@@ -51,5 +51,7 @@ extern QString defaultEncoding;
 extern QValueList<QString> pluginsList; //holds the names of available plugins
 extern KDirWatch *fileWatcher;
 
+extern QRegExp scriptBeginRx;
+extern QRegExp scriptEndRx;
 
 #endif // RESOURCE_H

@@ -74,16 +74,18 @@ void QuantaView::slotEditCurrentTag()
   DTDStruct *dtd = w->currentDTD();
   QString dtdName = dtd->name;
   Tag *tag = w->tagAt(dtd, line, col);
+  bool isUnknown = true;
+  QString tagName;
   if (tag)
   {
-    QString tagName = tag->name;
-    if ( QuantaCommon::isKnownTag(dtdName,tagName) )
+    tagName = tag->name;
+    if ( QuantaCommon::isKnownTag(dtd->name,tagName) )
     {
-      TagDialog *dlg = new TagDialog( QuantaCommon::tagFromDTD(dtdName,tagName), tag );
-
+      isUnknown = false;
+      TagDialog *dlg = new TagDialog( QuantaCommon::tagFromDTD(dtd,tagName), tag );
       if (dlg->exec())
       {
-       w->changeCurrentTag( dlg->getAttributes() );
+       w->changeTag(tag, dlg->getAttributes() );
  /*      int eLine, eCol;
        tag->endPos(eLine, eCol);
        w->viewCursorIf->setCursorPositionReal(eLine, eCol);*/
@@ -91,12 +93,34 @@ void QuantaView::slotEditCurrentTag()
 
       delete dlg;
     }
-    else
-    {
-      QString message = i18n("Unknown tag: %1").arg(tagName);
-      app->slotStatusMsg( message.data() );
-    }
     delete tag;
+  }
+
+  if (isUnknown)
+  {
+    dtd = w->defaultDTD();
+    tag = w->tagAt(dtd, line, col, false, true);
+    if (tag)
+    {
+      tagName = tag->name;
+      if ( QuantaCommon::isKnownTag(dtd->name,tagName) )
+      {
+        isUnknown = false;
+        TagDialog *dlg = new TagDialog( QuantaCommon::tagFromDTD(dtd,tagName), tag );
+
+        if (dlg->exec())
+        {
+         w->changeTag(tag, dlg->getAttributes() );
+        }
+        delete dlg;
+      }
+      delete tag;
+    }
+  }
+  if (isUnknown)
+  {
+    QString message = i18n("Unknown tag: %1").arg(tagName);
+    app->slotStatusMsg( message.data() );
   }
 }
 

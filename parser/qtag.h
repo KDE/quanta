@@ -62,6 +62,8 @@ typedef struct DTDStruct
      AttributeListDict* commonAttrs;  //the attributes of the common groups
      QString scriptName;              //the name that can be the value of <script language=""> attribute
      QString scriptRegExpStr;
+     QStringList scriptTagStart;
+     QStringList scriptTagEnd;
      QString booleanAttributes;       //simple or extended <tag booleanAttr> or <tag booleanAttr="1">
      QString booleanTrue;             //"true" or "1" or whatever
      QString booleanFalse;            //"false" or "0" or whatever

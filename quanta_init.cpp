@@ -950,8 +950,30 @@ void QuantaApp::readTagDir(QString &dirName)
 
  dtdConfig->setGroup("Extra rules");
  dtd->scriptName = (dtdConfig->readEntry("ScriptName")).lower();
- dtd->scriptRegExpStr = (dtdConfig->readEntry("ScriptRegExp"));
+ dtd->scriptRegExpStr = dtdConfig->readEntry("ScriptRegExp");
+ QStringList tagBorders = dtdConfig->readListEntry("ScriptTagBorders");
 
+ for (uint i = 0; i < tagBorders.count(); i++)
+ {
+   QString s;
+   QStringList slist = QStringList::split(" ",tagBorders[i].stripWhiteSpace());
+   s = slist[0].stripWhiteSpace();
+   dtd->scriptTagStart.append(s);
+   s.replace(QRegExp("\\?"),"\\?");
+   s.replace(QRegExp("\\*"),"\\*");
+   s.replace(QRegExp("\\."),"\\.");
+   s.replace(QRegExp("\\^"),"\\^");
+   s.replace(QRegExp("\\$"),"\\$");
+   scriptBeginRxStr.append("|("+s+")");
+   s = slist[1].stripWhiteSpace();
+   dtd->scriptTagEnd.append(s);
+   s.replace(QRegExp("\\?"),"\\?");
+   s.replace(QRegExp("\\*"),"\\*");
+   s.replace(QRegExp("\\."),"\\.");
+   s.replace(QRegExp("\\^"),"\\^");
+   s.replace(QRegExp("\\$"),"\\$");
+   scriptEndRxStr.append("|("+s+")");
+ }
  dtd->booleanAttributes = dtdConfig->readEntry("BooleanAttributes","extended");
  dtd->booleanTrue = dtdConfig->readEntry("BooleanTrue","true");
  dtd->booleanFalse = dtdConfig->readEntry("BooleanFalse","false");
@@ -984,11 +1006,16 @@ void QuantaApp::initTagDict()
          tagsDirs += *it + *subit+"/";
     }
   }
+  scriptBeginRxStr = "(<script)";
+  scriptEndRxStr = "(/script>)";
   for ( QStringList::Iterator it = tagsDirs.begin(); it != tagsDirs.end(); ++it )
   {
     readTagDir(*it);
   }
-
+  scriptBeginRx.setCaseSensitive(false);
+  scriptBeginRx.setPattern(scriptBeginRxStr);
+  scriptEndRx.setCaseSensitive(false);
+  scriptEndRx.setPattern(scriptEndRxStr);
   if (!dtds->find(defaultDocType)) defaultDocType = DEFAULT_DTD;
 }
 

@@ -47,6 +47,8 @@
 
 #include <cctype>
 
+#define STEP 1
+
 Document::Document(const QString& basePath, KTextEditor::Document *doc, QWidget *parent,
                    const char *name, WFlags f ) : QWidget(parent, name, f)
 {
@@ -175,7 +177,7 @@ Node *Document::nodeAt(int p_line, int p_col)
 
 /** Return a node Tag according to line,col (or current cursor pos if p_line==p_col==-1), and
     according to dtd. If forwardOnly is true, the text is parsed from (p_line,p_col) forward.*/
-Tag *Document::tagAt(DTDStruct *dtd, int p_line, int p_col, bool forwardOnly)
+Tag *Document::tagAt(DTDStruct *dtd, int p_line, int p_col, bool forwardOnly, bool useSimpleRx )
 {
   uint line;
   uint col;
@@ -192,7 +194,7 @@ Tag *Document::tagAt(DTDStruct *dtd, int p_line, int p_col, bool forwardOnly)
   Tag *tag = 0L;
   if (dtd->family == Xml)
   {
-    if (!tag) tag = findXMLTag(line, col, forwardOnly);
+    if (!tag) tag = findXMLTag(line, col, forwardOnly, useSimpleRx);
     if (!tag) tag = findText(line, col, forwardOnly);
   }
   if (dtd->family == Script)
@@ -354,13 +356,14 @@ Tag *Document::findScriptStruct(int line, int col)
   return tag;
 }
 
-Tag *Document::findXMLTag(int line, int col, bool forwardOnly)
+Tag *Document::findXMLTag(int line, int col, bool forwardOnly, bool useSimpleRx)
 {
   Tag *tag = 0L;
 //  QRegExp quotedTextRx("(((\\(?=[\"]))\")*[^\"]*)*");
   int bLine, bCol, eLine, eCol;
   bLine = bCol = eLine = eCol = 0;
   QRegExp xmlTagRx("<([^>]*(\"([^\"]*(<[^\"]*>)+[^\"<]*)*\")*('([^']*(<[^']*>)+[^'<]*)*')*[^>]*)*>",false);
+  if (useSimpleRx) xmlTagRx.setPattern("<[^<>]+>");
   int sLine = line;
   int sCol = col;
   bool tagFound = false;
@@ -403,6 +406,7 @@ Tag *Document::findXMLTag(int line, int col, bool forwardOnly)
       tag->type = Tag::XmlTag;
       if (tag->name[0] == '/') tag->type =  Tag::XmlTagEnd;
       if (tag->name == "!--") tag->type = Tag::Comment;
+      if (scriptBeginRx.search(tag->name) == 0) tag->type = Tag::ScriptTag;
       if (foundText.right(2) == "/>") tag->single = true;
   }
 
@@ -528,37 +532,36 @@ Tag *Document::findText(int line, int col, bool forwardOnly)
 }
 
 /** Change the current tag's attributes with those from dict */
-void Document::changeCurrentTag( QDict<QString> *dict )
+void Document::changeTag(Tag *tag, QDict<QString> *dict )
 {
   QDictIterator<QString> it( *dict ); // iterator for dict
   QDict<QString> oldAttr(1,false);
-  DTDStruct *dtd = currentDTD();
-  Tag *tag = tagAt(dtd);
-  if (tag)
+  QString tagStr = "";
+  while ( it.current() )  // for insert new attr
   {
-    QString tagStr = "";
-    while ( it.current() )  // for insert new attr
-    {
-      QString attr = QuantaCommon::attrCase(it.currentKey());
-      QString *val = it.current();
-      QString attrval;
+    QString attr = QuantaCommon::attrCase(it.currentKey());
+    QString val = *(it.current());
+    QString attrval;
 
-      if ( val->isEmpty() )  // for checkboxes ( without val) don't print =""
-          attrval = QString(" ")+attr;
-      else
-          attrval = QString(" ")+attr+"=\""+*val+"\"";
-      tagStr = attrval + tagStr;
-      ++it;
+    if ( val.isEmpty() )  // for checkboxes ( without val) don't print =""
+        attrval = QString(" ")+attr;
+    else
+    {
+      attrval = QString(" ")+attr+"=";
+      if (! val.startsWith("\\\"")) attrval += "\"";
+      attrval += val;
+      if (! val.endsWith("\\\"")) attrval += "\"";
     }
-    tagStr = "<"+QuantaCommon::tagCase(tag->name)+tagStr+">";
-    int bLine, bCol, eLine, eCol;
-    tag->beginPos(bLine,bCol);
-    tag->endPos(eLine,eCol);
-    editIf->removeText(bLine, bCol, eLine, eCol+1);
-    viewCursorIf->setCursorPositionReal((uint)bLine, (uint)bCol);
-    insertText(tagStr);
-    delete tag;
+    tagStr = attrval + tagStr;
+    ++it;
   }
+  tagStr = "<"+QuantaCommon::tagCase(tag->name)+tagStr+">";
+  int bLine, bCol, eLine, eCol;
+  tag->beginPos(bLine,bCol);
+  tag->endPos(eLine,eCol);
+  editIf->removeText(bLine, bCol, eLine, eCol+1);
+  viewCursorIf->setCursorPositionReal((uint)bLine, (uint)bCol);
+  insertText(tagStr);
 }
 
 // return global( on the desktop ) position of text cursor
@@ -803,7 +806,7 @@ bool Document::saveIt()
 QString Document::getTagNameAt(DTDStruct *dtd, int line, int col )
 {
  QString name = "";
- Tag *tag = tagAt(dtd, line, col);
+ Tag *tag = tagAt(dtd, line, col, false, true);
  if (tag)
  {
    name = tag->name;
@@ -897,7 +900,16 @@ void Document::slotCharactersInserted(int line,int column,const QString& string)
     {
       scriptAutoCompletion(dtd, line, column, string);
     }
-    completionInProgress = true;
+
+    dtd = defaultDTD();
+    if (dtd->family == Xml)
+    {
+      xmlAutoCompletion(dtd, line, column, string);
+    }
+    if (dtd->family == Script)
+    {
+      scriptAutoCompletion(dtd, line, column, string);
+    }
   }
  }
 }
@@ -911,7 +923,7 @@ void Document::xmlAutoCompletion(DTDStruct* dtd, int line, int column, const QSt
 
   tag = QuantaCommon::tagFromDTD(dtd, tagName);
 
-  if ( !tag )  //we are outside of any tag
+  if ( !tag || tagName.isEmpty() )  //we are outside of any tag
   {
     if ( string == "<" )  // a tag is started
     {
@@ -983,6 +995,8 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(DTDStruct 
    completion.text = QuantaCommon::tagCase( tagNameList[i]);
    completions->append( completion );
   }
+
+//  completionInProgress = true;
   return completions;
 }
 
@@ -1043,6 +1057,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeCompletions( DTD
           }
     }
 
+//  completionInProgress = true;
   return completions;
 }
 
@@ -1068,6 +1083,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeValueCompletions
     }
   }
   
+//  completionInProgress = true;
   return completions;
 }
 
@@ -1109,6 +1125,15 @@ DTDStruct* Document::currentDTD(bool fallback)
   return dtd;
 }
 
+/** Get a pointer to the default DTD (document, or app). */
+DTDStruct* Document::defaultDTD()
+{
+  DTDStruct* dtd =  dtds->find(dtdName);
+  if (!dtd) dtd = dtds->find(defaultDocType); //this will always exists
+
+  return dtd;
+}
+
 /** Find the DTD name for a part of the document. Search all the document if startLine=endLine=-1. */
 QString Document::findDTDName(int startLine, int endLine, bool searchPseudoDTD)
 {
@@ -1125,78 +1150,78 @@ QString Document::findDTDName(int startLine, int endLine, bool searchPseudoDTD)
  bool found = false;
  QString foundText = "";
  Tag *tag;
-
- if (searchPseudoDTD)
+ int direction = (startLine > endLine)?-1:1; //search direction
+ int pos = 0;
+ int pos2;
+ int i = startLine;
+ bool endReached;
+ QString text;
+ do
  {
-  //Look if we are inside of a script style definition, like <? ?> <* *> for php
-   QString scriptRxStr;
-   QDictIterator<DTDStruct> it(*dtds);
-   for( ; it.current(); ++it )
+   text = editIf->textLine(i);
+
+   if (searchPseudoDTD)
    {
-     DTDStruct *dtd = it.current();
-     if (dtd->family == Script)
+     if (i == startLine) text = this->text(i, 0, i, col);
+     pos = scriptBeginRx.searchRev(text);
+     pos2 = scriptEndRx.searchRev(text);
+     if (pos > pos2) //a script begin area was found
      {
-       scriptRxStr = dtd->scriptRegExpStr;
-       if (!dtd->scriptName.isEmpty())
+       if (text.mid(pos,7).lower() == "<script")
        {
-         if (!scriptRxStr.isEmpty()) scriptRxStr = "("+scriptRxStr+")|";
-         scriptRxStr.append("(<script[^>]+(language=\"");
-         scriptRxStr.append(dtd->scriptName);
-         scriptRxStr.append("\").+/script>)");
-       }
-       if (!scriptRxStr.isEmpty())
+         tag = findXMLTag(i, pos, true);
+         foundText = tag->attributeValue("language");
+       } else
        {
-         tag = findScriptTag(line, col, QRegExp(scriptRxStr,false));
-         if (tag)
+         foundText = scriptBeginRx.cap(0);
+         QDictIterator<DTDStruct> it(*dtds);
+         for( ; it.current(); ++it )
          {
-          foundText = dtd->name;
-          found = true;
-          delete tag;
-          break;
-         }
+           DTDStruct *dtd = it.current();
+           if (dtd->family == Script)
+           {
+             if (dtd->scriptTagStart.contains(foundText))
+             {
+               foundText = dtd->name;
+               break; //exit the for
+             }
+           }
+         } //FOR
        }
+       break; //exit the while
+     } else
+     {
+       if (pos2 != -1) searchPseudoDTD = false;
      }
    }
- } // if (searchPseudoDTD)
- if (!found)
- {
-   int direction = (startLine > endLine)?-1:1; //search direction
-   int pos = 0;
    //search for !DOCTYPE tags
-   int i = startLine;
-   bool endReached;
-   QString text;
-   do
+   pos = text.find("!doctype",0,false);
+   if (pos != -1) //parse the found !DOCTYPE tag
    {
-     QString text = editIf->textLine(i);
-     pos = text.find("!doctype",0,false);
-     if (pos != -1) //parse the found !DOCTYPE tag
-     {
-      tag = findXMLTag(i, pos-1, true);
-      if (tag)
+    tag = findXMLTag(i, pos-1, true);
+    if (tag)
+    {
+      text = tag->tagStr();
+      pos = text.find("public",0,false);
+      if (pos == -1) //if no PUBLIC info, use the word after !DOCTYPE as the doc.type
       {
-        text = tag->tagStr();
-        pos = text.find("public",0,false);
-        if (pos == -1) //if no PUBLIC info, use the word after !DOCTYPE as the doc.type
+        foundText = tag->attribute(0);
+      } else
+      {             //use the quoted string after PUBLIC as doc. type
+        pos = text.find("\"", pos+1);
+        if (pos !=-1)
         {
-          foundText = tag->attribute(0);
-        } else
-        {             //use the quoted string after PUBLIC as doc. type
-          pos = text.find("\"", pos+1);
-          if (pos !=-1)
-          {
-            int endPos = text.find("\"",pos+1);
-            foundText = text.mid(pos+1, endPos-pos-1);
-          }
+          int endPos = text.find("\"",pos+1);
+          foundText = text.mid(pos+1, endPos-pos-1);
         }
-        delete tag;
-        break;
       }
-     }
-     i += direction;
-     endReached = (direction < 0)?(i < endLine):(i > endLine);
-   } while (!endReached);
- }
+      delete tag;
+      break;
+    }
+   }
+   i += direction;
+   endReached = (direction < 0)?(i < endLine):(i > endLine);
+ } while (!endReached);
 
  return foundText;
 }
@@ -1263,16 +1288,24 @@ QString Document::find(QRegExp& rx, int sLine, int sCol, int& fbLine, int&fbCol,
  int maxLine = editIf->numLines();
  QString textToSearch = text(sLine, sCol, sLine, editIf->lineLength(sLine));
  int pos;
- int line = sLine;
+ int line = sLine;  
  do
  {
    pos = rx.search(textToSearch);
    if (pos == -1)
    {
-     line++;
-     if (line < maxLine) textToSearch.append("\n"+editIf->textLine(line));
+/*     if (line + STEP < maxLine)
+     {
+       line += STEP;
+       textToSearch.append("\n"+text(line - STEP + 1, 0, line, editIf->lineLength(line)));
+     } else*/
+     {
+      line ++;
+      if (line < maxLine) textToSearch.append("\n"+editIf->textLine(line));
+     }
    }
- } while (line <maxLine && pos == -1);
+ } while (line < maxLine && pos == -1);
+// pos = rx.search(text(sLine, sCol, maxLine -1, 100));
  if (pos != -1)
  {
    foundText = rx.cap();
@@ -1310,14 +1343,21 @@ QString Document::findRev(QRegExp& rx, int sLine, int sCol, int& fbLine, int&fbC
  QString foundText = "";
  int pos = -1;
  int line = sLine;
- QString textToSearch = text(sLine,0, sLine, sCol);
+ QString textToSearch = text(sLine, 0, sLine, sCol);
  do
  {
    pos = rx.searchRev(textToSearch);
    if (pos == -1)
    {
-     line--;
-     if (line >=0) textToSearch.prepend(editIf->textLine(line) + "\n");
+/*     if (line - STEP >= 0)
+     {
+         textToSearch.prepend(text(line - STEP, 0, line - 1, editIf->lineLength(line-1)) + "\n");
+         line -= STEP;
+     } else */
+     {
+       line--;
+       if (line >=0) textToSearch.prepend(editIf->textLine(line) + "\n");
+     }
    }
  } while (line >=0 && pos == -1);
  if (pos != -1)
@@ -1360,7 +1400,17 @@ void Document::codeCompletionRequested()
   if (dtd->family == Script)
   {
     scriptCodeCompletion(dtd, line, col);
+  }           /*
+  dtd = defaultDTD();
+  if (dtd->family == Xml)
+  {
+    xmlCodeCompletion(dtd, line, col);
+
   }
+  if (dtd->family == Script)
+  {
+    scriptCodeCompletion(dtd, line, col);
+  }             */
   completionInProgress = true;
 }
 

@@ -41,6 +41,7 @@ uint refreshFrequency;
 QString globalDataDir;
 QString defaultDocType;
 QuantaApp *QuantaCommon::quantaApp;
+QString defaultEncoding;
 
 QDict<AttributeList> *tagsDict;
 QDict<DTDStruct> *dtds; //holds all the known tags with attributes for each DTD.
@@ -50,7 +51,10 @@ Node *baseNode;
 Parser *parser;
 KDirWatch *fileWatcher;
 
-QString defaultEncoding;
+
+QRegExp scriptBeginRx;
+QRegExp scriptEndRx;
+
 
 QuantaCommon::QuantaCommon(){
 }

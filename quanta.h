@@ -410,6 +410,10 @@ signals: // Signals
 protected: // Protected attributes
   /** Timer to refresh the structure tree. */
   QTimer *refreshTimer;
+  /**  */
+  QString scriptBeginRxStr;
+  /**  */
+  QString scriptEndRxStr;
 };
  
 #endif // QUANTA_H
