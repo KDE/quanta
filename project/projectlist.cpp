@@ -97,12 +97,12 @@ bool ProjectList::readFromXML(const QDomDocument &dom, const KURL &baseURL,
             i--;
           } else
           {
-            insert(url.url(-1), new ProjectURL(url, el.attribute("desc"), el.attribute("uploadstatus").toInt(),
+            insert(url.url(-1), new ProjectURL(url, el.attribute("desc"), el.attribute("uploadstatus", "1").toInt(),
                                              docFolder, el));
           }
         } else
         {
-            insert(url.url(-1), new ProjectURL(url, el.attribute("desc"), el.attribute("uploadstatus").toInt(),
+            insert(url.url(-1), new ProjectURL(url, el.attribute("desc"), el.attribute("uploadstatus", "1").toInt(),
                                              docFolder, el));
         }
       }

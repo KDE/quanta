@@ -187,7 +187,7 @@ void ProjectUpload::slotBuildTree()
          uploadedTime = m_uploadTimeList[s];
        int modifiedTime = item.time(KIO::UDS_MODIFICATION_TIME);
        el.setAttribute("modified_time", modifiedTime);
-       int uploadStatus = el.attribute("uploadstatus").toInt();
+       int uploadStatus = el.attribute("uploadstatus", "1").toInt();
        if (uploadedTime != modifiedTime && uploadStatus != 0)
        {
          modified.append( u );
