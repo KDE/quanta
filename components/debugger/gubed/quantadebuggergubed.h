@@ -65,6 +65,8 @@ class QuantaDebuggerGubed : public DebuggerClient
     void leap();
     void skip();
     void stepInto();
+    void stepOver();
+    void stepOut();
     void pause();
     void kill();
     void setExecutionState(State newstate);

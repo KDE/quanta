@@ -205,7 +205,9 @@ const uint QuantaDebuggerGubed::supports(DebuggerClientCapabilities::Capabilitie
     case DebuggerClientCapabilities::Run:
     case DebuggerClientCapabilities::RunDisplay:
     case DebuggerClientCapabilities::Skip:
+    case DebuggerClientCapabilities::StepOut:
     case DebuggerClientCapabilities::StepInto:
+    case DebuggerClientCapabilities::StepOver:
     case DebuggerClientCapabilities::Watches:
     case DebuggerClientCapabilities::VariableSetValue:
       return true;
@@ -537,7 +539,9 @@ void QuantaDebuggerGubed::processCommand(QString data)
 void QuantaDebuggerGubed::debuggingState(bool enable)
 {
   debuggerInterface()->enableAction("debug_kill", enable);
+  debuggerInterface()->enableAction("debug_stepout", enable);
   debuggerInterface()->enableAction("debug_stepinto", enable);
+  debuggerInterface()->enableAction("debug_stepover", enable);
   debuggerInterface()->enableAction("debug_skip", enable);
 }
 
@@ -613,6 +617,20 @@ void QuantaDebuggerGubed::stepInto()
 {
   setExecutionState(Pause);
   sendCommand("next", "");
+}
+
+// Step over function
+void QuantaDebuggerGubed::stepOver()
+{
+  setExecutionState(Pause);
+  sendCommand("stepover", "");
+}
+
+// Step out of function
+void QuantaDebuggerGubed::stepOut()
+{
+  setExecutionState(Pause);
+  sendCommand("stepout", "");
 }
 
 // Skip next function
