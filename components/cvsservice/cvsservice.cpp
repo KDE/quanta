@@ -36,7 +36,7 @@
 
 CVSService::CVSService(KActionCollection *ac)
 {
-  m_menu = new KPopupMenu(this);
+  m_menu = new KPopupMenu();
 #if KDE_VERSION < KDE_MAKE_VERSION(3,2,90)
   KAction *action = new KAction(i18n("&Commit"), 0, this, SLOT(slotCommit()), ac);
 #else
