@@ -1120,6 +1120,7 @@ void ProjectPrivate::slotCloseProject()
   // empty dom tree
   dom.clear();
   m_events->clear();
+  config->setGroup("Projects");
   config->writePathEntry("Last Project", QString::null);
   init();
   parent->closeFiles();
@@ -1366,6 +1367,7 @@ void ProjectPrivate::writeConfig()
   config->reparseConfiguration();
   config->setGroup("Projects");
   // remember the last project in config
+  config->setGroup("Projects");
   config->writePathEntry("Last Project", projectURL.url());
   // add project to list
   if (!projectURL.isEmpty())
@@ -2539,6 +2541,7 @@ bool Project::queryClose()
   bool canExit = true;
   if (hasProject())
   {
+    d->config->setGroup("Projects");
     d->config->writePathEntry("Last Project", d->projectURL.url());
     canExit = d->uploadProjectFile();
     if (! canExit)

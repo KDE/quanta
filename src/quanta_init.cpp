@@ -600,7 +600,7 @@ void QuantaInit::openLastFiles()
   // we need to check config
   // because project now can be
   // in load stage ( remote prj )
-  m_config->setGroup  ("Projects");
+  m_config->setGroup("Projects");
   QString pu = m_config->readPathEntry("Last Project");
 
   KURL u;
@@ -855,10 +855,10 @@ void QuantaInit::initActions()
     new KAction(i18n("Re&name User Toolbar..."), 0, m_quanta, SLOT(slotRenameToolbar()), ac, "toolbars_rename");
     new KAction(i18n("Send Toolbar in E&mail..."), "mail_send", 0, m_quanta, SLOT(slotSendToolbar()), ac, "toolbars_send");
     new KAction(i18n("&Download Toolbar..." ), "network", 0, m_quanta, SLOT(slotDownloadToolbar()), ac, "toolbars_download" );
-    
+
 #ifdef BUILD_KAFKAPART
     KToggleAction *toggle = new KToggleAction( i18n("Smart Tag Insertion"), 0, ac, "smart_tag_insertion");
-    connect(toggle, SIGNAL(toggled(bool)), m_quanta, SLOT(slotSmartTagInsertion()));         
+    connect(toggle, SIGNAL(toggled(bool)), m_quanta, SLOT(slotSmartTagInsertion()));
 #endif
 
     m_quanta->showDTDToolbar=new KToggleAction(i18n("Show DTD Toolbar"), 0, ac, "view_dtd_toolbar");
@@ -1040,7 +1040,7 @@ void QuantaInit::recoverCrashed(QStringList& recoveredFileNameList)
 
   execCommandPS("ps -C quanta -C quanta_be -o pid --no-headers");
 
-  m_config->setGroup  ("Projects");
+  m_config->setGroup("Projects");
   QString pu = m_config->readPathEntry("Last Project");
 
   KURL u;
