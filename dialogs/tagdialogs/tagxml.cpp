@@ -328,8 +328,8 @@ void Tagxml::writeAttributes( QDict<QString> *d )
         {
             value = "";
         
-            Attribute* attr = m_dtdTag->attributeAt(count);
-            if(attr && attr->source.lower() == "selection")
+            Attribute* attrib = m_dtdTag->attribute(name);
+            if(attrib && attrib->source.lower() == "selection")
                 value = m_selection;
         }
 
