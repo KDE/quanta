@@ -1037,7 +1037,7 @@ void QuantaInit::recoverCrashed(QStringList& recoveredFileNameList)
 {
   m_quanta->m_doc->blockSignals(true);
 
-  execCommandPS("ps -C quanta -o pid --no-headers");
+  execCommandPS("ps -C quanta -C quanta_be -o pid --no-headers");
 
   m_config->setGroup  ("Projects");
   QString pu = m_config->readPathEntry("Last Project");
