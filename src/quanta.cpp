@@ -3934,7 +3934,7 @@ void QuantaApp::saveOptions()
 
     Project::ref()->writeConfig(m_config); // project
     manager()->writeConfig(m_config);
-//    saveMainWindowSettings(m_config);
+    saveMainWindowSettings(m_config);
     SpellChecker::ref()->writeConfig(m_config);
     writeDockConfig(m_config);
     m_config->sync();

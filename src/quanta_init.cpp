@@ -246,7 +246,7 @@ void QuantaInit::initQuanta()
     }
   }
 
-  //m_quanta->applyMainWindowSettings(m_config);
+  m_quanta->applyMainWindowSettings(m_config);
 
   m_quanta->m_tagsMenu =   static_cast<QPopupMenu*>(m_quanta->factory()->container("tags", m_quanta));
   KMenuBar *mb = m_quanta->menuBar();
