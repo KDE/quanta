@@ -311,8 +311,8 @@ void ViewManager::closeAll(bool createNew)
                  quantaApp->closeWindow(view);
               } else
               {
-                kdDebug(24000) << "CloseAll cancelled" << endl;
                connect(quantaApp, SIGNAL(viewActivated (KMdiChildView *)), this, SLOT(slotViewActivated(KMdiChildView*)));
+               view->activated();
                 return;
                }
           } else

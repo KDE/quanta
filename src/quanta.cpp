@@ -853,10 +853,6 @@ void QuantaApp::slotInsertTag(const KURL& url, DirInfo dirInfo)
   }
 }
 
-////////////////////////
-// status slots
-///////////////////////
-/** slot for new modify flag */
 void QuantaApp::slotNewStatus()
 {
   fileRecent->setEnabled(true);

@@ -195,7 +195,7 @@ void QuantaDoc::slotOpeningCompleted()
   quantaApp->reparse(true);
 
   quantaApp->debugger()->fileOpened(w->url());
-  emit newStatus();
+  quantaApp->slotNewStatus();
 #if KDE_IS_VERSION(3,1,90)
    disconnect(w->doc(), SIGNAL(completed()), this, SLOT(slotOpeningCompleted()));
 #endif
