@@ -17,6 +17,7 @@
 
 #include "tagmaildlg.h"
 #include "listdlg.h"
+#include "../resource.h"
 
 //kde includes
 #include <kapplication.h>
@@ -35,7 +36,7 @@ TagMailDlg::TagMailDlg(QWidget *parent, const char *name)
 	:TagMail(parent,name,true)
 {
   setCaption(name);
-	
+
   connect( buttonOk,     SIGNAL(clicked()), SLOT(accept()) );
   connect( buttonCancel, SIGNAL(clicked()), SLOT(reject()) );
   connect( buttonHelp,SIGNAL(clicked()),this,SLOT(slotShowHelp()));
@@ -68,7 +69,7 @@ void TagMailDlg::slotSelectAddress()
 	  addr = "";
 	else { /* do we really need quotes around this name ? */
 	  if (n.find(QRegExp("[^ 0-9A-Za-z\\x0080-\\xFFFF]")) != -1)
-	    addr = "\"" + n + "\" ";
+      addr = qConfig.attrValueQuotation + n + qConfig.attrValueQuotation + " ";
 	  else
 	    addr = n + " ";
 	}

@@ -44,7 +44,7 @@
 #include <ktexteditor/selectioninterface.h>
 #include <ktexteditor/markinterface.h>
 
-#if (KDE_VERSION > 308)               
+#if (KDE_VERSION > 308)
 #include <ktexteditor/dynwordwrapinterface.h>
 #endif
 
@@ -146,7 +146,7 @@ void QuantaView::slotInsertCSS()
 
   delete dlg;*/
   QString code="";
-  
+
   uint line, col;
   w->viewCursorIf->cursorPositionReal(&line, &col);
 
@@ -207,6 +207,7 @@ void QuantaView::slotTagMail()
   	if ( !QString(mailDlg->titleEdit->text()).isEmpty())
 	   		tag += QuantaCommon::attrCase(" title=\"")+mailDlg->titleEdit->text()+"\"";
     tag += QString(">");
+    tag.replace(QRegExp("\""), qConfig.attrValueQuotation);
     write()->insertTag(tag,QuantaCommon::tagCase("</a>"));
   }
   delete mailDlg;
@@ -830,7 +831,7 @@ void QuantaView::slotEditorOptions()
   dynamic_cast<KTextEditor::ConfigInterface *>(write()->doc())->configDialog();
   write()->writeConfig(quantaApp->config);
   quantaApp->config->sync();
-  
+
   quantaApp->config->setGroup("Kate View");
   qConfig.lineNumbers = quantaApp->config->readBoolEntry("LineNumbers", false);
   qConfig.iconBar = quantaApp->config->readBoolEntry("Iconbar", false);
@@ -839,7 +840,7 @@ void QuantaView::slotEditorOptions()
   quantaApp->viewLineNumbers->setChecked(qConfig.lineNumbers);
 #if (KDE_VERSION > 308)
   quantaApp->viewDynamicWordWrap->setChecked(qConfig.dynamicWordWrap);
-#endif  
+#endif
 }
 
 void QuantaView::setEol(int which)
@@ -870,7 +871,7 @@ void QuantaView::insertNewTag(QString tag, QString attr,bool insertInLine)
 
   delete dlg;
 }
-/** Returns the baseURL of the document. */    
+/** Returns the baseURL of the document. */
 KURL QuantaView::baseURL()
 {
   Document *w = write();

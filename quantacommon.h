@@ -41,7 +41,7 @@ typedef struct QConfig{
           //Tag style options
           uint tagCase;
           uint attrCase;
-          QString attrValueQuotation;
+          QChar attrValueQuotation;
           bool closeOptionalTags;
           bool closeTags;
 
@@ -83,7 +83,7 @@ typedef struct {
   */
 
 class QuantaCommon {
-public: 
+public:
 	QuantaCommon();
 	~QuantaCommon();
 
@@ -114,7 +114,7 @@ public:
   /** Returns 0 if the (line,col) is inside the area specified by the other arguments,
       -1 if it is before the area and 1 if it is after. */
   static int isBetween(int line, int col, int bLine, int bCol, int eLine, int eCol);
-  /** Returns a pointer to a KStandardDirs object usable for plugin searchup. type is the plugin binary type (exe or lib). The returned 
+  /** Returns a pointer to a KStandardDirs object usable for plugin searchup. type is the plugin binary type (exe or lib). The returned
 pointer must be deleted by the caller!! */
   static KStandardDirs* pluginDirs(const char *type);
 

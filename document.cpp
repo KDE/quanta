@@ -202,14 +202,14 @@ Tag *Document::tagAt(DTDStruct *dtd, int p_line, int p_col, bool forwardOnly, bo
     }
   }
 
-/*  
+/*
   if (t.elapsed() > 10)
   {
     kdDebug(24000) << "DTD: " << dtd->nickName << " line: " << line << " col: " << col << " simple: "<< useSimpleRx << "\n";
     kdDebug(24000) << "time: " << t.elapsed() <<"ms \n";
   }
 */
-  
+
   return tag;
 }
 
@@ -257,7 +257,7 @@ Tag *Document::findScriptText(int line, int col, const QRegExp& keywordRx)
       eLine = el;
       eCol = ec - 1;
     }
-  
+
   if (eCol < 0)
   {
     eLine = (eLine >0)?eLine-1:0;
@@ -534,9 +534,9 @@ void Document::changeTag(Tag *tag, QDict<QString> *dict )
     else
     {
       attrval = QString(" ")+attr+"=";
-      if (! val.startsWith("\\\"")) attrval += "\"";
+      if (!val.startsWith("\\\"") && !val.startsWith("\\\'")) attrval += qConfig.attrValueQuotation;
       attrval += val;
-      if (! val.endsWith("\\\"")) attrval += "\"";
+      if (!val.endsWith("\\\"") && !val.endsWith("\\\'")) attrval += qConfig.attrValueQuotation;
     }
     tagStr = attrval + tagStr;
     ++it;
@@ -550,7 +550,7 @@ void Document::changeTag(Tag *tag, QDict<QString> *dict )
     tagStr.append(" /");
   }
   tagStr.append(">");
-  
+
   int bLine, bCol, eLine, eCol;
   tag->beginPos(bLine,bCol);
   tag->endPos(eLine,eCol);
@@ -574,7 +574,7 @@ void Document::insertAttrib(QString attr)
   {
     tag->endPos(line, col);
     viewCursorIf->setCursorPositionReal( line, col - 1 );
-    insertTag( QString(" ") + QuantaCommon::attrCase(attr) + "=\"", QString( "\"" ) );
+    insertTag( " " + QuantaCommon::attrCase(attr) + "="+qConfig.attrValueQuotation, qConfig.attrValueQuotation );
     delete tag;
   }
 }
@@ -673,7 +673,7 @@ void Document::insertText(QString text, bool adjustCursor)
         }
         if(wordLength == -1)
           wordLength = (textLength)-i;
-          
+
         if((wordLength+col) > wordWrapAt)
         {
           if(col && !lineLock) // wraps onto new line unless locked by kate
@@ -718,10 +718,10 @@ KTextEditor::Document* Document::doc()
 bool Document::isModified()
 {
   bool modified = false;
-  if ( m_doc )	
+  if ( m_doc )
    modified = m_doc->isModified();
 
-  return modified;	
+  return modified;
 }
 /** Sets the modifiedFlag value. */
 void Document::setModified(bool flag)
@@ -810,7 +810,7 @@ QString Document::getTagNameAt(DTDStruct *dtd, int line, int col )
      QString s = tag->tagStr();
      int pos = s.find("<");
      if (pos !=-1)
-     {   
+     {
        s.remove(0,pos);
        pos = 0;
        while (pos < (int)s.length() && !s[pos].isSpace()) pos++;
@@ -879,7 +879,7 @@ void Document::slotFilterCompletion( KTextEditor::CompletionEntry *completion ,Q
 
   if ( completion->type == "attribute" )
   {
-    string->append("=\"\"");
+    string->append("="+QString(qConfig.attrValueQuotation)+QString(qConfig.attrValueQuotation));
   }
   if (completion->type == "doctypeList")
   {
@@ -991,7 +991,7 @@ bool Document::xmlAutoCompletion(DTDStruct* dtd, int line, int column, const QSt
           //suggest attribute completions
           showCodeCompletions( getAttributeCompletions(dtd, tagName) );
          }
-         else if ( string == "\"" )
+         else if ( string[0] == qConfig.attrValueQuotation )
               {
                //we need to find the attribute name
                QString textLine = editIf->textLine(line).left(column-1);
@@ -1148,7 +1148,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeValueCompletions
       }
     }
   }
-  
+
 //  completionInProgress = true;
   return completions;
 }
@@ -1282,9 +1282,9 @@ bool Document::scriptAutoCompletion(DTDStruct *dtd, int line, int column, const 
  if (string == "$")
  {
    showCodeCompletions( getVariableCompletions(dtd, line, column) );
-   handled = true; 
+   handled = true;
  }
- 
+
  return handled;
 }
 
@@ -1342,7 +1342,7 @@ QString Document::find(const QRegExp& regExp, int sLine, int sCol, int& fbLine, 
         if (line < maxLine) textToSearch.append("\n"+editIf->textLine(line));
        }
      }
-   } while (line < maxLine && pos == -1);    
+   } while (line < maxLine && pos == -1);
  } else
  {
    textToSearch = text(sLine, sCol, maxLine -1, editIf->lineLength(maxLine-1));
@@ -1428,7 +1428,7 @@ QString Document::findRev(const QRegExp& regExp, int sLine, int sCol, int& fbLin
     fbLine = leftStr.contains('\n');
     fbCol = pos - leftStr.findRev('\n') - 1;
    }
-   
+
    feCol = foundText.length()-foundText.findRev("\n")-2;
    feLine = fbLine + linesInFound;
    if (linesInFound == 0)
@@ -1476,7 +1476,7 @@ void Document::codeCompletionRequested()
     if (dtd->family == Script)
     {
       scriptCodeCompletion(dtd, line, col);
-    }             
+    }
   }
   completionInProgress = true;
 }
@@ -1590,7 +1590,7 @@ bool Document::scriptCodeCompletion(DTDStruct *dtd, int line, int col)
        scriptAutoCompletion(dtd, line, col, "$");
        goAhead = false;
        handled = true;
-     }  
+     }
    }
 
    if (goAhead)
@@ -1643,7 +1643,7 @@ void Document::checkDirtyStatus()
         }
         f.close();
       }
-      
+
     }
     if (m_dirty)
     {

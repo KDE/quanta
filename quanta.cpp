@@ -502,6 +502,7 @@ void QuantaApp::slotImageOpen(const KURL& url)
 	QString text = "<html>\n<body>\n<div align=\"center\">\n<img src=\"";
 	text += url.path(); //TODO
 	text += "\">\n</div>\n</body>\n</html>\n";
+  text.replace(QRegExp("\""), qConfig.attrValueQuotation);
 
 	part->closeURL();
 	part->begin( projectBaseURL() );
@@ -772,6 +773,7 @@ void QuantaApp::slotOptions()
 
   styleOptionsS->tagCase->setCurrentItem( qConfig.tagCase);
   styleOptionsS->attributeCase->setCurrentItem( qConfig.attrCase);
+  styleOptionsS->attributeQuotation->setCurrentItem( (qConfig.attrValueQuotation == '"') ? 0 : 1);
   styleOptionsS->tagAutoClose->setChecked( qConfig.closeTags );
   styleOptionsS->optionalTagAutoClose->setChecked( qConfig.closeOptionalTags );
   styleOptionsS->useAutoCompletion->setChecked( qConfig.useAutoCompletion );
@@ -842,6 +844,7 @@ void QuantaApp::slotOptions()
   {
     qConfig.tagCase = styleOptionsS->tagCase->currentItem();
     qConfig.attrCase = styleOptionsS->attributeCase->currentItem();
+    qConfig.attrValueQuotation = styleOptionsS->attributeQuotation->currentItem() == 0 ? '"': '\'';
     qConfig.closeTags = styleOptionsS->tagAutoClose->isChecked();
     qConfig.closeOptionalTags = styleOptionsS->optionalTagAutoClose->isChecked();
     qConfig.useAutoCompletion = styleOptionsS->useAutoCompletion->isChecked();

@@ -231,7 +231,7 @@ QString TagDialog::getAttributeString()
       if ( trans )
         attrval += QuantaCommon::attrCase(attr)+"="+val;
       else
-        attrval += QuantaCommon::attrCase(attr)+"=\""+val+"\"";
+        attrval += QuantaCommon::attrCase(attr) + "=" + qConfig.attrValueQuotation + val + qConfig.attrValueQuotation;
     } else
       attrval += QuantaCommon::attrCase(attr); // for checkboxes dont print =""
 
@@ -346,7 +346,7 @@ void TagDialog::insertTag(Document *w, bool insertInLine)
 
    if ( dtdTag->parentDTD->singleTagStyle == "xml" &&
         (dtdTag->isSingle() || (!qConfig.closeOptionalTags && dtdTag->isOptional()))
-      )  
+      )
    {
     newTag.append(" /");
    }
