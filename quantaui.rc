@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="quanta" version="1">
+<kpartgui name="quanta" version="2">
   <MenuBar>
      <Menu name="file" noMerge="1"><text>&amp;File</text>
       <Action name="file_new"/>
@@ -48,12 +48,15 @@
       <Separator/>
       <Action name="reload"/>
       <Separator/>
-      <Action name="view_with_netscape"/>
       <Action name="view_with_konqueror"/>
+      <Action name="view_with_netscape"/>
       <Action name="view_with_lynx"/>
       <Separator/>
       <Action name="previous_file"/>
       <Action name="next_file"/>
+    </Menu>
+    <Menu name="go_web"><text>&amp;Go</text>
+      <Action name="goto_line"/>
     </Menu>
     <Menu name="insert"><text>&amp;Insert</text>
       <Action name="tag_quick_start"/>
@@ -70,10 +73,13 @@
         <Action name="tag_b"/>
         <Action name="tag_i"/>
         <Action name="tag_u"/>
+        <Separator/>
         <Action name="tag_div_left"/>
         <Action name="tag_div_center"/>
         <Action name="tag_div_right"/>
         <Action name="tag_div_justify"/>
+        <Separator/>
+        <Action name="insert_css"/>
       </Menu>
       <Menu name="font_tags"><text>Font</text>
         <Action name="tag_p"/>
@@ -137,6 +143,7 @@
       <Action name="tag_date"/>
     </Menu>
     <Menu name="tools"><text>&amp;Tools</text>
+      <Separator/>
       <Action name="tag_attributes"/>
       <Action name="edit_current_tag"/>
       <Action name="context_help"/>
@@ -146,10 +153,6 @@
       <Action name="clean_indentation"/>
       <Separator/>
       <Action name="ftp_client"/>
-    </Menu>
-    <Menu name="go_document"><text>&amp;Go</text>
-      <Action name="go_back"/>
-      <Action name="go_forward"/>
     </Menu>
     <Menu name="project"><text>&amp;Project</text>
       <Action name="new_project"/>
@@ -168,6 +171,9 @@
       <Action name="vertical_selection"/>
     </Menu>
   </MenuBar>
+  <ToolBar name="mainToolBar"><text>Main Toolbar</text>
+    <Action name="edit_find_next"/>
+  </ToolBar>
   <ToolBar name="charStylesToolbar"><text>Character Styles Toolbar</text>
     <Action name="tag_b"/>
     <Action name="tag_i"/>

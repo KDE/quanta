@@ -403,7 +403,14 @@ void QuantaView::slotViewInLynx(){
   write()->save();
   if ( write()->hasFileName() ) {
     KProcess *show = new KProcess();
-    *show << "konsole" << "--nohist" << "--notoolbar" << "-e" << "lynx" << write()->fileName();
+    *show << "konsole" 
+          << "--nohist" 
+          << "--notoolbar"
+          << "--caption"
+          << "Lynx Preview - Quanta"
+          << "-e"
+          << "lynx"
+          << write()->fileName();
     show->start( KProcess::DontCare );
   }
 }

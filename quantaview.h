@@ -67,6 +67,8 @@ class QuantaView : public QWidget
      */
     QuantaDoc *getDocument() const;
 
+    QuantaApp *getApp() const { return app; }
+
     /** contains the implementation for printing functionality */
     void print(QPrinter *pPrinter);
 

@@ -7,6 +7,7 @@
 #include <qstring.h>
 
 class QuantaView;
+class KProcess;
 
 /**
  * An action for inserting an XML tag.
@@ -89,7 +90,7 @@ public:
     };
 
     /**
-     * What the sends us.
+     * What the script sends us.
      */
     enum ScriptOutput {
         NoOutput,
@@ -104,15 +105,15 @@ public:
      * Create an insert without an icon.
      */
     QuantaScriptAction( const QString& text, int accel,
-                        const QObject* receiver, const char* slot,
-                        QObject* parent, const char* name = 0 );
+                        QObject* parent, const char* name,
+                        QuantaView *view );
 
     /**
      * Create an insert with an icon.
      */
     QuantaScriptAction( const QString& text, const QString& pix, int accel,
-                        const QObject* receiver, const char* slot,
-                        QObject* parent, const char* name );
+                        QObject* parent, const char* name,
+                        QuantaView *view );
 
     virtual ~QuantaScriptAction();
 
@@ -125,13 +126,24 @@ public:
     ScriptOutput output() const { return output_; }
     void setOutput( const ScriptOutput out ) { this->output_ = out; }
 
+    ScriptOutput error() const { return error_; }
+    void setError( const ScriptOutput err ) { this->error_ = err; }
+
 protected slots:
     virtual void runScript();
+    virtual void slotGetScriptOutput( KProcess *, char *buffer, int buflen );
+    virtual void slotGetScriptError( KProcess *, char *buffer, int buflen );
+    virtual void scriptDone();
 
 private:
     QString filename_;
     ScriptInput input_;
     ScriptOutput output_;
+    ScriptOutput error_;
+    KProcess *proc;
+    bool firstError;
+    bool firstOutput;
+    QuantaView *view_;
 };
 
 #endif // QUANTA_ACTIONS_H

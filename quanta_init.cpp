@@ -1298,8 +1298,13 @@ void QuantaApp::initActions()
     // Tool actions
     //
 
-    KStdAction::gotoLine( this, SLOT( slotEditGotoLine() ), actionCollection() )
-        ->setAccel( CTRL+Key_G );
+    // We don't use the standard action right now as we need to override the
+    // standard location.
+    //    KStdAction::gotoLine( this, SLOT( slotEditGotoLine() ), actionCollection() )
+    //        ->setAccel( CTRL+Key_G );
+    (void) new KAction( i18n( "&Go To Line..." ), CTRL+Key_G, 
+                        this, SLOT( slotEditGotoLine() ),
+                        actionCollection(), "goto_line" );
 
     (void) new KAction( i18n( "&Indent" ), ALT+SHIFT+Key_Right, this, SLOT( slotEditIndent() ),
                         actionCollection(), "indent" );
@@ -1333,7 +1338,7 @@ void QuantaApp::initActions()
     KStdAction::showToolbar( this, SLOT( slotViewToolBar() ), actionCollection() );
     KStdAction::showStatusbar( this, SLOT( slotViewStatusBar() ), actionCollection() );
 
-    KToggleAction *showTree = new KToggleAction( i18n( "Show Tr&ee" ), "tree_win", CTRL+Key_T,
+    KToggleAction *showTree = new KToggleAction( i18n( "Show &Tree" ), "tree_win", CTRL+Key_T,
                                                  this, SLOT( slotShowLeftPanel() ),
                                                  actionCollection(), "show_tree" );
     showTree->setChecked( true );
@@ -1343,7 +1348,7 @@ void QuantaApp::initActions()
                                                      actionCollection(), "show_messages" );
     showMessages->setChecked( true );
 
-    KToggleAction *showPreview = new KToggleAction( i18n( "&Preview" ), "preview", Key_F6,
+    KToggleAction *showPreview = new KToggleAction( i18n( "Pr&eview" ), "preview", Key_F6,
                                                     this, SLOT( slotShowPreview() ),
                                                     actionCollection(), "show_preview" );
 
@@ -1354,16 +1359,21 @@ void QuantaApp::initActions()
                         , this, SLOT( slotViewRepaint() ),
                         actionCollection(), "reload" );
 
-    (void) new KAction( i18n( "View With Netscape" ), 0, view, SLOT( slotViewInNetscape() ),
+    (void) new KAction( i18n( "View With Net&scape" ), "netscape", 0,
+                        view, SLOT( slotViewInNetscape() ),
                         actionCollection(), "view_with_netscape" );
-    (void) new KAction( i18n( "View With Konqueror" ), 0, view, SLOT( slotViewInKFM() ),
+    (void) new KAction( i18n( "View With &Konqueror" ), "konqueror", 0,
+                        view, SLOT( slotViewInKFM() ),
                         actionCollection(), "view_with_konqueror" );
-    (void) new KAction( i18n( "View With Lynx" ), 0, view, SLOT( slotViewInLynx() ),
+    (void) new KAction( i18n( "View With L&ynx" ), "terminal", 0,
+                        view, SLOT( slotViewInLynx() ),
                         actionCollection(), "view_with_lynx" );
 
-    (void) new KAction( i18n( "Previous File" ), CTRL+ALT+Key_Right, this, SLOT( slotFilePrev() ),
+    (void) new KAction( i18n( "&Previous File" ), "1leftarrow", CTRL+ALT+Key_Right,
+                        this, SLOT( slotFilePrev() ),
                         actionCollection(), "previous_file" );
-    (void) new KAction( i18n( "Next File" ), CTRL+ALT+Key_Left, this, SLOT( slotFileNext() ),
+    (void) new KAction( i18n( "&Next File" ), "1rightarrow", CTRL+ALT+Key_Left,
+                        this, SLOT( slotFileNext() ),
                         actionCollection(), "next_file" );
 
     //
@@ -1393,7 +1403,7 @@ void QuantaApp::initActions()
     // Options actions
     //
 
-    (void) new KAction( i18n( "&Hightlighting..." ), 0, doc->write(), SLOT( hlDlg() ),
+    (void) new KAction( i18n( "&Highlighting..." ), 0, doc->write(), SLOT( hlDlg() ),
                         actionCollection(), "highlight_options" );
     // TODO: Highlighting mode
 

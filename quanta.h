@@ -109,6 +109,8 @@ class QuantaApp : public KTMainWindow
     QuantaDoc *getDoc() { return doc;};
     QuantaView *getView() { return view;};
 
+    MessageOutput *getMessages() { return messageOutput; }
+
     void openLastFiles();
      	
 
