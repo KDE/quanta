@@ -87,11 +87,7 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
 {
   quantaStarted = true;
   tempFileList.setAutoDelete(true);
-  toolbarGUIClientList.setAutoDelete(true);
-  toolbarDomList.setAutoDelete(true);
-  toolbarMenuList.setAutoDelete(true);
-  toolbarNames.setAutoDelete(true);
-  toolbarURLs.setAutoDelete(true);
+  toolbarList.setAutoDelete(true);
   userToolbarsCount = 0;
   baseNode = 0L;
   currentToolbarDTD = QString::null;
@@ -117,11 +113,17 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
 QuantaApp::~QuantaApp()
 {
  tempFileList.clear();
- toolbarGUIClientList.clear();
- toolbarDomList.clear();
- toolbarMenuList.clear();
- toolbarNames.clear();
- toolbarURLs.clear();
+ QDictIterator<ToolbarEntry> iter(toolbarList);
+ ToolbarEntry *p_toolbar;
+ for( ; iter.current(); ++iter )
+ {
+   p_toolbar = iter.current();
+   if (p_toolbar->dom) delete p_toolbar->dom;
+   if (p_toolbar->guiClient) delete p_toolbar->guiClient;
+   if (p_toolbar->menu) delete p_toolbar->menu;
+ }
+ 
+ toolbarList.clear();
 }
 
 
@@ -199,7 +201,7 @@ void QuantaApp::initQuanta()
 
 void QuantaApp::initToolBars()
 {
-  if (toolbarNames.count() == 0)
+ if (toolbarList.count() == 0)
      loadToolbarForDTD(project->defaultDTD());
 }
 
@@ -1387,7 +1389,7 @@ void QuantaApp::initPlugins()
   connect(m_pluginMenu, SIGNAL(aboutToShow()), this, SLOT(slotBuildPluginMenu()));
   connect(m_pluginMenu, SIGNAL(activated(int)), this, SLOT(slotPluginRun(int)));
 
-  menuBar()->insertItem(i18n("P&lugins"), m_pluginMenu, -1, PLUGINS_MENU_PLACE);
+  menuBar()->insertItem(i18n("Plu&gins"), m_pluginMenu, -1, PLUGINS_MENU_PLACE);
 }
 
 /** Builds the plugins menu dynamically */

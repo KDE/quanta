@@ -88,6 +88,16 @@ class Document;
 class PHP3Debugger;
 class PHP4Debugger;
 
+typedef struct ToolbarEntry{
+  KXMLGUIClient *guiClient;
+  QDomDocument *dom;
+  QPopupMenu *menu;
+  KURL url;
+  QString name;
+  bool user;
+  bool visible;
+};
+
 /**
   * The base class for Quanta application windows. 
   */
@@ -111,7 +121,8 @@ public:
   QDomDocument *actions() { return m_actions; }
   QPopupMenu *tagsMenu() { return m_tagsMenu;}
   QPopupMenu *pluginMenu() { return m_pluginMenu;}
-  QPopupMenu *toolbarMenu(const QString& name) {return toolbarMenuList[name];}
+  QPopupMenu *toolbarMenu(const QString& name);
+  ToolbarEntry *toolbarByURL(const KURL& url);
   KToggleAction *showDTDToolbar;
   /** True when the whole quanta is initalized. */
   bool quantaStarted;
@@ -133,7 +144,7 @@ public:
   /** Returns the project's base URL if it exists, the HOME dir if there is no project and no opened document (or the current opened document was not saved yet), and the base URL of the opened document, if it is saved somewhere. */
   KURL projectBaseURL();
 
-  KURL::List userToolbarFiles() {return m_userToolbarFileList;}
+  KURL::List userToolbarFiles();
   /** Returns the project (if there is one loaded) or global default encoding. */
   QString defaultEncoding();
   /** Returns the project (if there is one loaded) or global new file type. */
@@ -427,13 +438,8 @@ private:
 
   QPtrList<KTextEditor::Mark> markList;
   QPtrList<KTempFile> tempFileList;
-  QDict<KXMLGUIClient> toolbarGUIClientList;
-  QDict<QDomDocument> toolbarDomList;
-  QDict<QPopupMenu> toolbarMenuList;
-  QDict<QString> toolbarNames; //list of toolbar names according to their filename
-  QDict<KURL> toolbarURLs; //list of toolbar filenames according to their name
-  KURL::List m_userToolbarFileList; //contains the filenames of user (non DTD) toolbars
 
+  QDict<ToolbarEntry> toolbarList;
   uint userToolbarsCount;
   bool previewCopyMade;
   KTempFile *previewTmpFile;
