@@ -1,0 +1,309 @@
+// KDevelop Dialog Editor File (.kdevdlg)
+// 
+// Created by KDlgEdit Version 0.1alpha (C) 1999 by Pascal Krahmer
+// Get KDevelop including KDlgEdit at "www.beast.de/kdevelop"
+// 
+data Information
+{
+   Filename="/home/dima/kde2/quanta/quanta/project/newproject1.kdevdlg"
+   KDevelopVersion="1.1"
+   DlgEditVersion="0.1alpha"
+   LastChanged="Tue Aug 22 16:14:09 2000"
+}
+
+data SessionManagement
+{
+   OpenedRoot_1="Geometry"
+   OpenedRoot_2="C++ Code"
+   OpenedRoot_3="General"
+   OpenedRootCount="3"
+}
+
+item QWidget
+{
+   Name="mailDlg"
+   VarName="this"
+   X="0"
+   Y="0"
+   Width="450"
+   Height="370"
+   MinWidth="0"
+   MinHeight="0"
+
+   item QLabel
+   {
+      Name="NoName"
+      VarName="QLabel_1"
+      X="10"
+      Y="30"
+      Width="140"
+      Height="30"
+      MinWidth="0"
+      MinHeight="0"
+      Text="Project Name :"
+   }
+
+   item QLineEdit
+   {
+      Name="NoName"
+      VarName="linePrjName"
+      X="150"
+      Y="30"
+      Width="240"
+      Height="25"
+      MinWidth="0"
+      MinHeight="0"
+   }
+
+   item QLabel
+   {
+      Name="NoName"
+      VarName="QLabel_2"
+      X="10"
+      Y="60"
+      Width="140"
+      Height="30"
+      MinWidth="0"
+      MinHeight="0"
+      Text="Project Directory :"
+   }
+
+   item QLineEdit
+   {
+      Name="NoName"
+      VarName="linePrjDir"
+      X="150"
+      Y="60"
+      Width="240"
+      Height="25"
+      MinWidth="0"
+      MinHeight="0"
+   }
+
+   item QPushButton
+   {
+      Name="NoName"
+      VarName="buttonDir"
+      X="400"
+      Y="60"
+      Width="30"
+      Height="25"
+      MinWidth="0"
+      MinHeight="0"
+      Text="..."
+   }
+
+   item QLabel
+   {
+      Name="NoName"
+      VarName="QLabel_3"
+      X="10"
+      Y="90"
+      Width="130"
+      Height="30"
+      MinWidth="0"
+      MinHeight="0"
+      Text="Project File :"
+   }
+
+   item QLineEdit
+   {
+      Name="NoName"
+      VarName="linePrjFile :"
+      X="150"
+      Y="90"
+      Width="240"
+      Height="25"
+      MinWidth="0"
+      MinHeight="0"
+   }
+
+   item QLabel
+   {
+      Name="NoName"
+      VarName="QLabel_4"
+      X="10"
+      Y="120"
+      Width="130"
+      Height="30"
+      MinWidth="0"
+      MinHeight="0"
+      Text="Base URL:"
+   }
+
+   item QLineEdit
+   {
+      Name="NoName"
+      VarName="lineBaseURL"
+      X="150"
+      Y="120"
+      Width="240"
+      Height="25"
+      MinWidth="0"
+      MinHeight="0"
+   }
+
+   item QLabel
+   {
+      Name="NoName"
+      VarName="QLabel_5"
+      X="10"
+      Y="150"
+      Width="130"
+      Height="30"
+      MinWidth="0"
+      MinHeight="0"
+      Text="Author :"
+   }
+
+   item QLineEdit
+   {
+      Name="NoName"
+      VarName="lineAuthor"
+      X="150"
+      Y="150"
+      Width="240"
+      Height="25"
+      MinWidth="0"
+      MinHeight="0"
+   }
+
+   item QLabel
+   {
+      Name="NoName"
+      VarName="QLabel_6"
+      X="10"
+      Y="180"
+      Width="130"
+      Height="30"
+      MinWidth="0"
+      MinHeight="0"
+      Text="E-Mail :"
+   }
+
+   item QLineEdit
+   {
+      Name="NoName"
+      VarName="lineEmail"
+      X="150"
+      Y="180"
+      Width="240"
+      Height="25"
+      MinWidth="0"
+      MinHeight="0"
+   }
+
+   item QLabel
+   {
+      Name="NoName"
+      VarName="QLabel_7"
+      X="10"
+      Y="220"
+      Width="140"
+      Height="30"
+      MinWidth="0"
+      MinHeight="0"
+      Text="Images Directory:"
+   }
+
+   item QLabel
+   {
+      Name="NoName"
+      VarName="QLabel_8"
+      X="10"
+      Y="250"
+      Width="140"
+      Height="30"
+      MinWidth="0"
+      MinHeight="0"
+      Text="cgi-bin Directory:"
+   }
+
+   item QLabel
+   {
+      Name="NoName"
+      VarName="QLabel_9"
+      X="10"
+      Y="280"
+      Width="140"
+      Height="30"
+      MinWidth="0"
+      MinHeight="0"
+      Text="Project Scripts Dir:"
+   }
+
+   item QLineEdit
+   {
+      Name="NoName"
+      VarName="lineImagesDir"
+      X="150"
+      Y="220"
+      Width="240"
+      Height="25"
+      MinWidth="0"
+      MinHeight="0"
+   }
+
+   item QPushButton
+   {
+      Name="NoName"
+      VarName="buttonImagesDir"
+      X="400"
+      Y="220"
+      Width="30"
+      Height="25"
+      MinWidth="0"
+      MinHeight="0"
+      Text="..."
+   }
+
+   item QLineEdit
+   {
+      Name="NoName"
+      VarName="lineCgiDir"
+      X="150"
+      Y="250"
+      Width="240"
+      Height="25"
+      MinWidth="0"
+      MinHeight="0"
+   }
+
+   item QPushButton
+   {
+      Name="NoName"
+      VarName="buttonCgiDir"
+      X="400"
+      Y="250"
+      Width="30"
+      Height="25"
+      MinWidth="0"
+      MinHeight="0"
+      Text="..."
+   }
+
+   item QLineEdit
+   {
+      Name="NoName"
+      VarName="lineScriptsDir"
+      X="150"
+      Y="280"
+      Width="240"
+      Height="25"
+      MinWidth="0"
+      MinHeight="0"
+   }
+
+   item QPushButton
+   {
+      Name="NoName"
+      VarName="buttonScriptsDir"
+      X="400"
+      Y="280"
+      Width="30"
+      Height="25"
+      MinWidth="0"
+      MinHeight="0"
+      Text="..."
+   }
+}

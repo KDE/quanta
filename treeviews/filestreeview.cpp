@@ -1,0 +1,177 @@
+/***************************************************************************
+                          filestreeview.cpp  -  description
+                             -------------------
+    begin                : Thu Jun 1 2000
+    copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
+    email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com
+ ***************************************************************************/
+
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************/
+
+// QT includes
+#include <qdir.h>
+#include <qpixmap.h>
+#include <qheader.h>
+
+// KDE includes
+#include <krun.h>
+#include <klocale.h>
+#include <kiconloader.h>
+
+// app includes
+#include "filemanage.h"
+#include "filestreefile.h"
+#include "filestreefolder.h"
+#include "filestreeview.h"
+
+// include icons
+#include "pix/home.xpm"
+#include "pix/folder_red.xpm"
+
+extern QString fileMaskHtml;
+extern QString fileMaskJava;
+extern QString fileMaskText;
+extern QString fileMaskImage;
+
+FilesTreeView::FilesTreeView( QString dir, QStringList dirList, QWidget *parent, const char *name)
+	: FileManage(parent,name)
+{
+	this->dirList = dirList;	
+	
+	setRootIsDecorated( true );
+  header()->hide();
+  setSorting( 0 );
+
+  setFrameStyle( Panel | Sunken );
+  setLineWidth( 2 );
+  addColumn( "Name" );
+
+	setFocusPolicy(QWidget::ClickFocus);
+
+	rootDir = new FilesTreeFolder( this , "Root", "/");
+	rootDir->setPixmap( 0, QPixmap((const char**)folder_red_xpm));
+	rootDir->setOpen( false);
+  	
+ 	homeDir = new FilesTreeFolder( this , "Home", dir);
+	homeDir->setPixmap( 0, QPixmap((const char**)home_xpm));
+	homeDir->setOpen( true );
+	
+	fileMenu -> insertItem( i18n("List mode"), this ,SLOT(slotNewMode()));
+	
+	folderMenu -> insertItem( i18n("List mode"), this ,SLOT(slotNewMode()));
+	
+	connect(  this, SIGNAL(doubleClicked(QListViewItem *)),
+						this, SLOT(slotSelectFile(QListViewItem *)));
+	connect(  this, SIGNAL(selectionChanged(QListViewItem *)),
+						this, SLOT(slotSelectImage(QListViewItem *)));
+	connect(	this, SIGNAL(returnPressed(QListViewItem *)),
+						this, SLOT(slotSelectFile(QListViewItem *)));
+						
+	connect( this, SIGNAL(rightButtonPressed(QListViewItem*, const QPoint&, int)),
+					 this, SLOT(slotMenu(QListViewItem*, const QPoint&, int)));
+					
+	connect(	this, SIGNAL(open(QListViewItem *)),
+						this,	SLOT(slotSelectFile(QListViewItem *)));
+	connect(	this, SIGNAL(openInQuanta(QListViewItem *)),
+						this,	SLOT(slotSelectAnyFile(QListViewItem *)));
+}
+
+FilesTreeView::~FilesTreeView()
+{
+}
+
+void FilesTreeView::slotNewMode()
+{
+	emit changeMode();
+}
+
+void FilesTreeView::slotReload()
+{
+
+  FilesTreeFolder *d = dynamic_cast<FilesTreeFolder *>( currentItem()->parent());
+  if (d)
+    d->reloadList();
+
+}
+
+void FilesTreeView::slotMenu(QListViewItem *item, const QPoint &point, int)
+{
+	if ( !item ) return;
+	setSelected(item, true);
+	
+	FilesTreeFile *f = dynamic_cast<FilesTreeFile *>( item);
+	if ( f ) fileMenu->popup( point);
+	
+	FilesTreeFolder *d = dynamic_cast<FilesTreeFolder *>( item);
+	if ( d ) folderMenu->popup( point);
+}
+
+QString FilesTreeView::currentFileName()
+{
+	if ( !currentItem() ) return "";
+	QListViewItem *item = currentItem();
+	FilesTreeFolder *parent = dynamic_cast<FilesTreeFolder *> (item->parent());
+	
+	if ( !parent ) // top level element
+		return ((FilesTreeFolder *)item)->fullName( item );
+		
+	return parent->fullName( item )+item->text(0);
+}
+
+void FilesTreeView::slotSelectFile(QListViewItem *item)
+{
+	if ( !item ) return;
+	if ( !currentItem() ) return;
+	FilesTreeFolder *parent = (FilesTreeFolder *) item->parent();
+	if ( !parent ) return;
+	if ( dynamic_cast<FilesTreeFolder *>(item) ) return;
+	
+	QString nameToOpen = currentFileName();
+	
+	if ( QDir::match( fileMaskHtml+fileMaskJava+fileMaskText, nameToOpen) )
+	{
+		emit openFile( nameToOpen );
+		return;
+	}
+	else if ( QDir::match( fileMaskImage, nameToOpen) )
+	{
+		emit activatePreview();
+		emit openImage( nameToOpen );
+		return;
+	}
+	KRun *rk = new KRun( KURL(nameToOpen), 0, true );
+}
+
+void FilesTreeView::slotSelectAnyFile(QListViewItem *item)
+{
+	if ( !item ) return;
+	if ( !currentItem() ) return;
+	FilesTreeFolder *parent = (FilesTreeFolder *) item->parent();
+	if ( !parent ) return;
+	if ( dynamic_cast<FilesTreeFolder *>(item) ) return;
+	
+	emit openFile( currentFileName() );
+}
+
+void FilesTreeView::slotSelectImage(QListViewItem *item)
+{
+	if ( !item ) return;
+	if ( !currentItem() ) return;
+	FilesTreeFolder *parent = (FilesTreeFolder *) item->parent();
+	if ( !parent ) return;
+	if ( dynamic_cast<FilesTreeFolder *>(item) ) return;
+	
+	QString nameToOpen = parent->fullName( item )+item->text(0);
+	
+	if ( QDir::match( fileMaskImage, nameToOpen) )
+	{
+		emit openImage( nameToOpen );
+	}
+}

@@ -1,0 +1,562 @@
+# KDE tags expanded automatically by am_edit - $Revision$ 
+# Makefile.in generated automatically by automake 1.4 from Makefile.am
+
+# Copyright (C) 1994, 1995-8, 1999 Free Software Foundation, Inc.
+# This Makefile.in is free software; the Free Software Foundation
+# gives unlimited permission to copy and/or distribute it,
+# with or without modifications, as long as this notice is preserved.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY, to the extent permitted by law; without
+# even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE.
+
+####### kdevelop will overwrite this part!!! (begin)##########
+
+
+SHELL = @SHELL@
+
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+VPATH = @srcdir@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+#>- 
+bindir = @bindir@
+#>+ 3
+DEPDIR = .deps
+
+bindir = @bindir@
+sbindir = @sbindir@
+libexecdir = @libexecdir@
+datadir = @datadir@
+sysconfdir = @sysconfdir@
+sharedstatedir = @sharedstatedir@
+localstatedir = @localstatedir@
+libdir = @libdir@
+infodir = @infodir@
+mandir = @mandir@
+includedir = @includedir@
+oldincludedir = /usr/include
+
+DESTDIR =
+
+pkgdatadir = $(datadir)/@PACKAGE@
+pkglibdir = $(libdir)/@PACKAGE@
+pkgincludedir = $(includedir)/@PACKAGE@
+
+top_builddir = ../../..
+
+ACLOCAL = @ACLOCAL@
+AUTOCONF = @AUTOCONF@
+AUTOMAKE = @AUTOMAKE@
+AUTOHEADER = @AUTOHEADER@
+
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@ $(AM_INSTALL_PROGRAM_FLAGS)
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+transform = @program_transform_name@
+
+NORMAL_INSTALL = :
+PRE_INSTALL = :
+POST_INSTALL = :
+NORMAL_UNINSTALL = :
+PRE_UNINSTALL = :
+POST_UNINSTALL = :
+build_alias = @build_alias@
+build_triplet = @build@
+host_alias = @host_alias@
+host_triplet = @host@
+target_alias = @target_alias@
+target_triplet = @target@
+AS = @AS@
+AUTODIRS = @AUTODIRS@
+CC = @CC@
+CPP = @CPP@
+CXX = @CXX@
+CXXCPP = @CXXCPP@
+DCOPIDL = @DCOPIDL@
+DCOPIDL2CPP = @DCOPIDL2CPP@
+DCOP_DEPENDENCIES = @DCOP_DEPENDENCIES@
+DLLTOOL = @DLLTOOL@
+DPMSINC = @DPMSINC@
+DPMSLIB = @DPMSLIB@
+EXEEXT = @EXEEXT@
+GCJ = @GCJ@
+GCJFLAGS = @GCJFLAGS@
+GLINC = @GLINC@
+GLLIB = @GLLIB@
+GMSGFMT = @GMSGFMT@
+IDL = @IDL@
+IDL_DEPENDENCIES = @IDL_DEPENDENCIES@
+KDB2HTML = @KDB2HTML@
+KDE_CXXFLAGS = @KDE_CXXFLAGS@
+KDE_EXTRA_RPATH = @KDE_EXTRA_RPATH@
+KDE_INCLUDES = @KDE_INCLUDES@
+KDE_LDFLAGS = @KDE_LDFLAGS@
+KDE_PLUGIN = @KDE_PLUGIN@
+KDE_RPATH = @KDE_RPATH@
+KDE_USE_CLOSURE_FALSE = @KDE_USE_CLOSURE_FALSE@
+KDE_USE_CLOSURE_TRUE = @KDE_USE_CLOSURE_TRUE@
+KDE_USE_FINAL_FALSE = @KDE_USE_FINAL_FALSE@
+KDE_USE_FINAL_TRUE = @KDE_USE_FINAL_TRUE@
+LIBCOMPAT = @LIBCOMPAT@
+LIBCRYPT = @LIBCRYPT@
+LIBDL = @LIBDL@
+LIBJPEG = @LIBJPEG@
+LIBMICO = @LIBMICO@
+LIBOBJS = @LIBOBJS@
+LIBPNG = @LIBPNG@
+LIBPTHREAD = @LIBPTHREAD@
+LIBPYTHON = @LIBPYTHON@
+LIBQIMGIO = @LIBQIMGIO@
+LIBSM = @LIBSM@
+LIBSOCKET = @LIBSOCKET@
+LIBTIFF = @LIBTIFF@
+LIBTOOL = @LIBTOOL@
+LIBUCB = @LIBUCB@
+LIBZ = @LIBZ@
+LIB_KAB = @LIB_KAB@
+LIB_KDECORE = @LIB_KDECORE@
+LIB_KDEUI = @LIB_KDEUI@
+LIB_KFILE = @LIB_KFILE@
+LIB_KFM = @LIB_KFM@
+LIB_KFORMULA = @LIB_KFORMULA@
+LIB_KHTML = @LIB_KHTML@
+LIB_KIMGIO = @LIB_KIMGIO@
+LIB_KIO = @LIB_KIO@
+LIB_KPARTS = @LIB_KPARTS@
+LIB_KSPELL = @LIB_KSPELL@
+LIB_KSYCOCA = @LIB_KSYCOCA@
+LIB_KWRITE = @LIB_KWRITE@
+LIB_QT = @LIB_QT@
+LIB_SMB = @LIB_SMB@
+LIB_X11 = @LIB_X11@
+LN_S = @LN_S@
+MAKEINFO = @MAKEINFO@
+MCOPIDL = @MCOPIDL@
+MICO_INCLUDES = @MICO_INCLUDES@
+MICO_LDFLAGS = @MICO_LDFLAGS@
+MOC = @MOC@
+MSGFMT = @MSGFMT@
+NOOPT_CXXFLAGS = @NOOPT_CXXFLAGS@
+NOREPO = @NOREPO@
+OBJDUMP = @OBJDUMP@
+OBJEXT = @OBJEXT@
+PACKAGE = @PACKAGE@
+PAMINC = @PAMINC@
+PAMLIBPATHS = @PAMLIBPATHS@
+PAMLIBS = @PAMLIBS@
+PYTHONINC = @PYTHONINC@
+PYTHONLIB = @PYTHONLIB@
+QT_INCLUDES = @QT_INCLUDES@
+QT_LDFLAGS = @QT_LDFLAGS@
+RANLIB = @RANLIB@
+REPO = @REPO@
+STRIP = @STRIP@
+TOPSUBDIRS = @TOPSUBDIRS@
+USER_INCLUDES = @USER_INCLUDES@
+USER_LDFLAGS = @USER_LDFLAGS@
+USE_EXCEPTIONS = @USE_EXCEPTIONS@
+USE_RTTI = @USE_RTTI@
+USE_THREADS = @USE_THREADS@
+VERSION = @VERSION@
+XGETTEXT = @XGETTEXT@
+XPMINC = @XPMINC@
+XPMLIB = @XPMLIB@
+X_EXTRA_LIBS = @X_EXTRA_LIBS@
+X_INCLUDES = @X_INCLUDES@
+X_LDFLAGS = @X_LDFLAGS@
+X_PRE_LIBS = @X_PRE_LIBS@
+all_includes = @all_includes@
+all_libraries = @all_libraries@
+idldir = @idldir@
+kde_appsdir = @kde_appsdir@
+kde_bindir = @kde_bindir@
+kde_confdir = @kde_confdir@
+kde_datadir = @kde_datadir@
+kde_htmldir = @kde_htmldir@
+kde_icondir = @kde_icondir@
+kde_includes = @kde_includes@
+kde_libraries = @kde_libraries@
+kde_locale = @kde_locale@
+kde_mimedir = @kde_mimedir@
+kde_servicesdir = @kde_servicesdir@
+kde_servicetypesdir = @kde_servicetypesdir@
+kde_sounddir = @kde_sounddir@
+kde_templatesdir = @kde_templatesdir@
+kde_wallpaperdir = @kde_wallpaperdir@
+micodir = @micodir@
+qt_includes = @qt_includes@
+qt_libraries = @qt_libraries@
+x_includes = @x_includes@
+x_libraries = @x_libraries@
+
+EXTRA_DIST = delete.png down.png folder.png folder_blue.png folder_cyan.png folder_green.png folder_locked.png folder_open.png folder_red.png folder_yellow.png greenbook.png home.png html.png image.png java.png kfm.png mini-book1.png mini-book2.png mini-doc.png mini-modules.png project_folder.png save_small.png txt.png up.png empty1x16.png 
+mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+CONFIG_HEADER = ../../../config.h
+CONFIG_CLEAN_FILES = 
+DIST_COMMON =  Makefile.am Makefile.in
+
+
+DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
+
+TAR = gtar
+GZIP_ENV = --best
+#>- all: all-redirect
+#>+ 1
+all: docs-am  all-redirect
+.SUFFIXES:
+$(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
+#>- 	cd $(top_srcdir) && $(AUTOMAKE) --gnu quanta/icons/16x16/Makefile
+#>+ 2
+	cd $(top_srcdir) && $(AUTOMAKE) --gnu quanta/icons/16x16/Makefile
+	cd $(top_srcdir) && perl am_edit quanta/icons/16x16/Makefile.in
+
+Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status $(BUILT_SOURCES)
+	cd $(top_builddir) \
+	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+
+tags: TAGS
+TAGS:
+
+
+distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
+
+subdir = quanta/icons/16x16
+
+distdir: $(DISTFILES)
+	here=`cd $(top_builddir) && pwd`; \
+	top_distdir=`cd $(top_distdir) && pwd`; \
+	distdir=`cd $(distdir) && pwd`; \
+	cd $(top_srcdir) \
+	  && $(AUTOMAKE) --include-deps --build-dir=$$here --srcdir-name=$(top_srcdir) --output-dir=$$top_distdir --gnu quanta/icons/16x16/Makefile
+	@for file in $(DISTFILES); do \
+	  d=$(srcdir); \
+	  if test -d $$d/$$file; then \
+	    cp -pr $$/$$file $(distdir)/$$file; \
+	  else \
+	    test -f $(distdir)/$$file \
+	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
+	    || cp -p $$d/$$file $(distdir)/$$file || :; \
+	  fi; \
+	done
+info-am:
+info: info-am
+dvi-am:
+dvi: dvi-am
+check-am: all-am
+check: check-am
+installcheck-am:
+installcheck: installcheck-am
+install-exec-am:
+install-exec: install-exec-am
+
+install-data-am: install-data-local
+install-data: install-data-am
+
+install-am: all-am
+	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
+install: install-am
+uninstall-am: uninstall-local
+uninstall: uninstall-am
+all-am: Makefile
+all-redirect: all-am
+install-strip:
+	$(MAKE) $(AM_MAKEFLAGS) AM_INSTALL_PROGRAM_FLAGS=-s install
+installdirs:
+
+
+mostlyclean-generic:
+
+clean-generic:
+
+distclean-generic:
+	-rm -f Makefile $(CONFIG_CLEAN_FILES)
+	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
+
+maintainer-clean-generic:
+mostlyclean-am:  mostlyclean-generic
+
+mostlyclean: mostlyclean-am
+
+clean-am:  clean-generic mostlyclean-am
+
+#>- clean: clean-am
+#>+ 1
+clean: kde-rpo-clean  clean-am
+
+distclean-am:  distclean-generic clean-am
+	-rm -f libtool
+
+distclean: distclean-am
+
+maintainer-clean-am:  maintainer-clean-generic distclean-am
+	@echo "This command is intended for maintainers to use;"
+	@echo "it deletes files that may require special tools to rebuild."
+
+maintainer-clean: maintainer-clean-am
+
+.PHONY: tags distdir info-am info dvi-am dvi check check-am \
+installcheck-am installcheck install-exec-am install-exec \
+install-data-local install-data-am install-data install-am install \
+uninstall-local uninstall-am uninstall all-redirect all-am all \
+installdirs mostlyclean-generic distclean-generic clean-generic \
+maintainer-clean-generic clean mostlyclean distclean maintainer-clean
+
+
+install-data-local:
+#>- 	$(mkinstalldirs) $(kde_datadir)/quanta/toolbar/
+#>+ 1
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/quanta/toolbar/
+#>- 	$(INSTALL_DATA) delete.png $(kde_datadir)/quanta/toolbar/delete.png
+#>+ 1
+	$(INSTALL_DATA) delete.png $(DESTDIR)$(kde_datadir)/quanta/toolbar/delete.png
+#>- 	$(mkinstalldirs) $(kde_datadir)/quanta/toolbar/
+#>+ 1
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/quanta/toolbar/
+#>- 	$(INSTALL_DATA) down.png $(kde_datadir)/quanta/toolbar/down.png
+#>+ 1
+	$(INSTALL_DATA) down.png $(DESTDIR)$(kde_datadir)/quanta/toolbar/down.png
+#>- 	$(mkinstalldirs) $(kde_datadir)/quanta/toolbar/
+#>+ 1
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/quanta/toolbar/
+#>- 	$(INSTALL_DATA) folder.png $(kde_datadir)/quanta/toolbar/folder.png
+#>+ 1
+	$(INSTALL_DATA) folder.png $(DESTDIR)$(kde_datadir)/quanta/toolbar/folder.png
+#>- 	$(mkinstalldirs) $(kde_datadir)/quanta/toolbar/
+#>+ 1
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/quanta/toolbar/
+#>- 	$(INSTALL_DATA) folder_blue.png $(kde_datadir)/quanta/toolbar/folder_blue.png
+#>+ 1
+	$(INSTALL_DATA) folder_blue.png $(DESTDIR)$(kde_datadir)/quanta/toolbar/folder_blue.png
+#>- 	$(mkinstalldirs) $(kde_datadir)/quanta/toolbar/
+#>+ 1
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/quanta/toolbar/
+#>- 	$(INSTALL_DATA) folder_cyan.png $(kde_datadir)/quanta/toolbar/folder_cyan.png
+#>+ 1
+	$(INSTALL_DATA) folder_cyan.png $(DESTDIR)$(kde_datadir)/quanta/toolbar/folder_cyan.png
+#>- 	$(mkinstalldirs) $(kde_datadir)/quanta/toolbar/
+#>+ 1
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/quanta/toolbar/
+#>- 	$(INSTALL_DATA) folder_green.png $(kde_datadir)/quanta/toolbar/folder_green.png
+#>+ 1
+	$(INSTALL_DATA) folder_green.png $(DESTDIR)$(kde_datadir)/quanta/toolbar/folder_green.png
+#>- 	$(mkinstalldirs) $(kde_datadir)/quanta/toolbar/
+#>+ 1
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/quanta/toolbar/
+#>- 	$(INSTALL_DATA) folder_locked.png $(kde_datadir)/quanta/toolbar/folder_locked.png
+#>+ 1
+	$(INSTALL_DATA) folder_locked.png $(DESTDIR)$(kde_datadir)/quanta/toolbar/folder_locked.png
+#>- 	$(mkinstalldirs) $(kde_datadir)/quanta/toolbar/
+#>+ 1
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/quanta/toolbar/
+#>- 	$(INSTALL_DATA) folder_open.png $(kde_datadir)/quanta/toolbar/folder_open.png
+#>+ 1
+	$(INSTALL_DATA) folder_open.png $(DESTDIR)$(kde_datadir)/quanta/toolbar/folder_open.png
+#>- 	$(mkinstalldirs) $(kde_datadir)/quanta/toolbar/
+#>+ 1
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/quanta/toolbar/
+#>- 	$(INSTALL_DATA) folder_red.png $(kde_datadir)/quanta/toolbar/folder_red.png
+#>+ 1
+	$(INSTALL_DATA) folder_red.png $(DESTDIR)$(kde_datadir)/quanta/toolbar/folder_red.png
+#>- 	$(mkinstalldirs) $(kde_datadir)/quanta/toolbar/
+#>+ 1
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/quanta/toolbar/
+#>- 	$(INSTALL_DATA) folder_yellow.png $(kde_datadir)/quanta/toolbar/folder_yellow.png
+#>+ 1
+	$(INSTALL_DATA) folder_yellow.png $(DESTDIR)$(kde_datadir)/quanta/toolbar/folder_yellow.png
+#>- 	$(mkinstalldirs) $(kde_datadir)/quanta/toolbar/
+#>+ 1
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/quanta/toolbar/
+#>- 	$(INSTALL_DATA) greenbook.png $(kde_datadir)/quanta/toolbar/greenbook.png
+#>+ 1
+	$(INSTALL_DATA) greenbook.png $(DESTDIR)$(kde_datadir)/quanta/toolbar/greenbook.png
+#>- 	$(mkinstalldirs) $(kde_datadir)/quanta/toolbar/
+#>+ 1
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/quanta/toolbar/
+#>- 	$(INSTALL_DATA) home.png $(kde_datadir)/quanta/toolbar/home.png
+#>+ 1
+	$(INSTALL_DATA) home.png $(DESTDIR)$(kde_datadir)/quanta/toolbar/home.png
+#>- 	$(mkinstalldirs) $(kde_datadir)/quanta/toolbar/
+#>+ 1
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/quanta/toolbar/
+#>- 	$(INSTALL_DATA) html.png $(kde_datadir)/quanta/toolbar/html.png
+#>+ 1
+	$(INSTALL_DATA) html.png $(DESTDIR)$(kde_datadir)/quanta/toolbar/html.png
+#>- 	$(mkinstalldirs) $(kde_datadir)/quanta/toolbar/
+#>+ 1
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/quanta/toolbar/
+#>- 	$(INSTALL_DATA) image.png $(kde_datadir)/quanta/toolbar/image.png
+#>+ 1
+	$(INSTALL_DATA) image.png $(DESTDIR)$(kde_datadir)/quanta/toolbar/image.png
+#>- 	$(mkinstalldirs) $(kde_datadir)/quanta/toolbar/
+#>+ 1
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/quanta/toolbar/
+#>- 	$(INSTALL_DATA) java.png $(kde_datadir)/quanta/toolbar/java.png
+#>+ 1
+	$(INSTALL_DATA) java.png $(DESTDIR)$(kde_datadir)/quanta/toolbar/java.png
+#>- 	$(mkinstalldirs) $(kde_datadir)/quanta/toolbar/
+#>+ 1
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/quanta/toolbar/
+#>- 	$(INSTALL_DATA) kfm.png $(kde_datadir)/quanta/toolbar/kfm.png
+#>+ 1
+	$(INSTALL_DATA) kfm.png $(DESTDIR)$(kde_datadir)/quanta/toolbar/kfm.png
+#>- 	$(mkinstalldirs) $(kde_datadir)/quanta/toolbar/
+#>+ 1
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/quanta/toolbar/
+#>- 	$(INSTALL_DATA) mini-book1.png $(kde_datadir)/quanta/toolbar/mini-book1.png
+#>+ 1
+	$(INSTALL_DATA) mini-book1.png $(DESTDIR)$(kde_datadir)/quanta/toolbar/mini-book1.png
+#>- 	$(mkinstalldirs) $(kde_datadir)/quanta/toolbar/
+#>+ 1
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/quanta/toolbar/
+#>- 	$(INSTALL_DATA) mini-book2.png $(kde_datadir)/quanta/toolbar/mini-book2.png
+#>+ 1
+	$(INSTALL_DATA) mini-book2.png $(DESTDIR)$(kde_datadir)/quanta/toolbar/mini-book2.png
+#>- 	$(mkinstalldirs) $(kde_datadir)/quanta/toolbar/
+#>+ 1
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/quanta/toolbar/
+#>- 	$(INSTALL_DATA) mini-doc.png $(kde_datadir)/quanta/toolbar/mini-doc.png
+#>+ 1
+	$(INSTALL_DATA) mini-doc.png $(DESTDIR)$(kde_datadir)/quanta/toolbar/mini-doc.png
+#>- 	$(mkinstalldirs) $(kde_datadir)/quanta/toolbar/
+#>+ 1
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/quanta/toolbar/
+#>- 	$(INSTALL_DATA) mini-modules.png $(kde_datadir)/quanta/toolbar/mini-modules.png
+#>+ 1
+	$(INSTALL_DATA) mini-modules.png $(DESTDIR)$(kde_datadir)/quanta/toolbar/mini-modules.png
+#>- 	$(mkinstalldirs) $(kde_datadir)/quanta/toolbar/
+#>+ 1
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/quanta/toolbar/
+#>- 	$(INSTALL_DATA) project_folder.png $(kde_datadir)/quanta/toolbar/project_folder.png
+#>+ 1
+	$(INSTALL_DATA) project_folder.png $(DESTDIR)$(kde_datadir)/quanta/toolbar/project_folder.png
+#>- 	$(mkinstalldirs) $(kde_datadir)/quanta/toolbar/
+#>+ 1
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/quanta/toolbar/
+#>- 	$(INSTALL_DATA) save_small.png $(kde_datadir)/quanta/toolbar/save_small.png
+#>+ 1
+	$(INSTALL_DATA) save_small.png $(DESTDIR)$(kde_datadir)/quanta/toolbar/save_small.png
+#>- 	$(mkinstalldirs) $(kde_datadir)/quanta/toolbar/
+#>+ 1
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/quanta/toolbar/
+#>- 	$(INSTALL_DATA) txt.png $(kde_datadir)/quanta/toolbar/txt.png
+#>+ 1
+	$(INSTALL_DATA) txt.png $(DESTDIR)$(kde_datadir)/quanta/toolbar/txt.png
+#>- 	$(mkinstalldirs) $(kde_datadir)/quanta/toolbar/
+#>+ 1
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/quanta/toolbar/
+#>- 	$(INSTALL_DATA) up.png $(kde_datadir)/quanta/toolbar/up.png
+#>+ 1
+	$(INSTALL_DATA) up.png $(DESTDIR)$(kde_datadir)/quanta/toolbar/up.png
+#>- 	$(mkinstalldirs) $(kde_datadir)/quanta/toolbar/
+#>+ 1
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/quanta/toolbar/
+#>- 	$(INSTALL_DATA) empty1x16.png $(kde_datadir)/quanta/toolbar/empty1x16.png
+#>+ 1
+	$(INSTALL_DATA) empty1x16.png $(DESTDIR)$(kde_datadir)/quanta/toolbar/empty1x16.png
+
+uninstall-local:
+#>- 	-rm -f $(kde_datadir)/quanta/toolbar/delete.png
+#>+ 1
+	-rm -f $(DESTDIR)$(kde_datadir)/quanta/toolbar/delete.png
+#>- 	-rm -f $(kde_datadir)/quanta/toolbar/down.png
+#>+ 1
+	-rm -f $(DESTDIR)$(kde_datadir)/quanta/toolbar/down.png
+#>- 	-rm -f $(kde_datadir)/quanta/toolbar/folder.png
+#>+ 1
+	-rm -f $(DESTDIR)$(kde_datadir)/quanta/toolbar/folder.png
+#>- 	-rm -f $(kde_datadir)/quanta/toolbar/folder_blue.png
+#>+ 1
+	-rm -f $(DESTDIR)$(kde_datadir)/quanta/toolbar/folder_blue.png
+#>- 	-rm -f $(kde_datadir)/quanta/toolbar/folder_cyan.png
+#>+ 1
+	-rm -f $(DESTDIR)$(kde_datadir)/quanta/toolbar/folder_cyan.png
+#>- 	-rm -f $(kde_datadir)/quanta/toolbar/folder_green.png
+#>+ 1
+	-rm -f $(DESTDIR)$(kde_datadir)/quanta/toolbar/folder_green.png
+#>- 	-rm -f $(kde_datadir)/quanta/toolbar/folder_locked.png
+#>+ 1
+	-rm -f $(DESTDIR)$(kde_datadir)/quanta/toolbar/folder_locked.png
+#>- 	-rm -f $(kde_datadir)/quanta/toolbar/folder_open.png
+#>+ 1
+	-rm -f $(DESTDIR)$(kde_datadir)/quanta/toolbar/folder_open.png
+#>- 	-rm -f $(kde_datadir)/quanta/toolbar/folder_red.png
+#>+ 1
+	-rm -f $(DESTDIR)$(kde_datadir)/quanta/toolbar/folder_red.png
+#>- 	-rm -f $(kde_datadir)/quanta/toolbar/folder_yellow.png
+#>+ 1
+	-rm -f $(DESTDIR)$(kde_datadir)/quanta/toolbar/folder_yellow.png
+#>- 	-rm -f $(kde_datadir)/quanta/toolbar/greenbook.png
+#>+ 1
+	-rm -f $(DESTDIR)$(kde_datadir)/quanta/toolbar/greenbook.png
+#>- 	-rm -f $(kde_datadir)/quanta/toolbar/home.png
+#>+ 1
+	-rm -f $(DESTDIR)$(kde_datadir)/quanta/toolbar/home.png
+#>- 	-rm -f $(kde_datadir)/quanta/toolbar/html.png
+#>+ 1
+	-rm -f $(DESTDIR)$(kde_datadir)/quanta/toolbar/html.png
+#>- 	-rm -f $(kde_datadir)/quanta/toolbar/image.png
+#>+ 1
+	-rm -f $(DESTDIR)$(kde_datadir)/quanta/toolbar/image.png
+#>- 	-rm -f $(kde_datadir)/quanta/toolbar/java.png
+#>+ 1
+	-rm -f $(DESTDIR)$(kde_datadir)/quanta/toolbar/java.png
+#>- 	-rm -f $(kde_datadir)/quanta/toolbar/kfm.png
+#>+ 1
+	-rm -f $(DESTDIR)$(kde_datadir)/quanta/toolbar/kfm.png
+#>- 	-rm -f $(kde_datadir)/quanta/toolbar/mini-book1.png
+#>+ 1
+	-rm -f $(DESTDIR)$(kde_datadir)/quanta/toolbar/mini-book1.png
+#>- 	-rm -f $(kde_datadir)/quanta/toolbar/mini-book2.png
+#>+ 1
+	-rm -f $(DESTDIR)$(kde_datadir)/quanta/toolbar/mini-book2.png
+#>- 	-rm -f $(kde_datadir)/quanta/toolbar/mini-doc.png
+#>+ 1
+	-rm -f $(DESTDIR)$(kde_datadir)/quanta/toolbar/mini-doc.png
+#>- 	-rm -f $(kde_datadir)/quanta/toolbar/mini-modules.png
+#>+ 1
+	-rm -f $(DESTDIR)$(kde_datadir)/quanta/toolbar/mini-modules.png
+#>- 	-rm -f $(kde_datadir)/quanta/toolbar/project_folder.png
+#>+ 1
+	-rm -f $(DESTDIR)$(kde_datadir)/quanta/toolbar/project_folder.png
+#>- 	-rm -f $(kde_datadir)/quanta/toolbar/save_small.png
+#>+ 1
+	-rm -f $(DESTDIR)$(kde_datadir)/quanta/toolbar/save_small.png
+#>- 	-rm -f $(kde_datadir)/quanta/toolbar/txt.png
+#>+ 1
+	-rm -f $(DESTDIR)$(kde_datadir)/quanta/toolbar/txt.png
+#>- 	-rm -f $(kde_datadir)/quanta/toolbar/up.png
+#>+ 1
+	-rm -f $(DESTDIR)$(kde_datadir)/quanta/toolbar/up.png
+#>- 	-rm -f $(kde_datadir)/quanta/toolbar/empty1x16.png
+#>+ 1
+	-rm -f $(DESTDIR)$(kde_datadir)/quanta/toolbar/empty1x16.png
+
+####### kdevelop will overwrite this part!!! (end)############
+
+# Tell versions [3.59,3.63) of GNU make to not export all variables.
+# Otherwise a system limit (for SysV at least) may be exceeded.
+.NOEXPORT:
+
+#>+ 2
+docs-am:
+
+#>+ 5
+force-reedit:
+		cd $(top_srcdir) && $(AUTOMAKE) --gnu quanta/icons/16x16/Makefile
+	cd $(top_srcdir) && perl am_edit quanta/icons/16x16/Makefile.in
+
+
+#>+ 2
+final:
+	$(MAKE) all-am
+#>+ 3
+cvs-clean:
+	$(MAKE) -f $(top_srcdir)/admin/Makefile.common cvs-clean
+
+#>+ 3
+kde-rpo-clean:
+	-rm -f *.rpo
