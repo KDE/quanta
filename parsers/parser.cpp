@@ -22,6 +22,7 @@
 #include <qstrlist.h>
 #include <qdatetime.h>
 #include <qfile.h>
+#include <qtextcodec.h>
 #include <qvaluelist.h>
 #include <qvaluestack.h>
 
@@ -54,6 +55,7 @@
 #include <kdirwatch.h>
 #include <kiconloader.h>
 #include <klocale.h>
+#include <ktexteditor/document.h>
 #include <ktexteditor/editinterface.h>
 #include <ktexteditor/encodinginterface.h>
 #include <ktexteditor/viewcursorinterface.h>
@@ -1371,9 +1373,11 @@ void Parser::parseIncludedFile(const QString& fileName, const DTDStruct *dtd)
   {
     IncludedGroupElements *elements = &includedMap[fileName];
     QTextStream str(&file);
-    if (write->encodingIf)
-      encoding = write->encodingIf->encoding();
-    if (write->encoding.isEmpty())
+    QString encoding;
+    KTextEditor::EncodingInterface* encodingIf = dynamic_cast<KTextEditor::EncodingInterface*>(write->doc());
+    if (encodingIf)
+      encoding = encodingIf->encoding();
+    if (encoding.isEmpty())
       encoding = "utf8";  //final fallback
     str.setCodec(QTextCodec::codecForName(encoding));
     content = str.read();
