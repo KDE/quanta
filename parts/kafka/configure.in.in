@@ -10,7 +10,7 @@ build_wysiwyg="yes"
 
 KDE_VERSION=""
 AC_MSG_CHECKING(for KDE version)
-KDE_VERSION=`kde-config --version | grep KDE`
+KDE_VERSION=`$KDECONFIG --version | grep KDE`
 AC_MSG_RESULT("$KDE_VERSION")
 if test "x`echo $KDE_VERSION | grep 3.1.9`" = "x"; then
  if test "x`echo $KDE_VERSION | grep 3.2`" = "x"; then
