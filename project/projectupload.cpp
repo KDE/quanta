@@ -34,6 +34,7 @@
 #include <kmessagebox.h>
 #include <kprotocolinfo.h>
 #include <kdebug.h>
+#include <kio/netaccess.h>
 
 
 ProjectUpload::ProjectUpload(QString file, Project* prg, QWidget *parent, const char* name)
@@ -207,8 +208,6 @@ void ProjectUpload::startUpload()
 	baseUrl->setPath( linePath->text() );
 	baseUrl->setPass( linePasswd->text() );
 	
-	debug( baseUrl->url() );
-	
 	upload();
 }
 
@@ -231,7 +230,7 @@ void ProjectUpload::upload()
       to.addPath( currentFile );
       
       KURL dir( to.upURL() );
-      
+  
       to.setUser( user );
       to.setPass( pass );
       
@@ -239,25 +238,12 @@ void ProjectUpload::upload()
       dir.setPass( pass );
 			
   			if ( !madeDirs.contains(dir.url()) ) {
-  				//currentFile = "";
   				madeDirs.append( dir.url() );
-  				KIO::Job *job = KIO::mkdir(dir);
-  				/*
-  			  connect( job, SIGNAL( result( KIO::Job * ) ),
-              this, SLOT( uploadFinished( KIO::Job * ) ) );
-        connect( job, SIGNAL( percent( KIO::Job *,unsigned long ) ),
-              this, SLOT( uploadProgress( KIO::Job *,unsigned long ) ) );
-        connect( job, SIGNAL( infoMessage( KIO::Job *,const QString& ) ),
-              this, SLOT( uploadMessage( KIO::Job *,const QString& ) ) );
-
-  				return;
-  				*/
+  				KIO::NetAccess::mkdir( dir );
+  				
   			} 
-			
   			
-  			qDebug("%s -> %s", from.url().data(), to.url().data() );
-  			qDebug( dir.url() );
-  			
+  			//qDebug("%s -> %s", from.url().data(), to.url().data() );
       KIO::FileCopyJob *job = KIO::file_copy( from, to, -1, true, false, false );
       
   			connect( job, SIGNAL( result( KIO::Job * ) ),
@@ -313,7 +299,6 @@ void ProjectUpload::uploadProgress ( KIO::Job *, unsigned long percent  )
 void ProjectUpload::uploadMessage ( KIO::Job *, const QString & msg )
 {
   labelCurFile->setText( currentFile + " : " + msg );
-  debug("msg:"+currentFile + " : " + msg);
 }
 
 void ProjectUpload::selectAll()
