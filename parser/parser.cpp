@@ -738,8 +738,10 @@ Node *Parser::parse(Document *w)
  kdDebug(24000) << "Size of tree: " << treeSize << endl;
  */
 
+#ifdef BUILD_KAFKAPART
  //We need to reload Kafka to refresh the DOM::Node->Node links.
  quantaApp->view()->setNeedKafkaReload(true);
+ #endif
 
  return m_node;
 }
