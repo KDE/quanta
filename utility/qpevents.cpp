@@ -69,6 +69,8 @@ QPEvents::~QPEvents()
 
 void QPEvents::slotEventHappened(const QString& name, const QString& argument1, const QString& argument2)
 {
+  if (!quantaApp)
+    return;
   EventActions *events = Project::ref()->events();
   if (!events) return;
   if (events->contains(name))

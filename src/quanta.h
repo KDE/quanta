@@ -486,6 +486,8 @@ protected:
   /** Makes the tabwidget look and behave like we want. If closeButtonsOnly is true,
   only the close button behavior is changed. */
   void initTabWidget(bool closeButtonsOnly = false);
+  
+  void resetDockLayout();
 
   ScriptTreeView *scriptTab;
 

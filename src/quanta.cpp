@@ -143,6 +143,9 @@
 #include "tagattributetree.h"
 #include "projecttreeview.h"
 #include "scripttreeview.h"
+#include "servertreeview.h"
+#include "variableslistview.h"
+#include "debuggerbreakpointview.h"
 
 #include "listdlg.h"
 #include "tagdialog.h"
@@ -4719,28 +4722,69 @@ void QuantaApp::closeAllViews()
    ViewManager::ref()->closeAll();
 }
 
+void QuantaApp::resetDockLayout()
+{
+    QStringList groupList = m_config->groupList();
+    for (QStringList::Iterator it = groupList.begin(); it != groupList.end(); ++it)
+    {
+       if ((*it).startsWith("dock_setting_default"))
+       {
+        m_config->deleteGroup(*it);
+       }
+    }
+    m_config->sync();
+    QWidget *mainDockWidget = getMainDockWidget();
+    addToolWindow(fTab, KDockWidget::DockLeft, mainDockWidget);
+    addToolWindow(ProjectTreeView::ref(), KDockWidget::DockLeft, mainDockWidget);
+    addToolWindow(TemplatesTreeView::ref(), KDockWidget::DockLeft, mainDockWidget);
+    addToolWindow(StructTreeView::ref(), KDockWidget::DockLeft, mainDockWidget);
+    addToolWindow(scriptTab, KDockWidget::DockLeft, mainDockWidget);
+    addToolWindow(dTab, KDockWidget::DockRight, mainDockWidget);
+    addToolWindow(aTab, KDockWidget::DockRight, mainDockWidget);
+    addToolWindow(m_messageOutput, KDockWidget::DockBottom, mainDockWidget);
+    addToolWindow(m_problemOutput, KDockWidget::DockBottom, mainDockWidget);
+    if (m_previewToolView)
+      m_previewToolView =  addToolWindow(m_htmlPart->view(), KDockWidget::DockBottom, mainDockWidget);
+    if (m_documentationToolView)
+      m_documentationToolView= addToolWindow(m_htmlPartDoc->view(), KDockWidget::DockBottom, mainDockWidget);
+    for (QMap<QWidget*,KMdiToolViewAccessor*>::Iterator it = m_pToolViews->begin(); it != m_pToolViews->end(); ++it)
+    {
+        QWidget *widget = it.key();
+        if (dynamic_cast<ServerTreeView*>(widget))
+          addToolWindow(widget, KDockWidget::DockRight, mainDockWidget);
+        if (dynamic_cast<VariablesListView*>(widget))
+          addToolWindow(widget, KDockWidget::DockLeft, mainDockWidget);
+        if (dynamic_cast<DebuggerBreakpointView*>(widget))
+          addToolWindow(widget, KDockWidget::DockBottom, mainDockWidget);
+    }
+}
+
 void QuantaApp::switchToToplevelMode()
 {
    KMdiMainFrm::switchToToplevelMode();
+   resetDockLayout();
    initTabWidget();
 }
 
 void QuantaApp::switchToChildframeMode()
 {
    KMdiMainFrm::switchToChildframeMode();
+   resetDockLayout();
    initTabWidget();
 }
 
 void QuantaApp::switchToIDEAlMode()
 {
-    KMdiMainFrm::switchToIDEAlMode();
-    initTabWidget();
+   KMdiMainFrm::switchToIDEAlMode();
+   resetDockLayout();
+   initTabWidget();
 }
 
 void QuantaApp::switchToTabPageMode()
 {
-    KMdiMainFrm::switchToTabPageMode();
-    initTabWidget();
+   KMdiMainFrm::switchToTabPageMode();
+   resetDockLayout();
+   initTabWidget();
 }
 
 void QuantaApp::slotPreviewBeingClosed()
