@@ -43,6 +43,7 @@ class ParentItem : public KListViewItem
 {
 
 public:
+    ParentItem(KListView *parent, const QString& title);
     ParentItem(QListViewItem *parent, QListViewItem* after, Node *node);
 
     virtual ~ParentItem();

@@ -37,6 +37,7 @@ public:
   Node *node() const {return m_node;}
 
 public slots:
+  void slotDelayedSetCurrentNode();
   void editorContentChanged();
 
 signals:

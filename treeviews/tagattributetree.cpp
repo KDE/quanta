@@ -15,6 +15,7 @@
 //qt includes
 #include <qfont.h>
 #include <qpainter.h>
+#include <qtimer.h>
 
 //kde includes
 #include <klistview.h>
@@ -55,6 +56,8 @@ void TagAttributeTree::setCurrentNode(Node *node)
   if (!rebuildEnabled)
       return;
   clear();
+  if (!node)
+      return;
   AttributeItem *item = 0L;
   TopLevelItem *group;
   QString attrName;
@@ -156,8 +159,13 @@ void TagAttributeTree::setCurrentItem( QListViewItem *item )
          static_cast<AttributeItem*>(it)->showEditor();
     else
     if (dynamic_cast<ParentItem*>(it) )
-        setCurrentNode(static_cast<ParentItem*>(it)->node());
+        QTimer::singleShot(0, this,  SLOT(slotDelayedSetCurrentNode()));
   }
+}
+
+void TagAttributeTree::slotDelayedSetCurrentNode()
+{
+  setCurrentNode(static_cast<ParentItem*>(currentItem())->node());
 }
 
 

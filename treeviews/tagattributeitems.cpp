@@ -71,6 +71,11 @@ void TopLevelItem::paintCell(QPainter *p, const QColorGroup &cg,
     }
 }
 
+ParentItem::ParentItem(KListView* parent, const QString &title)
+: KListViewItem(parent, title)
+{
+}
+
 ParentItem::ParentItem(QListViewItem* parent, QListViewItem* after, Node *node)
 : KListViewItem(parent, after)
 {
