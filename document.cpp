@@ -530,7 +530,7 @@ void Document::insertText(QString text, bool adjustCursor)
 
   unsigned int line, col;
 
-  viewCursorIf->cursorPosition(&line, &col);
+  viewCursorIf->cursorPositionReal(&line, &col);
   editIf->insertText(line, col, text);
 
   // calculate new cursor position
@@ -596,7 +596,7 @@ void Document::insertText(QString text, bool adjustCursor)
           }
       }
     }
-    viewCursorIf->setCursorPosition(line, col);
+    viewCursorIf->setCursorPositionReal(line, col);
   }
 }
 

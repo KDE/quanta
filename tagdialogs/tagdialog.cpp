@@ -321,7 +321,7 @@ void TagDialog::insertTag(Document *w, bool insertInLine)
    if ( !insertInLine )
    {
     QString space="";
-  	space.fill( ' ',w->viewCursorIf->cursorColumn() );
+  	space.fill( ' ',w->viewCursorIf->cursorColumnReal() );
     newTag += "\n" + space + "  ";
     secondPartOfTag = "\n" + space + secondPartOfTag;
    }
