@@ -35,6 +35,7 @@ Tag::Tag()
   cleanStr = "";
   m_nameLine = -1;
   m_nameCol = -1;
+  validXMLTag = true;
 }
 
 Tag::Tag( const Tag &t)
@@ -147,12 +148,14 @@ void Tag::parse(const QString &p_tagStr, Document *p_write)
  m_nameCol = beginCol;
  int line = beginLine;
  int col = beginCol;
- if ( ( beginLine == endLine && col < endCol) ||
-      ( beginLine != endLine) )
-     col++;
  int begin;
 
  QString textLine = m_write->editIf->textLine(line);
+
+ if ( textLine[col] == '<' &&
+      (( beginLine == endLine && col < endCol) ||
+       ( beginLine != endLine)) )
+     col++;
 
  while ( (textLine[col].isSpace() || textLine[col] == '>') &&
          !textLine[col].isNull() &&
@@ -175,7 +178,9 @@ void Tag::parse(const QString &p_tagStr, Document *p_write)
  {
    col++;
  }
- name = textLine.mid(begin, col-begin);
+ if (beginLine == endLine && col == endCol && textLine[col] != '>')
+    col++;
+ name = textLine.mid(begin, col - begin);
  if (!name.isEmpty())
     m_nameCol = begin;
 

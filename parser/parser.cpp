@@ -325,6 +325,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
       tag->parse(tagStr , write);
       tag->type = Tag::XmlTag;
       tag->dtd = m_dtd;
+      tag->validXMLTag = (openNum == 0);
       tag->single = QuantaCommon::isSingleTag(m_dtd->name, tag->name);
       if (tag->name[0] == '/')
       {
@@ -1202,7 +1203,14 @@ Node *Parser::nodeAt(int line, int col, bool findDeepest)
     }
   }
 
-  if (findDeepest && node && node->tag->type == Tag::Empty)
+  bc = ec = el = bl = 0;
+  if (node)
+  {
+    node->tag->beginPos(bl, bc);
+    node->tag->endPos(el, ec);
+  }
+  if (node && node->tag->type == Tag::Empty &&
+     (findDeepest || (bl == el && ec < bc)) )
   {
      if (node->parent)
      {
@@ -1259,7 +1267,8 @@ Node *Parser::rebuild(Document *w)
      tagStr = node->tag->tagStr();
      if ( tagStr != text ||
           node->tag->type == Tag::Empty ||
-          node->insideSpecial
+          node->insideSpecial ||
+          node->tag->validXMLTag == false
         )
      {
        node = node->previousSibling();
@@ -1281,7 +1290,7 @@ Node *Parser::rebuild(Document *w)
      {
         text = w->text(bl + lineDiff, bc, el + lineDiff, ec);
         tagStr = node->tag->tagStr();
-        if (tagStr == text && node->tag->type != Tag::Empty && !node->insideSpecial)
+        if (tagStr == text && node->tag->type != Tag::Empty && !node->insideSpecial && !node->tag->validXMLTag)
         {
           if (!lastNode)
               lastNode = node;

@@ -131,6 +131,7 @@ public:
   bool closingMissing; //closing tag is optional and missing
   DTDStruct* dtd; //the tag belongs to this DTD
   QString structBeginStr; //if it's a special block, contains the block beginning definition string (like <? or <style language="foo">)
+  bool validXMLTag; //false if the closing ">" was not found
 
 private:
   int beginLine; //where the tag begins in the doc
