@@ -2,7 +2,7 @@
 
   INCLUDES = -I$(top_builddir) -I$(top_builddir)/quanta/parts/kafka  $(all_includes)
   KDE_CXXFLAGS = $(USE_EXCEPTIONS)
-  lib_LTLIBRARIES = libkafkalibrary.la
+  noinst_LTLIBRARIES = libkafkalibrary.la
 
   libkafkalibrary_la_SOURCES = htmlenhancer.cpp domtreeview.cpp kafkacommon.cpp kafkahtmlpart.cpp kafkahtmlview.cpp nodeproperties.cpp wkafkapart.cpp undoredo.cpp kafkasyncoptionsui.ui htmldocumentpropertiesui.ui kafkasyncoptions.cpp htmldocumentproperties.cpp
   libkafkalibrary_la_METASOURCES = AUTO

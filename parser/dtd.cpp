@@ -188,6 +188,7 @@ void DTD::parseDTDEntity(QString line) {
   QString name;
   QString *value;
 
+  line.replace("\\end", " ");
   name = line.mid(11);
   int firstSpace = name.find(' ');
   name = name.remove(firstSpace, name.length()-firstSpace);
@@ -208,6 +209,7 @@ void DTD::parseDTDElement(QString line) {
   QString name;
   QString *value;
 
+  line.replace("\\end", " ");
   name = line.mid(10);
   int firstSpace = name.find(' ');
   name.remove(firstSpace, name.length()-firstSpace);
@@ -243,6 +245,7 @@ void DTD::parseDTDAttlist(QString line) {
   QString name;
   QString *value;
 
+  line.replace("\\end", " ");
   name = line.mid(10);
   int firstSpace = name.find(' ');
   name.remove(firstSpace, name.length()-firstSpace);
