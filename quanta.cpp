@@ -833,11 +833,11 @@ void QuantaApp::slotOptions()
     name = it.current()->name;
     if (it.current()->family == Xml)
     {
-      if (name.lower() == qConfig.defaultDocType) index = 0;
+      if (name.lower() == qConfig.defaultDocType.lower()) index = 0;
       parserOptions->dtdName->insertItem(QuantaCommon::getDTDNickNameFromName(name), index);
       index = -1;
     }
-    if (name.lower() == qConfig.newFileType) index = 0;
+    if (name.lower() == qConfig.newFileType.lower()) index = 0;
     fileMasks->newfileCombo->insertItem(QuantaCommon::getDTDNickNameFromName(name), index);
   }
 
