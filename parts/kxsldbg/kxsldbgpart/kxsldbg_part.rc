@@ -28,6 +28,8 @@
 	<Separator/>
 	<Action name="evaluateCmd"/>
 	<Action name="gotoXPathCmd"/>
+	<Action name="lookupSystemID"/>
+	<Action name="lookupPublicID"/>
   </Menu>
 
 </MenuBar>

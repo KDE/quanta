@@ -57,7 +57,7 @@
 typedef KParts::GenericFactory<KXsldbgPart> KXsldbgPartFactory;
 K_EXPORT_COMPONENT_FACTORY( libkxsldbgpart, KXsldbgPartFactory );
 
-KXsldbgPart::KXsldbgPart( QWidget *parentWidget, const char *widgetName,
+KXsldbgPart::KXsldbgPart( QWidget *parentWidget, const char * /*widgetName*/,
                                   QObject *parent, const char *name,
                                   const QStringList & /*args*/ )
   : KParts::ReadOnlyPart(parent, name)
@@ -154,17 +154,17 @@ KXsldbgPart::KXsldbgPart( QWidget *parentWidget, const char *widgetName,
                         this, SLOT(deleteCmd_activated()),
                         actionCollection(), "deleteCmd" );
 
-    (void) new KAction( i18n("Source"),
+    (void) new KAction( i18n("&Source"),
                         "xsldbg_source", Key_S,
                         this, SLOT(sourceCmd_activated()),
                         actionCollection(), "sourceCmd" );
 
-    (void) new KAction( i18n("Data"),
+    (void) new KAction( i18n("&Data"),
                         "xsldbg_data", Key_D,
                         this, SLOT(dataCmd_activated()),
                         actionCollection(), "dataCmd" );
 
-    (void) new KAction( i18n("Output"),
+    (void) new KAction( i18n("&Output"),
                         "xsldbg_output", Key_O,
                         this, SLOT(outputCmd_activated()),
                         actionCollection(), "outputCmd" );
@@ -179,12 +179,12 @@ KXsldbgPart::KXsldbgPart( QWidget *parentWidget, const char *widgetName,
                         Key_W,
                         this, SLOT(walkCmd_activated()),
                         actionCollection(), "walkCmd" );
-    (void) new KAction( i18n("Stop Walking Through Stylesheet"),
+    (void) new KAction( i18n("Stop Wal&king Through Stylesheet"),
                         Key_K,
                         this, SLOT(walkStopCmd_activated()),
                         actionCollection(), "walkStopCmd" );
-    (void) new KAction( i18n("Trace Execution of Stylesheet"),
-                        Key_C,
+    (void) new KAction( i18n("Tr&ace Execution of Stylesheet"),
+                        Key_A,
                         this, SLOT(traceCmd_activated()),
                         actionCollection(), "traceCmd" );
     (void) new KAction( i18n("Stop Tracing of Stylesheet"),
@@ -192,15 +192,26 @@ KXsldbgPart::KXsldbgPart( QWidget *parentWidget, const char *widgetName,
                         this, SLOT(traceStopCmd_activated()),
                         actionCollection(), "traceStopCmd" );
 
-    (void) new KAction( i18n("Evaluate Expression..."),
+    (void) new KAction( i18n("&Evaluate Expression..."),
                         Key_E,
                         this, SLOT(evaluateCmd_activated()),
                         actionCollection(), "evaluateCmd" );
 
-    (void) new KAction( i18n("Goto XPath..."),
+    (void) new KAction( i18n("Goto &XPath..."),
                         Key_X,
                         this, SLOT(gotoXPathCmd_activated()),
                         actionCollection(), "gotoXPathCmd" );
+
+    (void) new KAction( i18n("Lookup SystemID..."),
+                        0,
+                        this, SLOT(slotLookupSystemID()),
+                        actionCollection(), "lookupSystemID" );
+
+    (void) new KAction( i18n("Lookup PublicID..."),
+                        0,
+                        this, SLOT(slotLookupPublicID()),
+                        actionCollection(), "lookupPublicID" );
+
 
     /*
     (void) new KAction( i18n("Exit KXsldbg"),
@@ -301,8 +312,7 @@ void KXsldbgPart::lookupSystemID( QString systemID)
    }
   if ( ok && !systemID.isEmpty() ){
       // user entered something and pressed ok
-	QString msg = i18n("system ");
-	msg.append(systemID);
+	QString msg(QString("system %1").arg(systemID));  // noTr
 	debugger->fakeInput(msg, TRUE);
   }
 
@@ -325,8 +335,7 @@ void KXsldbgPart::lookupPublicID(QString publicID)
    }
    if ( ok && !publicID.isEmpty()){
      // user entered something and pressed ok
-	QString msg = i18n("public ");
-	msg.append(publicID);
+	QString msg(QString("public %1").arg(publicID));  // noTr
 	debugger->fakeInput(msg, TRUE);
   }
 }
@@ -456,21 +465,21 @@ void KXsldbgPart::stepCmd_activated()
 void KXsldbgPart::nextCmd_activated()
 {
     if ( checkDebugger() )
-        debugger->fakeInput("next", true);
+        debugger->fakeInput("next", true);  // noTr
 }
 
 
 void KXsldbgPart::stepupCmd_activated()
 {
     if ( checkDebugger() )
-      debugger->fakeInput("stepup", TRUE);
+      debugger->fakeInput("stepup", TRUE);  // noTr
 }
 
 
 void KXsldbgPart::stepdownCmd_activated()
 {
     if ( checkDebugger() )
-      debugger->fakeInput("stepdown", TRUE);
+      debugger->fakeInput("stepdown", TRUE);  // noTr
 }
 
 
@@ -508,7 +517,7 @@ void KXsldbgPart::refreshCmd_activated()
       m_editWidget->repaintAll();
       /* Reload breakpoints from xsldbg */
       if ( checkDebugger() ){
-	debugger->fakeInput("showbreak", TRUE);
+	debugger->fakeInput("showbreak", TRUE);  // noTr
       }
     }
   }
@@ -563,7 +572,7 @@ void
 KXsldbgPart::lineNoChanged(QString fileName, int lineNumber, bool breakpoint)
 {
   if ( fileName.isEmpty() ) {
-    qDebug( "Empty file Name" );
+    qDebug( "Empty file Name" );  // noTr
     return;
   }
 
@@ -631,8 +640,7 @@ void  KXsldbgPart::deleteBreakPoint(int lineNumber)
 void KXsldbgPart::slotSearch()
 {
   if ((newSearch != 0L)  && checkDebugger() ) {
-    QString msg(i18n("search "));
-    msg.append(newSearch->text());
+    QString msg(QString("search \"%1\"").arg(newSearch->text()));  // noTr
  		debugger->fakeInput(msg, false);
   }
 }
