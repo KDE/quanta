@@ -1281,7 +1281,11 @@ void KPipe::close() {
   setState(0);
 }
 
+#if QT_VERSION < 300
 int KPipe::writeBlock(const char *data, uint len) {
+#else
+Q_LONG KPipe::writeBlock(const char *data, Q_ULONG len) {
+#endif
   int n;
 
   if (status() != IO_Ok) return 0;

@@ -15,7 +15,11 @@ public:
   KWriteFactory();
   virtual ~KWriteFactory();
 
+#if QT_VERSION < 300
   virtual KParts::Part *createPart( QWidget *parentWidget, const char *widgetName, QObject *parent, const char *name, const char *classname, const QStringList &args );
+#else
+  virtual KParts::Part *createPartObject( QWidget *parentWidget, const char *widgetName, QObject *parent, const char *name, const char *classname, const QStringList &args );
+#endif
 
   static const KAboutData *aboutData();
   static KInstance *instance();

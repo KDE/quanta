@@ -278,12 +278,13 @@ class KPipe : public QIODevice {
 
 #if QT_VERSION < 300
     virtual uint size() const {return 0;}
-#else
-    virtual Q_ULONG size() const {return 0;}
-#endif
-
     virtual int readBlock(char *, uint) {return 0;}
     virtual int writeBlock(const char *data, uint len);
+#else
+    virtual Q_ULONG size() const {return 0;}
+    virtual Q_LONG readBlock(char *, Q_ULONG) {return 0;}
+    virtual Q_LONG writeBlock(const char *data, Q_ULONG len);
+#endif
 
     virtual int getch() {return 0;}
     virtual int putch(int i) {char ch = i; return writeBlock(&ch, 1);}

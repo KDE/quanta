@@ -34,7 +34,11 @@ KWriteFactory::~KWriteFactory()
   s_instance = 0;
 }
 
+#if QT_VERSION < 300
 KParts::Part *KWriteFactory::createPart( QWidget *parentWidget, const char *widgetName, QObject *parent, const char *name, const char *classname, const QStringList & )
+#else
+KParts::Part *KWriteFactory::createPartObject( QWidget *parentWidget, const char *widgetName, QObject *parent, const char *name, const char *classname, const QStringList & )
+#endif
 {
   bool bWantDocument = ( strcmp( classname, "KTextEditor::Document" ) == 0 );
   bool bWantBrowserView = ( strcmp( classname, "Browser/View" ) == 0 );
