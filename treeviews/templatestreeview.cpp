@@ -147,7 +147,10 @@ KFileTreeBranch* TemplatesTreeView::newBranch(const KURL& url)
     if (url == localURL)
       newBrnch = new FilesTreeBranch(this, url, i18n("Local Templates"), SmallIcon("ttab"));
     else
+    {
       newBrnch = new FilesTreeBranch(this, url, i18n("Project Templates"), SmallIcon("ptab"));
+      m_projectDir = newBrnch;
+    }
   }
   newBrnch->excludeFilterRx.setPattern(EXCLUDE);
   addBranch(newBrnch);
