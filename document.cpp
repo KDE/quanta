@@ -422,7 +422,7 @@ void Document::insertText(const QString &text, bool adjustCursor, bool reparse)
 
 void Document::insertChildTags(QTag *tag, QTag *lastTag)
 {
-  if (!tag || tag == lastTag) //avoid infinite loop
+  if (!tag || tag == lastTag) //avoid infinite recursion
   {
     return;
   }
@@ -431,14 +431,23 @@ void Document::insertChildTags(QTag *tag, QTag *lastTag)
   {
     if (it.data())
     {
+      QTag *childTag = QuantaCommon::tagFromDTD(tag->parentDTD, it.key());
       QString tagStr =QuantaCommon::tagCase(it.key());
-      insertText("\n<" +tagStr + ">", true, false);
-      if ( ( !tag->isSingle() && !tag->isOptional() && qConfig.closeTags) ||
-           ( tag->isOptional() && qConfig.closeOptionalTags ) )
+      if ( tag->parentDTD->singleTagStyle == "xml" &&
+           ( childTag->isSingle() ||
+            (childTag->isOptional() && !qConfig.closeOptionalTags)) )
       {
-        insertText("\n</" + tagStr + ">", false, false);
+        insertText("\n<" +tagStr + "/>", true, false);
+      } else
+      {
+        insertText("\n<" +tagStr + ">", true, false);
       }
-      insertChildTags(QuantaCommon::tagFromDTD(tag->parentDTD, it.key()), tag);
+      insertChildTags(childTag, tag);
+      if ( (!childTag->isSingle() && !childTag->isOptional() && qConfig.closeTags) ||
+           (childTag->isOptional() && qConfig.closeOptionalTags) )
+      {
+        insertText("\n</" + tagStr + ">", true, false);
+      }
     }
   }
 }
