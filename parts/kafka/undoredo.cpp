@@ -200,8 +200,9 @@ void undoRedo::addNewModifsSet(NodeModifsSet *modifs, int modifLocation, NodeSel
   node = baseNode;
   while(node)
   {
-    if(!node->tag->cleanStrBuilt() && node->tag->type == Tag::Text)
-    {
+      if(!node->tag->cleanStrBuilt() && 
+          (node->tag->type == Tag::Text || (node->tag->type == Tag::Empty && !node->tag->tagStr().isEmpty())))
+      {
       if(!node->insideSpecial)
       {
         node->tag->setStr(KafkaDocument::ref()->generateCodeFromNode(node, 0, 0, foo, foo2, encodeText));

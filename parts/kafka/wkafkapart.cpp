@@ -497,8 +497,13 @@ bool KafkaDocument::buildKafkaNodeFromNode(Node *node, bool insertNode)
 	Node *n, *parent;
 	int i;
 
-	if(node->tag->type == Tag::XmlTag || (node->tag->type == Tag::Text && !node->insideSpecial))
-	{
+//     This is a hack to not created DOM::Nodes from quanta empty nodes if outside body, because KHTML
+//     moves a node in that condition into the body and then the trees become desynchronized.
+    bool isInsideBody = kafkaCommon::hasParent(node, "body");
+    
+    if(node->tag->type == Tag::XmlTag || 
+       ((node->tag->type == Tag::Text || (node->tag->type == Tag::Empty && isInsideBody)) && !node->insideSpecial))
+    {
 		str = node->tag->name.lower();
 
 		//The basics DOM::Nodes HTML, HEAD and BODY are loaded anyway, but we must now
@@ -529,8 +534,8 @@ bool KafkaDocument::buildKafkaNodeFromNode(Node *node, bool insertNode)
 			}
 			else
 			{
-				if(node->tag->type == Tag::Text)
-				{
+                if(node->tag->type == Tag::Text || node->tag->type == Tag::Empty)
+                {
 					newNode = kafkaCommon::createTextDomNode("", m_kafkaPart->document());
 				}
 				else
@@ -565,8 +570,8 @@ bool KafkaDocument::buildKafkaNodeFromNode(Node *node, bool insertNode)
 	/**	else if(node->parent->tag->str == "html")*/
 		else
 		{
-			if(node->tag->type == Tag::Text)
-			{
+            if(node->tag->type == Tag::Text || node->tag->type == Tag::Empty)
+            {
 				newNode = kafkaCommon::createTextDomNode("", m_kafkaPart->document());
 			}
 			else
@@ -585,8 +590,8 @@ bool KafkaDocument::buildKafkaNodeFromNode(Node *node, bool insertNode)
 		}
 
 		connectDomNodeToQuantaNode(newNode, node);
-		if(node->tag->type == Tag::Text)
-		{
+        if(node->tag->type == Tag::Text || node->tag->type == Tag::Empty)
+        {
 			//Now we get if the whitespaces at the left and right are kept or not.
 			//Left whitespaces are removed if:
 			//- It is the first child of a BLOCK
