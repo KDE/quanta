@@ -634,7 +634,8 @@ void QuantaApp::slotNewStatus()
 
     saveAction   ->setEnabled(m_doc->isModified());
     saveAllAction->setEnabled(m_doc->isModifiedAll());
-    saveprjAction->setEnabled(m_project->isModified());
+    if (m_project->isModified())
+        m_project->slotSaveProject();
 
     bool projectExists = m_project->hasProject();
     closeprjAction     ->setEnabled(projectExists);

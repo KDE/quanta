@@ -1815,19 +1815,19 @@ void QuantaApp::initActions()
     #ifdef BUILD_KAFKAPART
     KToggleAction *ta;
       ta =
-      new KToggleAction( i18n( "&Source Editor") , "show_quanta_editor", ALT+Key_F9,
+      new KToggleAction( i18n( "&Source editor") , "show_quanta_editor", ALT+Key_F9,
                          m_view, SLOT( slotShowQuantaEditor()),
                          ac, "show_quanta_editor");
       ta->setExclusiveGroup("view");
 
      showKafkaAction =
-      new KToggleAction( i18n( "&VPL Editor (experimental)"), UserIcon ("vpl"), CTRL+SHIFT+Key_F9,
+      new KToggleAction( i18n( "&VPL editor (experimental)"), UserIcon ("vpl"), CTRL+SHIFT+Key_F9,
       m_view, SLOT( slotShowKafkaPart() ),
                           ac, "show_kafka_view");
      showKafkaAction->setExclusiveGroup("view");
 
      ta =
-      new KToggleAction( i18n("V&PL && Source Editors"), "show_kafka_and_quanta", Key_F9,
+      new KToggleAction( i18n("V&PL and source editors"), "show_kafka_and_quanta", Key_F9,
                          m_view, SLOT( slotShowKafkaAndQuanta() ),
                           ac, "show_kafka_and_quanta");
      ta->setExclusiveGroup("view");
@@ -1887,9 +1887,6 @@ void QuantaApp::initActions()
     m_project->projectRecent->setText(i18n("Open Recent Project"));
     m_project->projectRecent->setMaxItems(32);
 
-    saveprjAction =  new KAction( i18n( "&Save Project" ), SmallIcon("save"), 0,
-                         m_project, SLOT( slotSaveProject() ),
-                         ac, "project_save" );
 
     closeprjAction =  new KAction( i18n( "&Close Project" ), SmallIcon("fileclose"), 0,
                          m_project, SLOT( slotCloseProject() ),

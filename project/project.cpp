@@ -404,12 +404,12 @@ bool Project::slotSaveProject()
 
     delete tmpFile;
     m_modified = false;
-    emit newStatus();
   } else
   {
     result = false;
   }
- if (result) projectRecent->addURL( projectURL );
+ if (result)
+      projectRecent->addURL( projectURL );
  return result;
 }
 
@@ -417,7 +417,8 @@ bool Project::slotSaveProject()
 void Project::slotCloseProject()
 {
   //fix: add save/no for remote
-  if (m_modified) slotSaveProject();
+  if (m_modified)
+      slotSaveProject();
 
   dom.clear();
 
