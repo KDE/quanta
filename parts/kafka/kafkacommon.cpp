@@ -2221,6 +2221,12 @@ Node* kafkaCommon::DTDExtractNodeSubtree(Node *startNode, int startOffset, Node 
         node = parentNode;
         parentNode = parentNode->parent;
     }
+    
+    if(startNode == endNode)
+    {
+        Q_ASSERT(startNode->tag->type == Tag::Text || startNode->tag->type == Tag::Empty);
+        return extractNode(startNode, modifs);
+    }
 
     // now let us extract the subtree
     node = commonParentStartChild;
@@ -2366,44 +2372,7 @@ Node* kafkaCommon::getNodeSubtree(Node *startNode, int startOffset, Node *endNod
     }
 
     Node* start_subtree = duplicateNodeSubtree(commonParentStartChild);
-    /*
-    Node* node = commonParentStartChild;
-    Node* new_node = start_subtree;
-    while(node)
-    {
-        if(node == startNode || node == endNode)
-        {
-            Node* parent = new_node->parent;
-            Node* child = new_node->child;
-            Node* next = new_node->next;
-            Node* prev = new_node->prev;
-            Node* _closingNode = new_node->_closingNode;
 
-            delete new_node;
-            new_node = new_start_node;
-
-            if(child)
-                child->parent = new_node;
-            if(next)
-                next->prev = new_node;
-            if(prev)
-                prev->next = new_node;
-            if(parent && !parent->child)
-                parent->child = new_node;
-
-            new_node->parent = parent;
-            new_node->child = child;
-            new_node->next = next;
-            new_node->prev = prev;
-            new_node->_closingNode = _closingNode;
-        }
-        if(node == commonParentEndChild->_closingNode || node == commonParent->_closingNode)
-            break;
-
-        node = node->nextSibling();
-        new_node = new_node->nextSibling();
-    }
-    */
 #ifdef LIGHT_DEBUG
     coutTree(start_subtree, 3);
 #endif

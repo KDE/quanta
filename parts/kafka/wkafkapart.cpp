@@ -2266,7 +2266,7 @@ void KafkaDocument::slotCopy()
     if(!startNode || !endNode)
         return;
     
-    Node const* subtree_root = kafkaCommon::getNodeSubtree(startNode, startOffset, endNode, endOffset);
+    Node* subtree_root = kafkaCommon::getNodeSubtree(startNode, startOffset, endNode, endOffset);
     
     if(subtree_root)
     {
