@@ -222,15 +222,9 @@ QString TagDialog::getAttributeString()
     QString attr  = it.currentKey();
     QString val   = *it.current();
 
-    bool trans;
-    val.toInt( &trans );
-
     QString attrval = " ";  // attr=value
 
     if ( !val.isEmpty() ) {
-      if ( trans )
-        attrval += QuantaCommon::attrCase(attr)+"="+val;
-      else
         attrval += QuantaCommon::attrCase(attr) + "=" + qConfig.attrValueQuotation + val + qConfig.attrValueQuotation;
     } else
       attrval += QuantaCommon::attrCase(attr); // for checkboxes dont print =""
