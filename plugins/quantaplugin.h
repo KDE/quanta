@@ -43,6 +43,8 @@ public:
   virtual QString location() const;
   /** Gets the plugin's type */
   virtual QString type() const;
+  /** Gets the plugin's standard attribute */
+  virtual bool isStandard() const;
   /** Gets the program's arguments */
   virtual QString arguments() const;
   /** Gets the output window */
@@ -67,8 +69,10 @@ public slots:
   virtual void setOutputWindow(const QString &);
   /** Sets the plugin's arguments */
   virtual void setArguments(const QString &);
-  /** Sets the plugin's type */ 
+  /** Sets the plugin's type */
   virtual void setType(const QString &);
+  /** Sets the plugin's standard attribute */
+  virtual void setStandard(bool isStandard);
   /** Sets the location of the plugin */
   virtual void setLocation(const QString &);
   /** Sets the file name of the plugin */
@@ -85,6 +89,8 @@ protected:
   QString m_type;
   QString m_arguments;
   QString m_outputWindow;
+  /** True, if it is not a user added plugin. Special handling code may be necessary for standard plugins. */
+  bool m_standard;
   bool m_isRunning;
 };
 

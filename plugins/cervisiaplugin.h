@@ -1,9 +1,9 @@
 /***************************************************************************
-                          quantacmdplugin.h  -  description
+                          cervisiaplugin.h  -  description
                              -------------------
-    begin                : Wed Sep 18 2002
-    copyright            : (C) 2002 by Marc Britton
-    email                : consume@optushome.com.au
+    begin                : Tue Sep 24 2002
+    copyright            : (C) 2002 by Andras Mantia
+    email                : amantia@freemail.hu
  ***************************************************************************/
 
 /***************************************************************************
@@ -15,43 +15,24 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef QUANTACMDPLUGIN_H
-#define QUANTACMDPLUGIN_H
+#ifndef CERVISIAPLUGIN_H
+#define CERVISIAPLUGIN_H
 
-/* QT INCLUDES */
-#include <qobject.h>
+#include "quantakpartplugin.h"
 
-/* OTHER INCLUDES */
-#include "quantaplugin.h"
-
-/**Quanta plugin for command line programs
-  *@author Marc Britton
+/**A Cervisia specific KPart plugin.
+  *@author Andras Mantia
   */
 
-class KProcess;
-
 class QuantaApp;
-class QWidget;
 
-class QuantaCmdPlugin : public QuantaPlugin
-{
-  Q_OBJECT
+class CervisiaPlugin : public QuantaKPartPlugin  {
 public: 
-	QuantaCmdPlugin(QuantaApp *);
-	~QuantaCmdPlugin();
-protected:
-  bool m_firstOutput;
-  KProcess *m_process;
-  QuantaApp *m_app;
+	CervisiaPlugin(QuantaApp *);
+	~CervisiaPlugin();
 public slots:
-  virtual bool unload();
-  virtual bool load();
   virtual bool run();
-  virtual bool isLoaded() const;
-  /** Does post process cleanup */
-  void cleanupProcess(KProcess *);
-  /** Writes (inserts or appends) process' output */
-  void writeOutput(KProcess *, char *, int);
+  virtual bool unload();
 };
 
 #endif

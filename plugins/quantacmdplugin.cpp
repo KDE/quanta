@@ -15,6 +15,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <cstdio>
+
 /* KDE INCLUDES */
 #include <kprocess.h>
 #include <kstandarddirs.h>
@@ -29,8 +31,8 @@
 #include "quantacmdplugin.h"
 #include "quantaplugin.h"
 #include "../quanta.h"
+#include "../quantacommon.h"
 #include "../messages/messageoutput.h"
-#include <cstdio>
 #include "../quantadoc.h"
 #include "../document.h"
 
@@ -82,7 +84,9 @@ bool QuantaCmdPlugin::load()
   if(loc.isEmpty())
   {
     const char *fn = fileName().latin1();
-    loc = locate("exe", fn);
+    KStandardDirs *dirs = QuantaCommon::pluginDirs("exe");
+    loc = dirs->findResource("exe", fn);
+    delete dirs;
   }
   else
   {

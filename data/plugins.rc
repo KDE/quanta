@@ -1,10 +1,21 @@
-[General]
-Plugins=Kompare
-SearchDirs=
-
-[Kompare]
-FileName=kompare
-Type=Command Line
-Location=
+[CVS management (Cervisia)]
 Arguments=
-outputWindow=Message Window
+FileName=libcervisia.so
+Location=
+OutputWindow=Editor View
+Standard=true
+Standard Name=cervisia_kpart
+Type=KPart
+
+[General]
+Plugins=kompare,CVS management (Cervisia)
+SearchPaths=
+
+[kompare]
+Arguments=
+FileName=kompare
+Location=
+OutputWindow=Message Window
+Standard=false
+Type=Command Line
+

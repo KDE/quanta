@@ -48,13 +48,15 @@ typedef struct QConfig{
           QString defaultDocType;
 
           //environment options
-          QString globalDataDir;
+          QString globalDataDir;         //not stored, initialized on app startup
+          QStringList pluginSearchPaths; //global but read from plugins.rc
 
         }; 
 
 class QuantaApp;
 class QString;
 class KURL;
+class KStandardDirs; 
 
 class QuantaCommon {
 public: 
@@ -94,6 +96,10 @@ public:
   /** Check if plugin is available or not. */
   static bool pluginAvailable(const QString& name);
 #endif
+  /** Returns a pointer to a KStandardDirs object usable for plugin searchup. type is the plugin binary type (exe or lib). The returned 
+pointer must be deleted by the caller!! */
+  static KStandardDirs* pluginDirs(const char *type);
+
 
 public: // Public attributes
   /**  */

@@ -73,7 +73,6 @@ protected:
   QuantaApp *m_app;    
   QDict<QuantaPlugin> m_plugins;
   QStringList m_pluginNames;
-  QStringList m_searchPaths;
 };
 
 #endif

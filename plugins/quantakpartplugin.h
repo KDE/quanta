@@ -37,11 +37,11 @@ class QuantaKPartPlugin : public QuantaPlugin
 public: 
   QuantaKPartPlugin(QuantaApp *);
   ~QuantaKPartPlugin();
-  bool isLoaded() const;
 public slots:
-  bool load();
-  bool run();
-  bool unload();
+  virtual bool load();
+  virtual bool run();
+  virtual bool unload();
+  virtual bool isLoaded() const;
 protected:
   QuantaApp *m_app;
   KParts::ReadOnlyPart *m_part;

@@ -33,6 +33,7 @@
 #include "quantaplugininterface.h"
 #include "quantaplugin.h"
 #include "../quanta.h"
+#include "../quantacommon.h"
 
 QuantaKPartPlugin::QuantaKPartPlugin(QuantaApp *a_app)
   : QuantaPlugin(), m_app(a_app), m_part(0)
@@ -57,7 +58,10 @@ bool QuantaKPartPlugin::load()
   QString loc = location();
   if(loc.isEmpty())
   {
-    loc = locate("lib", fileName());
+    const char *fn = fileName().latin1();
+    KStandardDirs *dirs = QuantaCommon::pluginDirs("lib");
+    loc = dirs->findResource("lib", fileName());
+    delete dirs;
   }
   else
   {

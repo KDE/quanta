@@ -29,6 +29,8 @@
 #include "quantaplugininterface.h"
 #include "quantakpartplugin.h"
 #include "quantacmdplugin.h"
+#include "cervisiaplugin.h"
+#include "../resource.h"
 #include "../quanta.h"
 
 QuantaPluginInterface::QuantaPluginInterface(QuantaApp *a_app)
@@ -73,16 +75,27 @@ void QuantaPluginInterface::readConfig()
 
     QuantaPlugin *newPlugin = 0;
     QString pluginType = config->readEntry("Type", "Command Line");
-    if(pluginType == "KPart")
-      newPlugin = new QuantaKPartPlugin(m_app);
-    else if(pluginType == "Command Line")
-      newPlugin = new QuantaCmdPlugin(m_app);
-    else
+    bool isStandard = config->readBoolEntry("Standard",false);
+    if (isStandard)
+    {
+      QString stdName = config->readEntry("Standard Name");
+      if (stdName == "cervisia_kpart")
+      {
+        newPlugin = new CervisiaPlugin(m_app);
+      }
+    } else
+    {
+      if(pluginType == "KPart")
+        newPlugin = new QuantaKPartPlugin(m_app);
+      else if(pluginType == "Command Line")
+        newPlugin = new QuantaCmdPlugin(m_app);
+    }
+    if (!newPlugin)
     {
       qWarning("Unknown plugin type: %s", pluginType.latin1());
       continue;
     }
-    
+    newPlugin->setStandard(isStandard);
     newPlugin->setPluginName(*it);
     newPlugin->setFileName(config->readEntry("FileName"));
     newPlugin->setLocation(config->readEntry("Location"));
@@ -119,6 +132,7 @@ void QuantaPluginInterface::writeConfig()
       config->writeEntry("Location", curPlugin->location());
       config->writeEntry("Arguments", curPlugin->arguments());
       config->writeEntry("OutputWindow", curPlugin->outputWindow());
+      config->writeEntry("Standard", curPlugin->isStandard());
     }    
   }
   config->sync();
@@ -170,13 +184,13 @@ QStringList QuantaPluginInterface::pluginNames() const
 /** Sets the search paths */
 void QuantaPluginInterface::setSearchPaths(QStringList a_searchPaths)
 {
-  m_searchPaths = a_searchPaths;
+  qConfig.pluginSearchPaths = a_searchPaths;
 }
 
 /** Gets the search paths */
 QStringList QuantaPluginInterface::searchPaths()
 {
-  return m_searchPaths;
+  return qConfig.pluginSearchPaths;
 }
 
 QStringList QuantaPluginInterface::pluginTypes()

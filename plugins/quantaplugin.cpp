@@ -25,6 +25,7 @@
 
 /* OTHER INCLUDES */
 #include "quantaplugin.h"
+#include "../resource.h"
 
 QuantaPlugin::QuantaPlugin()
  : m_isRunning(false)
@@ -141,6 +142,7 @@ bool QuantaPlugin::validatePlugin(QuantaPlugin *a_plugin)
 bool QuantaPlugin::validatePluginInfo(const QString &a_name, const QString &a_type,
     const QString &a_location, const QString &a_fileName, const QString &a_arguments, const QString &a_outputWindow)
 {
+  bool valid = true;
   // look the file up if location is null
   if(!a_location.isEmpty())
   {
@@ -148,7 +150,7 @@ bool QuantaPlugin::validatePluginInfo(const QString &a_name, const QString &a_ty
 
     QFileInfo pluginFile(path);
     if(!pluginFile.exists())
-      return FALSE;
+      valid = false;
       /* TODO : What other tests should we perform? Permissions etc? */
   }
   else
@@ -162,13 +164,18 @@ bool QuantaPlugin::validatePluginInfo(const QString &a_name, const QString &a_ty
     else
     {
       qWarning("QuantaPlugin::validatePluginInfo - Tried to lookup invalid plugin type \'%s\'", a_type.latin1());
-      return FALSE;
+      valid = false;  
     }
 
-    if(locate(lookupType, a_fileName) == QString::null)
-      return FALSE;
+    if (valid)
+    {
+      KStandardDirs *dirs = QuantaCommon::pluginDirs(lookupType);
+      if(dirs->findResource(lookupType, a_fileName) == QString::null)
+        valid = false;
+      delete dirs;         
+    }
   }
-  return TRUE; // past all tests, valid
+  return valid; // past all tests, valid
 }
 
 /** Returns whether the plugin is loaded or not */
@@ -191,3 +198,16 @@ void QuantaPlugin::setRunning(bool a_enable)
 {
   m_isRunning = a_enable;
 }
+
+/** Sets the plugin's standard attribute */
+void QuantaPlugin::setStandard(bool isStandard)
+{
+  m_standard = isStandard;
+}
+
+/** Gets the plugin's standard attribute */
+bool QuantaPlugin::isStandard() const
+{
+  return m_standard;
+}
+

@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>545</width>
-            <height>253</height>
+            <height>290</height>
         </rect>
     </property>
     <property name="caption">
@@ -152,6 +152,9 @@
                                     <property name="name">
                                         <cstring>pluginName</cstring>
                                     </property>
+                                    <property name="toolTip" stdset="0">
+                                        <string>The plugin name as it appears in the Plugins menu.</string>
+                                    </property>
                                 </widget>
                                 <widget class="QLayoutWidget">
                                     <property name="name">
@@ -168,7 +171,7 @@
                                             <number>6</number>
                                         </property>
                                         <spacer>
-                                            <property name="name">
+                                            <property name="name" stdset="0">
                                                 <cstring>Spacer9</cstring>
                                             </property>
                                             <property name="orientation">
@@ -179,8 +182,8 @@
                                             </property>
                                             <property name="sizeHint">
                                                 <size>
-                                                    <width>30</width>
-                                                    <height>0</height>
+                                                    <width>20</width>
+                                                    <height>20</height>
                                                 </size>
                                             </property>
                                         </spacer>
@@ -217,6 +220,9 @@
                                             <property name="name">
                                                 <cstring>location</cstring>
                                             </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>The exact location of the plugin. If not set the global search paths setting is used.</string>
+                                            </property>
                                         </widget>
                                         <widget class="QPushButton">
                                             <property name="name">
@@ -237,6 +243,9 @@
                                 <widget class="QLineEdit">
                                     <property name="name">
                                         <cstring>pluginFileName</cstring>
+                                    </property>
+                                    <property name="toolTip" stdset="0">
+                                        <string>The plugin executable or library name (with extension).</string>
                                     </property>
                                 </widget>
                                 <widget class="QLineEdit">
@@ -259,7 +268,7 @@
                                             <number>6</number>
                                         </property>
                                         <spacer>
-                                            <property name="name">
+                                            <property name="name" stdset="0">
                                                 <cstring>Spacer8</cstring>
                                             </property>
                                             <property name="orientation">
@@ -270,8 +279,8 @@
                                             </property>
                                             <property name="sizeHint">
                                                 <size>
-                                                    <width>130</width>
-                                                    <height>0</height>
+                                                    <width>20</width>
+                                                    <height>20</height>
                                                 </size>
                                             </property>
                                         </spacer>
@@ -322,7 +331,7 @@
                     </property>
                 </widget>
                 <spacer>
-                    <property name="name">
+                    <property name="name" stdset="0">
                         <cstring>Spacer10</cstring>
                     </property>
                     <property name="orientation">
@@ -333,8 +342,8 @@
                     </property>
                     <property name="sizeHint">
                         <size>
-                            <width>270</width>
-                            <height>0</height>
+                            <width>20</width>
+                            <height>20</height>
                         </size>
                     </property>
                 </spacer>

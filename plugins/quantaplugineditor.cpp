@@ -120,7 +120,7 @@ void QuantaPluginEditor::addSearchPath()
   QString appendDir = KFileDialog::getExistingDirectory(QString::null, 0, i18n("Select Directory"));
   if(appendDir != QString::null)
   {
-   searchPaths->setText(searchPaths->text()+appendDir+";"); 
+   searchPaths->setText(searchPaths->text()+appendDir+":"); 
   }
 }
 
@@ -240,7 +240,7 @@ void QuantaPluginEditor::setSearchPaths(const QStringList& paths)
   QString str;
   for (uint i =0; i < paths.count(); i++)
   {
-    str += paths[i] +";";
+    str += paths[i] +":";
   }
   searchPaths->setText(str);
 }
@@ -248,7 +248,7 @@ void QuantaPluginEditor::setSearchPaths(const QStringList& paths)
 QStringList QuantaPluginEditor::searchPathList()
 {
   QString str = searchPaths->text();
-  QStringList paths = QStringList::split(";",str);
+  QStringList paths = QStringList::split(":",str);
   
   return paths;
 }

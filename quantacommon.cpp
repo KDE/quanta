@@ -22,6 +22,7 @@
 //kde includes
 #include <kurl.h>
 #include <kdirwatch.h>
+#include <kstandarddirs.h>
 
 #include "quantacommon.h"
 
@@ -327,3 +328,16 @@ bool QuantaCommon::pluginAvailable(const QString& name)
   return result;
 }
 #endif
+
+/** Returns a pointer to a KStandardDirs object usable for plugin searchup. type is the plugin binary type (exe or lib). The returned 
+pointer must be deleted by the caller!! */
+KStandardDirs* QuantaCommon::pluginDirs(const char *type)
+{
+ KStandardDirs *dirs = new KStandardDirs();
+ dirs->addKDEDefaults();
+ for (uint i = 0; i < qConfig.pluginSearchPaths.count(); i++)
+ {
+   dirs->addResourceDir(type, qConfig.pluginSearchPaths[i]);
+ }
+ return dirs;
+}
