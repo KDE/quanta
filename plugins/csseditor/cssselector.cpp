@@ -35,65 +35,10 @@
 #include "../framewizard/fwglobal.h"
 #include "../../resource.h"
 #include "../../quanta.h"
+#include "encodingselector.h"
 
-CSSSelector::CSSSelector(QString dtd, QWidget *parent, const char* name) : CSSSelectorS (parent,name), currentDocumentDTD(dtd) {
-  
-  lvTags->setAllColumnsShowFocus(true);
-  lvClasses->setAllColumnsShowFocus(true);
-  lvIDs->setAllColumnsShowFocus(true);
-  lvPseudo->setAllColumnsShowFocus(true);
-  lvAtRules->setAllColumnsShowFocus(true);
-  
-  Connect();
-  QString configDir = locate("appdata", "csseditor/config.xml");
-  configDir = QFileInfo(configDir).dirPath() + "/";
+CSSSelector::CSSSelector(QWidget *parent, const char* name) : CSSSelectorS (parent,name) {
 
-  QDomDocument doc;
-  QFile file( configDir+"pseudo.xml" );
-  if ( !file.open( IO_ReadOnly ) )
-    return;
-  if ( !doc.setContent( &file ) ) {
-    file.close();
-    return;
-  }
-  file.close();
-
-  QDomElement docElem = doc.documentElement();
-
-  QDomNode n = docElem.firstChild();
-  while( !n.isNull() ) {
-    QDomElement e = n.toElement();
-    if( !e.isNull() ) {
-      cbPseudo->insertItem(e.attribute("name"));
-    }
-    n = n.nextSibling();
-  }
-
- file.setName( configDir+"atrules.xml" );
-  if ( !file.open( IO_ReadOnly ) )
-    return;
-  if ( !doc.setContent( &file ) ) {
-    file.close();
-    return;
-  }
-  file.close();
- docElem = doc.documentElement();
-
-  n = docElem.firstChild();
-  while( !n.isNull() ) {
-    QDomElement e = n.toElement();
-    if( !e.isNull() ) {
-      cbAtRules->insertItem(e.attribute("name"));
-    }
-    n = n.nextSibling();
-  }
-}
-
-CSSSelector::~CSSSelector(){
-}
-
-void CSSSelector::Connect(){
-    
   connect(pbAddTag,SIGNAL(clicked()), this ,SLOT(addTag()));
   connect(pbAddClass,SIGNAL(clicked()), this ,SLOT(addClass()));
   connect(pbAddID,SIGNAL(clicked()), this ,SLOT(addID()));
@@ -125,24 +70,73 @@ void CSSSelector::Connect(){
   connect(pbRemoveAllIDs,SIGNAL(clicked()), this ,SLOT(removeAll()));
   connect(pbRemoveAllPseudo,SIGNAL(clicked()), this ,SLOT(removeAll()));
   connect(pbRemoveAllAtRules,SIGNAL(clicked()), this ,SLOT(removeAll()));
+
+  m_header = QString::null;
+  m_footer = QString::null;
+
+  QString configDir = locate("appdata", "csseditor/config.xml");
+  configDir = QFileInfo(configDir).dirPath() + "/";
+
+  QDomDocument doc;
+  QFile file( configDir+"pseudo.xml" );
+  if ( !file.open( IO_ReadOnly ) )
+    return;
+  if ( !doc.setContent( &file ) ) {
+    file.close();
+    return;
+  }
+  file.close();
+
+  QDomElement docElem = doc.documentElement();
+
+  QDomNode n = docElem.firstChild();
+  while( !n.isNull() ) {
+    QDomElement e = n.toElement();
+    if( !e.isNull() ) {
+      cbPseudo->insertItem(e.attribute("name"));
+    }
+    n = n.nextSibling();
+  }
+
+  file.setName( configDir+"atrules.xml" );
+  if ( !file.open( IO_ReadOnly ) )
+    return;
+  if ( !doc.setContent( &file ) ) {
+    file.close();
+    return;
+  }
+  file.close();
+
+  docElem = doc.documentElement();
+
+  n = docElem.firstChild();
+  while( !n.isNull() ) {
+    QDomElement e = n.toElement();
+    if( !e.isNull() ) {
+      cbAtRules->insertItem(e.attribute("name"));
+    }
+    n = n.nextSibling();
+  }
+
+
+}
+
+CSSSelector::~CSSSelector(){
 }
 
 void CSSSelector::addTag(){
   QListViewItem *item = new QListViewItem(lvTags);
-  if(!cbTag->currentText().isEmpty())
-    item->setText(0,cbTag->currentText());
+  item->setText(0,cbTag->currentText());
 }
 
 void CSSSelector::addClass(){
   QListViewItem *item = new QListViewItem(lvClasses);
-  if(!leClass->text().isEmpty())
-    item->setText(0,leClass->text());
+  item->setText(0,leClass->text());
 }
 
 void CSSSelector::addID(){
   QListViewItem *item = new QListViewItem(lvIDs);
-  if(!leID->text().isEmpty())
-    item->setText(0,leID->text());
+  item->setText(0,leID->text());
 }
 
 void CSSSelector::addPseudo(){
@@ -237,8 +231,7 @@ void CSSSelector::removeSelected(){
 }
 
 void CSSSelector::loadExistingStyleSection(QString s){
-  s.remove("\n");
-  s.remove("\t");
+ 
   uint lf,rt;
   while(true){
    lf=s.find("/*",0);
@@ -246,13 +239,14 @@ void CSSSelector::loadExistingStyleSection(QString s){
    if(s.contains("/*") == 0 || s.contains("*/") == 0 ) break;
    s.remove(lf,rt+2-lf);
   }
-  
-  int  atPos=s.find("@");
 
-  QString tempStr,
-               atRuleType;
+  int  atPos=s.contains("@");
 
-  while(atPos >=0 ){
+  QString tempStr=QString::null;
+
+  QString atRuleType(QString::null);
+
+  while(atPos){
     int openParePos=s.find("{",atPos);
     if(openParePos>=0){
       if(s.mid(atPos,openParePos-atPos).contains(";")){
@@ -298,8 +292,7 @@ void CSSSelector::loadExistingStyleSection(QString s){
     else{
       int SCPos=s.find(";",atPos);
       if(SCPos){
-        tempStr=s.mid(atPos,SCPos-atPos);
-        s.remove(tempStr+";");
+        tempStr=s.mid(atPos,SCPos-atPos).simplifyWhiteSpace();
         tempStr.remove("\n");
         tempStr.remove("\t");
         QListViewItem *item;
@@ -307,16 +300,18 @@ void CSSSelector::loadExistingStyleSection(QString s){
         item->setText(0,tempStr.left( tempStr.find(" ") ) );
         tempStr.remove(0,tempStr.find(" ") );
         item->setText(1,tempStr);
+        s.remove(atPos,SCPos-atPos+1);
       }
       else{
         break;
       }
     }
-    atPos=s.find("@");
+    atPos=s.contains("@");
   }
 
   QMap<QString,QString> styleTagEntities;
-    QStringList temp = QStringList::split("}",s.stripWhiteSpace());  
+    QStringList temp = QStringList::split("}",s);
+    temp.pop_back();// the last element of the list is empty
     for ( QStringList::Iterator it = temp.begin(); it != temp.end(); ++it ) {
       (*it).remove("\n");
       (*it).remove("\t");
@@ -326,16 +321,16 @@ void CSSSelector::loadExistingStyleSection(QString s){
   QMap<QString,QString>::Iterator it;
   for ( it = styleTagEntities.begin(); it != styleTagEntities.end(); ++it ) {
     QListViewItem *item;
-    if(it.key().contains(":")){
-      item = new QListViewItem(lvPseudo);
-    }
-    else
-    if(it.key().contains("#")){
+    if(it.key().startsWith("#")){
       item = new QListViewItem(lvIDs);
     }
     else
-    if(it.key().contains(".")){
-      item = new QListViewItem(lvClasses); 
+    if(it.key().startsWith(".")){
+      item = new QListViewItem(lvClasses);
+    }
+    else
+    if(it.key().contains(":")){
+      item = new QListViewItem(lvPseudo);
     }
     else {
       item = new QListViewItem(lvTags);
@@ -390,6 +385,25 @@ QString CSSSelector::generateStyleSection(){
   return QString("\n\t")+styleSection;
 }
 
+void CSSSelector::openAtRulesEditor(QListViewItem *i){
+  if(i->text(0) == "@import") {
+    QFileDialog* fd = new QFileDialog( this, "file dialog", TRUE );
+    fd->setFilter( i18n("Cascading Stylesheet File")+" (*.css)" );
+    fd->setMode(QFileDialog::ExistingFile);
+    if( fd->exec() == QDialog::Accepted ){
+      i->setText(1,relativize( fd->selectedFile(), quantaApp->projectBaseURL().path() ));
+    }
+    delete fd;  
+  }
+  
+  if(i->text(0) == "@charset") {
+    encodingSelector* fd = new encodingSelector( this);
+    if( fd->exec() == QDialog::Accepted ){
+      i->setText(1,fd->encodingSet() );
+    }
+    delete fd;  
+  }
+}
 
 
 

@@ -46,47 +46,55 @@ class timeEditor;
   */
 
 class multipleSpinBox : public QHBox{
-   Q_OBJECT
-
-   private:
-     QPtrList<QSpinBox> SBList;
+  Q_OBJECT
+   
+  private:
+    QPtrList<QSpinBox> SBList;
      
-   public:
-      multipleSpinBox(QWidget *parent, const char* name=0, int n=2);
-     ~multipleSpinBox();
-      QSpinBox* getSpinBox(unsigned int i) { return SBList.at(i); }
-      void setSuffix(const QString&);
-   public slots:
-     void valueChangedSlot(const QString&);   
-   signals:
-     void valueChanged(const QString&);    
+  public:
+    multipleSpinBox(QWidget *parent, const char* name=0, int n=2);
+    ~multipleSpinBox();
+    QSpinBox* getSpinBox(unsigned int i) { return SBList.at(i); }
+    void setSuffix(const QString&);
+    
+  public slots:
+    void valueChangedSlot(const QString&);   
+  
+  signals:
+    void valueChanged(const QString&);    
 };
 
  
-enum mode{ multi, single };
+//enum mode{ multi, single };
+//enum URIResourceType{ audio, image, mousePointer };
     
 class URIEditor : public QHBox {
   Q_OBJECT
-
-   private:
-     QStringList sFiles;
-     QLineEdit *le;
-     QLabel *label;
-     KPushButton *pb;
-
-     mode Mode;
+  public:
+    enum mode{ multi, single };
+    enum URIResourceType{ audio, image, mousePointer };
+      
+  private:
+    QStringList m_sFiles;
+    QLineEdit *m_le;
+    QLabel *m_label;
+    KPushButton *m_pb;
+    mode m_Mode;
+    URIResourceType m_resourceType;
      
-   public:
-     URIEditor(QWidget *parent, const char* name=0);
-     ~URIEditor();
-     KPushButton * button() const { return pb;}
-     void setMode(const mode& m) { Mode = m ; }
+  public:
+    URIEditor(QWidget *parent, const char* name=0);
+    ~URIEditor();
+    KPushButton * button() const { return m_pb;}
+    void setMode(const mode& m) { m_Mode = m ; }
+    void setResourceType(const  URIResourceType& r) { m_resourceType = r ; }
      
-   public slots:
-     void URI(const QString&);
-     void openFileDialog();
-   signals:
-     void valueChanged(const QString&);   
+  public slots:
+    void URI(const QString&);
+    void openFileDialog();
+     
+  signals:
+    void valueChanged(const QString&);   
 };
    
 class percentageEditor : public QHBox  {
@@ -103,47 +111,47 @@ class percentageEditor : public QHBox  {
 
 
 class propertySetter : public QHBox  {
-   Q_OBJECT
-   private:
-     unsigned int ind;
-     QPtrList<QWidget> list;
-     QComboBox *cb;
-     QLineEdit *le;
-     QSpinBox  *sb;
-     lengthEditor *lE;
-     doubleLengthEditor *dlE;
-     doublePercentageEditor *dpe;
-     doubleComboBoxEditor *dcbe;
-     percentageEditor *pe;
-     URIEditor *ue;
-     frequencyEditor *fe;
-     timeEditor *te;
-     angleEditor *ae;
-     colorRequester *cr;
-     KPushButton *pb;     
-   public:
-           propertySetter(QWidget *parent=0, const char *name=0);
-           ~propertySetter();
-     void setComboBox();
-     void setSpinBox(const QString& min="0", const QString& max="9999", const QString& s=QString::null);
-     void setLineEdit();
-     void setLengthEditor();
-     void setDoubleLengthEditor();
-     void setDoublePercentageEditor();
-     void setDoubleComboBoxEditor();
-     void setPercentageEditor();
-     void setURIEditor();
-     void setFrequencyEditor();
-     void setTimeEditor();
-     void setAngleEditor();
-     void setColorRequester();
- 
-     void reset();
-
-     void addButton();
-     QComboBox* getComboBox() const { return cb; }
-     doubleComboBoxEditor* getDoubleComboBoxEditor() const { return dcbe; }
-     URIEditor* getURIEditor() const { return ue; }
+  Q_OBJECT
+      
+  private:
+    unsigned int m_ind;
+    QPtrList<QWidget> m_list;
+    QComboBox *m_cb;
+    QLineEdit *m_le;
+    QSpinBox  *m_sb;
+    lengthEditor *m_lE;
+    doubleLengthEditor *m_dlE;
+    doublePercentageEditor *m_dpe;
+    doubleComboBoxEditor *m_dcbe;
+    percentageEditor *m_pe;
+    URIEditor *m_ue;
+    frequencyEditor *m_fe;
+    timeEditor *m_te;
+    angleEditor *m_ae;
+    colorRequester *m_cr;
+    KPushButton *m_pb;  
+        
+  public:
+    propertySetter(QWidget *parent=0, const char *name=0);
+    ~propertySetter();
+    void setComboBox();
+    void setSpinBox(const QString& min="0", const QString& max="9999", const QString& s=QString::null);
+    void setLineEdit();
+    void setLengthEditor();
+    void setDoubleLengthEditor();
+    void setDoublePercentageEditor();
+    void setDoubleComboBoxEditor();
+    void setPercentageEditor();
+    void setUriEditor();
+    void setFrequencyEditor();
+    void setTimeEditor();
+    void setAngleEditor();
+    void setColorRequester();
+    void reset();
+    void addButton();
+    QComboBox* ComboBox() const { return m_cb; }
+    doubleComboBoxEditor* DoubleComboBoxEditor() const { return m_dcbe; }
+    URIEditor* UriEditor() const { return m_ue; }
      
   public slots:
     void Show();  

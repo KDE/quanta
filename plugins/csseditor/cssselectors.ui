@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>621</width>
-            <height>482</height>
+            <height>484</height>
         </rect>
     </property>
     <property name="caption">
@@ -529,7 +529,7 @@
                         </column>
                         <column>
                             <property name="text">
-                                <string>Properties</string>
+                                <string>Declarations</string>
                             </property>
                             <property name="clickable">
                                 <bool>true</bool>

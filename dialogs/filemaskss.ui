@@ -17,8 +17,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>536</width>
-            <height>394</height>
+            <width>554</width>
+            <height>523</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -222,8 +222,11 @@
             <property name="text">
                 <string>S&amp;how splashscreen on startup</string>
             </property>
+            <property name="accel">
+                <string>Alt+H</string>
+            </property>
         </widget>
-        <spacer row="8" column="0">
+        <spacer row="10" column="0">
             <property name="name">
                 <cstring>spacer2</cstring>
             </property>
@@ -236,11 +239,22 @@
             <property name="sizeHint">
                 <size>
                     <width>20</width>
-                    <height>25</height>
+                    <height>30</height>
                 </size>
             </property>
         </spacer>
-        <widget class="QLayoutWidget" row="7" column="0">
+        <widget class="QCheckBox" row="8" column="0">
+            <property name="name">
+                <cstring>showCloseButton</cstring>
+            </property>
+            <property name="text">
+                <string>Show close &amp;button on the tabs</string>
+            </property>
+            <property name="accel">
+                <string>Alt+B</string>
+            </property>
+        </widget>
+        <widget class="QLayoutWidget" row="9" column="0">
             <property name="name">
                 <cstring>layout2</cstring>
             </property>
@@ -280,12 +294,26 @@
                 </widget>
             </hbox>
         </widget>
-        <widget class="QCheckBox" row="6" column="0">
+        <widget class="QCheckBox" row="6" column="0" rowspan="1" colspan="2">
             <property name="name">
-                <cstring>showCloseButton</cstring>
+                <cstring>reloadProject</cstring>
             </property>
             <property name="text">
-                <string>Show close &amp;button on the tabs</string>
+                <string>&amp;Load last opened project on startup</string>
+            </property>
+            <property name="accel">
+                <string>Alt+L</string>
+            </property>
+        </widget>
+        <widget class="QCheckBox" row="7" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>reloadFiles</cstring>
+            </property>
+            <property name="text">
+                <string>L&amp;oad last opened files on startup</string>
+            </property>
+            <property name="accel">
+                <string>Alt+O</string>
             </property>
         </widget>
     </grid>

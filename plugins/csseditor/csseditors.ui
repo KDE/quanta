@@ -253,7 +253,7 @@
                             <cstring>SHckb</cstring>
                         </property>
                         <property name="text">
-                            <string></string>
+                            <string>Use shorthand form</string>
                         </property>
                         <property name="checked">
                             <bool>true</bool>

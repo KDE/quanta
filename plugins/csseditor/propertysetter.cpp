@@ -31,243 +31,226 @@
 #include "colorrequester.h"
 #include "specialsb.h"
 #include "csseditor_globals.h"
+#include <klocale.h>
 
-#define QT_CHECK_NULL
+#include "../framewizard/fwglobal.h"
+#include "../../resource.h"
+#include "../../quanta.h"
 
 
 propertySetter::propertySetter(QWidget *parent, const char *name ) : QHBox(parent,name) {
-  ind = 0;
-  cb = 0L;
-  le = 0L;
-  sb = 0L;
-  lE = 0L;
-  dlE = 0L;
-  dpe = 0L;
-  dcbe = 0L;
-  pe = 0L;
-  ue = 0L;
-  fe = 0L;
-  te = 0L;
-  ae = 0L;
-  cr = 0L;
-  pb = 0L;
-  list.setAutoDelete(true);
+  m_ind = 0;
+  m_cb = 0L;
+  m_le = 0L;
+  m_sb = 0L;
+  m_lE = 0L;
+  m_dlE = 0L;
+  m_dpe = 0L;
+  m_dcbe = 0L;
+  m_pe = 0L;
+  m_ue = 0L;
+  m_fe = 0L;
+  m_te = 0L;
+  m_ae = 0L;
+  m_cr = 0L;
+  m_pb = 0L;
+  m_list.setAutoDelete(true);
   setSpacing( KDialog::spacingHint() );
-
 }
+
 propertySetter::~propertySetter(){
   reset();
 }
 
 void propertySetter::reset(){
-  if(!list.isEmpty())
-    list.clear();
-
-  if(pb) {
-    delete pb;
-    pb=0;
+  if(!m_list.isEmpty())
+    m_list.clear();
+  if(m_pb) {
+    delete m_pb;
+    m_pb=0L;
    }
-
-  ind=0;
-
+  m_ind=0;
 }
 
 void propertySetter::setComboBox()
 {
-  cb = new QComboBox(this);
-  Q_CHECK_PTR( cb );
-  connect(cb, SIGNAL(activated(const QString&)), this, SIGNAL(valueChanged(const QString&)));
-  list.append(cb);
+  m_cb = new QComboBox(this);
+  connect(m_cb, SIGNAL(activated(const QString&)), this, SIGNAL(valueChanged(const QString&)));
+  m_list.append(m_cb);
 }
 
 void propertySetter::setSpinBox(const QString& min, const QString& max, const QString& s)
 {
-  sb = new QSpinBox(min.toInt(), max.toInt(), 1, this);
-  Q_CHECK_PTR( sb );
-  sb->setSuffix(s);
-  sb->setValue(0);
-  connect(sb, SIGNAL(valueChanged(const QString&)), this ,SIGNAL(valueChanged(const QString&)));
-  list.append(sb);
+  m_sb = new QSpinBox(min.toInt(), max.toInt(), 1, this);
+  m_sb->setSuffix(s);
+  m_sb->setValue(0);
+  connect(m_sb, SIGNAL(valueChanged(const QString&)), this ,SIGNAL(valueChanged(const QString&)));
+  m_list.append(m_sb);
 }
 
 void propertySetter::setLineEdit()
 {
-  le = new QLineEdit(this);
-  Q_CHECK_PTR( le );
-  connect(le,SIGNAL(textChanged ( const QString & )), this, SIGNAL(valueChanged ( const QString & )));
-  list.append(le);
+  m_le = new QLineEdit(this);
+  connect(m_le,SIGNAL(textChanged ( const QString & )), this, SIGNAL(valueChanged ( const QString & )));
+  m_list.append(m_le);
 }
 
 void propertySetter::setLengthEditor(){
-  lE = new lengthEditor(this);
-  Q_CHECK_PTR( lE );
-  connect(lE, SIGNAL(valueChanged(const QString&)), this ,SIGNAL(valueChanged(const QString&)));
-  list.append(lE);
+  m_lE = new lengthEditor(this);
+  connect(m_lE, SIGNAL(valueChanged(const QString&)), this ,SIGNAL(valueChanged(const QString&)));
+  m_list.append(m_lE);
 }
 
 void propertySetter::setDoubleLengthEditor(){
-  dlE = new doubleLengthEditor(this);
-  Q_CHECK_PTR( dlE );
-  connect(dlE, SIGNAL(valueChanged(const QString&)), this ,SIGNAL(valueChanged(const QString&)));
-  list.append(dlE);
+  m_dlE = new doubleLengthEditor(this);
+  connect(m_dlE, SIGNAL(valueChanged(const QString&)), this ,SIGNAL(valueChanged(const QString&)));
+  m_list.append(m_dlE);
 }
 
 void propertySetter::setFrequencyEditor(){
-  fe = new frequencyEditor(this);
-  Q_CHECK_PTR( fe );
-  connect(fe, SIGNAL(valueChanged(const QString&)), this ,SIGNAL(valueChanged(const QString&)));
-  list.append(fe);
+  m_fe = new frequencyEditor(this);
+  connect(m_fe, SIGNAL(valueChanged(const QString&)), this ,SIGNAL(valueChanged(const QString&)));
+  m_list.append(m_fe);
 }
 
 void propertySetter::setTimeEditor(){
-  te = new timeEditor(this);
-  Q_CHECK_PTR( te );
-  connect(te, SIGNAL(valueChanged(const QString&)), this ,SIGNAL(valueChanged(const QString&)));
-  list.append(te);
+  m_te = new timeEditor(this);
+  connect(m_te, SIGNAL(valueChanged(const QString&)), this ,SIGNAL(valueChanged(const QString&)));
+  m_list.append(m_te);
 }
 
 void propertySetter::setAngleEditor(){
-  ae = new angleEditor(this);
-  Q_CHECK_PTR( ae );
-  connect(ae, SIGNAL(valueChanged(const QString&)), this ,SIGNAL(valueChanged(const QString&)));
-  list.append(ae);
+  m_ae = new angleEditor(this);
+  connect(m_ae, SIGNAL(valueChanged(const QString&)), this ,SIGNAL(valueChanged(const QString&)));
+  m_list.append(m_ae);
 }
 
-void propertySetter::setURIEditor(){
-  ue = new URIEditor(this);
-  Q_CHECK_PTR( ue );
-  connect(ue, SIGNAL(valueChanged(const QString&)), this ,SIGNAL(valueChanged(const QString&)));
-  list.append(ue);
+void propertySetter::setUriEditor(){
+  m_ue = new URIEditor(this);
+  connect(m_ue, SIGNAL(valueChanged(const QString&)), this ,SIGNAL(valueChanged(const QString&)));
+  m_list.append(m_ue);
 }
 
 void propertySetter::setDoublePercentageEditor()
 {
-  dpe = new doublePercentageEditor(this);
-  Q_CHECK_PTR( dpe );
-  connect(dpe, SIGNAL(valueChanged(const QString&)), this, SIGNAL(valueChanged(const QString&)));
-  list.append(dpe);
+  m_dpe = new doublePercentageEditor(this);
+  connect(m_dpe, SIGNAL(valueChanged(const QString&)), this, SIGNAL(valueChanged(const QString&)));
+  m_list.append(m_dpe);
 }
 
 void propertySetter::setDoubleComboBoxEditor()
 {
-  dcbe = new doubleComboBoxEditor(this);
-  Q_CHECK_PTR( dcbe );
-  connect(dcbe, SIGNAL(valueChanged(const QString&)), this, SIGNAL(valueChanged(const QString&)));
-  list.append(dcbe);
+  m_dcbe = new doubleComboBoxEditor(this);
+  connect(m_dcbe, SIGNAL(valueChanged(const QString&)), this, SIGNAL(valueChanged(const QString&)));
+  m_list.append(m_dcbe);
 }
 
 void propertySetter::setPercentageEditor()
 {
-  pe = new percentageEditor(this);
-  Q_CHECK_PTR( pe );
-  connect(pe, SIGNAL(valueChanged(const QString&)), this, SIGNAL(valueChanged(const QString&)));
-  list.append(pe);
+  m_pe = new percentageEditor(this);
+  connect(m_pe, SIGNAL(valueChanged(const QString&)), this, SIGNAL(valueChanged(const QString&)));
+  m_list.append(m_pe);
 }
 
 void propertySetter::setColorRequester()
 {
-  cr = new colorRequester(this);
-  Q_CHECK_PTR( cr );
-  connect(cr, SIGNAL(textChanged(const QString&)), this, SIGNAL(valueChanged(const QString&)));
-  list.append(cr);
+  m_cr = new colorRequester(this);
+  connect(m_cr, SIGNAL(textChanged(const QString&)), this, SIGNAL(valueChanged(const QString&)));
+  m_list.append(m_cr);
 }
 
 void propertySetter::Show(){
 
   QWidget *w;
-  for ( w = list.first(); w; w = list.next() )  w->hide();
-  list.at(ind)->show();
-  if(list.count() == 1)
+  for ( w = m_list.first(); w; w = m_list.next() )  w->hide();
+  m_list.at(m_ind)->show();
+  if(m_list.count() == 1)
     {
-      if(pb)
-        pb->hide();
+      if(m_pb)
+        m_pb->hide();
     }
-  else  if(ind<list.count()-1)
-          { ind++;
-            pb->show();
+  else  if(m_ind<m_list.count()-1)
+          { m_ind++;
+            m_pb->show();
             }
-  else ind=0;
-
+  else m_ind=0;
 }
 
 void propertySetter::addButton(){
 
-  pb = new KPushButton(this);
+  m_pb = new KPushButton(this);
   //pb->hide();
-  //QString arrow = locate("appdata","csseditor/data/ar.png");
   QIconSet iconSet = SmallIconSet(QString::fromLatin1("2rightarrow"));
   QPixmap pixMap = iconSet.pixmap( QIconSet::Small, QIconSet::Normal );
-
-  pb->setIconSet(iconSet);
-  //QPixmap pixMap(arrow);
-  //pb->setPixmap(pixMap);
-  pb->setFixedSize( pixMap.width()+8, pixMap.height()+8 );
-  pb->hide();
-  connect(pb, SIGNAL(clicked()), this ,SLOT(Show()));
+  m_pb->setIconSet(iconSet);
+  m_pb->setFixedSize( pixMap.width()+8, pixMap.height()+8 );
+  m_pb->hide();
+  connect(m_pb, SIGNAL(clicked()), this ,SLOT(Show()));
 }
 
 URIEditor::URIEditor(QWidget *parent, const char* name) : QHBox(parent,name)
 {
-  Mode = single;
-  label = new QLabel(this);
-  le = new QLineEdit(this);
-  pb = new KPushButton(this);
+  m_Mode = single;
+  m_label = new QLabel(this);
+  m_le = new QLineEdit(this);
+  m_pb = new KPushButton(this);
 
-  label->setText(" Uri :");
+  m_label->setText(" Uri :");
 
   QIconSet iconSet =  SmallIconSet(QString::fromLatin1("fileopen"));
   QPixmap pixMap = iconSet.pixmap( QIconSet::Small, QIconSet::Normal );
 
-  pb->setIconSet(iconSet);
-  pb->setFixedSize( pixMap.width()+8, pixMap.height()+8 );
+  m_pb->setIconSet(iconSet);
+  m_pb->setFixedSize( pixMap.width()+8, pixMap.height()+8 );
   setSpacing( KDialog::spacingHint() );
 
-  if( Mode == single )
-    connect(le, SIGNAL(textChanged ( const QString & )), this, SLOT(URI(const QString&)));
-  connect(pb, SIGNAL(clicked()), this, SLOT(openFileDialog()));
+  if( m_Mode == single )
+    connect(m_le, SIGNAL(textChanged ( const QString & )), this, SLOT(URI(const QString&)));
+  connect(m_pb, SIGNAL(clicked()), this, SLOT(openFileDialog()));
 }
 
 URIEditor::~URIEditor(){
-  if(le) delete le;
-  le = 0;
-  if(pb) delete pb;
-  pb=0;
-
+  delete m_label;
+  delete m_le;
+  delete m_pb;
 }
 
 void URIEditor::URI(const QString & s)
  {
-   emit valueChanged("url(\"" + s + "\")");
+   QString h=relativize( s , quantaApp->projectBaseURL().path() );
+   emit valueChanged("url(\'" + h + "\')");
  }
 
 void URIEditor::openFileDialog(){
   QFileDialog* fd = new QFileDialog( this, "file dialog", TRUE );
-  bool multi=false;
+  switch(m_resourceType) {
+    case image :   fd->setFilter( i18n("Image")+" (*.png *.gif *.jpg)" );break;
+    case audio :  fd->setFilter( i18n("Audio")+" (*.au *.aiff *.wav)" );break;
+    case mousePointer :   fd->setFilter( i18n("Mouse Pointer")+" (*.cur)" );break;
+    default:;
+  }
 
-  if( Mode == single){
-        fd->setMode(QFileDialog::ExistingFile);
-       }
+  bool multi=false;
+  
+  if( m_Mode == single){
+    fd->setMode(QFileDialog::ExistingFile);
+  }
   else {
     fd->setMode(QFileDialog::ExistingFiles);
     multi=true;
+  }
+  
+  if( fd->exec() == QDialog::Accepted ){
+    if( !multi)
+      URI( fd->selectedFile() );
+    else {
+      QStringList selectedFiles = fd->selectedFiles();
+      for ( QStringList::Iterator it = selectedFiles.begin(); it != selectedFiles.end(); ++it ) 
+        m_sFiles.append( "url(\'" + relativize( (*it), quantaApp->projectBaseURL().path() ) + "\')");
+      emit valueChanged(m_sFiles.join(","));
     }
-
-  if( fd->exec() == QDialog::Accepted )
-    {
-      if( !multi){
-        emit valueChanged("url(\"" + fd->selectedFile() + "\")");
-      }
-      else {
-        QStringList selectedFiles = fd->selectedFiles();
-
-        for ( QStringList::Iterator it = selectedFiles.begin(); it != selectedFiles.end(); ++it ) {
-          sFiles.append("url(\"" + *it + "\")") ;
-        }
-        emit valueChanged(sFiles.join(","));
-
-       }
-     }
-   delete fd;
+  }
+  delete fd;
 }
 
 percentageEditor::percentageEditor(QWidget *parent, const char *name) : QHBox(parent,name)
@@ -280,14 +263,8 @@ percentageEditor::percentageEditor(QWidget *parent, const char *name) : QHBox(pa
 
 percentageEditor::~percentageEditor()
 {
-  if(sb) delete sb;
-  sb=0;
+  delete sb;
 }
-
-/*comboBoxEditor::comboBoxEditor(QWidget *parent, const char* name) : QHbox(parent,name){
-  cb = new QComboBox(this);
-}
-comboBoxEditor::~comboBoxEditor();  */
 
 multipleSpinBox::multipleSpinBox(QWidget *parent, const char* name, int n) : QHBox(parent,name){
   SBList.setAutoDelete(true);
@@ -304,19 +281,15 @@ multipleSpinBox::~multipleSpinBox(){
 }
 
 void multipleSpinBox::setSuffix(const QString& s){
-   QSpinBox *sb;
-    for ( sb = SBList.first(); sb; sb = SBList.next() )
-      sb->setSuffix(s);
+  QSpinBox *sb;
+  for ( sb = SBList.first(); sb; sb = SBList.next() )
+    sb->setSuffix(s);
 }
 
 void multipleSpinBox::valueChangedSlot(const QString& s) {
   QSpinBox *sb;
-    for ( sb = SBList.first(); sb; sb = SBList.next() )
-
-emit valueChanged(s);
+  for ( sb = SBList.first(); sb; sb = SBList.next() )
+    emit valueChanged(s);
 }
-
-
-
 
 #include "propertysetter.moc"
