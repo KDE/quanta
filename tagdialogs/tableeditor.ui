@@ -696,7 +696,7 @@
     <forward>struct DTDStruct</forward>
     <forward>class Document</forward>
     <forward>class Node</forward>
-    <forward>typedef struct TableNode {   Node *node;   bool isFromDocument;  bool merged; int mergedRow; int mergedCol; }  </forward>
+    <forward>typedef struct TableNode {   Node *node; bool merged; int mergedRow; int mergedCol; }  </forward>
 </forwards>
 <variables>
     <variable>int m_unmergeCellsId;</variable>
