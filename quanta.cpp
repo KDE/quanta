@@ -1286,7 +1286,23 @@ void QuantaApp::slotShowPreviewWidget(bool show)
 
 void QuantaApp::slotShowPreview()
 {
-  if (!m_view->writeExists()) return;
+  QWidgetStack *s = widgetStackOfHtmlPart();
+  if (!s)
+  {
+    showPreviewAction->setChecked(!showPreviewAction->isChecked());
+    return;
+  }
+  int id = s->id(s->visibleWidget());
+  if (id == 2)
+  {
+    showPreviewAction->setChecked(!showPreviewAction->isChecked());
+    return;
+  }
+  if (!m_view->writeExists())
+  {
+    showPreviewAction->setChecked(!showPreviewAction->isChecked());
+    return;
+  }
   Document *w = m_view->write();
 
   if (showPreviewAction->isChecked())
