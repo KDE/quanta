@@ -2015,17 +2015,24 @@ void QuantaApp::processDTD(QString documentType)
    if (!foundName.isEmpty())   //!DOCTYPE found in file
    {
     DTDSelectDialog *dlg = new DTDSelectDialog(this);
+    QStringList lst;
     QDictIterator<DTDStruct> it(*dtds);
     for( ; it.current(); ++it )
     {
       if (it.current()->family == Xml)
       {
-        dlg->dtdCombo->insertItem(it.current()->nickName);
-        if (it.current()->name == foundName)
-        {
-          w->setDTDIdentifier(foundName);
-          found =true;
-        }
+        lst << it.current()->nickName;
+      }
+    }
+    lst.sort();
+    QString foundNickName = QuantaCommon::getDTDNickNameFromName(foundName);
+    for (uint i = 0; i < lst.count(); i++)
+    {
+      dlg->dtdCombo->insertItem(lst[i]);
+      if (lst[i] == foundNickName)
+      {
+        w->setDTDIdentifier(foundName);
+        found =true;
       }
     }
 
@@ -2082,7 +2089,6 @@ void QuantaApp::slotToolsChangeDTD()
 {
   DTDSelectDialog *dlg = new DTDSelectDialog(this);
   Document *w = view->write();
-  int i=0;
   int pos = -1;
   int defaultIndex = 0;
   
@@ -2091,15 +2097,23 @@ void QuantaApp::slotToolsChangeDTD()
   QString oldDtdName = w->getDTDIdentifier();
   QString defaultDocType = project->defaultDTD();
   QDictIterator<DTDStruct> it(*dtds);
-  for( ; it.current(); ++it )
+  QStringList lst;
+  for (; it.current(); ++it)
   {
     if (it.current()->family == Xml)
     {
-      dlg->dtdCombo->insertItem(it.current()->nickName);
-      if (it.current()->name == oldDtdName) pos = i;
-      if (it.current()->name == defaultDocType) defaultIndex = i;
-      i++;
+      lst << it.current()->nickName;
     }
+  }
+  lst.sort();
+
+  QString oldDtdNickName = QuantaCommon::getDTDNickNameFromName(oldDtdName);
+  QString defaultDtdNickName = QuantaCommon::getDTDNickNameFromName(defaultDocType);
+  for(uint i = 0; i < lst.count(); i++)
+  {
+    dlg->dtdCombo->insertItem(lst[i]);
+    if (lst[i] == oldDtdNickName) pos = i;
+    if (lst[i] == defaultDtdNickName) defaultIndex = i;
   }
   if (pos == -1) pos = defaultIndex;
   dlg->dtdCombo->setCurrentItem(pos);
@@ -2441,7 +2455,7 @@ void QuantaApp::slotEmailDTD()
     if (it.current()->name == w->getDTDIdentifier()) current = i;
     i++;
   }
-
+  lst.sort();
   bool ok = FALSE;
   QString res = QInputDialog::getItem(
                   i18n( "Send DTD" ),
