@@ -68,7 +68,7 @@
 #include "qextfileinfo.h"
 #include "resource.h"
 #include "templatestreeview.h"
-#include "phpdebuggerinterface.h"
+#include "debuggermanager.h"
 
 #include "project.h"
 //#include "dtds.h"
@@ -197,7 +197,7 @@ void QuantaDoc::slotOpeningCompleted()
   quantaApp->processDTD();
   quantaApp->reparse(true);
 
-  quantaApp->debugger()->fileOpened(w->url());
+  quantaApp->debugger()->fileOpened(w->url().prettyURL(0, KURL::StripFileProtocol));
   quantaApp->slotNewStatus();
 #if KDE_IS_VERSION(3,1,90)
    disconnect(w->doc(), SIGNAL(completed()), this, SLOT(slotOpeningCompleted()));

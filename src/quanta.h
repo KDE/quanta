@@ -81,7 +81,7 @@ class GrepDialog;
 class MessageOutput;
 class QDomDocument;
 class Document;
-class PHPDebuggerInterface;
+class DebuggerManager;
 class QuantaInit;
 class KToolBarPopupAction;
 class KTempFile;
@@ -127,7 +127,7 @@ public:
   MessageOutput *messageOutput() const {return m_messageOutput;}
   MessageOutput *problemOutput() const {return m_problemOutput;}
 
-  PHPDebuggerInterface *debugger() const {return m_debugger;}
+  DebuggerManager *debugger() const {return m_debugger;}
   KParts::PartManager *partManager() {return m_partManager;}
 
   QWidget* createContainer(QWidget *parent, int index, const QDomElement &element, int &id );
@@ -403,11 +403,6 @@ protected slots:
 //Tools
   void slotSpellcheck ();
 
-  //Breakpoint
-  void debugToggleBreakpoint();
-  void debugClearBreakpoints();
-  void debugGotoBreakpoint (KTextEditor::Mark *mark);
-
   void slotShowSourceEditor();
   void slotShowVPLAndSourceEditor();
   void slotShowVPLOnly();
@@ -451,7 +446,7 @@ private:
   KMdiToolViewAccessor* m_documentationToolView;
 
   // Debugger
-  PHPDebuggerInterface *m_debugger;
+  DebuggerManager *m_debugger;
 
   QuantaPluginInterface *m_pluginInterface;
 

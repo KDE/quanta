@@ -151,7 +151,7 @@
 #include "spellchecker.h"
 #include "framewizard.h"
 
-#include "phpdebuggerinterface.h"
+#include "debuggermanager.h"
 
 #include "parser.h"
 #include "dtdparser.h"
@@ -4418,53 +4418,6 @@ Node *QuantaApp::showTagDialogAndReturnNode(const QString &tag, const QString &a
 #endif
 }
 
-void QuantaApp::debugToggleBreakpoint ()
-{
-  Document *w = ViewManager::ref()->activeDocument();
-  if (w)
-  {
-    KTextEditor::MarkInterface *markIf = dynamic_cast<KTextEditor::MarkInterface*>(w->doc());
-    uint line, col;
-    w->viewCursorIf->cursorPositionReal(&line, &col);
-    int mark = markIf->mark(line);
-    if (mark & KTextEditor::MarkInterface::markType02)
-    {
-      if(quantaApp->debugger()->removeBreakpoint(w->url(), line))
-         markIf->removeMark(line, KTextEditor::MarkInterface::markType02);
-    }
-    else
-    {
-      if(quantaApp->debugger()->setBreakpoint(w->url(), line))
-         markIf->addMark(line, KTextEditor::MarkInterface::markType02);
-    }
-  }
-}
-void QuantaApp::debugClearBreakpoints ()
-{
-  Document *w = ViewManager::ref()->activeDocument();
-  if (w)
-  {
-    KTextEditor::Mark* mark;
-    KTextEditor::MarkInterface *markinterface = dynamic_cast<KTextEditor::MarkInterface*>(w->doc());
-    QPtrList<KTextEditor::Mark> marks= dynamic_cast<KTextEditor::MarkInterface*>(w->doc())->marks();
-    for ( mark = marks.first(); mark; mark = marks.next() )
-    {
-      if(quantaApp->debugger()->removeBreakpoint(w->url(), mark->line))
-         markinterface->removeMark(mark->line,  KTextEditor::MarkInterface::markType02);
-    }
-  }
-}
-void QuantaApp::debugGotoBreakpoint (KTextEditor::Mark *mark)
-{
-  Document *w = ViewManager::ref()->activeDocument();
-  if (w)
-  {
-    if (mark->type == KTextEditor::MarkInterface::markType02)
-    {
-      w->viewCursorIf->setCursorPositionReal(mark->line, 0);
-    }
-  }
-}
 
 void QuantaApp::slotShowSourceEditor()
 {

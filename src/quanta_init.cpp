@@ -80,7 +80,7 @@
 #include "qextfileinfo.h"
 
 #include "project.h"
-#include "phpdebuggerinterface.h"
+#include "debuggermanager.h"
 
 #include "wkafkapart.h"
 #include "whtmlpart.h"
@@ -156,7 +156,7 @@ void QuantaInit::initQuanta()
   initActions();
 
   // Initialize debugger
-  m_quanta->m_debugger = new PHPDebuggerInterface();
+  m_quanta->m_debugger = new DebuggerManager(m_quanta);
 
   DTDs::ref();  // create the class, must be before readOptions() !
   readOptions();
@@ -655,12 +655,6 @@ void QuantaInit::initActions()
 //Edit menu
     KStdAction::undo(m_quanta, SLOT(slotUndo()), ac);
     KStdAction::redo(m_quanta, SLOT(slotRedo()), ac);
-
-//Debugger, breakpoint
-    new KAction(i18n("Toggle &Breakpoint"), SmallIcon("debug_breakpoint"), Qt::CTRL+Qt::SHIFT+Qt::Key_B,
-          m_quanta, SLOT(debugToggleBreakpoint()), ac, "debug_breakpoints_toggle");
-    new KAction(i18n("&Clear Breakpoints"), 0, m_quanta,
-          SLOT(debugClearBreakpoints()), ac, "debug_breakpoints_clear");
 
 //Tools menu
     KStdAction::spelling(m_quanta, SLOT(slotSpellcheck()), ac);
