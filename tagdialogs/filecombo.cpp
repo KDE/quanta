@@ -42,8 +42,24 @@ FileCombo::FileCombo(QString basePath, QWidget *parent, const char *name )
   button  ->setFixedSize(35,25);
   button  ->setText(i18n("..."));
 
-  //button  ->setPixmap( UserIcon("open") );
-  //button  ->setAutoRaise(true);
+  layout  ->addWidget( combo );
+  layout  ->addWidget( button );
+
+  connect( button, SIGNAL(clicked()), this, SLOT(slotFileSelect()) );
+}
+
+FileCombo::FileCombo( QWidget *parent, const char *name )
+   :QWidget( parent, name )
+{
+  this->basePath = ".";
+
+  QHBoxLayout *layout = new QHBoxLayout(this);
+
+  combo   = new QComboBox(true,this);
+  button  = new QPushButton(this);
+
+  button  ->setFixedSize(35,25);
+  button  ->setText(i18n("..."));
 
   layout  ->addWidget( combo );
   layout  ->addWidget( button );

@@ -31,6 +31,7 @@ class FileCombo : public QWidget  {
    Q_OBJECT
 public: 
 	FileCombo(QString basePath, QWidget *parent=0, const char *name=0);
+	FileCombo(QWidget *parent=0, const char *name=0);
 	~FileCombo();
 	
 	QString text();

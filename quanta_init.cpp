@@ -61,8 +61,6 @@
 
 #include "parser/parser.h"
 
-#include "toolbar/toolbars.h"
-
 QString fileMaskHtml 	= "*.*html *.*htm *.php* *.asp *.cfm *.css *.inc* *.*HTML *.*HTM *.PHP* *.ASP *.CFM *.CSS *.INC* *.xml *.XML";
 QString fileMaskPhp 	= "*.*PHP* *.*php* ";
 QString fileMaskJava  = "*.jss *.js *.JSS *.JS ";

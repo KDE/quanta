@@ -7,11 +7,17 @@ noinst_LIBRARIES = libtoolbar.a
 
 
 
-INCLUDES = $(all_includes)
+INCLUDES = $(all_includes)\
+		-I$(top_srcdir)/quanta/tagdialogs
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 libtoolbar_a_METASOURCES = AUTO
-libtoolbar_a_SOURCES = 
-EXTRA_DIST = 
+libtoolbar_a_SOURCES = \
+		actioneditdlgs.ui\
+		actioneditdlg.cpp
+EXTRA_DIST = \
+		actioneditdlgs.ui\
+		actioneditdlg.cpp\
+		actioneditdlg.h
 ##############################################################
 ####                  END KDEStudio part                  ####
 #2########################################################!@#$

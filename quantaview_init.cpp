@@ -38,7 +38,6 @@
 #include "widgets/wtoolbar.h"
 #include "kwrite/kwview.h"
 #include "kwrite/highlight/highlight.h"
-#include "toolbar/toolbars.h"
 
 #include <kaction.h>
 #include "quanta_actions.h"

@@ -72,9 +72,6 @@
 
 #include "parser/parser.h"
 
-#include "toolbar/toolbarconfigi.h"
-#include "toolbar/toolbars.h"
-
 #include "messages/messageoutput.h"
 
 #include <kedittoolbar.h>

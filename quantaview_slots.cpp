@@ -49,7 +49,6 @@
 #include "tagdialogs/tagquicktable.h"
 #include "tagdialogs/cssdialogi.h"
 
-#include "toolbar/toolbars.h"
 #include "qdom.h"
 
 void QuantaView::slotEditCurrentTag()
