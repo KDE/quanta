@@ -537,13 +537,11 @@ void QuantaApp::slotImageOpen(const KURL& url)
   WHTMLPart *part = htmlPart();
   QWidgetStack *s = widgetStackOfHtmlPart();
 
-  if ( !s ) return;
-  if ( !part ) return;
+  if ( !s || !part || !s->id( s ->visibleWidget()) ) return;
 
-  if ( !s->id( s ->visibleWidget()) ) return;
-
-    KToggleAction *ta = (KToggleAction *) actionCollection()->action( "show_preview" );
-  ta->setChecked(true);
+  KToggleAction *ta = (KToggleAction *) actionCollection()->action( "show_preview" );
+  if (!ta->isChecked())
+      ta->setChecked(true);
 
   QString text = "<html>\n<body>\n<div align=\"center\">\n<img src=\"";
   text += url.path(); //TODO
@@ -1104,8 +1102,12 @@ void QuantaApp::slotActivatePreview()
   WHTMLPart *part = htmlPart();
   if ( !part ) return;
   QWidgetStack *s = widgetStackOfHtmlPart();
-  previousWidgetList.push_back(s->id(s->visibleWidget()));
-  s->raiseWidget(1);
+  int id = s->id(s->visibleWidget());
+  if (id != 1)
+  {
+    previousWidgetList.push_back(id);
+    s->raiseWidget(1);
+  }
 }
 
 void QuantaApp::slotShowPreview()
