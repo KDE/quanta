@@ -418,8 +418,11 @@ void QuantaView::slotViewInNetscape()
   if (w->isModified())
   {
     dontShowSavePreview = "AskForSaveBeforePreview";
-    if ( KMessageBox::questionYesNo(this,i18n("The file must be saved before external preview.\n \
-         Do you want to save and preview?"),i18n("Save Before Preview"),i18n("&Yes"),i18n("&No"),dontShowSavePreview)
+    if ( KMessageBox::questionYesNo(this,
+                                    i18n("The file must be saved before external preview.\n"
+                                         "Do you want to save and preview?"),
+                                    i18n("Save Before Preview"),
+                                    i18n("&Yes"),i18n("&No"),dontShowSavePreview)
          == KMessageBox::Yes)
     {
       if (w->isUntitled())
@@ -453,8 +456,11 @@ void QuantaView::slotViewInKFM()
   if (w->isModified())
   {
     dontShowSavePreview = "AskForSaveBeforePreview";
-    if ( KMessageBox::questionYesNo(this,i18n("The file must be saved before external preview.\n \
-         Do you want to save and preview?"),i18n("Save Before Preview"),i18n("&Yes"),i18n("&No"),dontShowSavePreview)
+    if ( KMessageBox::questionYesNo(this,
+                                    i18n("The file must be saved before external preview.\n"
+                                         "Do you want to save and preview?"),
+                                    i18n("Save Before Preview"),
+                                    i18n("&Yes"),i18n("&No"),dontShowSavePreview)
          == KMessageBox::Yes)
     {
       if (w->isUntitled())
@@ -486,8 +492,10 @@ void QuantaView::slotViewInLynx()
   if (w->isModified())
   {
     dontShowSavePreview = "AskForSaveBeforePreview";
-    if ( KMessageBox::questionYesNo(this,i18n("The file must be saved before external preview.\n \
-         Do you want to save and preview?"),i18n("Save Before Preview"),i18n("&Yes"),i18n("&No"),dontShowSavePreview)
+    if ( KMessageBox::questionYesNo(this,
+                                    i18n("The file must be saved before external preview.\n"
+                                         "Do you want to save and preview?"),
+                                    i18n("Save Before Preview"),i18n("&Yes"),i18n("&No"),dontShowSavePreview)
          == KMessageBox::Yes)
     {
       if (w->isUntitled())
