@@ -22,6 +22,7 @@
 #include <qtabwidget.h>
 #include <qtextstream.h>
 #include <qfile.h>
+#include <qfileinfo.h>
 #include <qptrlist.h>
 #include <qpopupmenu.h>
 
@@ -253,7 +254,7 @@ void ActionEditDlg::saveAction( TagAction *a )
     if (!a)
         return;
     QDomElement el = a->data();
-    el.setAttribute("icon", actionIcon->icon() );
+    el.setAttribute("icon", QFileInfo(actionIcon->icon()).fileName());
     el.setAttribute("text", lineText->text() );
     el.setAttribute("tooltip", lineToolTip->text() );
     el.setAttribute("statustext", lineStatusText->text() );
