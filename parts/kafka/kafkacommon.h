@@ -752,8 +752,8 @@ public:
 	 */
 	static bool editDomNodeAttribute(DOM::Node domNode, Node* node,
 		const QString &attrName, const QString &attrValue, DOM::Document rootNode);
-
-	/**
+	
+    /**
 	 * Looks if domNode has a parent which is named name.
 	 * @return Returns the first parent which is named name or an empty DOM::Node if not found.
 	 */
@@ -787,13 +787,6 @@ public:
 	static bool parentSupports(DOM::Node parent, DOM::Node startNode, DOM::Node endNode,
 		const DTDStruct* dtd);
     
-    /**
-     * Sets the title attribute of node to name. This is useful to add tooltips to the nodes.
-     * @param node The Node to set the title attribute.
-     * @param name The value of title atribute (that will be displayed in the tooltip text)
-     * @return If the new Node replaces an existing node with the same name the previously existing Node is returned, otherwise null is returned.
-     */
-    static DOM::Node setTitleAttribute(DOM::Node& node, DOM::Document doc, QString const& name);
 
 	/** ----------------------- MISCELLANEOUS -------------------------------------*/
 

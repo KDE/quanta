@@ -2786,22 +2786,6 @@ bool kafkaCommon::parentSupports(DOM::Node parent, DOM::Node startNode, DOM::Nod
     return true;
 }
 
-DOM::Node kafkaCommon::setTitleAttribute(DOM::Node& node, DOM::Document doc, QString const& name)
-{
-    try
-    {
-        DOM::Node aux = doc.createAttribute("title");
-        aux.setNodeValue(name);
-
-        return node.attributes().setNamedItem(aux);
-    }
-    catch(DOM::DOMException e)
-    {
-        kdError() << "DOMException caughted - error code: " << e.code << endl;
-    }
-    return 0;
-}
-
 bool kafkaCommon::isInline(const QString &nodeNam)
 {
     QString nodeName = nodeNam.lower();
