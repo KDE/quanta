@@ -239,6 +239,7 @@ public slots:
   /** show preview ( F6 )*/
   void slotShowPreview();
   void slotShowPreviewWidget(bool show);
+  void slotHidePreview() {slotShowPreviewWidget(false);}
 
   void slotShowMessagesView();
   void slotShowProblemsView();
@@ -425,12 +426,12 @@ protected:
 
 private:
   FilesTreeView *fTab;
-  QWidgetStack *widgetStackOfHtmlPart();
   ToolbarEntry *toolbarByURL(const KURL& url);
   /** Message output window */
   MessageOutput *m_messageOutput;
   MessageOutput *m_problemOutput;
   KMdiToolViewAccessor* m_messageOutputView;
+  KMdiToolViewAccessor* m_problemsOutputView;
 
   // Debugger
   PHPDebuggerInterface *m_debugger;

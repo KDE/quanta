@@ -223,6 +223,7 @@ void QuantaView::addCustomWidget(QWidget *widget, const QString &label)
    setMDICaption(label);
    m_documentArea->reparent(this, 0, QPoint(), false);
    m_viewLayout->addWidget(m_documentArea, 1, 0);
+   m_documentArea->show();
 }
 
 void QuantaView::slotSetSourceLayout()
@@ -448,7 +449,6 @@ void QuantaView::slotSourceGetFocus(Kate::View *)
   kdDebug(25001)<< "slotSourceGetFocus(true)" << endl;
 #endif
   KAction *action;
-  kdDebug(24000)<< "slotSourceGetFocus(true)" << endl;
 
   //We reload the quanta view from the Node Tree.
   if (m_currentViewsLayout == SourceAndVPL && m_currentFocus == VPLFocus)
@@ -511,7 +511,6 @@ void QuantaView::reloadBothViews(bool force)
 /** reload the Kafka view from the Node Tree. Set force to true if you want to reload even if not necessary. */
 void QuantaView::reloadVPLView(bool force)
 {
-  kdDebug(24000) << "Reload VPL" << endl;
   if ((!qConfig.kafkaRefreshOnFocus && m_currentFocus == VPLFocus) ||
 	(m_currentViewsLayout != SourceOnly && m_kafkaReloadingEnabled) || force)
       m_document->docUndoRedo->reloadKafkaEditor(force);
@@ -697,20 +696,20 @@ void QuantaView::activated()
   {
       case SourceOnly:
         {
-           KToggleAction *ta = (KToggleAction *) quantaApp->actionCollection()->action( "show_quanta_editor" );
-           if (ta) ta->setChecked(true);
+           m_currentViewsLayout = -1;
+           slotSetSourceLayout();
            break;
         }
       case SourceAndVPL:
         {
-           KToggleAction *ta = (KToggleAction *) quantaApp->actionCollection()->action( "show_kafka_and_quanta" );
-           if (ta) ta->setChecked(true);
+           m_currentViewsLayout = -1;
+           slotSetSourceAndVPLLayout();
            break;
         }
       case VPLOnly:
         {
-            KToggleAction *ta = (KToggleAction *) quantaApp->actionCollection()->action( "show_kafka_view" );
-            if (ta) ta->setChecked(true);
+            m_currentViewsLayout = -1;
+            slotSetVPLOnlyLayout();
             break;
         }
   }

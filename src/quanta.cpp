@@ -676,29 +676,21 @@ void QuantaApp::slotStatusMsg(const QString &msg)
 /** repaint preview */
 void QuantaApp::slotRepaintPreview()
 {
-return;
-  WHTMLPart *part = m_htmlPart;
-  QWidgetStack *s = widgetStackOfHtmlPart();
-
-  if ( !s ) return;
-  if ( !part ) return;
-  if ( !s->id( s ->visibleWidget()) ) return;
-
   Document *w = ViewManager::ref()->activeDocument();
   if (!w) return;
 
   previewCopyMade = false;
 
-  KHTMLView *html = part->view();
+  KHTMLView *html = m_htmlPart->view();
   int xOffset = html->contentsX(), yOffset = html->contentsY();
 
-  part->closeURL();
-  KParts::BrowserExtension *browserExtension = KParts::BrowserExtension::childObject(part);
+  m_htmlPart->closeURL();
+  KParts::BrowserExtension *browserExtension = KParts::BrowserExtension::childObject(m_htmlPart);
   KParts::URLArgs  args(true, browserExtension->xOffset(), browserExtension->yOffset());
   browserExtension->setURLArgs( args );
 
   KURL url;
-  part->setEncoding(dynamic_cast<KTextEditor::EncodingInterface*>(w->doc())->encoding(), true);
+  m_htmlPart->setEncoding(dynamic_cast<KTextEditor::EncodingInterface*>(w->doc())->encoding(), true);
   QStringList list;
   if (m_noFramesPreview)
   {
@@ -722,11 +714,11 @@ return;
       noFramesText.replace(QRegExp("</?noframes[^>]*>", false), "");
       //kdDebug(24000) << "NOFRAMES: " << noFramesText << endl;
       if (w->isUntitled())
-        part->begin( Project::ref()->projectBaseURL(), xOffset, yOffset );
+        m_htmlPart->begin( Project::ref()->projectBaseURL(), xOffset, yOffset );
       else
-        part->begin( w->url(), xOffset, yOffset );
-      part->write(noFramesText);
-      part->end();
+        m_htmlPart->begin( w->url(), xOffset, yOffset );
+      m_htmlPart->write(noFramesText);
+      m_htmlPart->end();
     }
   }
 
@@ -742,7 +734,8 @@ return;
 
       url = Project::ref()->urlWithPrefix(url);
 
-      part->openURL(url);
+      m_htmlPart->openURL(url);
+      m_htmlPart->addToHistory(url.url());
     } else  //the document is Untitled, preview the text from it
     {
       QString text = w->editIf->text();
@@ -753,13 +746,13 @@ return;
       if (m_noFramesPreview)
       {
       }
-      part->begin( Project::ref()->projectBaseURL(), xOffset, yOffset );
-      part->write( text );
-      part->end();
+      m_htmlPart->begin( Project::ref()->projectBaseURL(), xOffset, yOffset );
+      m_htmlPart->write( text );
+      m_htmlPart->end();
     }
    }
 // part->end();
- part->show();
+ m_htmlPart->show();
 }
 
 void QuantaApp::slotOpenFileInPreview(const KURL& a_url)
@@ -1215,12 +1208,6 @@ void QuantaApp::slotOptions()
     qConfig.spellConfig->setReplaceAllList(spellOptions->replaceAllList());
     qConfig.spellConfig->setClient(spellOptions->client());
 
-    QWidgetStack *s;
-    if ( m_htmlPart )
-    {
-      s = widgetStackOfHtmlPart();
-      s ->raiseWidget( 0 );
-     }
 //    checkCommand( ID_VIEW_PREVIEW, false );
 
     qConfig.previewPosition = previewOptions->position();
@@ -1228,12 +1215,12 @@ void QuantaApp::slotOptions()
     QString layout = previewOptions->layout();
     layoutDockWidgets(layout);
     qConfig.windowLayout = layout;
-/*
+
     m_htmlPart->closeURL();
     m_htmlPart->begin( Project::ref()->projectBaseURL());
     m_htmlPart->write(" ");
     m_htmlPart->end();
-*/
+
     slotRepaintPreview();
     reparse(true);
 
@@ -1248,44 +1235,37 @@ void QuantaApp::slotOptions()
 
 void QuantaApp::slotShowPreviewWidget(bool show)
 {
-  QWidgetStack *s = widgetStackOfHtmlPart();
-  if (!s)
-      return;
+  QuantaView *view = ViewManager::ref()->activeView();
+  if (!view) return;
   if (show)
   {
-    int id = s->id(s->visibleWidget());
-    if (id != 1)
-    {
-      previousWidgetList.push_back(id);
-      s->raiseWidget(1);
-    }
+    m_htmlPart->view()->reparent(view->documentArea(), 0, QPoint(), true);
+    m_htmlPart->view()->resize(view->documentArea()->size());
+    view->documentArea()->show();
     m_previewVisible = true;
   } else
   {
-    int id = 0;
-    if (!previousWidgetList.empty())
-    {
-      id = previousWidgetList.last();
-      previousWidgetList.pop_back();
-    }
-    s->raiseWidget(id);
+    m_htmlPart->view()->reparent(this, 0, QPoint(), false);
+    m_htmlPart->view()->resize(0, 0);
+    m_htmlPart->view()->hide();
     m_previewVisible = false;
     m_noFramesPreview = false;
-    ViewManager::ref()->activeDocument()->setFocus();
+    if (view)
+      view->document()->setFocus();
   }
 
 #ifdef BUILD_KAFKAPART
-  int viewLayout = ViewManager::ref()->activeView()->currentViewsLayout();
+  int viewLayout = view->currentViewsLayout();
 #else
   int viewLayout = QuantaView::SourceOnly;
 #endif
-   KToggleAction *ta;
+   KToggleAction *ta = 0L;
 
-  if(viewLayout == QuantaView::SourceOnly)
+  if (viewLayout == QuantaView::SourceOnly)
     ta = (KToggleAction *) actionCollection()->action( "show_quanta_editor" );
-  else if(viewLayout == QuantaView::VPLOnly)
+  else if (viewLayout == QuantaView::VPLOnly)
     ta = (KToggleAction *) actionCollection()->action( "show_kafka_view" );
-  else if(viewLayout == QuantaView::SourceAndVPL)
+  else if (viewLayout == QuantaView::SourceAndVPL)
     ta = (KToggleAction *) actionCollection()->action( "show_kafka_and_quanta" );
 
   if (ta)
@@ -1296,21 +1276,6 @@ void QuantaApp::slotShowPreviewWidget(bool show)
 
 void QuantaApp::slotShowPreview()
 {
-  QWidgetStack *s = widgetStackOfHtmlPart();
-  if (!s)
-  {
-    m_previewVisible = false;
-    return;
-  }
-  int id = s->id(s->visibleWidget());
-  if (id == 2)
-  {
-    m_previewVisible = false;
-    return;
-  }
-  else if(id == 0)
-    //quanta/kafka/quanta-kafka view was loaded and hasn't changed m_previewVisible
-    m_previewVisible = false;
   Document *w  =ViewManager::ref()->activeDocument();
   if (!w)
   {
@@ -1542,8 +1507,7 @@ void QuantaApp::slotShowMessagesView()
 
 void QuantaApp::slotShowProblemsView()
 {
-//FIXME:
-  makeDockVisible(dynamic_cast<KDockWidget*>(m_messageOutputView->wrapperWidget()));
+  makeDockVisible(dynamic_cast<KDockWidget*>(m_problemsOutputView->wrapperWidget()));
 }
 
 QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomElement &element, int &id )
@@ -1632,10 +1596,13 @@ void QuantaApp::slotBack()
    {
        m_htmlPartDoc->back();
    } else
+   if (m_previewVisible)
+   {
+       m_htmlPart->back();
+   } else
    {
       activatePrevWin();
    }
-//FIXME: same for the preview
 }
 
 void QuantaApp::slotForward()
@@ -1643,6 +1610,10 @@ void QuantaApp::slotForward()
    if (ViewManager::ref()->documentationView(false)  == ViewManager::ref()->activeView())
    {
        m_htmlPartDoc->forward();
+   } else
+   if (m_previewVisible)
+   {
+       m_htmlPart->forward();
    } else
    {
       activateNextWin();
@@ -3606,11 +3577,6 @@ bool QuantaApp::queryClose()
   bool canExit = true;
   if (quantaStarted)
   {
-/*    if (dtabdock->isVisible())
-    {
-      QWidgetStack *s = widgetStackOfHtmlPart();
-      s->raiseWidget(0);
-    }*/
     saveOptions();
     exitingFlag = true;
     canExit = ViewManager::ref()->saveAll(false);
@@ -3710,31 +3676,6 @@ void QuantaApp::saveOptions()
     m_config->sync();
   }
 }
-
-
-QWidgetStack *QuantaApp::widgetStackOfHtmlPart()
-{
-return 0L;
-//FIXME:
-/*
-  QWidgetStack *s;
-  if (qConfig.previewPosition == "Bottom")
-  {
-    s = bottomWidgetStack;
-  } else
-  {
-    s = rightWidgetStack;
-  }
-//TODO: This should be done on startup and after the setting has changed
-  if (m_htmlPart->view()->parentWidget() != s)
-  {
-    s->addWidget( m_htmlPart->view(), 1 );
-    s->addWidget( m_htmlPartDoc->view(), 2 );
-  }
-
-  return s; */
-}
-
 
 void QuantaApp::statusBarTimeout()
 {

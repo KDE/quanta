@@ -69,6 +69,7 @@ void WHTMLPart::back()
 {
   if ( backEnable() ) {
     hpos--;
+    kdDebug(24000) << "History: " << history.at(hpos) << endl;
     openURL( KURL( history.at(hpos) ) );
 
     emit updateStatus( backEnable() , forwardEnable() );

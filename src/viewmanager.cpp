@@ -38,7 +38,6 @@
 
 ViewManager::ViewManager(QObject *parent, const char *name) : QObject(parent, name)
 {
-
     m_lastActiveView = 0L;
     m_documentationView = 0L;
 }
@@ -50,6 +49,8 @@ QuantaView* ViewManager::createView()
     connect(view, SIGNAL(cursorPositionChanged()), quantaApp, SLOT(slotNewLineColumn()));
     connect(view, SIGNAL(title(const QString &)), quantaApp, SLOT(slotNewLineColumn()));
     connect(view, SIGNAL(dragInsert(QDropEvent*)), this, SIGNAL(dragInsert(QDropEvent *)));
+    connect(view, SIGNAL(hidePreview()), quantaApp, SLOT(slotHidePreview()));
+
     return view;
 }
 

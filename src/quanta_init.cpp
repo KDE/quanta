@@ -393,18 +393,14 @@ void QuantaInit::initView()
   scriptTab = new ScriptTreeView(m_quanta->actionCollection(), m_quanta, "Scripts");
   addToolTreeView(scriptTab, i18n("Scripts"), BarIcon("run"), KDockWidget::DockLeft);
 
- /*
-  m_quanta->m_htmlPart = new WHTMLPart(m_quanta->rightWidgetStack,"rightHTML");
-  m_quanta->slotNewPart(m_quanta->m_htmlPart, false); */
+
+  m_quanta->m_htmlPart = new WHTMLPart(m_quanta, "rightHTML");
+  m_quanta->m_htmlPart->view()->resize(0, 0);
+  m_quanta->slotNewPart(m_quanta->m_htmlPart, false);
   m_quanta->m_htmlPartDoc = new WHTMLPart(m_quanta, "docHTML");
   m_quanta->m_htmlPartDoc->view()->resize(0, 0);
   m_quanta->slotNewPart(m_quanta->m_htmlPartDoc, false);
-/*
-  m_quanta->rightWidgetStack->addWidget(m_quanta->m_view, 0);
-  m_quanta->rightWidgetStack->addWidget(m_quanta->m_htmlPart->view(), 1);
-  m_quanta->rightWidgetStack->addWidget(m_quanta->m_htmlPartDoc->view(), 2);
-  m_quanta->rightWidgetStack->raiseWidget(0);
-*/
+
   m_quanta->m_messageOutput = new MessageOutput(m_quanta, "Messages");
   m_quanta->m_messageOutputView = addToolTreeView(m_quanta->m_messageOutput, i18n("Messages"), BarIcon("run"), KDockWidget::DockBottom);
 
@@ -414,7 +410,7 @@ void QuantaInit::initView()
 
   m_quanta->m_problemOutput = new MessageOutput(m_quanta, "Problems");
   m_quanta->m_problemOutput->setFocusPolicy(QWidget::NoFocus);
-  addToolTreeView(m_quanta->m_problemOutput, i18n("Problems"), BarIcon("run"), KDockWidget::DockBottom);
+  m_quanta->m_problemsOutputView = addToolTreeView(m_quanta->m_problemOutput, i18n("Problems"), BarIcon("run"), KDockWidget::DockBottom);
 
   connect(m_quanta->fTab, SIGNAL(openFile(const KURL &)),
           m_quanta, SLOT(slotFileOpen(const KURL &)));
@@ -470,10 +466,9 @@ void QuantaInit::initView()
           m_quanta, SLOT(slotShowPreviewWidget(bool)));
   connect(pTab, SIGNAL(showPreviewWidget(bool)),
           m_quanta, SLOT(slotShowPreviewWidget(bool)));
-//FIXME:
-/*
+
   connect(m_quanta->m_htmlPart, SIGNAL(onURL(const QString&)),
-              m_quanta, SLOT(slotStatusMsg(const QString&))); */
+              m_quanta, SLOT(slotStatusMsg(const QString&)));
   connect(m_quanta->m_htmlPartDoc, SIGNAL(onURL(const QString&)),
                  m_quanta, SLOT(slotStatusMsg(const QString&)));
 
@@ -508,7 +503,6 @@ KMdiToolViewAccessor* QuantaInit::addToolTreeView(QWidget *widget, const QString
 void QuantaInit::readOptions()
 {
   m_config->setGroup("General Options");
-  //if (2>m_config->readNumEntry("Version",0)) m_config = new KConfig();
 
   qConfig.markupMimeTypes = m_config->readEntry("Markup mimetypes", qConfig.markupMimeTypes);
   qConfig.scriptMimeTypes = m_config->readEntry("Script mimetypes", qConfig.scriptMimeTypes);
