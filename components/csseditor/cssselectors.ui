@@ -38,7 +38,7 @@
                         <bool>false</bool>
                     </property>
                     <property name="text">
-                        <string>Apply to file</string>
+                        <string>Apply to file:</string>
                     </property>
                 </widget>
                 <widget class="KURLRequester">

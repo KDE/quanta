@@ -90,7 +90,7 @@
                                 <cstring>kafkaDelayRefresh</cstring>
                             </property>
                             <property name="text">
-                                <string>Refresh the VPL editor every : </string>
+                                <string>Refresh the VPL editor every:</string>
                             </property>
                         </widget>
                     </grid>
@@ -158,7 +158,7 @@
                                 <cstring>sourceDelayRefresh</cstring>
                             </property>
                             <property name="text">
-                                <string>Refresh the source editor every : </string>
+                                <string>Refresh the source editor every:</string>
                             </property>
                         </widget>
                     </grid>

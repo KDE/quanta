@@ -65,7 +65,7 @@
                         <cstring>user2Button</cstring>
                     </property>
                     <property name="text">
-                        <string>Save &amp;As</string>
+                        <string>Save &amp;As...</string>
                     </property>
                 </widget>
                 <widget class="KPushButton">

@@ -32,7 +32,7 @@
                 <cstring>groupBox1</cstring>
             </property>
             <property name="title">
-                <string>Configure events</string>
+                <string>Configure Events</string>
             </property>
             <grid>
                 <property name="name">

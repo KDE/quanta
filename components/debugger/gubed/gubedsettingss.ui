@@ -138,7 +138,7 @@
                             <cstring>groupBox1</cstring>
                         </property>
                         <property name="title">
-                            <string>Directory mapping</string>
+                            <string>Directory Mapping</string>
                         </property>
                         <grid>
                             <property name="name">
@@ -362,7 +362,7 @@
                                     <cstring>optStartSession</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>StartSession</string>
+                                    <string>Start session:</string>
                                 </property>
                                 <property name="checked">
                                     <bool>true</bool>
@@ -388,7 +388,7 @@
                             <cstring>groupBox4</cstring>
                         </property>
                         <property name="title">
-                            <string>Error handling</string>
+                            <string>Error Handling</string>
                         </property>
                         <grid>
                             <property name="name">
