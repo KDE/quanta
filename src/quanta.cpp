@@ -1284,6 +1284,10 @@ void QuantaApp::slotShowPreviewWidget(bool show)
       view->addCustomWidget(m_htmlPart->view(), QString::null);
     } else
     {
+      if (!m_previewToolView)
+        m_previewToolView= addToolWindow(m_htmlPart->view(), KDockWidget::DockBottom, getMainDockWidget());
+      m_htmlPart->view()->show();
+      m_previewToolView->show();
     }
     m_previewVisible = true;
   } else
