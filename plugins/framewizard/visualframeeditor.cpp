@@ -113,16 +113,58 @@ void VisualFrameEditor::loadExistingStructure(const QStringList& list){
  }
 }
 
+QStringList VisualFrameEditor::convertAsterisks(QString s){
+   QStringList list=QStringList::split(",",s);
+   int leftPercentage = 100;
+   int leftPercentageDistributedAmongAsterisks=0;
+   int weightAsteriskCounter=0;
+   // This for is used to determine how much percentage must be assign to an asterisk
+   // example cols="40%,5*,*"
+   // then every asterisk must be assigned a percentage of 10% so the real percentage
+   // notation is cols="40%,50%,10%"
+   for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it ) {
+        if((*it).contains("%")){
+            leftPercentage -= (*it).section("%",0,0).toInt();
+        }
 
+        if((*it).contains("*")){
+             int weight= (*it).section("*",0,0).toInt();
+             if(weight==0) weight=1;
+             weightAsteriskCounter += weight;
+        }
+    }
+   if(weightAsteriskCounter!=0)
+   leftPercentageDistributedAmongAsterisks= proxInt(double(leftPercentage)/double(weightAsteriskCounter));
+
+   // this for changes asterisk notation in percentage notation
+   // This part of the comment is for me:
+   // NB: I valori delle percentuali generati da if .. else possono non corrispondere
+   // a quelli effettivamente generati dal metodo build che opera un'altra normalizzazione.
+   // In genere la differenza è dell' 1%
+   for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it ) {
+        if((*it).contains("*")){
+             int weight= (*it).section("*",0,0).toInt();
+             if(weight==0) weight=1;
+             int newPercentage = weight*leftPercentageDistributedAmongAsterisks;
+             if((*it)!=list.last()){
+               (*it)=(QString::number(newPercentage,10)+"%");
+               leftPercentage-=newPercentage;
+               }
+             else (*it)=(QString::number(leftPercentage,10)+"%");
+        }
+    }
+    return list;
+}
 void VisualFrameEditor::build(QString parent){
    QString line = existingStructure.first();
    if(line.contains("<frameset")){
       if(line.contains("rows")){
          split(parent,(line.contains(",")+1),"h");
 
-         QRegExp pattern("rows\\s*=\"([\\d%,]*)\"");
+         QRegExp pattern("rows\\s*=\"([\\d%,\\*]*)\"");
          pattern.search(line);
-         QStringList percentages=QStringList::split(",",pattern.cap(1));
+
+         QStringList percentages = convertAsterisks(pattern.cap(1));
 
          QRect dummy=t->findNode(parent)->getAtts()->getGeometry();
 
@@ -145,7 +187,8 @@ void VisualFrameEditor::build(QString parent){
          split(parent,(line.contains(",")+1),"v");
          QRegExp pattern("cols\\s*=\"([\\d%,]*)\"");
          pattern.search(line);
-         QStringList percentages=QStringList::split(",",pattern.cap(1));
+
+         QStringList percentages = convertAsterisks(pattern.cap(1));
 
          QRect dummy=t->findNode(parent)->getAtts()->getGeometry();
 
@@ -210,22 +253,21 @@ void VisualFrameEditor::paintEvent ( QPaintEvent * ){
 */
   //Delete the Selectable areas and the splitters
   QObjectList* ch = queryList("SelectableArea");
+  kdDebug(24000) << "Area num: " << ch->count() << endl;
   for (uint i = 0; i < ch->count(); i++)
   {
     QObject* o = ch->at(i);
     removeChild(o); //this will delete all childr of "o"
-    SAList.remove(static_cast<SelectableArea*>(o));
   }
   SAList.clear();
 
   ch = queryList("QSplitter");
+  kdDebug(24000) << "QSplitter num: " << ch->count() << endl;
   for (uint i = 0; i < ch->count(); i++)
   {
     QObject* o = ch->at(i);
     removeChild(o); //this will delete all children of "o"
-    splitterList.remove(static_cast<QSplitter*>(o));
   }
-  splitterList.clear();
 
   splitterIdNumber=0;
   draw2(t->getRoot(),this);

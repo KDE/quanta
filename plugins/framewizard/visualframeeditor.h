@@ -40,6 +40,8 @@ class VisualFrameEditor : public QHBox  {
       void build(QString);
       void setGeometries(QString);
       void draw2(treeNode *n, QWidget* parent);
+      QStringList convertAsterisks(QString);
+
    public:
 	   VisualFrameEditor( QWidget * parent = 0, const char * name = 0);
 	   ~VisualFrameEditor();
