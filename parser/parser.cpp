@@ -256,7 +256,7 @@ void Parser::deleteNode()
 /** Go to the next column, or to the next line if we are at the end of line */
 void Parser::nextPos(int &line, int &col)
 {
-  if (col < write->editIf->lineLength(line) - 1)
+  if (line < maxLines && col < write->editIf->lineLength(line) - 1)
   {
       col++;
   } else
