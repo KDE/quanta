@@ -929,12 +929,11 @@ void QuantaApp::slotOptions()
   if (debuggerStyle=="PHP3") debuggerOptions->radioPhp3->setChecked(true);
   if (debuggerStyle=="None") debuggerOptions->checkDebugger->setChecked(false);
 
-  if (KDE_VERSION >= 308)
-  {
+#if KDE_VERSION > 308
 //Spelling options
     page=kd->addVBoxPage(i18n("Spelling"), QString::null, BarIcon("spellcheck", KIcon::SizeMedium ) );
-    new KSpellConfig( (QWidget *)page, 0L, qConfig.spellConfig, false );
-  }
+    KSpellConfig *spellOptions = new KSpellConfig( (QWidget *)page, 0L, qConfig.spellConfig, false );
+#endif
   kd->adjustSize();
   if ( kd->exec() )
   {
@@ -983,6 +982,17 @@ void QuantaApp::slotOptions()
       if (!(debuggerStyle=="PHP4")) enablePhp4Debug(true);
       debuggerStyle="PHP4";
     }
+
+#if KDE_VERSION > 308
+  qConfig.spellConfig->setDictionary(spellOptions->dictionary());
+  qConfig.spellConfig->setNoRootAffix(spellOptions->noRootAffix());
+  qConfig.spellConfig->setRunTogether(spellOptions->runTogether());
+  qConfig.spellConfig->setDictFromList(spellOptions->dictFromList());
+  qConfig.spellConfig->setEncoding(spellOptions->encoding());
+  qConfig.spellConfig->setIgnoreList(spellOptions->ignoreList());
+  qConfig.spellConfig->setReplaceAllList(spellOptions->replaceAllList());
+  qConfig.spellConfig->setClient(spellOptions->client());
+#endif
 
     QWidgetStack *s;
     if ( htmlPart() )
