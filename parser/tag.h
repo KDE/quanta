@@ -182,6 +182,8 @@ public:
 
 private:
   void init();
+  /** Verifies if the last char from @param str is inside a script area or not */
+  bool isInsideScript(const QString& str);
 
   AreaStruct m_area; //where the tag is in the doc
   int m_nameLine;//where the tag name begins

@@ -28,7 +28,6 @@
 #include "kafkacommon.h"
 #endif
 
-
 GroupElementMapList globalGroupMap;
 
 Node::Node( Node *parent )

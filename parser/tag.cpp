@@ -27,6 +27,10 @@
 #include "quantacommon.h"
 #include "resource.h"
 
+#include "parser.h"
+#include "node.h"
+
+
 Tag::Tag()
 {
   init();
@@ -190,7 +194,8 @@ void Tag::parse(const QString &p_tagStr, Document *p_write)
         pos += 1;
         while (pos < strLength &&
                (m_tagStr[pos] != quotation ||
-               (m_tagStr[pos] == quotation && m_tagStr[pos-1] == '\\')))
+               (m_tagStr[pos] == quotation &&
+                (m_tagStr[pos-1] == '\\'  || isInsideScript(m_tagStr.mid(valueStartPos, pos - valueStartPos)) ) )))
         {
           pos++;
         }
@@ -549,4 +554,20 @@ void Tag::setDtd(const DTDStruct *dtd)
 {
  // assert(dtd);
   m_dtd = dtd;
+}
+
+bool Tag::isInsideScript(const QString &str)
+{
+  //This detects if the last char from str is inside a script area or not, to
+  //treat cases like <a href="<? echo "foo" ?>"> correctly
+  //TODO: speed up if you can...
+  if (str.find(m_dtd->specialAreaStartRx) != -1)
+  {
+    QString foundString = m_dtd->specialAreaStartRx.cap();
+    if (str.find(m_dtd->specialAreas[foundString]) == -1)
+    {
+      return true;
+    }
+  }
+  return false;
 }
