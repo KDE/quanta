@@ -173,7 +173,7 @@ void QuantaView::initActions()
 
     (void) new KAction( i18n( "Frame wizard..." ), "frame", 0,
                         this, SLOT( slotFrameWizard() ),
-                        actionCollection, "tag_misc" );
+                        actionCollection, "tag_frame_wizard" );
 
     (void) new KAction( i18n( "Paste &HTML Quoted" ), "editpaste", 0,
                         this, SLOT( slotPasteHTMLQuoted() ),

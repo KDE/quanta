@@ -2215,7 +2215,7 @@ bool QuantaApp::saveToolbar(bool localToolbar, const QString& toolbarToSave, con
       {
         if (!localToolbar)
             localToolbarsDir = projectToolbarsURL.prettyURL();
-        KMessageBox::sorry(0,i18n("You must save the toolbars in the following directory: \n\n%1")
+        KMessageBox::sorry(0,i18n("<qt>You must save the toolbars in the following directory: <br><br><b>%1</b></qt>")
                                   .arg(localToolbarsDir));
         query = KMessageBox::No;
       }
@@ -2230,8 +2230,8 @@ bool QuantaApp::saveToolbar(bool localToolbar, const QString& toolbarToSave, con
     KURL tarName = saveToolbarToFile(toolbarName, url);
     if (tarName.isEmpty())
     {
-      KMessageBox::error(this, i18n("An error happened while saving the \"%1\" toolbar.\n" \
-      "Check that you have write permissions for \"%2\"").arg(toolbarName).arg(tarName.prettyURL().remove("file:")));
+      KMessageBox::error(this, i18n("<qt>An error happened while saving the <b>%1</b> toolbar.<br>" \
+      "Check that you have write permissions for<br><b>%2</b></qt>").arg(toolbarName).arg(url.prettyURL().remove("file:")));
       return false;
     }
     if (!localToolbar)
@@ -2935,12 +2935,12 @@ bool QuantaApp::slotRemoveToolbar(const QString& name)
       int result;
       if (p_toolbar->url.isEmpty())
       {
-         result = KMessageBox::questionYesNoCancel(this, i18n("Toolbar \"%1\" is new and unsaved. Do you want to save before remove?").arg(p_toolbar->name),
+         result = KMessageBox::questionYesNoCancel(this, i18n("<qt>Toolbar <b>%1/<b> is new and unsaved. Do you want to save before remove?</qt>").arg(p_toolbar->name),
               i18n("Save Toolbar"));
       } else
       {
          FourButtonMessageBox dlg(this, 0, true);
-         dlg.textLabel->setText(i18n("The toolbar \"%1\" was modified. Do you want to save before remove?").arg(p_toolbar->name));
+         dlg.textLabel->setText(i18n("<qt>The toolbar <b>%1</b> was modified. Do you want to save before remove?</qt>").arg(p_toolbar->name));
          dlg.setCaption(i18n("Save Toolbar"));
          dlg.pixmapLabel->setPixmap(BarIcon("messagebox_info", KIcon::SizeMedium));
          dlg.exec();
@@ -2963,7 +2963,7 @@ bool QuantaApp::slotRemoveToolbar(const QString& name)
              {
                 bool local = true;
                 if (m_project->hasProject() && p_toolbar->url.url().startsWith(m_project->baseURL.url())) local = false;
-                if (!saveToolbar(local, name))
+                if (!saveToolbar(local, p_toolbar->name))
                     return false;
                 break;
              }
@@ -2971,7 +2971,7 @@ bool QuantaApp::slotRemoveToolbar(const QString& name)
              {
                 bool local = true;
                 if (m_project->hasProject() && p_toolbar->url.url().startsWith(m_project->baseURL.url())) local = false;
-                if (!saveToolbar(local, name, p_toolbar->url))
+                if (!saveToolbar(local, p_toolbar->name, p_toolbar->url))
                     return false;
                 break;
              }
