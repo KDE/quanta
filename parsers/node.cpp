@@ -57,33 +57,7 @@ Node::~Node()
   // If it has crashed the next line, it is a GroupElements bug.
   tag->cleanStrBuilt = false;
 #endif
-  //Remove the references to this node from the list of group elements.
-  //They are actually stored in globalGroupMap.
-  QPtrListIterator<GroupElementList> iter(groupElementLists);
-  GroupElementList *groupElementList;
-  while ((groupElementList = iter.current()) != 0)
-  {
-    ++iter;
-    GroupElementList::Iterator it = groupElementList->begin();
-    while (it != groupElementList->end())
-    {
-      if ((*it).node == this)
-      {
-       // it = groupElementList->erase(it);
-        (*it).node = 0L;
-        (*it).tag = 0L;
-        (*it).deleted = true;        
-      } else
-        ++it;
-    }
-  }
-  if (listItem)
-  {
-    static_cast<StructTreeTag*>(listItem)->node = 0L;
-    static_cast<StructTreeTag*>(listItem)->groupTag = 0L;
-  }
-  
-  groupElementLists.clear();
+  detachNode();
   if (prev && prev->next == this)
       prev->next = 0L;
   if (parent && parent->child == this)
@@ -426,4 +400,35 @@ void Node::operator =(Node* node)
   setLeafNode(0L);
 #endif
   tag = new Tag(*(node->tag));
+}
+
+void Node::detachNode()
+{
+  //Remove the references to this node from the list of group elements.
+  //They are actually stored in globalGroupMap.
+  QPtrListIterator<GroupElementList> iter(groupElementLists);
+  GroupElementList *groupElementList;
+  while ((groupElementList = iter.current()) != 0)
+  {
+    ++iter;
+    GroupElementList::Iterator it = groupElementList->begin();
+    while (it != groupElementList->end())
+    {
+      if ((*it).node == this)
+      {
+       // it = groupElementList->erase(it);
+        (*it).node = 0L;
+        (*it).tag = 0L;
+        (*it).deleted = true;        
+      } else
+        ++it;
+    }
+  }
+  if (listItem)
+  {
+    static_cast<StructTreeTag*>(listItem)->node = 0L;
+    static_cast<StructTreeTag*>(listItem)->groupTag = 0L;
+  }
+  
+  groupElementLists.clear();
 }

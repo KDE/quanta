@@ -619,6 +619,12 @@ void Parser::logReparse(NodeModifsSet *modifs, Document *w)
   NodeModif *modif;
   if (baseNode)
   {
+    Node *n = baseNode;
+    while (n)
+    {
+      n->detachNode();
+      n = n->nextSibling();
+    }
     modif = new NodeModif();
     modif->setType(NodeModif::NodeTreeRemoved);
     modif->setNode(baseNode);
@@ -789,6 +795,7 @@ void Parser::deleteNodes(Node *firstNode, Node *lastNode, NodeModifsSet *modifs)
     node->parent = 0L;
     node->next = 0L;
     node->prev = 0L;
+    node->detachNode();
     modif->setNode(node);
 #else
     delete node;
@@ -814,6 +821,11 @@ void Parser::deleteNodes(Node *firstNode, Node *lastNode, NodeModifsSet *modifs)
       {
         prev->next = child;
         child->prev = prev;
+        if (next) //the last child is just before the next
+        {
+          m->next = next;
+          next->prev = m;
+        }
       } else
       {
         if (!child)      //when there is no child, connect the next as the first child of the parent
@@ -1046,6 +1058,7 @@ Node *Parser::rebuild(Document *w)
         lastInserted->next = 0L;
         lastInserted->parent = 0L;
         lastInserted->child = 0L;
+        lastInserted->detachNode();
         modif->setNode(lastInserted);
         modifs->addNodeModif(modif);
 
