@@ -217,13 +217,17 @@ void QuantaView::addPlugin(QuantaPlugin *plugin)
 void QuantaView::addCustomWidget(QWidget *widget, const QString &label)
 {
    m_customWidget = widget;
-   m_splitter->hide();
-   m_customWidget->reparent(m_documentArea, 0, QPoint(), true);
-   m_customWidget->resize(m_documentArea->size());
-   setMDICaption(label);
-   m_documentArea->reparent(this, 0, QPoint(), false);
-   m_viewLayout->addWidget(m_documentArea, 1, 0);
-   m_documentArea->show();
+   if (m_customWidget)
+   {
+      m_splitter->hide();
+      m_customWidget->reparent(m_documentArea, 0, QPoint(), true);
+      m_customWidget->resize(m_documentArea->size());
+      if (!label.isEmpty())
+        setMDICaption(label);
+      m_documentArea->reparent(this, 0, QPoint(), false);
+      m_viewLayout->addWidget(m_documentArea, 1, 0);
+      m_documentArea->show();
+   }
 }
 
 void QuantaView::slotSetSourceLayout()

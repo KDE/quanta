@@ -1235,12 +1235,11 @@ void QuantaApp::slotShowPreviewWidget(bool show)
   if (!view) return;
   if (show)
   {
-    m_htmlPart->view()->reparent(view->documentArea(), 0, QPoint(), true);
-    m_htmlPart->view()->resize(view->documentArea()->size());
-    view->documentArea()->show();
+    view->addCustomWidget(m_htmlPart->view(), QString::null);
     m_previewVisible = true;
   } else
   {
+    view->addCustomWidget(0L, QString::null);
     m_htmlPart->view()->reparent(this, 0, QPoint(), false);
     m_htmlPart->view()->resize(0, 0);
     m_htmlPart->view()->hide();
