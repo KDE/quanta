@@ -7,7 +7,7 @@ CaseSensitive = true
 
 [Toolbars]
 Location = tagxml
-Names = 
+Names = tagxml
 
 [Extra tags]
 
