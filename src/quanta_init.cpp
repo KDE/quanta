@@ -351,9 +351,9 @@ void QuantaInit::initView()
   ViewManager *m_viewManager = ViewManager::ref(m_quanta);
   connect(m_quanta, SIGNAL(viewActivated (KMdiChildView *)), m_viewManager, SLOT(slotViewActivated(KMdiChildView*)));
 //   connect(m_quanta, SIGNAL(viewDeactivated(KMdiChildView *)), m_viewManager, SLOT(slotViewDeactivated(KMdiChildView*)));
-  KafkaDocument *m_kafkaDocument = KafkaDocument::ref(0, 0, "KafkaPart");
-  m_kafkaDocument->getKafkaWidget()->view()->setMinimumHeight(50);
-  loadVPLConfig();
+   KafkaDocument *m_kafkaDocument = KafkaDocument::ref(0, 0, "KafkaPart");
+   m_kafkaDocument->getKafkaWidget()->view()->setMinimumHeight(50);
+   loadVPLConfig();
 
 #if KDE_IS_VERSION(3,2,90)
   m_quanta->setIDEAlModeStyle(KMultiTabBar::KDEV3ICON);

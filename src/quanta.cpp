@@ -1191,12 +1191,13 @@ void QuantaApp::slotOptions()
     parserOptions->updateConfig();
 #ifdef BUILD_KAFKAPART
     kafkaOptions->updateConfig();
-    //ViewManager::ref()->activeView()>readConfig(m_config); //FIXME:
-    /**qConfig.quantaRefreshOnFocus = kafkaOptions->sourceFocusRefresh->isChecked();
+    qConfig.quantaRefreshOnFocus = kafkaOptions->sourceFocusRefresh->isChecked();
     qConfig.quantaRefreshDelay = kafkaOptions->sourceDelay->value();
     qConfig.kafkaRefreshOnFocus = kafkaOptions->kafkaFocusRefresh->isChecked();
     qConfig.kafkaRefreshDelay = kafkaOptions->kafkaDelay->value();
-    view()->reloadUpdateTimers();*/
+    QuantaView *view = ViewManager::ref()->activeView();
+    if (view && view->document())
+        view->reloadUpdateTimers();
     /**(static_cast<HTMLEnhancer *>(quantaApp->view()->getKafkaInterface()->mainEnhancer))->
       showIconsForScripts(kafkaOptions->showScriptsIcon->isChecked());*/
 
@@ -1227,12 +1228,12 @@ void QuantaApp::slotOptions()
     QString layout = previewOptions->layout();
     layoutDockWidgets(layout);
     qConfig.windowLayout = layout;
-
+/*
     m_htmlPart->closeURL();
     m_htmlPart->begin( Project::ref()->projectBaseURL());
     m_htmlPart->write(" ");
     m_htmlPart->end();
-
+*/
     slotRepaintPreview();
     reparse(true);
 

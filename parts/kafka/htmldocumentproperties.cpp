@@ -544,7 +544,7 @@ void htmlDocumentProperties::aboutToClose()
 
 	view->document()->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);
 
-	//quantaApp->view()->reloadBothViews();
+	view->reloadBothViews();
 
 	close();
 }

@@ -166,6 +166,9 @@ public slots:
    */
   void slotVPLLoadingError(Node *node);
 
+  /** Restarts the update timers according to the current settings */
+  void reloadUpdateTimers();
+
 private slots:
   void slotSavingCompleted();
   void slotSavingFailed(const QString& error);
