@@ -243,6 +243,24 @@ void undoRedo::addNewModifsSet(NodeModifsSet *modifs, int modifLocation, NodeSel
         (*it)->setSelectionAfter(modifs->selectionAfter());
         modifs->setSelectionAfter(0L);
         delete modifs;
+
+        //Move backward the iterator so that it will refresh next time        
+        curFocus = ViewManager::ref()->activeView()->hadLastFocus();
+        if((modifLocation == undoRedo::SourceModif || 
+          (modifLocation == undoRedo::NodeTreeModif && curFocus == QuantaView::SourceFocus)) && 
+          kafkaIterator.atLast())
+          --kafkaIterator;
+        else if((modifLocation == undoRedo::KafkaModif ||
+           (modifLocation == undoRedo::NodeTreeModif && curFocus == QuantaView::VPLFocus)) &&
+           sourceIterator.atLast())
+          --sourceIterator;
+        if(modifLocation == undoRedo::NodeTreeModif)
+        {
+          if(curFocus == QuantaView::SourceFocus)
+            reloadQuantaEditor();
+          else
+            reloadKafkaEditor(false, selection);
+        }
         return;
       }
     }
