@@ -73,7 +73,7 @@ public:
 #endif
 
 public slots:
-    virtual void insertTag(bool inputFromFile = false, bool outputToFile = false);
+    virtual bool insertTag(bool inputFromFile = false, bool outputToFile = false);
 
 
 protected slots:

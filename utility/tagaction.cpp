@@ -93,11 +93,11 @@ TagAction::~TagAction()
 {
 }
 
-void TagAction::insertTag(bool inputFromFile, bool outputToFile)
+bool TagAction::insertTag(bool inputFromFile, bool outputToFile)
 {
   QuantaView *view = ViewManager::ref()->activeView();
   if ( !view || !view->document())
-     return;
+     return false;
 
   QString space="";
 #ifdef BUILD_KAFKAPART
@@ -330,11 +330,13 @@ void TagAction::insertTag(bool inputFromFile, bool outputToFile)
     } else
     {
       KMessageBox::error(quantaApp, i18n("<qt>There was an error running <b>%1</b>.<br>Check that you have the <i>%2</i> executable installed and it is accessible.</qt>").arg(command + " " + args).arg(command), i18n("Script Not Found"));
+      return false;
     }
   }
 #ifdef BUILD_KAFKAPART
  }
 #endif
+  return true;
 }
 
 void TagAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
@@ -489,15 +491,17 @@ void TagAction::slotProcessExited(KProcess *)
 
 void TagAction::execute()
 {
-  insertTag(true, true);
- //To avoid lock-ups, start a timer.
-  timer = new QTimer(this);
-  connect(timer, SIGNAL(timeout()), SLOT(slotTimeout()));
-  timer->start(180*1000, true);
-  QExtFileInfo internalFileInfo;
-  loopStarted = true;
-  internalFileInfo.enter_loop();
-  delete timer;
+  if (insertTag(true, true))
+  {
+    //To avoid lock-ups, start a timer.
+      timer = new QTimer(this);
+      connect(timer, SIGNAL(timeout()), SLOT(slotTimeout()));
+      timer->start(10*1000, true);
+      QExtFileInfo internalFileInfo;
+      loopStarted = true;
+      internalFileInfo.enter_loop();
+      delete timer;
+  }
 }
 
 /** Timeout occurred while waiting for some network function to return. */
