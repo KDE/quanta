@@ -802,18 +802,22 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
      tag = userTagList.find(tagName.lower());
 
   QString s = editIf->textLine(line).left(column + 1);
+  bool namespacecompletion = false;
+  if (!tagName.isEmpty() && string ==":" && s.endsWith("<" + tagName + ":"))
+    namespacecompletion = true;
   int i = column;
   while (i > 0 && s[i].isSpace())
     i--;
   s = s.left(i + 1);
   
-  if ( !tag || tagName.isEmpty() )  //we are outside of any tag
+  if ( !tag || tagName.isEmpty() || namespacecompletion)  //we are outside of any tag
   {
 
-    if ( s.endsWith(completionDTD->tagAutoCompleteAfter) )  // a tag is started
+    if (s.endsWith(completionDTD->tagAutoCompleteAfter) || 
+        namespacecompletion)  // a tag is started, either with < or <namespace:
     {
       //we need to complete a tag name
-      showCodeCompletions( getTagCompletions(line, column) );
+      showCodeCompletions( getTagCompletions(line, column + 1) );
       handled = true;
     } else
     if (string == ">" && !tagName.isEmpty() && tagName[0] != '!' &&
@@ -869,6 +873,9 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
            ( tag->isOptional() && qConfig.closeOptionalTags ) )
       {
         //add closing tag if wanted
+        Node *node = parser->nodeAt(line, column, false);
+        if (node && !node->tag->nameSpace.isEmpty())
+            tagName.prepend(node->tag->nameSpace + ":");
         column++;
         editIf->insertText(line, column, "</" + tagName + ">");
 #ifdef BUILD_KAFKAPART
@@ -1681,7 +1688,10 @@ bool Document::xmlCodeCompletion(int line, int col)
     QString s;
     int index;
     QString tagName = tag->name.section('|', 0, 0).stripWhiteSpace();
-    if (col > bCol && col <= (int)(bCol + tagName.length()+1)) //we are inside a tag name, so show the possible tags
+    int nameCol = bCol + tagName.length() + 1;
+    if (!tag->nameSpace.isEmpty())
+      nameCol += 1 + tag->nameSpace.length();
+    if (col > bCol && col <= nameCol) //we are inside a tag name, so show the possible tags
     {
      showCodeCompletions( getTagCompletions(line, col) );
      handled = true;
