@@ -553,7 +553,7 @@ void Parser::coutTree(Node *node, int indent)
 const DTDStruct * Parser::currentDTD(int line, int col)
 {
   const DTDStruct *dtd = m_dtd;
-  Node *node = nodeAt(line, col, false);
+  Node *node = nodeAt(line, col, false, true);
   if (node)
   {
     dtd = node->tag->dtd;
@@ -564,7 +564,7 @@ const DTDStruct * Parser::currentDTD(int line, int col)
 
 /** Returns the node for position (line, column). As more than one node can
 contain the same area, it return the "deepest" node. */
-Node *Parser::nodeAt(int line, int col, bool findDeepest)
+Node *Parser::nodeAt(int line, int col, bool findDeepest, bool exact)
 {
   if (!write)
       return 0L;
@@ -600,7 +600,7 @@ Node *Parser::nodeAt(int line, int col, bool findDeepest)
         {
           int parentEl, parentEc;
           node->parent->tag->endPos(parentEl, parentEc);
-          if (QuantaCommon::isBetween(line, col, bl, bc, parentEl, parentEc) == 0)
+          if (!exact && QuantaCommon::isBetween(line, col, bl, bc, parentEl, parentEc) == 0)
           {
             node = node->parent;
           }
@@ -639,7 +639,7 @@ Node *Parser::nodeAt(int line, int col, bool findDeepest)
   if (node && (el < line || (el == line && ec + 1 < col)))
   {
     Node *n = node->nextSibling();
-    if (n && n->nextSibling()) //don't set it to the last, always empty node
+    if (n /*&& n->nextSibling()*/) //don't set it to the last, always empty node
       node = n;
   }
   return node;
