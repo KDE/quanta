@@ -437,9 +437,9 @@ bool KafkaWidget::eventFilter(QObject *, QEvent *event)
 
 	if(event->type() == QEvent::KeyPress)
 	{
-		QKeyEvent *keyevent = dynamic_cast<QKeyEvent *>(event);
-        Q_ASSERT(keyevent);
-		switch(keyevent->key())
+		QKeyEvent *keyevent = static_cast<QKeyEvent *>(event);
+		
+        switch(keyevent->key())
 		{
 			case Key_Left:
 #ifdef LIGHT_DEBUG
