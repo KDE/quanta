@@ -19,100 +19,79 @@
  #include <qcombobox.h>
  #include <qspinbox.h>
  
- doubleLengthEditor::doubleLengthEditor(QWidget *parent, const char *name) : QHBox(parent,name)
+doubleEditorBase::doubleEditorBase(QWidget *parent, const char *name) : QHBox(parent,name){
+}
+
+void doubleEditorBase::sxValueSlot(const QString& v){
+  m_sxValue=v;
+  emit valueChanged( m_sxValue +" " + m_dxValue);
+}
+
+void doubleEditorBase::dxValueSlot(const QString& v){
+  m_dxValue=v;
+  emit valueChanged( m_sxValue +" " + m_dxValue);
+} 
+ 
+ doubleLengthEditor::doubleLengthEditor(QWidget *parent, const char *name) : doubleEditorBase(parent,name)
 {
-  ssbSx = new specialSB(this);
-  ssbDx = new specialSB(this);
-  ssbSx->getComboBox()->insertItem("px");
-  ssbSx->getComboBox()->insertItem("em");
-  ssbSx->getComboBox()->insertItem("ex");
-  ssbDx->getComboBox()->insertItem("px");
-  ssbDx->getComboBox()->insertItem("em");
-  ssbDx->getComboBox()->insertItem("ex");
-  connect(ssbSx, SIGNAL(valueChanged(const QString&)), this, SLOT(ssbSxValueSlot(const QString&)));
-  connect(ssbDx, SIGNAL(valueChanged(const QString&)), this, SLOT(ssbDxValueSlot(const QString&)));
+  m_ssbSx = new specialSB(this);
+  m_ssbSx->insertItem("cm");
+  m_ssbSx->insertItem("em");
+  m_ssbSx->insertItem("ex");
+  m_ssbSx->insertItem("in");
+  m_ssbSx->insertItem("mm");  
+  m_ssbSx->insertItem("pc");
+  m_ssbSx->insertItem("pt");
+  m_ssbSx->insertItem("px");
+  
+  m_ssbDx = new specialSB(this);
+  m_ssbDx->insertItem("cm"); 
+  m_ssbDx->insertItem("em");
+  m_ssbDx->insertItem("ex");
+  m_ssbDx->insertItem("in");
+  m_ssbDx->insertItem("mm"); 
+  m_ssbDx->insertItem("pc");
+  m_ssbDx->insertItem("pt"); 
+  m_ssbDx->insertItem("px"); 
+    
+  connect(m_ssbSx, SIGNAL(valueChanged(const QString&)), this, SLOT(sxValueSlot(const QString&)));
+  connect(m_ssbDx, SIGNAL(valueChanged(const QString&)), this, SLOT(dxValueSlot(const QString&)));
 }
 
 doubleLengthEditor::~doubleLengthEditor()
 {
-  if(ssbSx) delete ssbSx;
-  ssbSx=0;
-  if(ssbDx) delete ssbDx;
-  ssbDx=0;
+  delete m_ssbSx;
+  delete m_ssbDx;
 }
 
-void doubleLengthEditor::ssbSxValueSlot(const QString& v)
+doubleComboBoxEditor::doubleComboBoxEditor(QWidget *parent, const char *name) : doubleEditorBase(parent,name)
 {
-  ssbSxValue=v;
-  emit valueChanged( ssbSxValue +" " + ssbDxValue);
-}
-
-void doubleLengthEditor::ssbDxValueSlot(const QString& v){
-  ssbDxValue=v;
-  emit valueChanged( ssbSxValue +" " + ssbDxValue);
-}
-
-doubleComboBoxEditor::doubleComboBoxEditor(QWidget *parent, const char *name) : QHBox(parent,name)
-{
-  cbSx = new QComboBox(this);
-  cbDx = new QComboBox(this);
-  connect(cbSx, SIGNAL(activated ( const QString & )), this, SLOT(sxValueSlot(const QString&)));
-  connect(cbDx, SIGNAL(activated ( const QString & )), this, SLOT(dxValueSlot(const QString&)));
-
+  m_cbSx = new QComboBox(this);
+  m_cbDx = new QComboBox(this);
+  connect(m_cbSx, SIGNAL(activated ( const QString & )), this, SLOT(sxValueSlot(const QString&)));
+  connect(m_cbDx, SIGNAL(activated ( const QString & )), this, SLOT(dxValueSlot(const QString&)));
 }
 
 doubleComboBoxEditor::~doubleComboBoxEditor()
 {
-  if(cbSx) delete cbSx;
-  cbSx=0;
-  if(cbDx) delete cbDx;
-  cbDx=0;
+  delete m_cbSx;
+  delete m_cbDx;
 }
 
-
-
-void doubleComboBoxEditor::sxValueSlot(const QString& s){
-  sxValue=s;
-  emit valueChanged( sxValue + " " + dxValue );
-}
-void doubleComboBoxEditor::dxValueSlot(const QString& s){
-  dxValue=s;
-  emit valueChanged( sxValue + " " + dxValue);
-}
-
-doublePercentageEditor::doublePercentageEditor(QWidget *parent, const char *name) : QHBox/*multipleSpinBox*/(parent,name)
+doublePercentageEditor::doublePercentageEditor(QWidget *parent, const char *name) : doubleEditorBase(parent,name)
 {
-  sbSx = new QSpinBox(this);
-  sbDx = new QSpinBox(this);
-  sbSx->setSuffix("%");
-  sbDx->setSuffix("%");
-  connect(sbSx,SIGNAL(valueChanged(const QString&)),this,SLOT(sxSBValueSlot(const QString&)));
-  connect(sbDx,SIGNAL(valueChanged(const QString&)),this,SLOT(dxSBValueSlot(const QString&)));
-  //setSuffix("%");
+  m_sbSx = new QSpinBox(this);
+  m_sbDx = new QSpinBox(this);
+  m_sbSx->setSuffix("%");
+  m_sbDx->setSuffix("%");
+  connect(m_sbSx,SIGNAL(valueChanged(const QString&)),this,SLOT(sxValueSlot(const QString&)));
+  connect(m_sbDx,SIGNAL(valueChanged(const QString&)),this,SLOT(dxValueSlot(const QString&)));
 }
 
 doublePercentageEditor::~doublePercentageEditor()
 {
-  if(sbSx) delete sbSx;
-  sbSx=0;
-  if(sbDx) delete sbDx;
-  sbDx=0;
+  delete m_sbSx;
+  delete m_sbDx;
 }
-
-void doublePercentageEditor::sxSBValueSlot(const QString& v){
-  sxSBValue=v;
-  emit valueChanged( sxSBValue +" " + dxSBValue);
-
-}
-
-void doublePercentageEditor::dxSBValueSlot(const QString& v){
-  dxSBValue=v;
-  emit valueChanged( sxSBValue +" " + dxSBValue);
-
-}
-
-
-
-
 
 #include "doubleeditors.moc"

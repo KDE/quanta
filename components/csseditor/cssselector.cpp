@@ -32,10 +32,8 @@
 #include <kstandarddirs.h>
 #include <klocale.h>
 #include "csseditor_globals.h"
-#include "fwglobal.h"
-#include "resource.h"
-#include "quanta.h"
-#include "encodingselector.h"
+//#include "resource.h"
+//#include "quanta.h"
 
 CSSSelector::CSSSelector(QString dtd, QWidget *parent, const char* name) : CSSSelectorS (parent,name), currentDocumentDTD(dtd) {
   
@@ -45,7 +43,6 @@ CSSSelector::CSSSelector(QString dtd, QWidget *parent, const char* name) : CSSSe
   lvClasses->setAllColumnsShowFocus(true);
   lvIDs->setAllColumnsShowFocus(true);
   lvPseudo->setAllColumnsShowFocus(true);
-  lvAtRules->setAllColumnsShowFocus(true);
   
   Connect();
   QString configDir = locate("appdata", "csseditor/config.xml");
@@ -71,26 +68,6 @@ CSSSelector::CSSSelector(QString dtd, QWidget *parent, const char* name) : CSSSe
     }
     n = n.nextSibling();
   }
-
-/*  file.setName( configDir+"atrules.xml" );
-  if ( !file.open( IO_ReadOnly ) )
-    return;
-  if ( !doc.setContent( &file ) ) {
-    file.close();
-    return;
-  }
-  file.close();
-
-
-  n = docElem.firstChild();
-  while( !n.isNull() ) {
-    QDomElement e = n.toElement();
-    if( !e.isNull() ) {
-      cbAtRules->insertItem(e.attribute("name"));
-    }
-    n = n.nextSibling();
-  }
-  */
 
   file.setName( configDir+"dtdTags.xml" );
   if ( !file.open( IO_ReadOnly ) )
@@ -145,25 +122,21 @@ void CSSSelector::Connect(){
   connect(pbAddClass,SIGNAL(clicked()), this ,SLOT(addClass()));
   connect(pbAddID,SIGNAL(clicked()), this ,SLOT(addID()));
   connect(pbAddPseudo,SIGNAL(clicked()), this ,SLOT(addPseudo()));
-  connect(pbAddAtRules,SIGNAL(clicked()), this ,SLOT(addAtRules()));
-
+  
   connect(lvTags, SIGNAL(doubleClicked( QListViewItem *  )), this, SLOT(openCSSEditor(QListViewItem *)));
   connect(lvClasses, SIGNAL(doubleClicked( QListViewItem *  )), this, SLOT(openCSSEditor(QListViewItem *)));
   connect(lvIDs, SIGNAL(doubleClicked( QListViewItem *  )), this, SLOT(openCSSEditor(QListViewItem *)));
   connect(lvPseudo, SIGNAL(doubleClicked( QListViewItem *  )), this, SLOT(openCSSEditor(QListViewItem *)));
-  connect(lvAtRules, SIGNAL(doubleClicked( QListViewItem *  )), this, SLOT(openAtRulesEditor(QListViewItem *)));
-   
+     
   connect(lvTags, SIGNAL(selectionChanged( QListViewItem *  )), this, SLOT(setCurrentItem(QListViewItem *)));
   connect(lvClasses, SIGNAL(selectionChanged( QListViewItem *  )), this, SLOT(setCurrentItem(QListViewItem *)));
   connect(lvIDs, SIGNAL(selectionChanged( QListViewItem *  )), this, SLOT(setCurrentItem(QListViewItem *)));
   connect(lvPseudo, SIGNAL( selectionChanged( QListViewItem *  )), this, SLOT(setCurrentItem(QListViewItem *)));
-  connect(lvAtRules, SIGNAL( selectionChanged( QListViewItem *  )), this, SLOT(setCurrentItem(QListViewItem *)));
-  
+    
   connect(pbRemoveSelectedTag,SIGNAL(clicked()), this ,SLOT(removeSelected()));
   connect(pbRemoveSelectedClass,SIGNAL(clicked()), this ,SLOT(removeSelected()));
   connect(pbRemoveSelectedID,SIGNAL(clicked()), this ,SLOT(removeSelected()));
   connect(pbRemoveSelectedPseudo,SIGNAL(clicked()), this ,SLOT(removeSelected()));
-  connect(pbRemoveSelectedAtRules,SIGNAL(clicked()), this ,SLOT(removeSelected()));
 
   connect(twSelectors,SIGNAL(currentChanged ( QWidget * )), this ,SLOT(setCurrentListView( QWidget * )));
 
@@ -171,7 +144,6 @@ void CSSSelector::Connect(){
   connect(pbRemoveAllClasses,SIGNAL(clicked()), this ,SLOT(removeAll()));
   connect(pbRemoveAllIDs,SIGNAL(clicked()), this ,SLOT(removeAll()));
   connect(pbRemoveAllPseudo,SIGNAL(clicked()), this ,SLOT(removeAll()));
-  connect(pbRemoveAllAtRules,SIGNAL(clicked()), this ,SLOT(removeAll()));
 }
 
 void CSSSelector::setDTDTags(const QString& s){
@@ -227,11 +199,6 @@ void CSSSelector::addID(){
 void CSSSelector::addPseudo(){
   QListViewItem *item = new QListViewItem(lvPseudo);
   item->setText(0,(lePseudoSelector->text()+":"+cbPseudo->currentText()).stripWhiteSpace());
-}
-
-void CSSSelector::addAtRules(){
-  QListViewItem *item = new QListViewItem(lvAtRules);
-  item->setText(0,"@" +cbAtRules->currentText());
 }
 
 void CSSSelector::openCSSEditor(QListViewItem * i){
@@ -342,11 +309,7 @@ void CSSSelector::loadExistingStyleSection(QString s){
         tempStr=s.mid(atPos,SCPos-atPos).simplifyWhiteSpace();
         tempStr.remove("\n");
         tempStr.remove("\t");
-        QListViewItem *item;
-        item = new QListViewItem(lvAtRules);
-        item->setText(0,tempStr.left( tempStr.find(" ") ) );
         tempStr.remove(0,tempStr.find(" ") );
-        item->setText(1,tempStr);
         s.remove(atPos,SCPos-atPos+1);
       }
       else{
@@ -366,12 +329,7 @@ void CSSSelector::loadExistingStyleSection(QString s){
         tempStr=s.left(closedParePos+1).simplifyWhiteSpace();
         tempStr.remove("\n");
         tempStr.remove("\t");
-        QListViewItem *item;
-        item = new QListViewItem(lvAtRules);
-        item->setText(0,tempStr.left( tempStr.find("{") ) );
         tempStr.remove(0,tempStr.find("{") );
-
-        item->setText(1,tempStr);
         s.remove(atPos,closedParePos-atPos+1);
 
       }
@@ -384,11 +342,7 @@ void CSSSelector::loadExistingStyleSection(QString s){
         s.remove(tempStr+";");
         tempStr.remove("\n");
         tempStr.remove("\t");
-        QListViewItem *item;
-        item = new QListViewItem(lvAtRules);
-        item->setText(0,tempStr.left( tempStr.find(" ") ) );
         tempStr.remove(0,tempStr.find(" ") );
-        item->setText(1,tempStr);
       }
       else{
         break;
@@ -457,40 +411,10 @@ QString CSSSelector::generateStyleSection(){
     styleSection+=(temp->text(0)+" { "+temp->text(1)+" } \n\t");
     temp = temp->nextSibling();
     }
-   
-  temp = lvAtRules->firstChild();
-  while(temp){
-    if( temp->text(0) == "@charset" )
-      styleSection+=(temp->text(0)+" \"" + temp->text(1) + "\";\n\t");
-    else
-    if( temp->text(0) == "@import" )
-      styleSection+=(temp->text(0)+ " url('" + temp->text(1) + "');\n\t");
-    temp = temp->nextSibling();
-    }
-      
+
   styleSection.truncate(styleSection.length()-1); //we elminate the last \t
 
   return QString("\n\t")+styleSection;
-}
-
-void CSSSelector::openAtRulesEditor(QListViewItem *i){
-  if(i->text(0) == "@import") {
-    QFileDialog* fd = new QFileDialog( this, "file dialog", TRUE );
-    fd->setFilter( i18n("Cascading Stylesheet File")+" (*.css)" );
-    fd->setMode(QFileDialog::ExistingFile);
-    if( fd->exec() == QDialog::Accepted ){
-      i->setText(1,relativize( fd->selectedFile(), quantaApp->projectBaseURL().path() ));
-    }
-    delete fd;  
-  }
-  
-  if(i->text(0) == "@charset") {
-    encodingSelector* fd = new encodingSelector( this);
-    if( fd->exec() == QDialog::Accepted ){
-      i->setText(1,fd->encodingSet() );
-    }
-    delete fd;  
-  }
 }
 
 

@@ -2,7 +2,7 @@
                           csseditor.cpp  -  description
                              -------------------
     begin                : mer lug 23 11:20:17 CEST 2003
-    copyright            : (C) |YEAR| by si2003    email                : simone@localhost
+    copyright            : (C) |YEAR| by si2003    email                : gulmini.luciano@student.unife.it
  ***************************************************************************/
 
 /***************************************************************************
@@ -40,7 +40,6 @@
 #include "resource.h"
 #include "cssshpropertyparser.h"
 #include "shorthandformer.h"
-#include "fwglobal.h"
 #include "resource.h"
 #include "quanta.h"
 
@@ -443,12 +442,12 @@ void CSSEditor::setMiniEditors(QListViewItem* i)
               unsigned int k;
               QDomNodeList sxValues = curr.firstChild().childNodes();
               for(k=0; k<sxValues.length(); k++){
-                m_ps->DoubleComboBoxEditor()->getCbSx()->insertItem(sxValues.item(k).toElement().attribute("name"));
+                m_ps->DoubleComboBoxEditor()->cbSx()->insertItem(sxValues.item(k).toElement().attribute("name"));
               }
 
               QDomNodeList dxValues = curr.lastChild().childNodes();
               for(k=0; k<dxValues.length(); k++){
-                m_ps->DoubleComboBoxEditor()->getCbDx()->insertItem(dxValues.item(k).toElement().attribute("name"));
+                m_ps->DoubleComboBoxEditor()->cbDx()->insertItem(dxValues.item(k).toElement().attribute("name"));
               }            
             }            
         }

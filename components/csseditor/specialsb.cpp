@@ -42,35 +42,35 @@ void specialSB::sbValueSlot(const QString& s){
 }
 
 frequencyEditor::frequencyEditor(QWidget *parent, const char *name ) : specialSB(parent,name) {
-  getComboBox()->insertItem("Hz");
-  getComboBox()->insertItem("kHz");
-  getSpinBox()->setMaxValue(9999);
+  /*getComboBox()*/m_cb->insertItem("Hz");
+  /*getComboBox()*/m_cb->insertItem("kHz");
+  /*getSpinBox()*/m_sb->setMaxValue(9999);
 }
 
 angleEditor::angleEditor(QWidget *parent, const char *name) : specialSB(parent,name){
-  getComboBox()->insertItem("deg");
-  getComboBox()->insertItem("grad");
-  getComboBox()->insertItem("rad");
-  getSpinBox()->setMaxValue(-360);
-  getSpinBox()->setMaxValue(360);
+  /*getComboBox()*/m_cb->insertItem("deg");
+  /*getComboBox()*/m_cb->insertItem("grad");
+  /*getComboBox()*/m_cb->insertItem("rad");
+  /*getSpinBox()*/m_sb->setMaxValue(-360);
+  /*getSpinBox()*/m_sb->setMaxValue(360);
 }
 
 timeEditor::timeEditor(QWidget *parent, const char *name ) : specialSB(parent,name) {
-  getComboBox()->insertItem("ms");
-  getComboBox()->insertItem("s");
-  getSpinBox()->setMaxValue(99999);
+  /*getComboBox()*/m_cb->insertItem("ms");
+  /*getComboBox()*/m_cb->insertItem("s");
+  /*getSpinBox()*/m_sb->setMaxValue(99999);
 }
 
 lengthEditor::lengthEditor(QWidget *parent, const char *name ) : specialSB(parent,name) {
-  getComboBox()->insertItem("px");
-  getComboBox()->insertItem("em");
-  getComboBox()->insertItem("ex");
-  getComboBox()->insertItem("in");
-  getComboBox()->insertItem("cm");
-  getComboBox()->insertItem("mm");
-  getComboBox()->insertItem("pt");
-  getComboBox()->insertItem("pc");
-  getSpinBox()->setMaxValue(99999);
+  /*getComboBox()*/m_cb->insertItem("px");
+  /*getComboBox()*/m_cb->insertItem("em");
+  /*getComboBox()*/m_cb->insertItem("ex");
+  /*getComboBox()*/m_cb->insertItem("in");
+  /*getComboBox()*/m_cb->insertItem("cm");
+  /*getComboBox()*/m_cb->insertItem("mm");
+  /*getComboBox()*/m_cb->insertItem("pt");
+  /*getComboBox()*/m_cb->insertItem("pc");
+  /*getSpinBox()*/m_sb->setMaxValue(99999);
 }
 
 

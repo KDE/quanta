@@ -40,49 +40,38 @@ class timeEditor;
   *@author gulmini luciano
   */
 
-  
-class fontEditor : public QHBox {
+
+class TLPEditor : public QHBox { //editor with a line text and a button calling a dialog
   Q_OBJECT
 
-  private:
+  protected:
     QLineEdit *m_le;
-    //QLabel *m_label;
+    QLabel *m_label;
     KPushButton *m_pb;
      
   public:
-    fontEditor(QWidget *parent, const char* name=0);
-    ~fontEditor();
+    TLPEditor(QWidget *parent, const char* name=0);
+    virtual ~TLPEditor();
     KPushButton *button() const { return m_pb;}
+    void setButtonIcon(QString);
+    void setToolTip(QString);
+    void setLabelText(QString);
+     
+  signals:
+    void valueChanged(const QString&);  
+}; 
+    
+class fontEditor : public TLPEditor{
+  Q_OBJECT
+     
+  public:
+    fontEditor(QWidget *parent, const char* name=0);
      
   public slots:
     void openFontChooser();
-     
-  signals:
-    void valueChanged(const QString&);   
 };
   
-  
-  
-class multipleSpinBox : public QHBox{
-  Q_OBJECT
-   
-  private:
-    QPtrList<QSpinBox> SBList;
-     
-  public:
-    multipleSpinBox(QWidget *parent, const char* name=0, int n=2);
-    ~multipleSpinBox();
-    QSpinBox* getSpinBox(unsigned int i) { return SBList.at(i); }
-    void setSuffix(const QString&);
-    
-  public slots:
-    void valueChangedSlot(const QString&);   
-  
-  signals:
-    void valueChanged(const QString&);    
-};
-    
-class URIEditor : public QHBox {
+class URIEditor : public TLPEditor {
   Q_OBJECT
   public:
     enum mode{ multi, single };
@@ -90,25 +79,17 @@ class URIEditor : public QHBox {
       
   private:
     QStringList m_sFiles;
-    QLineEdit *m_le;
-    QLabel *m_label;
-    KPushButton *m_pb;
     mode m_Mode;
     URIResourceType m_resourceType;
      
   public:
     URIEditor(QWidget *parent, const char* name=0);
-    ~URIEditor();
-    KPushButton * button() const { return m_pb;}
     void setMode(const mode& m) { m_Mode = m ; }
     void setResourceType(const  URIResourceType& r) { m_resourceType = r ; }
      
   public slots:
     void URI(const QString&);
     void openFileDialog();
-     
-  signals:
-    void valueChanged(const QString&);   
 };
    
 class percentageEditor : public QHBox  {

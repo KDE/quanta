@@ -19,31 +19,27 @@
 #define SPECIALSB_H
 
 #include <qhbox.h>
+#include <qcombobox.h>
 
 /**
   *@author simone
   */
-class QComboBox;
 class QSpinBox;
   
 class specialSB : public QHBox {
-     Q_OBJECT
-
-   private:
-     QComboBox *m_cb;
-     QSpinBox  *m_sb;
-     QString m_cbValue,
-             m_sbValue;
+    Q_OBJECT
+  protected:
+    QComboBox *m_cb;
+    QSpinBox  *m_sb;
+ 
+  private:
+    QString m_cbValue,
+                 m_sbValue;
 
    public:
            specialSB(QWidget *parent=0, const char *name=0);
            ~specialSB();
-     void setComboBox();
-     void setSpinBox(const QString&, const QString&, const QString&);
-     void reset();
-
-     QComboBox* getComboBox() const { return m_cb; }
-     QSpinBox* getSpinBox() const { return m_sb; }
+     void insertItem(QString s){ m_cb->insertItem(s); }
    public slots:
      void cbValueSlot(const QString&);
      void sbValueSlot(const QString&);
@@ -56,28 +52,24 @@ class angleEditor : public specialSB {
      Q_OBJECT
    public:
            angleEditor(QWidget *parent=0, const char *name=0);
-           ~angleEditor(){}
 };
 
 class frequencyEditor : public specialSB {
      Q_OBJECT
    public:
            frequencyEditor(QWidget *parent=0, const char *name=0);
-           ~frequencyEditor(){}
 };
 
 class timeEditor : public specialSB {
      Q_OBJECT
    public:
            timeEditor(QWidget *parent=0, const char *name=0);
-           ~timeEditor(){}
 };
 
 class lengthEditor : public specialSB {
      Q_OBJECT
    public:
            lengthEditor(QWidget *parent=0, const char *name=0);
-           ~lengthEditor(){}
 };
 
 #endif

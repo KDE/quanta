@@ -16,31 +16,33 @@
  ***************************************************************************/
 
 #include "propertysetter.h"
+
 #include <qlineedit.h>
 #include <qcombobox.h>
 #include <qspinbox.h>
-#include <kpushbutton.h>
 #include <qiconset.h>
 #include <qpixmap.h>
 #include <qptrlist.h>
-#include <kdialog.h>
-#include <kiconloader.h>
 #include <qfiledialog.h>
 #include <qlabel.h>
-#include <kstandarddirs.h>
-#include "colorrequester.h"
-#include "specialsb.h"
-#include "csseditor_globals.h"
-#include <klocale.h>
 #include <qfontdatabase.h> 
 #include <qtooltip.h>
 
-#include "fwglobal.h"
+#include <kpushbutton.h>
+#include <kstandarddirs.h>
+#include <kdebug.h>
+#include <kurl.h>
+#include <kdialog.h>
+#include <kiconloader.h>
+#include <klocale.h>
+
 #include "resource.h"
 #include "quanta.h"
 #include "fontfamilychooser.h"
+#include "colorrequester.h"
+#include "specialsb.h"
+#include "csseditor_globals.h"
 
-#include <kdebug.h>
 
 
 propertySetter::propertySetter(QWidget *parent, const char *name ) : QHBox(parent,name) {
@@ -210,37 +212,51 @@ void propertySetter::addButton(){
   connect(m_pb, SIGNAL(clicked()), this ,SLOT(Show()));
 }
 
-URIEditor::URIEditor(QWidget *parent, const char* name) : QHBox(parent,name)
-{
-  m_Mode = single;
+
+     
+TLPEditor::TLPEditor(QWidget *parent, const char* name) : QHBox(parent,name){
   m_label = new QLabel(this);
   m_le = new QLineEdit(this);
   m_pb = new KPushButton(this);
-
-  m_label->setText(" Uri :");
-
-  QIconSet iconSet =  SmallIconSet(QString::fromLatin1("fileopen"));
-  QPixmap pixMap = iconSet.pixmap( QIconSet::Small, QIconSet::Normal );
-
-  m_pb->setIconSet(iconSet);
-  m_pb->setFixedSize( pixMap.width()+8, pixMap.height()+8 );
   setSpacing( KDialog::spacingHint() );
-
-  if( m_Mode == single )
-    connect(m_le, SIGNAL(textChanged ( const QString & )), this, SLOT(URI(const QString&)));
-  connect(m_pb, SIGNAL(clicked()), this, SLOT(openFileDialog()));
 }
 
-URIEditor::~URIEditor(){
+TLPEditor::~TLPEditor(){
   delete m_label;
   delete m_le;
   delete m_pb;
 }
 
+void TLPEditor::setButtonIcon(QString s){
+  QIconSet iconSet =  SmallIconSet(QString::fromLatin1(s));
+  QPixmap pixMap = iconSet.pixmap( QIconSet::Small, QIconSet::Normal );
+  m_pb->setIconSet(iconSet);
+  m_pb->setFixedSize( pixMap.width()+8, pixMap.height()+8 );
+}
+
+void TLPEditor::setLabelText(QString s){
+  m_label->setText(s);
+}
+
+void TLPEditor::setToolTip(QString s){
+  QToolTip::add(m_pb, i18n( s ));
+}
+
+URIEditor::URIEditor(QWidget *parent, const char* name) : TLPEditor(parent,name)
+{
+  m_Mode = single;
+  setLabelText(" Uri  :");
+  setButtonIcon("fileopen");
+  setToolTip("Open the URI selector");
+
+  if( m_Mode == single )
+    connect(m_le, SIGNAL(textChanged ( const QString & )), this, SLOT(URI(const QString&)));
+  connect(m_pb, SIGNAL(clicked()), this, SLOT(openFileDialog()));  
+}
+
 void URIEditor::URI(const QString & s)
  {
-   QString h=relativize( s , quantaApp->projectBaseURL().path() );
-   emit valueChanged("url(\'" + h + "\')");
+   emit valueChanged("url(\'" + KURL::relativeURL( KURL( quantaApp->projectBaseURL().path() ), KURL(s) ) + "\')");
  }
 
 void URIEditor::openFileDialog(){
@@ -268,7 +284,7 @@ void URIEditor::openFileDialog(){
     else {
       QStringList selectedFiles = fd->selectedFiles();
       for ( QStringList::Iterator it = selectedFiles.begin(); it != selectedFiles.end(); ++it ) 
-        m_sFiles.append( "url(\'" + relativize( (*it), quantaApp->projectBaseURL().path() ) + "\')");
+        m_sFiles.append( "url(\'" + KURL::relativeURL( KURL( quantaApp->projectBaseURL().path() ), KURL( (*it) ) ) + "\')");
       emit valueChanged(m_sFiles.join(","));
     }
   }
@@ -280,7 +296,6 @@ percentageEditor::percentageEditor(QWidget *parent, const char *name) : QHBox(pa
   sb = new QSpinBox(0,9999,1,this);
   sb->setSuffix("%");
   connect(sb, SIGNAL(valueChanged ( const QString & )), this, SIGNAL(valueChanged(const QString&)));
-
 }
 
 percentageEditor::~percentageEditor()
@@ -288,53 +303,14 @@ percentageEditor::~percentageEditor()
   delete sb;
 }
 
-multipleSpinBox::multipleSpinBox(QWidget *parent, const char* name, int n) : QHBox(parent,name){
-  SBList.setAutoDelete(true);
-  int i;
-  for(i=0;i<n;i++){
-    QSpinBox *sb=new QSpinBox(this);
-    SBList.append(sb);
-    connect(sb, SIGNAL(valueChanged(const QString&)), this, SLOT(valueChangedSlot(const QString&)));
-  }
-}
-
-multipleSpinBox::~multipleSpinBox(){
-  SBList.clear();
-}
-
-void multipleSpinBox::setSuffix(const QString& s){
-  QSpinBox *sb;
-  for ( sb = SBList.first(); sb; sb = SBList.next() )
-    sb->setSuffix(s);
-}
-
-void multipleSpinBox::valueChangedSlot(const QString& s) {
-  QSpinBox *sb;
-  for ( sb = SBList.first(); sb; sb = SBList.next() )
-    emit valueChanged(s);
-}
-
-fontEditor::fontEditor(QWidget *parent, const char* name) : QHBox(parent,name)
+fontEditor::fontEditor(QWidget *parent, const char* name) : TLPEditor(parent,name)
 {
-  //m_label = new QLabel(this);
-  m_le = new QLineEdit(this);
-  m_pb = new KPushButton(this);
-  QIconSet iconSet =  SmallIconSet(QString::fromLatin1("fonts"));
-  QPixmap pixMap = iconSet.pixmap( QIconSet::Small, QIconSet::Normal );
-  QToolTip::add(m_pb, i18n("Open font family chooser"));
-
-  m_pb->setIconSet(iconSet);
-  m_pb->setFixedSize( pixMap.width()+8, pixMap.height()+8 );
-  setSpacing( KDialog::spacingHint() );
-
-  connect(m_le, SIGNAL(textChanged ( const QString & )), this, SIGNAL( valueChanged( const QString& ) ) );
+  setLabelText(" Font  :");
+  setButtonIcon("fonts");
+  setToolTip("Open font family chooser");
+  
   connect(m_pb, SIGNAL(clicked()), this, SLOT(openFontChooser()));
-}
-
-fontEditor::~fontEditor(){
-  //delete m_label;
-  delete m_le;
-  delete m_pb;
+  connect(m_le, SIGNAL(textChanged ( const QString & )), this, SIGNAL( valueChanged( const QString& ) ) );
 }
 
 void fontEditor::openFontChooser(){

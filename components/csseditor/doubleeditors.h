@@ -21,64 +21,54 @@
  class QSpinBox;
  class QComboBox;
  
- class doublePercentageEditor : public QHBox /*multipleSpinBox*/  {
-     Q_OBJECT
-   private:
-     QSpinBox  *sbSx,
-               *sbDx;
-     QString   sxSBValue,
-               dxSBValue;
-   public:
-	   doublePercentageEditor(QWidget *parent=0, const char *name=0);
-	   ~doublePercentageEditor();
+class doubleEditorBase : public QHBox {
+    Q_OBJECT
+  protected:
+    QString   m_sxValue,
+                   m_dxValue;
+  public:
+    doubleEditorBase(QWidget *parent=0, const char *name=0);
+    virtual ~doubleEditorBase(){}
 
-   public slots:
-     void sxSBValueSlot(const QString&);
-     void dxSBValueSlot(const QString&);
-
-   signals:
-     void valueChanged(const QString&);
-
-};
-
-class doubleComboBoxEditor : public QHBox  {
-     Q_OBJECT
-   private:
-     QComboBox *cbSx,
-               *cbDx;
-     QString sxValue,
-             dxValue;
-
-   public:
-	   doubleComboBoxEditor(QWidget *parent=0, const char *name=0);
-	   ~doubleComboBoxEditor();
-     QComboBox* getCbSx() const { return cbSx;}
-     QComboBox* getCbDx() const { return cbDx;}
    public slots:
      void sxValueSlot(const QString&);
      void dxValueSlot(const QString&);
 
    signals:
      void valueChanged(const QString&);
+}; 
+ 
+class doublePercentageEditor : public doubleEditorBase {
+    Q_OBJECT
+  private:
+    QSpinBox  *m_sbSx,
+                      *m_sbDx;
+  public:
+    doublePercentageEditor(QWidget *parent=0, const char *name=0);
+    virtual ~doublePercentageEditor();
 };
 
-class doubleLengthEditor : public QHBox  {
-     Q_OBJECT
-   private:
-     specialSB *ssbSx,
-               *ssbDx;
-     QString ssbSxValue,
-             ssbDxValue;
-   public:
-	   doubleLengthEditor(QWidget *parent=0, const char *name=0);
-	   ~doubleLengthEditor();
+class doubleComboBoxEditor : public doubleEditorBase {
+    Q_OBJECT
+  private:
+    QComboBox *m_cbSx,
+                         *m_cbDx;
+  public:
+    doubleComboBoxEditor(QWidget *parent=0, const char *name=0);
+    virtual ~doubleComboBoxEditor();
+    QComboBox* cbSx() const { return m_cbSx;}
+    QComboBox* cbDx() const { return m_cbDx;}
+};
 
-   public slots:
-     void ssbSxValueSlot(const QString&);
-     void ssbDxValueSlot(const QString&);
+class doubleLengthEditor : public doubleEditorBase {
+    Q_OBJECT
+  private:
+    specialSB *m_ssbSx,
+                     *m_ssbDx;
 
-   signals:
-     void valueChanged(const QString&);  
+  public:
+    doubleLengthEditor(QWidget *parent=0, const char *name=0);
+    virtual ~doubleLengthEditor();
 };
 
 #endif
