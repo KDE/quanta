@@ -781,7 +781,7 @@ void ActionConfigDialog::slotNewAction()
   el.setAttribute( "name", "user_"+KApplication::randomString(10) );
   el.setAttribute( "icon", "ball" );
 
-  currentAction = new TagAction(&el, m_mainWindow->actionCollection());
+  currentAction = new TagAction(&el, m_mainWindow);
 #if KDE_IS_VERSION(3,2,90)
     //add the actions to every toolbar xmlguiclient
     QDictIterator<ToolbarEntry> it(m_toolbarList);

@@ -2196,7 +2196,7 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
     //if there is no such action yet, add to the available actions
     if (!actionCollection()->action(actionName))
     {
-      TagAction *tagAction = new TagAction(&el, actionCollection() );
+      TagAction *tagAction = new TagAction(&el, this);
 
 #if KDE_IS_VERSION(3,2,90)
      //add the actions to every toolbar xmlguiclient

@@ -26,6 +26,7 @@
 #include <qstring.h>
 #include <qdom.h>
 
+class KMainWindow;
 class QuantaView;
 class KProcess;
 class QDomElement;
@@ -49,7 +50,7 @@ public:
     /**
      * Create an insert from dom element.
      */
-    TagAction( QDomElement *element, KActionCollection *parent);
+    TagAction(QDomElement *element, KMainWindow *parentMainWindow);
     virtual ~TagAction();
 
     QDomElement data() const { return tag; }
@@ -67,6 +68,12 @@ public:
      * Remove accelerator from tag action name *
      */
     QString actionText();
+
+signals:
+    void showMessage(const QString& msg, bool append);
+    void clearMessages();
+    void showMessagesView();
+    void createNewFile();
 
 protected slots:
     virtual void slotGetScriptOutput( KProcess *, char *buffer, int buflen );
@@ -89,8 +96,8 @@ private:
     QTimer* timer;
     QDomElement tag;
     QFile* m_file;
+    KMainWindow *m_parentMainWindow;
     QString m_inputFileName;
-    MessageOutput *m_appMessages;
     QStringList m_argsList;
     uint m_killCount;
 };

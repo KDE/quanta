@@ -206,6 +206,9 @@ signals: // Signals
   
   void toolbarRemoved(const QString&);
 
+  void showMessage(const QString&, bool);
+  void clearMessages();
+
 public slots:
   void slotFileNew();
   void slotFileOpen();

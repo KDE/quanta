@@ -69,9 +69,10 @@ int MyProcess::commSetupDoneC()
   return KProcess::commSetupDoneC();
 }
 
-TagAction::TagAction( QDomElement *element, KActionCollection *parent)
-  : KAction( element->attribute("text").isEmpty() ? QString("") : i18n(element->attribute("text").utf8()), KShortcut(element->attribute("shortcut")), 0, 0, parent, element->attribute("name") )
+TagAction::TagAction( QDomElement *element, KMainWindow *parentMainWindow)
+  : KAction(element->attribute("text").isEmpty() ? QString("") : i18n(element->attribute("text").utf8()), KShortcut(element->attribute("shortcut")), 0, 0, parentMainWindow->actionCollection(), element->attribute("name"))
 {
+  m_parentMainWindow = parentMainWindow;
   m_modified = false;
   m_useInputFile = false;
   m_useOutputFile = false;
@@ -81,11 +82,14 @@ TagAction::TagAction( QDomElement *element, KActionCollection *parent)
   {
     s = QFileInfo(s).fileName();
   }
-  setIcon( s );
+  setIcon(s);
   m_file = 0L;
   loopStarted = false;
-  m_appMessages = quantaApp->messageOutput();
-  connect( this, SIGNAL(activated()), SLOT(slotActionActivated()) );
+  connect(this, SIGNAL(activated()), SLOT(slotActionActivated()));
+  connect(this, SIGNAL(showMessage(const QString&, bool)), m_parentMainWindow, SIGNAL(showMessage(const QString&, bool)));
+  connect(this, SIGNAL(clearMessages()), m_parentMainWindow, SIGNAL(clearMessages()));
+  connect(this, SIGNAL(showMessagesView()), m_parentMainWindow, SLOT(slotShowMessagesView()));
+  connect(this, SIGNAL(createNewFile()), m_parentMainWindow, SLOT(slotFileNew()));
 }
 
 TagAction::~TagAction()
@@ -309,7 +313,7 @@ bool TagAction::slotActionActivated()
     scriptErrorDest  = script.attribute("error","none");
     if (scriptOutputDest == "message")
     {
-      quantaApp->slotShowMessagesView();
+      emit showMessagesView();
     }
 
     if (m_useInputFile)
@@ -319,8 +323,8 @@ bool TagAction::slotActionActivated()
 
     if (proc->start(KProcess::NotifyOnExit, KProcess::All))
     {
-      m_appMessages->clear();
-      m_appMessages->showMessage( i18n("The \"%1\" script started.\n").arg(actionText()) );
+      emit clearMessages();
+      emit showMessage(i18n("The \"%1\" script started.\n").arg(actionText()), false);
       if (!m_useInputFile)
       {
         if ( inputType == "current" || inputType == "selected" )
@@ -331,7 +335,7 @@ bool TagAction::slotActionActivated()
       proc->closeStdin();
     } else
     {
-      KMessageBox::error(quantaApp, i18n("<qt>There was an error running <b>%1</b>.<br>Check that you have the <i>%2</i> executable installed and it is accessible.</qt>").arg(command + " " + args).arg(command), i18n("Script Not Found"));
+      KMessageBox::error(m_parentMainWindow, i18n("<qt>There was an error running <b>%1</b>.<br>Check that you have the <i>%2</i> executable installed and it is accessible.</qt>").arg(command + " " + args).arg(command), i18n("Script Not Found"));
       ViewManager::ref()->activeView()->setFocus();
       if (loopStarted)
       {
@@ -380,9 +384,9 @@ void TagAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
   } else
   if ( scriptOutputDest == "new" )
   {
-    if ( firstOutput )
+    if (firstOutput)
     {
-        quantaApp->slotFileNew();
+        emit createNewFile();
         w = ViewManager::ref()->activeDocument();
     }
     w->insertTag( text );
@@ -391,10 +395,10 @@ void TagAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
   {
     if ( firstOutput )
     {
-      quantaApp->slotShowMessagesView();
-      m_appMessages->showMessage( i18n( "The \"%1\" script output:\n" ).arg( actionText() ) );
+      emit showMessagesView();
+      emit showMessage(i18n("The \"%1\" script output:\n").arg(actionText()), false);
     }
-    m_appMessages->showMessage( text, true );
+    emit showMessage(text, true);
   } else
   if ( scriptOutputDest == "file" && m_file)
   {
@@ -440,10 +444,10 @@ void TagAction::slotGetScriptError( KProcess *, char *buffer, int buflen )
   } else
   if ( scriptErrorDest == "new" )
   {
-    if ( firstError )
+    if (firstError)
     {
-        quantaApp->slotFileNew();
-        w = ViewManager::ref()->activeDocument();
+      emit createNewFile();
+      w = ViewManager::ref()->activeDocument();
     }
     w->insertTag( text );
   } else
@@ -451,10 +455,10 @@ void TagAction::slotGetScriptError( KProcess *, char *buffer, int buflen )
   {
     if ( firstError )
     {
-      quantaApp->slotShowMessagesView();
-      m_appMessages->showMessage( i18n( "The \"%1\" script output:\n" ).arg(actionText()) );
+      emit showMessagesView();
+      emit showMessage(i18n("The \"%1\" script output:\n").arg(actionText()), false);
     }
-    m_appMessages->showMessage( text, true );
+    emit showMessage(text, true);
   }
 
   firstError = false;
@@ -494,7 +498,7 @@ void TagAction::slotProcessExited(KProcess *process)
     qApp->exit_loop();
     loopStarted = false;
   }
-  m_appMessages->showMessage( i18n("The \"%1\" script has exited.").arg(actionText()) );
+  emit showMessage(i18n("The \"%1\" script has exited.").arg(actionText()), false);
   delete process;
 }
 
@@ -532,7 +536,7 @@ void TagAction::execute(bool blocking)
 /** Timeout occurred while waiting for some network function to return. */
 void TagAction::slotTimeout()
 {
-  if ((m_killCount == 0) && (KMessageBox::questionYesNo(quantaApp, i18n("<qt>The filtering action <b>%1</b> seems to be locked.<br>Do you want to terminate it?</qt>").arg(actionText()), i18n("Action Not Responding")) == KMessageBox::Yes))
+  if ((m_killCount == 0) && (KMessageBox::questionYesNo(m_parentMainWindow, i18n("<qt>The filtering action <b>%1</b> seems to be locked.<br>Do you want to terminate it?</qt>").arg(actionText()), i18n("Action Not Responding")) == KMessageBox::Yes))
   {
     if (::kill(-proc->pid(), SIGTERM))
     {

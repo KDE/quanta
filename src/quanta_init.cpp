@@ -459,6 +459,8 @@ void QuantaInit::initView()
   m_quanta->m_messageOutput = new MessageOutput(m_quanta, "Messages");
   m_quanta->m_messageOutput->setFocusPolicy(QWidget::NoFocus);
   m_quanta->m_messageOutput->showMessage(i18n("Message Window..."));
+  connect(m_quanta, SIGNAL(showMessage(const QString&, bool)), m_quanta->m_messageOutput, SLOT(showMessage(const QString&, bool)));
+  connect(m_quanta, SIGNAL(clearMessages()), m_quanta->m_messageOutput, SLOT(clear()));
 
   m_quanta->m_problemOutput = new MessageOutput(m_quanta, "Problems");
   m_quanta->m_problemOutput->setFocusPolicy(QWidget::NoFocus);
@@ -915,7 +917,7 @@ void QuantaInit::initActions()
         while( !n.isNull() ) {
           QDomElement e = n.toElement(); // try to convert the node to an element.
           if( !e.isNull() ) { // the node was really an element.
-              new TagAction( &e, ac);
+              new TagAction(&e, m_quanta);
           }
           n = n.nextSibling();
         }
@@ -941,7 +943,7 @@ void QuantaInit::initActions()
             if( !e.isNull())
             { // the node was really an element.
                 delete ac->action(e.attribute("name"));
-                new TagAction( &e, ac);
+                new TagAction(&e, m_quanta);
             }
             n = n.nextSibling();
           }
