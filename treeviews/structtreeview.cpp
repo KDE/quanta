@@ -533,7 +533,7 @@ void StructTreeView::slotSelectTag()
         {
           tag->endPos(eLine, eCol);
         } else
-        {
+        { //TODO: use QuantaView::slotSelectTagArea(Node *node) method
           if (tag->closingMissing && it->node->child)
           {
             Node *node = it->node->child;

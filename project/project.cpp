@@ -1083,14 +1083,13 @@ void Project::slotAcceptCreateProject()
   QString basePath = png->linePrjDir ->text();
 
   KURL oldBaseURL = baseURL;
-  baseURL = KURL();
+  baseURL = KURL::fromPathOrURL(basePath);
   baseURL.setHost(png->lineHost->text());
   baseURL.setUser(png->lineUser->text());
   baseURL.setPass(png->linePasswd->text());
   baseURL.setPort(png->linePort->text().toInt());
   baseURL.setProtocol(png->comboProtocol->currentText());
   if (baseURL.protocol() == i18n("Local")) baseURL.setProtocol("file");
-  baseURL.setPath(basePath);
   baseURL.adjustPath(1);
   if (!baseURL.path().startsWith("/")) baseURL.setPath("/"+baseURL.path());
   if (!QExtFileInfo::createDir( baseURL ))

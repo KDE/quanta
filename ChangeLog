@@ -32,6 +32,7 @@ Version 3.3 BE (Release date: xx-xx-2004; Started 26-01-2004):
 	- make the New Project wizard usable on lower resolutions [#75192]
 	- fix creation of remote projects [#73172]
 	- fix opening of documentation pages with references [#70345]
+        - fix creation of project when the main directory starts with a protocol name
         - various parsing fixes        
         - report bugs for "quanta" module, not for "quanta_be"        
     - performance:
