@@ -19,28 +19,36 @@ ScriptTagBorders = <? ?>, <* *>
 
 ScriptRegExp = (<\?.+\?>) | (<\*.+\*>)
 
-
-Block variations = 1
-Block1 = %controlstructure% %expr% { %statement% }
-Block2 = %controlstructure%  %expr% %statement%
-Block5 = else { %statement% }
-Block6 = else %statement% 
-Block9 = do { %statememt% } while %expr%
-    
-ControlStructures = while, if, elseif, for, foreach, switch, declare
-Expr = (%text%)
-Statement = %text%;
-
 StructKeywords = for;foreach;if;else;elseif;while;do;switch;declare;function;class
 StructBeginStr = {
 StructEndStr = }
 StructRx = \\{|\\}
-StructGroups = Inclusions/No Inclusions/attach/; Variables/No Variables/abs/; Functions/No Functions/mini-modules/; Classes/No Classes/classnew/
-RegExp0 = (?:include|require|include_once|require_once)[\\s]+(?:(?:(?:\(|\"|\')+[^\)]*(?:\)|\"|\')+)|(?:\$.*))
-RegExp0_clear = \n
-RegExp1 = \$+[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*
-RegExp1_clear = \$
-RegExp2 = function[\\s]+[a-zA-Z_\x7f-\xff]*[\\s]*(?:\(.*\)){0,1}
-RegExp2_clear = function[\\s]+
-RegExp3 = class[\\s]+[a-zA-Z_\x7f-\xff]*[\\s]*
-RegExp3_clear = (?:class[\s]+|\n)
+StructGroupsCount = 4
+
+[StructGroup_1]
+Name = Inclusions
+No_Name = No Inclusions
+Icon = attach
+SearchRx = (?:include|require|include_once|require_once)[\\s]+(?:(?:(?:\(|\"|\')+[^\)]*(?:\)|\"|\')+)|(?:\$.*))
+ClearRx = \n
+
+[StructGroup_2]
+Name = Variables
+No_Name = No Variables
+Icon = abs
+SearchRx = \$+[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*
+ClearRx = \$
+
+[StructGroup_3]
+Name = Functions
+No_Name = No Functions
+Icon = mini-modules
+SearchRx = function[\\s]+[a-zA-Z_\x7f-\xff]*[\\s]*(?:\(.*\)){0,1}
+ClearRx = function[\\s]+
+
+[StructGroup_4]
+Name = Classes
+No_Name = No Classes
+Icon = classnew
+SearchRx = class[\\s]+[a-zA-Z_\x7f-\xff]*[\\s]*
+ClearRx = (?:class[\s]+|\n)

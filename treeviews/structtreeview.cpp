@@ -118,12 +118,11 @@ void StructTreeView::createList(Node *node, StructTreeTag *parent, int openLevel
    for (uint i=0; i < groupsCount; i++)
    {
      name = m_parsingDTD->structGroups[i];
-     QString iconName = name.section('/',2,2);
-     name = name.left(name.find('/')).stripWhiteSpace();
+     name = name.section(';',0,0).stripWhiteSpace();
      groups[i] = new StructTreeTag(this, i18n(name));
-     if (!iconName.isEmpty())
+     if (!m_parsingDTD->groupIcons[i].isEmpty())
      {
-       groups[i]->setPixmap(0, SmallIcon(iconName));
+       groups[i]->setPixmap(0, SmallIcon(m_parsingDTD->groupIcons[i]));
      }
    }
    createList(node, top, openLevel-1 );
@@ -245,20 +244,28 @@ void StructTreeView::createList(Node *node, StructTreeTag *parent, int openLevel
          int pos = 0;
          while (pos != -1)
          {
-           rx.setPattern(m_parsingDTD->groupsRxs[i]);
+           rx.setPattern(m_parsingDTD->groupRxs[i]);
            pos = rx.search(tagStr, pos);
            if (pos != -1)
            {
              text = rx.cap(0);
              Tag *newTag = new Tag(*currentNode->tag);
-             int n = tagStr.left(pos).contains('\n');
+             int newLines = tagStr.left(pos).contains('\n');
              int bl, bc, el, ec;
              newTag->beginPos(bl,bc);
-             bl = bl + n;
-             bc = pos - tagStr.left(pos).findRev('\n') - 1;
-             ec = text.contains('\n');
-             el = bl + ec;
-             if (ec > 0) //is there really such case?
+             bl = bl + newLines;
+             int lastEol = tagStr.left(pos).findRev('\n');
+             if ( lastEol != -1)
+             {
+               bc = pos - lastEol - 1;
+             } else
+             {
+               bc += pos;
+             }
+             
+             newLines = text.contains('\n');
+             el = bl + newLines;
+             if (newLines > 0) //is there really such case?
              {
                ec = text.length() - text.findRev('\n');
              } else
@@ -268,8 +275,9 @@ void StructTreeView::createList(Node *node, StructTreeTag *parent, int openLevel
              newTag->setTagPosition(bl, bc, el, ec);
              newTag->setStr(text);
              pos += text.length();
-             rx.setPattern(m_parsingDTD->groupsClearRxs[i]);
+             rx.setPattern(m_parsingDTD->groupClearRxs[i]);
              text.replace(rx,"");
+             
              Node *node = new Node(currentNode);
              node->prev = 0;
              node->next = 0;
@@ -336,24 +344,42 @@ void StructTreeView::createList(Node *node, StructTreeTag *parent, int openLevel
      {
        //if the xml tag is part of a group, show it under the group
        QString groupTagName;
+       QRegExp attrRx("\\([^\\)]*\\)");
        for (uint i = 0; i < groupsCount; i++)     
-       {
-         groupTagName = m_parsingDTD->structGroups[i];
-         groupTagName = groupTagName.mid(groupTagName.findRev('/')).stripWhiteSpace();
-         groupTagName = groupTagName.mid(2, groupTagName.length()-3);
-         QStringList tl = QStringList::split(',',groupTagName);
-         if (currentNode->tag->name.lower() == tl[0])
+       {        
+         groupTagName = m_parsingDTD->groupTags[i];         
+         attrRx.search(groupTagName);
+         QString attrs = attrRx.cap();
+         QStringList groupTagAttrs = QStringList::split(',', attrs.mid(1, attrs.length()-2));
+         groupTagName = groupTagName.left(groupTagName.find('(')).lower();
+         if (currentNode->tag->name.lower() == groupTagName)
          {
            QString text="";
-           for (uint j = 1; j < tl.count(); j++)        
+           for (uint j = 0; j < groupTagAttrs.count(); j++)        
            {
-             if (currentNode->tag->hasAttribute(tl[j]))
+             QString attrName = groupTagAttrs[j].stripWhiteSpace();
+             if (currentNode->tag->hasAttribute(attrName))
              {           
-               text += currentNode->tag->attributeValue(tl[j]).left(50) + " | ";
+               text += currentNode->tag->attributeValue(attrName).left(100) + " | ";
              }
            }
            text = text.left(text.length()-3);
-           item = new StructTreeTag(groups[i], currentNode, text);
+           text.replace(QRegExp("\n"),"");
+             
+           //Find the group and the item (if there is already an item with this
+           //name) under we should insert the new node
+           QListViewItem *insertUnder = groups[i];
+           QListViewItemIterator it(groups[i]);
+           while ( it.current() ) 
+           {      
+             if (it.current()->text(0) == text) //we have already an item with this text
+             {
+               insertUnder = it.current();
+               break;
+             }
+             ++it;
+           }
+           item = new StructTreeTag(dynamic_cast<StructTreeTag*>(insertUnder), currentNode, text);
          }         
        }    
      }
@@ -390,7 +416,7 @@ void StructTreeView::slotReparse(Node* node, int openLevel)
   {
     if (groups[i]->childCount() == 0)  
     {
-      QString noGroup = m_parsingDTD->structGroups[i].section('/',1,1);
+      QString noGroup = m_parsingDTD->structGroups[i].section(';',1,1);
       groups[i]->setText(0, i18n(noGroup));
     }
   }

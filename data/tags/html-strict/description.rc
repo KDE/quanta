@@ -33,3 +33,16 @@ Groups = Script
 [Extra rules]
 BooleanAttributes = simple
 Single Tag Style = html
+StructGroupsCount = 2
+
+[StructGroup_1]
+Name = Images
+No_Name = No Images
+Icon = image
+Tag = img(src)
+
+[StructGroup_2]
+Name = Links
+No_Name = No Links
+Icon = www
+Tag = a(name,href)

@@ -1107,7 +1107,8 @@ void QuantaApp::readTagDir(QString &dirName)
  dtd->booleanTrue = dtdConfig->readEntry("BooleanTrue","true");
  dtd->booleanFalse = dtdConfig->readEntry("BooleanFalse","false");
  dtd->singleTagStyle = dtdConfig->readEntry("Single Tag Style", "html").lower();
- 
+
+//read the definition of a structure, and the structure keywords  
  QStringList structKeywords = dtdConfig->readListEntry("StructKeywords",';');
  if (structKeywords.count() !=0 )
  {
@@ -1125,12 +1126,22 @@ void QuantaApp::readTagDir(QString &dirName)
  dtd->structRx = dtdConfig->readEntry("StructRx","\\{|\\}").stripWhiteSpace();
  dtd->structBeginStr = dtdConfig->readEntry("StructBeginStr","{").stripWhiteSpace();
  dtd->structEndStr = dtdConfig->readEntry("StructEndStr","}").stripWhiteSpace();
- dtd->structGroups = dtdConfig->readListEntry("StructGroups",';');
- for (uint i = 0; i < dtd->structGroups.count(); i++)
+ 
+//read the definition of different structure groups, like links, images, functions
+//classes, etc. 
+ uint structGroupsCount = dtdConfig->readNumEntry("StructGroupsCount", 0);
+ if (structGroupsCount > MAX_STRUCTGROUPSCOUNT) structGroupsCount = MAX_STRUCTGROUPSCOUNT; //max. 10 groups
+ for (uint index = 1; index <= structGroupsCount; index++)
  {
-  dtd->groupsRxs.append(dtdConfig->readEntry(QString("RegExp%1").arg(i)).stripWhiteSpace());
-  dtd->groupsClearRxs.append(dtdConfig->readEntry(QString("RegExp%1_clear").arg(i)).stripWhiteSpace());
- }
+   dtdConfig->setGroup(QString("StructGroup_%1").arg(index));
+   dtd->structGroups += dtdConfig->readEntry("Name").stripWhiteSpace() + ";"
+                      + dtdConfig->readEntry("No_Name").stripWhiteSpace();
+   dtd->groupRxs += dtdConfig->readEntry("SearchRx").stripWhiteSpace();
+   dtd->groupClearRxs += dtdConfig->readEntry("ClearRx").stripWhiteSpace();
+   dtd->groupTags += dtdConfig->readEntry("Tag").stripWhiteSpace();
+   dtd->groupIcons += dtdConfig->readEntry("Icon").stripWhiteSpace();
+ }  
+ 
  dtds->insert(dtdName.lower(), dtd);//insert the taglist into the full list
 
  delete dtdConfig;

@@ -50,6 +50,8 @@ typedef QDict<QTag> QTagList;
 
 enum DTDFamily{Unknown = 0, Xml, Script};
 
+#define MAX_STRUCTGROUPSCOUNT 10
+
 //an internal representation of a DTD
 typedef struct DTDStruct
     {
@@ -79,9 +81,11 @@ typedef struct DTDStruct
      QString structBeginStr;
      QString structEndStr;
      
-     QStringList structGroups;        //group names to appear at the top of the Structure Tree
-     QStringList groupsRxs;           //the regexp which helps us to find the groups; valid only for script DTDs
-     QStringList groupsClearRxs;      //regexp to clear from the found group regex; valid only for script DTDs
+     QStringList structGroups;        //group names to appear at the top of the Structure Tree in form of "Name;No Name"
+     QStringList groupIcons;
+     QStringList groupTags;          //the tag which defines the group in tag(attr1,attr2,...) form
+     QStringList groupRxs;           //the regexp which helps us to find the groups; valid only for script DTDs
+     QStringList groupClearRxs;      //regexp to clear from the found group regex; valid only for script DTDs
      QStringList toolbars;
     };
 

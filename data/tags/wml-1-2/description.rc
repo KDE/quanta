@@ -43,3 +43,10 @@ head_options = hasCore
 [Extra rules]
 BooleanAttributes = simple
 Single Tag Style = XML
+StructGroupsCount = 1
+
+[StructGroup_1]
+Name = Links
+No_Name = No Links
+Icon = www
+Tag = a(title,href)
