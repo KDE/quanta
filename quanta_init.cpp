@@ -1056,7 +1056,7 @@ void QuantaApp::initActions()
                         SLOT(toggleLineNumbers()), actionCollection(), "view_line_numbers");
 
   (void) new KAction( i18n( "Configure &Editor..." ), SmallIcon("configure"), 0,
-                      view, SLOT( editorOptions() ), actionCollection(), "editor_options" );
+                      view, SLOT( slotEditorOptions() ), actionCollection(), "editor_options" );
 
 
     setEndOfLine = new KSelectAction(i18n("&End of Line"), 0, actionCollection(),"set_eol");

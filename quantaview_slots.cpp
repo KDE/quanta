@@ -739,7 +739,7 @@ void QuantaView::toggleLineNumbers()
   write()->kate_view->toggleLineNumbersOn();
 }
 
-void QuantaView::editorOptions()
+void QuantaView::slotEditorOptions()
 {
   dynamic_cast<KTextEditor::ConfigInterface *>(write()->doc())->configDialog();
   write()->writeConfig(app->config);

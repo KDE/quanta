@@ -550,7 +550,7 @@ void Document::replaceSelected(QString s)
 void Document::readConfig(KConfig *config)
 {
   bool m = _doc->isModified();
- dynamic_cast<KTextEditor::ConfigInterface*>(_doc)->readConfig( config );
+  dynamic_cast<KTextEditor::ConfigInterface*>(_doc)->readConfig( config );
   _doc->setModified(m);
 }
 

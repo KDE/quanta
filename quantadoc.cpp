@@ -138,6 +138,7 @@ bool QuantaDoc::newDocument( const KURL& url )
 
     // now we can create new kwrite
     w = newWrite( app->view->writeTab);
+    w->readConfig(app->config);
 
     if ( newfile ) furl = w->url().url();
 
@@ -185,6 +186,7 @@ void QuantaDoc::openDocument(const KURL& url, QString encoding)
         if ( w == it.current() ) defUrl = it.currentKey();
   	    ++it;
    	  }
+      w->readConfig(app->config);
 
       app ->view->writeTab->showPage( w );
       changeFileTabName(defUrl);

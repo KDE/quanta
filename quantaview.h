@@ -161,7 +161,7 @@ class QuantaView : public QWidget
 //Settings
     void toggleIconBorder ();
     void toggleLineNumbers();
-    void editorOptions ();
+    void slotEditorOptions ();
     void setEol(int);
 
 
