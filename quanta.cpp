@@ -90,7 +90,7 @@ void QuantaApp::setTitle(QString title)
 
 void QuantaApp::slotFileNew()
 {
-//doc->openDocument( KURL() );
+  doc->openDocument( KURL() );
 }
 
 void QuantaApp::slotFileOpen()
