@@ -10,7 +10,7 @@
  *                                                                         *
  ***************************************************************************/
 </comment>
-<author>(C) 2003 Andras Mantia &lt;amantia@kde.org&gt;</author>
+<author>Andras Mantia &lt;amantia@freemail.hu&gt;</author>
 <widget class="QDialog">
     <property name="name">
         <cstring>ActionConfigDialogS</cstring>
@@ -152,7 +152,7 @@
                         <property name="resizeMode">
                             <enum>AllColumns</enum>
                         </property>
-                        <property name="tooltipColumn" stdset="0">
+                        <property name="tooltipColumn">
                             <number>2</number>
                         </property>
                     </widget>
@@ -244,7 +244,7 @@
                                     <cstring>addToolbar</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>&amp;Add...</string>
+                                    <string>&amp;Add</string>
                                 </property>
                             </widget>
                             <widget class="QPushButton" row="7" column="3" rowspan="1" colspan="2">
@@ -349,6 +349,17 @@
                                         </property>
                                         <property name="text">
                                             <string>C&amp;ustom</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="KKeyButton" row="0" column="2">
+                                        <property name="name">
+                                            <cstring>shortcutKeyButton</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="text">
+                                            <string>None</string>
                                         </property>
                                     </widget>
                                     <widget class="QRadioButton" row="0" column="0">
@@ -527,7 +538,7 @@
                                                         </sizepolicy>
                                                     </property>
                                                     <property name="text">
-                                                        <string>&amp;Input:</string>
+                                                        <string>&amp;Input::</string>
                                                     </property>
                                                     <property name="buddy" stdset="0">
                                                         <cstring>inputBox</cstring>
@@ -541,12 +552,12 @@
                                                     </item>
                                                     <item>
                                                         <property name="text">
-                                                            <string>Current Document</string>
+                                                            <string>Current document</string>
                                                         </property>
                                                     </item>
                                                     <item>
                                                         <property name="text">
-                                                            <string>Selected Text</string>
+                                                            <string>Selected text</string>
                                                         </property>
                                                     </item>
                                                     <property name="name">
@@ -588,27 +599,27 @@
                                                     </item>
                                                     <item>
                                                         <property name="text">
-                                                            <string>Insert in Cursor Position</string>
+                                                            <string>Insert in cursor position</string>
                                                         </property>
                                                     </item>
                                                     <item>
                                                         <property name="text">
-                                                            <string>Replace Selection</string>
+                                                            <string>Replace selection</string>
                                                         </property>
                                                     </item>
                                                     <item>
                                                         <property name="text">
-                                                            <string>Replace Current Document</string>
+                                                            <string>Replace current document</string>
                                                         </property>
                                                     </item>
                                                     <item>
                                                         <property name="text">
-                                                            <string>Create New Document</string>
+                                                            <string>Create a new document</string>
                                                         </property>
                                                     </item>
                                                     <item>
                                                         <property name="text">
-                                                            <string>Message Window</string>
+                                                            <string>Message window</string>
                                                         </property>
                                                     </item>
                                                     <property name="name">
@@ -634,27 +645,27 @@
                                                     </item>
                                                     <item>
                                                         <property name="text">
-                                                            <string>Insert in Cursor Position</string>
+                                                            <string>Insert in cursor position</string>
                                                         </property>
                                                     </item>
                                                     <item>
                                                         <property name="text">
-                                                            <string>Replace Selection</string>
+                                                            <string>Replace selection</string>
                                                         </property>
                                                     </item>
                                                     <item>
                                                         <property name="text">
-                                                            <string>Replace Current Document</string>
+                                                            <string>Replace current document</string>
                                                         </property>
                                                     </item>
                                                     <item>
                                                         <property name="text">
-                                                            <string>Create New Document</string>
+                                                            <string>Create a new document</string>
                                                         </property>
                                                     </item>
                                                     <item>
                                                         <property name="text">
-                                                            <string>Message Window</string>
+                                                            <string>Message window</string>
                                                         </property>
                                                     </item>
                                                     <property name="name">
@@ -769,6 +780,12 @@
         <signal>activated(int)</signal>
         <receiver>widgetStack1</receiver>
         <slot>raiseWidget(int)</slot>
+    </connection>
+    <connection>
+        <sender>customShortcut</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>shortcutKeyButton</receiver>
+        <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
         <sender>buttonCancel</sender>
@@ -909,6 +926,18 @@
         <slot>slotTextChanged(const QString&amp;)</slot>
     </connection>
     <connection>
+        <sender>shortcutKeyButton</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>ActionConfigDialogS</receiver>
+        <slot>slotToggled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>customShortcut</sender>
+        <signal>clicked()</signal>
+        <receiver>shortcutKeyButton</receiver>
+        <slot>animateClick()</slot>
+    </connection>
+    <connection>
         <sender>actionIcon</sender>
         <signal>clicked()</signal>
         <receiver>ActionConfigDialogS</receiver>
@@ -924,6 +953,7 @@
     <tabstop>actionIcon</tabstop>
     <tabstop>lineToolTip</tabstop>
     <tabstop>noShortcut</tabstop>
+    <tabstop>shortcutKeyButton</tabstop>
     <tabstop>toolbarListBox</tabstop>
     <tabstop>addToolbar</tabstop>
     <tabstop>removeToolbar</tabstop>
@@ -960,8 +990,8 @@
 <includehints>
     <includehint>klistview.h</includehint>
     <includehint>kpushbutton.h</includehint>
-    <includehint>kpushbutton.h</includehint>
     <includehint>kicondialog.h</includehint>
+    <includehint>kkeybutton.h</includehint>
     <includehint>klistbox.h</includehint>
     <includehint>filecombo.h</includehint>
 </includehints>
