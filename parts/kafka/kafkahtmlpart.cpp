@@ -1288,6 +1288,9 @@ void KafkaWidget::finishedLoading()
 
 void KafkaWidget::slotNewCursorPos(const DOM::Node &domNode, long offset)
 {
+	if(!w->isLoaded())
+		return;
+
 	m_currentNode = domNode;
 	d->m_cursorOffset = (int)offset;
 #ifdef LIGHT_DEBUG
