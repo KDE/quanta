@@ -147,7 +147,7 @@ QString CSSSelectorEditor::code()
 		if (b_repeat != "repeat" && b_repeat != "")
 			properties += "background-repeat: " + b_repeat;
 		if (b_att != "scroll" && b_att != "")
-			properties += "background_attachment: " + b_att;
+			properties += "background-attachment: " + b_att;
 		if (b_pos != "")
 			properties += "background-position: " + b_pos;
 	}
