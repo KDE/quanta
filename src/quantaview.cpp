@@ -261,7 +261,7 @@ void QuantaView::updateTab()
     {
         if (qConfig.showCloseButtons != "ShowAlways")
         {
-            setIcon(m_plugin->icon());
+            setIcon(SmallIcon(m_plugin->icon()));
         }
        setMDICaption(m_plugin->name());
     } else
