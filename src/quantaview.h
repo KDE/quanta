@@ -91,11 +91,6 @@ public:
   /**Adds a QuantaPlugin object to the view.*/
   void addPlugin(QuantaPlugin *plugin);
 
-
-  /** Add new kwrite class to writeStack and return id in stack */
-  void addWrite( QWidget* w , QString label );
-  /** remove KWrite class from stack, return id of new KWrite */
-  QWidget* removeWrite();
   QWidget* documentArea() {return m_documentArea;}
   QWidget* VPLArea() {return m_VPLArea;}
 

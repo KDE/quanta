@@ -51,7 +51,6 @@ public:
   QuantaView *isOpened(const KURL &url);
 
   bool saveAll(bool dont_ask=true);
-  void closeAll();
 
   /** Returns true if at least one view has the modified flag set. */
   bool isOneModified();
@@ -66,6 +65,7 @@ public slots:
 
   /** closes all the other but active tabs */
   void slotCloseOtherTabs();
+  void closeAll();
 
 signals:
   /** emitted when a file from the template view is dropped on a view */

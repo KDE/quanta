@@ -283,7 +283,7 @@ void QuantaInit::initProject()
           m_quanta, SLOT(slotFileClose(const KURL &)));
   connect(m_project, SIGNAL(reloadTree(const ProjectUrlList & ,bool)),
           pTab, SLOT(slotReloadTree(const ProjectUrlList &,bool)));
-  connect(m_project, SIGNAL(closeFiles()), m_quanta->m_doc, SLOT(closeAll()));
+  connect(m_project, SIGNAL(closeFiles()), ViewManager::ref(), SLOT(closeAll()));
 
   connect(m_quanta->fTab, SIGNAL(insertDirInProject(const KURL&)),
           m_project, SLOT(slotAddDirectory(const KURL&)));
