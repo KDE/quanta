@@ -2377,18 +2377,16 @@ void Project::slotReloadProjectDocs()
   if (d->baseURL.isLocalFile())
     d->m_dirWatch->addDir(d->baseURL.path() + "/doc");
   KURL url;
-  KURL absURL;
   QString path;
   ProjectList::Iterator it( d->m_projectFiles );
   for ( ; it.current(); ++it) {
     url = *(it.current());
-    path = url.path();
-    absURL = QExtFileInfo::toAbsolute(url, d->baseURL);
+    path = d->m_projectFiles.toRelative(url).path();
     if (path.startsWith("doc/") && path.endsWith("/index.html"))
     {
-      emit addProjectDoc(absURL);
-      if (absURL.isLocalFile())
-        d->m_dirWatch->addFile(absURL.path());
+      emit addProjectDoc(url);
+      if (url.isLocalFile())
+        d->m_dirWatch->addFile(url.path());
     }
   }
 }
