@@ -76,6 +76,7 @@
 #include "treeviews/structtreeview.h"
 #include "treeviews/templatestreeview.h"
 #include "treeviews/tagattributetree.h"
+#include "treeviews/scripttreeview.h"
 
 #include "plugins/quantaplugininterface.h"
 #include "plugins/quantaplugin.h"
@@ -351,6 +352,8 @@ void QuantaApp::initView()
   ptabdock->setToolTipString(i18n("Project tree view"));
   ttabdock = createDockWidget("Templates", UserIcon("ttab"), 0L, i18n("Templates tree view"), "");
   ttabdock->setToolTipString(i18n("Templates tree view"));
+  scripttabdock = createDockWidget("Scripts", SmallIcon("run"), 0L, i18n("Scripts tree view"), "");
+  scripttabdock->setToolTipString(i18n("Scripts tree view"));
   stabdock = createDockWidget("Struct", BarIcon ("view_sidetree"), 0L, i18n("Structure view (DOM tree)"), "");
   stabdock->setToolTipString(i18n("Structure view (DOM tree)"));
   dtabdock = createDockWidget("Docs", BarIcon ("contents2"), 0L, i18n("Documentation"), "");
@@ -387,6 +390,7 @@ void QuantaApp::initView()
   tTab = new TemplatesTreeView("" , ttabdock);
   dTab = new DocTreeView(dtabdock);
   sTab = new StructTreeView(m_config, stabdock ,"struct");
+  scriptTab = new ScriptTreeView("", scripttabdock);
 
   rightWidgetStack = new QWidgetStack(maindock);
   bottomWidgetStack = new QWidgetStack(bottdock);
@@ -400,6 +404,7 @@ void QuantaApp::initView()
   ftabdock->setWidget(fTab);
   ptabdock->setWidget(pTab);
   ttabdock->setWidget(tTab);
+  scripttabdock->setWidget(scriptTab);
   stabdock->setWidget(sTab);
   dtabdock->setWidget(dTab);
 
@@ -485,6 +490,7 @@ void QuantaApp::initView()
 
   ptabdock->manualDock(ftabdock, KDockWidget::DockCenter);
   ttabdock->manualDock(ftabdock, KDockWidget::DockCenter);
+  scripttabdock->manualDock(ftabdock, KDockWidget::DockCenter);
   dtabdock->manualDock(ftabdock, KDockWidget::DockCenter);
   KDockWidget *w = stabdock->manualDock(ftabdock, KDockWidget::DockCenter);
   atabdock->manualDock(w, KDockWidget::DockBottom, 70);
@@ -501,6 +507,7 @@ void QuantaApp::initView()
   connectDockSignals(stabdock);
   connectDockSignals(dtabdock);
   connectDockSignals(atabdock);
+  connectDockSignals(scripttabdock);
 }
 
 void QuantaApp::connectDockSignals(QObject *obj)
@@ -735,6 +742,7 @@ void QuantaApp::readOptions()
 
     ptabdock->manualDock(ftabdock, KDockWidget::DockCenter);
     ttabdock->manualDock(ftabdock, KDockWidget::DockCenter);
+    scripttabdock->manualDock(ftabdock, KDockWidget::DockCenter);
     dtabdock->manualDock(ftabdock, KDockWidget::DockCenter);
     KDockWidget *w = stabdock->manualDock(ftabdock, KDockWidget::DockCenter);
     atabdock->manualDock(w, KDockWidget::DockBottom, 70);
@@ -746,6 +754,7 @@ void QuantaApp::readOptions()
 
     ptabdock->manualDock(ftabdock, KDockWidget::DockCenter);
     ttabdock->manualDock(ftabdock, KDockWidget::DockCenter);
+    scripttabdock->manualDock(ftabdock, KDockWidget::DockCenter);
     dtabdock->manualDock(ftabdock, KDockWidget::DockCenter);
     stabdock->manualDock(ftabdock, KDockWidget::DockCenter);
     atabdock->manualDock(ftabdock, KDockWidget::DockCenter);
@@ -1780,6 +1789,10 @@ void QuantaApp::initActions()
       new KToggleAction( i18n( "Show Templates Tree" ), UserIcon("ttab"), 0,
                          this, SLOT( slotShowTTabDock() ),
                          ac, "show_ttab_tree" );
+    showScriptTabAction =
+      new KToggleAction( i18n( "Show Scripts Tree" ), SmallIcon("run"), 0,
+                         this, SLOT( slotShowScriptTabDock() ),
+                         ac, "show_scripttab_tree" );
     showSTabAction =
       new KToggleAction( i18n( "Show Structure Tree" ), BarIcon ("view_sidetree"), 0,
                          this, SLOT( slotShowSTabDock() ),

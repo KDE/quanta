@@ -89,7 +89,7 @@ TemplatesTreeView::TemplatesTreeView(const KURL& projectBaseURL, QWidget *parent
 
   KURL url;
   url.setPath(qConfig.globalDataDir +"quanta/templates/");
-   globalDir = new FilesTreeFolder( this , i18n("Global Templates"), url);
+  globalDir = new FilesTreeFolder( this , i18n("Global Templates"), url);
   globalDir->setPixmap( 0, SmallIcon("folder"));
   globalDir->setOpen( true );
 

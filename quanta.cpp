@@ -1141,6 +1141,7 @@ void QuantaApp::slotOptions()
 
       ptabdock->manualDock(ftabdock, KDockWidget::DockCenter);
       ttabdock->manualDock(ftabdock, KDockWidget::DockCenter);
+      scripttabdock->manualDock(ftabdock, KDockWidget::DockCenter);
       dtabdock->manualDock(ftabdock, KDockWidget::DockCenter);
       KDockWidget *w = stabdock->manualDock(ftabdock, KDockWidget::DockCenter);
       atabdock->manualDock(w, KDockWidget::DockBottom, 70);
@@ -1152,6 +1153,7 @@ void QuantaApp::slotOptions()
 
       ptabdock->manualDock(ftabdock, KDockWidget::DockCenter);
       ttabdock->manualDock(ftabdock, KDockWidget::DockCenter);
+      scripttabdock->manualDock(ftabdock, KDockWidget::DockCenter);
       dtabdock->manualDock(ftabdock, KDockWidget::DockCenter);
       stabdock->manualDock(ftabdock, KDockWidget::DockCenter);
       atabdock->manualDock(ftabdock, KDockWidget::DockCenter);
@@ -1240,12 +1242,8 @@ void QuantaApp::slotShowPreview()
 
 void QuantaApp::slotShowProjectTree()
 {
-  if ( !ptabdock->isVisible() ) ptabdock->changeHideShowState();
-}
-
-void QuantaApp::slotShowTemplatesTree()
-{
-  if ( !ttabdock->isVisible() ) ttabdock->changeHideShowState();
+  if ( !ptabdock->isVisible() )
+      ptabdock->changeHideShowState();
 }
 
 void QuantaApp::slotNewLineColumn()
@@ -1472,6 +1470,7 @@ void QuantaApp::slotContextHelp()
       if (ftabdock->isVisible()) m_oldTreeViewWidget = ftabdock;
       if (ptabdock->isVisible()) m_oldTreeViewWidget = ptabdock;
       if (ttabdock->isVisible()) m_oldTreeViewWidget = ttabdock;
+      if (scripttabdock->isVisible()) m_oldTreeViewWidget = scripttabdock;
       if (stabdock->isVisible()) m_oldTreeViewWidget = stabdock;
       if (dtabdock->isVisible()) m_oldTreeViewWidget = dtabdock;
       if (!dtabdock->isVisible()) dtabdock->changeHideShowState();
@@ -1487,6 +1486,7 @@ void QuantaApp::slotContextHelp()
 void QuantaApp::slotShowFTabDock() { ftabdock->changeHideShowState();}
 void QuantaApp::slotShowPTabDock() { ptabdock->changeHideShowState();}
 void QuantaApp::slotShowTTabDock() { ttabdock->changeHideShowState();}
+void QuantaApp::slotShowScriptTabDock() { scripttabdock->changeHideShowState();}
 void QuantaApp::slotShowSTabDock() { stabdock->changeHideShowState();}
 void QuantaApp::slotShowATabDock() { atabdock->changeHideShowState();}
 void QuantaApp::slotShowDTabDock() { dtabdock->changeHideShowState();}
@@ -1525,6 +1525,7 @@ void QuantaApp::viewMenuAboutToShow()
   showFTabAction->setChecked( ftabdock->isVisible() );
   showPTabAction->setChecked( ptabdock->isVisible() );
   showTTabAction->setChecked( ttabdock->isVisible() );
+  showScriptTabAction->setChecked( scripttabdock->isVisible() );
   showSTabAction->setChecked( stabdock->isVisible() );
   showATabAction->setChecked( atabdock->isVisible() );
   showDTabAction->setChecked( dtabdock->isVisible() );

@@ -79,6 +79,7 @@ class FilesTreeView;
 class StructTreeView;
 class ProjectTreeView;
 class TemplatesTreeView;
+class ScriptTreeView;
 class TagAttributeTree;
 class Project;
 class GrepDialog;
@@ -172,6 +173,7 @@ public:
   TemplatesTreeView *tTab;
   StructTreeView *sTab;
   TagAttributeTree *aTab;
+  ScriptTreeView *scriptTab;
 
 signals: // Signals
   /** The tree views should be updated due to some changes on the disk. */
@@ -235,7 +237,6 @@ public slots:
   /** show preview ( F6 )*/
   void slotShowPreview();
   void slotShowProjectTree();
-  void slotShowTemplatesTree();
   /** Repaint preview ( slot ) */
   void slotViewRepaint();
 
@@ -243,6 +244,7 @@ public slots:
   void slotShowFTabDock();
   void slotShowPTabDock();
   void slotShowTTabDock();
+  void slotShowScriptTabDock();
   void slotShowSTabDock();
   void slotShowATabDock();
   void slotShowDTabDock();
@@ -424,6 +426,7 @@ private:
   KDockWidget *ftabdock;
   KDockWidget *stabdock;
   KDockWidget *atabdock;
+  KDockWidget *scripttabdock;
 
    /** HTML class for preview */
   WHTMLPart *htmlpart;
@@ -450,7 +453,7 @@ private:
   // ACTIONS
   KRecentFilesAction *projectToolbarFiles;
 
-  KToggleAction *showMessagesAction, *showTreeAction,
+  KToggleAction *showMessagesAction, *showTreeAction, *showScriptTabAction,
     *showFTabAction,*showPTabAction,*showTTabAction,*showSTabAction,*showATabAction,
     *showDTabAction, *showToolbarAction,*showStatusbarAction,*showPreviewAction,
     *showKafkaAction;

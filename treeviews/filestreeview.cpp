@@ -282,7 +282,9 @@ void FilesTreeView::slotAddToTop()
             s = "/";
         s += " ["+url.prettyURL()+"]";
         FilesTreeFolder *dir = new FilesTreeFolder(this , s, url); //FIXME: Why doesn't add to the TOP as the first item??
-         dir->setPixmap( 0, SmallIcon("folder") );
+         //dir->setPixmap( 0, SmallIcon("folder") );
+        KFileItem fileItem(KFileItem::Unknown, KFileItem::Unknown, url);
+        dir->setIcon(fileItem.iconName());
         dir->setOpen( false);
         topURLList.append(url);
       }
@@ -306,7 +308,8 @@ void FilesTreeView::slotNewTopFolder()
       s = "/";
     s += " ["+url.prettyURL()+"]";
     FilesTreeFolder *dir = new FilesTreeFolder(this , s, url);
-    dir->setPixmap( 0, SmallIcon("folder") );
+    KFileItem fileItem(KFileItem::Unknown, KFileItem::Unknown, url);
+    dir->setIcon(fileItem.iconName());
     dir->setOpen( false);
     topURLList.append(url);
   }
@@ -464,7 +467,7 @@ void FilesTreeView::slotDirListNewItems(const KFileItemList& items)
         {
           FilesTreeFolder* parent = dynamic_cast<FilesTreeFolder*>(listItem);
           dirItem= new FilesTreeFolder(this, parent, url);
-           dirItem->setIcon(iconName);
+          dirItem->setIcon(iconName);
         }
       } else
       {
