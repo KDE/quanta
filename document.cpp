@@ -650,6 +650,17 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
       editIf->insertText(line, column, "</" + tagName + ">");
       viewCursorIf->setCursorPositionReal( line, column );
       handled = true;
+    } else
+    if (string == "/" && tagName == "/")
+    {
+      Node *node = parser->nodeAt(line, column, false);
+      if (node && node->parent)
+      {
+        node = node->parent;
+        editIf->insertText(line, column + 1, node->tag->name + ">");
+        viewCursorIf->setCursorPositionReal( line, column + node->tag->name.length() + 2);
+        handled = true;
+      }
     }
   }
   else  // we are inside of a tag
