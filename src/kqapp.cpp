@@ -169,6 +169,7 @@ void KQApplicationPrivate::init()
 {
   if (quantaApp->quantaStarted)
   {
+    quantaApp->enableIdleTimer(false);
     quantaApp->m_quantaInit->initQuanta();
     quantaApp->show();
 
@@ -199,6 +200,7 @@ void KQApplicationPrivate::init()
   delete splash;
   delete quantaApp->m_quantaInit;
   quantaApp->m_quantaInit = 0L;
+  quantaApp->enableIdleTimer(true);
 }
 
 #include "kqapp.moc"
