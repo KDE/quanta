@@ -139,6 +139,7 @@ Document::Document(const KURL& p_baseURL, KTextEditor::Document *doc,
 
 Document::~Document()
 {
+ m_doc->closeURL(false); //TODO: Workaround for a Kate bug. Remove when KDE < 3.2.0 support is dropped.
  delete m_view;
  delete m_doc;
 }
