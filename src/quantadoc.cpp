@@ -188,10 +188,15 @@ void QuantaDoc::openDocument(const KURL& urlToOpen, const QString &a_encoding, b
 
     dynamic_cast<KTextEditor::EncodingInterface*>(w->doc())->setEncoding(encoding);
 
+#if KDE_IS_VERSION(3,1,90)
     connect(w->doc(), SIGNAL(completed()), this, SLOT(slotOpeningCompleted()));  
+#endif    
     if (w->doc()->openURL( url ))
     {
       loaded = true;
+#if KDE_VERSION < KDE_MAKE_VERSION(3,1,90)
+      slotOpeningCompleted();
+#endif
     }
   } 
   if (!loaded && !url.isEmpty()) //the open of the document has failed*/

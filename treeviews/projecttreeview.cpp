@@ -96,7 +96,7 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
 
   setFocusPolicy(QWidget::ClickFocus);
 
-  m_projectDir =  new ProjectTreeBranch( this, KURL(), i18n("No project"), SmallIcon("ptab"));
+  m_projectDir =  new ProjectTreeBranch( this, KURL(), i18n("No project"), SmallIcon("ptab"), true);
   addBranch(m_projectDir);
   m_projectDir->root()->setEnabled(false);
 
@@ -194,9 +194,9 @@ void ProjectTreeView::slotReload()
     {
       m_projectNameStr += "["+m_baseURL.protocol()+"://"+m_baseURL.user()+"@"+m_baseURL.host()+"]";
     }
-    m_projectDir =  new ProjectTreeBranch( this, m_baseURL, m_projectNameStr, UserIcon("ptab"));
+    m_projectDir =  new ProjectTreeBranch( this, m_baseURL, m_projectNameStr, UserIcon("ptab"), true);
   } else {
-    m_projectDir =  new ProjectTreeBranch( this, m_baseURL, i18n("No Project"), UserIcon("ptab"));
+    m_projectDir =  new ProjectTreeBranch( this, m_baseURL, i18n("No Project"), UserIcon("ptab"), true);
   }
 
   connect(m_projectDir, SIGNAL(populateFinished(KFileTreeViewItem*)),

@@ -232,12 +232,12 @@ KFileTreeBranch* FilesTreeView::newBranch(const KURL& url)
   FilesTreeBranch* newBrnch = 0;
   if (url.isLocalFile() && url.path() == "/")
   {
-    newBrnch = new FilesTreeBranch(this, url, i18n("Root Folder"), SmallIcon("folder_red"));
+    newBrnch = new FilesTreeBranch(this, url, i18n("Root Folder"), SmallIcon("folder_red"), true);
   } else
   {
     if (url.isLocalFile() && url.equals(KURL(QDir::homeDirPath()), true))
     {
-      newBrnch = new FilesTreeBranch(this, url, i18n("Home Folder"), SmallIcon("home_blue"));
+      newBrnch = new FilesTreeBranch(this, url, i18n("Home Folder"), SmallIcon("home_blue"), true);
     } else
     {
       QString s = url.fileName();
@@ -245,7 +245,7 @@ KFileTreeBranch* FilesTreeView::newBranch(const KURL& url)
         s = "/";
       s += " ["+url.prettyURL()+"]";
       KFileItem fileItem(KFileItem::Unknown, KFileItem::Unknown, url);
-      newBrnch = new FilesTreeBranch(this, url, s, SmallIcon(fileItem.iconName()));
+      newBrnch = new FilesTreeBranch(this, url, s, SmallIcon(fileItem.iconName()), true);
     }
   }
   addBranch(newBrnch);

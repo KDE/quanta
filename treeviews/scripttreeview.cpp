@@ -61,7 +61,7 @@ ScriptTreeView::ScriptTreeView(QWidget *parent, const char *name )
   url.setPath(qConfig.globalDataDir + resourceDir + "scripts/");
 
   FilesTreeBranch *m_globalDir;
-  m_globalDir = new FilesTreeBranch(this, url, i18n("Global scripts"), SmallIcon("run"));
+  m_globalDir = new FilesTreeBranch(this, url, i18n("Global scripts"), SmallIcon("run"), true);
   addBranch(m_globalDir);
 
   QDir dir(url.path(), "", QDir::All & !QDir::Hidden);
@@ -72,7 +72,7 @@ ScriptTreeView::ScriptTreeView(QWidget *parent, const char *name )
   url.setPath(locateLocal("data", resourceDir + "scripts/"));
 
   FilesTreeBranch *m_localDir;
-  m_localDir = new FilesTreeBranch(this, url, i18n("Local scripts"), SmallIcon("run"));
+  m_localDir = new FilesTreeBranch(this, url, i18n("Local scripts"), SmallIcon("run"), true);
   addBranch(m_localDir);
 
   dir.setPath(url.path());
