@@ -3524,7 +3524,7 @@ void QuantaApp::slotEmailDTEP()
     dtdFile += tempFile->name();
 
 
-    TagMailDlg *mailDlg = new TagMailDlg( this, i18n("Send DTD in email"));
+    TagMailDlg *mailDlg = new TagMailDlg( this, i18n("Send DTD in E-Mail"));
     QString toStr;
     QString message = i18n("Hi,\n This is a Quanta Plus [http://quanta.sourceforge.net] DTD definition tarball.\n\nHave fun.\n");
     QString titleStr;

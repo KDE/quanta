@@ -85,26 +85,26 @@ enum DTDFamily{Unknown = 0, Xml, Script};
 //an internal representation of a DTD
 typedef struct DTDStruct
     {
-     QString name;                    //< DTD name
-     QString nickName;                //< DTD nickname
-     bool loaded;                     //< true = DTD is complet in memory
-     QString url;                     //< the url of the DTD definition file
-     QString doctypeStr;              //< the string that appears right after !doctype
-     QString inheritsTagsFrom;        //< Inherited DTD name
-     QString defaultExtension;        //< default extension when creating new files
+     QString name;                    ///< DTD name
+     QString nickName;                ///< DTD nickname
+     bool loaded;                     ///< true = DTD is complet in memory
+     QString url;                     ///< the url of the DTD definition file
+     QString doctypeStr;              ///< the string that appears right after !doctype
+     QString inheritsTagsFrom;        ///< Inherited DTD name
+     QString defaultExtension;        ///< default extension when creating new files
      QStringList mimeTypes;
-     bool caseSensitive;              //< the tags&attributes in DTD are case sensitive or not
-     int family;                      //< xml, script type
-     bool toplevel;                   //< true if the DTD can be the main DTD of a document. Always true for XML like DTD's
-     QTagList* tagsList;              //< the list of all defined tags in the DTD
-     QString fileName;                //< the DTD decription.rc with path
-     AttributeListDict* commonAttrs;  //< the attributes of the common groups
+     bool caseSensitive;              ///< the tags&attributes in DTD are case sensitive or not
+     int family;                      ///< xml, script type
+     bool toplevel;                   ///< true if the DTD can be the main DTD of a document. Always true for XML like DTD's
+     QTagList* tagsList;              ///< the list of all defined tags in the DTD
+     QString fileName;                ///< the DTD decription.rc with path
+     AttributeListDict* commonAttrs;  ///< the attributes of the common groups
 
-     QString booleanAttributes;       //< simple or extended <tag booleanAttr> or <tag booleanAttr="1">
-     QString booleanTrue;             //< "true" or "1" or whatever
-     QString booleanFalse;            //< "false" or "0" or whatever
-     QString singleTagStyle;          //< "xml" or "html" (<tag/> or <tag>)
-     QString defaultAttrType;         //< "input", "string" or whatever
+     QString booleanAttributes;       ///< simple or extended <tag booleanAttr> or <tag booleanAttr="1">
+     QString booleanTrue;             ///< "true" or "1" or whatever
+     QString booleanFalse;            ///< "false" or "0" or whatever
+     QString singleTagStyle;          ///< "xml" or "html" (<tag/> or <tag>)
+     QString defaultAttrType;         ///< "input", "string" or whatever
 
 /****************** FOR THE NEW PARSER **********************/
 

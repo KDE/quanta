@@ -21,8 +21,6 @@
 #include <qheader.h>
 #include <qstringlist.h>
 #include <qregexp.h>
-#include <qfont.h>
-#include <qpainter.h>
 #include <qlistview.h>
 
 // KDE includes
@@ -47,23 +45,6 @@
 #include "quanta.h"
 #include "quantadoc.h"
 
-//ProjectTreeViewItem implementation
-ProjectTreeViewItem::ProjectTreeViewItem( KFileTreeViewItem *parent, KFileItem* item, KFileTreeBranch *brnch )
-: FilesTreeViewItem( parent, item, brnch)
-{
-}
-
-// make open project files bold
-void ProjectTreeViewItem::paintCell(QPainter *p, const QColorGroup &cg,
-                                    int column, int width, int align)
-{
-    QFont f = p->font();
-    f.setBold(quantaApp->doc()->isOpened(this->url()));
-    p->setFont(f);
-    FilesTreeViewItem::paintCell( p, cg, column, width, align );
-}
-
-
 //ProjectTreeBranch implementation
 ProjectTreeBranch::ProjectTreeBranch(KFileTreeView *parent, const KURL& url,
                                      const QString& name, const QPixmap& pix,
@@ -79,7 +60,7 @@ KFileTreeViewItem* ProjectTreeBranch::createTreeViewItem(KFileTreeViewItem *pare
   FilesTreeViewItem  *tvi = 0;
   if( parent && fileItem )
   {
-    tvi = new ProjectTreeViewItem( parent, fileItem, this );
+    tvi = new FilesTreeViewItem( parent, fileItem, this );
     if (tvi)
     {
       // we assume there are childs
@@ -104,7 +85,7 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   setRootIsDecorated( true );
  // header()->hide();
   setSorting( 0 );
-  m_urlList.clear();
+  m_projectFiles.clear();
   setShowSortIndicator(true);
   setFrameStyle( Panel | Sunken );
   setLineWidth( 2 );
@@ -122,36 +103,32 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   m_fileMenu = new KPopupMenu(this);
 
   m_fileMenu->insertItem(SmallIcon("fileopen"), i18n("&Open"), this, SLOT(slotOpen()));
-  m_fileMenu->insertItem(i18n("Open With..."), this, SLOT(slotOpenWith()));
-  m_openInQuantaId = m_fileMenu->insertItem(i18n("Open in Quanta"), this, SLOT(slotOpenInQuanta()));
-  m_fileMenu->insertItem(i18n("Insert Tag"), this, SLOT(slotInsertTag()));
+  m_fileMenu->insertItem(i18n("Open &With..."), this, SLOT(slotOpenWith()));
+  m_openInQuantaId = m_fileMenu->insertItem(i18n("Load Toolbar"), this, SLOT(slotLoadToolbar()));
+  m_fileMenu->insertItem(i18n("Insert &Tag"), this, SLOT(slotInsertTag()));
+  m_menuClose = m_fileMenu->insertItem(SmallIcon("fileclose"), i18n("Clos&e"), this, SLOT(slotClose()));
   m_fileMenu->insertSeparator();
-  m_fileMenu->insertItem(SmallIcon("editdelete"), i18n("Remove From Disc (and Project)"), this, SLOT(slotRemove()));
-  m_fileMenu->insertItem( i18n("Remove From Project"), this, SLOT(slotRemoveFromProject(int)));
-  m_fileMenu->insertItem(SmallIcon("dirsynch"), i18n("Upload File..."), this, SLOT(slotUploadSingleURL()));
+  m_fileMenu->insertItem(SmallIcon("editdelete"), i18n("Remove From &Disc (and Project)"), this, SLOT(slotRemove()));
+  m_fileMenu->insertItem( i18n("&Remove From Project"), this, SLOT(slotRemoveFromProject(int)));
+  m_fileMenu->insertItem(SmallIcon("dirsynch"), i18n("&Upload File..."), this, SLOT(slotUploadSingleURL()));
   m_fileMenu->insertSeparator();
   m_fileMenu->insertItem(i18n("Rename..."), this, SLOT(slotRename()));
-  m_fileMenu->insertItem(SmallIcon("info"), i18n("Properties..."), this, SLOT(slotProperties()));
-  
+  m_fileMenu->insertItem(SmallIcon("info"), i18n("&Properties..."), this, SLOT(slotProperties()));
+ 
   m_folderMenu = new KPopupMenu(this);
 
-/* this can be done by mouse and keyboard
-  m_folderMenu->insertItem( SmallIcon("fileopen"), i18n("&Open"), this, SLOT(slotOpen()));
-   m_folderMenu->insertSeparator();
-*/
-
-  m_folderMenu->insertItem(SmallIcon("editdelete"), i18n("Remove From Disc (and Project)"), this, SLOT(slotRemove()));
-  m_folderMenu->insertItem(i18n("Remove From Project"), this, SLOT(slotRemoveFromProject(int)));
-  m_folderMenu->insertItem(SmallIcon("dirsynch"), i18n("Upload Folder..."), this, SLOT(slotUploadSingleURL()));
+  m_folderMenu->insertItem(SmallIcon("editdelete"), i18n("Remove From &Disc (and Project)"), this, SLOT(slotRemove()));
+  m_folderMenu->insertItem(i18n("&Remove From Project"), this, SLOT(slotRemoveFromProject(int)));
+  m_folderMenu->insertItem(SmallIcon("dirsynch"), i18n("&Upload Folder..."), this, SLOT(slotUploadSingleURL()));
   m_folderMenu->insertSeparator();
   m_folderMenu->insertItem(i18n("Rename..."), this, SLOT(slotRename()));
-  m_folderMenu->insertItem(SmallIcon("info"), i18n("Properties..."), this, SLOT(slotProperties()));
+  m_folderMenu->insertItem(SmallIcon("info"), i18n("&Properties..."), this, SLOT(slotProperties()));
 
   m_projectMenu = new QPopupMenu(this);
   m_projectMenu->insertItem(SmallIcon("dirsynch"), i18n("&Upload Project..."), this, SLOT(slotUploadProject()));
-  m_projectMenu->insertItem(SmallIcon("reload"), i18n("&Rescan Project Folder..."), this, SLOT(slotRescan()));
-  m_projectMenu->insertItem(i18n("Pro&ject Properties..."), this, SLOT(slotOptions()));
-  m_projectMenu->insertItem(i18n("Reload"), this, SLOT(slotReload()));
+  m_projectMenu->insertItem(SmallIcon("reload"), i18n("Re&scan Project Folder..."), this, SLOT(slotRescan()));
+  m_projectMenu->insertItem(i18n("Project &Properties..."), this, SLOT(slotOptions()));
+  m_projectMenu->insertItem(i18n("&Reload"), this, SLOT(slotReload()));
 
 
   connect(this, SIGNAL(executed(QListViewItem *)),
@@ -188,11 +165,12 @@ void ProjectTreeView::slotMenu(KListView *listView, QListViewItem *item, const Q
       {
         if (currentURL().fileName().endsWith(toolbarExtension))
         {
-          m_fileMenu->changeItem(m_openInQuantaId, i18n("Load Toolbar File"));
+          m_fileMenu->setItemVisible(m_openInQuantaId, true);
         } else
         {
-          m_fileMenu->changeItem(m_openInQuantaId, i18n("Open in Quanta"));
+          m_fileMenu->setItemVisible(m_openInQuantaId, false);
         }
+        m_fileMenu->setItemVisible(m_menuClose, isFileOpen(currentURL()));
         m_fileMenu->popup(point);
       } else
       {
@@ -223,13 +201,13 @@ void ProjectTreeView::slotReload()
   connect(m_projectDir, SIGNAL(populateFinished(KFileTreeViewItem*)),
           this,           SLOT(slotPopulateFinished(KFileTreeViewItem*)));
   addBranch(m_projectDir);
-  m_projectDir->urlList = m_urlList;  // set list for filter
+  m_projectDir->urlList = m_projectFiles;  // set list for filter
   if (m_projectName)
     m_projectDir->populate(m_projectDir->rootUrl(), m_projectDir->root());
   else
     m_projectDir->root()->setEnabled(false);
 
-  if ( m_urlList.isEmpty() )
+  if ( m_projectFiles.isEmpty() )
     m_projectDir->root()->setExpandable( false );
   else
     m_projectDir->setOpen( true );
@@ -248,16 +226,14 @@ void ProjectTreeView::slotNewProjectLoaded(const QString &name, const KURL &base
 
 void ProjectTreeView::slotReloadTree( const ProjectUrlList &fileList, bool buildNewTree)
 {
-  m_urlList.clear();
   m_projectFiles.clear();
   KURL url;
 
-  // m_urlList must be absolute, otherwise filter doesn't work
+  // m_projectFiles must be absolute, otherwise filter doesn't work
   for (ProjectUrlList::ConstIterator it = fileList.begin(); it != fileList.end(); ++it )
   {
     url = QExtFileInfo::toAbsolute(*it, m_baseURL);
     url.adjustPath(-1);
-    m_urlList.append(url);
     m_projectFiles.append(ProjectURL(url, (*it).fileDesc));
   }
 
@@ -267,14 +243,14 @@ void ProjectTreeView::slotReloadTree( const ProjectUrlList &fileList, bool build
   } else
   {
     if (m_projectDir){
-      m_projectDir->urlList = m_urlList;  // set list for filter
+      m_projectDir->urlList = m_projectFiles;  // set list for filter
       KFileTreeViewItem *item;
       KFileTreeViewItem *rootItem = m_projectDir->root();
       QListViewItemIterator iter(this);
       for ( ; iter.current(); ++iter )
       {
         item = dynamic_cast <KFileTreeViewItem*> (iter.current());
-        item->setVisible(m_urlList.contains(item->url()) || item == rootItem);
+        item->setVisible(m_projectFiles.contains(item->url()) || item == rootItem);
       }
     }
   }
@@ -285,7 +261,7 @@ void ProjectTreeView::slotOpen()
   FilesTreeView::slotSelectFile(currentItem());
 }
 
-void ProjectTreeView::slotOpenInQuanta()
+void ProjectTreeView::slotLoadToolbar()
 {
  if (currentItem())
  {
@@ -293,10 +269,8 @@ void ProjectTreeView::slotOpenInQuanta()
    if (urlToOpen.fileName().endsWith(toolbarExtension))
    {
       emit loadToolbarFile(urlToOpen);
-      return;
-   } else
-     FilesTreeView::slotSelectFile(currentItem());
-  }
+   }
+ }
 }
 
 void ProjectTreeView::slotRemove()

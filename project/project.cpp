@@ -1501,6 +1501,9 @@ void Project::slotOptions()
     m_modified = true;
 
     emit newProjectLoaded(projectName, baseURL, templateURL);
+    // exclude filter might have changed
+    fileNameList(false);
+    emit reloadTree( m_projectFiles, false );
     emit newStatus();
   }
 }
@@ -1540,7 +1543,7 @@ void Project::slotRescanPrjDir()
   {
     insertFiles( dlg->files() );
     fileNameList(true);
-    emit reloadTree( m_projectFiles, true );
+    emit reloadTree(m_projectFiles, false);
   }
   delete dlg;
 }

@@ -235,7 +235,7 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
         if (currentNode)
         {
           if (currentNode->prev)
-              currentItem = dynamic_cast<StructTreeTag*>(currentNode->prev->listItem);
+              currentItem = static_cast<StructTreeTag*>(currentNode->prev->listItem);
           if (currentNode->parent)
           {
             parentItem = dynamic_cast<StructTreeTag*>(currentNode->parent->listItem);

@@ -502,6 +502,13 @@ void QuantaApp::initView()
   connect(pTab, SIGNAL(loadToolbarFile  (const KURL&)),
           this, SLOT(slotLoadToolbarFile(const KURL&)));
 
+  connect(fTab, SIGNAL(closeFile   (const KURL &)),
+          this, SLOT  (slotFileClose(const KURL &)));
+  connect(pTab, SIGNAL(closeFile   (const KURL &)),
+          this, SLOT  (slotFileClose(const KURL &)));
+  connect(tTab, SIGNAL(closeFile   (const KURL &)),
+          this, SLOT  (slotFileClose(const KURL &)));
+
   connect(tTab, SIGNAL(openImage  (const KURL&)),
           this, SLOT(slotImageOpen(const KURL&)));
   connect(tTab, SIGNAL(openFile  (const KURL &, const QString&)),
@@ -1116,7 +1123,7 @@ void QuantaApp::initActions()
                         DTDs::ref(), SLOT( slotLoadDTEP() ),
                         ac, "load_dtep" );
 
-    (void) new KAction( i18n( "Send DTD Package (DTEP) in E-&Mail" ), 0,
+    (void) new KAction( i18n( "Send DTD Package (DTEP) in E-&Mail..." ), 0,
                         this, SLOT( slotEmailDTEP() ),
                         ac, "send_dtep" );
 
@@ -1284,11 +1291,11 @@ void QuantaApp::initActions()
                         m_project, SLOT( slotAddDirectory() ),
                         ac, "project_insert_directory" );
 
-    rescanPrjDirAction = new KAction( i18n( "&Rescan Project Folder" ), SmallIcon("reload"), 0,
+    rescanPrjDirAction = new KAction( i18n( "&Rescan Project Folder..." ), SmallIcon("reload"), 0,
                         m_project, SLOT( slotRescanPrjDir() ),
                         ac, "project_rescan" );
 
-    uploadProjectAction = new KAction( i18n( "&Upload Project" ), Key_F8,
+    uploadProjectAction = new KAction( i18n( "&Upload Project..." ), Key_F8,
                         m_project, SLOT( slotUpload() ),
                         ac, "project_upload" );
 

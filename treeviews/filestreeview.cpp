@@ -26,6 +26,8 @@
 #include <qpoint.h>
 #include <qregexp.h>
 #include <qlineedit.h>
+#include <qfont.h>
+#include <qpainter.h>
 
 
 // KDE includes
@@ -49,7 +51,8 @@
 #include "resource.h"
 #include "quanta.h"
 #include "quantacommon.h"
-
+#include "quantadoc.h"
+#include "qextfileinfo.h"
 
 
 //FilesTreeViewItem implementation
@@ -76,6 +79,27 @@ int FilesTreeViewItem::compare( QListViewItem *i, int col,
                                 bool ascending ) const
 {
   return key( col, ascending ).compare( i->key( col, ascending) );
+}
+
+void FilesTreeViewItem::paintCell(QPainter *p, const QColorGroup &cg,
+                                  int column, int width, int align)
+{
+  QColorGroup _cg( cg );
+  QColor c = _cg.text();
+  if (column == 0)
+  {
+    QFont f = p->font();
+    f.setBold(quantaApp->doc()->isOpened(url()));
+    p->setFont(f);
+  } else
+  {
+    int h, s, v;
+    p->pen().color().getHsv(&h, &s, &v);
+    v = (v < 155 ? v + 100 : 255);
+    _cg.setColor(QColorGroup::Text, QColor(h, s, v, QColor::Hsv));
+  };
+  KFileTreeViewItem::paintCell( p, _cg, column, width, align );
+  _cg.setColor( QColorGroup::Text, c );
 }
     
     
@@ -117,7 +141,6 @@ KFileTreeViewItem* FilesTreeBranch::createTreeViewItem( KFileTreeViewItem *paren
   return tvi;
 }
 
-
 //FilesTreeView implementation
 FilesTreeView::FilesTreeView(QWidget *parent, const char *name)
 : KFileTreeView(parent, name)
@@ -146,31 +169,32 @@ FilesTreeView::FilesTreeView(KURL::List topList, QWidget *parent, const char *na
   m_fileMenu = new KPopupMenu();
 
   m_fileMenu->insertItem(SmallIcon("fileopen"), i18n("&Open"), this ,SLOT(slotOpen()));
-  m_fileMenu->insertItem(i18n("Open With..."), this, SLOT(slotOpenWith()));
-  m_fileMenu->insertItem(i18n("Insert Tag"), this, SLOT(slotInsertTag()));
+  m_fileMenu->insertItem(i18n("Open &With..."), this, SLOT(slotOpenWith()));
+  m_fileMenu->insertItem(i18n("Insert &Tag"), this, SLOT(slotInsertTag()));
+  m_menuClose = m_fileMenu->insertItem(SmallIcon("fileclose"), i18n("Clos&e"), this, SLOT(slotClose()));
   m_fileMenu->insertSeparator();
-  m_insertFileInProject = m_fileMenu->insertItem(i18n("Insert in Project..."), this, SLOT(slotInsertInProject()));
+  m_insertFileInProject = m_fileMenu->insertItem(i18n("&Insert in Project..."), this, SLOT(slotInsertInProject()));
   m_fileMenu->insertItem(SmallIcon("editcopy"), i18n("&Copy"), this, SLOT(slotCopy()));
-  m_fileMenu->insertItem(SmallIcon("editpaste"), i18n("&Paste"), this, SLOT(slotPaste()));
   m_fileMenu->insertItem(SmallIcon("editdelete"), i18n("&Delete"), this, SLOT(slotDelete()));
-  m_fileMenu->insertItem(SmallIcon("info"), i18n("Properties..."), this, SLOT(slotProperties()));
+  m_fileMenu->insertSeparator();
+  m_fileMenu->insertItem(SmallIcon("info"), i18n("&Properties..."), this, SLOT(slotProperties()));
 
   m_folderMenu = new KPopupMenu();
 
-  m_folderMenu->insertItem(SmallIcon("folder_new"), i18n("New Top Folder..."), this, SLOT(slotNewTopFolder()));
-  m_menuTop = m_folderMenu->insertItem(i18n("Add Folder to Top"), this, SLOT(slotAddToTop()));
+  m_folderMenu->insertItem(SmallIcon("folder_new"), i18n("&New Top Folder..."), this, SLOT(slotNewTopFolder()));
+  m_menuTop = m_folderMenu->insertItem(i18n("&Add Folder to Top"), this, SLOT(slotAddToTop()));
   m_folderMenu->insertSeparator();
-  m_insertFolderInProject = m_folderMenu->insertItem(i18n("Insert in Project..."), this, SLOT(slotInsertDirInProject()));
+  m_insertFolderInProject = m_folderMenu->insertItem(i18n("&Insert in Project..."), this, SLOT(slotInsertDirInProject()));
   m_folderMenu->insertItem(SmallIcon("editcopy"), i18n("&Copy"), this, SLOT(slotCopy()));
-  m_folderMenu->insertItem(SmallIcon("editpaste"), i18n("&Paste"), this, SLOT(slotPaste()));
+  m_menuPasteFolder = m_folderMenu->insertItem(SmallIcon("editpaste"), i18n("&Paste"), this, SLOT(slotPaste()));
   m_menuDel = m_folderMenu->insertItem( SmallIcon("editdelete"), i18n("&Delete"), this, SLOT(slotDelete()));
-  m_folderMenu->insertItem(SmallIcon("info"), i18n("Properties..."), this, SLOT(slotProperties()));
-  m_seperatorMenuId = m_folderMenu->insertSeparator();
-  m_reloadMenuId = m_folderMenu->insertItem(i18n("Reload"), this, SLOT(slotReload()));
+  m_folderMenu->insertSeparator();
+  m_folderMenu->insertItem(SmallIcon("info"), i18n("&Properties..."), this, SLOT(slotProperties()));
+  m_reloadMenuId = m_folderMenu->insertItem(i18n("&Reload"), this, SLOT(slotReload()));
 
   m_emptyMenu = new KPopupMenu();
 
-  m_emptyMenu->insertItem(i18n("New Top Folder..."), this, SLOT(slotNewTopFolder()), 0, -1 , 0);
+  m_emptyMenu->insertItem(i18n("&New Top Folder..."), this, SLOT(slotNewTopFolder()), 0, -1 , 0);
 
   addColumn(i18n("Files Tree"), -1);
   addColumn("");
@@ -254,33 +278,33 @@ void FilesTreeView::slotMenu(KListView* listView, QListViewItem *item, const QPo
   if (item)
   {
     bool hasProject = !m_projectName.isNull();
-    m_folderMenu->setItemEnabled(m_insertFolderInProject, hasProject);
-    m_fileMenu->setItemEnabled(m_insertFileInProject, hasProject);
+    m_folderMenu->setItemVisible(m_insertFolderInProject, hasProject);
+    m_fileMenu->setItemVisible(m_insertFileInProject, hasProject);
     setSelected(item, true);
     KFileTreeViewItem *curItem = currentKFileTreeViewItem();
     if ( !curItem->isDir() )
     {
+      m_fileMenu->setItemVisible(m_menuClose, isFileOpen(currentURL()));
       m_fileMenu->popup( point);
     } else {
-      m_folderMenu ->setItemEnabled( m_menuDel, true );
-      m_folderMenu ->setItemEnabled( m_menuTop, true );
+      m_folderMenu ->setItemVisible( m_menuDel, true );
+      m_folderMenu ->setItemVisible( m_menuTop, true );
+      m_folderMenu->setItemVisible(m_menuPasteFolder, isPathInClipboard());
       if ( curItem == curItem->branch()->root() )
       {
-        m_folderMenu ->setItemEnabled( m_menuDel, false);
+        m_folderMenu ->setItemVisible( m_menuDel, false);
         m_folderMenu ->changeItem( m_menuTop, i18n("Remove From Top"));
 
         m_config->setGroup("General Options");
         QString text = curItem->url().path();
         if ((text == "/" || text == QDir::homeDirPath()+"/") &&
             m_config->readBoolEntry("Home-Root Folder On", true) )
-          m_folderMenu ->setItemEnabled(m_menuTop, false);
-        m_folderMenu ->setItemVisible(m_seperatorMenuId, true);
+          m_folderMenu ->setItemVisible(m_menuTop, false);
         m_folderMenu ->setItemVisible(m_reloadMenuId, true);
       }
       else
       {
         m_folderMenu ->changeItem( m_menuTop, i18n("Add Folder to Top"));
-        m_folderMenu ->setItemVisible(m_seperatorMenuId, false);
         m_folderMenu ->setItemVisible(m_reloadMenuId, false);
       }
       m_folderMenu->popup( point);
@@ -485,6 +509,14 @@ const FileInfoDlg* FilesTreeView::addFileInfoPage(KPropertiesDialog* propDlg)
   return quantaFileProperties;
 }
 
+void FilesTreeView::slotClose()
+{
+  if (currentItem())
+  {
+    emit closeFile(currentURL());
+  }
+}
+
 void FilesTreeView::slotOpen()
 {
   QListViewItem *item = currentItem();
@@ -638,17 +670,18 @@ void FilesTreeView::slotProperties()
   if (propDlg->exec())
   {
     KURL newURL = propDlg->kurl();
-    if (url != newURL)
-    {
-      itemRenamed(url, newURL);
-    }
     if (fileInfoDlg)
     {
       QString newDesc = fileInfoDlg->fileDesc->text();
       if (currentKFileTreeViewItem()->text(1) != newDesc)
         itemDescChanged(currentKFileTreeViewItem(), newDesc);
     }
+    if (url != newURL)
+    {
+      itemRenamed(url, newURL);
+    }
   }
+//    delete propDlg;
 }
 
 
@@ -715,5 +748,18 @@ void FilesTreeView::slotNewProjectLoaded(const QString &name, const KURL &baseUR
   m_projectBaseURL = baseURL;
 }
 
+bool FilesTreeView::isFileOpen(const KURL &url)
+{
+  return quantaApp->doc()->isOpened(url);
+}
+
+bool FilesTreeView::isPathInClipboard()
+{
+  KURL url(QApplication::clipboard()->text());
+  if (!url.isValid())
+    return false;
+  else
+    return QExtFileInfo::exists(url);
+}
 
 #include "filestreeview.moc"

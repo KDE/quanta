@@ -24,16 +24,6 @@
 
 class KIO::Job;
 
-/** class for item with special paint */
-class ProjectTreeViewItem : public FilesTreeViewItem {
-
-public:
-  ProjectTreeViewItem( KFileTreeViewItem *parent, KFileItem* item, KFileTreeBranch *brnch );
-
-  void paintCell(QPainter *p, const QColorGroup &cg,
-                 int column, int width, int align);
-};
-
 class ProjectTreeBranch : public FilesTreeBranch {
 
 public:
@@ -46,7 +36,7 @@ public:
                                                 KFileItem *fileItem );
 
   /** only files in list will be shown */
-  KURL::List urlList;
+  ProjectUrlList urlList;
 };
 
 
@@ -72,7 +62,7 @@ public:
 
 public slots: // Public slots
   void slotOpen();
-  void slotOpenInQuanta();
+  void slotLoadToolbar();  
   void slotRemove();
 
   void slotMenu(KListView *listView, QListViewItem *item, const QPoint &point);
@@ -107,12 +97,11 @@ private:
   KURL m_oldURL;
   KURL m_newURL;
   KURL m_baseURL;
-  KURL::List m_urlList;
   QPopupMenu *m_projectMenu;
   QString m_projectName;
   ProjectUrlList m_projectFiles;
 
-  int m_openInQuantaId;
+  int m_openInQuantaId;  ///< remembers the menu entry
 
 protected:
   virtual void itemDescChanged(KFileTreeViewItem* item, const QString& newDesc);

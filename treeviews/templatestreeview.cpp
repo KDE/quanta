@@ -60,37 +60,81 @@
 #define NONE "None"
 
 
-const QString textMenu = I18N_NOOP("Insert as Text");
-const QString binaryMenu = I18N_NOOP("Insert Link to File");
-const QString docMenu = I18N_NOOP("New Document Based on This");
+const QString textMenu = I18N_NOOP("Insert as &Text");
+const QString binaryMenu = I18N_NOOP("Insert &Link to File");
+const QString docMenu = I18N_NOOP("&New Document Based on This");
+
+
+//TemplatesTreeBranch implementation
+TemplatesTreeBranch::TemplatesTreeBranch(KFileTreeView *parent, const KURL& url,
+                                         const QString& name, const QPixmap& pix,
+                                         bool showHidden,
+                                         KFileTreeViewItem *branchRoot)
+    : FilesTreeBranch(parent, url, name, pix, showHidden, branchRoot)
+{
+}
+
+KFileTreeViewItem* TemplatesTreeBranch::createTreeViewItem(KFileTreeViewItem *parent,
+                                                           KFileItem *fileItem )
+{
+  FilesTreeViewItem  *tvi = 0;
+  if( parent && fileItem )
+  {
+    tvi = new FilesTreeViewItem( parent, fileItem, this );
+    if (tvi && fileItem->isDir())
+    {
+      KURL url = fileItem->url();
+      if (url.isLocalFile())
+      {
+        QDir dir (url.path(), "", QDir::All & !QDir::Hidden);
+        tvi->setExpandable(dir.count() != 2);     //   . and .. are always there
+      } else {
+        tvi->setExpandable(true);     //   we assume there is something
+      }
+      QFileInfo dotFileInfo(fileItem->url().path() + "/.dirinfo");
+      if (dotFileInfo.exists())
+      {
+        KConfig *config = new KConfig(dotFileInfo.filePath());
+        tvi->setText(1, config->readEntry("Type"));
+        delete config;
+      }
+    }
+  }
+  else
+    kdDebug(24000) << "TemplatesTreeBranch::createTreeViewItem: Have no parent" << endl;
+  return tvi;
+}
+
+
 
 TemplatesTreeView::TemplatesTreeView(QWidget *parent, const char *name )
   : FilesTreeView(parent,name), m_projectDir(0)
 {
   m_fileMenu = new KPopupMenu();
 
-  m_openId = m_fileMenu->insertItem(i18n("&Open"), this ,SLOT(slotInsert()));
+  m_openId = m_fileMenu->insertItem(i18n("Open"), this ,SLOT(slotInsert()));
   m_fileMenu->insertItem(SmallIcon("fileopen"), i18n("&Open"), this ,SLOT(slotOpen()));
-  m_fileMenu->insertItem(SmallIcon("mail_send"), i18n("Send in E-Mail"), this, SLOT(slotSendInMail()));
-  m_insertFileInProject = m_fileMenu->insertItem(i18n("Insert in Project..."), this, SLOT(slotInsertInProject()));
+  m_fileMenu->insertItem(SmallIcon("mail_send"), i18n("Send in E-&Mail..."), this, SLOT(slotSendInMail()));
+  m_insertFileInProject = m_fileMenu->insertItem(i18n("&Insert in Project..."), this, SLOT(slotInsertInProject()));
+  m_menuClose = m_fileMenu->insertItem(SmallIcon("fileclose"), i18n("Clos&e"), this, SLOT(slotClose()));
   m_fileMenu->insertSeparator();
   m_fileMenu->insertItem(SmallIcon("editcopy"), i18n("&Copy"), this, SLOT(slotCopy()));
-  m_fileMenu->insertItem(SmallIcon("editpaste"), i18n("&Paste"), this, SLOT(slotPaste()));
   m_fileMenu->insertItem(SmallIcon("editdelete"), i18n("&Delete"), this, SLOT(slotDelete()));
-  m_fileMenu->insertItem(SmallIcon("info"), i18n("Properties"), this, SLOT(slotProperties()));
+  m_fileMenu->insertSeparator();
+  m_fileMenu->insertItem(SmallIcon("info"), i18n("&Properties..."), this, SLOT(slotProperties()));
 
   m_folderMenu = new KPopupMenu();
 
   m_folderMenu->insertItem(SmallIcon("folder_new"), i18n("&New Folder..."), this, SLOT(slotNewDir()));
-  m_folderMenu->insertItem(SmallIcon("mail_send"), i18n("Send in E-Mail"), this, SLOT(slotSendInMail()));
-  m_insertFolderInProject = m_folderMenu->insertItem(i18n("Insert in Project..."), this, SLOT(slotInsertDirInProject()));
+  m_folderMenu->insertItem(SmallIcon("mail_send"), i18n("Send in E-&Mail..."), this, SLOT(slotSendInMail()));
+  m_insertFolderInProject = m_folderMenu->insertItem(i18n("&Insert in Project..."), this, SLOT(slotInsertDirInProject()));
   m_folderMenu->insertSeparator();
   m_folderMenu->insertItem(SmallIcon("editcopy"), i18n("&Copy"), this, SLOT(slotCopy()));
-  m_folderMenu->insertItem(SmallIcon("editpaste"), i18n("&Paste"), this, SLOT(slotPaste()));
+  m_menuPasteFolder = m_folderMenu->insertItem(SmallIcon("editpaste"), i18n("&Paste"), this, SLOT(slotPaste()));
   m_deleteMenuId = m_folderMenu->insertItem(SmallIcon("editdelete"), i18n("&Delete"), this, SLOT(slotDelete()));
-  m_folderMenu->insertItem(SmallIcon("info"), i18n("Properties"), this, SLOT(slotProperties()));
-  m_seperatorMenuId = m_folderMenu->insertSeparator();
-  m_reloadMenuId = m_folderMenu->insertItem(i18n("Reload"), this, SLOT(slotReload()));
+  m_folderMenu->insertSeparator();
+  m_folderMenu->insertItem(SmallIcon("info"), i18n("&Properties..."), this, SLOT(slotProperties()));
+  m_reloadMenuId = m_folderMenu->insertItem(i18n("&Reload"), this, SLOT(slotReload()));
 
   setRootIsDecorated( true );
   //header()->hide();
@@ -98,7 +142,7 @@ TemplatesTreeView::TemplatesTreeView(QWidget *parent, const char *name )
   setFrameStyle( Panel | Sunken );
   setLineWidth( 2 );
   addColumn(i18n("Templates"), -1);
-  addColumn("");
+  addColumn(i18n("Group"), -1);
   setFullWidth(true);
   setShowSortIndicator(true);
 
@@ -141,14 +185,14 @@ KFileTreeBranch* TemplatesTreeView::newBranch(const KURL& url)
   FilesTreeBranch *newBrnch;
   if (url == globalURL)
   {
-    newBrnch = new FilesTreeBranch(this, url, i18n("Global Templates"), SmallIcon("ttab"));
+    newBrnch = new TemplatesTreeBranch(this, url, i18n("Global Templates"), SmallIcon("ttab"));
   } else
   {
     if (url == localURL)
-      newBrnch = new FilesTreeBranch(this, url, i18n("Local Templates"), SmallIcon("ttab"));
+      newBrnch = new TemplatesTreeBranch(this, url, i18n("Local Templates"), SmallIcon("ttab"));
     else
     {
-      newBrnch = new FilesTreeBranch(this, url, i18n("Project Templates"), SmallIcon("ptab"));
+      newBrnch = new TemplatesTreeBranch(this, url, i18n("Project Templates"), SmallIcon("ptab"));
       m_projectDir = newBrnch;
     }
   }
@@ -189,21 +233,20 @@ void TemplatesTreeView::slotMenu(KListView*, QListViewItem *item, const QPoint &
   if ( !item ) return;
   setSelected(item, true);
   bool hasProject = m_projectName;
-  m_folderMenu->setItemEnabled(m_insertFolderInProject, hasProject);
-  m_fileMenu->setItemEnabled(m_insertFileInProject, hasProject);
+  m_folderMenu->setItemVisible(m_insertFolderInProject, hasProject);
+  m_fileMenu->setItemVisible(m_insertFileInProject, hasProject);
 
   KFileTreeViewItem *curItem = currentKFileTreeViewItem();
   if ( curItem->isDir() )
   {
+    m_folderMenu->setItemVisible(m_menuPasteFolder, isPathInClipboard());
     if ( curItem == curItem->branch()->root())
     {
-      m_folderMenu ->setItemEnabled(m_deleteMenuId, false);
-      m_folderMenu ->setItemVisible(m_seperatorMenuId, true);
+      m_folderMenu ->setItemVisible(m_deleteMenuId, false);
       m_folderMenu ->setItemVisible(m_reloadMenuId, true);
     } else
     {
-      m_folderMenu ->setItemEnabled(m_deleteMenuId, true);
-      m_folderMenu ->setItemVisible(m_seperatorMenuId, false);
+      m_folderMenu ->setItemVisible(m_deleteMenuId, true);
       m_folderMenu ->setItemVisible(m_reloadMenuId, false);
     }
     m_folderMenu ->popup(point);
@@ -222,12 +265,13 @@ void TemplatesTreeView::slotMenu(KListView*, QListViewItem *item, const QPoint &
 
    if (menuText.isEmpty())
    {
-     m_fileMenu->setItemEnabled(m_openId, false);
+     m_fileMenu->setItemVisible(m_openId, false);
    } else
    {
-     m_fileMenu->setItemEnabled(m_openId, true);
+     m_fileMenu->setItemVisible(m_openId, true);
      m_fileMenu->changeItem(m_openId, menuText);
    }
+   m_fileMenu->setItemVisible(m_menuClose, isFileOpen(currentURL()));
 
    m_fileMenu->popup( point);
   }
@@ -517,7 +561,7 @@ void TemplatesTreeView::slotProperties()
   KConfig config(name);
   config.setGroup("Filtering");
   name = config.readEntry("Action", NONE);
-  if ( name = NONE )
+  if ( name == NONE )
      name = i18n(NONE);
   uint pos = 0;
   uint j = 1;
@@ -545,7 +589,7 @@ void TemplatesTreeView::slotProperties()
   addFileInfoPage(propDlg);
   if (propDlg->exec() == QDialog::Accepted)
    {
-    slotPropertiesApplied();
+//    slotPropertiesApplied();
     if (url != propDlg->kurl())
     {
       itemRenamed(url, propDlg->kurl());
@@ -580,6 +624,10 @@ void TemplatesTreeView::slotPropertiesApplied()
     m_dirInfo.postText = m_localDirInfo.postText;
     m_dirInfo.usePrePostText = m_localDirInfo.usePrePostText;
     writeDirInfo();
+    if (currentItem())
+    {
+      currentItem()->setText(1, m_dirInfo.mimeType);
+    }
   }
 
   writeTemplateInfo();
@@ -679,7 +727,7 @@ void TemplatesTreeView::writeTemplateInfo()
   QString fileName = currentURL().path() + TMPL;
   KConfig config(fileName);
   config.setGroup("Filtering");
-  if ( m_quantaProperties->actionCombo->currentText() = i18n(NONE) )
+  if ( m_quantaProperties->actionCombo->currentText() == i18n(NONE) )
     config.writeEntry("Action", NONE);
   else
     config.writeEntry("Action", m_quantaProperties->actionCombo->currentText());

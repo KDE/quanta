@@ -23,6 +23,18 @@
 //forward declarations
 class QuantaPropertiesPage;
 
+class TemplatesTreeBranch : public FilesTreeBranch {
+
+public:
+  TemplatesTreeBranch(KFileTreeView *parent, const KURL& url,
+                      const QString& name, const QPixmap& pix,
+                      bool showHidden = false, KFileTreeViewItem *branchRoot = 0L);
+
+  /** read the mimetype */
+  virtual KFileTreeViewItem* createTreeViewItem(KFileTreeViewItem *parent,
+                                                KFileItem *fileItem );
+};
+
 
 class TemplatesTreeView : public FilesTreeView  {
    Q_OBJECT
@@ -106,7 +118,6 @@ private:
   FilesTreeBranch *m_projectDir;
   int m_deleteMenuId;
   int m_openId;
-  int m_seperatorMenuId;
   int m_reloadMenuId;
   QuantaPropertiesPage *m_quantaProperties;
   /** Filters the template through and action, and returns the modified/filtered

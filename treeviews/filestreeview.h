@@ -49,6 +49,9 @@ public:
   QString key (int column, bool ascending) const;
   /** makes compare independent from locale */
   int compare( QListViewItem *i, int col, bool ascending ) const;
+  /** makes open files bold and 2. column gray */
+  void paintCell(QPainter *p, const QColorGroup &cg, int column, int width, int align);
+
 };
 
 /** class for branch with special items */
@@ -91,6 +94,9 @@ public slots:
   virtual void slotProperties();
 
   virtual void slotOpen();
+  /** close the document in Quanta */
+  virtual void slotClose();
+
   void slotOpenWith();
   void slotOpenInQuanta();
   void slotCopy();
@@ -114,6 +120,7 @@ protected:
   virtual void itemRenamed(const KURL& , const KURL& );
   virtual void itemDescChanged(KFileTreeViewItem* item, const QString& newDesc);
   virtual bool isProjectView() const { return false; }
+  virtual bool isPathInClipboard();
   const FileInfoDlg* addFileInfoPage(KPropertiesDialog *propDlg);
   /** expands an archiv, if possible */
   bool expandArchiv (KFileTreeViewItem *item);
@@ -123,10 +130,14 @@ protected:
   KPopupMenu *m_fileMenu;
   KPopupMenu *m_folderMenu;
   KPopupMenu *m_emptyMenu;
+  int m_menuClose;                ///< remembers the menu entry
+  int m_menuPasteFolder;          ///< remembers the menu entry
   int m_insertFileInProject;
   int m_insertFolderInProject;
   // config
   KConfig *m_config;
+  /** this is mainly for project and template tree to reduce includes there */
+  bool isFileOpen(const KURL &url);
 
 signals:
   void showPreviewWidget(bool);
@@ -140,11 +151,12 @@ signals:
   void insertTag(const KURL &, DirInfo);
   /** file or folder has been renamed */
   void renamed(const KURL &, const KURL &);
+  /** close the file in Quanta */
+  void closeFile( const KURL& );
 
 private:
   int m_menuTop;
   int m_menuDel;
-  int m_seperatorMenuId;
   int m_reloadMenuId;
   QString m_projectName;
   KURL m_projectBaseURL;
