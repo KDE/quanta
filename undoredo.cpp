@@ -80,7 +80,7 @@ void undoRedo::addNewModifsSet(NodeModifsSet modifs)
 		}
 		modifs.NodeModifList.clear();
 		_mergeNext = false;
-		//debugOutput();
+		debugOutput();
 		return;
 	}
 
@@ -90,7 +90,7 @@ void undoRedo::addNewModifsSet(NodeModifsSet modifs)
 	{
 		//we don't add the modifsset
 		_dontAddModifSet = -1;
-		//debugOutput();
+		debugOutput();
 		return;
 	}
 
@@ -282,13 +282,14 @@ void undoRedo::addNewModifsSet(NodeModifsSet modifs)
 	 * -Flags to prevent fusionning in case of copy/paste, and to provoke NodeModifs separation
 	 * in case of too heavy NodeModified (e.g. typing 100 lines of text shouldn't be undo'ed in one time)
 	 */
-	 //debugOutput();
+	 debugOutput();
 }
 
 bool undoRedo::undo(bool kafkaUndo)
 {
 	QTime t;
 	QValueList<NodeModif>::iterator it;
+	bool success = true;
 
 	t.start();
 	kdDebug(24000)<< "************* Begin Undo *****************" << endl;
@@ -300,7 +301,44 @@ bool undoRedo::undo(bool kafkaUndo)
 	while(1)
 	{
 		if(!UndoNodeModif(*it, kafkaUndo))
+		{
+			//one undo has failed, trying to recover (hope that the undo has done nothing).
+			kdDebug(24000)<< "Undo failed, trying to recover." << endl;
+			it++;
+			while(it != (*editorIterator).NodeModifList.end() && success)
+			{
+				if((*it).type == undoRedo::NodeTreeAdded)
+					(*it).type = undoRedo::NodeTreeRemoved;
+				else if((*it).type == undoRedo::NodeAndChildsAdded)
+					(*it).type = undoRedo::NodeAndChildsRemoved;
+				else if((*it).type == undoRedo::NodeAdded)
+					(*it).type = undoRedo::NodeRemoved;
+				else if((*it).type == undoRedo::NodeRemoved)
+					(*it).type = undoRedo::NodeAdded;
+				else if((*it).type == undoRedo::NodeAndChildsRemoved)
+					(*it).type = undoRedo::NodeAndChildsAdded;
+				else if((*it).type == undoRedo::NodeTreeRemoved)
+					(*it).type = undoRedo::NodeTreeAdded;
+
+				success = UndoNodeModif(*it, kafkaUndo);
+				kdDebug(24000) << "NodeModif type :" << (*it).type <<" redoed!" << endl;
+
+				if((*it).type == undoRedo::NodeTreeRemoved)
+					(*it).type = undoRedo::NodeTreeAdded;
+				else if((*it).type == undoRedo::NodeAndChildsRemoved)
+					(*it).type = undoRedo::NodeAndChildsAdded;
+				else if((*it).type == undoRedo::NodeRemoved)
+					(*it).type = undoRedo::NodeAdded;
+				else if((*it).type == undoRedo::NodeAdded)
+					(*it).type = undoRedo::NodeRemoved;
+				else if((*it).type == undoRedo::NodeAndChildsAdded)
+					(*it).type = undoRedo::NodeAndChildsRemoved;
+				else if((*it).type == undoRedo::NodeTreeAdded)
+					(*it).type = undoRedo::NodeTreeRemoved;
+				it++;
+			}
 			return false;
+		}
 		kdDebug(24000) << "NodeModif type :" << (*it).type <<" undoed!" << endl;
 		//coutTree(baseNode, 2);
 		if(it == (*editorIterator).NodeModifList.begin())

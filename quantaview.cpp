@@ -30,7 +30,6 @@
 #include <qwidget.h>
 #include <qsplitter.h>
 #include <qpoint.h>
-#include <qvaluelist.h>
 
 // include files for KDE
 #include <kaction.h>
@@ -101,9 +100,10 @@ QuantaView::QuantaView(QWidget *parent, const char *name )
   oldWrite = 0L;
   oldTab = 0L;
 
-  #ifdef BUILD_KAFKAPART
   currentViewsLayout = QuantaView::QuantaViewOnly;//TODO: load it from the config
+  #ifdef BUILD_KAFKAPART
   kafkaInterface = new WKafkaPart(0, 0, "KafkaHTMLPart");
+  kafkaInterface->getKafkaPart()->view()->setMinimumHeight(50);
   #endif
 
   setAcceptDrops(TRUE); // [MB02] Accept drops on the view
@@ -131,15 +131,17 @@ void QuantaView::addWrite( QWidget* w , QString label )
 {
   int oldLayout;
 
-  if(currentViewsLayout != QuantaView::QuantaViewOnly)
+  oldLayout = currentViewsLayout;
+  currentViewsLayout = QuantaView::QuantaViewOnly;
+  if(oldLayout == QuantaView::QuantaAndKafkaViews)
+    _splittSizes = splitter->sizes();
+  if(writeExists() && oldLayout != QuantaView::QuantaViewOnly)
   {
-    kafkaInterface->getKafkaPart()->view()->reparent(0, 0, QPoint(), false);
     kafkaInterface->getKafkaPart()->view()->hide();
+    kafkaInterface->getKafkaPart()->view()->reparent(0, 0, QPoint(), false);
     if(kafkaInterface->isLoaded())
       kafkaInterface->unloadDocument();
     write()->view()->reparent(write(), 0, QPoint(), true);
-    oldLayout = currentViewsLayout;
-    currentViewsLayout = QuantaView::QuantaViewOnly;
     resize(writeTab()->size().width()-5, writeTab()->size().height()-35);
     write()->view()->show();
     if(oldLayout == QuantaView::QuantaAndKafkaViews)
@@ -170,17 +172,19 @@ QWidget* QuantaView::removeWrite()
   int oldLayout;
 
   oldTab = 0L;
+  oldLayout = currentViewsLayout;
+  currentViewsLayout = QuantaView::QuantaViewOnly;
+  if(oldLayout == QuantaView::QuantaAndKafkaViews)
+    _splittSizes = splitter->sizes();
   if (writeExists())
   {
-      if(currentViewsLayout != QuantaView::QuantaViewOnly)
+      if(oldLayout != QuantaView::QuantaViewOnly)
     {
-      kafkaInterface->getKafkaPart()->view()->reparent(0, 0, QPoint(), false);
       kafkaInterface->getKafkaPart()->view()->hide();
+      kafkaInterface->getKafkaPart()->view()->reparent(0, 0, QPoint(), false);
       if(kafkaInterface->isLoaded())
         kafkaInterface->unloadDocument();
       write()->view()->reparent(write(), 0, QPoint(), true);
-      oldLayout = currentViewsLayout;
-      currentViewsLayout = QuantaView::QuantaViewOnly;
       resize(writeTab()->size().width()-5, writeTab()->size().height()-35);
       write()->view()->show();
       if(oldLayout == QuantaView::QuantaAndKafkaViews)
@@ -193,7 +197,14 @@ QWidget* QuantaView::removeWrite()
   {
     m_writeTab->removePage( m_writeTab->currentPage() );
   }*/
-  if(oldLayout == QuantaView::QuantaAndKafkaViews)
+  if(!writeExists())
+  {
+  //no more view, going back to the quanta editor view
+  KToggleAction *ta = (KToggleAction *) quantaApp->actionCollection()->action( "show_quanta_editor" );
+  if(ta)
+    ta->setChecked(true);
+  }
+  else if(oldLayout == QuantaView::QuantaAndKafkaViews)
   {
     slotShowKafkaAndQuanta();
   }
@@ -214,15 +225,17 @@ void QuantaView::updateViews()
   else
     _doc = 0L;
   oldLayout = currentViewsLayout;
-  if(_doc && currentViewsLayout != QuantaView::QuantaViewOnly)
+  currentViewsLayout = QuantaView::QuantaViewOnly;
+  if(oldLayout == QuantaView::QuantaAndKafkaViews)
+    _splittSizes = splitter->sizes();
+  if(_doc && oldLayout != QuantaView::QuantaViewOnly)
   //if the previous page is not a plugin
   {
-    kafkaInterface->getKafkaPart()->view()->reparent(0, 0, QPoint(), false);
     kafkaInterface->getKafkaPart()->view()->hide();
+    kafkaInterface->getKafkaPart()->view()->reparent(0, 0, QPoint(), false);
     if(kafkaInterface->isLoaded())
       kafkaInterface->unloadDocument();
     _doc->view()->reparent(_doc, 0, QPoint(), true);
-    currentViewsLayout = QuantaView::QuantaViewOnly;
     resize(writeTab()->size().width()-5, writeTab()->size().height()-35);
     _doc->view()->show();
     if(oldLayout == QuantaView::QuantaAndKafkaViews)
@@ -236,13 +249,11 @@ void QuantaView::updateViews()
    }
    else
    {
-     if((_doc && oldLayout == QuantaView::QuantaAndKafkaViews) ||
-      (!_doc && currentViewsLayout == QuantaView::QuantaAndKafkaViews))
+     if(oldLayout == QuantaView::QuantaAndKafkaViews)
      {
        slotShowKafkaAndQuanta();
      }
-     else if((_doc && oldLayout == QuantaView::KafkaViewOnly) ||
-       (!_doc && currentViewsLayout == QuantaView::KafkaViewOnly))
+     else if(oldLayout == QuantaView::KafkaViewOnly)
      {
        slotShowKafkaPart();
      }
@@ -381,8 +392,8 @@ void QuantaView::slotShowQuantaEditor()
     return;
   else if(currentViewsLayout == QuantaView::KafkaViewOnly)
   {
-    kafkaInterface->getKafkaPart()->view()->reparent(0, 0, QPoint(), false);
     kafkaInterface->getKafkaPart()->view()->hide();
+    kafkaInterface->getKafkaPart()->view()->reparent(0, 0, QPoint(), false);
     if(kafkaInterface->isLoaded())
       kafkaInterface->unloadDocument();
     write()->view()->reparent(write(), 0, QPoint(), true);
@@ -392,8 +403,9 @@ void QuantaView::slotShowQuantaEditor()
   }
   else if(currentViewsLayout == QuantaView::QuantaAndKafkaViews)
   {
-    kafkaInterface->getKafkaPart()->view()->reparent(0, 0, QPoint(), false);
+    _splittSizes = splitter->sizes();
     kafkaInterface->getKafkaPart()->view()->hide();
+    kafkaInterface->getKafkaPart()->view()->reparent(0, 0, QPoint(), false);
     if(kafkaInterface->isLoaded())
       kafkaInterface->unloadDocument();
     write()->view()->reparent(write(), 0, QPoint(), true);
@@ -413,8 +425,8 @@ void QuantaView::slotShowKafkaPart()
     quantaApp->rightWidget()->raiseWidget(0);
   if(currentViewsLayout == QuantaView::QuantaViewOnly)
   {
-    write()->view()->reparent(0, 0, QPoint(), false);
     write()->view()->hide();
+    write()->view()->reparent(0, 0, QPoint(), false);
     if(!kafkaInterface->isLoaded())
       kafkaInterface->loadDocument(write());
     kafkaInterface->getKafkaPart()->view()->reparent(write(), 0, QPoint(), true);
@@ -426,8 +438,9 @@ void QuantaView::slotShowKafkaPart()
     return;
   else if(currentViewsLayout == QuantaView::QuantaAndKafkaViews)
   {
-    write()->view()->reparent(0, 0, QPoint(), true);
+  _splittSizes = splitter->sizes();
     write()->view()->hide();
+    write()->view()->reparent(0, 0, QPoint(), false);
     if(!kafkaInterface->isLoaded())
       kafkaInterface->loadDocument(write());
     kafkaInterface->getKafkaPart()->view()->reparent(write(), 0, QPoint(), true);
@@ -458,6 +471,16 @@ void QuantaView::slotShowKafkaAndQuanta()
     write()->view()->show();
     currentViewsLayout = QuantaView::QuantaAndKafkaViews;
     resize(writeTab()->size().width()-5, writeTab()->size().height()-35);
+    if(_splittSizes.empty())
+    {
+      QValueList<int> sizes;
+      sizes << (writeTab()->size().height()-35)/2 << (writeTab()->size().height()-35)/2;
+      splitter->setSizes(sizes);
+    }
+    else
+      splitter->setSizes(_splittSizes);
+    splitter->setCollapsible(write()->view(), false);
+    splitter->setCollapsible(kafkaInterface->getKafkaPart()->view(), false);
     splitter->show();
   }
   else

@@ -677,7 +677,8 @@ void QuantaApp::slotClosePage(QWidget *w)
       write->closeTempFile();
       if (!write->isUntitled())
         fileWatcher->removeFile(write->url().path());
-      writeTab->removePage(w);
+      //writeTab->removePage(w);
+      m_view->removeWrite();
     }
   }
   if (!writeTab->currentPage())

@@ -26,6 +26,7 @@
 // include files for Qt
 #include <qwidget.h>
 #include <qptrlist.h>
+#include <qvaluelist.h>
 
 class QuantaDoc;
 class Document;
@@ -197,6 +198,7 @@ private:
   /** Kafka stuff */
   WKafkaPart *kafkaInterface;
   QSplitter *splitter;
+  QValueList<int> _splittSizes;
 
   int currentViewsLayout;
   bool beginOfScriptOutput;
