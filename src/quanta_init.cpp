@@ -374,6 +374,7 @@ void QuantaInit::initView()
       m_quanta->tabWidget()->setTabPosition( QTabWidget::Bottom );
       connect( m_quanta->tabWidget(), SIGNAL( contextMenu( QWidget *, const QPoint & ) ), m_viewManager,
            SLOT(slotTabContextMenu( QWidget *, const QPoint & ) ) );
+      disconnect( m_quanta->tabWidget(), SIGNAL(closeRequest( QWidget *)), 0, 0 );
       connect( m_quanta->tabWidget(), SIGNAL( closeRequest( QWidget *) ), m_viewManager,
            SLOT(slotCloseRequest( QWidget *) ) );
 

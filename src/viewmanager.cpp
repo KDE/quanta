@@ -494,7 +494,7 @@ void ViewManager::slotCloseRequest(QWidget *widget)
 {
    QuantaView *view = dynamic_cast<QuantaView *>(widget);
    if (view)
-      removeView(view, false, true);
+      removeView(view);
 }
 
 #include "viewmanager.moc"
