@@ -857,6 +857,16 @@ void Document::slotCharactersInserted(int line, int column, const QString& strin
     if (completionDTD->family == Script)
     {
       handled = scriptAutoCompletion(line, column);
+      if (!handled && string == ">")
+      {
+         Node *node = parser->nodeAt(line, column, false);
+         if (node && node->tag->validXMLTag && node->tag->type == Tag::ScriptTag)
+         {
+            column++;
+            editIf->insertText(line, column, "</" + node->tag->name + ">");
+           viewCursorIf->setCursorPositionReal( line, column );
+        }
+      }
       handled = true;
     }
 
