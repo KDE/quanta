@@ -111,7 +111,7 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta"), DCOPObject("WindowManager
   {
     quantaStarted = false;
     fprintf(stderr,"***************************************************************************\n");
-    fprintf(stderr, "%s", i18n("\tQuanta data files were not found.\nYou may forgot to run \"make install\",\nor your KDEDIR, KDEDIRS or PATH is not set correctly.!\n").latin1());
+    fprintf(stderr, "%s", static_cast<const char *> (i18n("\tQuanta data files were not found.\nYou may forgot to run \"make install\",\nor your KDEDIR, KDEDIRS or PATH is not set correctly.!\n").local8Bit()) );
     fprintf(stderr,"***************************************************************************\n");
     QTimer::singleShot(20, kapp, SLOT(quit()));
     return;
