@@ -117,8 +117,8 @@ KURL::List Project::fileNameList(bool check)
 
   //cout << dom.toString() << "\n";
   QDomNodeList nl = dom.elementsByTagName("item");
-
-  for ( unsigned int i=0; i < nl.count(); i++ )
+  uint nlCount = nl.count();
+  for ( unsigned int i=0; i < nlCount; i++ )
   {
     QDomElement el = nl.item(i).cloneNode().toElement();
     KURL url = baseURL;
@@ -157,6 +157,8 @@ void Project::insertFile(const KURL& nameURL, bool repaint )
     if ( !destination.isEmpty() )
     {
       CopyTo *dlg = new CopyTo(baseURL);
+      connect(dlg, SIGNAL(deleteDialog(CopyTo*)),
+                   SLOT(slotDeleteCopytoDlg(CopyTo*)));
       KURL tmpURL = dlg->copy( nameURL, destination );
       relNameURL = QExtFileInfo::toRelative( tmpURL, baseURL);
     }
@@ -180,11 +182,12 @@ void Project::insertFile(const KURL& nameURL, bool repaint )
   el.setAttribute("url", QuantaCommon::qUrl(relNameURL) );
 
   dom.firstChild().firstChild().appendChild( el );
+  m_projectFiles.append(relNameURL);
   m_modified = true;
 
   if ( repaint )
   {
-    emit reloadTree( fileNameList(), false);
+    emit reloadTree( m_projectFiles, false);
     emit newStatus();
   }
 }
@@ -203,24 +206,39 @@ void Project::insertFiles(const KURL& pathURL, const QString& mask )
 /** insert files */
 void Project::insertFiles( KURL::List files )
 {
+  QDomElement  el;
+  QDomNodeList nl = dom.elementsByTagName("item");
+  quantaApp->slotStatusMsg( i18n("Adding files to the project...") );
+  progressBar->setTotalSteps(2*files.count() - 2);
+  progressBar->setValue(0);
+  progressBar->setTextEnabled(true);
+
   KURL::List::Iterator it;
   for ( it = files.begin(); it != files.end(); ++it )
   {
     *it = QExtFileInfo::toRelative( *it, baseURL);
+    if (m_projectFiles.contains(*it))
+    {
+        it = files.erase(it);
+        --it;
+    }
+    progressBar->advance(1);
   }
 
-  QDomElement  el;
-  QDomNodeList nl = dom.elementsByTagName("item");
-
+/*
   for ( uint i = 0; i < nl.count(); i++ )
   {
     el = nl.item(i).toElement();
     KURL url = baseURL;
     QuantaCommon::setUrl(url,el.attribute("url"));
     if ( files.contains(url))
-        files.remove(url.url());
+    {
+      files.remove(url.url());
+      progressBar->advance(1);
+    }
+    progressBar->advance(1);
   }
-
+*/
   for ( it = files.begin(); it != files.end(); ++it )
   {
     if (! (*it).isEmpty())
@@ -231,10 +249,16 @@ void Project::insertFiles( KURL::List files )
         {
           el.setAttribute("url", QuantaCommon::qUrl(url));
           dom.firstChild().firstChild().appendChild( el );
+          m_projectFiles.append(url);
           m_modified = true;
         }
-      }
+     }
+     progressBar->advance(1);
   }
+  progressBar->setValue(0);
+  progressBar->setTextEnabled(false);
+
+  quantaApp->slotStatusMsg( i18n("Done."));
   emit newStatus();
 }
 
@@ -309,7 +333,7 @@ void Project::readLastConfig(KConfig *c)
   QuantaCommon::setUrl(url, urlPath);
 
   slotCloseProject();
-  if ( !urlPath.isEmpty() && !url.isMalformed())
+  if ( !urlPath.isEmpty() && url.isValid())
   {
    slotLoadProject ( url );
   }
@@ -426,13 +450,13 @@ void Project::slotCloseProject()
   projectName = QString::null;
   m_defaultDTD = qConfig.defaultDocType;
   currentProjectView = QString::null;
-
+  m_projectFiles.clear();
   emit closeFiles();
 
   emit setBaseURL( baseURL );
   emit setProjectName( i18n( "No Project" ) );
   emit templateURLChanged(KURL());
-  emit reloadTree( fileNameList(), true);
+  emit reloadTree( m_projectFiles, true);
 
   projectURL  = KURL();
   m_modified = false;
@@ -451,7 +475,7 @@ void Project::slotLoadProject(const KURL &a_url)
   projectName = QString::null;
   currentProjectView = QString::null;
 
-  if (url.isMalformed())
+  if (!url.isValid())
   {
       KMessageBox::sorry(this, i18n("Malformed URL\n%1").arg(url.prettyURL()));
   } else
@@ -614,14 +638,14 @@ void Project::loadProjectXML()
   }
   excludeRx.setPattern(regExpStr);
 
-  KURL::List fileList;
   QDomNodeList nl = dom.firstChild().firstChild().childNodes();
   quantaApp->slotStatusMsg( i18n("Reading the project file...") );
   progressBar->setTotalSteps(nl.count()-1);
   progressBar->setValue(0);
   progressBar->setTextEnabled(true);
   QString path;
-  for ( uint i = 0; i < nl.count(); i++ )
+  uint nlCount = nl.count();
+  for ( uint i = 0; i < nlCount; i++ )
   {
     el = nl.item(i).toElement();
     tmpString = el.attribute("url");
@@ -655,14 +679,14 @@ void Project::loadProjectXML()
                quantaApp->dTab->addProjectDoc(
                QExtFileInfo::toAbsolute(url, baseURL));
              }
-            fileList.append(url);
+            m_projectFiles.append(url);
           }
         } else
         {
           if (path.startsWith("doc/") && path.endsWith("/index.html"))
                quantaApp->dTab->addProjectDoc(
                QExtFileInfo::toAbsolute(url, baseURL));
-          fileList.append(url);
+          m_projectFiles.append(url);
         }
       } else
       {
@@ -679,7 +703,7 @@ void Project::loadProjectXML()
 
   emit setBaseURL(baseURL);
   emit setProjectName( projectName );
-  emit reloadTree( fileList, true);
+  emit reloadTree( m_projectFiles, true);
 
   emit showTree();
   emit newStatus();
@@ -716,9 +740,11 @@ void Project::slotAddFiles()
       if ( !destination.isEmpty())
       {
         CopyTo *dlg = new CopyTo( baseURL);
+        connect(dlg, SIGNAL(deleteDialog(CopyTo*)),
+                     SLOT  (slotDeleteCopytoDlg(CopyTo*)));
+        connect(dlg, SIGNAL(addFilesToProject(const KURL&)),
+                     SLOT  (slotInsertFilesAfterCopying(const KURL&)));
         list = dlg->copy( list, destination );
-        connect(dlg, SIGNAL(addFilesToProject(const KURL&, CopyTo*)),
-                     SLOT  (slotInsertFilesAfterCopying(const KURL&, CopyTo*)));
         return;
       }
       else {
@@ -738,7 +764,7 @@ void Project::slotAddFiles()
      }
    }
 
-    emit reloadTree( fileNameList(), false);
+    emit reloadTree( m_projectFiles, false);
   }
 }
 
@@ -772,10 +798,12 @@ void Project::slotAddDirectory(const KURL& p_dirURL, bool showDlg)
             (!destination.isEmpty()) )
       {
         CopyTo *dlg = new CopyTo( baseURL);
+        connect(dlg, SIGNAL(addFilesToProject(const KURL&)),
+                     SLOT  (slotInsertFilesAfterCopying(const KURL&)));
+        connect(dlg, SIGNAL(deleteDialog(CopyTo *)),
+                     SLOT  (slotDeleteCopytoDlg(CopyTo *)));
         //if ( rdir.right(1) == "/" ) rdir.remove( rdir.length()-1,1);
         dirURL = dlg->copy(dirURL, destination);
-        connect(dlg, SIGNAL(addFilesToProject(const KURL&, CopyTo*)),
-                     SLOT  (slotInsertFilesAfterCopying(const KURL&, CopyTo*)));
         return;
       }
       else
@@ -787,18 +815,22 @@ void Project::slotAddDirectory(const KURL& p_dirURL, bool showDlg)
   //And again, insert now directly the directory name into the project.
   //It's important if rdir doesn't contain any files or subdirectories.
     insertFiles(dirURL);
-    emit reloadTree( fileNameList(), false );
+    emit reloadTree( m_projectFiles, false );
   }
 }
 
-void Project::slotInsertFilesAfterCopying(const KURL& p_url,CopyTo* dlg)
+void Project::slotInsertFilesAfterCopying(const KURL& a_url)
 {
-  KURL url = p_url;
-//The CopyTo dlg is deleted only here!!
-  delete dlg;
+  KURL url = a_url;
   url.adjustPath(1);
   insertFiles( url, "*" );
-  emit reloadTree( fileNameList(), false );
+  emit reloadTree( m_projectFiles, false );
+}
+
+void Project::slotDeleteCopytoDlg(CopyTo *dlg)
+{
+//The CopyTo dlg is deleted only here!!
+  delete dlg;
 }
 
 void Project::slotRenameFinished( KIO::Job * job)
@@ -826,26 +858,54 @@ void Project::slotRenameFinished( KIO::Job * job)
         break;
       }
     }
-    for (uint i = 0; i < nl.count(); i++ )
+    KURL::List::Iterator it;
+    it = m_projectFiles.find(newURL);
+    if (it != m_projectFiles.end())
+       m_projectFiles.erase(it);
+
+    int nlCount = nl.count();
+    quantaApp->slotStatusMsg( i18n("Renaming files...") );
+    progressBar->setTotalSteps(nlCount - m_projectFiles.count() - 2);
+    progressBar->setValue(0);
+    progressBar->setTextEnabled(true);
+    bool checkStartsWith = oldStr.endsWith("/");
+    for (uint i = 0; i < nlCount; i++ )
     {
       el = nl.item(i).toElement();
       tmpString = el.attribute("url");
-      if (tmpString.startsWith(oldStr))
+      if (tmpString == oldStr ||
+          (checkStartsWith && tmpString.startsWith(oldStr)))
       {
         oldString = tmpString;
-        tmpString = tmpString.replace(oldStr,newStr);
+        tmpString = tmpString.replace(oldStr, newStr);
         if (oldString != tmpString )
         {
           el.setAttribute("url",tmpString);
           el.setAttribute("upload_time","");
         }
       }
+      progressBar->advance(1);
     }
+    for (it = m_projectFiles.begin(); it != m_projectFiles.end(); ++it)
+    {
+      tmpString = (*it).path();
+      if (tmpString == oldStr ||
+          (checkStartsWith && tmpString.startsWith(oldStr)))
+      {
+        tmpString = tmpString.replace(oldStr, newStr);
+        (*it).setPath(tmpString);
+      }
+      progressBar->advance(1);
+    }
+    progressBar->setValue(0);
+    progressBar->setTextEnabled(false);
+
+    quantaApp->slotStatusMsg( i18n("Done."));
     oldURL = KURL();
     newURL = KURL();
     m_modified = true;
 
-    emit reloadTree( fileNameList(), false );
+    emit reloadTree( m_projectFiles, false );
     emit newStatus();
   }
 }
@@ -912,6 +972,7 @@ void Project::slotRemove(const KURL& urlToRemove)
   KURL url = QExtFileInfo::toRelative(urlToRemove, baseURL);
   QString tmpString;
   QString urlStr = QuantaCommon::qUrl(url);
+  KURL::List::Iterator it;
   for ( uint i = 0; i < nl.count(); i++ )
   {
     el = nl.item(i).toElement();
@@ -922,6 +983,10 @@ void Project::slotRemove(const KURL& urlToRemove)
        )
     {
       el.parentNode().removeChild( el );
+      url = baseURL;
+      QuantaCommon::setUrl(url, tmpString);
+      it = m_projectFiles.find(url);
+      m_projectFiles.erase(it);
       m_modified = true;
       if (isFolder)
       {
@@ -930,7 +995,7 @@ void Project::slotRemove(const KURL& urlToRemove)
       else break;
     }
   }
-  emit reloadTree( fileNameList(), false );
+  emit reloadTree( m_projectFiles, false );
   emit newStatus();
 }
 
@@ -1505,7 +1570,7 @@ void Project::slotGetMessages(QString data)
 
 void Project::slotRescanPrjDir()
 {
-  RescanPrj *dlg = new RescanPrj( fileNameList(), baseURL, excludeRx, this, i18n("New Files in Project's Directory"));
+  RescanPrj *dlg = new RescanPrj( m_projectFiles, baseURL, excludeRx, this, i18n("New Files in Project's Directory"));
   if ( dlg->exec() )
   {
     insertFiles( dlg->files() );
@@ -1646,7 +1711,6 @@ void Project::slotSaveAsProjectView(bool askForName)
       }
     }
 
-    KURL::List fileList = fileNameList();
     QDomElement el = dom.createElement("projectview");
     el.setAttribute("name", currentProjectView);
     QDomElement item;
@@ -1659,7 +1723,7 @@ void Project::slotSaveAsProjectView(bool askForName)
       }
       KURL url = w->url();
       url = QExtFileInfo::toRelative(url, baseURL);
-      if (!w->isUntitled() && fileList.contains(url))
+      if (!w->isUntitled() && m_projectFiles.contains(url))
       {
        item = dom.createElement("viewitem");
        item.setAttribute("url", QuantaCommon::qUrl(url) );

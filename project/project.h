@@ -26,7 +26,7 @@
 #include <qregexp.h>
 
 #include <kio/job.h>
-
+#include <kurl.h>
 
 /**project
   *@author Yacovlev Alexander & Dmitry Poplavsky & Andras Mantia
@@ -93,7 +93,8 @@ public slots:
   void slotAddDirectory();
   void slotAddDirectory(const KURL& dirURL, bool showDlg = true);
   void slotInsertFile(const KURL& url);
-  void slotInsertFilesAfterCopying(const KURL& url, CopyTo*);
+  void slotInsertFilesAfterCopying(const KURL& url);
+  void slotDeleteCopytoDlg(CopyTo *);
   void slotRenameFinished( KIO::Job *);
 
   void slotRename(const KURL& url);
@@ -185,6 +186,7 @@ private:
   QBuffer buff;
   QRegExp excludeRx;
   QStringList excludeList;
+
 protected: // Protected attributes
   /** Default DTD for this project. */
   QString m_defaultDTD;

@@ -70,12 +70,14 @@ KURL CopyTo::copy(const KURL& urlToCopy, const KURL& destination)
 
 void CopyTo::endCopy( KIO::Job *,const KURL&,const KURL&, bool, bool)
 {
-  emit addFilesToProject(copiedURL, this);
+  emit addFilesToProject(copiedURL);
+  emit deleteDialog(this);
 }
 
 void CopyTo::slotResult( KIO::Job *)
 {
-  emit addFilesToProject(copiedURL, this);
+  emit addFilesToProject(copiedURL);
+  emit deleteDialog(this);
 }
 
 KURL::List CopyTo::copy( KURL::List sourceList, const KURL& destination )

@@ -560,8 +560,9 @@ void QuantaApp::slotHelpTip()
 void QuantaApp::slotStatusMsg(const QString &msg)
 {
   statusbarTimer->stop();
-  statusBar()   ->changeItem(" " + msg, IDS_STATUS);
+  statusBar()->changeItem(" " + msg, IDS_STATUS);
   statusBar()->repaint();
+  kapp->processEvents();
   statusbarTimer->start(10000, true);
 }
 

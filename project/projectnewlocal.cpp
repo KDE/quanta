@@ -202,9 +202,11 @@ void ProjectNewLocal::slotAddFiles()
       if ( !destination.isEmpty())
       {
         CopyTo *dlg = new CopyTo( baseURL);
+        connect(dlg, SIGNAL(addFilesToProject(const KURL&)),
+                     SLOT  (slotInsertFilesAfterCopying(const KURL&)));
+        connect(dlg, SIGNAL(deleteDialog(CopyTo *)),
+                     SLOT  (slotDeleteCopytoDlg(CopyTo *)));
         list = dlg->copy( list, destination );
-        connect(dlg, SIGNAL(addFilesToProject(const KURL&,CopyTo*)),
-                    SLOT(slotInsertFilesAfterCopying(const KURL&,CopyTo*)));
         return;
       } else
       {
@@ -261,9 +263,11 @@ void ProjectNewLocal::slotAddFolder()
       if ( !destination.isEmpty())
       {
         CopyTo *dlg = new CopyTo( baseURL);
+        connect(dlg, SIGNAL(addFilesToProject(const KURL&)),
+                     SLOT  (slotInsertFilesAfterCopying(const KURL&)));
+        connect(dlg, SIGNAL(deleteDialog(CopyTo *)),
+                     SLOT  (slotDeleteCopytoDlg(CopyTo *)));
         dirURL = dlg->copy(dirURL, destination);
-        connect(dlg, SIGNAL(addFilesToProject(const KURL&,CopyTo*)),
-                     SLOT(slotInsertFilesAfterCopying(const KURL&,CopyTo*)));
         return;
       } else
       {
@@ -271,15 +275,19 @@ void ProjectNewLocal::slotAddFolder()
       }
     }
 
-    slotInsertFilesAfterCopying(dirURL, 0);
+    slotInsertFilesAfterCopying(dirURL);
   }
 }
 
-void ProjectNewLocal::slotInsertFilesAfterCopying(const KURL& rdir, CopyTo* dlg)
+void ProjectNewLocal::slotDeleteCopyToDialog(CopyTo* dlg)
 {
-  KURL dirURL = rdir;
 //The CopyTo dlg is deleted only here!!
   if (dlg) delete dlg;
+}
+
+void ProjectNewLocal::slotInsertFilesAfterCopying(const KURL& rdir)
+{
+  KURL dirURL = rdir;
   dirURL.adjustPath(1);
   KURL::List files = QExtFileInfo::allFilesRelative( dirURL, "*");
   progressBar->setTotalSteps(files.count()-1);

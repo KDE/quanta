@@ -3,7 +3,7 @@
                              -------------------
     begin                : Fri Oct 27 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
-                           (C) 2001, 2002 Andras Mantia <amantia@freemail.hu>
+                           (C) 2001-2003 Andras Mantia <amantia@freemail.hu>
     email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com
  ***************************************************************************/
 
@@ -31,20 +31,21 @@ class CopyTo;
 
 class ProjectNewLocal : public ProjectNewLocalS  {
    Q_OBJECT
-public: 
+public:
   ProjectNewLocal(QWidget *parent=0, const char *name=0);
   ~ProjectNewLocal();
-  
+
   KURL::List files();
   KURL::List projectFiles();
-  
+
 public slots:
   void slotSetFiles(bool);
   void setBaseURL(const KURL& a_baseURL);
   void slotAddFolder();
   void slotAddFiles();
   void slotClearList();
-  void slotInsertFilesAfterCopying(const KURL&,CopyTo*);
+  void slotInsertFilesAfterCopying(const KURL&);
+  void slotDeleteCopyToDialog(CopyTo*);
 
   virtual void resizeEvent( QResizeEvent * );
 

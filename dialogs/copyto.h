@@ -3,7 +3,7 @@
                              -------------------
     begin                : Mon Mar 27 2000
     copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky
-                           (C) 2001-2002 by Andras Mantia
+                           (C) 2001-2003 by Andras Mantia
     email                : pdima@mail.univ.kiev.ua
  ***************************************************************************/
 
@@ -31,7 +31,7 @@ class KURL;
 
 class CopyTo : public QObject{
 Q_OBJECT
-public: 
+public:
   CopyTo(const KURL& dirURL);
   ~CopyTo();
 
@@ -45,7 +45,8 @@ public slots: // Public slots
   void slotResult( KIO::Job *);
 
 signals:
-  void addFilesToProject(const KURL&,CopyTo*);
+  void addFilesToProject(const KURL&);
+  void deleteDialog(CopyTo*);
 
 private:
   KURL mInitialDirUrl;
