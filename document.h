@@ -197,7 +197,7 @@ private:
   DTDStruct *completionDTD;
 
   /** Get list of possibile variable name completions */
-  QValueList<KTextEditor::CompletionEntry>* getVariableCompletions(int line, int col);
+  QValueList<KTextEditor::CompletionEntry>* getGroupCompletions(const QString&groupName, int line, int col);
   /** Get list of possibile tag name completions */
   QValueList<KTextEditor::CompletionEntry>* getTagCompletions(int line, int col);
   /** Get list of possibile tag attribute completions */

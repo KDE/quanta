@@ -20,6 +20,7 @@
 
 #include <qdict.h>
 #include <qstringlist.h>
+#include <qmap.h>
 
 #include "node.h"
 #include "tag.h"
@@ -39,6 +40,15 @@ struct DTDListNode {
     int bLine, bCol;
     int eLine, eCol;
   };
+
+struct GroupElement{
+    Tag *tag;
+    /*The node which contains the element */
+    Node *node;
+  };
+
+typedef QValueList<GroupElement> GroupElementList;
+typedef QMap<QString, GroupElementList> GroupElementMapList;
 
 class Parser {
 public:
@@ -70,13 +80,13 @@ public:
   /** Rebuild the nodes */
   Node *rebuild(Document *w);
 
-  /** Clear the parser internal text, thus forcing the reparsing. */
-  void clear();
-
   /** No descriptions */
   DTDStruct * currentDTD(int line, int col);
 
-  QString m_text;  //FIXME: having an internal copy of text is absolutely useless
+  /** Parse for groups (variables, inclusions) in the node. */
+  void parseForGroups();
+
+  QMap<QString, GroupElementMapList> m_groups; //a list of groups (variables, inclusions)
 
 private:
   Node* m_node;       //the internal Node pointer
@@ -85,7 +95,6 @@ private:
   Document *write;    //pointer to the parsed document
   int maxLines; // how many lines are in the current document
   int oldMaxLines;
-  QValueList<DTDListNode> dtdList;
   int treeSize;
 
   /** Print the doc structure tree to the standard output.

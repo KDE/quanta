@@ -566,8 +566,6 @@ void Document::slotFilterCompletion( KTextEditor::CompletionEntry *completion ,Q
 */
 void Document::slotCharactersInserted(int line,int column,const QString& string)
 {
- kdDebug(24000) << "slotCharactersInserted: " << string << endl;
- kdDebug(24000) << "completionInProgress: " << completionInProgress << endl;
  bool handled = false;
  if (qConfig.useAutoCompletion)
  {
@@ -699,7 +697,7 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
 }
 
 /** Return a list of possible variable name completions */
-QValueList<KTextEditor::CompletionEntry>* Document::getVariableCompletions(int line, int col)
+QValueList<KTextEditor::CompletionEntry>* Document::getGroupCompletions(const QString& groupName, int line, int col)
 {
   QValueList<KTextEditor::CompletionEntry> *completions = new QValueList<KTextEditor::CompletionEntry>();
   KTextEditor::CompletionEntry completion;
@@ -709,18 +707,16 @@ QValueList<KTextEditor::CompletionEntry>* Document::getVariableCompletions(int l
   QString textLine = editIf->textLine(line).left(col);
   QString word = findWordRev(textLine);
   completion.userdata = word;
-
-  for (uint i = 0; i < variableList.count(); i++)
+  GroupElementMapList map = parser->m_groups[groupName];
+  GroupElementMapList::Iterator it;
+  for ( it = map.begin(); it != map.end(); ++it )
   {
-
-   if (variableList[i].startsWith(word))
-   {
-     completion.text = variableList[i];
-     completions->append( completion );
-   }
+    if (it.key().startsWith(word))
+    {
+      completion.text = it.key();
+      completions->append( completion );
+    }
   }
-
-//  completionInProgress = true;
   return completions;
 }
 
@@ -1073,13 +1069,18 @@ bool Document::scriptAutoCompletion(int line, int column)
    showCodeCompletions(getTagCompletions(line, column + 1));
    handled = true;
  } else
- //TODO: this is PHP specific. Make it generic
- if (s[i] == completionDTD->varAutoCompleteAfter)
  {
-   showCodeCompletions( getVariableCompletions(line, column + 1) );
-   handled = true;
+   StructTreeGroup group;
+   for (uint j = 0; j < completionDTD->structTreeGroups.count(); j++)
+   {
+     group = completionDTD->structTreeGroups[j];
+     if (s[i] == group.autoCompleteAfter)
+     {
+       showCodeCompletions(getGroupCompletions(group.name, line, column + 1));
+       break;
+     }
+   }
  }
-
  return handled;
 }
 
@@ -1428,6 +1429,8 @@ bool Document::evenQuotes(const QString &text)
 /** No descriptions */
 void Document::parseVariables()
 {
+ QTime t;
+ t.start();
  variableList.clear();
  QString text = editIf->text();
 //TODO: Make general for all script languages
@@ -1461,6 +1464,7 @@ void Document::parseVariables()
  }
 
  variableList.sort();
+ kdDebug(24000) << "parseVariables: " << t.elapsed() << " ms\n";
 }
 
 /** No descriptions */

@@ -1177,30 +1177,24 @@ void QuantaApp::readTagDir(QString &dirName)
    dtd->definitionAreas[tmpStrList[0].stripWhiteSpace()] = tmpStrList[1].stripWhiteSpace();
  }
 
- rxStr = dtdConfig->readEntry("VariableDefinitionRx");
- dtd->variableDefsRx.setPattern(QuantaCommon::makeRxCompatible(rxStr));
- rxStr = dtdConfig->readEntry("ExcludeFromVariableDefinitonRx");
- dtd->excludeFromVariableDefsRx.setPattern(QuantaCommon::makeRxCompatible(rxStr));
-
-
 /**** End of code for the new parser *****/
 
 //read the definition of a structure, and the structure keywords
  QStringList structKeywords = dtdConfig->readListEntry("StructKeywords",';');
  if (structKeywords.count() !=0 )
  {
-    dtd->structKeywordsRxStr = "\\b(";
+    tmpStr = "\\b(";
     for (uint i = 0; i < structKeywords.count(); i++)
     {
-      dtd->structKeywordsRxStr += structKeywords[i].stripWhiteSpace()+"|";
+      tmpStr += structKeywords[i].stripWhiteSpace()+"|";
     }
-    dtd->structKeywordsRxStr.truncate(dtd->structKeywordsRxStr.length()-1);
-    dtd->structKeywordsRxStr += ")\\b";
+    tmpStr.truncate(tmpStr.length()-1);
+    tmpStr += ")\\b";
  } else
  {
-   dtd->structKeywordsRxStr = "\\b[\\d\\S\\w]+\\b";
+   tmpStr = "\\b[\\d\\S\\w]+\\b";
  }
- dtd->structKeywordsRx.setPattern(dtd->structKeywordsRxStr);
+ dtd->structKeywordsRx.setPattern(tmpStr);
 
  dtd->structRx.setPattern(dtdConfig->readEntry("StructRx","\\{|\\}").stripWhiteSpace());
  dtd->structBeginStr = dtdConfig->readEntry("StructBeginStr","{").stripWhiteSpace();
@@ -1211,8 +1205,6 @@ void QuantaApp::readTagDir(QString &dirName)
  dtd->minusAllowedInWord = dtdConfig->readBoolEntry("MinusAllowedInWord", false);
  dtd->tagAutoCompleteAfter = dtdConfig->readEntry("TagAutoCompleteAfter").stripWhiteSpace().at(0);
  dtd->attrAutoCompleteAfter = dtdConfig->readEntry("AttributeAutoCompleteAfter","(").stripWhiteSpace().at(0);
- dtd->varAutoCompleteAfter =dtdConfig->readEntry("VariableAutoCompleteAfter","$").stripWhiteSpace().at(0);
-
  dtd->attributeSeparator = dtdConfig->readEntry("AttributeSeparator").stripWhiteSpace().at(0);
  if (dtd->attributeSeparator.isNull())
  {
@@ -1258,19 +1250,12 @@ void QuantaApp::readTagDir(QString &dirName)
  for (uint index = 1; index <= structGroupsCount; index++)
  {
    dtdConfig->setGroup(QString("StructGroup_%1").arg(index));
-   //TODO: old code, to be removed
-   dtd->structGroups += dtdConfig->readEntry("Name").stripWhiteSpace() + ";"
-                      + dtdConfig->readEntry("No_Name").stripWhiteSpace();
-   dtd->groupRxs += dtdConfig->readEntry("SearchRx").stripWhiteSpace();
-   dtd->groupClearRxs += dtdConfig->readEntry("ClearRx").stripWhiteSpace();
-   dtd->groupTags += dtdConfig->readEntry("Tag").stripWhiteSpace();
-   dtd->groupIcons += dtdConfig->readEntry("Icon").stripWhiteSpace();
-
    //new code
    group.name = dtdConfig->readEntry("Name").stripWhiteSpace();
    group.noName = dtdConfig->readEntry("No_Name").stripWhiteSpace();
    group.icon = dtdConfig->readEntry("Icon").stripWhiteSpace();
    group.searchRx = dtdConfig->readEntry("SearchRx").stripWhiteSpace();
+   group.hasSearchRx = !group.searchRx.pattern().isEmpty();
    group.clearRx = dtdConfig->readEntry("ClearRx").stripWhiteSpace();
    tagStr = dtdConfig->readEntry("Tag").stripWhiteSpace();
    group.tag = "";
@@ -1301,6 +1286,8 @@ void QuantaApp::readTagDir(QString &dirName)
    else if (tagStr == "ScriptStructureEnd")
        group.tagType = Tag::ScriptStructureEnd;
    else group.tagType = -1;
+   group.autoCompleteAfter = dtdConfig->readEntry("AutoCompleteAfter").stripWhiteSpace().at(0);
+
    dtd->structTreeGroups.append(group);
  }
 

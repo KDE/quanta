@@ -106,7 +106,21 @@ public:
 
   int size();
 
-  enum TokenType {Unknown = 0, XmlTag,  XmlTagEnd, Text, Comment, CSS, ScriptTag, ScriptStructureBegin, ScriptStructureEnd, NeedsParsing = 500, Empty, Skip = 1000 }; // types of token
+  enum TokenType {
+    Unknown = 0,
+    XmlTag,
+    XmlTagEnd,
+    Text,
+    Comment,
+    CSS,
+    ScriptTag,
+    ScriptStructureBegin,
+    ScriptStructureEnd,
+    LocalVariable,
+    GlobalVariable,
+    NeedsParsing = 500,
+    Empty,
+    Skip = 1000 }; // types of token
 
   //TODO: write setting/retrieving methods for the below attributes, and add
   //them the m_ prefix
@@ -133,5 +147,6 @@ private:
   /** Parse the attributes in the string and build the attrs vector */
   void parseAttr( QString text, int &line, int &col);
 };
+
 
 #endif

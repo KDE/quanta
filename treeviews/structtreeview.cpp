@@ -374,14 +374,13 @@ void StructTreeView::slotReparse(Document *w, Node* node, int openLevel)
   write = w;
   buildTree(node, openLevel);
 
- // kdDebug(24000) << "StructTreeView building: " << timer.elapsed() << " ms\n";
+  kdDebug(24000) << "StructTreeView building: " << timer.elapsed() << " ms\n";
 
   for (uint i = 0; i < groupsCount; i++)
   {
     if (groups[i]->childCount() == 0)
     {
-      QString noGroup = m_parsingDTD->structGroups[i].section(';',1,1);
-      groups[i]->setText(0, i18n(noGroup));
+      groups[i]->setText(0, i18n(m_parsingDTD->structTreeGroups[i].noName));
     }
   }
   useOpenLevelSetting = false;

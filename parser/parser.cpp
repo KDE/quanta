@@ -43,7 +43,6 @@
 
 Parser::Parser()
 {
-  m_text = QString::null;
   m_node = 0L;
   oldMaxLines = 0;
 }
@@ -141,7 +140,6 @@ bool Parser::scriptParser(Node *startNode)
           }
           currentNode = node;
           found = true;
-
           currentNode = specialAreaParser(node); //Why??
           //specialAreaParser(node);
           col = pos2 + 1;
@@ -627,14 +625,30 @@ Node *Parser::parse(Document *w)
     baseNode = 0L;
     m_node = 0L;
   }
+  QMap<QString, GroupElementMapList>::Iterator groupIt;
+  for (groupIt = m_groups.begin(); groupIt != m_groups.end(); ++groupIt)
+  {
+    GroupElementMapList::Iterator it;
+    for (it = groupIt.data().begin(); it != groupIt.data().end(); ++it)
+    {
+      for (uint i = 0 ; i < it.data().count(); i++)
+      {
+        delete it.data()[i].tag;
+      }
+    }
+  }
+  m_groups.clear();
+
   Node *lastNode;
   write = w;
   m_dtd = w->defaultDTD();
-  m_text = w->editIf->text();
   maxLines = w->editIf->numLines() - 1;
   if (maxLines >= 0)
       m_node = parseArea(0, 0, maxLines, w->editIf->lineLength(maxLines), &lastNode);
   kdDebug(24000) << "New parser ("<< maxLines << " lines): " << t.elapsed() << " ms\n";
+  t.restart();
+  parseForGroups();
+  kdDebug(24000) << "Group parser " << t.elapsed() << " ms\n";
  /*
  treeSize = 0;
  coutTree(m_node, 2);
@@ -1128,17 +1142,12 @@ void Parser::coutTree(Node *node, int indent)
    if (node->child)
        coutTree(node->child, indent + 4);
   // treeSize += sizeof(node) + sizeof(node->tag);
-   treeSize += node->size();
+   //treeSize += node->size();
    //treeSize++;
    node = node->next;
  }
 }
 
-/** Clear the parser internal text, thus forcing the reparsing. */
-void Parser::clear()
-{
-  m_text = "";
-}
 
 /** No descriptions */
 DTDStruct * Parser::currentDTD(int line, int col)
@@ -1228,8 +1237,7 @@ Node *Parser::rebuild(Document *w)
    QString tagStr;
    bool moveNodes = false;
    uint line, col;
-   m_text = w->editIf->text();
-   QStringList textLines = QStringList::split('\n', m_text, true);
+   QStringList textLines = QStringList::split('\n', w->editIf->text(), true);
    w->viewCursorIf->cursorPositionReal(&line, &col);
    Node *node = nodeAt(line, col, false);
    Node *startNode = node;
@@ -1547,6 +1555,7 @@ Node *Parser::rebuild(Document *w)
     }
    }
  }
+ parseForGroups();
  /*
  treeSize = 0;
  coutTree(m_node, 2);
@@ -1556,3 +1565,65 @@ Node *Parser::rebuild(Document *w)
  kdDebug(24000) << "Rebuild: " << t.elapsed() << " ms \n";
  return m_node;
 }
+
+void Parser::parseForGroups()
+{
+  GroupElementList* groupElementList;
+  GroupElementMapList* groupElementMapList;
+  DTDStruct *dtd;
+  QString str;
+  QString tagStr;
+  QString tmpStr;
+  QString title;
+  GroupElement groupElement;
+  StructTreeGroup group;
+  int bl, bc, el, ec;
+  int pos;
+  Node *currentNode = m_node;
+  while (currentNode)
+  {
+    currentNode->tag->beginPos(bl, bc);
+    str = currentNode->tag->cleanStr;
+    tagStr = currentNode->tag->tagStr();
+    dtd = currentNode->tag->dtd;
+    for (uint i = 0; i < dtd->structTreeGroups.count(); i++)
+    {
+      group = dtd->structTreeGroups[i];
+      if (!group.hasSearchRx)
+        continue;
+      groupElementMapList = &m_groups[group.name];
+      pos = 0;
+      while (pos != -1)
+      {
+        pos = group.searchRx.search(str, pos);
+        if (pos != -1)
+        {
+          title = tagStr.mid(pos, group.searchRx.matchedLength());
+          Tag *newTag = new Tag(*currentNode->tag);
+          tmpStr = tagStr.left(pos);
+          int newLines = tmpStr.contains('\n');
+          bl += newLines;
+          int l = tmpStr.findRev('\n'); //the last EOL
+          bc = (l == -1) ? bc+pos : pos - l - 1;
+          newLines = title.contains('\n');
+          l = title.length();
+          el = bl + newLines;
+          ec = (newLines > 0) ? l - title.findRev('\n') : bc + l - 1;
+          newTag->setTagPosition(bl, bc, el, ec);
+          newTag->setStr(title);
+          pos += l;
+          title.replace(group.clearRx,"");
+          newTag->name = title;
+          groupElement.tag = newTag;
+          groupElement.node = currentNode;
+          groupElementList = & (*groupElementMapList)[title];
+          groupElementList->append(groupElement);
+        }
+      }
+    }
+    //Go to the next node
+    currentNode = currentNode->nextSibling();
+  }
+}
+
+

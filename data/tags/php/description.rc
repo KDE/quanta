@@ -21,8 +21,6 @@ ScriptRegExp = (<\?.+\?>) | (<\*.+\*>) | (<\%.+\%>)
 
 StructGroupsCount = 5
 
-VariableAutoCompleteAfter = $
-
 [Parsing rules]
 AreaBorders = <? ?>, <* *>, <% %>
 Tags = script(language)
@@ -47,6 +45,7 @@ No_Name = No Variables
 Icon = abs
 SearchRx = \$+[a-zA-Z0-9_\x7f-\xff]*[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*
 ClearRx = \$
+AutoCompleteAfter = $
 
 [StructGroup_3]
 Name = Functions

@@ -1176,7 +1176,7 @@ void QuantaApp::reparse(bool force)
   if (m_view->writeExists())
   {
     Document *w = m_view->write();
-    w->parseVariables();
+   // w->parseVariables();
     if (force)
     {
       baseNode = parser->parse(w);

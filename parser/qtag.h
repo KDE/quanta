@@ -52,10 +52,12 @@ typedef struct StructTreeGroup{
         QString noName;      //the text when there are no elements in the group
         QString icon;        //the icon of the group
         QRegExp searchRx;    //regular experssion to help us find the group - for pseudo DTDs
+        bool hasSearchRx;    //true if searchRx should be used
         QRegExp clearRx;     //clear the text matched from the result of the searchRx search - for pseudo DTDs
         QString tag;         //tags belonging to this group - for real DTDs
         int tagType;     //the tag type for which this is valid
         QStringList attributes; //the attributes of the above tag to be displayed - for real DTDs
+        QChar autoCompleteAfter;  //holds the char after the autocompletion box should be shown for this group elements. Null, if autocompletion shouldn't be used
       };
 
 typedef QPtrList<Attribute> AttributeList;
@@ -163,21 +165,7 @@ typedef struct DTDStruct
 /* A list of structure tree groups definition */
      QValueList<StructTreeGroup> structTreeGroups;
 
-/*A regexp to match a variable definition (eg $var_name in PHP) */
-     QRegExp variableDefsRx;
-/*A regexp which tells what should be removed from the string found with
-the above regexp to get the variable name itself. In case of PHP it's simply
-"$" */
-     QRegExp excludeFromVariableDefsRx;
 /****************** END FOR THE NEW PARSER **********************/
-
-     QString structKeywordsRxStr;        //regular expression to match the keywords that can appear before a structrue
-
-     QStringList structGroups;        //group names to appear at the top of the Structure Tree in form of "Name;No Name"
-     QStringList groupIcons;
-     QStringList groupTags;          //the tag which defines the group in tag(attr1,attr2,...) form
-     QStringList groupRxs;           //the regexp which helps us to find the groups; valid only for script DTDs
-     QStringList groupClearRxs;      //regexp to clear from the found group regex; valid only for script DTDs
      QStringList toolbars;
 /*A list with abbreviations in the for of: <template templatename, code> */
      QMap<QString, QString> abbreviations;
@@ -187,7 +175,6 @@ the above regexp to get the variable name itself. In case of PHP it's simply
 
      QChar tagAutoCompleteAfter;
      QChar attrAutoCompleteAfter;
-     QChar varAutoCompleteAfter;
      QChar attributeSeparator;
      QChar tagSeparator;
     };
