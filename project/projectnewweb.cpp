@@ -124,11 +124,17 @@ void ProjectNewWeb::slotStart()
         connect( proc, SIGNAL(processExited(    KProcess *)), this,
                        SLOT(  slotGetWgetExited(KProcess *)));
 
-        proc->start(KProcess::NotifyOnExit, KProcess::AllOutput);
-
-        start = true;
-        button->setText( i18n("Stop") );
-      	emit enableNextButton((QWidget *)this->parent(),false);
+        if (proc->start(KProcess::NotifyOnExit, KProcess::AllOutput))
+        {
+          start = true;
+          button->setText( i18n("Stop") );
+        	emit enableNextButton((QWidget *)this->parent(),false);
+        } else
+        {
+          KMessageBox::error(this, i18n("There was an error while trying to run the \"wget\" application.\
+           Check first that it is present on your system and that it is in your PATH."));
+          delete proc;
+        }
       } else
       {
         KMessageBox::sorry(this,i18n("This feature is available only if the project lies on a local disk!"));
