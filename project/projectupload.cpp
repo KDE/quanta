@@ -60,7 +60,7 @@ ProjectUpload::ProjectUpload(Project* prg, const KURL& url, QWidget *parent, con
     list->hide();
     initProjectInfo(prg);
     startUrl = url;
-    QTimer::singleShot(10, this, SLOT(slotBuildTree())); 
+    QTimer::singleShot(10, this, SLOT(slotBuildTree()));
 }
 
 
@@ -224,7 +224,7 @@ void ProjectUpload::startUpload()
 
   buildSelectedItemList();
   int selectedNum = toUpload.count();
-  
+
 	totalProgress->setProgress(0);
 	totalProgress->setTotalSteps(selectedNum);
 	uploadInProgress = true;
@@ -241,7 +241,7 @@ void ProjectUpload::startUpload()
                                          .arg(u.prettyURL())) == KMessageBox::Yes)
     {
       upload();
-    }                                   
+    }
   }
 }
 
@@ -256,8 +256,8 @@ void ProjectUpload::upload()
 	for ( KURL::List::Iterator file = toUpload.begin(); file != toUpload.end(); ++file )
 	{
       currentURL = *file;
-      
-			KURL from = QExtFileInfo::toAbsolute(currentURL, p->baseURL);      
+
+			KURL from = QExtFileInfo::toAbsolute(currentURL, p->baseURL);
 			to = *baseUrl;
 			to.addPath( currentURL.path() );
 			if (to.fileName(false).isEmpty())
@@ -399,12 +399,12 @@ void ProjectUpload::slotUploadNext()
   		QDomElement el = nl.item(i).toElement();
   		if ( el.nodeName() == "item"  &&  el.attribute("url") == QuantaCommon::qUrl(currentURL) )
   		{
-  			//QDateTime stime;
-  			//stime.setTime_t(1);
-  			//el.setAttribute( "upload_time", stime.secsTo( QDateTime::currentDateTime() ) );
-        time_t stime;
+  			QDateTime stime;
+  			stime.setTime_t(1);
+  			el.setAttribute( "upload_time", stime.secsTo(QDateTime::currentDateTime() ) );
+/*        time_t stime;
         time(&stime);
-  			el.setAttribute( "upload_time", (int)stime);
+  			el.setAttribute( "upload_time", (int)stime);*/
         break;
   		}
   	}
