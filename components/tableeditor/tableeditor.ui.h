@@ -451,10 +451,10 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
     }
     n = n->nextSibling();
   }
-  if (0 && missingBody) {
+/*  if (missingBody) { //Hm, why do we need it? I don't remember now. ;-)
       rowSpinBox->setValue(nRow);
       colSpinBox->setValue(maxCol);
-  }
+  } */
   //by default the current page is the data handling page
   m_tableTags = m_tableDataTags;
   m_tableRows = m_tableDataRows;
