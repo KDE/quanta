@@ -225,7 +225,7 @@ public:
   /** No descriptions */
   void setName(const QString& theName);
   /** No descriptions */
-  QString name();
+  QString name(bool doNotConvert = false);
   /** No descriptions */
   bool isSingle();
   /** No descriptions */

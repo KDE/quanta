@@ -17,6 +17,7 @@
 #include <list>
 #include <cctype>
 #include <cstdlib>
+#include <stdlib.h>
 
 //QT includes
 #include <qcheckbox.h>
@@ -733,6 +734,7 @@ void Document::slotFilterCompletion( KTextEditor::CompletionEntry *completion ,Q
   if (completion->type == "charCompletion")
   {
     *string = completion->userdata;
+    string->append(";");
   } else
   if ( completion->type == "attributeValue")
   {
@@ -1376,6 +1378,20 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeValueCompletions
   return completions;
 }
 
+static void ssort( QValueList<KTextEditor::CompletionEntry> &a, int max )
+{
+  KTextEditor::CompletionEntry tmp;
+  uint j, maxpos;
+  for ( uint h = max; h >= 1; h-- )
+  {
+    maxpos = 0;
+    for ( j = 0; j <= h; j++ )
+      maxpos = a[j].text > a[maxpos].text ? j : maxpos;
+    tmp = a[maxpos];
+    a[maxpos] = a[h];
+    a[h] = tmp;
+  }
+}
 /** Return a list of character completions (like &nbsp; ...) */
 QValueList<KTextEditor::CompletionEntry>* Document::getCharacterCompletions(const QString& startsWith)
 {
@@ -1396,17 +1412,41 @@ QValueList<KTextEditor::CompletionEntry>* Document::getCharacterCompletions(cons
         viewCursorIf->cursorPositionReal(&line, &col);
         Node *node = parser->nodeAt(line, col, false);
         completions = getGroupCompletions(node, group, line, col);
+        for (uint i = 0; i < completions->count(); i++)
+        {
+          (*completions)[i].type = "charCompletion";
+          (*completions)[i].userdata = (*completions)[i].text;
+        }
         break;
       }
     }
   }
   
-  //now add the character codes
   if (!completions)
-   completions = new QValueList<KTextEditor::CompletionEntry>();
-
+    completions = new QValueList<KTextEditor::CompletionEntry>();
+  
   KTextEditor::CompletionEntry completion;
   completion.type = "charCompletion";
+  //add the entities from the tag files
+  QDictIterator<QTag> it(*(completionDTD->tagsList));
+  for( ; it.current(); ++it )
+  {
+    QTag *tag = it.current();
+    if (tag->type == "entity")
+    {
+      QString tagName = tag->name(true);
+      if (tagName.upper().startsWith(startsWith))
+      {
+        completion.text = tagName;
+        completion.userdata = tagName;
+        completions->append( completion );
+      }
+    }
+  }
+
+  ssort(*completions, completions->count()); //quite slow...
+  
+  //now add the character codes
 
   for ( QStringList::Iterator it = charList.begin(); it != charList.end(); ++it )
   {
@@ -1415,15 +1455,15 @@ QValueList<KTextEditor::CompletionEntry>* Document::getCharacterCompletions(cons
     if (begin == 1)
         continue;
     int length = completion.text.find(";)") - begin + 1;
-    QString s = completion.text.mid(begin, length);
-    completion.text = "&" + s + " : " + completion.text.left(begin -2) + " - " + completion.text.mid(begin + length + 1);
+    QString s = completion.text.mid(begin, length - 1);
+    completion.text = s + " : " + completion.text.left(begin -2) + " - " + completion.text.mid(begin + length + 1);
     if (s.startsWith(startsWith))
     {
       completion.userdata = startsWith + "|" + s.mid(startsWith.length());
       completions->append( completion );
     }
   }
-  
+    
   return completions;
 }
 

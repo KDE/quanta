@@ -133,9 +133,9 @@ void QTag::setName(const QString& theName)
   tagName = theName;
 }
 /** No descriptions */
-QString QTag::name()
+QString QTag::name(bool doNotConvert)
 {
-  if (!parentDTD || parentDTD->caseSensitive)
+  if (doNotConvert || !parentDTD || parentDTD->caseSensitive)
       return tagName;
   else
       return tagName.upper();
