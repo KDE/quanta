@@ -156,7 +156,7 @@ Document::Document(KTextEditor::Document *doc,
   KTextEditor::MarkInterfaceExtension* iface = dynamic_cast<KTextEditor::MarkInterfaceExtension*>(m_doc);
   if (iface)
   {
-    iface->setPixmap(KTextEditor::MarkInterface::markType10, SmallIcon("stop"));
+    iface->setPixmap(KTextEditor::MarkInterface::markType07, SmallIcon("stop"));
     iface->setPixmap(KTextEditor::MarkInterface::markType02, SmallIcon("debug_breakpoint"));
     iface->setDescription(KTextEditor::MarkInterface::markType02, i18n("Breakpoint"));
     iface->setPixmap(KTextEditor::MarkInterface::markType05, SmallIcon("debug_currentline"));
@@ -2237,7 +2237,7 @@ void Document::setErrorMark(int line)
 {
   if (!markIf)
     return;
-  markIf->addMark(line, KTextEditor::MarkInterface::markType10);
+  markIf->addMark(line, KTextEditor::MarkInterface::markType07);
 }
 
 void Document::clearErrorMarks()
@@ -2248,8 +2248,8 @@ void Document::clearErrorMarks()
   KTextEditor::Mark* mark;
   for (mark = marks.first(); mark; mark = marks.next())
   {
-    if (mark->type & KTextEditor::MarkInterface::markType10)
-        markIf->removeMark(mark->line, KTextEditor::MarkInterface::markType10);
+    if (mark->type & KTextEditor::MarkInterface::markType07)
+        markIf->removeMark(mark->line, KTextEditor::MarkInterface::markType07);
   }
 }
 
