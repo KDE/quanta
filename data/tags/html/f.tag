@@ -1,197 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TAGS>
 <TAGS>
 <tag name="fieldset" hasCore="1" hasI18n="1" hasScript="1">
-	<kafkainfos>
-		<rootnode canbedeleted="true" canbemodified="true" canhavecursorfocus="no" cursorcanenter="true">
-		</rootnode>
-	</kafkainfos>
+<children>
+<child name="a" />
+<child name="abbr" />
+<child name="acronym" />
+<child name="address" />
+<child name="attr" />
+<child name="b" />
+<child name="bdo" />
+<child name="big" />
+<child name="blockquote" />
+<child name="br" />
+<child name="button" />
+<child name="cite" />
+<child name="code" />
+<child name="del" />
+<child name="dfn" />
+<child name="div" />
+<child name="dl" />
+<child name="em" />
+<child name="fieldset" />
+<child name="form" />
+<child name="h1" />
+<child name="h2" />
+<child name="h3" />
+<child name="h4" />
+<child name="h5" />
+<child name="h6" />
+<child name="hr" />
+<child name="i" />
+<child name="img" />
+<child name="input" />
+<child name="ins" />
+<child name="kbd" />
+<child name="label" />
+<child name="legend" />
+<child name="map" />
+<child name="noscript" />
+<child name="object" />
+<child name="ol" />
+<child name="p" />
+<child name="pre" />
+<child name="q" />
+<child name="samp" />
+<child name="script" />
+<child name="select" />
+<child name="small" />
+<child name="span" />
+<child name="strong" />
+<child name="sub" />
+<child name="sup" />
+<child name="table" />
+<child name="textarea" />
+<child name="tt" />
+<child name="ul" />
+<child name="var" />
+</children>
 </tag>
-<tag name="font" hasCore="1" hasI18n="1">
+<tag name="form" hasScript="1" hasCore="1" hasI18n="1">
 
-    <attr name="color" type="color">
-        <text>Color</text>
+    <attr name="action" type="input">
+        <text>Action</text>
+        <textlocation col="0" row="0" />
+        <location col="1" row="0" colspan="3" />
+    </attr>
+
+    <attr name="method" type="list">
+        <text>Method</text>
+        <textlocation col="0" row="1" />
+        <location col="1" row="1"/>
+        <items>
+                <item>GET</item>
+                <item>POST</item>
+        </items>
+    </attr>
+
+    <attr name="enctype" type="list">
+        <text>Enctype</text>
         <textlocation col="0" row="2" />
-        <tooltip>Font color</tooltip>
-        <location col="1" row="2"  />
-    </attr>
-
-    <attr name="face" type="input">
-        <text>Face</text>
-        <textlocation col="0" row="3" />
-        <location col="1" row="3" colspan="2" />
-    </attr>
-
-    <attr name="size" type="list">
-        <text>Size</text>
-        <textlocation col="0" row="4" />
-        <location col="1" row="4"/>
+        <location col="1" row="2" colspan="3"/>
         <items>
-                <item>+1</item>
-                <item>-1</item>
-                <item>+2</item>
-                <item>-2</item>
-                <item>+3</item>
-                <item>-3</item>
-                <item>+4</item>
-                <item>-4</item>
+           <item>application/x-www-form-urlencoded</item>
+           <item>multipart/form-data</item>
         </items>
     </attr>
 
-    <spacer orientation="h">
-        <location col="0" row="5" />
-    </spacer>
 
-    <spacer orientation="h">
-        <location col="1" row="8" />
-    </spacer>
-
-    <spacer orientation="h">
-        <location col="2" row="8" />
-    </spacer>
-
-    <spacer orientation="v">
-        <location col="0" row="9" colspan="3" />
-    </spacer>
-
-    <kafkainfos>
-        <rootnode canbedeleted="true" canbemodified="true" canhavecursorfocus="no" cursorcanenter="true">
-        </rootnode>
-    </kafkainfos>
-
-</tag>
-<tag name="frame" hasCore="1" single="1">
-
-    <attr name="name" type="input">
-        <text>Name</text>
-        <textlocation col="0" row="0" />
-        <location col="1" row="0" colspan="2"/>
-    </attr>
-
-    <attr name="src" type="url">
-        <text>Src</text>
-        <textlocation col="0" row="1" />
-        <location col="1" row="1"  colspan="2"/>
-    </attr>
-
-    <attr name="longdesc" type="url">
-        <text>Long desc</text>
+    <attr name="target" type="list">
+        <text>Target</text>
         <textlocation col="0" row="3" />
-        <location col="1" row="3"  colspan="2"/>
-    </attr>
-
-    <attr name="frameborder" type="list">
-        <text>Frame border</text>
-        <textlocation col="0" row="4" />
-        <location col="1" row="4"  colspan="2"/>
+        <location col="1" row="3" />
         <items>
-                <item>yes</item>
-                <item>no</item>
+                <item>_blank</item>
+                <item>_self</item>
+                <item>_parent</item>
+                <item>_top</item>
         </items>
     </attr>
 
-    <attr name="marginwidth" type="input">
-        <text>Margin width</text>
-        <textlocation col="0" row="5" />
-        <location col="1" row="5" colspan="2"/>
+    <attr name="accept-charset" type="input">
+        <text>Accept charset</text>
+        <textlocation col="2" row="3" />
+        <location col="3" row="3"/>
     </attr>
 
-    <attr name="marginheight" type="input">
-        <text>Margin height</text>
-        <textlocation col="0" row="6" />
-        <location col="1" row="6" colspan="2"/>
-    </attr>
+    <attr name="name"> </attr>
+    <attr name="onsubmit"> </attr>
+    <attr name="onreset"> </attr>
 
-    <attr name="noresize" type="check">
-        <text>No resize</text>
-        <location col="1" row="7" colspan="2"/>
-    </attr>
-
-    <attr name="scrolling" type="list">
-        <text>Scrolling</text>
-        <textlocation col="0" row="8" />
-        <location col="1" row="8" colspan="2"/>
-        <items>
-                <item>auto</item>
-                <item>yes</item>
-                <item>no</item>
-        </items>
-    </attr>
-
-    <spacer orientation="h">
-        <location col="0" row="8" />
-    </spacer>
-
-    <spacer orientation="h">
-        <location col="1" row="8" />
-    </spacer>
-
-    <spacer orientation="h">
-        <location col="2" row="8" />
-    </spacer>
-
-    <spacer orientation="v">
-        <location col="0" row="9" colspan="3" />
-    </spacer>
-
-    <kafkainfos>
-        <rootnode canbedeleted="false" canbemodified="false" canhavecursorfocus="no" cursorcanenter="false">
-        </rootnode>
-    </kafkainfos>
-
-
-</tag>
-<tag name="frameset" hasCore="1">
-
-   <attr name="rows" type="input">
-        <text>Rows</text>
-        <textlocation col="0" row="0" />
-        <location col="1" row="0" colspan="2"/>
-    </attr>
-
-    <attr name="cols" type="input">
-        <text>Cols</text>
-        <textlocation col="0" row="1" />
-        <location col="1" row="1"  colspan="2"/>
-    </attr>
-
-    <attr name="onload" type="input">
-        <text>On load</text>
-        <textlocation col="0" row="3" />
-        <location col="1" row="3"  colspan="2"/>
-    </attr>
-
-    <attr name="onunload" type="input">
-        <text>On unload</text>
-        <textlocation col="0" row="4" />
-        <location col="1" row="4"  colspan="2"/>
-    </attr>
-
-    <attr name="border"> </attr>
-    <attr name="frameborder"> </attr>
-    <attr name="marginwidth"> </attr>
-    <attr name="marginheight"> </attr>
-    <attr name="framespacing"> </attr>
-
-    <spacer orientation="h">
-        <location col="0" row="8" />
-    </spacer>
-
-    <spacer orientation="h">
-        <location col="1" row="8" />
-    </spacer>
-
-    <spacer orientation="h">
-        <location col="2" row="8" />
-    </spacer>
-
-    <spacer orientation="v">
-        <location col="0" row="9" colspan="3" />
-    </spacer>
-
-    <kafkainfos>
-        <rootnode canbedeleted="false" canbemodified="false" canhavecursorfocus="no" cursorcanenter="false">
-        </rootnode>
-    </kafkainfos>
+<children>
+<child name="address" />
+<child name="blockquote" />
+<child name="del" />
+<child name="div" />
+<child name="dl" />
+<child name="fieldset" />
+<child name="h1" />
+<child name="h2" />
+<child name="h3" />
+<child name="h4" />
+<child name="h5" />
+<child name="h6" />
+<child name="hr" />
+<child name="ins" />
+<child name="noscript" />
+<child name="ol" />
+<child name="p" />
+<child name="pre" />
+<child name="script" />
+<child name="table" />
+<child name="ul" />
+</children>
 
 </tag>
 </TAGS>
