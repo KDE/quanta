@@ -590,7 +590,7 @@ void TagAction::insertOutputInTheNodeTree(QString str1, QString str2, Node *node
         uint line, col;
         bool smartTagInsertion, hasSelection, nodeTreeModified;
 
-	if(!node && str1 == "" || node && str1 != "")
+	if(!node && str1.isEmpty() || node && !str1.isEmpty())
 		return;
                 
         //Three cases :
