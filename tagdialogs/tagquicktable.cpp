@@ -51,7 +51,7 @@ void TagQuickTable::slotChangeColumnNumber(int columnNum)
 
  for (int i = rowNum + 1; i <= columnNum; i++)
  {
-  TagQuickTableItem* newItem = new TagQuickTableItem(ColumnsListView, QString("Column-%1").arg(i));
+  TagQuickTableItem* newItem = new TagQuickTableItem(ColumnsListView, i18n("Column-%1").arg(i));
   ColumnsListView->insertItem(newItem);
   ColumnsListView->setSelected(newItem, true);
   ColumnsListView->setCurrentItem(newItem);

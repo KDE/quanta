@@ -83,7 +83,7 @@ void FileCombo::setText( QString _txt )
 void FileCombo::slotFileSelect()
 {
  		QString fileName = KFileDialog::getOpenFileName(
- 		  basePath, "*|All files");
+ 		  basePath, i18n("*|All files"));
 
 		if ( fileName.isEmpty() ) return;
 

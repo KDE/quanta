@@ -44,9 +44,9 @@
 #include "../resource.h"
 
 extern QString globalDataDir;
-const QString textMenu = i18n("Insert as Text");
-const QString binaryMenu = i18n("Insert Link to File");
-const QString docMenu = i18n("New Document Based on This");
+const QString textMenu = I18N_NOOP("Insert as Text");
+const QString binaryMenu = I18N_NOOP("Insert Link to File");
+const QString docMenu = I18N_NOOP("New Document Based on This");
 
 TemplatesTreeView::TemplatesTreeView(const QString& projectBasePath, QWidget *parent, const char *name )
   : projectDir(0)
@@ -56,7 +56,7 @@ TemplatesTreeView::TemplatesTreeView(const QString& projectBasePath, QWidget *pa
     basePath = projectBasePath;
 
 	fileMenu = new QPopupMenu();
-	
+
 	openId = fileMenu -> insertItem( UserIcon("open"),  i18n("&Open"), 		this ,SLOT(slotInsert()));
   fileMenu -> insertItem(i18n("Open for Editing"), 	this ,SLOT(slotOpen()));
 //	fileMenu -> insertItem(i18n("Insert Tag"), 	this ,SLOT(slotInsertTag()));
@@ -105,9 +105,9 @@ TemplatesTreeView::TemplatesTreeView(const QString& projectBasePath, QWidget *pa
 		projectDir = 0L;
 	}
 */
-	
-	this->dirList = 0L;	
-	
+
+	this->dirList = 0L;
+
 	setRootIsDecorated( true );
     header()->hide();
     setSorting( 0 );
@@ -120,20 +120,20 @@ TemplatesTreeView::TemplatesTreeView(const QString& projectBasePath, QWidget *pa
 
 	rootDir = 0L;
  	homeDir = 0L;
-	
+
 	connect(  this, SIGNAL(doubleClicked(QListViewItem *)),
 						this, SLOT(slotSelectFile(QListViewItem *)));
 	connect(  this, SIGNAL(selectionChanged(QListViewItem *)),
 						this, SLOT(slotSelectImage(QListViewItem *)));
 	connect(	this, SIGNAL(returnPressed(QListViewItem *)),
 						this, SLOT(slotSelectFile(QListViewItem *)));
-						
+
 	connect( this, SIGNAL(rightButtonPressed(QListViewItem*, const QPoint&, int)),
 					 this, SLOT(slotMenu(QListViewItem*, const QPoint&, int)));
-					
+
 	connect(	this, SIGNAL(open(QListViewItem *)),
 						this,	SLOT(slotSelectFile(QListViewItem *)));
-						
+
   setAcceptDrops(true);
   setSelectionMode(QListView::Single);
   viewport()->setAcceptDrops(true);
@@ -164,7 +164,7 @@ void TemplatesTreeView::slotMenu(QListViewItem *item, const QPoint &point, int)
 {
 	if ( !item ) return;
 	setSelected(item, true);
-	
+
 	FilesTreeFolder *d = dynamic_cast<FilesTreeFolder *>( item);
 	if ( d )
 	{
@@ -172,17 +172,17 @@ void TemplatesTreeView::slotMenu(QListViewItem *item, const QPoint &point, int)
 	       || d->text(0) == i18n("Project Templates") )
 	        folderMenu ->setItemEnabled( deleteMenuId, false);
 	  else  folderMenu ->setItemEnabled( deleteMenuId, true );
-	
+
 	  folderMenu ->popup     ( point);
 	} else
   {
    readDirInfo();
-	
+
    QString menuText = "";
 
-   if (dirInfo.mimeType.upper().contains("TEXT")) menuText = textMenu;
-   if (dirInfo.mimeType.upper().contains("FILE")) menuText = binaryMenu;
-   if (dirInfo.mimeType.upper().contains("TEMPLATE")) menuText = docMenu;
+   if (dirInfo.mimeType.upper().contains("TEXT")) menuText = i18n(textMenu);
+   if (dirInfo.mimeType.upper().contains("FILE")) menuText = i18n(binaryMenu);
+   if (dirInfo.mimeType.upper().contains("TEMPLATE")) menuText = i18n(docMenu);
 
    if (menuText.isEmpty())
    {
@@ -236,9 +236,9 @@ void TemplatesTreeView::slotInsert()
 {
  QString menuText = fileMenu->text(openId);
 
- if (menuText == textMenu) slotInsertInDocument();
- if (menuText == binaryMenu) slotInsertTag();
- if (menuText == docMenu) slotNewDocument();
+ if (menuText == i18n(textMenu)) slotInsertInDocument();
+ if (menuText == i18n(binaryMenu)) slotInsertTag();
+ if (menuText == i18n(docMenu)) slotNewDocument();
 }
 
 /** No descriptions */
@@ -332,7 +332,7 @@ void TemplatesTreeView::contentsDropEvent(QDropEvent *e)
  if (item)
  {
   FilesTreeFolder *parent = dynamic_cast<FilesTreeFolder *> (item->parent());
-	
+
 	if ( !parent ) // top level element
   {
 		dest = ((FilesTreeFolder *)item)->fullName();
@@ -593,8 +593,8 @@ void TemplatesTreeView::slotSetTemplateDir(const QString &Dir)
 /** No descriptions */
 int TemplatesTreeView::denyBinaryInsert()
 {
-  KMessageBox::sorry(this, "Can't insert binary file as text", "Wrong type",
-FALSE);
+  KMessageBox::sorry(this, i18n("Can't insert binary file as text"), i18n("Wrong type"),
+                     false);
 
  return 1; //not used yet
 }

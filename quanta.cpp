@@ -310,7 +310,7 @@ void QuantaApp::slotFileClose()
   htmlPart()->begin( KURL( doc->basePath() ));
   htmlPart()->write( "" );
  	htmlPart()->end();
-  
+
   slotUpdateStatus(view->write());
 }
 
@@ -322,7 +322,7 @@ void QuantaApp::slotFileCloseAll()
   htmlPart()->begin( KURL( doc->basePath() ));
  	htmlPart()->write( "" );
  	htmlPart()->end();
-  
+
   slotNewStatus();
 }
 
@@ -352,7 +352,7 @@ void QuantaApp::slotFileQuit()
     {
       memberList->at(i)->close();
     }
-  }	
+  }
 
 }
 
@@ -374,7 +374,7 @@ void QuantaApp::slotViewToolBar()
   QToolBar *mbar = toolBar("mainToolBar");
   QToolBar *ebar = toolBar("mainEditToolBar");
   QToolBar *nbar = toolBar("mainNaviToolBar");
-  
+
   if(mbar->isVisible()) {
     mbar->hide();
     ebar->hide();
@@ -392,7 +392,7 @@ void QuantaApp::slotViewStatusBar()
   if (statusBar()->isVisible())
     statusBar()->hide();
   else
-    statusBar()->show();  
+    statusBar()->show();
 }
 
 
@@ -418,11 +418,11 @@ void QuantaApp::repaintPreview( bool clear )
 
   WHTMLPart *part = htmlPart();
   QWidgetStack *s = widgetStackOfHtmlPart();
-	
+
   if ( !s ) return;
   if ( !part ) return;
   if ( !s->id( s ->visibleWidget()) ) return;
-	  
+
   if ( clear )
  {
     oldtext = "";
@@ -432,24 +432,24 @@ void QuantaApp::repaintPreview( bool clear )
   int xOffset = html->contentsX(), yOffset = html->contentsY();
 
   part->closeURL();
-		
+
   KParts::URLArgs  args(true, browserExtension()->xOffset(), browserExtension()->yOffset());
   browserExtension()->setURLArgs( args );
 
   QString url;
   Document *w = view->write();
-  if (!w->isUntitled())	
+  if (!w->isUntitled())
   {
 //if it's	not untitled, than it was loaded from somewhere. In this case show it from that place
 	  url = w->url().url();
 
 	  if ( doc->isModified() ) //doc->saveDocument( doc->url() );
          w->saveIt();
-	
+
 	  url = project->urlWithPrefix(w->url());
-	
+
 	  part->begin(url, xOffset, yOffset );
-	  part->openURL( KURL(url) );		
+	  part->openURL( KURL(url) );
   } else  //the document is Untitled, preview the text from it
  {
   	QString text = w->editIf->text();
@@ -473,7 +473,7 @@ void QuantaApp::slotImageOpen(QString url)
 
   WHTMLPart *part = htmlPart();
   QWidgetStack *s = widgetStackOfHtmlPart();
-  
+
   if ( !s ) return;
   if ( !part ) return;
 
@@ -485,7 +485,7 @@ void QuantaApp::slotImageOpen(QString url)
 	QString text = "<html>\n<body>\n<div align=\"center\">\n<img src=\"";
 	text += url;
 	text += "\">\n</div>\n</body>\n</html>\n";
-	
+
 	part->closeURL();
 	part->begin( KURL( doc->basePath() ) );
   part->write( text.data() );
@@ -499,7 +499,7 @@ void QuantaApp::slotImageOpen(QString url)
 void QuantaApp::slotInsertTag(QString url, DirInfo dirInfo)
 {
  	QImage img(url);
-  
+
   QString furl = QExtFileInfo::toRelative( url, doc->basePath() );
   Document *w = view->write();
 
@@ -510,7 +510,7 @@ void QuantaApp::slotInsertTag(QString url, DirInfo dirInfo)
   {
 
    if ( !img.isNull() )
-   { 
+   {
      QString width,height;
      width.setNum( img.width () );
 	   height.setNum( img.height() );
@@ -554,7 +554,7 @@ void QuantaApp::slotNewStatus()
   projectOptionAction->setEnabled(projectExists);
   saveAsProjectTemplateAction->setEnabled(projectExists);
   saveSelectionAsProjectTemplateAction->setEnabled(projectExists);
-  
+
   if (projectExists)
   {
     QStringList toolbarList = QExtFileInfo::allFiles(project->toolbarDir+"/", "*.toolbar.tgz");
@@ -584,7 +584,7 @@ void QuantaApp::slotNewStatus()
 
  if ( w->isModified() )
 	  wTab->changeTab( w,  floppyIcon, wTab->tabLabel(w));
- else 	
+ else
 	wTab->changeTab( w,  emptyIcon,  wTab->tabLabel(w));
 
 //This is a really dirty fix for the QTabWidget problem. After the changeTab call,
@@ -666,7 +666,7 @@ void QuantaApp::slotOptionsConfigureToolbars()
     iter.current()->actionCollection()->take(action);
    }
  }
-  
+
  KEditToolbar dlg(factory(), this);
 
  int result = dlg.exec();
@@ -715,7 +715,7 @@ void QuantaApp::slotOptionsConfigureToolbars()
         delete menu;
       }
     }
- }     
+ }
 
  m_tagsMenuId = menuBar()->insertItem(i18n("&Tags"),m_tagsMenu,-1,5);
  view->toolbarTab->setCurrentPage(currentPageIndex);
@@ -726,7 +726,7 @@ void QuantaApp::slotOptionsConfigureActions()
  int currentPageIndex = view->toolbarTab->currentPageIndex();
 
  ActionEditDlg dlg( this, this, "actions_edit_dlg", true); //actionCollection(), QString::null, true, this );
-    
+
  if ( dlg.exec() )
  {
     QFile f( KGlobal::instance()->dirs()->saveLocation("data")+"quanta/actions.rc" );
@@ -746,7 +746,7 @@ void QuantaApp::slotOptions()
 				    i18n("Configure Quanta"),
 				    KDialogBase::Ok | KDialogBase::Cancel,
 				    KDialogBase::Ok, this, "tabdialog");
-				
+
 	// Tag Style options
   QVBox *page=kd->addVBoxPage(i18n("Tag Style"), QString::null, BarIcon("kwrite", KIcon::SizeMedium ) );
   StyleOptionsS *styleOptionsS = new StyleOptionsS( (QWidget *)page );
@@ -764,7 +764,7 @@ void QuantaApp::slotOptions()
   for (iter = availableEncodingNames.begin(); iter != availableEncodingNames.end(); ++iter)
   {
      ++iIndex;
-     if (*iter == defaultEncoding)
+     if ((*iter).lower() == defaultEncoding.lower())
      {
        styleOptionsS->encodingCombo->setCurrentItem(iIndex);
        break;
@@ -802,7 +802,7 @@ void QuantaApp::slotOptions()
 
   if (debuggerStyle=="PHP3") debuggerOptions->radioPhp3->setChecked(true);
   if (debuggerStyle=="None") debuggerOptions->checkDebugger->setChecked(false);
-  
+
   if ( kd->exec() )
   {
     tagsCase = styleOptionsS->tagCase->currentItem();
@@ -836,7 +836,7 @@ void QuantaApp::slotOptions()
       if (!(debuggerStyle=="PHP4")) enablePhp4Debug(true);
       debuggerStyle="PHP4";
     }
-    
+
     QWidgetStack *s;
     if ( htmlPart() )
     {
@@ -846,12 +846,12 @@ void QuantaApp::slotOptions()
 //    checkCommand( ID_VIEW_PREVIEW, false );
 
   	previewPosition = previewOptions->position();
-  	
+
   	htmlpart->closeURL();
   	htmlpart->begin( KURL( doc->basePath() ));
   	htmlpart->write( "" );
   	htmlpart->end();
-  	
+
   	repaintPreview(true);
   }
 
@@ -869,12 +869,12 @@ void QuantaApp::slotSwapLeftPanelMode()
 	{
 		FilesTreeFolder *p = dynamic_cast<FilesTreeFolder *>(fTTab->currentItem()->parent());
 		if (!p) return;
-		
+
 		QString dir = p->fullName();
-		
+
 		fLTab->dir = dir;
 		fLTab->slotReload();
-		
+
 		fTab->raiseWidget(1);
 	}
 	else if ( fTab->id( fTab->visibleWidget() ) == 1 ) fTab->raiseWidget(0);
@@ -886,13 +886,13 @@ void QuantaApp::slotActivatePreview()
 	WHTMLPart *part = htmlPart();
 	if ( !part ) return;
 	QWidgetStack *s = widgetStackOfHtmlPart();
-/*	
+/*
 	enableCommand(ID_VIEW_BACK);
   enableCommand(ID_VIEW_FORWARD);
 	enableCommand(ID_VIEW_REPAINT);
-*/	
+*/
 	s->raiseWidget( 1 );
-	
+
 //	checkCommand( ID_VIEW_PREVIEW, true );
 }
 
@@ -901,7 +901,7 @@ void QuantaApp::slotShowPreview()
 	WHTMLPart *part = htmlPart();
  	QWidgetStack *s = widgetStackOfHtmlPart();
   Document *w = view->write();
-	
+
 	if ( !s ) return;
 	if ( !part ) return;
 
@@ -912,7 +912,7 @@ void QuantaApp::slotShowPreview()
 //		disableCommand(ID_VIEW_BACK);
 //		disableCommand(ID_VIEW_FORWARD);
 //		disableCommand(ID_VIEW_REPAINT);
-		
+
 		s   ->raiseWidget( 0 );
 
 //FIXME:
@@ -940,11 +940,11 @@ void QuantaApp::slotShowPreview()
 //		enableCommand(ID_VIEW_BACK);
 //		enableCommand(ID_VIEW_FORWARD);
 //		enableCommand(ID_VIEW_REPAINT);
-		
+
 	  if ( previewPosition == "Bottom" )
 	  {
 	  }
-		
+
 		s->raiseWidget( 1 );
 		repaintPreview(false);
 	}
@@ -1000,7 +1000,7 @@ void QuantaApp::reparse()
       int expandLevel = config->readNumEntry("Expand level",8);
       if ( expandLevel == 0 ) expandLevel = 40;
       sTab->slotReparse(baseNode , expandLevel );
-		  
+
       uint line;
       uint col;
       w->viewCursorIf->cursorPositionReal(&line, &col);
@@ -1014,7 +1014,7 @@ void QuantaApp::setCursorPosition( int row, int col )
   Document *w = view->write();
 
   int numLines = w->editIf->numLines();
-  
+
   if ( row < numLines )
     w->viewCursorIf->setCursorPositionReal(row, col);
   else
@@ -1026,14 +1026,14 @@ void QuantaApp::setCursorPosition( int row, int col )
 void QuantaApp::gotoFileAndLine(QString filename, int line )
 {
   if ( !filename.isEmpty() ) doc->openDocument( filename );
-  
+
   Document *w = view->write();
   int numLines = w->editIf->numLines();
   if ( numLines > line && line >= 0 )
   {
     w->viewCursorIf->setCursorPositionReal(line, 0);
   }
-  
+
   w->view()->setFocus();
 }
 
@@ -1042,10 +1042,10 @@ void QuantaApp::gotoFileAndLine(QString filename, int line )
 void QuantaApp::slotDockChanged()
 {
   static bool docTabOpened = false;
-  
+
 //  if ( stabdock->isVisible() && baseNode) reparse();
-  
-  if ( dtabdock->isVisible() ) 
+
+  if ( dtabdock->isVisible() )
   {
     static bool first = true;
   	rightWidgetStack -> raiseWidget(2);
@@ -1076,10 +1076,10 @@ void QuantaApp::selectArea(int line1, int col1, int line2, int col2)
 
   if ( line1 > numLines-1 )
     line1 = numLines-1;
-    
+
   if ( line2 > numLines-1 )
     line2 = numLines-1;
-    
+
   w->viewCursorIf->setCursorPositionReal(line2, col2);
   w->selectionIf->setSelection(line1, col1, line2, col2);
 }
@@ -1089,12 +1089,12 @@ void QuantaApp::openDoc( QString url )
    static QString oldUrl("");
 
    if ( url == oldUrl ) return;
-     		
+
    htmlPartDoc->closeURL();
    htmlPartDoc->openURL(url);
 	 htmlPartDoc->show();
 	 htmlPartDoc->addToHistory(url);
-	 
+
 	 oldUrl = url;
 }
 /*
@@ -1105,18 +1105,18 @@ void QuantaApp::updateNavButtons( bool back, bool forward )
    	  enableCommand(ID_VIEW_BACK);
    else
    		disableCommand(ID_VIEW_BACK);
-   		
+
    if ( forward )
    	  enableCommand(ID_VIEW_FORWARD);
    else
    		disableCommand(ID_VIEW_FORWARD);
-   		
+
 } */
 
 void QuantaApp::contextHelp()
 {
   int id_w = rightWidgetStack->id( rightWidgetStack->visibleWidget());
-  
+
   if (  id_w == 1 || id_w == 2 )
   {
     rightWidgetStack->raiseWidget(0);
@@ -1126,14 +1126,14 @@ void QuantaApp::contextHelp()
   {
     QString currentW =view->write()->kate_view->currentWord();
     QString *url = dTab->contextHelp( currentW);
-  
-    if ( url ) 
+
+    if ( url )
     {
       if ( !dtabdock->isVisible() ) dtabdock->changeHideShowState();
-      
+
       rightWidgetStack->raiseWidget(2);
       htmlPartDoc->view()->setFocus();
-      
+
   		openDoc(*url);
     }
   }
@@ -1145,8 +1145,8 @@ void QuantaApp::slotShowPTabDock() { ptabdock->changeHideShowState();}
 void QuantaApp::slotShowTTabDock() { ttabdock->changeHideShowState();}
 void QuantaApp::slotShowSTabDock() { stabdock->changeHideShowState();}
 void QuantaApp::slotShowDTabDock() { dtabdock->changeHideShowState();}
-void QuantaApp::slotShowBottDock() 
-{ 
+void QuantaApp::slotShowBottDock()
+{
   if ( bottdock->parent() == 0L )
        bottdock->manualDock(maindock, KDockWidget::DockBottom, 80);
   else bottdock->changeHideShowState();
@@ -1186,13 +1186,13 @@ void QuantaApp::slotToolSyntaxCheck()
   {
     QString fname = w->url().prettyURL();
     if ( fname.left(5) == "file:" ) fname.remove(0,5);
-    
+
     KProcess *p = new KProcess();
     *p << "perl";
     *p << locate("lib","quanta/plugins/weblint");
     *p << "-x" << "Netscape";
     *p << fname;
-    
+
     connect( p, SIGNAL(processExited(KProcess *)),
              messageOutput, SLOT(weblintFinished()) );
     connect( p, SIGNAL(processExited(KProcess *)),
@@ -1200,16 +1200,16 @@ void QuantaApp::slotToolSyntaxCheck()
     connect( p, SIGNAL(receivedStdout(KProcess *, char *, int)),
              messageOutput, SLOT( processWebLint(KProcess *, char *, int)) );
 
-    
+
     p->start( KProcess::NotifyOnExit, KProcess::Stdout);
   }
 }
-    
+
 QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomElement &element, int &id )
 {
 
   QString tabname = element.attribute( "tabname", "" );
-  
+
   if ( element.tagName().lower() == "toolbar" && !tabname.isEmpty() ) {
 //avoid QToolBar warning in the log
     QtMsgHandler oldHandler = qInstallMsgHandler( silenceQToolBar );
@@ -1230,21 +1230,21 @@ QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomEleme
     qInstallMsgHandler( oldHandler );
     return tb;
   }
-  
+
   return KMainWindow::createContainer( parent, index, element, id );
-  
+
 }
 
 void QuantaApp::removeContainer( QWidget *container, QWidget *parent, QDomElement &element, int id )
 {
 //  debug( QString("name:") + container->parent()->name() );
-  
+
 /*  if ( container->parent() && QString(container->parent()->name()) == QString("ToolBar stack") ) {
     ((KToolBar*)container)->saveState( element );
     int id = view->toolbarStack->id( container );
     qDebug("id: %d",id);
     view->toolbarStack->removeWidget( container );
-    view->tabBar->removeTab( view->tabBar->tab(id) ); 
+    view->tabBar->removeTab( view->tabBar->tab(id) );
   }
   else                                                */
     KMainWindow::removeContainer( container, parent, element, id );
@@ -1658,7 +1658,7 @@ QString QuantaApp::saveToolBar(QString& toolbarName, QString destFile)
                 nodeList2.item(k).save(actStr,1);
             }
           }
-     
+
        }
       }
   }
@@ -1858,7 +1858,7 @@ void QuantaApp::slotSendToolbar()
   QString res = QInputDialog::getItem(
                   i18n( "Send Toolbar" ),
                   i18n( "Please select a toolbar:" ), lst, current, FALSE, &ok, this );
-  
+
   if (!ok)
     return;
 

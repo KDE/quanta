@@ -88,7 +88,7 @@ void TagDialog::init(QTag *dtdTag, QString base)
   if (!dtdTag)   //the tag is invalid, let's create a default one
   {
     this->dtdTag = new QTag();
-    QString s = "Unknown tag";
+    QString s = i18n("Unknown tag");
     this->dtdTag->setName(s);
     deleteTag = true;
   } else
@@ -108,7 +108,7 @@ void TagDialog::init(QTag *dtdTag, QString base)
 /**  */
 void TagDialog::parseTag()
 {
-  if (dtdTag->name() != "Unknown tag") //read from the extra tags
+  if (dtdTag->name() != i18n("Unknown tag")) //read from the extra tags
   {
     QDomDocument doc;
     //read the tag file it is available
@@ -297,7 +297,7 @@ void TagDialog::parseAttributes( QString attrs )
 
    if ( t[0] == '=' ) {
   		t = t.remove(0,1).stripWhiteSpace();
-  		
+
   		if ( t[0] == '"' ) {
   			i = 1;
   			while ( t[i] != '"' && !t[i].isNull() ) i++;
@@ -318,24 +318,24 @@ void TagDialog::parseAttributes( QString attrs )
   			t = t.remove(0,i+1).stripWhiteSpace();
   		}
   		else {
-  		
+
     		i=0;
   	  	while ( !t[i].isSpace() && !t[i].isNull() )	i++;
-    	
+
     		*value = t.left(i);
     		t = t.remove(0,i).stripWhiteSpace();
   		}
-  		
+
   		// debug ( name+" , "+attr[attrcount]+"="+value[attrcount]+";" );
-  		
-  		
-  		
-  	
+
+
+
+
    }
    // qDebug("attr :%s; value :%s;",attr.data(),value->data() );
    dict->insert( attr , value );
  }
-  	
+
 }
 
 /** Insert the new tag into the Document*/

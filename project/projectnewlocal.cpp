@@ -42,26 +42,26 @@ ProjectNewLocal::ProjectNewLocal(QWidget *parent, const char *name )
 	: ProjectNewLocalS(parent,name)
 {
 	imagelabel->setPixmap( UserIcon("wiznewprjloc") );
-	
+
 	listFiles->setColumnAlignment(1,Qt::AlignRight);
-	
+
     QString tmpString;
     tmpString = fileMaskPhp + fileMaskHtml + fileMaskJava + fileMaskImage;
 	webmask->setText(tmpString.simplifyWhiteSpace());
 	webmask->setCursorPosition(0);
 	mask->setText("*");
-										
+
 	projectDirTree = 0L;
-									
+
 	checkInsertWeb->setChecked( true );
-	
+
 	connect( checkInsert, SIGNAL(toggled(bool)),
 					 this, 				SLOT(setFiles(bool)));
 	connect( checkInsertWeb, SIGNAL(toggled(bool)),
 					 this, 				   SLOT(setFiles(bool)));
 	connect( checkInsertWithMask, SIGNAL(toggled(bool)),
 					 this, 				        SLOT(setFiles(bool)));
-					
+
 	connect(addFiles,SIGNAL(clicked()),this,SLOT(slotAddFiles()));
 	connect(addFolder,SIGNAL(clicked()),this,SLOT(slotAddFolder()));
 	connect(clearList,SIGNAL(clicked()),this,SLOT(slotClearList()));
@@ -73,11 +73,11 @@ ProjectNewLocal::~ProjectNewLocal(){
 void ProjectNewLocal::setDestDir(QWidget *w,bool)
 {
 	ProjectNewGeneral *png = (ProjectNewGeneral *)w;
-	
+
 	dir = png->linePrjDir->text();
 	if ( dir.right(1) != "/" ) dir+="/";
-	
-	checkInsert->setText(i18n("Insert files from ")+dir);
+
+	checkInsert->setText(i18n("Insert files from %1").arg(dir));
 }
 
 QStringList ProjectNewLocal::files()
@@ -88,17 +88,17 @@ QStringList ProjectNewLocal::files()
 QStringList ProjectNewLocal::projectFiles(bool relative)
 {
 	QStringList list;
-	
+
 	QFileInfo fi( dir );
 	if ( !fi.exists() || !fi.isDir() || !checkInsert->isChecked() ) return list;
-	
+
 	QString fmask = "*";
 	if ( checkInsertWeb->isChecked() ) fmask = webmask->text();
 	if ( checkInsertWithMask->isChecked() ) fmask = mask->text();
-	
+
     if (relative) list = QExtFileInfo::allFilesRelative( dir, fmask);
 		else          list = QExtFileInfo::allFiles( dir, fmask);
-	
+
 	return list;
 }
 
@@ -147,12 +147,12 @@ void ProjectNewLocal::slotAddFiles()
      	}
      	delete dlg;
 	}
-	
+
 	for (uint i = 0; i < files.count(); i++)
 	{
 	   if (fileList.find(files[i]) == fileList.end()) fileList.append(files[i]);
 	 }
-    slotReloadTree(fileList,false);	
+    slotReloadTree(fileList,false);
 }
 
 /** No descriptions */
@@ -160,15 +160,15 @@ void ProjectNewLocal::slotAddFolder()
 {
 	QString dirName = KFileDialog::getExistingDirectory(
 		dir, this, i18n("Insert Directory in Project"));
-	
+
 	if ( dirName.isEmpty() ) return;
-	
+
 	if ( dirName.left(5) == "file:" ) dirName.remove(0,5);
 	if ( dirName.right(1) != "/" ) dirName += "/";
-	
+
 	QString sdir = dirName;
     sdir = QExtFileInfo::toRelative( sdir, dir);
-	
+
     if ( sdir.left(2) == ".." )
    {
   	  CopyTo *dlg = new CopyTo( dir, this, dirName+i18n(": copy to project...") );
@@ -188,25 +188,25 @@ void ProjectNewLocal::slotAddFolder()
     delete dlg;
   }
 
-  QStringList files = QExtFileInfo::allFiles( dirName, "*");	
+  QStringList files = QExtFileInfo::allFiles( dirName, "*");
   for (uint i = 0; i < files.count(); i++)
 	{
 	   if (fileList.find(files[i]) == fileList.end()) fileList.append(files[i]);
 	 }
-  slotReloadTree(fileList,false);	
+  slotReloadTree(fileList,false);
 }
 
 void ProjectNewLocal::insertFilesAfterCopying(QString rdir,CopyTo* dlg)
 {
 //The CopyTo dlg is deleted only here!!
-  delete dlg;	
+  delete dlg;
   if ( rdir.right(1) != "/" ) rdir += "/";
-  QStringList files = QExtFileInfo::allFiles( rdir, "*");	
+  QStringList files = QExtFileInfo::allFiles( rdir, "*");
   for (uint i = 0; i < files.count(); i++)
 	{
 	   if (fileList.find(files[i]) == fileList.end()) fileList.append(files[i]);
 	 }
-  slotReloadTree(fileList,false);	
+  slotReloadTree(fileList,false);
 }
 
 /** No descriptions */
@@ -229,16 +229,16 @@ void ProjectNewLocal::slotReloadTree( QStringList fileList, bool newtree)
 		projectDirTree -> setPixmap( 0, SmallIcon("folder"));
 		projectDirTree -> setOpen( true );
 	}
-	
+
 	projectDirTree -> setOpen( false );
 	projectDirTree->setText( 0, projectName );
-	
+
 	int pos;
 	QString fname;
-	
+
 	ProjectTreeFolder *newFolder = 0L;
 	ProjectTreeFolder *folder = projectDirTree;
-	
+
 	QStringList::Iterator it;
 
   for ( it = fileList.begin(); it != fileList.end(); ++it )
@@ -262,7 +262,7 @@ void ProjectNewLocal::slotReloadTree( QStringList fileList, bool newtree)
 
       if ( !newFolder )
       	newFolder = new ProjectTreeFolder( folder, dir);
-      	
+
       folder = newFolder;
       fname.remove(0,pos+1);
     }

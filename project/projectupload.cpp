@@ -51,21 +51,21 @@ ProjectUpload::ProjectUpload(QString file, Project* prg, QWidget *parent, const 
   :ProjectUploadS( parent, name, true, 0)
 {
     initProjectInfo(prg);
-	
+
     QFileInfo fi( p->basePath + file );
-  
+
     if (fi.isDir())
     {
 	   	kdDebug() << file << " is a directory" << endl;
   		QDomNodeList nl = p->dom.firstChild().firstChild().childNodes();
 
   		QDateTime stime;
-  		stime.setTime_t(1);	
-  		
+  		stime.setTime_t(1);
+
   		for ( unsigned int i=0; i<nl.count(); i++ )
   		{
   		    QDomElement el = nl.item(i).toElement();
-  	    	if ( el.nodeName() == "item" )	
+  	    	if ( el.nodeName() == "item" )
   	    	{
     				QString url = el.attribute("url");
     				if (url.contains(file) > 0)
@@ -92,15 +92,15 @@ ProjectUpload::ProjectUpload(QString file, Project* prg, QWidget *parent, const 
     						modified.append( url );
     						it->setSelected(true);
     	    		}
-    		    }	
+    		    }
   	    	}
-  		} //for		
+  		} //for
     } else  //it is not a directory
     {
    		kdDebug() << file << " is a file" << endl;
 
           files.append( file );
-  	
+
   		QString size;
   		size.sprintf( "%i", fi.size() );
 
@@ -108,9 +108,9 @@ ProjectUpload::ProjectUpload(QString file, Project* prg, QWidget *parent, const 
   		QString date;
   		date.sprintf( "%4i.%2i.%2i", d.year(), d.month(), d.day() );
   		date.replace( QRegExp(" "), "0" );
-  		
+
   		QListViewItem *it = new QListViewItem( list, file, size, date );
-  		
+
   		modified.append( file );
   		it->setSelected(true);
     }
@@ -121,7 +121,7 @@ ProjectUpload::ProjectUpload(QString file, Project* prg, QWidget *parent, const 
 ProjectUpload::ProjectUpload( Project* prg, QWidget* parent,  const char* name, bool modal, WFlags fl )
   :ProjectUploadS( parent,  name, modal, fl )
 {
-	
+
 	initProjectInfo(prg);
 
   //list->addDir(p->basePath);
@@ -129,38 +129,38 @@ ProjectUpload::ProjectUpload( Project* prg, QWidget* parent,  const char* name, 
 	QDomNodeList nl = p->dom.firstChild().firstChild().childNodes();
 
 	QDateTime stime;
-	stime.setTime_t(1);	
-	
+	stime.setTime_t(1);
+
 	for ( unsigned int i=0; i<nl.count(); i++ )
 	{
 	    QDomElement el = nl.item(i).toElement();
-	    if ( el.nodeName() == "item" )	
+	    if ( el.nodeName() == "item" )
 	    {
 	      	QString url = el.attribute("url");
 
 	        files.append( url );
-	      
+
 	      	QFileInfo fi( p->basePath + url );
 	        QString size;
 	      	size.sprintf( "%i", fi.size() );
-	      
+
 	      	QDate d = fi.lastModified().date();
 	      	QString date;
 	      	date.sprintf( "%4i.%2i.%2i", d.year(), d.month(), d.day() );
 	      	date.replace( QRegExp(" "), "0" );
-	      
+
 					QListViewItem *it = list->addItem( url, size, date );
 
 					int uploadTime = el.attribute("upload_time","1").toInt();
 					int modifiedTime = stime.secsTo( fi.lastModified() );
-	
+
 	      	if ( uploadTime < modifiedTime )
 	      	{
 						modified.append( url );
 						it->setSelected(true);
 						// Find this node and highlight it.
 						//UploadTreeFile *it = list->getNode
-          }	
+          }
 	    }
 	} //for
  list->slotSelectFile();
@@ -175,17 +175,17 @@ void  ProjectUpload::initProjectInfo(Project *prg)
 {
 
 	p = prg;
-	
+
 	baseUrl = new KURL();
-	
+
 	list->setMultiSelection(true);
-	
+
 	list->setColumnAlignment(1,Qt::AlignRight);
 	list->setColumnAlignment(2,Qt::AlignRight);
 	list->setShowSortIndicator (true);
-	
+
 	QDomElement uploadEl = p->dom.firstChild().firstChild().namedItem("upload").toElement();
-	
+
 	lineHost -> setText(uploadEl.attribute("remote_host",""));
 	lineUser -> setText(uploadEl.attribute("user",""));
 	linePath -> setText(uploadEl.attribute("remote_path",""));
@@ -197,9 +197,9 @@ void  ProjectUpload::initProjectInfo(Project *prg)
 	  linePasswd->setText(p->passwd);
 	} else
 	{
-	  linePasswd->clear();	
+	  linePasswd->clear();
 	}
-	
+
 	QStringList protocols = KProtocolInfo::protocols();
 	for ( uint i=0; i<protocols.count(); i++ )
 	{
@@ -213,12 +213,12 @@ void  ProjectUpload::initProjectInfo(Project *prg)
 				comboProtocol->setCurrentItem( comboProtocol->count()-1 );
 		}
 	}
-	
-//  KCompletion *comp = linePath->completionObject();	
+
+//  KCompletion *comp = linePath->completionObject();
 //  connect(linePath,SIGNAL(returnPressed(const QString&)),
 //                  comp,SLOT(addItem(const QString&)));
 
-  uploadInProgress = false;	
+  uploadInProgress = false;
   connect( this, SIGNAL( uploadNext() ), SLOT( slotUploadNext() ) );
 
   lineHost->setFocus();
@@ -259,13 +259,13 @@ void ProjectUpload::startUpload()
 {
 	stopUpload = false;
 	QDomElement uploadEl = p->dom.firstChild().firstChild().namedItem("upload").toElement();
-	
+
 	uploadEl.setAttribute("remote_host", lineHost->text() );
 	uploadEl.setAttribute("remote_path", linePath->text() );
 	uploadEl.setAttribute("remote_port", port->text() );
 	uploadEl.setAttribute("user", lineUser->text() );
 	uploadEl.setAttribute("remote_protocol", comboProtocol->currentText() );
-	
+
 	baseUrl->setProtocol( comboProtocol->currentText() );
 	baseUrl->setPort( port->text().toInt() );
 	baseUrl->setHost( lineHost->text() );
@@ -301,7 +301,7 @@ void ProjectUpload::upload()
 	int pos;
   KURL dir;
   KURL to;
-            	
+
 //	for ( QListViewItem *it = list->firstChild(); it; it = it->nextSibling() )
 	for ( QStringList::Iterator file = toUpload.begin(); file != toUpload.end(); ++file )
 	{
@@ -448,7 +448,7 @@ void ProjectUpload::reject()
   {
     suspendUpload = true;
   	if (KMessageBox::questionYesNo(this,i18n("Do you really want to cancel the upload?"),
-  																	i18n("Cancel upload")) == KMessageBox::No)
+                                   i18n("Cancel upload")) == KMessageBox::No)
   	{
   	    suspendUpload = false;
   	    emit uploadNext();

@@ -61,7 +61,7 @@ StructTreeView::StructTreeView(Parser *parser, KConfig *config, QWidget *parent,
 
   setFrameStyle( Panel | Sunken );
   setLineWidth( 2 );
-  addColumn( "Name" );
+  addColumn( i18n("Name") );
 
 	setFocusPolicy(QWidget::ClickFocus);
 
@@ -110,9 +110,9 @@ void StructTreeView::createList(Node *node, StructTreeTag *parent, int openLevel
 
 	if ( !parent ) {
 		top = new StructTreeTag( this, i18n("Document Structure") );
-		images = new StructTreeTag( this, "Images" );
+		images = new StructTreeTag( this, i18n("Images") );
 		images->setPixmap( 0, SmallIcon("image") );
-		links = new StructTreeTag( this, "Links" );
+		links = new StructTreeTag( this, i18n("Links") );
 		links->setPixmap( 0, SmallIcon("www") );
 
 		createList(node, top, openLevel-1 );
@@ -223,9 +223,9 @@ void StructTreeView::slotReparse(Node* node, int openLevel)
 	imagesCount = linksCount = 0;
 	createList(node,0L,openLevel);
 	if ( !imagesCount )
-	  images->setText(0,"No Images");
+	  images->setText(0, i18n("No Images"));
 	if ( !linksCount )
-	  links->setText(0,"No Links");
+	  links->setText(0, i18n("No Links"));
   useOpenLevelSetting = false;
 }
 
@@ -246,56 +246,55 @@ void StructTreeView::slotMouseClicked(int button, QListViewItem *item, const QPo
 
   config->setGroup("Parser options");
 
-  QString handleMBM = config->readEntry("MBM","Select tag area");
-	QString handleLBM = config->readEntry("LBM","Find tag");
-	QString handleDoubleClick = config->readEntry("Double click","Select tag area");
+  QString handleMBM = config->readEntry("MBM", i18n("Select tag area"));
+  QString handleLBM = config->readEntry("LBM", i18n("Find tag"));
+  QString handleDoubleClick = config->readEntry("Double click", i18n("Select tag area"));
 
-	setSelected(item, true);
+  setSelected(item, true);
 
-	if ( button == Qt::RightButton ) {
-		popupMenu->popup( point);
-		return;
-	}
+  if ( button == Qt::RightButton ) {
+      popupMenu->popup( point);
+      return;
+  }
 
-	if ( button == Qt::LeftButton ) {
+  if ( button == Qt::LeftButton ) {
 
-    if ( handleLBM == i18n("Find Tag && Open Tree"))
-    	setOpen( item, ! isOpen(item) );
-    setSelected(item, true);
-    slotGotoTag(item);
+      if ( handleLBM == i18n("Find Tag && Open Tree"))
+          setOpen( item, ! isOpen(item) );
+      setSelected(item, true);
+      slotGotoTag(item);
   }
 
   if ( button == Qt::MidButton ) {
 
-    if ( handleMBM == i18n("nothing"))
-    	return;
+      if ( handleMBM == i18n("nothing"))
+          return;
 
-    if ( handleMBM == i18n("Find Tag && Open Tree")) {
-    	setOpen( item, ! isOpen(item) );
-    	setSelected(item, true);
-    	slotGotoTag(item);
-    }
+      if ( handleMBM == i18n("Find Tag && Open Tree")) {
+          setOpen( item, ! isOpen(item) );
+          setSelected(item, true);
+          slotGotoTag(item);
+      }
 
-    if ( handleMBM == i18n("Select Tag Area"))
-    	slotSelectTag();
+      if ( handleMBM == i18n("Select Tag Area"))
+          slotSelectTag();
 
-    if ( handleMBM == i18n("Go to End of Tag"))
-    	slotGotoClosingTag();
+      if ( handleMBM == i18n("Go to End of Tag"))
+          slotGotoClosingTag();
 
-    setSelected(item, true);
+      setSelected(item, true);
   }
-
 }
 
 
 void StructTreeView::slotDoubleClicked( QListViewItem *)
 {
-  config->setGroup("Parser options");
+    config->setGroup("Parser options");
 
-  if ( config->readEntry("Double click") == "nothing" )
-  	return;
+    if ( config->readEntry("Double click") == i18n("nothing") )
+        return;
 
-	slotSelectTag();
+    slotSelectTag();
 }
 
 
@@ -450,7 +449,7 @@ void StructTreeView::slotCollapsed(QListViewItem *item)
   it->node->opened = false;
 }
 /** Do a reparse before showing. */
-void StructTreeView::showEvent(QShowEvent* ev)
+void StructTreeView::showEvent(QShowEvent* /*ev*/)
 {
  slotReparse();
 }

@@ -142,7 +142,7 @@ QString CSSSelectorEditor::code()
      	// One line for background rule
 		if (b_color != "transparent" && b_color != "")
 			properties += "background-color: " + b_color;
-		if (b_img != "none" && b_img != "")   	
+		if (b_img != "none" && b_img != "")
 			properties += "background-image: " + b_img;
 		if (b_repeat != "repeat" && b_repeat != "")
 			properties += "background-repeat: " + b_repeat;
@@ -177,7 +177,7 @@ QString CSSSelectorEditor::code()
 		properties += "text-indent: " + t;
 	t = comboLineHeight->currentText();
 	if (t != "normal" && t != "")
-		properties += "line_height: " + t;
+		properties += "line-height: " + t;
 
 	// Now, let's add the margin
 	QString mt = comboTopMargin->currentText();
@@ -187,7 +187,7 @@ QString CSSSelectorEditor::code()
 	if ( checkMarginInline->isChecked() ) {
 		QString temp = "margin: " + mt + " " + mr + " " + mb + " " + ml;
 		temp = " " + temp.simplifyWhiteSpace();
-		
+
 		// We can specify only some values if there are repetitions, so let's
 		// check for it
 		if (mt == mb && mb == mr && mr == ml)
@@ -196,7 +196,7 @@ QString CSSSelectorEditor::code()
 			properties += "margin: " + mt + " " + mr + ";\n";
 		else if (ml == mr)
 			properties += "margin: " + mt + " " + mr + " " + mb + ";\n";
-		else if (temp != "margin: " && temp != "margin: 0 0 0 0") 			
+		else if (temp != "margin: " && temp != "margin: 0 0 0 0")
 			properties += temp + ";\n";
 	} else {
 		if (mt != "0" && mt != "")
@@ -223,7 +223,7 @@ QString CSSSelectorEditor::code()
 			properties += "padding: " + pt + " " + pr + ";\n";
 		else if (pl == pr)
 			properties += "padding: " + pt + " " + pr + " " + pb + ";\n";
-		else if (temp != "padding: " && temp != "padding: 0 0 0 0") 			
+		else if (temp != "padding: " && temp != "padding: 0 0 0 0")
 			properties += temp + ";\n";
 	} else {
 		if (pt != "0" && pt != "")
@@ -261,7 +261,7 @@ QString CSSSelectorEditor::code()
 
 	QString b_t = QString(b_w_t + " " + b_s_t + " " + b_c_t).simplifyWhiteSpace();
 	QString b_r = QString(b_w_r + " " + b_s_r + " " + b_c_r).simplifyWhiteSpace();
-	QString b_b = QString(b_w_b + " " + b_s_b + " " + b_c_b).simplifyWhiteSpace(); 	
+	QString b_b = QString(b_w_b + " " + b_s_b + " " + b_c_b).simplifyWhiteSpace();
 	QString b_l = QString(b_w_l + " " + b_s_l + " " + b_c_l).simplifyWhiteSpace();
 
 	if ( radioBorderWCS->isChecked() ) {
@@ -284,7 +284,7 @@ QString CSSSelectorEditor::code()
 			properties += "left-border: " + b_l;
 	} else if ( radioBorderOnly->isChecked() ) {
 		// 1 rule: border
-		if ( b_t != "medum none" && b_t != "" )
+		if ( b_t != "medium none" && b_t != "" )
 			properties += "border: " + b_t;
 	}
 
@@ -393,7 +393,7 @@ void CSSSelectorEditor::widgetFromCode(QString code)
 		// In pname goes the property name, in pvalue goes the property value
 		QString pname = p.mid(p.find("{") + 1, p.find(":")).simplifyWhiteSpace();
 		QString pvalue = p.mid(p.find(":") + 1).simplifyWhiteSpace();
-		
+
 		// Remove chars that could be in the string (errors)
 		pname = pname.replace(QRegExp(":"), "");
 		pname = pname.replace(QRegExp("\\{"), "");
@@ -614,3 +614,5 @@ void CSSSelectorEditor::splitValueTRBL(QString value, QString& t,
 			break;
 	}
 }
+
+#include "cssselectoreditor.moc"

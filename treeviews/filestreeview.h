@@ -19,7 +19,7 @@
 #define FILESTREEVIEW_H
 
 #include <qwidget.h>
-#include <qstrlist.h>
+#include <qstringlist.h>
 
 #include <kconfig.h>
 #include <kpropertiesdialog.h>
@@ -38,10 +38,10 @@ class FilesTreeView : public FileManage  {
    Q_OBJECT
 public:
     FilesTreeView();
-	FilesTreeView( QString dir, QStrList topList, QWidget *parent=0L, const char *name=0L);
+	FilesTreeView( QString dir, QStringList topList, QWidget *parent=0L, const char *name=0L);
 	~FilesTreeView();
   void addFileInfoPage(KPropertiesDialog *propDlg);
-	
+
 public slots:
 	void slotMenu(QListViewItem *, const QPoint &, int);
 
@@ -49,28 +49,28 @@ public slots:
 	void slotSelectAnyFile(QListViewItem *);
 	void slotSelectImage  (QListViewItem *);
 	void slotAddToTop     ();
-	
+
 	void slotNewMode();
   /** No descriptions */
   virtual void slotInsertTag();
 	virtual void slotReload();
   virtual void slotProperties();
-	
+
 signals:
 	void activatePreview();
 	void openFile ( const KURL&, const QString& );
 	void openImage( QString fileToOpen );
-	
+
 protected:
 	virtual QString currentFileName();
   /** Return true, if the file is a text file. */
   bool isText(QString fileName);
-	
+
 public:
 	FilesTreeFolder *homeDir;
-  FilesTreeFolder *rootDir;
+    FilesTreeFolder *rootDir;
 
-  QStrList dirList;
+    QStringList dirList;
 };
 
 #endif

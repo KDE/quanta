@@ -27,6 +27,7 @@
 #include <qclipboard.h>
 #include <qcheckbox.h>
 #include <qtextedit.h>
+#include <qtextcodec.h>
 
 // include files for KDE
 #include <kapp.h>
@@ -92,8 +93,7 @@ void QuantaView::slotEditCurrentTag()
     }
     else
     {
-      QString message = i18n("Unknown tag: ");
-      message += tagName;
+      QString message = i18n("Unknown tag: %1").arg(tagName);
       app->slotStatusMsg( message.data() );
     }
     delete tag;
@@ -177,7 +177,7 @@ void QuantaView::slotTagMisc()
         {
 		      write()->insertTag(tag,QuantaCommon::tagCase(""));
         }
-  	}  	
+  	}
   }
   delete miscDlg;
 }
@@ -188,12 +188,13 @@ void QuantaView::slotTagQuickStart(){
 	TagQuickStart *quickDlg = new TagQuickStart( doc->basePath(), this, i18n("Generate HTML Text"));
 
   if ( quickDlg->exec() ) {
+    const QString chset = QTextCodec::codecForLocale()->mimeName();
   	QString tag = QString("<!DOCTYPE HTML PUBLIC \""+DEFAULT_DTD+"\">\n")+QuantaCommon::tagCase("<html>\n")
   	                  +space+QuantaCommon::tagCase("<head>\n")+space+QuantaCommon::tagCase("  <title>");
   	if ( !QString(quickDlg->lineTitle->text()).isEmpty())
 	   		tag += quickDlg->lineTitle->text();
     tag += QuantaCommon::tagCase("</title>\n")+space+
-           "  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">\n"+
+           "  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=" + chset + "\">\n"+
            space+"  <meta name=\"GENERATOR\" content=\"Quanta Plus\">\n"+space+
            QuantaCommon::tagCase("</head>\n")+space+QuantaCommon::tagCase("<body");
     if ( !QString(quickDlg->lineBGImage->text()).isEmpty())
@@ -220,7 +221,7 @@ void QuantaView::slotTagQuickList(){
   if ( listDlg->exec() ) {
   	int i;
     int n = listDlg->spinBoxRows->value();
-    		    	
+
     QString tag;
     if ( listDlg->radioOrdered->isChecked())
     	tag = QString("<ol>\n")+space;
@@ -247,12 +248,12 @@ void QuantaView::slotTagQuickTable()
 	int y,x;
 
 	TagQuickTable *quickDlg = new TagQuickTable(write(), this,i18n("Generate Table"));
-	
+
   if ( quickDlg->exec() )
   {
   		y = quickDlg->SpinBoxRow->value();
   		x = quickDlg->SpinBoxCol->value();
-  	
+
   		QString tag = QString("<table>\n")+space;
 
       if (quickDlg->useCaption->isChecked())
@@ -293,7 +294,7 @@ void QuantaView::slotTagQuickTable()
           item = item->nextSibling();
         }
       }
-  	
+
   		if (quickDlg->useTHead->isChecked())
   		{
   			tag += "  <thead>\n";
@@ -312,7 +313,7 @@ void QuantaView::slotTagQuickTable()
   		}
   	 	tag+="  <tbody>\n";
      	for ( int i=0;i<y;i++)
-     	{ 	
+     	{
  		  	tag += QString("    <tr>\n")+space;
  		  	for ( int j=0;j<x;j++)
  			  tag += QString("      <td>  </td>\n")+space;
@@ -320,7 +321,7 @@ void QuantaView::slotTagQuickTable()
  	 	}
  	 	tag += "  </tbody>\n";
  	 	tag += QString("</table>");
-  	
+
   	write()->insertTag( QuantaCommon::tagCase(tag) );
   }
   delete quickDlg;
@@ -461,7 +462,7 @@ void QuantaView::slotViewInLynx()
 /** check netscape status */
 void QuantaView::slotNetscapeStatus(KProcess *proc)
 {
-  if ( proc->exitStatus() ) 
+  if ( proc->exitStatus() )
   {
     KProcess *show = new KProcess();
     QString url = app->project->urlWithPrefix(write()->url());
@@ -476,7 +477,7 @@ void QuantaView::slotInsertTagFromTree(QString name)
 	QExtFileInfo file( name );
 	file.convertToRelative( doc->basePath() );
 	QString shortName = file.filePath();
-	
+
 	if ( QDir::match( fileMaskImage, name) )
 	{
 		write()->insertTag( QuantaCommon::tagCase("<img")+QuantaCommon::attrCase(" src=\"")+shortName+"\">");
@@ -497,7 +498,7 @@ void QuantaView::slotGetScriptOutput(KProcess *, char *buffer, int buflen)
 {
   Document *w = write();
 
-  QString output(buffer);
+  QString output(QString::fromLocal8Bit(buffer));
   output.truncate(buflen);
 
   if ( scriptOutputDest == "cursor" )
@@ -509,20 +510,20 @@ void QuantaView::slotGetScriptOutput(KProcess *, char *buffer, int buflen)
         //if ( !app->viewMenu->isItemChecked(ID_VIEW_MES) )
         //  app->slotViewMes();
         app->messageOutput->clear();
-        app->messageOutput->insertItem("Script output:\n");
+        app->messageOutput->insertItem(i18n("Script output:\n"));
       }
 
       app->messageOutput->showMessage(output);
-  }	
+  }
 
-  if ( scriptOutputDest == "new" ) 
+  if ( scriptOutputDest == "new" )
   {
 		 if ( beginOfScriptOutput )
         doc->openDocument( KURL() );
      w->insertTag(output);
   }
 
-  if ( scriptOutputDest == "replace" ) 
+  if ( scriptOutputDest == "replace" )
   {
 		 if ( beginOfScriptOutput ) w->editIf->clear();
      w->insertTag(output);
@@ -537,7 +538,7 @@ void QuantaView::slotGetScriptError(KProcess *, char *buffer, int buflen)
 {
   Document *w = write();
 
-  QString output(buffer);
+  QString output(QString::fromLocal8Bit(buffer));
   output.truncate(buflen);
 
   if ( scriptErrorDest == "merge" ) {
@@ -554,20 +555,20 @@ void QuantaView::slotGetScriptError(KProcess *, char *buffer, int buflen)
         //if ( !app->viewMenu->isItemChecked(ID_VIEW_MES) )
         //  app->slotViewMes();
         app->messageOutput->clear();
-        app->messageOutput->insertItem("Script output:\n");
+        app->messageOutput->insertItem(i18n("Script output:\n"));
       }
-        
-      app->messageOutput->showMessage( output );  	
-  }	
 
-  if ( scriptErrorDest == "new" ) 
+      app->messageOutput->showMessage( output );
+  }
+
+  if ( scriptErrorDest == "new" )
   {
 		 if ( beginOfScriptError )
         doc->openDocument( KURL() );
      w->insertTag(output);
   }
 
-  if ( scriptErrorDest == "replace" ) 
+  if ( scriptErrorDest == "replace" )
   {
 		 if ( beginOfScriptError ) write()->editIf->clear();
      w->insertTag(output);
@@ -586,9 +587,9 @@ void QuantaView::slotPasteHTMLQuoted()
 
   if ( ( !text.isNull() ) && (!text.isEmpty() ) )
   {
-    text.replace( QRegExp( I18N_NOOP( "&" ) ), I18N_NOOP( "&amp;" ) );
-    text.replace( QRegExp( I18N_NOOP( "<" ) ), I18N_NOOP( "&lt;" ) );
-    text.replace( QRegExp( I18N_NOOP( "\"" ) ), I18N_NOOP( "&quot;" ) );
+    text.replace( QRegExp( "&" ), "&amp;" );
+    text.replace( QRegExp( "<" ), "&lt;" );
+    text.replace( QRegExp( "\"" ), "&quot;" );
     unsigned int line, col;
     w->viewCursorIf->cursorPositionReal(&line, &col);
     w->editIf->insertText(line, col, text );

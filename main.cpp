@@ -45,7 +45,7 @@ working with tagging and scripting languages.\
 \n\nQuanta Plus is not in any way affiliated with any commercial\n \
 versions of Quanta. \
 \n\nWe hope you enjoy Quanta Plus.\n\n");
-	
+
 
 static KCmdLineOptions options[] =
 {
@@ -68,41 +68,41 @@ int main(int argc, char *argv[])
 
 	//aboutData.otherText(&othertext);
 
- 	aboutData.addAuthor("Eric Laffoon","Project Lead - public liason", "sequitur@kde.org");
- 	aboutData.addAuthor("Andras Mantia","Program Lead - bug squisher", "amantia@freemail.hu");
- 	aboutData.addAuthor("Dmitry Poplavsky","Inactive - left for commerical version", "dima@kde.org");
- 	aboutData.addAuthor("Alexander Yakovlev","Inactive - left for commerical version", "yshurik@kde.org");
+ 	aboutData.addAuthor("Eric Laffoon",I18N_NOOP("Project Lead - public liason"), "sequitur@kde.org");
+ 	aboutData.addAuthor("Andras Mantia",I18N_NOOP("Program Lead - bug squisher"), "amantia@freemail.hu");
+ 	aboutData.addAuthor("Dmitry Poplavsky",I18N_NOOP("Inactive - left for commerical version"), "dima@kde.org");
+ 	aboutData.addAuthor("Alexander Yakovlev",I18N_NOOP("Inactive - left for commerical version"), "yshurik@kde.org");
 
  	aboutData.addCredit("Richard Moore",
-    "Coding and tag dialog definition documentation and more",
+    I18N_NOOP("Coding and tag dialog definition documentation and more"),
     "rich@kde.org");
 
   aboutData.addCredit("Marc Britton",
-    "Various fixes, scripting dialog system",
+    I18N_NOOP("Various fixes, scripting dialog system"),
     "consume@optushome.com.au");
 
   aboutData.addCredit("Robert Nickel",
-    "Documentation, many cool parsing scripts to automate \ndevelopment",
+    I18N_NOOP("Documentation, many cool parsing scripts to automate \ndevelopment"),
     "robert@artnickel.com");
 
   aboutData.addCredit("Jason P. Hanley",
-    "Various fixes, foundational code for DTD parsing and other \nDTD related work",
+    I18N_NOOP("Various fixes, foundational code for DTD parsing and other \nDTD related work"),
     "jphanley@buffalo.edu");
 
   aboutData.addCredit("George Vilches",
-    "Tree based upload dialog",
+    I18N_NOOP("Tree based upload dialog"),
     "gav@creolmail.org");
 
   aboutData.addCredit("Matthew Colton",
-    "Cool splash screen for many version releases of Quanta",
+    I18N_NOOP("Cool splash screen for many version releases of Quanta"),
     "mat.colton@web-xs.de");
 
   aboutData.addCredit("Claus Hindsgaul",
-    "Danish translation",
+    I18N_NOOP("Danish translation"),
     "claus_h@image.dk");
 
   aboutData.addCredit("Dmitri Dmitrienko",
-    "Part of a code for PHP4 Debugger",
+    I18N_NOOP("Part of a code for PHP4 Debugger"),
     "dd@cron.ru");
 
 

@@ -18,7 +18,8 @@
 #include "tagimgdlg.moc"
 #include <qspinbox.h>
 
-#include <kapp.h>
+#include <kapplication.h>
+#include <klocale.h>
 #include <kiconloader.h>
 #include <kfiledialog.h>
 
@@ -81,7 +82,7 @@ void TagImgDlg::slotRecalcImgSize()
 /** select image */
 void TagImgDlg::slotFileSelect()
 {
-		QString fileName = KFileDialog::getOpenFileName( basePath, "*.gif *.jpg *.png *.jpeg *.bmp *.GIF *.JPG *.PNG *.JPEG *.BMP|Image files\n*|All files");
+		QString fileName = KFileDialog::getOpenFileName( basePath, i18n("*.gif *.jpg *.png *.jpeg *.bmp *.GIF *.JPG *.PNG *.JPEG *.BMP|Image files\n*|All files"));
 		if (fileName.isEmpty()) return;
 
 		QExtFileInfo file(fileName);

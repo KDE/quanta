@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include <iostream.h>
 
+#include <klocale.h>
+
 #include "listener.h"
 
 #include "idesite.h"
@@ -18,8 +20,7 @@ HRESULT IdeSite::initialize(RequestorBase *req, int dbg_ver, char *dbg_descr)
   sockaddr_in addr;
   requestor->getserveraddr(&addr);
 
-  QString mes = "::log:Start session on ";
-  mes+=inet_ntoa(addr.sin_addr);
+  QString mes = i18n("::log:Start session on %1").arg(inet_ntoa(addr.sin_addr));
   emit message(mes);
 
   return S_OK;
@@ -96,8 +97,7 @@ HRESULT IdeSite::close()
   sockaddr_in addr;
   requestor->getserveraddr(&addr);
 
-  QString mes = "::log:Stop session on ";
-  mes+=inet_ntoa(addr.sin_addr);
+  QString mes = i18n("::log:Stop session on %1").arg(inet_ntoa(addr.sin_addr));
   emit message(mes);
 
   requestor = NULL;
@@ -115,7 +115,7 @@ void IdeSite::print_location()
 
   if (SUCCEEDED(hr))
   {
-    QString mes = "\n:LOCATION:";
+    QString mes = i18n("\n:LOCATION:");
     mes += mod_name.data();
     QString t;
     t.sprintf(":%s=%d","mod_no",mod_no);
@@ -125,12 +125,12 @@ void IdeSite::print_location()
 
     emit message(mes);
   }
-  else print_error("Failed to get current location");
+  else print_error(i18n("Failed to get current location"));
 }
 
-void IdeSite::print_error(char *msg)
+void IdeSite::print_error(QString msg)
 {
-  QString mes = "\n:ERROR:";
+  QString mes = i18n("\n:ERROR:");
   mes += msg;
 
   emit message(mes);

@@ -24,7 +24,8 @@
 
 // KDE clases
 #include <kconfig.h>
-#include <kapp.h>
+#include <kapplication.h>
+#include <klocale.h>
 #include <kstddirs.h>
 #include <kiconloader.h>
 
@@ -46,7 +47,7 @@ DocTreeView::DocTreeView(QWidget *parent, const char *name )
 
   setFrameStyle( Panel | Sunken );
   setLineWidth( 2 );
-  addColumn( "Name" );
+  addColumn( i18n("Name") );
 
   QStringList docDirs = KGlobal::instance()->dirs()->findDirs("appdata", "doc");
 

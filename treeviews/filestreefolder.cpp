@@ -32,7 +32,7 @@
 #include <kiconloader.h>
 
 
-FilesTreeFolder::FilesTreeFolder( FilesTreeFolder * parent, const char * name )
+FilesTreeFolder::FilesTreeFolder( FilesTreeFolder * parent, QString name )
     : QListViewItem( parent ), file( name ), folderName( name )
 {
     parentFolder 	= parent;
@@ -46,7 +46,7 @@ FilesTreeFolder::FilesTreeFolder( FilesTreeFolder * parent, const char * name )
 }
 
 
-FilesTreeFolder::FilesTreeFolder( QListView * parent, const char * name, const char *_dir )
+FilesTreeFolder::FilesTreeFolder( QListView * parent, QString name, const QString & _dir )
     : QListViewItem( parent ), file(name), folderName(_dir)
 {
     parentFolder = 0L;
@@ -54,8 +54,8 @@ FilesTreeFolder::FilesTreeFolder( QListView * parent, const char * name, const c
     readable 	= true;
     showall 	= true;
 
-  setDragEnabled(true);
-  setDropEnabled(true);
+    setDragEnabled(true);
+    setDropEnabled(true);
 }
 
 
@@ -66,7 +66,7 @@ void FilesTreeFolder::setOpen( bool open )
 								 													+fileMaskImage;
  */
 	QDir thisDir( fullName() );
-	
+
   // exists ?
   if ( !thisDir.exists())	return;
   // readable ?
@@ -74,7 +74,7 @@ void FilesTreeFolder::setOpen( bool open )
   {
 	  readable = false;
 	  setExpandable( false );
-	
+
 	  setPixmap( 0, SmallIcon("folder_locked") );
 	  return;
 	}
@@ -83,28 +83,28 @@ void FilesTreeFolder::setOpen( bool open )
   {
 		thisDir.setSorting( QDir::Name);
 		thisDir.setFilter ( QDir::Dirs);
-		
+
 		QStringList::Iterator it;
-		
+
 		QStringList dirList =  thisDir.entryList();
-		
+
 		dirList.remove(".");
 		dirList.remove("..");
-		
+
 		FilesTreeFolder *ditem;
-		
+
 		for ( it = dirList.begin(); it != dirList.end(); ++it )
 		{
 		  ditem = new FilesTreeFolder( this, *it );
 		  ditem->setPixmap( 0, SmallIcon("folder") );
 		}
-		
+
 		thisDir.setFilter( QDir::Files);
-		
+
 		QStringList fileList = thisDir.entryList();
-		
+
 		FilesTreeFile* item;
-		
+
 		for ( it = fileList.begin(); it != fileList.end(); ++it )
 	//	  if ( QDir::match( fileMask, *it ) )
 		  {
@@ -128,7 +128,7 @@ void FilesTreeFolder::setOpen( bool open )
 QString FilesTreeFolder::fullName()
 {
 	QString s="";
-	
+
 //  if (!item) item = this;
 
   if ( parentFolder )

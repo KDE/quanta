@@ -30,10 +30,10 @@ UploadTreeView::UploadTreeView( QWidget *parent, const char *name ) :
 
 	setFrameStyle( Panel | Sunken );
 	setLineWidth( 2 );
-	addColumn( tr2i18n("Name") );
-  addColumn( tr2i18n("Upload") );
-	addColumn( tr2i18n("Size") );
-	addColumn( tr2i18n("Date") );
+	addColumn( i18n("Name") );
+    addColumn( i18n("Upload") );
+	addColumn( i18n("Size") );
+	addColumn( i18n("Date") );
 
 	setFocusPolicy(QWidget::ClickFocus);
 
@@ -42,7 +42,7 @@ UploadTreeView::UploadTreeView( QWidget *parent, const char *name ) :
 	connect(  this, SIGNAL(clicked(QListViewItem *)),
 						this, SLOT(slotSelectFile(QListViewItem *)));
 
-	//rootDir = new FilesTreeFolder( this , "Root Directory", "/");
+	//rootDir = new FilesTreeFolder( this , i18n("Root Directory"), "/");
 }
 
 UploadTreeView::~UploadTreeView()
@@ -230,3 +230,5 @@ UploadTreeFile* UploadTreeView::addItem( QString item, QString date, QString siz
 	}
 	return file;
 }
+
+#include "uploadtreeview.moc"

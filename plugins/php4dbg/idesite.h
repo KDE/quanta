@@ -7,7 +7,7 @@
 
 #include "thread.h"
 #include "dbgbase/DbgSite.h"
- 
+
 class IdeSite : public DbgSiteBase {
   Q_OBJECT
 private:
@@ -21,11 +21,11 @@ public:
   HRESULT handlebreakpoint(BRREASON reason, BRACTION *action);
   HRESULT close();
 
-  void print_error(char *msg);
+  void print_error(QString);
   void print_location();
-  
+
 signals:
-  void message(QString);  
+  void message(QString);
 
 };
 

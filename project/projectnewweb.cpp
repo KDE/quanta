@@ -36,18 +36,18 @@ ProjectNewWeb::ProjectNewWeb(QWidget *parent, const char *name )
 {
   button->setEnabled(false);
   siteUrl->setFocus();
-  
+
   imagelabel->setPixmap( UserIcon("wiznewprjweb") );
-  
+
   listFiles->setColumnAlignment(1,Qt::AlignRight);
-  
+
   connect( commandLine, SIGNAL(textChanged(const QString&)),
            this,        SLOT  (enableStart(const QString&)));
   connect( siteUrl,     SIGNAL(textChanged(const QString&)),
            this,        SLOT  (setCommandL(const QString&)));
   connect( button,      SIGNAL(clicked()),
            this,        SLOT  (slotStart()));
-           
+
   start = false;
   filesList.clear();
 }
@@ -64,8 +64,8 @@ void ProjectNewWeb::enableStart(const QString&)
 void ProjectNewWeb::setCommandL(const QString& url)
 {
   QString siteurl = url;
-  
-  if ( url.left(6) != "ftp://" && url.left(7) != "http://" ) 
+
+  if ( url.left(6) != "ftp://" && url.left(7) != "http://" )
   {
     siteurl = QString("http://")+url;
   }
@@ -83,39 +83,39 @@ void ProjectNewWeb::slotStart()
   if ( !start )
   {
     emit enableMessages();
-    
+
     QExtFileInfo::createDir( basePath );
-    
+
     chdir( basePath );
-    
+
     proc = new KProcess();
     proc ->clearArguments();
-  
+
     QStringList list = QStringList::split (" ", commandLine->text());
-    
-    for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it ) 
+
+    for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
     {
       *proc << *it;
     }
-    
+
     connect( proc, SIGNAL(receivedStdout(   KProcess*,char*,int)), this,
                    SLOT(  slotGetWgetOutput(KProcess*,char*,int)));
     connect( proc, SIGNAL(receivedStderr(   KProcess*,char*,int)), this,
                    SLOT(  slotGetWgetOutput(KProcess*,char*,int)));
     connect( proc, SIGNAL(processExited(    KProcess *)), this,
                    SLOT(  slotGetWgetExited(KProcess *)));
-                   
+
     proc->start(KProcess::NotifyOnExit, KProcess::AllOutput);
-    
+
     start = true;
     button->setText( i18n("Stop") );
   	emit enableNextButton((QWidget *)this->parent(),false);
   } else {
-      
+
     // STOPPING !!!
-    
+
     delete proc;
-    
+
     start = false;
     button->setText( i18n("Start") );
   	emit enableNextButton((QWidget *)this->parent(),true);
@@ -125,8 +125,8 @@ void ProjectNewWeb::slotStart()
 void ProjectNewWeb::slotGetWgetExited(KProcess*)
 {
 	start = false;
-  button->setText( i18n("Start") );
-	emit messages("wget finished...\n");
+    button->setText( i18n("Start") );
+    emit messages(i18n("wget finished...\n"));
 	emit enableNextButton((QWidget *)this->parent(),true);
 }
 
@@ -136,7 +136,7 @@ void ProjectNewWeb::slotGetWgetOutput(KProcess *, char *buffer, int buflen)
   output = output.left( buflen );
 
   emit messages(output);
-  
+
   int pos;
   while ( (pos = output.find("saved")) != -1 )
   {
@@ -145,26 +145,26 @@ void ProjectNewWeb::slotGetWgetOutput(KProcess *, char *buffer, int buflen)
       output = output.remove(0,pos+1);
       continue;
     }
-    
+
     int endName = output.find('\'',begName);
     if ( endName == -1 || endName > pos ) {
       output = output.remove(0,pos+1);
       continue;
     }
-  
+
     QString fileName = output.left(endName);
     fileName = fileName.right( endName - begName-1);
-  
+
     output = output.remove(0,pos+1);
-    
+
     textFromTo->setText( siteUrl->text()+" -->> "+basePath+fileName );
-    
+
     filesList.append( basePath+fileName );
-    
+
     QFileInfo fi( basePath+fileName );
     QString size;
     size.sprintf( "%i", fi.size() );
-    
+
     new QListViewItem(listFiles, fileName, size );
     listFiles->setColumnWidth(0,listFiles->width()-listFiles->columnWidth(1)-20);
   }

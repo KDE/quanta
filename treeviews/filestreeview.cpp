@@ -52,60 +52,61 @@ FilesTreeView::FilesTreeView()
 {
 }
 
-FilesTreeView::FilesTreeView( QString dir, QStrList topList, QWidget *parent, const char *name)
+FilesTreeView::FilesTreeView( QString dir, QStringList topList, QWidget *parent, const char *name)
 	: FileManage(parent,name)
 {
-	this->dirList = topList;	
-	
+	this->dirList = topList;
+
 	setRootIsDecorated( true );
-  header()->hide();
-  setSorting( 0 );
+    header()->hide();
+    setSorting( 0 );
 
-  setFrameStyle( Panel | Sunken );
-  setLineWidth( 2 );
-  addColumn( "Name" );
+    setFrameStyle( Panel | Sunken );
+    setLineWidth( 2 );
+    addColumn( i18n("Name") );
 
-	setFocusPolicy(QWidget::ClickFocus);
+    setFocusPolicy(QWidget::ClickFocus);
 
-	rootDir = new FilesTreeFolder( this , "Root Directory", "/");
-	rootDir->setPixmap( 0, SmallIcon("folder"));
-	rootDir->setOpen( false);
-  	
- 	homeDir = new FilesTreeFolder( this , "Home Directory", dir);
-	homeDir->setPixmap( 0, SmallIcon("folder_home"));
-	homeDir->setOpen( true );
-	
+    rootDir = new FilesTreeFolder( this , i18n("Root Directory"), "/");
+    rootDir->setPixmap( 0, SmallIcon("folder"));
+    rootDir->setOpen( false);
+
+    homeDir = new FilesTreeFolder( this , i18n("Home Directory"), dir);
+    homeDir->setPixmap( 0, SmallIcon("folder_home"));
+    homeDir->setOpen( true );
+
 	fileMenu -> insertItem( i18n("List Mode"), this ,SLOT(slotNewMode()));
 
 	folderMenu -> insertItem( i18n("List Mode"), this ,SLOT(slotNewMode()));
 	folderMenu -> insertItem( i18n("Add Folder to Top"), this ,SLOT(slotAddToTop()), 0, ID_TOP, 0);
-	
-	connect(  this, SIGNAL(doubleClicked(QListViewItem *)),
-						this, SLOT(slotSelectFile(QListViewItem *)));
-	connect(  this, SIGNAL(selectionChanged(QListViewItem *)),
-						this, SLOT(slotSelectImage(QListViewItem *)));
-	connect(	this, SIGNAL(returnPressed(QListViewItem *)),
-						this, SLOT(slotSelectFile(QListViewItem *)));
-						
-	connect( this, SIGNAL(rightButtonPressed(QListViewItem*, const QPoint&, int)),
-					 this, SLOT(slotMenu(QListViewItem*, const QPoint&, int)));
-					
-	connect(	this, SIGNAL(open(QListViewItem *)),
-						this,	SLOT(slotSelectFile(QListViewItem *)));
-	connect(	this, SIGNAL(openInQuanta(QListViewItem *)),
-						this,	SLOT(slotSelectAnyFile(QListViewItem *)));
-						
+
+	connect(this, SIGNAL(doubleClicked(QListViewItem *)),
+            this, SLOT(slotSelectFile(QListViewItem *)));
+	connect(this, SIGNAL(selectionChanged(QListViewItem *)),
+            this, SLOT(slotSelectImage(QListViewItem *)));
+	connect(this, SIGNAL(returnPressed(QListViewItem *)),
+            this, SLOT(slotSelectFile(QListViewItem *)));
+
+	connect(this, SIGNAL(rightButtonPressed(QListViewItem*, const QPoint&, int)),
+            this, SLOT(slotMenu(QListViewItem*, const QPoint&, int)));
+
+	connect(this, SIGNAL(open(QListViewItem *)),
+            this, SLOT(slotSelectFile(QListViewItem *)));
+	connect(this, SIGNAL(openInQuanta(QListViewItem *)),
+            this, SLOT(slotSelectAnyFile(QListViewItem *)));
+
 	// generate top list of directories
-	for ( topList.first(); topList.current(); topList.next() )
+    QStringList::ConstIterator it;
+    for (it = topList.begin(); it != topList.end(); ++it)
 	{
-	  QString f = topList.current();
-	  QString fname = f;
-    int i;
-    while ( ( i = f.find('/')) >= 0 ) f.remove(0,i+1);
-	
-	  FilesTreeFolder *dir = new FilesTreeFolder( this , " "+f, fname+"/");
-	  dir->setPixmap( 0, SmallIcon("kdisknav") );
-	  dir->setOpen( false);
+        QString f = (*it);
+        QString fname = f;
+        int i;
+        while ( ( i = f.find('/')) >= 0 )
+            f.remove(0,i+1);
+        FilesTreeFolder *dir = new FilesTreeFolder( this , " "+f, fname+"/");
+        dir->setPixmap( 0, SmallIcon("kdisknav") );
+        dir->setOpen( false );
 	}
 }
 
@@ -132,21 +133,24 @@ void FilesTreeView::slotMenu(QListViewItem *item, const QPoint &point, int)
 {
 	if ( !item ) return;
 	setSelected(item, true);
-	
+
 	FilesTreeFile *f = dynamic_cast<FilesTreeFile *>( item);
 	if ( f ) fileMenu->popup( point);
-	
+
 	FilesTreeFolder *d = dynamic_cast<FilesTreeFolder *>( item);
 	if ( d )
 	{
-	  if ( !d->parentFolder )folderMenu ->changeItem( ID_TOP, i18n("Remove From Top"));
-	  else                   folderMenu ->changeItem( ID_TOP, i18n("Add Folder to Top"));
-	
-	  if ( d->text(0) == "Home" || d->text(0) == "Root" )
-	        folderMenu ->setItemEnabled( ID_TOP, false);
-	  else  folderMenu ->setItemEnabled( ID_TOP, true );
-	
-	  folderMenu ->popup     ( point);
+	  if ( !d->parentFolder )
+          folderMenu ->changeItem( ID_TOP, i18n("Remove From Top"));
+	  else
+          folderMenu ->changeItem( ID_TOP, i18n("Add Folder to Top"));
+
+	  if ( d->text(0) == i18n("Home Directory") || d->text(0) == i18n("Root Directory") ) //keep in sync with above texts!
+          folderMenu ->setItemEnabled( ID_TOP, false);
+	  else
+          folderMenu ->setItemEnabled( ID_TOP, true );
+
+	  folderMenu->popup(point);
 	}
 }
 
@@ -155,10 +159,10 @@ QString FilesTreeView::currentFileName()
 	if ( !currentItem() ) return "";
 	QListViewItem *item = currentItem();
 	FilesTreeFolder *parent = dynamic_cast<FilesTreeFolder *> (item->parent());
-	
+
 	if ( !parent ) // top level element
 		return ((FilesTreeFolder *)item)->fullName();
-		
+
 	return parent->fullName()+item->text(0);
 }
 
@@ -169,11 +173,11 @@ void FilesTreeView::slotSelectFile(QListViewItem *item)
 	FilesTreeFolder *parent = (FilesTreeFolder *) item->parent();
 	if ( !parent ) return;
 	if ( dynamic_cast<FilesTreeFolder *>(item) ) return;
-	
+
 	QString nameToOpen = currentFileName();
 
 
-	
+
 	if ( QDir::match( fileMaskHtml+fileMaskJava+fileMaskText, nameToOpen) )
 	{
 		KURL url(nameToOpen);
@@ -193,8 +197,8 @@ void FilesTreeView::slotSelectFile(QListViewItem *item)
 		emit openFile( url, defaultEncoding );
  } else
  {
-   if (KMessageBox::questionYesNo(this,"This file cannot be opened in Quanta. \n \
-       Do you want to open with an external program or run it?","Unknown type") == KMessageBox::Yes)
+   if (KMessageBox::questionYesNo(this, i18n("This file cannot be opened in Quanta. \n \
+       Do you want to open with an external program or run it?"), i18n("Unknown type")) == KMessageBox::Yes)
   {
    KFileOpenWithHandler fowh;
 	 new KRun( KURL(nameToOpen), 0, true );
@@ -209,9 +213,9 @@ void FilesTreeView::slotSelectAnyFile(QListViewItem *item)
 	FilesTreeFolder *parent = (FilesTreeFolder *) item->parent();
 	if ( !parent ) return;
 	if ( dynamic_cast<FilesTreeFolder *>(item) ) return;
-	
+
 	KURL url(currentFileName());
-	
+
  QString mimetype = KMimeType::findByFileContent(currentFileName())->name();
 
  if (! mimetype.contains("text"))
@@ -232,9 +236,9 @@ void FilesTreeView::slotSelectImage(QListViewItem *item)
 	FilesTreeFolder *parent = (FilesTreeFolder *) item->parent();
 	if ( !parent ) return;
 	if ( dynamic_cast<FilesTreeFolder *>(item) ) return;
-	
+
 	QString nameToOpen = parent->fullName()+item->text(0);
-	
+
 	if ( QDir::match( fileMaskImage, nameToOpen) )
 	{
 		emit openImage( nameToOpen );
@@ -243,29 +247,29 @@ void FilesTreeView::slotSelectImage(QListViewItem *item)
 
 void FilesTreeView::slotAddToTop()
 {
-  FilesTreeFolder *d = dynamic_cast<FilesTreeFolder *>( currentItem() );
+    FilesTreeFolder *d = dynamic_cast<FilesTreeFolder *>( currentItem() );
 	if ( d )
 	{
-	  if ( d->parentFolder )
-	  { // add
-	    QString f = currentFileName();
-	    QString fname = f;
-      int i;
-      while ( ( i = f.find('/')) >= 0 ) f.remove(0,i+1);
-	
-      if ( dirList.find( fname ) != -1) return;
+        if ( d->parentFolder )
+        { // add
+            QString f = currentFileName();
+            QString fname = f;
+            int i;
+            while ( ( i = f.find('/')) >= 0 ) f.remove(0,i+1);
 
-	    FilesTreeFolder *dir = new FilesTreeFolder( this , " "+f, fname+"/");
-  	    dir->setPixmap( 0, SmallIcon("kdisknav") );
-	    dir->setOpen( false);
-	    dirList.append( fname );
-	  }
-	  else { // remove
-	    QString f = currentFileName();
-	    f = f.remove( f.length()-1, 1 );
-	    dirList.remove( f );
-	    delete( d );
-	  }
+            if ( dirList.contains( fname ) != -1) return;
+
+            FilesTreeFolder *dir = new FilesTreeFolder( this , " "+f, fname+"/");
+            dir->setPixmap( 0, SmallIcon("kdisknav") );
+            dir->setOpen( false);
+            dirList.append( fname );
+        }
+        else { // remove
+            QString f = currentFileName();
+            f = f.remove( f.length()-1, 1 );
+            dirList.remove( f );
+            delete( d );
+        }
 	}
 }
 

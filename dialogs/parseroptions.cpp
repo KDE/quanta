@@ -42,7 +42,7 @@ ParserOptions::ParserOptions( KConfig *config, QWidget* parent,  const char* nam
     if ( !name )
 		  setName( "ParserOptions" );
 
-    if ( handleLBM == "Find Tag & Open Tree" )
+    if ( handleLBM == i18n("Find Tag & Open Tree") )
     {
       comboLBM->setCurrentItem(1);
     }
