@@ -274,7 +274,7 @@ void Project::loadProject(QString fname)
 	if ( (projectName=n_prj.toElement().attribute("name")).isNull() ) return;
 	
 	previewPrefix = n_prj.toElement().attribute("preview");
-	if ( previewPrefix.right(1) != "/" ) previewPrefix+="/";
+	if ( previewPrefix.right(1) != "/" && !previewPrefix.isEmpty() ) previewPrefix+="/";
 		
 	QDomNodeList nl = dom.firstChild().firstChild().childNodes();
 	
