@@ -8,6 +8,7 @@ noinst_LIBRARIES = libdialogs.a
 
 
 INCLUDES = $(all_includes)
+CXXFLAGS = -Wall 
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 libdialogs_a_METASOURCES = AUTO
 libdialogs_a_SOURCES = \

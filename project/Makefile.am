@@ -8,6 +8,7 @@ noinst_LIBRARIES = libproject.a
 
 
 INCLUDES = $(all_includes)
+CXXFLAGS = -Wall 
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 libproject_a_METASOURCES = AUTO
 libproject_a_SOURCES = \

@@ -8,6 +8,7 @@ noinst_LIBRARIES = libwidgets.a
 
 
 INCLUDES = $(all_includes)
+CXXFLAGS = -Wall 
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 libwidgets_a_METASOURCES = AUTO
 libwidgets_a_SOURCES = \

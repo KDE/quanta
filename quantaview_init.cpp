@@ -64,12 +64,13 @@ QuantaView::QuantaView( QuantaApp *app, QWidget *parent, const char *name )
 	writeTab = new QTabWidget(this);
   writeTab ->setTabPosition( QTabWidget::Bottom );
   writeTab ->setFocusPolicy( QWidget::NoFocus );
-
+             
   layout->addWidget( tabBar       ,0,0);
   layout->addWidget( toolbarStack ,1,0);
   layout->addWidget( writeTab     ,2,0);
 
-  connect( writeTab,	SIGNAL(selected(const QString &)), app, SLOT(slotUpdateStatus(const QString &)));
+  //connect( writeTab,	SIGNAL(selected(const QString &)), app, SLOT(slotUpdateStatus(const QString &)));
+  connect( writeTab,	SIGNAL(currentChanged(QWidget*)), app, SLOT(slotUpdateStatus(QWidget*)));
   connect( tabBar,		SIGNAL(selected(int)), toolbarStack, SLOT(raiseWidget(int)));
   connect( writeTab,	SIGNAL(selected(const QString &)), app, SLOT(reparse()));
   

@@ -9,6 +9,7 @@ noinst_LIBRARIES = libhighlight.a
 
 INCLUDES = $(all_includes)\
 		-I$(top_srcdir)/quanta/kwrite
+CXXFLAGS = -Wall 
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 libhighlight_a_METASOURCES = AUTO
 libhighlight_a_SOURCES = \

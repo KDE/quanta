@@ -8,6 +8,7 @@ noinst_LIBRARIES = libtreeviews.a
 
 
 INCLUDES = $(all_includes)
+CXXFLAGS = -Wall 
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 libtreeviews_a_METASOURCES = AUTO
 libtreeviews_a_SOURCES = \

@@ -38,6 +38,7 @@
 // include files for KDE 
 #include <kapp.h>
 #include <kdockwidget.h>
+#include "kqapp.h"
 #include "widgets/whtmlpart.h"
 #include <kparts/browserextension.h>
 
@@ -160,7 +161,8 @@ class QuantaApp : public KDockMainWindow
     void slotNewStatus    ();
     void slotNewMarkStatus();
     void slotNewLineColumn();
-    void slotUpdateStatus (const QString &);
+    //void slotUpdateStatus (const QString &);
+    void slotUpdateStatus (QWidget*);
 
     void slotDockChanged();
     void slotSwapLeftPanelMode();

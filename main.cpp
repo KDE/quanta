@@ -15,11 +15,14 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <stdlib.h>
+
 // kde includes
 #include <klocale.h>
 #include <kaboutdata.h>
 #include <kiconloader.h>
 #include <kcmdlineargs.h>
+#include <ksimpleconfig.h>
 
 // qt includes
 #include <qpixmap.h>
@@ -34,10 +37,11 @@ static const char *description =
 	I18N_NOOP("Quanta Plus Web Development Environment");
 // INSERT A DESCRIPTION FOR YOUR APPLICATION HERE
 	
-	
+
 static KCmdLineOptions options[] =
 {
   { "+[File]", I18N_NOOP("file to open"), 0 },
+  { "unique", I18N_NOOP("Whether we start as a one-instance application."), 0 },
   { 0, 0, 0 }
   // INSERT YOUR COMMANDLINE OPTIONS HERE
 };
@@ -51,72 +55,42 @@ int main(int argc, char *argv[])
 		"We hope you enjoy our program.",
 		"http://quanta.sourceforge.net"
 		);
-		
+
  	aboutData.addAuthor("Dmitry Poplavsky",0, "dima@kde.org");
  	aboutData.addAuthor("Alexander Yakovlev",0, "yshurik@kde.org");
  	aboutData.addAuthor("Eric Laffoon",0, "sequitur@kde.org");
- 	
+
  	aboutData.addCredit("Richard Moore",
     "Coding and tag dialog definition documentation",
     "rich@kde.org");
-    
+
   aboutData.addCredit("Matthew Colton",
     "Cool splash screen for quanta",
     "mat.colton@web-xs.de");
-    
+
   aboutData.addCredit("Claus Hindsgaul",
     "Danish translation",
     "claus_h@image.dk");
-    
+
   aboutData.addCredit("Dmitri Dmitrienko",
     "Part of a code for PHP4 Debugger",
     "dd@cron.ru");
-    
-	KCmdLineArgs::init( argc, argv, &aboutData );
-	KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
-	
-	KApplication app;
 
-	QFrame *f = new QFrame( 0L, QString("Quanta")+VERSION,
-													QWidget::WStyle_NoBorder | QWidget::WStyle_Customize );
 
-  QPixmap pm( UserIcon("quantalogo") );
-  
-  f->setBackgroundPixmap(pm);
-  f->setGeometry( QApplication::desktop()->width ()/2-160,
-                  QApplication::desktop()->height()/2-120,
-  						     320, 240 );
-  f->setLineWidth(0);
-  f->show();
-  
+  KCmdLineArgs::init( argc, argv, &aboutData );
+  KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
 
+  KApplication *app;
+  KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+
+  if (args->isSet("unique")) {
+	if (!KQUniqueApplication::start())
+		exit(0);
+	app = new KQUniqueApplication;
+  } else {
+	app = new KQApplication;
+  }
   qInitNetworkProtocols();
-	
-  if (app.isRestored())
-  {
-    RESTORE(QuantaApp);
-  }
-  else
-  {
-    QuantaApp *quanta;
-     
-    quanta = new QuantaApp();
-    quanta ->show();
-    
-    delete f;
-    
-    quanta ->openLastFiles();
 
-    KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-		
-		if (args->count())
-		{
-		  KURL url(args->arg(0));
-      quanta->slotFileOpen( url );
-		}
-		args->clear();
-  }
-  
-
-  return app.exec();
+  return app->exec();
 }

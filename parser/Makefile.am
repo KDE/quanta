@@ -8,6 +8,7 @@ noinst_LIBRARIES = libparser.a
 
 
 INCLUDES = $(all_includes)
+CXXFLAGS = -Wall 
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 libparser_a_METASOURCES = AUTO
 libparser_a_SOURCES = \

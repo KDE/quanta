@@ -573,9 +573,9 @@ void QuantaDoc::changeFileTabName( QString oldUrl, QString newUrl )
  		}
  		QString shortUrl = name1.right( len );
  		
- 		if ( app->view->writeTab->tabLabel(it1.current()) != shortUrl)
+ 		if ( app->view->writeTab->tabLabel(it1.current()) != shortUrl) 
  		  app->view->writeTab->changeTab( it1.current() , shortUrl );
- 		
+ 		                                                                
  		++it1;
  	}
 }

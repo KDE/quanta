@@ -362,10 +362,10 @@ void QuantaApp::slotInsertTag(QString url)
      QString w,h;
      w.setNum( img.width () );
 	   h.setNum( img.height() );
-	   
+
 	   doc->write()->insertTag("<img src=\""+furl+"\" width=\""+w+"\" height=\""+h+"\" border=\"0\">");
-   } 
-   else 
+   }
+   else
      doc->write()->insertTag( "<a href=\""+furl+"\">","</a>");
 }
 
@@ -376,59 +376,68 @@ void QuantaApp::slotInsertTag(QString url)
 void QuantaApp::slotNewStatus()
 {
   setTitle( doc->url().url() );
-  
+
   int  config   = doc->write()->config();
   bool readOnly = doc->write()->isReadOnly();
-  
+
   if (readOnly) statusBar()->changeItem(i18n(" R/O "),IDS_INS_OVR);
   else          statusBar()->changeItem(config & KWriteView::cfOvr ? i18n(" OVR ") : i18n(" INS "),IDS_INS_OVR);
-  
+
   statusBar()->changeItem(doc->write()->isModified() ? " * " : "",IDS_MODIFIED);
-  
+
   saveAction   ->setEnabled(doc->isModified());
   saveAllAction->setEnabled(doc->isModified());
-  
+
   closeprjAction     ->setEnabled(project->hasProject());
   insertFileAction   ->setEnabled(project->hasProject());
   insertDirAction    ->setEnabled(project->hasProject());
   rescanPrjDirAction ->setEnabled(project->hasProject());
   uploadProjectAction->setEnabled(project->hasProject());
   projectOptionAction->setEnabled(project->hasProject());
-  
+
   int eol = doc->write()->getEol()-1;
   eol = eol>=0? eol: 0;
-  
+
   eolSelectAction->setCurrentItem(eol);
   hlSelectAction ->setCurrentItem(doc->write()->getHl ());
-  
-  QDictIterator<Document> it( *(doc->docList) );
+
+  //QDictIterator<Document> it( *(doc->docList) );
 
   QIconSet floppyIcon( UserIcon("save_small"));
   QIconSet  emptyIcon( UserIcon("empty1x16" ));
 
   QTabWidget *wTab = view->writeTab;
+  Document *w = static_cast<Document*>(wTab->currentPage());
+  if ( w->isModified() )
+	  wTab->changeTab( w,  floppyIcon, wTab->tabLabel(w));
+  else
+	  wTab->changeTab( w,  emptyIcon,  wTab->tabLabel(w));
+      
+  w->oldstat = w->isModified();
   
+/*  
   while ( Document *w = it.current() )
   {
     if ( w->isModified() != w->oldstat );
     {
-      if ( w->isModified() ) 
+      if ( w->isModified() )
     	  wTab->changeTab( w,  floppyIcon, wTab->tabLabel(w));
       else
     	  wTab->changeTab( w,  emptyIcon,  wTab->tabLabel(w));
-    
+      
       w->oldstat = w->isModified();
     }
 
     ++it;
   }
+*/  
 }
 
 /** slot for new undo flag */
 void QuantaApp::slotNewUndo()
 {
 	int state = doc->write()->undoState();
-  
+
   undoAction->setEnabled(state & 1);
   redoAction->setEnabled(state & 2);
 }
@@ -437,12 +446,13 @@ void QuantaApp::slotNewUndo()
 void QuantaApp::slotNewMarkStatus()
 {
   bool stat = doc->write()->hasMarkedText();
-		
+
   cutAction ->setEnabled(stat);
   copyAction->setEnabled(stat);
 }
 
-void QuantaApp::slotUpdateStatus(const QString &)
+//void QuantaApp::slotUpdateStatus(const QString &)
+void QuantaApp::slotUpdateStatus(QWidget*)
 {
 	slotNewUndo();
 	slotNewStatus();

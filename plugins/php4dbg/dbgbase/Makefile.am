@@ -8,6 +8,7 @@ noinst_LIBRARIES = libdbgbase.a
 
 
 INCLUDES = $(all_includes)
+CXXFLAGS = -Wall -DDBG_USE_STDALLOCA
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 libdbgbase_a_METASOURCES = AUTO
 libdbgbase_a_SOURCES = \

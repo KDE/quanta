@@ -9,6 +9,7 @@ noinst_LIBRARIES = libtoolbar.a
 
 INCLUDES = $(all_includes)\
 		-I$(top_srcdir)/quanta/tagdialogs
+CXXFLAGS = -Wall 
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 libtoolbar_a_METASOURCES = AUTO
 libtoolbar_a_SOURCES = \

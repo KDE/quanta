@@ -8,6 +8,7 @@ noinst_LIBRARIES = libmessages.a
 
 
 INCLUDES = $(all_includes)
+CXXFLAGS = -Wall 
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 libmessages_a_METASOURCES = AUTO
 libmessages_a_SOURCES = \
