@@ -369,7 +369,7 @@ void XsldbgConfigImpl::slotChooseSourceFile()
 {
 	  QString fileName;
 		fileName = QFileDialog::getOpenFileName(QString::null, "*.xsl; *.XSL; *.Xsl \n *.*", 0L,
-										i18n("Choose XSL source to debug"));
+										i18n("Choose XSL Source to Debug"));
 
 	if ((fileName != QString::null) && (fileName.length() > 0))
 		xslSourceEdit->setText(fileName);
@@ -380,7 +380,7 @@ void XsldbgConfigImpl::slotChooseDataFile()
 {
 	QString fileName;
 	fileName = QFileDialog::getOpenFileName(QString::null, "*.xml; *.XML; *.Xml \n*.docbook \n *.html;*.HTML; *.htm ; *HTM \n *.*", 0L,
-									i18n("Choose XML data  to debug"));
+									i18n("Choose XML Data to Debug"));
 	if ((fileName != QString::null) && (fileName.length() > 0))
 		xmlDataEdit->setText(fileName);
 }
@@ -390,7 +390,7 @@ void XsldbgConfigImpl::slotChooseOutputFile()
 {
 	QString fileName;
 	fileName = QFileDialog::getSaveFileName(QString::null, "*.xml; *.XML; *.Xml \n*.docbook \n *.txt; *.TXT \n *.htm;*.HTM;*.htm;*.HTML \n*.*", 0L,
-									i18n("Choose output file for XSL transformation"));
+									i18n("Choose Output File for XSL Transformation"));
 	if ((fileName != QString::null) && (fileName.length() > 0))
 		outputFileEdit->setText(fileName);
 }
@@ -466,11 +466,11 @@ void XsldbgConfigImpl::slotApply()
   QString msg;
   if (isValid(msg)){
     if (!msg.isEmpty())
-      QMessageBox::information(this, i18n("Suspect configuration"),
+      QMessageBox::information(this, i18n("Suspect Configuration"),
 			     msg, QMessageBox::Ok);
     update();
   }else{
-    QMessageBox::information(this, i18n("Incomplete or invalid configuration"),
+    QMessageBox::information(this, i18n("Incomplete or Invalid Configuration"),
 			     msg, QMessageBox::Ok);
   }
 

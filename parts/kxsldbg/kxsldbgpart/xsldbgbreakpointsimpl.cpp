@@ -80,8 +80,8 @@ void XsldbgBreakpointsImpl::slotAddBreakpoint()
 	  if (!sourceFileEdit->text().isEmpty()){
 	        debugger->slotBreakCmd(sourceFileEdit->text(), lineNo);
 	  }else {
-	      QMessageBox::information(this, i18n("Operation failed"),
-		  i18n("A line number was provided without a file name"),
+	      QMessageBox::information(this, i18n("Operation Failed"),
+		  i18n("A line number was provided without a file name."),
   	           QMessageBox::Ok);
 	  }
 	}else if (!templateNameEdit->text().isEmpty() ||
@@ -89,8 +89,8 @@ void XsldbgBreakpointsImpl::slotAddBreakpoint()
 		debugger->slotBreakCmd(templateNameEdit->text(),
 				       modeNameEdit->text());
 	}else{
-	    QMessageBox::information(this, i18n("Operation failed"),
-		 i18n("No details provided or an invalid line number was supplied"),
+	    QMessageBox::information(this, i18n("Operation Failed"),
+		 i18n("No details provided or an invalid line number was supplied."),
   	          QMessageBox::Ok);
 	}
 }
@@ -104,13 +104,13 @@ void XsldbgBreakpointsImpl::slotDeleteBreakpoint()
 	  if (!sourceFileEdit->text().isEmpty()){
 		debugger->slotDeleteCmd(sourceFileEdit->text(), lineNo);
 	  }else {
-	    QMessageBox::information(this, i18n("Operation failed"),
-	         i18n("A line number was provided without a file name"),
+	    QMessageBox::information(this, i18n("Operation Failed"),
+	         i18n("A line number was provided without a file name."),
   	         QMessageBox::Ok);
 	  }
 	}else {
-	    QMessageBox::information(this, i18n("Operation failed"),
-		 i18n("No details provided or an invalid line or ID was supplied"),
+	    QMessageBox::information(this, i18n("Operation Failed"),
+		 i18n("No details provided or an invalid line or ID was supplied."),
   	          QMessageBox::Ok);
 	}
 }
@@ -132,13 +132,13 @@ void XsldbgBreakpointsImpl::slotEnableBreakpoint()
 	  if (!sourceFileEdit->text().isEmpty()){
 		debugger->slotEnableCmd(sourceFileEdit->text(), lineNo);
 	  }else {
-	       QMessageBox::information(this, i18n("Operation failed"),
-	           i18n("A line number was provided without a file name"),
+	       QMessageBox::information(this, i18n("Operation Failed"),
+	           i18n("A line number was provided without a file name."),
   	           QMessageBox::Ok);
 	  }
 	}else {
-	    QMessageBox::information(this, i18n("Operation failed"),
-		 i18n("No details provided"),
+	    QMessageBox::information(this, i18n("Operation Failed"),
+		 i18n("No details provided."),
   	          QMessageBox::Ok);
 	}
 }

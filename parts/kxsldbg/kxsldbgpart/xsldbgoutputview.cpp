@@ -68,7 +68,7 @@ XsldbgOutputView::XsldbgOutputView(QWidget * parent)
   new QBoxLayout(this, QBoxLayout::TopToBottom);
   setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred));
   setMinimumSize(QSize(500, 80));
-  setCaption(i18n("xsldbg output"));
+  setCaption(i18n("xsldbg Output"));
   setText(i18n("\t\txsldbg output capture ready\n\n"));
   dlg = 0L;
   show();
@@ -85,7 +85,7 @@ XsldbgOutputView::XsldbgOutputView(QWidget * parent)
   new QBoxLayout(this, QBoxLayout::TopToBottom);
   setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred));
   setMinimumSize(QSize(500,80));
-  setCaption(i18n("xsldbg output"));
+  setCaption(i18n("xsldbg Output"));
   setText(i18n("\t\txsldbg output capture ready\n\n"));
   dlg = 0L;
   show();
@@ -117,7 +117,7 @@ void XsldbgOutputView::slotProcShowMessage(QString  msg)
 	  (msg.find("Error: No data file supplied") == -1) &&
 	  (msg.find("Load of source deferred") == -1) &&
 	  (msg.find("Load of data deferred") == -1) )
-	showDialog(QMessageBox::Warning, i18n("Request failed "),
+	showDialog(QMessageBox::Warning, i18n("Request Failed "),
 		 msg);
       processed = TRUE;
       qDebug(i18n("Processed error" ) + msg);

@@ -96,12 +96,12 @@ KXsldbgPart::KXsldbgPart( QWidget *parentWidget, const char *widgetName,
 
     // set our XML-UI resource file
     setXMLFile("kxsldbg_part.rc");
-   (void) new KAction( i18n("Configure"),
+   (void) new KAction( i18n("Configure..."),
                         "configure", Key_C,
                         this, SLOT(configureCmd_activated()),
                         actionCollection(), "configureCmd" );
 
-    (void) new KAction( i18n("Inspect"),
+    (void) new KAction( i18n("Inspect..."),
                         "find", Key_I,
                         this, SLOT(inspectorCmd_activated()),
                         actionCollection(), "inspectCmd" );
@@ -169,35 +169,35 @@ KXsldbgPart::KXsldbgPart( QWidget *parentWidget, const char *widgetName,
                         this, SLOT(outputCmd_activated()),
                         actionCollection(), "outputCmd" );
 
-    (void) new KAction( i18n("Reload current file from disk"),
+    (void) new KAction( i18n("Reload Current File From Disk"),
                         "xsldbg_refresh", CTRL + Key_F5,
                         this, SLOT(refreshCmd_activated()),
                         actionCollection(), "refreshCmd" );
 
     /* tracing and walking */
-    (void) new KAction( i18n("Walk through the stylesheet"),
+    (void) new KAction( i18n("Walk Through Stylesheet..."),
                         Key_W,
                         this, SLOT(walkCmd_activated()),
                         actionCollection(), "walkCmd" );
-    (void) new KAction( i18n("Stop walking through stylesheet"),
+    (void) new KAction( i18n("Stop Walking Through Stylesheet"),
                         Key_K,
                         this, SLOT(walkStopCmd_activated()),
                         actionCollection(), "walkStopCmd" );
-    (void) new KAction( i18n("Trace execution of stylesheet"),
+    (void) new KAction( i18n("Trace Execution of Stylesheet"),
                         Key_C,
                         this, SLOT(traceCmd_activated()),
                         actionCollection(), "traceCmd" );
-    (void) new KAction( i18n("Stop tracing of stylesheet"),
+    (void) new KAction( i18n("Stop Tracing of Stylesheet"),
                         Key_K,
                         this, SLOT(traceStopCmd_activated()),
                         actionCollection(), "traceStopCmd" );
 
-    (void) new KAction( i18n("Evaluate an expression"),
+    (void) new KAction( i18n("Evaluate Expression..."),
                         Key_E,
                         this, SLOT(evaluateCmd_activated()),
                         actionCollection(), "evaluateCmd" );
 
-    (void) new KAction( i18n("Goto XPath"),
+    (void) new KAction( i18n("Goto XPath..."),
                         Key_X,
                         this, SLOT(gotoXPathCmd_activated()),
                         actionCollection(), "gotoXPathCmd" );
@@ -275,7 +275,7 @@ bool KXsldbgPart::checkDebugger()
 {
   bool result = debugger != 0L;
   if (!result){
-    QMessageBox::information(0L, i18n("Debugger not ready"),
+    QMessageBox::information(0L, i18n("Debugger Not Ready"),
 			      i18n("Configure and start the debugger first!"),
 			      QMessageBox::Ok);
   }
@@ -293,7 +293,7 @@ void KXsldbgPart::lookupSystemID( QString systemID)
    if (systemID.isEmpty()){
      systemID = QInputDialog::getText(
 			      i18n( "Lookup SystemID" ),
-			      i18n( "Please enter SystemID to find" ),
+			      i18n( "Please enter SystemID to find:" ),
 			      QLineEdit::Normal, QString::null, &ok,
 			      m_editWidget);
    }else{
@@ -318,7 +318,7 @@ void KXsldbgPart::lookupPublicID(QString publicID)
    if (publicID.isEmpty()){
      publicID = QInputDialog::getText(
 			      i18n( "Lookup PulicID" ),
-			      i18n( "Please enter PublicID to find" ),
+			      i18n( "Please enter PublicID to find:" ),
 			      QLineEdit::Normal, QString::null, &ok, m_editWidget );
    }else{
      ok = TRUE;
@@ -538,9 +538,9 @@ void KXsldbgPart::breakCmd_activated()
 void KXsldbgPart::evaluateCmd_activated()
 {
 #if KDE_IS_VERSION(3,1,90)
-  QString expression = KInputDialog::getText(i18n("Evalute expression"), i18n("XPath:"));
+  QString expression = KInputDialog::getText(i18n("Evalute Expression"), i18n("XPath:"));
 #else
-  QString expression = KLineEditDlg::getText(i18n("Evalute expression"), i18n("XPath:"));
+  QString expression = KLineEditDlg::getText(i18n("Evalute Expression"), i18n("XPath:"));
 #endif
   if (checkDebugger()  && (expression.length() > 0)){
     debugger->slotCatCmd( expression);

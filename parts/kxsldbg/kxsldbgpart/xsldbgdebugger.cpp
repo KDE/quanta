@@ -269,8 +269,8 @@ void XsldbgDebugger::slotTraceCmd()
 void XsldbgDebugger::slotBreakCmd(QString fileName, int lineNumber)
 {
   if (outputFileActive == TRUE){
-    QMessageBox::information(0L, i18n("Operation failed"),
-			     i18n("Can't set/edit breakpoints on the output file"),
+    QMessageBox::information(0L, i18n("Operation Failed"),
+			     i18n("Can't set/edit breakpoints on the output file."),
 			     QMessageBox::Ok);
     return ;
   }
@@ -289,8 +289,8 @@ void XsldbgDebugger::slotBreakCmd(QString templateName, QString modeName)
 {
 
   if (outputFileActive == TRUE){
-    QMessageBox::information(0L, i18n("Operation failed"),
-			     i18n("Can't set/edit breakpoints on the output file"),
+    QMessageBox::information(0L, i18n("Operation Failed"),
+			     i18n("Can't set/edit breakpoints on the output file."),
 			     QMessageBox::Ok);
     return ;
   }
@@ -307,8 +307,8 @@ void XsldbgDebugger::slotEnableCmd(QString fileName, int lineNumber)
 {
 
   if (outputFileActive == TRUE){
-    QMessageBox::information(0L, i18n("Operation failed"),
-			     i18n("Can't set/edit breakpoints on the output file"),
+    QMessageBox::information(0L, i18n("Operation Failed"),
+			     i18n("Can't set/edit breakpoints on the output file."),
 			     QMessageBox::Ok);
     return ;
   }
@@ -327,8 +327,8 @@ void XsldbgDebugger::slotEnableCmd(int id)
 {
 
   if (outputFileActive == TRUE){
-    QMessageBox::information(0L, i18n("Operation failed"),
-			     i18n("Can't set/edit breakpoints on the output file"),
+    QMessageBox::information(0L, i18n("Operation Failed"),
+			     i18n("Can't set/edit breakpoints on the output file."),
 			     QMessageBox::Ok);
     return ;
   }
@@ -347,8 +347,8 @@ void XsldbgDebugger::slotDeleteCmd(QString fileName, int lineNumber)
 {
 
   if (outputFileActive == TRUE){
-    QMessageBox::information(0L, i18n("Operation failed"),
-			     i18n("Can't set/edit breakpoints on the output file"),
+    QMessageBox::information(0L, i18n("Operation Failed"),
+			     i18n("Can't set/edit breakpoints on the output file."),
 			     QMessageBox::Ok);
     return ;
   }
@@ -366,8 +366,8 @@ void XsldbgDebugger::slotDeleteCmd(int id)
 {
 
   if (outputFileActive == TRUE){
-    QMessageBox::information(0L, i18n("Operation failed"),
-			     i18n("Can't set/edit breakpoints on the output file"),
+    QMessageBox::information(0L, i18n("Operation Failed"),
+			     i18n("Can't set/edit breakpoints on the output file."),
 			     QMessageBox::Ok);
     return ;
   }

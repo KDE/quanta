@@ -65,7 +65,7 @@ XsldbgInspector::XsldbgInspector( XsldbgDebugger *debugger, QWidget* parent,
     if ( !name )
 	setName( "XsldbgInspector" );
     resize( 597, 364 );
-    setCaption( tr( "Xsldbg Inspector" ) );
+    setCaption( i18n( "Xsldbg Inspector" ) );
     setSizeGripEnabled( TRUE );
     XsldbgInspectorLayout = new QGridLayout( this, 1, 1, 11, 6,
 					     "XsldbgInspectorLayout");
@@ -124,14 +124,14 @@ XsldbgInspector::XsldbgInspector( XsldbgDebugger *debugger, QWidget* parent,
     Layout1->addItem( spacer );
 
     buttonOk = new QPushButton( this, "buttonOk" );
-    buttonOk->setText( i18n( "OK" ) );
+    buttonOk->setText( i18n( "&OK" ) );
     buttonOk->setAccel( 0 );
     buttonOk->setAutoDefault( TRUE );
     buttonOk->setDefault( TRUE );
     Layout1->addWidget( buttonOk );
 
     buttonApply = new QPushButton( this, "buttonApply" );
-    buttonApply->setText( i18n( "Apply" ) );
+    buttonApply->setText( i18n( "&Apply" ) );
     QToolTip::add(buttonApply, i18n("Apply changes to xsldbg after restarting execution"));
     buttonApply->setAccel( 0 );
     buttonApply->setAutoDefault( TRUE );
@@ -139,7 +139,7 @@ XsldbgInspector::XsldbgInspector( XsldbgDebugger *debugger, QWidget* parent,
     Layout1->addWidget( buttonApply );
 
     buttonRefresh = new QPushButton( this, "buttonRefresh" );
-    buttonRefresh->setText( i18n( "Refresh" ) );
+    buttonRefresh->setText( i18n( "&Refresh" ) );
     QToolTip::add(buttonRefresh, i18n("Refresh values in inspectors from xsldbg"));
     buttonRefresh->setAccel( 0 );
     buttonRefresh->setAutoDefault( TRUE );
@@ -147,7 +147,7 @@ XsldbgInspector::XsldbgInspector( XsldbgDebugger *debugger, QWidget* parent,
     Layout1->addWidget( buttonRefresh );
 
     buttonCancel = new QPushButton( this, "buttonCancel" );
-    buttonCancel->setText( i18n( "Cancel" ) );
+    buttonCancel->setText( i18n( "&Cancel" ) );
     buttonCancel->setAccel( 0 );
     buttonCancel->setAutoDefault( TRUE );
     Layout1->addWidget( buttonCancel );
