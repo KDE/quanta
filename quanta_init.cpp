@@ -405,8 +405,8 @@ void QuantaApp::initMenuBar()
   projectMenu->insertItem(i18n("&Insert File(s)..."),   ID_PROJECT_ADD_FILE);
   projectMenu->insertItem(i18n("Insert &Directory..."), ID_PROJECT_ADD_DIRECTORY);
   projectMenu->insertSeparator();
-  projectMenu->insertItem(i18n("Upload project"),   ID_PROJECT_UPLOAD_PROJECT);
-  projectMenu->insertItem(i18n("&Project options"), ID_PROJECT_PROPERTIES);
+  projectMenu->insertItem(i18n("&Upload project..."),   ID_PROJECT_UPLOAD_PROJECT);
+  projectMenu->insertItem(i18n("&Project options..."), ID_PROJECT_PROPERTIES);
 //  projectMenu->insertItem(i18n("Rescan project's directory"), ID_PROJECT_RESCAN_FILES);
 //  projectMenu->insertItem(UserIcon("file_properties"), i18n("&File properties"), ID_PROJECT_FILE_PROPERTIES);
 //  projectMenu->insertSeparator();
@@ -446,13 +446,14 @@ void QuantaApp::initMenuBar()
   ///////////////////////////////////////////////////////////////////
   // menuBar entry helpMenu
   helpMenu_ = helpMenu(	"Quanta+ Web Development Enviroment\n\n"\
+  											"Version 2.0beta4\n"\
   											"(c) 2000 by\n"\
-  											"Dmitry Poplavsky,\n"\
-  											"Alexander Yakovlev,\n"\
+  											"Dmitry Poplavsky\n"\
+  											"Alexander Yakovlev\n"\
   											"Eric Laffoon\n\n"\
-  											"pdima@users.sourceforge.net,\n"\
-  											"yshurik@penguinpowered.com,\n"\
-  											"sequitur@easystreet.com\n\n"\
+  											"pdima@kde.org\n"\
+  											"yshurik@kde.org\n"\
+  											"sequitur@kde.org\n\n"\
   											"http://quanta.sourceforge.net/"
   											);
 
