@@ -659,7 +659,7 @@ void Project::loadProjectXML()
   {
     excludeStr = excludeList[i].stripWhiteSpace();
     if (!excludeStr.endsWith("*"))
-      excludeStr.append("$");
+      excludeStr = excludeStr + "/*|"+ excludeStr + "$";
     if (!excludeStr.startsWith("*"))
       excludeStr.prepend("^");
     excludeStr.replace(".","\\.");
@@ -1392,25 +1392,6 @@ void Project::slotOptions()
     el = dom.createElement("exclude");
     dom.firstChild().firstChild().appendChild( el );
     el.appendChild( dom.createTextNode( excludeStr ) );
-
-    QString regExpStr = "";
-    excludeList = QStringList::split(';', excludeStr);
-    for (uint i = 0; i < excludeList.count(); i++)
-    {
-      excludeStr = excludeList[i].stripWhiteSpace();
-      if (!excludeStr.endsWith("*"))
-        excludeStr.append("$");
-      if (!excludeStr.startsWith("*"))
-        excludeStr.prepend("^");
-      excludeStr.replace(".","\\.");
-      excludeStr.replace("*",".*");
-      excludeStr.replace("?",".");
-      regExpStr.append(excludeStr);
-      if (i+1 < excludeList.count())
-        regExpStr.append("|");
-    }
-    excludeRx.setPattern(regExpStr);
-
 
     el = dom.firstChild().firstChild().namedItem("defaultDTD").toElement();
     if(el.isNull())
