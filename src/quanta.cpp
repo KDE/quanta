@@ -193,6 +193,7 @@ const QString resourceDir = QString(QUANTA_PACKAGE) + "/";
 static void silenceQToolBar(QtMsgType, const char *){}
 
 QuantaApp::QuantaApp(int mdiMode) : DCOPObject("WindowManagerIf"), KMdiMainFrm( 0, "Quanta", (KMdi::MdiMode) mdiMode)
+
 {
   setStandardToolBarMenuEnabled(true);
   createStandardStatusBarAction();
@@ -225,8 +226,6 @@ QuantaApp::QuantaApp(int mdiMode) : DCOPObject("WindowManagerIf"), KMdiMainFrm( 
   }
   qConfig.enableDTDToolbar = true;
 
-  exitingFlag = false;
-
   // connect up signals from KXXsldbgPart
   connectDCOPSignal(0, 0, "debuggerPositionChangedQString,int)", "newDebuggerPosition(QString,int)", false );
   connectDCOPSignal(0, 0, "editorPositionChanged(QString,int,int)", "newCursorPosition(QString,int,int)", false );
@@ -250,16 +249,18 @@ QuantaApp::QuantaApp(int mdiMode) : DCOPObject("WindowManagerIf"), KMdiMainFrm( 
   m_newTemplateStuff = 0L;
   m_newScriptStuff = 0L;
   m_newDocStuff = 0L;
+  m_debugger = 0L;
   emit eventHappened("quanta_start", QDateTime::currentDateTime().toString(Qt::ISODate), QString::null);
 }
 
 
 QuantaApp::~QuantaApp()
 {
-  disconnect(m_htmlPart, SIGNAL(destroyed(QObject *)));
-  disconnect(m_htmlPartDoc, SIGNAL(destroyed(QObject *)));
+  
+ // disconnect(m_htmlPart, SIGNAL(destroyed(QObject *)));
+ // disconnect(m_htmlPartDoc, SIGNAL(destroyed(QObject *)));
   disconnect(this, SIGNAL(lastChildViewClosed()), ViewManager::ref(), SLOT(slotLastViewClosed()));
-// kdDebug(24000) << "QuantaApp::~QuantaApp" << endl;
+  kdDebug(24000) << "QuantaApp::~QuantaApp" << endl;
 #ifdef ENABLE_CVSSERVICE
  delete CVSService::ref();
 #endif
@@ -3818,11 +3819,12 @@ void QuantaApp::slotNewPart(KParts::Part *newPart, bool setActiv)
 
 bool QuantaApp::queryClose()
 {
+  if (m_quantaInit) 
+    return false; //not loaded completely
   bool canExit = true;
   if (quantaStarted)
   {
     saveOptions();
-    exitingFlag = true;
     parser->setParsingEnabled(false);
     canExit = ViewManager::ref()->closeAll(false);
     if (canExit)
@@ -3832,7 +3834,10 @@ bool QuantaApp::queryClose()
     parser->setParsingEnabled(true);
   }
   if (canExit)
+  {
+    kdDebug(24000) << "Quanta will exit" << endl;
     emit eventHappened("quanta_exit", QDateTime::currentDateTime().toString(Qt::ISODate), QString::null);
+  }
   return canExit;
 }
 

@@ -529,8 +529,6 @@ private:
   // DOC & VIEW
   QuantaDoc  *m_doc;
 
-  bool exitingFlag;
-
   /** parsered tree of document  */
   QTimer *statusbarTimer;
 
