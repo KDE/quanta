@@ -85,6 +85,7 @@ KQApplication::KQApplication()
      {
        splash = new KSplash();
        connect(quantaApp, SIGNAL(showSplash(bool)), splash, SLOT(setShown(bool)));
+       QTimer::singleShot(10*1000, this, SLOT(slotSplashTimeout()));
      }
      setMainWidget(quantaApp);
      slotInit();
@@ -100,6 +101,11 @@ KQApplication::~KQApplication()
 {
 }
 
+void KQApplication::slotSplashTimeout()
+{
+  delete splash;
+  splash = 0L;
+}
 
 KQUniqueApplication::KQUniqueApplication()
  : KUniqueApplication()
@@ -140,6 +146,7 @@ int KQUniqueApplication::newInstance()
     {
       splash = new KSplash();
       connect(quantaApp, SIGNAL(showSplash(bool)), splash, SLOT(setShown(bool)));
+      QTimer::singleShot(10*1000, this, SLOT(slotSplashTimeout()));
     }
     setMainWidget(quantaApp);
     slotInit();
@@ -152,6 +159,13 @@ void KQUniqueApplication::slotInit()
 {
   KQApplicationPrivate::init();
 }
+
+void KQUniqueApplication::slotSplashTimeout()
+{
+  delete splash;
+  splash = 0L;
+}
+
 
 void KQApplicationPrivate::init()
 {
@@ -185,6 +199,7 @@ void KQApplicationPrivate::init()
   }
   args->clear();
   delete splash;
+  splash = 0L;
 }
 
 #include "kqapp.moc"

@@ -35,7 +35,7 @@ class KSplash : public QFrame
 class KQApplicationPrivate
 {
   public:
-    KQApplicationPrivate() {};
+    KQApplicationPrivate():splash(0L){};
     ~KQApplicationPrivate() {};
 
   protected:
@@ -55,7 +55,7 @@ class KQApplication : public KApplication, KQApplicationPrivate
   public slots:
     /** No descriptions */
     void slotInit();
-
+    void slotSplashTimeout();
 };
 
 class KQUniqueApplication : public KUniqueApplication, KQApplicationPrivate
@@ -72,7 +72,7 @@ class KQUniqueApplication : public KUniqueApplication, KQApplicationPrivate
   public slots:
     /** No descriptions */
     void slotInit();
-
+    void slotSplashTimeout();
 };
 
 #endif
