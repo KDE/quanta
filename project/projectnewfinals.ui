@@ -18,13 +18,13 @@
             <x>0</x>
             <y>0</y>
             <width>620</width>
-            <height>410</height>
+            <height>418</height>
         </rect>
     </property>
     <property name="sizePolicy">
         <sizepolicy>
             <hsizetype>5</hsizetype>
-            <vsizetype>5</vsizetype>
+            <vsizetype>1</vsizetype>
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
         </sizepolicy>
@@ -52,7 +52,7 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QLabel" row="0" column="0" rowspan="9" colspan="1">
+        <widget class="QLabel" row="0" column="0" rowspan="2" colspan="1">
             <property name="name">
                 <cstring>imagelabel</cstring>
             </property>
@@ -88,190 +88,183 @@
             <property name="vAlign" stdset="0">
             </property>
         </widget>
-        <spacer row="2" column="3">
+        <spacer row="1" column="1">
             <property name="name">
-                <cstring>Spacer9</cstring>
+                <cstring>spacer10</cstring>
             </property>
             <property name="orientation">
                 <enum>Vertical</enum>
             </property>
             <property name="sizeType">
-                <enum>Fixed</enum>
+                <enum>Preferred</enum>
             </property>
             <property name="sizeHint">
                 <size>
                     <width>20</width>
-                    <height>17</height>
+                    <height>40</height>
                 </size>
             </property>
         </spacer>
-        <spacer row="8" column="3">
+        <widget class="QLayoutWidget" row="0" column="1">
             <property name="name">
-                <cstring>Spacer6</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>57</height>
-                </size>
-            </property>
-        </spacer>
-        <widget class="QLineEdit" row="0" column="2">
-            <property name="name">
-                <cstring>lineAuthor</cstring>
-            </property>
-        </widget>
-        <widget class="QLabel" row="0" column="4">
-            <property name="name">
-                <cstring>TextLabel5</cstring>
-            </property>
-            <property name="text">
-                <string>Email:</string>
-            </property>
-        </widget>
-        <widget class="QLabel" row="0" column="1">
-            <property name="name">
-                <cstring>TextLabel4</cstring>
-            </property>
-            <property name="text">
-                <string>Author:</string>
-            </property>
-        </widget>
-        <widget class="QLineEdit" row="0" column="5">
-            <property name="name">
-                <cstring>lineEmail</cstring>
-            </property>
-            <property name="text">
-                <string></string>
-            </property>
-        </widget>
-        <spacer row="0" column="3">
-            <property name="name">
-                <cstring>Spacer2</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Horizontal</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Fixed</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>16</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
-        <widget class="QCheckBox" row="3" column="1" rowspan="1" colspan="5">
-            <property name="name">
-                <cstring>checkPrefix</cstring>
-            </property>
-            <property name="text">
-                <string>Use preview &amp;prefix</string>
-            </property>
-        </widget>
-        <widget class="QLabel" row="4" column="1">
-            <property name="name">
-                <cstring>TextLabel1</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-            <property name="text">
-                <string>Prefix:</string>
-            </property>
-        </widget>
-        <widget class="QLineEdit" row="4" column="2" rowspan="1" colspan="4">
-            <property name="name">
-                <cstring>linePrefix</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-        </widget>
-        <widget class="Line" row="5" column="1" rowspan="1" colspan="5">
-            <property name="name">
-                <cstring>Line4</cstring>
-            </property>
-            <property name="frameShape">
-                <enum>HLine</enum>
-            </property>
-            <property name="frameShadow">
-                <enum>Sunken</enum>
-            </property>
-            <property name="orientation">
-                <enum>Horizontal</enum>
-            </property>
-        </widget>
-        <widget class="QCheckBox" row="6" column="1" rowspan="1" colspan="5">
-            <property name="name">
-                <cstring>insertGlobalTemplates</cstring>
-            </property>
-            <property name="text">
-                <string>Insert &amp;global templates</string>
-            </property>
-        </widget>
-        <widget class="QCheckBox" row="7" column="1" rowspan="1" colspan="5">
-            <property name="name">
-                <cstring>insertLocalTemplates</cstring>
-            </property>
-            <property name="text">
-                <string>Insert &amp;local templates</string>
-            </property>
-        </widget>
-        <widget class="QGroupBox" row="1" column="1" rowspan="1" colspan="5">
-            <property name="name">
-                <cstring>GroupBox4</cstring>
-            </property>
-            <property name="title">
-                <string>Project Defaults</string>
+                <cstring>layout11</cstring>
             </property>
             <grid>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
+                <widget class="QLabel" row="3" column="0">
+                    <property name="name">
+                        <cstring>TextLabel1</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                    <property name="text">
+                        <string>Prefix:</string>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="0" column="1">
+                    <property name="name">
+                        <cstring>lineAuthor</cstring>
+                    </property>
+                </widget>
+                <widget class="QGroupBox" row="1" column="0" rowspan="1" colspan="5">
+                    <property name="name">
+                        <cstring>GroupBox4</cstring>
+                    </property>
+                    <property name="title">
+                        <string>Project Defaults</string>
+                    </property>
+                    <grid>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="QLabel" row="0" column="0">
+                            <property name="name">
+                                <cstring>TextLabel3_2_3</cstring>
+                            </property>
+                            <property name="maximumSize">
+                                <size>
+                                    <width>32767</width>
+                                    <height>32767</height>
+                                </size>
+                            </property>
+                            <property name="text">
+                                <string>Default DTD:</string>
+                            </property>
+                        </widget>
+                        <widget class="QComboBox" row="1" column="1">
+                            <property name="name">
+                                <cstring>encodingCombo</cstring>
+                            </property>
+                        </widget>
+                        <widget class="QLabel" row="1" column="0">
+                            <property name="name">
+                                <cstring>TextLabel3_2_2_2</cstring>
+                            </property>
+                            <property name="maximumSize">
+                                <size>
+                                    <width>32767</width>
+                                    <height>32767</height>
+                                </size>
+                            </property>
+                            <property name="text">
+                                <string>Default encoding:</string>
+                            </property>
+                        </widget>
+                        <widget class="QComboBox" row="0" column="1">
+                            <property name="name">
+                                <cstring>dtdCombo</cstring>
+                            </property>
+                        </widget>
+                    </grid>
+                </widget>
+                <widget class="QCheckBox" row="6" column="0" rowspan="1" colspan="5">
+                    <property name="name">
+                        <cstring>insertLocalTemplates</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Insert &amp;local templates</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="5" column="0" rowspan="1" colspan="5">
+                    <property name="name">
+                        <cstring>insertGlobalTemplates</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Insert &amp;global templates</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="5">
+                    <property name="name">
+                        <cstring>checkPrefix</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Use preview &amp;prefix</string>
+                    </property>
+                </widget>
                 <widget class="QLabel" row="0" column="0">
                     <property name="name">
-                        <cstring>TextLabel3_2_3</cstring>
-                    </property>
-                    <property name="maximumSize">
-                        <size>
-                            <width>32767</width>
-                            <height>32767</height>
-                        </size>
+                        <cstring>TextLabel4</cstring>
                     </property>
                     <property name="text">
-                        <string>Default DTD:</string>
+                        <string>Author:</string>
                     </property>
                 </widget>
-                <widget class="QComboBox" row="1" column="1">
+                <widget class="QLineEdit" row="0" column="4">
                     <property name="name">
-                        <cstring>encodingCombo</cstring>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="1" column="0">
-                    <property name="name">
-                        <cstring>TextLabel3_2_2_2</cstring>
-                    </property>
-                    <property name="maximumSize">
-                        <size>
-                            <width>32767</width>
-                            <height>32767</height>
-                        </size>
+                        <cstring>lineEmail</cstring>
                     </property>
                     <property name="text">
-                        <string>Default encoding:</string>
+                        <string></string>
                     </property>
                 </widget>
-                <widget class="QComboBox" row="0" column="1">
+                <spacer row="0" column="2">
                     <property name="name">
-                        <cstring>dtdCombo</cstring>
+                        <cstring>Spacer2</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Fixed</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>16</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="Line" row="4" column="0" rowspan="1" colspan="5">
+                    <property name="name">
+                        <cstring>Line4</cstring>
+                    </property>
+                    <property name="frameShape">
+                        <enum>HLine</enum>
+                    </property>
+                    <property name="frameShadow">
+                        <enum>Sunken</enum>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="3" column="1" rowspan="1" colspan="4">
+                    <property name="name">
+                        <cstring>linePrefix</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="0" column="3">
+                    <property name="name">
+                        <cstring>TextLabel5</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Email:</string>
                     </property>
                 </widget>
             </grid>
