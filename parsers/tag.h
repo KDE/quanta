@@ -71,7 +71,7 @@ class Tag {
 public:
   Tag();
   Tag(const Tag&);
-  Tag(const AreaStruct &area, Document *write, DTDStruct *dtd = 0L, bool doParse = false);
+  Tag(const AreaStruct &area, Document *write, const DTDStruct *dtd = 0L, bool doParse = false);
   ~Tag();
   Tag operator = ( const Tag& );
 
@@ -165,7 +165,7 @@ public:
   int type;   //one of the TokenType
   bool single; // tags like <tag />
   bool closingMissing; //closing tag is optional and missing
-  DTDStruct* dtd; //the tag belongs to this DTD
+  const DTDStruct* dtd; //the tag belongs to this DTD
   QString structBeginStr; //if it's a special block, contains the block beginning definition string (like <? or <style language="foo">)
   bool validXMLTag; //false if the closing ">" was not found
 #ifdef BUILD_KAFKAPART

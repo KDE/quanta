@@ -768,7 +768,7 @@
     <variable>int m_row;</variable>
     <variable>KPopupMenu *m_popup;</variable>
     <variable>KURL m_baseURL;</variable>
-    <variable>DTDStruct *m_dtd;</variable>
+    <variable>const DTDStruct *m_dtd;</variable>
     <variable>QValueList&lt;QValueList&lt;TableNode&gt; &gt; *m_tableDataTags;</variable>
     <variable>QValueList&lt;TableNode&gt; *m_tableDataRows;</variable>
     <variable>QTable *m_dataTable;</variable>
@@ -809,7 +809,7 @@
     <function access="protected" returnType="QString">cellValue( int row, int col )</function>
     <function access="protected" returnType="QString">tableToString()</function>
     <function access="protected" returnType="QString">tagContent( Node * node )</function>
-    <function>createNewTable( Document * write, DTDStruct * dtd )</function>
+    <function>createNewTable( Document * write, const DTDStruct * dtd )</function>
     <function access="protected">deleteList( QValueList&lt;TableNode&gt; * table )</function>
     <function access="protected">deleteMatrix( QValueList&lt;QValueList&lt;TableNode&gt; &gt; * matrix )</function>
 </functions>

@@ -89,9 +89,10 @@
 #include "quantaview.h"
 #include "doctreeview.h"
 #include "quantacommon.h"
+#include "dtds.h"
 
-Project::Project( QWidget *, const char *name )
-        : QWidget(0L,name)
+Project::Project()
+        : QObject()
 {
   config = 0L;
   init();
@@ -99,12 +100,14 @@ Project::Project( QWidget *, const char *name )
 
 Project::~Project()
 {
-  if (hasProject()) slotSaveProject();
+  if (hasProject()) 
+    slotSaveProject();
 }
 
 void Project::init()
 {
   projectURL  = KURL();
+  templateURL = KURL();
   projectName = QString::null;
   m_modified=false;
   m_defaultDTD = qConfig.defaultDocType;
@@ -116,10 +119,6 @@ void Project::init()
   previewPrefix = KURL();
 }
 
-bool Project::hasProject()
-{
-  return !projectName.isNull();
-}
 
 /** Retrieve the list of urls which are in the project. If check is true,
 for local files it verifies if it exists or not, and adds only the exisiting
@@ -161,7 +160,7 @@ void Project::insertFile(const KURL& nameURL, bool repaint )
 
   if ( relNameURL.path().startsWith("/") || relNameURL.path().startsWith(".")  )
   {
-    KURLRequesterDlg *urlRequesterDlg = new KURLRequesterDlg( baseURL.prettyURL(), this, "");
+    KURLRequesterDlg *urlRequesterDlg = new KURLRequesterDlg( baseURL.prettyURL(), quantaApp, "");
     urlRequesterDlg->setCaption(i18n("%1: Copy to Project").arg(nameURL.prettyURL(0, KURL::StripFileProtocol)));
     urlRequesterDlg->urlRequester()->setMode( KFile::Directory | KFile::ExistingOnly);
     urlRequesterDlg->exec();
@@ -326,7 +325,7 @@ bool Project::createEmptyDom()
   if (!result)
   {
     emit hideSplash();
-    KMessageBox::sorry(this, i18n("<qt>Cannot open file <b>%1</b> for writing.</qt>").arg(projectURL.prettyURL(0, KURL::StripFileProtocol)));
+    KMessageBox::sorry(quantaApp, i18n("<qt>Cannot open file <b>%1</b> for writing.</qt>").arg(projectURL.prettyURL(0, KURL::StripFileProtocol)));
     return false;
   }
 
@@ -384,11 +383,10 @@ void Project::writeConfig(KConfig *config)
 void Project::slotOpenProject()
 {
   KURL url = KFileDialog::getOpenURL( QString::null,
-                       "*.wpj *.webprj"+i18n("|Project Files\n*|All Files"), this);
+                       "*.wpj *.webprj"+i18n("|Project Files\n*|All Files"), quantaApp);
 
   if( !url.isEmpty() )
   {
-    slotCloseProject();
     slotLoadProject ( url );
 
     projectRecent->addURL( url );
@@ -404,7 +402,7 @@ void Project::slotOpenProject(const KURL &url)
     if ( !QExtFileInfo::exists(url) )
     {
       emit hideSplash();
-      if (KMessageBox::questionYesNo( this,
+      if (KMessageBox::questionYesNo(quantaApp,
            i18n("<qt>The file <b>%1</b> does not exist.<br> Do you want to remove it from the list?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)) )
            == KMessageBox::Yes)
       {
@@ -412,7 +410,6 @@ void Project::slotOpenProject(const KURL &url)
       }
     } else
     {
-      slotCloseProject();
       slotLoadProject ( url );
       projectRecent->addURL( url );
     }
@@ -444,14 +441,14 @@ bool Project::slotSaveProject()
     tmpFile->setAutoDelete(true);
     dom.save(*(tmpFile->textStream()), 0);
     tmpFile->close();
-    if ( KIO::NetAccess::upload( tmpFile->name(), projectURL ) )
+    if (KIO::NetAccess::upload( tmpFile->name(), projectURL ))
     {
-        emit statusMsg( i18n( "Wrote project %1..." ).arg( projectURL.prettyURL() ) );
+        emit statusMsg(i18n( "Wrote project %1..." ).arg( projectURL.prettyURL()));
     }
     else
     {
-      emit statusMsg( QString::null );
-      KMessageBox::error( this, KIO::NetAccess::lastErrorString() );
+      emit statusMsg(QString::null);
+      KMessageBox::error(quantaApp, KIO::NetAccess::lastErrorString());
       result = false;
     }
 
@@ -469,6 +466,7 @@ bool Project::slotSaveProject()
 /** close project and edited files */
 void Project::slotCloseProject()
 {
+  if (!hasProject()) return;
   //fix: add save/no for remote
   if (m_modified)
       slotSaveProject();
@@ -480,9 +478,7 @@ void Project::slotCloseProject()
   m_projectFiles.clear();
   emit closeFiles();
 
-  emit setBaseURL( baseURL );
-  emit setProjectName( i18n( "No Project" ) );
-  emit templateURLChanged(KURL());
+  emit newProjectLoaded(projectName, baseURL, templateURL);
   emit reloadTree( m_projectFiles, true);
   emit newStatus();
 }
@@ -490,6 +486,8 @@ void Project::slotCloseProject()
 /** load project from file: name */
 void Project::slotLoadProject(const KURL &a_url)
 {
+  if (hasProject()) slotCloseProject();
+
   KURL url = a_url;
   projectURL = KURL();
   projectName = QString::null;
@@ -498,7 +496,7 @@ void Project::slotLoadProject(const KURL &a_url)
   if (!url.isValid())
   {
       emit hideSplash();
-      KMessageBox::sorry(this, i18n("<qt>Malformed URL: <b>%1</b></qt>").arg(url.prettyURL()));
+      KMessageBox::sorry(quantaApp, i18n("<qt>Malformed URL: <b>%1</b></qt>").arg(url.prettyURL()));
   } else
   {
     QString tmpName = QString::null;
@@ -530,17 +528,16 @@ void Project::slotLoadProject(const KURL &a_url)
         keepPasswd = !passwd.isEmpty();
         storePasswdInFile = keepPasswd;
         openCurrentView();
-        emit newProjectLoaded();
       } else
       {
         emit hideSplash();
-        KMessageBox::error(this, i18n("<qt>Cannot open the file <b>%1</b> for reading.</qt>").arg(tmpName));
+        KMessageBox::error(quantaApp, i18n("<qt>Cannot open the file <b>%1</b> for reading.</qt>").arg(tmpName));
       }
       KIO::NetAccess::removeTempFile( tmpName);
     } else
     {
       emit hideSplash();
-      KMessageBox::error(this,i18n("<qt>Cannot access the project file <b>%1</b>.</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)));
+      KMessageBox::error(quantaApp, i18n("<qt>Cannot access the project file <b>%1</b>.</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)));
     }
   }
 }
@@ -556,7 +553,7 @@ void Project::loadProjectXML()
   if ( projectNode.isNull() || projectName.isEmpty() )
   {
     emit hideSplash();
-    KMessageBox::sorry( this, i18n("Invalid project file.") );
+    KMessageBox::sorry(quantaApp, i18n("Invalid project file.") );
     return;
   }
 
@@ -732,8 +729,7 @@ void Project::loadProjectXML()
 
   quantaApp->slotStatusMsg(i18n("Done."));
 
-  emit setBaseURL(baseURL);
-  emit setProjectName(projectName);
+  emit newProjectLoaded(projectName, baseURL, templateURL);
   emit reloadTree(m_projectFiles, true);
 
   emit showTree();
@@ -752,7 +748,7 @@ void Project::slotInsertFile( const KURL& url )
 void Project::slotAddFiles()
 {
   KURL::List list = KFileDialog::getOpenURLs(
-    baseURL.url(),  i18n("*"), this, i18n("Insert Files in Project"));
+    baseURL.url(),  i18n("*"), quantaApp, i18n("Insert Files in Project"));
 
   if ( !list.isEmpty() )
   {
@@ -761,7 +757,7 @@ void Project::slotAddFiles()
 
     if ( firstURL.path().startsWith("/") || firstURL.path().startsWith("."))
     {
-      KURLRequesterDlg *urlRequesterDlg = new KURLRequesterDlg( baseURL.prettyURL(), this, "");
+      KURLRequesterDlg *urlRequesterDlg = new KURLRequesterDlg( baseURL.prettyURL(), quantaApp, "");
       urlRequesterDlg->setCaption(i18n("Files: Copy to Project"));
       urlRequesterDlg->urlRequester()->setMode( KFile::Directory | KFile::ExistingOnly);
       urlRequesterDlg->exec();
@@ -802,7 +798,7 @@ void Project::slotAddFiles()
 void Project::slotAddDirectory()
 {
  KURL url = KURL();
- url = KFileDialog::getExistingURL(baseURL.prettyURL(), this,
+ url = KFileDialog::getExistingURL(baseURL.prettyURL(), quantaApp,
                 i18n("Insert Folder in Project"));
  slotAddDirectory(url);
 }
@@ -821,7 +817,7 @@ void Project::slotAddDirectory(const KURL& p_dirURL, bool showDlg)
       KURL destination = baseURL;
       if (showDlg)
       {
-        KURLRequesterDlg *urlRequesterDlg = new KURLRequesterDlg( baseURL.prettyURL(), this, "");
+        KURLRequesterDlg *urlRequesterDlg = new KURLRequesterDlg( baseURL.prettyURL(), 0L, "");
         urlRequesterDlg->setCaption(i18n("%1: Copy to Project").arg(dirURL.prettyURL(0, KURL::StripFileProtocol)));
         urlRequesterDlg->urlRequester()->setMode( KFile::Directory | KFile::ExistingOnly);
         urlRequesterDlg->exec();
@@ -872,135 +868,76 @@ void Project::slotDeleteCopytoDlg(CopyTo *dlg)
   delete dlg;
 }
 
-void Project::slotRenameFinished( KIO::Job * job)
+//rename the elements in the project dom tree
+void Project::slotRenamed(const KURL& oldURL, const KURL& newURL)
 {
-  if ( job->error() )
+  //rename the elements in the project dom tree
+  QDomElement el;
+  QDomNodeList nl = dom.elementsByTagName("item");
+  QString tmpString;
+  QString oldString;
+  QString oldStr = QuantaCommon::qUrl(QExtFileInfo::toRelative(oldURL, baseURL));
+  QString newStr = QuantaCommon::qUrl(QExtFileInfo::toRelative(newURL, baseURL));
+  for (uint i = 0; i < nl.count(); i++ )
   {
-    KMessageBox::error(this,i18n("<qt>An error occurred while renaming <b>%1</b>.<br>The error message was:<br><br>%2</qt>")
-                            .arg(oldURL.prettyURL(0, KURL::StripFileProtocol)).arg(job->errorString()));
-  } else
-  {
-    //rename the elements in the project dom tree
-    QDomElement el;
-    QDomNodeList nl = dom.elementsByTagName("item");
-    QString tmpString;
-    QString oldString;
-    QString oldStr = QuantaCommon::qUrl(oldURL);
-    QString newStr = QuantaCommon::qUrl(newURL);
-    for (uint i = 0; i < nl.count(); i++ )
+    el = nl.item(i).toElement();
+    tmpString = el.attribute("url");
+    if (tmpString == newStr)
     {
-      el = nl.item(i).toElement();
-      tmpString = el.attribute("url");
-      if (tmpString == newStr)
-      {
-        el.parentNode().removeChild( el );
-        break;
-      }
+      el.parentNode().removeChild( el );
+      break;
     }
-    KURL::List::Iterator it;
-    it = m_projectFiles.find(newURL);
-    if (it != m_projectFiles.end())
-       m_projectFiles.erase(it);
-
-    int nlCount = nl.count();
-    quantaApp->slotStatusMsg(i18n("Renaming files..."));
-    progressBar->setTotalSteps(nlCount - m_projectFiles.count() - 2);
-    progressBar->setValue(0);
-    progressBar->setTextEnabled(true);
-    bool checkStartsWith = oldStr.endsWith("/");
-    for (uint i = 0; i < nlCount; i++ )
-    {
-      el = nl.item(i).toElement();
-      tmpString = el.attribute("url");
-      if (tmpString == oldStr ||
-          (checkStartsWith && tmpString.startsWith(oldStr)))
-      {
-        oldString = tmpString;
-        tmpString = tmpString.replace(oldStr, newStr);
-        if (oldString != tmpString )
-        {
-          el.setAttribute("url",tmpString);
-          el.setAttribute("upload_time", "");
-        }
-      }
-      progressBar->advance(1);
-    }
-    for (KURL::List::Iterator it = m_projectFiles.begin(); it != m_projectFiles.end(); ++it)
-    {
-      tmpString = (*it).path();
-      if (tmpString == oldStr ||
-          (checkStartsWith && tmpString.startsWith(oldStr)))
-      {
-        tmpString = tmpString.replace(oldStr, newStr);
-        (*it).setPath(tmpString);
-      }
-      progressBar->advance(1);
-    }
-    progressBar->setTotalSteps(1);
-    progressBar->setValue(0);
-    progressBar->setTextEnabled(false);
-
-    quantaApp->slotStatusMsg(i18n("Done."));
-    oldURL = KURL();
-    newURL = KURL();
-    m_modified = true;
-
-    emit reloadTree(m_projectFiles, false);
-    emit newStatus();
   }
+  KURL::List::Iterator it;
+  it = m_projectFiles.find(newURL);
+  if (it != m_projectFiles.end())
+      m_projectFiles.erase(it);
+
+  int nlCount = nl.count();
+  quantaApp->slotStatusMsg(i18n("Renaming files..."));
+  progressBar->setTotalSteps(nlCount - m_projectFiles.count() - 2);
+  progressBar->setValue(0);
+  progressBar->setTextEnabled(true);
+  bool checkStartsWith = oldStr.endsWith("/");
+  for (uint i = 0; i < nlCount; i++ )
+  {
+    el = nl.item(i).toElement();
+    tmpString = el.attribute("url");
+    if (tmpString == oldStr ||
+        (checkStartsWith && tmpString.startsWith(oldStr)))
+    {
+      oldString = tmpString;
+      tmpString = tmpString.replace(oldStr, newStr);
+      if (oldString != tmpString )
+      {
+        el.setAttribute("url",tmpString);
+        el.setAttribute("upload_time", "");
+      }
+    }
+    progressBar->advance(1);
+  }
+  for (KURL::List::Iterator it = m_projectFiles.begin(); it != m_projectFiles.end(); ++it)
+  {
+    tmpString = (*it).path();
+    if (tmpString == oldStr ||
+        (checkStartsWith && tmpString.startsWith(oldStr)))
+    {
+      tmpString = tmpString.replace(oldStr, newStr);
+      (*it).setPath(tmpString);
+    }
+    progressBar->advance(1);
+  }
+  progressBar->setTotalSteps(1);
+  progressBar->setValue(0);
+  progressBar->setTextEnabled(false);
+
+  quantaApp->slotStatusMsg(i18n("Done."));
+  m_modified = true;
+
+  emit reloadTree(m_projectFiles, false);
+  emit newStatus();
 }
 
-/** Rename a file or folder in the project*/
-void Project::slotRename(const KURL& url)
-{
-  bool folderRename = url.fileName(false).isEmpty();
-
-  QString oldName;
-  QString caption;
-  if (folderRename)
-  {
-    oldName = url.fileName(true);
-    caption = i18n("Rename Folder");
-  } else
-  {
-    oldName = url.fileName();
-    caption = i18n("Rename File");
-  }
-
-  KLineEditDlg dlg(i18n("Enter the new name:"), oldName, this);
-  dlg.setCaption(caption);
-
-  if ( dlg.exec() )
-  {
-    KURL newUrl = url;
-    if (folderRename)
-    {
-      newUrl.setPath(QFileInfo(url.path(-1)).dirPath() + '/'+dlg.text()+'/');
-    } else
-    {
-      newUrl.setFileName(dlg.text());
-    }
-
-    if ( url != newUrl )
-    {
-
-      //set the class global attributes
-      oldURL = QExtFileInfo::toRelative(url, baseURL);
-      newURL = QExtFileInfo::toRelative(newUrl, baseURL);
-      bool proceed = true;
-      if (QExtFileInfo::exists(newUrl))
-      {
-        proceed = KMessageBox::warningYesNo(this, i18n("<qt>The file <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>").arg(newUrl.prettyURL(0, KURL::StripFileProtocol)),i18n("Overwrite")) == KMessageBox::Yes;
-      }
-      if (proceed)
-      {
-      //start the rename job
-        KIO::SimpleJob *job = KIO::rename( url, newUrl, true );
-        connect( job, SIGNAL( result( KIO::Job *) ), SLOT( slotRenameFinished( KIO::Job *) ));
-      }
-    }
-  }
-}
 
 void Project::slotRemove(const KURL& urlToRemove)
 {
@@ -1043,7 +980,7 @@ void Project::slotRemove(const KURL& urlToRemove)
 /** create new project */
 void Project::slotNewProject()
 {
-  wiz = new QWizard( this, "new", true);
+  wiz = new QWizard(quantaApp, "new", true);
   wiz->setCaption(i18n("New Project Wizard"));
   //wiz->setMinimumSize(620,440);
 
@@ -1089,21 +1026,12 @@ void Project::slotNewProject()
   connect( pnw, SIGNAL(enableNextButton(QWidget *,bool)),
            wiz, SLOT(setBackEnabled(QWidget*,bool)));
 
-  QStringList lst;
-  QDictIterator<DTDStruct> it(*dtds);
-  for( ; it.current(); ++it )
-  {
-    if (it.current()->toplevel)
-    {
-      lst << it.current()->nickName;
-    }
-  }
-  lst.sort();
+  QStringList lst = DTDs::ref()->nickNameList(true);
   uint pos = 0;
   for (uint i = 0; i < lst.count(); i++)
   {
     pnf->dtdCombo->insertItem(lst[i]);
-    if (lst[i] == QuantaCommon::getDTDNickNameFromName(qConfig.defaultDocType.lower()))
+    if (lst[i] == DTDs::ref()->getDTDNickNameFromName(qConfig.defaultDocType.lower()))
        pos = i;
   }
   pnf->dtdCombo->setCurrentItem(pos);
@@ -1160,7 +1088,7 @@ void Project::slotAcceptCreateProject()
   if (!baseURL.path().startsWith("/")) baseURL.setPath("/"+baseURL.path());
   if (!QExtFileInfo::createDir( baseURL ))
   {
-    QuantaCommon::dirCreationError(this, baseURL);
+    QuantaCommon::dirCreationError(quantaApp, baseURL);
     baseURL = oldBaseURL;
   } else
   {
@@ -1172,7 +1100,7 @@ void Project::slotAcceptCreateProject()
     {
       email = pnf->lineEmail  ->text();
       author = pnf->lineAuthor ->text();
-      m_defaultDTD = QuantaCommon::getDTDNameFromNickName(pnf->dtdCombo->currentText());
+      m_defaultDTD = DTDs::ref()->getDTDNameFromNickName(pnf->dtdCombo->currentText());
       m_defaultEncoding  = pnf->encodingCombo->currentText();
 
       QuantaCommon::setUrl(previewPrefix, pnf->linePrefix->text());
@@ -1245,7 +1173,7 @@ void Project::slotAcceptCreateProject()
        templateURL = QExtFileInfo::toAbsolute(templateURL, baseURL);
        if (!QExtFileInfo::createDir(templateURL))
        {
-         QuantaCommon::dirCreationError(this, templateURL);
+         QuantaCommon::dirCreationError(quantaApp, templateURL);
        }
      }
      //the nodes are already created in loadProjectXML() called from createEmptyDom()
@@ -1260,18 +1188,15 @@ void Project::slotAcceptCreateProject()
      toolbarURL = QExtFileInfo::toAbsolute(toolbarURL, baseURL);
      if (!QExtFileInfo::createDir(toolbarURL))
      {
-       QuantaCommon::dirCreationError(this, toolbarURL);
+       QuantaCommon::dirCreationError(quantaApp, toolbarURL);
      }
      el = dom.firstChild().firstChild().namedItem("toolbars").toElement();
      url = QExtFileInfo::toRelative(toolbarURL, baseURL);
      el.firstChild().setNodeValue(QuantaCommon::qUrl(url));
 
-//     emit closeFiles();   already done in closeProject at the begining
-     emit setBaseURL( baseURL );
-     emit setProjectName( projectName );
+     emit newProjectLoaded(projectName, baseURL, templateURL);
      emit reloadTree( fileNameList(), true );
      emit showTree();
-     emit newProjectLoaded();
 
      m_modified = true;
 
@@ -1287,7 +1212,7 @@ void Project::slotAcceptCreateProject()
 void Project::slotOptions()
 {
   KURL url;
-  KDialogBase optionsDlg(this, "project_options", true, i18n("Project Properties"), KDialogBase::Ok | KDialogBase::Cancel);
+  KDialogBase optionsDlg(quantaApp, "project_options", true, i18n("Project Properties"), KDialogBase::Ok | KDialogBase::Cancel);
   ProjectOptions optionsPage(&optionsDlg);
   optionsDlg.setMainWidget(&optionsPage);
 
@@ -1349,21 +1274,12 @@ void Project::slotOptions()
   optionsPage.lineExclude->setText(excludeStr);
 
   optionsPage.linePrefix->setText(previewPrefix.url());
-  QStringList lst;
-  QDictIterator<DTDStruct> it(*dtds);
-  for( ; it.current(); ++it )
-  {
-    if (it.current()->toplevel)
-    {
-      lst << it.current()->nickName;
-    }
-  }
-  lst.sort();
+  QStringList lst = DTDs::ref()->nickNameList(true);
   uint pos = 0;
   for (uint i = 0; i < lst.count(); i++)
   {
     optionsPage.dtdCombo->insertItem(lst[i]);
-    if (lst[i] == QuantaCommon::getDTDNickNameFromName(m_defaultDTD))
+    if (lst[i] == DTDs::ref()->getDTDNickNameFromName(m_defaultDTD))
        pos = i;
   }
   optionsPage.dtdCombo->setCurrentItem(pos);
@@ -1418,7 +1334,7 @@ void Project::slotOptions()
     projectName = optionsPage.linePrjName->text();
     author    = optionsPage.lineAuthor ->text();
     email      = optionsPage.lineEmail  ->text();
-    m_defaultDTD = QuantaCommon::getDTDNameFromNickName(optionsPage.dtdCombo->currentText()).lower();
+    m_defaultDTD = DTDs::ref()->getDTDNameFromNickName(optionsPage.dtdCombo->currentText()).lower();
     m_defaultEncoding  = optionsPage.encodingCombo->currentText();
 
     QuantaCommon::setUrl(templateURL, optionsPage.linePrjTmpl->text());
@@ -1426,7 +1342,7 @@ void Project::slotOptions()
     templateURL = QExtFileInfo::toAbsolute(templateURL, baseURL);
     if (!QExtFileInfo::createDir(templateURL))
     {
-      QuantaCommon::dirCreationError(this, templateURL);
+      QuantaCommon::dirCreationError(quantaApp, templateURL);
     }
 
     QuantaCommon::setUrl(toolbarURL, optionsPage.linePrjToolbar->text());
@@ -1434,7 +1350,7 @@ void Project::slotOptions()
     toolbarURL = QExtFileInfo::toAbsolute(toolbarURL, baseURL);
     if (!QExtFileInfo::createDir(toolbarURL))
     {
-      QuantaCommon::dirCreationError(this, toolbarURL);
+      QuantaCommon::dirCreationError(quantaApp, toolbarURL);
     }
 
     QuantaCommon::setUrl(previewPrefix,optionsPage.linePrefix->text()+"/");
@@ -1576,8 +1492,7 @@ void Project::slotOptions()
     config->sync();
     m_modified = true;
 
-    emit setProjectName( projectName );
-    emit templateURLChanged( templateURL );
+    emit newProjectLoaded(projectName, baseURL, templateURL);
     emit newStatus();
   }
 }
@@ -1586,7 +1501,7 @@ void Project::slotUpload()
 {
   emit saveAllFiles();
 
-  ProjectUpload *dlg = new ProjectUpload(this, KURL(), 0, i18n("Upload project items..."), false, Qt::WDestructiveClose);
+  ProjectUpload *dlg = new ProjectUpload(KURL(), i18n("Upload project items..."));
   dlg->show();
 }
 
@@ -1595,7 +1510,7 @@ void Project::slotUploadURL(const KURL& urlToUpload)
   emit saveAllFiles();
   KURL url = QExtFileInfo::toRelative( urlToUpload, baseURL);
 
-  ProjectUpload *dlg = new ProjectUpload(this, url, 0, i18n("Upload project items..."), false, Qt::WDestructiveClose);
+  ProjectUpload *dlg = new ProjectUpload(url, i18n("Upload project items..."));
   dlg->show();
 }
 
@@ -1612,7 +1527,7 @@ void Project::slotGetMessages(const QString& data)
 
 void Project::slotRescanPrjDir()
 {
-  RescanPrj *dlg = new RescanPrj( m_projectFiles, baseURL, excludeRx, this, i18n("New Files in Project's Folder"));
+  RescanPrj *dlg = new RescanPrj( m_projectFiles, baseURL, excludeRx, quantaApp, i18n("New Files in Project's Folder"));
   if ( dlg->exec() )
   {
     insertFiles( dlg->files() );
@@ -1638,17 +1553,6 @@ KURL Project::urlWithPrefix(const KURL& url)
      returnUrl = url;
   }
   return returnUrl;
-}
-
-/** Read property of QString defaultDTD. */
-const QString& Project::defaultDTD()
-{
-  return m_defaultDTD;
-}
-/** Write property of QString defaultDTD. */
-void Project::setDefaultDTD( const QString& p_defaultDTD)
-{
-  m_defaultDTD = p_defaultDTD;
 }
 
 void Project::openCurrentView()
@@ -1712,11 +1616,11 @@ void Project::slotOpenProjectView()
 #if KDE_IS_VERSION(3, 1, 90)
   QString res = KInputDialog::getItem(
                   i18n("Open Project View"),
-                  i18n("Select a project view to open:"), list, 0, FALSE, &ok, this );
+                  i18n("Select a project view to open:"), list, 0, FALSE, &ok, quantaApp);
 #else
   QString res = QInputDialog::getItem(
                   i18n("Open Project View"),
-                  i18n("Select a project view to open:"), list, 0, FALSE, &ok, this );
+                  i18n("Select a project view to open:"), list, 0, FALSE, &ok, quantaApp);
 #endif
   if ( ok)
   {
@@ -1728,7 +1632,7 @@ void Project::slotOpenProjectView()
 /** Saves a project view (group of files & toolbars) asking for a name. */
 void Project::slotSaveAsProjectView(bool askForName)
 {
-  KLineEditDlg dlg(i18n("Enter the name of the view:"), "", this);
+  KLineEditDlg dlg(i18n("Enter the name of the view:"), "", quantaApp);
   dlg.setCaption(i18n("Save Project View As"));
 
   if ( !askForName || dlg.exec() )
@@ -1736,17 +1640,17 @@ void Project::slotSaveAsProjectView(bool askForName)
     if (askForName) currentProjectView = dlg.text().lower();
     else
     {
-      if (KMessageBox::questionYesNo(this, i18n("<qt>Do you want to overwrite the <b>%1</b> project view?</qt>").arg(currentProjectView))
+      if (KMessageBox::questionYesNo(quantaApp, i18n("<qt>Do you want to overwrite the <b>%1</b> project view?</qt>").arg(currentProjectView))
           == KMessageBox::No) return;
     }
     QDomNodeList nl = dom.elementsByTagName("projectview");
-    for (uint i =0 ;i < nl.count(); i++)
+    for (uint i = 0 ;i < nl.count(); i++)
     {
       QDomNode node = nl.item(i);
       if (node.toElement().attribute("name") == currentProjectView)
       {
         if (!askForName ||
-            KMessageBox::questionYesNo(this, i18n("<qt>A project view named <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>")
+            KMessageBox::questionYesNo(quantaApp, i18n("<qt>A project view named <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>")
                                              .arg(currentProjectView)) == KMessageBox::Yes)
         {
           node.parentNode().removeChild(node);
@@ -1816,11 +1720,11 @@ void Project::slotDeleteProjectView()
 #if KDE_IS_VERSION(3, 1, 90)
   QString res = KInputDialog::getItem(
                   i18n("Delete Project View"),
-                  i18n("Select a project view to delete:"), list, 0, FALSE, &ok, this );
+                  i18n("Select a project view to delete:"), list, 0, FALSE, &ok, quantaApp);
 #else
   QString res = QInputDialog::getItem(
                   i18n("Delete Project View"),
-                  i18n("Select a project view to delete:"), list, 0, FALSE, &ok, this );
+                  i18n("Select a project view to delete:"), list, 0, FALSE, &ok, quantaApp);
 #endif
   if ( ok)
   {
@@ -1850,6 +1754,26 @@ bool Project::contains(const KURL& url)
   if (m_projectFiles.isEmpty())
      fileNameList(false);
   return (m_projectFiles.contains(QExtFileInfo::toRelative(url, baseURL)) > 0);
+}
+
+/** Returns the project's base URL if it exists, the HOME dir if there is no project and no opened document (or the current opened document was not saved yet), and the base URL of the opened document, if it is saved somewhere. */
+KURL Project::projectBaseURL()
+{
+  KURL result;
+  if  (hasProject())
+  {
+     result = baseURL;
+  } else
+  {
+    if  ( !quantaApp->view()->writeExists() || quantaApp->view()->write()->isUntitled() )
+    {
+      result = QExtFileInfo::home();
+    } else
+    {
+       result = QExtFileInfo::path(quantaApp->view()->write()->url());
+    }
+  }
+  return result;
 }
 
 #include "project.moc"

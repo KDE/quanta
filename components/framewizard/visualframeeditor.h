@@ -25,7 +25,6 @@
 #include <qsplitter.h>
 #include <qptrlist.h>
 #include <qvaluelist.h>
-#include <qguardedptr.h>
 /**
   *@author gulmini luciano
   */
@@ -34,7 +33,7 @@ class VisualFrameEditor : public QHBox  {
    Q_OBJECT
    private:
       tree *t;
-      QGuardedPtr<SelectableArea> firstInsertedSA;
+      SelectableArea* firstInsertedSA;
       QStringList existingStructure;
 
       void build(QString,QString);

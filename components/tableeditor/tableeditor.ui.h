@@ -826,7 +826,7 @@ void TableEditor::slotRemoveCol()
 }
 
 
-void TableEditor::createNewTable(Document *write, DTDStruct *dtd)
+void TableEditor::createNewTable(Document *write, const DTDStruct *dtd)
 {
   m_write = write;
   m_dtd = dtd;
@@ -1002,8 +1002,7 @@ void TableEditor::slotEditChildTable()
       //create a new editor object and save the current state of the table there
       KTextEditor::Document *doc =
   KTextEditor::createDocument ("libkatepart", 0L, "KTextEditor::Document");
-      w = new Document(quantaApp->projectBaseURL(), doc, quantaApp->project(),
-                             quantaApp->m_pluginInterface, 0L);
+      w = new Document(doc, quantaApp->m_pluginInterface, 0L);
       QString tableData = readModifiedTable();
       w->editIf->insertText(0, 0, tableData);
       localParser = new Parser();

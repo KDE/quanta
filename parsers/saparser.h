@@ -115,7 +115,7 @@ private:
   Node* m_lastParsedNode;
   Node* m_currentNode;
   int m_lastParsedLine, m_lastParsedCol;
-  DTDStruct *m_dtd;
+  const DTDStruct *m_dtd;
   GroupElementMapList *m_groups;
   QStringList *m_selectors; //holds the CSS selectors
   QRegExp m_quotesRx;
@@ -133,7 +133,7 @@ private:
   bool s_searchForAreaEnd;
   bool s_searchForForcedAreaEnd;
   QRegExp s_forcedAreaRx;
-  DTDStruct *s_dtd;
+  const DTDStruct *s_dtd;
   bool s_searchForSpecialAreas;
   ContextStruct s_context;
   QValueStack<ContextStruct> s_contextStack;

@@ -85,25 +85,26 @@ enum DTDFamily{Unknown = 0, Xml, Script};
 //an internal representation of a DTD
 typedef struct DTDStruct
     {
-     QString name;                    //DTD name
-     QString nickName;                //DTD nickname
-     QString url;                     //the url of the DTD definition file
-     QString doctypeStr;              //the string that appears right after !doctype
-     QString inheritsTagsFrom;        //Inherited DTD name
-     QString defaultExtension;        //default extension when creating new files
+     QString name;                    //< DTD name
+     QString nickName;                //< DTD nickname
+     bool loaded;                     //< true = DTD is complet in memory
+     QString url;                     //< the url of the DTD definition file
+     QString doctypeStr;              //< the string that appears right after !doctype
+     QString inheritsTagsFrom;        //< Inherited DTD name
+     QString defaultExtension;        //< default extension when creating new files
      QStringList mimeTypes;
-     bool caseSensitive;              //the tags&attributes in DTD are case sensitive or not
-     int family;                      //xml, script type
-     bool toplevel;                 //true if the DTD can be the main DTD of a document. Always true for XML like DTD's
-     QTagList* tagsList;              //the list of all defined tags in the DTD
-     QString fileName;                //the DTD decription.rc with path
-     AttributeListDict* commonAttrs;  //the attributes of the common groups
+     bool caseSensitive;              //< the tags&attributes in DTD are case sensitive or not
+     int family;                      //< xml, script type
+     bool toplevel;                   //< true if the DTD can be the main DTD of a document. Always true for XML like DTD's
+     QTagList* tagsList;              //< the list of all defined tags in the DTD
+     QString fileName;                //< the DTD decription.rc with path
+     AttributeListDict* commonAttrs;  //< the attributes of the common groups
 
-     QString booleanAttributes;       //simple or extended <tag booleanAttr> or <tag booleanAttr="1">
-     QString booleanTrue;             //"true" or "1" or whatever
-     QString booleanFalse;            //"false" or "0" or whatever
-     QString singleTagStyle;          //"xml" or "html" (<tag/> or <tag>)
-     QString defaultAttrType;         //"input", "string" or whatever
+     QString booleanAttributes;       //< simple or extended <tag booleanAttr> or <tag booleanAttr="1">
+     QString booleanTrue;             //< "true" or "1" or whatever
+     QString booleanFalse;            //< "false" or "0" or whatever
+     QString singleTagStyle;          //< "xml" or "html" (<tag/> or <tag>)
+     QString defaultAttrType;         //< "input", "string" or whatever
 
 /****************** FOR THE NEW PARSER **********************/
 
@@ -127,7 +128,7 @@ typedef struct DTDStruct
 /* A regular expression which matches the starting strings of all the
    possible special areas.
 */
-     QRegExp     specialAreaStartRx;
+     mutable QRegExp     specialAreaStartRx;
 
 /* For each special tag name, holds an attribute name. This attribute is used to
    figure out the DTD which is valid in the special tag area.
@@ -158,20 +159,20 @@ typedef struct DTDStruct
      QMap<QString, QString> comments;
 
 /* Regular experssion to match the start of the comments (//, <!--)*/
-     QRegExp commentsStartRx;
+     mutable QRegExp commentsStartRx;
 
 /* How does a structure starts in this DTD. Eg. "{" or "begin".*/
      QString structBeginStr;
 /* How does a structure ends in this DTD. Eg. "}" or "end".*/
      QString structEndStr;
 /* A regular experssion to match the structe begin or end. */
-     QRegExp structRx;
+     mutable QRegExp structRx;
 /* Regular experssion to match the possible keywords that can appear before
    a structure, like "function", "for", etc. */
-     QRegExp structKeywordsRx;
+     mutable QRegExp structKeywordsRx;
 /* Regular expression containing the keywords that indicate that the groups
 defined in the structure after the keyword have local scope */
-     QRegExp localScopeKeywordsRx;
+     mutable QRegExp localScopeKeywordsRx;
 
 /* A list of structure tree groups definition */
      QValueList<StructTreeGroup> structTreeGroups;
@@ -180,12 +181,12 @@ defined in the structure after the keyword have local scope */
 /****************** END FOR THE NEW PARSER **********************/
      QStringList toolbars;
 /*A list with abbreviations in the for of: <template templatename, code> */
-     QMap<QString, QString> abbreviations;
+     mutable QMap<QString, QString> abbreviations;
 
 /* True if foo-foo2 should be considered as one word. False (default) otherwise. */
      bool minusAllowedInWord;
 
-     QChar tagAutoCompleteAfter;
+     mutable QChar tagAutoCompleteAfter;
      QChar attrAutoCompleteAfter;
      QChar attributeSeparator;
      QChar tagSeparator;
@@ -234,7 +235,7 @@ public:
   Attribute* attribute(const QString& name);
 
   /** The tag belongs to this DTD */
-  DTDStruct *parentDTD;
+  const DTDStruct *parentDTD;
   /** The tag has the attributes of the above common groups */
   QStringList commonGroups;
   QStringList stoppingTags;

@@ -26,8 +26,22 @@ class QuantaPropertiesPage;
 
 class TemplatesTreeView : public FilesTreeView  {
    Q_OBJECT
+
 public:
-  TemplatesTreeView(const KURL& projectBaseURL, QWidget *parent = 0L, const char *name = 0L);
+
+  /**
+   *  since this class is a singleton you must use this function to access it
+   *
+   *  the parameter are only used at the first call to create the class
+   *
+   */
+  static TemplatesTreeView* const ref(QWidget *parent = 0L, const char *name = 0L)
+  {
+    static TemplatesTreeView *m_ref;
+    if (!m_ref) m_ref = new TemplatesTreeView (parent, name);
+    return m_ref;
+  }
+
   ~TemplatesTreeView();
   /** Writes a .dirinfo file from the selected item's path */
   void writeDirInfo(const QString& dirInfoFile = QString::null);
@@ -36,12 +50,25 @@ public:
 
 
 public slots:
-  /** Sets the project template directory */
-  void slotSetTemplateURL(const KURL& newTemplateURL);
-  /** No descriptions */
+
+  /**  Inserts the content of the selected template into the
+    *  activ document
+    */
   void slotInsertInDocument();
+
+  /**
+   *  displays the RBM
+   *
+   *
+   *  @param listView KListView where the event comes from
+   *
+   *  @param item QListViewItem where the mousepointer is hovering
+   *
+   *  @param point QPoint coordinates of the event
+   *
+   */
   void slotMenu(KListView *listView, QListViewItem *item, const QPoint &point);
-  /** No descriptions */
+  /** Creates a new document based in the selected template. */
   void slotNewDocument();
   /** Insert the template as text, image, new document. */
   void slotInsert();
@@ -49,7 +76,12 @@ public slots:
   void slotNewDir();
  /** Handles dropping on the document from the template tree */
   void slotDragInsert(QDropEvent *);
-  /** packs and sends files or folders */
+
+  /**
+   *  slot for the RBM
+   *
+   *  packs and sends files or folders as attachment to an email
+   */
   void slotSendInMail();
   virtual void slotSelectFile(QListViewItem *item);
   virtual void slotOpen();
@@ -61,23 +93,35 @@ public slots:
   virtual void slotPropertiesApplied();
   virtual void slotInsertTag();
 
+  /** Sets the project template directory */
+  void slotNewProjectLoaded(const QString &, const KURL &, const KURL &);
+
 private:
 
-  FilesTreeBranch *m_globalDir;
-  FilesTreeBranch *m_localDir;
+  /** The constructor is privat because we use singleton patter.
+   *  If you need the class use TemplatesTreeView::ref() for
+   *  construction and reference
+   */
+  TemplatesTreeView(QWidget *parent = 0L, const char *name = 0L);
   FilesTreeBranch *m_projectDir;
   int m_deleteMenuId;
   int m_openId;
+  int m_seperatorMenuId;
+  int m_reloadMenuId;
   QuantaPropertiesPage *m_quantaProperties;
   /** Filters the template through and action, and returns the modified/filtered
   template file */
   KURL filterTemplate();
+  QString m_projectName;
+  KURL localURL;
+  KURL globalURL;
 
 signals: // Signals
   /** No descriptions */
   void insertFile(const KURL &);
 
 protected: // Protected methods
+  KFileTreeBranch* newBranch(const KURL& url);
   /** No descriptions */
   virtual QDragObject * dragObject();
   DirInfo m_dirInfo;

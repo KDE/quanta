@@ -26,7 +26,7 @@
 #include <qtooltip.h>
 #include <qwhatsthis.h>
 
-Tagxml::Tagxml( QDomNode &d, DTDStruct *dtd, QWidget *parent, const char *name)
+Tagxml::Tagxml( QDomNode &d, const DTDStruct *dtd, QWidget *parent, const char *name)
   :QWidget(parent,name), TagWidget(parent,name), doc(d)
 {
    m_dtd = dtd;

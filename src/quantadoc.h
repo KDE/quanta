@@ -84,6 +84,7 @@ signals:
   void newStatus();
   void title(QString);
   void hideSplash();
+  void documentClosed();
 
 private:
   KPopupMenu *attribMenu;

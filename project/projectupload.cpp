@@ -55,11 +55,11 @@
 #include "qextfileinfo.h"
 #include "resource.h"
 
-ProjectUpload::ProjectUpload(Project* prg, const KURL& url, QWidget *parent, const char* name, bool modal, WFlags fl)
-  :ProjectUploadS( parent, name, modal, fl)
+ProjectUpload::ProjectUpload(const KURL& url, const char* name)
+  :ProjectUploadS( 0L, name, true, Qt::WDestructiveClose)
 {
     list->hide();
-    m_project = prg;
+    m_project = Project::ref();
     initProjectInfo();
     startUrl = url;
     QTimer::singleShot(10, this, SLOT(slotBuildTree()));
@@ -74,24 +74,21 @@ ProjectUpload::~ProjectUpload()
 
 void  ProjectUpload::initProjectInfo()
 {
-
-  p = m_project;
-
   baseUrl = new KURL();
 
 //  list->setMultiSelection(true);
 
-  QDomElement uploadEl = p->dom.firstChild().firstChild().namedItem("upload").toElement();
+  QDomElement uploadEl = m_project->dom.firstChild().firstChild().namedItem("upload").toElement();
 
   lineHost -> setText(uploadEl.attribute("remote_host",""));
   lineUser -> setText(uploadEl.attribute("user",""));
   linePath -> setText(uploadEl.attribute("remote_path",""));
   port -> setText( uploadEl.attribute("remote_port","") );
   QString def_p = uploadEl.attribute("remote_protocol","ftp");
-  keepPasswd->setChecked(p->keepPasswd);
-  if (p->keepPasswd)
+  keepPasswd->setChecked(m_project->keepPasswd);
+  if (m_project->keepPasswd)
   {
-    linePasswd->insert(p->passwd);
+    linePasswd->insert(m_project->passwd);
   } else
   {
     linePasswd->clear();
@@ -130,14 +127,14 @@ void ProjectUpload::slotBuildTree()
  bool isDirectory = strUrl.endsWith("/");
  QString s;
  QDomElement el;
- QDomNodeList nl = p->dom.elementsByTagName("item");
+ QDomNodeList nl = m_project->dom.elementsByTagName("item");
  totalProgress->setTotalSteps(nl.count() - 1 );
  totalProgress->setValue(0);
  totalText->setText(i18n("Scanning project files..."));
 
- QDict<KFileItem> projectDirFiles = QExtFileInfo::allFilesDetailed(p->baseURL, "*");
+ QDict<KFileItem> projectDirFiles = QExtFileInfo::allFilesDetailed(m_project->baseURL, "*");
  
- KURL u = p->baseURL;
+ KURL u = m_project->baseURL;
  KURL absUrl = u;
  for (uint i = 0; i < nl.count(); i++)
  {
@@ -146,7 +143,7 @@ void ProjectUpload::slotBuildTree()
    if (startUrl.isEmpty() || (s.startsWith(strUrl) && isDirectory) || s == strUrl)
    {
      QuantaCommon::setUrl(u, s);
-     absUrl.setPath(p->baseURL.path(1)+u.path());
+     absUrl.setPath(m_project->baseURL.path(1)+u.path());
      KFileItem *p_item = projectDirFiles.find(absUrl.url());
      if (!p_item)
        continue;       
@@ -216,7 +213,7 @@ void ProjectUpload::buildSelectedItemList()
 void ProjectUpload::startUpload()
 {
   stopUpload = false;
-  QDomElement uploadEl = p->dom.firstChild().firstChild().namedItem("upload").toElement();
+  QDomElement uploadEl = m_project->dom.firstChild().firstChild().namedItem("upload").toElement();
   QString path = linePath->text();
   if (!path.startsWith("/"))
     path.prepend("/");
@@ -225,7 +222,7 @@ void ProjectUpload::startUpload()
   uploadEl.setAttribute("remote_port", port->text() );
   uploadEl.setAttribute("user", lineUser->text() );
   uploadEl.setAttribute("remote_protocol", comboProtocol->currentText() );
-  p->setModified(true);
+  m_project->setModified(true);
 
   baseUrl->setProtocol(comboProtocol->currentText());
   baseUrl->setPort(port->text().toInt());
@@ -235,12 +232,12 @@ void ProjectUpload::startUpload()
   baseUrl->setPass(password);
   if (keepPasswd->isChecked())
   {
-     p->keepPasswd = true;
-     p->passwd = password;
+     m_project->keepPasswd = true;
+     m_project->passwd = password;
   } else
   {
-     p->keepPasswd = false;
-     p->passwd = "";
+     m_project->keepPasswd = false;
+     m_project->passwd = "";
   }
 
   buildSelectedItemList();
@@ -293,7 +290,7 @@ void ProjectUpload::upload()
       }
 
 
-      KURL from = QExtFileInfo::toAbsolute(currentURL, p->baseURL);
+      KURL from = QExtFileInfo::toAbsolute(currentURL, m_project->baseURL);
       to = *baseUrl;
       to.addPath( currentURL.path() );
       if (to.fileName(false).isEmpty())
@@ -430,7 +427,7 @@ void ProjectUpload::slotUploadNext()
     toUpload.remove( it );
 
     //update upload time
-    QDomNodeList nl = p->dom.elementsByTagName("item");
+    QDomNodeList nl = m_project->dom.elementsByTagName("item");
     QDomElement el;
     for ( uint i = 0; i < nl.count(); i++ )
     {
@@ -449,7 +446,7 @@ void ProjectUpload::slotUploadNext()
 
 void ProjectUpload::clearProjectModified()
 {
-  QDomNodeList nl = p->dom.elementsByTagName("item");
+  QDomNodeList nl = m_project->dom.elementsByTagName("item");
   for ( unsigned int i=0; i<nl.count(); i++ )
   {
     QDomElement el = nl.item(i).toElement();

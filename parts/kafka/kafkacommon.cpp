@@ -2563,7 +2563,7 @@ bool kafkaCommon::removeDomNode(DOM::Node node)
 	return true;
 }
 
-DOM::Node kafkaCommon::createDomNode(const QString &nodeName, DTDStruct* dtd,
+DOM::Node kafkaCommon::createDomNode(const QString &nodeName, const DTDStruct* dtd,
 	DOM::Document rootNode)
 {
 	//this will change with the futur multi-DTDs support
@@ -2597,7 +2597,7 @@ DOM::Node kafkaCommon::createTextDomNode(const QString &textString, DOM::Documen
 	return rootNode.createTextNode(textString);
 }
 
-DOM::Node kafkaCommon::createDomNodeAttribute(const QString &nodeName, DTDStruct* dtd,
+DOM::Node kafkaCommon::createDomNodeAttribute(const QString &nodeName, const DTDStruct* dtd,
 	const QString &attrName, const QString &attrValue, DOM::Document rootNode)
 {
 	DOM::Node attr;
@@ -2650,7 +2650,7 @@ bool kafkaCommon::insertDomNodeAttribute(DOM::Node node, DOM::Node attr)
 	return true;
 }
 
-bool kafkaCommon::editDomNodeAttribute(DOM::Node node, const QString &nodeName, DTDStruct* dtd,
+bool kafkaCommon::editDomNodeAttribute(DOM::Node node, const QString &nodeName, const DTDStruct* dtd,
 	const QString &attrName, const QString &attrValue, DOM::Document rootNode)
 {
 	DOM::Node attr;

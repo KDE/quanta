@@ -37,9 +37,22 @@ class QTime;
 
 class StructTreeView : public KListView  {
    Q_OBJECT
-friend class QuantaApp;
+//friend class QuantaApp;
 public:
-  StructTreeView(KConfig *config, QWidget *parent=0, const char *name=0);
+
+  /**
+   *  since this class is a singleton you must use this function to access it
+   *
+   *  the parameters are only used at the first call to create the class
+   *
+   */
+  static StructTreeView* const ref(QWidget *parent = 0L, const char *name = 0L)
+  {
+    static StructTreeView *m_ref;
+    if (!m_ref) m_ref = new StructTreeView (parent, name);
+    return m_ref;
+  }
+
   ~StructTreeView();
 
 
@@ -96,6 +109,12 @@ signals:
   void showPreviewWidget(bool);
 
 private:
+
+  /** The constructor is privat because we use singleton patter.
+   *  If you need the class use StructTreeView::ref() for
+   *  construction and reference
+   */
+  StructTreeView(QWidget *parent=0, const char *name=0);
   /** builds the structure tree */
   void buildTree(Node *baseNode, int openLevel);
   /** Do the recursive opening or closing of the trees */
@@ -121,7 +140,7 @@ protected slots: // Protected slots
   void slotDTDChanged(int id);
 protected: // Protected attributes
   /**  */
-  DTDStruct* m_parsingDTD;
+  const DTDStruct* m_parsingDTD;
   Document *write;
   QTime timer;
 };

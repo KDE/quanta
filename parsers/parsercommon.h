@@ -25,12 +25,12 @@
 #include "tag.h"
 
 class Document;
-class DTDStruct;
+struct DTDStruct;
 class Node;
 
 namespace ParserCommon{
   extern QStringList includedFiles;
-  extern QPtrList<DTDStruct> includedFilesDTD; 
+  extern QPtrList<const DTDStruct> includedFilesDTD; 
   
   //this methods may go in a common class as well             
   QString getLine(Document *write, int line, int endLine, int endCol);
@@ -45,7 +45,8 @@ namespace ParserCommon{
       parentNode: the parent of the node
       currentNode: the last child of the parent, if it exists
   */
-  Node* createScriptTagNode(Document *write, const AreaStruct &area, const QString &areaName, DTDStruct *dtd, Node *parentNode, Node *currentNode);
+  Node* createScriptTagNode(Document *write, const AreaStruct &area, const QString &areaName,
+                            const DTDStruct *dtd, Node *parentNode, Node *currentNode);
 }
  
 #endif

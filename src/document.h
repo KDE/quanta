@@ -61,7 +61,7 @@ class Document : public QWidget{
    Q_OBJECT
 
 public:
-  Document(const KURL& p_baseURL, KTextEditor::Document *doc, Project *project,
+  Document(KTextEditor::Document *doc,
            QuantaPluginInterface * =0,
            QWidget *parent = 0, const char *name = 0, WFlags f=0);
   ~Document();
@@ -130,9 +130,9 @@ public:
   /** Sets the DTD identifier */
   void setDTDIdentifier(QString id);
   /** Get a pointer to the current active DTD. If fallback is true, this always gives back a valid and known DTD pointer: the active, the document specified and in last case the application default document type. */
-  DTDStruct* currentDTD(bool fallback = true);
+  const DTDStruct* currentDTD(bool fallback = true);
   /** Get a pointer to the default DTD (document, or app). */
-  DTDStruct* defaultDTD();
+  const DTDStruct* defaultDTD();
   /** Find the DTD name for a part of the document. */
   QString findDTDName(Tag **tag);
   /** Retrives the text from the specified rectangle. The KTextEditor::EditInterface::text seems to not
@@ -156,7 +156,7 @@ work correctly. */
   /** No descriptions */
   void setParsingDTD(const QString& dtdName);
   /** Find the word until the first word boundary backwards */
-  QString findWordRev(const QString& textToSearch, DTDStruct *dtd = 0L);
+  QString findWordRev(const QString& textToSearch, const DTDStruct *dtd = 0L);
   /** Returns the changed status since the last query. Resets changed.*/
   bool hasChanged();
   /** Sets the changed status.*/
@@ -180,7 +180,6 @@ work correctly. */
   void convertCase();
 
   bool busy;
-  KURL baseURL;
 
   KTextEditor::ViewCursorInterface *viewCursorIf;
   KTextEditor::SelectionInterface *selectionIf;
@@ -252,7 +251,7 @@ private:
   int spellMoved;
   QString dtdName;
 /*The DTD valid in the place where the completion was invoked.*/
-  DTDStruct *completionDTD;
+  const DTDStruct *completionDTD;
 
   bool changed;
   bool completionInProgress;

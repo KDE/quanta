@@ -54,7 +54,6 @@
 #include "qextfileinfo.h"
 #include "quanta.h"
 #include "tagmaildlg.h"
-#include "project.h"
 
 #define EXCLUDE ".*\\.tmpl$"
 #define TMPL ".tmpl"
@@ -65,15 +64,13 @@ const QString textMenu = I18N_NOOP("Insert as Text");
 const QString binaryMenu = I18N_NOOP("Insert Link to File");
 const QString docMenu = I18N_NOOP("New Document Based on This");
 
-TemplatesTreeView::TemplatesTreeView(const KURL& projectBaseURL, QWidget *parent, const char *name )
+TemplatesTreeView::TemplatesTreeView(QWidget *parent, const char *name )
   : FilesTreeView(parent,name), m_projectDir(0)
 {
-  Q_UNUSED(projectBaseURL);
-
   m_fileMenu = new KPopupMenu();
 
-  m_openId = m_fileMenu->insertItem(SmallIcon("fileopen"), i18n("&Open"), this ,SLOT(slotInsert()));
-  m_fileMenu->insertItem(i18n("Open for Editing"), this, SLOT(slotOpen()));
+  m_openId = m_fileMenu->insertItem(i18n("&Open"), this ,SLOT(slotInsert()));
+  m_fileMenu->insertItem(SmallIcon("fileopen"), i18n("&Open"), this ,SLOT(slotOpen()));
   m_fileMenu->insertItem(SmallIcon("mail_send"), i18n("Send in E-Mail"), this, SLOT(slotSendInMail()));
   m_insertFileInProject = m_fileMenu->insertItem(i18n("Insert in Project..."), this, SLOT(slotInsertInProject()));
   m_fileMenu->insertSeparator();
@@ -81,8 +78,6 @@ TemplatesTreeView::TemplatesTreeView(const KURL& projectBaseURL, QWidget *parent
   m_fileMenu->insertItem(SmallIcon("editpaste"), i18n("&Paste"), this, SLOT(slotPaste()));
   m_fileMenu->insertItem(SmallIcon("editdelete"), i18n("&Delete"), this, SLOT(slotDelete()));
   m_fileMenu->insertItem(SmallIcon("info"), i18n("Properties"), this, SLOT(slotProperties()));
-  m_fileMenu->insertSeparator();
-  m_fileMenu->insertItem(i18n("Reload"), this, SLOT(slotReload()));
 
   m_folderMenu = new KPopupMenu();
 
@@ -94,8 +89,8 @@ TemplatesTreeView::TemplatesTreeView(const KURL& projectBaseURL, QWidget *parent
   m_folderMenu->insertItem(SmallIcon("editpaste"), i18n("&Paste"), this, SLOT(slotPaste()));
   m_deleteMenuId = m_folderMenu->insertItem(SmallIcon("editdelete"), i18n("&Delete"), this, SLOT(slotDelete()));
   m_folderMenu->insertItem(SmallIcon("info"), i18n("Properties"), this, SLOT(slotProperties()));
-  m_folderMenu->insertSeparator();
-  m_folderMenu->insertItem(i18n("Reload"), this, SLOT(slotReload()));
+  m_seperatorMenuId = m_folderMenu->insertSeparator();
+  m_reloadMenuId = m_folderMenu->insertItem(i18n("Reload"), this, SLOT(slotReload()));
 
   setRootIsDecorated( true );
   //header()->hide();
@@ -107,23 +102,11 @@ TemplatesTreeView::TemplatesTreeView(const KURL& projectBaseURL, QWidget *parent
   setFullWidth(true);
   setShowSortIndicator(true);
 
-  KURL url;
-  url.setPath(qConfig.globalDataDir + resourceDir + "templates/");
-  m_globalDir = new FilesTreeBranch(this, url, i18n("Global Templates"), SmallIcon("ttab"));
-  addBranch(m_globalDir);
+  globalURL.setPath(qConfig.globalDataDir + resourceDir + "templates/");
+  newBranch(globalURL);
 
-  QDir dir(url.path(), "", QDir::All & !QDir::Hidden);
-  m_globalDir->root()->setExpandable(dir.count() != 2);     //   . and .. are always there
-
-  url.setPath(locateLocal("data", resourceDir + "templates/"));
-  m_localDir = new FilesTreeBranch(this, url, i18n("Local Templates"), SmallIcon("ttab"));
-  addBranch(m_localDir);
-
-  dir.setPath(url.path());
-  m_localDir->root()->setExpandable(dir.count() != 2);     //   . and .. are always there
-
-  m_globalDir->excludeFilterRx.setPattern(EXCLUDE);
-  m_localDir->excludeFilterRx.setPattern(EXCLUDE);
+  localURL.setPath(locateLocal("data", resourceDir + "templates/"));
+  newBranch(localURL);
 
   setFocusPolicy(QWidget::ClickFocus);
 
@@ -152,6 +135,34 @@ TemplatesTreeView::~TemplatesTreeView()
 {
 }
 
+
+KFileTreeBranch* TemplatesTreeView::newBranch(const KURL& url)
+{
+  FilesTreeBranch *newBrnch;
+  if (url == globalURL)
+  {
+    newBrnch = new FilesTreeBranch(this, url, i18n("Global Templates"), SmallIcon("ttab"));
+  } else
+  {
+    if (url == localURL)
+      newBrnch = new FilesTreeBranch(this, url, i18n("Local Templates"), SmallIcon("ttab"));
+    else
+      newBrnch = new FilesTreeBranch(this, url, i18n("Project Templates"), SmallIcon("ptab"));
+  }
+  newBrnch->excludeFilterRx.setPattern(EXCLUDE);
+  addBranch(newBrnch);
+  if (url.isLocalFile())
+  {
+    QDir dir (url.path(), "", QDir::All & !QDir::Hidden);
+    newBrnch->root()->setExpandable(dir.count() != 2);     //   . and .. are always there
+  } else {
+    newBrnch->root()->setExpandable(true);     //   we assume there is something
+  }
+
+  return newBrnch;
+}
+
+
 /** No descriptions */
 void TemplatesTreeView::slotInsertInDocument()
 {
@@ -174,16 +185,24 @@ void TemplatesTreeView::slotMenu(KListView*, QListViewItem *item, const QPoint &
 {
   if ( !item ) return;
   setSelected(item, true);
-  m_folderMenu->setItemEnabled(m_insertFolderInProject, quantaApp->project()->hasProject());
-  m_fileMenu->setItemEnabled(m_insertFileInProject, quantaApp->project()->hasProject());
+  bool hasProject = m_projectName;
+  m_folderMenu->setItemEnabled(m_insertFolderInProject, hasProject);
+  m_fileMenu->setItemEnabled(m_insertFileInProject, hasProject);
 
   KFileTreeViewItem *curItem = currentKFileTreeViewItem();
   if ( curItem->isDir() )
   {
     if ( curItem == curItem->branch()->root())
-          m_folderMenu ->setItemEnabled(m_deleteMenuId, false);
-    else  m_folderMenu ->setItemEnabled(m_deleteMenuId, true);
-
+    {
+      m_folderMenu ->setItemEnabled(m_deleteMenuId, false);
+      m_folderMenu ->setItemVisible(m_seperatorMenuId, true);
+      m_folderMenu ->setItemVisible(m_reloadMenuId, true);
+    } else
+    {
+      m_folderMenu ->setItemEnabled(m_deleteMenuId, true);
+      m_folderMenu ->setItemVisible(m_seperatorMenuId, false);
+      m_folderMenu ->setItemVisible(m_reloadMenuId, false);
+    }
     m_folderMenu ->popup(point);
   } else
   {
@@ -246,6 +265,7 @@ void TemplatesTreeView::slotSelectFile(QListViewItem *item)
   if ( !item ) return;
 
   KFileTreeViewItem *kftvItem = currentKFileTreeViewItem();
+  if ( !kftvItem ) return;
 
   if (expandArchiv(kftvItem)) return;
 
@@ -522,12 +542,11 @@ void TemplatesTreeView::slotProperties()
   addFileInfoPage(propDlg);
   if (propDlg->exec() == QDialog::Accepted)
    {
+    slotPropertiesApplied();
     if (url != propDlg->kurl())
     {
       itemRenamed(url, propDlg->kurl());
     }
-    slotPropertiesApplied();
-    slotReload();
    }
 }
 
@@ -636,28 +655,17 @@ void TemplatesTreeView::slotDragInsert(QDropEvent *e)
    }
 }
 
-/** Sets the project template directory */
-void TemplatesTreeView::slotSetTemplateURL(const KURL& newTemplateURL)
+void TemplatesTreeView::slotNewProjectLoaded(const QString &projectName, const KURL &baseURL, const KURL &templateURL)
 {
+  Q_UNUSED(baseURL);
+  m_projectName = projectName;
   if (m_projectDir)
     removeBranch(m_projectDir);
-  if(!newTemplateURL.isEmpty())
+  if (!templateURL.isEmpty())
   {
-    m_projectDir =new FilesTreeBranch(this, newTemplateURL, i18n("Project Templates"), SmallIcon("ptab"));
-    addBranch(m_projectDir);
-        if (newTemplateURL.isLocalFile())
-    {
-      QDir dir (newTemplateURL.path(), "", QDir::All & !QDir::Hidden);
-      m_projectDir->root()->setExpandable(dir.count() != 2);     //   . and .. are always there
-    } else {
-      m_projectDir->root()->setExpandable(true);     //   we assume there is something
-    }
-    m_projectDir->excludeFilterRx.setPattern(EXCLUDE);
-
+    newBranch(templateURL);
   }
-  slotReload();
 }
-
 
 
 /*!
@@ -841,5 +849,6 @@ bool TemplatesTreeView::acceptDrag(QDropEvent* e ) const
 {
  return (FilesTreeView::acceptDrag(e) || QTextDrag::canDecode(e));
 }
+
 
 #include "templatestreeview.moc"

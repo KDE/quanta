@@ -43,9 +43,9 @@ VisualFrameEditor::VisualFrameEditor(QWidget * parent, const char * name) : QHBo
 }
 
 VisualFrameEditor::~VisualFrameEditor(){
- // delete t;
-//  delete firstInsertedSA;
- // firstInsertedSA=0L;
+  delete t;
+  delete firstInsertedSA;
+  firstInsertedSA=0L;
 }
 
 void VisualFrameEditor::setGeometries(QString l){

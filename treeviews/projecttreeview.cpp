@@ -21,6 +21,9 @@
 #include <qheader.h>
 #include <qstringlist.h>
 #include <qregexp.h>
+#include <qfont.h>
+#include <qpainter.h>
+#include <qlistview.h>
 
 // KDE includes
 #include <krun.h>
@@ -28,6 +31,7 @@
 #include <kio/job.h>
 #include <kopenwith.h>
 #include <kiconloader.h>
+#include <klineeditdlg.h>
 #include <kmessagebox.h>
 #include <kdebug.h>
 #include <kpopupmenu.h>
@@ -40,6 +44,25 @@
 #include "quantacommon.h"
 #include "qextfileinfo.h"
 #include "resource.h"
+#include "quanta.h"
+#include "quantadoc.h"
+
+//ProjectTreeViewItem implementation
+ProjectTreeViewItem::ProjectTreeViewItem( KFileTreeViewItem *parent, KFileItem* item, KFileTreeBranch *brnch )
+: FilesTreeViewItem( parent, item, brnch)
+{
+}
+
+// make open project files bold
+void ProjectTreeViewItem::paintCell(QPainter *p, const QColorGroup &cg,
+                                    int column, int width, int align)
+{
+    QFont f = p->font();
+    f.setBold(quantaApp->doc()->isOpened(this->url()));
+    p->setFont(f);
+    FilesTreeViewItem::paintCell( p, cg, column, width, align );
+}
+
 
 //ProjectTreeBranch implementation
 ProjectTreeBranch::ProjectTreeBranch(KFileTreeView *parent, const KURL& url,
@@ -48,18 +71,29 @@ ProjectTreeBranch::ProjectTreeBranch(KFileTreeView *parent, const KURL& url,
                                      KFileTreeViewItem *branchRoot)
     : FilesTreeBranch(parent, url, name, pix, showHidden, branchRoot)
 {
-  setAutoUpdate(false);
 }
 
 KFileTreeViewItem* ProjectTreeBranch::createTreeViewItem(KFileTreeViewItem *parent,
                                                         KFileItem *fileItem )
 {
-  KFileTreeViewItem *tvi = FilesTreeBranch::createTreeViewItem(parent, fileItem);
-  if ( tvi && fileItem->url().fileName() == "CVS") {
-      tvi->setPixmap( 0, SmallIcon("log") );
-      tvi->setExpandable( false );
-      tvi->setEnabled( false );
-  };
+  FilesTreeViewItem  *tvi = 0;
+  if( parent && fileItem )
+  {
+    tvi = new ProjectTreeViewItem( parent, fileItem, this );
+    if (tvi)
+    {
+      // we assume there are childs
+      tvi->setExpandable(tvi->isDir());
+      tvi->setVisible(urlList.contains(fileItem->url()));  // only listelements
+      if (fileItem->url().fileName() == "CVS") {
+          tvi->setPixmap( 0, SmallIcon("log") );
+          tvi->setExpandable( false );
+          tvi->setEnabled( false );
+      };
+    }
+  }
+  else
+    kdDebug(24000) << "ProjectTreeBranch::createTreeViewItem: Have no parent" << endl;
   return tvi;
 }
 
@@ -97,11 +131,8 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   m_fileMenu->insertItem(SmallIcon("dirsynch"), i18n("Upload File..."), this, SLOT(slotUploadSingleURL()));
   m_fileMenu->insertSeparator();
   m_fileMenu->insertItem(i18n("Rename..."), this, SLOT(slotRename()));
-  m_fileMenu->insertItem(SmallIcon("info"), i18n("Properties"), this, SLOT(slotProperties()));
-  m_fileMenu->insertSeparator();
-  m_fileMenu->insertItem(SmallIcon("reload"), i18n("&Rescan Project Folder"), this, SLOT(slotRescan()));
-  m_fileMenu->insertItem(i18n("Pro&ject Properties..."), this, SLOT(slotOptions()));
-
+  m_fileMenu->insertItem(SmallIcon("info"), i18n("Properties..."), this, SLOT(slotProperties()));
+  
   m_folderMenu = new KPopupMenu(this);
 
 /* this can be done by mouse and keyboard
@@ -114,16 +145,13 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   m_folderMenu->insertItem(SmallIcon("dirsynch"), i18n("Upload Folder..."), this, SLOT(slotUploadSingleURL()));
   m_folderMenu->insertSeparator();
   m_folderMenu->insertItem(i18n("Rename..."), this, SLOT(slotRename()));
-  m_folderMenu->insertItem(SmallIcon("info"), i18n("Properties"), this, SLOT(slotProperties()));
-  m_folderMenu->insertSeparator();
-  m_folderMenu->insertItem(SmallIcon("reload"), i18n("&Rescan Project Folder"), this, SLOT(slotRescan()));
-  m_folderMenu->insertItem(i18n("Pro&ject Properties..."), this, SLOT(slotOptions()));
+  m_folderMenu->insertItem(SmallIcon("info"), i18n("Properties..."), this, SLOT(slotProperties()));
 
   m_projectMenu = new QPopupMenu(this);
   m_projectMenu->insertItem(SmallIcon("dirsynch"), i18n("&Upload Project..."), this, SLOT(slotUploadProject()));
-  m_projectMenu->insertSeparator();
-  m_projectMenu->insertItem(SmallIcon("reload"), i18n("&Rescan Project Folder"), this, SLOT(slotRescan()));
-  m_projectMenu->insertItem(i18n("Pro&ject Options"), this, SLOT(slotOptions()));
+  m_projectMenu->insertItem(SmallIcon("reload"), i18n("&Rescan Project Folder..."), this, SLOT(slotRescan()));
+  m_projectMenu->insertItem(i18n("Pro&ject Properties..."), this, SLOT(slotOptions()));
+  m_projectMenu->insertItem(i18n("Reload"), this, SLOT(slotReload()));
 
 
   connect(this, SIGNAL(executed(QListViewItem *)),
@@ -174,15 +202,46 @@ void ProjectTreeView::slotMenu(KListView *listView, QListViewItem *item, const Q
   }
 }
 
-void ProjectTreeView::slotSetBaseURL( const KURL& url )
+void ProjectTreeView::slotReload()
 {
-  m_baseURL = url;
+  if (m_projectDir)
+    removeBranch(m_projectDir);
+  QString m_projectNameStr = m_projectName+" ";
+  if (m_projectName)
+  {
+    if (m_baseURL.protocol() == "file")
+    {
+      m_projectNameStr += i18n("[local disk]");
+    } else
+    {
+      m_projectNameStr += "["+m_baseURL.protocol()+"://"+m_baseURL.user()+"@"+m_baseURL.host()+"]";
+    }
+    m_projectDir =  new ProjectTreeBranch( this, m_baseURL, m_projectNameStr, UserIcon("ptab"));
+  } else
+    m_projectDir =  new ProjectTreeBranch( this, m_baseURL, i18n("No Project"), UserIcon("ptab"));
+
+  addBranch(m_projectDir);
+  m_projectDir->urlList = m_urlList;  // set list for filter
+  if (m_projectName)
+    m_projectDir->populate(m_projectDir->rootUrl(), m_projectDir->root());
+  else
+    m_projectDir->root()->setEnabled(false);
+
+  if ( m_urlList.isEmpty() )
+    m_projectDir->root()->setExpandable( false );
+  else
+    m_projectDir->setOpen( true );
 }
 
-void ProjectTreeView::slotSetProjectName(const QString& name )
+/** Sets the project template directory */
+void ProjectTreeView::slotNewProjectLoaded(const QString &name, const KURL &baseURL, const KURL &)
 {
+  m_baseURL = baseURL;
   m_projectName = name;
-  m_projectDir->root()->setText( 0, name);
+  if (!m_projectName.isNull())
+    m_projectDir->root()->setText( 0, name);
+  else
+    m_projectDir->root()->setText( 0, i18n("No Project"));
 }
 
 void ProjectTreeView::slotReloadTree( const KURL::List &urlList, bool buildNewTree)
@@ -193,45 +252,26 @@ void ProjectTreeView::slotReloadTree( const KURL::List &urlList, bool buildNewTr
   // m_urlList must be absolute, otherwise filter doesn't work
   for (KURL::List::ConstIterator it = urlList.begin(); it != urlList.end(); ++it )
   {
-    url = addBaseURL(*it);
+    url = QExtFileInfo::toAbsolute(*it, m_baseURL);
     url.adjustPath(-1);
     m_urlList.append(url);
   }
 
   if (buildNewTree)
   {
-    if (m_projectDir) 
-      removeBranch(m_projectDir);
-    QString m_projectNameStr = m_projectName+" ";
-    bool hasProject = (m_projectName != i18n("No Project"));
-    if (hasProject)
-    {
-     if (m_baseURL.protocol() == "file")
-     {
-       m_projectNameStr += i18n("[local disk]");
-     } else
-     {
-       m_projectNameStr += "["+m_baseURL.protocol()+"://"+m_baseURL.user()+"@"+m_baseURL.host()+"]";
-     }
-    }
-    m_projectDir =  new ProjectTreeBranch( this, m_baseURL, m_projectNameStr, UserIcon("ptab"));
-    addBranch(m_projectDir);
-    m_projectDir->urlList = m_urlList;  // set list for filter
-    if (hasProject)
-      m_projectDir->populate(m_projectDir->rootUrl(), m_projectDir->root());
-    else
-      m_projectDir->root()->setEnabled(false);
-
-    if ( m_urlList.isEmpty() )
-      m_projectDir->root()->setExpandable( false );
-    else
-      m_projectDir->setOpen( true );
+    slotReload();
   } else
   {
     if (m_projectDir){
       m_projectDir->urlList = m_urlList;  // set list for filter
-      slotRemoveDeleted();
-      slotReload();
+      KFileTreeViewItem *item;
+      KFileTreeViewItem *rootItem = m_projectDir->root();
+      QListViewItemIterator iter(this);
+      for ( ; iter.current(); ++iter )
+      {
+        item = dynamic_cast <KFileTreeViewItem*> (iter.current());
+        item->setVisible(m_urlList.contains(item->url()) || item == rootItem);
+      }
     }
   }
 }
@@ -263,6 +303,7 @@ void ProjectTreeView::slotRemove()
        KMessageBox::warningYesNo(this,i18n("<qt>Do you really want to remove <b>%1</b> from the disk?</qt>")
                                       .arg(url.prettyURL(0, KURL::StripFileProtocol)))== KMessageBox::Yes )
   {
+    if (currentKFileTreeViewItem()->isDir()) url.adjustPath(+1);
     KIO::del( url );
     emit removeFromProject( url);
   }
@@ -288,10 +329,58 @@ void ProjectTreeView::slotRename()
 {
   if ( currentItem() )
   {
-    KURL url = currentURL();
-    if ( currentKFileTreeViewItem()->isDir() ) url.adjustPath(+1);
-    emit renameInProject(url);
+    m_oldURL = currentURL();
+    QString oldName;
+    QString caption;
+    bool folder = false;
+    if ( currentKFileTreeViewItem()->isDir()) 
+    {
+      caption = i18n("Rename Folder");
+      oldName = m_oldURL.fileName(true);
+      folder = true;
+    } else
+    {
+      oldName = m_oldURL.fileName();
+      caption = i18n("Rename File");
+    }      
+    
+    KLineEditDlg dlg(i18n("Enter the new name:"), oldName, this);
+    dlg.setCaption(caption);
+    if (dlg.exec())
+    {
+      m_newURL = m_oldURL;
+      if (folder)
+      {
+        m_newURL.setPath(QFileInfo(m_oldURL.path(-1)).dirPath() + '/'+dlg.text()+'/');
+        m_oldURL.adjustPath(1);
+      } else
+      {
+        m_newURL.setFileName(dlg.text());
+      }
+      if ( m_oldURL != m_newURL )
+      {
+        //set the class global attributes
+        KURL oldURL = QExtFileInfo::toAbsolute(m_oldURL, m_baseURL);
+        KURL newURL = QExtFileInfo::toAbsolute(m_newURL, m_baseURL);
+        bool proceed = true;
+        if (QExtFileInfo::exists(newURL))
+        {
+          proceed = KMessageBox::warningYesNo(this, i18n("<qt>The file <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>").arg(newURL.prettyURL(0, KURL::StripFileProtocol)),i18n("Overwrite")) == KMessageBox::Yes;
+        }
+        if (proceed)
+        {
+        //start the rename job
+          KIO::SimpleJob *job = KIO::rename( oldURL, newURL, true );
+          connect(job, SIGNAL( result( KIO::Job *) ), SLOT(slotRenameFinished( KIO::Job *)));
+        }
+      }  
+    }
   }
+}
+
+void ProjectTreeView::slotRenameFinished(KIO::Job *)
+{
+  emit renamed(m_oldURL, m_newURL);
 }
 
 
@@ -324,39 +413,13 @@ void ProjectTreeView::slotUploadProject()
 }
 
 
-/** Remove all the deleted - from the project - url's from the treeview. */
-void ProjectTreeView::slotRemoveDeleted()
+void ProjectTreeView::slotDocumentClosed()
 {
-  KFileTreeViewItem *item;
-  KURL url;
   QListViewItemIterator iter(this);
   for ( ; iter.current(); ++iter )
   {
-    item = dynamic_cast <KFileTreeViewItem*> (iter.current());
-    if (item && !m_urlList.contains(item->url()) && item != m_projectDir->root())
-    {
-      delete item;
-    }
+    iter.current()->repaint();
   }
 }
-
-  KURL ProjectTreeView::addBaseURL(const KURL&  url) {
-
-//  kdDebug(24000) << url.path() << "|" << m_baseURL.path() << endl;
-    if (m_baseURL.isEmpty())
-      return url;
-    else
-      return QExtFileInfo::toAbsolute(url, m_baseURL);;
-  }
-
-void ProjectTreeView::itemRenamed(const KURL& oldUrl, const KURL& newUrl )
-{
-  // simply undo the renaming, user must use rbm menu for a save rename,
-  // because project musst be changed also
-  KIO::SimpleJob *job = KIO::rename( newUrl, oldUrl, true );
-  Q_UNUSED(job);
-}
-
-
 
 #include "projecttreeview.moc"

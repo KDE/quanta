@@ -27,12 +27,13 @@
 #include "qtag.h"
 #include "quantacommon.h"
 #include "resource.h"
+#include "dtds.h"
 
 int nodeNum; //for memory debugging - remove if not needed
  
 namespace ParserCommon {
  QStringList includedFiles;
- QPtrList<DTDStruct> includedFilesDTD; 
+ QPtrList<const DTDStruct> includedFilesDTD; 
  
  //common methods.
 QString getLine(Document *write, int line, int endLine, int endCol)
@@ -78,7 +79,7 @@ Node* createTextNode(Document *write, Node *node, int eLine, int eCol, Node *par
   Node *textNode = 0L;
   int bLine = 0;
   int bCol = 0;
-  DTDStruct *dtd = write->defaultDTD();
+  const DTDStruct *dtd = write->defaultDTD();
   if (node)
   {
     node->tag->endPos(bLine, bCol);
@@ -154,13 +155,14 @@ Node* createTextNode(Document *write, Node *node, int eLine, int eCol, Node *par
   return node;
 }
 
-Node* createScriptTagNode(Document *write, const AreaStruct &area, const QString &areaName, DTDStruct *dtd, Node *parentNode, Node *currentNode)
+Node* createScriptTagNode(Document *write, const AreaStruct &area, const QString &areaName,
+                          const DTDStruct *dtd, Node *parentNode, Node *currentNode)
 {
   Tag *tag = new Tag();
   tag->setTagPosition(area);
   tag->setStr(areaName);
   tag->setWrite(write);
-  tag->dtd = dtds->find(dtd->specialAreaNames[areaName]);
+  tag->dtd = DTDs::ref()->find(dtd->specialAreaNames[areaName]);
   if (!tag->dtd)
       tag->dtd = dtd;
   tag->name = i18n("%1 block").arg(dtd->specialAreaNames[areaName].upper());

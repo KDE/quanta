@@ -440,7 +440,7 @@ void QuantaView::insertTag( const char *tag)
 
   Document *w = write();
   QString tagStr = QuantaCommon::tagCase(tag);
-  DTDStruct *dtd = w->currentDTD(true);
+  const DTDStruct *dtd = w->currentDTD(true);
   bool single = QuantaCommon::isSingleTag(dtd->name, tagStr);
   bool optional = QuantaCommon::isOptionalTag(dtd->name, tagStr);
 

@@ -64,7 +64,7 @@ public:
   /** Rebuild the nodes */
   Node *rebuild(Document *w);
   /** No descriptions */
-  DTDStruct * currentDTD(int line, int col);
+  const DTDStruct * currentDTD(int line, int col);
   /** Remove the found groups from the memeber variables */
   void clearGroups();
   void parseIncludedFiles();  
@@ -106,7 +106,7 @@ signals:
 private:
   Node* m_node;       //the internal Node pointer
   QString m_dtdName;  //the DTD name of write
-  DTDStruct* m_dtd; //the dtd used for main parsing
+  const DTDStruct* m_dtd; //the dtd used for main parsing
   QGuardedPtr<Document> write;    //pointer to the parsed document
   int maxLines; // how many lines are in the current document
   int oldMaxLines;
@@ -115,7 +115,7 @@ private:
   bool m_parsingEnabled;
   bool m_parsingNeeded;
 
-  void parseIncludedFile(const QString &fileName, DTDStruct *dtd);
+  void parseIncludedFile(const QString &fileName, const DTDStruct *dtd);
   /** Searches for scripts inside the text from startNode. It looks only for the
   script begin/and delimiters, and not for the <script> or other special tags.
   Useful when parsing for script inside the xml tags.

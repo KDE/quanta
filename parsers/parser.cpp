@@ -45,6 +45,7 @@
 #include "kafkacommon.h"
 #include "undoredo.h"
 #endif
+#include "dtds.h"
 
 //kde includes
 #include <kapplication.h>
@@ -251,11 +252,11 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
             rootNode = node;
         //find the DTD that needs to be used for the special area
         QString s = tag->attributeValue(m_dtd->specialTags[tag->name.lower()]);
-        DTDStruct *dtd = dtds->find(s);
+        const DTDStruct *dtd = DTDs::ref()->find(s);
         if (!dtd)
             dtd = m_dtd;
         //a trick here: replace the node's DTD with this one
-        DTDStruct *savedDTD = node->tag->dtd;
+        const DTDStruct *savedDTD = node->tag->dtd;
         node->tag->dtd = dtd;
         //now parse the special area
         area.bLine = area.eLine;
@@ -511,9 +512,9 @@ void Parser::coutTree(Node *node, int indent)
 
 
 /** No descriptions */
-DTDStruct * Parser::currentDTD(int line, int col)
+const DTDStruct * Parser::currentDTD(int line, int col)
 {
-  DTDStruct *dtd = m_dtd;
+  const DTDStruct *dtd = m_dtd;
   Node *node = nodeAt(line, col, false);
   if (node)
   {
@@ -1200,7 +1201,7 @@ void Parser::parseIncludedFiles()
   }
 }
 
-void Parser::parseIncludedFile(const QString& fileName, DTDStruct *dtd)
+void Parser::parseIncludedFile(const QString& fileName, const DTDStruct *dtd)
 {
   StructTreeGroup group;
   QString content;
@@ -1281,7 +1282,7 @@ void Parser::parseIncludedFile(const QString& fileName, DTDStruct *dtd)
               structPos =  pos + 1;
             }
           }
-          QValueList<StructTreeGroup>::Iterator it;
+          QValueList<StructTreeGroup>::ConstIterator it;
           for (it = dtd->structTreeGroups.begin(); it != dtd->structTreeGroups.end(); ++it)
           {
             group = *it;
@@ -1325,7 +1326,7 @@ void Parser::slotIncludedFileChanged(const QString& fileName)
   int pos = ParserCommon::includedFiles.findIndex(fileName);
   if (pos != -1)
   {
-    DTDStruct *dtd = ParserCommon::includedFilesDTD.at(pos);
+    const DTDStruct *dtd = ParserCommon::includedFilesDTD.at(pos);
     if (dtd)
     {
       includedMap[fileName].clear();
@@ -1364,7 +1365,7 @@ void Parser::parseForXMLGroup(Node *node)
 bool Parser::parseScriptInsideTag(Node *startNode)
 {
   bool found = false;
-  DTDStruct *dtd = startNode->tag->dtd;
+  const DTDStruct *dtd = startNode->tag->dtd;
   if (dtd->specialAreas.count())
   {
     QString foundText;

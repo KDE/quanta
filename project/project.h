@@ -50,22 +50,30 @@ class ProjectNewGeneral;
 
 class CopyTo;
 
-class Project : public QWidget  {
+class Project : public QObject  {
    Q_OBJECT
 public:
-  Project( QWidget *parent=0, const char *name=0);
+
+  /**
+   *  since this class is a singleton you must use this function to access it
+   *
+   *  the parameter are only used at the first call to create the class
+   *
+   */
+  static Project* const ref()
+  {
+    static Project *m_ref;
+    if (!m_ref) m_ref = new Project ();
+    return m_ref;
+  }
+
   ~Project();
 
-  bool hasProject();
+  bool hasProject() {return !projectName.isNull();};
+
   KURL::List fileNameList(bool check = false);
-  void loadProjectXML();
 
   void insertFile( const KURL& nameURL, bool repaint );
-  void insertFiles( const KURL& pathURL, const QString& mask );
-  void insertFiles( KURL::List files );
-
-  bool createEmptyDom();
-
   void readConfig(KConfig *);
   void readLastConfig(KConfig *c=0);
   void writeConfig(KConfig *);
@@ -75,11 +83,16 @@ public:
   /** Returns the relative url with the prefix inserted. */
   KURL urlWithPrefix(const KURL& url);
   bool contains(const KURL &url);
-  /** Write property of QString defaultDTD. */
-  virtual void setDefaultDTD( const QString& p_defaultDTD);
   /** Read property of QString defaultDTD. */
-  virtual const QString& defaultDTD();
+  virtual const QString& Project::defaultDTD() {return m_defaultDTD;}
   virtual const QString& defaultEncoding() {return m_defaultEncoding;}
+
+  /** Returns the project's base URL if it exists,
+   * the HOME dir if there is no project and no opened document
+   * (or the current  opened document was not saved yet),
+   * and the base URL of the opened document, if it is saved somewhere.
+   */
+  KURL projectBaseURL();
 
 public slots:
 
@@ -99,9 +112,9 @@ public slots:
   void slotInsertFile(const KURL& url);
   void slotInsertFilesAfterCopying(const KURL::List& a_url);
   void slotDeleteCopytoDlg(CopyTo *);
-  void slotRenameFinished( KIO::Job *);
 
-  void slotRename(const KURL& url);
+  /** if somewhere something was renamed */
+  void slotRenamed(const KURL& oldURL, const KURL& newURL);
   void slotRemove(const KURL& urlToRemove);
 
   void slotAcceptCreateProject();
@@ -127,9 +140,6 @@ signals:
   void closeFile( const KURL&);
   void closeFiles();
 
-  void setBaseURL( const KURL& url );
-  void setProjectName(const QString&);
-
   void showTree();
   void reloadTree(const KURL::List &, bool);
 
@@ -141,13 +151,8 @@ signals:
   void saveAllFiles();
   void newStatus();
   void statusMsg(QString);
-//  void checkOpenAction(bool);
   /** No descriptions */
-  void removeFromProject(int);
-  /** No descriptions */
-  void newProjectLoaded();
-  /** No descriptions */
-  void templateURLChanged(const KURL &);
+  void newProjectLoaded(const QString &, const KURL &, const KURL &);
   void hideSplash();
 
 public:
@@ -157,7 +162,6 @@ public:
   QString projectName;
 
   KURL baseURL;
-  KURL remoteDir;
   KURL templateURL;
   KURL toolbarURL;
 
@@ -179,6 +183,17 @@ public:
   bool keepPasswd;
 
 private:
+
+  /** The constructor is privat because we use singleton patter.
+   *  If you need the class use Project::ref() for
+   *  construction and reference
+   */
+  Project();
+  void loadProjectXML();
+
+  bool createEmptyDom();
+  void insertFiles( const KURL& pathURL, const QString& mask );
+  void insertFiles( KURL::List files );
   QWizard *wiz;
   QWidgetStack *stack;
   QString currentProjectView;
@@ -201,10 +216,6 @@ protected: // Protected attributes
   /** Default DTD for this project. */
   QString m_defaultDTD;
   QString m_defaultEncoding;
-  /** The old name of the url. (Used when renaming/removing an url from the project). */
-  KURL oldURL;
-  /** The new name of the url (used when renaming an url). */
-  KURL newURL;
   KURL::List m_projectFiles; //stores the last result of fileNameList call
 
   void openCurrentView();

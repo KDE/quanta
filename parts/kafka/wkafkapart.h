@@ -33,7 +33,7 @@ class Parser;
 class kNodeAttrs;
 class NodeModifsSet;
 class NodeEnhancer;
-class DTDStruct;
+struct DTDStruct;
 
 #include <qmap.h>
 #include <qobject.h>
@@ -313,7 +313,7 @@ public:
 	/**
 	 * Returns the default DTD of the current Document.
 	 */
-	DTDStruct* defaultDTD();
+	const DTDStruct* defaultDTD();
 
 	/**
 	 * @return Returns the current KafkaWidget.

@@ -29,7 +29,7 @@ Tag::Tag()
   init();
 }
 
-Tag::Tag(const AreaStruct &area, Document *write, DTDStruct *dtd, bool doParse)
+Tag::Tag(const AreaStruct &area, Document *write, const DTDStruct *dtd, bool doParse)
 {
   init();
   QString s = write->text(area);

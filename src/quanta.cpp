@@ -149,6 +149,7 @@
 #endif
 
 #include "quantaplugininterface.h"
+#include "dtds.h"
 
 const QString resourceDir = QString(PACKAGE) + "/";
 
@@ -180,7 +181,7 @@ void QuantaApp::slotFileOpen()
  if (view()->writeExists() && !view()->write()->isUntitled())
      startDir = view()->write()->url().url();
  else
-      startDir = projectBaseURL().url();
+      startDir = Project::ref()->projectBaseURL().url();
 
  KURL::List urls;
  QString encoding;
@@ -296,7 +297,7 @@ bool QuantaApp::slotFileSaveAs()
     if(gotPath)
     {
       if(saveAsPath.isEmpty())
-        saveAsPath = projectBaseURL().url();
+        saveAsPath = Project::ref()->projectBaseURL().url();
       else
       {
         QFileInfo saveAsPathInfo = QFileInfo(saveAsPath);
@@ -306,7 +307,7 @@ bool QuantaApp::slotFileSaveAs()
     }
     else
     {
-      saveAsPath = projectBaseURL().url();
+      saveAsPath = Project::ref()->projectBaseURL().url();
     }
 
     QString saveAsFileName = "";
@@ -314,28 +315,27 @@ bool QuantaApp::slotFileSaveAs()
       saveAsFileName = "/" + oldURL.fileName();
 
     KURL saveUrl;
-    QString encoding;
 #if KDE_VERSION < KDE_MAKE_VERSION(3,1,90)
     KateFileDialog dialog(saveAsPath+saveAsFileName, myEncoding, this, i18n ("Save File"), KateFileDialog::saveDialog);
     KateFileDialogData data = dialog.exec();
     saveUrl = data.url;
-    encoding = data.encoding;
 #else
     KEncodingFileDialog::Result data;
     data = KEncodingFileDialog::getSaveURLAndEncoding(myEncoding, saveAsPath+saveAsFileName,
             "all/allfiles text/plain", this, i18n("Save File"));
     saveUrl = data.URLs[0];
-    encoding = data.encoding;
 #endif
+    QString encoding;
+    encoding = data.encoding;
     dynamic_cast<KTextEditor::EncodingInterface*>(w->doc())->setEncoding(encoding);
     if (w->checkOverwrite(saveUrl) == KMessageBox::Yes && m_doc->saveDocument(saveUrl))
     {
       oldURL = saveUrl;
-      if (  m_project->hasProject() && !m_project->contains(saveUrl)  &&
+      if (  Project::ref()->hasProject() && !Project::ref()->contains(saveUrl)  &&
            KMessageBox::Yes == KMessageBox::questionYesNo(0,i18n("<qt>Do you want to add the<br><b>%1</b><br>file to project?</qt>").arg(saveUrl.prettyURL(0, KURL::StripFileProtocol)))
         )
       {
-        m_project->insertFile(saveUrl, true);
+        Project::ref()->insertFile(saveUrl, true);
       }
 #ifdef BUILD_KAFKAPART
       view()->write()->docUndoRedo->fileSaved();
@@ -368,7 +368,7 @@ void QuantaApp::saveAsTemplate(bool projectTemplate,bool selectionOnly)
 
     if (projectTemplate)
     {
-      url = KFileDialog::getSaveURL(m_project->templateURL.url(), QString::null, this);
+      url = KFileDialog::getSaveURL(Project::ref()->templateURL.url(), QString::null, this);
     } else
     {
       url = KFileDialog::getSaveURL(locateLocal("data",resourceDir + "templates/"), QString::null, this);
@@ -376,7 +376,7 @@ void QuantaApp::saveAsTemplate(bool projectTemplate,bool selectionOnly)
 
     if (url.isEmpty()) return;
 
-    if ( m_project->hasProject() )  projectTemplateURL = m_project->templateURL;
+    if ( Project::ref()->hasProject() )  projectTemplateURL = Project::ref()->templateURL;
     if ( ((projectTemplate) && (projectTemplateURL.isParentOf(url)) ) ||
           ((! projectTemplate) && (KURL(localTemplateDir).isParentOf(url))) )
     {
@@ -411,7 +411,7 @@ void QuantaApp::saveAsTemplate(bool projectTemplate,bool selectionOnly)
     fileName = url.path();
   }
 
-  if (projectTemplate) m_project->insertFile(fileName, true);
+  if (projectTemplate) Project::ref()->insertFile(fileName, true);
 #ifdef BUILD_KAFKAPART
   view()->write()->docUndoRedo->fileSaved();
 #endif
@@ -483,7 +483,7 @@ void QuantaApp::slotFileClose()
     m_doc->closeDocument();
     WHTMLPart *part = m_htmlPart;
     part->closeURL();
-    part->begin(projectBaseURL());
+    part->begin(Project::ref()->projectBaseURL());
     part->write( "" );
     part->end();
 
@@ -523,7 +523,7 @@ void QuantaApp::slotFileCloseAll()
 
   WHTMLPart *part = m_htmlPart;
   part->closeURL();
-  part->begin(projectBaseURL());
+  part->begin(Project::ref()->projectBaseURL());
   part->write( "" );
   part->end();
 
@@ -557,7 +557,7 @@ void QuantaApp::slotEditFindInFiles()
   if (!grepDialog)
   {
     QString startDir = QDir::homeDirPath();
-    KURL pBase = projectBaseURL();
+    KURL pBase = Project::ref()->projectBaseURL();
     if (pBase.isLocalFile()) startDir = pBase.path(1);
     grepDialog = new GrepDialog( startDir, this, "grep_dialog" );
     connect( grepDialog, SIGNAL( itemSelected   (const QString& , int)),
@@ -658,7 +658,7 @@ void QuantaApp::slotRepaintPreview()
       noFramesText.replace(QRegExp("</?noframes[^>]*>", false), "");
       //kdDebug(24000) << "NOFRAMES: " << noFramesText << endl;
       if (w->isUntitled())
-        part->begin( projectBaseURL(), xOffset, yOffset );
+        part->begin( Project::ref()->projectBaseURL(), xOffset, yOffset );
       else
         part->begin( w->url(), xOffset, yOffset );
       part->write(noFramesText);
@@ -675,7 +675,7 @@ void QuantaApp::slotRepaintPreview()
       if ( m_doc->isModified() ) //m_doc->saveDocument( m_doc->url() );
           w->saveIt();
 
-      url = m_project->urlWithPrefix(url);
+      url = Project::ref()->urlWithPrefix(url);
 
       part->begin(url, xOffset, yOffset);
       part->openURL(url);
@@ -689,7 +689,7 @@ void QuantaApp::slotRepaintPreview()
       if (m_noFramesPreview)
       {
       }
-      part->begin( projectBaseURL(), xOffset, yOffset );
+      part->begin( Project::ref()->projectBaseURL(), xOffset, yOffset );
       part->write( text );
     }
    }
@@ -721,7 +721,7 @@ void QuantaApp::slotImageOpen(const KURL& url)
   text += url.url(); //TODO
   text += "\">\n</div>\n</body>\n</html>\n";
   part->closeURL();
-  part->begin( projectBaseURL() );
+  part->begin( Project::ref()->projectBaseURL() );
   part->write( text );
   part->end();
 
@@ -737,7 +737,7 @@ void QuantaApp::slotInsertTag(const KURL& url, DirInfo dirInfo)
     KURL baseURL ;
     if  ( m_view->write()->isUntitled() )
     {
-      baseURL = projectBaseURL();
+      baseURL = Project::ref()->projectBaseURL();
     } else
     {
       baseURL = m_view->write()->url();
@@ -783,7 +783,7 @@ void QuantaApp::slotInsertTag(const KURL& url, DirInfo dirInfo)
 void QuantaApp::slotNewStatus()
 {
   fileRecent->setEnabled(true);
-  m_project->projectRecent->setEnabled(true);
+  Project::ref()->projectRecent->setEnabled(true);
   if (m_view->writeExists())
   {
     Document *w = m_view->write();
@@ -803,10 +803,10 @@ void QuantaApp::slotNewStatus()
 
     saveAction   ->setEnabled(m_doc->isModified());
     saveAllAction->setEnabled(m_doc->isModifiedAll());
-    if (m_project->isModified())
-        m_project->slotSaveProject();
+    if (Project::ref()->isModified())
+        Project::ref()->slotSaveProject();
 
-    bool projectExists = m_project->hasProject();
+    bool projectExists = Project::ref()->hasProject();
     closeprjAction     ->setEnabled(projectExists);
     openPrjViewAction  ->setEnabled(projectExists);
     savePrjViewAction  ->setEnabled(projectExists);
@@ -953,8 +953,8 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
   }
   dynamic_cast<KTextEditor::PopupMenuInterface*>(newWrite->view())->installPopup((QPopupMenu *)factory()->container("popup_editor", quantaApp));
   newWrite->checkDirtyStatus();
-  if (newWrite != m_view->oldWrite && sTab)
-    sTab->useOpenLevelSetting = true;
+  if (newWrite != m_view->oldWrite)
+    StructTreeView::ref()->useOpenLevelSetting = true;
   reparse(true);
   slotNewStatus();
   slotNewLineColumn();
@@ -1176,21 +1176,12 @@ void QuantaApp::slotOptions()
 
   page=kd->addVBoxPage(i18n("Parser"), QString::null, BarIcon("kcmsystem", KIcon::SizeMedium ) );
   ParserOptions *parserOptions = new ParserOptions( m_config, (QWidget *)page );
-  QStringList lst;
-  QDictIterator<DTDStruct> it(*dtds);
-  for( ; it.current(); ++it )
-  {
-    if (it.current()->toplevel)
-    {
-      lst << it.current()->nickName;
-    }
-  }
-  lst.sort();
+  QStringList lst = DTDs::ref()->nickNameList();
   uint pos = 0;
   for (uint i = 0; i < lst.count(); i++)
   {
     fileMasks->defaultDTDCombo->insertItem(lst[i]);
-    if (lst[i] == QuantaCommon::getDTDNickNameFromName(qConfig.defaultDocType.lower()))
+    if (lst[i] == DTDs::ref()->getDTDNickNameFromName(qConfig.defaultDocType.lower()))
        pos = i;
   }
   fileMasks->defaultDTDCombo->setCurrentItem(pos);
@@ -1203,13 +1194,7 @@ void QuantaApp::slotOptions()
 
   page = kd->addVBoxPage(i18n("Abbreviations"), QString::null, BarIcon("source", KIcon::SizeMedium));
   Abbreviation *abbreviationOptions = new Abbreviation((QWidget*)(page));
-  lst.clear();
-  it.toFirst();
-  for( ; it.current(); ++it )
-  {
-      lst << it.current()->nickName;
-  }
-  lst.sort();
+  lst = DTDs::ref()->nickNameList();
   uint abbrevDTDPos = 0;
   QString defaultDTDNickName;
   if (m_view->writeExists())
@@ -1292,7 +1277,7 @@ void QuantaApp::slotOptions()
       showIconsForScripts(kafkaOptions->showScriptsIcon->isChecked());*/
 
 #endif
-    qConfig.defaultDocType = QuantaCommon::getDTDNameFromNickName(fileMasks->defaultDTDCombo->currentText());
+    qConfig.defaultDocType = DTDs::ref()->getDTDNameFromNickName(fileMasks->defaultDTDCombo->currentText());
 
     abbreviationOptions->saveTemplates();
 
@@ -1320,7 +1305,7 @@ void QuantaApp::slotOptions()
     qConfig.windowLayout = layout;
 
     m_htmlPart->closeURL();
-    m_htmlPart->begin( projectBaseURL());
+    m_htmlPart->begin( Project::ref()->projectBaseURL());
     m_htmlPart->write( "" );
     m_htmlPart->end();
 
@@ -1499,7 +1484,7 @@ void QuantaApp::updateTreeViews()
     Node *node = parser->nodeAt(cursorLine, cursorCol);
     if (node)
     {
-      sTab->showTagAtPos(node);
+      StructTreeView::ref()->showTagAtPos(node);
     }
 #ifdef BUILD_KAFKAPART
     if(view()->hadLastFocus() == QuantaView::quantaFocus)
@@ -1548,7 +1533,7 @@ void QuantaApp::reparse(bool force)
       w->viewCursorIf->cursorPositionReal(&line, &col);
       Node *node = parser->nodeAt(line, col);
       if (stabdock->isVisible() && node)
-         sTab->showTagAtPos(node);
+         StructTreeView::ref()->showTagAtPos(node);
       aTab->setCurrentNode(node);
     }
   }
@@ -1910,13 +1895,13 @@ void QuantaApp::slotShowOpenFileList()
   KURL::List fileList;
   QStringList openList;
   KURL url;
-  KURL baseURL = projectBaseURL();
+  KURL baseURL = Project::ref()->projectBaseURL();
   fileList = m_doc->openedFiles(false);
 
   for (uint i = 0; i < fileList.count(); i++)
   {
     url = fileList[i];
-    if (m_project->hasProject())
+    if (Project::ref()->hasProject())
     {
       url = QExtFileInfo::toRelative(url, baseURL);
       if (url.protocol() == baseURL.protocol())
@@ -1931,12 +1916,6 @@ void QuantaApp::slotShowOpenFileList()
     KURL docURL= fileList[listDlg.getEntryNum()];
     m_view->writeTab()->showPage(m_doc->isOpened(docURL));
   }
-}
-
-/** No descriptions */
-void QuantaApp::slotNewProjectLoaded()
-{
-  tTab->slotSetTemplateURL(m_project->templateURL);
 }
 
 /** No descriptions */
@@ -2054,7 +2033,7 @@ void QuantaApp::slotContextMenuAboutToShow()
     action = actionCollection()->action("upload_file");
     if (action)
     {
-      action->setEnabled(m_project->contains(m_view->write()->url()));
+      action->setEnabled(Project::ref()->contains(m_view->write()->url()));
     }
   }
 }
@@ -2513,14 +2492,14 @@ bool QuantaApp::saveToolbar(bool localToolbar, const QString& toolbarToSave, con
         url = KFileDialog::getSaveURL(localToolbarsDir, "*"+toolbarExtension, this);
       } else
       {
-        url = KFileDialog::getSaveURL(m_project->toolbarURL.url(), "*"+toolbarExtension, this);
+        url = KFileDialog::getSaveURL(Project::ref()->toolbarURL.url(), "*"+toolbarExtension, this);
       }
 
       if (url.isEmpty())
           return false;
 
-      if (m_project->hasProject())
-          projectToolbarsURL = m_project->toolbarURL;
+      if (Project::ref()->hasProject())
+          projectToolbarsURL = Project::ref()->toolbarURL;
       if ( ((!localToolbar) && (projectToolbarsURL.isParentOf(url)) ) ||
             ((localToolbar) && (KURL(localToolbarsDir).isParentOf(url))) )
       {
@@ -2549,7 +2528,7 @@ bool QuantaApp::saveToolbar(bool localToolbar, const QString& toolbarToSave, con
       return false;
     }
     if (!localToolbar)
-        m_project->insertFile(tarName, true);
+        Project::ref()->insertFile(tarName, true);
   }
   return true;
 }
@@ -2925,7 +2904,7 @@ void QuantaApp::processDTD(const QString& documentType)
 {
  Document *w = m_view->write();
  QString foundName;
- QString projectDTD = m_project->defaultDTD();
+ QString projectDTD = Project::ref()->defaultDTD();
  w->setDTDIdentifier(projectDTD);
  Tag *tag = 0L;
  if (documentType.isEmpty())
@@ -2937,17 +2916,8 @@ void QuantaApp::processDTD(const QString& documentType)
       KDialogBase dlg(this, 0L, true, i18n("DTD Selector"), KDialogBase::Ok | KDialogBase::Cancel);
       DTDSelectDialog *dtdWidget = new DTDSelectDialog(&dlg);
       dlg.setMainWidget(dtdWidget);
-      QStringList lst;
-      QDictIterator<DTDStruct> it(*dtds);
-      for( ; it.current(); ++it )
-      {
-        if (it.current()->toplevel)
-        {
-          lst << it.current()->nickName;
-        }
-      }
-      lst.sort();
-      QString foundNickName = QuantaCommon::getDTDNickNameFromName(foundName);
+      QStringList lst = DTDs::ref()->nickNameList(true);
+      QString foundNickName = DTDs::ref()->getDTDNickNameFromName(foundName);
       for (uint i = 0; i < lst.count(); i++)
       {
         dtdWidget->dtdCombo->insertItem(lst[i]);
@@ -2958,18 +2928,13 @@ void QuantaApp::processDTD(const QString& documentType)
         }
       }
 
-      if (!dtds->find(foundName.lower()))
+      if (!DTDs::ref()->find(foundName))
       {
         //try to find the closest matching DTD
         QString s = foundName.lower();
         uint spaceNum = s.contains(' ');
-        QStringList dtdList;
+        QStringList dtdList = DTDs::ref()->nameList();
         QStringList lastDtdList;
-        QDictIterator<DTDStruct> it(*dtds);
-        for (;it.current(); ++it)
-        {
-          dtdList += it.currentKey();
-        }
         for (uint i = 0; i <= spaceNum && !dtdList.empty(); i++)
         {
           lastDtdList = dtdList;
@@ -3009,8 +2974,8 @@ void QuantaApp::processDTD(const QString& documentType)
 
 //    dlg->dtdCombo->insertItem(i18n("Create New DTD Info"));
       dtdWidget->messageLabel->setText(i18n("This DTD is not known for Quanta. Choose a DTD or create a new one."));
-      dtdWidget->currentDTD->setText(QuantaCommon::getDTDNickNameFromName(foundName));
-      QString projectDTDNickName = QuantaCommon::getDTDNickNameFromName(projectDTD);
+      dtdWidget->currentDTD->setText(DTDs::ref()->getDTDNickNameFromName(foundName));
+      QString projectDTDNickName = DTDs::ref()->getDTDNickNameFromName(projectDTD);
       for (int i = 0; i < dtdWidget->dtdCombo->count(); i++)
       {
         if (dtdWidget->dtdCombo->text(i) == projectDTDNickName)
@@ -3026,8 +2991,8 @@ void QuantaApp::processDTD(const QString& documentType)
         if (dlg.exec())
         {
           qConfig.showDTDSelectDialog = !dtdWidget->useClosestMatching->isChecked();
-          w->setDTDIdentifier(QuantaCommon::getDTDNameFromNickName(dtdWidget->dtdCombo->currentText()));
-          DTDStruct *dtd = dtds->find(w->getDTDIdentifier());
+          w->setDTDIdentifier(DTDs::ref()->getDTDNameFromNickName(dtdWidget->dtdCombo->currentText()));
+          const DTDStruct *dtd = DTDs::ref()->find(w->getDTDIdentifier());
           if (dtdWidget->convertDTD->isChecked() && dtd->family == Xml)
           {
             int bLine, bCol, eLine, eCol;
@@ -3043,17 +3008,7 @@ void QuantaApp::processDTD(const QString& documentType)
    } else //DOCTYPE not found in file
    {
      QString mimetype = KMimeType::findByURL(w->url())->name();
-     QDictIterator<DTDStruct> it(*dtds);
-     DTDStruct *currdtd = 0L;
-     for( ; it.current(); ++it )
-     {
-       currdtd = it.current();
-       if (currdtd->toplevel && currdtd->mimeTypes.contains(mimetype))
-       {
-         break;
-       }
-       currdtd = 0L;
-     }
+     const DTDStruct *currdtd = DTDs::ref()->DTDfromMimeType(mimetype);
      if (currdtd)
         w->setDTDIdentifier(currdtd->name);
      else
@@ -3066,10 +3021,10 @@ void QuantaApp::processDTD(const QString& documentType)
 
   if (!w->isUntitled())
   {
-    m_messageOutput->showMessage(i18n("\"%1\" is used for \"%2\".\n").arg(QuantaCommon::getDTDNickNameFromName(w->getDTDIdentifier())).arg(w->url().prettyURL(0, KURL::StripFileProtocol)));
+    m_messageOutput->showMessage(i18n("\"%1\" is used for \"%2\".\n").arg(DTDs::ref()->getDTDNickNameFromName(w->getDTDIdentifier())).arg(w->url().prettyURL(0, KURL::StripFileProtocol)));
   }
   loadToolbarForDTD(w->getDTDIdentifier());
-  sTab->useOpenLevelSetting = true;
+  StructTreeView::ref()->useOpenLevelSetting = true;
 }
 
 /** No descriptions */
@@ -3088,20 +3043,11 @@ void QuantaApp::slotChangeDTD()
     Tag *tag = 0L;
     w->findDTDName(&tag);
     QString oldDtdName = w->getDTDIdentifier();
-    QString defaultDocType = m_project->defaultDTD();
-    QDictIterator<DTDStruct> it(*dtds);
-    QStringList lst;
-    for (; it.current(); ++it)
-    {
-      if (it.current()->toplevel)
-      {
-        lst << it.current()->nickName;
-      }
-    }
-    lst.sort();
+    QString defaultDocType = Project::ref()->defaultDTD();
+    QStringList lst = DTDs::ref()->nickNameList(true);
 
-    QString oldDtdNickName = QuantaCommon::getDTDNickNameFromName(oldDtdName);
-    QString defaultDtdNickName = QuantaCommon::getDTDNickNameFromName(defaultDocType);
+    QString oldDtdNickName = DTDs::ref()->getDTDNickNameFromName(oldDtdName);
+    QString defaultDtdNickName = DTDs::ref()->getDTDNickNameFromName(defaultDocType);
     for(uint i = 0; i < lst.count(); i++)
     {
       dtdWidget->dtdCombo->insertItem(lst[i]);
@@ -3113,15 +3059,15 @@ void QuantaApp::slotChangeDTD()
       pos = defaultIndex;
     dtdWidget->dtdCombo->setCurrentItem(pos);
     dtdWidget->messageLabel->setText(i18n("Change the current DTD."));
-    dtdWidget->currentDTD->setText(QuantaCommon::getDTDNickNameFromName(w->getDTDIdentifier()));
+    dtdWidget->currentDTD->setText(DTDs::ref()->getDTDNickNameFromName(w->getDTDIdentifier()));
     //dlg->useClosestMatching->setShown(false);
     delete dtdWidget->useClosestMatching;
     dtdWidget->useClosestMatching = 0L;
     dtdWidget->adjustSize();
     if (dlg.exec())
     {
-      w->setDTDIdentifier(QuantaCommon::getDTDNameFromNickName(dtdWidget->dtdCombo->currentText()));
-      DTDStruct *dtd = dtds->find(w->getDTDIdentifier());
+      w->setDTDIdentifier(DTDs::ref()->getDTDNameFromNickName(dtdWidget->dtdCombo->currentText()));
+      const DTDStruct *dtd = DTDs::ref()->find(w->getDTDIdentifier());
       if (dtdWidget->convertDTD->isChecked() && dtd->family == Xml)
       {
         if (tag)
@@ -3192,17 +3138,17 @@ void QuantaApp::slotHelpUserList()
 /** Loads the toolbars for dtd named dtdName and unload the ones belonging to oldDtdName. */
 void QuantaApp::loadToolbarForDTD(const QString& dtdName)
 {
-  DTDStruct *oldDtd = dtds->find(currentToolbarDTD);
+  const DTDStruct *oldDtd = DTDs::ref()->find(currentToolbarDTD);
   if (!oldDtd && !currentToolbarDTD.isEmpty())
-      oldDtd = dtds->find(m_project->defaultDTD());
+      oldDtd = DTDs::ref()->find(Project::ref()->defaultDTD());
 
   QString fileName;
-  DTDStruct *newDtd = dtds->find(dtdName);
+  const DTDStruct *newDtd = DTDs::ref()->find(dtdName);
   if (!newDtd)
   {
-      newDtd = dtds->find(m_project->defaultDTD());
+      newDtd = DTDs::ref()->find(Project::ref()->defaultDTD());
       if (!newDtd)
-          newDtd = dtds->find(qConfig.defaultDocType); //extreme case
+          newDtd = DTDs::ref()->find(qConfig.defaultDocType); //extreme case
   }
 
   ToolbarEntry *p_toolbar;
@@ -3346,7 +3292,7 @@ bool QuantaApp::slotRemoveToolbar(const QString& name)
         case KMessageBox::Yes:
              {
                 bool local = true;
-                if (m_project->hasProject() && p_toolbar->url.url().startsWith(m_project->baseURL.url())) local = false;
+                if (Project::ref()->hasProject() && p_toolbar->url.url().startsWith(Project::ref()->baseURL.url())) local = false;
                 if (!saveToolbar(local, p_toolbar->name))
                     return false;
                 break;
@@ -3354,7 +3300,7 @@ bool QuantaApp::slotRemoveToolbar(const QString& name)
         case KMessageBox::Continue:
              {
                 bool local = true;
-                if (m_project->hasProject() && p_toolbar->url.url().startsWith(m_project->baseURL.url())) local = false;
+                if (Project::ref()->hasProject() && p_toolbar->url.url().startsWith(Project::ref()->baseURL.url())) local = false;
                 if (!saveToolbar(local, p_toolbar->name, p_toolbar->url))
                     return false;
                 break;
@@ -3423,33 +3369,18 @@ void QuantaApp::slotParsingDTDChanged(const QString& newDTDName)
   }
 }
 
-/** Returns the project's base URL if it exists, the HOME dir if there is no project and no opened document (or the current opened document was not saved yet), and the base URL of the opened document, if it is saved somewhere. */
 KURL QuantaApp::projectBaseURL() const
 {
-  KURL result;
-  if  ( m_project->hasProject())
-  {
-     result = m_project->baseURL;
-  } else
-  {
-    if  ( !m_view->writeExists() || m_view->write()->isUntitled() )
-    {
-      result = QExtFileInfo::home();
-    } else
-    {
-       result = QExtFileInfo::path(m_view->write()->url());
-    }
-  }
-  return result;
+  return Project::ref()->projectBaseURL();
 }
 
 /** No descriptions */
 void QuantaApp::slotBuildPrjToolbarsMenu()
 {
   KURL::List toolbarList;
-  if (m_project && m_project->hasProject())
+  if (Project::ref()->hasProject())
   {
-    toolbarList = QExtFileInfo::allFiles(m_project->toolbarURL, "*"+toolbarExtension);
+    toolbarList = QExtFileInfo::allFiles(Project::ref()->toolbarURL, "*"+toolbarExtension);
     projectToolbarFiles->setMaxItems(toolbarList.count());
     for (uint i = 0; i < toolbarList.count(); i++)
     {
@@ -3465,9 +3396,9 @@ void QuantaApp::slotBuildPrjToolbarsMenu()
 QString QuantaApp::defaultEncoding()
 {
   QString encoding = qConfig.defaultEncoding;
-  if (m_project && m_project->hasProject())
+  if (Project::ref()->hasProject())
   {
-    encoding = m_project->defaultEncoding();
+    encoding = Project::ref()->defaultEncoding();
   }
   return encoding;
 }
@@ -3543,31 +3474,21 @@ void QuantaApp::slotEmailDTEP()
   if (m_view->writeExists())
   {
     Document *w = m_view->write();
-    QStringList lst;
-    int current = 0;
-    int i = 0;
-    QDictIterator<DTDStruct> it(*dtds);
-    for( ; it.current(); ++it )
-    {
-      lst << it.current()->nickName;
-      if (it.current()->name == w->getDTDIdentifier()) current = i;
-      i++;
-    }
-    lst.sort();
+    QStringList lst(DTDs::ref()->nickNameList());
+    QString nickName = DTDs::ref()->getDTDNickNameFromName(w->getDTDIdentifier());
     bool ok = FALSE;
 #if KDE_IS_VERSION(3, 1, 90)
     QString res = KInputDialog::getItem(
-                    i18n( "Send DTD" ),
-                    i18n( "Please select a DTD:" ), lst, current, FALSE, &ok, this );
 #else
     QString res = QInputDialog::getItem(
-                    i18n( "Send DTD" ),
-                    i18n( "Please select a DTD:" ), lst, current, FALSE, &ok, this );
 #endif
+                    i18n( "Send DTD" ),
+                    i18n( "Please select a DTD:" ), lst, lst.findIndex(nickName), FALSE, &ok, this );
+
     if (!ok)
       return;
 
-    QString dtdName = QuantaCommon::getDTDNameFromNickName(res);
+    QString dtdName = DTDs::ref()->getDTDNameFromNickName(res);
 
     QStringList dtdFile;
 
@@ -3580,7 +3501,7 @@ void QuantaApp::slotEmailDTEP()
     tar.open(IO_WriteOnly);
 
     KURL dirURL;
-    dirURL.setPath(dtds->find(dtdName)->fileName);
+    dirURL.setPath(DTDs::ref()->find(dtdName)->fileName);
     dirURL.setPath(dirURL.directory(false));
 
     KURL::List files = QExtFileInfo::allFilesRelative(dirURL, "*");
@@ -3677,7 +3598,7 @@ QString QuantaApp::currentURL() const
 
 QString QuantaApp::projectURL() const
 {
-  return projectBaseURL().url();
+  return Project::ref()->projectBaseURL().url();
 }
 
 QStringList QuantaApp::openedURLs() const
@@ -3701,13 +3622,13 @@ void QuantaApp::slotExpandAbbreviation()
   if (m_view->writeExists())
   {
     Document *w = m_view->write();
-    DTDStruct *dtd = w->currentDTD();
+    const DTDStruct *dtd = w->currentDTD();
     uint line, col;
     w->viewCursorIf->cursorPositionReal(&line, &col);
     QString text = w->text(line, 0, line, col - 1);
     text = w->findWordRev(text) + " ";
     QString textToInsert;
-    QMap<QString, QString>::Iterator it;
+    QMap<QString, QString>::ConstIterator it;
     for (it = dtd->abbreviations.begin(); it != dtd->abbreviations.end(); ++it)
     {
       if (it.key().startsWith(text))
@@ -3744,7 +3665,7 @@ void QuantaApp::slotExpandAbbreviation()
 
 void QuantaApp::slotUploadFile()
 {
-  m_project->slotUploadURL(m_view->write()->url());
+  Project::ref()->slotUploadURL(m_view->write()->url());
 }
 
 
@@ -3762,8 +3683,8 @@ void QuantaApp::slotDeleteFile()
   {
     if (KIO::NetAccess::del(url))
     {
-      if (m_project->hasProject())
-        m_project->slotRemove(url);
+      if (Project::ref()->hasProject())
+        Project::ref()->slotRemove(url);
     }
     m_view->write()->setModified(false); //don't ask for save
     slotFileClose();
@@ -4033,95 +3954,6 @@ void QuantaApp::layoutDockWidgets(const QString& layout)
   }
 }
 
-void QuantaApp::slotLoadDTD()
-{
-  KURL url = KFileDialog::getOpenURL("", "*.dtd", this);
-  if (!url.isEmpty())
-  {
-    DTDParser dtdParser(url, KGlobal::dirs()->saveLocation("data") + resourceDir + "dtep");
-    if (dtdParser.parse())
-    {
-      QString dirName = dtdParser.dirName();
-      KConfig dtdcfg(dirName + "description.rc");
-      dtdcfg.setGroup("General");
-      QString dtdName = dtdcfg.readEntry("Name");
-      QString nickName = dtdcfg.readEntry("NickName", dtdName);
-      if (dtds->find(dtdName.lower()) &&
-          KMessageBox::questionYesNo(this, i18n("<qt>Do you want to replace the existing <b>%1</b> DTD?</qt>").arg(nickName)) == KMessageBox::No)
-      {
-        return;
-      }
-      removeDTD(dtds->find(dtdName.lower()));
-      if (readTagDir(dirName))
-      {
-          QString family = dtdcfg.readEntry("Family", "1");
-          if (family == "1" && m_view->writeExists() &&
-              KMessageBox::questionYesNo(this, i18n("<qt>Use the newly loaded <b>%1</b> DTD for the current document?</qt>").arg(nickName), i18n("Change DTD")) == KMessageBox::Yes)
-          {
-            Document *w = m_view->write();
-            w->setDTDIdentifier(dtdName);
-            loadToolbarForDTD(w->getDTDIdentifier());
-            reparse(true);
-          }
-      }
-    }
-  }
-}
-
-void QuantaApp::slotLoadDTEP()
-{
-  QString dirName = KFileDialog::getExistingDirectory(QString::null, 0, i18n("Select A DTEP Directory"));
-  if (!dirName.isEmpty())
-  {
-    dirName += "/";
-    KConfig dtdcfg(dirName+"description.rc");
-    dtdcfg.setGroup("General");
-    QString dtdName = dtdcfg.readEntry("Name");
-    QString nickName = dtdcfg.readEntry("NickName", dtdName);
-    if (dtds->find(dtdName.lower()) &&
-        KMessageBox::questionYesNo(this, i18n("<qt>Do you want to replace the existing <b>%1</b> DTD?</qt>").arg(nickName)) == KMessageBox::No)
-    {
-      return;
-    }
-    removeDTD(dtds->find(dtdName.lower()));
-    if (!readTagDir(dirName))
-    {
-      KMessageBox::error(this, i18n("<qt>Cannot read the DTEP from <b>%1</b>. Check that the directory contains a valid DTEP (<i>description.rc and *.tag files</i>).</qt>").arg(dirName), i18n("Error loading DTEP"));
-    } else
-    {
-      QString family = dtdcfg.readEntry("Family", "1");
-      if (KMessageBox::questionYesNo(this, i18n("<qt>Autoload the <b>%1</b> DTD in the feature?</qt>").arg(nickName)) == KMessageBox::Yes)
-      {
-        KURL src;
-        src.setPath(dirName);
-        KURL target;
-        QString destDir = KGlobal::dirs()->saveLocation("data") + resourceDir + "dtep/";
-        target.setPath(destDir + src.fileName());
-        KIO::copy( src, target, false); //don't care about the result
-      }
-      if (family == "1" && m_view->writeExists() &&
-          KMessageBox::questionYesNo(this, i18n("<qt>Use the newly loaded <b>%1</b> DTD for the current document?</qt>").arg(nickName), i18n("Change DTD")) == KMessageBox::Yes)
-      {
-        Document *w = m_view->write();
-        w->setDTDIdentifier(dtdName);
-        loadToolbarForDTD(w->getDTDIdentifier());
-        reparse(true);
-      }
-    }
-  }
-}
-
-void QuantaApp::removeDTD(DTDStruct *dtd)
-{
-  if (dtd)
-  {
-    delete dtd->tagsList;
-    dtd->tagsList = 0L;
-    delete dtd->commonAttrs;
-    dtd->commonAttrs = 0L;
-    dtds->remove(dtd->name.lower());
-  }
-}
 
 void QuantaApp::slotConvertCase()
 {
@@ -4136,11 +3968,11 @@ void QuantaApp::slotReloadStructTreeView()
   if (m_view->writeExists())
   {
     Document *w = m_view->write();
-    sTab->setParsingDTD(w->parsingDTD());
+    StructTreeView::ref()->setParsingDTD(w->parsingDTD());
     int expandLevel = qConfig.expandLevel;
     if (expandLevel == 0)
         expandLevel = 40;
-    sTab->slotReparse(w, baseNode , expandLevel );
+    StructTreeView::ref()->slotReparse(w, baseNode , expandLevel );
   }
 }
 
@@ -4171,7 +4003,7 @@ QString QuantaApp::saveCurrentFile()
       return QString::null;
     }
   }
-  KURL url = project()->urlWithPrefix(w->url());
+  KURL url = Project::ref()->urlWithPrefix(w->url());
   return url.url();
 }
 

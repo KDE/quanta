@@ -139,15 +139,11 @@ public:
   /** Returns the QTag object for the tag "tag" from the DTD named "dtdname". */
   static QTag* tagFromDTD(const QString& dtdName, const QString& tag);
   /** Returns the QTag object for the tag "tag" from the DTD. */
-  static QTag* tagFromDTD(DTDStruct* dtd, const QString& tag);
+  static QTag* tagFromDTD(const DTDStruct* dtd, const QString& tag);
   /** Returns the QTag object for the node "node" from node's DTD. */
   static QTag* tagFromDTD(Node *node);
   /** Returns an XML style string containing the GUI for attributes. */
   static QString xmlFromAttributes(AttributeList* attributes);
-  /** Returns the DTD name (identifier) corresponding to the DTD's nickname */
-  static QString getDTDNameFromNickName(const QString& nickName);
-  /** Returns the DTD iddentifier from the given nickname */
-  static QString getDTDNickNameFromName(const QString& name);
   /** Returns 0 if the (line,col) is inside the area specified by the other arguments,
       -1 if it is before the area and 1 if it is after. */
   static int isBetween(int line, int col, int bLine, int bCol, int eLine, int eCol);
@@ -187,8 +183,8 @@ pointer must be deleted by the caller!! */
   static bool closesTag(QString namespaceName, QString tagName, bool caseSensitive,
     QString namespaceName2, QString tagName2, bool caseSensitive2);
   static int denyBinaryInsert();
-  static void removeCommentsAndQuotes(QString& str, DTDStruct* dtd);
-  static bool insideCommentsOrQuotes(int position, const QString &string, DTDStruct *dtd);
+  static void removeCommentsAndQuotes(QString& str, const DTDStruct* dtd);
+  static bool insideCommentsOrQuotes(int position, const QString &string, const DTDStruct *dtd);
 };
 
 

@@ -64,9 +64,11 @@
 #include "quantacommon.h"
 #include "qextfileinfo.h"
 #include "resource.h"
+#include "templatestreeview.h"
 
 #include "project.h"
 #include "quantaplugininterface.h"
+#include "dtds.h"
 
 #ifdef BUILD_KAFKAPART
 #include "undoredo.h"
@@ -124,7 +126,7 @@ bool QuantaDoc::newDocument( const KURL& url, bool switchToExisting )
     w = newWrite( );
     quantaApp->view()->addWrite( w, w->url().url() );
 
-    quantaApp->processDTD(quantaApp->project()->defaultDTD());
+    quantaApp->processDTD(Project::ref()->defaultDTD());
 
     /*KToggleAction *a;
     a = dynamic_cast<KToggleAction*>(w->view()->actionCollection()->action("view_border"));
@@ -358,6 +360,7 @@ void QuantaDoc::closeDocument()
       openDocument( KURL() );
     }
   }
+  emit documentClosed();
 }
 
 void QuantaDoc::closeAll()
@@ -386,6 +389,7 @@ void QuantaDoc::closeAll()
 
   //all documents were removed, so open an empty one
   openDocument( KURL() );
+  emit documentClosed();
 }
 
 void QuantaDoc::readConfig( KConfig *config )
@@ -499,9 +503,9 @@ Document* QuantaDoc::write() const
 
 Document* QuantaDoc::newWrite()
 {
-  DTDStruct *dtd = dtds->find(quantaApp->project()->defaultDTD());
+  const DTDStruct *dtd = DTDs::ref()->find(Project::ref()->defaultDTD());
   if (!dtd)
-      dtd = dtds->find(qConfig.defaultDocType);   //fallback, but not really needed
+      dtd = DTDs::ref()->find(qConfig.defaultDocType);   //fallback, but not really needed
   int i = 1;
   //while ( isOpened("file:/"+i18n("Untitled%1.").arg(i)+dtd->defaultExtension)) i++;
   while ( isOpened("file:/"+i18n("Untitled%1").arg(i))) i++;
@@ -515,8 +519,7 @@ Document* QuantaDoc::newWrite()
                                 quantaApp->view->writeTab(),
                                 "KTextEditor::Document"
                                 );*/
-  Document *w = new Document(quantaApp->projectBaseURL(), doc, quantaApp->project(),
-                             quantaApp->m_pluginInterface, quantaApp->view()->writeTab());
+  Document *w = new Document(doc, quantaApp->m_pluginInterface, quantaApp->view()->writeTab());
   w->readConfig(quantaApp->config());
   QString encoding = quantaApp->defaultEncoding();
   dynamic_cast<KTextEditor::EncodingInterface*>(doc)->setEncoding(encoding);
@@ -524,7 +527,7 @@ Document* QuantaDoc::newWrite()
   KTextEditor::View * v = w->view();
 
   //[MB02] connect all kate views for drag and drop
-  connect((QObject *)w->view(), SIGNAL(dropEventPass(QDropEvent *)), (QObject *)quantaApp->gettTab(), SLOT(slotDragInsert(QDropEvent *)));
+  connect((QObject *)w->view(), SIGNAL(dropEventPass(QDropEvent *)), (QObject *) TemplatesTreeView::ref(), SLOT(slotDragInsert(QDropEvent *)));
 
   w->setUntitledUrl( fname );
   dynamic_cast<KTextEditor::PopupMenuInterface*>(w->view())->installPopup((QPopupMenu *)quantaApp->factory()->container("popup_editor", quantaApp));

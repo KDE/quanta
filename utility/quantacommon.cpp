@@ -45,13 +45,13 @@
 
 #include "quantacommon.h"
 #include "tag.h"
+#include "dtds.h"
 //#include "resource.h"
 
 
 QConfig qConfig; //holds the main configuration settings
 QString tmpDir;
 
-QDict<DTDStruct> *dtds; //holds all the known tags with attributes for each DTD.
 QRegExp scriptBeginRx;
 QRegExp scriptEndRx;
 
@@ -123,7 +123,7 @@ bool QuantaCommon::isSingleTag(const QString& dtdName, const QString& tag)
   if(tag.lower() == "!doctype" || tag.lower() == "?xml")
     return true;
 
-  DTDStruct* dtd = dtds->find(dtdName.lower());
+  const DTDStruct* dtd = DTDs::ref()->find(dtdName);
   if (dtd && !tag.isEmpty())
   {
     QString searchForTag = (dtd->caseSensitive) ? tag : tag.upper();
@@ -140,7 +140,7 @@ bool QuantaCommon::isOptionalTag(const QString& dtdName, const QString& tag)
 {
   bool optional = false;
 
-  DTDStruct* dtd = dtds->find(dtdName.lower());
+  const DTDStruct* dtd = DTDs::ref()->find(dtdName);
   if (dtd && !tag.isEmpty())
   {
     QString searchForTag = (dtd->caseSensitive) ? tag : tag.upper();
@@ -156,7 +156,7 @@ bool QuantaCommon::isKnownTag(const QString& dtdName, const QString& tag)
 {
   bool known = false;
 
-  DTDStruct* dtd = dtds->find(dtdName.lower());
+  const DTDStruct* dtd = DTDs::ref()->find(dtdName);
   if (dtd && !tag.isEmpty())
   {
     QString searchForTag = (dtd->caseSensitive) ? tag : tag.upper();
@@ -171,7 +171,7 @@ AttributeList* QuantaCommon::tagAttributes(const QString& dtdName, const QString
 {
   AttributeList* attrs = 0L;
 
-  DTDStruct* dtd = dtds->find(dtdName.lower());
+  const DTDStruct* dtd = DTDs::ref()->find(dtdName);
   if (dtd && !tag.isEmpty())
   {
     QString searchForTag = (dtd->caseSensitive) ? tag : tag.upper();
@@ -186,12 +186,12 @@ AttributeList* QuantaCommon::tagAttributes(const QString& dtdName, const QString
 /** Returns the QTag object for the tag "tag" from the DTD named "dtdname". */
 QTag* QuantaCommon::tagFromDTD(const QString& dtdName, const QString& tag)
 {
-  DTDStruct* dtd = dtds->find(dtdName.lower());
+  const DTDStruct* dtd = DTDs::ref()->find(dtdName);
   return tagFromDTD(dtd, tag);
 }
 
 /** Returns the QTag object for the tag "tag" from the DTD. */
-QTag* QuantaCommon::tagFromDTD(DTDStruct *dtd, const QString& tag)
+QTag* QuantaCommon::tagFromDTD(const DTDStruct *dtd, const QString& tag)
 {
   QTag *qtag = 0;
   if (dtd && !tag.isEmpty())
@@ -253,40 +253,6 @@ QString QuantaCommon::xmlFromAttributes(AttributeList* attributes)
  } //if
 
  return xmlStr;
-}
-
-/** Returns the DTD name (identifier) corresponding to the DTD's nickname */
-QString QuantaCommon::getDTDNameFromNickName(const QString& nickName)
-{
-  QString name = nickName;
-  QDictIterator<DTDStruct> it(*dtds);
-  for( ; it.current(); ++it )
-  {
-    if (it.current()->nickName.lower() == nickName.lower())
-    {
-     name = it.current()->name;
-     break;
-    }
-  }
-
- return name;
-}
-
-/** Returns the DTD iddentifier from the given nickname */
-QString QuantaCommon::getDTDNickNameFromName(const QString& name)
-{
-  QString nickName = name;
-  QDictIterator<DTDStruct> it(*dtds);
-  for( ; it.current(); ++it )
-  {
-    if (it.current()->name.lower() == name.lower())
-    {
-      nickName = it.current()->nickName;
-      break;
-    }
-  }
-
-  return nickName;
 }
 
   /** Returns 0 if the (line,col) is inside the area specified by the other
@@ -473,7 +439,7 @@ QString QuantaCommon::i18n2normal(const QString& a_str)
 
 static const QChar space(' ');
 
-void QuantaCommon::removeCommentsAndQuotes(QString &str, DTDStruct *dtd)
+void QuantaCommon::removeCommentsAndQuotes(QString &str, const DTDStruct *dtd)
 {
  //Replace all the commented strings and the escaped quotation marks (\", \')
  // with spaces so they will not mess up our parsing
@@ -524,7 +490,7 @@ void QuantaCommon::removeCommentsAndQuotes(QString &str, DTDStruct *dtd)
 
 }
 
-bool QuantaCommon::insideCommentsOrQuotes(int position, const QString &string, DTDStruct *dtd)
+bool QuantaCommon::insideCommentsOrQuotes(int position, const QString &string, const DTDStruct *dtd)
 {
  //Return true if position is inside a commented or quoted string 
  QString str = string;

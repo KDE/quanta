@@ -32,6 +32,7 @@
 #include "qextfileinfo.h"
 #include "document.h"
 #include "quantacommon.h"
+#include "dtds.h"
 
 SAParser::SAParser()
 {
@@ -73,9 +74,9 @@ void SAParser::parseForScriptGroup(Node *node)
   KURL baseURL = QExtFileInfo::path(m_write->url());
   QString str = node->tag->cleanStr;
   QString tagStr = node->tag->tagStr();
-  DTDStruct* dtd = node->tag->dtd;
+  const DTDStruct* dtd = node->tag->dtd;
   node->tag->beginPos(bl, bc);
-  QValueList<StructTreeGroup>::Iterator it;
+  QValueList<StructTreeGroup>::ConstIterator it;
   for (it = dtd->structTreeGroups.begin(); it != dtd->structTreeGroups.end(); ++it)
   {
     group = *it;
@@ -655,7 +656,7 @@ Node* SAParser::parseArea(const AreaStruct &specialArea,
   s_dtd = 0L;
   if (s_parentNode && !areaStartString.isEmpty())
   {
-    s_dtd = dtds->find(s_parentNode->tag->dtd->specialAreaNames[areaStartString]);
+    s_dtd = DTDs::ref()->find(s_parentNode->tag->dtd->specialAreaNames[areaStartString]);
     s_areaEndString = s_parentNode->tag->dtd->specialAreas[areaStartString];
     s_searchForAreaEnd = true;
   }

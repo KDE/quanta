@@ -39,12 +39,13 @@
 #include "quanta.h"
 #include "quantaview.h"
 #include "quantacommon.h"
+#include "dtds.h"
 
 #include "structtreetag.h"
 #include "structtreeview.h"
 #include "structtreeview.moc"
 
-StructTreeView::StructTreeView(KConfig *config, QWidget *parent, const char *name )
+StructTreeView::StructTreeView(QWidget *parent, const char *name )
 : KListView(parent,name)
 {
   for (int i = 0; i < 5; i++)
@@ -53,7 +54,7 @@ StructTreeView::StructTreeView(KConfig *config, QWidget *parent, const char *nam
   lastTag = 0L;
   groupsCount = 0;
   followCursorFlag = true;
-  this->config = config;
+  this->config = quantaApp->config();
 
   topOpened = true;
   useOpenLevelSetting = true;
@@ -70,13 +71,7 @@ StructTreeView::StructTreeView(KConfig *config, QWidget *parent, const char *nam
 
   dtdMenu = new KPopupMenu(this);
 
-  QDictIterator<DTDStruct> it(*dtds);
-  for( ; it.current(); ++it )
-  {
-    dtdList << it.current()->nickName;
-  }
-  dtdList.sort();
-
+  dtdList = DTDs::ref()->nickNameList();
   for(uint i = 0; i < dtdList.count(); i++ )
   {
     dtdMenu->insertItem(dtdList[i],i,-1);
@@ -653,26 +648,18 @@ void StructTreeView::showEvent(QShowEvent* /*ev*/)
 void StructTreeView::slotDTDChanged(int id)
 {
   QString text = dtdMenu->text(id);
-  QDictIterator<DTDStruct> it(*dtds);
-  for( ; it.current(); ++it )
-  {
-    if (it.current()->nickName == text)
-    {
-      QString dtdName = QuantaCommon::getDTDNameFromNickName(text);
-      emit parsingDTDChanged(dtdName.lower());
-      break;
-    }
-  }
+  QString dtdName = DTDs::ref()->getDTDNameFromNickName(text);
+  emit parsingDTDChanged(dtdName.lower());
 }
 /** Set the Parse As... menu to dtdName. */
 void StructTreeView::setParsingDTD(const QString dtdName)
 {
-  QString dtdNickName = QuantaCommon::getDTDNickNameFromName(dtdName);
+  QString dtdNickName = DTDs::ref()->getDTDNickNameFromName(dtdName);
   for (uint i = 0; i < dtdList.count(); i++)
   {
     dtdMenu->setItemChecked(i, dtdList[i] == dtdNickName);
   }
-  m_parsingDTD = dtds->find(dtdName); //this should always exist
+  m_parsingDTD = DTDs::ref()->find(dtdName); //this should always exist
 }
 
 void StructTreeView::slotOpenFile()

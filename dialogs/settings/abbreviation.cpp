@@ -35,6 +35,7 @@
 #include "codetemplatedlgs.h"
 #include "resource.h"
 #include "quantacommon.h"
+#include "dtds.h"
 
 
 Abbreviation::Abbreviation(QWidget *parent, const char *name):
@@ -54,11 +55,11 @@ void Abbreviation::slotDTDChanged(const QString& newDTDName)
   templatesList->clear();
   codeEdit->clear();
   oldItem = 0L;
-  QString dtdName = QuantaCommon::getDTDNameFromNickName(newDTDName);
-  m_dtd = dtds->find(dtdName.lower());
+  QString dtdName = DTDs::ref()->getDTDNameFromNickName(newDTDName);
+  m_dtd = DTDs::ref()->find(dtdName);
   QString templateStr;
   QString templateName;
-  QMap<QString, QString>::Iterator it;
+  QMap<QString, QString>::ConstIterator it;
   for ( it = m_dtd->abbreviations.begin(); it != m_dtd->abbreviations.end(); ++it )
   {
     templateStr = it.key();
@@ -154,7 +155,7 @@ void Abbreviation::saveTemplates()
   doc.setContent(s);
   QDomNode node = doc.firstChild();
   int pos;
-  QMap<QString,QString>::Iterator it;
+  QMap<QString,QString>::ConstIterator it;
   for (it = m_dtd->abbreviations.begin(); it != m_dtd->abbreviations.end(); ++it)
   {
     QDomElement el = doc.createElement("Template");

@@ -142,7 +142,7 @@ void QuantaView::slotFrameWizard()
       {
        dlg.setSaved(true);
       }
-  dlg.setFramesetFileCurrentPath(quantaApp->projectBaseURL().path());
+  dlg.setFramesetFileCurrentPath(Project::ref()->projectBaseURL().path());
   dlg.loadExistingFramesetStructure(l2);
 
   if ( dlg.exec() )
@@ -409,7 +409,7 @@ void QuantaView::slotTagEditTable()
   } else
   {
     Node *node = parser->nodeAt(line, col);
-    DTDStruct *dtd = w->defaultDTD();
+    const DTDStruct *dtd = w->defaultDTD();
     if (node)
       dtd = node->tag->dtd;
     bLine = line;
@@ -501,7 +501,7 @@ void QuantaView::slotViewInKFM()
   if ( !w->isUntitled() )
   {
     KProcess *show = new KProcess();
-    KURL url = quantaApp->project()->urlWithPrefix(w->url());
+    KURL url = Project::ref()->urlWithPrefix(w->url());
     *show << "kfmclient" << "openURL" << url.url();
     show->start( KProcess::DontCare );
   }
@@ -535,7 +535,7 @@ void QuantaView::slotViewInLynx()
   if ( !w->isUntitled() )
   {
     KProcess *show = new KProcess();
-    KURL url = quantaApp->project()->urlWithPrefix(w->url());
+    KURL url = Project::ref()->urlWithPrefix(w->url());
     *show << "konsole"
           << "--nohist"
           << "--notoolbar"
@@ -891,7 +891,7 @@ void QuantaView::slotSpellcheck ()
 {
   if (writeExists())
   {
-    quantaApp->spellChecker()->spellCheck(write()->doc());
+    SpellChecker::ref(this)->spellCheck(write()->doc());
   }
 }
 
@@ -1131,7 +1131,7 @@ KURL QuantaView::baseURL()
     base = QuantaCommon::convertToPath(w->url());
   } else
   {
-    base = w->baseURL;
+    base = Project::ref()->projectBaseURL();
   }
 
   return base;

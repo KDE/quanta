@@ -31,7 +31,20 @@ class KConfig;
 class SpellChecker : public QObject  {
    Q_OBJECT
 public:
-  SpellChecker(QObject *parent=0, const char *name=0);
+
+  /**
+   *  since this class is a singleton you must use this function to access it
+   *
+   *  the parameter are only used at the first call to create the class
+   *
+   */
+  static SpellChecker* const ref(QWidget *parent = 0L, const char *name = 0L)
+  {
+    static SpellChecker *m_ref;
+    if (!m_ref) m_ref = new SpellChecker (parent, name);
+    return m_ref;
+  }
+
   ~SpellChecker();
   /** Read the KSpell configuration from the Quanta configuration file. */
   void readConfig(KConfig *config);
@@ -48,6 +61,12 @@ public slots:
   void spellCleanDone();
 
 private:
+
+  /** The constructor is privat because we use singleton patter.
+   *  If you need the class use SpellChecker::ref() for
+   *  construction and reference
+   */
+  SpellChecker(QObject *parent=0, const char *name=0);
   void locatePosition( uint pos, uint& line, uint& col );
 
   KTextEditor::Document *m_currentDoc;

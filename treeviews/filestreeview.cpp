@@ -45,10 +45,11 @@
 
 #include "filestreeview.h"
 #include "fileinfodlg.h"
-#include "project.h"
 #include "resource.h"
 #include "quanta.h"
 #include "quantacommon.h"
+
+
 
 //FilesTreeViewItem implementation
 FilesTreeViewItem::FilesTreeViewItem( KFileTreeViewItem *parent, KFileItem* item, KFileTreeBranch *brnch )
@@ -90,9 +91,6 @@ FilesTreeBranch::FilesTreeBranch(KFileTreeView *parent, const KURL& url,
 
 bool FilesTreeBranch::matchesFilter( const KFileItem *item ) const
 {
-  if (!urlList.isEmpty())
-    return urlList.contains(item->url());
-
   if (!excludeFilterRx.isEmpty())
     if (excludeFilterRx.exactMatch(item->url().path()))
       return false;
@@ -109,12 +107,15 @@ KFileTreeViewItem* FilesTreeBranch::createTreeViewItem( KFileTreeViewItem *paren
     tvi = new FilesTreeViewItem( parent, fileItem, this );
     // we assume there are childs
     if (tvi)
+    {
       tvi->setExpandable(tvi->isDir());
+    }
   }
   else
     kdDebug(24000) << "createTreeViewItem: Have no parent" << endl;
   return tvi;
 }
+
 
 //FilesTreeView implementation
 FilesTreeView::FilesTreeView(QWidget *parent, const char *name)
@@ -151,10 +152,7 @@ FilesTreeView::FilesTreeView(KURL::List topList, QWidget *parent, const char *na
   m_fileMenu->insertItem(SmallIcon("editcopy"), i18n("&Copy"), this, SLOT(slotCopy()));
   m_fileMenu->insertItem(SmallIcon("editpaste"), i18n("&Paste"), this, SLOT(slotPaste()));
   m_fileMenu->insertItem(SmallIcon("editdelete"), i18n("&Delete"), this, SLOT(slotDelete()));
-  m_fileMenu->insertItem(SmallIcon("info"), i18n("Properties"), this, SLOT(slotProperties()));
-  m_fileMenu->insertSeparator();
-  m_fileMenu->insertItem(i18n("Reload"), this, SLOT(slotReload()));
-
+  m_fileMenu->insertItem(SmallIcon("info"), i18n("Properties..."), this, SLOT(slotProperties()));
 
   m_folderMenu = new KPopupMenu();
 
@@ -165,9 +163,9 @@ FilesTreeView::FilesTreeView(KURL::List topList, QWidget *parent, const char *na
   m_folderMenu->insertItem(SmallIcon("editcopy"), i18n("&Copy"), this, SLOT(slotCopy()));
   m_folderMenu->insertItem(SmallIcon("editpaste"), i18n("&Paste"), this, SLOT(slotPaste()));
   m_menuDel = m_folderMenu->insertItem( SmallIcon("editdelete"), i18n("&Delete"), this, SLOT(slotDelete()));
-  m_folderMenu->insertItem(SmallIcon("info"), i18n("Properties"), this, SLOT(slotProperties()));
-  m_folderMenu->insertSeparator();
-  m_folderMenu->insertItem(i18n("Reload"), this, SLOT(slotReload()));
+  m_folderMenu->insertItem(SmallIcon("info"), i18n("Properties..."), this, SLOT(slotProperties()));
+  m_seperatorMenuId = m_folderMenu->insertSeparator();
+  m_reloadMenuId = m_folderMenu->insertItem(i18n("Reload"), this, SLOT(slotReload()));
 
   m_emptyMenu = new KPopupMenu();
 
@@ -225,13 +223,23 @@ KFileTreeBranch* FilesTreeView::newBranch(const KURL& url)
   return newBrnch;
 }
 
-void FilesTreeView::itemRenamed(const KURL& , const KURL& newURL )
+void FilesTreeView::itemRenamed(const KURL& oldURL, const KURL& newURL )
 {
   KFileTreeViewItem *curItem = currentKFileTreeViewItem();
-  if ( ! curItem) return;
-  KFileItem *fItem = curItem->fileItem();
-  fItem->setURL(newURL);
-  curItem->setText( 0, fItem->text());
+  if (! curItem) return;
+
+  if (curItem->isDir())
+  {
+    KURL n = newURL;
+    n.adjustPath(1);
+    KURL o = oldURL;
+    o.adjustPath(1);
+    emit renamed(o, n);
+  }
+  else
+  {
+    emit renamed(oldURL, newURL);
+  }
 }
 
 /** RMB pressed, bring up the menu */
@@ -240,8 +248,9 @@ void FilesTreeView::slotMenu(KListView* listView, QListViewItem *item, const QPo
   Q_UNUSED(listView);
   if (item)
   {
-    m_folderMenu->setItemEnabled(m_insertFolderInProject, quantaApp->project()->hasProject());
-    m_fileMenu->setItemEnabled(m_insertFileInProject, quantaApp->project()->hasProject());
+    bool hasProject = !m_projectName.isNull();
+    m_folderMenu->setItemEnabled(m_insertFolderInProject, hasProject);
+    m_fileMenu->setItemEnabled(m_insertFileInProject, hasProject);
     setSelected(item, true);
     KFileTreeViewItem *curItem = currentKFileTreeViewItem();
     if ( !curItem->isDir() )
@@ -260,10 +269,14 @@ void FilesTreeView::slotMenu(KListView* listView, QListViewItem *item, const QPo
         if ((text == "/" || text == QDir::homeDirPath()+"/") &&
             m_config->readBoolEntry("Home-Root Folder On", true) )
           m_folderMenu ->setItemEnabled(m_menuTop, false);
+        m_folderMenu ->setItemVisible(m_seperatorMenuId, true);
+        m_folderMenu ->setItemVisible(m_reloadMenuId, true);
       }
       else
       {
         m_folderMenu ->changeItem( m_menuTop, i18n("Add Folder to Top"));
+        m_folderMenu ->setItemVisible(m_seperatorMenuId, false);
+        m_folderMenu ->setItemVisible(m_reloadMenuId, false);
       }
       m_folderMenu->popup( point);
    }
@@ -308,6 +321,7 @@ void FilesTreeView::slotSelectFile(QListViewItem *item)
 /** expands an archiv, if possible */
 bool FilesTreeView::expandArchiv (KFileTreeViewItem *item)
 {
+  if (!item) return false;
   KURL urlToOpen = item->url();
 
   if ( ! urlToOpen.isLocalFile()) return false;
@@ -529,11 +543,16 @@ void FilesTreeView::slotDelete()
   {
     KURL url = currentURL();
     QString msg;
-    if ( currentKFileTreeViewItem()->isDir() )
-      msg = i18n("<qt>Do you really want to delete folder <b>%1</b> ?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol));
-    else
-      msg = i18n("<qt>Do you really want to delete file <b>%1</b> ?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol));
-
+    if (m_projectBaseURL.isParentOf(url))
+    {
+      msg = i18n("<qt><b>%1</b> might be part of your project! Do you really want to delete it?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol));
+    } else
+    {
+      if ( currentKFileTreeViewItem()->isDir() )
+        msg = i18n("<qt>Do you really want to delete folder <b>%1</b> ?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol));
+      else
+        msg = i18n("<qt>Do you really want to delete file <b>%1</b> ?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol));
+    }
     if ( KMessageBox::warningYesNo(this, msg) == KMessageBox::Yes )
     {
       KIO::Job *job = KIO::del(url);
@@ -594,21 +613,19 @@ void FilesTreeView::slotProperties()
 {
   KURL url = currentURL();
   if (url.isEmpty()) return;
-
+    
+  KPropertiesDialog *propDlg = new KPropertiesDialog( url, this, 0L, false, false); //autodeletes itself
   if (!currentKFileTreeViewItem()->isDir())
   {
-    KPropertiesDialog *propDlg = new KPropertiesDialog( url, this, 0L, false, false); //autodeletes itself
     addFileInfoPage(propDlg);
-    if (propDlg->exec())
-    {
-      if (url != propDlg->kurl())
-      {
-        itemRenamed(url, propDlg->kurl());
-      }
-    }
-  } else
+  }
+  if (propDlg->exec())
   {
-    (void) new KPropertiesDialog(url, this);
+    KURL newURL = propDlg->kurl();
+    if (url != newURL)
+    {
+     itemRenamed(url, newURL);
+    }
   }
 }
 
@@ -616,15 +633,12 @@ void FilesTreeView::slotProperties()
 
 void FilesTreeView::slotReload()
 {
-    QListViewItemIterator it(this);
-    KFileTreeViewItem *kftvi;
-    for ( ; it.current(); ++it )
-    {
-      kftvi = dynamic_cast<KFileTreeViewItem*> (it.current());
-      if ( kftvi && kftvi->isDir() && kftvi->isOpen()) {
-        kftvi->branch()->updateDirectory(kftvi->url());
-      }
-    }
+  KFileTreeViewItem *curItem = currentKFileTreeViewItem();
+  if (!curItem) return;
+
+  KURL url = curItem->branch()->rootUrl();
+  removeBranch(curItem->branch());
+  newBranch(url);
 }
 
 
@@ -634,9 +648,6 @@ void FilesTreeView::slotJobFinished(KIO::Job *job)
       job->showErrorDialog(this);
 
   progressBar->reset();
-
-  slotReload();
-//  emit reloadTreeviews();
 }
 
 
@@ -674,5 +685,13 @@ void FilesTreeView::findDrop(const QPoint &pos, QListViewItem *&parent, QListVie
     parent = atpos;
   }
 }
+
+
+void FilesTreeView::slotNewProjectLoaded(const QString &name, const KURL &baseURL, const KURL &)
+{
+  m_projectName = name;
+  m_projectBaseURL = baseURL;
+}
+
 
 #include "filestreeview.moc"

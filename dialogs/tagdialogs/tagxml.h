@@ -32,7 +32,7 @@ class Tagxml : public QWidget, TagWidget {
   Q_OBJECT
   public:
     /** construtor */
-    Tagxml(QDomNode &d, DTDStruct *dtd, QWidget* parent=0, const char *name=0);
+    Tagxml(QDomNode &d, const DTDStruct *dtd, QWidget* parent=0, const char *name=0);
     /** destructor */
     ~Tagxml();
 
@@ -44,7 +44,7 @@ class Tagxml : public QWidget, TagWidget {
 
   private:
     QDomNode doc;
-    DTDStruct *m_dtd;
+    const DTDStruct *m_dtd;
     QWidget *m_firstItem;
 
 };
