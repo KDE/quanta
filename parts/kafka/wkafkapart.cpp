@@ -94,6 +94,7 @@ QString ab = i18n("Ident all");
 	if ( file.open(IO_ReadOnly) )
 	{
 		QTextStream t( &file );        // use a text stream
+		t.setEncoding(QTextStream::UnicodeUTF8);
 		while ( !t.eof() )
 		{
 			tmp = t.readLine();
