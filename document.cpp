@@ -843,7 +843,8 @@ void Document::slotCompletionDone( KTextEditor::CompletionEntry completion )
   if (completion.type == "attribute")
   {
     viewCursorIf->setCursorPositionReal(row,col-1);
-    showCodeCompletions( getAttributeValueCompletions(completion.userdata, completion.text) );
+    QTag *tag = QuantaCommon::tagFromDTD(dtdName,completion.userdata);
+    showCodeCompletions( getAttributeValueCompletions(tag, completion.text) );
   }
   if (completion.type == "attributeValue")
   {
@@ -857,6 +858,10 @@ void Document::slotCompletionDone( KTextEditor::CompletionEntry completion )
 */
 void Document::slotFilterCompletion( KTextEditor::CompletionEntry *completion ,QString *string )
 {
+/*  uint line, col;
+  viewCursorIf->cursorPositionReal(&line, &col);
+  DTDStruct* dtd = dtds->find(findDTDName(line, 0));*/
+
   if ( completion->type == "attribute" )
   {
     string->append("=\"\"");
@@ -877,32 +882,38 @@ void Document::slotCharactersInserted(int line,int column,const QString& string)
  if (useAutoCompletion)
  {
   DTDStruct* dtd = dtds->find(findDTDName(line, 0));
-  if (dtd->family == Xml)
+  if (dtd)
   {
-    xmlAutoCompletion(line, column, string);
-  }
-  if (dtd->family == Script)
-  {
-    scriptAutoCompletion(line, column, string);
-  }
+    if (dtd->family == Xml)
+    {
+      xmlAutoCompletion(dtd, line, column, string);
+    }
+    if (dtd->family == Script)
+    {
+      scriptAutoCompletion(dtd, line, column, string);
+    }
+  } //if (dtd)
  }
 }
 
 /** Called whenever a user inputs text in an XML type document. */
-void Document::xmlAutoCompletion(int line, int column, const QString & string)
+void Document::xmlAutoCompletion(DTDStruct* dtd, int line, int column, const QString & string)
 {
-  QString tag;
+  QTag *tag;
+  QString tagName;
   if ( string == ">")
-    tag = getTagNameAt( line, column-1 );
+    tagName = getTagNameAt( line, column-1 );
   else
-    tag = getTagNameAt( line, column );
+    tagName = getTagNameAt( line, column );
 
-  if ( tag == "" )  //we are outside of any tag
+  tag = QuantaCommon::tagFromDTD(dtd, tagName);
+
+  if ( tagName == "" )  //we are outside of any tag
   {
     if ( string == "<" )  // a tag is started
     {
       //we need to complete a tag name
-      showCodeCompletions( getTagCompletions(line, column) );
+      showCodeCompletions( getTagCompletions(dtd, line, column) );
     }
     else if ( string == "&")
          {
@@ -912,14 +923,14 @@ void Document::xmlAutoCompletion(int line, int column, const QString & string)
   }
   else  // we are inside of a tag
   {
-    if ( string == ">" && tag[0] != '/' &&
-         QuantaCommon::isKnownTag(dtdName, tag) &&
-         !QuantaCommon::isSingleTag(dtdName, tag) &&
-         ( QuantaCommon::isOptionalTag(dtdName, tag) || useCloseTag ))
+    if ( string == ">" && tagName[0] != '/' &&
+         tag &&
+         !tag->isSingle() &&
+         ( tag->isOptional() || useCloseTag ))
     {
       //add closing tag if wanted
       column++;
-      editIf->insertText(line, column, "</" + tag + ">");
+      editIf->insertText(line, column, "</" + tagName + ">");
       viewCursorIf->setCursorPositionReal( line, column );
     }
     else if ( string == " " )
@@ -939,69 +950,85 @@ void Document::xmlAutoCompletion(int line, int column, const QString & string)
 
 
 /** Return a list of possible tag name completions */
-QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(int line, int col)
+QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(DTDStruct *dtd,int line, int col)
 {
   QValueList<KTextEditor::CompletionEntry> *completions = new QValueList<KTextEditor::CompletionEntry>();
   KTextEditor::CompletionEntry completion;
   completion.type = "tag";
 
-  DTDStruct* dtd = dtds->find(findDTDName(line, 0));
-
-  if (dtd) {
-    QDictIterator<QTag> it(* dtd->tagsList);
-    for( ; it.current(); ++it )
-    {
+  QDictIterator<QTag> it(* dtd->tagsList);
+  for( ; it.current(); ++it )
+  {
       completion.text = QuantaCommon::tagCase( it.current()->name() );
       completions->append( completion );
-    }
   }
-  
+
   return completions;
 }
 
 /** Return a list of valid attributes for the given tag */
-QValueList<KTextEditor::CompletionEntry>* Document::getAttributeCompletions( QString tag )
+QValueList<KTextEditor::CompletionEntry>* Document::getAttributeCompletions( QTag* tag )
 {
   QValueList<KTextEditor::CompletionEntry> *completions = new QValueList<KTextEditor::CompletionEntry>();
   KTextEditor::CompletionEntry completion;
-  completion.type = "attribute";
-  completion.userdata = tag;
 
-  if ( QuantaCommon::isKnownTag(dtdName,tag) )
+  switch (tag->parentDTD->family)
   {
-    AttributeList *list = QuantaCommon::tagAttributes(dtdName,tag);
-    for (uint i = 0; i < list->count(); i++)
-    {
-      QString item = list->at(i)->name;
-      completion.text = item;
-      completions->append( completion );
-    }
-  }
+     case Xml:
+          {
+            completion.type = "attribute";
+            completion.userdata = tag->name();
 
-  if (tag.contains("!doctype",false)) //special case, list all the known document types
-  {
-    QDictIterator<DTDStruct> it(*dtds);
-    for( ; it.current(); ++it )
-    {
-     completion.type = "doctypeList";
-     completion.text = it.current()->nickName;
-     completions->append(completion);
+            AttributeList *list = tag->attributes();
+            for (uint i = 0; i < list->count(); i++)
+            {
+              QString item = list->at(i)->name;
+              completion.text = item;
+              completion.comment = list->at(i)->type;
+              completions->append( completion );
+            }
+
+
+            if (tag->name().contains("!doctype",false)) //special case, list all the known document types
+            {
+              QDictIterator<DTDStruct> it(*dtds);
+              for( ; it.current(); ++it )
+              {
+               completion.type = "doctypeList";
+               completion.text = it.current()->nickName;
+               completions->append(completion);
+              }
+            }
+            break;
+          }
+     case Script:
+          {
+            completion.userdata = tag->name();
+            completion.type = "script";
+            AttributeList *list = tag->attributes();
+            for (uint i = 0; i < list->count(); i++)
+            {
+              QString item = list->at(i)->name;
+              completion.text = item;
+              completion.comment = list->at(i)->type;
+              completions->append( completion );
+            }
+          }
     }
-  }
 
   return completions;
 }
 
 /** Return a list of valid attribute values for the given tag and attribute */
-QValueList<KTextEditor::CompletionEntry>* Document::getAttributeValueCompletions( QString tag, QString attribute )
+QValueList<KTextEditor::CompletionEntry>* Document::getAttributeValueCompletions( QTag* tag, QString attribute )
 {
   QValueList<KTextEditor::CompletionEntry> *completions = new QValueList<KTextEditor::CompletionEntry>();
 
   KTextEditor::CompletionEntry completion;
   completion.type = "attributeValue";
-  completion.userdata = tag + "," + attribute;
+  completion.userdata = tag->name() + "," + attribute;
 
-  QStringList *values = QuantaCommon::tagAttributeValues(dtdName,tag,attribute);
+  QStringList *values = QuantaCommon::tagAttributeValues(tag->parentDTD->name,tag->name(),attribute);
   if (values) {
     for ( QStringList::Iterator it = values->begin(); it != values->end(); ++it ) {
       completion.text = *it;
@@ -1144,10 +1171,43 @@ QString Document::findDTDName(int startLine, int endLine, bool checkCursorPos)
 }
 
 /** Called whenever a user inputs text in a script type document. */
-void Document::scriptAutoCompletion(int line, int column, const QString & string)
+void Document::scriptAutoCompletion(DTDStruct *dtd, int line, int column, const QString & string)
 {
- //TODO: Implement this.
+  if (string == "(")  //if we need to list the arguments of a function
+ {
+   QString textLine = editIf->textLine(line).left(column);
+   int startPos = -1;
+   int pos;
+   bool end = false;
+   do{
+     pos = textLine.findRev(QRegExp("\\W"), startPos);
+     if (textLine[pos] == '_')
+     {
+       startPos = pos - textLine.length()-1;
+       end = false;
+     } else
+     {
+       end = true;
+     }
+   } while (!end);
+   QString word = textLine.remove(0,pos+1);
+   QTag *tag = dtd->tagsList->find(word);
+   if (tag)
+   {
+     QStringList argList;
+     QString arguments;
+     for (int i =0; i < tag->attributeCount(); i++)
+     {
+       Attribute* attr = tag->attributeAt(i);
+       arguments = arguments + attr->type +" "+attr->name +",";
+     }
+     arguments = tag->name() + "("+arguments.left(arguments.length()-1)+")";
+     argList.append(arguments);
+     codeCompletionIf->showArgHint(argList, "()" ,",");
+   }
+ }
 }
+
 /** Retriwes the text from the specified rectangle. The KTextEditor::EditInterface::text seems to not
 work correctly. */
 QString Document::text(int bLine, int bCol, int eLine, int eCol)

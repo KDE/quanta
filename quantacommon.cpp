@@ -156,9 +156,13 @@ AttributeList*  QuantaCommon::tagAttributes(QString dtdName, QString tag)
 /** Returns the QTag object for the tag "tag" from the DTD named "dtdname". */
 QTag* QuantaCommon::tagFromDTD(QString dtdName, QString tag)
 {
-  QTag *qtag = 0;
-
   DTDStruct* dtd = dtds->find(dtdName);
+  return tagFromDTD(dtd, tag);
+}
+/** Returns the QTag object for the tag "tag" from the DTD. */
+QTag* QuantaCommon::tagFromDTD(DTDStruct *dtd, QString tag)
+{
+  QTag *qtag = 0;
   if (dtd)
   {
     QString searchForTag = (dtd->caseSensitive) ? tag : tag.upper();
@@ -167,6 +171,7 @@ QTag* QuantaCommon::tagFromDTD(QString dtdName, QString tag)
 
  return qtag;
 }
+
 /** Returns an XML style string containing the GUI for attributes. */
 QString QuantaCommon::xmlFromAttributes(AttributeList* attributes)
 {

@@ -50,6 +50,8 @@ public:
   static AttributeList*  tagAttributes(QString dtdName, QString tag);
   /** Returns the QTag object for the tag "tag" from the DTD named "dtdname". */
   static QTag* tagFromDTD(QString dtdName, QString tag);
+  /** Returns the QTag object for the tag "tag" from the DTD. */
+  static QTag* tagFromDTD(DTDStruct * dtd, QString tag);
   /** Returns an XML style string containing the GUI for attributes. */
   static QString xmlFromAttributes(AttributeList* attributes);
   /** Returns list of values for attribute */

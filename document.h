@@ -32,6 +32,8 @@
 #include <ktexteditor/selectioninterface.h>
 #include <ktexteditor/codecompletioninterface.h>
 
+#include "parser/qtag.h"
+
 /**
   *@author Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon & Andras Mantia
   */
@@ -107,18 +109,6 @@ public:
   /** No descriptions */
   bool saveIt();
 
-
-  /** Brings up list of code completions */
-  void showCodeCompletions( QValueList<KTextEditor::CompletionEntry> *completions );
-  /** Get list of possibile tag name completions */
-  QValueList<KTextEditor::CompletionEntry>* getTagCompletions(int line, int col);
-  /** Get list of possibile tag attribute completions */
-  QValueList<KTextEditor::CompletionEntry>* getAttributeCompletions( QString tag );
-  /** Get list of possibile tag attribute value completions */
-  QValueList<KTextEditor::CompletionEntry>* getAttributeValueCompletions( QString tag, QString attribute );
-  /** Get list of possibile completions in normal text input (nt creating a tag) */
-  QValueList<KTextEditor::CompletionEntry>* getCharacterCompletions();
-
   /** Returns the DTD identifier for the document */
   QString getDTDIdentifier();
   /** Sets the DTD identifier */
@@ -170,10 +160,21 @@ private:
 
   Tag *findXMLTag(int line, int col);
   Tag *findText(int line, int col);
+
+  /** Brings up list of code completions */
+  void showCodeCompletions( QValueList<KTextEditor::CompletionEntry> *completions );
+  /** Get list of possibile tag name completions */
+  QValueList<KTextEditor::CompletionEntry>* getTagCompletions(DTDStruct *dtd, int line, int col);
+  /** Get list of possibile tag attribute completions */
+  QValueList<KTextEditor::CompletionEntry>* getAttributeCompletions( QTag* tag );
+  /** Get list of possibile tag attribute value completions */
+  QValueList<KTextEditor::CompletionEntry>* getAttributeValueCompletions( QTag* tag, QString attribute );
+  /** Get list of possibile completions in normal text input (nt creating a tag) */
+  QValueList<KTextEditor::CompletionEntry>* getCharacterCompletions();
   /** Called whenever a user inputs text in an XML type document. */
-  void xmlAutoCompletion(int , int , const QString & );
+  void xmlAutoCompletion(DTDStruct*,int , int , const QString & );
   /** Called whenever a user inputs text in a script type document. */
-  void scriptAutoCompletion(int , int , const QString & );
+  void scriptAutoCompletion(DTDStruct*,int , int , const QString & );
 };
 
 #endif

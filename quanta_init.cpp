@@ -682,7 +682,7 @@ void QuantaApp::setAttributes(QDomDocument *dom, QTag* tag)
    {
      attr = new Attribute;
      attr->name = n.toElement().attribute("name");
-     attr->type = n.toElement().attribute("type","input");
+     attr->type = n.toElement().attribute("type",tag->parentDTD->defaultAttrType);
      attr->defaultValue = n.toElement().attribute("defaultValue");
      attr->status = n.toElement().attribute("status");   
     
@@ -815,6 +815,7 @@ void QuantaApp::readTagDir(QString &dirName)
  }
  //read the extra tags and their attributes
  dtdConfig->setGroup("Extra tags");
+ dtd->defaultAttrType = dtdConfig->readEntry("DefaultAttrType","input");
  QStrList extraTagsList;
  dtdConfig->readListEntry("List",extraTagsList);
  for (uint i = 0 ; i < extraTagsList.count(); i++)
@@ -868,7 +869,7 @@ void QuantaApp::readTagDir(QString &dirName)
    {
      Attribute* attr = new Attribute;
      attr->name = QString(attrList.at(j)).stripWhiteSpace();
-     attr->type = "input"; //NOTE: We can read this and the others also from the dtdConfig in the future
+     attr->type = dtd->defaultAttrType;
      tag->addAttribute(attr);
      delete attr;
    }
