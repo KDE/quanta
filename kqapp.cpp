@@ -23,6 +23,7 @@
 #include <kurl.h>
 #include <kiconloader.h>
 #include <kstandarddirs.h>
+#include <kglobalsettings.h>
 
 #include "quantacommon.h"
 #include "project/project.h"
@@ -39,9 +40,8 @@ KSplash::KSplash()
    QPixmap pm( UserIcon("quantalogo") );
 
    setBackgroundPixmap(pm);
-   setGeometry( QApplication::desktop()->width ()/2-225,
-            QApplication::desktop()->height()/2-150,
-                     450, 300 );
+   QRect desk = KGlobalSettings::splashScreenDesktopGeometry();
+   setGeometry( desk.center().x()-225, desk.center().y()-150, 450, 300 );
    setLineWidth(0);
    show();
 }
