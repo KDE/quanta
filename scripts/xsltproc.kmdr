@@ -11,7 +11,7 @@
             <x>0</x>
             <y>0</y>
             <width>461</width>
-            <height>250</height>
+            <height>220</height>
         </rect>
     </property>
     <property name="caption">
@@ -27,63 +27,7 @@
         <property name="spacing">
             <number>6</number>
         </property>
-        <widget class="QLayoutWidget" row="1" column="0">
-            <property name="name">
-                <cstring>Layout5</cstring>
-            </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <property name="margin">
-                    <number>0</number>
-                </property>
-                <property name="spacing">
-                    <number>6</number>
-                </property>
-                <spacer>
-                    <property name="name">
-                        <cstring>Spacer4</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>30</width>
-                            <height>0</height>
-                        </size>
-                    </property>
-                </spacer>
-                <widget class="ExecButton">
-                    <property name="name">
-                        <cstring>ExecButton1</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Translate</string>
-                    </property>
-                    <property name="associations" stdset="0">
-                        <stringlist>
-                            <string># Set up the CMDLINE var and run xsltproc
-@GroupBox1
-xsltproc $CMDLINE</string>
-                        </stringlist>
-                    </property>
-                </widget>
-                <widget class="CloseButton">
-                    <property name="name">
-                        <cstring>CloseButton1</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Close</string>
-                    </property>
-                </widget>
-            </hbox>
-        </widget>
-        <widget class="GroupBox" row="0" column="0">
+        <widget class="GroupBox" row="0" column="0" rowspan="1" colspan="3">
             <property name="name">
                 <cstring>GroupBox1</cstring>
             </property>
@@ -147,7 +91,7 @@ CMDLINE="-o $HOME/$OPFILE $STYLESHEET $FILE"</string>
                             </property>
                             <property name="associations" stdset="0">
                                 <stringlist>
-                                    <string></string>
+                                    <string>@null</string>
                                     <string></string>
                                     <string># Check if we're using the current file and make note of it
 if [ !@FileSelector1 ]
@@ -274,6 +218,46 @@ fi</string>
                 </widget>
             </grid>
         </widget>
+        <widget class="ExecButton" row="1" column="1">
+            <property name="name">
+                <cstring>ExecButton1</cstring>
+            </property>
+            <property name="text">
+                <string>Translate</string>
+            </property>
+            <property name="associations" stdset="0">
+                <stringlist>
+                    <string># Set up the CMDLINE var and run xsltproc
+@GroupBox1
+xsltproc $CMDLINE</string>
+                </stringlist>
+            </property>
+        </widget>
+        <widget class="CloseButton" row="1" column="2">
+            <property name="name">
+                <cstring>CloseButton1</cstring>
+            </property>
+            <property name="text">
+                <string>Close</string>
+            </property>
+        </widget>
+        <spacer row="1" column="0">
+            <property name="name">
+                <cstring>Spacer4</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>241</width>
+                    <height>0</height>
+                </size>
+            </property>
+        </spacer>
     </grid>
 </widget>
 <connections>
