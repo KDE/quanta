@@ -87,7 +87,7 @@
 #include "parser/parser.h"
 #include "dialogs/filemasks.h"
 
-QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
+QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta"), DCOPObject("WindowManagerIf")
 {
   quantaStarted = true;
   tempFileList.setAutoDelete(true);
@@ -1618,5 +1618,3 @@ void QuantaApp::slotPluginsValidate()
   }
   statusBar()->message(i18n("All plugins validated successfully."));
 }
-
-

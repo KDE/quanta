@@ -49,6 +49,7 @@
 #include "quantacommon.h"
 #include "qextfileinfo.h"
 #include "resource.h"
+#include "dcopwindowmanagerif.h"
 
 // forward declaration
 class QuantaPluginInterface;
@@ -102,7 +103,7 @@ typedef struct ToolbarEntry{
 /**
   * The base class for Quanta application windows. 
   */
-class QuantaApp : public KDockMainWindow
+class QuantaApp : public KDockMainWindow, virtual public DCOPWindowManagerIf
 {
   Q_OBJECT
 
@@ -153,6 +154,8 @@ public:
   QString defaultEncoding();
   /** Returns the project (if there is one loaded) or global new file type. */
   QString newFileType();
+  /** No descriptions */
+  int currentEditorIfNum() const;
 
 public slots:
 

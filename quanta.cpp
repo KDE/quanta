@@ -2525,4 +2525,10 @@ void QuantaApp::slotEmailDTD()
   
 }
 
+/** No descriptions */
+int QuantaApp::currentEditorIfNum() const
+{
+  return view->write()->editIf->editInterfaceNumber();
+}
+
 #include "quanta.moc"

@@ -123,6 +123,7 @@ Document* QuantaView::removeWrite()
   {
     Document *w = write();
     writeTab->removePage( w );
+    delete w;
   }
   return dynamic_cast<Document *>(writeTab->currentPage()); //don't call write() here
 }

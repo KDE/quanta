@@ -103,6 +103,8 @@ Document::Document(const KURL& p_baseURL, KTextEditor::Document *doc,
 
 Document::~Document()
 {
+  delete m_view;
+  delete m_doc;
 }
 
 void Document::resizeEvent(QResizeEvent *e)
