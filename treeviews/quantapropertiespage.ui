@@ -91,7 +91,7 @@
                 <cstring>typesCombo</cstring>
             </property>
         </widget>
-        <widget class="QLabel" row="3" column="0" rowspan="1" colspan="2">
+        <widget class="QLabel" row="2" column="0" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>textLabel1</cstring>
             </property>
@@ -102,7 +102,12 @@
                 <cstring>actionCombo</cstring>
             </property>
         </widget>
-        <widget class="QButtonGroup" row="2" column="0" rowspan="1" colspan="4">
+        <widget class="KComboBox" row="2" column="2" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>actionCombo</cstring>
+            </property>
+        </widget>
+        <widget class="QButtonGroup" row="3" column="0" rowspan="1" colspan="4">
             <property name="name">
                 <cstring>prePostGroup</cstring>
             </property>
@@ -155,11 +160,6 @@
                 </widget>
             </grid>
         </widget>
-        <widget class="KComboBox" row="3" column="2" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>actionCombo</cstring>
-            </property>
-        </widget>
     </grid>
 </widget>
 <connections>
@@ -168,6 +168,18 @@
         <signal>toggled(bool)</signal>
         <receiver>typesCombo</receiver>
         <slot>setDisabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>usePrePostText</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>preTextEdit</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>usePrePostText</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>postTextEdit</receiver>
+        <slot>setEnabled(bool)</slot>
     </connection>
 </connections>
 <tabstops>

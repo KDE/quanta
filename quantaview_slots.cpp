@@ -662,7 +662,6 @@ void QuantaView::slotPasteURLEncoded()
 
 /** Kate releated slots. */
 
-
 void QuantaView::slotUndo ()
 {
   if (writeExists())

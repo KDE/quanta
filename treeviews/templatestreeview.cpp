@@ -447,7 +447,7 @@ void TemplatesTreeView::slotProperties()
   if ( f )
   {
    startDir = currentURL().path();
-   quantaProperties->prePostGroup->setEnabled(false);
+   quantaProperties->prePostGroup->hide();
   } else
   {
    startDir = currentURL().path() + "/dummy_file";
