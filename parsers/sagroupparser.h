@@ -21,6 +21,7 @@
 #include <qobject.h>
 
 //forward definitions
+class QTimer;
 class Document;
 class Node;
 class SAParser;
@@ -36,6 +37,7 @@ public:
     SAGroupParser(SAParser *parent, Document *write, Node *startNode, Node *endNode, bool synchronous, bool parsingLastNode, bool paringLastGroup);
     ~SAGroupParser() {};
 
+    QTimer *m_parseForGroupTimer;
 
   public slots:
     void slotParseForScriptGroup();

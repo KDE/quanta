@@ -43,6 +43,10 @@ SAParser::SAParser()
   m_specialInsideXml = false;
   m_parsingEnabled = true;
   m_synchronous = true;
+  m_parseOneLineTimer = new QTimer(this);
+  connect(m_parseOneLineTimer, SIGNAL(timeout()), this, SLOT(slotParseOneLine()));
+  m_parseInDetailTimer = new QTimer(this);
+  connect(m_parseInDetailTimer, SIGNAL(timeout()), this, SLOT(slotParseNodeInDetail()));
 }
 
 SAParser::~SAParser()
@@ -175,7 +179,7 @@ bool SAParser::slotParseOneLine()
 #ifdef DEBUG_PARSER
                   kdDebug(24001) << "Calling slotParseOneLine from parseArea (opening group struct)." << endl;
 #endif
-                  QTimer::singleShot(0, this, SLOT(slotParseOneLine()));
+                  m_parseOneLineTimer->start(0, true);
                 }
                 return true;
               } else  //it's a closing group structure element (like "}")
@@ -191,7 +195,7 @@ bool SAParser::slotParseOneLine()
 #ifdef DEBUG_PARSER
                     kdDebug(24001) << "Calling slotParseOneLine from parseArea (closing group struct)." << endl;
 #endif
-                    QTimer::singleShot(0, this, SLOT(slotParseOneLine()));
+                    m_parseOneLineTimer->start(0, true);
                   }
                   return true;
                 }
@@ -249,7 +253,7 @@ bool SAParser::slotParseOneLine()
 #ifdef DEBUG_PARSER
                   kdDebug(24001) << "Calling slotParseOneLine from parseArea (group structure)." << endl;
 #endif
-                  QTimer::singleShot(0, this, SLOT(slotParseOneLine()));
+                  m_parseOneLineTimer->start(0, true);
                 }
                 return true;
               }
@@ -302,7 +306,7 @@ bool SAParser::slotParseOneLine()
 #ifdef DEBUG_PARSER
                 kdDebug(24001) << "Calling slotParseOneLine from slotParseOneLine (nested area)." << endl;
 #endif
-                QTimer::singleShot(0, this, SLOT(slotParseOneLine()));
+                m_parseOneLineTimer->start(0, true);
                 return true;
               }
             }
@@ -391,6 +395,7 @@ bool SAParser::slotParseOneLine()
               connect(groupParser, SIGNAL(cleanGroups()), SIGNAL(cleanGroups()));
               connect(groupParser, SIGNAL(parsingDone(SAGroupParser*)), SLOT(slotGroupParsingDone(SAGroupParser*)));
               groupParser->slotParseForScriptGroup();
+              m_groupParsers.append(groupParser);
             }
           }
 
@@ -592,12 +597,12 @@ bool SAParser::slotParseOneLine()
       //slotParseOneLine();
     }
     else
-{
+    {
 #ifdef DEBUG_PARSER
       kdDebug(24001) << "Calling slotParseOneLine from slotParseOneLine." << endl;
 #endif
-      QTimer::singleShot(0, this, SLOT(slotParseOneLine()));
-}
+      m_parseOneLineTimer->start(0, true);
+    }
   } else
   {
     if (!m_synchronous)
@@ -699,7 +704,7 @@ Node* SAParser::parseArea(const AreaStruct &specialArea,
 #ifdef DEBUG_PARSER
       kdDebug(24001) << "Calling slotParseOneLine from parseArea." << endl;
 #endif
-      QTimer::singleShot(0, this, SLOT(slotParseOneLine()));
+      m_parseOneLineTimer->start(0, true);
       return 0L;
     }
   }
@@ -738,7 +743,7 @@ Node *SAParser::parsingDone()
 #ifdef DEBUG_PARSER
           kdDebug(24001) << "Calling slotParseNodeInDetail from parsingDone (use return values)" << endl;
 #endif
-          QTimer::singleShot(0, this, SLOT(slotParseNodeInDetail()));
+          m_parseInDetailTimer->start(0, true);
           return m_lastParsedNode;
         }
         else
@@ -805,10 +810,11 @@ Node *SAParser::parsingDone()
         }
       }
       SAGroupParser *groupParser = new SAGroupParser(this, write(), g_node, g_endNode, m_synchronous, parsingLastNode, true);
-            connect(groupParser, SIGNAL(rebuildStructureTree(bool)), SIGNAL(rebuildStructureTree(bool)));
-            connect(groupParser, SIGNAL(cleanGroups()), SIGNAL(cleanGroups()));
-            connect(groupParser, SIGNAL(parsingDone(SAGroupParser*)), SLOT(slotGroupParsingDone(SAGroupParser*)));
-            groupParser->slotParseForScriptGroup();
+      connect(groupParser, SIGNAL(rebuildStructureTree(bool)), SIGNAL(rebuildStructureTree(bool)));
+      connect(groupParser, SIGNAL(cleanGroups()), SIGNAL(cleanGroups()));
+      connect(groupParser, SIGNAL(parsingDone(SAGroupParser*)), SLOT(slotGroupParsingDone(SAGroupParser*)));
+      groupParser->slotParseForScriptGroup();
+      m_groupParsers.append(groupParser);      
      }
   }
 
@@ -830,7 +836,7 @@ Node *SAParser::parsingDone()
 #ifdef DEBUG_PARSER
         kdDebug(24001) << "Calling slotParseNodeInDetail from parsingDone." << endl;
 #endif
-        QTimer::singleShot(0, this, SLOT(slotParseNodeInDetail()));
+        m_parseInDetailTimer->start(0, true);
         emit rebuildStructureTree(false);
       }
       else
@@ -924,7 +930,7 @@ void SAParser::slotParseNodeInDetail()
 #ifdef DEBUG_PARSER
 //        kdDebug(24001) << "Calling slotParseNodeInDetail from slotParseNodeInDetail." << endl; //this is really heavy debug information, enable only when really needed
 #endif
-        QTimer::singleShot(0, this, SLOT(slotParseNodeInDetail()));
+        m_parseInDetailTimer->start(0, true);
       } else
       {
 #ifdef DEBUG_PARSER
@@ -943,10 +949,22 @@ void SAParser::setParsingEnabled(bool enabled)
   kdDebug(24001) << "Parsing enabled: " << enabled << endl;
 #endif
   m_parsingEnabled = enabled;
+  if (!enabled)
+  {
+    m_parseOneLineTimer->stop();
+    m_parseInDetailTimer->stop();
+    for (QValueList<SAGroupParser*>::Iterator it = m_groupParsers.begin(); it != m_groupParsers.end(); ++it)
+    {
+      (*it)->m_parseForGroupTimer->stop();
+      delete (*it);
+    }
+    m_groupParsers.clear();
+  }
 }
 
 void SAParser::slotGroupParsingDone(SAGroupParser *groupParser)
 {
+  m_groupParsers.remove(groupParser);
   delete groupParser;
 }
 

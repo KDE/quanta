@@ -45,6 +45,8 @@ SAGroupParser::SAGroupParser(SAParser *parent, Document *write, Node *startNode,
   m_parent = parent;
   m_write = write;
   m_count = 0;
+  m_parseForGroupTimer = new QTimer(this);
+  connect(m_parseForGroupTimer, SIGNAL(timeout()), this, SLOT(slotParseForScriptGroup()));
 }
 
 void SAGroupParser::slotParseForScriptGroup()
@@ -75,7 +77,7 @@ void SAGroupParser::slotParseForScriptGroup()
 #ifdef DEBUG_PARSER
       //kdDebug(24001) << "Calling slotParseForScriptGroup from slotParseForScriptGroup." << endl;
 #endif
-      QTimer::singleShot(0, this, SLOT(slotParseForScriptGroup()));
+      m_parseForGroupTimer->start(0, true);
     }
   } else
   {

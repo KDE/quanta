@@ -30,6 +30,7 @@ struct DTDStruct;
 class Document;
 class QString;
 class QStringList;
+class QTimer;
 class KDirWatch;
 class SAGroupParser;
 
@@ -141,6 +142,9 @@ private:
   Node *s_returnNode;
   bool s_useReturnVars;
   Node *s_next;
+  QValueList<SAGroupParser*> m_groupParsers;
+  QTimer *m_parseOneLineTimer;  
+  QTimer *m_parseInDetailTimer;
 };
 
 #endif

@@ -136,7 +136,7 @@ bool QuantaView::mayRemove()
         m_customWidget->reparent(0L, 0, QPoint(), false);
     if (!saveModified())
           return false;
-    if (dynamic_cast<QuantaView *>(quantaApp->activeWindow()) == this)
+    if (static_cast<QuantaView *>(quantaApp->activeWindow()) == this)
     {
         parser->setSAParserEnabled(false);
         delete baseNode;

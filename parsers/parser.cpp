@@ -1641,7 +1641,7 @@ void Parser::synchParseInDetail()
 void Parser::setSAParserEnabled(bool enabled)
 {
   m_saParser->setParsingEnabled(enabled);
-  kapp->processEvents(QEventLoop::ExcludeUserInput | QEventLoop::ExcludeSocketNotifiers); //this makes sure that the parsing is really disabled
+  //kapp->processEvents(QEventLoop::ExcludeUserInput | QEventLoop::ExcludeSocketNotifiers); //this makes sure that the parsing is really disabled
 }
 
 #include "parser.moc"

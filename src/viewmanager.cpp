@@ -184,7 +184,7 @@ Document *ViewManager::activeDocument()
 
 QuantaView* ViewManager::activeView()
 {
-    return dynamic_cast<QuantaView *>(quantaApp->activeWindow());
+    return static_cast<QuantaView *>(quantaApp->activeWindow());
 }
 
 void ViewManager::slotViewActivated(KMdiChildView *view)
