@@ -143,6 +143,11 @@ Document::Document(KTextEditor::Document *doc,
   if (a)
     m_view->actionCollection()->take(a);
 
+  //conflicting shortcuts, so change them
+  a = m_view->actionCollection()->action("view_border");
+  if (a)
+    a->setShortcut(Qt::SHIFT + Qt::Key_F9);
+  
   a = m_view->actionCollection()->action("view_folding_markers");
   if (a)
     a->setShortcut(Qt::SHIFT + Qt::Key_F11);
