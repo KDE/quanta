@@ -49,8 +49,6 @@
 #include "quanta.h"
 #include "quantaview.h"
 #include "tagattributetree.h"
-#include "node.h"
-#include "tag.h"
 
 #include "viewmanager.h"
 
