@@ -58,7 +58,7 @@ UploadTreeFile::~UploadTreeFile()
   delete m_fileItem;
 }
 
-mode_t UploadTreeFile::permissions()
+int UploadTreeFile::permissions()
 {
   if (m_fileItem)
       return m_fileItem->permissions();

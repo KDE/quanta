@@ -80,7 +80,7 @@ void DirtyDlg::slotCompareDone(KProcess* proc)
  }
 
  KIO::UDSEntry entry;
- KIO::NetAccess::stat(m_src, entry);
+ KIO::NetAccess::stat(m_src, entry, this);
  KFileItem item(entry, m_src, false, true);
  m_permissions = item.permissions();
  //TODO: Replace with KIO::NetAccess::file_move, when KDE 3.1 support

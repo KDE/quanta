@@ -55,7 +55,7 @@ KURL CopyTo::copy(const KURL& urlToCopy, const KURL& destination)
   if (doCopy)
   {
     KIO::UDSEntry entry;
-    KIO::NetAccess::stat(urlToCopy, entry);
+    KIO::NetAccess::stat(urlToCopy, entry, 0);
     KFileItem item(entry, urlToCopy, false, true);
     destURL = targetDirURL;
     destURL.setPath(destURL.path(1) + urlToCopy.fileName());
@@ -102,7 +102,7 @@ KURL::List CopyTo::copy(const KURL::List& sourceList, const KURL& destination )
     for (uint i = 0; i < sourceList.count(); i++)
     {
       KURL srcURL = sourceList[i];
-      KIO::NetAccess::stat(srcURL, entry);
+      KIO::NetAccess::stat(srcURL, entry, 0);
       KFileItem item(entry, srcURL, false, true);
       KURL u = targetDirURL;
       u.setPath(targetDirURL.path(1) + srcURL.fileName());

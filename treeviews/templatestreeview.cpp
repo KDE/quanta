@@ -389,7 +389,7 @@ QDragObject * TemplatesTreeView::dragObject ()
   readDirInfo();
   if(!m_dirInfo.mimeType.isEmpty()) // only drag when the template type is specified
   {
-    KURLDrag *drag = KURLDrag::newDrag(KURL::List(currentURL()), this);
+    KURLDrag *drag = new KURLDrag(KURL::List(currentURL()), this);
     return drag;
   }
   return 0;
@@ -518,7 +518,7 @@ void TemplatesTreeView::slotProperties()
   KPropertiesDialog *propDlg = new KPropertiesDialog( url, this, 0L, false, false); //autodeletes itself
 
 //Always add the Quanta directory page
-  QFrame *quantaDirPage = propDlg->dialog()->addPage(i18n("Quanta Template"));
+  QFrame *quantaDirPage = propDlg->addPage(i18n("Quanta Template"));
   QVBoxLayout *topLayout = new QVBoxLayout( quantaDirPage);
   m_quantaProperties = new QuantaPropertiesPage( quantaDirPage, i18n("Quanta") );
 

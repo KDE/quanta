@@ -666,4 +666,3 @@ int QuantaCommon::denyBinaryInsert()
  return result;
 }
 
-#include "quantacommon.moc"

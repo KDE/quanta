@@ -82,7 +82,8 @@ QuantaDoc::QuantaDoc(QWidget *parent, const char *name) : QObject(parent, name)
   fileWatcher = new KDirWatch(this);
   connect(fileWatcher, SIGNAL(dirty(const QString&)),SLOT(slotFileDirty(const QString&)));
 
-  attribMenu = new KPopupMenu(i18n("Tag"));
+  attribMenu = new KPopupMenu();
+  attribMenu->insertTitle(i18n("Tag"));
   connect( attribMenu, SIGNAL(activated(int)), this, SLOT(slotInsertAttrib(int)));
 }
 
@@ -224,7 +225,7 @@ void QuantaDoc::slotAttribPopup()
     if ( QuantaCommon::isKnownTag(w->getDTDIdentifier(),tagName) )
     {
       QString caption = i18n("Attributes of <%1>").arg(tagName);
-      attribMenu->setTitle( caption );
+      attribMenu->insertTitle( caption );
 
       AttributeList *list = QuantaCommon::tagAttributes(w->getDTDIdentifier(),tagName );
       uint menuId = 0;
@@ -261,12 +262,10 @@ void QuantaDoc::slotAttribPopup()
       {
         attribMenu->setActiveItem( 0);
 
-        QPoint globalPos = w->mapToGlobal(w->viewCursorIf->cursorCoordinates());
-        quantaApp->config()->setGroup("Kate Document"); //FIXME: Read from some general (not Kate specific) location.
-        QFont font;
-        font.fromString(quantaApp->config()->readEntry("Font"));
+        QPoint globalPos = w->view()->mapToGlobal(w->viewCursorIf->cursorCoordinates());
+        QFont font = w->view()->font();
         globalPos.setY(globalPos.y() + QFontMetrics(font).height());
-        attribMenu->exec( globalPos );
+        attribMenu->exec(globalPos);
       }
     }
     else {
@@ -318,7 +317,8 @@ void QuantaDoc::slotInsertAttrib( int id )
     }
 
     delete attribMenu;
-    attribMenu = new KPopupMenu(i18n("Tag"));
+    attribMenu = new KPopupMenu();
+    attribMenu->insertTitle(i18n("Tag"));
     connect( attribMenu, SIGNAL(activated(int)), this, SLOT(slotInsertAttrib(int)));
   }
 }

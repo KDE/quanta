@@ -17,7 +17,6 @@
 #define UPLOADTREEFILE_H
 
 #include <klistview.h>
-#include <sys/types.h>
 
 #include "uploadtreefolder.h"
 
@@ -34,7 +33,7 @@ public:
   ~UploadTreeFile();
 
   void setWhichPixmap(const QString& pixmap);
-  mode_t permissions();
+  int permissions();
 
   /** used for sorting */
   virtual QString key ( int column, bool ascending ) const;
