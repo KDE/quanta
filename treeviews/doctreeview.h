@@ -37,6 +37,7 @@ public:
   ~DocTreeView();
 
   QString *contextHelp( QString keyword );
+  void addProjectDoc(const KURL& url);
 
 signals:
   void openURL( QString );
@@ -48,7 +49,7 @@ private slots:
 private:
 
   QDict <QString> *contextHelpDict;
-
+  KListViewItem *projectDocFolder;
 };
 
 #endif
