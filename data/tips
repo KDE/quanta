@@ -104,7 +104,7 @@ server name in form of <i>ftp://user@server</i> and select the remote folder.
 
 <tip category="Information">
 <html>
-<p>...that there is a <b>README</b> file with useful informations?
+<p>...that there is a <b>README</b> file with useful information?
 </p>
 </html>
 </tip>
@@ -116,4 +116,16 @@ server name in form of <i>ftp://user@server</i> and select the remote folder.
 </html>
 </tip>
 
+<tip category="Application">
+<html>
+<p>...that you can use quanta to enable new DTDs using our <b>tagxml DTD</b>?
+</p>
+</html>
+</tip>
 
+<tip category="Application">
+<html>
+<p>...that you can use <b>Kommander</b> to create custom dialogs for Quanta?
+</p>
+</html>
+</tip>
