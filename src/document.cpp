@@ -1168,9 +1168,9 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(int line, 
         }
       }
     }
+    if ((!objStr.isEmpty() || !completionRequested) && classStr.isEmpty()) //the class cannot be identified for the object or there is no object.
+      return completions;
   }
-  if ((!objStr.isEmpty() || !completionRequested) && classStr.isEmpty()) //the class cannot be identified for the object or there is no object.
-    return completions;
   completion.userdata = word + "|";
   QStringList tagNameList;
   QMap<QString, QString> comments;
