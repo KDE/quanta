@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>CSSSelectorS</class>
 <widget class="QDialog">
     <property name="name">
@@ -955,9 +955,6 @@
             </property>
             <property name="text">
                 <string>&amp;Help</string>
-            </property>
-            <property name="accel">
-                <string>Alt+H</string>
             </property>
         </widget>
     </grid>
