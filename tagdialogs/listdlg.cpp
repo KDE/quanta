@@ -28,7 +28,7 @@
 ListDlg::ListDlg(QStringList &entryList,QWidget* parent, const char *name )
   :KDialogBase(parent,name),    listbox(new KListBox(this))
 {
-   CHECK_PTR(listbox);
+   Q_CHECK_PTR(listbox);
    setMainWidget(listbox);
    showButtonApply(false);
    enableButtonSeparator(true);

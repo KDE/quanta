@@ -39,7 +39,7 @@ class Tagxml : public QWidget, TagWidget {
     /** destructor */
     ~Tagxml();
 
-    QList<Attr> attributes;
+    QPtrList<Attr> attributes;
 
     void readAttributes( QDict<QString> *d);
     void writeAttributes( QDict<QString> *d );

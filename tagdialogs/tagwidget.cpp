@@ -77,9 +77,7 @@ void TagWidget::setValue( QString val, QSpinBox *spin)
 
 void TagWidget::setValue( QString val, KColorButton *button)
 {
-  QString value = val;
-
-  button->setColor( value.data() );
+  button->setColor( val );
 }
 
 void TagWidget::updateDict( QString attr, QLineEdit *line )

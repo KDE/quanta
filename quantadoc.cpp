@@ -555,7 +555,7 @@ void QuantaDoc::slotAttribPopup()
     }
     else {
       QString message = i18n("Unknown tag: %1").arg(tagName);
-      quantaApp->slotStatusMsg( message.data() );
+      quantaApp->slotStatusMsg( message );
     }
   }
 }
@@ -570,10 +570,10 @@ void QuantaDoc::slotInsertAttrib( int id )
   {
     Tag *tag = node->tag;
     QString tagName = tag->name;
-    if ( QuantaCommon::isKnownTag(w->getDTDIdentifier(),tagName) )
+    if ( QuantaCommon::isKnownTag(w->getDTDIdentifier(), tagName) )
     {
       int menuId;
-      AttributeList *list = QuantaCommon::tagAttributes(w->getDTDIdentifier(),tagName.data() );
+      AttributeList *list = QuantaCommon::tagAttributes(w->getDTDIdentifier(), tagName);
       menuId = list->count();
       QString attrStr;
       if (id <= menuId)

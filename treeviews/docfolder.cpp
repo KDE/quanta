@@ -104,7 +104,7 @@ DocFolder::~DocFolder(){
 
 QString DocFolder::text( int ) const
 {
-  return name.data();
+  return name;
 }
 
 void DocFolder::setup()

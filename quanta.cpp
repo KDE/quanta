@@ -545,7 +545,7 @@ void QuantaApp::slotImageOpen(const KURL& url)
 
   part->closeURL();
   part->begin( projectBaseURL() );
-  part->write( text.data() );
+  part->write( text );
   part->end();
 
   part->show();
@@ -1156,7 +1156,7 @@ void QuantaApp::slotNewLineColumn()
   }
   linenumber.sprintf(i18n("Line: %d Col: %d"),line+1,col+1);
 
-  statusBar()->changeItem(linenumber.data(), IDS_STATUS_CLM);
+  statusBar()->changeItem(linenumber, IDS_STATUS_CLM);
 }
 
 

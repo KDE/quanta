@@ -105,7 +105,7 @@ void QuantaView::slotEditCurrentTag()
   if (isUnknown)
   {
     QString message = i18n("Unknown tag: %1").arg(tagName);
-    quantaApp->slotStatusMsg( message.data() );
+    quantaApp->slotStatusMsg( message );
   }
 }
 
@@ -431,7 +431,7 @@ void QuantaView::slotViewInNetscape()
     KProcess *show = new KProcess();
     KURL url = quantaApp->project()->urlWithPrefix(w->url());
 
-    *show << "netscape" << "-remote" << QString(QString("openURL(")+url.url()+")").data();
+    *show << "netscape" << "-remote" << QString("openURL(")+url.url()+")";
     connect( show, SIGNAL(processExited(KProcess *)), this, SLOT(slotNetscapeStatus(KProcess *)));
     show->start( KProcess::NotifyOnExit );
   }
