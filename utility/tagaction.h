@@ -90,13 +90,11 @@ signals:
 public slots:
     virtual void slotActivated();
     
-#if KDE_VERSION >= KDE_MAKE_VERSION(3,4,0)
     /**
      * We need this information in order to know if queued actions should be applied.
      * It's public because it can be activated by other classes if there are any queued actions.
      */
     virtual bool slotActionActivated(KAction::ActivationReason reason, Qt::ButtonState state);
-#endif    
 
 protected slots:
     virtual void slotGetScriptOutput( KProcess *, char *buffer, int buflen );

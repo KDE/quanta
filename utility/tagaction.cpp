@@ -111,6 +111,7 @@ QString TagAction::type()
    return tag.attribute("type","");
 }
 
+#if KDE_VERSION >= KDE_MAKE_VERSION(3,4,0)
 bool TagAction::slotActionActivated(KAction::ActivationReason reason, Qt::ButtonState /*state*/)
 {
     QuantaView *view = ViewManager::ref()->activeView();
@@ -444,6 +445,7 @@ bool TagAction::slotActionActivated(KAction::ActivationReason reason, Qt::Button
     }    
     return true;
 }
+#endif
 
 bool TagAction::slotActionActivated()
 {
