@@ -147,7 +147,6 @@ void undoRedo::addNewModifsSet(NodeModifsSet *modifs, int modifLocation)
 #ifdef LIGHT_DEBUG
         kdDebug(25001)<< "undoRedo::addNewModifsSet() - NodeModifsSet type: " << modifLocation << endl;
 #endif
-        m_doc->setModified(true);
 
         QValueList<NodeModif>::iterator it2;
         NodeModifsSet *NMSet;
