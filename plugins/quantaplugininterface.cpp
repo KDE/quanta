@@ -78,15 +78,17 @@ void QuantaPluginInterface::readConfig()
     QString pluginType = config->readEntry("Type", "Command Line");
     if (pluginType == "KPart") pluginType = i18n("KPart");
     if (pluginType == "Command Line") pluginType = i18n("Command Line");
+    kdDebug(24000) << "Plugin type: " << pluginType << endl;
+    kdDebug(24000) << "Command Line: " << i18n("Command Line") << endl;
     bool isStandard = config->readBoolEntry("Standard",false);
-    if (isStandard)
+/*    if (isStandard)
     {
       QString stdName = config->readEntry("Standard Name");
       if (newPlugin)
       {
         newPlugin->setStandardName(stdName);
       }
-    } else
+    } else */
     {
       if(pluginType == i18n("KPart"))
         newPlugin = new QuantaKPartPlugin();
