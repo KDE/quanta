@@ -125,8 +125,8 @@ void TemplatesTreeView::slotInsertInDocument()
 
  if (! mimetype.contains("text"))
  {
-   if (KMessageBox::questionYesNo(this,"This file may be a binary file, thus cannot be \
-inserted correctly.\n Do you still want to insert it?","Wrong type") != KMessageBox::Yes)
+   if (KMessageBox::questionYesNo(this,i18n("This file may be a binary file, thus cannot be \
+inserted correctly.\n Do you still want to insert it?"),i18n("Wrong type")) != KMessageBox::Yes)
   {
     return;
   }
@@ -161,8 +161,8 @@ void TemplatesTreeView::slotNewDocument()
 
  if (! mimetype.contains("text"))
  {
-   if (KMessageBox::questionYesNo(this,"This file may be a binary file, thus cannot be \
-used as a base file correctly.\n Do you still want to continue?","Wrong type") != KMessageBox::Yes)
+   if (KMessageBox::questionYesNo(this,i18n("This file may be a binary file, thus cannot be \
+used as a base file correctly.\n Do you still want to continue?"),i18n("Wrong type")) != KMessageBox::Yes)
   {
     return;
   }

@@ -324,8 +324,8 @@ void ProjectTreeView::slotOpenInQuanta()
 
  if (! mimetype.contains("text"))
  {
-   if (KMessageBox::questionYesNo(this,"This file may be a binary file, thus cannot be opened \
-    in Quanta correctly.\n Do you still want to open it?","Wrong type") != KMessageBox::Yes)
+   if (KMessageBox::questionYesNo(this,i18n("This file may be a binary file, thus cannot be opened \
+    in Quanta correctly.\n Do you still want to open it?"),i18n("Wrong type")) != KMessageBox::Yes)
   {
     return;
   }

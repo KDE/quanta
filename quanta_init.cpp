@@ -760,6 +760,13 @@ void QuantaApp::initActions()
                         this, SLOT( slotFileSaveAsProjectTemplate() ),
                         actionCollection(), "save_project_template" );
 
+    saveSelectionAsLocalTemplateAction = new KAction( i18n( "Save Selection As Local Template" ), 0,
+                        this, SLOT( slotFileSaveSelectionAsLocalTemplate() ),
+                        actionCollection(), "save_selection_local_template" );
+    saveSelectionAsProjectTemplateAction = new KAction( i18n( "Save Selection As Project Template..." ), 0,
+                        this, SLOT( slotFileSaveSelectionAsProjectTemplate() ),
+                        actionCollection(), "save_selection_project_template" );
+
     KStdAction::quit( this, SLOT( slotFileQuit() ), actionCollection() );
 
    (void) new KAction( i18n( "&File list" ), 0,this, SLOT( slotShowOpenFileList() ),

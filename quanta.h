@@ -116,7 +116,7 @@ class QuantaApp : public KDockMainWindow
     void initTagDict();
     
     virtual bool queryExit();
-    void saveAsTemplate (bool projectTemplate);
+    void saveAsTemplate (bool projectTemplate, bool selectionOnly = false);
 
   public slots:
     
@@ -127,6 +127,8 @@ class QuantaApp : public KDockMainWindow
     void slotFileSaveAs  ();
     void slotFileSaveAsLocalTemplate ();
     void slotFileSaveAsProjectTemplate ();
+    void slotFileSaveSelectionAsLocalTemplate ();
+    void slotFileSaveSelectionAsProjectTemplate ();
     void slotFileSaveAll ();
     void slotFileClose   ();
     void slotFileCloseAll();
@@ -319,7 +321,8 @@ class QuantaApp : public KDockMainWindow
       *backAction, *forwardAction,
       *saveprjAction, *closeprjAction, *insertFileAction, *insertDirAction,
       *newPrjAction, *openPrjAction, *rescanPrjDirAction, *uploadProjectAction,
-      *projectOptionAction, *saveAsLocalTemplateAction, *saveAsProjectTemplateAction;
+      *projectOptionAction, *saveAsLocalTemplateAction, *saveAsProjectTemplateAction,
+      *saveSelectionAsLocalTemplateAction, *saveSelectionAsProjectTemplateAction;
       
     KAction *editUndo, *editRedo, *bookmarkToggle, *bookmarkClear;
 

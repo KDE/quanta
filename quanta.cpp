@@ -183,7 +183,7 @@ void QuantaApp::slotFileSaveAs()
   slotUpdateStatus(view->write());
 }
 
-void QuantaApp::saveAsTemplate(bool projectTemplate)
+void QuantaApp::saveAsTemplate(bool projectTemplate,bool selectionOnly)
 {
   KURL url;
   int query;
@@ -217,7 +217,21 @@ void QuantaApp::saveAsTemplate(bool projectTemplate)
 
   if( query == KMessageBox::Cancel ) return;
 
-  doc->saveDocument( url );
+  if (selectionOnly)
+  {
+    QString selection = doc->write()->selectionIf->selection();
+    QFile templateFile(url.directory(false)+url.fileName());
+
+    templateFile.open(IO_WriteOnly);
+    QTextStream stream(&templateFile);
+    stream << selection;
+    templateFile.flush();
+    templateFile.close();
+
+  } else
+  {
+    doc->saveDocument( url );
+  }
   slotUpdateStatus(view->write());
 }
 
@@ -229,6 +243,17 @@ void QuantaApp::slotFileSaveAsLocalTemplate()
 void QuantaApp::slotFileSaveAsProjectTemplate()
 {
 	saveAsTemplate(true);
+}
+
+
+void QuantaApp::slotFileSaveSelectionAsLocalTemplate()
+{
+	saveAsTemplate(false, true);
+}
+
+void QuantaApp::slotFileSaveSelectionAsProjectTemplate()
+{
+	saveAsTemplate(true, true);
 }
 
 void QuantaApp::slotFileSaveAll()
