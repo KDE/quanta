@@ -96,11 +96,6 @@ KFileTreeViewItem* ProjectTreeBranch::createTreeViewItem(KFileTreeViewItem *pare
       // we assume there are childs
       tvi->setExpandable(tvi->isDir());
       tvi->setVisible(urlList.contains(fileItem->url()));  // only listelements
-      if (fileItem->url().fileName() == "CVS") {
-          tvi->setPixmap( 0, SmallIcon("log") );
-          tvi->setExpandable( false );
-          tvi->setEnabled( false );
-      };
     }
   }
   else
