@@ -323,7 +323,12 @@ void QuantaDebuggerGubed::addWatch(const QString &variable)
    sendCommand("watchvariable", variable);
 
 }
-
+// Remove watch
+void QuantaDebuggerGubed::removeWatch(DebuggerVariable *var)
+{
+  sendCommand("unwatchvariable", var->name());
+}
+    
 
 // Read configuration
 void QuantaDebuggerGubed::readConfig(QDomNode node)

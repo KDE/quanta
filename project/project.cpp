@@ -1367,13 +1367,17 @@ void Project::slotOptions()
   optionsPage.comboDebuggerClient->insertItem(i18n("No debugger"));
   int idxDbg = 0;
   m_debuggerClientEdit = debuggerClient;
+  optionsPage.buttonDebuggerOptions->setEnabled(false);
   for(iterDbg = offers.begin(); iterDbg != offers.end(); ++iterDbg) 
   {
     KService::Ptr service = *iterDbg;
     optionsPage.comboDebuggerClient->insertItem(service->name());
     idxDbg++;
     if(debuggerClient == service->name())
+    {
       optionsPage.comboDebuggerClient->setCurrentItem(idxDbg);
+      optionsPage.buttonDebuggerOptions->setEnabled(true);
+    }
   }
   
   QDomElement uploadEl = dom.firstChild().firstChild().namedItem("upload").toElement();

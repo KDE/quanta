@@ -21,6 +21,8 @@
 
 #include <qobject.h>
 #include <qptrlist.h>
+#include <kmditoolviewaccessor.h> 
+
 
 class VariablesListView;
 class DebuggerVariable;
@@ -31,7 +33,8 @@ class DebuggerUI : public QObject
   
   public:
     DebuggerUI(QObject *parent = 0, const char *name = 0);
-
+    ~DebuggerUI();
+    
     // Watches      
     void preWatchUpdate();
     void postWatchUpdate();
@@ -44,7 +47,8 @@ class DebuggerUI : public QObject
             
   private:    
     VariablesListView* m_variablesListView;
-    
+    KMdiToolViewAccessor* m_variableListViewTVA;
+    int m_debuggerMenuID;
 };
 
 #endif

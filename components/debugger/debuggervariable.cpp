@@ -16,6 +16,7 @@
  ***************************************************************************/
 
 #include "debuggervariable.h"
+#include <kdebug.h>
 
 DebuggerVariable::DebuggerVariable()
   : m_type(DebuggerVariableTypes::Scalar), m_isReference(false), m_item(NULL)
@@ -101,4 +102,15 @@ bool DebuggerVariable::isReference()
   
 DebuggerVariable::~DebuggerVariable()
 {
+  DebuggerVariable * v;
+  while((v = m_valueList.first()))
+  {
+    m_valueList.remove(v);
+    delete v;
+  }
+  if(m_item)
+    delete m_item;
+  else
+    kdDebug(24000) << "DebuggerVariable::~DebuggerVariable: m_item is NULL" << endl;
+    
 }

@@ -27,6 +27,7 @@
 #include <kdockwidget.h>
 #include <klocale.h>
 #include <qstring.h>
+#include <kmditoolviewaccessor.h> 
 
 DebuggerUI::DebuggerUI(QObject *parent, const char *name)
  : QObject(parent, name), m_variablesListView(0)
@@ -34,10 +35,29 @@ DebuggerUI::DebuggerUI(QObject *parent, const char *name)
   m_variablesListView = new VariablesListView(quantaApp->getMainDockWidget(), "debuggerVariables");
   m_variablesListView->setIcon(SmallIcon("math_brace"));
   m_variablesListView->setCaption(i18n("Variables"));
-  quantaApp->addToolWindow(m_variablesListView, KDockWidget::DockBottom, quantaApp->getMainDockWidget());
-
+  m_variableListViewTVA = quantaApp->addToolWindow(m_variablesListView, KDockWidget::DockLeft, quantaApp->getMainDockWidget());
+ 
+  QPopupMenu* debuggerMenu = (QPopupMenu*)(quantaApp->guiFactory())->container("debugger_menu", quantaApp);
+  if(debuggerMenu)
+    m_debuggerMenuID = quantaApp->menuBar()->insertItem(i18n("Debug"), debuggerMenu, -1, 9);
+  else
+    m_debuggerMenuID  = 0;
+    
+  connect(m_variablesListView, SIGNAL(removeVariable(DebuggerVariable* )), parent, SLOT(slotRemoveVariable(DebuggerVariable* )));
 }
 
+DebuggerUI::~DebuggerUI()
+{
+  if(m_debuggerMenuID > 0)
+    quantaApp->menuBar()->removeItem(m_debuggerMenuID);
+  m_debuggerMenuID = 0;
+  
+  quantaApp->deleteToolWindow(m_variableListViewTVA);
+  m_variableListViewTVA = 0L;
+  
+  
+ // delete m_variablesListView;
+}
 
 void DebuggerUI::setVariables(const QPtrList<DebuggerVariable>& vars)
 {

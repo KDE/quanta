@@ -43,8 +43,10 @@ class VariablesListView : public KListView
     
   signals:
     void valueChanged(DebuggerVariable*);
+    void removeVariable(DebuggerVariable*);
     
   private:  
+    void keyPressEvent(QKeyEvent *e);
     void addChild(KListViewItem* parent, DebuggerVariable* var);
     DebuggerVariable* parsePHPVariables(QString &str);
     

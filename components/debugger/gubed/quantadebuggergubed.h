@@ -63,6 +63,7 @@ class QuantaDebuggerGubed : public DebuggerClient {
   
     // Variables
     void addWatch(const QString &variable);
+    void removeWatch(DebuggerVariable *var);
     
   private:
     QSocket *m_socket;

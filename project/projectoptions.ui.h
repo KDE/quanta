@@ -50,3 +50,9 @@ void ProjectOptions::keepPasswdToggled( bool )
       KMessageBox::information(this, i18n("<qt>Saving the password is not recommended. Please read the <b>What's This</b> information for this checkbox.</qt>"), i18n("Security Warning"), "SavePasswordWarning");
   }
 }
+
+
+void ProjectOptions::comboDebuggerClient_activated( int idx)
+{
+    buttonDebuggerOptions->setEnabled(idx > 0);
+}

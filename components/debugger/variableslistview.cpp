@@ -36,30 +36,70 @@ VariablesListView::~VariablesListView()
 {
 }
 
+void VariablesListView::keyPressEvent(QKeyEvent *e)
+{
+  if(e->key() != Qt::Key_Delete)
+  {
+    e->ignore();
+    return;
+  }
+  
+  if(!selectedItem())
+    return;
+    
+  DebuggerVariable* v;
+  for( v = m_variablesList.first(); v; v = m_variablesList.next())
+  {
+    if(v->item() == selectedItem())
+    {
+      emit removeVariable(v);
+      m_variablesList.remove(v);
+      delete v;
+      return;
+    }
+  }
+}
+
 void VariablesListView::addVariable(DebuggerVariable* variable)
 {
+
+  // Remove the old varible if its there
   DebuggerVariable* v;
-  
   for( v = m_variablesList.first(); v; v = m_variablesList.next())
   {
     if(v->name() == variable->name())
     {
-      v->setValue(variable->value());
-      v->setValues(variable->values());
-      v->setType(variable->type());
-      v->setReference(variable->isReference());
-      
-      variable = NULL;
+      m_variablesList.remove(v);
+      delete v;
+
       break;
     }
   }
+
+  // Insert the new variable
+  m_variablesList.append(variable);
+
+  KListViewItem * item = new KListViewItem(this);
+  item->setText(0, variable->name());
+  variable->setItem(item);
+  switch(variable->type())
+  {
+    case DebuggerVariableTypes::Array:
+    case DebuggerVariableTypes::Object:
+      addChild(item, variable);
+      break;
+    case DebuggerVariableTypes::Reference:
+    case DebuggerVariableTypes::Resource:
+    case DebuggerVariableTypes::Scalar:
+      item->setText(1, variable->value());
+      break;
+    default:
+      item->setText(0, i18n("Unhandled variable type"));          
+  }
   
-  QPtrList<DebuggerVariable> newlist;
-  newlist = m_variablesList;
-  if(variable)
-    newlist.append(variable);
+  insertItem(item);  
   
-  setVariables(newlist);
+  //setVariables(newlist);
 }
   
 void VariablesListView::clear()
@@ -79,7 +119,7 @@ void VariablesListView::setVariables(const QPtrList<DebuggerVariable>& vars)
   {    
     item = new KListViewItem(this);
     item->setText(0, v->name());
-    
+    v->setItem(item);
     switch(v->type())
     {
       case DebuggerVariableTypes::Array:
@@ -108,7 +148,7 @@ void VariablesListView::addChild(KListViewItem* parent, DebuggerVariable* var)
   for(child = list.first(); child; child = list.next())
   {
     item = new KListViewItem(parent);
-    var->setItem(item);
+    child->setItem(item);
     item->setText(0, child->name());
     
     switch(child->type())
@@ -196,7 +236,7 @@ DebuggerVariable* VariablesListView::parsePHPVariables(QString &str) {
     str.remove(0, length + 3);  
     debuggervar = new DebuggerVariable(key, data, DebuggerVariableTypes::Scalar);
   }
-  else if(type == "a")
+  else if(type == "a" || type == "O")
   {
     /* Example:
       s:6:"$array";a:5:{s:11:"Ingredients";a:3:{i:0;s:8:"potatoes";i:1;s:4:"salt";i:2;s:6:"pepper";}s:6:"Guests";a:4:{i:0;s:5:"Fiona";i:1;s:4:"Tori";i:2;s:4:"Neil";i:3;s:4:"Nick";}s:4:"Dogs";a:4:{i:0;s:5:"Kitty";i:1;s:5:"Tessy";i:2;s:5:"Fanny";i:3;s:5:"Cosmo";}s:7:"Numbers";a:6:{i:0;i:1;i:1;i:2;i:2;i:3;i:3;i:9;i:4;i:8;i:5;i:7;}s:6:"Letter";s:1:"L";}
@@ -235,6 +275,7 @@ DebuggerVariable* VariablesListView::parsePHPVariables(QString &str) {
   } 
   else
   {
+    kdDebug(24000) << "VariablesListView::parsePHPVariables: Unknown variable type " << type << endl;
     debuggervar = new DebuggerVariable(key, i18n("<Unimplemented type>"), DebuggerVariableTypes::Scalar);
   }
  

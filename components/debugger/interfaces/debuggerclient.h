@@ -25,6 +25,7 @@
 
 class DebuggerInterface;
 class DebuggerBreakpoint;
+class DebuggerVariable;
 
 class DebuggerClient : public QObject
 {
@@ -78,6 +79,7 @@ class DebuggerClient : public QObject
     virtual void addBreakpoint(DebuggerBreakpoint* breakpoint);
     virtual void removeBreakpoint(DebuggerBreakpoint* breakpoint);
     virtual void addWatch(const QString &);
+    virtual void removeWatch(DebuggerVariable*);
     
     bool isActive();    
     DebuggerInterface *debuggerInterface();

@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="quanta" version="32045">
+<kpartgui name="quanta" version="32047">
   <MenuBar noMerge="1">
 
     <Menu name="file" noMerge="1"><text>&amp;File</text>
@@ -63,24 +63,6 @@
       <Action name="view_with_opera"/>
       <Action name="view_with_lynx"/>
     </Menu>
-
-   <Menu name="debug" noMerge="1"><text>&amp;Debug</text>
-     <Menu name="debug_execution"><text>&amp;Execution</text>
-       <Action name="debug_run" />
-       <Action name="debug_leap" />
-       <Action name="debug_stepover" />
-       <Action name="debug_stepinto" />
-       <Action name="debug_stepout" />
-       <Action name="debug_skip" />
-       <Action name="debug_pause" />
-       <Separator />
-       <Action name="debug_kill" />
-     </Menu>
-     <Menu name="debug_breakpoints"><text>&amp;Breakpoints</text>
-       <Action name="debug_breakpoints_toggle" />
-       <Action name="debug_breakpoints_clear" />
-     </Menu>
-   </Menu>
 
   <Menu name="project" noMerge="1"><text>&amp;Project</text>
       <Action name="project_new"/>
@@ -212,6 +194,24 @@
     <Action name="open_file_under_cursor"/>
   </Menu>
 
+  <Menu name="debugger_menu" noMerge="1"><text>&amp;Debug</text>
+    <Menu name="debug_execution"><text>&amp;Execution</text>
+      <Action name="debug_run" />
+      <Action name="debug_leap" />
+      <Action name="debug_stepover" />
+      <Action name="debug_stepinto" />
+      <Action name="debug_stepout" />
+      <Action name="debug_skip" />
+      <Action name="debug_pause" />
+      <Separator />
+      <Action name="debug_kill" />
+    </Menu>
+    <Menu name="debug_breakpoints"><text>&amp;Breakpoints</text>
+      <Action name="debug_breakpoints_toggle" />
+      <Action name="debug_breakpoints_clear" />
+    </Menu>
+  </Menu>  
+  
   <ActionProperties>
     <Action accel="Ctrl+Return" name="tag_br" />
     <Action accel="Ctrl+Minus"  name="tag_hr" />

@@ -47,7 +47,7 @@ DebuggerManager::DebuggerManager(QObject *myparent)
   
   // Create objects
   m_breakpointList = new DebuggerBreakpointList();
-  m_debuggerui = new DebuggerUI(this, "debuggerui");
+  m_debuggerui = NULL;
   m_interface = new QuantaDebuggerInterface(this, "interface");
   m_client = NULL; 
 }
@@ -61,6 +61,11 @@ void DebuggerManager::slotNewProjectLoaded(const QString &projectname, const KUR
   }
   enableAction("*", false);
     
+  if(m_debuggerui)
+  {
+    delete m_debuggerui;
+    m_debuggerui = NULL;
+  }
   //kdDebug(24000) << "DebuggerManager::slotNewProjectLoaded " << projectname << ", " << Project::ref()->debuggerClient << endl;
   
   // Load new client
@@ -76,9 +81,8 @@ void DebuggerManager::slotNewProjectLoaded(const QString &projectname, const KUR
       {
         int errCode = 0;
         m_client = KParts::ComponentFactory::createInstanceFromService<DebuggerClient::DebuggerClient>(service, this, 0, QStringList(), &errCode); 
-//    m_client = (DebuggerClient*)KParts::ComponentFactory::createInstanceFromLibrary<DebuggerClient>("quantadebuggergubed", this);
-
-        kdDebug(24000) << service->name() << " (" << m_client << ")" << endl;
+        
+        //kdDebug(24000) << service->name() << " (" << m_client << ")" << endl;
       
         if(!m_client)
           KMessageBox::error(NULL, i18n("<qt>Unable to load the debugger plugin, error code %1 was returned: <b>%2</b>.</qt>").arg(errCode).arg(KLibLoader::self()->lastErrorMessage()), i18n("Debugger Error"));
@@ -107,6 +111,8 @@ void DebuggerManager::slotNewProjectLoaded(const QString &projectname, const KUR
     }
     
     m_client->readConfig(nodeThisDbg);
+    
+    m_debuggerui = new DebuggerUI(this, "debuggerui");
   }
   
   initClientActions();
@@ -170,6 +176,13 @@ void DebuggerManager::initClientActions()
 DebuggerManager::~DebuggerManager() 
 {
   delete m_breakpointList; 
+  m_breakpointList = 0L;
+  delete m_client;
+  m_client = 0L;
+  delete m_debuggerui;
+  m_debuggerui = 0L;
+  delete m_interface;
+  m_interface = 0L;
 }
 
 void DebuggerManager::enableAction(QString action, bool enable)
@@ -198,7 +211,14 @@ void DebuggerManager::enableAction(QString action, bool enable)
   }
 }
 
-
+void DebuggerManager::slotRemoveVariable(DebuggerVariable* var)
+{
+  if(!m_client)
+    return;
+  
+  m_client->removeWatch(var);
+  
+}
 void DebuggerManager::slotAddWatch(const QString &var)
 {
   kdDebug(24000) << "DebuggerManager::slotAddWatch " << var << endl;

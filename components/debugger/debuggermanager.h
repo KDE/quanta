@@ -25,6 +25,7 @@ class DebuggerClient;
 class QuantaDebuggerInterface; 
 class DebuggerBreakpointList; 
 class DebuggerUI;
+class DebuggerVariable;
 
 class DebuggerManager : public QObject {
   Q_OBJECT 
@@ -79,6 +80,7 @@ class DebuggerManager : public QObject {
     
     // Watches
     void slotAddWatch(const QString &var);
+    void slotRemoveVariable(DebuggerVariable* var);
     
     // Connection related slots
     void slotDebugStartSession();

@@ -121,9 +121,16 @@ void DebuggerClient::readConfig(QDomNode)
    
 }
 
-void DebuggerClient::addWatch(const QString &variable)
+//  Unimplemented defaults: add watch
+void DebuggerClient::addWatch(const QString &)
 {
-   KMessageBox::error(NULL, i18n("%1 does not support watches.").arg(this->getName()), i18n("Settings"));
-
+  KMessageBox::error(NULL, i18n("%1 does not support watches.").arg(this->getName()), i18n("Settings"));
 }
-    
+   
+//  Unimplemented defaults: Remove watch
+void DebuggerClient::removeWatch(DebuggerVariable *)
+{
+  // Giving an error seems pointless, since you shouldnt be able to add a watch in the first place...
+  KMessageBox::error(NULL, i18n("%1 does not support watches.").arg(this->getName()), i18n("Settings"));
+}
+ 
