@@ -432,6 +432,7 @@ void StructTreeView::slotGotoTag( QListViewItem *item )
     kdDebug(24000) << "Node type: " << it->node->tag->type << endl;
     kdDebug(24000) << "Node str: " << it->node->tag->tagStr() << endl;
     emit newCursorPosition( line, col);
+    it->node->tag->write()->view()->setFocus();
   }
 }
 
@@ -595,6 +596,7 @@ void StructTreeView::slotSelectTag()
     emit selectArea( bLine, bCol, eLine, eCol+1);
 
     setSelected(item, true);
+    it->node->tag->write()->view()->setFocus();
   }
 }
 
