@@ -11,10 +11,10 @@
  *   This program is free software; you can redistribute it and/or modify   *
  *   it under the terms of the GNU General Public License as published by   *
  *   the Free Software Foundation; either version 2 of the License, or      *
- *   (at your option) any later version.                                    *                     
+ *   (at your option) any later version.                                    *
  *                                                                          *
  ***************************************************************************/
- 
+
 #include "debuggerclient.h"
 #include "debuggerinterface.h"
 #include <kdebug.h>
@@ -23,14 +23,14 @@
 
 
 // CTor
-DebuggerClient::DebuggerClient(QObject *parent, const char* name) 
+DebuggerClient::DebuggerClient(QObject *parent, const char* name)
  : QObject(parent, name)
 {
   m_active = false;
 }
 
 
-DebuggerInterface* DebuggerClient::debuggerInterface() 
+DebuggerInterface* DebuggerClient::debuggerInterface()
 {
   return static_cast<DebuggerInterface*>( parent()->child( 0, "DebuggerInterface" ) );
 }
@@ -100,7 +100,7 @@ void DebuggerClient::addBreakpoint(DebuggerBreakpoint*)
 {
   KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.").arg(this->getName()).arg(i18n("Set Breakpoint")), i18n("Unsupported Debugger Function"));
 
-} 
+}
 
 // Unimplemented defaults
 void DebuggerClient::removeBreakpoint(DebuggerBreakpoint*)
@@ -118,7 +118,7 @@ void DebuggerClient::showConfig(QDomNode)
 // Unimplemented defaults
 void DebuggerClient::readConfig(QDomNode)
 {
-   
+
 }
 
 //  Unimplemented defaults: add watch
@@ -126,16 +126,16 @@ void DebuggerClient::addWatch(const QString &)
 {
   KMessageBox::error(NULL, i18n("%1 does not support watches.").arg(this->getName()), i18n("Unsupported Debugger Function"));
 }
-   
+
 //  Unimplemented defaults: Remove watch
 void DebuggerClient::removeWatch(DebuggerVariable *)
 {
   // Giving an error seems pointless, since you shouldnt be able to add a watch in the first place...
   KMessageBox::error(NULL, i18n("%1 does not support watches.").arg(this->getName()), i18n("Unsupported Debugger Function"));
 }
- 
+
 // Unimplemented defaults: set value of varialbe
-void DebuggerClient::variableSetValue(DebuggerVariable *)
+void DebuggerClient::variableSetValue(const DebuggerVariable &)
 {
   KMessageBox::error(NULL, i18n("%1 does not support setting the value of variables.").arg(this->getName()), i18n("Unsupported Debugger Function"));
 }

@@ -6,7 +6,7 @@ noinst_LTLIBRARIES =  libdebuggermanager.la
 
 libdebuggermanager_la_LDFLAGS = $(all_libraries)
 libdebuggermanager_la_LIBADD = interfaces/libdebuggerinterface.la
-libdebuggermanager_la_SOURCES = debuggermanager.cpp debuggerbreakpoint.cpp quantadebuggerinterface.cpp debuggervariable.cpp debuggerui.cpp variableslistview.cpp debuggerbreakpointlist.cpp
+libdebuggermanager_la_SOURCES = debuggermanager.cpp debuggerbreakpoint.cpp quantadebuggerinterface.cpp debuggervariable.cpp debuggerui.cpp variableslistview.cpp debuggerbreakpointlist.cpp debuggervariablesets.ui
 noinst_HEADERS = debuggermanager.h debuggerbreakpoint.h debuggerbreakpointlist.h debuggervariable.h debuggerui.h variableslistview.h
 
 AM_CPPFLAGS =  -I$(top_srcdir)/quanta/components/debuggerquanta \

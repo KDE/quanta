@@ -37,7 +37,7 @@
 K_EXPORT_COMPONENT_FACTORY( quantadebuggergubed,
                             KGenericFactory<QuantaDebuggerGubed>("quantadebuggergubed"))
 
-const char QuantaDebuggerGubed::protocolversion[] = "0.0.9";
+const char QuantaDebuggerGubed::protocolversion[] = "0.0.10";
 
 QuantaDebuggerGubed::QuantaDebuggerGubed (QObject *parent, const char* name, const QStringList&)
     : DebuggerClient (parent, name)
@@ -185,6 +185,7 @@ const uint QuantaDebuggerGubed::supports(DebuggerClientCapabilities::Capabilitie
   switch(cap)
   {
     case DebuggerClientCapabilities::LineBreakpoints:
+    case DebuggerClientCapabilities::ConditionalBreakpoints:
     case DebuggerClientCapabilities::StartSession:
     case DebuggerClientCapabilities::EndSession:
     case DebuggerClientCapabilities::Kill:
@@ -435,6 +436,12 @@ void QuantaDebuggerGubed::processCommand(QString data)
     setExecutionState(Pause);
     debuggerInterface()->showStatus(i18n("Breakpoint reached: %1").arg(data), true);
   }
+  // A conditional breakpoint was fulfilled
+  else if(m_command == "conditionalbreak")
+  {
+    setExecutionState(Pause);
+    debuggerInterface()->showStatus(i18n("Conditional breakpoint fulfilled: %1").arg(data), true);
+  }
   // There is a breakpoint set in this file/line
   else if(m_command == "breakpoint")
   {
@@ -461,6 +468,11 @@ void QuantaDebuggerGubed::processCommand(QString data)
   }
   // Show the contents of a variable
   else if(m_command == "variable")
+  {
+    showWatch(data);
+  }
+  // Show the contents of a variable
+  else if(m_command == "showcondition")
   {
     showWatch(data);
   }
@@ -583,13 +595,21 @@ void QuantaDebuggerGubed::pause()
 // Add a breakpoint
 void QuantaDebuggerGubed::addBreakpoint (DebuggerBreakpoint* breakpoint)
 {
-  sendCommand("breakpoint", mapLocalPathToServer(breakpoint->filePath()) + ":" + QString::number(breakpoint->line()));
+  if(breakpoint->condition().isEmpty())
+    sendCommand("breakpoint", mapLocalPathToServer(breakpoint->filePath()) + ":" + QString::number(breakpoint->line()));
+  else
+  {
+    sendCommand("conditionalbreakpoint", breakpoint->condition());
+  }
 }
 
 // Clear a breakpoint
 void QuantaDebuggerGubed::removeBreakpoint(DebuggerBreakpoint* breakpoint)
 {
-  sendCommand("clearpoint", mapLocalPathToServer(breakpoint->filePath()) + ":" + QString::number(breakpoint->line()));
+  if(breakpoint->condition().isEmpty())
+    sendCommand("clearpoint", mapLocalPathToServer(breakpoint->filePath()) + ":" + QString::number(breakpoint->line()));
+  else
+    sendCommand("clearconditionalbreakpoint", breakpoint->condition());
 }
 
 // A file was opened...
@@ -770,9 +790,9 @@ QString QuantaDebuggerGubed::mapLocalPathToServer(QString localpath)
   return m_serverBasedir + localpath;
 }
 
-void QuantaDebuggerGubed::variableSetValue(DebuggerVariable *variable)
+void QuantaDebuggerGubed::variableSetValue(const DebuggerVariable &variable)
 {
-  sendCommand("setvariable", variable->name() + "=" + variable->value());
+  sendCommand("setvariable", variable.name() + "=" + variable.value());
 }
 
 #include "quantadebuggergubed.moc"

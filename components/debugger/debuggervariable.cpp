@@ -65,11 +65,24 @@ DebuggerVariable::DebuggerVariable(const QString& name, const ValueList_t& value
   m_size = values.count();
 }
 
+DebuggerVariable::DebuggerVariable(DebuggerVariable* v)
+    : m_item(NULL)
+{
+  m_name = v->name();
+  m_valueList = v->values();
+  m_size = m_valueList.count();
+  m_value = v->value();
+  m_type = v->type();
+  m_isReference = v->isReference();
+
+}
+
+
 void DebuggerVariable::setName(const QString& name)
 {
   m_name = name;
 }
-QString DebuggerVariable::name()
+QString DebuggerVariable::name() const
 {
   return m_name;
 }
@@ -78,7 +91,7 @@ void DebuggerVariable::setValue(const QString& value)
   m_value = value;
 }
 
-QString DebuggerVariable::value()
+QString DebuggerVariable::value() const
 {
   if(isScalar())
     return m_value;
@@ -86,7 +99,7 @@ QString DebuggerVariable::value()
     return i18n("Non scalar value");
 }
 
-bool DebuggerVariable::isScalar()
+bool DebuggerVariable::isScalar() const
 {
   switch(m_type)
   {
@@ -108,7 +121,7 @@ void DebuggerVariable::setValues(const ValueList_t& valueList)
   m_valueList = valueList;
 }
 
-ValueList_t DebuggerVariable::values()
+ValueList_t DebuggerVariable::values() const
 {
   return m_valueList;
 }
@@ -118,12 +131,12 @@ void DebuggerVariable::setType(int type)
   m_type = type;
 }
 
-int DebuggerVariable::type()
+int DebuggerVariable::type() const
 {
   return m_type;
 }
 
-const QString DebuggerVariable::typeName()
+const QString DebuggerVariable::typeName() const
 {
   switch(m_type)
   {
@@ -158,12 +171,12 @@ void DebuggerVariable::setSize(long size)
   m_size = size;
 }
 
-long DebuggerVariable::size()
+long DebuggerVariable::size() const
 {
   return m_size;
 }
 
-QString DebuggerVariable::sizeName()
+QString DebuggerVariable::sizeName() const
 {
   switch(m_type)
   {
@@ -183,7 +196,7 @@ void DebuggerVariable::setReference(bool ref)
 {
   m_isReference = ref;
 }
-bool DebuggerVariable::isReference()
+bool DebuggerVariable::isReference() const
 {
   return m_isReference;
 }
@@ -197,9 +210,8 @@ DebuggerVariable::~DebuggerVariable()
     m_valueList.remove(v);
     delete v;
   }
+  // If this variable is shown in the treeview, remove it
   if(m_item)
     delete m_item;
-  else
-    kdDebug(24000) << "DebuggerVariable::~DebuggerVariable: m_item is NULL" << endl;
 
 }

@@ -957,7 +957,6 @@ void QuantaInit::initActions()
     new KAction(i18n("Open File: none"), 0, m_quanta, SLOT(slotOpenFileUnderCursor()), ac, "open_file_under_cursor");
     new KAction(i18n("Upload..."), 0, m_quanta, SLOT(slotUploadFile()), ac, "upload_file");
     new KAction(i18n("Delete File"), 0, m_quanta, SLOT(slotDeleteFile()), ac, "delete_file");
-    new KAction(i18n("Add Watch"), SmallIcon("math_brace"), 0, m_quanta, SLOT(slotDebuggerAddWatch()), ac, "debug_addwatch");
 
     QString ss = i18n("Upload Opened Project Files...");
 /*    new KAction(i18n("Upload Opened Project Files"), 0, m_quanta, SLOT(slotUploadOpenedFiles()), ac, "upload_opened_files"); */

@@ -23,7 +23,9 @@
 #include <kparts/componentfactory.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
-#include "qextfileinfo.h"
+#include <qextfileinfo.h>
+#include <kinputdialog.h>
+#include <qlineedit.h>
 
 #include "quanta.h"
 #include "quantadoc.h"
@@ -40,6 +42,8 @@
 #include "quantaview.h"
 #include "debuggerui.h"
 
+// dialogs
+#include "debuggervariablesets.h"
 
 DebuggerManager::DebuggerManager(QObject *myparent)
     : QObject(myparent)
@@ -137,7 +141,12 @@ void DebuggerManager::initActions()
               this, SLOT(toggleBreakpoint()), ac, "debug_breakpoints_toggle");
   new KAction(i18n("&Clear Breakpoints"), 0,
               this, SLOT(clearBreakpoints()), ac, "debug_breakpoints_clear");
+  new KAction(i18n("Break when..."), SmallIcon("math_int"), 0,
+              this, SLOT(slotConditionalBreakpoint()), ac, "debug_conditional_break");
+  new KAction(i18n("Break when..."), SmallIcon("math_int"), 0,
+              this, SLOT(slotConditionalBreakpoint()), ac, "debug_conditional_breakdialog");
 
+  // Execution
   new KAction(i18n("&Run"), SmallIcon("debug_run"), 0,
               this, SLOT(slotDebugRun()), ac, "debug_run");
   new KAction(i18n("&Leap"), SmallIcon("debug_leap"), 0,
@@ -159,7 +168,15 @@ void DebuggerManager::initActions()
   new KAction(i18n("End Session"), SmallIcon("debug_disconnect"), 0,
               this, SLOT(slotDebugEndSession()), ac, "debug_disconnect");
 
-  connect(quantaApp, SIGNAL(debuggerAddWatch(const QString&)), this, SLOT(slotAddWatch(const QString&)));
+  // Variables
+  new KAction(i18n("Watch variable"), SmallIcon("math_brace"), 0,
+              this, SLOT(slotAddWatch()), ac, "debug_addwatch");
+  new KAction(i18n("Watch variable"), SmallIcon("math_brace"), 0,
+              this, SLOT(slotAddWatch()), ac, "debug_addwatchdialog");
+  new KAction(i18n("Set value of variable"), SmallIcon("edit"), 0,
+              this, SLOT(slotVariableSet()), ac, "debug_variable_set");
+  new KAction(i18n("Set value of variable"), SmallIcon("edit"), 0,
+              this, SLOT(slotVariableSet()), ac, "debug_variable_setdialog");
 
 }
 
@@ -223,13 +240,55 @@ void DebuggerManager::slotRemoveVariable(DebuggerVariable* var)
   m_client->removeWatch(var);
 
 }
-void DebuggerManager::slotAddWatch(const QString &var)
+
+
+void DebuggerManager::slotAddWatch()
 {
-  kdDebug(24000) << "DebuggerManager::slotAddWatch " << var << endl;
+  kdDebug(24000) << "DebuggerManager::slotAddWatch() " << endl;
   if(!m_client)
     return;
 
-  m_client->addWatch(var);
+
+  QString watch = KInputDialog::getText(i18n("Add watch"), i18n("Specify variable to watch"), quantaApp->popupWord);
+  quantaApp->popupWord = "";
+  if(!watch.isEmpty())
+  {
+    m_client->addWatch(watch);
+  }
+}
+
+void DebuggerManager::slotVariableSet()
+{
+  kdDebug(24000) << "DebuggerManager::slotVariableSet(" << quantaApp->popupWord << ") " << endl;
+  if(!m_client)
+    return;
+
+
+  DebuggerVariableSetS dlg;
+  dlg.lineVariable->setText(quantaApp->popupWord);
+  quantaApp->popupWord = "";
+  if(dlg.exec() == QDialog::Accepted)
+  {
+    DebuggerVariable var;
+    var.setName(dlg.lineVariable->text());
+    var.setValue(dlg.lineValue->text());
+    m_client->variableSetValue(var);
+  }
+}
+
+void DebuggerManager::slotConditionalBreakpoint()
+{
+  kdDebug(24000) << "DebuggerManager::slotConditionalBreakpoint() " << quantaApp->popupWord << endl;
+  if(!m_client)
+    return;
+
+  QString condition = KInputDialog::getText(i18n("Add conditional breakpoint"), i18n("Specify expression to break at (when true)"), quantaApp->popupWord);
+  quantaApp->popupWord = "";
+  if(!condition.isEmpty())
+  {
+    DebuggerBreakpoint * bp = new DebuggerBreakpoint("", 0, condition);
+    m_client->addBreakpoint(bp);
+  }
 }
 
 void DebuggerManager::slotDebugStartSession()

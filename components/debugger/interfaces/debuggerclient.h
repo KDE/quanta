@@ -90,7 +90,7 @@ class DebuggerClient : public QObject
     virtual void removeBreakpoint(DebuggerBreakpoint* breakpoint);
     virtual void addWatch(const QString &);
     virtual void removeWatch(DebuggerVariable*);
-    virtual void variableSetValue(DebuggerVariable *variable);
+    virtual void variableSetValue(const DebuggerVariable &variable);
 
     bool isActive();
     DebuggerInterface *debuggerInterface();

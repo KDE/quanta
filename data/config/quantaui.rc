@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="quanta" version="32056">
+<kpartgui name="quanta" version="32057">
   <MenuBar noMerge="1">
 
     <Menu name="file" noMerge="1"><text>&amp;File</text>
@@ -234,8 +234,13 @@
       <Action name="debug_kill" />
     </Menu>
     <Menu name="debug_breakpoints"><text>&amp;Breakpoints</text>
+      <Action name="debug_conditional_breakdialog" />
       <Action name="debug_breakpoints_toggle" />
       <Action name="debug_breakpoints_clear" />
+    </Menu>
+    <Menu name="debug_variables"><text>&amp;Variables</text>
+      <Action name="debug_addwatchdialog" />
+      <Action name="debug_variable_setdialog" />
     </Menu>
   </Menu>
 

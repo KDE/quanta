@@ -200,10 +200,12 @@ public:
   /** Called when a document was closed. Resets some variables. */
   void slotFileClosed();
 
+  /** Clicked word or selected text for context sensitive menu in editor */
+  QString popupWord;
+
 signals: // Signals
   /** signal used to hide the splash screen */
   void showSplash(bool);
-  void debuggerAddWatch(const QString &);
 
 public slots:
   void slotFileNew();
@@ -360,9 +362,6 @@ public slots:
   void slotUploadFile(QuantaView *view=0L);
   void slotDeleteFile(QuantaView *view=0L);
 
-  // Debugger
-  void slotDebuggerAddWatch();
-
 //Overridden KMdiMainFrm slots
   virtual void closeAllViews();
   virtual void closeActiveView();
@@ -486,7 +485,6 @@ private:
 
   // Debugger
   DebuggerManager *m_debugger;
-  QString popupWord;
 
   QuantaPluginInterface *m_pluginInterface;
 

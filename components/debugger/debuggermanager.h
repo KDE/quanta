@@ -80,10 +80,12 @@ class DebuggerManager : public QObject
     // Breakpoint
     void toggleBreakpoint();
     void clearBreakpoints();
+    void slotConditionalBreakpoint();
 
     // Watches
-    void slotAddWatch(const QString &var);
+    void slotAddWatch();
     void slotRemoveVariable(DebuggerVariable* var);
+    void slotVariableSet();
 
     // Connection related slots
     void slotDebugStartSession();

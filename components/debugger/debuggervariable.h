@@ -47,6 +47,7 @@ class DebuggerVariable
 {
   public:
     DebuggerVariable();
+    DebuggerVariable(DebuggerVariable* var);
     DebuggerVariable(const QString& name);
     DebuggerVariable(const QString& name, const QString& value, int type);
     DebuggerVariable(const QString& name, const QString& value, int type, int size);
@@ -54,31 +55,31 @@ class DebuggerVariable
     virtual ~DebuggerVariable();
 
     virtual void setName(const QString& name);
-    virtual QString name();
+    virtual QString name() const;
 
     virtual void setValue(const QString& value);
-    virtual QString value();
+    virtual QString value() const;
 
     virtual void setValues(const ValueList_t& valueList);
-    virtual ValueList_t values();
+    virtual ValueList_t values() const;
 
     virtual void setType(int type);
-    virtual int type();
-    virtual const QString typeName();
-    virtual bool isScalar();
+    virtual int type() const;
+    virtual const QString typeName() const ;
+    virtual bool isScalar() const;
 
     virtual void setSize(long size);
-    virtual long size();
-    virtual QString sizeName();
+    virtual long size() const;
+    virtual QString sizeName() const;
 
     virtual void setReference(bool ref);
-    virtual bool isReference();
+    virtual bool isReference() const;
 
     virtual void touch() { m_touched = true;};
-    virtual bool touched() { return m_touched;};
+    virtual bool touched()  const { return m_touched;};
 
     virtual void setItem(KListViewItem* item) { m_item = item;};
-    virtual KListViewItem*  item() { return m_item;};
+    virtual KListViewItem*  item() const{  return m_item;};
 
   private:
     ValueList_t m_valueList;

@@ -1949,52 +1949,92 @@ void QuantaApp::slotContextMenuAboutToShow()
     {
       action->setEnabled(Project::ref()->contains(w->url()));
     }
-    action = actionCollection()->action("debug_addwatch");
-    if (action)
+
+    // If we have a debugger session active...
+    if(debugger() && debugger()->hasClient())
     {
-      QPopupMenu *popup = static_cast<QPopupMenu*>(factory()->container("popup_editor",this));
-      if (popup) {
-        if(debugger() && debugger()->hasClient())
-        {
-          int startpos;
-          QString word;
-          if(w->selectionIf->hasSelection())
-          {
-            word = w->selectionIf->selection();
-          }
-          else
-          {
-            word =  w->editIf->textLine(w->viewCursorIf->cursorLine());
-            startpos = word.findRev(QRegExp("$|[^a-zA-Z0-9_]"), w->viewCursorIf->cursorColumn());
+      int startpos;
+      QString word;
 
-            word.remove(0, startpos);
-            if(word.left(1) != "$")
-              word.remove(0, 1);;
-
-            word = word.left(word.find(QRegExp("[^a-zA-Z0-9_]"), 1));
-          }
-          startpos = word.find("\n");
-          if(startpos > 0)
-            word.remove(0, startpos);
-
-          popupWord = word;
-          if(word.length() > 15)
-          {
-            word.remove(0, 12);
-            word += "...";
-          }
-          action->setText(i18n("Add Watch: %1").arg(word));
-          action->setEnabled(word != "");
-
-          if(!action->isPlugged(popup))
-            action->plug(popup);
-        }
-        else
-        {
-          if(action->isPlugged(popup))
-            action->unplug(popup);
-        }
+      // If we have a selection made, thats what we want to use for watching, setting etc
+      if(w->selectionIf->hasSelection())
+      {
+        word = w->selectionIf->selection();
       }
+      else
+      {
+        // Otherwise, find the word under the cursor
+        word =  w->editIf->textLine(w->viewCursorIf->cursorLine());
+        startpos = word.findRev(QRegExp("$|[^a-zA-Z0-9_]"), w->viewCursorIf->cursorColumn());
+
+        word.remove(0, startpos);
+        if(word.left(1) != "$")
+          word.remove(0, 1);
+
+        word = word.left(word.find(QRegExp("[^a-zA-Z0-9_]"), 1));
+      }
+      // If we have a linebreak, take everything before the break
+      startpos = word.find("\n");
+      if(startpos > 0)
+        word = word.left(startpos);
+
+      // Trim whitespace from the beginning and end of the string
+      word = word.stripWhiteSpace();
+
+      // now we have a word, possibly the name of a variable
+      popupWord = word;
+
+      // The word we display in the popup will be cut off not to make an obeast pop up menu
+      if(word.length() > 15)
+      {
+        word.remove(0, 12);
+        word += "...";
+      }
+
+      // If we have the addwatch action...
+      action = actionCollection()->action("debug_addwatch");
+      if(action)
+      {
+        action->setText(i18n("Add Watch: %1").arg(word));
+        action->setEnabled(!word.isEmpty());
+
+        if(!action->isPlugged(popup))
+          action->plug(popup);
+      }
+
+      // Dito for the set action
+      action = actionCollection()->action("debug_variable_set");
+      if(action)
+      {
+        action->setText(i18n("Set value of '%1'").arg(word));
+        action->setEnabled(!word.isEmpty());
+
+        if(!action->isPlugged(popup))
+          action->plug(popup);
+      }
+
+      // Dito for the "break when" action
+      action = actionCollection()->action("debug_conditional_break");
+      if(action)
+      {
+        action->setText(i18n("Break when %1...").arg(word));
+        action->setEnabled(!word.isEmpty());
+
+        if(!action->isPlugged(popup))
+          action->plug(popup);
+      }
+    }
+    else
+    {
+      action = actionCollection()->action("debug_addwatch");
+      if(action && action->isPlugged(popup))
+        action->unplug(popup);
+      action = actionCollection()->action("debug_variable_set");
+      if(action && action->isPlugged(popup))
+        action->unplug(popup);
+      action = actionCollection()->action("debug_conditional_break");
+      if(action && action->isPlugged(popup))
+        action->unplug(popup);
     }
 #ifdef ENABLE_CVSSERVICE
    if (w->url().isLocalFile() && !w->isUntitled() && CVSService::ref()->exists())
@@ -2020,11 +2060,6 @@ void QuantaApp::slotContextMenuAboutToShow()
 #endif
   }
 
-}
-
-void QuantaApp::slotDebuggerAddWatch()
-{
-  emit debuggerAddWatch(popupWord);
 }
 
 void QuantaApp::slotOpenFileUnderCursor()

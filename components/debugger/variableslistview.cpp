@@ -369,22 +369,23 @@ void VariablesListView::slotVariableContextMenu(KListView *, QListViewItem *, co
 
 void VariablesListView::slotVariableSetValue()
 {
-  DebuggerVariable* v = selected();
-
-  if(!v)
+  if(!selected())
     return;
 
+  DebuggerVariable v(selected());
+
   QString newvalue;
-  switch(v->type())
+  switch(v.type())
   {
     case DebuggerVariableTypes::String:
-      newvalue = "\"" + v->value() + "\"";
+      newvalue = "\"" + v.value() + "\"";
       break;
 
     case DebuggerVariableTypes::Float:
     case DebuggerVariableTypes::Boolean:
     case DebuggerVariableTypes::Integer:
-      newvalue = v->value();
+    //case DebuggerVariableTypes::Array:
+      newvalue = v.value();
       break;
 
     default:
@@ -394,7 +395,7 @@ void VariablesListView::slotVariableSetValue()
   if(newvalue.isNull())
     return;
 
-  v->setValue(newvalue);
+  v.setValue(newvalue);
   quantaApp->debugger()->client()->variableSetValue(v);
 
 }

@@ -89,7 +89,7 @@ class QuantaDebuggerGubed : public DebuggerClient
     // Variables
     void addWatch(const QString &variable);
     void removeWatch(DebuggerVariable *var);
-    void variableSetValue(DebuggerVariable *variable);
+    void variableSetValue(const DebuggerVariable &variable);
 
   private:
     KExtendedSocket *m_socket;

@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>594</width>
-            <height>566</height>
+            <height>568</height>
         </rect>
     </property>
     <property name="caption">
@@ -554,11 +554,27 @@
     </connection>
 </connections>
 <tabstops>
+    <tabstop>tabWidget2</tabstop>
+    <tabstop>lineLocalBasedir</tabstop>
+    <tabstop>lineServerBasedir</tabstop>
+    <tabstop>checkUseProxy</tabstop>
+    <tabstop>lineServerHost</tabstop>
+    <tabstop>lineServerPort</tabstop>
+    <tabstop>lineServerListenPort</tabstop>
+    <tabstop>checkBreakOnNotice</tabstop>
+    <tabstop>checkBreakOnWarning</tabstop>
+    <tabstop>checkBreakOnUserNotice</tabstop>
+    <tabstop>checkBreakOnUserWarning</tabstop>
+    <tabstop>checkBreakOnUserError</tabstop>
+    <tabstop>sliderDisplayDelay</tabstop>
     <tabstop>buttonOk</tabstop>
     <tabstop>buttonCancel</tabstop>
 </tabstops>
+<includes>
+    <include location="local" impldecl="in implementation">gubedsettingss.ui.h</include>
+</includes>
 <slots>
-    <slot specifier="pure virtual">slotUseProxyToggle(bool)</slot>
+    <slot specifier="pure virtual">slotUseProxyToggle( bool )</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>
