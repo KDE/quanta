@@ -77,47 +77,39 @@ int main(int argc, char *argv[])
    aboutData.addAuthor("Alexander Yakovlev",I18N_NOOP("Inactive - left for commercial version"), "yshurik@kde.org");
 
    aboutData.addCredit("Michal Rudolf",
-    I18N_NOOP("Table editor, various and Kommander maintainer"),
+    I18N_NOOP("Various fixes, table editor maintainer"),
     "mrudolf@kdewebdev.org");
-   
+
    aboutData.addCredit("Linus McCabe",
-    I18N_NOOP("Debugger interface and Gubed PHP debugger"),
+    I18N_NOOP("Debugger interface and integration of the Gubed PHP debugger"),
     "Linus@mccabe.nu");
-   
+
    aboutData.addCredit("Thiago Silva",
-    I18N_NOOP("Debugger interface and Dbg integration"),
+    I18N_NOOP("Debugger interface"),
     "thiago.silva@kdemail.net");
-   
-   aboutData.addCredit("Paulo Moura Guedes",
-    I18N_NOOP("KLinkStatus link checker"),
-    "pmg@netcabo.pt");
-   
+
    aboutData.addCredit("Chris Hornbaker",
     I18N_NOOP("XML - compliance, tools & DTEPs"),
     "chrishornbaker@earthlink.net");
-   
+
    aboutData.addCredit("Dave Reddish",
     I18N_NOOP("Template contributions"),
     "wykd@wykd.co.uk");
-   
+
    aboutData.addCredit("Doug Bezona",
     I18N_NOOP("ColdFusion support"),
     "doug@bezona.com");
-   
-   aboutData.addCredit("Jan Schaefer",
-    I18N_NOOP("KImageMapEditor"),
-    "janschaefer@users.sourceforge.net");
-   
+
    aboutData.addCredit("Mathieu Kooiman",
     I18N_NOOP("Initial debugger work - advanced test"),
     "M.Kooiman@MAP-IS.nl");
-   
+
    aboutData.addCredit("Richard Moore",
     I18N_NOOP("Coding and tag dialog definition documentation and more"),
     "rich@kde.org");
 
   aboutData.addCredit("Marc Britton",
-    I18N_NOOP("Various fixes, Kommander"),
+    I18N_NOOP("Original plugin system, various fixes"),
     "consume@optushome.com.au");
 
   aboutData.addCredit("Robert Nickel",
@@ -145,12 +137,8 @@ int main(int argc, char *argv[])
     "e.gulmini@tiscali.it");
 
   aboutData.addCredit("Emiliano Gulmini",
-    I18N_NOOP("Crash recovery - KFileReplace maintainer"),
+    I18N_NOOP("Crash recovery"),
     "emi_barbarossa@yahoo.it");
-
-  aboutData.addCredit("François Dupoux",
-    I18N_NOOP("Original KFileReplace developer"),
-    "dupoux@dupoux.com");
 
   aboutData.addCredit("Jens Herden",
     I18N_NOOP("Cleanup of the treeview code, code review"),
@@ -169,11 +157,11 @@ int main(int argc, char *argv[])
     "claus_h@image.dk");
 
   aboutData.addCredit("Dmitri Dmitrienko",
-    I18N_NOOP("Part of a code for PHP4 Debugger"),
+    I18N_NOOP("Part of a code for the old PHP4 Debugger"),
     "dd@cron.ru");
 
   aboutData.addCredit("Keith Isdale",
-    I18N_NOOP("XSLT tags, XSLT debugger"),
+    I18N_NOOP("XSLT tags"),
     "k_isdale@tpg.com.au");
 
   aboutData.addCredit("Lukas Masek",
