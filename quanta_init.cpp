@@ -115,6 +115,12 @@ QuantaApp::QuantaApp()
     
   connect( debugger,      SIGNAL(data(QString)),
            messageOutput, SLOT(insertAtEnd(QString)) );
+           
+  if ( !debugger->ok() ) {
+    QString s;
+	  messageOutput->insertAtEnd("\nPhp Debugger:\n\t\tSorry, but I can't listen port N "+
+	    s.sprintf("%i",phpDebugPort)+"\n\n" );
+	}
 
   ///////////////////////////////////////////////////////////////////
   // disable menu and toolbar items at startup

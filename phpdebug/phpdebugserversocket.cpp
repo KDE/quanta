@@ -10,11 +10,6 @@
 PhpDebugServerSocket::PhpDebugServerSocket( int port, QObject *parent, const char *name )
   :QServerSocket( port, 0, parent, name )
 {
-  if ( !ok() ) {
-    QString s;
-	  QMessageBox::critical( 0, "Php Debugger",
-                           "Sorry, but I can't listen port N "+s.sprintf("%i",port) );
-	}
 }
 
 void PhpDebugServerSocket::newConnection( int socket )
