@@ -15,24 +15,37 @@
  *                                                                         *
  ***************************************************************************/
 
- #ifndef NODEPROPERTIES_H
- #define NODEPROPERTIES_H
+#ifndef NODEPROPERTIES_H
+#define NODEPROPERTIES_H
 
- #include <dom/dom_node.h>
+#include <dom/dom_node.h>
 
- class Node;
+class Node;
 
- class kNodeProperties
- {
- public:
- 	kNodeProperties();
- 	~kNodeProperties();
+class kNodeAttrs
+{
+public:
+	kNodeAttrs();
+	~kNodeAttrs();
 
-	//temporary, will change with multi-DTD support
-	DOM::Node _rootNode;
-	DOM::Node _leafNode;
-	Node* _closingNode;
 
- };
+enum cursorFocus {
+	no = 0,
+	left,
+	right,
+	leftAndRight,
+	singleNode,
+	singleNodeAndItself,
+	textNode
+};
 
- #endif
+	int type;
+	Node* node;
+	bool cbDeleted;
+	bool cbModified;
+	int chCursorFocus;
+	bool ccEnter;
+
+};
+
+#endif

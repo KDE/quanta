@@ -274,18 +274,57 @@ private:
 #endif
 //end
 
-	void paintCursor(QPainter *p);
+	/**
+	 * Move the cursor one position left.
+	 */
 	void keyLeft();
+	/**
+	 * Move the cursor one position right.
+	 */
 	void keyRight();
+	/**
+	 * Move the cursor one position up.
+	 */
 	void keyUp();
+	/**
+	 * Move the cursor one position down.
+	 */
 	void keyDown();
+	/**
+	 * Delete one character/DOM::Node left to the cursor.
+	 */
 	void keyBackspace();
+	/**
+	 * Delete one character/DOM::Node right to the cursor.
+	 */
 	void keyDelete();
+	/**
+	 * Break the current line.
+	 */
 	void keyReturn();
-	//temporary universam method to get cursor coordinates
+	/**
+	 * Temporary universal method to get the cursor coordinates of a DOM::Node.
+	 */
 	bool getCursor(DOM::Node _node, int offset, int &_x, int &_y, int &height);
+	/**
+	 * Postprocess the cursor position, i.e. when the cursor is between two
+	 * DOM::Nodes, it set the cursor in the right node to make edition as
+	 * in a word processor.
+	 */
 	void postprocessCursorPosition();
+	/**
+	 * Make the cursor visible whenever it is going :-)
+	 * @param xMargin The minimum margin in the X axis between the cursor
+	 * and the edge of the widget.
+	 * @param yMargin The minimim margin in the Y axis between the cursor
+	 * and the edge of the widget.
+	 */
 	void makeCursorVisible(int xMargin = 50, int yMargin = 50);
+	/**
+	 * Paints the cursor.
+	 * @param p It requires a QPainter to draw the cursor :)
+	 */
+	void paintCursor(QPainter *p);
 	DOM::Node m_currentNode;
 	DOM::Range m_currentSelection;
 	KafkaHTMLPartPrivate *d;

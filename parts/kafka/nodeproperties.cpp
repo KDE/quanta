@@ -19,12 +19,17 @@
 
  #include "nodeproperties.h"
 
-kNodeProperties::kNodeProperties()
+kNodeAttrs::kNodeAttrs()
 {
-	_closingNode = 0L;
+	node = 0L;
+	type = 0;
+	cbDeleted = false;
+	cbModified = false;
+	chCursorFocus = kNodeAttrs::no;
+	ccEnter = false;
 }
 
-kNodeProperties::~kNodeProperties()
+kNodeAttrs::~kNodeAttrs()
 {
 
 }

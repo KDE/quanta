@@ -1,7 +1,7 @@
 /***************************************************************************
                           tagxml.cpp  -  description
                              -------------------
-    begin                : Пнд Сен 25 14:34:07 EEST 2000
+    begin                : О©╫ О©╫ 25 14:34:07 EEST 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
                            (C) 2002-2003 by Andras Mantia
     email                : pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com, amantia@freemail.hu
@@ -27,7 +27,7 @@
 #include <qtooltip.h>
 #include <qwhatsthis.h>
 
-Tagxml::Tagxml( QDomDocument &d, DTDStruct *dtd, QWidget *parent, const char *name)
+Tagxml::Tagxml( QDomNode &d, DTDStruct *dtd, QWidget *parent, const char *name)
   :QWidget(parent,name), TagWidget(parent,name), doc(d)
 {
    m_dtd = dtd;
@@ -36,7 +36,7 @@ Tagxml::Tagxml( QDomDocument &d, DTDStruct *dtd, QWidget *parent, const char *na
    grid->setMargin( 11 );
    m_firstItem = 0L;
 //parse the tag XML file, in order to build up the dialog
-   for ( QDomNode n = d.firstChild().firstChild().firstChild(); !n.isNull(); n = n.nextSibling() )
+   for ( QDomNode n = d.firstChild(); !n.isNull(); n = n.nextSibling() )
    {
      QDomNode location = findChild(n,"location");
      if ( location.isNull() )
@@ -226,7 +226,8 @@ Tagxml::~Tagxml()
 
 void Tagxml::focusToFirstItem()
 {
-  m_firstItem->setFocus();
+  if(m_firstItem)
+    m_firstItem->setFocus();
 }
 
 void Tagxml::readAttributes( QDict<QString> *d )

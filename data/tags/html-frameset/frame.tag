@@ -74,5 +74,10 @@
         <location col="0" row="9" colspan="3" />
     </spacer>
 
+    <kafkainfos>
+        <rootnode canbedeleted="false" canbemodified="false" canhavecursorfocus="no" cursorcanenter="false">
+        </rootnode>
+    </kafkainfos>
+
 </tag>
 </TAGS>

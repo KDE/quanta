@@ -1,20 +1,20 @@
 <!DOCTYPE TAGS>
 <TAGS>
 <tag name="font" hasCore="1" hasI18n="1">
-    
+
     <attr name="color" type="color">
         <text>Color</text>
         <textlocation col="0" row="2" />
         <tooltip>Font color</tooltip>
         <location col="1" row="2"  />
     </attr>
-    
+
     <attr name="face" type="input">
         <text>Face</text>
         <textlocation col="0" row="3" />
         <location col="1" row="3" colspan="2" />
     </attr>
-    
+
     <attr name="size" type="list">
         <text>Size</text>
         <textlocation col="0" row="4" />
@@ -46,6 +46,11 @@
     <spacer orientation="v">
         <location col="0" row="9" colspan="3" />
     </spacer>
+
+    <kafkainfos>
+        <rootnode canbedeleted="true" canbemodified="true" canhavecursorfocus="no" cursorcanenter="true">
+        </rootnode>
+    </kafkainfos>
 
 </tag>
 </TAGS>

@@ -25,7 +25,7 @@
         <textlocation col="0" row="4" />
         <location col="1" row="4"  colspan="2"/>
     </attr>
-    
+
     <spacer orientation="h">
         <location col="0" row="8" />
     </spacer>
@@ -41,6 +41,11 @@
     <spacer orientation="v">
         <location col="0" row="9" colspan="3" />
     </spacer>
+
+    <kafkainfos>
+        <rootnode canbedeleted="false" canbemodified="false" canhavecursorfocus="no" cursorcanenter="false">
+        </rootnode>
+    </kafkainfos>
 
 </tag>
 </TAGS>

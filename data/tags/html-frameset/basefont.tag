@@ -39,7 +39,7 @@
                 <item>7</item>
         </items>
     </attr>
-    
+
     <attr name="id"> </attr>
 
     <spacer orientation="h">
@@ -57,6 +57,11 @@
     <spacer orientation="v">
         <location col="0" row="9" colspan="3" />
     </spacer>
+
+    <kafkainfos>
+        <rootnode canbedeleted="true" canbemodified="true" canhavecursorfocus="no" cursorcanenter="false">
+        </rootnode>
+    </kafkainfos>
 
 </tag>
 </TAGS>

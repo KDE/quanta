@@ -201,6 +201,18 @@ public:
   bool isSingle();
   /** No descriptions */
   bool isOptional();
+#ifdef BUILD_KAFKAPART
+  /** temporary kafkapart functions */
+  void setCanBeDeleted(bool b) {_canBeDeleted = b;}
+  void setCanBeModified(bool b) {_canBeModified = b;}
+  void setCanHaveCursorFocus(int b) {_canHaveCursorFocus = b;}
+  void setCursorCanEnter(bool b) {_cursorCanEnter = b;}
+  bool canBeDeleted() {return _canBeDeleted;}
+  bool canBeModified() {return _canBeModified;}
+  int canHaveCursorFocus() {return _canHaveCursorFocus;}
+  bool cursorCanEnter() {return _cursorCanEnter;}
+#endif
+
   /** No descriptions */
   QString fileName();
   /** No descriptions */
@@ -221,6 +233,13 @@ protected: // Protected attributes
   AttributeList attrs;
   bool single;
   bool optional;
+#ifdef BUILD_KAFKAPART
+  /** temporary kafkapart bools */
+  bool _canBeDeleted;
+  bool _canBeModified;
+  int _canHaveCursorFocus;
+  bool _cursorCanEnter;
+#endif
   QString tagName;
   /** The path to the tag file. Null if there is no tag file for the tag. */
   QString m_fileName;

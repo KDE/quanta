@@ -967,7 +967,7 @@ void KafkaHTMLPart::keyDelete()
 		else if(d->TagsTextDeletable.contains(_nodeNext.nodeName().string().upper()))
 		{//if it is a Text deletable tag
 			if(!_nodeNext.hasChildNodes())
-			{//if we go up and we can delete the tag, delete it :)
+			{//if the tagTextDeletable has no childs, delete it
 				kdDebug(25001)<< "KafkaHTMLPart::keyDelete() - deleting" <<
 					" a TagTextDeletable" << endl;
 				emit domNodeIsAboutToBeRemoved(_nodeNext, true);

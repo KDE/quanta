@@ -122,7 +122,7 @@ void TagDialog::parseTag()
        {
           if (n.nodeName() == "tag" && n.toElement().attribute("name") == dtdTag->name()) //read a tag
           {
-             mainDlg = new Tagxml( doc, dtdTag->parentDTD, this );
+             mainDlg = new Tagxml( n, dtdTag->parentDTD, this );
              ((Tagxml    *)mainDlg)->writeAttributes( dict );
              break;
           }
@@ -143,7 +143,8 @@ void TagDialog::parseTag()
         docString += QuantaCommon::xmlFromAttributes(dtdTag->attributes());
         docString += "</tag>\n</TAGS>\n";
         doc.setContent(docString);
-        mainDlg = new Tagxml( doc, dtdTag->parentDTD, this );
+        QDomNode domNode2 = doc.firstChild().firstChild();
+        mainDlg = new Tagxml( domNode2, dtdTag->parentDTD, this );
       }
     }
 
@@ -187,7 +188,8 @@ void TagDialog::parseTag()
     if (addPage)
     {
       extraDoc.setContent(docString);
-      extraPage = new Tagxml( extraDoc, dtdTag->parentDTD, this );
+      QDomNode domNode = extraDoc.firstChild().firstChild();
+      extraPage = new Tagxml( domNode, dtdTag->parentDTD, this );
       extraPage->writeAttributes( dict );
       addTab( extraPage, i18n(title) );
       extraPageList->append(extraPage);

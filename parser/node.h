@@ -28,7 +28,16 @@ class Tag;
 class QListViewItem;
 
 #ifdef BUILD_KAFKAPART
-#include "../parts/kafka/nodeproperties.h"
+#include <dom/dom_node.h>
+#include <qlist.h>
+
+typedef struct domNodeStruct
+   {
+    int type;
+    DOM::Node domNode;
+    int beginOffset;
+    int endOffset;
+   };
 #endif
 
 class Node {
@@ -47,7 +56,11 @@ public:
  int size();
 
  #ifdef BUILD_KAFKAPART
- kNodeProperties *kafkaAddon;
+ QList<domNodeStruct> vList;
+ QList<domNodeStruct> hList;
+ DOM::Node _rootNode;
+ DOM::Node _leafNode;
+ Node* _closingNode;
  #endif
  QListViewItem *listItem;
  Tag *tag;

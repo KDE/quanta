@@ -29,7 +29,7 @@
     <spacer orientation="v">
         <location col="0" row="5" colspan="4" />
     </spacer>
-    
+
     <attr name="bgcolor" type="color">
         <text>Bg color</text>
         <textlocation col="0" row="5" />
@@ -41,9 +41,14 @@
     <spacer orientation="v">
         <location col="0" row="9" colspan="4" />
     </spacer>
-   
+
     <attr name="char"> </attr>
     <attr name="charoff"> </attr>
+
+    <kafkainfos>
+        <rootnode canbedeleted="false" canbemodified="false" canhavecursorfocus="no" cursorcanenter="false">
+        </rootnode>
+    </kafkainfos>
 
 </tag>
 </TAGS>

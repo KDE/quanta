@@ -26,6 +26,7 @@ class KafkaHTMLPart;
 class Document;
 class Node;
 class Parser;
+class kNodeAttrs;
 
 #include <qmap.h>
 #include <qobject.h>
@@ -237,12 +238,25 @@ private:
 	 */
 	void getQuantaCursorPosition(int &line, int &col);
 
+	/**
+	 * Connects the domNode to the corresponding Quanta Node.
+	 * @param _domNode The DOM::Node to connect to the Node.
+	 * @param _node The Node to connect to the DOM::Node.
+	 */
+	void connectDomNodeToQuantaNode(DOM::Node _domNode, Node *_node);
+
+	/**
+	 * Disconnects the domNode from its corresponding Quanta Node.
+	 * @param _domNode The DOM::Node to disconnect from its Node.
+	 */
+	void disconnectDomNodeFromQuantaNode(DOM::Node _domNode);
+
 	/** For debugging purpose. It prints the quanta internal tree to stdout */
 	void coutTree(Node *node, int indent);
 
 	QMap<QString, QString> decodedChars;
 	QMap<QString, QString> encodedChars;
-	QPtrDict<Node> domNodeToNode;
+	QPtrDict<kNodeAttrs> domNodeProps;
 	KafkaHTMLPart *_kafkaPart;
 	Document *_currentDoc;
 	Node *_rootNode;

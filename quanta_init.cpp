@@ -71,6 +71,7 @@
 #include "messages/messageoutput.h"
 #ifdef BUILD_KAFKAPART
 #include "parts/kafka/wkafkapart.h"
+#include "parts/kafka/nodeproperties.h"
 #endif
 
 #include "toolbar/tagaction.h"
@@ -958,6 +959,35 @@ void QuantaApp::setAttributes(QDomNode *dom, QTag* tag)
 
      delete attr;
    }
+#ifdef BUILD_KAFKAPART
+   if ( n.nodeName() == "kafkainfos" )
+   {
+     QDomElement child = n.toElement().firstChild().toElement();
+     if(child.tagName() == "rootnode")
+     {
+       tag->setCanBeDeleted((child.attribute("canbedeleted", "false") == "false")?false:true);
+       tag->setCanBeModified((child.attribute("canbemodified", "false") ==
+           "false")?false:true);
+       tag->setCursorCanEnter((child.attribute("cursorcanenter", "false") ==
+           "false")?false:true);
+       QString result = child.attribute("canhavecursorfocus", "no");
+       {
+         if(result == "no")
+           tag->setCanHaveCursorFocus(kNodeAttrs::no);
+         else if(result == "left")
+           tag->setCanHaveCursorFocus(kNodeAttrs::left);
+         else if(result == "right")
+           tag->setCanHaveCursorFocus(kNodeAttrs::right);
+         else if(result == "leftandright")
+           tag->setCanHaveCursorFocus(kNodeAttrs::leftAndRight);
+         else if(result == "singlenode")
+           tag->setCanHaveCursorFocus(kNodeAttrs::singleNode);
+         else if(result == "singlenodeanditself")
+           tag->setCanHaveCursorFocus(kNodeAttrs::singleNodeAndItself);
+       }
+     }
+   }
+#endif
  }
 
 // return attrs;
@@ -1127,6 +1157,7 @@ void QuantaApp::readTagDir(QString &dirName)
      tag->stoppingTags.append(stopTag);
    }
    //read the possible tag options
+   optionsList.clear();
    dtdConfig->readListEntry(tag->name() + "_options",optionsList);
    for (uint j = 0; j < optionsList.count(); j++)
    {
@@ -1149,6 +1180,7 @@ void QuantaApp::readTagDir(QString &dirName)
        tag->setOptional(true);
      }
    }
+   attrList.clear();
    dtdConfig->readListEntry(tag->name(), attrList);
    for (uint j = 0; j < attrList.count(); j++)
    {
