@@ -41,9 +41,12 @@ DocItem::~DocItem()
 }
 
 
-QString DocItem::text( int ) const
+QString DocItem::text( int i) const
 {
-  return name;
+  if (i == 0)
+    return name;
+  else
+    return "";
 }
 //#include "docitem.moc"
 

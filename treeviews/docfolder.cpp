@@ -101,9 +101,12 @@ DocFolder::~DocFolder(){
 }
 
 
-QString DocFolder::text( int ) const
+QString DocFolder::text( int i) const
 {
-  return name;
+  if (i == 0)
+    return name;
+  else
+    return "";
 }
 
 void DocFolder::setup()
