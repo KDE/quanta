@@ -1610,6 +1610,7 @@ void Parser::parseForGroups()
         {
           title = tagStr.mid(pos, group.searchRx.matchedLength());
           Tag *newTag = new Tag(*currentNode->tag);
+          newTag->beginPos(bl, bc);
           tmpStr = tagStr.left(pos);
           int newLines = tmpStr.contains('\n');
           bl += newLines;

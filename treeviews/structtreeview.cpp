@@ -129,7 +129,7 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
     for (uint i = 0; i < groupsCount; i++)
     {
        group = m_parsingDTD->structTreeGroups[i];
-       groups[i] = new StructTreeTag(this, i18n(group.name));
+       groups[i] = new StructTreeTag(this, i18n(group.name) + " ["+m_parsingDTD->nickName+"]");
        if (!group.icon.isEmpty())
        {
          groups[i]->setPixmap(0, SmallIcon(group.icon));
@@ -323,12 +323,13 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
       groupElementList = & (it.data());
       for (uint j = 0; j < groupElementList->count(); j++)
       {
-        item = new StructTreeTag(dynamic_cast<StructTreeTag*>(insertUnder), (*groupElementList)[j].node, (*groupElementList)[j].node->tag->name);
+        item = new StructTreeTag(dynamic_cast<StructTreeTag*>(insertUnder), (*groupElementList)[j].node, (*groupElementList)[j].node->tag->name, insertAfter);
         if (first)
         {
           insertUnder = item;
           first = false;
         }
+        insertAfter = item;
       }
     }
   }
@@ -407,7 +408,7 @@ void StructTreeView::slotReparse(Document *w, Node* node, int openLevel)
   {
     if (groups[i]->childCount() == 0)
     {
-      groups[i]->setText(0, i18n(m_parsingDTD->structTreeGroups[i].noName));
+      groups[i]->setText(0, i18n(m_parsingDTD->structTreeGroups[i].noName) + " ["+m_parsingDTD->nickName+"]");
     }
   }
   useOpenLevelSetting = false;
