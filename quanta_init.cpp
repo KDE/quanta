@@ -174,12 +174,6 @@ void QuantaApp::initProject()
 					pTab, 		SLOT  (slotSetProjectName(QString)));
 	connect(project,	SIGNAL(closeFiles()),
 					doc,			SLOT	(closeAll()));
-//	connect(project,	SIGNAL(requestOpenedFiles()),
-//					doc,			SLOT	(slotRequestOpenedFiles()));
-	connect(doc,			SIGNAL(openedFiles(QStringList)),
-					project,	SLOT  (slotOpenedFiles(QStringList)));
-	connect(project,  SIGNAL(addRecentProject(const QString &)),
-					this,			SLOT	(addRecentProject(const QString &)));
 					
 	connect(fLTab,		SIGNAL(insertDirInProject(QString)),
 					project,	SLOT	(addDirectory(QString)));
@@ -428,8 +422,7 @@ void QuantaApp::saveOptions()
   doc    ->writeConfig(config); // kwrites
   project->writeConfig(config); // project
   
-  fileRecent   ->saveEntries(config, "Files");
-  projectRecent->saveEntries(config, "Projects");
+  fileRecent            ->saveEntries(config, "Files");
 }
 
 
@@ -462,8 +455,10 @@ void QuantaApp::readOptions()
   
 #warning Check for statusbar  
 
-  fileRecent   ->loadEntries(config, "Files");
-  projectRecent->loadEntries(config, "Projects");
+  fileRecent ->loadEntries(config, "Files");
+  
+  doc    ->readConfig(config); // kwrites
+  project->readConfig(config); // project
 
   resize( config->readSizeEntry("Geometry", &QSize(800,580)));
 }
@@ -756,9 +751,9 @@ void QuantaApp::initActions()
     (void) new KAction( i18n( "&Open Project..." ), UserIcon("openprj"), 0,
                         project, SLOT( openProject() ),
                         actionCollection(), "open_project" );
-
-    projectRecent =
-      KStdAction::openRecent(this, SLOT(slotProjectOpenRecent(const KURL&)),
+                        
+    project -> projectRecent =
+      KStdAction::openRecent(project, SLOT(openProject(const KURL&)),
                              actionCollection(), "project_open_recent");
     
     closeprjAction =  new KAction( i18n( "&Close Project" ), SmallIcon("fileclose"), 0, 

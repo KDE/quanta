@@ -112,14 +112,6 @@ void QuantaApp::slotFileOpenRecent(const KURL &url )
   doc->openDocument( url );
 }
 
-void QuantaApp::slotProjectOpenRecent(const KURL&)
-{
-  project->closeProject();
-#warning open project recent  
-//  project->loadProject (recentProjectsMenu->text(id_));
-  leftPanel-> showPage( (QWidget *)pTab );
-}
-
 void QuantaApp::slotFileSave()
 {
   if ( doc->write()->isUntitled() )

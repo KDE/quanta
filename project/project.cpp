@@ -42,6 +42,8 @@
 #include <kfile.h>
 #include <kwizard.h>
 #include <klocale.h>
+#include <kaction.h>
+#include <kstdaction.h>
 #include <kfiledialog.h>
 
 // application headers
@@ -210,12 +212,16 @@ void Project::readConfig (KConfig *config)
   
   closeProject();
   loadProject ( url );
+  
+  projectRecent->loadEntries(config, "RecentProjects");
 }
 
 void Project::writeConfig(KConfig *config)
 {
   config->setGroup  ("Projects");
   config->writeEntry("Last Project", projectFileName);
+  
+  projectRecent->saveEntries(config, "RecentProjects");
   
   saveProject();
 }
@@ -234,9 +240,19 @@ void Project::openProject()
   if( !fileToOpen.isEmpty() )
   {
     closeProject();
-    loadProject( fileToOpen );
-    emit addRecentProject( fileToOpen );
+    loadProject ( fileToOpen );
+    
+    KURL url(fileToOpen);
+    projectRecent->addURL( url );
   }
+}
+
+void Project::openProject(const KURL &url)
+{
+  if ( url.url().isEmpty() ) return;
+  
+  closeProject();
+  loadProject ( url.url() );
 }
 
 /** save project file */
@@ -252,8 +268,6 @@ bool Project::saveProject()
 
   QTextStream qts( &f );
 
-  emit requestOpenedFiles();
-
   // remove old opened files
   QDomElement  el;
 	QDomNodeList nl = dom.firstChild().firstChild().childNodes();
@@ -268,14 +282,6 @@ bool Project::saveProject()
 		}
 	}
 	// insert new opened files
-	QStringList::Iterator it;
-  for ( it = openedFiles.begin(); it != openedFiles.end(); ++it )
-	{
-  	el = dom.createElement("openfile");
-  	el.setAttribute("url", *it );
-
-  	dom.firstChild().firstChild().appendChild( el );
-	}
 	
   dom.save( qts, 0);
   return true;
@@ -472,12 +478,6 @@ void Project::slotRemoveFolder(QString fname)
   }
 }
 
-/** for receive from quantadoc */
-void Project::slotOpenedFiles(QStringList list)
-{
-	openedFiles = list;
-}
-
 /** create new project */
 void Project::newProject()
 {
@@ -545,7 +545,6 @@ void Project::slotAcceptCreateProject()
 	projectFileName = basePath+png->linePrjFile->text();
 
   createEmptyDom();
-  openedFiles.clear();
 	
 	email = png->lineEmail->text();
 	author = png->lineAuthor->text();

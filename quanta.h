@@ -124,7 +124,6 @@ class QuantaApp : public KMainWindow
     
     void slotImageOpen        (QString);
     void slotFileOpenRecent   (const KURL&);
-    void slotProjectOpenRecent(const KURL&);
     void slotInsertTag        (QString);
 
     void slotEditFindInFiles   ();
@@ -265,7 +264,6 @@ class QuantaApp : public KMainWindow
     
     // ACTIONS
     KRecentFilesAction *fileRecent;
-    KRecentFilesAction *projectRecent;
     
     KAction *saveAction, *saveAllAction, *undoAction, *redoAction,
       *cutAction, *copyAction, *findNextAction, *backAction, *forwardAction,

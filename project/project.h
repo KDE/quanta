@@ -32,6 +32,7 @@ class QWizard;
 class QWidgetStack;
 
 class KConfig;
+class KRecentFilesAction;
 
 class ProjectNewWeb;
 class ProjectNewLocal;
@@ -60,6 +61,7 @@ public slots:
 
   void newProject();
   void openProject();
+  void openProject(const KURL&);
   bool saveProject();
   void closeProject();
   void loadProject(QString fname);
@@ -77,8 +79,6 @@ public slots:
 
 	void slotAcceptCreateProject();
 	
-  void slotOpenedFiles(QStringList);
-
   void slotSelectProjectType(const QString &);
 
   void slotEnableMessages();
@@ -97,10 +97,7 @@ signals:
 	
 	void reloadTree			 ( QStringList,bool,bool );
 	
-  void addRecentProject( const QString &);
-
-  void requestOpenedFiles();
-  void setLocalFiles( bool );
+  void setLocalFiles   ( bool );
 
   void messages				 			( QString );
   void selectMessageWidget	();
@@ -121,8 +118,8 @@ public:
 
   QString email;
   QString author;
-
-  QStringList openedFiles;
+  
+  KRecentFilesAction *projectRecent;
 
 private:
 	QWizard *wiz;
@@ -132,6 +129,7 @@ private:
 	ProjectNewLocal		  *pnl;
 	ProjectNewWeb 			*pnw;
 	ProjectNewFinal 		*pnf;
+	
 };
 
 #endif
