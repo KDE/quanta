@@ -28,14 +28,24 @@
 #include <qwhatsthis.h>
 
 #include <klocale.h>
+#include <kconfig.h>
 
 /* 
  *  Constructs a ParserOptions which is a child of 'parent', with the 
  *  name 'name' and widget flags set to 'f' 
  */
-ParserOptions::ParserOptions( QWidget* parent,  const char* name, WFlags fl )
+ParserOptions::ParserOptions( KConfig *config, QWidget* parent,  const char* name, WFlags fl )
     : QWidget( parent, name, fl )
 {
+		this->config = config;
+		config->setGroup("Parser options");
+		
+		QString handleMBM = config->readEntry("MBM", i18n("Find tag and open tree"));
+		QString handleLBM = config->readEntry("LBM", i18n("Find tag"));
+		QString handleRBM = config->readEntry("RBM", i18n("Popup menu"));
+		QString handleDoubleClick = config->readEntry("Double click", i18n("Select tag area"));
+		
+		
     if ( !name )
 		  setName( "ParserOptions" );
     resize( 400, 330 );
@@ -57,43 +67,47 @@ ParserOptions::ParserOptions( QWidget* parent,  const char* name, WFlags fl )
     grid_2->addItem( spacer, 1, 1 );
 
     comboMBM = new QComboBox( FALSE, GroupBox2, "comboMBM" );
-
-    comboMBM -> insertItem(i18n("Find tag and open tree"));
-    comboMBM -> insertItem(i18n("Find tag"));
-    comboMBM -> insertItem(i18n("Select tag area"));
-    comboMBM -> insertItem(i18n("nothing"));
-
-
-
+    comboMBM -> insertItem(i18n("Find tag and open tree"),0);
+    comboMBM -> insertItem(i18n("Find tag"),1);
+    comboMBM -> insertItem(i18n("Go to end of tag"),2);
+    comboMBM -> insertItem(i18n("Select tag area"),3);
+    comboMBM -> insertItem(i18n("nothing"),4);
     grid_2->addWidget( comboMBM, 1, 2 );
+
+    if ( handleMBM == i18n("Find tag and open tree") ) comboMBM->setCurrentItem(0); else
+    if ( handleMBM == i18n("Find tag") ) comboMBM->setCurrentItem(1); else
+    if ( handleMBM == i18n("Go to end of tag") ) comboMBM->setCurrentItem(2); else
+    if ( handleMBM == i18n("Select tag area") ) comboMBM->setCurrentItem(3); else
+    comboMBM->setCurrentItem(4);
 
     comboRBM = new QComboBox( FALSE, GroupBox2, "comboRBM" );
     comboRBM -> insertItem(i18n("Popup menu"));
-
     grid_2->addWidget( comboRBM, 2, 2 );
+
     QSpacerItem* spacer_2 = new QSpacerItem( 109, 20, QSizePolicy::Expanding, QSizePolicy::Fixed );
     grid_2->addItem( spacer_2, 2, 1 );
     QSpacerItem* spacer_3 = new QSpacerItem( 109, 20, QSizePolicy::Expanding, QSizePolicy::Fixed );
     grid_2->addItem( spacer_3, 3, 1 );
 
     comboLBM = new QComboBox( FALSE, GroupBox2, "comboLBM" );
-
-    comboLBM -> insertItem(i18n("Find tag"));
-    comboLBM -> insertItem(i18n("Find tag and open tree"));
-
-
-
+    comboLBM -> insertItem(i18n("Find tag"),0);
+    comboLBM -> insertItem(i18n("Find tag and open tree"),1);
     grid_2->addWidget( comboLBM, 0, 2 );
+
+    if ( handleLBM == "Find tag and open tree" ) comboLBM->setCurrentItem(1);
+    else comboLBM->setCurrentItem(0);
+
     QSpacerItem* spacer_4 = new QSpacerItem( 109, 20, QSizePolicy::Expanding, QSizePolicy::Fixed );
     grid_2->addItem( spacer_4, 0, 1 );
 
     comboDoubleClick = new QComboBox( FALSE, GroupBox2, "comboDoubleClick" );
-
-    comboDoubleClick -> insertItem( i18n("Select tag area") );
-    comboDoubleClick -> insertItem( i18n("nothing") );
-
-
+    comboDoubleClick -> insertItem( i18n("Select tag area"),0 );
+    comboDoubleClick -> insertItem( i18n("nothing"),1 );
     grid_2->addWidget( comboDoubleClick, 3, 2 );
+
+    if ( handleDoubleClick == i18n("Select tag area") ) comboDoubleClick->setCurrentItem(0);
+    else comboDoubleClick->setCurrentItem(1);
+
 
     TextLabel2_2 = new QLabel( GroupBox2, "TextLabel2_2" );
     TextLabel2_2->setText( i18n( "Left button"  ) );
@@ -126,6 +140,7 @@ ParserOptions::ParserOptions( QWidget* parent,  const char* name, WFlags fl )
 
     spinExpand = new QSpinBox( this, "spinExpand" );
     spinExpand->setMaximumSize( QSize( 70, 32767 ) );
+    spinExpand->setValue( config->readNumEntry("Expand level", 0) );
 
     grid->addWidget( spinExpand, 1, 1 );
 
@@ -143,3 +158,16 @@ ParserOptions::~ParserOptions()
     // no need to delete child widgets, Qt does it all for us
 }
 
+
+void ParserOptions::updateConfig()
+{
+
+		config->setGroup("Parser options");
+		
+		config->writeEntry("MBM",comboMBM->currentText());
+		config->writeEntry("LBM",comboLBM->currentText());
+		config->writeEntry("RBM",comboRBM->currentText());
+		config->writeEntry("Double click",comboDoubleClick->currentText());
+		config->writeEntry("Expand level", spinExpand->text().toInt() );
+		
+}

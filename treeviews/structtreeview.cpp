@@ -25,6 +25,7 @@
 #include <kiconloader.h>
 #include <kpopupmenu.h>
 #include <klocale.h>
+#include <kconfig.h>
 
 // app includes
 #include "../parser/node.h"
@@ -34,7 +35,7 @@
 #include "structtreeview.h"
 
 
-StructTreeView::StructTreeView(Parser *parser, QWidget *parent, const char *name )
+StructTreeView::StructTreeView(Parser *parser, KConfig *config, QWidget *parent, const char *name )
 		: QListView(parent,name)
 {
 	top = 0L;
@@ -42,6 +43,7 @@ StructTreeView::StructTreeView(Parser *parser, QWidget *parent, const char *name
 	links = 0L;
 	lastTag = 0L;
 	followCursorFlag = true;
+	this->config = config;
 
 	this->parser = parser;
 	
@@ -88,10 +90,11 @@ StructTreeView::StructTreeView(Parser *parser, QWidget *parent, const char *name
 	
 //	connect(this, SIGNAL(clicked(QListViewItem *)), SLOT(slotFollowTag(QListViewItem *)));
 	
-	connect( this, SIGNAL(mouseButtonPressed(int, QListViewItem*, const QPoint&, int)),
-					 this, SLOT  (slotMenu(int, QListViewItem*, const QPoint&, int)));
+	connect( this, SIGNAL(mouseButtonClicked(int, QListViewItem*, const QPoint&, int)),
+					 this, SLOT  (slotMouseClicked(int, QListViewItem*, const QPoint&, int)));
 					
 	connect( this, SIGNAL(onItem(QListViewItem *)), SLOT(slotOnTag(QListViewItem *)));
+	connect( this, SIGNAL(doubleClicked(QListViewItem *)), SLOT(slotDoubleClicked(QListViewItem *)));
 
 }
 
@@ -235,10 +238,16 @@ void StructTreeView::slotFollowTag( QListViewItem *item )
 	emit newCursorPosition( parser->pos2y( it->pos1 ), parser->pos2x( it->pos1 ) );	
 }
 
-/** slot for right utton menu */
-void StructTreeView::slotMenu(int button, QListViewItem *item, const QPoint& point, int)
+
+void StructTreeView::slotMouseClicked(int button, QListViewItem *item, const QPoint& point, int)
 {
   if ( !item ) return;
+
+  config->setGroup("Parser options");
+		
+  QString handleMBM = config->readEntry("MBM","Find tag and open tree");
+	QString handleLBM = config->readEntry("LBM","Find tag");
+	QString handleDoubleClick = config->readEntry("Double click","Select tag area");
 
 	setSelected(item, true);
 	
@@ -248,13 +257,47 @@ void StructTreeView::slotMenu(int button, QListViewItem *item, const QPoint& poi
 	}
 	
 	if ( button == Qt::LeftButton ) {
-    setOpen( item, ! isOpen(item) );	
+	
+    if ( handleLBM == i18n("Find tag and open tree"))
+    	setOpen( item, ! isOpen(item) );	
+    setSelected(item, true);
+    slotFollowTag(item);
   }
 
-  slotFollowTag(item);
+  if ( button == Qt::MidButton ) {
+	
+    if ( handleMBM == i18n("nothing"))
+    	return;
+    	
+    if ( handleMBM == i18n("Find tag and open tree")) {
+    	setOpen( item, ! isOpen(item) );	
+    	setSelected(item, true);
+    	slotFollowTag(item);
+    }
+    	
+    if ( handleMBM == i18n("Select tag area"))
+    	slotSelectTag();
 
-  setSelected(item, true);
+    if ( handleMBM == i18n("Go to end of tag"))
+    	slotGotoEndOfTag();
+    	
+    setSelected(item, true);
+  }
+
 }
+
+
+void StructTreeView::slotDoubleClicked( QListViewItem *)
+{
+  config->setGroup("Parser options");
+
+  if ( config->readEntry("Double click") == i18n("nothing") )
+  	return;
+
+	slotSelectTag();	
+}
+
+
 
 void StructTreeView::slotReparse()
 {
@@ -285,7 +328,8 @@ void StructTreeView::slotSelectTag()
 		
 	emit selectArea( parser->pos2x( it->pos1 ), parser->pos2y( it->pos1 ),
 	                 parser->pos2x( it->pos2 ), parser->pos2y( it->pos2 ) );	
-
+	
+  setSelected(item, true);
 }
 
 void StructTreeView::slotOnTag( QListViewItem * item)

@@ -900,7 +900,7 @@ void QuantaApp::slotOptions()
 //  page=kd->addVBoxPage(i18n("Keys"), QString::null, UserIcon( "keysconfig" ) );
 
   page=kd->addVBoxPage(i18n("Parser"), QString::null, UserIcon( "filesmask" ) );
-  ParserOptions *parserOptions = new ParserOptions( (QWidget *)page );
+  ParserOptions *parserOptions = new ParserOptions( config, (QWidget *)page );
 
 //  KGuiCmdConfigTab *keys = new KGuiCmdConfigTab((QWidget *)page, KGuiCmdManager::self());
 
@@ -911,6 +911,8 @@ void QuantaApp::slotOptions()
     tagsCapital = styleOptions->checkTagsCapital->isChecked();
     attrCapital = styleOptions->checkAttrCapital->isChecked();
     useCloseTag = styleOptions->checkEndTag->isChecked();
+
+    parserOptions->updateConfig();
 
     QWidgetStack *s;
     if ( htmlPart() ) {
@@ -1037,8 +1039,14 @@ void QuantaApp::reparse()
 	{
 		Node *node = parser->parse( view->write()->text() );
 		//sTab->s = parser->s;
-		if ( parser->textChanged )
-			sTab->slotReparse( node , 3 );
+		if ( parser->textChanged ) {
+		  config->setGroup("Parser options");
+		  int expandLevel = config->readNumEntry("Expand level",0);
+		  if ( expandLevel == 0 )
+		  	expandLevel = 100000000;
+		  	
+		  sTab->slotReparse( node , expandLevel );
+		}
 		// delete node;
 	}
 }

@@ -30,12 +30,13 @@ class StructTreeTag;
 class Parser;
 class QPopupMenu;
 class QuantaApp;
+class KConfig;
 
 class StructTreeView : public QListView  {
    Q_OBJECT
 friend class QuantaApp;
 public: 
-	StructTreeView(Parser *parser, QWidget *parent=0, const char *name=0);
+	StructTreeView(Parser *parser, KConfig *config, QWidget *parent=0, const char *name=0);
 	~StructTreeView();
 	
   /** create items in the level */
@@ -49,7 +50,8 @@ public slots: // Public slots
   /** repaint document structure */
   void slotReparse(Node* node, int openLevel = 3 );
   void slotFollowTag( QListViewItem *item );
-  void slotMenu(int button, QListViewItem*, const QPoint&, int);
+  void slotMouseClicked(int button, QListViewItem*, const QPoint&, int);
+  void slotDoubleClicked( QListViewItem * );
   void slotOnTag( QListViewItem *);
 
   // slots for RBM menu
@@ -88,6 +90,8 @@ private:
   StructTreeTag *lastTag;
 
   void setOpenSubTree( QListViewItem *it, bool open);
+
+  KConfig *config;
 };
 
 #endif

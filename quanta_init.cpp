@@ -649,7 +649,7 @@ void QuantaApp::initView()
   dTab -> setFocusPolicy(QWidget::NoFocus);
 
 
-  sTab = new StructTreeView( parser, leftPanel ,"struct");
+  sTab = new StructTreeView( parser, config, leftPanel ,"struct");
 	sTab ->setFocusPolicy(QWidget::NoFocus);
 
   leftPanel->addTab( fTab,	"Files"  );
