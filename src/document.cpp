@@ -995,6 +995,7 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
            if (!QuantaCommon::insideCommentsOrQuotes(column, textLine, completionDTD))
            {
              showCodeCompletions(getAttributeCompletions(tagName, ""));
+             handled = true;
            }
          }
     else if ( string[0] == qConfig.attrValueQuotation )
