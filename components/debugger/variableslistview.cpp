@@ -264,7 +264,13 @@ DebuggerVariable* VariablesListView::parsePHPVariables(QString &str) {
     data = (data == "0" ? i18n("False"): i18n("True"));
     str.remove(0, str.find(';') + 1);
     debuggervar = new DebuggerVariable(key, data, DebuggerVariableTypes::Boolean);
-
+  }
+  else if(type == "N")
+  {
+    /* Example:
+      s:6:"return";N;
+    */
+    debuggervar = new DebuggerVariable(key, i18n("<Undefined>"), DebuggerVariableTypes::Undefined);
   }
   else if(type == "s")
   {
