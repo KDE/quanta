@@ -32,8 +32,8 @@ PreviewOptions::PreviewOptions(QWidget *parent, const char *name)
           this,  SLOT(slotTogglePreview()));
   connect(radioDisabled, SIGNAL(toggled(bool)),
           this,  SLOT(slotTogglePreview()));
-  connect(radioFullworkspace, SIGNAL(toggled(bool)),
-          this,  SLOT(slotTogglePreview()));
+//  connect(radioFullworkspace, SIGNAL(toggled(bool)),
+//          this,  SLOT(slotTogglePreview()));
   connect(radioDefault, SIGNAL(toggled(bool)),
           this,  SLOT(slotToggleWindowLayout()));
   connect(radioTabbed, SIGNAL(toggled(bool)),
@@ -59,7 +59,7 @@ void PreviewOptions::setPosition(const QString& position )
   if ( position == "Disabled") radioDisabled->setChecked(true);
   if ( position == "Bottom"  ) radioBottom->setChecked(true);
   if ( position == "Right"   ) radioRight->setChecked(true);
-  if ( position == "FWSpace" ) radioFullworkspace->setChecked(true);
+//  if ( position == "FWSpace" ) radioFullworkspace->setChecked(true);
 }
 
 QString PreviewOptions::position()
@@ -70,8 +70,8 @@ QString PreviewOptions::position()
       position = "Bottom";
   if ( radioRight->isChecked() )
       position = "Right";
-  if ( radioFullworkspace->isChecked() )
-      position = "FWSpace";
+//  if ( radioFullworkspace->isChecked() )
+//      position = "FWSpace";
   if ( radioDisabled->isChecked() )
       position = "Disabled";
 
@@ -95,8 +95,8 @@ void PreviewOptions::slotTogglePreview()
       pixmap->setPixmap( UserIcon("preview1") );
   if ( radioRight->isChecked() )
       pixmap->setPixmap( UserIcon("preview2") );
-  if ( radioFullworkspace->isChecked() )
-      pixmap->setPixmap( UserIcon("preview3") );
+//  if ( radioFullworkspace->isChecked() )
+  //    pixmap->setPixmap( UserIcon("preview3") );
   if ( radioDisabled->isChecked() )
       pixmap->setPixmap( UserIcon("preview4") );
 }
