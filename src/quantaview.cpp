@@ -798,8 +798,10 @@ void QuantaView::activated()
             break;
         }
   }
-  if (m_documentArea->height() + ToolbarTabWidget::ref()->height() > height())
+  if (m_documentArea->height() + ToolbarTabWidget::ref()->height() > height() && ToolbarTabWidget::ref()->isVisible())
     resize(m_documentArea->width(), m_documentArea->height() - ToolbarTabWidget::ref()->height());
+  else if (ToolbarTabWidget::ref()->isHidden())
+    resize(width(), height());
  }
 
 
