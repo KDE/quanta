@@ -92,7 +92,7 @@
       <all>
         <configargs>--enable-debug=full --with-kafkapart --prefix=/opt/kde3</configargs>
         <builddir>/home/andris/development/build/kde-head/kdewebdev</builddir>
-        <topsourcedir/>
+        <topsourcedir>/home/andris/development/sources/kde-head/kdewebdev</topsourcedir>
         <ccompiler>kdevgccoptions</ccompiler>
         <cxxcompiler>kdevgppoptions</cxxcompiler>
         <f77compiler>kdevpgf77options</f77compiler>

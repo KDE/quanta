@@ -95,7 +95,7 @@ StructTreeView::StructTreeView(KConfig *config, QWidget *parent, const char *nam
   popupMenu -> insertItem( i18n("Open Subtrees"), this ,SLOT(slotOpenSubTree()));
   popupMenu -> insertItem( i18n("Close Subtrees"),this ,SLOT(slotCloseSubTree()));
   popupMenu -> insertSeparator();
-  popupMenu -> insertItem( UserIcon("repaint"),  i18n("&Reparse"),     this ,SLOT(slotReparse()));
+  popupMenu -> insertItem( UserIcon("repaint"),  i18n("&Reparse"),     this ,SLOT(slotReparseMenuItem()));
   followCursorId = popupMenu -> insertItem( i18n("Follow Cursor"), this ,SLOT(changeFollowCursor()));
 
   popupMenu -> setItemChecked ( followCursorId, followCursor() );
@@ -168,33 +168,6 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
   QMap<QString, QListViewItem*> groupItems;
   while (currentNode)
   {
-    if (currentNode->tag->type == Tag::ScriptTag)
-    {
-      delete currentNode->child;
-      currentNode->child = 0L;
-      AreaStruct area(currentNode->tag->area());
-      Node *next = 0L;
-      if (currentNode->next)
-      {
-        AreaStruct area2(currentNode->next->tag->area());
-        area.eLine = area2.eLine;
-        area.eCol = area2.eCol + 1;
-        next = currentNode->next->next;
-        if (currentNode->next->closesPrevious)
-        {
-          currentNode->next->removeAll = false;
-          delete currentNode->next;
-        }
-      } else
-      {
-        area.eLine = write->editIf->numLines() - 1;
-        area.eCol = write->editIf->lineLength(area.eLine);
-      }
-      Node *node = parser->parseSpecialArea(area, currentNode->tag->tagStr(), "", currentNode, area.eLine, area.eCol, true); 
-      node->next = next;
-      if (next)
-        next->prev = node;
-    }
     title = "";
     item = new StructTreeTag(parentItem, currentNode, title, currentItem);
     item->setOpen(level < openLevel);
@@ -299,7 +272,7 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
     for (uint i = 0; i < groupsCount; i++)
     {
       group = m_parsingDTD->structTreeGroups[i];
-      groupElementMapList = &parser->m_groups;
+      groupElementMapList = parser->groups();
       QString name = group.name+"|";
       for (it = groupElementMapList->begin(); it != groupElementMapList->end(); ++it)
       {
@@ -506,7 +479,7 @@ void StructTreeView::slotDoubleClicked( QListViewItem *item)
 
 
 
-void StructTreeView::slotReparse()
+void StructTreeView::slotReparseMenuItem()
 {
   useOpenLevelSetting = true;
   emit needReparse();
@@ -673,7 +646,7 @@ void StructTreeView::slotCollapsed(QListViewItem *item)
 /** Do a reparse before showing. */
 void StructTreeView::showEvent(QShowEvent* /*ev*/)
 {
- slotReparse();
+  slotReparseMenuItem();
 }
 
 /** The treeview DTD  has changed to id. */

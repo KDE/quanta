@@ -68,7 +68,7 @@ public slots: // Public slots
   void slotDoubleClicked( QListViewItem * );
 
   // slots for RBM menu
-  void slotReparse();
+  void slotReparseMenuItem();
   void slotSelectTag();
   void slotGotoTag( QListViewItem *item );
   void slotGotoClosingTag();

@@ -55,4 +55,6 @@ extern QuantaApp *quantaApp;
 extern const QString resourceDir;
 extern bool typingInProgress;
 
+extern int nodeNum;
+
 #endif // RESOURCE_H

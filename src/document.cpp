@@ -937,12 +937,12 @@ QValueList<KTextEditor::CompletionEntry>* Document::getGroupCompletions(Node *no
   if (!group.removeFromAutoCompleteWordRx.pattern().isEmpty())
       word.remove(group.removeFromAutoCompleteWordRx);
   completion.userdata = word + "|";
-  GroupElementMapList map = parser->m_groups;
+  GroupElementMapList *map = parser->groups();
   GroupElementMapList::Iterator it;
   QString str = group.name;
   str.append("|");
   str.append(word);
-  for ( it = map.begin(); it != map.end(); ++it )
+  for ( it = map->begin(); it != map->end(); ++it )
   {
     if (it.key().startsWith(str) && it.key() != str )
     {
@@ -1163,7 +1163,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeValueCompletions
     {
       values = new QStringList();
       deleteValues = true;
-      for ( QStringList::Iterator it = parser->selectors.begin(); it != parser->selectors.end(); ++it )
+      for ( QStringList::Iterator it = parser->selectors()->begin(); it != parser->selectors()->end(); ++it )
       {
         int index = (*it).find('.');
         if (index != -1)
@@ -1849,6 +1849,7 @@ void Document::slotDelayedTextChanged(bool forced)
      reparseEnabled = false;
      return;
    }
+   
     uint line, column;
     QString oldNodeName = "";
     Node *node;
@@ -2254,7 +2255,7 @@ void Document::convertCase()
     kapp->eventLoop()->processEvents( QEventLoop::ExcludeUserInput | QEventLoop::ExcludeSocketNotifiers);
     KProgress *pBar = progressDlg.progressBar();
     pBar->setValue(0);
-    pBar->setTotalSteps(parser->nodeNum);
+    pBar->setTotalSteps(nodeNum);
     pBar->setTextEnabled(true);
     if (w.lowerTag->isChecked())
         tagCase = 1;
