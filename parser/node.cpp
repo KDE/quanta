@@ -76,7 +76,6 @@ Node::~Node()
   if ( groupTag ) { delete groupTag; groupTag = 0L;}
 }
 
-
 Node *Node::nextSibling()
 {
   Node *result = 0L;

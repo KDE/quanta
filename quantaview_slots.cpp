@@ -669,6 +669,7 @@ void QuantaView::slotUndo ()
     bool updateClosing = qConfig.updateClosingTags;
     qConfig.updateClosingTags = false;
     dynamic_cast<KTextEditor::UndoInterface*>(write()->doc())->undo();
+    //write()->docUndoRedo.undo();
     qConfig.updateClosingTags = updateClosing;
   }
 }

@@ -23,6 +23,7 @@
 #include <qstrlist.h>
 #include <qdatetime.h>
 #include <qfile.h>
+#include <qvaluelist.h>
 
 //standard library includes
 #include <stdio.h>
@@ -1212,8 +1213,24 @@ Node *Parser::rebuild(Document *w)
 {
  QTime t;
  t.start();
+ NodeModifsSet modifs;
+ NodeModif modif;
+ Node *returnNode, *nn;
+ QValueList<int> loc;
+
  if (w != write || !m_node)
  {
+   //going to return
+   if(baseNode)
+   {
+     modif.type = undoRedo::NodeTreeRemoved;
+     modif.node = baseNode;
+     modifs.append(modif);
+   }
+   modif.type = undoRedo::NodeTreeAdded;
+   modif.node = 0L;
+   modifs.append(modif);
+   w->docUndoRedo.addNewModifsSet(modifs);
    return parse(w);
  } else
  {
@@ -1302,7 +1319,19 @@ Node *Parser::rebuild(Document *w)
    } else
    {
 //     node = m_node;
-     return parse(write);
+   //going to return
+   if(baseNode)
+   {
+     modif.type = undoRedo::NodeTreeRemoved;
+     modif.node = baseNode;
+     modifs.append(modif);
+   }
+   modif.type = undoRedo::NodeTreeAdded;
+   modif.node = 0L;
+   modifs.append(modif);
+   w->docUndoRedo.addNewModifsSet(modifs);
+   return parse(w);
+
    }
    if (node)
        node->tag->beginPos(bLine, bCol);
@@ -1336,7 +1365,11 @@ Node *Parser::rebuild(Document *w)
      if (next && next->closesPrevious)
       next->closesPrevious = false;
 
-     delete node;
+      modif.type = undoRedo::NodeRemoved;
+      modif.location = w->docUndoRedo.getLocation(node);
+      modif.node = node;
+      modifs.append(modif);
+     //delete node;
      node = 0L;
      if (child)
      {
@@ -1416,11 +1449,35 @@ Node *Parser::rebuild(Document *w)
    //something strange has happened, like moving text with D&D inside the editor
    if (eLine < bLine || (eLine == bLine && eCol <= bCol))
    {
-      return parse(w);
+   //going to return
+   if(baseNode)
+   {
+     modif.type = undoRedo::NodeTreeRemoved;
+     modif.node = baseNode;
+     modifs.append(modif);
+   }
+   modif.type = undoRedo::NodeTreeAdded;
+   modif.node = 0L;
+   modifs.append(modif);
+   w->docUndoRedo.addNewModifsSet(modifs);
+   return parse(w);
+
    }
    firstNode->child = 0L;
    Node *lastInserted = 0L;
    node = parseArea(bLine, bCol, eLine, eCol, &lastInserted, firstNode);
+
+   Node *swapNode = firstNode;
+   while(swapNode)
+   {
+      modif.type = undoRedo::NodeAndChildsAdded;
+      modif.location = w->docUndoRedo.getLocation(swapNode);
+      modif.node = 0L;
+      modifs.append(modif);
+      //kdDebug(24000)<< "Node created: " << swapNode->tag->name << endl;
+      if(swapNode == lastInserted) break;
+      swapNode = swapNode->next;
+   }
 
    //another stange case: the parsed area contains a special area without end
    if (!node)
@@ -1434,7 +1491,18 @@ Node *Parser::rebuild(Document *w)
       }
      delete lastNode;
      lastNode = 0L;
-     return parse(w);
+   //going to return
+   if(baseNode)
+   {
+     modif.type = undoRedo::NodeTreeRemoved;
+     modif.node = baseNode;
+     modifs.append(modif);
+   }
+   modif.type = undoRedo::NodeTreeAdded;
+   modif.node = 0L;
+   modifs.append(modif);
+   w->docUndoRedo.addNewModifsSet(modifs);
+   return parse(w);
    }
 
    bool goUp;
@@ -1550,6 +1618,7 @@ Node *Parser::rebuild(Document *w)
 
     }
    }
+   w->docUndoRedo.addNewModifsSet(modifs);
  }
   kdDebug(24000) << "Rebuild: " << t.elapsed() << " ms \n";
 //  t.restart();

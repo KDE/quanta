@@ -1239,6 +1239,8 @@ void QuantaApp::slotForceReparse()
 /** reparse current document and initialize node. */
 void QuantaApp::reparse(bool force)
 {
+  //temp
+//  if (!parser->activated()) return;
   if (m_view->writeExists())
   {
     Document *w = m_view->write();

@@ -58,7 +58,7 @@
 Document::Document(const KURL& p_baseURL, KTextEditor::Document *doc,
                    Project *project, QuantaPluginInterface *a_pIf,
                    QWidget *parent, const char *name, WFlags f )
-  : QWidget(parent, name, f)
+  : QWidget(parent, name, f), docUndoRedo(this)
 {
   m_dirty   = false;
   busy    = false;

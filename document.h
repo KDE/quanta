@@ -34,6 +34,7 @@
 #include <ktexteditor/selectioninterface.h>
 #include <ktexteditor/codecompletioninterface.h>
 
+#include "undoredo.h"
 #include "parser/qtag.h"
 
 /**
@@ -148,6 +149,10 @@ work correctly. */
   /** Paste the contents of clipboard into the document */
   void paste();
 
+  /** disable/enable the parser*/
+ void activateParser(bool activation) {reparseEnabled = activation;}
+ bool parserActivated() {return reparseEnabled;}
+
   bool busy;
   KURL baseURL;
 
@@ -161,6 +166,8 @@ work correctly. */
   /** Hold the list of user tags (real or not, like functions) that are in the document*/
   QTagList userTagList;
   Kate::View *kate_view;
+  /** The undo/redo stack */
+  undoRedo docUndoRedo;
 
 public slots:
 
