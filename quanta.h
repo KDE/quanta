@@ -131,6 +131,9 @@ public:
   MessageOutput *getMessages() { return messageOutput; }
   QWidgetStack *widgetStackOfHtmlPart();
 
+  /** Returns the output dock widget */
+  KDockWidget *outputDockWidget() const { return bottdock; }
+
   /** Loads the initial project */
   void loadInitialProject(QString url="");
 

@@ -21,6 +21,7 @@
 #include <kparts/part.h>
 #include <klocale.h>
 #include <kstandarddirs.h>
+#include <kdockwidget.h>
 
 /* QT INCLUDES */
 #include <qwidget.h>
@@ -37,6 +38,7 @@
 #include "../quanta.h"
 #include "../quantacommon.h"
 #include "../resource.h"
+#include "../messages/messageoutput.h"
 
 QuantaKPartPlugin::QuantaKPartPlugin()
   : QuantaPlugin(), m_part(0)
@@ -70,16 +72,16 @@ bool QuantaKPartPlugin::load()
     loc += QString("/") + fileName();
   }
 
+  if(loc.isEmpty())
+  {
+    qWarning("QuantaKPartPlugin::run - null location");
+    return FALSE;
+  }
+
   QString ow = outputWindow();
   if(ow == i18n("Editor View"))
   {
     QWidgetStack *stack = quantaApp->widgetStackOfHtmlPart();
-
-    if(loc.isEmpty())
-    {
-      qWarning("QuantaKPartPlugin::run - null location");
-      return FALSE;
-    }
 
     QFileInfo partInfo(loc);
     m_part = KParts::ComponentFactory::createPartInstanceFromLibrary<KParts::ReadOnlyPart>(partInfo.baseName().latin1(), stack, 0, stack, 0, QStringList(arguments()));
@@ -90,6 +92,17 @@ bool QuantaKPartPlugin::load()
     }
 
     stack->addWidget(m_part->widget());
+  }
+  else if(ow == i18n("Output Dock"))
+  {
+    QFileInfo partInfo(loc);
+	KDockWidget *outDock = quantaApp->outputDockWidget();
+    m_part = KParts::ComponentFactory::createPartInstanceFromLibrary<KParts::ReadOnlyPart>(partInfo.baseName().latin1(), outDock, 0, outDock, 0, QStringList(arguments()));
+    if(!m_part)
+    {
+      qWarning("Failed to create KPart");
+      return FALSE;
+    }
   }
   else
   {
@@ -107,8 +120,18 @@ bool QuantaKPartPlugin::run()
   if(isLoaded())
   {
     quantaApp->guiFactory()->addClient(m_part);
-    QWidgetStack *stack = quantaApp->widgetStackOfHtmlPart();
-    stack->raiseWidget(m_part->widget());
+
+	QString ow = outputWindow();
+	if(ow == i18n("Output Dock"))
+	{
+		quantaApp->outputDockWidget()->setWidget(m_part->widget());
+	}
+	else if (i18n("Editor View"))
+	{
+    	QWidgetStack *stack = quantaApp->widgetStackOfHtmlPart();
+    	stack->raiseWidget(m_part->widget());
+	}
+
     m_part->widget()->show();
 
     setRunning(TRUE);
@@ -126,12 +149,21 @@ bool QuantaKPartPlugin::unload()
     return FALSE;
 
   quantaApp->guiFactory()->removeClient(m_part);
-  QWidgetStack *stack = quantaApp->widgetStackOfHtmlPart();
-  stack->removeWidget(m_part->widget());
+
+  QString ow = outputWindow();
+  if(ow == i18n("Output Dock"))
+  {
+    quantaApp->outputDockWidget()->setWidget(quantaApp->getMessages());
+  }
+  else if(ow == i18n("Editor View"))
+  {
+	QWidgetStack *stack = quantaApp->widgetStackOfHtmlPart();
+  	stack->removeWidget(m_part->widget());
+    stack->raiseWidget(0);
+  }
+
   delete m_part;
   m_part = 0;
-
-  stack->raiseWidget(0);
 
   setRunning(FALSE);
 
