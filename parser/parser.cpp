@@ -78,6 +78,11 @@ Parser::Parser()
   list->append("dt");
   list->append("dd");
   tagsStop.insert("dd",list);
+  
+  list = new QStringList();
+  list->append("option");
+  tagsStop.insert("option",list);
+  
 }
 
 Parser::~Parser()
