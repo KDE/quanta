@@ -287,7 +287,8 @@ bool QuantaCommon::checkMimeGroup(const KURL& url, const QString& group)
  KMimeType::List list = KMimeType::allMimeTypes();
  KMimeType::List::iterator it;
  bool status = false;
- QString mimetype = KMimeType::findByURL(url)->name();
+ KMimeType::Ptr mime = KMimeType::findByURL(url);
+ QString mimetype = mime->name();
  mimetype = mimetype.section('/',-1);
  for ( it = list.begin(); it != list.end(); ++it )
  {
@@ -298,18 +299,25 @@ bool QuantaCommon::checkMimeGroup(const KURL& url, const QString& group)
     }
  }
 
- if (!status && group == "text" && url.isLocalFile())
+ if (!status && group == "text")
  {
+   if (url.isLocalFile())
+   {
 #if KDE_VERSION < KDE_MAKE_VERSION(3,1,90)
-   Format f = findFormatByFileContent(url.path());
-   if (f.text && f.compression == Format::NoCompression)
-       status = true;
+      Format f = findFormatByFileContent(url.path());
+      if (f.text && f.compression == Format::NoCompression)
+          status = true;
 #else
-   KMimeType::Format f = KMimeType::findFormatByFileContent(url.path());
-   if (f.text && f.compression == KMimeType::Format::NoCompression)
-       status = true;
-
+      KMimeType::Format f = KMimeType::findFormatByFileContent(url.path());
+      if (f.text && f.compression == KMimeType::Format::NoCompression)
+          status = true;
 #endif
+   } else
+   {
+     QVariant v = mime->property("X-KDE-text");
+     if (v.isValid())
+         status = v.toBool();
+   }
  }
  if (!status && mimetype == "x-zerosize")
      status = true;

@@ -23,6 +23,7 @@
 
 // KDE includes
 #include <kiconloader.h>
+#include <kmimetype.h>
 
 // app includes
 #include "filestreefile.h"
@@ -55,20 +56,7 @@ FilesTreeFile::~FilesTreeFile(){
 /** set icon of item  */
 void FilesTreeFile::setIcon(const KURL& a_url)
 {
-//TODO
-  if (QuantaCommon::checkMimeType(a_url,"html")) setPixmap( 0, SmallIcon("www"));
-  else
-    if (QuantaCommon::checkMimeType(a_url,"x-java") ) setPixmap( 0, SmallIcon("info"));
-    else
-      if (QuantaCommon::checkMimeGroup(a_url,"text")) setPixmap( 0, SmallIcon("txt"));
-      else  if (QuantaCommon::checkMimeGroup(a_url,"image")) setPixmap( 0, SmallIcon("image") );
-}
-
-/** set icon of item  */
-void FilesTreeFile::setDirIcon()
-{
-  setPixmap( 0, SmallIcon("folder") );
-  isDir = true;
+ setPixmap(0, KMimeType::pixmapForURL(a_url, 0, KIcon::Small));
 }
 
 /** No descriptions */

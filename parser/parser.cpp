@@ -1245,6 +1245,8 @@ DTDStruct * Parser::currentDTD(int line, int col)
 contain the same area, it return the "deepest" node. */
 Node *Parser::nodeAt(int line, int col, bool findDeepest)
 {
+  if (!write)
+      return 0L;
   Node *node = m_node;
   int bl, bc, el, ec;
   int result;

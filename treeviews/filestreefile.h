@@ -29,13 +29,12 @@ class FilesTreeFolder;
 
 class FilesTreeFile : public KListViewItem
 {
-public: 
+public:
   FilesTreeFile( FilesTreeFolder *parent, QString name, const KURL& p_url);
   FilesTreeFile( QListView *parent, QString name, const KURL& p_url);
   ~FilesTreeFile();
-  
+
   /** set icon for the item */
-  void setDirIcon();
   void setIcon(const KURL& a_url);
   /** No descriptions */
   virtual void sortChildItems(int column, bool ascending);

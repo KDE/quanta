@@ -22,6 +22,7 @@
 #include <qdict.h>
 #include <qstringlist.h>
 #include <qmap.h>
+#include <qguardedptr.h>
 
 #include "node.h"
 #include "tag.h"
@@ -102,7 +103,7 @@ private:
   Node* m_node;       //the internal Node pointer
   QString m_dtdName;  //the DTD name of write
   DTDStruct *m_dtd; //the dtd used for main parsing
-  Document *write;    //pointer to the parsed document
+  QGuardedPtr<Document> write;    //pointer to the parsed document
   int maxLines; // how many lines are in the current document
   int oldMaxLines;
   int treeSize;
