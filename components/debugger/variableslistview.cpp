@@ -23,11 +23,24 @@
 #include "variableslistview.h"
 #include "debuggervariable.h"
 
+
+namespace VariablesListViewColumns
+{
+  enum Columns 
+  {
+    Name = 0,
+    Value,
+    Type
+    
+  };
+}
+
 VariablesListView::VariablesListView(QWidget *parent, const char *name)
  : KListView(parent, name)
 {
   addColumn(i18n("Name"));
   addColumn(i18n("Value"));
+  addColumn(i18n("Type"));
   setRootIsDecorated(true);
 }
 
@@ -80,22 +93,13 @@ void VariablesListView::addVariable(DebuggerVariable* variable)
   m_variablesList.append(variable);
 
   KListViewItem * item = new KListViewItem(this);
-  item->setText(0, variable->name());
+  item->setText(VariablesListViewColumns::Name, variable->name());
+  item->setText(VariablesListViewColumns::Type, variable->typeName());
   variable->setItem(item);
-  switch(variable->type())
-  {
-    case DebuggerVariableTypes::Array:
-    case DebuggerVariableTypes::Object:
-      addChild(item, variable);
-      break;
-    case DebuggerVariableTypes::Reference:
-    case DebuggerVariableTypes::Resource:
-    case DebuggerVariableTypes::Scalar:
-      item->setText(1, variable->value());
-      break;
-    default:
-      item->setText(0, i18n("Unhandled variable type"));          
-  }
+  if(variable->isScalar())
+    item->setText(VariablesListViewColumns::Value, variable->value());
+  else  
+    addChild(item, variable);
   
   insertItem(item);  
   
@@ -118,22 +122,13 @@ void VariablesListView::setVariables(const QPtrList<DebuggerVariable>& vars)
   for( v = m_variablesList.first(); v; v = m_variablesList.next())
   {    
     item = new KListViewItem(this);
-    item->setText(0, v->name());
+    item->setText(VariablesListViewColumns::Name, v->name());
+    item->setText(VariablesListViewColumns::Type, v->typeName());
     v->setItem(item);
-    switch(v->type())
-    {
-      case DebuggerVariableTypes::Array:
-      case DebuggerVariableTypes::Object:
-        addChild(item, v);
-        break;
-      case DebuggerVariableTypes::Reference:
-      case DebuggerVariableTypes::Resource:
-      case DebuggerVariableTypes::Scalar:
-        item->setText(1, v->value());
-        break;
-      default:
-        item->setText(0, i18n("Unhandled variable type"));          
-    }
+    if(v->isScalar())
+      item->setText(VariablesListViewColumns::Value, v->value());
+    else  
+      addChild(item, v);
     
     insertItem(item);
   }
@@ -149,22 +144,13 @@ void VariablesListView::addChild(KListViewItem* parent, DebuggerVariable* var)
   {
     item = new KListViewItem(parent);
     child->setItem(item);
-    item->setText(0, child->name());
-    
-    switch(child->type())
-    {
-      case DebuggerVariableTypes::Array:
-      case DebuggerVariableTypes::Object:
-        addChild(item, child);
-        break;
-      case DebuggerVariableTypes::Reference:
-      case DebuggerVariableTypes::Resource:
-      case DebuggerVariableTypes::Scalar:
-        item->setText(1, child->value());
-        break;
-      default:
-        item->setText(0, i18n("Unhandled variable type"));          
-    }    
+    item->setText(VariablesListViewColumns::Name, child->name());
+    item->setText(VariablesListViewColumns::Type, child->typeName());
+
+    if(child->isScalar())
+      item->setText(VariablesListViewColumns::Value, child->value());
+    else  
+      addChild(item, child);  
   }
 }
 
@@ -217,7 +203,18 @@ DebuggerVariable* VariablesListView::parsePHPVariables(QString &str) {
     */
     data = str.left(str.find(';'));
     str.remove(0, str.find(';') + 1);
-    debuggervar = new DebuggerVariable(key, data, DebuggerVariableTypes::Scalar);
+    debuggervar = new DebuggerVariable(key, data, DebuggerVariableTypes::Integer);
+    
+  } 
+  else if(type == "b")
+  {
+    /* Example:
+      s:8:"$boolvar";b:1;
+    */
+    data = str.left(str.find(';'));
+    data = (data == "0" ? i18n("False"): i18n("True"));
+    str.remove(0, str.find(';') + 1);
+    debuggervar = new DebuggerVariable(key, data, DebuggerVariableTypes::Boolean);
     
   } 
   else if(type == "s") 
@@ -234,7 +231,7 @@ DebuggerVariable* VariablesListView::parsePHPVariables(QString &str) {
     data = str.left(length + 1);
     data.remove(0, 1);        // remove starting quote
     str.remove(0, length + 3);  
-    debuggervar = new DebuggerVariable(key, data, DebuggerVariableTypes::Scalar);
+    debuggervar = new DebuggerVariable(key, data, DebuggerVariableTypes::String, length);
   }
   else if(type == "a" || type == "O")
   {
@@ -266,17 +263,21 @@ DebuggerVariable* VariablesListView::parsePHPVariables(QString &str) {
     */
     data = str.left(str.find(';'));
     str.remove(0, str.find(';') + 1);
-    debuggervar = new DebuggerVariable(key, data, DebuggerVariableTypes::Scalar);
+    debuggervar = new DebuggerVariable(key, data, DebuggerVariableTypes::Float);
 
   } 
   else if(type == "-")
   {
-    debuggervar = new DebuggerVariable(key,  i18n("<Undefined>"), DebuggerVariableTypes::Scalar);
+    debuggervar = new DebuggerVariable(key,  i18n("<Undefined>"), DebuggerVariableTypes::Undefined);
+  } 
+  else if(type == "!")
+  {
+    debuggervar = new DebuggerVariable(key,  i18n("<Error>"), DebuggerVariableTypes::Error);
   } 
   else
   {
     kdDebug(24000) << "VariablesListView::parsePHPVariables: Unknown variable type " << type << endl;
-    debuggervar = new DebuggerVariable(key, i18n("<Unimplemented type>"), DebuggerVariableTypes::Scalar);
+    debuggervar = new DebuggerVariable(key, i18n("<Unimplemented type>"), DebuggerVariableTypes::Error);
   }
  
   return debuggervar;

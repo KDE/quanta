@@ -258,8 +258,6 @@ QString QuantaDebuggerGubed::getName() {
 void QuantaDebuggerGubed::showWatch(QString data)
 {
   debuggerInterface()->parsePHPVariables(data);
-  //DebuggerVariable *var = debuggerInterface()->newDebuggerVariable("test", "testvalue", DebuggerVariableTypes::Scalar);
-  //debuggerInterface()->addVariable(var);
 }
 
 // Run boy, run (and show whats happening)

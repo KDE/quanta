@@ -26,11 +26,16 @@
 namespace DebuggerVariableTypes {
 
   enum VarType {
-    Scalar,
     Object,
     Resource,
     Reference,
-    Array 
+    Array,
+    String,
+    Integer,
+    Float,
+    Boolean,
+    Error,
+    Undefined
   };
 }
 
@@ -42,6 +47,7 @@ public:
   DebuggerVariable();
   DebuggerVariable(const QString& name);  
   DebuggerVariable(const QString& name, const QString& value, int type);
+  DebuggerVariable(const QString& name, const QString& value, int type, int size);
   DebuggerVariable(const QString& name, const ValueList_t& values, int type);
   virtual ~DebuggerVariable();
   
@@ -56,6 +62,11 @@ public:
   
   virtual void setType(int type);
   virtual int type();
+  virtual const QString typeName();
+  virtual bool isScalar();
+  
+  virtual void setSize(long size);
+  virtual long size();
   
   virtual void setReference(bool ref);
   virtual bool isReference();
@@ -71,6 +82,7 @@ private:
   
   QString m_name;    
   QString m_value;
+  long    m_size;
   int     m_type;  
   bool    m_isReference;
   long    m_touched;
