@@ -309,44 +309,43 @@ QuantaApp::~QuantaApp()
 
 void QuantaApp::setTitle(const QString& title)
 {
-  setCaption( "  [  "+title+"  ]  " );
+  setCaption("  [  "+title+"  ]  ");
 }
 
 void QuantaApp::slotFileNew()
 {
-    m_doc->openDocument( KURL() );
+  m_doc->openDocument(KURL());
 }
 
 void QuantaApp::slotFileOpen()
 {
- QString myEncoding = defaultEncoding();
- QString startDir;
- Document *w = ViewManager::ref()->activeDocument();
- if (w && !w->isUntitled())
-     startDir = w->url().url();
- else
-     startDir = Project::ref()->projectBaseURL().url();
+  QString myEncoding = defaultEncoding();
+  QString startDir;
+  Document *w = ViewManager::ref()->activeDocument();
+  if (w && !w->isUntitled())
+      startDir = w->url().url();
+  else
+      startDir = Project::ref()->projectBaseURL().url();
 
- KEncodingFileDialog::Result data;
- data = KEncodingFileDialog::getOpenURLsAndEncoding(myEncoding, startDir,
-     "all/allfiles text/html text/xml application/x-php text/plain", this, i18n("Open File"));
- slotFileOpen(data.URLs, data.encoding);
+  KEncodingFileDialog::Result data;
+  data = KEncodingFileDialog::getOpenURLsAndEncoding(myEncoding, startDir,
+      "all/allfiles text/html text/xml application/x-php text/plain", this, i18n("Open File"));
+  slotFileOpen(data.URLs, data.encoding);
 }
 
 void QuantaApp::slotFileOpen( const KURL::List &urls, const QString& encoding )
 {
- m_doc->blockSignals(true);
- for (KURL::List::ConstIterator i=urls.begin(); i != urls.end(); ++i)
- {
-   if (QuantaCommon::checkMimeGroup(*i, "text") ||
-       QuantaCommon::denyBinaryInsert() == KMessageBox::Yes)
-     slotFileOpen( *i , encoding);
- }
- m_doc->blockSignals(false);
- Document *w = ViewManager::ref()->activeDocument();
- if (w)
-   setCaption(w->url().prettyURL() );
- //slotUpdateStatus(w);//FIXME:
+  m_doc->blocksignals(true);
+  for (kurl::list::constiterator i = urls.begin(); i != urls.end(); ++i)
+  {
+    if (quantacommon::checkmimegroup(*i, "text") ||
+        quantacommon::denybinaryinsert() == kmessagebox::yes)
+      slotfileopen(*i , encoding);
+  }
+  m_doc->blocksignals(false);
+  document *w = viewmanager::ref()->activedocument();
+  if (w)
+    setcaption(w->url().prettyurl() );
 }
 
 void QuantaApp::slotFileOpen(const KURL &url)
@@ -354,19 +353,17 @@ void QuantaApp::slotFileOpen(const KURL &url)
   slotFileOpen(url, defaultEncoding());
 }
 
-void QuantaApp::slotFileOpen( const KURL &url, const QString& encoding )
+void QuantaApp::slotFileOpen(const KURL &url, const QString& encoding)
 {
-  m_doc->openDocument( url, encoding );
-
-//  slotUpdateStatus(m_view->write()); //FIXME:
+  m_doc->openDocument(url, encoding);
 }
 
 void QuantaApp::slotFileOpenRecent(const KURL &url)
 {
   if (!QExtFileInfo::exists(url))
   {
-    if (KMessageBox::questionYesNo( this,
-        i18n("The file %1 does not exist.\n Do you want to remove it from the list?").arg(url.prettyURL(0, KURL::StripFileProtocol)) )
+    if (KMessageBox::questionYesNo(this,
+        i18n("The file %1 does not exist.\n Do you want to remove it from the list?").arg(url.prettyURL(0, KURL::StripFileProtocol)))
         == KMessageBox::Yes)
     {
       fileRecent->removeURL(url);
@@ -388,12 +385,12 @@ void QuantaApp::slotFileSave()
   if (w)
   {
     w->checkDirtyStatus();
-    if ( w->isUntitled() )
+    if (w->isUntitled())
       slotFileSaveAs();
     else
     {
       if(ViewManager::ref()->activeView() &&
-            ViewManager::ref()->activeView()->hadLastFocus() == QuantaView::VPLFocus)
+         ViewManager::ref()->activeView()->hadLastFocus() == QuantaView::VPLFocus)
         w->docUndoRedo->reloadQuantaEditor();
       view->saveDocument(w->url());
       w->docUndoRedo->fileSaved();
@@ -412,8 +409,8 @@ bool QuantaApp::slotFileSaveAs()
     w->checkDirtyStatus();
     if (!w->isUntitled() && oldURL.isLocalFile())
     {
-        fileWatcher->removeFile(oldURL.path());
-        kdDebug(24000) << "removeFile[slotFileSaveAs]: " << oldURL.path() << endl;
+      fileWatcher->removeFile(oldURL.path());
+      kdDebug(24000) << "removeFile[slotFileSaveAs]: " << oldURL.path() << endl;
     }
     QString myEncoding =  dynamic_cast<KTextEditor::EncodingInterface*>(w->doc())->encoding();
 
@@ -421,7 +418,7 @@ bool QuantaApp::slotFileSaveAs()
 
     KURL saveAsUrl;
 
-    if(fTab->isVisible())
+    if (fTab->isVisible())
     {
       saveAsUrl = fTab->currentURL();
       if (fTab->currentKFileTreeViewItem() && fTab->currentKFileTreeViewItem()->isDir())
@@ -430,7 +427,7 @@ bool QuantaApp::slotFileSaveAs()
       }
       gotPath = true;
     } else
-    if(ProjectTreeView::ref()->isVisible())
+    if (ProjectTreeView::ref()->isVisible())
     {
       saveAsUrl = ProjectTreeView::ref()->currentURL();
       if (ProjectTreeView::ref()->currentKFileTreeViewItem() && ProjectTreeView::ref()->currentKFileTreeViewItem()->isDir())
@@ -445,7 +442,7 @@ bool QuantaApp::slotFileSaveAs()
       {
         saveAsUrl = Project::ref()->projectBaseURL();
         saveAsUrl.adjustPath(+1);
-        saveAsUrl.setFileName( oldURL.fileName() );
+        saveAsUrl.setFileName(oldURL.fileName());
       } else
         saveAsUrl = oldURL;
     }
@@ -462,8 +459,8 @@ bool QuantaApp::slotFileSaveAs()
     if (QuantaCommon::checkOverwrite(saveUrl) && view->saveDocument(saveUrl))
     {
       oldURL = saveUrl;
-      if (  Project::ref()->hasProject() && !Project::ref()->contains(saveUrl)  &&
-           KMessageBox::Yes == KMessageBox::questionYesNo(0,i18n("<qt>Do you want to add the<br><b>%1</b><br>file to project?</qt>").arg(saveUrl.prettyURL(0, KURL::StripFileProtocol)))
+      if (Project::ref()->hasProject() && !Project::ref()->contains(saveUrl) &&
+          KMessageBox::Yes == KMessageBox::questionYesNo(0,i18n("<qt>Do you want to add the<br><b>%1</b><br>file to project?</qt>").arg(saveUrl.prettyURL(0, KURL::StripFileProtocol)))
         )
       {
         if (saveUrl.isLocalFile())
@@ -490,7 +487,7 @@ bool QuantaApp::slotFileSaveAs()
   return result;
 }
 
-void QuantaApp::saveAsTemplate(bool projectTemplate,bool selectionOnly)
+void QuantaApp::saveAsTemplate(bool projectTemplate, bool selectionOnly)
 {
   QuantaView *view = ViewManager::ref()->activeView();
   Document *w = view->document();
@@ -500,7 +497,7 @@ void QuantaApp::saveAsTemplate(bool projectTemplate,bool selectionOnly)
   int query;
   KURL projectTemplateURL;
   w->checkDirtyStatus();
-  QString localTemplateDir = locateLocal("data",resourceDir + "templates/");
+  QString localTemplateDir = locateLocal("data", resourceDir + "templates/");
 
   do {
     query = KMessageBox::Yes;
@@ -531,7 +528,7 @@ void QuantaApp::saveAsTemplate(bool projectTemplate,bool selectionOnly)
     }
   } while (query != KMessageBox::Yes);
 
-  if( query == KMessageBox::Cancel ) return;
+  if (query == KMessageBox::Cancel) return;
 
   KTempFile *tempFile = new KTempFile(tmpDir);
   tempFile->setAutoDelete(true);
@@ -585,10 +582,6 @@ void QuantaApp::slotFileSaveSelectionAsProjectTemplate()
 void QuantaApp::slotFileSaveAll()
 {
   ViewManager::ref()->saveAll();
-//FIXME:
-  /*
-  if (m_view->writeExists())
-    slotUpdateStatus(m_view->write()); */
 }
 
 void QuantaApp::slotFileReload(QuantaView *view)
@@ -613,7 +606,7 @@ void QuantaApp::slotFileReloadAll()
 
 void QuantaApp::slotFileClose()
 {
-   ViewManager::ref()->removeActiveView();
+  ViewManager::ref()->removeActiveView();
 }
 
 void QuantaApp::slotFileClose(const KURL &url)
@@ -628,7 +621,6 @@ void QuantaApp::slotFileClose(const KURL &url)
 
 void QuantaApp::slotFileCloseAll()
 {
-
   ViewManager::ref()->closeAll();
   WHTMLPart *part = m_htmlPart;
   part->closeURL();
@@ -715,9 +707,9 @@ void QuantaApp::slotRepaintPreview()
       noFramesText.replace(QRegExp("</?noframes[^>]*>", false), "");
       //kdDebug(24000) << "NOFRAMES: " << noFramesText << endl;
       if (w->isUntitled())
-        m_htmlPart->begin( Project::ref()->projectBaseURL(), xOffset, yOffset );
+        m_htmlPart->begin(Project::ref()->projectBaseURL(), xOffset, yOffset);
       else
-        m_htmlPart->begin( w->url(), xOffset, yOffset );
+        m_htmlPart->begin(w->url(), xOffset, yOffset);
       m_htmlPart->write(noFramesText);
       m_htmlPart->end();
     }
@@ -730,10 +722,10 @@ void QuantaApp::slotRepaintPreview()
   //if it's  not untitled, than it was loaded from somewhere. In this case show it from that place
       url = w->url();
 
-      if ( w->isModified() )
+      if (w->isModified())
       {
-          w->saveIt(); //saves the file so the preview will show the current content
-          m_previewedDocument = w;
+        w->saveIt(); //saves the file so the preview will show the current content
+        m_previewedDocument = w;
       }
       url = Project::ref()->urlWithPrefix(url);
 
@@ -742,24 +734,23 @@ void QuantaApp::slotRepaintPreview()
     } else  //the document is Untitled, preview the text from it
     {
       QString text = w->editIf->text();
-      if ( text.isEmpty() )
+      if (text.isEmpty())
       {
-        text = i18n( "<center><h3>The current document is empty...</h3></center>" );
+        text = i18n("<center><h3>The current document is empty...</h3></center>");
       }
       m_htmlPart->closeURL();
-      m_htmlPart->begin( Project::ref()->projectBaseURL(), xOffset, yOffset );
-      m_htmlPart->write( text );
+      m_htmlPart->begin(Project::ref()->projectBaseURL(), xOffset, yOffset);
+      m_htmlPart->write(text);
       m_htmlPart->end();
     }
    }
-// part->end();
- m_htmlPart->show();
+  m_htmlPart->show();
 }
 
 void QuantaApp::slotOpenFileInPreview(const KURL& a_url)
 {
   WHTMLPart *part = m_htmlPart;
-  if ( !part  )
+  if (!part)
      return;
   slotShowPreviewWidget(true);
   part->openURL(a_url);
@@ -777,8 +768,8 @@ void QuantaApp::slotImageOpen(const KURL& url)
   part->closeURL();
   KURL docURL = url;
   docURL.setFileName("imagepreview.html");
-  part->begin( docURL );
-  part->write( text );
+  part->begin(docURL);
+  part->write(text);
   part->end();
 
   part->show();
@@ -800,7 +791,7 @@ void QuantaApp::slotInsertTag(const KURL& url, DirInfo dirInfo)
       baseURL = w->url();
       baseURL.setFileName("");
     }
-    KURL relURL = QExtFileInfo::toRelative( url, baseURL);
+    KURL relURL = QExtFileInfo::toRelative(url, baseURL);
     QString urlStr = relURL.url();
     if (relURL.protocol() == baseURL.protocol())
         urlStr = relURL.path();
@@ -814,7 +805,7 @@ void QuantaApp::slotInsertTag(const KURL& url, DirInfo dirInfo)
       if (url.isLocalFile())
       {
         QImage img(url.path());
-        if ( !img.isNull() )
+        if (!img.isNull())
         {
           QString width,height;
           width.setNum(img.width());
@@ -899,71 +890,71 @@ void QuantaApp::slotOptionsConfigureKeys()
      if (toolbarGuiClients.contains(*it) <= 0) //no need to insert the collections of the toolbars as they are present in the main actionCollection
         dlg.insert((*it)->actionCollection());
   }
-  if ( dlg.configure() == KKeyDialog::Accepted )
+  if (dlg.configure() == KKeyDialog::Accepted)
   {
-  // this is needed for when we have multiple embedded kateparts and change one of them.
+    // this is needed for when we have multiple embedded kateparts and change one of them.
     // it also needs to be done to their views, as they too have actioncollections to update
-      if( const QPtrList<KParts::Part> * partlist = m_partManager->parts() )
+    if (const QPtrList<KParts::Part> * partlist = m_partManager->parts())
+    {
+      QPtrListIterator<KParts::Part> it(*partlist);
+      while (KParts::Part* part = it.current())
       {
-          QPtrListIterator<KParts::Part> it( *partlist );
-          while ( KParts::Part* part = it.current() )
-          {
-              if ( KTextEditor::Document * doc = dynamic_cast<KTextEditor::Document*>( part ) )
-              {
-                  KActionPtrList actionList = doc->actionCollection()->actions();
-                  KActionPtrList::Iterator actionIt;
-                  if (!w || w->doc() != doc)
-                  {
-                    for ( actionIt = actionList.begin(); actionIt != actionList.end(); ++actionIt )
-                    {
-                        (*actionIt)->setShortcut((*actionIt)->shortcutDefault());
-                    }
-                  }
-                  doc->reloadXML();
-
-                  QPtrList<KTextEditor::View> const & list = doc->views();
-                  QPtrListIterator<KTextEditor::View> itt( list );
-                  while( KTextEditor::View * view = itt.current() )
-                  {
-                     if (!w || w->view() != view)
-                     {
-                        actionList = view->actionCollection()->actions();
-                        for ( actionIt = actionList.begin(); actionIt != actionList.end(); ++actionIt )
-                        {
-                            (*actionIt)->setShortcut((*actionIt)->shortcutDefault());
-                        }
-                     }
-                     view->reloadXML();
-                     ++itt;
-                  }
-              }
-              ++it;
-          }
-      }
-
-      QDomDocument doc;
-      doc.setContent(KXMLGUIFactory::readConfigFile(xmlFile(), instance()));
-      QDomNodeList nodeList = doc.elementsByTagName("ActionProperties");
-      QDomNode node = nodeList.item(0).firstChild();
-      while (!node.isNull())
-      {
-        if (node.nodeName() == "Action")
+        if (KTextEditor::Document *doc = dynamic_cast<KTextEditor::Document*>(part))
         {
-          TagAction *action = dynamic_cast<TagAction*>(actionCollection()->action(node.toElement().attribute("name")));
-          if (action)
+          KActionPtrList actionList = doc->actionCollection()->actions();
+          KActionPtrList::Iterator actionIt;
+          if (!w || w->doc() != doc)
           {
-            action->setModified(true);
-            QDomElement el = action->data();
-            el.setAttribute("shortcut", action->shortcut().toString());
-            el = node.toElement();
-            node = node.nextSibling();
-            el.parentNode().removeChild(el);
-          } else
+            for ( actionIt = actionList.begin(); actionIt != actionList.end(); ++actionIt)
+            {
+                (*actionIt)->setShortcut((*actionIt)->shortcutDefault());
+            }
+          }
+          doc->reloadXML();
+
+          QPtrList<KTextEditor::View> const & list = doc->views();
+          QPtrListIterator<KTextEditor::View> itt( list );
+          while (KTextEditor::View * view = itt.current())
           {
-            node = node.nextSibling();
+            if (!w || w->view() != view)
+            {
+              actionList = view->actionCollection()->actions();
+              for (actionIt = actionList.begin(); actionIt != actionList.end(); ++actionIt)
+              {
+                  (*actionIt)->setShortcut((*actionIt)->shortcutDefault());
+              }
+            }
+            view->reloadXML();
+            ++itt;
           }
         }
+        ++it;
       }
+    }
+
+    QDomDocument doc;
+    doc.setContent(KXMLGUIFactory::readConfigFile(xmlFile(), instance()));
+    QDomNodeList nodeList = doc.elementsByTagName("ActionProperties");
+    QDomNode node = nodeList.item(0).firstChild();
+    while (!node.isNull())
+    {
+      if (node.nodeName() == "Action")
+      {
+        TagAction *action = dynamic_cast<TagAction*>(actionCollection()->action(node.toElement().attribute("name")));
+        if (action)
+        {
+          action->setModified(true);
+          QDomElement el = action->data();
+          el.setAttribute("shortcut", action->shortcut().toString());
+          el = node.toElement();
+          node = node.nextSibling();
+          el.parentNode().removeChild(el);
+        } else
+        {
+          node = node.nextSibling();
+        }
+      }
+    }
   }
 }
 
@@ -1023,7 +1014,7 @@ void QuantaApp::slotConfigureToolbars(const QString& defaultToolbar)
    }
  }
 
- connect( dlg, SIGNAL( newToolbarConfig() ), SLOT( slotNewToolbarConfig() ) );
+ connect(dlg, SIGNAL(newToolbarConfig()), SLOT(slotNewToolbarConfig()));
  dlg->exec();
  delete dlg;
  QPopupMenu *menu = 0L;
@@ -1073,20 +1064,20 @@ void QuantaApp::slotOptionsConfigureToolbars()
 
 void QuantaApp::slotNewToolbarConfig()
 {
- applyMainWindowSettings(KGlobal::config(), autoSaveGroup());
- ToolbarTabWidget::ref()->setCurrentPage(currentPageIndex);
+  applyMainWindowSettings(KGlobal::config(), autoSaveGroup());
+  ToolbarTabWidget::ref()->setCurrentPage(currentPageIndex);
 }
 
 void QuantaApp::slotOptionsConfigureActions()
 {
-  ActionConfigDialog dlg( this, "actions_config_dlg", true);
+  ActionConfigDialog dlg(this, "actions_config_dlg", true);
   dlg.exec();
 }
 
 void QuantaApp::slotPreviewOptions()
 {
-    KMessageBox::information(this, i18n("Changes made in the preview configuration dialog are global and have effect on every application using the KHTML part to display web pages, including Konqueror."), i18n("Warning"), "configure_preview_warning");
-    KApplication::startServiceByDesktopName("quanta_preview_config");
+  KMessageBox::information(this, i18n("Changes made in the preview configuration dialog are global and have effect on every application using the KHTML part to display web pages, including Konqueror."), i18n("Warning"), "configure_preview_warning");
+  KApplication::startServiceByDesktopName("quanta_preview_config");
 }
 
 void QuantaApp::slotOptions()
@@ -1097,7 +1088,7 @@ void QuantaApp::slotOptions()
               KDialogBase::Ok, this, "tabdialog");
 
   // Tag Style options
-  QVBox *page=kd->addVBoxPage(i18n("Tag Style"), QString::null, BarIcon("kwrite", KIcon::SizeMedium ) );
+  QVBox *page=kd->addVBoxPage(i18n("Tag Style"), QString::null, BarIcon("kwrite", KIcon::SizeMedium));
   StyleOptionsS *styleOptionsS = new StyleOptionsS( (QWidget *)page);
 
   styleOptionsS->tagCase->setCurrentItem( qConfig.tagCase);
