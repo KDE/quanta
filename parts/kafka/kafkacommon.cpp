@@ -302,7 +302,7 @@ void kafkaCommon::applyIndentation(Node *node, int nbOfSpaces, int nbOfTabs, Nod
     while(parent)
     {
         if(getNodeDisplay(parent, true) == kafkaCommon::blockDisplay)
-            nonInlineDepth2++;
+            ++nonInlineDepth2;
         parent = parent->parent;
     }
 
@@ -312,15 +312,15 @@ void kafkaCommon::applyIndentation(Node *node, int nbOfSpaces, int nbOfTabs, Nod
     {
         //prepare the indentation
         indentation1 = "\n";
-        for(i = 1; i <= nbOfSpaces * nonInlineDepth; i++)
+        for(i = 1; i <= nbOfSpaces * nonInlineDepth; ++i)
             indentation1 += " ";
-        for(i = 1; i <= nbOfTabs * nonInlineDepth; i++)
+        for(i = 1; i <= nbOfTabs * nonInlineDepth; ++i)
             indentation1 += "\t";
 
         indentation2 = "\n";
-        for(i = 1; i <= nbOfSpaces * nonInlineDepth2; i++)
+        for(i = 1; i <= nbOfSpaces * nonInlineDepth2; ++i)
             indentation2 += " ";
-        for(i = 1; i <= nbOfTabs * nonInlineDepth2; i++)
+        for(i = 1; i <= nbOfTabs * nonInlineDepth2; ++i)
             indentation2 += "\t";
 
         //test and add indentations if necessary
@@ -342,7 +342,7 @@ void kafkaCommon::applyIndentation(Node *node, int nbOfSpaces, int nbOfTabs, Nod
             {
                 //Remove the indentation at the right of the text Node
                 text = prev->tag->tagStr();
-                for(i = 0; (unsigned)i < text.length(); i++)
+                for(i = 0; (unsigned)i < text.length(); ++i)
                 {
                     if(!text[i].isSpace())
                         break;
@@ -621,7 +621,7 @@ void kafkaCommon::fitsNodesPosition(Node* startNode, int colMovement, int lineMo
         else
             node->tag->setTagPosition(beginLine + lineMovement,
                                       beginCol, lastLine + lineMovement, lastCol);
-        for(j = 0; j < node->tag->attrCount(); j++)
+        for(j = 0; j < node->tag->attrCount(); ++j)
         {
             if(node->tag->getAttribute(j).nameLine == SNbeginLine)
             {
@@ -716,7 +716,7 @@ QString kafkaCommon::removeUnnecessaryWhitespaces(const QString &string,
     	return "";
 
     newString = string[0];
-    for(i = 1; (unsigned)i < string.length(); i++)
+    for(i = 1; (unsigned)i < string.length(); ++i)
     {
     	if(!string[i - 1].isSpace() || !string[i].isSpace())
     		newString += string[i];
@@ -2936,7 +2936,7 @@ void kafkaCommon::getEndPosition(const QString &tagString, int bLine, int bCol, 
 
     eLine = bLine;
     eCol = bCol - 1;
-    for(i = 0; i < (signed)tagString.length(); i++)
+    for(i = 0; i < (signed)tagString.length(); ++i)
     {
         if(tagString[i] == "\n")
         {
@@ -3034,7 +3034,7 @@ QValueList<int> kafkaCommon::getLocation(Node * node)
         i = 1;
         while(node->prev)
         {
-            i++;
+            ++i;
             node = node->prev;
         }
         loc.prepend(i);
@@ -3053,7 +3053,7 @@ QValueList<int> kafkaCommon::getLocation(DOM::Node domNode)
         i = 1;
         while(!domNode.previousSibling().isNull())
         {
-            i++;
+            ++i;
             domNode = domNode.previousSibling();
         }
         loc.prepend(i);
@@ -3075,7 +3075,7 @@ Node* kafkaCommon::getNodeFromLocation(QValueList<int> loc)
     {
         if(!node)
             return 0L;
-        for(i = 1; i < (*it); i++)
+        for(i = 1; i < (*it); ++i)
         {
             if(!node->next)
                 return 0L;
@@ -3102,7 +3102,7 @@ Node* kafkaCommon::getNodeFromLocation(QValueList<int> loc, Node* nodeTree)
     {
         if(!node)
             return 0L;
-        for(i = 1; i < (*it); i++)
+        for(i = 1; i < (*it); ++i)
         {
             if(!node->next)
                 return 0L;
@@ -3128,7 +3128,7 @@ DOM::Node kafkaCommon::getNodeFromLocation(QValueList<int> loc, DOM::Node rootNo
     {
         if(node.isNull())
             return DOM::Node();
-        for(i = 1; i < (*it); i++)
+        for(i = 1; i < (*it); ++i)
         {
             if(node.nextSibling().isNull())
                 return DOM::Node();
@@ -3146,7 +3146,7 @@ Node* kafkaCommon::getNodeFromSubLocation(QValueList<int> loc, int locOffset)
     QValueList<int> list;
     int i;
 
-    for(i = 0; i < locOffset; i++)
+    for(i = 0; i < locOffset; ++i)
     {
         list.append((*it));
         ++it;
@@ -3225,9 +3225,9 @@ bool kafkaCommon::compareNodes(Node *n1, Node *n2)
         if(n1->tag->attrCount() != n2->tag->attrCount())
             return false;
 
-        for(i = 0; i < n1->tag->attrCount(); i++)
+        for(i = 0; i < n1->tag->attrCount(); ++i)
         {
-            for(j = 0; j < n2->tag->attrCount(); j++)
+            for(j = 0; j < n2->tag->attrCount(); ++j)
             {
                 if(n1->tag->getAttribute(i).name.lower() == n2->tag->getAttribute(j).name.lower() &&
                         n1->tag->getAttribute(i).value.lower() == n2->tag->getAttribute(j).value.lower())
@@ -3580,7 +3580,7 @@ void kafkaCommon::coutDomTree(DOM::Node, int)
         kdDebug(25001)<< dots << "  +++ prev " << node.previousSibling().handle() << " next " <<
         node.nextSibling().handle() << " parent " <<
         node.parentNode().handle() << " child " << node.firstChild().handle() << endl;
-        for(j = 0; j < (int)node.attributes().length(); j++)
+        for(j = 0; j < (int)node.attributes().length(); ++j)
         {
             kdDebug(25001)<< dots << " *** attr" << j << " " <<
             node.attributes().item(j).nodeName().string() <<  " - " <<
@@ -3622,7 +3622,7 @@ void kafkaCommon::coutTree(Node *node, int indent)
         eLine << ":" << eCol << endl;
         kdDebug(25001)<< dots << "  +++ prev " << node->prev << " next " << node->next << " parent " <<
         node->parent << " child " << node->child << endl;
-        for(j = 0; j < node->tag->attrCount(); j++)
+        for(j = 0; j < node->tag->attrCount(); ++j)
         {
             kdDebug(25001)<< dots << " *** attr" << j << " " <<
             node->tag->getAttribute(j).nameLine << ":" <<
