@@ -1,18 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="p" hasScript="1" hasCore="1" hasI18n="1">
-
-    <stoppingtags>
-        <stoppingtag name="p" />
-        <stoppingtag name="li" />
-        <stoppingtag name="td" />
-        <stoppingtag name="tr" />
-        <stoppingtag name="th" />
-        <stoppingtag name="dt" />
-        <stoppingtag name="dd" />
-    </stoppingtags>
-
+<tag name="strong" hasCore="1" hasI18n="1" hasScript="1">
 <children>
 <child name="a" />
 <child name="abbr" />
@@ -48,6 +37,5 @@
 <child name="tt" />
 <child name="var" />
 </children>
-
 </tag>
 </TAGS>

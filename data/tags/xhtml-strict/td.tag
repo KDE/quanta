@@ -1,30 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="td" hasScript="1" hasCore="1" hasI18n="1" optional="1">
+<tag name="td" hasScript="1" hasCore="1" hasI18n="1">
 
-    <attr name="width" type="input">
-        <text>width</text>
+    <attr name="rowspan" type="input">
+        <text>Rowspan</text>
         <textlocation col="0" row="0" />
-        <tooltip>use % for percent or it will set pixels</tooltip>
         <location col="1" row="0" />
     </attr>
 
     <attr name="colspan" type="input">
-        <text>colspan</text>
+        <text>Colspan</text>
         <textlocation col="2" row="0" />
         <location col="3" row="0" />
     </attr>
 
-    <attr name="rowspan" type="input">
-        <text>rowspan</text>
-        <textlocation col="2" row="1" />
-        <location col="3" row="1" />
-    </attr>
-
     <attr name="align" type="list">
-        <text>align</text>
-        <textlocation col="0" row="2" />
+        <text>Align</text>
+        <textlocation col="0" row="1" />
         <items>
             <item>left</item>
             <item>center</item>
@@ -32,26 +25,37 @@
             <item>justify</item>
             <item>char</item>
         </items>
-        <location col="1" row="2" colspan="1" />
+        <location col="1" row="1" colspan="1" />
     </attr>
 
     <attr name="valign" type="list">
-        <text>valign</text>
-        <textlocation col="2" row="2"  />
+        <text>Valign</text>
+        <textlocation col="2" row="1"  />
         <items>
             <item>baseline</item>
             <item>bottom</item>
             <item>middle</item>
             <item>top</item>
         </items>
-        <location col="3" row="2" colspan="1" />
+        <location col="3" row="1" colspan="1" />
     </attr>
 
-    <attr name="headers" type="input" />
+    <attr name="headers" type="input">
+        <text>Headers</text>
+        <textlocation col="0" row="2" />
+        <location col="1" row="2" colspan="3"/>
+    </attr>
 
-    <attr name="abbr" type="input" />
+    <attr name="abbr" type="input">
+        <text>Abbr</text>
+        <textlocation col="0" row="3" />
+        <location col="1" row="3" colspan="3"/>
+    </attr>
 
     <attr name="scope" type="list">
+        <text>Scope</text>
+        <textlocation col="0" row="4" />
+        <location col="1" row="4" colspan="3"/>
         <items>
             <item>row</item>
             <item>col</item>
@@ -60,11 +64,23 @@
         </items>
     </attr>
 
-    <attr name="axis" type="input" />
+    <attr name="axis" type="input">
+        <text>Axis</text>
+        <textlocation col="0" row="5" />
+        <location col="1" row="5" colspan="3"/>
+    </attr>
 
-    <attr name="char" type="input" />
+    <attr name="char" type="input">
+        <text>Char</text>
+        <textlocation col="0" row="6" />
+        <location col="1" row="6" />
+    </attr>
 
-    <attr name="charoff" type="input" />
+    <attr name="charoff" type="input">
+        <text>Charoff</text>
+        <textlocation col="0" row="7" />
+        <location col="1" row="7" />
+    </attr>
 
     <stoppingtags>
         <stoppingtag name="td" />

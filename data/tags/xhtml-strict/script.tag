@@ -4,7 +4,7 @@
 <tag name="script">
 
     <attr name="type" type="list">
-        <text>type</text>
+        <text>Type</text>
         <textlocation col="0" row="0" />
         <location col="1" row="0" colspan="2" />
         <items>
@@ -17,31 +17,35 @@
     </attr>
 
     <attr name="id" type="input">
-        <text>id</text>
+        <text>Id</text>
         <textlocation col="0" row="1" />
         <location col="1" row="1" colspan="2" />
     </attr>
 
     <attr name="src" type="url">
-        <text>src</text>
+        <text>Src</text>
         <textlocation col="0" row="2" />
         <location col="1" row="2" colspan="2" />
     </attr>
 
     <attr name="charset" type="input">
-        <text>charset</text>
+        <text>Charset</text>
         <textlocation col="0" row="3" />
         <location col="1" row="3" colspan="2" />
     </attr>
 
     <attr name="defer" type="check">
-        <text>defer</text>
-        <location col="0" row="4" colspan="2" />
+        <text>Defer</text>
+        <location col="1" row="4" colspan="2" />
     </attr>
 
-    <attr name="xml:space" type="check">
-        <text>xml:space</text>
-        <location col="0" row="5" colspan="2" />
+    <attr name="xml:space" type="list">
+        <text>Xml:space</text>
+        <textlocation col="0" row="5" />
+        <location col="1" row="5" colspan="2" />
+        <items>
+                <item>preserve</item>
+        </items>
     </attr>
 
 </tag>
