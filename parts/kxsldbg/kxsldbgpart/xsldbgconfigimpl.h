@@ -24,7 +24,7 @@
 #include "xsldbgconfig.h" 
 #include "xsldbgdialogbase.h" 
  
-#include <qlist.h> 
+#include <qptrlist.h> 
  
  
 class LibxsltParam : public QObject 

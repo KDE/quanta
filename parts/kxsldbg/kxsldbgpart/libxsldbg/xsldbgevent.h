@@ -26,7 +26,7 @@
 #endif
 
 #include <qevent.h>
-#include <qlist.h>
+#include <qptrlist.h>
 
 #include "xsldbgmsg.h"
 

@@ -9,7 +9,7 @@
 #ifndef QXSLDBGDOC_H
 #define QXSLDBGDOC_H
 
-#include <qlist.h>
+#include <qptrlist.h>
 #include <qstring.h>
 
 class QXsldbgTextLine {
