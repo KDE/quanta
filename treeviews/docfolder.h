@@ -42,6 +42,7 @@ public:
   void setOpen( bool o);
 	
 public:
+  QString url;
   QString name;	
   bool topLevel;
 };

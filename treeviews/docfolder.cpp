@@ -35,6 +35,7 @@ DocFolder::DocFolder(QListViewItem *parent, QString _name, KConfig *config, QStr
 {
   name = _name;
   topLevel = false;
+  url = "";
 
   QStrList list;
 
@@ -53,7 +54,10 @@ DocFolder::DocFolder(QListViewItem *parent, QString _name, KConfig *config, QStr
   for ( list.last(); ( item = list.current() ) ; list.prev() ) {
     if ( item[0] == '#' ) { // current item is folder
       item++; // remove leading #
+      QString l_url = config->readEntry( QString("folder_")+item, "" );
       DocFolder *el = new DocFolder(this, QString(item), config, basePath);
+      if ( ! l_url.isEmpty() )
+        el->url = basePath+l_url;
       el->setPixmap( 0, UserIcon("mini-book1") );
       el->setOpen( false );
     }
@@ -65,6 +69,7 @@ DocFolder::DocFolder(QListView *parent, QString _name, KConfig *config, QString 
 {
   name = _name;
   topLevel = false;
+  url = "";
   QStrList list;
 
   config->readListEntry( name, list );
@@ -82,7 +87,10 @@ DocFolder::DocFolder(QListView *parent, QString _name, KConfig *config, QString 
   for ( list.last(); ( item = list.current() ) ; list.prev() ) {
     if ( item[0] == '#' ) { // current item is folder
       item++; // remove leading #
+      QString l_url = config->readEntry( QString("folder_")+item, "" );
       DocFolder *el = new DocFolder(this, QString(item), config, basePath);
+      if ( ! l_url.isEmpty() )
+        el->url = basePath+l_url;
       el->setPixmap( 0, UserIcon("mini-book1") );
       el->setOpen( false );
     }
