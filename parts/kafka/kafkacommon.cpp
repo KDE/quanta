@@ -15,7 +15,8 @@
  *                                                                         *
  ***************************************************************************/
 
- #include "../../parser/node.h"
+#include <kdebug.h>
+#include "../../parser/node.h"
 
 #include "kafkacommon.h"
 
