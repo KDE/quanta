@@ -71,6 +71,7 @@
 #include <kparts/componentfactory.h>
 
 #include <ktexteditor/editinterface.h>
+#include <ktexteditor/encodinginterface.h>
 #include <ktexteditor/selectioninterface.h>
 #include <ktexteditor/viewcursorinterface.h>
 #include <ktexteditor/printinterface.h>
@@ -129,7 +130,10 @@
 #include "toolbar/toolbartabwidget.h"
 
 #include "dialogs/kategrepdialog.h"
+
+#if KDE_VERSION < KDE_MAKE_VERSION(3,1,90)
 #include "dialogs/katefiledialog.h"
+#endif
 
 #include "plugins/quantakpartplugin.h"
 #include "plugins/quantaplugininterface.h"
@@ -162,15 +166,29 @@ void QuantaApp::slotFileOpen()
      startDir = view()->write()->url().url();
  else
       startDir = projectBaseURL().url();
+
+ KURL::List urls;
+ QString encoding;
+#if KDE_VERSION < KDE_MAKE_VERSION(3,1,90)
  KateFileDialog *dialog = new KateFileDialog (startDir, myEncoding, this, i18n ("Open File"));
  KateFileDialogData data = dialog->exec();
+ urls = data.urls;
+ encoding = data.encoding;
  delete dialog;
+#else
+ KFileDialog dialog(startDir, myEncoding, i18n("Open File"), KFileDialog::Opening);
+ if (dialog.exec())
+ {
+   urls = dialog.selectedURLs();
+   encoding = dialog.selectedEncoding();
+ }
+#endif
 
  m_doc->blockSignals(true);
  m_view->writeTab()->blockSignals(true);
- for (KURL::List::Iterator i=data.urls.begin(); i != data.urls.end(); ++i)
+ for (KURL::List::Iterator i=urls.begin(); i != urls.end(); ++i)
  {
-   slotFileOpen( *i , data.encoding);
+   slotFileOpen( *i , encoding);
 //   kapp->eventLoop()->processEvents( QEventLoop::ExcludeUserInput | QEventLoop::ExcludeSocketNotifiers);
  }
  m_doc->blockSignals(false);
@@ -277,16 +295,30 @@ bool QuantaApp::slotFileSaveAs()
     if (!(oldURL.fileName()).isEmpty())
       saveAsFileName = "/" + oldURL.fileName();
 
+    KURL saveUrl;
+    QString encoding;
+#if KDE_VERSION < KDE_MAKE_VERSION(3,1,90)
     KateFileDialog dialog(saveAsPath+saveAsFileName, myEncoding, this, i18n ("Save File"), KateFileDialog::saveDialog);
     KateFileDialogData data = dialog.exec();
-    if (w->checkOverwrite(data.url) == KMessageBox::Yes && m_doc->saveDocument(data.url))
+    saveUrl = data.url;
+    encoding = data.encoding;
+#else
+   KFileDialog dialog(saveAsPath+saveAsFileName, myEncoding, i18n("Save File"), KFileDialog::Saving);
+   if (dialog.exec())
     {
-      oldURL = data.url;
+      saveUrl = dialog.selectedURL();
+      encoding = dialog.selectedEncoding();
+    }
+#endif
+    dynamic_cast<KTextEditor::EncodingInterface*>(w->doc())->setEncoding(encoding);
+    if (w->checkOverwrite(saveUrl) == KMessageBox::Yes && m_doc->saveDocument(saveUrl))
+    {
+      oldURL = saveUrl;
       if ( ( m_project->hasProject() ) &&
-          ( KMessageBox::Yes == KMessageBox::questionYesNo(0,i18n("Add file\n %1 \n to project?").arg(data.url.prettyURL())) )
+          ( KMessageBox::Yes == KMessageBox::questionYesNo(0,i18n("Add file\n %1 \n to project?").arg(saveUrl.prettyURL())) )
         )
       {
-        m_project->insertFile(data.url, true);
+        m_project->insertFile(saveUrl, true);
       }
 #ifdef BUILD_KAFKAPART
       view()->write()->docUndoRedo->fileSaved();

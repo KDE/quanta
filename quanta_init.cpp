@@ -1701,6 +1701,8 @@ void QuantaApp::initActions()
     fileRecent =  KStdAction::openRecent(this, SLOT(slotFileOpenRecent(const KURL&)),
                                          ac, "file_open_recent");
     fileRecent->setMaxItems(32);
+    fileRecent->setIcon("fileopen");
+    connect(fileRecent, SIGNAL(activated()), this, SLOT(slotFileOpen()));
 
     fileOpenRecent = new KToolBarPopupAction(i18n("Open"),
        "fileopen", KStdAccel::shortcut(KStdAccel::Open), this,
