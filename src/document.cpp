@@ -1430,12 +1430,10 @@ QValueList<KTextEditor::CompletionEntry>* Document::getCharacterCompletions(cons
     }
   }
   
-  QStringList keys = completionMap.keys();
-  keys.sort();
   QValueList<KTextEditor::CompletionEntry> *completions2 = new QValueList<KTextEditor::CompletionEntry>();
-  for (QStringList::ConstIterator it = keys.constBegin(); it != keys.constEnd(); ++it)
+  for (QMap<QString, KTextEditor::CompletionEntry>::ConstIterator it = completionMap.constBegin(); it != completionMap.constEnd(); ++it)
   {
-    completions2->append(completionMap[*it]);
+    completions2->append(it.data());
   }
   delete completions;
   completions = completions2;
