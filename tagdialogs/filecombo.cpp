@@ -48,6 +48,8 @@ FileCombo::FileCombo(const KURL& a_baseURL, QWidget *parent, const char *name )
   layout  ->addWidget( button );
 
   connect( button, SIGNAL(clicked()), this, SLOT(slotFileSelect()) );
+  connect( combo, SIGNAL(activated(const QString&)), SLOT(slotComboActivated(const QString&)));
+  connect( combo, SIGNAL(textChanged(const QString&)), SLOT(slotComboActivated(const QString&)));
 }
 
 FileCombo::FileCombo( QWidget *parent, const char *name )
@@ -67,6 +69,8 @@ FileCombo::FileCombo( QWidget *parent, const char *name )
   layout  ->addWidget( button );
 
   connect( button, SIGNAL(clicked()), this, SLOT(slotFileSelect()) );
+  connect( combo, SIGNAL(activated(const QString&)), SLOT(slotComboActivated(const QString&)));
+  connect( combo, SIGNAL(textChanged(const QString&)), SLOT(slotComboActivated(const QString&)));
 }
 
 FileCombo::~FileCombo(){
@@ -106,6 +110,11 @@ void FileCombo::setBaseURL(const KURL& a_baseURL)
 void FileCombo::setReturnAbsolutePath(bool absolutePath)
 {
  m_absolutePath = absolutePath;
+}
+
+void FileCombo::slotComboActivated(const QString&s)
+{
+  emit activated(s);
 }
 
 #include "filecombo.moc"

@@ -112,9 +112,11 @@ friend class QuantaView;
 friend class ActionEditDlg;
 
 public:
+//TODO: make this private and create the "get" methods for them
   StructTreeView *sTab;
   QWidgetStack *rightWidgetStack;
   QWidgetStack *bottomWidgetStack;
+  QDict<ToolbarEntry> toolbarList;
 
   QuantaApp();
   ~QuantaApp();
@@ -161,6 +163,8 @@ public:
 
   /** reparse current document and initialize node. */
   void reparse(bool force);
+  /** Remove the toolbar named "name". */
+  void removeToolbar(const QString& name);
 
 public slots:
 
@@ -364,9 +368,7 @@ protected:
   void initPlugins();
   /** Loads the toolbars for dtd named dtdName and unload the ones belonging to oldDtdName. */
   void loadToolbarForDTD(const QString& dtdName);
-  /** Remove the toolbar named "name". */
-  void removeToolbar(const QString& name);
- 
+
 private:
 
   /** Messaage output window */
@@ -463,7 +465,6 @@ private:
   QPtrList<KTextEditor::Mark> markList;
   QPtrList<KTempFile> tempFileList;
 
-  QDict<ToolbarEntry> toolbarList;
   uint userToolbarsCount;
   bool previewCopyMade;
   KTempFile *previewTmpFile;

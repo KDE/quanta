@@ -46,7 +46,11 @@ public:
 
 public slots:
   void slotFileSelect();
-    
+  void slotComboActivated(const QString&);
+
+signals:
+  void activated(const QString&);  
+
 protected:
   KURL baseURL;
   bool m_absolutePath;

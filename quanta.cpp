@@ -117,6 +117,7 @@
 #include "messages/messageoutput.h"
 
 #include "toolbar/actioneditdlg.h"
+#include "toolbar/actionconfigdialog.h"
 #include "toolbar/toolbarxmlgui.h"
 #include "toolbar/tagaction.h"
 
@@ -757,8 +758,9 @@ void QuantaApp::slotOptionsConfigureActions()
 {
  int currentPageIndex = view->toolbarTab->currentPageIndex();
 
- ActionEditDlg dlg( this, "actions_edit_dlg", true); //actionCollection(), QString::null, true, this );
+// ActionEditDlg dlg( this, "actions_edit_dlg", true); //actionCollection(), QString::null, true, this );
 
+ ActionConfigDialog dlg( this, "actions_config_dlg", true);
  if ( dlg.exec() )
  {
     QFile f( KGlobal::instance()->dirs()->saveLocation("data")+"quanta/actions.rc" );
@@ -1530,17 +1532,21 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
    QString name = nodeList.item(0).cloneNode().toElement().attribute("tabname");
 
    //search for another toolbar with the same name
-   QPtrList<KXMLGUIClient> xml_clients = factory()->clients();
-   bool found = false;
-   for (uint index = 0; index < xml_clients.count(); index++)
+   QPtrList<KXMLGUIClient> xml_clients = guiFactory()->clients();
+   QString newName = name;
+   bool found;
+   do
    {
-    nodeList = xml_clients.at(index)->domDocument().elementsByTagName("ToolBar");
-    for (uint i = 0; i < nodeList.count(); i++)
+    uint index = 0;
+    do
     {
-      if ((nodeList.item(i).cloneNode().toElement().attribute("name") ) == name.lower())
+      name = newName;
+      if (index == 0)
+         found = false;
+      nodeList = xml_clients.at(index)->domDocument().elementsByTagName("ToolBar");
+      for (uint i = 0; i < nodeList.count(); i++)
       {
-        QString newName;
-        do
+        if ((nodeList.item(i).cloneNode().toElement().attribute("name") ) == name.lower())
         {
           KMessageBox::information(this,i18n("A toolbar called \"%1\" already exists.\n Please rename the loaded toolbar.").arg(name),i18n("Name conflict"));
 
@@ -1554,14 +1560,20 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
             KMessageBox::information(this,i18n("The rename was canceled.\n The toolbar won't be loaded."),i18n("Name conflict"));
             return;
           }
-        } while (name == newName);
-        name = newName;
-        found = true;
-        break;
+          found = true;
+          break;
+        }
       }
-     }
-     if (found) break;
-   }
+      if (found)
+      {
+        index = 0;
+      } else
+      {
+        index++;
+      }
+    } while (index < xml_clients.count());
+   } while (name == newName && found);
+   name = newName;
 
    ToolbarEntry* p_toolbar = new ToolbarEntry;
 
