@@ -20,7 +20,7 @@
 
 //own includes
 #include "filestreeview.h"
-#include "project_url.h"
+#include "projecturl.h"
 
 class KIO::Job;
 
