@@ -179,14 +179,14 @@ Just go to <b>Settings > Configure Shortcuts</b>.
 
 <tip category="Application">
 <html>
-<p>...that you can use Cervisia to manage CVS from inside Quanta? <b>Click on the Cervisia icon</b> and and it will load up the current project directory (if it is CVS). If you've never used CVS Cervisia has great help files and setting up a local repository is easy.
+<p>...that you can use Cervisia to manage CVS from inside Quanta? <b>Click on the Cervisia icon</b> and and it will load up the current project directory (if it is CVS). If you have never used CVS before Cervisia has great help files and setting up a local repository is easy.
 </p>
 </html>
 </tip>
 
 <tip category="Application">
 <html>
-<p>...that you can use KFileReplace to find and replace across your entire project? <b>Click on the KFileReplace button</b> and you can set extensive configurations, use multi line values and wild cards and even go to the files found in Quanta.
+<p>...that you can use KFileReplace to find and replace across your entire project? <b>Click on the KFileReplace button</b> and you can set extensive configurations, use multi line values and wild cards, and even go to the files found in Quanta.
 </p>
 </html>
 </tip>
