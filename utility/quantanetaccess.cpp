@@ -205,7 +205,7 @@ bool QuantaNetAccess::checkProjectRemove(const KURL& src, QWidget* window, bool 
     {
       QString nice = QExtFileInfo::toRelative(url, baseURL).path();
       nice = KStringHandler::lsqueeze(nice, 60);
-      if ( KMessageBox::Yes != KMessageBox::warningYesNo(window, i18n("<qt>Do you really want to remove <br><b>%1</b><br> from the project?</qt>").arg(nice), i18n("Remove From Project"), KStdGuiItem::yes(), KStdGuiItem::no(), "RemoveFromProject") )
+      if ( KMessageBox::Continue != KMessageBox::warningContinueCancel(window, i18n("<qt>Do you really want to remove <br><b>%1</b><br> from the project?</qt>").arg(nice), i18n("Remove From Project"), KStdGuiItem::del(), "RemoveFromProject") )
       {
         return false;
       }
@@ -228,7 +228,7 @@ bool QuantaNetAccess::checkProjectDel(const KURL& src, QWidget* window, bool con
       {
         QString nice = url.prettyURL(0, KURL::StripFileProtocol);
         nice = KStringHandler::csqueeze(nice, 60);
-        if ( KMessageBox::Yes != KMessageBox::warningYesNo(window, i18n("<qt>Do you really want to delete <br><b>%1</b><br> and remove it from the project?</qt>").arg(nice), i18n("Delete & Remove From Project"), KStdGuiItem::yes(), KStdGuiItem::no(), "DeleteAndRemoveFromProject") )
+        if ( KMessageBox::Continue != KMessageBox::warningContinueCancel(window, i18n("<qt>Do you really want to delete <br><b>%1</b><br> and remove it from the project?</qt>").arg(nice), i18n("Delete & Remove From Project"), KStdGuiItem::del(), "DeleteAndRemoveFromProject") )
         {
           return false;
         }
@@ -241,7 +241,7 @@ bool QuantaNetAccess::checkProjectDel(const KURL& src, QWidget* window, bool con
   if (confirm) {
     QString nice = url.prettyURL(0, KURL::StripFileProtocol);
     nice = KStringHandler::csqueeze(nice, 60);
-    return (KMessageBox::Yes == KMessageBox::warningYesNo(window, i18n("<qt>Do you really want to delete <br><b>%1</b>?</qt>").arg(nice), i18n("Delete File or Folder"), KStdGuiItem::yes(), KStdGuiItem::no(), "DeleteFileOrFolder") );
+    return (KMessageBox::Continue == KMessageBox::warningContinueCancel(window, i18n("<qt>Do you really want to delete <br><b>%1</b>?</qt>").arg(nice), i18n("Delete File or Folder"), KStdGuiItem::del(), "DeleteFileOrFolder") );
   }
   return true;
 }

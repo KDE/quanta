@@ -876,7 +876,7 @@ void TemplatesTreeView::slotDelete()
     else
       msg = i18n("Do you really want to delete file \n%1 ?\n").arg(url.path());
 
-    if ( KMessageBox::warningYesNo(this, msg) == KMessageBox::Yes )
+    if ( KMessageBox::warningContinueCancel(this, msg, QString::null, KStdGuiItem::del()) == KMessageBox::Continue )
     {
       KIO::Job *job = KIO::del(url);
       connect( job, SIGNAL( result( KIO::Job *) ), this , SLOT( slotJobFinished( KIO::Job *) ) );

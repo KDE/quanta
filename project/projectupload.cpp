@@ -359,8 +359,8 @@ void ProjectUpload::startUpload()
       return;
     } else
     {
-      if (KMessageBox::warningYesNo(this, i18n("<qt><b>%1</b> seems to be unaccessible.<br>Do you want to proceed with upload?</qt>")
-                                          .arg(u.prettyURL(0, KURL::StripFileProtocol))) == KMessageBox::Yes)
+      if (KMessageBox::warningContinueCancel(this, i18n("<qt><b>%1</b> seems to be unaccessible.<br>Do you want to proceed with upload?</qt>")
+          .arg(u.prettyURL(0, KURL::StripFileProtocol)),QString::null,KStdGuiItem::del()) == KMessageBox::Continue)
       {
         upload();
         return;

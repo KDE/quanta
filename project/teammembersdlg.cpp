@@ -145,7 +145,7 @@ void TeamMembersDlg::slotDeleteMember()
 {
    QListViewItem *item =membersListView->currentItem();
    if (!item) return;
-   if (KMessageBox::warningYesNo(this, i18n("<qt>Are you sure that you want to remove <b>%1</b> from the project team?</qt>").arg(item->text(0)), i18n("Delete Member")) == KMessageBox::Yes)
+   if (KMessageBox::warningContinueCancel(this, i18n("<qt>Are you sure that you want to remove <b>%1</b> from the project team?</qt>").arg(item->text(0)), i18n("Delete Member"),KStdGuiItem::del()) == KMessageBox::Continue)
    {
       delete item;
    }
