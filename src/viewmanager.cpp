@@ -16,6 +16,7 @@
 
 //kde includes
 #include <kdirwatch.h>
+#include <kiconloader.h>
 #include <klocale.h>
 #include <kmdimainfrm.h>
 #include <kurl.h>
@@ -55,10 +56,10 @@ ViewManager::ViewManager(QObject *parent, const char *name) : QObject(parent, na
     m_lastActiveEditorView = 0L;
     m_documentationView = 0L;
     m_tabPopup = new KPopupMenu(quantaApp);
-    m_tabPopup->insertItem(i18n("&Close"), this, SLOT(slotCloseView()));
+    m_tabPopup->insertItem(SmallIcon("close"), i18n("&Close"), this, SLOT(slotCloseView()));
     m_tabPopup->insertItem(i18n("Close &Other Tabs"), this, SLOT(slotCloseOtherTabs()));
     m_tabPopup->insertItem(i18n("Close &All"), this, SLOT(closeAll()));
-    m_tabPopup->insertItem(i18n("&Reload"), this, SLOT(slotReloadFile()), 0, RELOAD_ID);
+    m_tabPopup->insertItem(SmallIcon("reload"), i18n("&Reload"), this, SLOT(slotReloadFile()), 0, RELOAD_ID);
     m_tabPopup->insertItem(i18n("&Upload File"), this, SLOT(slotUploadFile()), 0, UPLOAD_ID);
     m_tabPopup->insertItem(i18n("&Delete File"), this, SLOT(slotDeleteFile()), 0, DELETE_ID);
     m_tabPopup->insertSeparator();
