@@ -209,6 +209,9 @@ void ProjectUpload::slotBuildTree()
  totalText->setText(i18n("Total:"));
  totalProgress->setTotalSteps(1);
  totalProgress->setValue(0);
+ //hack to force repainting of the treeview
+ resize(width() + 1, height());
+ resize(width() - 1, height());
 }
 
 
