@@ -1071,7 +1071,7 @@ void QuantaApp::readOptions()
 
   previewPosition   = config->readEntry("Preview position","Right");
 
-  int mode = config->readNumEntry("Left panel mode", 1);
+  int mode = config->readNumEntry("Left panel mode", 0);
   if ( mode == 0 || mode == 1 ) fTab->raiseWidget(mode);
 
   hSplit->setPos( config->readNumEntry("HSplit position", 1000) );

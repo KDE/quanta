@@ -1303,9 +1303,9 @@ void QuantaApp::reparse()
 		//sTab->s = parser->s;
 		if ( parser->textChanged ) {
 		  config->setGroup("Parser options");
-		  int expandLevel = config->readNumEntry("Expand level",4);
+		  int expandLevel = config->readNumEntry("Expand level",8);
 		  if ( expandLevel == 0 )
-		  	expandLevel = 100000000;
+		  	expandLevel = 100;
 		  	
 		  sTab->slotReparse( node , expandLevel );
 		}
@@ -1323,25 +1323,11 @@ void QuantaApp::gotoFileAndLine( const QString &filename, int line )
 {
   doc->openDocument( filename );
   setCaption(doc->getTitle());
-  view->write()->setCursorPosition( line, 0 );
+  if ( view->write()->numLines() > line )
+    view->write()->setCursorPosition( line, 0 );
   view->write()->view()->setFocus();
 }
 
-/*
-void QuantaApp::slotStructTreeOpen()
-{
-  Node *node = parser->parse( view->write()->text() );
-	sTab->s = parser->s;
-	sTab->slotReparse( node,true );
-}
-
-void QuantaApp::slotStructTreeClose()
-{
-  Node *node = parser->parse( view->write()->text() );
-	sTab->s = parser->s;
-	sTab->slotReparse( node,false );
-}
-*/
 
 void QuantaApp::slotSelectMessageWidget()
 {

@@ -60,8 +60,8 @@ EXTRA_DIST = \
 #2########################################################!@#$
 
 install-data-local:
-	$(mkinstalldirs) $(kde_appsdir)/Office/
-	$(INSTALL_DATA) $(srcdir)/quanta.desktop $(kde_appsdir)/Office/quanta.desktop
+	$(mkinstalldirs) $(kde_appsdir)/Development/
+	$(INSTALL_DATA) $(srcdir)/quanta.desktop $(kde_appsdir)/Development/quanta.desktop
 
 uninstall-local:
-	-rm -f $(kde_appsdir)/Office/quanta.desktop
+	-rm -f $(kde_appsdir)/Development/quanta.desktop
