@@ -50,7 +50,7 @@
 #include "projectnewgeneral.h"
 #include "projectnewlocal.h"
 #include "projectnewweb.h"
-#include "projectnewfinals.h"
+#include "projectnewfinal.h"
 #include "projectupload.h"
 #include "rescanprj.h"
 
@@ -223,7 +223,7 @@ void Project::openProject()
 /** save project file */
 bool Project::saveProject()
 {
-  if ( !hasProject()  ) return;
+  if ( !hasProject()  ) return false;
 
   QFile f( projectFileName );
   if ( !f.open( IO_ReadWrite | IO_Truncate ) )
@@ -468,9 +468,7 @@ void Project::newProject()
 	
 	pnl = new ProjectNewLocal( stack );
 	pnw = new ProjectNewWeb  ( stack );
-	
-	pnf = new ProjectNewFinalS( wiz );
-	pnf ->imagelabel->setPixmap( UserIcon("wiznewprjfin") );
+	pnf = new ProjectNewFinal( wiz );
 	
 	stack->addWidget( pnl, 0);
 	stack->addWidget( pnw, 1 );
@@ -588,8 +586,15 @@ void Project::options()
 	QTabDialog *dlg = new QTabDialog(0L, i18n("Project options"), true);
 
 	png = new ProjectNewGeneral( dlg );
-	pnf = new ProjectNewFinalS ( dlg );
-	pnf ->imagelabel->setPixmap( UserIcon("wiznewprjfin") );
+	pnf = new ProjectNewFinal  ( dlg );
+	
+	png ->setMargin(10);
+	pnf ->setMargin(10);
+	
+	png ->imagelabel->hide();
+	pnf ->imagelabel->hide();
+	
+	png ->bGroupSources->hide();
 		
 	dlg->addTab( png, i18n("General") );
 	dlg->addTab( pnf, i18n("Network") );
@@ -601,7 +606,7 @@ void Project::options()
 	png->linePrjFile->setEnabled( false );
 	png->buttonDir  ->setEnabled( false );
 	
-	delete png->ButtonGroup1_2;
+	
 	
 	png->linePrjDir ->setText( basePath );
 	png->linePrjName->setText( projectName );

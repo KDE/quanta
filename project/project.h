@@ -33,7 +33,7 @@ class QWidgetStack;
 class ProjectNewGeneral;
 class ProjectNewLocal;
 class ProjectNewWeb;
-class ProjectNewFinalS;
+class ProjectNewFinal;
 
 class Project : public QWidget  {
    Q_OBJECT
@@ -125,7 +125,7 @@ private:
 	ProjectNewGeneral		*png;
 	ProjectNewLocal		  *pnl;
 	ProjectNewWeb 			*pnw;
-	ProjectNewFinalS		*pnf;
+	ProjectNewFinal 		*pnf;
 };
 
 #endif

@@ -18,6 +18,7 @@
 // qt includes
 #include <qdir.h>
 #include <qlabel.h>
+#include <qlayout.h>
 #include <qlineedit.h>
 #include <qpushbutton.h>
 #include <qradiobutton.h>
@@ -84,3 +85,9 @@ QString ProjectNewGeneral::type()
 	if ( radioWeb  ->isChecked() ) return "Web";
   return "Local";
 }
+
+void ProjectNewGeneral::setMargin(int i)
+{
+  ProjectNewGeneralSLayout->setMargin(i);
+}
+

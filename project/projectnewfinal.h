@@ -15,32 +15,22 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef PROJECTNEWGENERAL_H
-#define PROJECTNEWGENERAL_H
+#ifndef PROJECTNEWFINAL_H
+#define PROJECTNEWFINAL_H
 
-#include "projectnewgenerals.h"
+#include "projectnewfinals.h"
 
 /**
   *@author Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
   */
 
-class ProjectNewGeneral : public ProjectNewGeneralS  {
+class ProjectNewFinal : public ProjectNewFinalS  {
    Q_OBJECT
 public: 
-	ProjectNewGeneral(QWidget *parent=0, const char *name=0);
-	~ProjectNewGeneral();
+	ProjectNewFinal(QWidget *parent=0, const char *name=0);
+	~ProjectNewFinal();
 	
-	QString type();
 	void setMargin(int);
-	
-public slots:
-	void slotButtonDir();
-	void slotLinePrjFile(const QString &);
-	void slotChangeNames(const QString &);
-		
-signals:
-  void setBasePath(QString);
-	void enableNextButton(QWidget *, bool);
 };
 
 #endif

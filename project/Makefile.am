@@ -24,7 +24,8 @@ libproject_a_SOURCES = \
 		projectnewfinals.ui\
 		rescanprjdir.ui\
 		rescanprj.cpp\
-		projectuploads.ui
+		projectuploads.ui\
+		projectnewfinal.cpp
 EXTRA_DIST = \
 		copyto.cpp\
 		copyto.h\
@@ -46,7 +47,9 @@ EXTRA_DIST = \
 		rescanprjdir.ui\
 		rescanprj.cpp\
 		rescanprj.h\
-		projectuploads.ui
+		projectuploads.ui\
+		projectnewfinal.cpp\
+		projectnewfinal.h
 ##############################################################
 ####                  END KDEStudio part                  ####
 #2########################################################!@#$

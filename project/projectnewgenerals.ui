@@ -7,17 +7,17 @@
         <cstring>ProjectNewGeneralS</cstring>
     </property>
     <property stdset="1">
+        <name>enabled</name>
+        <bool>true</bool>
+    </property>
+    <property stdset="1">
         <name>geometry</name>
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>470</width>
+            <width>466</width>
             <height>357</height>
         </rect>
-    </property>
-    <property stdset="1">
-        <name>enabled</name>
-        <bool>true</bool>
     </property>
     <property stdset="1">
         <name>caption</name>
@@ -60,15 +60,18 @@
                         <cstring>imagelabel</cstring>
                     </property>
                     <property stdset="1">
-                        <name>text</name>
-                        <string></string>
-                    </property>
-                    <property stdset="1">
                         <name>sizePolicy</name>
                         <sizepolicy>
                             <hsizetype>0</hsizetype>
                             <vsizetype>7</vsizetype>
                         </sizepolicy>
+                    </property>
+                    <property stdset="1">
+                        <name>minimumSize</name>
+                        <size>
+                            <width>120</width>
+                            <height>0</height>
+                        </size>
                     </property>
                     <property stdset="1">
                         <name>maximumSize</name>
@@ -78,11 +81,8 @@
                         </size>
                     </property>
                     <property stdset="1">
-                        <name>minimumSize</name>
-                        <size>
-                            <width>120</width>
-                            <height>0</height>
-                        </size>
+                        <name>text</name>
+                        <string></string>
                     </property>
                     <property stdset="1">
                         <name>alignment</name>
@@ -204,10 +204,6 @@
                                         <cstring>buttonDir</cstring>
                                     </property>
                                     <property stdset="1">
-                                        <name>text</name>
-                                        <string>...</string>
-                                    </property>
-                                    <property stdset="1">
                                         <name>sizePolicy</name>
                                         <sizepolicy>
                                             <hsizetype>0</hsizetype>
@@ -220,6 +216,10 @@
                                             <width>32</width>
                                             <height>32767</height>
                                         </size>
+                                    </property>
+                                    <property stdset="1">
+                                        <name>text</name>
+                                        <string>...</string>
                                     </property>
                                 </widget>
                                 <widget row="4"  column="0" >
@@ -289,7 +289,7 @@
                             <class>QButtonGroup</class>
                             <property stdset="1">
                                 <name>name</name>
-                                <cstring>ButtonGroup1_2</cstring>
+                                <cstring>bGroupSources</cstring>
                             </property>
                             <property stdset="1">
                                 <name>title</name>
@@ -352,12 +352,12 @@
                                                 <cstring>radioCvs</cstring>
                                             </property>
                                             <property stdset="1">
-                                                <name>text</name>
-                                                <string>Get files from CVS repository ( cvs checkout )</string>
-                                            </property>
-                                            <property stdset="1">
                                                 <name>enabled</name>
                                                 <bool>false</bool>
+                                            </property>
+                                            <property stdset="1">
+                                                <name>text</name>
+                                                <string>Get files from CVS repository ( cvs checkout )</string>
                                             </property>
                                         </widget>
                                     </vbox>

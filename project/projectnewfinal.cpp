@@ -1,5 +1,5 @@
 /***************************************************************************
-                          projectnewgeneral.h  -  description
+                          projectnewgeneral.cpp  -  description
                              -------------------
     begin                : Fri Oct 27 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
@@ -15,32 +15,27 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef PROJECTNEWGENERAL_H
-#define PROJECTNEWGENERAL_H
+// qt includes
+#include <qlabel.h>
+#include <qlayout.h>
 
-#include "projectnewgenerals.h"
+// kde includes
+#include <kiconloader.h>
 
-/**
-  *@author Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
-  */
+// app includes
+#include "projectnewfinal.h"
 
-class ProjectNewGeneral : public ProjectNewGeneralS  {
-   Q_OBJECT
-public: 
-	ProjectNewGeneral(QWidget *parent=0, const char *name=0);
-	~ProjectNewGeneral();
-	
-	QString type();
-	void setMargin(int);
-	
-public slots:
-	void slotButtonDir();
-	void slotLinePrjFile(const QString &);
-	void slotChangeNames(const QString &);
-		
-signals:
-  void setBasePath(QString);
-	void enableNextButton(QWidget *, bool);
-};
+ProjectNewFinal::ProjectNewFinal(QWidget *parent, const char *name )
+	: ProjectNewFinalS(parent,name)
+{
+	imagelabel->setPixmap( UserIcon("wiznewprjfin") );
+}
 
-#endif
+ProjectNewFinal::~ProjectNewFinal(){
+}
+
+void ProjectNewFinal::setMargin(int i)
+{
+  ProjectNewFinalSLayout->setMargin(i);
+}
+
