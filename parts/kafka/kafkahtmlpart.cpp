@@ -102,7 +102,7 @@ KafkaHTMLPart::KafkaHTMLPart(QWidget *parent, QWidget *widgetParent, WKafkaPart 
 
 //for debug purposes, we add a DOM tree view
 #ifdef HEAVY_DEBUG
-	d->domdialog = new KafkaDOMTreeDialog(view(), this);
+	//d->domdialog = new KafkaDOMTreeDialog(view(), this);
 #endif
 	//IMPORTANT:without him, no document() is created in khtmlPart
 	begin();
@@ -1306,7 +1306,7 @@ DOM::Node KafkaHTMLPart::createNode(const QString &NodeName)
 void KafkaHTMLPart::showDomTree()
 {
 #ifdef HEAVY_DEBUG
-	d->domdialog->show();
+	//d->domdialog->show();
 #endif
 }
 

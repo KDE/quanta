@@ -32,7 +32,7 @@ class Document;
 /**
  * For heavy debug including Node Tree in stdout printing, a DOM::Node tree widget.
  */
-//#define HEAVY_DEBUG
+#define HEAVY_DEBUG
 
 /**
  * Light debugging, including functions name in stdout printing.
@@ -119,7 +119,7 @@ public:
 	 * @param n1 The start node.
 	 * @param n2 The end node.
 	 */
-	static void fitIndentationNodes(Node *n1, Node *n2, NodeModifsSet &modifs);
+	static void fitIndentationNodes(Node *n1, Node *n2);
 
 	/**
 	 * Fits the Nodes positions after a change in the Node tree.
@@ -169,13 +169,11 @@ public:
 	 * @param nextSibling This Node will be the next Sibling of Node. If null, node will be appened at
 	 * the child list of parentNode.
 	 * @param modifs The changes made are logged into modifs.
-	 * @param indentation Specifies if we should add/delete Empty Nodes in order to let the undoRedo system
-	 * create a nice indentation.
 	 * @param merge Try to merge with the siblings if possible.
 	 * @return Returns a pointer to the node inserted.
 	 */
 	static Node* insertNode(Node *node, Node* parentNode, Node* nextSibling, NodeModifsSet &modifs,
-		bool indentation = true, bool merge = true);
+		bool merge = true);
 
 	/**
 	 * It behaves essentially like the above function except that it can "surround" a set of Nodes with the
@@ -193,12 +191,12 @@ public:
 	 * @return Returns a pointer to the node inserted.
 	 */
 	static Node *insertNode(Node *newNode, Node *parent, Node *nextSibling, Node *nextEndSibling,
-		NodeModifsSet &modifs, bool indentation = true);
+		NodeModifsSet &modifs);
 
 	/**
 	 * It behaves essentially like the above function except that it can split the endNodeToSurround and
 	 * startNodeToSurround if necessary, according to the offsets.
-	 * startNodeToSurround et endNodeToSurround MUST have the same parent. If not, use the
+	 * startNodeToSurround et endNodeToSurround MUST have the same parent. If not, use the last
 	 * DTDinsertNode.
 	 * This function does not try to know if the location of the new Node is valid.
 	 * @param startNodeToSurround The first Node which will be enclosed by the new Node.
@@ -211,11 +209,15 @@ public:
 
 	/**
 	 * It behaves essentially like the above function except that it will insert the new Node only if the DTD
-	 * allows it.
+	 * allows it, and if generateElements is set to true, it will try to add new Element to be DTD compliant
+	 * e.g. surrounding text by TABLE will make TD and TR to be created and inserted to be DTD compliant.
+	 * @param generateElements Specifies if we should try add elements to be DTD compliant if newNode
+	 * can't be inserted.
 	 * @return Returns false if it wasn't possible to insert the tag because e.g. of an invalid parent.
 	 */
 	static bool DTDinsertNode(Node *newNode, Node *parent, Node *startNodeToSurround,
-		Node *endNodeToSurround, int startOffset, int endOffset, NodeModifsSet &modifs);
+		Node *endNodeToSurround, int startOffset, int endOffset, NodeModifsSet &modifs,
+		bool generateElements = true);
 
 	/**
 	 * It behaves essentially like the above function except that the new Tag can surround any subtree. If
@@ -243,9 +245,8 @@ public:
 	 * @param nextSibling The next sibling of the Node.
 	 * @return Returns a pointer to the newly created Node.
 	 */
-	static Node *createAndInsertNode(const QString &nodeName, const QString &tagString, int nodeType, Document *doc,
-		Node* parent, Node* nextSibling, NodeModifsSet &modifs, bool indentation = true,
-		bool merge = true);
+	static Node *createAndInsertNode(const QString &nodeName, const QString &tagString, int nodeType,
+		Document *doc, Node* parent, Node* nextSibling, NodeModifsSet &modifs, bool merge = true);
 
 	/**
 	 * It behaves essentially like the above function except that it reate its closing Node if necessary
@@ -256,11 +257,9 @@ public:
 	 * nextSibling, the closing Node will be placed at the right of the newly created Node.
 	 * All the Nodes between the new Node and its closing Tag will be moved as childs of the new Node.
 	 * @param modifs The changes made are logged into modifs.
-	 * @param indentation Specifies if we should add/delete Empty Nodes in order to let the undoRedo system
-	 * create a nice indentation.
 	 */
-	static Node *createAndInsertNode(const QString &nodeName, const QString &tagString, int nodeType, Document *doc,
-		Node *parent, Node *nextSibling, Node *nextEndSibling, NodeModifsSet &modifs, bool indentation = true);
+	static Node *createAndInsertNode(const QString &nodeName, const QString &tagString, int nodeType,
+		Document *doc, Node *parent, Node *nextSibling, Node *nextEndSibling, NodeModifsSet &modifs);
 
 	/**
 	 * It behaves essentially like the above function except that if necessary, it will split the Nodes.
@@ -278,12 +277,15 @@ public:
 
 	/**
 	 * It behaves essentially like the above function except that it will insert the new Node only if the DTD
-	 * allows it.
+	 * allows it, and if generateElements is set to true, it will try to add new Element to be DTD compliant
+	 * e.g. surrounding text by TABLE will make TD and TR to be created and inserted to be DTD compliant.
+	 * @param generateElements Specifies if we should try add elements to be DTD compliant if newNode
+	 * can't be inserted.
 	 * @return Returns false if it wasn't possible to insert the tag because e.g. of an invalid parent.
 	 */
 	static bool DTDcreateAndInsertNode(const QString &nodeName, const QString &tagString, int nodeType, Document *doc,
 		Node *parent, Node *startNodeToSurround, Node *endNodeToSurround, int startOffset, int endOffset,
-		NodeModifsSet &modifs);
+		NodeModifsSet &modifs, bool generateElements = true);
 
 	/**
 	 * It behaves essentially like the above function except that the new Tag can surround any subtree. If
@@ -311,7 +313,8 @@ public:
 		bool &addingStarted, int level, NodeModifsSet &modifs);
 
 	/**
-	 * Create a copy of Node. This is a custom copy function with some pointers set to NULL like listItem
+	 * Create a copy of Node. It use the Node copy operator and add some kafka-specific flags :
+	 * It set the cleanStrBuilt to true;
 	 * @param node The node to duplicate.
 	 * @return Returns the duplicated Node. I wonder if i should always write so obvious things ;-)
 	 */
@@ -321,14 +324,11 @@ public:
 	 * Extract a Node from the Node Tree. WARNING this will log that the Node was removed.
 	 * @param node The node to delete.
 	 * @param modifs The changes made are logged into modifs.
-	 * @param deleteChilds If we delete or move up the children. WARNING: it don't check
+	 * @param deleteChilds If we remove or move up the children. WARNING: it don't check
 	 * if the children of node are legal childs of the parent of node.
-	 * @param indentation Specifies if we should add/delete Empty Nodes in order to let the undoRedo system
-	 * create a nice indentation.
 	 * @return Returns the node extracted with its childs
 	 */
-	static Node* extractNode(Node *node, NodeModifsSet &modifs, bool deleteChildren = true,
-		bool indentation = true);
+	static Node* extractNode(Node *node, NodeModifsSet &modifs, bool removeChildren = true);
 
 	/**
 	 * Extract and delete Node from the Tree.

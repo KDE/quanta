@@ -564,10 +564,7 @@ void htmlDocumentProperties::addBasicNodes(NodeModifsSet &modifs)
 	while(allTheNodes)
 	{
 		n = allTheNodes->next;
-		tagName = allTheNodes->tag->name;
-		if(tagName.left(1) == "/")
-			tagName = tagName.right(tagName.length() - 1);
-		if(qHead->isChild(tagName))
+		if(qHead->isChild(allTheNodes))
 		{
 			/*//TODO:LOG this into the modif!!
 			allTheNodes->parent = headNode;
@@ -583,7 +580,7 @@ void htmlDocumentProperties::addBasicNodes(NodeModifsSet &modifs)
 			lastHeadChild = allTheNodes;*/
 			kafkaCommon::moveNode(allTheNodes, headNode, 0L, modifs);
 		}
-		else if(bodyNodeCreated && htmlNodeCreated && qBody->isChild(tagName))
+		else if(bodyNodeCreated && htmlNodeCreated && qBody->isChild(allTheNodes))
 		{
 			//TODO:log!!
 			/**allTheNodes->parent = bodyNode;

@@ -254,3 +254,19 @@ int Node::size()
 #endif
   return l;
 }
+
+void Node::operator =(Node* node)
+{
+
+	(*this) = (*node);
+	prev = 0L;
+	next = 0L;
+	parent = 0L;
+	child = 0L;
+	listItem = 0L;
+	groupElementLists.clear();
+	group = 0L;
+	groupTag = 0L;
+	tag = new Tag(*(node->tag));
+
+}

@@ -180,7 +180,7 @@
     </attr>
 
 <children>
-<child name="li" />
+<child name="li" usage="required" />
 </children>
 </tag>
 

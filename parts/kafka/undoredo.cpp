@@ -1196,7 +1196,7 @@ void undoRedo::reloadKafkaEditor(bool force)
 void undoRedo::reloadQuantaEditor(bool force)
 {
 	QString text, allText;
-	Node *_node = baseNode;
+	Node *node = baseNode;
 	int bCol, bLine, eCol, eLine;
 	WKafkaPart *kafkaInterface = quantaApp->view()->getKafkaInterface();
 	bool updateClosing;
@@ -1216,38 +1216,38 @@ void undoRedo::reloadQuantaEditor(bool force)
 	m_doc->activateRepaintView(false);
 	qConfig.updateClosingTags = false;
 
-	/**m_doc->editIf->removeText(0, 0, m_doc->editIf->numLines() - 1,
-		m_doc->editIf->lineLength(m_doc->editIf->numLines() - 1));*/
 	bLine = 0;
 	bCol = 0;
-	while(_node)
+	while(node)
 	{
-		if(!_node->tag->cleanStrBuilt)
+		if(!node->tag->cleanStrBuilt)
 		{
-			_node->tag->setStr(kafkaInterface->generateCodeFromNode(_node, bLine, bCol, eLine, eCol));
-			_node->tag->setTagPosition(bLine, bCol, eLine, eCol);
+			node->tag->setStr(kafkaInterface->generateCodeFromNode(node, bLine, bCol, eLine, eCol));
+			node->tag->setTagPosition(bLine, bCol, eLine, eCol);
 			//kdDebug(25001)<< "POS1 " << bLine <<  " " <<  bCol << " " << eLine << " " << eCol << endl;
-			kafkaCommon::applyIndentation(_node, 2, 0);
+			kafkaCommon::fitIndentationNodes(node, node->nextSibling());
+			kafkaCommon::applyIndentation(node, 2, 0);
 			//int a, b, c, d;
 			//_node->tag->beginPos(a,b);
 			//_node->tag->endPos(c,d);
 			//kdDebug(25001)<< "POS2 " << a <<  " " <<  b << " " << c << " " << d << endl;
-			_node->tag->cleanStrBuilt = true;
+			node->tag->cleanStrBuilt = true;
 		}
 		//_node->tag->beginPos(bLine, bCol);
 		//i can't stop redraw events of Kate!
 		//m_doc->editIf->insertText(bLine, bCol, _node->tag->tagStr());
 		//allText += _node->tag->tagStr();
-		_node->tag->endPos(bLine, bCol);
+		node->tag->endPos(bLine, bCol);
 		bCol++;
-		_node = _node->nextSibling();
+		node = node->nextSibling();
 	}
 
-	_node = baseNode;
-	while(_node)
+	node = baseNode;
+	while(node)
 	{
-		allText += _node->tag->tagStr();
-		_node = _node->nextSibling();
+		//kdDebug(25001)<< "CurNode : " << _node->tag->name << " - " << _node->tag->tagStr() << endl;
+		allText += node->tag->tagStr();
+		node = node->nextSibling();
 	}
 
 	//temp

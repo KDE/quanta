@@ -21,7 +21,7 @@
         <location col="0" row="2" colspan="2" />
     </attr>
 <children>
-<child name="li" />
+<child name="li" usage="required" />
 </children>
 </tag>
 

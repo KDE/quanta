@@ -165,19 +165,50 @@ Attribute* QTag::attribute(const QString& name)
  return attr;
 }
 
-bool QTag::isChild(const QString& tag)
+bool QTag::isChild(const QString& tag, bool trueIfNoChildsDefined)
 {
  QString tagName = tag;
   tagName = parentDTD->caseSensitive ? tagName : tagName.upper();
-  return (childTags.isEmpty() || childTags.contains(tagName));
+  if(trueIfNoChildsDefined)
+    return (childTags.isEmpty() || childTags.contains(tagName));
+  else
+    return (!childTags.isEmpty() && childTags.contains(tagName));
 }
 
-bool QTag::isChild(Node *node)
+bool QTag::isChild(Node *node, bool trueIfNoChildsDefined)
 {
-  if(node->tag->type == Tag::Text)
-    return (childTags.isEmpty() || childTags.contains("#text") || childTags.contains("#TEXT"));
+  QString nodeName;
+
+  if(!node)
+    return false;
+  else if(node->tag->type == Tag::Text)
+  {
+    if(trueIfNoChildsDefined)
+      return(childTags.isEmpty() || childTags.contains("#text") || childTags.contains("#TEXT"));
+    else
+      return(!childTags.isEmpty() && (childTags.contains("#text") || childTags.contains("#TEXT")));
+  }
   else if(node->tag->type == Tag::Empty)
     return true;
+  else if(node->tag->type == Tag::XmlTagEnd)
+  {
+    nodeName = node->tag->name;
+    if(nodeName.left(1) == "/")
+      nodeName = nodeName.mid(1);
+    return isChild(nodeName, trueIfNoChildsDefined);
+  }
   else
-    return isChild(node->tag->name);
+    return isChild(node->tag->name, trueIfNoChildsDefined);
+}
+
+QPtrList<QTag> QTag::parents()
+{
+  QPtrList<QTag> qTagList;
+  QDictIterator<QTag> it((*parentDTD->tagsList));
+  for(; it.current(); ++it)
+  {
+    if(it.current()->isChild(name()))
+      qTagList.append(it.current());
+  }
+  return qTagList;
 }

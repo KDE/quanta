@@ -56,6 +56,12 @@ public:
  Node( Node *parent );
  ~Node();
 
+ /**
+  * Copy everything from node except prev, next, child, parent, listItem, group, groupTag, which are set to Null
+  * The groupElementsList is cleared.
+  */
+ void operator =(Node* node);
+
  Node *next;
  Node *prev;
  Node *parent;

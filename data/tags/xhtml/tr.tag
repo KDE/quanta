@@ -47,7 +47,7 @@
 
 <children>
 <child name="th" />
-<child name="td" />
+<child name="td" usage="required" />
 </children>
 </tag>
 </TAGS>

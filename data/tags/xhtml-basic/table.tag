@@ -6,7 +6,7 @@
     <attr name="summary" type="input" />
 <children>
 <child name="caption" />
-<child name="tr" />
+<child name="tr" usage="required" />
 </children>
 </tag>
 </TAGS>

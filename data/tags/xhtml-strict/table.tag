@@ -72,7 +72,7 @@
 <child name="thead" />
 <child name="tfoot" />
 <child name="tbody" />
-<child name="tr" />
+<child name="tr" usage="required" />
 </children>
 
 </tag>

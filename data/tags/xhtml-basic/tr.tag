@@ -35,7 +35,7 @@
 
 <children>
 <child name="td" />
-<child name="th" />
+<child name="th" usage="required" />
 </children>
 </tag>
 </TAGS>

@@ -527,7 +527,7 @@ void QuantaView::slotShowKafkaPart()
 {
 #ifdef BUILD_KAFKAPART
   DOM::Node node;
-  int offset, id, oldViewsLayout;
+  int id, oldViewsLayout;
   KToggleAction *ta = (KToggleAction *) quantaApp->actionCollection()->action( "show_kafka_view" );
   KToggleAction *ta2 = (KToggleAction *) quantaApp->actionCollection()->action( "show_quanta_editor" );
 
@@ -594,7 +594,7 @@ void QuantaView::slotShowKafkaAndQuanta()
 #ifdef BUILD_KAFKAPART
   KToggleAction *ta = (KToggleAction *) quantaApp->actionCollection()->action( "show_kafka_and_quanta" );
   KToggleAction *ta2 = (KToggleAction *) quantaApp->actionCollection()->action( "show_quanta_editor" );
-  int curCol, curLine, offset, oldViewsLayout;
+  int oldViewsLayout;
   DOM::Node node;
 
   if(!writeExists())
@@ -696,10 +696,15 @@ void QuantaView::resize(int width, int height)
 void QuantaView::slotKafkaGetFocus(bool focus)
 {
 #ifdef BUILD_KAFKAPART
+#ifdef LIGHT_DEBUG
   kdDebug(25001)<< "QuantaView::slotKafkaGetFocus(" << focus << ")" << endl;
+#endif
   int contentsX, contentsY;
+  KAction *action;
+
   if(focus)
   {
+    //We reload the kafka part from the Node Tree
     if(currentViewsLayout == QuantaView::QuantaAndKafkaViews && currentFocus == QuantaView::quantaFocus)
     {
       killTimer(kafkaUpdateTimer);
@@ -712,15 +717,62 @@ void QuantaView::slotKafkaGetFocus(bool focus)
       //doesn't work!
       kafkaInterface->getKafkaPart()->view()->setContentsPos(contentsX, contentsY);
     }
+
+    //We disable some actions which doesn't work on kafka for the moment
+    action = quantaApp->actionCollection()->action("tag_edit_table");
+    if(action)
+      action->setEnabled(false);
+    action = 0L;
+    action = quantaApp->actionCollection()->action("tag_quick_list");
+    if(action)
+      action->setEnabled(false);
+    action = 0L;
+    action = quantaApp->actionCollection()->action("tag_color");
+    if(action)
+      action->setEnabled(false);
+    action = 0L;
+    action = quantaApp->actionCollection()->action("tag_mail");
+    if(action)
+      action->setEnabled(false);
+    action = 0L;
+    action = quantaApp->actionCollection()->action("tag_misc");
+    if(action)
+      action->setEnabled(false);
+    action = 0L;
+    action = quantaApp->actionCollection()->action("tag_frame_wizard");
+    if(action)
+      action->setEnabled(false);
+    action = 0L;
+    action = quantaApp->actionCollection()->action("insert_css");
+    if(action)
+      action->setEnabled(false);
+    action = 0L;
+    action = quantaApp->actionCollection()->action("insert_char");
+    if(action)
+      action->setEnabled(false);
+    action = 0L;
+    action = quantaApp->actionCollection()->action("");
+    if(action)
+      action->setEnabled(false);
+    action = 0L;
+    action = quantaApp->actionCollection()->action("");
+    if(action)
+      action->setEnabled(false);
+
+    currentFocus = QuantaView::kafkaFocus;
   }
-  currentFocus = QuantaView::kafkaFocus;
 #endif
 }
 
 void QuantaView::slotQuantaGetFocus(Kate::View *)
 {
 #ifdef BUILD_KAFKAPART
+#ifdef LIGHT_DEBUG
   kdDebug(25001)<< "QuantaView::slotQuantaGetFocus(true)" << endl;
+#endif
+  KAction *action;
+
+  //We reload the quanta view from the Node Tree.
   if(currentViewsLayout == QuantaView::QuantaAndKafkaViews && currentFocus == QuantaView::kafkaFocus)
   {
     killTimer(quantaUpdateTimer);
@@ -729,6 +781,48 @@ void QuantaView::slotQuantaGetFocus(Kate::View *)
       kafkaUpdateTimer = startTimer(qConfig.kafkaRefreshDelay);
     write()->docUndoRedo->reloadQuantaEditor();
   }
+
+    //We enable some actions which doesn't work on kafka for the moment
+    action = quantaApp->actionCollection()->action("tag_edit_table");
+    if(action)
+      action->setEnabled(true);
+    action = 0L;
+    action = quantaApp->actionCollection()->action("tag_quick_list");
+    if(action)
+      action->setEnabled(true);
+    action = 0L;
+    action = quantaApp->actionCollection()->action("tag_color");
+    if(action)
+      action->setEnabled(true);
+    action = 0L;
+    action = quantaApp->actionCollection()->action("tag_mail");
+    if(action)
+      action->setEnabled(true);
+    action = 0L;
+    action = quantaApp->actionCollection()->action("tag_misc");
+    if(action)
+      action->setEnabled(true);
+    action = 0L;
+    action = quantaApp->actionCollection()->action("tag_frame_wizard");
+    if(action)
+      action->setEnabled(true);
+    action = 0L;
+    action = quantaApp->actionCollection()->action("insert_css");
+    if(action)
+      action->setEnabled(true);
+    action = 0L;
+    action = quantaApp->actionCollection()->action("insert_char");
+    if(action)
+      action->setEnabled(true);
+    action = 0L;
+    action = quantaApp->actionCollection()->action("");
+    if(action)
+      action->setEnabled(true);
+    action = 0L;
+    action = quantaApp->actionCollection()->action("");
+    if(action)
+      action->setEnabled(true);
+
   currentFocus = QuantaView::quantaFocus;
 #endif
 }
@@ -737,8 +831,6 @@ void QuantaView::slotQuantaGetFocus(Kate::View *)
 void QuantaView::timerEvent( QTimerEvent *e )
 {
   kdDebug(25001)<< "QuantaView::timerEvent" << endl;
-  int offset;
-  uint oldCurCol, oldCurLine;
   DOM::Node node;
 
   if (kafkaInterface->isLoaded() && currentViewsLayout == QuantaView::QuantaAndKafkaViews && writeExists())

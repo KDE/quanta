@@ -51,6 +51,24 @@
 WKafkaPart::WKafkaPart(QWidget *parent, QWidget *widgetParent, const char *name)
 :domNodeProps(1021)
 {
+// i18n reserve
+QString a = i18n("Selector");QString b = i18n("Attribute");QString c = i18n("Class");
+QString d = i18n("Pseudo-class");QString e = i18n("CSS rules");QString f = i18n("Universal selector");
+QString g = i18n("Linked stylesheets");QString h = i18n("Embedded stylesheets");QString i = i18n("Inline style attribute");
+QString j = i18n("Link");QString k = i18n("Priority");QString l = i18n("ID");
+QString m = i18n("Browser support");QString n = i18n("Pseudo-element");QString o = i18n("Imported");
+QString p = i18n("Inheritance");QString q = i18n("Inherited");QString r = i18n("");
+
+QString s = i18n("Name");QString tt = i18n("Undo");QString u = i18n("Redo");
+QString v = i18n("Undo/Redo history");QString w = i18n("CSS styles");
+
+QString x = i18n("Sorry, VPL doesn't support this functionnality yet!");
+QString y = i18n("Merge cells");
+QString z = i18n("Split cells");
+QString aa = i18n("Edit CSS style of this Tag");
+QString ab = i18n("Ident all");
+//end
+
 #ifdef LIGHT_DEBUG
 	kdDebug(25001)<< "WKafkaPart::WKafkaPart()" << endl;
 #endif
@@ -104,17 +122,6 @@ WKafkaPart::~WKafkaPart()
 
 void WKafkaPart::loadDocument(Document *doc)
 {
-// i18n reserve
-QString a = i18n("Selector");QString b = i18n("Attribute");QString c = i18n("Class");
-QString d = i18n("Pseudo-class");QString e = i18n("CSS rules");QString f = i18n("Universal selector");
-QString g = i18n("Linked stylesheets");QString h = i18n("Embedded stylesheets");QString i = i18n("Inline style attribute");
-QString j = i18n("Link");QString k = i18n("Priority");QString l = i18n("ID");
-QString m = i18n("Browser support");QString n = i18n("Pseudo-element");QString o = i18n("Imported");
-QString p = i18n("Inheritance");QString q = i18n("Inherited");QString r = i18n("");
-
-QString s = i18n("Name");QString tt = i18n("Undo");QString u = i18n("Redo");
-QString v = i18n("Undo/Redo history");QString w = i18n("CSS styles");
-//end
 
 #ifdef LIGHT_DEBUG
 	kdDebug(25001) << "WKafkaPart::loadDocument()" << endl;

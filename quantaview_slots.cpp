@@ -1046,7 +1046,7 @@ void QuantaView::slotInsertChar(const QString &selected)
 Node *QuantaView::showTagDialogAndReturnNode(QString tag, QString attr)
 {
 #ifdef BUILD_KAFKAPART
-  Node *n;
+  Node *n = 0L;
   if(writeExists())
   {
     Document *w = write();

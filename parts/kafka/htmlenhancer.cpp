@@ -185,6 +185,21 @@ bool HTMLEnhancer::enhanceNode(Node *node, DOM::Node parentDNode, DOM::Node next
 		node->_rootNode.attributes().setNamedItem(attr);
 	}
 
+	//THEN add a minimal border for borderless tables
+	//TODO: make it configurable, and look if CSS hasn't defined a border first
+	if(!node->_rootNode.isNull() && node->_rootNode.nodeName().string().lower() == "table" )
+	{
+		domNode = node->_rootNode.attributes().getNamedItem("border");
+		if(domNode.isNull())
+		{
+			attr = m_wkafkapart->getKafkaPart()->htmlDocument().createAttribute("border");
+			attr.setNodeValue("1");
+			node->_rootNode.attributes().setNamedItem(attr);
+		}
+		else if(!domNode.isNull() && domNode.nodeValue().string() == "0")
+			domNode.setNodeValue("1");
+	}
+
 	return true;
 }
 
