@@ -659,7 +659,7 @@ void QuantaApp::saveOptions()
     m_config->setGroup("Quanta View");
     m_config->writeEntry("LineNumbers", qConfig.lineNumbers);
     m_config->writeEntry("Iconbar", qConfig.iconBar);
-    m_config->writeEntry("DynamicWordWrap",qConfig.dynamicWordWrap);
+    m_config->writeEntry("DynamicWordWrap", qConfig.dynamicWordWrap);
    // m_doc->writeConfig(m_config); // kwrites
     m_project->writeConfig(m_config); // project
     manager()->writeConfig(m_config);

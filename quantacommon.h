@@ -184,6 +184,8 @@ pointer must be deleted by the caller!! */
   static bool closesTag(Tag *tag1, Tag *tag2);
   static bool closesTag(QString namespaceName, QString tagName, bool caseSensitive,
     QString namespaceName2, QString tagName2, bool caseSensitive2);
+  static int denyBinaryInsert();
+
 };
 
 

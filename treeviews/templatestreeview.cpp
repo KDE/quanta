@@ -161,7 +161,7 @@ void TemplatesTreeView::slotInsertInDocument()
    emit insertFile(url);
  } else
  {
-   if (denyBinaryInsert() == KMessageBox::Yes)
+   if (QuantaCommon::denyBinaryInsert() == KMessageBox::Yes)
    {
      emit insertFile(url);
    }
@@ -210,7 +210,7 @@ void TemplatesTreeView::slotMenu(KListView*, QListViewItem *item, const QPoint &
 void TemplatesTreeView::slotNewDocument()
 {
  KURL url = filterTemplate();
- if (QuantaCommon::checkMimeGroup(url, "text") || denyBinaryInsert() == KMessageBox::Yes)
+ if (QuantaCommon::checkMimeGroup(url, "text") || QuantaCommon::denyBinaryInsert() == KMessageBox::Yes)
  {
    QListViewItem *item = currentItem();
    if (item )
@@ -588,7 +588,7 @@ void TemplatesTreeView::slotDragInsert(QDropEvent *e)
    {
      if(m_dirInfo.mimeType == "text/all") // default to inserting in document
      {
-      if(!mimeType.contains("text", false) && denyBinaryInsert() != KMessageBox::Yes)
+      if(!mimeType.contains("text", false) && QuantaCommon::denyBinaryInsert() != KMessageBox::Yes)
       {
         return;
       }
@@ -603,7 +603,7 @@ void TemplatesTreeView::slotDragInsert(QDropEvent *e)
      else
      if(m_dirInfo.mimeType == "template/all")
      {
-       if(!mimeType.contains("text", false) && denyBinaryInsert() != KMessageBox::Yes)
+       if(!mimeType.contains("text", false) && QuantaCommon::denyBinaryInsert() != KMessageBox::Yes)
        {
          return;
        }

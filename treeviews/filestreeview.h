@@ -109,7 +109,6 @@ protected:
   KFileTreeBranch* newBranch(const KURL& url);
   virtual void itemRenamed(const KURL& , const KURL& );
   void addFileInfoPage(KPropertiesDialog *propDlg);
-  int denyBinaryInsert();
   /** expands an archiv, if possible */
   bool expandArchiv (KFileTreeViewItem *item);
   bool acceptDrag(QDropEvent* e ) const;

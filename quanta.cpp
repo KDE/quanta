@@ -194,7 +194,9 @@ void QuantaApp::slotFileOpen()
  m_view->writeTab()->blockSignals(true);
  for (KURL::List::Iterator i=urls.begin(); i != urls.end(); ++i)
  {
-   slotFileOpen( *i , encoding);
+   if (QuantaCommon::checkMimeGroup(*i, "text") ||
+       QuantaCommon::denyBinaryInsert() == KMessageBox::Yes)
+     slotFileOpen( *i , encoding);
 //   kapp->eventLoop()->processEvents( QEventLoop::ExcludeUserInput | QEventLoop::ExcludeSocketNotifiers);
  }
  m_doc->blockSignals(false);
@@ -210,22 +212,25 @@ void QuantaApp::slotFileOpen( const KURL &url, const QString& encoding )
   m_view->write()->view()->setFocus();
 }
 
-void QuantaApp::slotFileOpenRecent(const KURL &url )
+void QuantaApp::slotFileOpenRecent(const KURL &url)
 {
   QString fn = url.prettyURL();
-  if ( fn.left(5) == "file:" ) fn.remove(0,5);
+  if (fn.left(5) == "file:")
+    fn.remove(0,5);
 
-  if ( (url.isLocalFile()) && (! QFileInfo(fn).exists()) )
- {
+  if ((url.isLocalFile()) && (!QFileInfo(fn).exists()))
+  {
     if (KMessageBox::questionYesNo( this,
-         i18n("The file %1 does not exist.\n Do you want to remove from the list?").arg(fn) )
-         == KMessageBox::Yes)
+        i18n("The file %1 does not exist.\n Do you want to remove from the list?").arg(fn) )
+        == KMessageBox::Yes)
     {
       fileRecent->removeURL(url);
     }
   } else
+  if (QuantaCommon::checkMimeGroup(url, "text") ||
+      QuantaCommon::denyBinaryInsert() == KMessageBox::Yes)
   {
-    m_doc->openDocument( url );
+    m_doc->openDocument(url);
   }
   fileRecent->setCurrentItem(-1);
   m_view->write()->view()->setFocus();
@@ -1325,6 +1330,11 @@ void QuantaApp::slotShowPreviewWidget(bool show)
     m_noFramesPreview = false;
     m_view->write()->view()->setFocus();
   }
+  KToggleAction *ta = (KToggleAction *) quantaApp->actionCollection()->action( "show_quanta_editor" );
+  if (ta)
+  {
+    ta->setChecked(!show);
+  }
 }
 
 void QuantaApp::slotShowPreview()
@@ -1376,11 +1386,6 @@ void QuantaApp::slotShowPreview()
           fileWatcher->addFile(origUrl.path());
     }
     m_previewVisible = false;
-  }
-  KToggleAction *ta = (KToggleAction *) quantaApp->actionCollection()->action( "show_quanta_editor" );
-  if (ta)
-  {
-    ta->setChecked(!m_previewVisible);
   }
   m_noFramesPreview = false;
 }
@@ -1659,16 +1664,7 @@ void QuantaApp::slotContextHelp()
 void QuantaApp::slotShowFTabDock() { ftabdock->changeHideShowState();}
 void QuantaApp::slotShowPTabDock() { ptabdock->changeHideShowState();}
 void QuantaApp::slotShowTTabDock() { ttabdock->changeHideShowState();}
-void QuantaApp::slotShowScriptTabDock() {
-  if (scripttabdock->isVisible())
-  {
-    scripttabdock->hide();
-  } else {
-    if (scripttabdock->parentDockTabGroup())
-      scripttabdock->parentDockTabGroup()->show();
-    scripttabdock->show();
-  }
-}
+void QuantaApp::slotShowScriptTabDock() { scripttabdock->changeHideShowState(); }
 void QuantaApp::slotShowSTabDock() { stabdock->changeHideShowState();}
 void QuantaApp::slotShowATabDock() { atabdock->changeHideShowState();}
 void QuantaApp::slotShowDTabDock() { dtabdock->changeHideShowState();}
@@ -3763,9 +3759,9 @@ void QuantaApp::layoutDockWidgets(const QString &layout)
     ptabdock->manualDock(ftabdock, KDockWidget::DockCenter);
     ttabdock->manualDock(ftabdock, KDockWidget::DockCenter);
     scripttabdock->manualDock(ftabdock, KDockWidget::DockCenter);
-    dtabdock->manualDock(ftabdock, KDockWidget::DockCenter);
     KDockWidget *w = stabdock->manualDock(ftabdock, KDockWidget::DockCenter);
     atabdock->manualDock(w, KDockWidget::DockBottom, 70);
+    dtabdock->manualDock(ftabdock, KDockWidget::DockCenter);
   } else
   if (layout == "Tabbed")
   {
@@ -3776,9 +3772,9 @@ void QuantaApp::layoutDockWidgets(const QString &layout)
     ptabdock->manualDock(ftabdock, KDockWidget::DockCenter);
     ttabdock->manualDock(ftabdock, KDockWidget::DockCenter);
     scripttabdock->manualDock(ftabdock, KDockWidget::DockCenter);
-    dtabdock->manualDock(ftabdock, KDockWidget::DockCenter);
     stabdock->manualDock(ftabdock, KDockWidget::DockCenter);
     atabdock->manualDock(ftabdock, KDockWidget::DockCenter);
+    dtabdock->manualDock(ftabdock, KDockWidget::DockCenter);
   }
 }
 
