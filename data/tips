@@ -129,3 +129,10 @@ server name in form of <i>ftp://user@server</i> and select the remote folder.
 </p>
 </html>
 </tip>
+
+<tip category="Application">
+<html>
+<p>...that Quanta has a visual <b>problem reporter</b>? Switch to the <b>Structure Tree</b> and make the problem description widget visible with <b>View &gt; Show Problem Reporter</b>.
+</p>
+</html>
+</tip>

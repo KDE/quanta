@@ -1426,6 +1426,10 @@ void QuantaApp::slotDockStatusChanged()
 {
   qConfig.windowLayout = "Custom";
   showMessagesAction->setChecked(bottdock->isVisible());
+  if (!stabdock->isVisible()) {
+    m_problemOutput->clear();
+    m_problemOutput->showMessage(i18n("Switch to the Structure Tree in order to turn on the error recognition.\n"));
+  }
 }
 
 void QuantaApp::slotDockChanged()
@@ -1469,6 +1473,10 @@ void QuantaApp::slotDockChanged()
     }
   }
   showMessagesAction->setChecked(bottdock->isVisible());
+  if (!stabdock->isVisible()) {
+    m_problemOutput->clear();
+    m_problemOutput->showMessage(i18n("Switch to the Structure Tree in order to turn on the error recognition.\n"));
+  }
 }
 
 void QuantaApp::selectArea(int line1, int col1, int line2, int col2)
@@ -1551,7 +1559,14 @@ void QuantaApp::slotShowScriptTabDock() { scripttabdock->changeHideShowState();}
 void QuantaApp::slotShowSTabDock() { stabdock->changeHideShowState();}
 void QuantaApp::slotShowATabDock() { atabdock->changeHideShowState();}
 void QuantaApp::slotShowDTabDock() { dtabdock->changeHideShowState();}
-void QuantaApp::slotShowProblemsDock() { problemsdock->changeHideShowState();}
+void QuantaApp::slotShowProblemsDock()
+{
+  problemsdock->changeHideShowState();
+  if (!stabdock->isVisible()) {
+    m_problemOutput->clear();
+    m_problemOutput->showMessage(i18n("Switch to the Structure Tree in order to turn on the error recognition.\n"));
+  }
+}
 void QuantaApp::slotShowBottDock(bool force)
 {
   if ( bottdock->parent() == 0L )
