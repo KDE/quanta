@@ -191,8 +191,13 @@ QString tree::createFrameTag(areaAttribute *a){
 
 
   if( !Src.isEmpty() )
-      tagMiddle+= (" src=\"" + KURL::relativeURL( KURL(reldPath) ,KURL(Src)) + "\"");
-          
+  {
+    KURL u;
+    u.setPath(reldPath);
+    KURL base;
+    base.setPath(Src);
+    tagMiddle+= (" src=\"" + QExtFileInfo::toRelative( reldPath, base).path() + "\"");
+  }       
       
   if( !Longdesc.isEmpty() )
       tagMiddle+= (" longdesc=\""+Longdesc+"\"");
