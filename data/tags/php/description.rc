@@ -37,7 +37,7 @@ SearchRx_Minimal = true
 ClearRx = \n
 HasFileName = true
 ParseFile = true
-FileNameRx = (?:include|require|include_once|require_once|\(|\)|\"|\')
+FileNameRx = (?:include|require|include_once|require_once|\(|\)|\"|\'|;$)
 
 [StructGroup_2]
 Name = Variables
