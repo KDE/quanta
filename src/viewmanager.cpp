@@ -24,6 +24,7 @@
 #include <kpopupmenu.h>
 #include <ktexteditor/view.h>
 #include <ktexteditor/encodinginterface.h>
+#include <ktexteditor/highlightinginterface.h>
 #include <ktexteditor/popupmenuinterface.h>
 #include <ktexteditor/editorchooser.h>
 
@@ -112,6 +113,28 @@ void ViewManager::createNewDocument()
   KTextEditor::EncodingInterface* encodingIf = dynamic_cast<KTextEditor::EncodingInterface*>(doc);
   if (encodingIf)
       encodingIf->setEncoding(encoding);
+  KTextEditor::HighlightingInterface* highlightIf = dynamic_cast<KTextEditor::HighlightingInterface*>(doc);
+  if (highlightIf)
+  {
+     QString hlName;
+     int htmlIdx, xmlIdx;
+     for (uint i = 0; i < highlightIf->hlModeCount(); i++)
+     {
+         hlName = highlightIf->hlModeName(i);
+         if (hlName == "HTML")
+           htmlIdx = i;
+         if (hlName == "XML")
+           xmlIdx = i;
+     }
+     const DTDStruct *dtd = w->defaultDTD();
+     if (dtd->family == 1)
+     {
+        if (dtd->singleTagStyle == "xml")
+          highlightIf->setHlMode(xmlIdx);
+        else
+          highlightIf->setHlMode(htmlIdx);
+     }
+  }
 
   KTextEditor::View * v = w->view();
 
