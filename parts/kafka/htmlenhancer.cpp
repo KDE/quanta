@@ -74,6 +74,22 @@ bool HTMLEnhancer::enhanceNode(Node *node, DOM::Node parentDNode, DOM::Node next
 #endif
 		}
 	}
+        
+        //THEN update the href attr of the LINK node with the baseURL
+        if(node->tag->name.lower() == "link" && node->rootNode())
+        {
+          domNode = node->rootNode()->attributes().getNamedItem("href");
+          if(!domNode.isNull())
+          {
+            baseURL.setPath(ViewManager::ref()->activeDocument()->url().directory());
+            QuantaCommon::setUrl(url, domNode.nodeValue().string());
+            url = QExtFileInfo::toAbsolute(url, baseURL);
+            domNode.setNodeValue(url.url());
+#ifdef HEAVY_DEBUG
+            kdDebug(25001)<< "HTMLTranslator::translateNode() - new href : " << url.url() << endl;
+#endif        
+          }
+        }
 
 	//THEN if it is the style element, add a DOM::Node::TEXT_NODE child gathering all the CSS
 	//by default, the parser parse it as a script, which can't be translated in DOM::Nodes.
