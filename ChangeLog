@@ -19,7 +19,9 @@ Version 3.3.2 (Release date: xx-10-2004; Started 07-10-2004):
           only with the mouse through the selection. [#92936]
 	- don't show directories that were removed from the project in the upload
 	  dialog [#87186]
-  
+	- don't show the Upload File item in the tab context menu if the current item 
+	  is not part of a project.
+ 
 
 
   - improvements:

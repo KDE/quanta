@@ -39,6 +39,7 @@
 #include "document.h"
 #include "quantaview.h"
 #include "viewmanager.h"
+#include "project.h"
 #include "resource.h"
 #include "quanta.h"
 #include "toolbartabwidget.h"
@@ -443,7 +444,10 @@ void ViewManager::slotTabContextMenu(QWidget *widget, const QPoint& point)
    {
        m_tabPopup->insertSeparator(SEPARATOR_INDEX);
        m_tabPopup->setItemVisible(RELOAD_ID, true);
-       m_tabPopup->setItemVisible(UPLOAD_ID, true);
+       if (Project::ref()->hasProject() && Project::ref()->contains(m_contextView->document()->url()))
+         m_tabPopup->setItemVisible(UPLOAD_ID, true);
+       else
+         m_tabPopup->setItemVisible(UPLOAD_ID, false);
        m_tabPopup->setItemVisible(DELETE_ID, true);
        m_separatorVisible = true;
    } else
