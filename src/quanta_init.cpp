@@ -222,6 +222,8 @@ void QuantaInit::initQuanta()
     m_quanta->toolBar("mainPluginsToolBar")->show();
     showToolbarAction->setChecked(true);
   }
+  // Always hide debugger toolbar at this point
+  m_quanta->toolBar("debugger_toolbar")->hide();
 
   m_quanta->m_pluginInterface->setPluginMenu(static_cast<QPopupMenu*>(m_quanta->factory()->container("plugins", m_quanta)));
  m_quanta->m_pluginInterface->buildPluginMenu();

@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="quanta" version="32051">
+<kpartgui name="quanta" version="32052">
   <MenuBar noMerge="1">
 
     <Menu name="file" noMerge="1"><text>&amp;File</text>
@@ -10,8 +10,8 @@
       <Action name="file_save" />
       <Action name="file_save_as" />
       <Menu name="save_as_template" append="save_merge"><text>Save as Template</text>
-              <Action name="save_local_template"/>
-              <Action name="save_project_template"/>
+        <Action name="save_local_template"/>
+        <Action name="save_project_template"/>
         <Separator />
         <Action name="save_selection_local_template"/>
         <Action name="save_selection_project_template" />
@@ -190,7 +190,7 @@
   </ToolBar>
 
   <ToolBar name="mainNaviToolBar" noMerge="1">
-  <text>Navigation Toolbar</text>
+    <text>Navigation Toolbar</text>
     <Action name="show_messages"/>
     <Action name="show_quanta_editor"/>
     <Action name="show_kafka_view"/>
@@ -211,6 +211,10 @@
   </Menu>
 
   <Menu name="debugger_menu" noMerge="1"><text>&amp;Debug</text>
+    <Menu name="debug_session"><text>Session</text>
+      <Action name="debug_connect" />
+      <Action name="debug_disconnect" />
+    </Menu>
     <Menu name="debug_execution"><text>&amp;Execution</text>
       <Action name="debug_run" />
       <Action name="debug_leap" />
@@ -227,6 +231,21 @@
       <Action name="debug_breakpoints_clear" />
     </Menu>
   </Menu>
+
+  <ToolBar name="debugger_toolbar" noMerge="1">
+    <text>Debugger</text>
+    <Action name="debug_run" />
+    <Action name="debug_leap" />
+    <Action name="debug_stepover" />
+    <Action name="debug_stepinto" />
+    <Action name="debug_stepout" />
+    <Action name="debug_skip" />
+    <Action name="debug_pause" />
+    <Separator />
+    <Action name="debug_kill" />
+    <Separator />
+    <Action name="debug_breakpoints_toggle" />
+  </Toolbar>
 
   <ActionProperties>
     <Action accel="Ctrl+Return" name="tag_br" />

@@ -986,20 +986,20 @@ void QuantaApp::slotConfigureToolbars(const QString& defaultToolbar)
         p_toolbar->guiClient->xmlFile(), p_toolbar->guiClient->instance());
  }
 #endif
- saveMainWindowSettings(KGlobal::config(), autoSaveGroup());
- KEditToolbar *dlg;
- if (defaultToolbar)
+  saveMainWindowSettings(KGlobal::config(), autoSaveGroup());
+  KEditToolbar *dlg;
+  if (defaultToolbar)
     dlg = new KEditToolbar(defaultToolbar, factory(), this);
- else
+  else
     dlg = new KEditToolbar(factory(), this);
 
- KMenuBar *mb = menuBar();
- KActionCollection *ac = actionCollection();
- //remove the manually added menus BEFORE the dlg shows up
- if (m_debugger->UI())
- {
+  KMenuBar *mb = menuBar();
+  KActionCollection *ac = actionCollection();
+  //remove the manually added menus BEFORE the dlg shows up
+  if (m_debugger->UI())
+  {
     m_debugger->UI()->hideMenu();
- }
+  }
   for (uint i = 0 ; i < mb->count(); i++)
   {
        if (mb->text(mb->idAt(i)) == i18n("&Window"))
@@ -1573,7 +1573,7 @@ void QuantaApp::setCursorPosition( int row, int col )
 void QuantaApp::gotoFileAndLine(const QString& filename, int line, int column)
 {
   if ( !filename.isEmpty() )
-      m_doc->openDocument( KURL::fromPathOrURL( filename ) );
+    m_doc->openDocument( KURL::fromPathOrURL( filename ) );
 
   Document *w = ViewManager::ref()->activeDocument();
   if (w)
@@ -3142,12 +3142,6 @@ void QuantaApp::loadToolbarForDTD(const QString& dtdName)
     }
     ToolbarTabWidget::ref()->setCurrentPage(0);
  }
-//Debug toolbar should be the last
-  if (m_debugger->UI())
-  {
-      showToolbarFile(KURL().fromPathOrURL(qConfig.globalDataDir +resourceDir + "toolbars/debug.toolbar.tgz"));
-      ToolbarTabWidget::ref()->setCurrentPage(0);
-  }
  currentToolbarDTD = newDtd->name;
  slotToggleDTDToolbar(!allToolbarsHidden());
 }
