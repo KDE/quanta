@@ -152,6 +152,7 @@ void QuantaDoc::openDocument(const KURL& urlToOpen, const QString &a_encoding, b
   QString encoding = a_encoding;
   if (!newDocument(url, switchToExisting))
       return;
+  Document *w = write();
   bool loaded = false;
   if ( !url.isEmpty() && QExtFileInfo::exists(url))
   {
@@ -161,7 +162,6 @@ void QuantaDoc::openDocument(const KURL& urlToOpen, const QString &a_encoding, b
        fileWatcher->addFile(url.path());
     }
 
-    Document *w = write();
     if (encoding.isEmpty())
         encoding = quantaApp->defaultEncoding();
 
@@ -194,6 +194,19 @@ void QuantaDoc::openDocument(const KURL& urlToOpen, const QString &a_encoding, b
       emit newStatus();
       loaded = true;
     }
+  } else
+  { /*
+    Project *project = quantaApp->project();
+    KTextEditor::HighlightingInterface *highlightinginterface = dynamic_cast<KTextEditor::HighlightingInterface*>(w->doc());
+    for (unsigned int i=0; i< highlightinginterface->hlModeCount(); i++)
+    {
+      kdDebug(24000) << QString("HL mode #%1 : %2").arg(i).arg(highlightinginterface->hlModeName(i)) << endl;
+      if (project->defaultDTD().contains(highlightinginterface->hlModeName(i), false))
+      {
+        highlightinginterface->setHlMode(i);
+        break;
+      }
+    } */
   }
   if (!loaded && !url.isEmpty()) //the open of the document has failed*/
   {
@@ -451,9 +464,11 @@ Document* QuantaDoc::newWrite()
   if (!dtd)
       dtd = dtds->find(qConfig.defaultDocType);   //fallback, but not really needed
   int i = 1;
-  while ( isOpened("file:/"+i18n("Untitled%1.").arg(i)+dtd->defaultExtension)) i++;
+  //while ( isOpened("file:/"+i18n("Untitled%1.").arg(i)+dtd->defaultExtension)) i++;
+  while ( isOpened("file:/"+i18n("Untitled%1").arg(i))) i++;
 
-  QString fname = i18n("Untitled%1.").arg(i)+dtd->defaultExtension;
+//  QString fname = i18n("Untitled%1.").arg(i)+dtd->defaultExtension;
+  QString fname = i18n("Untitled%1").arg(i);
 
   KTextEditor::Document *doc =
   KTextEditor::createDocument ("libkatepart", quantaApp->view()->writeTab(), "KTextEditor::Document");
@@ -473,16 +488,6 @@ Document* QuantaDoc::newWrite()
   connect((QObject *)w->view(), SIGNAL(dropEventPass(QDropEvent *)), (QObject *)quantaApp->gettTab(), SLOT(slotDragInsert(QDropEvent *)));
 
   w->setUntitledUrl( fname );
-  Project *project = quantaApp->project();
-  KTextEditor::HighlightingInterface *highlightinginterface = dynamic_cast<KTextEditor::HighlightingInterface*>(w->doc());
-  for (unsigned int i=0; i< highlightinginterface->hlModeCount(); i++)
-  {
-    if (project->defaultDTD().contains(highlightinginterface->hlModeName(i).lower()))
-    {
-      highlightinginterface->setHlMode(i);
-      break;
-    }
-  }
   dynamic_cast<KTextEditor::PopupMenuInterface*>(w->view())->installPopup((QPopupMenu *)quantaApp->factory()->container("popup_editor", quantaApp));
 
   quantaApp->setFocusProxy(w->view());
