@@ -42,7 +42,7 @@ void NodeSelectionInd::fillWithVPLCursorSelection()
   int offset, offsetEndSel;
 
   kafkaDoc = KafkaDocument::ref();
-  kafkaDoc->getKafkaWidget()->getCurrentNode(domNode, offset);
+  kafkaDoc->getKafkaWidget()->getCurrentNode(domNode, domOffset);
   KafkaDocument::ref()->translateKafkaIntoNodeCursorPosition(domNode, domOffset, &node, offset);
   m_cursorNode = kafkaCommon::getLocation(node);
   m_cursorOffset = offset;
