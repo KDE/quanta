@@ -44,13 +44,11 @@ SAParser::SAParser()
   m_baseNode = 0L;
   m_currentNode = 0L;
   m_quotesRx = QRegExp("\"|'");
-  includeWatch = 0L;
   m_lastGroupParsed = false;
 }
 
 SAParser::~SAParser()
 {
-  delete includeWatch;
 }
 
 void SAParser::init(Node *node, Document* write)
@@ -181,7 +179,7 @@ void SAParser::parseForScriptGroup(Node *node)
           url = QExtFileInfo::toAbsolute(url, baseURL);
           ParserCommon::includedFiles += url.path();
           ParserCommon::includedFilesDTD.append(dtd);
-          includeWatch->addFile(url.path());
+          ParserCommon::includeWatch->addFile(url.path());
         }
         node->groupTag = newTag;
 

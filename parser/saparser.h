@@ -71,8 +71,6 @@ public:
                   
   void parseInDetail(bool synchronous);     
   
-  KDirWatch *includeWatch; 
-
 private slots:
   /** Parses one line and calls itself with a singleshot timer to parse the next line. */
   bool slotParseOneLine();

@@ -27,10 +27,12 @@
 class Document;
 struct DTDStruct;
 class Node;
+class KDirWatch;
 
 namespace ParserCommon{
   extern QStringList includedFiles;
   extern QPtrList<const DTDStruct> includedFilesDTD; 
+  extern KDirWatch *includeWatch;
   
   //this methods may go in a common class as well             
   QString getLine(Document *write, int line, int endLine, int endCol);
