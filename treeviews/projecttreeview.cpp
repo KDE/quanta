@@ -148,7 +148,7 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   m_folderMenu->insertItem(i18n("Create Site &Template..."), this, SLOT(slotCreateSiteTemplate()));
   m_folderMenu->insertItem(i18n("Re&name"), this, SLOT(slotStartRename()));
   m_folderMenu->insertSeparator();
-  m_setDocumentRootId = m_folderMenu->insertItem(i18n("Document &Base Folder"), this, SLOT(slotChangeDocumentFolderStatus()));
+  m_setDocumentRootId = m_folderMenu->insertItem(i18n("Document-&Base Folder"), this, SLOT(slotChangeDocumentFolderStatus()));
   m_folderMenu->insertItem(i18n("Upload &Status"), m_uploadStatusMenu);
   m_folderMenu->insertItem(SmallIcon("info"), i18n("&Properties..."), this, SLOT(slotProperties()));
 
@@ -372,8 +372,7 @@ void ProjectTreeView::slotRemoveFromProject(int askForRemove)
   {
     KURL url = currentURL();
     if ( !askForRemove ||
-         KMessageBox::warningYesNo(this,i18n("<qt>Do you really want to remove <br><b>%1</b><br> from the project?</qt>")
-                                        .arg(url.prettyURL(0, KURL::StripFileProtocol)), i18n("Remove from Project")) == KMessageBox::Yes )
+         KMessageBox::warningYesNo(this,i18n("<qt>Do you really want to remove <br><b>%1</b><br> from the project?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)), i18n("Remove from Project"), KStdGuiItem::yes(), KStdGuiItem::no(), "RemoveFromProject") == KMessageBox::Yes )
     {
       if ( currentKFileTreeViewItem()->isDir() ) url.adjustPath(+1);
       emit removeFromProject(url);
