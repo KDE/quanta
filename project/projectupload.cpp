@@ -184,7 +184,7 @@ void ProjectUpload::slotBuildTree()
      UploadTreeFile *it = list->addItem(u, item);
      if ( it != 0 )
      {
-       int uploadedTime;
+       int uploadedTime = -1;
        if (m_uploadTimeList.contains(s))
          uploadedTime = m_uploadTimeList[s];
        int modifiedTime = item.time(KIO::UDS_MODIFICATION_TIME);

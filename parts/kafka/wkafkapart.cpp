@@ -1239,7 +1239,7 @@ void KafkaDocument::translateKafkaIntoNodeCursorPosition(DOM::Node domNode, long
 	QChar curChar, oldChar;
 	long currentOffset;
 	bool waitForSpace = false, found = false;
-	int curNodeOffset, bLine, bCol, eLine, eCol;
+	int curNodeOffset, bLine = 0, bCol = 0, eLine, eCol;
 
         offset = 0;
         (*node) = 0L;

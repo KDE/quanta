@@ -110,6 +110,7 @@
 #include "qpevents.h"
 
 #include "tagactionmanager.h"
+#include "tagactionset.h"
 
 QuantaInit::QuantaInit(QuantaApp * quantaApp)
         : QObject()

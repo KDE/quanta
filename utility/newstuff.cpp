@@ -57,7 +57,7 @@ void QNewDTEPStuff::installResource()
 void QNewToolbarStuff::installResource()
 {
     KURL destURL = KURL::fromPathOrURL(KGlobal::dirs()->saveLocation("data") + resourceDir + "toolbars/" + QFileInfo(m_tarName).fileName());
-    bool ok;
+    bool ok = true;
     if (QuantaCommon::checkOverwrite(destURL))
     {
         if (!QExtFileInfo::copy(KURL::fromPathOrURL(m_tarName), destURL, -1, true, false, parentWidget()))
@@ -77,7 +77,7 @@ void QNewToolbarStuff::installResource()
 void QNewTemplateStuff::installResource()
 {
     KURL destURL = KURL::fromPathOrURL(KGlobal::dirs()->saveLocation("data") + resourceDir + "templates/" + QFileInfo(m_tarName).fileName());
-    bool ok;
+    bool ok = true;
     if (QuantaCommon::checkOverwrite(destURL))
     {
         if (!QExtFileInfo::copy(KURL::fromPathOrURL(m_tarName), destURL, -1, true, false, parentWidget()))

@@ -991,7 +991,7 @@ Node *kafkaCommon::insertNode(Node *newNode, Node *parent, Node *nextSibling, No
     kdDebug(25001)<< "kafkaCommon::insertNode()1" << endl;
 #endif
 
-    Node *n, *nodeEnd;
+    Node *n, *nodeEnd = 0;
 
     if(!newNode)
         return 0L;
@@ -1294,7 +1294,7 @@ bool kafkaCommon::DTDinsertNode(Node *newNode, Node *startNode, int startOffset,
     Node *commonParent = 0L, *commonParentStartChild, *commonParentEndChild, *parentNode, *node;
     Node *lastValidStartParent = 0L, *lastValidEndParent = 0L, *newParentNode, *child, *next;
     Node *oldCommonParent, *lastNewNode, *oldParentNode;
-    QTag *parentNodeQTag, *newNodeQTag, *lastNewNodeQTag;
+    QTag *parentNodeQTag = 0, *newNodeQTag, *lastNewNodeQTag;
     NodeModif modif;
     int locOffset = 1;
     bool newNodeIsInline, isAfter;
@@ -1926,7 +1926,7 @@ Node *kafkaCommon::duplicateNodeSubtree(Node *node)
 {
     QPtrList<NodeLink> nodeLinkList;
     bool goUp = false;
-    Node *currentNode, *currentNewNode, *newRootNode, *newNext, *newParent, *newPrev;
+    Node *currentNode, *currentNewNode, *newRootNode = 0, *newNext, *newParent, *newPrev;
     NodeLink *link;
 
     if(!node)
@@ -1972,7 +1972,7 @@ Node *kafkaCommon::duplicateNodeSubtree(Node *node)
 Node* kafkaCommon::extractNode(Node *node, NodeModifsSet *modifs, bool extractChildren,
                                bool extractClosingTag)
 {
-    NodeModif *modif, *modifChild;
+    NodeModif *modif = 0, *modifChild;
     Node *lastChild, *curNode;
     Node *parent, *prev, *next, *child, *n;
     bool isSingle;
@@ -2652,7 +2652,7 @@ int kafkaCommon::DTDExtractNode(const QString &nodeName, Document *doc, Node *st
 void kafkaCommon::moveNode(Node *nodeToMove, Node *newParent, Node *newNextSibling,
                            NodeModifsSet *modifs, bool merge, bool moveClosingNode)
 {
-    NodeModif *modif;
+    NodeModif *modif = 0;
     Node *newNode, *closingNode;
     closingNode = nodeToMove->getClosingNode();
 
@@ -3018,7 +3018,7 @@ void kafkaCommon::setTagStringAndFitsNodes(Node *node, const QString &newTagStri
 
 void kafkaCommon::editNodeAttribute(Node* node, const QString& name, const QString& value, NodeModifsSet* modifs)
 {
-    NodeModif *modif;
+    NodeModif *modif = 0;
 
     if(!node)
         return;

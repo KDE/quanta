@@ -74,6 +74,7 @@
 
 #include "undoredo.h"
 #include "tagactionmanager.h"
+#include "tagactionset.h"
 
 QuantaDoc::QuantaDoc(QWidget *parent, const char *name) : QObject(parent, name)
 {
@@ -185,7 +186,7 @@ bool switchToExisting)
     if (highlightIf)
     {
       QString hlName;
-      int htmlIdx, xmlIdx;
+      int htmlIdx = -1, xmlIdx = -1;
       for (uint i = 0; i < highlightIf->hlModeCount(); i++)
       {
           hlName = highlightIf->hlModeName(i);

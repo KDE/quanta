@@ -34,6 +34,7 @@
 #include "undoredo.h"
 #include "wkafkapart.h"
 #include "tagactionmanager.h"
+#include "tagactionset.h"
 
 #include "whtmlpart.h"
 #include "document.h"

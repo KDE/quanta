@@ -1115,7 +1115,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(int line, 
             gParser->slotParseForScriptGroup();
             for (GroupElementList::Iterator it = n->m_groupElements.begin(); it != n->m_groupElements.end(); ++it)
             {
-              GroupElement *e = *it;
+//               GroupElement *e = *it;
               if (parentGroupStr.isEmpty() && (*it)->group->appendToTags)
               {
                 parentGroupStr = (*it)->group->parentGroup;

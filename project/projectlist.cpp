@@ -40,7 +40,7 @@ void ProjectList::clear()
 }
 
 bool ProjectList::readFromXML(QDomDocument &dom, const KURL &baseURL,
-                                 const KURL &templateURL, const QRegExp &excludeRx)
+                                 const KURL &/*templateURL*/, const QRegExp &excludeRx)
 {
   clear();  // empty the list
   m_baseURL = baseURL; // remember this

@@ -116,7 +116,7 @@ void colorRequester::setInitialValue(/*const QString& s*/){
    if( temp.contains("rgb(") != 0){
      temp.remove("rgb(").remove(")");
      QStringList rgbValues = QStringList::split(",",temp);
-     bool ok;
+//      bool ok;
      int r = rgbValues[0].toInt();
      int g = rgbValues[1].toInt();
      int b = rgbValues[2].toInt();

@@ -270,7 +270,7 @@ void Node::setNodeValue(const QString &value)
 
 Node* Node::lastChild()
 {
-    Node *n, *m;
+    Node *n, *m = 0;
     n = child;
     while(n)
     {

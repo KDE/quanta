@@ -55,6 +55,7 @@
 #include "quantaview.h"
 #include "tagattributetree.h"
 #include "tagactionmanager.h"
+#include "tagactionset.h"
 #include "cursors.h"
 
 #include "viewmanager.h"
