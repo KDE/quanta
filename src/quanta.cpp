@@ -1614,7 +1614,6 @@ void QuantaApp::slotForward()
    {
       activateNextWin();
    }
-  //FIXME: same for the preview
 }
 
 void QuantaApp::slotShowOpenFileList()
@@ -3287,7 +3286,11 @@ int QuantaApp::currentEditorIfNum() const
     return w->editIf->editInterfaceNumber();
   } else
   {
-    return 0; //FIXME: m_view->oldWrite->editIf->editInterfaceNumber();
+    QuantaView * view = ViewManager::ref()->lastActiveEditorView();
+    if (view)
+      return view->document()->editIf->editInterfaceNumber();
+    else
+      return 0L;
   }
 }
 
@@ -3300,7 +3303,11 @@ QString QuantaApp::currentURL() const
     return w->url().url();
   } else
   {
-    return ""; //FIXME: m_view->oldWrite->url().url();
+    QuantaView * view = ViewManager::ref()->lastActiveEditorView();
+    if (view)
+      return view->document()->url().url();
+    else
+      return "";
   }
 }
 

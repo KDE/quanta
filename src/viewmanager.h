@@ -67,6 +67,9 @@ public:
   it creates one. */
   QuantaView *documentationView(bool create = true);
 
+  /** Returns the last active view which had an editor inside or 0 if there was no such view */
+  QuantaView *lastActiveEditorView() {return m_lastActiveEditorView;}
+
 public slots:
   void slotViewDeactivated(KMdiChildView *view);
   void slotViewActivated(KMdiChildView *view);
@@ -84,8 +87,9 @@ signals:
 private:
  /** Private constructor for the singleton object. */
   ViewManager(QObject * parent = 0, const char * name = 0);
-  QuantaView *m_lastActiveView;
-  QuantaView *m_documentationView;
+  QuantaView *m_lastActiveView; ///< Holds the last active view. Used to deactivate it when a new view is selected
+  QuantaView *m_lastActiveEditorView; ///< Contains the last active view which has an editor inside
+  QuantaView *m_documentationView; ///< Contains the view which holds the documentation browser
 };
 
 #endif

@@ -62,7 +62,7 @@ public:
     void execute();
     /**
      * Remove accelerator from tag action name *
-     */ 
+     */
     QString actionText();
 #ifdef BUILD_KAFKAPART
     /**
@@ -93,7 +93,6 @@ private:
     QString scriptErrorDest;
     QTimer* timer;
     QDomElement tag;
-    QuantaView *m_view;
     QFile* m_file;
     QString m_inputFileName;
     MessageOutput *m_appMessages;

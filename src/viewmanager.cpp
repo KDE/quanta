@@ -39,6 +39,7 @@
 ViewManager::ViewManager(QObject *parent, const char *name) : QObject(parent, name)
 {
     m_lastActiveView = 0L;
+    m_lastActiveEditorView = 0L;
     m_documentationView = 0L;
 }
 
@@ -89,6 +90,8 @@ void ViewManager::createNewDocument()
   view->addDocument(w);
   view->activate(); //if we don't call this manually, the activeView() won't return the newly created view
   view->activated(); //the previous activate does not call this, because it detects that the view was not changed (createView() also calls activate())
+  m_lastActiveView = view;
+  m_lastActiveEditorView = view;
 }
 
 bool ViewManager::removeView(QuantaView *view, bool force)
@@ -99,6 +102,10 @@ bool ViewManager::removeView(QuantaView *view, bool force)
       {
         if (view == m_documentationView)
             m_documentationView = 0L;
+        if (view == m_lastActiveView)
+            m_lastActiveView = 0L;
+        if (view == m_lastActiveEditorView)
+            m_lastActiveEditorView = 0L;
         quantaApp->closeWindow(view);
         if (!quantaApp->activeWindow())
         {
@@ -121,8 +128,9 @@ QuantaView* ViewManager::activeView()
     return dynamic_cast<QuantaView *>(quantaApp->activeWindow());
 }
 
-void ViewManager::slotViewDeactivated(KMdiChildView *view)
+void ViewManager::slotViewDeactivated(KMdiChildView * /*view*/)
 {
+//This seems to be not called when a view is deactivated...
 /*
    QuantaView *qView = dynamic_cast<QuantaView*>(view);
    if (qView)
@@ -133,18 +141,21 @@ void ViewManager::slotViewActivated(KMdiChildView *view)
 {
    if (m_lastActiveView)
      m_lastActiveView->deactivated();
-   QuantaView *qView = dynamic_cast<QuantaView*>(view);
-   if (qView)
-     qView->activated();
+   QuantaView *qView = static_cast<QuantaView*>(view);
+   qView->activated();
 
   parser->clearGroups();
-  kdDebug(24000) << "Calling reparse from update " << endl;
   parser->setSAParserEnabled(true);
   quantaApp->reparse(true); //FIXME
   quantaApp->slotNewStatus();
   quantaApp->slotNewLineColumn();
   typingInProgress = false; //need to reset, as it's set to true in the above slots
-  m_lastActiveView = dynamic_cast<QuantaView *>(view);
+  m_lastActiveView = qView;
+  if (m_lastActiveView->document())
+  {
+    m_lastActiveEditorView = m_lastActiveView;
+    kdDebug(24000) << "Last active view: " << m_lastActiveEditorView->document()->url() << endl;
+  }
 }
 
 
@@ -265,7 +276,12 @@ void ViewManager::closeAll(bool createNew)
                  if (!w->isUntitled() && w->url().isLocalFile())
                    fileWatcher->removeFile(w->url().path());
                  quantaApp->guiFactory()->removeClient(w->view());
-                 kdDebug(24000) << "Gui removed " << endl;
+                 if (view == m_lastActiveEditorView)
+                   m_lastActiveEditorView = 0L;
+                 if (view == m_lastActiveView)
+                   m_lastActiveView = 0L;
+                 if (view == m_documentationView)
+                   m_documentationView = 0L;
                  quantaApp->closeWindow(view);
               } else
               {
