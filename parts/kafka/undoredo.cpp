@@ -323,7 +323,7 @@ bool undoRedo::undo(bool /**kafkaUndo*/)
 		}
 		else
 		{
-			QIconSet floppyIcon( UserIcon("save_small"));
+			QIconSet floppyIcon( SmallIcon("filesave"));
 			QTabWidget *wTab = quantaApp->view()->writeTab();
 			wTab->changeTab( w,  floppyIcon,  wTab->tabLabel(w));
 		}
@@ -388,7 +388,7 @@ bool undoRedo::redo(bool /**kafkaUndo*/)
 		}
 		else
 		{
-			QIconSet floppyIcon( UserIcon("save_small"));
+			QIconSet floppyIcon( SmallIcon("filesave"));
 			QTabWidget *wTab = quantaApp->view()->writeTab();
 			wTab->changeTab( w,  floppyIcon,  wTab->tabLabel(w));
 		}

@@ -268,7 +268,7 @@ void QuantaView::updateTab()
                setMDICaption(urlStr + " " + i18n("[modified]"));
             } else
             {
-                setIcon(UserIcon("save_small"));
+                setIcon(SmallIcon("filesave"));
                 setMDICaption(urlStr);
             }
             m_szCaption = urlStr + " " + i18n("[modified]");
