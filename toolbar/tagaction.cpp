@@ -173,7 +173,7 @@ void TagAction::insertTag()
 
 void TagAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
 {
-    QCString tmp( buffer, buflen );
+    QCString tmp( buffer, buflen + 1 );
     QString text( tmp );
 
 
@@ -206,7 +206,7 @@ void TagAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
 
 void TagAction::slotGetScriptError( KProcess *, char *buffer, int buflen )
 {
-    QCString tmp( buffer, buflen );
+    QCString tmp( buffer, buflen + 1 );
     QString text( tmp );
 
     if ( scriptErrorDest == "merge" ) {
