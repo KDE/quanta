@@ -254,6 +254,8 @@ QuantaApp::QuantaApp(int mdiMode) : DCOPObject("WindowManagerIf"), KMdiMainFrm( 
 
 QuantaApp::~QuantaApp()
 {
+  disconnect(m_htmlPart, SIGNAL(destroyed(QObject *)));
+  disconnect(m_htmlPartDoc, SIGNAL(destroyed(QObject *)));
   disconnect(this, SIGNAL(lastChildViewClosed()), ViewManager::ref(), SLOT(slotLastViewClosed()));
 // kdDebug(24000) << "QuantaApp::~QuantaApp" << endl;
 #ifdef ENABLE_CVSSERVICE
@@ -2136,6 +2138,7 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
    QString i18nName = i18n(name.utf8());
    QString origName = name;
    bool found = false;
+   bool nameModified = false;
    int count = 2;
    do
    {
@@ -2148,10 +2151,11 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
        nodeList = xml_clients.at(index)->domDocument().elementsByTagName("ToolBar");
        for (uint i = 0; i < nodeList.count(); i++)
        {
-         if ((nodeList.item(i).cloneNode().toElement().attribute("name") ) == name.lower())
+         if ((nodeList.item(i).cloneNode().toElement().attribute("name").lower() ) == name.lower())
          {
            newName = origName + QString(" (%1)").arg(count);
            i18nName = i18n(origName.utf8()) + QString(" (%1)").arg(count);
+           nameModified = true;
            count++;
            found = true;
            break;
@@ -2173,6 +2177,7 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
    QDomDocument *dom = new QDomDocument();
    dom->setContent(toolbarDom->toString());
    p_toolbar->dom = dom;
+   p_toolbar->nameModified = nameModified;
 
    userToolbarsCount++;
 
@@ -2318,12 +2323,11 @@ void QuantaApp::slotLoadToolbar()
 /** Load an user toolbar from the disk. */
 void QuantaApp::slotLoadGlobalToolbar()
 {
- KURL url;
-
- url = KFileDialog::getOpenURL(qConfig.globalDataDir +resourceDir + "toolbars/", "*"+toolbarExtension+"\n*", this);
- if (! url.isEmpty())
+ KURL::List urls = KFileDialog::getOpenURLs(qConfig.globalDataDir +resourceDir + "toolbars/", "*"+toolbarExtension+"\n*", this);
+ if (!urls.isEmpty())
  {
-   slotLoadToolbarFile(url);
+   for (KURL::List::ConstIterator it = urls.constBegin(); it != urls.constEnd(); ++it)
+      slotLoadToolbarFile(*it);
  }
 }
 
@@ -2562,6 +2566,7 @@ void QuantaApp::slotAddToolbar()
   p_toolbar->name = name;
   p_toolbar->user = true;
   p_toolbar->visible = true;
+  p_toolbar->nameModified = false;
   p_toolbar->menu = new QPopupMenu;
   m_tagsMenu->insertItem(p_toolbar->name, p_toolbar->menu);
   toolbarList.insert(name.lower(), p_toolbar);
@@ -2946,8 +2951,8 @@ void QuantaApp::focusInEvent(QFocusEvent* e)
  Document *w = ViewManager::ref()->activeDocument();
  if (w)
  {
-   w->view()->setFocus();
-   w->checkDirtyStatus();
+    w->view()->setFocus();
+    w->checkDirtyStatus();
  }
 }
 
@@ -3127,6 +3132,17 @@ bool QuantaApp::slotRemoveToolbar(const QString& name)
      QString s2 = toolbarGUI->domDocument().toString();
      s1.remove(i18ntabnameRx);
      s2.remove(i18ntabnameRx);
+     if (p_toolbar->nameModified)
+     {
+       QRegExp tabnameRx("\\stabname=\"[^\"]*\"");
+       tabnameRx.search(s2);
+       QString name1 = tabnameRx.cap();
+       name1.remove(" tab");
+       QString name2 = name1;
+       name2.remove(QRegExp("[\\s]\\([0-9]+\\)"));
+       s2.replace(name1, name2);
+       s2.replace(name1.lower(), name2.lower());
+     }
      bool useToolbarGUI = true;
      if ( s1 != s2 /*|| actionsModified */)
      {
@@ -3869,7 +3885,9 @@ void QuantaApp::saveOptions()
 
     m_config->writeEntry("Preview area", qConfig.previewPosition);
     m_config->writeEntry("Documentation area", qConfig.docPosition);
+
     m_config->writeEntry("Smart Tag Insertion", qConfig.smartTagInsertion);
+
     m_config->writeEntry("Window layout", qConfig.windowLayout);
     m_config->writeEntry("Follow Cursor", StructTreeView::ref()->followCursor() );
     //If user choose the timer interval, it needs to restart the timer too
@@ -4866,5 +4884,6 @@ void QuantaApp::slotHTMLPartDeleted(QObject *object)
   } else
      createDocPart();
 }
+
 
 #include "quanta.moc"
