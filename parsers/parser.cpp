@@ -1751,7 +1751,11 @@ Node* Parser::parseSpecialArea(const AreaStruct &specialArea,
                 currentNode->tag->type == Tag::Empty) )
               appendAreaToTextNode(currentContext.area, currentNode);
             else
+            {
               currentNode = createTextNode(currentNode, line, areaEndPos, parentNode);
+  //            if (!fullParse)
+  //              parseForScriptGroup(currentNode);
+            }
             currentNode->insideSpecial = true;
           }
           //kdDebug(24000) << QString("Special area %1 ends at %2, %3").arg(dtd->name).arg(line).arg(lastCol) << endl;
@@ -1944,13 +1948,13 @@ Node* Parser::parseSpecialArea(const AreaStruct &specialArea,
    }
 
   }
+  if (!currentNode || (parentNode && !parentNode->child))
+  {
+    currentNode = createTextNode(parentNode, endLine, endCol, parentNode);
+    currentNode->insideSpecial = true;
+  }
   if (fullParse)
   {
-    if (!currentNode)
-    {
-      currentNode = createTextNode(parentNode, endLine, endCol, parentNode);
-      currentNode->insideSpecial = true;
-    }
     Node *n;
     if (parentNode)
     {
@@ -1969,6 +1973,12 @@ Node* Parser::parseSpecialArea(const AreaStruct &specialArea,
       n = n->nextSibling();
     }
   }
+/*   else
+  {
+    Node *n = createTextNode(parentNode, endLine, endCol, parentNode);
+    n->insideSpecial = true;
+    parseForScriptGroup(n);
+  } */
   lastLine = endLine;
   lastCol = endCol;
   return currentNode;

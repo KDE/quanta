@@ -746,6 +746,12 @@ void Document::slotFilterCompletion( KTextEditor::CompletionEntry *completion ,Q
 */
 void Document::slotCharactersInserted(int line,int column,const QString& string)
 {
+ DTDStruct *dtd = currentDTD();
+ if ( (dtd->family == Script && string == ">") || 
+      (dtd->family == Xml && string == "<") )
+ {
+   slotDelayedTextChanged(true);
+ }
  bool handled = false;
  if (qConfig.useAutoCompletion)
  {
@@ -794,7 +800,7 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
   bool handled = false;
   tagName = getTagNameAt(line, column);
   tag = QuantaCommon::tagFromDTD(completionDTD, tagName);
-  if (!tag)
+  if (!tag && !tagName.isEmpty())
      tag = userTagList.find(tagName.lower());
 
   QString s = editIf->textLine(line).left(column + 1);
@@ -1372,7 +1378,9 @@ bool Document::scriptAutoCompletion(int line, int column)
  {
    QString textLine = s.left(i);
    QString word = findWordRev(textLine, completionDTD);
-   QTag *tag = completionDTD->tagsList->find(word);
+   QTag *tag = 0L;
+   if (!word.isEmpty())
+    tag = completionDTD->tagsList->find(word);
    if (!tag) 
      tag = userTagList.find(word.lower());
    if (tag)
@@ -1574,6 +1582,7 @@ QString Document::findRev(const QRegExp& regExp, int sLine, int sCol, int& fbLin
 /** Code completion was requested by the user. */
 void Document::codeCompletionRequested()
 {
+  slotDelayedTextChanged(true);
   bool handled = false;
   uint line, col;
   viewCursorIf->cursorPositionReal(&line, &col);
@@ -1581,7 +1590,6 @@ void Document::codeCompletionRequested()
   if (completionDTD->family == Xml)
   {
     handled = xmlCodeCompletion(line, col);
-
   }
   if (completionDTD->family == Script)
   {
@@ -1618,6 +1626,7 @@ void Document::codeCompletionRequested()
 /** Bring up the code completion tooltip. */
 void Document::codeCompletionHintRequested()
 {
+  slotDelayedTextChanged(true);
   uint line, col;
   viewCursorIf->cursorPositionReal(&line, &col);
   completionDTD = currentDTD();
@@ -1824,14 +1833,15 @@ void Document::slotTextChanged()
   changed = true;
   if (reparseEnabled)
   {
+    kdDebug(24000) << "Delayed text changed called." << endl;
     //delay the handling, otherwise we may get wrong values for (line,column)
     QTimer::singleShot(0, this, SLOT(slotDelayedTextChanged()));
   }
 }
 
-void Document::slotDelayedTextChanged()
+void Document::slotDelayedTextChanged(bool forced)
 {
-   if (typingInProgress)
+   if (!forced && typingInProgress)
    {
     // kdDebug(24000) << "Reparsing delayed!" << endl;
      parser->setParsingNeeded(true);

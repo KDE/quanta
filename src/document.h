@@ -229,7 +229,7 @@ public slots:
   /** No descriptions */
   void slotTextChanged();
   /** No descriptions */
-  void slotDelayedTextChanged();
+  void slotDelayedTextChanged(bool forced = false);
   void slotDelayedScriptAutoCompletion();
   void slotDelayedShowCodeCompletion();
 

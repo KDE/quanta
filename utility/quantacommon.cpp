@@ -124,7 +124,7 @@ bool QuantaCommon::isSingleTag(const QString& dtdName, const QString& tag)
     return true;
 
   DTDStruct* dtd = dtds->find(dtdName.lower());
-  if (dtd)
+  if (dtd && !tag.isEmpty())
   {
     QString searchForTag = (dtd->caseSensitive) ? tag : tag.upper();
     QTag* qtag = dtd->tagsList->find(searchForTag);
@@ -141,7 +141,7 @@ bool QuantaCommon::isOptionalTag(const QString& dtdName, const QString& tag)
   bool optional = false;
 
   DTDStruct* dtd = dtds->find(dtdName.lower());
-  if (dtd)
+  if (dtd && !tag.isEmpty())
   {
     QString searchForTag = (dtd->caseSensitive) ? tag : tag.upper();
     QTag* qtag = dtd->tagsList->find(searchForTag);
@@ -157,7 +157,7 @@ bool QuantaCommon::isKnownTag(const QString& dtdName, const QString& tag)
   bool known = false;
 
   DTDStruct* dtd = dtds->find(dtdName.lower());
-  if (dtd)
+  if (dtd && !tag.isEmpty())
   {
     QString searchForTag = (dtd->caseSensitive) ? tag : tag.upper();
     if (dtd->tagsList->find(searchForTag))
@@ -167,12 +167,12 @@ bool QuantaCommon::isKnownTag(const QString& dtdName, const QString& tag)
   return known;
 }
 
-AttributeList*  QuantaCommon::tagAttributes(const QString& dtdName, const QString& tag)
+AttributeList* QuantaCommon::tagAttributes(const QString& dtdName, const QString& tag)
 {
   AttributeList* attrs = 0L;
 
   DTDStruct* dtd = dtds->find(dtdName.lower());
-  if (dtd)
+  if (dtd && !tag.isEmpty())
   {
     QString searchForTag = (dtd->caseSensitive) ? tag : tag.upper();
     QTag* qtag = dtd->tagsList->find(searchForTag);
@@ -194,7 +194,7 @@ QTag* QuantaCommon::tagFromDTD(const QString& dtdName, const QString& tag)
 QTag* QuantaCommon::tagFromDTD(DTDStruct *dtd, const QString& tag)
 {
   QTag *qtag = 0;
-  if (dtd)
+  if (dtd && !tag.isEmpty())
   {
     QString searchForTag = (dtd->caseSensitive) ? tag : tag.upper();
     qtag = dtd->tagsList->find(searchForTag);
