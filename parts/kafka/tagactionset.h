@@ -79,7 +79,7 @@ public slots:
 	// Insert
     void slotInsertTable();
     void slotInsertRowAbove();
-    void slotInsertRowBellow();
+    void slotInsertRowBelow();
     void slotInsertColumnLeft();
     void slotInsertColumnRight();
     // Remove
@@ -96,7 +96,7 @@ private:
 	// Insert
     bool canInsertTable() const;
     bool canInsertRowAbove() const;
-    bool canInsertRowBellow() const;
+    bool canInsertRowBelow() const;
     bool canInsertColumnLeft() const;
     bool canInsertColumnRight() const;
     // Remove

@@ -121,10 +121,10 @@ void TableTagActionSet::initActions(QWidget* parent)
                 SLOT(slotInsertRowAbove()),
                 ac, actionName);
 
-    actionName = "insert_row_bellow";
+    actionName = "insert_row_below";
     //m_actionNames += actionName;
-    new KAction(i18n("Row bellow"), 0, this,
-                SLOT(slotInsertRowBellow()),
+    new KAction(i18n("Row below"), 0, this,
+                SLOT(slotInsertRowBelow()),
                 ac, actionName);
 
     actionName = "insert_column_left";
@@ -216,15 +216,15 @@ bool TableTagActionSet::fillWithTagActions(QWidget* widget, DOM::Node const& nod
 
         //m_insertActionMenu_1->insert(m_separator);
     }
-    // Insert Row Bellow
-    KAction* insertRowBellowAction = ac->action("insert_row_bellow");
-    Q_ASSERT(insertRowBellowAction);
+    // Insert Row Below
+    KAction* insertRowBelowAction = ac->action("insert_row_below");
+    Q_ASSERT(insertRowBelowAction);
 
-    m_insertActionMenu_1->remove(insertRowBellowAction);
-    if(canInsertRowBellow())
+    m_insertActionMenu_1->remove(insertRowBelowAction);
+    if(canInsertRowBelow())
     {
         emptyTableActionMenu_0 = emptyInsertActionMenu_1 = false;
-        m_insertActionMenu_1->insert(insertRowBellowAction);
+        m_insertActionMenu_1->insert(insertRowBelowAction);
 
         m_insertActionMenu_1->insert(m_separator);
     }
@@ -386,12 +386,12 @@ void TableTagActionSet::slotInsertRowAbove()
     kafkaCommon::coutTree(baseNode, 3);
 }
 
-bool TableTagActionSet::canInsertRowBellow() const
+bool TableTagActionSet::canInsertRowBelow() const
 {
     return isInTagContext();
 }
 
-void TableTagActionSet::slotInsertRowBellow()
+void TableTagActionSet::slotInsertRowBelow()
 {
     Q_ASSERT(m_currentNode);
 
