@@ -215,7 +215,7 @@ void QuantaView::slotTagQuickStart(){
   	                  +space+tagCase("<head>\n")+space+tagCase("  <title>");
   	if ( !QString(quickDlg->lineTitle->text()).isEmpty())
 	   		tag += quickDlg->lineTitle->text();
-    tag += tagCase("</title>\n")+space+tagCase("</head>\n")+space+tagCase("<body");
+    tag += tagCase("</title>\n")+space+"  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">\n"+space+"  <meta name=\"GENERATOR\" content=\"Quanta Plus\">\n"+space+tagCase("</head>\n")+space+tagCase("<body");
     if ( !QString(quickDlg->lineBGImage->text()).isEmpty())
 	   		tag += attrCase(" background=\"")+quickDlg->lineBGImage->text()+"\"";
 	  if ( !QString(quickDlg->comboBGColor->currentText()).isEmpty())
