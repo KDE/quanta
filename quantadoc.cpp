@@ -153,6 +153,9 @@ bool QuantaDoc::newDocument( const KURL& url )
     if ( newfile ) furl = w->url().url();
 
   	app ->view  ->addWrite( w, QExtFileInfo::shortName(w->url().url()) );
+
+    app->processDTD();
+    write()->dtdName = "HTML 4.0"; //FIXME: This is hardcoded for testing...
   	
   	docList->insert( w->url().url(), w );
   }

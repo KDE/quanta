@@ -798,8 +798,9 @@ void Document::slotCharactersInserted(int line,int column,const QString& string)
       showCodeCompletions( getAttributeCompletions(tag) );
     } else if ( string == "\"" ) {
       //we need to find the attribute name
-      //QString attribute = "";
-      //showCodeCompletions( getAttributeValueCompletions(tag, attribute) );
+      QString textLine = editIf->textLine(line).left(column-1);
+      QString attribute = textLine.mid(textLine.findRev(' ')+1);
+      showCodeCompletions( getAttributeValueCompletions(tag, attribute) );
     }
   }
  }
@@ -813,13 +814,16 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions()
   completion.type = "tag";
 
   DTDStruct* dtd = dtds->find(dtdName);
-  QDictIterator<QTag> it(* dtd->tagsList);
-  for( ; it.current(); ++it )
-  {
-    completion.text = QuantaCommon::tagCase( it.current()->name() );
-    completions->append( completion );
-  }
 
+  if (dtd) {
+    QDictIterator<QTag> it(* dtd->tagsList);
+    for( ; it.current(); ++it )
+    {
+      completion.text = QuantaCommon::tagCase( it.current()->name() );
+      completions->append( completion );
+    }
+  }
+  
   return completions;
 }
 
