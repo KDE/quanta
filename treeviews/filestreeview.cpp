@@ -294,8 +294,8 @@ void FilesTreeView::slotMenu(KListView* listView, QListViewItem *item, const QPo
         m_folderMenu ->changeItem( m_menuTop, i18n("Remove From Top"));
 
         m_config->setGroup("General Options");
-        QString text = curItem->url().path();
-        if ((text == "/" || text == QDir::homeDirPath()+"/") &&
+        KURL url = curItem->url();
+        if ((url == KURL("file:/") || url == KURL("file:" + QDir::homeDirPath()+"/")) &&
             m_config->readBoolEntry("Home-Root Folder On", true) )
           m_folderMenu ->setItemVisible(m_menuTop, false);
       }
