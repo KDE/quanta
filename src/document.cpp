@@ -1106,20 +1106,20 @@ bool Document::isDerivatedFrom(const QString& className, const QString &baseClas
     return false;
 
   QString parentClass = completionDTD->classInheritance[className];
-  bool found = false;
+  int result = 0;
   do {
     if (parentClass == baseClass)
-      return true;
+      result = 1; //className extends baseClass
     else
     {
       if (completionDTD->classInheritance.contains(parentClass))
         parentClass = completionDTD->classInheritance[parentClass];
       else
-        return false;
+        result = -1;//nothing was found in the inheritance list
     }
-  } while (!found);
+  } while (result == 0);
 
-  return false;
+  return (result == 1);
 }
 
 
