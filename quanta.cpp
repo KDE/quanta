@@ -42,6 +42,7 @@
 #include <kstandarddirs.h>
 #include <kstatusbar.h>
 #include <klibloader.h>
+#include <kprocess.h>
 
 // application specific includes
 #include "document.h"

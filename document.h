@@ -84,8 +84,8 @@ public slots:
   void slotSpellCheck  ();
   void slotSpellGo     (KSpell *);
   void slotSpellResult (bool);
-  void slotSpellCorrect( QString originalword, QString newword, unsigned pos);
-  void slotSpellMis    ( QString originalword, QStringList *suggestions, unsigned pos);
+  void slotSpellCorrect( const QString &originalword, const QString &newword, unsigned int pos);
+  void slotSpellMis    ( const QString &originalword, const QStringList &suggestions, unsigned int pos);
   void slotSpellDone   ();
   void createSpellList ();
 

@@ -533,8 +533,8 @@ void Document::slotSpellGo(KSpell *)
 		spellMoved = 0;
 		createSpellList();
 
-		connect( spell, SIGNAL(misspelling(QString, QStringList *, unsigned)), this, SLOT(slotSpellMis(QString, QStringList *, unsigned)));
-	  connect( spell, SIGNAL(corrected(QString, QString, unsigned)), this, SLOT(slotSpellCorrect(QString, QString, unsigned)));
+		connect( spell, SIGNAL(misspelling(const QString &, const QStringList &, unsigned int)), this, SLOT(slotSpellMis(const QString &, const QStringList &, unsigned int)));
+	  connect( spell, SIGNAL(corrected(const QString &, const QString &, unsigned int)), this, SLOT(slotSpellCorrect(const QString &, const QString &, unsigned int)));
 	  connect( spell, SIGNAL(done(bool)), this, SLOT(slotSpellResult(bool)));
 
 		spell->check( spellText );
@@ -593,7 +593,7 @@ void Document::createSpellList()
 }
 
 
-void Document::slotSpellMis(QString originalword, QStringList *, unsigned pos)
+void Document::slotSpellMis(const QString &originalword, const QStringList &, unsigned int pos)
 {
 
   //int posText = (*spellPos)[pos-1];
@@ -619,7 +619,7 @@ void Document::slotSpellMis(QString originalword, QStringList *, unsigned pos)
 
 }
 
-void Document::slotSpellCorrect( QString originalword, QString newword, unsigned )
+void Document::slotSpellCorrect( const QString &originalword, const QString &newword, unsigned int)
 {
 	if ( originalword == newword )
 		return;
