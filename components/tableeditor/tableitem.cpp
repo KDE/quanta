@@ -78,7 +78,12 @@ void TableItem::paint(QPainter* p, const QColorGroup& cg, const QRect& cr, bool 
      p->fillRect(cr0, cg.brush(QColorGroup::Base));
      p->setPen(cg.text());
    }
-   p->drawText(4, 4, cr.width()-8, cr.height()-8, m_halign | m_valign | WordBreak, text());
+   if (!pixmap().isNull()) {
+     p->drawPixmap(4, 4, pixmap());
+     p->drawText(6 + pixmap().width(), 4, cr.width()-8, cr.height()-8, m_halign | m_valign | WordBreak, text());
+   }
+   else 
+     p->drawText(4, 4, cr.width()-8, cr.height()-8, m_halign | m_valign | WordBreak, text());
 }
 
 QSize TableItem::sizeHint() const

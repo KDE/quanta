@@ -836,7 +836,6 @@
     <function>configureTable( QTable * table )</function>
     <function>setCellText( QTable * table, int row, int col, const QString &amp; text )</function>
     <function>configureCell( int row, int col, Node * node )</function>
-    <function>newFunction()</function>
 </functions>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
