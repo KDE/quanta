@@ -327,7 +327,8 @@ void QuantaApp::initView()
   stabdock->setToolTipString(i18n("Structure view (DOM tree)"));
   dtabdock = createDockWidget("Docs", BarIcon ("contents2"),    0L,"" /*i18n("Docs")*/);
   dtabdock->setToolTipString(i18n("Documentation"));
-
+  m_oldTreeViewWidget = ptabdock;
+  
   QStringList topStrList;
   config->setGroup("General Options");
   topStrList = config->readListEntry("Top folders");
