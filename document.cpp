@@ -1244,8 +1244,11 @@ QString Document::findDTDName(int startLine, int endLine, bool searchPseudoDTD)
                  if (text.mid(pos,7).lower() == "<script")
                  {
                    tag = findXMLTag(i, pos, true);
-                   foundText = tag->attributeValue("language");
-                   delete tag;
+                   if (tag)
+                   {
+                     foundText = tag->attributeValue("language");
+                     delete tag;
+                   }
                  } else
                  {
                    foundText = dtd->name;

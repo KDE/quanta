@@ -722,7 +722,9 @@ void QuantaApp::slotOptionsConfigureToolbars()
     }
  }
 
- m_tagsMenuId = menuBar()->insertItem(i18n("&Tags"),m_tagsMenu,-1,6);
+ m_tagsMenuId = menuBar()->insertItem(i18n("&Tags"),m_tagsMenu,-1,5);
+ menuBar()->removeItem(menuBar()->idAt(menuBar()->count()-1));
+ menuBar()->insertItem(i18n("P&lugins"), m_pluginMenu, -1, 6);
  view->toolbarTab->setCurrentPage(currentPageIndex);
 }
 

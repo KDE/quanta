@@ -182,7 +182,7 @@ void QuantaApp::initQuanta()
   initPlugins  ();
   
   m_tagsMenu = new QPopupMenu(this);
-  m_tagsMenuId = menuBar()->insertItem(i18n("&Tags"),m_tagsMenu,-1,6);                                                                     
+  m_tagsMenuId = menuBar()->insertItem(i18n("&Tags"),m_tagsMenu,-1,5);                                                                     
 
   pm_set  = (QPopupMenu*)guiFactory()->container("settings", this);
   connect(pm_set, SIGNAL(aboutToShow()), this, SLOT(settingsMenuAboutToShow()));
@@ -1407,7 +1407,7 @@ void QuantaApp::initPlugins()
   connect(m_pluginMenu, SIGNAL(aboutToShow()), this, SLOT(slotBuildPluginMenu()));
   connect(m_pluginMenu, SIGNAL(activated(int)), this, SLOT(slotPluginRun(int)));
 
-  menuBar()->insertItem("P&lugins", m_pluginMenu, -1, 4);
+  menuBar()->insertItem(i18n("P&lugins"), m_pluginMenu, -1, 6);
 #endif
 }
 
@@ -1415,8 +1415,8 @@ void QuantaApp::initPlugins()
 void QuantaApp::slotBuildPluginMenu()
 {
   m_pluginMenu->clear();
-  m_pluginMenu->insertItem("&Edit", this, SLOT(slotPluginsEdit()), 0);
-  m_pluginMenu->insertItem("&Validate", this, SLOT(slotPluginsValidate()), 0);
+  m_pluginMenu->insertItem(i18n("&Edit"), this, SLOT(slotPluginsEdit()), 0);
+  m_pluginMenu->insertItem(i18n("&Validate"), this, SLOT(slotPluginsValidate()), 0);
   m_pluginMenu->insertSeparator();
 
   // TODO : We should have a QuantaPluginInterface::isModified function
