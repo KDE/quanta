@@ -123,6 +123,9 @@
 #include "dialogs/kategrepdialog.h"
 #include "dialogs/katefiledialog.h"
 
+#include "plugins/quantakpartplugin.h"
+#include "plugins/quantaplugininterface.h"
+
 // from kfiledialog.cpp - avoid qt warning in STDERR (~/.xsessionerrors)
 static void silenceQToolBar(QtMsgType, const char *){}
 
@@ -654,10 +657,21 @@ void QuantaApp::slotNewUndo()
 
 void QuantaApp::slotUpdateStatus(QWidget* w)
 {
-  Document *newWrite = dynamic_cast<Document *>(w);
+//remove the GUI of the plugin, if the last visible tab was a plugin
+  QString tabTitle =view->writeTab->tabLabel(view->oldTab);
+  QuantaKPartPlugin *plugin = dynamic_cast<QuantaKPartPlugin *>(m_pluginInterface->plugin(tabTitle));
+  if (plugin)
+    plugin->showGui(false);
+  view->oldTab = w;
 
+  Document *newWrite = dynamic_cast<Document *>(w);
   if (!newWrite)
   {
+//add the GUI for the currently visible plugin
+    tabTitle = view->writeTab->tabLabel(w);
+    plugin = dynamic_cast<QuantaKPartPlugin *>(m_pluginInterface->plugin(tabTitle));
+    if (plugin)
+       plugin->showGui(true);
     return;
   }
   dynamic_cast<KTextEditor::PopupMenuInterface*>(newWrite->view())->installPopup((QPopupMenu *)factory()->container("popup_editor", quantaApp));

@@ -183,6 +183,7 @@ class QuantaView : public QWidget
 public: // Public attributes
   /**  */
   Document *oldWrite;
+  QWidget *oldTab;
   /**  */
   QString dontShowSavePreview;
 protected:

@@ -85,6 +85,7 @@ QuantaView::QuantaView(QWidget *parent, const char *name )
 
 
   oldWrite = 0L;
+  oldTab = 0L;
 
   connect(this, SIGNAL(dragInsert(QDropEvent *)), quantaApp->tTab, SLOT(slotDragInsert(QDropEvent *)));
   setAcceptDrops(TRUE); // [MB02] Accept drops on the view

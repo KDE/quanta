@@ -169,7 +169,19 @@ bool QuantaKPartPlugin::unload()
   setRunning(FALSE);
 
   emit pluginStopped();
-  
+
   return TRUE;
 }
+
+void QuantaKPartPlugin::showGui(bool show)
+{
+  if (show)
+  {
+    quantaApp->guiFactory()->addClient(m_part);
+  } else
+  {
+    quantaApp->guiFactory()->removeClient(m_part);
+  }
+}
+
 #include "quantakpartplugin.moc"

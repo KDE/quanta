@@ -36,6 +36,7 @@ class QuantaKPartPlugin : public QuantaPlugin
 public: 
   QuantaKPartPlugin();
   ~QuantaKPartPlugin();
+  void showGui(bool show);
 public slots:
   virtual bool load();
   virtual bool run();
