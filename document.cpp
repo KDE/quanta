@@ -629,8 +629,11 @@ void Document::slotFilterCompletion( KTextEditor::CompletionEntry *completion ,Q
     uint line, col;
     viewCursorIf->cursorPositionReal(&line, &col);
     QString textLine = editIf->textLine(line);
-    if (textLine[col] != completionDTD->tagSeparator)
-        string->append(completionDTD->tagSeparator);
+    QChar tagSeparator = completionDTD->tagSeparator;
+    if (tagSeparator == '\'' || tagSeparator =='"')
+        tagSeparator = qConfig.attrValueQuotation;
+    if (textLine[col] != tagSeparator)
+        string->append(tagSeparator);
   }
   if ( completion->type == "attribute" )
   {
@@ -1433,7 +1436,7 @@ void Document::codeCompletionRequested()
 }
 
 /** Bring up the code completion tooltip. */
-void Document::codeCompletionHintRequested()
+1void Document::codeCompletionHintRequested()
 {
   uint line, col;
   viewCursorIf->cursorPositionReal(&line, &col);
