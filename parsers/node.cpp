@@ -73,7 +73,7 @@ Node::~Node()
 
 void Node::save(QDomElement& element) const
 {
-    kdDebug(25001) << "Save:\n" << element.ownerDocument().toString() << endl;
+    //kdDebug(25001) << "Save:\n" << element.ownerDocument().toString() << endl;
     QDomElement child_element;
     if(next)
     {
@@ -112,8 +112,8 @@ void Node::save(QDomElement& element) const
     QString s_element;
     QTextStream stream(&s_element, IO_WriteOnly);
     element.save(stream, 3);
-    kdDebug(25001) << "Load:\n" << s_element << endl;
-    kdDebug(25001) << "Save:\n" << element.ownerDocument().toString() << endl;
+    //kdDebug(25001) << "Load:\n" << s_element << endl;
+    //kdDebug(25001) << "Save:\n" << element.ownerDocument().toString() << endl;
 }
 
 bool Node::load(QDomElement const& element)
@@ -121,7 +121,7 @@ bool Node::load(QDomElement const& element)
     QString s_element;
     QTextStream stream(&s_element, IO_WriteOnly);
     element.save(stream, 3);
-    kdDebug(25001) << "Load:\n" << s_element << endl;
+    //kdDebug(25001) << "Load:\n" << s_element << endl;
 
     QDomNodeList list = element.childNodes();
     for(unsigned int i = 0; i != list.count(); ++i)

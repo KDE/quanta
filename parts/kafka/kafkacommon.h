@@ -84,6 +84,11 @@ public:
 	 */
 	static Node* getPrevNodeNE(Node *node, Node *endNode = 0L);
 
+    
+    static Node* DTDGetNonInlineCommonParent(Node* startNode, Node* endNode, 
+                                             QValueList<int>& commonParentStartChildLocation, 
+                                             QValueList<int>& commonParentEndChildLocation, Node* nodeSubtree);
+
 	/**
 	 * This function returns the next DOM::Node after node : the first child of
 	 * DOM::Node if available, else its next sibling if available, else the next
@@ -107,7 +112,7 @@ public:
 	 * @return Returns the previous DOM::Node of node.
 	 */
 	static DOM::Node getPrevDomNode(DOM::Node node, DOM::Node endNode = DOM::Node());
-
+    
 
 	/** ----------------------- NODE INDENTATION STUFF -------------------------------------*/
 
@@ -470,14 +475,27 @@ public:
 		bool deleteClosingTag = true, bool mergeAndFormat = true);
     
     /**
-     * Extarct a node subtree in the tree. WARNING This function will log that the nodes were added.
-     * @param node The root node of the Node subtree to insert.
-     * @param modifs The changes made are logged into modifs. Put 0L if you don't want to log
-     * and if you know what you're doing!
+     * Extract a node subtree in the tree. WARNING This function will log that the nodes were added.
+     * @param startNode The node from which we start the removal.
+     * @param startOffset The offset of startNode from which we start the removal.
+     * @param endNode The node from which we end the removal.
+     * @param endOffset The offset of endNode from which we end the removal.
+     * @param cursorNode The cursor is inside cursorNode.
+     * @param cursorOffset The offset of the cursor inside cursorNode.
      * @return Returns a pointer to the node inserted.
      */
     static Node* DTDExtractNodeSubtree(Node *startNode, int startOffset, Node *endNode, int endOffset, 
                                        Node **cursorNode, int &cursorOffset, NodeModifsSet *modifs);
+    
+    /**
+     * Similar to the above function but it operates on the given node tree. See DTDGetNodeSubtree.
+     * @param nodeSubtree The Node tree on which we're going to make the removal.
+     * @return Returns a pointer to the node inserted.
+     */
+    static Node* DTDExtractNodeSubtree(Node *startNode, int startOffset, Node *endNode, int endOffset, 
+                                       Node* nodeSubtree, NodeModifsSet* modifs);
+    
+    static Node* extractNodeSubtreeAux(Node* commonParentStartChild, Node* commonParentEndChild, NodeModifsSet* modifs);
     
     /**
      * It behaves essentially like the above function. Provided for convenience.
@@ -557,6 +575,13 @@ public:
 	 * @return Returns if the node was splitted.
 	 */
 	static bool splitNode(Node *n, int offset, NodeModifsSet *modifs);
+    
+    static void splitStartNodeSubtree(Node* startNode, Node* commonParent, 
+                                      QValueList<int>& commonParentStartChildLocation, NodeModifsSet* modifs);
+    static void splitEndNodeSubtree(Node* endNode, Node* commonParent, 
+                                    QValueList<int>& commonParentStartChildLocation, 
+                                    QValueList<int>& commonParentEndChildLocation, 
+                                    bool subTree, NodeModifsSet* modifs);
 
 	/**
 	 * If n and n2 are both Text or Empty Nodes, merge them into one.
@@ -640,6 +665,12 @@ public:
 	 */
 	static Node* getNodeFromLocation(QValueList<int> loc);
 
+    /**
+     * Similar to the above function but instead of using baseNode it uses the passes Node tree.
+     * @param nodeTree Node tree where to get the location.
+     */
+    static Node* getNodeFromLocation(QValueList<int> loc, Node* nodeTree);
+
 	/**
 	 * It behaves essentially like the above function except that it operate on DOM::Nodes.
 	 * @rootNode It needs the root Node of the DOM::Node Tree i.e. the document() Node.
@@ -653,6 +684,8 @@ public:
 	 * @return Returns a parent of the node pointed by loc.
 	 */
 	static Node* getNodeFromSubLocation(QValueList<int> loc, int locOffset);
+
+    static Node* getNodeFromSubLocation(QValueList<int> loc, int locOffset, Node* nodeTree);
 
 	/**
 	 * A enumeration for kafkaCommon::compareNodePosition().

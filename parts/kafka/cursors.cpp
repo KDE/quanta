@@ -32,7 +32,6 @@
   
 NodeSelectionInd::~NodeSelectionInd()
 {
-
 }
 
 bool NodeSelectionInd::operator==(const NodeSelectionInd & nodeSelection)

@@ -134,6 +134,51 @@ Node* kafkaCommon::getPrevNodeNE(Node *node, Node *endNode)
     return n;
 }
 
+Node* kafkaCommon::DTDGetNonInlineCommonParent(Node* startNode, Node* endNode, 
+                                               QValueList<int>& commonParentStartChildLocation, 
+                                               QValueList<int>& commonParentEndChildLocation, Node* nodeSubtree)
+{
+    // look for commonParent
+    Node* commonParent = 0;
+    Node* commonParentStartChild = 0, *commonParentEndChild = 0;
+    int locOffset = 1;
+    QValueList<int> startNodeLocation = getLocation(startNode);
+    QValueList<int> endNodeLocation = getLocation(endNode);
+    QValueList<int>::iterator itStart = startNodeLocation.begin();
+    QValueList<int>::iterator itEnd = endNodeLocation.begin();
+    while(itStart != startNodeLocation.end() && itEnd != endNodeLocation.end() &&
+          (*itStart) == (*itEnd))
+    {
+        commonParent = getNodeFromSubLocation(startNodeLocation, locOffset, nodeSubtree);
+        itStart++;
+        itEnd++;
+        locOffset++;
+    }
+
+    //If commonParent isn't inline, move commonParent to the closest non inline node
+    if(commonParent && (isInline(commonParent->tag->name) ||
+       commonParent->tag->type == Tag::Text || commonParent->tag->type == Tag::Empty))
+    {
+        Node* oldCommonParent = commonParent;
+        commonParent = commonParent->parent;
+        while(commonParent && isInline(commonParent->tag->name))
+        {
+            oldCommonParent = commonParent;
+            commonParent = commonParent->parent;
+        }
+        commonParentStartChild = oldCommonParent;
+        commonParentEndChild = oldCommonParent;
+    }
+    //startNode or endNode can't be the commonParent.
+    else if(itStart == startNodeLocation.end() || itEnd == endNodeLocation.end())
+        commonParent = commonParent->parent;
+    
+    commonParentStartChildLocation = getLocation(commonParentStartChild);
+    commonParentEndChildLocation = getLocation(commonParentEndChild);
+    
+    return commonParent;
+}
+
 DOM::Node kafkaCommon::getNextDomNode(DOM::Node node, bool &goUp, bool returnParentNode, DOM::Node endNode)
 {
     if(node.isNull())
@@ -1066,10 +1111,10 @@ Node* kafkaCommon::DTDInsertNodeSubtree(Node *newNode, NodeSelectionInd& selecti
     
     if(!startNode)
     {
-      kdError() << "NULL startNode in kafkaCommon::DTDInsertNodeSubtree given by NodeSelectionInd::cursorNode()" << endl;
-      return 0;
+        kdError() << "NULL startNode in kafkaCommon::DTDInsertNodeSubtree given by NodeSelectionInd::cursorNode()" << endl;
+        return 0;
     }
-
+    
     Node* endNode = 0;
     if(!cursorNode)
         return 0;
@@ -2064,7 +2109,7 @@ Node* kafkaCommon::extractNode(Node *node, NodeModifsSet *modifs, bool extractCh
 }
 
 Node* kafkaCommon::DTDExtractNodeSubtree(Node *startNode, int startOffset, Node *endNode, int endOffset,
-        Node **cursorNode, int &cursorOffset, NodeModifsSet *modifs)
+                                         Node **cursorNode, int &cursorOffset, NodeModifsSet *modifs)
 {
 #ifdef LIGHT_DEBUG
     kdDebug(25001) << "kafkaCommon::extractNodeSubtree()" << endl;
@@ -2073,54 +2118,15 @@ Node* kafkaCommon::DTDExtractNodeSubtree(Node *startNode, int startOffset, Node 
     if(!startNode || !endNode)
         return 0;
 
-    Node *commonParent = 0, *commonParentStartChild = 0, *commonParentEndChild = 0, *parentNode, *node;
-    Node *newParentNode, *child, *next;
-    Node *oldCommonParent;
-    int locOffset = 1;
+    QValueList<int> commonParentStartChildLocation;
+    QValueList<int> commonParentEndChildLocation;
 
-    /**
-     * TODO : Optionnal for the moment : move the cursor coordinates so that we have good locations.
-     * e.g. <b>boo|</b>baa should be translated to <b>boo</b>|baa
-     */
+    Node* commonParent = DTDGetNonInlineCommonParent(startNode, endNode, 
+            commonParentStartChildLocation, commonParentEndChildLocation, 0);
 
-    //Then search for the common parent of startNode and endNode (commonParent)
-    //and for the childs of commonParent which are parent of startNode and endNode
-    //(commonParentStartChild && commonParentEndChild)
-    //CommonParent will be the limit (startNode -- commonNode) where Nodes can
-    //be splitted in order to insert the newNode.
-
-    // look for commonParent
-    QValueList<int> startNodeLocation = getLocation(startNode);
-    QValueList<int> endNodeLocation = getLocation(endNode);
-    QValueList<int>::iterator itStart = startNodeLocation.begin();
-    QValueList<int>::iterator itEnd = endNodeLocation.begin();
-    while(itStart != startNodeLocation.end() && itEnd != endNodeLocation.end() &&
-            (*itStart) == (*itEnd))
-    {
-        commonParent = getNodeFromSubLocation(startNodeLocation, locOffset);
-        itStart++;
-        itEnd++;
-        locOffset++;
-    }
-
-    //If commonParent isn't inline, move commonParent to the closest non inline node
-    if(commonParent && (isInline(commonParent->tag->name) ||
-                        commonParent->tag->type == Tag::Text || commonParent->tag->type == Tag::Empty))
-    {
-        oldCommonParent = commonParent;
-        commonParent = commonParent->parent;
-        while(commonParent && isInline(commonParent->tag->name))
-        {
-            oldCommonParent = commonParent;
-            commonParent = commonParent->parent;
-        }
-        commonParentStartChild = oldCommonParent;
-        commonParentEndChild = oldCommonParent;
-    }
-    //startNode or endNode can't be the commonParent.
-    else if(itStart == startNodeLocation.end() || itEnd == endNodeLocation.end())
-        commonParent = commonParent->parent;
-
+    Node* commonParentStartChild = getNodeFromLocation(commonParentStartChildLocation);
+    Node* commonParentEndChild = getNodeFromLocation(commonParentEndChildLocation);
+    
     //OK now, we are sure the node can be inserted. Start the work by splitting
     //startNode and endNode if necessary
     if(startNode->tag->type == Tag::Text || startNode->tag->type == Tag::Empty)
@@ -2165,68 +2171,12 @@ Node* kafkaCommon::DTDExtractNodeSubtree(Node *startNode, int startOffset, Node 
             endNode = endNode->previousSibling();
         }
     }
-
-    //Then we "split" the lastValidStartParent - startNode subtree into two : the first part is untouched
-    // and the second will be surrounded by the new Node. Same thing for endNode.
-    node = startNode;
-    parentNode = startNode->parent;
-    while(parentNode && commonParent && parentNode != commonParent)
-    {
-        if(node != parentNode->firstChild())
-        {
-            //node is not the first Child of parentNode, we have to duplicate parentNode, and put node and
-            //all its next sibling as child of the new parentNode.
-            /**newParentNode = insertNode(parentNode->tag->name, parentNode->tag->tagStr(),
-            parentNode->tag->type, parentNode->tag->write(), parentNode->parentNode(),
-            parentNode, parentNode, modifs);*/
-            newParentNode = duplicateNode(parentNode);
-            insertNode(newParentNode, parentNode->parentNode(), parentNode, parentNode, modifs);
-            child = parentNode->firstChild();
-            while(child && child != startNode && !child->hasForChild(startNode))
-            {
-                next = child->next;
-                moveNode(child, newParentNode, 0L, modifs);
-                child = next;
-            }
-        }
-        commonParentStartChild = parentNode;
-        node = parentNode;
-        parentNode = parentNode->parent;
-    }
-    node = endNode;
-    parentNode = endNode->parent;
-    while(parentNode && commonParent && parentNode != commonParent)
-    {
-        if(node != parentNode->lastChild())
-        {
-            //node is not the last Child of parentNode, we have to duplicate parentNode, and put all
-            //the next sibling of node as child of the new parentNode
-            /**newParentNode = insertNode(parentNode->tag->name, parentNode->tag->tagStr(),
-            parentNode->tag->type, parentNode->tag->write(), parentNode->parentNode(),
-            parentNode, parentNode, modifs);*/
-            newParentNode = duplicateNode(parentNode);
-            insertNode(newParentNode, parentNode->parentNode(), parentNode, parentNode, modifs);
-            if(parentNode == commonParentStartChild)
-                commonParentStartChild = newParentNode;
-            if(parentNode == commonParentEndChild)
-                commonParentEndChild = newParentNode;
-            child = parentNode->firstChild();
-            while(child)
-            {
-                next = child->next;
-                moveNode(child, newParentNode, 0L, modifs);
-                if(child == endNode || child->hasForChild(endNode))
-                {
-                    if(QuantaCommon::closesTag(child->tag, next->tag))
-                        moveNode(next, newParentNode, 0L, modifs);
-                    break;
-                }
-                child = next;
-            }
-        }
-        node = parentNode;
-        parentNode = parentNode->parent;
-    }
+    
+    commonParentStartChildLocation = getLocation(commonParentStartChild);    
+    splitStartNodeSubtree(startNode, commonParent, commonParentStartChildLocation, modifs);
+    
+    commonParentEndChildLocation = getLocation(commonParentEndChild); // the tree has changed
+    splitEndNodeSubtree(endNode, commonParent, commonParentStartChildLocation, commonParentEndChildLocation, false, modifs);
     
     if(startNode == endNode)
     {
@@ -2235,14 +2185,123 @@ Node* kafkaCommon::DTDExtractNodeSubtree(Node *startNode, int startOffset, Node 
     }
 
     // now let us extract the subtree
-    node = commonParentStartChild;
+    commonParentStartChild = getNodeFromLocation(commonParentStartChildLocation);
+    commonParentEndChild = getNodeFromLocation(commonParentEndChildLocation);
+    
+    if(!commonParentEndChild)
+        commonParentEndChild = endNode;
+    extractNodeSubtreeAux(commonParentStartChild, commonParentEndChild, modifs);
+    
+    // merge identical nodes
+    Node* commonParentEndChild_next = commonParentEndChild->SNext();
+    mergeInlineNode(commonParent, commonParentEndChild_next, cursorNode, cursorOffset, modifs);
+    mergeInlineNode(commonParentStartChild, commonParentEndChild, cursorNode, cursorOffset, modifs);
+
+#ifdef LIGHT_DEBUG
+    coutTree(commonParentStartChild, 3);
+#endif
+
+    return commonParentStartChild;
+}
+
+Node* kafkaCommon::DTDExtractNodeSubtree(Node *startNode, int startOffset, Node *endNode, int endOffset, 
+                                         Node* nodeSubtree, NodeModifsSet* modifs)
+{
+#ifdef LIGHT_DEBUG
+    kdDebug(25001) << "kafkaCommon::extractNodeSubtree()" << endl;
+#endif
+
+    if(!startNode || !endNode)
+        return 0;
+       
+    QValueList<int> commonParentStartChildLocation;
+    QValueList<int> commonParentEndChildLocation;
+
+    Node* commonParent = DTDGetNonInlineCommonParent(startNode, endNode, 
+            commonParentStartChildLocation, commonParentEndChildLocation, nodeSubtree);
+
+    Node* commonParentStartChild = getNodeFromLocation(commonParentStartChildLocation, nodeSubtree);
+    Node* commonParentEndChild = getNodeFromLocation(commonParentEndChildLocation, nodeSubtree);
+    
+    //OK now, we are sure the node can be inserted. Start the work by splitting
+    //startNode and endNode if necessary
+    if(startNode->tag->type == Tag::Text || startNode->tag->type == Tag::Empty)
+    {
+        if(splitNode(startNode, startOffset, modifs))
+        {
+            //</TEMPORARY>
+            if(startNode == commonParentStartChild)
+                commonParentStartChild = commonParentStartChild->nextSibling();
+            if(startNode == endNode)
+            {
+                endNode = endNode->nextSibling();
+                endOffset -= startOffset;
+            }
+            startNode = startNode->nextSibling();
+        }
+        else if(startOffset == (signed)startNode->tag->tagStr().length())
+        {
+            //No need to update endNode. If endNode == startNode && startOffset == endOffset,
+            //we'll catch this later.
+            if(startNode == commonParentStartChild)
+                commonParentStartChild = commonParentStartChild->nextSibling();
+            startNode = startNode->nextSibling();
+        }
+    }
+    if(endNode->tag->type == Tag::Text || endNode->tag->type == Tag::Empty)
+    {
+        if(!splitNode(endNode, endOffset, modifs) && endOffset == 0)
+        {
+            //No need to update startNode. If startNode == endNode && startOffset == endOffset,
+            //we'll catch this later.
+            if(endNode == commonParentEndChild)
+                commonParentEndChild = commonParentEndChild->previousSibling();
+            endNode = endNode->previousSibling();
+        }
+    }
+
+    commonParentStartChildLocation = getLocation(commonParentStartChild);    
+    splitStartNodeSubtree(startNode, commonParent, commonParentStartChildLocation, modifs);
+    
+    commonParentEndChildLocation = getLocation(commonParentEndChild);
+    splitEndNodeSubtree(endNode, commonParent, commonParentStartChildLocation, commonParentEndChildLocation, true, modifs);
+    
+    if(startNode == endNode)
+    {
+        Q_ASSERT(startNode->tag->type == Tag::Text || startNode->tag->type == Tag::Empty);
+        return extractNode(startNode, modifs);
+    }
+            
+    // now let us extract the subtree
+    commonParentStartChild = getNodeFromLocation(commonParentStartChildLocation, commonParent);
+    commonParentEndChild = getNodeFromLocation(commonParentEndChildLocation, commonParent);
+    
+    if(!commonParentEndChild)
+        commonParentEndChild = endNode;
+    extractNodeSubtreeAux(commonParentStartChild, commonParentEndChild, modifs);
+    
+    //merge identical nodes
+    Node* cursorNode = 0;
+    int cursorOffset = 0;
+    Node* commonParentEndChild_next = commonParentEndChild->SNext();
+    mergeInlineNode(commonParent, commonParentEndChild_next, &cursorNode, cursorOffset, modifs);
+    mergeInlineNode(commonParentStartChild, commonParentEndChild, &cursorNode, cursorOffset, modifs);
+
+#ifdef LIGHT_DEBUG
+    coutTree(commonParentStartChild, 3);
+#endif
+
+    return commonParentStartChild;
+}
+
+Node* kafkaCommon::extractNodeSubtreeAux(Node* commonParentStartChild, Node* commonParentEndChild, NodeModifsSet* modifs)
+{  
+    Node* node = commonParentStartChild;
     Node* prev_node = 0;
     Node* next_node = 0;
     Node* significant_next_node = 0;
     Node* node_extracted = 0;
 
-    if(!commonParentEndChild)
-        commonParentEndChild = endNode;
     Node* commonParentEndChild_next = commonParentEndChild->SNext();
 
     while(node && node != commonParentEndChild_next)
@@ -2264,16 +2323,7 @@ Node* kafkaCommon::DTDExtractNodeSubtree(Node *startNode, int startOffset, Node 
         prev_node = node_extracted;
         node = significant_next_node;
     }
-
-    // merge identical nodes
-    mergeInlineNode(commonParent, commonParentEndChild_next, cursorNode, cursorOffset, modifs);
-    mergeInlineNode(commonParentStartChild, commonParentEndChild, cursorNode, cursorOffset, modifs);
-
-#ifdef LIGHT_DEBUG
-
-    coutTree(commonParentStartChild, 3);
-#endif
-
+    
     return commonParentStartChild;
 }
 
@@ -2288,20 +2338,21 @@ Node* kafkaCommon::getNodeSubtree(Node *startNode, int startOffset, Node *endNod
         return 0;
 
     // Look for common_parent
+    Node* commonParent = 0;
+    int locOffset = 1;
+    
     QValueList<int> startNodeLocation = getLocation(startNode);
     QValueList<int> endNodeLocation = getLocation(endNode);
     QValueList<int>::iterator itStart = startNodeLocation.begin();
     QValueList<int>::iterator itEnd = endNodeLocation.begin();
-
-    Node* commonParent = 0;
-    int locOffset = 1;
+    
     while(itStart != startNodeLocation.end() && itEnd != endNodeLocation.end() &&
             (*itStart) == (*itEnd))
     {
         commonParent = getNodeFromSubLocation(startNodeLocation, locOffset);
-        itStart++;
-        itEnd++;
-        locOffset++;
+        ++itStart;
+        ++itEnd;
+        ++locOffset;
     }
 
     //If common_parent isn't inline, move commonParent to the closest non inline node
@@ -2324,66 +2375,32 @@ Node* kafkaCommon::getNodeSubtree(Node *startNode, int startOffset, Node *endNod
     //startNode or endNode can't be the commonParent.
     else if(itStart == startNodeLocation.end() || itEnd == endNodeLocation.end())
         commonParent = commonParent->parent;
+    
+    // get the subtree to operate
+    Node* newStartNode = 0;
+    Node* newEndNode = 0;
+    
+    Node* newCommonParent = duplicateNodeSubtree(commonParent);
+    
+    QValueList<int> const commonParentLocation = getLocation(commonParent);
+    uint const commonParentDepth = commonParentLocation.size();
+    uint const newStartNodeDepth = startNodeLocation.size() - commonParentDepth + 1;
+    uint const newEndNodeDepth = startNodeLocation.size() - commonParentDepth + 1;
+    
+    QValueList<int> newStartNodeLocation, newEndNodeLocation;
+    newStartNodeLocation.push_back(1);
+    newEndNodeLocation.push_back(1);
 
-    //OK now, we are sure the node can be inserted. Start the work by splitting
-    //startNode and endNode if necessary
-    Node* new_start_node = duplicateNode(startNode);
-    if(startNode->tag->type == Tag::Text || startNode->tag->type == Tag::Empty)
-    {
-        new_start_node->parent = startNode->parent; // for the split
-        if(splitNode(new_start_node, startOffset, 0))
-        {
-            /*
-            //</TEMPORARY>
-            if(startNode == commonParentStartChild)
-                commonParentStartChild = commonParentStartChild->nextSibling();
-            if(startNode == endNode)
-            {
-                endNode = endNode->nextSibling();
-                endOffset -= startOffset;
-            }
-            */
-            new_start_node = extractNode(startNode->parent->SLastChild(), 0);
-            if(startNode == endNode)
-            {
-                new_start_node->parent = new_start_node;
-                splitNode(new_start_node, endOffset - startOffset, 0);
-                delete new_start_node->child;
-                return extractNode(new_start_node, 0);
-            }
-        }
-        else if(startOffset == (signed)startNode->tag->tagStr().length())
-        {
-            //No need to update endNode. If endNode == startNode && startOffset == endOffset,
-            //we'll catch this later.
-            if(startNode == commonParentStartChild)
-                commonParentStartChild = commonParentStartChild->nextSibling();
-            new_start_node = duplicateNode(startNode->nextSibling());
-        }
-    }
-    Node* new_end_node = duplicateNode(endNode);
-    if(endNode->tag->type == Tag::Text || endNode->tag->type == Tag::Empty)
-    {
-        new_end_node->parent = endNode->parent; // for the split
-        if(!splitNode(new_end_node, endOffset, 0) && endOffset == 0)
-        {
-            //No need to update startNode. If startNode == endNode && startOffset == endOffset,
-            //we'll catch this later.
-            if(endNode == commonParentEndChild)
-                commonParentEndChild = commonParentEndChild->previousSibling();
-            new_end_node = duplicateNode(endNode->previousSibling());
-        }
-        delete extractNode(endNode->parent->SLastChild(), 0);
-        new_end_node = extractNode(new_end_node, 0);
-    }
+    for(uint i = 1; i != newStartNodeDepth; ++i)
+        newStartNodeLocation.push_back(startNodeLocation[i + commonParentDepth - 1]);
+    
+    for(uint i = 1; i != newEndNodeDepth; ++i)
+        newEndNodeLocation.push_back(endNodeLocation[i + commonParentDepth - 1]);
 
-    Node* start_subtree = duplicateNodeSubtree(commonParentStartChild);
-
-#ifdef LIGHT_DEBUG
-    coutTree(start_subtree, 3);
-#endif
-
-    return start_subtree;
+    newStartNode = getNodeFromLocation(newStartNodeLocation, newCommonParent);
+    newEndNode = getNodeFromLocation(newEndNodeLocation, newCommonParent);
+    
+    return DTDExtractNodeSubtree(newStartNode, startOffset, newEndNode, endOffset, newCommonParent, 0);
 }
 
 Node* kafkaCommon::DTDRemoveSelection(NodeSelectionInd& selection, 
@@ -2684,7 +2701,7 @@ void kafkaCommon::moveNode(Node *nodeToMove, Node *newParent, Node *newNextSibli
     //insert the new Node.
     insertNode(newNode, newParent, newNextSibling, 0L, merge);
     if(modifs)
-      modif->setFinalLocation(getLocation(newNode));
+        modif->setFinalLocation(getLocation(newNode));
     
     if(moveClosingNode && closingNode)
         moveNode(closingNode, newParent, newNextSibling,
@@ -2730,6 +2747,81 @@ bool kafkaCommon::splitNode(Node *n, int offset, NodeModifsSet *modifs)
     node->tag->setCleanStrBuilt(true);
     node->tag->setIndentationDone(true);
     return true;
+}
+
+void kafkaCommon::splitStartNodeSubtree(Node* startNode, Node* commonParent, 
+                                        QValueList<int>& commonParentStartChildLocation, NodeModifsSet* modifs)
+{
+    //Then we "split" the lastValidStartParent - startNode subtree into two : the first part is untouched
+    // and the second will be surrounded by the new Node. Same thing for endNode.
+    Node* node = startNode;
+    Node* parentNode = startNode->parent;
+    Node* commonParentStartChild = 0;
+    while(parentNode && commonParent && parentNode != commonParent)
+    {
+        if(node != parentNode->firstChild())
+        {
+            Node* newParentNode = duplicateNode(parentNode);
+            insertNode(newParentNode, parentNode->parentNode(), parentNode, parentNode, modifs);
+            Node* child = parentNode->firstChild();
+            while(child && child != startNode && !child->hasForChild(startNode))
+            {
+                Node* next = child->next;
+                moveNode(child, newParentNode, 0L, modifs);
+                child = next;
+            }
+        }
+        commonParentStartChild = parentNode;
+        node = parentNode;
+        parentNode = parentNode->parent;
+    }
+    commonParentStartChildLocation = getLocation(commonParentStartChild);
+}
+
+void kafkaCommon::splitEndNodeSubtree(Node* endNode, Node* commonParent,        
+                                      QValueList<int>& commonParentStartChildLocation, 
+                                      QValueList<int>& commonParentEndChildLocation,
+                                      bool subTree, NodeModifsSet* modifs)
+{
+    Node* node = endNode;
+    Node* parentNode = endNode->parent;
+    
+    Node* aux = 0;
+    if(subTree)
+        aux = commonParent;
+    else
+        aux = baseNode;
+    Node* commonParentStartChild = getNodeFromLocation(commonParentStartChildLocation, aux);
+    Node* commonParentEndChild = getNodeFromLocation(commonParentEndChildLocation, aux);
+    while(parentNode && commonParent && parentNode != commonParent)
+    {
+        if(node != parentNode->lastChild())
+        {
+            Node* newParentNode = duplicateNode(parentNode);
+            insertNode(newParentNode, parentNode->parentNode(), parentNode, parentNode, modifs);
+            if(parentNode == commonParentStartChild)
+                commonParentStartChild = newParentNode;
+            if(parentNode == commonParentEndChild)
+                commonParentEndChild = newParentNode;
+            Node* child = parentNode->firstChild();
+            while(child)
+            {
+                Node* next = child->next;
+                moveNode(child, newParentNode, 0L, modifs);
+                if(child == endNode || child->hasForChild(endNode))
+                {
+                    if(QuantaCommon::closesTag(child->tag, next->tag))
+                        moveNode(next, newParentNode, 0L, modifs);
+                    break;
+                }
+                child = next;
+            }
+        }
+        node = parentNode;
+        parentNode = parentNode->parent;
+    }
+    commonParentStartChildLocation = getLocation(commonParentStartChild);
+    commonParentEndChildLocation = getLocation(commonParentEndChild);
 }
 
 bool kafkaCommon::mergeNodes(Node *n, Node *n2, NodeModifsSet *modifs, bool mergeTextOnly)
@@ -2964,7 +3056,7 @@ void kafkaCommon::editNodeAttribute(Node* node, const QString& name, const QStri
         modif = new NodeModif();
         modif->setType(NodeModif::NodeModified);
         modif->setTag(new Tag(*(node->tag)));
-        modif->setLocation(kafkaCommon::getLocation(node));
+        modif->setLocation(getLocation(node));
     }
 
     if(node->tag->editAttribute(name, value))
@@ -3038,6 +3130,33 @@ Node* kafkaCommon::getNodeFromLocation(QValueList<int> loc)
     return m;
 }
 
+Node* kafkaCommon::getNodeFromLocation(QValueList<int> loc, Node* nodeTree)
+{
+    QValueList<int>::iterator it;
+    Node *node = nodeTree;
+    if(!node)
+        node = baseNode;
+    Node *m = 0L;
+    int i;
+
+    if(!node)
+        return 0L;
+    for(it = loc.begin(); it != loc.end(); it++)
+    {
+        if(!node)
+            return 0L;
+        for(i = 1; i < (*it); i++)
+        {
+            if(!node->next)
+                return 0L;
+            node = node->next;
+        }
+        m = node;
+        node = node->child;
+    }
+    return m;
+}
+
 DOM::Node kafkaCommon::getNodeFromLocation(QValueList<int> loc, DOM::Node rootNode)
 {
     QValueList<int>::iterator it;
@@ -3077,6 +3196,21 @@ Node* kafkaCommon::getNodeFromSubLocation(QValueList<int> loc, int locOffset)
     }
 
     return getNodeFromLocation(list);
+}
+
+Node* kafkaCommon::getNodeFromSubLocation(QValueList<int> loc, int locOffset, Node* nodeTree)
+{
+    QValueList<int>::iterator it = loc.begin();
+    QValueList<int> list;
+    int i;
+
+    for(i = 0; i != locOffset; ++i)
+    {
+        list.append((*it));
+        ++it;
+    }
+
+    return getNodeFromLocation(list, nodeTree);
 }
 
 int kafkaCommon::compareNodePosition(QValueList<int> pos1, QValueList<int> pos2)
