@@ -110,7 +110,7 @@ FilesTreeView::FilesTreeView(KURL::List topList, QWidget *parent, const char *na
       } else
       {
 	      FilesTreeFolder *dir = new FilesTreeFolder( this, url.fileName()+" ["+url.path()+"]", url);
-	      dir->setPixmap( 0, SmallIcon("kdisknav") );
+	      dir->setPixmap( 0, SmallIcon("folder") );
     	  dir->setOpen( false);
       }
 	}
@@ -288,7 +288,7 @@ void FilesTreeView::slotAddToTop()
       {
         url.setPath(url.path(-1));
   	    FilesTreeFolder *dir = new FilesTreeFolder(this , url.fileName() +" ["+url.path()+"]", url); //FIXME: Why doesn't add to the TOP as the first item??
-   	    dir->setPixmap( 0, SmallIcon("kdisknav") );
+   	    dir->setPixmap( 0, SmallIcon("folder") );
   	    dir->setOpen( false);
   	    topURLList.append(url);
   	  }

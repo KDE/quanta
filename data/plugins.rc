@@ -1,6 +1,6 @@
 [CVS management (Cervisia)]
 Arguments=
-FileName=libcervisia.so
+FileName=kde3/libcervisiapart.so
 Icon=cervisia
 Location=
 OutputWindow=Editor View
