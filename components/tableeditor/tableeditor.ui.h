@@ -1040,7 +1040,7 @@ void TableEditor::slotEditChildTable()
       }
       //create a new editor object and save the current state of the table there
       KTextEditor::Document *doc =
-  KTextEditor::createDocument ("libkatepart", 0L, "KTextEditor::Document");
+          KTextEditor::createDocument ("libkatepart", 0L, "KTextEditor::Document");
       w = new Document(doc, 0L);
       QString tableData = readModifiedTable();
       w->editIf->insertText(0, 0, tableData);
@@ -1053,7 +1053,7 @@ void TableEditor::slotEditChildTable()
       int pos2 = tableData.find(cellData);
       if (pos2 != -1)
         pos2 = tableData.find(table.nestedData, pos2);
-      if (pos2 == -1) {
+      else {
         KMessageBox::error(this, i18n("Cannot edit the child table. Most probably you modified the cell containing the table manually."), i18n("Cannot Read Table"));
         error = true;
         errorIt = it;
@@ -1076,6 +1076,7 @@ void TableEditor::slotEditChildTable()
       }
       childTableNode->next->tag->endPos(table.eLine, table.eCol);
       TableEditor editor;
+      editor.setCaption("Child Table Editor");
       editor.setBaseURL(m_baseURL);
       editor.setTableArea(table.bLine, table.bCol, table.eLine, table.eCol, localParser);
       if (editor.exec()) {
