@@ -26,6 +26,7 @@ public:
   static QString toAbsolute( QString  fname, QString dir);
   /** recurse function for all files in dir */
   static QStringList allFiles( QString path, QString mask, int level = 0 );
+  static QStringList allFilesRelative( QString path, QString mask, int level = 0 );
 };
 
 #endif

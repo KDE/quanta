@@ -208,9 +208,32 @@ void Project::saveProject()
 
   QTextStream qts( &f );
 
-  dom.save( qts, 0);
-
   emit requestOpenedFiles();
+
+  // remove old opened files
+  QDomElement  el;
+	QDomNodeList nl = dom.firstChild().firstChild().childNodes();
+	
+	for ( unsigned int i=0; i<nl.count(); i++ )
+  {
+		el = nl.item(i).toElement();
+		if ( el.nodeName() == "openfile" )
+		{
+			el.parentNode().removeChild( el );
+			i--;
+		}
+	}
+	// insert new opened files
+	QStringList::Iterator it;
+  for ( it = openedFiles.begin(); it != openedFiles.end(); ++it )
+	{
+  	el = dom.createElement("openfile");
+  	el.setAttribute("url", *it );
+
+  	dom.firstChild().firstChild().appendChild( el );
+	}
+	
+  dom.save( qts, 0);
 }
 
 /** close project and edited files */

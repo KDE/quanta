@@ -151,3 +151,16 @@ QStringList QExtFileInfo::allFiles( QString path, QString mask, int level )
 	
 	return r;
 }
+
+QStringList QExtFileInfo::allFilesRelative( QString path, QString mask, int level )
+{
+	QStringList::Iterator it;
+	QStringList r = QExtFileInfo::allFiles( path, mask, level );
+	
+	for ( it = r.begin(); it != r.end(); ++it )
+	{
+		*it = QExtFileInfo::toRelative( *it, path );
+	}
+	
+	return r;
+}

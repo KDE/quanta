@@ -41,6 +41,8 @@ ProjectNewLocal::ProjectNewLocal(QWidget *parent, const char *name )
 										fileMaskHtml+
 										fileMaskJava+
 										fileMaskImage);
+									
+	checkInsertWeb->setChecked( true );
 										
 	connect( checkInsert, SIGNAL(toggled(bool)),
 					 this, 				SLOT(setFiles(bool)));
@@ -73,7 +75,7 @@ QStringList ProjectNewLocal::files()
 	if ( checkInsertWeb->isChecked() ) fmask = webmask->text();
 	if ( checkInsertWithMask->isChecked() ) fmask = mask->text();
 	
-	list = QExtFileInfo::allFiles( dir, fmask);
+	list = QExtFileInfo::allFilesRelative( dir, fmask);
 	
 	return list;
 }
@@ -82,7 +84,7 @@ void ProjectNewLocal::setFiles(bool status)
 {
 	listFiles->clear();
 	
-	if ( !status ) return;
+	if ( !checkInsert->isChecked() ) return;
 	
 	QStringList list = files();
 	for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
