@@ -189,7 +189,6 @@ void QuantaView::addDocument(Document *document)
   m_currentViewsLayout = SourceOnly;//to correctly reload the timers.
 
   reloadUpdateTimers();
-  m_kafkaDocument->readConfig(quantaApp->config());
 #endif
 
 #endif

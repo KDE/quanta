@@ -441,6 +441,7 @@ void QuantaInit::initView()
 #ifdef BUILD_KAFKAPART
    KafkaDocument *m_kafkaDocument = KafkaDocument::ref(0, 0, "KafkaPart");
    m_kafkaDocument->getKafkaWidget()->view()->setMinimumHeight(50);
+   m_kafkaDocument->readConfig(quantaApp->config());
    loadVPLConfig();
 #endif
   (void) ToolbarTabWidget::ref(quantaApp);
