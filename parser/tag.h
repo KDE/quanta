@@ -20,6 +20,8 @@
 
 #include <qstring.h>
 #include <qdict.h>
+#include <qvaluelist.h>
+
 #include "qtag.h"
 
 /**
@@ -43,8 +45,6 @@ namespace Kate {
 
 class Document;
 
-#define MAX_ATTR_NUM 100
-
 struct TagAttr {
   QString name;           //attr name
   QString value;          //attr value
@@ -54,18 +54,18 @@ struct TagAttr {
 };
 
 class Tag {
-public: 
+public:
   Tag();
   Tag( const Tag&);
   ~Tag();
   Tag operator = ( const Tag& );
-  
+
   /** Parse the p_tagStr in p_write and build up the tag's attributes and values */
   void parse (const QString &p_tagStr, Document *p_write);
   /** Return the attribute at index*/
-  QString attribute(int index);
+  QString attribute(uint index);
   /** Return the attribute value at index*/
-  QString attributeValue(int index);
+  QString attributeValue(uint index);
   /** Return the value of attr*/
   QString attributeValue(QString attr);
   /** Returns the quotation status of the attribute */
@@ -83,7 +83,7 @@ public:
   /** Where the attr value at index begins in the document */
   void attributeValuePos(int index, int &line, int &col) {line = attrs[index].valueLine; col = attrs[index].valueCol;}
   /** Set the internal string which is parsed */
-  void setStr(const QString &p_tagStr) {m_tagStr = p_tagStr; cleanStr = m_tagStr;}
+  void setStr(const QString &p_tagStr);
   /** Get the tag in string format */
   QString tagStr() {return m_tagStr;};
   /** Get the document where the tag lies */
@@ -96,9 +96,12 @@ public:
   int valueIndexAtPos(int line, int col);
   /** Return the index of attr. */
   int attributeIndex(QString attr);
-  
+
   void namePos(int &line, int &col);
-  
+  int attrCount() {return attrs.count();}
+
+  int size();
+
   enum TokenType {Unknown = 0, XmlTag,  XmlTagEnd, Text, Comment, CSS, ScriptTag, ScriptStructureBegin, ScriptStructureEnd, NeedsParsing = 500, Empty, Skip = 1000 }; // types of token
 
   //TODO: write setting/retrieving methods for the below attributes, and add
@@ -108,7 +111,6 @@ public:
   int type;   //one of the TokenType
   bool single; // tags like <tag />
   bool closingMissing; //closing tag is optional and missing
-  int attrCount;
   DTDStruct* dtd; //the tag belongs to this DTD
   QString structBeginStr; //if it's a special block, contains the block beginning definition string (like <? or <style language="foo">)
 
@@ -119,8 +121,8 @@ private:
   int endCol;
   int m_nameLine;//where the tag name begins
   int m_nameCol;
-  
-  TagAttr attrs[MAX_ATTR_NUM];  //attributes in a tag
+
+  QValueList<TagAttr> attrs;  //attributes in a tag
   QString m_tagStr;   //the tag in string format (as it is in the document)
   Document *m_write;  //the document
 

@@ -637,8 +637,12 @@ Node *Parser::parse(Document *w)
   if (maxLines >= 0)
       m_node = parseArea(0, 0, maxLines, w->editIf->lineLength(maxLines), &lastNode);
   kdDebug(24000) << "New parser ("<< maxLines << " lines): " << t.elapsed() << " ms\n";
- // coutTree(rootNode, 2); -1
-  return m_node;
+ /*
+ treeSize = 0;
+ coutTree(m_node, 2);
+ kdDebug(24000) << "Size of tree: " << treeSize << endl;
+ */
+ return m_node;
 }
 
 /** Parses the found special (like script, css and such) areas.*/
@@ -1110,6 +1114,7 @@ Node* Parser::specialAreaParser(Node *startNode)
 
 /** Print the doc structure tree to the standard output.
     Only for debugging purposes. */
+
 void Parser::coutTree(Node *node, int indent)
 {
  QString output;
@@ -1121,9 +1126,12 @@ void Parser::coutTree(Node *node, int indent)
        output += node->tag->name.replace('\n'," ");
    else
        output+= node->tag->tagStr().replace('\n'," ");
-   cout << output <<" (" << node->tag->type << ")\n";
+  // cout << output <<" (" << node->tag->type << ")\n";
    if (node->child)
        coutTree(node->child, indent + 4);
+  // treeSize += sizeof(node) + sizeof(node->tag);
+   treeSize += node->size();
+   //treeSize++;
    node = node->next;
  }
 }
@@ -1541,8 +1549,12 @@ Node *Parser::rebuild(Document *w)
     }
    }
  }
- //coutTree(m_node, 2);
- //cout << "\n";
+ /*
+ treeSize = 0;
+ coutTree(m_node, 2);
+ kdDebug(24000) << "Size of tree: " << treeSize << endl;
+ cout << "\n";
+ */
  kdDebug(24000) << "Rebuild: " << t.elapsed() << " ms \n";
  return m_node;
 }

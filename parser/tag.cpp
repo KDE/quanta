@@ -30,7 +30,6 @@ Tag::Tag()
   type = Unknown;
   single = false;
   closingMissing = false;
-  attrCount = 0;
   structBeginStr = "";
   cleanStr = "";
   m_nameLine = -1;
@@ -54,13 +53,7 @@ Tag::Tag( const Tag &t)
   structBeginStr = t.structBeginStr;
   m_nameLine = t.m_nameLine;
   m_nameCol = t.m_nameCol;
-
-  for (int i=0; i<t.attrCount; i++)
-  {
-    attrs[i] = t.attrs[i];
-  }
-
-  attrCount = t.attrCount;
+  attrs = t.attrs;
 }
 
 Tag::~Tag()
@@ -71,35 +64,37 @@ Tag::~Tag()
 void Tag::parseAttr( QString text, int &line, int &col)
 {
   QString tagname;
-  int currentAttrNum = attrCount;
 
   while ( text[col].isSpace() && !text[col].isNull()) col++;
 
   if ( text[col]=='>' || col >= (int)text.length() ) return;
 
   int begin = col;
+  TagAttr attr;
 
   //go through the string
-  while (col < (int) text.length() && text[col] != '>' && currentAttrNum < MAX_ATTR_NUM)
+  while (col < (int) text.length() && text[col] != '>')
   {
    //find where the attr name begins
-   while ( text[col].isSpace() && !text[col].isNull()) col++;
+   while ( text[col].isSpace() && !text[col].isNull())
+         col++;
    begin = col++;
    //go to the first non-space char
    while ( !text[col].isSpace() &&  text[col] != '=' && text[col] != '>'
             && !text[col].isNull())
    {
-    QString s = text.mid(col,1);
-    col++;
+     QString s = text.mid(col,1);
+     col++;
    }
    if (text[col].isNull()) break;
    if (text[col] == '=') //an attribute value comes
    {
-     attrs[currentAttrNum].name = text.mid(begin, col-begin).stripWhiteSpace();
-     attrs[currentAttrNum].nameLine = line;
-     attrs[currentAttrNum].nameCol = begin;
+     attr.name = text.mid(begin, col-begin).stripWhiteSpace();
+     attr.nameLine = line;
+     attr.nameCol = begin;
      col++;
-     while ( text[col].isSpace() ) col++;
+     while ( text[col].isSpace() )
+        col++;
      if (text[col] == '\"') //the attribute value is quoted
      {
        begin = ++col;
@@ -109,8 +104,8 @@ void Tag::parseAttr( QString text, int &line, int &col)
        {
          col++;
        }
-       attrs[currentAttrNum].value = text.mid(begin, col-begin);
-       attrs[currentAttrNum].quoted = true;
+       attr.value = text.mid(begin, col-begin);
+       attr.quoted = true;
        col++;
      }
      else
@@ -122,26 +117,25 @@ void Tag::parseAttr( QString text, int &line, int &col)
        {
         col++;
        }
-       attrs[currentAttrNum].value = text.mid(begin, col-begin);
-       attrs[currentAttrNum].quoted = false;
+       attr.value = text.mid(begin, col-begin);
+       attr.quoted = false;
      } //else
-     attrs[currentAttrNum].valueLine = line;
-     attrs[currentAttrNum].valueCol = begin;
+     attr.valueLine = line;
+     attr.valueCol = begin;
    }
    else           // no attribute value, the next attr comes
    {
      //FIXME: This values are not correct for every DTD
-     attrs[currentAttrNum].name = text.mid(begin, col-begin).stripWhiteSpace();
-     attrs[currentAttrNum].nameLine = line;
-     attrs[currentAttrNum].nameCol = begin;
-     attrs[currentAttrNum].value = "true";
-     attrs[currentAttrNum].quoted = false;
-     attrs[currentAttrNum].valueLine = line;
-     attrs[currentAttrNum].valueCol = begin;
+     attr.name = text.mid(begin, col-begin).stripWhiteSpace();
+     attr.nameLine = line;
+     attr.nameCol = begin;
+     attr.value = "true";
+     attr.quoted = false;
+     attr.valueLine = line;
+     attr.valueCol = begin;
    }
-   currentAttrNum++;
+   attrs.append(attr);
   }
- attrCount = currentAttrNum;
 }
 
 void Tag::parse(const QString &p_tagStr, Document *p_write)
@@ -150,7 +144,6 @@ void Tag::parse(const QString &p_tagStr, Document *p_write)
  cleanStr = m_tagStr;
  m_write = p_write;
 
- attrCount = 0;
  m_nameLine = beginLine;
  m_nameCol = beginCol;
  int line = beginLine;
@@ -173,7 +166,7 @@ void Tag::parse(const QString &p_tagStr, Document *p_write)
  if (!name.isEmpty())
     m_nameCol = begin;
 
- while ( textLine[col] != '>' && attrCount < 50)
+ while ( textLine[col] != '>')
   {
     if ( textLine.isNull() )
       break;
@@ -188,20 +181,20 @@ void Tag::parse(const QString &p_tagStr, Document *p_write)
   }
 }
 
-QString Tag::attribute(int index)
+QString Tag::attribute(uint index)
 {
   QString attr="";
-  if ( attrCount )
+  if ( index < attrs.count() )
   {
    attr = attrs[index].name;
   }
   return attr;
 }
 
-QString Tag::attributeValue(int index)
+QString Tag::attributeValue(uint index)
 {
   QString val = "";
-  if ( attrCount )
+  if ( index < attrs.count() )
   {
     val = attrs[index].value;
   }
@@ -211,7 +204,7 @@ QString Tag::attributeValue(int index)
 QString Tag::attributeValue(QString attr)
 {
  QString val = "";
- for (int i=0 ; i < attrCount; i++)
+ for (uint i = 0 ; i < attrs.count(); i++)
  {
 
   if ( attr.upper() == attrs[i].name.upper())
@@ -226,9 +219,11 @@ QString Tag::attributeValue(QString attr)
 /** Check if this tag has the attr attribute defined */
 bool Tag::hasAttribute( const QString &attr )
 {
-  for (int i=0; i < attrCount; i++)
+  for (uint i = 0; i < attrs.count(); i++)
+  {
     if ( attrs[i].name.lower() ==  attr.lower()  )
       return true;
+  }
   return false;
 }
 
@@ -245,18 +240,18 @@ void Tag::setTagPosition(int bLine, int bCol, int eLine, int eCol)
 int Tag::attributeIndex(QString attr)
 {
   int index = -1;
-  int i = 0;
+  uint i = 0;
   do{
     if (attrs[i].name == attr) index = i;
     i++;
-  } while (index == -1 && i < attrCount);
+  } while (index == -1 && i < attrs.count());
   return index;
 }
 /** Returns the index of attribute at (line,col). */
 int Tag::attributeIndexAtPos(int line, int col)
 {
  int index = -1;
- int i = 0;
+ uint i = 0;
  do
  {
    if (attrs[i].nameLine == line)
@@ -268,7 +263,7 @@ int Tag::attributeIndexAtPos(int line, int col)
      }
    }
    i++;
- } while (i < attrCount && index == -1);
+ } while (i < attrs.count() && index == -1);
  return index;
 }
 
@@ -276,7 +271,7 @@ int Tag::attributeIndexAtPos(int line, int col)
 int Tag::valueIndexAtPos(int line, int col)
 {
  int index = -1;
- int i = 0;
+ uint i = 0;
  do
  {
    if (attrs[i].valueLine == line)
@@ -288,7 +283,7 @@ int Tag::valueIndexAtPos(int line, int col)
      }
    }
    i++;
- } while (i < attrCount && index == -1);
+ } while (i < attrs.count() && index == -1);
  return index;
 }
 
@@ -296,4 +291,19 @@ void Tag::namePos(int &line, int &col)
 {
   line = m_nameLine;
   col = m_nameCol;
+}
+
+void Tag::setStr(const QString &p_tagStr)
+{
+  m_tagStr = p_tagStr; cleanStr = m_tagStr;
+}
+
+int Tag::size()
+{
+  int l = sizeof(name) +  8*sizeof(int) + 2*sizeof(bool);
+  l += sizeof(cleanStr) + sizeof(m_tagStr);
+  l += sizeof(structBeginStr) + sizeof(attrs);
+  l += sizeof(dtd) + sizeof(m_write);
+
+  return l;
 }

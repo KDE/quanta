@@ -502,7 +502,7 @@ void QuantaDoc::slotAttribPopup()
     QStrIList attrList = QStrIList();
     QString name;
 
-    for (int i=0; i < tag->attrCount; i++ )
+    for (int i=0; i < tag->attrCount(); i++ )
         attrList.append( tag->attribute(i) );
 
     if ( QuantaCommon::isKnownTag(w->getDTDIdentifier(),tagName) )

@@ -327,7 +327,7 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
                  newTag->setName(name);
                  newTag->parentDTD = m_parsingDTD;
                }
-               for (int i = 0; i < currentNode->tag->attrCount; i++)
+               for (int i = 0; i < currentNode->tag->attrCount(); i++)
                {
                  Attribute *attr = new Attribute;
                  attr->name = currentNode->tag->attribute(i);

@@ -102,3 +102,10 @@ Node *Node::previousSibling()
 
   return result;
 }
+
+int Node::size()
+{
+  int l = tag->size();
+  l += 4*sizeof(Node*) + sizeof(QListViewItem*) + sizeof(Tag*);
+  return l;
+}

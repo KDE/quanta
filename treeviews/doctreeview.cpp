@@ -38,7 +38,7 @@ DocTreeView::DocTreeView(QWidget *parent, const char *name )
   : KListView(parent,name)
 {
 
-  contextHelpDict = new QDict <QString> ( 101, false );
+  contextHelpDict = new QDict<QString>( 101, false );
 
   setRootIsDecorated( true );
   header()->hide();

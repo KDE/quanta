@@ -47,6 +47,7 @@ public:
 
  Node *nextSibling();
  Node *previousSibling();
+ int size();
 
  #ifdef BUILD_KAFKAPART
  DOM::Node *kafkaNode;

@@ -57,7 +57,7 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, Node *a_node, const QString 
               if (title == "font")
               {
                 setPixmap( 0, UserIcon("tag_font_small") );
-                if ( tag->attrCount )
+                if ( tag->attrCount() )
                   title = space + tag->attribute(0) + "=" + tag->attributeValue(0);
                 else
                   title = "";

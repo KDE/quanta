@@ -86,6 +86,7 @@ private:
   int maxLines; // how many lines are in the current document
   int oldMaxLines;
   QValueList<DTDListNode> dtdList;
+  int treeSize;
 
   /** Print the doc structure tree to the standard output.
       Only for debugging purposes. */
