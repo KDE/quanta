@@ -312,28 +312,28 @@ xhtml1frameset='&lt;?xml version="1.0" encoding="@ComboMetachar"?&gt;
 ################################
 # Set the DTD based on user selection
 
-case "@widgetText" in 
-"HTML 4.01 Transitional" ) 
+case "@widgetText" in
+"HTML 4.01 Transitional" )
 	DTD="$htmltrans"
-;; 
-"HTML 4.01 Strict" ) 
+;;
+"HTML 4.01 Strict" )
 	DTD="$strict"
-;; 
-"HTML 4.01 Frameset" ) 
+;;
+"HTML 4.01 Frameset" )
 	DTD="$frameset"
-;; 
-"XHTML 1.0 Transitional" ) 
+;;
+"XHTML 1.0 Transitional" )
 	DTD="$xhtml1trans"
-;; 
-"XHTML 1.0 Strict" ) 
+;;
+"XHTML 1.0 Strict" )
 	DTD="$xhtml1strict"
-;; 
-"XHTML 1.0 Frameset" ) 
-	DTD="$xhtml1frameset
-;; 
-* ) 
+;;
+"XHTML 1.0 Frameset" )
+	DTD="$xhtml1frameset"
+;;
+* )
 	echo "No Match"
-;; 
+;;
 esac
 </string>
                         </stringlist>
