@@ -20,17 +20,17 @@
 #include <klocale.h>
 
 DebuggerVariable::DebuggerVariable()
-  : m_type(DebuggerVariableTypes::Undefined)
-  , m_isReference(false)
+  : m_isReference(false)
   , m_size(0)
+  , m_type(DebuggerVariableTypes::Undefined)
   , m_item(NULL)
 {
 }
 
 DebuggerVariable::DebuggerVariable(const QString& name)  
-  : m_type(DebuggerVariableTypes::Undefined)
-  , m_isReference(false)
+  : m_isReference(false)
   , m_size(0)
+  , m_type(DebuggerVariableTypes::Undefined)
   , m_item(NULL)
 {
   m_name = name;
@@ -162,6 +162,22 @@ void DebuggerVariable::setSize(long size)
 long DebuggerVariable::size()
 {
   return m_size;
+}
+
+QString DebuggerVariable::sizeName()
+{
+  switch(m_type)
+  {
+    case DebuggerVariableTypes::Reference:
+    case DebuggerVariableTypes::Resource:
+    case DebuggerVariableTypes::Integer:
+    case DebuggerVariableTypes::Float:
+    case DebuggerVariableTypes::Boolean:
+    case DebuggerVariableTypes::Undefined:
+    case DebuggerVariableTypes::Error:
+      return "";
+  }     
+  return QString::number(m_size);
 }
 
 void DebuggerVariable::setReference(bool ref)

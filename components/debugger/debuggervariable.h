@@ -67,6 +67,7 @@ public:
   
   virtual void setSize(long size);
   virtual long size();
+  virtual QString sizeName();
   
   virtual void setReference(bool ref);
   virtual bool isReference();
@@ -82,9 +83,9 @@ private:
   
   QString m_name;    
   QString m_value;
+  bool    m_isReference;
   long    m_size;
   int     m_type;  
-  bool    m_isReference;
   long    m_touched;
   
   KListViewItem* m_item;

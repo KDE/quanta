@@ -26,11 +26,14 @@
 
 namespace VariablesListViewColumns
 {
+  // The enums must correspond to the order of the columns
+  // If you change here, change the column adding
   enum Columns 
   {
     Name = 0,
     Value,
-    Type
+    Type,
+    Size
     
   };
 }
@@ -38,9 +41,11 @@ namespace VariablesListViewColumns
 VariablesListView::VariablesListView(QWidget *parent, const char *name)
  : KListView(parent, name)
 {
+  // If you change here, change the VariablesListViewColumns enums above
   addColumn(i18n("Name"));
   addColumn(i18n("Value"));
   addColumn(i18n("Type"));
+  addColumn(i18n("Size"));
   setRootIsDecorated(true);
 }
 
@@ -95,6 +100,7 @@ void VariablesListView::addVariable(DebuggerVariable* variable)
   KListViewItem * item = new KListViewItem(this);
   item->setText(VariablesListViewColumns::Name, variable->name());
   item->setText(VariablesListViewColumns::Type, variable->typeName());
+  item->setText(VariablesListViewColumns::Size, variable->sizeName());
   variable->setItem(item);
   if(variable->isScalar())
     item->setText(VariablesListViewColumns::Value, variable->value());
@@ -124,6 +130,7 @@ void VariablesListView::setVariables(const QPtrList<DebuggerVariable>& vars)
     item = new KListViewItem(this);
     item->setText(VariablesListViewColumns::Name, v->name());
     item->setText(VariablesListViewColumns::Type, v->typeName());
+    item->setText(VariablesListViewColumns::Size, v->sizeName());
     v->setItem(item);
     if(v->isScalar())
       item->setText(VariablesListViewColumns::Value, v->value());
@@ -146,7 +153,8 @@ void VariablesListView::addChild(KListViewItem* parent, DebuggerVariable* var)
     child->setItem(item);
     item->setText(VariablesListViewColumns::Name, child->name());
     item->setText(VariablesListViewColumns::Type, child->typeName());
-
+    item->setText(VariablesListViewColumns::Size, child->sizeName());
+  
     if(child->isScalar())
       item->setText(VariablesListViewColumns::Value, child->value());
     else  
