@@ -153,13 +153,13 @@ bool TagActionSet::fillWithTagActions(QWidget* widget, DOM::Node const& node)
         cutDivAction->unplug(widget);
     }
         
-    KAction* applySourceIndentationAction = ac->action("apply_source_indentation");
-    assert(applySourceIndentationAction);
-
-    applySourceIndentationAction->unplug(widget); // to keep things in order
-    applySourceIndentationAction->plug(widget);
-
-    m_separator->plug(widget);
+//     KAction* applySourceIndentationAction = ac->action("apply_source_indentation");
+//     assert(applySourceIndentationAction);
+// 
+//     applySourceIndentationAction->unplug(widget); // to keep things in order
+//     applySourceIndentationAction->plug(widget);
+// 
+//     m_separator->plug(widget);
 
     return true;
 }
