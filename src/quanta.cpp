@@ -2214,7 +2214,7 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
      }
    }
 
-   m_tagsMenu->insertItem(name,menu);
+   m_tagsMenu->insertItem(i18nName, menu);
    p_toolbar->menu = menu;
 
    tempFileList.append(tempFile);
@@ -2258,7 +2258,7 @@ void QuantaApp::showToolbarFile(const KURL &url)
         action->plug(menu);
       }
     }
-    m_tagsMenu->insertItem(p_toolbar->name,menu);
+    m_tagsMenu->insertItem(i18n(p_toolbar->name.utf8()),menu);
     p_toolbar->menu = menu;
     guiFactory()->addClient(p_toolbar->guiClient);
     p_toolbar->visible = true;
