@@ -922,6 +922,12 @@
         <receiver>ActionConfigDialogS</receiver>
         <slot>slotToggled(bool)</slot>
     </connection>
+    <connection>
+        <sender>customShortcut</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>shortcutKeyButton</receiver>
+        <slot>animateClick()</slot>
+    </connection>
 </connections>
 <tabstops>
     <tabstop>actionTreeView</tabstop>

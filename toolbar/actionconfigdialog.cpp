@@ -110,6 +110,8 @@ ActionConfigDialog::ActionConfigDialog( QWidget* parent, const char* name, bool 
   treeMenu->insertItem(i18n("&Add new toolbar"), this, SLOT(slotAddToolbar()));
   treeMenu->insertItem(i18n("&Remove toolbar"), this, SLOT(slotRemoveToolbar()));
   treeMenu->insertItem(i18n("&Edit toolbar"), this, SLOT(slotEditToolbar()));
+
+  globalShortcuts = KGlobal::config()->entryMap( "Global Shortcuts" );
 }
 
 ActionConfigDialog::~ActionConfigDialog()
@@ -566,8 +568,47 @@ void ActionConfigDialog::saveCurrentAction()
 
 void ActionConfigDialog::slotShortcutCaptured(const KShortcut &shortcut)
 {
-  shortcutKeyButton->setText(shortcut.toString());
-  buttonApply->setEnabled(true);
+  QString shortcutText = shortcut.toString();
+  QString global;
+//check for conflicting global shortcuts
+  QMap<QString, QString>::Iterator it;
+  for ( it = globalShortcuts.begin(); it != globalShortcuts.end(); ++it )
+  {
+    kdDebug(24000) << it.data() << "\n";
+    if (it.data().contains(shortcutText))
+    {
+      global = it.key();
+      break;
+    }
+  }
+
+  if (global.isEmpty())
+  {
+    for (uint i = 0; i < quantaApp->actionCollection()->count(); i++)
+    {
+      KAction *action = quantaApp->actionCollection()->action(i);
+      if (action->shortcut().toString().contains(shortcutText))
+      {
+        global = action->text();
+        break;
+      }
+    }
+  }
+
+  if (global.isEmpty())
+  {
+    shortcutKeyButton->setText(shortcutText);
+    buttonApply->setEnabled(true);
+  } else
+  {
+    global.replace('&',"");
+    QString s =  i18n("The '%1' key combination has already been allocated "
+                "to the \"%2\" action.\n"
+                "Please choose a unique key combination.").
+                arg(shortcutText).arg(global);
+    KMessageBox::sorry( this, s, i18n("Conflicting Shortcuts"));
+    shortcutKeyButton->animateClick();
+  }
 }
 
 void ActionConfigDialog::accept()

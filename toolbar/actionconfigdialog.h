@@ -2,7 +2,7 @@
 //
 // C++ Interface: h
 //
-// Description: 
+// Description:
 //
 //
 // Author: Andras Mantia <amantia@freemail.hu>, (C) 2003
@@ -14,6 +14,7 @@
 #ifndef ACTIONCONFIGDIALOG_H
 #define ACTIONCONFIGDIALOG_H
 
+#include <qmap.h>
 #include "actionconfigdialogs.h"
 
 class KPopupMenu;
@@ -53,6 +54,7 @@ private:
   KPopupMenu *treeMenu;
   KAction *currentAction;
   QListViewItem *allActionsItem;
+  QMap<QString, QString> globalShortcuts;
 };
 
 #endif
