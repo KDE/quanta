@@ -1703,7 +1703,8 @@ void QuantaApp::slotContextHelp()
         {
            currentWord = w->currentWord();
         }
-        QString *url = dTab->contextHelp(currentWord);
+        const DTDStruct *dtd = w->currentDTD(true);
+        QString *url = dTab->contextHelp(dtd->documentation + "|" + currentWord);
         if (url)
             openDoc(*url);
     }

@@ -206,6 +206,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
   }
   dtd->doctypeStr.prepend(' ');
   dtd->inheritsTagsFrom = dtdConfig->readEntry("Inherits").lower();
+  dtd->documentation = dtdConfig->readEntry("Documentation").lower();
 
   dtd->defaultExtension = dtdConfig->readEntry("DefaultExtension", "html");
   dtd->caseSensitive = caseSensitive;

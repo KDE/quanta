@@ -92,6 +92,7 @@ void DocTreeView::slotRefreshTree()
       config.setGroup("Tree");
 
       QString relDocDir = config.readEntry("Doc dir");
+      QString name = config.readEntry("Name").lower();
 
       DocFolder *folder = new DocFolder(this, config.readEntry("Top Element"), &config , QDir::cleanDirPath(docDir+relDocDir)+"/");
       folder->setPixmap( 0, SmallIcon("folder_open") );
@@ -107,7 +108,7 @@ void DocTreeView::slotRefreshTree()
       {
         QString keyword = list.at(i);
         QString *url = new QString(QDir::cleanDirPath(docDir + relDocDir + "/" + config.readEntry( list.at(i) )));
-        contextHelpDict->insert( keyword, url );
+        contextHelpDict->insert( name + "|" + keyword, url );
       }
     }
   }
@@ -133,9 +134,13 @@ void DocTreeView::clickItem( QListViewItem *)
 }
 
 
-QString * DocTreeView::contextHelp( QString keyword )
+QString * DocTreeView::contextHelp(const QString &keyword)
 {
-  return contextHelpDict->find( keyword );
+  QString word = keyword.mid(keyword.find("|"));
+  if (contextHelpDict->find(keyword))
+    return contextHelpDict->find(keyword);
+  else
+    return contextHelpDict->find(word); //to support old documentation packages
 }
 
 void DocTreeView::slotDoubleClicked(QListViewItem *item )

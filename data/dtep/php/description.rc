@@ -4,6 +4,7 @@ DefaultExtension = php
 NumOfPages = 0
 CaseSensitive = true
 Family = 2
+Documentation = PHP
 
 [Extra tags]
 List = apache_lookup_uri

@@ -7,6 +7,8 @@ DefaultExtension = html
 Groups = Core, I18n, Script
 NumOfPages = 2
 CaseSensitive = false
+Documentation = HTML
+
 
 [Toolbars]
 Location = html

@@ -100,6 +100,7 @@ typedef struct DTDStruct
      bool caseSensitive;              ///< the tags&attributes in DTD are case sensitive or not
      int family;                      ///< xml, script type
      bool toplevel;                   ///< true if the DTD can be the main DTD of a document. Always true for XML like DTD's
+     QString documentation;           ///< the name of the documentation package 
      QTagList* tagsList;              ///< the list of all defined tags in the DTD
      QString fileName;                ///< the DTD decription.rc with path
      AttributeListDict* commonAttrs;  ///< the attributes of the common groups
