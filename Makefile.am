@@ -20,6 +20,5 @@ messages: rc.cpp
 	cat extrafiles | perl -e 'while(<STDIN>) { if (/\<action .* text="(.*)"/) { print "i18n(\"$$1\");\n"; }}' >> rc.cpp
 	(cd data && $(PREPARETIPS) >> ../tips.cpp)
 	find . -name "*.tag" -print | xargs cat | perl -e 'while(<STDIN>) { if (/\<tag .* comment="(.*)"/) { print "i18n(\"$$1\");\n"; }}' >> rc.cpp
-	cat rc.cpp > rc2.cpp
 	$(XGETTEXT) rc.cpp tips.cpp `cat files` -o $(podir)/quanta.pot
 	rm -f extrafiles tips.cpp files dirs
