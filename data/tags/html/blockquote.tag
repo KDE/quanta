@@ -3,7 +3,7 @@
 <tag name="blockquote">
 
     <label>
-        <text>Cite </text>
+        <text>Cite</text>
         <location col="0" row="0" />
     </label>
 
@@ -13,7 +13,7 @@
     </attr>
 
     <label>
-        <text>Dir </text>
+        <text>Dir</text>
         <location col="0" row="1" />
     </label>
 

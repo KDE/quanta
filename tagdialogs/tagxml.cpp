@@ -76,13 +76,13 @@ Tagxml::Tagxml( QDomDocument &d, QWidget *parent, const char *name)
      	  QLabel *label = new QLabel(this);
      	  QDomElement ltext = findChild(n,"text").toElement();
      	  if ( !ltext.isNull() )
-     	  	label->setText( ltext.text() );
+     	  	label->setText( ltext.text().isEmpty() ? QString("") : (ltext.text()+":") );
 
           if ( tip != QString::null )
               QToolTip::add( label, tip );
           if ( whatsThis != QString::null )
               QWhatsThis::add( label, whatsThis );
-     	  	
+
      	  grid->addMultiCellWidget( label, row, row+rowspan, col,  col+colspan );
      }
 
@@ -150,7 +150,7 @@ Tagxml::Tagxml( QDomDocument &d, QWidget *parent, const char *name)
         if ( type == "url" ) {
         	 FileCombo *w = new FileCombo(basePath, this);
         	 grid->addMultiCellWidget( w, row, row+rowspan, col,  col+colspan );
-        	
+
              if ( tip != QString::null )
                  QToolTip::add( w, tip );
              if ( whatsThis != QString::null )

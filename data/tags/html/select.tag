@@ -3,7 +3,7 @@
 <tag name="select">
 
     <label>
-        <text>Name </text>
+        <text>Name</text>
         <location col="0" row="0" />
     </label>
 
@@ -17,7 +17,7 @@
     </label>
 
     <attr name="multiple" type="check">
-        <text>Multiple </text>
+        <text>Multiple</text>
         <location col="1" row="1" />
     </attr>
 
@@ -27,12 +27,12 @@
     </label>
 
     <attr name="disabled" type="check">
-        <text>Disabled </text>
+        <text>Disabled</text>
         <location col="1" row="2" />
     </attr>
 
     <label>
-        <text>Tab Index </text>
+        <text>Tab index</text>
         <location col="0" row="3" />
     </label>
 
@@ -41,7 +41,7 @@
     </attr>
 
     <label>
-        <text>On Focus </text>
+        <text>On focus</text>
         <location col="0" row="4" />
     </label>
 
@@ -50,7 +50,7 @@
     </attr>
 
     <label>
-        <text>On Blur </text>
+        <text>On blur</text>
         <location col="0" row="5" />
     </label>
 
@@ -59,7 +59,7 @@
     </attr>
 
     <label>
-        <text>On Change </text>
+        <text>On change</text>
         <location col="0" row="6" />
     </label>
 

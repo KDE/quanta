@@ -1,11 +1,3 @@
-/****************************************************************************
-** Form implementation generated from reading ui file 'eventswidgetdlgs.ui'
-**
-** Created: Fri Nov 3 19:03:49 2000
-**      by:  The User Interface Compiler (uic)
-**
-** WARNING! All changes made in this file will be lost!
-****************************************************************************/
 #include "eventswidgetdlgs.h"
 #include "eventswidgetdlgs.moc"
 #include <qlabel.h>
@@ -32,52 +24,52 @@ EventsWidgetDlgS::EventsWidgetDlgS( QWidget* parent,  const char* name, WFlags f
     grid->setMargin( 11 );
 
     TextLabel1 = new QLabel( this, "TextLabel1" );
-    TextLabel1->setText( tr( "OnClick"  ) );
+    TextLabel1->setText( tr( "OnClick:"  ) );
 
     grid->addWidget( TextLabel1, 0, 0 );
 
     TextLabel2 = new QLabel( this, "TextLabel2" );
-    TextLabel2->setText( tr( "OnDblClick"  ) );
+    TextLabel2->setText( tr( "OnDblClick:"  ) );
 
     grid->addWidget( TextLabel2, 1, 0 );
 
     TextLabel3 = new QLabel( this, "TextLabel3" );
-    TextLabel3->setText( tr( "OnMouseDown"  ) );
+    TextLabel3->setText( tr( "OnMouseDown:"  ) );
 
     grid->addWidget( TextLabel3, 2, 0 );
 
     TextLabel4 = new QLabel( this, "TextLabel4" );
-    TextLabel4->setText( tr( "OnMouseUp"  ) );
+    TextLabel4->setText( tr( "OnMouseUp:"  ) );
 
     grid->addWidget( TextLabel4, 3, 0 );
 
     TextLabel5 = new QLabel( this, "TextLabel5" );
-    TextLabel5->setText( tr( "OnMouseOver"  ) );
+    TextLabel5->setText( tr( "OnMouseOver:"  ) );
 
     grid->addWidget( TextLabel5, 4, 0 );
 
     TextLabel6 = new QLabel( this, "TextLabel6" );
-    TextLabel6->setText( tr( "OnMouseMove"  ) );
+    TextLabel6->setText( tr( "OnMouseMove:"  ) );
 
     grid->addWidget( TextLabel6, 5, 0 );
 
     TextLabel7 = new QLabel( this, "TextLabel7" );
-    TextLabel7->setText( tr( "OnMouseOut"  ) );
+    TextLabel7->setText( tr( "OnMouseOut:"  ) );
 
     grid->addWidget( TextLabel7, 6, 0 );
 
     TextLabel8 = new QLabel( this, "TextLabel8" );
-    TextLabel8->setText( tr( "OnKeyPress"  ) );
+    TextLabel8->setText( tr( "OnKeyPress:"  ) );
 
     grid->addWidget( TextLabel8, 7, 0 );
 
     TextLabel9 = new QLabel( this, "TextLabel9" );
-    TextLabel9->setText( tr( "OnKeyDown"  ) );
+    TextLabel9->setText( tr( "OnKeyDown:"  ) );
 
     grid->addWidget( TextLabel9, 8, 0 );
 
     TextLabel10 = new QLabel( this, "TextLabel10" );
-    TextLabel10->setText( tr( "OnKeyUp"  ) );
+    TextLabel10->setText( tr( "OnKeyUp:"  ) );
 
     grid->addWidget( TextLabel10, 9, 0 );
 

@@ -3,7 +3,7 @@
 <tag name="br">
 
     <label>
-        <text>Clear </text>
+        <text>Clear</text>
         <location col="0" row="0" />
     </label>
 

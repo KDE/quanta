@@ -3,7 +3,7 @@
 <tag name="thead">
 
     <label>
-        <text>Align </text>
+        <text>Align</text>
         <location col="0" row="0" />
     </label>
 
@@ -37,7 +37,7 @@
     </spacer>
 
     <label>
-        <text>Bg Color</text>
+        <text>Bg color</text>
         <location col="0" row="5" />
     </label>
 

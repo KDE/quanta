@@ -3,43 +3,43 @@
 <tag name="a">
 
     <label>
-        <text>Href </text>
+        <text>Href</text>
         <location col="0" row="0" />
     </label>
 
     <label>
-        <text> Name </text>
+        <text>Name</text>
         <location col="0" row="1" />
     </label>
 
     <label>
-        <text> Rel </text>
+        <text>Rel</text>
         <location col="0" row="2" />
     </label>
 
     <label>
-        <text> Rev </text>
+        <text>Rev</text>
         <location col="2" row="2" />
     </label>
 
     <label>
-        <text> Type </text>
+        <text>Type</text>
         <location col="0" row="3" />
     </label>
 
     <label>
-        <text> Target </text>
+        <text>Target</text>
         <location col="2" row="3" />
     </label>
 
 
     <label>
-        <text> OnFocus </text>
+        <text>OnFocus</text>
         <location col="0" row="8" />
     </label>
 
     <label>
-        <text> OnBlur </text>
+        <text>OnBlur</text>
         <location col="0" row="9" />
     </label>
 

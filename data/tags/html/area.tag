@@ -3,47 +3,47 @@
 <tag name="area">
 
     <label>
-        <text>Shape </text>
+        <text>Shape</text>
         <location col="0" row="0" />
     </label>
 
     <label>
-        <text>Coords </text>
+        <text>Coords</text>
         <location col="0" row="1" />
     </label>
 
     <label>
-        <text>HREF </text>
+        <text>HREF</text>
         <location col="0" row="3" />
     </label>
 
     <label>
-        <text>Target </text>
+        <text>Target</text>
         <location col="0" row="4" />
     </label>
 
     <label>
-        <text>No HREF </text>
+        <text>No HREF</text>
         <location col="0" row="5" />
     </label>
 
     <label>
-        <text>Alt </text>
+        <text>Alt</text>
         <location col="0" row="6" />
     </label>
 
     <label>
-        <text>Tab Index </text>
+        <text>Tab index</text>
         <location col="0" row="7" />
     </label>
 
     <label>
-        <text>OnFocus </text>
+        <text>OnFocus</text>
         <location col="0" row="8" />
     </label>
 
     <label>
-        <text>OnBlur </text>
+        <text>OnBlur</text>
         <location col="0" row="9" />
     </label>
 
@@ -78,7 +78,7 @@
     </attr>
 
     <attr name="nohref" type="check">
-        <text>No HREF </text>
+        <text>No HREF</text>
         <location col="1" row="5" colspan="2"/>
     </attr>
 

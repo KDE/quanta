@@ -32,7 +32,7 @@
     </attr>
 
     <label>
-        <text>Size </text>
+        <text>Size</text>
         <location col="0" row="4" />
     </label>
 

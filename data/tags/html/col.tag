@@ -3,7 +3,7 @@
 <tag name="col">
 
     <label>
-        <text>Width </text>
+        <text>Width</text>
         <location col="0" row="0" />
     </label>
 
@@ -13,7 +13,7 @@
     </attr>
 
     <label>
-        <text>Span </text>
+        <text>Span</text>
         <location col="0" row="1" />
     </label>
 
@@ -62,7 +62,7 @@
     </attr>
 
     <label>
-        <text>Character </text>
+        <text>Character</text>
         <location col="0" row="4" />
     </label>
 
@@ -72,7 +72,7 @@
     </attr>
 
     <label>
-        <text>Character Offset </text>
+        <text>Character offset</text>
         <location col="0" row="5" />
     </label>
 

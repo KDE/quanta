@@ -3,22 +3,22 @@
 <tag name="frameset">
 
     <label>
-        <text>Rows </text>
+        <text>Rows</text>
         <location col="0" row="0" />
     </label>
 
     <label>
-        <text>Cols </text>
+        <text>Cols</text>
         <location col="0" row="1" />
     </label>
 
     <label>
-        <text>On Load </text>
+        <text>On load</text>
         <location col="0" row="3" />
     </label>
 
     <label>
-        <text>On Unload </text>
+        <text>On unload</text>
         <location col="0" row="4" />
     </label>
 

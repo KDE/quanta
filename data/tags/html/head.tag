@@ -3,7 +3,7 @@
 <tag name="html">
 
     <label>
-        <text>Profile </text>
+        <text>Profile</text>
         <location col="0" row="0" />
     </label>
 

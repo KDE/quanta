@@ -3,7 +3,7 @@
 <tag name="colgroup">
 
     <label>
-        <text>Width </text>
+        <text>Width</text>
         <location col="0" row="0" />
     </label>
 
@@ -14,7 +14,7 @@ You can add multiple values with commas</tooltip>
     </attr>
 
     <label>
-        <text>Span </text>
+        <text>Span</text>
         <location col="0" row="1" />
     </label>
 
@@ -64,7 +64,7 @@ You can add multiple values with commas</tooltip>
     </attr>
 
     <label>
-        <text>Character </text>
+        <text>Character</text>
         <location col="0" row="4" />
     </label>
 
@@ -74,7 +74,7 @@ You can add multiple values with commas</tooltip>
     </attr>
 
     <label>
-        <text>Character Offset </text>
+        <text>Character offset</text>
         <location col="0" row="5" />
     </label>
 

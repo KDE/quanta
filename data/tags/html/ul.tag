@@ -3,7 +3,7 @@
 <tag name="ol">
 
     <label>
-        <text>Type :</text>
+        <text>Type</text>
         <location col="0" row="0" />
     </label>
 

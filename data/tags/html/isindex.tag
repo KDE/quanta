@@ -3,7 +3,7 @@
 <tag name="base">
 
     <label>
-        <text>Prompt </text>
+        <text>Prompt</text>
         <location col="0" row="0" />
     </label>
 

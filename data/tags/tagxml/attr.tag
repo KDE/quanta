@@ -3,7 +3,7 @@
 <tag name="attr">
 
     <label>
-        <text>Name </text>
+        <text>Name</text>
         <location col="0" row="0" />
     </label>
 
@@ -13,7 +13,7 @@
     </attr>
 
     <label>
-        <text>Type </text>
+        <text>Type</text>
         <location col="0" row="1" />
     </label>
 

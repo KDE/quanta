@@ -3,22 +3,22 @@
 <tag name="form">
 
     <label>
-        <text>Action </text>
+        <text>Action</text>
         <location col="0" row="0" />
     </label>
 
     <label>
-        <text>Method </text>
+        <text>Method</text>
         <location col="0" row="1" />
     </label>
 
     <label>
-        <text>Enctype </text>
+        <text>Enctype</text>
         <location col="0" row="2" />
     </label>
 
     <label>
-        <text>Target </text>
+        <text>Target</text>
         <location col="0" row="3" />
     </label>
 

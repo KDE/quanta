@@ -3,7 +3,7 @@
 <tag name="div">
 
     <label>
-        <text>Alignment </text>
+        <text>Alignment</text>
         <location col="0" row="0" />
     </label>
 

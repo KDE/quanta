@@ -3,17 +3,17 @@
 <tag name="hr">
 
     <label>
-        <text>Alignment </text>
+        <text>Alignment</text>
         <location col="0" row="0" />
     </label>
 
     <label>
-        <text>Line height </text>
+        <text>Line height</text>
         <location col="0" row="1" />
     </label>
 
     <label>
-        <text>Line width </text>
+        <text>Line width</text>
         <location col="0" row="2" />
     </label>
 
@@ -38,7 +38,7 @@
 
 
     <attr name="noshade" type="check" >
-        <text>No shade ( solid line ) </text>
+        <text>No shade (solid line)</text>
         <location col="0" row="3"/>
     </attr>
 

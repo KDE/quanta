@@ -3,7 +3,7 @@
 <tag name="table">
 
     <label>
-        <text>Width </text>
+        <text>Width</text>
         <location col="0" row="0" />
     </label>
 
@@ -13,7 +13,7 @@
     </attr>
 
     <label>
-        <text>Cell Spacing </text>
+        <text>Cell spacing</text>
         <location col="2" row="0" />
     </label>
 
@@ -22,7 +22,7 @@
     </attr>
 
     <label>
-        <text>Border </text>
+        <text>Border</text>
         <location col="0" row="1" />
     </label>
 
@@ -31,7 +31,7 @@
     </attr>
 
     <label>
-        <text>Cell Padding </text>
+        <text>Cell padding</text>
         <location col="2" row="1" />
     </label>
 
@@ -40,7 +40,7 @@
     </attr>
 
     <label>
-        <text>Align </text>
+        <text>Align</text>
         <location col="0" row="2" />
     </label>
 
@@ -54,7 +54,7 @@
     </attr>
 
     <label>
-        <text>Background Color</text>
+        <text>Background color</text>
         <location col="0" row="3"  />
     </label>
 

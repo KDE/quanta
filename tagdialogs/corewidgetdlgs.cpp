@@ -1,11 +1,3 @@
-/****************************************************************************
-** Form implementation generated from reading ui file 'corewidgetdlg.ui'
-**
-** Created: Thu Nov 2 18:48:48 2000
-**      by:  The User Interface Compiler (uic)
-**
-** WARNING! All changes made in this file will be lost!
-****************************************************************************/
 #include "corewidgetdlgs.h"
 #include "corewidgetdlgs.moc"
 #include <qframe.h>
@@ -33,22 +25,22 @@ CoreWidgetDlgS::CoreWidgetDlgS( QWidget* parent,  const char* name, WFlags fl )
     grid->setMargin( 11 );
 
     TextLabel1 = new QLabel( this, "TextLabel1" );
-    TextLabel1->setText( tr( "Id"  ) );
+    TextLabel1->setText( tr( "Id:"  ) );
 
     grid->addWidget( TextLabel1, 0, 0 );
 
     TextLabel2 = new QLabel( this, "TextLabel2" );
-    TextLabel2->setText( tr( "Class            "  ) );
+    TextLabel2->setText( tr( "Class:"  ) );
 
     grid->addWidget( TextLabel2, 1, 0 );
 
     TextLabel3 = new QLabel( this, "TextLabel3" );
-    TextLabel3->setText( tr( "Style"  ) );
+    TextLabel3->setText( tr( "Style:"  ) );
 
     grid->addWidget( TextLabel3, 2, 0 );
 
     TextLabel4 = new QLabel( this, "TextLabel4" );
-    TextLabel4->setText( tr( "Title"  ) );
+    TextLabel4->setText( tr( "Title:"  ) );
 
     grid->addWidget( TextLabel4, 3, 0 );
 
@@ -58,12 +50,12 @@ CoreWidgetDlgS::CoreWidgetDlgS( QWidget* parent,  const char* name, WFlags fl )
     grid->addMultiCellWidget( Line1, 4, 4, 0, 2 );
 
     TextLabel5 = new QLabel( this, "TextLabel5" );
-    TextLabel5->setText( tr( "Lang"  ) );
+    TextLabel5->setText( tr( "Lang:"  ) );
 
     grid->addWidget( TextLabel5, 5, 0 );
 
     TextLabel6 = new QLabel( this, "TextLabel6" );
-    TextLabel6->setText( tr( "Dir"  ) );
+    TextLabel6->setText( tr( "Dir:"  ) );
 
     grid->addWidget( TextLabel6, 6, 0 );
     QSpacerItem* spacer = new QSpacerItem( 20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding );

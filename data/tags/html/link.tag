@@ -3,42 +3,42 @@
 <tag name="base">
 
     <label>
-        <text>Rel </text>
+        <text>Rel</text>
         <location col="0" row="0" />
     </label>
 
     <label>
-        <text>Rev </text>
+        <text>Rev</text>
         <location col="0" row="1" />
     </label>
 
     <label>
-        <text>href </text>
+        <text>href</text>
         <location col="0" row="2" />
     </label>
 
     <label>
-        <text>Type </text>
+        <text>Type</text>
         <location col="0" row="3" />
     </label>
 
     <label>
-        <text>Target </text>
+        <text>Target</text>
         <location col="0" row="4" />
     </label>
 
     <label>
-        <text>Media </text>
+        <text>Media</text>
         <location col="0" row="5" />
     </label>
 
     <label>
-        <text>href lang. </text>
+        <text>href lang.</text>
         <location col="0" row="6" />
     </label>
 
     <label>
-        <text>Charset </text>
+        <text>Charset</text>
         <location col="0" row="7" />
     </label>
 

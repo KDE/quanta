@@ -3,7 +3,7 @@
 <tag name="big">
 
     <label>
-        <text>Dir </text>
+        <text>Dir</text>
         <location col="0" row="0" />
     </label>
 

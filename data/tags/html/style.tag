@@ -3,17 +3,17 @@
 <tag name="script">
 
     <label>
-        <text>Type </text>
+        <text>Type</text>
         <location col="0" row="0" />
     </label>
 
     <label>
-        <text>Media </text>
+        <text>Media</text>
         <location col="0" row="1" />
     </label>
 
     <label>
-        <text>Title </text>
+        <text>Title</text>
         <location col="0" row="2" />
     </label>
 

@@ -50,7 +50,7 @@ FileManage::FileManage( QWidget *parent, const char *name)
 	fileMenu -> insertItem(					  			   i18n("Open in Quanta"), 	this ,SLOT(slotOpenInQuanta()));
 	fileMenu -> insertItem(					  			   i18n("Insert Tag"), 	this ,SLOT(slotInsertTag()));
 	fileMenu -> insertSeparator();
-	fileMenu -> insertItem(					  			   i18n("Insert in Project"),this ,SLOT(slotInsertInProject()));
+	fileMenu -> insertItem(					  			   i18n("Insert in Project..."),this ,SLOT(slotInsertInProject()));
 	fileMenu -> insertSeparator();
 	fileMenu -> insertItem( UserIcon("copy"),  i18n("&Copy"), 		this ,SLOT(slotCopy()));
 	fileMenu -> insertItem( UserIcon("paste"), i18n("&Paste"),		this ,SLOT(slotPaste()));
@@ -62,7 +62,7 @@ FileManage::FileManage( QWidget *parent, const char *name)
 
 	folderMenu = new QPopupMenu();
 
-	folderMenu -> insertItem(					  			   i18n("Insert in Project"),this ,SLOT(slotInsertDirInProject()));
+	folderMenu -> insertItem(					  			   i18n("Insert in Project..."),this ,SLOT(slotInsertDirInProject()));
 	folderMenu -> insertSeparator();
 	folderMenu -> insertItem( UserIcon("copy"),  i18n("&Copy"), 		this ,SLOT(slotCopy()));
 	folderMenu -> insertItem( UserIcon("paste"), i18n("&Paste"),		this ,SLOT(slotPaste()));

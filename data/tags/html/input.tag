@@ -65,7 +65,7 @@
     </attr>
 
     <label>
-      <text>Max Length</text>
+      <text>Max length</text>
       <location col="2" row="2" colspan="1" />
     </label>
 
@@ -85,7 +85,7 @@
     </attr>
 
     <label>
-      <text>Img Src</text>
+      <text>Img src</text>
       <location col="0" row="4" colspan="1" />
     </label>
 
@@ -147,7 +147,7 @@
     </attr>
 
     <label>
-      <text>On Focus</text>
+      <text>On focus</text>
       <location col="0" row="8" colspan="1" />
     </label>
 
@@ -156,7 +156,7 @@
     </attr>
 
     <label>
-      <text>On Select</text>
+      <text>On select</text>
       <location col="2" row="8" colspan="1" />
     </label>
 
@@ -165,7 +165,7 @@
     </attr>
 
     <label>
-      <text>On Blur</text>
+      <text>On blur</text>
       <location col="0" row="9" colspan="1" />
     </label>
 
@@ -174,7 +174,7 @@
     </attr>
 
     <label>
-      <text>On Change</text>
+      <text>On change</text>
       <location col="2" row="9" colspan="1" />
     </label>
 

@@ -78,7 +78,7 @@ TagDialog::TagDialog(QString tag ,QString attr)
   this->resize(420,400);
 
   if ( mainDlg )  addTab( mainDlg,    i18n("Main") );
-  if ( coreDlg )  addTab( coreDlg,    i18n("Core & i18n") );
+  if ( coreDlg )  addTab( coreDlg,    i18n("Core && i18n") );
   if ( eventsDlg )addTab( eventsDlg,  i18n("Events") );
 
   setOkButton(i18n("&OK"));

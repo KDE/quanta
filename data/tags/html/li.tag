@@ -3,7 +3,7 @@
 <tag name="li">
 
     <label>
-        <text>Type :</text>
+        <text>Type</text>
         <location col="0" row="0" />
     </label>
 
@@ -23,7 +23,7 @@
 
 
     <label>
-        <text>Value :</text>
+        <text>Value</text>
         <location col="0" row="1" />
     </label>
 

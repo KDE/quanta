@@ -3,32 +3,32 @@
 <tag name="frame">
 
     <label>
-        <text>Name </text>
+        <text>Name</text>
         <location col="0" row="0" />
     </label>
 
     <label>
-        <text>Src </text>
+        <text>Src</text>
         <location col="0" row="1" />
     </label>
 
     <label>
-        <text>Long Desc </text>
+        <text>Long desc</text>
         <location col="0" row="3" />
     </label>
 
     <label>
-        <text>Frame Border </text>
+        <text>Frame border</text>
         <location col="0" row="4" />
     </label>
 
     <label>
-        <text>Margin Width </text>
+        <text>Margin width</text>
         <location col="0" row="5" />
     </label>
 
     <label>
-        <text>Margin Height </text>
+        <text>Margin height</text>
         <location col="0" row="6" />
     </label>
 
@@ -38,7 +38,7 @@
     </label>
 
     <label>
-        <text>Scrolling </text>
+        <text>Scrolling</text>
         <location col="0" row="8" />
     </label>
 
@@ -73,7 +73,7 @@
     </attr>
 
     <attr name="noresize" type="check">
-        <text> No Resize </text>
+        <text>No resize</text>
         <location col="1" row="7" colspan="2"/>
     </attr>
 

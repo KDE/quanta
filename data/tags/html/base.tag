@@ -3,12 +3,12 @@
 <tag name="base">
 
     <label>
-        <text>HREF </text>
+        <text>HREF</text>
         <location col="0" row="0" />
     </label>
 
     <label>
-        <text>Target </text>
+        <text>Target</text>
         <location col="0" row="1" />
     </label>
 

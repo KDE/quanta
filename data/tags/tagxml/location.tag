@@ -3,7 +3,7 @@
 <tag name="location">
 
     <label>
-        <text>Row </text>
+        <text>Row</text>
         <location col="0" row="0" />
     </label>
 
@@ -25,7 +25,7 @@
     </attr>
 
     <label>
-        <text>Column </text>
+        <text>Column</text>
         <location col="0" row="1" />
     </label>
 
@@ -45,7 +45,7 @@
     </attr>
 
     <label>
-        <text>Row Span </text>
+        <text>Row span</text>
         <location col="0" row="2" />
     </label>
 
@@ -67,7 +67,7 @@
     </attr>
 
     <label>
-        <text>Col Span </text>
+        <text>Col span</text>
         <location col="0" row="3" />
     </label>
 

@@ -3,7 +3,7 @@
 <tag name="spacer">
 
     <label>
-        <text>Orientation </text>
+        <text>Orientation</text>
         <location col="0" row="0" />
     </label>
 

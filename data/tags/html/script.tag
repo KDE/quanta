@@ -3,22 +3,22 @@
 <tag name="script">
 
     <label>
-        <text>Type </text>
+        <text>Type</text>
         <location col="0" row="0" />
     </label>
 
     <label>
-        <text>Language </text>
+        <text>Language</text>
         <location col="0" row="1" />
     </label>
 
     <label>
-        <text>Source </text>
+        <text>Source</text>
         <location col="0" row="2" />
     </label>
 
     <label>
-        <text>Charset </text>
+        <text>Charset</text>
         <location col="0" row="3" />
     </label>
 
@@ -52,7 +52,7 @@
     </attr>
 
     <attr name="defer" type="check">
-        <text> Defer (script execution may wait ) </text>
+        <text>Defer (script execution may wait)</text>
         <location col="0" row="4" colspan="2" />
     </attr>
 

@@ -3,7 +3,7 @@
 <tag name="div">
 
     <label>
-        <text>Value </text>
+        <text>Value</text>
         <location col="0" row="0" />
     </label>
 
@@ -17,7 +17,7 @@
     </label>
 
     <attr name="selected" type="check">
-        <text>Selected </text>
+        <text>Selected</text>
         <location col="1" row="1" />
     </attr>
 
@@ -27,12 +27,12 @@
     </label>
 
     <attr name="disabled" type="check">
-        <text>Disabled </text>
+        <text>Disabled</text>
         <location col="1" row="2" />
     </attr>
 
     <label>
-        <text>Label </text>
+        <text>Label</text>
         <location col="0" row="3" />
     </label>
 

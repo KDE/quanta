@@ -1,5 +1,5 @@
 /**********************************************************************
-            --- KDevelop (KDlgEdit)  generated file ---                
+            --- KDevelop (KDlgEdit)  generated file ---
 
             Last generated: Fri Apr 7 23:17:41 2000
 
@@ -20,7 +20,7 @@ void  TagImgDlg::initDialog(){
   labelImgSource= new QLabel(this,"labelImgSource");
   labelImgSource->setGeometry(10,10,120,30);
   labelImgSource->setMinimumSize(0,0);
-  labelImgSource->setText(i18n("Image Source"));
+  labelImgSource->setText(i18n("Image source:"));
 
   lineImgSource= new KLineEdit(this,"lineImgSource");
   lineImgSource->setGeometry(130,10,220,25);
@@ -34,7 +34,7 @@ void  TagImgDlg::initDialog(){
   QLabel_4= new QLabel(this,"NoName");
   QLabel_4->setGeometry(10,40,120,30);
   QLabel_4->setMinimumSize(0,0);
-  QLabel_4->setText(i18n("Width"));
+  QLabel_4->setText(i18n("Width:"));
 
   lineWidth= new KLineEdit(this,"NoName");
   lineWidth->setGeometry(130,40,60,25);
@@ -44,13 +44,13 @@ void  TagImgDlg::initDialog(){
   QLabel_5= new QLabel(this,"NoName");
   QLabel_5->setGeometry(200,40,90,30);
   QLabel_5->setMinimumSize(0,0);
-  QLabel_5->setText(i18n("Height"));
+  QLabel_5->setText(i18n("Height:"));
 
   lineHeight= new KLineEdit(this,"NoName");
   lineHeight->setGeometry(290,40,60,25);
   lineHeight->setMinimumSize(0,0);
   lineHeight->setValidator( new KFloatValidator( lineHeight ) );
-  
+
   buttonRecalcImgSize= new QPushButton(this,"NoName");
   buttonRecalcImgSize->setGeometry(355,40,35,25);
   buttonRecalcImgSize->setMinimumSize(0,0);
@@ -59,7 +59,7 @@ void  TagImgDlg::initDialog(){
   QLabel_6= new QLabel(this,"NoName");
   QLabel_6->setGeometry(10,70,120,30);
   QLabel_6->setMinimumSize(0,0);
-  QLabel_6->setText(i18n("HSpace"));
+  QLabel_6->setText(i18n("HSpace:"));
 
   lineHSpace= new KLineEdit(this,"NoName");
   lineHSpace->setGeometry(130,70,60,25);
@@ -68,7 +68,7 @@ void  TagImgDlg::initDialog(){
   QLabel_7= new QLabel(this,"NoName");
   QLabel_7->setGeometry(200,70,90,30);
   QLabel_7->setMinimumSize(0,0);
-  QLabel_7->setText(i18n("VSpace"));
+  QLabel_7->setText(i18n("VSpace:"));
 
   lineVSpace= new KLineEdit(this,"NoName");
   lineVSpace->setGeometry(290,70,60,25);
@@ -77,7 +77,7 @@ void  TagImgDlg::initDialog(){
   QLabel_8= new QLabel(this,"NoName");
   QLabel_8->setGeometry(10,100,120,30);
   QLabel_8->setMinimumSize(0,0);
-  QLabel_8->setText(i18n("Alternate Text"));
+  QLabel_8->setText(i18n("Alternate text:"));
 
   lineAltText= new KLineEdit(this,"NoName");
   lineAltText->setGeometry(130,100,260,25);
@@ -86,7 +86,7 @@ void  TagImgDlg::initDialog(){
   QLabel_9= new QLabel(this,"NoName");
   QLabel_9->setGeometry(10,130,120,30);
   QLabel_9->setMinimumSize(0,0);
-  QLabel_9->setText(i18n("Border"));
+  QLabel_9->setText(i18n("Border:"));
 
   spinBorder= new QSpinBox(this,"NoName");
   spinBorder->setGeometry(130,130,60,25);
@@ -96,7 +96,7 @@ void  TagImgDlg::initDialog(){
   QLabel_10= new QLabel(this,"NoName");
   QLabel_10->setGeometry(220,130,70,30);
   QLabel_10->setMinimumSize(0,0);
-  QLabel_10->setText(i18n("Align"));
+  QLabel_10->setText(i18n("Align:"));
 
   comboAlign= new QComboBox(this,"NoName");
   comboAlign->setGeometry(290,130,100,25);

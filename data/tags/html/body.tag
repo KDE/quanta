@@ -3,32 +3,32 @@
 <tag name="body">
 
     <label>
-        <text>BG Image</text>
+        <text>BG image</text>
         <location col="0" row="0" />
     </label>
 
     <label>
-        <text>BG Color</text>
+        <text>BG color</text>
         <location col="0" row="1" />
     </label>
 
     <label>
-        <text>Text Color</text>
+        <text>Text color</text>
         <location col="0" row="2" />
     </label>
 
     <label>
-        <text>Link Color</text>
+        <text>Link color</text>
         <location col="0" row="3" />
     </label>
 
     <label>
-        <text>Active Link Color</text>
+        <text>Active link color</text>
         <location col="0" row="4" />
     </label>
 
     <label>
-        <text>Visited Link Color</text>
+        <text>Visited link color</text>
         <location col="0" row="5" />
     </label>
 
@@ -63,12 +63,12 @@
 
     
     <label>
-        <text>On Load : </text>
+        <text>On load</text>
         <location col="0" row="7" />
     </label>
 
     <label>
-        <text>On unload : </text>
+        <text>On unload</text>
         <location col="0" row="8" />
     </label>
 

@@ -53,9 +53,9 @@ FilesListView::FilesListView( QString dir, QStringList dirList, QWidget *parent,
 
 	setFocusPolicy(QWidget::ClickFocus);
 
-	fileMenu -> insertItem( i18n("Tree mode"), this ,SLOT(slotNewMode()));
+	fileMenu -> insertItem( i18n("Tree Mode"), this ,SLOT(slotNewMode()));
 
-	folderMenu -> insertItem( i18n("Tree mode"), this ,SLOT(slotNewMode()));
+	folderMenu -> insertItem( i18n("Tree Mode"), this ,SLOT(slotNewMode()));
 
 	connect(  this, SIGNAL(clicked(QListViewItem *)),
 						this, SLOT(slotClicked(QListViewItem *)));
