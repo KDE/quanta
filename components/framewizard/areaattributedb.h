@@ -29,24 +29,24 @@ class areaAttribute : public QObject{
     Q_OBJECT
 
     private:
-      QRect geometry;
-      QMap<QString,QString> attributeMap;     //tag specific attributes
+      QRect m_geometry;
+      QMap<QString,QString> m_attributeMap;     //tag specific attributes
 
     public:
       areaAttribute();
-      areaAttribute(areaAttribute* a){ attributeMap = a->getAttributeMap(); }
+      areaAttribute(areaAttribute* a){ m_attributeMap = a->attributeMap(); }
       ~areaAttribute(){};
-      void setAttribute(const QString& name, const QString& value){ attributeMap[name] = value; }
-      void setAllAttributes(QMap<QString,QString> map){ attributeMap = map; }
+      void setAttribute(const QString& name, const QString& value){ m_attributeMap[name] = value; }
+      void setAllAttributes(QMap<QString,QString> map){ m_attributeMap = map; }
       void resetAttributes();
-      QRect getGeometry() const { return geometry; }
-      QString getSrc() const{ return attributeMap["src"]; }
-      QString getAttributeValue(QString l) { return getAttributeMap()[l];}
-      QMap<QString,QString> getAttributeMap() { return attributeMap; }
+      QRect geometry() const { return m_geometry; }
+      QString src() const{ return m_attributeMap["src"]; }
+      QString attributeValue(QString l) { return attributeMap()[l];}
+      QMap<QString,QString> attributeMap() { return m_attributeMap; }
 
 
     public slots:
-      void setGeometry(QRect g) { geometry = g; }
+      void setGeometry(QRect g) { m_geometry = g; }
 };
 
 #endif

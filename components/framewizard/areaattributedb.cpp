@@ -22,18 +22,18 @@ areaAttribute::areaAttribute(){
 }
 
 void areaAttribute::resetAttributes(){
-  attributeMap["name"] = "";
-  attributeMap["longdesc"] = "";
-  attributeMap["src"] = "";
-  attributeMap["scrolling"] = "auto"; // default value
-  attributeMap["id"] = "";
-  attributeMap["style"] = "";
-  attributeMap["title"] = "";
-  attributeMap["class"] = "";
-  attributeMap["noresize"] = "noresize";
-  attributeMap["frameborder"] = "1"; // default value
-  attributeMap["marginwidth"] = "10";
-  attributeMap["marginheight"] = "10";
+  m_attributeMap["name"] = "";
+  m_attributeMap["longdesc"] = "";
+  m_attributeMap["src"] = "";
+  m_attributeMap["scrolling"] = "auto"; // default value
+  m_attributeMap["id"] = "";
+  m_attributeMap["style"] = "";
+  m_attributeMap["title"] = "";
+  m_attributeMap["class"] = "";
+  m_attributeMap["noresize"] = "noresize";
+  m_attributeMap["frameborder"] = "1"; // default value
+  m_attributeMap["marginwidth"] = "10";
+  m_attributeMap["marginheight"] = "10";
 }
 #include "areaattributedb.moc"
 

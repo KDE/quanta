@@ -52,8 +52,8 @@ class VisualFrameEditor : public QHBox  {
       void removeNode(QString l);
       void split(QString,int,QString);
       void setAllAttributes(QString l,QMap<QString,QString> map) { (t->findAreaAttribute(l)->setAllAttributes(map)); }
-      QMap<QString,QString> getAttributeMap(QString l) { return t->findAreaAttribute(l)->getAttributeMap(); }
-      QString initSA() const { return t->getRoot()->getLabel(); }
+      QMap<QString,QString> getAttributeMap(QString l) { return t->findAreaAttribute(l)->attributeMap(); }
+      QString initSA() const { return t->root()->getLabel(); }
 
    protected:
       virtual void paintEvent ( QPaintEvent * );

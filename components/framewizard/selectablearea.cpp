@@ -41,7 +41,7 @@ bool SelectableArea::eventFilter(QObject *o, QEvent *event)
                            view()->setFrameShape(QFrame::Box);
                            view()->setFrameShadow ( QFrame::Plain );
                            view()->setLineWidth(2);
-                           emit selected(idLabel);
+                           emit selected(m_idLabel);
                            return true;
                            };
          break;

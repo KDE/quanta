@@ -18,7 +18,7 @@
 #ifndef SELECTABLEAREA_H
 #define SELECTABLEAREA_H
 
-#include <qwidget.h>
+//#include <qwidget.h>
 #include <khtml_part.h>
 #include <khtmlview.h>
 
@@ -33,15 +33,15 @@ class SelectableArea : public KHTMLPart  {
    public :
      SelectableArea(QWidget *parent=0, const char *name=0);
      ~SelectableArea();
-     QString getIdLabel() const { return idLabel; }
-           void setIdLabel(QString i) { idLabel = i; }
+     QString idLabel() const { return m_idLabel; }
+     void setIdLabel(QString i) { m_idLabel = i; }
      void setSource(const QString& s) { if(!s.isEmpty()) openURL( KURL(s) ); }
 
    protected :
      virtual bool eventFilter(QObject*, QEvent*);
 
    private :
-      QString idLabel;
+      QString m_idLabel;
 
     signals :
      void selected(QString);
