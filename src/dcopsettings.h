@@ -26,9 +26,10 @@ class DCOPSettings : public DCOPSettingsIf
 public:
   DCOPSettings();
   ~DCOPSettings() {};
-  
+
   virtual QString encoding();
-  virtual QString dtep();     
+  virtual QString dtep();
+  virtual QString quotationChar();
 };
 
 #endif

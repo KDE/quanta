@@ -111,7 +111,11 @@ QuantaView::QuantaView(QWidget *parent, const char *name )
 QuantaView::~QuantaView()
 {
    quantaApp->slotFileClosed();
-   if (m_document) emit documentClosed();
+   if (m_document)
+   {
+        m_document->view()->reparent(0L, 0, QPoint(), false);
+       emit documentClosed();
+   }
    delete m_document;
    m_document = 0L;
 }

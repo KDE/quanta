@@ -27,6 +27,7 @@ class DCOPSettingsIf : virtual public DCOPObject
 
   virtual QString encoding() = 0;
   virtual QString dtep() = 0;
+  virtual QString quotationChar() = 0;
 };
 
 #endif

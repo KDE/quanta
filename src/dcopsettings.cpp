@@ -44,5 +44,8 @@ QString DCOPSettings::dtep()
     return qConfig.defaultDocType;
 }
 
-
+QString DCOPSettings::quotationChar()
+{
+    return qConfig.attrValueQuotation;
+}
 

@@ -188,10 +188,10 @@ Document::~Document()
  m_doc->closeURL(); //TODO: Workaround for a Kate bug. Remove when KDE < 3.2.0 support is dropped.
 #else
  m_doc->closeURL(false); //TODO: Workaround for a Kate bug. Remove when KDE < 3.2.0 support is dropped.
-#endif
-
  delete m_view;
  delete m_doc;
+#endif
+
 }
 
 void Document::setUntitledUrl(QString url)
