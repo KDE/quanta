@@ -14,14 +14,17 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
-#include "eventswidgetdlg.h"
+
 #include "tagwidget.h"
+#include "eventswidgetdlg.h"
+
+// qt includes
 #include <qdict.h>
+#include <qlineedit.h>
 
 EventsWidgetDlg::EventsWidgetDlg(QWidget *parent, const char *name)
-  : QWidget(parent,name), TagWidget(parent,name)
+  : EventsWidgetDlgS(parent,name), TagWidget(parent,name)
 {
-	initDialog();
 }
 
 EventsWidgetDlg::~EventsWidgetDlg(){
