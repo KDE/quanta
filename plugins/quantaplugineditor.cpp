@@ -168,9 +168,9 @@ void QuantaPluginEditor::refreshPlugins()
     QPixmap statusIcon;
     bool isValid = QuantaPlugin::validatePlugin(curPlugin);
     if(isValid)
-      statusIcon = SmallIcon("button_ok", KGlobal::instance());
+      statusIcon = SmallIcon("ok", KGlobal::instance());
     else
-      statusIcon = SmallIcon("button_cancel", KGlobal::instance());
+      statusIcon = SmallIcon("no", KGlobal::instance());
     newItem->setPixmap(1, statusIcon);
 
     newItem->setText(2, curPlugin->location());

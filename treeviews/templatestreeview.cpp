@@ -151,7 +151,7 @@ TemplatesTreeView::TemplatesTreeView(QWidget *parent, const char *name )
   m_deleteMenuId = m_folderMenu->insertItem(SmallIcon("editdelete"), i18n("&Delete"), this, SLOT(slotDelete()));
   m_folderMenu->insertSeparator();
   m_folderMenu->insertItem(SmallIcon("info"), i18n("&Properties"), this, SLOT(slotProperties()));
-  m_reloadMenuId = m_folderMenu->insertItem(SmallIcon("reload"), i18n("&Reload"), this, SLOT(slotReload()));
+  m_reloadMenuId = m_folderMenu->insertItem(SmallIcon("revert"), i18n("&Reload"), this, SLOT(slotReload()));
   m_downloadMenuId = m_folderMenu->insertItem(i18n("Do&wnload Template..."), this, SIGNAL(downloadTemplate()));
 
   addColumn(i18n("Templates"), -1);

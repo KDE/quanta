@@ -121,7 +121,7 @@ ServerTreeView::ServerTreeView(KConfig *config, QWidget *parent, const KURL &url
   m_renameId = m_folderMenu->insertItem(i18n("Re&name"), this, SLOT(slotStartRename()));
   m_folderMenu->insertSeparator();
   m_folderMenu->insertItem(SmallIcon("info"), i18n("&Properties"), this, SLOT(slotProperties()));
-  m_reloadMenuId = m_folderMenu->insertItem(SmallIcon("reload"), i18n("&Reload"), this, SLOT(slotReload()));
+  m_reloadMenuId = m_folderMenu->insertItem(SmallIcon("revert"), i18n("&Reload"), this, SLOT(slotReload()));
 
   addColumn(i18n("Upload Tree"), -1);
   addColumn("");

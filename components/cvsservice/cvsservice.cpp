@@ -24,6 +24,7 @@
 #include <klistbox.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <kdeversion.h>
 
 // CvsService
 #include <repository_stub.h>
@@ -36,9 +37,17 @@
 CVSService::CVSService(KActionCollection *ac)
 {
   m_menu = new QPopupMenu;
+#if KDE_VERSION < KDE_MAKE_VERSION(3,2,90)
   KAction *action = new KAction(i18n("&Commit"), 0, this, SLOT(slotCommit()), ac);
+#else  
+  KAction *action = new KAction(i18n("&Commit"), "vcs_commit", 0, this, SLOT(slotCommit()), ac);
+#endif  
   action->plug(m_menu);
+#if KDE_VERSION < KDE_MAKE_VERSION(3,2,90)
   action = new KAction(i18n("&Update"), 0, this, SLOT(slotUpdate()), ac);
+#else  
+  action = new KAction(i18n("&Update"), "vcs_update", 0, this, SLOT(slotUpdate()), ac);
+#endif  
   action->plug(m_menu);
   m_cvsJob = 0L;
   m_repository = 0L;

@@ -125,24 +125,14 @@ void ProjectPrivate::initActions(KActionCollection *ac)
                         this, SLOT( slotNewProject() ),
                         ac, "project_new" );
 
-#if KDE_VERSION < KDE_MAKE_VERSION(3,2,90)
-  (void) new KAction( i18n( "&Open Project..." ), "folder_new", 0,
-                        this, SLOT( slotOpenProject() ),
-                        ac, "project_open" );
-#else
   (void) new KAction( i18n( "&Open Project..." ), "project_open", 0,
                         this, SLOT( slotOpenProject() ),
                         ac, "project_open" );
-#endif
   projectRecent =
       KStdAction::openRecent(parent, SLOT(slotOpenProject(const KURL&)),
                             ac, "project_open_recent");
   projectRecent->setText(i18n("Open Recent Project"));
-#if KDE_VERSION < KDE_MAKE_VERSION(3,2,90)
-  projectRecent->setIcon("folder_new");
-#else
   projectRecent->setIcon("project_open");
-#endif
   projectRecent->setMaxItems(32);
   projectRecent->setToolTip(i18n("Open/Open recent project"));
   connect(projectRecent, SIGNAL(activated()), this, SLOT(slotOpenProject()));
@@ -1216,7 +1206,7 @@ void ProjectPrivate::loadProjectFromTemp(const KURL &url, const QString &tempFil
 /** load project from file: url */
 void ProjectPrivate::loadProject(const KURL &url)
 {
-  if (projectURL == url)
+  if (projectURL == url) 
     return;
   if (!url.isValid())
   {

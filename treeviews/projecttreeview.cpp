@@ -129,8 +129,6 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   m_fileMenu->insertItem(i18n("Insert &Tag"), this, SLOT(slotInsertTag()));
   m_menuClose = m_fileMenu->insertItem(SmallIcon("fileclose"), i18n("Clos&e"), this, SLOT(slotClose()));
   m_fileMenu->insertSeparator();
-  m_fileMenu->insertItem(SmallIcon("folder_new"), i18n("&Create Folder..."), this, SLOT(slotCreateFolder()));
-  m_fileMenu->insertSeparator();
   m_fileMenu->insertItem(SmallIcon("editdelete"), i18n("&Delete"), this, SLOT(slotDelete()));
   m_fileMenu->insertItem( i18n("&Remove From Project"), this, SLOT(slotRemoveFromProject(int)));
   m_fileMenu->insertItem(SmallIcon("up"), i18n("&Upload File..."), this, SLOT(slotUploadSingleURL()));
@@ -159,7 +157,7 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   m_projectMenu->insertItem(SmallIcon("up"), i18n("&Upload Project..."), this, SLOT(slotUploadProject()));
   m_projectMenu->insertItem(SmallIcon("reload"), i18n("Re&scan Project Folder..."), this, SLOT(slotRescan()));
   m_projectMenu->insertItem(SmallIcon("configure"), i18n("Project &Properties"), this, SLOT(slotOptions()));
-  m_projectMenu->insertItem(SmallIcon("reload"), i18n("&Reload"), this, SLOT(slotReload()));
+  m_projectMenu->insertItem(SmallIcon("revert"), i18n("&Reload"), this, SLOT(slotReload()));
   m_projectMenu->insertSeparator();
   m_projectMenu->insertItem(i18n("Upload &Status"), m_uploadStatusMenu);
 

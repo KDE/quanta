@@ -715,7 +715,7 @@ void QuantaInit::initActions()
     m_quanta->saveAllAction = new KAction( i18n( "Save All..." ), "save_all", SHIFT+KStdAccel::shortcut(KStdAccel::Save).keyCodeQt(),
                         m_quanta, SLOT( slotFileSaveAll() ),
                         ac, "file_save_all" );
-    (void)  new KAction(i18n("Reloa&d"), "reload", CTRL+Key_F5, m_quanta,
+    (void)  new KAction(i18n("Reloa&d"), "revert", CTRL+Key_F5, m_quanta,
                         SLOT(slotFileReload()), ac, "file_reload");
 //    (void)  new KAction(i18n("Reload All "), 0, 0, m_quanta,
 //                        SLOT(slotFileReloadAll()), ac, "file_reload_all");
@@ -733,7 +733,7 @@ void QuantaInit::initActions()
     // Edit actions
 
     (void) new KAction( i18n( "Find in Files..." ),
-                        UserIcon("find"), CTRL+ALT+Key_F,
+                        SmallIcon("filefind"), CTRL+ALT+Key_F,
                         m_quanta, SLOT( slotEditFindInFiles() ),
                         ac, "find_in_files" );
 
@@ -981,7 +981,7 @@ void QuantaInit::initActions()
                         m_quanta, SLOT( slotTagQuickList() ),
                         ac, "tag_quick_list" );
 
-    (void) new KAction( i18n( "Color..." ), "color", CTRL+SHIFT+Key_C,
+    (void) new KAction( i18n( "Color..." ), "colorize", CTRL+SHIFT+Key_C,
                         m_quanta, SLOT( slotTagColor() ),
                         ac, "tag_color" );
 
