@@ -23,6 +23,7 @@
 #include <klistview.h>
 
 class DocFolder;
+class KPopupMenu;
 
 
 /**
@@ -38,17 +39,26 @@ public:
   QString *contextHelp( QString keyword );
   void addProjectDoc(const KURL& url);
 
+public slots:
+  void slotNewProjectLoaded(const QString &, const KURL &, const KURL &);
+
+
 signals:
   void openURL(const QString& );
+  void reloadProjectDocs();
 
 private slots:
   void clickItem( QListViewItem *);
   void slotDoubleClicked(QListViewItem *);
+  void slotReload();
+  void slotMenu(KListView *, QListViewItem *item, const QPoint &point);
+
 
 private:
 
   QDict <QString> *contextHelpDict;
   KListViewItem *projectDocFolder;
+  KPopupMenu *m_contextMenu;
 };
 
 #endif

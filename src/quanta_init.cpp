@@ -395,6 +395,9 @@ void QuantaInit::initProject()
   connect(pTab, SIGNAL(uploadProject()), m_project, SLOT(slotUpload()));
   connect(pTab, SIGNAL(reloadProject()), m_project, SLOT(slotReloadProject()));
 
+    connect(m_quanta->dTab, SIGNAL(reloadProjectDocs()), m_project, SLOT(slotReloadProjectDocs()));
+
+
   connect(m_project, SIGNAL(enableMessageWidget()),
           m_quanta, SLOT(slotShowMessagesView()));
 
@@ -412,6 +415,9 @@ void QuantaInit::initProject()
           pTab, SLOT(slotNewProjectLoaded(const QString &, const KURL &, const KURL &)));
   connect(m_project, SIGNAL(newProjectLoaded(const QString &, const KURL &, const KURL &)),
           m_quanta->fTab, SLOT(slotNewProjectLoaded(const QString &, const KURL &, const KURL &)));
+  connect(m_project, SIGNAL(newProjectLoaded(const QString &, const KURL &, const KURL &)),
+          m_quanta->dTab, SLOT(slotNewProjectLoaded(const QString &, const KURL &, const KURL &)));
+
   connect(pTab, SIGNAL(changeFileDescription(const KURL&, const QString&)),
           m_project, SLOT(slotFileDescChanged(const KURL&, const QString&)));
   connect(pTab, SIGNAL(changeUploadStatus(const KURL&, int)),

@@ -847,18 +847,10 @@ void Project::loadProjectXML()
             i--;
           } else
           {
-            if (path.startsWith("doc/") && path.endsWith("/index.html"))
-            {
-               quantaApp->dTab->addProjectDoc(
-               QExtFileInfo::toAbsolute(url, baseURL));
-             }
             m_projectFiles.append(file);
           }
         } else
         {
-          if (path.startsWith("doc/") && path.endsWith("/index.html"))
-               quantaApp->dTab->addProjectDoc(
-               QExtFileInfo::toAbsolute(url, baseURL));
           m_projectFiles.append(file);
         }
       } else
@@ -2080,6 +2072,22 @@ KURL Project::documentFolderForURL(const KURL& url)
     }
   }
   return docFolderURL;
+}
+
+void Project::slotReloadProjectDocs()
+{
+   KURL url;
+   QString path;
+   for (ProjectUrlList::ConstIterator it = m_projectFiles.begin(); it != m_projectFiles.end(); ++it)
+   {
+      url = *it;
+      path = url.path();
+      if (path.startsWith("doc/") && path.endsWith("/index.html"))
+      {
+          quantaApp->dTab->addProjectDoc(
+          QExtFileInfo::toAbsolute(url, baseURL));
+        }
+  }
 }
 
 #include "project.moc"

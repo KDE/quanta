@@ -25,6 +25,7 @@
 #include <kconfig.h>
 #include <kapplication.h>
 #include <klocale.h>
+#include <kpopupmenu.h>
 #include <kstandarddirs.h>
 #include <kiconloader.h>
 #include <kurl.h>
@@ -92,6 +93,10 @@ DocTreeView::DocTreeView(QWidget *parent, const char *name )
   connect(this, SIGNAL(returnPressed(QListViewItem *)), SLOT(clickItem(QListViewItem *)));
   connect(this, SIGNAL(doubleClicked(QListViewItem *)), SLOT(slotDoubleClicked(QListViewItem *)));
 
+  m_contextMenu  = new KPopupMenu(this);
+  m_contextMenu->insertItem(i18n("&Reload"), this, SLOT(slotReload()));
+  connect(this, SIGNAL(contextMenu(KListView*, QListViewItem*, const QPoint&)),
+          this, SLOT(slotMenu(KListView*, QListViewItem*, const QPoint&)));
 }
 
 
@@ -136,6 +141,33 @@ void DocTreeView::addProjectDoc(const KURL& url)
   int pos = path.find("/doc/");
   path = path.mid(pos + 5);
   new DocItem(projectDocFolder, path, url.url());
+}
+
+void DocTreeView::slotMenu(KListView *, QListViewItem *item, const QPoint &point)
+{
+  if (!item) return;
+  setSelected(item, true);
+
+  if ( currentItem() == projectDocFolder)
+  {
+    m_contextMenu->popup(point);
+  }
+}
+
+void DocTreeView::slotNewProjectLoaded(const QString &, const KURL &, const KURL &)
+{
+  slotReload();
+}
+
+void DocTreeView::slotReload()
+{
+  QListViewItem *child = projectDocFolder->firstChild();
+  while (child) {
+      QListViewItem *c = child;
+      child = child->nextSibling();
+      delete c;
+  }
+  emit reloadProjectDocs();
 }
 
 #include "doctreeview.moc"

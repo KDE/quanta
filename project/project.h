@@ -150,6 +150,8 @@ public slots:
   void slotDebuggerOptions();
   void slotDebuggerChanged(const QString &debugger);
 
+  void slotReloadProjectDocs();
+
 signals:
 
   void openFile( const KURL&, const QString& );

@@ -94,7 +94,7 @@ ScriptTreeView::ScriptTreeView(QWidget *parent, const char *name )
   m_globalDir->excludeFilterRx.setPattern(excludeString);
   m_localDir->excludeFilterRx.setPattern(excludeString);
 
-  m_fileMenu = new KPopupMenu();
+  m_fileMenu = new KPopupMenu(this);
   m_fileMenu->insertItem(SmallIcon("info"), i18n("Description"), this, SLOT(slotProperties()));
   m_fileMenu->insertItem(SmallIcon("run"), i18n("Run Script"), this, SLOT(slotRun()));
   m_fileMenu->insertSeparator();
