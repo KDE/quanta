@@ -700,6 +700,8 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
           {
             int pos = node->tag->tagStr().findRev(' ');
             QString s = node->tag->tagStr().mid(pos).stripWhiteSpace();
+            if (s.contains("="))
+                s = "";
             showCodeCompletions( getAttributeCompletions(tagName, s) );
           }
          }
