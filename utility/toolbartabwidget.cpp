@@ -65,12 +65,12 @@ ToolbarTabWidget::ToolbarTabWidget(QWidget * parent, const char * name, WFlags f
 #endif
 }
 
-void ToolbarTabWidget::insertTab(QWidget * child, const QString & label )
+void ToolbarTabWidget::insertTab(QWidget *child, const QString &label, const QString &id)
 {
   if (child->inherits("KToolBar") && child->parentWidget())
   {
     QTabWidget::insertTab(child->parentWidget(), label);
-    toolbarList.append(child);
+    toolbarList.insert(id, child);
   }
 }
 
@@ -78,38 +78,66 @@ QWidget* ToolbarTabWidget::page(int index)
 {
   QWidget *w = QTabWidget::page(index);
 
-  for (QWidget *tb = toolbarList.first(); tb; tb = toolbarList.next())
+  for (QMap<QString, QWidget*>::Iterator it = toolbarList.begin(); it != toolbarList.end(); ++it)
   {
-    if (tb->parentWidget() == w)
+    if (it.data()->parentWidget() == w)
     {
-      w = tb;
+      w = *it;
       break;
     }
   }
   return w;
 }
 
-QWidget* ToolbarTabWidget::page(const QString& label)
+QString ToolbarTabWidget::id(QWidget *w) const
 {
-  QWidget *w = 0L;
-  for (int i = 0; i < count(); i++)
+  QString idStr;
+  for (QMap<QString, QWidget*>::ConstIterator it = toolbarList.constBegin(); it != toolbarList.constEnd(); ++it)
   {
-    if (this->label(i) == label)
+    if (it.data()->parentWidget() == w)
     {
-      w = page(i);
+      idStr = it.key();
       break;
     }
   }
+  return idStr;
+}
+
+QString ToolbarTabWidget::id(int index) const
+{
+  QWidget *w = QTabWidget::page(index);
+  QString idStr;
+  for (QMap<QString, QWidget*>::ConstIterator it = toolbarList.constBegin(); it != toolbarList.constEnd(); ++it)
+  {
+    if (it.data()->parentWidget() == w)
+    {
+      idStr = it.key();
+      break;
+    }
+  }
+  return idStr;
+}
+
+QWidget* ToolbarTabWidget::page(const QString& id)
+{
+  QWidget *w = toolbarList.find(id).data();
   return w;
 }
 
-void ToolbarTabWidget::removePage(QWidget * w )
+void ToolbarTabWidget::removePage(QWidget * w)
 {
   QWidget *parent = w->parentWidget();
   if (w->inherits("KToolBar") && parent)
   {
     QTabWidget::removePage(parent);
-    toolbarList.remove(w);
+    for (QMap<QString, QWidget*>::ConstIterator it = toolbarList.constBegin(); it != toolbarList.constEnd(); ++it)
+    {
+      if (it.data() == w)
+      {
+        toolbarList.remove(it.key());
+        break;
+      }
+    }
     delete parent;
   }
 }
@@ -126,7 +154,7 @@ void ToolbarTabWidget::slotRenameToolbar()
 
 void ToolbarTabWidget::slotEditToolbar()
 {
-  emit editToolbar(tabUnderMouse + " <quanta>");
+  emit editToolbar(tabUnderMouseLabel + " <quanta>");
 }
 
 void ToolbarTabWidget::mousePressEvent ( QMouseEvent * e )
@@ -135,9 +163,11 @@ void ToolbarTabWidget::mousePressEvent ( QMouseEvent * e )
   {
     QPoint p = e->globalPos();
     QTab *tab = 0L;
+    QWidget *pageW = 0L;
     for (int i =0; i < tabBar()->count(); i++)
     {
       tab = tabBar()->tabAt(i);
+      pageW = page(i);
       QRect r = tab->rect();
       QPoint p1 = mapToGlobal(r.topLeft());
       QPoint p2 = mapToGlobal(r.bottomRight());
@@ -146,8 +176,18 @@ void ToolbarTabWidget::mousePressEvent ( QMouseEvent * e )
       else
         tab = 0L;
     }
-    tabUnderMouse = tab ? tab->text() : label(currentPageIndex());
-    m_popupMenu->changeTitle(1, i18n("Toolbar Menu") + " - " + i18n(tabUnderMouse.utf8()));
+    tabUnderMouseLabel = tab ? tab->text() : label(currentPageIndex());
+    if (!pageW)
+      pageW = currentPage();
+    for (QMap<QString, QWidget*>::Iterator it = toolbarList.begin(); it != toolbarList.end(); ++it)
+    {
+      if (it.data()->parentWidget() == pageW)
+      {
+        tabUnderMouse = it.key();
+        break;
+      }
+    }
+    m_popupMenu->changeTitle(1, i18n("Toolbar Menu") + " - " + i18n(tabUnderMouseLabel.utf8()));
     m_popupMenu->popup(p);
   }
 }
@@ -157,9 +197,9 @@ void ToolbarTabWidget::resizeEvent(QResizeEvent *e)
 {
   QWidget::resizeEvent(e);
   QWidget *tb;
-  for (uint i = 0; i < toolbarList.count(); i++)
+  for (QMap<QString, QWidget*>::Iterator it = toolbarList.begin(); it != toolbarList.end(); ++it)
   {
-    tb = toolbarList.at(i);
+    tb = it.data();
     tb->resize(QSize(width(), tb->height()));
   }
   int i = currentPageIndex();
@@ -201,9 +241,10 @@ void QuantaToolBar::mousePressEvent(QMouseEvent *e)
     QPoint p = e->globalPos();
     if (m_toolbarTab)
     {
-      m_toolbarTab->tabUnderMouse = m_toolbarTab->label(m_toolbarTab->currentPageIndex());
+      m_toolbarTab->tabUnderMouse = m_toolbarTab->id(m_toolbarTab->currentPageIndex());
+      m_toolbarTab->tabUnderMouseLabel = m_toolbarTab->label(m_toolbarTab->currentPageIndex());
       m_popupMenu->insertTitle(i18n("Toolbar Menu") + " - "
-                               + i18n(m_toolbarTab->tabUnderMouse.utf8()));
+                               + i18n(m_toolbarTab->tabUnderMouseLabel.utf8()));
       m_popupMenu->insertItem(i18n("New Action..."), m_toolbarTab, SIGNAL(newAction()));
       QObjectList* childrenList = queryList("KToolBarButton");
       for (uint i = 0; i < childrenList->count(); i++)

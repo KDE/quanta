@@ -16,7 +16,7 @@
 #define TOOLBARTABWIDGET_H
 
 #include <qwidget.h>
-#include <qptrlist.h>
+#include <qmap.h>
 
 class QTabWidget;
 class KPopupMenu;
@@ -38,10 +38,12 @@ public:
   }
   virtual ~ToolbarTabWidget(){};
 
-  virtual void insertTab(QWidget * child, const QString & label);
+  virtual void insertTab(QWidget *child, const QString &label, const QString &id);
   virtual QWidget* page(int index);
-  virtual QWidget* page(const QString& label);
+  virtual QWidget* page(const QString& id);
   int tabHeight() const;
+  QString id(QWidget *w) const;
+  QString id(int index) const;
 
 public slots:
   virtual void removePage(QWidget * w );
@@ -61,13 +63,14 @@ signals:
 
 public:
   QString tabUnderMouse;
+  QString tabUnderMouseLabel;
 
 protected:
   virtual void mousePressEvent ( QMouseEvent * e );
 
   KPopupMenu *m_popupMenu;
   QTabBar *m_tabBar;
-  QPtrList<QWidget> toolbarList;
+  QMap<QString, QWidget*> toolbarList;
 
 private:
   ToolbarTabWidget(QWidget * parent = 0, const char * name = 0, WFlags f = 0);

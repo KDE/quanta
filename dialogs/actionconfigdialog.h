@@ -33,6 +33,7 @@ typedef struct ToolbarEntry{
   QPopupMenu *menu;
   KURL url;
   QString name;
+  QString id;
   bool user;
   bool visible;
   bool nameModified; ///< True if the name of the toolbar was modified by Quanta on loading:" (n)" was added

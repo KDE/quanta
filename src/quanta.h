@@ -604,9 +604,9 @@ protected: // Protected attributes
   QNewTemplateStuff *m_newTemplateStuff;
   QNewScriptStuff *m_newScriptStuff;
   QNewDocStuff *m_newDocStuff;
+  QDict<ToolbarEntry> m_toolbarList;
 
 public: //TODO: check if it's worth to make a read method for them
-  QDict<ToolbarEntry> toolbarList;
   KRecentFilesAction *fileRecent;
   /** True when the whole quanta is initialized. */
   bool quantaStarted;

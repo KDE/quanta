@@ -82,6 +82,7 @@ ActionConfigDialog::ActionConfigDialog(const QDict<ToolbarEntry> &toolbarList, K
   QListViewItem *item, *oldItem = allActionsItem;
   KAction *action;
   QString toolbarName;
+  QString toolbarId;
   ToolbarTabWidget *tb = ToolbarTabWidget::ref();
   QRegExp r("\\&(?!\\&)");
   KActionCollection *ac = m_mainWindow->actionCollection();
@@ -92,8 +93,9 @@ ActionConfigDialog::ActionConfigDialog(const QDict<ToolbarEntry> &toolbarList, K
     item = new KListViewItem(actionTreeView, oldItem, i18n(toolbarName.utf8()));
     actionTreeView->insertItem(item);
 
+    toolbarId = tb->id(i);
     QListViewItem *oldActionItem = 0L;
-    ToolbarEntry *p_toolbar = m_toolbarList[toolbarName.lower()];
+    ToolbarEntry *p_toolbar = m_toolbarList[toolbarId];
     if (p_toolbar)
     {
       QDomNode node = p_toolbar->guiClient->domDocument().firstChild().firstChild().firstChild();
@@ -208,6 +210,7 @@ void ActionConfigDialog::slotToolbarRemoved(const QString &/*name*/)
 void ActionConfigDialog::slotEditToolbar()
 {
   QString toolbarName;
+  QString toolbarId;
   QListViewItem *oldItem;
   QListViewItem *item = actionTreeView->currentItem();
   if (item->parent())
@@ -224,7 +227,8 @@ void ActionConfigDialog::slotEditToolbar()
     for (int i = 0; i < tb->count(); i++)
     {
       toolbarName = tb->label(i);
-      ToolbarEntry *p_toolbar = m_toolbarList[toolbarName.lower()];
+      toolbarId = tb->id(i);
+      ToolbarEntry *p_toolbar = m_toolbarList[toolbarId];
       if (p_toolbar)
       {
         oldItem = actionTreeView->findItem(toolbarName, 0);
@@ -329,7 +333,8 @@ void ActionConfigDialog::slotSelectionChanged(QListViewItem *item)
       for (int i = 0; i < tb->count(); i++)
       {
         QString toolbarName = tb->label(i);
-        ToolbarEntry *p_toolbar = m_toolbarList[toolbarName.lower()];
+        QString toolbarId = tb->id(i);
+        ToolbarEntry *p_toolbar = m_toolbarList[toolbarId];
         if (p_toolbar)
         {
           QDomNode node = p_toolbar->guiClient->domDocument().firstChild().firstChild().firstChild();
@@ -603,7 +608,8 @@ void ActionConfigDialog::saveCurrentAction()
   for (int i = 0; i < tb->count(); i++)
   {
     QString toolbarName = tb->label(i);
-    ToolbarEntry *p_toolbar = m_toolbarList[toolbarName.lower()];
+    QString toolbarId = tb->id(i);
+    ToolbarEntry *p_toolbar = m_toolbarList[toolbarId];
     bool isOnToolbar = false;
     if (p_toolbar)
     {
