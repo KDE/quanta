@@ -85,9 +85,9 @@ public:
   /** Where the tag ends in the document */
   void endPos(int &eLine, int &eCol) {eLine = endLine; eCol = endCol;}
   /** Where the attr at index begins in the document */
-  void attributeNamePos(int index, int &line, int &col) {line = attrs[index].nameLine; col = attrs[index].nameCol;}
+  void attributeNamePos(int index, int &line, int &col);
   /** Where the attr value at index begins in the document */
-  void attributeValuePos(int index, int &line, int &col) {line = attrs[index].valueLine; col = attrs[index].valueCol;}
+  void attributeValuePos(int index, int &line, int &col);
   /** Set the internal string which is parsed */
   void setStr(const QString &p_tagStr);
   /** Get the tag in string format */

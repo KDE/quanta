@@ -201,6 +201,46 @@ void Document::changeTag(Tag *tag, QDict<QString> *dict )
   insertText(tagStr);
 }
 
+/**Change the attr value of the called attrName to attrValue*/
+void Document::changeTagAttribute(Tag *tag, const QString& attrName, const QString& attrValue)
+{
+  QString value;
+  int line, col;
+  int index = tag->attributeIndex(attrName);
+  if (index != -1)
+  {
+    int endCol;
+    value = tag->attributeValue(index);
+    tag->attributeValuePos(index, line, col);
+    endCol = col + value.length();
+    if (attrValue.isEmpty())
+    {
+       tag->attributeNamePos(index, line, col);
+       endCol++;
+    }
+    reparseEnabled = false;
+    editIf->removeText(line, col, line, endCol);
+    reparseEnabled = true;
+    value = attrValue;
+  } else
+  {
+    tag->endPos(line, col);
+    if (attrValue.isEmpty())
+    {
+      value = "";
+    } else
+    {
+      value = " " + QuantaCommon::attrCase(attrName) + "=" + qConfig.attrValueQuotation + attrValue + qConfig.attrValueQuotation;
+    }
+  }
+  if (!value.isEmpty())
+  {
+    viewCursorIf->setCursorPositionReal((uint)line, (uint)col);
+    insertText(value);
+  }
+  slotDelayedTextChanged();
+}
+
 /**  */
 void Document::selectText(int x1, int y1, int x2, int y2 )
 {
@@ -1614,6 +1654,7 @@ void Document::slotDelayedTextChanged()
       }
     }
 
+    quantaApp->slotNewLineColumn();
     if (qConfig.instantUpdate)
         quantaApp->getsTab()->slotReparse(this, baseNode , qConfig.expandLevel);
 }

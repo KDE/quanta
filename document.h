@@ -75,6 +75,8 @@ public:
   void insertTag( QString s1,QString s2 = "" );
   /** Change the current tag's attributes with those from dict */
   void changeTag(Tag *tag, QDict<QString> *dict );
+  /**Change the attr value of the called attrName to attrValue*/
+  void changeTagAttribute(Tag *tag, const QString& attrName, const QString&attrValue);
   /** No descriptions */
   void insertFile(const KURL& url);
   /** Inserts text at the current cursor position */
