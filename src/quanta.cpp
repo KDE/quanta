@@ -1300,7 +1300,7 @@ void QuantaApp::slotShowPreviewWidget(bool show)
         slotRepaintPreview();
     }
     if (view->document())
-        view->document()->setFocus();
+        view->document()->view()->setFocus();
   }
 
 #ifdef BUILD_KAFKAPART
@@ -1694,7 +1694,7 @@ void QuantaApp::slotBack()
    {
        m_htmlPartDoc->back();
    } else
-   if (m_previewVisible)
+   if (m_previewVisible && (!m_previewToolView || m_htmlPart->view()->hasFocus()))
    {
        m_htmlPart->back();
    } else
@@ -1709,7 +1709,7 @@ void QuantaApp::slotForward()
    {
        m_htmlPartDoc->forward();
    } else
-   if (m_previewVisible)
+   if (m_previewVisible && (!m_previewToolView || m_htmlPart->view()->hasFocus()))
    {
        m_htmlPart->forward();
    } else
