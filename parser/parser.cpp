@@ -552,8 +552,8 @@ void Parser::specialAreaParser(Node *startNode)
      s = dtd->commentsStartRx.cap();
      if (s == "\\\"" || s == "\\'")
      {
-       str[pos-1] = ' ';
-       str[pos-2] = ' ';
+       str[pos] = ' ';
+       str[pos+1] = ' ';
        pos += 2;
      } else
      {
