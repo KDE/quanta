@@ -24,6 +24,8 @@ void MessageItemPHP::parseData(QString text)
    QString l1 = getLine(text); // start: notice
    QString l2 = getLine(text); // message:
    QString l3 = getLine(text); // location:
+   QString l4 = getLine(text); // frames: ( if present )
+   
    
    l1.remove(0,7);
    l2.remove(0,9);
@@ -31,6 +33,7 @@ void MessageItemPHP::parseData(QString text)
    
    l1 = l1.stripWhiteSpace();
    l3 = l3.stripWhiteSpace();
+   l4 = l4.stripWhiteSpace();
    
    int sepPos = l3.find(":"); // separatorof fname and line
    if ( sepPos != -1 ) {
@@ -42,8 +45,6 @@ void MessageItemPHP::parseData(QString text)
       int line = sline.toInt(&ok);
       if ( ok )
         setLine(line);
-//      debug("fname:"+fname);
-//      debug("line:"+sline);
       
    }
    
@@ -60,6 +61,38 @@ void MessageItemPHP::parseData(QString text)
    message = l2 + " : " + l3;
    
    setText( stype + " : " + message );
+   
+   if ( l4.left(7) == "frames:" ) {
+     l4.remove(0,8);
+     bool ok = true;
+     int fCount = l4.toInt( &ok );
+     
+     if ( ok ) 
+        for ( int i=0; i<fCount; i++ ) {
+          QString func = getLine(text);
+          QString location = getLine(text);
+          func.remove(0,10);
+          location.remove(0,10);
+          QString mes = "   from : "+func+" : "+location;
+          
+          QString fname;
+          int line;
+          int sepPos = location.find(":"); // separatorof fname and line
+          if ( sepPos != -1 ) {
+             fname = location.left(sepPos);
+             QString sline = location.mid(sepPos+1,100);
+             if ( fname.find("(null)") != -1 )
+                fname =  QString::null;
+             bool ok = true;
+             line = sline.toInt(&ok);
+             if ( !ok )
+               line = -1;
+          }      
+          
+          new MessageItem( listBox(), mes, line, fname);
+        
+        }
+   }
 
 }
 
