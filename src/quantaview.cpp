@@ -250,6 +250,7 @@ void QuantaView::updateTab()
                 setIcon(UserIcon("save_small"));
                 setMDICaption(urlStr);
             }
+            m_szCaption = urlStr + " " + i18n("[modified]");
         } else
         {
           if (qConfig.showCloseButtons != "ShowAlways")
