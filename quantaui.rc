@@ -1,8 +1,9 @@
-<!DOCTYPE kpartgui>
+<!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
 <kpartgui name="quanta" version="2">
   <MenuBar>
-  
-    <Menu name="file"><text>&amp;File</text>
+
+    <Menu name="file" ><text>&amp;File</text>
+      <Action name="file_save_as" append="save_merge"/>
       <Menu name="save_as_template" append="save_merge"><text>Save As Template</text>
       	<Action name="save_project_template"/>
       	<Action name="save_local_template"/>
@@ -10,34 +11,24 @@
       <Action name="save_all" append="save_merge"/>
       <Action name="close_all" append="close_merge"/>
     </Menu>
-    
-    <Menu name="edit"><text>&amp;Edit</text>
-      <Action name="undo_history" append="edit_undo_merge"/>
-      <Menu name="paste_special" append="edit_paste_merge"><text>Paste &amp;Special</text>
+
+   <Menu name="edit" noMerge="1"><text>&amp;Edit</text>
+    <Action name="undo_history" append="edit_undo_merge"/>
+     <Menu name="paste_special" append="edit_paste_merge"><text>Paste &amp;Special</text>
          <Action name="edit_paste_html_quoted"/>
          <Action name="edit_paste_url_encoded"/>
       </Menu>
-      <Action name="unselect_all" append="edit_select_merge"/>
-      <Action name="invert_selection" append="edit_select_merge"/>
-      <Action name="vertical_selection" append="edit_select_merge"/>
+  </Menu>
+
+    <Menu name="tools"><text>&amp;Tools</text>
       <Action name="find_in_files"/>
-      <Merge/>
-    </Menu>
-    
-    <Menu name="qtools"><text>&amp;Tools</text>
-      <Action name="goto_line"/>
-      <Separator/>
-      <Action name="indent"/>
-      <Action name="unindent"/>
-      <Action name="clean_indentation"/>
       <Separator/>
       <Action name="edit_current_tag"/>
       <Action name="context_help"/>
       <Separator/>
-      <Action name="text_spelling"/>
       <Action name="syntax_check"/>
     </Menu>
-    
+
     <Menu name="qinsert"><text>&amp;Insert</text>
       <Action name="tag_quick_start"/>
       <Action name="tag_quick_list"/>
@@ -188,21 +179,7 @@
     <Action name="file_close"   />
     <Separator/>
   </ToolBar>
-  <ToolBar name="mainEditToolBar" noMerge="1" fullWidth="false">
-  <text>Editor Toolbar</text>
-    <Action name="edit_cut"  />
-    <Action name="edit_copy" />
-    <Action name="edit_paste"/>
-    <Separator/>
-    <Action name="edit_undo" />
-    <Action name="edit_redo" />
-    <Separator/>
-    <Action name="edit_find" />
-    <Action name="edit_find_next"/>
-    <Separator/>
-    <Action name="text_spelling"/>
-    <Separator/>
-  </ToolBar>
+
   <ToolBar name="mainNaviToolBar" noMerge="1">
   <text>Navigation Toolbar</text>
     <Action name="show_tree"/>
@@ -299,7 +276,7 @@
    	<Action name="tag_form_submit"/>
    	<Action name="tag_form_reset"/>
   </ToolBar>
-  
+
   <ToolBar name="other" tabname="Other">
   <text>Other</text>
     <Action name="tag_color"/>

@@ -20,9 +20,9 @@
 #include <qfileinfo.h>
 
 // include kde headers
-#include <kapp.h>
 #include <klocale.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
+#include <ktexteditor/viewcursorinterface.h>
 
 #include "../document.h"
 
@@ -34,6 +34,7 @@
 #include "tagwidget.h"
 #include "tagimgdlg.h"
 #include "tagxml.h"
+
 
 extern QStrList *tagsList; // list of known tags
 extern QStrList *tagsCore; // list of tags, allowed core attributes ( id, class, id, title )
@@ -222,7 +223,7 @@ void TagDialog::formeTag()
 
   if ( !insertInLine ) {
     QString space="";
-  	space.fill( ' ', write->currentColumn() );
+  	space.fill( ' ',write->viewCursorIf->cursorColumn() );
     newTag += "\n" + space + "  ";
     secondPartOfTag = "\n" + space + secondPartOfTag;
   }

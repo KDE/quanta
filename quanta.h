@@ -140,7 +140,6 @@ class QuantaApp : public KDockMainWindow
     void slotEditFindInFiles   ();
     
     void slotToolSyntaxCheck();
-    void slotSpellCheck();
 
     /// open url in documentation window
     void openDoc( QString url );
@@ -160,7 +159,6 @@ class QuantaApp : public KDockMainWindow
     
     void slotNewUndo      ();
     void slotNewStatus    ();
-    void slotNewMarkStatus();
     void slotNewLineColumn();
     //void slotUpdateStatus (const QString &);
     void slotUpdateStatus (QWidget*);
@@ -191,7 +189,8 @@ class QuantaApp : public KDockMainWindow
     
     void viewMenuAboutToShow();
     void settingsMenuAboutToShow();
-    
+//    void setEOLMenuAboutToShow();
+
     void slotMessageWidgetEnable();
     void slotMessageWidgetDisable();
     
@@ -302,19 +301,20 @@ class QuantaApp : public KDockMainWindow
     // ACTIONS
     KRecentFilesAction *fileRecent;
     
-    KToggleAction *verticalSelectAction, *showMessagesAction, *showTreeAction,
+    KToggleAction *showMessagesAction, *showTreeAction,
       *showFTabAction,*showPTabAction,*showTTabAction,*showSTabAction,*showDTabAction,
       *showToolbarAction,*showStatusbarAction,*showPreviewAction;
     
-    KSelectAction *eolSelectAction, *hlSelectAction;
-    
+    KSelectAction *setEndOfLine;
+
     KAction *saveAction, *saveAllAction, *undoAction, *redoAction,
-      *cutAction, *copyAction, *findNextAction, *backAction, *forwardAction,
+      *backAction, *forwardAction,
       *saveprjAction, *closeprjAction, *insertFileAction, *insertDirAction,
       *newPrjAction, *openPrjAction, *rescanPrjDirAction, *uploadProjectAction,
       *projectOptionAction, *saveAsLocalTemplateAction, *saveAsProjectTemplateAction;
       
-      
+    KAction *editUndo, *editRedo, *bookmarkToggle, *bookmarkClear;
+
     QDomDocument *m_actions;
 
 };

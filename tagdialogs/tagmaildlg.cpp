@@ -19,7 +19,7 @@
 #include "listdlg.h"
 
 //kde includes
-#include <kapp.h>
+#include <kapplication.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kabc/stdaddressbook.h>

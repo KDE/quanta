@@ -28,6 +28,7 @@
 #include <qtextstream.h>
 #include <qtabbar.h>
 #include <qradiobutton.h>
+#include <qimage.h>
 #include <qtimer.h>
 
 // include files for KDE
@@ -46,6 +47,12 @@
 #include <kstatusbar.h>
 #include <kprocess.h>
 
+#include <ktexteditor/editinterface.h>
+#include <ktexteditor/selectioninterface.h>
+#include <ktexteditor/viewcursorinterface.h>
+
+#include <kate/view.h>
+
 // application specific includes
 #include "document.h"
 #include "quanta.h"
@@ -55,8 +62,6 @@
 #include "resource.h"
 
 #include "project/project.h"
-
-#include "kwrite/highlight/highlight.h"
 
 #include "widgets/whtmlpart.h"
 
@@ -101,6 +106,7 @@ void QuantaApp::setTitle(QString title)
 void QuantaApp::slotFileNew()
 {
   doc->openDocument( KURL() );
+  slotUpdateStatus(view->write());
 }
 
 void QuantaApp::slotFileOpen()
@@ -108,6 +114,8 @@ void QuantaApp::slotFileOpen()
   KURL url = KFileDialog::getOpenURL( QString::null, QString::null, this);
     
   if ( !url.url().isEmpty() ) slotFileOpen( url );
+
+  slotUpdateStatus(view->write());
 }
 
 void QuantaApp::slotFileOpen( const KURL &url )
@@ -227,7 +235,7 @@ void QuantaApp::slotFileClose()
   htmlPart()->write( "" );
  	htmlPart()->end();
   
-  slotNewStatus();
+  slotUpdateStatus(view->write());
 }
 
 void QuantaApp::slotFileCloseAll()
@@ -285,17 +293,14 @@ void QuantaApp::slotEditFindInFiles()
 void QuantaApp::slotViewToolBar()
 {
   QToolBar *mbar = toolBar("mainToolBar");
-  QToolBar *ebar = toolBar("mainEditToolBar");
   QToolBar *nbar = toolBar("mainNaviToolBar");
   
   if(mbar->isVisible()) {
     mbar->hide();
-    ebar->hide();
     nbar->hide();
   }
   else {
     nbar->show();
-    ebar->show();
     mbar->show();
   }
 }
@@ -360,7 +365,7 @@ void QuantaApp::repaintPreview( bool clear )
 	part->openURL( KURL(url) );		
  } else  //the document is Untitled, preview the text from it
  {
-  	QString text = doc->write()->text();
+  	QString text = doc->write()->editIf->text();
     if ( text == oldtext ) return;
   	if ( text.isEmpty() )
   	{
@@ -406,11 +411,11 @@ void QuantaApp::slotImageOpen(QString url)
 /** insert <img> tag for images or <a> for other */
 void QuantaApp::slotInsertTag(QString url)
 {
- 	QImage img;
+ 	QImage img(url);
   
   QString furl = QExtFileInfo::toRelative( url, doc->basePath() );
   
-   if ( img.load(url) )  
+   if ( !img.isNull() )
    { 
      QString w,h;
      w.setNum( img.width () );
@@ -430,12 +435,12 @@ void QuantaApp::slotNewStatus()
 {
   setTitle( doc->url().prettyURL() );
 
-  int  config   = doc->write()->config();
+/*  int  config   = doc->write()->config();
   bool readOnly = doc->write()->isReadOnly();
 
   if (readOnly) statusBar()->changeItem(i18n(" R/O "),IDS_INS_OVR);
   else          statusBar()->changeItem(config & KWriteView::cfOvr ? i18n(" OVR ") : i18n(" INS "),IDS_INS_OVR);
-
+               */
   statusBar()->changeItem(doc->write()->isModified() ? " * " : "",IDS_MODIFIED);
 
   saveAction   ->setEnabled(doc->isModified());
@@ -449,83 +454,85 @@ void QuantaApp::slotNewStatus()
   uploadProjectAction->setEnabled(project->hasProject());
   projectOptionAction->setEnabled(project->hasProject());
 
-  int eol = doc->write()->getEol()-1;
-  eol = eol>=0? eol: 0;
-
-  eolSelectAction->setCurrentItem(eol);
-  hlSelectAction ->setCurrentItem(doc->write()->getHl ());
-
-  //QDictIterator<Document> it( *(doc->docList) );
 
   QIconSet floppyIcon( UserIcon("save_small"));
   QIconSet  emptyIcon( UserIcon("empty1x16" ));
 
 #ifdef USE_KDOCKTABGROUP
   KDockTabGroup *wTab = view->writeTab;
-  Document *w = static_cast<Document*>(wTab->currentPage());
+  int pageId = wTab->visiblePageId();
+  Document *w = static_cast<Document*>(wTab->visiblePage());
+  if (w->isModified())
+  {
+   	 wTab->setPixmap(pageId, floppyIcon.pixmap());
+  }
+  else
+  {
+     wTab->setPixmap(pageId, QPixmap(0,0));
+  }
 #else
   QTabWidget *wTab = view->writeTab;
   Document *w = static_cast<Document*>(wTab->currentPage());
+
  if ( w->isModified() )
 	  wTab->changeTab( w,  floppyIcon, wTab->tabLabel(w));
  else 	
 	wTab->changeTab( w,  emptyIcon,  wTab->tabLabel(w));
+
 //This is a really dirty fix for the QTabWidget problem. After the changeTab call,
 //it will reset itself and you will see the first tabs, even if the actual page is on
 //a tab eg. at the end, and it won't be visible now. This is really confusing.
+/*
 	int pageId = wTab->currentPageIndex();	
     bool block=wTab->signalsBlocked();
     wTab->blockSignals(true);
     wTab->setCurrentPage(pageId-1);
     wTab->setCurrentPage(pageId);
-    wTab->blockSignals(block);
+    wTab->blockSignals(block);*/
 #endif
 
   w->oldstat = w->isModified();
-  
-/*  
-  while ( Document *w = it.current() )
-  {
-    if ( w->isModified() != w->oldstat );
-    {
-      if ( w->isModified() )
-    	  wTab->changeTab( w,  floppyIcon, wTab->tabLabel(w));
-      else
-    	  wTab->changeTab( w,  emptyIcon,  wTab->tabLabel(w));
-      
-      w->oldstat = w->isModified();
-    }
-
-    ++it;
-  }
-*/
 }
 
 /** slot for new undo flag */
 void QuantaApp::slotNewUndo()
 {
-	int state = doc->write()->undoState();
+/*!!!!	int state = doc->write()->undoState();
 
   undoAction->setEnabled(state & 1);
-  redoAction->setEnabled(state & 2);
+  redoAction->setEnabled(state & 2);*/
 }
 
-/** slot for new mark flag */
-void QuantaApp::slotNewMarkStatus()
-{
-  bool stat = doc->write()->hasMarkedText();
-
-  cutAction ->setEnabled(stat);
-  copyAction->setEnabled(stat);
-}
-
-//void QuantaApp::slotUpdateStatus(const QString &)
-void QuantaApp::slotUpdateStatus(QWidget*)
+void QuantaApp::slotUpdateStatus(QWidget* w)
 {
 	slotNewUndo();
 	slotNewStatus();
-	slotNewMarkStatus();
 	slotNewLineColumn();
+
+//Add the Kate menus
+
+  if (view->oldWrite != 0L)
+  {
+    view->oldWrite->writeConfig(config);
+    guiFactory()->removeClient(view->oldWrite->view());
+    guiFactory()->unplugActionList(view->oldWrite->view(), "kate_actions");
+    view->oldWrite->view()->actionCollection()->setWidget(dynamic_cast<Document *>(w)->view());
+  }
+/*
+  QPtrList<KAction> al;
+  for (int i=0; i < dynamic_cast<Document *>(w)->view()->actionCollection()->count(); i++)
+  {
+    al.append(dynamic_cast<Document *>(w)->view()->actionCollection()->action(i));
+  }
+*/
+  guiFactory()->addClient(dynamic_cast<Document *>(w)->view());
+//  guiFactory()->plugActionList(dynamic_cast<Document *>(w)->view(), "kate_actions", al);
+
+
+  dynamic_cast<Document *>(w)->readConfig(config);
+
+  view->write()->view()->resize(view->writeTab->size().width()-5, view->writeTab->size().height()-35);
+  view->oldWrite = view->write();
 }
 
 void QuantaApp::slotOptionsConfigureKeys()
@@ -741,8 +748,11 @@ void QuantaApp::slotShowTemplatesTree()
 void QuantaApp::slotNewLineColumn()
 {
   QString linenumber;
-  int y = view->write()->currentLine()+1;
-  int x = view->write()->currentColumn() +1;
+  unsigned int x;
+  unsigned int y;
+
+  view->write()->viewCursorIf->cursorPosition(&y, &x);
+  x++; y++ ;
 
   sTab->showTagAtPos(x-1,y-1);
 
@@ -756,7 +766,7 @@ void QuantaApp::reparse()
 {
 	if ( stabdock->isVisible() )
 	{
-		Node *node = parser->parse( view->write()->text() );
+		Node *node = parser->parse( view->write()->editIf->text() );
 		//sTab->s = parser->s;
 		if ( parser->textChanged ) {
 		  config->setGroup("Parser options");
@@ -766,8 +776,10 @@ void QuantaApp::reparse()
 		  	
 		  sTab->slotReparse( node , expandLevel );
 		  
-	    int y = view->write()->currentLine();
-      int x = view->write()->currentColumn();
+      unsigned int x;
+      unsigned int y;
+
+      view->write()->viewCursorIf->cursorPosition(&y, &x);
 
       sTab->showTagAtPos(x,y);
 
@@ -779,13 +791,13 @@ void QuantaApp::reparse()
 void QuantaApp::setCursorPosition( int row, int col )
 {
   
-  int numLines = view->write()->numLines();
+  int numLines = view->write()->editIf->numLines();
   
   if ( row < numLines )
-    view->write()->setCursorPosition( row, col );
+    view->write()->viewCursorIf->setCursorPosition(row, col);
   else
-    view->write()->setCursorPosition( numLines-1, col );
-  
+    view->write()->viewCursorIf->setCursorPosition(numLines - 1, col);
+
   view->write()->view()->setFocus();
 }
 
@@ -793,9 +805,10 @@ void QuantaApp::gotoFileAndLine( const QString &filename, int line )
 {
   if ( !filename.isEmpty() ) doc->openDocument( filename );
   
-  if ( view->write()->numLines() > line && line >= 0 )
+  int numLines = view->write()->editIf->numLines();
+  if ( numLines > line && line >= 0 )
   {
-    view->write()->setCursorPosition( line, 0 );
+    view->write()->viewCursorIf->setCursorPosition(line, 0);
   }
   
   view->write()->view()->setFocus();
@@ -826,22 +839,25 @@ void QuantaApp::slotDockChanged()
     	rightWidgetStack -> raiseWidget(0);
   	    docTabOpened = false;
     }
-    if ( !exitingFlag ) doc ->write()->setFocus();
+    if ( !exitingFlag )
+    {
+      if (doc->write() != 0) {doc ->write()->setFocus();}
+    }
   }
 }
 
 void QuantaApp::selectArea(int col1, int row1, int col2, int row2)
 {
-  int numLines = view->write()->numLines();
-  
+  int numLines = view->write()->editIf->numLines();
+
   if ( row1 > numLines-1 )
     row1 = numLines-1;
     
   if ( row2 > numLines-1 )
     row2 = numLines-1;
     
-  setCursorPosition( row2, col2 );
-  view->write()->selectText(col1,row1,col2,row2);
+  view->write()->viewCursorIf->setCursorPosition(row2, col2);
+  view->write()->selectionIf->setSelection(col1, row1, col2, row2);
 }
 
 void QuantaApp::openDoc( QString url )
@@ -882,9 +898,10 @@ void QuantaApp::contextHelp()
     rightWidgetStack->raiseWidget(0);
     doc ->write()->setFocus();
   }
-  else 
+  else
   {
-    QString *url = dTab->contextHelp( view->write()->currentWord());
+    QString currentW =view->write()->kate_view->currentWord();
+    QString *url = dTab->contextHelp( currentW);
   
     if ( url ) 
     {
@@ -984,11 +1001,6 @@ void QuantaApp::slotToolSyntaxCheck()
     p->start( KProcess::NotifyOnExit, KProcess::Stdout);
   }
 }
-
-void QuantaApp::slotSpellCheck() {
-   view->write()->slotSpellCheck();
-}
-
     
 QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomElement &element, int &id )
 {
@@ -1081,7 +1093,11 @@ void QuantaApp::slotShowOpenFileList()
 //This "complex" read-out is due to the reversed list.
   QString docName= fileList[openList.count() - listDlg.getEntryNum() - 1];
 
+#ifdef USE_KDOCKTABGROUP
+  view->writeTab->setVisiblePage(view->doc->docList->find(docName));
+#else
   view->writeTab->showPage(view->doc->docList->find(docName));
+#endif
 }
 /** No descriptions */
 void QuantaApp::slotNewProjectLoaded()
@@ -1102,4 +1118,16 @@ void QuantaApp::slotInsertFile(QString fileName)
 {
   doc->write()->insertFile(fileName);
 }
+
+/*
+//Kate releated
+void QuantaApp::setEOLMenuAboutToShow()
+{
+  int eol = view->write()->view()->getEol();
+  eol = eol>=0? eol: 0;
+  setEndOfLine->setCurrentItem( eol );
+}
+
+  */
+
 #include "quanta.moc"

@@ -91,6 +91,8 @@ class QuantaView : public QWidget
   	QString attrCase( const char*  attr);
   	
   	void updateToolBars( ToolBars *);
+  /** No descriptions */
+  void resizeEvent (QResizeEvent *);
 
 	public slots:
 
@@ -151,8 +153,38 @@ class QuantaView : public QWidget
     void slotPasteURLEncoded();
   /** Add the starting and closing text for a 
 user specified tag. */
-    void slotTagMisc();
-    void slotInsertChar(const QString &selected);
+  void slotTagMisc();
+
+/** Kate releated slots */
+/*
+    void slotUndo ();
+    void slotRedo ();
+
+    void slotCut ();
+    void slotCopy ();
+    void slotPaste ();
+
+    void slotSelectAll ();
+    void slotDeselectAll ();
+
+    void slotFind ();
+    void slotFindAgain ();
+    void slotFindAgainB ();
+    void slotReplace ();
+    void slotEditCommand ();
+    void slotIndent();
+    void slotUnIndent();
+    void slotSpellcheck ();
+    void slotGotoLine ();
+    void setEol(int);
+    void slotSetHl (uint n);
+  	void exportAs(const QString&);
+
+    void toggleBookmark();
+    void clearBookmarks();
+
+    void slotComment ();
+    void slotUnComment ();  */
 
   signals:
     void newCurPos();
@@ -181,6 +213,9 @@ user specified tag. */
     bool beginOfScriptError;
     QString scriptOutputDest;
     QString scriptErrorDest;
+public: // Public attributes
+  /**  */
+  Document *oldWrite;
 };
 
 #endif // QUANTAVIEW_H

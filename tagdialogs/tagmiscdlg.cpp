@@ -18,7 +18,7 @@
 #include "tagmiscdlg.h"
 
 //kde includes
-#include <kapp.h>
+#include <kapplication.h>
 
 //qt includes
 #include <qlineedit.h>

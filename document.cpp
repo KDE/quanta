@@ -18,6 +18,8 @@
 
 //QT includes
 #include <qfile.h>
+#include <qfileinfo.h>
+#include <qtextstream.h>
 
 // KDE includes
 #include <kapp.h>
@@ -26,19 +28,34 @@
 #include <kaction.h>
 #include <kdialogbase.h>
 #include <kiconloader.h>
-#include <kspell.h>
+#include <kmessagebox.h>
+
+#include <ktexteditor/cursorinterface.h>
+#include <ktexteditor/clipboardinterface.h>
+#include <ktexteditor/configinterface.h>
+#include <ktexteditor/wordwrapinterface.h>
 
 #include "document.h"
-#include "kwrite/kwdoc.h"
-#include "kwrite/kwdialog.h"
-#include "kwrite/highlight/highlight.h"
 
 
-Document::Document( KWriteDoc *doc,const QString& basePath,QWidget *parent, const char *name)
-	:	KWrite( doc, parent, name)
+Document::Document(const QString& basePath, KTextEditor::Document *doc, QWidget *parent,
+                   const char *name, WFlags f ) : QWidget(parent, name, f)
 {
   busy    = false;
   oldstat = false;
+  _doc = doc;
+  _view = (KTextEditor::View *)_doc->createView(this, 0L);
+  int w = parent->width() -5 ;
+  int h = parent->height() - 35;
+   _view->resize(w,h);
+//  _view->setGeometry(parent->geometry());
+
+  kate_doc = dynamic_cast<Kate::Document*>(_doc);
+  kate_view = dynamic_cast<Kate::View*>(_view);
+
+  editIf = dynamic_cast<KTextEditor::EditInterface *>(_doc);
+  selectionIf = dynamic_cast<KTextEditor::SelectionInterface *>(_doc);
+  viewCursorIf = dynamic_cast<KTextEditor::ViewCursorInterface *>(_view);
   this->basePath = basePath;
 }
 
@@ -53,62 +70,51 @@ void Document::setUntitledUrl(QString url)
 
 bool Document::isUntitled()
 {
-  return ( kWriteDoc->url().url().isEmpty() ) ? true : false;
+  return ( editIf->length() == 0 ) ? true : false;
 }
 
 KURL Document::url()
 {
-  return ( isUntitled() ) ? KURL(untitledUrl) : kWriteDoc->url();
-}
-
-void Document::setURL(KURL url,bool f)
-{
-  kWriteDoc->setURL( url, f );
+  return ( isUntitled() ) ? KURL(untitledUrl) : _doc->url();
 }
 
 // kwrite addons
 
 void Document::insertTag(QString s1,QString s2)
 {
-	int line,col; // cursor position
-	VConfig c;
+  QString selection = "";
 
-		
-  if ( !s2.isEmpty() ) { // use 2 tags
-  	// QString marked = markedText();
-  	if ( !hasMarkedText() ) {
-  		kWriteView ->getVConfig(c);
-		  kWriteDoc->insert( c, s1);
+  if ( selectionIf->hasSelection() )
+    {
+		  selection = selectionIf->selection();
+      selectionIf->removeSelectedText();
   	}
-  	else {
-  		cut();
-  		kWriteView ->getVConfig(c);
-		  kWriteDoc->insert( c, s1);
-		  paste();
-  	}
-  	
-  	col = currentColumn();
-  	line = currentLine();
-  	kWriteView ->getVConfig(c);
-	  kWriteDoc->insert( c, s2);
-	  setCursorPosition(line,col);
-  }
-  else {  // using only 1 tag
-  	kWriteView ->getVConfig(c);
-	  kWriteDoc->insert( c, s1);
-  }
+/*
+	unsigned int line,col; // cursor position
+  viewCursorIf->cursorPosition(&line,&col);
+  editIf->insertText(line, col, s1+selection+s2);
 
-  kWriteDoc->updateViews();
+   KTextEditor::WordWrapInterface *ww = dynamic_cast<KTextEditor::WordWrapInterface*>(_doc);
+   if ( (ww->wordWrap()) && ((col+s1.length()) > ww->wordWrapAt()) )
+   {
+     line++;
+     col = col+s1.length()-ww->wordWrapAt()+1;
+   } else
+   {
+     col = col+s1.length();
+   }
+  viewCursorIf->setCursorPosition(line,col);
+  */
+
+ kate_view->insertText(s1+selection+s2);
+ for (unsigned int i=0; i < s2.length(); i++)
+   kate_view->cursorLeft();
 }
 
+//FIXME: This method can go away
 QString Document::getLine(int y)
 {
-  if ( y < 0 || y > kWriteDoc->lastLine()) return QString();
-  TextLine *textLine;
-  textLine = kWriteDoc->getTextLine(y);
-  QString s(textLine->getText(), textLine->length());
-  // debug( "line : "+s );
-  return s;
+  return editIf->textLine(y);
 }
 
 QString Document::findBeginOfTag(QString t, int x, int y)
@@ -273,13 +279,17 @@ QString Document::currentTag()
 {
   tagAttrNum = 0;
   
-  int y = currentLine();
-  int ox = currentColumn(); // need to reorganise ;)
-  
+  unsigned int y;// = currentLine();
+  unsigned int ox;// = currentColumn(); // need to reorganise ;)
+
+  viewCursorIf->cursorPosition(&y, &ox);
+
+
   QString t = getLine(y);
-  int x=0, i=0;
-  
-  int tab = kWriteDoc->tabWidth();
+  int x=0;
+  unsigned int i=0;
+
+  int tab = kate_view->tabWidth();
   
   while (i<ox) 
   {
@@ -302,7 +312,7 @@ QString Document::currentTag()
 }
 
 void Document::changeCurrentTag( QDict<QString> *dict )
-{
+{          /*
   QDictIterator<QString> it( *dict ); // iterator for dict
   QDict<QString> oldAttr(1,false);
 
@@ -383,19 +393,19 @@ void Document::changeCurrentTag( QDict<QString> *dict )
   kWriteDoc->recordEnd( c );
 
 //  kWriteDoc->updateLines( tagBeginY, tagEndY, 0 );
-  kWriteView->repaint();
+  kWriteView->repaint();                            */
 }
 
 // return global( on the desktop ) position of text cursor
 QPoint Document::getGlobalCursorPos()
 {
-  int h, y, x;
+/*  int h, y, x;
 
   h = kWriteDoc->fontHeight;
   y = h*kWriteView->cursor.y - kWriteView->yPos;
   x = kWriteView->cXPos - (kWriteView->xPos-2);
 
-  return kWriteView->mapToGlobal( QPoint(x,y) );
+  return kWriteView->mapToGlobal( QPoint(x,y) );*/
 }
 
 
@@ -429,237 +439,32 @@ QString Document::attrCase( QString  attr)
 
 void Document::insertAttrib(QString attr)
 {
-   setCursorPosition( tagEndY, tagEndX );
+   viewCursorIf->setCursorPosition( tagEndY, tagEndX );
    insertTag( QString(" ") + attrCase(attr) + "=\"", QString( "\"" ) );
 }
 
 /**  */
 void Document::selectText(int x1, int y1, int x2, int y2 )
 {
-  VConfig c;
-  kWriteView ->getVConfig(c);
-  c.cursor.x = x1;
-  c.cursor.y = y1;
-
-  PointStruc end;
-  end.x = x2;
-  end.y = y2;
-
-	doc()->selectTo( c,end,0);
-	
-	view()->repaint();
+   selectionIf->setSelection(x1, y1, x2, y2);
 }
 
 
 void Document::replaceSelected(QString s)
 {
-  VConfig c;
-	cut();
-  kWriteView ->getVConfig(c);
-	kWriteDoc->insert( c, s);
-}
+ unsigned int line, col;
 
-// configure editor
-void Document::editorOptions()
-{
-  KWin kwin;
-  // I read that no widgets should be created on the stack
-  KDialogBase *kd = new KDialogBase(KDialogBase::IconList,
-                                    i18n("Configure KWrite"),
-                                    KDialogBase::Ok | KDialogBase::Cancel |
-                                    KDialogBase::Help ,
-                                    KDialogBase::Ok, this, "tabdialog");
+ viewCursorIf->cursorPosition(&line, &col);
+ selectionIf->removeSelectedText();
+ editIf->insertText(line, col, s);
 
-  // color options
-  QVBox *page=kd->addVBoxPage(i18n("Colors"), QString::null,
-                              BarIcon("colors", KIcon::SizeMedium) );
-  ColorConfig *colorConfig = new ColorConfig((QWidget *)page);
-  QColor* colors = this->getColors();
-  colorConfig->setColors(colors);
-
-  // indent options
-  page=kd->addVBoxPage(i18n("Indent"), QString::null,
-                       BarIcon("rightjust", KIcon::SizeMedium) );
-  IndentConfigTab *indentConfig = new IndentConfigTab((QWidget *)page, this);
-
-  // select options
-  page=kd->addVBoxPage(i18n("Select"), QString::null,
-                       BarIcon("misc") );
-  SelectConfigTab *selectConfig = new SelectConfigTab((QWidget *)page, this);
-
-  // edit options
-  page=kd->addVBoxPage(i18n("Edit"), QString::null,
-                       BarIcon("kwrite", KIcon::SizeMedium ) );
-  EditConfigTab *editConfig = new EditConfigTab((QWidget *)page, this);
-
-  // spell checker
-  page = kd->addVBoxPage( i18n("Spelling"), i18n("Spell checker behavior"),
-                          BarIcon("spellcheck", KIcon::SizeMedium) );
-  KSpellConfig *ksc = new KSpellConfig((QWidget *)page, 0L, this->ksConfig(), false );
-
-  kwin.setIcons(kd->winId(), kapp->icon(), kapp->miniIcon());
-
-  kd -> setMinimumHeight(350);
-
-  if (kd->exec()) {
-    // color options
-    colorConfig->getColors(colors);
-    this->applyColors();
-    // indent options
-    indentConfig->getData(this);
-    // select options
-    selectConfig->getData(this);
-    // edit options
-    editConfig->getData(this);
-    // spell checker
-    ksc->writeGlobalSettings();
-
-    this->setKSConfig(*ksc);
-  }
-
-  delete kd;
-}
-
-
-/** spell checker */
-void Document::slotSpellCheck()
-{
-	spell = new KSpell( this, "Spell checker...", this, SLOT(slotSpellGo(KSpell *)), ksConfig()  );
-}
-
-/** spell check go */
-void Document::slotSpellGo(KSpell *)
-{
-	if ( spell->status() == KSpell::Running )
-	{
-
-		spellMoved = 0;
-		createSpellList();
-
-		connect( spell, SIGNAL(misspelling(const QString &, const QStringList &, unsigned int)), this, SLOT(slotSpellMis(const QString &, const QStringList &, unsigned int)));
-	  connect( spell, SIGNAL(corrected(const QString &, const QString &, unsigned int)), this, SLOT(slotSpellCorrect(const QString &, const QString &, unsigned int)));
-	  connect( spell, SIGNAL(done(bool)), this, SLOT(slotSpellResult(bool)));
-	  		
-		spell->check( spellText );
-		
-	}
-	else {
-    warning(i18n("Error starting KSpell. Please make sure you have ISpell properly configured."));
-  }
-}
-
-/** create lists from html text */
-void Document::createSpellList()
-{
-	unsigned int pos = 0;
-	int wordBeg, wordEnd;
-	
-	spellPos = new QValueList<int>();
-	//spellLen = new QValueList<int>();
-	//spellList = new QStringList();
-	
-	spellText = "";
-	
-	QString s = text();
-	
-	while ( pos < s.length() )
-	{
-	  if ( s.mid(pos,7).lower() == "<script" )
-	  {
-	  	while ( s.mid(pos,9).lower() != "</script>" ) pos++;
-	  	pos += 9;
-	  }
-	
-	  if ( s.mid(pos,2).lower() == "<?" )
-	  {
-	  	while ( s.mid(pos,2).lower() != "?>" ) pos++;
-	  	pos += 2;
-	  }
-	
-	  if ( s[pos] == '<') while ( s[pos] != '>') pos++;
-	
-		if ( s[pos].isLetter() )
-		{
-			wordBeg = pos;
-			while ( s[pos].isLetter() ) pos++;
-			wordEnd = pos;
-			
-		  //qDebug( "%s %d %d ",s.mid( wordBeg, wordEnd-wordBeg ).data(), wordBeg, wordEnd );
-			
-			//spellList -> append( s.mid( wordBeg, wordEnd-wordBeg ) );
-			spellText += s.mid( wordBeg, wordEnd-wordBeg ) + "\n";
-			spellPos  -> append( wordBeg );
-			//spellLen  -> append( wordEnd-wordBeg );
-		}
-		else pos++;
-	}
-}
-
-
-void Document::slotSpellMis(const QString &originalword, const QStringList &, unsigned int pos)
-{
-
-  //int posText = (*spellPos)[pos-1];
-
-  int posTab = 0;
-
-  for ( unsigned i=0; i < pos+1; i++ )
-  	if ( spellText[i] == '\n' ) {
-  	   posTab++;
-  	}
-  	
-  int posText = (*spellPos)[ posTab ] + spellMoved;
-
-  int x = pos2x(posText);
-  int y = pos2y(posText);
-
-  setCursorPosition(y,x-1);
-  selectText(x-1, y, x-1+originalword.length(), y);
-
-  kWriteDoc->updateViews();
-
-  // qDebug( "pos : %d; posText : %d; x : %d; y : %d; word : %s ", pos, posText, x,y,originalword.data() );
-
-}
-
-void Document::slotSpellCorrect( const QString &originalword, const QString &newword, unsigned int)
-{
-	if ( originalword == newword )
-		return;
-
-	replaceSelected( newword );
-	
-	spellMoved += newword.length() - originalword.length();
-	
-//	for (unsigned int i=pos+1; i< spellPos->count(); i++)
-//		(*spellPos)[i] += newword.length() - originalword.length();
-		
-}
-
-/** spell check result */
-void Document::slotSpellResult(bool)
-{
-  spell->hide();
-	view()->repaint();
-	spell->cleanUp();
-	
-	slotSpellDone();
-}
-
-/** spell check done */
-void Document::slotSpellDone()
-{
-	//delete spell;
-	delete spellPos;
-	//delete spellLen;
-	//delete spellList;
 }
 
 
 /**  */
 int Document::pos2y( int pos )
 {
-	QString s = text();
+	QString s = editIf->text();
 	int endLineCount = 0;
 	if ( pos<0 ) pos = 0;
 	
@@ -671,7 +476,7 @@ int Document::pos2y( int pos )
 
 int Document::pos2x( int pos )
 {
-  QString s = text();
+  QString s = editIf->text();
 	int i;
 	if ( pos<0 ) pos = 0;
 	for (i=pos; s[i]!='\n' && i; i--);
@@ -680,7 +485,7 @@ int Document::pos2x( int pos )
 
 int Document::xy2pos( int x, int y )
 {
-  QString s = text();
+  QString s = editIf->text();
   int pos = 0;
   QStringList slist = QStringList::split('\n',s,true);
 
@@ -701,45 +506,69 @@ int Document::xy2pos( int x, int y )
 
 void Document::readConfig(KConfig *config)
 {
-  KWrite::readConfig( config );
-  doc() ->readConfig( config );
-  
-  HlManager *hlManager = doc()->hlManager;
-  
-  ItemFont      defaultFont;
-  ItemStyleList defaultStyleList;
-  
-  hlManager->getDefaults(defaultStyleList,defaultFont);
-  hlManager->setDefaults(defaultStyleList,defaultFont);
+  dynamic_cast<KTextEditor::ConfigInterface*>(_doc)->readConfig( config );
 }
 
 void Document::writeConfig(KConfig *config)
 {
-  KWrite::writeConfig( config );
-  doc() ->writeConfig( config );
+  dynamic_cast<KTextEditor::ConfigInterface*>(_doc)->writeConfig( config );
 }
 
-bool Document::isVerticalSelect()
-{
-  return ( config() & KWriteView::cfVerticalSelect );
-}
-
-void Document::setVerticalSelect(bool f)
-{
-  setConfig(configFlags | KWriteView::cfVerticalSelect);
-}
 /** No descriptions */
 void Document::insertFile(QString fileName)
 {
-  VConfig c;
+  unsigned int line, col;
+
   QFile file(fileName);
 
-  kWriteView ->getVConfig(c);
-
   file.open(IO_ReadOnly);
-  kWriteDoc->insertFile( c, file);
+
+  QTextStream stream( &file );
+
+  viewCursorIf->cursorPosition(&line, &col);
+  editIf->insertText(line, col, stream.read());
+
   file.close();
-  	
-  kWriteDoc->updateViews();
 }
+/** Get the view of the document */
+KTextEditor::View* Document::view()
+{
+  return _view;
+}
+
+/** Get the KTextEditor::Document of the document */
+KTextEditor::Document* Document::doc()
+{
+  return _doc;
+}
+
+
 #include "document.moc"
+/** Returns true if the document was modified. */
+bool Document::isModified()
+{
+  return _doc->isModified();
+}
+/** Sets the modifiedFlag value. */
+void Document::setModified(bool flag)
+{
+  _doc->setModified(flag);
+}
+
+/** No descriptions */
+int Document::checkOverwrite(KURL u)
+{
+  int query = KMessageBox::Yes;
+
+  if( u.isLocalFile() )
+  {
+    QFileInfo info;
+    QString name( u.path() );
+    info.setFile( name );
+    if( info.exists() )
+      query = KMessageBox::warningYesNoCancel( this,
+        i18n( "A Document with this name already exists.\nDo you want to overwrite it?" ) );
+  }
+  return query;
+}
+

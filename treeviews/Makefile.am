@@ -1,4 +1,8 @@
 ####### kdevelop will overwrite this part!!! (begin)##########
+noinst_LIBRARIES = libtreeviews.a
+
+## INCLUDES were found outside kdevelop specific part
+
 libtreeviews_a_METASOURCES = AUTO
 
 libtreeviews_a_SOURCES = templatestreeview.cpp quantatreeview.cpp projecttreeview.cpp structtreeview.cpp filemanage.cpp doctreeview.cpp docitem.cpp filestreefile.cpp fileslistview.cpp projecttreefile.cpp docfolder.cpp structtreetag.cpp projecttreefolder.cpp filestreefolder.cpp filestreeview.cpp 
@@ -8,7 +12,7 @@ EXTRA_DIST = docfolder.h filestreeview.cpp filestreefolder.cpp docitem.h project
 
 ####### kdevelop will overwrite this part!!! (end)############
 
-noinst_LIBRARIES = libtreeviews.a
+#noinst_LIBRARIES = libtreeviews.a
 
 INCLUDES = $(all_includes)
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)

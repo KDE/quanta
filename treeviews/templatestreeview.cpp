@@ -41,7 +41,7 @@ TemplatesTreeView::TemplatesTreeView(const QString& projectBasePath, QWidget *pa
 	fileMenu -> insertItem( UserIcon("open"),  i18n("&Open"), 		this ,SLOT(slotOpen()));
 	fileMenu -> insertItem(i18n("Open in Quanta"), 	this ,SLOT(slotOpenInQuanta()));
 	fileMenu -> insertItem(i18n("Insert tag"), 	this ,SLOT(slotInsertTag()));
-	fileMenu -> insertItem(i18n("Insert in document"), 	this ,SLOT(slotInsertInDocument()));
+	fileMenu -> insertItem(i18n("Insert as text in document"), 	this ,SLOT(slotInsertInDocument()));
 	fileMenu -> insertItem(i18n("New document based on this"), 	this ,SLOT(slotNewDocument()));
 	fileMenu -> insertSeparator();
 	fileMenu -> insertItem( UserIcon("copy"),  i18n("&Copy"), 		this ,SLOT(slotCopy()));

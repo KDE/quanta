@@ -30,7 +30,6 @@
 
 // app includes
 #include "quanta.h"
-#include "kwrite/kwview.h"
 
 
 static const char *description =

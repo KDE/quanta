@@ -44,7 +44,7 @@
 #include <qpushbutton.h>
 #include <qtimer.h>
 
-#include <kapp.h>
+#include <kcolordialog.h>
 #include <kconfig.h>
 #include <kglobal.h>
 #include <kglobalsettings.h>

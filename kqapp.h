@@ -17,7 +17,7 @@
 #ifndef KQAPPLICATION_H
 #define KQAPPLICATION_H
 
-#include <kuniqueapp.h>
+#include <kuniqueapplication.h>
 
 
 class KSplash : public QFrame

@@ -450,7 +450,7 @@ void QuantaView::slotTagSelect(){
 
 void QuantaView::slotViewInNetscape()
 {
-  write()->save();
+  write()->doc()->save();
   if ( !write()->isUntitled() ) 
   {
     KProcess *show = new KProcess();
@@ -464,7 +464,7 @@ void QuantaView::slotViewInNetscape()
 
 void QuantaView::slotViewInKFM()
 {
-  write()->save();
+  write()->doc()->save();
   if ( !write()->isUntitled() ) 
   {
     KProcess *show = new KProcess();
@@ -476,7 +476,7 @@ void QuantaView::slotViewInKFM()
 
 void QuantaView::slotViewInLynx()
 {
-  write()->save();
+  write()->doc()->save();
   if ( !write()->isUntitled() ) 
   {
     KProcess *show = new KProcess();
@@ -558,8 +558,7 @@ void QuantaView::slotGetScriptOutput(KProcess *, char *buffer, int buflen)
 
   if ( scriptOutputDest == "replace" ) 
   {
-		 if ( beginOfScriptOutput )
-        write()->setText("");
+		 if ( beginOfScriptOutput ) write()->editIf->clear();
      write()->insertTag(output);
   }
 
@@ -603,8 +602,7 @@ void QuantaView::slotGetScriptError(KProcess *, char *buffer, int buflen)
 
   if ( scriptErrorDest == "replace" ) 
   {
-		 if ( beginOfScriptError )
-        write()->setText("");
+		 if ( beginOfScriptError ) write()->editIf->clear();
      write()->insertTag(output);
   }
 
@@ -622,7 +620,9 @@ void QuantaView::slotPasteHTMLQuoted()
         text.replace( QRegExp( I18N_NOOP( "&" ) ), I18N_NOOP( "&amp;" ) );
         text.replace( QRegExp( I18N_NOOP( "<" ) ), I18N_NOOP( "&lt;" ) );
         text.replace( QRegExp( I18N_NOOP( "\"" ) ), I18N_NOOP( "&quot;" ) );
-        write()->insertText( text );
+        unsigned int line, col;
+        write()->viewCursorIf->cursorPosition(&line, &col);
+        write()->editIf->insertText(line, col, text );
     }
 }
 
@@ -634,14 +634,129 @@ void QuantaView::slotPasteURLEncoded()
 
     if ( ( !text.isNull() ) && (!text.isEmpty() ) ) {
         text = KURL::encode_string( text );
-        write()->insertText( text );
+        unsigned int line, col;
+        write()->viewCursorIf->cursorPosition(&line, &col);
+        write()->editIf->insertText(line, col, text );
     }
 }
 
-/** insert special character */
-void QuantaView::slotInsertChar(const QString &selected){
-	int begin = selected.find("(")+1;
-    int length = selected.find(")") - begin;
-	QString part = selected.mid(begin, length);
-    write()->insertTag(part);
+
+/** Kate releated slots. */
+/*
+
+void QuantaView::slotUndo ()
+{
+  write()->doc()->undo();
 }
+
+void QuantaView::slotRedo ()
+{
+  write()->doc()->redo();
+}
+
+void QuantaView::slotCut ()
+{
+  write()->view()->cut();
+}
+
+void QuantaView::slotCopy ()
+{
+  write()->view()->copy();
+}
+
+void QuantaView::slotPaste ()
+{
+  write()->view()->paste();
+}
+
+void QuantaView::slotSelectAll ()
+{
+  write()->doc()->selectAll();
+}
+
+void QuantaView::slotDeselectAll ()
+{
+  write()->doc()->clearSelection ();
+}
+
+void QuantaView::slotFind ()
+{
+  write()->view()->find();
+}
+
+void QuantaView::slotFindAgain ()
+{
+  write()->view()->findAgain(false);
+}
+
+void QuantaView::slotFindAgainB ()
+{
+   write()->view()->findPrev();
+}
+
+void QuantaView::slotReplace ()
+{
+   write()->view()->replace();
+}
+
+void QuantaView::slotEditCommand ()
+{
+   write()->view()->slotEditCommand();
+}
+
+void QuantaView::slotIndent()
+{
+  write()->view()->indent();
+}
+
+void QuantaView::slotUnIndent()
+{
+   write()->view()->unIndent();
+}
+
+void QuantaView::slotSpellcheck ()
+{
+   write()->doc()->spellcheck();
+}
+
+void QuantaView::slotGotoLine ()
+{
+   write()->view()->gotoLine();
+}
+
+void QuantaView::setEol(int which)
+{
+   write()->view()->setEol( which );
+}
+
+void QuantaView::slotSetHl (uint n)
+{
+   write()->doc()->setHlMode(n);
+}
+
+
+void QuantaView::exportAs(const QString& filter)
+{
+   write()->doc()->exportAs(filter);
+}
+
+void QuantaView::toggleBookmark ()
+{
+  write()->view()->toggleBookmark();
+}
+
+void QuantaView::clearBookmarks ()
+{
+   write()->doc()->clearMarks();
+}
+
+void QuantaView::slotComment ()
+{
+   write()->view()->comment();
+}
+
+void QuantaView::slotUnComment ()
+{
+   write()->view()->uncomment();
+}
+         */

@@ -10,6 +10,10 @@
 #include <kprocess.h>
 #include <qdom.h>
 #include <klocale.h>
+#include <ktexteditor/cursorinterface.h>
+#include <ktexteditor/viewcursorinterface.h>
+#include <ktexteditor/editinterface.h>
+#include <ktexteditor/selectioninterface.h>
 
 TagAction::TagAction( QDomElement *element, QuantaView *view,KActionCollection *collection )
   : KAction( element->attribute("text"), 0, collection, element->attribute("name") ),
@@ -35,7 +39,10 @@ void TagAction::insertTag()
      return;
 
   QString space="";
-	space.fill( ' ',view_->write()->currentColumn() );
+  unsigned int line, col;
+
+  dynamic_cast<KTextEditor::ViewCursorInterface *> (view_->write()->view())->cursorPosition(&line, &col);
+	space.fill( ' ', col);
 
   QString type = tag.attribute("type","");
 
@@ -117,12 +124,12 @@ void TagAction::insertTag()
     scriptErrorDest  = script.attribute("error","none");
 
     if ( inputType == "current" ) {
-    	buffer = view_->write()->text();
+    	buffer = dynamic_cast<KTextEditor::EditInterface*> (view_->write()->doc())->text();
       proc->writeStdin( buffer.local8Bit(), buffer.length() );
     }
 
     if ( inputType == "selected" ) {
-    	buffer = view_->write()->markedText();
+    	buffer = dynamic_cast<KTextEditor::SelectionInterface*>(view_->write()->doc())->selection();
       proc->writeStdin( buffer.local8Bit(), buffer.length() );
     }
     proc->closeStdin();
@@ -141,7 +148,7 @@ void TagAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
 
     if ( scriptOutputDest == "replace" ) {
         if ( firstOutput )
-            view_->write()->setText("");
+            dynamic_cast<KTextEditor::EditInterface*>(view_->write()->doc())->clear();
         view_->write()->insertTag( text );
     }
 
@@ -178,7 +185,7 @@ void TagAction::slotGetScriptError( KProcess *, char *buffer, int buflen )
 
     if ( scriptErrorDest == "replace" ) {
         if ( firstOutput )
-            view_->write()->setText("");
+            dynamic_cast<KTextEditor::EditInterface*>(view_->write()->doc())->clear();
         view_->write()->insertTag( text );
     }
 

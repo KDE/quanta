@@ -38,7 +38,6 @@ class Document;
 
 class KConfig;
 
-
 class QuantaDoc : public QObject
 {
   Q_OBJECT
@@ -87,38 +86,17 @@ class QuantaDoc : public QObject
     /** close documents. */
     void closeAll();
     
-    void finishLoadURL(KWrite *);
-    void finishSaveURL(KWrite *);
+ //   void finishLoadURL(KWrite *);
+ //   void finishSaveURL(KWrite *);
 
     /** show popup menu with list of attributes for current tag */
     void slotInsertAttrib      ( int id );
     void slotInsertCoreAttrib  ( int id );
     void slotInsertEventsAttrib( int id );
     void slotAttribPopup();
-    
-    void editorOptions();
-    void highlightings();
-    
-    void cut();
-    void copy();
-    void paste();
-    void undo();
-    void redo();
-    void undoHistory();
-    void selectAll();
-    void deselectAll();
-    void find();
-    void findAgain();
-    void replace();
-    void invertSelect();
-    void verticalSelect();
-    void indent();
-    void unindent();
-    void cleanIndent();
-    void gotoLine();
 
-    void setHl (int);
-    void setEol(int);
+    void undoHistory();
+    void invertSelect();
  	
   signals:
     void newStatus();
@@ -135,7 +113,8 @@ class QuantaDoc : public QObject
     KPopupMenu *attribMenu;
     QPopupMenu *attribCoreMenu;
     QPopupMenu *attribEventsMenu;
-*/    
+*/
+
 };
 
 #endif // QUANTADOC_H

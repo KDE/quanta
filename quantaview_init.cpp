@@ -24,12 +24,15 @@
 #include <qwidgetstack.h>
 #include <qdom.h>
 #include <qfile.h>
+#include <qevent.h>
 
 // include files for KDE
 #include <klocale.h>
 #include <kstddirs.h>
 #include <kmenubar.h>
 #include <kiconloader.h>
+
+#include <ktexteditor/viewcursorinterface.h>
 
 // application specific includes
 #include "document.h"
@@ -40,8 +43,6 @@
 
 
 #include "widgets/wtoolbar.h"
-#include "kwrite/kwview.h"
-#include "kwrite/highlight/highlight.h"
 
 #include <kaction.h>
 #include "toolbar/tagaction.h"
@@ -63,13 +64,15 @@ QuantaView::QuantaView( QuantaApp *app, QWidget *parent, const char *name )
 	toolbarStack-> setFocusPolicy(QWidget::NoFocus);
 #ifdef USE_KDOCKTABGROUP
    writeTab = new KDockTabGroup(this);
+   connect( writeTab,	SIGNAL(pageSelected (QWidget*)), app, SLOT(slotUpdateStatus(QWidget*)));  connect( tabBar,		SIGNAL(selected(int)), toolbarStack, SLOT(raiseWidget(int)));
+   connect( writeTab,	SIGNAL(pageSelected (QWidget*)), app, SLOT(reparse()));
 #else
   writeTab = new QTabWidget(this);
   writeTab ->setTabPosition( QTabWidget::Bottom );
-#endif
 //  connect( writeTab,	SIGNAL(selected(const QString &)), app, SLOT(slotUpdateStatus(const QString &)));
   connect( writeTab,	SIGNAL(currentChanged(QWidget*)), app, SLOT(slotUpdateStatus(QWidget*)));
   connect( writeTab,	SIGNAL(selected(const QString &)), app, SLOT(reparse()));
+#endif
   writeTab ->setFocusPolicy( QWidget::NoFocus );
              
   layout->addWidget( tabBar       ,0,0);
@@ -78,6 +81,7 @@ QuantaView::QuantaView( QuantaApp *app, QWidget *parent, const char *name )
   connect( tabBar,SIGNAL(selected(int)), toolbarStack, SLOT(raiseWidget(int)));
 
   writeTab->show();
+  oldWrite = 0L;
 }
 
 QuantaView::~QuantaView()
@@ -97,17 +101,28 @@ void QuantaView::print(QPrinter *pPrinter)
 /** return current KWrite class */
 Document* QuantaView::write()
 {
+#ifdef USE_KDOCKTABGROUP
+  return ( Document* )writeTab->visiblePage();
+#else
   return ( Document* )writeTab->currentPage();
+#endif
+
 }
 
 /** Add new kwrite class to writeStack and return id in stack */
 void QuantaView::addWrite( Document* w , QString label )
 {
+#ifdef    USE_KDOCKTABGROUP
+	writeTab->insertPage(w, label);
+	writeTab->setVisiblePage(w);
+#else
 	QIconSet emptyIcon ( UserIcon("empty1x16"));
 	writeTab->addTab  ( w,  emptyIcon,  label );
 	writeTab->showPage( w );
+#endif
 	
-	connect( w, SIGNAL(newCurPos()), this, SLOT(slotNewCurPos()));
+	connect( w->view(),
+           SIGNAL(cursorPositionChanged()), this, SLOT(slotNewCurPos()));
 }
 
 /** remove KWrite class from stack, return id of new KWrite */
@@ -180,24 +195,13 @@ void QuantaView::initActions()
     (void) new KAction( i18n( "Insert CSS..." ),"mini-modules", 0,
                         this, SLOT( slotInsertCSS() ),
                         actionCollection, "insert_css" );
-
-    // special-character combo
-    KSelectAction* char_action = new KSelectAction( actionCollection, "insert_char" );
-    connect( char_action, SIGNAL(activated(const QString &)),
-             this, SLOT(slotInsertChar(const QString &)) );
-    QStringList char_list;
-    QFile file( locate("appdata","chars") );
-    if ( file.open(IO_ReadOnly) ) {    // file opened successfully
-        QTextStream t( &file );        // use a text stream
-        QString s;
-        while ( !t.eof() ) {           // until end of file...
-            char_list << t.readLine(); // line excluding '\n'
-        }
-        f.close();
-    }
-    char_action->setItems(char_list);
-    char_action->setComboWidth(150);
-
+                        
 //    qDebug("ctrl+enter: " + QString::number(CTRL+Key_Enter) );
 }
 
+/** No descriptions */
+void QuantaView::resizeEvent (QResizeEvent *)
+{
+ if (write() !=0)
+   write()->view()->resize(writeTab->size().width()-5, writeTab->size().height()-35);
+}

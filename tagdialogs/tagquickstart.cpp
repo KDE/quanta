@@ -42,7 +42,6 @@ TagQuickStart::TagQuickStart(QString basePath, QWidget *parent, const char *name
 	colorALink->setColor("#008080");
 	colorVLink->setColor("#c06060");
 	
-//FIXME: reenable the connect lines
 	connect( buttonFileSelect, SIGNAL(clicked()),SLOT(slotFileSelect()) );
 	
 	connect( colorBG,    SIGNAL(activated(const QColor &)), this, SLOT(slotBGColor   (const QColor &)) );

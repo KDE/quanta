@@ -20,10 +20,20 @@
 
 #include <qdict.h>
 #include <qwidget.h>
-#include "kwrite/kwview.h"
+
+#include <kate/document.h>
+#include <kate/view.h>
+
+
+#include <ktexteditor/document.h>
+#include <ktexteditor/view.h>
+#include <ktexteditor/viewcursorinterface.h>
+#include <ktexteditor/editinterface.h>
+#include <ktexteditor/selectioninterface.h>
+
 
 /**
-  *@author Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
+  *@author Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon & Andras Mantia
   */
 
 struct TagAttr {
@@ -37,28 +47,20 @@ struct TagAttr {
   bool quotes;
 };
 
-class KSpell;
 class KConfig;
 class QStringList;
 
-class Document : public KWrite  {
+class Document : public QWidget{
    Q_OBJECT
-   friend class KWrite;
-   friend class KWriteDoc;
-   friend class KWriteView;
-   
+
 public: 
-	Document( KWriteDoc *doc, const QString& basePath, QWidget *parent=0, const char *name=0);
+	Document(const QString& basePath, KTextEditor::Document *doc, QWidget *parent = 0, const char *name = 0, WFlags f=0);
 	~Document();
 
 public:
 
-  // configure dialog
-  void editorOptions();
-
   KURL url();
-  void setURL(KURL,bool);
-  
+
   bool isUntitled();
   void setUntitledUrl(QString);
   
@@ -79,24 +81,11 @@ public:
 	int pos2x (int pos);
 	int xy2pos(int x, int y );
 
-public slots:
-  
-  void slotSpellCheck  ();
-  void slotSpellGo     (KSpell *);
-  void slotSpellResult (bool);
-  void slotSpellCorrect( const QString &originalword, const QString &newword, unsigned int pos);
-  void slotSpellMis    ( const QString &originalword, const QStringList &suggestions, unsigned int pos);
-  void slotSpellDone   ();
-  void createSpellList ();
-
 public:
 
   void readConfig (KConfig *);
   void writeConfig(KConfig *);
   
-  bool  isVerticalSelect();
-  void setVerticalSelect(bool);
-
   QString findBeginOfTag( QString tag, int x, int y);
   QString findEndOfTag  ( QString tag, int x, int y);
   
@@ -118,6 +107,16 @@ public:
   QString attrCase( QString  attr);
   /** No descriptions */
   void insertFile(QString fileName);
+  /** Get the view of the document */
+  KTextEditor::View* view();
+  /** Get the KTextEditor::Document of the document */
+  KTextEditor::Document* doc();
+  /** Sets the modifiedFlag value. */
+  void setModified(bool flag);
+  /** Returns true if the document was modified. */
+  bool isModified();
+  /** No descriptions */
+  int checkOverwrite(KURL u);
 
   TagAttr tagAttr[50];
   int tagAttrNum;
@@ -127,14 +126,22 @@ public:
   bool busy;
   QString basePath;
 
+  KTextEditor::ViewCursorInterface *viewCursorIf;
+  KTextEditor::SelectionInterface *selectionIf;
+  KTextEditor::EditInterface *editIf;
+
+  Kate::Document *kate_doc;
+  Kate::View *kate_view;
+
 private:
 
   QString untitledUrl;
 
-
-  KSpell          *spell;
   QString         spellText;
 	QValueList<int> *spellPos;
+  KTextEditor::Document *_doc;
+  KTextEditor::View *_view;
+
 	
 	int spellMoved;
 };

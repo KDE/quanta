@@ -60,10 +60,10 @@ QString ProjectTreeFile::key ( int, bool ) const
   QString prefix = "5";
 
 //FIXME: QDir::match is VERY slow on KDE/QT 3.0
-//  if ( QDir::match( fileMaskHtml,  key) ) prefix = "2";
-//  if ( QDir::match( fileMaskText,  key) ) prefix = "3";
-//  if ( QDir::match( fileMaskImage, key) ) prefix = "4";
-  	
+/*  if ( QDir::match( fileMaskHtml,  key) ) prefix = "2";
+  if ( QDir::match( fileMaskText,  key) ) prefix = "3";
+  if ( QDir::match( fileMaskImage, key) ) prefix = "4";
+  */	
   key = prefix + key;
   return key;
 }
