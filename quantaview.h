@@ -42,11 +42,11 @@ class ToolbarTabWidget;
 class WKafkaPart;
 namespace DOM
 {
-	class Node;
+  class Node;
 }
 namespace Kate
 {
-	class View;
+  class View;
 }
 class QSplitter;
 
@@ -95,13 +95,13 @@ public:
 
   /** Return the curren views layout*/
   int getViewsLayout() {return currentViewsLayout;}
+#endif
 
     enum viewsLayout {
     QuantaViewOnly = 0,
     QuantaAndKafkaViews,
     KafkaViewOnly
   };
-#endif
 
   /** Resize the current view */
   void resize(int width, int height);
