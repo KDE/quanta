@@ -212,7 +212,7 @@ void ProjectNewWeb::slotGetWgetOutput(KProcess *, char *buffer, int buflen)
 
     KURL u = baseURL;
     QuantaCommon::setUrl(u, fileName);
-    listView->addItem(u, "", "");
+    listView->addItem(u, KFileItem(KFileItem::Unknown, KFileItem::Unknown, KURL()));
   }
 }
 

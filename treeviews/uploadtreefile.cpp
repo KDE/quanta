@@ -2,7 +2,7 @@
                           uploadtreefile.cpp  -  description
                              -------------------
     begin                : Sun Aug 25 2002
-    copyright            : (C) 2002 by Andras Mantia
+    copyright            : (C) 2002, 2003 by Andras Mantia
     email                : amantia@freemail.hu
  ***************************************************************************/
 
@@ -21,6 +21,7 @@
 #include <qfileinfo.h>
 
 // KDE includes
+#include <kfileitem.h>
 #include <kiconloader.h>
 #include <kurl.h>
 
@@ -28,23 +29,25 @@
 #include "uploadtreefile.h"
 #include "../resource.h"
 
-UploadTreeFile::UploadTreeFile( UploadTreeFolder *parent, const KURL &a_url, QString date, QString size )
-    : KListViewItem( parent, a_url.fileName(), "", date, size )
+UploadTreeFile::UploadTreeFile( UploadTreeFolder *parent, const KURL &a_url, const KFileItem &a_fileItem)
+    : KListViewItem( parent, a_url.fileName(), "", QString("%1").arg( (long int)a_fileItem.size() ), a_fileItem.timeString())
 {
   m_url = a_url;
   isDir = false;
   parentFolder = parent;
+  m_fileItem = new KFileItem(a_fileItem);
 
   setWhichPixmap("check_clear");
   setText(0, m_url.fileName());
 }
 
-UploadTreeFile::UploadTreeFile( QListView *parent, const KURL &a_url, QString date, QString size )
-    : KListViewItem( parent, a_url.fileName(), "", date, size )
+UploadTreeFile::UploadTreeFile( QListView *parent, const KURL &a_url, const KFileItem &a_fileItem)
+    : KListViewItem( parent, a_url.fileName(), "", QString("%1").arg( (long int)a_fileItem.size() ), a_fileItem.timeString())
 {
   m_url = a_url;
   isDir = false;
   parentFolder = 0L;
+  m_fileItem = new KFileItem(a_fileItem);
 
   //setPixmap( 1, SmallIcon("check") );
   setWhichPixmap("check_clear");
@@ -52,9 +55,18 @@ UploadTreeFile::UploadTreeFile( QListView *parent, const KURL &a_url, QString da
 }
 
 
-UploadTreeFile::~UploadTreeFile(){
+UploadTreeFile::~UploadTreeFile()
+{
+  delete m_fileItem;
 }
 
+mode_t UploadTreeFile::permissions()
+{
+  if (m_fileItem)
+      return m_fileItem->permissions();
+  else
+      return -1;
+}
 
 /** used for sorting */
 QString UploadTreeFile::key ( int, bool ) const
@@ -65,7 +77,7 @@ QString UploadTreeFile::key ( int, bool ) const
 //  return QFileInfo(key).extension()+key;
 }
 
-void UploadTreeFile::setWhichPixmap( QString pixmap )
+void UploadTreeFile::setWhichPixmap(const QString& pixmap )
 {
   setPixmap( 1, SmallIcon(pixmap) );
 }

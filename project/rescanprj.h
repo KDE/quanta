@@ -25,12 +25,14 @@
 #include <qregexp.h>
 #include <kio/job.h>
 
+
 #include "rescanprjdir.h"
+
+class KFileItem;
 
 struct URLListEntry{
    KURL url;
-   QString date;
-   QString size;
+   KFileItem* fileItem;
  };
 
 class RescanPrj : public RescanPrjDir  {

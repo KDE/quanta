@@ -147,7 +147,7 @@ void ProjectUpload::slotBuildTree()
      KIO::NetAccess::stat(absUrl, entry);
      KFileItem item(entry, absUrl, false, true);
      s = QString("%1").arg( (long int)item.size() );
-     QListViewItem *it = list->addItem(u, s, item.timeString());
+     UploadTreeFile *it = list->addItem(u, item);
      if ( it != 0 )
      {
        int uploadTime = el.attribute("upload_time","1").toInt();
@@ -195,7 +195,8 @@ void ProjectUpload::buildSelectedItemList()
       u = dynamic_cast<UploadTreeFile*>(item)->url();
      }
 
-     if (!u.isEmpty()) toUpload.append(u);
+     if (!u.isEmpty())
+         toUpload.append(item);
    }
   }
 }
@@ -259,10 +260,26 @@ void ProjectUpload::upload()
   if ( stopUpload ) return;
   KURL dir;
   KURL to;
+  UploadTreeFile *fileItem;
+  UploadTreeFolder *folderItem;
 
-  for ( KURL::List::Iterator file = toUpload.begin(); file != toUpload.end(); ++file )
+  uint toUploadCount = toUpload.count();
+  currentItem = 0L;
+  for (uint i = 0; i < toUploadCount; i++)
   {
-      currentURL = *file;
+      currentItem = toUpload.at(i);
+      if (dynamic_cast<UploadTreeFile*>(currentItem))
+      {
+        fileItem = dynamic_cast<UploadTreeFile*>(currentItem);
+        folderItem = 0L;
+        currentURL = fileItem->url();
+      } else
+      {
+        fileItem = 0L;
+        folderItem = dynamic_cast<UploadTreeFolder*>(currentItem);
+        currentURL = folderItem->url();
+      }
+
 
       KURL from = QExtFileInfo::toAbsolute(currentURL, p->baseURL);
       to = *baseUrl;
@@ -292,10 +309,10 @@ void ProjectUpload::upload()
         }
       }
 
-      //qDebug("%s -> %s", from.url().data(), to.url().data() );
-      if (!from.fileName(false).isEmpty())
+      qDebug("%s -> %s", from.url().data(), to.url().data() );
+      if (!from.fileName(false).isEmpty() && fileItem)
       {
-        KIO::FileCopyJob *job = KIO::file_copy( from, to, -1, true, false, false );
+        KIO::FileCopyJob *job = KIO::file_copy( from, to, fileItem->permissions(), true, false, false );
 
         connect( job, SIGNAL( result( KIO::Job * ) ),this,
                           SLOT( uploadFinished( KIO::Job * ) ) );
@@ -391,13 +408,14 @@ void ProjectUpload::slotUploadNext()
   if (!suspendUpload)
   {
     totalProgress->setProgress(totalProgress->progress()+1);
-    QListViewItem *it = list->findItem( currentURL.path() );
+   // QListViewItem *it = list->findItem( currentURL.path() );
+   QListViewItem *it = currentItem;
     if (it)
     {
      it->setSelected(false);
      it->repaint();
     }
-    toUpload.remove( currentURL );
+    toUpload.remove( it );
 
     //update upload time
     QDomNodeList nl = p->dom.firstChild().firstChild().childNodes();

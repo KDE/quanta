@@ -70,7 +70,13 @@ RescanPrj::RescanPrj(KURL::List p_prjFileList, const KURL& p_baseURL, QRegExp &p
            this,           SLOT(slotCollapse()));
 }
 
-RescanPrj::~RescanPrj(){
+RescanPrj::~RescanPrj()
+{
+  for (uint i = 0; i < urlList.count(); i++)
+  {
+    delete urlList[i].fileItem;
+  }
+  urlList.clear();
 }
 
 void RescanPrj::addEntries(KIO::Job *job,const KIO::UDSEntryList &list)
@@ -99,8 +105,7 @@ void RescanPrj::addEntries(KIO::Job *job,const KIO::UDSEntryList &list)
       if (prjFileList.findIndex(itemURL) == -1 )
       {
         urlEntry.url = itemURL;
-        urlEntry.date = item.timeString();
-        urlEntry.size = QString("%1").arg( (long int)item.size() );
+        urlEntry.fileItem = new KFileItem(item);
         urlList.append(urlEntry);
       }
     }
@@ -178,7 +183,7 @@ void RescanPrj::slotListDone(KIO::Job *)
   for (uint i = 0; i < urlList.count(); i++)
   {
     urlEntry = urlList[i];
-    listView->addItem(urlEntry.url, urlEntry.size, urlEntry.date);
+    listView->addItem(urlEntry.url, *(urlEntry.fileItem));
     progress->advance(1);
   }
 

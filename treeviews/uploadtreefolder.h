@@ -30,7 +30,7 @@
   */
 
 class KURL;
-  
+
 class UploadTreeFolder : public KListViewItem  {
 public:
   UploadTreeFolder( const KURL &a_url, QListView * parent, const char * name);
@@ -44,7 +44,7 @@ public:
 
   virtual void setOpen( bool );
   void setup();
-  void setWhichPixmap( QString pixmap );
+  void setWhichPixmap(const QString& pixmap );
 
 public:
   UploadTreeFolder * parentFolder;

@@ -2,7 +2,7 @@
                           uploadtreefile.h  -  description
                              -------------------
     begin                : Sun Aug 25 2002
-    copyright            : (C) 2002 by Andras Mantia
+    copyright            : (C) 2002, 2003 by Andras Mantia
     email                : amantia@freemail.hu
  ***************************************************************************/
 
@@ -19,19 +19,23 @@
 #define UPLOADTREEFILE_H
 
 #include <klistview.h>
+
 #include "uploadtreefolder.h"
 
 /**
-  *@author George Vilches
+  *@author George Vilches & Andras Mantia
   */
 
+class KFileItem;
+
 class UploadTreeFile : public KListViewItem  {
-public: 
-  UploadTreeFile( UploadTreeFolder *parent, const KURL &a_url, QString, QString);
-  UploadTreeFile( QListView *parent, const KURL &a_url, QString, QString );
+public:
+  UploadTreeFile( UploadTreeFolder *parent, const KURL &a_url, const KFileItem &a_fileItem);
+  UploadTreeFile( QListView *parent, const KURL &a_url, const KFileItem &a_fileItem);
   ~UploadTreeFile();
-  
-  void setWhichPixmap( QString );
+
+  void setWhichPixmap(const QString& pixmap);
+  mode_t permissions();
 
   /** used for sorting */
   virtual QString key ( int column, bool ascending ) const;
@@ -42,6 +46,7 @@ public:
   UploadTreeFolder * parentFolder;
   KURL m_url;
   bool isDir;
+  KFileItem *m_fileItem;
 };
 
 #endif

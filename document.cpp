@@ -748,7 +748,6 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
   QString tagName;
   bool handled = false;
   tagName = getTagNameAt(line, column);
-
   tag = QuantaCommon::tagFromDTD(completionDTD, tagName);
   if (!tag) tag = userTagList.find(tagName.lower());
 
@@ -1915,6 +1914,7 @@ void Document::paste()
 
 bool Document::eventFilter(QObject *object, QEvent *event)
 {
+	Q_UNUSED(object);
   if(event->type() == QEvent::Paint && !repaintEnabled)
     return true;
   else if(event->type() == QEvent::FocusIn )

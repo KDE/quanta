@@ -21,7 +21,10 @@
 
 #include "projectuploads.h"
 #include "project.h"
+
+#include <qptrlist.h>
 #include <qstringlist.h>
+
 #include <kio/job.h>
 #include "../treeviews/uploadtreeview.h"
 
@@ -59,7 +62,8 @@ protected slots:
 private:
   void buildSelectedItemList();
   KURL::List modified; // modified files
-  KURL::List toUpload; // list of files , still didn't uploaded
+  QPtrList<QListViewItem> toUpload; // list of files , still didn't uploaded
+  QListViewItem *currentItem;
   KURL currentURL;
   KURL::List madeDirs;
   Project *p;

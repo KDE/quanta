@@ -160,7 +160,7 @@ void ProjectNewLocal::slotSetFiles(bool)
        if ( !fileList.contains(files[i]) )
        {
          fileList.append(files[i]);
-         QListViewItem *it = listView->addItem(files[i], "", "");
+         QListViewItem *it = listView->addItem(files[i], KFileItem(KFileItem::Unknown , KFileItem::Unknown, KURL()));
          if (it)  it->setSelected(true);
          progressBar->setValue(i);
        }
@@ -220,7 +220,7 @@ void ProjectNewLocal::slotAddFiles()
        if (!fileList.contains(list[i]))
        {
          fileList.append(list[i]);
-         QListViewItem *it = listView->addItem(list[i], "", "");
+         QListViewItem *it = listView->addItem(list[i], KFileItem(KFileItem::Unknown , KFileItem::Unknown, KURL()));
          if (it)  it->setSelected(true);
          progressBar->setValue(i);
        }
@@ -289,7 +289,7 @@ void ProjectNewLocal::slotInsertFilesAfterCopying(const KURL& rdir, CopyTo* dlg)
      if ( !fileList.contains(files[i]) )
      {
        fileList.append(files[i]);
-       QListViewItem *it = listView->addItem(files[i], "", "");
+       QListViewItem *it = listView->addItem(files[i], KFileItem(KFileItem::Unknown , KFileItem::Unknown, KURL()));
        if (it)  it->setSelected(true);
        progressBar->setValue(i);
      }

@@ -2,7 +2,7 @@
                           uploadtreeview.h  -  description
                              -------------------
     begin                : Sun Aug 25 2002
-    copyright            : (C) 2002 by Andras Mantia
+    copyright            : (C) 2002, 2003 by Andras Mantia
     email                : amantia@freemail.hu
  ***************************************************************************/
 
@@ -26,9 +26,10 @@
 #include "uploadtreefolder.h"
 #include "uploadtreefile.h"
 
+class KFileItem;
 
 /**
-  *@author George Vilches
+  *@author George Vilches & Andras Mantia
   */
 
 class UploadTreeView : public KListView {
@@ -36,7 +37,7 @@ class UploadTreeView : public KListView {
 public:
   UploadTreeView( QWidget *parent, const char *name=0L );
   ~UploadTreeView();
-  UploadTreeFile* addItem( const KURL &a_url, QString, QString );
+  UploadTreeFile* addItem( const KURL &a_url, const KFileItem &a_fileItem);
   QListViewItem* findItem( const QString& );
   int checkboxTree( QListViewItem *it = 0);
   void expandAll( QListViewItem * = 0 );
@@ -52,11 +53,11 @@ public slots:
   void selectAllUnderNode( QListViewItem *it, bool select );
 
 private slots:
-  void slotDoubleClicked(QListViewItem *, const QPoint &, int );  
+  void slotDoubleClicked(QListViewItem *, const QPoint &, int );
 
 private:
   UploadTreeFolder* findFolder( UploadTreeFolder *, const QString&);
-  UploadTreeFolder* printTree( UploadTreeFolder *, QString);
+  UploadTreeFolder* printTree( UploadTreeFolder *, const QString&);
 };
 
 #endif

@@ -67,7 +67,7 @@ void UploadTreeFolder::setOpen( bool open )
 QString UploadTreeFolder::fullName()
 {
   QString s="";
-  
+
   if ( parentFolder )
   {
     s = parentFolder->fullName();
@@ -113,7 +113,7 @@ UploadTreeFolder::~UploadTreeFolder()
 {
 }
 
-void UploadTreeFolder::setWhichPixmap( QString pixmap )
+void UploadTreeFolder::setWhichPixmap(const QString& pixmap )
 {
   setPixmap( 1, SmallIcon(pixmap) );
 }

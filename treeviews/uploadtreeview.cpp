@@ -20,6 +20,7 @@
 #include <kcursor.h>
 #include <klocale.h>
 #include <kurl.h>
+#include <kfileitem.h>
 
 #include "uploadtreeview.h"
 #include "../quantacommon.h"
@@ -254,7 +255,7 @@ UploadTreeFolder* UploadTreeView::findFolder( UploadTreeFolder *it, const QStrin
   return 0;
 }
 
-UploadTreeFolder* UploadTreeView::printTree( UploadTreeFolder *it = 0, QString indent = "" )
+UploadTreeFolder* UploadTreeView::printTree( UploadTreeFolder *it = 0,const QString& indent = QString::null )
 {
   QListViewItem *itIter = 0;
   if (it == 0) itIter = firstChild();
@@ -299,7 +300,7 @@ QListViewItem* UploadTreeView::findItem(const QString& path )
   return 0;
 }
 
-UploadTreeFile* UploadTreeView::addItem(const KURL &a_url, QString date, QString size )
+UploadTreeFile* UploadTreeView::addItem(const KURL &a_url, const KFileItem& a_fileItem)
 {
   QString item = a_url.path(); //TODO: do with real KURL's
   QString fname = item;
@@ -336,11 +337,11 @@ UploadTreeFile* UploadTreeView::addItem(const KURL &a_url, QString date, QString
   {
     if (it == 0)
     {
-    file = new UploadTreeFile(this, a_url, date, size);
+    file = new UploadTreeFile(this, a_url, a_fileItem);
     }
     else
     {
-      file = new UploadTreeFile(it, a_url, date, size);
+      file = new UploadTreeFile(it, a_url, a_fileItem);
     }
   }
   return file;
