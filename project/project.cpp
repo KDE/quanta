@@ -376,7 +376,7 @@ void Project::closeProject()
   emit closeFiles();
 
   emit setBasePath		( basePath );
-  emit setProjectName	( i18n( "No project" ) );
+  emit setProjectName	( i18n( "No Project" ) );
   emit templateDirChanged(QString::null);
   emit reloadTree 		( fileNameList(), true, false );
 
@@ -451,10 +451,10 @@ void Project::slotProjectReadFinish(KIO::Job *job)
 {
   emit checkOpenAction(true);
   if ( job->error() ) job->showErrorDialog();
-  
+
   QString s(buff.buffer());
-  
-  if ( !dom.setContent( s )) { KMessageBox::sorry( this, i18n("Not found XML info in file") );return;}
+
+  if ( !dom.setContent( s )) { KMessageBox::sorry( this, i18n("Didn't find XML info in file.") );return;}
   
   loadProjectXML();
   
@@ -490,8 +490,8 @@ void Project::loadProjectXML()
   QDomNode    no;
   QDomElement el;
 	
-  if ((no=dom.firstChild().firstChild()).isNull())      { KMessageBox::sorry( this, i18n("Wrong project's file") );return;}
-  if ((name=no.toElement().attribute("name")).isNull()) { KMessageBox::sorry( this, i18n("Wrong project's file") );return;}
+  if ((no=dom.firstChild().firstChild()).isNull())      { KMessageBox::sorry( this, i18n("Wrong project's file.") );return;}
+  if ((name=no.toElement().attribute("name")).isNull()) { KMessageBox::sorry( this, i18n("Wrong project's file.") );return;}
 	
   QString s = no.toElement().attribute("previewPrefix");
   if ( s.right(1) != "/" && !s.isEmpty() ) s+="/";
@@ -561,7 +561,7 @@ void Project::insertFile( QString name )
 void Project::addFiles()
 {
 	KURL::List list = KFileDialog::getOpenURLs(
-		basePath,	i18n("*"), this, i18n("Insert files in project..."));
+		basePath,	i18n("*"), this, i18n("Insert Files in Project"));
 		
 	QStringList files = list.toStringList();
 	
@@ -591,7 +591,7 @@ void Project::addFiles()
 void Project::addDirectory()
 {
 	QString dir = KFileDialog::getExistingDirectory(
-		basePath, this, i18n("Insert directory in project..."));
+		basePath, this, i18n("Insert Directory in Project"));
 	
 	addDirectory(dir);
 }
@@ -791,9 +791,9 @@ void Project::newProject()
 	stack->addWidget( pnl, 0);
 	stack->addWidget( pnw, 1 );
 	
-	wiz->addPage( png,   i18n("<b>General setting of project...</b>"));
-	wiz->addPage( stack, i18n("<b>Insert files in project...</b>"));
-	wiz->addPage( pnf,   i18n("<b>Some settings of project...</b>"));
+	wiz->addPage( png,   i18n("<b>General setting of project</b>"));
+	wiz->addPage( stack, i18n("<b>Insert files in project</b>"));
+	wiz->addPage( pnf,   i18n("<b>Some settings of project</b>"));
 	
 	wiz->setNextEnabled  ( png,   false );
 	wiz->setBackEnabled  ( stack, true  );
@@ -947,7 +947,7 @@ void Project::slotAcceptCreateProject()
 
 void Project::options()
 {
-	QTabDialog *dlg = new QTabDialog(0L, i18n("Project options"), true);
+	QTabDialog *dlg = new QTabDialog(0L, i18n("Project Options"), true);
 
 	png = new ProjectNewGeneral( dlg );
 	pnf = new ProjectNewFinal  ( dlg );

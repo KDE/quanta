@@ -1632,7 +1632,7 @@ void QuantaApp::slotSaveToolbar(bool localToolbar, QString toolbarToSave)
   if (toolbarToSave.isEmpty())
   {
     QTabWidget *tb = view->toolbarTab;
-    ToolBarsDlg * dlg = new ToolBarsDlg(this, i18n("Save toolbar"));
+    ToolBarsDlg * dlg = new ToolBarsDlg(this, i18n("Save Toolbar"));
     QComboBox * combo = new QComboBox(dlg);
     dlg->nameEdit->hide();
     combo->setGeometry(QRect(135,25,115,24));
@@ -1701,7 +1701,7 @@ void QuantaApp::slotSaveProjectToolbar()
 /** Adds a new, empty toolbar. */
 void QuantaApp::slotAddToolbar()
 {
- ToolBarsDlg * dlg = new ToolBarsDlg(this, i18n("New toolbar"));
+ ToolBarsDlg * dlg = new ToolBarsDlg(this, i18n("New Toolbar"));
  dlg->nameEdit->setText(i18n("User_%1").arg(userToolbarsCount));
  if (dlg->exec())
  {
@@ -1736,7 +1736,7 @@ void QuantaApp::slotRemoveToolbar()
  QTabWidget *tb = view->toolbarTab;
  int i;
 
- ToolBarsDlg * dlg = new ToolBarsDlg(this, i18n("Remove toolbar"));
+ ToolBarsDlg * dlg = new ToolBarsDlg(this, i18n("Remove Toolbar"));
  QComboBox * combo = new QComboBox(dlg);
  dlg->nameEdit->hide();
  combo->setGeometry(QRect(135,25,115,24));
@@ -1764,7 +1764,7 @@ void QuantaApp::slotRemoveToolbar()
     if ( s1 != s2 )
     {
      if (KMessageBox::questionYesNo(this, i18n("The toolbar \"%1\" was modified. Do you want to save before remove?").arg(combo->currentText()),
-             i18n("Save toolbar")) == KMessageBox::Yes)
+             i18n("Save Toolbar")) == KMessageBox::Yes)
      {
        slotSaveToolbar(true, combo->currentText().lower() );
      }
@@ -1784,7 +1784,7 @@ void QuantaApp::slotRemoveToolbar()
 void QuantaApp::slotSendToolbar()
 {
   QTabWidget *tb = view->toolbarTab;
-  ToolBarsDlg * dlg = new ToolBarsDlg(this, i18n("Send toolbar"));
+  ToolBarsDlg * dlg = new ToolBarsDlg(this, i18n("Send Toolbar"));
   QComboBox * combo = new QComboBox(dlg);
   dlg->nameEdit->hide();
   combo->setGeometry(QRect(135,25,115,24));
@@ -1814,7 +1814,7 @@ void QuantaApp::slotSendToolbar()
 
   toolbarFile += tempFile->name();
 
-  TagMailDlg *mailDlg = new TagMailDlg( this, i18n("Send toolbar by e-mail"));
+  TagMailDlg *mailDlg = new TagMailDlg( this, i18n("Send toolbar by email"));
   QString toStr;
   QString message = i18n("Hi,\n This is a Quanta Plus [http://quanta.sourceforge.net] toolbar.\n\nHave fun.\n");
   QString titleStr;
@@ -1862,7 +1862,7 @@ void QuantaApp::saveModifiedToolbars()
      if ( (s1 != s2) && (!s1.isEmpty()) )
      {
        if (KMessageBox::questionYesNo(this, i18n("The toolbar \"%1\" was modified. Do you want to save before remove?").arg(it.currentKey()),
-             i18n("Save toolbar")) == KMessageBox::Yes)
+             i18n("Save Toolbar")) == KMessageBox::Yes)
        {
          slotSaveToolbar(true, it.currentKey() );
        }

@@ -67,21 +67,21 @@ StructTreeView::StructTreeView(Parser *parser, KConfig *config, QWidget *parent,
 	RBMenuFile = new KPopupMenu("Project's file");
 
 	RBMenuFile -> insertItem( UserIcon("open"),  i18n("&Open"),       this, SLOT(slotFileOpen()), 0, ID_PROJECT_FILE_OPEN);
-	RBMenuFile -> insertItem( i18n("&Insert tag"), this, SLOT(slotFileTag()), 0, ID_PROJECT_FILE_TAG);
+	RBMenuFile -> insertItem( i18n("&Insert Tag"), this, SLOT(slotFileTag()), 0, ID_PROJECT_FILE_TAG);
 	RBMenuFile -> insertSeparator();
-	RBMenuFile -> insertItem( i18n("Remove file from project"), this, SLOT(slotRemoveFromProject()), 0, ID_PROJECT_REMOVE_FROM_PROJECT);
+	RBMenuFile -> insertItem( i18n("Remove File From Project"), this, SLOT(slotRemoveFromProject()), 0, ID_PROJECT_REMOVE_FROM_PROJECT);
 */
 
  	popupMenu = new QPopupMenu();
 
-	popupMenu -> insertItem( i18n("Select tag area"), this ,SLOT(slotSelectTag()));
-	popupMenu -> insertItem( i18n("End of tag"), 		  this ,SLOT(slotGotoEndOfTag()));
+	popupMenu -> insertItem( i18n("Select Tag Area"), this ,SLOT(slotSelectTag()));
+	popupMenu -> insertItem( i18n("End of Tag"), 		  this ,SLOT(slotGotoEndOfTag()));
 	popupMenu -> insertSeparator();
 	popupMenu -> insertItem( i18n("Open"), 		this ,SLOT(slotOpenSubTree()));
 	popupMenu -> insertItem( i18n("Close"),		this ,SLOT(slotCloseSubTree()));
 	popupMenu -> insertSeparator();
-	popupMenu -> insertItem( UserIcon("repaint"),  i18n("&reparse"), 		this ,SLOT(slotReparse()));
-	followCursorId = popupMenu -> insertItem( i18n("follow cursor"), this ,SLOT(changeFollowCursor()));
+	popupMenu -> insertItem( UserIcon("repaint"),  i18n("&Reparse"), 		this ,SLOT(slotReparse()));
+	followCursorId = popupMenu -> insertItem( i18n("Follow Cursor"), this ,SLOT(changeFollowCursor()));
 
 	popupMenu -> setItemChecked ( followCursorId, followCursor() );
 
@@ -108,7 +108,7 @@ void StructTreeView::createList(Node *node, StructTreeTag *parent, int openLevel
 	if ( !node ) return;
 
 	if ( !parent ) {
-		top = new StructTreeTag( this, "Document structure" );
+		top = new StructTreeTag( this, i18n("Document Structure") );
 		images = new StructTreeTag( this, "Images" );
 		images->setPixmap( 0, SmallIcon("image") );
 		links = new StructTreeTag( this, "Links" );
@@ -244,9 +244,9 @@ void StructTreeView::slotReparse(Node* node, int openLevel)
 	imagesCount = linksCount = 0;
 	createList(node,0L,openLevel);
 	if ( !imagesCount )
-	  images->setText(0,"no Images");
+	  images->setText(0,"No Images");
 	if ( !linksCount )
-	  links->setText(0,"no Links");
+	  links->setText(0,"No Links");
 }
 
 void StructTreeView::slotFollowTag( QListViewItem *item )
@@ -279,7 +279,7 @@ void StructTreeView::slotMouseClicked(int button, QListViewItem *item, const QPo
 
 	if ( button == Qt::LeftButton ) {
 
-    if ( handleLBM == i18n("Find tag and open tree"))
+    if ( handleLBM == i18n("Find Tag && Open Tree"))
     	setOpen( item, ! isOpen(item) );
     setSelected(item, true);
     slotFollowTag(item);
@@ -290,16 +290,16 @@ void StructTreeView::slotMouseClicked(int button, QListViewItem *item, const QPo
     if ( handleMBM == i18n("nothing"))
     	return;
 
-    if ( handleMBM == i18n("Find tag and open tree")) {
+    if ( handleMBM == i18n("Find Tag && Open Tree")) {
     	setOpen( item, ! isOpen(item) );
     	setSelected(item, true);
     	slotFollowTag(item);
     }
 
-    if ( handleMBM == i18n("Select tag area"))
+    if ( handleMBM == i18n("Select Tag Area"))
     	slotSelectTag();
 
-    if ( handleMBM == i18n("Go to end of tag"))
+    if ( handleMBM == i18n("Go to End of Tag"))
     	slotGotoEndOfTag();
 
     setSelected(item, true);
@@ -312,7 +312,7 @@ void StructTreeView::slotDoubleClicked( QListViewItem *)
 {
   config->setGroup("Parser options");
 
-  if ( config->readEntry("Double click") == i18n("nothing") )
+  if ( config->readEntry("Double click") == "nothing" )
   	return;
 
 	slotSelectTag();

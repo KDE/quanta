@@ -127,16 +127,16 @@ void ProjectNewLocal::resizeEvent ( QResizeEvent *t )
 void ProjectNewLocal::slotAddFiles()
 {
 	KURL::List list = KFileDialog::getOpenURLs(
-		dir,	i18n("*"), this, i18n("Insert files in project..."));
-		
+		dir,	i18n("*"), this, i18n("Insert Files in Project"));
+
 	QStringList files = list.toStringList();
-	
+
 	if ( files.isEmpty() ) return;
-	
+
 	QString t = files.first();
 	if ( t.left(5)=="file:" ) t.remove(0,5);
 	t = QExtFileInfo::toRelative( t, dir );
-	
+
 	if ( t.left(2)=="..")
 	{
 		CopyTo *dlg = new CopyTo( dir, this, i18n("Files: copy to project...") );
@@ -163,7 +163,7 @@ void ProjectNewLocal::slotAddFiles()
 void ProjectNewLocal::slotAddFolder()
 {
 	QString dirName = KFileDialog::getExistingDirectory(
-		dir, this, i18n("Insert directory in project..."));
+		dir, this, i18n("Insert Directory in Project"));
 	
 	if ( dirName.isEmpty() ) return;
 	

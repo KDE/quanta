@@ -64,7 +64,7 @@ CSSDialog::CSSDialog( QString basePath, QWidget* parent,  const char* name, bool
     grid->setMargin( 11 );
 
     TextLabel26 = new QLabel( this, "TextLabel26" );
-    TextLabel26->setText( i18n( "Selector : "  ) );
+    TextLabel26->setText( i18n( "Selector: "  ) );
 
     grid->addWidget( TextLabel26, 0, 1 );
     QSpacerItem* spacer = new QSpacerItem( 113, 20, QSizePolicy::Expanding, QSizePolicy::Fixed );
@@ -109,12 +109,12 @@ CSSDialog::CSSDialog( QString basePath, QWidget* parent,  const char* name, bool
     grid_2->setMargin( 11 );
 
     TextLabel1_2_2 = new QLabel( widget, "TextLabel1_2_2" );
-    TextLabel1_2_2->setText( i18n( "Font Variant"  ) );
+    TextLabel1_2_2->setText( i18n( "Font variant:"  ) );
 
     grid_2->addWidget( TextLabel1_2_2, 2, 0 );
 
     TextLabel1 = new QLabel( widget, "TextLabel1" );
-    TextLabel1->setText( i18n( "Font Family"  ) );
+    TextLabel1->setText( i18n( "Font family:"  ) );
 
     grid_2->addWidget( TextLabel1, 0, 0 );
 
@@ -139,12 +139,12 @@ CSSDialog::CSSDialog( QString basePath, QWidget* parent,  const char* name, bool
     grid_2->addMultiCellWidget( font_style, 1, 1, 1, 2 );
 
     TextLabel1_2_3 = new QLabel( widget, "TextLabel1_2_3" );
-    TextLabel1_2_3->setText( i18n( "Font Weight"  ) );
+    TextLabel1_2_3->setText( i18n( "Font weight:"  ) );
 
     grid_2->addWidget( TextLabel1_2_3, 3, 0 );
 
     TextLabel1_2 = new QLabel( widget, "TextLabel1_2" );
-    TextLabel1_2->setText( i18n( "Font Style"  ) );
+    TextLabel1_2->setText( i18n( "Font style:"  ) );
 
     grid_2->addWidget( TextLabel1_2, 1, 0 );
 
@@ -192,7 +192,7 @@ CSSDialog::CSSDialog( QString basePath, QWidget* parent,  const char* name, bool
     grid_2->addMultiCellWidget( font_size, 4, 4, 1, 2 );
 
     TextLabel1_2_3_2 = new QLabel( widget, "TextLabel1_2_3_2" );
-    TextLabel1_2_3_2->setText( i18n( "Font Size"  ) );
+    TextLabel1_2_3_2->setText( i18n( "Font size:"  ) );
 
     grid_2->addWidget( TextLabel1_2_3_2, 4, 0 );
 
@@ -216,7 +216,7 @@ CSSDialog::CSSDialog( QString basePath, QWidget* parent,  const char* name, bool
     grid_3->setMargin( 11 );
 
     TextLabel2 = new QLabel( widget_2, "TextLabel2" );
-    TextLabel2->setText( i18n( "Color"  ) );
+    TextLabel2->setText( i18n( "Color:"  ) );
 
     grid_3->addWidget( TextLabel2, 0, 0 );
 
@@ -233,22 +233,22 @@ CSSDialog::CSSDialog( QString basePath, QWidget* parent,  const char* name, bool
     grid_3->addMultiCellWidget( background_image, 2, 2, 1, 2 );
 
     TextLabel4 = new QLabel( widget_2, "TextLabel4" );
-    TextLabel4->setText( i18n( "Background Image"  ) );
+    TextLabel4->setText( i18n( "Background image:"  ) );
 
     grid_3->addWidget( TextLabel4, 2, 0 );
 
     TextLabel3 = new QLabel( widget_2, "TextLabel3" );
-    TextLabel3->setText( i18n( "Background Color"  ) );
+    TextLabel3->setText( i18n( "Background color:"  ) );
 
     grid_3->addWidget( TextLabel3, 1, 0 );
 
     TextLabel5 = new QLabel( widget_2, "TextLabel5" );
-    TextLabel5->setText( i18n( "Background Repeat"  ) );
+    TextLabel5->setText( i18n( "Background repeat:"  ) );
 
     grid_3->addWidget( TextLabel5, 3, 0 );
 
     TextLabel6 = new QLabel( widget_2, "TextLabel6" );
-    TextLabel6->setText( i18n( "Background Attachment"  ) );
+    TextLabel6->setText( i18n( "Background attachment:"  ) );
 
     grid_3->addWidget( TextLabel6, 4, 0 );
 
@@ -271,7 +271,7 @@ CSSDialog::CSSDialog( QString basePath, QWidget* parent,  const char* name, bool
     grid_3->addMultiCellWidget( background_repeat, 3, 3, 1, 2 );
 
     TextLabel7 = new QLabel( widget_2, "TextLabel7" );
-    TextLabel7->setText( i18n( "Background Position"  ) );
+    TextLabel7->setText( i18n( "Background position:"  ) );
 
     grid_3->addWidget( TextLabel7, 5, 0 );
 
@@ -311,7 +311,7 @@ CSSDialog::CSSDialog( QString basePath, QWidget* parent,  const char* name, bool
     grid_3->addItem( spacer_13, 7, 1 );
     QSpacerItem* spacer_14 = new QSpacerItem( 182, 20, QSizePolicy::Expanding, QSizePolicy::Fixed );
     grid_3->addItem( spacer_14, 7, 2 );
-    TabWidget2->insertTab( widget_2, i18n( "Color and BG" ) );
+    TabWidget2->insertTab( widget_2, i18n( "Color && BG" ) );
 
     QWidget* widget_3 = new QWidget( TabWidget2, "widget_3" );
     grid_4 = new QGridLayout( widget_3 );
@@ -319,42 +319,42 @@ CSSDialog::CSSDialog( QString basePath, QWidget* parent,  const char* name, bool
     grid_4->setMargin( 11 );
 
     TextLabel1_3 = new QLabel( widget_3, "TextLabel1_3" );
-    TextLabel1_3->setText( i18n( "Word Spacing"  ) );
+    TextLabel1_3->setText( i18n( "Word spacing:"  ) );
 
     grid_4->addWidget( TextLabel1_3, 0, 0 );
 
     TextLabel2_2 = new QLabel( widget_3, "TextLabel2_2" );
-    TextLabel2_2->setText( i18n( "Letter Spacing"  ) );
+    TextLabel2_2->setText( i18n( "Letter spacing:"  ) );
 
     grid_4->addWidget( TextLabel2_2, 1, 0 );
 
     TextLabel5_2 = new QLabel( widget_3, "TextLabel5_2" );
-    TextLabel5_2->setText( i18n( "Text Transformation"  ) );
+    TextLabel5_2->setText( i18n( "Text transformation:"  ) );
 
     grid_4->addWidget( TextLabel5_2, 4, 0 );
 
     TextLabel6_2 = new QLabel( widget_3, "TextLabel6_2" );
-    TextLabel6_2->setText( i18n( "Text Alignment"  ) );
+    TextLabel6_2->setText( i18n( "Text alignment:"  ) );
 
     grid_4->addWidget( TextLabel6_2, 5, 0 );
 
     TextLabel7_2 = new QLabel( widget_3, "TextLabel7_2" );
-    TextLabel7_2->setText( i18n( "Text Indentation"  ) );
+    TextLabel7_2->setText( i18n( "Text indentation:"  ) );
 
     grid_4->addWidget( TextLabel7_2, 6, 0 );
 
     TextLabel8 = new QLabel( widget_3, "TextLabel8" );
-    TextLabel8->setText( i18n( "Line Height"  ) );
+    TextLabel8->setText( i18n( "Line height:"  ) );
 
     grid_4->addWidget( TextLabel8, 7, 0 );
 
     TextLabel4_2 = new QLabel( widget_3, "TextLabel4_2" );
-    TextLabel4_2->setText( i18n( "Vertical Alignment"  ) );
+    TextLabel4_2->setText( i18n( "Vertical alignment:"  ) );
 
     grid_4->addWidget( TextLabel4_2, 3, 0 );
 
     TextLabel3_2 = new QLabel( widget_3, "TextLabel3_2" );
-    TextLabel3_2->setText( i18n( "Text Decoration"  ) );
+    TextLabel3_2->setText( i18n( "Text decoration:"  ) );
 
     grid_4->addWidget( TextLabel3_2, 2, 0 );
 
@@ -693,7 +693,7 @@ CSSDialog::CSSDialog( QString basePath, QWidget* parent,  const char* name, bool
     grid_6->setMargin( 11 );
 
     TextLabel22 = new QLabel( widget_5, "TextLabel22" );
-    TextLabel22->setText( i18n( "Display"  ) );
+    TextLabel22->setText( i18n( "Display:"  ) );
 
     grid_6->addWidget( TextLabel22, 0, 0 );
 
@@ -708,7 +708,7 @@ CSSDialog::CSSDialog( QString basePath, QWidget* parent,  const char* name, bool
     grid_6->addMultiCellWidget( display, 0, 0, 1, 2 );
 
     TextLabel23 = new QLabel( widget_5, "TextLabel23" );
-    TextLabel23->setText( i18n( "Whitespace"  ) );
+    TextLabel23->setText( i18n( "Whitespace:"  ) );
 
     grid_6->addWidget( TextLabel23, 1, 0 );
 
@@ -733,12 +733,12 @@ CSSDialog::CSSDialog( QString basePath, QWidget* parent,  const char* name, bool
     grid_6->addMultiCellWidget( list_style_type, 3, 3, 1, 2 );
 
     TextLabel24 = new QLabel( widget_5, "TextLabel24" );
-    TextLabel24->setText( i18n( "List Style Type"  ) );
+    TextLabel24->setText( i18n( "List style type:"  ) );
 
     grid_6->addWidget( TextLabel24, 3, 0 );
 
     TextLabel24_2 = new QLabel( widget_5, "TextLabel24_2" );
-    TextLabel24_2->setText( i18n( "List Style Image"  ) );
+    TextLabel24_2->setText( i18n( "List style image:"  ) );
 
     grid_6->addWidget( TextLabel24_2, 4, 0 );
 
@@ -747,7 +747,7 @@ CSSDialog::CSSDialog( QString basePath, QWidget* parent,  const char* name, bool
     grid_6->addMultiCellWidget( list_style_image, 4, 4, 1, 2 );
 
     TextLabel25 = new QLabel( widget_5, "TextLabel25" );
-    TextLabel25->setText( i18n( "List Style Position"  ) );
+    TextLabel25->setText( i18n( "List style position:"  ) );
 
     grid_6->addWidget( TextLabel25, 5, 0 );
 
@@ -954,12 +954,12 @@ CSSDialog::CSSDialog( QString basePath, QWidget* parent,  const char* name, bool
     grid_8->setMargin( 11 );
 
     TextLabel18 = new QLabel( widget_7, "TextLabel18" );
-    TextLabel18->setText( i18n( "Width"  ) );
+    TextLabel18->setText( i18n( "Width:"  ) );
 
     grid_8->addWidget( TextLabel18, 0, 0 );
 
     TextLabel19 = new QLabel( widget_7, "TextLabel19" );
-    TextLabel19->setText( i18n( "Height"  ) );
+    TextLabel19->setText( i18n( "Height:"  ) );
 
     grid_8->addWidget( TextLabel19, 1, 0 );
 
@@ -992,7 +992,7 @@ CSSDialog::CSSDialog( QString basePath, QWidget* parent,  const char* name, bool
     grid_8->addMultiCellWidget( height, 1, 1, 1, 2 );
 
     TextLabel20 = new QLabel( widget_7, "TextLabel20" );
-    TextLabel20->setText( i18n( "Float"  ) );
+    TextLabel20->setText( i18n( "Float:"  ) );
 
     grid_8->addWidget( TextLabel20, 2, 0 );
 
@@ -1006,7 +1006,7 @@ CSSDialog::CSSDialog( QString basePath, QWidget* parent,  const char* name, bool
     grid_8->addMultiCellWidget( Float, 2, 2, 1, 2 );
 
     TextLabel21 = new QLabel( widget_7, "TextLabel21" );
-    TextLabel21->setText( i18n( "Clear"  ) );
+    TextLabel21->setText( i18n( "Clear:"  ) );
 
     grid_8->addWidget( TextLabel21, 3, 0 );
 

@@ -71,7 +71,7 @@ TagDialog::TagDialog(QString tag ,QString attr)
   if ( coreDlg )   coreDlg->  writeAttributes( dict );
   if ( eventsDlg ) eventsDlg->writeAttributes( dict );
 
-  QString caption = i18n("Tag properties: ");
+  QString caption = i18n("Tag Properties: ");
   caption += this->tag;
   setCaption( caption);
 
@@ -81,8 +81,8 @@ TagDialog::TagDialog(QString tag ,QString attr)
   if ( coreDlg )  addTab( coreDlg,    i18n("Core & i18n") );
   if ( eventsDlg )addTab( eventsDlg,  i18n("Events") );
 
-  setOkButton();
-  setCancelButton();
+  setOkButton(i18n("&OK"));
+  setCancelButton(i18n("&Cancel"));
 
   connect( this, SIGNAL(applyButtonPressed()),  SLOT(slotAccept()) );
   connect( this, SIGNAL(cancelButtonPressed()), SLOT(reject()) );

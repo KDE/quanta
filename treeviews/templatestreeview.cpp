@@ -42,9 +42,9 @@
 #include "newtemplatedirdlg.h"
 #include "quantapropertiespagedlg.h"
 
-const QString textMenu = i18n("Insert as text");
-const QString binaryMenu = i18n("Insert link to file");
-const QString docMenu = i18n("New document based on this");
+const QString textMenu = i18n("Insert as Aext");
+const QString binaryMenu = i18n("Insert Link to File");
+const QString docMenu = i18n("New Document Based on This");
 
 TemplatesTreeView::TemplatesTreeView(const QString& projectBasePath, QWidget *parent, const char *name )
   : projectDir(0)
@@ -56,46 +56,46 @@ TemplatesTreeView::TemplatesTreeView(const QString& projectBasePath, QWidget *pa
 	fileMenu = new QPopupMenu();
 	
 	openId = fileMenu -> insertItem( UserIcon("open"),  i18n("&Open"), 		this ,SLOT(slotInsert()));
-  fileMenu -> insertItem(i18n("Open for editing"), 	this ,SLOT(slotOpen()));
-//	fileMenu -> insertItem(i18n("Insert tag"), 	this ,SLOT(slotInsertTag()));
-//	fileMenu -> insertItem(i18n("Insert as text in document"), 	this ,SLOT(slotInsertInDocument()));
-//	fileMenu -> insertItem(i18n("New document based on this"), 	this ,SLOT(slotNewDocument()));
+  fileMenu -> insertItem(i18n("Open for Editing"), 	this ,SLOT(slotOpen()));
+//	fileMenu -> insertItem(i18n("Insert Tag"), 	this ,SLOT(slotInsertTag()));
+//	fileMenu -> insertItem(i18n("Insert as Text in Document"), 	this ,SLOT(slotInsertInDocument()));
+//	fileMenu -> insertItem(i18n("New Document Based on This"), 	this ,SLOT(slotNewDocument()));
 	fileMenu -> insertSeparator();
-	fileMenu -> insertItem( i18n("&New directory"), 		this ,SLOT(slotNewDir()));
+	fileMenu -> insertItem( i18n("&New Directory..."), 		this ,SLOT(slotNewDir()));
 	fileMenu -> insertItem( UserIcon("copy"),  i18n("&Copy"), 		this ,SLOT(slotCopy()));
 	fileMenu -> insertItem( UserIcon("paste"), i18n("&Paste"),		this ,SLOT(slotPaste()));
-	fileMenu -> insertItem( UserIcon("delete"),i18n("&Delete"),   this ,SLOT(slotDelete()));
-	fileMenu -> insertItem( i18n("Properties"),   this ,SLOT(slotProperties()));
+	fileMenu -> insertItem( UserIcon("delete"),i18n("&Delete..."),   this ,SLOT(slotDelete()));
+	fileMenu -> insertItem( i18n("Properties..."),   this ,SLOT(slotProperties()));
 	fileMenu -> insertSeparator();
 	fileMenu -> insertItem( i18n("Reload"),   this ,SLOT(slotReload()));
-	
-	
+
+
 	folderMenu = new QPopupMenu();
-	
-//	folderMenu -> insertItem( i18n("Add folder to top"), this ,SLOT(slotAddToTop()), 0, ID_TOP, 0);
+
+//	folderMenu -> insertItem( i18n("Add Folder to Top"), this ,SLOT(slotAddToTop()), 0, ID_TOP, 0);
 //	folderMenu -> insertSeparator();
-	folderMenu -> insertItem( i18n("&New directory"), 		this ,SLOT(slotNewDir()));
+	folderMenu -> insertItem( i18n("&New Directory..."), 		this ,SLOT(slotNewDir()));
 	folderMenu -> insertItem( UserIcon("copy"),  i18n("&Copy"), 		this ,SLOT(slotCopy()));
 	folderMenu -> insertItem( UserIcon("paste"), i18n("&Paste"),		this ,SLOT(slotPaste()));
-	deleteMenuId = folderMenu -> insertItem( UserIcon("delete"),i18n("&Delete"),   this ,SLOT(slotDelete()));
-	folderMenu -> insertItem( i18n("Properties"),   this ,SLOT(slotProperties()));
+	deleteMenuId = folderMenu -> insertItem( UserIcon("delete"),i18n("&Delete..."),   this ,SLOT(slotDelete()));
+	folderMenu -> insertItem( i18n("Properties..."),   this ,SLOT(slotProperties()));
 	folderMenu -> insertSeparator();
 	folderMenu -> insertItem( i18n("Reload"),   this ,SLOT(slotReload()));
 
 	QString dir = KGlobal::dirs()->findResourceDir("data","quanta/toolbar/quantalogo.png")+"quanta/templates/";
- 	globalDir = new FilesTreeFolder( this , i18n("Global templates"), dir);
+ 	globalDir = new FilesTreeFolder( this , i18n("Global Templates"), dir);
 	globalDir->setPixmap( 0, SmallIcon("folder"));
 	globalDir->setOpen( true );
 
 	dir = locateLocal("data","quanta/templates/");
- 	localDir = new FilesTreeFolder( this , i18n("Local templates"),dir);
+ 	localDir = new FilesTreeFolder( this , i18n("Local Templates"),dir);
 	localDir->setPixmap( 0, SmallIcon("folder"));
 	localDir->setOpen( true );
 
 /*
 	if (! basePath.isEmpty())
 	{
- 		projectDir = new FilesTreeFolder( this , i18n("Project templates"), basePath+"templates/");
+ 		projectDir = new FilesTreeFolder( this , i18n("Project Templates"), basePath+"templates/");
 		projectDir->setPixmap( 0, SmallIcon("folder"));
 		projectDir->setOpen( true );
 	} else
@@ -166,8 +166,8 @@ void TemplatesTreeView::slotMenu(QListViewItem *item, const QPoint &point, int)
 	FilesTreeFolder *d = dynamic_cast<FilesTreeFolder *>( item);
 	if ( d )
 	{
-	  if ( d->text(0) == i18n("Global templates") || d->text(0) == i18n("Local templates" )
-	       || d->text(0) == i18n("Project templates") )
+	  if ( d->text(0) == i18n("Global Templates") || d->text(0) == i18n("Local Templates" )
+	       || d->text(0) == i18n("Project Templates") )
 	        folderMenu ->setItemEnabled( deleteMenuId, false);
 	  else  folderMenu ->setItemEnabled( deleteMenuId, true );
 	
@@ -242,7 +242,7 @@ void TemplatesTreeView::slotInsert()
 /** No descriptions */
 void TemplatesTreeView::slotNewDir()
 {
-  NewTemplateDirDlg *createDirDlg = new NewTemplateDirDlg(this,i18n("Create new template directory"));
+  NewTemplateDirDlg *createDirDlg = new NewTemplateDirDlg(this,i18n("Create New Template Directory"));
   createDirDlg->typesCombo->insertItem("text/all");
   createDirDlg->typesCombo->insertItem("file/all");
   createDirDlg->typesCombo->insertItem("template/all");
@@ -426,7 +426,7 @@ void TemplatesTreeView::slotProperties()
   KPropertiesDialog *propDlg = new KPropertiesDialog( KURL( currentFileName() ), this, 0L, false, false);
 
 //Always add the Quanta directory page
-  QFrame *quantaDirPage = propDlg->dialog()->addPage(i18n("Quanta directory"));
+  QFrame *quantaDirPage = propDlg->dialog()->addPage(i18n("Quanta Directory"));
   QVBoxLayout *topLayout = new QVBoxLayout( quantaDirPage);
   quantaProperties = new QuantaPropertiesPageDlg( quantaDirPage, i18n("Quanta") );
 
@@ -581,7 +581,7 @@ void TemplatesTreeView::slotSetTemplateDir(const QString &Dir)
 
   if(!Dir.isEmpty())
   {
-    projectDir = new FilesTreeFolder(this, i18n("Project templates"), Dir);
+    projectDir = new FilesTreeFolder(this, i18n("Project Templates"), Dir);
     projectDir->setPixmap(0, SmallIcon("folder"));
     projectDir->setOpen(true);
   }

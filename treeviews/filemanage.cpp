@@ -46,28 +46,28 @@ FileManage::FileManage( QWidget *parent, const char *name)
 	fileMenu = new QPopupMenu();
 	
 	fileMenu -> insertItem( UserIcon("open"),  i18n("&Open"), 		this ,SLOT(slotOpen()));
-	fileMenu -> insertItem(					  			   i18n("Open with..."), 		this ,SLOT(slotOpenWith()));
+	fileMenu -> insertItem(					  			   i18n("Open With..."), 		this ,SLOT(slotOpenWith()));
 	fileMenu -> insertItem(					  			   i18n("Open in Quanta"), 	this ,SLOT(slotOpenInQuanta()));
-	fileMenu -> insertItem(					  			   i18n("Insert tag"), 	this ,SLOT(slotInsertTag()));
+	fileMenu -> insertItem(					  			   i18n("Insert Tag"), 	this ,SLOT(slotInsertTag()));
 	fileMenu -> insertSeparator();
-	fileMenu -> insertItem(					  			   i18n("Insert in project"),this ,SLOT(slotInsertInProject()));
+	fileMenu -> insertItem(					  			   i18n("Insert in Project"),this ,SLOT(slotInsertInProject()));
 	fileMenu -> insertSeparator();
 	fileMenu -> insertItem( UserIcon("copy"),  i18n("&Copy"), 		this ,SLOT(slotCopy()));
 	fileMenu -> insertItem( UserIcon("paste"), i18n("&Paste"),		this ,SLOT(slotPaste()));
-	fileMenu -> insertItem( UserIcon("delete"),i18n("&Delete"),   this ,SLOT(slotDelete()));
-	fileMenu -> insertItem( i18n("Properties"),   this ,SLOT(slotProperties()));
+	fileMenu -> insertItem( UserIcon("delete"),i18n("&Delete..."),   this ,SLOT(slotDelete()));
+	fileMenu -> insertItem( i18n("Properties..."),   this ,SLOT(slotProperties()));
 	fileMenu -> insertSeparator();
 	fileMenu -> insertItem( i18n("Reload"),   this ,SLOT(slotReload()));
-	
-	
+
+
 	folderMenu = new QPopupMenu();
-	
-	folderMenu -> insertItem(					  			   i18n("Insert in project"),this ,SLOT(slotInsertDirInProject()));
+
+	folderMenu -> insertItem(					  			   i18n("Insert in Project"),this ,SLOT(slotInsertDirInProject()));
 	folderMenu -> insertSeparator();
 	folderMenu -> insertItem( UserIcon("copy"),  i18n("&Copy"), 		this ,SLOT(slotCopy()));
 	folderMenu -> insertItem( UserIcon("paste"), i18n("&Paste"),		this ,SLOT(slotPaste()));
-	folderMenu -> insertItem( UserIcon("delete"),i18n("&Delete"),   this ,SLOT(slotDelete()));
-	folderMenu -> insertItem( i18n("Properties"),   this ,SLOT(slotProperties()));
+	folderMenu -> insertItem( UserIcon("delete"),i18n("&Delete..."),   this ,SLOT(slotDelete()));
+	folderMenu -> insertItem( i18n("Properties..."),   this ,SLOT(slotProperties()));
 	folderMenu -> insertSeparator();
 	folderMenu -> insertItem( i18n("Reload"),   this ,SLOT(slotReload()));
 	

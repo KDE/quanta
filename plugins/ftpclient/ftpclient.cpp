@@ -35,7 +35,7 @@ extern "C" {
 FtpClient::FtpClient( QWidget* parent, const char* name, WFlags fl )
   :QDialog(parent, name, true, fl),localOperator( "/" )
 {
-  setCaption( i18n("Small FTP client") );
+  setCaption( i18n("Small FTP Client") );
 
   resize(500,400);
 

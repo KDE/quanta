@@ -27,6 +27,7 @@
 // kde includes
 #include <kfiledialog.h>
 #include <kiconloader.h>
+#include <klocale.h>
 #include "projectnewgeneral.h"
 
 ProjectNewGeneral::ProjectNewGeneral(QWidget *parent, const char *name )
@@ -61,7 +62,7 @@ void ProjectNewGeneral::slotButtonDir()
 	linePrjDir->setText( KFileDialog::getExistingDirectory(
 		linePrjDir->text(),
 		this,
-		"Select project directory..."
+		i18n("Select Project Directory")
 	));
 }
 
@@ -81,10 +82,10 @@ void ProjectNewGeneral::slotChangeNames( const QString &text )
 	int i;
 	QString fname = text.lower();
 	while( (i=fname.find(" ")) >=0 ) fname.remove(i,1);
-	
+
 	linePrjFile->setText( fname+".webprj" );
 	linePrjDir ->setText( QDir::homeDirPath()+"/"+fname );
-	
+
 	emit setBasePath(linePrjDir->text());
 }
 
@@ -104,13 +105,13 @@ void ProjectNewGeneral::setMargin(int i)
 void ProjectNewGeneral::slotButtonTmpl()
 {
   linePrjTmpl->setText( KFileDialog::getExistingDirectory(linePrjTmpl->text(), this,
-  "Select project template directory..."));
-}                                          
+  i18n("Select Project Template Directory")));
+}
 
 void ProjectNewGeneral::slotButtonToolbar()
 {
   linePrjToolbar->setText( KFileDialog::getExistingDirectory(linePrjToolbar->text(), this,
-  "Select project toolbar & actions directory..."));
+  i18n("Select Project Toolbar & Actions Directory")));
 }
 
 void ProjectNewGeneral::slotLinePrjToolbar(const QString &Str)

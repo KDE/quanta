@@ -26,7 +26,7 @@
   </action>
 
 
-  <action icon="tag_br" type="tag" name="tag_br" text="New line" >
+  <action icon="tag_br" type="tag" name="tag_br" text="New Line" >
    <tag>&lt;br></tag>
    <tooltip>The &lt;b>BR&lt;/b> element forces a &lt;i>break&lt;/i> in the current line of text.
      &lt;br>- CLEAR=[ left | all | right | none ] (clear floating objects)
@@ -43,14 +43,14 @@
    </tooltip>
   </action>
 
-  <action icon="tag_nbsp" type="text" name="tag_nbsp" text="Non breaking space" >
+  <action icon="tag_nbsp" type="text" name="tag_nbsp" text="Non Breaking Space" >
    <text>&amp;nbsp;</text>
    <tooltip>Inserting &lt;b>nbsp&lt;/b>.
      Non breaking &lt;i>space&lt;/i>.
    </tooltip>
   </action>
 
-  <action icon="tag_a" type="tag" name="tag_a" text="Anchor" >
+  <action icon="tag_a" type="tag" name="tag_a" text="Anchor..." >
    <tag useDialog="true" >&lt;a></tag>
    <xtag use="true" >&lt;/a></xtag>
    <tooltip>The &lt;b>A&lt;/b> element denotes an &lt;i>anchor&lt;/i>--a hypertext link or the destination of a link.
@@ -58,7 +58,7 @@
    </tooltip>
   </action>
 
-  <action icon="tag_image" type="tag" name="tag_img" text="Image" >
+  <action icon="tag_image" type="tag" name="tag_img" text="Image..." >
    <tag useDialog="true" >&lt;img></tag>
    <tooltip>The &lt;b>IMG&lt;/b> element specifies an &lt;i>inline&lt;/i> image.
      The required &lt;b>SRC&lt;/b> attribute specifies the location of the image.
@@ -79,7 +79,7 @@
    </tooltip>
   </action>
 
-  <action icon="div_left" type="tag" name="tag_div_left" text="Align left" >
+  <action icon="div_left" type="tag" name="tag_div_left" text="Align Left" >
    <tag>&lt;div align=&quot;left&quot;></tag>
    <xtag use="true" >&lt;/div></xtag>
    <tooltip>The &lt;b>DIV ALIGN&lt;/b>=&lt;i>left&lt;/i>
@@ -87,7 +87,7 @@
    </tooltip>
   </action>
 
-  <action icon="div_center" type="tag" name="tag_div_center" text="Align center" >
+  <action icon="div_center" type="tag" name="tag_div_center" text="Align Center" >
    <tag>&lt;div align=&quot;center&quot;></tag>
    <xtag use="true" >&lt;/div></xtag>
    <tooltip>The &lt;b>DIV ALIGN&lt;/b>=&lt;i>center&lt;/i> or &lt;b>CENTER&lt;/b>
@@ -95,7 +95,7 @@
    </tooltip>
   </action>
 
-  <action icon="div_right" type="tag" name="tag_div_right" text="Align right" >
+  <action icon="div_right" type="tag" name="tag_div_right" text="Align Right" >
    <tag>&lt;div align=&quot;right&quot;></tag>
    <xtag use="true" >&lt;/div></xtag>
    <tooltip>The &lt;b>DIV ALIGN&lt;/b>=&lt;i>right&lt;/i>
@@ -103,7 +103,7 @@
    </tooltip>
   </action>
 
-  <action icon="div_justify" type="tag" name="tag_div_justify" text="Align justify" >
+  <action icon="div_justify" type="tag" name="tag_div_justify" text="Align Justify" >
    <tag>&lt;div align=&quot;justify&quot;></tag>
    <xtag use="true" >&lt;/div></xtag>
    <tooltip>The &lt;b>DIV ALIGN&lt;/b>=&lt;i>justify&lt;/i>
@@ -111,7 +111,7 @@
    </tooltip>
   </action>
 
-  <action  icon="tag_font" type="tag" name="tag_font" text="Font" >
+  <action  icon="tag_font" type="tag" name="tag_font" text="Font..." >
    <tag useDialog="true" >&lt;font></tag>
    <xtag use="true" >&lt;/font></xtag>
    <tooltip>The &lt;b>FONT&lt;/b> element allows authors to suggest rudimentary &lt;i>font changes&lt;/i>.
@@ -156,7 +156,7 @@
    </tooltip>
   </action>
 
-  <action  icon="tag_h1" type="tag" name="tag_h1" text="Head  1 level" >
+  <action  icon="tag_h1" type="tag" name="tag_h1" text="Head 1 Level" >
    <tag useDialog="false" >&lt;h1></tag>
    <xtag use="true" >&lt;/h1></xtag>
    <tooltip>The &lt;b>H1&lt;/b> element defines a &lt;i>level-one heading&lt;/i>.
@@ -165,7 +165,7 @@
    </tooltip>
   </action>
 
-  <action  icon="tag_h2" type="tag" name="tag_h2" text="Head  2 level" >
+  <action  icon="tag_h2" type="tag" name="tag_h2" text="Head 2 Level" >
    <tag useDialog="false" >&lt;h2></tag>
    <xtag use="true" >&lt;/h2></xtag>
    <tooltip>The &lt;b>H2&lt;/b> element defines a &lt;i>level-two heading&lt;/i>.
@@ -174,7 +174,7 @@
    </tooltip>
   </action>
 
-  <action  icon="tag_h3" type="tag" name="tag_h3" text="Head  3 level" >
+  <action  icon="tag_h3" type="tag" name="tag_h3" text="Head 3 Level" >
    <tag useDialog="false" >&lt;h3></tag>
    <xtag use="true" >&lt;/h3></xtag>
    <tooltip>The &lt;b>H3&lt;/b> element defines a &lt;i>level-three heading&lt;/i>.
@@ -183,7 +183,7 @@
    </tooltip>
   </action>
 
-  <action  icon="tag_h4" type="tag" name="tag_h4" text="Head  4 level" >
+  <action  icon="tag_h4" type="tag" name="tag_h4" text="Head 4 Level" >
    <tag useDialog="false" >&lt;h4></tag>
    <xtag use="true" >&lt;/h4></xtag>
    <tooltip>The &lt;b>H4&lt;/b> element defines a &lt;i>level-four heading&lt;/i>.
@@ -192,7 +192,7 @@
    </tooltip>
   </action>
 
-  <action  icon="tag_h5" type="tag" name="tag_h5" text="Head  5 level" >
+  <action  icon="tag_h5" type="tag" name="tag_h5" text="Head 5 Level" >
    <tag useDialog="false" >&lt;h5></tag>
    <xtag use="true" >&lt;/h5></xtag>
    <tooltip>The &lt;b>H5&lt;/b> element defines a &lt;i>level-five heading&lt;/i>.
@@ -206,42 +206,42 @@
    <xtag use="true" inLine="false" >&lt;/table></xtag>
   </action>
 
-  <action icon="table_head" type="tag" name="tag_table_head" text="Table head (with dialog)" >
+  <action icon="table_head" type="tag" name="tag_table_head" text="Table Head (with dialog)" >
    <tag useDialog="true" >&lt;th></tag>
    <xtag use="true" inLine="true" >&lt;/th></xtag>
   </action>
 
-  <action icon="tag_table_body" type="tag" name="tag_table_body" text="Table body (with dialog)" >
+  <action icon="tag_table_body" type="tag" name="tag_table_body" text="Table Body (with dialog)" >
    <tag useDialog="true" >&lt;tbody></tag>
    <xtag use="true" inLine="true" >&lt;/tbody></xtag>
   </action>
 
-  <action icon="tag_table_row" type="tag" name="tag_table_row" text="Table row (with dialog)" >
+  <action icon="tag_table_row" type="tag" name="tag_table_row" text="Table Row (with dialog)" >
    <tag useDialog="true" >&lt;tr></tag>
    <xtag use="true" inLine="false" >&lt;/tr></xtag>
   </action>
 
-  <action icon="table_data" type="tag" name="tag_table_data" text="Table data (with dialog)" >
+  <action icon="table_data" type="tag" name="tag_table_data" text="Table Data (with dialog)" >
    <tag useDialog="true" >&lt;td></tag>
    <xtag use="true" inLine="true" >&lt;/td></xtag>
   </action>
 
-  <action icon="tag_th" type="tag" name="tag_th" text="Table head" >
+  <action icon="tag_th" type="tag" name="tag_th" text="Table Head" >
    <tag useDialog="false" >&lt;th></tag>
    <xtag use="true" inLine="true" >&lt;/th></xtag>
   </action>
 
-  <action icon="tag_tbody" type="tag" name="tag_tbody" text="Table body" >
+  <action icon="tag_tbody" type="tag" name="tag_tbody" text="Table Body" >
    <tag useDialog="false" >&lt;tbody></tag>
    <xtag use="true" inLine="true" >&lt;/tbody></xtag>
   </action>
 
-  <action icon="tag_tr" type="tag" name="tag_tr" text="Table row" >
+  <action icon="tag_tr" type="tag" name="tag_tr" text="Table Row" >
    <tag useDialog="false" >&lt;tr></tag>
    <xtag use="true" inLine="false" >&lt;/tr></xtag>
   </action>
 
-  <action icon="tag_td" type="tag" name="tag_td" text="Table data" >
+  <action icon="tag_td" type="tag" name="tag_td" text="Table Data" >
    <tag useDialog="false" >&lt;td></tag>
    <xtag use="true" inLine="true" >&lt;/td></xtag>
   </action>
@@ -261,7 +261,7 @@
    <xtag use="true" inLine="false" >&lt;/ol></xtag>
   </action>
 
-  <action icon="tag_li" type="tag" name="tag_li" text="List item" >
+  <action icon="tag_li" type="tag" name="tag_li" text="List Item" >
    <tag useDialog="false" >&lt;li></tag>
    <xtag use="true" inLine="true" >&lt;/li></xtag>
   </action>
@@ -291,27 +291,27 @@
    <xtag use="true" inLine="false" >&lt;/select></xtag>
   </action>
 
-  <action icon="textarea" type="tag" name="tag_form_textarea" text="Text area" >
+  <action icon="textarea" type="tag" name="tag_form_textarea" text="Text Area" >
    <tag useDialog="false" >&lt;textarea></tag>
    <xtag use="true" inLine="true" >&lt;/textarea></xtag>
   </action>
 
-  <action icon="lineedit" type="tag" name="tag_form_lineedit" text="Input text" >
+  <action icon="lineedit" type="tag" name="tag_form_lineedit" text="Input Text" >
    <tag useDialog="true" >&lt;input type=&quot;text&quot;></tag>
    <xtag use="false" inLine="true" />
   </action>
 
-  <action icon="linepas" type="tag" name="tag_form_passedit" text="Input password" >
+  <action icon="linepas" type="tag" name="tag_form_passedit" text="Input Password" >
    <tag useDialog="true" >&lt;input type=&quot;password&quot;></tag>
    <xtag use="false" inLine="true" />
   </action>
 
-  <action icon="check" type="tag" name="tag_form_check" text="Check button" >
+  <action icon="check" type="tag" name="tag_form_check" text="Check Button" >
    <tag useDialog="true" >&lt;input type=&quot;checkbox&quot;></tag>
    <xtag use="false" inLine="true" ></xtag>
   </action>
 
-  <action icon="radio" type="tag" name="tag_form_radio" text="Radio button" >
+  <action icon="radio" type="tag" name="tag_form_radio" text="Radio Button" >
    <tag useDialog="true" >&lt;input type=&quot;radio&quot;></tag>
    <xtag use="false" inLine="true" ></xtag>
   </action>

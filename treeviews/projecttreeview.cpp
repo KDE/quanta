@@ -66,11 +66,11 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
 	fileMenu -> insertItem(					  			   i18n("Open with..."), 		this ,SLOT(slotOpenWith()));
 	openInQuantaId = fileMenu -> insertItem(					  			   i18n("Open in Quanta"), 	this ,SLOT(slotOpenInQuanta()));
 	fileMenu -> insertSeparator();
-	fileMenu -> insertItem(	UserIcon("delete"),i18n("Remove from disc (and project)"), 	 this ,SLOT(slotRemove()));
-	fileMenu -> insertItem(					  			   i18n("Remove from project"),this ,SLOT(slotRemoveFromProject(int)));
+	fileMenu -> insertItem(	UserIcon("delete"),i18n("Remove From Disc (and project)"), 	 this ,SLOT(slotRemove()));
+	fileMenu -> insertItem(					  			   i18n("Remove From Project"),this ,SLOT(slotRemoveFromProject(int)));
 	fileMenu -> insertItem( i18n("Rename"),   this ,SLOT(slotRenameFile()));
 	fileMenu -> insertSeparator();
-	fileMenu -> insertItem(i18n("Upload file..."),this,SLOT(slotUploadSingleFile()));
+	fileMenu -> insertItem(i18n("Upload File..."),this,SLOT(slotUploadSingleFile()));
 	fileMenu -> insertSeparator();
 	fileMenu -> insertItem( i18n("Properties"),   this ,SLOT(slotProperties()));
 
@@ -78,11 +78,11 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
 	
 	folderMenu -> insertItem( UserIcon("open"),  i18n("&Open"), 		this ,SLOT(slotOpen()));
  	folderMenu -> insertSeparator();
-	folderMenu -> insertItem(	UserIcon("delete"),i18n("Remove from disc (and project)"), 	 this ,SLOT(slotRemove()));
-	folderMenu -> insertItem(					  			   i18n("Remove from project"),this ,SLOT(slotRemoveFromProject(int)));
+	folderMenu -> insertItem(	UserIcon("delete"),i18n("Remove From Ddisc (and project)"), 	 this ,SLOT(slotRemove()));
+	folderMenu -> insertItem(					  			   i18n("Remove From Project"),this ,SLOT(slotRemoveFromProject(int)));
  	folderMenu -> insertItem( i18n("Rename"),   this ,SLOT(slotRenameFolder()));
 	folderMenu -> insertSeparator();
-	folderMenu -> insertItem(i18n("Upload folder..."),this,SLOT(slotUploadSingleFolder()));
+	folderMenu -> insertItem(i18n("Upload Folder..."),this,SLOT(slotUploadSingleFolder()));
 	folderMenu -> insertSeparator();
 	folderMenu -> insertItem( i18n("Properties"),   this ,SLOT(slotProperties()));
 
@@ -112,7 +112,7 @@ QString ProjectTreeView::currentFileName()
 	
 	if ( !parent ) // top level element
 		return ((ProjectTreeFolder *)item)->path;
-	
+
 	ProjectTreeFolder *f = dynamic_cast<ProjectTreeFolder *>(item);
 	
 	if ( f ) return f->path;
@@ -132,7 +132,7 @@ void ProjectTreeView::slotMenu(QListViewItem *item, const QPoint& point, int)
   {
     if (QFileInfo(currentFileName()).extension() == "toolbar.tgz")
     {
-     fileMenu->changeItem(openInQuantaId, i18n("Load toolbar file"));
+     fileMenu->changeItem(openInQuantaId, i18n("Load Toolbar File"));
     }
     fileMenu->popup( point);
   }
@@ -229,17 +229,17 @@ void ProjectTreeView::slotReloadTree( QStringList fileList, bool newtree, bool )
 void ProjectTreeView::slotOpen()
 {
 	if ( !currentItem() ) return;
-	
+
 	QListViewItem *item =  currentItem();
-	
+
 	if ( !item ) return;
 	if ( !currentItem() ) return;
-	
+
 	ProjectTreeFolder *f = dynamic_cast<ProjectTreeFolder *>(item);
 	if ( f ) return;
-	
+
 	QString nameToOpen = currentFileName();
-	
+
 	if ( QDir::match( fileMaskHtml+fileMaskJava+fileMaskText, nameToOpen) )
 	{
 		KURL url(nameToOpen);
@@ -261,8 +261,8 @@ void ProjectTreeView::slotOpen()
 		emit openFile( url );
  } else
  {
-   if (KMessageBox::questionYesNo(this,"This file cannot be opened in Quanta. \n \
-       Do you want to open with an external program or run it?","Unknown type") == KMessageBox::Yes)
+   if (KMessageBox::questionYesNo(this,i18n("This file cannot be opened in Quanta. \n \
+       Do you want to open with an external program or run it?"),i18n("Unknown type")) == KMessageBox::Yes)
   {
    KFileOpenWithHandler fowh;
 	 new KRun( KURL(nameToOpen), 0, true );
@@ -273,13 +273,13 @@ void ProjectTreeView::slotOpen()
 void ProjectTreeView::slotOpenWith()
 {
 	if ( !currentItem() ) return;
-	
+
 	QStringList list;
 	QString fileToOpen = currentFileName();
 	list.append( fileToOpen );
-	
+
 	KFileOpenWithHandler *kfowh = new KFileOpenWithHandler();
-	
+
 	kfowh -> displayOpenWithDialog( KURL::List( list ) );
 }
 
@@ -300,7 +300,7 @@ void ProjectTreeView::slotOpenInQuanta()
  if (! mimetype.contains("text"))
  {
    if (KMessageBox::questionYesNo(this,i18n("This file may be a binary file, thus cannot be opened \
-    in Quanta correctly.\n Do you still want to open it?"),i18n("Wrong type")) != KMessageBox::Yes)
+    in Quanta correctly.\n Do you still want to open it?"),i18n("Wrong Type")) != KMessageBox::Yes)
   {
     return;
   }
@@ -311,8 +311,8 @@ void ProjectTreeView::slotOpenInQuanta()
 void ProjectTreeView::slotRemove()
 {
 	if ( !currentItem() ) return;
-	
-  if ( KMessageBox::warningYesNo(this,"Do you really want to remove \n"+currentFileName()+"\nfrom disk ?") != KMessageBox::Yes ) 
+
+  if ( KMessageBox::warningYesNo(this,i18n("Do you really want to remove \n%1\nfrom disk ?").arg(currentFileName())) != KMessageBox::Yes )
 	  return;
 
 	
@@ -338,16 +338,16 @@ void ProjectTreeView::slotRemoveFromProject(int askForRemove)
 	if ( !currentItem() ) return;
 	
 	if ( (askForRemove) &&
-	      ( KMessageBox::warningYesNo(this,"Do you really want to remove \n"+currentFileName()+"\nfrom project ?") != KMessageBox::Yes ) )
+	      ( KMessageBox::warningYesNo(this,i18n("Do you really want to remove \n%1\nfrom project ?").arg(currentFileName())) != KMessageBox::Yes ) )
 		return;
-	
+
 	ProjectTreeFolder *d = dynamic_cast<ProjectTreeFolder *>( currentItem() );
 	if ( d ) {
 		emit removeFolderFromProject( currentFileName() );
 		delete( d );
 		return;
 	}
-	
+
 	ProjectTreeFile *f = dynamic_cast<ProjectTreeFile *>( currentItem() );
 	if ( f ) {
 		emit removeFileFromProject( currentFileName() );

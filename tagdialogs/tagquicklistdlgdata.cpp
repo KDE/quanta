@@ -1,5 +1,5 @@
 /**********************************************************************
-            --- KDevelop (KDlgEdit)  generated file ---                
+            --- KDevelop (KDlgEdit)  generated file ---
 
             Last generated: Tue Dec 7 16:51:35 1999
 
@@ -15,11 +15,11 @@
 void  TagQuickListDlg::initDialog()
 {
 	this->resize(230,150);
-	
+
   QLabel_1= new QLabel(this,"NoName");
   QLabel_1->setGeometry(10,10,100,30);
   QLabel_1->setMinimumSize(0,0);
-  QLabel_1->setText(i18n("Rows"));
+  QLabel_1->setText(i18n("Rows:"));
 
   spinBoxRows= new QSpinBox(this,"NoName");
   spinBoxRows->setGeometry(120,10,100,25);
@@ -29,17 +29,17 @@ void  TagQuickListDlg::initDialog()
   buttonOk= new QPushButton(this,"NoName");
   buttonOk->setGeometry(10,110,100,30);
   buttonOk->setMinimumSize(0,0);
-  buttonOk->setText(i18n("OK"));
+  buttonOk->setText(i18n("&OK"));
 
   QLabel_2= new QLabel(this,"NoName");
   QLabel_2->setGeometry(10,40,100,30);
   QLabel_2->setMinimumSize(0,0);
-  QLabel_2->setText(i18n("Style"));
+  QLabel_2->setText(i18n("Style:"));
 
   buttonCancel= new QPushButton(this,"NoName");
   buttonCancel->setGeometry(120,110,100,30);
   buttonCancel->setMinimumSize(0,0);
-  buttonCancel->setText(i18n("Cancel"));
+  buttonCancel->setText(i18n("&Cancel"));
 
   groupBox= new QButtonGroup(this,"NoName");
   groupBox->setGeometry(120,40,100,60);

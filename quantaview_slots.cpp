@@ -90,7 +90,7 @@ void QuantaView::slotEditCurrentTag()
   }
   else
   {
-    QString message = i18n("Unknown tag : ");
+    QString message = i18n("Unknown tag: ");
     message += tag;
     app->slotStatusMsg( message.data() );
   }
@@ -215,7 +215,7 @@ void QuantaView::slotTagFormReset()
 /** for <a href=mailto> tag  */
 void QuantaView::slotTagMail()
 {
-	TagMailDlg *mailDlg = new TagMailDlg( this, i18n("E-mail link (mailto)..."));
+	TagMailDlg *mailDlg = new TagMailDlg( this, i18n("Email Link (mailto)"));
 
   if ( mailDlg->exec() ) {
   	QString tag = QString(tagCase("<a"));
@@ -245,7 +245,7 @@ void QuantaView::slotTagMisc()
  static QString element = "";
  static bool addClosingTag = true;
 
- TagMiscDlg *miscDlg = new TagMiscDlg(element, addClosingTag, this, i18n("Misc. tag..."));
+ TagMiscDlg *miscDlg = new TagMiscDlg(element, addClosingTag, this, i18n("Misc. Tag"));
 
   if ( miscDlg->exec() ) {
   	QString tag;
@@ -268,7 +268,7 @@ void QuantaView::slotTagMisc()
 
 /** quick html text generate */
 void QuantaView::slotTagQuickStart(){
-	TagQuickStart *quickDlg = new TagQuickStart( doc->basePath(), this, i18n("Generate HTML text..."));
+	TagQuickStart *quickDlg = new TagQuickStart( doc->basePath(), this, i18n("Generate HTML Text"));
 
   if ( quickDlg->exec() ) {
   	QString tag = QString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\">\n")+tagCase("<html>\n")
@@ -296,7 +296,7 @@ void QuantaView::slotTagQuickStart(){
 
 /** do quick list */
 void QuantaView::slotTagQuickList(){
-	TagQuickListDlg *listDlg = new TagQuickListDlg(this,i18n("Generate list..."));
+	TagQuickListDlg *listDlg = new TagQuickListDlg(this,i18n("Generate List"));
   if ( listDlg->exec() ) {
   	int i;
     int n = listDlg->spinBoxRows->value();
@@ -326,7 +326,7 @@ void QuantaView::slotTagQuickTable()
 {
 	int y,x;
 
-	TagQuickTable *quickDlg = new TagQuickTable(write(), this,i18n("Generate table..."));
+	TagQuickTable *quickDlg = new TagQuickTable(write(), this,i18n("Generate Table"));
 	
   if ( quickDlg->exec() )
   {
@@ -501,7 +501,7 @@ void QuantaView::slotViewInNetscape()
   {
     dontShowSavePreview = "AskForSaveBeforePreview";
     if ( KMessageBox::questionYesNo(this,i18n("The file must be saved before external preview.\n \
-         Do you want to save and preview?"),i18n("Save before preview"),i18n("&Yes"),i18n("&No"),dontShowSavePreview)
+         Do you want to save and preview?"),i18n("Save Before Preview"),i18n("&Yes"),i18n("&No"),dontShowSavePreview)
          == KMessageBox::Yes)
     {
       if (write()->isUntitled())
@@ -534,7 +534,7 @@ void QuantaView::slotViewInKFM()
   {
     dontShowSavePreview = "AskForSaveBeforePreview";
     if ( KMessageBox::questionYesNo(this,i18n("The file must be saved before external preview.\n \
-         Do you want to save and preview?"),i18n("Save before preview"),i18n("&Yes"),i18n("&No"),dontShowSavePreview)
+         Do you want to save and preview?"),i18n("Save Before Preview"),i18n("&Yes"),i18n("&No"),dontShowSavePreview)
          == KMessageBox::Yes)
     {
       if (write()->isUntitled())
@@ -565,7 +565,7 @@ void QuantaView::slotViewInLynx()
   {
     dontShowSavePreview = "AskForSaveBeforePreview";
     if ( KMessageBox::questionYesNo(this,i18n("The file must be saved before external preview.\n \
-         Do you want to save and preview?"),i18n("Save before preview"),i18n("&Yes"),i18n("&No"),dontShowSavePreview)
+         Do you want to save and preview?"),i18n("Save Before Preview"),i18n("&Yes"),i18n("&No"),dontShowSavePreview)
          == KMessageBox::Yes)
     {
       if (write()->isUntitled())

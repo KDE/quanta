@@ -200,7 +200,7 @@
             </rect>
         </property>
         <property name="text">
-            <string>&amp;Add Files</string>
+            <string>&amp;Add Files...</string>
         </property>
     </widget>
     <widget class="QPushButton">
@@ -216,7 +216,7 @@
             </rect>
         </property>
         <property name="text">
-            <string>A&amp;dd Folder</string>
+            <string>A&amp;dd Folder...</string>
         </property>
     </widget>
     <widget class="QPushButton">

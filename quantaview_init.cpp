@@ -164,11 +164,11 @@ void QuantaView::initActions()
                         actionCollection, "tag_color" );
                         
                         
-    (void) new KAction( i18n( "E-Mail..." ), "tag_mail", 0,
+    (void) new KAction( i18n( "Email..." ), "tag_mail", 0,
                         this, SLOT( slotTagMail() ),
                         actionCollection, "tag_mail" );
 
-    (void) new KAction( i18n( "Misc. tag..." ), "tag_misc", CTRL+Key_T,
+    (void) new KAction( i18n( "Misc. Tag..." ), "tag_misc", CTRL+Key_T,
                         this, SLOT( slotTagMisc() ),
                         actionCollection, "tag_misc" );
 

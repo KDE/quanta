@@ -40,9 +40,9 @@ ParserOptions::ParserOptions( KConfig *config, QWidget* parent,  const char* nam
 		this->config = config;
 		config->setGroup("Parser options");
 
-		QString handleMBM = config->readEntry("MBM", i18n("Find tag"));
-		QString handleLBM = config->readEntry("LBM", i18n("Find tag and open tree"));
-		QString handleRBM = config->readEntry("RBM", i18n("Popup menu"));
+		QString handleMBM = config->readEntry("MBM", i18n("Find Tag"));
+		QString handleLBM = config->readEntry("LBM", i18n("Find Fag & Open Tree"));
+		QString handleRBM = config->readEntry("RBM", i18n("Popup Menu"));
 		QString handleDoubleClick = config->readEntry("Double click", i18n("Select tag area"));
 
 
@@ -54,7 +54,7 @@ ParserOptions::ParserOptions( KConfig *config, QWidget* parent,  const char* nam
     grid->setMargin( 1 );
 
     GroupBox2 = new QGroupBox( this, "GroupBox2" );
-    GroupBox2->setTitle( i18n( "Clicks on list items:"  ) );
+    GroupBox2->setTitle( i18n( "Clicks on List Items"  ) );
     GroupBox2->setMargin( 10 );
     GroupBox2->setColumnLayout(0, Qt::Vertical );
     GroupBox2->layout()->setSpacing( 0 );
@@ -67,21 +67,21 @@ ParserOptions::ParserOptions( KConfig *config, QWidget* parent,  const char* nam
     grid_2->addItem( spacer, 1, 1 );
 
     comboMBM = new QComboBox( FALSE, GroupBox2, "comboMBM" );
-    comboMBM -> insertItem(i18n("Find tag and open tree"),0);
-    comboMBM -> insertItem(i18n("Find tag"),1);
-    comboMBM -> insertItem(i18n("Go to end of tag"),2);
-    comboMBM -> insertItem(i18n("Select tag area"),3);
-    comboMBM -> insertItem(i18n("nothing"),4);
+    comboMBM -> insertItem(i18n("Find Tag & Open Tree"),0);
+    comboMBM -> insertItem(i18n("Find Tag"),1);
+    comboMBM -> insertItem(i18n("Go to End of Tag"),2);
+    comboMBM -> insertItem(i18n("Select Tag Area"),3);
+    comboMBM -> insertItem(i18n("Nothing"),4);
     grid_2->addWidget( comboMBM, 1, 2 );
 
-    if ( handleMBM == i18n("Find tag and open tree") ) comboMBM->setCurrentItem(0); else
-    if ( handleMBM == i18n("Find tag") ) comboMBM->setCurrentItem(1); else
-    if ( handleMBM == i18n("Go to end of tag") ) comboMBM->setCurrentItem(2); else
-    if ( handleMBM == i18n("Select tag area") ) comboMBM->setCurrentItem(3); else
+    if ( handleMBM == i18n("Find Tag & Open Tree") ) comboMBM->setCurrentItem(0); else
+    if ( handleMBM == i18n("Find Tag") ) comboMBM->setCurrentItem(1); else
+    if ( handleMBM == i18n("Go to End of Tag") ) comboMBM->setCurrentItem(2); else
+    if ( handleMBM == i18n("Select Tag Area") ) comboMBM->setCurrentItem(3); else
     comboMBM->setCurrentItem(4);
 
     comboRBM = new QComboBox( FALSE, GroupBox2, "comboRBM" );
-    comboRBM -> insertItem(i18n("Popup menu"));
+    comboRBM -> insertItem(i18n("Popup Menu"));
     grid_2->addWidget( comboRBM, 2, 2 );
 
     QSpacerItem* spacer_2 = new QSpacerItem( 109, 20, QSizePolicy::Expanding, QSizePolicy::Fixed );
@@ -90,19 +90,19 @@ ParserOptions::ParserOptions( KConfig *config, QWidget* parent,  const char* nam
     grid_2->addItem( spacer_3, 3, 1 );
 
     comboLBM = new QComboBox( FALSE, GroupBox2, "comboLBM" );
-    comboLBM -> insertItem(i18n("Find tag"),0);
-    comboLBM -> insertItem(i18n("Find tag and open tree"),1);
+    comboLBM -> insertItem(i18n("Find Tag"),0);
+    comboLBM -> insertItem(i18n("Find Tag & Open Tree"),1);
     grid_2->addWidget( comboLBM, 0, 2 );
 
-    if ( handleLBM == "Find tag and open tree" ) comboLBM->setCurrentItem(1);
+    if ( handleLBM == "Find Tag & Open Tree" ) comboLBM->setCurrentItem(1);
     else comboLBM->setCurrentItem(0);
 
     QSpacerItem* spacer_4 = new QSpacerItem( 109, 20, QSizePolicy::Expanding, QSizePolicy::Fixed );
     grid_2->addItem( spacer_4, 0, 1 );
 
     comboDoubleClick = new QComboBox( FALSE, GroupBox2, "comboDoubleClick" );
-    comboDoubleClick -> insertItem( i18n("Select tag area"),0 );
-    comboDoubleClick -> insertItem( i18n("nothing"),1 );
+    comboDoubleClick -> insertItem( i18n("Select Tag Area"),0 );
+    comboDoubleClick -> insertItem( i18n("Nothing"),1 );
     grid_2->addWidget( comboDoubleClick, 3, 2 );
 
     if ( handleDoubleClick == i18n("Select tag area") ) comboDoubleClick->setCurrentItem(0);
@@ -110,22 +110,22 @@ ParserOptions::ParserOptions( KConfig *config, QWidget* parent,  const char* nam
 
 
     TextLabel2_2 = new QLabel( GroupBox2, "TextLabel2_2" );
-    TextLabel2_2->setText( i18n( "Left button"  ) );
+    TextLabel2_2->setText( i18n( "Left button:"  ) );
 
     grid_2->addWidget( TextLabel2_2, 0, 0 );
 
     TextLabel3_2 = new QLabel( GroupBox2, "TextLabel3_2" );
-    TextLabel3_2->setText( i18n( "Middle button"  ) );
+    TextLabel3_2->setText( i18n( "Middle button:"  ) );
 
     grid_2->addWidget( TextLabel3_2, 1, 0 );
 
     TextLabel4_2 = new QLabel( GroupBox2, "TextLabel4_2" );
-    TextLabel4_2->setText( i18n( "Right button"  ) );
+    TextLabel4_2->setText( i18n( "Right button:"  ) );
 
     grid_2->addWidget( TextLabel4_2, 2, 0 );
 
     TextLabel5_2 = new QLabel( GroupBox2, "TextLabel5_2" );
-    TextLabel5_2->setText( i18n( "Double click"  ) );
+    TextLabel5_2->setText( i18n( "Double click:"  ) );
 
     grid_2->addWidget( TextLabel5_2, 3, 0 );
 
@@ -145,7 +145,7 @@ ParserOptions::ParserOptions( KConfig *config, QWidget* parent,  const char* nam
     grid->addWidget( spinExpand, 1, 1 );
 
     TextLabel6 = new QLabel( this, "TextLabel6" );
-    TextLabel6->setText( i18n( "Expand tree when reparse to level :"  ) );
+    TextLabel6->setText( i18n( "Expand tree when reparse to level:"  ) );
 
     grid->addWidget( TextLabel6, 1, 0 );
 }

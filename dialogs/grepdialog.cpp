@@ -43,7 +43,7 @@ GrepDialog::GrepDialog(const QString &dirname, QWidget *parent, const char *name
     : QDialog( parent, name, false ), 
     childproc(0)
 {
-    setCaption(i18n("Search in Files..."));
+    setCaption(i18n("Search in Files"));
     
     QGridLayout *layout = new QGridLayout(this, 6, 3, 10, 4);
     layout->setColStretch(0, 10);

@@ -79,10 +79,10 @@ FilesTreeView::FilesTreeView( QString dir, QStrList topList, QWidget *parent, co
 	homeDir->setPixmap( 0, SmallIcon("folder_home"));
 	homeDir->setOpen( true );
 	
-	fileMenu -> insertItem( i18n("List mode"), this ,SLOT(slotNewMode()));
-	
-	folderMenu -> insertItem( i18n("List mode"), this ,SLOT(slotNewMode()));
-	folderMenu -> insertItem( i18n("Add folder to top"), this ,SLOT(slotAddToTop()), 0, ID_TOP, 0);
+	fileMenu -> insertItem( i18n("List Mode"), this ,SLOT(slotNewMode()));
+
+	folderMenu -> insertItem( i18n("List Mode"), this ,SLOT(slotNewMode()));
+	folderMenu -> insertItem( i18n("Add Folder to Top"), this ,SLOT(slotAddToTop()), 0, ID_TOP, 0);
 	
 	connect(  this, SIGNAL(doubleClicked(QListViewItem *)),
 						this, SLOT(slotSelectFile(QListViewItem *)));
@@ -143,8 +143,8 @@ void FilesTreeView::slotMenu(QListViewItem *item, const QPoint &point, int)
 	FilesTreeFolder *d = dynamic_cast<FilesTreeFolder *>( item);
 	if ( d )
 	{
-	  if ( !d->parentFolder )folderMenu ->changeItem( ID_TOP, i18n("Remove from top"));
-	  else                   folderMenu ->changeItem( ID_TOP, i18n("Add folder to top"));
+	  if ( !d->parentFolder )folderMenu ->changeItem( ID_TOP, i18n("Remove From Top"));
+	  else                   folderMenu ->changeItem( ID_TOP, i18n("Add Folder to Top"));
 	
 	  if ( d->text(0) == "Home" || d->text(0) == "Root" )
 	        folderMenu ->setItemEnabled( ID_TOP, false);
@@ -284,7 +284,7 @@ void FilesTreeView::addFileInfoPage(KPropertiesDialog* propDlg)
   if (f)
   {
 
-    QFrame *quantaFilePage = propDlg->dialog()->addPage(i18n("Quanta file info"));
+    QFrame *quantaFilePage = propDlg->dialog()->addPage(i18n("Quanta File Info"));
     QVBoxLayout *topLayout = new QVBoxLayout( quantaFilePage);
     FileInfoDlg *quantaFileProperties = new FileInfoDlg( quantaFilePage, i18n("Quanta") );
 

@@ -592,7 +592,7 @@ void QuantaApp::openLastFiles()
   for ( urls.last();urls.current();urls.prev() )
   {
     KURL fu(urls.current());
-    
+
     if ( !isPrj || fu.isLocalFile() ) 
       doc->openDocument( fu );
   }
@@ -692,7 +692,7 @@ void QuantaApp::initActions()
 
     KStdAction::selectAll(view, SLOT(slotSelectAll()), actionCollection());
     KStdAction::deselect(view, SLOT(slotDeselectAll()),actionCollection());
-    (void) new KAction( i18n( "&Toggle block selection" ), Key_F4, view,
+    (void) new KAction( i18n( "&Toggle Block Selection" ), Key_F4, view,
                         SLOT( toggleVertical() ), actionCollection(), "set_verticalSelect" );
 
 
@@ -769,23 +769,23 @@ void QuantaApp::initActions()
                         this, SLOT( slotFileSaveAll() ),
                         actionCollection(), "save_all" );
 
-    saveAsLocalTemplateAction = new KAction( i18n( "Save As Local Template" ), 0,
+    saveAsLocalTemplateAction = new KAction( i18n( "Save as Local Template..." ), 0,
                         this, SLOT( slotFileSaveAsLocalTemplate() ),
                         actionCollection(), "save_local_template" );
-    saveAsProjectTemplateAction = new KAction( i18n( "Save As Project Template..." ), 0,
+    saveAsProjectTemplateAction = new KAction( i18n( "Save as Project Template..." ), 0,
                         this, SLOT( slotFileSaveAsProjectTemplate() ),
                         actionCollection(), "save_project_template" );
 
-    saveSelectionAsLocalTemplateAction = new KAction( i18n( "Save Selection As Local Template" ), 0,
+    saveSelectionAsLocalTemplateAction = new KAction( i18n( "Save Selection as Local Template..." ), 0,
                         this, SLOT( slotFileSaveSelectionAsLocalTemplate() ),
                         actionCollection(), "save_selection_local_template" );
-    saveSelectionAsProjectTemplateAction = new KAction( i18n( "Save Selection As Project Template..." ), 0,
+    saveSelectionAsProjectTemplateAction = new KAction( i18n( "Save Selection as Project Template..." ), 0,
                         this, SLOT( slotFileSaveSelectionAsProjectTemplate() ),
                         actionCollection(), "save_selection_project_template" );
 
     KStdAction::quit( this, SLOT( slotFileQuit() ), actionCollection() );
 
-   (void) new KAction( i18n( "&File list" ), 0,this, SLOT( slotShowOpenFileList() ),
+   (void) new KAction( i18n( "&File List" ), 0,this, SLOT( slotShowOpenFileList() ),
                         actionCollection(), "file_list" );
 
     // Edit actions
@@ -797,7 +797,7 @@ void QuantaApp::initActions()
 
     undoRedo->setGroup( "edit_undo_merge" ); */
 
-    (void) new KAction( i18n( "Find In Files" ),
+    (void) new KAction( i18n( "Find in Files" ),
                         UserIcon("find"), CTRL+ALT+Key_F,
                         this, SLOT( slotEditFindInFiles() ),
                         actionCollection(), "find_in_files" );
@@ -816,7 +816,7 @@ void QuantaApp::initActions()
                         view, SLOT( slotEditCurrentTag() ),
                         actionCollection(), "edit_current_tag" );
 
-    (void) new KAction( i18n( "&Syntax check" ), 0, 
+    (void) new KAction( i18n( "&Syntax Check" ), 0, 
                         this, SLOT( slotToolSyntaxCheck() ),
                         actionCollection(), "syntax_check" );
     
@@ -864,20 +864,20 @@ void QuantaApp::initActions()
     backAction = new KAction ( i18n("Back"), "back", ALT+Key_Left, this, SLOT( slotBack() ),    actionCollection(), "w_back" );
     forwardAction = new KAction ( i18n("Forward"), "forward", ALT+Key_Right, this, SLOT( slotForward() ),    actionCollection(), "w_forward" );
 
-    (void) new KAction( i18n( "&Reload preview" ), "reload",
+    (void) new KAction( i18n( "&Reload Preview" ), "reload",
                         KStdAccel::key(KStdAccel::Reload),
                         this, SLOT( slotViewRepaint() ),
                         actionCollection(), "reload" );
                         
-    (void) new KAction( i18n( "View With Net&scape" ), "netscape", ALT+Key_F6,
+    (void) new KAction( i18n( "View with Net&scape" ), "netscape", ALT+Key_F6,
                         view, SLOT( slotViewInNetscape() ),
                         actionCollection(), "view_with_netscape" );
                         
-    (void) new KAction( i18n( "View With &Konqueror" ), "konqueror", CTRL+Key_F6,
+    (void) new KAction( i18n( "View with &Konqueror" ), "konqueror", CTRL+Key_F6,
                         view, SLOT( slotViewInKFM() ),
                         actionCollection(), "view_with_konqueror" );
                         
-    (void) new KAction( i18n( "View With L&ynx" ), "terminal", SHIFT+Key_F6,
+    (void) new KAction( i18n( "View with L&ynx" ), "terminal", SHIFT+Key_F6,
                         view, SLOT( slotViewInLynx() ),
                         actionCollection(), "view_with_lynx" );
 
@@ -918,7 +918,7 @@ void QuantaApp::initActions()
                          project, SLOT( closeProject() ),
                          actionCollection(), "close_project" );
 
-    insertFileAction = new KAction( i18n( "&Insert File(s)..." ), 0, 
+    insertFileAction = new KAction( i18n( "&Insert Files..." ), 0, 
                         project, SLOT( addFiles() ),
                         actionCollection(), "insert_file" );
                         
@@ -926,7 +926,7 @@ void QuantaApp::initActions()
                         project, SLOT( addDirectory() ),
                         actionCollection(), "insert_directory" );
                         
-    rescanPrjDirAction = new KAction( i18n( "&Rescan project directory" ), SmallIcon("reload"), 0, 
+    rescanPrjDirAction = new KAction( i18n( "&Rescan Project Directory" ), SmallIcon("reload"), 0, 
                         project, SLOT( slotRescanPrjDir() ),
                         actionCollection(), "rescan_prjdir" );
 
@@ -956,11 +956,11 @@ void QuantaApp::initActions()
     projectToolbarFiles = new KRecentFilesAction(i18n("Load &Project Toolbar"),0,this, SLOT(slotLoadToolbarFile(const KURL&)),
                            actionCollection(), "toolbars_load_project");
 
-    new KAction(i18n("Load &Global Toolbar"), 0, this, SLOT(slotLoadGlobalToolbar()), actionCollection(), "toolbars_load_global");
-    new KAction(i18n("Load &Local Toolbar"), 0, this, SLOT(slotLoadToolbar()), actionCollection(), "toolbars_load_user");
-    new KAction(i18n("Save As &Local Toolbar"),  0, this, SLOT(slotSaveLocalToolbar()), actionCollection(), "toolbars_save_local");
-    new KAction(i18n("Save As &Project Toolbar"),  0, this, SLOT(slotSaveProjectToolbar()), actionCollection(), "toolbars_save_project");
-    new KAction(i18n("&Add User Toolbar"),  0, this, SLOT(slotAddToolbar()), actionCollection(), "toolbars_add");
-    new KAction(i18n("&Remove User Toolbar"),  0, this, SLOT(slotRemoveToolbar()), actionCollection(), "toolbars_remove");
-    new KAction(i18n("Send Toolbar In E-&Mail"),  0, this, SLOT(slotSendToolbar()), actionCollection(), "toolbars_send");
+    new KAction(i18n("Load &Global Toolbar..."), 0, this, SLOT(slotLoadGlobalToolbar()), actionCollection(), "toolbars_load_global");
+    new KAction(i18n("Load &Local Toolbar..."), 0, this, SLOT(slotLoadToolbar()), actionCollection(), "toolbars_load_user");
+    new KAction(i18n("Save as &Local Toolbar..."),  0, this, SLOT(slotSaveLocalToolbar()), actionCollection(), "toolbars_save_local");
+    new KAction(i18n("Save as &Project Toolbar..."),  0, this, SLOT(slotSaveProjectToolbar()), actionCollection(), "toolbars_save_project");
+    new KAction(i18n("&Add User Toolbar..."),  0, this, SLOT(slotAddToolbar()), actionCollection(), "toolbars_add");
+    new KAction(i18n("&Remove User Toolbar..."),  0, this, SLOT(slotRemoveToolbar()), actionCollection(), "toolbars_remove");
+    new KAction(i18n("Send Toolbar in E&mail..."),  0, this, SLOT(slotSendToolbar()), actionCollection(), "toolbars_send");
 }

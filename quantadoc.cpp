@@ -67,11 +67,11 @@ extern QDict <QStrList> *tagsDict;
 
 QuantaDoc::QuantaDoc( QuantaApp *app, QWidget *parent, const char *name) : QObject(parent, name)
 {
-	this->app = app;	
-	
+	this->app = app;
+
   docList = new QDict<Document>(1);
 
-  attribMenu = new KPopupMenu("Tag :");
+  attribMenu = new KPopupMenu(i18n("Tag :"));
   connect( attribMenu, SIGNAL(activated(int)), this, SLOT(slotInsertAttrib(int)));
 
   attribCoreMenu = new QPopupMenu();
@@ -514,7 +514,7 @@ void QuantaDoc::slotAttribPopup()
 
   if ( tagsList->find( tag.upper()) != -1 )
   {
-    QString caption = QString("Attributes of <")+tag+">";
+    QString caption = QString(i18n("Attributes of <"))+tag+">";
     attribMenu->setTitle( caption );
 
     QStrList *list = tagsDict->find( tag );
@@ -534,7 +534,7 @@ void QuantaDoc::slotAttribPopup()
       haveAttributes = true;
       attribMenu->insertItem("Core", attribCoreMenu, -2);
     }
-    
+
     if ( tagsI18n->find(tag.upper()) != -1 ) {
       haveAttributes = true;
       attribMenu->insertItem("I18n", attribI18nMenu, -2);
@@ -554,7 +554,7 @@ void QuantaDoc::slotAttribPopup()
     attribMenu->exec( globalPos );
   }
   else {
-    QString message = i18n("Unknown tag : ");
+    QString message = i18n("Unknown tag: ");
     message += tag;
     app->slotStatusMsg( message.data() );
   }
@@ -632,7 +632,7 @@ void QuantaDoc::nextDocument()
  	  prev = it.current();
  		++it;
  	}
- 	
+
  	if ( prev )
  		new_d = prev;
  	
@@ -671,7 +671,7 @@ void QuantaDoc::changeFileTabName( QString oldUrl, QString newUrl )
  		while ( it2.current() && i != -1 && it1.current() != it2.current() )
  		{
  			QString name2 = it2.currentKey();
- 			
+
  			if ( name1 != name2 )
  			{
  				while ( name1.right( len ) == name2.right( len ) && i != -1 && len>=0 )
