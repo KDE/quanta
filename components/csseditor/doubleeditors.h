@@ -17,18 +17,18 @@
  #ifndef DOUBLEEDITORS_H
  #define DOUBLEEDITORS_H
  #include "minieditor.h"
- 
+
  class mySpinBox;
  class specialSB;
  class QSpinBox;
  class QComboBox;
- 
+
 class doubleEditorBase : public miniEditor {
     Q_OBJECT
   protected:
     QString   m_sxValue,
                    m_dxValue;
-                   
+
   public:
     doubleEditorBase(QWidget *parent=0, const char *name=0);
     virtual ~doubleEditorBase(){}
@@ -41,18 +41,18 @@ class doubleEditorBase : public miniEditor {
 
    signals:
      void valueChanged(const QString&);
-}; 
- 
+};
+
 class doublePercentageEditor : public doubleEditorBase {
     Q_OBJECT
   private:
     mySpinBox  *m_sbSx,
                       *m_sbDx;
-                      
+
   public:
     doublePercentageEditor(QWidget *parent=0, const char *name=0);
     virtual ~doublePercentageEditor();
-    virtual void setInitialValue(QString sx, QString dx);
+    virtual void setInitialValue(const QString& sx, const QString& dx);
     virtual void connectToPropertySetter(propertySetter* p);
 };
 
@@ -61,7 +61,7 @@ class doubleComboBoxEditor : public doubleEditorBase {
   private:
     QComboBox *m_cbSx,
                          *m_cbDx;
-                         
+
   public:
     doubleComboBoxEditor(QWidget *parent=0, const char *name=0);
     virtual ~doubleComboBoxEditor();
@@ -79,7 +79,7 @@ class doubleLengthEditor : public doubleEditorBase {
   public:
     doubleLengthEditor(QWidget *parent=0, const char *name=0);
     virtual ~doubleLengthEditor();
-    virtual void setInitialValue(QString sx, QString dx);
+    virtual void setInitialValue(const QString& sx, const QString& dx);
     virtual void connectToPropertySetter(propertySetter* p);
 };
 

@@ -33,9 +33,9 @@ public:
     ShorthandFormer( QMap<QString,QString> m );
     ~ShorthandFormer(){}
     QString compress();
-    QMap<QString,QString> expand(QString propertyName, QString propertyValue);
+    QMap<QString,QString> expand(const QString& propertyName, const QString& propertyValue);
     static QStringList SHFormList();
-     
+
 private:
     QMap<QString,QString> m_properties;
     QString cue_after,
@@ -79,7 +79,7 @@ private:
                padding_bottom,
                padding_left,
                padding_right;
-    
+
 private:
   QString compressCueProp();
   QString compressPauseProp();
@@ -88,30 +88,30 @@ private:
   QString compressFontProp();
   QString compressBackgroundProp();
   QString compressOutlineProp();
-  QString compressListStyleProp(); 
+  QString compressListStyleProp();
   QString compressBorderStyleProp();
   QString compressBorderWidthProp();
-  QString compressBorderColorProp(); 
-  QString compressBorderProp(); 
-  
-  QString compressImplementation( QString prop, QString t, QString b, QString r, QString l, QString defValue);
-  QString compressImplementation2( QString prop, QString after, QString before, QString defValue);
-  QString compressImplementation3( QString prop, QString p1, QString p2, QString p3);
-  
-  QMap<QString,QString> expandCueProp(QStringList l);
-  QMap<QString,QString> expandPauseProp(QStringList l);
-  QMap<QString,QString> expandBackgroundProp(QStringList l);
-  QMap<QString,QString> expandFontProp(QStringList l);
-  QMap<QString,QString> expandOutlineProp(QStringList l);
-  QMap<QString,QString> expandListstyleProp(QStringList l);
-  QMap<QString,QString> expandBoxSide(QString subPropName, QStringList l);
-  QMap<QString,QString> expandBorderProp(QStringList l);
-  QMap<QString,QString> expandBox(QString subPropName, QStringList l);
-  QMap<QString,QString> expandPaddingProp(QStringList l);
-  QMap<QString,QString> expandMarginProp(QStringList l);
- 
-  QMap<QString,QString> expandImplementation(QString propertyName, QStringList l);
-  QMap<QString,QString> expandImplementation2(QString propertyName, QStringList l);
+  QString compressBorderColorProp();
+  QString compressBorderProp();
+
+  QString compressImplementation( const QString& prop, const QString& t, const QString& b, const QString& r, const QString& l, const QString& defValue);
+  QString compressImplementation2( const QString& prop, const QString& after, const QString& before, const QString& defValue);
+  QString compressImplementation3( const QString& prop, const QString& p1, const QString& p2, const QString& p3);
+
+  QMap<QString,QString> expandCueProp(const QStringList& l);
+  QMap<QString,QString> expandPauseProp(const QStringList& l);
+  QMap<QString,QString> expandBackgroundProp(const QStringList& l);
+  QMap<QString,QString> expandFontProp(const QStringList& l);
+  QMap<QString,QString> expandOutlineProp(const QStringList& l);
+  QMap<QString,QString> expandListstyleProp(const QStringList& l);
+  QMap<QString,QString> expandBoxSide(const QString& subPropName, const QStringList& l);
+  QMap<QString,QString> expandBorderProp(const QStringList& l);
+  QMap<QString,QString> expandBox(const QString& subPropName, const QStringList& l);
+  QMap<QString,QString> expandPaddingProp(const QStringList& l);
+  QMap<QString,QString> expandMarginProp(const QStringList& l);
+
+  QMap<QString,QString> expandImplementation(const QString& propertyName, const QStringList& l);
+  QMap<QString,QString> expandImplementation2(const QString& propertyName, const QStringList& l);
  };
 
 #endif

@@ -25,7 +25,7 @@ class mySpinBox;
 /**
   *@author gulmini luciano
   */
- 
+
 class specialSB : public miniEditor {
     Q_OBJECT
   protected:
@@ -33,17 +33,17 @@ class specialSB : public miniEditor {
     mySpinBox  *m_sb;
 
    public:
-           specialSB(QWidget *parent=0, const char *name=0);
-           ~specialSB();
-     void insertItem(QString s){ m_cb->insertItem(s); }
-     void setInitialValue(QString s);
+     specialSB(QWidget *parent=0, const char *name=0);
+     ~specialSB();
+     void insertItem(const QString& s){ m_cb->insertItem(s); }
+     void setInitialValue(const QString& s);
      QStringList cbValueList();
-      virtual void connectToPropertySetter(propertySetter* p);
-     
+     virtual void connectToPropertySetter(propertySetter* p);
+
    public slots:
      void cbValueSlot(const QString&);
      void sbValueSlot(const QString&);
-     
+
    signals:
      void valueChanged(const QString&);
 

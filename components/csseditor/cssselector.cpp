@@ -41,16 +41,16 @@
 CSSSelector::CSSSelector(QWidget *parent, const char* name) : CSSSelectorS (parent,name),m_orderNumber(0),m_stopProcessingStylesheet(false) {
 
   m_currentItem = 0L;
-    
+
   Connect();
-  
+
   kurApplyToFile->fileDialog()->setURL(Project::ref()->projectBaseURL().url());
   kurApplyToFile->fileDialog()->setFilter( "*.html *.htm |" + i18n("HTML files") +" (*.html *.htm)\n*.xhtml |" + i18n("XHTML files")+" (*.xhtml)\n*.xml |" + i18n("XML files")+" (*.xml)\n*.*|" + i18n("All files")+" (*.*)"  );
-  QWhatsThis::add((QLineEdit*)(kurApplyToFile->lineEdit()),"With this line edit you can insert the URL of the file you want to use to preview the style sheet you are editing");                           
-  
+  QWhatsThis::add((QLineEdit*)(kurApplyToFile->lineEdit()),"With this line edit you can insert the URL of the file you want to use to preview the style sheet you are editing");
+
   /*QString configDir = locate("appdata", "csseditor/config.xml");
   configDir = QFileInfo(configDir).dirPath() + "/";*/
-  
+
   QString configDir = QFileInfo( locate("appdata", "csseditor/config.xml") ).dirPath() + "/";
 
   QDomDocument doc;
@@ -84,7 +84,7 @@ CSSSelector::CSSSelector(QWidget *parent, const char* name) : CSSSelectorS (pare
   file.close();
 
  QStringList dtdNames,
-                    dtdNickNames;                 
+                    dtdNickNames;
  docElem = doc.documentElement();
  n = docElem.firstChild();
   while( !n.isNull() ) {
@@ -173,25 +173,25 @@ void CSSSelector::addTag(){
   QListViewItem *item = new QListViewItem(lvTags);
   if(!cbTag->currentText().isEmpty()){
     item->setText(0,cbTag->currentText());
-    QPair<QString, unsigned int> tmp(QString::null,++m_orderNumber);  
-    m_currentStylesheetStructure[item->text(0)]=tmp;  
-  }     
+    QPair<QString, unsigned int> tmp(QString::null,++m_orderNumber);
+    m_currentStylesheetStructure[item->text(0)]=tmp;
+  }
 }
 
 void CSSSelector::addClass(){
   QListViewItem *item = new QListViewItem(lvClasses);
   if(!leClass->text().isEmpty()){
     item->setText(0,leClass->text());
-    QPair<QString, unsigned int> tmp(QString::null,++m_orderNumber);  
-    m_currentStylesheetStructure[item->text(0)]=tmp; 
-  }     
+    QPair<QString, unsigned int> tmp(QString::null,++m_orderNumber);
+    m_currentStylesheetStructure[item->text(0)]=tmp;
+  }
 }
 
 void CSSSelector::addID(){
   QListViewItem *item = new QListViewItem(lvIDs);
   if(!leID->text().isEmpty()){
     item->setText(0,leID->text());
-    QPair<QString, unsigned int> tmp(QString::null,++m_orderNumber);  
+    QPair<QString, unsigned int> tmp(QString::null,++m_orderNumber);
     m_currentStylesheetStructure[item->text(0)]=tmp;
   }
 }
@@ -199,7 +199,7 @@ void CSSSelector::addID(){
 void CSSSelector::addPseudo(){
   QListViewItem *item = new QListViewItem(lvPseudo);
   item->setText(0,(lePseudoSelector->text()+":"+cbPseudo->currentText()).stripWhiteSpace());
-  QPair<QString, unsigned int> tmp(QString::null,++m_orderNumber);  
+  QPair<QString, unsigned int> tmp(QString::null,++m_orderNumber);
   m_currentStylesheetStructure[item->text(0)]=tmp;
 }
 
@@ -231,7 +231,7 @@ void CSSSelector::openCSSEditor(QListViewItem * i){
       if(temp != i) s+=(temp->text(0)+" { "+temp->text(1)+" } ");
       temp = temp->nextSibling();
    }
-  
+
     CSSEditor dlg(i);
     if(m_callingFrom == "XHTML"){
       dlg.setHeader(m_header);
@@ -239,12 +239,12 @@ void CSSSelector::openCSSEditor(QListViewItem * i){
       dlg.setFooter(m_footer);
       dlg.setFileToPreview(m_fileToPreview,false);
     }
-    else if(m_callingFrom == "CSS"){         
-              if(kurApplyToFile->url().isEmpty()) 
+    else if(m_callingFrom == "CSS"){
+              if(kurApplyToFile->url().isEmpty())
                 dlg.hidePreviewer();
               else {
                 dlg.setFileToPreview(kurApplyToFile->url(),true);
-                
+
                 QString tmp;
                 QListViewItem *item = lvTags->firstChild();
                 while( item ) {
@@ -252,32 +252,32 @@ void CSSSelector::openCSSEditor(QListViewItem * i){
                   tmp += item->text(0) + " {" + item->text(1) + "}";
                   item = item->nextSibling();
                 }
-        
+
                 item = lvClasses->firstChild();
                 while( item ) {
                   if(i->text(0).stripWhiteSpace() != item->text(0).stripWhiteSpace())
                   tmp += item->text(0) + " {" + item->text(1) + "}";
                   item = item->nextSibling();
                 }
-        
+
                 item = lvIDs->firstChild();
                 while( item ) {
                   if(i->text(0).stripWhiteSpace() != item->text(0).stripWhiteSpace())
                   tmp += item->text(0) + " {" + item->text(1) + "}";
                   item = item->nextSibling();
                 }
-        
+
                 item = lvPseudo->firstChild();
                 while( item ) {
                   if(i->text(0).stripWhiteSpace() != item->text(0).stripWhiteSpace())
                   tmp += item->text(0) + " {" + item->text(1) + "}";
                   item = item->nextSibling();
                 }
-                       
+
                 dlg.setExternalStyleSheetDefinition(tmp);
-              }            
-   } 
-   
+              }
+   }
+
     dlg.initialize();
 
     if(dlg.exec())  {
@@ -312,16 +312,16 @@ void CSSSelector::removeSelected(){
   }
 }
 
-void CSSSelector::loadCSSContent(QString s){
+void CSSSelector::loadCSSContent(const QString& s){
   stylesheetParser p(s);
   connect(&p,SIGNAL(errorOccurred(const QString&)), this, SLOT(setStylesheetProcessing(const QString&)));
   p.parse();
   m_orderNumber = p.orderNumber();
-  
+
   QMap<QString, QPair<QString,unsigned int> >::Iterator it;
   m_currentStylesheetStructure = p.stylesheetStructure();
   for ( it = m_currentStylesheetStructure.begin(); it != m_currentStylesheetStructure.end(); ++it ) {
-    if(!it.key().startsWith("@rule") and !it.key().startsWith("/*")){
+    if(!it.key().startsWith("@rule") && !it.key().startsWith("/*")){
       QListViewItem *item;
       if(it.key().contains(":")){
         item = new QListViewItem(lvPseudo);
@@ -340,7 +340,7 @@ void CSSSelector::loadCSSContent(QString s){
 
       item->setText(0,it.key());
       item->setText(1,it.data().first);
-    
+
     }
   }
 }
@@ -350,12 +350,12 @@ QString CSSSelector::generateFormattedStyleSection(){
   QString styleSection,tmpStr;
   unsigned int indentWidth,
                       indentDisplacement = 2;
-  for ( unsigned int i=0;i<=m_orderNumber;i++ ) {                    
+  for ( unsigned int i=0;i<=m_orderNumber;i++ ) {
     for ( it = m_currentStylesheetStructure.begin(); it != m_currentStylesheetStructure.end(); ++it ) {
       if(it.data().second == i){
-       if(it.key().startsWith("@rule"))  
+       if(it.key().startsWith("@rule"))
          styleSection += it.data().first;
-       else if(it.key().startsWith("/*"))  
+       else if(it.key().startsWith("/*"))
                  styleSection += it.data().first;
                else {
                   styleSection += "\n" + it.key() + " {\n";
@@ -364,16 +364,16 @@ QString CSSSelector::generateFormattedStyleSection(){
                   QString indentStr;
                   indentStr.fill(' ',indentWidth);
                   for ( QStringList::Iterator it = props.begin(); it != props.end(); ++it ) {
-                    if((*it).startsWith(" ")) 
+                    if((*it).startsWith(" "))
                       tmpStr +=  indentStr + (*it).remove(0,1) + ";\n";
-                    else 
+                    else
                       tmpStr += indentStr + (*it) + ";\n";
                   }
                   indentStr.fill(' ', indentDisplacement);
                   styleSection += tmpStr + indentStr + "}\n\n";
                   tmpStr = QString::null;
               }
-      } 
+      }
     }
   }
   return "\n"+styleSection;
@@ -384,8 +384,8 @@ void CSSSelector::enableApplyToFile(){
   kurApplyToFile->setEnabled(true);
 }
 
-void CSSSelector::setStylesheetProcessing(const QString& msg) { 
-  m_stopProcessingStylesheet=true; 
+void CSSSelector::setStylesheetProcessing(const QString& msg) {
+  m_stopProcessingStylesheet=true;
   KMessageBox::error (0L, msg );
 }
 

@@ -34,7 +34,7 @@ specialSB::~specialSB(){
 void specialSB::connectToPropertySetter(propertySetter* p){
   connect(this, SIGNAL(valueChanged(const QString&)), p,SIGNAL(valueChanged(const QString&)));
 }
- 
+
 
 void specialSB::cbValueSlot(const QString& s){
   emit valueChanged( m_sb->text() +s );
@@ -44,16 +44,16 @@ void specialSB::sbValueSlot(const QString& s){
   emit valueChanged( s + m_cb->currentText());
 }
 
-void specialSB::setInitialValue(QString s){
+void specialSB::setInitialValue(const QString& s){
 
   QRegExp pattern("\\d("+ cbValueList().join("|")+")");
-  
+
   if(s.contains(pattern)) {
     QString temp1(s.stripWhiteSpace()),
                  temp2(s.stripWhiteSpace());
-                 
+
     m_sb->setValue(temp1.remove(QRegExp("\\D")).toInt());
-    m_cb->setCurrentText(temp2.remove(QRegExp("\\d")));              
+    m_cb->setCurrentText(temp2.remove(QRegExp("\\d")));
   }
   else return;
 }

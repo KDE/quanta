@@ -24,29 +24,29 @@
 CSSSHPropertyParser::CSSSHPropertyParser(const QString& s){
   QStringList l1,
                      l2=QStringList::split(",",s);
-                     
+
   for ( QStringList::Iterator it = l2.begin(); it != l2.end(); ++it ) {
     QString temp;
     temp=removeBeginningWhiteSpaces((*it));
     temp=removeEndingWhiteSpaces(temp);
     l1.append(temp);
   }
-   
-  m_propertyToParse = l1.join(",");// we eliminte blanks before after a comma in things like "something" , something    , serif 
+
+  m_propertyToParse = l1.join(",");// we eliminte blanks before after a comma in things like "something" , something    , serif
 }
 
 CSSSHPropertyParser::~CSSSHPropertyParser(){}
 
-QString CSSSHPropertyParser::removeEndingWhiteSpaces(QString s){
+QString CSSSHPropertyParser::removeEndingWhiteSpaces(const QString& s){
   int index = s.length()-1;
   while(s[index] == ' ' )  index--;
-  return s.left(index+1);  
+  return s.left(index+1);
 }
 
-QString CSSSHPropertyParser::removeBeginningWhiteSpaces(QString s){
+QString CSSSHPropertyParser::removeBeginningWhiteSpaces(const QString& s){
   int index = 0;
   while(s[index] == ' ' ) index++;
-  return s.right(s.length()-index);  
+  return s.right(s.length()-index);
 }
 
 QString CSSSHPropertyParser::extractFunctionList(){
@@ -71,7 +71,7 @@ QString CSSSHPropertyParser::extractQuotedStringList(){
 }
 
 QString CSSSHPropertyParser::extractURIList(){//extract things like url('...') or url("..") or url("..."), url(.....
-    //kdDebug(24000) << "\n\n\nextractURIList()\n\n\n"; 
+    //kdDebug(24000) << "\n\n\nextractURIList()\n\n\n";
   QRegExp URIListPattern("\\s*(url\\([\\W\\w]*\\))\\s*");
   URIListPattern.search(m_propertyToParse);
   return URIListPattern.cap(1);
@@ -81,14 +81,14 @@ QStringList CSSSHPropertyParser::parse(){
   QStringList tokenList;
   bool stop = false;
   m_propertyToParse = removeBeginningWhiteSpaces(m_propertyToParse);
-  
+
   while(!stop){
     QString temp;
     for(unsigned int i=0;i<m_propertyToParse.length()  ;i++){
-      if(m_propertyToParse[i] == ' ') break;// tokens are delimited by a blank 
+      if(m_propertyToParse[i] == ' ') break;// tokens are delimited by a blank
       temp+=m_propertyToParse[i];
     }
-    
+
     if(temp.contains("url(") !=0 ){
       QString foundURIList = extractURIList();
       m_propertyToParse = removeBeginningWhiteSpaces(m_propertyToParse.remove(foundURIList));
@@ -101,7 +101,7 @@ QStringList CSSSHPropertyParser::parse(){
       tokenList.append(foundFunctionList);
     }
     else
-    if(temp.contains("'")!=0 || temp.contains("\"")!=0 || temp.contains(",")!=0){ 
+    if(temp.contains("'")!=0 || temp.contains("\"")!=0 || temp.contains(",")!=0){
       QString foundQuotedStringList = extractQuotedStringList();
       m_propertyToParse = removeBeginningWhiteSpaces(m_propertyToParse.remove(foundQuotedStringList));
       tokenList.append(foundQuotedStringList);
@@ -116,7 +116,7 @@ QStringList CSSSHPropertyParser::parse(){
       tokenList.append(temp);
       int tempPos = m_propertyToParse.find(temp);
       m_propertyToParse = removeBeginningWhiteSpaces(m_propertyToParse.remove(tempPos,temp.length()));
-    }  
+    }
     if( m_propertyToParse.isEmpty() ) stop = true;
   }
   return tokenList;

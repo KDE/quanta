@@ -38,37 +38,37 @@ class CSSSelector : public CSSSelectorS {
                  m_footer,
                  m_callingFrom,
                  m_fileToPreview;
-    QMap<QString, QPair<QString,unsigned int> > m_currentStylesheetStructure;    
-    unsigned int m_orderNumber; 
-    bool m_stopProcessingStylesheet;                
- 
-    void Connect();   
-            
-  public:    
+    QMap<QString, QPair<QString,unsigned int> > m_currentStylesheetStructure;
+    unsigned int m_orderNumber;
+    bool m_stopProcessingStylesheet;
+
+    void Connect();
+
+  public:
     CSSSelector(QWidget *parent=0, const char* name=0);
     ~CSSSelector();
-    void loadCSSContent(QString s);
+    void loadCSSContent(const QString& s);
     void setHeader(const QString& h) { m_header = h; }
-    void setFooter(const QString& f) { m_footer = f; }         
+    void setFooter(const QString& f) { m_footer = f; }
     void enableApplyToFile();
-    void setCallingFrom(QString cf){ m_callingFrom = cf ;}
+    void setCallingFrom(const QString& cf){ m_callingFrom = cf ;}
     void setFileToPreview(const QString& s){ m_fileToPreview=s;}
     bool errorOnProcessingStylesheet() const { return m_stopProcessingStylesheet; }
     QString generateFormattedStyleSection();
-    
-  private slots: 
-    void openCSSEditor(QListViewItem *);  
+
+  private slots:
+    void openCSSEditor(QListViewItem *);
     void addTag();
     void addClass();
     void addID();
     void addPseudo();
     void removeAll();
-    void removeSelected();     
+    void removeSelected();
     void setCurrentItem(QListViewItem* i) { m_currentItem = i; }
     void setCurrentListView(QWidget*);
     void setDTDTags(const QString&);
-    void setStylesheetProcessing(const QString&);   
+    void setStylesheetProcessing(const QString&);
 };
 
 #endif
- 
+

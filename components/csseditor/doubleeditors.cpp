@@ -20,9 +20,9 @@
  #include "csseditor_globals.h"
  #include "propertysetter.h"
  #include <qregexp.h>
- 
 
- 
+
+
 doubleEditorBase::doubleEditorBase(QWidget *parent, const char *name) : miniEditor(parent,name){
 }
 
@@ -34,30 +34,30 @@ void doubleEditorBase::sxValueSlot(const QString& v){
 void doubleEditorBase::dxValueSlot(const QString& v){
   m_dxValue=v;
   emit valueChanged( m_sxValue +" " + m_dxValue);
-} 
- 
+}
+
  doubleLengthEditor::doubleLengthEditor(QWidget *parent, const char *name) : doubleEditorBase(parent,name){
-  
+
   m_ssbSx = new specialSB(this);
   m_ssbSx->insertItem("cm");
   m_ssbSx->insertItem("em");
   m_ssbSx->insertItem("ex");
   m_ssbSx->insertItem("in");
-  m_ssbSx->insertItem("mm");  
+  m_ssbSx->insertItem("mm");
   m_ssbSx->insertItem("pc");
   m_ssbSx->insertItem("pt");
   m_ssbSx->insertItem("px");
-  
+
   m_ssbDx = new specialSB(this);
-  m_ssbDx->insertItem("cm"); 
+  m_ssbDx->insertItem("cm");
   m_ssbDx->insertItem("em");
   m_ssbDx->insertItem("ex");
   m_ssbDx->insertItem("in");
-  m_ssbDx->insertItem("mm"); 
+  m_ssbDx->insertItem("mm");
   m_ssbDx->insertItem("pc");
-  m_ssbDx->insertItem("pt"); 
-  m_ssbDx->insertItem("px"); 
-    
+  m_ssbDx->insertItem("pt");
+  m_ssbDx->insertItem("px");
+
   connect(m_ssbSx, SIGNAL(valueChanged(const QString&)), this, SLOT(sxValueSlot(const QString&)));
   connect(m_ssbDx, SIGNAL(valueChanged(const QString&)), this, SLOT(dxValueSlot(const QString&)));
 }
@@ -71,7 +71,7 @@ void doubleLengthEditor::connectToPropertySetter(propertySetter* p){
   connect(this, SIGNAL(valueChanged(const QString&)), p ,SIGNAL(valueChanged(const QString&)));
 }
 
-void doubleLengthEditor::setInitialValue(QString sx, QString dx){
+void doubleLengthEditor::setInitialValue(const QString& sx, const QString& dx){
   m_ssbSx->setInitialValue(sx);
   m_ssbDx->setInitialValue(dx);
 }
@@ -110,7 +110,9 @@ void doublePercentageEditor::connectToPropertySetter(propertySetter* p){
   connect(this, SIGNAL(valueChanged(const QString&)), p ,SIGNAL(valueChanged(const QString&)));
 }
 
-void doublePercentageEditor::setInitialValue(QString sx, QString dx){
+void doublePercentageEditor::setInitialValue(const QString& a_sx, const QString& a_dx){
+  QString sx = a_sx;
+  QString dx = a_dx;
   m_sbSx->setValue(sx.remove("%").toInt());
   m_sbDx->setValue(dx.remove("%").toInt());
 }

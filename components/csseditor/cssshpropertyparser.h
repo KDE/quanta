@@ -39,8 +39,8 @@ class CSSSHPropertyParser{
     QString extractURIList();
     QString extractFunctionList();
     QString extractQuotedStringList();
-    QString removeBeginningWhiteSpaces(QString s);
-    QString removeEndingWhiteSpaces(QString s);
+    QString removeBeginningWhiteSpaces(const QString& s);
+    QString removeEndingWhiteSpaces(const QString& s);
 };
 
 #endif
