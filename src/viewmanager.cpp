@@ -78,11 +78,13 @@ QuantaView* ViewManager::createView()
     connect(view, SIGNAL(title(const QString &)), quantaApp, SLOT(slotNewLineColumn()));
     connect(view, SIGNAL(dragInsert(QDropEvent*)), this, SIGNAL(dragInsert(QDropEvent *)));
     connect(view, SIGNAL(hidePreview()), quantaApp, SLOT(slotHidePreview()));
+    disconnect(view, SIGNAL(childWindowCloseRequest( KMdiChildView *)), 0, 0 );
+    connect(view, SIGNAL(childWindowCloseRequest( KMdiChildView*)), this, SLOT(slotCloseRequest(KMdiChildView*)));
 
-  connect(view, SIGNAL(documentClosed()), ProjectTreeView::ref(), SLOT(slotDocumentClosed()));
-  connect(view, SIGNAL(documentClosed()), quantaApp->filesToolView(), SLOT(slotDocumentClosed()));
-  connect(view, SIGNAL(documentClosed()), TemplatesTreeView::ref(), SLOT(slotDocumentClosed()));
-  connect(view, SIGNAL(documentClosed()), quantaApp->scriptToolView(), SLOT(slotDocumentClosed()));
+    connect(view, SIGNAL(documentClosed()), ProjectTreeView::ref(), SLOT(slotDocumentClosed()));
+    connect(view, SIGNAL(documentClosed()), quantaApp->filesToolView(), SLOT(slotDocumentClosed()));
+    connect(view, SIGNAL(documentClosed()), TemplatesTreeView::ref(), SLOT(slotDocumentClosed()));
+    connect(view, SIGNAL(documentClosed()), quantaApp->scriptToolView(), SLOT(slotDocumentClosed()));
 
     return view;
 }
@@ -490,7 +492,7 @@ void ViewManager::slotCloseView()
    removeView(m_contextView);
 }
 
-void ViewManager::slotCloseRequest(QWidget *widget)
+void ViewManager::slotCloseRequest(KMdiChildView *widget)
 {
    QuantaView *view = dynamic_cast<QuantaView *>(widget);
    if (view)

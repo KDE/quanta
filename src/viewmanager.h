@@ -86,7 +86,7 @@ public slots:
   /** called when the context menu was invoked on a tab */
   void slotTabContextMenu(QWidget *widget, const QPoint & point);
   /** called when the user requests to close a tab with the close button */
-  void slotCloseRequest(QWidget *widget);
+  void slotCloseRequest(KMdiChildView *widget);
 signals:
   /** emitted when a file from the template view is dropped on a view */
   void dragInsert(QDropEvent *);

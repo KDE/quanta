@@ -376,24 +376,13 @@ void QuantaInit::initView()
       m_quanta->tabWidget()->setTabPosition( QTabWidget::Bottom );
       connect( m_quanta->tabWidget(), SIGNAL( contextMenu( QWidget *, const QPoint & ) ), m_viewManager,
            SLOT(slotTabContextMenu( QWidget *, const QPoint & ) ) );
-      disconnect( m_quanta->tabWidget(), SIGNAL(closeRequest( QWidget *)), 0, 0 );
-      connect( m_quanta->tabWidget(), SIGNAL( closeRequest( QWidget *) ), m_viewManager,
-           SLOT(slotCloseRequest( QWidget *) ) );
-
   }
   m_quanta->setTabWidgetVisibility(KMdi::AlwaysShowTabs);
 #endif
 
   m_quanta->setStandardMDIMenuEnabled(false);
   m_quanta->setManagedDockPositionModeEnabled(true);
-/*  KMdiChildView* pMDICover = new KMdiChildView("MainDock");
-  pMDICover->setName("MainDock");
-  QBoxLayout *ml=new QHBoxLayout(pMDICover);
-  ml->setAutoAdd(true);
-  quantaApp->addWindow(pMDICover);
-  pMDICover->show();
 
-*/
   m_quanta->fTab = new FilesTreeView(m_config,  m_quanta, "filestree");
   m_quanta->aTab = new EnhancedTagAttributeTree(m_quanta, "TagAttributes");
   pTab = ProjectTreeView::ref(m_quanta, "Project");
