@@ -122,7 +122,7 @@ public:
 
        @return true if close is possible
   */
-  bool Project::queryClose();
+  bool queryClose();
 
 public slots:
 
