@@ -25,6 +25,7 @@
 #include <qdict.h>
 #include <qdom.h>
 #include <qlabel.h>
+#include <qlayout.h>
 #include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qfileinfo.h>
@@ -60,6 +61,7 @@
 #include <kprogress.h>
 #include <kio/job.h>
 #include <kio/netaccess.h>
+#include <klineedit.h>
 #include <kurlrequesterdlg.h>
 #include <kurlrequester.h>
 #include <kprotocolinfo.h>
@@ -91,6 +93,7 @@
 #include "viewmanager.h"
 #include "projectlist.h"
 #include "projectprivate.h"
+#include "teammembersdlg.h"
 
 ProjectPrivate::ProjectPrivate(Project *p)
           : QObject()
@@ -585,6 +588,9 @@ void ProjectPrivate::loadProjectXML()
      m_teamLeader.name = no.namedItem("name").toElement().text();
      m_teamLeader.email = no.namedItem("email").toElement().text();
   }
+
+  m_subprojects.clear();
+  m_subprojectLeaders.clear();
   no = teamNode.namedItem("subprojectleaders");
   nl = no.toElement().elementsByTagName("subproject");
   for (uint i = 0; i < nl.count(); i++)
@@ -594,9 +600,14 @@ void ProjectPrivate::loadProjectXML()
      TeamMember member;
      member.name = el2.attribute("name");
      member.email = el2.attribute("email");
-     m_subprojectLeaders[el.attribute("name")] = member;
+     SubProject subproject;
+     subproject.name = el.attribute("name");
+     subproject.location = el.attribute("location");
+     m_subprojects.append(subproject);
+     m_subprojectLeaders[subproject.name] = member;
   }
 
+  m_taskLeaders.clear();
   no = teamNode.namedItem("taskleaders");
   nl = no.toElement().elementsByTagName("projecttask");
   for (uint i = 0; i < nl.count(); i++)
@@ -607,6 +618,21 @@ void ProjectPrivate::loadProjectXML()
      member.email = el.attribute("email");
      m_taskLeaders[el.attribute("task")] = member;
   }
+
+  m_simpleMembers.clear();
+  nl = teamNode.toElement().elementsByTagName("member");
+  for (uint i = 0; i < nl.count(); i++)
+  {
+     el = nl.item(i).toElement();
+     TeamMember member;
+     member.name = el.namedItem("name").toElement().text();
+     member.email = el.namedItem("email").toElement().text();
+     member.task = el.attribute("task");
+     m_simpleMembers.append(member);
+  }
+
+  no = teamNode.namedItem("mailinglist");
+  m_mailingList = no.toElement().attribute("address");
 
   if (m_projectFiles.readFromXML(dom, baseURL, templateURL, excludeRx))
    m_modified = true;
@@ -1555,9 +1581,14 @@ void Project::slotRemove(const KURL& urlToRemove)
 void Project::slotOptions()
 {
   KURL url;
-  KDialogBase optionsDlg(d->m_parent, "project_options", true, i18n("Project Options"), KDialogBase::Ok | KDialogBase::Cancel);
-  ProjectOptions optionsPage(&optionsDlg);
-  optionsDlg.setMainWidget(&optionsPage);
+  KDialogBase optionsDlg(KDialogBase::Tabbed, WStyle_DialogBorder, d->m_parent, "project_options", true, i18n("Project Settings"), KDialogBase::Ok | KDialogBase::Cancel);
+ // optionsDlg.setMainWidget(&optionsPage);
+
+ //add the main options page
+  QFrame *page = optionsDlg.addPage(i18n("Options"));
+  ProjectOptions optionsPage(page);
+  QVBoxLayout *topLayout = new QVBoxLayout( page, 0, KDialog::spacingHint() );
+  topLayout->addWidget(&optionsPage);
 
   optionsPage.linePrjName->setText( d->projectName );
   url = QExtFileInfo::toRelative(d->templateURL, d->baseURL);
@@ -1653,6 +1684,37 @@ void Project::slotOptions()
   }
 
   optionsPage.checkPrefix->setChecked(d->usePreviewPrefix);
+
+//add the team members page
+  page = optionsDlg.addPage(i18n("Team Configuration"));
+  TeamMembersDlg membersPage(page);
+  topLayout = new QVBoxLayout( page, 0, KDialog::spacingHint() );
+  topLayout->addWidget(&membersPage);
+
+  QListViewItem *item;
+  if (!teamLeader().name.isEmpty())
+  {
+    TeamMember member = teamLeader();
+    item = new QListViewItem(membersPage.membersListView, member.name, member.email, i18n("Team Leader"), member.task);
+    membersPage.membersListView->insertItem(item);
+  }
+  for (QMap<QString, TeamMember>::ConstIterator it = d->m_subprojectLeaders.constBegin(); it != d->m_subprojectLeaders.constEnd(); ++it)
+  {
+    TeamMember member = it.data();
+    item = new QListViewItem(membersPage.membersListView, member.name, member.email, i18n("Subproject Leader"), member.task, it.key());
+  }
+  for (QMap<QString, TeamMember>::ConstIterator it = d->m_taskLeaders.constBegin(); it != d->m_taskLeaders.constEnd(); ++it)
+  {
+    TeamMember member = it.data();
+    item = new QListViewItem(membersPage.membersListView, member.name, member.email, i18n("Task Leader"), it.key());
+  }
+  for (QValueList<TeamMember>::ConstIterator it = d->m_simpleMembers.constBegin(); it != d->m_simpleMembers.constEnd(); ++it)
+  {
+    TeamMember member = *it;
+    item = new QListViewItem(membersPage.membersListView, member.name, member.email, i18n("Simple Member"), member.task);
+  }
+  membersPage.mailingListEdit->setText(d->m_mailingList);
+
   if ( optionsDlg.exec() )
   {
     d->projectName = optionsPage.linePrjName->text();
@@ -1781,6 +1843,91 @@ void Project::slotOptions()
        }
     }
 
+    QDomNode projectNode = d->dom.firstChild().firstChild();
+    QDomNode teamNode = projectNode.namedItem("teamdata");
+    if (!teamNode.isNull())
+      projectNode.removeChild(teamNode);
+    teamNode = d->dom.createElement("teamdata");
+    QDomNode taskLeadersNode = d->dom.createElement("taskleaders");
+    teamNode.appendChild(taskLeadersNode);
+    QDomNode subLeadersNode = d->dom.createElement("subprojectleaders");
+    teamNode.appendChild(subLeadersNode);
+    QListViewItemIterator it(membersPage.membersListView);
+    QListViewItem *item;
+    QStringList savedSubprojects;
+    while (it.current())
+    {
+        item = it.current();
+        QString role = item->text(2);
+        if (role == i18n("Team Leader"))
+        {
+           QDomElement leaderEl = d->dom.createElement("leader");
+           teamNode.appendChild(leaderEl);
+           el = d->dom.createElement("name");
+           leaderEl.appendChild(el);
+           el.appendChild(d->dom.createTextNode(item->text(0)));
+           el = d->dom.createElement("email");
+           leaderEl.appendChild(el);
+           el.appendChild(d->dom.createTextNode(item->text(1)));
+        } else
+        if (role == i18n("Subproject Leader"))
+        {
+           QString prjName = item->text(4);
+           savedSubprojects.append(prjName);
+           QDomElement subEl = d->dom.createElement("subproject");
+           for (uint i = 0; i < d->m_subprojects.count(); i++)
+           {
+             if (d->m_subprojects[i].name == prjName)
+             {
+                 subEl.setAttribute("location", d->m_subprojects[i].location);
+                 break;
+             }
+           }
+           subEl.setAttribute("name", prjName);
+           subLeadersNode.appendChild(subEl);
+           el = d->dom.createElement("subprojectleader");
+           el.setAttribute("name", item->text(0));
+           el.setAttribute("email", item->text(1));
+           subEl.appendChild(el);
+        } else
+        if (role == i18n("Task Leader"))
+        {
+           el = d->dom.createElement("projecttask");
+           el.setAttribute("tasklead", item->text(0));
+           el.setAttribute("email", item->text(1));
+           el.setAttribute("task", item->text(3));
+           taskLeadersNode.appendChild(el);
+        } else
+        if (role == i18n("Simple Member"))
+        {
+           QDomElement memberEl = d->dom.createElement("member");
+           memberEl.setAttribute("task", item->text(3));
+           teamNode.appendChild(memberEl);
+           el = d->dom.createElement("name");
+           memberEl.appendChild(el);
+           el.appendChild(d->dom.createTextNode(item->text(0)));
+           el = d->dom.createElement("email");
+           memberEl.appendChild(el);
+           el.appendChild(d->dom.createTextNode(item->text(1)));
+        }
+        ++it;
+    }
+    //subprojects without a leader
+    for (uint i = 0; i < d->m_subprojects.count(); i++)
+    {
+      if (!savedSubprojects.contains(d->m_subprojects[i].name))
+      {
+          el = d->dom.createElement("subproject");
+          el.setAttribute("name", d->m_subprojects[i].name);
+          el.setAttribute("location", d->m_subprojects[i].location);
+      }
+    }
+
+    el = d->dom.createElement("mailinglist");
+    el.setAttribute("address", membersPage.mailingListEdit->text());
+    teamNode.appendChild(el);
+    projectNode.appendChild(teamNode);
+
     d->m_modified = true;
     d->loadProjectXML();
   }
@@ -1818,7 +1965,8 @@ void Project::slotRescanPrjDir()
                                     d->m_parent, i18n("New Files in Project's Folder"));
   if ( dlg->exec() )
   {
-    d->insertFiles( dlg->files() );
+    d->insertFiles(dlg->files());
+    setModified();
     emit reloadTree(&(d->m_projectFiles), false, QStringList());
   }
   delete dlg;
@@ -2146,6 +2294,42 @@ TeamMember Project::subprojectLeader(const QString &name)
 TeamMember Project::taskLeader(const QString &name)
 {
   return d->m_taskLeaders[name];
+}
+
+QValueList<TeamMember> Project::simpleMembers()
+{
+  return d->m_simpleMembers;
+}
+
+QString Project::mailingList()
+{
+  return d->m_mailingList;
+}
+
+QValueList<SubProject>* Project::subprojects()
+{
+  return &d->m_subprojects;
+}
+
+QMap<QString, TeamMember> Project::allMembers()
+{
+   QMap<QString, TeamMember> members;
+   for (QValueList<TeamMember>::ConstIterator it = d->m_simpleMembers.constBegin(); it != d->m_simpleMembers.constEnd(); ++it)
+   {
+      members[(*it).name] = *it;
+   }
+   if (!d->m_teamLeader.name.isEmpty())
+     members[d->m_teamLeader.name] = d->m_teamLeader;
+   for (QMap<QString, TeamMember>::ConstIterator it = d->m_subprojectLeaders.constBegin(); it != d->m_subprojectLeaders.constEnd(); ++it)
+   {
+      members[it.data().name] = it.data();
+   }
+   for (QMap<QString, TeamMember>::ConstIterator it = d->m_taskLeaders.constBegin(); it != d->m_taskLeaders.constEnd(); ++it)
+   {
+      members[it.data().name] = it.data();
+   }
+
+   return members;
 }
 
 #include "project.moc"

@@ -75,6 +75,9 @@ upload.*/
   TeamMember m_teamLeader;
   QMap<QString, TeamMember> m_subprojectLeaders;
   QMap<QString, TeamMember> m_taskLeaders;
+  QValueList<TeamMember> m_simpleMembers;
+  QValueList<SubProject> m_subprojects;
+  QString m_mailingList;
 
   KAction
     *closeprjAction, *insertFileAction, *insertDirAction,

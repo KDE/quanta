@@ -65,6 +65,12 @@ typedef  QMap<QString, EventAction> EventActions;
 struct TeamMember {
   QString name;
   QString email;
+  QString task;
+};
+
+struct SubProject {
+  QString name;
+  QString location;
 };
 
 class Project : public QObject  {
@@ -127,6 +133,10 @@ public:
   TeamMember teamLeader();
   TeamMember subprojectLeader(const QString &name);
   TeamMember taskLeader(const QString &name);
+  QValueList<TeamMember> simpleMembers();
+  QString mailingList();
+  QValueList<SubProject>* subprojects();
+  QMap<QString, TeamMember> allMembers();
 
   /** save project file */
   bool slotSaveProject();

@@ -26,7 +26,7 @@
     <general>
       <mainprogram>quanta</mainprogram>
       <useconfiguration>default</useconfiguration>
-      <activetarget>components/csseditor/libcsseditor.la</activetarget>
+      <activetarget>project/libproject.la</activetarget>
     </general>
     <configure>
       <configargs>--prefix=/opt/kde3 --enable-debug\s</configargs>
@@ -162,7 +162,7 @@
     </groups>
     <tree>
       <hidenonprojectfiles>false</hidenonprojectfiles>
-      <hidepatterns></hidepatterns>
+      <hidepatterns/>
       <showvcsfields>true</showvcsfields>
     </tree>
   </kdevfileview>
