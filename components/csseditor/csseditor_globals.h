@@ -28,7 +28,7 @@ const QStringList HTMLColors(QStringList::split(",",QString("aliceblue,antiquewh
                                    "darkkhaki,darkmagenta,darkolivegreen,darkorange,darkorchid,darkred,darksalmon,"
                                    "darkseagreen,darkslateblue,darkslategray,darkturquoise,darkviolet,deeppink,"
                                    "deepskyblue,dimgray,dodgerblue,firebrick,floralwhite,forestgreen,fuchsia,gainsboro,"
-                                   "ghostwhite,gold,goldenrod,gray,green,greenyellow,honeydew,hotpink,indianred,"
+                                   "ghostwhite,gold,goldenrod,gray,grey,green,greenyellow,honeydew,hotpink,indianred,"
                                    "indigo,ivory,khaki,lavender,lavenderblush,lawngreen,lemonchiffon,lightblue,lightcoral,"
                                    "lightcyan,lightgoldenrodyellow,lightgreen,lightgrey,lightpink,lightsalmon,lightseagreen,"
                                    "lightskyblue,lightslategray,lightsteelblue,lightyellow,lime,limegreen,linen,magenta,"
@@ -40,15 +40,15 @@ const QStringList HTMLColors(QStringList::split(",",QString("aliceblue,antiquewh
                                    "salmon,sandybrown,seagreen,seashell,sienna,silver,skyblue,slateblue,slategray,snow,"
                                    "springgreen,steelblue,tan,teal,thistle,tomato,turquoise,violet,wheat,white,whitesmoke,"
                                    "yellow,yellowgreen")));
-                                   
 
-  const QStringList lengthUnits(QStringList::split(",",QString("cm,em,ex,in,mm,pc,pt,px"))); 
+
+  const QStringList lengthUnits(QStringList::split(",",QString("cm,em,ex,in,mm,pc,pt,px")));
   const QStringList frequencyUnits(QStringList::split(",",QString("Hz,kHz")));
   const QStringList angleUnits(QStringList::split(",",QString("deg,rad,grad")));
   const QStringList timeUnits(QStringList::split(",",QString("s,ms")));
-};                                                                   
+};
 
-                                                                   
+
 class mySpinBox : public QSpinBox{
     Q_OBJECT
   public:
@@ -56,8 +56,8 @@ class mySpinBox : public QSpinBox{
     mySpinBox( int minValue, int maxValue, int step = 1, QWidget * parent = 0, const char * name = 0 );
     ~mySpinBox();
   public slots:
-    void checkSuffix(const QString&);  
+    void checkSuffix(const QString&);
 };
 
-                                                          
+
 #endif
