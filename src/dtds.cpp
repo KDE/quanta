@@ -395,7 +395,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
   /**** End of code for the new parser *****/
 
   //read the definition of a structure, and the structure keywords
-  QStringList structKeywords = dtdConfig->readListEntry("StructKeywords",';');
+  QStringList structKeywords = dtdConfig->readListEntry("StructKeywords",',');
   if (structKeywords.count() !=0 )
   {
       tmpStr = "\\b(";
@@ -411,7 +411,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
   }
   dtd->structKeywordsRx.setPattern(tmpStr);
 
-  structKeywords = dtdConfig->readListEntry("LocalScopeKeywords",';');
+  structKeywords = dtdConfig->readListEntry("LocalScopeKeywords",',');
   if (structKeywords.count() !=0 )
   {
       tmpStr = "\\b(";

@@ -758,6 +758,10 @@ void QuantaInit::initActions()
     (void) new KAction( i18n( "&Change the DTD..." ), 0,
                         m_quanta, SLOT( slotChangeDTD() ),
                         ac, "change_dtd" );
+    
+    (void) new KAction( i18n( "&Edit DTD settings..." ), 0,
+    m_quanta, SLOT( slotEditDTD() ),
+    ac, "edit_dtd" );
 
     (void) new KAction( i18n( "&Load && Convert DTD..." ), 0,
                         DTDs::ref(), SLOT( slotLoadDTD() ),

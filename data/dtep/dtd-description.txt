@@ -23,6 +23,7 @@ Inherits = the name of the DTD from where this DTD inherits the tags (-//W3C//DT
 DefaultExtension = new files are created with this extension (html)
 Groups = the list of common attribute groups, which may be present in more than
       one tag (Core, I18n, Script). See below (Group1, Group2...)
+      OBSOLETE, don't use. Groups are read from common.tag.
 NumOfPages = how many pages does a tag dialog have (aside of the page containing
       the attributes defined in the tag file). See below (Page1,...)
 CaseSensitive = case-sensitiveness of the DTD

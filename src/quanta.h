@@ -334,6 +334,8 @@ public slots:
 
   /** Change the DTD/DTEP of the current document. */
   void slotChangeDTD();
+  /** Edit a DTD/DTEP description. */
+  void slotEditDTD();
   /** Called when the user explicetly requested the completion box.*/
   void slotShowCompletion();
   /** Called when the user explicetly requested the completion hint.*/

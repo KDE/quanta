@@ -30,7 +30,7 @@ public:
 	~KafkaHTMLView();
 
 protected:
-	void leaveEvent(QEvent *);
+	//void leaveEvent(QEvent *);
 };
 
 #endif

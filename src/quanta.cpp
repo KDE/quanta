@@ -57,6 +57,7 @@
 #include <kcombobox.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
+#include <kencodingfiledialog.h>
 #include <kfiledialog.h>
 #include <kmenubar.h>
 #include <klocale.h>
@@ -169,13 +170,13 @@
 
 #include "messageoutput.h"
 
+#include "dtepeditdlg.h"
 #include "actionconfigdialog.h"
 #include "toolbarxmlgui.h"
 #include "tagaction.h"
 #include "toolbartabwidget.h"
 #include "dcopquanta.h"
 
-#include <kencodingfiledialog.h>
 
 #include "quantaplugininterface.h"
 #include "quantaplugin.h"
@@ -2925,6 +2926,45 @@ void QuantaApp::slotChangeDTD()
     if (view)
       view->activated();
     reparse(true);
+  }
+}
+
+void QuantaApp::slotEditDTD()
+{
+  Document *w = ViewManager::ref()->activeDocument();
+  if (w)
+  {
+    QStringList lst(DTDs::ref()->nickNameList());
+    QString nickName = DTDs::ref()->getDTDNickNameFromName(w->getDTDIdentifier());
+    bool ok = FALSE;
+    QString res = KInputDialog::getItem(
+        i18n( "Send DTD" ),
+    i18n( "Please select a DTD:" ), lst, lst.findIndex(nickName), FALSE, &ok, this );
+
+    if (!ok)
+      return;
+
+    QString dtdName = DTDs::ref()->getDTDNameFromNickName(res);
+    
+    KDialogBase editDlg(this, "edit_dtep", true, i18n("Configure DTEP"), KDialogBase::Ok | KDialogBase::Cancel);
+    DTEPEditDlg dtepDlg(DTDs::ref()->find(dtdName)->fileName, &editDlg);
+    editDlg.setMainWidget(&dtepDlg);
+    if (editDlg.exec())
+    {
+      QFileInfo f(DTDs::ref()->find(dtdName)->fileName);
+      if (f.isWritable())
+      {
+        if (f.exists())
+        {
+          if (KMessageBox::warningYesNo(this, i18n("<qt>The file <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>").arg(f.filePath()),i18n("Overwrite")) == KMessageBox::No)
+            return;
+        }
+        KConfig* config = dtepDlg.resultConfig();
+        KConfig* newConfig = config->copyTo(f.filePath());
+        newConfig->sync();
+        delete newConfig;        
+      }
+    }
   }
 }
 

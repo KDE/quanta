@@ -15,6 +15,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <kcursor.h>
+ 
 #include "kafkahtmlview.moc"
 #include "kafkahtmlpart.h"
 
@@ -26,9 +28,12 @@ KafkaHTMLView::KafkaHTMLView(KafkaWidget *part, QWidget *parent, const char *nam
 KafkaHTMLView::~KafkaHTMLView()
 {
 }
-
+/*
 void KafkaHTMLView::leaveEvent(QEvent *)
 {
-    setCursor(Qt::arrowCursor);
+  releaseMouse();
+  setCursor(KCursor::workingCursor());
 }
 
+
+*/
