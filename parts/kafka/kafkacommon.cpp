@@ -742,7 +742,7 @@ Node *kafkaCommon::createDoctypeNode(Document *doc)
     closingNode->prev = node;
 
     //Then build the Script tag which will be child of the above node.
-    child = kafkaCommon::createNode("#text", doc->defaultDTD()->doctypeStr, Tag::Text, doc);
+    child = kafkaCommon::createNode("#text", "DOCTYPE" + doc->defaultDTD()->doctypeStr, Tag::Text, doc);
     child->tag->cleanStrBuilt = true;
     child->insideSpecial = true;
     insertNode(child, node, 0L, 0L, false);

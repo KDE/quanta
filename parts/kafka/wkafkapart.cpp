@@ -1018,14 +1018,18 @@ QString KafkaDocument::generateCodeFromNode(Node *node, int bLine, int bCol, int
 		{
 			text = "<" + QuantaCommon::tagCase("style") + ">";
 		}
-		else if(node->tag->name.contains("DTD block"))
+		else if(node->tag->name.contains("DTD"))
 		{
-			text = "<!DOCTYPE";
+			text = "<!";
 		}
-		else if(node->tag->name.contains("XML PI block"))
+		else if(node->tag->name.contains("XML PI"))
 		{
 			text = "<?xml";
 		}
+                else if(node->tag->name.contains("PHP"))
+                {
+                  text = "<?php";
+                }
 		bCol += text.length();
 		eCol = bCol - 1;
 		eLine = bLine;

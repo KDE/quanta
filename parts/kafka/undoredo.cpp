@@ -1315,10 +1315,14 @@ void undoRedo::reloadQuantaEditor(bool force, bool syncQuantaCursor, bool encode
                           kafkaCommon::fitIndentationNodes(node, kafkaCommon::getNextNodeNE(node, goUp));
                           kafkaCommon::applyIndentation(node, 2, 0);
                         }
+                        else if(node->tag->type == Tag::ScriptTag)
+                        {
+                          //Script formatting
+                          node->tag->setStr(kafkaInterface->generateCodeFromNode(node, 0, 0, eLine, eCol, encodeText));
+                        }
                         else
                         {
                           //Script formatting
-                        
                         }
                         node->tag->cleanStrBuilt = true;
                 }
