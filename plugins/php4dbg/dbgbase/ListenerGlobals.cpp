@@ -27,7 +27,7 @@
 #endif
 
 #ifdef _DEBUG
-void __dbgtrace(const char *str,...) {
+void __//DBGTRACE(const char *str,...) {
 	va_list args;
 
 	if (!str) return;
@@ -46,16 +46,18 @@ void __dbgtrace(const char *str,...) {
 }
 #endif
 
-int oserrno(int isnetwork) {
 #ifdef PHP_WIN32
+int oserrno(int isnetwork) {
 	if (isnetwork)
 		return WSAGetLastError();
 	else
 		return GetLastError();
-#else
-	return errno;
-#endif
 }
+#else
+int oserrno(int ) {
+	return errno;
+}
+#endif
 
 void oserrnostr(char *buf, int bufsize, int err) {
 	if (!bufsize || !buf) return;
@@ -112,7 +114,7 @@ void SCOPELIST::assign(dbg_packet *pack) {
 	int siz;
 
 	clear();
-	p = dbg_packet_findfirstframe(pack, FRAME_STACK);
+	p = dbg_packet_findfirstframe(pack, (char*)FRAME_STACK);
 	while (p) {
 		stk = (dbg_stack_body *)FRAME_DATA_PTR(p);
 		
@@ -124,7 +126,7 @@ void SCOPELIST::assign(dbg_packet *pack) {
 			stkitem.scope_descr = strdup(str);
 		}
 		push_back(stkitem);
-		p = dbg_packet_findnextframe(pack, FRAME_STACK, p);
+		p = dbg_packet_findnextframe(pack, (char*)FRAME_STACK, p);
 	}
 }
 
@@ -176,7 +178,7 @@ void BREAKPOINTLIST::assign(dbg_packet *pack) {
 	breakpointlistitem bpitem;
 	dbg_frame *frame;
 
-	frame = dbg_packet_findfirstframe(pack, FRAME_BPR);
+	frame = dbg_packet_findfirstframe(pack, (char*)FRAME_BPR);
 	while (frame) {
 		body = (dbg_bpr_body *)FRAME_DATA_PTR(frame);
 		mod_name = NULL;
@@ -186,12 +188,12 @@ void BREAKPOINTLIST::assign(dbg_packet *pack) {
 		bpitem.state = (mod_name==NULL) ? BPS_UNRESOLVED : BPS_ENABLED;
 		bpitem.mod_name = (mod_name) ? strdup(mod_name) : NULL;
 		push_back( bpitem);
-		frame = dbg_packet_findnextframe(pack, FRAME_BPR, frame);
+		frame = dbg_packet_findnextframe(pack, (char*)FRAME_BPR, frame);
 	}
 }
 
 void BREAKPOINTLIST::add(const BPOINTITEM bpm, const char *mod_name) {
-	breakpointlistitem bpitem, *pbpitem;
+	breakpointlistitem bpitem, *pbpitem = 0L;
 	bool found = false;
 	iterator it;
 	
@@ -247,7 +249,7 @@ void DOCLIST::assign(dbg_packet *pack) {
 	doclistitem item;
 	dbg_frame *frame;
 
-	frame = dbg_packet_findfirstframe(pack, FRAME_SRC_TREE);
+	frame = dbg_packet_findfirstframe(pack,(char*) FRAME_SRC_TREE);
 	while (frame) {
 		body = (dbg_src_tree_body *)FRAME_DATA_PTR(frame);
 		mod_name = NULL;
@@ -256,7 +258,7 @@ void DOCLIST::assign(dbg_packet *pack) {
 		item.mod_no = body->mod_no;
 		item.parent_mod_no = body->parent_mod_no;
 		push_back(item);
-		frame = dbg_packet_findnextframe(pack, FRAME_SRC_TREE, frame);
+		frame = dbg_packet_findnextframe(pack, (char*)FRAME_SRC_TREE, frame);
 	}
 }
 
@@ -267,7 +269,7 @@ void LINESINFOLIST::assign(dbg_packet *pack) {
 	linesinfoitem item;
 	dbg_frame *frame;
 
-	frame = dbg_packet_findfirstframe(pack, FRAME_SRCLINESINFO);
+	frame = dbg_packet_findfirstframe(pack, (char*)FRAME_SRCLINESINFO);
 	while (frame) {
 		body = (dbg_srclinesinfo_body *)FRAME_DATA_PTR(frame);
 
@@ -277,7 +279,7 @@ void LINESINFOLIST::assign(dbg_packet *pack) {
 		item.ctx_id = body->ctx_id;
 		
 		push_back(item);
-		frame = dbg_packet_findnextframe(pack, FRAME_SRCLINESINFO, frame);
+		frame = dbg_packet_findnextframe(pack, (char*)FRAME_SRCLINESINFO, frame);
 	}
 }
 	
@@ -334,7 +336,8 @@ int dbh_check_new_client_connect(int listen_socket, sockaddr *addr, int timeoutm
 	int ret_val;
 	timeval timeout;
 	sockaddr laddr;
-	NET_SIZE_T siz;
+	//NET_SIZE_T siz;
+  socklen_t siz;
 	
 	if (listen_socket<=0) return 0;
 	FD_ZERO(&rset);

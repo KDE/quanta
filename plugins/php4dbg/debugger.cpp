@@ -13,7 +13,7 @@ PHP4Debugger::PHP4Debugger( QObject * parent, const char * name )
 
 void PHP4Debugger::init()
 {
-  cfgprm cfg = {0,0,0,0,0};
+  cfgprm cfg = {0,0,0,0,""};
   memset(&cfg, 0, sizeof(cfg));
   cfg.breakonload       = DEFAULT_LSTNR_BREAKONSTART;
   cfg.port              = DEFAULT_LSTNR_PORT;

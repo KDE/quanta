@@ -43,7 +43,7 @@ protected:
 	void submitbreakpoints(dbg_packet *pack);
 public:
 	ThreadBase(): fsock(0), flags(0), fsite(0) {
-		DBGTRACE("ThreadBase::ThreadBase\n");
+	//	DBGTRACE("ThreadBase::ThreadBase\n");
 		memset(&fclient_addr, 0, sizeof(fclient_addr));
 		memset(&fcfg, 0, sizeof(fcfg));
 	}

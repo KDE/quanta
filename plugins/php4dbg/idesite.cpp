@@ -12,7 +12,7 @@
 #include "idesite.h"
 #include "idesite.moc"
 
-HRESULT IdeSite::initialize(RequestorBase *req, int dbg_ver, char *dbg_descr)
+HRESULT IdeSite::initialize(RequestorBase *req, int /*dbg_ver*/, char */*dbg_descr*/)
 {
   requestor = req;
 
@@ -25,7 +25,7 @@ HRESULT IdeSite::initialize(RequestorBase *req, int dbg_ver, char *dbg_descr)
   return S_OK;
 }
 
-HRESULT IdeSite::handleerror(int errtype, char *errmsg, BRACTION *action)
+HRESULT IdeSite::handleerror(int /*errtype*/, char *errmsg, BRACTION *action)
 {
   assert(requestor!=NULL);
 
@@ -42,7 +42,7 @@ HRESULT IdeSite::handleerror(int errtype, char *errmsg, BRACTION *action)
   if (SUCCEEDED(hr))
   {
     mes = mod_name.data();
-    t.sprintf(":%d:",line_no);
+    t.sprintf(":%ld:",line_no);
     mes += t;
   }
   else mes+="::";
@@ -73,7 +73,7 @@ HRESULT IdeSite::handlebreakpoint(BRREASON reason, BRACTION *action)
   if (SUCCEEDED(hr))
   {
     mes = mod_name.data();
-    t.sprintf(":%d:",line_no);
+    t.sprintf(":%ld:",line_no);
     mes += t;
   }
   else mes+="::";
@@ -117,9 +117,9 @@ void IdeSite::print_location()
     QString mes = i18n("\n:LOCATION:");
     mes += mod_name.data();
     QString t;
-    t.sprintf(":%s=%d","mod_no",mod_no);
+    t.sprintf(":%s=%ld","mod_no",mod_no);
     mes += t;
-    t.sprintf(":%s=%d:","line_no",line_no);
+    t.sprintf(":%s=%ld:","line_no",line_no);
     mes += t;
 
     emit message(mes);

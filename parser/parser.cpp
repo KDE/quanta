@@ -156,6 +156,7 @@ Node *Parser::newParse(Document *w)
         if (openNum != 0)
             line++;
       }
+      
       col = tagEndCol;
       nodeFound = true;
       //build an xml tag node here

@@ -4,7 +4,7 @@
 #include "ListenerGlobals.h"
 #include "idesite.h"
  
-void Thread::stop(char bWait) {
+void Thread::stop(char /*bWait*/) {
 }
  
 DbgSiteBase* Thread::create_site() 

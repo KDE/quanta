@@ -305,8 +305,12 @@ DBGAPI dbg_frame* dbg_packet_findfirstframe(dbg_packet *pack, framename frname);
 DBGAPI dbg_frame* dbg_packet_findnextframe(dbg_packet *pack, framename frname, dbg_frame *frame);
 DBGAPI int dbg_packet_findrawdata(dbg_packet *pack, int rawid, char **data, int *datasize);
 
-DBGAPI int dbg_packet_recv(dbg_header_struct *hdr, dbg_packet *pack, int socket, int timeoutsec);
-DBGAPI int dbg_packet_send(int cmd , dbg_packet *pack, int socket, int flags);
+DBGAPI int dbg_packet_recv(dbg_header_struct *hdr, dbg_packet *pack, int a_socket, int timeoutsec);
+DBGAPI int dbg_packet_send(int cmd , dbg_packet *pack, int a_socket, int flags);
+
+int dbg_packet_update_limit(dbg_packet *pack, int space);
+int dbg_sock_read(char *buf, int bufsize, int a_socket, int timeoutms);
+int dbg_packet_recv_body(dbg_packet *pack, int bodysize, int a_socket, int timeoutms);
 
 #define dbg_packet_findstring(pack,rawid,data,datasize) dbg_packet_findrawdata(pack,rawid,data,datasize)
 #define dbg_packet_add_string(pack,str) dbg_packet_add_rawdata(pack,str,strlen(str)+1)

@@ -34,7 +34,7 @@ protected:
 
 public:
 	ListenerBase(): listensock(0), fstatus(LSTNRS_notinitialized), _error(0) {
-		DBGTRACE("ListenerBase::ListenerBase\n");
+//		DBGTRACE("ListenerBase::ListenerBase\n");
 		memset(&fcfg, 0, sizeof(fcfg));
 	}
 	virtual ~ListenerBase();
