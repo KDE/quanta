@@ -680,6 +680,7 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
     if (statusBarVisible)
     {
       showStatusbarAction->setChecked(true);
+      statusBar()->changeItem("", IDS_STATUS);
       statusBar()->show();
     }
   }
