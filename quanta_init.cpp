@@ -752,7 +752,7 @@ void QuantaApp::loadInitialProject(QString url)
 }
 
 
-bool QuantaApp::queryExit()
+bool QuantaApp::queryClose()
 {
   bool canExit = true;
   if (quantaStarted)

@@ -338,7 +338,7 @@ protected:
   uint readTagFile(QString fileName, DTDStruct* parentDTD, QTagList *tagList);
   /** Parse the dom document and retrieve the tag attributes */
   void setAttributes(QDomNode *dom, QTag *tag);
-  virtual bool queryExit();
+  virtual bool queryClose();
   void saveAsTemplate (bool projectTemplate, bool selectionOnly = false);
   /** Saves the toolbar and the actions. Returns the name of the actions file*/
   KURL saveToolBar(const QString& toolbarName,const KURL& destFile);
