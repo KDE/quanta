@@ -55,11 +55,11 @@
 #include "../quanta.h"
 
 FilesTreeView::FilesTreeView(KURL::List topList, QWidget *parent, const char *name)
-	: FileManage(parent,name)
+        : FileManage(parent,name)
 {
-	topURLList = topList;
+        topURLList = topList;
 
-	setRootIsDecorated( true );
+        setRootIsDecorated( true );
   header()->hide();
   setSorting(0);
 
@@ -67,49 +67,49 @@ FilesTreeView::FilesTreeView(KURL::List topList, QWidget *parent, const char *na
   setLineWidth( 2 );
   addColumn( i18n("Name") );
 
-	setFocusPolicy(QWidget::ClickFocus);
+        setFocusPolicy(QWidget::ClickFocus);
 
-	folderMenu -> insertItem( i18n("Add Folder to Top"), this ,SLOT(slotAddToTop()), 0, ID_TOP, 0);
+        folderMenu -> insertItem( i18n("Add Folder to Top"), this ,SLOT(slotAddToTop()), 0, ID_TOP, 0);
 
-	connect(  this, SIGNAL(doubleClicked(QListViewItem *)),
-						this, SLOT(slotSelectFile(QListViewItem *)));
-	connect(	this, SIGNAL(returnPressed(QListViewItem *)),
-						this, SLOT(slotSelectFile(QListViewItem *)));
-	connect(	this, SIGNAL(open(QListViewItem *)),
-						this,	SLOT(slotSelectFile(QListViewItem *)));
+        connect(  this, SIGNAL(doubleClicked(QListViewItem *)),
+                                                this, SLOT(slotSelectFile(QListViewItem *)));
+        connect(        this, SIGNAL(returnPressed(QListViewItem *)),
+                                                this, SLOT(slotSelectFile(QListViewItem *)));
+        connect(        this, SIGNAL(open(QListViewItem *)),
+                                                this,        SLOT(slotSelectFile(QListViewItem *)));
 
-	connect(	this, SIGNAL(openInQuanta(QListViewItem *)),
-						this,	SLOT(slotSelectAnyFile(QListViewItem *)));
+        connect(        this, SIGNAL(openInQuanta(QListViewItem *)),
+                                                this,        SLOT(slotSelectAnyFile(QListViewItem *)));
 
-	connect(  this, SIGNAL(selectionChanged(QListViewItem *)),
-						this, SLOT(slotSelectImage(QListViewItem *)));
+        connect(  this, SIGNAL(selectionChanged(QListViewItem *)),
+                                                this, SLOT(slotSelectImage(QListViewItem *)));
 
-	connect( this, SIGNAL(rightButtonPressed(QListViewItem*, const QPoint&, int)),
-					 this, SLOT(slotMenu(QListViewItem*, const QPoint&, int)));
+        connect( this, SIGNAL(rightButtonPressed(QListViewItem*, const QPoint&, int)),
+                                         this, SLOT(slotMenu(QListViewItem*, const QPoint&, int)));
 
 
-	// generate top list of directories
-	for (uint i = 0; i <  topList.count(); i++)
-	{
-	  KURL url = topURLList[i];
+        // generate top list of directories
+        for (uint i = 0; i <  topList.count(); i++)
+        {
+          KURL url = topURLList[i];
     if (url.isLocalFile() && url.path() == "/")
     {
       FilesTreeFolder *dir = new FilesTreeFolder( this, i18n("Root directory"), url);
-    	dir->setPixmap( 0, SmallIcon("folder"));
-   	  dir->setOpen( false);
+            dir->setPixmap( 0, SmallIcon("folder"));
+             dir->setOpen( false);
     } else
       if (url.isLocalFile() && url.path() == QDir::homeDirPath()+"/")
       {
-	      FilesTreeFolder *dir = new FilesTreeFolder( this, i18n("Home directory"), url);
-    	  dir->setPixmap( 0, SmallIcon("folder_home"));
-    	  dir->setOpen( true );
+              FilesTreeFolder *dir = new FilesTreeFolder( this, i18n("Home directory"), url);
+              dir->setPixmap( 0, SmallIcon("folder_home"));
+              dir->setOpen( true );
       } else
       {
-	      FilesTreeFolder *dir = new FilesTreeFolder( this, url.fileName()+" ["+url.path()+"]", url);
-	      dir->setPixmap( 0, SmallIcon("kdisknav") );
-    	  dir->setOpen( false);
+              FilesTreeFolder *dir = new FilesTreeFolder( this, url.fileName()+" ["+url.path()+"]", url);
+              dir->setPixmap( 0, SmallIcon("kdisknav") );
+              dir->setOpen( false);
       }
-	}
+        }
 
 }
 
@@ -131,38 +131,38 @@ void FilesTreeView::slotReload()
 /** RMB pressed, bring up the menu */
 void FilesTreeView::slotMenu(QListViewItem *item, const QPoint &point, int)
 {
-	if (item)
+        if (item)
   {
-  	setSelected(item, true);
+          setSelected(item, true);
 
-  	FilesTreeFile *f = dynamic_cast<FilesTreeFile *>( item);
-  	if ( f )
+          FilesTreeFile *f = dynamic_cast<FilesTreeFile *>( item);
+          if ( f )
     {
       fileMenu->popup( point);
     }
 
-  	FilesTreeFolder *d = dynamic_cast<FilesTreeFolder *>( item);
-  	if ( d )
-  	{
-  	  if ( !d->parentFolder )
+          FilesTreeFolder *d = dynamic_cast<FilesTreeFolder *>( item);
+          if ( d )
+          {
+            if ( !d->parentFolder )
       {
         folderMenu ->changeItem( ID_TOP, i18n("Remove From Top"));
       }
-  	  else
+            else
       {
         folderMenu ->changeItem( ID_TOP, i18n("Add Folder to Top"));
       }
 
-  	  if ( d->text(0) == i18n("Home directory") || d->text(0) == i18n("Root directory") )
+            if ( d->text(0) == i18n("Home directory") || d->text(0) == i18n("Root directory") )
       {
-  	    folderMenu ->setItemEnabled( ID_TOP, false);
+              folderMenu ->setItemEnabled( ID_TOP, false);
       }
-  	  else
+            else
       {
         folderMenu ->setItemEnabled( ID_TOP, true );
       }
 
-  	  folderMenu->popup( point);
+            folderMenu->popup( point);
    }
  }
 }
@@ -171,14 +171,14 @@ void FilesTreeView::slotMenu(QListViewItem *item, const QPoint &point, int)
 KURL FilesTreeView::currentURL()
 {
   KURL url;
-	QListViewItem *item = currentItem();
- 	FilesTreeFolder *folderItem = dynamic_cast<FilesTreeFolder *> (item);
+        QListViewItem *item = currentItem();
+         FilesTreeFolder *folderItem = dynamic_cast<FilesTreeFolder *> (item);
   if ( folderItem )
   {
     url = folderItem->url;
   } else
   {
-   	FilesTreeFile *fileItem = dynamic_cast<FilesTreeFile *> (item);
+           FilesTreeFile *fileItem = dynamic_cast<FilesTreeFile *> (item);
     if ( fileItem )
     {
       url = fileItem->url;
@@ -191,29 +191,34 @@ KURL FilesTreeView::currentURL()
 /** Called for: double click, return, Open */
 void FilesTreeView::slotSelectFile(QListViewItem *item)
 {
-	if (item)
+        if (item)
   {
-  	FilesTreeFolder *parent = (FilesTreeFolder *) item->parent();
+          FilesTreeFolder *parent = (FilesTreeFolder *) item->parent();
     if ( parent && !dynamic_cast<FilesTreeFolder *>(item) )
     {
-  	 	KURL urlToOpen = currentURL();
+                   KURL urlToOpen = currentURL();
       if (!urlToOpen.isEmpty())
       {
-      	if ( QuantaCommon::checkMimeGroup(urlToOpen,"text") )
-      	{
-    		  emit openFile( urlToOpen, quantaApp->defaultEncoding() );
-      	}
-      	else if ( QuantaCommon::checkMimeGroup(urlToOpen, "image") ) //it may be an image
-    	       {
-            		emit activatePreview();
-            		emit openImage( urlToOpen );
+              if ( QuantaCommon::checkMimeGroup(urlToOpen,"text") )
+              {
+                      emit openFile( urlToOpen, quantaApp->defaultEncoding() );
+              }
+              else if ( QuantaCommon::checkMimeGroup(urlToOpen, "image") ) //it may be an image
+                   {
+                            emit activatePreview();
+                            emit openImage( urlToOpen );
              } else //it is an unknown type, maybe binary
              {
-               if (KMessageBox::questionYesNo(this,i18n("This file cannot be opened in Quanta. \n \
-                   Do you want to open with an external program or run it?"),i18n("Unknown type")) == KMessageBox::Yes)
+               int result = KMessageBox::questionYesNoCancel(this,i18n("This file cannot be opened in Quanta. \n \
+                   Do you want to open with an external program or run it?"),i18n("Unknown type"), KStdGuiItem::yes(), KStdGuiItem::no(), "Open Everything");
+               if ( result == KMessageBox::Yes)
                {
                  KFileOpenWithHandler fowh;
                  new KRun(urlToOpen, 0, true );
+               } else
+               if (result == KMessageBox::No)
+               {
+                      emit openFile( urlToOpen, quantaApp->defaultEncoding() );
                }
              }
        }
@@ -224,10 +229,10 @@ void FilesTreeView::slotSelectFile(QListViewItem *item)
 /** Open in Quanta*/
 void FilesTreeView::slotSelectAnyFile(QListViewItem *item)
 {
-	if (item )
+        if (item )
   {
-  	FilesTreeFolder *parent = (FilesTreeFolder *) item->parent();
-	  if ( parent && !dynamic_cast<FilesTreeFolder *>(item) )
+          FilesTreeFolder *parent = (FilesTreeFolder *) item->parent();
+          if ( parent && !dynamic_cast<FilesTreeFolder *>(item) )
     {
        KURL urlToOpen = currentURL();
        if (!urlToOpen.isEmpty())
@@ -247,15 +252,15 @@ void FilesTreeView::slotSelectAnyFile(QListViewItem *item)
 /** Load the image in preview area */
 void FilesTreeView::slotSelectImage(QListViewItem *item)
 {
-	if (item)
+        if (item)
   {
-  	KURL urlToOpen = currentURL();
-  	FilesTreeFolder *parent = (FilesTreeFolder *) item->parent();
-  	if ( parent && !dynamic_cast<FilesTreeFolder *>(item) && !urlToOpen.isEmpty() )
+          KURL urlToOpen = currentURL();
+          FilesTreeFolder *parent = (FilesTreeFolder *) item->parent();
+          if ( parent && !dynamic_cast<FilesTreeFolder *>(item) && !urlToOpen.isEmpty() )
     {
-    	if ( QuantaCommon::checkMimeGroup(urlToOpen,"image") )
-    	{
-  	  	emit openImage(urlToOpen );
+            if ( QuantaCommon::checkMimeGroup(urlToOpen,"image") )
+            {
+                    emit openImage(urlToOpen );
       }
     }
   }
@@ -265,33 +270,33 @@ void FilesTreeView::slotSelectImage(QListViewItem *item)
 void FilesTreeView::slotAddToTop()
 {
   FilesTreeFolder *d = dynamic_cast<FilesTreeFolder *>( currentItem() );
-	if ( d )
-	{
+        if ( d )
+        {
     KURL url(currentURL().url());
-	  if ( d->parentFolder )      //it is not a top folder
-	  { // add
+          if ( d->parentFolder )      //it is not a top folder
+          { // add
       if (topURLList.findIndex(url) == -1)
       {
         url.setPath(url.path(-1));
-  	    FilesTreeFolder *dir = new FilesTreeFolder( this , url.fileName() +" ["+url.path()+"]", url); //FIXME: Why doesn't add to the TOP as the first item??
-   	    dir->setPixmap( 0, SmallIcon("kdisknav") );
-  	    dir->setOpen( false);
-  	    topURLList.append(url);
-  	  }
+              FilesTreeFolder *dir = new FilesTreeFolder( this , url.fileName() +" ["+url.path()+"]", url); //FIXME: Why doesn't add to the TOP as the first item??
+               dir->setPixmap( 0, SmallIcon("kdisknav") );
+              dir->setOpen( false);
+              topURLList.append(url);
+            }
     } else
     { // remove
       url.adjustPath(-1);
       topURLList.remove(url);
-	    delete(d);
-	  }
-	}
+            delete(d);
+          }
+        }
 }
 
 /** Properties dialog addon*/
 void FilesTreeView::addFileInfoPage(KPropertiesDialog* propDlg)
 {
   QListViewItem *item = currentItem();
-	FilesTreeFile *f = dynamic_cast<FilesTreeFile *>( item);
+        FilesTreeFile *f = dynamic_cast<FilesTreeFile *>( item);
 //If the item is a file, add the Quanta file info page
   if (f)
   {
@@ -377,7 +382,7 @@ void FilesTreeView::addFileInfoPage(KPropertiesDialog* propDlg)
 void FilesTreeView::slotProperties()
 {
   QListViewItem *item = currentItem();
-	FilesTreeFile *f = dynamic_cast<FilesTreeFile *>( item);
+        FilesTreeFile *f = dynamic_cast<FilesTreeFile *>( item);
   if (f)
   {
     KURL url = currentURL();
