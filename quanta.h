@@ -275,6 +275,8 @@ class QuantaApp : public KTMainWindow
     /** Repaint preview ( slot ) */
     void slotViewRepaint();
 
+    void slotViewMessages();
+    
     /** repaint preview */
     void repaintPreview( bool clear = false);
 
@@ -398,6 +400,8 @@ class QuantaApp : public KTMainWindow
     ToolBars *toolbars;
 
     FtpClient *ftpClient;
+    
+    int phpDebugPort;
 };
  
 #endif // QUANTA_H

@@ -75,7 +75,6 @@
 #include "toolbar/toolbars.h"
 
 
-
 /////////////////////////////////////////////////////////////////////
 // SLOT CALLBACK IMPLEMENTATION
 /////////////////////////////////////////////////////////////////////
@@ -239,6 +238,10 @@ void QuantaApp::commandCallback(int id_)
     case ID_VIEW_TREE:
          slotShowLeftPanel();
          break;
+         
+    case ID_VIEW_MES:
+         slotViewMessages();
+         break;
 
     case ID_VIEW_FTP:
          slotFtpClient();
@@ -311,7 +314,7 @@ void QuantaApp::commandCallback(int id_)
     case ID_CONTEXT_HELP:
          contextHelp();
          break;
-
+         
     default:
          break;
   }
@@ -1475,4 +1478,18 @@ void QuantaApp::slotFtpClientClose()
 	rightWidgetStack->removeWidget ( ftpClient );
 	delete ftpClient;
 	ftpClient = 0L;
+}
+
+void QuantaApp::slotViewMessages()
+{
+  bool stat = viewMenu -> isItemChecked( ID_VIEW_MES );
+  
+  static int oldpos = 850;
+  int pos = hSplit->getPos();
+  
+  if ( pos >  850 && !stat )  hSplit->setPos(850);
+  if ( pos <= 850 && !stat )  hSplit->setPos(oldpos);
+  if ( stat ) {hSplit->setPos(1000);oldpos=hSplit->getPos();}
+  
+  viewMenu->setItemChecked(ID_VIEW_MES, !stat);
 }

@@ -273,29 +273,29 @@
    <xtag use="true" inLine="false" >&lt;/form></xtag>
   </action>
   <action useTextButton="0" textButton="" icon="" type="separator" id="5003" name="" />
-  <action useTextButton="0" textButton="" icon="radio" type="tag" id="5004" name="Radio button" >
-   <tag useDialog="true" >&lt;input type=&quot;radio&quot;></tag>
-   <xtag use="false" inLine="true" ></xtag>
-  </action>
-  <action useTextButton="0" textButton="" icon="check" type="tag" id="5005" name="Check button" >
-   <tag useDialog="true" >&lt;input type=&quot;checkbox&quot;></tag>
-   <xtag use="false" inLine="true" ></xtag>
-  </action>
   <action useTextButton="0" textButton="" icon="select" type="tag" id="5006" name="Select" >
    <tag useDialog="true" >&lt;select></tag>
    <xtag use="true" inLine="false" >&lt;/select></xtag>
   </action>
+  <action useTextButton="0" textButton="" icon="textarea" type="tag" id="5009" name="Text area" >
+   <tag useDialog="false" >&lt;textarea></tag>
+   <xtag use="true" inLine="true" >&lt;/textarea></xtag>
+  </action>
   <action useTextButton="0" textButton="" icon="lineedit" type="tag" id="5007" name="Input text" >
-   <tag useDialog="true" >&lt;input></tag>
+   <tag useDialog="true" >&lt;input type=&quot;text&quot;></tag>
    <xtag use="false" inLine="true" />
   </action>
   <action useTextButton="0" textButton="" icon="linepas" type="tag" id="5008" name="Input password" >
    <tag useDialog="true" >&lt;input type=&quot;password&quot;></tag>
    <xtag use="false" inLine="true" />
   </action>
-  <action useTextButton="0" textButton="" icon="textarea" type="tag" id="5009" name="Text area" >
-   <tag useDialog="false" >&lt;textarea></tag>
-   <xtag use="true" inLine="true" >&lt;/textarea></xtag>
+  <action useTextButton="0" textButton="" icon="check" type="tag" id="5005" name="Check button" >
+   <tag useDialog="true" >&lt;input type=&quot;checkbox&quot;></tag>
+   <xtag use="false" inLine="true" ></xtag>
+  </action>
+  <action useTextButton="0" textButton="" icon="radio" type="tag" id="5004" name="Radio button" >
+   <tag useDialog="true" >&lt;input type=&quot;radio&quot;></tag>
+   <xtag use="false" inLine="true" ></xtag>
   </action>
   <action useTextButton="0" textButton="" icon="" type="separator" id="5010" name="" />
   <action useTextButton="0" textButton="" icon="submit" type="tag" id="5011" name="Submit" >

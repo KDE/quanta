@@ -57,6 +57,7 @@
 #include "treeviews/doctreeview.h"
 #include "treeviews/structtreeview.h"
 
+#include "phpdebug/phpdebugserversocket.h"
 
 #include "parser/parser.h"
 
@@ -106,8 +107,14 @@ QuantaApp::QuantaApp()
   initView();
   initKeyAccel();
 	initProject();
-
+	
   readOptions();
+  
+  PhpDebugServerSocket *debugger = 
+    new PhpDebugServerSocket( phpDebugPort,0,0);
+    
+  connect( debugger,      SIGNAL(data(QString)),
+           messageOutput, SLOT(insertAtEnd(QString)) );
 
   ///////////////////////////////////////////////////////////////////
   // disable menu and toolbar items at startup
@@ -376,7 +383,7 @@ void QuantaApp::initMenuBar()
 
   toolMenu->insertItem(UserIcon("spellcheck"),i18n("Spe&lling..."),		ID_EDIT_SPELL);
   toolMenu->insertItem(UserIcon("ftpclient"),	i18n("&Ftp client..."),	ID_VIEW_FTP);
-
+ 
 
   ///////////////////////////////////////////////////////////////////
   // menuBar entry viewMenu
@@ -936,6 +943,8 @@ void QuantaApp::saveOptions()
 
   config->writeEntry("Follow Cursor", sTab->followCursor() );
 
+  config->writeEntry("PHP Debugger Port", phpDebugPort );
+  
   // save list of open files
 
   QStrList fileList;
@@ -982,6 +991,8 @@ void QuantaApp::readOptions()
   hSplit->setPos( config->readNumEntry("HSplit position", 1000) );
   vSplit->setPos( config->readNumEntry("VSplit position", 250 ) );
 
+  phpDebugPort = config->readNumEntry("PHP Debugger Port", 7869 );
+  
   if ( vSplit->getPos() == 0 )
         checkCommand( ID_VIEW_TREE, false );
   else  checkCommand( ID_VIEW_TREE, true  );

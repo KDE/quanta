@@ -2,21 +2,22 @@
 ####   Makefile.am generated automatically by KDEStudio   ####
 #### WARNING! All changes made in this part will be lost! ####
 ##############################################################
-SUBDIRS = toolbar data widgets treeviews tagdialogs project parser dialogs kwrite 
+SUBDIRS = phpdebug toolbar data widgets treeviews tagdialogs project parser dialogs kwrite 
 bin_PROGRAMS = quanta
 
 
 quanta_LDFLAGS = $(all_libraries)
 quanta_LDADD = \
-		$(top_builddir)/quanta/kwrite/libkwrite.a\
-		$(top_builddir)/quanta/kwrite/highlight/libhighlight.a\
-		$(top_builddir)/quanta/dialogs/libdialogs.a\
-		$(top_builddir)/quanta/parser/libparser.a\
-		$(top_builddir)/quanta/project/libproject.a\
-		$(top_builddir)/quanta/tagdialogs/libtagdialogs.a\
-		$(top_builddir)/quanta/treeviews/libtreeviews.a\
-		$(top_builddir)/quanta/widgets/libwidgets.a\
-		$(top_builddir)/quanta/toolbar/libtoolbar.a\
+		$(top_srcdir)/quanta/kwrite/libkwrite.a\
+		$(top_srcdir)/quanta/kwrite/highlight/libhighlight.a\
+		$(top_srcdir)/quanta/dialogs/libdialogs.a\
+		$(top_srcdir)/quanta/parser/libparser.a\
+		$(top_srcdir)/quanta/project/libproject.a\
+		$(top_srcdir)/quanta/tagdialogs/libtagdialogs.a\
+		$(top_srcdir)/quanta/treeviews/libtreeviews.a\
+		$(top_srcdir)/quanta/widgets/libwidgets.a\
+		$(top_srcdir)/quanta/toolbar/libtoolbar.a\
+		$(top_srcdir)/quanta/phpdebug/libphpdebug.a\
 		-lX11 $\
 		-lz\
 		-lpng -lz -lm\
@@ -29,8 +30,9 @@ quanta_LDADD = \
 		-lkhtml\
 		-lkspell\
 		-ltiff -ljpeg -lz
-LDFLAGS =   -lktexteditor
+LDFLAGS =  -s -lktexteditor
 INCLUDES = $(all_includes)
+DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 quanta_METASOURCES = AUTO
 quanta_SOURCES = \
 		document.cpp\
