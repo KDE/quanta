@@ -29,7 +29,7 @@
 #include <kio/job.h>
 #include <kopenwith.h>
 #include <kiconloader.h>
-#include <klineeditdlg.h>
+#include <kinputdialog.h>
 #include <kmessagebox.h>
 #include <kdebug.h>
 #include <kpopupmenu.h>
@@ -344,18 +344,18 @@ void ProjectTreeView::slotRename()
       caption = i18n("Rename File");
     }
 
-    KLineEditDlg dlg(i18n("Enter the new name:"), oldName, this);
-    dlg.setCaption(caption);
-    if (dlg.exec())
+    bool ok;
+    QString newName = KInputDialog::getText(caption, i18n("Enter the new name:"), oldName, &ok, this);
+    if (ok)
     {
       m_newURL = m_oldURL;
       if (folder)
       {
-        m_newURL.setPath(QFileInfo(m_oldURL.path(-1)).dirPath() + '/'+dlg.text()+'/');
+        m_newURL.setPath(QFileInfo(m_oldURL.path(-1)).dirPath() + '/'+newName+'/');
         m_oldURL.adjustPath(1);
       } else
       {
-        m_newURL.setFileName(dlg.text());
+        m_newURL.setFileName(newName);
       }
       if ( m_oldURL != m_newURL )
       {

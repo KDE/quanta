@@ -99,13 +99,15 @@ void  ProjectUpload::initProjectInfo()
   protocols.sort();
   for ( uint i=0; i<protocols.count(); i++ )
   {
-    QString p = protocols[i];
+    QString protocol = protocols[i];
+    KURL p;
+    p.setProtocol(protocol);
     if ( KProtocolInfo::supportsWriting(p) &&
          KProtocolInfo::supportsMakeDir(p) &&
          KProtocolInfo::supportsDeleting(p) )
     {
-      comboProtocol->insertItem(p);
-      if ( p == def_p )
+      comboProtocol->insertItem(protocol);
+      if ( protocol == def_p )
         comboProtocol->setCurrentItem( comboProtocol->count()-1 );
     }
   }

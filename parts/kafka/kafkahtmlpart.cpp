@@ -1069,7 +1069,7 @@ void KafkaWidget::keyDelete()
 void KafkaWidget::keyBackspace()
 {
 	kNodeAttrs *attrs, *attrsTmp;
-	int focus, childPosition;
+	int focus;
 	DOM::Node _nodeParent, _node, _nodePrev, oldCurrentNode, temp, tempParent, prevSibling, nodePrevPrev;
 	DOM::Node toplevelBlock, toplevelBlock2, startNode, endNode, startNode2, endNode2;
 	DOM::Node childOfCommonParent, childOfCommonParent2, commonParent;
@@ -1361,7 +1361,7 @@ void KafkaWidget::keyBackspace()
 
 					temp.setNodeValue(text);
 					emit domNodeModified(temp);
-					
+
 					if(boolTmp)
 						QTimer::singleShot(0, this, SLOT(slotDelayedSetCaretPosition()));
 				}

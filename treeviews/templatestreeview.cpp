@@ -434,7 +434,7 @@ void TemplatesTreeView::contentsDropEvent(QDropEvent *e)
         }
         if (proceed)
         {
-          if (!KIO::NetAccess::upload(tempFile->name(),  url))
+          if (!KIO::NetAccess::upload(tempFile->name(),  url, this))
           {
             KMessageBox::error(this,i18n("<qt>Could not write to file <b>%1</b>.<br>Check if you have rights to write there or that your connection is working.</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)));
           }

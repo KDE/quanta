@@ -28,7 +28,6 @@
 #include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qfileinfo.h>
-#include <qinputdialog.h>
 #include <qtabdialog.h>
 #include <qfiledialog.h>
 #include <qtextstream.h>
@@ -55,7 +54,7 @@
 #include <kstdaction.h>
 #include <kstandarddirs.h>
 #include <kfiledialog.h>
-#include <klineeditdlg.h>
+#include <kinputdialog.h>
 #include <kmessagebox.h>
 #include <kprogress.h>
 #include <kio/job.h>
@@ -68,11 +67,8 @@
 #include <kdeversion.h>
 #include <kmainwindow.h>
 #include <kparts/componentfactory.h>
-
-#if KDE_IS_VERSION(3, 1, 90)
 #include <kinputdialog.h>
 #include <kactioncollection.h>
-#endif
 #include <kiconloader.h>
 
 // application headers
@@ -138,18 +134,11 @@ void Project::initActions(KActionCollection *ac)
   (void) new KAction( i18n( "&Open Project..." ), BarIcon("folder_new"), 0,
                         this, SLOT( slotOpenProject() ),
                         ac, "project_open" );
-#if KDE_VERSION < KDE_MAKE_VERSION(3,1,92)
-  projectRecent = new KQRecentFilesAction(i18n("Op&en Recent Project"),
-                                "folder_new", 0,
-                                  this, SLOT(slotOpenProject(const KURL&)),
-                                  ac, "project_open_recent");
-#else
   projectRecent =
       KStdAction::openRecent(this, SLOT(slotOpenProject(const KURL&)),
                             ac, "project_open_recent");
   projectRecent->setText(i18n("Open Recent Project"));
   projectRecent->setIcon("folder_new");
-#endif
   projectRecent->setMaxItems(32);
   projectRecent->setToolTip(i18n("Open / Open Recent Project"));
   connect(projectRecent, SIGNAL(activated()),
@@ -418,7 +407,7 @@ bool Project::createEmptyDom()
     *(tempFile->textStream()) << str;
     tempFile->close();
     result = QExtFileInfo::createDir(baseURL);
-    if (result) result = KIO::NetAccess::upload(tempFile->name(), projectURL);
+    if (result) result = KIO::NetAccess::upload(tempFile->name(), projectURL, m_parent);
     delete tempFile;
   } else
   {
@@ -553,7 +542,7 @@ bool Project::slotSaveProject()
     tmpFile->setAutoDelete(true);
     dom.save(*(tmpFile->textStream()), 0);
     tmpFile->close();
-    if (KIO::NetAccess::upload( tmpFile->name(), projectURL ))
+    if (KIO::NetAccess::upload( tmpFile->name(), projectURL, m_parent))
     {
         emit statusMsg(i18n( "Wrote project %1..." ).arg( projectURL.prettyURL()));
     }
@@ -613,7 +602,7 @@ void Project::slotLoadProject(const KURL &a_url)
   } else
   {
     QString tmpName = QString::null;
-    if (KIO::NetAccess::download(url, tmpName))
+    if (KIO::NetAccess::download(url, tmpName, m_parent))
     {
       projectURL = url;
       QFile f(tmpName);
@@ -633,11 +622,7 @@ void Project::slotLoadProject(const KURL &a_url)
         //load the password for this project
         KConfig *config = kapp->config();
         config->setGroup("Projects");
-#if KDE_VERSION < KDE_MAKE_VERSION(3,1,90)
-        passwd = QuantaCommon::obscure(config->readEntry(projectName, ""));
-#else
         passwd = KStringHandler::obscure(config->readEntry(projectName, ""));
-#endif
         keepPasswd = !passwd.isEmpty();
         storePasswdInFile = keepPasswd;
         openCurrentView();
@@ -1408,13 +1393,15 @@ void Project::slotOptions()
   protocols.sort();
   for ( uint i = 0; i < protocols.count(); i++ )
   {
-    QString p = protocols[i];
+    QString protocol = protocols[i];
+    KURL p;
+    p.setProtocol(protocol);
     if ( KProtocolInfo::supportsWriting(p) &&
          KProtocolInfo::supportsMakeDir(p) &&
          KProtocolInfo::supportsDeleting(p) )
     {
-      optionsPage.comboProtocol->insertItem(p);
-      if ( p == def_p )
+      optionsPage.comboProtocol->insertItem(protocol);
+      if ( protocol == def_p )
         optionsPage.comboProtocol->setCurrentItem( optionsPage.comboProtocol->count()-1 );
     }
   }
@@ -1643,11 +1630,7 @@ void Project::slotOptions()
     if (optionsPage.keepPasswd->isChecked())
     {
       passwd = optionsPage.linePasswd->password();
-#if KDE_VERSION < KDE_MAKE_VERSION(3,1,90)
-      config->writeEntry(projectName, QuantaCommon::obscure(passwd));
-#else
       config->writeEntry(projectName, KStringHandler::obscure(passwd));
-#endif
       keepPasswd = true;
     }
     else
@@ -1822,15 +1805,9 @@ void Project::slotOpenProjectView()
   list.sort();
 
   bool ok = FALSE;
-#if KDE_IS_VERSION(3, 1, 90)
   QString res = KInputDialog::getItem(
                   i18n("Open Project View"),
                   i18n("Select a project view to open:"), list, 0, FALSE, &ok, m_parent );
-#else
-  QString res = QInputDialog::getItem(
-                  i18n("Open Project View"),
-                  i18n("Select a project view to open:"), list, 0, FALSE, &ok, m_parent );
-#endif
   if ( ok)
   {
     currentProjectView = res;
@@ -1841,71 +1818,70 @@ void Project::slotOpenProjectView()
 /** Saves a project view (group of files & toolbars) asking for a name. */
 void Project::slotSaveAsProjectView(bool askForName)
 {
-  KLineEditDlg dlg(i18n("Enter the name of the view:"), "", m_parent);
-  dlg.setCaption(i18n("Save Project View As"));
-
-  if ( !askForName || dlg.exec() )
+  if (askForName)
   {
-    if (askForName) currentProjectView = dlg.text().lower();
-    else
+    bool ok;
+    currentProjectView = KInputDialog::getText(i18n("Save Project View As"), i18n("Enter the name of the view:"), "", &ok, m_parent).lower();
+    if (!ok)
+      return;
+  } else
+  {
+    if (KMessageBox::questionYesNo(m_parent, i18n("<qt>Do you want to overwrite the <b>%1</b> project view?</qt>").arg(currentProjectView))
+        == KMessageBox::No) return;
+  }
+  QDomNodeList nl = dom.elementsByTagName("projectview");
+  for (uint i = 0 ;i < nl.count(); i++)
+  {
+    QDomNode node = nl.item(i);
+    if (node.toElement().attribute("name") == currentProjectView)
     {
-      if (KMessageBox::questionYesNo(m_parent, i18n("<qt>Do you want to overwrite the <b>%1</b> project view?</qt>").arg(currentProjectView))
-          == KMessageBox::No) return;
-    }
-    QDomNodeList nl = dom.elementsByTagName("projectview");
-    for (uint i = 0 ;i < nl.count(); i++)
-    {
-      QDomNode node = nl.item(i);
-      if (node.toElement().attribute("name") == currentProjectView)
+      if (!askForName ||
+          KMessageBox::questionYesNo(m_parent, i18n("<qt>A project view named <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>")
+                                            .arg(currentProjectView)) == KMessageBox::Yes)
       {
-        if (!askForName ||
-            KMessageBox::questionYesNo(m_parent, i18n("<qt>A project view named <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>")
-                                             .arg(currentProjectView)) == KMessageBox::Yes)
-        {
-          node.parentNode().removeChild(node);
-          break;
-        } else
-        {
-          return;
-        }
+        node.parentNode().removeChild(node);
+        break;
+      } else
+      {
+        return;
       }
     }
-
-    QDomElement el = dom.createElement("projectview");
-    el.setAttribute("name", currentProjectView);
-    QDomElement item;
-    KMdiIterator<KMdiChildView*> *it = quantaApp->createIterator();
-    QuantaView *view;
-    for (it->first(); !it->isDone(); it->next()) {
-        view = dynamic_cast<QuantaView*>(it->currentItem());
-        if (view && view->document())
-        {
-            Document *w = view->document();
-            KURL url = w->url();
-            url = QExtFileInfo::toRelative(url, baseURL);
-            if (!w->isUntitled() && m_projectFiles.contains(url))
-            {
-                item = dom.createElement("viewitem");
-                item.setAttribute("url", QuantaCommon::qUrl(url) );
-                el.appendChild(item);
-            }
-        }
-    }
-    delete it;
-
-    KURL::List toolbarList = quantaApp->userToolbarFiles();
-    for (uint i =0 ; i < toolbarList.count(); i++)
-    {
-      item = dom.createElement("viewtoolbar");
-      KURL url = toolbarList[i];
-      url = QExtFileInfo::toRelative(url, baseURL);
-      item.setAttribute("url", QuantaCommon::qUrl(url) );
-      el.appendChild(item);
-    }
-
-    dom.firstChild().firstChild().appendChild( el );
-    slotSaveProject();
   }
+
+  QDomElement el = dom.createElement("projectview");
+  el.setAttribute("name", currentProjectView);
+  QDomElement item;
+  KMdiIterator<KMdiChildView*> *it = quantaApp->createIterator();
+  QuantaView *view;
+  for (it->first(); !it->isDone(); it->next()) {
+      view = dynamic_cast<QuantaView*>(it->currentItem());
+      if (view && view->document())
+      {
+          Document *w = view->document();
+          KURL url = w->url();
+          url = QExtFileInfo::toRelative(url, baseURL);
+          if (!w->isUntitled() && m_projectFiles.contains(url))
+          {
+              item = dom.createElement("viewitem");
+              item.setAttribute("url", QuantaCommon::qUrl(url) );
+              el.appendChild(item);
+          }
+      }
+  }
+  delete it;
+
+  KURL::List toolbarList = quantaApp->userToolbarFiles();
+  for (uint i =0 ; i < toolbarList.count(); i++)
+  {
+    item = dom.createElement("viewtoolbar");
+    KURL url = toolbarList[i];
+    url = QExtFileInfo::toRelative(url, baseURL);
+    item.setAttribute("url", QuantaCommon::qUrl(url) );
+    el.appendChild(item);
+  }
+
+  dom.firstChild().firstChild().appendChild( el );
+  slotSaveProject();
 
 }
 
@@ -1928,15 +1904,9 @@ void Project::slotDeleteProjectView()
   list.sort();
 
   bool ok = FALSE;
-#if KDE_IS_VERSION(3, 1, 90)
   QString res = KInputDialog::getItem(
                   i18n("Delete Project View"),
                   i18n("Select a project view to delete:"), list, 0, FALSE, &ok, m_parent );
-#else
-  QString res = QInputDialog::getItem(
-                  i18n("Delete Project View"),
-                  i18n("Select a project view to delete:"), list, 0, FALSE, &ok, m_parent );
-#endif
   if ( ok)
   {
     for (uint i = 0; i < nl.count(); i++)

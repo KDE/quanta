@@ -56,9 +56,7 @@
 #include <kspell.h>
 #include <ktip.h>
 #include <kio/netaccess.h>
-#if KDE_IS_VERSION(3,1,90) || defined(COMPAT_KMDI)
 #include <ktabwidget.h>
-#endif
 #include <kmultitabbar.h>
 
 #ifdef BUILD_KAFKAPART
@@ -630,11 +628,7 @@ void QuantaInit::openLastFiles()
 
   m_config->setGroup("General Options");
 
-#if KDE_IS_VERSION(3,1,3)
   QStringList urls = m_config->readPathListEntry("List of opened files");
-#else
-  QStringList urls = m_config->readListEntry("List of opened files");
-#endif
   m_quanta->m_doc->blockSignals(true);
   for ( QStringList::Iterator it = urls.begin(); it != urls.end(); ++it )
   {
@@ -708,14 +702,8 @@ void QuantaInit::initActions()
     KStdAction::close  ( m_quanta, SLOT( slotFileClose()), ac);
     (void) new KAction(i18n("Close Other Tabs"), 0, ViewManager::ref(), SLOT(slotCloseOtherTabs()), ac, "close_other_tabs");
 
-#if KDE_VERSION < KDE_MAKE_VERSION(3,1,92)
-    m_quanta->fileRecent =  new KQRecentFilesAction(i18n("Open &Recent"), "fileopen", 0,
-                      m_quanta, SLOT(slotFileOpenRecent(const KURL&)), ac,
-                      "file_open_recent");
-#else
     m_quanta->fileRecent =  KStdAction::openRecent(m_quanta, SLOT(slotFileOpenRecent(const KURL&)),
                                          ac, "file_open_recent");
-#endif
     m_quanta->fileRecent->setMaxItems(32);
     m_quanta->fileRecent->setToolTip(i18n("Open / Open Recent"));
     connect(m_quanta->fileRecent, SIGNAL(activated()), m_quanta, SLOT(slotFileOpen()));
@@ -1043,13 +1031,8 @@ void QuantaInit::recoverCrashed(QStringList& recoveredFileNameList)
   m_config->reparseConfiguration();
   m_config->setGroup("General Options");
 
-#if KDE_IS_VERSION(3,1,3)
   QStringList backedUpUrlsList = m_config->readPathListEntry("List of backedup files");
   QStringList autosavedUrlsList = m_config->readPathListEntry("List of autosaved files");
-#else
-  QStringList backedUpUrlsList = m_config->readListEntry("List of backedup files");
-  QStringList autosavedUrlsList = m_config->readListEntry("List of autosaved files");
-#endif
 
   for ( QStringList::Iterator backedUpUrlsIt = backedUpUrlsList.begin();
         backedUpUrlsIt != backedUpUrlsList.end();
@@ -1071,12 +1054,12 @@ void QuantaInit::recoverCrashed(QStringList& recoveredFileNameList)
      if (!isPrj || originalVersion.isLocalFile())
      {
        KIO::UDSEntry entry;
-       KIO::NetAccess::stat(originalVersion, entry);
+       KIO::NetAccess::stat(originalVersion, entry, m_quanta);
        KFileItem* item= new KFileItem(entry, originalVersion, false, true);
        QString origTime = item->timeString();
        KIO::filesize_t origSize = item->size();
        delete item;
-       KIO::NetAccess::stat(autosavedVersion, entry);
+       KIO::NetAccess::stat(autosavedVersion, entry, m_quanta);
        item= new KFileItem(entry, autosavedVersion, false, true);
        QString backupTime = item->timeString();
        KIO::filesize_t backupSize = item->size();
@@ -1132,14 +1115,9 @@ void QuantaInit::recoverCrashed(QStringList& recoveredFileNameList)
       QFile::remove(autosavedVersion.path());
       m_config->setGroup("General Options");
 
-#if KDE_IS_VERSION(3,1,3)
      QStringList backedupFilesEntryList = m_config->readPathListEntry("List of backedup files");
      QStringList autosavedFilesEntryList = m_config->readPathListEntry("List of autosaved files");
-#else
-     QStringList backedupFilesEntryList = m_config->readListEntry("List of backedup files");
-     QStringList autosavedFilesEntryList = m_config->readListEntry("List of autosaved files");
-#endif
-      QStringList::Iterator entryIt;
+     QStringList::Iterator entryIt;
 
       for ( entryIt = autosavedFilesEntryList.begin();
             entryIt != autosavedFilesEntryList.end(); ++entryIt )

@@ -598,14 +598,10 @@ void EnhancedTagAttributeTree::showCaption()
   {
     if(curNode->tag->type == Tag::XmlTag || curNode->tag->type == Tag::XmlTagEnd ||
       curNode->tag->type == Tag::ScriptTag)
-#if KDE_IS_VERSION(3,1,90)
     {
       QString s = i18n("Current Tag : <b>%1</b>").arg(curNode->tag->name);
       nodeName->setText(KStringHandler::rPixelSqueeze(s, nodeName->fontMetrics(), attrTree->width()- 50));
     }
-#else
-      nodeName->setText(i18n("Current Tag : <b>%1</b>").arg(KStringHandler::rsqueeze(curNode->tag->name, 30)));
-#endif
     else if(curNode->tag->type == Tag::Text)
       nodeName->setText(i18n("Current Tag : <b>text</b>"));
     else if(curNode->tag->type == Tag::Comment)

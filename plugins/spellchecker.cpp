@@ -91,22 +91,17 @@ void SpellChecker::spellCheck(KTextEditor::Document *document)
   {
     m_currentDoc = document;
     m_currentDoc->setModified(true);
-#if KDE_IS_VERSION(3,1,90)
     m_kspell = new KSpell( 0, i18n("Spellcheck"),
                             this, SLOT(ready()), qConfig.spellConfig, true, false, KSpell::HTML);
-#else
-    m_kspell = new KSpell( 0, i18n("Spellcheck"),
-                            this, SLOT(ready()), qConfig.spellConfig);
-#endif
-     connect( m_kspell, SIGNAL(death()),
-              this, SLOT(spellCleanDone()) );
+    connect( m_kspell, SIGNAL(death()),
+            this, SLOT(spellCleanDone()) );
 
-     connect( m_kspell, SIGNAL(misspelling(const QString&, const QStringList&, unsigned int)),
-              this, SLOT(misspelling(const QString&, const QStringList&, unsigned int)) );
-     connect( m_kspell, SIGNAL(corrected(const QString&, const QString&, unsigned int)),
-              this, SLOT(corrected(const QString&, const QString&, unsigned int)) );
-     connect( m_kspell, SIGNAL(done(const QString&)),
-              this, SLOT(spellResult(const QString&)) );
+    connect( m_kspell, SIGNAL(misspelling(const QString&, const QStringList&, unsigned int)),
+            this, SLOT(misspelling(const QString&, const QStringList&, unsigned int)) );
+    connect( m_kspell, SIGNAL(corrected(const QString&, const QString&, unsigned int)),
+            this, SLOT(corrected(const QString&, const QString&, unsigned int)) );
+    connect( m_kspell, SIGNAL(done(const QString&)),
+            this, SLOT(spellResult(const QString&)) );
 
   }
 }

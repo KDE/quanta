@@ -23,7 +23,6 @@
 #include <qwidgetstack.h>
 #include <qtabwidget.h>
 #include <qfile.h>
-#include <qinputdialog.h>
 #include <qlineedit.h>
 #include <qcheckbox.h>
 #include <qtabbar.h>
@@ -59,7 +58,6 @@
 #include <kkeydialog.h>
 #include <kstandarddirs.h>
 #include <klibloader.h>
-#include <klineeditdlg.h>
 #include <kdockwidget.h>
 #include <kstatusbar.h>
 #include <kpopupmenu.h>
@@ -96,14 +94,8 @@
 
 #include <kio/netaccess.h>
 
-#if KDE_IS_VERSION(3,1,90)
 #include <ktabwidget.h>
 #include <kinputdialog.h>
-#endif
-
-#if defined(COMPAT_KMDI)
-#include <ktabwidget.h>
-#endif
 
 #include <time.h>
 
@@ -166,11 +158,7 @@
 #include "toolbartabwidget.h"
 #include "dcopquanta.h"
 
-#if KDE_VERSION < KDE_MAKE_VERSION(3,1,90)
-#include "katefiledialog.h"
-#else
 #include <kencodingfiledialog.h>
-#endif
 
 #include "config.h"
 #include "quantaplugininterface.h"
@@ -277,7 +265,7 @@ QuantaApp::~QuantaApp()
  }
  QString infoCss = tmpDir;
  infoCss += "quanta/info.css";
- KIO::NetAccess::del(KURL().fromPathOrURL(infoCss));
+ KIO::NetAccess::del(KURL().fromPathOrURL(infoCss), this);
  QDir dir;
  dir.rmdir(tmpDir + "quanta");
 
@@ -310,19 +298,11 @@ void QuantaApp::slotFileOpen()
 
  KURL::List urls;
  QString encoding;
-#if KDE_VERSION < KDE_MAKE_VERSION(3,1,90)
- KateFileDialog *dialog = new KateFileDialog (startDir, myEncoding, this, i18n ("Open File"));
- KateFileDialogData data = dialog->exec();
- urls = data.urls;
- encoding = data.encoding;
- delete dialog;
-#else
  KEncodingFileDialog::Result data;
  data = KEncodingFileDialog::getOpenURLsAndEncoding(myEncoding, startDir,
         "all/allfiles text/plain", this, i18n("Open File"));
  urls = data.URLs;
  encoding = data.encoding;
-#endif
 
  m_doc->blockSignals(true);
  for (KURL::List::Iterator i=urls.begin(); i != urls.end(); ++i)
@@ -437,16 +417,10 @@ bool QuantaApp::slotFileSaveAs()
       saveAsFileName = "/" + oldURL.fileName();
 
     KURL saveUrl;
-#if KDE_VERSION < KDE_MAKE_VERSION(3,1,90)
-    KateFileDialog dialog(saveAsPath+saveAsFileName, myEncoding, this, i18n ("Save File"), KateFileDialog::saveDialog);
-    KateFileDialogData data = dialog.exec();
-    saveUrl = data.url;
-#else
     KEncodingFileDialog::Result data;
     data = KEncodingFileDialog::getSaveURLAndEncoding(myEncoding, saveAsPath+saveAsFileName,
             "all/allfiles text/plain", this, i18n("Save File"));
     saveUrl = data.URLs[0];
-#endif
     QString encoding;
     encoding = data.encoding;
     KTextEditor::EncodingInterface* encodingIf = dynamic_cast<KTextEditor::EncodingInterface*>(w->doc());
@@ -677,11 +651,7 @@ void QuantaApp::slotHelpTip()
 void QuantaApp::slotStatusMsg(const QString &msg)
 {
   statusbarTimer->stop();
-#if KDE_IS_VERSION(3,1,90)
   statusBar()->changeItem(" " + KStringHandler::cPixelSqueeze(msg, statusBar()->fontMetrics(), progressBar->x() - 20), IDS_STATUS);
-#else
-  statusBar()->changeItem(" " + KStringHandler::csqueeze(msg, progressBar->x() / statusBar()->fontMetrics().width('a')), IDS_STATUS);
-#endif
   statusBar()->repaint();
   kapp->processEvents(QEventLoop::ExcludeUserInput | QEventLoop::ExcludeSocketNotifiers);
   statusbarTimer->start(10000, true);
@@ -999,14 +969,11 @@ void QuantaApp::slotConfigureToolbars(const QString& defaultToolbar)
 #endif
  saveMainWindowSettings(KGlobal::config(), autoSaveGroup());
  KEditToolbar *dlg;
-#if KDE_IS_VERSION(3,1,90)
-  if (defaultToolbar)
+ if (defaultToolbar)
     dlg = new KEditToolbar(defaultToolbar, factory(), this);
-  else
+ else
     dlg = new KEditToolbar(factory(), this);
-#else
-  dlg = new KEditToolbar(factory(), this);
-#endif
+
  KMenuBar *mb = menuBar();
  KActionCollection *ac = actionCollection();
  //remove the manually added menus BEFORE the dlg shows up
@@ -1865,11 +1832,7 @@ void QuantaApp::slotContextMenuAboutToShow()
       {
         QMap<QString, XMLStructGroup>::ConstIterator it = node->tag->dtd()->xmlStructTreeGroups.find(node->tag->name.lower());
 
-#if KDE_IS_VERSION(3, 2, 0)
         if (it != node->tag->dtd()->xmlStructTreeGroups.constEnd())
-#else
-        if (it != node->tag->dtd()->xmlStructTreeGroups.end())
-#endif
         {
           XMLStructGroup group = it.data();
           uint count = group.attributes.count();
@@ -2361,15 +2324,9 @@ bool QuantaApp::saveToolbar(bool localToolbar, const QString& toolbarToSave, con
     }
 
     bool ok = FALSE;
-#if KDE_IS_VERSION(3, 1, 90)
     QString res = KInputDialog::getItem(
                     i18n( "Save Toolbar" ),
                     i18n( "Please select a toolbar:" ), lst, current, FALSE, &ok, this );
-#else
-    QString res = QInputDialog::getItem(
-                    i18n( "Save Toolbar" ),
-                    i18n( "Please select a toolbar:" ), lst, current, FALSE, &ok, this );
-#endif
     if ( !ok )
       return false;
 
@@ -2444,12 +2401,11 @@ void QuantaApp::slotSaveProjectToolbar()
 /** Adds a new, empty toolbar. */
 void QuantaApp::slotAddToolbar()
 {
- KLineEditDlg dlg(i18n("Enter toolbar name:"), i18n("User_%1").arg(userToolbarsCount), this);
- dlg.setCaption(i18n("New Toolbar"));
- if (dlg.exec())
+ bool ok;
+ QString name = KInputDialog::getText(i18n("New Toolbar"), i18n("Enter toolbar name:"), i18n("User_%1").arg(userToolbarsCount), &ok, this);
+ if (ok)
  {
   userToolbarsCount++;
-  QString name = dlg.text();
 
 
   KTempFile* tempFile = new KTempFile(tmpDir);
@@ -2504,15 +2460,9 @@ bool QuantaApp::slotRemoveToolbar()
  }
 
  bool ok = FALSE;
-#if KDE_IS_VERSION(3, 1, 90)
  QString res = KInputDialog::getItem(
                  i18n( "Remove Toolbar" ),
                  i18n( "Please select a toolbar:" ), lst, current, FALSE, &ok, this );
-#else
- QString res = QInputDialog::getItem(
-                 i18n( "Remove Toolbar" ),
-                 i18n( "Please select a toolbar:" ), lst, current, FALSE, &ok, this );
-#endif
 
  if (ok)
  {
@@ -2537,15 +2487,9 @@ void QuantaApp::slotSendToolbar()
   }
 
   bool ok = FALSE;
-#if KDE_IS_VERSION(3, 1, 90)
   QString res = KInputDialog::getItem(
                   i18n( "Send Toolbar" ),
                   i18n( "Please select a toolbar:" ), lst, current, FALSE, &ok, this );
-#else
-  QString res = QInputDialog::getItem(
-                  i18n( "Send Toolbar" ),
-                  i18n( "Please select a toolbar:" ), lst, current, FALSE, &ok, this );
-#endif
 
   if (!ok)
     return;
@@ -2609,15 +2553,9 @@ void QuantaApp::slotRenameToolbar()
   }
 
   bool ok = FALSE;
-#if KDE_IS_VERSION(3, 1, 90)
   QString res = KInputDialog::getItem(
                   i18n( "Rename Toolbar" ),
                   i18n( "Please select a toolbar:" ), lst, current, FALSE, &ok, this );
-#else
-  QString res = QInputDialog::getItem(
-                  i18n( "Rename Toolbar" ),
-                  i18n( "Please select a toolbar:" ), lst, current, FALSE, &ok, this );
-#endif
   if (ok)
   {
     slotRenameToolbar(res.lower());
@@ -2629,12 +2567,12 @@ void QuantaApp::slotRenameToolbar(const QString& name)
   ToolbarEntry *p_toolbar = quantaApp->toolbarList[name];
   if (p_toolbar)
   {
-    KLineEditDlg dlg(i18n("Enter the new name:"), p_toolbar->name, this);
-    dlg.setCaption(i18n("Rename Toolbar"));
-    if (dlg.exec() && dlg.text() != p_toolbar->name)
+    bool ok;
+    QString newName = KInputDialog::getText(i18n("Rename Toolbar"), i18n("Enter the new name:"), p_toolbar->name, &ok, this);
+    if (ok && newName != p_toolbar->name)
     {
       toolbarList.take(name.lower());
-      p_toolbar->name = dlg.text();
+      p_toolbar->name = newName;
       QDomElement el = p_toolbar->guiClient->domDocument().firstChild().firstChild().toElement();
       el.setAttribute("tabname", p_toolbar->name);
       el.removeAttribute("i18ntabname");
@@ -3413,11 +3351,7 @@ void QuantaApp::slotEmailDTEP()
     QStringList lst(DTDs::ref()->nickNameList());
     QString nickName = DTDs::ref()->getDTDNickNameFromName(w->getDTDIdentifier());
     bool ok = FALSE;
-#if KDE_IS_VERSION(3, 1, 90)
     QString res = KInputDialog::getItem(
-#else
-    QString res = QInputDialog::getItem(
-#endif
                     i18n( "Send DTD" ),
                     i18n( "Please select a DTD:" ), lst, lst.findIndex(nickName), FALSE, &ok, this );
 
@@ -3640,7 +3574,7 @@ void QuantaApp::slotDeleteFile(QuantaView *view)
                    .arg(url.prettyURL(0, KURL::StripFileProtocol)),
                    i18n("Delete File")) == KMessageBox::Yes)
   {
-    if (KIO::NetAccess::del(url))
+    if (KIO::NetAccess::del(url, this))
     {
       if (Project::ref()->hasProject())
         Project::ref()->slotRemove(url);
@@ -3873,13 +3807,8 @@ void QuantaApp::saveOptions()
     m_config->writeEntry("Follow Cursor", StructTreeView::ref()->followCursor() );
     //If user choose the timer interval, it needs to restart the timer too
     m_config->writeEntry("Autosave interval", qConfig.autosaveInterval);
-#if KDE_IS_VERSION(3,1,3)
     m_config->writePathEntry("Top folders", fTab->topURLList.toStringList());
     m_config->writePathEntry("List of opened files", ViewManager::ref()->openedFiles().toStringList());
-#else
-    m_config->writeEntry("Top folders", fTab->topURLList.toStringList());
-    m_config->writeEntry("List of opened files", ViewManager::ref()->openedFiles().toStringList());
-#endif
     m_config->writeEntry("Version", VERSION); // version
     m_config->writeEntry("Close Buttons", qConfig.showCloseButtons);
     m_config->writeEntry("MDI mode", mdiMode());

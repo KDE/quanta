@@ -184,14 +184,9 @@ Document::Document(KTextEditor::Document *doc,
 Document::~Document()
 {
 //  kdDebug(24000) << "Document::~ Document: " << this << endl;
-#if KDE_VERSION < KDE_MAKE_VERSION(3, 1, 90)
- m_doc->closeURL(); //TODO: Workaround for a Kate bug. Remove when KDE < 3.2.0 support is dropped.
-#else
  m_doc->closeURL(false); //TODO: Workaround for a Kate bug. Remove when KDE < 3.2.0 support is dropped.
  delete m_view;
  delete m_doc;
-#endif
-
 }
 
 void Document::setUntitledUrl(QString url)
@@ -365,7 +360,7 @@ void Document::insertFile(const KURL& url)
     fileName = url.path();
   } else
   {
-    if (!KIO::NetAccess::download(url, fileName))
+    if (!KIO::NetAccess::download(url, fileName, 0))
     {
       KMessageBox::error(0, i18n("<qt>Cannot download <b>%1</b>.</qt>").arg( url.prettyURL(0, KURL::StripFileProtocol)));
       return;
@@ -2212,13 +2207,8 @@ void Document::createBackup(KConfig* config)
       m_backupPathValue = qConfig.backupDirPath + url().fileName() + "." + hashFilePath(url().path());
      //creates an entry string in quantarc if it does not exist yet
      config->setGroup("General Options");
-#if KDE_IS_VERSION(3,1,3)
      QStringList backedupFilesEntryList = config->readPathListEntry("List of backedup files");
      QStringList autosavedFilesEntryList = config->readPathListEntry("List of autosaved files");
-#else
-     QStringList backedupFilesEntryList = config->readListEntry("List of backedup files");
-     QStringList autosavedFilesEntryList = config->readListEntry("List of autosaved files");
-#endif
      QString encoding = quantaApp->defaultEncoding();
      KTextEditor::EncodingInterface* encodingIf = dynamic_cast<KTextEditor::EncodingInterface*>(m_doc);
      if (encodingIf)
@@ -2252,13 +2242,8 @@ void Document::removeBackup(KConfig *config)
   config->reparseConfiguration();
   config->setGroup("General Options");
 
-#if KDE_IS_VERSION(3,1,3)
   QStringList backedupFilesEntryList = config->readPathListEntry("List of backedup files");
   QStringList autosavedFilesEntryList = config->readPathListEntry("List of autosaved files");
-#else
-  QStringList backedupFilesEntryList = config->readListEntry("List of backedup files");
-  QStringList autosavedFilesEntryList = config->readListEntry("List of autosaved files");
-#endif
 
   autosavedFilesEntryList.remove(m_backupPathValue);
   config->writeEntry("List of autosaved files",autosavedFilesEntryList);

@@ -20,12 +20,7 @@
 #include <kdebug.h>
 #include <kiconloader.h>
 #include <kdeversion.h>
-
-#if KDE_IS_VERSION(3, 1, 90)
 #include <kinputdialog.h>
-#else
-#include <qinputdialog.h>
-#endif
 
 // Quanta includes
 #include "variableslistview.h"
@@ -395,11 +390,7 @@ void VariablesListView::slotVariableSetValue()
     default:
       newvalue = "";
   }
-#if KDE_IS_VERSION(3,1,90)
   newvalue = KInputDialog::getText(i18n("Set variable"), i18n("New value"), newvalue, 0, this);
-#else
-  newvalue = QInputDialog::getText(i18n("Set variable"), i18n("New value"),QLineEdit::Normal, newvalue, 0, this);
-#endif
   if(newvalue.isNull())
     return;
 

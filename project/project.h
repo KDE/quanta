@@ -39,11 +39,7 @@ class QWidgetStack;
 
 class KConfig;
 class KTempFile;
-#if KDE_VERSION < KDE_MAKE_VERSION(3,1,92)
-class KQRecentFilesAction;
-#else
 class KRecentFilesAction;
-#endif
 class KActionCollection;
 class KAction;
 class KMainWindow;
@@ -138,11 +134,11 @@ public slots:
   /** Deletes a project view */
   void slotDeleteProjectView();
   void slotFileDescChanged(const KURL& url, const QString& desc);
-  
+
   /** Debugger options */
   void slotDebuggerOptions();
   void slotDebuggerChanged(const QString &debugger);
-  
+
 signals:
 
   void openFile( const KURL&, const QString& );
@@ -182,11 +178,7 @@ public:
   QString email;
   QString author;
 
-#if KDE_VERSION < KDE_MAKE_VERSION(3,1,92)
-  KQRecentFilesAction *projectRecent;
-#else
   KRecentFilesAction *projectRecent;
-#endif
 
     /** Holds the upload password. It is not saved, and it is lost after the project is closed. */
   QString passwd;
@@ -225,9 +217,9 @@ private:
   QBuffer buff;
   QRegExp excludeRx;
   QStringList excludeList;
-  
+
   QString m_debuggerClientEdit;
-  
+
   KAction
     *closeprjAction, *insertFileAction, *insertDirAction,
     *uploadProjectAction,  *rescanPrjDirAction,

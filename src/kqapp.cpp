@@ -45,16 +45,10 @@ KSplash::KSplash()
    QPixmap pm( UserIcon("quantalogo_be") );
 
    setBackgroundPixmap(pm);
-#if KDE_VERSION >= KDE_MAKE_VERSION(3,1,90)
   QRect desk = KGlobalSettings::splashScreenDesktopGeometry();
   setGeometry( desk.center().x()-225, desk.center().y()-150, 450, 300 );
-#else
-  setGeometry( QApplication::desktop()->width ()/2-225,
-                QApplication::desktop()->height()/2-150,
-                450, 300 );
-#endif
-   setLineWidth(0);
-   show();
+  setLineWidth(0);
+  show();
 }
 
 
@@ -125,12 +119,7 @@ int KQUniqueApplication::newInstance()
   args = KCmdLineArgs::parsedArgs();
   if (mainWidget())
   {
-#if KDE_VERSION < KDE_MAKE_VERSION( 3, 1, 90 )
-	KWin::setActiveWindow( mainWidget()->winId() );
-#else
-	KWin::activateWindow( mainWidget()->winId() );
-#endif
-
+    KWin::activateWindow( mainWidget()->winId() );
     quantaApp = static_cast<QuantaApp*>(mainWidget());
     for (int i = 0; i < args->count(); i++)
     {

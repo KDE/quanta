@@ -911,9 +911,6 @@ bool QuantaView::saveDocument(const KURL& url)
   {
     if (!m_document->doc()->saveAs(url))
     {
-#if KDE_VERSION < KDE_MAKE_VERSION(3,1,90)
-      KMessageBox::error(this, i18n("<qt>Saving of the document <b>%1</b> failed.<br>Maybe you should try to save in another directory.</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)));
-#endif
       fileWatcher->addFile(oldURL.path());
       return false; //saving to a local file failed
     } else //successful saving to a local file

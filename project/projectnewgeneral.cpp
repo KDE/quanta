@@ -46,13 +46,15 @@ ProjectNewGeneral::ProjectNewGeneral(QWidget *parent, const char *name )
   protocols.sort();
   for ( uint i=0; i<protocols.count(); i++ )
   {
-    QString p = protocols[i];
+    KURL p;
+    p.setProtocol(protocols[i]);
+    QString protocol = protocols[i];
     if ( KProtocolInfo::supportsWriting(p) &&
          KProtocolInfo::supportsMakeDir(p) &&
          KProtocolInfo::supportsDeleting(p) &&
-         (p != "file" && p != "fonts" && p != "floppy" && p != "newcd" ))
+         (protocol != "file" && protocol != "fonts" && protocol != "floppy" && protocol != "newcd" ))
     {
-      comboProtocol->insertItem(p);
+      comboProtocol->insertItem(protocol);
     }
   }
   comboProtocol->setCurrentItem(0);

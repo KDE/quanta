@@ -64,9 +64,6 @@ class KAction;
 class KToggleAction;
 class KProcess;
 class KSelectAction;
-#if KDE_VERSION < KDE_MAKE_VERSION(3,1,92)
-class KQRecentFilesAction;
-#endif
 class KRecentFilesAction;
 class KToolBarPoupAction;
 
@@ -533,11 +530,7 @@ protected: // Protected attributes
 
 public: //TODO: check if it's worth to make a read method for them
   QDict<ToolbarEntry> toolbarList;
-#if KDE_VERSION < KDE_MAKE_VERSION(3,1,92)
-  KQRecentFilesAction *fileRecent;
-#else
   KRecentFilesAction *fileRecent;
-#endif
   /** True when the whole quanta is initialized. */
   bool quantaStarted;
   bool m_loopStarted; //true if an internal event loop has been started

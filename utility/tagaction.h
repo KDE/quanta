@@ -21,9 +21,7 @@
 #include <kdeversion.h>
 
 #include <kaction.h>
-#if KDE_IS_VERSION(3,1,90)
 #include <kactioncollection.h>
-#endif
 
 #include <qstring.h>
 #include <qdom.h>

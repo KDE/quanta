@@ -69,7 +69,7 @@ DTDParser::~DTDParser()
 bool DTDParser::parse()
 {
   QString fileName = QString::null;
-  if (!KIO::NetAccess::download(m_dtdURL, fileName))
+  if (!KIO::NetAccess::download(m_dtdURL, fileName, 0))
   {
     KMessageBox::error(0, i18n("<qt>Cannot download the DTD from <b>%1</b>.</qt>").arg( m_dtdURL.prettyURL(0, KURL::StripFileProtocol)));
     return false;

@@ -153,20 +153,14 @@ bool switchToExisting)
     if (encoding.isEmpty())
         encoding = quantaApp->defaultEncoding();
 
-  KTextEditor::EncodingInterface* encodingIf =
-dynamic_cast<KTextEditor::EncodingInterface*>(w->doc());
-  if (encodingIf)
-      encodingIf->setEncoding(encoding);
+    KTextEditor::EncodingInterface* encodingIf = dynamic_cast<KTextEditor::EncodingInterface*>(w->doc());
+    if (encodingIf)
+       encodingIf->setEncoding(encoding);
 
-#if KDE_IS_VERSION(3,1,90)
     connect(w->doc(), SIGNAL(completed()), this, SLOT(slotOpeningCompleted()));
-#endif
     if (w->doc()->openURL( url ))
     {
       loaded = true;
-#if KDE_VERSION < KDE_MAKE_VERSION(3,1,90)
-      slotOpeningCompleted();
-#endif
     }
   }
   if (!loaded && !url.isEmpty()) //the open of the document has failed*/
@@ -203,9 +197,7 @@ void QuantaDoc::slotOpeningCompleted()
 
   quantaApp->debugger()->fileOpened(w->url().prettyURL(0, KURL::StripFileProtocol));
   quantaApp->slotNewStatus();
-#if KDE_IS_VERSION(3,1,90)
-   disconnect(w->doc(), SIGNAL(completed()), this, SLOT(slotOpeningCompleted()));
-#endif
+  disconnect(w->doc(), SIGNAL(completed()), this, SLOT(slotOpeningCompleted()));
 }
 
 /** show popup menu with list of attributes for current tag */

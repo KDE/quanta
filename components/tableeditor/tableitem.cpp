@@ -18,14 +18,12 @@
 #include <qpainter.h>
 #include "tableitem.h"
 
-#if KDE_IS_VERSION(3,2,0)
 TableItem::TableItem(QTable* table, EditType et) : QTableItem(table, et)
 {
   setReplaceable(false);
   m_halign = Qt::AlignLeft;
   m_valign = Qt::AlignVCenter;
 }
-#endif
 
 TableItem::TableItem(QTable* table, EditType et, const QString& text) : QTableItem(table, et, text)
 {

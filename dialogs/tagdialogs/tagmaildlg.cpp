@@ -38,9 +38,7 @@ TagMailDlg::TagMailDlg(QWidget *parent, const char *name)
   :TagMail(parent, name)
 {
   setCaption(name);
-#if KDE_IS_VERSION(3,1,90)
   setModal(true);
-#endif
 
   connect( buttonOk,     SIGNAL(clicked()), SLOT(accept()) );
   connect( buttonCancel, SIGNAL(clicked()), SLOT(reject()) );

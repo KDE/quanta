@@ -93,11 +93,7 @@ void FilesTreeViewItem::paintCell(QPainter *p, const QColorGroup &cg,
   } else
   {
     int h, s, v;
-#if KDE_IS_VERSION(3,1,90)
     p->pen().color().getHsv(&h, &s, &v);
-#else
-    p->pen().color().getHsv(h, s, v);
-#endif
     v = (v < 155 ? v + 100 : 255);
     _cg.setColor(QColorGroup::Text, QColor(h, s, v, QColor::Hsv));
   };
@@ -174,11 +170,7 @@ FilesTreeView::FilesTreeView(KConfig *config, QWidget *parent, const char *name)
   // I must read this here because quanta_init has not done it yet
   qConfig.showHiddenFiles = m_config->readBoolEntry("Show Hidden Files", true);
   QStringList topStrList;
-#if KDE_IS_VERSION(3,1,3)
   topStrList = m_config->readPathListEntry("Top folders");
-#else
-  topStrList = m_config->readListEntry("Top folders");
-#endif
   KURL url;
   for (uint i = 0; i < topStrList.count(); i++)
   {

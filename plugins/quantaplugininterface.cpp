@@ -16,6 +16,7 @@
  ***************************************************************************/
 
 /* KDE INCLUDES */
+#include <kactioncollection.h>
 #include <kconfig.h>
 #include <kstandarddirs.h>
 #include <kmainwindow.h>
