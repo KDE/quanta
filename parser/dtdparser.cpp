@@ -136,8 +136,8 @@ void DTDParser::writeDescriptionRC()
   config.writeEntry("Family", "1");
   config.writeEntry("CaseSensitive", m_caseSensitive);
   config.setGroup("Parsing rules");
-  config.writeEntry("SpecialAreas","<!-- -->");
-  config.writeEntry("SpecialAreaNames","comment");
+  config.writeEntry("SpecialAreas","<!-- -->,<?xml ?>,<!DOCTYPE >");
+  config.writeEntry("SpecialAreaNames","comment,XML PI,DTD");
 
   config.sync();
 }
