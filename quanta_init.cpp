@@ -111,9 +111,9 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta"), DCOPObject("WindowManager
   {
     quantaStarted = false;
     fprintf(stderr,"***************************************************************************\n");
-    fprintf(stderr, i18n("\tQuanta data files were not found.\nYou may forgot to run \"make install\",\nor your KDEDIR, KDEDIRS or PATH is not set correctly.!\n"));
+    fprintf(stderr, "%s", i18n("\tQuanta data files were not found.\nYou may forgot to run \"make install\",\nor your KDEDIR, KDEDIRS or PATH is not set correctly.!\n").latin1());
     fprintf(stderr,"***************************************************************************\n");
-    QTimer::singleShot(20,kapp, SLOT(quit()));
+    QTimer::singleShot(20, kapp, SLOT(quit()));
     return;
   }
   qConfig.enableDTDToolbar = true;
@@ -585,7 +585,7 @@ void QuantaApp::saveOptions()
     m_config->writeEntry("Follow Cursor", sTab->followCursor() );
     m_config->writeEntry("PHP Debugger Port", phpDebugPort );
     m_config->writeEntry("Top folders", fTab->topURLList.toStringList());
-    m_config->writeEntry("List of opened files", m_doc->openedFiles().toStringList());
+    m_config->writePathEntry("List of opened files", m_doc->openedFiles().toStringList());
     m_config->writeEntry("Version", VERSION); // version
     m_config->writeEntry ("Enable Debugger", debuggerStyle!="None");
     m_config->writeEntry ("PHP Debugger style", debuggerStyle);
@@ -785,7 +785,7 @@ void QuantaApp::openLastFiles()
   // because project now can be
   // in load stage ( remote prj )
   m_config->setGroup  ("Projects");
-  QString pu = m_config->readEntry("Last Project");
+  QString pu = m_config->readPathEntry("Last Project");
 
   KURL u;
   QuantaCommon::setUrl(u, pu);
@@ -795,7 +795,7 @@ void QuantaApp::openLastFiles()
 
   m_config->setGroup("General Options");
 
-  QStringList urls = m_config->readListEntry("List of opened files");
+  QStringList urls = m_config->readPathListEntry("List of opened files");
 
   m_doc->blockSignals(true);
   m_view->writeTab()->blockSignals(true);
@@ -1115,7 +1115,7 @@ void QuantaApp::readTagDir(QString &dirName)
 
  //read the toolbars
  dtdConfig->setGroup("Toolbars");
- tmpStr = dtdConfig->readEntry("Location"); //holds the location of the toolbars
+ tmpStr = dtdConfig->readPathEntry("Location"); //holds the location of the toolbars
  if (!tmpStr.endsWith("/") && !tmpStr.isEmpty())
  {
    tmpStr.append("/");
