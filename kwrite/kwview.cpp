@@ -51,6 +51,7 @@
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kmessagebox.h>
+#include <kstringhandler.h>
 #include <kio/job.h>
 #include <kio/netaccess.h>
 #include <kaction.h>
@@ -2796,7 +2797,7 @@ void KWrite::searchAgain(SConfig &s) {
       } else {
         // wrapped
         KMessageBox::sorry(this,
-          i18n("Search string '%1' not found!").arg(searchFor),
+          i18n("Search string '%1' not found!").arg(KStringHandler::csqueeze(searchFor)),
           i18n("Find"));
       }
     }
