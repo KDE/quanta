@@ -1894,7 +1894,8 @@ void Document::slotDelayedTextChanged(bool forced)
     {
       viewCursorIf->cursorPositionReal(&line, &column);
       node = parser->nodeAt(line, column, false);
-      if (node)
+      if (node &&
+          (node->tag->type==Tag::XmlTag || node->tag->type == Tag::XmlTagEnd) )
       {
         Tag *tag;
         tag = new Tag(*node->tag);
