@@ -149,6 +149,8 @@ public slots:
 
   void slotReloadProjectDocs();
 
+  void slotShowProjectToolbar(bool show);
+
   void setModified(bool b = true);
 
 signals:

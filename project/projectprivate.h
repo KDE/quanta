@@ -200,7 +200,7 @@ public slots:
   void slotSelectProjectType(const QString &title);
 
 signals:
-  void setLocalFiles( bool );
+  void setLocalFiles(bool);
   void eventHappened(const QString&, const QString&, const QString& );
 
 private:

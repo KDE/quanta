@@ -264,6 +264,7 @@ void QuantaInit::initQuanta()
   m_quanta->slotFileNew();
   m_quanta->slotNewStatus();
   initToolBars();
+  Project::ref()->slotShowProjectToolbar(Project::ref()->hasProject());
   KTipDialog::showTip(m_quanta);
 
   //get the PID of this running instance

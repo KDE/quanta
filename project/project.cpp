@@ -73,6 +73,7 @@
 #include <kinputdialog.h>
 #include <kactioncollection.h>
 #include <kiconloader.h>
+#include <kxmlguifactory.h>
 
 // application headers
 #include "copyto.h"
@@ -98,6 +99,7 @@
 #include "eventconfigurationdlg.h"
 #include "qpevents.h"
 #include "uploadprofiles.h"
+#include "quanta.h"
 
 extern QString simpleMemberStr;
 extern QString taskLeaderStr;
@@ -216,6 +218,7 @@ void ProjectPrivate::adjustActions()
   saveSelectionAsProjectTemplateAction->setEnabled(projectExists);
 
   adjustViewActions();
+  parent->slotShowProjectToolbar(projectExists);
 }
 
 
@@ -2559,6 +2562,16 @@ bool Project::queryClose()
 bool Project::eventsEnabled()
 {
    return d->m_eventsEnabled;
+}
+
+void Project::slotShowProjectToolbar(bool show)
+{
+  if (quantaApp && quantaApp->factory())
+  {
+    QWidget *w = quantaApp->factory()->container("project_toolbar", quantaApp);
+    if (w)
+      w->setShown(show);
+  }
 }
 
 #include "project.moc"
