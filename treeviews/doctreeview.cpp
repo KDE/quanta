@@ -26,7 +26,7 @@
 #include <kconfig.h>
 #include <kapplication.h>
 #include <klocale.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <kiconloader.h>
 
 // application clases

@@ -242,7 +242,6 @@ void ProjectTreeView::slotOpen()
       if (KMessageBox::questionYesNo(this,i18n("This file cannot be opened in Quanta. \n \
           Do you want to open with an external program or run it?"),i18n("Unknown type")) == KMessageBox::Yes)
       {
-         KFileOpenWithHandler fowh;
         new KRun( urlToOpen, 0, true );
       }
  }
@@ -252,12 +251,11 @@ void ProjectTreeView::slotOpenWith()
 {
   if (currentItem())
   {
-     KURL::List list;
+    KURL::List list;
     KURL urlToOpen = currentURL();
     list.append( urlToOpen );
 
-    KFileOpenWithHandler *kfowh = new KFileOpenWithHandler();
-    kfowh -> displayOpenWithDialog( list);
+    KRun::displayOpenWithDialog( list);
   }
 }
 

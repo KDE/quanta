@@ -25,7 +25,7 @@
 
 // KDE includes
 #include <klocale.h>
-#include <kapp.h>
+#include <kapplication.h>
 #include <kdebug.h>
 #include <kurl.h>
 #include <kpushbutton.h>

@@ -38,6 +38,10 @@
 #include <qdom.h>
 #include <qspinbox.h>
 
+#ifdef KDE_NO_COMPAT
+#define WAS_KDE_NO_COMPAT
+#undef KDE_NO_COMPAT
+#endif
 // include files for KDE
 #include <kiconloader.h>
 #include <kmessagebox.h>
@@ -48,7 +52,7 @@
 #include <khtmlview.h>
 #include <kdialogbase.h>
 #include <kkeydialog.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <klibloader.h>
 #include <klineeditdlg.h>
 #include <kdockwidget.h>
@@ -78,6 +82,10 @@
 
 
 #include <kate/view.h>
+
+#ifdef WAS_KDE_NO_COMPAT
+#define KDE_NO_COMPAT
+#endif
 
 // application specific includes
 #include "document.h"

@@ -21,9 +21,8 @@
 #include <qpixmap.h>
 
 // KDE includes
-#include <kapp.h>
 #include <kconfig.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <kiconloader.h>
 
 // app includes

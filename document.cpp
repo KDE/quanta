@@ -26,7 +26,6 @@
 #include <qradiobutton.h>
 
 // KDE includes
-#include <kapp.h>
 #include <kwin.h>
 #include <klocale.h>
 #include <kaction.h>

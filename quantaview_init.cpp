@@ -31,7 +31,7 @@
 
 // include files for KDE
 #include <klocale.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <kmenubar.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>

@@ -26,6 +26,10 @@
 #include <qptrlist.h>
 #include <qpopupmenu.h>
 
+#ifdef KDE_NO_COMPAT
+#define WAS_KDE_NO_COMPAT
+#undef KDE_NO_COMPAT
+#endif
 //kde includes
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -39,6 +43,10 @@
 #include <kurl.h>
 #include <ktexteditor/popupmenuinterface.h>
 
+#ifdef WAS_KDE_NO_COMPAT
+#define KDE_NO_COMPAT
+#endif
+
 //app includes
 #include "actioneditdlg.h"
 #include "tagaction.h"
@@ -48,6 +56,7 @@
 #include "../quantaview.h"
 #include "../quantacommon.h"
 #include "../document.h"
+
 
 class ActionListItem : public QListBoxPixmap {
 private:
@@ -365,5 +374,6 @@ void ActionEditDlg::saveAction( TagAction *a )
   }
 
 }
+
 
 #include "actioneditdlg.moc"

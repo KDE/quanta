@@ -22,7 +22,6 @@
 #include <config.h>
 #endif
 
-#include <kapp.h>
 #include <qwidget.h>
 #include <qdom.h>
 #include <qlist.h>

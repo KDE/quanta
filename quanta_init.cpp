@@ -1437,7 +1437,7 @@ void QuantaApp::initActions()
 
     KStdAction::saveAs( this, SLOT( slotFileSaveAs() ), actionCollection() );
 
-    saveAllAction = new KAction( i18n( "Save All..." ), UserIcon("save_all"), SHIFT+KStdAccel::key(KStdAccel::Save),
+    saveAllAction = new KAction( i18n( "Save All..." ), UserIcon("save_all"), SHIFT+KStdAccel::shortcut(KStdAccel::Save).keyCodeQt(),
                         this, SLOT( slotFileSaveAll() ),
                         actionCollection(), "save_all" );
 
@@ -1540,7 +1540,7 @@ void QuantaApp::initActions()
                          actionCollection(), "show_preview" );
 
     (void) new KAction( i18n( "&Reload Preview" ), "reload",
-                        KStdAccel::key(KStdAccel::Reload),
+                        KStdAccel::shortcut(KStdAccel::Reload).keyCodeQt(),
                         this, SLOT( slotViewRepaint() ),
                         actionCollection(), "reload" );
 

@@ -226,7 +226,6 @@ void FilesTreeView::slotSelectFile(QListViewItem *item)
                if (KMessageBox::questionYesNo(this,i18n("This file cannot be opened in Quanta. \n \
                    Do you want to open with an external program or run it?"),i18n("Unknown Type")) == KMessageBox::Yes)
                {
-                 KFileOpenWithHandler fowh;
                  new KRun(urlToOpen, 0, true );
                }
              }

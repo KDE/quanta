@@ -30,7 +30,7 @@
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kopenwith.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <kmimetype.h>
 #include <kmessagebox.h>
 #include <kcombobox.h>

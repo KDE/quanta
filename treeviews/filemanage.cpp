@@ -30,7 +30,7 @@
 #include <kio/paste.h>
 #include <kio/global.h>
 #include <kio/job.h>
-#include <kpropsdlg.h>
+#include <kpropertiesdialog.h>
 #include <kopenwith.h>
 #include <kmessagebox.h>
 #include <kurl.h>
@@ -127,10 +127,7 @@ void FileManage::slotOpenWith()
     KURL::List list;
     KURL urlToOpen = currentURL();
     list.append( urlToOpen );
-  
-    KFileOpenWithHandler *kfowh = new KFileOpenWithHandler();
-    kfowh->displayOpenWithDialog( list );
-    delete kfowh;
+    KRun::displayOpenWithDialog( list );
   }
 }
 
