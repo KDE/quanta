@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="fieldset" hasScript="1" hasCore="1" single="1">
+<tag name="fieldset" hasScript="1" hasCore="1">
 
 <children>
 <child name="a" />

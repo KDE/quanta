@@ -279,8 +279,6 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
               dtd = m_dtd;
           //a trick here: replace the node's DTD with this one //Note: with the new SAParser, the top level nodes must be Tag::ScriptTag-s!
          // const DTDStruct *savedDTD = node->tag->dtd;
-         if (!dtd)
-           kdDebug(24000) << "parser.cpp:283: " << endl;
           node->tag->setDtd(dtd);
           node->tag->type = Tag::ScriptTag;
           //now parse the special area

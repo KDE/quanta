@@ -176,7 +176,6 @@ void Node::setNodeValue(QString value)
   if(!tag)
   {
     tag = new Tag();
-    kdDebug(24000) << "node:176" << endl;
   }
   tag->setStr(value);
 }
