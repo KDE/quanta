@@ -184,8 +184,8 @@ void WKafkaPart::unloadDocument()
 	node = baseNode;
 	while(node)
 	{
-		node->_rootNode = 0L;
-		node->_leafNode = 0L;
+		node->_rootNode = DOM::Node();
+		node->_leafNode = DOM::Node();
 		node = node->nextSibling();
 	}
 	emit unloaded();
@@ -207,8 +207,8 @@ void WKafkaPart::reloadDocument()
 	node = baseNode;
 	while(node)
 	{
-		node->_rootNode = 0L;
-		node->_leafNode = 0L;
+		node->_rootNode = DOM::Node();
+		node->_leafNode = DOM::Node();
 		node = node->nextSibling();
 	}
 	loadDocument(_currentDoc);
@@ -759,7 +759,7 @@ bool WKafkaPart::buildKafkaNodeFromNode(Node *_node, bool insertNode)
 				//the parent tag was invalid and khtml refuse to insert it
 				//so impossible to inser the current node
 				disconnectDomNodeFromQuantaNode(newNode);
-				_node->_rootNode = 0L;
+				_node->_rootNode = DOM::Node();
 				return false;
 			}
 			else
@@ -775,7 +775,7 @@ bool WKafkaPart::buildKafkaNodeFromNode(Node *_node, bool insertNode)
 					kdDebug(25001)<< "WKafkart::buildKafkaNodeFromNode() *ERROR* - code : " <<
 						e.code << endl;
 					disconnectDomNodeFromQuantaNode(newNode);
-					_node->_rootNode = 0L;
+					_node->_rootNode = DOM::Node();
 					return false;
 				}
 			}
@@ -789,7 +789,7 @@ bool WKafkaPart::buildKafkaNodeFromNode(Node *_node, bool insertNode)
 					kdDebug(25001)<< "WKafkart::buildKafkaNodeFromNode() *ERROR4* - code : " <<
 						e.code << endl;
 					disconnectDomNodeFromQuantaNode(newNode);
-					_node->_rootNode = 0L;
+					_node->_rootNode = DOM::Node();
 					return false;
 				}
 			}

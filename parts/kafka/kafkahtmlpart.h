@@ -126,12 +126,12 @@ public:
 	 * when setting skipParentNodes to true.
 	 * @return Returns the next Node :)
 	 */
-	DOM::Node getNextNode(DOM::Node _node, bool &goUp, bool skipParentNodes = false, bool dontBlock = false, DOM::Node _endNode = 0L);
+	DOM::Node getNextNode(DOM::Node _node, bool &goUp, bool skipParentNodes = false, bool dontBlock = false, DOM::Node _endNode = DOM::Node());
 
 	/**
 	 * The same that above, but this function search the previous DOM::Node.
 	 */
-	DOM::Node getPrevNode(DOM::Node _node, bool &goUp, bool skipParentNodes = false, bool dontBlock = false, DOM::Node _endNode = 0L);
+	DOM::Node getPrevNode(DOM::Node _node, bool &goUp, bool skipParentNodes = false, bool dontBlock = false, DOM::Node _endNode = DOM::Node());
 
 	/**
 	 * Category: Temporary function

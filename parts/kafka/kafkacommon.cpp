@@ -15,7 +15,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <dom/dom_node.h>
 #include <kdebug.h>
 
 #include "../../parser/node.h"

@@ -19,6 +19,7 @@
 #define KAFKACOMMON_H
 
 #include <qvaluelist.h>
+#include <dom/dom_node.h>
 
 class Node;
 namespace DOM
@@ -74,7 +75,7 @@ public:
 	 * when setting returnParentNode to false.
 	 * @return the next Node.
 	 */
-	static DOM::Node getNextDomNode(DOM::Node node, bool &goUp, bool returnParentNode = false, DOM::Node endNode = 0L);
+	static DOM::Node getNextDomNode(DOM::Node node, bool &goUp, bool returnParentNode = false, DOM::Node endNode = DOM::Node());
 
 	/**
 	 * Fits the Nodes position after a change in the Node tree.

@@ -1340,7 +1340,7 @@ DOM::Node KafkaHTMLPart::getPrevNode(DOM::Node _node, bool &goingTowardsRootNode
 			_node.nodeName().string() << " to " <<
 			_node.lastChild().nodeName().string() << endl;
 		if(_endNode == _node.lastChild())
-			return 0L;
+			return DOM::Node();
 		return _node.lastChild();
 	}
 	if(_node.previousSibling() != 0)
@@ -1350,14 +1350,14 @@ DOM::Node KafkaHTMLPart::getPrevNode(DOM::Node _node, bool &goingTowardsRootNode
 			_node.nodeName().string() <<
 		 	" to " << _node.previousSibling().nodeName().string() << endl;
 		if(_endNode == _node.previousSibling())
-			return 0L;
+			return DOM::Node();
 		return _node.previousSibling();
 	}
 	if(_node.previousSibling() == 0)
 	{//else if there is no sibling, we go up if we can
 		goingTowardsRootNode = true;
 		if(_node.parentNode().isNull())
-			return 0L;
+			return DOM::Node();
 		if(w->getAttrs(_node.parentNode()) &&
 			w->getAttrs(_node.parentNode())->ccanEnter() || dontBlock)
 		{
@@ -1372,14 +1372,14 @@ DOM::Node KafkaHTMLPart::getPrevNode(DOM::Node _node, bool &goingTowardsRootNode
 			if (skipParentNodes)
 			{
 				if(_endNode == _node.parentNode())
-					return 0L;
+					return DOM::Node();
 				return getPrevNode(_node.parentNode(), goingTowardsRootNode,
 					skipParentNodes, dontBlock);
 			}
 			else
 			{
 				if(_endNode == _node.parentNode())
-					return 0L;
+					return DOM::Node();
 				return _node.parentNode();
 			}
 		}
@@ -1778,7 +1778,7 @@ void KafkaHTMLPart::khtmlDrawContentsEvent(khtml::DrawContentsEvent *event)
 
 bool KafkaHTMLPart::getCursor(DOM::Node _node, int offset, int &_x, int &_y, int &height)
 {//temp method until - i hope :) - khtml will provide this
-	kNodeAttrs *attrs = w->getAttrs(_node);
+/**	kNodeAttrs *attrs = w->getAttrs(_node);
 	if(attrs->chCurFoc() == kNodeAttrs::textNode)
 	{
 		_node.getCursor(offset, _x, _y, height);
@@ -1812,7 +1812,7 @@ bool KafkaHTMLPart::getCursor(DOM::Node _node, int offset, int &_x, int &_y, int
 				return false;
 		}
 		return true;
-	}
+	}*/
 	return false;
 }
 
