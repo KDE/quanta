@@ -89,11 +89,27 @@ Attribute* QTag::attributeAt(int index)
 bool QTag::isAttribute(const QString &attrName)
 {
   Attribute *a;
+  int i;
+  AttributeList *groupAttrs;
 
+  //Check in the QTag specific attributes
   for(a = attrs.first(); a; a = attrs.next())
   {
     if(a->name == attrName)
       return true;
+  }
+  //Check in the common attributes
+  for(i = 0; i < (signed)commonGroups.count(); i++)
+  {
+    groupAttrs = parentDTD->commonAttrs->find(commonGroups[i]);
+    if(groupAttrs)
+    {
+      for(a = groupAttrs->first(); a; a = groupAttrs->next())
+      {
+        if(a->name == attrName)
+         return true;
+      }
+    }
   }
   return false;
 }

@@ -226,6 +226,14 @@ public:
 	void translateQuantaIntoKafkaCursorPosition(uint line, uint col, DOM::Node &domNode, int &offset);
 
 	/**
+	 * Returns the internal Node offset corresponding to the kafka cursor position.
+	 * @param domNode The kafka DOM::Node cursor position.
+	 * @param domNodeOffset The kafka offset cursor position.
+	 * @return  Returns the node internal corresponding offset.
+	 */
+	long translateKafkaIntoNodeCursorPosition(DOM::Node domNode, long domNodeOffset);
+
+	/**
 	 * Returns the quanta cursor position corresponding to the kafka cursor position.
 	 * @param domNode The kafka DOM::Node cursor position.
 	 * @param offset The kafka offset cursor position.

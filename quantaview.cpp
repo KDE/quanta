@@ -458,14 +458,16 @@ void QuantaView::reloadBothViews(bool force)
 /** reload the Kafka view from the Node Tree. Set force to true if you want to reload even if not necessary. */
 void QuantaView::reloadKafkaView(bool force)
 {
-	if(getViewsLayout() != QuantaView::QuantaViewOnly)
+	if(!(qConfig.kafkaRefreshOnFocus && hadLastFocus() != QuantaView::kafkaFocus) &&
+		getViewsLayout() != QuantaView::QuantaViewOnly)
 		write()->docUndoRedo->reloadKafkaEditor(force);
 }
 
 /** reload the Quanta view from the Node Tree. Set force to true if you want to reload even if not necessary. */
 void QuantaView::reloadQuantaView(bool force)
 {
-	if(getViewsLayout() != QuantaView::KafkaViewOnly)
+	if(!(qConfig.quantaRefreshOnFocus && hadLastFocus() != QuantaView::quantaFocus) &&
+		getViewsLayout() != QuantaView::KafkaViewOnly)
 		write()->docUndoRedo->reloadQuantaEditor(force);
 }
 

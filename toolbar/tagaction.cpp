@@ -505,14 +505,14 @@ void TagAction::insertOutputInTheNodeTree(QString str1, QString str2, Node *node
 	KafkaWidget *kafkaPart = m_view->getKafkaInterface()->getKafkaWidget();
 	KafkaDocument *wkafka = m_view->getKafkaInterface();
 	NodeModifsSet *modifs;
-	DOM::Node domNode;
-	DOM::Range range;
+	DOM::Node domNode, domStartContainer, domEndContainer;
 	QString tagName;
 	QTag *nodeQTag, *qTag, *nodeParentQTag;
 	Node *kafkaNode, *startContainer, *endContainer, *nodeParent;
 	QPtrList<QTag> qTagList;
 	int offset;
 	bool specialTagInsertion = false;
+	long startOffset, endOffset;
 
 	if(!node && str1 == "" || node && str1 != "")
 		return;
@@ -528,17 +528,16 @@ void TagAction::insertOutputInTheNodeTree(QString str1, QString str2, Node *node
 		}
 		kafkaPart->getCurrentNode(domNode, offset);
 		kafkaNode = wkafka->getNode(domNode);
-		kdDebug(25001)<< "BOO"<< endl;
 
 		if(!kafkaNode)
 			return;
-		kdDebug(25001)<< "BOO2"<< endl;
 
 		nodeParent = kafkaNode;
 		if(nodeParent->tag->type == Tag::Text)
 			nodeParent = nodeParent->parent;
 
-		//Checking if at least one parent of node can have a Text Node as child, otherwise it is impossible for the
+		//Checking if at least one parent of node can have a Text Node as child, otherwise
+		//it is impossible for the
 		//user to add this node. In that case, try to insert the Node in the closest parent accepting it.
 		//e.g. TR/TD/LI
 		nodeQTag = QuantaCommon::tagFromDTD(quantaApp->view()->write()->defaultDTD(),
@@ -547,28 +546,24 @@ void TagAction::insertOutputInTheNodeTree(QString str1, QString str2, Node *node
 		kdDebug(25001)<< "nodeQTag name : " << nodeQTag->name() << endl;
 		for(qTag = qTagList.first(); qTag; qTag = qTagList.next())
 		{
-			kdDebug(25001)<< "boo 2-2 tag:" << qTag->name() << endl;
 			if(qTag->isChild("#text", false))
 				break;
-			kdDebug(25001)<< "boo 2-2-1 tag:" << qTag->name() << endl;
 			if(qTag == qTagList.getLast())
 				specialTagInsertion = true;
 		}
 
-		range = kafkaPart->selection();
+		kafkaPart->selection(domStartContainer, startOffset, domEndContainer, endOffset);
 
 		if(specialTagInsertion)
 		{
 			//let's try to insert this node in the closest parent accepting it.
-			kdDebug(25001)<< "BOO2-3"<< endl;
 			while(nodeParent)
 			{
-				nodeParentQTag = QuantaCommon::tagFromDTD(quantaApp->view()->write()->defaultDTD(),
+				nodeParentQTag =
+					QuantaCommon::tagFromDTD(quantaApp->view()->write()->defaultDTD(),
 					nodeParent->tag->name);
-				kdDebug(25001)<< "nodeParentQTag" << nodeParentQTag->name() << endl;
 				if(nodeParentQTag && nodeParentQTag->isChild(node))
 				{
-					kdDebug(25001)<< "nodeParentQTag DOUND" << nodeParentQTag->name() << endl;
 					kafkaCommon::DTDinsertNode(node, nodeParent, 0L, 0L, 0, 0, modifs);
 					break;
 				}
@@ -578,22 +573,20 @@ void TagAction::insertOutputInTheNodeTree(QString str1, QString str2, Node *node
 		else if(kafkaPart->hasSelection())
 		{
 			//If some text is selected in kafka, surround the selection with the new Node.
-			kdDebug(25001)<< "BOO3"<< endl;
-			startContainer = wkafka->getNode(range.startContainer());
-			endContainer = wkafka->getNode(range.endContainer());
+			startContainer = wkafka->getNode(domStartContainer);
+			endContainer = wkafka->getNode(domEndContainer);
+			startOffset = wkafka->translateKafkaIntoNodeCursorPosition(domStartContainer, startOffset);
+			endOffset = wkafka->translateKafkaIntoNodeCursorPosition(domStartContainer, endOffset);
 			if(!startContainer || !endContainer)
 				return;
-			kdDebug(25001)<< "BOO4-2"<< endl;
-				kafkaCommon::DTDinsertNode(node, startContainer, range.startOffset(),
-					endContainer, range.endOffset(), modifs);
+			kafkaCommon::DTDinsertNode(node, startContainer, (int)startOffset,
+				endContainer, (int)endOffset, modifs);
 		}
 		else
 		{
 			//Nothing is selected, simply inserting the Node if it is not an inline.
-			kdDebug(25001)<< "BOO4"<< endl;
 			if(!kafkaCommon::isInline(node->tag->name) || nodeQTag->isSingle())
 			{
-				kdDebug(25001)<< "BOO5"<< endl;
 				kafkaCommon::DTDinsertNode(node, nodeParent, kafkaNode,
 					kafkaNode, offset, offset, modifs);
 			}

@@ -1490,6 +1490,7 @@ bool kafkaCommon::splitNode(Node *n, int offset, NodeModifsSet *modifs)
 	NodeModif *modif;
 	Tag *tag;
 	QString tagStr;
+	Node *node;
 
 	if(!n || n->tag->type != Tag::Text || offset <= 0 || offset >= (signed)n->tag->tagStr().length())
 		return false;
@@ -1508,8 +1509,11 @@ bool kafkaCommon::splitNode(Node *n, int offset, NodeModifsSet *modifs)
 		modifs->addNodeModif(modif);
 	}
 
-	createAndInsertNode("#text", tagStr.right(tagStr.length() - offset), Tag::Text, n->tag->write(),
+	node = createAndInsertNode("#text", tagStr.right(tagStr.length() - offset), Tag::Text, n->tag->write(),
 		n->parent, n->next, modifs, false);
+
+	//Node's string is a part of n's clean string
+	node->tag->cleanStrBuilt = true;
 	return true;
 }
 

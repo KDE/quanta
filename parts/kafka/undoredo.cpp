@@ -1286,6 +1286,8 @@ void undoRedo::reloadQuantaEditor(bool force, bool syncQuantaCursor)
 	{
 		if(!node->tag->cleanStrBuilt)
 		{
+			//FIXME FIXME FIXME KafkaDocument::translateKafkaIntoNodeCursorPosition() set the
+			//clean string but does not touch the position!!! FIXME FIXME FIXME
 			node->tag->setStr(kafkaInterface->generateCodeFromNode(node, bLine, bCol, eLine, eCol));
 			node->tag->setTagPosition(bLine, bCol, eLine, eCol);
 			//kdDebug(25001)<< "POS1 " << bLine <<  " " <<  bCol << " " << eLine << " " << eCol << endl;
