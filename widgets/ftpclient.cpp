@@ -80,6 +80,7 @@ FtpClient::FtpClient(QWidget *parent, const char *name )
 	     		 this, 			SLOT( slotRemoteDirChanged( const QString & ) ) );
 	
   localOperator.listChildren();
+  remoteOperator.setPort( 21 );
 
   sel = IDLEFT;
 }
@@ -297,24 +298,23 @@ void FtpClient::slotRemoteFinished( QNetworkOperation *op )
 
   if ( op && op->state() == QNetworkProtocol::StFailed )
   {
+  	int ecode = op->errorCode();
   	// an error happend, let the user know that
   	QMessageBox::critical( this, tr( "ERROR" ), op->protocolDetail() );
 
   	QString t;
   	// do something depending in the error code
-  	int ecode = op->errorCode();
+  	
 		if ( ecode == QNetworkProtocol::ErrListChlidren || ecode == QNetworkProtocol::ErrParse ||
 	    ecode == QNetworkProtocol::ErrUnknownProtocol || ecode == QNetworkProtocol::ErrLoginIncorrect ||
 	    ecode == QNetworkProtocol::ErrValid || ecode == QNetworkProtocol::ErrHostNotFound ||
 	    ecode == QNetworkProtocol::ErrFileNotExisting )
 	  {
-	    remoteOperator = oldRemote;
 	    remoteHost->setEditText( remoteOperator.host() );
 	    remotePath->setEditText( remoteOperator.path() );
 	    password->setText( remoteOperator.password() );
 	    userName->setEditText( remoteOperator.user() );
 	    port->setText( t.sprintf( "%i", remoteOperator.port() ) );
-	    remoteOperator.listChildren();
 		}
   }
   else if ( op->operation() == QNetworkProtocol::OpListChildren ) {
