@@ -310,6 +310,7 @@ bool ViewManager::saveAll(bool dont_ask)
 
 void ViewManager::closeAll(bool createNew)
 {
+  quantaApp->slotShowPreviewWidget(false);
   disconnect(quantaApp, SIGNAL(viewActivated (KMdiChildView *)), this, SLOT(slotViewActivated(KMdiChildView*)));
   disconnect(quantaApp, SIGNAL(lastChildViewClosed()), this, SLOT(slotLastViewClosed()));
 
