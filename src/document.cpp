@@ -143,9 +143,9 @@ Document::Document(KTextEditor::Document *doc,
   if (a)
     m_view->actionCollection()->take(a);
 
-  KAction *viewborderAction = m_view->actionCollection()->action( "view_border" );
-  if (viewborderAction)
-    viewborderAction->setShortcut(Qt::SHIFT + Qt::Key_F9);
+  a = m_view->actionCollection()->action("view_folding_markers");
+  if (a)
+    a->setShortcut(Qt::SHIFT + Qt::Key_F11);
   
   KActionMenu *bookmarkAction = dynamic_cast<KActionMenu*>(m_view->actionCollection()->action( "bookmarks" ));
   if (bookmarkAction)

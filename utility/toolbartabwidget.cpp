@@ -24,6 +24,7 @@
 
 //kde includes
 #include <kaction.h>
+#include <kaccelmanager.h>
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -56,6 +57,9 @@ ToolbarTabWidget::ToolbarTabWidget(QWidget * parent, const char * name, WFlags f
           quantaApp, SLOT(slotRenameToolbar(const QString&)));
   connect(this, SIGNAL(editToolbar(const QString&)),
           quantaApp, SLOT(slotConfigureToolbars(const QString&)));
+#if KDE_VERSION > KDE_MAKE_VERSION(3,3,90)
+  KAcceleratorManager::setNoAccel(this);
+#endif
 }
 
 void ToolbarTabWidget::insertTab(QWidget * child, const QString & label )
