@@ -40,12 +40,18 @@ messages: rc.cpp
 	find $$dirs -maxdepth 1 -name "*.cpp" -print > files ;\
 	find $$dirs -maxdepth 1 -name "*.cc" -print >> files ;\
 	find $$dirs -maxdepth 1 -name "*.h" -print >> files ;\
+	toolbars=`find -name "*.toolbar.tgz"`;\
+	for toolbar in $$toolbars; do \
+	 tar Oxfz $$toolbar  >> extrafiles; \
+	done
+	(cd data && $(PREPARETIPS) >> ../extrafiles)
 	$(EXTRACTRC) `find $$dirs -maxdepth 1 -name "*.ui"` >> rc.cpp
 	$(EXTRACTRC) `find $$dirs -maxdepth 1 -name "*.rc"` >> rc.cpp
 	$(EXTRACTRC) `find $$dirs -maxdepth 1 -name "*.kmdr"` >> rc.cpp
 	$(EXTRACTRC) data/chars >> rc.cpp
+	$(EXTRACTRC) extrafiles >> rc.cpp
 	$(XGETTEXT) rc.cpp `cat files` -o $(podir)/quanta.pot
-	rm -f files dirs
+	rm -f extrafiles files dirs 
 
 KDE_ICON = quanta
 
