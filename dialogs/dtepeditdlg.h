@@ -26,13 +26,15 @@ class DTEPEditDlg : public DTEPEditDlgS
   public:
     DTEPEditDlg(const QString& descriptionFile, QWidget *parent = 0, const char *name = 0);
     ~DTEPEditDlg();
-    KConfig *resultConfig();
+    void saveResult();
     void slotFamilyChanged(int family);
     
   private:  
     void init();
     void readGeneral();
     void readPages();
+    void writeGeneral(KConfig *config);
+    void writePages(KConfig *config);
     
   QString m_descriptionFile;
   KConfig *m_config;

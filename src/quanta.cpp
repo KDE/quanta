@@ -2951,19 +2951,7 @@ void QuantaApp::slotEditDTD()
     editDlg.setMainWidget(&dtepDlg);
     if (editDlg.exec())
     {
-      QFileInfo f(DTDs::ref()->find(dtdName)->fileName);
-      if (f.isWritable())
-      {
-        if (f.exists())
-        {
-          if (KMessageBox::warningYesNo(this, i18n("<qt>The file <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>").arg(f.filePath()),i18n("Overwrite")) == KMessageBox::No)
-            return;
-        }
-        KConfig* config = dtepDlg.resultConfig();
-        KConfig* newConfig = config->copyTo(f.filePath());
-        newConfig->sync();
-        delete newConfig;        
-      }
+      dtepDlg.saveResult();
     }
   }
 }

@@ -11,7 +11,10 @@
 //
 
 //qt includes
+
 #include <qcheckbox.h>
+#include <qfile.h>
+#include <qfileinfo.h>
 #include <qtabwidget.h>
 #include <qwidgetstack.h>
 
@@ -19,12 +22,16 @@
 //kde includes
 #include <kcombobox.h>
 #include <kconfig.h>
+#include <kfiledialog.h>
 #include <klineedit.h>
 #include <klocale.h>
+#include <kmessagebox.h>
+#include <kstandarddirs.h>
 
 //own includes
 #include "dtepeditdlg.h"
 #include "dtds.h"
+#include "resource.h"
 
 DTEPEditDlg::DTEPEditDlg(const QString& descriptionFile, QWidget *parent, const char *name)
  : DTEPEditDlgS(parent, name)
@@ -32,7 +39,7 @@ DTEPEditDlg::DTEPEditDlg(const QString& descriptionFile, QWidget *parent, const 
   nameEdit->setFocus();
   m_descriptionFile = descriptionFile;
   
-  m_config = new KConfig(m_descriptionFile, true);
+  m_config = new KConfig(m_descriptionFile, false, false);
   init();
   
 }
@@ -133,9 +140,98 @@ void DTEPEditDlg::readPages()
   }
 }
 
-KConfig *DTEPEditDlg::resultConfig()
+void DTEPEditDlg::saveResult()
 {
-  return m_config;
+  QString targetFile = m_descriptionFile;
+  QFileInfo f(targetFile);
+  if (!f.isWritable())
+  {
+    if (f.exists())
+    {
+      if (KMessageBox::questionYesNo(this, i18n("<qt>The file <b>%1</b> is not writable.<br>Do you want to save the configuration to a different file?</qt>").arg(f.filePath()),i18n("Save As")) == KMessageBox::Yes)
+      {
+        targetFile = KFileDialog::getSaveFileName(locateLocal("data", resourceDir + "dtep/"), i18n("*.rc|DTEP description"), this, i18n("Save Description As"));
+      } else
+        targetFile = "";
+    }
+  }
+  if (!targetFile.isEmpty())
+  {
+    QFile f(targetFile);
+    if (f.exists())
+      f.remove();
+    KConfig* newConfig = m_config->copyTo(targetFile);
+    newConfig->sync();
+    writeGeneral(newConfig);
+    writePages(newConfig);
+    newConfig->sync();
+    delete newConfig;        
+  }
+}
+
+void DTEPEditDlg::writeGeneral(KConfig *config)
+{  
+  config->setGroup("General");
+  config->writeEntry("Name", nameEdit->text());
+  config->writeEntry("NickName", nickNameEdit->text());
+  config->writeEntry("Family", typeCombo->currentItem() + 1);
+  config->writeEntry("CaseSensitive", caseSensitive->isChecked());
+  config->writeEntry("Inherits", inheritsCombo->currentText());
+  config->writeEntry("URL", urlEdit->text());
+  config->writeEntry("DoctypeString", doctypeEdit->text());
+  if (m_family == 1)
+    config->writeEntry("TopLevel", topLevel->isChecked());
+  
+  config->setGroup("Toolbars");
+  config->writeEntry("Location", toolbarFolderEdit->text());
+  config->writeEntry("Names", toolbarsEdit->text());
+}
+
+void DTEPEditDlg::writePages(KConfig *config)
+{
+  if (m_family == 1)
+    config->deleteGroup("Pages");
+  else
+  {
+    int num = 0;
+    if (enablePage1->isChecked())
+    {
+      num++;
+      config->setGroup(QString("Page%1").arg(num));
+      config->writeEntry("Title", pageTitleEdit1->text());
+      config->writeEntry("Group", groupsEdit1->text());
+    }
+    if (enablePage2->isChecked())
+    {
+      num++;
+      config->setGroup(QString("Page%1").arg(num));
+      config->writeEntry("Title", pageTitleEdit2->text());
+      config->writeEntry("Group", groupsEdit2->text());
+    }
+    if (enablePage3->isChecked())
+    {
+      num++;
+      config->setGroup(QString("Page%1").arg(num));
+      config->writeEntry("Title", pageTitleEdit3->text());
+      config->writeEntry("Group", groupsEdit3->text());
+    }
+    if (enablePage4->isChecked())
+    {
+      num++;
+      config->setGroup(QString("Page%1").arg(num));
+      config->writeEntry("Title", pageTitleEdit4->text());
+      config->writeEntry("Group", groupsEdit4->text());
+    }
+    if (enablePage5->isChecked())
+    {
+      num++;
+      config->setGroup(QString("Page%1").arg(num));
+      config->writeEntry("Title", pageTitleEdit5->text());
+      config->writeEntry("Group", groupsEdit5->text());
+    }
+    config->setGroup("General");
+    config->writeEntry("NumOfPages", num);
+  }
 }
 
 #include "dtepeditdlg.moc"
