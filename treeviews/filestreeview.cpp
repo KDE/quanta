@@ -28,6 +28,7 @@
 #include <qlineedit.h>
 #include <qfont.h>
 #include <qpainter.h>
+#include <qevent.h>
 
 
 // KDE includes
@@ -85,7 +86,6 @@ void FilesTreeViewItem::paintCell(QPainter *p, const QColorGroup &cg,
                                   int column, int width, int align)
 {
   QColorGroup _cg( cg );
-  QColor c = _cg.text();
   if (column == 0)
   {
     QFont f = p->font();
@@ -103,7 +103,6 @@ void FilesTreeViewItem::paintCell(QPainter *p, const QColorGroup &cg,
     _cg.setColor(QColorGroup::Text, QColor(h, s, v, QColor::Hsv));
   };
   KFileTreeViewItem::paintCell( p, _cg, column, width, align );
-  _cg.setColor( QColorGroup::Text, c );
 }
     
     
@@ -149,11 +148,17 @@ KFileTreeViewItem* FilesTreeBranch::createTreeViewItem( KFileTreeViewItem *paren
 FilesTreeView::FilesTreeView(QWidget *parent, const char *name)
 : KFileTreeView(parent, name)
 {
+  m_dock = 0L;
+  m_action = 0L;
 }
 
-FilesTreeView::FilesTreeView(KURL::List topList, QWidget *parent, const char *name)
+FilesTreeView::FilesTreeView(KConfig *config, KActionCollection *ac, KDockWidget *parent, const char *name)
   : KFileTreeView(parent, name)
 {
+  m_dock = parent;
+  m_action = new KToggleAction( i18n("Show Files Tree"), UserIcon("ftab"), 0,
+                                this, SLOT( slotToggleShow() ),
+                                ac, "show_ftab_tree" );
   setRootIsDecorated( true );
   setSorting(0);
   setFrameStyle( Panel | Sunken );
@@ -166,9 +171,34 @@ FilesTreeView::FilesTreeView(KURL::List topList, QWidget *parent, const char *na
   connect(this, SIGNAL(dropped(KURL::List&, KURL&)),
           this, SLOT(slotDropped(KURL::List&, KURL&)));
 
-  topURLList = topList;
+  m_config = config;
+  m_config->setGroup("General Options");
+  QStringList topStrList;
+#if KDE_IS_VERSION(3,1,3)
+  topStrList = m_config->readPathListEntry("Top folders");
+#else
+  topStrList = m_config->readListEntry("Top folders");
+#endif
+  KURL url;
+  for (uint i = 0; i < topStrList.count(); i++)
+  {
+    url = KURL();
+    QuantaCommon::setUrl(url, topStrList[i]);
+    topURLList.append(url);
+  }
 
-  m_config = quantaApp->config();
+  m_config->setGroup("General Options");
+  if (m_config->readBoolEntry("Home-Root Folder On", true))
+  {
+    url = KURL();
+    url.setPath("/");
+    if (!topURLList.contains(url))
+        topURLList.append(url);
+    url = KURL();
+    url.setPath(QDir::homeDirPath()+"/");
+    if (!topURLList.contains(url))
+        topURLList.append(url);
+  }
 
   m_fileMenu = new KPopupMenu();
 
@@ -331,7 +361,7 @@ void FilesTreeView::slotSelectFile(QListViewItem *item)
   {
     if ( QuantaCommon::checkMimeGroup(urlToOpen,"text") )
     {
-      emit openFile( urlToOpen, quantaApp->defaultEncoding() );
+      emit openFile(urlToOpen);
     }
     else if ( QuantaCommon::checkMimeGroup(urlToOpen, "image") ) //it may be an image
       {
@@ -344,7 +374,7 @@ void FilesTreeView::slotSelectFile(QListViewItem *item)
         {
           if (QuantaCommon::denyBinaryInsert() == KMessageBox::Yes)
           {
-            emit openFile( urlToOpen, quantaApp->defaultEncoding() );
+            emit openFile(urlToOpen);
           }
         }
    }
@@ -765,6 +795,26 @@ bool FilesTreeView::isPathInClipboard()
     return false;
   else
     return QExtFileInfo::exists(url);
+}
+
+void FilesTreeView::showEvent ( QShowEvent * )
+{
+  if (m_action) m_action->setChecked(true);
+};
+
+void FilesTreeView::hideEvent ( QHideEvent * )
+{
+  if (m_action) m_action->setChecked(false);
+};
+
+
+void FilesTreeView::slotDocumentClosed()
+{
+  QListViewItemIterator iter(this);
+  for ( ; iter.current(); ++iter )
+  {
+    iter.current()->repaint();
+  }
 }
 
 #include "filestreeview.moc"

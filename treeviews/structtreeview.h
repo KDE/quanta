@@ -105,7 +105,7 @@ signals:
   void onTag( const QString &tag );
   /** No descriptions */
   void parsingDTDChanged(const QString&);
-  void openFile(const KURL&, const QString& );
+  void openFile(const KURL&);
   void openImage(const KURL&);
   void showPreviewWidget(bool);
 

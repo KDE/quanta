@@ -262,8 +262,6 @@ public slots:
 
 signals:
   void newCurPos();
-  /** emit when select document from tabbar */
-  void writeSelected(int);
   /** emitted when a file from the template view is dropped on the view */
   void dragInsert(QDropEvent *);
 

@@ -51,10 +51,11 @@ public:
    *  the parameters are only used at the first call to create the class
    *
    */
-  static ProjectTreeView* const ref(QWidget *parent = 0L, const char *name = 0L)
+  static ProjectTreeView* const ref(KActionCollection *ac = 0L,
+                                    KDockWidget *parent = 0L, const char *name = 0L)
   {
     static ProjectTreeView *m_ref;
-    if (!m_ref) m_ref = new ProjectTreeView (parent, name);
+    if (!m_ref) m_ref = new ProjectTreeView (ac, parent, name);
     return m_ref;
   }
 
@@ -69,8 +70,6 @@ public slots: // Public slots
   void slotReloadTree(const ProjectUrlList &a_fileList, bool buildNewtree);
   /** Sets new project informations */
   void slotNewProjectLoaded(const QString &, const KURL &, const KURL &);
-  /** triggers repaint of treeview */
-  void slotDocumentClosed();
   /** reloads the tree again with current settings */
   void slotReload();
   virtual void slotPopulateFinished(KFileTreeViewItem* );
@@ -91,7 +90,8 @@ private:
    *  If you need the class use ProjectTreeView::ref() for
    *  construction and reference
    */
-  ProjectTreeView(QWidget *parent = 0L, const char *name = 0L);
+  ProjectTreeView(KActionCollection *ac,
+                  KDockWidget *parent, const char *name);
 
   ProjectTreeBranch *m_projectDir;
   KURL m_oldURL;

@@ -150,13 +150,91 @@
 #endif
 
 #include "quantaplugininterface.h"
+#include "quantaplugin.h"
 #include "dtds.h"
+#include "dcopsettings.h"
+#include "spellchecker.h"
+#include "quanta_init.h"
+
 
 const QString resourceDir = QString(PACKAGE) + "/";
 
 
 // from kfiledialog.cpp - avoid qt warning in STDERR (~/.xsessionerrors)
 static void silenceQToolBar(QtMsgType, const char *){}
+
+
+
+QuantaApp::QuantaApp() : DCOPObject("WindowManagerIf"), KDockMainWindow(0L,"Quanta")
+{
+  m_quantaInit = new QuantaInit(this);
+  dcopSettings = new DCOPSettings;
+  quantaStarted = true;
+  tempFileList.setAutoDelete(true);
+  toolbarList.setAutoDelete(true);
+  userToolbarsCount = 0;
+  baseNode = 0L;
+  currentToolbarDTD = QString::null;
+  m_config=kapp->config();
+
+  qConfig.globalDataDir = KGlobal::dirs()->findResourceDir("data",resourceDir + "toolbar/quantalogo.png");
+  if (qConfig.globalDataDir.isEmpty())
+  {
+    quantaStarted = false;
+    kdWarning() << "***************************************************************************" << endl
+                << i18n("Quanta data files were not found.\nYou may have forgotten to run \"make install\","
+                        "or your KDEDIR, KDEDIRS or PATH are not set correctly.") << endl
+                << "***************************************************************************" << endl;
+    QTimer::singleShot(20, kapp, SLOT(quit()));
+    return;
+  }
+  qConfig.enableDTDToolbar = true;
+
+  setHighlight = 0;
+  grepDialog  = 0L;
+  exitingFlag = false;
+  qConfig.spellConfig = new KSpellConfig();
+  idleTimer = new QTimer(this);
+  connect(idleTimer, SIGNAL(timeout()), SLOT(slotIdleTimerExpired()));
+
+  // connect up signals from KXXsldbgPart
+  connectDCOPSignal(0, 0, "debuggerPositionChangedQString,int)", "newDebuggerPosition(QString,int)", false );
+  connectDCOPSignal(0, 0, "editorPositionChanged(QString,int,int)", "newCursorPosition(QString,int,int)", false );
+  connectDCOPSignal(0, 0, "openFile(QString,int,int)", "openFile(QString,int,int)", false);
+
+  m_execCommandPS = 0L;
+}
+
+QuantaApp::~QuantaApp()
+{
+ tempFileList.clear();
+ QDictIterator<ToolbarEntry> iter(toolbarList);
+ ToolbarEntry *p_toolbar;
+ for( ; iter.current(); ++iter )
+ {
+   p_toolbar = iter.current();
+   if (p_toolbar->dom) delete p_toolbar->dom;
+   if (p_toolbar->menu)
+     delete p_toolbar->menu;
+   if (p_toolbar->guiClient) delete p_toolbar->guiClient;
+ }
+
+ toolbarList.clear();
+ QStringList tmpDirs = KGlobal::dirs()->resourceDirs("tmp");
+ tmpDir = tmpDirs[0];
+ for (uint i = 0; i < tmpDirs.count(); i++)
+ {
+   if (tmpDirs[i].contains("kde-"))
+      tmpDir = tmpDirs[i];
+ }
+ QDir dir;
+ dir.rmdir(tmpDir + "quanta");
+
+ delete m_execCommandPS;
+ m_execCommandPS = 0L;
+ delete dcopSettings;
+ delete dcopQuanta;
+}
 
 
 /////////////////////////////////////////////////////////////////////
@@ -213,6 +291,11 @@ void QuantaApp::slotFileOpen()
  Document *w = m_view->write();
  setCaption(w->url().prettyURL() );
  slotUpdateStatus(w);
+}
+
+void QuantaApp::slotFileOpen(const KURL &url)
+{
+  slotFileOpen(url, defaultEncoding());
 }
 
 void QuantaApp::slotFileOpen( const KURL &url, const QString& encoding )
@@ -283,7 +366,7 @@ bool QuantaApp::slotFileSaveAs()
     KURL saveAsUrl;
     if(ptabdock->isVisible())
     {
-      saveAsUrl = pTab->currentURL();
+      saveAsUrl = ProjectTreeView::ref()->currentURL();
       saveAsPath = saveAsUrl.url();
       gotPath = true;
     }
@@ -818,23 +901,8 @@ void QuantaApp::slotNewStatus()
 
     saveAction   ->setEnabled(m_doc->isModified());
     saveAllAction->setEnabled(m_doc->isModifiedAll());
-    if (Project::ref()->isModified())
-        Project::ref()->slotSaveProject();
 
     bool projectExists = Project::ref()->hasProject();
-    closeprjAction     ->setEnabled(projectExists);
-    openPrjViewAction  ->setEnabled(projectExists);
-    savePrjViewAction  ->setEnabled(projectExists);
-    saveAsPrjViewAction->setEnabled(projectExists);
-    deletePrjViewAction->setEnabled(projectExists);
-
-    insertFileAction   ->setEnabled(projectExists);
-    insertDirAction    ->setEnabled(projectExists);
-    rescanPrjDirAction ->setEnabled(projectExists);
-    uploadProjectAction->setEnabled(projectExists);
-    projectOptionAction->setEnabled(projectExists);
-    saveAsProjectTemplateAction->setEnabled(projectExists);
-    saveSelectionAsProjectTemplateAction->setEnabled(projectExists);
 
     actionCollection()->action("toolbars_load_project")->setEnabled(projectExists);
     actionCollection()->action("toolbars_save_project")->setEnabled(projectExists);
@@ -1010,8 +1078,6 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
   m_view->updateViews();
 #endif
   m_view->oldTab = w;
-
-  emit reloadTreeviews();
 }
 
 void QuantaApp::slotOptionsConfigureKeys()
@@ -1103,7 +1169,7 @@ void QuantaApp::slotConfigureToolbars(const QString& defaultToolbar)
  }
 
  //add the menus
- menuBar()->insertItem(i18n("Plu&gins"), m_pluginMenu, -1, PLUGINS_MENU_PLACE);
+ menuBar()->insertItem(i18n("Plu&gins"), m_pluginInterface->pluginMenu(), -1, PLUGINS_MENU_PLACE);
  menuBar()->insertItem(i18n("&Tags"),m_tagsMenu,-1, TAGS_MENU_PLACE);
  tb->setCurrentPage(currentPageIndex);
 }
@@ -1729,25 +1795,6 @@ void QuantaApp::slotContextHelp()
   }
 }
 
-void QuantaApp::slotShowFTabDock() 
-{ 
-  ftabdock->changeHideShowState();
-}
-
-void QuantaApp::slotShowPTabDock() 
-{ 
-  ptabdock->changeHideShowState();
-}
-
-void QuantaApp::slotShowTTabDock() 
-{ 
-  ttabdock->changeHideShowState();
-}
-
-void QuantaApp::slotShowScriptTabDock() 
-{
- scripttabdock->changeHideShowState(); 
-}
 void QuantaApp::slotShowSTabDock() 
 { 
   stabdock->changeHideShowState();
@@ -1756,7 +1803,7 @@ void QuantaApp::slotShowSTabDock()
 
 void QuantaApp::slotShowATabDock() 
 { 
- atabdock->changeHideShowState();
+  atabdock->changeHideShowState();
 }
 
 void QuantaApp::slotShowDTabDock() 
@@ -1825,10 +1872,6 @@ void QuantaApp::settingsMenuAboutToShow()
 
 void QuantaApp::viewMenuAboutToShow()
 {
-  showFTabAction->setChecked( ftabdock->isVisible() );
-  showPTabAction->setChecked( ptabdock->isVisible() );
-  showTTabAction->setChecked( ttabdock->isVisible() );
-  showScriptTabAction->setChecked( scripttabdock->isVisible() );
   showSTabAction->setChecked( stabdock->isVisible() );
   showATabAction->setChecked( atabdock->isVisible() );
   showDTabAction->setChecked( dtabdock->isVisible() );
@@ -3456,13 +3499,13 @@ QString QuantaApp::defaultEncoding()
   return encoding;
 }
 
-QPopupMenu *QuantaApp::toolbarMenu(const QString& name)
-{
-  QPopupMenu *menu = 0L;
-  ToolbarEntry* p_toolbar = toolbarList[name.lower()];
-  if (p_toolbar) menu = p_toolbar->menu;
-  return menu;
-}
+// QPopupMenu *QuantaApp::toolbarMenu(const QString& name)
+// {
+//   QPopupMenu *menu = 0L;
+//   ToolbarEntry* p_toolbar = toolbarList[name.lower()];
+//   if (p_toolbar) menu = p_toolbar->menu;
+//   return menu;
+// }
 
 KURL::List QuantaApp::userToolbarFiles()
 {
@@ -3921,62 +3964,6 @@ void QuantaApp::slotProcessTimeout()
   }
 }
 
-
-QString QuantaApp::searchPathListEntry(const QString& backedUpUrl,const QString& autosavedUrls)
-{
-  KURL k(backedUpUrl);
-  QStringList autosavedUrlsList = QStringList::split(",", autosavedUrls);
-  QStringList::Iterator autosavedUrlsIt;
-  for (autosavedUrlsIt = autosavedUrlsList.begin();
-       autosavedUrlsIt != autosavedUrlsList.end();
-       ++autosavedUrlsIt)
-  {
-   QString quPID = retrievePID((*autosavedUrlsIt));
-
-   QStringList PIDlist = QStringList::split("\n", m_scriptOutput);
-
-   bool isOrphan = true;
-   QStringList::Iterator PIDIt;
-   for ( PIDIt = PIDlist.begin(); PIDIt != PIDlist.end(); ++PIDIt )
-   {
-    if ((*PIDIt) == quPID && qConfig.quantaPID != quPID)
-    {
-     isOrphan = false;
-     break;
-    }
-   }
-   if (isOrphan || ((*autosavedUrlsIt).right(1) == "U"))
-   {
-    if(retrieveHashedPath(Document::hashFilePath(k.path())) == retrieveHashedPath((*autosavedUrlsIt)))
-      return (*autosavedUrlsIt);
-   }
-  }
-  return QString::null;
-}
-
-/** Retrieves PID from the name of a backup file */
-QString QuantaApp::retrievePID(const QString& filename)
-{
- QString strPID = QString::null;
- strPID = filename.right(filename.length() - filename.findRev("P") - 1);
-
- if (strPID.isEmpty())
-  strPID = filename.right(filename.length() - filename.findRev("N") - 1);
-
- return strPID;
-}
-/** Retrieves hashed path from the name of a backup file */
-QString QuantaApp::retrieveHashedPath(const QString& filename)
-{
- return filename.mid(filename.findRev(".") + 1,
-                      filename.findRev("P") - 1 - filename.findRev("."));
-}
-/** Retrieves the non hashed part of the name of a backup file */
-QString QuantaApp::retrieveBaseFileName(const QString& filename)
-{
- return filename.left(filename.findRev("."));
-}
-
 void QuantaApp::layoutDockWidgets(const QString& layout)
 {
   if (layout == "Default")
@@ -4066,6 +4053,149 @@ void QuantaApp::slotReportBug()
   KAboutData aboutData( "quanta", I18N_NOOP("Quanta"), VERSION);
   KBugReport bugReportDlg(this, true, &aboutData);
   bugReportDlg.exec();
+}
+
+
+bool QuantaApp::queryClose()
+{
+  bool canExit = true;
+  if (quantaStarted)
+  {
+    if (dtabdock->isVisible())
+    {
+      QWidgetStack *s = widgetStackOfHtmlPart();
+      s->raiseWidget(0);
+    }
+    saveOptions();
+    exitingFlag = true;
+    canExit = m_doc->saveAll(false);
+    if (canExit)
+        canExit = removeToolbars();
+    if (canExit)
+    {
+      disconnect( m_view->writeTab(),SIGNAL(currentChanged(QWidget*)), this,     SLOT(slotUpdateStatus(QWidget*)));
+      //avoid double question about saving files, so set the "modified"
+      //flags to "false". This is safe here.
+      Document *w;
+      for (int i = m_view->writeTab()->count() -1; i >=0; i--)
+      {
+        w = dynamic_cast<Document*>(m_view->writeTab()->page(i));
+        if (w)
+           w->setModified(false);
+      }
+      Project::ref()->slotCloseProject();
+      do
+      {
+        if (m_view->writeExists())
+        {
+          w = m_view->write();
+          w->closeTempFile();
+        }
+      }while (m_view->removeWrite());
+    }
+  }
+
+  return canExit;
+}
+
+void QuantaApp::saveOptions()
+{
+  if (m_config)
+  {
+    m_config->setGroup  ("General Options");
+
+    m_config->writeEntry("Geometry", size());
+
+    m_config->writeEntry("Show Toolbar", toolBar("mainToolBar")->isVisible());
+    m_config->writeEntry("Show DTD Toolbar", showDTDToolbar->isChecked());
+    m_config->writeEntry("Show Statusbar", statusBar()->isVisible());
+
+    m_config->writeEntry("Markup mimetypes", qConfig.markupMimeTypes  );
+    m_config->writeEntry("Script mimetypes", qConfig.scriptMimeTypes   );
+    m_config->writeEntry("Image mimetypes", qConfig.imageMimeTypes );
+    m_config->writeEntry("Text mimetypes", qConfig.textMimeTypes  );
+
+    m_config->writeEntry("Capitals for tags", qConfig.tagCase);
+    m_config->writeEntry("Capitals for attr", qConfig.attrCase);
+    m_config->writeEntry("Attribute quotation", qConfig.attrValueQuotation=='"' ? "double":"single");
+    m_config->writeEntry("Close tag if optional", qConfig.closeOptionalTags);
+    m_config->writeEntry("Close tags", qConfig.closeTags);
+    m_config->writeEntry("Auto completion", qConfig.useAutoCompletion);
+    m_config->writeEntry("Update Closing Tags", qConfig.updateClosingTags);
+
+//    m_config->writeEntry("DynamicWordWrap", qConfig.dynamicWordWrap);
+
+    m_config->writeEntry("Default encoding", qConfig.defaultEncoding);
+    m_config->writeEntry("Default DTD", qConfig.defaultDocType);
+
+    m_config->writeEntry("Preview position", qConfig.previewPosition);
+    m_config->writeEntry("Window layout", qConfig.windowLayout);
+    m_config->writeEntry("Follow Cursor", StructTreeView::ref()->followCursor() );
+    //If user choose the timer interval, it needs to restart the timer too
+    m_config->writeEntry("Autosave interval", qConfig.autosaveInterval);
+#if KDE_IS_VERSION(3,1,3)
+    m_config->writePathEntry("Top folders", fTab->topURLList.toStringList());
+    m_config->writePathEntry("List of opened files", m_doc->openedFiles().toStringList());
+#else
+    m_config->writeEntry("Top folders", fTab->topURLList.toStringList());
+    m_config->writeEntry("List of opened files", m_doc->openedFiles().toStringList());
+#endif
+    m_config->writeEntry("Version", VERSION); // version
+    m_config->writeEntry("Show Close Buttons", qConfig.showCloseButtons);
+
+    if (m_view->writeExists())
+        m_view->write()->writeConfig(m_config);
+
+    m_config->deleteGroup("RecentFiles");
+    fileRecent->saveEntries(m_config);
+
+    m_config->setGroup("Parser Options");
+    m_config->writeEntry("Instant Update", qConfig.instantUpdate);
+    m_config->writeEntry("Show Empty Nodes", qConfig.showEmptyNodes);
+    m_config->writeEntry("Show Closing Tags", qConfig.showClosingTags);
+    m_config->writeEntry("Refresh frequency", qConfig.refreshFrequency);
+    m_config->writeEntry("Expand Level", qConfig.expandLevel);
+    m_config->writeEntry("Show DTD Select Dialog", qConfig.showDTDSelectDialog);
+
+    m_config->setGroup("Quanta View");
+    m_config->writeEntry("LineNumbers", qConfig.lineNumbers);
+    m_config->writeEntry("Iconbar", qConfig.iconBar);
+    m_config->writeEntry("DynamicWordWrap", qConfig.dynamicWordWrap);
+   // m_doc->writeConfig(m_config); // kwrites
+    Project::ref()->writeConfig(m_config); // project
+    manager()->writeConfig(m_config);
+    //saveMainWindowSettings(m_config);
+    writeDockConfig(m_config);
+    SpellChecker::ref()->writeConfig(m_config);
+    m_config->sync();
+  }
+}
+
+
+QWidgetStack *QuantaApp::widgetStackOfHtmlPart()
+{
+  QWidgetStack *s;
+  if (qConfig.previewPosition == "Bottom")
+  {
+    s = bottomWidgetStack;
+  } else
+  {
+    s = rightWidgetStack;
+  }
+//TODO: This should be done on startup and after the setting has changed
+  if (m_htmlPart->view()->parentWidget() != s)
+  {
+    s->addWidget( m_htmlPart->view(), 1 );
+    s->addWidget( m_htmlPartDoc->view(), 2 );
+  }
+
+  return s;
+}
+
+
+void QuantaApp::statusBarTimeout()
+{
+  statusBar()->changeItem("", IDS_STATUS);
 }
 
 QStringList QuantaApp::selectors(const QString &tag)

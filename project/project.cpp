@@ -66,10 +66,13 @@
 #include <kpassdlg.h>
 #include <kstringhandler.h>
 #include <kdeversion.h>
+#include <kmainwindow.h> 
 
 #if KDE_IS_VERSION(3, 1, 90)
 #include <kinputdialog.h>
 #endif
+#include <kactioncollection.h>
+#include <kiconloader.h>
 
 // application headers
 #include "copyto.h"
@@ -84,18 +87,19 @@
 #include "rescanprj.h"
 #include "resource.h"
 #include "document.h"
-#include "quanta.h"
 #include "quantadoc.h"
 #include "quantaview.h"
 #include "doctreeview.h"
 #include "quantacommon.h"
+#include "quanta.h" //TODO: should get rid of it
 #include "dtds.h"
 
-Project::Project()
+Project::Project(KMainWindow *parent)
         : QObject()
 {
+  m_parent = parent;
   config = 0L;
-  init();
+  initActions(parent->actionCollection());
 }
 
 Project::~Project()
@@ -119,6 +123,104 @@ void Project::init()
   previewPrefix = KURL();
 }
 
+
+void Project::initActions(KActionCollection *ac)
+{
+  (void) new KAction( i18n( "&New Project..." ), 0,
+                        this, SLOT( slotNewProject() ),
+                        ac, "project_new" );
+
+  (void) new KAction( i18n( "&Open Project..." ), BarIcon("folder_new"), 0,
+                        this, SLOT( slotOpenProject() ),
+                        ac, "project_open" );
+#if KDE_VERSION < KDE_MAKE_VERSION(3,1,92)
+  projectRecent = new KQRecentFilesAction(i18n("Op&en Recent Project"),
+                                "folder_new", 0,
+                                  this, SLOT(slotOpenProject(const KURL&)),
+                                  ac, "project_open_recent");
+#else
+  projectRecent =
+      KStdAction::openRecent(this, SLOT(slotOpenProject(const KURL&)),
+                            ac, "project_open_recent");
+  projectRecent->setText(i18n("Open Recent Project"));
+  projectRecent->setIcon("folder_new");
+#endif
+  projectRecent->setMaxItems(32);
+  projectRecent->setToolTip(i18n("Open / Open Recent Project"));
+  connect(projectRecent, SIGNAL(activated()),
+            this, SLOT(slotOpenProject()));
+
+
+  closeprjAction =  new KAction( i18n( "&Close Project" ), SmallIcon("fileclose"), 0,
+                        this, SLOT( slotCloseProject() ),
+                        ac, "project_close" );
+
+
+  openPrjViewAction = new KAction( i18n( "Open Project &View..." ), 0,
+                        this, SLOT( slotOpenProjectView() ),
+                        ac, "project_view_open" );
+
+  savePrjViewAction = new KAction( i18n( "&Save Project View" ), 0,
+                        this, SLOT( slotSaveProjectView() ),
+                        ac, "project_view_save" );
+  saveAsPrjViewAction = new KAction( i18n( "Save Project View &As..." ), 0,
+                        this, SLOT( slotSaveAsProjectView() ),
+                        ac, "project_view_save_as" );
+  deletePrjViewAction = new KAction( i18n( "&Delete Project View..." ), 0,
+                        this, SLOT( slotDeleteProjectView() ),
+                        ac, "project_view_delete" );
+
+
+
+  insertFileAction = new KAction( i18n( "&Insert Files..." ), 0,
+                        this, SLOT( slotAddFiles() ),
+                        ac, "project_insert_file" );
+
+  insertDirAction = new KAction( i18n( "Insert &Directory..." ), 0,
+                        this, SLOT( slotAddDirectory() ),
+                        ac, "project_insert_directory" );
+
+  rescanPrjDirAction = new KAction( i18n( "&Rescan Project Folder..." ), SmallIcon("reload"), 0,
+                        this, SLOT( slotRescanPrjDir() ),
+                        ac, "project_rescan" );
+
+  uploadProjectAction = new KAction( i18n( "&Upload Project..." ), Key_F8,
+                        this, SLOT( slotUpload() ),
+                        ac, "project_upload" );
+
+  projectOptionAction = new KAction( i18n( "&Project Properties..." ), Key_F7,
+                        this, SLOT( slotOptions() ),
+                        ac, "project_options" );
+
+  saveAsProjectTemplateAction =
+            new KAction( i18n( "Save as Project Template..." ), 0,
+                        m_parent, SLOT( slotFileSaveAsProjectTemplate() ),
+                        ac, "save_project_template" );
+
+  saveSelectionAsProjectTemplateAction =
+                        new KAction( i18n( "Save Selection to Project Template File..." ), 0,
+                                     m_parent, SLOT( slotFileSaveSelectionAsProjectTemplate() ),
+                                     ac, "save_selection_project_template" );
+  adjustActions();
+}
+
+void Project::adjustActions()
+{
+  bool projectExists = hasProject();
+  closeprjAction->setEnabled(projectExists);
+  openPrjViewAction->setEnabled(projectExists);
+  savePrjViewAction->setEnabled(projectExists);
+  saveAsPrjViewAction->setEnabled(projectExists);
+  deletePrjViewAction->setEnabled(projectExists);
+
+  insertFileAction->setEnabled(projectExists);
+  insertDirAction->setEnabled(projectExists);
+  rescanPrjDirAction->setEnabled(projectExists);
+  uploadProjectAction->setEnabled(projectExists);
+  projectOptionAction->setEnabled(projectExists);
+  saveAsProjectTemplateAction->setEnabled(projectExists);
+  saveSelectionAsProjectTemplateAction->setEnabled(projectExists);
+}
 
 /** Retrieve the list of urls which are in the project. If check is true,
 for local files it verifies if it exists or not, and adds only the exisiting
@@ -166,7 +268,7 @@ void Project::insertFile(const KURL& nameURL, bool repaint )
 
   if ( relNameURL.path().startsWith("/") || relNameURL.path().startsWith(".")  )
   {
-    KURLRequesterDlg *urlRequesterDlg = new KURLRequesterDlg( baseURL.prettyURL(), quantaApp, "");
+    KURLRequesterDlg *urlRequesterDlg = new KURLRequesterDlg( baseURL.prettyURL(), m_parent, "");
     urlRequesterDlg->setCaption(i18n("%1: Copy to Project").arg(nameURL.prettyURL(0, KURL::StripFileProtocol)));
     urlRequesterDlg->urlRequester()->setMode( KFile::Directory | KFile::ExistingOnly);
     urlRequesterDlg->exec();
@@ -235,7 +337,7 @@ void Project::insertFiles( KURL::List files )
 {
   QDomElement  el;
   QDomNodeList nl = dom.elementsByTagName("item");
-  quantaApp->slotStatusMsg( i18n("Adding files to the project...") );
+  emit statusMsg( i18n("Adding files to the project...") );
   progressBar->setTotalSteps(2 * files.count() - 2);
   progressBar->setValue(0);
   progressBar->setTextEnabled(true);
@@ -285,7 +387,7 @@ void Project::insertFiles( KURL::List files )
   progressBar->setValue(0);
   progressBar->setTextEnabled(false);
 
-  quantaApp->slotStatusMsg(i18n("Done."));
+  emit statusMsg(i18n("Done."));
   emit newStatus();
 }
 
@@ -331,7 +433,7 @@ bool Project::createEmptyDom()
   if (!result)
   {
     emit hideSplash();
-    KMessageBox::sorry(quantaApp, i18n("<qt>Cannot open file <b>%1</b> for writing.</qt>").arg(projectURL.prettyURL(0, KURL::StripFileProtocol)));
+    KMessageBox::sorry(m_parent, i18n("<qt>Cannot open file <b>%1</b> for writing.</qt>").arg(projectURL.prettyURL(0, KURL::StripFileProtocol)));
     return false;
   }
 
@@ -389,7 +491,7 @@ void Project::writeConfig(KConfig *config)
 void Project::slotOpenProject()
 {
   KURL url = KFileDialog::getOpenURL( QString::null,
-                       "*.wpj *.webprj"+i18n("|Project Files\n*|All Files"), quantaApp);
+                       "*.wpj *.webprj"+i18n("|Project Files\n*|All Files"), m_parent);
 
   if( !url.isEmpty() )
   {
@@ -397,7 +499,6 @@ void Project::slotOpenProject()
 
     projectRecent->addURL( url );
   }
-
   emit newStatus();
 }
 
@@ -408,7 +509,7 @@ void Project::slotOpenProject(const KURL &url)
     if ( !QExtFileInfo::exists(url) )
     {
       emit hideSplash();
-      if (KMessageBox::questionYesNo(quantaApp,
+      if (KMessageBox::questionYesNo(m_parent,
            i18n("<qt>The file <b>%1</b> does not exist.<br> Do you want to remove it from the list?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)) )
            == KMessageBox::Yes)
       {
@@ -453,8 +554,8 @@ bool Project::slotSaveProject()
     }
     else
     {
-      emit statusMsg(QString::null);
-      KMessageBox::error(quantaApp, KIO::NetAccess::lastErrorString());
+      emit statusMsg(QString::null );
+      KMessageBox::error(m_parent, KIO::NetAccess::lastErrorString() );
       result = false;
     }
 
@@ -486,6 +587,7 @@ void Project::slotCloseProject()
 
   emit newProjectLoaded(projectName, baseURL, templateURL);
   emit reloadTree( m_projectFiles, true);
+  adjustActions();
   emit newStatus();
 }
 
@@ -502,7 +604,7 @@ void Project::slotLoadProject(const KURL &a_url)
   if (!url.isValid())
   {
       emit hideSplash();
-      KMessageBox::sorry(quantaApp, i18n("<qt>Malformed URL: <b>%1</b></qt>").arg(url.prettyURL()));
+      KMessageBox::sorry(m_parent, i18n("<qt>Malformed URL: <b>%1</b></qt>").arg(url.prettyURL()));
   } else
   {
     QString tmpName = QString::null;
@@ -524,7 +626,7 @@ void Project::slotLoadProject(const KURL &a_url)
         f.close();
         loadProjectXML();
         //load the password for this project
-        KConfig *config = quantaApp->config();
+        KConfig *config = kapp->config();
         config->setGroup("Projects");
 #if KDE_VERSION < KDE_MAKE_VERSION(3,1,90)
         passwd = QuantaCommon::obscure(config->readEntry(projectName, ""));
@@ -534,16 +636,17 @@ void Project::slotLoadProject(const KURL &a_url)
         keepPasswd = !passwd.isEmpty();
         storePasswdInFile = keepPasswd;
         openCurrentView();
+        adjustActions();
       } else
       {
         emit hideSplash();
-        KMessageBox::error(quantaApp, i18n("<qt>Cannot open the file <b>%1</b> for reading.</qt>").arg(tmpName));
+        KMessageBox::error(m_parent, i18n("<qt>Cannot open the file <b>%1</b> for reading.</qt>").arg(tmpName));
       }
       KIO::NetAccess::removeTempFile( tmpName);
     } else
     {
       emit hideSplash();
-      KMessageBox::error(quantaApp, i18n("<qt>Cannot access the project file <b>%1</b>.</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)));
+      KMessageBox::error(m_parent, i18n("<qt>Cannot access the project file <b>%1</b>.</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)));
     }
   }
 }
@@ -559,7 +662,7 @@ void Project::loadProjectXML()
   if ( projectNode.isNull() || projectName.isEmpty() )
   {
     emit hideSplash();
-    KMessageBox::sorry(quantaApp, i18n("Invalid project file.") );
+    KMessageBox::sorry(m_parent, i18n("Invalid project file.") );
     return;
   }
 
@@ -672,7 +775,7 @@ void Project::loadProjectXML()
   excludeRx.setPattern(regExpStr);
 
   QDomNodeList nl = dom.firstChild().firstChild().childNodes();
-  quantaApp->slotStatusMsg( i18n("Reading the project file...") );
+  emit statusMsg( i18n("Reading the project file...") );
   progressBar->setTotalSteps(nl.count() - 1);
   progressBar->setValue(0);
   progressBar->setTextEnabled(true);
@@ -734,7 +837,7 @@ void Project::loadProjectXML()
   progressBar->setValue(0);
   progressBar->setTextEnabled(false);
 
-  quantaApp->slotStatusMsg(i18n("Done."));
+  emit statusMsg(i18n("Done."));
 
   emit newProjectLoaded(projectName, baseURL, templateURL);
   emit reloadTree(m_projectFiles, true);
@@ -755,7 +858,7 @@ void Project::slotInsertFile( const KURL& url )
 void Project::slotAddFiles()
 {
   KURL::List list = KFileDialog::getOpenURLs(
-    baseURL.url(),  i18n("*"), quantaApp, i18n("Insert Files in Project"));
+    baseURL.url(),  i18n("*"), m_parent, i18n("Insert Files in Project"));
 
   if ( !list.isEmpty() )
   {
@@ -764,7 +867,7 @@ void Project::slotAddFiles()
 
     if ( firstURL.path().startsWith("/") || firstURL.path().startsWith("."))
     {
-      KURLRequesterDlg *urlRequesterDlg = new KURLRequesterDlg( baseURL.prettyURL(), quantaApp, "");
+      KURLRequesterDlg *urlRequesterDlg = new KURLRequesterDlg( baseURL.prettyURL(), m_parent, "");
       urlRequesterDlg->setCaption(i18n("Files: Copy to Project"));
       urlRequesterDlg->urlRequester()->setMode( KFile::Directory | KFile::ExistingOnly);
       urlRequesterDlg->exec();
@@ -805,7 +908,7 @@ void Project::slotAddFiles()
 void Project::slotAddDirectory()
 {
  KURL url = KURL();
- url = KFileDialog::getExistingURL(baseURL.prettyURL(), quantaApp,
+ url = KFileDialog::getExistingURL(baseURL.prettyURL(), m_parent,
                 i18n("Insert Folder in Project"));
  slotAddDirectory(url);
 }
@@ -824,7 +927,7 @@ void Project::slotAddDirectory(const KURL& p_dirURL, bool showDlg)
       KURL destination = baseURL;
       if (showDlg)
       {
-        KURLRequesterDlg *urlRequesterDlg = new KURLRequesterDlg( baseURL.prettyURL(), 0L, "");
+        KURLRequesterDlg *urlRequesterDlg = new KURLRequesterDlg( baseURL.prettyURL(), m_parent, "");
         urlRequesterDlg->setCaption(i18n("%1: Copy to Project").arg(dirURL.prettyURL(0, KURL::StripFileProtocol)));
         urlRequesterDlg->urlRequester()->setMode( KFile::Directory | KFile::ExistingOnly);
         urlRequesterDlg->exec();
@@ -901,7 +1004,7 @@ void Project::slotRenamed(const KURL& oldURL, const KURL& newURL)
       m_projectFiles.erase(it);
 
   uint nlCount = nl.count();
-  quantaApp->slotStatusMsg(i18n("Renaming files..."));
+  emit statusMsg(i18n("Renaming files..."));
   progressBar->setTotalSteps(nlCount - m_projectFiles.count() - 2);
   progressBar->setValue(0);
   progressBar->setTextEnabled(true);
@@ -938,7 +1041,7 @@ void Project::slotRenamed(const KURL& oldURL, const KURL& newURL)
   progressBar->setValue(0);
   progressBar->setTextEnabled(false);
 
-  quantaApp->slotStatusMsg(i18n("Done."));
+  emit statusMsg(i18n("Done."));
   m_modified = true;
 
   emit reloadTree(m_projectFiles, false);
@@ -987,7 +1090,7 @@ void Project::slotRemove(const KURL& urlToRemove)
 /** create new project */
 void Project::slotNewProject()
 {
-  wiz = new QWizard(quantaApp, "new", true);
+  wiz = new QWizard(m_parent, "new", true);
   wiz->setCaption(i18n("New Project Wizard"));
   wiz->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
   
@@ -1063,6 +1166,7 @@ void Project::slotNewProject()
 
   delete wiz;
 
+  adjustActions();
   emit newStatus();
 }
 
@@ -1094,7 +1198,7 @@ void Project::slotAcceptCreateProject()
   if (!baseURL.path().startsWith("/")) baseURL.setPath("/"+baseURL.path());
   if (!QExtFileInfo::createDir( baseURL ))
   {
-    QuantaCommon::dirCreationError(quantaApp, baseURL);
+    QuantaCommon::dirCreationError(m_parent, baseURL);
     baseURL = oldBaseURL;
   } else
   {
@@ -1179,7 +1283,7 @@ void Project::slotAcceptCreateProject()
        templateURL = QExtFileInfo::toAbsolute(templateURL, baseURL);
        if (!QExtFileInfo::createDir(templateURL))
        {
-         QuantaCommon::dirCreationError(quantaApp, templateURL);
+         QuantaCommon::dirCreationError(m_parent, templateURL);
        }
      }
      //the nodes are already created in loadProjectXML() called from createEmptyDom()
@@ -1194,7 +1298,7 @@ void Project::slotAcceptCreateProject()
      toolbarURL = QExtFileInfo::toAbsolute(toolbarURL, baseURL);
      if (!QExtFileInfo::createDir(toolbarURL))
      {
-       QuantaCommon::dirCreationError(quantaApp, toolbarURL);
+       QuantaCommon::dirCreationError(m_parent, toolbarURL);
      }
      el = dom.firstChild().firstChild().namedItem("toolbars").toElement();
      url = QExtFileInfo::toRelative(toolbarURL, baseURL);
@@ -1219,7 +1323,7 @@ void Project::slotAcceptCreateProject()
 void Project::slotOptions()
 {
   KURL url;
-  KDialogBase optionsDlg(quantaApp, "project_options", true, i18n("Project Properties"), KDialogBase::Ok | KDialogBase::Cancel);
+  KDialogBase optionsDlg(m_parent, "project_options", true, i18n("Project Options"), KDialogBase::Ok | KDialogBase::Cancel);
   ProjectOptions optionsPage(&optionsDlg);
   optionsDlg.setMainWidget(&optionsPage);
 
@@ -1349,7 +1453,7 @@ void Project::slotOptions()
     templateURL = QExtFileInfo::toAbsolute(templateURL, baseURL);
     if (!QExtFileInfo::createDir(templateURL))
     {
-      QuantaCommon::dirCreationError(quantaApp, templateURL);
+      QuantaCommon::dirCreationError(m_parent, templateURL);
     }
 
     QuantaCommon::setUrl(toolbarURL, optionsPage.linePrjToolbar->text());
@@ -1357,7 +1461,7 @@ void Project::slotOptions()
     toolbarURL = QExtFileInfo::toAbsolute(toolbarURL, baseURL);
     if (!QExtFileInfo::createDir(toolbarURL))
     {
-      QuantaCommon::dirCreationError(quantaApp, toolbarURL);
+      QuantaCommon::dirCreationError(m_parent, toolbarURL);
     }
 
     QuantaCommon::setUrl(previewPrefix,optionsPage.linePrefix->text()+"/");
@@ -1477,7 +1581,7 @@ void Project::slotOptions()
 
     loadProjectXML();
 
-    KConfig *config = quantaApp->config();
+    KConfig *config = kapp->config();
     config->setGroup("Projects");
     if (optionsPage.keepPasswd->isChecked())
     {
@@ -1537,7 +1641,7 @@ void Project::slotGetMessages(const QString& data)
 
 void Project::slotRescanPrjDir()
 {
-  RescanPrj *dlg = new RescanPrj( m_projectFiles, baseURL, excludeRx, quantaApp, i18n("New Files in Project's Folder"));
+  RescanPrj *dlg = new RescanPrj( m_projectFiles, baseURL, excludeRx, m_parent, i18n("New Files in Project's Folder"));
   if ( dlg->exec() )
   {
     insertFiles( dlg->files() );
@@ -1627,11 +1731,11 @@ void Project::slotOpenProjectView()
 #if KDE_IS_VERSION(3, 1, 90)
   QString res = KInputDialog::getItem(
                   i18n("Open Project View"),
-                  i18n("Select a project view to open:"), list, 0, FALSE, &ok, quantaApp);
+                  i18n("Select a project view to open:"), list, 0, FALSE, &ok, m_parent );
 #else
   QString res = QInputDialog::getItem(
                   i18n("Open Project View"),
-                  i18n("Select a project view to open:"), list, 0, FALSE, &ok, quantaApp);
+                  i18n("Select a project view to open:"), list, 0, FALSE, &ok, m_parent );
 #endif
   if ( ok)
   {
@@ -1643,7 +1747,7 @@ void Project::slotOpenProjectView()
 /** Saves a project view (group of files & toolbars) asking for a name. */
 void Project::slotSaveAsProjectView(bool askForName)
 {
-  KLineEditDlg dlg(i18n("Enter the name of the view:"), "", quantaApp);
+  KLineEditDlg dlg(i18n("Enter the name of the view:"), "", m_parent);
   dlg.setCaption(i18n("Save Project View As"));
 
   if ( !askForName || dlg.exec() )
@@ -1651,7 +1755,7 @@ void Project::slotSaveAsProjectView(bool askForName)
     if (askForName) currentProjectView = dlg.text().lower();
     else
     {
-      if (KMessageBox::questionYesNo(quantaApp, i18n("<qt>Do you want to overwrite the <b>%1</b> project view?</qt>").arg(currentProjectView))
+      if (KMessageBox::questionYesNo(m_parent, i18n("<qt>Do you want to overwrite the <b>%1</b> project view?</qt>").arg(currentProjectView))
           == KMessageBox::No) return;
     }
     QDomNodeList nl = dom.elementsByTagName("projectview");
@@ -1661,7 +1765,7 @@ void Project::slotSaveAsProjectView(bool askForName)
       if (node.toElement().attribute("name") == currentProjectView)
       {
         if (!askForName ||
-            KMessageBox::questionYesNo(quantaApp, i18n("<qt>A project view named <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>")
+            KMessageBox::questionYesNo(m_parent, i18n("<qt>A project view named <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>")
                                              .arg(currentProjectView)) == KMessageBox::Yes)
         {
           node.parentNode().removeChild(node);
@@ -1731,11 +1835,11 @@ void Project::slotDeleteProjectView()
 #if KDE_IS_VERSION(3, 1, 90)
   QString res = KInputDialog::getItem(
                   i18n("Delete Project View"),
-                  i18n("Select a project view to delete:"), list, 0, FALSE, &ok, quantaApp);
+                  i18n("Select a project view to delete:"), list, 0, FALSE, &ok, m_parent );
 #else
   QString res = QInputDialog::getItem(
                   i18n("Delete Project View"),
-                  i18n("Select a project view to delete:"), list, 0, FALSE, &ok, quantaApp);
+                  i18n("Select a project view to delete:"), list, 0, FALSE, &ok, m_parent );
 #endif
   if ( ok)
   {

@@ -107,9 +107,14 @@ KFileTreeViewItem* TemplatesTreeBranch::createTreeViewItem(KFileTreeViewItem *pa
 
 
 
-TemplatesTreeView::TemplatesTreeView(QWidget *parent, const char *name )
+TemplatesTreeView::TemplatesTreeView(KActionCollection *ac,
+                                     KDockWidget *parent, const char *name )
   : FilesTreeView(parent,name), m_projectDir(0)
 {
+  m_dock = parent;
+  m_action = new KToggleAction( i18n("Show Templates Tree"), UserIcon("ttab"), 0,
+                                this, SLOT( slotToggleShow() ),
+                                ac, "show_ttab_tree" );
   m_fileMenu = new KPopupMenu();
 
   m_openId = m_fileMenu->insertItem(i18n("Open"), this ,SLOT(slotInsert()));
@@ -287,7 +292,7 @@ void TemplatesTreeView::slotNewDocument()
    {
      if ( currentKFileTreeViewItem() != currentKFileTreeViewItem()->branch()->root())
      {
-       emit openFile(KURL(), quantaApp->defaultEncoding());
+       emit openFile(KURL());
        emit insertFile(url);
      }
    }
@@ -693,7 +698,7 @@ void TemplatesTreeView::slotDragInsert(QDropEvent *e)
        {
          return;
        }
-       emit openFile(KURL(), quantaApp->defaultEncoding());
+       emit openFile(KURL());
        emit insertFile(KURL::fromPathOrURL( localFileName ));
      }
    }

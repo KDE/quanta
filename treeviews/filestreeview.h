@@ -22,6 +22,7 @@
 #include <kfiletreebranch.h>
 #include <kfiletreeview.h>
 #include <kfiletreeviewitem.h>
+#include <kdockwidget.h>
 
 
 //foward declarations
@@ -31,12 +32,15 @@ class QString;
 class QPixmap;
 class QPoint;
 class QRegExp;
+class QShowEvent;
 
 class KFileItem;
 class KPopupMenu;
 class KPropertiesDialog;
 class KURL;
 class FileInfoDlg;
+class KToggleAction;
+class KActionCollection;
 
 struct DirInfo;
 
@@ -79,7 +83,8 @@ class FilesTreeView : public KFileTreeView {
 
 public:
   FilesTreeView(QWidget *parent = 0L, const char *name = 0L);
-  FilesTreeView(KURL::List topList, QWidget *parent = 0L, const char *name = 0L);
+  FilesTreeView(KConfig *config, KActionCollection *ac,
+                KDockWidget *parent, const char *name = 0L);
   virtual ~FilesTreeView();
   KURL::List topURLList;
 
@@ -111,9 +116,15 @@ public slots:
   void slotReturnPressed(QListViewItem *item);
   /** Sets new project informations */
   void slotNewProjectLoaded(const QString &, const KURL &, const KURL &);
+  /** triggers repaint of treeview */
+  void slotDocumentClosed();
 
 protected slots:
   void slotDropped (KURL::List&, KURL&);
+  void slotToggleShow()
+  {
+    if (m_dock) m_dock->changeHideShowState();
+  };
 
 protected:
   virtual KFileTreeBranch* newBranch(const KURL& url);
@@ -138,10 +149,14 @@ protected:
   KConfig *m_config;
   /** this is mainly for project and template tree to reduce includes there */
   bool isFileOpen(const KURL &url);
+  KToggleAction *m_action;
+  void showEvent ( QShowEvent * );
+  void hideEvent ( QHideEvent * );
+  KDockWidget *m_dock;
 
 signals:
   void showPreviewWidget(bool);
-  void openFile(const KURL&, const QString& );
+  void openFile(const KURL&);
   void openImage(const KURL&);
   void open(QListViewItem *name);
   void openInQuanta(QListViewItem *name);
@@ -153,7 +168,6 @@ signals:
   void renamed(const KURL &, const KURL &);
   /** close the file in Quanta */
   void closeFile( const KURL& );
-
 private:
   int m_menuTop;
   int m_menuDel;

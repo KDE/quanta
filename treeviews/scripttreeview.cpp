@@ -24,6 +24,7 @@
 #include <ktar.h>
 #include <ktempfile.h>
 #include <kurl.h>
+#include <kqapp.h>
 
 
 //qt includes
@@ -40,13 +41,17 @@
 //app includes
 #include "scripttreeview.h"
 #include "resource.h"
-#include "quanta.h"
 #include "quantacommon.h"
 #include "tagmaildlg.h"
 
-ScriptTreeView::ScriptTreeView(QWidget *parent, const char *name )
+ScriptTreeView::ScriptTreeView(KActionCollection *ac,
+                               KDockWidget *parent, const char *name )
   : FilesTreeView(parent,name)
 {
+  m_dock = parent;
+  m_action = new KToggleAction( i18n("Show Scripts Tree"), SmallIcon("run"), 0,
+                                this, SLOT( slotToggleShow() ),
+                                ac, "show_scripttab_tree" );
   setRootIsDecorated( true );
   //header()->hide();
   setSorting( 0 );
@@ -143,7 +148,7 @@ void ScriptTreeView::slotEditDescription()
   {
     KURL urlToOpen = infoFile(currentURL());
     emit showPreviewWidget(false);
-    emit openFile(urlToOpen, quantaApp->defaultEncoding());
+    emit openFile(urlToOpen);
   }
 }
 
@@ -156,7 +161,7 @@ void ScriptTreeView::slotEditScript()
     KURL infoUrl = infoFile(urlToOpen);
     QString editApp = infoOptionValue(infoUrl, "editor");
     if (editApp.isEmpty())
-        emit openFile(urlToOpen, quantaApp->defaultEncoding());
+        emit openFile(urlToOpen);
     else
     {
       KProcess *proc = new KProcess();
@@ -196,7 +201,7 @@ void ScriptTreeView::slotEditInQuanta()
   {
     KURL urlToOpen = currentURL();
     emit showPreviewWidget(false);
-    emit openFile(urlToOpen, quantaApp->defaultEncoding());
+    emit openFile(urlToOpen);
   }
 }
 

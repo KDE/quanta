@@ -28,20 +28,18 @@
 
 // include files for Qt
 #include <qmap.h>
+#include <qdict.h>
 #include <qvaluelist.h>
 #include <qstrlist.h>
 #include <qptrlist.h>
 
 // include files for KDE
-#include <kapplication.h>
 #include <kdockwidget.h>
 #include "kqapp.h"
 #include <kparts/browserextension.h>
 #include <kate/document.h>
-#include <ktempfile.h>
 
 //app includes
-#include "qtag.h"
 #include "dcopwindowmanagerif.h"
 
 // forward declaration
@@ -76,16 +74,15 @@ class Node;
 class Parser;
 class DocTreeView;
 class FilesTreeView;
-class StructTreeView;
-class ProjectTreeView;
-class TemplatesTreeView;
-class ScriptTreeView;
 class EnhancedTagAttributeTree;
 class Project;
 class GrepDialog;
 class MessageOutput;
 class QDomDocument;
 class Document;
+class QuantaInit;
+class KToolBarPopupAction;
+class KTempFile;
 
 class SpellChecker;
 struct DirInfo;
@@ -107,6 +104,8 @@ class QuantaApp : public KDockMainWindow, public DCOPWindowManagerIf
 {
   Q_OBJECT
 
+friend class QuantaInit;
+
 public:
   QuantaApp();
   ~QuantaApp();
@@ -114,7 +113,6 @@ public:
   QuantaDoc  *doc() const {return m_doc; }
   QuantaView *view() const {return m_view;}
   QPopupMenu *tagsMenu() const {return m_tagsMenu;}
-  QPopupMenu *pluginMenu() const {return m_pluginMenu;}
   KConfig *config() const {return m_config;}
   QWidgetStack *rightWidget() const {return rightWidgetStack;}
   QWidgetStack *bottomWidget() const {return bottomWidgetStack;}
@@ -123,16 +121,11 @@ public:
   MessageOutput *messageOutput() const {return m_messageOutput;}
   MessageOutput *problemOutput() const {return m_problemOutput;}
 
-  QPopupMenu *toolbarMenu(const QString& name);
-  ToolbarEntry *toolbarByURL(const KURL& url);
+/*  QPopupMenu *toolbarMenu(const QString& name);*/
 
-  QWidgetStack *widgetStackOfHtmlPart();
 
   /** Returns the output dock widget */
-  KDockWidget *outputDockWidget() const { return bottdock; }
-
-  /** Loads the initial project */
-  void loadInitialProject(const QString& url);
+//   KDockWidget *outputDockWidget() const { return bottdock; }
 
   QWidget* createContainer(QWidget *parent, int index, const QDomElement &element, int &id );
   void removeContainer(QWidget *container, QWidget *parent, QDomElement &element, int id );
@@ -166,45 +159,24 @@ public:
 
   bool structTreeVisible() const;
 
-    //return the old Cursor position
+  //return the old Cursor position
   void oldCursorPos(uint &line, uint &col) {line = oldCursorLine; col = oldCursorCol;}
-  /** search for s in autosaveUrls and return a file path */
-  QString searchPathListEntry(const QString& backedUpUrl, const QString& autosavedUrls);
-  /** if there are backup files, asks user whether wants to restore them or to mantain the originals instead*/
-  void recoverCrashed(QStringList& recoveredFileNameList);
-  /** Obtains PID from file extension */
-  QString retrievePID(const QString& filename);
-  /** Retrieves hashed path from the name of a backup file */
-  QString retrieveHashedPath(const QString& filename);
-  /** Retrieves the non hashed part of the name of a backup file */
-  QString retrieveBaseFileName(const QString& filename);
-  /**Executes *nix ps command */
-  void execCommandPS(const QString& cmd);
-  /** Loads the toolbars for dtd named dtdName and unload the ones belonging to oldDtdName. */
   void loadToolbarForDTD(const QString& dtdName);
   
   QStringList selectors(const QString& tag);
   
     /** tabs for left panel */
-  ProjectTreeView *pTab;
   DocTreeView *dTab;
-  FilesTreeView *fTab;
-  TemplatesTreeView *tTab;
   EnhancedTagAttributeTree *aTab;
-  ScriptTreeView *scriptTab;
 
 signals: // Signals
-  /** The tree views should be updated due to some changes on the disk. */
-  void reloadTreeviews();
   /** signal used to hide the splash screen */
   void showSplash(bool);
 
 public slots:
-  /** Delayed initialization. */
-  void initQuanta();
-
   void slotFileNew();
   void slotFileOpen();
+  void slotFileOpen(const KURL &);
   void slotFileOpen( const KURL &, const QString& );
   void slotFileSave();
   bool slotFileSaveAs();
@@ -230,7 +202,6 @@ public slots:
   void slotInsertTag(const KURL&, DirInfo);
 
   void slotEditFindInFiles();
-  void openLastFiles();
   /// open url in documentation window
   void openDoc(const QString& url);
 
@@ -263,10 +234,6 @@ public slots:
   void slotShowBottDock(bool force = false);
   void slotShowMainDock(bool force = false);
   void slotShowProblemsDock(bool force = false);
-  void slotShowFTabDock();
-  void slotShowPTabDock();
-  void slotShowTTabDock();
-  void slotShowScriptTabDock();
   void slotShowSTabDock();
   void slotShowATabDock();
   void slotShowDTabDock();
@@ -340,12 +307,6 @@ public slots:
   void slotShowCompletionHint();
   /** No descriptions */
   void slotParsingDTDChanged(const QString& newDTDName);
-  /** Builds the plugins menu dynamically */
-  void slotBuildPluginMenu();
-  /** Brings up the plugin editor menu */
-  void slotPluginsEdit();
-  /** Validates the currently loaded plugins */
-  void slotPluginsValidate();
   /** No descriptions */
   void slotBuildPrjToolbarsMenu();
 
@@ -408,7 +369,6 @@ protected:
   {
       return static_cast<KParts::BrowserExtension *>(((KParts::ReadOnlyPart *)m_htmlPart)->child( 0L, "KParts::BrowserExtension" ));
   }
-  void initToolBars();
   /** Ask for save all the modified user toolbars. */
   bool removeToolbars();
   /** Returns true if all toolbars are hidden, false otherwise. */
@@ -416,13 +376,6 @@ protected:
   /** No descriptions */
   virtual void focusInEvent(QFocusEvent*);
   void saveOptions();
-  void readOptions();
-
-  void initActions();
-  void initStatusBar();
-  void initDocument();
-  void initView();
-  void initProject();
 
   virtual bool queryClose();
   void saveAsTemplate (bool projectTemplate, bool selectionOnly = false);
@@ -433,21 +386,21 @@ protected:
   /** Show the toolbar which is in url. If it was not loaded yet, it loads the
       toolbar from the file */
   void showToolbarFile(const KURL &url);
-  /** Initialize the plugin architecture. */
-  void initPlugins();
   void setTitle(const QString&);
-  void connectDockSignals(QObject *obj);
   void layoutDockWidgets(const QString &layout);
   /** Updates the structure and attribute treeview. */
   void updateTreeViews();
 
 
 private:
+  FilesTreeView *fTab;
+  QWidgetStack *widgetStackOfHtmlPart();
+  ToolbarEntry *toolbarByURL(const KURL& url);
   /** Message output window */
   MessageOutput *m_messageOutput;
   MessageOutput *m_problemOutput;
+  QuantaPluginInterface *m_pluginInterface;
 
-  QPopupMenu *m_pluginMenu;
   QPopupMenu *m_tagsMenu;
 
   // config
@@ -490,21 +443,13 @@ private:
   KRecentFilesAction *projectToolbarFiles;
 
   KToggleAction *showMessagesAction, *showProblemsAction,
-    *showScriptTabAction,
-    *showFTabAction, *showPTabAction, *showTTabAction,
     *showSTabAction, *showATabAction, *showDTabAction,
     *showStatusbarAction,
     *showKafkaAction, *showDTDToolbar;
   KSelectAction *setEndOfLine;
   KToolBarPopupAction *showPreviewAction;
 
-  KAction *saveAction, *saveAllAction,
-    *closeprjAction, *insertFileAction, *insertDirAction,
-    *uploadProjectAction,  *rescanPrjDirAction,
-    *projectOptionAction, *saveAsProjectTemplateAction,
-    *saveSelectionAsProjectTemplateAction,
-    *openPrjViewAction, *savePrjViewAction, *saveAsPrjViewAction,
-    *deletePrjViewAction;
+  KAction *saveAction, *saveAllAction;
 
   KAction *bookmarkToggle, *bookmarkClear, *bookmarkPrev, *bookmarkNext;
   KAction *editTagAction, *selectTagAreaAction;
@@ -563,11 +508,10 @@ public: //TODO: check if it's worth to make a read method for them
 #else
   KRecentFilesAction *fileRecent;
 #endif
-  /** plugin classes */
-  QuantaPluginInterface *m_pluginInterface;
   /** True when the whole quanta is initialized. */
   bool quantaStarted;
   bool m_loopStarted; //true if an internal event loop has been started
+  QuantaInit *m_quantaInit;  ///< the pointer to all the init stuff
 };
 
 #endif // QUANTA_H

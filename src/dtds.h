@@ -135,7 +135,7 @@ public slots:
 
 signals:
   /** used to hide the splash screen */
-  void showSplash(bool);
+  void hideSplash();
   
   /** DTD has changed need reparse */
   void forceReparse();

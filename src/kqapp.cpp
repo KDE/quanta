@@ -31,6 +31,7 @@
 #include "quantacommon.h"
 #include "project.h"
 #include "quanta.h"
+#include "quanta_init.h"
 #include "kqapp.h"
 
  
@@ -157,7 +158,7 @@ void KQApplicationPrivate::init()
 {
   if (quantaApp->quantaStarted)
   {
-    quantaApp->initQuanta();
+    quantaApp->m_quantaInit->initQuanta();
     quantaApp->show();
 
     QString initialProject;
@@ -171,9 +172,9 @@ void KQApplicationPrivate::init()
       else
         initialFiles += arg;
     }
-    quantaApp->loadInitialProject(initialProject);
+    quantaApp->m_quantaInit->loadInitialProject(initialProject);
     //recoverCrashed manages the autosaved copies
-    quantaApp->recoverCrashed(initialFiles);
+    quantaApp->m_quantaInit->recoverCrashed(initialFiles);
 
     for(QStringList::Iterator it = initialFiles.begin();it != initialFiles.end();++it)
     {
@@ -181,10 +182,12 @@ void KQApplicationPrivate::init()
       QuantaCommon::setUrl(url, (*it));
       quantaApp->slotFileOpen(url, quantaApp->defaultEncoding());  // load initial files
     }
-    quantaApp->openLastFiles();
+    quantaApp->m_quantaInit->openLastFiles();
   }
   args->clear();
   delete splash;
+  delete quantaApp->m_quantaInit;
+  quantaApp->m_quantaInit = 0L;
 }
 
 #include "kqapp.moc"

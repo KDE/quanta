@@ -68,7 +68,6 @@
 #include "templatestreeview.h"
 
 #include "project.h"
-#include "quantaplugininterface.h"
 #include "dtds.h"
 
 #ifdef BUILD_KAFKAPART
@@ -506,7 +505,7 @@ Document* QuantaDoc::newWrite()
                                 quantaApp->view->writeTab(),
                                 "KTextEditor::Document"
                                 );*/
-  Document *w = new Document(doc, quantaApp->m_pluginInterface, quantaApp->view()->writeTab());
+  Document *w = new Document(doc, quantaApp->view()->writeTab());
   w->readConfig(quantaApp->config());
   QString encoding = quantaApp->defaultEncoding();
   dynamic_cast<KTextEditor::EncodingInterface*>(doc)->setEncoding(encoding);

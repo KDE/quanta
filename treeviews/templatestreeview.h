@@ -47,10 +47,11 @@ public:
    *  the parameter are only used at the first call to create the class
    *
    */
-  static TemplatesTreeView* const ref(QWidget *parent = 0L, const char *name = 0L)
+  static TemplatesTreeView* const ref(KActionCollection *ac = 0L,
+                                      KDockWidget *parent = 0L, const char *name = 0L)
   {
     static TemplatesTreeView *m_ref;
-    if (!m_ref) m_ref = new TemplatesTreeView (parent, name);
+    if (!m_ref) m_ref = new TemplatesTreeView (ac, parent, name);
     return m_ref;
   }
 
@@ -114,7 +115,8 @@ private:
    *  If you need the class use TemplatesTreeView::ref() for
    *  construction and reference
    */
-  TemplatesTreeView(QWidget *parent = 0L, const char *name = 0L);
+  TemplatesTreeView(KActionCollection *ac,
+                    KDockWidget *parent, const char *name = 0L);
   FilesTreeBranch *m_projectDir;
   int m_deleteMenuId;
   int m_openId;

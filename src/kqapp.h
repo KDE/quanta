@@ -19,6 +19,7 @@
 #ifndef KQAPPLICATION_H
 #define KQAPPLICATION_H
 
+#include <qframe.h>
 #include <kuniqueapplication.h>
 
 class KCmdLineArgs;

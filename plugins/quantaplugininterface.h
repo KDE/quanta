@@ -26,10 +26,11 @@
 #include <qobject.h>
 #include <qdict.h>
 #include <qstringlist.h>
+#include <qpopupmenu.h>
 
 /* OTHER INCLUDES */
-#include "quantaplugin.h"
 
+class QuantaPlugin;
 
 /**Provides an interface to the installed plugins
   *@author Marc Britton
@@ -38,7 +39,19 @@ class QuantaPluginInterface : public QObject
 {
   Q_OBJECT
 public:
-  QuantaPluginInterface();
+  /**
+   *  since this class is a singleton you must use this function to access it
+   *
+   *  the parameters are only used at the first call to create the class
+   *
+   */
+  static QuantaPluginInterface* const ref(QWidget *parent = 0L)
+  {
+    static QuantaPluginInterface *m_ref;
+    if (!m_ref) m_ref = new QuantaPluginInterface (parent);
+    return m_ref;
+  }
+
   ~QuantaPluginInterface();
   /** Reads the rc file */
   virtual void readConfig();
@@ -47,25 +60,43 @@ public:
   /* Returns TRUE if the plugin specified by a_name is available for us*/
   bool pluginAvailable(const QString &);
   /** Gets the plugins */
-  QDict<QuantaPlugin> plugins();
+  QDict<QuantaPlugin> plugins() {return m_plugins;};
   /** Sets the plugins */
-  void setPlugins(QDict<QuantaPlugin>);
+  void setPlugins(QDict<QuantaPlugin> plugins) {m_plugins = plugins;};
   /** Gets the plugin specified by a_name */
   virtual QuantaPlugin *plugin(const QString &);
-  /** Gets the plugin names */
-  virtual QStringList pluginNames() const;
-  /** Gets the search paths */
-  virtual QStringList searchPaths();
-  /** Sets the search paths */
-  virtual void setSearchPaths(QStringList);
+  /** Gets the plugin menu */
+  virtual QPopupMenu *pluginMenu() {return m_pluginMenu;};
+
+private:
+  /** The constructor is privat because we use singleton patter.
+   *  If you need the class use QuantaPluginInterface::ref() for
+   *  construction and reference
+   */
+  QuantaPluginInterface(QWidget *parent);
+
+protected slots:
+  /** slot for the menu: validate */
+  void slotPluginsValidate();
+  /** slot for the menu: edit */
+  void slotPluginsEdit();
 
 protected:
+  /** Gets the plugin names */
+  virtual QStringList pluginNames() const;
+  /** Builds the plugins menu dynamically */
+  void buildPluginMenu();
   void readConfigFile(const QString& configFile);
 
   QDict<QuantaPlugin> m_plugins;
 
+  QWidget *m_parent;
+
+  QPopupMenu *m_pluginMenu;
+
 signals:
   void hideSplash();
+  void statusMsg(const QString &);
 };
 
 #endif

@@ -23,8 +23,8 @@
 
 /* QT INCLUDES */
 #include <qobject.h>
-#include <qstring.h>
 
+class QString;
 
 /**Base class for quanta plugins
   *@author Marc Britton

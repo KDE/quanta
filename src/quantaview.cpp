@@ -252,7 +252,7 @@ QWidget* QuantaView::removeWrite()
   } else
   {
     QString tabTitle = m_writeTab->tabLabel(m_writeTab->currentPage());
-    QuantaPlugin *plugin = quantaApp->m_pluginInterface->plugin(tabTitle);
+    QuantaPlugin *plugin = QuantaPluginInterface::ref()->plugin(tabTitle);
     if (plugin)
     {
       plugin->unload();

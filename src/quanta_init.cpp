@@ -3,7 +3,7 @@
                              -------------------
     begin                : ?? ???  9 13:29:57 EEST 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev <pdima@users.sourceforge.net,yshurik@linuxfan.com>
-                           (C) 2001-2003 by Andras Mantia <amantia@kde.org>
+                           (C) 2001-2004 by Andras Mantia <amantia@kde.org>
                            (C) 2000, 2003 by Eric Laffoon <sequitur@kde.org>
  ***************************************************************************/
 
@@ -62,6 +62,7 @@
 
 // application specific includes
 
+#include "quanta_init.h"
 #include "quanta.h"
 #include "quantaview.h"
 #include "quantadoc.h"
@@ -87,95 +88,32 @@
 #include "scripttreeview.h"
 
 #include "quantaplugininterface.h"
-#include "quantaplugin.h"
-#include "quantaplugineditor.h"
 
-#include "spellchecker.h"
 
 #include "parser.h"
 #include "filemasks.h"
 #include "dirtydlg.h"
 #include "dirtydialog.h"
 
-#include "dcopsettings.h"
-#include "dcopquanta.h"
 #include "dtds.h"
+#include "spellchecker.h"
 
-QuantaApp::QuantaApp() : DCOPObject("WindowManagerIf"), KDockMainWindow(0L,"Quanta")
+QuantaInit::QuantaInit(QuantaApp * quantaApp)
+        : QObject()
 {
-  dcopSettings = new DCOPSettings;
-  dcopQuanta = new DCOPQuanta;
-  quantaStarted = true;
-  tempFileList.setAutoDelete(true);
-  toolbarList.setAutoDelete(true);
-  userToolbarsCount = 0;
-  baseNode = 0L;
-  currentToolbarDTD = QString::null;
-  m_config=kapp->config();
-
-  qConfig.globalDataDir = KGlobal::dirs()->findResourceDir("data",resourceDir + "toolbar/quantalogo.png");
-  if (qConfig.globalDataDir.isEmpty())
-  {
-    quantaStarted = false;
-    kdWarning() << "***************************************************************************" << endl
-                << i18n("Quanta data files were not found.\nYou may have forgotten to run \"make install\","
-                        "or your KDEDIR, KDEDIRS or PATH are not set correctly.") << endl
-                << "***************************************************************************" << endl;
-    QTimer::singleShot(20, kapp, SLOT(quit()));
-    return;
-  }
-  qConfig.enableDTDToolbar = true;
-
-  setHighlight = 0;
-  grepDialog  = 0L;
-  exitingFlag = false;
-  qConfig.spellConfig = new KSpellConfig();
-  idleTimer = new QTimer(this);
-  connect(idleTimer, SIGNAL(timeout()), SLOT(slotIdleTimerExpired()));
-
-  // connect up signals from KXXsldbgPart
-  connectDCOPSignal(0, 0, "debuggerPositionChangedQString,int)", "newDebuggerPosition(QString,int)", false );
-  connectDCOPSignal(0, 0, "editorPositionChanged(QString,int,int)", "newCursorPosition(QString,int,int)", false );
-  connectDCOPSignal(0, 0, "openFile(QString,int,int)", "openFile(QString,int,int)", false);
-
-  m_execCommandPS = 0L;
+  m_quanta = quantaApp;
+  connect(this, SIGNAL(hideSplash()), m_quanta, SLOT(slotHideSplash()));
 }
 
-QuantaApp::~QuantaApp()
+QuantaInit::~QuantaInit()
 {
- tempFileList.clear();
- QDictIterator<ToolbarEntry> iter(toolbarList);
- ToolbarEntry *p_toolbar;
- for( ; iter.current(); ++iter )
- {
-   p_toolbar = iter.current();
-   if (p_toolbar->dom) delete p_toolbar->dom;
-   if (p_toolbar->menu)
-     delete p_toolbar->menu;
-   if (p_toolbar->guiClient) delete p_toolbar->guiClient;
- }
-
- toolbarList.clear();
- QStringList tmpDirs = KGlobal::dirs()->resourceDirs("tmp");
- tmpDir = tmpDirs[0];
- for (uint i = 0; i < tmpDirs.count(); i++)
- {
-   if (tmpDirs[i].contains("kde-"))
-      tmpDir = tmpDirs[i];
- }
- QDir dir;
- dir.rmdir(tmpDir + "quanta");
-
- delete m_execCommandPS;
- m_execCommandPS = 0L;
- delete dcopSettings;
- delete dcopQuanta;
 }
 
 
 /** Delayed initialization. */
-void QuantaApp::initQuanta()
+void QuantaInit::initQuanta()
 {
+  m_config = quantaApp->m_config;
   parser = new Parser();
 
   QStringList tmpDirs = KGlobal::dirs()->resourceDirs("tmp");
@@ -202,24 +140,20 @@ void QuantaApp::initQuanta()
   if (! DTDs::ref()->find(qConfig.defaultDocType))
      qConfig.defaultDocType = DEFAULT_DTD;
 
-  initDocument ();
-  initView     ();
-  initProject  ();
+  initView();
+  initDocument();  // after initView because of init of treeViews
+  initProject();
   initActions();
   
   DTDs::ref();  // create the class, must be before readOptions() !
   readOptions();
 
-  m_pluginInterface = new QuantaPluginInterface();
-  connect(m_pluginInterface, SIGNAL(hideSplash()), SLOT(slotHideSplash()));
-  m_pluginInterface->readConfig();
-
-  createGUI( QString::null, false /* conserveMemory */ );
-
+  m_quanta->createGUI( QString::null, false /* conserveMemory */ );
+   
 //Compatility code (read the action shortcuts from quantaui.rc)
 //TODO: Remove after upgrade from 3.1 is not supported
   QDomDocument doc;
-  doc.setContent(KXMLGUIFactory::readConfigFile(xmlFile(), instance()));
+  doc.setContent(KXMLGUIFactory::readConfigFile(m_quanta->xmlFile(), m_quanta->instance()));
   QDomNodeList nodeList = doc.elementsByTagName("ActionProperties");
   QDomNode node = nodeList.item(0).firstChild();
   while (!node.isNull())
@@ -227,7 +161,7 @@ void QuantaApp::initQuanta()
     if (node.nodeName() == "Action")
     {
       QDomElement el = node.toElement();
-      oldShortcuts.insert(el.attribute("name"), el.attribute("shortcut"));
+      m_quanta->oldShortcuts.insert(el.attribute("name"), el.attribute("shortcut"));
       node = node.nextSibling();
       el.parentNode().removeChild(el);
     } else
@@ -239,468 +173,354 @@ void QuantaApp::initQuanta()
 //  applyMainWindowSettings(m_config);
   initPlugins  ();
 
-  m_tagsMenu = new QPopupMenu(this);
-  editTagAction->plug(m_tagsMenu);
-  selectTagAreaAction->plug(m_tagsMenu);
-  m_tagsMenu->insertSeparator();
-  menuBar()->insertItem(i18n("&Tags"),m_tagsMenu,-1,TAGS_MENU_PLACE);
+  m_quanta->m_tagsMenu = new QPopupMenu(m_quanta);
+  m_quanta->editTagAction->plug(m_quanta->m_tagsMenu);
+  m_quanta->selectTagAreaAction->plug(m_quanta->m_tagsMenu);
+  m_quanta->m_tagsMenu->insertSeparator();
+  m_quanta->menuBar()->insertItem(i18n("&Tags"), m_quanta->m_tagsMenu, -1, TAGS_MENU_PLACE);
 
-  pm_set  = (QPopupMenu*)guiFactory()->container("settings", this);
-  connect(pm_set, SIGNAL(aboutToShow()), this, SLOT(settingsMenuAboutToShow()));
+  m_quanta->pm_set  = (QPopupMenu*)(m_quanta->guiFactory())->container("settings", m_quanta);
+  connect(m_quanta->pm_set, SIGNAL(aboutToShow()), m_quanta, SLOT(settingsMenuAboutToShow()));
 
-  pm_bookmark  = (QPopupMenu*)guiFactory()->container("bookmarks", this);
-  connect(pm_bookmark, SIGNAL(aboutToShow()),
-          this, SLOT(bookmarkMenuAboutToShow()));
+  m_quanta->pm_bookmark  = (QPopupMenu*)(m_quanta->guiFactory())->container("bookmarks", m_quanta);
+  connect(m_quanta->pm_bookmark, SIGNAL(aboutToShow()),
+          m_quanta, SLOT(bookmarkMenuAboutToShow()));
 
-  QPopupMenu* pm_view = (QPopupMenu*)guiFactory()->container("view", this);
-  connect(pm_view,SIGNAL(aboutToShow()), this, SLOT(viewMenuAboutToShow()));
+  QPopupMenu* pm_view = (QPopupMenu*)(m_quanta->guiFactory())->container("view", m_quanta);
+  connect(pm_view,SIGNAL(aboutToShow()), m_quanta, SLOT(viewMenuAboutToShow()));
 
-  QPopupMenu *toolbarsMenu  = (QPopupMenu*)guiFactory()->container("toolbars_load", this);
-  connect(toolbarsMenu, SIGNAL(aboutToShow()), this, SLOT(slotBuildPrjToolbarsMenu()));
+  QPopupMenu *toolbarsMenu  = (QPopupMenu*)(m_quanta->guiFactory())->container("toolbars_load", m_quanta);
+  connect(toolbarsMenu, SIGNAL(aboutToShow()), m_quanta, SLOT(slotBuildPrjToolbarsMenu()));
 
-  connect(guiFactory()->container("popup_editor", quantaApp), SIGNAL(aboutToShow()), this, SLOT(slotContextMenuAboutToShow()));
+  connect(m_quanta->guiFactory()->container("popup_editor", m_quanta), SIGNAL(aboutToShow()), m_quanta, SLOT(slotContextMenuAboutToShow()));
 
-  connect(m_messageOutput, SIGNAL(clicked(const QString&,int)),
-          this, SLOT(gotoFileAndLine(const QString&,int)));
-  connect(m_problemOutput, SIGNAL(clicked(const QString&,int)),
-          this, SLOT(gotoFileAndLine(const QString&,int)));
+  connect(m_quanta->m_messageOutput, SIGNAL(clicked(const QString&,int)),
+          m_quanta, SLOT(gotoFileAndLine(const QString&,int)));
+  connect(m_quanta->m_problemOutput, SIGNAL(clicked(const QString&,int)),
+          m_quanta, SLOT(gotoFileAndLine(const QString&,int)));
 
-  refreshTimer = new QTimer( this );
-  connect(refreshTimer, SIGNAL(timeout()), SLOT(slotReparse()));
-  refreshTimer->start( qConfig.refreshFrequency*1000, false ); //update the structure tree every 5 seconds
+  m_quanta->refreshTimer = new QTimer(m_quanta);
+  connect(m_quanta->refreshTimer, SIGNAL(timeout()), m_quanta, SLOT(slotReparse()));
+  m_quanta->refreshTimer->start( qConfig.refreshFrequency*1000, false ); //update the structure tree every 5 seconds
   if (qConfig.instantUpdate || qConfig.refreshFrequency == 0)
   {
-    refreshTimer->stop();
+    m_quanta->refreshTimer->stop();
   }
 
-  slotFileNew();
-  slotNewStatus();
+  m_quanta->slotFileNew();
+  m_quanta->slotNewStatus();
   initToolBars();
-  KTipDialog::showTip(this);
+  KTipDialog::showTip(m_quanta);
 
   //get the PID of this running instance
   qConfig.quantaPID = QString::number(int(getpid()), 10);
   qConfig.backupDirPath = KGlobal::instance()->dirs()->saveLocation("data", resourceDir + "backups/");
 
-  autosaveTimer = new QTimer( this );
-  connect(autosaveTimer, SIGNAL(timeout()), SLOT(slotAutosaveTimer()));
-  autosaveTimer->start(qConfig.autosaveInterval * 60000, false);
+  m_quanta->autosaveTimer = new QTimer(m_quanta);
+  connect(m_quanta->autosaveTimer, SIGNAL(timeout()), m_quanta, SLOT(slotAutosaveTimer()));
+  m_quanta->autosaveTimer->start(qConfig.autosaveInterval * 60000, false);
 
-  connect(m_doc, SIGNAL(hideSplash()), SLOT(slotHideSplash()));
-  
-  connect(parser, SIGNAL(rebuildStructureTree()), this, SLOT(slotReloadStructTreeView()));
+  connect(m_quanta->m_doc, SIGNAL(hideSplash()), m_quanta, SLOT(slotHideSplash()));
+  connect(parser, SIGNAL(rebuildStructureTree()),
+          m_quanta, SLOT(slotReloadStructTreeView()));
 }
 
-
-void QuantaApp::initToolBars()
+void QuantaInit::initToolBars()
 {
- if (toolbarList.count() == 0)
-     loadToolbarForDTD(Project::ref()->defaultDTD());
+ if (m_quanta->toolbarList.count() == 0)
+     m_quanta->loadToolbarForDTD(Project::ref()->defaultDTD());
 }
 
-void QuantaApp::initStatusBar()
+void QuantaInit::initStatusBar()
 {
-  statusbarTimer = new QTimer(this);
-  connect(statusbarTimer,SIGNAL(timeout()),this,SLOT(statusBarTimeout()));
+  m_quanta->statusbarTimer = new QTimer(m_quanta);
+  connect(m_quanta->statusbarTimer,SIGNAL(timeout()),
+          m_quanta, SLOT(statusBarTimeout()));
 
-  progressBar = new KProgress(statusBar());
+  progressBar = new KProgress(m_quanta->statusBar());
   progressBar->show();
-  statusBar()->insertItem(i18n(IDS_DEFAULT),IDS_STATUS, 1);
-  statusBar()->addWidget(progressBar);
-  statusBar()->insertFixedItem(" XXX ",     IDS_INS_OVR  );
-  statusBar()->insertFixedItem(" * ",       IDS_MODIFIED );
-  statusBar()->insertFixedItem(i18n("Line: 00000 Col: 000"), IDS_STATUS_CLM, true);
+  m_quanta->statusBar()->insertItem(i18n(IDS_DEFAULT),IDS_STATUS, 1);
+  m_quanta->statusBar()->addWidget(progressBar);
+  m_quanta->statusBar()->insertFixedItem(" XXX ",     IDS_INS_OVR  );
+  m_quanta->statusBar()->insertFixedItem(" * ",       IDS_MODIFIED );
+  m_quanta->statusBar()->insertFixedItem(i18n("Line: 00000 Col: 000"), IDS_STATUS_CLM, true);
 
-  statusBar()->changeItem("", IDS_INS_OVR);
-  statusBar()->changeItem("", IDS_MODIFIED);
-  statusBar()->changeItem("", IDS_STATUS_CLM);
-  statusBar()->setItemAlignment(IDS_STATUS, AlignLeft);
+  m_quanta->statusBar()->changeItem("", IDS_INS_OVR);
+  m_quanta->statusBar()->changeItem("", IDS_MODIFIED);
+  m_quanta->statusBar()->changeItem("", IDS_STATUS_CLM);
+  m_quanta->statusBar()->setItemAlignment(IDS_STATUS, AlignLeft);
 }
 
-void QuantaApp::statusBarTimeout()
+
+void QuantaInit::initDocument()
 {
-  statusBar()->changeItem("", IDS_STATUS);
+  m_quanta->m_doc = new QuantaDoc(m_quanta);
+  connect(m_quanta->m_doc, SIGNAL(newStatus()),
+          m_quanta, SLOT(slotNewStatus()));
+  connect(m_quanta->m_doc, SIGNAL(documentClosed()),
+          pTab, SLOT(slotDocumentClosed()));
+  connect(m_quanta->m_doc, SIGNAL(documentClosed()),
+          m_quanta->fTab, SLOT(slotDocumentClosed()));
+  connect(m_quanta->m_doc, SIGNAL(documentClosed()),
+          tTab, SLOT(slotDocumentClosed()));
+  connect(m_quanta->m_doc, SIGNAL(documentClosed()),
+          scriptTab, SLOT(slotDocumentClosed()));
 }
 
-void QuantaApp::initDocument()
+void QuantaInit::initProject()
 {
-  m_doc = new QuantaDoc(this);
-  connect(m_doc, SIGNAL(newStatus()),    this, SLOT(slotNewStatus()));
-  connect(m_doc, SIGNAL(documentClosed()), ProjectTreeView::ref(), SLOT(slotDocumentClosed()));
-}
+  Project *m_project = Project::ref(m_quanta);
 
-void QuantaApp::initProject()
-{
-  Project *m_project = Project::ref();
+  connect(m_project, SIGNAL(openFile(const KURL &, const QString&)),
+          m_quanta, SLOT(slotFileOpen(const KURL &, const QString&)));
+  connect(m_project, SIGNAL(closeFile(const KURL &)),
+          m_quanta, SLOT(slotFileClose(const KURL &)));
+  connect(m_project, SIGNAL(reloadTree(const ProjectUrlList & ,bool)),
+          pTab, SLOT(slotReloadTree(const ProjectUrlList &,bool)));
+  connect(m_project, SIGNAL(closeFiles()), m_quanta->m_doc, SLOT(closeAll()));
+  connect(m_project, SIGNAL(showTree()), m_quanta, SLOT(slotShowProjectTree()));
 
-  connect(m_project,  SIGNAL(openFile    (const KURL &, const QString&)),
-          this,     SLOT  (slotFileOpen(const KURL &, const QString&)));
-  connect(m_project,  SIGNAL(closeFile   (const KURL &)),
-          this,     SLOT  (slotFileClose(const KURL &)));
-  connect(m_project,  SIGNAL(reloadTree(const ProjectUrlList & ,bool)),
-          pTab,     SLOT  (slotReloadTree(const ProjectUrlList &,bool)));
-  connect(m_project,  SIGNAL(closeFiles()),
-          m_doc,      SLOT  (closeAll()));
-  connect(m_project,  SIGNAL(showTree()),
-          this,     SLOT  (slotShowProjectTree()));
+  connect(m_quanta->fTab, SIGNAL(insertDirInProject(const KURL&)),
+          m_project, SLOT(slotAddDirectory(const KURL&)));
 
-  connect(fTab,    SIGNAL(insertDirInProject(const KURL&)),
-          m_project,  SLOT  (slotAddDirectory(const KURL&)));
+  connect(m_quanta->fTab, SIGNAL(insertFileInProject(const KURL&)),
+          m_project, SLOT(slotInsertFile(const KURL&)));
 
-  connect(fTab,    SIGNAL(insertFileInProject(const KURL&)),
-          m_project,  SLOT  (slotInsertFile(const KURL&)));
+  connect(TemplatesTreeView::ref(), SIGNAL(insertDirInProject(const KURL&)),
+          m_project, SLOT(slotAddDirectory(const KURL&)));
 
-  connect(TemplatesTreeView::ref(),    SIGNAL(insertDirInProject(const KURL&)),
-          m_project,  SLOT  (slotAddDirectory(const KURL&)));
-
-  connect(TemplatesTreeView::ref(),    SIGNAL(insertFileInProject(const KURL&)),
-          m_project,  SLOT  (slotInsertFile(const KURL&)));
+  connect(TemplatesTreeView::ref(), SIGNAL(insertFileInProject(const KURL&)),
+          m_project, SLOT(slotInsertFile(const KURL&)));
 
   // inform project if something was renamed
-  connect(pTab,     SIGNAL(renamed(const KURL&, const KURL&)),
-          m_project,  SLOT  (slotRenamed(const KURL&, const KURL&)));
-  connect(fTab,     SIGNAL(renamed(const KURL&, const KURL&)),
-          m_project,  SLOT  (slotRenamed(const KURL&, const KURL&)));
-  connect(tTab,     SIGNAL(renamed(const KURL&, const KURL&)),
-          m_project,  SLOT  (slotRenamed(const KURL&, const KURL&)));
+  connect(pTab, SIGNAL(renamed(const KURL&, const KURL&)),
+          m_project, SLOT(slotRenamed(const KURL&, const KURL&)));
+  connect(m_quanta->fTab, SIGNAL(renamed(const KURL&, const KURL&)),
+          m_project, SLOT(slotRenamed(const KURL&, const KURL&)));
+  connect(tTab, SIGNAL(renamed(const KURL&, const KURL&)),
+          m_project, SLOT(slotRenamed(const KURL&, const KURL&)));
 
-  connect(pTab,     SIGNAL(removeFromProject(const KURL&)),
-          m_project,  SLOT  (slotRemove(const KURL&)));
-  connect(pTab,     SIGNAL(uploadSingleURL(const KURL&)),
-          m_project,  SLOT  (slotUploadURL(const KURL&)));
-  connect(pTab,     SIGNAL(rescanProjectDir()),
-          m_project,  SLOT  (slotRescanPrjDir()));
-  connect(pTab,     SIGNAL(showProjectOptions()),
-          m_project,  SLOT  (slotOptions()));
-  connect(pTab,     SIGNAL(uploadProject()),
-          m_project,  SLOT  (slotUpload()));
+  connect(pTab, SIGNAL(removeFromProject(const KURL&)),
+          m_project, SLOT(slotRemove(const KURL&)));
+  connect(pTab, SIGNAL(uploadSingleURL(const KURL&)),
+          m_project, SLOT(slotUploadURL(const KURL&)));
+  connect(pTab, SIGNAL(rescanProjectDir()), m_project, SLOT(slotRescanPrjDir()));
+  connect(pTab, SIGNAL(showProjectOptions()), m_project, SLOT(slotOptions()));
+  connect(pTab, SIGNAL(uploadProject()), m_project, SLOT(slotUpload()));
 
-  connect(m_project,  SIGNAL(enableMessageWidget(bool)),
-          this,     SLOT  (slotEnableMessageWidget(bool)));
+  connect(m_project, SIGNAL(enableMessageWidget(bool)),
+          m_quanta, SLOT(slotEnableMessageWidget(bool)));
 
-  connect(m_project,  SIGNAL(messages(const QString&)),
-          m_messageOutput, SLOT(showMessage(const QString&)));
+  connect(m_project, SIGNAL(messages(const QString&)),
+          m_quanta->m_messageOutput, SLOT(showMessage(const QString&)));
 
-  connect(m_project,  SIGNAL(saveAllFiles()),
-          this, SLOT(slotFileSaveAll()));
-  connect(m_project,  SIGNAL(newStatus()),
-          this, SLOT(slotNewStatus()));
+  connect(m_project, SIGNAL(saveAllFiles()),
+          m_quanta, SLOT(slotFileSaveAll()));
+  connect(m_project, SIGNAL(newStatus()),
+          m_quanta, SLOT(slotNewStatus()));
 
-  connect(m_project,  SIGNAL(newProjectLoaded(const QString &, const KURL &, const KURL &)),
+  connect(m_project, SIGNAL(newProjectLoaded(const QString &, const KURL &, const KURL &)),
           TemplatesTreeView::ref(), SLOT(slotNewProjectLoaded(const QString &, const KURL &, const KURL &)));
-  connect(m_project,  SIGNAL(newProjectLoaded(const QString &, const KURL &, const KURL &)),
+  connect(m_project, SIGNAL(newProjectLoaded(const QString &, const KURL &, const KURL &)),
           pTab, SLOT(slotNewProjectLoaded(const QString &, const KURL &, const KURL &)));
-  connect(m_project,  SIGNAL(newProjectLoaded(const QString &, const KURL &, const KURL &)),
-          fTab, SLOT(slotNewProjectLoaded(const QString &, const KURL &, const KURL &)));
-  connect(pTab,    SIGNAL(changeFileDescription(const KURL&, const QString&)),
+  connect(m_project, SIGNAL(newProjectLoaded(const QString &, const KURL &, const KURL &)),
+          m_quanta->fTab, SLOT(slotNewProjectLoaded(const QString &, const KURL &, const KURL &)));
+  connect(pTab, SIGNAL(changeFileDescription(const KURL&, const QString&)),
           m_project, SLOT(slotFileDescChanged(const KURL&, const QString&)));
 
-  connect(m_project, SIGNAL(hideSplash()), SLOT(slotHideSplash()));
+  connect(m_project, SIGNAL(hideSplash()), m_quanta, SLOT(slotHideSplash()));
 
+  connect(m_project, SIGNAL(statusMsg(const QString &)),
+          m_quanta, SLOT(slotStatusMsg(const QString & )));
 }
 
-void QuantaApp::initView()
+void QuantaInit::initView()
 {
   ////////////////////////////////////////////////////////////////////
   // create the main widget here that is managed by KTMainWindow's view-region and
   // connect the widget to your document to display document contents.
 
-  maindock = createDockWidget( "Editor", UserIcon("textarea"  ), 0L, i18n("Editor"), 0L);
-  bottdock = createDockWidget( "Output", UserIcon("output_win"), 0L, i18n("Message output"), 0L);
-  bottdock->setToolTipString(i18n("Message output"));
-  problemsdock = createDockWidget( "Problems", SmallIcon("stop"), 0L, i18n("Problem reporter"), 0L);
-  problemsdock->setToolTipString(i18n("Problem reporter"));
+  m_quanta->maindock = m_quanta->createDockWidget( "Editor", UserIcon("textarea"  ), 0L, i18n("Editor"), 0L);
+  m_quanta->bottdock = m_quanta->createDockWidget( "Output", UserIcon("output_win"), 0L, i18n("Message output"), 0L);
+  m_quanta->bottdock->setToolTipString(i18n("Message output"));
+  m_quanta->problemsdock = m_quanta->createDockWidget( "Problems", SmallIcon("stop"), 0L, i18n("Problem reporter"), 0L);
+  m_quanta->problemsdock->setToolTipString(i18n("Problem reporter"));
 
-  atabdock = createDockWidget("TagAttributes", UserIcon("tag_misc"), 0L, i18n("Attribute tree view"), "");
-  atabdock->setToolTipString(i18n("Attribute tree view"));
-  ftabdock = createDockWidget("Files", UserIcon("ftab"), 0L, i18n("Files tree view"), "");
-  ftabdock->setToolTipString(i18n("Files tree view"));
-  ptabdock = createDockWidget("Project", UserIcon("ptab"), 0L, i18n("Project tree view"), "");
-  ptabdock->setToolTipString(i18n("Project tree view"));
-  ttabdock = createDockWidget("Templates", UserIcon("ttab"), 0L, i18n("Templates tree view"), "");
-  ttabdock->setToolTipString(i18n("Templates tree view"));
-  scripttabdock = createDockWidget("Scripts", SmallIcon("run"), 0L, i18n("Scripts tree view"), "");
-  scripttabdock->setToolTipString(i18n("Scripts tree view"));
-  stabdock = createDockWidget("Struct", BarIcon ("view_sidetree"), 0L, i18n("Structure view (DOM tree)"), "");
-  stabdock->setToolTipString(i18n("Structure view (DOM tree)"));
-  dtabdock = createDockWidget("Docs", BarIcon ("contents"), 0L, i18n("Documentation"), "");
-  dtabdock->setToolTipString(i18n("Documentation"));
+  m_quanta->atabdock = m_quanta->createDockWidget("TagAttributes", UserIcon("tag_misc"), 0L, i18n("Attribute tree view"), "");
+  m_quanta->atabdock->setToolTipString(i18n("Attribute tree view"));
+  m_quanta->ftabdock = m_quanta->createDockWidget("Files", UserIcon("ftab"), 0L, i18n("Files tree view"), "");
+  m_quanta->ftabdock->setToolTipString(i18n("Files tree view"));
+  m_quanta->ptabdock = m_quanta->createDockWidget("Project", UserIcon("ptab"), 0L, i18n("Project tree view"), "");
+  m_quanta->ptabdock->setToolTipString(i18n("Project tree view"));
+  m_quanta->ttabdock = m_quanta->createDockWidget("Templates", UserIcon("ttab"), 0L, i18n("Templates tree view"), "");
+  m_quanta->ttabdock->setToolTipString(i18n("Templates tree view"));
+  m_quanta->scripttabdock = m_quanta->createDockWidget("Scripts", SmallIcon("run"), 0L, i18n("Scripts tree view"), "");
+  m_quanta->scripttabdock->setToolTipString(i18n("Scripts tree view"));
+  m_quanta->stabdock = m_quanta->createDockWidget("Struct", BarIcon ("view_sidetree"), 0L, i18n("Structure view (DOM tree)"), "");
+  m_quanta->stabdock->setToolTipString(i18n("Structure view (DOM tree)"));
+  m_quanta->dtabdock = m_quanta->createDockWidget("Docs", BarIcon ("contents2"), 0L, i18n("Documentation"), "");
+  m_quanta->dtabdock->setToolTipString(i18n("Documentation"));
 
-  m_oldTreeViewWidget = ptabdock;
-  QStringList topStrList;
-  m_config->setGroup("General Options");
-#if KDE_IS_VERSION(3,1,3)
-  topStrList = m_config->readPathListEntry("Top folders");
-#else
-  topStrList = m_config->readListEntry("Top folders");
-#endif
-  KURL::List topList;
-  KURL url;
-  for (uint i = 0; i < topStrList.count(); i++)
-  {
-    url = KURL();
-    QuantaCommon::setUrl(url, topStrList[i]);
-    topList.append(url);
-  }
+  m_quanta->m_oldTreeViewWidget = m_quanta->ptabdock;
 
-  m_config->setGroup("General Options");
-  if (m_config->readBoolEntry("Home-Root Folder On", true))
-  {
-    url = KURL();
-    url.setPath("/");
-    if (!topList.contains(url))
-        topList.append(url);
-    url = KURL();
-    url.setPath(QDir::homeDirPath()+"/");
-    if (!topList.contains(url))
-        topList.append(url);
-  }
-  fTab = new FilesTreeView(topList, ftabdock);
-  aTab = new EnhancedTagAttributeTree(atabdock);
-  pTab = ProjectTreeView::ref(ptabdock );
-  tTab = TemplatesTreeView::ref(ttabdock);  // creates the treeview
-  dTab = new DocTreeView(dtabdock);
-  StructTreeView *sTab = StructTreeView::ref(stabdock ,"struct");
-  scriptTab = new ScriptTreeView(scripttabdock);
+  m_quanta->fTab = new FilesTreeView(m_config, m_quanta->actionCollection(), m_quanta->ftabdock);
+  m_quanta->aTab = new EnhancedTagAttributeTree(m_quanta->atabdock);
+  pTab = ProjectTreeView::ref(m_quanta->actionCollection(), m_quanta->ptabdock);
+  tTab = TemplatesTreeView::ref(m_quanta->actionCollection(), m_quanta->ttabdock);  // creates the treeview
+  m_quanta->dTab = new DocTreeView(m_quanta->dtabdock);
+  StructTreeView *sTab = StructTreeView::ref(m_quanta->stabdock ,"struct");
+  scriptTab = new ScriptTreeView(m_quanta->actionCollection(), m_quanta->scripttabdock);
 
-  rightWidgetStack = new QWidgetStack(maindock);
-  bottomWidgetStack = new QWidgetStack(bottdock);
-  m_view = new QuantaView(rightWidgetStack);
-  connect(m_view, SIGNAL(dragInsert(QDropEvent *)), tTab,
-                  SLOT(slotDragInsert(QDropEvent *)));
+  m_quanta->rightWidgetStack = new QWidgetStack(m_quanta->maindock);
+  m_quanta->bottomWidgetStack = new QWidgetStack(m_quanta->bottdock);
+  m_quanta->m_view = new QuantaView(m_quanta->rightWidgetStack);
 
-  maindock->setWidget(rightWidgetStack);
-  bottdock->setWidget(bottomWidgetStack);
-  atabdock->setWidget(aTab);
-  ftabdock->setWidget(fTab);
-  ptabdock->setWidget(pTab);
-  ttabdock->setWidget(tTab);
-  scripttabdock->setWidget(scriptTab);
-  stabdock->setWidget(sTab);
-  dtabdock->setWidget(dTab);
+  m_quanta->maindock->setWidget(m_quanta->rightWidgetStack);
+  m_quanta->bottdock->setWidget(m_quanta->bottomWidgetStack);
+  m_quanta->atabdock->setWidget(m_quanta->aTab);
+  m_quanta->ftabdock->setWidget(m_quanta->fTab);
+  m_quanta->ptabdock->setWidget(pTab);
+  m_quanta->ttabdock->setWidget(tTab);
+  m_quanta->scripttabdock->setWidget(scriptTab);
+  m_quanta->stabdock->setWidget(sTab);
+  m_quanta->dtabdock->setWidget(m_quanta->dTab);
 
-  maindock->setFocusPolicy(QWidget::StrongFocus);
+  m_quanta->maindock->setFocusPolicy(QWidget::StrongFocus);
 
-  rightWidgetStack->setMinimumHeight(1);
+  m_quanta->rightWidgetStack->setMinimumHeight(1);
 
-  m_htmlPart = new WHTMLPart(rightWidgetStack,"rightHTML");
-  m_htmlPartDoc = new WHTMLPart(rightWidgetStack, "docHTML");
+  m_quanta->m_htmlPart = new WHTMLPart(m_quanta->rightWidgetStack,"rightHTML");
+  m_quanta->m_htmlPartDoc = new WHTMLPart(m_quanta->rightWidgetStack, "docHTML");
 
-  rightWidgetStack->addWidget(m_view, 0);
-  rightWidgetStack->addWidget(m_htmlPart->view(), 1);
-  rightWidgetStack->addWidget(m_htmlPartDoc->view(), 2);
-  rightWidgetStack->raiseWidget(0);
+  m_quanta->rightWidgetStack->addWidget(m_quanta->m_view, 0);
+  m_quanta->rightWidgetStack->addWidget(m_quanta->m_htmlPart->view(), 1);
+  m_quanta->rightWidgetStack->addWidget(m_quanta->m_htmlPartDoc->view(), 2);
+  m_quanta->rightWidgetStack->raiseWidget(0);
 
-  m_messageOutput = new MessageOutput(bottomWidgetStack);
-  m_messageOutput->setFocusPolicy(QWidget::NoFocus);
-  m_messageOutput->showMessage(i18n("Message Window...\n"));
+  m_quanta->m_messageOutput = new MessageOutput(m_quanta->bottomWidgetStack);
+  m_quanta->m_messageOutput->setFocusPolicy(QWidget::NoFocus);
+  m_quanta->m_messageOutput->showMessage(i18n("Message Window...\n"));
 
-  bottomWidgetStack->addWidget(m_messageOutput, 0);
-//  bottomWidgetStack->addWidget( m_htmlPart   ->view(), 1 );
-//  bottomWidgetStack->addWidget( htmlPartDoc->view(), 2 );
+  m_quanta->bottomWidgetStack->addWidget(m_quanta->m_messageOutput, 0);
+//  m_quanta->bottomWidgetStack->addWidget( m_quanta->m_htmlPart   ->view(), 1 );
+//  m_quanta->bottomWidgetStack->addWidget( htmlPartDoc->view(), 2 );
 
-  m_problemOutput = new MessageOutput(problemsdock);
-  m_problemOutput->setFocusPolicy(QWidget::NoFocus);
-  problemsdock->setWidget(m_problemOutput);
+  m_quanta->m_problemOutput = new MessageOutput(m_quanta->problemsdock);
+  m_quanta->m_problemOutput->setFocusPolicy(QWidget::NoFocus);
+  m_quanta->problemsdock->setWidget(m_quanta->m_problemOutput);
 
-  connect(fTab, SIGNAL(openFile  (const KURL &, const QString&)),
-          this, SLOT(slotFileOpen(const KURL &, const QString&)));
-  connect(fTab, SIGNAL(openImage(const KURL&)),
-          this, SLOT  (slotImageOpen(const KURL&)));
+  connect(m_quanta->fTab, SIGNAL(openFile(const KURL &)),
+          m_quanta, SLOT(slotFileOpen(const KURL &)));
+  connect(m_quanta->fTab, SIGNAL(openImage(const KURL&)),
+          m_quanta, SLOT  (slotImageOpen(const KURL&)));
 
-  connect(pTab, SIGNAL(openFile  (const KURL &, const QString&)),
-          this, SLOT(slotFileOpen(const KURL &, const QString&)));
+  connect(pTab, SIGNAL(openFile(const KURL &)),
+          m_quanta, SLOT(slotFileOpen(const KURL &)));
   connect(pTab, SIGNAL(openImage  (const KURL&)),
-          this, SLOT(slotImageOpen(const KURL&)));
+          m_quanta, SLOT(slotImageOpen(const KURL&)));
   connect(pTab, SIGNAL(loadToolbarFile  (const KURL&)),
-          this, SLOT(slotLoadToolbarFile(const KURL&)));
+          m_quanta, SLOT(slotLoadToolbarFile(const KURL&)));
 
-  connect(fTab, SIGNAL(closeFile   (const KURL &)),
-          this, SLOT  (slotFileClose(const KURL &)));
+  connect(m_quanta->fTab, SIGNAL(closeFile   (const KURL &)),
+          m_quanta, SLOT  (slotFileClose(const KURL &)));
   connect(pTab, SIGNAL(closeFile   (const KURL &)),
-          this, SLOT  (slotFileClose(const KURL &)));
+          m_quanta, SLOT  (slotFileClose(const KURL &)));
   connect(tTab, SIGNAL(closeFile   (const KURL &)),
-          this, SLOT  (slotFileClose(const KURL &)));
+          m_quanta, SLOT  (slotFileClose(const KURL &)));
+
+  connect(m_quanta->fTab, SIGNAL(closeFile   (const KURL &)),
+          m_quanta, SLOT  (slotFileClose(const KURL &)));
+  connect(pTab, SIGNAL(closeFile   (const KURL &)),
+          m_quanta, SLOT  (slotFileClose(const KURL &)));
+  connect(tTab, SIGNAL(closeFile   (const KURL &)),
+          m_quanta, SLOT  (slotFileClose(const KURL &)));
 
   connect(tTab, SIGNAL(openImage  (const KURL&)),
-          this, SLOT(slotImageOpen(const KURL&)));
-  connect(tTab, SIGNAL(openFile  (const KURL &, const QString&)),
-          this, SLOT(slotFileOpen(const KURL &, const QString&)));
+          m_quanta, SLOT(slotImageOpen(const KURL&)));
+  connect(tTab, SIGNAL(openFile(const KURL &)),
+          m_quanta, SLOT(slotFileOpen(const KURL &)));
   connect(tTab, SIGNAL(insertFile  (const KURL &)),
-          this, SLOT(slotInsertFile(const KURL &)));
+          m_quanta, SLOT(slotInsertFile(const KURL &)));
   connect(tTab, SIGNAL(insertTag(const KURL &, DirInfo)),
-          this, SLOT(slotInsertTag(const KURL &, DirInfo)));
+          m_quanta, SLOT(slotInsertTag(const KURL &, DirInfo)));
 
-  connect(scriptTab, SIGNAL(openFile(const KURL &, const QString&)),
-          this, SLOT(slotFileOpen(const KURL &, const QString&)));
+  connect(scriptTab, SIGNAL(openFile(const KURL &)),
+          m_quanta, SLOT(slotFileOpen(const KURL &)));
   connect(scriptTab, SIGNAL(openFileInPreview(const KURL &)),
-          this, SLOT(slotOpenFileInPreview(const KURL &)));
+          m_quanta, SLOT(slotOpenFileInPreview(const KURL &)));
   connect(scriptTab, SIGNAL(showPreviewWidget(bool)),
-          this, SLOT(slotShowPreviewWidget(bool)));
+          m_quanta, SLOT(slotShowPreviewWidget(bool)));
   connect(scriptTab, SIGNAL(assignActionToScript(const KURL &, const QString&)),
-          this, SLOT(slotAssignActionToScript(const KURL &, const QString&)));
+          m_quanta, SLOT(slotAssignActionToScript(const KURL &, const QString&)));
 
 
-  connect(fTab, SIGNAL(insertTag(const KURL &, DirInfo)),
-          this, SLOT(slotInsertTag(const KURL &, DirInfo)));
+  connect(m_quanta->fTab, SIGNAL(insertTag(const KURL &, DirInfo)),
+          m_quanta, SLOT(slotInsertTag(const KURL &, DirInfo)));
   connect(pTab, SIGNAL(insertTag(const KURL &, DirInfo)),
-          this, SLOT(slotInsertTag(const KURL &, DirInfo)));
+          m_quanta, SLOT(slotInsertTag(const KURL &, DirInfo)));
 
-  connect(fTab, SIGNAL(showPreviewWidget(bool)),
-          this, SLOT(slotShowPreviewWidget(bool)));
+  connect(m_quanta->fTab, SIGNAL(showPreviewWidget(bool)),
+          m_quanta, SLOT(slotShowPreviewWidget(bool)));
   connect(pTab, SIGNAL(showPreviewWidget(bool)),
-          this, SLOT(slotShowPreviewWidget(bool)));
+          m_quanta, SLOT(slotShowPreviewWidget(bool)));
 
-  connect(m_htmlPart, SIGNAL(onURL(const QString&)),
-              this, SLOT(slotStatusMsg(const QString&)));
-  connect(m_htmlPartDoc, SIGNAL(onURL(const QString&)),
-                 this, SLOT(slotStatusMsg(const QString&)));
+  connect(m_quanta->m_htmlPart, SIGNAL(onURL(const QString&)),
+              m_quanta, SLOT(slotStatusMsg(const QString&)));
+  connect(m_quanta->m_htmlPartDoc, SIGNAL(onURL(const QString&)),
+                 m_quanta, SLOT(slotStatusMsg(const QString&)));
 
-  connect(m_view, SIGNAL(newCurPos()), this, SLOT(slotNewLineColumn()));
+  connect(m_quanta->m_view, SIGNAL(newCurPos()), m_quanta, SLOT(slotNewLineColumn()));
 
-  connect(sTab, SIGNAL(newCursorPosition(int,int)), SLOT(setCursorPosition(int,int)));
-  connect(sTab, SIGNAL(selectArea(int,int,int,int)), SLOT( selectArea(int,int,int,int)));
-  connect(sTab, SIGNAL(selectTagArea(Node*)), m_view, SLOT(slotSelectTagArea(Node*)));
-  connect(sTab, SIGNAL(needReparse()), SLOT(slotForceReparse()));
-  connect(sTab, SIGNAL(parsingDTDChanged(const QString&)), SLOT(slotParsingDTDChanged(const QString&)));
-  connect(sTab, SIGNAL(openFile    (const KURL &, const QString&)),
-          this, SLOT  (slotFileOpen(const KURL &, const QString&)));
+  connect(sTab, SIGNAL(newCursorPosition(int,int)), m_quanta, SLOT(setCursorPosition(int,int)));
+  connect(sTab, SIGNAL(selectArea(int,int,int,int)), m_quanta, SLOT( selectArea(int,int,int,int)));
+  connect(sTab, SIGNAL(needReparse()), m_quanta, SLOT(slotForceReparse()));
+  connect(sTab, SIGNAL(parsingDTDChanged(const QString&)), m_quanta, SLOT(slotParsingDTDChanged(const QString&)));
+  connect(sTab, SIGNAL(openFile(const KURL &)),
+          m_quanta, SLOT  (slotFileOpen(const KURL &)));
   connect(sTab, SIGNAL(openImage  (const KURL&)),
-          this, SLOT(slotImageOpen(const KURL&)));
+          m_quanta, SLOT(slotImageOpen(const KURL&)));
   connect(sTab, SIGNAL(showPreviewWidget(bool)),
-          this, SLOT(slotShowPreviewWidget(bool)));
+          m_quanta, SLOT(slotShowPreviewWidget(bool)));
   connect(parser, SIGNAL(nodeTreeChanged()), sTab, SLOT(slotNodeTreeChanged()));
 
-  connect(dTab, SIGNAL(openURL(const QString&)), SLOT(openDoc(const QString&)));
+  connect(m_quanta->dTab, SIGNAL(openURL(const QString&)), m_quanta, SLOT(openDoc(const QString&)));
 
-  connect(m_view, SIGNAL(dragInsert(QDropEvent *)), tTab, SLOT(slotDragInsert(QDropEvent *)));
+  connect(m_quanta->m_view, SIGNAL(dragInsert(QDropEvent *)), tTab, SLOT(slotDragInsert(QDropEvent *)));
 
-  setMainDockWidget( maindock );
-  setView(maindock);
+  m_quanta->setMainDockWidget( m_quanta->maindock );
+  m_quanta->setView(m_quanta->maindock);
 
   qConfig.windowLayout = "Default";
-  layoutDockWidgets(qConfig.windowLayout);
-  KDockManager *mng = ftabdock->dockManager();
-  connect(mng, SIGNAL(change()), this, SLOT(slotDockChanged()));
+  m_quanta->layoutDockWidgets(qConfig.windowLayout);
+  KDockManager *mng = m_quanta->ftabdock->dockManager();
+  connect(mng, SIGNAL(change()), m_quanta, SLOT(slotDockChanged()));
 
 //signal docking ststus changes
-  connectDockSignals(maindock);
-  connectDockSignals(bottdock);
-  connectDockSignals(problemsdock);
-  connectDockSignals(ftabdock);
-  connectDockSignals(ptabdock);
-  connectDockSignals(ttabdock);
-  connectDockSignals(stabdock);
-  connectDockSignals(dtabdock);
-  connectDockSignals(atabdock);
-  connectDockSignals(scripttabdock);
+  connectDockSignals(m_quanta->maindock);
+  connectDockSignals(m_quanta->bottdock);
+  connectDockSignals(m_quanta->problemsdock);
+  connectDockSignals(m_quanta->ftabdock);
+  connectDockSignals(m_quanta->ptabdock);
+  connectDockSignals(m_quanta->ttabdock);
+  connectDockSignals(m_quanta->stabdock);
+  connectDockSignals(m_quanta->dtabdock);
+  connectDockSignals(m_quanta->atabdock);
+  connectDockSignals(m_quanta->scripttabdock);
 }
 
-void QuantaApp::connectDockSignals(QObject *obj)
+void QuantaInit::connectDockSignals(QObject *obj)
 {
-  connect(obj, SIGNAL(docking(KDockWidget*, KDockWidget::DockPosition)), SLOT(slotDockStatusChanged()));
-  connect(obj, SIGNAL( setDockDefaultPos()), SLOT(slotDockStatusChanged()));
-  connect(obj, SIGNAL( headerCloseButtonClicked()), SLOT(slotDockStatusChanged()));
-  connect(obj, SIGNAL( headerDockbackButtonClicked()), SLOT(slotDockStatusChanged()));
-  connect(obj, SIGNAL( iMBeingClosed()), SLOT(slotDockStatusChanged()));
-  connect(obj, SIGNAL( hasUndocked()), SLOT(slotDockStatusChanged()));
-}
-
-QWidgetStack *QuantaApp::widgetStackOfHtmlPart()
-{
-  QWidgetStack *s;
-  if (qConfig.previewPosition == "Bottom")
-  {
-    s = bottomWidgetStack;
-  } else
-  {
-    s = rightWidgetStack;
-  }
-//TODO: This should be done on startup and after the setting has changed
-  if (m_htmlPart->view()->parentWidget() != s)
-  {
-    s->addWidget( m_htmlPart->view(), 1 );
-    s->addWidget( m_htmlPartDoc->view(), 2 );
-  }
-
-  return s;
-}
-
-void QuantaApp::saveOptions()
-{
-  if (m_config)
-  {
-    m_config->setGroup  ("General Options");
-
-    m_config->writeEntry("Geometry", size());
-
-    m_config->writeEntry("Show Toolbar", toolBar("mainToolBar")->isVisible());
-    m_config->writeEntry("Show DTD Toolbar", showDTDToolbar->isChecked());
-    m_config->writeEntry("Show Statusbar", statusBar()->isVisible());
-
-    m_config->writeEntry("Markup mimetypes", qConfig.markupMimeTypes  );
-    m_config->writeEntry("Script mimetypes", qConfig.scriptMimeTypes   );
-    m_config->writeEntry("Image mimetypes", qConfig.imageMimeTypes );
-    m_config->writeEntry("Text mimetypes", qConfig.textMimeTypes  );
-
-    m_config->writeEntry("Capitals for tags", qConfig.tagCase);
-    m_config->writeEntry("Capitals for attr", qConfig.attrCase);
-    m_config->writeEntry("Attribute quotation", qConfig.attrValueQuotation=='"' ? "double":"single");
-    m_config->writeEntry("Close tag if optional", qConfig.closeOptionalTags);
-    m_config->writeEntry("Close tags", qConfig.closeTags);
-    m_config->writeEntry("Auto completion", qConfig.useAutoCompletion);
-    m_config->writeEntry("Update Closing Tags", qConfig.updateClosingTags);
-
-//    m_config->writeEntry("DynamicWordWrap", qConfig.dynamicWordWrap);
-
-    m_config->writeEntry("Default encoding", qConfig.defaultEncoding);
-    m_config->writeEntry("Default DTD", qConfig.defaultDocType);
-
-    m_config->writeEntry("Preview position", qConfig.previewPosition);
-    m_config->writeEntry("Window layout", qConfig.windowLayout);
-    m_config->writeEntry("Follow Cursor", StructTreeView::ref()->followCursor() );
-    //If user choose the timer interval, it needs to restart the timer too
-    m_config->writeEntry("Autosave interval", qConfig.autosaveInterval);
-#if KDE_IS_VERSION(3,1,3)
-    m_config->writePathEntry("Top folders", fTab->topURLList.toStringList());
-    m_config->writePathEntry("List of opened files", m_doc->openedFiles().toStringList());
-#else
-    m_config->writeEntry("Top folders", fTab->topURLList.toStringList());
-    m_config->writeEntry("List of opened files", m_doc->openedFiles().toStringList());
-#endif
-    m_config->writeEntry("Version", VERSION); // version
-    m_config->writeEntry("Show Close Buttons", qConfig.showCloseButtons);
-
-    if (m_view->writeExists())
-        m_view->write()->writeConfig(m_config);
-
-    m_config->deleteGroup("RecentFiles");
-    fileRecent->saveEntries(m_config);
-
-    m_config->setGroup("Parser Options");
-    m_config->writeEntry("Instant Update", qConfig.instantUpdate);
-    m_config->writeEntry("Show Empty Nodes", qConfig.showEmptyNodes);
-    m_config->writeEntry("Show Closing Tags", qConfig.showClosingTags);
-    m_config->writeEntry("Refresh frequency", qConfig.refreshFrequency);
-    m_config->writeEntry("Expand Level", qConfig.expandLevel);
-    m_config->writeEntry("Show DTD Select Dialog", qConfig.showDTDSelectDialog);
-
-    m_config->setGroup("Quanta View");
-    m_config->writeEntry("LineNumbers", qConfig.lineNumbers);
-    m_config->writeEntry("Iconbar", qConfig.iconBar);
-    m_config->writeEntry("DynamicWordWrap", qConfig.dynamicWordWrap);
-   // m_doc->writeConfig(m_config); // kwrites
-    Project::ref()->writeConfig(m_config); // project
-    manager()->writeConfig(m_config);
-    //saveMainWindowSettings(m_config);
-    writeDockConfig(m_config);
-    SpellChecker::ref()->writeConfig(m_config);
-    m_config->sync();
-  }
+  connect(obj, SIGNAL(docking(KDockWidget*, KDockWidget::DockPosition)), m_quanta, SLOT(slotDockStatusChanged()));
+  connect(obj, SIGNAL( setDockDefaultPos()), m_quanta, SLOT(slotDockStatusChanged()));
+  connect(obj, SIGNAL( headerCloseButtonClicked()), m_quanta, SLOT(slotDockStatusChanged()));
+  connect(obj, SIGNAL( headerDockbackButtonClicked()), m_quanta, SLOT(slotDockStatusChanged()));
+  connect(obj, SIGNAL( iMBeingClosed()), m_quanta, SLOT(slotDockStatusChanged()));
+  connect(obj, SIGNAL( hasUndocked()), m_quanta, SLOT(slotDockStatusChanged()));
 }
 
 
-void QuantaApp::readOptions()
+
+void QuantaInit::readOptions()
 {
   m_config->setGroup("General Options");
   //if (2>m_config->readNumEntry("Version",0)) m_config = new KConfig();
@@ -725,36 +545,36 @@ void QuantaApp::readOptions()
   qConfig.previewPosition   = m_config->readEntry("Preview position","Right");
 
   QSize s(800,580);
-  resize( m_config->readSizeEntry("Geometry", &s));
+  m_quanta->resize( m_config->readSizeEntry("Geometry", &s));
   qConfig.autosaveInterval = m_config->readNumEntry("Autosave interval", 1);
 
-  KToggleAction *showToolbarAction = (KToggleAction *) actionCollection()->action( "view_toolbar" );
+  KToggleAction *showToolbarAction = (KToggleAction *) m_quanta->actionCollection()->action( "view_toolbar" );
   if (!m_config->readBoolEntry("Show Toolbar",true))
   {
-    toolBar("mainToolBar")->hide();
-    toolBar("mainEditToolBar")->hide();
-    toolBar("mainNaviToolBar")->hide();
+    m_quanta->toolBar("mainToolBar")->hide();
+    m_quanta->toolBar("mainEditToolBar")->hide();
+    m_quanta->toolBar("mainNaviToolBar")->hide();
     showToolbarAction->setChecked(false);
   } else
   {
-    toolBar("mainToolBar")->show();
-    toolBar("mainEditToolBar")->show();
-    toolBar("mainNaviToolBar")->show();
+    m_quanta->toolBar("mainToolBar")->show();
+    m_quanta->toolBar("mainEditToolBar")->show();
+    m_quanta->toolBar("mainNaviToolBar")->show();
   }
   if (!m_config->readBoolEntry("Show Statusbar", true))
   {
-     showStatusbarAction->setChecked(false);
+     m_quanta->showStatusbarAction->setChecked(false);
   } else
   {
-     showStatusbarAction->setChecked(true);
+     m_quanta->showStatusbarAction->setChecked(true);
   }
-  slotViewStatusBar();
+  m_quanta->slotViewStatusBar();
   showToolbarAction  ->setChecked(m_config->readBoolEntry("Show Toolbar",   true));
   qConfig.enableDTDToolbar = m_config->readBoolEntry("Show DTD Toolbar",true);
-  showDTDToolbar->setChecked(qConfig.enableDTDToolbar);
+  m_quanta->showDTDToolbar->setChecked(qConfig.enableDTDToolbar);
   qConfig.showCloseButtons = m_config->readBoolEntry("Show Close Buttons", true);
 #if KDE_IS_VERSION(3,1,90)
-  KTabWidget *tab = static_cast<KTabWidget*>(m_view->writeTab());
+  KTabWidget *tab = static_cast<KTabWidget*>(m_quanta->m_view->writeTab());
   if (qConfig.showCloseButtons)
   {
     tab->setHoverCloseButton(true);
@@ -767,7 +587,7 @@ void QuantaApp::readOptions()
   qConfig.showCloseButtons = false;
 #endif
 
-  fileRecent ->loadEntries(m_config);
+  m_quanta->fileRecent ->loadEntries(m_config);
 
   m_config->setGroup("Parser Options");
   qConfig.showEmptyNodes = m_config->readBoolEntry("Show Empty Nodes", false);
@@ -781,43 +601,43 @@ void QuantaApp::readOptions()
   qConfig.lineNumbers = m_config->readBoolEntry("LineNumbers", false);
   qConfig.iconBar = m_config->readBoolEntry("Iconbar", false);
   qConfig.dynamicWordWrap = m_config->readBoolEntry("DynamicWordWrap",false);
-  viewBorder->setChecked(qConfig.iconBar);
-  viewLineNumbers->setChecked(qConfig.lineNumbers);
-  viewDynamicWordWrap->setChecked(qConfig.dynamicWordWrap);
-  manager()->readConfig(m_config);
+  m_quanta->viewBorder->setChecked(qConfig.iconBar);
+  m_quanta->viewLineNumbers->setChecked(qConfig.lineNumbers);
+  m_quanta->viewDynamicWordWrap->setChecked(qConfig.dynamicWordWrap);
+  m_quanta->manager()->readConfig(m_config);
 
 #ifdef BUILD_KAFKAPART
-  quantaApp->view()->readConfig(m_config);
+  m_quanta->view()->readConfig(m_config);
 #endif
 
-  m_previewVisible = false;
-  m_noFramesPreview = false;
+  m_quanta->m_previewVisible = false;
+  m_quanta->m_noFramesPreview = false;
 #ifdef BUILD_KAFKAPART
-  showKafkaAction->setChecked( false );
+  m_quanta->showKafkaAction->setChecked( false );
 #endif
-  showMessagesAction->setChecked( bottdock->parent() != 0L );
+  m_quanta->showMessagesAction->setChecked( m_quanta->bottdock->parent() != 0L );
 
-  m_doc->readConfig(m_config); // kwrites
+  m_quanta->m_doc->readConfig(m_config); // kwrites
   Project::ref()->readConfig(m_config); // project
 
-  if (m_view->writeExists() && m_view->write()->isUntitled())
+  if (m_quanta->m_view->writeExists() && m_quanta->m_view->write()->isUntitled())
   {
-    m_doc->closeDocument();
-    m_doc->openDocument(KURL());
+    m_quanta->m_doc->closeDocument();
+    m_quanta->m_doc->newDocument(KURL());
   }
 
   m_config->setGroup  ("General Options");
   SpellChecker::ref()->readConfig(m_config);
-  readDockConfig(m_config);
+  m_quanta->readDockConfig(m_config);
 
   m_config->setGroup  ("General Options");
   QString layout = m_config->readEntry("Window layout", "Custom");
-  layoutDockWidgets(layout);
+  m_quanta->layoutDockWidgets(layout);
   qConfig.windowLayout = layout;
 
 }
 
-void QuantaApp::openLastFiles()
+void QuantaInit::openLastFiles()
 {
 
   // Reload previously opened files only if setting allows
@@ -846,35 +666,35 @@ void QuantaApp::openLastFiles()
 #else
   QStringList urls = m_config->readListEntry("List of opened files");
 #endif
-  m_doc->blockSignals(true);
-  m_view->writeTab()->blockSignals(true);
+  m_quanta->m_doc->blockSignals(true);
+  m_quanta->m_view->writeTab()->blockSignals(true);
   for ( QStringList::Iterator it = urls.begin(); it != urls.end(); ++it )
   {
     KURL fu;
     QuantaCommon::setUrl(fu, *it);
 
-    if (!m_doc->isOpened(fu) && (!isPrj || fu.isLocalFile()))
-      m_doc->openDocument(fu, QString::null, false);
+    if (!m_quanta->m_doc->isOpened(fu) && (!isPrj || fu.isLocalFile()))
+      m_quanta->m_doc->openDocument(fu, QString::null, false);
  //   kapp->eventLoop()->processEvents( QEventLoop::ExcludeUserInput | QEventLoop::ExcludeSocketNotifiers);
   }
   m_config->sync();
-  m_doc->blockSignals(false);
-  m_view->writeTab()->blockSignals(false);
-  Document *w = m_view->write();
+  m_quanta->m_doc->blockSignals(false);
+  m_quanta->m_view->writeTab()->blockSignals(false);
+  Document *w = m_quanta->m_view->write();
   if (w) //w==0 might happen on quick close on startup
   {
-    setCaption(w->url().prettyURL() );
-    slotUpdateStatus(w);
+    m_quanta->setCaption(w->url().prettyURL() );
+    m_quanta->slotUpdateStatus(w);
   }
 }
 
 /** Loads the initial project */
-void QuantaApp::loadInitialProject(const QString& url)
+void QuantaInit::loadInitialProject(const QString& url)
 {
   if(url.isNull())
   {
     // Get config
-    KConfig *config = quantaApp->config();
+    KConfig *config = m_quanta->config();
     config->setGroup("General Options");
 
     // Reload last project if setting is enabled
@@ -886,207 +706,156 @@ void QuantaApp::loadInitialProject(const QString& url)
 }
 
 
-bool QuantaApp::queryClose()
+void QuantaInit::initActions()
 {
-  bool canExit = true;
-  if (quantaStarted)
-  {
-    if (dtabdock->isVisible())
-    {
-      QWidgetStack *s = widgetStackOfHtmlPart();
-      s->raiseWidget(0);
-    }
-    saveOptions();
-    exitingFlag = true;
-    canExit = m_doc->saveAll(false);
-    if (canExit)
-        canExit = removeToolbars();
-    if (canExit)
-    {
-      disconnect( m_view->writeTab(),SIGNAL(currentChanged(QWidget*)), this,     SLOT(slotUpdateStatus(QWidget*)));
-      //avoid double question about saving files, so set the "modified"
-      //flags to "false". This is safe here.
-      Document *w;
-      for (int i = m_view->writeTab()->count() -1; i >=0; i--)
-      {
-        w = dynamic_cast<Document*>(m_view->writeTab()->page(i));
-        if (w)
-           w->setModified(false);
-      }
-      Project::ref()->slotCloseProject();
-      do
-      {
-        if (m_view->writeExists())
-        {
-          w = m_view->write();
-          w->closeTempFile();
-        }
-      }while (m_view->removeWrite());
-    }
-  }
-
-  return canExit;
-}
-
-
-
-void QuantaApp::initActions()
-{
-    KActionCollection *ac = actionCollection();
-
-    editTagAction = new KAction( i18n( "&Edit Current Tag..." ), CTRL+Key_E,
-                        m_view, SLOT( slotEditCurrentTag() ),
+    KActionCollection *ac = m_quanta->actionCollection();
+    m_quanta->editTagAction = new KAction( i18n( "&Edit Current Tag..." ), CTRL+Key_E,
+                        m_quanta->m_view, SLOT( slotEditCurrentTag() ),          
                         ac, "edit_current_tag" );
-    selectTagAreaAction = new KAction( i18n( "&Select Current Tag Area" ), 0,
-                        m_view, SLOT( slotSelectTagArea() ),
+    m_quanta->selectTagAreaAction = new KAction( i18n( "&Select Current Tag Area" ), 0,
+                        m_quanta->m_view, SLOT( slotSelectTagArea() ),
                         ac, "select_tag_area" );
     new KAction( i18n( "E&xpand Abbreviation" ), CTRL+Key_J,
-                        this, SLOT( slotExpandAbbreviation() ),
+                        m_quanta, SLOT( slotExpandAbbreviation() ),
                         ac, "expand_abbreviation" );
 
-    new KAction(i18n("&Report Bug..."), 0, this, SLOT(slotReportBug()), ac, "help_reportbug"); //needed, because quanta_be bugs should be reported for quanta
+    new KAction(i18n("&Report Bug..."), 0, m_quanta, SLOT(slotReportBug()), ac, "help_reportbug"); //needed, because quanta_be bugs should be reported for quanta
     //Kate actions
 
 //Edit menu
-    KStdAction::undo(m_view, SLOT(slotUndo()), ac);
-    KStdAction::redo(m_view, SLOT(slotRedo()), ac);
+    KStdAction::undo(m_quanta->m_view, SLOT(slotUndo()), ac);
+    KStdAction::redo(m_quanta->m_view, SLOT(slotRedo()), ac);
 
-    KStdAction::cut(m_view, SLOT(slotCut()), ac);
-    KStdAction::copy(m_view, SLOT(slotCopy()), ac) ;
+    KStdAction::cut(m_quanta->m_view, SLOT(slotCut()), ac);
+    KStdAction::copy(m_quanta->m_view, SLOT(slotCopy()), ac) ;
 #if KDE_VERSION < KDE_MAKE_VERSION(3,1,92)
-    (void) new KQPasteAction(i18n("Paste"), "editpaste", KStdAccel::shortcut(KStdAccel::Paste), m_view, SLOT(slotPaste()), ac, "edit_paste");
+    (void) new KQPasteAction(i18n("Paste"), "editpaste", KStdAccel::shortcut(KStdAccel::Paste), m_quanta->m_view, SLOT(slotPaste()), ac, "edit_paste");
 #else
-    KStdAction::pasteText(m_view, SLOT(slotPaste()), ac);
+    KStdAction::pasteText(m_quanta->m_view, SLOT(slotPaste()), ac);
 #endif
 
-    KStdAction::selectAll(this, SLOT(slotSelectAll()), ac);
-    KStdAction::deselect(m_view, SLOT(slotDeselectAll()), ac);
-    (void) new KAction( i18n( "Toggle &Block Selection" ), Key_F4, m_view,
+    KStdAction::selectAll(m_quanta, SLOT(slotSelectAll()), ac);
+    KStdAction::deselect(m_quanta->m_view, SLOT(slotDeselectAll()), ac);
+    (void) new KAction( i18n( "Toggle &Block Selection" ), Key_F4, m_quanta->m_view,
                         SLOT( toggleVertical() ), ac, "set_verticalSelect" );
-    new KToggleAction(i18n("Overwrite Mode"), Key_Insert, m_view, SLOT(toggleInsert()), ac, "set_insert" );
+    new KToggleAction(i18n("Overwrite Mode"), Key_Insert, m_quanta->m_view, SLOT(toggleInsert()), ac, "set_insert" );
 
 
-    KStdAction::find(this, SLOT(slotFind()), ac);
-    new KAction(i18n("Find &Next"), "findnext", KStdAccel::shortcut(KStdAccel::FindNext), this, 
+    KStdAction::find(m_quanta, SLOT(slotFind()), ac);
+    new KAction(i18n("Find &Next"), "findnext", KStdAccel::shortcut(KStdAccel::FindNext), m_quanta, 
                  SLOT(slotFindAgain()), ac, "edit_find_next");
-    KStdAction::findPrev(this, SLOT(slotFindAgainB()), ac, "edit_find_prev");
-    KStdAction::replace(this, SLOT(slotReplace()), ac);
+    KStdAction::findPrev(m_quanta, SLOT(slotFindAgainB()), ac, "edit_find_prev");
+    KStdAction::replace(m_quanta, SLOT(slotReplace()), ac);
 
-    new KAction(i18n("&Indent"), "indent", CTRL+Key_I, m_view,
+    new KAction(i18n("&Indent"), "indent", CTRL+Key_I, m_quanta->m_view,
                 SLOT(slotIndent()), ac, "edit_indent");
-    new KAction(i18n("Unindent"), "unindent", CTRL+SHIFT+Key_I, m_view,
+    new KAction(i18n("Unindent"), "unindent", CTRL+SHIFT+Key_I, m_quanta->m_view,
                 SLOT(slotUnIndent()), ac, "edit_unindent");
-    new KAction(i18n("Cl&ean Indentation"), "cleanindent", 0, m_view,
+    new KAction(i18n("Cl&ean Indentation"), "cleanindent", 0, m_quanta->m_view,
                 SLOT(slotCleanIndent()), ac, "edit_cleanindent");
 
     new KAction(i18n("Co&mment"),  CTRL+Qt::Key_NumberSign,
-                m_view, SLOT(slotComment()), ac, "edit_comment");
+                m_quanta->m_view, SLOT(slotComment()), ac, "edit_comment");
     new KAction(i18n("Unc&omment"),
-                CTRL+SHIFT+Qt::Key_NumberSign, m_view, SLOT(slotUnComment()),
+                CTRL+SHIFT+Qt::Key_NumberSign, m_quanta->m_view, SLOT(slotUnComment()),
                 ac, "edit_uncomment");
-    new KAction(i18n("Apply &Word Wrap"), "", 0, m_view, SLOT(slotApplyWordWrap()),
+    new KAction(i18n("Apply &Word Wrap"), "", 0, m_quanta->m_view, SLOT(slotApplyWordWrap()),
                 ac, "edit_apply_wordwrap");
 
 
 
 //Tools menu
-    KStdAction::gotoLine(m_view, SLOT(slotGotoLine()), ac, "edit_goto_line");
-    KStdAction::spelling(m_view, SLOT(slotSpellcheck()), ac);
+    KStdAction::gotoLine(m_quanta->m_view, SLOT(slotGotoLine()), ac, "edit_goto_line");
+    KStdAction::spelling(m_quanta->m_view, SLOT(slotSpellcheck()), ac);
 
 //Bookmarks
-    bookmarkToggle = new KAction(i18n("Toggle &Bookmark"), Qt::CTRL+Qt::Key_B,
-          m_view, SLOT(toggleBookmark()), ac, "bookmarks_toggle");
-    bookmarkClear = new KAction(i18n("&Clear Bookmarks"), 0, m_view,
+    m_quanta->bookmarkToggle = new KAction(i18n("Toggle &Bookmark"), Qt::CTRL+Qt::Key_B,
+          m_quanta->m_view, SLOT(toggleBookmark()), ac, "bookmarks_toggle");
+    m_quanta->bookmarkClear = new KAction(i18n("&Clear Bookmarks"), 0, m_quanta->m_view,
           SLOT(clearBookmarks()), ac, "bookmarks_clear");
-    bookmarkPrev = new KAction(i18n("&Previous Bookmark"), Qt::ALT+Qt::Key_PageDown, m_view,
+    m_quanta->bookmarkPrev = new KAction(i18n("&Previous Bookmark"), Qt::ALT+Qt::Key_PageDown, m_quanta->m_view,
           SLOT(slotPreviousBookmark()), ac, "bookmarks_previous");
-    bookmarkNext = new KAction(i18n("&Next Bookmark"), Qt::ALT+Qt::Key_PageUp, m_view,
+    m_quanta->bookmarkNext = new KAction(i18n("&Next Bookmark"), Qt::ALT+Qt::Key_PageUp, m_quanta->m_view,
           SLOT(slotNextBookmark()), ac, "bookmarks_next");
 
 //Settings
-  viewBorder =  new KToggleAction(i18n("Show &Icon Border"), Qt::SHIFT+Qt::Key_F9, m_view,
+  m_quanta->viewBorder =  new KToggleAction(i18n("Show &Icon Border"), Qt::SHIFT+Qt::Key_F9, m_quanta->m_view,
                     SLOT(toggleIconBorder()), ac, "view_border");
-  viewLineNumbers =  new KToggleAction(i18n("Show &Line Numbers"), Key_F11, m_view,
+  m_quanta->viewLineNumbers =  new KToggleAction(i18n("Show &Line Numbers"), Key_F11, m_quanta->m_view,
                         SLOT(toggleLineNumbers()), ac, "view_line_numbers");
 
 //help
-   (void) new KAction(i18n("Ti&p of the Day"), "idea", "", this,
+   (void) new KAction(i18n("Ti&p of the Day"), "idea", "", m_quanta,
       SLOT(slotHelpTip()), ac, "help_tip");
 
 //    viewFoldingMarkes =  new KToggleAction(i18n("Show Folding &Markers"), Key_F9, m_view,
 //                              SLOT(toggleFoldingMarkers()), ac, "view_folding_markers");
-  viewDynamicWordWrap = new KToggleAction(i18n("&Dynamic Word Wrap"), Key_F10, m_view,
+  m_quanta->viewDynamicWordWrap = new KToggleAction(i18n("&Dynamic Word Wrap"), Key_F10, m_quanta->m_view,
                               SLOT(toggleDynamicWordWrap()), ac, "view_dynamic_word_wrap");
 
   (void) new KAction( i18n( "Configure &Editor..." ), SmallIcon("configure"), 0,
-                      m_view, SLOT( slotEditorOptions() ), ac, "editor_options" );
+                      m_quanta->m_view, SLOT( slotEditorOptions() ), ac, "editor_options" );
 
 
-    setEndOfLine = new KSelectAction(i18n("End of &Line"), 0, ac,"set_eol");
-    connect(setEndOfLine, SIGNAL(activated(int)), m_view, SLOT(setEol(int)));
-    connect(setEndOfLine->popupMenu(), SIGNAL(aboutToShow()), this, SLOT(setEOLMenuAboutToShow()));
+    m_quanta->setEndOfLine = new KSelectAction(i18n("End of &Line"), 0, ac,"set_eol");
+    connect(m_quanta->setEndOfLine, SIGNAL(activated(int)), m_quanta->m_view, SLOT(setEol(int)));
+    connect(m_quanta->setEndOfLine->popupMenu(), SIGNAL(aboutToShow()), m_quanta, SLOT(setEOLMenuAboutToShow()));
 
     QStringList list;
     list.append(i18n("&Unix"));
     list.append(i18n("&Windows/DOS"));
     list.append(i18n("&Macintosh"));
-    setEndOfLine->setItems(list);
+    m_quanta->setEndOfLine->setItems(list);
 
 
     // File actions
     //
-    KStdAction::openNew( this, SLOT( slotFileNew()  ), ac);
-    KStdAction::open   ( this, SLOT( slotFileOpen() ), ac, "file_open");
-    KStdAction::close  ( this, SLOT( slotFileClose()), ac);
-    (void) new KAction(i18n("Close Other Tabs"), 0, m_view, SLOT(slotCloseOtherTabs()), ac, "close_other_tabs");
+    KStdAction::openNew( m_quanta, SLOT( slotFileNew()  ), ac);
+    KStdAction::open   ( m_quanta, SLOT( slotFileOpen() ), ac, "file_open");
+    KStdAction::close  ( m_quanta, SLOT( slotFileClose()), ac);
+    (void) new KAction(i18n("Close Other Tabs"), 0, m_quanta->m_view, SLOT(slotCloseOtherTabs()), ac, "close_other_tabs");
 
 #if KDE_VERSION < KDE_MAKE_VERSION(3,1,92)
-    fileRecent =  new KQRecentFilesAction(i18n("Open &Recent"), "fileopen", 0,
-                      this, SLOT(slotFileOpenRecent(const KURL&)), ac,
+    m_quanta->fileRecent =  new KQRecentFilesAction(i18n("Open &Recent"), "fileopen", 0,
+                      m_quanta, SLOT(slotFileOpenRecent(const KURL&)), ac,
                       "file_open_recent");
 #else
-    fileRecent =  KStdAction::openRecent(this, SLOT(slotFileOpenRecent(const KURL&)),
+    m_quanta->fileRecent =  KStdAction::openRecent(m_quanta, SLOT(slotFileOpenRecent(const KURL&)),
                                          ac, "file_open_recent");
 #endif
-    fileRecent->setMaxItems(32);
-    fileRecent->setToolTip(i18n("Open / Open Recent"));
-    connect(fileRecent, SIGNAL(activated()), this, SLOT(slotFileOpen()));
+    m_quanta->fileRecent->setMaxItems(32);
+    m_quanta->fileRecent->setToolTip(i18n("Open / Open Recent"));
+    connect(m_quanta->fileRecent, SIGNAL(activated()), m_quanta, SLOT(slotFileOpen()));
 
-    (void) new KAction( i18n( "Close All" ), 0, this,
+    (void) new KAction( i18n( "Close All" ), 0, m_quanta,
                         SLOT( slotFileCloseAll() ),
                         ac, "file_close_all" );
 
-    saveAction = KStdAction::save(this, SLOT( slotFileSave() ), ac);
+    m_quanta->saveAction = KStdAction::save(m_quanta, SLOT( slotFileSave() ), ac);
 
-    KStdAction::saveAs( this, SLOT( slotFileSaveAs() ), ac );
+    KStdAction::saveAs( m_quanta, SLOT( slotFileSaveAs() ), ac );
 
-    saveAllAction = new KAction( i18n( "Save All..." ), UserIconSet("save_all"), SHIFT+KStdAccel::shortcut(KStdAccel::Save).keyCodeQt(),
-                        this, SLOT( slotFileSaveAll() ),
+    m_quanta->saveAllAction = new KAction( i18n( "Save All..." ), UserIconSet("save_all"), SHIFT+KStdAccel::shortcut(KStdAccel::Save).keyCodeQt(),
+                        m_quanta, SLOT( slotFileSaveAll() ),
                         ac, "file_save_all" );
-    (void)  new KAction(i18n("Reloa&d"), UserIconSet("reload"), CTRL+Key_F5, this,
+    (void)  new KAction(i18n("Reloa&d"), UserIconSet("reload"), CTRL+Key_F5, m_quanta,
                         SLOT(slotFileReload()), ac, "file_reload");
-//    (void)  new KAction(i18n("Reload All "), 0, 0, this,
+//    (void)  new KAction(i18n("Reload All "), 0, 0, m_quanta,
 //                        SLOT(slotFileReloadAll()), ac, "file_reload_all");
 
     (void) new KAction( i18n( "Save as Local Template..." ), 0,
-                        this, SLOT( slotFileSaveAsLocalTemplate() ),
+                        m_quanta, SLOT( slotFileSaveAsLocalTemplate() ),
                         ac, "save_local_template" );
-    saveAsProjectTemplateAction = new KAction( i18n( "Save as Project Template..." ), 0,
-                        this, SLOT( slotFileSaveAsProjectTemplate() ),
-                        ac, "save_project_template" );
 
     (void) new KAction( i18n( "Save Selection to Local Template File..." ), 0,
-                        this, SLOT( slotFileSaveSelectionAsLocalTemplate() ),
+                        m_quanta, SLOT( slotFileSaveSelectionAsLocalTemplate() ),
                         ac, "save_selection_local_template" );
-    saveSelectionAsProjectTemplateAction = new KAction( i18n( "Save Selection to Project Template File..." ), 0,
-                        this, SLOT( slotFileSaveSelectionAsProjectTemplate() ),
-                        ac, "save_selection_project_template" );
+    
+    KStdAction::print( m_quanta, SLOT( slotFilePrint() ), ac );
 
-    KStdAction::print( this, SLOT( slotFilePrint() ), ac );
+    KStdAction::quit( m_quanta, SLOT( slotFileQuit() ), ac );
 
-    KStdAction::quit( this, SLOT( slotFileQuit() ), ac );
-
-   (void) new KAction( i18n( "&List Opened Files..." ), ALT+Key_0, this,
+   (void) new KAction( i18n( "&List Opened Files..." ), ALT+Key_0, m_quanta,
                        SLOT( slotShowOpenFileList() ), ac, "file_list" );
 
     // Edit actions
@@ -1100,33 +869,33 @@ void QuantaApp::initActions()
 
     (void) new KAction( i18n( "Find in Files..." ),
                         UserIcon("find"), CTRL+ALT+Key_F,
-                        this, SLOT( slotEditFindInFiles() ),
+                        m_quanta, SLOT( slotEditFindInFiles() ),
                         ac, "find_in_files" );
 
     // Tool actions
 
     (void) new KAction( i18n( "Context &Help..." ), CTRL+Key_H,
-                        this, SLOT( slotContextHelp() ),
+                        m_quanta, SLOT( slotContextHelp() ),
                         ac, "context_help" );
 
     (void) new KAction( i18n( "&Quanta Homepage" ), 0,
-                        this, SLOT( slotHelpHomepage() ),
+                        m_quanta, SLOT( slotHelpHomepage() ),
                         ac, "help_homepage" );
 
     (void) new KAction( i18n( "&User Mailing List" ), 0,
-                        this, SLOT( slotHelpUserList() ),
+                        m_quanta, SLOT( slotHelpUserList() ),
                         ac, "help_userlist" );
 
     (void) new KAction( i18n( "Make &Donation" ), 0,
-                        this, SLOT( slotMakeDonation() ),
+                        m_quanta, SLOT( slotMakeDonation() ),
                         ac, "help_donation" );
 
     (void) new KAction( i18n( "Tag &Attributes..." ), ALT+Key_Down,
-                        m_doc, SLOT( slotAttribPopup() ),
+                        m_quanta->m_doc, SLOT( slotAttribPopup() ),
                         ac, "tag_attributes" );
 
     (void) new KAction( i18n( "&Change the DTD..." ), 0,
-                        this, SLOT( slotChangeDTD() ),
+                        m_quanta, SLOT( slotChangeDTD() ),
                         ac, "change_dtd" );
 
     (void) new KAction( i18n( "&Load && Convert DTD..." ), 0,
@@ -1138,76 +907,60 @@ void QuantaApp::initActions()
                         ac, "load_dtep" );
 
     (void) new KAction( i18n( "Send DTD Package (DTEP) in E-&Mail..." ), 0,
-                        this, SLOT( slotEmailDTEP() ),
+                        m_quanta, SLOT( slotEmailDTEP() ),
                         ac, "send_dtep" );
 
 #ifdef BUILD_KAFKAPART
     (void) new KAction( i18n( "&Document Properties" ), 0,
-                        this, SLOT( slotDocumentProperties() ),
+                        m_quanta, SLOT( slotDocumentProperties() ),
                         ac, "tools_document_properties" );
 #endif
 
     (void) new KAction( i18n( "&Convert Tag && Attribute Case..."), 0,
-                        this, SLOT(slotConvertCase()),
+                        m_quanta, SLOT(slotConvertCase()),
                         ac, "tools_change_case");
 
     // View actions
 
-    showFTabAction =
-      new KToggleAction( i18n( "Show Files Tree" ), UserIcon("ftab"), 0,
-                         this, SLOT( slotShowFTabDock() ),
-                         ac, "show_ftab_tree" );
-    showPTabAction =
-      new KToggleAction( i18n( "Show Project Tree" ), UserIcon("ptab"), 0,
-                         this, SLOT( slotShowPTabDock() ),
-                         ac, "show_ptab_tree" );
-    showTTabAction =
-      new KToggleAction( i18n( "Show Templates Tree" ), UserIcon("ttab"), 0,
-                         this, SLOT( slotShowTTabDock() ),
-                         ac, "show_ttab_tree" );
-    showScriptTabAction =
-      new KToggleAction( i18n( "Show Scripts Tree" ), SmallIcon("run"), 0,
-                         this, SLOT( slotShowScriptTabDock() ),
-                         ac, "show_scripttab_tree" );
-    showSTabAction =
+    m_quanta->showSTabAction =
       new KToggleAction( i18n( "Show Structure Tree" ), BarIcon ("view_sidetree"), 0,
-                         this, SLOT( slotShowSTabDock() ),
+                         m_quanta, SLOT( slotShowSTabDock() ),
                          ac, "show_stab_tree" );
-    showATabAction =
+    m_quanta->showATabAction =
       new KToggleAction( i18n( "Show Attribute Tree" ), UserIcon ("tag_misc"), 0,
-                         this, SLOT( slotShowATabDock() ),
+                         m_quanta, SLOT( slotShowATabDock() ),
                          ac, "show_atab_tree" );
-    showDTabAction =
+    m_quanta->showDTabAction =
       new KToggleAction( i18n( "Show Documentation Tree" ), BarIcon ("contents2"), 0,
-                         this, SLOT( slotShowDTabDock() ),
+                         m_quanta, SLOT( slotShowDTabDock() ),
                          ac, "show_dtab_tree" );
 
-    showMessagesAction =
+    m_quanta->showMessagesAction =
       new KToggleAction( i18n( "Show &Messages" ), "output_win", CTRL+Key_M,
-                         this, SLOT( slotShowBottDock() ),
+                         m_quanta, SLOT( slotShowBottDock() ),
                          ac, "show_messages" );
-    showProblemsAction =
+    m_quanta->showProblemsAction =
       new KToggleAction( i18n( "Show &Problem Reporter" ), "stop", 0,
-                         this, SLOT( slotShowProblemsDock() ),
+                         m_quanta, SLOT( slotShowProblemsDock() ),
                          ac, "show_problems" );
 
 #ifdef BUILD_KAFKAPART
     KToggleAction *ta;
       ta =
       new KToggleAction( i18n( "&Source Editor"), UserIcon ("view_text"), ALT+Key_F9,
-                         m_view, SLOT( slotShowQuantaEditor()),
+                         m_quanta->m_view, SLOT( slotShowQuantaEditor()),
                          ac, "show_quanta_editor");
       ta->setExclusiveGroup("view");
 
-     showKafkaAction =
+     m_quanta->showKafkaAction =
       new KToggleAction( i18n( "&VPL Editor"), UserIcon ("vpl"), CTRL+SHIFT+Key_F9,
-      m_view, SLOT( slotShowKafkaPart() ),
+      m_quanta->m_view, SLOT( slotShowKafkaPart() ),
                           ac, "show_kafka_view");
-     showKafkaAction->setExclusiveGroup("view");
+     m_quanta->showKafkaAction->setExclusiveGroup("view");
 
      ta =
       new KToggleAction( i18n("VPL && So&urce Editors"), UserIcon ("vpl_text"), Key_F9,
-                         m_view, SLOT( slotShowKafkaAndQuanta() ),
+                         m_quanta->m_view, SLOT( slotShowKafkaAndQuanta() ),
                           ac, "show_kafka_and_quanta");
      ta->setExclusiveGroup("view");
     /**kafkaSelectAction = new KSelectAction(i18n("Main &View"), 0, ac,"show_kafka");
@@ -1216,163 +969,96 @@ void QuantaApp::initActions()
     list2.append(i18n("&VPL editor (experimental)"));
     list2.append(i18n("&Both editors"));
     kafkaSelectAction->setItems(list2);
-    connect(kafkaSelectAction, SIGNAL(activated(int)), this, SLOT(slotShowKafkaPartl(int)));*/
+    connect(kafkaSelectAction, SIGNAL(activated(int)), m_quanta, SLOT(slotShowKafkaPartl(int)));*/
 #endif
 
-     showPreviewAction =
+     m_quanta->showPreviewAction =
       new KToolBarPopupAction( i18n( "Pr&eview" ), "preview", Key_F6,
-                         this, SLOT( slotShowPreview() ),
+                         m_quanta, SLOT( slotShowPreview() ),
                          ac, "show_preview" );
 
-     showPreviewAction->popupMenu()->insertItem(i18n("Preview Without Frames"), 0);
-     connect(showPreviewAction->popupMenu(), SIGNAL(activated(int)),
-             this, SLOT(slotShowNoFramesPreview()));
+     m_quanta->showPreviewAction->popupMenu()->insertItem(i18n("Preview Without Frames"), 0);
+     connect(m_quanta->showPreviewAction->popupMenu(), SIGNAL(activated(int)),
+             m_quanta, SLOT(slotShowNoFramesPreview()));
 
     (void) new KAction( i18n( "&Reload Preview" ), "reload",
                         KStdAccel::shortcut(KStdAccel::Reload).keyCodeQt(),
-                        this, SLOT(slotRepaintPreview()),
+                        m_quanta, SLOT(slotRepaintPreview()),
                         ac, "reload" );
 
     (void) new KAction( i18n( "View with &Konqueror" ), "konqueror", CTRL+Key_F6,
-                        m_view, SLOT( slotViewInKFM() ),
+                        m_quanta->m_view, SLOT( slotViewInKFM() ),
                         ac, "view_with_konqueror" );
 
     (void) new KAction( i18n( "View with L&ynx" ), "terminal", SHIFT+Key_F6,
-                        m_view, SLOT( slotViewInLynx() ),
+                        m_quanta->m_view, SLOT( slotViewInLynx() ),
                         ac, "view_with_lynx" );
 
     (void) new KAction( i18n( "&Previous File" ), "1leftarrow", KStdAccel::back(),
-                        this, SLOT( slotBack() ),
+                        m_quanta, SLOT( slotBack() ),
                         ac, "previous_file" );
 
     (void) new KAction( i18n( "&Next File" ), "1rightarrow", KStdAccel::forward(),
-                        this, SLOT( slotForward() ),
+                        m_quanta, SLOT( slotForward() ),
                         ac, "next_file" );
-
-    // Project actions
-    //
-    Project *m_project = Project::ref();
-    (void) new KAction( i18n( "&New Project..." ), 0,
-                        m_project, SLOT( slotNewProject() ),
-                        ac, "project_new" );
-
-    (void) new KAction( i18n( "&Open Project..." ), BarIcon("folder_new"), 0,
-                        m_project, SLOT( slotOpenProject() ),
-                        ac, "project_open" );
-#if KDE_VERSION < KDE_MAKE_VERSION(3,1,92)
-    m_project -> projectRecent = new KQRecentFilesAction(i18n("Op&en Recent Project"),
-                                 "folder_new", 0,
-                                  m_project, SLOT(slotOpenProject(const KURL&)),
-                                  ac, "project_open_recent");
-#else
-    m_project -> projectRecent =
-      KStdAction::openRecent(m_project, SLOT(slotOpenProject(const KURL&)),
-                             ac, "project_open_recent");
-    m_project->projectRecent->setText(i18n("Open Recent Project"));
-    m_project->projectRecent->setIcon("folder_new");
-#endif
-    m_project->projectRecent->setMaxItems(32);
-    m_project->projectRecent->setToolTip(i18n("Open / Open Recent Project"));
-    connect(m_project->projectRecent, SIGNAL(activated()), m_project, SLOT(slotOpenProject()));
-
-
-    closeprjAction =  new KAction( i18n( "&Close Project" ), SmallIcon("fileclose"), 0,
-                         m_project, SLOT( slotCloseProject() ),
-                         ac, "project_close" );
-
-
-    openPrjViewAction = new KAction( i18n( "Open Project &View..." ), 0,
-                        m_project, SLOT( slotOpenProjectView() ),
-                        ac, "project_view_open" );
-
-    savePrjViewAction = new KAction( i18n( "&Save Project View" ), 0,
-                        m_project, SLOT( slotSaveProjectView() ),
-                        ac, "project_view_save" );
-    saveAsPrjViewAction = new KAction( i18n( "Save Project View &As..." ), 0,
-                        m_project, SLOT( slotSaveAsProjectView() ),
-                        ac, "project_view_save_as" );
-    deletePrjViewAction = new KAction( i18n( "&Delete Project View..." ), 0,
-                        m_project, SLOT( slotDeleteProjectView() ),
-                        ac, "project_view_delete" );
-
-
-
-    insertFileAction = new KAction( i18n( "&Insert Files..." ), 0,
-                        m_project, SLOT( slotAddFiles() ),
-                        ac, "project_insert_file" );
-
-    insertDirAction = new KAction( i18n( "Insert &Directory..." ), 0,
-                        m_project, SLOT( slotAddDirectory() ),
-                        ac, "project_insert_directory" );
-
-    rescanPrjDirAction = new KAction( i18n( "&Rescan Project Folder..." ), SmallIcon("reload"), 0,
-                        m_project, SLOT( slotRescanPrjDir() ),
-                        ac, "project_rescan" );
-
-    uploadProjectAction = new KAction( i18n( "&Upload Project..." ), Key_F8,
-                        m_project, SLOT( slotUpload() ),
-                        ac, "project_upload" );
-
-    projectOptionAction = new KAction( i18n( "&Project Properties..." ), Key_F7,
-                        m_project, SLOT( slotOptions() ),
-                        ac, "project_options" );
 
     // Options actions
     //
-    KStdAction::showToolbar  ( this, SLOT( slotViewToolBar() ), ac, "view_toolbar" );
-    showStatusbarAction = KStdAction::showStatusbar( this, SLOT( slotViewStatusBar() ), ac, "view_statusbar" );
+    KStdAction::showToolbar  ( m_quanta, SLOT( slotViewToolBar() ), ac, "view_toolbar" );
+    m_quanta->showStatusbarAction = KStdAction::showStatusbar( m_quanta, SLOT( slotViewStatusBar() ), ac, "view_statusbar" );
 
 
     (void) new KAction( i18n( "Configure &Actions..." ), UserIcon("ball"),0,
-                        this, SLOT( slotOptionsConfigureActions() ),
+                        m_quanta, SLOT( slotOptionsConfigureActions() ),
                         ac, "conf_actions" );
 
-    KStdAction::keyBindings      ( this, SLOT( slotOptionsConfigureKeys() ), ac, "keys_bind" );
-    KStdAction::configureToolbars( this, SLOT( slotOptionsConfigureToolbars() ), ac, "conf_toolbars" );
-    KStdAction::preferences      ( this, SLOT( slotOptions() ), ac, "general_options" );
+    KStdAction::keyBindings      ( m_quanta, SLOT( slotOptionsConfigureKeys() ), ac, "keys_bind" );
+    KStdAction::configureToolbars( m_quanta, SLOT( slotOptionsConfigureToolbars() ), ac, "conf_toolbars" );
+    KStdAction::preferences      ( m_quanta, SLOT( slotOptions() ), ac, "general_options" );
 
     // Toolbars actions
-    projectToolbarFiles = new KRecentFilesAction(i18n("Load &Project Toolbar"),0,this, SLOT(slotLoadToolbarFile(const KURL&)),
-                           ac, "toolbars_load_project");
+    m_quanta->projectToolbarFiles = new KRecentFilesAction(i18n("Load &Project Toolbar"),0,
+                                                           m_quanta, SLOT(slotLoadToolbarFile(const KURL&)),
+                                                           ac, "toolbars_load_project");
 
-    new KAction(i18n("Load &Global Toolbar..."), 0, this, SLOT(slotLoadGlobalToolbar()), ac, "toolbars_load_global");
-    new KAction(i18n("Load &Local Toolbar..."), 0, this, SLOT(slotLoadToolbar()), ac, "toolbars_load_user");
-    new KAction(i18n("Save as &Local Toolbar..."), 0, this, SLOT(slotSaveLocalToolbar()), ac, "toolbars_save_local");
-    new KAction(i18n("Save as &Project Toolbar..."), 0, this, SLOT(slotSaveProjectToolbar()), ac, "toolbars_save_project");
-    new KAction(i18n("&Add User Toolbar..."),  0, this, SLOT(slotAddToolbar()), ac, "toolbars_add");
-    new KAction(i18n("&Remove User Toolbar..."), 0, this, SLOT(slotRemoveToolbar()), ac, "toolbars_remove");
-    new KAction(i18n("Re&name User Toolbar..."), 0, this, SLOT(slotRenameToolbar()), ac, "toolbars_rename");
-    new KAction(i18n("Send Toolbar in E-&Mail..."), 0, this, SLOT(slotSendToolbar()), ac, "toolbars_send");
+    new KAction(i18n("Load &Global Toolbar..."), 0, m_quanta, SLOT(slotLoadGlobalToolbar()), ac, "toolbars_load_global");
+    new KAction(i18n("Load &Local Toolbar..."), 0, m_quanta, SLOT(slotLoadToolbar()), ac, "toolbars_load_user");
+    new KAction(i18n("Save as &Local Toolbar..."), 0, m_quanta, SLOT(slotSaveLocalToolbar()), ac, "toolbars_save_local");
+    new KAction(i18n("Save as &Project Toolbar..."), 0, m_quanta, SLOT(slotSaveProjectToolbar()), ac, "toolbars_save_project");
+    new KAction(i18n("&Add User Toolbar..."),  0, m_quanta, SLOT(slotAddToolbar()), ac, "toolbars_add");
+    new KAction(i18n("&Remove User Toolbar..."), 0, m_quanta, SLOT(slotRemoveToolbar()), ac, "toolbars_remove");
+    new KAction(i18n("Re&name User Toolbar..."), 0, m_quanta, SLOT(slotRenameToolbar()), ac, "toolbars_rename");
+    new KAction(i18n("Send Toolbar in E-&Mail..."), 0, m_quanta, SLOT(slotSendToolbar()), ac, "toolbars_send");
 
-    showDTDToolbar=new KToggleAction(i18n("Show DTD Toolbar"), 0, ac, "view_dtd_toolbar");
-    connect(showDTDToolbar, SIGNAL(toggled(bool)), this, SLOT(slotToggleDTDToolbar(bool)));
+    m_quanta->showDTDToolbar=new KToggleAction(i18n("Show DTD Toolbar"), 0, ac, "view_dtd_toolbar");
+    connect(m_quanta->showDTDToolbar, SIGNAL(toggled(bool)), m_quanta, SLOT(slotToggleDTDToolbar(bool)));
 
 
     new KAction(i18n("Complete Text"), CTRL+Key_Space,
-                this, SLOT(slotShowCompletion()), ac,"show_completion");
+                m_quanta, SLOT(slotShowCompletion()), ac,"show_completion");
     new KAction(i18n("Completion Hints"), CTRL+SHIFT+Key_Space,
-                this, SLOT(slotShowCompletionHint()), ac,"show_completion_hint");
+                m_quanta, SLOT(slotShowCompletionHint()), ac,"show_completion_hint");
 
-    KStdAction::back(this, SLOT( slotBack() ), ac, "w_back");
-    KStdAction::forward(this, SLOT( slotForward() ), ac, "w_forward");
+    KStdAction::back(m_quanta, SLOT( slotBack() ), ac, "w_back");
+    KStdAction::forward(m_quanta, SLOT( slotForward() ), ac, "w_forward");
 
-    new KAction(i18n("Open File: none"), 0, this, SLOT(slotOpenFileUnderCursor()), ac, "open_file_under_cursor");
-    new KAction(i18n("Upload..."), 0, this, SLOT(slotUploadFile()), ac, "upload_file");
-    new KAction(i18n("Delete File"), 0, this, SLOT(slotDeleteFile()), ac, "delete_file");
+    new KAction(i18n("Open File: none"), 0, m_quanta, SLOT(slotOpenFileUnderCursor()), ac, "open_file_under_cursor");
+    new KAction(i18n("Upload..."), 0, m_quanta, SLOT(slotUploadFile()), ac, "upload_file");
+    new KAction(i18n("Delete File"), 0, m_quanta, SLOT(slotDeleteFile()), ac, "delete_file");
 
     QString ss = i18n("Upload Opened Project Files...");
-/*    new KAction(i18n("Upload Opened Project Files"), 0, this, SLOT(slotUploadOpenedFiles()), ac, "upload_opened_files"); */
+/*    new KAction(i18n("Upload Opened Project Files"), 0, m_quanta, SLOT(slotUploadOpenedFiles()), ac, "upload_opened_files"); */
 
     QString error;
     int el, ec;
-    m_actions = new QDomDocument();
+    m_quanta->m_actions = new QDomDocument();
 //load the global actions
     QFile f(qConfig.globalDataDir + resourceDir + "actions.rc");
     if ( f.open( IO_ReadOnly ))
     {
-      if (m_actions->setContent(&f, &error, &el, &ec))
+      if (m_quanta->m_actions->setContent(&f, &error, &el, &ec))
       {
-        QDomElement docElem = m_actions->documentElement();
+        QDomElement docElem = m_quanta->m_actions->documentElement();
 
         QDomNode n = docElem.firstChild();
         while( !n.isNull() ) {
@@ -1386,7 +1072,7 @@ void QuantaApp::initActions()
         kdError(24000) << QString("Error %1 at (%2, %3) in %4").arg(error).arg(el).arg(ec).arg(f.name()) << endl;
       f.close();
     }
-    m_actions->clear();
+    m_quanta->m_actions->clear();
 //read the user defined actions
     QString s = locateLocal("appdata","actions.rc");
     if (!s.isEmpty())
@@ -1394,9 +1080,9 @@ void QuantaApp::initActions()
       f.setName(s);
       if ( f.open( IO_ReadOnly ))
       {
-        if (m_actions->setContent(&f, &error, &el, &ec))
+        if (m_quanta->m_actions->setContent(&f, &error, &el, &ec))
         {
-          QDomElement docElem = m_actions->documentElement();
+          QDomElement docElem = m_quanta->m_actions->documentElement();
 
           QDomNode n = docElem.firstChild();
           while( !n.isNull() ) {
@@ -1414,85 +1100,33 @@ void QuantaApp::initActions()
       }
     } else
     {
-      m_actions->setContent(s);
+      m_quanta->m_actions->setContent(s);
     }
 
 }
 
 /** Initialize the plugin architecture. */
-void QuantaApp::initPlugins()
+void QuantaInit::initPlugins()
 {
   // TODO : read option from plugins.rc to see if we should validate the plugins
 
-  m_pluginMenu = new QPopupMenu(this);
-  m_pluginMenu->setCheckable(TRUE);
-  connect(m_pluginMenu, SIGNAL(aboutToShow()), this, SLOT(slotBuildPluginMenu()));
+  m_quanta->m_pluginInterface = QuantaPluginInterface::ref(m_quanta);
+  connect(m_quanta->m_pluginInterface, SIGNAL(hideSplash()),
+          m_quanta, SLOT(slotHideSplash()));
+  connect(m_quanta->m_pluginInterface, SIGNAL(statusMsg(const QString &)),
+          m_quanta, SLOT(slotStatusMsg(const QString & )));
+  m_quanta->m_pluginInterface->readConfig();
 
-  menuBar()->insertItem(i18n("Plu&gins"), m_pluginMenu, -1, PLUGINS_MENU_PLACE);
+  m_quanta->menuBar()->insertItem(i18n("Plu&gins"), m_quanta->m_pluginInterface->pluginMenu(),
+                                  -1, PLUGINS_MENU_PLACE);
 }
 
-/** Builds the plugins menu dynamically */
-void QuantaApp::slotBuildPluginMenu()
-{
-  m_pluginMenu->clear();
-  m_pluginMenu->insertItem(i18n("&Edit"), this, SLOT(slotPluginsEdit()), 0);
-  m_pluginMenu->insertItem(i18n("&Validate"), this, SLOT(slotPluginsValidate()), 0);
-  m_pluginMenu->insertSeparator();
 
-  // TODO : We should have a QuantaPluginInterface::isModified function
-  // so that we can skip all of this work if nothing has changed
-
-  QDict<QuantaPlugin> plugins = m_pluginInterface->plugins();
-  QDictIterator<QuantaPlugin> it(plugins);
-  for(;it.current() != 0;++it)
-  {
-       QuantaPlugin *curPlugin = it.current();
-       if(curPlugin)
-       {
-//         int id = m_pluginMenu->insertItem(curPlugin->pluginName());
-//         if(curPlugin->isRunning())
-//           m_pluginMenu->setItemChecked(id, TRUE);
-           curPlugin->m_action->plug(m_pluginMenu);
-       }
-  }
-}
-
-void QuantaApp::slotPluginsEdit()
-{
-  QuantaPluginEditor *editor = new QuantaPluginEditor(view(), "plugin_editor");
-  editor->setSearchPaths(m_pluginInterface->searchPaths());
-  editor->setPlugins(m_pluginInterface->plugins());
-
-  editor->exec();
-  m_pluginInterface->setSearchPaths(editor->searchPathList());
-  m_pluginInterface->setPlugins(editor->plugins());
-  m_pluginInterface->writeConfig();
-}
-
-void QuantaApp::slotPluginsValidate()
-{
-  QDict<QuantaPlugin> plugins = m_pluginInterface->plugins();
-
-  QDictIterator<QuantaPlugin> it(plugins);
-  for(;it.current();++it)
-  {
-    if(!QuantaPlugin::validatePlugin(it.current()))
-    {
-      int answer = KMessageBox::warningYesNo(m_view, i18n("You have plugins installed that are not currently valid. Do you want to edit the plugins?"), i18n("Invalid Plugins"));
-      if(answer == KMessageBox::Yes)
-      {
-        slotPluginsEdit();
-      }
-      return;
-    }
-  }
-  statusBar()->message(i18n("All plugins validated successfully."));
-}
-void QuantaApp::recoverCrashed(QStringList& recoveredFileNameList)
+void QuantaInit::recoverCrashed(QStringList& recoveredFileNameList)
 {
 
-  m_doc->blockSignals(true);
-  m_view->writeTab()->blockSignals(true);
+  m_quanta->m_doc->blockSignals(true);
+  m_quanta->m_view->writeTab()->blockSignals(true);
 
   execCommandPS("ps -C quanta -o pid --no-headers");
 
@@ -1550,8 +1184,8 @@ void QuantaApp::recoverCrashed(QStringList& recoveredFileNameList)
        delete item;
        if (QFileInfo(autosavedVersion.path()).exists())
        {
-          emit showSplash(false);
-          DirtyDlg *dlg = new DirtyDlg(autosavedVersion.path(), originalVersion.path(), false, this);
+          emit hideSplash();
+          DirtyDlg *dlg = new DirtyDlg(autosavedVersion.path(), originalVersion.path(), false, m_quanta);
           dlg->setCaption(i18n("Restore File"));
           DirtyDialog *w = static_cast<DirtyDialog*>(dlg->mainWidget());
           w->textLabel->setText(i18n("<qt>A backup copy of a file was found:<br><br>"
@@ -1581,15 +1215,16 @@ void QuantaApp::recoverCrashed(QStringList& recoveredFileNameList)
             backupURL.setPath(backupURL.path()+"."+QString::number(getpid(),10)+".backup");
             //TODO: Replace with KIO::NetAccess::file_move, when KDE 3.1 support
             //is dropped
-            QExtFileInfo::copy(originalVersion, backupURL, -1, true, false, this);
+            QExtFileInfo::copy(originalVersion, backupURL, -1, true, false, m_quanta);
             //TODO: Replace with KIO::NetAccess::file_copy, when KDE 3.1 support
             //is dropped
-            QExtFileInfo::copy(autosavedVersion, originalVersion, -1, true, false, this);
+            QExtFileInfo::copy(autosavedVersion, originalVersion, -1, true, false, m_quanta);
             //we save a list of autosaved file names so "KQApplicationPrivate::init()"
             //can open them. If autosavedVersion.path().right(1) == "U" then we are recovering
             //an untitled document
             if(isUntitledDocument)
-             slotFileOpen(autosavedVersion, defaultEncoding());  // load initial files
+             m_quanta->slotFileOpen(autosavedVersion,
+                                    m_quanta->defaultEncoding());  // load initial files
             else
              recoveredFileNameList += originalVersion.path();
           }
@@ -1634,39 +1269,96 @@ void QuantaApp::recoverCrashed(QStringList& recoveredFileNameList)
     }
   }
 
-  m_view->writeTab()->blockSignals(false);
+  m_quanta->m_view->writeTab()->blockSignals(false);
  }
- void QuantaApp::execCommandPS(const QString& cmd)
+ void QuantaInit::execCommandPS(const QString& cmd)
  {
 
   //We create a KProcess that executes the "ps" *nix command to get the PIDs of the
   //other instances of quanta actually running
-  m_execCommandPS = new KProcess();
-  *m_execCommandPS << QStringList::split(" ",cmd);
+  m_quanta->m_execCommandPS = new KProcess();
+  *(m_quanta->m_execCommandPS) << QStringList::split(" ",cmd);
 
-  connect( m_execCommandPS, SIGNAL(receivedStdout(KProcess*,char*,int)),
-           this, SLOT(slotGetScriptOutput(KProcess*,char*,int)));
-  connect( m_execCommandPS, SIGNAL(receivedStderr(KProcess*,char*,int)),
-           this, SLOT(slotGetScriptError(KProcess*,char*,int)));
-  connect( m_execCommandPS, SIGNAL(processExited(KProcess*)),
-           this, SLOT(slotProcessExited(KProcess*)));
+  connect( m_quanta->m_execCommandPS, SIGNAL(receivedStdout(KProcess*,char*,int)),
+           m_quanta, SLOT(slotGetScriptOutput(KProcess*,char*,int)));
+  connect( m_quanta->m_execCommandPS, SIGNAL(receivedStderr(KProcess*,char*,int)),
+           m_quanta, SLOT(slotGetScriptError(KProcess*,char*,int)));
+  connect( m_quanta->m_execCommandPS, SIGNAL(processExited(KProcess*)),
+           m_quanta, SLOT(slotProcessExited(KProcess*)));
 
   //if KProcess fails I think a message box is needed... I will fix it
-  if (!m_execCommandPS->start(KProcess::NotifyOnExit,KProcess::All))
+  if (!m_quanta->m_execCommandPS->start(KProcess::NotifyOnExit,KProcess::All))
     kdError() << "Failed to query for running Quanta instances!" << endl;
     //TODO: Replace the above error with a real messagebox after the message freeze is over
   else
   {
     //To avoid lock-ups, start a timer.
-    QTimer *timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), SLOT(slotProcessTimeout()));
+    QTimer *timer = new QTimer(m_quanta);
+    connect(timer, SIGNAL(timeout()),
+            m_quanta, SLOT(slotProcessTimeout()));
     timer->start(180*1000, true);
     QExtFileInfo internalFileInfo;
-    m_loopStarted = true;
+    m_quanta->m_loopStarted = true;
     internalFileInfo.enter_loop();
     delete timer;
   }
  }
 
 
+QString QuantaInit::searchPathListEntry(const QString& backedUpUrl,const QString& autosavedUrls)
+{
+  KURL k(backedUpUrl);
+  QStringList autosavedUrlsList = QStringList::split(",", autosavedUrls);
+  QStringList::Iterator autosavedUrlsIt;
+  for (autosavedUrlsIt = autosavedUrlsList.begin();
+       autosavedUrlsIt != autosavedUrlsList.end();
+       ++autosavedUrlsIt)
+  {
+   QString quPID = retrievePID((*autosavedUrlsIt));
 
+   QStringList PIDlist = QStringList::split("\n", m_quanta->m_scriptOutput);
+
+   bool isOrphan = true;
+   QStringList::Iterator PIDIt;
+   for ( PIDIt = PIDlist.begin(); PIDIt != PIDlist.end(); ++PIDIt )
+   {
+    if ((*PIDIt) == quPID && qConfig.quantaPID != quPID)
+    {
+     isOrphan = false;
+     break;
+    }
+   }
+   if (isOrphan || ((*autosavedUrlsIt).right(1) == "U"))
+   {
+    if(retrieveHashedPath(Document::hashFilePath(k.path())) == retrieveHashedPath((*autosavedUrlsIt)))
+      return (*autosavedUrlsIt);
+   }
+  }
+  return QString::null;
+}
+
+/** Retrieves hashed path from the name of a backup file */
+QString QuantaInit::retrieveHashedPath(const QString& filename)
+{
+ return filename.mid(filename.findRev(".") + 1,
+                      filename.findRev("P") - 1 - filename.findRev("."));
+}
+
+
+/** Retrieves PID from the name of a backup file */
+QString QuantaInit::retrievePID(const QString& filename)
+{
+ QString strPID = QString::null;
+ strPID = filename.right(filename.length() - filename.findRev("P") - 1);
+
+ if (strPID.isEmpty())
+  strPID = filename.right(filename.length() - filename.findRev("N") - 1);
+
+ return strPID;
+}
+
+/** Retrieves the non hashed part of the name of a backup file */
+QString QuantaInit::retrieveBaseFileName(const QString& filename)
+{
+ return filename.left(filename.findRev("."));
+}

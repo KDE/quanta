@@ -43,6 +43,7 @@
 #include <kdebug.h>
 #include <kprogress.h>
 #include <kio/netaccess.h>
+#include <kstandarddirs.h>
 
 #include <ktexteditor/cursorinterface.h>
 #include <ktexteditor/clipboardinterface.h>
@@ -59,7 +60,6 @@
 #include "dirtydialog.h"
 #include "casewidget.h"
 #include "project.h"
-#include "quantaplugininterface.h"
 
 #include "quanta.h"
 #include "quantaview.h"
@@ -77,7 +77,6 @@
 extern GroupElementMapList globalGroupMap;
 
 Document::Document(KTextEditor::Document *doc,
-                   QuantaPluginInterface *a_pIf,
                    QWidget *parent, const char *name, WFlags f )
   : QWidget(parent, name, f)
 {
@@ -113,8 +112,6 @@ Document::Document(KTextEditor::Document *doc,
   docUndoRedo = new undoRedo(this);
 #endif
 
-  //need access to plugin interface. and we can't get to app from here ..
-  m_pluginInterface = a_pIf;
   //each document remember wheter it has a entry in quantarc
   m_backupEntry = false;
   //path of the backup copy file of the document

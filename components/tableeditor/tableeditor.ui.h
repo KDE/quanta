@@ -1012,7 +1012,7 @@ void TableEditor::slotEditChildTable()
       //create a new editor object and save the current state of the table there
       KTextEditor::Document *doc =
   KTextEditor::createDocument ("libkatepart", 0L, "KTextEditor::Document");
-      w = new Document(doc, quantaApp->m_pluginInterface, 0L);
+      w = new Document(doc, 0L);
       QString tableData = readModifiedTable();
       w->editIf->insertText(0, 0, tableData);
       localParser = new Parser();

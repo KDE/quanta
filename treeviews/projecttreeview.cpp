@@ -42,8 +42,6 @@
 #include "quantacommon.h"
 #include "qextfileinfo.h"
 #include "resource.h"
-#include "quanta.h"
-#include "quantadoc.h"
 
 //ProjectTreeBranch implementation
 ProjectTreeBranch::ProjectTreeBranch(KFileTreeView *parent, const KURL& url,
@@ -79,9 +77,14 @@ KFileTreeViewItem* ProjectTreeBranch::createTreeViewItem(KFileTreeViewItem *pare
 }
 
 //ProjectTreeView implementation
-ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
+ProjectTreeView::ProjectTreeView(KActionCollection *ac,
+                                 KDockWidget *parent, const char *name )
   : FilesTreeView(parent,name)
 {
+  m_dock = parent;
+  m_action = new KToggleAction( i18n("Show Project Tree"), UserIcon("ptab"), 0,
+                                this, SLOT( slotToggleShow() ),
+                                ac, "show_ptab_tree" );
   setRootIsDecorated(false);
  // header()->hide();
   setSorting( 0 );
@@ -399,16 +402,6 @@ void ProjectTreeView::slotOptions()
 void ProjectTreeView::slotUploadProject()
 {
   emit uploadProject();
-}
-
-
-void ProjectTreeView::slotDocumentClosed()
-{
-  QListViewItemIterator iter(this);
-  for ( ; iter.current(); ++iter )
-  {
-    iter.current()->repaint();
-  }
 }
 
 void ProjectTreeView::slotPopulateFinished(KFileTreeViewItem* item)

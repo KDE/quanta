@@ -19,8 +19,11 @@
 #define QUANTAPLUGINEDITOR_H
 
 /* KDE INCLUDES */
+#include <kdialogbase.h>
+
 /* QT INCLUDES */
 #include <qdict.h>
+#include <qlistview.h>
 
 /* OTHER INCLUDES */
 #include "quantaplugin.h"

@@ -44,6 +44,9 @@ class KQRecentFilesAction;
 #else
 class KRecentFilesAction;
 #endif
+class KActionCollection;
+class KAction;
+class KMainWindow;
 
 class ProjectNewWeb;
 class ProjectNewLocal;
@@ -59,13 +62,13 @@ public:
   /**
    *  since this class is a singleton you must use this function to access it
    *
-   *  the parameter are only used at the first call to create the class
+   *  the parameter is only used at the first call to create the class
    *
    */
-  static Project* const ref()
+  static Project* const ref(KMainWindow *parent = 0L)
   {
     static Project *m_ref;
-    if (!m_ref) m_ref = new Project ();
+    if (!m_ref) m_ref = new Project(parent);
     return m_ref;
   }
 
@@ -153,7 +156,7 @@ signals:
 
   void saveAllFiles();
   void newStatus();
-  void statusMsg(QString);
+  void statusMsg(const QString &);
   /** No descriptions */
   void newProjectLoaded(const QString &, const KURL &, const KURL &);
   void hideSplash();
@@ -191,7 +194,10 @@ private:
    *  If you need the class use Project::ref() for
    *  construction and reference
    */
-  Project();
+  Project(KMainWindow *parent);
+  /** setup of the actions */
+  void initActions(KActionCollection *ac);
+  void Project::adjustActions();
   void loadProjectXML();
 
   bool createEmptyDom();
@@ -210,10 +216,18 @@ private:
 
   bool m_modified;
   bool storePasswdInFile;
-
+  KMainWindow *m_parent;
   QBuffer buff;
   QRegExp excludeRx;
   QStringList excludeList;
+
+  KAction
+    *closeprjAction, *insertFileAction, *insertDirAction,
+    *uploadProjectAction,  *rescanPrjDirAction,
+    *projectOptionAction, *saveAsProjectTemplateAction,
+    *saveSelectionAsProjectTemplateAction,
+    *openPrjViewAction, *savePrjViewAction, *saveAsPrjViewAction,
+    *deletePrjViewAction;
 
 protected: // Protected attributes
   /** Default DTD for this project. */

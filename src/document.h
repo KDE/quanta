@@ -52,7 +52,6 @@ class KTempFile;
 class Tag;
 class Node;
 class Project;
-class QuantaPluginInterface;
 class undoRedo;
 struct AreaStruct;
 struct DTDStruct;
@@ -62,7 +61,6 @@ class Document : public QWidget{
 
 public:
   Document(KTextEditor::Document *doc,
-           QuantaPluginInterface * =0,
            QWidget *parent = 0, const char *name = 0, WFlags f=0);
   ~Document();
 
@@ -233,8 +231,6 @@ public slots:
   void slotDelayedShowCodeCompletion();
 
 private:
-
-  QuantaPluginInterface *m_pluginInterface;
 
   QString untitledUrl;
 

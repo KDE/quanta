@@ -37,10 +37,8 @@
 #include "quantaplugineditor.h"
 #include "quantaplugin.h"
 #include "quantapluginconfig.h"
-#include "quantaplugininterface.h"
 #include "pluginconfig.h"
 #include "plugineditor.h"
-#include "quanta.h"
 #include "resource.h"
 
 QuantaPluginEditor::QuantaPluginEditor(QWidget *a_parent, const char *a_name)

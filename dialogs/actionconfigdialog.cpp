@@ -23,6 +23,7 @@
 #include <qmultilineedit.h>
 #include <qradiobutton.h>
 #include <qtabwidget.h>
+#include <qregexp.h>
 
 //kde includes
 #include <kconfig.h>

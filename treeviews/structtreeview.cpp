@@ -393,7 +393,7 @@ void StructTreeView::slotGotoTag( QListViewItem *item )
     {
       KURL url;
       QuantaCommon::setUrl(url, it->node->fileName);
-      emit openFile(url, quantaApp->defaultEncoding());
+      emit openFile(url);
     }
     int el, ec;
     tag->endPos(el, ec);
@@ -548,7 +548,7 @@ void StructTreeView::slotSelectTag()
       it->node->tag->beginPos(bLine, bCol);
       it->node->tag->endPos(eLine, eCol);
       eCol--;
-      emit openFile(url, quantaApp->defaultEncoding());
+      emit openFile(url);
 
     }
     emit selectArea( bLine, bCol, eLine, eCol + 1);
@@ -664,7 +664,7 @@ void StructTreeView::slotOpenFile()
     url = QExtFileInfo::toAbsolute(url, baseUrl);
     if ( QuantaCommon::checkMimeGroup(url,"text" ) )
     {
-      emit openFile( url, quantaApp->defaultEncoding() );
+      emit openFile(url);
     }
     else if ( QuantaCommon::checkMimeGroup(url,"image" ) )
     {

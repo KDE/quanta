@@ -26,18 +26,22 @@
 #include <qdict.h>
 #include <qstring.h>
 #include <qstringlist.h>
-#include <qapplication.h>
 #include <qfileinfo.h>
 
 /* OTHER INCLUDES */
 #include "quantaplugininterface.h"
+#include "quantaplugineditor.h"
+#include "quantaplugin.h"
+
 #include "resource.h"
-#include "quanta.h"
 #include "quantacommon.h"
 
-QuantaPluginInterface::QuantaPluginInterface()
+QuantaPluginInterface::QuantaPluginInterface(QWidget *parent)
 {
- // m_plugins.setAutoDelete(TRUE);
+  m_pluginMenu = new QPopupMenu(parent);
+  m_parent = parent;
+
+  // m_plugins.setAutoDelete(TRUE);
 }
 
 QuantaPluginInterface::~QuantaPluginInterface()
@@ -58,7 +62,7 @@ void QuantaPluginInterface::readConfigFile(const QString& configFile)
   QStringList paths = config->readListEntry("SearchPaths");
   for(QStringList::Iterator it = paths.begin();it != paths.end(); ++it)
     (*it) = (*it).stripWhiteSpace();
-  setSearchPaths(paths);
+  qConfig.pluginSearchPaths = paths;
 
   // now that we have a list of the plugins, go through and get the details of them
   for(QStringList::Iterator it = pList.begin();it != pList.end();++it)
@@ -82,7 +86,7 @@ void QuantaPluginInterface::readConfigFile(const QString& configFile)
       if (pluginType == "Command Line")
       {
         emit hideSplash();
-        KMessageBox::information(quantaApp, i18n("<qt><b>%1</b> is a command line plugin. We have removed support for command-line plugins. However, the functionality has not been lost as script actions can still be used to run command-line tools. </qt>").arg(*it), i18n("Unsupported plugin type"), "CommandLinePluginWarning");
+        KMessageBox::information(m_parent, i18n("<qt><b>%1</b> is a command line plugin. We have removed support for command-line plugins. However, the functionality has not been lost as script actions can still be used to run command-line tools. </qt>").arg(*it), i18n("Unsupported plugin type"), "CommandLinePluginWarning");
         continue;
       }
 
@@ -125,6 +129,7 @@ void QuantaPluginInterface::readConfig()
   // read the global plugins.rc
   configFile = qConfig.globalDataDir + resourceDir + "plugins.rc";
   readConfigFile(configFile);
+  buildPluginMenu();
 }
 
 /** Writes the plugin settings to the rc file */
@@ -137,7 +142,7 @@ void QuantaPluginInterface::writeConfig()
 
   config->setGroup("General");
   config->writeEntry("Plugins", names);
-  config->writeEntry("SearchPaths", searchPaths());
+  config->writeEntry("SearchPaths", qConfig.pluginSearchPaths);
 
   for(QStringList::Iterator it = names.begin();it != names.end(); ++it)
   {
@@ -171,17 +176,6 @@ void QuantaPluginInterface::writeConfig()
   delete config;
 }
 
-/** Gets the plugins */
-QDict<QuantaPlugin> QuantaPluginInterface::plugins()
-{
-    return m_plugins;
-}
-
-/** Sets the plugins */
-void QuantaPluginInterface::setPlugins(QDict<QuantaPlugin> a_plugins)
-{
-  m_plugins = a_plugins;
-}
 
 /** Returns TRUE if the plugin is available */
 bool QuantaPluginInterface::pluginAvailable(const QString &a_name)
@@ -205,22 +199,66 @@ QStringList QuantaPluginInterface::pluginNames() const
   return names;
 }
 
-/** Sets the search paths */
-void QuantaPluginInterface::setSearchPaths(QStringList a_searchPaths)
-{
-  qConfig.pluginSearchPaths = a_searchPaths;
-}
-
-/** Gets the search paths */
-QStringList QuantaPluginInterface::searchPaths()
-{
-  return qConfig.pluginSearchPaths;
-}
 
 /** Gets the plugin specified by a_name */
 QuantaPlugin *QuantaPluginInterface::plugin(const QString &a_name)
 {
   return m_plugins[a_name];
 }
+
+/** Builds the plugins menu */
+void QuantaPluginInterface::buildPluginMenu()
+{
+  m_pluginMenu->clear();
+//  m_pluginMenu->setCheckable(TRUE);
+  m_pluginMenu->insertItem(i18n("&Edit"), this, SLOT(slotPluginsEdit()), 0);
+  m_pluginMenu->insertItem(i18n("&Validate"), this, SLOT(slotPluginsValidate()), 0);
+  m_pluginMenu->insertSeparator();
+
+  QDictIterator<QuantaPlugin> it(m_plugins);
+  for(;it.current() != 0;++it)
+  {
+       QuantaPlugin *curPlugin = it.current();
+       if(curPlugin)
+       {
+//         int id = m_pluginMenu->insertItem(curPlugin->pluginName());
+//         if(curPlugin->isRunning())
+//           m_pluginMenu->setItemChecked(id, TRUE);
+           curPlugin->m_action->plug(m_pluginMenu);
+       }
+  }
+}
+
+void QuantaPluginInterface::slotPluginsEdit()
+{
+  QuantaPluginEditor *editor = new QuantaPluginEditor(m_parent, "plugin_editor");
+  editor->setSearchPaths(qConfig.pluginSearchPaths);
+  editor->setPlugins(plugins());
+
+  editor->exec();
+  qConfig.pluginSearchPaths = editor->searchPathList();
+  setPlugins(editor->plugins());
+  writeConfig();
+  buildPluginMenu();
+}
+
+void QuantaPluginInterface::slotPluginsValidate()
+{
+  QDictIterator<QuantaPlugin> it(m_plugins);
+  for(;it.current();++it)
+  {
+    if(!QuantaPlugin::validatePlugin(it.current()))
+    {
+      int answer = KMessageBox::warningYesNo(m_parent, i18n("You have plugins installed that are not currently valid. Do you want to edit the plugins?"), i18n("Invalid Plugins"));
+      if(answer == KMessageBox::Yes)
+      {
+        slotPluginsEdit();
+      }
+      return;
+    }
+  }
+  emit statusMsg(i18n("All plugins validated successfully."));
+}
+
 
 #include "quantaplugininterface.moc"

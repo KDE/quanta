@@ -658,7 +658,7 @@ uint DTDs::readTagFile(const QString& fileName, DTDStruct* parentDTD, QTagList *
  int errorLine, errorCol;
  if (!m_doc->setContent( &f, &errorMsg, &errorLine, &errorCol ))
  {
-   emit showSplash(false);
+   emit hideSplash();
    KMessageBox::error(0L, i18n("<qt>The DTD tag file %1 is not valid.<br> The error message is: <i>%2 in line %3, column %4.</i></qt>").arg(fileName).arg(errorMsg).arg(errorLine).arg(errorCol),
    i18n("Invalid Tag File"));
    kdWarning() << fileName << ": " << errorMsg << ": " << errorLine << "," << errorCol << endl;
