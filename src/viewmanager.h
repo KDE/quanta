@@ -15,7 +15,10 @@
 #ifndef VIEWMANAGER_H
 #define VIEWMANAGER_H
 
+#include <kurl.h>
+
 //forward declarations
+class Document;
 class QuantaView;
 class KafkaDocument;
 class KPopupMenu;

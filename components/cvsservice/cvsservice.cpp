@@ -13,8 +13,6 @@
  *
  ***************************************************************************/
 
-#include "cvsservice.h"
-
 //qt include
 #include <qpopupmenu.h>
 
@@ -29,6 +27,10 @@
 #include <cvsservice_stub.h>
 #include <cvsjob_stub.h>
 
+#include "cvsservice.h"
+#include "viewmanager.h"
+#include "document.h"
+
 CVSService::CVSService(KActionCollection *ac)
 {
   m_menu = new QPopupMenu;
@@ -36,33 +38,68 @@ CVSService::CVSService(KActionCollection *ac)
   action->plug(m_menu);
   m_cvsJob = 0L;
   m_repository = 0L;
+  m_cvsService =0L;
 }
 
 CVSService::~CVSService()
 {
+  if (m_cvsService)
+    m_cvsService->quit();
   delete m_menu;
   delete m_repository;
   m_repository = 0L;
+  m_cvsService = 0L;
+}
+
+void CVSService::setAppId(const QCString &id)
+{
+  m_appId = id;
+  if (m_cvsService)
+    m_cvsService->quit();
+  delete m_cvsService;
+  m_cvsService = new CvsService_stub(m_appId, "CvsService");
 }
 
 void CVSService::setRepository(const QString &repository)
 {
    delete m_repository;
    m_repository = new Repository_stub(m_appId, "CvsRepository");
-   m_repository->setWorkingCopy(repository);
+   if (m_repository->setWorkingCopy(repository))
+   {
+      m_repositoryPath = repository;
+      if (!m_repositoryPath.endsWith("/"))
+        m_repositoryPath += "/";
+   }
+}
+
+void CVSService::slotUpdate()
+{
+  QStringList files;
+  if (!m_defaultFile.isEmpty())
+  {
+     if (m_defaultFile.startsWith(m_repositoryPath))
+     {
+       files += m_defaultFile.remove(m_repositoryPath);
+       slotUpdate(files);
+     } else
+     {
+       emit clearMessages();
+       emit showMessage(i18n("Error: \"%1\" is not part of the\n\"%2\" repository.").arg(m_defaultFile).arg(m_repositoryPath), false);
+     }
+  }
 }
 
 void CVSService::slotUpdate(const QStringList &files)
 {
    if (m_repository && !m_appId.isEmpty())
    {
-      CvsService_stub cvsService(m_appId, "CvsService");
-
-      DCOPRef job = cvsService.update(files, true, true, true, "");
+      emit clearMessages();
+      DCOPRef job = m_cvsService->log(files[0]);//m_cvsService->update(files, true, true, true, "");
       m_cvsJob = new CvsJob_stub( job.app(), job.obj() );
 
-      connectDCOPSignal(job.app(), job.obj(), "jobExited(bool, int)", SLOT(slotJobExited(bool, int)), true);
-      connectDCOPSignal(job.app(), job.obj(), "receivedStdout(QString)", SLOT(slotReceivedStdout(QString)), true);
+      connectDCOPSignal(job.app(), job.obj(), "jobExited(bool, int)", "slotJobExited(bool, int)", true);
+      connectDCOPSignal(job.app(), job.obj(), "receivedStdout(QString)", "slotReceivedStdout(QString)", true);
+      connectDCOPSignal(job.app(), job.obj(), "receivedStderr(QString)", "slotReceivedStdout(QString)", true);
       m_cvsJob->execute();
    }
 }
@@ -80,6 +117,7 @@ void CVSService::slotJobExited(bool normalExit, int exitStatus)
 
 void CVSService::slotReceivedStdout(QString output)
 {
+   emit showMessage(output, false);
 }
 
  #include "cvsservice.moc"

@@ -539,6 +539,7 @@ protected: // Protected attributes
   DCOPQuanta *dcopQuanta;
   KParts::PartManager *m_partManager;  ///< the pointer to the part manager
   QGuardedPtr<KTextEditor::View> m_oldKTextEditor;  ///< remembers the last activated GUI
+  int m_cvsMenuId;
 
 public: //TODO: check if it's worth to make a read method for them
   QDict<ToolbarEntry> toolbarList;

@@ -1,6 +1,6 @@
 noinst_LTLIBRARIES = libcvsservice.la
 
-libcvsservice_la_SOURCES = cvsservice.cpp
+libcvsservice_la_SOURCES = cvsservice.cpp cvsservicedcopif.skel
 libcvsservice_la_METASOURCES = AUTO
 
 AM_CPPFLAGS = -I$(top_srcdir)/quanta/src \
@@ -9,3 +9,4 @@ AM_CPPFLAGS = -I$(top_srcdir)/quanta/src \
 	-I$(top_srcdir)/quanta/project \
 	-I$(top_srcdir)/lib \
 	$(KMDI_INCLUDES) $(all_includes)
+noinst_HEADERS =  cvsservicedcopif.h

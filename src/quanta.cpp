@@ -234,11 +234,13 @@ QuantaApp::QuantaApp(int mdiMode) : DCOPObject("WindowManagerIf"), KMdiMainFrm( 
   m_documentationToolView = 0L;
   m_previewedDocument = 0L;
   m_previewVisible =  false;
+  m_cvsMenuId = -1;
 }
 
 QuantaApp::~QuantaApp()
 {
 // kdDebug(24000) << "QuantaApp::~QuantaApp" << endl;
+ delete CVSService::ref();
  delete m_debugger;
  m_debugger = 0L;
  quantaApp = 0L;
@@ -1959,10 +1961,25 @@ void QuantaApp::slotContextMenuAboutToShow()
       }
     }
 #ifdef ENABLE_CVSSERVICE
-   if (CVSService::ref()->exists())
+   if (w->url().isLocalFile() && !w->isUntitled() && CVSService::ref()->exists())
    {
-     popup->insertSeparator();
-     popup->insertItem(SmallIcon("cervisia"), i18n("CVS"), CVSService::ref()->menu());
+     if (m_cvsMenuId == -1)
+     {
+       popup->insertSeparator();
+       m_cvsMenuId = popup->insertItem(SmallIcon("cervisia"), i18n("CVS"), CVSService::ref()->menu());
+     }
+     if (Project::ref()->contains(w->url()))
+       CVSService::ref()->setRepository(Project::ref()->projectBaseURL().path());
+     else
+         CVSService::ref()->setRepository(w->url().directory());
+     CVSService::ref()->setCurrentFile(w->url().path());
+   } else
+   if (m_cvsMenuId != -1)
+   {
+       int idx = popup->indexOf(m_cvsMenuId);
+       popup->removeItemAt(idx-1);
+       popup->removeItem(m_cvsMenuId);
+       m_cvsMenuId = -1;
    }
 #endif
   }

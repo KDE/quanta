@@ -17,17 +17,19 @@
 #define CVSSERVICE_H
 
 #include <qobject.h>
-#include <dcopobject.h>
+
+#include "cvsservicedcopif.h"
 
 class QPopupMenu;
 class KActionCollection;
 class CvsJob_stub;
+class CvsService_stub;
 class Repository_stub;
 
 /** @short This class manages the CVS repositories from withing Quanta with the help of "cvsservice"
  *
  */
-class CVSService : public QObject, public DCOPObject
+class CVSService : public QObject, public CVSServiceDCOPIf
 {
   Q_OBJECT
 
@@ -46,16 +48,22 @@ public:
 
   ~CVSService();
 
-  void setAppId(const QCString& id) {m_appId = id;}
+  void setAppId(const QCString& id);
   /** Returns true if the cvsservice was found */
   bool exists() {return !m_appId.isEmpty();}
   void setRepository(const QString &repository);
+  void setCurrentFile(const QString &file) {m_defaultFile = file;}
   QPopupMenu *menu() {return m_menu;}
 
 public slots:
+  void slotUpdate();
   void slotUpdate(const QStringList &files);
-  void slotJobExited(bool normalExit, int exitStatus);
-  void slotReceivedStdout(QString output);
+  virtual void slotJobExited(bool normalExit, int exitStatus);
+  virtual void slotReceivedStdout(QString output);
+
+signals:
+  void clearMessages();
+  void showMessage(const QString &msg, bool append);
 
 private:
   CVSService(KActionCollection *ac);
@@ -64,6 +72,9 @@ private:
   QPopupMenu *m_menu;
   Repository_stub *m_repository;
   CvsJob_stub *m_cvsJob;
+  CvsService_stub *m_cvsService;
+  QString m_defaultFile;
+  QString m_repositoryPath;
 };
 
 #endif
