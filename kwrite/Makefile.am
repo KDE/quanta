@@ -8,10 +8,6 @@ noinst_LIBRARIES = libkwrite.a
 
 
 INCLUDES = $(all_includes)\
-		-I$(top_srcdir)/quanta/data/icons/48x48\
-		-I$(top_srcdir)/quanta/data/icons/32x32\
-		-I$(top_srcdir)/quanta/data/icons/22x22\
-		-I$(top_srcdir)/quanta/data/icons/16x16\
 		-I$(top_srcdir)/quanta/kwrite/highlight
 CXXFLAGS = -g -Wall 
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)

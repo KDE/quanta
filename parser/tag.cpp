@@ -24,6 +24,7 @@
 Tag::Tag()
 {
   name = "";
+  single = false;
 //  attr.setAutoDelete(true);
   attrcount = 0;
   for (int i=0; i<20;i++)
@@ -33,6 +34,7 @@ Tag::Tag()
 Tag::Tag( const Tag &t)
 {
 	name = t.name;
+	single = t.single;
 	
 	for (int i=0; i<t.attrcount; i++) {
 	  attr[i] = t.attr[i];
@@ -55,6 +57,10 @@ void Tag::parseStr ( const QString tag )
   int i = 0;
 
   t = t.stripWhiteSpace();
+  if ( t.right(1) == "/" )  {
+    single = true;
+    t.truncate( t.length() - 1 );
+  }
 
   while ( !t[i].isSpace() && !t[i].isNull() )	i++;
 

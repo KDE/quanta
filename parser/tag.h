@@ -44,6 +44,8 @@ public:
 	QString attr[20];  //atributes
 	QString value[20]; // values of attributes.
 	int attrcount;
+	
+	bool single; // tag <tag />
 
 };
 

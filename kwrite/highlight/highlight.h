@@ -199,6 +199,29 @@ class HlShellComment : public HlCharDetect {
     virtual bool startEnable(QChar c) {return !isInWord(c);}
 };
 
+// xml 
+
+class HlXmlTag : public HlItem {
+  public:
+    HlXmlTag(int attribute, int context);
+    virtual bool startEnable(QChar c) {return c == '<';}
+    virtual const QChar *checkHgl(const QChar *);
+};
+
+class HlXmlValue : public HlItem {
+  public:
+    HlXmlValue(int attribute, int context);
+    virtual bool startEnable(QChar c) {return c == '=';}
+    virtual const QChar *checkHgl(const QChar *);
+};
+
+class HlXmlAttrib : public HlItem {
+  public:
+    HlXmlAttrib(int attribute, int context);
+    virtual bool startEnable(QChar c) {return (c != '=') && (c != '<') && (c != '/'); }
+    virtual const QChar *checkHgl(const QChar *);
+};
+
 //modula 2 hex
 class HlMHex : public HlItemWw {
   public:
@@ -491,6 +514,26 @@ class HtmlHighlight : public GenHighlight {
 // *******************************************************************
 
 };
+
+// *******************************************************************
+// a quanta highlightings section
+// *******************************************************************
+
+class XmlHighlight : public GenHighlight {
+  public:
+    XmlHighlight(const char * name);
+    virtual ~XmlHighlight();
+    virtual QString getCommentStart() { return QString("<!--"); };
+    virtual QString getCommentEnd() { return QString("-->"); };
+  protected:
+    virtual void createItemData(ItemDataList &);
+    virtual void makeContextList();
+};
+
+// *******************************************************************
+// end of a quanta highlightings section
+// *******************************************************************
+
 
 class BashHighlight : public GenHighlight {
   public:

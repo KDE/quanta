@@ -7,11 +7,7 @@ noinst_LIBRARIES = libtreeviews.a
 
 
 
-INCLUDES = $(all_includes)\
-		-I$(top_srcdir)/quanta/data/icons/48x48\
-		-I$(top_srcdir)/quanta/data/icons/32x32\
-		-I$(top_srcdir)/quanta/data/icons/22x22\
-		-I$(top_srcdir)/quanta/data/icons/16x16
+INCLUDES = $(all_includes)
 CXXFLAGS = -g -Wall 
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 libtreeviews_a_METASOURCES = AUTO

@@ -172,7 +172,7 @@ Node * Parser::subParse( Node * parent, QString tag )
           prevNode->next = tnode;
         prevNode = tnode;
 
-        if ( singleTags->find(tagData->name.upper()) == -1 ) { // not single tag
+        if ( !tagData->single && singleTags->find(tagData->name.upper()) == -1 ) { // not single tag
           tnode->child = subParse( tnode , tagData->name.lower() );
 
         	tnode->endContext = pos-1;

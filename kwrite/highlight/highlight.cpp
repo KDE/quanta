@@ -2818,6 +2818,7 @@ HlManager::HlManager() : QObject(0L) {
   hlList.append(new Highlight(I18N_NOOP("Normal")));
   hlList.append(new HtmlHighlight(  "HTML"     ));
   hlList.append(new PhpHighlight(   "PHP"      ));
+  hlList.append(new XmlHighlight(   "XML"      ));
   hlList.append(new JSHighlight(    "JavaScript"));
   hlList.append(new JavaHighlight(  "Java"     ));
   hlList.append(new SqlHighlight(   "SQL"      ));
@@ -3404,5 +3405,110 @@ void HighlightDialog::done(int r) {
   writeback();
   QDialog::done(r);
 }
+
+
+// ********************************************************
+// quanta highlighting
+// ********************************************************
+
+
+XmlHighlight::XmlHighlight(const char * name) : GenHighlight(name) {
+  iWildcards = "*.XML;*.xml;*.Xml;*.tag";
+  iMimetypes = "text/xml";
+}
+
+XmlHighlight::~XmlHighlight() {
+}
+
+void XmlHighlight::createItemData(ItemDataList &list) {
+  list.append(new ItemData(I18N_NOOP("Normal Text"),dsNormal));                                         //0
+  list.append(new ItemData(I18N_NOOP("Char"       ),dsChar,Qt::darkGreen,Qt::green,false,false));
+  list.append(new ItemData(I18N_NOOP("Comment"    ),dsComment));
+  list.append(new ItemData(I18N_NOOP("Tag Text"   ),dsOthers,Qt::black,Qt::white,true,false));
+  list.append(new ItemData(I18N_NOOP("Tag"        ),dsKeyword,Qt::darkMagenta,Qt::magenta,true,false));
+  list.append(new ItemData(I18N_NOOP("Tag Value"  ),dsDecVal,Qt::darkCyan,Qt::cyan,false,false));       //5
+  list.append(new ItemData("Tag Attribute",dsDecVal,Qt::darkBlue,Qt::green,false,false));     //6
+}
+
+void XmlHighlight::makeContextList() {
+  HlContext *c;
+
+  contextList[0] = c = new HlContext(0,0); // text
+    c->items.append(new HlRangeDetect (1,0,'&', ';'));
+    c->items.append(new HlStringDetect(2,1,"<!--"));
+    c->items.append(new HlStringDetect(2,2,"<COMMENT>"));
+    c->items.append(new HlCharDetect  (3,3,'<'));
+
+  contextList[1] = c = new HlContext(2,1); // <!-- -->
+    c->items.append(new HlStringDetect(2,0,"-->"));
+
+  contextList[2] = c = new HlContext(2,2); // <comment />
+    c->items.append(new HlStringDetect(2,0,"</COMMENT>"));
+
+  contextList[3] = c = new HlContext(3,3); // tag
+    c->items.append(new HlCharDetect(3,3,' '));
+
+    c->items.append(new HlXmlValue        (5,3));
+    c->items.append(new HlXmlTag          (4,3));
+    c->items.append(new HlXmlAttrib       (6,3));
+    c->items.append(new HlCharDetect       (3,0,'>'));
+}
+
+
+
+HlXmlTag::HlXmlTag(int attribute, int context)
+  : HlItem(attribute,context) {
+}
+
+const QChar *HlXmlTag::checkHgl(const QChar *s)
+{
+  while (*s == ' ' || *s == '\t' || *s == '/') s++;
+
+  while (*s != ' ' && *s != '\t' && *s != '>' && *s != '\0')
+    	s++;
+
+  return s;
+}
+
+
+HlXmlValue::HlXmlValue(int attribute, int context)
+  : HlItem(attribute,context) {
+}
+
+const QChar *HlXmlValue::checkHgl(const QChar *s) {
+  while (*s == ' ' || *s == '\t') s++;
+  if (*s == '\"') {
+    do {
+      s++;
+      if (*s == '\0') return 0L;
+    } while (*s != '\"');
+    s++;
+  } else {
+    while (*s != ' ' && *s != '\t' && *s != '>' && *s != '\0') s++;
+  }
+  return s;
+}
+
+HlXmlAttrib::HlXmlAttrib(int attribute, int context)
+  : HlItem(attribute,context) {
+}
+
+const QChar *HlXmlAttrib::checkHgl(const QChar *s)
+{
+  while (*s == ' ' || *s == '\t') s++;
+
+  while (*s != ' ' && *s != '\t' && *s != '>' && *s != '\0' && *s != '=' )
+  {
+  	s++;
+  }
+
+  return s;
+}
+
+
+// ********************************************************
+// quanta highlighting
+// ********************************************************
+
 
 #include "highlight.moc"
