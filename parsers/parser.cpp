@@ -510,6 +510,10 @@ Node *Parser::parse(Document *w, bool force)
   if (maxLines >= 0)
       m_node = parseArea(0, 0, maxLines, w->editIf->lineLength(maxLines) - 1, &lastNode);
   kdDebug(24000) << "Parsing time ("<< maxLines << " lines): " << t.elapsed() << " ms\n";
+  if (!m_node)
+  {
+    m_node = ParserCommon::createTextNode(w, 0L, maxLines, w->editIf->lineLength(maxLines), 0L);
+  }
   m_parsingNeeded = false;
 /*
  treeSize = 0;
