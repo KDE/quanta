@@ -451,7 +451,7 @@ void StructTreeView::slotMouseClicked(int button, QListViewItem *item, const QPo
 
     setSelected(item, true);
 
-    if ( button == Qt::RightButton )
+    if (button == Qt::RightButton)
     {
       if (dynamic_cast<StructTreeTag*>(item))
       {
@@ -490,7 +490,8 @@ void StructTreeView::slotMouseClicked(int button, QListViewItem *item, const QPo
       setSelected(item, true);
     }
   } else
-    emptyAreaMenu->popup(point);
+    if (button == Qt::RightButton)
+      emptyAreaMenu->popup(point);
 }
 
 
