@@ -45,3 +45,5 @@ void XsldbgWalkSpeedImpl::reject()
 } 
  
  
+
+#include "xsldbgwalkspeedimpl.moc"

@@ -4,9 +4,6 @@ lib_LTLIBRARIES = libkxsldbgpart.la
 
 ## INCLUDES were found outside kdevelop specific part
 
-
-LDFLAGS =    
-
 libkxsldbgpart_la_METASOURCES = AUTO
 
 libkxsldbgpart_la_SOURCES = xsldbgwalkspeedimpl.cpp xsldbgtemplatesimpl.cpp xsldbgtemplatelistitem.cpp xsldbgsourcesimpl.cpp xsldbgoutputview.cpp xsldbglocalvariablesimpl.cpp xsldbglocallistitem.cpp xsldbglistitem.cpp xsldbginspector.cpp xsldbgglobalvariablesimpl.cpp xsldbggloballistitem.cpp xsldbgentitiesimpl.cpp xsldbgdoc.cpp xsldbgdialogbase.cpp xsldbgdebugger.cpp xsldbgconfigimpl.cpp xsldbgcallstackimpl.cpp xsldbgbreakpointsimpl.cpp xsldbgbreakpointlistitem.cpp qxsldbgview.cpp qxsldbgdoc.cpp kxsldbg_part.cpp xsldbgwalkspeed.ui xsldbgtemplates.ui xsldbgsources.ui xsldbgmsgdialog.ui xsldbglocalvariables.ui xsldbgglobalvariables.ui xsldbgentities.ui xsldbgconfig.ui xsldbgcallstack.ui xsldbgbreakpoints.ui 
@@ -20,10 +17,9 @@ EXTRA_DIST = xsldbgbreakpoints.ui xsldbgcallstack.ui xsldbgconfig.ui xsldbgentit
 INCLUDES = $(XSLDBG_CFLAGS) -I.. $(all_includes)
 
 
-libkxsldbgpart_la_LDFLAGS = -module $(KDE_PLUGIN) libxsldbg/libxsldbg.la  libqtnotfier/libqtnotfier.la $(all_libraries)  $(LIBXSLT_LIBS) $(LIBXML_LIBS) 
-libkxsldbgpart_la_LIBADD  =  $(LIB_KPARTS) $(LIB_KFILE)
+libkxsldbgpart_la_LDFLAGS = -module $(KDE_PLUGIN) $(all_libraries)
+libkxsldbgpart_la_LIBADD  =  libxsldbg/libxsldbg.la libqtnotfier/libqtnotfier.la $(LIB_KPARTS) 
         
-
 
 # this is where the desktop file will go
 partdesktopdir   = $(kde_servicesdir)

@@ -79,3 +79,5 @@ void XsldbgLocalVariablesImpl::slotEvaluate()
  
  
  
+
+#include "xsldbglocalvariablesimpl.moc"

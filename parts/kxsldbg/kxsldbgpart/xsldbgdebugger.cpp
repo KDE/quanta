@@ -430,3 +430,5 @@ void  XsldbgDebugger::slotCdCmd(QString xPathExpression){
 		fakeInput(msg, TRUE);		 
 } 
 
+
+#include "xsldbgdebugger.moc"

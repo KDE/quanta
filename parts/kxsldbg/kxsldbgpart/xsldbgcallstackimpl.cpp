@@ -67,3 +67,5 @@ void XsldbgCallStackImpl::refresh()
 	debugger->fakeInput("where", true) ; 
 } 
  
+
+#include "xsldbgcallstackimpl.moc"

@@ -69,3 +69,5 @@ void XsldbgSourcesImpl::refresh()
  
  
  
+
+#include "xsldbgsourcesimpl.moc"

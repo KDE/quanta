@@ -73,3 +73,5 @@ void XsldbgGlobalVariablesImpl::slotEvaluate()
 } 
  
  
+
+#include "xsldbgglobalvariablesimpl.moc"

@@ -188,3 +188,5 @@ void XsldbgBreakpointsImpl::slotProcBreakpointItem(QString  fileName,
  
  
  
+
+#include "xsldbgbreakpointsimpl.moc"

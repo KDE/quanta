@@ -10,12 +10,8 @@ SUBDIRS = kxsldbgpart
 
 EXTRA_DIST = main.cpp xsldbgmain.c simpleio.c kxsldbg.cpp kxsldbg.h kxsldbg.desktop kxsldbg_shell.rc
 
-install-data-local:
-	$(mkinstalldirs) $(kde_appsdir)/Development/
-	$(INSTALL_DATA) $(srcdir)/kxsldbg.desktop $(kde_appsdir)/Development/kxsldbg.desktop
-
-uninstall-local:
-	-rm -f $(kde_appsdir)/Development/kxsldbg.desktop
+applnk_DATA = kxsldbg.desktop
+applnkdir = $(kde_appsdir)/Development
 
 xsldbg_SOURCES = \
 	xsldbgmain.c  \

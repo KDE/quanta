@@ -65,3 +65,5 @@ void XsldbgTemplatesImpl::refresh()
 } 
  
  
+
+#include "xsldbgtemplatesimpl.moc"

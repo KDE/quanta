@@ -75,3 +75,5 @@ void XsldbgEntitiesImpl::refresh()
  
  
  
+
+#include "xsldbgentitiesimpl.moc"

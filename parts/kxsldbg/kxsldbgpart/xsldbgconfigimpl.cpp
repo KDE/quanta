@@ -479,3 +479,5 @@ void XsldbgConfigImpl::slotCancel()
 { 
   hide(); 
 } 
+
+#include "xsldbgconfigimpl.moc"

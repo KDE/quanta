@@ -156,3 +156,5 @@ void KXsldbg::newDebuggerPosition(const QString &file, int lineNumber)
                              (char *) file.latin1() );
 
 }
+
+#include "kxsldbg.moc"

@@ -722,3 +722,5 @@ void KXsldbgPart::traceStopCmd_activated()
   walkStopCmd_activated();
 }
 
+
+#include "kxsldbg_part.moc"

@@ -217,3 +217,5 @@ void XsldbgInspector::refreshVariables()
     if (callStackWidget != 0L) 
       callStackWidget->refresh(); 
 } 
+
+#include "xsldbginspector.moc"

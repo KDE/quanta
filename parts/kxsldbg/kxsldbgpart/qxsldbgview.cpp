@@ -359,3 +359,5 @@ void QXsldbgView::focusOutEvent ( QFocusEvent *e)
   QScrollView::focusOutEvent(e);
   hideCursor = TRUE;
 }
+
+#include "qxsldbgview.moc"

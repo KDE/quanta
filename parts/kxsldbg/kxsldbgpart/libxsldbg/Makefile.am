@@ -4,11 +4,7 @@ lib_LTLIBRARIES = libxsldbg.la
 
 ## INCLUDES were found outside kdevelop specific part
 
-
-LDFLAGS =
-
-
-libxsldbg_la_LDFLAGS = -version-info @XSLDBG_VERSION_INFO@
+libxsldbg_la_LDFLAGS = -version-info $(XSLDBG_VERSION_INFO)
 
 libxsldbg_la_METASOURCES = AUTO
 
@@ -20,6 +16,5 @@ EXTRA_DIST = arraylist.c breakpoint.c breakpoint_cmds.c callstack.c debug.c debu
 ####### kdevelop will overwrite this part!!! (end)############
 
 INCLUDES = -I .. $(LIBXML_CFLAGS)  $(LIBXSLT_CFLAGS)  $(all_includes)
-CFLAGS = -DDOCS_PATH=\"$(DOCS_PATH)\"
+AM_CFLAGS = -DDOCS_PATH=\"$(DOCS_PATH)\"
 
-allmoc.cpp : xsldbgdebuggerbase.h qtnotifier2.h
