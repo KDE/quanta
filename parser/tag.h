@@ -83,7 +83,7 @@ public:
   TagAttr getAttribute(uint index) const {return attrs[index];}
   /** Remove the attribute number index */
   void deleteAttribute(uint index) {attrs.remove(attrs.at(index));}
-  /** Overwrite the attribute attrName's value with attrValue if existing, else creating the attribute */
+  /** Insert a new Attribute, even if it already exists. Prefer using editAttribute */
   void editAttribute(const QString& attrName, const QString& attrValue);
   /** Delete the attribute attrName */
   void deleteAttribute(const QString& attrName);

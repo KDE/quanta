@@ -39,6 +39,8 @@ Node::Node( Node *parent )
   insideSpecial = false;
 #ifdef BUILD_KAFKAPART
   _closingNode = 0L;
+  m_rootNode = 0L;
+  m_leafNode = 0L;
 #endif
   groupElementLists.clear();
 }
@@ -213,6 +215,21 @@ Node *Node::prevNE()
   return n;
 }
 
+Node *Node::firstChildNE()
+{
+  Node *n = child;
+  while(n && n->tag->type == Tag::Empty)
+    n = n->next;
+  return n;
+}
+
+Node *Node::lastChildNE()
+{
+  Node *n = lastChild();
+  while(n && n->tag->type == Tag::Empty)
+    n = n->prev;
+  return n;
+}
 
 #ifdef BUILD_KAFKAPART
 bool Node::hasForChild(Node *node)

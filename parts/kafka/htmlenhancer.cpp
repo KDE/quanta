@@ -48,30 +48,33 @@ HTMLEnhancer::~HTMLEnhancer()
 
 bool HTMLEnhancer::enhanceNode(Node *node, DOM::Node parentDNode, DOM::Node nextDNode)
 {
-	DOM::Node domNode, domNode2, attr;
+	DOM::Node domNode, domNode2, attr, *ptDomNode;
 	bool tbody, goUp;
 	Node *n;
 	QString script, filename, text;
 	KURL url, baseURL;
 
 	//FIRST update the src attr with the baseURL
-	domNode = node->_rootNode.attributes().getNamedItem("src");
-	if(!domNode.isNull())
+	if(node->rootNode())
 	{
-		baseURL.setPath(quantaApp->view()->write()->url().directory());
-		QuantaCommon::setUrl(url, domNode.nodeValue().string());
-		url = QExtFileInfo::toAbsolute(url, baseURL);
-		domNode.setNodeValue(url.url());
+		domNode = node->rootNode()->attributes().getNamedItem("src");
+		if(!domNode.isNull())
+		{
+			baseURL.setPath(quantaApp->view()->write()->url().directory());
+			QuantaCommon::setUrl(url, domNode.nodeValue().string());
+			url = QExtFileInfo::toAbsolute(url, baseURL);
+			domNode.setNodeValue(url.url());
 #ifdef HEAVY_DEBUG
-		kdDebug(25001)<< "HTMLTranslator::translateNode() - new src : " << url.url() << endl;
+			kdDebug(25001)<< "HTMLTranslator::translateNode() - new src : " << url.url() << endl;
 #endif
+		}
 	}
 
 	//THEN if it is the style element, add a DOM::Node::TEXT_NODE child gathering all the CSS
 	//by default, the parser parse it as a script, which can't be translated in DOM::Nodes.
-	if(node->tag->type == Tag::XmlTag && node->tag->name.lower() == "style")
+	if(node->rootNode() && node->tag->type == Tag::XmlTag && node->tag->name.lower() == "style")
 	{
-		domNode = node->_rootNode;
+		domNode = *node->rootNode();
 		n = node->child;
 		text = "";
 		goUp = false;
@@ -111,7 +114,7 @@ bool HTMLEnhancer::enhanceNode(Node *node, DOM::Node parentDNode, DOM::Node next
 	}
 
 	//THEN add a TBODY tag if necessary
-	if(!node->_rootNode.isNull() && node->_rootNode.nodeName().string().lower() == "table")
+	if(node->rootNode() && node->rootNode()->nodeName().string().lower() == "table")
 	{
 		tbody = false;
 		n = node->child;
@@ -125,39 +128,40 @@ bool HTMLEnhancer::enhanceNode(Node *node, DOM::Node parentDNode, DOM::Node next
 		{
 			domNode = kafkaCommon::createDomNode("TBODY", m_wkafkapart->defaultDTD(),
 				m_wkafkapart->getKafkaWidget()->htmlDocument());
-			if(!kafkaCommon::insertDomNode(domNode, node->_rootNode))
+			if(!kafkaCommon::insertDomNode(domNode, *node->rootNode()))
 				return false;
 			m_wkafkapart->connectDomNodeToQuantaNode(domNode, node);
-			node->_leafNode = domNode;
+			ptDomNode = new DOM::Node(domNode);
+			node->setLeafNode(ptDomNode);
 		}
 	}
 
 	//THEN add a red dotted border to FORM tags.
-	if(!node->_rootNode.isNull() && node->_rootNode.nodeName().string().lower() == "form")
+	if(node->rootNode() && node->rootNode()->nodeName().string().lower() == "form")
 	{
-		kafkaCommon::editDomNodeAttribute(node->_rootNode, node, "style", "border: 1px dotted red",
+		kafkaCommon::editDomNodeAttribute(*node->rootNode(), node, "style", "border: 1px dotted red",
 			m_wkafkapart->getKafkaWidget()->document());
 	}
 
 	//THEN add a blue dotted border to DL, OL, UL tags
-	if(!node->_rootNode.isNull())
+	if(node->rootNode())
 	{
-		text = node->_rootNode.nodeName().string().lower();
+		text = node->rootNode()->nodeName().string().lower();
 		if(text == "dl" || text == "ol" || text == "ul")
 		{
-			kafkaCommon::editDomNodeAttribute(node->_rootNode, node, "style", "border: 1px dotted blue",
+			kafkaCommon::editDomNodeAttribute(*node->rootNode(), node, "style", "border: 1px dotted blue",
 				m_wkafkapart->getKafkaWidget()->document());
 		}
 	}
 
 	//THEN add a minimal border for borderless tables
 	//TODO: make it configurable, and look if CSS hasn't defined a border first
-	if(!node->_rootNode.isNull() && node->_rootNode.nodeName().string().lower() == "table")
+	if(node->rootNode() && node->rootNode()->nodeName().string().lower() == "table")
 	{
-		attr = node->_rootNode.attributes().getNamedItem("border");
+		attr = node->rootNode()->attributes().getNamedItem("border");
 		if(attr.isNull() || (!attr.isNull() && attr.nodeValue().string() == "0"))
 		{
-			kafkaCommon::editDomNodeAttribute(node->_rootNode, node, "border", "1",
+			kafkaCommon::editDomNodeAttribute(*node->rootNode(), node, "border", "1",
 				m_wkafkapart->getKafkaWidget()->document());
 		}
 	}

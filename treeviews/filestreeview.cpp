@@ -553,6 +553,7 @@ void FilesTreeView::slotOpenInQuanta()
 }
 void FilesTreeView::slotPopulateFinished(KFileTreeViewItem *item)
 {
+  progressBar->setTotalSteps(1);
   progressBar->setValue(0);
   progressBar->setTextEnabled(false);
 

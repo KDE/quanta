@@ -44,7 +44,7 @@ htmlDocumentProperties::htmlDocumentProperties( QWidget* parent, const char* nam
  	bool modal, WFlags fl) :
 	htmlDocumentPropertiesui(parent, name, modal, fl), titleNode( 0L ), htmlNode( 0L ),
 	headNode( 0L ), linkNode( 0L ), bodyNode( 0L), doctypeNode( 0L ), CSSNode ( 0L ),
-	titleDirty(false), linkDirty(false)
+	xmlNode( 0L ), titleDirty(false), linkDirty(false)
 {
 	Node *node;
 	QString text, nodeName;
@@ -61,6 +61,19 @@ htmlDocumentProperties::htmlDocumentProperties( QWidget* parent, const char* nam
 	cssStylesheet->button()->setAutoDefault(false);
 	cancel->setAutoDefault(false);
 	ok->setAutoDefault(true);
+
+	//set the taborder and disable focus for some widgets.
+	currentDTD->setFocusPolicy(QWidget::NoFocus);
+	QWidget::setTabOrder(title, metaItems);
+	QWidget::setTabOrder(metaItems, metaItemsAdd);
+	QWidget::setTabOrder(metaItemsAdd, metaItemsDelete);
+	QWidget::setTabOrder(metaItemsDelete, cssRules);
+	QWidget::setTabOrder(cssRules, cssRulesAdd);
+	QWidget::setTabOrder(cssRulesAdd, cssRulesEdit);
+	QWidget::setTabOrder(cssRulesEdit, cssRulesDelete);
+	QWidget::setTabOrder(cssRulesDelete, cssStylesheet);
+	QWidget::setTabOrder(cssStylesheet, ok);
+	QWidget::setTabOrder(ok, cancel);
 
 	//set the current DTD name
 	currentDTD->setText(quantaApp->view()->write()->defaultDTD()->nickName);
@@ -547,11 +560,25 @@ void htmlDocumentProperties::addBasicNodes(NodeModifsSet *modifs)
 	if(headNode)
 		return;
 
+	if(!xmlNode && quantaApp->view()->write()->defaultDTD()->name.contains("XHTML", false))
+	{
+		//if the xml node is not present and the current DTD is a xhtml like, create it.
+		allTheNodes = baseNode;
+		baseNode = 0L;
+		xmlNode = kafkaCommon::createAndInsertNode("?xml", "", Tag::XmlTag,
+			quantaApp->view()->write(), 0L, 0L, 0L, modifs);
+		xmlNode->tag->editAttribute("version", "1.0");
+		xmlNode->tag->editAttribute("encoding", quantaApp->defaultEncoding());
+	}
+
 	if(!doctypeNode)
 	{
 		//if the !doctype node is not present, create it
-		allTheNodes = baseNode;
-		baseNode = 0L;
+		if(!quantaApp->view()->write()->defaultDTD()->name.contains("XHTML", false))
+		{
+			allTheNodes = baseNode;
+			baseNode = 0L;
+		}
 		doctypeNode = kafkaCommon::createDoctypeNode(quantaApp->view()->write());
 		kafkaCommon::insertNode(doctypeNode, 0L, 0L, modifs);
 		doctypeNode->child = allTheNodes;
@@ -569,6 +596,12 @@ void htmlDocumentProperties::addBasicNodes(NodeModifsSet *modifs)
 		doctypeNode->child = 0L;
 		htmlNode = kafkaCommon::createAndInsertNode("html", "", Tag::XmlTag,
 			quantaApp->view()->write(), doctypeNode, 0L, 0L, modifs);
+
+		//TODO: hardcoded
+		//If it is XML, it add the namespace.
+		if(quantaApp->view()->write()->defaultDTD()->name.contains("XHTML", false))
+			htmlNode->tag->editAttribute("xmlns", "http://www.w3.org/1999/xhtml");
+
 		htmlNode->child = allTheNodes;
 		while(allTheNodes)
 		{

@@ -80,6 +80,25 @@ void EditableTree::editorContentChanged()
 
 }
 
+void EditableTree::focusInEvent(QFocusEvent *)
+{
+  /**QListViewItem *it = currentItem();
+  if( dynamic_cast<AttributeItem*>(it))
+  {
+    static_cast<AttributeItem *>(it)->showEditor();
+    static_cast<AttributeItem *>(it)->lin->setFocus();
+  }*/
+}
+
+void EditableTree::focusOutEvent(QFocusEvent *)
+{
+  /**QListViewItem *it = currentItem();
+  if( dynamic_cast<AttributeItem*>(it))
+  {
+    static_cast<AttributeItem *>(it)->hideEditor();
+  }*/
+}
+
 DualEditableTree::DualEditableTree(QWidget *parent, const char *name)
 : EditableTree(parent, name)
 {
@@ -412,25 +431,30 @@ void TagAttributeTree::editorContentChanged()
       if(nodeModified)
       {
         //delete the corresponding DOM::Node.
-        domNode = m_node->_rootNode;
-        quantaApp->view()->getKafkaInterface()->disconnectDomNodeFromQuantaNode(domNode);
-        if(!domNode.isNull())
-          domNode.parentNode().removeChild(domNode);
-        if(m_node->_rootNode != m_node->_leafNode)
+        if(m_node->rootNode())
         {
-          domNode = m_node->_leafNode;
+          domNode = *m_node->rootNode();
           quantaApp->view()->getKafkaInterface()->disconnectDomNodeFromQuantaNode(domNode);
-          if(!domNode.isNull())
-            domNode.parentNode().removeChild(domNode);
+          domNode.parentNode().removeChild(domNode);
         }
-        m_node->_rootNode = 0L;
-        m_node->_leafNode = 0L;
+        if(m_node->leafNode() && m_node->rootNode() && *m_node->rootNode() != *m_node->leafNode())
+        {
+          domNode = *m_node->leafNode();
+          quantaApp->view()->getKafkaInterface()->disconnectDomNodeFromQuantaNode(domNode);
+          domNode.parentNode().removeChild(domNode);
+        }
+        if(m_node->rootNode())
+          delete m_node->rootNode();
+        m_node->setRootNode(0L);
+        if(m_node->leafNode())
+          delete m_node->leafNode();
+        m_node->setLeafNode(0L);
 
         quantaApp->view()->getKafkaInterface()->buildKafkaNodeFromNode(m_node, true);
-        if(!domNode.isNull() && !m_node->_leafNode.isNull())
+        if(!domNode.isNull() && m_node->leafNode())
         {
            while(!domNode.firstChild().isNull())
-             m_node->_leafNode.appendChild(domNode.firstChild());
+             m_node->leafNode()->appendChild(domNode.firstChild());
         }
 
         modifs->addNodeModif(modif);

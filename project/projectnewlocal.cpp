@@ -152,18 +152,19 @@ void ProjectNewLocal::slotSetFiles(bool)
   if ( checkInsert->isChecked() )
   {
     KURL::List files = projectFiles();
-    progressBar->setTotalSteps(files.count()-1);
+    progressBar->setTotalSteps(files.count() - 1);
     progressBar->setTextEnabled(true);
     for (uint i = 0; i < files.count(); i++)
     {
-       if ( !fileList.contains(files[i]) )
+       if ( !fileList.contains(files[i]))
        {
          fileList.append(files[i]);
-         QListViewItem *it = listView->addItem(files[i], KFileItem(KFileItem::Unknown , KFileItem::Unknown, KURL()));
+         QListViewItem *it = listView->addItem(files[i], KFileItem(KFileItem::Unknown, KFileItem::Unknown, KURL()));
          if (it)  it->setSelected(true);
          progressBar->setValue(i);
        }
     }
+    progressBar->setTotalSteps(1);
     progressBar->setValue(0);
     progressBar->setTextEnabled(false);
     listView->checkboxTree();
@@ -213,7 +214,7 @@ void ProjectNewLocal::slotAddFiles()
       }
     }
 
-    progressBar->setTotalSteps(list.count()-1);
+    progressBar->setTotalSteps(list.count() - 1);
     progressBar->setTextEnabled(true);
     for (uint i = 0; i < list.count(); i++)
     {
@@ -221,14 +222,14 @@ void ProjectNewLocal::slotAddFiles()
        if (!fileList.contains(list[i]))
        {
          fileList.append(list[i]);
-         QListViewItem *it = listView->addItem(list[i], KFileItem(KFileItem::Unknown , KFileItem::Unknown, KURL()));
+         QListViewItem *it = listView->addItem(list[i], KFileItem(KFileItem::Unknown, KFileItem::Unknown, KURL()));
          if (it)  it->setSelected(true);
          progressBar->setValue(i);
        }
     }
-   progressBar->setValue(0);
-   progressBar->setTextEnabled(false);
-
+    progressBar->setTotalSteps(1);
+    progressBar->setValue(0);
+    progressBar->setTextEnabled(false);
   }
 }
 
@@ -292,20 +293,21 @@ void ProjectNewLocal::slotInsertFilesAfterCopying(const KURL::List& a_urlList)
   {
     dirURL = *it;
    // dirURL.adjustPath(1);
-    KURL::List files = QExtFileInfo::allFilesRelative( dirURL, "*");
-    progressBar->setTotalSteps(files.count()-1);
+    KURL::List files = QExtFileInfo::allFilesRelative(dirURL, "*");
+    progressBar->setTotalSteps(files.count() - 1);
     progressBar->setTextEnabled(true);
     for (uint i = 0; i < files.count(); i++)
     {
-      if ( !fileList.contains(files[i]) )
+      if ( !fileList.contains(files[i]))
       {
         fileList.append(files[i]);
-        QListViewItem *it = listView->addItem(files[i], KFileItem(KFileItem::Unknown , KFileItem::Unknown, KURL()));
+        QListViewItem *it = listView->addItem(files[i], KFileItem(KFileItem::Unknown, KFileItem::Unknown, KURL()));
         if (it)  it->setSelected(true);
         progressBar->setValue(i);
       }
     }
     //listView->selectAll(false);
+    progressBar->setTotalSteps(1);
     progressBar->setValue(0);
     progressBar->setTextEnabled(false);
   }

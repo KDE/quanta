@@ -222,8 +222,12 @@ void KafkaDocument::unloadDocument()
 	node = baseNode;
 	while(node)
 	{
-		node->_rootNode = DOM::Node();
-		node->_leafNode = DOM::Node();
+		if(node->rootNode())
+			delete node->rootNode();
+		node->setRootNode(0L);
+		if(node->leafNode())
+			delete node->leafNode();
+		node->setLeafNode(0L);
 		node = node->nextSibling();
 	}
 	emit unloaded();
@@ -245,8 +249,12 @@ void KafkaDocument::reloadDocument()
 	node = baseNode;
 	while(node)
 	{
-		node->_rootNode = DOM::Node();
-		node->_leafNode = DOM::Node();
+		if(node->rootNode())
+			delete node->rootNode();
+		node->setRootNode(0L);
+		if(node->leafNode())
+			delete node->leafNode();
+		node->setLeafNode(0L);
 		node = node->nextSibling();
 	}
 	loadDocument(m_currentDoc);
@@ -387,7 +395,7 @@ bool KafkaDocument::buildKafkaNodeFromNode(Node *node, bool insertNode)
 	if(node)
 		kdDebug(25001)<< "KafkaDocument::buildKafkaNodeFromNode() " << endl;
 #endif
-	DOM::Node newNode, newNode2, attr, nextNode, parentNode;
+	DOM::Node newNode, newNode2, attr, nextNode, parentNode, *ptDomNode;
 	QString str, nodeValue;
 	Node *n;
 	int i;
@@ -508,25 +516,28 @@ bool KafkaDocument::buildKafkaNodeFromNode(Node *node, bool insertNode)
 
 		if(insertNode)
 		{
-			node->_rootNode = newNode;
+			ptDomNode = new DOM::Node(newNode);
+			node->setRootNode(ptDomNode);
 			n = node;
 			while(n->next)
 			{
 				n = n->next;
-				if(!n->_rootNode.isNull())
+				if(n->rootNode())
 				{
-					nextNode = n->_rootNode;
+					nextNode = *n->rootNode();
 						break;
 				}
 			}
-			if(node->parent && !node->parent->_leafNode.isNull())
-				parentNode = node->parent->_leafNode;
-			else if(node->parent && node->parent->_leafNode.isNull())
+			if(node->parent && node->parent->leafNode())
+				parentNode = *node->parent->leafNode();
+			else if(node->parent && !node->parent->leafNode())
 			{
 				//the parent tag was invalid and khtml refuse to insert it
 				//so impossible to inser the current node
 				disconnectDomNodeFromQuantaNode(newNode);
-				node->_rootNode = DOM::Node();
+				if(node->rootNode())
+					delete node->rootNode();
+				node->setRootNode(0L);
 				return false;
 			}
 			else
@@ -537,7 +548,9 @@ bool KafkaDocument::buildKafkaNodeFromNode(Node *node, bool insertNode)
 				if(!kafkaCommon::insertDomNode(newNode, parentNode))
 				{
 					disconnectDomNodeFromQuantaNode(newNode);
-					node->_rootNode = DOM::Node();
+					if(node->rootNode())
+						delete node->rootNode();
+					node->setRootNode(0L);
 					return false;
 				}
 			}
@@ -546,32 +559,37 @@ bool KafkaDocument::buildKafkaNodeFromNode(Node *node, bool insertNode)
 				if(!kafkaCommon::insertDomNode(newNode, parentNode, nextNode))
 				{
 					disconnectDomNodeFromQuantaNode(newNode);
-					node->_rootNode = DOM::Node();
+					if(node->rootNode())
+						delete node->rootNode();
+					node->setRootNode(0L);
 					return false;
 				}
 			}
-			node->_leafNode = newNode;
+			ptDomNode = new DOM::Node(newNode);
+			node->setLeafNode(ptDomNode);
 			mainEnhancer->enhanceNode(node, parentNode, nextNode);
 		}
 		else
 		{
-			node->_rootNode = newNode;
-			node->_leafNode = newNode;
+			ptDomNode = new DOM::Node(newNode);
+			node->setRootNode(ptDomNode);
+			ptDomNode = new DOM::Node(newNode);
+			node->setLeafNode(ptDomNode);
 		}
 	}
 	else
 	{
-		if(node->parent && !node->parent->_leafNode.isNull())
-			parentNode = node->parent->_leafNode;
+		if(node->parent && node->parent->leafNode())
+			parentNode = *node->parent->leafNode();
 		else
 			parentNode = body;
 		n = node;
 		while(n->next)
 		{
 			n = n->next;
-			if(!n->_rootNode.isNull())
+			if(n->rootNode())
 			{
-				nextNode = n->_rootNode;
+				nextNode = *n->rootNode();
 				break;
 			}
 		}
@@ -616,6 +634,7 @@ Node * KafkaDocument::buildNodeFromKafkaNode(DOM::Node _domNode, Node *_nodePare
 	kdDebug(25001)<< "Node* KafkaDocument::buildNodeFromKafkaNode() - DOM::Node 2xNode* int: " <<
 		beginOffset << " Node* int: " << endOffset << " NodeModifsSet " << endl;
 #endif
+	DOM::Node *ptDomNode;
 	Node *_node, *_nodeXmlEnd = 0L, *_emptyNode, *n = 0L;
 	Tag *_tag, *_tagEnd, *_tagEmptyNode;
 	NodeModif *modif;
@@ -628,8 +647,10 @@ Node * KafkaDocument::buildNodeFromKafkaNode(DOM::Node _domNode, Node *_nodePare
 
 	_node = new Node(_nodeParent);
 	connectDomNodeToQuantaNode(_domNode, _node);
-	_node->_rootNode = _domNode;
-	_node->_leafNode = _domNode;
+	ptDomNode = new DOM::Node(_domNode);
+	_node->setRootNode(ptDomNode);
+	ptDomNode = new DOM::Node(_domNode);
+	_node->setLeafNode(ptDomNode);
 
 	//split _beginNode
 	if(beginOffset != 0 && beginOffset != -1)
@@ -937,27 +958,42 @@ QString KafkaDocument::generateCodeFromNode(Node *_node, int bLine, int bCol, in
 		{
 			text += " ";
 			text += _node->tag->attribute(j);
-			text += "=";
-			if(_node->tag->isQuotedAttribute(j))
+
+			//doctype have only attrNames.
+			if(_node->tag->name.lower() != "!doctype")
 			{
-				text += qConfig.attrValueQuotation;
-				bCol++;
-			}
-			text += _node->tag->attributeValue(j);
-			if(_node->tag->isQuotedAttribute(j))
-			{
-				text += qConfig.attrValueQuotation;
-				bCol++;
+				text += "=";
+				if(_node->tag->isQuotedAttribute(j))
+				{
+					text += qConfig.attrValueQuotation;
+					bCol++;
+				}
+				text += _node->tag->attributeValue(j);
+				if(_node->tag->isQuotedAttribute(j))
+				{
+					text += qConfig.attrValueQuotation;
+					bCol++;
+				}
 			}
 			bCol += _node->tag->attribute(j).length() + _node->tag->attributeValue(j).length() + 2;
 		}
+
+		//only single Nodes except !doctype and ?xml nodes in XML tag style get the "/"
 		if ( _node->tag->dtd->singleTagStyle == "xml" &&
 			(_node->tag->single || (!qConfig.closeOptionalTags &&
-			QuantaCommon::isOptionalTag(_node->tag->dtd->name, _node->tag->name))))
+			QuantaCommon::isOptionalTag(_node->tag->dtd->name, _node->tag->name)))
+			 && _node->tag->name.lower() != "?xml" && _node->tag->name.lower() != "!doctype")
 		{
 			text += "/";
 			bCol++;
 		}
+		//?xml nodes get a "?"
+		if(_node->tag->name.lower() == "?xml")
+		{
+			text += "?";
+			bCol++;
+		}
+
 		text += ">";
 		eCol = bCol;
 		eLine = bLine;
@@ -1022,14 +1058,14 @@ void KafkaDocument::translateQuantaIntoKafkaCursorPosition(uint curLine, uint cu
 				//if we are at the end of a text which is recognized as the beginning of the next tag
 				node = node->previousSibling();
 				//we can go directly to the last offset
-				domNode = node->_rootNode;
-				if(domNode.isNull())
+				if(!node->rootNode())
 				{
 					offset = 0;
 					kdDebug(25001)<< "KafkaDocument::getKafkaCursorPosition() - ERROR DOM::Node not found"
 						<< endl;
 					return;
 				}
+				domNode = *node->rootNode();
 				offset = domNode.nodeValue().string().length();
 #ifdef LIGHT_DEBUG
 				kdDebug(25001)<< "KafkaDocument::getKafkaCursorPosition() - " <<
@@ -1054,10 +1090,10 @@ void KafkaDocument::translateQuantaIntoKafkaCursorPosition(uint curLine, uint cu
 		node->tag->type << ": pos " << bLine << ":" << bCol << " - " << eLine << ":" << eCol << endl;
 #endif
 
-	domNode = node->_rootNode;
 	offset = 0;
-	if(!domNode.isNull() && domNode.nodeType() == DOM::Node::TEXT_NODE)
+	if(node->rootNode() && node->rootNode()->nodeType() == DOM::Node::TEXT_NODE)
 	{
+		domNode = *node->rootNode();
 		currentLine = m_currentDoc->editIf->textLine(line);
 		if(line < eLine)
 			currentLine += " ";//remplace the \n
@@ -1095,7 +1131,7 @@ void KafkaDocument::translateQuantaIntoKafkaCursorPosition(uint curLine, uint cu
 			offset++;
 		}
 	}
-	else if(!domNode.isNull())
+	else if(node->rootNode())
 		offset = 0;//shoud we select?
 	else
 		m_kafkaPart->finishedLoading();//set the cursor in the first text
@@ -1374,10 +1410,10 @@ void KafkaDocument::coutLinkTree(Node *, int)
 		output += " (";
 		output += node->tag->type;
 		output += ") ";
-		domNode = node->_rootNode;
 		n = 0L;
-		if(!domNode.isNull())
+		if(node->rootNode())
 		{
+			domNode = *node->rootNode();
 			n = getNode(domNode);
 		}
 
@@ -1516,7 +1552,7 @@ void KafkaDocument::slotDomNodeAboutToBeRemoved(DOM::Node _domNode, bool deleteC
 #endif
 	Node *_node = 0L, *_nodeNext = 0L, *_tmpNode = 0L, *n = 0L;
 	Tag *_tag;
-	int i;
+	int i, bLine, bCol, eLine, eCol, bLine2, bCol2;
 	bool hasClosingNode = false, b;
 	NodeModifsSet *modifs;
 	NodeModif *modif;
@@ -1535,6 +1571,17 @@ void KafkaDocument::slotDomNodeAboutToBeRemoved(DOM::Node _domNode, bool deleteC
 	}
 
 	modifs = new NodeModifsSet();
+
+	//If we are deleting a PHP Node which is embedded into a tag e.g. <a <? echo boo; ?> >
+	//We must regenerate the <a> tag string.
+	if(_node->tag->type == Tag::ScriptTag && _node->parent)
+	{
+		_node->parent->tag->beginPos(bLine, bCol);
+		_node->parent->tag->endPos(eLine, eCol);
+		_node->tag->beginPos(bLine2, bCol2);
+		if(QuantaCommon::isBetween(bLine2, bCol2, bLine, bCol, eLine,eCol) == 0)
+			_node->parent->tag->cleanStrBuilt = false;
+	}
 
 	if(_node->prev)
 	{
@@ -1592,10 +1639,10 @@ void KafkaDocument::slotDomNodeAboutToBeRemoved(DOM::Node _domNode, bool deleteC
 		b = false;
 		while(_tmpNode)
 		{
-			if(!_tmpNode->_rootNode.isNull())
-				disconnectDomNodeFromQuantaNode(_tmpNode->_rootNode);
-			if(!_tmpNode->_leafNode.isNull())
-				disconnectDomNodeFromQuantaNode(_tmpNode->_leafNode);
+			if(_tmpNode->rootNode())
+				disconnectDomNodeFromQuantaNode(*_tmpNode->rootNode());
+			if(_tmpNode->leafNode())
+				disconnectDomNodeFromQuantaNode(*_tmpNode->leafNode());
 			_tmpNode = kafkaCommon::getNextNode(_tmpNode, b, _node);
 		}
 		//delete _node->child;
@@ -1624,10 +1671,10 @@ void KafkaDocument::slotDomNodeAboutToBeRemoved(DOM::Node _domNode, bool deleteC
 	if(_node == baseNode)
 		baseNode = _node->next;
 
-	if(!_node->_rootNode.isNull())
-		disconnectDomNodeFromQuantaNode(_node->_rootNode);
-	if(!_node->_leafNode.isNull())
-		disconnectDomNodeFromQuantaNode(_node->_leafNode);
+	if(_node->rootNode())
+		disconnectDomNodeFromQuantaNode(*_node->rootNode());
+	if(_node->leafNode())
+		disconnectDomNodeFromQuantaNode(*_node->leafNode());
 	_node->parent = 0L;
 	_nodeNext = _node->next;
 	_node->next = 0L;

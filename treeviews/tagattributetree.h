@@ -44,7 +44,8 @@ public:
 
 public slots:
   virtual void editorContentChanged();
-
+  virtual void focusInEvent(QFocusEvent *);
+  virtual void focusOutEvent(QFocusEvent *);
 
 protected:
   bool m_editable;

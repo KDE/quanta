@@ -230,7 +230,7 @@ void Project::insertFiles( KURL::List files )
   QDomElement  el;
   QDomNodeList nl = dom.elementsByTagName("item");
   quantaApp->slotStatusMsg( i18n("Adding files to the project...") );
-  progressBar->setTotalSteps(2*files.count() - 2);
+  progressBar->setTotalSteps(2 * files.count() - 2);
   progressBar->setValue(0);
   progressBar->setTextEnabled(true);
 
@@ -257,7 +257,7 @@ void Project::insertFiles( KURL::List files )
         {
           el = dom.createElement("item");
           el.setAttribute("url", QuantaCommon::qUrl(url));
-          dom.firstChild().firstChild().appendChild( el );   
+          dom.firstChild().firstChild().appendChild(el);   
           m_projectFiles.append(url);
           m_modified = true;
         }      
@@ -268,17 +268,18 @@ void Project::insertFiles( KURL::List files )
       if (!excludeRx.exactMatch(url.path()))
       {
         el.setAttribute("url", QuantaCommon::qUrl(url));
-        dom.firstChild().firstChild().appendChild( el );
+        dom.firstChild().firstChild().appendChild(el);
         m_projectFiles.append(url);
         m_modified = true;
       }
      }
      progressBar->advance(1);
   }
+  progressBar->setTotalSteps(1);
   progressBar->setValue(0);
   progressBar->setTextEnabled(false);
 
-  quantaApp->slotStatusMsg( i18n("Done."));
+  quantaApp->slotStatusMsg(i18n("Done."));
   emit newStatus();
 }
 
@@ -668,7 +669,7 @@ void Project::loadProjectXML()
 
   QDomNodeList nl = dom.firstChild().firstChild().childNodes();
   quantaApp->slotStatusMsg( i18n("Reading the project file...") );
-  progressBar->setTotalSteps(nl.count()-1);
+  progressBar->setTotalSteps(nl.count() - 1);
   progressBar->setValue(0);
   progressBar->setTextEnabled(true);
   QString path;
@@ -718,20 +719,21 @@ void Project::loadProjectXML()
         }
       } else
       {
-        el.parentNode().removeChild( el );
+        el.parentNode().removeChild(el);
         i--;
       }
     }
     progressBar->advance(1);
   }
+  progressBar->setTotalSteps(1);
   progressBar->setValue(0);
   progressBar->setTextEnabled(false);
 
-  quantaApp->slotStatusMsg( i18n("Done."));
+  quantaApp->slotStatusMsg(i18n("Done."));
 
   emit setBaseURL(baseURL);
-  emit setProjectName( projectName );
-  emit reloadTree( m_projectFiles, true);
+  emit setProjectName(projectName);
+  emit reloadTree(m_projectFiles, true);
 
   emit showTree();
   emit newStatus();
@@ -900,7 +902,7 @@ void Project::slotRenameFinished( KIO::Job * job)
        m_projectFiles.erase(it);
 
     int nlCount = nl.count();
-    quantaApp->slotStatusMsg( i18n("Renaming files...") );
+    quantaApp->slotStatusMsg(i18n("Renaming files..."));
     progressBar->setTotalSteps(nlCount - m_projectFiles.count() - 2);
     progressBar->setValue(0);
     progressBar->setTextEnabled(true);
@@ -933,6 +935,7 @@ void Project::slotRenameFinished( KIO::Job * job)
       }
       progressBar->advance(1);
     }
+    progressBar->setTotalSteps(1);
     progressBar->setValue(0);
     progressBar->setTextEnabled(false);
 

@@ -1295,7 +1295,8 @@ void undoRedo::reloadQuantaEditor(bool force, bool syncQuantaCursor)
 			node->tag->setStr(kafkaInterface->generateCodeFromNode(node, bLine, bCol, eLine, eCol));
 			node->tag->setTagPosition(bLine, bCol, eLine, eCol);
 			//kdDebug(25001)<< "POS1 " << bLine <<  " " <<  bCol << " " << eLine << " " << eCol << endl;
-			kafkaCommon::fitIndentationNodes(node, node->nextSibling());
+			goUp = false;
+			kafkaCommon::fitIndentationNodes(node, kafkaCommon::getNextNodeNE(node, goUp));
 			kafkaCommon::applyIndentation(node, 2, 0);
 			//int a, b, c, d;
 			//_node->tag->beginPos(a,b);

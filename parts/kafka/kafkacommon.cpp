@@ -168,7 +168,7 @@ void kafkaCommon::applyIndentation(Node *node, int nbOfSpaces, int nbOfTabs)
 	Node *parent, *nextNE, *realPrevNE, *realNextNE, *realPrev, *realNext;
 	int nonInlineDepth = 0, nonInlineDepth2 = 0, i;
 	bool b = false;
-	QString indentation1, indentation2, smallIndentation2;
+	QString indentation1, indentation2;
 
 	if(!node)
 		return;
@@ -189,19 +189,16 @@ void kafkaCommon::applyIndentation(Node *node, int nbOfSpaces, int nbOfTabs)
 		parent = parent->parent;
 	}
 
+	//compute the "non-inline depth" of the next non-empty Node.
 	if (nextNE)
 		parent = nextNE->parent;
 	else
 		parent = 0L;
 	while(parent)
 	{
-		parent = nextNE->parent;
-		while(parent)
-		{
-			if(getNodeDisplay(parent->tag->name) != kafkaCommon::inlineDisplay)
-				nonInlineDepth2++;
-			parent = parent->parent;
-		}
+		if(getNodeDisplay(parent->tag->name) != kafkaCommon::inlineDisplay)
+			nonInlineDepth2++;
+		parent = parent->parent;
 	}
 
 	parent = node->parent;
@@ -221,53 +218,34 @@ void kafkaCommon::applyIndentation(Node *node, int nbOfSpaces, int nbOfTabs)
 		for(i = 1; i <= nbOfTabs * nonInlineDepth2; i++)
 			indentation2 += "\t";
 
-		smallIndentation2 = "\n";
-		for(i = 1; i <= nbOfSpaces * (nonInlineDepth2 - 1); i++)
-			smallIndentation2 += " ";
-		for(i = 1; i <= nbOfTabs * (nonInlineDepth2 - 1); i++)
-			smallIndentation2 += "\t";
-		//kdDebug(25001)<< "CURNODE:" << node->tag->name << endl;
-
 		//test and add indentations if necessary
-		if(!realPrevNE || (realPrevNE && getNodeDisplay(node->tag->name, true) != kafkaCommon::inlineDisplay) ||
+		if(!realPrevNE || (realPrevNE && getNodeDisplay(node->tag->name, true) !=
+			kafkaCommon::inlineDisplay) ||
 			(realPrevNE && getNodeDisplay(node->tag->name, true) == kafkaCommon::inlineDisplay &&
 			getNodeDisplay(realPrevNE->tag->name, true) != kafkaCommon::inlineDisplay))
 		{
-			//kdDebug(25001)<< "BOO1" << endl;
 			if(node->tag->type == Tag::Text)
 			{
-				//kdDebug(25001)<< "BOO2" << endl;
-				//node->tag->setStr(indentation1 + node->tag->tagStr());
 				setTagStringAndFitsNodes(node, indentation1 + node->tag->tagStr());
 			}
 			else if(realPrev && realPrev->tag->type == Tag::Empty)
 			{
-				//kdDebug(25001)<< "BOO3" << endl;
-				//realPrev->tag->setStr(indentation1);
 				setTagStringAndFitsNodes(realPrev, indentation1);
 			}
 		}
 
-		if(!realNextNE || (realNextNE && getNodeDisplay(node->tag->name, true) != kafkaCommon::inlineDisplay) ||
+		if(!realNextNE || (realNextNE && getNodeDisplay(node->tag->name, true) !=
+			kafkaCommon::inlineDisplay) ||
 			(realNextNE && getNodeDisplay(node->tag->name, true) == kafkaCommon::inlineDisplay &&
 			getNodeDisplay(realNextNE->tag->name, true) != kafkaCommon::inlineDisplay))
 		{
-			//kdDebug(25001)<< "BOO4" << endl;
 			if(node->tag->type == Tag::Text)
 			{
-				//kdDebug(25001)<< "BOO5" << endl;
-				//node->tag->setStr(node->tag->tagStr() + indentation2);
 				setTagStringAndFitsNodes(node, node->tag->tagStr() + indentation2);
 			}
 			else if(realNext && realNext->tag->type == Tag::Empty)
 			{
-				//kdDebug(25001)<< "BOO6" << endl;
-				if(realNext->nextNE())
-					//realNext->tag->setStr(indentation2);
-					setTagStringAndFitsNodes(realNext, indentation2);
-				else
-					//realNext->tag->setStr(smallIndentation2);
-					setTagStringAndFitsNodes(realNext, smallIndentation2);
+				setTagStringAndFitsNodes(realNext, indentation2);
 			}
 		}
 	}
@@ -284,7 +262,7 @@ void kafkaCommon::fitIndentationNodes(Node *n1, Node *n2)
 	kdDebug(25001)<< "kafkaCommon::fitIndentationNodes()" << endl;
 #endif
 	Node *parent, *child, *node, *emptyNode = 0L, *emptyNode2 = 0L;
-	int nbEmptyNodes = 0;
+	int nbEmptyNodes = 0, n1Depth, n2Depth;
 	bool lastChild = false, firstChild = false;
 	//We don't want to log the modifications made to Empty Nodes /
 	//addition of whitespaces in Text Nodes, so let's create a dummy one.
@@ -293,34 +271,29 @@ void kafkaCommon::fitIndentationNodes(Node *n1, Node *n2)
 	if(!n1 || !n2 || n1 == n2 || n1->tag->type == Tag::Empty || n2->tag->type == Tag::Empty)
 		return;
 
-	if(n1->parent == n2 || n2->parent == n1)
+	n1Depth = nodeDepth(n1);
+	n2Depth = nodeDepth(n2);
+
+	if(n1Depth != n2Depth)
 	{
-		//kdDebug(25001)<< "BOO1" << endl;
-		if(n1->parent == n2)
+		if(n1Depth > n2Depth)
 		{
-			//kdDebug(25001)<< "BOO2" << endl;
 			child = n1;
 			parent = n2;
-			if(n2->firstChild() == n1)
-				firstChild = true;
-			if(n2->lastChild() == n1)
-				lastChild = true;
 		}
 		else
 		{
-			//kdDebug(25001)<< "BOO2-1" << endl;
 			child = n2;
 			parent = n1;
-			if(n1->firstChild() == n2)
-				firstChild = true;
-			if(n1->lastChild() == n2)
-				lastChild = true;
 		}
+		if(child->parent->firstChildNE() == child)
+			firstChild = true;
+		if(child->parent->lastChildNE() == child)
+			lastChild = true;
 
 		//counting the Empty Nodes and deleting them to have only one empty node.
 		if(firstChild)
 		{
-			//kdDebug(25001)<< "BOO3" << endl;
 			node = child->prev;
 			while(node)
 			{
@@ -342,7 +315,6 @@ void kafkaCommon::fitIndentationNodes(Node *n1, Node *n2)
 		nbEmptyNodes = 0;
 		if(lastChild)
 		{
-			//kdDebug(25001)<< "BOO4" << endl;
 			node = child->next;
 			while(node)
 			{
@@ -364,19 +336,18 @@ void kafkaCommon::fitIndentationNodes(Node *n1, Node *n2)
 		//adding/deleting a empty node if necessary
 		if(firstChild)
 		{
-			if(getNodeDisplay(parent->tag->name) != kafkaCommon::inlineDisplay)
+			if(getNodeDisplay(parent->tag->name, true) != kafkaCommon::inlineDisplay)
 			{
 				if(child->tag->type != Tag::Text && !emptyNode)
 				{
-				//kdDebug(25001)<< "BOO5" << endl;
-					createAndInsertNode("", "", Tag::Empty, n2->tag->write(), parent, child, child, modifs);
+					createAndInsertNode("", "", Tag::Empty, n2->tag->write(), child->parent,
+						child, child, modifs);
 				}
 			}
 			else
 			{
 				if(child->tag->type == Tag::Text && emptyNode)
 				{
-					//kdDebug(25001)<< "BOO6" << endl;
 					extractAndDeleteNode(emptyNode, modifs, false, false);
 				}
 			}
@@ -384,19 +355,18 @@ void kafkaCommon::fitIndentationNodes(Node *n1, Node *n2)
 
 		if(lastChild)
 		{
-			if(getNodeDisplay(parent->tag->name) != kafkaCommon::inlineDisplay)
+			if(getNodeDisplay(parent->tag->name, true) != kafkaCommon::inlineDisplay)
 			{
 				if(child->tag->type != Tag::Text && !emptyNode2)
 				{
-					//kdDebug(25001)<< "BOO7" << endl;
-					createAndInsertNode("", "", Tag::Empty, n2->tag->write(), parent, 0L, 0L, modifs);
+					createAndInsertNode("", "", Tag::Empty, n2->tag->write(), child->parent,
+						0L, 0L, modifs);
 				}
 			}
 			else
 			{
 				if(child->tag->type == Tag::Text && emptyNode2)
 				{
-					//kdDebug(25001)<< "BOO8" << endl;
 					extractAndDeleteNode(emptyNode2, modifs, false, false);
 				}
 			}
@@ -430,25 +400,23 @@ void kafkaCommon::fitIndentationNodes(Node *n1, Node *n2)
 
 		//adding/deleting a empty node if necessary
 		parent = n1->parent;
-		if(!parent || getNodeDisplay(parent->tag->name) != kafkaCommon::inlineDisplay)
+		if(!parent || getNodeDisplay(parent->tag->name, true) != kafkaCommon::inlineDisplay)
 		{
-			if(getNodeDisplay(n1->tag->name) != kafkaCommon::inlineDisplay)
+			if(getNodeDisplay(n1->tag->name, true) != kafkaCommon::inlineDisplay &&
+				n1->tag->type != Tag::Text)
 			{
 				if(n2->tag->type == Tag::Text && emptyNode)
 				{
-				//kdDebug(25001)<< "BOO9" << endl;
 					extractAndDeleteNode(emptyNode, modifs, false, false);
 				}
 				else if(n2->tag->type != Tag::Text && !emptyNode)
 				{
 					if(n1->getClosingNode() == n2)
 					{
-					//kdDebug(25001)<< "BOO10" << endl;
 						createAndInsertNode("", "", Tag::Empty, n2->tag->write(), n1, 0L, 0L, modifs);
 					}
 					else
 					{
-					//kdDebug(25001)<< "BOO11" << endl;
 						createAndInsertNode("", "", Tag::Empty, n2->tag->write(), parent, n2, n2, modifs);
 					}
 				}
@@ -456,22 +424,21 @@ void kafkaCommon::fitIndentationNodes(Node *n1, Node *n2)
 			else
 			{
 				if((n2->tag->type == Tag::Text ||
-					getNodeDisplay(n2->tag->name) == kafkaCommon::inlineDisplay) && emptyNode)
+					getNodeDisplay(n2->tag->name, true) == kafkaCommon::inlineDisplay) &&
+					emptyNode)
 				{
-				//kdDebug(25001)<< "BOO12" << endl;
 					extractAndDeleteNode(emptyNode, modifs, false, false);
 				}
 				else if(n2->tag->type != Tag::Text &&
-					getNodeDisplay(n2->tag->name) != kafkaCommon::inlineDisplay && !emptyNode)
+					getNodeDisplay(n2->tag->name, true) != kafkaCommon::inlineDisplay &&
+						!emptyNode)
 				{
 					if(n1->getClosingNode() == n2)
 					{
-					//kdDebug(25001)<< "BOO13" << endl;
 						createAndInsertNode("", "", Tag::Empty, n2->tag->write(), n1, 0L, 0L, modifs);
 					}
 					else
 					{
-					//kdDebug(25001)<< "BOO14" << endl;
 						createAndInsertNode("", "", Tag::Empty, n2->tag->write(), parent, n2, n2, modifs);
 					}
 				}
@@ -612,18 +579,48 @@ Node* kafkaCommon::createNode(const QString &nodeName, const QString &tagString,
 Node *kafkaCommon::createDoctypeNode(Document *doc)
 {
 	Node *node;
-	QString tagStr;
+	QString attrsString, attr;
+	QStringList attrsList;
+	QStringList::Iterator it, it2;
+	bool closingQuoteFound = false;
 
 	if(!doc)
 		return 0L;
 
-	//create the Node
-	tagStr = "<!DOCTYPE" + doc->defaultDTD()->doctypeStr + ">";
+	//Get the attrs of this node
+	attrsString = doc->defaultDTD()->doctypeStr;
+	attrsList = QStringList::split(" ", attrsString);
+	for(it = attrsList.begin(); it != attrsList.end(); ++it)
+	{
+		closingQuoteFound  = false;
+		if((*it).contains("\"") != 0)
+		{
+			it2 = it;
+			++it2;
+			attr = *it;
+			attrsList.remove(it);
+			it = it2;
+			while(it != attrsList.end())
+			{
+				if( (*it).contains("\"") != 0)
+					closingQuoteFound = true;
+				it2 = it;
+				attr += " " + *it;
+				++it2;
+				attrsList.remove(it);
+				it = it2;
+				if(closingQuoteFound)
+					break;
+			}
+			attrsList.insert(it, attr);
+		}
+	}
 
-	//As the Tag class was not made to handle value-less attrs, we won't load them.
-	//We'll simply set the Tag string.
-	node = createNode("!DOCTYPE", tagStr, Tag::XmlTag, doc);
-	node->tag->cleanStrBuilt = true;
+	//create the node and add its attributes. They have no value because !doctype attrs
+	//are special. generateCodeFromNode() will handle that.
+	node = createNode("!DOCTYPE", "", Tag::XmlTag, doc);
+	for(it = attrsList.begin(); it != attrsList.end(); ++it)
+		node->tag->editAttribute(*it, "");
 
 	return node;
 }
@@ -1754,6 +1751,23 @@ Node* kafkaCommon::getNodeFromSubLocation(QValueList<int> loc, int locOffset)
 	}
 
 	return getNodeFromLocation(list);
+}
+
+int kafkaCommon::nodeDepth(Node *node)
+{
+	int depth = 0;
+
+	if(!node)
+		return -1;
+
+	node = node->parent;
+	while(node)
+	{
+		depth++;
+		node = node->parent;
+	}
+
+	return depth;
 }
 
 bool kafkaCommon::insertDomNode(DOM::Node node, DOM::Node parent, DOM::Node nextSibling,

@@ -33,12 +33,12 @@ class DTDStruct;
 /**
  * For heavy debug including Node Tree in stdout printing, a DOM::Node tree widget.
  */
-//#define HEAVY_DEBUG
+#define HEAVY_DEBUG
 
 /**
  * Light debugging, including functions name in stdout printing.
  */
-//#define LIGHT_DEBUG
+#define LIGHT_DEBUG
 
 
 /** This class gathers all the basic functions needed by kafka. */
@@ -57,7 +57,7 @@ public:
 	 * available next sibling of a parent of node.
 	 * @param _node It is the Node from which we want the next Node.
 	 * @param goUp This boolean specifies if we should go up (torwards the root Node)
-	 * or down in the tree.
+	 * i.e. not looking at the childs of node, or make a standart iteration.
 	 * For a normal use, It must be set to false at the
 	 * beginning and then the same boolean must be used when using
 	 * several times this function.
@@ -67,7 +67,7 @@ public:
 	static Node* getNextNode(Node *node, bool &goUp, Node *endNode = 0L);
 
 	/**
-	 * It behaves essentially like the above function except that it won't return any empty Nodes.
+	 * It behaves essentially like the above function except that it will skip empty Nodes.
 	 */
 	static Node* getNextNodeNE(Node *node, bool &goUp, Node *endNode = 0L);
 
@@ -77,7 +77,7 @@ public:
 	static Node* getPrevNode(Node *node, Node *endNode = 0L);
 
 	/**
-	 * It behaves essentially like the above function except that it won't return any empty Nodes.
+	 * It behaves essentially like the above function except that it will skip empty Nodes.
 	 */
 	static Node* getPrevNodeNE(Node *node, Node *endNode = 0L);
 
@@ -104,7 +104,7 @@ public:
 
 	/**
 	 * This function takes care to modify the current node or/and the next sibling in order to have a nice
-	 * indentation. WARNING it doesn't create the necessary Nodes.
+	 * indentation. WARNING it doesn't create the necessary Nodes. Call fitIndentationNodes first.
 	 * @param node Apply nice indentation to this Node.
 	 * @param nbOfSpaces Specifies the number of spaces the minimal indentation must be.
 	 * @param nbOfTabs Specifies the number of tabs the minimal indentation must be.
@@ -448,6 +448,14 @@ public:
 	 * @return Returns a parent of the node pointed by loc.
 	 */
 	static Node* getNodeFromSubLocation(QValueList<int> loc, int locOffset);
+
+	/**
+	 * Get the node's depth in the tree.
+	 * @param node The node we want the depth.
+	 * @return Returns the depth of node. It is basically the number of parents of node.
+	 * It will return 0 if node has no parent Nodes, and -1 if node doesn't exists.
+	 */
+	static int nodeDepth(Node *node);
 
 
 	/** ----------------- DOM::NODE TREE MODIFICATIONS --------------------*/

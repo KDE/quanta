@@ -98,16 +98,25 @@ public:
  void setParent(Node *nodeParent) {parent = nodeParent;}
  //If Node is of type XmlTag, return the corresponding XmlTagEnd if available
  Node *getClosingNode();
- //Return the first next non-Empty Node
+ //Returns the first next non-Empty Node
  Node *nextNE();
- //Return the first prev non-Empty Node
+ //Returns the first prev non-Empty Node
  Node *prevNE();
+ //Returns the first non-Empty child
+ Node *firstChildNE();
+ //Returns the last non-Empty child
+ Node *lastChildNE();
 
  int size();
 
 #ifdef BUILD_KAFKAPART
- DOM::Node _rootNode;
- DOM::Node _leafNode;
+//set/get the corresponding DOM::Node of this node.
+// A node can correspont to several DOM::Node so we keep a pointer to the root Node
+// and the leaf Node.
+ DOM::Node* rootNode() {return m_rootNode;}
+ DOM::Node* leafNode() { return m_leafNode;}
+ void setRootNode(DOM::Node *rootNode) {m_rootNode = rootNode;}
+ void setLeafNode(DOM::Node *leafNode) {m_leafNode = leafNode;}
  Node* _closingNode;
 #endif
  QListViewItem *listItem; //points to the listview item which represents this node in the structure tree
@@ -129,6 +138,11 @@ public:
 //with more than one elements. The original group element lists are in
 // Parser::m_groups
  QPtrList<GroupElementList> groupElementLists;
+
+ #ifdef BUILD_KAFKAPART
+private:
+  DOM::Node *m_rootNode, *m_leafNode;
+#endif
 };
 
 #endif

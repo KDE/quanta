@@ -80,7 +80,7 @@ public:
     virtual void placeEditor(QWidget *w, int column = 1);
     virtual QString editorText(int column = 1);
 
-    //lin is the right editor, lin2 is the left one.
+    //I'm not sane... lin is the right editor, lin2 is the left one.
     QLineEdit *lin, *lin2;
 
 protected:

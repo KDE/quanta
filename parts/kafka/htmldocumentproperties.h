@@ -74,7 +74,7 @@ private:
 	void loadCSS(Node *node);
 
 	QPtrList<NodeLinkedViewItem> CSSList, metaList;
-	Node *titleNode, *htmlNode, *headNode, *linkNode, *bodyNode, *doctypeNode, *CSSNode;
+	Node *titleNode, *htmlNode, *headNode, *linkNode, *bodyNode, *doctypeNode, *CSSNode, *xmlNode;
 	bool titleDirty, linkDirty;
 };
 
