@@ -37,6 +37,8 @@
 #include "viewmanager.h"
 #include "resource.h"
 #include "quanta.h"
+#include "scripttreeview.h"
+#include "projecttreeview.h"
 #include "templatestreeview.h"
 #include "toolbartabwidget.h"
 #include "parser.h"
@@ -56,6 +58,11 @@ QuantaView* ViewManager::createView()
     connect(view, SIGNAL(title(const QString &)), quantaApp, SLOT(slotNewLineColumn()));
     connect(view, SIGNAL(dragInsert(QDropEvent*)), this, SIGNAL(dragInsert(QDropEvent *)));
     connect(view, SIGNAL(hidePreview()), quantaApp, SLOT(slotHidePreview()));
+
+  connect(view, SIGNAL(documentClosed()), ProjectTreeView::ref(), SLOT(slotDocumentClosed()));
+  connect(view, SIGNAL(documentClosed()), quantaApp->filesToolView(), SLOT(slotDocumentClosed()));
+  connect(view, SIGNAL(documentClosed()), TemplatesTreeView::ref(), SLOT(slotDocumentClosed()));
+  connect(view, SIGNAL(documentClosed()), quantaApp->scriptToolView(), SLOT(slotDocumentClosed()));
 
     return view;
 }

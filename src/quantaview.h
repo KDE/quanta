@@ -176,6 +176,8 @@ signals:
   void showProblemsView();
   void cursorPositionChanged();
   void title(const QString &);
+  /** emitted if this view contained an editor and it is closed */
+  void documentClosed();
 
 public:
   Document *oldWrite;

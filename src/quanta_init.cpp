@@ -265,14 +265,6 @@ void QuantaInit::initDocument()
   m_quanta->m_doc = new QuantaDoc(m_quanta);
   connect(m_quanta->m_doc, SIGNAL(newStatus()),
           m_quanta, SLOT(slotNewStatus()));
-  connect(m_quanta->m_doc, SIGNAL(documentClosed()),
-          pTab, SLOT(slotDocumentClosed()));
-  connect(m_quanta->m_doc, SIGNAL(documentClosed()),
-          m_quanta->fTab, SLOT(slotDocumentClosed()));
-  connect(m_quanta->m_doc, SIGNAL(documentClosed()),
-          tTab, SLOT(slotDocumentClosed()));
-  connect(m_quanta->m_doc, SIGNAL(documentClosed()),
-          scriptTab, SLOT(slotDocumentClosed()));
 }
 
 void QuantaInit::initProject()
@@ -388,8 +380,8 @@ void QuantaInit::initView()
   StructTreeView *sTab = StructTreeView::ref(m_quanta ,"Struct");
   addToolTreeView(sTab, i18n("Document Structure"), BarIcon("view_sidetree"), KDockWidget::DockLeft);
 
-  scriptTab = new ScriptTreeView(m_quanta, "Scripts");
-  addToolTreeView(scriptTab, i18n("Scripts"), BarIcon("run"), KDockWidget::DockLeft);
+  m_quanta->scriptTab = new ScriptTreeView(m_quanta, "Scripts");
+  addToolTreeView(m_quanta->scriptTab, i18n("Scripts"), BarIcon("run"), KDockWidget::DockLeft);
 
 
   m_quanta->m_htmlPart = new WHTMLPart(m_quanta, "rightHTML");
@@ -400,7 +392,7 @@ void QuantaInit::initView()
   m_quanta->slotNewPart(m_quanta->m_htmlPartDoc, false);
 
   m_quanta->m_messageOutput = new MessageOutput(m_quanta, "Messages");
-  m_quanta->m_messageOutputView = addToolTreeView(m_quanta->m_messageOutput, i18n("Messages"), BarIcon("run"), KDockWidget::DockBottom);
+  m_quanta->m_messageOutputView = addToolTreeView(m_quanta->m_messageOutput, i18n("Messages"), SmallIcon("openterm"), KDockWidget::DockBottom);
 
 
   m_quanta->m_messageOutput->setFocusPolicy(QWidget::NoFocus);
@@ -408,7 +400,7 @@ void QuantaInit::initView()
 
   m_quanta->m_problemOutput = new MessageOutput(m_quanta, "Problems");
   m_quanta->m_problemOutput->setFocusPolicy(QWidget::NoFocus);
-  m_quanta->m_problemsOutputView = addToolTreeView(m_quanta->m_problemOutput, i18n("Problems"), BarIcon("run"), KDockWidget::DockBottom);
+  m_quanta->m_problemsOutputView = addToolTreeView(m_quanta->m_problemOutput, i18n("Problems"), SmallIcon("info"), KDockWidget::DockBottom);
 
   connect(m_quanta->fTab, SIGNAL(openFile(const KURL &)),
           m_quanta, SLOT(slotFileOpen(const KURL &)));
@@ -445,13 +437,13 @@ void QuantaInit::initView()
   connect(tTab, SIGNAL(insertTag(const KURL &, DirInfo)),
           m_quanta, SLOT(slotInsertTag(const KURL &, DirInfo)));
 
-  connect(scriptTab, SIGNAL(openFile(const KURL &)),
+  connect(m_quanta->scriptTab, SIGNAL(openFile(const KURL &)),
           m_quanta, SLOT(slotFileOpen(const KURL &)));
-  connect(scriptTab, SIGNAL(openFileInPreview(const KURL &)),
+  connect(m_quanta->scriptTab, SIGNAL(openFileInPreview(const KURL &)),
           m_quanta, SLOT(slotOpenFileInPreview(const KURL &)));
-  connect(scriptTab, SIGNAL(showPreviewWidget(bool)),
+  connect(m_quanta->scriptTab, SIGNAL(showPreviewWidget(bool)),
           m_quanta, SLOT(slotShowPreviewWidget(bool)));
-  connect(scriptTab, SIGNAL(assignActionToScript(const KURL &, const QString&)),
+  connect(m_quanta->scriptTab, SIGNAL(assignActionToScript(const KURL &, const QString&)),
           m_quanta, SLOT(slotAssignActionToScript(const KURL &, const QString&)));
 
 

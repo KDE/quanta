@@ -560,6 +560,7 @@ void QuantaView::closeEvent(QCloseEvent *e)
   if (m_customWidget)
      m_customWidget->reparent(0L, 0, QPoint(), false);
   m_document = 0L;
+  emit documentClosed();
   e->accept();
 }
 

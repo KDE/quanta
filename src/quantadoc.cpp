@@ -175,6 +175,7 @@ void QuantaDoc::openDocument(const KURL& urlToOpen, const QString &a_encoding, b
   {
     quantaApp->processDTD();
     quantaApp->reparse(true);
+    emit newStatus();
   }
 }
 
@@ -194,7 +195,7 @@ void QuantaDoc::slotOpeningCompleted()
   quantaApp->reparse(true);
 
   quantaApp->debugger()->fileOpened(w->url());
-  quantaApp->slotNewStatus();
+  emit newStatus();
 #if KDE_IS_VERSION(3,1,90)
    disconnect(w->doc(), SIGNAL(completed()), this, SLOT(slotOpeningCompleted()));
 #endif

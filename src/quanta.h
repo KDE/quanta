@@ -74,6 +74,7 @@ class Node;
 class Parser;
 class DocTreeView;
 class FilesTreeView;
+class ScriptTreeView;
 class EnhancedTagAttributeTree;
 class Project;
 class GrepDialog;
@@ -183,6 +184,8 @@ public:
   /** Returns the baseURL of the document. */
   KURL baseURL();
 
+  ScriptTreeView *scriptToolView() {return scriptTab;}
+  FilesTreeView *filesToolView() {return fTab;}
 
 signals: // Signals
   /** signal used to hide the splash screen */
@@ -420,6 +423,7 @@ protected:
   /** Updates the structure and attribute treeview. */
   void updateTreeViews();
 
+  ScriptTreeView *scriptTab;
 
 private:
   FilesTreeView *fTab;

@@ -65,7 +65,6 @@ signals: // Signals
 
 private:
   QuantaApp * m_quanta;
-  ScriptTreeView *scriptTab;
   void initToolBars();
   void readOptions();
 

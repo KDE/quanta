@@ -52,7 +52,6 @@ public slots:
 signals:
   void newStatus();
   void hideSplash();
-  void documentClosed();
 
 private:
   KPopupMenu *attribMenu;
