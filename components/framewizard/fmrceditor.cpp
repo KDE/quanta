@@ -18,20 +18,17 @@
 #include "fmrceditor.h"
 #include <qspinbox.h>
 #include <qlabel.h>
-fmRCeditor::fmRCeditor() : fmRCeditorS()
-{
-}
-fmRCeditor::~fmRCeditor(){
+
+fmRCeditor::fmRCeditor() : fmRCeditorS(){}
+
+fmRCeditor::~fmRCeditor(){}
+
+int fmRCeditor::spinBoxValue() const {
+  return sb->value();
 }
 
-int fmRCeditor::getSpinBoxValue()
-{
-    return sb->value();
-}
-
-void fmRCeditor::setLabelText(QString s)
-{
-    tl->setText(s);
+void fmRCeditor::setLabelText(QString s){
+  tl->setText(s);
 }
 
 #include "fmrceditor.moc"

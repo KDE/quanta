@@ -18,7 +18,6 @@
 #ifndef AREAATTRIBUTEDB_H
 #define AREAATTRIBUTEDB_H
 #include <qrect.h>
-#include <qstring.h>
 #include <qmap.h>
 #include <qobject.h>
 /**this is
@@ -34,16 +33,14 @@ class areaAttribute : public QObject{
 
     public:
       areaAttribute();
-      areaAttribute(areaAttribute* a){ m_attributeMap = a->attributeMap(); }
       ~areaAttribute(){};
       void setAttribute(const QString& name, const QString& value){ m_attributeMap[name] = value; }
       void setAllAttributes(QMap<QString,QString> map){ m_attributeMap = map; }
       void resetAttributes();
       QRect geometry() const { return m_geometry; }
       QString src() const{ return m_attributeMap["src"]; }
-      QString attributeValue(QString l) { return attributeMap()[l];}
-      QMap<QString,QString> attributeMap() { return m_attributeMap; }
-
+      QString attributeValue(QString l) const { return attributeMap()[l];}
+      QMap<QString,QString> attributeMap() const { return m_attributeMap; }
 
     public slots:
       void setGeometry(QRect g) { m_geometry = g; }

@@ -17,49 +17,41 @@
 
 #include "selectablearea.h"
 #include <qframe.h>
-#include <kdebug.h>
-#include <kurl.h>
-#include <khtmlview.h>
+//#include <kdebug.h>
 #include "fwglobal.h"
 
-
-
 SelectableArea::SelectableArea(QWidget *parent, const char *name ) : KHTMLPart(parent,name) {
-    view()->setFrameShape(QFrame::NoFrame);
-    view()->setMinimumSize(QSize(1,1));
-    view()->installEventFilter(this);
+  view()->setFrameShape(QFrame::NoFrame);
+  view()->setMinimumSize(QSize(1,1));
+  view()->installEventFilter(this);
 }
 
-SelectableArea::~SelectableArea(){
-}
+SelectableArea::~SelectableArea(){}
 
-
-bool SelectableArea::eventFilter(QObject *o, QEvent *event)
-{
-   switch ( event->type() ) {
-      case QEvent::FocusIn : {
-                           view()->setFrameShape(QFrame::Box);
-                           view()->setFrameShadow ( QFrame::Plain );
-                           view()->setLineWidth(2);
-                           emit selected(m_idLabel);
-                           return true;
-                           };
-         break;
-      case QEvent::FocusOut : {
-                           view()->setFrameShape(QFrame::NoFrame);
-                           return true;
-                           }
-                           break;
-      case QEvent::Resize : {
-                             emit Resized( view()->geometry() );
-                             view()->hide();
-                             view()->show();
-                             return true;
-                             }
-                             break;
+bool SelectableArea::eventFilter(QObject *o, QEvent *event){
+  switch ( event->type() ) {
+    case QEvent::FocusIn : {
+                                             view()->setFrameShape(QFrame::Box);
+                                             view()->setFrameShadow ( QFrame::Plain );
+                                             view()->setLineWidth(2);
+                                             emit selected(m_idLabel);
+                                             return true;
+                                           };
+                                           break;
+    case QEvent::FocusOut : {
+                                               view()->setFrameShape(QFrame::NoFrame);
+                                               return true;
+                                             }
+                                             break;
+    case QEvent::Resize : {
+                                          emit Resized( view()->geometry() );
+                                          view()->hide();
+                                          view()->show();
+                                          return true;
+                                         }
+                                         break;
       default: return KHTMLPart::eventFilter( o, event );
-   }
-
+  }
 }
 
 #include "selectablearea.moc"

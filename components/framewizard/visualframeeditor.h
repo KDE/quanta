@@ -20,46 +20,47 @@
 
 #include "treenode.h"
 #include "selectablearea.h"
-#include <qmap.h>
 #include <qhbox.h>
-#include <qsplitter.h>
-#include <qptrlist.h>
-#include <qvaluelist.h>
+
 /**
   *@author gulmini luciano
   */
-
+     
+  
 class VisualFrameEditor : public QHBox  {
    Q_OBJECT
    private:
-      tree *t;
-      SelectableArea* firstInsertedSA;
-      QStringList existingStructure;
-
-      void build(QString,QString);
+      enum MarkupLanguage{XHTML,HTML};
+      tree *m_internalTree;
+      SelectableArea* m_firstInsertedSA;
+      QStringList m_existingStructure;
+      MarkupLanguage m_markupLanguage;
+      
+      void buildInternalTree(QString);
       void setGeometries(QString);
-      void draw2(treeNode *n, QWidget* parent);
+      void drawGUI(treeNode *n, QWidget* parent);
       QStringList convertAsterisks(QString,int);
+      
+      QString createFrameTag(areaAttribute *a);
+      QString formatStructure();
+      QString RCvalue(treeNode *n);
+      void createStructure(treeNode* n);
 
    public:
       VisualFrameEditor( QWidget * parent = 0, const char * name = 0);
       ~VisualFrameEditor();
       void draw() { repaint(); }
-      void loadExistingStructure(QStringList,QString);
-      QString framesetStructure(QString path){ return (t->framesetStructure(path)); }
-      void setNodeSplitMode(QString node,QString mode){ t->findNode(node)->setSplit(mode); }
-      void reset();//{ t->reinitialize(); }
+      void loadExistingStructure(QStringList);
+      QString framesetStructure(); 
       void removeNode(QString l);
-      void split(QString,int,QString);
-      void setAllAttributes(QString l,QMap<QString,QString> map) { (t->findAreaAttribute(l)->setAllAttributes(map)); }
-      QMap<QString,QString> getAttributeMap(QString l) { return t->findAreaAttribute(l)->attributeMap(); }
-      QString initSA() const { return t->root()->getLabel(); }
+      void split(QString,int,SplitType);
+      void setMarkupLanguage(const QString& s);
+      tree* internalTree() { return m_internalTree;}
 
    protected:
       virtual void paintEvent ( QPaintEvent * );
    signals:
       void areaSelected(QString);
-      void SAResized();
 };
 
 #endif

@@ -26,25 +26,17 @@
 
 class fmFPeditor : public fmFPeditorS  {
   Q_OBJECT
+  
   public: 
-	  fmFPeditor();
-	  ~fmFPeditor();
-  public slots:  
-    QString getIdValue();
-    QString getSrcValue();
-    QString getClassValue();
-    QString getLongdescValue();
-    QString getTitleValue();
-    QString getStyleValue();
-    QString getNameValue();
-    QString getNoresizeValue();
-    QString getScrollingValue(); 
-    QString getFrameborderValue(); 
-    QString getMarginwidthValue();
-    QString getMarginheightValue(); 
+    fmFPeditor();
+    ~fmFPeditor();  
     void setup(QMap<QString,QString>);
-    QMap<QString,QString> getAttributeMap();
-
+    QMap<QString,QString> attributeMap();
+    
+  private: 
+    QString noresizeValue();
+    QString scrollingValue(); 
+    QString frameborderValue();   
 };
 
 #endif

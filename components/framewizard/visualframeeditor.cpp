@@ -17,15 +17,12 @@
 
 #include "visualframeeditor.h"
 
-#include <qstringlist.h>
 #include <qobjectlist.h>
+#include <qsplitter.h>
+//#include <kdebug.h>
 
-#include <kdebug.h>
-#include <khtmlview.h>
-
-#include "fwglobal.h"
 #include "qextfileinfo.h"
-
+#include "project.h"
 
 static int cancelledPixels(int n){
    return (n-1)*6;
@@ -35,139 +32,125 @@ QMap<QString, QValueList< int > > SIZES;
 static int splitterIdNumber = 0;
 
 
-VisualFrameEditor::VisualFrameEditor(QWidget * parent, const char * name) : QHBox(parent,name)
-{
-  t = new tree;
-  t->root()->atts()->setGeometry(QRect(0,0,510,422));
-  firstInsertedSA = 0L;
+VisualFrameEditor::VisualFrameEditor(QWidget * parent, const char * name) : QHBox(parent,name){
+  m_internalTree = new tree;
+  m_internalTree->root()->atts()->setGeometry(QRect(0,0,510,422));
+  m_firstInsertedSA = 0L;
+  m_markupLanguage = HTML;
 }
 
 VisualFrameEditor::~VisualFrameEditor(){
-  delete t;
-  delete firstInsertedSA;
-  firstInsertedSA=0L;
+  delete m_internalTree;
+  delete m_firstInsertedSA;
 }
 
 void VisualFrameEditor::setGeometries(QString l){
-   int cP = cancelledPixels(t->findNode(l)->countChildren());
-   QRect newGeometry(t->findNode(l)->atts()->geometry());
-   QPtrList<treeNode> list=t->findNode(l)->getChildrenList();
-   QPtrListIterator<treeNode> it( list );
-   treeNode *node;
-  if(t->findNode(l)->getSplit() == "v"){
-      int dummyDimension=t->findNode(l)->atts()->geometry().width()-cP;
-      while ( (node = it.current()) != 0 ) {
-         ++it;
-         newGeometry.setWidth( int(dummyDimension/t->findNode(l)->countChildren()) );
-         t->findNode(node->getLabel())->atts()->setGeometry(newGeometry);
-         }
+  int cP = cancelledPixels(m_internalTree->findNode(l)->countChildren());
+  QRect newGeometry(m_internalTree->findNode(l)->atts()->geometry());
+  QPtrList<treeNode> list=m_internalTree->findNode(l)->childrenList();
+  QPtrListIterator<treeNode> it( list );
+  treeNode *node;
+  if(m_internalTree->findNode(l)->splitType() == VERTICAL){
+    int dummyDimension=m_internalTree->findNode(l)->atts()->geometry().width()-cP;
+    while ( (node = it.current()) != 0 ) {
+      ++it;
+      newGeometry.setWidth( int(dummyDimension/m_internalTree->findNode(l)->countChildren()) );
+      m_internalTree->findNode(node->label())->atts()->setGeometry(newGeometry);
     }
-    else
-   if(t->findNode(l)->getSplit() == "h"){
-      int dummyDimension=t->findNode(l)->atts()->geometry().height()-cP;
-      while ( (node = it.current()) != 0 ) {
-         ++it;
-         newGeometry.setHeight( int(dummyDimension/t->findNode(l)->countChildren()) );
-         t->findNode(node->getLabel())->atts()->setGeometry(newGeometry);
-      }
+  }
+  else
+  if(m_internalTree->findNode(l)->splitType() == HORIZONTAL){
+    int dummyDimension=m_internalTree->findNode(l)->atts()->geometry().height()-cP;
+    while ( (node = it.current()) != 0 ) {
+      ++it;
+      newGeometry.setHeight( int(dummyDimension/m_internalTree->findNode(l)->countChildren()) );
+      m_internalTree->findNode(node->label())->atts()->setGeometry(newGeometry);
     }
+  }
 }
 
-
-void VisualFrameEditor::split(QString l, int n, QString type) {
-   if(l==t->root()->getLabel()){
-    t->root()->setSplit(type);
-    for(int i = 1; i<=n; i++)
-      t->addChildNode(l);
+void VisualFrameEditor::split(QString l, int n, SplitType type) {
+  if(l==m_internalTree->root()->label()){
+    m_internalTree->root()->setSplitType(type);
+    for(int i = 1; i<=n; i++) m_internalTree->addChildNode(l);
     setGeometries(l);
+  }
+  else {
+    QString parentLabel=m_internalTree->findNode(l)->parentLabel();
+    SplitType parentSplit=m_internalTree->findNode(parentLabel)->splitType();
+    if( parentSplit != type ) {
+      m_internalTree->findNode(l)->setSplitType(type);
+      for(int i = 1; i<=n; i++) m_internalTree->addChildNode(l); 
+      setGeometries(l);
     }
-   else {
-         QString parentLabel=t->findNode(l)->getParentLabel();
-         QString parentSplit=t->findNode(parentLabel)->getSplit();
-         if(parentSplit!=type) {
-                                t->findNode(l)->setSplit(type);
-                                for(int i = 1; i<=n; i++)
-                                  t->addChildNode(l);
-                                setGeometries(l);
-         }
-         else {
-               for(int i = 1; i<=n; i++)
-                 t->insertChildNode(l);
-               t->findNode(parentLabel)->removeChildNode(l,true);
-               setGeometries(t->findNode(parentLabel)->getLabel());
-         }
-     }
+    else {
+      for(int i = 1; i<=n; i++) m_internalTree->insertChildNode(l);
+      m_internalTree->findNode(parentLabel)->removeChildNode(l,true);
+      setGeometries(m_internalTree->findNode(parentLabel)->label());
+    }
+  }
 }
 
-
-void VisualFrameEditor::loadExistingStructure(QStringList list,QString path){
-  if(!list.isEmpty())
-   {
-    existingStructure = list;
-    existingStructure.remove("</frameset>");//closure tag not needed
-    build(t->root()->getLabel(),path);
- }
+void VisualFrameEditor::loadExistingStructure(QStringList list){
+  if(!list.isEmpty()) {
+    m_existingStructure = list;
+    m_existingStructure.remove("</frameset>");//closure tag not needed
+    buildInternalTree(m_internalTree->root()->label());
+  }
 }
 
 QStringList VisualFrameEditor::convertAsterisks(QString s,int d){
-   QStringList list=QStringList::split(",",s);
-   int leftPercentage = 100;
-   int leftPercentageDistributedAmongAsterisks=0;
-   int weightAsteriskCounter=0;
+  QStringList list=QStringList::split(",",s);
+  int leftPercentage = 100;
+  int leftPercentageDistributedAmongAsterisks=0;
+  int weightAsteriskCounter=0;
    // This for is used to determine how much percentage must be assign to an asterisk
    // example cols="40%,5*,*"
    // then every asterisk must be assigned a percentage of 10% so the real percentage
    // notation is cols="40%,50%,10%"
-   for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it ) {
-
-        if(!(*it).contains("%") && !(*it).contains("*")){
-            leftPercentage -= ( (*it).toInt()*100 )/d;
-        }
-
-        if((*it).contains("%")){
-            leftPercentage -= (*it).section("%",0,0).toInt();
-        }
-
-        if((*it).contains("*")){
-             int weight= (*it).section("*",0,0).toInt();
-             if(weight==0) weight=1;
-             weightAsteriskCounter += weight;
-        }
+  for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it ) {
+    if(!(*it).contains("%") && !(*it).contains("*")) leftPercentage -= ( (*it).toInt()*100 )/d;
+    if((*it).contains("%")) leftPercentage -= (*it).section("%",0,0).toInt();
+    if((*it).contains("*")) {
+      int weight= (*it).section("*",0,0).toInt();
+      if( weight==0 ) weight=1;
+      weightAsteriskCounter += weight;
     }
-   if(weightAsteriskCounter!=0)
-     leftPercentageDistributedAmongAsterisks= proxInt(double(leftPercentage)/double(weightAsteriskCounter));
+  }
+  
+  if(weightAsteriskCounter!=0) leftPercentageDistributedAmongAsterisks = proxInt(double(leftPercentage)/double(weightAsteriskCounter));
    // this for changes asterisk notation in percentage notation
    // This part of the comment is for me:
    // NB: I valori delle percentuali generati da if .. else possono non corrispondere
    // a quelli effettivamente generati dal metodo build che opera un'altra normalizzazione.
    // In genere la differenza �dell' 1%
-   for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it ) {
-        if((*it).contains("*")){
-             int weight= (*it).section("*",0,0).toInt();
-             if(weight==0) weight=1;
-             int newPercentage = weight*leftPercentageDistributedAmongAsterisks;
-             (*it)=(QString::number(newPercentage,10)+"%");
-             leftPercentage-=newPercentage;
-               }
-        }
-    return list;
+  for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it ) {
+    if((*it).contains("*")){
+      int weight= (*it).section("*",0,0).toInt();
+      if(weight==0) weight=1;
+      int newPercentage = weight*leftPercentageDistributedAmongAsterisks;
+      (*it)=(QString::number(newPercentage,10)+"%");
+      leftPercentage-=newPercentage;
+    }
+  }
+  return list;
 }
 
-void VisualFrameEditor::build(QString parent, QString path){
-  QString line = existingStructure.first();
+void VisualFrameEditor::buildInternalTree(QString parent){
+  QString line = m_existingStructure.first();
   if(line.contains("<frameset")) {
     if(line.contains("rows")) {
-      split(parent,(line.contains(",")+1),"h");
+      split(parent,(line.contains(",")+1),HORIZONTAL);
       
       QRegExp pattern("rows\\s*=\"([\\s\\d%,\\*]*)\"");
       pattern.search(line);
 
-      QRect dummy=t->findNode(parent)->atts()->geometry();
+      QRect dummy=m_internalTree->findNode(parent)->atts()->geometry();
       QStringList percentages = convertAsterisks(pattern.cap(1),dummy.height());
 
       int dummyDimension=dummy.height()-cancelledPixels(line.contains(",")+1);
 
-      QPtrList<treeNode> list=t->findNode(parent)->getChildrenList();
+      QPtrList<treeNode> list=m_internalTree->findNode(parent)->childrenList();
       QPtrListIterator<treeNode> it( list );
       treeNode *node;
       while ( (node = it.current()) != 0 ) {
@@ -184,16 +167,16 @@ void VisualFrameEditor::build(QString parent, QString path){
     }
     else
     if(line.contains("cols")) {
-      split(parent,(line.contains(",")+1),"v");
+      split(parent,(line.contains(",")+1),VERTICAL);
       QRegExp pattern("cols\\s*=\"([\\s\\d%,\\*]*)\"");
       pattern.search(line);
 
-      QRect dummy=t->findNode(parent)->atts()->geometry();
+      QRect dummy=m_internalTree->findNode(parent)->atts()->geometry();
       QStringList percentages = convertAsterisks(pattern.cap(1),dummy.width());
 
       int dummyDimension=dummy.width()-cancelledPixels(line.contains(",")+1);
 
-      QPtrList<treeNode> list=t->findNode(parent)->getChildrenList();
+      QPtrList<treeNode> list=m_internalTree->findNode(parent)->childrenList();
       QPtrListIterator<treeNode> it( list );
       treeNode *node;
       while ( (node = it.current()) != 0 ) {
@@ -209,26 +192,23 @@ void VisualFrameEditor::build(QString parent, QString path){
       }
     }
 
-    existingStructure.pop_front();
-    t->findNode(parent)->firstChild();
-    while(t->findNode(parent)->currentChild()) {
-      build(t->findNode(parent)->currentChild()->getLabel(),path);
-      t->findNode(parent)->nextChild();
+    m_existingStructure.pop_front();
+    m_internalTree->findNode(parent)->firstChild();
+    while(m_internalTree->findNode(parent)->currentChild()) {
+      buildInternalTree(m_internalTree->findNode(parent)->currentChild()->label());
+      m_internalTree->findNode(parent)->nextChild();
     }
   }
   else {
     QMap<QString,QString> attributeMap;
-    if( line.contains( QRegExp("\\s+noresize\\s+") ) )
-      attributeMap["noresize"] = "noresize";
-    else
-      attributeMap["noresize"] = QString::null;
+    if( line.contains( QRegExp("\\s+noresize") ) ) attributeMap["noresize"] = "noresize";
+    else attributeMap["noresize"] = QString::null;
 
-    //QRegExp srcPattern("\\s+src\\s*=\\s*\"([\\w\\s\\./_\\+\\d]*)\"");  //search for files
     QRegExp srcPattern("\\s+src\\s*=\\s*\"([%-\\w\\s\\./_\\+\\d]*)\"");  //search for files
     if(srcPattern.search(line) !=-1 ) {      
       KURL pathToConvert, basePath;
       pathToConvert.setPath(srcPattern.cap(1));
-      basePath.setPath(path);
+      basePath.setPath( Project::ref()->projectBaseURL().path() );
       attributeMap["src"] = QExtFileInfo::toAbsolute( pathToConvert, basePath ).path();
       line.remove(srcPattern);//we don't need to operate on this anymore
     }
@@ -239,18 +219,17 @@ void VisualFrameEditor::build(QString parent, QString path){
     while ( pos >= 0 ) {
       pos = pattern.search( line, pos );
       attributeMap[ pattern.cap(1).section( QRegExp("=\\s*\"") ,0,0) ] = pattern.cap(1).section(QRegExp("=\\s*\""),1,1).remove("\"");
-      if ( pos >= 0 ) 
-        pos += pattern.matchedLength();
+      if ( pos >= 0 ) pos += pattern.matchedLength();
     }
-    t->findNode(parent)->setAtts(attributeMap);
-    existingStructure.pop_front();
+    m_internalTree->findNode(parent)->atts()->setAllAttributes(attributeMap);
+    m_existingStructure.pop_front();
   }
 }
 
 void VisualFrameEditor::paintEvent ( QPaintEvent * ){
   hide();
-  delete firstInsertedSA;
-  firstInsertedSA = 0L;
+  delete m_firstInsertedSA;
+  m_firstInsertedSA = 0L;
   
   QObjectList* splitterList = queryList("QSplitter");
   for (uint i = 0; i < splitterList->count(); i++) {
@@ -260,43 +239,43 @@ void VisualFrameEditor::paintEvent ( QPaintEvent * ){
 
   delete splitterList;
   splitterIdNumber = 0;
-  draw2( t->root(), this);
+  drawGUI( m_internalTree->root(), this);
   show();
 }
 
 void VisualFrameEditor::removeNode(QString l){
-  if( l == t->root()->getLabel() ) t->reinitialize();//trying to remove root node is equivalent to reinitialize
+  if( l == m_internalTree->root()->label() ) m_internalTree->reset();//trying to remove root node is equivalent to reinitialize
   else {
-    QString parentLabel=t->findNode(l)->getParentLabel();
-    if(t->findNode(parentLabel)->countChildren()>=3) 
-      t->removeChildNode(parentLabel,l,true);    
+    QString parentLabel=m_internalTree->findNode(l)->parentLabel();
+    if(m_internalTree->findNode(parentLabel)->countChildren()>=3) 
+      m_internalTree->removeChildNode(parentLabel,l,true);    
     else {
-      t->removeChildNode(parentLabel,l,true);
-      if( !t->findNode(parentLabel)->firstChild()->hasChildren() ){ //final nodes
-        areaAttribute *tmp = new areaAttribute(t->findNode(parentLabel)->firstChild()->atts());
-        t->findNode(parentLabel)->removeChildren();
-        t->findNode(parentLabel)->setAtts( tmp );
-        t->findNode(parentLabel)->setSplit("n");
+      m_internalTree->removeChildNode(parentLabel,l,true);
+      if( !m_internalTree->findNode(parentLabel)->firstChild()->hasChildren() ){ //final nodes
+        QMap<QString,QString> map = m_internalTree->findNode(parentLabel)->firstChild()->atts()->attributeMap();
+        m_internalTree->findNode(parentLabel)->removeChildren();
+        m_internalTree->findNode(parentLabel)->atts()->setAllAttributes( map ) ;
+        m_internalTree->findNode(parentLabel)->setSplitType(NONE);
       }
       else {
-        QPtrList<treeNode> list = t->findNode(parentLabel)->firstChild()->getChildrenList();
-        if( parentLabel != t->root()->getLabel() ) {
-          QString grandParentLabel = t->findNode(parentLabel)->getParentLabel();
-          t->removeChildNode( parentLabel,t->findNode(parentLabel)->firstChild()->getLabel(),false );
-          t->removeChildNode( grandParentLabel ,parentLabel, true );
+        QPtrList<treeNode> list = m_internalTree->findNode(parentLabel)->firstChild()->childrenList();
+        if( parentLabel != m_internalTree->root()->label() ) {
+          QString grandParentLabel = m_internalTree->findNode(parentLabel)->parentLabel();
+          m_internalTree->removeChildNode( parentLabel,m_internalTree->findNode(parentLabel)->firstChild()->label(),false );
+          m_internalTree->removeChildNode( grandParentLabel ,parentLabel, true );
           treeNode *node;
           for ( node = list.first(); node; node = list.next() ) {
             node->setParentLabel(grandParentLabel);
-            t->findNode(grandParentLabel)->addChildNode(node);
+            m_internalTree->findNode(grandParentLabel)->addChildNode(node);
           }
         }
         else {
-          t->findNode(parentLabel)->setSplit( t->findNode(parentLabel)->firstChild()->getSplit() );
-          t->removeChildNode( parentLabel,t->findNode(parentLabel)->firstChild()->getLabel(),false );
+          m_internalTree->findNode(parentLabel)->setSplitType( m_internalTree->findNode(parentLabel)->firstChild()->splitType() );
+          m_internalTree->removeChildNode( parentLabel,m_internalTree->findNode(parentLabel)->firstChild()->label(),false );
           treeNode *node;
           for ( node = list.first(); node; node = list.next() ) {
             node->setParentLabel(parentLabel);
-            t->findNode(parentLabel)->addChildNode(node);
+            m_internalTree->findNode(parentLabel)->addChildNode(node);
           }
         }
       }
@@ -304,36 +283,167 @@ void VisualFrameEditor::removeNode(QString l){
   }
 }
 
-void VisualFrameEditor::draw2(treeNode *n, QWidget* parent){
+void VisualFrameEditor::drawGUI(treeNode *n, QWidget* parent){
   if(n->hasChildren()) {
     QString splitterName("splitter"+QString::number(++splitterIdNumber,10));
     QSplitter *splitter = new QSplitter(parent,splitterName);
     if(SIZES.contains(splitterName)) splitter->setSizes( SIZES[splitterName] );
-    if(n->getSplit() == "v") splitter->setOrientation(QSplitter::Horizontal);
-    if(n->getSplit() == "h") splitter->setOrientation(QSplitter::Vertical);
+    switch( n->splitType() ){
+      case VERTICAL : splitter->setOrientation(QSplitter::Horizontal);break;
+      case HORIZONTAL : splitter->setOrientation(QSplitter::Vertical);break;
+      default:break;
+    }
     n->firstChild();
     while(n->currentChild()) {
-      draw2(n->currentChild(),splitter);
+      drawGUI(n->currentChild(),splitter);
       n->nextChild();
     }
   }
   else {
-    SelectableArea *sa=new SelectableArea(parent,n->getLabel());
-    if(parent->isA("QSplitter"))
-      dynamic_cast<QSplitter *>(parent)->setResizeMode(sa->view(),QSplitter::KeepSize );
+    SelectableArea *sa=new SelectableArea(parent,n->label());
+    if(parent->isA("QSplitter")) dynamic_cast<QSplitter *>(parent)->setResizeMode(sa->view(),QSplitter::KeepSize );
     else
-      if(!firstInsertedSA)  
-        firstInsertedSA = sa;
+    if(!m_firstInsertedSA) m_firstInsertedSA = sa;
     sa->view()->setGeometry(n->atts()->geometry());
-    sa->setIdLabel( n->getLabel() );
+    sa->setIdLabel( n->label() );
     sa->setSource( n->atts()->src() );
-    QObject::connect(sa, SIGNAL(Resized(QRect)), t->findNode(sa->idLabel())->atts(), SLOT(setGeometry(QRect)));
-    QObject::connect(sa, SIGNAL(selected(QString)),this, SIGNAL(areaSelected(QString)));
+    connect(sa, SIGNAL(Resized(QRect)), m_internalTree->findNode(sa->idLabel())->atts(), SLOT(setGeometry(QRect)));
+    connect(sa, SIGNAL(selected(QString)),this, SIGNAL(areaSelected(QString)));
   }
 }
 
-void VisualFrameEditor::reset(){
-  t->reinitialize();
+QString VisualFrameEditor::createFrameTag(areaAttribute *a){
+  QString Src(a->attributeValue("src")),
+               Longdesc(a->attributeValue("longdesc")),
+               Name(a->attributeValue("name")),
+               Scrolling(a->attributeValue("scrolling")),
+               Id(a->attributeValue("id")),
+               Style(a->attributeValue("style")),
+               Title(a->attributeValue("title")),
+               Class(a->attributeValue("class")),
+               Noresize(a->attributeValue("noresize")),
+               Frameborder(a->attributeValue("frameborder")),
+               Marginwidth(a->attributeValue("marginwidth")),
+               Marginheight(a->attributeValue("marginheight"));
+
+  QString tagBegin="<frame",
+          tagEnd,
+          tagMiddle;     
+
+  if( !Src.isEmpty() ) {
+    KURL base;
+    base.setPath( Project::ref()->projectBaseURL().path() );
+    KURL u;
+    u.setPath(Src);
+    tagMiddle+= (" src=\"" + QExtFileInfo::toRelative( u, base).path() + "\"");
+  }       
+      
+  if( !Longdesc.isEmpty() )
+      tagMiddle+= (" longdesc=\""+Longdesc+"\"");
+  //if( !Name.isEmpty() )
+  tagMiddle+=(" name=\""+Name+"\"");
+  if( Scrolling!="auto" && !Scrolling.isEmpty() )    tagMiddle+=(" scrolling=\""+Scrolling+"\"");
+  if( !Id.isEmpty() )        tagMiddle+=(" id=\""+Id+"\"");
+  if( !Style.isEmpty() )     tagMiddle+=(" style=\""+Style+"\"");
+  if( !Title.isEmpty() )     tagMiddle+=(" title=\""+Title+"\"");
+  if( !Class.isEmpty() )     tagMiddle+=(" class=\""+Class+"\"");
+  if( Frameborder=="0" )     tagMiddle+=(" frameborder=\""+Frameborder+"\"");
+  if( Marginwidth!="0" && !Marginwidth.isEmpty() )     tagMiddle+=(" marginwidth=\""+Marginwidth+"\"");
+  if( Marginheight!="0" && !Marginheight.isEmpty())    tagMiddle+=(" marginheight=\""+Marginheight+"\"");
+  
+  switch(m_markupLanguage){
+    case HTML:  if( Noresize=="noresize" ) tagMiddle+=(" "+Noresize);
+                          tagEnd=">\n";break;
+    case XHTML:  if( Noresize=="noresize" ) tagMiddle+=(" noresize=\""+Noresize+"\"");
+                            tagEnd="/>\n";break;
+    default:;
+  }   
+
+  return tagBegin+tagMiddle+tagEnd;
+}
+
+QString VisualFrameEditor::RCvalue(treeNode *n) {
+  QString s;
+  QMap<int,int> dimMap;
+  double percentage = 100.0;
+  int remainingPercentage=100;
+  int child_number = n->countChildren();
+  int lostPixels = (6*(child_number-1)); // 6 pixels are lost every time a splitter is drawn
+
+  switch( n->splitType() ) {
+    case VERTICAL: percentage/=n->atts()->geometry().width();
+                                 for(int i=1;i<=child_number;++i) dimMap[i]=n->childrenList().at(i-1)->atts()->geometry().width();
+                                 break;
+    case HORIZONTAL: percentage/=n->atts()->geometry().height();
+                                      for(int i=1;i<=child_number;++i) dimMap[i]=n->childrenList().at(i-1)->atts()->geometry().height();
+                                      break;
+    default:break;
+  }
+  
+  while( lostPixels > 0) {
+    for(int i=1;i<=child_number;++i){
+      dimMap[i]+=1;
+      lostPixels--;
+      if(lostPixels == 0) break;
+    }
+  }
+      
+  for(int i=1;i<=child_number-1;++i) {
+    remainingPercentage-=proxInt(dimMap[i]*percentage);
+    s+=QString::number(proxInt(dimMap[i]*percentage),10);
+    s+="%,";
+  }
+
+  return s+=(QString::number(remainingPercentage,10)+"%");
+}
+
+static QStringList nonFormattedStructure;
+
+void VisualFrameEditor::createStructure(treeNode* n){
+  if(n==m_internalTree->root() && !n->hasChildren()) return;
+  if(n->hasChildren()) {
+    switch( n->splitType() ){
+      case VERTICAL: nonFormattedStructure.append("<frameset cols=\""+RCvalue(n)+"\">\n");break;
+      case HORIZONTAL: nonFormattedStructure.append("<frameset rows=\""+RCvalue(n)+"\">\n");break;
+      default:break;
+    }
+    n->firstChild();
+    while(n->currentChild()){
+      createStructure(n->currentChild());
+      n->nextChild();
+    }
+    nonFormattedStructure.append("</frameset>\n");
+  }
+  else nonFormattedStructure.append(createFrameTag(n->atts()));
+}
+
+QString VisualFrameEditor::formatStructure(){
+  QString s;
+  int tabNum = 0;
+  for ( QStringList::Iterator it = nonFormattedStructure.begin(); it != nonFormattedStructure.end(); ++it ) {
+    if((*it).contains("<frameset")) tabNum++;
+    else 
+    if((*it).contains("</frameset>")) {
+      tabNum--;
+      s.truncate(s.length()-1);
+    }
+    s+=*it;
+    for(int i=1;i<=tabNum;i++) s+='\t';
+  }
+  nonFormattedStructure.clear();
+  return s;
+}
+
+QString VisualFrameEditor::framesetStructure() { 
+  m_internalTree->refreshGeometries(m_internalTree->root());
+  createStructure(m_internalTree->root());
+  return formatStructure();
+}
+
+void VisualFrameEditor::setMarkupLanguage(const QString& s){
+  if( s.contains("xhtml",false)!=0 ) m_markupLanguage = XHTML;
+  else
+  if( s.contains("html",false)!=0 ) m_markupLanguage = HTML;  
 }
 
 #include "visualframeeditor.moc"

@@ -29,8 +29,8 @@ class fmRCeditor : public fmRCeditorS  {
   public: 
     fmRCeditor();
     ~fmRCeditor();
-  public slots:
-    int getSpinBoxValue();
+  public:
+    int spinBoxValue() const;
     void setLabelText(QString);
 
 };

@@ -7,7 +7,7 @@
     <property name="geometry">
         <rect>
             <x>0</x>
-            <y>1</y>
+            <y>0</y>
             <width>300</width>
             <height>150</height>
         </rect>
@@ -148,12 +148,5 @@
         <slot>reject()</slot>
     </connection>
 </connections>
-<includes>
-    <include location="global" impldecl="in declaration">qstring.h</include>
-</includes>
-<slots>
-    <slot returnType="int">getSpinBoxValue()</slot>
-    <slot>setLabelText( QString s )</slot>
-</slots>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

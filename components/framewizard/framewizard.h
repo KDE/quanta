@@ -18,8 +18,6 @@
 #ifndef FRAMEWIZARD_H
 #define FRAMEWIZARD_H
 
-
-#include <qwidget.h>
 #include <framewizards.h>
 #include "visualframeeditor.h"
 class QStringList;
@@ -29,30 +27,34 @@ class FrameWizard : public FrameWizardS
 {
   Q_OBJECT
   private:
-    bool saved; // if saved = false the the file containing the frameset structure
-                // has been not saved on so you cannot edit the frame
-          // This is for me: se non si salva il file no si riesce a conoscere il
-          // percorso relativo dei file da mettere nell'attributo src
-    QString framesetFileCurrentPath;
+    bool m_hasSelected,
+            m_saved; // if saved = false the the file containing the frameset structure
+                            // has been not saved and so you cannot edit the frame
+                            // This is for me: se non si salva il file no si riesce a conoscere il
+                            // percorso relativo dei file da mettere nell'attributo src
+    QString m_currSA;
 
   public:
-    /** construtor */
     FrameWizard( QWidget* parent=0, const char *name=0);
-    /** destructor */
     ~FrameWizard();
-  public slots:
+    
+  private slots:  
+    void showFrameEditorDlg(); 
+    void reset();
+    void remove();
     void catchSelectedArea( QString id );
     void split();
     void draw();
-    void showFrameEditorDlg();
-    void reset();
-    void remove();
-    void loadExistingFramesetStructure(QStringList list){ vfe->loadExistingStructure(list,framesetFileCurrentPath);}
-    void setFramesetFileCurrentPath(const QString& p){ framesetFileCurrentPath = p; }
-    QString getFramesetFileCurrentPath() { return framesetFileCurrentPath; }
-    QString generateFramesetStructure(){ return vfe->framesetStructure(framesetFileCurrentPath); }
     int showRCeditorDlg( QString );
-    void setSaved( bool b){ saved=b; }
+    
+  public :   
+    void loadExistingFramesetStructure(QStringList list){ vfe->loadExistingStructure(list);}
+    QString generateFramesetStructure(){ return vfe->framesetStructure(); }
+    void setSaved( bool b){ m_saved=b; }
+    void setMarkupLanguage(const QString& s){ vfe->setMarkupLanguage(s);}
+    
+  signals:
+    void launchDraw();  
 
 };
 
