@@ -597,13 +597,24 @@ void QuantaApp::slotHidePreview()
 {
   KToggleAction *ta = (KToggleAction *) actionCollection()->action( "show_preview" );
   if (ta->isChecked())
-      ta->setChecked(false);
+  {
+    ta->setChecked(false);
+    int id = 0;
+    if (!previousWidgetList.empty())
+    {
+      id = previousWidgetList.last();
+      previousWidgetList.pop_back();
+    }
+    QWidgetStack *s = widgetStackOfHtmlPart();
+    s->raiseWidget(id);
+  }
 }
 
 void QuantaApp::slotOpenFileInPreview(const KURL& a_url)
 {
   if ( qConfig.previewPosition == "Disabled" )
      return;
+  slotActivatePreview();
   WHTMLPart *part = htmlPart();
   QWidgetStack *s = widgetStackOfHtmlPart();
   if ( !s || !part  )

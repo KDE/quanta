@@ -204,6 +204,7 @@ void ScriptTreeView::slotEditInQuanta()
   if (f)
   {
     KURL urlToOpen = currentURL();
+    emit hidePreview();
     emit openFile(urlToOpen, quantaApp->defaultEncoding());
   }
 }
