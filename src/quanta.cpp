@@ -3402,7 +3402,7 @@ void QuantaApp::slotDownloadDTEP()
 {
     if (!m_newDTEPStuff)
       m_newDTEPStuff = new QNewDTEPStuff("quanta/dtep", this);
-    m_newDTEPStuff->download();
+    m_newDTEPStuff->downloadResource();
 }
 
 void QuantaApp::slotUploadDTEP()
@@ -3413,7 +3413,7 @@ void QuantaApp::slotDownloadToolbar()
 {
     if (!m_newToolbarStuff)
       m_newToolbarStuff = new QNewToolbarStuff("quanta/toolbar", this);
-    m_newToolbarStuff->download();
+    m_newToolbarStuff->downloadResource();
 }
 
 void QuantaApp::slotSmartTagInsertion()
@@ -3436,14 +3436,14 @@ void QuantaApp::slotDownloadTemplate()
 {
     if (!m_newTemplateStuff)
       m_newTemplateStuff = new QNewTemplateStuff("quanta/template", this);
-    m_newTemplateStuff->download();
+    m_newTemplateStuff->downloadResource();
 }
 
 void QuantaApp::slotDownloadScript()
 {
     if (!m_newScriptStuff)
       m_newScriptStuff = new QNewScriptStuff("quanta/script", this);
-    m_newScriptStuff->download();
+    m_newScriptStuff->downloadResource();
 }
 
 void QuantaApp::slotDownloadDoc()
@@ -3453,7 +3453,7 @@ void QuantaApp::slotDownloadDoc()
     m_newDocStuff = new QNewDocStuff("quanta/documentation", this);
     connect(m_newDocStuff, SIGNAL(installFinished()), dTab, SLOT(slotRefreshTree()));
   }
-  m_newDocStuff->download();
+  m_newDocStuff->downloadResource();
 }
 
 void QuantaApp::slotCodeFormatting()
