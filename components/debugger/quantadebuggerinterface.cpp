@@ -41,28 +41,28 @@ QuantaDebuggerInterface::QuantaDebuggerInterface (QObject *myparent, const char*
 QuantaDebuggerInterface::~QuantaDebuggerInterface ()
 {}
 
-void QuantaDebuggerInterface::haveBreakpoint (QString file, int line)
+void QuantaDebuggerInterface::haveBreakpoint (const QString& file, int line)
 {
   return m_manager->haveBreakpoint(file, line);
 }
 
 // Public help functions
-bool QuantaDebuggerInterface::showStatus(QString message, bool log)
+bool QuantaDebuggerInterface::showStatus(const QString& message, bool log)
 {
   return m_manager->showStatus(message, log);
 }
 
-bool QuantaDebuggerInterface::setActiveLine(QString file, int line)
+bool QuantaDebuggerInterface::setActiveLine(const QString& file, int line)
 {
   return m_manager->setActiveLine(file, line);
 }
 
-void QuantaDebuggerInterface::enableAction(QString action, bool enable)
+void QuantaDebuggerInterface::enableAction(const QString& action, bool enable)
 {
   m_manager->enableAction(action, enable);
 }
 
-void QuantaDebuggerInterface::fileOpened(QString file)
+void QuantaDebuggerInterface::fileOpened(const QString& file)
 {
   m_manager->fileOpened(file);
 }

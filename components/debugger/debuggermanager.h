@@ -57,17 +57,17 @@ class DebuggerManager : public QObject
     PathMapper * Mapper() { return m_pathmapper; };
 
     // Breakpoints
-    void haveBreakpoint (QString file, int line);
+    void haveBreakpoint (const QString& file, int line);
     void refreshBreakpoints();
     DebuggerBreakpoint *newDebuggerBreakpoint();
 
     // Public help functions
-    bool showStatus(QString message, bool log);
-    bool setActiveLine (QString file, int line);
-    void setMark(QString filename, long line, bool set, int mark);
+    bool showStatus(const QString& message, bool log);
+    bool setActiveLine (const QString& file, int line);
+    void setMark(const QString& filename, long line, bool set, int mark);
 
-    void enableAction(QString action, bool enable);
-    void fileOpened(QString file);
+    void enableAction(const QString& action, bool enable);
+    void fileOpened(const QString& file);
 
     bool hasClient() { return m_client != 0; };
 

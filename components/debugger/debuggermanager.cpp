@@ -213,7 +213,7 @@ DebuggerManager::~DebuggerManager()
   m_pathmapper = 0L;
 }
 
-void DebuggerManager::enableAction(QString action, bool enable)
+void DebuggerManager::enableAction(const QString& action, bool enable)
 {
   if(action == "*")
   {
@@ -404,7 +404,7 @@ void DebuggerManager::slotDebugStepOut()
 
 
 // A new file was opened, tell the debugger so it can tell us about breakpoints etc
-void DebuggerManager::fileOpened(QString file)
+void DebuggerManager::fileOpened(const QString& file)
 {
 
   // Set breakpoint markers if we have a bp in the file
@@ -441,13 +441,13 @@ void DebuggerManager::refreshBreakpoints()
 
 
 // The debug server told us we have a breakpoint, mark it in the file
-void DebuggerManager::haveBreakpoint (QString file, int line)
+void DebuggerManager::haveBreakpoint (const QString& file, int line)
 {
   setMark(file, line, true, KTextEditor::MarkInterface::markType02);
 }
 
 // New current line
-bool DebuggerManager::setActiveLine (QString file, int line )
+bool DebuggerManager::setActiveLine (const QString& file, int line )
 {
   //Get local filename
   QString filename = file;
@@ -477,7 +477,7 @@ bool DebuggerManager::setActiveLine (QString file, int line )
 }
 
 // Set/clear a mark in a document
-void DebuggerManager::setMark(QString filename, long line, bool set, int mark)
+void DebuggerManager::setMark(const QString& filename, long line, bool set, int mark)
 {
   if((!filename.isEmpty()) && ViewManager::ref()->isOpened(filename))
   {
@@ -501,8 +501,9 @@ void DebuggerManager::setMark(QString filename, long line, bool set, int mark)
 }
 
 // Show a status message and optionally put it on the log
-bool DebuggerManager::showStatus(QString message, bool log)
+bool DebuggerManager::showStatus(const QString& a_message, bool log)
 {
+  QString message = a_message;
   quantaApp->slotStatusMsg(m_client->getName() + ": " + message);
 
   if(log)

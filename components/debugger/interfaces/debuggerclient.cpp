@@ -101,7 +101,7 @@ void DebuggerClient::kill()
 }
 
 // Unimplemented defaults
-void DebuggerClient::fileOpened(QString)
+void DebuggerClient::fileOpened(const QString&)
 {
    return;
 }

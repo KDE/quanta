@@ -369,7 +369,7 @@ void QuantaDebuggerGubed::slotReadyRead()
 
 
 // Process a gubed command
-void QuantaDebuggerGubed::processCommand(QString data)
+void QuantaDebuggerGubed::processCommand(const QString& data)
 {
   kdDebug(24002) << k_funcinfo << ", " << m_command << " : " << data << endl;
 
@@ -564,13 +564,15 @@ void QuantaDebuggerGubed::sendWatches()
 }
 
 // Send a command to gubed
-bool QuantaDebuggerGubed::sendCommand(QString command, QString data)
+bool QuantaDebuggerGubed::sendCommand(const QString& a_command, const QString& a_data)
 {
-  kdDebug(24002) << k_lineinfo << ", command: " << command << ", data " << data << endl;
+  kdDebug(24002) << k_lineinfo << ", command: " << a_command << ", data " << a_data << endl;
   if(!m_socket || m_socket->socketStatus() != KExtendedSocket::connected)
     return false;
 
   // Needs line terminatino
+  QString command = a_command;
+  QString data = a_data;
   command += "\n";
   data += "\n";
 
@@ -587,7 +589,7 @@ QString QuantaDebuggerGubed::getName()
   return "Gubed";      // no i18n on the name
 }
 
-void QuantaDebuggerGubed::showWatch(QString data)
+void QuantaDebuggerGubed::showWatch(const QString& data)
 {
   debuggerInterface()->parsePHPVariables(data);
 }
@@ -680,7 +682,7 @@ void QuantaDebuggerGubed::removeBreakpoint(DebuggerBreakpoint* breakpoint)
 }
 
 // A file was opened...
-void QuantaDebuggerGubed::fileOpened(QString)
+void QuantaDebuggerGubed::fileOpened(const QString&)
 {
   sendCommand("reinitialize", "");
 }
@@ -896,14 +898,14 @@ void QuantaDebuggerGubed::showConfig(QDomNode node)
 }
 
 // Map a server filepath to a local one using project settings
-QString QuantaDebuggerGubed::mapServerPathToLocal(QString serverpath)
+QString QuantaDebuggerGubed::mapServerPathToLocal(const QString& serverpath)
 {
   // Translate filename from server to local
   return debuggerInterface()->Mapper()->mapServerPathToLocal(serverpath);
 }
 
 // Map a local filepath to a server one using project settings
-QString QuantaDebuggerGubed::mapLocalPathToServer(QString localpath)
+QString QuantaDebuggerGubed::mapLocalPathToServer(const QString& localpath)
 {
   // Translate filename from local to server
   return debuggerInterface()->Mapper()->mapLocalPathToServer(localpath);

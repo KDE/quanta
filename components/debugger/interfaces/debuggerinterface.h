@@ -38,14 +38,14 @@ class DebuggerInterface : public QObject
     DebuggerInterface(QObject *parent, const char* name);
 
     // Breakpoints
-    virtual void haveBreakpoint (QString file, int line) = 0;
+    virtual void haveBreakpoint (const QString& file, int line) = 0;
 
     // Public help functions
-    virtual bool showStatus(QString message, bool log) = 0;
-    virtual bool setActiveLine (QString file, int line) = 0;
+    virtual bool showStatus(const QString& message, bool log) = 0;
+    virtual bool setActiveLine (const QString& file, int line) = 0;
 
-    virtual void enableAction(QString action, bool enable) = 0;
-    virtual void fileOpened(QString file) = 0;
+    virtual void enableAction(const QString& action, bool enable) = 0;
+    virtual void fileOpened(const QString& file) = 0;
     virtual void sendRequest(const KURL &url) = 0;
     virtual const QString activeFileParts(const QString & str) = 0;
 

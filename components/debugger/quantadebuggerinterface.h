@@ -37,15 +37,15 @@ class QuantaDebuggerInterface : public DebuggerInterface
     ~QuantaDebuggerInterface();
 
     // Breakpoints
-    void haveBreakpoint (QString file, int line) ;
+    void haveBreakpoint (const QString& file, int line) ;
     void refreshBreakpoints();
 
     // Public help functions
-    bool showStatus(QString message, bool log);
-    bool setActiveLine (QString file, int line) ;
+    bool showStatus(const QString& message, bool log);
+    bool setActiveLine (const QString& file, int line) ;
 
-    void enableAction(QString action, bool enable);
-    void fileOpened(QString file) ;
+    void enableAction(const QString& action, bool enable);
+    void fileOpened(const QString& file) ;
     void sendRequest(const KURL &url);
     virtual const QString activeFileParts(const QString & str);
 

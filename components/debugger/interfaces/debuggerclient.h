@@ -85,7 +85,7 @@ class DebuggerClient : public QObject
     virtual void showConfig(QDomNode node);
 
     // Misc
-    virtual void fileOpened(QString file);
+    virtual void fileOpened(const QString& file);
     virtual void addBreakpoint(DebuggerBreakpoint* breakpoint);
     virtual void removeBreakpoint(DebuggerBreakpoint* breakpoint);
     virtual void addWatch(const QString &);

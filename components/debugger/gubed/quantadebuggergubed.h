@@ -79,7 +79,7 @@ class QuantaDebuggerGubed : public DebuggerClient
     QString getName();
 
     // New file opened in quanta
-    void fileOpened(QString file);
+    void fileOpened(const QString& file);
 
     // Settings
     void readConfig(QDomNode node);
@@ -114,15 +114,15 @@ class QuantaDebuggerGubed : public DebuggerClient
 
     WatchList m_watchlist;
 
-    bool sendCommand(QString, QString);
-    void processCommand(QString);
+    bool sendCommand(const QString&, const QString&);
+    void processCommand(const QString&);
     void sendWatches();
     void sendBreakpoints();
     void debuggingState(bool enable);
 
-    QString mapServerPathToLocal(QString serverpath);
-    QString mapLocalPathToServer(QString localpath);
-    void showWatch(QString data);
+    QString mapServerPathToLocal(const QString& serverpath);
+    QString mapLocalPathToServer(const QString& localpath);
+    void showWatch(const QString& data);
 
   public slots:
     // Socket slots
