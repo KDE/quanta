@@ -23,6 +23,7 @@
 #include <qeventloop.h>
 #include <qfile.h>
 #include <qfileinfo.h>
+#include <qtextcodec.h>
 #include <qtextstream.h>
 #include <qregexp.h>
 #include <qradiobutton.h>
@@ -44,6 +45,7 @@
 #include <ktexteditor/cursorinterface.h>
 #include <ktexteditor/clipboardinterface.h>
 #include <ktexteditor/configinterface.h>
+#include <ktexteditor/encodinginterface.h>
 #include <ktexteditor/wordwrapinterface.h>
 #include <ktexteditor/markinterfaceextension.h>
 
@@ -1084,6 +1086,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeCompletions(cons
                     completion.text = QuantaCommon::attrCase(name);
                     completion.comment = attrs->at(j)->type;
                     tempCompletions.append( completion );
+                    nameList.append(completion.text);
                   }
                 }
               }
@@ -1093,9 +1096,10 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeCompletions(cons
                 QDictIterator<DTDStruct> it(*dtds);
                 for( ; it.current(); ++it )
                 {
-                completion.type = "doctypeList";
-                completion.text = it.current()->nickName;
-                tempCompletions.append(completion);
+                 completion.type = "doctypeList";
+                 completion.text = it.current()->nickName;
+                 tempCompletions.append(completion);
+                 nameList.append(completion.text);
                 }
               }
               //below isn't fast, but enough here. May be better with QMap<QString, KTextEditor::CompletionEntry>
@@ -2098,6 +2102,7 @@ void Document::createBackup(KConfig* config)
      QStringList backedupFilesEntryList = config->readListEntry("List of backedup files");
      QStringList autosavedFilesEntryList = config->readListEntry("List of autosaved files");
 #endif
+     QString encoding = dynamic_cast<KTextEditor::EncodingInterface*>(m_doc)->encoding();
      if(!autosavedFilesEntryList.contains(m_backupPathValue))
      {
        autosavedFilesEntryList.append(m_backupPathValue);
@@ -2112,7 +2117,7 @@ void Document::createBackup(KConfig* config)
      if(file.open(IO_WriteOnly))
      {
       QTextStream stream(&file);
-      stream.setEncoding(QTextStream::UnicodeUTF8);
+      stream.setCodec(QTextCodec::codecForName(encoding));
       stream << editIf->text();
       file.close();
      }
@@ -2132,7 +2137,7 @@ void Document::removeBackup(KConfig *config)
   QStringList backedupFilesEntryList = config->readListEntry("List of backedup files");
   QStringList autosavedFilesEntryList = config->readListEntry("List of autosaved files");
 #endif
-
+  
   autosavedFilesEntryList.remove(m_backupPathValue);
   config->writeEntry("List of autosaved files",autosavedFilesEntryList);
   backedupFilesEntryList.remove(url().path() + "." + qConfig.quantaPID);

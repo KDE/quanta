@@ -90,7 +90,7 @@ then
 fi
 
 AC_DEFUN(VERSION_TO_NUMBER,
-[`$1 | sed -e 's/libxml //' | awk 'BEGIN { FS = "."; } { printf "%d",
+[`$1 | sed -e 's/libxml //' | $AWK 'BEGIN { FS = "."; } { printf "%d",
  ([$]1* 1000 + [$]2) * 1000 + [$]3;}'`])
 
 dnl
@@ -189,7 +189,7 @@ fi
 
 
 AC_DEFUN(VERSION_TO_NUMBER,
-[`$1 | sed -e 's/libxslt //' | awk 'BEGIN { FS = "."; } { printf "%d",
+[`$1 | sed -e 's/libxslt //' | $AWK 'BEGIN { FS = "."; } { printf "%d",
  ([$]1  * 1000 + [$]2) * 1000 + [$]3;}'`])
 
 dnl

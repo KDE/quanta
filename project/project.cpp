@@ -919,12 +919,12 @@ void Project::slotRenameFinished( KIO::Job * job)
         if (oldString != tmpString )
         {
           el.setAttribute("url",tmpString);
-          el.setAttribute("upload_time","");
+          el.setAttribute("upload_time", "");
         }
       }
       progressBar->advance(1);
     }
-    for (it = m_projectFiles.begin(); it != m_projectFiles.end(); ++it)
+    for (KURL::List::Iterator it = m_projectFiles.begin(); it != m_projectFiles.end(); ++it)
     {
       tmpString = (*it).path();
       if (tmpString == oldStr ||
@@ -939,12 +939,12 @@ void Project::slotRenameFinished( KIO::Job * job)
     progressBar->setValue(0);
     progressBar->setTextEnabled(false);
 
-    quantaApp->slotStatusMsg( i18n("Done."));
+    quantaApp->slotStatusMsg(i18n("Done."));
     oldURL = KURL();
     newURL = KURL();
     m_modified = true;
 
-    emit reloadTree( m_projectFiles, false );
+    emit reloadTree(m_projectFiles, true);
     emit newStatus();
   }
 }

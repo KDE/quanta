@@ -194,9 +194,12 @@ void TemplatesTreeView::slotMenu(KListView*, QListViewItem *item, const QPoint &
 
    QString menuText = "";
 
-   if (m_dirInfo.mimeType.upper().contains("TEXT")) menuText = i18n(textMenu);
-   if (m_dirInfo.mimeType.upper().contains("FILE")) menuText = i18n(binaryMenu);
-   if (m_dirInfo.mimeType.upper().contains("TEMPLATE")) menuText = i18n(docMenu);
+   if (m_dirInfo.mimeType.upper().contains("TEXT"))
+     menuText = i18n(textMenu.utf8());
+   if (m_dirInfo.mimeType.upper().contains("FILE"))
+     menuText = i18n(binaryMenu.utf8());
+   if (m_dirInfo.mimeType.upper().contains("TEMPLATE"))
+     menuText = i18n(docMenu.utf8());
 
    if (menuText.isEmpty())
    {
@@ -233,9 +236,12 @@ void TemplatesTreeView::slotInsert()
 {
  QString menuText = m_fileMenu->text(m_openId);
 
- if (menuText == i18n(textMenu)) slotInsertInDocument();
- if (menuText == i18n(binaryMenu)) slotInsertTag();
- if (menuText == i18n(docMenu)) slotNewDocument();
+ if (menuText == i18n(textMenu.utf8())) 
+   slotInsertInDocument();
+ if (menuText == i18n(binaryMenu.utf8()))
+   slotInsertTag();
+ if (menuText == i18n(docMenu.utf8()))
+   slotNewDocument();
 }
 
 void TemplatesTreeView::slotSelectFile(QListViewItem *item)

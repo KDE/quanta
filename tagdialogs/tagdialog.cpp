@@ -200,7 +200,7 @@ void TagDialog::parseTag()
       QDomNode domNode = extraDoc.firstChild().firstChild();
       extraPage = new Tagxml( domNode, dtdTag->parentDTD, this );
       extraPage->writeAttributes( dict );
-      addTab( extraPage, i18n(title) );
+      addTab( extraPage, i18n(title.utf8()) );
       extraPageList->append(extraPage);
     }
     delete attrs;

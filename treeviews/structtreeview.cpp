@@ -140,7 +140,7 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
       for (uint i = 0; i < groupsCount; i++)
       {
           group = m_parsingDTD->structTreeGroups[i];
-          groups[i] = new StructTreeTag(this, i18n(group.name) + " ["+m_parsingDTD->nickName+"]");
+          groups[i] = new StructTreeTag(this, i18n(group.name.utf8()) + " ["+m_parsingDTD->nickName+"]");
           if (!group.icon.isEmpty())
           {
             groups[i]->setPixmap(0, SmallIcon(group.icon));
@@ -154,7 +154,7 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
       for (it = m_parsingDTD->xmlStructTreeGroups.begin(); it != m_parsingDTD->xmlStructTreeGroups.end(); ++it)
       {
         XMLStructGroup group = it.data();
-        groups[i] = new StructTreeTag(this, i18n(group.name) + " ["+m_parsingDTD->nickName+"]");
+        groups[i] = new StructTreeTag(this, i18n(group.name.utf8()) + " ["+m_parsingDTD->nickName+"]");
         if (!group.icon.isEmpty())
         {
           groups[i]->setPixmap(0, SmallIcon(group.icon));
@@ -396,7 +396,7 @@ void StructTreeView::slotReparse(Document *w, Node* node, int openLevel)
     {
       if (groups[i]->childCount() == 0)
       {
-        groups[i]->setText(0, i18n(m_parsingDTD->structTreeGroups[i].noName) + " ["+m_parsingDTD->nickName+"]");
+        groups[i]->setText(0, i18n(m_parsingDTD->structTreeGroups[i].noName.utf8()) + " ["+m_parsingDTD->nickName+"]");
       }
     }
   } else
@@ -407,7 +407,7 @@ void StructTreeView::slotReparse(Document *w, Node* node, int openLevel)
     {
       if (groups[i]->childCount() == 0)
       {
-        groups[i]->setText(0, i18n(it.data().noName) + " ["+m_parsingDTD->nickName+"]");
+        groups[i]->setText(0, i18n(it.data().noName.utf8()) + " ["+m_parsingDTD->nickName+"]");
       }
       i++;
     }

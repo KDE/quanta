@@ -80,7 +80,7 @@ ActionConfigDialog::ActionConfigDialog( QWidget* parent, const char* name, bool 
   for (int i = 0; i < tb->count(); i++)
   {
     toolbarName = tb->label(i);
-    item = new KListViewItem(actionTreeView, oldItem, i18n(toolbarName));
+    item = new KListViewItem(actionTreeView, oldItem, i18n(toolbarName.utf8()));
     actionTreeView->insertItem(item);
 
     QListViewItem *oldActionItem = 0L;
@@ -114,7 +114,7 @@ ActionConfigDialog::ActionConfigDialog( QWidget* parent, const char* name, bool 
              QListViewItem *actionItem = item->firstChild();
              while (actionItem && actionItem->depth() > 0)
              {
-                if (actionItem->text(0) == defaultAction)
+                if (actionItem->text(0) == defaultAction || actionItem->text(0) == defaultAction + "...")
                 {
                   actionTreeView->setCurrentItem(actionItem);
                   break;
@@ -161,7 +161,7 @@ void ActionConfigDialog::slotAddToolbar()
       item = actionTreeView->lastItem();
       if (item->parent())
         item = item->parent();
-      new KListViewItem(actionTreeView, item, i18n(toolbarName));
+      new KListViewItem(actionTreeView, item, i18n(toolbarName.utf8()));
       break;
     }
   }

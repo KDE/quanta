@@ -324,7 +324,7 @@ void TagAttributeTree::setCurrentNode(Node *node)
     group->setOpen(true);
     for (uint i = 0; i < qTag->commonGroups.count(); i++)
     {
-      group = new TopLevelItem(this, group, i18n(qTag->commonGroups[i]));
+      group = new TopLevelItem(this, group, i18n(qTag->commonGroups[i].utf8()));
       AttributeList *groupAttrs = qTag->parentDTD->commonAttrs->find(qTag->commonGroups[i]);
       for (uint j = 0; j < groupAttrs->count(); j++)
       {

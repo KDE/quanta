@@ -263,16 +263,6 @@ void QuantaApp::initQuanta()
   qConfig.quantaPID = QString::number(int(getpid()), 10);
   qConfig.backupDirPath = KGlobal::instance()->dirs()->saveLocation("data", resourceDir + "backups/");
 
-  m_config->setGroup("General Options");
-
-  if(!m_config->hasKey("List of autosaved files"))
-    m_config->writeEntry("List of autosaved files", QString::null);
-
-  if(!m_config->hasKey("List of backedup files"))
-    m_config->writeEntry("List of backedup files", QString::null);
-
-  m_config->sync();
-
   autosaveTimer = new QTimer( this );
   connect(autosaveTimer, SIGNAL(timeout()), SLOT(slotAutosaveTimer()));
   autosaveTimer->start(qConfig.autosaveInterval * 60000, false);
@@ -2338,7 +2328,9 @@ void QuantaApp::recoverCrashed(QStringList& recoveredFileNameList)
             entryIt != autosavedFilesEntryList.end(); ++entryIt )
       {
         if ((*entryIt) == autosavedVersion.path())
+        {
           entryIt = autosavedFilesEntryList.remove(entryIt);
+        }
       }
       m_config->writeEntry("List of autosaved files", autosavedFilesEntryList);
 

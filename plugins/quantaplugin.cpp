@@ -68,7 +68,7 @@ void QuantaPlugin::setPluginName(const QString &a_name)
   m_name = a_name;
   if (!m_action)
   {
-    m_action = new KToggleAction(i18n(a_name), 0, this, SLOT(toggle()), quantaApp->actionCollection(), a_name);
+    m_action = new KToggleAction(i18n(a_name.utf8()), 0, this, SLOT(toggle()), quantaApp->actionCollection(), a_name);
   }
   m_action->setText(a_name);
 }

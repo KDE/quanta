@@ -2808,6 +2808,20 @@ void QuantaApp::slotRemoveAction(const QString& toolbarName, const QString& a_ac
     if (actionCollection()->action(i)->text() == actionName)
     {
       action = actionCollection()->action(i);
+      break;
+    }
+  }
+  if (!action) //workaround for actionnames ending with "...". It's stripped from the end
+              //of the text when plugged into a toolbar.
+  {
+    actionName += "...";
+    for (uint i = 0; i < actionCollection()->count(); i++)
+    {
+      if (actionCollection()->action(i)->text() == actionName)
+      {
+        action = actionCollection()->action(i);
+        break;
+      }
     }
   }
 

@@ -399,7 +399,7 @@ void QuantaView::initActions()
         t.setEncoding(QTextStream::UnicodeUTF8);
         QString s;
         while ( !t.eof() ) {           // until end of file...
-            charList << i18n(t.readLine()); // line excluding '\n'
+            charList << i18n(t.readLine().utf8()); // line excluding '\n'
         }
         file.close();
     }
@@ -472,16 +472,18 @@ void QuantaView::reloadBothViews(bool force)
 /** reload the Kafka view from the Node Tree. Set force to true if you want to reload even if not necessary. */
 void QuantaView::reloadKafkaView(bool force)
 {
-	if(!(qConfig.kafkaRefreshOnFocus && hadLastFocus() != QuantaView::kafkaFocus) &&
-		getViewsLayout() != QuantaView::QuantaViewOnly && m_kafkaReloadingEnabled)
+	if((!qConfig.kafkaRefreshOnFocus && hadLastFocus() == QuantaView::kafkaFocus) ||
+		(getViewsLayout() != QuantaView::QuantaViewOnly && m_kafkaReloadingEnabled) ||
+		force)
 		write()->docUndoRedo->reloadKafkaEditor(force);
 }
 
 /** reload the Quanta view from the Node Tree. Set force to true if you want to reload even if not necessary. */
 void QuantaView::reloadQuantaView(bool force)
 {
-	if(!(qConfig.quantaRefreshOnFocus && hadLastFocus() != QuantaView::quantaFocus) &&
-		getViewsLayout() != QuantaView::KafkaViewOnly && m_quantaReloadingEnabled)
+	if((!qConfig.quantaRefreshOnFocus && hadLastFocus() == QuantaView::quantaFocus) ||
+		(getViewsLayout() != QuantaView::KafkaViewOnly && m_quantaReloadingEnabled)
+		|| force)
 		write()->docUndoRedo->reloadQuantaEditor(force);
 }
 
