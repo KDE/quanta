@@ -289,7 +289,7 @@ void TagAttributeTree::setCurrentNode(Node *node)
     if (node->tag->type == Tag::XmlTagEnd)
      nameSpace.remove('/');
     group = new TopLevelItem(this, group, i18n("Namespace"));
-    item = new AttributeNameSpaceItem(this, group, i18n("name"), nameSpace);
+    item = new AttributeNameSpaceItem(this, group, i18n("prefix"), nameSpace);
     group->setOpen(true);
   }
   if (qTag)
