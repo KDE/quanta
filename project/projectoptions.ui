@@ -130,14 +130,6 @@
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="KPushButton" row="0" column="2">
-                    <property name="name">
-                        <cstring>buttonEditProfiles</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Edit Profiles</string>
-                    </property>
-                </widget>
                 <widget class="QLabel" row="0" column="1">
                     <property name="name">
                         <cstring>profileLabel</cstring>
@@ -160,6 +152,25 @@
                     </property>
                     <property name="text">
                         <string>Default profile:</string>
+                    </property>
+                </widget>
+                <widget class="KPushButton" row="0" column="2">
+                    <property name="name">
+                        <cstring>buttonEditProfiles</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Edit Profiles</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>checkShowUploadTreeviews</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Show a &amp;treeview for each profile</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+T</string>
                     </property>
                 </widget>
             </grid>
@@ -274,6 +285,9 @@
             </property>
             <property name="text">
                 <string>E&amp;xclude files listed in .cvsignore</string>
+            </property>
+            <property name="accel">
+                <string>Alt+X</string>
             </property>
             <property name="whatsThis" stdset="0">
                 <string>The files listed in &lt;i&gt;.cvsignore&lt;/i&gt; files will not appear in the project tree, nor will be shown when you rescan the project folder or upload the project. Files matching the &lt;i&gt;.cvsignore&lt;/i&gt; entries that were already present in the project will be removed from it, but they will not be removed from the disc.&lt;br&gt;
@@ -550,6 +564,8 @@
     <tabstop>encodingCombo</tabstop>
     <tabstop>viewCombo</tabstop>
     <tabstop>dtdCombo</tabstop>
+    <tabstop>buttonEditProfiles</tabstop>
+    <tabstop>checkShowUploadTreeviews</tabstop>
     <tabstop>comboDebuggerClient</tabstop>
     <tabstop>buttonDebuggerOptions</tabstop>
     <tabstop>checkPrefix</tabstop>

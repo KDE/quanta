@@ -367,9 +367,12 @@
     <tabstop>encodingCombo</tabstop>
     <tabstop>defaultDTDCombo</tabstop>
     <tabstop>showDTDSelectDialog</tabstop>
-    <tabstop>warnBinaryOpening</tabstop>
     <tabstop>showSplash</tabstop>
+    <tabstop>reloadProject</tabstop>
+    <tabstop>reloadFiles</tabstop>
     <tabstop>sbAutoSave</tabstop>
+    <tabstop>warnBinaryOpening</tabstop>
+    <tabstop>warnEventActions</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

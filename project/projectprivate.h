@@ -80,6 +80,7 @@ upload.*/
   QValueList<TeamMember> m_simpleMembers;
   QValueList<SubProject> m_subprojects;
   QString m_mailingList;
+  bool m_showUploadTreeviews;
 
   KAction
     *closeprjAction, *insertFileAction, *insertDirAction,

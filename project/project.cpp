@@ -108,6 +108,7 @@ ProjectPrivate::ProjectPrivate(Project *p)
 {
   parent = p;
   m_projectFiles.setAutoDelete(true);
+  m_showUploadTreeviews = true;
   m_events = new EventActions();
   init();
 }
@@ -657,9 +658,14 @@ void ProjectPrivate::loadProjectXML()
 
   if (m_projectFiles.readFromXML(dom, baseURL, templateURL, excludeRx))
    m_modified = true;
-  // read the profiles and create treeviews for them
-  UploadProfiles::ref()->readFromXML(dom);
- 
+  QDomElement uploadEl = projectNode.namedItem("uploadprofiles").toElement();
+  m_showUploadTreeviews = uploadEl.attribute("showtreeviews", "true") == "true";
+  if (m_showUploadTreeviews)
+  {
+    // read the profiles and create treeviews for them
+    UploadProfiles::ref()->readFromXML(dom);
+  } else
+    UploadProfiles::ref()->clear();
   parent->statusMsg(QString::null);
   parent->newProjectLoaded(projectName, baseURL, templateURL);
   parent->reloadTree(&(m_projectFiles), true, treeStatusFromXML());
@@ -1703,6 +1709,7 @@ void Project::slotOptions()
   }
   QDomElement uploadEl = d->dom.firstChild().firstChild().namedItem("uploadprofiles").toElement();
   optionsPage.profileLabel->setText(uploadEl.attribute("defaultProfile"));
+  optionsPage.checkShowUploadTreeviews->setChecked(d->m_showUploadTreeviews);
 
   QString excludeStr;
   for (uint i = 0; i < d->excludeList.count(); i++)
@@ -1926,6 +1933,7 @@ void Project::slotOptions()
         el.setAttribute("projectview", defaultView);
        }
     }
+    uploadEl.setAttribute("showtreeviews", optionsPage.checkShowUploadTreeviews->isChecked() ? "true" : "false");
 
     QDomNode teamNode = projectNode.namedItem("teamdata");
     if (!teamNode.isNull())
