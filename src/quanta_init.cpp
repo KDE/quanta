@@ -192,7 +192,7 @@ void QuantaInit::initQuanta()
       m_quanta->readDockConfig(m_config); //FIXME: This causes the visible widget construction on startup, but is needed to restore the window layout...
       if (mdiMode != KMdi::IDEAlMode)
         m_quanta->setToolviewStyle(qConfig.toolviewTabs);
-   }
+  }
   m_quanta->initTabWidget(true);
   qConfig.windowLayout = "Custom";
   //FIXME: This is a hack to workaround the starting problem when we are in Toplevel mode.
@@ -429,7 +429,7 @@ void QuantaInit::initView()
   (void) ToolbarTabWidget::ref(quantaApp);
   //set the toolview and close button style before the GUI is created
   m_config->setGroup  ("General Options");
-  qConfig.toolviewTabs = m_config->readNumEntry("MDI style", 3);
+  qConfig.toolviewTabs = m_config->readNumEntry("MDI style", KMdi::IconOnly);
   m_quanta->initTabWidget();
 
   m_quanta->setStandardMDIMenuEnabled(false);
@@ -593,7 +593,6 @@ void QuantaInit::readOptions()
 //  m_quanta->initTabWidget(true);
   m_quanta->fileRecent ->loadEntries(m_config);
   qConfig.showHiddenFiles = m_config->readBoolEntry("Show Hidden Files", true);
-  qConfig.toolviewTabs = m_config->readNumEntry("MDI style", 3);
 
   m_config->setGroup("Parser options");
   qConfig.showEmptyNodes = m_config->readBoolEntry("Show Empty Nodes", false);
