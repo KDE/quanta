@@ -1916,7 +1916,7 @@ void Project::updateTimeStamp(const KURL& url, int modifiedTime)
         {
           el.setAttribute("modified_time", modifiedTime);
           el.setAttribute("upload_time", modifiedTime);
-          setModified(true);
+          m_modified = true;
         }
         break;
       }
