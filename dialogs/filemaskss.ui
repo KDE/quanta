@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>536</width>
-            <height>362</height>
+            <height>388</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -190,23 +190,7 @@
                 </widget>
             </grid>
         </widget>
-        <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>showDTDSelectDialog</cstring>
-            </property>
-            <property name="text">
-                <string>Show the DTD selection dialog when loading files with unknown DTD</string>
-            </property>
-        </widget>
-        <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>warnBinaryOpening</cstring>
-            </property>
-            <property name="text">
-                <string>Warn about opening binary/unknown files</string>
-            </property>
-        </widget>
-        <spacer row="6" column="0">
+        <spacer row="7" column="0">
             <property name="name">
                 <cstring>spacer2</cstring>
             </property>
@@ -223,6 +207,22 @@
                 </size>
             </property>
         </spacer>
+        <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>warnBinaryOpening</cstring>
+            </property>
+            <property name="text">
+                <string>Warn about opening binary/unknown files</string>
+            </property>
+        </widget>
+        <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>showDTDSelectDialog</cstring>
+            </property>
+            <property name="text">
+                <string>Show the DTD selection dialog when loading files with unknown DTD</string>
+            </property>
+        </widget>
         <widget class="QCheckBox" row="5" column="0" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>showSplash</cstring>
@@ -230,6 +230,46 @@
             <property name="text">
                 <string>Show splashscreen on startup</string>
             </property>
+        </widget>
+        <widget class="QLayoutWidget" row="6" column="0">
+            <property name="name">
+                <cstring>layout2</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>tlAutoSave</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Create backups every</string>
+                    </property>
+                </widget>
+                <widget class="QSpinBox">
+                    <property name="name">
+                        <cstring>sbAutoSave</cstring>
+                    </property>
+                    <property name="maxValue">
+                        <number>30000</number>
+                    </property>
+                    <property name="minValue">
+                        <number>1</number>
+                    </property>
+                    <property name="value">
+                        <number>15</number>
+                    </property>
+                </widget>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>textLabel1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>minutes</string>
+                    </property>
+                </widget>
+            </hbox>
         </widget>
     </grid>
 </widget>

@@ -406,7 +406,10 @@ bool QuantaDoc::saveModified()
            break;
 
       case KMessageBox::No :
-           completed=true;
+           {
+	     write()->removeBackup(quantaApp->config());
+      	     completed=true;
+	   }
            break;
 
       case KMessageBox::Cancel :

@@ -169,6 +169,8 @@ public:
 
     //return the old Cursor position
   void oldCursorPos(uint &line, uint &col) {line = oldCursorLine; col = oldCursorCol;}
+  //search for s in autosaveUrls and return a file path
+  QString searchPathListEntry(QString s,QString autosaveUrls);
 
     /** tabs for left panel */
   ProjectTreeView *pTab;
@@ -351,6 +353,8 @@ public slots:
 
 /** Show the Document Properties Dialog */
   void slotDocumentProperties();
+  /** No descriptions */
+  void slotAutosaveTimer();
 
 protected slots:
   /** No descriptions */
@@ -523,6 +527,7 @@ protected: // Protected attributes
   /* Store the old shortcuts from the local quantaui.rc */
   QMap<QString, QString> oldShortcuts;
   KURL urlUnderCursor;
+  QTimer *autosaveTimer;
 
 public: //TODO: check if it's worth to make a read method for them
   QDict<ToolbarEntry> toolbarList;

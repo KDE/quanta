@@ -239,6 +239,19 @@ void QuantaApp::initQuanta()
   slotFileNew();
   initToolBars();
   KTipDialog::showTip(this);
+
+  autosaveTimer = new QTimer( this );
+  connect(autosaveTimer, SIGNAL(timeout()), SLOT(slotAutosaveTimer()));
+  autosaveTimer->start( 1000*qConfig.autosaveInterval*60, false );
+
+  qConfig.autosaveEntryKey = "Autosave List";
+  m_config->setGroup("General Options");
+  if(!m_config->hasKey(qConfig.autosaveEntryKey))
+  {
+   m_config->writeEntry(qConfig.autosaveEntryKey,QString::null);
+   m_config->sync();
+  }
+  qConfig.autosaveEntryList = m_config->readEntry(qConfig.autosaveEntryKey,qConfig.autosaveEntryList);
 }
 
 
@@ -585,6 +598,8 @@ void QuantaApp::saveOptions()
     m_config->writeEntry("Window layout", qConfig.windowLayout);
     m_config->writeEntry("Follow Cursor", sTab->followCursor() );
     m_config->writeEntry("PHP Debugger Port", phpDebugPort );
+    //If user choose the timer interval, it needs to restart the timer too
+    m_config->writeEntry("Autosave interval",qConfig.autosaveInterval);
 #if KDE_IS_VERSION(3,1,3)
     m_config->writePathEntry("Top folders", fTab->topURLList.toStringList());
     m_config->writePathEntry("List of opened files", m_doc->openedFiles().toStringList());
@@ -657,6 +672,7 @@ void QuantaApp::readOptions()
 
   QSize s(800,580);
   resize( m_config->readSizeEntry("Geometry", &s));
+  qConfig.autosaveInterval = m_config->readNumEntry("Autosave interval", 10);
 
   KToggleAction *showToolbarAction = (KToggleAction *) actionCollection()->action( "view_toolbar" );
   if (!m_config->readBoolEntry("Show Toolbar",true))
@@ -820,13 +836,37 @@ void QuantaApp::openLastFiles()
 
 #if KDE_IS_VERSION(3,1,3)
   QStringList urls = m_config->readPathListEntry("List of opened files");
+  QStringList autosaveUrls = m_config->readPathListEntry("Autosave List");
 #else
   QStringList urls = m_config->readListEntry("List of opened files");
+  QStringList autosaveUrls = m_config->readListEntry("Autosave List");
 #endif
   m_doc->blockSignals(true);
   m_view->writeTab()->blockSignals(true);
   for ( QStringList::Iterator it = urls.begin(); it != urls.end(); ++it )
   {
+    // when quanta crash and file autoreloading option is on
+    // then if user restart quanta, the backup copies will reload
+    QString autosavePath = searchPathListEntry((*it),autosaveUrls.join(","));
+    if(!autosavePath.isEmpty())
+    {
+     KURL originalVersion;
+     QuantaCommon::setUrl(originalVersion, *it);
+     KURL autosavedVersion;
+     QuantaCommon::setUrl(autosavedVersion,autosavePath);
+
+     if (!isPrj || originalVersion.isLocalFile())
+     {
+       if (QFileInfo(autosavedVersion.path()).exists())
+       {
+         //TODO: Replace with KIO::NetAccess::file_copy, when KDE 3.1 support
+//is dropped
+          QExtFileInfo::copy(autosavedVersion, originalVersion, -1, true, false, this);
+       }
+     }
+     m_config->setGroup("General Options");
+     m_config->writeEntry(qConfig.autosaveEntryKey,QString::null);
+    }
     KURL fu;
     QuantaCommon::setUrl(fu, *it);
 
@@ -834,6 +874,7 @@ void QuantaApp::openLastFiles()
         m_doc->openDocument(fu, QString::null, false);
  //   kapp->eventLoop()->processEvents( QEventLoop::ExcludeUserInput | QEventLoop::ExcludeSocketNotifiers);
   }
+  m_config->sync();
   m_doc->blockSignals(false);
   m_view->writeTab()->blockSignals(false);
   Document *w = m_view->write();

@@ -242,8 +242,7 @@ void QuantaApp::slotFileSave()
       view()->write()->docUndoRedo->fileSaved();
 #endif
     }
-
-
+    w->removeBackup(m_config);
     slotUpdateStatus(w);
   }
 }
@@ -329,6 +328,7 @@ bool QuantaApp::slotFileSaveAs()
     }
     if (oldURL.isLocalFile())
         fileWatcher->addFile(oldURL.path());
+    w->removeBackup(m_config);
   }
   return result;
 }
@@ -424,6 +424,13 @@ void QuantaApp::slotFileSaveSelectionAsProjectTemplate()
 void QuantaApp::slotFileSaveAll()
 {
   m_doc->saveAll();
+  QTabWidget *docTab = view()->writeTab();
+  Document *w;
+  for (int i = docTab->count() -1; i >=0; i--)
+  {
+    w = dynamic_cast<Document*>(docTab->page(i));
+    w->removeBackup(m_config);
+  }
   slotUpdateStatus(m_view->write());
 }
 
@@ -1009,6 +1016,9 @@ void QuantaApp::slotOptions()
   fileMasks->warnBinaryOpening->setChecked(m_config->readEntry("Open Everything") != "Yes");
   m_config->setGroup("General Options");
   fileMasks->showSplash->setChecked(m_config->readBoolEntry("Show Splash", true));
+  if(!m_config->readEntry("Autosave interval").isEmpty())
+     fileMasks->sbAutoSave->setValue(m_config->readNumEntry("Autosave interval"));
+  //else default value 15
 
   QStringList availableEncodingNames(KGlobal::charsets()->availableEncodingNames());
   fileMasks->encodingCombo->insertStringList( availableEncodingNames );
@@ -1110,6 +1120,8 @@ void QuantaApp::slotOptions()
     qConfig.imageMimeTypes = fileMasks->lineImage->text();
     qConfig.textMimeTypes = fileMasks->lineText->text();
     qConfig.showDTDSelectDialog = fileMasks->showDTDSelectDialog->isChecked();
+    qConfig.autosaveInterval =  fileMasks->sbAutoSave->value();
+    autosaveTimer->start( 1000*qConfig.autosaveInterval*60, false );
     m_config->setGroup("Notification Messages");
     m_config->writeEntry("Open Everything", fileMasks->warnBinaryOpening->isChecked() ? "" : "Yes");
     m_config->setGroup("General Options");
@@ -3538,6 +3550,40 @@ QStringList QuantaApp::tagAreas(const QString &tag, bool includeCoordinates, boo
   else
     return QStringList();
 }
+
+void QuantaApp::slotAutosaveTimer()
+{
+
+  QTabWidget *docTab = view()->writeTab();
+  Document *w;
+
+  for (int i = docTab->count() -1; i >=0; i--)
+  {
+    w = dynamic_cast<Document*>(docTab->page(i));
+    if (w)
+      w->createBackup(m_config);
+  }
+
+}
+
+QString QuantaApp::searchPathListEntry(QString s,QString autosaveUrls)
+{
+ s = s.right(s.length()-s.findRev("/",s.length()-1));
+ QStringList urls=QStringList::split(",",autosaveUrls);
+ qWarning("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+ QStringList::Iterator it;
+ for ( it = urls.begin(); it != urls.end(); ++it )
+  {
+   QString path = (*it);
+   int posFileName = path.findRev("/",path.length()-1);
+   path = path.right(path.length()-posFileName);
+   if(s == path) return (*it);
+  }
+
+  qWarning("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+  return QString::null;
+}
+
 
 #include "quanta.moc"
 

@@ -189,6 +189,21 @@ work correctly. */
   undoRedo *docUndoRedo;
 #endif
 
+  bool isBackedUp();
+  /* Creates an automatic backup copy for the crash recovering mechanism */
+  void createBackup(KConfig* config);
+  /* checks the existance of an entry in quantarc */
+  bool existsBackupEntry();
+  /** No descriptions */
+  void setBackupEntry(bool b);
+  /** No descriptions */
+  QString getAutosaveDocumentEntryValue();
+  /** No descriptions */
+  void setAutosaveDocumentEntryValue(const QString& ev );
+  /* Removes automatic backup copies */
+  void removeBackup(KConfig *config);
+
+
 protected:
   bool eventFilter(QObject *object, QEvent *event);
 
@@ -222,10 +237,13 @@ private:
 
   KTempFile *tempFile;
   QString m_tempFileName;
-
+  bool m_backupCreated;
+  bool m_backupEntry;
+  /* path of the backup copy file of the document */
+  QString autosaveDocumentEntryValue;
   int spellMoved;
   QString dtdName;
-  /*The DTD valid in the place where the completion was invoked.*/
+/*The DTD valid in the place where the completion was invoked.*/
   DTDStruct *completionDTD;
 
   bool changed;

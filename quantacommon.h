@@ -90,6 +90,9 @@ typedef struct QConfig{
           QString textMimeTypes;
           QString previewPosition;
           QString windowLayout;
+	  int autosaveInterval;
+          QString autosaveEntryList;
+	  QString autosaveEntryKey;
 
           //spelling options
           KSpellConfig *spellConfig;

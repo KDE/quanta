@@ -423,7 +423,7 @@ void QuantaView::slotTagEditTable()
     w->activateParser(false);
     w->editIf->removeText(bl, bc, el, ec + 1);
     w->viewCursorIf->setCursorPositionReal((uint)bl, (uint)bc);
-    w->insertText(tableString);
+    w->insertText(tableString, false);
   }
 }
 

@@ -17,6 +17,7 @@
  ***************************************************************************/
 #include <list>
 #include <cctype>
+#include <cstdlib>
 
 //QT includes
 #include <qdir.h>
@@ -94,6 +95,12 @@ Document::Document(const KURL& p_baseURL, KTextEditor::Document *doc,
 
   //need access to plugin interface. and we can't get to app from here ..
   m_pluginInterface = a_pIf;
+  //???
+  m_backupCreated = false;
+  //each document remember wheter it has a entry in quantarc
+  m_backupEntry = false;
+  //path of the backup copy file of the document
+  autosaveDocumentEntryValue = QString::null;
 
   connect( m_doc,  SIGNAL(charactersInteractivelyInserted (int ,int ,const QString&)),
            this,  SLOT(slotCharactersInserted(int ,int ,const QString&)) );
@@ -1995,5 +2002,89 @@ void Document::clearErrorMarks()
         markIf->removeMark(mark->line, KTextEditor::MarkInterface::markType10);
   }
 }
+
+/** ??? */
+bool Document::isBackedUp()
+{
+ return m_backupCreated;
+}
+/** if exists an entry for this document then return true */
+bool Document::existsBackupEntry()
+{
+ if(qConfig.autosaveEntryList.isEmpty())
+    return false;
+
+ QStringList entryList = QStringList::split(",",qConfig.autosaveEntryList);
+ if(entryList.contains(autosaveDocumentEntryValue))
+    return true;
+ else
+    return false;
+}
+/** obvious */
+void Document::setBackupEntry(bool b)
+{
+   m_backupEntry = b;
+}
+/** if the document is modified then backup it and insert an entry in quantarc */
+void Document::createBackup(KConfig* config)
+{
+    if(isModified())
+    {
+     //thanks for the hint Andras & Fredi :-)
+     QString backupPath=KGlobal::instance()->dirs()->saveLocation("data", "quanta/backups/");
+
+     autosaveDocumentEntryValue = backupPath+url().fileName();
+
+     //creates an entry string in quantarc if it does not exist yet
+     if(!existsBackupEntry())
+     {
+       config->setGroup("General Options");
+       QStringList entryList = QStringList::split(",",qConfig.autosaveEntryList);
+       entryList.append(autosaveDocumentEntryValue);
+       qConfig.autosaveEntryList = entryList.join(",");
+       config->writeEntry(qConfig.autosaveEntryKey,qConfig.autosaveEntryList);
+       config->sync();
+       setBackupEntry(true);
+     }
+
+     //create a copy of this specific document
+     QFile file (autosaveDocumentEntryValue);
+     if(file.open(IO_WriteOnly))
+     {
+      QTextStream stream( &file );
+      stream << editIf->text();
+      file.close();
+     }
+    }
+}
+
+QString Document::getAutosaveDocumentEntryValue()
+{
+   return autosaveDocumentEntryValue;
+}
+
+void Document::setAutosaveDocumentEntryValue(const QString& ev )
+{
+   autosaveDocumentEntryValue = ev;
+}
+
+/** if there is no more need of a backup copy then remove it */
+void Document::removeBackup(KConfig *config)
+{
+ config->setGroup("General Options");
+ QStringList entryList = QStringList::split(",",qConfig.autosaveEntryList);
+ entryList.remove(autosaveDocumentEntryValue);
+ qConfig.autosaveEntryList = entryList.join(",");
+
+ config->writeEntry(qConfig.autosaveEntryKey,qConfig.autosaveEntryList);
+ config->sync();
+
+ setBackupEntry(false);
+
+ if(QFile::exists(autosaveDocumentEntryValue))
+    QFile::remove(autosaveDocumentEntryValue);
+}
+
+
 
 #include "document.moc"
