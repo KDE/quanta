@@ -94,7 +94,7 @@
 
 #include <kio/netaccess.h>
 
-#if KDE_IS_VERSION(3,1,90)
+#if KDE_IS_VERSION(3,1,90) || defined(COMPAT_KMDI)
 #include <ktabwidget.h>
 #include <kinputdialog.h>
 #endif
@@ -1108,19 +1108,13 @@ void QuantaApp::slotOptions()
        break;
      }
   }
-#if KDE_IS_VERSION(3,1,90)
-  fileMasks->showCloseButton->setChecked(qConfig.showCloseButtons);
-#else
-  fileMasks->showCloseButton->setShown(false);
-#endif
-
-
   // Preview options
-  page=kd->addVBoxPage(i18n("Layout"), QString::null, BarIcon("kview", KIcon::SizeMedium ) );
+  page=kd->addVBoxPage(i18n("User Interface"), QString::null, BarIcon("kview", KIcon::SizeMedium ) );
   PreviewOptions *previewOptions = new PreviewOptions( (QWidget *)page );
 
   previewOptions->setPosition(qConfig.previewPosition);
   previewOptions->setWindowLayout(qConfig.windowLayout);
+  previewOptions->setCloseButtons(qConfig.showCloseButtons);
 
 #ifdef BUILD_KAFKAPART
   //kafka options
@@ -1194,19 +1188,25 @@ void QuantaApp::slotOptions()
     m_config->writeEntry("Reload Files", fileMasks->reloadFiles->isChecked());
 
     qConfig.defaultEncoding = fileMasks->encodingCombo->currentText();
-#if KDE_IS_VERSION(3,1,90)
-    qConfig.showCloseButtons = fileMasks->showCloseButton->isChecked();
-//FIXME:
-/*
-    KTabWidget *tab = static_cast<KTabWidget*>(m_view->writeTab());
-    if (qConfig.showCloseButtons)
+    qConfig.showCloseButtons = previewOptions->closeButtons();
+#if KDE_IS_VERSION(3,2,2) || defined(COMPAT_KMDI)
+    KTabWidget *tab = tabWidget();
+    if (tab)
     {
-      tab->setHoverCloseButton(true);
-      tab->setHoverCloseButtonDelayed(false);
-    } else
-    {
-      tab->setHoverCloseButton(false);
-    } */
+        if (qConfig.showCloseButtons == "ShowAlways")
+        {
+          tab->setHoverCloseButton(true);
+          tab->setHoverCloseButtonDelayed(false);
+        } else
+        if (qConfig.showCloseButtons == "ShowDelayed")
+        {
+          tab->setHoverCloseButton(true);
+          tab->setHoverCloseButtonDelayed(true);
+        } else
+        {
+          tab->setHoverCloseButton(false);
+        }
+    }
 #endif
 
     qConfig.showEmptyNodes = parserOptions->showEmptyNodes->isChecked();
@@ -3717,12 +3717,12 @@ void QuantaApp::saveOptions()
     m_config->writeEntry("List of opened files", ViewManager::ref()->openedFiles().toStringList());
 #endif
     m_config->writeEntry("Version", VERSION); // version
-    m_config->writeEntry("Show Close Buttons", qConfig.showCloseButtons);
+    m_config->writeEntry("Close Buttons", qConfig.showCloseButtons);
 
     m_config->deleteGroup("RecentFiles");
     fileRecent->saveEntries(m_config);
 
-    m_config->setGroup("Parser Options");
+    m_config->setGroup("Parser options");
     m_config->writeEntry("Instant Update", qConfig.instantUpdate);
     m_config->writeEntry("Show Empty Nodes", qConfig.showEmptyNodes);
     m_config->writeEntry("Show Closing Tags", qConfig.showClosingTags);

@@ -45,10 +45,6 @@
 #include <kparts/partmanager.h>
 #include <kstatusbar.h>
 
-#if KDE_IS_VERSION(3,1,90)
-#include <ktabwidget.h>
-#endif
-
 #ifdef BUILD_KAFKAPART
 #include "undoredo.h"
 #include "wkafkapart.h"

@@ -69,7 +69,7 @@ typedef struct QConfig{
           QString defaultDocType;
           uint expandLevel;
           bool showDTDSelectDialog;
-          bool showCloseButtons;
+          QString showCloseButtons; ///< can be Disabled, ShowAlways or ShowDelayed
 
 #ifdef BUILD_KAFKAPART
          //kafka sync options

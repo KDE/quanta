@@ -3,7 +3,7 @@
                              -------------------
     begin                : Fri Aug 4 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon <pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com>
-                           (C) 2002 Andras Mantia <amantia@kde.org>
+                           (C) 2002, 2004 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -76,6 +76,23 @@ QString PreviewOptions::layout()
       layout = "Tabbed";
 
   return layout;
+}
+
+QString PreviewOptions::closeButtons()
+{
+   QString closeButtonState = "ShowAlways";
+   if (radioDelayedCloseButtons->isChecked())
+       closeButtonState = "ShowDelayed";
+   if (radioNoCloseButtons->isChecked())
+       closeButtonState = "Disabled";
+   return closeButtonState;
+}
+
+void PreviewOptions::setCloseButtons(const QString &state)
+{
+   if (state == "ShowAlways")  radioShowCloseButtons->setChecked(true);
+   if (state == "ShowDelayed")  radioDelayedCloseButtons->setChecked(true);
+   if (state == "Disabled")  radioNoCloseButtons->setChecked(true);
 }
 
 void PreviewOptions::slotTogglePreview()

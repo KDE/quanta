@@ -56,7 +56,7 @@
 #include <kspell.h>
 #include <ktip.h>
 #include <kio/netaccess.h>
-#if KDE_IS_VERSION(3,1,90)
+#if KDE_IS_VERSION(3,1,90) || defined(COMPAT_KMDI)
 #include <ktabwidget.h>
 #endif
 #include <kmultitabbar.h>
@@ -549,11 +549,30 @@ void QuantaInit::readOptions()
   showToolbarAction  ->setChecked(m_config->readBoolEntry("Show Toolbar",   true));
   qConfig.enableDTDToolbar = m_config->readBoolEntry("Show DTD Toolbar",true);
   m_quanta->showDTDToolbar->setChecked(qConfig.enableDTDToolbar);
-  qConfig.showCloseButtons = m_config->readBoolEntry("Show Close Buttons", true);
+  qConfig.showCloseButtons = m_config->readEntry("Close Buttons", "ShowAlways");
+#if KDE_IS_VERSION(3,2,2) || defined(COMPAT_KMDI)
+  KTabWidget *tabWidget = m_quanta->tabWidget();
+  if (tabWidget)
+  {
+      if (qConfig.showCloseButtons == "ShowAlways")
+      {
+        tabWidget->setHoverCloseButton(true);
+        tabWidget->setHoverCloseButtonDelayed(false);
+      } else
+      if (qConfig.showCloseButtons == "ShowDelayed")
+      {
+        tabWidget->setHoverCloseButton(true);
+        tabWidget->setHoverCloseButtonDelayed(true);
+      } else
+      {
+         tabWidget->setHoverCloseButton(false);
+      }
+  }
+#endif
 
   m_quanta->fileRecent ->loadEntries(m_config);
 
-  m_config->setGroup("Parser Options");
+  m_config->setGroup("Parser options");
   qConfig.showEmptyNodes = m_config->readBoolEntry("Show Empty Nodes", false);
   qConfig.showClosingTags = m_config->readBoolEntry("Show Closing Tags", false);
   qConfig.instantUpdate = m_config->readBoolEntry("Instant Update", false);

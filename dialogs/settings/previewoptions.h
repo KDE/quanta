@@ -3,7 +3,7 @@
                              -------------------
     begin                : Fri Aug 4 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon <pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com>
-                           (C) 2002 Andras Mantia <amantia@kde.org>
+                           (C) 2002, 2004 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -30,8 +30,10 @@ public:
 
   QString position();
   QString layout();
+  QString closeButtons();
   void setPosition(const QString& );
   void setWindowLayout(const QString& );
+  void setCloseButtons(const QString& );
 
 public slots:
   void slotToggleWindowLayout();
