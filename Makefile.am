@@ -14,16 +14,16 @@ endif
 # Make merging simple
 LIB_KMDI =
 
-bin_PROGRAMS = quanta
+bin_PROGRAMS = quanta_be
 
-quanta_SOURCES = quantacommon.cpp quanta_init.cpp quantaview.cpp quantadoc.cpp quantaview_slots.cpp main.cpp document.cpp kqapp.cpp qextfileinfo.cpp quanta.cpp dcopwindowmanagerif.skel
+quanta_be_SOURCES = quantacommon.cpp quanta_init.cpp quantaview.cpp quantadoc.cpp quantaview_slots.cpp main.cpp document.cpp kqapp.cpp qextfileinfo.cpp quanta.cpp dcopwindowmanagerif.skel
 
-quanta_LDADD = $(LIB_KAFKA) $(LIB_KMDI) $(top_builddir)/quanta/project/libproject.la $(top_builddir)/quanta/plugins/libplugins.la $(top_builddir)/quanta/widgets/libwidgets.la $(top_builddir)/quanta/parser/libparser.la $(top_builddir)/quanta/treeviews/libtreeviews.la $(top_builddir)/quanta/toolbar/libtoolbar.la $(top_builddir)/quanta/tagdialogs/libtagdialogs.la $(top_builddir)/quanta/dialogs/libdialogs.la $(top_builddir)/quanta/messages/libmessages.la $(top_builddir)/quanta/plugins/php4dbg/libphp4dbg.la $(top_builddir)/quanta/plugins/php4dbg/dbgbase/libdbgbase.la $(top_builddir)/quanta/plugins/framewizard/libframewizard.la $(top_builddir)/quanta/plugins/csseditor/libcsseditor.la $(top_builddir)/quanta/plugins/php3dbg/libphp3dbg.la -lkatepartinterfaces $(LIBXML_LIBS) $(LIB_KABC) $(LIB_KSPELL) $(LIB_KHTML)
+quanta_be_LDADD = $(LIB_KAFKA) $(LIB_KMDI) $(top_builddir)/quanta/project/libproject.la $(top_builddir)/quanta/plugins/libplugins.la $(top_builddir)/quanta/widgets/libwidgets.la $(top_builddir)/quanta/parser/libparser.la $(top_builddir)/quanta/treeviews/libtreeviews.la $(top_builddir)/quanta/toolbar/libtoolbar.la $(top_builddir)/quanta/tagdialogs/libtagdialogs.la $(top_builddir)/quanta/dialogs/libdialogs.la $(top_builddir)/quanta/messages/libmessages.la $(top_builddir)/quanta/plugins/php4dbg/libphp4dbg.la $(top_builddir)/quanta/plugins/php4dbg/dbgbase/libdbgbase.la $(top_builddir)/quanta/plugins/framewizard/libframewizard.la $(top_builddir)/quanta/plugins/csseditor/libcsseditor.la $(top_builddir)/quanta/plugins/php3dbg/libphp3dbg.la -lkatepartinterfaces $(LIBXML_LIBS) $(LIB_KABC) $(LIB_KSPELL) $(LIB_KHTML)
 
-quanta_METASOURCES = AUTO
+quanta_be_METASOURCES = AUTO
 
 # the library search path.
-quanta_LDFLAGS = $(all_libraries) $(KDE_RPATH)
+quanta_be_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 
 # some parts got own messages targets. No need to duplicate their messages
 messages: rc.cpp
@@ -57,7 +57,7 @@ messages: rc.cpp
 
 # this is where the kdelnk file will go
 kdelnkdir = $(kde_appsdir)/Development
-kdelnk_DATA = quanta.desktop
+kdelnk_DATA = quanta_be.desktop
 
 # this is where the XML-GUI resource file goes
 rcdir = ${quanta_datadir}
