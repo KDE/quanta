@@ -20,13 +20,11 @@
 
 #include <qwidget.h>
 #include "csseditors.h"
-#include <qstringlist.h>
 #include <qdom.h>
 #include <qmap.h>
 #include <qlistview.h>
 #include <qsignal.h>
 
-class QListViewItem;
 class propertySetter;
 class KHTMLPart;
 class QListViewItem;
@@ -69,8 +67,12 @@ class CSSEditor : public CSSEditorS
                  m_Selectors,
                  m_Header,
                  m_Footer,
-                 m_InlineStyleContent;
-                        
+                 
+                 m_InlineStyleContent,
+                 m_externalStyleSheetDefinition,
+                 m_fileToPreview;
+      
+     bool m_isFileToPreviewExternal;                              
             //sourceFileName;   
    
     void Connect();
@@ -88,22 +90,22 @@ class CSSEditor : public CSSEditorS
     void removeProperty(const QVariant&); 
     void updatePreview();
     void setMiniEditors(QListViewItem*);
+    void toggleShortendForm();
     
   public:
     
     CSSEditor(QWidget* parent=0, const char *name=0){};
     CSSEditor( QListViewItem * i, QWidget* parent=0, const char *name=0);
-    CSSEditor( QString s, QWidget* parent=0, const char *name=0);
     ~CSSEditor(); 
     void initialize();
     void setSelectors( const QString& s) { m_Selectors = s; }
     void setHeader( const QString& s) { m_Header = s; }
     void setFooter( const QString& s) { m_Footer = s;}
     void setInlineStyleContent( const QString& s){ m_InlineStyleContent = s; }
-    void setForInitialPreview(const QString& s) { Q_UNUSED(s); } 
     QString generateProperties();
-    // void setSourceFileName(const QString& n) { sourceFileName = n; }
     void hidePreviewer();
+    void setFileToPreview(const QString& s,bool b) { m_fileToPreview = s; m_isFileToPreviewExternal = b;}                                                                         
+    void setExternalStyleSheetDefinition(const QString& s) { m_externalStyleSheetDefinition = s;}
 
   signals:
     void signalUpdatePreview();

@@ -18,7 +18,9 @@
 #ifndef TLPEDITORS_H
 #define TLPEDITORS_H
 
-#include <qhbox.h>
+#include "minieditor.h"
+#include "propertysetter.h"
+
 class KPushButton;
 class QLineEdit;
 class QLabel;
@@ -27,7 +29,7 @@ class QLabel;
   */
 
 
-class TLPEditor : public QHBox { //editor with a line text and a button calling a dialog
+class TLPEditor : public miniEditor { //editor with a line text and a button calling a dialog
   Q_OBJECT
 
   protected:
@@ -41,9 +43,11 @@ class TLPEditor : public QHBox { //editor with a line text and a button calling 
     virtual void setButtonIcon(QString);
     void setToolTip(QString);
     void setLabelText(QString);
+    void setWhatsThis(QString);
     QLineEdit* lineEdit() const { return m_le; }
     KPushButton* button() const { return m_pb; }
-    virtual void setInitialValue(const QString& s){Q_UNUSED(s);}
+    virtual void setInitialValue(const QString& s)=0;
+    virtual void connectToPropertySetter(propertySetter* p)=0;
 
   signals:
     void valueChanged(const QString&);
@@ -53,10 +57,11 @@ class fontEditor : public TLPEditor{
   Q_OBJECT
   private:
     QString m_initialValue;
-
+    
   public:
     fontEditor(QWidget *parent, const char* name=0);
     virtual void setInitialValue(const QString& s) { m_initialValue = s; }
+    virtual void connectToPropertySetter(propertySetter* p);
 
   public slots:
     void openFontChooser();
@@ -69,18 +74,19 @@ class URIEditor : public TLPEditor {
     enum URIResourceType{ audio, image, mousePointer };
 
   private:
-    QStringList m_sFiles;
     mode m_Mode;
     URIResourceType m_resourceType;
 
   public:
     URIEditor(QWidget *parent, const char* name=0);
-    void setMode(const mode& m) { m_Mode = m ; }
+    void setMode(const mode& m);
     void setResourceType(const  URIResourceType& r) { m_resourceType = r ; }
-    virtual void setInitialValue(const QString& s){Q_UNUSED(s);}
+    virtual void setInitialValue(const QString& s){}
+    virtual void connectToPropertySetter(propertySetter* p);
 
   public slots:
-    void URI(const QString&);
+    void selectedURI(const QString&);
+    void selectedURIs(const QStringList&);
     void openFileDialog();
 };
 

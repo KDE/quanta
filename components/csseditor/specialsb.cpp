@@ -16,9 +16,10 @@
  ***************************************************************************/
 
 #include "specialsb.h"
+#include "propertysetter.h"
 #include "csseditor_globals.h"
 
-specialSB::specialSB(QWidget *parent, const char *name ) : QHBox(parent,name) {
+specialSB::specialSB(QWidget *parent, const char *name ) : miniEditor(parent,name) {
   m_sb=new mySpinBox(this);
   m_cb=new QComboBox(this);
   connect(m_cb, SIGNAL(activated ( const QString & )), this, SLOT(cbValueSlot(const QString&)));
@@ -30,6 +31,11 @@ specialSB::~specialSB(){
   delete m_sb;
 }
 
+void specialSB::connectToPropertySetter(propertySetter* p){
+  connect(this, SIGNAL(valueChanged(const QString&)), p,SIGNAL(valueChanged(const QString&)));
+}
+ 
+
 void specialSB::cbValueSlot(const QString& s){
   emit valueChanged( m_sb->text() +s );
 }
@@ -38,9 +44,18 @@ void specialSB::sbValueSlot(const QString& s){
   emit valueChanged( s + m_cb->currentText());
 }
 
-void specialSB::setInitialValue(QString sbValue, QString cbValue){
-  m_sb->setValue(sbValue.toInt());
-  m_cb->setCurrentText(cbValue);
+void specialSB::setInitialValue(QString s){
+
+  QRegExp pattern("\\d("+ cbValueList().join("|")+")");
+  
+  if(s.contains(pattern)) {
+    QString temp1(s.stripWhiteSpace()),
+                 temp2(s.stripWhiteSpace());
+                 
+    m_sb->setValue(temp1.remove(QRegExp("\\D")).toInt());
+    m_cb->setCurrentText(temp2.remove(QRegExp("\\d")));              
+  }
+  else return;
 }
 
 QStringList specialSB::cbValueList(){

@@ -29,9 +29,9 @@ class QStringList;
 
 class ShorthandFormer{
 public:
-    ShorthandFormer();
+    ShorthandFormer(){}
     ShorthandFormer( QMap<QString,QString> m );
-    ~ShorthandFormer();
+    ~ShorthandFormer(){}
     QString compress();
     QMap<QString,QString> expand(QString propertyName, QString propertyValue);
     static QStringList SHFormList();

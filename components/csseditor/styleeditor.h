@@ -1,7 +1,7 @@
 /***************************************************************************
                            styleeditor  -  description
     begin              : Wed Apr 7 2004
-    copyright          : (C) 2004 by Luciano Gulmini <e.gulmini@tiscali.it>
+    copyright          : (C) 2004 by Luciano Gulmini <gulmini.luciano@student.unife.it>
  ***************************************************************************/
 
 /***************************************************************************
@@ -22,7 +22,7 @@
 //app includes
 
 //forward declarations
-
+class propertySetter;
 class StyleEditor : public TLPEditor{
   Q_OBJECT
   private:
@@ -34,6 +34,8 @@ public:
 
 public slots:
     void openCSSEditor();
+    virtual void connectToPropertySetter(propertySetter* p){}
+    virtual void setInitialValue(const QString& s){}
 };
 
 

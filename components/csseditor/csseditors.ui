@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>CSSEditorS</class>
 <widget class="QDialog">
     <property name="name">
@@ -15,13 +15,33 @@
     <property name="caption">
         <string>CSS Editor</string>
     </property>
+    <property name="sizeGripEnabled">
+        <bool>true</bool>
+    </property>
     <grid>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QLayoutWidget" row="1" column="0">
+        <spacer row="2" column="1">
             <property name="name">
-                <cstring>layout7</cstring>
+                <cstring>spacer1</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>280</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QLayoutWidget" row="2" column="2">
+            <property name="name">
+                <cstring>layout6</cstring>
             </property>
             <hbox>
                 <property name="name">
@@ -29,249 +49,270 @@
                 </property>
                 <widget class="QPushButton">
                     <property name="name">
-                        <cstring>pbHelp</cstring>
+                        <cstring>pbOk</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>0</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
                     </property>
                     <property name="text">
-                        <string>&amp;Help</string>
+                        <string>&amp;OK</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+O</string>
                     </property>
                 </widget>
-                <spacer>
+                <widget class="QPushButton">
                     <property name="name">
-                        <cstring>spacer1</cstring>
+                        <cstring>pbCancel</cstring>
                     </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>0</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
                     </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
+                    <property name="text">
+                        <string>&amp;Cancel</string>
                     </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>40</width>
-                            <height>20</height>
-                        </size>
+                    <property name="accel">
+                        <string>Alt+C</string>
                     </property>
-                </spacer>
-                <widget class="QLayoutWidget">
-                    <property name="name">
-                        <cstring>layout6</cstring>
-                    </property>
-                    <hbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <widget class="QPushButton">
-                            <property name="name">
-                                <cstring>pbOk</cstring>
-                            </property>
-                            <property name="text">
-                                <string>&amp;OK</string>
-                            </property>
-                        </widget>
-                        <widget class="QPushButton">
-                            <property name="name">
-                                <cstring>pbCancel</cstring>
-                            </property>
-                            <property name="text">
-                                <string>&amp;Cancel</string>
-                            </property>
-                        </widget>
-                    </hbox>
                 </widget>
             </hbox>
         </widget>
-        <widget class="QSplitter" row="0" column="0">
+        <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>SHckb</cstring>
+            </property>
+            <property name="text">
+                <string>Use shorthand form</string>
+            </property>
+            <property name="checked">
+                <bool>false</bool>
+            </property>
+        </widget>
+        <widget class="QSplitter" row="0" column="0" rowspan="1" colspan="3">
             <property name="name">
                 <cstring>splitter3</cstring>
+            </property>
+            <property name="frameShape">
+                <enum>NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Plain</enum>
             </property>
             <property name="orientation">
                 <enum>Horizontal</enum>
             </property>
-            <widget class="QLayoutWidget">
+            <widget class="QTabWidget">
                 <property name="name">
-                    <cstring>layout3</cstring>
+                    <cstring>twMediaGroup</cstring>
                 </property>
-                <vbox>
+                <property name="sizePolicy">
+                    <sizepolicy>
+                        <hsizetype>0</hsizetype>
+                        <vsizetype>7</vsizetype>
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                    </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                    <size>
+                        <width>33</width>
+                        <height>7</height>
+                    </size>
+                </property>
+                <property name="maximumSize">
+                    <size>
+                        <width>290</width>
+                        <height>32767</height>
+                    </size>
+                </property>
+                <widget class="QWidget">
                     <property name="name">
-                        <cstring>unnamed</cstring>
+                        <cstring>tab</cstring>
                     </property>
-                    <widget class="QTabWidget">
+                    <attribute name="title">
+                        <string>Visual</string>
+                    </attribute>
+                    <grid>
                         <property name="name">
-                            <cstring>twMediaGroup</cstring>
+                            <cstring>unnamed</cstring>
                         </property>
-                        <widget class="QWidget">
-                            <property name="name">
-                                <cstring>tab</cstring>
-                            </property>
-                            <attribute name="title">
-                                <string>Visual</string>
-                            </attribute>
-                            <grid>
-                                <property name="name">
-                                    <cstring>unnamed</cstring>
+                        <property name="margin">
+                            <number>0</number>
+                        </property>
+                        <widget class="QListView" row="0" column="0">
+                            <column>
+                                <property name="text">
+                                    <string>Properties</string>
                                 </property>
-                                <widget class="QListView" row="0" column="0">
-                                    <column>
-                                        <property name="text">
-                                            <string>Properties</string>
-                                        </property>
-                                        <property name="clickable">
-                                            <bool>false</bool>
-                                        </property>
-                                        <property name="resizable">
-                                            <bool>false</bool>
-                                        </property>
-                                    </column>
-                                    <property name="name">
-                                        <cstring>lvVisual</cstring>
-                                    </property>
-                                    <property name="resizeMode">
-                                        <enum>LastColumn</enum>
-                                    </property>
-                                </widget>
-                            </grid>
-                        </widget>
-                        <widget class="QWidget">
-                            <property name="name">
-                                <cstring>tab</cstring>
-                            </property>
-                            <attribute name="title">
-                                <string>Paged</string>
-                            </attribute>
-                            <grid>
-                                <property name="name">
-                                    <cstring>unnamed</cstring>
+                                <property name="clickable">
+                                    <bool>false</bool>
                                 </property>
-                                <widget class="QListView" row="0" column="0">
-                                    <column>
-                                        <property name="text">
-                                            <string>Properties</string>
-                                        </property>
-                                        <property name="clickable">
-                                            <bool>true</bool>
-                                        </property>
-                                        <property name="resizable">
-                                            <bool>true</bool>
-                                        </property>
-                                    </column>
-                                    <property name="name">
-                                        <cstring>lvPaged</cstring>
-                                    </property>
-                                    <property name="resizeMode">
-                                        <enum>AllColumns</enum>
-                                    </property>
-                                </widget>
-                            </grid>
-                        </widget>
-                        <widget class="QWidget">
-                            <property name="name">
-                                <cstring>tab</cstring>
-                            </property>
-                            <attribute name="title">
-                                <string>Interactive</string>
-                            </attribute>
-                            <grid>
-                                <property name="name">
-                                    <cstring>unnamed</cstring>
+                                <property name="resizable">
+                                    <bool>false</bool>
                                 </property>
-                                <widget class="QListView" row="0" column="0">
-                                    <column>
-                                        <property name="text">
-                                            <string>Properties</string>
-                                        </property>
-                                        <property name="clickable">
-                                            <bool>true</bool>
-                                        </property>
-                                        <property name="resizable">
-                                            <bool>true</bool>
-                                        </property>
-                                    </column>
-                                    <property name="name">
-                                        <cstring>lvInteractive</cstring>
-                                    </property>
-                                    <property name="resizeMode">
-                                        <enum>AllColumns</enum>
-                                    </property>
-                                </widget>
-                            </grid>
-                        </widget>
-                        <widget class="QWidget">
+                            </column>
                             <property name="name">
-                                <cstring>tab</cstring>
+                                <cstring>lvVisual</cstring>
                             </property>
-                            <attribute name="title">
-                                <string>Aural</string>
-                            </attribute>
-                            <grid>
-                                <property name="name">
-                                    <cstring>unnamed</cstring>
-                                </property>
-                                <widget class="QListView" row="0" column="0">
-                                    <column>
-                                        <property name="text">
-                                            <string>Properties</string>
-                                        </property>
-                                        <property name="clickable">
-                                            <bool>true</bool>
-                                        </property>
-                                        <property name="resizable">
-                                            <bool>true</bool>
-                                        </property>
-                                    </column>
-                                    <property name="name">
-                                        <cstring>lvAural</cstring>
-                                    </property>
-                                    <property name="resizeMode">
-                                        <enum>AllColumns</enum>
-                                    </property>
-                                </widget>
-                            </grid>
-                        </widget>
-                        <widget class="QWidget">
-                            <property name="name">
-                                <cstring>tab</cstring>
+                            <property name="cursor">
+                                <cursor>13</cursor>
                             </property>
-                            <attribute name="title">
-                                <string>All</string>
-                            </attribute>
-                            <grid>
-                                <property name="name">
-                                    <cstring>unnamed</cstring>
-                                </property>
-                                <widget class="QListView" row="0" column="0">
-                                    <column>
-                                        <property name="text">
-                                            <string>Properties</string>
-                                        </property>
-                                        <property name="clickable">
-                                            <bool>true</bool>
-                                        </property>
-                                        <property name="resizable">
-                                            <bool>true</bool>
-                                        </property>
-                                    </column>
-                                    <property name="name">
-                                        <cstring>lvAll</cstring>
-                                    </property>
-                                    <property name="resizeMode">
-                                        <enum>AllColumns</enum>
-                                    </property>
-                                </widget>
-                            </grid>
+                            <property name="resizeMode">
+                                <enum>LastColumn</enum>
+                            </property>
                         </widget>
-                    </widget>
-                    <widget class="QCheckBox">
+                    </grid>
+                </widget>
+                <widget class="QWidget">
+                    <property name="name">
+                        <cstring>tab</cstring>
+                    </property>
+                    <attribute name="title">
+                        <string>Paged</string>
+                    </attribute>
+                    <grid>
                         <property name="name">
-                            <cstring>SHckb</cstring>
+                            <cstring>unnamed</cstring>
                         </property>
-                        <property name="text">
-                            <string>Use shorthand form</string>
+                        <property name="margin">
+                            <number>0</number>
                         </property>
-                        <property name="checked">
-                            <bool>true</bool>
+                        <widget class="QListView" row="0" column="0">
+                            <column>
+                                <property name="text">
+                                    <string>Properties</string>
+                                </property>
+                                <property name="clickable">
+                                    <bool>true</bool>
+                                </property>
+                                <property name="resizable">
+                                    <bool>true</bool>
+                                </property>
+                            </column>
+                            <property name="name">
+                                <cstring>lvPaged</cstring>
+                            </property>
+                            <property name="resizeMode">
+                                <enum>AllColumns</enum>
+                            </property>
+                        </widget>
+                    </grid>
+                </widget>
+                <widget class="QWidget">
+                    <property name="name">
+                        <cstring>tab</cstring>
+                    </property>
+                    <attribute name="title">
+                        <string>Interactive</string>
+                    </attribute>
+                    <grid>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
                         </property>
-                    </widget>
-                </vbox>
+                        <property name="margin">
+                            <number>0</number>
+                        </property>
+                        <widget class="QListView" row="0" column="0">
+                            <column>
+                                <property name="text">
+                                    <string>Properties</string>
+                                </property>
+                                <property name="clickable">
+                                    <bool>true</bool>
+                                </property>
+                                <property name="resizable">
+                                    <bool>true</bool>
+                                </property>
+                            </column>
+                            <property name="name">
+                                <cstring>lvInteractive</cstring>
+                            </property>
+                            <property name="resizeMode">
+                                <enum>AllColumns</enum>
+                            </property>
+                        </widget>
+                    </grid>
+                </widget>
+                <widget class="QWidget">
+                    <property name="name">
+                        <cstring>tab</cstring>
+                    </property>
+                    <attribute name="title">
+                        <string>Aural</string>
+                    </attribute>
+                    <grid>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <property name="margin">
+                            <number>0</number>
+                        </property>
+                        <widget class="QListView" row="0" column="0">
+                            <column>
+                                <property name="text">
+                                    <string>Properties</string>
+                                </property>
+                                <property name="clickable">
+                                    <bool>true</bool>
+                                </property>
+                                <property name="resizable">
+                                    <bool>true</bool>
+                                </property>
+                            </column>
+                            <property name="name">
+                                <cstring>lvAural</cstring>
+                            </property>
+                            <property name="resizeMode">
+                                <enum>AllColumns</enum>
+                            </property>
+                        </widget>
+                    </grid>
+                </widget>
+                <widget class="QWidget">
+                    <property name="name">
+                        <cstring>tab</cstring>
+                    </property>
+                    <attribute name="title">
+                        <string>All</string>
+                    </attribute>
+                    <grid>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <property name="margin">
+                            <number>0</number>
+                        </property>
+                        <widget class="QListView" row="0" column="0">
+                            <column>
+                                <property name="text">
+                                    <string>Properties</string>
+                                </property>
+                                <property name="clickable">
+                                    <bool>true</bool>
+                                </property>
+                                <property name="resizable">
+                                    <bool>true</bool>
+                                </property>
+                            </column>
+                            <property name="name">
+                                <cstring>lvAll</cstring>
+                            </property>
+                            <property name="resizeMode">
+                                <enum>AllColumns</enum>
+                            </property>
+                        </widget>
+                    </grid>
+                </widget>
             </widget>
             <widget class="QSplitter">
                 <property name="name">
@@ -295,6 +336,20 @@
                     <property name="name">
                         <cstring>fPreview</cstring>
                     </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>7</hsizetype>
+                            <vsizetype>7</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                        <size>
+                            <width>0</width>
+                            <height>200</height>
+                        </size>
+                    </property>
                     <property name="frameShape">
                         <enum>StyledPanel</enum>
                     </property>
@@ -306,11 +361,44 @@
                     <property name="name">
                         <cstring>display</cstring>
                     </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>7</hsizetype>
+                            <vsizetype>7</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="maximumSize">
+                        <size>
+                            <width>32766</width>
+                            <height>32766</height>
+                        </size>
+                    </property>
+                    <property name="readOnly">
+                        <bool>true</bool>
+                    </property>
                 </widget>
             </widget>
         </widget>
+        <widget class="KPushButton" row="2" column="0">
+            <property name="name">
+                <cstring>pbHelp</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+            <property name="text">
+                <string>&amp;Help</string>
+            </property>
+            <property name="accel">
+                <string>Alt+H</string>
+            </property>
+        </widget>
     </grid>
 </widget>
+<customwidgets>
+</customwidgets>
 <connections>
     <connection>
         <sender>pbCancel</sender>
@@ -326,4 +414,7 @@
     </connection>
 </connections>
 <layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>kpushbutton.h</includehint>
+</includehints>
 </UI>

@@ -18,7 +18,7 @@
 #ifndef SPECIALSB_H
 #define SPECIALSB_H
 
-#include <qhbox.h>
+#include "minieditor.h"
 #include <qcombobox.h>
 class mySpinBox;
 
@@ -26,7 +26,7 @@ class mySpinBox;
   *@author gulmini luciano
   */
  
-class specialSB : public QHBox {
+class specialSB : public miniEditor {
     Q_OBJECT
   protected:
     QComboBox *m_cb;
@@ -36,8 +36,9 @@ class specialSB : public QHBox {
            specialSB(QWidget *parent=0, const char *name=0);
            ~specialSB();
      void insertItem(QString s){ m_cb->insertItem(s); }
-     void setInitialValue(QString sbValue, QString cbValue);
+     void setInitialValue(QString s);
      QStringList cbValueList();
+      virtual void connectToPropertySetter(propertySetter* p);
      
    public slots:
      void cbValueSlot(const QString&);

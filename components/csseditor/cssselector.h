@@ -18,8 +18,10 @@
 #ifndef CSSSELECTOR_H
 #define CSSSELECTOR_H
 
-
+#include <qmap.h>
+#include <qpair.h>
 #include "cssselectors.h"
+
 class QListViewItem;
 class QStringList;
 /**
@@ -28,33 +30,31 @@ class QStringList;
 
 class CSSSelector : public CSSSelectorS {
   Q_OBJECT
-  
+
   private:
     QListViewItem *m_currentItem;
     QListView *m_currentListView;
     QString m_header,
                  m_footer,
-                 m_initialPreviewText;  
-    //QString m_sourceFileName;             
-    bool m_hideEditorPreviewer; 
+                 m_callingFrom,
+                 m_fileToPreview;
+    QMap<QString, QPair<QString,unsigned int> > m_currentStylesheetStructure;    
+    unsigned int m_orderNumber; 
+    bool m_stopProcessingStylesheet;                
+ 
     void Connect();   
-    
             
-  public: 
+  public:    
     CSSSelector(QWidget *parent=0, const char* name=0);
     ~CSSSelector();
-    
-  public :
-    void loadExistingStyleSection(QString);
-    void loadCSSFileContent(QString s){ loadExistingStyleSection(s); }
-    void setForInitialPreview(const QString& s) { m_initialPreviewText = s;}   
+    void loadCSSContent(QString s);
     void setHeader(const QString& h) { m_header = h; }
-    void setFooter(const QString& f) { m_footer = f; }
-    QString generateStyleSection();  
-    QString generateFormattedStyleSection();         
-    //void setSourceFileName(const QString& n) { m_sourceFileName = n; }
-    //QString sourceFileName() const { return m_sourceFileName; }    
-    void hideEditorPreviewer(bool b){ m_hideEditorPreviewer = b; }
+    void setFooter(const QString& f) { m_footer = f; }         
+    void enableApplyToFile();
+    void setCallingFrom(QString cf){ m_callingFrom = cf ;}
+    void setFileToPreview(const QString& s){ m_fileToPreview=s;}
+    bool errorOnProcessingStylesheet() const { return m_stopProcessingStylesheet; }
+    QString generateFormattedStyleSection();
     
   private slots: 
     void openCSSEditor(QListViewItem *);  
@@ -67,6 +67,7 @@ class CSSSelector : public CSSSelectorS {
     void setCurrentItem(QListViewItem* i) { m_currentItem = i; }
     void setCurrentListView(QWidget*);
     void setDTDTags(const QString&);
+    void setStylesheetProcessing(const QString&);   
 };
 
 #endif

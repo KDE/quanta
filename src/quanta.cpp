@@ -4132,14 +4132,17 @@ void QuantaApp::slotInsertCSS()
     QString styleTagContent(w->text(bLine, bCol+1, eLine, eCol-1).remove("<!--").remove("-->"));// <style></style> block content
         kdDebug(24000) << "Style tag contains: " << endl << styleTagContent << endl;
     CSSSelector *dlg = new CSSSelector;
-
-    dlg->setForInitialPreview(fullDocument);
-    //dlg->setSourceFileName(w->url().path());
+    
+    dlg->setCallingFrom("XHTML");
+    QFileInfo fi(quantaApp->currentURL());
+    dlg->setFileToPreview(quantaApp->projectBaseURL().path() +  fi.baseName());
+   
 
     dlg->setHeader(header);
     dlg->setFooter(footer);
 
-    dlg->loadExistingStyleSection(styleTagContent);
+    dlg->loadCSSContent(styleTagContent);
+    if(!dlg->errorOnProcessingStylesheet())
     if( dlg->exec() ){
       w->activateParser(false);
       styleNode->next->tag->beginPos(eLine, eCol);
@@ -4156,23 +4159,29 @@ void QuantaApp::slotInsertCSS()
         kdDebug(24000) << "[CSS editor] This is a pure CSS document";
 
     CSSSelector *dlg = new CSSSelector;
-    dlg->setForInitialPreview(QString::null);
+    
+    dlg->setCallingFrom("CSS");
+    
     if (!fullDocument.isEmpty())
-      dlg->loadExistingStyleSection(fullDocument);
-    if (dlg->exec())
-    {
+      dlg->loadCSSContent(fullDocument);
+    dlg->enableApplyToFile();  
+    if(!dlg->errorOnProcessingStylesheet())
+      if (dlg->exec())
+      {
       w->activateParser(false);
       w->editIf->clear();
       w->activateParser(true);
       w->insertTag(dlg->generateFormattedStyleSection());
-    }
-    delete dlg;
+      }
+     delete dlg;
   } else
   if (parentNode && parentNode->tag->type == Tag::XmlTag)
   {
         kdDebug(24000) << "[CSS editor] We will add a style attribute to: " << parentNode->tag->name << endl;
     CSSEditor *dlg = new CSSEditor(this);
-    dlg->setForInitialPreview(fullDocument);
+    QFileInfo fi(quantaApp->currentURL());
+    dlg->setFileToPreview(quantaApp->projectBaseURL().path() +  fi.baseName(),false);
+
 
     parentNode->tag->beginPos(bLine, bCol);
     parentNode->tag->endPos(eLine, eCol);

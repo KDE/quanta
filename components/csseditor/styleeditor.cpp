@@ -1,7 +1,7 @@
 /***************************************************************************
                            styleeditor  -  implementation
     begin              : Wed Apr 7 2004
-    copyright          : (C) 2004 by Luciano Gulmini <e.gulmini@tiscali.it>
+    copyright          : (C) 2004 by Luciano Gulmini <gulmini.luciano@student.unife.it>
  ***************************************************************************/
 
 /***************************************************************************
@@ -17,6 +17,7 @@
 #include <qtooltip.h>
 #include <qiconset.h>
 #include <qlabel.h>
+#include <qfileinfo.h>
 
 //kde includes
 #include <kdialog.h>
@@ -36,6 +37,7 @@
 #include "styleeditor.h"
 #include "viewmanager.h"
 #include "csseditor.h"
+#include "quanta.h"
 
 StyleEditor::StyleEditor(QWidget *parent, const char* name) : TLPEditor(parent,name){
   connect(m_pb, SIGNAL(clicked()), this, SLOT(openCSSEditor()));
@@ -75,7 +77,8 @@ void StyleEditor::openCSSEditor(){
 
   if (styleNode && styleNode->tag->type == Tag::XmlTag) {
     CSSEditor *dlg = new CSSEditor(this);
-    dlg->setForInitialPreview(fullDocument);
+    QFileInfo fi(quantaApp->currentURL());
+    dlg->setFileToPreview(quantaApp->projectBaseURL().path() +  fi.baseName(),false);
 
     styleNode->tag->beginPos(bLine, bCol);
     styleNode->tag->endPos(eLine, eCol);

@@ -19,6 +19,7 @@
 #include <qcombobox.h>
 #include <qlabel.h>
 #include <qtooltip.h>
+#include <qwhatsthis.h>
 
 #include <kpushbutton.h>
 #include <kurl.h>
@@ -34,8 +35,8 @@
 #include "tlpeditors.h"
 #include "fontfamilychooser.h"
 #include "project.h"
-
-TLPEditor::TLPEditor(QWidget *parent, const char* name) : QHBox(parent,name){
+    
+TLPEditor::TLPEditor(QWidget *parent, const char* name) : miniEditor(parent,name){
   m_label = new QLabel(this);
   m_le = new QLineEdit(this);
   m_pb = new KPushButton(this);
@@ -63,80 +64,113 @@ void TLPEditor::setToolTip(QString s){
   QToolTip::add(m_pb, s);
 }
 
+void TLPEditor::setWhatsThis(QString s){
+  QWhatsThis::add(m_le,s);
+}
+
 URIEditor::URIEditor(QWidget *parent, const char* name) : TLPEditor(parent,name){
-  m_Mode = Single;
-  setLabelText(i18n( " Uri  :" ));
+  QString whatsthis =i18n("WIth this line edit you can insert the URI of the resource you want to reach");  
+  setWhatsThis(whatsthis);
+  setLabelText(" Uri  :");
   setButtonIcon("fileopen");
   setToolTip(i18n("Open the URI selector"));
-
-  if( m_Mode == Single )
-    connect(m_le, SIGNAL(textChanged ( const QString & )), this, SLOT(URI(const QString&)));
+    
   connect(m_pb, SIGNAL(clicked()), this, SLOT(openFileDialog()));
 }
 
-void URIEditor::URI(const QString & s){
+void URIEditor::connectToPropertySetter(propertySetter* p){
+  connect(this,SIGNAL(valueChanged(const QString&)), p ,SIGNAL(valueChanged(const QString&))); 
+}
+
+void URIEditor::setMode(const mode& m) { 
+  m_Mode = m ; 
+  if( m_Mode == Single )
+    connect(m_le, SIGNAL(textChanged ( const QString & )), this, SLOT(selectedURI(const QString&)));
+  else{
+    connect(m_le, SIGNAL(textChanged ( const QString & )), this, SLOT(selectedURIs(const QStringList&))); 
+  }  
+}
+
+void URIEditor::selectedURI(const QString & s){
    KURL u;
    u.setPath(s);
    emit valueChanged("url(\'" + QExtFileInfo::toRelative(u, quantaApp->projectBaseURL()).path() + "\')");
- }
+}
 
+void URIEditor::selectedURIs(const QStringList& s){
+  KURL u;
+  QStringList selectedFiles = s,
+                     selectedFilesWithURLFormat;
+  for ( QStringList::Iterator it = selectedFiles.begin(); it != selectedFiles.end(); ++it ){      
+    u.setPath(*it);   
+    selectedFilesWithURLFormat.append( "url(\'" + QExtFileInfo::toRelative(u, quantaApp->projectBaseURL()).path() + "\')");
+  }
+  emit valueChanged(selectedFilesWithURLFormat.join(","));
+}
+ 
 void URIEditor::openFileDialog(){
-
-  KFileDialog* fd = new KFileDialog( Project::ref()->projectBaseURL().url(), "*.*", this, "file dialog", TRUE );
+  
+  KFileDialog fd( Project::ref()->projectBaseURL().url(), "*.*", this, "file dialog", TRUE );
   switch(m_resourceType) {
     case image :   {
-                             fd->setFilter( "*.png *.gif *.jpg *.mng|" + i18n("Image Files (*.png *.gif *.jpg *.mng)") +"\n*|" + i18n("All Files") );
-                             KImageFilePreview *ip = new KImageFilePreview( fd );
-                             fd->setPreviewWidget( ip );
-                            }
+                             fd.setFilter( "*.png *.gif *.jpg *.mng|" + i18n("Image files") +" (*.png *.gif *.jpg *.mng)\n*.*|" + i18n("All files")+(" (*.*)") );
+                             KImageFilePreview *ip = new KImageFilePreview( &fd );
+                             fd.setPreviewWidget( ip );
+                            } 
                              break;
-    case audio :  fd->setFilter( "*.au *.aiff *.wav|" + i18n("Audio Files (*.au *.aiff *.wav)")+"\n*|" + i18n("All Files") );break;
-    //case mousePointer :   fd->setFilter( "*.|" + i18n("Mouse Pointers (*.)")+"\n*|" + i18n("All Files") );break;
-    case mousePointer :   fd->setFilter( "*|" + i18n("All Files") );break;
+    case audio : {
+                           fd.setFilter( "*.au *.aiff *.wav|" + i18n("Audio files")+" (*.au *.aiff *.wav)\n*.*|" + i18n("All files")+(" (*.*)") );
 
+    
+                         }
+                         break; 
+  //case mousePointer :   fd.setFilter( "*.|" + i18n("Mouse Pointers (*.)")+"\n*.*|" + i18n("All files (*.*)") );break;
+    case mousePointer :   fd.setFilter( "*.*|" + i18n("All files")+(" (*.*)") );break;
+    
     default:;
   }
-
-  bool multi=false;
-
-  if( m_Mode == Single) fd->setMode(1);
-  else {
-    fd->setMode(4);
-    multi=true;
-  }
-
-  if( fd->exec() ){
-    if( !multi)
-      URI( fd->selectedFile() );
+    
+  if( m_Mode == Single) 
+    fd.setMode(KFile::File); 
+  else 
+    fd.setMode(KFile::Files);
+ 
+  
+  if( fd.exec() ){
+    if( fd.mode() == KFile::File )
+      selectedURI( fd.selectedFile() );
     else {
-      QStringList selectedFiles = fd->selectedFiles();
+      selectedURIs( fd.selectedFiles() );
+      /*QStringList selectedFiles = fd.selectedFiles();
       KURL u;
-      for ( QStringList::Iterator it = selectedFiles.begin(); it != selectedFiles.end(); ++it )
-      {
-        u.setPath(*it);
+      for ( QStringList::Iterator it = selectedFiles.begin(); it != selectedFiles.end(); ++it ){      
+        u.setPath(*it);   
         m_sFiles.append( "url(\'" + QExtFileInfo::toRelative(u, quantaApp->projectBaseURL()).path() + "\')");
       }
-      emit valueChanged(m_sFiles.join(","));
+      emit valueChanged(m_sFiles.join(","));*/
     }
   }
-  delete fd;
 }
 
 fontEditor::fontEditor(QWidget *parent, const char* name) : TLPEditor(parent,name), m_initialValue(QString::null){
-  setLabelText(i18n( " Font  family :" ));
+  QString whatsthis =i18n("With this line edit you can insert the name of the font you want to use");  
+  setWhatsThis(whatsthis);
+  setLabelText(i18n(" Font  family :"));
   setButtonIcon("fonts");
   setToolTip(i18n("Open font family chooser"));
   connect(m_pb, SIGNAL(clicked()), this, SLOT(openFontChooser()));
   connect(m_le, SIGNAL(textChanged ( const QString & )), this, SIGNAL( valueChanged( const QString& ) ) );
 }
 
+void fontEditor::connectToPropertySetter(propertySetter* p){
+  connect(this, SIGNAL(valueChanged(const QString&)), p, SIGNAL(valueChanged(const QString&))); 
+}
+
 void fontEditor::openFontChooser(){
-  fontFamilyChooser *dlg = new fontFamilyChooser( this );
-  dlg->setInitialValue(m_initialValue);
-  if( dlg->exec() == QDialog::Accepted ){
-    emit valueChanged( dlg->fontList().join(", "));
-  }
-  delete dlg;
+  fontFamilyChooser dlg( this );
+  dlg.setInitialValue(m_initialValue);
+  if( dlg.exec() )
+    emit valueChanged( dlg.fontList().join(", "));
 }
 
 #include "tlpeditors.moc"

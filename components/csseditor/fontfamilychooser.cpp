@@ -28,6 +28,7 @@
 #include <kglobalsettings.h>
 #include <qregexp.h>
 #include <qlineedit.h>
+#include <qwhatsthis.h>
 
 #include<kdebug.h>
 
@@ -79,6 +80,15 @@ fontFamilyChooser::fontFamilyChooser(QWidget* parent, const char *name) : fontFa
   connect( pbRemove, SIGNAL( clicked() ), this, SLOT( removeFont() ) );
   connect( pbMoveUp, SIGNAL( clicked() ), this, SLOT( moveFontUp() ) );
   connect( pbMoveDown, SIGNAL( clicked() ), this, SLOT( moveFontDown() ) );
+  
+  QWhatsThis::add(lbAvailable,i18n("These are the names ot the available fonts on your system"));
+  QWhatsThis::add(lbGeneric,i18n("These are the names ot the generic fonts "));
+  QWhatsThis::add(lbSelected,i18n("These are the names ot the generic fonts you have selected  "));
+  QWhatsThis::add(pbAdd,i18n("Click this to add to add a font to your style sheet"));
+  QWhatsThis::add(pbRemove,i18n("Click this to remove a font from your style sheet"));
+  QWhatsThis::add(pbMoveUp,i18n("Click this to make the font more preferable than the preceeding one"));
+  QWhatsThis::add(pbMoveDown,i18n("Click this to make the font less preferable than the following one"));
+  
 }
  
 fontFamilyChooser::~fontFamilyChooser(){} 

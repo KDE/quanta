@@ -16,33 +16,36 @@
  ***************************************************************************/
 
 #include "csseditor.h"
-#include <qlistview.h>
 #include <qlayout.h>
 #include <qtabwidget.h>
-#include <qfile.h>
 #include <qpushbutton.h>
 #include <qcheckbox.h>
-#include <qlineedit.h>
 #include <qtextedit.h>
-#include <qregexp.h>
 #include <qtextstream.h>
-#include <qmap.h>
 #include <qfileinfo.h>
 
 #include <klocale.h>
 #include <khtml_part.h>
 #include <khtmlview.h>
 #include <kstandarddirs.h>
+#include <klineedit.h>
 #include <kdebug.h>
+#include <kconfig.h>
+#include <kparts/browserextension.h>
 
 #include "propertysetter.h"
 #include "qmyhighlighter.h"
 #include "resource.h"
 #include "cssshpropertyparser.h"
 #include "shorthandformer.h"
-#include "resource.h"
 #include "quanta.h"
+#include "percentageeditor.h"
+#include "colorslider.h"
 #include "tlpeditors.h"
+#include "doubleeditors.h"
+#include "specialsb.h"
+#include "colorrequester.h"
+
 
 
 myCheckListItem::myCheckListItem(QListView * parent, const QString & text):QCheckListItem(parent, text, QCheckListItem::CheckBox),m_checkedChildren(0){
@@ -52,6 +55,7 @@ myCheckListItem::myCheckListItem(QListView * parent, const QString & text):QChec
 myCheckListItem::myCheckListItem(QCheckListItem * parent, const QString & text):QCheckListItem(parent, text, QCheckListItem::CheckBox),m_checkedChildren(0){
   m_sig = new QSignal;
 }
+
 myCheckListItem::~myCheckListItem(){
   delete m_sig;
 }
@@ -76,7 +80,7 @@ void myCheckListItem::stateChange (bool b){
        while( child ) {
          m_sig->setValue(QVariant(child->text(0)));
          m_sig->activate();
-         static_cast<myCheckListItem*>(child)->setOn(false);
+         static_cast<myCheckListItem*>(child)->setOn(false);    
          child = child->nextSibling();
        }
        m_checkedChildren = 0;
@@ -174,20 +178,24 @@ void CSSEditor::setCurrentPropOn(const QString& s){
    static_cast<myCheckListItem*>(lvVisual->findItem( "border-left-"+s,0 ))->setOn(true);  
  }
  
- void CSSEditor::hidePreviewer(){ 
-   m_previewer->view()->hide(); 
-   fPreview->setEnabled(false);
+void CSSEditor::hidePreviewer(){ 
+  fPreview->hide();
  }
  
-void CSSEditor::initialize()
-{
+void CSSEditor::initialize(){
+
+   
+  connect(pbOk, SIGNAL(clicked()), this, SLOT(toggleShortendForm()));
+  quantaApp->config()->setGroup("CSSEditor Options");
+  SHckb->setChecked(quantaApp->config()->readBoolEntry("Shorthand form enabled",false));
+  
   QString configFile = locate("appdata", "csseditor/config.xml");
 
   m_myhi = new QMyHighlighter(display);
-  display->setReadOnly(true);
 
   QBoxLayout *fPreviewLayout = new QBoxLayout(fPreview,QBoxLayout::LeftToRight);
   m_previewer=new KHTMLPart(fPreview);
+  
   fPreviewLayout->addWidget(m_previewer->view());
 
   QFile file( configFile );
@@ -245,7 +253,7 @@ void CSSEditor::initialize()
   if( !m_selectorName.isEmpty() ){ //the cssselector has been called
      m_initialProperties = m_initialProperties.stripWhiteSpace();
      props=QStringList::split(";",m_initialProperties);
-     temp=(m_selectorName + " {\n\t");
+     temp= m_selectorName + " {\n\t" ;
    }
 
   else {
@@ -260,7 +268,7 @@ void CSSEditor::initialize()
        const QString propertyValue((*it).section(":",1,1));
 
       if( ShorthandFormer::SHFormList().contains(propertyName)==0 ) {
-         temp+=( propertyName + " : " + propertyValue +";\n\t");
+         temp+= propertyName + " : " + propertyValue +";\n\t";
          addAndSetPropertyOn(propertyName,propertyValue);
       }
     else{
@@ -275,19 +283,23 @@ void CSSEditor::initialize()
     }
     }
     temp.truncate(temp.length()-1);
+    //temp.chop(1);
     if(normalMode)//normal mode editing
       temp+="}";
     display->setText(temp);
     activatePreview();
 }
 
+void CSSEditor::toggleShortendForm()
+{
+ quantaApp->config()->setGroup("CSSEditor Options");
+ quantaApp->config()->writeEntry("Shorthand form enabled", SHckb->isChecked());
+ quantaApp->config()->sync();
+}
+
 CSSEditor::CSSEditor(QListViewItem *i, QWidget *parent, const char *name) : CSSEditorS(parent, name){
   m_selectorName = i->text(0);
   m_initialProperties = i->text(1);
-}
-
-CSSEditor::CSSEditor( QString s, QWidget* parent, const char *name) : CSSEditorS(parent, name){
-  m_selectorName = s;
 }
 
 CSSEditor::~CSSEditor() {
@@ -310,8 +322,10 @@ void CSSEditor::setMiniEditors(QListViewItem* i){
       
       if(valueTypeName =="list") {
         m_ps->setComboBox();
-        m_ps->ComboBox()->insertStringList(QStringList::split(",",curr.attribute("value")));
+        QStringList values = QStringList::split(",",curr.attribute("value"));
+        m_ps->ComboBox()->insertStringList(values);
         if(m_properties.contains(m_currentProp->text(0)) !=0 )
+          if( values.contains(m_currentProp->text(0)))
             m_ps->ComboBox()->setCurrentText(m_properties[m_currentProp->text(0)]); 
         if(curr.attribute("editable") == "yes"){
           m_ps->ComboBox()->setEditable(true);
@@ -345,98 +359,138 @@ void CSSEditor::setMiniEditors(QListViewItem* i){
       }
       else           
       if( valueTypeName == "length") {
+        lengthEditor *editor = new lengthEditor(m_ps);
         if(m_properties.contains(m_currentProp->text(0)) !=0 )
-          m_ps->setLengthEditor(m_properties[m_currentProp->text(0)]);  
-        else m_ps->setLengthEditor();   
+          editor->setInitialValue(m_properties[m_currentProp->text(0)]);   
+        else 
+          editor->setInitialValue(QString::null); 
+        m_ps->installMiniEditor(editor);
       }
       else
       if( valueTypeName == "percentage") {
-        if(m_properties.contains(m_currentProp->text(0)) !=0 )
-          m_ps->setPercentageEditor(m_properties[m_currentProp->text(0)]);
-        else m_ps->setPercentageEditor();  
+        if(m_properties.contains(m_currentProp->text(0)) !=0 ){
+          percentageEditor *editor = new percentageEditor(m_properties[m_currentProp->text(0)],m_ps);
+          m_ps->installMiniEditor(editor);
+        }
+        else {
+          percentageEditor *editor = new percentageEditor("0",m_ps);
+          m_ps->installMiniEditor(editor);
+        } 
       }
       else
       if( valueTypeName == "doubleLength") {
-        if(m_properties.contains(m_currentProp->text(0)) !=0 )
-          m_ps->setDoubleLengthEditor(m_properties[m_currentProp->text(0)]);
-        else m_ps->setDoubleLengthEditor();  
+        doubleLengthEditor *editor = new doubleLengthEditor(m_ps);
+        
+        if(m_properties.contains(m_currentProp->text(0)) !=0 ){
+          QString temp(m_properties[m_currentProp->text(0)].simplifyWhiteSpace()),
+                       sx(temp.section(" ",0,0)),
+                       dx(temp.section(" ",1,1));
+
+          editor->setInitialValue(sx,dx);
+        }
+        else editor->setInitialValue(QString::null,QString::null); 
+        m_ps->installMiniEditor(editor);
       }
       else
       if( valueTypeName == "doublePercentage") {
-        if(m_properties.contains(m_currentProp->text(0)) !=0 )
-          m_ps->setDoublePercentageEditor(m_properties[m_currentProp->text(0)]);  
-        else m_ps->setDoublePercentageEditor();  
+        doublePercentageEditor *editor = new doublePercentageEditor(m_ps);
+        
+        if(m_properties.contains(m_currentProp->text(0)) !=0 ){
+          QString temp(m_properties[m_currentProp->text(0)].simplifyWhiteSpace()),
+                       sx(temp.section(" ",0,0)),
+                       dx(temp.section(" ",1,1));
+
+          editor->setInitialValue(sx,dx);
+        }
+        else editor->setInitialValue(QString::null,QString::null);
+        m_ps->installMiniEditor(editor);
       }
       else
       if( valueTypeName == "frequency") {
+        frequencyEditor *editor = new frequencyEditor(m_ps);
         if(m_properties.contains(m_currentProp->text(0)) !=0 )
-          m_ps->setFrequencyEditor(m_properties[m_currentProp->text(0)]); 
-        else m_ps->setFrequencyEditor();  
+          editor->setInitialValue(m_properties[m_currentProp->text(0)]);
+        else 
+          editor->setInitialValue(QString::null); 
+        m_ps->installMiniEditor(editor);
       }
       else
       if( valueTypeName == "time") {
+        timeEditor *editor = new timeEditor(m_ps);
         if(m_properties.contains(m_currentProp->text(0)) !=0 )
-          m_ps->setTimeEditor(m_properties[m_currentProp->text(0)]);
-        else m_ps->setTimeEditor();  
+          editor->setInitialValue(m_properties[m_currentProp->text(0)]);
+        else 
+          editor->setInitialValue(QString::null); 
+        m_ps->installMiniEditor(editor);
       }     
       else
       if( valueTypeName == "angle") {
-        if(m_properties.contains(m_currentProp->text(0)) !=0 )
-          m_ps->setAngleEditor(m_properties[m_currentProp->text(0)]); 
-        else m_ps->setAngleEditor();  
+        angleEditor *editor = new angleEditor(m_ps);
+        if(m_properties.contains(m_currentProp->text(0)) !=0 )       
+         editor->setInitialValue(m_properties[m_currentProp->text(0)]);
+        else 
+          editor->setInitialValue(QString::null); 
+        m_ps->installMiniEditor(editor);
       }    
-      /*else
-      if( valueTypeName == "edit") {
-        m_ps->ComboBox()->setEditable(true);
-        m_ps->ComboBox()->lineEdit()->clear();
-      }*/
       else
-      if( valueTypeName == "uri") {
-        m_ps->setUriEditor();
-        if(curr.attribute("mode") == "multi") m_ps->UriEditor()->setMode(URIEditor::Multi);
+      if( valueTypeName == "freeedit") {
+        m_ps->setLineEdit();
+      }
+      else
+      if( valueTypeName == "uri") {  
+        URIEditor *editor = new URIEditor(m_ps);      
+
+        if(curr.attribute("mode") == "multi") editor->setMode(URIEditor::Multi);
+        else editor->setMode(URIEditor::Single); 
             
-        if(curr.attribute("resourceType") == "audio") m_ps->UriEditor()->setResourceType(URIEditor::audio);
+        if( curr.attribute("resourceType") == "audio") editor->setResourceType(URIEditor::audio);
         else
-           if(curr.attribute("resourceType") == "image") m_ps->UriEditor()->setResourceType(URIEditor::image);  
-           else
-             if(curr.attribute("resourceType") == "mousePointer") m_ps->UriEditor()->setResourceType(URIEditor::mousePointer); 
+          if( curr.attribute("resourceType") == "image") editor->setResourceType(URIEditor::image);  
+          else
+            if( curr.attribute("resourceType") == "mousePointer") editor->setResourceType(URIEditor::mousePointer);  
+      
+        m_ps->installMiniEditor(editor);             
       }      
       else
       if( valueTypeName == "colors") {
+        RGBcolorSlider *RGBeditor = new RGBcolorSlider(m_ps);
+        colorRequester *CReditor = new colorRequester(m_ps);
         if(m_properties.contains(m_currentProp->text(0)) !=0 ){
-          m_ps->setColorRequester(m_properties[m_currentProp->text(0)]);
-          m_ps->setPredefinedColorListEditor(m_properties[m_currentProp->text(0)]);
-        }
-        else {
-          m_ps->setColorRequester();
-          m_ps->setPredefinedColorListEditor();
+          CReditor->lineEdit()->setText(m_properties[m_currentProp->text(0)]);
+          CReditor->setInitialValue();
+          
         }
         
+        m_ps->installMiniEditor(CReditor);
+        m_ps->setPredefinedColorListEditor();
+        m_ps->installMiniEditor(RGBeditor);        
       }         
       else
       if( valueTypeName =="doubleList") {
-        m_ps->setDoubleComboBoxEditor();
-        m_ps->DoubleComboBoxEditor()->cbSx()->insertStringList(QStringList::split(",",curr.firstChild().toElement().attribute("value")));
-        m_ps->DoubleComboBoxEditor()->cbDx()->insertStringList(QStringList::split(",",curr.lastChild().toElement().attribute("value")));          
+        doubleComboBoxEditor *editor = new doubleComboBoxEditor(m_ps);
+        editor->cbSx()->insertStringList(QStringList::split(",",curr.firstChild().toElement().attribute("value")));
+        editor->cbDx()->insertStringList(QStringList::split(",",curr.lastChild().toElement().attribute("value")));
+        m_ps->installMiniEditor(editor);          
       } 
       else
         if( valueTypeName == "fontDialog" ){
-          if(m_properties.contains(m_currentProp->text(0)) !=0 )
-            m_ps->setFontEditor(m_properties[m_currentProp->text(0)]);
-          else m_ps->setFontEditor(); 
+          fontEditor *editor = new fontEditor(m_ps);
+          if(m_properties.contains(m_currentProp->text(0)) !=0 ){
+            editor->setInitialValue(m_properties[m_currentProp->text(0)]);
+          }
+          else editor->setInitialValue(QString::null);
+          m_ps->installMiniEditor(editor);
         } 
     }
     m_ps->addButton();
     m_ps->Show();
   }
-  
-  
 }
 
 void CSSEditor::checkProperty(const QString& v){
-  if(!m_currentProp->isOn()) {
+  if(!m_currentProp->isOn()) 
     m_currentProp->setOn(true);
-  }
+  
   if( m_currentProp->depth() ){
     myCheckListItem *p = static_cast<myCheckListItem*>(m_currentProp->parent());
     while(p){
@@ -534,10 +588,7 @@ void CSSEditor::checkProperty(const QString& v){
                    addProperty("border-left-style",values[3]);break;
     }
   }
-  else
-  
-  
-  addProperty(m_currentProp->text(0),v);
+  else addProperty(m_currentProp->text(0),v);
   emit signalUpdatePreview();
 }
 
@@ -550,8 +601,7 @@ void CSSEditor::Connect(){
   connect(lvPaged,SIGNAL( selectionChanged( QListViewItem *  )),this,SLOT(setMiniEditors ( QListViewItem *  )));
 }
 
-void CSSEditor::removeProperty(const QVariant& v)
-{
+void CSSEditor::removeProperty(const QVariant& v){
   m_properties.remove(v.toString());
   updatePreview();
 }
@@ -560,8 +610,10 @@ QString CSSEditor::generateProperties(){
   QString props;
   QMap<QString,QString>::Iterator it;
   if(!SHckb->isChecked()) {
-    for ( it = m_properties.begin(); it != m_properties.end(); ++it ) props+=( it.key() + " : " + it.data().stripWhiteSpace() + "; " );
+    for ( it = m_properties.begin(); it != m_properties.end(); ++it ) 
+      props+= it.key() + " : " + it.data().stripWhiteSpace() + "; " ;
     props.truncate(props.length()-1);//the last white space creates some problems: better remove it
+    //props.chop(1);
     return props;
   }
   else {    
@@ -570,58 +622,76 @@ QString CSSEditor::generateProperties(){
   }
 }
 
-void CSSEditor::updatePreview()
-{
-    updateDisplay();
-    activatePreview();
+void CSSEditor::updatePreview(){
+  updateDisplay();
+  activatePreview();
 }
 
 void CSSEditor::activatePreview() {
-
-  QString testHeader,
-               testFooter,
-               testBody;
-
-  if(!m_selectorName.isEmpty()) {
-    testHeader += (  m_selectorName + " { \n " );
-    testFooter = ( "}"  + m_Selectors );
-  }
-  else {
-    testHeader += (" style=\"" );
-    testFooter = "\"" ;
-  }
+  if(!m_isFileToPreviewExternal){
+   QString testHeader,
+                 testFooter,
+                 testBody;
+        
+    if(!m_selectorName.isEmpty()) {
+      testHeader +=  m_selectorName + " { \n ";
+      testFooter =  "\n}"  + m_Selectors;
+    }
+    else {
+      testHeader += " style=\"" ;
+      testFooter = "\"" ;
+    }
   
-  QMap<QString,QString>::Iterator it;
-  for ( it = m_properties.begin(); it != m_properties.end(); ++it ) {
-    QString s( it.key() + " : " + it.data() + ";");
-    testBody+= s;
-   } 
+    QMap<QString,QString>::Iterator it;
+    for ( it = m_properties.begin(); it != m_properties.end(); ++it ) 
+      testBody+= it.key() + " : " + it.data() + ";";
 
- QFileInfo fi(quantaApp->currentURL());
- m_previewer->begin( KURL(quantaApp->projectBaseURL().path() +  fi.baseName() ) );
- m_previewer->write( m_Header + testHeader + testBody + testFooter + m_Footer);
- m_previewer->end(); 
+    m_previewer->begin( KURL(m_fileToPreview) );
+    m_previewer->write( m_Header +  testHeader + testBody+ testFooter+ m_Footer);
+    m_previewer->end(); 
+
+    
+  }   
+  else {
+    QString tmp("{"); 
+    QFile file(m_fileToPreview);      
+    if ( file.open( IO_ReadOnly ) ) {                    
+        QMap<QString,QString>::Iterator it;        
+        for ( it = m_properties.begin(); it != m_properties.end(); ++it ) 
+          tmp+= it.key() + " : " + it.data() + ";";
+         
+        
+        QFileInfo fi(m_fileToPreview);
+        KParts::URLArgs a;
+        if(fi.extension().lower() == "xml" or fi.extension().lower() == "xhtml")
+          a.serviceType="text/xml";
+        if(fi.extension().lower() == "html" or fi.extension().lower() == "html")
+          a.serviceType="text/xml";   
+        m_previewer->browserExtension()->setURLArgs(a);
+        QTextStream stream( &file ); 
+        
+        m_previewer->begin(KURL(m_fileToPreview));       
+        m_previewer->write(stream.read());
+        m_previewer->end(); 
+        m_previewer->setUserStyleSheet(m_externalStyleSheetDefinition + " " + m_selectorName+" "+ tmp +"}");         
+        file.close();
+    }
+   //else KMessageBox::sorry(this,i18n("The css file you want to edit can't be opened"));  
+  }  
 }
 
-void CSSEditor::updateDisplay()
-{
+void CSSEditor::updateDisplay(){  
   QString toDisplay;
-  bool normalMode = true;
-
-  if(!m_selectorName.isEmpty()){// we're working on <style></style> block
-      toDisplay= ( m_selectorName +" {\n\t" );
-  }
-  else {
-      normalMode = false;
-      toDisplay = "\n\t";
-   }
   QMap<QString,QString>::Iterator it;
-  for ( it = m_properties.begin(); it != m_properties.end(); ++it ) {
-    QString s( it.key() + " : " + it.data() + ";");
-    toDisplay += (s + "\n\t");
-  }
-  if(normalMode)//normal mode editing
+  for ( it = m_properties.begin(); it != m_properties.end(); ++it ) 
+    toDisplay += it.key() + " : " + it.data() + ";\n\t";
+  
+  if(!m_selectorName.isEmpty()){// we're working on <style></style> block
+    toDisplay.prepend(m_selectorName +" {\n\t");
     toDisplay+="}";
+  }    
+  else  toDisplay.prepend("\n\t");
+       
   display->setText(toDisplay);
 }
 

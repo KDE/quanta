@@ -18,9 +18,12 @@
  #include "specialsb.h"
  #include <qcombobox.h>
  #include "csseditor_globals.h"
+ #include "propertysetter.h"
  #include <qregexp.h>
  
-doubleEditorBase::doubleEditorBase(QWidget *parent, const char *name) : QHBox(parent,name){
+
+ 
+doubleEditorBase::doubleEditorBase(QWidget *parent, const char *name) : miniEditor(parent,name){
 }
 
 void doubleEditorBase::sxValueSlot(const QString& v){
@@ -34,6 +37,7 @@ void doubleEditorBase::dxValueSlot(const QString& v){
 } 
  
  doubleLengthEditor::doubleLengthEditor(QWidget *parent, const char *name) : doubleEditorBase(parent,name){
+  
   m_ssbSx = new specialSB(this);
   m_ssbSx->insertItem("cm");
   m_ssbSx->insertItem("em");
@@ -63,20 +67,13 @@ doubleLengthEditor::~doubleLengthEditor(){
   delete m_ssbDx;
 }
 
+void doubleLengthEditor::connectToPropertySetter(propertySetter* p){
+  connect(this, SIGNAL(valueChanged(const QString&)), p ,SIGNAL(valueChanged(const QString&)));
+}
+
 void doubleLengthEditor::setInitialValue(QString sx, QString dx){
-  QRegExp pattern("\\d"+m_ssbSx->cbValueList().join("|"));
-  
-  if(sx.contains(pattern)) {
-    QString temp1(sx.stripWhiteSpace()),
-                 temp2(sx.stripWhiteSpace());
-    m_ssbSx->setInitialValue(temp1.remove(QRegExp("\\D")), temp2.remove(QRegExp("\\d")));
-  }
-  
-  if(dx.contains(pattern)) {
-    QString temp1(dx.stripWhiteSpace()),
-                 temp2(dx.stripWhiteSpace());
-    m_ssbDx->setInitialValue(temp1.remove(QRegExp("\\D")), temp2.remove(QRegExp("\\d")));
-  }
+  m_ssbSx->setInitialValue(sx);
+  m_ssbDx->setInitialValue(dx);
 }
 
 doubleComboBoxEditor::doubleComboBoxEditor(QWidget *parent, const char *name) : doubleEditorBase(parent,name){
@@ -91,6 +88,10 @@ doubleComboBoxEditor::~doubleComboBoxEditor(){
   delete m_cbDx;
 }
 
+void doubleComboBoxEditor::connectToPropertySetter(propertySetter* p){
+  connect(this, SIGNAL(valueChanged(const QString&)), p ,SIGNAL(valueChanged(const QString&)));
+}
+
 doublePercentageEditor::doublePercentageEditor(QWidget *parent, const char *name) : doubleEditorBase(parent,name){
   m_sbSx = new mySpinBox(this);
   m_sbDx = new mySpinBox(this);
@@ -103,6 +104,10 @@ doublePercentageEditor::doublePercentageEditor(QWidget *parent, const char *name
 doublePercentageEditor::~doublePercentageEditor(){
   delete m_sbSx;
   delete m_sbDx;
+}
+
+void doublePercentageEditor::connectToPropertySetter(propertySetter* p){
+  connect(this, SIGNAL(valueChanged(const QString&)), p ,SIGNAL(valueChanged(const QString&)));
 }
 
 void doublePercentageEditor::setInitialValue(QString sx, QString dx){

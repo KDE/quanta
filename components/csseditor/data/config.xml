@@ -25,11 +25,13 @@
   <elevation>  
     <list value="below,level,above,higher,lower,inherit"/>  
     <angle/> 
+    <freeedit/>
   </elevation>
    
   <pitch> 
     <list value="inherit,x-low,medium,high,x-high,low"/>
     <frequency/> 
+    <freeedit/>
   </pitch>
    
   <pitch-range>    
@@ -47,11 +49,13 @@
       <time/>
       <percentage/> 
       <list value="inherit"/>
+      <freeedit/>
     </pause-after>    
     <pause-before> 
       <time/>
       <percentage/> 
       <list value="inherit"/> 
+      <freeedit/>
     </pause-before>   
   </pause>
  
@@ -87,7 +91,7 @@
   </stress>
    
   <voice-family>      
-    <edit/>
+    <freeedit/>
      <list value="inherit"/> 
   </voice-family>
    
@@ -118,7 +122,7 @@
         <leftList value="top,center,bottom"/>
         <rightList value="left,center,right"/>      
       </doubleList>
-      <edit/>
+      <freeedit/>
       <doubleLength/>
       <doublePercentage/> 
       <list value="inherit" editable="yes"/>
@@ -137,7 +141,7 @@
       <list value="transparent,inherit" editable="yes"/>
     </border-color>   
     <border-spacing>     
-      <edit/>
+      <freeedit/>
       <doubleLength/>
       <list value="inherit" editable="yes"/> 
     </border-spacing>  
@@ -155,6 +159,7 @@
       <border-top-width>           
         <length/> 
         <list value="thin,medium,thick,inherit"/>
+        <freeedit/>
       </border-top-width> 
   </border-top>
      
@@ -172,6 +177,7 @@
    <border-left-width> 
     <length/>  
     <list value="thin,medium,thick,inherit"/>
+    <freeedit/>
    </border-left-width>
    
   </border-left>
@@ -190,6 +196,7 @@
   <border-right-width>    
     <length/> 
     <list value="thin,medium,thick,inherit"/>
+    <freeedit/>
   </border-right-width>
    
   </border-right> 
@@ -207,7 +214,8 @@
        
   <border-bottom-width> 
     <length/>
-    <list value="thin,medium,thick,inherit"/> 
+    <list value="thin,medium,thick,inherit"/>
+    <freeedit/> 
   </border-bottom-width>
      
   </border-bottom> 
@@ -223,6 +231,7 @@
     <length/>
     <percentage/>
     <list value="auto,inherit"/>
+    <freeedit/>
   </bottom>
     
  <caption-side>
@@ -273,6 +282,7 @@
       <length/>
       <percentage/>  
       <list value="xx-small,x-small,small,medium,large,x-large,xx-large,larger,smaller,inherit"/> 
+      <freeedit/>
      </font-size> 
       
      <font-style>
@@ -292,18 +302,21 @@
     <height>       
       <length/>
       <percentage/>  
-      <list value="auto,inherit"/>   
+      <list value="auto,inherit"/>  
+      <freeedit/> 
     </height>
     
     <left>         
        <length/>
        <percentage/>
        <list value="auto,inherit"/>
+       <freeedit/>
     </left>
     
     <letter-spacing>            
        <length/> 
-       <list value="normal,inherit"/>  
+       <list value="normal,inherit"/> 
+       <freeedit/> 
     </letter-spacing>
     
     <line-height>        
@@ -311,6 +324,7 @@
       <percentage/>    
       <number/>
       <list value="normal,inherit"/>
+      <freeedit/>
     </line-height>
     
     <list-style hasSub="yes">   
@@ -330,47 +344,55 @@
     <margin-left>          
       <length/>
       <percentage/>  
-      <list value="auto"/>   
+      <list value="auto"/>  
+      <freeedit/> 
     </margin-left> 
     <margin-bottom>        
       <length/>
       <percentage/>  
-      <list value="auto"/>   
+      <list value="auto"/>  
+      <freeedit/> 
     </margin-bottom>
     <margin-right>     
       <length/>
       <percentage/>  
       <list value="auto"/> 
+      <freeedit/>
     </margin-right> 
     <margin-top>        
       <length/>
       <percentage/>  
-      <list value="auto"/>   
+      <list value="auto"/>  
+      <freeedit/> 
     </margin-top>  
   </margin>
     
   <max-height>      
     <length/>
     <percentage/>
-    <list value="none,inherit"/>   
+    <list value="none,inherit"/> 
+    <freeedit/>  
   </max-height>
     
   <max-width>     
     <length/>
     <percentage/>  
     <list value="none,inherit"/>  
+    <freeedit/>
   </max-width>
     
   <min-height>    
     <length/>
     <percentage/> 
-    <list value="none,inherit"/>    
+    <list value="none,inherit"/> 
+    <freeedit/>   
   </min-height> 
      
   <min-width>         
     <length/>
     <percentage/>  
     <list value="none,inherit"/>   
+    <freeedit/>
   </min-width>
   
   <outline hasSub="yes">
@@ -383,7 +405,8 @@
     </outline-style>    
     <outline-width> 
       <length/> 
-      <list value="thin,medium,thick,inherit"/>  
+      <list value="thin,medium,thick,inherit"/>
+      <freeedit/>  
     </outline-width>    
   </outline> 
   
@@ -395,23 +418,27 @@
     <padding-top>  
       <length/>  
       <list value="thin,medium,thick,inherit"/>
+      <freeedit/>
     </padding-top> 
     <padding-right> 
       <length/>
       <list value="thin,medium,thick,inherit"/>
+      <freeedit/>
     </padding-right>
     <padding-bottom>
       <length/>
       <list value="thin,medium,thick,inherit"/>
+      <freeedit/>
     </padding-bottom>  
     <padding-left> 
       <length/>
       <list value="thin,medium,thick,inherit"/>
+      <freeedit/>
     </padding-left>  
   </padding>
        
   <page>               
-    <edit/>  
+    <freeedit/>  
     <list value="auto"/> 
   </page>
     
@@ -439,6 +466,7 @@
     <length/>
     <percentage/>
     <list value="auto,inherit"/>   
+    <freeedit/>
   </right>
     
   <table-layout>
@@ -454,13 +482,14 @@
    <doubleList> 
         <leftList value="none,underline,overline,line-through,blink,inherit"/>
         <rightList value="none,underline,overline,line-through,blink,inherit"/>      
-      </doubleList> 
+   </doubleList> 
   </text-decoration>
     
   <text-indent>           
     <length/>
     <percentage/>  
     <list value="inherit"/>    
+    <freeedit/>
   </text-indent>
        
   <text-transform> 
@@ -471,6 +500,7 @@
     <length/>
     <percentage/> 
     <list value="auto,inherit"/> 
+    <freeedit/>
   </top> 
     
   <unicode-bidi>
@@ -480,7 +510,8 @@
   <vertical-align>     
     <list value="baseline,inherit,sub,super,top,text-top,middle,bottom,text-bottom"/>      
     <length/>
-    <percentage/>     
+    <percentage/>  
+    <freeedit/>   
   </vertical-align>
      
   <visibility>
@@ -495,11 +526,13 @@
     <length/>
     <percentage/>
     <list value="auto,inherit"/>  
+    <freeedit/>
   </width>
     
   <word-spacing>          
     <length/> 
     <list value="auto,inherit"/> 
+    <freeedit/>
   </word-spacing>
      
   <z-index>      
@@ -513,7 +546,7 @@
        
   <page>    
     <list value="auto"/>            
-    <edit/> 
+    <freeedit/> 
   </page> 
      
   <page-break-after>
@@ -548,6 +581,7 @@
     <outline-width>    
       <length/> 
       <list value="thin,medium,thick,inherit"/> 
+      <freeedit/>
     </outline-width>      
  </outline>
     
