@@ -129,7 +129,7 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
   QTimer *t = new QTimer( this );
   connect( t, SIGNAL(timeout()), SLOT(reparse()) );
   t->start( 2000, false );
-  slotFileNew();
+ // slotFileNew();
 
   setHighlight = view->write()->kate_doc->hlActionMenu (i18n("&Highlight Mode"), actionCollection(), "set_highlight");
 
@@ -587,7 +587,19 @@ bool QuantaApp::queryExit()
 {
   exitingFlag = true;
   saveOptions();
-  return doc->saveAll(false);
+  bool canExit = doc->saveAll(false);
+  if (canExit)
+  {
+    do
+    {
+      if (view->write() !=0)
+      {
+        view->write()->closeTempFile();
+	  	  doc->docList->remove( doc->url().url() );
+      }
+	  }while (view->removeWrite());
+  }
+  return canExit;
 }
 
 /**

@@ -29,6 +29,7 @@
 #include <kdialogbase.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
+#include <ktempfile.h>
 
 #include <ktexteditor/cursorinterface.h>
 #include <ktexteditor/clipboardinterface.h>
@@ -57,6 +58,7 @@ Document::Document(const QString& basePath, KTextEditor::Document *doc, QWidget 
   selectionIf = dynamic_cast<KTextEditor::SelectionInterface *>(_doc);
   viewCursorIf = dynamic_cast<KTextEditor::ViewCursorInterface *>(_view);
   this->basePath = basePath;
+  tempFile = 0;
 }
 
 Document::~Document()
@@ -577,3 +579,47 @@ int Document::checkOverwrite(KURL u)
   return query;
 }
 
+/** Creates a temporary file where the url is backed up. */
+int Document::createTempFile()
+{
+ closeTempFile();
+ tempFile = new KTempFile();
+ tempFile->setAutoDelete(true);
+ * (tempFile->textStream()) << editIf->text();
+
+ tempUrl = KURL(QFileInfo(*(tempFile->file())).filePath());
+ tempFile->close();
+
+ return 1;
+}
+
+/** No descriptions */
+int Document::closeTempFile()
+{
+// tempFile->unlink();
+ if (tempFile != 0)
+ {
+   delete tempFile;
+   tempFile = 0;
+ }
+}
+/** No descriptions */
+void Document::clearTempFile()
+{
+// tempFile->unlink();
+ delete tempFile;
+ tempFile = new KTempFile();
+}
+/** No descriptions */
+KURL Document::tempURL()
+{
+ return tempUrl;
+}
+
+/** No descriptions */
+bool Document::saveIt()
+{
+ bool modifyStatus = _doc->isModified();
+ _doc->save();
+ _doc->setModified(modifyStatus);
+}

@@ -49,6 +49,8 @@
 #include <kprocess.h>
 #include <ktempfile.h>
 
+#include <kparts/componentfactory.h>
+
 #include <ktexteditor/editinterface.h>
 #include <ktexteditor/selectioninterface.h>
 #include <ktexteditor/viewcursorinterface.h>
@@ -371,23 +373,14 @@ void QuantaApp::repaintPreview( bool clear )
   {
 //if it's	not untitled, than it was loaded from somewhere. In this case show it from that place
 	  url = doc->write()->url().url();
-/*
-    //First make a backup copy
-    previewTmpFile = new KTempFile();//(QFileInfo(url).dirPath());
-    QTextStream stream(previewTmpFile->fstream(), IO_ReadWrite);
-    QString s= doc->write()->editIf->text() ;
-    stream << s;
-    previewTmpFile->close();
 
-    previewCopyMade = true;
-  */
-	  if ( doc->isModified() ) doc->saveDocument( doc->url() );
+	  if ( doc->isModified() ) //doc->saveDocument( doc->url() );
+         doc->write()->saveIt();
 	
 	  url = project->urlWithPrefix(doc->write()->url());
 	
 	  part->begin(url, xOffset, yOffset );
 	  part->openURL( KURL(url) );		
-//	  part->openURL(previewTmpFile->name());		
   } else  //the document is Untitled, preview the text from it
  {
   	QString text = doc->write()->editIf->text();
@@ -739,13 +732,24 @@ void QuantaApp::slotShowPreview()
 //		disableCommand(ID_VIEW_REPAINT);
 		
 		s   ->raiseWidget( 0 );
-/*
-    if (previewCopyMade)
+
+//FIXME:
+//Restore the original doc from the temp file.
+//We should find a better synchronous method to copy the temp file to the current one.
+
+    if (doc->isModified())
     {
-      previewTmpFile->unlink();
-      previewCopyMade = false;
+      KURL origUrl = doc->write()->url();
+      KURL tempUrl = doc->write()->tempURL();
+
+      KTextEditor::Document *doc2 = KParts::ComponentFactory::createPartInstanceFromQuery<KTextEditor::Document>( "KTextEditor/Document",
+			        								      QString::null,
+							    						      this, 0,
+									      			      this, 0 );
+      doc2->openURL(tempUrl);
+      doc2->saveAs(origUrl);
+      delete doc2;
     }
-*/
 		doc ->write()->setFocus();
 	}
 	else {
@@ -1014,8 +1018,13 @@ void QuantaApp::viewMenuAboutToShow()
 
 void QuantaApp::slotToolSyntaxCheck()
 {
-  slotFileSave();
-  if ( !doc->write()->isUntitled() ) 
+//  slotFileSave();
+if ( doc->isModified() )
+{
+  doc->write()->saveIt();
+}
+
+if ( !doc->write()->isUntitled() )
   {
     QString fname = doc->write()->url().prettyURL();
     if ( fname.left(5) == "file:" ) fname.remove(0,5);
@@ -1028,6 +1037,8 @@ void QuantaApp::slotToolSyntaxCheck()
     
     connect( p, SIGNAL(processExited(KProcess *)),
              messageOutput, SLOT(weblintFinished()) );
+    connect( p, SIGNAL(processExited(KProcess *)),
+             this, SLOT(slotSyntaxCheckDone()) );
     connect( p, SIGNAL(receivedStdout(KProcess *, char *, int)),
              messageOutput, SLOT( processWebLint(KProcess *, char *, int)) );
 
@@ -1201,3 +1212,25 @@ void QuantaApp::gotoBookmark (int n)
 
 
 #include "quanta.moc"
+/** No descriptions */
+void QuantaApp::slotSyntaxCheckDone()
+{
+//FIXME:
+//Restore the original doc from the temp file.
+//We should find a better synchronous method to copy the temp file to the current one.
+//A method for this is also a good idea.
+
+    if (doc->isModified())
+    {
+      KURL origUrl = doc->write()->url();
+      KURL tempUrl = doc->write()->tempURL();
+
+      KTextEditor::Document *doc2 = KParts::ComponentFactory::createPartInstanceFromQuery<KTextEditor::Document>( "KTextEditor/Document",
+			        								      QString::null,
+							    						      this, 0,
+									      			      this, 0 );
+      doc2->openURL(tempUrl);
+      doc2->saveAs(origUrl);
+      delete doc2;
+    }
+}

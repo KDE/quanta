@@ -227,6 +227,8 @@ class QuantaView : public QWidget
 public: // Public attributes
   /**  */
   Document *oldWrite;
+  /**  */
+  QString dontShowSavePreview;
 };
 
 #endif // QUANTAVIEW_H

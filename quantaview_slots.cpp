@@ -31,8 +31,10 @@
 #include <klocale.h>
 #include <kprocess.h>
 #include <kcolordlg.h>
+#include <kmessagebox.h>
 
 #include <ktexteditor/configinterface.h>
+
 
 // application specific includes
 #include "document.h"
@@ -452,8 +454,20 @@ void QuantaView::slotTagSelect(){
 
 void QuantaView::slotViewInNetscape()
 {
-  write()->doc()->save();
-  if ( !write()->isUntitled() ) 
+  if (write()->isModified())
+  {
+    dontShowSavePreview = "AskForSaveBeforePreview";
+    if ( KMessageBox::questionYesNo(this,i18n("The file must be saved before external preview.\n \
+         Do you want to save and preview?"),i18n("Save before preview"),i18n("&Yes"),i18n("&No"),dontShowSavePreview)
+         == KMessageBox::Yes)
+    {
+      write()->doc()->save();
+    } else
+    {
+      return;
+    }
+  }
+  if ( !write()->isUntitled() )
   {
     KProcess *show = new KProcess();
     QString url = app->project->urlWithPrefix(write()->url());
@@ -466,8 +480,20 @@ void QuantaView::slotViewInNetscape()
 
 void QuantaView::slotViewInKFM()
 {
-  write()->doc()->save();
-  if ( !write()->isUntitled() ) 
+  if (write()->isModified())
+  {
+    dontShowSavePreview = "AskForSaveBeforePreview";
+    if ( KMessageBox::questionYesNo(this,i18n("The file must be saved before external preview.\n \
+         Do you want to save and preview?"),i18n("Save before preview"),i18n("&Yes"),i18n("&No"),dontShowSavePreview)
+         == KMessageBox::Yes)
+    {
+      write()->doc()->save();
+    } else
+    {
+      return;
+    }
+  }
+  if ( !write()->isUntitled() )
   {
     KProcess *show = new KProcess();
     QString url = app->project->urlWithPrefix(write()->url());
@@ -478,13 +504,25 @@ void QuantaView::slotViewInKFM()
 
 void QuantaView::slotViewInLynx()
 {
-  write()->doc()->save();
-  if ( !write()->isUntitled() ) 
+  if (write()->isModified())
+  {
+    dontShowSavePreview = "AskForSaveBeforePreview";
+    if ( KMessageBox::questionYesNo(this,i18n("The file must be saved before external preview.\n \
+         Do you want to save and preview?"),i18n("Save before preview"),i18n("&Yes"),i18n("&No"),dontShowSavePreview)
+         == KMessageBox::Yes)
+    {
+      write()->doc()->save();
+    } else
+    {
+      return;
+    }
+  }
+  if ( !write()->isUntitled() )
   {
     KProcess *show = new KProcess();
     QString url = app->project->urlWithPrefix(write()->url());
     *show << "konsole"
-          << "--nohist" 
+          << "--nohist"
           << "--notoolbar"
           << "--caption"
           << "Lynx Preview - Quanta"

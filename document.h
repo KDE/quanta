@@ -49,6 +49,7 @@ struct TagAttr {
 
 class KConfig;
 class QStringList;
+class KTempFile;
 
 class Document : public QWidget{
    Q_OBJECT
@@ -117,6 +118,16 @@ public:
   bool isModified();
   /** No descriptions */
   int checkOverwrite(KURL u);
+  /** Creates a temporary file where the url is backed up. */
+  int createTempFile();
+  /** No descriptions */
+  int closeTempFile();
+  /** No descriptions */
+  void clearTempFile();
+  /** No descriptions */
+  KURL tempURL();
+  /** No descriptions */
+  bool saveIt();
 
   TagAttr tagAttr[50];
   int tagAttrNum;
@@ -142,7 +153,9 @@ private:
   KTextEditor::Document *_doc;
   KTextEditor::View *_view;
 
-	
+	KTempFile *tempFile;
+  KURL tempUrl;
+
 	int spellMoved;
 };
 

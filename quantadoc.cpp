@@ -162,7 +162,7 @@ bool QuantaDoc::newDocument( const KURL& url )
     }
     // now we can create new kwrite
     Document *w = newWrite( app->view->writeTab);
-    
+
     if ( newfile ) furl = w->url().url();
     
   	app ->view  ->addWrite( w, QExtFileInfo::shortName(w->url().url()) );
@@ -188,6 +188,7 @@ void QuantaDoc::openDocument(const KURL& url)
   if ( !newDocument( url )) return;
   if ( !url.url().isEmpty()) {
 //    write()->busy = true;
+
     if (write()->doc()->openURL( url ))
     {
       Document *w = write();
@@ -214,6 +215,9 @@ void QuantaDoc::openDocument(const KURL& url)
     }
 
   }
+
+  write()->createTempFile();
+
   emit title( url.url() );
 }
 
@@ -255,6 +259,8 @@ void QuantaDoc::saveDocument(const KURL& url)
   if ( !url.url().isEmpty()) 
   {
     write()->doc()->saveAs( url );
+    write()->closeTempFile();
+    write()->createTempFile();
 //    write()->setURL( url, false );
   }
   
@@ -300,11 +306,12 @@ bool QuantaDoc::saveAll(bool dont_ask)
       if ( dont_ask ) 
       {
       	w->doc()->save();
+        w->closeTempFile();
+        w->createTempFile();
       	if ( w->isModified() ) flagsave = false;
       }
       else
       	if ( !saveModified() ) flagsave = false;
-
       changeFileTabName( oldUrl );
     }
     ++it;
@@ -321,6 +328,7 @@ bool QuantaDoc::saveAll(bool dont_ask)
 void QuantaDoc::closeDocument()
 {
 	if ( !saveModified() ) return;
+  write()->closeTempFile();
 	docList->remove( url().url() );
 	if ( !app->view->removeWrite()) openDocument( KURL() );
 }
@@ -332,6 +340,7 @@ void QuantaDoc::closeAll()
     if (app->view->write() !=0)
     {
   	  if ( !saveModified() ) return;
+      app->view->write()->closeTempFile();
 		  docList->remove( url().url() );
     }
 	}

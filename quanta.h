@@ -227,6 +227,8 @@ class QuantaApp : public KDockMainWindow
   void slotNewProjectLoaded();
   /** No descriptions */
   void slotInsertFile(QString);
+  /** No descriptions */
+  void slotSyntaxCheckDone();
 
  private slots:
 	

@@ -1737,7 +1737,7 @@
 			<itemData name="String" defStyleNum="dsString"/>
 			<itemData name="Comment" defStyleNum="dsComment"/>
 			<itemData name="Variable" defStyleNum="dsVar"/>
-			<itemData name="HTML Tag" defStyleNum="dsNormal"/>
+			<itemData name="HTML Tag" defStyleNum="dsFloat"/>
 			<itemData name="Number"      defStyleNum="dsDecVal" />
 			<itemData name="Identifier" defStyleNum="dsOthers"/>
 			<itemData name="Types" defStyleNum="dsDataType"/>
