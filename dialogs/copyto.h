@@ -22,22 +22,21 @@
 // kde includes
 #include <kio/jobclasses.h>
 
-// app includes
-#include "copytos.h"
+
 /**
   *@author Yacovlev Alexander & Dmitry Poplavsky
   */
 
 class KURL;
 
-class CopyTo : public CopyToS  {
+class CopyTo : public QObject{
 Q_OBJECT
 public: 
-  CopyTo(const KURL& dirURL, QWidget *parent=0, const char *name=0);
+  CopyTo(const KURL& dirURL);
   ~CopyTo();
 
-  KURL copy( const KURL& sourceURL);
-  KURL::List copy( KURL::List sourceList );
+  KURL copy( const KURL& sourceURL, const KURL &destination);
+  KURL::List copy( KURL::List sourceList, const KURL &destination );
 
   KURL copiedURL;
 

@@ -16,49 +16,33 @@
  *                                                                         *
  ***************************************************************************/
 // qt includes
-#include <qdir.h>
-#include <qlineedit.h>
-#include <qpushbutton.h>
 
 // kde includes
 #include <kio/job.h>
-#include <kio/jobclasses.h>
 #include <kio/netaccess.h>
-#include <kfiledialog.h>
-#include <kiconloader.h>
-#include <kurlrequester.h>
 
 //app includes
 #include "copyto.h"
-#include "../quantacommon.h"
 #include "../qextfileinfo.h"
 
-CopyTo::CopyTo(const KURL& dirURL, QWidget *parent, const char *name)
-    : CopyToS(parent,name,true)
+CopyTo::CopyTo(const KURL& dirURL)
 {
 
   mInitialDirUrl = dirURL;
-
-  urlRequester->setMode( KFile::Directory | KFile::ExistingOnly);
-  urlRequester->setURL( dirURL.prettyURL() );
-  urlRequester->setFocus();
-  
-  connect( buttonOk,    SIGNAL(clicked()), SLOT(accept()) );
-  connect( buttonCancel,SIGNAL(clicked()), SLOT(reject()) );
 }
 
 CopyTo::~CopyTo(){
 }
 
-KURL CopyTo::copy(const KURL& urlToCopy)
+KURL CopyTo::copy(const KURL& urlToCopy, const KURL& destination)
 {
   KURL targetDirURL = KURL();
-  if ( urlRequester->url().isEmpty() )
+  if ( destination.isEmpty() )
   {
     targetDirURL = mInitialDirUrl;
   } else
   {
-    QuantaCommon::setUrl(targetDirURL, urlRequester->url());
+   targetDirURL = destination;
   }
   targetDirURL.adjustPath(1);
 
@@ -80,29 +64,29 @@ KURL CopyTo::copy(const KURL& urlToCopy)
 
     copiedURL = destURL;
   }
-  
+
   return destURL;
 }
 
 void CopyTo::endCopy( KIO::Job *,const KURL&,const KURL&, bool, bool)
 {
-  emit addFilesToProject(copiedURL,this);
+  emit addFilesToProject(copiedURL, this);
 }
 
 void CopyTo::slotResult( KIO::Job *)
 {
-  emit addFilesToProject(copiedURL,this);
+  emit addFilesToProject(copiedURL, this);
 }
 
-KURL::List CopyTo::copy( KURL::List sourceList )
+KURL::List CopyTo::copy( KURL::List sourceList, const KURL& destination )
 {
   KURL targetDirURL = KURL();
-  if ( urlRequester->url().isEmpty() )
+  if ( destination.isEmpty() )
   {
     targetDirURL = mInitialDirUrl;
   } else
   {
-    QuantaCommon::setUrl(targetDirURL, urlRequester->url());
+    targetDirURL = destination;
   }
   bool doCopy = true;
   if (!QExtFileInfo::exists(targetDirURL))
@@ -131,7 +115,7 @@ KURL::List CopyTo::copy( KURL::List sourceList )
 
     copiedURL = targetDirURL;
   }
-  
+
   return destList;
 
 }

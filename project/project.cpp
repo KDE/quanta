@@ -58,6 +58,8 @@
 #include <kprogress.h>
 #include <kio/job.h>
 #include <kio/netaccess.h>
+#include <kurlrequesterdlg.h>
+#include <kurlrequester.h>
 
 // application headers
 #include "../dialogs/copyto.h"
@@ -131,19 +133,22 @@ void Project::insertFile(const KURL& nameURL, bool repaint )
 
   if ( relNameURL.path().startsWith("/") || relNameURL.path().startsWith(".")  )
   {
-    CopyTo *dlg = new CopyTo( baseURL, this, i18n("%1: copy to project...").arg(nameURL.prettyURL()) );
-
-    if ( dlg->exec() )
+    KURLRequesterDlg *urlRequesterDlg = new KURLRequesterDlg( baseURL.prettyURL(), this, "");
+    urlRequesterDlg->setCaption(i18n("%1: copy to project...").arg(nameURL.prettyURL()));
+    urlRequesterDlg->urlRequester()->setMode( KFile::Directory | KFile::ExistingOnly);
+    urlRequesterDlg->exec();
+    KURL destination = urlRequesterDlg->selectedURL();
+    delete urlRequesterDlg;
+    if ( !destination.isEmpty() )
     {
-      KURL tmpURL = dlg->copy( nameURL );
+      CopyTo *dlg = new CopyTo(baseURL);
+      KURL tmpURL = dlg->copy( nameURL, destination );
       relNameURL = QExtFileInfo::toRelative( tmpURL, baseURL);
     }
     else  // Copy canceled, addition aborted
     {
-      delete dlg;
       return;
     }
-    delete dlg;
   }
 
   QDomElement  el;
@@ -629,24 +634,29 @@ void Project::slotAddFiles()
   {
     KURL firstURL = list.first();
     firstURL = QExtFileInfo::toRelative( firstURL, baseURL );
-    
+
     if ( firstURL.path().startsWith("/") || firstURL.path().startsWith("."))
     {
-      CopyTo *dlg = new CopyTo( baseURL, this, i18n("Files: copy to project...") );
+      KURLRequesterDlg *urlRequesterDlg = new KURLRequesterDlg( baseURL.prettyURL(), this, "");
+      urlRequesterDlg->setCaption(i18n("Files: copy to project..."));
+      urlRequesterDlg->urlRequester()->setMode( KFile::Directory | KFile::ExistingOnly);
+      urlRequesterDlg->exec();
+      KURL destination = urlRequesterDlg->selectedURL();
+      delete urlRequesterDlg;
 
-      if ( dlg->exec() )
+      if ( !destination.isEmpty())
       {
-        list = dlg->copy( list );
+        CopyTo *dlg = new CopyTo( baseURL);
+        list = dlg->copy( list, destination );
         connect(dlg, SIGNAL(addFilesToProject(const KURL&, CopyTo*)),
                      SLOT  (slotInsertFilesAfterCopying(const KURL&, CopyTo*)));
         return;
       }
       else {
-        delete dlg;
         return;
       }
     }
-    
+
    insertFiles( list );
    //Take care also of the selected dirs
    KURL dirURL;
@@ -654,11 +664,11 @@ void Project::slotAddFiles()
    {
      dirURL = list[i];
      if (dirURL.path().endsWith("/"))
-     {     
+     {
        insertFiles( dirURL, "*" );
      }
    }
-    
+
     emit reloadTree( fileNameList(), false);
   }
 }
@@ -689,23 +699,27 @@ void Project::slotAddDirectory(const KURL& p_dirURL, bool showDlg)
 
     if ( relURL.path().startsWith("/") || relURL.path().startsWith("."))
     {
-      CopyTo *dlg = new CopyTo( baseURL, this, i18n("%1: copy to project...").arg(dirURL.prettyURL()) );
+      KURLRequesterDlg *urlRequesterDlg = new KURLRequesterDlg( baseURL.prettyURL(), this, "");
+      urlRequesterDlg->setCaption(i18n("%1: copy to project...").arg(dirURL.prettyURL()));
+      urlRequesterDlg->urlRequester()->setMode( KFile::Directory | KFile::ExistingOnly);
+      urlRequesterDlg->exec();
+      KURL destination = urlRequesterDlg->selectedURL();
+      delete urlRequesterDlg;
 
       if ( (showDlg == false) ||
-            (dlg->exec() ) )
+            (!destination.isEmpty()) )
       {
+        CopyTo *dlg = new CopyTo( baseURL);
         //if ( rdir.right(1) == "/" ) rdir.remove( rdir.length()-1,1);
-        dirURL = dlg->copy(dirURL);
+        dirURL = dlg->copy(dirURL, destination);
         connect(dlg, SIGNAL(addFilesToProject(const KURL&, CopyTo*)),
                      SLOT  (slotInsertFilesAfterCopying(const KURL&, CopyTo*)));
         return;
       }
       else
       {
-        delete dlg;
         return;
       }
-      delete dlg;
     }
     insertFiles( dirURL, "*" );
   //And again, insert now directly the directory name into the project.
@@ -719,7 +733,7 @@ void Project::slotInsertFilesAfterCopying(const KURL& p_url,CopyTo* dlg)
 {
   KURL url = p_url;
 //The CopyTo dlg is deleted only here!!
-  delete dlg;  
+  delete dlg;
   url.adjustPath(1);
   insertFiles( url, "*" );
   emit reloadTree( fileNameList(), false );

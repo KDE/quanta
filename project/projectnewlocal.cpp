@@ -33,6 +33,8 @@
 #include <kprogress.h>
 #include <kmimetype.h>
 #include <kdeversion.h>
+#include <kurlrequesterdlg.h>
+#include <kurlrequester.h>
 
 //app includes
 #include "projectnewlocal.h"
@@ -190,20 +192,24 @@ void ProjectNewLocal::slotAddFiles()
 
     if ( u.path().startsWith("..") || u.path().startsWith("/"))
     {
-      CopyTo *dlg = new CopyTo( baseURL, this, i18n("Files: copy to project...") );
+      KURLRequesterDlg *urlRequesterDlg = new KURLRequesterDlg( baseURL.prettyURL(), this, "");
+      urlRequesterDlg->setCaption(i18n("Files: copy to project..."));
+      urlRequesterDlg->urlRequester()->setMode( KFile::Directory | KFile::ExistingOnly);
+      urlRequesterDlg->exec();
+      KURL destination = urlRequesterDlg->selectedURL();
+      delete urlRequesterDlg;
 
-        if ( dlg->exec() )
-        {
-             list = dlg->copy( list );
-            connect(dlg, SIGNAL(addFilesToProject(const KURL&,CopyTo*)),
-                         SLOT(slotInsertFilesAfterCopying(const KURL&,CopyTo*)));
-            return;
-         } else
-         {
-          delete dlg;
-              return;
-         }
-         delete dlg;
+      if ( !destination.isEmpty())
+      {
+        CopyTo *dlg = new CopyTo( baseURL);
+        list = dlg->copy( list, destination );
+        connect(dlg, SIGNAL(addFilesToProject(const KURL&,CopyTo*)),
+                    SLOT(slotInsertFilesAfterCopying(const KURL&,CopyTo*)));
+        return;
+      } else
+      {
+        return;
+      }
     }
 
     progressBar->setTotalSteps(list.count()-1);
@@ -245,25 +251,30 @@ void ProjectNewLocal::slotAddFolder()
   {
     dirURL.adjustPath(1);
 
-     KURL sdir = dirURL;
+    KURL sdir = dirURL;
     sdir = QExtFileInfo::toRelative( sdir, baseURL);
 
     if ( sdir.path().startsWith("..") || sdir.path().startsWith("/") )
     {
-      CopyTo *dlg = new CopyTo( baseURL, this, i18n("%1: copy to project...").arg(dirURL.prettyURL()) );
 
-      if ( dlg->exec() )
+      KURLRequesterDlg *urlRequesterDlg = new KURLRequesterDlg( baseURL.prettyURL(), this, "");
+      urlRequesterDlg->setCaption(i18n("%1: copy to project...").arg(dirURL.prettyURL()));
+      urlRequesterDlg->urlRequester()->setMode( KFile::Directory | KFile::ExistingOnly);
+      urlRequesterDlg->exec();
+      KURL destination = urlRequesterDlg->selectedURL();
+      delete urlRequesterDlg;
+
+      if ( !destination.isEmpty())
       {
-        dirURL = dlg->copy(dirURL);
+        CopyTo *dlg = new CopyTo( baseURL);
+        dirURL = dlg->copy(dirURL, destination);
         connect(dlg, SIGNAL(addFilesToProject(const KURL&,CopyTo*)),
                      SLOT(slotInsertFilesAfterCopying(const KURL&,CopyTo*)));
         return;
       } else
       {
-        delete dlg;
         return;
       }
-      delete dlg;
     }
 
     slotInsertFilesAfterCopying(dirURL, 0);

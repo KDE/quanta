@@ -35,7 +35,7 @@
 #include <kmessagebox.h>
 #include <kcombobox.h>
 #include <kpropertiesdialog.h>
-#include <kurlrequester.h>
+#include <kurlrequesterdlg.h>
 #include <ktempfile.h>
 #include <kio/netaccess.h>
 
@@ -326,14 +326,11 @@ void TemplatesTreeView::contentsDropEvent(QDropEvent *e)
        QListViewItem *item = itemAt(contentsToViewport(e->pos()));
        if (dynamic_cast<FilesTreeFolder *> (item)) dest +="/";
        dest = QFileInfo(dest).dirPath()+"/";
-       CopyTo *dlg = new CopyTo( dest + "template.txt", this, i18n("Save selection as template file: "));
-       if ( dlg->exec() )
+       KURL url =KURLRequesterDlg::getURL( dest + "template.txt", this, i18n("Save selection as template file: "));
+       if ( !url.isEmpty() )
        {
   //       KMessageBox::information(this,content, "Decode Drop" + dest);
          //now save the file
-         QString fileName = dlg->urlRequester->url();
-         KURL url;
-         QuantaCommon::setUrl(url, fileName);
          KTempFile* tempFile = new KTempFile(tmpDir);
          tempFile->setAutoDelete(true);
           * (tempFile->textStream()) << content;
@@ -352,7 +349,6 @@ void TemplatesTreeView::contentsDropEvent(QDropEvent *e)
          }
          delete tempFile;
        }
-       delete dlg;
      }
  }
 }
