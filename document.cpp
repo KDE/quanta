@@ -170,44 +170,6 @@ void Document::insertTag(QString s1,QString s2)
 /** Change the current tag's attributes with those from dict */
 void Document::changeTag(Tag *tag, QDict<QString> *dict )
 {
- /* QDictIterator<QString> it( *dict ); // iterator for dict
-  QDict<QString> oldAttr(1,false);
-  QString tagStr = "";
-  QTag *qTag = QuantaCommon::tagFromDTD(currentDTD(true), tag->name);
-
-  while ( it.current() )  // for insert new attr
-  {
-    QString val = *(it.current());
-    QString attr = QuantaCommon::attrCase(it.currentKey());
-    QString attrval;
-
-    if (qTag && qTag->parentDTD->singleTagStyle == "xml" && attr=="/")
-    {
-     ++it;
-     continue;
-    }
-
-    if ( val.isEmpty() )  // for checkboxes ( without val) don't print =""
-        attrval = QString(" ")+attr;
-    else
-    {
-      attrval = QString(" ")+attr+"=";
-      if (!val.startsWith("\\\"") && !val.startsWith("\\\'")) attrval += qConfig.attrValueQuotation;
-      attrval += val;
-      if (!val.endsWith("\\\"") && !val.endsWith("\\\'")) attrval += qConfig.attrValueQuotation;
-    }
-    tagStr = attrval + tagStr;
-    ++it;
-  }
-  tagStr = "<"+QuantaCommon::tagCase(tag->name)+tagStr;
-
-  if (  dict && !dict->isEmpty() && qTag && qTag->parentDTD->singleTagStyle == "xml" &&
-       (qTag->isSingle() || (!qConfig.closeOptionalTags && qTag->isOptional()) || tag->single)
-     )
-  {
-    tagStr.append(" /");
-  }
-  tagStr.append(">");*/
   tag->modifyAttributes(dict);
   QString tagStr = tag->toString();
 

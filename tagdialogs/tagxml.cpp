@@ -259,14 +259,15 @@ void Tagxml::readAttributes( QDict<QString> *d )
           value = (value == "checked")?m_dtd->booleanTrue:m_dtd->booleanFalse;
           d->replace(name, new QString(value));
         }
-      }
+      } else
       if (dynamic_cast<Attr_file *>(attr))
       {
         value = KURL::encode_string(value);
         d->replace(name, new QString(value));
-      } else
+      } else {
         value.replace(QRegExp("&(?!amp;)"), "&amp;");
         d->replace(name, new QString(value) );
+      }
     }
 
 

@@ -71,40 +71,60 @@ Tag::~Tag()
 
 void Tag::parse(const QString &p_tagStr, Document *p_write)
 {
+ attrs.clear();
  m_tagStr = p_tagStr;
+ uint strLength = m_tagStr.length();
  cleanStr = m_tagStr;
  m_write = p_write;
  m_nameLine = beginLine;
  m_nameCol = beginCol + 1;
  uint pos = 1;
- while (pos < m_tagStr.length() &&
+ while (pos < strLength &&
         !m_tagStr[pos].isSpace() && m_tagStr[pos] != '>' && m_tagStr[pos] != '\n')
  {
    pos++;
  }
  name = m_tagStr.mid(1, pos - 1);
-  int nameSpacePos = name.find(':');
-  if (nameSpacePos != -1)
-  {
-    nameSpace = name.left(nameSpacePos);
-    name = name.mid(++nameSpacePos);
-    m_nameCol += nameSpacePos;
-  }
+ int nameSpacePos = name.find(':');
+ if (nameSpacePos != -1)
+ {
+   nameSpace = name.left(nameSpacePos);
+   name = name.mid(++nameSpacePos);
+   m_nameCol += nameSpacePos;
+ }
  QString attrStr;
  TagAttr attr;
- int sPos = ++pos;
+ while (pos < strLength && m_tagStr[pos].isSpace())
+        pos++;
+ int sPos = pos;
  int valueStartPos = 0;
- while (pos < m_tagStr.length())
+ while (pos < strLength)
  {
     //find the attribute name
-    while (pos < m_tagStr.length() &&
+    while (pos < strLength &&
            !m_tagStr[pos].isSpace() && m_tagStr[pos] != '=')
     {
       pos++;
     }
     attr.name = m_tagStr.mid(sPos, pos - sPos);
     if (attr.name.endsWith(">"))
-        break;
+    {
+      attr.name = attr.name.left(attr.name.length() - 1).lower();
+      if (!attr.name.stripWhiteSpace().isEmpty())
+      {
+        attr.nameLine = m_tagStr.left(sPos).contains('\n') + beginLine;
+        if (attr.nameLine == beginLine)
+            attr.nameCol = sPos + beginCol;
+        else
+            attr.nameCol = m_tagStr.left(sPos).section('\n',-1).length();
+        attr.value = (dtd != 0) ? dtd->booleanTrue : QString("checked");
+        attr.valueCol = attr.nameCol;
+        attr.valueLine = attr.nameLine;
+        attr.quoted = false;
+        attrs.append(attr);
+      }
+      break;
+    }
     if (dtd && !dtd->caseSensitive)
         attr.name = attr.name.lower();
     attr.nameLine = m_tagStr.left(sPos).contains('\n') + beginLine;
@@ -117,16 +137,16 @@ void Tag::parse(const QString &p_tagStr, Document *p_write)
             pos++;
     //if the attribute is just listed and there is no value specified,
     //treate it as a "true" boolean
-    if (m_tagStr[pos] != '=' || pos == m_tagStr.length())
+    if (m_tagStr[pos] != '=' || pos == strLength)
     {
-      attr.value = (dtd != 0) ? dtd->booleanTrue : QString("true");
+      attr.value = (dtd != 0) ? dtd->booleanTrue : QString("checked");
       attr.valueCol = attr.nameCol;
       attr.valueLine = attr.nameLine;
       attr.quoted = false;
     } else
     {
       pos++;
-      while (pos < m_tagStr.length() && m_tagStr[pos].isSpace())
+      while (pos < strLength && m_tagStr[pos].isSpace())
             pos++;
       if (m_tagStr[pos] == '\'' || m_tagStr[pos] == '"')
       {
@@ -134,7 +154,7 @@ void Tag::parse(const QString &p_tagStr, Document *p_write)
         valueStartPos = pos + 1;
         QChar quotation = m_tagStr[pos];
         pos += 1;
-        while (pos < m_tagStr.length() &&
+        while (pos < strLength &&
                (m_tagStr[pos] != quotation ||
                (m_tagStr[pos] == quotation && m_tagStr[pos-1] == '\\')))
         {
@@ -145,7 +165,7 @@ void Tag::parse(const QString &p_tagStr, Document *p_write)
       {
         attr.quoted = false;
         valueStartPos = pos;
-        while (pos < m_tagStr.length() && !m_tagStr[pos].isSpace())
+        while (pos < strLength && !m_tagStr[pos].isSpace())
           pos++;
         attr.value = m_tagStr.mid(valueStartPos, pos - valueStartPos -1);
       }
@@ -159,7 +179,7 @@ void Tag::parse(const QString &p_tagStr, Document *p_write)
     attrs.append(attr);
     //go to the first non-space char. This is where the next attribute name starts
     pos++;
-    while (pos < m_tagStr.length() && m_tagStr[pos].isSpace())
+    while (pos < strLength && m_tagStr[pos].isSpace())
           pos++;
     sPos = pos++;
  }
@@ -372,6 +392,13 @@ void Tag::modifyAttributes(QDict<QString> *attrDict)
     }
     editAttribute(attribute, value);
     ++it;
+  }
+  for (uint i = 0 ; i < attrs.count(); i++)
+  {
+    if ( !attrDict->find(attrs[i].name) )
+    {
+      attrs.remove(attrs.at(i));
+    }
   }
 }
 

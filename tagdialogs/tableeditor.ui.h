@@ -90,15 +90,21 @@ void TableEditor::slotContextMenuRequested( int row, int col, const QPoint & pos
 
 void TableEditor::slotEditCell()
 {
-  TagDialog dlg(QuantaCommon::tagFromDTD(m_dtd, "td"), (*m_tableTags)[m_row][m_col].node->tag, m_baseURL);
-  dlg.exec();
+  Tag *tag = (*m_tableTags)[m_row][m_col].node->tag;
+  TagDialog dlg(QuantaCommon::tagFromDTD(m_dtd, "td"), tag, m_baseURL);
+  if (dlg.exec()) {
+    tag->modifyAttributes(dlg.getAttributes());
+  }
 }
 
 
 void TableEditor::slotEditRow()
 {
-  TagDialog dlg(QuantaCommon::tagFromDTD(m_dtd,"tr"), (*m_tableRows)[m_row].node->tag, m_baseURL);
-  dlg.exec();
+  Tag *tag = (*m_tableRows)[m_row].node->tag;
+  TagDialog dlg(QuantaCommon::tagFromDTD(m_dtd,"tr"), tag, m_baseURL);
+  if (dlg.exec()) {
+    tag->modifyAttributes(dlg.getAttributes());
+  }
 }
 
 
@@ -250,6 +256,7 @@ void TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol )
         {
           tableNode.node = new Node(0L);
           tableNode.node->tag = new Tag();
+          tableNode.node->tag->dtd = m_dtd;
           tableNode.node->tag->parse("<td>", m_write);
           tableNode.isFromDocument = false;
           tableRowTags.append(tableNode);
@@ -516,16 +523,18 @@ void TableEditor::slotInsertRow()
   TableNode tableNode;
   tableNode.node = new Node(0L);
   tableNode.node->tag = new Tag();
+  tableNode.node->tag->dtd = m_dtd;
   tableNode.node->tag->parse("<tr>", m_write);
   QValueList<TableNode>::Iterator rowIt = m_tableRows->at(num);
-  if (rowIt != m_tableRows->end()) 
+  if (rowIt != m_tableRows->end())
     m_tableRows->insert(rowIt, tableNode);
   else
     m_tableRows->append(tableNode);
   QValueList<TableNode> tableRowTags;
-  for (int i = 0; i < m_dataTable->numCols(); i++) {    
+  for (int i = 0; i < m_dataTable->numCols(); i++) {
     tableNode.node = new Node(0L);
     tableNode.node->tag = new Tag();
+    tableNode.node->tag->dtd = m_dtd;
     tableNode.node->tag->parse("<td>", m_write);
     tableRowTags.append(tableNode);
   }
@@ -548,6 +557,7 @@ void TableEditor::slotInsertCol()
   for (QValueList<QValueList<TableNode> >::Iterator it = m_tableTags->begin(); it != m_tableTags->end(); ++it) {
     tableNode.node = new Node(0L);
     tableNode.node->tag = new Tag();
+    tableNode.node->tag->dtd = m_dtd;
     tableNode.node->tag->parse("<td>", m_write);
     (*it).append(tableNode);
   }
@@ -637,7 +647,7 @@ void TableEditor::deleteMatrix( QValueList<QValueList<TableNode> > *matrix )
       for (QValueList<TableNode>::Iterator it2 = (*it).begin(); it2 != (*it).end(); ++it2) {
         if (!(*it2).isFromDocument)
           delete (*it2).node;
-      }      
+      }
   }
   delete matrix;
 

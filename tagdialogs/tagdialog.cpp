@@ -223,7 +223,7 @@ QString TagDialog::getAttributeString()
 {
   QDictIterator<QString> it( *dict );
 
-  QString attrStr("");
+  QString attrStr;
 
   while ( it.current() ) {
     QString attr  = QuantaCommon::attrCase(it.currentKey());
@@ -231,11 +231,12 @@ QString TagDialog::getAttributeString()
 
     QString attrval = " ";  // attr=value
 
-    if ( !val.isEmpty() ) {
-        attrval += attr + "=" + qConfig.attrValueQuotation + val + qConfig.attrValueQuotation;
-    } else
+    if ( val.isEmpty()) {
       attrval += attr; // for checkboxes dont print =""
-
+    }
+    else {
+        attrval += attr + "=" + qConfig.attrValueQuotation + val + qConfig.attrValueQuotation;
+    }
     attrStr = attrval + attrStr;
 
     ++it;
