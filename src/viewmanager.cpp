@@ -86,6 +86,7 @@ void ViewManager::createNewDocument()
 
   quantaApp->slotNewPart(doc, true);  // register new part in partmanager and make active
   view->addDocument(w);
+  view->activate();
 }
 
 bool ViewManager::removeView(QuantaView *view, bool force)
@@ -259,6 +260,7 @@ void ViewManager::closeAll(bool createNew)
                  if (!w->isUntitled() && w->url().isLocalFile())
                    fileWatcher->removeFile(w->url().path());
                  quantaApp->guiFactory()->removeClient(w->view());
+                 kdDebug(24000) << "Gui removed " << endl;
                  quantaApp->closeWindow(view);
               } else
               {

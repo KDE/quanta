@@ -902,51 +902,23 @@ void QuantaApp::slotNewStatus()
     actionCollection()->action("toolbars_save_project")->setEnabled(projectExists);
 
     //FIXME:
-    /*
+
     // try to set the icon from mimetype
     QIconSet mimeIcon (KMimeType::pixmapForURL(w->url(), 0, KIcon::Small));
     if (mimeIcon.isNull())
       mimeIcon = QIconSet(SmallIcon("document"));
-    QString label = wTab->tabLabel(w);
+   // QString label = wTab->tabLabel(w);
     QString urlStr = QExtFileInfo::shortName(w->url().path());
-#if KDE_IS_VERSION(3,1,90)
-    if (qConfig.showCloseButtons)
+    QuantaView *view = ViewManager::ref()->activeView();
+    if (w->isModified())
     {
-      if (w->isModified() && label == urlStr)
-      {
-        wTab->setTabLabel(w, urlStr + " " + i18n("[modified]"));
-      } else
-      if (!w->isModified() && label != urlStr)
-      {
-        wTab->setTabLabel(w, urlStr);
-      }
+       view->setIcon(UserIcon("save_small"));
+       view->setMDICaption(urlStr + " " + i18n("[modified]"));
     } else
-#endif
     {
-      if (w->isModified() && label == urlStr)
-      {
-        wTab->changeTab(w, UserIcon("save_small"), urlStr + " " + i18n("[modified]"));
-      }else
-      if (!w->isModified() && label != urlStr)
-      {
-        wTab->changeTab(w, mimeIcon, urlStr);
-      }
+      view->setIcon(mimeIcon.pixmap());
+      view->setMDICaption(urlStr);
     }
-//This is a really dirty fix for the QTabWidget problem. After the changeTab call,
-//it will reset itself and you will see the first tabs, even if the actual page is on
-//a tab eg. at the end, and it won't be visible now. This is really confusing.
-//I thought it is fixed in QT 3.x, but it is not. :-(
-
-    int pageId = wTab->currentPageIndex();
-    bool block=wTab->signalsBlocked();
-    wTab->blockSignals(true);
-    //If we don't disable the parser, it will parse page 0 and then reload kafka
-    //even if the signals are supposed to be blocked ;(
-    parser->setParsingEnabled(false);
-    wTab->setCurrentPage(0);
-    wTab->setCurrentPage(pageId);
-    parser->setParsingEnabled(true);
-    wTab->blockSignals(block); */
  }
 }
 

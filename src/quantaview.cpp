@@ -118,6 +118,7 @@ QuantaView::QuantaView(QWidget *parent, const char *name )
 
 QuantaView::~QuantaView()
 {
+    kdDebug(24000) << "QuantaView DTOR" << endl;
     if (m_plugin)
     {
       m_plugin->unload();
@@ -143,6 +144,7 @@ bool QuantaView::mayRemove()
           if (m_guiAdded)
           {
             quantaApp->guiFactory()->removeClient(m_document->view());
+            kdDebug(24000) << "Gui removed for " << m_document->view() << endl;
             m_guiAdded = false;
           }
       }
@@ -164,8 +166,6 @@ void QuantaView::addDocument(Document *document)
                   this, SLOT(slotSourceGetFocus(Kate::View *)));
     connect(m_document->view(), SIGNAL(cursorPositionChanged()), this, SIGNAL(cursorPositionChanged()));
 
-    setMDICaption(m_document->url().fileName());
-    setCaption(m_document->url().prettyURL());
 
 #ifdef BUILD_KAFKAPART
    m_kafkaDocument =KafkaDocument::ref();
@@ -228,8 +228,6 @@ void QuantaView::addDocument(Document *document)
             slotSetVPLOnlyLayout();
             break;
    }
-
-   activate();
 }
 
 void QuantaView::addPlugin(QuantaPlugin *plugin)
@@ -238,6 +236,7 @@ void QuantaView::addPlugin(QuantaPlugin *plugin)
    m_toolbarTab->reparent(0, 0, QPoint(), false);
    m_plugin = plugin;
    setMDICaption(m_plugin->name());
+   setIcon(m_plugin->icon());
    m_splitter->hide();
    QWidget *w = m_plugin->widget();
    if (w)
@@ -696,14 +695,18 @@ void QuantaView::activated()
     quantaApp->slotReloadStructTreeView(); //FIXME
     if (m_plugin)
 //        quantaApp->partManager()->setActivePart(m_plugin->part(), m_plugin->widget());
-      quantaApp->guiFactory()->addClient(m_plugin->part());
+    quantaApp->guiFactory()->addClient(m_plugin->part());
     return;
   }
   ToolbarTabWidget::ref()->reparent(this, 0, QPoint(), qConfig.enableDTDToolbar);
   m_viewLayout->addWidget(ToolbarTabWidget::ref(), 0 , 0);
   //quantaApp->partManager()->setActivePart(m_document->doc(), m_document->view());
-  quantaApp->guiFactory()->addClient(m_document->view());
-  m_guiAdded = true;
+  if (!m_guiAdded)
+  {
+    quantaApp->guiFactory()->addClient(m_document->view());
+    m_guiAdded = true;
+    kdDebug(24000) << "Gui added for " << m_document->view() << endl;
+  }
   m_document->checkDirtyStatus();
   StructTreeView::ref()->useOpenLevelSetting = true;
   quantaApp->loadToolbarForDTD(m_document->getDTDIdentifier());
@@ -725,7 +728,9 @@ void QuantaView::deactivated()
   } else
   if (m_document && m_guiAdded)
   {
-    quantaApp->guiFactory()->removeClient(m_document->view());
+    kdDebug(24000) << "Gui removed for " << m_document->view() << endl;
+//FIXME: Why does this crash???
+    quantaApp->guiFactory()->removeClient(m_document->doc());
     m_guiAdded = false;
   }
 

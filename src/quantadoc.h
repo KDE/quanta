@@ -48,8 +48,6 @@ public:
   void readConfig(KConfig *);
   void writeConfig(KConfig *);
 
-  void changeFileTabName(const KURL& newURL = KURL());
-
 public slots:
   /** close documents. */
   /** show popup menu with list of attributes for current tag */

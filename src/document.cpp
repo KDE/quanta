@@ -86,7 +86,7 @@ Document::Document(KTextEditor::Document *doc,
   changed = false;
   m_doc = doc;
   m_view = 0L; //needed, because createView() calls processEvents() and the "this" may be deleted before m_view gets a value => crash on delete m_view;
-  m_view = m_doc->createView(this, 0L);
+  m_view = m_doc->createView(parent, 0L);
   completionInProgress = false;
   // remove the unwanted actions
   m_view->actionCollection()->take(m_view->actionCollection()->action( "file_export" ));

@@ -181,24 +181,17 @@ void QuantaDoc::slotOpeningCompleted()
   w->setDirtyStatus(false);
   //  kdDebug(24000) << "Text: " << w->editIf->text() << endl;
 
-  //changeFileTabName(); //FIXME:
   quantaApp->fileRecent->addURL( w->url() );
 
   quantaApp->slotRepaintPreview();
 
   w->createTempFile();
   w->view()->setFocus();
-  QuantaView *view = ViewManager::ref()->activeView();
-  if (view)
-  {
-     view->setMDICaption(w->url().prettyURL());
-     view->setCaption(w->url().fileName());
-  }
   quantaApp->processDTD();
   quantaApp->reparse(true);
 
   quantaApp->debugger()->fileOpened(w->url());
-  emit newStatus();
+  quantaApp->slotNewStatus();
 #if KDE_IS_VERSION(3,1,90)
    disconnect(w->doc(), SIGNAL(completed()), this, SLOT(slotOpeningCompleted()));
 #endif
@@ -384,47 +377,6 @@ void QuantaDoc::nextDocument()
   tab->showPage(tab->page(index)); */
 }
 
-void QuantaDoc::changeFileTabName(const KURL &newURL)
-{
-//FIXME:
-/*
-  Document *w = write();
-  KURL url = newURL;
-
-  if (url.isEmpty())
-  {
-    url = w->url();
-  }
-  QTabWidget *tab = quantaApp->view()->writeTab();
-  if (tab->tabToolTip(w) != url.prettyURL() )
-  {
-    tab->changeTab( w, QExtFileInfo::shortName(url.path()));
-    tab->setTabToolTip( w, url.prettyURL() );
-  }
-
-    // try to set the icon from mimetype
-  QIconSet mimeIcon (KMimeType::pixmapForURL(url, 0, KIcon::Small));
-  if (mimeIcon.isNull())
-    mimeIcon = QIconSet(SmallIcon("document"));
-#if KDE_IS_VERSION(3,1,90)
-  if (qConfig.showCloseButtons)
-  {
-    if (w->isModified())
-    {
-      tab->changeTab( w, SmallIcon("fileclose"), tab->tabLabel(w) + " " + i18n("[modified]"));
-    } else
-    {
-      tab->changeTab( w, SmallIcon("fileclose"), tab->tabLabel(w));
-    }
-  } else
-#endif
-  {
-    if ( w->isModified() )
-      tab->changeTab( w, UserIcon("save_small"), tab->tabLabel(w));
-    else
-      tab->changeTab( w, mimeIcon,  tab->tabLabel(w));
-  } */
-}
 
 /// SLOTS
 
