@@ -1,16 +1,17 @@
-//
-// C++ Implementation: dtepeditdlg
-//
-// Description: 
-//
-//
-// Author: Andras Mantia <amantia@kde.org>, (C) 2005
-//
-// Copyright: See COPYING file that comes with this distribution
-//
-//
+/***************************************************************************
+                          dtepeditdlg.cpp  -  description
+                             -------------------
+    begin                : Tue Feb 1 11:07:24 2005
+    copyright            : (C) 2005 Andras Mantia <amantia@kde.org>
+ ***************************************************************************/
 
-//qt includes
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; version 2 of the License.               *
+ *                                                                         *
+ ***************************************************************************/
 
 #include <qcheckbox.h>
 #include <qfile.h>
