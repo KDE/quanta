@@ -34,6 +34,9 @@
 #include <kmessagebox.h>
 #include <kcombobox.h>
 #include <kpropertiesdialog.h>
+#include <kurlrequester.h>
+#include <ktempfile.h>
+#include <kio/netaccess.h>
 
 #include "templatestreeview.h"
 #include "templatestreeview.moc"
@@ -41,6 +44,7 @@
 #include "filestreefile.h"
 #include "newtemplatedirdlg.h"
 #include "quantapropertiespagedlg.h"
+#include "../project/copyto.h"
 #include "../resource.h"
 
 const QString textMenu = I18N_NOOP("Insert as Text");
@@ -316,39 +320,74 @@ void TemplatesTreeView::startDrag()
 /** No descriptions */
 void TemplatesTreeView::contentsDropEvent(QDropEvent *e)
 {
- QString source;
- QString dest = "";
-// QTextDrag::decode(e,source);
- QStringList fileList;
-
- QUriDrag::decodeLocalFiles(e, fileList);
- if(fileList.empty()) return;
-
- source = fileList.front();
-
  QListViewItem *item = itemAt(contentsToViewport(e->pos()));
 
  if (item)
  {
-  FilesTreeFolder *parent = dynamic_cast<FilesTreeFolder *> (item->parent());
+   FilesTreeFolder *parent = dynamic_cast<FilesTreeFolder *> (item->parent());
+   QString dest = "";
+   if ( !parent ) // top level element
+   {
+     dest = ((FilesTreeFolder *)item)->fullName();
+   }
+   else
+   {
+     dest = parent->fullName()+item->text(0);
+   }
+   if (QUriDrag::canDecode(e))
+   {
+     QString source;
+    // QTextDrag::decode(e,source);
+     QStringList fileList;
 
-	if ( !parent ) // top level element
-  {
-		dest = ((FilesTreeFolder *)item)->fullName();
-	}
-  else
-  {
-   	dest = parent->fullName()+item->text(0);
-    KIO::Job *job = KIO::copy(source,dest);
-    connect( job, SIGNAL( result( KIO::Job *) ), this , SLOT( slotJobFinished( KIO::Job *) ) );
-  }
+     QUriDrag::decodeLocalFiles(e, fileList);
+     if(fileList.empty()) return;
+
+     source = fileList.front();
+     KIO::Job *job = KIO::copy(source,dest);
+     connect( job, SIGNAL( result( KIO::Job *) ), this , SLOT( slotJobFinished( KIO::Job *) ) );
+   } else
+     if (QTextDrag::canDecode(e))
+     {
+       QString content;
+       QTextDrag::decode(e, content);
+       QListViewItem *item = itemAt(contentsToViewport(e->pos()));
+       if (dynamic_cast<FilesTreeFolder *> (item)) dest +="/";
+       dest = QFileInfo(dest).dirPath()+"/";
+       CopyTo *dlg = new CopyTo( dest + "template.txt", this, i18n("Save selection as template file: "));
+       if ( dlg->exec() )
+       {
+  //       KMessageBox::information(this,content, "Decode Drop" + dest);
+         //now save the file
+         QString fileName = dlg->urlRequester->url();
+         KURL url;
+         QuantaCommon::setUrl(url, fileName);
+         KTempFile* tempFile = new KTempFile();
+         tempFile->setAutoDelete(true);
+          * (tempFile->textStream()) << content;
+         tempFile->close();
+         bool proceed = true;
+         if (KIO::NetAccess::exists(url))
+         {
+           proceed = KMessageBox::questionYesNo(this, i18n("A file with the same name already exists.\nDo you want to overwrite it?"),i18n("Overwrite")) == KMessageBox::Yes;
+         }
+         if (proceed)
+         {
+           if (!KIO::NetAccess::upload(tempFile->name(),  url))
+           {
+             KMessageBox::error(this,i18n("Couldn't write to file:\n %1.\nCheck if you have rights to write there or that your connection is working.").arg(url.prettyURL()));
+           }
+         }
+         delete tempFile;
+       }
+       delete dlg;
+     }
  }
-
 }
 /** No descriptions */
 void TemplatesTreeView::contentsDragEnterEvent(QDragEnterEvent *event)
 {
- if (QUriDrag::canDecode(event))
+ if (QUriDrag::canDecode(event) || QTextDrag::canDecode(event))
  {
     event->accept();
  }
@@ -523,49 +562,58 @@ void TemplatesTreeView::slotInsertTag()
 
 void TemplatesTreeView::slotDragInsert(QDropEvent *e)
 {
-  QStringList fileList;
-  QUriDrag::decodeLocalFiles(e, fileList);
+ if (QUriDrag::canDecode(e))
+ {
+   QStringList fileList;
+   QUriDrag::decodeLocalFiles(e, fileList);
 
-  if(fileList.empty())
-   return;
+   if(fileList.empty())
+    return;
 
-  QString localFileName = fileList.front();
+   QString localFileName = fileList.front();
 
-  readDirInfo(localFileName);
-  QString mimeType = KMimeType::findByPath(localFileName)->name();
+   readDirInfo(localFileName);
+   QString mimeType = KMimeType::findByPath(localFileName)->name();
 
-  /* First, see if the type of the file is specified in the .dirinfo file */
-  if(!dirInfo.mimeType.isEmpty())
-  {
-    if(dirInfo.mimeType == "text/all") // default to inserting in document
-    {
-     if(!mimeType.contains("text", false))
+   /* First, see if the type of the file is specified in the .dirinfo file */
+   if(!dirInfo.mimeType.isEmpty())
+   {
+     if(dirInfo.mimeType == "text/all") // default to inserting in document
      {
-       denyBinaryInsert();
-       return;
-     }
-     emit insertFile(localFileName);
-    }
-
-    if(dirInfo.mimeType == "file/all")
-    {
-      // whatever this is, insert it with a tag (image or link or prefix/postfix)
-      emit insertTag(localFileName, dirInfo);
-    }
-    else
-    if(dirInfo.mimeType == "template/all")
-    {
       if(!mimeType.contains("text", false))
       {
-/*        if(confirmInsert() != KMessageBox::Yes)
-          return;*/
         denyBinaryInsert();
         return;
       }
-      emit openFile(KURL(), qConfig.defaultEncoding);
       emit insertFile(localFileName);
-    }
-  }
+     }
+
+     if(dirInfo.mimeType == "file/all")
+     {
+       // whatever this is, insert it with a tag (image or link or prefix/postfix)
+       emit insertTag(localFileName, dirInfo);
+     }
+     else
+     if(dirInfo.mimeType == "template/all")
+     {
+       if(!mimeType.contains("text", false))
+       {
+ /*        if(confirmInsert() != KMessageBox::Yes)
+           return;*/
+         denyBinaryInsert();
+         return;
+       }
+       emit openFile(KURL(), qConfig.defaultEncoding);
+       emit insertFile(localFileName);
+     }
+   }
+ } else
+   if (QTextDrag::canDecode(e))
+   {
+     QString s;
+     QTextDrag::decode(e, s);
+     KMessageBox::information(this,s, "Decode");
+   }
 }
 
 int TemplatesTreeView::confirmInsert()
