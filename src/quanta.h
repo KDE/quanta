@@ -198,6 +198,7 @@ public:
 
   /** Called when a document was closed. Resets some variables. */
   void slotFileClosed();
+  void setTabToolTip(QWidget *w, const QString& toolTipStr);
 
   /** Clicked word or selected text for context sensitive menu in editor */
   QString popupWord;
@@ -483,7 +484,7 @@ protected:
   /** Makes the tabwidget look and behave like we want. If closeButtonsOnly is true,
   only the close button behavior is changed. */
   void initTabWidget(bool closeButtonsOnly = false);
-  
+
 
   bool eventFilter(QObject *object, QEvent *event);
 

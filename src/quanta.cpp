@@ -453,7 +453,7 @@ bool QuantaApp::slotFileSaveAs()
       } else
         saveAsUrl = oldURL;
     }
-    
+
     KEncodingFileDialog::Result data;
     data = KEncodingFileDialog::getSaveURLAndEncoding(myEncoding, saveAsUrl.url(),
              "all/allfiles text/plain", this, i18n("Save File"));
@@ -3878,9 +3878,9 @@ void QuantaApp::saveOptions()
 
     m_config->writeEntry("Preview area", qConfig.previewPosition);
     m_config->writeEntry("Documentation area", qConfig.docPosition);
-    
+
     m_config->writeEntry("Smart Tag Insertion", qConfig.smartTagInsertion);
-    
+
     m_config->writeEntry("Window layout", qConfig.windowLayout);
     m_config->writeEntry("Follow Cursor", StructTreeView::ref()->followCursor() );
     //If user choose the timer interval, it needs to restart the timer too
@@ -4726,7 +4726,7 @@ void QuantaApp::initTabWidget(bool closeButtonsOnly)
 bool QuantaApp::eventFilter(QObject *obj, QEvent *event)
 {
   //Smart Tag insertion : toggle the smart Tag insertion if the control key is pressed/released
-  if(obj == this && (event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease) && 
+  if(obj == this && (event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease) &&
     ViewManager::ref()->activeDocument() && ViewManager::ref()->activeView() &&
     ViewManager::ref()->activeDocument()->defaultDTD()->name.contains("HTML", false) != 0)
   {
@@ -4739,10 +4739,10 @@ bool QuantaApp::eventFilter(QObject *obj, QEvent *event)
 
       qConfig.smartTagInsertion = !qConfig.smartTagInsertion;
       (static_cast<KToggleAction* >(action))->setChecked(qConfig.smartTagInsertion);
-        
+
     }
   }
-    
+
   return KMdiMainFrm::eventFilter(obj, event);
 }
 
@@ -4820,6 +4820,12 @@ void QuantaApp::slotTabDragged(QWidget *widget)
      QDragObject *d = new QTextDrag( url, this );
      d->dragCopy();
    }
+}
+
+void QuantaApp::setTabToolTip(QWidget *w, const QString &toolTipStr)
+{
+  if (tabWidget())
+    tabWidget()->setTabToolTip(w, toolTipStr);
 }
 
 #include "quanta.moc"

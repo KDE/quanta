@@ -313,6 +313,7 @@ void QuantaView::updateTab()
              setIcon(mimeIcon.pixmap());
           }
           setMDICaption(urlStr);
+          quantaApp->setTabToolTip(this, m_document->url().prettyURL(0, KURL::StripFileProtocol));
         }
     } else
     if (m_plugin)
@@ -829,16 +830,16 @@ void QuantaView::activated()
   m_document->checkDirtyStatus();
   StructTreeView::ref()->useOpenLevelSetting = true;
   quantaApp->loadToolbarForDTD(m_document->getDTDIdentifier());
-  
+
   //TEMP : If the activated document is not a (X)HTML document, disable smartTagInsertion
   //Will be removed when VPL will support every DTD
   KAction *action = quantaApp->actionCollection()->action("smart_tag_insertion");
   if(action && m_document->defaultDTD()->name.contains("HTML", false) == 0)
-  { 
+  {
     qConfig.smartTagInsertion = false;
     (static_cast<KToggleAction* >(action))->setChecked(false);
   }
-  
+
   switch (m_currentViewsLayout)
   {
       case SourceOnly:
