@@ -59,8 +59,9 @@ public:
 
   bool isUntitled();
   void setUntitledUrl(QString);
-  /** Return a node Tag accroding to line,col (or current cursor pos if line==col==-1) */
-  Tag *tagAt(int p_line = -1, int p_col = -1);
+  /** Return a node Tag accroding to line,col (or current cursor pos if line==col==-1).
+      If p_dtdName is specified, find tag according to this dtd. */
+  Tag *tagAt(int p_line = -1, int p_col = -1, QString p_dtdName=QString::null);
   /** return a pointet to the Node according to p_line, p_col (or current cursor pos, if both are -1)  */
   Node *nodeAt(int p_line = -1, int p_col = -1);
   /** Returns tag name at specified position */
@@ -120,6 +121,10 @@ work correctly. */
   QString text(int bLine, int bCol, int eLine, int eCol);
   /** Code completion was requested by the user. */
   void codeCompletionRequested();
+  /** Code completion is manually invoked for script type languages. */
+  void scriptCodeCompletion(DTDStruct *dtd, int line, int col);
+  /** Bring up the code completion tooltip. */
+  void codeCompletionHintRequested();
 
   bool oldstat;
   bool busy;
@@ -168,9 +173,9 @@ private:
   /** Get list of possibile tag name completions */
   QValueList<KTextEditor::CompletionEntry>* getTagCompletions(DTDStruct *dtd, int line, int col);
   /** Get list of possibile tag attribute completions */
-  QValueList<KTextEditor::CompletionEntry>* getAttributeCompletions( QTag* tag, QString startsWith );
+  QValueList<KTextEditor::CompletionEntry>* getAttributeCompletions( DTDStruct *dtd, QString tagName, QString startsWith=QString::null);
   /** Get list of possibile tag attribute value completions */
-  QValueList<KTextEditor::CompletionEntry>* getAttributeValueCompletions( QTag* tag, QString attribute );
+  QValueList<KTextEditor::CompletionEntry>* getAttributeValueCompletions( DTDStruct *dtd, QString tagName, QString attribute, QString startsWith=QString::null);
   /** Get list of possibile completions in normal text input (nt creating a tag) */
   QValueList<KTextEditor::CompletionEntry>* getCharacterCompletions();
   /** Called whenever a user inputs text in an XML type document. */
@@ -179,6 +184,8 @@ private:
   void scriptAutoCompletion(DTDStruct*,int , int , const QString & );
   /** Find the word until the first word boundary backwards */
   QString findWordRev(const QString& textToSearch);
+  /** Invoke code completion dialog for XML like tags according to the position (line, col), using DTD dtd. */
+  void xmlCodeCompletion(DTDStruct *dtd, int line, int col);
 };
 
 #endif

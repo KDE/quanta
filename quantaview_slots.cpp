@@ -71,10 +71,7 @@ void QuantaView::slotEditCurrentTag()
   w->viewCursorIf->cursorPositionReal(&line, &col);
   QString dtdName = w->findDTDName(line, 0); //call currentTag, so should be before
 
-//  Node *node = w->nodeAt(); //get node at current position
-//  if (!node || !node->tag) return;
-//  Tag *tag = node->tag;
-  Tag *tag = w->tagAt();
+  Tag *tag = w->tagAt(-1,-1,dtdName);
   if (tag)
   {
     QString tagName = tag->name;
@@ -85,9 +82,9 @@ void QuantaView::slotEditCurrentTag()
       if (dlg->exec())
       {
        w->changeCurrentTag( dlg->getAttributes() );
-       int eLine, eCol;
+ /*      int eLine, eCol;
        tag->endPos(eLine, eCol);
-       w->viewCursorIf->setCursorPositionReal(eLine, eCol);
+       w->viewCursorIf->setCursorPositionReal(eLine, eCol);*/
       }
 
       delete dlg;

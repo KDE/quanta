@@ -1223,4 +1223,5 @@ void QuantaApp::initActions()
     new KAction(i18n("Send Toolbar in E&mail..."),  0, this, SLOT(slotSendToolbar()), actionCollection(), "toolbars_send");
 
     new KAction(i18n("Complete Text"),CTRL+Key_Space,this,SLOT(slotShowCompletion()),actionCollection(),"show_completion");
+    new KAction(i18n("Completion Hints"),CTRL+SHIFT+Key_Space,this,SLOT(slotShowCompletionHint()),actionCollection(),"show_completion_hint");
 }

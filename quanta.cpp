@@ -1971,4 +1971,10 @@ void QuantaApp::slotShowCompletion()
   view->write()->codeCompletionRequested();
 }
 
+/** No descriptions */
+void QuantaApp::slotShowCompletionHint()
+{
+  view->write()->codeCompletionHintRequested();
+}
+
 #include "quanta.moc"
