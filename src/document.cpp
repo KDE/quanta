@@ -617,6 +617,9 @@ QString Document::getTagNameAt(int line, int col )
             textLine[pos] != '>') 
             pos++;
       name = textLine.left(pos).stripWhiteSpace();
+      pos = name.find(":");
+      if (pos != -1)
+        name = name.mid(pos + 1);
       break;
     } else
     {
@@ -751,8 +754,8 @@ void Document::slotFilterCompletion( KTextEditor::CompletionEntry *completion ,Q
 void Document::slotCharactersInserted(int line,int column,const QString& string)
 {
  const DTDStruct *dtd = currentDTD();
- if ( (dtd->family == Script && string == ">") || 
-      (dtd->family == Xml && string == "<") )
+ if ( (string == ">") || 
+      (string == "<") )
  {
    slotDelayedTextChanged(true);
  }
@@ -836,7 +839,7 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
       viewCursorIf->setCursorPositionReal( line, column );
       handled = true;
     } else
-    if (string == "/" && tagName == "/")
+    if (string == "/" && s.endsWith("</") && tagName.isEmpty())
     {
       Node *node = parser->nodeAt(line, column, false);
       if (node && node->parent)
@@ -844,11 +847,13 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
         node = node->parent;
         QString name = node->tag->name;
         name = name.left(name.find(" | "));
+        if (!node->tag->nameSpace.isEmpty())
+          name.prepend(node->tag->nameSpace + ":");
         editIf->insertText(line, column + 1, name + ">");
 #ifdef BUILD_KAFKAPART
         docUndoRedo->dontAddModifsSet(2);
 #endif
-        viewCursorIf->setCursorPositionReal( line, column + node->tag->name.length() + 2);
+        viewCursorIf->setCursorPositionReal( line, column + name.length() + 2);
         handled = true;
       }
     }
