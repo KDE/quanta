@@ -484,14 +484,20 @@ void ProjectPrivate::loadProjectXML()
   for (uint i = 0; i < excludeList.count(); i++)
   {
     excludeStr = excludeList[i].stripWhiteSpace();
-    if (!excludeStr.endsWith("*"))
-      excludeStr = excludeStr + "/*|"+ excludeStr + "$";
+    QString str = excludeStr;
     if (!excludeStr.startsWith("*"))
-      excludeStr.prepend("^");
-    excludeStr.replace(".","\\.");
-    excludeStr.replace("*",".*");
-    excludeStr.replace("?",".");
-    regExpStr.append(excludeStr);
+    {
+      if (!excludeStr.endsWith("*"))
+        str += "|^" + excludeStr + "/*|*/" + excludeStr + "/*|*/" + excludeStr + "$";
+      else
+        str += "|^" + excludeStr + "|*/" + excludeStr + "$";
+    } else
+    if (!excludeStr.endsWith("*"))
+      str = excludeStr + "/*|"+ excludeStr + "$";
+    str.replace(".","\\.");
+    str.replace("*",".*");
+    str.replace("?",".");
+    regExpStr.append(str);
     if (i+1 < excludeList.count())
       regExpStr.append("|");
   }
@@ -894,7 +900,7 @@ void ProjectPrivate::slotSelectProjectType(const QString &title)
 bool ProjectPrivate::createEmptyDom()
 {
   QString str;
-  QTextStream stream( &str, IO_WriteOnly );
+  QTextStream stream(&str, IO_WriteOnly);
   stream.setEncoding(QTextStream::UnicodeUTF8);
 
   stream << "<!DOCTYPE webproject ><webproject>" << endl;
@@ -905,7 +911,7 @@ bool ProjectPrivate::createEmptyDom()
 
   bool result = true;
 
-  if (! projectURL.isLocalFile())
+  if (!projectURL.isLocalFile())
   {
     tempFile = new KTempFile(tmpDir); // tempFile will get deleted in slotProjectClose()
     tempFile->setAutoDelete(true);
@@ -1177,7 +1183,7 @@ void ProjectPrivate::loadProjectFromTemp(const KURL &url, const QString &tempFil
       baseURL.setPath(dir.canonicalPath());
       baseURL.adjustPath(-1);
     }
-    dom.setContent( &f );
+    dom.setContent(&f);
     f.close();
     loadProjectXML();
     openCurrentView();
@@ -1307,7 +1313,7 @@ void ProjectPrivate::slotDebuggerOptions()
     {
       int errCode = 0;
       DebuggerClient::DebuggerClient* dbg = KParts::ComponentFactory::createInstanceFromService<DebuggerClient::DebuggerClient>(service, this, 0, QStringList(), &errCode);
-      if(dbg)
+      if (dbg)
       {
         QDomNode projectNode = dom.firstChild().firstChild();
         QDomNode nodeThisDbg;
@@ -1377,11 +1383,11 @@ void ProjectPrivate::removeFromConfig(const QString & urlStr)
   int i = projectList.findIndex( urlStr );
   if ( i > -1)
   {
-    projectList.remove( projectList.at(i) );
+    projectList.remove(projectList.at(i));
     config->writePathEntry("OpenProjects", projectList);
     // remove the temp file from list
     projectList = config->readPathListEntry("ProjectTempFiles");
-    projectList.remove( projectList.at(i) );
+    projectList.remove(projectList.at(i));
     config->writePathEntry("ProjectTempFiles", projectList);
   }
   config->sync();
@@ -1414,7 +1420,7 @@ bool ProjectPrivate::uploadProjectFile()
   }
   if (KIO::NetAccess::upload(m_tmpProjectFile, projectURL, m_mainWindow))
   {
-    removeFromConfig( projectURL.url() );    // remove the project from the list of open projects
+    removeFromConfig(projectURL.url());    // remove the project from the list of open projects
     if (quantaApp)
       parent->statusMsg(i18n( "Uploaded project file %1" ).arg( projectURL.prettyURL()));
     // delete all temp files we used
