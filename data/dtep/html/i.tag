@@ -203,7 +203,7 @@
 </tag>
 
 
-<tag name="img" single="1">
+<tag name="img" single="1" hasCore="1">
   <attr name="src" type="url">
     <text>Src</text>
     <textlocation col="0" row="0" />
