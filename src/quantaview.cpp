@@ -744,7 +744,7 @@ void QuantaView::activated()
     quantaApp->slotReloadStructTreeView();
     if (m_plugin)
        quantaApp->partManager()->setActivePart(m_plugin->part(), m_plugin->widget());
-       resize(m_documentArea->width(), m_documentArea->height());
+       resize(width(), height());
     return;
   }
   ToolbarTabWidget::ref()->reparent(this, 0, QPoint(), qConfig.enableDTDToolbar);
