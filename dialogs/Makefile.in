@@ -199,7 +199,7 @@ INCLUDES = $(all_includes)
 
 noinst_LIBRARIES = libdialogs.a
 
-libdialogs_a_SOURCES = previewoptionsdata.cpp previewoptions.cpp styleoptionsdata.cpp styleoptions.cpp filesmaskdata.cpp filesmask.cpp 
+libdialogs_a_SOURCES = previewoptionsdata.cpp previewoptions.cpp styleoptionsdata.cpp styleoptions.cpp filesmaskdata.cpp filesmask.cpp parseroptions.cpp
 
 EXTRA_DIST = filesmask.cpp filesmask.h filesmaskdata.cpp styleoptions.cpp styleoptions.h styleoptionsdata.cpp preview.kdevdlg previewoptions.h previewoptions.cpp previewoptionsdata.cpp 
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -215,12 +215,14 @@ LIBS = @LIBS@
 libdialogs_a_LIBADD = 
 #>- libdialogs_a_OBJECTS =  previewoptionsdata.$(OBJEXT) \
 #>- previewoptions.$(OBJEXT) styleoptionsdata.$(OBJEXT) \
-#>- styleoptions.$(OBJEXT) filesmaskdata.$(OBJEXT) filesmask.$(OBJEXT)
-#>+ 6
+#>- styleoptions.$(OBJEXT) filesmaskdata.$(OBJEXT) filesmask.$(OBJEXT) \
+#>- parseroptions.$(OBJEXT)
+#>+ 7
 @KDE_USE_FINAL_FALSE@libdialogs_a_OBJECTS = previewoptionsdata.$(OBJEXT) \
 previewoptions.$(OBJEXT) styleoptionsdata.$(OBJEXT) \
-styleoptions.$(OBJEXT) filesmaskdata.$(OBJEXT) filesmask.$(OBJEXT)\
-styleoptions.moc.o previewoptions.moc.o filesmask.moc.o 
+styleoptions.$(OBJEXT) filesmaskdata.$(OBJEXT) filesmask.$(OBJEXT) \
+parseroptions.$(OBJEXT)\
+parseroptions.moc.o styleoptions.moc.o previewoptions.moc.o filesmask.moc.o 
 @KDE_USE_FINAL_TRUE@libdialogs_a_OBJECTS = libdialogs_a.all_cpp.o 
 libdialogs_a_final_OBJECTS = libdialogs_a.all_cpp.o 
 AR = ar
@@ -243,16 +245,16 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 TAR = gtar
 GZIP_ENV = --best
 #>- DEP_FILES =  .deps/filesmask.P .deps/filesmaskdata.P \
-#>- .deps/previewoptions.P .deps/previewoptionsdata.P .deps/styleoptions.P \
-#>- .deps/styleoptionsdata.P
+#>- .deps/parseroptions.P .deps/previewoptions.P .deps/previewoptionsdata.P \
+#>- .deps/styleoptions.P .deps/styleoptionsdata.P
 #>+ 8
-@KDE_USE_FINAL_TRUE@DEP_FILES =  $(DEPDIR)/styleoptions.moc.P $(DEPDIR)/previewoptions.moc.P $(DEPDIR)/filesmask.moc.P  $(DEPDIR)/libdialogs_a.all_cpp.P \
+@KDE_USE_FINAL_TRUE@DEP_FILES =  $(DEPDIR)/parseroptions.moc.P $(DEPDIR)/styleoptions.moc.P $(DEPDIR)/previewoptions.moc.P $(DEPDIR)/filesmask.moc.P  $(DEPDIR)/libdialogs_a.all_cpp.P \
 	  .deps/filesmask.P .deps/filesmaskdata.P \
-.deps/previewoptions.P .deps/previewoptionsdata.P .deps/styleoptions.P \
-.deps/styleoptionsdata.P
-@KDE_USE_FINAL_FALSE@DEP_FILES =  $(DEPDIR)/styleoptions.moc.P $(DEPDIR)/previewoptions.moc.P $(DEPDIR)/filesmask.moc.P   .deps/filesmask.P .deps/filesmaskdata.P \
-.deps/previewoptions.P .deps/previewoptionsdata.P .deps/styleoptions.P \
-.deps/styleoptionsdata.P
+.deps/parseroptions.P .deps/previewoptions.P .deps/previewoptionsdata.P \
+.deps/styleoptions.P .deps/styleoptionsdata.P
+@KDE_USE_FINAL_FALSE@DEP_FILES =  $(DEPDIR)/parseroptions.moc.P $(DEPDIR)/styleoptions.moc.P $(DEPDIR)/previewoptions.moc.P $(DEPDIR)/filesmask.moc.P   .deps/filesmask.P .deps/filesmaskdata.P \
+.deps/parseroptions.P .deps/previewoptions.P .deps/previewoptionsdata.P \
+.deps/styleoptions.P .deps/styleoptionsdata.P
 
 SOURCES = $(libdialogs_a_SOURCES)
 OBJECTS = $(libdialogs_a_OBJECTS)
@@ -520,6 +522,10 @@ mostlyclean distclean maintainer-clean
 .NOEXPORT:
 
 #>+ 3
+parseroptions.moc.cpp: $(srcdir)/parseroptions.h
+	$(MOC) $(srcdir)/parseroptions.h -o parseroptions.moc.cpp
+
+#>+ 3
 styleoptions.moc.cpp: $(srcdir)/styleoptions.h
 	$(MOC) $(srcdir)/styleoptions.h -o styleoptions.moc.cpp
 
@@ -533,7 +539,7 @@ filesmask.moc.cpp: $(srcdir)/filesmask.h
 
 #>+ 3
 clean-metasources:
-	-rm -f  styleoptions.moc.cpp previewoptions.moc.cpp filesmask.moc.cpp
+	-rm -f  parseroptions.moc.cpp styleoptions.moc.cpp previewoptions.moc.cpp filesmask.moc.cpp
 
 #>+ 2
 docs-am:
@@ -545,11 +551,11 @@ force-reedit:
 
 
 #>+ 11
-libdialogs_a.all_cpp.cpp: $(srcdir)/Makefile.in $(srcdir)/previewoptionsdata.cpp $(srcdir)/previewoptions.cpp $(srcdir)/styleoptionsdata.cpp $(srcdir)/styleoptions.cpp $(srcdir)/filesmaskdata.cpp $(srcdir)/filesmask.cpp  styleoptions.moc.cpp previewoptions.moc.cpp filesmask.moc.cpp
+libdialogs_a.all_cpp.cpp: $(srcdir)/Makefile.in $(srcdir)/previewoptionsdata.cpp $(srcdir)/previewoptions.cpp $(srcdir)/styleoptionsdata.cpp $(srcdir)/styleoptions.cpp $(srcdir)/filesmaskdata.cpp $(srcdir)/filesmask.cpp $(srcdir)/parseroptions.cpp  parseroptions.moc.cpp styleoptions.moc.cpp previewoptions.moc.cpp filesmask.moc.cpp
 	@echo 'creating libdialogs_a.all_cpp.cpp ...'; \
 	rm -f libdialogs_a.all_cpp.files libdialogs_a.all_cpp.final; \
 	echo "#define KDE_USE_FINAL 1" >> libdialogs_a.all_cpp.final; \
-	for file in previewoptionsdata.cpp previewoptions.cpp styleoptionsdata.cpp styleoptions.cpp filesmaskdata.cpp filesmask.cpp  styleoptions.moc.cpp previewoptions.moc.cpp filesmask.moc.cpp; do \
+	for file in previewoptionsdata.cpp previewoptions.cpp styleoptionsdata.cpp styleoptions.cpp filesmaskdata.cpp filesmask.cpp parseroptions.cpp  parseroptions.moc.cpp styleoptions.moc.cpp previewoptions.moc.cpp filesmask.moc.cpp; do \
 	  echo "#include \"$$file\"" >> libdialogs_a.all_cpp.files; \
 	  test ! -f $(srcdir)/$$file || egrep '^#pragma +implementation' $(srcdir)/$$file >> libdialogs_a.all_cpp.final; \
 	done; \

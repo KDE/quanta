@@ -66,6 +66,10 @@ public:
   /** insert tag in document  */
   void insertTag(QString s1,QString s2="");
 
+  /** add attrib to end of current tag */
+  void insertAttrib(QString attr);
+
+
   //bool hasFileName() { return (fileName() != 0 ); };
 
   QString findBeginOfTag( QString tag, int x, int y);

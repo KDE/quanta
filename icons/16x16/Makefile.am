@@ -1,7 +1,7 @@
 ####### kdevelop will overwrite this part!!! (begin)##########
 
 
-EXTRA_DIST = delete.png down.png folder.png folder_blue.png folder_cyan.png folder_green.png folder_locked.png folder_open.png folder_red.png folder_yellow.png greenbook.png home.png html.png image.png java.png kfm.png mini-book1.png mini-book2.png mini-doc.png mini-modules.png project_folder.png save_small.png txt.png up.png empty1x16.png 
+EXTRA_DIST = delete.png down.png folder.png folder_blue.png folder_cyan.png folder_green.png folder_locked.png folder_open.png folder_red.png folder_yellow.png greenbook.png home.png html.png image.png java.png kfm.png mini-book1.png mini-book2.png mini-doc.png mini-modules.png project_folder.png save_small.png txt.png up.png empty1x16.png tag_br_small.png tag_font_small.png tag_hr_small.png
 
 install-data-local:
 	$(mkinstalldirs) $(kde_datadir)/quanta/toolbar/
@@ -54,6 +54,12 @@ install-data-local:
 	$(INSTALL_DATA) up.png $(kde_datadir)/quanta/toolbar/up.png
 	$(mkinstalldirs) $(kde_datadir)/quanta/toolbar/
 	$(INSTALL_DATA) empty1x16.png $(kde_datadir)/quanta/toolbar/empty1x16.png
+	$(mkinstalldirs) $(kde_datadir)/quanta/toolbar/
+	$(INSTALL_DATA) tag_br_small.png $(kde_datadir)/quanta/toolbar/tag_br_small.png
+	$(mkinstalldirs) $(kde_datadir)/quanta/toolbar/
+	$(INSTALL_DATA) tag_font_small.png $(kde_datadir)/quanta/toolbar/tag_font_small.png
+	$(mkinstalldirs) $(kde_datadir)/quanta/toolbar/
+	$(INSTALL_DATA) tag_hr_small.png $(kde_datadir)/quanta/toolbar/tag_hr_small.png
 
 uninstall-local:
 	-rm -f $(kde_datadir)/quanta/toolbar/delete.png
@@ -81,5 +87,8 @@ uninstall-local:
 	-rm -f $(kde_datadir)/quanta/toolbar/txt.png
 	-rm -f $(kde_datadir)/quanta/toolbar/up.png
 	-rm -f $(kde_datadir)/quanta/toolbar/empty1x16.png
+	-rm -f $(kde_datadir)/quanta/toolbar/tag_br_small.png
+	-rm -f $(kde_datadir)/quanta/toolbar/tag_font_small.png
+	-rm -f $(kde_datadir)/quanta/toolbar/tag_hr_small.png
 
 ####### kdevelop will overwrite this part!!! (end)############

@@ -113,6 +113,8 @@
 #define ID_OPTIONS_COLORS           14030
 #define ID_OPTIONS_HIGHLIGHT        14040
 #define ID_OPTIONS_TOOLBAR          14050
+#define ID_OPTIONS_KEYS		          14050
+
 
 
 ///////////////////////////////////////////////////////////////////

@@ -415,6 +415,12 @@ QString Document::attrCase( const char*  attr)
 }
 
 
+void Document::insertAttrib(QString attr)
+{
+   setCursorPosition( tagEndY, tagEndX );
+   insertTag( QString(" ") + attrCase(attr) + "=\"", QString( "\"" ) );
+}
+
 /**  */
 void Document::selectText(int x1, int y1, int x2, int y2 )
 {

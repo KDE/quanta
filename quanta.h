@@ -263,6 +263,9 @@ class QuantaApp : public KTMainWindow
     /** options slots */
     void slotOptions();
 
+    /** configure keybindings */
+    void slotOptionsConfigureKeys();
+
     /** reparse current document and initialize node. */
 	  void reparse();
 	
@@ -306,6 +309,11 @@ class QuantaApp : public KTMainWindow
     QPopupMenu *insertTablesMenu;
     QPopupMenu *insertFormsMenu;
     QPopupMenu *insertListsMenu;
+
+    /** RBM popup menu for kwrite */
+
+    QPopupMenu *kwritePopupMenu;
+
 
     /** widget stack for left panel */
     QWidgetStack *fTab;

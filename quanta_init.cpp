@@ -34,7 +34,6 @@
 #include <khtmlview.h>
 #include <kstddirs.h>
 
-
 // application specific includes
 #include "quanta.h"
 #include "quantaview.h"
@@ -156,9 +155,8 @@ void QuantaApp::initKeyAccel()
   keyAccel->insertItem( "Find next", Key_F3);
   keyAccel->connectItem("Find next", this, SLOT(slotEditSearchAgain()));
 
-#warning tag_attributes_still_doesnt_work
   keyAccel->insertItem( "Tag attributes", Key_Down+ALT);
-//  keyAccel->connectItem("Tag attributes", doc, SLOT(slotAttribPopup()));
+  keyAccel->connectItem("Tag attributes", doc, SLOT(slotAttribPopup()));
 
   keyAccel->connectItem(KStdAccel::Help, this, SLOT(appHelpActivated()));
 
@@ -419,10 +417,11 @@ void QuantaApp::initMenuBar()
   optionsMenu = new QPopupMenu();
 //  optionsMenu->insertItem(i18n("&Editor options"),  ID_OPTIONS_EDITOR );
 //  optionsMenu->insertItem(i18n("Editor &colors"),   ID_OPTIONS_COLORS );
-  optionsMenu->insertItem(i18n("&Highliting"),       ID_OPTIONS_HIGHLIGHT );
-  optionsMenu->insertItem(i18n("&Editor options"),   ID_OPTIONS_EDITOR);
+  optionsMenu->insertItem(i18n("&Highliting..."),       ID_OPTIONS_HIGHLIGHT );
+  optionsMenu->insertItem(i18n("&Editor options..."),   ID_OPTIONS_EDITOR);
+  optionsMenu->insertItem(i18n("Configure &key bindings..."),   ID_OPTIONS_KEYS);
   optionsMenu->insertSeparator();
-  optionsMenu->insertItem(i18n("&General options"),  ID_OPTIONS );
+  optionsMenu->insertItem(i18n("&General options..."),  ID_OPTIONS );
 
 
   ///////////////////////////////////////////////////////////////////
@@ -452,6 +451,7 @@ void QuantaApp::initMenuBar()
 
   menuBar()->insertSeparator();
   menuBar()->insertItem(i18n("&Help"), helpMenu_);
+
 
   ///////////////////////////////////////////////////////////////////
   // CONNECT THE MENU SLOTS WITH SIGNALS
@@ -548,6 +548,25 @@ void QuantaApp::initStatusBar()
 void QuantaApp::initDocument()
 {
   doc = new QuantaDoc(this,this);
+
+  kwritePopupMenu = new QPopupMenu();
+
+  kwritePopupMenu->insertItem(UserIcon("cut"), 	i18n("Cu&t"), 	 ID_EDIT_CUT );
+  kwritePopupMenu->insertItem(UserIcon("copy"), 	i18n("&Copy"), ID_EDIT_COPY );
+  kwritePopupMenu->insertItem(UserIcon("paste"), i18n("&Paste"), ID_EDIT_PASTE );
+  kwritePopupMenu->insertSeparator();
+  kwritePopupMenu->insertItem(UserIcon("undo"),i18n("&Undo"), ID_EDIT_UNDO );
+  kwritePopupMenu->insertItem(UserIcon("redo"),i18n("&Redo"), ID_EDIT_REDO );
+  kwritePopupMenu->insertSeparator();
+  kwritePopupMenu->insertItem( i18n("Context help"),  		ID_CONTEXT_HELP );
+  kwritePopupMenu->insertItem( i18n("Tag attributes"),  	ID_ATTRIB_POPUP);
+  kwritePopupMenu->insertItem( i18n("&Edit current tag"), ID_EDIT_CURRENT_TAG);
+
+  connect(kwritePopupMenu, SIGNAL(activated(int)), SLOT(commandCallback(int)));
+  connect(kwritePopupMenu, SIGNAL(highlighted(int)), SLOT(statusCallback(int)));
+
+  doc->setRBMenu(kwritePopupMenu);
+
 }
 
 void QuantaApp::initProject()

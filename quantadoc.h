@@ -31,6 +31,8 @@
 // forward declaration of the Quanta classes
 class QuantaApp;
 class QuantaView;
+class QPopupMenu;
+class KPopupMenu;
 
 class Document;
 class KWriteManager;
@@ -97,6 +99,9 @@ class QuantaDoc : public QObject
 		
 		/** change file name in dict and tabbar  from old ones to current */
 		void changeFileName(QString oldname);
+		
+		/** set RB menu for KWrite */
+		void setRBMenu( QPopupMenu * rbMenu ) { this->rbMenu = rbMenu; }
 
 	
   public slots:
@@ -108,6 +113,12 @@ class QuantaDoc : public QObject
     void closeAll();
     /** for exchange signals */
     void slotRequestOpenedFiles();
+
+    /** show popup menu with list of attributes for current tag */
+    void slotInsertAttrib( int id );
+    void slotInsertCoreAttrib( int id );
+    void slotInsertEventsAttrib( int id );
+    void slotAttribPopup();
  	
   signals:
   	void openedFiles(QStringList);
@@ -125,6 +136,11 @@ class QuantaDoc : public QObject
     QDict<Document> docList;
     /** manager for bookmarks */
     KWriteManager *writeManager;
+    QPopupMenu *rbMenu;
+
+    KPopupMenu *attribMenu;
+    QPopupMenu *attribCoreMenu;
+    QPopupMenu *attribEventsMenu;
 };
 
 #endif // QUANTADOC_H

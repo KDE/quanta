@@ -31,6 +31,7 @@
 #include <kconfig.h>
 #include <khtmlview.h>
 #include <kdialogbase.h>
+#include <kkeydialog.h>
 
 // application specific includes
 #include "quanta.h"
@@ -47,6 +48,8 @@
 #include "dialogs/filesmask.h"
 #include "dialogs/styleoptions.h"
 #include "dialogs/previewoptions.h"
+#include "dialogs/parseroptions.h"
+
 
 #include "treeviews/filestreeview.h"
 #include "treeviews/fileslistview.h"
@@ -227,6 +230,10 @@ void QuantaApp::commandCallback(int id_)
 
     case ID_OPTIONS:
     		 slotOptions();
+    		 break;
+    		
+    case ID_OPTIONS_KEYS:
+    		 slotOptionsConfigureKeys();
     		 break;
 
     case ID_OPTIONS_EDITOR:
@@ -849,8 +856,17 @@ void QuantaApp::slotUpdateStatus(const QString &)
 	setCaption(doc->getTitle());
 }
 
+void QuantaApp::slotOptionsConfigureKeys()
+{
+
+	KKeyDialog::configureKeys(keyAccel);
+	
+}
+
+
 void QuantaApp::slotOptions()
 {
+
 	KDialogBase *kd = new KDialogBase(KDialogBase::IconList,
 				    i18n("Configure Quanta"),
 				    KDialogBase::Ok | KDialogBase::Cancel,
@@ -881,7 +897,11 @@ void QuantaApp::slotOptions()
   previewOptions->setPosition( previewPosition );
 
   // Keys options
-  page=kd->addVBoxPage(i18n("Keys"), QString::null, UserIcon( "keysconfig" ) );
+//  page=kd->addVBoxPage(i18n("Keys"), QString::null, UserIcon( "keysconfig" ) );
+
+  page=kd->addVBoxPage(i18n("Parser"), QString::null, UserIcon( "filesmask" ) );
+  ParserOptions *parserOptions = new ParserOptions( (QWidget *)page );
+
 //  KGuiCmdConfigTab *keys = new KGuiCmdConfigTab((QWidget *)page, KGuiCmdManager::self());
 
   //IndentConfigTab *indentConfig = new IndentConfigTab(page, kWrite);

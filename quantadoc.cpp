@@ -25,17 +25,23 @@
 // include files for KDE
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <kpopupmenu.h>
 
 // application specific includes
 #include "quantadoc.h"
 #include "quanta.h"
 #include "quantaview.h"
 
+#include "resource.h"
+
 #include "document.h"
 #include "kwrite/kwdoc.h"
 #include "kwrite/highlight/highlight.h"
 
 QList<QuantaView> *QuantaDoc::pViewList = 0L;
+
+extern QDict <QStrList> *tagsDict;
+
 
 QuantaDoc::QuantaDoc( QuantaApp *app, QWidget *parent, const char *name) : QObject(parent, name)
 {
@@ -47,7 +53,24 @@ QuantaDoc::QuantaDoc( QuantaApp *app, QWidget *parent, const char *name) : QObje
   }
 
   pViewList->setAutoDelete(true);
+  rbMenu = 0L;
 
+  attribMenu = new KPopupMenu("Tag :");
+  connect( attribMenu, SIGNAL(activated(int)), this, SLOT(slotInsertAttrib(int)));
+
+  attribCoreMenu = new QPopupMenu();
+  char *attr;
+  for ( attr = lCore->first(); lCore->current(); attr = lCore->next() )
+    attribCoreMenu->insertItem( attr, lCore->at() );
+
+  connect( attribCoreMenu, SIGNAL(activated(int)), this, SLOT(slotInsertCoreAttrib(int)));
+
+
+  attribEventsMenu = new QPopupMenu();
+  for ( attr = lScript->first(); lScript->current(); attr = lScript->next() )
+    attribEventsMenu->insertItem( attr, lScript->at() );
+
+  connect( attribEventsMenu, SIGNAL(activated(int)), this, SLOT(slotInsertEventsAttrib(int)));
 }
 
 QuantaDoc::~QuantaDoc()
@@ -434,6 +457,7 @@ Document* QuantaDoc::newWrite(QWidget *parent)
  	write = new Document( writeDoc, parent, "write" , fname);
  	write -> readConfig( app->config );
  	write -> setHl( hl->nameFind( "HTML"));
+ 	write -> installPopup( rbMenu );
 
  	connect( write, SIGNAL(newStatus()), 		app, SLOT(slotNewStatus()));
  	connect( write, SIGNAL(newUndo()),   		app, SLOT(slotNewUndo()));
@@ -462,3 +486,91 @@ void QuantaDoc::slotRequestOpenedFiles()
 
   emit openedFiles( list );
 }
+
+
+/** show popup menu with list of attributes for current tag */
+void QuantaDoc::slotAttribPopup()
+{
+  attribMenu->clear();
+
+  write()->currentTag();
+  QString tag = write()->getTagAttr(0);
+  QStrIList attrList = QStrIList();
+
+  for (int i=1; i < write()->tagAttrNum; i++ )
+      attrList.append( write()->getTagAttr(i) );
+
+  if ( tagsList->find( tag.upper()) != -1 )
+  {
+    QString caption = QString("Attributes of <")+tag+">";
+    attribMenu->setTitle( caption );
+//    attribMenu->insertItem( caption.data() );
+//    attribMenu->insertSeparator();
+//    attribMenu->insertSeparator();
+
+    QStrList *list = tagsDict->find( tag );
+    char * item = list->first();
+    bool haveAttributes = false; // if popup memu haven't members, dont show it
+    while ( item ) {
+      if ( !((lCore->find(item)!=-1) || (lI18n->find(item)!=-1) || (lScript->find(item)!=-1))) {
+        haveAttributes = true;
+        attribMenu->insertItem( item , /* KPM_FirstItem+ */list->at() );
+        if ( attrList.find(item) != -1 )
+          attribMenu->setItemEnabled( /* KPM_FirstItem+ */list->at(), false );
+      }
+      item = list->next();
+    }
+
+    if ( tagsCore->find(tag.upper()) != -1 ) {
+      haveAttributes = true;
+      attribMenu->insertItem("Core", attribCoreMenu, -2);
+    }
+
+    if ( tagsScript->find(tag.upper()) != -1 ) {
+      haveAttributes = true;
+      attribMenu->insertItem("Script", attribEventsMenu, -2);
+    }
+
+    if ( !haveAttributes )
+      return;              // don't show empty menu, may be core dumped
+
+    attribMenu->setActiveItem( /* KPM_FirstItem */ 0);
+
+    QPoint globalPos = write()->getGlobalCursorPos();
+    attribMenu->exec( globalPos );
+
+
+  } else {
+    QString message = i18n("Unknown tag : ");
+    message += tag;
+    app->slotStatusMsg( message.data() );
+  }
+}
+
+void QuantaDoc::slotInsertAttrib( int id )
+{
+//  id = id - KPM_FirstItem;
+  write()->currentTag();
+  QString tag = write()->getTagAttr(0);
+  if ( tagsList->find( tag.upper()) != -1 ) {
+
+    QStrList *list = tagsDict->find( tag.data() );
+
+    //write()->insertTag( QString(" &")+list->at(id)+"=\"","\"" );
+    write()->insertAttrib( list->at(id) );
+
+  }
+}
+
+void QuantaDoc::slotInsertCoreAttrib( int id )
+{
+  write()->insertAttrib( lCore->at(id) );
+//  write()->insertTag( QString(" ")+lCore->at(id)+"=\"","\"" );
+}
+
+void QuantaDoc::slotInsertEventsAttrib( int id )
+{
+	write()->insertAttrib( lScript->at(id) );
+//  write()->insertTag( QString(" ")+lScript->at(id)+"=\"","\"" );
+}
+
