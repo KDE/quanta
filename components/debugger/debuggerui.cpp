@@ -44,11 +44,12 @@ DebuggerUI::DebuggerUI(QObject *parent, const char *name)
     m_debuggerMenuID  = 0;
     
   connect(m_variablesListView, SIGNAL(removeVariable(DebuggerVariable* )), parent, SLOT(slotRemoveVariable(DebuggerVariable* )));
+  
 }
 
 DebuggerUI::~DebuggerUI()
 {
-  if(m_debuggerMenuID > 0)
+  if(m_debuggerMenuID != 0)
     quantaApp->menuBar()->removeItem(m_debuggerMenuID);
   m_debuggerMenuID = 0;
   
