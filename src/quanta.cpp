@@ -3712,7 +3712,7 @@ bool QuantaApp::queryClose()
       delete it;
 
       Project::ref()->slotCloseProject();
-      ViewManager::ref()->closeAll();
+      ViewManager::ref()->closeAll(false);
     }
   }
 

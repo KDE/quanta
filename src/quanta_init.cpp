@@ -360,7 +360,14 @@ void QuantaInit::initView()
 
   m_quanta->setStandardMDIMenuEnabled(true);
   m_quanta->setManagedDockPositionModeEnabled(true);
+/*  KMdiChildView* pMDICover = new KMdiChildView("MainDock");
+  pMDICover->setName("MainDock");
+  QBoxLayout *ml=new QHBoxLayout(pMDICover);
+  ml->setAutoAdd(true);
+  quantaApp->addWindow(pMDICover);
+  pMDICover->show();
 
+*/
   m_quanta->fTab = new FilesTreeView(m_config, m_quanta->actionCollection(), m_quanta, "filestree");
   addToolTreeView(m_quanta->fTab, i18n("Files"), UserIcon("ftab"), KDockWidget::DockLeft);
 

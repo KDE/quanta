@@ -241,7 +241,7 @@ bool ViewManager::saveAll(bool dont_ask)
   return flagsave;
 }
 
-void ViewManager::closeAll()
+void ViewManager::closeAll(bool createNew)
 {
   KMdiIterator<KMdiChildView*> *it = quantaApp->createIterator();
   QuantaView *view;
@@ -269,8 +269,8 @@ void ViewManager::closeAll()
       }
   }
   delete it;
-
-  createNewDocument();
+  if (createNew)
+      createNewDocument();
 }
 
 bool ViewManager::isOneModified()

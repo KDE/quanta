@@ -69,7 +69,8 @@ public slots:
 
   /** closes all the other but active tabs */
   void slotCloseOtherTabs();
-  void closeAll();
+  /** closes all view. If createNew is true, it creates a new view after closing the others. */
+  void closeAll(bool createNew = true);
 
 signals:
   /** emitted when a file from the template view is dropped on a view */
