@@ -1,0 +1,87 @@
+<!DOCTYPE kpartgui>
+<kpartgui name="quanta" version="1">
+  <MenuBar>
+     <Menu name="file" noMerge="1"><text>&amp;File</text>
+      <Action name="file_new"/>
+      <Action name="file_open"/>
+      <Separator/>
+      <Action name="file_save"/>
+      <Action name="file_save_as"/>
+      <Action name="save_all"/>
+      <MergeLocal name="save_merge"/>
+      <Separator/>
+      <Action name="file_close"/>
+      <Action name="close_all"/>
+      <Separator/>
+      <Action name="file_quit"/>
+    </Menu>
+    <Menu name="edit" noMerge="1"><text>&amp;Edit</text>
+      <Merge name="edit_undo_merge"/>
+      <Action name="edit_undo" />
+      <Action name="edit_redo" />
+      <Action name="undo_history"/>
+      <Separator/>
+      <Action name="edit_cut"/>
+      <Action name="edit_copy"/>
+      <Action name="edit_paste"/>
+      <Separator/>
+      <Action name="edit_select_all" />
+      <Action name="unselect_all"/>
+      <Action name="invert_selection"/>
+      <Separator/>
+      <Action name="edit_find"/>
+      <Action name="edit_find_next"/>
+      <Action name="edit_replace"/>
+      <MergeLocal name="edit_find_merge"/>
+      <Separator/>
+      <Action name="find_in_files"/>
+      <Merge/>
+    </Menu>
+    <Menu name="view" noMerge="1"><text>&amp;View</text>
+      <Action name="show_tree"/>
+      <Action name="show_messages"/>
+      <Action name="show_preview"/>
+      <Separator/>
+      <Action name="reload"/>
+      <Separator/>
+      <Action name="previous_file"/>
+      <Action name="next_file"/>
+    </Menu>
+    <Menu name="tools">
+      <Action name="tag_attributes"/>
+      <Action name="edit_current_tag"/>
+      <Action name="context_help"/>
+      <Separator/>
+      <Action name="indent"/>
+      <Action name="unindent"/>
+      <Action name="clean_indentation"/>
+      <Separator/>
+      <Action name="ftp_client"/>
+    </Menu>
+    <Menu name="go_document"><text>&amp;Go</text>
+      <Action name="go_back"/>
+      <Action name="go_forward"/>
+    </Menu>
+    <Menu name="project"><text>&amp;Project</text>
+      <Action name="new_project"/>
+      <Action name="open_project"/>
+      <Action name="close_project"/>
+      <Separator/>
+      <Action name="insert_file"/>
+      <Action name="insert_directory"/>
+      <Separator/>
+      <Action name="upload_project"/>
+      <Separator/>
+      <Action name="project_options"/>
+    </Menu>
+    <Menu name="settings"><text>&amp;Settings</text>
+      <Merge/>
+      <Action name="vertical_selection"/>
+    </Menu>
+  </MenuBar>
+  <ToolBar name="mainToolBar"><text>Main Toolbar</text>
+    <Action name="open"/>
+    <Separator/>
+  </ToolBar>
+</kpartgui>
+
