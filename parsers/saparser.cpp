@@ -64,7 +64,7 @@ void SAParser::init(Node *node, Document* write)
 
 bool SAParser::slotParseOneLine()
 {
-  if (!m_parsingEnabled && !m_synchronous)
+  if ((!m_parsingEnabled && !m_synchronous) || !baseNode)
   {
 #ifdef DEBUG_PARSER
     kdDebug(24001) << "slotParseOneLine - interrupted" << endl;
@@ -829,7 +829,7 @@ void SAParser::slotParseNodeInDetail()
 #ifdef DEBUG_PARSER
   kdDebug(24001) << "slotParseNodeInDetail. Enabled: " << m_parsingEnabled << " Synch: " << m_synchronous << endl; //this is really heavy debug information, enable only when really needed
 #endif
-  if (m_currentNode && m_parsingEnabled)
+  if (m_currentNode && m_parsingEnabled && baseNode)
   {
     if (m_currentNode->insideSpecial &&
         m_currentNode->tag->type != Tag::Comment &&
@@ -949,7 +949,7 @@ void SAGroupParser::slotParseForScriptGroup()
 #ifdef DEBUG_PARSER
   //kdDebug(24001) << "slotParseForScriptGroup. Synch: " << m_synchronous << endl;
 #endif
-  if (!m_parent->parsingEnabled())
+  if (!m_parent->parsingEnabled() || !baseNode)
   {
 #ifdef DEBUG_PARSER
     kdDebug(24001) << "slotParseForScriptGroup aborted. Synch: " << m_synchronous << endl;

@@ -19,10 +19,12 @@
 #include <cstdlib>
 
 //QT includes
+#include <qcheckbox.h>
 #include <qdir.h>
 #include <qeventloop.h>
 #include <qfile.h>
 #include <qfileinfo.h>
+#include <qlineedit.h>
 #include <qtextcodec.h>
 #include <qtextstream.h>
 #include <qregexp.h>
@@ -73,12 +75,14 @@
 #include "dirtydialog.h"
 #include "casewidget.h"
 #include "project.h"
+#include "dtdselectdialog.h"
 
 #include "quanta.h"
 #include "quantaview.h"
 #include "structtreeview.h"
 #include "qextfileinfo.h"
 #include "viewmanager.h"
+#include "messageoutput.h"
 
 #ifdef BUILD_KAFKAPART
 #include "undoredo.h"
@@ -167,6 +171,7 @@ Document::Document(KTextEditor::Document *doc,
   //iface->setMarksUserChangable(KTextEditor::MarkInterface::markType01 + KTextEditor::MarkInterface::markType02);
 
   tempFile = 0;
+  m_tempFileName = QString::null;
   dtdName = Project::ref()->defaultDTD();
   m_parsingDTD = dtdName;
   reparseEnabled = true;
@@ -596,6 +601,7 @@ int Document::closeTempFile()
  if (QFileInfo(m_tempFileName).exists())
      QFile::remove(m_tempFileName);
 
+ m_tempFileName = QString::null;
  return 1; //not used yet
 }
 /** No descriptions */
@@ -2481,20 +2487,30 @@ void Document::open(const KURL &url, const QString &encoding)
     connect(m_doc, SIGNAL(canceled(const QString&)), this, SLOT(slotOpeningFailed(const QString&)));
     if (!m_doc->openURL(url))
       emit openingFailed(url);
+    if (!url.isLocalFile())
+    {
+      QExtFileInfo internalFileInfo;
+      internalFileInfo.enter_loop();
+    }
 }
 
 void Document::slotOpeningCompleted()
 {
+  if (!url().isLocalFile())
+    qApp->exit_loop();
   disconnect(m_doc, SIGNAL(completed()), this, SLOT(slotOpeningCompleted()));
   m_dirty = false;
   createTempFile();
   m_view->setFocus();
+  processDTD();
   emit openingCompleted(url());
 }
 
 void Document::slotOpeningFailed(const QString &errorMessage)
 {
   Q_UNUSED(errorMessage); //TODO: append the error message to our own error message
+  if (!url().isLocalFile())
+    qApp->exit_loop();
   disconnect(m_doc, SIGNAL(canceled(const QString&)), this, SLOT(slotOpeningFailed(const QString&)));
   KURL u = url();
   if (u.isLocalFile())
@@ -2504,5 +2520,131 @@ void Document::slotOpeningFailed(const QString &errorMessage)
   }
   emit openingFailed(u);
 }
+
+void Document::processDTD(const QString& documentType)
+{
+ QString foundName;
+ QString projectDTD = Project::ref()->defaultDTD();
+ setDTDIdentifier(projectDTD);
+ Tag *tag = 0L;
+ if (documentType.isEmpty())
+ {
+   foundName = findDTDName(&tag); //look up the whole file for DTD definition
+   bool found = false;
+   if (!foundName.isEmpty())   //!DOCTYPE found in file
+   {
+      KDialogBase dlg(this, 0L, true, i18n("DTD Selector"), KDialogBase::Ok | KDialogBase::Cancel);
+      DTDSelectDialog *dtdWidget = new DTDSelectDialog(&dlg);
+      dlg.setMainWidget(dtdWidget);
+      QStringList lst = DTDs::ref()->nickNameList(true);
+      QString foundNickName = DTDs::ref()->getDTDNickNameFromName(foundName);
+      for (uint i = 0; i < lst.count(); i++)
+      {
+        dtdWidget->dtdCombo->insertItem(lst[i]);
+        if (lst[i] == foundNickName)
+        {
+          setDTDIdentifier(foundName);
+          found =true;
+        }
+      }
+
+      if (!DTDs::ref()->find(foundName))
+      {
+        //try to find the closest matching DTD
+        QString s = foundName.lower();
+        uint spaceNum = s.contains(' ');
+        QStringList dtdList = DTDs::ref()->nameList();
+        QStringList lastDtdList;
+        for (uint i = 0; i <= spaceNum && !dtdList.empty(); i++)
+        {
+          lastDtdList = dtdList;
+          QStringList::Iterator strIt = dtdList.begin();
+          while (strIt != dtdList.end())
+          {
+            if (!(*strIt).startsWith(s.section(' ', 0, i)))
+            {
+              strIt = dtdList.remove(strIt);
+            } else
+            {
+              ++strIt;
+            }
+          }
+        }
+        dtdList = lastDtdList;
+        for (uint i = 0; i <= spaceNum && !dtdList.empty(); i++)
+        {
+          lastDtdList = dtdList;
+          QStringList::Iterator strIt = dtdList.begin();
+          while (strIt != dtdList.end())
+          {
+            if (!(*strIt).endsWith(s.section(' ', -(i+1), -1)))
+            {
+              strIt = dtdList.remove(strIt);
+            } else
+            {
+              ++strIt;
+            }
+          }
+        }
+        if (lastDtdList.count() == 1 || lastDtdList[0].startsWith(s.section(' ', 0, 0)))
+        {
+          projectDTD = lastDtdList[0];
+        }
+      }
+
+//    dlg->dtdCombo->insertItem(i18n("Create New DTD Info"));
+      dtdWidget->messageLabel->setText(i18n("This DTD is not known for Quanta. Choose a DTD or create a new one."));
+      dtdWidget->currentDTD->setText(DTDs::ref()->getDTDNickNameFromName(foundName));
+      QString projectDTDNickName = DTDs::ref()->getDTDNickNameFromName(projectDTD);
+      for (int i = 0; i < dtdWidget->dtdCombo->count(); i++)
+      {
+        if (dtdWidget->dtdCombo->text(i) == projectDTDNickName)
+        {
+          dtdWidget->dtdCombo->setCurrentItem(i);
+          break;
+        }
+      }
+      if (!found && qConfig.showDTDSelectDialog)
+      {
+        quantaApp->slotHideSplash();
+        if (dlg.exec())
+        {
+          qConfig.showDTDSelectDialog = !dtdWidget->useClosestMatching->isChecked();
+          setDTDIdentifier(DTDs::ref()->getDTDNameFromNickName(dtdWidget->dtdCombo->currentText()));
+          const DTDStruct *dtd = DTDs::ref()->find(dtdName);
+          if (dtdWidget->convertDTD->isChecked() && dtd->family == Xml)
+          {
+            int bLine, bCol, eLine, eCol;
+            tag->beginPos(bLine,bCol);
+            tag->endPos(eLine,eCol);
+            editIf->removeText(bLine, bCol, eLine, eCol+1);
+            viewCursorIf->setCursorPositionReal((uint)bLine, (uint)bCol);
+            insertText("<!DOCTYPE" + dtd->doctypeStr +">");
+          }
+        }
+      }
+   } else //DOCTYPE not found in file
+   {
+     QString mimetype = KMimeType::findByURL(url())->name();
+     const DTDStruct *currdtd = DTDs::ref()->DTDfromMimeType(mimetype);
+     if (currdtd)
+        setDTDIdentifier(currdtd->name);
+     else
+        setDTDIdentifier(projectDTD);
+   }
+ } else //dtdName is read from the method's parameter
+ {
+   setDTDIdentifier(documentType);
+ }
+
+  if (!isUntitled())
+  {
+    quantaApp->messageOutput()->showMessage(i18n("\"%1\" is used for \"%2\".\n").arg(DTDs::ref()->getDTDNickNameFromName(dtdName)).arg(url().prettyURL(0, KURL::StripFileProtocol)));
+  }
+  quantaApp->loadToolbarForDTD(dtdName);
+  StructTreeView::ref()->useOpenLevelSetting = true;
+  delete tag;
+}
+
 
 #include "document.moc"

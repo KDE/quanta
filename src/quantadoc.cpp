@@ -127,9 +127,9 @@ bool QuantaDoc::newDocument( const KURL& url, bool switchToExisting )
     view = ViewManager::ref()->activeView();
 
     if (Project::ref()->hasProject())
-        quantaApp->processDTD(Project::ref()->defaultDTD());
+        view->document()->processDTD(Project::ref()->defaultDTD());
     else
-        quantaApp->processDTD(qConfig.defaultDocType);
+        view->document()->processDTD(qConfig.defaultDocType);
   }
   else // select opened
   if (switchToExisting)
@@ -228,10 +228,10 @@ void QuantaDoc::slotOpeningCompleted(const KURL &url)
 {
   quantaApp->fileRecent->addURL(url);
   quantaApp->slotRepaintPreview();
-  quantaApp->processDTD();
   quantaApp->reparse(true);
   quantaApp->debugger()->fileOpened(url.prettyURL(0, KURL::StripFileProtocol));
   quantaApp->slotNewStatus();
+  emit eventHappened("after_open", url.url(), QString::null);
 }
 
 /** show popup menu with list of attributes for current tag */

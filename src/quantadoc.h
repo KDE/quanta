@@ -51,6 +51,7 @@ public slots:
 signals:
   void newStatus();
   void hideSplash();
+  void eventHappened(const QString&, const QString&, const QString& );
 
 private:
   KPopupMenu *attribMenu;

@@ -173,6 +173,8 @@ work correctly. */
   QString currentWord();
   /** Opens the url. The url must be valid and the file pointed to it must exists. */
   void open(const KURL &url, const QString &encoding);
+  /** Reads the DTD info from the file, tries to find the correct DTD and builds the tag/attribute list from the DTD file. */
+  void processDTD(const QString& documentType = QString::null);
 
   bool busy;
 

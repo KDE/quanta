@@ -1018,6 +1018,7 @@ void QuantaInit::initActions()
              m_quanta, SLOT(slotInsertChar()) );
 
     connect(m_quanta, SIGNAL(eventHappened(const QString&, const QString&, const QString& )), QPEvents::ref(m_quanta), SLOT(slotEventHappened(const QString&, const QString&, const QString& )));
+    connect(m_quanta->doc(), SIGNAL(eventHappened(const QString&, const QString&, const QString& )), QPEvents::ref(m_quanta), SLOT(slotEventHappened(const QString&, const QString&, const QString& )));
     connect(ViewManager::ref(), SIGNAL(eventHappened(const QString&, const QString&, const QString& )), QPEvents::ref(m_quanta), SLOT(slotEventHappened(const QString&, const QString&, const QString& )));
 }
 

@@ -294,7 +294,7 @@ QuantaApp::~QuantaApp()
  }
  QString infoCss = tmpDir;
  infoCss += "quanta/info.css";
- KIO::NetAccess::del(KURL().fromPathOrURL(infoCss), this);
+ QFile::remove(infoCss);
  QDir dir;
  dir.rmdir(tmpDir + "quanta");
 
@@ -355,7 +355,6 @@ void QuantaApp::slotFileOpen(const KURL &url)
 void QuantaApp::slotFileOpen( const KURL &url, const QString& encoding )
 {
   m_doc->openDocument( url, encoding );
-  emit eventHappened("after_open", url.url(), QString::null);
 
 //  slotUpdateStatus(m_view->write()); //FIXME:
 }
@@ -1441,6 +1440,8 @@ void QuantaApp::slotShowNoFramesPreview()
 void QuantaApp::restoreFromTempfile(Document *w)
 {
   if (!w) return;
+  if (w->tempFileName().isEmpty())
+    return;
 
   KURL origUrl = w->url();
   if (!w->isUntitled() && origUrl.isLocalFile())
@@ -2885,133 +2886,6 @@ void QuantaApp::slotAssignActionToScript(const KURL& a_scriptURL, const QString&
   dlg.exec();
 }
 
-/** Reads the DTD info from the file, tries to find the correct DTD and builds the tag/attribute list from the DTD file. */
-void QuantaApp::processDTD(const QString& documentType)
-{
- Document *w = ViewManager::ref()->activeDocument();
- QString foundName;
- QString projectDTD = Project::ref()->defaultDTD();
- w->setDTDIdentifier(projectDTD);
- Tag *tag = 0L;
- if (documentType.isEmpty())
- {
-   foundName = w->findDTDName(&tag); //look up the whole file for DTD definition
-   bool found = false;
-   if (!foundName.isEmpty())   //!DOCTYPE found in file
-   {
-      KDialogBase dlg(this, 0L, true, i18n("DTD Selector"), KDialogBase::Ok | KDialogBase::Cancel);
-      DTDSelectDialog *dtdWidget = new DTDSelectDialog(&dlg);
-      dlg.setMainWidget(dtdWidget);
-      QStringList lst = DTDs::ref()->nickNameList(true);
-      QString foundNickName = DTDs::ref()->getDTDNickNameFromName(foundName);
-      for (uint i = 0; i < lst.count(); i++)
-      {
-        dtdWidget->dtdCombo->insertItem(lst[i]);
-        if (lst[i] == foundNickName)
-        {
-          w->setDTDIdentifier(foundName);
-          found =true;
-        }
-      }
-
-      if (!DTDs::ref()->find(foundName))
-      {
-        //try to find the closest matching DTD
-        QString s = foundName.lower();
-        uint spaceNum = s.contains(' ');
-        QStringList dtdList = DTDs::ref()->nameList();
-        QStringList lastDtdList;
-        for (uint i = 0; i <= spaceNum && !dtdList.empty(); i++)
-        {
-          lastDtdList = dtdList;
-          QStringList::Iterator strIt = dtdList.begin();
-          while (strIt != dtdList.end())
-          {
-            if (!(*strIt).startsWith(s.section(' ', 0, i)))
-            {
-              strIt = dtdList.remove(strIt);
-            } else
-            {
-              ++strIt;
-            }
-          }
-        }
-        dtdList = lastDtdList;
-        for (uint i = 0; i <= spaceNum && !dtdList.empty(); i++)
-        {
-          lastDtdList = dtdList;
-          QStringList::Iterator strIt = dtdList.begin();
-          while (strIt != dtdList.end())
-          {
-            if (!(*strIt).endsWith(s.section(' ', -(i+1), -1)))
-            {
-              strIt = dtdList.remove(strIt);
-            } else
-            {
-              ++strIt;
-            }
-          }
-        }
-        if (lastDtdList.count() == 1 || lastDtdList[0].startsWith(s.section(' ', 0, 0)))
-        {
-          projectDTD = lastDtdList[0];
-        }
-      }
-
-//    dlg->dtdCombo->insertItem(i18n("Create New DTD Info"));
-      dtdWidget->messageLabel->setText(i18n("This DTD is not known for Quanta. Choose a DTD or create a new one."));
-      dtdWidget->currentDTD->setText(DTDs::ref()->getDTDNickNameFromName(foundName));
-      QString projectDTDNickName = DTDs::ref()->getDTDNickNameFromName(projectDTD);
-      for (int i = 0; i < dtdWidget->dtdCombo->count(); i++)
-      {
-        if (dtdWidget->dtdCombo->text(i) == projectDTDNickName)
-        {
-          dtdWidget->dtdCombo->setCurrentItem(i);
-          break;
-        }
-      }
-      if (!found && qConfig.showDTDSelectDialog)
-      {
-        emit showSplash(false);
-//        slotUpdateStatus(w);//FIXME:
-        if (dlg.exec())
-        {
-          qConfig.showDTDSelectDialog = !dtdWidget->useClosestMatching->isChecked();
-          w->setDTDIdentifier(DTDs::ref()->getDTDNameFromNickName(dtdWidget->dtdCombo->currentText()));
-          const DTDStruct *dtd = DTDs::ref()->find(w->getDTDIdentifier());
-          if (dtdWidget->convertDTD->isChecked() && dtd->family == Xml)
-          {
-            int bLine, bCol, eLine, eCol;
-            tag->beginPos(bLine,bCol);
-            tag->endPos(eLine,eCol);
-            w->editIf->removeText(bLine, bCol, eLine, eCol+1);
-            w->viewCursorIf->setCursorPositionReal((uint)bLine, (uint)bCol);
-            w->insertText("<!DOCTYPE" + dtd->doctypeStr +">");
-          }
-        }
-      }
-   } else //DOCTYPE not found in file
-   {
-     QString mimetype = KMimeType::findByURL(w->url())->name();
-     const DTDStruct *currdtd = DTDs::ref()->DTDfromMimeType(mimetype);
-     if (currdtd)
-        w->setDTDIdentifier(currdtd->name);
-     else
-        w->setDTDIdentifier(projectDTD);
-   }
- } else //dtdName is read from the method's parameter
- {
-   w->setDTDIdentifier(documentType);
- }
-
-  if (!w->isUntitled())
-  {
-    m_messageOutput->showMessage(i18n("\"%1\" is used for \"%2\".\n").arg(DTDs::ref()->getDTDNickNameFromName(w->getDTDIdentifier())).arg(w->url().prettyURL(0, KURL::StripFileProtocol)));
-  }
-  loadToolbarForDTD(w->getDTDIdentifier());
-  StructTreeView::ref()->useOpenLevelSetting = true;
-  delete tag;
-}
 
 /** No descriptions */
 void QuantaApp::slotChangeDTD()

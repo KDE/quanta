@@ -136,8 +136,6 @@ public:
 
   QWidget* createContainer(QWidget *parent, int index, const QDomElement &element, int &id );
   void removeContainer(QWidget *container, QWidget *parent, QDomElement &element, int id );
-  /** Reads the DTD info from the file, tries to find the correct DTD and builds the tag/attribute list from the DTD file. */
-  void processDTD(const QString& documentType = QString::null);
 /** Returns the project's base URL if it exists, the HOME dir if there is no project and no opened document (or the current opened document was not saved yet), and the base URL of the opened document, if it is saved somewhere.
 
   maps to the same function in Project*/

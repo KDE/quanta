@@ -302,7 +302,7 @@ bool QPEvents::handleEvent(const EventAction& ev)
           if (action)
           {
             action->addArguments(ev.arguments);
-            action->execute();
+            action->insertTag();
           }
           else
             KMessageBox::sorry(0L, i18n("<qt>The <b>%1</b> script action was not found on your system.</qt>").arg(name), i18n("Action Execution Error"));
