@@ -46,6 +46,7 @@ public:
   FilesTreeViewItem( KFileTreeViewItem *parent, KFileItem* item, KFileTreeBranch *brnch );
     /* sorts dirs seperat from files */
   QString key (int column, bool ascending) const;
+  int compare( QListViewItem *i, int col, bool ascending ) const;
 };
 
 /** class for branch with special items */

@@ -57,13 +57,25 @@ FilesTreeViewItem::FilesTreeViewItem( KFileTreeViewItem *parent, KFileItem* item
 
 QString FilesTreeViewItem::key(int column, bool ascending) const
 {
-  Q_UNUSED(ascending);
-  if (isDir())
-    return text(column).prepend(" ");
-  else
-    return text(column);
+  if (ascending) 
+    if (isDir())
+      return text(column).prepend(" ");
+    else
+      return text(column);
+  else  
+    if (isDir())
+      return text(column);
+    else
+      return text(column).prepend(" ");
 }
 
+int FilesTreeViewItem::compare( QListViewItem *i, int col,
+                                bool ascending ) const
+{
+  return key( col, ascending ).compare( i->key( col, ascending) );
+}
+    
+    
 //FilesTreeBranch implementation
 FilesTreeBranch::FilesTreeBranch(KFileTreeView *parent, const KURL& url,
                                  const QString& name, const QPixmap& pix,
