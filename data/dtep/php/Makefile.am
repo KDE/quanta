@@ -56,7 +56,6 @@ image.tag \
 imap.tag \
 info.tag \
 ingres-ii.tag \
-ingres.tag \
 ircg.tag \
 java.tag \
 ldap.tag \
@@ -70,10 +69,9 @@ mcrypt.tag \
 mcve.tag \
 memcache.tag \
 mhash.tag \
-mime-magic.tag \
+mime_magic.tag \
 ming.tag \
 misc.tag \
-mnogo.tag \
 mnogosearch.tag \
 msession.tag \
 msql.tag \
@@ -129,7 +127,6 @@ tokenizer.tag \
 uodbc.tag \
 url.tag \
 var.tag \
-variables.tag \
 vpopmail.tag \
 w32api.tag \
 wddx.tag \
