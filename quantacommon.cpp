@@ -44,7 +44,7 @@
 #include <qdatastream.h>
 
 #include "quantacommon.h"
-#include "parser/tag.h"
+#include "tag.h"
 #include "dtds.h"
 //#include "resource.h"
 

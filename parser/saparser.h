@@ -32,6 +32,7 @@ class Document;
 class QString;
 class QStringList;
 class KDirWatch;
+class SAGroupParser;
 
 
 /**
@@ -46,6 +47,8 @@ public:
   virtual ~SAParser();
   
   void setParsingEnabled(bool enabled);
+  bool parsingEnabled() {return m_parsingEnabled;}
+  Document *write() {return m_write;}
   void init(Node *node, Document *write);
 /*
   Parses the document for special areas (eg. scripts).
@@ -71,10 +74,12 @@ public:
                   
   void parseInDetail(bool synchronous);     
   
+public slots:  
+  void slotGroupParsingDone(SAGroupParser *groupParser);
+  
 private slots:
   /** Parses one line and calls itself with a singleshot timer to parse the next line. */
   bool slotParseOneLine();
-  void slotParseForScriptGroup();
   void slotParseNodeInDetail();
   
 signals:
@@ -84,8 +89,6 @@ signals:
 private:
   //private methods
   Node* parsingDone();
-  void parseForScriptGroup(Node *node);
-
   
   //private structures
   struct ContextStruct{
@@ -104,8 +107,8 @@ private:
   };  
   
   //private member variables
+  bool m_parsingLastNode;
   bool m_useNext;
-  bool m_lastGroupParsed;
   bool m_parsingEnabled;  
   bool m_synchronous;
   Document* m_write;
@@ -138,10 +141,41 @@ private:
   Node *s_returnNode;
   bool s_useReturnVars;
   Node *s_next;
+};
 
+class SAGroupParser: public QObject {
+
+ Q_OBJECT
+ 
+ public:
+   SAGroupParser(SAParser *parent, Node *startNode, Node *endNode, bool synchronous, bool parsingLastNode, bool paringLastGroup) 
+     { g_node = startNode;
+       g_endNode = endNode;
+       m_synchronous = synchronous;
+       m_lastGroupParsed = paringLastGroup; 
+       m_parsingLastNode = parsingLastNode;
+       m_parent = parent;
+     }
+   ~SAGroupParser() {};
+
+    
+ public slots:
+  void slotParseForScriptGroup();
+ 
+ signals:
+  void rebuildStructureTree();  
+  void cleanGroups();
+  void parsingDone(SAGroupParser*);
+ 
+ private:
+  void parseForScriptGroup(Node *node);
+
+  bool m_lastGroupParsed;
+  bool m_parsingLastNode;
+  bool m_synchronous;
+  SAParser *m_parent;
   Node* g_node;
-  Node* g_endNode;
-  
+  Node* g_endNode; 
 };
 
 #endif

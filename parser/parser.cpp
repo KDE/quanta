@@ -391,7 +391,10 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
     if (ec == -1)
         ec = 0;
     AreaStruct area(el, ec, endLine, endCol);
+    cleanGroups();
+    m_saParser->setParsingEnabled(true);
     currentNode = m_saParser->parseArea(area, "", "", parentNode, true, true); //TODO: don't parse in detail here
+    m_saParser->setParsingEnabled(false);
     el = m_saParser->lastParsedLine();
     ec = m_saParser->lastParsedColumn();
   } else
@@ -538,8 +541,8 @@ Node *Parser::nodeAt(int line, int col, bool findDeepest)
   if (!write)
       return 0L;
   if (!baseNode)
-     baseNode = parse(write, true); //FIXME: this most likely hides a bug: new documents are not parsed
-           
+   baseNode = parse(write, true); //FIXME: this most likely hides a bug: new documents are not parsed
+    
   Node *node = m_node;
   int bl, bc, el, ec;
   int result;
@@ -619,6 +622,12 @@ void Parser::logReparse(NodeModifsSet *modifs, Document *w)
   NodeModif *modif;
   if (baseNode)
   {
+    Node *n = baseNode;
+    while (n)
+    {
+      n->detachNode();
+      n = n->nextSibling();
+    }
     modif = new NodeModif();
     modif->setType(NodeModif::NodeTreeRemoved);
     modif->setNode(baseNode);
@@ -789,6 +798,7 @@ void Parser::deleteNodes(Node *firstNode, Node *lastNode, NodeModifsSet *modifs)
     node->parent = 0L;
     node->next = 0L;
     node->prev = 0L;
+    node->detachNode();
     modif->setNode(node);
 #else
     delete node;
@@ -814,6 +824,11 @@ void Parser::deleteNodes(Node *firstNode, Node *lastNode, NodeModifsSet *modifs)
       {
         prev->next = child;
         child->prev = prev;
+        if (next) //the last child is just before the next
+        {
+          m->next = next;
+          next->prev = m;
+        }
       } else
       {
         if (!child)      //when there is no child, connect the next as the first child of the parent
@@ -1046,6 +1061,7 @@ Node *Parser::rebuild(Document *w)
         lastInserted->next = 0L;
         lastInserted->parent = 0L;
         lastInserted->child = 0L;
+        lastInserted->detachNode();
         modif->setNode(lastInserted);
         modifs->addNodeModif(modif);
 

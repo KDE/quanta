@@ -126,6 +126,7 @@ public:
   Node *SFirstChild();
  //Returns the last significant child.
   Node *SLastChild();
+  void detachNode();
 
 
 
