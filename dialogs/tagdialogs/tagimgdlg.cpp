@@ -23,6 +23,7 @@
 #include <kapplication.h>
 #include <klocale.h>
 #include <kiconloader.h>
+#include <kio/netaccess.h>
 #include <kfiledialog.h>
 #include <kurl.h>
 
@@ -40,6 +41,7 @@ TagImgDlg::TagImgDlg(QWidget *parent, const char *name)
   : QWidget(parent,name), TagWidget(parent,name)
 {
   img = 0L;
+  isTmpFile = false;
   setCaption(name);
   initDialog();
 
@@ -52,34 +54,48 @@ TagImgDlg::TagImgDlg(QWidget *parent, const char *name)
   connect( lineImgSource, SIGNAL( returnPressed()), this, SLOT(slotLineFileSelect()) );
 }
 
-TagImgDlg::~TagImgDlg(){
+TagImgDlg::~TagImgDlg()
+{
+  if (isTmpFile)
+  {
+    KIO::NetAccess::removeTempFile(imgFileName);
+    isTmpFile = false;
+  }
 }
 
 /** Choose new image */
 void TagImgDlg::slotImageSet(const KURL& imageURL)
 {
-//TODO: Make it work with non local files
- if (imageURL.isLocalFile())
- {
-  QString file = imageURL.path();
-  widgetImg->slotSetImage( file);
-
-  img = new QImage(file);
-  if ( !img->isNull() )
+  if (isTmpFile)
+  {
+    KIO::NetAccess::removeTempFile(imgFileName);
+    isTmpFile = false;
+  }
+  if (imageURL.isLocalFile())
+  {
+    imgFileName = imageURL.path();
+  } else
+  {
+    KIO::NetAccess::download(imageURL, imgFileName, this); 
+    isTmpFile = true; 
+  }
+  widgetImg->slotSetImage(imgFileName);
+  
+  img = new QImage(imgFileName);
+  if (!img->isNull())
   {
     QString s;
-    s.setNum( img->width() );
-    lineWidth->setText( s );
-    s.setNum( img->height() );
-    lineHeight->setText( s );
+    s.setNum(img->width());
+    lineWidth->setText(s);
+    s.setNum(img->height());
+    lineHeight->setText(s);
   }
- }
 }
 
 /** recalculate image size */
 void TagImgDlg::slotRecalcImgSize()
 {
-  if ( img ) {
+  if (img) {
     QString s;
     s.setNum( img->width() );
     lineWidth->setText( s );
@@ -130,7 +146,7 @@ void TagImgDlg::writeAttributes( QDict<QString> *d )
   if (( t=d->find("src") ))
   {
     lineImgSource->setText(*t);
-    KURL url;
+    KURL url = baseURL;
     QuantaCommon::setUrl(url, *t);
     url = QExtFileInfo::toAbsolute(url, baseURL);
     slotImageSet( url );
