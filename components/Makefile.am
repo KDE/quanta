@@ -1,1 +1,1 @@
-SUBDIRS = csseditor framewizard tableeditor phpdebug
+SUBDIRS = csseditor framewizard tableeditor debugger
