@@ -89,6 +89,10 @@ int main(int argc, char *argv[])
     "Various fixes, foundational code for DTD parsing and other \nDTD related work",
     "jphanley@buffalo.edu");
 
+  aboutData.addCredit("George Vilches",
+    "Tree based upload dialog",
+    "gav@creolmail.org");
+
   aboutData.addCredit("Matthew Colton",
     "Cool splash screen for many version releases of Quanta",
     "mat.colton@web-xs.de");
