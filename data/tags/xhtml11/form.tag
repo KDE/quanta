@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TAGS>
 <TAGS>
-<children name="form" hasScript="1" hasCore="1" hasI18n="1">
+<tag name="form" hasScript="1" hasCore="1" hasI18n="1">
 
     <attr name="action" type="url">
         <text>action</text>
