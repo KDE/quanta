@@ -23,6 +23,7 @@
 #include <kiconloader.h>
 #include <kparts/componentfactory.h>
 #include <ktexteditor/editinterface.h>
+#include <kate/document.h>
 
 //qt includes
 #include <qpoint.h>
