@@ -82,7 +82,7 @@ KFileTreeViewItem* ProjectTreeBranch::createTreeViewItem(KFileTreeViewItem *pare
 ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   : FilesTreeView(parent,name)
 {
-  setRootIsDecorated( true );
+  setRootIsDecorated(false);
  // header()->hide();
   setSorting( 0 );
   m_projectFiles.clear();
