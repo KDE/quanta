@@ -22,6 +22,10 @@
 #include <errno.h>
 #endif
 
+#ifndef INADDR_NONE
+#define INADDR_NONE -1
+#endif
+
 #ifdef _DEBUG
 void __dbgtrace(const char *str,...) {
 	va_list args;
