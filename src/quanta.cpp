@@ -2125,7 +2125,7 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
    }
    if ( (toolbarDom->toString().isEmpty()) ) //|| (actionContent.isEmpty()))
    {
-     KMessageBox::error(this, i18n("Cannot load the toolbars from the archive.\nCheck that the filenames inside the archives begin with the archive name."));
+     KMessageBox::error(this, i18n("Cannot load the toolbars from the archive.\nCheck that the file names inside the archives begin with the archive name."));
      return;
    }
 
