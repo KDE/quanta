@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>449</width>
+            <width>445</width>
             <height>348</height>
         </rect>
     </property>
@@ -56,10 +56,6 @@
                         <cstring>imagelabel</cstring>
                     </property>
                     <property stdset="1">
-                        <name>text</name>
-                        <string></string>
-                    </property>
-                    <property stdset="1">
                         <name>sizePolicy</name>
                         <sizepolicy>
                             <hsizetype>0</hsizetype>
@@ -79,6 +75,10 @@
                             <width>120</width>
                             <height>32767</height>
                         </size>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string></string>
                     </property>
                     <property stdset="1">
                         <name>alignment</name>
@@ -169,8 +169,8 @@
                                 <cstring>buttonFilter</cstring>
                             </property>
                             <property stdset="1">
-                                <name>text</name>
-                                <string>...</string>
+                                <name>enabled</name>
+                                <bool>false</bool>
                             </property>
                             <property stdset="1">
                                 <name>sizePolicy</name>
@@ -187,8 +187,8 @@
                                 </size>
                             </property>
                             <property stdset="1">
-                                <name>enabled</name>
-                                <bool>false</bool>
+                                <name>text</name>
+                                <string>...</string>
                             </property>
                         </widget>
                         <widget row="4"  column="0"  rowspan="1"  colspan="3" >
@@ -343,4 +343,15 @@
         <slot>setEnabled(bool)</slot>
     </connection>
 </connections>
+<tabstops>
+    <tabstop>checkPublishing</tabstop>
+    <tabstop>lineUrl</tabstop>
+    <tabstop>lineUser</tabstop>
+    <tabstop>linePasswd</tabstop>
+    <tabstop>checkPrefix</tabstop>
+    <tabstop>linePrefix</tabstop>
+    <tabstop>checkFilter</tabstop>
+    <tabstop>lineFilter</tabstop>
+    <tabstop>buttonFilter</tabstop>
+</tabstops>
 </UI>

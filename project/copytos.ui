@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>384</width>
+            <width>380</width>
             <height>81</height>
         </rect>
     </property>
@@ -78,10 +78,6 @@
                 <cstring>buttonDir</cstring>
             </property>
             <property stdset="1">
-                <name>text</name>
-                <string>...</string>
-            </property>
-            <property stdset="1">
                 <name>sizePolicy</name>
                 <sizepolicy>
                     <hsizetype>0</hsizetype>
@@ -95,6 +91,10 @@
                     <height>27</height>
                 </size>
             </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>...</string>
+            </property>
         </widget>
         <widget row="0"  column="0"  rowspan="1"  colspan="3" >
             <class>QLineEdit</class>
@@ -105,4 +105,10 @@
         </widget>
     </grid>
 </widget>
+<tabstops>
+    <tabstop>lineDir</tabstop>
+    <tabstop>buttonDir</tabstop>
+    <tabstop>buttonOk</tabstop>
+    <tabstop>buttonCancel</tabstop>
+</tabstops>
 </UI>

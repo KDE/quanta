@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>435</width>
+            <width>431</width>
             <height>458</height>
         </rect>
     </property>
@@ -378,4 +378,18 @@
     <slot access="public">selectAll()</slot>
     <slot access="public">selectModified()</slot>
 </connections>
+<tabstops>
+    <tabstop>lineHost</tabstop>
+    <tabstop>comboProtocol</tabstop>
+    <tabstop>linePath</tabstop>
+    <tabstop>port</tabstop>
+    <tabstop>lineUser</tabstop>
+    <tabstop>linePasswd</tabstop>
+    <tabstop>list</tabstop>
+    <tabstop>buttonAll</tabstop>
+    <tabstop>buttonModified</tabstop>
+    <tabstop>buttonClear</tabstop>
+    <tabstop>buttonUpload</tabstop>
+    <tabstop>buttonCancel</tabstop>
+</tabstops>
 </UI>

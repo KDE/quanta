@@ -911,14 +911,14 @@ void QuantaApp::slotBack()
 {
   if ( rightWidgetStack->id( rightWidgetStack->visibleWidget()) == 0 ) slotFilePrev();
   if ( rightWidgetStack->id( rightWidgetStack->visibleWidget()) == 1 ) htmlpart->back();
-  if ( rightWidgetStack->id( rightWidgetStack->visibleWidget()) == 1 ) htmlPartDoc->back();
+  if ( rightWidgetStack->id( rightWidgetStack->visibleWidget()) == 2 ) htmlPartDoc->back();
 }
 
 void QuantaApp::slotForward()
 {
   if ( rightWidgetStack->id( rightWidgetStack->visibleWidget()) == 0 ) slotFileNext();
   if ( rightWidgetStack->id( rightWidgetStack->visibleWidget()) == 1 ) htmlpart->forward();
-  if ( rightWidgetStack->id( rightWidgetStack->visibleWidget()) == 1 ) htmlPartDoc->forward();
+  if ( rightWidgetStack->id( rightWidgetStack->visibleWidget()) == 2 ) htmlPartDoc->forward();
 }
 
 void QuantaApp::slotMessageWidgetEnable()

@@ -828,4 +828,26 @@
     <slot access="public">newAction()</slot>
     <slot access="public">actionSelected()</slot>
 </connections>
+<tabstops>
+    <tabstop>actionsList</tabstop>
+    <tabstop>buttonNew</tabstop>
+    <tabstop>buttonDelete</tabstop>
+    <tabstop>lineText</tabstop>
+    <tabstop>lineToolTip</tabstop>
+    <tabstop>lineStatusText</tabstop>
+    <tabstop>actionTab</tabstop>
+    <tabstop>tag</tabstop>
+    <tabstop>useTagClose</tabstop>
+    <tabstop>tagClose</tabstop>
+    <tabstop>useActionDialog</tabstop>
+    <tabstop>buttonOk_2</tabstop>
+    <tabstop>buttonCancel_2</tabstop>
+    <tabstop>tabScript</tabstop>
+    <tabstop>inputNone</tabstop>
+    <tabstop>inputSelected</tabstop>
+    <tabstop>inputCurrent</tabstop>
+    <tabstop>outputMessage</tabstop>
+    <tabstop>errorMessage</tabstop>
+    <tabstop>text</tabstop>
+</tabstops>
 </UI>

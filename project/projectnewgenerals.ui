@@ -15,7 +15,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>466</width>
+            <width>462</width>
             <height>357</height>
         </rect>
     </property>
@@ -370,4 +370,15 @@
         </widget>
     </grid>
 </widget>
+<tabstops>
+    <tabstop>linePrjName</tabstop>
+    <tabstop>linePrjDir</tabstop>
+    <tabstop>buttonDir</tabstop>
+    <tabstop>linePrjFile</tabstop>
+    <tabstop>lineAuthor</tabstop>
+    <tabstop>lineEmail</tabstop>
+    <tabstop>radioLocal</tabstop>
+    <tabstop>radioWeb</tabstop>
+    <tabstop>radioCvs</tabstop>
+</tabstops>
 </UI>
