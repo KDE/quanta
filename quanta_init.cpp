@@ -171,8 +171,7 @@ void QuantaApp::initQuanta()
        QDomElement el = doc.firstChild().toElement();
        if (el.attribute("version","old") != QString(VERSION))
        {
-         QString command = "mv "+uiFileName+" "+uiFileName+".old";
-         system(QFile::encodeName(command));
+         ::rename(QFile::encodeName(uiFileName), QFile::encodeName(uiFileName+".old"));
        }
      } else
      {
