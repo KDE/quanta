@@ -745,6 +745,7 @@ void QuantaApp::initView()
   connect(  htmlPartRight,  SIGNAL(onURL(const QString&)), this, SLOT(slotStatusMsg(const QString&)));
   connect(  htmlPartBottom, SIGNAL(onURL(const QString&)), this, SLOT(slotStatusMsg(const QString&)));
   connect(  htmlPartTop,    SIGNAL(onURL(const QString&)), this, SLOT(slotStatusMsg(const QString&)));
+  connect(  htmlPartDoc,    SIGNAL(onURL(const QString&)), this, SLOT(slotStatusMsg(const QString&)));
 
   connect(  htmlPartDoc,    SIGNAL(updateStatus(bool, bool)), SLOT(updateNavButtons( bool, bool)));
 

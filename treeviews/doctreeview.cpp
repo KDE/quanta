@@ -98,6 +98,8 @@ void DocTreeView::clickItem( QListViewItem *)
 	DocItem *dit = dynamic_cast< DocItem *>(it);
 	if ( dit )
 		emit openURL( dit->url );
+	else
+		emit openURL( locate("appdata","doc/documentation.html") );
 }
 
 

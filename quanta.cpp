@@ -32,6 +32,7 @@
 #include <khtmlview.h>
 #include <kdialogbase.h>
 #include <kkeydialog.h>
+#include <kstddirs.h>
 
 // application specific includes
 #include "quanta.h"
@@ -1168,7 +1169,13 @@ void QuantaApp::slotLeftTabChanged(QWidget *)
   DocTreeView *dView = dynamic_cast<DocTreeView *>( leftPanel->currentPage());
 
   if ( dView ) {
+    static bool first = true;
   	rightWidgetStack -> raiseWidget(2);
+  	if ( first )
+  	{
+  		openDoc( locate("appdata","doc/documentation.html") );
+  		first = false;
+  	}
   	docTabOpened = true;
   }
   else {

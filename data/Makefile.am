@@ -1,16 +1,3 @@
-####### kdevelop will overwrite this part!!! (begin)##########
-
-
-EXTRA_DIST = tagdata.rc ol.tag 
-
-install-data-local:
-	$(mkinstalldirs) $(kde_datadir)/quanta/
-	$(INSTALL_DATA) tagdata.rc $(kde_datadir)/quanta/tagdata.rc
-
-uninstall-local:
-	-rm -f $(kde_datadir)/quanta/tagdata.rc
-
-####### kdevelop will overwrite this part!!! (end)############
 
 EXTRA_DIST = tagdata.rc 
 
@@ -42,10 +29,9 @@ install-data-local:
 	$(INSTALL_DATA) style.tag $(kde_datadir)/quanta/tags/style.tag
 	$(INSTALL_DATA) ul.tag $(kde_datadir)/quanta/tags/ul.tag
 	$(INSTALL_DATA) a.tag $(kde_datadir)/quanta/tags/a.tag
-
-
-
+	$(INSTALL_DATA) documentation.html $(kde_datadir)/quanta/doc/documentation.html
+	$(INSTALL_DATA) head_bg.gif $(kde_datadir)/quanta/doc/head_bg.gif
+	$(INSTALL_DATA) minilogo.jpg $(kde_datadir)/quanta/doc/minilogo.jpg
 
 uninstall-local:
 	-rm -f $(kde_datadir)/quanta/tagdata.rc
-
