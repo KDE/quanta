@@ -77,10 +77,7 @@ bool QuantaCmdPlugin::load()
   m_process = new KShellProcess;
 
   QString args = arguments();
-  if (!args.isEmpty())
-     args = KShellProcess::quote(args);
   
-
   /* TODO
   QString text = quantaApp->getDoc()->write()->editIf->text();
   args.replace(QRegExp("document"), text);
