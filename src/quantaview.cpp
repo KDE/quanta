@@ -124,44 +124,45 @@ QuantaView::~QuantaView()
 
 bool QuantaView::mayRemove()
 {
-    emit hidePreview();
-    if (m_plugin)
-   {
-       m_plugin->unload(false);
-   } else
-   {
-     if (m_customWidget)
-         m_customWidget->reparent(0L, 0, QPoint(), false);
-     if (!saveModified())
+  emit hidePreview();
+  if (m_plugin)
+  {
+    m_plugin->unload(false);
+  } else
+  {
+    if (m_customWidget)
+        m_customWidget->reparent(0L, 0, QPoint(), false);
+    if (!saveModified())
           return false;
-     if (dynamic_cast<QuantaView *>(quantaApp->activeWindow()) == this)
-     {
-         parser->setSAParserEnabled(false);
-         delete baseNode;
-         baseNode = 0L;
-     }
-      if (m_document)
-      {
-        KURL url = m_document->url();
-        emit eventHappened("before_close", url.url(), QString::null);
-        m_currentViewsLayout  = -1;
-        slotSetSourceLayout(); //set the layout to source only, otherwise it crashes...
+    if (dynamic_cast<QuantaView *>(quantaApp->activeWindow()) == this)
+    {
+        parser->setSAParserEnabled(false);
+        delete baseNode;
+        baseNode = 0L;
         m_kafkaDocument->getKafkaWidget()->view()->reparent(0, 0, QPoint(), false);
-          m_document->closeTempFile();
-          if (!m_document->isUntitled() && url.isLocalFile())
-          {
-            fileWatcher->removeFile(url.path());
-            kdDebug(24000) << "removeFile[mayRemove]: " << url.path() << endl;
-          }
-          quantaApp->menuBar()->activateItemAt(-1);
-          quantaApp->guiFactory()->removeClient(m_document->view());
-          emit eventHappened("after_close", url.url(), QString::null);
+    }
+    if (m_document)
+    {
+      KURL url = m_document->url();
+      emit eventHappened("before_close", url.url(), QString::null);
+      m_currentViewsLayout = -1;
+      //slotSetSourceLayout(); //set the layout to source only, otherwise it crashes...
+     // m_kafkaDocument->getKafkaWidget()->view()->reparent(0, 0, QPoint(), false);
+      m_document->closeTempFile();
+      if (!m_document->isUntitled() && url.isLocalFile())
+      {
+        fileWatcher->removeFile(url.path());
+        kdDebug(24000) << "removeFile[mayRemove]: " << url.path() << endl;
       }
+      quantaApp->menuBar()->activateItemAt(-1);
+      quantaApp->guiFactory()->removeClient(m_document->view());
+      emit eventHappened("after_close", url.url(), QString::null);
+    }
 /*      kdDebug(24000) << "Calling reparse from close " << endl;
       parser->setSAParserEnabled(true);
       quantaApp->reparse(true);*/
-   }
-   return true;
+  }
+  return true;
 }
 
 void QuantaView::addDocument(Document *document)
@@ -169,9 +170,8 @@ void QuantaView::addDocument(Document *document)
    if (!document)
      return;
    m_document = document;
-   connect(m_document, SIGNAL(editorGotFocus()),
-                  this, SLOT(slotSourceGetFocus()));
-    connect(m_document->view(), SIGNAL(cursorPositionChanged()), this, SIGNAL(cursorPositionChanged()));
+   connect(m_document, SIGNAL(editorGotFocus()), this, SLOT(slotSourceGetFocus()));
+   connect(m_document->view(), SIGNAL(cursorPositionChanged()), this, SIGNAL(cursorPositionChanged()));
 
 
    m_kafkaDocument =KafkaDocument::ref();
