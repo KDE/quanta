@@ -35,7 +35,7 @@
 MessageOutput::MessageOutput(QWidget *parent, const char *name )
   : QListBox(parent,name)
 {
-  m_maxItems = 200;
+  m_maxItems = 2000;
 
   QPalette pal = palette();
   pal.setColor(QColorGroup::HighlightedText, pal.color(QPalette::Normal, QColorGroup::Text));

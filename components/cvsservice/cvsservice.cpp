@@ -54,10 +54,10 @@ CVSService::CVSService(KActionCollection *ac)
   action->plug(m_menu);
   KPopupMenu *updateToMenu = new KPopupMenu(m_menu);
 #if KDE_VERSION < KDE_MAKE_VERSION(3,2,90)
-  m_menu->insertItem(i18n("&Update To"), updateToMenu);
+  m_menu->insertItem(i18n("Update &To"), updateToMenu);
   action = new KAction(i18n("&Tag/Date..."), 0, this, SLOT(slotUpdateToTag()), ac);
 #else
-  m_menu->insertItem(SmallIconSet("vcs_update"), i18n("&Update To"), updateToMenu);
+  m_menu->insertItem(SmallIconSet("vcs_update"), i18n("Update &To"), updateToMenu);
   action = new KAction(i18n("&Tag/Date..."), "vcs_update", 0, this, SLOT(slotUpdateToTag()), ac);
 #endif
   action->plug(updateToMenu);
@@ -81,6 +81,9 @@ CVSService::CVSService(KActionCollection *ac)
 #else
   action = new KAction(i18n("&Remove from Repository..."), "vcs_remove", 0, this, SLOT(slotRemove()), ac);
 #endif
+  action->plug(m_menu);
+  m_menu->insertSeparator();
+  action = new KAction(i18n("Show &Log Messages"), 0, this, SLOT(slotBrowseLog()), ac);
   action->plug(m_menu);
     
   m_cvsJob = 0L;
@@ -377,6 +380,35 @@ void CVSService::slotRemove(const QStringList &files)
     connectDCOPSignal(m_job.app(), m_job.obj(), "receivedStdout(QString)", "slotReceivedStdout(QString)", true);
     connectDCOPSignal(m_job.app(), m_job.obj(), "receivedStderr(QString)", "slotReceivedStderr(QString)", true);
     m_cvsJob->execute();
+  }
+}
+
+
+void CVSService::slotBrowseLog()
+{
+  if (!m_defaultFile.isEmpty())
+  {
+    if (m_defaultFile.startsWith(m_repositoryPath))
+    {
+      QString file = m_defaultFile.remove(m_repositoryPath);
+      if (m_repository && !m_appId.isEmpty() )
+      {
+        emit clearMessages();
+        emit showMessage(i18n("Showing CVS log..."), false);
+        m_files += file;
+        m_job = m_cvsService->log(file);
+        m_cvsCommand = "log";
+        m_cvsJob = new CvsJob_stub(m_job.app(), m_job.obj());
+
+        connectDCOPSignal(m_job.app(), m_job.obj(), "jobExited(bool, int)", "slotJobExited(bool, int)", true);
+        connectDCOPSignal(m_job.app(), m_job.obj(), "receivedStdout(QString)", "slotReceivedStdout(QString)", true);
+        connectDCOPSignal(m_job.app(), m_job.obj(), "receivedStderr(QString)", "slotReceivedStderr(QString)", true);
+        m_cvsJob->execute();
+      }
+    } else
+    {
+      notInRepository();
+    }
   }
 }
 
