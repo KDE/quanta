@@ -276,7 +276,6 @@ void QuantaApp::initQuanta()
 
   m_config->sync();
 
- // qConfig.autosaveInterval = "1";
   autosaveTimer = new QTimer( this );
   connect(autosaveTimer, SIGNAL(timeout()), SLOT(slotAutosaveTimer()));
   autosaveTimer->start(qConfig.autosaveInterval.toInt() * 60000, false);
@@ -2202,27 +2201,7 @@ void QuantaApp::slotPluginsValidate()
 }
 void QuantaApp::recoverCrashed(QStringList& recoveredFileNameList)
 {
-  m_config->setGroup  ("Projects");
-  QString pu = m_config->readPathEntry("Last Project");
 
-  KURL u;
-  QuantaCommon::setUrl(u, pu);
-  bool isPrj = true;
-  if (pu.isEmpty())
-     isPrj = false;
-  if (!u.isValid())
-     isPrj = false;
-
-  m_config->reparseConfiguration();
-  m_config->setGroup("General Options");
-
-#if KDE_IS_VERSION(3,1,3)
-  QStringList backedUpUrlsList = m_config->readPathListEntry("List of backedup files");
-  QStringList autosavedUrlsList = m_config->readPathListEntry("List of autosaved files");
-#else
-  QStringList backedUpUrlsList = m_config->readListEntry("List of backedup files");
-  QStringList autosavedUrlsListList = m_config->readListEntry("List of autosaved files");
-#endif
   m_doc->blockSignals(true);
   m_view->writeTab()->blockSignals(true);
 
@@ -2252,8 +2231,30 @@ void QuantaApp::recoverCrashed(QStringList& recoveredFileNameList)
     m_loopStarted = true;
     internalFileInfo.enter_loop();
     delete timer;
-    //m_execCommandPS->wait();
   }
+
+  m_config->setGroup  ("Projects");
+  QString pu = m_config->readPathEntry("Last Project");
+
+  KURL u;
+  QuantaCommon::setUrl(u, pu);
+  bool isPrj = true;
+  if (pu.isEmpty())
+     isPrj = false;
+  if (!u.isValid())
+     isPrj = false;
+
+  m_config->reparseConfiguration();
+  m_config->setGroup("General Options");
+
+#if KDE_IS_VERSION(3,1,3)
+  QStringList backedUpUrlsList = m_config->readPathListEntry("List of backedup files");
+  QStringList autosavedUrlsList = m_config->readPathListEntry("List of autosaved files");
+#else
+  QStringList backedUpUrlsList = m_config->readListEntry("List of backedup files");
+  QStringList autosavedUrlsList = m_config->readListEntry("List of autosaved files");
+#endif
+
   for ( QStringList::Iterator backedUpUrlsIt = backedUpUrlsList.begin();
         backedUpUrlsIt != backedUpUrlsList.end();
 	++backedUpUrlsIt )
@@ -2351,6 +2352,8 @@ void QuantaApp::recoverCrashed(QStringList& recoveredFileNameList)
           entryIt = autosavedFilesEntryList.remove(entryIt);
       }
       m_config->writeEntry("List of autosaved files", autosavedFilesEntryList);
+
+      autosavedUrlsList = autosavedFilesEntryList;
 
       for ( entryIt = backedupFilesEntryList.begin();
             entryIt != backedupFilesEntryList.end(); ++entryIt )
