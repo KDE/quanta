@@ -106,6 +106,7 @@ void QuantaPluginEditor::addPlugin()
     newPlugin->setLocation(configDlg->location->text());
     newPlugin->setArguments(configDlg->arguments->text());
     newPlugin->setOutputWindow(configDlg->outputWindow->currentText());
+    newPlugin->setStandard(false);
 
 	  QString pluginName = newPlugin->pluginName();
     m_plugins.insert(pluginName, newPlugin);
