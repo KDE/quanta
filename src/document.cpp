@@ -576,12 +576,13 @@ return 1;
 /** No descriptions */
 int Document::closeTempFile()
 {
-// tempFile->unlink();
  if (tempFile != 0)
  {
    delete tempFile;
    tempFile = 0;
  }
+ if (QFileInfo(m_tempFileName).exists())
+     QFile::remove(m_tempFileName);
 
  return 1; //not used yet
 }
@@ -1889,7 +1890,8 @@ void Document::checkDirtyStatus()
           m_doc->setModified(false);
           m_doc->openURL(url());
           createTempFile();
-      }
+      } else
+        createTempFile();
       delete dlg;
     }
     m_dirty = false;
