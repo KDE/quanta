@@ -244,7 +244,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
           tag->type = Tag::XmlTagEnd;
           tag->single = true;
         }
-        if (tagStr.right(2) == "/>")
+        if (tagStr.right(2) == "/>" || tag->name.isEmpty())
         {
           tag->single = true;
           if (tag->name.length() > 1 && tag->name.endsWith("/"))

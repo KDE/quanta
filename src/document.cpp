@@ -864,7 +864,7 @@ void Document::slotCharactersInserted(int line, int column, const QString& strin
          {
             column++;
             editIf->insertText(line, column, "</" + node->tag->name + ">");
-           viewCursorIf->setCursorPositionReal( line, column );
+            viewCursorIf->setCursorPositionReal( line, column );
         }
       }
       handled = true;
@@ -938,19 +938,22 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
     if (string == "/" && s.endsWith("</") && tagName.isEmpty())
     {
       Node *node = parser->nodeAt(line, column, false);
-      if (node && node->parent)
+      if (node && node->parent )
       {
         node = node->parent;
-        QString name = node->tag->name;
-        name = name.left(name.find(" | "));
-        if (!node->tag->nameSpace.isEmpty())
-          name.prepend(node->tag->nameSpace + ":");
-        editIf->insertText(line, column + 1, name + ">");
+        if (!node->next || !QuantaCommon::closesTag(node->tag, node->next->tag))
+        {
+            QString name = node->tag->name;
+            name = name.left(name.find(" | "));
+            if (!node->tag->nameSpace.isEmpty())
+              name.prepend(node->tag->nameSpace + ":");
+            editIf->insertText(line, column + 1, name + ">");
 #ifdef BUILD_KAFKAPART
-        docUndoRedo->dontAddModifsSet(2);
+            docUndoRedo->dontAddModifsSet(2);
 #endif
-        viewCursorIf->setCursorPositionReal( line, column + name.length() + 2);
-        handled = true;
+            viewCursorIf->setCursorPositionReal( line, column + name.length() + 2);
+            handled = true;
+        }
       }
     }
   }
@@ -975,15 +978,18 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
       {
         //add closing tag if wanted
         Node *node = parser->nodeAt(line, column, false);
-        if (node && !node->tag->nameSpace.isEmpty())
-            tagName.prepend(node->tag->nameSpace + ":");
-        column++;
-        editIf->insertText(line, column, "</" + tagName + ">");
+        if (node && (!node->next || !QuantaCommon::closesTag(node->tag, node->next->tag)))
+        {
+            if (node && !node->tag->nameSpace.isEmpty())
+                tagName.prepend(node->tag->nameSpace + ":");
+            column++;
+            editIf->insertText(line, column, "</" + tagName + ">");
 #ifdef BUILD_KAFKAPART
-        docUndoRedo->dontAddModifsSet(2);
+            docUndoRedo->dontAddModifsSet(2);
 #endif
-        viewCursorIf->setCursorPositionReal( line, column );
-        handled = true;
+            viewCursorIf->setCursorPositionReal( line, column );
+            handled = true;
+        }
       }
       if (!tag->childTags.isEmpty())
       {
