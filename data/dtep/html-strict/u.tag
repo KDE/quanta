@@ -25,7 +25,7 @@
 </children>
 </tag>
 
-<tag name="u" hasCore="1" hasI18n="1" hasScript="1">
+<tag name="u" hasCore="1" hasI18n="1" hasScript="1" scope="word">
 
 <children>
 <child name="#text" />
