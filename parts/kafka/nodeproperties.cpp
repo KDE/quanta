@@ -2,7 +2,7 @@
                               nodeproperties.cpp
                              -------------------
 
-    copyright            : (C) 2003 - Nicolas Deschildre
+    copyright            : (C) 2003, 2004 - Nicolas Deschildre
     email                : nicolasdchd@ifrance.com
  ***************************************************************************/
 
@@ -21,12 +21,14 @@
 
 kNodeAttrs::kNodeAttrs()
 {
-	node = 0L;
-	type = 0;
-	cbDeleted = false;
-	cbModified = false;
-	chCursorFocus = kNodeAttrs::no;
-	ccEnter = false;
+	m_node = 0L;
+	m_isLinkedToNode = true;
+	m_specialBehavior = kNodeAttrs::none;
+	m_type = 0;
+	m_cbDeleted = false;
+	m_cbModified = false;
+	m_chCursorFocus = kNodeAttrs::no;
+	m_ccEnter = false;
 }
 
 kNodeAttrs::~kNodeAttrs()

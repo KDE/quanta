@@ -2,7 +2,7 @@
                             htmlenhancer.h
                              -------------------
 
-    copyright            : (C) 2003 - Nicolas Deschildre
+    copyright            : (C) 2003, 2004 - Nicolas Deschildre
     email                : nicolasdchd@ifrance.com
  ***************************************************************************/
 
@@ -53,6 +53,20 @@ public:
 	virtual bool enhanceNode(Node *node, DOM::Node parentDNode, DOM::Node nextDNode);
 
 	/**
+	 * This functions is called once the whole DOM::Node tree is built. It will add empty
+	 * TEXT DOM::Node around block element or inside element when necessary
+	 * so that the user can access every single part of kafka with the cursor.
+	 * @param domNode The node we want to add these empty text around.
+	 */
+	virtual void postEnhanceNode(DOM::Node domNode);
+
+	/**
+	 * This function do the opposite of postEnhanceNode. Usefull to remove the
+	 * extra Text DOM::Nodes when deleting a DOM::Node.
+	 */
+	virtual void postUnenhanceNode(DOM::Node domNode);
+
+	/**
 	* Read the config.
 	* @m_config The config to read.
 	*/
@@ -80,7 +94,7 @@ public:
 	 * @param showIcons Should we show these icons?
 	 */
 	void showIconsForScripts(bool showIcons) {m_showIconForScripts = showIcons;}
-	
+
 private:
 	KURL m_baseURL;
 	bool m_showIconForScripts;

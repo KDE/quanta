@@ -238,9 +238,106 @@ Node *Node::lastChildNE()
   return n;
 }
 
+Node *Node::SPrev()
+{
+  Node *node = prev;
+  int bCol, bLine, eCol, eLine, col, line;
+
+  if(parent)
+  {
+    parent->tag->beginPos(bLine, bCol);
+    parent->tag->endPos(eLine, eCol);
+  }
+
+  while(node && node->tag->type != Tag::XmlTag && node->tag->type != Tag::Text)
+  {
+    if(node->tag->type == Tag::ScriptTag)
+    {
+       //Check if it is an embedded ScriptTag. If it is, continue.
+       node->tag->beginPos(line, col);
+       if(QuantaCommon::isBetween(line, col, bLine, bCol, eLine, eCol) != 0)
+         break;
+    }
+    node = node->prev;
+  }
+
+  return node;
+}
+
+Node *Node::SNext()
+{
+  Node *node = next;
+  int bCol, bLine, eCol, eLine, col, line;
+
+  if(parent)
+  {
+    tag->beginPos(bLine, bCol);
+    tag->endPos(eLine, eCol);
+  }
+
+  while(node && node->tag->type != Tag::XmlTag && node->tag->type != Tag::Text)
+  {
+    if(node->tag->type == Tag::ScriptTag)
+    {
+       //Check if it is an embedded ScriptTag. If it is, continue.
+       node->tag->beginPos(line, col);
+       if(QuantaCommon::isBetween(line, col, bLine, bCol, eLine, eCol) != 0)
+         break;
+    }
+     node = node->next;
+  }
+
+  return node;
+}
+
+Node *Node::SFirstChild()
+{
+  Node *node = child;
+  int bCol, bLine, eCol, eLine, col, line;
+
+  tag->beginPos(bLine, bCol);
+  tag->endPos(eLine, eCol);
+  while(node && node->tag->type != Tag::XmlTag && node->tag->type != Tag::Text)
+  {
+    if(node->tag->type == Tag::ScriptTag)
+    {
+       //Check if it is an embedded ScriptTag. If it is, continue.
+       node->tag->beginPos(line, col);
+       if(QuantaCommon::isBetween(line, col, bLine, bCol, eLine, eCol) != 0)
+         break;
+    }
+     node = node->next;
+  }
+
+  return node;
+}
+
+Node *Node::SLastChild()
+{
+  Node *node = lastChild();
+  int bCol, bLine, eCol, eLine, col, line;
+
+  tag->beginPos(bLine, bCol);
+  tag->endPos(eLine, eCol);
+  while(node && node->tag->type != Tag::XmlTag && node->tag->type != Tag::Text)
+  {
+    if(node->tag->type == Tag::ScriptTag)
+    {
+       //Check if it is an embedded ScriptTag. If it is, continue.
+       node->tag->beginPos(line, col);
+       if(QuantaCommon::isBetween(line, col, bLine, bCol, eLine, eCol) != 0)
+         break;
+    }
+     node = node->prev;
+  }
+
+  return node;
+}
+
 #ifdef BUILD_KAFKAPART
 bool Node::hasForChild(Node *node)
 {
+  //TODO: NOT EFFICIENT AT ALL!! Change by using kafkaCommon::getLocation() and compare!
   Node *n;
   bool goUp = false;
 
@@ -263,11 +360,25 @@ Node *Node::getClosingNode()
 {
   Node* n = next;
 
-  if(next && tag && tag->type == Tag::XmlTag && !tag->single)
+  if(next && tag && (tag->type == Tag::XmlTag || tag->type == Tag::ScriptTag) && !tag->single)
   {
     while (n && n->tag->type == Tag::Empty)
       n = n->next;
-    if (n && n->tag->type == Tag::XmlTagEnd && QuantaCommon::closesTag(tag, n->tag))
+    if (n && n->tag->type == Tag::XmlTagEnd && ((tag->type == Tag::XmlTag && QuantaCommon::closesTag(tag, n->tag)) || (tag->type == Tag::ScriptTag && n->tag->name == "")))
+      return n;
+  }
+  return 0L;
+}
+
+Node *Node::getOpeningNode()
+{
+  Node *n = prev;
+  if(prev && tag && tag->type == Tag::XmlTagEnd)
+  {
+    while(n && n->tag->type == Tag::Empty)
+      n = n->prev;
+    if(n && ((n->tag->type == Tag::XmlTag && QuantaCommon::closesTag(n->tag, tag))
+      || (n->tag->type == Tag::ScriptTag && tag->name == "")))
       return n;
   }
   return 0L;
@@ -295,5 +406,9 @@ void Node::operator =(Node* node)
   groupElementLists.clear();
   group = 0L;
   groupTag = 0L;
+#ifdef BUILD_KAFKAPART
+  setRootNode(0L);
+  setLeafNode(0L);
+#endif
   tag = new Tag(*(node->tag));
 }

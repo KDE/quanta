@@ -1371,7 +1371,21 @@ void QuantaApp::slotShowPreviewWidget(bool show)
     m_noFramesPreview = false;
     m_view->write()->view()->setFocus();
   }
-  KToggleAction *ta = (KToggleAction *) quantaApp->actionCollection()->action( "show_quanta_editor" );
+
+#ifdef BUILD_KAFKAPART
+  int viewLayout = m_view->getViewsLayout();
+#else
+  int viewLayout = QuantaView::QuantaViewOnly;
+#endif
+   KToggleAction *ta;
+
+  if(viewLayout == QuantaView::QuantaViewOnly)
+    ta = (KToggleAction *) actionCollection()->action( "show_quanta_editor" );
+  else if(viewLayout == QuantaView::KafkaViewOnly)
+    ta = (KToggleAction *) actionCollection()->action( "show_kafka_view" );
+  else if(viewLayout == QuantaView::QuantaAndKafkaViews)
+    ta = (KToggleAction *) actionCollection()->action( "show_kafka_and_quanta" );
+
   if (ta)
   {
     ta->setChecked(!show);
@@ -1392,6 +1406,9 @@ void QuantaApp::slotShowPreview()
     m_previewVisible = false;
     return;
   }
+  else if(id == 0)
+    //quanta/kafka/quanta-kafka view was loaded and hasn't changed m_previewVisible
+    m_previewVisible = false;
   if (!m_view->writeExists())
   {
     m_previewVisible = false;

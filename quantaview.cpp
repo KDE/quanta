@@ -493,10 +493,10 @@ void QuantaView::slotShowQuantaEditor()
 {
 #ifdef BUILD_KAFKAPART
   KToggleAction *ta = (KToggleAction *) quantaApp->actionCollection()->action( "show_quanta_editor" );
-  if(ta)
-    ta->setChecked(true);
   /**killTimer(quantaUpdateTimer);*/
   quantaApp->slotShowPreviewWidget(false);
+  if(ta)
+    ta->setChecked(true);
   if(!writeExists())
   {
     currentViewsLayout = QuantaView::QuantaViewOnly;
@@ -555,6 +555,7 @@ void QuantaView::slotShowKafkaPart()
   KToggleAction *ta2 = (KToggleAction *) quantaApp->actionCollection()->action( "show_quanta_editor" );
 
   /**killTimer(quantaUpdateTimer);*/
+  quantaApp->slotShowPreviewWidget(false);
   if(!writeExists())
   {
     currentViewsLayout = QuantaView::KafkaViewOnly;
@@ -620,6 +621,7 @@ void QuantaView::slotShowKafkaAndQuanta()
   int oldViewsLayout;
   DOM::Node node;
 
+  quantaApp->slotShowPreviewWidget(false);
   if(!writeExists())
   {
     currentViewsLayout = QuantaView::QuantaAndKafkaViews;
@@ -667,8 +669,8 @@ void QuantaView::slotShowKafkaAndQuanta()
     else
       splitter->setSizes(_splittSizes);
 #if QT_VERSION > 0x030103      //shouldn't be a problem in the real release, as KDE 3.2 will require QT 3.2
-    splitter->setCollapsible(write()->view(), false);
-    splitter->setCollapsible(kafkaInterface->getKafkaWidget()->view(), false);
+    splitter->setCollapsible(write()->view(), true);
+    splitter->setCollapsible(kafkaInterface->getKafkaWidget()->view(), true);
 #endif
     splitter->show();
     if (quantaUpdateTimer != -1) killTimer(quantaUpdateTimer);

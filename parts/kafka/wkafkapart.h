@@ -2,7 +2,7 @@
                                wkafkapart.h
                              -------------------
 
-    copyright            : (C) 2003 - Nicolas Deschildre
+    copyright            : (C) 2003, 2004 - Nicolas Deschildre
     email                : nicolasdchd@ifrance.com
  ***************************************************************************/
 
@@ -101,11 +101,15 @@ public:
 	Node *getNode(DOM::Node _domNode);
 
 	/**
-	 * Connects the domNode to the corresponding Quanta Node.
-	 * @param _domNode The DOM::Node to connect to the Node.
-	 * @param _node The Node to connect to the DOM::Node.
+	 * Connects the domNode to the corresponding Quanta Node with an intermediate class :
+	 * a kNodeAttrs which links the node and the DOM::Node.
+	 * This is MANDATORY, even if node is null, to use this function at each
+	 * DOM::Node insertion !!
+	 * @param domNode The DOM::Node to connect to the Node.
+	 * @param node The Node to connect to the DOM::Node. Can be null.
+	 * @return Returns the kNodeAttr which links them.
 	 */
-	void connectDomNodeToQuantaNode(DOM::Node _domNode, Node *_node);
+	kNodeAttrs* connectDomNodeToQuantaNode(DOM::Node domNode, Node *node);
 
 	/**
 	 * Disconnects the domNode from its corresponding Quanta Node.
@@ -132,31 +136,31 @@ public:
 	/**
 	 * This function synchronizes the Node from the DOM::Node. If the Node is a text Node,
 	 * we try to keep its indentation while updating it.
-	 * @param _node The Node to synchronize.
-	 * @param _domNode The Node is synchronized from this DOM::Node.
+	 * @param node The Node to synchronize.
+	 * @param domNode The Node is synchronized from this DOM::Node.
 	 */
-	void buildNodeFromKafkaNode(Node *_node, DOM::Node _domNode);
+	void buildNodeFromKafkaNode(Node *node, DOM::Node domNode);
 
 	/**
 	 * This function creates and synchronize a Node from the DOM::Node. It adds
 	 * the closing Node if necessary, and the node and its closing Node can surround Nodes
 	 * and thus make them its childs. Usefull when adding a Node on a selected range of Nodes.
 	 * It also create empty Nodes between Nodes.
-	 * @param _domNode The Node returned is synchronized from this DOM::Node.
-	 * @param _nodeParent The parent Node of the Node returned.
-	 * @param _beginNode The new Node will be placed before or within _beginNode.
+	 * @param domNode The Node returned is synchronized from this DOM::Node.
+	 * @param nodeParent The parent Node of the Node returned.
+	 * @param beginNode The new Node will be placed before or within _beginNode.
 	 * @param beginOffset NOT IMLEMENTED If set to 0 or -1, the new Node will be placed before _beginNode,
 	 * else _beginNode will be splitted at offset #beginOffset and the new Node will be placed
 	 * inbetween.
-	 * @param _endNode NOT IMPLEMENTED If not null and if the new Node has a closing tag, set the closing node
-	 * after or within _endNode.
+	 * @param endNode NOT IMPLEMENTED If not null and if the new Node has a closing tag, set the closing node
+	 * after or within endNode.
 	 * @param endOffset NOT IMPLEMENTED If set to -1, the closing node will be placed after _endNode, else _endNode
 	 * will be splitted at offset #endOffset and the closing Node will be placed inbetween.
 	 * @param modifs The NodeModifSet to log the changes made.
 	 * @return Returns the new main Node created from the DOM::Node.
 	*/
-	Node * buildNodeFromKafkaNode(DOM::Node _domNode, Node *_nodeParent,
-		Node *_beginNode, int beginOffset, Node *_endNode, int endOffset,
+	Node * buildNodeFromKafkaNode(DOM::Node domNode, Node *nodeParent,
+		Node *beginNode, int beginOffset, Node *endNode, int endOffset,
 		NodeModifsSet *modifs);
 
 
@@ -214,7 +218,7 @@ public:
 	QString generateCodeFromNode(Node *node, int bLine, int bCol, int &eLine, int &eCol);
 
 
-	/* ----------------------------------- KAFKA<->QUANTA POSITION TRANSLATION -------------------------------*/
+	/* ------------------------- KAFKA<->QUANTA POSITION TRANSLATION -------------------------------*/
 
 	/**
 	 * Returns the kafka cursor position corresponding to the quanta cursor position.
@@ -242,6 +246,56 @@ public:
 	 */
 	void translateKafkaIntoQuantaCursorPosition(DOM::Node domNode, int offset, int &line, int &col);
 
+	/**
+	 * Returns the kafka cursor position corresponding to the internal Node offset.
+	 * @param node The node.
+	 * @param offset The internal offset of Node.
+	 * @param domNode Returns the corresponding DOM::Node of node. Can be null.
+	 * @param domNodeOffset Returns the offset inside the DOM::Node.
+	 */
+	void translateNodeIntoKafkaCursorPosition(Node *node, int offset, DOM::Node &domNode,
+		long &domNodeOffset);
+
+
+	/** ----------------- DOM::NODE TREE MODIFICATIONS --------------------*/
+
+	/**
+	 * Insert a DOM::Node in the DOM::Node tree. It takes care to handle the exceptions and
+	 * to postEnhance (cf htmlenhancer.h)
+	 * @param node The node to insert.
+	 * @param parent The new parent of node. If null, insert node at the top level.
+	 * @param nextSibling The new next sibling of node. If null, append node at the end of the child list.
+	 * @param rootNode The root DOM::Node of the DOM::Node tree. Useful when no parent is provided.
+	 * @return Returns true if the operation was successfull.
+	 */
+	bool insertDomNode(DOM::Node node, DOM::Node parent = DOM::Node(),
+		DOM::Node nextSibling = DOM::Node(), DOM::Node rootNode = DOM::Node());
+
+
+	/**
+	 * Removes a DOM::Node from the DOM::Node Tree. It takes care to handle the exceptions
+	 * and to postUnenhance (cf htmlenhancer.h)
+	 * @param node The Node to remove from the tree.
+	 * @retun Returns true if the operation was successfull..
+	 */
+	bool removeDomNode(DOM::Node node);
+
+
+	/** ------------------ DOM::NODE TREE NAVIGATION -----------------------------------------*/
+
+	/**
+	 * @param domNode The DOM::Node the search starts from.
+	 * @return Returns the next previous sibling which has no special behavior (cf htmlenhancer.h)
+	 * Sibling here (contrary to node.h) has the same meaning as in dom/dom_node.h
+	 */
+	DOM::Node getPrevSiblingNSpecial(DOM::Node domNode);
+
+	/**
+	 * @param domNode The DOM::Node the search starts from.
+	 * @return Returns the next next sibling which has no special behavior (cf htmlenhancer.h)
+	 * Sibling here (contrary to node.h) has the same meaning as in dom/dom_node.h
+	 */
+	DOM::Node getNextSiblingNSpecial(DOM::Node domNode);
 
 	/* --------------------------------- MISCELLANEOUS ------------------------------------------*/
 

@@ -2,7 +2,7 @@
                      htmldocumentproperties.cpp
                              -------------------
 
-    copyright            : (C) 2003 - Nicolas Deschildre
+    copyright            : (C) 2003, 2004 - Nicolas Deschildre
     email                : nicolasdchd@ifrance.com
  ***************************************************************************/
 
@@ -83,7 +83,7 @@ htmlDocumentProperties::htmlDocumentProperties( QWidget* parent, const char* nam
 	metaItems->addColumn("content");
 	metaItems->setFrameStyle( QFrame::Panel | QFrame::Sunken );
 	metaItems->setLineWidth( 2 );
-	metaItems->setSorting(-1);
+	metaItems->setSorting(0, true);
 
 
 	//set the cssRules KListView
@@ -102,13 +102,15 @@ htmlDocumentProperties::htmlDocumentProperties( QWidget* parent, const char* nam
 		while(node)
 		{
 			nodeName = node->tag->name.lower();
+			if(nodeName == "?xml" || nodeName.contains("xml pi block"))
+				xmlNode = node;
 			if(nodeName == "html")
 				htmlNode = node;
 			if(nodeName == "head")
 				headNode = node;
 			if(nodeName == "body")
 				bodyNode = node;
-			if(nodeName == "!doctype")
+			if(nodeName == "!doctype" || nodeName.contains("dtd block"))
 				doctypeNode = node;
 			if(nodeName == "title")
 				titleNode = node;
@@ -120,6 +122,7 @@ htmlDocumentProperties::htmlDocumentProperties( QWidget* parent, const char* nam
 				loadCSS(node);
 			node = node->next;
 		}
+		//support for old Node organization
 		if(doctypeNode)
 		{
 			node = doctypeNode->child;
@@ -261,6 +264,7 @@ void htmlDocumentProperties::loadMetaNode(Node *node)
 	item->node = node;
 	metaList.append(item);
 
+	metaItems->sort();
 }
 
 void htmlDocumentProperties::loadCSS(Node *node)
@@ -278,10 +282,11 @@ void htmlDocumentProperties::loadCSS(Node *node)
 			selector = selector.left((uint)selector.find("{")).stripWhiteSpace();
 			if(node->child)
 				item = new NodeLinkedViewItem(cssRules, selector,
-					node->child->tag->tagStr());
+					node->child->tag->tagStr().replace('\n'," "));
 			else
 				item = new NodeLinkedViewItem(cssRules, selector, "");
 			item->node = node;
+			item->moveItem(cssRules->lastChild());
 			CSSList.append(item);
 		}
 		node = node->next;
@@ -468,7 +473,7 @@ void htmlDocumentProperties::aboutToClose()
 				{
 					//Delete the CSS Node
 					node = (static_cast<NodeLinkedViewItem *>(item))->node;
-					if(node->prev && node->next->tag->type == Tag::ScriptStructureEnd)
+					if(node->next && node->next->tag->type == Tag::ScriptStructureEnd)
 						kafkaCommon::extractAndDeleteNode(node->next, modifs);
 					kafkaCommon::extractAndDeleteNode(node, modifs);
 				}
@@ -552,7 +557,7 @@ void htmlDocumentProperties::addBasicCssNodes(NodeModifsSet *modifs)
 void htmlDocumentProperties::addBasicNodes(NodeModifsSet *modifs)
 {
 	Node *allTheNodes, *lastHeadChild, *lastBodyChild, *lastHtmlChild;
-	Node *n;
+	Node *n, *nextNode;
 	bool htmlNodeCreated = false, bodyNodeCreated = false;
 	QTag *qHead, *qBody;
 	QString tagName;
@@ -565,10 +570,12 @@ void htmlDocumentProperties::addBasicNodes(NodeModifsSet *modifs)
 		//if the xml node is not present and the current DTD is a xhtml like, create it.
 		allTheNodes = baseNode;
 		baseNode = 0L;
-		xmlNode = kafkaCommon::createAndInsertNode("?xml", "", Tag::XmlTag,
-			quantaApp->view()->write(), 0L, 0L, 0L, modifs);
-		xmlNode->tag->editAttribute("version", "1.0");
-		xmlNode->tag->editAttribute("encoding", quantaApp->defaultEncoding());
+		xmlNode = kafkaCommon::createXmlDeclarationNode(quantaApp->view()->write(),
+			quantaApp->defaultEncoding());
+		nextNode = xmlNode->next;
+		xmlNode = kafkaCommon::insertNode(xmlNode, 0L, 0L, modifs);
+		kafkaCommon::insertNode(nextNode, 0L, 0L, modifs);
+		xmlNode->next->next = allTheNodes;
 	}
 
 	if(!doctypeNode)
@@ -579,23 +586,25 @@ void htmlDocumentProperties::addBasicNodes(NodeModifsSet *modifs)
 			allTheNodes = baseNode;
 			baseNode = 0L;
 		}
-		doctypeNode = kafkaCommon::createDoctypeNode(quantaApp->view()->write());
-		kafkaCommon::insertNode(doctypeNode, 0L, 0L, modifs);
-		doctypeNode->child = allTheNodes;
-		while(allTheNodes)
+		else
 		{
-			allTheNodes->parent = doctypeNode;
-			allTheNodes = allTheNodes->next;
+			allTheNodes = xmlNode->next->next;
+			xmlNode->next->next = 0L;
 		}
+		doctypeNode = kafkaCommon::createDoctypeNode(quantaApp->view()->write());
+		nextNode = doctypeNode->next;
+		doctypeNode = kafkaCommon::insertNode(doctypeNode, 0L, 0L, modifs);
+		kafkaCommon::insertNode(nextNode, 0L, 0L, modifs);
+		doctypeNode->next->next = allTheNodes;
 	}
 
 	if(!htmlNode && !headNode)
 	{
 		//if the HTML node is not present, create it
-		allTheNodes = doctypeNode->firstChild();
-		doctypeNode->child = 0L;
+		allTheNodes = doctypeNode->next->next;
+		doctypeNode->next->next = 0L;
 		htmlNode = kafkaCommon::createAndInsertNode("html", "", Tag::XmlTag,
-			quantaApp->view()->write(), doctypeNode, 0L, 0L, modifs);
+			quantaApp->view()->write(), 0L, 0L, 0L, modifs);
 
 		//TODO: hardcoded
 		//If it is XML, it add the namespace.
@@ -620,8 +629,8 @@ void htmlDocumentProperties::addBasicNodes(NodeModifsSet *modifs)
 	if(!bodyNode && htmlNodeCreated)
 	{
 		//let's create BODY to take all the Nodes which can't be in the newly created HTML
-		bodyNode = kafkaCommon::createAndInsertNode("body", "", Tag::XmlTag, quantaApp->view()->write(),
-			htmlNode, 0L, 0L, modifs);
+		bodyNode = kafkaCommon::createAndInsertNode("body", "", Tag::XmlTag,
+			quantaApp->view()->write(), htmlNode, 0L, 0L, modifs);
 		bodyNodeCreated = true;
 	}
 
@@ -687,7 +696,7 @@ void htmlDocumentProperties::addBasicNodes(NodeModifsSet *modifs)
 }
 
 NodeLinkedViewItem::NodeLinkedViewItem(EditableTree *listView, const QString& title, const QString& title2)
-: AttributeItem(listView, title, title2)
+: AttributeItem(listView, title, title2, 0L)
 {
 	node = 0L;
 	dirty = false;

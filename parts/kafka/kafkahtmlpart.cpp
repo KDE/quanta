@@ -3,7 +3,7 @@
                              -------------------
 
     copyright            : (C) 2001 - The Kafka Team
-                           (C) 2003 - Nicolas Deschildre
+                                   (C) 2003, 2004 - Nicolas Deschildre
     email                : kde-kafka@master.kde.org && nicolasdchd@ifrance.com
  ***************************************************************************/
 
@@ -44,6 +44,7 @@
 #endif
 #include "wkafkapart.h"
 #include "nodeproperties.h"
+#include "../../document.h"
 #include "../../resource.h"
 #include "../../quanta.h"
 #include "../../quantaview.h"
@@ -55,15 +56,10 @@ class KafkaWidgetPrivate
 public:
 	KafkaWidgetPrivate()
 	{
-		cursorTimer = 0;
-		drawCursor = true;
 	}
 	~KafkaWidgetPrivate()
 	{
 	}
-	int cursorTimer;
-	bool cursorOn;
-	bool drawCursor;
 	int m_cursorOffset;
 	int m_pressOffset;
 	int m_releaseOffset;
@@ -86,7 +82,6 @@ KafkaWidget::KafkaWidget(QWidget *parent, QWidget *widgetParent, KafkaDocument *
 	d->m_cursorOffset = 0;
 	d->m_pressOffset = 0;
 	d->m_releaseOffset = 0;
-	d->cursorOn = false;
 	d->stuckCursorHorizontalPos = false;
 
 	// With the mix of Leo Savernik's caret Mode and the current editing
@@ -128,7 +123,7 @@ void KafkaWidget::newDocument()
 	begin();
 	write(newPageHTMLCode);
 	end();
-	finishedLoading();
+	putCursorAtFirstAvailableLocation();
 
 }
 
@@ -141,6 +136,33 @@ void KafkaWidget::insertText(DOM::Node node, const QString &text, int position)
 
 	if(position < 0) return;//nothing to do if something is selected
 	//if(focus == kNodeAttrs::no || !cbModified) return;//can't add text in this Node.
+	if(position == 0 && node.nodeName().string().lower() == "body")
+	{
+		//SPECIFIC HTML code!!!
+		//doesn't work!
+		//putCursorAtFirstAvailableLocation();
+		if(!node.firstChild().isNull() && node.firstChild().nodeType() == DOM::Node::TEXT_NODE)
+		{
+			node = m_currentNode = node.firstChild();
+			position = 0;
+		}
+
+		if(position == 0 && node.nodeName().string().lower() == "body")
+		{
+			//We shouldn't go here...
+			DOM::Text textNode = document().createTextNode(text);
+			node.appendChild(textNode);
+			m_currentNode = textNode;
+			d->m_cursorOffset = text.length();
+			emit domNodeInserted(textNode, false);
+#ifdef LIGHT_DEBUG
+			kdDebug(25001) << "KafkaWidget::insertText() - added text - 1" << endl;
+#endif
+			QTimer::singleShot(0, this, SLOT(slotDelayedSetCaretPosition()));
+			return;
+		}
+	}
+
 	if(focus == kNodeAttrs::textNode && node.nodeType() == DOM::Node::TEXT_NODE)
 	{
 		DOM::DOMString textNode = node.nodeValue();
@@ -150,18 +172,6 @@ void KafkaWidget::insertText(DOM::Node node, const QString &text, int position)
 		emit domNodeModified(node);
 #ifdef LIGHT_DEBUG
 		kdDebug(25001) << "KafkaWidget::insertText() - added text" << endl;
-#endif
-	}
-	else if(position == 0 && node.nodeName().string().lower() == "body")
-	{
-		//SPECIFIC HTML code!!!
-		DOM::Text textNode = document().createTextNode(text);
-		node.appendChild(textNode);
-		m_currentNode = textNode;
-		d->m_cursorOffset = text.length();
-		emit domNodeInserted(textNode, false);
-#ifdef LIGHT_DEBUG
-		kdDebug(25001) << "KafkaWidget::insertText() - added text - 1" << endl;
 #endif
 	}
 	else if(position == 0)
@@ -246,10 +256,10 @@ void KafkaWidget::normalize(DOM::Node _node)
 
 void KafkaWidget::keyReturn()
 {
-	//Temporary HTML-specific function
-	//TODO:CHANGE AND USE <P> instead of <BR> when possible
-	DOM::Node brNode, secondPartOfText;
+	//WARNING : HTML-specific function
+	DOM::Node text, text2, pDomNode, pDomNode2, brDomNode;
 	int focus;
+//	QTag *qTag;
 
 	if(m_currentNode.isNull())
 		return;
@@ -259,39 +269,100 @@ void KafkaWidget::keyReturn()
 	focus = w->getAttrs(m_currentNode)->chCurFoc();
 	if (focus == kNodeAttrs::textNode)
 	{
-		brNode = document().createElement("BR");
+		//First split if necessary the text
 		if(d->m_cursorOffset == 0)
-		{
-			m_currentNode.parentNode().insertBefore(brNode, m_currentNode);
-			emit domNodeInserted(brNode, false);
-		}
+			text2 = m_currentNode;
 		else if((unsigned)d->m_cursorOffset ==
 			(static_cast<DOM::CharacterData>(m_currentNode)).length())
-		{
-			if(m_currentNode.parentNode().lastChild() == m_currentNode)
-				m_currentNode.parentNode().appendChild(brNode);
-			else
-				m_currentNode.parentNode().insertBefore(brNode,
-					m_currentNode.nextSibling());
-			emit domNodeInserted(brNode, false);
-			m_currentNode = brNode;
-			d->m_cursorOffset = 1;
-			postprocessCursorPosition();
-			setCaretPosition(m_currentNode, (long)d->m_cursorOffset);
-			emit domNodeNewCursorPos(m_currentNode, d->m_cursorOffset);
-		}
+			text = m_currentNode;
 		else
 		{
-			secondPartOfText = (static_cast<DOM::Text>(m_currentNode)).splitText(d->m_cursorOffset);
+			text = m_currentNode;
+			text2 = (static_cast<DOM::Text>(m_currentNode)).splitText(d->m_cursorOffset);
 			emit domNodeModified(m_currentNode);
-			emit domNodeInserted(secondPartOfText, false);
-			m_currentNode.parentNode().insertBefore(brNode, secondPartOfText);
-			emit domNodeInserted(brNode, false);
-			m_currentNode = secondPartOfText;
-			d->m_cursorOffset = 0;
-			setCaretPosition(m_currentNode, (long)d->m_cursorOffset);
-			emit domNodeNewCursorPos(m_currentNode, d->m_cursorOffset);
+			emit domNodeInserted(text2, false);
 		}
+
+		//Then look if we are in a area which can handle a P
+		//and if it is ok and necessary, insert the current text in a P
+		//TODO: Change a bit for the p so that it handle every case
+		/**qTag = QuantaCommon::tagFromDTD(w->getCurrentDoc()->defaultDTD(),
+			m_currentNode.parentNode().nodeName().string());
+		pDomNode = kafkaCommon::hasParent(m_currentNode, "p");
+		if(pDomNode.isNull() && qTag && qTag->isChild("p"))
+		{
+			if(!text.isNull())
+			{
+				emit domNodeIsAboutToBeRemoved(text, false);
+				w->removeDomNode(text);
+			}
+
+			pDomNode = kafkaCommon::createDomNode("p", w->getCurrentDoc()->defaultDTD(),
+				document());
+			w->insertDomNode(pDomNode, m_currentNode.parentNode(),
+				m_currentNode.nextSibling());
+			emit domNodeInserted(pDomNode, false);
+
+			if(!text.isNull())
+			{
+				w->::insertDomNode(text, pDomNode);
+				emit domNodeInserted(text, false);
+			}
+		}
+
+		//Then we insert either a P or a BR tag.
+		if(qTag && qTag->isChild("p") && !pDomNode.isNull())
+		{
+			if(!text2.isNull())
+			{
+				emit domNodeIsAboutToBeRemoved(text2, false);
+				w->::removeDomNode(text2);
+			}
+
+			pDomNode2 = kafkaCommon::createDomNode("p", w->getCurrentDoc()->defaultDTD(),
+				document());
+			w->insertDomNode(pDomNode2, pDomNode.parentNode(),
+				pDomNode.nextSibling());
+			emit domNodeInserted(pDomNode2, false);
+
+			if(!text2.isNull())
+			{
+				w->insertDomNode(text2, pDomNode2);
+				emit domNodeInserted(text2, false);
+			}
+			m_currentNode = pDomNode2.firstChild();
+			d->m_cursorOffset = 0;
+		}
+		else
+		{*/
+			brDomNode = kafkaCommon::createDomNode("br", w->getCurrentDoc()->defaultDTD(),
+				document());
+			if(!text.isNull())
+				w->insertDomNode(brDomNode, m_currentNode.parentNode(),
+					text.nextSibling());
+			else
+				w->insertDomNode(brDomNode, m_currentNode.parentNode(),
+					text2);
+			emit domNodeInserted(brDomNode, false);
+			if(!text2.isNull())
+				m_currentNode = text2;
+			else
+				m_currentNode = brDomNode.nextSibling();
+			d->m_cursorOffset = 0;
+		/**}*/
+
+		kdDebug(25001)<< "CURNODE : " << m_currentNode.nodeName().string() << ":"
+			<< m_currentNode.nodeValue().string() << " : " << d->m_cursorOffset << endl;
+		QTimer::singleShot(0, this, SLOT(slotDelayedSetCaretPosition()));
+		//setCaretPosition(m_currentNode, (long)d->m_cursorOffset);
+				kdDebug(25001)<< "CURNODE : " << m_currentNode.nodeName().string() << ":"
+			<< m_currentNode.nodeValue().string() << " : " << d->m_cursorOffset << endl;
+		//emit domNodeNewCursorPos(m_currentNode, d->m_cursorOffset);
+		//		kdDebug(25001)<< "CURNODE : " << m_currentNode.nodeName().string() << ":"
+		//	<< m_currentNode.nodeValue().string() << " : " << d->m_cursorOffset << endl;
+		postprocessCursorPosition();
+				kdDebug(25001)<< "CURNODE : " << m_currentNode.nodeName().string() << ":"
+			<< m_currentNode.nodeValue().string() << " : " << d->m_cursorOffset << endl;
 	}
 }
 
@@ -308,12 +379,6 @@ bool KafkaWidget::eventFilter(QObject *, QEvent *event)
 		kdDebug(25001) << "KafkaWidget::eventFilter() FocusIn" << endl;
 #endif
 		emit hasFocus(true);
-		if(!d->cursorTimer)
-			{
-				d->cursorTimer = startTimer(500);
-				d->drawCursor = true;
-				d->cursorOn = true;
-			}
 	}
 
 	if(event->type() == QEvent::FocusOut)
@@ -322,12 +387,6 @@ bool KafkaWidget::eventFilter(QObject *, QEvent *event)
 		kdDebug(25001) << "KafkaWidget::eventFilter() FocusOut" << endl;
 #endif
 		emit hasFocus(false);
-		if(d->cursorTimer)
-		{
-			killTimer(d->cursorTimer);
-			d->cursorTimer = 0;
-		}
-			d->cursorOn = false;
 	}
 
 	if(event->type() == QEvent::KeyPress)
@@ -470,14 +529,12 @@ bool KafkaWidget::eventFilter(QObject *, QEvent *event)
 				d->stuckCursorHorizontalPos = false;
 				break;
 		}
-		if(d->cursorTimer)
-		{
-			killTimer(d->cursorTimer);
-			d->cursorTimer = startTimer(500);
-			d->drawCursor = true;
-			view()->updateContents();
-		}
 	}
+
+#ifdef LIGHT_DEBUG
+	kdDebug(25001)<< "Current Offset : " << m_currentNode.nodeName().string()  << ":" <<
+		d->m_cursorOffset << " (" << event->type() << ")" << endl;
+#endif
 
 	if(!forgetEvent)
 		return false;
@@ -1103,8 +1160,8 @@ void KafkaWidget::postprocessCursorPosition()
 		while(1)
 		{
 			_prevNextNode = _nextNode;
-			_nextNode = getPrevNode(_nextNode, b);
-			if(_nextNode == 0)
+			_nextNode = kafkaCommon::getPrevDomNode(_nextNode);
+			if(_nextNode.isNull())
 				break;
 			attrs2 = w->getAttrs(_nextNode);
 			if(attrs2->chCurFoc() == kNodeAttrs::textNode &&
@@ -1235,6 +1292,9 @@ void KafkaWidget::khtmlMouseReleaseEvent(khtml::MouseReleaseEvent *event)
 void KafkaWidget::khtmlMousePressEvent(khtml::MousePressEvent *event)
 {
 	KHTMLPart::khtmlMousePressEvent(event);
+	if(d->m_cursorOffset == 0 && !m_currentNode.isNull() &&
+		m_currentNode.nodeName().string().lower() == "body")
+		putCursorAtFirstAvailableLocation();
 #ifdef HEAVY_DEBUG
 	//d->domdialog->domview->showTree(document());
 #endif
@@ -1257,33 +1317,41 @@ void KafkaWidget::setCurrentNode(DOM::Node node, int offset)
 	d->m_cursorOffset = offset;
 	makeCursorVisible();
 	if(!m_currentNode.isNull() && m_currentNode.nodeName().string() != "#document")
-		setCaretPosition(m_currentNode, (long)d->m_cursorOffset);
+		QTimer::singleShot(0, this, SLOT(slotDelayedSetCaretPosition()));
+		//setCaretPosition(m_currentNode, (long)d->m_cursorOffset);
 }
 
-void KafkaWidget::finishedLoading()
+void KafkaWidget::putCursorAtFirstAvailableLocation()
 {
 	kNodeAttrs *attrs = 0L;
-	DOM::Node _node = document();
+	DOM::Node node = document();
         bool b = false;
 
-	while(_node != 0)
+	while(!node.isNull())
 	{
-		_node = getNextNode(_node, b);
-		if(_node == 0)
+		node = kafkaCommon::getNextDomNode(node, b);
+		if(node.isNull())
 		{
-			_node = document();
+			if(!w->body.isNull())
+				node = w->body;
+			else
+				node = DOM::Node();
 			break;
 		}
-		attrs = w->getAttrs(_node);
+		attrs = w->getAttrs(node);
 		if(!attrs) return;
-		if(attrs->chCurFoc() != kNodeAttrs::no || _node.nodeName().string() == "#text")
+		if(node.nodeType() == DOM::Node::TEXT_NODE)
 			break;
 	}
-	m_currentNode = _node;
+	m_currentNode = node;
         d->m_cursorOffset = 0;
-	//if(!m_currentNode.isNull() && m_currentNode.nodeName().string() != "#document")
-		setCaretPosition(m_currentNode, (long)d->m_cursorOffset);
-	emit domNodeNewCursorPos(m_currentNode, d->m_cursorOffset);
+	QTimer::singleShot(0, this, SLOT(slotDelayedSetCaretPosition()));
+
+#ifdef LIGHT_DEBUG
+	if(!m_currentNode.isNull())
+		kdDebug(25001)<< "KafkaWidget::putCursorAtFirstAvailableLocation() - " <<
+			m_currentNode.nodeName().string() << endl;
+#endif
 }
 
 void KafkaWidget::slotNewCursorPos(const DOM::Node &domNode, long offset)

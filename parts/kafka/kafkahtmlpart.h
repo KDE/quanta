@@ -3,7 +3,7 @@
                              -------------------
 
     copyright            : (C) 2001 - The Kafka Team
-                           (C) 2003 - Nicolas Deschildre
+                                   (C) 2003, 2004 - Nicolas Deschildre
     email                : kde-kafka@master.kde.org && nicolasdchd@ifrance.com
  ***************************************************************************/
 
@@ -124,9 +124,10 @@ public slots:
 	void normalize(DOM::Node _node);
 
 	/**
-	 * Set the cursor after having loaded the DOM tree from scratch
+	 * Set the cursor after having loaded the DOM tree from scratch.
+	 * Look for the first available location for the cursor.
 	 */
-	void finishedLoading();
+	void putCursorAtFirstAvailableLocation();
 
 	/**
 	 * Reload the TagAttributesTree if necessary;

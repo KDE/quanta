@@ -2,7 +2,7 @@
                                 undoredo.cpp
                              -------------------
 
-    copyright            : (C) 2003 - Nicolas Deschildre
+    copyright            : (C) 2003, 2004 - Nicolas Deschildre
     email                : nicolasdchd@ifrance.com
  ***************************************************************************/
 
@@ -1249,8 +1249,7 @@ void undoRedo::reloadKafkaEditor(bool force, bool syncKafkaCursor)
 	KafkaDocument *kafkaInterface = quantaApp->view()->getKafkaInterface();
 
 	Document *m_doc = kafkaInterface->getCurrentDoc();
-	kafkaInterface->unloadDocument();
-	kafkaInterface->loadDocument(m_doc);
+	kafkaInterface->reloadDocument();
 
 	if(syncKafkaCursor)
 		syncKafkaCursorAndSelection();
@@ -1259,7 +1258,7 @@ void undoRedo::reloadKafkaEditor(bool force, bool syncKafkaCursor)
 void undoRedo::reloadQuantaEditor(bool force, bool syncQuantaCursor)
 {
 	QString text, allText;
-	Node *node = baseNode;
+	Node *node = baseNode, *child;
 	int bCol, bLine, eCol, eLine, bCol2, bLine2, bCol3, bLine3, eCol3, eLine3, i;
 	KafkaDocument *kafkaInterface = quantaApp->view()->getKafkaInterface();
 	bool updateClosing, goUp;
@@ -1295,9 +1294,13 @@ void undoRedo::reloadQuantaEditor(bool force, bool syncQuantaCursor)
 			node->tag->setStr(kafkaInterface->generateCodeFromNode(node, 0, 0, eLine, eCol));
 			//node->tag->setTagPosition(bLine, bCol, eLine, eCol);
 			//kdDebug(25001)<< "POS1 " << bLine <<  " " <<  bCol << " " << eLine << " " << eCol << endl;
-			goUp = false;
-			kafkaCommon::fitIndentationNodes(node, kafkaCommon::getNextNodeNE(node, goUp));
-			kafkaCommon::applyIndentation(node, 2, 0);
+			if(node->tag->type != Tag::ScriptTag && !node->insideSpecial)
+			{
+				kafkaCommon::fitIndentationNodes(kafkaCommon::getPrevNodeNE(node), node);
+				goUp = false;
+				kafkaCommon::fitIndentationNodes(node, kafkaCommon::getNextNodeNE(node, goUp));
+				kafkaCommon::applyIndentation(node, 2, 0);
+			}
 			//int a, b, c, d;
 			//_node->tag->beginPos(a,b);
 			//_node->tag->endPos(c,d);
@@ -1341,7 +1344,25 @@ void undoRedo::reloadQuantaEditor(bool force, bool syncQuantaCursor)
 		else
 		{
 			allText += node->tag->tagStr();
-			node->tag->beginPos(bLine, bCol);
+
+			//If a child is a Script inside this Tag e.g. <a href="<? PHP stuff here ?>">, make
+			//its position fits inside the parent
+			node->tag->beginPos(bLine3, bCol3);
+			node->tag->endPos(eLine3, eCol3);
+			child = node->firstChild();
+			while(child)
+			{
+				child->tag->beginPos(bLine2, bCol2);
+				if(child->tag->type == Tag::ScriptTag &&
+					QuantaCommon::isBetween(bLine2, bCol2, bLine3, bCol3, eLine3,eCol3) == 0)
+				{
+					child->tag->setTagPosition(bLine, bCol + 1, bLine, bCol + 1);
+				}
+				child = child->next;
+			}
+
+			//Update the node's positions
+			node->tag->setTagPosition(bLine, bCol, -1, -1);
 			for(i = 0; i < node->tag->attrCount(); i++)
 			{
 				bCol3 = node->tag->getAttribute(i).nameLine;
@@ -1355,6 +1376,7 @@ void undoRedo::reloadQuantaEditor(bool force, bool syncQuantaCursor)
 			}
 			kafkaCommon::getEndPosition(node->tag->tagStr(), bLine, bCol, eLine, eCol);
 			node->tag->setTagPosition(bLine, bCol, eLine, eCol);
+
 			bCol = eCol + 1;
 			bLine = eLine;
 		}
@@ -1681,6 +1703,9 @@ void undoRedo::syncKafkaCursorAndSelection()
 	int offset;
 	uint curLine, curCol/**, curLine2, curCol2*/;
 	/**DOM::Range range(kafkaPart) = kafkaPart->selection();*/
+
+	if(!quantaApp->view()->getKafkaInterface()->isLoaded())
+		return;
 
 	/**DOM::Range tempRange(document());
 	tempRange.setStart(document(), 0);

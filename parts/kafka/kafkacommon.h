@@ -2,7 +2,7 @@
                                kafkacommon.h
                              -------------------
 
-    copyright            : (C) 2003 - Nicolas Deschildre
+    copyright            : (C) 2003, 2004 - Nicolas Deschildre
     email                : nicolasdchd@ifrance.com
  ***************************************************************************/
 
@@ -33,12 +33,12 @@ class DTDStruct;
 /**
  * For heavy debug including Node Tree in stdout printing, a DOM::Node tree widget.
  */
-#define HEAVY_DEBUG
+//#define HEAVY_DEBUG
 
 /**
  * Light debugging, including functions name in stdout printing.
  */
-#define LIGHT_DEBUG
+//#define LIGHT_DEBUG
 
 
 /** This class gathers all the basic functions needed by kafka. */
@@ -49,7 +49,7 @@ public:
 	kafkaCommon() {}
 	~kafkaCommon() {}
 
-	/** ----------------------- NODE TREE NAVIGATION -------------------------------------*/
+	/** ----------------------- NODE & DOM::NODE TREE NAVIGATION -------------------------------------*/
 
 	/**
 	 * This function returns the next Node after node : the first child of
@@ -99,6 +99,12 @@ public:
 	static DOM::Node getNextDomNode(DOM::Node node, bool &goUp, bool returnParentNode = false,
 		DOM::Node endNode = DOM::Node());
 
+	/**
+	 * This function returns the previous Node after node.
+	 * @return Returns the previous DOM::Node of node.
+	 */
+	static DOM::Node getPrevDomNode(DOM::Node node, DOM::Node endNode = DOM::Node());
+
 
 	/** ----------------------- NODE INDENTATION STUFF -------------------------------------*/
 
@@ -140,20 +146,35 @@ public:
 
 	/**
 	 * Get the display type of a Node. NOT a official list, more a little hack to
-	 * handle the indentation.
-	 * @param nodeName The name of the Node.
-	 * @param closingNodeToo Specifies if we return the display of the corresponding Node of closing Nodes.
+	 * handle the indentation. Text are inline. The rest return an error.
+	 * @param closingNodeToo Specifies if we consider that closing Node have the same type as
+	 * their opening tag.
 	 * @return Returns the type.
 	 */
-	static int getNodeDisplay(const QString &nodeName, bool closingNodeToo = false);
+	static int getNodeDisplay(Node *node, bool closingNodeToo);
 
 	//the enumeration of the different display types
 	enum nodeDisplay
 	{
 		noneDisplay = 0,
 		inlineDisplay,
-		blockDisplay
+		blockDisplay,
+		errorDisplay
 	};
+
+	/**
+	 * Remove the unnecessary whitespaces in a string : when a XML page is loaded,
+	 * a "group" of whitespace in a string is translated into a single whitespace.
+	 * e.g. this function returns : " a b cd " for parameter: "     a    b cd     "
+	 * @param string The text to modify.
+	 * @param removeAllSpacesAtTheLeft Specifies if it should remove ALL spaces in the left
+	 * unlike the above example.
+	 * @param removeAllSpacesAtTheRight Specifies if it should remove ALL spaces in the right
+	 * unlike the above example.
+	 * @return Returns the modified string.
+	 */
+	static QString removeUnnecessaryWhitespaces(const QString &string,
+		bool removeAllSpacesAtTheLeft = false, bool removeAllSpacesAtTheRight = false);
 
 
 	/** ----------------------- NODE TREE MODIFICATIONS -------------------------------------*/
@@ -170,33 +191,52 @@ public:
 		Document *doc);
 
 	/**
-	 * Create a !doctype Node with all the necessary attributes.
+	 * Create a !doctype Node with all the necessary attributes. It has a child and a closing Node.
 	 * @param doc It needs the document where the !doctype node will be inserted in order to
 	 * build the right attributes.
 	 */
 	static Node *createDoctypeNode(Document *doc);
 
 	/**
+	 * Create a <?xml ... ?> Node. It has a child and a closing Node.
+	 * @param doc It needs the document where the xml node will be inserted.
+	 * @param encoding The encoding to use (usually get it with quantaApp->defaultEncoding())
+	 */
+	static Node *createXmlDeclarationNode(Document *doc, const QString &encoding);
+
+	/**
+	 * Create a node subtree which contains the mandatory Nodes in order to be DTD compliant.
+	 * e.g. TABLE alone isn't DTD compliant, this function will return TABLE->TR->TD.
+	 * WARNING : it won't log change thus node must NOT be in the Node tree.
+	 * @param node The root Node of the Node subtree.
+	 * @param doc The document the Node subtree will belong to.
+	 * @return Returns the last Node of the subtree or node if there was nothing to add.
+	 */
+	static Node* createMandatoryNodeSubtree(Node *node, Document *doc);
+
+	/**
 	 * Insert node in the tree. WARNING This function will log that node was added.
+	 * WARNING : baseNode is used as the rootNode.
 	 * It will also try to merge text/Empty Nodes.
 	 * @param node The node to insert.
 	 * @param parentNode This Node will be the parent of node.
 	 * @param nextSibling This Node will be the next Sibling of Node. If null, node will be appened at
 	 * the child list of parentNode.
+	 * TODO: @param rootNode The rootNode of the tree we want to insert the Node (usually &baseNode).
 	 * @param modifs The changes made are logged into modifs. Put 0L if you don't want to log
 	 * and if you know what you're doing!
 	 * @param merge Try to merge with the siblings if possible.
 	 * @return Returns a pointer to the node inserted.
 	 */
-	static Node* insertNode(Node *node, Node* parentNode, Node* nextSibling, NodeModifsSet *modifs,
-		bool merge = true);
+	static Node* insertNode(Node *node, Node* parentNode, Node* nextSibling,
+		NodeModifsSet *modifs/**, Node **rootNode*/, bool merge = true);
 
 	/**
 	 * It behaves essentially like the above function except that it can "surround" a set of Nodes with the
 	 * new Node. Thus, the closing Node is created if necessary.
 	 * nextSibling and nextEndSibling MUST have the same parent. If not, use the
 	 * DTDinsertNode.
-	 * This function does not try to know if the location of the new Node is valid.
+	 * This function does not try to know if the location of the new Node is DTD valid.
 	 * @param newNode The new Node to insert.
 	 * @param parent The parent of the Node.
 	 * @param nextSibling The next sibling of the Node.
@@ -207,7 +247,7 @@ public:
 	 * @return Returns a pointer to the node inserted.
 	 */
 	static Node *insertNode(Node *newNode, Node *parent, Node *nextSibling, Node *nextEndSibling,
-		NodeModifsSet *modifs);
+		NodeModifsSet *modifs, bool merge = true);
 
 	/**
 	 * It behaves essentially like the above function except that it can split the endNodeToSurround and
@@ -224,30 +264,70 @@ public:
 		Node *endNodeToSurround, int startOffset, int endOffset, NodeModifsSet *modifs);
 
 	/**
-	 * It behaves essentially like the above function except that it will insert the new Node only if the DTD
-	 * allows it, and if generateElements is set to true, it will try to add new Element to be DTD compliant
-	 * e.g. surrounding text by TABLE will make TD and TR to be created and inserted to be DTD compliant.
-	 * @param generateElements Specifies if we should try add elements to be DTD compliant if newNode
-	 * can't be inserted.
-	 * @return Returns false if it wasn't possible to insert the tag because e.g. of an invalid parent.
-	 */
-	static bool DTDinsertNode(Node *newNode, Node *parent, Node *startNodeToSurround,
-		Node *endNodeToSurround, int startOffset, int endOffset, NodeModifsSet *modifs,
-		bool generateElements = true);
-
-	/**
-	 * It behaves essentially like the above function except that the new Tag can surround any subtree. If
+	 * It behaves essentially like the above function except that it will insert the new Node only
+	 * if the DTD allows it. The new Tag can surround any subtree. If
 	 * necessary, several copies of the Node will be used.
 	 * This function takes care of the DTD validity of the Nodes created.
+	 * It will build the necessary mandatory Nodes (e.g. insertion of TABLE will also insert TR and TD).
 	 * This is the key function making the toolbars working.
 	 * @param startNode The first Node which must be surrounded by the new Node.
 	 * @param startOffset If firstNode is a text, specify at which offset the new Node must begin to surround.
 	 * @param endNode The last Node which must be surrounded by the new Node.
 	 * @param endOffset If endNode is a text, specify at which offset the new Node must stop to surround.
+	 * @param doc The document is needed in order to build the mandatory Node tree if necessary.
+	 * <TEMPORARY> : We want to keep track of the cursor position. TODO : cursor class
+	 * @param cursorNode The cursor is inside cursorNode.
+	 * @param cursorOffset The offset of the cursor inside cursorNode.
+	 * </TEMPORARY>
 	 * @return Returns false if it wasn't possible to insert the tag because e.g. of an invalid parent.
 	 */
 	static bool DTDinsertNode(Node *newNode, Node *startNode, int startOffset, Node *endNode,
-		int endOffset, NodeModifsSet *modifs);
+		int endOffset, Document *doc, Node **cursorNode, int &cursorOffset, NodeModifsSet *modifs);
+
+	/**
+	 * It behaves essentially like the above function except that it will try first to remove newNode
+	 * from the area, by calling DTDExtractNode. If newNode wasn't present, it will then insert it by
+	 * calling DTDinsertNode.
+	 * This is the key function making the toolbars working.
+	 */
+	static void DTDinsertRemoveNode(Node *newNode, Node *startNode, int startOffset, Node *endNode,
+		int endOffset, Document *doc, Node **cursorNode, int &cursorOffset, NodeModifsSet *modifs);
+
+	/**
+	 * Insert a node subtree in the tree. WARNING This function will log that the nodes were added.
+	 * WARNING : baseNode is used as the rootNode.
+	 * It will also try to merge text/Empty Nodes.
+	 * @param node The root node of the Node subtree to insert.
+	 * @param parentNode This Node will be the parent of node.
+	 * @param nextSibling This Node will be the next Sibling of Node. If null, node will be appened at
+	 * the child list of parentNode.
+	 * @param modifs The changes made are logged into modifs. Put 0L if you don't want to log
+	 * and if you know what you're doing!
+	 * @param merge Try to merge with the siblings if possible.
+	 * @return Returns a pointer to the node inserted.
+	 */
+	static Node* insertNodeSubtree(Node *node, Node* parentNode, Node* nextSibling,
+		NodeModifsSet *modifs, bool merge = true);
+
+	/**
+	 * It behaves essentially like the above function except that it can "surround" a set of Nodes with the
+	 * new Node. Thus, the closing Node is created if necessary.
+	 * nextSibling and nextEndSibling MUST have the same parent. If not, use the
+	 * DTDinsertNode.
+	 * The Node Subtree MUST be a single-Node-per-parent subtree.
+	 * This function does not try to know if the location of the new Node is DTD valid.
+	 * @param node The root node of the Node subtree to insert.
+	 * @param parent The parent of the Node.
+	 * @param nextSibling The next sibling of the Node.
+	 * @param nextEndSibling The next sibling of the closing Node if created. If nextEndSibling ==
+	 * nextSibling, the closing Node will be placed at the right of the newly created Node.
+	 * All the Nodes between the new Node and its closing Tag will be moved as childs of the
+	 * last Node of the Node subtree..
+	 * @param modifs The changes made are logged into modifs.
+	 * @return Returns a pointer to the node inserted.
+	 */
+	static Node* insertNodeSubtree(Node *node, Node* parentNode, Node* nextSibling,
+		Node* nextEndSibling, NodeModifsSet *modifs, bool merge = true);
 
 	/**
 	 * Create a Node of name nodeName, of type nodeType, (see tag.h) connected to the document doc,
@@ -287,26 +367,16 @@ public:
 	 * @param startOffset The first Node will be splitted at offset startOffset, the right part will be enclosed.
 	 * @param endOffset The last Node will be splitted at offset endOffset, the left part will be enclosed.
 	 */
-	static Node *createAndInsertNode(const QString &nodeName, const QString &tagString, int nodeType,
-	Document *doc, Node *parent, Node *startNodeToSurround, Node *endNodeToSurround, int startOffset,
-	int endOffset, NodeModifsSet *modifs);
+	static Node *createAndInsertNode(const QString &nodeName, const QString &tagString,
+		int nodeType, Document *doc, Node *parent, Node *startNodeToSurround,
+		Node *endNodeToSurround, int startOffset, int endOffset, NodeModifsSet *modifs);
 
 	/**
-	 * It behaves essentially like the above function except that it will insert the new Node only if the DTD
-	 * allows it, and if generateElements is set to true, it will try to add new Element to be DTD compliant
-	 * e.g. surrounding text by TABLE will make TD and TR to be created and inserted to be DTD compliant.
-	 * @param generateElements Specifies if we should try add elements to be DTD compliant if newNode
-	 * can't be inserted.
-	 * @return Returns false if it wasn't possible to insert the tag because e.g. of an invalid parent.
-	 */
-	static bool DTDcreateAndInsertNode(const QString &nodeName, const QString &tagString, int nodeType,
-	Document *doc, Node *parent, Node *startNodeToSurround, Node *endNodeToSurround, int startOffset,
-	int endOffset, NodeModifsSet *modifs, bool generateElements = true);
-
-	/**
-	 * It behaves essentially like the above function except that the new Tag can surround any subtree. If
+	 * It behaves essentially like the above function except that it will insert the new Node only
+	 * if the DTD allows it. The new Tag can surround any subtree. If
 	 * necessary, several copies of the Node will be used.
 	 * This function takes care of the DTD validity of the Nodes created.
+	 * It will build the necessary mandatory Nodes (e.g. insertion of TABLE will also insert TR and TD).
 	 * This is the key function making the toolbars working.
 	 * @param startNode The first Node which must be surrounded by the new Node.
 	 * @param startOffset If firstNode is a text, specify at which offset the new Node must begin to surround.
@@ -315,26 +385,41 @@ public:
 	 * @return Returns false if it wasn't possible to insert the tag because e.g. of an invalid parent.
 	 */
 	static bool DTDcreateAndInsertNode(const QString &nodeName, const QString &tagString, int nodeType,
-	Document *doc, Node *startNode, int startOffset, Node *endNode, int endOffset, NodeModifsSet *modifs);
+		Document *doc, Node *startNode, int startOffset, Node *endNode, int endOffset,
+		Node **cursorNode, int &cursorOffset, NodeModifsSet *modifs);
 
 	/**
 	 * For internal use. From startNode to endNode, it add where possible/necessary a new Node in order
 	 * to surround the maximum of Nodes. This is used by the above function. This function calls itself.
+	 * @param newNode The root Node of the node subtree to insert.
+	 * @param leafNode The leaf Node of the node subtree to insert.
+	 * @param startExaminationNode It will start examine Nodes from startExaminationNode.
+	 * @param endExaminationNode It will stop examine Nodes from endExaminationNode.
+	 * @param startNode This function will start adding newNode from startNode.
+	 * @param endNode This function will stop adding newNode at endNode.
 	 * @param currentNode This node is currently examined.
+	 * @param examinationStarted Specifies if we have begun to examine the Nodes.
 	 * @param addingStarted Specifies if we have begun to add the new Node.
 	 * @level The relative level of the current Node Sibling (level 0 : root Node, level 1 : childs, and so on...)
 	 * MUST BE set to 0.
 	 */
-	static bool addNodeRecursively(Node *newNode, Node* startNode, Node *endNode, Node* currentNode,
-		bool &addingStarted, int level, NodeModifsSet *modifs);
+	static bool addNodeRecursively(Node *newNode, Node *leafNode, Node *startExaminationNode,
+		Node *endExaminationNode, Node* startNode, Node *endNode, Node* currentNode,
+		bool &examinationStarted, bool &addingStarted, int level, NodeModifsSet *modifs);
 
 	/**
 	 * Create a copy of Node. It use the Node copy operator and add some kafka-specific flags :
-	 * It set the cleanStrBuilt to true;
+	 * It set the cleanStrBuilt to false;
 	 * @param node The node to duplicate.
 	 * @return Returns the duplicated Node. I wonder if i should always write so obvious things ;-)
 	 */
 	static Node *duplicateNode(Node *node);
+
+	/**
+	 * It behaves essentially like the above function except that it can handle a node Subtree.
+	 * INNEFICIENT for bi
+	 */
+	static Node *duplicateNodeSubtree(Node *node);
 
 	/**
 	 * Extract a Node from the Node Tree. WARNING this will log that the Node was removed.
@@ -343,18 +428,63 @@ public:
 	 * @param modifs The changes made are logged into modifs.
 	 * @param deleteChilds If we remove or move up the children. WARNING: it don't check
 	 * if the children of node are legal childs of the parent of node.
+	 * @param removeClosingTag Delete the closingTag if node isn't single and is Tag::XmlTag.
+	 * TODO: @param removeEmbeddedTags Specifies if we delete the embedded Nodes e.g.
+	 * <a href="<? boo ?>" > : the PHP block is an embedded block.
 	 * @return Returns the node extracted with its childs
 	 */
-	static Node* extractNode(Node *node, NodeModifsSet *modifs, bool removeChildren = true);
+	static Node* extractNode(Node *node, NodeModifsSet *modifs, bool removeChildren = true,
+		bool removeClosingTag = false/**, bool removeEmbeddedTags = false*/);
 
 	/**
 	 * It behaves essentially the above function.
 	 * Extract and BUT NOT DELETE RIGHT NOW node from the Tree. The undo/redo system will delete it
 	 * when necessary.
+	 * TODO: remove it, and use extractNode instead.
 	 * @param deleteClosingTag Delete the closingTag if node isn't single.
 	 */
 	static void extractAndDeleteNode(Node *node, NodeModifsSet *modifs, bool deleteChildren = true,
 		bool deleteClosingTag = true, bool mergeAndFormat = true);
+
+	/**
+	 * An enumeration of all the possible return states of DTDExtractNode
+	 */
+	enum extractNodeStatus
+	{
+		//The node to extract was not found.
+		nothingExtracted = 0,
+		//The extract operation stopped because of a DTD error : if the node was removed, the child
+		//weren't able to be childs of the node's parent, according to the DTD. Should not occur
+		//except really bad HTML.
+		extractionStoppedDueToBadNodes,
+		//everything has gone fine
+		extractionDone,
+		//Invalid start or end position, or the given Node was a block.
+		extractionBadParameters
+	};
+
+	/**
+	 * This function will try to extract the node nodeName (of type XmlTag) from a given subtree,
+	 * according to the DTD. If the DTD don't allow it, it won't remove it.
+	 * This function is only interesting for the removal of Inline Nodes thus it will return an error if
+	 * a block nodeName is submitted.
+	 * TODO: AVOID splitting of Node when the DTD don't allow the removal.
+	 * @param nodeName The name of the Node to remove (must be inline).
+	 * @param doc It is needed to get the DTD informations.
+	 * @param startNode The node from which we start the removal.
+	 * @param startOffset The offset of startNode from which we start the removal.
+	 * @param endNode The node from which we end the removal.
+	 * @param endOffset The offset of endNode from which we end the removal.
+	 * <TEMPORARY> : We want to keep track of the cursor position. TODO : cursor class
+	 * @param cursorNode The cursor is inside cursorNode.
+	 * @param cursorOffset The offset of the cursor inside cursorNode.
+	 * </TEMPORARY>
+	 * @param modifs The usual modifs to log the modifications made for the undo/redo system.
+	 * @return Returns a kafkaCommon::extractNodeStatus.
+	 */
+	static int DTDExtractNode(const QString &nodeName, Document *doc, Node *startNode,
+		int startOffset, Node *endNode, int endOffset, Node **cursorNode, int &cursorOffset,
+		NodeModifsSet *modifs);
 
 	/**
 	 * Moves a Node somewhere else.
@@ -362,8 +492,10 @@ public:
 	 * @param newParent The new parent of nodeToMove.
 	 * @param newNextSibling The new next Sibling of nodeToMove.
 	 * @param modifs The changes made are logged into modifs.
+	 * @param merge Specifies if it should try to merge the Node at its new location.
 	 */
-	static void moveNode(Node *nodeToMove, Node *newParent, Node *newNextSibling, NodeModifsSet *modifs);
+	static void moveNode(Node *nodeToMove, Node *newParent, Node *newNextSibling,
+		NodeModifsSet *modifs, bool merge = true);
 
 	/**
 	 * Split a Text Node at offset offset. If offset or n is invalid, nothing is done.
@@ -377,10 +509,25 @@ public:
 	/**
 	 * If n and n2 are both Text or Empty Nodes, merge them into one.
 	 * WARNING if merging occurs, n2 is deleted.
-	 * @param modifs The changes made are logged into modifs.
+	 * @param modifs The changes made are logged into modifs
+	 * @param mergeTextOnly Specify if we should only merge text Nodes, not empty ones.
 	 * @return Returns true if the Nodes were merged, else false.
 	 */
-	static bool mergeNodes(Node *n, Node *n2, NodeModifsSet *modifs);
+	static bool mergeNodes(Node *n, Node *n2, NodeModifsSet *modifs, bool mergeTextOnly = false);
+
+	/**
+	 * This function will navigate through the Nodes from startNode to endNode and
+	 * merge identical inline Nodes as well as text Nodes.
+	 * @param startNode The node from which the merge starts.
+	 * @param endNode The node from which the merge ends.
+	 * @param modifs The usual modifs, to log the changes.
+	 * <TEMPORARY> : We want to keep track of the cursor position. TODO : cursor class
+	 * @param cursorNode The cursor is inside cursorNode.
+	 * @param cursorOffset The offset of the cursor inside cursorNode.
+	 * </TEMPORARY>
+	 */
+	static void mergeInlineNode(Node *startNode, Node *endNode, Node **cursorNode,
+		int &cursorOffset, NodeModifsSet *modifs);
 
 
 	/** ----------------------- NODE MODIFICATIONS -------------------------------------*/
@@ -450,6 +597,42 @@ public:
 	static Node* getNodeFromSubLocation(QValueList<int> loc, int locOffset);
 
 	/**
+	 * A enumeration for kafkaCommon::compareNodePosition().
+	 */
+	enum position
+	{
+		//It means that it is a previous sibling (not the dom/dom_node.h definition, but rather
+		// the node.h definition)
+		isBefore = 0,
+		//It is the same Node.
+		isAtTheSamePosition,
+		//It means that it is a next sibling (in the node.h way).
+		isAfter,
+		//guess what?
+		positionError
+	};
+
+	/**
+	 * Compare the position of two Nodes.
+	 * e.g. (pos1)->next = (pos2); compareNodePosition(n1, n2) == kafkaCommon::before.
+	 * @param pos1 The location of the Node to compare.
+	 * @param pos2 The location of the Node to be compared to.
+	 * @return Return a kafkaCommon::position flag.
+	 */
+	static int compareNodePosition(QValueList<int> pos1, QValueList<int> pos2);
+
+	/**
+	 * It behave essentially like the above function except that it is based on Nodes.
+	 */
+	static int compareNodePosition(Node *n1, Node *n2);
+
+	/**
+	 * Compare n1 and n2's node type, node name, and node attributes.
+	 * @return Returns true if there are indentical.
+	 */
+	static bool compareNodes(Node *n1, Node *n2);
+
+	/**
 	 * Get the node's depth in the tree.
 	 * @param node The node we want the depth.
 	 * @return Returns the depth of node. It is basically the number of parents of node.
@@ -462,10 +645,12 @@ public:
 
 	/**
 	 * Insert a DOM::Node in the DOM::Node tree. It takes care to handle the exceptions.
+	 * WARNING : The postEnhancement is not done (cf htmlenhancer.h)
+	 * Prefer using KafkaDocument::insertDomNode()
 	 * @param node The node to insert.
 	 * @param parent The new parent of node. If null, insert node at the top level.
 	 * @param nextSibling The new next sibling of node. If null, append node at the end of the child list.
-	 * @param rootNode The root DOM::Node of the DOM::Node tree. Usefull when no parent is provided.
+	 * @param rootNode The root DOM::Node of the DOM::Node tree. Useful when no parent is provided.
 	 * @return Returns true if the operation was successfull.
 	 */
 	static bool insertDomNode(DOM::Node node, DOM::Node parent = DOM::Node(),
@@ -474,6 +659,8 @@ public:
 
 	/**
 	 * Removes a DOM::Node from the DOM::Node Tree. It takes care to handle the exceptions.
+	 * WARNING : The postUnenhancement is not done (cf htmlenhancer.h)
+	 * Prefer using KafkaDocument::removeDomNode()
 	 * @param node The Node to remove from the tree.
 	 * @retun Returns true if the operation was successfull..
 	 */
@@ -559,11 +746,17 @@ public:
 	static bool editDomNodeAttribute(DOM::Node domNode, Node* node,
 		const QString &attrName, const QString &attrValue, DOM::Document rootNode);
 
+	/**
+	 * Looks if domNode has a parent which is named name.
+	 * @return Returns the first parent which is named name or an empty DOM::Node if not found.
+	 */
+	static DOM::Node hasParent(DOM::Node domNode, const QString &name);
+
 	/** ----------------------- MISCELLANEOUS -------------------------------------*/
 
 	/**
 	 * TEMPORARY, HTML specific
-	 * @return Returns true if it is a inline Node. Official List, unlike getNodeDisplay().
+	 * @return Returns true if it is a inline Node. Official DTD List, unlike getNodeDisplay().
 	 */
 	 static bool isInline(const QString &nodename);
 

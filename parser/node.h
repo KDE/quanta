@@ -96,8 +96,12 @@ public:
  bool hasForChild(Node *node);
 #endif
  void setParent(Node *nodeParent) {parent = nodeParent;}
- //If Node is of type XmlTag, return the corresponding XmlTagEnd if available
+ //If Node is of type XmlTag or ScriptTag, return the corresponding XmlTagEnd if available
  Node *getClosingNode();
+ //If Node is of type XmlTagEnd, return the corresponding XmlTag or ScriptTag if available
+ Node *getOpeningNode();
+
+ /** The Node link skipping Empty Nodes. */
  //Returns the first next non-Empty Node
  Node *nextNE();
  //Returns the first prev non-Empty Node
@@ -106,6 +110,23 @@ public:
  Node *firstChildNE();
  //Returns the last non-Empty child
  Node *lastChildNE();
+
+/**
+ * The main problem manipulating the default links prev/next/parent/child is that we often want
+ * to manipulate only the "significant" Nodes e.g. XmlTag, Text, ScriptNode, like in a DOM::Node tree.
+ * These functions, prefixed with "S" which stands for "simplified" or "significant", will only return
+ * and manipulate XmlTag, Text and ScriptNode.
+ */
+ //Returns the first significant previous sibling.
+  Node *SPrev();
+ //Returns the first significant next sibling.
+  Node *SNext();
+ //Returns the first significant child.
+  Node *SFirstChild();
+ //Returns the last significant child.
+  Node *SLastChild();
+
+
 
  int size();
 

@@ -2,7 +2,7 @@
                              nodeenhancer.h
                              -------------------
 
-    copyright            : (C) 2003 - Nicolas Deschildre
+    copyright            : (C) 2003, 2004 - Nicolas Deschildre
     email                : nicolasdchd@ifrance.com
  ***************************************************************************/
 
@@ -49,6 +49,18 @@ public:
 	 * @param nextDNode the DOM::Node next to the root DOM::Node of node.
 	 */
 	virtual bool enhanceNode(Node *node, DOM::Node parentDNode, DOM::Node nextDNode) = 0;
+
+	/**
+	 * This function apply some modifications once the whole DOM::Node tree is built.
+	 * @param domNode The domNode we want to add some modifications.
+	 */
+	virtual void postEnhanceNode(DOM::Node domNode) = 0;
+
+	/**
+	 * This function un-apply the modifications made by postEnhanceNode()
+	 * @param domNode The DOM::Node we want to un-enhance!
+	 */
+	virtual void postUnenhanceNode(DOM::Node domNode) = 0;
 
 	/**
 	* Read the config.

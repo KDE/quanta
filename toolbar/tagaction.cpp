@@ -517,9 +517,10 @@ void TagAction::insertOutputInTheNodeTree(QString str1, QString str2, Node *node
 	QTag *nodeQTag, *qTag, *nodeParentQTag;
 	Node *kafkaNode, *startContainer, *endContainer, *nodeParent;
 	QPtrList<QTag> qTagList;
-	int offset;
+	int nodeOffset, domNodeOffset;
 	bool specialTagInsertion = false;
-	long startOffset, endOffset;
+	long startOffset, endOffset, longDomNodeOffset;
+	QValueList<int> loc;
 
 	if(!node && str1 == "" || node && str1 != "")
 		return;
@@ -532,11 +533,14 @@ void TagAction::insertOutputInTheNodeTree(QString str1, QString str2, Node *node
 			//We build the node from the str1
 			node = kafkaCommon::createNode("", "", Tag::XmlTag, m_view->write());
 			node->tag->parse(str1, quantaApp->view()->write());
+			node->tag->name = QuantaCommon::tagCase(node->tag->name);
+			node->tag->single = QuantaCommon::isSingleTag(m_view->write()->defaultDTD()->name,
+				node->tag->name);
 		}
-		kafkaPart->getCurrentNode(domNode, offset);
+		kafkaPart->getCurrentNode(domNode, domNodeOffset);
 		kafkaNode = wkafka->getNode(domNode);
 
-		if(!kafkaNode)
+		if(!kafkaNode || !quantaApp->view()->writeExists())
 			return;
 
 		nodeParent = kafkaNode;
@@ -549,8 +553,14 @@ void TagAction::insertOutputInTheNodeTree(QString str1, QString str2, Node *node
 		//e.g. TR/TD/LI
 		nodeQTag = QuantaCommon::tagFromDTD(quantaApp->view()->write()->defaultDTD(),
 			node->tag->name);
+
+		if(!nodeQTag)
+			return;
+
 		qTagList = nodeQTag->parents();
+#ifdef HEAVY_DEBUG
 		kdDebug(25001)<< "nodeQTag name : " << nodeQTag->name() << endl;
+#endif
 		for(qTag = qTagList.first(); qTag; qTag = qTagList.next())
 		{
 			if(qTag->isChild("#text", false))
@@ -560,6 +570,7 @@ void TagAction::insertOutputInTheNodeTree(QString str1, QString str2, Node *node
 		}
 
 		kafkaPart->selection(domStartContainer, startOffset, domEndContainer, endOffset);
+		nodeOffset = wkafka->translateKafkaIntoNodeCursorPosition(domNode, domNodeOffset);
 
 		if(specialTagInsertion)
 		{
@@ -571,36 +582,50 @@ void TagAction::insertOutputInTheNodeTree(QString str1, QString str2, Node *node
 					nodeParent->tag->name);
 				if(nodeParentQTag && nodeParentQTag->isChild(node))
 				{
-					kafkaCommon::DTDinsertNode(node, nodeParent, 0L, 0L, 0, 0, modifs);
+					kafkaNode = kafkaCommon::createMandatoryNodeSubtree(node,
+						quantaApp->view()->write());
+					nodeOffset = 0;
+					kafkaCommon::insertNodeSubtree(node, nodeParent, 0L, 0L, modifs);
 					break;
 				}
 				nodeParent = nodeParent->parent;
 			}
 		}
-		else if(kafkaPart->hasSelection())
+		else if(kafkaPart->hasSelection() && !nodeQTag->isSingle())
 		{
 			//If some text is selected in kafka, surround the selection with the new Node.
 			startContainer = wkafka->getNode(domStartContainer);
 			endContainer = wkafka->getNode(domEndContainer);
 			startOffset = wkafka->translateKafkaIntoNodeCursorPosition(domStartContainer, startOffset);
-			endOffset = wkafka->translateKafkaIntoNodeCursorPosition(domStartContainer, endOffset);
+			endOffset = wkafka->translateKafkaIntoNodeCursorPosition(domEndContainer, endOffset);
 			if(!startContainer || !endContainer)
 				return;
-			kafkaCommon::DTDinsertNode(node, startContainer, (int)startOffset,
-				endContainer, (int)endOffset, modifs);
+			kafkaCommon::DTDinsertRemoveNode(node, startContainer, (int)startOffset,
+				endContainer, (int)endOffset, quantaApp->view()->write(), &kafkaNode,
+					nodeOffset, modifs);
 		}
 		else
 		{
 			//Nothing is selected, simply inserting the Node if it is not an inline.
 			if(!kafkaCommon::isInline(node->tag->name) || nodeQTag->isSingle())
 			{
-				kafkaCommon::DTDinsertNode(node, nodeParent, 0L,
-					0L, offset, offset, modifs);
+				kafkaCommon::DTDinsertRemoveNode(node, kafkaNode, (int)nodeOffset, kafkaNode,
+					(int)nodeOffset, quantaApp->view()->write(), &kafkaNode, nodeOffset, modifs);
 			}
 		}
 
 		m_view->write()->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);
 		m_view->reloadKafkaView();
+
+		//Now update the kafka cursor position
+		wkafka->translateNodeIntoKafkaCursorPosition(kafkaNode, nodeOffset, domNode,
+			longDomNodeOffset);
+		if(!domNode.isNull() && domNode.nodeType() != DOM::Node::TEXT_NODE &&
+			!domNode.firstChild().isNull() && domNode.firstChild().nodeType() ==
+			DOM::Node::TEXT_NODE)
+			domNode = domNode.firstChild();
+		if(!domNode.isNull())
+			wkafka->getKafkaWidget()->setCurrentNode(domNode, (int)longDomNodeOffset);
 	}
 	else
 		m_view->write()->insertTag(str1, str2);

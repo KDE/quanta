@@ -227,6 +227,9 @@ bool QTag::isChild(Node *node, bool trueIfNoChildsDefined)
       nodeName = nodeName.mid(1);
     return isChild(nodeName, trueIfNoChildsDefined);
   }
+  else if(node->tag->type == Tag::ScriptTag)
+    //FIXME: It might depend of scripts...
+    return true;
   else
     return isChild(node->tag->name, trueIfNoChildsDefined);
 }
