@@ -102,8 +102,6 @@ uint PreviewOptions::toolviewTabs()
   uint state = 0;
   if (radioIconText->isChecked()) state = 3;
   if (radioText->isChecked()) state = 1;
-  if (state != m_toolviewTabs)
-    KMessageBox::information(this, i18n("Changes made to the toolview tab style take effect only on the next startup."), i18n("Warning"), "TabStyleChangeWarning");
   return state;
 }
 

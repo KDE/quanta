@@ -1217,7 +1217,9 @@ void QuantaApp::slotOptions()
         uiRebuildNeeded = true;
     qConfig.toolviewTabs = tmp;
     if (uiRebuildNeeded)
+    {
         initTabWidget();
+     }
     qConfig.showHiddenFiles = uiOptions->hiddenFiles();
 
     qConfig.showEmptyNodes = parserOptions->showEmptyNodes->isChecked();
