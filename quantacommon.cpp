@@ -838,5 +838,11 @@ void KQRecentFilesAction::slotClicked()
   KAction::slotActivated();
 }
 
+void KQRecentFilesAction::slotActivated()
+{
+  emit activated( currentItem() );
+  emit activated( currentText() );
+}
+
 
 #include "quantacommon.moc"

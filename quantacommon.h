@@ -299,6 +299,7 @@ protected slots:
   void menuAboutToShow();
   void menuItemActivated( int id );
   void slotClicked();
+  virtual void slotActivated();
 
 private:
   void init();
