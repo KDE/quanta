@@ -754,6 +754,9 @@
     <tabstop>inputSelected</tabstop>
     <tabstop>inputCurrent</tabstop>
 </tabstops>
+<includes>
+    <include location="global" impldecl="in implementation">kkeybutton.h</include>
+</includes>
 <slots>
     <slot>deleteAction()</slot>
     <slot>newAction()</slot>
