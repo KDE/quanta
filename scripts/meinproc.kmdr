@@ -11,7 +11,7 @@
             <x>0</x>
             <y>0</y>
             <width>471</width>
-            <height>201</height>
+            <height>169</height>
         </rect>
     </property>
     <property name="caption">
@@ -27,7 +27,15 @@
         <property name="spacing">
             <number>6</number>
         </property>
-        <widget class="GroupBox" row="0" column="0">
+        <widget class="CloseButton" row="1" column="2">
+            <property name="name">
+                <cstring>CloseButton1</cstring>
+            </property>
+            <property name="text">
+                <string>Close</string>
+            </property>
+        </widget>
+        <widget class="GroupBox" row="0" column="0" rowspan="1" colspan="3">
             <property name="name">
                 <cstring>StyleScript</cstring>
             </property>
@@ -68,7 +76,7 @@
                                 <cstring>CheckBox4</cstring>
                             </property>
                             <property name="text">
-                                <string>Current Working Folder</string>
+                                <string>Current Working Folder in Quanta</string>
                             </property>
                             <property name="autoRepeat">
                                 <bool>false</bool>
@@ -82,6 +90,9 @@
                                     <string></string>
                                     <string></string>
                                 </stringlist>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string></string>
                             </property>
                         </widget>
                         <spacer>
@@ -157,6 +168,9 @@
                                     <string>@widgetText</string>
                                 </stringlist>
                             </property>
+                            <property name="selectionType">
+                                <enum>Directory</enum>
+                            </property>
                         </widget>
                     </hbox>
                 </widget>
@@ -169,7 +183,7 @@
                     </property>
                     <property name="associations" stdset="0">
                         <stringlist>
-                            <string></string>
+                            <string>@null</string>
                             <string>@widgetText
 </string>
                         </stringlist>
@@ -177,56 +191,25 @@
                 </widget>
             </grid>
         </widget>
-        <widget class="QLayoutWidget" row="1" column="0">
+        <widget class="ExecButton" row="1" column="1">
             <property name="name">
-                <cstring>Layout7</cstring>
+                <cstring>ExecButton2</cstring>
             </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <property name="margin">
-                    <number>0</number>
-                </property>
-                <property name="spacing">
-                    <number>6</number>
-                </property>
-                <spacer>
-                    <property name="name">
-                        <cstring>Spacer8</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>30</width>
-                            <height>0</height>
-                        </size>
-                    </property>
-                </spacer>
-                <widget class="ExecButton">
-                    <property name="name">
-                        <cstring>ExecButton2</cstring>
-                    </property>
-                    <property name="focusPolicy">
-                        <enum>TabFocus</enum>
-                    </property>
-                    <property name="text">
-                        <string>Process</string>
-                    </property>
-                    <property name="on">
-                        <bool>false</bool>
-                    </property>
-                    <property name="default">
-                        <bool>true</bool>
-                    </property>
-                    <property name="associations" stdset="0">
-                        <stringlist>
-                            <string>if [ !@OtherDir ]
+            <property name="focusPolicy">
+                <enum>TabFocus</enum>
+            </property>
+            <property name="text">
+                <string>Process</string>
+            </property>
+            <property name="on">
+                <bool>false</bool>
+            </property>
+            <property name="default">
+                <bool>true</bool>
+            </property>
+            <property name="associations" stdset="0">
+                <stringlist>
+                    <string>if [ !@OtherDir ]
  then
   CUR=1
  else
@@ -243,23 +226,30 @@ fi
 cd $DIR
 rm -f *.html
 meinproc index.docbook
-if [ !@PrevKonq ]
+if [ @PrevKonq ]
 then
  konqueror index.html
 fi</string>
-                        </stringlist>
-                    </property>
-                </widget>
-                <widget class="CloseButton">
-                    <property name="name">
-                        <cstring>CloseButton1</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Close</string>
-                    </property>
-                </widget>
-            </hbox>
+                </stringlist>
+            </property>
         </widget>
+        <spacer row="1" column="0">
+            <property name="name">
+                <cstring>Spacer8</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>260</width>
+                    <height>0</height>
+                </size>
+            </property>
+        </spacer>
     </grid>
 </widget>
 <connections>
