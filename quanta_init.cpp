@@ -649,8 +649,7 @@ void QuantaApp::readOptions()
   showToolbarAction  ->setChecked(config->readBoolEntry("Show Toolbar",   true));
   showStatusbarAction->setChecked(config->readBoolEntry("Show Statusbar", true));
   qConfig.enableDTDToolbar = config->readBoolEntry("Show DTD Toolbar",true);
-
-  slotToggleDTDToolbar(qConfig.enableDTDToolbar);
+  showDTDToolbar->setChecked(qConfig.enableDTDToolbar);
 
   config->setGroup("Kate View");
   qConfig.lineNumbers = config->readBoolEntry("LineNumbers", false);

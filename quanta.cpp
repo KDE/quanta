@@ -2298,6 +2298,7 @@ void QuantaApp::slotToggleDTDToolbar(bool show)
   {
     view->toolbarTab->hide();
   }
+  qConfig.enableDTDToolbar = show;
 }
 
 
@@ -2423,7 +2424,8 @@ bool QuantaApp::allToolbarsHidden()
     if (p_toolbar->visible)
     {
        showDTDToolbar->setEnabled(true);
-       result = false;;
+       result = false;
+       break;
     }
   }
 
