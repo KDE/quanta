@@ -437,15 +437,17 @@ QString QuantaCommon::i18n2normal(const QString& a_str)
                              "square",  "decimal", "lower-roman","upper-roman","lower-alpha",
                              "upper-alpha","inside","outside",  "auto",        "both" };
   QString str = a_str;
-  for (int i = 0; i < keywordNum; i++)
+  if (!a_str.isEmpty())
   {
-    if (a_str == i18n(keywords[i]))
+    for (int i = 0; i < keywordNum; i++)
     {
-      str = keywords[i];
-      break;
+      if (a_str == i18n(keywords[i]))
+      {
+        str = keywords[i];
+        break;
+      }
     }
   }
-
   return str;
 }
 

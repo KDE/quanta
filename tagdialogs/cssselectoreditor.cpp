@@ -280,13 +280,13 @@ QString CSSSelectorEditor::code()
   } else if ( radioBorderSides->isChecked() ) {
     // 4 rules: top, right, bottom, left -border
     if ( b_t != "medium none" && b_t != "" )
-      properties += "top-border: " + b_t;
+      properties += "border-top: " + b_t;
     if ( b_r != "medium none" && b_r != "" )
-      properties += "right-border: " + b_r;
+      properties += "border-right: " + b_r;
     if ( b_b != "medium none" && b_b != "" )
-      properties += "bottom-border: " + b_b;
+      properties += "border-bottom: " + b_b;
     if ( b_l != "medium none" && b_l != "" )
-      properties += "left-border: " + b_l;
+      properties += "border-left: " + b_l;
   } else if ( radioBorderOnly->isChecked() ) {
     // 1 rule: border
     if ( b_t != "medium none" && b_t != "" )

@@ -2530,12 +2530,13 @@ void QuantaApp::slotEmailDTD()
 
 }
 
-/** No descriptions */
+/** Returns the interface number for the currently active editor. */
 int QuantaApp::currentEditorIfNum() const
 {
   return view->write()->editIf->editInterfaceNumber();
 }
 
+/** Return the URL of the currently active document */
 QString QuantaApp::currentURL() const
 {
   return view->write()->url().url();
