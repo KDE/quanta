@@ -1,0 +1,56 @@
+<!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
+<kpartgui name="kxsldbg_part" version="1">
+<MenuBar>
+  <Menu name="debug"><text>Debug</text>
+	<Action name="configureCmd"/>
+	<Action name="inspectCmd"/>
+	<Action name="runCmd"/>
+	<Action name="continueCmd"/>
+	<Action name="stepCmd"/>
+	<Action name="nextCmd"/>
+	<Separator/>
+	<Action name="stepupCmd"/>
+	<Action name="stepdownCmd"/>
+	<Separator/>
+	<Action name="breakCmd"/>
+	<Action name="deleteCmd"/>
+	<Action name="enableCmd"/>
+	<Separator/>
+	<Action name="sourceCmd"/>
+	<Action name="dataCmd"/>	
+	<Action name="outputCmd"/>
+	<Action name="refreshCmd"/>
+	<Separator/>
+	<Action name="walkCmd"/>
+	<Action name="walkStopCmd"/>
+	<Action name="traceCmd"/>
+	<Action name="traceStopCmd"/>
+	<Separator/>
+	<Action name="evaluateCmd"/>
+	<Action name="gotoXPathCmd"/>
+  </Menu>
+
+</MenuBar>
+
+<ToolBar name="debugToolBar">
+	<Action name="configureCmd"/>
+	<Action name="inspectCmd"/>
+	<Action name="runCmd"/>
+	<Action name="continueCmd"/>
+	<Action name="stepCmd"/>
+	<Action name="nextCmd"/>
+	<Separator/>
+	<Action name="stepupCmd"/>
+	<Action name="stepdownCmd"/>
+	<Separator/>
+	<Action name="breakCmd"/>
+	<Action name="deleteCmd"/>
+	<Action name="enableCmd"/>
+	<Separator/>
+	<Action name="sourceCmd"/>
+	<Action name="dataCmd"/>
+	<Action name="outputCmd"/>
+	<Action name="refreshCmd"/>
+        <Separator/>	
+   </ToolBar>
+</kpartgui>

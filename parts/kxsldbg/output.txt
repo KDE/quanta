@@ -1,0 +1,50 @@
+
+         xsldbg version 0.5.9
+         ====================
+   
+    xsldbg help
+    ___________
+ 
+xsldbg is similar to gdb. It has three major modes of execution of stylesheets. 
+     Run the whole stylesheet
+     Step to next xsl instruction
+     Continue until next break point is found, or stylesheet has restarted
+ 
+On systems with readline library available you can use the back/forward keys to navigate the history of entered commands. On all systems the last entered command can be repeated by just pressing the <ENTER> key. 
+ 
+     TEMPLATENAME : a valid template name
+     FILENAME : a valid URL for a stylesheet
+     LINENO : a valid line number in associated FILENAME
+     NUMBER_OF_FRAMES : a valid line number frames to change position by
+     BREAKPOINT_ID : a valid break point number
+     SPEED: speed to walk through code at, between 0 to 9
+        (Comment): a comment about command meaning or usage
+     { opt1 | opt2 | opt2 .. etc} : Choose one of the opt's
+     XPATH : a xpath selection of node(s)
+     PARAM_ID : a valid parameter number as indicated by showparam command
+     PATH : a path to change working directory to
+     TEXT : free form text   (no restrictions)
+     COMMAND : a valid command for the xsdbg
+     QNAME : a valid variable/parameter name
+     SOURCE : the stylesheet being/to be executed
+     DATA : the xml data(document) being/to be processed by the stylesheet
+     DEVICE_PATH : is a valid terminal on the operating system
+     TTY_LEVEL : is a valid level of input/output to use
+ 
+ 
+     Help related :help
+     Running related : {bye|exit|quit},step,stepup,stepdown,continue,run,trace
+     Libxslt parameter related :addparam,delparam,showparam
+     Template related :templates,where,frame
+     Break point related :break,showbreak,delete,enable
+     Expression viewing(xpath) :cat
+     Node viewing :ls,dir,du,cat,pwd
+     Variable viewing :globals,locals,cat
+     Node selection :source,data,cd
+     Searching :search
+     Operating system related :chdir,shell,tty
+     File related :validate,load,save,write,free
+ 
+nb: At the moment the file related commands as disabled because they are not completed.
+
+  Help document version 0.5
