@@ -33,10 +33,13 @@
 /* FORWARD DECLARATIONS */
 class QWidget;
 class QListView;
+class KDialogBase;
+class PluginEditor;
 
-class QuantaPluginEditor : public PluginEditor
+class QuantaPluginEditor : public KDialogBase
 {
   Q_OBJECT
+
 public:
   QuantaPluginEditor(QWidget *, const char *);
   ~QuantaPluginEditor();
@@ -45,8 +48,10 @@ public:
   QStringList searchPathList();
   /** No descriptions */
   void setSearchPaths(const QStringList& paths);
+
 signals:
   void pluginsChanged();
+
 public slots:
   void setPlugins(QDict<QuantaPlugin>);
   void addSearchPath();
@@ -54,10 +59,10 @@ public slots:
   void removePlugin();
   void configurePlugin();
   void refreshPlugins();
-protected slots:
-  void accept();
+
 protected:
   QDict<QuantaPlugin> m_plugins;
+  PluginEditor *m_pluginEditorWidget;
 };
 
 class PluginEditorItem : public QListViewItem

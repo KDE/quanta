@@ -21,6 +21,7 @@
 #include <kglobal.h>
 #include <klocale.h>
 #include <kicondialog.h>
+#include <kdialogbase.h>
 
 /* QT INCLUDES */
 #include <qwidget.h>
@@ -37,24 +38,28 @@
 #include "quantaplugin.h"
 #include "quantapluginconfig.h"
 #include "quantaplugininterface.h"
+#include "pluginconfig.h"
+#include "plugineditor.h"
 #include "../quanta.h"
 #include "../resource.h"
 
 QuantaPluginEditor::QuantaPluginEditor(QWidget *a_parent, const char *a_name)
-  : PluginEditor(a_parent, a_name)
+  : KDialogBase(a_parent, a_name, true, i18n("Edit Plugins"), KDialogBase::Ok | KDialogBase::Cancel)
 {
  // m_plugins.setAutoDelete(TRUE);
 
-  pluginList->setSelectionMode(QListView::Single);
-  pluginList->setAllColumnsShowFocus(TRUE);
-  pluginList->setColumnAlignment(2, Qt::AlignHCenter);
+  m_pluginEditorWidget = new PluginEditor(this);
+  setMainWidget(m_pluginEditorWidget);
+  m_pluginEditorWidget->pluginList->setSelectionMode(QListView::Single);
+  m_pluginEditorWidget->pluginList->setAllColumnsShowFocus(TRUE);
+  m_pluginEditorWidget->pluginList->setColumnAlignment(2, Qt::AlignHCenter);
 
   connect(this, SIGNAL(pluginsChanged()), SLOT(refreshPlugins()));
-  connect(refreshButton, SIGNAL(clicked()), SLOT(refreshPlugins()));
-  connect(addButton, SIGNAL(clicked()), SLOT(addPlugin()));
-  connect(removeButton, SIGNAL(clicked()), SLOT(removePlugin()));
-  connect(addSearchPathButton, SIGNAL(clicked()), SLOT(addSearchPath()));
-  connect(configureButton, SIGNAL(clicked()), SLOT(configurePlugin()));
+  connect(m_pluginEditorWidget->refreshButton, SIGNAL(clicked()), SLOT(refreshPlugins()));
+  connect(m_pluginEditorWidget->addButton, SIGNAL(clicked()), SLOT(addPlugin()));
+  connect(m_pluginEditorWidget->removeButton, SIGNAL(clicked()), SLOT(removePlugin()));
+  connect(m_pluginEditorWidget->addSearchPathButton, SIGNAL(clicked()), SLOT(addSearchPath()));
+  connect(m_pluginEditorWidget->configureButton, SIGNAL(clicked()), SLOT(configurePlugin()));
 }
 
 QuantaPluginEditor::~QuantaPluginEditor()
@@ -66,16 +71,12 @@ QDict<QuantaPlugin> QuantaPluginEditor::plugins()
   return m_plugins;
 }
 
-void QuantaPluginEditor::accept()
-{
-  QDialog::accept();
-}
-
 void QuantaPluginEditor::addPlugin()
 {
   // new plugin config menu
   // create new plugin and add to list
   QuantaPluginConfig *configDlg = new QuantaPluginConfig(this, "pluginConfig");
+  PluginConfig *configWidget = static_cast<PluginConfig*>(configDlg->mainWidget());
 
   if(configDlg->exec())
   {
@@ -83,12 +84,12 @@ void QuantaPluginEditor::addPlugin()
     QuantaPlugin *newPlugin = 0;
     newPlugin = new QuantaPlugin();
 
-    newPlugin->setPluginName(configDlg->pluginName->text());
-    newPlugin->setFileName(configDlg->pluginFileName->text());
-    newPlugin->setLocation(configDlg->location->text());
-    newPlugin->setOutputWindow(configDlg->outputWindow->currentText());
+    newPlugin->setPluginName(configWidget->pluginName->text());
+    newPlugin->setFileName(configWidget->pluginFileName->text());
+    newPlugin->setLocation(configWidget->location->text());
+    newPlugin->setOutputWindow(configWidget->outputWindow->currentText());
     newPlugin->setStandard(false);
-    newPlugin->setIcon(configDlg->iconButton->icon());
+    newPlugin->setIcon(configWidget->iconButton->icon());
     QString pluginName = newPlugin->pluginName();
     m_plugins.insert(pluginName, newPlugin);
     emit pluginsChanged();
@@ -102,7 +103,7 @@ void QuantaPluginEditor::addSearchPath()
   QString appendDir = KFileDialog::getExistingDirectory(QString::null, 0, i18n("Select Directory"));
   if(!appendDir.isNull())
   {
-   searchPaths->setText(searchPaths->text()+appendDir+":");
+    m_pluginEditorWidget->searchPaths->setText(m_pluginEditorWidget->searchPaths->text()+appendDir+":");
   }
 }
 
@@ -110,7 +111,7 @@ void QuantaPluginEditor::configurePlugin()
 {
   // create a new config dialog. populate with plugin data
   QString key;
-  QListViewItem *item = pluginList->currentItem();
+  QListViewItem *item = m_pluginEditorWidget->pluginList->currentItem();
   if(item)
     key = item->text(0);
 
@@ -118,24 +119,25 @@ void QuantaPluginEditor::configurePlugin()
   {
     QuantaPluginConfig *configDlg = new QuantaPluginConfig(this, "pluginConfig");
     QuantaPlugin *curPlugin = m_plugins.find(key);
+    PluginConfig *configWidget = static_cast<PluginConfig*>(configDlg->mainWidget());
 
-    configDlg->outputWindow->setCurrentText(curPlugin->outputWindow());
-    configDlg->pluginName->setText(curPlugin->pluginName());
-    configDlg->pluginFileName->setText(curPlugin->fileName());
-    configDlg->location->setText(curPlugin->location());
-    configDlg->iconButton->setIcon(curPlugin->icon());
-    configDlg->inputBox->setCurrentItem(curPlugin->input());
-    configDlg->readOnlyBox->setChecked(curPlugin->readOnlyPart());
+    configWidget->outputWindow->setCurrentText(curPlugin->outputWindow());
+    configWidget->pluginName->setText(curPlugin->pluginName());
+    configWidget->pluginFileName->setText(curPlugin->fileName());
+    configWidget->location->setText(curPlugin->location());
+    configWidget->iconButton->setIcon(curPlugin->icon());
+    configWidget->inputBox->setCurrentItem(curPlugin->input());
+    configWidget->readOnlyBox->setChecked(curPlugin->readOnlyPart());
 
     if(configDlg->exec())
     {
-      curPlugin->setPluginName(configDlg->pluginName->text());
-      curPlugin->setFileName(configDlg->pluginFileName->text());
-      curPlugin->setLocation(configDlg->location->text());
-      curPlugin->setOutputWindow(configDlg->outputWindow->currentText());
-      curPlugin->setIcon(configDlg->iconButton->icon());
-      curPlugin->setInput(configDlg->inputBox->currentItem());
-      curPlugin->setReadOnlyPart(configDlg->readOnlyBox->isChecked());
+      curPlugin->setPluginName(configWidget->pluginName->text());
+      curPlugin->setFileName(configWidget->pluginFileName->text());
+      curPlugin->setLocation(configWidget->location->text());
+      curPlugin->setOutputWindow(configWidget->outputWindow->currentText());
+      curPlugin->setIcon(configWidget->iconButton->icon());
+      curPlugin->setInput(configWidget->inputBox->currentItem());
+      curPlugin->setReadOnlyPart(configWidget->readOnlyBox->isChecked());
     }
 
     delete configDlg;
@@ -147,12 +149,12 @@ void QuantaPluginEditor::configurePlugin()
 void QuantaPluginEditor::refreshPlugins()
 {
   // call validate on all plugins to refresh their status
-  pluginList->clear();
+  m_pluginEditorWidget->pluginList->clear();
 
   QDictIterator<QuantaPlugin> it(m_plugins);
   for(;it.current();++it)
   {
-    QListViewItem *newItem = new PluginEditorItem(pluginList);
+    QListViewItem *newItem = new PluginEditorItem(m_pluginEditorWidget->pluginList);
     QuantaPlugin *curPlugin = it.current();
 
     newItem->setText(0, curPlugin->pluginName());
@@ -169,19 +171,19 @@ void QuantaPluginEditor::refreshPlugins()
     newItem->setText(3, curPlugin->fileName());
     newItem->setText(4, curPlugin->outputWindow());
 
-    pluginList->insertItem(newItem);
+    m_pluginEditorWidget->pluginList->insertItem(newItem);
   }
 }
 
 void QuantaPluginEditor::removePlugin()
 {
-  QListViewItem *currentItem = pluginList->currentItem();
-  if(currentItem)
+  QListViewItem *currentItem = m_pluginEditorWidget->pluginList->currentItem();
+  if (currentItem)
   {
     QuantaPlugin *plugin = m_plugins.find(currentItem->text(0));
     if(plugin)
     {
-       m_plugins.remove(plugin->pluginName());
+      m_plugins.remove(plugin->pluginName());
       delete plugin;
       emit pluginsChanged();
     }
@@ -218,12 +220,12 @@ void QuantaPluginEditor::setSearchPaths(const QStringList& paths)
   {
     str += paths[i] +":";
   }
-  searchPaths->setText(str);
+  m_pluginEditorWidget->searchPaths->setText(str);
 }
 /** No descriptions */
 QStringList QuantaPluginEditor::searchPathList()
 {
-  QString str = searchPaths->text();
+  QString str = m_pluginEditorWidget->searchPaths->text();
   QStringList paths = QStringList::split(":",str);
 
   return paths;

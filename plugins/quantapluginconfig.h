@@ -18,7 +18,8 @@
 #ifndef QUANTAPLUGINCONFIG_H
 #define QUANTAPLUGINCONFIG_H
 
-#include "pluginconfig.h"
+class PluginConfig;
+class KDialogBase;
 
 /**Dialog to configure a plugin's options
   *@author Marc Britton
@@ -26,7 +27,7 @@
 
 class QString;
 
-class QuantaPluginConfig : public PluginConfig
+class QuantaPluginConfig : public KDialogBase
 {
   Q_OBJECT
 public:
@@ -39,6 +40,9 @@ public slots:
   void selectLocation();
   /** Updates other widgets based on the name */
   void nameChanged(const QString &);
+
+protected:
+  PluginConfig *m_pluginConfigWidget;
 };
 
 #endif

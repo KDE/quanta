@@ -16,6 +16,7 @@
  ***************************************************************************/
 
 /* KDE INCLUDES */
+#include <kdialogbase.h>
 #include <kfiledialog.h>
 #include <kmessagebox.h>
 #include <klocale.h>
@@ -34,19 +35,23 @@
 #include "quantapluginconfig.h"
 #include "quantaplugin.h"
 #include "quantaplugininterface.h"
+#include "pluginconfig.h"
 
 QuantaPluginConfig::QuantaPluginConfig(QWidget *a_parent, const char *a_name)
-  : PluginConfig(a_parent, a_name)
+  : KDialogBase(a_parent, a_name, true, i18n("Configure Plugin"), KDialogBase::Ok | KDialogBase::Cancel)
 {
-  connect(pluginName, SIGNAL(textChanged(const QString &)), this, SLOT(nameChanged(const QString &)));
-  connect(locationButton, SIGNAL(clicked()), this, SLOT(selectLocation()));
+  m_pluginConfigWidget = new PluginConfig(this);
 
   QStringList windows;
   i18n("Message Area Tab");
   windows << i18n("Editor Tab") << i18n("Editor Frame") << i18n("Message Frame");
-  outputWindow->insertStringList(windows);
-  iconButton->setStrictIconSize(false);
-//  iconButton->
+  m_pluginConfigWidget->outputWindow->insertStringList(windows);
+  m_pluginConfigWidget->iconButton->setStrictIconSize(false);
+
+  connect(m_pluginConfigWidget->pluginName, SIGNAL(textChanged(const QString &)), this, SLOT(nameChanged(const QString &)));
+  connect(m_pluginConfigWidget->locationButton, SIGNAL(clicked()), this, SLOT(selectLocation()));
+
+  setMainWidget(m_pluginConfigWidget);
 }
 
 QuantaPluginConfig::~QuantaPluginConfig()
@@ -55,19 +60,19 @@ QuantaPluginConfig::~QuantaPluginConfig()
 
 void QuantaPluginConfig::accept()
 {
-  if(validateCheckBox->isChecked())
+  if(m_pluginConfigWidget->validateCheckBox->isChecked())
   {
-    bool isValid = QuantaPlugin::validatePluginInfo(pluginName->text(), location->text(), pluginFileName->text(), outputWindow->currentText());
+    bool isValid = QuantaPlugin::validatePluginInfo(m_pluginConfigWidget->pluginName->text(), m_pluginConfigWidget->location->text(), m_pluginConfigWidget->pluginFileName->text(), m_pluginConfigWidget->outputWindow->currentText());
 
-      if(!isValid)
-      {
-        int answer = KMessageBox::questionYesNo(this, i18n("The plugin information you entered appears to be invalid. Are you sure you want to apply these settings?"), i18n("Invalid Plugin"));
+    if(!isValid)
+    {
+      int answer = KMessageBox::questionYesNo(this, i18n("The plugin information you entered appears to be invalid. Are you sure you want to apply these settings?"), i18n("Invalid Plugin"));
 
-        if(answer == KMessageBox::No)
-          return;
-      }
+      if(answer == KMessageBox::No)
+        return;
+    }
   }
-  QDialog::accept();
+  KDialogBase::accept();
 }
 
 /** Gets the plugin location */
@@ -76,7 +81,7 @@ void QuantaPluginConfig::selectLocation()
   QString pluginLocation = KFileDialog::getExistingDirectory(QString::null, this, i18n("Select Plugin Directory"));
   if(!pluginLocation.isNull())
   {
-    location->setText(pluginLocation);
+    m_pluginConfigWidget->location->setText(pluginLocation);
   }
 }
 
@@ -84,7 +89,7 @@ void QuantaPluginConfig::nameChanged(const QString &a_text)
 {
   QString text = a_text;
   text = "lib" + text + ".la";
-  pluginFileName->setText(text.lower());
+  m_pluginConfigWidget->pluginFileName->setText(text.lower());
 }
 
 #include "quantapluginconfig.moc"

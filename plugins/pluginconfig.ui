@@ -11,7 +11,7 @@
 
 </comment>
 <author>(C) 2002 by Marc Britton &lt;consume@optushome.com.au&gt;,  (C) 2003 by Andras Mantia &lt;amantia@kde.org&gt;</author>
-<widget class="QDialog">
+<widget class="QWidget">
     <property name="name">
         <cstring>PluginConfig</cstring>
     </property>
@@ -19,9 +19,15 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>561</width>
-            <height>293</height>
+            <width>560</width>
+            <height>281</height>
         </rect>
+    </property>
+    <property name="minimumSize">
+        <size>
+            <width>560</width>
+            <height>280</height>
+        </size>
     </property>
     <property name="caption">
         <string>Configure Plugin</string>
@@ -58,22 +64,6 @@
                 </size>
             </property>
         </spacer>
-        <widget class="QPushButton" row="1" column="2">
-            <property name="name">
-                <cstring>PushButton9</cstring>
-            </property>
-            <property name="text">
-                <string>&amp;OK</string>
-            </property>
-        </widget>
-        <widget class="QPushButton" row="1" column="3">
-            <property name="name">
-                <cstring>PushButton10</cstring>
-            </property>
-            <property name="text">
-                <string>&amp;Cancel</string>
-            </property>
-        </widget>
         <widget class="QGroupBox" row="0" column="0" rowspan="1" colspan="4">
             <property name="name">
                 <cstring>GroupBox2</cstring>
@@ -255,29 +245,16 @@
         </widget>
     </grid>
 </widget>
-<connections>
-    <connection>
-        <sender>PushButton10</sender>
-        <signal>clicked()</signal>
-        <receiver>PluginConfig</receiver>
-        <slot>reject()</slot>
-    </connection>
-    <connection>
-        <sender>PushButton9</sender>
-        <signal>clicked()</signal>
-        <receiver>PluginConfig</receiver>
-        <slot>accept()</slot>
-    </connection>
-</connections>
 <tabstops>
     <tabstop>pluginName</tabstop>
     <tabstop>iconButton</tabstop>
+    <tabstop>outputWindow</tabstop>
     <tabstop>location</tabstop>
     <tabstop>locationButton</tabstop>
-    <tabstop>outputWindow</tabstop>
+    <tabstop>pluginFileName</tabstop>
+    <tabstop>inputBox</tabstop>
+    <tabstop>readOnlyBox</tabstop>
     <tabstop>validateCheckBox</tabstop>
-    <tabstop>PushButton9</tabstop>
-    <tabstop>PushButton10</tabstop>
 </tabstops>
 <includes>
     <include location="global" impldecl="in implementation">kicondialog.h</include>
