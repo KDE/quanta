@@ -77,6 +77,7 @@
 
 #if (KDE_VERSION > 308)
 #include <ktexteditor/dynwordwrapinterface.h>
+#include <ktexteditor/encodinginterface.h>
 #endif
 
 
@@ -226,23 +227,23 @@ bool QuantaApp::slotFileSaveAs()
     KURL oldURL = w->url();
     w->checkDirtyStatus();
     fileWatcher->stopScan();
-    if (w->kate_view->saveAs() == Kate::View::SAVE_OK)
+    #if KDE_VERSION >= 308
+      QString myEncoding =  dynamic_cast<KTextEditor::EncodingInterface*>(w->doc())->encoding();
+    #else
+      QString myEncoding = w->kate_doc->encoding();
+    #endif
+
+    KateFileDialog dialog(projectBaseURL().path(), myEncoding, this, i18n ("Save File"), KateFileDialog::saveDialog);
+    KateFileDialogData data = dialog.exec();
+    if (m_doc->saveDocument(data.url))
     {
-      w->createTempFile();
-
-      KURL url = w->doc()->url();
-
       if ( ( m_project->hasProject() ) &&
-          ( KMessageBox::Yes == KMessageBox::questionYesNo(0,i18n("Add file\n %1 \n to project ?").arg(url.url())) )
+          ( KMessageBox::Yes == KMessageBox::questionYesNo(0,i18n("Add file\n %1 \n to project ?").arg(data.url.prettyURL())) )
         )
       {
-        m_project->insertFile(url,true);
+        m_project->insertFile(data.url, true);
       }
 
-      if ( oldURL != url )
-      {
-        m_doc->changeFileTabName();
-      }
       slotUpdateStatus(w);
       result = true;
     }
