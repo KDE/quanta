@@ -2023,7 +2023,9 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
      file = (KArchiveFile *) tar.directory()->entry(base+".actions");
      if (file)
      {
-      actionDom.setContent(file->device());
+       QIODevice *device = file->device();
+       actionDom.setContent(device);
+       delete device;
      }
 
      tar.close();
@@ -2031,6 +2033,7 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
    if ( (toolbarDom->toString().isEmpty()) ) //|| (actionContent.isEmpty()))
    {
      KMessageBox::error(this, i18n("Cannot load the toolbars from the archive.\nCheck that the filenames inside the archives begin with the archive name."));
+     delete toolbarDom;
      return;
    }
 
@@ -2174,6 +2177,7 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
    p_toolbar->visible = true;
    p_toolbar->user = true; //TODO
    toolbarList.insert(i18nName.lower(), p_toolbar);
+   delete toolbarDom;
 
    slotToggleDTDToolbar(!allToolbarsHidden());
  }

@@ -205,6 +205,7 @@ Document::~Document()
 //  kdDebug(24000) << "Document::~ Document: " << this << endl;
  m_doc->closeURL(false); //TODO: Workaround for a Kate bug. Remove when KDE < 3.2.0 support is dropped.
  delete m_view;
+ delete m_doc;
 }
 
 void Document::setUntitledUrl(const QString &url)
@@ -644,6 +645,7 @@ QString Document::getTagNameAt(int line, int col )
 void Document::showCodeCompletions( QValueList<KTextEditor::CompletionEntry> *completions ) {
   codeCompletionIf->showCompletionBox( *completions, false );
   argHintVisible = false;
+  delete completions;
 }
 
 /** Once the completed text has been inserted into the document we
