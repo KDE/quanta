@@ -122,8 +122,11 @@
     </Menu>
     
     <Menu name="qview"><text>&amp;View</text>
-      <Action name="show_tree"/>
-      <Action name="show_messages"/>
+      <Action name="show_ftab_tree"/>
+      <Action name="show_ptab_tree"/>
+      <Action name="show_stab_tree"/>
+      <Action name="show_dtab_tree"/>
+      <Separator/>
       <Action name="show_preview"/>
       <Separator/>
       <Action name="doc_back"/>
@@ -155,6 +158,8 @@
     <Menu name="settings"><text>&amp;Settings</text>
       <Action name="view_toolbar"/>
       <Action name="view_statusbar"/>
+      <Action name="show_tree"/>
+      <Action name="show_messages"/>
       <Separator/>
       <Action name="editor_options"/>
       <Action name="general_options"/>
@@ -171,13 +176,14 @@
   
   <ToolBar name="mainToolBar" noMerge="1" fullWidth="false">
   <text>Main Toolbar</text>
-    <DefineGroup name="file_operations" />
-    <Action name="file_new"     group="file_operations" />
-    <Action name="open_project" group="file_operations" />
-    <Action name="file_open"    group="file_operations" />
+    <Action name="file_new"     />
+    <Action name="open_project" />
+    <Action name="file_open"    />
     <Separator/>
-    <Action name="file_save"  group="file_operations" />
-    <Action name="save_all"     group="file_operations" />
+    <Action name="file_save"    />
+    <Action name="save_all"     />
+    <Separator/>
+    <Action name="file_close"   />
     <Separator/>
   </ToolBar>
   <ToolBar name="mainEditToolBar" noMerge="1" fullWidth="false">
@@ -189,9 +195,10 @@
     <Action name="edit_undo" />
     <Action name="edit_redo" />
     <Separator/>
-    <Action name="text_spelling"/>
     <Action name="edit_find" />
     <Action name="edit_find_next"/>
+    <Separator/>
+    <Action name="text_spelling"/>
     <Separator/>
   </ToolBar>
   <ToolBar name="mainNaviToolBar" noMerge="1">

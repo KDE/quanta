@@ -50,7 +50,6 @@
 
 #include "widgets/wtoolbar.h"
 #include "widgets/whtmlpart.h"
-#include "widgets/wsplitter.h"
 #include "messages/messageoutput.h"
 
 #include "treeviews/fileslistview.h"
@@ -90,7 +89,7 @@ QDict <QStrList> *tagsDict;
 #include <kaction.h>
 #include <kstdaction.h>
 
-QuantaApp::QuantaApp()
+QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
 {
   grepDialog	= 0;
 
@@ -108,6 +107,12 @@ QuantaApp::QuantaApp()
   createGUI( QString::null, false );
   
   initContextMenu();
+  
+  QPopupMenu* pm_set  = (QPopupMenu*)guiFactory()->container("settings", this);
+  connect(pm_set, SIGNAL(aboutToShow()), this, SLOT(settingsMenuAboutToShow())); 
+  
+  QPopupMenu* pm_view = (QPopupMenu*)guiFactory()->container("qview", this);
+  connect(pm_view,SIGNAL(aboutToShow()), this, SLOT(viewMenuAboutToShow())); 
   
   doc->newDocument( KURL() );
   
@@ -235,23 +240,20 @@ void QuantaApp::initView()
   // create the main widget here that is managed by KTMainWindow's view-region and
   // connect the widget to your document to display document contents.
 
-	
-  topWidgetStack = new QWidgetStack( this );
-
-  hSplit = new WSplitter( topWidgetStack );
-  hSplit->setOrientation( Vertical);
-  vSplit = new WSplitter( hSplit);
-  vSplit->setOrientation( Horizontal);
-
-  leftPanel = new QTabWidget( vSplit);
-  leftPanel ->setFocusPolicy(QWidget::NoFocus);
-
-  fTab = new QWidgetStack( leftPanel );
+  maindock = createDockWidget( "Editor", UserIcon("textarea"  ), 0L, i18n("Editor"));
+  bottdock = createDockWidget( "Output", UserIcon("output_win"), 0L, i18n("Output"));
+  
+  ftabdock = createDockWidget( "Files",  UserIcon("ftab"),     0L, " ");
+  ptabdock = createDockWidget( "Project",UserIcon("ptab"),     0L, " ");
+  stabdock = createDockWidget( "Struct", BarIcon ("view_sidetree"),0L, " ");
+  dtabdock = createDockWidget( "Docs",   BarIcon ("contents2"),    0L, " ");
 
   QStrList topList;
   config->setGroup("General Options");
   config->readListEntry("Top folders", topList);
 
+  fTab = new QWidgetStack( ftabdock );
+  
   fTTab = new FilesTreeView( QDir::homeDirPath()+"/" , topList, fTab );
   fLTab = new FilesListView( QDir::homeDirPath()+"/" , 0L, fTab );
 
@@ -263,63 +265,40 @@ void QuantaApp::initView()
   fTab -> addWidget( fLTab, 1 );
   fTab -> raiseWidget( 0 );
 
-  pTab	= new ProjectTreeView( leftPanel);
-  dTab	= new DocTreeView( leftPanel);
+  pTab	= new ProjectTreeView( ptabdock );
+  dTab	= new DocTreeView    ( dtabdock );
 
   pTab -> setFocusPolicy(QWidget::NoFocus);
   dTab -> setFocusPolicy(QWidget::NoFocus);
 
-
-  sTab = new StructTreeView( parser, config, leftPanel ,"struct");
+  sTab = new StructTreeView( parser, config, stabdock ,"struct");
 	sTab ->setFocusPolicy(QWidget::NoFocus);
 
-  leftPanel->addTab( fTab,	"Files"  );
-  leftPanel->addTab( pTab,	"Project");
-  leftPanel->addTab( sTab,	"Struct" );
-  leftPanel->addTab( dTab,	"Docs"   );
-
-  rightWidgetStack = new QWidgetStack( vSplit );
+  rightWidgetStack = new QWidgetStack( maindock );
 
   view = new QuantaView( this, rightWidgetStack );
   view->app = this;
   view->doc = doc;
-
-  bottomWidgetStack = new QWidgetStack( hSplit );
-
-  messageOutput = new MessageOutput( bottomWidgetStack );
+  
+  messageOutput = new MessageOutput( bottdock );
   messageOutput ->setFocusPolicy(QWidget::NoFocus);
 
-
-  vSplit->activate( leftPanel, rightWidgetStack );
-  hSplit->activate( vSplit, bottomWidgetStack );
-
-  leftPanel->setMinimumWidth( 1 );
-
-  bottomWidgetStack ->setMinimumHeight( 1 );
-	leftPanel					->setMinimumHeight( 1 );
+  maindock ->setWidget( rightWidgetStack );
+  bottdock ->setWidget( messageOutput );
+  ftabdock ->setWidget( fTab );
+  ptabdock ->setWidget( pTab );
+  stabdock ->setWidget( sTab );
+  dtabdock ->setWidget( dTab );
+  
   rightWidgetStack  ->setMinimumHeight( 1 );
-	hSplit	 					->setMinimumHeight( 1 );
 
-  vSplit->setPos( 25 );
-  hSplit->setPos( 100);
-
-  htmlPartRight	 = new WHTMLPart( rightWidgetStack,  "rightHTML");
-  htmlPartBottom = new WHTMLPart( bottomWidgetStack, "bottomHTML");
-  htmlPartTop    = new WHTMLPart( topWidgetStack, 	 "topHTML");
+  htmlpart    	 = new WHTMLPart( rightWidgetStack,  "rightHTML");
   htmlPartDoc 	 = new WHTMLPart( rightWidgetStack,  "docHTML");
 
-  bottomWidgetStack->addWidget( messageOutput, 0 );
-  bottomWidgetStack->addWidget( htmlPartBottom->view(), 1 );
-  bottomWidgetStack->raiseWidget(0);
-
   rightWidgetStack->addWidget( view, 0 );
-  rightWidgetStack->addWidget( htmlPartRight->view(), 1 );
-  rightWidgetStack->addWidget( htmlPartDoc  ->view(), 2 );
+  rightWidgetStack->addWidget( htmlpart   ->view(), 1 );
+  rightWidgetStack->addWidget( htmlPartDoc->view(), 2 );
   rightWidgetStack->raiseWidget(0);
-
-  topWidgetStack->addWidget( hSplit, 0);
-  topWidgetStack->addWidget( htmlPartTop->view(), 1 );
-  topWidgetStack->raiseWidget(0);
 
   connect( 	fTTab,SIGNAL(openFile  (KURL &)),
   					this, SLOT(slotFileOpen(KURL &)));
@@ -327,9 +306,9 @@ void QuantaApp::initView()
   					this, SLOT(slotFileOpen(KURL &)));
   					
   connect( 	fTTab,SIGNAL(openImage(QString)),
-  					this, SLOT(slotImageOpen(QString)));
+  					this, SLOT  (slotImageOpen(QString)));
   connect( 	fLTab,SIGNAL(openImage(QString)),
-  					this, SLOT(slotImageOpen(QString)));
+  					this, SLOT  (slotImageOpen(QString)));
   					
   connect(	fLTab,SIGNAL(changeMode()),
   					this, SLOT(slotSwapLeftPanelMode()));
@@ -355,11 +334,8 @@ void QuantaApp::initView()
   connect( 	pTab, SIGNAL(activatePreview()),
   					this, SLOT(slotActivatePreview()));
   					
-  connect(  htmlPartRight,  SIGNAL(onURL(const QString&)), this, SLOT(slotStatusMsg(const QString&)));
-  connect(  htmlPartBottom, SIGNAL(onURL(const QString&)), this, SLOT(slotStatusMsg(const QString&)));
-  connect(  htmlPartTop,    SIGNAL(onURL(const QString&)), this, SLOT(slotStatusMsg(const QString&)));
+  connect(  htmlpart,       SIGNAL(onURL(const QString&)), this, SLOT(slotStatusMsg(const QString&)));
   connect(  htmlPartDoc,    SIGNAL(onURL(const QString&)), this, SLOT(slotStatusMsg(const QString&)));
-
   connect(  htmlPartDoc,    SIGNAL(updateStatus(bool, bool)), SLOT(updateNavButtons( bool, bool)));
 
   connect( view, SIGNAL(newCurPos()), this, SLOT(slotNewLineColumn()));
@@ -367,50 +343,31 @@ void QuantaApp::initView()
   connect( sTab, SIGNAL(newCursorPosition(int,int)), SLOT(setCursorPosition(int,int)));
 //  connect( sTab, SIGNAL(onTag(const QString &)), SLOT( slotStatusHelpMsg(const QString &)));
   connect( sTab, SIGNAL(selectArea(int,int,int,int)), SLOT( selectArea(int,int,int,int)));
-  connect( sTab, SIGNAL(needReparse()), SLOT(reparse()));
-
+  connect( sTab, SIGNAL(needReparse()),    SLOT(reparse()));
   connect( dTab, SIGNAL(openURL(QString)), SLOT(openDoc(QString)));
-
-  connect( leftPanel, SIGNAL(currentChanged(QWidget*)), this, SLOT( slotLeftTabChanged(QWidget*)));
   
-  // Main function for insert view
-  setCentralWidget( topWidgetStack );
+  setMainDockWidget( maindock );
+  setView(maindock);
+  
+  maindock ->setEnableDocking( KDockWidget::DockNone );
+  ftabdock ->manualDock(maindock, KDockWidget::DockLeft,   30);
+  bottdock ->manualDock(maindock, KDockWidget::DockBottom, 80);
+  
+  ptabdock ->manualDock(ftabdock, KDockWidget::DockCenter);
+  stabdock ->manualDock(ftabdock, KDockWidget::DockCenter);
+  dtabdock ->manualDock(ftabdock, KDockWidget::DockCenter);
 }
 
 
 WHTMLPart * QuantaApp::htmlPart()
 {
-  WHTMLPart *res = 0L;
-
-  if ( previewPosition == "Bottom" )
-     res = htmlPartBottom;
-
-  if ( previewPosition == "Right" )
-     res = htmlPartRight;
-
-  if ( previewPosition == "FWSpace" )
-     res = htmlPartTop;
-
-  return res;
-
+  return htmlpart;
 }
 
 
 QWidgetStack *QuantaApp::widgetStackOfHtmlPart()
 {
-  QWidgetStack *res = 0L;
-
-  if ( previewPosition == "Bottom" )
-     res = bottomWidgetStack;
-
-  if ( previewPosition == "Right" )
-     res = rightWidgetStack;
-
-  if ( previewPosition == "FWSpace" )
-     res = topWidgetStack;
-
-  return res;
-
+  return rightWidgetStack;
 }
 
 void QuantaApp::saveOptions()
@@ -432,9 +389,6 @@ void QuantaApp::saveOptions()
 
   config->writeEntry("Preview position", previewPosition);
 
-  config->writeEntry("HSplit position", hSplit->getPos() );
-  config->writeEntry("VSplit position", vSplit->getPos() );
-  
   config->writeEntry("Left panel mode", fTab->id( fTab->visibleWidget()));
 
   config->writeEntry("Follow Cursor", sTab->followCursor() );
@@ -450,6 +404,8 @@ void QuantaApp::saveOptions()
   project->writeConfig(config); // project
   
   fileRecent            ->saveEntries(config);
+  
+  writeDockConfig();
 }
 
 
@@ -470,9 +426,6 @@ void QuantaApp::readOptions()
 
   previewPosition   = config->readEntry("Preview position","Right");
 
-  setHSplit( config->readNumEntry("HSplit position", 850));
-  setVSplit( config->readNumEntry("VSplit position", 300));
-  
   phpDebugPort = config->readNumEntry("PHP Debugger Port", 7869);
   
   sTab->setFollowCursor( config->readBoolEntry("Follow Cursor", true));
@@ -489,6 +442,8 @@ void QuantaApp::readOptions()
 
   config->setGroup("General Options");
   resize( config->readSizeEntry("Geometry", &QSize(800,580)));
+  
+  readDockConfig();
 }
 
 void QuantaApp::openLastFiles()
@@ -505,22 +460,6 @@ void QuantaApp::openLastFiles()
 }
 
 #warning Check action for message output and tree
-void QuantaApp::setHSplit(int i)
-{
-  hSplit -> setPos(i);
-/*  
-  if ( hSplit->getPos() < 1000 )
-  {
-
-    int pos = hSplit->getPos();
-    hSplit->setPos( (pos > 850) ? 850 : pos);
-  }*/
-}
-
-void QuantaApp::setVSplit(int i)
-{
-  vSplit -> setPos(i);
-}
 
 bool QuantaApp::queryExit()
 {
@@ -721,14 +660,31 @@ void QuantaApp::initActions()
     
     // View actions
     //
-    KToggleAction *showTreeAction = 
-      new KToggleAction( i18n( "Show &Tree" ), "tree_win", CTRL+Key_T,
-                         this, SLOT( slotShowLeftPanel() ),
-                         actionCollection(), "show_tree" );
+    showFTabAction = 
+      new KToggleAction( i18n( "Show Files Tree" ), 0,
+                         this, SLOT( slotShowFTabDock() ),
+                         actionCollection(), "show_ftab_tree" );
+    showPTabAction = 
+      new KToggleAction( i18n( "Show Project Tree" ), 0,
+                         this, SLOT( slotShowPTabDock() ),
+                         actionCollection(), "show_ptab_tree" );
+    showSTabAction = 
+      new KToggleAction( i18n( "Show Structure Tree" ), 0,
+                         this, SLOT( slotShowSTabDock() ),
+                         actionCollection(), "show_stab_tree" );
+    showDTabAction = 
+      new KToggleAction( i18n( "Show Documentation Tree" ), 0,
+                         this, SLOT( slotShowDTabDock() ),
+                         actionCollection(), "show_dtab_tree" );
                          
-    KToggleAction *showMessagesAction = 
+//    showTreeAction = 
+//      new KToggleAction( i18n( "Show &Tree" ), "tree_win", CTRL+Key_T,
+//                         this, SLOT( slotShowLeftDock() ),
+//                         actionCollection(), "show_tree" );
+                         
+    showMessagesAction = 
       new KToggleAction( i18n( "Show &Messages" ), "output_win", CTRL+Key_M,
-                         this, SLOT( slotViewMessages() ),
+                         this, SLOT( slotShowBottDock() ),
                          actionCollection(), "show_messages" );
                            
     KToggleAction *showPreviewAction = 
@@ -736,7 +692,7 @@ void QuantaApp::initActions()
                          this, SLOT( slotShowPreview() ),
                          actionCollection(), "show_preview" );
     
-    showTreeAction    ->setChecked( true );
+//    showTreeAction    ->setChecked( true );
     showMessagesAction->setChecked( true );
     showPreviewAction ->setChecked( false );
                            

@@ -37,7 +37,7 @@
 
 // include files for KDE 
 #include <kapp.h>
-#include <kmainwindow.h>
+#include <kdockwidget.h>
 #include "widgets/whtmlpart.h"
 #include <kparts/browserextension.h>
 
@@ -45,7 +45,6 @@
 class QuantaDoc;
 class QuantaView;
 
-class WSplitter;
 class QTabWidget;
 class QWidgetStack;
 class QListViewItem;
@@ -74,7 +73,7 @@ class QDomDocument;
 /**
   * The base class for Quanta application windows. 
   */
-class QuantaApp : public KMainWindow
+class QuantaApp : public KDockMainWindow
 {
   Q_OBJECT
 
@@ -113,9 +112,6 @@ class QuantaApp : public KMainWindow
     
     virtual bool queryExit();
     
-    void setHSplit(int);
-    void setVSplit(int);
-
   public slots:
     
     void slotFileNew ();
@@ -167,7 +163,7 @@ class QuantaApp : public KMainWindow
     /** show preview ( F6 )*/
     void slotShowPreview();
     
-    void slotShowLeftPanel();
+    
     
     void slotShowProjectTree();
 
@@ -176,7 +172,15 @@ class QuantaApp : public KMainWindow
     /** Repaint preview ( slot ) */
     void slotViewRepaint();
 
-    void slotViewMessages();
+    void slotShowLeftDock();
+    void slotShowBottDock();
+    void slotShowFTabDock();
+    void slotShowPTabDock();
+    void slotShowSTabDock();
+    void slotShowDTabDock();
+    
+    void viewMenuAboutToShow();
+    void settingsMenuAboutToShow();
     
     /** repaint preview */
     void repaintPreview( bool clear = false);
@@ -195,9 +199,6 @@ class QuantaApp : public KMainWindow
 
 	  void selectArea(int col1, int row1, int col2, int row2);
 	
-	  void slotSelectMessageWidget ();
-	  void slotDisableMessageWidget();
-	  
 	  void setTitle(QString);
 
 	  	  
@@ -229,17 +230,18 @@ class QuantaApp : public KMainWindow
 
     QString previewPosition;
 
-    QWidgetStack *topWidgetStack;
     QWidgetStack *rightWidgetStack;
-    QWidgetStack *bottomWidgetStack;
-
-    WSplitter *hSplit;
-    WSplitter *vSplit;
+    
+    KDockWidget *leftdock;
+    KDockWidget *maindock;
+    KDockWidget *bottdock;
+    KDockWidget *ptabdock;
+    KDockWidget *dtabdock;
+    KDockWidget *ftabdock;
+    KDockWidget *stabdock;
 
    	/** HTML class for preview */
-    WHTMLPart *htmlPartTop;
-    WHTMLPart *htmlPartBottom;
-    WHTMLPart *htmlPartRight;
+    WHTMLPart *htmlpart;
     WHTMLPart *htmlPartDoc;
 
     /** Messaage output window */
@@ -248,9 +250,6 @@ class QuantaApp : public KMainWindow
     /** Grep window */
     GrepDialog *grepDialog;
 
-    /** qtabwidget for left panel */
-    QTabWidget *leftPanel;
-    
     // DOC & VIEW
     QuantaDoc  *doc;
     QuantaView *view;
@@ -268,7 +267,8 @@ class QuantaApp : public KMainWindow
     // ACTIONS
     KRecentFilesAction *fileRecent;
     
-    KToggleAction *verticalSelectAction;
+    KToggleAction *verticalSelectAction, *showMessagesAction, *showTreeAction,
+      *showFTabAction,*showPTabAction,*showSTabAction,*showDTabAction;
     
     KSelectAction *eolSelectAction, *hlSelectAction;
     

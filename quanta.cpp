@@ -53,7 +53,6 @@
 #include "kwrite/highlight/highlight.h"
 
 #include "widgets/whtmlpart.h"
-#include "widgets/wsplitter.h"
 
 #include "dialogs/filemasks.h"
 #include "dialogs/styleoptionss.h"
@@ -508,20 +507,10 @@ void QuantaApp::slotOptions()
 
   	previewPosition = previewOptions->position();
   	
-  	htmlPartTop->closeURL();
-  	htmlPartTop->begin( KURL( doc->basePath() ));
-  	htmlPartTop->write( "" );
-  	htmlPartTop->end();
-  	
-  	htmlPartRight->closeURL();
-  	htmlPartRight->begin( KURL( doc->basePath() ));
-  	htmlPartRight->write( "" );
-  	htmlPartRight->end();
-  	
-  	htmlPartBottom->closeURL();
-  	htmlPartBottom->begin( KURL( doc->basePath() ));
-  	htmlPartBottom->write( "" );
-  	htmlPartBottom->end();
+  	htmlpart->closeURL();
+  	htmlpart->begin( KURL( doc->basePath() ));
+  	htmlpart->write( "" );
+  	htmlpart->end();
   	
   	repaintPreview(true);
   }
@@ -535,25 +524,23 @@ void QuantaApp::slotOptions()
 
 void QuantaApp::slotSwapLeftPanelMode()
 {
-	QWidgetStack *s;
-	QWidget *w = leftPanel->currentPage();
-	if ( !( s = dynamic_cast<QWidgetStack *>(w)) ) return;
-	
-	if 	( s->id( s->visibleWidget() ) == 0 )
+	if 	( fTab->id( fTab->visibleWidget() ) == 0 )
 	{
-		FilesTreeView *fT = dynamic_cast<FilesTreeView *>( s->visibleWidget() );
-		s->raiseWidget(1);
-		FilesListView *fL = dynamic_cast<FilesListView *>( s->visibleWidget() );
+		FilesTreeView *fT = dynamic_cast<FilesTreeView *>( fTab->visibleWidget() );
+		FilesListView *fL = dynamic_cast<FilesListView *>( fTab->visibleWidget() );
 		if (!fT) return;
 		if (!fL) return;
 		FilesTreeFolder *p = dynamic_cast<FilesTreeFolder *>(fT->currentItem()->parent());
 		if (!p) return;
 		
 		QString dir = p->fullName();
+		
 		fL->dir = dir;
 		fL->slotReload();
+		
+		fTab->raiseWidget(1);
 	}
-	else if ( s->id( s->visibleWidget() ) == 1 ) s->raiseWidget(0);
+	else if ( fTab->id( fTab->visibleWidget() ) == 1 ) fTab->raiseWidget(0);
 }
 
 void QuantaApp::slotActivatePreview()
@@ -579,9 +566,6 @@ void QuantaApp::slotShowPreview()
 	if ( !s ) return;
 	if ( !part ) return;
 
-	static int hSplitPos = 1000;
-//	static int vSplitPos = 250;
-
   KToggleAction *ta = (KToggleAction *) actionCollection()->action( "show_preview" );
 	bool stat = !ta->isChecked();
 
@@ -589,12 +573,6 @@ void QuantaApp::slotShowPreview()
 //		disableCommand(ID_VIEW_BACK);
 //		disableCommand(ID_VIEW_FORWARD);
 //		disableCommand(ID_VIEW_REPAINT);
-		
-		if ( previewPosition == "Bottom" )
-		{
-	      hSplitPos = hSplit->getPos();
-	      hSplit -> setPos( 1000 );
-	  }
 		
 		s   ->raiseWidget( 0 );
 		doc ->write()->setFocus();
@@ -606,11 +584,6 @@ void QuantaApp::slotShowPreview()
 		
 	  if ( previewPosition == "Bottom" )
 	  {
-	    if ( (hSplit -> getPos()) > 800 && hSplitPos > 800 )
-	         hSplit -> setPos(800);
-	    else hSplit -> setPos( hSplitPos );
-	
-	    hSplitPos = hSplit->getPos();
 	  }
 		
 		s->raiseWidget( 1 );
@@ -619,29 +592,10 @@ void QuantaApp::slotShowPreview()
 //	checkCommand( ID_VIEW_PREVIEW, !stat );
 }
 
-void QuantaApp::slotShowLeftPanel()
-{
-	static int vSplitPos = 250;
-
-  KToggleAction *ta = (KToggleAction *) actionCollection()->action( "show_tree" );
-	bool stat = !ta->isChecked();
-
-	if ( stat )
-	{
-    vSplitPos = vSplit->getPos();
-    vSplit -> setPos( 0 );
-	}
-	else {
-    if ( vSplitPos == 0 ) vSplitPos = 250;
-    vSplit -> setPos( vSplitPos );
-	  vSplitPos = vSplit->getPos();
-	}
-//	checkCommand( ID_VIEW_TREE, !stat );
-}
-
 void QuantaApp::slotShowProjectTree()
 {
-  leftPanel->showPage((QWidget *)pTab);
+#warning view project tree
+//  leftPanel->showPage((QWidget *)pTab);
 }
 
 void QuantaApp::slotNewLineColumn()
@@ -660,7 +614,8 @@ void QuantaApp::slotNewLineColumn()
 /** reparse current document and initialize node. */
 void QuantaApp::reparse()
 {
-	if ( QString(leftPanel->currentPage()->name()) == "struct" )
+#warning fixme
+//	if ( QString(leftPanel->currentPage()->name()) == "struct" )
 	{
 		Node *node = parser->parse( view->write()->text() );
 		//sTab->s = parser->s;
@@ -695,21 +650,10 @@ void QuantaApp::gotoFileAndLine( const QString &filename, int line )
 }
 
 
-void QuantaApp::slotSelectMessageWidget()
-{
-	bottomWidgetStack -> raiseWidget(0);
-	if ( hSplit->getPos() > 800 ) hSplit->setPos(800);
-}
-
-void QuantaApp::slotDisableMessageWidget()
-{
-	hSplit->setPos(1000);
-}
-
-
 void QuantaApp::slotLeftTabChanged(QWidget *)
 {
-
+#warning fixme
+/*
   static bool docTabOpened = false;
 
   StructTreeView *sView = dynamic_cast<StructTreeView *>( leftPanel->currentPage());
@@ -735,6 +679,7 @@ void QuantaApp::slotLeftTabChanged(QWidget *)
     }
   	docTabOpened = false;
   }
+*/
 }
 
 void QuantaApp::selectArea(int col1, int row1, int col2, int row2)
@@ -774,18 +719,20 @@ void QuantaApp::updateNavButtons( bool back, bool forward )
 
 void QuantaApp::contextHelp()
 {
-   if ( leftPanel->currentPage() == dTab ) {
-   	 leftPanel->showPage(fTab);
-   }
-   else {
+#warning fixme
+//   if ( leftPanel->currentPage() == dTab ) 
+//   {
+//   	 leftPanel->showPage(fTab);
+//   }
+//   else {
      QString curWord = view->write()->currentWord();
      QString * url = dTab->contextHelp( curWord );
 
      if ( url ) {
-        leftPanel->showPage(dTab);
+//        leftPanel->showPage(dTab);
    		  openDoc(*url);
      }
-   }
+//   }
 }
 
 void QuantaApp::slotFtpClient()
@@ -824,21 +771,25 @@ void QuantaApp::slotFtpClient()
 */	
 }
 
-void QuantaApp::slotViewMessages()
+void QuantaApp::slotShowBottDock() { bottdock->changeHideShowState();}
+void QuantaApp::slotShowLeftDock() { ftabdock->changeHideShowState();}
+void QuantaApp::slotShowFTabDock() { ftabdock->changeHideShowState();}
+void QuantaApp::slotShowPTabDock() { ptabdock->changeHideShowState();}
+void QuantaApp::slotShowSTabDock() { stabdock->changeHideShowState();}
+void QuantaApp::slotShowDTabDock() { dtabdock->changeHideShowState();}
+
+void QuantaApp::settingsMenuAboutToShow()
 {
-  KToggleAction *ta = (KToggleAction *) actionCollection()->action( "show_messages" );
-	bool stat = !ta->isChecked();
-  
-  static int oldpos = (hSplit->getPos() > 850) ? 850 : hSplit->getPos();
-  
-  int pos = hSplit->getPos();
-  
-  if ( stat ) 
-  {
-    oldpos=( pos > 850) ? 850 : pos;
-    hSplit->setPos(1000);
-  }
-  else hSplit->setPos(oldpos);
+  showTreeAction    ->setChecked( ftabdock->isVisible() );
+  showMessagesAction->setChecked( bottdock->isVisible() );
+}
+
+void QuantaApp::viewMenuAboutToShow()
+{
+  showFTabAction    ->setChecked( ftabdock->isVisible() );
+  showPTabAction    ->setChecked( ptabdock->isVisible() );
+  showSTabAction    ->setChecked( stabdock->isVisible() );
+  showDTabAction    ->setChecked( dtabdock->isVisible() );
 }
 
 void QuantaApp::slotToolSyntaxCheck()

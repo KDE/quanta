@@ -12,13 +12,10 @@ DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 libwidgets_a_METASOURCES = AUTO
 libwidgets_a_SOURCES = \
 		whtmlpart.cpp\
-		wsplitter.cpp\
 		wtoolbar.cpp
 EXTRA_DIST = \
 		whtmlpart.cpp\
 		whtmlpart.h\
-		wsplitter.cpp\
-		wsplitter.h\
 		wtoolbar.cpp\
 		wtoolbar.h
 ##############################################################
