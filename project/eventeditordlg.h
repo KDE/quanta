@@ -20,6 +20,9 @@
 
 #include "eventeditordlgs.h"
 
+class QLabel;
+class KComboBox;
+
 class EventEditorDlg : public EventEditorDlgS
 {
   Q_OBJECT
@@ -39,6 +42,8 @@ public slots:
    void slotActionChanged(const QString &name);
 
 protected:
+   void resetArgumentWidgets(QLabel *label, KComboBox *combo);
+
    QMap<QString, QString> m_scriptActions;
 
 protected slots:

@@ -601,7 +601,12 @@ void ProjectPrivate::loadProjectXML()
     ev.action = el.attribute("action");
     QDomNodeList nl2 = el.elementsByTagName("argument");
     for (uint j = 0; j < nl2.count(); j++)
-      ev.arguments << nl2.item(j).toElement().text();
+    {
+      QString s = nl2.item(j).toElement().text();
+      if (s == "--not set--")
+        s = "";
+      ev.arguments << s;
+    }
     m_events->insert(el.attribute("name"), ev);
   }
 

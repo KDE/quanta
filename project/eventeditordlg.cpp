@@ -78,10 +78,10 @@ QString EventEditorDlg::argument1()
 {
    if (argument1Combo->isEnabled())
    {
+      QString s = argument1Combo->currentText();
       QString actionType = actionCombo->currentText();
       if (actionType == QPEvents::ref()->fullActionName("email"))
       {
-          QString s = argument1Combo->currentText();
           if (s ==  i18n(teamLeaderStr.utf8()))
               s = "teamleader";
           else
@@ -110,6 +110,7 @@ QString EventEditorDlg::argument1()
           }
           return s;
        }
+       return s;
    }
 
    return QString::null;
@@ -119,6 +120,15 @@ QString EventEditorDlg::argument2()
 {
    if (argument2Combo->isEnabled())
    {
+     QString actionType = actionCombo->currentText();
+     if (actionType == QPEvents::ref()->fullActionName("log"))
+     {
+        int id = argument2Combo->currentItem();
+        if (id == 0)
+            return "full";
+       else
+            return "minimal";
+     }
      return argument2Combo->currentText();
    } else
      return QString::null;
@@ -128,6 +138,15 @@ QString EventEditorDlg::argument3()
 {
    if (argument3Combo->isEnabled())
    {
+     QString actionType = actionCombo->currentText();
+     if (actionType == QPEvents::ref()->fullActionName("log"))
+     {
+        int id = argument3Combo->currentItem();
+        if (id == 0)
+            return "create_new";
+       else
+            return "append";
+     }
      return argument3Combo->currentText();
    } else
      return QString::null;
@@ -200,6 +219,22 @@ void EventEditorDlg::setArguments(const QStringList& arguments)
          argument1Combo->setCurrentItem(0);
       }
    } else
+   if (actionType == QPEvents::ref()->fullActionName("log"))
+   {
+      argument1Combo->insertItem(arguments[0], 0);
+      argument1Combo->setCurrentItem(0);
+      QString s = arguments[1];
+      if (s == "full")
+        argument2Combo->setCurrentItem(0);
+      else if (s == "minimal")
+        argument2Combo->setCurrentItem(1);
+      s = arguments[2];
+      if (s == "create_new")
+        argument3Combo->setCurrentItem(0);
+      else if (s == "append")
+        argument3Combo->setCurrentItem(1);
+      return; //setup for log arguments completed
+   } else
    {
      argument1Combo->insertItem(arguments[0], 0);
      argument1Combo->setCurrentItem(0);
@@ -212,24 +247,21 @@ void EventEditorDlg::setArguments(const QStringList& arguments)
    argument4Combo->setCurrentItem(0);
 }
 
+void EventEditorDlg::resetArgumentWidgets(QLabel *label, KComboBox *combo)
+{
+   label->setEnabled(false);
+   combo->setEnabled(false);
+   combo->setEditable(true);
+   combo->clear();
+   QToolTip::remove(combo);
+}
+
 void EventEditorDlg::slotActionChanged(const QString &name)
 {
-   argument1Label->setEnabled(false);
-   argument2Label->setEnabled(false);
-   argument3Label->setEnabled(false);
-   argument4Label->setEnabled(false);
-   argument1Combo->setEnabled(false);
-   argument2Combo->setEnabled(false);
-   argument3Combo->setEnabled(false);
-   argument4Combo->setEnabled(false);
-   argument1Combo->clear();
-   argument2Combo->clear();
-   argument3Combo->clear();
-   argument4Combo->clear();
-   QToolTip::remove(argument1Combo);
-   QToolTip::remove(argument2Combo);
-   QToolTip::remove(argument3Combo);
-   QToolTip::remove(argument4Combo);
+   resetArgumentWidgets(argument1Label, argument1Combo);
+   resetArgumentWidgets(argument2Label, argument2Combo);
+   resetArgumentWidgets(argument3Label, argument3Combo);
+   resetArgumentWidgets(argument4Label, argument4Combo);
    if (name == QPEvents::ref()->fullActionName("email"))
    {
        argument1Label->setEnabled(true);
@@ -255,6 +287,18 @@ void EventEditorDlg::slotActionChanged(const QString &name)
        argument1Label->setText(i18n("Log file:"));
        argument1Combo->setEnabled(true);
        QToolTip::add(argument1Combo, i18n("A relative file to the project folder or a file outside of the project folder in which case the full path must be specified."));
+       argument2Label->setEnabled(true);
+       argument2Label->setText(i18n("Detail:"));
+       argument2Combo->setEnabled(true);
+       argument2Combo->setEditable(false);
+       argument2Combo->insertItem(i18n("Full"), 0);
+       argument2Combo->insertItem(i18n("Minimal"), 1);
+       argument3Label->setEnabled(true);
+       argument3Label->setText(i18n("Behaviour:"));
+       argument3Combo->setEnabled(true);
+       argument3Combo->setEditable(false);
+       argument3Combo->insertItem(i18n("Create new log"), 0);
+       argument3Combo->insertItem(i18n("Append to existing log"), 1);
    } else
    if (name == QPEvents::ref()->fullActionName("script"))
    {

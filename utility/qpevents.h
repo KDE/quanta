@@ -84,6 +84,7 @@ private:
 
     QMap<QString, QString> m_eventNames;
     QMap<QString, QString> m_actionNames;
+    QString m_eventName;
 };
 
 #endif

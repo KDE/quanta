@@ -82,12 +82,11 @@ void EventConfigurationDlg::saveEvents(QDomDocument dom)
        for (uint  i = 2; i < 6; i++)
        {
           QString s = item->text(i);
-          if (!s.isEmpty())
-          {
-              QDomNode argNode = dom.createElement("argument");
-              node.appendChild(argNode);
-              argNode.appendChild(dom.createTextNode(s));
-          }
+          if (s.isEmpty())
+            s == "--not set--";
+            QDomNode argNode = dom.createElement("argument");
+            node.appendChild(argNode);
+            argNode.appendChild(dom.createTextNode(s));
         }
         ++it;
     }

@@ -15,6 +15,9 @@
  ***************************************************************************/
 
 //qt includes
+#include <qdatetime.h>
+#include <qfile.h>
+#include <qtextstream.h>
 
 //kde includes
 #include <kapplication.h>
@@ -68,6 +71,7 @@ void QPEvents::slotEventHappened(const QString& name, const QString& argument1, 
   if (!events) return;
   if (events->contains(name))
   {
+    m_eventName = name;
     EventAction ev = (*events)[name];
     if (ev.type == EventAction::Internal)
     {
@@ -220,8 +224,58 @@ bool QPEvents::handleEvent(const EventAction& ev)
        kapp->invokeMailer(member.name + "<" + member.email + ">", "", "", ev.arguments[1], body, "", QStringList(), "");
 
        return true;
+    }
+    if (ev.action == "log")
+    {
+       QString logFile = ev.arguments[0];
+       KURL url = KURL::fromPathOrURL(logFile);
+       if (url.isValid() && !url.isLocalFile())
+       {
+          KMessageBox::sorry(0L, i18n("Logging to remote files is not supported."));
+          return false;
+       }
+       if (!logFile.startsWith("/"))
+       {
+          url = Project::ref()->projectBaseURL();
+          url.addPath(logFile);
+          if (!url.isLocalFile())
+          {
+            KMessageBox::sorry(0L, i18n("Logging to files inside a remote project is not supported."));
+            return false;
+          }
+          QFile file(url.path());
+          bool result;
+          if (ev.arguments[2] == "create_new")
+            result = file.open(IO_WriteOnly);
+          else
+            result = file.open(IO_WriteOnly | IO_Append);
+          if (result)
+          {
+            QTextStream stream(&file);
+            //Note: the log text should not be translated.
+            QString s = QDateTime::currentDateTime().toString(Qt::ISODate) + ": ";
+            s.append( "Event : " + m_eventName + " : ");
+            s.append( "Action: " + ev.action + " : ");
+            if (ev.arguments[1] == "full")
+            {
+              s.append( "Arguments: ");
+              for (uint i = 1; i < ev.arguments.count(); i++)
+                s.append(ev.arguments[i] + " | ");
+            }
+            s[s.length() - 1] = '\n';
+            stream << s;
+            file.close();
+          }
+          if (!result)
+          {
+            KMessageBox::sorry(0L, i18n("<qt>Logging failed. Check that you have write access to <i>%1</i>.").arg(url.prettyURL(KURL::StripFileProtocol)));
+            return false;
+          }
+       } else
+       {
+       }
     } else
-      KMessageBox::sorry(0L, i18n("Unsupported internal event action."));
+      KMessageBox::sorry(0L, i18n("<qt>Unsupported internal event action : <b>%1</b>.</qt>").arg(ev.action));
   } else
   if (ev.type == EventAction::External)
   {

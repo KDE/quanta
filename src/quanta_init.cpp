@@ -628,8 +628,7 @@ void QuantaInit::openLastFiles()
     QuantaCommon::setUrl(fu, *it);
 
     if (!ViewManager::ref()->isOpened(fu) && (!isPrj || fu.isLocalFile()))
-      m_quanta->m_doc->openDocument(fu, QString::null, false);
- //   kapp->eventLoop()->processEvents( QEventLoop::ExcludeUserInput | QEventLoop::ExcludeSocketNotifiers);
+      m_quanta->slotFileOpen(fu);
   }
   m_config->sync();
   m_quanta->m_doc->blockSignals(false);
