@@ -21,9 +21,10 @@ quanta_LDADD = \
 		$(top_builddir)/quanta/messages/libmessages.a\
 		$(LIB_KHTML) $(LIB_KFILE) -lkspell
 
-LDFLAGS =  -s -lktexteditor
+LDFLAGS =  -lktexteditor
 INCLUDES = $(all_includes)\
 		-I$(top_srcdir)/quanta/plugins/weblint
+
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 quanta_METASOURCES = AUTO
 quanta_SOURCES = \
@@ -35,7 +36,8 @@ quanta_SOURCES = \
 		quantadoc.cpp\
 		quantaview.cpp\
 		quantaview_init.cpp\
-		quantaview_slots.cpp
+		quantaview_slots.cpp\
+		quanta_actions.cpp
 EXTRA_DIST = \
 		document.cpp\
 		document.h\

@@ -47,6 +47,41 @@
       <Action name="previous_file"/>
       <Action name="next_file"/>
     </Menu>
+    <Menu name="insert"><text>&amp;Insert</text>
+      <Action name="tag_quick_start"/>
+      <Action name="tag_quick_table"/>
+      <Action name="tag_quick_list"/>
+      <Separator/>
+      <Action name="tag_img"/>
+      <Action name="tag_a"/>
+      <Action name="tag_font"/>
+      <Menu name="standard_tags"><text>Standard</text>
+        <Action name="tag_b"/>
+        <Action name="tag_i"/>
+        <Action name="tag_u"/>
+        <Action name="tag_div_left"/>
+        <Action name="tag_div_center"/>
+        <Action name="tag_div_right"/>
+        <Action name="tag_div_justify"/>
+      </Menu>
+      <Menu name="font_tags"><text>Font</text>
+        <Action name="tag_font"/>
+        <Action name="tag_font_base"/>
+        <Separator/>
+        <Action name="tag_font_inc"/>
+        <Action name="tag_font_dec"/>
+        <Separator/>
+        <Action name="tag_pre"/>
+        <Action name="tag_sub"/>
+        <Action name="tag_sup"/>
+        <Separator/>
+        <Action name="tag_h1"/>
+        <Action name="tag_h2"/>
+        <Action name="tag_h3"/>
+        <Action name="tag_h4"/>
+        <Action name="tag_h5"/>
+      </Menu>
+    </Menu>
     <Menu name="tools"><text>&amp;Tools</text>
       <Action name="tag_attributes"/>
       <Action name="edit_current_tag"/>
@@ -79,9 +114,31 @@
       <Action name="vertical_selection"/>
     </Menu>
   </MenuBar>
-  <ToolBar name="mainToolBar"><text>Main Toolbar</text>
-    <Action name="open"/>
-    <Separator/>
+  <ToolBar name="charStylesToolbar"><text>Character Styles Toolbar</text>
+    <Action name="tag_b"/>
+    <Action name="tag_i"/>
+    <Action name="tag_u"/>
+    <Action name="tag_sub"/>
+    <Action name="tag_sup"/>
+    <Separator lineSeparator="true"/>
+    <Action name="tag_font_inc"/>
+    <Action name="tag_font_dec"/>
+  </ToolBar>
+  <ToolBar name="paragraphStylesToolbar"><text>Paragraph Styles Toolbar</text>
+    <Action name="tag_h1"/>
+    <Action name="tag_h2"/>
+    <Action name="tag_h3"/>
+    <Action name="tag_h4"/>
+    <Action name="tag_h5"/>
+    <Separator lineSeparator="true"/>
+    <Action name="tag_p"/>
+    <Action name="tag_pre"/>
+  </ToolBar>
+  <ToolBar name="TextFlowStylesToolbar"><text>Text Flow Styles Toolbar</text>
+    <Action name="tag_div_left"/>
+    <Action name="tag_div_center"/>
+    <Action name="tag_div_right"/>
+    <Action name="tag_div_justify"/>
   </ToolBar>
   <Menu name="documentContextPopup"><text>Document Context Popup</text>
      <Action name="edit_undo"/>

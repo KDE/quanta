@@ -1326,11 +1326,12 @@ void QuantaApp::initActions()
     KStdAction::showToolbar( this, SLOT( slotViewToolBar() ), actionCollection() );
     KStdAction::showStatusbar( this, SLOT( slotViewStatusBar() ), actionCollection() );
 
-    (void) new KAction( i18n( "Show Tr&ee" ), CTRL+Key_T, this, SLOT( slotShowLeftPanel() ),
+    (void) new KAction( i18n( "Show Tr&ee" ), "tree_win", CTRL+Key_T,
+                        this, SLOT( slotShowLeftPanel() ),
                         actionCollection(), "show_tree" );
     (void) new KAction( i18n( "Show &Messages" ), CTRL+Key_B, this, SLOT( slotViewMessages() ),
                         actionCollection(), "show_messages" );
-    (void) new KAction( i18n( "&Preview" ), Key_F6, this, SLOT( slotShowPreview() ),
+    (void) new KAction( i18n( "&Preview" ), "preview", Key_F6, this, SLOT( slotShowPreview() ),
                         actionCollection(), "show_preview" );
 
     KStdAction::back( htmlPartDoc, SLOT( back() ), actionCollection() );

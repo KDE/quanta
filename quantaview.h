@@ -81,6 +81,9 @@ class QuantaView : public QWidget
     Document* removeWrite();
 	  /** initialise tags menu */
 	  void initMenu();
+
+      void initActions();
+
 	  /**  */
 	  void insertTag( const char *tag);
 	
@@ -92,6 +95,7 @@ class QuantaView : public QWidget
   	void updateToolBars( ToolBars *);
 
 	public slots:
+      void slotTag();
 	
 	  /** Callback for toolbar with tags. */
 	  void slotToolbarCallback( int id );

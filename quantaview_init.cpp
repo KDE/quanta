@@ -46,6 +46,13 @@
 // #define NEW_STUFF
 //
 
+#ifdef NEW_STUFF
+
+#include <kaction.h>
+#include "quanta_actions.h"
+
+#endif
+
 QuantaView::QuantaView( QuantaApp *app, QWidget *parent, const char *name )
 	: QWidget( parent, name)
 {
@@ -72,6 +79,11 @@ QuantaView::QuantaView( QuantaApp *app, QWidget *parent, const char *name )
   connect( tabBar,		SIGNAL(selected(int)), toolbarStack, SLOT(raiseWidget(int)));
 
   initMenu();
+
+#ifdef NEW_STUFF
+  initActions();
+#endif
+
   writeTab->show();
 }
 
@@ -520,3 +532,188 @@ void QuantaView::initMenu()
   connect(app->viewMenu, SIGNAL(activated(int)), SLOT(slotToolbarCallback(int)));
 #endif
 }
+
+
+#ifdef NEW_STUFF
+
+void QuantaView::initActions()
+{
+    KActionCollection *actionCollection = app->actionCollection();
+
+    (void) new KAction( i18n( "Quick Start..." ), "quick_start", 0,
+                        this, SLOT( slotTagQuickStart() ),
+                        actionCollection, "tag_quick_start" );
+    (void) new KAction( i18n( "Quick Table..." ), "quick_table", 0,
+                        this, SLOT( slotTagQuickTable() ),
+                        actionCollection, "tag_quick_table" );
+    (void) new KAction( i18n( "Quick List..." ), "quick_list", 0,
+                        this, SLOT( slotTagQuickList() ),
+                        actionCollection, "tag_quick_list" );
+
+    (void) new KAction( i18n( "Insert Image..." ), "tag_image", 0,
+                        this, SLOT( slotTagImg() ),
+                        actionCollection, "tag_img" );
+    (void) new KAction( i18n( "Insert Anchor..." ), "tag_a", 0,
+                        this, SLOT( slotTagA() ),
+                        actionCollection, "tag_a" );
+    (void) new KAction( i18n( "Font..." ), "tag_font", 0,
+                        this, SLOT( slotTagFont() ),
+                        actionCollection, "tag_font" );
+
+    //
+    // Standard style tags
+    //
+    QuantaTagAction *tagB = new QuantaTagAction( i18n( "Bold" ), "tag_bold", 0,
+                                                 this, SLOT( slotTag() ),
+                                                 actionCollection, "tag_b" );
+    tagB->setTag( I18N_NOOP( "b" ) );
+
+    QuantaTagAction *tagI = new QuantaTagAction( i18n( "Italic" ), "tag_i", 0,
+                                                 this, SLOT( slotTag() ),
+                                                 actionCollection, "tag_i" );
+    tagI->setTag( I18N_NOOP( "i" ) );
+
+    QuantaTagAction *tagU = new QuantaTagAction( i18n( "Underline" ), "tag_u", 0,
+                                                 this, SLOT( slotTag() ),
+                                                 actionCollection, "tag_u" );
+    tagU->setTag( I18N_NOOP( "u" ) );
+    // TODO: BR
+    QuantaTagAction *tagP = new QuantaTagAction( i18n( "Paragraph" ), "tag_p", 0,
+                                                 this, SLOT( slotTag() ),
+                                                 actionCollection, "tag_p" );
+    tagP->setTag( I18N_NOOP( "p" ) );
+    // TODO: nbsp
+    // TODO: BR
+    // TODO: HR
+    QuantaTagAction *tagComment = new QuantaTagAction( i18n( "Comment" ), "tag_comm", 0,
+                                                 this, SLOT( slotTag() ),
+                                                 actionCollection, "tag_comment" );
+    tagComment->setTag( I18N_NOOP( "<!-- " ), I18N_NOOP( " -->" ) );
+
+    QuantaTagAction *tagDivLeft = new QuantaTagAction( i18n( "Align Left" ), "div_left", 0,
+                                                       this, SLOT( slotTag() ),
+                                                       actionCollection, "tag_div_left" );
+    QString start = tagCase( I18N_NOOP("<div %1>") );
+    QString end = tagCase( I18N_NOOP("</div>") );
+    start = start.arg( attrCase( I18N_NOOP("align%2") ) );
+    start = start.arg( "=\"left\"" );
+    tagDivLeft->setTag( start, end );
+
+    QuantaTagAction *tagDivCenter = new QuantaTagAction( i18n( "Align Center" ), "div_center", 0,
+                                                       this, SLOT( slotTag() ),
+                                                       actionCollection, "tag_div_center" );
+    start = tagCase( I18N_NOOP("<div %1>") );
+    end = tagCase( I18N_NOOP("</div>") );
+    start = start.arg( attrCase( I18N_NOOP("align%2") ) );
+    start = start.arg( "=\"center\"" );
+    tagDivCenter->setTag( start, end );
+
+    QuantaTagAction *tagDivRight = new QuantaTagAction( i18n( "Align Right" ), "div_right", 0,
+                                                       this, SLOT( slotTag() ),
+                                                       actionCollection, "tag_div_right" );
+    start = tagCase( I18N_NOOP("<div %1>") );
+    end = tagCase( I18N_NOOP("</div>") );
+    start = start.arg( attrCase( I18N_NOOP("align%2") ) );
+    start = start.arg( "=\"right\"" );
+    tagDivRight->setTag( start, end );
+
+    QuantaTagAction *tagDivJustify = new QuantaTagAction( i18n( "Align Justify" ), "div_justify", 0,
+                                                       this, SLOT( slotTag() ),
+                                                       actionCollection, "tag_div_justify" );
+    start = tagCase( I18N_NOOP("<div %1>") );
+    end = tagCase( I18N_NOOP("</div>") );
+    start = start.arg( attrCase( I18N_NOOP("align%2") ) );
+    start = start.arg( "=\"justify\"" );
+    tagDivJustify->setTag( start, end );
+    // TODO: CSS
+
+    //
+    // Fonts
+    //
+    (void) new KAction( i18n( "Base Font" ), "tag_font_base", 0,
+                        this, SLOT( slotTagFontBase() ),
+                        actionCollection, "tag_font_base" );
+
+    QuantaTagAction *tagFontInc = new QuantaTagAction( i18n( "Font Size +1" ), "font_inc", 0,
+                                                       this, SLOT( slotTag() ),
+                                                       actionCollection, "tag_font_inc" );
+    start = tagCase( I18N_NOOP("<font %1>") );
+    end = tagCase( I18N_NOOP("</font>") );
+    start = start.arg( attrCase( I18N_NOOP("size%2") ) );
+    start = start.arg( "=\"+1\"" );
+    tagFontInc->setTag( start, end );
+
+    QuantaTagAction *tagFontDec = new QuantaTagAction( i18n( "Font Size -1" ), "font_dec", 0,
+                                                       this, SLOT( slotTag() ),
+                                                       actionCollection, "tag_font_dec" );
+    start = tagCase( I18N_NOOP("<font %1>") );
+    end = tagCase( I18N_NOOP("</font>") );
+    start = start.arg( attrCase( I18N_NOOP("size%2") ) );
+    start = start.arg( "=\"-1\"" );
+    tagFontDec->setTag( start, end );
+
+    QuantaTagAction *tagPre = new QuantaTagAction( i18n( "Pre-Formatted" ), "tag_pre", 0,
+                                                   this, SLOT( slotTag() ),
+                                                   actionCollection, "tag_pre" );
+    tagPre->setTag( I18N_NOOP( "pre" ) );
+
+    QuantaTagAction *tagSub = new QuantaTagAction( i18n( "Subscript" ), "tag_sub", 0,
+                                                   this, SLOT( slotTag() ),
+                                                   actionCollection, "tag_sub" );
+    tagSub->setTag( I18N_NOOP( "sub" ) );
+
+    QuantaTagAction *tagSup = new QuantaTagAction( i18n( "Superscript" ), "tag_sup", 0,
+                                                   this, SLOT( slotTag() ),
+                                                   actionCollection, "tag_sup" );
+    tagSup->setTag( I18N_NOOP( "sup" ) );
+
+    //
+    // Headings
+    //
+    QuantaTagAction *tagH1 = new QuantaTagAction( i18n( "Heading 1" ), "tag_h1", 0,
+                                                   this, SLOT( slotTag() ),
+                                                   actionCollection, "tag_h1" );
+    tagH1->setTag( I18N_NOOP( "h1" ) );
+    QuantaTagAction *tagH2 = new QuantaTagAction( i18n( "Heading 2" ), "tag_h2", 0,
+                                                   this, SLOT( slotTag() ),
+                                                   actionCollection, "tag_h2" );
+    tagH2->setTag( I18N_NOOP( "h2" ) );
+    QuantaTagAction *tagH3 = new QuantaTagAction( i18n( "Heading 3" ), "tag_h3", 0,
+                                                   this, SLOT( slotTag() ),
+                                                   actionCollection, "tag_h3" );
+    tagH3->setTag( I18N_NOOP( "h3" ) );
+    QuantaTagAction *tagH4 = new QuantaTagAction( i18n( "Heading 4" ), "tag_h4", 0,
+                                                   this, SLOT( slotTag() ),
+                                                   actionCollection, "tag_h4" );
+    tagH4->setTag( I18N_NOOP( "h4" ) );
+    QuantaTagAction *tagH5 = new QuantaTagAction( i18n( "Heading 5" ), "tag_h5", 0,
+                                                   this, SLOT( slotTag() ),
+                                                   actionCollection, "tag_h5" );
+    tagH5->setTag( I18N_NOOP( "h5" ) );
+}
+
+void QuantaView::slotTag()
+{
+    const QObject *src = sender();
+    if ( src && src->inherits( "QuantaTagAction" ) ) {
+        QuantaTagAction *tag = (QuantaTagAction *) src;
+
+        if ( tag->closeTag().isNull() )
+            insertTag( tag->openTag() );
+        else
+            write()->insertTag( tag->openTag(), tag->closeTag() );
+    }
+}
+
+#else
+
+void QuantaView::initActions()
+{
+}
+
+void QuantaView::slotTag()
+{
+
+}
+
+#endif // NEW_STUFF
