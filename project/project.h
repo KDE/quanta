@@ -113,6 +113,7 @@ public:
   QValueList<SubProject>* subprojects();
   QStringList tasks();
   QMap<QString, TeamMember> allMembers();
+  bool eventsEnabled();
 
   /** Called when an url was moved inside the project with drag &drop */
   void urlMoved(const KURL& srcURL, const KURL &destURL);

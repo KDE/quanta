@@ -110,6 +110,7 @@ ProjectPrivate::ProjectPrivate(Project *p)
   parent = p;
   m_projectFiles.setAutoDelete(true);
   m_showUploadTreeviews = true;
+  m_eventsEnabled = true;
   m_events = new EventActions();
   init();
   m_wizTitle = i18n("<b>Insert Files in Project</b>");
@@ -430,8 +431,8 @@ void ProjectPrivate::loadProjectXML()
   {
     previewPrefix = KURL::fromPathOrURL( tmpString );
   }
-
   usePreviewPrefix = ( projectNode.toElement().attribute("usePreviewPrefix") == "1");
+  m_eventsEnabled = projectNode.toElement().attribute("enableEvents", "true") == "true";
   m_defaultEncoding = projectNode.toElement().attribute("encoding");
   if (m_defaultEncoding.isEmpty())
   {
@@ -1939,6 +1940,7 @@ void Project::slotOptions()
   topLayout = new QVBoxLayout( page, 0, KDialog::spacingHint() );
   topLayout->addWidget(&eventsPage);
   eventsPage.initEvents(d->m_events);
+  eventsPage.enableEventsBox->setChecked(d->m_eventsEnabled);
 
   if ( optionsDlg.exec() )
   {
@@ -2154,6 +2156,8 @@ void Project::slotOptions()
     projectNode.appendChild(teamNode);
 
     eventsPage.saveEvents(d->dom);
+    d->m_eventsEnabled = eventsPage.enableEventsBox->isChecked();
+    projectNode.toElement().setAttribute("enableEvents", d->m_eventsEnabled?"true":"false");
 
     setModified();
     d->loadProjectXML();
@@ -2550,6 +2554,11 @@ bool Project::queryClose()
       emit eventHappened("after_project_close", d->baseURL.url(), QString::null);
   }
   return canExit;
+}
+
+bool Project::eventsEnabled()
+{
+   return d->m_eventsEnabled;
 }
 
 #include "project.moc"

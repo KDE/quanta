@@ -71,7 +71,7 @@ QPEvents::~QPEvents()
 
 void QPEvents::slotEventHappened(const QString& name, const QString& argument1, const QString& argument2)
 {
-  if (!quantaApp)
+  if (!quantaApp || !Project::ref()->eventsEnabled())
     return;
   EventActions *events = Project::ref()->events();
   if (!events) return;

@@ -81,6 +81,7 @@ upload.*/
   QValueList<SubProject> m_subprojects;
   QString m_mailingList;
   bool m_showUploadTreeviews;
+  bool m_eventsEnabled;
 
   KAction
     *closeprjAction, *insertFileAction, *insertDirAction,
