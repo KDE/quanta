@@ -70,7 +70,6 @@
 
 #include "quanta_init.h"
 #include "quanta.h"
-#include "quantaview.h"
 #include "viewmanager.h"
 #include "quantadoc.h"
 #include "resource.h"

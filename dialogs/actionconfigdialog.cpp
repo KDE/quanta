@@ -43,7 +43,6 @@
 //app includes
 #include "resource.h"
 #include "quanta.h"
-#include "quantaview.h"
 #include "filecombo.h"
 
 #include "actionconfigdialog.h"

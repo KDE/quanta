@@ -25,7 +25,6 @@
 #include "resource.h"
 #include "quanta.h"
 #include "quantacommon.h"
-#include "quantaview.h"
 #include "document.h"
 #include "tag.h"
 #include "node.h"

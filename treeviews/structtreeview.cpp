@@ -38,7 +38,6 @@
 #include "resource.h"
 #include "qextfileinfo.h"
 #include "quanta.h"
-#include "quantaview.h"
 #include "quantacommon.h"
 #include "dtds.h"
 #include "viewmanager.h"

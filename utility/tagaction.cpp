@@ -47,7 +47,7 @@
 #include "document.h"
 #include "quantaview.h"
 #include "quanta.h"
-#include "quantadoc.h"
+// #include "quantadoc.h"
 #include "tagdialog.h"
 #include "messageoutput.h"
 #include "quantacommon.h"
@@ -398,7 +398,7 @@ void TagAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
   {
     if ( firstOutput )
     {
-        quantaApp->doc()->openDocument( KURL() );
+        quantaApp->slotFileNew();
         w = ViewManager::ref()->activeDocument();
     }
     w->insertTag( text );
@@ -457,7 +457,7 @@ void TagAction::slotGetScriptError( KProcess *, char *buffer, int buflen )
   {
     if ( firstError )
     {
-        quantaApp->doc()->openDocument( KURL() );
+        quantaApp->slotFileNew();
         w = ViewManager::ref()->activeDocument();
     }
     w->insertTag( text );

@@ -16,8 +16,6 @@
 
 #include "dcopsettings.h"
 #include "quanta.h"
-#include "quantaview.h"
-#include "document.h"
 #include "resource.h"
 #include "quantacommon.h"
 #include "project.h"

@@ -66,7 +66,6 @@
 #include "tagaction.h"
 #include "toolbartabwidget.h"
 #include "quantaplugin.h"
-#include "quantaplugininterface.h"
 #include "project.h"
 #include "structtreeview.h"
 

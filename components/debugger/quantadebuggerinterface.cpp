@@ -21,11 +21,6 @@
 #include <kiconloader.h>
 #include <kmessagebox.h>
 
-#include "quanta.h"
-#include "quantadoc.h"
-#include "document.h"
-#include "resource.h"
-#include "project.h"
 #include "debuggerinterface.h"
 #include "quantadebuggerinterface.h"
 #include "debuggermanager.h"

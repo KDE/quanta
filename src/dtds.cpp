@@ -41,7 +41,6 @@
 #include "dtdparser.h"
 #include "document.h"
 #include "quanta.h"
-#include "quantaview.h"
 #include "viewmanager.h"
 
 #include "dtds.h"

@@ -67,7 +67,6 @@
 #include "quantacommon.h"
 #include "qextfileinfo.h"
 #include "resource.h"
-#include "templatestreeview.h"
 #include "debuggermanager.h"
 
 #include "project.h"

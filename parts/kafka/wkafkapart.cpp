@@ -36,7 +36,6 @@
 #include "document.h"
 #include "quanta.h"
 #include "quantacommon.h"
-#include "quantaview.h"
 #include "resource.h"
 #include "undoredo.h"
 #include "node.h"
