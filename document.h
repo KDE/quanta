@@ -48,6 +48,8 @@ public:
 
 public:
 
+  // configure dialog
+  void editorOptions();
 
   bool hasFileName();
   QString fileName();

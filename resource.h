@@ -63,6 +63,13 @@
 #define ID_EDIT_GOTO_LINE           11090
 #define ID_EDIT_CURRENT_TAG         11100
 #define ID_EDIT_SPELL			          11110
+#define ID_EDIT_UREDO_HISTORY       11120
+#define ID_EDIT_SELECT_ALL          11130
+#define ID_EDIT_DESELECT_ALL        11140
+#define ID_EDIT_INVERT_SELECT       11150
+#define ID_EDIT_INDENT              11160
+#define ID_EDIT_UNINDENT            11170
+#define ID_EDIT_CLEAN_INDENT        11180
 
 
 ///////////////////////////////////////////////////////////////////

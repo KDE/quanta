@@ -203,9 +203,17 @@ class QuantaApp : public KTMainWindow
     void slotEditPaste();
     void slotEditUndo();
     void slotEditRedo();
+    void slotURedoHistory();
+    void slotEditSelectAll();
+    void slotEditDeselectAll();
+    void slotEditInvertSelect();
     void slotEditSearch();
     void slotEditSearchAgain();
     void slotEditReplace();
+    void slotEditIndent();
+    void slotEditUnindent();
+    void slotEditCleanIndent();
+    void slotEditGotoLine();
 
     /** open url in documentation window
      */
@@ -284,6 +292,7 @@ class QuantaApp : public KTMainWindow
     QPopupMenu *recentFilesMenu;
     QPopupMenu *recentProjectsMenu;
     QPopupMenu *editMenu;
+    QPopupMenu *toolMenu;
     QPopupMenu *viewMenu;
     QPopupMenu *insertMenu;
     QPopupMenu *projectMenu;

@@ -2777,19 +2777,23 @@ HlManager::HlManager() : QObject(0L) {
 
   hlList.setAutoDelete(true);
   hlList.append(new Highlight(I18N_NOOP("Normal")));
+  hlList.append(new HtmlHighlight(  "HTML"     ));
+  hlList.append(new PhpHighlight(   "PHP"      ));
+  hlList.append(new JSHighlight(    "JavaScript"));
+  hlList.append(new JavaHighlight(  "Java"     ));
+  hlList.append(new SqlHighlight(   "SQL"      ));
+  hlList.append(new PerlHighlight(  "Perl"     ));
+
   hlList.append(new CHighlight(     "C"        ));
   hlList.append(new CppHighlight(   "C++"      ));
   hlList.append(new ObjcHighlight(  "Objective-C"));
-  hlList.append(new JavaHighlight(  "Java"     ));
-  hlList.append(new HtmlHighlight(  "HTML"     ));
   hlList.append(new BashHighlight(  "Bash"     ));
   hlList.append(new ModulaHighlight("Modula 2" ));
   hlList.append(new AdaHighlight(   "Ada"      ));
   hlList.append(new PythonHighlight("Python"   ));
-  hlList.append(new PerlHighlight(  "Perl"     ));
   hlList.append(new SatherHighlight("Sather"   ));
   hlList.append(new LatexHighlight( "Latex"    ));
-  hlList.append(new IdlHighlight("IDL"));
+  hlList.append(new IdlHighlight(   "IDL"      ));
 }
 
 HlManager::~HlManager() {

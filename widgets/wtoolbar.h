@@ -33,7 +33,9 @@ public:
 	
 	void fixingSize();
 	void insertSeparator();
-	
+
+  static void insertSeparator( KToolBar * );
+		
 public:
 };
 

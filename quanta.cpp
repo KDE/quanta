@@ -128,6 +128,22 @@ void QuantaApp::commandCallback(int id_)
          slotEditRedo();
          break;
 
+    case ID_EDIT_UREDO_HISTORY:
+         slotURedoHistory();
+         break;
+
+    case ID_EDIT_SELECT_ALL:
+         slotEditSelectAll();
+         break;
+
+    case ID_EDIT_DESELECT_ALL:
+         slotEditDeselectAll();
+         break;
+
+    case ID_EDIT_INVERT_SELECT:
+         slotEditInvertSelect();
+         break;
+
     case ID_EDIT_SEARCH:
          slotEditSearch();
          break;
@@ -138,6 +154,26 @@ void QuantaApp::commandCallback(int id_)
 
     case ID_EDIT_REPLACE:
          slotEditReplace();
+         break;
+
+    case ID_EDIT_INDENT:
+         slotEditIndent();
+         break;
+
+    case ID_EDIT_UNINDENT:
+         slotEditUnindent();
+         break;
+
+    case ID_EDIT_GOTO_LINE:
+         slotEditGotoLine();
+         break;
+
+    case ID_EDIT_CLEAN_INDENT:
+         slotEditCleanIndent();
+         break;
+
+    case ID_EDIT_CURRENT_TAG:
+         view->slotEditCurrentTag();
          break;
   
     case ID_VIEW_TOOLBAR:
@@ -194,7 +230,7 @@ void QuantaApp::commandCallback(int id_)
     		 break;
 
     case ID_OPTIONS_EDITOR:
-         // doc->write()->optDlg();
+         doc->write()->editorOptions();
          break;
 
     case ID_OPTIONS_COLORS:
@@ -204,6 +240,7 @@ void QuantaApp::commandCallback(int id_)
     case ID_OPTIONS_HIGHLIGHT:
          doc->write()->hlDlg();
          break;
+
     case ID_CONTEXT_HELP:
          contextHelp();
          break;
@@ -511,6 +548,33 @@ void QuantaApp::slotEditRedo()
   slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
 }
 
+void QuantaApp::slotURedoHistory()
+{
+  slotStatusMsg(i18n("Undo/Redo history..."));
+
+  doc->write()->undoHistory();
+
+  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
+}
+
+void QuantaApp::slotEditSelectAll()
+{
+  slotStatusMsg(i18n("Undo/Redo history..."));
+
+  doc->write()->selectAll();
+
+  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
+}
+
+void QuantaApp::slotEditDeselectAll()
+{
+  slotStatusMsg(i18n("Undo/Redo history..."));
+
+  doc->write()->deselectAll();
+
+  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
+}
+
 void QuantaApp::slotEditSearch()
 {
   slotStatusMsg(i18n("Search..."));
@@ -538,6 +602,50 @@ void QuantaApp::slotEditReplace()
   slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
 }
 
+void QuantaApp::slotEditInvertSelect()
+{
+  slotStatusMsg(i18n("Invert Selection..."));
+
+  doc->write()->invertSelection();
+
+  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
+}
+
+void QuantaApp::slotEditIndent()
+{
+  slotStatusMsg(i18n("Indent..."));
+
+  doc->write()->indent();
+
+  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
+}
+
+void QuantaApp::slotEditUnindent()
+{
+  slotStatusMsg(i18n("UnIndent..."));
+
+  doc->write()->unIndent();
+
+  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
+}
+
+void QuantaApp::slotEditCleanIndent()
+{
+  slotStatusMsg(i18n("Clean Indentation..."));
+
+  doc->write()->cleanIndent();
+
+  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
+}
+
+void QuantaApp::slotEditGotoLine()
+{
+  slotStatusMsg(i18n("Goto Line..."));
+
+  doc->write()->gotoLine();
+
+  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
+}
 
 void QuantaApp::slotViewToolBar()
 {

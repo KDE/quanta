@@ -303,7 +303,7 @@ bool QuantaDoc::newDocument( const char* name )
 
   bool fnew = false;
   if ( !name ) {
-    fileName = "Untitled.html";
+    fileName = "Untitled1.html";
     fnew = true;
   }
   else fileName = name;

@@ -17,9 +17,18 @@
 
 #include <list>
 
+// QT includes
+// KDE includes
+#include <kapp.h>
+#include <kwin.h>
+#include <klocale.h>
+#include <kdialogbase.h>
+#include <kiconloader.h>
+
 #include "document.h"
 
 #include "kwrite/kwdoc.h"
+#include "kwrite/kwdialog.h"
 #include "kwrite/highlight/highlight.h"
 
 Document::Document( KWriteDoc *doc, QWidget *parent, const char *name , QString fname)
@@ -33,8 +42,7 @@ Document::~Document()
 
 bool Document::hasFileName()
 {
-  KURL url;
-  if ( kWriteDoc->url().fileName().isEmpty() ) return false;
+  if ( kWriteDoc->url().path().isEmpty() ) return false;
   return true;
 }
 
@@ -431,4 +439,62 @@ void Document::replaceSelected(QString s)
 	cut();
   kWriteView ->getVConfig(c);
 	kWriteDoc->insert( c, s);
+}
+
+// configure editor
+void Document::editorOptions()
+{
+  KWin kwin;
+  // I read that no widgets should be created on the stack
+  KDialogBase *kd = new KDialogBase(KDialogBase::IconList,
+                                    i18n("Configure KWrite"),
+                                    KDialogBase::Ok | KDialogBase::Cancel |
+                                    KDialogBase::Help ,
+                                    KDialogBase::Ok, this, "tabdialog");
+
+  // color options
+  QVBox *page=kd->addVBoxPage(i18n("Colors"), QString::null,
+                              BarIcon("colors", KIcon::SizeMedium) );
+  ColorConfig *colorConfig = new ColorConfig((QWidget *)page);
+  QColor* colors = this->getColors();
+  colorConfig->setColors(colors);
+
+  // indent options
+  page=kd->addVBoxPage(i18n("Indent"), QString::null,
+                       BarIcon("rightjust", KIcon::SizeMedium) );
+  IndentConfigTab *indentConfig = new IndentConfigTab((QWidget *)page, this);
+
+  // select options
+  page=kd->addVBoxPage(i18n("Select"), QString::null,
+                       BarIcon("misc") );
+  SelectConfigTab *selectConfig = new SelectConfigTab((QWidget *)page, this);
+
+  // edit options
+  page=kd->addVBoxPage(i18n("Edit"), QString::null,
+                       BarIcon("kwrite", KIcon::SizeMedium ) );
+  EditConfigTab *editConfig = new EditConfigTab((QWidget *)page, this);
+
+  // spell checker
+  page = kd->addVBoxPage( i18n("Spelling"), i18n("Spell checker behavior"),
+                          BarIcon("spellcheck", KIcon::SizeMedium) );
+  KSpellConfig *ksc = new KSpellConfig((QWidget *)page, 0L, this->ksConfig(), false );
+
+  kwin.setIcons(kd->winId(), kapp->icon(), kapp->miniIcon());
+
+ if (kd->exec()) {
+    // color options
+    colorConfig->getColors(colors);
+    this->applyColors();
+    // indent options
+    indentConfig->getData(this);
+    // select options
+    selectConfig->getData(this);
+    // edit options
+    editConfig->getData(this);
+    // spell checker
+    ksc->writeGlobalSettings();
+    this->setKSConfig(*ksc);
+  }
+
+  delete kd;
 }

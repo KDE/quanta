@@ -46,6 +46,7 @@
 
 #include "project/project.h"
 
+#include "widgets/wtoolbar.h"
 #include "widgets/whtmlpart.h"
 #include "widgets/wsplitter.h"
 #include "widgets/messageoutput.h"
@@ -126,8 +127,9 @@ QuantaApp::QuantaApp()
   disableCommand(ID_BOOKMARKS_CLEAR);
 
   if ( doc->docList.count() == 0 ) // no documents opened
-  	 doc->newDocument();
-  	
+  {
+  	doc->newDocument();
+  }
 }
 
 QuantaApp::~QuantaApp()
@@ -138,19 +140,6 @@ QuantaApp::~QuantaApp()
 void QuantaApp::initKeyAccel()
 {
   keyAccel = new KAccel(this);
-	
-  // fileMenu accelerators
-  keyAccel->connectItem(KStdAccel::New, this, SLOT(slotFileNew()));
-  keyAccel->connectItem(KStdAccel::Open, this, SLOT(slotFileOpen()));
-  keyAccel->connectItem(KStdAccel::Save, this, SLOT(slotFileSave()));
-  keyAccel->connectItem(KStdAccel::Close, this, SLOT(slotFileClose()));
-  keyAccel->connectItem(KStdAccel::Print, this, SLOT(slotFilePrint()));
-  keyAccel->connectItem(KStdAccel::Quit, this, SLOT(slotFileQuit()));
-  // editMenu accelerators
-  keyAccel->connectItem(KStdAccel::Cut, this, SLOT(slotEditCut()));
-  keyAccel->connectItem(KStdAccel::Copy, this, SLOT(slotEditCopy()));
-  keyAccel->connectItem(KStdAccel::Paste, this, SLOT(slotEditPaste()));
-
 
   keyAccel->insertItem( "Undo", Key_Z+CTRL);
   keyAccel->connectItem("Undo",   this, SLOT(slotEditUndo()));
@@ -167,33 +156,23 @@ void QuantaApp::initKeyAccel()
   keyAccel->insertItem( "Find next", Key_F3);
   keyAccel->connectItem("Find next", this, SLOT(slotEditSearchAgain()));
 
+#warning tag_attributes_still_doesnt_work
   keyAccel->insertItem( "Tag attributes", Key_Down+ALT);
 //  keyAccel->connectItem("Tag attributes", doc, SLOT(slotAttribPopup()));
 
   keyAccel->connectItem(KStdAccel::Help, this, SLOT(appHelpActivated()));
-			
-  keyAccel->changeMenuAccel(fileMenu, ID_FILE_NEW, KStdAccel::New);
-  keyAccel->changeMenuAccel(fileMenu, ID_FILE_OPEN, KStdAccel::Open);
-  keyAccel->changeMenuAccel(fileMenu, ID_FILE_SAVE, KStdAccel::Save);
-  keyAccel->changeMenuAccel(fileMenu, ID_FILE_CLOSE, KStdAccel::Close);
-  keyAccel->changeMenuAccel(fileMenu, ID_FILE_PRINT, KStdAccel::Print);
-  keyAccel->changeMenuAccel(fileMenu, ID_FILE_QUIT, KStdAccel::Quit);
-
-  keyAccel->changeMenuAccel(editMenu, ID_EDIT_CUT, KStdAccel::Cut);
-  keyAccel->changeMenuAccel(editMenu, ID_EDIT_COPY, KStdAccel::Copy);
-  keyAccel->changeMenuAccel(editMenu, ID_EDIT_PASTE, KStdAccel::Paste);
-  keyAccel->changeMenuAccel(editMenu, ID_EDIT_UNDO,         "Undo");
-  keyAccel->changeMenuAccel(editMenu, ID_EDIT_REDO,         "Redo");
-  keyAccel->changeMenuAccel(editMenu, ID_EDIT_SEARCH,       "Find");
-  keyAccel->changeMenuAccel(editMenu, ID_EDIT_REPLACE,      "Replace");
-  keyAccel->changeMenuAccel(editMenu, ID_EDIT_SEARCH_AGAIN, "Find next");
-
 
   keyAccel->insertItem("Edit current tag",Key_F4);
   keyAccel->connectItem("Edit current tag",view,SLOT(slotEditCurrentTag()));
 
-  keyAccel->insertItem("Context help",Key_F1+SHIFT);
+  keyAccel->insertItem("Context help",Key_F1);
   keyAccel->connectItem("Context help",this,SLOT( contextHelp() ) );
+
+  keyAccel->insertItem("Indent",ALT+SHIFT+Key_Right);
+  keyAccel->connectItem("Indent",this,SLOT( slotEditIndent() ) );
+
+  keyAccel->insertItem("Unindent",ALT+SHIFT+Key_Left);
+  keyAccel->connectItem("Unindent",this,SLOT( slotEditUnindent() ) );
 
   keyAccel->insertItem("Refresh Preview",Key_F5);
   keyAccel->connectItem("Refresh Preview",this,SLOT(slotViewRepaint()));
@@ -246,31 +225,60 @@ void QuantaApp::initKeyAccel()
   keyAccel->insertItem("&gt;",Key_Greater+CTRL);
   keyAccel->connectItem("&gt;",view,SLOT(slotTagGt()));
 
-  keyAccel->insertItem("Context help",Key_F1+SHIFT);
-//  keyAccel->connectItem("Context help",this,SLOT(slotContextHelp()));
+  keyAccel->insertItem("goto line", ALT+Key_N);
+  keyAccel->connectItem("goto line",this,SLOT(slotEditGotoLine()));
 
-  keyAccel->changeMenuAccel(insertStandardMenu, ID_TAG_BR, "<br>");
-  keyAccel->changeMenuAccel(insertMenu,         ID_TAG_IMAGE, "<img>");
-  keyAccel->changeMenuAccel(insertMenu,         ID_TAG_A, "<a>");
-  keyAccel->changeMenuAccel(insertMenu,         ID_TAG_COLOR, "#color");
-  keyAccel->changeMenuAccel(insertTablesMenu,   ID_TAG_TABLE_DATA, "<td>");
-  keyAccel->changeMenuAccel(insertTablesMenu,   ID_TAG_TABLE_ROW, "<tr>");
-  keyAccel->changeMenuAccel(insertTablesMenu,   ID_TAG_TABLE_HEAD, "<th>");
+  keyAccel->readSettings();
+
+  keyAccel->connectItem(KStdAccel::New,   this, SLOT(slotFileNew()));
+  keyAccel->connectItem(KStdAccel::Open,  this, SLOT(slotFileOpen()));
+  keyAccel->connectItem(KStdAccel::Save,  this, SLOT(slotFileSave()));
+  keyAccel->connectItem(KStdAccel::Close, this, SLOT(slotFileClose()));
+  keyAccel->connectItem(KStdAccel::Print, this, SLOT(slotFilePrint()));
+  keyAccel->connectItem(KStdAccel::Quit,  this, SLOT(slotFileQuit()));
+  keyAccel->connectItem(KStdAccel::Cut,   this, SLOT(slotEditCut()));
+  keyAccel->connectItem(KStdAccel::Copy,  this, SLOT(slotEditCopy()));
+  keyAccel->connectItem(KStdAccel::Paste, this, SLOT(slotEditPaste()));
+
+  keyAccel->changeMenuAccel(fileMenu, ID_FILE_NEW,   KStdAccel::New);
+  keyAccel->changeMenuAccel(fileMenu, ID_FILE_OPEN,  KStdAccel::Open);
+  keyAccel->changeMenuAccel(fileMenu, ID_FILE_SAVE,  KStdAccel::Save);
+  keyAccel->changeMenuAccel(fileMenu, ID_FILE_CLOSE, KStdAccel::Close);
+  keyAccel->changeMenuAccel(fileMenu, ID_FILE_PRINT, KStdAccel::Print);
+  keyAccel->changeMenuAccel(fileMenu, ID_FILE_QUIT,  KStdAccel::Quit);
+
+  keyAccel->changeMenuAccel(editMenu, ID_EDIT_CUT,   KStdAccel::Cut);
+  keyAccel->changeMenuAccel(editMenu, ID_EDIT_COPY,  KStdAccel::Copy);
+  keyAccel->changeMenuAccel(editMenu, ID_EDIT_PASTE, KStdAccel::Paste);
+  keyAccel->changeMenuAccel(editMenu, ID_EDIT_UNDO,         "Undo");
+  keyAccel->changeMenuAccel(editMenu, ID_EDIT_REDO,         "Redo");
+  keyAccel->changeMenuAccel(editMenu, ID_EDIT_SEARCH,       "Find");
+  keyAccel->changeMenuAccel(editMenu, ID_EDIT_REPLACE,      "Replace");
+  keyAccel->changeMenuAccel(editMenu, ID_EDIT_SEARCH_AGAIN, "Find next");
+
+  keyAccel->changeMenuAccel(insertStandardMenu, ID_TAG_BR,          "<br>");
+  keyAccel->changeMenuAccel(insertMenu,         ID_TAG_IMAGE,       "<img>");
+  keyAccel->changeMenuAccel(insertMenu,         ID_TAG_A,           "<a>");
+  keyAccel->changeMenuAccel(insertMenu,         ID_TAG_COLOR,       "#color");
+  keyAccel->changeMenuAccel(insertTablesMenu,   ID_TAG_TABLE_DATA,  "<td>");
+  keyAccel->changeMenuAccel(insertTablesMenu,   ID_TAG_TABLE_ROW,   "<tr>");
+  keyAccel->changeMenuAccel(insertTablesMenu,   ID_TAG_TABLE_HEAD,  "<th>");
   keyAccel->changeMenuAccel(insertMenu,         ID_TAG_QUICK_TABLE, "<table>");
-  keyAccel->changeMenuAccel(insertMenu,         ID_TAG_FONT, "<font>");
-  keyAccel->changeMenuAccel(insertMenu,         ID_TAG_QUICK_LIST, "<ul> / <ol>");
-  keyAccel->changeMenuAccel(viewMenu,           ID_VIEW_IN_KFM2, "Preview in Konqueror");
-  keyAccel->changeMenuAccel(viewMenu,           ID_VIEW_IN_NETSCAPE, "Preview in Netscape");
-  keyAccel->changeMenuAccel(viewMenu,           ID_VIEW_REPAINT, "Refresh Preview");
-  keyAccel->changeMenuAccel(viewMenu,           ID_VIEW_PREVIEW, "Preview");
-  keyAccel->changeMenuAccel(insertStandardMenu, ID_TAG_NBSP, "&nbsp;");
-//  keyAccel->changeMenuAccel(helpMenu,           ID_CONTEXT_HELP, "Context help");
-  keyAccel->changeMenuAccel(editMenu,           ID_EDIT_CURRENT_TAG, "Edit current tag");
-  keyAccel->changeMenuAccel(editMenu,           ID_ATTRIB_POPUP, "Tag attributes");
-  keyAccel->changeMenuAccel(editMenu,           ID_CONTEXT_HELP, "Context help");
+  keyAccel->changeMenuAccel(insertMenu,         ID_TAG_FONT,        "<font>");
+  keyAccel->changeMenuAccel(insertMenu,         ID_TAG_QUICK_LIST,  "<ul> / <ol>");
+  keyAccel->changeMenuAccel(insertStandardMenu, ID_TAG_NBSP,        "&nbsp;");
 
+  keyAccel->changeMenuAccel(viewMenu, ID_VIEW_IN_KFM2,     "Preview in Konqueror");
+  keyAccel->changeMenuAccel(viewMenu, ID_VIEW_IN_NETSCAPE, "Preview in Netscape");
+  keyAccel->changeMenuAccel(viewMenu, ID_VIEW_REPAINT,     "Refresh Preview");
+  keyAccel->changeMenuAccel(viewMenu, ID_VIEW_PREVIEW,     "Preview");
 
-  keyAccel->readSettings();	
+  keyAccel->changeMenuAccel(toolMenu, ID_EDIT_CURRENT_TAG, "Edit current tag");
+  keyAccel->changeMenuAccel(toolMenu, ID_ATTRIB_POPUP,     "Tag attributes");
+  keyAccel->changeMenuAccel(toolMenu, ID_CONTEXT_HELP,     "Context help");
+  keyAccel->changeMenuAccel(toolMenu, ID_EDIT_INDENT,      "Indent");
+  keyAccel->changeMenuAccel(toolMenu, ID_EDIT_UNINDENT,    "Unindent");
+  keyAccel->changeMenuAccel(toolMenu, ID_EDIT_GOTO_LINE,   "goto line");
 }
 
 void QuantaApp::initMenuBar()
@@ -307,26 +315,47 @@ void QuantaApp::initMenuBar()
   ///////////////////////////////////////////////////////////////////
   // menuBar entry editMenu
   editMenu = new QPopupMenu();
+
+  editMenu->insertItem(UserIcon("undo"),i18n("&Undo"), ID_EDIT_UNDO);
+  editMenu->insertItem(UserIcon("redo"),i18n("&Redo"), ID_EDIT_REDO);
+  editMenu->insertItem(i18n("Undo/Redo &History..."),  ID_EDIT_UREDO_HISTORY);
+
+  editMenu->insertSeparator();
+
   editMenu->insertItem(UserIcon("cut"), 	i18n("Cu&t"), 	ID_EDIT_CUT);
   editMenu->insertItem(UserIcon("copy"), 	i18n("&Copy"), 	ID_EDIT_COPY);
   editMenu->insertItem(UserIcon("paste"), i18n("&Paste"), ID_EDIT_PASTE);
+  editMenu->insertItem(i18n("Select &All"),       ID_EDIT_SELECT_ALL);
+  editMenu->insertItem(i18n("&Deselect All"),     ID_EDIT_DESELECT_ALL);
+  editMenu->insertItem(i18n("Invert &Selection"), ID_EDIT_INVERT_SELECT);
 
   editMenu->insertSeparator();
-  editMenu->insertItem(UserIcon("undo"),i18n("&Undo"), ID_EDIT_UNDO);
-  editMenu->insertItem(UserIcon("redo"),i18n("&Redo"), ID_EDIT_REDO);
-  editMenu->insertSeparator();
+
   editMenu->insertItem(UserIcon("find"),      i18n("&Search"),      ID_EDIT_SEARCH);
   editMenu->insertItem(UserIcon("findnext"),  i18n("Search &again"),ID_EDIT_SEARCH_AGAIN);
   editMenu->insertItem(UserIcon("replace"),   i18n("R&eplace"),     ID_EDIT_REPLACE);
-  editMenu->insertSeparator();
-  editMenu->insertItem(UserIcon("spellcheck"),i18n("Spe&ll checker"),ID_EDIT_SPELL);
-  editMenu->insertSeparator();
-  editMenu->insertItem( i18n("&Edit current tag"),  ID_EDIT_CURRENT_TAG);
-  editMenu->insertItem( i18n("Tag attributes"),  		ID_ATTRIB_POPUP);
-  editMenu->insertItem( i18n("Context help"),  		  ID_CONTEXT_HELP);
-  editMenu->insertItem( i18n("&Goto line"),         ID_EDIT_GOTO_LINE);
 
-//  editMenu->setAccel(ALT+Key_G, ID_EDIT_GOTO_LINE);
+  ///////////////////////////////////////////////////////////////////
+  // menuBar entry toolMenu
+  toolMenu = new QPopupMenu();
+
+  toolMenu->insertItem( i18n("&Goto line"),         ID_EDIT_GOTO_LINE);
+
+  toolMenu->insertSeparator();
+
+  toolMenu->insertItem( i18n("&Indent"),            ID_EDIT_INDENT);
+  toolMenu->insertItem( i18n("&Unindent"),          ID_EDIT_UNINDENT);
+  toolMenu->insertItem( i18n("&Clean Indentation"), ID_EDIT_CLEAN_INDENT);
+
+  toolMenu->insertSeparator();
+
+  toolMenu->insertItem( i18n("Context help"),  		  ID_CONTEXT_HELP);
+  toolMenu->insertItem( i18n("Tag attributes"),  		ID_ATTRIB_POPUP);
+  toolMenu->insertItem( i18n("&Edit current tag"),  ID_EDIT_CURRENT_TAG);
+
+  toolMenu->insertSeparator();
+
+  toolMenu->insertItem(UserIcon("spellcheck"),i18n("Spe&ll checker"),ID_EDIT_SPELL);
 
 
   ///////////////////////////////////////////////////////////////////
@@ -357,7 +386,7 @@ void QuantaApp::initMenuBar()
   // menuBar entry projectMenu
   projectMenu = new QPopupMenu();
   projectMenu->insertItem(i18n("&Create new"),    ID_PROJECT_NEW);
-  projectMenu->insertItem(UserIcon("openprj"), i18n("&Open project"),  ID_PROJECT_OPEN);
+  projectMenu->insertItem(UserIcon("openprj"),    i18n("&Open project"),  ID_PROJECT_OPEN);
   projectMenu->insertItem(i18n("Open &recent project"),recentProjectsMenu, ID_PROJECT_OPEN_RECENT);
   projectMenu->insertItem(i18n("&Close"),         ID_PROJECT_CLOSE);
   projectMenu->insertSeparator();
@@ -377,7 +406,7 @@ void QuantaApp::initMenuBar()
   // menuBar entry bookmarksmenu
   bookmarksMenu = new QPopupMenu();
   bookmarksMenu->insertItem(i18n("&Set bookmark"),   ID_BOOKMARKS_SET);
-  bookmarksMenu->insertItem(UserIcon("bookmark"), i18n("&Add bookmark"),   ID_BOOKMARKS_ADD);
+  bookmarksMenu->insertItem(UserIcon("bookmark"),    i18n("&Add bookmark"),   ID_BOOKMARKS_ADD);
   bookmarksMenu->insertItem(i18n("&Clear bookmarks"),ID_BOOKMARKS_CLEAR);
 
   ///////////////////////////////////////////////////////////////////
@@ -385,7 +414,8 @@ void QuantaApp::initMenuBar()
   optionsMenu = new QPopupMenu();
 //  optionsMenu->insertItem(i18n("&Editor options"),  ID_OPTIONS_EDITOR );
 //  optionsMenu->insertItem(i18n("Editor &colors"),   ID_OPTIONS_COLORS );
-  optionsMenu->insertItem(i18n("&Highliting"),      ID_OPTIONS_HIGHLIGHT );
+  optionsMenu->insertItem(i18n("&Highliting"),       ID_OPTIONS_HIGHLIGHT );
+  optionsMenu->insertItem(i18n("&Editor options"),   ID_OPTIONS_EDITOR);
   optionsMenu->insertSeparator();
   optionsMenu->insertItem(i18n("&General options"),  ID_OPTIONS );
 
@@ -409,6 +439,7 @@ void QuantaApp::initMenuBar()
   // they will appear later from left to right
   menuBar()->insertItem(i18n(" &File "), fileMenu);
   menuBar()->insertItem(i18n(" &Edit "), editMenu);
+  menuBar()->insertItem(i18n(" &Tool "), toolMenu);
   menuBar()->insertItem(i18n(" &View "), viewMenu);
   menuBar()->insertItem(i18n(" &Project "), projectMenu);
   //menuBar()->insertItem(i18n(" &Bookmarks "), bookmarksMenu);
@@ -427,6 +458,9 @@ void QuantaApp::initMenuBar()
   connect(editMenu, SIGNAL(activated(int)), SLOT(commandCallback(int)));
   connect(editMenu, SIGNAL(highlighted(int)), SLOT(statusCallback(int)));
 
+  connect(toolMenu, SIGNAL(activated(int)), SLOT(commandCallback(int)));
+  connect(toolMenu, SIGNAL(highlighted(int)), SLOT(statusCallback(int)));
+
   connect(viewMenu, SIGNAL(activated(int)), SLOT(commandCallback(int)));
   connect(viewMenu, SIGNAL(highlighted(int)), SLOT(statusCallback(int)));
 
@@ -435,7 +469,6 @@ void QuantaApp::initMenuBar()
 
   connect(optionsMenu, SIGNAL(activated(int)), SLOT(commandCallback(int)));
   connect(optionsMenu, SIGNAL(highlighted(int)), SLOT(statusCallback(int)));
-
 }
 
 void QuantaApp::initToolBar()
@@ -443,17 +476,15 @@ void QuantaApp::initToolBar()
 
   ///////////////////////////////////////////////////////////////////
   // TOOLBAR
-  toolBar()->insertButton(UserIcon("new"), ID_FILE_NEW, true, i18n("New File"));
-  toolBar()->insertButton(UserIcon("open"), ID_FILE_OPEN, true, i18n("Open File"));
+  toolBar()->insertButton(UserIcon("new"),     ID_FILE_NEW,      true, i18n("New File"));
+  toolBar()->insertButton(UserIcon("open"),    ID_FILE_OPEN,     true, i18n("Open File"));
   toolBar()->insertButton(UserIcon("openprj"), ID_PROJECT_OPEN,  true, i18n("Open Project"));
-  toolBar()->insertButton(UserIcon("save"), ID_FILE_SAVE, true, i18n("Save File"));
-  toolBar()->insertButton(UserIcon("save_all"), ID_FILE_SAVE_ALL, true, i18n("Save All Files"));
+  toolBar()->insertButton(UserIcon("save"),    ID_FILE_SAVE,     true, i18n("Save File"));
+  toolBar()->insertButton(UserIcon("save_all"),ID_FILE_SAVE_ALL, true, i18n("Save All Files"));
 //  toolBar()->insertButton(UserIcon("upload_file"),    ID_PROJECT_UPLOAD_FILE,     true, i18n("Upload File"));
 //  toolBar()->insertButton(BarIcon("fileprint"), ID_FILE_PRINT, true, i18n("Print"));
 
-  QFrame *separatorLine1= new QFrame( toolBar());
-  separatorLine1->setFrameStyle( QFrame::VLine|QFrame::Sunken);
-  toolBar()->insertWidget( 0,20,separatorLine1);
+  WToolBar::insertSeparator( toolBar() );
 
   toolBar()->insertButton(UserIcon("cut"), ID_EDIT_CUT, true, i18n("Cut"));
   toolBar()->insertButton(UserIcon("copy"), ID_EDIT_COPY, true, i18n("Copy"));
@@ -464,16 +495,12 @@ void QuantaApp::initToolBar()
 
   toolBar()->insertButton(UserIcon("spellcheck"),   ID_EDIT_SPELL,   true, i18n("Spell Checker"));
 
-  QFrame *separatorLine2= new QFrame( toolBar());
-  separatorLine2->setFrameStyle( QFrame::VLine|QFrame::Sunken);
-  toolBar()->insertWidget( 0,20,separatorLine2);
+  WToolBar::insertSeparator( toolBar() );
 
   toolBar()->insertButton(UserIcon("find"),  		ID_EDIT_SEARCH,  			true, i18n("Search"));
   toolBar()->insertButton(UserIcon("findnext"),	ID_EDIT_SEARCH_AGAIN, true, i18n("Search again"));
 
-  QFrame *separatorLine3= new QFrame( toolBar());
-  separatorLine3->setFrameStyle( QFrame::VLine|QFrame::Sunken);
-  toolBar()->insertWidget( 0,20,separatorLine3);
+  WToolBar::insertSeparator( toolBar() );
 
   toolBar()->insertButton(UserIcon("tree_win"),   ID_VIEW_TREE,     true, i18n("View tree"));
   toolBar()->insertButton(UserIcon("preview"),    ID_VIEW_PREVIEW,  true, i18n("Preview"));
@@ -486,9 +513,7 @@ void QuantaApp::initToolBar()
   toolBar()->insertButton(UserIcon("forward"),   ID_VIEW_FORWARD, true, i18n("Forward"));
   toolBar()->insertButton(UserIcon("repaint"),   ID_VIEW_REPAINT, true, i18n("Refresh Preview"));
 
-  QFrame *separatorLine4= new QFrame( toolBar());
-  separatorLine4->setFrameStyle( QFrame::VLine|QFrame::Sunken);
-  toolBar()->insertWidget( 0,20,separatorLine4);
+  WToolBar::insertSeparator( toolBar() );
 
   toolBar()->insertButton(UserIcon("close"),    ID_FILE_CLOSE,  true, i18n("Close File"));
   toolBar()->alignItemRight(ID_FILE_CLOSE);
@@ -518,7 +543,6 @@ void QuantaApp::initStatusBar()
 void QuantaApp::initDocument()
 {
   doc = new QuantaDoc(this,this);
-  //doc->newDocument();
 }
 
 void QuantaApp::initProject()
