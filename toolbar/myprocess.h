@@ -25,7 +25,6 @@ class MyProcess:public KProcess
 
   public:
     MyProcess();
-    MyProcess( QObject* parent, const char *name = 0 );
     virtual ~MyProcess() {};
 
   protected:

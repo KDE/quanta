@@ -55,10 +55,6 @@ MyProcess::MyProcess():KProcess()
 {
 }
 
-MyProcess::MyProcess(QObject* parent, const char *name):KProcess(parent, name)
-{
-}
-
 int MyProcess::commSetupDoneC()
 {
   ::setpgid(pid_, 0);
