@@ -1475,7 +1475,8 @@ Node* Parser::parseSpecialArea(const AreaStruct &specialArea,
                                const QString &areaStartString,
                                const QString &forcedAreaEndString,
                                Node *parentNode,
-                               int &lastLine, int &lastCol)
+                               int &lastLine, int &lastCol,
+                               bool fullParse)
 {
   int startLine = specialArea.bLine;
   int startCol = specialArea.bCol;
@@ -1538,8 +1539,6 @@ Node* Parser::parseSpecialArea(const AreaStruct &specialArea,
   Node *currentNode = parentNode;
   while (line <= endLine)
   {
-    if (typingInProgress)
-      kdDebug(24000) << "Key pressed. " << endl;
     contextFound = false;
     switch (currentContext.type)
     {
@@ -1558,7 +1557,8 @@ Node* Parser::parseSpecialArea(const AreaStruct &specialArea,
             searchedString = textLine.left(quotedStringPos);
             commentPos = searchedString.find(dtd->commentsStartRx, col); //comments
             searchedString = textLine.left(commentPos);
-            groupKeywordPos = searchedString.find(dtd->structRx, col); //groups, like { }
+            if (fullParse)
+              groupKeywordPos = searchedString.find(dtd->structRx, col); //groups, like { }
           } else
             searchedString = textLine;
           int specialAreaPos = -1;
@@ -1701,13 +1701,16 @@ Node* Parser::parseSpecialArea(const AreaStruct &specialArea,
               QString foundText = dtd->specialAreaStartRx.cap();
               currentContext.area.eLine = line;
               currentContext.area.eCol = specialAreaPos - 1;
-              if ( currentNode &&
-                  (currentNode->tag->type == Tag::Text ||
-                   currentNode->tag->type == Tag::Empty) )
-                appendAreaToTextNode(currentContext.area, currentNode);
-              else
-                currentNode = createTextNode(currentNode, line, specialAreaPos, currentContext.parentNode);
-              currentNode->insideSpecial = true;
+              if (fullParse)
+              {
+                if ( currentNode &&
+                    (currentNode->tag->type == Tag::Text ||
+                    currentNode->tag->type == Tag::Empty) )
+                  appendAreaToTextNode(currentContext.area, currentNode);
+                else
+                  currentNode = createTextNode(currentNode, line, specialAreaPos, currentContext.parentNode);
+                currentNode->insideSpecial = true;
+              }
               //create a toplevel node for the included special area
               AreaStruct area(line, specialAreaPos, line, specialAreaPos + foundText.length() - 1);
               Node *node = createScriptTagNode(area, foundText, dtd, currentContext.parentNode, currentNode);
@@ -1741,13 +1744,16 @@ Node* Parser::parseSpecialArea(const AreaStruct &specialArea,
 
           currentContext.area.eLine = line;
           currentContext.area.eCol = areaEndPos - 1;
-          if ( currentNode &&
-              (currentNode->tag->type == Tag::Text ||
-               currentNode->tag->type == Tag::Empty) )
-            appendAreaToTextNode(currentContext.area, currentNode);
-          else
-            currentNode = createTextNode(currentNode, line, areaEndPos, parentNode);
-          currentNode->insideSpecial = true;
+          if (fullParse)
+          {
+            if ( currentNode &&
+                (currentNode->tag->type == Tag::Text ||
+                currentNode->tag->type == Tag::Empty) )
+              appendAreaToTextNode(currentContext.area, currentNode);
+            else
+              currentNode = createTextNode(currentNode, line, areaEndPos, parentNode);
+            currentNode->insideSpecial = true;
+          }
           //kdDebug(24000) << QString("Special area %1 ends at %2, %3").arg(dtd->name).arg(line).arg(lastCol) << endl;
 
           //create a closing node for the special area
@@ -1767,15 +1773,18 @@ Node* Parser::parseSpecialArea(const AreaStruct &specialArea,
           node->tag = tag;
           node->closesPrevious = true;
 
-          Node *n = parentNode->child;
-          while (n)
+          if (fullParse)  
           {
-            if (n->tag->type == Tag::Text || n->tag->type == Tag::ScriptStructureBegin)
-              parseForScriptGroup(n);
-            if (n != currentNode)  
-              n = n->nextSibling();
-            else 
-              break;  
+            Node *n = parentNode->child;
+            while (n)
+            {
+              if (n->tag->type == Tag::Text || n->tag->type == Tag::ScriptStructureBegin)
+                parseForScriptGroup(n);
+              if (n != currentNode)  
+                n = n->nextSibling();
+              else 
+                break;  
+            }
           }
 
           return node;
@@ -1789,42 +1798,44 @@ Node* Parser::parseSpecialArea(const AreaStruct &specialArea,
           currentContext.area.eCol = context.area.bCol - 1;
        //   currentContext.parentNode = parentNode;
           contextStack.push(currentContext);
-
-          if (currentNode &&
-             (currentNode->tag->type == Tag::Text || currentNode->tag->type == Tag::Empty) )
+          if (fullParse)
           {
-            appendAreaToTextNode(currentContext.area, currentNode);
-            currentNode->insideSpecial = true;
-          } else
-          {
-            //create a tag from the currentContext
-            Tag *tag = new Tag(currentContext.area, write, dtd);
-            QString tagStr = tag->tagStr();
-            tag->cleanStr = tagStr;
-            QuantaCommon::removeCommentsAndQuotes(tag->cleanStr, dtd);
-            if (tagStr.simplifyWhiteSpace().isEmpty())
+            if (currentNode &&
+              (currentNode->tag->type == Tag::Text || currentNode->tag->type == Tag::Empty) )
             {
-              tag->type = Tag::Empty;
+              appendAreaToTextNode(currentContext.area, currentNode);
+              currentNode->insideSpecial = true;
             } else
             {
-              tag->type = Tag::Text;
+              //create a tag from the currentContext
+              Tag *tag = new Tag(currentContext.area, write, dtd);
+              QString tagStr = tag->tagStr();
+              tag->cleanStr = tagStr;
+              QuantaCommon::removeCommentsAndQuotes(tag->cleanStr, dtd);
+              if (tagStr.simplifyWhiteSpace().isEmpty())
+              {
+                tag->type = Tag::Empty;
+              } else
+              {
+                tag->type = Tag::Text;
+              }
+              tag->single = true;
+              //create a node with the above tag
+              Node *node = new Node(currentContext.parentNode);
+              nodeNum++;
+              node->tag = tag;
+              node->insideSpecial = true;
+              if (currentContext.parentNode && !currentContext.parentNode->child)
+              {
+                currentContext.parentNode->child = node;
+              }
+              else if (currentNode)
+              {
+                node->prev = currentNode;
+                currentNode->next = node;
+              }
+              currentNode = node;
             }
-            tag->single = true;
-            //create a node with the above tag
-            Node *node = new Node(currentContext.parentNode);
-            nodeNum++;
-            node->tag = tag;
-            node->insideSpecial = true;
-            if (currentContext.parentNode && !currentContext.parentNode->child)
-            {
-              currentContext.parentNode->child = node;
-            }
-            else if (currentNode)
-            {
-              node->prev = currentNode;
-              currentNode->next = node;
-            }
-            currentNode = node;
           }
           //kdDebug(24000) << QString("%1 context: %2, %3, %4, %5").arg(currentContext.type).arg( currentContext.bLine).arg(currentContext.bCol).arg(currentContext.eLine).arg(currentContext.eCol) << endl;
 
@@ -1852,14 +1863,16 @@ Node* Parser::parseSpecialArea(const AreaStruct &specialArea,
           currentContext.area.eLine = line;
           currentContext.area.eCol = pos;
           //kdDebug(24000) << QString("Quoted String context: %1, %2, %3, %4").arg( currentContext.bLine).arg(currentContext.bCol).arg(currentContext.eLine).arg(currentContext.eCol) << endl;
-          if ( currentNode  &&
-              (currentNode->tag->type == Tag::Text ||
-               currentNode->tag->type == Tag::Empty) )
-            appendAreaToTextNode(currentContext.area, currentNode);
-          else
-            currentNode = createTextNode(0L, line, pos, currentContext.parentNode);
-          currentNode->insideSpecial = true;
-
+          if (fullParse)
+          {
+            if ( currentNode  &&
+                (currentNode->tag->type == Tag::Text ||
+                currentNode->tag->type == Tag::Empty) )
+              appendAreaToTextNode(currentContext.area, currentNode);
+            else
+              currentNode = createTextNode(0L, line, pos, currentContext.parentNode);
+            currentNode->insideSpecial = true;
+          }
           previousContext = contextStack.pop();
           currentContext.parentNode = previousContext.parentNode;
           currentContext.type = previousContext.type;
@@ -1888,22 +1901,24 @@ Node* Parser::parseSpecialArea(const AreaStruct &specialArea,
           currentContext.type = previousContext.type;
           //kdDebug(24000) << QString("Comment context: %1, %2, %3, %4").arg( currentContext.bLine).arg(currentContext.bCol).arg(currentContext.eLine).arg(currentContext.eCol) << endl;
 
-          //create a tag with the comment
-          Tag *tag = new Tag(currentContext.area, write, dtd);
-          tag->type = Tag::Comment;
-          tag->single = true;
-          //create a node with the above tag
-          Node *node = new Node(currentContext.parentNode);
-          nodeNum++;
-          node->tag = tag;
-          node->insideSpecial = true;
-          if (currentNode)
+          if (fullParse)
           {
-            currentNode->next = node;
-            node->prev = currentNode;
+            //create a tag with the comment
+            Tag *tag = new Tag(currentContext.area, write, dtd);
+            tag->type = Tag::Comment;
+            tag->single = true;
+            //create a node with the above tag
+            Node *node = new Node(currentContext.parentNode);
+            nodeNum++;
+            node->tag = tag;
+            node->insideSpecial = true;
+            if (currentNode)
+            {
+              currentNode->next = node;
+              node->prev = currentNode;
+            }
+            currentNode = node;
           }
-          currentNode = node;
-
           previousContext = contextStack.pop();
           currentContext.parentNode = previousContext.parentNode;
           currentContext.type = previousContext.type;
@@ -1929,27 +1944,30 @@ Node* Parser::parseSpecialArea(const AreaStruct &specialArea,
    }
 
   }
-  if (!currentNode)
+  if (fullParse)
   {
-    currentNode = createTextNode(parentNode, endLine, endCol, parentNode);
-    currentNode->insideSpecial = true;
-  }
-  Node *n;
-  if (parentNode)
-  {
-     n = parentNode->child;
-  } else
-  {
-    n = currentNode;
-    while (n->prev)
-      n = n->prev;
-    currentNode = n;
-  }
-  while (n)
-  {
-    if (n->tag->type == Tag::Text || n->tag->type == Tag::ScriptStructureBegin)
-      parseForScriptGroup(n);
-    n = n->nextSibling();
+    if (!currentNode)
+    {
+      currentNode = createTextNode(parentNode, endLine, endCol, parentNode);
+      currentNode->insideSpecial = true;
+    }
+    Node *n;
+    if (parentNode)
+    {
+      n = parentNode->child;
+    } else
+    {
+      n = currentNode;
+      while (n->prev)
+        n = n->prev;
+      currentNode = n;
+    }
+    while (n)
+    {
+      if (n->tag->type == Tag::Text || n->tag->type == Tag::ScriptStructureBegin)
+        parseForScriptGroup(n);
+      n = n->nextSibling();
+    }
   }
   lastLine = endLine;
   lastCol = endCol;

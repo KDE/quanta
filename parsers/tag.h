@@ -59,6 +59,7 @@ struct TagAttr {
 struct AreaStruct{
    AreaStruct() {bLine = bCol = eLine = eCol = -1;}
    AreaStruct(int bl, int bc, int el, int ec) {bLine = bl; bCol = bc; eLine = el; eCol = ec;}
+   AreaStruct(const AreaStruct& area) {bLine = area.bLine; bCol = area.bCol; eLine = area.eLine; eCol = area.eCol;}
    int bLine;
    int bCol;
    int eLine;

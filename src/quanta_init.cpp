@@ -99,7 +99,7 @@
 
 #include "dcopsettings.h"
 
-QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta"), DCOPObject("WindowManagerIf")
+QuantaApp::QuantaApp() : DCOPObject("WindowManagerIf"), KDockMainWindow(0L,"Quanta")
 {
   dcopSettings = new DCOPSettings;
   quantaStarted = true;

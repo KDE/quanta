@@ -81,6 +81,21 @@ public:
   /** Print the doc structure tree to the standard output.
       Only for debugging purposes. */
   void coutTree(Node *node, int indent);
+/*
+  Parses the document for special areas (eg. scripts).
+  specialArea: the area (start/end position) in the document that may contain the special
+               area. It may end before the end position.
+  areaStartString: the special area starting string
+  forcedAreaEndString: force this as the special area ending string.
+  parentNode: the Node under where the special area goes
+  lastLine: will contain the line where the special area ends
+  lastCol: will contain the column where the special area ends
+*/
+  Node* parseSpecialArea(const AreaStruct &specialArea,
+                         const QString &areaStartString,
+                         const QString &forcedAreaEndString,
+                         Node *parentNode,
+                         int& lastLine, int& lastCol, bool fullParse = false);
 
   GroupElementMapList m_groups; //a list of groups (variables, inclusions)
   QStringList includedFiles;
@@ -118,21 +133,6 @@ private:
   contain any scripts. */
   bool parseScriptInsideTag(Node *startNode);
 
-/*
-  Parses the document for special areas (eg. scripts).
-  specialArea: the area (start/end position) in the document that may contain the special
-               area. It may end before the end position.
-  areaStartString: the special area starting string
-  forcedAreaEndString: force this as the special area ending string.
-  parentNode: the Node under where the special area goes
-  lastLine: will contain the line where the special area ends
-  lastCol: will contain the column where the special area ends
-*/
-  Node* parseSpecialArea(const AreaStruct &specialArea,
-                         const QString &areaStartString,
-                         const QString &forcedAreaEndString,
-                         Node *parentNode,
-                         int& lastLine, int& lastCol);
   QString getLine(int line, int endLine, int endCol);
   /** Appends a text area to a text node. */
   void appendAreaToTextNode(const AreaStruct &area, Node *node);
