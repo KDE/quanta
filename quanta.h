@@ -40,7 +40,6 @@
 #include "kqapp.h"
 #include "widgets/whtmlpart.h"
 #include <kparts/browserextension.h>
-#include <ktoolbar.h>
 #include <kate/document.h>
 #include <ktempfile.h>
 

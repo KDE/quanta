@@ -1127,7 +1127,7 @@ void QuantaApp::readTagDir(QString &dirName)
  {
    tmpStr = tmpStrList[i].stripWhiteSpace();
    int pos = tmpStr.find('(');
-   dtd->specialTags[tmpStr.left(pos)] = tmpStr.mid(pos+1, tmpStr.findRev(')')-pos-1);
+   dtd->specialTags[tmpStr.left(pos).stripWhiteSpace()] = tmpStr.mid(pos+1, tmpStr.findRev(')')-pos-1).stripWhiteSpace();
  }
 
  //static const QString quotationStr = "\\\\\"|\\\\'";
@@ -1153,7 +1153,7 @@ void QuantaApp::readTagDir(QString &dirName)
  {
    tmpStr = tmpStrList[i].stripWhiteSpace();
    int pos = tmpStr.find('(');
-   dtd->definitionTags[tmpStrList[i].stripWhiteSpace()] = tmpStr.mid(pos+1, tmpStr.findRev(')')-pos-1);
+   dtd->definitionTags[tmpStr.left(pos).stripWhiteSpace()] = tmpStr.mid(pos+1, tmpStr.findRev(')')-pos-1).stripWhiteSpace();
  }
 
  //Read the areas that define the areas
@@ -1179,7 +1179,7 @@ void QuantaApp::readTagDir(QString &dirName)
     dtd->structKeywordsRxStr += ")\\b";
  } else
  {
-   dtd->structKeywordsRxStr = " ";
+   dtd->structKeywordsRxStr = "\\b[\\d\\S\\w]+\\b";
  }
  dtd->structKeywordsRx.setPattern(dtd->structKeywordsRxStr);
 
@@ -1251,7 +1251,24 @@ void QuantaApp::readTagDir(QString &dirName)
      for (uint i = 0; i < tmpStrList.count(); i++)
        group.attributes += tmpStrList[i].stripWhiteSpace();
    }
-
+   tagStr = dtdConfig->readEntry("TagType");
+   if (tagStr == "XmlTag")
+       group.tagType = Tag::XmlTag;
+   else if (tagStr == "XmlTagEnd")
+       group.tagType = Tag::XmlTagEnd;
+   else if (tagStr == "Text")
+       group.tagType = Tag::Text;
+   else if (tagStr == "Comment")
+       group.tagType = Tag::Comment;
+   else if (tagStr == "CSS")
+       group.tagType = Tag::CSS;
+   else if (tagStr == "ScriptTag")
+       group.tagType = Tag::ScriptTag;
+   else if (tagStr == "ScriptStructureBegin")
+       group.tagType = Tag::ScriptStructureBegin;
+   else if (tagStr == "ScriptStructureEnd")
+       group.tagType = Tag::ScriptStructureEnd;
+   else group.tagType = -1;
    dtd->structTreeGroups.append(group);
  }
 
@@ -1359,18 +1376,22 @@ void QuantaApp::initTagDict()
     for (uint i = 0; i < dtd->insideDTDs.count(); i++)
     {
       DTDStruct *insideDTD = dtds->find(dtd->insideDTDs[i]);
-
-      for (mapIt = insideDTD->definitionAreas.begin(); mapIt != insideDTD->definitionAreas.end(); ++mapIt)
+      if (!insideDTD)
+          insideDTD = dtds->find(QuantaCommon::getDTDNameFromNickName(dtd->insideDTDs[i]));
+      if (insideDTD)
       {
-        tmpStr = mapIt.key();
-        dtd->specialAreas[tmpStr] = mapIt.data();
-        dtd->specialAreaNames[tmpStr] = dtd->insideDTDs[i];
-        specialAreaStartRxStr.append("(?:"+ QuantaCommon::makeRxCompatible(tmpStr)+")|");
-      }
+        for (mapIt = insideDTD->definitionAreas.begin(); mapIt != insideDTD->definitionAreas.end(); ++mapIt)
+        {
+          tmpStr = mapIt.key();
+          dtd->specialAreas[tmpStr] = mapIt.data();
+          dtd->specialAreaNames[tmpStr] = dtd->insideDTDs[i];
+          specialAreaStartRxStr.append("(?:"+ QuantaCommon::makeRxCompatible(tmpStr)+")|");
+        }
 
-      for (mapIt = insideDTD->definitionTags.begin(); mapIt != insideDTD->definitionTags.end(); ++mapIt)
-      {
-         dtd->specialTags[mapIt.key()] = mapIt.data();
+        for (mapIt = insideDTD->definitionTags.begin(); mapIt != insideDTD->definitionTags.end(); ++mapIt)
+        {
+          dtd->specialTags[mapIt.key()] = mapIt.data();
+        }
       }
     }
     dtd->specialAreaStartRx.setPattern(specialAreaStartRxStr.left(specialAreaStartRxStr.length() - 1));

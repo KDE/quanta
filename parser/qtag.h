@@ -54,6 +54,7 @@ typedef struct StructTreeGroup{
         QRegExp searchRx;    //regular experssion to help us find the group - for pseudo DTDs
         QRegExp clearRx;     //clear the text matched from the result of the searchRx search - for pseudo DTDs
         QString tag;         //tags belonging to this group - for real DTDs
+        int tagType;     //the tag type for which this is valid
         QStringList attributes; //the attributes of the above tag to be displayed - for real DTDs
       };
 
@@ -164,7 +165,6 @@ typedef struct DTDStruct
 /****************** END FOR THE NEW PARSER **********************/
 
      QString structKeywordsRxStr;        //regular expression to match the keywords that can appear before a structrue
-     QString structRxStr;
 
      QStringList structGroups;        //group names to appear at the top of the Structure Tree in form of "Name;No Name"
      QStringList groupIcons;

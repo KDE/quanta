@@ -1434,6 +1434,7 @@ void Document::slotTextChanged()
   {
     //delay the handling, otherwise we may get wrong values for (line,column)
     QTimer::singleShot(0, this, SLOT(slotDelayedTextChanged()));
+//    slotDelayedTextChanged();
   }
 }
 

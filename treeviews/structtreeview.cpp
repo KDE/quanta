@@ -66,14 +66,14 @@ StructTreeView::StructTreeView(Parser *parser, KConfig *config, QWidget *parent,
   setFocusPolicy(QWidget::ClickFocus);
 
   dtdMenu = new QPopupMenu(this);
-  
+
   QDictIterator<DTDStruct> it(*dtds);
   for( ; it.current(); ++it )
   {
     dtdList << it.current()->nickName;
   }
   dtdList.sort();
-  
+
   for(uint i = 0; i < dtdList.count(); i++ )
   {
     dtdMenu->insertItem(dtdList[i],i,-1);
@@ -129,7 +129,7 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
     QString tagStr;
     QString tmpStr;
     StructTreeGroup group;
-    for (uint i = 0; i < groupsCount; i++)          
+    for (uint i = 0; i < groupsCount; i++)
     {
        group = m_parsingDTD->structTreeGroups[i];
        groups[i] = new StructTreeTag(this, i18n(group.name));
@@ -165,7 +165,7 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
             for (uint j = 0; j < group.attributes.count(); j++)
             {
               if (currentNode->tag->hasAttribute(group.attributes[j]))
-              {           
+              {
                 title.append(currentNode->tag->attributeValue(group.attributes[j]).left(100));
                 title.append(" | ");
               }
@@ -200,6 +200,8 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
         for (uint i = 0; i < groupsCount; i++)
         {
           group = m_parsingDTD->structTreeGroups[i];
+          if (group.tagType != -1 && currentNode->tag->type != group.tagType)
+              continue;
           //parse the node for groups (function/variable/inclusion/etc.) definitions
           tagStr = currentNode->tag->tagStr();
           int pos = 0;
@@ -289,7 +291,7 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
           {
             if (currentNode->prev)
                 currentItem = dynamic_cast<StructTreeTag*>(currentNode->prev->listItem);
-            if (currentNode->parent)  
+            if (currentNode->parent)
             {
               parentItem = dynamic_cast<StructTreeTag*>(currentNode->parent->listItem);
               if (!parentItem)
@@ -297,12 +299,12 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
                 parentItem = top;
               }
             }
-            else  
+            else
             {
               parentItem = top;
             }
           }
-              
+
         }
       }
     }
@@ -412,13 +414,13 @@ void StructTreeView::slotMouseClicked(int button, QListViewItem *item, const QPo
 
     setSelected(item, true);
 
-    if ( button == Qt::RightButton ) 
+    if ( button == Qt::RightButton )
     {
       popupMenu->popup( point);
       return;
     }
 
-    if ( button == Qt::LeftButton ) 
+    if ( button == Qt::LeftButton )
     {
       if ( handleLBM == i18n("Find Tag && Open Tree"))
            setOpen( item, ! isOpen(item) );
@@ -426,12 +428,12 @@ void StructTreeView::slotMouseClicked(int button, QListViewItem *item, const QPo
       slotGotoTag(item);
     }
 
-    if ( button == Qt::MidButton ) 
+    if ( button == Qt::MidButton )
     {
       if ( handleMBM == i18n("nothing"))
            return;
 
-      if ( handleMBM == i18n("Find Tag && Open Tree")) 
+      if ( handleMBM == i18n("Find Tag && Open Tree"))
       {
         setOpen( item, ! isOpen(item) );
         setSelected(item, true);
@@ -494,7 +496,7 @@ void StructTreeView::slotGotoClosingTag()
         it->node->next->tag->endPos(newLine, newCol);
       }
     }
-    
+
     emit newCursorPosition( newLine, newCol + 1 );
   }
 }

@@ -905,7 +905,7 @@ Node* Parser::specialAreaParser(Node *startNode)
 
         int l = name.length();
         s = tagStr.mid(startPos + l + 1, lastPos2 - startPos - l - 1);
-        eLine = bLine + s.contains('\n');
+          eLine = bLine + s.contains('\n');
         n = s.findRev('\n');
         if (n == -1)
         {
@@ -1006,7 +1006,15 @@ Node* Parser::specialAreaParser(Node *startNode)
 
   eLine = eCol = -1;
   //create a node with the end of special area
-  QString specialEndStr = dtd->specialAreas[startNode->tag->structBeginStr];
+  QString specialEndStr;
+  //explicitely check for existence here, otherwise the operator[]
+  //will insert a new item in the QMap with key="" and data="".
+  //No need to do the same in other places, as the operator[] is
+  //used only when count() > 0
+  if (dtd->specialAreas.contains(startNode->tag->structBeginStr))
+  {
+    specialEndStr = dtd->specialAreas[startNode->tag->structBeginStr];
+  }
   if (specialEndStr.isEmpty())
   {
     tag = new Tag(*startNode->tag);

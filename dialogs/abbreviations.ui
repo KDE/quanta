@@ -186,6 +186,7 @@
     <slot>slotAddTemplate()</slot>
     <slot>slotRemoveTemplate()</slot>
     <slot>slotEditTemplate()</slot>
+    <slot>templatesList_currentChanged(QListViewItem*)</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
