@@ -116,8 +116,11 @@ bool QuantaDoc::newDocument( const KURL& url, bool switchToExisting )
   if (switchToExisting)
   {
     view->document()->checkDirtyStatus();
-    view->activate();
-    view->activated();
+    if (view != ViewManager::ref()->activeView())
+    {
+      view->activate();
+      view->activated();
+    }
     return false; // don't need loadURL
   }
 
