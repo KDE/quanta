@@ -2146,7 +2146,7 @@ void Document::slotDelayedTextChanged(bool forced)
             node = node->previousSibling();
           while (node)
           {
-            if (node->tag->type == Tag::XmlTag || node->tag->type == Tag::XmlTagEnd)
+            if (node->tag->validXMLTag && (node->tag->type == Tag::XmlTag || node->tag->type == Tag::XmlTagEnd))
             {
               if (node->tag->nameSpace + node->tag->name == currentNode->tag->nameSpace + currentNode->tag->name )
               {
