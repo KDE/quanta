@@ -384,8 +384,8 @@ QString QuantaCommon::qUrl(const KURL &url)
 /** No descriptions */
 void QuantaCommon::dirCreationError(QWidget *widget, const KURL& url)
 {
-  KMessageBox::error(widget, i18n("Can't create directory \n\"%1\".\nCheck that you have write permission in the parent directory or that the connection to\n\"%2\"\n is valid!")
-                             .arg(url.prettyURL())
+  KMessageBox::error(widget, i18n("<qt>Can't create directory<br><b>%1</b>.<br>Check that you have write permission in the parent directory or that the connection to<br><b>%2</b><br> is valid!</qt>")
+                             .arg(url.prettyURL(0, KURL::StripFileProtocol))
                              .arg(url.protocol()+"://"+url.user()+"@"+url.host()));}
 
 /**

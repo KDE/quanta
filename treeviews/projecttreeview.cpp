@@ -287,8 +287,8 @@ void ProjectTreeView::slotRemove()
   KURL url = currentURL();
   QListViewItem *item = currentItem();
   if ( item &&
-       KMessageBox::warningYesNo(this,i18n("Do you really want to remove \n%1\nfrom disk?")
-                                      .arg(url.prettyURL()))== KMessageBox::Yes )
+       KMessageBox::warningYesNo(this,i18n("<qt>Do you really want to remove <b>%1</b> from the disk?</qt>")
+                                      .arg(url.prettyURL(0, KURL::StripFileProtocol)))== KMessageBox::Yes )
   {
     KIO::del( url );
     emit removeFromProject( url);
@@ -302,8 +302,8 @@ void ProjectTreeView::slotRemoveFromProject(int askForRemove)
   if (item)
   {
     if ( !askForRemove ||
-         KMessageBox::warningYesNo(this,i18n("Do you really want to remove \n%1\nfrom project?")
-                                        .arg(url.prettyURL())) == KMessageBox::Yes )
+         KMessageBox::warningYesNo(this,i18n("<qt>Do you really want to remove <b>%1</b> from the project?</qt>")
+                                        .arg(url.prettyURL(0, KURL::StripFileProtocol))) == KMessageBox::Yes )
     {
       emit removeFromProject(url);
     }

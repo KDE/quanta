@@ -1784,13 +1784,17 @@ void QuantaApp::initActions()
                         this, SLOT( slotMakeDonation() ),
                         ac, "help_donation" );
 
-    (void) new KAction( i18n( "Tag &Attributes" ), ALT+Key_Down,
+    (void) new KAction( i18n( "Tag &Attributes..." ), ALT+Key_Down,
                         m_doc, SLOT( slotAttribPopup() ),
                         ac, "tag_attributes" );
 
-    (void) new KAction( i18n( "&Change DTD Type" ), 0,
+    (void) new KAction( i18n( "&Change DTD Type..." ), 0,
                         this, SLOT( slotToolsChangeDTD() ),
                         ac, "tools_change_dtd" );
+
+    (void) new KAction( i18n( "&Load DTD..." ), 0,
+                        this, SLOT( slotLoadDTD() ),
+                        ac, "tools_load_dtd" );
 
     (void) new KAction( i18n( "Send DTD in E-&Mail" ), 0,
                         this, SLOT( slotEmailDTD() ),

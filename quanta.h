@@ -365,6 +365,8 @@ public slots:
   /** No descriptions */
   void slotAutosaveTimer();
 
+  void slotLoadDTD();
+
 protected slots:
   /** No descriptions */
   void slotMakeDonation();

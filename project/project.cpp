@@ -149,7 +149,7 @@ void Project::insertFile(const KURL& nameURL, bool repaint )
   if ( relNameURL.path().startsWith("/") || relNameURL.path().startsWith(".")  )
   {
     KURLRequesterDlg *urlRequesterDlg = new KURLRequesterDlg( baseURL.prettyURL(), this, "");
-    urlRequesterDlg->setCaption(i18n("%1: Copy to Project").arg(nameURL.prettyURL()));
+    urlRequesterDlg->setCaption(i18n("%1: Copy to Project").arg(nameURL.prettyURL(0, KURL::StripFileProtocol)));
     urlRequesterDlg->urlRequester()->setMode( KFile::Directory | KFile::ExistingOnly);
     urlRequesterDlg->exec();
     KURL destination = urlRequesterDlg->selectedURL();
@@ -300,7 +300,7 @@ bool Project::createEmptyDom()
 
   if (!result)
   {
-    KMessageBox::sorry(this, i18n("Can't open file %1 for writing.").arg(projectURL.prettyURL()));
+    KMessageBox::sorry(this, i18n("<qt>Can't open file <b>%1</b> for writing.</qt>").arg(projectURL.prettyURL(0, KURL::StripFileProtocol)));
     return false;
   }
 
@@ -378,7 +378,7 @@ void Project::slotOpenProject(const KURL &url)
     if ( !QExtFileInfo::exists(url) )
     {
       if (KMessageBox::questionYesNo( this,
-           i18n("The file %1 does not exist.\n Do you want to remove it from the list?").arg(url.prettyURL()) )
+           i18n("<qt>The file <b>%1</b> does not exist.<br> Do you want to remove it from the list?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)) )
            == KMessageBox::Yes)
       {
         projectRecent->removeURL(url);
@@ -477,7 +477,7 @@ void Project::slotLoadProject(const KURL &a_url)
 
   if (!url.isValid())
   {
-      KMessageBox::sorry(this, i18n("Malformed URL\n%1").arg(url.prettyURL()));
+      KMessageBox::sorry(this, i18n("<qt>Malformed URL: <b>%1</b></qt>").arg(url.prettyURL()));
   } else
   {
     QString tmpName = QString::null;
@@ -506,12 +506,12 @@ void Project::slotLoadProject(const KURL &a_url)
         emit newProjectLoaded();
       } else
       {
-        KMessageBox::error(this, i18n("Cannot open the file %1 for reading").arg(tmpName));
+        KMessageBox::error(this, i18n("<qt>Cannot open the file <b>%1</b> for reading.</qt>").arg(tmpName));
       }
       KIO::NetAccess::removeTempFile( tmpName);
     } else
     {
-      KMessageBox::error(this,i18n("Cannot access the project file %1").arg(url.prettyURL()));
+      KMessageBox::error(this,i18n("<qt>Cannot access the project file <b>%1</b>.</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)));
     }
   }
 }
@@ -788,7 +788,7 @@ void Project::slotAddDirectory(const KURL& p_dirURL, bool showDlg)
     if ( relURL.path().startsWith("/") || relURL.path().startsWith("."))
     {
       KURLRequesterDlg *urlRequesterDlg = new KURLRequesterDlg( baseURL.prettyURL(), this, "");
-      urlRequesterDlg->setCaption(i18n("%1: Copy to Project").arg(dirURL.prettyURL()));
+      urlRequesterDlg->setCaption(i18n("%1: Copy to Project").arg(dirURL.prettyURL(0, KURL::StripFileProtocol)));
       urlRequesterDlg->urlRequester()->setMode( KFile::Directory | KFile::ExistingOnly);
       urlRequesterDlg->exec();
       KURL destination = urlRequesterDlg->selectedURL();
@@ -842,8 +842,8 @@ void Project::slotRenameFinished( KIO::Job * job)
 {
   if ( job->error() )
   {
-    KMessageBox::error(this,i18n("An error occurred while renaming \"%1\".\nThe error message was:\n\n%2")
-                            .arg(oldURL.prettyURL()).arg(job->errorString()));
+    KMessageBox::error(this,i18n("<qt>An error occurred while renaming <b>%1</b>.<br>The error message was:<br><br>%2</qt>")
+                            .arg(oldURL.prettyURL(0, KURL::StripFileProtocol)).arg(job->errorString()));
   } else
   {
     //rename the elements in the project dom tree
@@ -955,8 +955,7 @@ void Project::slotRename(const KURL& url)
       bool proceed = true;
       if (QExtFileInfo::exists(newUrl))
       {
-        QString s = (newUrl.isLocalFile()) ? newUrl.path() : newUrl.prettyURL();
-        proceed = KMessageBox::warningYesNo(this, i18n("<qt>The file <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>").arg(s),i18n("Overwrite")) == KMessageBox::Yes;
+        proceed = KMessageBox::warningYesNo(this, i18n("<qt>The file <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>").arg(newUrl.prettyURL(0, KURL::StripFileProtocol)),i18n("Overwrite")) == KMessageBox::Yes;
       }
       if (proceed)
       {

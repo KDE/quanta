@@ -247,8 +247,8 @@ void ProjectUpload::startUpload()
     upload();
   } else
   {
-    if (KMessageBox::warningYesNo(this, i18n("%1 seems to be unaccessible.\nDo you want to proceed with upload?")
-                                         .arg(u.prettyURL())) == KMessageBox::Yes)
+    if (KMessageBox::warningYesNo(this, i18n("<qt><b>%1</b> seems to be unaccessible.<br>Do you want to proceed with upload?</qt>")
+                                         .arg(u.prettyURL(0, KURL::StripFileProtocol))) == KMessageBox::Yes)
     {
       upload();
     }
@@ -304,7 +304,7 @@ void ProjectUpload::upload()
         madeDirs.append( dir );
         if (!QExtFileInfo::createDir(dir))
         {
-          QuantaCommon::dirCreationError(this, dir.prettyURL());
+          QuantaCommon::dirCreationError(this, dir.prettyURL(0, KURL::StripFileProtocol));
           return;
         }
       }

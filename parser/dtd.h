@@ -2,8 +2,8 @@
                           dtdparser.cpp  -  description
                              -------------------
     begin                : Tue Jul 30 15:26:20 EEST 2002
-    copyright            : (C) 2002 by Jason P. Hanley, Andras Mantia
-    email                : jphanley@buffalo.edu, amantia@freemail.hu
+    copyright            : (C) 2002 by Jason P. Hanley <jphanley@buffalo.edu>
+                           (C) 2002, 2003 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -30,9 +30,9 @@ class DTD
 {
 
 public:
-  DTD(KURL file, QString dir);
+  DTD(const KURL &dtdURL, const QString& dtepDir);
   ~DTD();
-  
+
 public:
   QStringList getTags();
   AttributeList* getTagAttributes(QString tag);
@@ -40,25 +40,25 @@ public:
   void printContents();
   void writeTagFiles();
   /** No descriptions */
-  void parseDTD();
+  bool parseDTD();
 
 private:
-  void parseDTD(QString fileName);
+  bool parseDTD(const KURL& url);
   void parseDTDEntity(QString line);
   void parseDTDElement(QString line);
   void parseDTDAttlist(QString line);
   void parseTagAttributeValues(QString name, QString *value);
   void parseDTDReplace(QString *value);
   void stripSpaces(QString *value);
-  void removeComments(QString *value);
+  void removeComments(QString &value);
 
   QDict<QString> entities;
   QDict<QString> elements;
   QStringList tags;
   QDict<AttributeList> tagAttributes;
   /** From where to load the DTD file. */
-  KURL dtdFile;
-  QString tagsDir;
+  KURL m_dtdURL;
+  QString m_dtepDir;
 };
 
 #endif

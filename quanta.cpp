@@ -315,7 +315,7 @@ bool QuantaApp::slotFileSaveAs()
     {
       oldURL = saveUrl;
       if (  m_project->hasProject() && !m_project->contains(saveUrl)  &&
-           KMessageBox::Yes == KMessageBox::questionYesNo(0,i18n("<qt>Do you want to add the<br><b>%1</b><br>file to project?</qt>").arg(saveUrl.prettyURL()))
+           KMessageBox::Yes == KMessageBox::questionYesNo(0,i18n("<qt>Do you want to add the<br><b>%1</b><br>file to project?</qt>").arg(saveUrl.prettyURL(0, KURL::StripFileProtocol)))
         )
       {
         m_project->insertFile(saveUrl, true);
@@ -2313,8 +2313,8 @@ bool QuantaApp::saveToolbar(bool localToolbar, const QString& toolbarToSave, con
     KURL tarName = saveToolbarToFile(toolbarName, url);
     if (tarName.isEmpty())
     {
-      KMessageBox::error(this, i18n("<qt>An error happened while saving the <b>%1</b> toolbar.<br>" \
-      "Check that you have write permissions for<br><b>%2</b></qt>").arg(toolbarName).arg(url.prettyURL().remove("file:")));
+      KMessageBox::error(this, i18n("<qt>An error happened while saving the <b>%1</b> toolbar.<br>"
+      "Check that you have write permissions for<br><b>%2</b></qt>").arg(toolbarName).arg(url.prettyURL(0, KURL::StripFileProtocol)));
       return false;
     }
     if (!localToolbar)
@@ -2795,7 +2795,7 @@ void QuantaApp::processDTD(const QString& documentType)
 
   if (!w->isUntitled())
   {
-    m_messageOutput->showMessage(i18n("\"%1\" is used for \"%2\".\n").arg(QuantaCommon::getDTDNickNameFromName(w->getDTDIdentifier())).arg(w->url().prettyURL()));
+    m_messageOutput->showMessage(i18n("\"%1\" is used for \"%2\".\n").arg(QuantaCommon::getDTDNickNameFromName(w->getDTDIdentifier())).arg(w->url().prettyURL(0, KURL::StripFileProtocol)));
   }
   loadToolbarForDTD(w->getDTDIdentifier());
   sTab->useOpenLevelSetting = true;
@@ -3596,6 +3596,18 @@ void QuantaApp::layoutDockWidgets(const QString &layout)
     dtabdock->manualDock(ftabdock, KDockWidget::DockCenter);
     stabdock->manualDock(ftabdock, KDockWidget::DockCenter);
     atabdock->manualDock(ftabdock, KDockWidget::DockCenter);
+  }
+}
+
+void QuantaApp::slotLoadDTD()
+{
+  KURL url = KFileDialog::getOpenURL("", "*.dtd", this);
+  if (!url.isEmpty())
+  {
+    DTD dtdParser(url, KGlobal::dirs()->saveLocation("data") + "quanta/dtep");
+    dtdParser.parseDTD();
+    //dtdParser.printContents();
+    dtdParser.writeTagFiles();
   }
 }
 

@@ -211,7 +211,7 @@ void QuantaDoc::openDocument(const KURL& urlToOpen, const QString &a_encoding, b
   }
   if (!loaded && !url.isEmpty()) //the open of the document has failed*/
   {
-    KMessageBox::error(quantaApp, i18n("Cannot open document \"%1\".").arg(url.prettyURL()));
+    KMessageBox::error(quantaApp, i18n("<qt>Cannot open document <b>%1</b>.</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)));
     closeDocument();
   }
 }
@@ -228,7 +228,7 @@ bool QuantaDoc::saveDocument(const KURL& url)
     if (!wdoc->saveAs( url ))
     {
 #if KDE_VERSION < KDE_MAKE_VERSION(3,1,90)
-      KMessageBox::error(quantaApp, i18n("Saving of the document\n%1\nfailed.\nMaybe you should try to save in another directory.").arg(url.prettyURL()));
+      KMessageBox::error(quantaApp, i18n("<qt>Saving of the document <b>%1</b>failed.<br>Maybe you should try to save in another directory.</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)));
 #endif
       result = false;
     } else

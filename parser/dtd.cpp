@@ -2,8 +2,8 @@
                           dtdparser.cpp  -  description
                              -------------------
     begin                : Tue Jul 30 15:26:20 EEST 2002
-    copyright            : (C) 2002 by Jason P. Hanley, Andras Mantia
-    email                : jphanley@buffalo.edu, amantia@freemail.hu
+    copyright            : (C) 2002 by Jason P. Hanley <jphanley@buffalo.edu>
+                           (C) 2002, 2003 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -17,21 +17,27 @@
 
 
 #include <qfile.h>
+#include <qfileinfo.h>
 #include <qregexp.h>
 #include <qstringlist.h>
 #include <qdom.h>
 
+#include <klocale.h>
 #include <kurl.h>
 #include <kdebug.h>
+#include <kio/netaccess.h>
+#include <kmessagebox.h>
+#include <ktempfile.h>
 
 #include "dtd.h"
 #include "../quantacommon.h"
+#include "../qextfileinfo.h"
 
 
-DTD::DTD(KURL file, QString dir)
+DTD::DTD(const KURL &dtdURL, const QString &dtepDir)
 {
-  dtdFile = file;
-  tagsDir = dir;
+  m_dtdURL = dtdURL;
+  m_dtepDir = dtepDir + "/"+QFileInfo(dtdURL.fileName()).baseName();
 }
 
 DTD::~DTD()
@@ -63,28 +69,36 @@ void DTD::printContents()
     for ( uint i = 0; i < attributes->count(); i++)
     {
       Attribute *attribute = attributes->at(i);
-      kdDebug(24000) << "  " << attribute->name << ": ";
+      QString s = "  " + attribute->name + ": ";
       for (uint j = 0; j < attribute->values.count(); j++)
       {
-        kdDebug(24000) << attribute->values[j] << ", ";
+        s += attribute->values[j] + ", ";
       }
-      kdDebug(24000) << endl;
+      kdDebug(24000) << s << endl;
     }
   }
 }
 
 void DTD::writeTagFiles()
 {
+  QString dirName = m_dtepDir;
+  KURL u;
+  u.setPath(dirName);
+  if (!QExtFileInfo::createDir(dirName)) {
+    QuantaCommon::dirCreationError(0, u);
+    return;
+  }
+  dirName.append("/");
   for ( QStringList::Iterator tagIt = tags.begin(); tagIt != tags.end(); ++tagIt ) {
     QString tag = *tagIt;
-    
-    QFile file( tagsDir + tag.lower() + ".tag" );
+
+    QFile file( dirName + tag.lower() + ".tag" );
     if ( file.open( IO_WriteOnly ) ) {
       QTextStream stream( &file );
-      
+
       stream << "<!DOCTYPE TAGS>" << endl
              << "<TAGS>" << endl
-             << "<tag name=\"" << tag << "\">" << endl <<endl;
+             << "<tag name=\"" << tag << "\">" << endl << endl;
 
       AttributeList *attributes = getTagAttributes(tag);
       stream << QuantaCommon::xmlFromAttributes(attributes);
@@ -99,15 +113,21 @@ void DTD::writeTagFiles()
   }
 }
 
-void DTD::parseDTD(QString fileName)
+bool DTD::parseDTD(const KURL &url)
 {
+ QString fileName = QString::null;
+ if (!KIO::NetAccess::download(url, fileName))
+ {
+   KMessageBox::error(0, i18n("<qt>Cannot download the DTD from <b>%1</b>.</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)));
+   return false;
+ }
   QFile file(fileName);
   if (file.open(IO_ReadOnly))
   {
     QTextStream fileStream(&file);
     QString entireDTD = fileStream.read();
     file.close();
-    removeComments(&entireDTD);
+    removeComments(entireDTD);
 
     QString line;
     QStringList lines = QStringList::split("\n",entireDTD);
@@ -118,7 +138,7 @@ void DTD::parseDTD(QString fileName)
       if (line.startsWith("<")) {
         while (!line.endsWith(">") && it != lines.end()) {
           ++it;
-          line += " \\end"+*it;
+          line += " \\end" + *it;
         }
       } else if (line.startsWith("%")) {
         while (!line.endsWith(";") && it != lines.end()) {
@@ -130,7 +150,7 @@ void DTD::parseDTD(QString fileName)
       line = line.stripWhiteSpace();
       line = line.simplifyWhiteSpace();
 
-      //kdDebug() << "line is: " << line << endl;
+      //kdDebug(24000) << "Parsed line is: " << line << endl;
 
       if ( line.startsWith("<!ENTITY") && line.endsWith(">"))
       {
@@ -151,16 +171,16 @@ void DTD::parseDTD(QString fileName)
       {
         line.remove(0,1);
         line.truncate(line.length()-1);
-        parseDTD(line + ".ent");
+        KURL entityURL = url;
+        entityURL.setPath(url.directory()+ "/" + line + ".ent");
+        parseDTD(entityURL);
       } else
       {
-        kdDebug(24000) << "Unknown tag: " << line << endl;
+        kdDebug(24000) << QString("Unknown tag: [%1]").arg(line) << endl;
       }
 
       if (it != lines.end()) ++it;
     }
-  } else {
-    kdDebug(24000) << "Can not find file" << endl;
   }
 }
 
@@ -356,28 +376,28 @@ void DTD::stripSpaces(QString *value) {
   }
 }
 
-void DTD::removeComments(QString *value) {
+void DTD::removeComments(QString &value) {
   int begin, end;
-  begin = value->find("<!--");
-  end = value->find("-->",begin+2);
+  begin = value.find("<!--");
+  end = value.find("-->",begin+2);
   while (begin != -1 && end != -1) {
-    value->remove(begin, end-begin+2);
-    begin = value->find("<!--");
-    end = value->find("-->",begin+2);
+    value.remove(begin, end-begin+3);
+    begin = value.find("<!--");
+    end = value.find("-->",begin+2);
   }
 
-  begin = value->find("--");
-  end = value->find("--",begin+2);
+  begin = value.find("--");
+  end = value.find("--",begin+2);
   while (begin != -1 && end != -1) {
-    value->remove(begin, end-begin+2);
-    begin = value->find("--");
-    end = value->find("--",begin+2);
+    value.remove(begin, end-begin+2);
+    begin = value.find("--");
+    end = value.find("--",begin+2);
   }
 
-  value->replace(QRegExp("<!>"), "");
+  value.replace(QRegExp("<!>"), "");
 }
 
-void DTD::parseDTD()
+bool DTD::parseDTD()
 {
-  parseDTD(dtdFile.path());
+  return parseDTD(m_dtdURL);
 }

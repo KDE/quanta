@@ -76,7 +76,7 @@ void ProjectNewLocal::setBaseURL(const KURL& a_baseURL)
 {
   baseURL = a_baseURL;
   baseURL.adjustPath(1);
-  checkInsert->setText(i18n("Insert files from \"%1\"").arg(baseURL.prettyURL()));
+  checkInsert->setText(i18n("<qt>Insert files from <b>%1</b>.</qt>").arg(baseURL.prettyURL(0, KURL::StripFileProtocol)));
   listView->clear();
   fileList.clear();
   checkInsert->setChecked(false);
@@ -254,7 +254,7 @@ void ProjectNewLocal::slotAddFolder()
     {
 
       KURLRequesterDlg *urlRequesterDlg = new KURLRequesterDlg( baseURL.prettyURL(), this, "");
-      urlRequesterDlg->setCaption(i18n("%1: Copy to Project").arg(dirURL.prettyURL()));
+      urlRequesterDlg->setCaption(i18n("%1: Copy to Project").arg(dirURL.prettyURL(0, KURL::StripFileProtocol)));
       urlRequesterDlg->urlRequester()->setMode( KFile::Directory | KFile::ExistingOnly);
       urlRequesterDlg->exec();
       KURL destination = urlRequesterDlg->selectedURL();

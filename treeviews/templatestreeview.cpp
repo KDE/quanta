@@ -353,14 +353,13 @@ void TemplatesTreeView::contentsDropEvent(QDropEvent *e)
          bool proceed = true;
          if (QExtFileInfo::exists(url))
          {
-           QString s = (url.isLocalFile()) ? url.path() : url.prettyURL();
-           proceed = KMessageBox::warningYesNo(this, i18n("<qt>The file <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>").arg(s),i18n("Overwrite")) == KMessageBox::Yes;
+           proceed = KMessageBox::warningYesNo(this, i18n("<qt>The file <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)),i18n("Overwrite")) == KMessageBox::Yes;
          }
          if (proceed)
          {
            if (!KIO::NetAccess::upload(tempFile->name(),  url))
            {
-             KMessageBox::error(this,i18n("Couldn't write to file:\n %1.\nCheck if you have rights to write there or that your connection is working.").arg(url.prettyURL()));
+             KMessageBox::error(this,i18n("<qt>Couldn't write to file <b>%1</b>.<br>Check if you have rights to write there or that your connection is working.</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)));
            }
          }
          delete tempFile;
