@@ -161,9 +161,6 @@
             <property name="text">
                 <string>&amp;Update opening/closing tag automatically</string>
             </property>
-            <property name="accel">
-                <string>Alt+U</string>
-            </property>
         </widget>
         <widget class="QCheckBox" row="5" column="0" rowspan="1" colspan="2">
             <property name="name">
@@ -180,9 +177,6 @@
             <property name="text">
                 <string>Use &amp;auto-completion</string>
             </property>
-            <property name="accel">
-                <string>Alt+A</string>
-            </property>
         </widget>
         <widget class="QCheckBox" row="7" column="0" rowspan="1" colspan="2">
             <property name="name">
@@ -190,9 +184,6 @@
             </property>
             <property name="text">
                 <string>Automatic &amp;replacement of the accented characters</string>
-            </property>
-            <property name="accel">
-                <string>Alt+R</string>
             </property>
             <property name="whatsThis" stdset="0">
                 <string>If this option is turned on the accented characters, like &lt;b&gt;&amp;#225;&lt;/b&gt;, will be automatically replaced  by their unicode style notation, for the above case with &lt;b&gt;&amp;#038;#225;&lt;/b&gt;.&lt;br&gt;

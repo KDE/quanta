@@ -136,9 +136,6 @@
             <property name="text">
                 <string>&amp;Proceed</string>
             </property>
-            <property name="accel">
-                <string>Alt+P</string>
-            </property>
             <property name="autoDefault">
                 <bool>true</bool>
             </property>
@@ -160,9 +157,6 @@
             </property>
             <property name="text">
                 <string>&amp;Cancel</string>
-            </property>
-            <property name="accel">
-                <string>Alt+C</string>
             </property>
             <property name="autoDefault">
                 <bool>true</bool>
@@ -191,9 +185,6 @@
             </property>
             <property name="text">
                 <string>&amp;Keep passwords in memory</string>
-            </property>
-            <property name="accel">
-                <string>Alt+K</string>
             </property>
         </widget>
         <widget class="QFrame" row="2" column="0" rowspan="1" colspan="3">
@@ -225,9 +216,6 @@
                     <property name="text">
                         <string>&amp;Invert</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+I</string>
-                    </property>
                 </widget>
                 <widget class="QPushButton" row="3" column="1">
                     <property name="name">
@@ -235,9 +223,6 @@
                     </property>
                     <property name="text">
                         <string>&amp;None</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+N</string>
                     </property>
                 </widget>
                 <widget class="QPushButton" row="7" column="1">
@@ -247,9 +232,6 @@
                     <property name="text">
                         <string>C&amp;ollapse All</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+O</string>
-                    </property>
                 </widget>
                 <widget class="QPushButton" row="8" column="1">
                     <property name="name">
@@ -257,9 +239,6 @@
                     </property>
                     <property name="text">
                         <string>U&amp;pdate All</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+P</string>
                     </property>
                     <property name="toolTip" stdset="0">
                         <string>This will cause all files to appear already uploaded</string>
@@ -279,9 +258,6 @@
                     </property>
                     <property name="text">
                         <string>E&amp;xpand All</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+X</string>
                     </property>
                 </widget>
                 <widget class="KProgress" row="13" column="0" rowspan="1" colspan="2">

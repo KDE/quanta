@@ -51,9 +51,6 @@
             <property name="text">
                 <string>&amp;New...</string>
             </property>
-            <property name="accel">
-                <string>Alt+N</string>
-            </property>
         </widget>
         <widget class="QLabel" row="0" column="0">
             <property name="name">
@@ -162,9 +159,6 @@
             <property name="text">
                 <string>&amp;Add...</string>
             </property>
-            <property name="accel">
-                <string>Alt+A</string>
-            </property>
         </widget>
         <spacer row="8" column="3">
             <property name="name">
@@ -190,9 +184,6 @@
             <property name="text">
                 <string>&amp;Remove</string>
             </property>
-            <property name="accel">
-                <string>Alt+R</string>
-            </property>
         </widget>
         <widget class="QPushButton" row="7" column="2" rowspan="1" colspan="2">
             <property name="name">
@@ -200,9 +191,6 @@
             </property>
             <property name="text">
                 <string>&amp;Edit</string>
-            </property>
-            <property name="accel">
-                <string>Alt+E</string>
             </property>
         </widget>
         <widget class="QLabel" row="9" column="0" rowspan="1" colspan="3">

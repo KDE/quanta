@@ -222,9 +222,6 @@
             <property name="text">
                 <string>S&amp;how splashscreen on startup</string>
             </property>
-            <property name="accel">
-                <string>Alt+H</string>
-            </property>
         </widget>
         <spacer row="10" column="0">
             <property name="name">
@@ -290,9 +287,6 @@
             <property name="text">
                 <string>&amp;Load last-opened project on startup</string>
             </property>
-            <property name="accel">
-                <string>Alt+L</string>
-            </property>
         </widget>
         <widget class="QCheckBox" row="7" column="0" rowspan="1" colspan="2">
             <property name="name">
@@ -300,9 +294,6 @@
             </property>
             <property name="text">
                 <string>L&amp;oad last-opened files on startup</string>
-            </property>
-            <property name="accel">
-                <string>Alt+O</string>
             </property>
         </widget>
     </grid>

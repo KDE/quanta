@@ -93,9 +93,6 @@
                             <property name="text">
                                 <string>&amp;Always show</string>
                             </property>
-                            <property name="accel">
-                                <string>Alt+A</string>
-                            </property>
                             <property name="checked">
                                 <bool>true</bool>
                             </property>
@@ -107,9 +104,6 @@
                             <property name="text">
                                 <string>&amp;Do not show</string>
                             </property>
-                            <property name="accel">
-                                <string>Alt+D</string>
-                            </property>
                         </widget>
                         <widget class="QRadioButton" row="2" column="0">
                             <property name="name">
@@ -117,9 +111,6 @@
                             </property>
                             <property name="text">
                                 <string>Show de&amp;layed</string>
-                            </property>
-                            <property name="accel">
-                                <string>Alt+L</string>
                             </property>
                         </widget>
                     </grid>

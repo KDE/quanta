@@ -134,9 +134,6 @@
                     <property name="text">
                         <string>Use &amp;pre/post text</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+P</string>
-                    </property>
                 </widget>
                 <widget class="QLabel" row="1" column="0">
                     <property name="name">
