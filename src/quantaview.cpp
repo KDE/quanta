@@ -89,7 +89,7 @@ QuantaView::QuantaView(QWidget *parent, const char *name )
   m_documentArea = new QWidget(this);
 
 //get the reference to the user toolbar holding widget
-  ToolbarTabWidget *m_toolbarTab = ToolbarTabWidget::ref(this);
+  ToolbarTabWidget *m_toolbarTab = ToolbarTabWidget::ref();
   m_toolbarTab->reparent(this, 0, QPoint(), true);
   m_toolbarTab ->setFocusPolicy( QWidget::NoFocus );
 
@@ -126,7 +126,7 @@ bool QuantaView::mayRemove()
 {
    if (m_plugin)
    {
-       m_plugin->unload();
+       m_plugin->unload(false);
    } else
    {
        parser->setSAParserEnabled(false);

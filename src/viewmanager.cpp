@@ -34,6 +34,7 @@
 #include "resource.h"
 #include "quanta.h"
 #include "templatestreeview.h"
+#include "toolbartabwidget.h"
 #include "parser.h"
 
 ViewManager::ViewManager(QObject *parent, const char *name) : QObject(parent, name)
@@ -98,6 +99,7 @@ bool ViewManager::removeView(QuantaView *view, bool force)
 {
     if (view)
     {
+       ToolbarTabWidget::ref()->reparent(0L, 0, QPoint(), false);
        if (force || view->mayRemove())
       {
         if (view == m_documentationView)
@@ -109,7 +111,7 @@ bool ViewManager::removeView(QuantaView *view, bool force)
         quantaApp->closeWindow(view);
         if (!quantaApp->activeWindow())
         {
-            createNewDocument();
+      //      createNewDocument();
         }
         return true;
        }
@@ -262,6 +264,7 @@ void ViewManager::closeAll(bool createNew)
   disconnect(quantaApp, SIGNAL(viewActivated (KMdiChildView *)), this, SLOT(slotViewActivated(KMdiChildView*)));
   KMdiIterator<KMdiChildView*> *it = quantaApp->createIterator();
   QuantaView *view;
+  ToolbarTabWidget::ref()->reparent(0L, 0, QPoint(), false);
   for (it->first(); !it->isDone(); it->next())
   {
       view = dynamic_cast<QuantaView*>(it->currentItem());

@@ -293,7 +293,7 @@ bool QuantaPlugin::isLoaded()
   return m_part != 0;
 }
 
-bool QuantaPlugin::unload()
+bool QuantaPlugin::unload(bool remove)
 {
   if(!isLoaded())
     return FALSE;
@@ -308,7 +308,8 @@ bool QuantaPlugin::unload()
   emit pluginStopped();
 
   m_action->setChecked(false);
-  removeWidget();
+  if (remove)
+    removeWidget();
   return true;
 }
 

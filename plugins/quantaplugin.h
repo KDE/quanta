@@ -67,8 +67,8 @@ public slots:
   virtual void setRunning(bool);
   /** Loads the plugin */
   virtual bool load();
-  /** Unloads te plugin */
-  virtual bool unload();
+  /** Unloads te plugin. If remove is true, it will also remove the plugin widget. */
+  virtual bool unload(bool remove = true);
   /** Runs the plugin */
   virtual bool run();
   /** Runs the plugin if it's not running yet, unloads otherwise.*/

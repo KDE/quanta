@@ -94,6 +94,7 @@
 #include "templatestreeview.h"
 #include "tagattributetree.h"
 #include "scripttreeview.h"
+#include "toolbartabwidget.h"
 
 #include "quantaplugininterface.h"
 
@@ -354,6 +355,7 @@ void QuantaInit::initView()
    KafkaDocument *m_kafkaDocument = KafkaDocument::ref(0, 0, "KafkaPart");
    m_kafkaDocument->getKafkaWidget()->view()->setMinimumHeight(50);
    loadVPLConfig();
+   (void) ToolbarTabWidget::ref(quantaApp);
 
 #if KDE_IS_VERSION(3,2,90)
   m_quanta->setIDEAlModeStyle(KMultiTabBar::KDEV3ICON);
