@@ -232,6 +232,9 @@ QuantaApp::QuantaApp(int mdiMode) : DCOPObject("WindowManagerIf"), KMdiMainFrm( 
   connect(m_partManager, SIGNAL(activePartChanged(KParts::Part * )),
           this, SLOT(slotActivePartChanged(KParts::Part * )));
 
+  m_oldContextCut = 0L;
+  m_oldContextCopy = 0L;
+  m_oldContextPaste = 0L;
   m_oldKTextEditor = 0L;
   m_previewToolView = 0L;
 }
