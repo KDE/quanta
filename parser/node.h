@@ -26,6 +26,7 @@
 
 #include <qptrlist.h>
 #include <qvaluelist.h>
+#include <qmap.h>
 
 class Tag;
 class QListViewItem;
