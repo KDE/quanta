@@ -167,7 +167,7 @@ if( (currentProp = static_cast<myCheckListItem*>(lvVisual->findItem( s,0 )) ))
       if( (currentProp = static_cast<myCheckListItem*>(lvPaged->findItem( s,0 )) )) 
         currentProp->setOn(true); 
         
-      if( currentProp->depth() ) {
+      if(currentProp && currentProp->depth() ) {
           myCheckListItem *p = static_cast<myCheckListItem*>(currentProp->parent());
           while(p) {
             p->setOn(true);
