@@ -163,7 +163,7 @@ BaseTreeBranch::BaseTreeBranch(KFileTreeView *parent, const KURL& url,
   bool localFile = url.isLocalFile();
   setAutoUpdate(localFile);
   setChildRecurse(false);
-  
+
   // TODO drop this if support for KDE 3.2 is dropped
 #if KDE_VERSION < KDE_MAKE_VERSION(3,2,90)
   connect(this, SIGNAL(refreshItems(const KFileItemList&)),
@@ -216,7 +216,7 @@ void BaseTreeBranch::slotRefreshItems(const KFileItemList& list)
       ++it;
   }
 #else
-  Q_UNUSED(list);  
+  Q_UNUSED(list);
 #endif
 }
 
@@ -253,14 +253,14 @@ void BaseTreeBranch::reopenFolder()
 {
   if (folderToOpen.isEmpty())
     return;
-  KFileTreeViewItem *item;   
+  KFileTreeViewItem *item;
   for (QStringList::Iterator it = folderToOpen.begin(); it != folderToOpen.end(); ++it) {
     KURL url( (*it) );
     item = findTVIByURL(url);
     if (item) {
       // erase the url in the list
       (*it) = "";
-      // open the folder 
+      // open the folder
       item->setExpandable(true);
       item->setOpen(true);
     }
@@ -299,16 +299,16 @@ BaseTreeView::BaseTreeView(QWidget *parent, const char *name)
 
   connect(this, SIGNAL(executed(QListViewItem *)),
           this, SLOT(slotSelectFile(QListViewItem *)));
-  
+
   connect(this, SIGNAL(openFile(const KURL &)),
           quantaApp, SLOT(slotFileOpen(const KURL &)));
-  
+
   connect(this, SIGNAL(openImage(const KURL &)),
           quantaApp, SLOT(slotImageOpen(const KURL &)));
-  
+
   connect(this, SIGNAL(closeFile(const KURL &)),
           quantaApp, SLOT(slotFileClose(const KURL &)));
-  
+
   connect(this, SIGNAL(insertTag(const KURL &, DirInfo)),
           quantaApp, SLOT(slotInsertTag(const KURL &, DirInfo)));
 }
@@ -946,10 +946,13 @@ void BaseTreeView::doRename(KFileTreeViewItem* kftvi, const QString & newName)
     //start the rename job
       oldURL.adjustPath(-1);
       newURL.adjustPath(-1);
-      if (! QuantaNetAccess::file_move(oldURL, newURL, -1, true, false, this, true))
+      if (!QuantaNetAccess::file_move(oldURL, newURL, -1, true, false, this, true))
       {
         kftvi->setText(0, kftvi->fileItem()->text());  // reset the text
       }
+    } else
+    {
+       kftvi->setText(0, kftvi->fileItem()->text());  // reset the text
     }
   }
 }
@@ -960,7 +963,7 @@ void BaseTreeView::saveLayout(KConfig *config, const QString &group)
   KListView::saveLayout(config, group);
   if (! m_saveOpenFolder || ! qConfig.saveTrees)
     return;
-  
+
   KConfigGroupSaver saver(config, group);
   BaseTreeBranch *btb;
   int i = 0;
@@ -986,7 +989,7 @@ void BaseTreeView::restoreLayout(KConfig *config, const QString &group)
   KListView::restoreLayout(config, group);
   if (! m_saveOpenFolder || ! qConfig.saveTrees)
     return;
-  
+
   KConfigGroupSaver saver(config, group);
   BaseTreeBranch *btb;
   KFileTreeBranchIterator it( branches() );
