@@ -821,24 +821,24 @@ void QuantaApp::repaintPreview( bool clear )
       text = i18n( "<i>The current document is empty</i>" );
   }
 
-  KParts::URLArgs args(true, browserExtension()->xOffset(), browserExtension()->yOffset());
- 	browserExtension()->setURLArgs( args );
-
   KHTMLView *html = part->view();
 
   int xOffset = html->contentsX(), yOffset = html->contentsY();
 
+  part->closeURL();
+		
+	KParts::URLArgs args(true, browserExtension()->xOffset(), browserExtension()->yOffset());
+ 	browserExtension()->setURLArgs( args );
+
 	if ( usePrefix )
 	{
    	if ( doc->isModified() ) doc->saveDocument( doc->getAbsFilePath() );
-
-		part->closeURL();
+		
 		part->begin( project->previewPrefix+fname, xOffset, yOffset );
 		part->openURL( KURL( project->previewPrefix+fname ) );
 		part->end();
 	}
 	else {
-		part->closeURL();
 		part->begin( KURL( doc->basePath() ), xOffset, yOffset );
   	part->write( text );
 		part->end();
