@@ -15,6 +15,7 @@ Version 3.3 BE (Release date: xx-xx-2004; Started 26-01-2004):
         - creation of templates directory failed in some cases when using the new project wizard
         - don't crash the CSS editor on invalid CSS
         - don't crash the table editor on invalid nested tables
+        - don't crash when setting table/body/header/footer attributes for newly created tables [#74949]
         - various parsing fixes        
         - report bugs for "quanta" module, not for "quanta_be"        
     - performance:
