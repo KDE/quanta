@@ -138,7 +138,8 @@ void TagAction::insertTag(bool inputFromFile, bool outputToFile)
   if ( type == "script" )
   {
     KProcess *proc = new KProcess();
-    proc ->clearArguments();
+    proc->clearArguments();
+    proc->setWorkingDirectory(quantaApp->projectBaseURL().path());
 
     QDomElement script = tag.namedItem("script").toElement();
     QString command = script.text();
