@@ -16,6 +16,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <stdlib.h>
+
 // include files for QT
 #include <qdir.h>
 #include <qprinter.h>
@@ -25,6 +27,10 @@
 #include <qlayout.h>
 #include <qtoolbutton.h>
 #include <qtimer.h>
+#include <qdom.h>
+#include <qfile.h>
+#include <qfileinfo.h>
+
 
 // include files for KDE
 #include <kaccel.h>
@@ -35,7 +41,7 @@
 #include <klocale.h>
 #include <kconfig.h>
 #include <khtmlview.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <kstatusbar.h>
 
 #include <kparts/componentfactory.h>
@@ -82,7 +88,6 @@ QString fileMaskImage = "*.gif *.jpg *.png *.jpeg *.bmp *.xpm *.GIF *.JPG *.PNG 
 QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
 {
   QuantaCommon::quantaApp = this;
-
   tempFileList.setAutoDelete(true);
   toolbarGUIClientList.setAutoDelete(true);
   toolbarDomList.setAutoDelete(true);
@@ -97,19 +102,56 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
 
   config=kapp->config();
 
+//  QTimer::singleShot(10,this, SLOT(initQuanta()));
+}
+
+QuantaApp::~QuantaApp()
+{
+ tempFileList.clear();
+}
+
+
+/** Delayed initialization. */
+void QuantaApp::initQuanta()
+{
   parser = new Parser();
-  
+
   initTagDict  ();
   initStatusBar();
   initDocument ();
   initView     ();
   initProject  ();
-  
+
   initActions();
+  readOptions();
+
+//Check for an existing quanatui.rc
+//  QString uiFileName = QString(getenv("KDEHOME"))+"/share/apps/quanta/quantaui.rc";
+  QString uiFileName = locateLocal("appdata","quantaui.rc");
+  if (QFileInfo(uiFileName).exists())
+  {
+    QDomDocument doc;
+     QFile f( uiFileName );
+		 f.open( IO_ReadOnly );
+	   if ( doc.setContent( &f ) )
+     {
+       f.close();
+       QDomElement el = doc.firstChild().toElement();
+       if (el.attribute("version","old") != QString(VERSION))
+       {
+//         KMessageBox::information(0, i18n("An old quantaui.rc was found at %1.\nIt will be renamed to quantaui.rc.old").arg(uiFileName));
+         QString command = "mv "+uiFileName+" "+uiFileName+".old";
+         system(command.latin1());
+       }
+     } else
+     {
+       f.close();
+     }
+  }
+
 
   createGUI( QString::null, false );
 
-  initToolBars();
 
   pm_set  = (QPopupMenu*)guiFactory()->container("settings", this);
   connect(pm_set, SIGNAL(aboutToShow()), this, SLOT(settingsMenuAboutToShow()));
@@ -120,24 +162,22 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
   QPopupMenu* pm_view = (QPopupMenu*)guiFactory()->container("qview", this);
   connect(pm_view,SIGNAL(aboutToShow()), this, SLOT(viewMenuAboutToShow()));
 
-  readOptions();
-
   connect( messageOutput, SIGNAL(clicked(QString,int)),
            this,          SLOT(gotoFileAndLine(QString,int)));
 
   QTimer *t = new QTimer( this );
   connect( t, SIGNAL(timeout()), SLOT(reparse()) );
   t->start( 5000, false ); //update the structure tree every 5 seconds
-  QTimer::singleShot(10,this, SLOT(slotFileNew()) );
+
+//Delay the calls as they contain dialog popups. That may crash Quanta!
+  QTimer::singleShot(10,this,SLOT(slotFileNew()));;
+  QTimer::singleShot(15,this,SLOT(initToolBars()));
+
 
 //  KParts::ReadOnlyPart *m_cervisia =  KParts::ComponentFactory::createPartInstanceFromLibrary<KParts::ReadOnlyPart>( "libcervisia.so",this);
 
 }
 
-QuantaApp::~QuantaApp()
-{
- tempFileList.clear();
-}
 
 void QuantaApp::initToolBars()
 {
@@ -638,11 +678,11 @@ bool QuantaApp::queryExit()
 /**
  Parse the dom document and retrieve the tag attributes
 */
-void QuantaApp::setAttributes(QDomDocument *dom, QTag* tag)
+void QuantaApp::setAttributes(QDomNode *dom, QTag* tag)
 {
  Attribute *attr;
 
- QDomElement el = dom->firstChild().firstChild().toElement();
+ QDomElement el = dom->toElement();
 
  QDictIterator<AttributeList> it(*(tag->parentDTD->commonAttrs));
  for( ; it.current(); ++it )
@@ -667,7 +707,7 @@ void QuantaApp::setAttributes(QDomDocument *dom, QTag* tag)
  tag->type = el.attribute("type","xmltag");
  tag->returnType = el.attribute("returnType","");
 
- for ( QDomNode n = dom->firstChild().firstChild().firstChild(); !n.isNull(); n = n.nextSibling() )
+ for ( QDomNode n = dom->firstChild(); !n.isNull(); n = n.nextSibling() )
  {
    if (n.nodeName() == "stoppingtags") //read what tag can act as closing tag
    {
@@ -737,6 +777,40 @@ void QuantaApp::setAttributes(QDomDocument *dom, QTag* tag)
 // return attrs;
 }
 
+/** Reads the tags for the tag files. Returns the number of read tags. */
+uint QuantaApp::readTagFile(QString fileName, DTDStruct* parentDTD, QTagList *tagList)
+{
+ int numOfTags = 0;
+
+ QFile f( fileName );
+ f.open( IO_ReadOnly );
+ QDomDocument *doc = new QDomDocument();
+ doc->setContent( &f );
+ f.close();
+
+ for ( QDomNode n = doc->firstChild().firstChild(); !n.isNull(); n = n.nextSibling() )
+ {
+   if (n.nodeName() == "tag") //read a tag
+   {
+     QTag *tag = new QTag();
+     tag->setName(n.toElement().attribute("name"));
+     tag->setFileName(fileName);
+     tag->parentDTD = parentDTD;
+     setAttributes(&n, tag);
+     if (parentDTD->caseSensitive)
+     {
+       tagList->insert(tag->name(),tag);  //append the tag to the list for this DTD
+     } else
+     {
+       tagList->insert(tag->name().upper(),tag);
+     }
+     numOfTags++;
+   }
+ }
+
+ return numOfTags;
+}
+
 /** Reads the tag files and the description.rc from tagDir in order to
     build up the internal DTD and tag structures. */
 void QuantaApp::readTagDir(QString &dirName)
@@ -794,26 +868,7 @@ void QuantaApp::readTagDir(QString &dirName)
    if (! name.isEmpty())
    {
      QString fname = dirName + *it_f ;
-     QFile f( fname );
-     f.open( IO_ReadOnly );
-     QDomDocument *doc = new QDomDocument();
-     doc->setContent( &f );
-     f.close();
-
-     QTag *tag = new QTag();
-     tag->setName(name);
-     tag->setFileName(fname);
-     tag->parentDTD = dtd;
-     setAttributes(doc, tag);
-     if (caseSensitive)
-     {
-       tagList->insert(tag->name(),tag);  //append the tag to the list for this DTD
-     } else
-     {
-       tagList->insert(tag->name().upper(),tag);
-     }
-     delete doc;
-     numOfTags++;
+     numOfTags += readTagFile(fname,dtd, tagList);
    }
  }
  //read the extra tags and their attributes
@@ -898,7 +953,7 @@ void QuantaApp::readTagDir(QString &dirName)
  dtd->booleanTrue = dtdConfig->readEntry("BooleanTrue","true");
  dtd->booleanFalse = dtdConfig->readEntry("BooleanFalse","false");
 
- dtds->insert(dtdName, dtd);//insert the taglist into the full list7
+ dtds->insert(dtdName, dtd);//insert the taglist into the full list
 
  delete dtdConfig;
 }
@@ -910,7 +965,7 @@ void QuantaApp::readTagDir(QString &dirName)
 
 void QuantaApp::initTagDict()
 {
-  dtds = new QDict<DTDStruct>(119, false); //max 119 DTD is supported
+  dtds = new QDict<DTDStruct>(119, false); //optimized for max 119 DTD. This should be enough.
   dtds->setAutoDelete(true);
 
   QStringList tagsResourceDirs = KGlobal::instance()->dirs()->findDirs("appdata", "tags");

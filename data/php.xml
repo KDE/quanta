@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE language SYSTEM "language.dtd">
-<language name="PHP" version="1.03" kateversion="2.0" section="Scripts" 
-extensions="*.php;*.php3;*.wml;*.phtml" 
+<language name="PHP" version="1.03" kateversion="2.0" section="Scripts"
+extensions="*.php;*.php3;*.wml;*.phtml"
 mimetype="text/x-php4-src;text/x-php3-src;text/vnd.wap.wml">
 	<highlighting>
 		<list name="others">
@@ -2712,7 +2712,7 @@ mimetype="text/x-php4-src;text/x-php3-src;text/vnd.wap.wml">
 				<DetectChar attribute="String" context="doblequotestring" char="&quot;" />
 				<DetectChar attribute="String" context="singlequotestring" char="&#39;" />
 				<RegExpr attribute="String" context="" String="" />
-				<RegExpr attribute="Variable" context="#stay" String="\$[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*" />
+				<RegExpr attribute="Variable" context="#stay" String="\$+[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*" />
 				<HlCOct attribute="Octal" context="#stay" />
 				<HlCHex attribute="Hex" context="#stay" />
 				<Float attribute="Float" context="#stay" />

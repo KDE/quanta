@@ -100,6 +100,8 @@ public:
   QuantaApp();
   ~QuantaApp();
 
+  /** Delayed initialization. */
+  void initQuanta();
   QuantaDoc  *getDoc()   { return doc; };
   QuantaView *getView()  { return view;};
   Project *getProject()  { return project; };
@@ -256,6 +258,9 @@ public slots:
   /** No descriptions */
   void slotShowCompletionHint();
 
+protected slots:
+  void initToolBars();
+
 protected:
   KParts::BrowserExtension *browserExtension()
   {
@@ -276,10 +281,11 @@ protected:
   void initView();
   void initProject();
   void initTagDict();
-  void initToolBars();
 
+  /** Reads the tags for the tag files. Returns the number of read tags. */
+  uint readTagFile(QString fileName, DTDStruct* parentDTD, QTagList *tagList);
   /** Parse the dom document and retrieve the tag attributes */
-  void setAttributes(QDomDocument *dom, QTag *tag);
+  void setAttributes(QDomNode *dom, QTag *tag);
   virtual bool queryExit();
   void saveAsTemplate (bool projectTemplate, bool selectionOnly = false);
   /* Saves the toolbar and the actions. Returns the name of the actions file*/

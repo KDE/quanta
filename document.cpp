@@ -662,8 +662,6 @@ KTextEditor::Document* Document::doc()
   return _doc;
 }
 
-
-#include "document.moc"
 /** Returns true if the document was modified. */
 bool Document::isModified()
 {
@@ -1419,3 +1417,6 @@ void Document::slotCompletionAborted()
 {
  completionInProgress = false;
 }
+
+
+#include "document.moc"

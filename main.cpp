@@ -27,6 +27,9 @@
 // qt includes
 #include <qpixmap.h>
 #include <qnetwork.h>
+#include <qdom.h>
+#include <qfile.h>
+#include <qfileinfo.h>
 
 // app includes
 #include "quanta.h"
@@ -113,7 +116,6 @@ int main(int argc, char *argv[])
       break;
     }
   }
-
 
   KApplication *app;
 //  KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
