@@ -30,7 +30,6 @@
 #include <kapp.h>
 #include <ktmainwindow.h>
 #include <kaccel.h>
-#include <khtml_part.h>
 #include "widgets/whtmlpart.h"
 #include <kparts/browserextension.h>
 
@@ -43,8 +42,8 @@ class QTabWidget;
 class QWidgetStack;
 class WHTMLPart;
 class KHTMLView;
-class MessageOutput;
 class QListViewItem;
+class QListBox;
 
 class Parser;
 class Node;
@@ -56,6 +55,8 @@ class ProjectTreeView;
 class Project;
 class ToolBars;
 class GrepDialog;
+class FtpClient;
+class MessageOutput;
 
 /**
   * The base class for Quanta application windows. It sets up the main
@@ -300,7 +301,7 @@ class QuantaApp : public KTMainWindow
 	
 	  void slotSelectMessageWidget();
 	  void slotDisableMessageWidget();
-
+	  
 	protected:
 	  KParts::BrowserExtension *browserExtension() {
       return static_cast<KParts::BrowserExtension *>(((KParts::ReadOnlyPart *)htmlPart())->child( 0L, "KParts::BrowserExtension" ));

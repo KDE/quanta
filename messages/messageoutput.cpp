@@ -16,28 +16,57 @@
  ***************************************************************************/
 
 #include "messageoutput.h"
+#include "messageitem.h"
 
 MessageOutput::MessageOutput(QWidget *parent, const char *name )
-  : KEdit(parent,name)
+  : QListBox(parent,name)
 {
-  insertAtEnd( "Message window...\n\n" );
+  insertItem( "Message window..." );
+  max_items = 200;
 }
 
-MessageOutput::~MessageOutput(){
-}
-
-void MessageOutput::insertAtEnd(QString s)
+MessageOutput::~MessageOutput()
 {
-  int row = (numLines() == 0)? 0 : numLines()-1;
-  int col = qstrlen(textLine(row));
-  insertAt(s, row, col);
 }
 
-void MessageOutput::mouseReleaseEvent(QMouseEvent*){
-  emit clicked();
+void MessageOutput::insertItem(QString s)
+{
+  checkMaxItems();
+  new MessageItem(this,s);
 }
 
-void MessageOutput::keyPressEvent ( QKeyEvent* event){
-  KEdit::keyPressEvent(event);
-  emit keyPressed(event->ascii());
+void MessageOutput::showMessage( QString message ) 
+{
+  int endPos;
+  if ( message.right(1) == "\n" ) 
+    message.remove( message.length()-1,1 );
+    
+  if ( message.left(1) == "\n" ) 
+    message.remove( 0,1 );
+  
+  
+  while ( ( endPos = message.find('\n') ) != -1 ) {
+    insertItem( message.left(endPos) );
+    message.remove(0,endPos+1);
+  }
+  insertItem( message );
 }
+
+
+void MessageOutput::checkMaxItems() 
+{
+  if ( count() >= max_items )
+    removeItem( index(firstItem()) );
+}
+
+void MessageOutput::clickItem( QListBoxItem * l_item ) 
+{
+   MessageItem *item = dynamic_cast<MessageItem*>(l_item);
+   if ( item )  {
+     if ( (item->fileName() != QString::null) && (item->line()!=-1) )
+       emit clicked( item->fileName(), item->line() );  
+   }
+}
+
+
+

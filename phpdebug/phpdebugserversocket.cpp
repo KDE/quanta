@@ -26,10 +26,11 @@ void PhpDebugServerSocket::newConnection( int socket )
 void PhpDebugServerSocket::readClient()
 {
   QSocket* socket = (QSocket*)sender();
-	if (socket->canReadLine()) 
+	while (socket->canReadLine()) 
 	{
 	  QString s = socket->readLine();
 	  emit data( s );
+	  //debug(s);
 	}
 }
 

@@ -1,9 +1,9 @@
 /***************************************************************************
                           messageoutput.h  -  description
                              -------------------
-    begin                : Thu Feb 24 2000
-    copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavski
-    email                : pdima@mail.univ.kiev.ua
+    begin                : Jan 12 2001
+    copyright            : (C) 2001 by Dmitry Poplavsky
+    email                : dima@kde.org
  ***************************************************************************/
 
 /***************************************************************************
@@ -15,36 +15,36 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef MESSAGEOUTPUT_H
-#define MESSAGEOUTPUT_H
 
-#include <qwidget.h>
-#include <keditcl.h>
+#ifndef MESSAGEITEM_H
+#define MESSAGEITEM_H
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
-/**class for displaing of
-weblint output
-  *@author Yacovlev Alexander & Dmitry Poplavski
-  */
+#include <qlistbox.h>
 
-class MessageOutput : public KEdit  {
-   Q_OBJECT
-public: 
-	MessageOutput(QWidget *parent=0, const char *name=0);
-	~MessageOutput();
-	
-public slots:	
-	void insertAtEnd(QString s);
-	
-protected:
-  virtual void mouseReleaseEvent(QMouseEvent* event);
-  virtual void keyPressEvent ( QKeyEvent* event);
+/**
+  Like QListBoxText with storing of filename and line in it.
+*/
 
-  signals:
-  /** emited, if the mouse was clicked over the widget*/
-  void clicked();
-  void keyPressed(int key);
-
+class MessageItem : public QListBoxText {
+  public:
+  
+    MessageItem( QListBox *listbox, const QString &text=QString::null, int line=-1, const QString &fname=QString::null);
+    
+    /** return line number for file , associated with this message */
+    int line() { return lineNumber; }
+    /** return name of file , associated with this message */
+    QString fileName() { return filename; }
+  private:
+  
+    // line number and filename , associated with this line
+    int lineNumber;
+    QString filename;
+  
 };
 
 #endif
+

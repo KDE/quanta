@@ -1,8 +1,8 @@
-
 #ifndef PHPDEBUGSERVERSOCKET_H
 #define PHPDEBUGSERVERSOCKET_H
 
 #include <qserversocket.h>
+
 
 class PhpDebugServerSocket : public QServerSocket  {
   Q_OBJECT

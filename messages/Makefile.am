@@ -3,24 +3,22 @@
 #### WARNING! All changes made in this part will be lost! ####
 ##############################################################
 
-noinst_LIBRARIES = libwidgets.a
+noinst_LIBRARIES = libmessages.a
 
 
 
 INCLUDES = $(all_includes)
+CXXFLAGS = -g3 
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
-libwidgets_a_METASOURCES = AUTO
-libwidgets_a_SOURCES = \
-		whtmlpart.cpp\
-		wsplitter.cpp\
-		wtoolbar.cpp
+libmessages_a_METASOURCES = AUTO
+libmessages_a_SOURCES = \
+		messageoutput.cpp\
+		messageitem.cpp
 EXTRA_DIST = \
-		whtmlpart.cpp\
-		whtmlpart.h\
-		wsplitter.cpp\
-		wsplitter.h\
-		wtoolbar.cpp\
-		wtoolbar.h
+		messageoutput.cpp\
+		messageoutput.h\
+		messageitem.cpp\
+		messageitem.h
 ##############################################################
 ####                  END KDEStudio part                  ####
 #2########################################################!@#$

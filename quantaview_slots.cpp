@@ -40,7 +40,7 @@
 #include "qextfileinfo.h"
 
 #include "project/project.h"
-#include "widgets/messageoutput.h"
+#include "messages/messageoutput.h"
 
 // dialogs headers
 #include "tagdialogs/tagdialog.h"
@@ -557,11 +557,10 @@ void QuantaView::slotGetScriptOutput(KProcess *, char *buffer, int buflen)
         //if ( !app->viewMenu->isItemChecked(ID_VIEW_MES) )
         //  app->slotViewMes();
         app->messageOutput->clear();
-        app->messageOutput->insertAtEnd("Script output:\n");
-        app->messageOutput->insertAtEnd(output);
+        app->messageOutput->insertItem("Script output:\n");
       }
-      else
-        app->messageOutput->insertAtEnd(output);  	
+
+      app->messageOutput->showMessage(output);
   }	
 
   if ( scriptOutputDest == "new" ) {
@@ -601,11 +600,10 @@ void QuantaView::slotGetScriptError(KProcess *, char *buffer, int buflen)
         //if ( !app->viewMenu->isItemChecked(ID_VIEW_MES) )
         //  app->slotViewMes();
         app->messageOutput->clear();
-        app->messageOutput->insertAtEnd("Script output:\n");
-        app->messageOutput->insertAtEnd(output);
+        app->messageOutput->insertItem("Script output:\n");
       }
-      else
-        app->messageOutput->insertAtEnd(output);  	
+        
+      app->messageOutput->showMessage( output );  	
   }	
 
   if ( scriptErrorDest == "new" ) {

@@ -49,7 +49,7 @@
 #include "widgets/wtoolbar.h"
 #include "widgets/whtmlpart.h"
 #include "widgets/wsplitter.h"
-#include "widgets/messageoutput.h"
+#include "messages/messageoutput.h"
 
 #include "treeviews/fileslistview.h"
 #include "treeviews/filestreeview.h"
@@ -113,12 +113,12 @@ QuantaApp::QuantaApp()
     new PhpDebugServerSocket( phpDebugPort,0,0);
     
   connect( debugger,      SIGNAL(data(QString)),
-           messageOutput, SLOT(insertAtEnd(QString)) );
+           messageOutput, SLOT(showMessage(QString)) );
            
   if ( !debugger->ok() ) {
     QString s;
-	  messageOutput->insertAtEnd("\nPhp Debugger:\n\t\tSorry, but I can't listen port N "+
-	    s.sprintf("%i",phpDebugPort)+"\n\n" );
+	  messageOutput->insertItem("\nPhp Debugger:\t\tSorry, but I can't listen port N "+
+	    s.sprintf("%i",phpDebugPort)+"\n" );
 	}
 
   ///////////////////////////////////////////////////////////////////
@@ -465,7 +465,7 @@ void QuantaApp::initMenuBar()
   menuBar()->insertItem(i18n(" &Tool "), toolMenu);
   menuBar()->insertItem(i18n(" &View "), viewMenu);
   menuBar()->insertItem(i18n(" &Project "), projectMenu);
-  #warning NEED_BOOKMARS!!!
+
   //menuBar()->insertItem(i18n(" &Bookmarks "), bookmarksMenu);
   menuBar()->insertItem(i18n(" &Options "), optionsMenu);
 
@@ -650,7 +650,7 @@ void QuantaApp::initProject()
 	connect(project,	SIGNAL(disableMessageWidget()),
 					this,			SLOT  (slotDisableMessageWidget()));
 	connect(project,	SIGNAL(messages(QString)),
-					messageOutput, SLOT(insertAtEnd(QString)));
+					messageOutput, SLOT(insertItem(QString)));
 
 	connect(project,	SIGNAL(saveAllFiles()),
 					this, SLOT(slotFileSaveAll()));					
