@@ -907,6 +907,7 @@ void SAParser::slotParseNodeInDetail()
          }
          Tag *tag = new Tag(area, m_write, node->tag->dtd(), false);
          commentNode->tag = tag;
+         commentNode->insideSpecial = true;
          node->child = commentNode;
       }
       if (m_currentNode)
