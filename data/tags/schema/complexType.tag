@@ -76,12 +76,16 @@
    <stoppingtag name="notation" />
   </stoppingtags>
   <children>
+   <child name="all" />
    <child name="annotation" />
-   <child name="simpleContent" />
-   <child name="complexContent" />
+   <child name="anyAttribute" />
    <child name="attribute" />
    <child name="attributeGroup" />
-   <child name="anyAttribute" />
+   <child name="choice" />
+   <child name="complexContent" />
+   <child name="group" />
+   <child name="sequence" />
+   <child name="simpleContent" />
   </children>
  </tag>
 </TAGS>
