@@ -23,7 +23,6 @@
 #include <kiconloader.h>
 #include <kparts/componentfactory.h>
 #include <ktexteditor/editinterface.h>
-#include <kate/document.h>
 
 //qt includes
 #include <qpoint.h>
@@ -37,7 +36,6 @@
 #include "../parser/node.h"
 #include "../parser/node.h"
 
-#include "../document.h"
 #include "../quantacommon.h"
 #include "../quanta.h"
 #include "../resource.h"
@@ -970,9 +968,9 @@ void TableEditor::slotEditChildTable()
   bool tempDocCreated = false;
   bool error = false;
   QValueList<NestedTable>::Iterator errorIt;
-  Parser *localParser;
-  Document *w;
-  Node *savedBaseNode;
+  Parser *localParser = 0L;
+  Document *w = 0L;
+  Node *savedBaseNode = 0L;
   NestedTable table;
 
   for (QValueList<NestedTable>::Iterator it = m_nestedTables.begin(); it != m_nestedTables.end(); ++it) {
