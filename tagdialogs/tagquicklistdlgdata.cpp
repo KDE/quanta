@@ -29,7 +29,7 @@ void  TagQuickListDlg::initDialog()
   buttonOk= new QPushButton(this,"NoName");
   buttonOk->setGeometry(10,110,100,30);
   buttonOk->setMinimumSize(0,0);
-  buttonOk->setText(i18n("Ok"));
+  buttonOk->setText(i18n("OK"));
 
   QLabel_2= new QLabel(this,"NoName");
   QLabel_2->setGeometry(10,40,100,30);

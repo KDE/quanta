@@ -39,7 +39,7 @@ void  TagQuickTable::initDialog()
   buttonOk= new QPushButton(this,"NoName");
   buttonOk->setGeometry(10,80,100,30);
   buttonOk->setMinimumSize(0,0);
-  buttonOk->setText(i18n("Ok"));
+  buttonOk->setText(i18n("OK"));
   buttonOk->setDefault(true);
 
   buttonCancel= new QPushButton(this,"NoName");
