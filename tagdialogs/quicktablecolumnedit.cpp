@@ -1,9 +1,9 @@
 /***************************************************************************
-                          tagquicktable.h  -  description
+                          quicktablecolumnedit.cpp  -  description
                              -------------------
-    begin                : Sun Nov 28 1999
-    copyright            : (C) 1999 by Yacovlev Alexander & Dmitry Poplavsky & Andras Mantia
-    email                : pdima@mail.univ.kiev.ua
+    begin                : Wed Jul 17 2002
+    copyright            : (C) 2002 by Andras Mantia
+    email                : amantia@freemail.hu
  ***************************************************************************/
 
 /***************************************************************************
@@ -15,35 +15,14 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef TAGQUICKTABLE_H
-#define TAGQUICKTABLE_H
+#include "quicktablecolumnedit.h"
 
-#include <qwidget.h>
-#include <qspinbox.h>
-#include <qlabel.h>
-#include <qpushbutton.h>
-#include <qdialog.h>
+QuickTableColumnEdit::QuickTableColumnEdit(QWidget *parent, const char *name ) : TableColumnDialog(parent,name)
+{
+	setCaption(name);
+  connect( buttonOk, SIGNAL(clicked()), SLOT(accept()) );
+	connect( buttonCancel, SIGNAL(clicked()), SLOT(reject()) );
+}
 
-#include "quicktable.h"
-
-/**
-  *@author Dmitry Poplavsky & Yacovlev Alexander
-  */
-
-class TagQuickTable : public Quick_Table{
-   Q_OBJECT
-public: 
-	TagQuickTable(QWidget *parent=0, const char *name=0);
-	~TagQuickTable();
-
-public:
-
-private: 
-public slots: // Public slots
-  /** No descriptions */
-  void slotChangeColumnNumber(int columnNum);
-  /** No descriptions */
-  void slotEditColumn(QListViewItem *item);
-};
-
-#endif
+QuickTableColumnEdit::~QuickTableColumnEdit(){
+}

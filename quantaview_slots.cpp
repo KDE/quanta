@@ -25,6 +25,7 @@
 #include <qlineedit.h>
 #include <qclipboard.h>
 #include <qcheckbox.h>
+#include <qtextedit.h>
 
 // include files for KDE
 #include <kapp.h>
@@ -330,6 +331,45 @@ void QuantaView::slotTagQuickTable()
   		x = quickDlg->SpinBoxCol->value();
   	
   		QString tag = QString("<table>\n")+space;
+
+      if (quickDlg->useCaption->isChecked())
+      {
+        tag +="  <caption>\n     ";
+        tag += quickDlg->CaptionTextEdit->text();
+        tag +="\n  </caption>\n";
+      }
+
+      if (quickDlg->useCols->isChecked())
+      {
+        QListViewItem *item = quickDlg->ColumnsListView->firstChild();
+        QString value;
+        for (int i = 1; i <= x; i++)
+        {
+          tag +="  <col";
+          value = item->text(1);
+          if (!value.isEmpty())
+          {
+            tag +=" width=" + value;
+          }
+          value = item->text(2);
+          if (!value.isEmpty())
+          {
+            tag +=" align=" + value;
+          }
+          value = item->text(3);
+          if (!value.isEmpty())
+          {
+            tag +=" valign=" + value;
+          }
+          value = item->text(4);
+          if (!value.isEmpty())
+          {
+            tag +=" class=" + value;
+          }
+          tag +=">\n";
+          item = item->nextSibling();
+        }
+      }
   	
   		if (quickDlg->useTHead->isChecked())
   		{

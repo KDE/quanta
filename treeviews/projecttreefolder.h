@@ -2,7 +2,7 @@
                           ProjectTreeFolder.h  -  description
                              -------------------
     begin                : Wed Mar 15 2000
-    copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky
+    copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky & Andras Mantia
     email                : pdima@mail.univ.kiev.ua
  ***************************************************************************/
 
@@ -24,7 +24,7 @@
 #include "projecttreefile.h"
 
 /**folder in project window
-  *@author Yacovlev Alexander & Dmitry Poplavsky
+  *@author Yacovlev Alexander & Dmitry Poplavsky & Andras Mantia
   */
 
 class ProjectTreeFolder : public FilesTreeFolder  {

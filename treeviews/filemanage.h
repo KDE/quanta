@@ -2,7 +2,7 @@
                           filemanage.h  -  description
                              -------------------
     begin                : Mon Aug 7 2000
-    copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
+    copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon & Andras Mantia
     email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com
  ***************************************************************************/
 
@@ -25,7 +25,7 @@
 class QPopupMenu;
 
 /**
-  *@author Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
+  *@author Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon & Andras Mantia
   */
 
 /*This will remain here, as we need the inserTag(QString, DirInfo) signal.

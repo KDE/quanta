@@ -1,9 +1,9 @@
 /***************************************************************************
-                          projectfile.h  -  description
+                          tagquicktableitem.h  -  description
                              -------------------
-    begin                : Wed Mar 15 2000
-    copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky & Andras Mantia
-    email                : pdima@mail.univ.kiev.ua
+    begin                : Wed Jul 17 2002
+    copyright            : (C) 2002 by Andras Mantia
+    email                : amantia@freemail.hu
  ***************************************************************************/
 
 /***************************************************************************
@@ -15,30 +15,23 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef PROJECTTREEFILE_H
-#define PROJECTTREEFILE_H
+#ifndef TAGQUICKTABLEITEM_H
+#define TAGQUICKTABLEITEM_H
 
-#include "filestreefile.h"
+#include <qlistview.h>
+#include <qstring.h>
 
-class ProjectTreeFolder;
-
-/**project file
-  *@author Yacovlev Alexander & Dmitry Poplavsky & Andras Mantia
+/**
+  *@author Andras Mantia
   */
 
-class ProjectTreeFile : public FilesTreeFile  {
-friend class Project;
-public: 
-	ProjectTreeFile( ProjectTreeFolder *parent, const char *name, const char *filename = 0L);
-	~ProjectTreeFile();
-  /**  */
-  void setIcon(QString name);
-  /** used for sorting */
-  virtual QString key ( int column, bool ascending ) const;
-  virtual void paintCell( QPainter *, const QColorGroup &, int, int, int);
-  
+class TagQuickTableItem : public QListViewItem  {
 public:
-  QString fname;
+	TagQuickTableItem(QListView *parent=0);
+	TagQuickTableItem(QListView *parent, QString label1);
+	~TagQuickTableItem();
+  /** No descriptions */
+  virtual int compare(QListViewItem *i, int col, bool ascending) const;
 };
 
 #endif

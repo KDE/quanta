@@ -2,7 +2,7 @@
                           projecttreeview.h  -  description
                              -------------------
     begin                : Tue Mar 14 2000
-    copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky
+    copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky & Andras Mantia
     email                : pdima@mail.univ.kiev.ua
  ***************************************************************************/
 
@@ -30,7 +30,7 @@
 class QPopupMenu;
 class ProjectTreeFolder;
 /**
-  *@author Yacovlev Alexander & Dmitry Poplavsky
+  *@author Yacovlev Alexander & Dmitry Poplavsky & Andras Mantia
   */
 
 class ProjectTreeView : public FilesTreeView  {
