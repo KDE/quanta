@@ -451,7 +451,7 @@ void TagAction::slotProcessExited(KProcess *)
     qApp->exit_loop();
     loopStarted = false;
   }
-  m_appMessages->showMessage( i18n("The \"%1\" script has exited.\n").arg(tag.attribute("text")) );
+  m_appMessages->showMessage( i18n("\nThe \"%1\" script has exited.\n").arg(tag.attribute("text")) );
 }
 
 void TagAction::execute()
