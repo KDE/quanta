@@ -51,6 +51,7 @@ TagAttributeTree::~TagAttributeTree()
 
 void TagAttributeTree::setCurrentNode(Node *node)
 {
+  m_parentItem = 0L;
   m_node = node;
   emit newNodeSelected(node);
   if (!rebuildEnabled)
@@ -63,12 +64,15 @@ void TagAttributeTree::setCurrentNode(Node *node)
   QString attrName;
   QTag *qTag = QuantaCommon::tagFromDTD(node->tag->dtd, node->tag->name);
   group = new TopLevelItem(this, i18n("Parent tags"));
-  ParentItem *it = 0L;
   Node *n = node->parent;
   while (n)
   {
     if (n->tag->type == Tag::XmlTag)
-        it = new ParentItem(group, it, n);
+    {
+      if (!m_parentItem)
+        m_parentItem = new ParentItem(this, group);
+      m_parentItem->addNode(n);
+    }
     n = n->parent;
   }
   group->setOpen(true);
@@ -157,15 +161,12 @@ void TagAttributeTree::setCurrentItem( QListViewItem *item )
     it = currentItem();
     if ( dynamic_cast<AttributeItem*>(it) )
          static_cast<AttributeItem*>(it)->showEditor();
-    else
-    if (dynamic_cast<ParentItem*>(it) )
-        QTimer::singleShot(0, this,  SLOT(slotDelayedSetCurrentNode()));
   }
 }
 
-void TagAttributeTree::slotDelayedSetCurrentNode()
+void TagAttributeTree::slotParentSelected(int index)
 {
-  setCurrentNode(static_cast<ParentItem*>(currentItem())->node());
+  setCurrentNode(m_parentItem->node(index));
 }
 
 

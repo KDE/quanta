@@ -754,6 +754,7 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
      kafkaPart->unloadDocument();
    }
   #endif
+  slotNewLineColumn();
 
   emit reloadTreeviews();
 }
@@ -1213,8 +1214,8 @@ void QuantaApp::slotNewLineColumn()
   if (node)
   {
     sTab->showTagAtPos(node);
-    aTab->setCurrentNode(node);
   }
+  aTab->setCurrentNode(node);
   linenumber.sprintf(i18n("Line: %d Col: %d"),line+1,col+1);
 
   statusBar()->changeItem(linenumber, IDS_STATUS_CLM);

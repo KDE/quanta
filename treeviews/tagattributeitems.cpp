@@ -71,24 +71,29 @@ void TopLevelItem::paintCell(QPainter *p, const QColorGroup &cg,
     }
 }
 
-ParentItem::ParentItem(KListView* parent, const QString &title)
-: KListViewItem(parent, title)
+ParentItem::ParentItem(TagAttributeTree *listView, QListViewItem* parent)
+: KListViewItem(parent)
 {
-}
-
-ParentItem::ParentItem(QListViewItem* parent, QListViewItem* after, Node *node)
-: KListViewItem(parent, after)
-{
-  m_node = node;
-  if (node)
+  m_listView = listView;
+  combo = new QComboBox( m_listView->viewport() );
+  QObject::connect(combo, SIGNAL(activated(int)), m_listView, SLOT(slotParentSelected(int)));
+  QRect r = m_listView->itemRect( this );
+  if ( !r.size().isValid() )
   {
-    setText(0, node->tag->name);
-    setText(1, node->tag->cleanStr);
+    m_listView->ensureItemVisible( this );
+    r = m_listView->itemRect( this );
   }
+  r.setX( m_listView->header()->sectionPos( 0 ) + 20);
+  r.setWidth( m_listView->header()->sectionSize( 0 ) - 20);
+  r = QRect( m_listView->viewportToContents( r.topLeft() ), r.size() );
+  combo->resize( r.size() );
+  m_listView->moveChild( combo, r.x(), r.y() );
+  combo->show();
 }
 
 ParentItem::~ParentItem()
 {
+  delete combo;
 }
 
 
@@ -104,6 +109,20 @@ void ParentItem::paintCell(QPainter *p, const QColorGroup &cg,
       p->setPen(QPen(QColor(0,0,0)));
       p->drawLine( width - 1, 0, width - 1, height());
     }
+}
+
+void ParentItem::addNode(Node *node)
+{
+  if (node)
+  {
+    m_nodeList.append(node);
+    combo->insertItem(node->tag->name);
+  }
+}
+
+Node* ParentItem::node(int index)
+{
+  return m_nodeList.at(index);
 }
 
 //Generic attribute item

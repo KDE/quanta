@@ -13,6 +13,8 @@
 #ifndef TAGATTRIBUTEITEM_H
 #define TAGATTRIBUTEITEM_H
 
+#include <qptrlist.h>
+
 class KColorCombo;
 class KURLRequester;
 class KListView;
@@ -43,11 +45,11 @@ class ParentItem : public KListViewItem
 {
 
 public:
-    ParentItem(KListView *parent, const QString& title);
-    ParentItem(QListViewItem *parent, QListViewItem* after, Node *node);
+    ParentItem(TagAttributeTree *listView, QListViewItem *parent);
 
     virtual ~ParentItem();
-    Node *node() const {return m_node;}
+    Node *node(int index);
+    void addNode(Node *node);
 
 protected:
 
@@ -55,7 +57,9 @@ protected:
                     int column, int width, int align );
 
 private:
-    Node *m_node;
+    QPtrList<Node> m_nodeList;
+    QComboBox *combo;
+    TagAttributeTree *m_listView;
 };
 
 class AttributeItem : public KListViewItem

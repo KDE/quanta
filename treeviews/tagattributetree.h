@@ -22,6 +22,7 @@
 
 class KListView;
 class KListViewItem;
+class ParentItem;
 class Node;
 
 
@@ -37,7 +38,7 @@ public:
   Node *node() const {return m_node;}
 
 public slots:
-  void slotDelayedSetCurrentNode();
+  void slotParentSelected(int index);
   void editorContentChanged();
 
 signals:
@@ -46,7 +47,7 @@ signals:
 private:
   Node *m_node;
   bool rebuildEnabled;
-
+  ParentItem *m_parentItem;
 };
 
 #endif
