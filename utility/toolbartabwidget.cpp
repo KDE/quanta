@@ -43,13 +43,13 @@ ToolbarTabWidget::ToolbarTabWidget(QWidget * parent, const char * name, WFlags f
 {
   m_popupMenu = new KPopupMenu(this);
   m_popupMenu->insertTitle(i18n("Toolbar Menu"), 1);
-  m_popupMenu->insertItem(i18n("New Toolbar..."), this, SIGNAL(addToolbar()));
+  m_popupMenu->insertItem(i18n("New Action..."), quantaApp, SLOT(slotNewAction()));
+  m_popupMenu->insertSeparator();
+  m_popupMenu->insertItem(i18n("New Toolbar..."), quantaApp, SLOT(slotAddToolbar()));
   m_popupMenu->insertItem(i18n("Remove Toolbar"), this, SLOT(slotRemoveToolbar()));
   m_popupMenu->insertItem(i18n("Rename Toolbar..."), this, SLOT(slotRenameToolbar()));
   m_popupMenu->insertItem(SmallIconSet("configure_toolbars"), i18n("Configure Toolbars..."), this, SLOT(slotEditToolbar()));
 
-  connect(this, SIGNAL(addToolbar()),
-          quantaApp, SLOT(slotAddToolbar()));
   connect(this, SIGNAL(removeToolbar(const QString&)),
           quantaApp, SLOT(slotRemoveToolbar(const QString&)));
   connect(this, SIGNAL(renameToolbar(const QString&)),
@@ -197,6 +197,7 @@ void QuantaToolBar::mousePressEvent(QMouseEvent *e)
       m_toolbarTab->tabUnderMouse = m_toolbarTab->label(m_toolbarTab->currentPageIndex());
       m_popupMenu->insertTitle(i18n("Toolbar Menu") + " - "
                                + i18n(m_toolbarTab->tabUnderMouse.utf8()));
+      m_popupMenu->insertItem(i18n("New Action..."), quantaApp, SLOT(slotNewAction()));
       QObjectList* childrenList = queryList("KToolBarButton");
       for (uint i = 0; i < childrenList->count(); i++)
       {
@@ -209,11 +210,11 @@ void QuantaToolBar::mousePressEvent(QMouseEvent *e)
           QString actionName = currentActionName;
           m_popupMenu->insertItem(i18n("Remove Action - %1").arg(actionName.replace('&',"&&")), this, SLOT(slotRemoveAction()));
           m_popupMenu->insertItem(i18n("Edit Action - %1").arg(actionName), this, SLOT(slotEditAction()));
-          m_popupMenu->insertSeparator();
           break;
         }
       }
-      m_popupMenu->insertItem(i18n("New Toolbar..."), m_toolbarTab, SIGNAL(addToolbar()));
+      m_popupMenu->insertSeparator();
+      m_popupMenu->insertItem(i18n("New Toolbar..."), quantaApp, SLOT(slotAddToolbar()));
       m_popupMenu->insertItem(i18n("Remove Toolbar"), m_toolbarTab, SLOT(slotRemoveToolbar()));
       m_popupMenu->insertItem(i18n("Rename Toolbar..."), m_toolbarTab, SLOT(slotRenameToolbar()));
       m_popupMenu->insertItem(SmallIconSet("configure_toolbars"), i18n("Configure Toolbars..."), m_toolbarTab, SLOT(slotEditToolbar()));

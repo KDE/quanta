@@ -53,7 +53,6 @@ private slots:
   void slotEditToolbar();
 
 signals:
-  void addToolbar();
   void removeToolbar(const QString&);
   void renameToolbar(const QString&);
   void editToolbar(const QString&);

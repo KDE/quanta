@@ -2862,6 +2862,13 @@ void QuantaApp::slotEditAction(const QString& actionName)
   dlg.exec();
 }
 
+void QuantaApp::slotNewAction()
+{
+  ActionConfigDialog dlg(this, "actions_config_dlg");
+  dlg.slotNewAction();
+  dlg.exec();
+}
+
 void QuantaApp::slotAssignActionToScript(const KURL& a_scriptURL, const QString& a_interpreter)
 {
   ActionConfigDialog dlg(this, "actions_config_dlg");

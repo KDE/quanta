@@ -37,6 +37,7 @@ public slots:
   void slotToggled(bool);
   void slotTextChanged();
   void slotTextChanged(const QString&);
+  void slotNewAction();
 
 private slots:
   void slotAddToolbar();
@@ -45,7 +46,6 @@ private slots:
   void slotContextMenu(KListView *,QListViewItem *,const QPoint &);
   void slotSelectionChanged(QListViewItem *);
   void slotShortcutCaptured(const KShortcut&);
-  void slotNewAction();
   void slotDeleteAction();
   void slotApply();
   void slotAddContainerToolbar();

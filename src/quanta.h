@@ -19,7 +19,7 @@
 #define QUANTA_H
 
 #define QUANTA_PACKAGE "quanta"
-#define QUANTA_VERSION "3.3.0"
+#define QUANTA_VERSION "3.3.89 (2004-09-13)"
 
 #define IDS_STATUS      1
 #define IDS_INS_OVR     2
@@ -329,6 +329,8 @@ public slots:
   void slotRemoveAction(const QString&, const QString& actionName);
   /** Edit the action */
   void slotEditAction(const QString&);
+  /** Creates a new, empty action */
+  void slotNewAction();
   /** Creates a script action for a_scriptURL using the a_interpreter as the script
   interpreter application */
   void slotAssignActionToScript(const KURL&a_scriptURL, const QString& a_interpreter);

@@ -17,6 +17,14 @@ Version 3.4 (Release date: xx-xx-2005; Started 20-08-2004):
           on the active treeview, selected directory, etc.)
         - update the modified status text/icon when using Save All  [#87196]
 
+  - behavioral/user interface changes:
+        - Toolbars->Add User Toolbar renamed to New User Toolbar
+
+  - enhancements/new features:
+        - smart tag insertion support in text editing mode as well
+        - New Toolbar menu entry added to the toolbar context menu [#80647]
+        - New Action menu entry added to the toolbar context menu
+
 Version 3.3.0 (Release date: 18-08-2004; Started 07-05-2004):
 NOTE: Unfortunately I failed to update the changelog regulary, thus some new features and
 bugfixes might not be listed here.
