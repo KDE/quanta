@@ -362,7 +362,7 @@ void QuantaInit::initView()
   m_quanta->scripttabdock->setToolTipString(i18n("Scripts tree view"));
   m_quanta->stabdock = m_quanta->createDockWidget("Struct", BarIcon ("view_sidetree"), 0L, i18n("Structure view (DOM tree)"), "");
   m_quanta->stabdock->setToolTipString(i18n("Structure view (DOM tree)"));
-  m_quanta->dtabdock = m_quanta->createDockWidget("Docs", BarIcon ("contents2"), 0L, i18n("Documentation"), "");
+  m_quanta->dtabdock = m_quanta->createDockWidget("Docs", BarIcon ("contents"), 0L, i18n("Documentation"), "");
   m_quanta->dtabdock->setToolTipString(i18n("Documentation"));
 
   m_quanta->m_oldTreeViewWidget = m_quanta->ptabdock;
