@@ -4,6 +4,7 @@ install-data-local:
 	$(mkinstalldirs) $(kde_datadir)/quanta/
 	$(mkinstalldirs) $(kde_datadir)/quanta/doc
 	$(mkinstalldirs) $(kde_datadir)/quanta/tags
+	$(mkinstalldirs) $(kde_datadir)/quanta/doc/quanta/
 	$(INSTALL_DATA) $(srcdir)/toolbars.rc $(kde_datadir)/quanta/toolbars.rc	
 	$(INSTALL_DATA) $(srcdir)/tagdata.rc $(kde_datadir)/quanta/tagdata.rc
 	$(INSTALL_DATA) $(srcdir)/a.tag $(kde_datadir)/quanta/tags/a.tag
@@ -47,6 +48,10 @@ install-data-local:
 	$(INSTALL_DATA) $(srcdir)/documentation.html $(kde_datadir)/quanta/doc/documentation.html
 	$(INSTALL_DATA) $(srcdir)/head_bg.gif $(kde_datadir)/quanta/doc/head_bg.gif
 	$(INSTALL_DATA) $(srcdir)/minilogo.jpg $(kde_datadir)/quanta/doc/minilogo.jpg
+	$(INSTALL_DATA) $(srcdir)/quanta-dialog-xml.html $(kde_datadir)/quanta/doc/quanta/quanta-dialog-xml.html
+	$(INSTALL_DATA) $(srcdir)/quanta.docrc $(kde_datadir)/quanta/doc/quanta.docrc
 
 uninstall-local:
-	-rm -f $(kde_datadir)/quanta/tagdata.rc
+	-rm -f  $(kde_datadir)/quanta/tagdata.rc
+	-rm -fr $(kde_datadir)/quanta/doc/*
+	

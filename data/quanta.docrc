@@ -1,0 +1,17 @@
+# KDE Config File
+[Tree]
+
+Doc dir=quanta
+
+#top level elements
+Top Element=Quanta documentation
+
+Quanta documentation=Quanta Tag Dialog Definition XML
+Quanta Tag Dialog Definition XML=quanta-dialog-xml.html
+
+
+# keywords for context help
+[Context]
+
+ContextList=dialog-xml
+dialog-xml=quanta-dialog-xml.html
