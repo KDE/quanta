@@ -18,6 +18,7 @@
 
 //qt includes
 #include <qobject.h>
+#include <qguardedptr.h>
 
 //kde includes
 #include <dcopref.h>
@@ -99,7 +100,7 @@ private:
   KPopupMenu *m_menu;
   Repository_stub *m_repository;
   CvsJob_stub *m_cvsJob;
-  CvsService_stub *m_cvsService;
+  QGuardedPtr<CvsService_stub> m_cvsService;
   QString m_defaultFile;
   QString m_repositoryPath;
   QString m_cvsCommand;
