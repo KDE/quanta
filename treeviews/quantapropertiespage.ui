@@ -17,8 +17,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>345</width>
-            <height>454</height>
+            <width>364</width>
+            <height>487</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -102,7 +102,7 @@
         </widget>
         <widget class="QLabel" row="2" column="0" rowspan="1" colspan="2">
             <property name="name">
-                <cstring>textLabel1</cstring>
+                <cstring>filteringLabel</cstring>
             </property>
             <property name="text">
                 <string>Filtering &amp;action:</string>
@@ -133,6 +133,9 @@
                     </property>
                     <property name="text">
                         <string>Use &amp;pre/post text</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+P</string>
                     </property>
                 </widget>
                 <widget class="QLabel" row="1" column="0">
@@ -196,8 +199,4 @@
     <tabstop>parentAttr</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
-<includehints>
-    <includehint>kcombobox.h</includehint>
-    <includehint>kcombobox.h</includehint>
-</includehints>
 </UI>

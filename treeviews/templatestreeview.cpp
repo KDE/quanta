@@ -533,11 +533,13 @@ void TemplatesTreeView::slotProperties()
   QString startDir = "";
   if (  !currentKFileTreeViewItem()->isDir() )
   {
-   startDir = url.path();
-   m_quantaProperties->prePostGroup->hide();
+    startDir = url.path();
+    m_quantaProperties->prePostGroup->hide();
   } else
   {
-   startDir = url.path() + "/dummy_file";
+    startDir = url.path() + "/dummy_file";
+    m_quantaProperties->filteringLabel->hide();
+    m_quantaProperties->actionCombo->hide();
   }
   QFileInfo dotFileInfo(QFileInfo(startDir).dirPath()+"/.dirinfo");
   if (!dotFileInfo.exists()) m_quantaProperties->parentAttr->setChecked(true);
