@@ -40,6 +40,7 @@
 
 //app includes
 #include "tagaction.h"
+#include "myprocess.h"
 #include "../document.h"
 #include "../quantaview.h"
 #include "../quanta.h"
@@ -49,6 +50,18 @@
 #include "../quantacommon.h"
 #include "../resource.h"
 #include "../qextfileinfo.h"
+
+MyProcess::MyProcess():KProcess()
+{
+}
+
+MyProcess::MyProcess(QObject* parent, const char *name):KProcess(parent, name)
+{
+}
+
+int MyProcess::commSetupDoneC()
+{ ::setpgid(pid_, 0); return KProcess::commSetupDoneC();
+}
 
 TagAction::TagAction( QDomElement *element, KActionCollection *parent)
   : KAction( element->attribute("text"), KShortcut(element->attribute("shortcut")), 0, 0, parent, element->attribute("name") )
@@ -142,7 +155,7 @@ void TagAction::insertTag(bool inputFromFile, bool outputToFile)
 
   if ( type == "script" )
   {
-    proc = new KProcess();
+    proc = new MyProcess();
     proc->setWorkingDirectory(quantaApp->projectBaseURL().path());
 
     QDomElement script = tag.namedItem("script").toElement();
@@ -211,7 +224,7 @@ void TagAction::insertTag(bool inputFromFile, bool outputToFile)
 
     if (proc->start(KProcess::NotifyOnExit, KProcess::All))
     {
-      ::setpgid(proc->pid(), 0);
+      //::setpgid(proc->pid(), 0);
       if (!inputFromFile)
       {
         if ( inputType == "current" || inputType == "selected" )
@@ -389,7 +402,7 @@ void TagAction::slotTimeout()
 {
   if (KMessageBox::warningYesNo(quantaApp, i18n("<qt>The filtering action <b>%1</b> seems to be locked.<br>Do you want to terminate it?</qt>").arg(tag.attribute("text")), i18n("Action not responding")) == KMessageBox::Yes)
   {
-    if (::kill(-proc->pid(), SIGKILL))
+    if (::kill(-proc->pid(), SIGTERM))
     {
       return;
     }
@@ -399,3 +412,4 @@ void TagAction::slotTimeout()
 
 
 #include "tagaction.moc"
+#include "myprocess.moc"
