@@ -16,6 +16,7 @@
 //qt includes
 #include <qeventloop.h>
 #include <qstring.h>
+#include <qpoint.h>
 #include <qregexp.h>
 #include <qcstring.h>
 #include <qstringlist.h>
@@ -1363,6 +1364,14 @@ void Parser::parseIncludedFiles()
   emit rebuildStructureTree(true);
 }
 
+//structure used to temporary store the position of the groupelements in the searchFor
+//included file as a string
+struct GroupElementPosition{
+  GroupElement *element;
+  int startPos;
+  int endPos;
+};
+
 void Parser::parseIncludedFile(const QString& fileName, const DTDStruct *dtd)
 {
 #ifdef DEBUG_PARSER
@@ -1423,8 +1432,9 @@ void Parser::parseIncludedFile(const QString& fileName, const DTDStruct *dtd)
             }
           }          
           
+          QValueList<GroupElementPosition> gPositions;
           //go through the list of found structures and search for groups
-          int structEndPosition = 0;
+          int structStartPosition = 0; //from where to start the group search. This is before the structure begin position
           QString savedStr = foundStr;
           for (uint i = 0; i < structPositions.count(); i++)
           {
@@ -1448,6 +1458,7 @@ void Parser::parseIncludedFile(const QString& fileName, const DTDStruct *dtd)
             }
             if (pos == -1)
                 pos = foundStr.length();
+            int structEndPos = pos;
             foundStr = foundStr.left(pos);
             QString spaces;
             spaces.fill(' ', pos - structPos + 1);
@@ -1485,7 +1496,7 @@ void Parser::parseIncludedFile(const QString& fileName, const DTDStruct *dtd)
               group = *it;
               if (!group.hasDefinitionRx)
                 continue;
-              int pos = structEndPosition;
+              int pos = structStartPosition;
               while (pos != -1)
               {
                 pos = group.definitionRx.search(foundStr, pos);
@@ -1521,21 +1532,39 @@ void Parser::parseIncludedFile(const QString& fileName, const DTDStruct *dtd)
                     GroupElement *groupElement = new GroupElement;
                     groupElement->node = node;
                     groupElement->parentNode = 0L;
+                    int minPos = areaPos + pos + 1;
+                    for (QValueList<GroupElementPosition>::Iterator gPosIt = gPositions.begin(); gPosIt != gPositions.end(); ++gPosIt)
+                    {
+                      GroupElementPosition gPos = (*gPosIt);
+                      if ( (areaPos + pos > gPos.startPos) && (areaPos + pos < gPos.endPos) && (gPos.startPos < minPos))
+                      {
+                        groupElement->parentNode = gPos.element->node;          
+                        minPos = gPos.startPos; 
+                      }
+                    }
                     GroupElementList *groupElementList = &(*elements)[group.name][s];
                     groupElementList->append(groupElement);
+                    
+                    GroupElementPosition gPos;
+                    gPos.startPos = areaPos + pos;
+                    gPos.endPos = structEndPos;
+                    gPos.element = groupElement;
+                    gPositions.append(gPos);
                     
                     if (group.appendToTags)
                     {
                       QTag *qTag = new QTag();
                       qTag->setName(s.left(s.find('(')));
                       qTag->className = "";
+                      if (groupElement->parentNode)
+                        qTag->className = groupElement->parentNode->tag->name;
                       write->userTagList.insert(s.lower(), qTag);
                     }
                   }
                 }
               }
             } //for
-            structEndPosition = structBeginPos + 1;
+            structStartPosition = structBeginPos + 1;
           }
         } //if (areaPos != -1)
       }// while (areaPos != -1)
