@@ -207,17 +207,18 @@ void QuantaDoc::openDocument(const KURL& url, const QString &a_encoding, bool sw
   }
 }
 
-void QuantaDoc::saveDocument(const KURL& url)
+bool QuantaDoc::saveDocument(const KURL& url)
 {
   Document *w = write();
   KURL oldURL = w->url();
-
+  bool result = true;
   if ( !url.isEmpty())
   {
     fileWatcher->removeFile(oldURL.path());
     if (!w->doc()->saveAs( url ))
     {
       KMessageBox::error(quantaApp, i18n("Saving of the document\n%1\nfailed.\nMaybe you should try to save in another directory.").arg(url.prettyURL()));
+      result = false;
     }
     w->closeTempFile();
     w->createTempFile();
@@ -236,7 +237,7 @@ void QuantaDoc::saveDocument(const KURL& url)
 
   emit title( w->url().url() );
 
-  return;
+  return result;
 }
 
 bool QuantaDoc::saveAll(bool dont_ask)
@@ -364,14 +365,13 @@ bool QuantaDoc::saveModified()
       case KMessageBox::Yes :
            if ( write()->isUntitled() )
            {
-             quantaApp->slotFileSaveAs();
+             completed = quantaApp->slotFileSaveAs();
            }
            else
            {
-             saveDocument( write()->url());
-            };
+             completed = saveDocument( write()->url());
+           };
 
-           completed=true;
            break;
 
       case KMessageBox::No :
@@ -405,7 +405,7 @@ bool QuantaDoc::isModifiedAll()
 {
   bool modified = false;
 
-  QTabWidget *docTab =quantaApp->view()->writeTab();
+  QTabWidget *docTab = quantaApp->view()->writeTab();
   Document *w;
   for (int i = docTab->count() -1; i >=0; i--)
   {

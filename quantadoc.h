@@ -46,7 +46,7 @@ public:
 
   bool newDocument(const KURL&, bool switchToExisting = true);
   void openDocument(const KURL&, const QString& a_encoding = QString::null, bool switchToExisting = true);
-  void saveDocument(const KURL&);
+  bool saveDocument(const KURL&);
   void closeDocument();
 
   void prevDocument();
@@ -58,8 +58,8 @@ public:
   /** Check if url is opened or not. */
   Document* isOpened(const KURL& url);
 
-  /// "save modified" - asks the user
-  /// for saving if the document is modified
+  // "save modified" - asks the user
+  // for saving if the document is modified
   bool saveModified();
   bool saveAll(bool dont_ask=true);
 

@@ -217,8 +217,9 @@ void QuantaApp::slotFileSave()
   slotUpdateStatus(w);
 }
 
-void QuantaApp::slotFileSaveAs()
+bool QuantaApp::slotFileSaveAs()
 {
+  bool result = false;
   if (m_view->writeExists())
   {
     Document *w = m_view->write();
@@ -243,9 +244,11 @@ void QuantaApp::slotFileSaveAs()
         m_doc->changeFileTabName();
       }
       slotUpdateStatus(w);
+      result = true;
     }
     fileWatcher->startScan();
   }
+  return result;
 }
 
 void QuantaApp::saveAsTemplate(bool projectTemplate,bool selectionOnly)
