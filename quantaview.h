@@ -103,6 +103,9 @@ public:
     KafkaViewOnly
   };
 
+  /** Reloads both views ONLY when changes have been made to the Node tree ONLY. */
+  void reloadBothViews();
+
   /** Resize the current view */
   void resize(int width, int height);
 

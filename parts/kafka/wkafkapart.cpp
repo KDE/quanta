@@ -1158,6 +1158,12 @@ QString WKafkaPart::getEncodedText(QString decodedText, int bLine, int bCol, int
 	return decodedText;
 }
 
+QString WKafkaPart::getEncodedText(QString decodedText)
+{
+	int a = 0, b = 0, c, d;
+	return getEncodedText(decodedText, a, b, c, d);
+}
+
 QString WKafkaPart::generateCodeFromNode(Node *_node, int bLine, int bCol, int &eLine, int &eCol)
 {
 	QString text, _char;
@@ -1211,9 +1217,23 @@ QString WKafkaPart::generateCodeFromNode(Node *_node, int bLine, int bCol, int &
 		/** Can't use KGlobal::charsets()->toEntity() :
 		 * It translate all chars into entities! */
 	}
+	else if(_node->tag->type == Tag::ScriptTag)
+	{
+		//WARNING : HTML SPECIFIC
+		if(_node->tag->name.contains("style"));
+		{
+			text = "<" + QuantaCommon::tagCase("style") + ">";
+			bCol += text.length();
+			eCol = bCol - 1;
+			eLine = bLine;
+		}
+	}
 	else
 	{
-		eCol = bCol;
+		//default behavior : return node->tag->tagStr()
+		text = _node->tag->tagStr();
+		bCol += text.length();
+		eCol = bCol - 1;
 		eLine = bLine;
 	}
 	return text;

@@ -441,6 +441,13 @@ void QuantaView::insertTag( const char *tag)
   }
 }
 
+/** Reloads both views ONLY when changes have been made to the Node tree ONLY. */
+void QuantaView::reloadBothViews()
+{
+	write()->docUndoRedo->reloadQuantaEditor();
+	write()->docUndoRedo->reloadKafkaEditor(true);
+}
+
 void QuantaView::slotShowQuantaEditor()
 {
 #ifdef BUILD_KAFKAPART
@@ -501,7 +508,7 @@ void QuantaView::slotShowKafkaPart()
 {
 #ifdef BUILD_KAFKAPART
   DOM::Node node;
-  int offset, id;
+  int offset, id, oldViewsLayout;
   KToggleAction *ta = (KToggleAction *) quantaApp->actionCollection()->action( "show_kafka_view" );
   KToggleAction *ta2 = (KToggleAction *) quantaApp->actionCollection()->action( "show_quanta_editor" );
 
@@ -534,6 +541,7 @@ void QuantaView::slotShowKafkaPart()
     kafkaInterface->getKafkaCursorPosition(node, offset);
     kafkaInterface->getKafkaPart()->setCurrentNode(node, offset);
     kafkaInterface->getKafkaPart()->view()->reparent(write(), 0, QPoint(), true);
+    oldViewsLayout = currentViewsLayout;
     currentViewsLayout = QuantaView::KafkaViewOnly;
     resize(writeTab()->size().width()-5, writeTab()->size().height()-35);
     kafkaInterface->getKafkaPart()->view()->show();
@@ -556,6 +564,8 @@ void QuantaView::slotShowKafkaPart()
     splitter->reparent(0, 0, QPoint(), false);
     splitter->hide();
   }
+  if(oldViewsLayout == QuantaView::QuantaViewOnly && write()->editIf->text().stripWhiteSpace() == "")
+    quantaApp->slotDocumentProperties();
 #endif
 }
 
@@ -564,7 +574,7 @@ void QuantaView::slotShowKafkaAndQuanta()
 #ifdef BUILD_KAFKAPART
   KToggleAction *ta = (KToggleAction *) quantaApp->actionCollection()->action( "show_kafka_and_quanta" );
   KToggleAction *ta2 = (KToggleAction *) quantaApp->actionCollection()->action( "show_quanta_editor" );
-  int curCol, curLine, offset;
+  int curCol, curLine, offset, oldViewsLayout;
   DOM::Node node;
 
   if(!writeExists())
@@ -602,6 +612,7 @@ void QuantaView::slotShowKafkaAndQuanta()
     kafkaInterface->getKafkaPart()->view()->show();
     write()->view()->reparent(splitter, 0, QPoint(), true);
     write()->view()->show();
+    oldViewsLayout = currentViewsLayout;
     currentViewsLayout = QuantaView::QuantaAndKafkaViews;
     resize(writeTab()->size().width()-5, writeTab()->size().height()-35);
     if(_splittSizes.empty())
@@ -624,6 +635,8 @@ void QuantaView::slotShowKafkaAndQuanta()
       kafkaUpdateTimer = startTimer(qConfig.kafkaRefreshDelay);
     else if(currentFocus == QuantaView::kafkaFocus && !qConfig.quantaRefreshOnFocus)
       quantaUpdateTimer = startTimer(qConfig.quantaRefreshDelay);
+    if(oldViewsLayout == QuantaView::QuantaViewOnly && write()->editIf->text().stripWhiteSpace() == "")
+      quantaApp->slotDocumentProperties();
   }
   else
   {

@@ -16,9 +16,10 @@
 #include <qfont.h>
 #include <qpainter.h>
 #include <qtimer.h>
+#include <qlineedit.h>
 
 //kde includes
-#include <klistview.h>
+//#include <klistview.h>
 #include <klocale.h>
 
 //app includes
@@ -34,6 +35,7 @@
 #include "../resource.h"
 #include "../quanta.h"
 #include <dom/dom_node.h>
+#include <kdebug.h>
 #include "../parser/tag.h"
 #include "../parser/node.h"
 #include "../parts/kafka/wkafkapart.h"
@@ -41,8 +43,154 @@
 #include "../parts/kafka/undoredo.h"
 #endif
 
+EditableTree::EditableTree(QWidget *parent, const char *name)
+: KListView(parent, name)
+{
+  m_editable = true;
+}
+
+EditableTree::~EditableTree()
+{
+
+}
+
+void EditableTree::setCurrentItem( QListViewItem *item)
+{
+  if ( item && m_editable)
+  {
+    QListViewItem *it = currentItem();
+    if ( dynamic_cast<AttributeItem*>(it) )
+         static_cast<AttributeItem*>(it)->hideEditor();
+
+    KListView::setCurrentItem(item);
+    it = currentItem();
+    if ( dynamic_cast<AttributeItem*>(it) )
+         static_cast<AttributeItem*>(it)->showEditor();
+  }
+}
+
+void EditableTree::editorContentChanged()
+{
+
+}
+
+DualEditableTree::DualEditableTree(QWidget *parent, const char *name)
+: EditableTree(parent, name)
+{
+  curCol = 0;
+  setFocusPolicy(QWidget::ClickFocus);
+  this->installEventFilter(this);
+  connect(this, SIGNAL(clicked(QListViewItem *, const QPoint &, int )),
+    this, SLOT(itemClicked(QListViewItem *, const QPoint &, int )));
+}
+
+DualEditableTree::~DualEditableTree()
+{
+
+}
+
+bool DualEditableTree::eventFilter(QObject *object, QEvent *event)
+{
+  AttributeItem *it = dynamic_cast<AttributeItem*>(currentItem());
+  AttributeItem *up = 0L, *down = 0L;
+  if(!it)
+    return KListView::eventFilter(object, event);
+  if(currentItem()->itemAbove())
+    up = dynamic_cast<AttributeItem*>(currentItem()->itemAbove());
+  if(currentItem()->itemBelow())
+    down = dynamic_cast<AttributeItem *>(currentItem()->itemBelow());
+
+  if(event->type() == QEvent::KeyPress && m_editable)
+  {
+    QKeyEvent *keyevent = static_cast<QKeyEvent *>(event);
+    switch(keyevent->key())
+    {
+      case Key_Left:
+      if(curCol == 1 && it->lin->cursorPosition() == 0 )
+      {
+        it->hideEditor(1);
+        it->showEditor(0);
+	it->lin2->setFocus();
+        curCol = 0;
+      }
+      break;
+
+      case Key_Right:
+      if(curCol == 0 && (unsigned)it->lin2->cursorPosition() == it->lin2->text().length())
+      {
+        it->hideEditor(0);
+        it->showEditor(1);
+	it->lin->setFocus();
+        curCol = 1;
+      }
+      break;
+
+      case Key_Up:
+      if(up)
+      {
+        it->hideEditor(curCol);
+        up->showEditor(curCol);
+      }
+      break;
+
+      case Key_Down:
+      if(down)
+      {
+        it->hideEditor(curCol);
+        down->showEditor(curCol);
+      }
+      break;
+    }
+  }
+  return KListView::eventFilter(object, event);;
+}
+
+void DualEditableTree::resizeEvent(QResizeEvent *)
+{
+  if(!currentItem()) return;
+  AttributeItem *item = dynamic_cast<AttributeItem*>(currentItem());
+  if(item)
+  {
+    item->hideEditor(curCol);
+    item->showEditor(curCol);
+  }
+}
+
+void DualEditableTree::setCurrentItem(QListViewItem *item)
+{
+  if ( item && m_editable)
+  {
+    QListViewItem *it = currentItem();
+    if ( dynamic_cast<AttributeItem*>(it) )
+    {
+         static_cast<AttributeItem*>(it)->hideEditor(0);
+         static_cast<AttributeItem*>(it)->hideEditor(1);
+    }
+
+    KListView::setCurrentItem(item);
+    it = currentItem();
+    if ( dynamic_cast<AttributeItem*>(it) )
+         static_cast<AttributeItem*>(it)->showEditor(curCol);
+  }
+}
+
+void DualEditableTree::editorContentChanged()
+{
+  emit itemModified(dynamic_cast<AttributeItem*>(currentItem()));
+}
+
+void DualEditableTree::itemClicked(QListViewItem *item, const QPoint &, int column)
+{
+  if(item)
+  {
+    curCol = column;
+    if(item == currentItem())
+      setCurrentItem(item);
+  }
+}
+
 TagAttributeTree::TagAttributeTree(QWidget *parent, const char *name)
-:KListView(parent, name)
+: EditableTree(parent, name)
 {
   setRootIsDecorated( true );
   setSorting(-1);
@@ -284,7 +432,7 @@ void TagAttributeTree::editorContentChanged()
   }
 }
 
-void TagAttributeTree::setCurrentItem( QListViewItem *item )
+/**void TagAttributeTree::setCurrentItem( QListViewItem *item )
 {
   if ( item )
   {
@@ -297,7 +445,7 @@ void TagAttributeTree::setCurrentItem( QListViewItem *item )
     if ( dynamic_cast<AttributeItem*>(it) )
          static_cast<AttributeItem*>(it)->showEditor();
   }
-}
+}*/
 
 void TagAttributeTree::slotParentSelected(int index)
 {

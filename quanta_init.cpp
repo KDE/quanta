@@ -1794,6 +1794,12 @@ void QuantaApp::initActions()
                         this, SLOT( slotEmailDTD() ),
                         ac, "tools_send_dtd" );
 
+#ifdef BUILD_KAFKAPART
+    (void) new KAction( i18n( "Document Properties" ), 0,
+                        this, SLOT( slotDocumentProperties() ),
+                        ac, "tools_document_properties" );
+#endif
+
  /*   (void) new KAction( i18n( "Weblint &Syntax Check" ), 0,
                         this, SLOT( slotToolSyntaxCheck() ),
                         ac, "syntax_check" );

@@ -23,6 +23,7 @@ class QListViewItem;
 class QLineEdit;
 class QComboBox;
 
+class EditableTree;
 class TagAttributeTree;
 class Node;
 
@@ -67,30 +68,33 @@ class AttributeItem : public KListViewItem
 {
 public:
     AttributeItem(QListViewItem* parent, const QString& title, const QString& title2);
-    AttributeItem(TagAttributeTree *listView, QListViewItem* parent, const QString& title, const QString& title2);
+    AttributeItem(EditableTree *listView, QListViewItem* parent, const QString& title, const QString& title2);
+    AttributeItem(EditableTree *listView, const QString& title, const QString& title2);
 
     virtual ~AttributeItem();
-    virtual void showEditor();
-    virtual void hideEditor();
-    virtual void placeEditor(QWidget *w);
-    virtual QString editorText();
+    virtual void replaceCurrentEditor();
+    virtual void showEditor(int column = 1);
+    virtual void hideEditor(int column = 1);
+    virtual void placeEditor(QWidget *w, int column = 1);
+    virtual QString editorText(int column = 1);
+
+    //lin is the right editor, lin2 is the left one.
+    QLineEdit *lin, *lin2;
 
 protected:
 
     void paintCell( QPainter *p, const QColorGroup &cg,
                     int column, int width, int align );
 
-    TagAttributeTree *m_listView;
+    EditableTree *m_listView;
 
-private:
-    QLineEdit* lin;
 };
 
 class AttributeNameSpaceItem:public AttributeItem
 {
 public:
     AttributeNameSpaceItem(QListViewItem* parent, const QString& title, const QString& title2): AttributeItem(parent, title, title2){};
-    AttributeNameSpaceItem(TagAttributeTree *listView, QListViewItem* parent, const QString& title, const QString& title2):AttributeItem(listView, parent, title, title2){};
+    AttributeNameSpaceItem(EditableTree *listView, QListViewItem* parent, const QString& title, const QString& title2):AttributeItem(listView, parent, title, title2){};
     virtual ~AttributeNameSpaceItem(){};
 
 };
@@ -101,9 +105,9 @@ public:
     AttributeBoolItem(TagAttributeTree *listView, QListViewItem* parent, const QString& title, const QString& title2);
 
     virtual ~AttributeBoolItem();
-    virtual void showEditor();
-    virtual void hideEditor();
-    virtual QString editorText();
+    virtual void showEditor(int column = 1);
+    virtual void hideEditor(int column = 1);
+    virtual QString editorText(int column = 1);
 
 private:
     QComboBox* combo;
@@ -115,9 +119,9 @@ public:
     AttributeUrlItem(TagAttributeTree *listView, QListViewItem* parent, const QString& title, const QString& title2);
 
     virtual ~AttributeUrlItem();
-    virtual void showEditor();
-    virtual void hideEditor();
-    virtual QString editorText();
+    virtual void showEditor(int column = 1);
+    virtual void hideEditor(int column = 1);
+    virtual QString editorText(int column = 1);
 
 private:
     KURLRequester* urlRequester;
@@ -126,12 +130,12 @@ private:
 class AttributeListItem : public AttributeItem
 {
 public:
-    AttributeListItem(TagAttributeTree *listView, QListViewItem* parent, const QString& title, const QString& title2);
+    AttributeListItem(EditableTree *listView, QListViewItem* parent, const QString& title, const QString& title2);
 
     virtual ~AttributeListItem();
-    virtual void showEditor();
-    virtual void hideEditor();
-    virtual QString editorText();
+    virtual void showEditor(int column = 1);
+    virtual void hideEditor(int column = 1);
+    virtual QString editorText(int column = 1);
 
 private:
     QComboBox* combo;
@@ -140,12 +144,12 @@ private:
 class AttributeColorItem : public AttributeItem
 {
 public:
-    AttributeColorItem(TagAttributeTree *listView, QListViewItem* parent, const QString& title, const QString& title2);
+    AttributeColorItem(EditableTree *listView, QListViewItem* parent, const QString& title, const QString& title2);
 
     virtual ~AttributeColorItem();
-    virtual void showEditor();
-    virtual void hideEditor();
-    virtual QString editorText();
+    virtual void showEditor(int column = 1);
+    virtual void hideEditor(int column = 1);
+    virtual QString editorText(int column = 1);
 
 private:
     KColorCombo* combo;

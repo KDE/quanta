@@ -105,6 +105,7 @@
 #include "dialogs/fourbuttonmessagebox.h"
 #ifdef BUILD_KAFKAPART
 #include "parts/kafka/kafkasyncoptions.h"
+#include "parts/kafka/htmldocumentproperties.h"
 #endif
 
 #include "treeviews/filestreeview.h"
@@ -3334,6 +3335,18 @@ void QuantaApp::slotEmailDTD()
     }
     delete mailDlg;
   }
+}
+
+void QuantaApp::slotDocumentProperties()
+{
+#ifdef BUILD_KAFKAPART
+  if(view()->writeExists())
+  {
+    htmlDocumentProperties *htmlPropsDlg = new htmlDocumentProperties(this);
+    htmlPropsDlg->exec();
+    delete htmlPropsDlg;
+  }
+#endif
 }
 
 /** Returns the interface number for the currently active editor. */

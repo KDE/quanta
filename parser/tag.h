@@ -69,11 +69,15 @@ public:
   /** Return the value of attr*/
   QString attributeValue(QString attr);
   /** Add an attribute */
-  void addAttribute(TagAttr _attr) {attrs.append(_attr);}
+  void addAttribute(TagAttr attr) {attrs.append(attr);}
   /** Get the attribute number index */
   TagAttr getAttribute(uint index) const {return attrs[index];}
   /** Remove the attribute number index */
   void deleteAttribute(uint index) {attrs.remove(attrs.at(index));}
+  /** Overwrite the attribute attrName's value with attrValue if existing, else creating the attribute */
+  void editAttribute(QString attrName, QString attrValue);
+  /** Delete the attribute attrName */
+  void deleteAttribute(QString attrName);
   /** Returns the quotation status of the attribute */
   bool isQuotedAttribute(int index) const {return attrs[index].quoted;}
   /** Check if this tag has the attr attribute defined */
@@ -137,7 +141,9 @@ public:
   bool validXMLTag; //false if the closing ">" was not found
 #ifdef BUILD_KAFKAPART
   //specifies if we need to build the clean tag string from the attrs
-  // or the text without entities
+  // or the text without entities. This is the most important bool of kafka!
+  // if true, the markup is already generated.
+  // if false, it is not, we need to generate it.
   bool cleanStrBuilt;
   //specifies if this tag are just here to provide a DOM::Node <-> Node correspondance
   // but are not in the Node Tree.

@@ -145,20 +145,39 @@ AttributeItem::AttributeItem(QListViewItem* parent, const QString &title, const 
 : KListViewItem(parent, title, title2)
 {
   lin = 0L;
+  lin2 = 0L;
 }
 
-AttributeItem::AttributeItem(TagAttributeTree* listView, QListViewItem* parent, const QString &title, const QString& title2)
+AttributeItem::AttributeItem(EditableTree* listView, QListViewItem* parent, const QString &title, const QString& title2)
 : KListViewItem(parent, title, title2)
 {
   m_listView = listView;
   lin = new QLineEdit( m_listView->viewport() );
+  lin2 = new QLineEdit( m_listView->viewport() );
   QObject::connect( lin, SIGNAL( returnPressed() ), m_listView, SLOT( editorContentChanged() ) );
   lin->hide();
+  lin2->hide();
+}
+
+AttributeItem::AttributeItem(EditableTree *listView, const QString& title, const QString& title2)
+: KListViewItem(listView, title, title2)
+{
+  m_listView = listView;
+  lin = new QLineEdit( m_listView->viewport() );
+  lin2 = new QLineEdit( m_listView->viewport() );
+  lin2->setText(title);
+  lin->setText(title2);
+  QObject::connect( lin, SIGNAL( returnPressed() ), m_listView, SLOT( editorContentChanged() ) );
+  lin->hide();
+  lin2->hide();
 }
 
 AttributeItem::~AttributeItem()
 {
-  delete lin;
+  if(lin)
+    delete lin;
+  if(lin2)
+    delete lin2;
 }
 
 void AttributeItem::paintCell(QPainter *p, const QColorGroup &cg,
@@ -174,27 +193,60 @@ void AttributeItem::paintCell(QPainter *p, const QColorGroup &cg,
     }
 }
 
-QString AttributeItem::editorText()
+QString AttributeItem::editorText(int column)
 {
-  return lin->text();
+  if(column == 1)
+    return lin->text();
+  else
+    return lin2->text();
 }
 
-void AttributeItem::showEditor()
+void AttributeItem::replaceCurrentEditor()
 {
-  placeEditor(lin);
-  lin->show();
-  lin->setText(text(1));
-  lin->setFocus();
+  if(lin->isVisible())
+  {
+    placeEditor(lin, 1);
+  }
+  else if(lin2->isVisible())
+  {
+    placeEditor(lin, 0);
+  }
 }
 
-void AttributeItem::hideEditor()
+void AttributeItem::showEditor(int column)
+{
+  if(column == 1)
+  {
+    placeEditor(lin, column);
+    lin->show();
+    lin->setText(text(1));
+    lin->setFocus();
+  }
+  else
+  {
+    placeEditor(lin2, column);
+    lin2->show();
+    lin2->setText(text(0));
+    lin2->setFocus();
+  }
+}
+
+void AttributeItem::hideEditor(int column)
 {
   m_listView->editorContentChanged();
-  setText(1, lin->text());
-  lin->hide();
+  if(column == 1 && lin->isVisible())
+  {
+    setText(1, lin->text());
+    lin->hide();
+  }
+  else if(column == 0 && lin2->isVisible())
+  {
+    setText(0, lin2->text());
+    lin2->hide();
+  }
 }
 
-void AttributeItem::placeEditor( QWidget *w )
+void AttributeItem::placeEditor( QWidget *w, int column)
 {
   QRect r = m_listView->itemRect( this );
   if ( !r.size().isValid() )
@@ -202,8 +254,16 @@ void AttributeItem::placeEditor( QWidget *w )
     m_listView->ensureItemVisible( this );
     r = m_listView->itemRect( this );
   }
-  r.setX( m_listView->header()->sectionPos( 1 ) );
-  r.setWidth( m_listView->header()->sectionSize( 1 ) - 1 );
+  if(column == 1)
+  {
+    r.setX( m_listView->header()->sectionPos( 1 ) );
+    r.setWidth( m_listView->header()->sectionSize( 1 ) - 1 );
+  }
+  else
+  {
+    r.setX( m_listView->header()->sectionPos( 0 ) );
+    r.setWidth( m_listView->header()->sectionSize( 0 ) - 1 );
+  }
   r = QRect( m_listView->viewportToContents( r.topLeft() ), r.size() );
   w->resize( r.size() );
   m_listView->moveChild( w, r.x(), r.y() );
@@ -215,8 +275,8 @@ AttributeBoolItem::AttributeBoolItem(TagAttributeTree* listView, QListViewItem* 
 {
   m_listView = listView;
   combo = new QComboBox( m_listView->viewport() );
-  combo->insertItem(m_listView->node()->tag->dtd->booleanTrue);
-  combo->insertItem(m_listView->node()->tag->dtd->booleanFalse);
+  combo->insertItem((static_cast<TagAttributeTree *>(m_listView))->node()->tag->dtd->booleanTrue);
+  combo->insertItem((static_cast<TagAttributeTree *>(m_listView))->node()->tag->dtd->booleanFalse);
   combo->hide();
   QObject::connect( combo, SIGNAL( activated(int) ), m_listView, SLOT( editorContentChanged() ) );
  }
@@ -226,23 +286,23 @@ AttributeBoolItem::~AttributeBoolItem()
   delete combo;
 }
 
-QString AttributeBoolItem::editorText()
+QString AttributeBoolItem::editorText(int)
 {
   return combo->currentText();
 }
 
-void AttributeBoolItem::showEditor()
+void AttributeBoolItem::showEditor(int)
 {
   placeEditor(combo);
   combo->show();
-  if (text(1) == m_listView->node()->tag->dtd->booleanTrue)
+  if (text(1) == (static_cast<TagAttributeTree *>(m_listView))->node()->tag->dtd->booleanTrue)
       combo->setCurrentItem(0);
   else
       combo->setCurrentItem(1);
   combo->setFocus();
 }
 
-void AttributeBoolItem::hideEditor()
+void AttributeBoolItem::hideEditor(int)
 {
   m_listView->editorContentChanged();
   setText(1, combo->currentText());
@@ -265,25 +325,25 @@ AttributeUrlItem::~AttributeUrlItem()
   delete urlRequester;
 }
 
-QString AttributeUrlItem::editorText()
+QString AttributeUrlItem::editorText(int)
 {
   KURL url, baseURL;
   QuantaCommon::setUrl(url, urlRequester->url());
-  baseURL = m_listView->node()->tag->write()->url();
+  baseURL = (static_cast<TagAttributeTree *>(m_listView))->node()->tag->write()->url();
   baseURL.setPath(baseURL.directory());
   url = QExtFileInfo::toRelative(url, baseURL);
   QString s = url.url();
-  if (url.protocol() == m_listView->node()->tag->write()->url().protocol())
+  if (url.protocol() == (static_cast<TagAttributeTree *>(m_listView))->node()->tag->write()->url().protocol())
     s.remove(0, url.protocol().length() + 1);
   return s;
 }
 
-void AttributeUrlItem::showEditor()
+void AttributeUrlItem::showEditor(int)
 {
   placeEditor(urlRequester);
   urlRequester->show();
   KURL url, baseURL;
-  baseURL = m_listView->node()->tag->write()->url();
+  baseURL = (static_cast<TagAttributeTree *>(m_listView))->node()->tag->write()->url();
   baseURL.setPath(baseURL.directory());
   QuantaCommon::setUrl(url, text(1));
   url= QExtFileInfo::toAbsolute(url, baseURL);
@@ -291,7 +351,7 @@ void AttributeUrlItem::showEditor()
   urlRequester->setFocus();
 }
 
-void AttributeUrlItem::hideEditor()
+void AttributeUrlItem::hideEditor(int)
 {
   m_listView->editorContentChanged();
   setText(1, editorText());
@@ -301,12 +361,12 @@ void AttributeUrlItem::hideEditor()
 
 //editable listbox
 //Boolean attribute item
-AttributeListItem::AttributeListItem(TagAttributeTree* listView, QListViewItem* parent, const QString &title, const QString& title2)
+AttributeListItem::AttributeListItem(EditableTree* listView, QListViewItem* parent, const QString &title, const QString& title2)
 : AttributeItem(parent, title, title2)
 {
   m_listView = listView;
   combo = new QComboBox( m_listView->viewport() );
-  Node *node = m_listView->node();
+  Node *node = (static_cast<TagAttributeTree *>(m_listView))->node();
   QTag *qTag = QuantaCommon::tagFromDTD(node->tag->dtd, node->tag->name);
   if (qTag)
   {
@@ -325,17 +385,17 @@ AttributeListItem::~AttributeListItem()
   delete combo;
 }
 
-QString AttributeListItem::editorText()
+QString AttributeListItem::editorText(int)
 {
   return combo->currentText();
 }
 
-void AttributeListItem::showEditor()
+void AttributeListItem::showEditor(int)
 {
   placeEditor(combo);
   combo->show();
   int index = -1;
-  Node *node = m_listView->node();
+  Node *node = (static_cast<TagAttributeTree *>(m_listView))->node();
   QTag *qTag = QuantaCommon::tagFromDTD(node->tag->dtd, node->tag->name);
   if (qTag)
   {
@@ -355,7 +415,7 @@ void AttributeListItem::showEditor()
   combo->setFocus();
 }
 
-void AttributeListItem::hideEditor()
+void AttributeListItem::hideEditor(int)
 {
   m_listView->editorContentChanged();
   setText(1, combo->currentText());
@@ -363,7 +423,7 @@ void AttributeListItem::hideEditor()
 }
 
 //editable color combobox
-AttributeColorItem::AttributeColorItem(TagAttributeTree* listView, QListViewItem* parent, const QString &title, const QString& title2)
+AttributeColorItem::AttributeColorItem(EditableTree* listView, QListViewItem* parent, const QString &title, const QString& title2)
 : AttributeItem(parent, title, title2)
 {
   m_listView = listView;
@@ -378,7 +438,7 @@ AttributeColorItem::~AttributeColorItem()
   delete combo;
 }
 
-QString AttributeColorItem::editorText()
+QString AttributeColorItem::editorText(int)
 {
   QString name =  combo->color().name();
   if (name == "#000000")
@@ -387,7 +447,7 @@ QString AttributeColorItem::editorText()
   return name;
 }
 
-void AttributeColorItem::showEditor()
+void AttributeColorItem::showEditor(int)
 {
   placeEditor(combo);
   combo->show();
@@ -396,7 +456,7 @@ void AttributeColorItem::showEditor()
   combo->setFocus();
 }
 
-void AttributeColorItem::hideEditor()
+void AttributeColorItem::hideEditor(int)
 {
   m_listView->editorContentChanged();
   QString name =  combo->color().name();

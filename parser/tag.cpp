@@ -317,3 +317,38 @@ void Tag::attributeValuePos(int index, int &line, int &col)
   col = attrs[index].valueCol;
  }
 }
+
+void Tag::editAttribute(QString attrName, QString attrValue)
+{
+  TagAttr attr;
+
+  for (uint i = 0 ; i < attrs.count(); i++)
+  {
+    if ( attrName == attrs[i].name ||
+      (!dtd->caseSensitive && attrs[i].name == attrName.lower()))
+    {
+      attr = attrs[i];
+      attr.value = attrValue;
+      attrs.remove(attrs.at(i));
+      attrs.append(attr);
+      return;
+    }
+  }
+  //attrName not found, creating the attr.
+  attr.name = attrName;
+  attr.value = attrValue;
+  attr.quoted = true;
+  attrs.append(attr);
+}
+
+void Tag::deleteAttribute(QString attrName)
+{
+  for (uint i = 0 ; i < attrs.count(); i++)
+  {
+    if ( attrName == attrs[i].name ||
+      (!dtd->caseSensitive && attrs[i].name == attrName.lower()))
+    {
+      attrs.remove(attrs.at(i));
+    }
+  }
+}

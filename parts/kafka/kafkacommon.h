@@ -26,11 +26,13 @@ namespace DOM
 {
 	class Node;
 }
+class NodeModifsSet;
+class Document;
 
 /**
  * For heavy debug including Node Tree in stdout printing, a DOM::Node tree widget.
  */
-//#define HEAVY_DEBUG
+#define HEAVY_DEBUG
 
 /**
  * Light debugging, including functions name in stdout printing.
@@ -105,6 +107,24 @@ public:
 	 * @return Returns the Node at location loc.
 	 */
 	static Node* getNodeFromLocation(QValueList<int> loc);
+
+	/**void createNode(QString nodeName, int nodeType, Document *doc,
+		Node *nodeCreated, Node* closingNodeCreated);*/
+
+	/**
+	 * Create a Node of name NodeName, of type nodeType, (see tag.h) connected to the document doc,
+	 * create its closing Node if necessary and then insert them with parent as Node's parent
+	 * and nextSibling as Node's next sibling.
+	 * @param modifs The changes made are logged into modifs.
+	 * @return Returns a pointer to the newly created Node.
+	 */
+	static Node *createAndInsertNode(QString nodeName, int nodeType, Document *doc,
+		Node *parent, Node *nextSibling, NodeModifsSet &modifs);
+
+	/**
+	 * Extract a Node, including its childs, from a Tree and delete it.
+	 */
+	static void extractAndDeleteNode(Node *node, NodeModifsSet &modifs);
 
 	/**
 	 * Get the display type of a Node. NOT a official list, more a little hack to

@@ -344,6 +344,9 @@ public slots:
 
   void slotExpandAbbreviation();
 
+/** Show the Document Properties Dialog */
+  void slotDocumentProperties();
+
 protected slots:
   /** No descriptions */
   void slotMakeDonation();

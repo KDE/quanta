@@ -187,6 +187,12 @@ public:
 	QString getEncodedText(QString decodedText, int bLine, int bCol, int &eLine, int &eCol);
 
 	/**
+	 * This function behaves essentially like the above function except that it doesn't
+	 * return the position of the encoded text.
+	 */
+	QString getEncodedText(QString decodedText);
+
+	/**
 	 * This function generates the code corresponding to the XML node.
 	 * @param _node The Node we want to generate its code.
 	 * @param bLine The start line of the returned generated code.

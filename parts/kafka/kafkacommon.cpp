@@ -19,7 +19,10 @@
 
 #include "../../parser/node.h"
 #include "../../parser/tag.h"
+#include "../../document.h"
 #include "../../resource.h"
+#include "../../quantacommon.h"
+#include "undoredo.h"
 
 #include "kafkacommon.h"
 
@@ -223,6 +226,108 @@ Node* kafkaCommon::getNodeFromLocation(QValueList<int> loc)
 		node = node->child;
 	}
 	return m;
+}
+
+Node *kafkaCommon::createAndInsertNode(QString nodeName, int nodeType, Document *doc,
+	Node *parent, Node *nextSibling, NodeModifsSet &modifs)
+{
+	Node *leftNode, *rightNode, *node, *nodeEnd;
+	Node *n;
+	NodeModif modif, modif2;
+	bool endTagBuild = false;
+
+	node = new Node(parent);
+	node->tag = new Tag();
+	node->tag->dtd = doc->defaultDTD();
+	node->tag->setWrite(doc);
+	node->tag->type = nodeType;
+	node->tag->name = QuantaCommon::tagCase(nodeName);
+	node->tag->single = QuantaCommon::isSingleTag(doc->defaultDTD()->name, nodeName);
+	node->tag->cleanStrBuilt = false;
+	modif.type = undoRedo::NodeAdded;
+	modif.node = 0L;
+	modif.childsNumber = 0;
+	modif.childsNumber2 = 0;
+	leftNode = node;
+
+	if(!node->tag->single && nodeType == Tag::XmlTag)
+	{
+		nodeEnd = new Node(parent);
+		nodeEnd->prev = node;
+		node->next = nodeEnd;
+		nodeEnd->tag = new Tag();
+		nodeEnd->tag->setWrite(doc);
+		nodeEnd->tag->type = Tag::XmlTagEnd;
+		nodeEnd->tag->name = QuantaCommon::tagCase("/" + nodeName);
+		nodeEnd->closesPrevious = true;
+		nodeEnd->tag->single = false;
+		nodeEnd->tag->dtd = doc->defaultDTD();
+		nodeEnd->tag->cleanStrBuilt = false;
+		modif2.type = undoRedo::NodeAdded;
+		modif2.node = 0L;
+		modif2.childsNumber = 0;
+		modif2.childsNumber2 = 0;
+		rightNode = nodeEnd;
+		endTagBuild = true;
+	}
+	else
+		rightNode = node;
+
+	//place the Nodes
+	if(parent)
+		n = parent->child;
+	else
+		n = baseNode;
+	while(n && n->next)
+		n = n->next;
+
+	if(!parent && (!nextSibling || (nextSibling && !nextSibling->prev)))
+		baseNode = node;
+	if(parent && !parent->child)
+		parent->child = leftNode;
+	if(nextSibling && nextSibling->prev)
+		nextSibling->prev->next = leftNode;
+	else if(n)
+		n->next = leftNode;
+	leftNode->prev = nextSibling?nextSibling->prev:n;
+	if(nextSibling)
+		nextSibling->prev = rightNode;
+	rightNode->next = nextSibling;
+
+	modif.location = kafkaCommon::getLocation(node);
+	modifs.NodeModifList.append(modif);
+	if(endTagBuild)
+	{
+		modif2.location = kafkaCommon::getLocation(nodeEnd);
+		modifs.NodeModifList.append(modif2);
+	}
+
+	return node;
+}
+
+void kafkaCommon::extractAndDeleteNode(Node *node, NodeModifsSet &modifs)
+{
+	NodeModif modif;
+
+	modif.type = undoRedo::NodeAndChildsRemoved;
+	modif.location = kafkaCommon::getLocation(node);
+	modif.node = node;
+	modif.childsNumber = 0;
+	modif.childsNumber2 = 0;
+
+	if(node == baseNode)
+		baseNode = 0L;
+	if(node->parent && node->parent->child == node)
+		node->parent->child = node->next;
+	node->parent = 0L;
+	if(node->prev)
+		node->prev->next = node->next;
+	if(node->next)
+		node->next->prev = node->prev;
+	node->prev = 0L;
+	node->next = 0L;
+
+	modifs.NodeModifList.append(modif);
 }
 
 int kafkaCommon::getNodeType(QString nodeName)

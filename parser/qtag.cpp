@@ -22,12 +22,6 @@ QTag::QTag()
  attrs.setAutoDelete(true);
  single = false;
  optional = false;
- #ifdef BUILD_KAFKAPART
- _canBeDeleted = false;
- _canBeModified = false;
- _canHaveCursorFocus = false;
- _cursorCanEnter = false;
- #endif
  tagName = "";
  m_fileName = "";
  type = "xmltag";
@@ -40,12 +34,6 @@ QTag::QTag( QTag &t)
   tagName = t.tagName;
   single = t.single;
   optional = t.optional;
-  #ifdef BUILD_KAFKAPART
-  _canBeDeleted = t._canBeDeleted;
-  _canBeModified = t._canBeModified;
-  _canHaveCursorFocus = t._canHaveCursorFocus;
-  _cursorCanEnter = t._cursorCanEnter;
-  #endif
   m_fileName = t.m_fileName;
   parentDTD = t.parentDTD;
   type = t.type;
