@@ -186,6 +186,8 @@ void QuantaPluginInterface::setPlugins(QDict<QuantaPlugin> a_plugins)
 /** Returns TRUE if the plugin is available */
 bool QuantaPluginInterface::pluginAvailable(const QString &a_name)
 {
+  if (a_name.isEmpty())
+      return 0;
   QuantaPlugin *availPlugin = m_plugins.find(a_name);
   if(availPlugin && QuantaPlugin::validatePlugin(availPlugin))
     return TRUE;
@@ -220,6 +222,8 @@ QStringList QuantaPluginInterface::searchPaths()
 /** Gets the plugin specified by a_name */
 QuantaPlugin *QuantaPluginInterface::plugin(const QString &a_name)
 {
+  if (a_name.isEmpty())
+      return 0;
   return m_plugins[a_name];
 }
 

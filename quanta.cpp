@@ -3209,9 +3209,13 @@ void QuantaApp::slotHelpUserList()
 /** Loads the toolbars for dtd named dtdName and unload the ones belonging to oldDtdName. */
 void QuantaApp::loadToolbarForDTD(const QString& dtdName)
 {
-  const DTDStruct *oldDtd = DTDs::ref()->find(currentToolbarDTD);
-  if (!oldDtd && !currentToolbarDTD.isEmpty())
-      oldDtd = DTDs::ref()->find(Project::ref()->defaultDTD());
+  const DTDStruct *oldDtd = 0;
+  if (!currentToolbarDTD.isEmpty())
+  {
+      oldDtd = DTDs::ref()->find(currentToolbarDTD);
+      if (!oldDtd)
+          oldDtd = DTDs::ref()->find(Project::ref()->defaultDTD());
+  }
 
   QString fileName;
   const DTDStruct *newDtd = DTDs::ref()->find(dtdName);
