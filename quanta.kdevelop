@@ -36,7 +36,7 @@
       <abortonerror>true</abortonerror>
       <numberofjobs>1</numberofjobs>
       <dontact>false</dontact>
-      <makebin/>
+      <makebin></makebin>
       <envvars>
         <envvar value="1" name="WANT_AUTOCONF_2_5" />
         <envvar value="1" name="WANT_AUTOMAKE_1_6" />
@@ -48,7 +48,7 @@
     </compiler>
     <run>
       <mainprogram>quanta/src/quanta_be</mainprogram>
-      <programargs>--nologo</programargs>
+      <programargs>--nologo --unique</programargs>
       <terminal>false</terminal>
       <envvars/>
       <directoryradio>build</directoryradio>
@@ -155,12 +155,10 @@
       <group pattern=".desktop" name="Desktop" />
       <group pattern=".tag" name="Tags" />
       <group pattern="*" name="Others" />
-      <hidenonprojectfiles>false</hidenonprojectfiles>
-      <hidenonlocation>false</hidenonlocation>
     </groups>
     <tree>
       <hidenonprojectfiles>false</hidenonprojectfiles>
-      <hidepatterns></hidepatterns>
+      <hidepatterns/>
       <showvcsfields>true</showvcsfields>
     </tree>
   </kdevfileview>
@@ -235,10 +233,10 @@
   </kdevcvs>
   <kdevfilecreate>
     <filetypes>
-      <type icon="" ext="h" name="C++ header" create="template" >
+      <type icon="" ext="h" create="template" name="C++ header" >
         <descr>Quanta speicfic header</descr>
       </type>
-      <type icon="source_cpp" ext="cpp" name="C++ source" create="template" >
+      <type icon="source_cpp" ext="cpp" create="template" name="C++ source" >
         <descr>A new empty C++ file.</descr>
       </type>
     </filetypes>

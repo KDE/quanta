@@ -111,7 +111,6 @@ KQUniqueApplication::KQUniqueApplication()
  : KUniqueApplication()
 {
   KGlobal::dirs()->addPrefix(PREFIX);
-  dcopClient()->registerAs("quanta", false);
 }
 
 
@@ -139,6 +138,7 @@ int KQUniqueApplication::newInstance()
   }
   else
   {
+    dcopClient()->registerAs("quanta", false);
     splash = 0L;
     KConfig *config = kapp->config();
     config->setGroup("General Options");
