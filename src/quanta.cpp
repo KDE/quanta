@@ -396,6 +396,11 @@ void QuantaApp::slotFileSave()
       slotFileSaveAs();
     else
     {
+#ifdef BUILD_KAFKAPART
+      if(ViewManager::ref()->activeView() &&
+            ViewManager::ref()->activeView()->hadLastFocus() == QuantaView::VPLFocus)
+        w->docUndoRedo->reloadQuantaEditor();
+#endif
       view->saveDocument(w->url());
 #ifdef BUILD_KAFKAPART
       w->docUndoRedo->fileSaved();

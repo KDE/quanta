@@ -148,6 +148,10 @@ void undoRedo::addNewModifsSet(NodeModifsSet *modifs, int modifLocation)
         kdDebug(25001)<< "undoRedo::addNewModifsSet() - NodeModifsSet type: " << modifLocation << endl;
 #endif
 
+        if(ViewManager::ref()->activeView() &&
+            ViewManager::ref()->activeView()->hadLastFocus() == QuantaView::VPLFocus)
+        m_doc->setModified(true);
+        
         QValueList<NodeModif>::iterator it2;
         NodeModifsSet *NMSet;
         QValueList<int> loc;
