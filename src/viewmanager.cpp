@@ -46,6 +46,8 @@
 #include "templatestreeview.h"
 #include "toolbartabwidget.h"
 #include "parser.h"
+#include "qextfileinfo.h"
+#include "project.h"
 
 #define SEPARATOR_INDEX 3
 #define RELOAD_ID 11
@@ -198,6 +200,14 @@ void ViewManager::slotViewActivated(KMdiChildView *view)
   if (m_lastActiveView->document())
   {
     m_lastActiveEditorView = m_lastActiveView;
+  }
+  Document *w = qView->document();
+  if (w && !w->isUntitled() && Project::ref()->hasProject())
+  {
+      KURL url = QExtFileInfo::toRelative(w->url(), Project::ref()->projectBaseURL());
+      KFileTreeViewItem *item = ProjectTreeView::ref()->findItem(ProjectTreeView::ref()->rootBranch(), url.path());
+      ProjectTreeView::ref()->ensureItemVisible(item);
+      ProjectTreeView::ref()->setSelected(item, true);
   }
 }
 

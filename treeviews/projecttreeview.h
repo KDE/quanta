@@ -70,6 +70,7 @@ public:
   void setDocumentRootItem(ProjectTreeViewItem* item) {m_documentRootItem = item;}
   ProjectTreeViewItem* documentRootItem() {return m_documentRootItem;}
   KURL documentRootURL() {return m_documentRootURL;}
+  ProjectTreeBranch* rootBranch() {return m_projectDir;}
 
 public slots: // Public slots
   void slotOpen();
