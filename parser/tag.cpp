@@ -91,7 +91,7 @@ void Tag::parse(const QString &p_tagStr, Document *p_write)
     attr.name = m_tagStr.mid(sPos, pos - sPos);
     attr.nameLine = m_tagStr.left(sPos).contains('\n') + beginLine;
     if (attr.nameLine == beginLine)
-        attr.nameCol = sPos;
+        attr.nameCol = sPos + beginCol;
     else
         attr.nameCol = m_tagStr.left(sPos).section('\n',-1).length();
 
@@ -133,7 +133,7 @@ void Tag::parse(const QString &p_tagStr, Document *p_write)
       }
       attr.valueLine = m_tagStr.left(valueStartPos).contains('\n') + beginLine;
       if (attr.valueLine == beginLine)
-          attr.valueCol = valueStartPos;
+          attr.valueCol = valueStartPos + beginCol;
       else
           attr.valueCol = m_tagStr.left(valueStartPos).section('\n',-1).length();
     }
