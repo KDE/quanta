@@ -9,8 +9,7 @@ noinst_LIBRARIES = libphp4dbg.a
 
 INCLUDES = $(all_includes)\
 		-I$(top_srcdir)/quanta/plugins/php4dbg/dbgbase
-CXXFLAGS = -Wall 
-DEFS = -I. -I$(srcdir) -I$(top_srcdir)
+AM_CXXFLAGS = -Wall -I. -I$(srcdir) -I$(top_srcdir)
 libphp4dbg_a_METASOURCES = AUTO
 libphp4dbg_a_SOURCES = \
 		debugger.cpp\
