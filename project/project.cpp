@@ -852,7 +852,7 @@ void ProjectPrivate::slotSaveAsProjectView(bool askForName)
     if (node.toElement().attribute("name") == currentProjectView)
     {
       if (!askForName ||
-          KMessageBox::questionYesNo(m_parent, i18n("<qt>A project view named <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>")
+          KMessageBox::warningYesNo(m_parent, i18n("<qt>A project view named <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>")
                                             .arg(currentProjectView)) == KMessageBox::Yes)
       {
         node.parentNode().removeChild(node);

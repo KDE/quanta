@@ -821,7 +821,7 @@ void DTDs::slotLoadDTD()
       QString nickName = dtdcfg.readEntry("NickName", dtdName);
       DTDStruct * dtd = m_dict->find(dtdName) ;
       if (dtd &&
-          KMessageBox::questionYesNo(0L, i18n("<qt>Do you want to replace the existing <b>%1</b> DTD?</qt>").arg(nickName)) == KMessageBox::No)
+          KMessageBox::warningYesNo(0L, i18n("<qt>Do you want to replace the existing <b>%1</b> DTD?</qt>").arg(nickName)) == KMessageBox::No)
       {
         return;
       }
@@ -853,7 +853,7 @@ void DTDs::slotLoadDTEP(const QString &_dirName, bool askForAutoload)
   QString nickName = dtdcfg.readEntry("NickName", dtdName);
   DTDStruct * dtd = m_dict->find(dtdName) ;
   if ( dtd &&
-      KMessageBox::questionYesNo(0L, i18n("<qt>Do you want to replace the existing <b>%1</b> DTD?</qt>").arg(nickName)) == KMessageBox::No)
+      KMessageBox::warningYesNo(0L, i18n("<qt>Do you want to replace the existing <b>%1</b> DTD?</qt>").arg(nickName)) == KMessageBox::No)
   {
     return;
   }

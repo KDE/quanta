@@ -225,7 +225,7 @@ void QuantaToolBar::slotEditAction()
 
 void QuantaToolBar::slotRemoveAction()
 {
-  if ( KMessageBox::questionYesNo(this, i18n("<qt>Are you sure you want to remove the <b>%1</b> action?</qt>").arg(currentActionName)) == KMessageBox::Yes )
+  if ( KMessageBox::warningYesNo(this, i18n("<qt>Are you sure you want to remove the <b>%1</b> action?</qt>").arg(currentActionName)) == KMessageBox::Yes )
   {
     emit removeAction(m_toolbarTab->tabUnderMouse, currentActionName);
   }

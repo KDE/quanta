@@ -508,7 +508,7 @@ void TagAction::execute()
 /** Timeout occurred while waiting for some network function to return. */
 void TagAction::slotTimeout()
 {
-  if (KMessageBox::warningYesNo(quantaApp, i18n("<qt>The filtering action <b>%1</b> seems to be locked.<br>Do you want to terminate it?</qt>").arg(actionText()), i18n("Action Not Responding")) == KMessageBox::Yes)
+  if (KMessageBox::questionYesNo(quantaApp, i18n("<qt>The filtering action <b>%1</b> seems to be locked.<br>Do you want to terminate it?</qt>").arg(actionText()), i18n("Action Not Responding")) == KMessageBox::Yes)
   {
     if (::kill(-proc->pid(), SIGTERM))
     {

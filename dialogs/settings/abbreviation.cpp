@@ -178,7 +178,7 @@ void AbbreviationDlg::slotRemoveTemplate()
 {
   QListViewItem *item = templatesList->currentItem();
   if (item &&
-      KMessageBox::questionYesNo(this, i18n("<qt>Do you really want to remove the <b>%1</b> template?</qt>").arg(item->text(1))) == KMessageBox::Yes)
+      KMessageBox::warningYesNo(this, i18n("<qt>Do you really want to remove the <b>%1</b> template?</qt>").arg(item->text(1))) == KMessageBox::Yes)
   {
     m_currentAbbrev->abbreviations.remove(item->text(0)+" "+item->text(1));
     delete item;

@@ -177,7 +177,7 @@ void ActionConfigDialog::slotRemoveToolbar()
   }
   if (s != i18n("All"))
   {
-    if ( KMessageBox::questionYesNo(this, i18n("Do you really want to remove the \"%1\" toolbar?").arg(s)) == KMessageBox::Yes )
+    if ( KMessageBox::warningYesNo(this, i18n("Do you really want to remove the \"%1\" toolbar?").arg(s)) == KMessageBox::Yes )
     {
       if (quantaApp->slotRemoveToolbar(s.lower()))
       {
@@ -797,7 +797,7 @@ void ActionConfigDialog::slotNewAction()
 
 void ActionConfigDialog::slotDeleteAction()
 {
-  if ( KMessageBox::questionYesNo(this, i18n("<qt>Removing the action removes all the references to it.\nAre you sure you want to remove the <b>%1</b> action?</qt>").arg(currentAction->text())) == KMessageBox::Yes )
+  if ( KMessageBox::warningYesNo(this, i18n("<qt>Removing the action removes all the references to it.\nAre you sure you want to remove the <b>%1</b> action?</qt>").arg(currentAction->text())) == KMessageBox::Yes )
   {
     QString actionName = currentAction->name();
     quantaApp->slotDeleteAction(currentAction);

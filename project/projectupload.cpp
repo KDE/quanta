@@ -595,7 +595,7 @@ void ProjectUpload::slotRemoveProfile()
    } else
    {
       QString profileName = comboProfile->currentText();
-      if (KMessageBox::questionYesNo(this, i18n("<qt>Do you really want to remove the <b>%1</b> upload profile?</qt>").arg(profileName),
+      if (KMessageBox::warningYesNo(this, i18n("<qt>Do you really want to remove the <b>%1</b> upload profile?</qt>").arg(profileName),
                                    i18n("Profile Removal")) == KMessageBox::Yes)
        {
           m_profilesNode.removeChild(m_currentProfileElement);

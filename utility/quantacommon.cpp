@@ -663,7 +663,7 @@ bool QuantaCommon::closesTag(QString namespaceName, QString tagName, bool caseSe
 
 int QuantaCommon::denyBinaryInsert()
 {
-  int result = KMessageBox::warningYesNo(0L, i18n("The file type is not recognized. \
+  int result = KMessageBox::questionYesNo(0L, i18n("The file type is not recognized. \
   Opening binary files may confuse Quanta.\n Are you sure you want to open this file?"),
   i18n("Unknown Type"), KStdGuiItem::yes(), KStdGuiItem::no(), "Open Everything");
  return result;
