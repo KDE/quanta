@@ -128,22 +128,6 @@
         <property name="title">
             <string>Plugin Options</string>
         </property>
-        <widget class="QLineEdit">
-            <property name="name">
-                <cstring>pluginName</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>167</x>
-                    <y>25</y>
-                    <width>230</width>
-                    <height>22</height>
-                </rect>
-            </property>
-            <property name="toolTip" stdset="0">
-                <string>The plugin name as it appears in the Plugins menu.</string>
-            </property>
-        </widget>
         <widget class="QLayoutWidget">
             <property name="name">
                 <cstring>layout15</cstring>
@@ -289,72 +273,6 @@
                 </widget>
             </grid>
         </widget>
-        <widget class="QLayoutWidget">
-            <property name="name">
-                <cstring>layout10</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>26</y>
-                    <width>148</width>
-                    <height>235</height>
-                </rect>
-            </property>
-            <grid>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="QLabel" row="3" column="0">
-                    <property name="name">
-                        <cstring>TextLabel4_2</cstring>
-                    </property>
-                    <property name="text">
-                        <string>File name:</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="1" column="0">
-                    <property name="name">
-                        <cstring>TextLabel4</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Type:</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="5" column="0">
-                    <property name="name">
-                        <cstring>TextLabel1</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Output window:</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="0" column="0">
-                    <property name="name">
-                        <cstring>TextLabel3_2</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Name:</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="4" column="0">
-                    <property name="name">
-                        <cstring>TextLabel5</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Program arguments:</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="2" column="0">
-                    <property name="name">
-                        <cstring>TextLabel3</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Location:</string>
-                    </property>
-                </widget>
-            </grid>
-        </widget>
         <spacer>
             <property name="name">
                 <cstring>spacer4</cstring>
@@ -400,32 +318,102 @@
                     <verstretch>0</verstretch>
                 </sizepolicy>
             </property>
+            <property name="text">
+                <string></string>
+            </property>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout7</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>70</y>
+                    <width>148</width>
+                    <height>190</height>
+                </rect>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel" row="0" column="0">
+                    <property name="name">
+                        <cstring>TextLabel4</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Type:</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="4" column="0">
+                    <property name="name">
+                        <cstring>TextLabel1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Output window:</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="3" column="0">
+                    <property name="name">
+                        <cstring>TextLabel5</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Program arguments:</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="0">
+                    <property name="name">
+                        <cstring>TextLabel3</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Location:</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="2" column="0">
+                    <property name="name">
+                        <cstring>TextLabel4_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>File name:</string>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+        <widget class="QLineEdit">
+            <property name="name">
+                <cstring>pluginName</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>167</x>
+                    <y>25</y>
+                    <width>230</width>
+                    <height>22</height>
+                </rect>
+            </property>
+            <property name="toolTip" stdset="0">
+                <string>The plugin name as it appears in the Plugins menu.</string>
+            </property>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>TextLabel3_2</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>20</y>
+                    <width>146</width>
+                    <height>34</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>Name:</string>
+            </property>
         </widget>
     </widget>
 </widget>
-<customwidgets>
-    <customwidget>
-        <class>KIconButton</class>
-        <header location="global">kicondialog.h</header>
-        <sizehint>
-            <width>-1</width>
-            <height>-1</height>
-        </sizehint>
-        <container>0</container>
-        <sizepolicy>
-            <hordata>5</hordata>
-            <verdata>5</verdata>
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-        </sizepolicy>
-        <pixmap>image0</pixmap>
-    </customwidget>
-</customwidgets>
-<images>
-    <image name="image0">
-        <data format="XPM.GZ" length="797">789cad91cf4ec3300cc6ef7d8aa8b9552863dba512e211401c91260eb1d3fca934268d714068ef8e1dcb6bcb760337877cf9e9b35d7bd599d79727d3ad9a8f933f153498fdd174e173bfffdabd3d7e37ed6663e8ace9b4774deb0c9ae7c3fbc077a0bbbdafc132a9ecb72cb3c87e2d348a8c51e4c8b2dfaa37a814af15a9de41a5d0c292130945919ad9ab8cb1367c33fe462cc72d62adf7dec235a17787f409828990c321c3ea8239a9c007875784538510d0b16998138cb1d621e412b8b927c6cc0000044c9e9c73edcd13587a24157ba0d69a3c0e4b51bcfc1f0265a4c794505abfccc0e14820512c3d5a69028b595f9af8bd1fa87b001df73f6ffbfcd0fc008d53aabf</data>
-    </image>
-</images>
 <connections>
     <connection>
         <sender>PushButton10</sender>
@@ -440,6 +428,19 @@
         <slot>accept()</slot>
     </connection>
 </connections>
+<tabstops>
+    <tabstop>pluginName</tabstop>
+    <tabstop>iconButton</tabstop>
+    <tabstop>pluginType</tabstop>
+    <tabstop>location</tabstop>
+    <tabstop>locationButton</tabstop>
+    <tabstop>pluginFileName</tabstop>
+    <tabstop>arguments</tabstop>
+    <tabstop>outputWindow</tabstop>
+    <tabstop>validateCheckBox</tabstop>
+    <tabstop>PushButton9</tabstop>
+    <tabstop>PushButton10</tabstop>
+</tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
     <includehint>kiconbutton.h</includehint>

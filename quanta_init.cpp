@@ -177,6 +177,12 @@ void QuantaApp::initQuanta()
   initPlugins  ();
   
   m_tagsMenu = new QPopupMenu(this);
+  KAction *editTagAction =
+           new KAction( i18n( "&Edit Current Tag..." ), CTRL+Key_E,
+                        view, SLOT( slotEditCurrentTag() ),
+                        actionCollection(), "edit_current_tag" );
+  editTagAction->plug(m_tagsMenu);
+  m_tagsMenu->insertSeparator();
   menuBar()->insertItem(i18n("&Tags"),m_tagsMenu,-1,TAGS_MENU_PLACE);                                                                     
 
   pm_set  = (QPopupMenu*)guiFactory()->container("settings", this);
@@ -1247,7 +1253,7 @@ void QuantaApp::initActions()
     // Tool actions
 
     (void) new KAction( i18n( "&Context Help..." ), CTRL+Key_H,
-                        this, SLOT( contextHelp() ),
+                        this, SLOT( slotContextHelp() ),
                         actionCollection(), "context_help" );
 
     (void) new KAction( i18n( "&Quanta Homepage" ), 0,
@@ -1262,13 +1268,13 @@ void QuantaApp::initActions()
                         doc, SLOT( slotAttribPopup() ),
                         actionCollection(), "tag_attributes" );
 
-    (void) new KAction( i18n( "&Edit Current Tag..." ), CTRL+Key_E,
-                        view, SLOT( slotEditCurrentTag() ),
-                        actionCollection(), "edit_current_tag" );
-
     (void) new KAction( i18n( "&Change DTD Type" ), 0,
                         this, SLOT( slotToolsChangeDTD() ),
                         actionCollection(), "tools_change_dtd" );
+
+    (void) new KAction( i18n( "Send DTD in E-&Mail" ), 0,
+                        this, SLOT( slotEmailDTD() ),
+                        actionCollection(), "tools_send_dtd" );
 
     (void) new KAction( i18n( "&Syntax Check" ), 0,
                         this, SLOT( slotToolSyntaxCheck() ),
@@ -1413,7 +1419,7 @@ void QuantaApp::initActions()
     new KAction(i18n("Save as &Project Toolbar..."),  0, this, SLOT(slotSaveProjectToolbar()), actionCollection(), "toolbars_save_project");
     new KAction(i18n("&Add User Toolbar..."),  0, this, SLOT(slotAddToolbar()), actionCollection(), "toolbars_add");
     new KAction(i18n("&Remove User Toolbar..."),  0, this, SLOT(slotRemoveToolbar()), actionCollection(), "toolbars_remove");
-    new KAction(i18n("Send Toolbar in E&mail..."),  0, this, SLOT(slotSendToolbar()), actionCollection(), "toolbars_send");
+    new KAction(i18n("Send Toolbar in E-&Mail..."),  0, this, SLOT(slotSendToolbar()), actionCollection(), "toolbars_send");
 
     showDTDToolbar=new KToggleAction(i18n("Show DTD Toolbar"),0, actionCollection(), "view_dtd_toolbar");//,view,SLOT(slotHideToolbar()),actionCollection(),"view_dtd_toolbar");
     connect(showDTDToolbar, SIGNAL(toggled(bool)), this, SLOT(slotToggleDTDToolbar(bool)));

@@ -1159,12 +1159,13 @@ void QuantaApp::updateNavButtons( bool back, bool forward )
 
 } */
 
-void QuantaApp::contextHelp()
+void QuantaApp::slotContextHelp()
 {
   int id_w = rightWidgetStack->id( rightWidgetStack->visibleWidget());
 
   if (  id_w == 1 || id_w == 2 )
   {
+    if ( !m_oldTreeViewWidget->isVisible() ) m_oldTreeViewWidget->changeHideShowState();
     rightWidgetStack->raiseWidget(0);
 //    view->write()->view()->setFocus();
   }
@@ -1175,6 +1176,11 @@ void QuantaApp::contextHelp()
 
     if ( url )
     {
+      if (ftabdock->isVisible()) m_oldTreeViewWidget = ftabdock;
+      if (ptabdock->isVisible()) m_oldTreeViewWidget = ptabdock;
+      if (ttabdock->isVisible()) m_oldTreeViewWidget = ttabdock;
+      if (stabdock->isVisible()) m_oldTreeViewWidget = stabdock;
+      if (dtabdock->isVisible()) m_oldTreeViewWidget = dtabdock;
       if ( !dtabdock->isVisible() ) dtabdock->changeHideShowState();
 
       rightWidgetStack->raiseWidget(2);
@@ -1706,7 +1712,7 @@ KURL QuantaApp::saveToolBar(const QString& toolbarName, const KURL& destFile)
   buffer.close();
   buffer2.close();
 
-//TODO: Implement saving in non-local dirs (firs in a temp file, than copy it to the dest)
+//TODO: Implement saving in non-local dirs (first in a temp file, than copy it to the dest)
   KTar tar(tarFile.path(), "application/x-gzip");
   tar.open(IO_WriteOnly);
   tar.writeFile(QFileInfo(tarFile.path()).baseName()+".toolbar", "user", "group", buffer.buffer().size(), buffer.buffer().data());
@@ -1868,7 +1874,7 @@ void QuantaApp::slotSendToolbar()
   QTabWidget *tb = view->toolbarTab;
 
   QStringList lst;
-  int current=0;
+  int current = 0;
   for (int i = 0; i < tb->count(); i++)
   {
     lst << tb->label(i);
@@ -1898,7 +1904,7 @@ void QuantaApp::slotSendToolbar()
 
   toolbarFile += tempFile->name();
 
-  TagMailDlg *mailDlg = new TagMailDlg( this, i18n("Send toolbar by email"));
+  TagMailDlg *mailDlg = new TagMailDlg( this, i18n("Send toolbar in email"));
   QString toStr;
   QString message = i18n("Hi,\n This is a Quanta Plus [http://quanta.sourceforge.net] toolbar.\n\nHave fun.\n");
   QString titleStr;
@@ -2044,13 +2050,13 @@ void QuantaApp::slotToolsChangeDTD()
   Document *w = view->write();
   int i=0;
   int pos = -1;
-  QDictIterator<DTDStruct> it(*dtds);
   int defaultIndex = 0;
   
   Tag *tag = 0L;
   w->findDTDName(&tag);
   QString oldDtdName = w->getDTDIdentifier();
   QString defaultDocType = project->defaultDTD();
+  QDictIterator<DTDStruct> it(*dtds);
   for( ; it.current(); ++it )
   {
     if (it.current()->family == Xml)
@@ -2385,6 +2391,97 @@ bool QuantaApp::allToolbarsHidden()
   }
 
   return true;
+}
+
+/** No descriptions */
+void QuantaApp::slotEmailDTD()
+{
+  Document *w = view->write();
+  QStringList lst;
+  int current = 0;
+  int i = 0;
+  QDictIterator<DTDStruct> it(*dtds);
+  for( ; it.current(); ++it )
+  {
+    lst << it.current()->nickName;
+    if (it.current()->name == w->getDTDIdentifier()) current = i;
+    i++;
+  }
+
+  bool ok = FALSE;
+  QString res = QInputDialog::getItem(
+                  i18n( "Send DTD" ),
+                  i18n( "Please select a DTD:" ), lst, current, FALSE, &ok, this );
+
+  if (!ok)
+    return;
+
+  QString dtdName = QuantaCommon::getDTDNameFromNickName(res);
+
+  QStringList dtdFile;
+
+  QString prefix="quanta";
+  KTempFile* tempFile = new KTempFile(locateLocal("tmp", prefix), ".tgz");
+  tempFile->setAutoDelete(true);
+
+//pack the .tag files and the description.rc into a .tgz file
+  KTar tar(tempFile->name(), "application/x-gzip");
+  tar.open(IO_WriteOnly);
+
+  KURL dirURL;
+  dirURL.setPath(dtds->find(dtdName)->fileName);
+  dirURL.setPath(dirURL.directory(false));
+
+  KURL::List files = QExtFileInfo::allFilesRelative(dirURL, "*");
+  for ( KURL::List::Iterator it_f = files.begin(); it_f != files.end(); ++it_f )
+  {
+    QString name = (*it_f).fileName();
+
+    QFile file(dirURL.path()+name);
+    file.open(IO_ReadOnly);
+    QByteArray bArray = file.readAll();
+    tar.writeFile(dirURL.fileName()+"/"+name, "user", "group", bArray.size(), bArray.data());
+    file.close();
+
+  }
+  tar.close();
+  
+  tempFile->close();
+  tempFileList.append(tempFile);
+
+  dtdFile += tempFile->name();
+  
+
+  TagMailDlg *mailDlg = new TagMailDlg( this, i18n("Send DTD in email"));
+  QString toStr;
+  QString message = i18n("Hi,\n This is a Quanta Plus [http://quanta.sourceforge.net] DTD definition tarball.\n\nHave fun.\n");
+  QString titleStr;
+  QString subjectStr;
+
+  mailDlg->TitleLabel->setText(i18n("Content"));
+  mailDlg->titleEdit->setFixedHeight(60);
+  mailDlg->titleEdit->setVScrollBarMode(QTextEdit::Auto);
+  mailDlg->titleEdit->setHScrollBarMode(QTextEdit::Auto);
+  if ( mailDlg->exec() ) {
+  	if ( !mailDlg->lineEmail->text().isEmpty())
+  	{
+      toStr = +mailDlg->lineEmail->text();
+	  	subjectStr = (mailDlg->lineSubject->text().isEmpty())?i18n("Quanta Plus DTD"):mailDlg->lineSubject->text();
+    	if ( !mailDlg->titleEdit->text().isEmpty())
+        message = mailDlg->titleEdit->text();
+  	} else
+    {
+      KMessageBox::error(this,i18n("No destination address was specified./n Sending is aborted."),i18n("Error sending e-mail"));
+      delete mailDlg;
+      return;
+    }
+
+    QString nullString="";
+    kapp->invokeMailer(toStr, nullString, nullString, subjectStr, message, nullString, dtdFile);
+
+  }
+  delete mailDlg;
+  
 }
 
 #include "quanta.moc"

@@ -187,7 +187,7 @@ public slots:
 
 //  void updateNavButtons( bool back, bool forward );
 
-  void contextHelp();
+  void slotContextHelp();
 
   void slotBack();
   void slotForward();
@@ -310,6 +310,8 @@ protected slots:
   void slotHelpHomepage();
   /** Show or hide the DTD toolbar */
   void slotToggleDTDToolbar(bool show);
+  /** No descriptions */
+  void slotEmailDTD();
 
 protected:
   KParts::BrowserExtension *browserExtension()
@@ -467,6 +469,8 @@ protected: // Protected attributes
   QString currentToolbarDTD;
 
   SpellChecker *spellChecker;
+
+  KDockWidget *m_oldTreeViewWidget;
 };
  
 #endif // QUANTA_H

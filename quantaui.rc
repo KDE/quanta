@@ -133,7 +133,7 @@
 
   <Menu name="tools"><text>T&amp;ools</text>
     <Action name="tools_change_dtd"/>
-    <Action name="edit_current_tag"/>
+    <Action name="tools_send_dtd"/>
     <Separator/>
     <Action name="syntax_check"/>
   </Menu>
