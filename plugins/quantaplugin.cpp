@@ -256,4 +256,5 @@ void QuantaPlugin::setIcon(const QString& a_icon)
   m_icon = a_icon;
   if (m_action) m_action->setIcon(a_icon);
 }
+
 #include "quantaplugin.moc"

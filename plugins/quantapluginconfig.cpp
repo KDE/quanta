@@ -107,4 +107,5 @@ void QuantaPluginConfig::updateWindows(const QString &a_type)
   outputWindow->clear();
   outputWindow->insertStringList(windows);  
 }
+
 #include "quantapluginconfig.moc"

@@ -584,9 +584,12 @@ void QuantaApp::readOptions()
 
   qConfig.defaultDocType = config->readEntry("Default DTD",DEFAULT_DTD);
   if (! dtds->find(qConfig.defaultDocType))
-    qConfig.defaultDocType = DEFAULT_DTD;
+     qConfig.defaultDocType = DEFAULT_DTD;
 
   qConfig.newFileType = config->readEntry("New File Type", qConfig.defaultDocType);
+  if (! dtds->find(qConfig.newFileType))
+     qConfig.newFileType = qConfig.defaultDocType;
+
   qConfig.defaultEncoding = config->readEntry("Default encoding", QTextCodec::codecForLocale()->name());
   qConfig.useMimeTypes = config->readBoolEntry("Use MimeTypes", false);
 
