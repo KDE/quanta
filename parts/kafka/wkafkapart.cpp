@@ -356,7 +356,7 @@ void WKafkaPart::slotDomNodeInserted(DOM::Node _domNode)
 			attr.nameLine = attrLine;
 			attr.valueCol = attrCol + _tag->name.length() + 1;
 			attr.valueLine = attrLine;
-			//attr.quoted = ???
+			attr.quoted = true;
 			_tag->addAttribute(attr);
 		}
 		_tag->type = Tag::XmlTag;
@@ -430,13 +430,13 @@ void WKafkaPart::slotDomNodeInserted(DOM::Node _domNode)
 	/** THIRD PART: change the neighbour Tag positions */
 
 	taglenCol = lastCol - beginCol;
-	//taglenLine = lastLine - beginLine;
 	__nextNode = getNextNode(_node, b);
-	while(__nextNode)
+	fitsNodesPosition(__nextNode, taglenCol, taglenLine);
+	/**while(__nextNode)
 	{
 		__nextNode->tag->beginPos(NNbeginLine, NNbeginCol);
 		__nextNode->tag->endPos(NNlastLine, NNlastCol);
-		if(NNbeginCol != beginCol) break;
+		if(NNbeginLine != beginLine) break;
 		__nextNode->tag->setTagPosition(NNbeginLine, NNbeginCol +
 			taglenCol, NNlastLine, NNlastCol + taglenCol);
 		for(j = 0; j < __nextNode->tag->attrCount(); j++)
@@ -449,7 +449,7 @@ void WKafkaPart::slotDomNodeInserted(DOM::Node _domNode)
 			__nextNode->tag->getAttribute(j).valueCol += taglenCol;
 		}
 		__nextNode = getNextNode(__nextNode, b);
-	}
+	}*/
 
 	baseNode = parser->parse(_currentDoc);
 }
@@ -486,22 +486,19 @@ void WKafkaPart::slotDomNodeAboutToBeRemoved(DOM::Node _domNode)
 	kdDebug(25001)<< "WKafkaPart::slotDomNodeAboutToBeRemoved() node:" <<
 		_domNode.nodeName().string() << endl;
 	Node *_node = 0L, *_nodePrev = 0L, *_nodeParent = 0L, *_nodeNext = 0L;
-	Node *_nodeNextBackup = 0L, *_nodeParentBackup = 0L, *closingNode = 0L;
-	Node *__nextNode = 0L;
-	int startLine, startCol, endLine, endCol, taglenCol, taglenLine, j;
+	Node *_nodeNextBackup = 0L, *_nodeParentBackup = 0L;
+	Node *_nodeNextClosingBackup = 0L, *_nodeParentClosingBackup = 0L;
+	Node *_nodeChilds = 0L, *_tmpNode = 0L;
+	int startLine, startCol, endLine, endCol;
+	int taglenCol, taglenLine, closingTaglenCol, closingTaglenLine;
 	int startLine2, startCol2, endLine2, endCol2;
-	int NNbeginLine, NNbeginCol, NNlastLine, NNlastCol;
-	bool b = false;
+	bool hasClosingNode = false;
+	bool deleteChilds = true;
 
 	/** FIRST PART: remove the HTML code from the editor*/
 
 	coutTree(_rootNode, 2);
-	if(_domNode.hasChildNodes())
-	{
-		kdDebug(25001)<< "WKafkaPart::slotDomNodeAboutToBeRemoved() - doesnt" <<
-		 " support inserting nodes with childs for the moment. Sorry" << endl;
-		return;
-	}
+
 	_node = searchCorrespondingNode(_domNode);
 	if(!_node)
 	{
@@ -517,88 +514,121 @@ void WKafkaPart::slotDomNodeAboutToBeRemoved(DOM::Node _domNode)
 			" to remove the rootNode" << endl;
 		return;
 	}
-	_node->tag->beginPos(startLine, startCol);
-	_node->tag->endPos(endLine, endCol);
-	_currentDoc->editIf->removeText(startLine, startCol, endLine, endCol + 1);
-	taglenCol = endCol - startCol;
-	taglenLine = endLine - startLine;
-	/**if(_node->kafkaAddon && _node->kafkaAddon->_closingNode)
+	if(_node->kafkaAddon && _node->kafkaAddon->_closingNode)
 	{
+		hasClosingNode = true;
+		_nodeNextClosingBackup = _node->kafkaAddon->_closingNode->next;
+		_nodeParentClosingBackup = _node->kafkaAddon->_closingNode->parent;
 		_node->kafkaAddon->_closingNode->tag->beginPos(startLine2, startCol2);
 		_node->kafkaAddon->_closingNode->tag->endPos(endLine2, endCol2);
-		_currentDoc->editIf->removeText(startLine2, startCol2 - taglenCol, endLine2,
-			endCol2 - taglenCol + 1);
-	}*/
+		closingTaglenCol = startCol - endCol;
+		closingTaglenLine = startLine - endLine;
+		if(!deleteChilds)
+			_currentDoc->editIf->removeText(startLine2, startCol2, endLine2,
+				endCol2 + 1);
+	}
+	_node->tag->beginPos(startLine, startCol);
+	_node->tag->endPos(endLine, endCol);
+	if(hasClosingNode && deleteChilds)
+		_currentDoc->editIf->removeText(startLine, startCol, endLine2, endCol2 + 1);
+	else
+		_currentDoc->editIf->removeText(startLine, startCol, endLine, endCol + 1);
+	taglenCol = startCol - endCol;
+	taglenLine = startLine - endLine;
 
 	/** SECOND PART: remove the node from the quanta tree and delete it */
 
-	while(1)
+	_node->removeAll = false;
+	_nodePrev = _node->prev;
+	if(hasClosingNode)
 	{
-		_node->removeAll = false;
-		_nodePrev = _node->prev;
+		_nodeNext = _node->kafkaAddon->_closingNode->next;
+		_node->kafkaAddon->_closingNode->removeAll = false;
+	}
+	else
 		_nodeNext = _node->next;
-		_nodeParent = _node->parent;
-		if(_node->kafkaAddon && _node->kafkaAddon->_closingNode )
-			closingNode = _node->kafkaAddon->_closingNode;
-		if(_node->child)
-			delete _node->child;
-		delete _node;
-		_node = 0L;
+	_nodeParent = _node->parent;
+	if(hasClosingNode)
+		delete _node->kafkaAddon->_closingNode;
+	if(_node->child && deleteChilds)
+		delete _node->child;
+	else
+		_nodeChilds = _node->child;
+	delete _node;
+	_node = 0L;
 
-		if(_nodePrev)
+	if(_nodePrev)
+	{
+		if(!deleteChilds)
+			_nodePrev->next = _nodeChilds;
+		else if(_nodeNext)
+			_nodePrev->next = _nodeNext;
+		else
+			_nodePrev->next = 0L;
+	}
+	if(_nodeNext)
+	{
+		if(!deleteChilds)
 		{
-			if(_nodeNext)
-				_nodePrev->next = _nodeNext;
-			else
-				_nodePrev->next = 0L;
+			_tmpNode = _nodeChilds;
+			while(_tmpNode)
+			{
+				if(_tmpNode->next)
+					_tmpNode = _tmpNode->next;
+				else
+					break;
+			}
+			_nodeNext->prev = _tmpNode;
 		}
-		if(_nodeNext)
+		else if(_nodePrev)
+			_nodeNext->prev = _nodePrev;
+		else
+			_nodeNext->prev = 0L;
+	}
+	if(_nodeParent->child == 0L)
+	{//it means that it was _node before
+		if(!deleteChilds)
+			_nodeParent->child = _nodeChilds;
+		else if(_nodePrev)
+			_nodeParent->child = _nodePrev;
+		else if(_nodeNext)
+			_nodeParent->child = _nodeNext;
+		else
+			_nodeParent->child = 0L;
+	}
+	if(!deleteChilds)
+	{
+		_tmpNode = _nodeChilds;
+		while(_tmpNode)
 		{
-			if(_nodePrev)
-				_nodeNext->prev = _nodePrev;
-			else
-				_nodeNext->prev = 0L;
+			_tmpNode->parent = _nodeParent;
+			_tmpNode = _tmpNode->next;
 		}
-		if(_nodeParent->child == 0L)
-		{//it means that it was _node before
-			if(_nodePrev)
-				_nodeParent->child = _nodePrev;
-			else if(_nodeNext)
-				_nodeParent->child = _nodeNext;
-			else
-				_nodeParent->child = 0L;
-		}
-		if(closingNode)
-		{
-			_node = closingNode;
-			closingNode = 0L;
-		}
-		else break;
 	}
 
 	/** THIRD PART: change the neighbour Tag positions */
 
-	__nextNode = (_nodeNextBackup)?_nodeNextBackup:_nodeParentBackup;
-	__nextNode = getNextNode(__nextNode, b);
-	while(__nextNode)
+	if(hasClosingNode)
 	{
-		__nextNode->tag->beginPos(NNbeginLine, NNbeginCol);
-		__nextNode->tag->endPos(NNlastLine, NNlastCol);
-		if(NNbeginCol != endCol) break;
-		__nextNode->tag->setTagPosition(NNbeginLine , NNbeginCol -
-			taglenCol, NNlastLine , NNlastCol - taglenCol);
-		for(j = 0; j < __nextNode->tag->attrCount(); j++)
+		if(_nodeChilds)
 		{
-			if(__nextNode->tag->getAttribute(j).nameLine != endLine)
-				break;
-			//__nextNode->tag->getAttribute(j).nameLine -= taglenLine;
-			__nextNode->tag->getAttribute(j).nameCol -= taglenCol;
-			//__nextNode->tag->getAttribute(j).valueLine -= taglenLine;
-			__nextNode->tag->getAttribute(j).valueCol -= taglenCol;
+			fitsNodesPosition(_nodeChilds, taglenCol, taglenLine, startLine2,
+				startCol2);
 		}
-		__nextNode = getNextNode(__nextNode, b);
+		_tmpNode = (_nodeNextClosingBackup)?_nodeNextClosingBackup:
+			_nodeParentClosingBackup;
+		fitsNodesPosition(_tmpNode, taglenCol + closingTaglenCol,taglenLine +
+			closingTaglenCol);
 	}
+	else
+	{
+		_tmpNode = (_nodeNextBackup)?_nodeNextBackup:_nodeParentBackup;
+		fitsNodesPosition(_tmpNode, taglenCol, taglenLine);
+	}
+
 	coutTree(_rootNode, 2);
+
+	baseNode = parser->parse(_currentDoc);
 }
 
 void WKafkaPart::slotDomNodeGetFocus(DOM::Node _domNode)
@@ -806,21 +836,77 @@ Node *WKafkaPart::searchCorrespondingNode(DOM::Node _domNode)
 
 void WKafkaPart::coutTree(Node *node, int indent)
 {
- QString output;
- while (node)
- {
-   output = "";
-   output.fill('.', indent);
-   if (node->tag->type != Tag::Text)
-       output += node->tag->name.replace('\n'," ");
-   else
-       output+= node->tag->tagStr().replace('\n'," ");
-   kdDebug(25001) << output <<" (" << node->tag->type << ")" << endl;
-   if (node->child)
-       coutTree(node->child, indent + 4);
-  // treeSize += sizeof(node) + sizeof(node->tag);
-   //treeSize += node->size();
-   //treeSize++;
-   node = node->next;
- }
+	QString output;
+	int bLine, bCol, eLine, eCol, j;
+	while (node)
+	{
+		output = "";
+		output.fill('.', indent);
+		node->tag->beginPos(bLine, bCol);
+		node->tag->endPos(eLine, eCol);
+		if (node->tag->type != Tag::Text)
+			output += node->tag->name.replace('\n'," ");
+		else
+			output+= node->tag->tagStr().replace('\n'," ");
+		kdDebug(25001) << output <<" (" << node->tag->type << ") at pos " <<
+			bLine << ":" << bCol << " - " << eLine << ":" << eCol << endl;
+		for(j = 0; j < node->tag->attrCount(); j++)
+		{
+			kdDebug(25001)<< " attr" << j << " " <<
+				node->tag->getAttribute(j).nameLine << ":" <<
+				node->tag->getAttribute(j).nameCol << " - " <<
+				node->tag->getAttribute(j).valueLine << ":" <<
+				node->tag->getAttribute(j).valueCol << endl;
+		}
+
+		if (node->child)
+			coutTree(node->child, indent + 4);
+		// treeSize += sizeof(node) + sizeof(node->tag);
+		//treeSize += node->size();
+		//treeSize++;
+		node = node->next;
+	}
+}
+
+void WKafkaPart::fitsNodesPosition(Node* _startNode, int colMovement, int lineMovement, int colEnd, int lineEnd)
+{
+	bool b = false;
+	int j, SNbeginLine, SNbeginCol, SNlastLine, SNlastCol;
+	int beginLine, beginCol, lastLine, lastCol;
+	Node *_node = _startNode;
+
+	_startNode->tag->beginPos(SNbeginLine, SNbeginCol);
+	_startNode->tag->endPos(SNlastLine, SNlastCol);
+
+	while(_node)
+	{
+		_node->tag->beginPos(beginLine, beginCol);
+		_node->tag->endPos(lastLine, lastCol);
+		if(beginLine >= lineEnd && beginCol >= colEnd &&
+			colEnd != -2 && lineEnd != -2)
+			return;
+		if(beginLine == SNbeginLine)
+			_node->tag->setTagPosition(beginLine + lineMovement,
+				beginCol + colMovement, lastLine + lineMovement ,
+				lastCol + colMovement);
+		else
+			_node->tag->setTagPosition(beginLine + lineMovement,
+				beginCol, lastLine + lineMovement, lastCol);
+		for(j = 0; j < _node->tag->attrCount(); j++)
+		{
+			if(_node->tag->getAttribute(j).nameLine == SNbeginLine)
+			{
+				_node->tag->getAttribute(j).nameLine += lineMovement;
+				_node->tag->getAttribute(j).nameCol += colMovement;
+				_node->tag->getAttribute(j).valueLine += lineMovement;
+				_node->tag->getAttribute(j).valueCol += colMovement;
+			}
+			else
+			{
+				_node->tag->getAttribute(j).nameLine += lineMovement;
+				_node->tag->getAttribute(j).valueLine += lineMovement;
+			}
+		}
+		_node = getNextNode(_node, b);
+	}
 }

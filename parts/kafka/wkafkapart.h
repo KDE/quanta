@@ -112,19 +112,67 @@ signals:
 	void newCursorPosition(int col, int row);
 
 private:
+	/** This function returns the special XML character (e.g. space, é,...)
+	  * from its encoded form (e.g. &nbsp;)
+	  * @return Returns the special character.
+	  */
+
 	QString getSpecialChar(QString encodedChar);
+	/** This function returns the XML-encoded character (e.g. &nbsp;)
+	  * from the XML special character (e.g. space, é,...)
+	  * @param encodeWhiteSpaces Specifies if it should encode the whitespaces
+	  * @return Returns the XML-encoded character.
+	  */
+
 	QString getEncodedChar(QString specialChar, bool encodeWhiteSpaces = true);
+	/** For debugging purpose. It prints the quanta internal tree to stdout */
+
+	void coutTree(Node *node, int indent);
+	/** This function returns the next Node after _node.
+	  * @param _node It is the Node from which we want the next Node.
+	  * @goingTowardsRootNode This boolean must be set to false at the
+	  * beginning and then the same boolean must be used when using
+	  * multiple times this function.
+	  * @return Returns the next Node.
+	  */
+
+	Node *getNextNode(Node *_node, bool &goingTowardsRootNode);
+	/** This function search the corresponding quanta Node to the kafka DOM::Node
+	  * @param _domNode The DOM::Node we seek its corresponding Node.
+	  * @return The Node corresponding to _domNode.
+	  */
+
+	Node *searchCorrespondingNode(DOM::Node _domNode);
+	/** Loads one kafka XML DOM::Node from a quanta XML Node
+	  * @param _node The Node we build a DOM::Node.
+	  */
+
+	void synchronizeXMLTag(Node* _node);
+	/** Loads one kafka Text DOM::Node from a quanta Text Node
+	 * @param _node The Node we build a DOM::Node.
+	 */
+
+	void synchronizeTextTag(Node* _node);
+	/** Fits the Nodes position when a change occurs in the kafka tree.
+	  * @param _startNode The Node where the update starts
+	  * @param colMovement The number of column that should be
+	  * added/retrieved from the column position
+	  * @param lineMovement The number of lines that should be
+	  * added/retrieved from the line position
+	  * @param colEnd The column position where the update should stop
+	  * @param lineEnd The line position where the update should stop
+	  */
+
+	void fitsNodesPosition(Node* _startNode, int colMovement,
+		int lineMovement = 0, int colEnd = -2, int lineEnd = -2);
 	QMap<QString, QString> specialChars;
 	QMap<QString, QString> encodedChars;
 	KafkaHTMLPart *_kafkaPart;
 	Document *_currentDoc;
 	Node *_rootNode;
-	void coutTree(Node *node, int indent);
+
 	bool _docLoaded;
-	void synchronizeXMLTag(Node* _node);
-	void synchronizeTextTag(Node* _node);
-	Node *getNextNode(Node *_node, bool &goingTowardsRootNode);
-	Node *searchCorrespondingNode(DOM::Node _domNode);
+
 };
 
 #endif
