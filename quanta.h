@@ -1,7 +1,7 @@
 /***************************************************************************
                           quanta.h  -  description
                              -------------------
-    begin                : Втр Май  9 13:29:57 EEST 2000
+    begin                : ÷?? ???  9 13:29:57 EEST 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
     email                : pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com
  ***************************************************************************/
@@ -83,6 +83,12 @@ class QuantaApp : public KMainWindow
     MessageOutput *getMessages() { return messageOutput; }
 
     void openLastFiles();
+    
+     /** from @see KXMLGUIBuilder, for tollbars in tabbar ( tags,... )
+     *
+     */
+    QWidget* createContainer( QWidget *parent, int index, const QDomElement &element, int &id );
+ 	
 
   protected:
   
@@ -102,6 +108,7 @@ class QuantaApp : public KMainWindow
     virtual bool queryExit();
     virtual void saveProperties(KConfig *_cfg);
     virtual void readProperties(KConfig *_cfg);
+    
 
   public slots:
     

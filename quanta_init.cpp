@@ -1,7 +1,7 @@
 /***************************************************************************
                           quanta.cpp  -  description
                              -------------------
-    begin                : Втр Май  9 13:29:57 EEST 2000
+    begin                : ÷?? ???  9 13:29:57 EEST 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
     email                : pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com
  ***************************************************************************/
@@ -107,34 +107,6 @@ QuantaApp::QuantaApp()
 
   initActions();
   createGUI( QString::null, false );
-
-  QListIterator<KToolBar> itT = toolBarIterator();
-  
-  int i=0;
-  
-  while ( itT.current() )
-  {
-    debug("*");
-    QString toolbarName((*itT)->name());
-    
-    if ( toolbarName.left(4) != "main" )
-    {
-      view->toolbarStack->addWidget( (*itT), i++ );
-    }
-    ++itT;
-  }
-  
-  view->toolbarStack->raiseWidget( 0 );
-  
-  QDomDocument dom = domDocument();
-  
-  QDomNodeList domchilds = dom.firstChild().childNodes();
-  
-  for ( unsigned t=0; t < domchilds.count(); t++ )
-  {
-    QDomElement de = domchilds.item(t).toElement();
-    debug( de.tagName() );
-  }
   
   initContextMenu();
   

@@ -1,7 +1,7 @@
 /***************************************************************************
                           quanta.cpp  -  description
                              -------------------
-    begin                : Втр Май  9 13:29:57 EEST 2000
+    begin                : ÷?? ???  9 13:29:57 EEST 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
     email                : pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com
  ***************************************************************************/
@@ -25,6 +25,7 @@
 #include <qlineedit.h>
 #include <qcheckbox.h>
 #include <qtextstream.h>
+#include <qtabbar.h>
 
 // include files for KDE
 #include <kiconloader.h>
@@ -79,6 +80,83 @@
 #include <kedittoolbar.h>
 #include <kaction.h>
 
+
+void QuantaApp::statusCallback(int id_)
+{
+  switch (id_)
+  {
+    case ID_FILE_NEW_WINDOW:
+         slotStatusHelpMsg(i18n("Opens a new application window"));
+         break;
+
+    case ID_FILE_NEW:
+         slotStatusHelpMsg(i18n("Creates a new document"));
+         break;
+
+    case ID_FILE_OPEN:
+         slotStatusHelpMsg(i18n("Opens an existing document"));
+         break;
+
+    case ID_FILE_OPEN_RECENT:
+         slotStatusHelpMsg(i18n("Opens a recently used file"));
+         break;
+
+    case ID_FILE_SAVE:
+         slotStatusHelpMsg(i18n("Saves the actual document"));
+         break;
+
+    case ID_FILE_SAVE_AS:
+         slotStatusHelpMsg(i18n("Saves the actual document as..."));
+         break;
+
+    case ID_FILE_CLOSE:
+         slotStatusHelpMsg(i18n("Closes the actual document"));
+         break;
+		case ID_FILE_NEXT:
+    			 slotStatusHelpMsg(i18n("Go to next file"));
+		     break;
+
+		case ID_FILE_PREV:
+    			 slotStatusHelpMsg(i18n("Go to previous file"));
+			   break;
+
+
+    case ID_FILE_PRINT:
+         slotStatusHelpMsg(i18n("Prints out the actual document"));
+         break;
+
+    case ID_FILE_QUIT:
+         slotStatusHelpMsg(i18n("Quits the application"));
+         break;
+
+    case ID_EDIT_CUT:
+         slotStatusHelpMsg(i18n("Cuts the selected section and puts it to the clipboard"));
+         break;
+
+    case ID_EDIT_COPY:
+         slotStatusHelpMsg(i18n("Copies the selected section to the clipboard"));
+         break;
+
+    case ID_EDIT_PASTE:
+         slotStatusHelpMsg(i18n("Pastes the clipboard contents to actual position"));
+         break;
+
+    case ID_VIEW_TOOLBAR:
+         slotStatusHelpMsg(i18n("Enables/disables the toolbar"));
+         break;
+
+    case ID_VIEW_STATUSBAR:
+         slotStatusHelpMsg(i18n("Enables/disables the statusbar"));
+         break;
+
+    default:
+         break;
+  }
+}
+
+/////////////////////////////////////////////////////////////////////
+// SLOT IMPLEMENTATION
+/////////////////////////////////////////////////////////////////////
 
 void QuantaApp::slotFileNewWindow()
 {
@@ -887,6 +965,9 @@ void QuantaApp::slotShowLeftPanel()
   KToggleAction *ta = (KToggleAction *) actionCollection()->action( "show_tree" );
 	bool stat = !ta->isChecked();
 
+	bool stat = viewMenu -> isItemChecked( ID_VIEW_TREE );
+#endif
+
 	if ( stat )
 	{
     vSplitPos = vSplit->getPos();
@@ -1123,3 +1204,29 @@ void QuantaApp::slotToolSyntaxCheck()
     p->start( KProcess::NotifyOnExit, KProcess::Stdout);
   }
 }
+
+    
+QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomElement &element, int &id )
+{
+
+#ifdef NEW_STUFF
+  QString tabname = element.attribute( "tabname", "" );
+  
+  if ( element.tagName().lower() == "toolbar" && !tabname.isEmpty() ) {
+    KToolBar *tb = new KToolBar(this);
+    view->toolbarStack->addWidget( tb, view->tabBar->insertTab( new QTab( i18n( tabname ))));
+    tb->->loadState( element );
+    return tb;
+  }
+  
+  else {
+    return KMainWindow::createContainer( parent, index, element, id );
+  }
+#else
+
+ return KMainWindow::createContainer( parent, index, element, id );
+  
+#endif
+
+}
+
