@@ -13,22 +13,22 @@ class QSocketNotifier;
 class PHP4Debugger : public QObject {
   Q_OBJECT
 
-public:  
+public:
   PHP4Debugger( QObject * parent=0, const char * name=0 );
   ~PHP4Debugger();
-  
+
   void init();
-  
+
 public slots:
   void activated(int);
-  void viewMessage(QString);
-  
+  void viewMessage(const QString&);
+
 signals:
-  void message(QString);
-  
+  void message(const QString&);
+
 private:
   Listener *listener;
-  QSocketNotifier *sn; 
+  QSocketNotifier *sn;
 };
 
 #endif

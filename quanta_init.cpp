@@ -66,7 +66,7 @@
 #include "quantadoc.h"
 #include "resource.h"
 #include "document.h"
-#include <kapplication.h> 
+#include <kapplication.h>
 #include <dcopclient.h>
 
 #include "project/project.h"
@@ -131,7 +131,7 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta"), DCOPObject("WindowManager
   // connect up signals from KXXsldbgPart
   connectDCOPSignal(0, 0, "debuggerPositionChangedQString,int)", "newDebuggerPosition(QString,int)", false );
   connectDCOPSignal(0, 0, "editorPositionChanged(QString,int,int)", "newCursorPosition(QString,int,int)", false );
-  connectDCOPSignal(0, 0, "openFile(QString,int,int)", "openFile(QString,int,int)", false); 
+  connectDCOPSignal(0, 0, "openFile(QString,int,int)", "openFile(QString,int,int)", false);
 }
 
 QuantaApp::~QuantaApp()
@@ -833,8 +833,8 @@ void QuantaApp::enablePhp4Debug(bool enable)
 {
   if (enable) {
     dbg4 = new PHP4Debugger(0L,0L);
-    connect( dbg4,          SIGNAL(message(QString)),
-             m_messageOutput, SLOT(php4Debug(QString)) );
+    connect( dbg4,          SIGNAL(message(const QString&)),
+             m_messageOutput, SLOT(php4Debug(const QString&)) );
     dbg4->init();
     debuggerStyle = "PHP4";
   } else delete dbg4;

@@ -81,7 +81,7 @@ void PHP4Debugger::activated(int)
   QObject::connect(sn,SIGNAL(activated(int)),this,SLOT(activated(int)));
 }
 
-void PHP4Debugger::viewMessage(QString mes)
+void PHP4Debugger::viewMessage(const QString& mes)
 {
   emit message(mes);
 }

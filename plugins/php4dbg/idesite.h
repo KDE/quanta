@@ -25,7 +25,7 @@ public:
   void print_location();
 
 signals:
-  void message(QString);
+  void message(const QString&);
 
 };
 
