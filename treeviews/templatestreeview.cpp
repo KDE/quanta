@@ -27,6 +27,7 @@
 #include <qlabel.h>
 
 // KDE includes
+#include <kapplication.h>
 #include <krun.h>
 #include <klocale.h>
 #include <kiconloader.h>

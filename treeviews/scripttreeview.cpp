@@ -13,6 +13,7 @@
  *                                                                         *
  ***************************************************************************/
 //kde includes
+#include <kapplication.h>
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -24,8 +25,6 @@
 #include <ktar.h>
 #include <ktempfile.h>
 #include <kurl.h>
-#include <kqapp.h>
-
 
 //qt includes
 #include <qdir.h>

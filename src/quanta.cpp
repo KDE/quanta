@@ -43,6 +43,7 @@
 #include <qptrlist.h>
 
 // include files for KDE
+#include <kapplication.h>
 #include <kaboutdata.h>
 #include <kbugreport.h>
 #include <kcolordialog.h>

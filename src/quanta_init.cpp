@@ -165,6 +165,24 @@ void QuantaInit::initQuanta()
   //m_quanta->KDockMainWindow::createGUI( QString::null, false /* conserveMemory */ );
   kdDebug(24000) << "Calling createGUI" << endl;
   m_quanta->createShellGUI(true);
+
+  addToolTreeView(m_quanta->fTab, i18n("Files"), UserIcon("ftab"), KDockWidget::DockLeft);
+  addToolTreeView(m_quanta->aTab, i18n("Attribute Editor"), UserIcon("tag_misc"), KDockWidget::DockRight);
+  addToolTreeView(ProjectTreeView::ref(), i18n("Project"), UserIcon("ptab"), KDockWidget::DockLeft);
+  addToolTreeView(TemplatesTreeView::ref(), i18n("Templates"), UserIcon("ttab"), KDockWidget::DockLeft);
+  addToolTreeView(m_quanta->dTab, i18n("Documentation"), BarIcon("contents"), KDockWidget::DockLeft);
+  addToolTreeView(StructTreeView::ref(), i18n("Document Structure"), BarIcon("view_sidetree"), KDockWidget::DockLeft);
+  addToolTreeView(m_quanta->scriptTab, i18n("Scripts"), BarIcon("run"), KDockWidget::DockLeft);
+  m_quanta->m_messageOutputView = addToolTreeView(m_quanta->m_messageOutput, i18n("Messages"), SmallIcon("openterm"), KDockWidget::DockBottom);
+  m_quanta->m_problemsOutputView = addToolTreeView(m_quanta->m_problemOutput, i18n("Problems"), SmallIcon("info"), KDockWidget::DockBottom);
+
+  m_config->setGroup  ("General Options");
+  QString layout = m_config->readEntry("Window layout", "Default");
+  int mdiMode = m_config->readNumEntry("MDI mode", -1);
+  if (mdiMode != -1 && layout != "Default")
+      m_quanta->readDockConfig(m_config); //FIXME: This causes the visible widget construction on startup, but is needed to restore the window layout...
+  qConfig.windowLayout = "Custom";
+
   m_quanta->menuBar()->insertItem(i18n("Plu&gins"), m_quanta->m_pluginInterface->pluginMenu(),
                                   -1, PLUGINS_MENU_PLACE);
 
@@ -369,26 +387,19 @@ void QuantaInit::initView()
 
 */
   m_quanta->fTab = new FilesTreeView(m_config,  m_quanta, "filestree");
-  addToolTreeView(m_quanta->fTab, i18n("Files"), UserIcon("ftab"), KDockWidget::DockLeft);
-
   m_quanta->aTab = new EnhancedTagAttributeTree(m_quanta, "TagAttributes");
-  addToolTreeView(m_quanta->aTab, i18n("Attribute Editor"), UserIcon("tag_misc"), KDockWidget::DockRight);
-
   pTab = ProjectTreeView::ref(m_quanta, "Project");
-  addToolTreeView(pTab, i18n("Project"), UserIcon("ptab"), KDockWidget::DockLeft);
-
   tTab = TemplatesTreeView::ref(m_quanta, "Templates");  // creates the treeview
-  addToolTreeView(tTab, i18n("Templates"), UserIcon("ttab"), KDockWidget::DockLeft);
-
   m_quanta->dTab = new DocTreeView(m_quanta, "Docs");
-  addToolTreeView(m_quanta->dTab, i18n("Documentation"), BarIcon("contents"), KDockWidget::DockLeft);
-
   StructTreeView *sTab = StructTreeView::ref(m_quanta ,"Struct");
-  addToolTreeView(sTab, i18n("Document Structure"), BarIcon("view_sidetree"), KDockWidget::DockLeft);
-
   m_quanta->scriptTab = new ScriptTreeView(m_quanta, "Scripts");
-  addToolTreeView(m_quanta->scriptTab, i18n("Scripts"), BarIcon("run"), KDockWidget::DockLeft);
 
+  m_quanta->m_messageOutput = new MessageOutput(m_quanta, "Messages");
+  m_quanta->m_messageOutput->setFocusPolicy(QWidget::NoFocus);
+  m_quanta->m_messageOutput->showMessage(i18n("Message Window...\n"));
+
+  m_quanta->m_problemOutput = new MessageOutput(m_quanta, "Problems");
+  m_quanta->m_problemOutput->setFocusPolicy(QWidget::NoFocus);
 
   m_quanta->m_htmlPart = new WHTMLPart(m_quanta, "rightHTML");
   m_quanta->m_htmlPart->view()->resize(0, 0);
@@ -398,17 +409,6 @@ void QuantaInit::initView()
   m_quanta->m_htmlPartDoc = new WHTMLPart(m_quanta, "docHTML");
   m_quanta->m_htmlPartDoc->view()->resize(0, 0);
   m_quanta->slotNewPart(m_quanta->m_htmlPartDoc, false);
-
-  m_quanta->m_messageOutput = new MessageOutput(m_quanta, "Messages");
-  m_quanta->m_messageOutputView = addToolTreeView(m_quanta->m_messageOutput, i18n("Messages"), SmallIcon("openterm"), KDockWidget::DockBottom);
-
-
-  m_quanta->m_messageOutput->setFocusPolicy(QWidget::NoFocus);
-  m_quanta->m_messageOutput->showMessage(i18n("Message Window...\n"));
-
-  m_quanta->m_problemOutput = new MessageOutput(m_quanta, "Problems");
-  m_quanta->m_problemOutput->setFocusPolicy(QWidget::NoFocus);
-  m_quanta->m_problemsOutputView = addToolTreeView(m_quanta->m_problemOutput, i18n("Problems"), SmallIcon("info"), KDockWidget::DockBottom);
 
   connect(m_quanta->fTab, SIGNAL(openFile(const KURL &)),
           m_quanta, SLOT(slotFileOpen(const KURL &)));
@@ -587,13 +587,6 @@ void QuantaInit::readOptions()
 
   Project::ref()->readConfig(m_config); // project
   SpellChecker::ref()->readConfig(m_config);
-
-  m_config->setGroup  ("General Options");
-  QString layout = m_config->readEntry("Window layout", "Default");
-  int mdiMode = m_config->readNumEntry("MDI mode", -1);
-  if (mdiMode != -1 && layout != "Default")
-      m_quanta->readDockConfig(m_config);
-  qConfig.windowLayout = "Custom";
 }
 
 void QuantaInit::openLastFiles()

@@ -25,6 +25,7 @@
 #include <qcursor.h>
 
 // include files for KDE
+#include <kapplication.h>
 #include <kconfig.h>
 #include <kurl.h>
 #include <kglobal.h>

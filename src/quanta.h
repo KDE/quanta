@@ -32,8 +32,8 @@
 #include <qptrlist.h>
 
 // include files for KDE
+#include <kdeversion.h>
 #include <kdockwidget.h>
-#include "kqapp.h"
 #include <kparts/browserextension.h>
 #include <kparts/dockmainwindow.h>
 
