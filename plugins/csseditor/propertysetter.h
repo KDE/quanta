@@ -23,10 +23,7 @@
 #include <kurlrequester.h>
 #include <qptrlist.h>
 #include "doubleeditors.h"
-
-
-
-class QComboBox;
+#include <qcombobox.h>
 class QLabel;
 class QLineEdit;
 class QSpinBox;
@@ -39,12 +36,33 @@ class lengthEditor;
 class specialSB;
 class timeEditor;
 
-
-
 /**
   *@author gulmini luciano
   */
 
+  
+class fontEditor : public QHBox {
+  Q_OBJECT
+
+  private:
+    QLineEdit *m_le;
+    //QLabel *m_label;
+    KPushButton *m_pb;
+     
+  public:
+    fontEditor(QWidget *parent, const char* name=0);
+    ~fontEditor();
+    KPushButton *button() const { return m_pb;}
+     
+  public slots:
+    void openFontChooser();
+     
+  signals:
+    void valueChanged(const QString&);   
+};
+  
+  
+  
 class multipleSpinBox : public QHBox{
   Q_OBJECT
    
@@ -63,10 +81,6 @@ class multipleSpinBox : public QHBox{
   signals:
     void valueChanged(const QString&);    
 };
-
- 
-//enum mode{ multi, single };
-//enum URIResourceType{ audio, image, mousePointer };
     
 class URIEditor : public QHBox {
   Q_OBJECT
@@ -129,11 +143,14 @@ class propertySetter : public QHBox  {
     timeEditor *m_te;
     angleEditor *m_ae;
     colorRequester *m_cr;
+    QComboBox *m_pcb;
     KPushButton *m_pb;  
+    fontEditor *m_ftE;
         
   public:
     propertySetter(QWidget *parent=0, const char *name=0);
     ~propertySetter();
+    void setFontEditor();
     void setComboBox();
     void setSpinBox(const QString& min="0", const QString& max="9999", const QString& s=QString::null);
     void setLineEdit();
@@ -147,6 +164,7 @@ class propertySetter : public QHBox  {
     void setTimeEditor();
     void setAngleEditor();
     void setColorRequester();
+    void setPredefinedColorListEditor();
     void reset();
     void addButton();
     QComboBox* ComboBox() const { return m_cb; }

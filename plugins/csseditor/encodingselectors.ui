@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>encodingSelectorS</class>
 <widget class="QDialog">
     <property name="name">
@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>228</width>
-            <height>107</height>
+            <height>109</height>
         </rect>
     </property>
     <property name="caption">
@@ -44,31 +44,6 @@
                             </property>
                         </widget>
                         <widget class="QComboBox">
-                            <item>
-                                <property name="text">
-                                    <string>ISO-8859-1</string>
-                                </property>
-                            </item>
-                            <item>
-                                <property name="text">
-                                    <string>ISO-8859-5</string>
-                                </property>
-                            </item>
-                            <item>
-                                <property name="text">
-                                    <string>SHIFT_JIS</string>
-                                </property>
-                            </item>
-                            <item>
-                                <property name="text">
-                                    <string>EUC-JP</string>
-                                </property>
-                            </item>
-                            <item>
-                                <property name="text">
-                                    <string>UTF-8</string>
-                                </property>
-                            </item>
                             <property name="name">
                                 <cstring>cbEncoding</cstring>
                             </property>

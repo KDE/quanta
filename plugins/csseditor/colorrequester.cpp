@@ -34,7 +34,8 @@ void colorRequester::init()
      d->edit = new KLineEdit( this, "line edit" );
 
      myButton = new KPushButton( this, "kfile button");
-     QIconSet iconSet = SmallIconSet(QString::fromLatin1("xpaint"));
+     //QIconSet iconSet = SmallIconSet(QString::fromLatin1("xpaint"));
+     QIconSet iconSet = SmallIconSet(QString::fromLatin1("colorize"));
      QPixmap pixMap = iconSet.pixmap( QIconSet::Small, QIconSet::Normal );
      myButton->setIconSet( iconSet );
      myButton->setFixedSize( pixMap.width()+8, pixMap.height()+8 );

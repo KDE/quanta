@@ -4,7 +4,7 @@
   <element name="before"/>
   <element name="first-child"/>
   <element name="first-letter"/>
-  <element name="first-line"/>
+  <element name="first-line" appliesTo="p"/>
   <class name="active"/>
   <class name="focus"/>
   <class name="hover"/>

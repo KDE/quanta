@@ -18,13 +18,28 @@
 
 
 #include "encodingselector.h"
+#include <kglobal.h>
+#include <kcharsets.h> 
+#include <qtextcodec.h>
 
 /**
   *@author gulmini luciano
   */
 
 encodingSelector::encodingSelector(QWidget *parent, const char* name) :  encodingSelectorS(parent,name){
+  QStringList encodings (KGlobal::charsets()->availableEncodingNames());
+  int insert = 0;
+  for (uint i=0; i < encodings.count(); i++) {
+    bool found = false;
+    QTextCodec *codecForEnc = KGlobal::charsets()->codecForName(encodings[i], found);
+ 
+    if (found){
+      cbEncoding->insertItem (encodings[i]);
+      insert++;
+    }
+  }
 }
+
 encodingSelector::~encodingSelector(){}
 
  

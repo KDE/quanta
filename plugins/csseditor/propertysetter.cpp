@@ -32,10 +32,15 @@
 #include "specialsb.h"
 #include "csseditor_globals.h"
 #include <klocale.h>
+#include <qfontdatabase.h> 
+#include <qtooltip.h>
 
 #include "../framewizard/fwglobal.h"
 #include "../../resource.h"
 #include "../../quanta.h"
+#include "fontfamilychooser.h"
+
+#include <kdebug.h>
 
 
 propertySetter::propertySetter(QWidget *parent, const char *name ) : QHBox(parent,name) {
@@ -54,6 +59,8 @@ propertySetter::propertySetter(QWidget *parent, const char *name ) : QHBox(paren
   m_ae = 0L;
   m_cr = 0L;
   m_pb = 0L;
+  m_pcb = 0L;
+  m_ftE = 0L;
   m_list.setAutoDelete(true);
   setSpacing( KDialog::spacingHint() );
 }
@@ -70,6 +77,13 @@ void propertySetter::reset(){
     m_pb=0L;
    }
   m_ind=0;
+}
+
+void propertySetter::setFontEditor()
+{
+  m_ftE = new fontEditor(this);
+  connect(m_ftE, SIGNAL(valueChanged(const QString&)), this, SIGNAL(valueChanged(const QString&)));
+  m_list.append(m_ftE);
 }
 
 void propertySetter::setComboBox()
@@ -157,6 +171,14 @@ void propertySetter::setColorRequester()
   m_cr = new colorRequester(this);
   connect(m_cr, SIGNAL(textChanged(const QString&)), this, SIGNAL(valueChanged(const QString&)));
   m_list.append(m_cr);
+}
+
+void propertySetter::setPredefinedColorListEditor()
+{
+  m_pcb = new QComboBox(this);
+  m_pcb->insertStringList(QStringList::split(",",HTMLColors));
+  connect(m_pcb, SIGNAL(activated(const QString&)), this, SIGNAL(valueChanged(const QString&)));
+  m_list.append(m_pcb);
 }
 
 void propertySetter::Show(){
@@ -291,5 +313,40 @@ void multipleSpinBox::valueChangedSlot(const QString& s) {
   for ( sb = SBList.first(); sb; sb = SBList.next() )
     emit valueChanged(s);
 }
+
+fontEditor::fontEditor(QWidget *parent, const char* name) : QHBox(parent,name)
+{
+  //m_label = new QLabel(this);
+  m_le = new QLineEdit(this);
+  m_pb = new KPushButton(this);
+  QIconSet iconSet =  SmallIconSet(QString::fromLatin1("fonts"));
+  QPixmap pixMap = iconSet.pixmap( QIconSet::Small, QIconSet::Normal );
+  QToolTip::add(m_pb, i18n("Open font family chooser"));
+
+  m_pb->setIconSet(iconSet);
+  m_pb->setFixedSize( pixMap.width()+8, pixMap.height()+8 );
+  setSpacing( KDialog::spacingHint() );
+
+  connect(m_le, SIGNAL(textChanged ( const QString & )), this, SIGNAL( valueChanged( const QString& ) ) );
+  connect(m_pb, SIGNAL(clicked()), this, SLOT(openFontChooser()));
+}
+
+fontEditor::~fontEditor(){
+  //delete m_label;
+  delete m_le;
+  delete m_pb;
+}
+
+void fontEditor::openFontChooser(){
+  fontFamilyChooser *dlg = new fontFamilyChooser( this );
+  
+  if( dlg->exec() == QDialog::Accepted ){
+    emit valueChanged( dlg->fontList().join(", "));
+  }
+  delete dlg;
+}
+
+
+
 
 #include "propertysetter.moc"

@@ -17,11 +17,6 @@
 #ifndef CSSEDITOR_H
 #define CSSEDITOR_H
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#include <kapplication.h>
 #include <qwidget.h>
 #include "csseditors.h"
 #include <qstringlist.h>
@@ -78,9 +73,8 @@ class CSSEditor : public CSSEditorS
                  m_InlineStyleContent,
                  m_testFileName,
                  m_initialPreviewText;            
-            //sourceFileName;
-    QStringList SHFormList;        
-
+            //sourceFileName;   
+   
     void Connect();
     void appendSub(QDomNodeList, myCheckListItem *);
     void buildListView(QDomNodeList, QListView *);
@@ -98,7 +92,8 @@ class CSSEditor : public CSSEditorS
     void setMiniEditors(QListViewItem*);
     
   public:
-    CSSEditor(QWidget* parent=0, const char *name=0){}
+    
+    CSSEditor(QWidget* parent=0, const char *name=0){};
     CSSEditor( QListViewItem * i, QWidget* parent=0, const char *name=0);
     CSSEditor( QString s, QWidget* parent=0, const char *name=0);
     ~CSSEditor(); 

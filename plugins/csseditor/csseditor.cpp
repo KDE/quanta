@@ -252,27 +252,12 @@ void CSSEditor::initialize()
     stream << m_initialPreviewText;
   }
   m_testFile->close();
-  
-  SHFormList.append("cue"); 
-  SHFormList.append("pause");
-  SHFormList.append("font");
-  SHFormList.append("background");
-  SHFormList.append("border");
-  SHFormList.append("border-top");
-  SHFormList.append("border-bottom");
-  SHFormList.append("border-left");
-  SHFormList.append("border-right");
-  SHFormList.append("border-color");
-  SHFormList.append("border-style");
-  SHFormList.append("border-width");
-  SHFormList.append("outline");
-  SHFormList.append("list-style");
-   
+     
   for ( QStringList::Iterator it = props.begin(); it != props.end(); ++it ) {
        const QString propertyName((*it).section(":",0,0).stripWhiteSpace());
        const QString propertyValue((*it).section(":",1,1));
       
-      if(SHFormList.contains(propertyName)==0) {
+      if( ShorthandFormer::SHFormList().contains(propertyName)==0 ) {
          temp+=( propertyName + " : " + propertyValue +";\n\t");
          addAndSetPropertyOn(propertyName,propertyValue);
       }       
@@ -434,13 +419,22 @@ void CSSEditor::setMiniEditors(QListViewItem* i)
             if( typeName == "color") {
               m_ps->setColorRequester();
             }
+            
+            if( typeName == "predefinedColorList") {
+              m_ps->setPredefinedColorListEditor();
+            }
+            
+            if( typeName == "fontDialog" ){
+              m_ps->setFontEditor();
+            }
               
           }
 
-          if(curr.firstChild().toElement().attribute("type") == "edit"){
+          /*if(curr.firstChild().toElement().attribute("type") == "edit"){
             m_ps->ComboBox()->setEditable(true);
             m_ps->ComboBox()->lineEdit()->clear();
-              }
+             kdDebug(24000)<<"\n\n\nEDIT2"<<endl;
+              }*/
             }
             else
           if(curr.tagName()=="doubleSelectable")
@@ -456,7 +450,7 @@ void CSSEditor::setMiniEditors(QListViewItem* i)
               for(k=0; k<dxValues.length(); k++){
                 m_ps->DoubleComboBoxEditor()->getCbDx()->insertItem(dxValues.item(k).toElement().attribute("name"));
               }            
-            }
+            }            
         }
        m_ps->addButton();
        

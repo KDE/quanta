@@ -31,48 +31,6 @@ ShorthandFormer::ShorthandFormer(){}
 ShorthandFormer::ShorthandFormer( QMap<QString,QString> m)
 {
   m_properties = m;
-  cue_after = QString::null;
-  cue_before = QString::null;
-  pause_before = QString::null;
-  pause_after = QString::null;
-  background_color = QString::null;
-  background_image = QString::null;
-  background_repeat = QString::null;
-  background_attachment = QString::null;
-  background_position = QString::null;
-  border_top_style = QString::null;
-  border_top_color = QString::null;
-  border_top_width = QString::null;
-  border_left_style = QString::null;
-  border_left_color = QString::null;
-  border_left_width = QString::null;
-  border_right_style = QString::null;
-  border_right_color = QString::null;
-  border_right_width = QString::null;
-  border_bottom_style = QString::null;
-  border_bottom_color = QString::null;
-  border_bottom_width = QString::null;
-  outline_style = QString::null;
-  outline_color = QString::null;
-  outline_width = QString::null;
-  list_style_type = QString::null;
-  list_style_image = QString::null;
-  list_style_position = QString::null;
-  font_style = QString::null;
-  font_variant = QString::null;
-  font_weight = QString::null;
-  font_size = QString::null;
-  line_height = QString::null;
-  font_family = QString::null;
-  margin_top = QString::null;
-  margin_bottom = QString::null;
-  margin_left = QString::null;
-  margin_right = QString::null;
-  padding_top = QString::null;
-  padding_bottom = QString::null;
-  padding_left = QString::null;
-  padding_right = QString::null;
-  
    if(m_properties.contains("cue-after")){
                       cue_after= m_properties["cue-after"];
                       m_properties.remove("cue-after");
@@ -246,19 +204,17 @@ ShorthandFormer::~ShorthandFormer()
 
 QString ShorthandFormer::compress()
 {                             
-  QString props(QString::null);   
+  QString props;   
   
-   props += compressCueProp(); 
-   props += compressPauseProp(); 
-   props += compressBackgroundProp();
-   props += compressFontProp();
-   props += compressPaddingProp();    
-   props += compressMarginProp();  
-   props += compressOutlineProp();
-   props += compressListStyleProp();
-   props += compressBorderProp();
-
- 
+  props += compressCueProp(); 
+  props += compressPauseProp(); 
+  props += compressBackgroundProp();
+  props += compressFontProp();
+  props += compressPaddingProp();    
+  props += compressMarginProp();  
+  props += compressOutlineProp();
+  props += compressListStyleProp();
+  props += compressBorderProp();
                                        
   QMap<QString,QString>::Iterator it;             
   for ( it = m_properties.begin(); it != m_properties.end(); ++it )           
@@ -269,12 +225,11 @@ QString ShorthandFormer::compress()
 }
 
 QString ShorthandFormer::compressBorderProp(){
-  QString props(QString::null);
+  QString props;
   
   bool allColorSidesSet = false,
-         allStyleSidesSet = false,
-         allWidthSidesSet = false;
-     
+       allStyleSidesSet = false,
+       allWidthSidesSet = false;    
    
   if(!border_left_color.isEmpty())
      if( ( border_left_color == border_top_color ) && ( border_top_color == border_right_color ) && ( border_right_color == border_bottom_color ) )
@@ -345,7 +300,7 @@ QString ShorthandFormer::compressBorderWidthProp(){
 
 QString ShorthandFormer::compressBorderColorProp(){
 //because the default value of color property is browser dependant, this method doesn't compress the color value
-  QString props(QString::null);
+  QString props;
   if( !border_top_color.isEmpty() )
     props += ("border-top-color : " + border_top_color +"; ");
   if( !border_right_color.isEmpty() )
@@ -358,9 +313,9 @@ QString ShorthandFormer::compressBorderColorProp(){
 }
 
 QString ShorthandFormer::compressFontProp(){
-  QString fontProp(QString::null),
-               props(QString::null);
-  bool appendLineHeight = false;  
+  QString fontProp,
+               props;
+  //bool appendLineHeight = false;  
   
   if( font_style.isEmpty() && font_variant.isEmpty() && font_weight.isEmpty() && font_size.isEmpty() && font_family.isEmpty() ) { 
     if( !line_height.isEmpty() )
@@ -373,20 +328,25 @@ QString ShorthandFormer::compressFontProp(){
        fontProp += ( " " + font_variant);
      if( !font_weight.isEmpty() )
        fontProp += ( " " + font_weight); 
-     if( !font_family.isEmpty() ) 
-       fontProp += ( " " + font_family);
      if( !font_size.isEmpty() ){
        fontProp += ( " " + font_size);
        if( !line_height.isEmpty() ) 
          fontProp += ( "/" + line_height.stripWhiteSpace() );      
      } 
-     else 
-        if( !line_height.isEmpty() )
-          appendLineHeight = true;         
+     else {
+       fontProp += ( " medium");
+       /*if( !line_height.isEmpty() )
+          appendLineHeight = true;  */
+       if( !line_height.isEmpty() ) 
+         fontProp += ( "/" + line_height.stripWhiteSpace() );    
+     }
+        
+     if( !font_family.isEmpty() ) 
+       fontProp += ( " " + font_family);            
    if( !fontProp.isEmpty() )
     props += ( "font :" + fontProp + "; ");
-   if(appendLineHeight) 
-    props += ( "line-height : " + line_height + "; ");
+  /* if(appendLineHeight) 
+    props += ( "line-height : " + line_height + "; ");*/
   }  
    return props; 
 }
@@ -400,7 +360,7 @@ QString ShorthandFormer::compressPauseProp(){
 }   
 
 QString ShorthandFormer::compressBackgroundProp(){
-  QString backgroundProp(QString::null);
+  QString backgroundProp;
   if( !background_color.isEmpty() ) 
     backgroundProp += (" " + background_color );
   if( !background_image.isEmpty() )
@@ -429,11 +389,11 @@ QString ShorthandFormer::compressOutlineProp(){
   return compressImplementation3("outline", outline_color, outline_style, outline_width);
 }
 QString ShorthandFormer::compressListStyleProp(){
-  return compressImplementation3("list-type", list_style_type, list_style_image, list_style_position);
+  return compressImplementation3("list-style", list_style_type, list_style_image, list_style_position);
 }
 
 QString ShorthandFormer::compressImplementation3( QString prop, QString p1, QString p2, QString p3){
-QString props(QString::null);
+QString props;
   if( !p1.isEmpty() ) 
     props += (" " + p1 );
   if( !p2.isEmpty() )
@@ -446,7 +406,7 @@ QString props(QString::null);
 }
 
 QString ShorthandFormer::compressImplementation2( QString prop, QString after, QString before, QString defValue){
-  QString props(QString::null);                  
+  QString props;                  
   if(after == before){
     if(!after.isEmpty())
       props+=( prop + " : " + after + "; ");
@@ -465,7 +425,7 @@ QString ShorthandFormer::compressImplementation2( QString prop, QString after, Q
 
 QString ShorthandFormer::compressImplementation( QString prop, QString t, QString b, QString r, QString l, QString defValue){
 unsigned int boxSide = 0;
- QString props(QString::null), 
+ QString props, 
               top(t.stripWhiteSpace()),
               bottom(b.stripWhiteSpace()),
               left(l.stripWhiteSpace()),
@@ -626,36 +586,54 @@ unsigned int boxSide = 0;
 QMap<QString,QString> ShorthandFormer::expand( QString propertyName, QString propertyValue ){
   CSSSHPropertyParser parser(propertyValue);
   QStringList foundValues = parser.parse();
-  
+   
   if( propertyName == "cue" ) 
-    return expandCueProp(foundValues);
+       return expandCueProp(foundValues);
+  else
   if( propertyName == "pause")
-    return expandPauseProp(foundValues);  
+       return expandPauseProp(foundValues);
+  else  
   if( propertyName == "background")
-    return expandBackgroundProp(foundValues);   
+       return expandBackgroundProp(foundValues);
+  else   
   if( propertyName == "border-color")
-    return expandBox("color", foundValues);
+       return expandBox("color", foundValues);
+  else
   if( propertyName == "border-style")
-    return expandBox("style", foundValues);
+       return expandBox("style", foundValues);
+  else
   if( propertyName == "border-width")
-    return expandBox("width", foundValues);  
+       return expandBox("width", foundValues);  
+  else
   if( propertyName == "font")
-    return  expandFontProp(foundValues);
+       return  expandFontProp(foundValues);
+  else
   if( propertyName == "outline")
-    return  expandOutlineProp(foundValues);
+       return  expandOutlineProp(foundValues);
+  else
   if( propertyName == "list-style")
-    return  expandListstyleProp(foundValues);
+       return  expandListstyleProp(foundValues);
+  else
   if( propertyName == "border-bottom")
-    return  expandBoxSide("bottom",foundValues);
+       return  expandBoxSide("bottom",foundValues);
+  else
   if( propertyName == "border-top")
-    return  expandBoxSide("top",foundValues);
+       return  expandBoxSide("top",foundValues);
+  else
   if( propertyName == "border-left")
-    return  expandBoxSide("left",foundValues);
+       return  expandBoxSide("left",foundValues);
+  else
   if( propertyName == "border-right")
-    return  expandBoxSide("right",foundValues);  
+       return  expandBoxSide("right",foundValues); 
+  else
   if( propertyName == "border")
-    return  expandBorderProp(foundValues);   
-  
+       return  expandBorderProp(foundValues); 
+  else
+  if( propertyName == "padding")
+       return  expandPaddingProp(foundValues); 
+  else
+  if( propertyName == "margin")
+       return  expandMarginProp(foundValues);  
 }
 
 QMap<QString,QString> ShorthandFormer::expandCueProp(QStringList l){
@@ -665,7 +643,6 @@ QMap<QString,QString> ShorthandFormer::expandCueProp(QStringList l){
 QMap<QString,QString> ShorthandFormer::expandPauseProp(QStringList l){
   return expandImplementation("pause",l);
 }
-
 
 QMap<QString,QString>  ShorthandFormer::expandImplementation(QString propertyName, QStringList l){
   QMap<QString,QString> expandedProps;
@@ -681,7 +658,6 @@ QMap<QString,QString>  ShorthandFormer::expandImplementation(QString propertyNam
          return expandedProps;
        } 
 }
-
 
 QMap<QString,QString>  ShorthandFormer::expandBackgroundProp(QStringList l){
   QMap<QString,QString> expandedProps;       
@@ -701,26 +677,26 @@ QMap<QString,QString>  ShorthandFormer::expandBackgroundProp(QStringList l){
 
     while (  it != l.end() ) {  
       if( (*it).contains("url(") || ((*it).stripWhiteSpace()) == "none" || ((*it).stripWhiteSpace()) == "inherit" ){
-        expandedProps["background-image"] = ((*it));
+        expandedProps["background-image"] = (*it);
       }
       else
       if( ((*it).stripWhiteSpace()) == "repeat" || ((*it).stripWhiteSpace()) == "repeat-x" || ((*it).stripWhiteSpace()) == "repeat-y" || ((*it).stripWhiteSpace()) == "no-repeat" || ((*it).stripWhiteSpace()) == "inherit" ) {
-        expandedProps["background-repeat"] = ((*it));
+        expandedProps["background-repeat"] = (*it);
       }
       else
       if( ((*it).stripWhiteSpace()) == "scroll" || ((*it).stripWhiteSpace()) == "fixed" || ((*it).stripWhiteSpace()) == "inherit"){
-        expandedProps["background-attachment"] = ((*it));
+        expandedProps["background-attachment"] = (*it);
       }
       else
       if( ((*it).stripWhiteSpace()) == "top" || ((*it).stripWhiteSpace()) == "center" || ((*it).stripWhiteSpace()) == "bottom" || ((*it).stripWhiteSpace()) == "left" || ((*it).stripWhiteSpace()) == "right" || (*it).contains(percentagePattern) || (*it).contains(lengthPattern) || ((*it).stripWhiteSpace()) == "inherit"){
         if( expandedProps.contains("background-position") )
           expandedProps["background-position"] = ( expandedProps["background-position"] + " " + ((*it)) );
         else    
-          expandedProps["background-position"] = ((*it));
+          expandedProps["background-position"] = (*it);
       }
       else
       if( (*it).contains(colorPattern) || HTMLColorList.contains((*it))!=0 || ((*it).stripWhiteSpace()) == "transparent" || ((*it).stripWhiteSpace()) == "inherit" ){
-        expandedProps["background-color"] = ((*it));
+        expandedProps["background-color"] = (*it);
       }  
       ++it;  
     }     
@@ -728,29 +704,30 @@ QMap<QString,QString>  ShorthandFormer::expandBackgroundProp(QStringList l){
   return expandedProps;
 }
 
-
 QMap<QString,QString>  ShorthandFormer::expandBox(QString subPropName, QStringList l){
-    QMap<QString,QString> expandedProps;       
+    
+    QMap<QString,QString> expandedProps;  
+    expandedProps["border-top-" + subPropName] = l[0];     
   switch(l.count()){
-  case 1 : expandedProps["border-top-" + subPropName] = l[0];
+  case 1 : 
                 expandedProps["border-right-" + subPropName] = l[0];
                 expandedProps["border-bottom-" + subPropName] = l[0];
                 expandedProps["border-left-" + subPropName] = l[0];
                 break;
-  case 2 : expandedProps["border-top-" + subPropName] = l[0];
+  case 2 : 
                 expandedProps["border-right-" + subPropName] = l[1];
                 expandedProps["border-bottom-" + subPropName] = l[0];
                 expandedProps["border-left-" + subPropName] = l[1];
                 break;
- case 3 : expandedProps["border-top-" + subPropName] = l[0];
+ case 3 : 
                 expandedProps["border-right-" + subPropName] = l[1];
                 expandedProps["border-bottom-" + subPropName] = l[2];
                 expandedProps["border-left-" + subPropName] = l[1];
                 break;
- case 4 : expandedProps["border-top-" + subPropName] = l[0];
+ case 4 : 
                 expandedProps["border-right-" + subPropName] = l[1];
                 expandedProps["border-bottom-" + subPropName] = l[2];
-                expandedProps["border-left-" + subPropName] = l[4];
+                expandedProps["border-left-" + subPropName] = l[3];
                 break;
    default:break;               
   }
@@ -777,26 +754,26 @@ QMap<QString,QString>  ShorthandFormer::expandFontProp(QStringList l){
    QStringList::Iterator it = l.begin();
     while (  it != l.end() ) { 
       if( ((*it).stripWhiteSpace()) == "oblique" || ((*it).stripWhiteSpace()) == "italic" || ((*it).stripWhiteSpace()) == "normal" || ((*it).stripWhiteSpace()) == "inherit" ){
-        expandedProps["font-style"] = ((*it));
+        expandedProps["font-style"] = (*it);
       }       
       else
       if( ((*it).stripWhiteSpace()) == "normal" || ((*it).stripWhiteSpace()) == "small-caps" || ((*it).stripWhiteSpace()) == "inherit"){
-          expandedProps["font-variant"] = ((*it)) ;
+          expandedProps["font-variant"] = (*it) ;
       }      
       else
       if( ((*it).stripWhiteSpace()) == "900" || ((*it).stripWhiteSpace()) == "800" || ((*it).stripWhiteSpace()) == "700" || ((*it).stripWhiteSpace()) == "600" || ((*it).stripWhiteSpace()) == "500" || ((*it).stripWhiteSpace()) == "400" || ((*it).stripWhiteSpace()) == "300" || ((*it).stripWhiteSpace()) == "200" || ((*it).stripWhiteSpace()) == "100" || ((*it).stripWhiteSpace()) == "lighter" || ((*it).stripWhiteSpace()) == "bolder" || ((*it).stripWhiteSpace()) == "normal" || ((*it).stripWhiteSpace()) == "bold" || ((*it).stripWhiteSpace()) == "inherit"){
-        expandedProps["font-weight"] = ((*it));
+        expandedProps["font-weight"] = (*it);
       }
       else
       if( ((*it).stripWhiteSpace()) == "smaller" || ((*it).stripWhiteSpace()) == "larger" || ((*it).stripWhiteSpace()) == "xx-large" || ((*it).stripWhiteSpace()) == "x-large" || ((*it).stripWhiteSpace()) == "large" || ((*it).stripWhiteSpace()) == "medium" || ((*it).stripWhiteSpace()) == "small" || ((*it).stripWhiteSpace()) == "x-small" || ((*it).stripWhiteSpace()) == "xx-small" || ((*it).stripWhiteSpace()) == "inherit" ){
-        expandedProps["font-size"] = ((*it));
+        expandedProps["font-size"] = (*it);
       }
       else
       if( (*it).contains(percentagePattern) || (*it).contains(numberPattern) || (*it).contains(lengthPattern) || (*it).stripWhiteSpace() == "/normal" || (*it).stripWhiteSpace() == "/inherit" ) {
         expandedProps["line-height"] = ((*it).remove('/'));
       }
       else
-        expandedProps["font-family"] = ((*it));
+        expandedProps["font-family"] = (*it);
       ++it;  
     }  
   return expandedProps;
@@ -808,15 +785,15 @@ QMap<QString,QString> ShorthandFormer::expandListstyleProp( QStringList l){
   QStringList::Iterator it = l.begin();
      while (  it != l.end() ) { 
       if( (*it).contains("url(") || ((*it).stripWhiteSpace()) == "none" || ((*it).stripWhiteSpace()) == "inherit" ){
-        expandedProps["list-style-image"] = ((*it));
+        expandedProps["list-style-image"] = (*it);
       }       
       else
       if( ((*it).stripWhiteSpace()) == "disc" || ((*it).stripWhiteSpace()) == "circle" || ((*it).stripWhiteSpace()) == "square" || ((*it).stripWhiteSpace()) == "decimal" || ((*it).stripWhiteSpace()) == "decimal-leading-zero" || ((*it).stripWhiteSpace()) == "lower-roman" || ((*it).stripWhiteSpace()) == "upper-roman" || ((*it).stripWhiteSpace()) == "lower-greek" || ((*it).stripWhiteSpace()) == "lower-alpha" || ((*it).stripWhiteSpace()) == "lower-latin" || ((*it).stripWhiteSpace()) == "upper-alpha" || ((*it).stripWhiteSpace()) == "upper-latin" || ((*it).stripWhiteSpace()) == "hebrew" || ((*it).stripWhiteSpace()) == "armenian" || ((*it).stripWhiteSpace()) == "georgian" || ((*it).stripWhiteSpace()) == "cjk-ideographic" || ((*it).stripWhiteSpace()) == "hiragana" || ((*it).stripWhiteSpace()) == "katakana" || ((*it).stripWhiteSpace()) == "hiragana-iroha" || ((*it).stripWhiteSpace()) == "katakana-iroha" || ((*it).stripWhiteSpace()) == "none" || ((*it).stripWhiteSpace()) == "inherit"){
-          expandedProps["list-style-type"] = ((*it)) ;
+          expandedProps["list-style-type"] = (*it) ;
       }      
       else
       if( ((*it).stripWhiteSpace()) == "inside" || ((*it).stripWhiteSpace()) == "outside" || ((*it).stripWhiteSpace()) == "inherit"){
-        expandedProps["list-style-position"] = ((*it));
+        expandedProps["list-style-position"] = (*it);
       }
       ++it;  
     }  
@@ -840,15 +817,15 @@ QMap<QString,QString>  ShorthandFormer::expandOutlineProp( QStringList l){
       ((*it).stripWhiteSpace()) == "inset" ||
       ((*it).stripWhiteSpace()) == "outset" ||    
       ((*it).stripWhiteSpace()) == "inherit" ){
-        expandedProps["outline-style"] = ((*it));
+        expandedProps["outline-style"] = (*it);
       }       
       else
       if(  (*it).contains(colorPattern) || HTMLColorList.contains((*it))!=0 || ((*it).stripWhiteSpace()) == "invert" || ((*it).stripWhiteSpace()) == "inherit"){
-          expandedProps["outline-color"] = ((*it)) ;
+          expandedProps["outline-color"] = (*it) ;
       }      
       else
       if( (*it).contains(lengthPattern) || ((*it).stripWhiteSpace()) == "thin" || ((*it).stripWhiteSpace()) == "medium" || ((*it).stripWhiteSpace()) == "thick" || ((*it).stripWhiteSpace()) == "inherit"){
-        expandedProps["outline-width"] = ((*it));
+        expandedProps["outline-width"] = (*it);
       }
       ++it;  
     }  
@@ -872,15 +849,15 @@ QMap<QString,QString>  ShorthandFormer::expandBoxSide(QString subPropName, QStri
       ((*it).stripWhiteSpace()) == "inset" ||
       ((*it).stripWhiteSpace()) == "outset" ||    
       ((*it).stripWhiteSpace()) == "inherit" ){
-        expandedProps[subPropName + "-style"] = ((*it));
+        expandedProps[subPropName + "-style"] = (*it);
       }       
       else
       if(  (*it).contains(colorPattern) || HTMLColorList.contains((*it))!=0 || ((*it).stripWhiteSpace()) == "transparent" || ((*it).stripWhiteSpace()) == "inherit"){
-          expandedProps[subPropName + "-color"] = ((*it)) ;
+          expandedProps[subPropName + "-color"] = (*it) ;
       }      
       else
       if( (*it).contains(lengthPattern) || ((*it).stripWhiteSpace()) == "thin" || ((*it).stripWhiteSpace()) == "medium" || ((*it).stripWhiteSpace()) == "thick" || ((*it).stripWhiteSpace()) == "inherit"){
-        expandedProps[subPropName + "-width"] = ((*it));
+        expandedProps[subPropName + "-width"] = (*it);
       }
       ++it;  
     }  
@@ -904,28 +881,85 @@ QMap<QString,QString>  ShorthandFormer::expandBorderProp(QStringList l){
       ((*it).stripWhiteSpace()) == "inset" ||
       ((*it).stripWhiteSpace()) == "outset" ||    
       ((*it).stripWhiteSpace()) == "inherit" ){
-        expandedProps["border-top-style"] = ((*it));
-        expandedProps["border-left-style"] = ((*it));
-        expandedProps["border-right-style"] = ((*it));
-        expandedProps["border-bottom-style"] = ((*it));
+        expandedProps["border-top-style"] = (*it);
+        expandedProps["border-left-style"] = (*it);
+        expandedProps["border-right-style"] = (*it);
+        expandedProps["border-bottom-style"] = (*it);
       }       
       else
       if(  (*it).contains(colorPattern) || HTMLColorList.contains((*it))!=0 || ((*it).stripWhiteSpace()) == "transparent" || ((*it).stripWhiteSpace()) == "inherit"){
-          expandedProps["border-top-color"] = ((*it));
-          expandedProps["border-left-color"] = ((*it));
-          expandedProps["border-right-color"] = ((*it));
-          expandedProps["border-bottom-color"] = ((*it));
+          expandedProps["border-top-color"] = (*it);
+          expandedProps["border-left-color"] = (*it);
+          expandedProps["border-right-color"] = (*it);
+          expandedProps["border-bottom-color"] = (*it);
       }      
       else
       if( (*it).contains(lengthPattern) || ((*it).stripWhiteSpace()) == "thin" || ((*it).stripWhiteSpace()) == "medium" || ((*it).stripWhiteSpace()) == "thick" || ((*it).stripWhiteSpace()) == "inherit"){
-        expandedProps["border-top-width"] = ((*it));
-        expandedProps["border-left-width"] = ((*it));
-        expandedProps["border-right-width"] = ((*it));
-        expandedProps["border-bottom-width"] = ((*it));
+        expandedProps["border-top-width"] = (*it);
+        expandedProps["border-left-width"] = (*it);
+        expandedProps["border-right-width"] = (*it);
+        expandedProps["border-bottom-width"] = (*it);
       }
       ++it;  
     }  
   return expandedProps;
 }
 
+QMap<QString,QString> ShorthandFormer::expandImplementation2(QString propertyName, QStringList l){
+  QMap<QString,QString> expandedProps; 
+  expandedProps[ propertyName + "-top" ] = l[0];     
+  switch(l.count()){
+  case 1 : 
+                expandedProps[ propertyName + "-right" ] = l[0];
+                expandedProps[ propertyName + "-bottom" ] = l[0];
+                expandedProps[ propertyName + "-left" ] = l[0];
+                break;
+  case 2 : 
+                expandedProps[ propertyName + "-right" ] = l[1];
+                expandedProps[ propertyName + "-bottom" ] = l[0];
+                expandedProps[ propertyName + "-left" ] = l[1];
+                break;
+ case 3 : 
+                expandedProps[ propertyName + "-right" ] = l[1];
+                expandedProps[ propertyName + "-bottom" ] = l[2];
+                expandedProps[ propertyName + "-left" ] = l[1];
+                break;
+ case 4 : 
+                expandedProps[ propertyName + "-right" ] = l[1];
+                expandedProps[ propertyName + "-bottom" ] = l[2];
+                expandedProps[ propertyName + "-left" ] = l[3];
+                break;
+   default:break;               
+  }
+  return expandedProps; 
+  }
+
+QMap<QString,QString> ShorthandFormer::expandPaddingProp(QStringList l){
+  return expandImplementation2("padding", l);
+}
+
+ QMap<QString,QString> ShorthandFormer::expandMarginProp(QStringList l){
+   return expandImplementation2("margin", l);
+ }
+
+QStringList ShorthandFormer::SHFormList() {
+  QStringList l;
+  l.append("cue"); 
+  l.append("pause");
+  l.append("font");
+  l.append("background");
+  l.append("border");
+  l.append("border-top");
+  l.append("border-bottom");
+  l.append("border-left");
+  l.append("border-right");
+  l.append("border-color");
+  l.append("border-style");
+  l.append("border-width");
+  l.append("outline");
+  l.append("list-style");
+  l.append("padding");
+  l.append("margin");
+  return l;  
+}
 

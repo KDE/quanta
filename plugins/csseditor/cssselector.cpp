@@ -37,8 +37,110 @@
 #include "../../quanta.h"
 #include "encodingselector.h"
 
-CSSSelector::CSSSelector(QWidget *parent, const char* name) : CSSSelectorS (parent,name) {
+CSSSelector::CSSSelector(QString dtd, QWidget *parent, const char* name) : CSSSelectorS (parent,name), currentDocumentDTD(dtd) {
+  
+  m_currentItem = 0L;
 
+  lvTags->setAllColumnsShowFocus(true);
+  lvClasses->setAllColumnsShowFocus(true);
+  lvIDs->setAllColumnsShowFocus(true);
+  lvPseudo->setAllColumnsShowFocus(true);
+  lvAtRules->setAllColumnsShowFocus(true);
+  
+  Connect();
+  QString configDir = locate("appdata", "csseditor/config.xml");
+  configDir = QFileInfo(configDir).dirPath() + "/";
+
+  QDomDocument doc;
+  QFile file( configDir+"pseudo.xml" );
+  if ( !file.open( IO_ReadOnly ) )
+    return;
+  if ( !doc.setContent( &file ) ) {
+    file.close();
+    return;
+  }
+  file.close();
+
+  QDomElement docElem = doc.documentElement();
+
+  QDomNode n = docElem.firstChild();
+  while( !n.isNull() ) {
+    QDomElement e = n.toElement();
+    if( !e.isNull() ) {
+      cbPseudo->insertItem(e.attribute("name"));
+    }
+    n = n.nextSibling();
+  }
+
+/*  file.setName( configDir+"atrules.xml" );
+  if ( !file.open( IO_ReadOnly ) )
+    return;
+  if ( !doc.setContent( &file ) ) {
+    file.close();
+    return;
+  }
+  file.close();
+
+
+  n = docElem.firstChild();
+  while( !n.isNull() ) {
+    QDomElement e = n.toElement();
+    if( !e.isNull() ) {
+      cbAtRules->insertItem(e.attribute("name"));
+    }
+    n = n.nextSibling();
+  }
+  */
+
+  file.setName( configDir+"dtdTags.xml" );
+  if ( !file.open( IO_ReadOnly ) )
+    return;
+  if ( !doc.setContent( &file ) ) {
+    file.close();
+    return;
+  }
+  file.close();
+ 
+ QStringList dtdNames,dtdNickNames; 
+ docElem = doc.documentElement();
+ n = docElem.firstChild();
+  while( !n.isNull() ) {
+    QDomElement e = n.toElement();
+    if( !e.isNull() ) {
+      dtdNames.append(e.attribute("name"));
+      dtdNickNames.append(e.attribute("nickName"));
+    }
+    n = n.nextSibling();
+  }
+    
+  if( !currentDocumentDTD.isEmpty() ) {
+    if( dtdNames.contains( currentDocumentDTD ) ) {
+      n = docElem.firstChild();
+      while( !n.isNull() ) {
+        if( n.toElement().attribute("name") == currentDocumentDTD ){
+          break;
+        }
+        n = n.nextSibling();
+      }
+      QStringList tagList = QStringList::split( ',',n.toElement().text() );
+      cbTag->insertStringList( tagList );
+      cbTag->setAutoCompletion(true);
+      cbDTD->setDisabled(true);
+    }
+  }
+  else { 
+    cbDTD->insertStringList( dtdNickNames );
+    }
+
+}
+
+CSSSelector::~CSSSelector(){
+}
+
+void CSSSelector::Connect(){
+  
+  connect(cbDTD,SIGNAL(activated(const QString&)),this,SLOT(setDTDTags(const QString&)));
+  
   connect(pbAddTag,SIGNAL(clicked()), this ,SLOT(addTag()));
   connect(pbAddClass,SIGNAL(clicked()), this ,SLOT(addClass()));
   connect(pbAddID,SIGNAL(clicked()), this ,SLOT(addID()));
@@ -70,15 +172,17 @@ CSSSelector::CSSSelector(QWidget *parent, const char* name) : CSSSelectorS (pare
   connect(pbRemoveAllIDs,SIGNAL(clicked()), this ,SLOT(removeAll()));
   connect(pbRemoveAllPseudo,SIGNAL(clicked()), this ,SLOT(removeAll()));
   connect(pbRemoveAllAtRules,SIGNAL(clicked()), this ,SLOT(removeAll()));
+}
 
-  m_header = QString::null;
-  m_footer = QString::null;
-
+void CSSSelector::setDTDTags(const QString& s){
+  
   QString configDir = locate("appdata", "csseditor/config.xml");
   configDir = QFileInfo(configDir).dirPath() + "/";
 
   QDomDocument doc;
-  QFile file( configDir+"pseudo.xml" );
+ 
+
+  QFile file( configDir+"dtdTags.xml" );
   if ( !file.open( IO_ReadOnly ) )
     return;
   if ( !doc.setContent( &file ) ) {
@@ -86,57 +190,38 @@ CSSSelector::CSSSelector(QWidget *parent, const char* name) : CSSSelectorS (pare
     return;
   }
   file.close();
-
+ 
+  QStringList dtdNames;
   QDomElement docElem = doc.documentElement();
-
   QDomNode n = docElem.firstChild();
   while( !n.isNull() ) {
-    QDomElement e = n.toElement();
-    if( !e.isNull() ) {
-      cbPseudo->insertItem(e.attribute("name"));
-    }
-    n = n.nextSibling();
+    if( n.toElement().attribute("nickName") == s )
+     break;
+  n = n.nextSibling();
   }
-
-  file.setName( configDir+"atrules.xml" );
-  if ( !file.open( IO_ReadOnly ) )
-    return;
-  if ( !doc.setContent( &file ) ) {
-    file.close();
-    return;
-  }
-  file.close();
-
-  docElem = doc.documentElement();
-
-  n = docElem.firstChild();
-  while( !n.isNull() ) {
-    QDomElement e = n.toElement();
-    if( !e.isNull() ) {
-      cbAtRules->insertItem(e.attribute("name"));
-    }
-    n = n.nextSibling();
-  }
-
-
-}
-
-CSSSelector::~CSSSelector(){
+  QStringList tagList = QStringList::split( ',',n.toElement().text() );
+  tagList.sort();
+  cbTag->clear();
+  cbTag->insertStringList( tagList );
+  cbTag->setAutoCompletion(true);
 }
 
 void CSSSelector::addTag(){
   QListViewItem *item = new QListViewItem(lvTags);
-  item->setText(0,cbTag->currentText());
+  if(!cbTag->currentText().isEmpty())
+    item->setText(0,cbTag->currentText());
 }
 
 void CSSSelector::addClass(){
   QListViewItem *item = new QListViewItem(lvClasses);
-  item->setText(0,leClass->text());
+  if(!leClass->text().isEmpty())
+    item->setText(0,leClass->text());
 }
 
 void CSSSelector::addID(){
   QListViewItem *item = new QListViewItem(lvIDs);
-  item->setText(0,leID->text());
+  if(!leID->text().isEmpty())
+    item->setText(0,leID->text());
 }
 
 void CSSSelector::addPseudo(){
@@ -227,11 +312,15 @@ void CSSSelector::removeAll(){
 }
 
 void CSSSelector::removeSelected(){
-  delete m_currentItem;
+  if( m_currentItem ) {
+    delete m_currentItem;
+    m_currentItem = 0L;
+  } 
 }
 
 void CSSSelector::loadExistingStyleSection(QString s){
- 
+  s.remove("\n");
+  s.remove("\t");
   uint lf,rt;
   while(true){
    lf=s.find("/*",0);
@@ -239,14 +328,13 @@ void CSSSelector::loadExistingStyleSection(QString s){
    if(s.contains("/*") == 0 || s.contains("*/") == 0 ) break;
    s.remove(lf,rt+2-lf);
   }
+  
+  int  atPos=s.find("@");
 
-  int  atPos=s.contains("@");
+  QString tempStr,
+               atRuleType;
 
-  QString tempStr=QString::null;
-
-  QString atRuleType(QString::null);
-
-  while(atPos){
+  while(atPos >=0 ){
     int openParePos=s.find("{",atPos);
     if(openParePos>=0){
       if(s.mid(atPos,openParePos-atPos).contains(";")){
@@ -292,7 +380,8 @@ void CSSSelector::loadExistingStyleSection(QString s){
     else{
       int SCPos=s.find(";",atPos);
       if(SCPos){
-        tempStr=s.mid(atPos,SCPos-atPos).simplifyWhiteSpace();
+        tempStr=s.mid(atPos,SCPos-atPos);
+        s.remove(tempStr+";");
         tempStr.remove("\n");
         tempStr.remove("\t");
         QListViewItem *item;
@@ -300,18 +389,17 @@ void CSSSelector::loadExistingStyleSection(QString s){
         item->setText(0,tempStr.left( tempStr.find(" ") ) );
         tempStr.remove(0,tempStr.find(" ") );
         item->setText(1,tempStr);
-        s.remove(atPos,SCPos-atPos+1);
       }
       else{
         break;
       }
     }
-    atPos=s.contains("@");
+    atPos=s.find("@");
   }
 
   QMap<QString,QString> styleTagEntities;
-    QStringList temp = QStringList::split("}",s);
-    temp.pop_back();// the last element of the list is empty
+    QStringList temp = QStringList::split("}",s.stripWhiteSpace());
+        
     for ( QStringList::Iterator it = temp.begin(); it != temp.end(); ++it ) {
       (*it).remove("\n");
       (*it).remove("\t");
@@ -321,16 +409,16 @@ void CSSSelector::loadExistingStyleSection(QString s){
   QMap<QString,QString>::Iterator it;
   for ( it = styleTagEntities.begin(); it != styleTagEntities.end(); ++it ) {
     QListViewItem *item;
-    if(it.key().startsWith("#")){
+    if(it.key().contains(":")){
+      item = new QListViewItem(lvPseudo);
+    }
+    else
+    if(it.key().contains("#")){
       item = new QListViewItem(lvIDs);
     }
     else
-    if(it.key().startsWith(".")){
-      item = new QListViewItem(lvClasses);
-    }
-    else
-    if(it.key().contains(":")){
-      item = new QListViewItem(lvPseudo);
+    if(it.key().contains(".")){
+      item = new QListViewItem(lvClasses); 
     }
     else {
       item = new QListViewItem(lvTags);
@@ -366,7 +454,7 @@ QString CSSSelector::generateStyleSection(){
 
   temp = lvPseudo->firstChild();
   while(temp){
-    styleSection+=(temp->text(0)+" "+temp->text(1)+"\n\t");
+    styleSection+=(temp->text(0)+" { "+temp->text(1)+" } \n\t");
     temp = temp->nextSibling();
     }
    

@@ -40,7 +40,7 @@
      <value name="inherit"/>  
     </selectable>
     <string>
-     <value type="uri" mode="single"/>
+     <value type="uri" mode="single" resourceType="audio"/>
     </string>
    </mixed>
   </cue-after>
@@ -52,7 +52,7 @@
      <value name="inherit"/>  
     </selectable>
     <string>
-     <value type="uri" mode="single"/>
+     <value type="uri" mode="single" resourceType="audio"/>
     </string>
    </mixed>
   </cue-before>
@@ -110,7 +110,7 @@
     <value name="auto"/> 
    </selectable>
    <string>
-    <value type="uri" mode="single"/>
+    <value type="uri" mode="single" resourceType="audio"/>
    </string>
   </mixed>
  </play-during>
@@ -267,6 +267,7 @@
     </selectable>
     <string>
      <value type="color"/>
+     <value type="predefinedColorList"/>
     </string>
    </mixed>
   </background-color>
@@ -278,7 +279,7 @@
      <value name="inherit"/>  
     </selectable>
     <string>
-     <value type="uri" mode="single"/>
+     <value type="uri" mode="single" resourceType="image"/>
     </string>
    </mixed>
   </background-image>
@@ -298,7 +299,7 @@
       <value name="left"/>
       <value name="center"/>
       <value name="right"/> 
-     </dx>	 
+     </dx>         
     </doubleSelectable>
     <string>
      <value type="edit"/>
@@ -340,6 +341,7 @@
     </selectable>
     <string>
      <value type="color"/>
+     <value type="predefinedColorList"/>
     </string>
    </mixed>
   </border-color>
@@ -383,6 +385,7 @@
      </selectable>
      <string>
       <value type="color"/>
+      <value type="predefinedColorList"/>
      </string>
     </mixed>
    </border-top-color>
@@ -428,6 +431,7 @@
      </selectable>
      <string>
       <value type="color"/>
+      <value type="predefinedColorList"/>
      </string>
     </mixed>
    </border-left-color>
@@ -472,6 +476,7 @@
      </selectable>
      <string>
       <value type="color"/>
+      <value type="predefinedColorList"/>
      </string>
     </mixed>
    </border-right-color>
@@ -517,6 +522,7 @@
      </selectable>
      <string>
       <value type="color"/>
+      <value type="predefinedColorList"/>
      </string>
     </mixed>
    </border-bottom-color>
@@ -614,6 +620,7 @@
    </selectable>
    <string>
     <value type="color"/>
+    <value type="predefinedColorList"/>
    </string>
   </mixed>
  </color>
@@ -641,7 +648,7 @@
     <value name="progress"/> 
    </selectable>
    <string>
-    <value type="uri" mode="multi"/>
+    <value type="uri" mode="multi" resourceType="mousePointer"/>
    </string>
   </mixed>
  </cursor>
@@ -686,16 +693,8 @@
    
      <font-family hasSub="no">
      <mixed>
-       <selectable> 
-	 <value name="inherit"/> 
-	 <value name="serif"/> 
-	 <value name="sans-serif"/>
-	 <value name="cursive"/>
-	 <value name="fantasy"/>
-	 <value name="monospace"/> 
-       </selectable>
        <string>
-         <value type="edit"/>
+         <value type="fontDialog"/>
        </string>
       </mixed>
      </font-family>
@@ -704,19 +703,19 @@
      <mixed>
       <selectable>
          <value name="xx-small"/>  
-	   <value name="x-small"/>  
-	   <value name="small"/>   
-	   <value name="medium"/>  
-	   <value name="large"/>   
-	   <value name="x-large"/>   
-	   <value name="xx-large"/>  
-	   <value name="larger"/>   
-	   <value name="smaller"/>   
-	   <value name="inherit"/>  
+           <value name="x-small"/>  
+           <value name="small"/>   
+           <value name="medium"/>  
+           <value name="large"/>   
+           <value name="x-large"/>   
+           <value name="xx-large"/>  
+           <value name="larger"/>   
+           <value name="smaller"/>   
+           <value name="inherit"/>  
       </selectable>
       <numeric>
          <value type="length"/>
-	 <value type="percentage"/>
+         <value type="percentage"/>
       </numeric>
      </mixed>
      </font-size> 
@@ -756,7 +755,7 @@
         <value name="inherit"/>
       </selectable>
      </font-weight>  
-	 
+         
    </font>
    
     <height hasSub="no">
@@ -957,7 +956,7 @@
         <value name="inherit"/> 
        </selectable>
      </page-break-before>  
-	
+        
       <page-break-inside hasSub="no">
        <selectable>
          <value name="avoid"/> 
@@ -980,7 +979,7 @@
     <mixed>
       <selectable>
          <value name="none"/>  
-	 <value name="inherit"/>  
+         <value name="inherit"/>  
       </selectable>
       <string>
          <value type="edit"/>
@@ -992,11 +991,11 @@
     <mixed>
       <selectable>
          <value name="auto"/>  
-	 <value name="inherit"/>  
+         <value name="inherit"/>  
       </selectable>
       <numeric>
          <value type="length"/>
-	 <value type="percentage"/>
+         <value type="percentage"/>
       </numeric>
      </mixed>
     </right>
@@ -1035,11 +1034,11 @@
     <text-indent hasSub="no"> 
     <mixed>
       <selectable>
-	 <value name="inherit"/>  
+         <value name="inherit"/>  
       </selectable>
       <numeric>
          <value type="length"/>
-	 <value type="percentage"/>
+         <value type="percentage"/>
       </numeric>
      </mixed>
     </text-indent>
@@ -1108,11 +1107,11 @@
     <white-space hasSub="no">
       <selectable>
         <value name="normal"/> 
-	<value name="pre"/>  
-	<value name="pre-wrap"/> 
-	<value name="pre-line"/>  
-	<value name="nowrap"/> 
-	<value name="inherit"/>
+        <value name="pre"/>  
+        <value name="pre-wrap"/> 
+        <value name="pre-line"/>  
+        <value name="nowrap"/> 
+        <value name="inherit"/>
       </selectable>
     </white-space>
     
@@ -1122,11 +1121,11 @@
      <mixed>
       <selectable>
          <value name="auto"/>  
-	 <value name="inherit"/>  
+         <value name="inherit"/>  
       </selectable>
       <numeric>
          <value type="length"/>
-	 <value type="percentage"/>
+         <value type="percentage"/>
       </numeric>
      </mixed>
     </width>
@@ -1135,7 +1134,7 @@
       <mixed>
       <selectable>
          <value name="auto"/>  
-	 <value name="inherit"/>  
+         <value name="inherit"/>  
       </selectable>
       <numeric>
          <value type="length"/>
@@ -1161,10 +1160,10 @@
       <mixed>
        <selectable>
          <value name="none"/>   
-	 <value name="inherit"/>  
+         <value name="inherit"/>  
        </selectable>
        <string>
-         <value type="uri" mode="single"/>
+         <value type="uri" mode="single" resourceType="image"/>
       </string>
      </mixed>
     </list-style-image> 
@@ -1203,7 +1202,7 @@
         <value name="inherit"/>
       </selectable>
      </list-style-type>  
-	 
+         
    </list-style>
    
  
@@ -1213,10 +1212,11 @@
       <mixed>
        <selectable>   
          <value name="invert"/> 
-	 <value name="inherit"/>  
+         <value name="inherit"/>  
        </selectable>
        <string>
          <value type="color"/>
+         <value type="predefinedColorList"/>
        </string>
       </mixed>
      </outline-color>
@@ -1233,7 +1233,7 @@
         <value name="ridge"/>  
         <value name="inset"/>  
         <value name="outset"/>  
-	<value name="inherit"/>  
+        <value name="inherit"/>  
        </selectable>
       </outline-style> 
      
@@ -1349,7 +1349,7 @@
         <value name="inherit"/> 
        </selectable>
      </page-break-before>  
-	
+        
       <page-break-inside hasSub="no">
        <selectable>
          <value name="avoid"/> 
@@ -1385,7 +1385,7 @@
     <value name="progress"/>  
    </selectable>
    <string>
-    <value type="uri" mode="multi"/>
+    <value type="uri" mode="multi" resourceType="mousePointer"/>
    </string>
   </mixed>
     
@@ -1401,6 +1401,7 @@
      </selectable>
      <string>
       <value type="color"/>
+      <value type="predefinedColorList"/>
      </string>
     </mixed>
    </outline-color>

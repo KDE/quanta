@@ -34,6 +34,7 @@ public:
     ~ShorthandFormer();
     QString compress();
     QMap<QString,QString> expand(QString propertyName, QString propertyValue);
+    static QStringList SHFormList();
      
 private:
     QMap<QString,QString> m_properties;
@@ -106,8 +107,11 @@ private:
   QMap<QString,QString> expandBoxSide(QString subPropName, QStringList l);
   QMap<QString,QString> expandBorderProp(QStringList l);
   QMap<QString,QString> expandBox(QString subPropName, QStringList l);
+  QMap<QString,QString> expandPaddingProp(QStringList l);
+  QMap<QString,QString> expandMarginProp(QStringList l);
  
   QMap<QString,QString> expandImplementation(QString propertyName, QStringList l);
+  QMap<QString,QString> expandImplementation2(QString propertyName, QStringList l);
  };
 
 #endif
