@@ -33,6 +33,7 @@ UploadTreeFile::UploadTreeFile( UploadTreeFolder *parent, const KURL &a_url, QSt
 {
 	m_url = a_url;
 	isDir = false;
+  parentFolder = parent;
 
   setWhichPixmap("check_clear");
   setText(0, m_url.fileName());
@@ -43,6 +44,7 @@ UploadTreeFile::UploadTreeFile( QListView *parent, const KURL &a_url, QString da
 {
 	m_url = a_url;
 	isDir = false;
+  parentFolder = 0L;
 
   //setPixmap( 1, SmallIcon("check") );
   setWhichPixmap("check_clear");

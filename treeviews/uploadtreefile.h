@@ -39,6 +39,7 @@ public:
   KURL url();
 
 public:
+	UploadTreeFolder * parentFolder;
 	KURL m_url;
 	bool isDir;
 };
