@@ -69,7 +69,12 @@ TagAction::TagAction( QDomElement *element, KActionCollection *parent)
   m_modified = false;
   tag = element->cloneNode().toElement();
   m_view = quantaApp->view();
-  setIcon( tag.attribute("icon","") );
+  QString s = tag.attribute("icon");
+  if (!QFileInfo(s).exists())
+  {
+    s = QFileInfo(s).fileName();
+  }
+  setIcon( s );
   loopStarted = false;
   m_appMessages = quantaApp->getMessageOutput();
   if ( m_view )

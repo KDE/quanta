@@ -267,8 +267,12 @@ void ActionConfigDialog::slotSelectionChanged(QListViewItem *item)
       currentAction = action;
       QDomElement el = action->data();
       if ( el.hasAttribute("icon") )
-          actionIcon->setIcon( el.attribute("icon") );
-
+      {
+        QString s = el.attribute("icon");
+        if (!QFileInfo(s).exists())
+          s = QFileInfo(s).fileName();
+        actionIcon->setIcon(s);
+      }
       lineText->setText( el.attribute("text") );
       lineToolTip->setText( el.attribute("tooltip") );
       QString shortcutText = action->shortcut().toString();
@@ -425,7 +429,7 @@ void ActionConfigDialog::saveCurrentAction()
   QString s;
   QDomElement el = static_cast<TagAction *>(currentAction)->data();
   s = actionIcon->icon();
-  el.setAttribute("icon", QFileInfo(s).fileName());
+  el.setAttribute("icon", s);
   currentAction->setIcon(s);
   QString oldText = el.attribute("text");
   s = lineText->text();
