@@ -1381,13 +1381,14 @@ void QuantaApp::slotShowPreviewWidget(bool show)
        delete m_previewToolView;
        m_previewToolView = 0L;
    }
-    Document *w = view->document();
-    if (w)
+    if (m_previewedDocument)
     {
-      KURL url = w->url();
+      KURL url = m_previewedDocument->url();
       url.setFileName("preview-" + url.fileName());
       KIO::NetAccess::del(url, this);
-      w->view()->setFocus();
+      Document *w = view->document();
+      if (w)
+        w->view()->setFocus();
     }
   }
 
