@@ -53,13 +53,8 @@ int UploadTreeView::checkboxTree( QListViewItem *it )
 {
   parentWidget()->setCursor(KCursor::workingCursor());
   
-	QListViewItem *itIter = 0;
-	if (it == 0) itIter = firstChild();
-	else
-  {
-    itIter = it->firstChild();
-    if (!itIter && dynamic_cast<UploadTreeFile *>(it)) itIter = it;
-  }
+  QListViewItem *itIter = it ? it->firstChild() : firstChild();
+
   // bitFlag structure: (0/1)all children exist (0/1)no children exist.
   // We don't need some children as a bit flag, because that's implied if the bits are "00".
 
@@ -74,7 +69,7 @@ int UploadTreeView::checkboxTree( QListViewItem *it )
       {
         int hadCheckFlags = checkboxTree( itIter );
         bitFlags &= hadCheckFlags;
-        UploadTreeFolder *itF = dynamic_cast<UploadTreeFolder *>(itIter);
+        UploadTreeFolder *itF = static_cast<UploadTreeFolder *>(itIter);
 
         if (hadCheckFlags == 2) {
           // All children exist.
@@ -95,7 +90,7 @@ int UploadTreeView::checkboxTree( QListViewItem *it )
       }
       else if ( dynamic_cast<UploadTreeFile *>(itIter) )
       {
-        UploadTreeFile *itF = dynamic_cast<UploadTreeFile *>(itIter);
+        UploadTreeFile *itF = static_cast<UploadTreeFile *>(itIter);
         if ( itF->isSelected() )
         {
           itF->setWhichPixmap("check");
@@ -172,6 +167,16 @@ void UploadTreeView::slotSelectFile( QListViewItem *it )
   }
   else
   {
+    UploadTreeFile *itFile = static_cast<UploadTreeFile*>(it);
+    if (it->isSelected())
+    {
+      itFile->setWhichPixmap("check");
+      itFile->setSelected(true);
+    } else
+    {
+      itFile->setWhichPixmap("check_clear");
+      itFile->setSelected(false);
+    }
     itF = dynamic_cast<UploadTreeFile*>(it)->parentFolder;
   }
 
