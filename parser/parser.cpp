@@ -516,10 +516,9 @@ Node *Parser::nodeAt(int line, int col, bool findDeepest)
   {
     node->tag->beginPos(bl, bc);
     bc++;
-    Node *n = node->nextNotChild();
-    if (n && n->tag)
+    if (node->nextNotChild())
     {
-      n->tag->beginPos(el, ec);
+      node->nextNotChild()->tag->beginPos(el, ec);
     } else
     {
        el = write->editIf->numLines();
@@ -732,7 +731,7 @@ void Parser::deleteNodes(Node *firstNode, Node *lastNode, NodeModifsSet *modifs)
       next->prev = prev;
     if (prev && prev->next == node)
     {
-      prev->next = next;
+        prev->next = next;
     }
     if (next && next->closesPrevious)
       next->closesPrevious = false;
@@ -741,7 +740,7 @@ void Parser::deleteNodes(Node *firstNode, Node *lastNode, NodeModifsSet *modifs)
     modif = new NodeModif();
     modif->setType(NodeModif::NodeRemoved);
     modif->setLocation(kafkaCommon::getLocation(node));
-    if (prev && prev->next == node)
+    if(prev)
       prev->next = 0L;
     if(parent && parent->child == node)
       parent->child = 0L;
@@ -756,9 +755,8 @@ void Parser::deleteNodes(Node *firstNode, Node *lastNode, NodeModifsSet *modifs)
     node = 0L;
     i = 0;
     j = 0;
-    if (!closesPrevious)
+    if (child)
     {
-      //move the children up one level
       Node *n = child;
       Node *m = child;
       while (n)
@@ -768,73 +766,39 @@ void Parser::deleteNodes(Node *firstNode, Node *lastNode, NodeModifsSet *modifs)
         n = n->next;
         i++;
       }
-      //connect the first child to the tree (after prev, or as the first child of the parent)
-      if (prev && child)
+      if (prev)
       {
-        prev->next = child;
-        child->prev = prev;
+        if (!closesPrevious)
+        {
+          child->prev = prev;
+          prev->next = child;
+        }
       } else
       {
-        if (!child)      //when there is no child, connect the next as the first child of the parent
-          child = next;
-        else
-        if (next)
-        {
-          n = child;
-          while (n->next)
-            n = n->next;
-          n->next = next;
-          next->prev = n;  
-        }  
-        if (parent && !parent->child)
-        {          
-          parent->child = child;
-        }  
+        if (parent)
+            parent->child = child;
       }
-    } else
+      prev = m;
+    }
+
+    if (prev)
     {
-      //change the parent of children, so the prev will be the new parent
-      if (child)
-      {
-        Node *n = child;
-        Node *m = child;
-        while (n)
-        {
-          m = n;
-          n->parent = prev;
-          n = n->next;
-          i++;
-        }      
-        if (prev->child)
-        {
-          n = prev;
-          while (n->child)
-          {
-            n = n->child;
-            while (n->next)
-              n = n->next;
-          }
-          n->next = child;
-          child->prev = n;
-        } else
-        {
-          prev->child = child;
-        }
-      }
-      //move down the nodes starting with next one level and append to the list of children of prev
+      node = prev;
+      node->next = next;
       if (next)
+          next->prev = prev;
+      while (node->child)
+      {
+        node = node->child;
+        while (node->next)
+              node = node->next;
+      }
+      if (next && closesPrevious) //if there is a node after the deleted one and the deleted node closed the previous one
       {
         if (prev->child) //if the previous node has a child, append the next node after the last child
         {
-            Node *n = prev;
-            while (n->child)
-            {
-              n = n->child;
-              while (n->next)
-                n = n->next;
-            }
-            next->prev = n;
-            n->next = next;
+            next->prev = node;
+            node->next = next;
         } else // else append it as the first child of the previous
         {
           prev->child = next;
@@ -850,8 +814,22 @@ void Parser::deleteNodes(Node *firstNode, Node *lastNode, NodeModifsSet *modifs)
           n = n->next;
           j++;
         }
-        
       }
+    } else
+    {
+      if (next && closesPrevious)
+      {
+        Node *n = next;
+        while (n)
+        {
+          n->parent = prev;
+          n = n->next;
+        }
+        next->prev = 0L;
+      }
+      node = parent;
+      if (node)
+          node->child = next;
     }
 #ifdef BUILD_KAFKAPART
     modif->setChildrenMovedUp(i);
@@ -859,11 +837,11 @@ void Parser::deleteNodes(Node *firstNode, Node *lastNode, NodeModifsSet *modifs)
     modifs->addNodeModif(modif);
 #endif
     node = nextNode;
-
- //   kdDebug(24000)<< "Node removed!" << endl;
-//    coutTree(m_node, 2);
+/*
+    kdDebug(24000)<< "Node removed!" << endl;
+    coutTree(m_node, 2);
+*/
   }
-  coutTree(m_node, 2);
 #ifndef BUILD_KAFKAPART
   Q_UNUSED(modifs);
 #endif
@@ -939,20 +917,20 @@ Node *Parser::rebuild(Document *w)
    //another stange case: the parsed area contains a special area without end
    if (!node)
    {
-     if (lastNode)
-     {
-       if (lastNode->prev )
-           lastNode->prev->next = 0L;
-       if (lastNode->parent && lastNode->parent->child == lastNode)
-           lastNode->parent->child = 0L;
-     }
+      if (lastNode)
+      {
+        if (lastNode->prev )
+            lastNode->prev->next = 0L;
+        if (lastNode->parent && lastNode->parent->child == lastNode)
+            lastNode->parent->child = 0L;
+      }
      delete lastNode;
      nodeNum--;
      lastNode = 0L;
 #ifdef BUILD_KAFKAPART
-     logReparse(modifs, w);
+   logReparse(modifs, w);
 #endif
-     return parse(w);
+   return parse(w);
    }
 
    bool goUp;

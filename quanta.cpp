@@ -1127,8 +1127,6 @@ void QuantaApp::slotOptions()
   fileMasks->warnBinaryOpening->setChecked(m_config->readEntry("Open Everything") != "Yes");
   m_config->setGroup("General Options");
   fileMasks->showSplash->setChecked(m_config->readBoolEntry("Show Splash", true));
-  fileMasks->reloadProject->setChecked(m_config->readBoolEntry("Reload Project", true));
-  fileMasks->reloadFiles->setChecked(m_config->readBoolEntry("Reload Files", true));
   if(!m_config->readEntry("Autosave interval").isEmpty())
      fileMasks->sbAutoSave->setValue(m_config->readNumEntry("Autosave interval"));
   //else default value 15
@@ -1248,8 +1246,6 @@ void QuantaApp::slotOptions()
     m_config->writeEntry("Open Everything", fileMasks->warnBinaryOpening->isChecked() ? "" : "Yes");
     m_config->setGroup("General Options");
     m_config->writeEntry("Show Splash", fileMasks->showSplash->isChecked());
-    m_config->writeEntry("Reload Project", fileMasks->reloadProject->isChecked());
-    m_config->writeEntry("Reload Files", fileMasks->reloadFiles->isChecked());
 
     qConfig.defaultEncoding = fileMasks->encodingCombo->currentText();
 #if KDE_IS_VERSION(3,1,90)

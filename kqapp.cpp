@@ -40,7 +40,7 @@ KSplash::KSplash()
  : QFrame( 0L, QString("Quanta")+VERSION,
    QWidget::WStyle_NoBorder | QWidget::WStyle_Customize | WX11BypassWM)
 {
-   QPixmap pm( UserIcon("quantalogo_be") );
+   QPixmap pm( UserIcon("quantalogo") );
 
    setBackgroundPixmap(pm);
 #if KDE_VERSION >= KDE_MAKE_VERSION(3,1,90)

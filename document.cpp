@@ -856,7 +856,7 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
       if (!tag->childTags.isEmpty())
       {
         reparseEnabled = false;
- //       insertText("\n", false, false);
+//        insertText("\n", false, false);
         insertChildTags(tag);
         reparseEnabled = true;
         baseNode = parser->rebuild(this);

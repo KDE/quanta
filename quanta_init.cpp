@@ -833,8 +833,6 @@ void QuantaApp::openLastFiles()
 
   // Reload previously opened files only if setting allows
   m_config->setGroup("General Options");
-  if (!m_config->readBoolEntry("Reload Files", true))
-    return;
 
   // we need to check config
   // because project now can be
@@ -889,8 +887,7 @@ void QuantaApp::loadInitialProject(const QString& url)
     config->setGroup("General Options");
 
     // Reload last project if setting is enabled
-    if (config->readBoolEntry("Reload Project", true))
-      m_project->readLastConfig();
+    m_project->readLastConfig();
   }
   else
     m_project->slotOpenProject(url);
@@ -1698,7 +1695,7 @@ void QuantaApp::initActions()
     KStdAction::deselect(m_view, SLOT(slotDeselectAll()), ac);
     (void) new KAction( i18n( "Toggle &Block Selection" ), Key_F4, m_view,
                         SLOT( toggleVertical() ), ac, "set_verticalSelect" );
-    new KToggleAction(i18n("Overwrite Mode"), Key_Insert, m_view, SLOT(toggleInsert()), ac, "set_insert" );
+    new KAction(i18n("Toggle Insert"), Key_Insert, m_view, SLOT(toggleInsert()), ac, "set_insert" );
 
 
     KStdAction::find(this, SLOT(slotFind()), ac);
