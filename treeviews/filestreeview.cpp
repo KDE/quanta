@@ -150,9 +150,9 @@ QString FilesTreeView::currentFileName()
 	FilesTreeFolder *parent = dynamic_cast<FilesTreeFolder *> (item->parent());
 	
 	if ( !parent ) // top level element
-		return ((FilesTreeFolder *)item)->fullName( item );
+		return ((FilesTreeFolder *)item)->fullName();
 		
-	return parent->fullName( item )+item->text(0);
+	return parent->fullName()+item->text(0);
 }
 
 void FilesTreeView::slotSelectFile(QListViewItem *item)
@@ -229,7 +229,7 @@ void FilesTreeView::slotSelectImage(QListViewItem *item)
 	if ( !parent ) return;
 	if ( dynamic_cast<FilesTreeFolder *>(item) ) return;
 	
-	QString nameToOpen = parent->fullName( item )+item->text(0);
+	QString nameToOpen = parent->fullName()+item->text(0);
 	
 	if ( QDir::match( fileMaskImage, nameToOpen) )
 	{

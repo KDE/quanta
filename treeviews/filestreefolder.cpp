@@ -21,6 +21,8 @@
 
 // QT includes
 #include <qdir.h>
+#include <qdragobject.h>
+#include <qevent.h>
 #include <qfile.h>
 #include <qfileinfo.h>
 #include <qpixmap.h>
@@ -40,6 +42,9 @@ FilesTreeFolder::FilesTreeFolder( FilesTreeFolder * parent, const char * name )
     readable 	= true;
     opened 		= false;
     showall 	= true;
+
+    setDragEnabled(true);
+    setDropEnabled(true);
 }
 
 
@@ -50,6 +55,9 @@ FilesTreeFolder::FilesTreeFolder( QListView * parent, const char * name, const c
 
     readable 	= true;
     showall 	= true;
+
+  setDragEnabled(true);
+  setDropEnabled(true);
 }
 
 
@@ -126,16 +134,16 @@ void FilesTreeFolder::setOpen( bool open )
 }
 
 /** retun full name of the folder */
-QString FilesTreeFolder::fullName(QListViewItem *item)
+QString FilesTreeFolder::fullName()
 {
-	QString s;
+	QString s="";
 	
 //  if (!item) item = this;
 
   if ( parentFolder )
   {
 		s = parentFolder->fullName();
-		s+= file.name()+"/";
+		s += file.name()+"/";
   }
   else {
 		s = folderName;
@@ -227,4 +235,19 @@ void FilesTreeFolder::restoreOpenStatus()
     }
     child = child->nextSibling();
    }
+}
+/** No descriptions */
+void FilesTreeFolder::dropped(QDropEvent *e)
+{
+  QString droppedText;
+
+  if (QTextDrag::decode(e, droppedText))
+  {
+
+  }
+}
+/** No descriptions */
+bool FilesTreeFolder::acceptDrop(const QMimeSource *mime) const
+{
+  return true;
 }

@@ -46,6 +46,8 @@ public slots:
   /** No descriptions */
   void slotNewDir();
   virtual void slotReload();
+  /** No descriptions */
+  void contentsDragEnterEvent(QDragEnterEvent *event);
 
 private:
 	QString basePath;
@@ -60,6 +62,11 @@ private:
 signals: // Signals
   /** No descriptions */
   void insertFile(QString);
+protected: // Protected methods
+  /** No descriptions */
+  virtual QDragObject * dragObject ();
+  /** No descriptions */
+  void contentsDropEvent(QDropEvent *);
 };
 
 #endif

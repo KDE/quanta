@@ -1671,6 +1671,7 @@
 
 				<Detect2Chars attribute="Comment" context="comments1" char="/" char1="/" />
 				<Detect2Chars attribute="Comment" context="comments2" char="/" char1="*" />
+				<DetectChar attribute="Comment" context="comments3" char="#"/>
 				<keyword attribute="Keyword" context="#stay" String="keywords"/>
 				<DetectChar attribute="String" context="strings1" char="&quot;"/>
 				<DetectChar attribute="String" context="strings2" char="'"/>
@@ -1686,7 +1687,10 @@
 				<Detect2Chars attribute="Comment" context="#pop" char="*" char1="/" />
 			</context>
 
+			<context name="comments3" attribute="Comment" lineEndContext="#pop" />
+
 			<context name="strings1" attribute="String" lineEndContext="#stay">
+				<Detect2Chars attribute="String" context="#stay" char="\\" char1="&quot;"/>
 				<DetectChar attribute="String" context="#pop" char="&quot;"/>
 				<RegExpr attribute="Variable" context="#stay" String="\$[a-zA-Z_]+[a-zA-Z0-9_]*"/>
 			</context>

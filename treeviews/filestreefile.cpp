@@ -37,6 +37,9 @@ FilesTreeFile::FilesTreeFile( FilesTreeFolder *parent, QString name, QString fil
 {
 	fname = filename;
 	isDir = false;
+
+  setDragEnabled(true);
+  setDropEnabled(true);
 }
 
 FilesTreeFile::FilesTreeFile( QListView *parent, QString name, QString filename)
@@ -44,6 +47,8 @@ FilesTreeFile::FilesTreeFile( QListView *parent, QString name, QString filename)
 {
 	fname = filename;
 	isDir = false;
+  setDragEnabled(true);
+  setDropEnabled(true);
 }
 
 

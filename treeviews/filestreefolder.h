@@ -35,10 +35,12 @@ public:
 
   	/** used for sorting */
   	virtual QString key ( int column, bool ascending ) const;
-    virtual QString fullName(QListViewItem *item = 0);
+    virtual QString fullName();
 
     void setOpen( bool );
     void setup();
+  /** No descriptions */
+  virtual bool acceptDrop(const QMimeSource *mime) const;
 
 public:
     QFile file;
@@ -59,6 +61,9 @@ private: // Private methods
 private: // Private methods
   /** No descriptions */
   void saveOpenStatus();
+protected: // Protected methods
+  /** No descriptions */
+  virtual void dropped(QDropEvent *e);
 };
 
 

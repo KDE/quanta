@@ -570,6 +570,7 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
 
   view->write()->view()->resize(view->writeTab->size().width()-5, view->writeTab->size().height()-35);
   view->oldWrite = view->write();
+  view->write()->view()->setFocus();
 
   emit reloadTreeviews();
 }
@@ -775,7 +776,7 @@ void QuantaApp::slotShowPreview()
       doc2->saveAs(origUrl);
       delete doc2;
     }
-	doc ->write()->view()->setFocus();
+	view->write()->view()->setFocus();
 
 	}
 	else {
@@ -954,7 +955,7 @@ void QuantaApp::contextHelp()
   if (  id_w == 1 || id_w == 2 )
   {
     rightWidgetStack->raiseWidget(0);
-    doc ->write()->setFocus();
+    view->write()->view()->setFocus();
   }
   else
   {

@@ -19,6 +19,8 @@
 #include <qdir.h>
 #include <qpixmap.h>
 #include <qheader.h>
+#include <qdragobject.h>
+#include <qpoint.h>
 
 // KDE includes
 #include <krun.h>
@@ -122,6 +124,8 @@ TemplatesTreeView::TemplatesTreeView(const QString& projectBasePath, QWidget *pa
 	connect(	this, SIGNAL(open(QListViewItem *)),
 						this,	SLOT(slotSelectFile(QListViewItem *)));
 						
+  setAcceptDrops(true);
+  viewport()->setAcceptDrops(true);
 }
 
 TemplatesTreeView::~TemplatesTreeView()
@@ -298,4 +302,40 @@ void TemplatesTreeView::slotNewDir()
     }
     slotReload();
    }
+}
+/** No descriptions */
+QDragObject * TemplatesTreeView::dragObject ()
+{
+  QDragObject *drag = new QTextDrag(currentFileName(), this);
+  return drag;
+}
+/** No descriptions */
+void TemplatesTreeView::contentsDropEvent(QDropEvent *e)
+{
+ QString source;
+ QString dest = "";
+ QTextDrag::decode(e,source);
+
+  QListViewItem *item = itemAt( contentsToViewport(e->pos()));
+
+	FilesTreeFolder *parent = dynamic_cast<FilesTreeFolder *> (item->parent());
+	
+	if ( !parent ) // top level element
+  {
+		dest = ((FilesTreeFolder *)item)->fullName();
+	} else
+  {
+   	dest = parent->fullName()+item->text(0);
+    KIO::Job *job = KIO::copy(source,dest);
+    connect( job, SIGNAL( result( KIO::Job *) ), this , SLOT( slotJobFinished( KIO::Job *) ) );
+  }	
+
+}
+/** No descriptions */
+void TemplatesTreeView::contentsDragEnterEvent(QDragEnterEvent *event)
+{
+ if (QTextDrag::canDecode(event))
+ {
+    event->accept();
+ }
 }
