@@ -63,7 +63,6 @@
 // dialogs headers
 #include "tagdialogs/tagdialog.h"
 
-#include "tagdialogs/tagquickstart.h"
 #include "tagdialogs/tagquicklistdlg.h"
 #include "tagdialogs/tagquicktable.h"
 #include "tagdialogs/csseditor.h"
