@@ -169,7 +169,9 @@ QString QExtFileInfo::shortName(const QString &fname)
 
 KURL QExtFileInfo::path( const KURL &url )
 {
-  return url.directory(false,false);
+  KURL result = url;
+  result.setPath(result.directory(false,false));
+  return result;
 }
 
 KURL QExtFileInfo::home()

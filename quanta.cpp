@@ -237,7 +237,7 @@ bool QuantaApp::slotFileSaveAs()
       QString myEncoding = w->kate_doc->encoding();
     #endif
 
-    KateFileDialog dialog(projectBaseURL().path(), myEncoding, this, i18n ("Save File"), KateFileDialog::saveDialog);
+    KateFileDialog dialog(projectBaseURL().url(), myEncoding, this, i18n ("Save File"), KateFileDialog::saveDialog);
     KateFileDialogData data = dialog.exec();
     if (w->checkOverwrite(data.url) == KMessageBox::Yes && m_doc->saveDocument(data.url))
     {
@@ -2924,7 +2924,7 @@ KURL QuantaApp::projectBaseURL() const
       result = QExtFileInfo::home();
     } else
     {
-      result = QExtFileInfo::path(m_view->write()->url());
+       result = QExtFileInfo::path(m_view->write()->url());
     }
   }
   return result;
