@@ -1087,7 +1087,8 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeValueCompletions
   completion.type = "attributeValue";
   completion.userdata = startsWith+"|"+tagName + "," + attribute;
 
-  QStringList *values = tagAttributeValues(completionDTD->name,tagName,attribute);
+  bool deleteValues;
+  QStringList *values = tagAttributeValues(completionDTD->name,tagName, attribute, deleteValues);
   if (values)
   {
     for ( QStringList::Iterator it = values->begin(); it != values->end(); ++it )
@@ -1099,7 +1100,8 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeValueCompletions
       }
     }
   }
-  delete values;
+  if (deleteValues)
+    delete values;
   int andSignPos = startsWith.find('&');
   if (andSignPos != -1)
   {
@@ -1853,10 +1855,10 @@ void Document::slotDelayedTextChanged()
 }
 
 /** Returns list of values for attribute */
-QStringList* Document::tagAttributeValues(const QString& dtdName, const QString& tag, const QString &attribute)
+QStringList* Document::tagAttributeValues(const QString& dtdName, const QString& tag, const QString &attribute, bool &deleteResult)
 {
   QStringList *values = 0L;
-
+  deleteResult = true;
   DTDStruct* dtd = dtds->find(dtdName.lower());
   if (dtd)
   {
@@ -1894,6 +1896,7 @@ QStringList* Document::tagAttributeValues(const QString& dtdName, const QString&
             break;
           } else {
             values = &attr->values;
+            deleteResult = false;
             break;
           }
         }

@@ -203,7 +203,7 @@ work correctly. */
   /* Removes automatic backup copies */
   void removeBackup(KConfig *config);
   /* create a string using document path string */
- static QString hashedFilePath(const QString& p); 
+ static QString hashedFilePath(const QString& p);
 
 
 protected:
@@ -275,8 +275,9 @@ private:
   QValueList<KTextEditor::CompletionEntry>* getCharacterCompletions(const QString& starstWith=QString::null);
   /** Invoke code completion dialog for XML like tags according to the position (line, col), using DTD dtd. */
   bool xmlCodeCompletion(int line, int col);
-  /** Returns list of values for attribute */
-  QStringList* tagAttributeValues(const QString& dtdName, const QString& tag, const QString& attribute);
+  /** Returns list of values for attribute. If deleteResult is true after the call,
+  the caller must delete the returned list. */
+  QStringList* tagAttributeValues(const QString& dtdName, const QString& tag, const QString& attribute, bool &deleteResult);
   /** Brings up list of code completions */
   void showCodeCompletions( QValueList<KTextEditor::CompletionEntry> *completions );
   /** Called whenever a user inputs text in an XML type document. */
