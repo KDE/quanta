@@ -728,7 +728,10 @@ void ActionConfigDialog::slotNewAction()
   static_cast<TagAction*>(currentAction)->setModified(true);
   QListViewItem *currentItem = actionTreeView->currentItem();
   QListViewItem *item = new KListViewItem(allActionsItem);
+  QString actionText = QString("Action_%1").arg(quantaApp->actionCollection()->count());
+  currentAction->setText(actionText);
   item->setText(2, currentAction->name());
+  item->setText(0, actionText);
   item->setPixmap(0, BarIcon("ball"));
   allActionsItem->sortChildItems(0, true);
   if (!currentItem->parent() || currentItem->parent() == allActionsItem)
@@ -737,6 +740,7 @@ void ActionConfigDialog::slotNewAction()
   } else
   {
     item = new KListViewItem(currentItem->parent(), currentItem);
+    item->setText(0, actionText);
     item->setText(2, currentAction->name());
     item->setPixmap(0, BarIcon("ball"));
     actionTreeView->setCurrentItem(item);
@@ -837,6 +841,9 @@ void ActionConfigDialog::createScriptAction(const QString& a_name, const QString
 {
   actionTreeView->setCurrentItem(allActionsItem);
   slotNewAction();
+  typeCombo->setCurrentItem(1);
+  scriptPath->setText(a_script);
+  lineText->setText(a_name);
 }
 
 #include "actionconfigdialog.moc"

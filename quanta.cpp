@@ -2648,7 +2648,9 @@ void QuantaApp::slotEditAction(const QString& actionName)
 void QuantaApp::slotAssignActionToScript(const KURL& a_scriptURL, const QString& a_interpreter)
 {
   ActionConfigDialog dlg(this, "actions_config_dlg");
-  dlg.createScriptAction(a_scriptURL.fileName(), a_interpreter + " " + a_scriptURL.path());
+  QString name = a_scriptURL.fileName();
+  name.truncate(name.length() - QFileInfo(name).extension().length() - 1);
+  dlg.createScriptAction(name, a_interpreter + " " + a_scriptURL.path());
   dlg.exec();
 }
 
