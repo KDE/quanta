@@ -2,8 +2,9 @@
 Encoding=UTF-8
 Name=KXsldbg
 Name[sv]=Kxsldbg
+Name[xx]=xxKXsldbgxx
 Exec=kxsldbg %i %m -caption "%c"
 Icon=kxsldbg
 Type=Application
-DocPath=quanta/index.html
+DocPath=kxsldbg/index.html
 Terminal=0
