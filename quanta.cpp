@@ -63,6 +63,7 @@
 #include <kdirwatch.h>
 #include <kspell.h>
 #include <kdeversion.h>
+#include <kio/netaccess.h>
 
 #include <kparts/componentfactory.h>
 
@@ -963,14 +964,7 @@ void QuantaApp::slotShowPreview()
       KURL origUrl = w->url();
       KURL tempUrl;
       tempUrl.setPath(w->tempFileName());
-
-      KTextEditor::Document *doc2 = KParts::ComponentFactory::createPartInstanceFromQuery<KTextEditor::Document>( "KTextEditor/Document",
-			        								      QString::null,
-							    						      this, 0,
-									      			      this, 0 );
-      doc2->openURL(tempUrl);
-      doc2->saveAs(origUrl);
-      delete doc2;
+      KIO::NetAccess::file_copy(tempUrl, origUrl, -1, true, false, this);  
     }
     fileWatcher->startScan();
 //	  w->view()->setFocus();
@@ -1480,14 +1474,7 @@ void QuantaApp::slotSyntaxCheckDone()
     KURL origUrl = w->url();
     KURL tempUrl;
     tempUrl.setPath(w->tempFileName());
-
-    KTextEditor::Document *doc2 = KParts::ComponentFactory::createPartInstanceFromQuery<KTextEditor::Document>( "KTextEditor/Document",
- 	         								      QString::null,
- 	 				    						      this, 0,
- 	 						      			      this, 0 );
-    doc2->openURL(tempUrl);
-    doc2->saveAs(origUrl);
-    delete doc2;
+    KIO::NetAccess::file_copy(tempUrl, origUrl, -1, true, false, this);  
   }
   fileWatcher->startScan();
 }
