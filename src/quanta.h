@@ -411,6 +411,8 @@ protected slots:
   void slotUploadDTEP();
   /** Downloads a toolbar from the main server */
   void slotDownloadToolbar();
+  /** Uploads a toolbar to the main server */
+  void slotUploadToolbar();
   /** Enable/Disable Smart Tag Insertion */
   void slotSmartTagInsertion();
   /** Downloads a template from the main server */
@@ -475,6 +477,16 @@ protected slots:
   void slotTabDragged(QWidget *widget);
 
 protected:
+  /** Create a DTEP tarball which can be uploaded or sent in email. Returns
+  *   the name of the created file or QString::null if creation has failed.
+  */
+  QString createDTEPTarball();
+  
+  /** Create a toolbar tarball which can be uploaded or sent in email. Returns
+  *   the name of the created file or QString::null if creation has failed.
+  */
+  QString createToolbarTarball();
+  
   /** Ask for save all the modified user toolbars. */
   bool removeToolbars();
   /** Returns true if all toolbars are hidden, false otherwise. */

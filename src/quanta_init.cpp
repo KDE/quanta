@@ -772,6 +772,9 @@ void QuantaInit::initActions()
     (void) new KAction( i18n( "&Download DTD Package (DTEP)..." ), "network", 0,
                         m_quanta, SLOT( slotDownloadDTEP() ),
                         ac, "download_dtep" );
+    (void) new KAction( i18n( "&Upload DTD Package (DTEP)..." ), "network", 0,
+                        m_quanta, SLOT( slotUploadDTEP() ),
+                        ac, "upload_dtep" );
 /*
     (void) new KAction( i18n( "&Upload DTD Package (DTEP)..." ), 0,
                         m_quanta, SLOT( slotUploadDTEP() ),
@@ -857,6 +860,7 @@ void QuantaInit::initActions()
     new KAction(i18n("&Remove User Toolbar..."), 0, m_quanta, SLOT(slotRemoveToolbar()), ac, "toolbars_remove");
     new KAction(i18n("Re&name User Toolbar..."), 0, m_quanta, SLOT(slotRenameToolbar()), ac, "toolbars_rename");
     new KAction(i18n("Send Toolbar in E&mail..."), "mail_send", 0, m_quanta, SLOT(slotSendToolbar()), ac, "toolbars_send");
+    new KAction(i18n("&Upload Toolbar..." ), "network", 0, m_quanta, SLOT(slotUploadToolbar()), ac, "toolbars_upload" );
     new KAction(i18n("&Download Toolbar..." ), "network", 0, m_quanta, SLOT(slotDownloadToolbar()), ac, "toolbars_download" );
 
     KToggleAction *toggle = new KToggleAction( i18n("Smart Tag Insertion"), 0, ac, "smart_tag_insertion");

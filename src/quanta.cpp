@@ -2555,9 +2555,7 @@ bool QuantaApp::slotRemoveToolbar()
 
 }
 
-
-/** Sends a toolbar in mail. */
-void QuantaApp::slotSendToolbar()
+QString QuantaApp::createToolbarTarball()
 {
   ToolbarTabWidget *tb = ToolbarTabWidget::ref();
 
@@ -2571,15 +2569,13 @@ void QuantaApp::slotSendToolbar()
 
   bool ok = FALSE;
   QString res = KInputDialog::getItem(
-                  i18n( "Send Toolbar" ),
-                  i18n( "Please select a toolbar:" ), lst, current, FALSE, &ok, this );
+      i18n( "Send Toolbar" ),
+  i18n( "Please select a toolbar:" ), lst, current, FALSE, &ok, this );
 
   if (!ok)
-    return;
+    return QString::null;
 
   QString toolbarName = res.lower();
-
-  QStringList toolbarFile;
 
   QString prefix="quanta";
   KTempDir* tempDir = new KTempDir(tmpDir);
@@ -2591,7 +2587,19 @@ void QuantaApp::slotSendToolbar()
   tempURL.setPath(tempFileName);
   saveToolbarToFile(toolbarName, tempURL);
 
-  toolbarFile += tempFileName + ".toolbar.tgz";
+  return tempFileName + ".toolbar.tgz";
+}
+
+/** Sends a toolbar in mail. */
+void QuantaApp::slotSendToolbar()
+{
+
+  QString tempFileName = createToolbarTarball();
+  if (tempFileName.isNull())
+    return;
+  
+  QStringList toolbarFile;
+  toolbarFile += tempFileName;
 
   TagMailDlg *mailDlg = new TagMailDlg( this, i18n("Send toolbar in email"));
   QString toStr;
@@ -2620,6 +2628,23 @@ void QuantaApp::slotSendToolbar()
     kapp->invokeMailer(toStr, QString::null, QString::null, subjectStr, message, QString::null, toolbarFile);
   }
   delete mailDlg;
+}
+
+void QuantaApp::slotDownloadToolbar()
+{
+  if (!m_newToolbarStuff)
+    m_newToolbarStuff = new QNewToolbarStuff("quanta/toolbar", this);
+  m_newToolbarStuff->downloadResource();
+}
+
+void QuantaApp::slotUploadToolbar()
+{
+  QString tempFileName = createToolbarTarball();
+  if (tempFileName.isNull())
+    return;
+  if (!m_newToolbarStuff)
+    m_newToolbarStuff = new QNewToolbarStuff("quanta/toolbar", this);
+  tempDirList.append(m_newToolbarStuff->uploadResource(tempFileName));
 }
 
 void QuantaApp::slotRenameToolbar()
@@ -3326,7 +3351,7 @@ void QuantaApp::slotLoadDTEP()
   }
 }
 
-void QuantaApp::slotEmailDTEP()
+QString QuantaApp::createDTEPTarball()
 {
   Document *w = ViewManager::ref()->activeDocument();
   if (w)
@@ -3335,15 +3360,13 @@ void QuantaApp::slotEmailDTEP()
     QString nickName = DTDs::ref()->getDTDNickNameFromName(w->getDTDIdentifier());
     bool ok = FALSE;
     QString res = KInputDialog::getItem(
-                    i18n( "Send DTD" ),
-                    i18n( "Please select a DTD:" ), lst, lst.findIndex(nickName), FALSE, &ok, this );
+        i18n( "Send DTD" ),
+    i18n( "Please select a DTD:" ), lst, lst.findIndex(nickName), FALSE, &ok, this );
 
     if (!ok)
-      return;
+      return QString::null;
 
     QString dtdName = DTDs::ref()->getDTDNameFromNickName(res);
-
-    QStringList dtdFile;
 
     QString prefix="quanta";
     KTempDir* tempDir = new KTempDir(tmpDir);
@@ -3372,14 +3395,21 @@ void QuantaApp::slotEmailDTEP()
 
     }
     tar.close();
-    dtdFile += tempFileName;
+    return tempFileName;
+  }
+  return QString::null;
+}
 
-    /*
-    if (!m_newDTEPStuff)
-      m_newDTEPStuff = new QNewDTEPStuff("quanta/dtep", this);
-    m_newDTEPStuff->uploadResource(tempFileName);
-    return;
-    */
+void QuantaApp::slotEmailDTEP()
+{
+  Document *w = ViewManager::ref()->activeDocument();
+  if (w)
+  {
+    QString tempFileName = createDTEPTarball();
+    if (tempFileName.isNull())
+      return;
+    QStringList dtdFile;
+    dtdFile += tempFileName;   
 
     TagMailDlg *mailDlg = new TagMailDlg( this, i18n("Send DTEP in Email"));
     QString toStr;
@@ -3414,20 +3444,19 @@ void QuantaApp::slotEmailDTEP()
 
 void QuantaApp::slotDownloadDTEP()
 {
-    if (!m_newDTEPStuff)
-      m_newDTEPStuff = new QNewDTEPStuff("quanta/dtep", this);
-    m_newDTEPStuff->downloadResource();
+  if (!m_newDTEPStuff)
+    m_newDTEPStuff = new QNewDTEPStuff("quanta/dtep", this);
+  m_newDTEPStuff->downloadResource();
 }
 
 void QuantaApp::slotUploadDTEP()
 {
-}
-
-void QuantaApp::slotDownloadToolbar()
-{
-    if (!m_newToolbarStuff)
-      m_newToolbarStuff = new QNewToolbarStuff("quanta/toolbar", this);
-    m_newToolbarStuff->downloadResource();
+  QString tempFileName = createDTEPTarball();
+  if (tempFileName.isNull())
+    return;
+  if (!m_newDTEPStuff)
+    m_newDTEPStuff = new QNewDTEPStuff("quanta/dtep", this);
+  tempDirList.append(m_newDTEPStuff->uploadResource(tempFileName));
 }
 
 void QuantaApp::slotSmartTagInsertion()
