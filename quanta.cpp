@@ -670,6 +670,9 @@ void QuantaApp::slotOptionsConfigureToolbars()
 
  int result = dlg.exec();
 
+ bool block = view->toolbarTab->signalsBlocked();
+ view->toolbarTab->blockSignals(true);
+ view->toolbarTab->setUpdatesEnabled(false);
  QString actionName;
  QString name;
 // QDictIterator<KXMLGUIClient> it(toolbarGUIClientList);
@@ -679,21 +682,15 @@ void QuantaApp::slotOptionsConfigureToolbars()
  QPtrList<KXMLGUIClient> guiClients = factory()->clients();
  for (uint i = 0; i < guiClients.count(); i++)
  {
-    bool clientRemoved;
     guiClient = guiClients.at(i);
     if (result == QDialog::Accepted)
     {
       nodeList = guiClient->domDocument().elementsByTagName("ToolBar");
       name = nodeList.item(0).cloneNode().toElement().attribute("tabname");
-      clientRemoved = toolbarMenuList.remove(name.lower());
-      if (clientRemoved)
-      {
-        menu = new QPopupMenu(m_tagsMenu);
-        //remove all inserted toolbars
-         factory()->removeClient(guiClient);
-  //      cout << "REMOVED: --------------------------------------------\n";
-   //     cout << guiClient->domDocument().toString() << "\n";
-      }
+      toolbarMenuList.remove(name.lower());
+      menu = new QPopupMenu(m_tagsMenu);
+      //remove all inserted toolbars
+      factory()->removeClient(guiClient);
     }
     //plug the actions in again
     nodeList = guiClient->domDocument().elementsByTagName("Action");
@@ -708,7 +705,7 @@ void QuantaApp::slotOptionsConfigureToolbars()
       }
     }
     //and add them again. Is there a better way to do this?
-    if (result == QDialog::Accepted && clientRemoved)
+    if (result == QDialog::Accepted )
     {
       guiFactory()->addClient(guiClient);
       if (!name.isEmpty())
@@ -727,6 +724,9 @@ void QuantaApp::slotOptionsConfigureToolbars()
  menuBar()->insertItem(i18n("&Tags"),m_tagsMenu,-1, TAGS_MENU_PLACE);
  view->write()->kate_view->installPopup((QPopupMenu *)factory()->container("popup_editor", quantaApp));
  view->toolbarTab->setCurrentPage(currentPageIndex);
+ view->toolbarTab->setUpdatesEnabled(true);
+ view->toolbarTab->blockSignals(block);
+ view->toolbarTab->repaint();
 }
 
 void QuantaApp::slotOptionsConfigureActions()
