@@ -51,14 +51,14 @@ TagDialog::TagDialog(QTag* tag ,QString attr, QString base)
   {
     this->tag = new QTag();
     QString s = "Unknown tag";
-    tag->setName(s);
+    this->tag->setName(s);
     deleteTag = true;
   } else
   {
+    this->tag = tag;
     deleteTag = false;
   }
   dict = new QDict<QString>(1,false);
-  this->tag = tag;
   basePath = base;
 
   QString caption = i18n("Tag Properties: ");
@@ -87,10 +87,12 @@ TagDialog::~TagDialog()
 /**  */
 void TagDialog::parseTag()
 {
-  QDomDocument doc;
-  //read the tag file it is available
-  if (QFileInfo(tag->fileName()).exists())
+  if (tag->name() != "Unknown tag") //read from the extra tags
   {
+    QDomDocument doc;
+    //read the tag file it is available
+    if (QFileInfo(tag->fileName()).exists())
+    {
  		 QFile f( tag->fileName() );
 		 f.open( IO_ReadOnly );
 	   if ( doc.setContent( &f ) )
@@ -99,16 +101,14 @@ void TagDialog::parseTag()
        ((Tagxml    *)mainDlg)->writeAttributes( dict );
      }
      f.close();
-  }
-  else
-  {
-    if (tag->name().lower() == "img") //NOTE: HTML specific code!
+    }
+    else
     {
-       mainDlg = new TagImgDlg( this);
-       ((TagImgDlg *)mainDlg)->writeAttributes( dict );
-    } else
-    {
-      if (tag->name() != "Unknown tag") //read from the extra tags
+      if (tag->name().lower() == "img") //NOTE: HTML specific code!
+      {
+         mainDlg = new TagImgDlg( this);
+        ((TagImgDlg *)mainDlg)->writeAttributes( dict );
+      } else
       {
         QString docString = "<!DOCTYPE TAGS>\n<TAGS>\n";
         docString += QString("<tag name=\"%1\">\n").arg(tag->name());
@@ -118,7 +118,6 @@ void TagDialog::parseTag()
         mainDlg = new Tagxml( doc, this );
       }
     }
-  }
 
   if ( mainDlg )
   {
@@ -167,7 +166,7 @@ void TagDialog::parseTag()
     }
     delete attrs;
   }
-
+ }
 }
 
 /** Insert an attribute to dict*/
