@@ -44,6 +44,7 @@
 #include "structtreetag.h"
 #include "structtreeview.h"
 #include "structtreeview.moc"
+extern GroupElementMapList globalGroupMap;
 
 StructTreeView::StructTreeView(QWidget *parent, const char *name )
 : KListView(parent,name)
@@ -258,7 +259,6 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
   }
 
   GroupElementList* groupElementList;
-  GroupElementMapList* groupElementMapList;
   QListViewItem *insertUnder;
   QListViewItem *insertAfter;
   QListViewItem *listItem;
@@ -270,9 +270,8 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
     for (uint i = 0; i < groupsCount; i++)
     {
       group = m_parsingDTD->structTreeGroups[i];
-      groupElementMapList = parser->groups();
       QString name = group.name+"|";
-      for (it = groupElementMapList->begin(); it != groupElementMapList->end(); ++it)
+      for (it = globalGroupMap.begin(); it != globalGroupMap.end(); ++it)
       {
         insertUnder = groups[i];
         insertAfter = insertUnder;

@@ -34,12 +34,13 @@
 #include "quantacommon.h"
 #include "dtds.h"
 
+extern GroupElementMapList globalGroupMap;
+
 SAParser::SAParser()
 {
   m_write = 0L;
   m_baseNode = 0L;
   m_currentNode = 0L;
-  m_groups = new GroupElementMapList();
   m_selectors = new QStringList();
   m_quotesRx = QRegExp("\"|'");
   includeWatch = 0L;
@@ -47,7 +48,6 @@ SAParser::SAParser()
 
 SAParser::~SAParser()
 {
-  delete m_groups;
   delete m_selectors;
   delete includeWatch;
 }
@@ -114,7 +114,7 @@ void SAParser::parseForScriptGroup(Node *node)
         //have the same title. For example get the list of all group
         //element which are variable and the matched string was "$i"
         QString s = title;
-        groupElementList = & ((*m_groups)[group.name + "|" + s.remove(group.clearRx)]);
+        groupElementList = & (globalGroupMap[group.name + "|" + s.remove(group.clearRx)]);
         GroupElementList::Iterator elIt;
         //Create a new tag which point to the exact location of the matched string.
         //For example when the group defined PHP variables it

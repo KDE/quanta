@@ -157,7 +157,7 @@ public:
 //"function | foo" and "variable | $i" group. In this case the list has two pointers.
 //if "$i" appeared more than once in the node, the second pointer points to a list
 //with more than one elements. The original group element lists are in
-// Parser::m_groups
+// globalGroupMap
  QPtrList<GroupElementList> groupElementLists;
 
  #ifdef BUILD_KAFKAPART

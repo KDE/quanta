@@ -25,6 +25,8 @@
 #include "kafkacommon.h"
 #endif
 
+GroupElementMapList globalGroupMap;
+
 Node::Node( Node *parent )
 {
   this->parent = parent;
@@ -55,7 +57,7 @@ Node::~Node()
   tag->cleanStrBuilt = false;
 #endif
   //Remove the references to this node from the list of group elements.
-  //They are actually stored in Parser::m_groups.
+  //They are actually stored in globalGroupMap.
   QPtrListIterator<GroupElementList> iter(groupElementLists);
   GroupElementList *groupElementList;
   while ((groupElementList = iter.current()) != 0)

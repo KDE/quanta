@@ -958,7 +958,8 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
   reparse(true);
   slotNewStatus();
   slotNewLineColumn();
-
+  typingInProgress = false; //need to reset, as it's set to true in the above slots
+  
   loadToolbarForDTD(newWrite->getDTDIdentifier());
 
   Document *currentWrite = m_view->write();
@@ -1522,7 +1523,7 @@ void QuantaApp::reparse(bool force)
       baseNode = parser->parse(w, true);
     }
 
-    if ( stabdock->isVisible() && (w->hasChanged() || force))
+    if (w->hasChanged() || force)
     {
       slotReloadStructTreeView();
     }
@@ -1703,13 +1704,41 @@ void QuantaApp::slotContextHelp()
   }
 }
 
-void QuantaApp::slotShowFTabDock() { ftabdock->changeHideShowState();}
-void QuantaApp::slotShowPTabDock() { ptabdock->changeHideShowState();}
-void QuantaApp::slotShowTTabDock() { ttabdock->changeHideShowState();}
-void QuantaApp::slotShowScriptTabDock() { scripttabdock->changeHideShowState(); }
-void QuantaApp::slotShowSTabDock() { stabdock->changeHideShowState();}
-void QuantaApp::slotShowATabDock() { atabdock->changeHideShowState();}
-void QuantaApp::slotShowDTabDock() { dtabdock->changeHideShowState();}
+void QuantaApp::slotShowFTabDock() 
+{ 
+  ftabdock->changeHideShowState();
+}
+
+void QuantaApp::slotShowPTabDock() 
+{ 
+  ptabdock->changeHideShowState();
+}
+
+void QuantaApp::slotShowTTabDock() 
+{ 
+  ttabdock->changeHideShowState();
+}
+
+void QuantaApp::slotShowScriptTabDock() 
+{
+ scripttabdock->changeHideShowState(); 
+}
+void QuantaApp::slotShowSTabDock() 
+{ 
+  stabdock->changeHideShowState();
+  slotReloadStructTreeView();
+}
+
+void QuantaApp::slotShowATabDock() 
+{ 
+ atabdock->changeHideShowState();
+}
+
+void QuantaApp::slotShowDTabDock() 
+{ 
+  dtabdock->changeHideShowState();
+}
+
 void QuantaApp::slotShowProblemsDock(bool force)
 {
   if(!force)
@@ -1736,7 +1765,6 @@ void QuantaApp::slotShowMainDock(bool force)
     maindock->show();
   }
 }
-
 
 void QuantaApp::slotShowBottDock(bool force)
 {
@@ -3965,7 +3993,7 @@ void QuantaApp::slotConvertCase()
 
 void QuantaApp::slotReloadStructTreeView()
 {
-  if (m_view->writeExists())
+  if (stabdock->isVisible() && m_view->writeExists())
   {
     Document *w = m_view->write();
     StructTreeView::ref()->setParsingDTD(w->parsingDTD());

@@ -54,6 +54,7 @@
 #include <kiconloader.h>
 #include <klocale.h>
 
+extern GroupElementMapList globalGroupMap;
 static const QChar space(' ');
 
 Parser::Parser()
@@ -1144,18 +1145,12 @@ Node *Parser::rebuild(Document *w)
  return m_node;
 }
 
-GroupElementMapList* Parser::groups() 
-{
-  return m_saParser->groups();
-}
-
 void Parser::clearGroups()
 {
-  GroupElementMapList *m_groups = m_saParser->groups();
   GroupElementMapList::Iterator it;
   GroupElementList::Iterator elementIt;
   GroupElementList *list;
-  for (it = m_groups->begin(); it != m_groups->end(); ++it)
+  for (it = globalGroupMap.begin(); it != globalGroupMap.end(); ++it)
   {
     list = & it.data();
     //Clear the group element list and also remove the group tag which
@@ -1167,7 +1162,7 @@ void Parser::clearGroups()
       delete (*elementIt).tag;
     }
   }
-  m_groups->clear();
+  globalGroupMap.clear();
   ParserCommon::includedFiles.clear();
   ParserCommon::includedFilesDTD.clear();
   m_saParser->selectors()->clear();

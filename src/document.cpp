@@ -74,6 +74,8 @@
 
 #define STEP 1
 
+extern GroupElementMapList globalGroupMap;
+
 Document::Document(KTextEditor::Document *doc,
                    QuantaPluginInterface *a_pIf,
                    QWidget *parent, const char *name, WFlags f )
@@ -939,12 +941,11 @@ QValueList<KTextEditor::CompletionEntry>* Document::getGroupCompletions(Node *no
   if (!group.removeFromAutoCompleteWordRx.pattern().isEmpty())
       word.remove(group.removeFromAutoCompleteWordRx);
   completion.userdata = word + "|";
-  GroupElementMapList *map = parser->groups();
   GroupElementMapList::Iterator it;
   QString str = group.name;
   str.append("|");
   str.append(word);
-  for ( it = map->begin(); it != map->end(); ++it )
+  for ( it = globalGroupMap.begin(); it != globalGroupMap.end(); ++it )
   {
     if (it.key().startsWith(str) && it.key() != str )
     {

@@ -71,7 +71,6 @@ public:
                   
   void parseInDetail(bool synchronous);     
   
-  GroupElementMapList* groups() {return m_groups;}
   QStringList* selectors() {return m_selectors;}
   
   KDirWatch *includeWatch;
@@ -116,7 +115,6 @@ private:
   Node* m_currentNode; ///< the currently parsed script node for details. Changes only after the whole area between m_currentNode and m_currentNode->next is parsed.
   int m_lastParsedLine, m_lastParsedCol;
   const DTDStruct *m_dtd;
-  GroupElementMapList *m_groups;
   QStringList *m_selectors; //holds the CSS selectors
   QRegExp m_quotesRx;
 

@@ -86,7 +86,6 @@ public:
       Only for debugging purposes. */
   void coutTree(Node *node, int indent);
 
-  GroupElementMapList *groups(); //a list of groups (variables, inclusions)
   QStringList *selectors();
   
   IncludedGroupElementsMap includedMap;
