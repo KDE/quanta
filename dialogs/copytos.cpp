@@ -2,7 +2,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file './copytos.ui'
 **
-** Created: Mon Sep 23 19:01:20 2002
+** Created: Mon Sep 23 15:59:34 2002
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
