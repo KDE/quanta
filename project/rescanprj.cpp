@@ -104,8 +104,18 @@ void RescanPrj::addEntries(KIO::Job *job,const KIO::UDSEntryList &list)
     name = item.name();
     if (item.isDir() && item.isLink())
     {
-      linkItems.append(new KFileItem(item));
-      //kdDebug(24000) << "Got link: " << name << " Points to:" << item.linkDest() << endl;
+      kdDebug(24000) << "Got link: " << name << " Points to:" << item.linkDest() << endl;
+      KURL u = item.url();
+      u.setPath(item.linkDest());
+      u.adjustPath(+1);
+      if (!prjFileList.contains(u))
+      {
+        linkItems.append(new KFileItem(item));
+      } else
+      {
+        kdDebug(24000) << "Recursive link" << endl;
+        continue;
+      }
     }
     if (!name.isEmpty() && name != dot && name != dotdot && !excludeRx.exactMatch(name))
     {
