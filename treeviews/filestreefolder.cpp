@@ -152,6 +152,7 @@ void FilesTreeFolder::dropped(QDropEvent *e)
 /** No descriptions */
 bool FilesTreeFolder::acceptDrop(const QMimeSource *mime) const
 {
+  Q_UNUSED(mime);
   return true;
 }
 /** No descriptions */

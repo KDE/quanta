@@ -67,6 +67,8 @@ public:
 	QString attributeValue(int index);
   /** Return the value of attr*/
 	QString attributeValue(QString attr);
+  /** Returns the quotation status of the attribute */
+  bool isQuotedAttribute(int index) {return attrs[index].quoted;}
   /** Check if this tag has the attr attribute defined */
   bool hasAttribute( const QString &attr );
   /** Set the coordinates of tag inside the document */
@@ -104,6 +106,7 @@ public:
   bool closingMissing; //closing tag is optional and missing
   int attrCount;
   QString parsingDTDName;
+  int offset; //if the text in tag is parsed, shift it with offset
 
 private:
   int beginLine; //where the tag begins in the doc

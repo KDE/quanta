@@ -1066,8 +1066,8 @@ void QuantaApp::reparse()
       }
       if (dtds->find(w->getDTDIdentifier()))
       {
-        baseNode = parser->parse(w);
-        //baseNode = parser->newParse(w);
+        //baseNode = parser->parse(w);
+        baseNode = parser->newParse(w);
         sTab->setParsingDTD(w->parsingDTD());
       }
     

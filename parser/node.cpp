@@ -20,7 +20,7 @@
 Node::Node( Node *parent )
 {
   this->parent = parent;
-  next = child = 0L;
+  prev = next = child = 0L;
   tag = 0L;
   opened = false;
 }

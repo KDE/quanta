@@ -31,6 +31,7 @@ Tag::Tag()
   single = false;
   closingMissing = false;
   attrCount = 0;
+  offset = 0;
 }
 
 Tag::Tag( const Tag &t)
@@ -46,6 +47,7 @@ Tag::Tag( const Tag &t)
   m_tagStr = t.m_tagStr;
   m_write = t.m_write;
   type = t.type;
+  offset = t.offset;
 
 	for (int i=0; i<t.attrCount; i++)
   {

@@ -50,6 +50,97 @@ Parser::~Parser()
 {
 }
 
+Node* Parser::scriptParser(Node *startNode)
+{
+ 
+  QString foundText;
+  QString s;
+  QString specialEndStr;
+  QString text = startNode->tag->tagStr();
+  
+  int pos = 0;
+  int pos2;
+  int parsingDTDIndex = 0;
+  int col = startNode->tag->offset;
+  int bl, bc, el, ec;
+  int node_bl, node_bc, node_el, node_ec;
+  int n;
+  startNode->tag->beginPos(node_bl, node_bc);
+  startNode->tag->endPos(node_el, node_ec);
+  Node *currentNode = 0L;
+  
+  while (pos != -1)
+  {
+    pos = text.find(m_dtd->specialAreaStartRx, col); //FIXME: m_dtd nem jo...
+    if (pos != -1)
+    {
+      foundText = m_dtd->specialAreaStartRx.cap();
+      //Calculate the beginning coordinates
+      s = text.left(pos);
+      n = s.contains('\n');
+      bl = node_bl + n;
+      if (n > 0)
+      {
+        bc = pos - s.findRev("\n") - 1;
+      } else
+      {
+        bc = node_bc + pos;
+      }
+      //What is the closing string?
+      for (uint i = 0; i < m_dtd->specialAreaBegin.count(); i++)
+      {
+        if (m_dtd->specialAreaBegin[i] == foundText)
+        {
+          specialEndStr = m_dtd->specialAreaEnd[i];
+          parsingDTDIndex = i;
+          break;
+        }
+      }
+      pos2 = text.find(specialEndStr, pos);
+      if (pos2 != -1) 
+      {          
+        //Calculate the end coordinates
+        s = text.left(pos2);
+        n = s.contains('\n');
+        el = node_bl + n;
+        if (n > 0)
+        {
+          ec = pos2 - s.findRev("\n");
+        } else
+        {
+          ec = node_bc + pos2 + specialEndStr.length() - 1;
+        }
+        s = text.mid(pos, pos2 - pos);
+        //build the tag
+        Tag *tag = new Tag;
+        tag->setWrite(write);
+        tag->setStr(s);
+        tag->setTagPosition(bl, bc, el, ec);
+        tag->single = true;
+        tag->parsingDTDName = m_dtd->specialAreaNames[parsingDTDIndex];
+        tag->name = i18n("%1 block").arg(tag->parsingDTDName.upper());
+        tag->offset = foundText.length();
+        Node *node = new Node(startNode);
+        node->tag = tag;
+        node->tag->type = Tag::ScriptTag;
+        if (!currentNode)
+        {
+          startNode->child = node;
+        } else
+        {
+          currentNode->next = node;
+          node->prev = currentNode;
+        }
+        currentNode = node;
+
+        parseInside(node); 
+
+        col = pos2 + 1;           
+      } else 
+        pos = -1;
+    }
+  }
+}
 
 Node *Parser::newParse(Document *w)
 {
@@ -113,7 +204,7 @@ Node *Parser::newParse(Document *w)
           pos = 0;
         }
       }
-      tagStartCol = specialStartPos;
+      tagStartCol = specialStartPos ;
       col = tagEndCol;
       nodeFound = true;
 
@@ -127,6 +218,7 @@ Node *Parser::newParse(Document *w)
       tag->single = true;
       tag->parsingDTDName = m_dtd->specialAreaNames[parsingDTDIndex];
       tag->name = i18n("%1 block").arg(tag->parsingDTDName.upper());
+      tag->offset = foundText.length();
       
       goUp = (parentNode && parentNode->tag->single);
     }
@@ -271,7 +363,6 @@ Node *Parser::newParse(Document *w)
           {
             if (parentNode) 
                 parentNode->child = node;
-            node->prev = 0;
           }
           if (!textTag->single)
               parentNode = node;
@@ -300,7 +391,6 @@ Node *Parser::newParse(Document *w)
         {
           if (parentNode) 
               parentNode->child = node;
-          node->prev = 0;
         }
         if (!tag->single)
             parentNode = node;
@@ -318,7 +408,11 @@ Node *Parser::newParse(Document *w)
         {
           node->tag->type = Tag::Comment;
         }
-      }
+      }       
+      else if (tag->type == Tag::XmlTag)
+           {
+             scriptParser(node);
+           }
       
       currentNode = node;
       if (!rootNode) 
@@ -464,6 +558,9 @@ void Parser::parseInside(Node *startNode)
           currentNode->next = node;
         }
         node->tag = tag;
+        
+        scriptParser(node);
+        
         currentNode = node;
       } 
       lastPos = pos + 1;
@@ -526,7 +623,6 @@ void Parser::parseInside(Node *startNode)
         if (!rootNode->child)            
         {
           rootNode->child = node;
-          node->prev = 0L;
         } else
         {
           node->prev = currentNode;
@@ -539,20 +635,6 @@ void Parser::parseInside(Node *startNode)
       } 
       
       bCol += name.length() + 1;
-
-      
-      /* 1. keywordPos-tol lastPos-ig: Text
-        2. letrehozni egy node-ot a fenti Text-el, single tipusu, nem lesz gyereke
-        3. pos-tol tovabbkeresni a megfelelo }-ra, eddig lesz egy Struct
-        4. letrehozni egy node-ot a fentivel, parentNode ez lesz
-        5. node letrehozasanal, ha kezdo pozicio > parentNode vegso pozicio, akkor
-            feljebb kell lepni 
-        6. az egeszet addig kell ismetelni, mig nem talalunk {-t.  
-        7. node letrehozasakor a lastPos-t es a keywordPos-t at kell 
-            alakitani koordinataka, es a tagStr-be az eredeti string reszet kell
-            berakni, nem ami a str-ben van
-        8. Szimpla stringre valo kereseskor nem szukseges QRegExp-et hasznalni 
-      */
     }
   }
 
