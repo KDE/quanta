@@ -1,27 +1,19 @@
 This files contains the changes since Quanta 2.0 until the current 3.3, which
 is still under heavy development.
 
-Version 3.3 BE 2 (Release date: 05-05-2004; Started 26-01-2004):
+Version 3.3 BE 2 (Release date: 07-05-2004; Started 26-01-2004):
     - bugfixes:
         - VPL:
             - show the parent tag in the tag attribute view when editing text
             - stop inserting &nbsp; everywhere [#72535]
             - fix some various crashes [#72532]
-            - don't lose the comment text from inside a comment
-        - never crash when invoking the CSS editor on an empty document
-        - don't crash when invoking the CSS editor after a <style> without the closing </style>
         - correctly close tags with namespaces when entering "</"
         - make autocompletion work correctly with namespaced tags
         - don't insert boolean attributes with false as value in the tags
         - fix XML style tag editing (don't make tags look like <foo /="true">)
 	- make the New Project wizard usable on lower resolutions [#75192]
-        - make removal of top folders added with "New Top Folder" possible [#76498, #76573]
-        - don't change the tab name if saving under a new name failed (needs KDE 3.2.2 or later)
         - various parsing fixes
         - report bugs for "quanta" module, not for "quanta_be"
-        - use the correct quotation and case when inserting a link to a file from the treeviews [#76663]
-        - don't break the opening tag when some new tag is pasted inside an existing one
-    	- don't insert the closing tag for a Tag action if it is not requested to do so.
         - fix restoration of the toolbar visibility setting [#79082]
         - hide/show the plugin toolbar as well when Show Toolbar is unchecked/checked [#79082]
         - don't ask for copying a file to the project if it is under the project directory (happened
@@ -32,11 +24,7 @@ Version 3.3 BE 2 (Release date: 05-05-2004; Started 26-01-2004):
         - don't crash when canceling a failed upload
         - don't hang for 3 minutes if a filtering script action cannot be found
 
-    - performance:
-        - parse the included files less often
-
     - behavioral/user interface changes:
-      - remove  the < and > from the entered misc. tags.
       - expand abbreviation is CTRL-SHIFT-J
       - some menu items were restructured:
             - File: Close/Close All moved under Window
@@ -54,13 +42,14 @@ Version 3.3 BE 2 (Release date: 05-05-2004; Started 26-01-2004):
                                           Layout renamed to User Interface
                                           Layout->Window Layout replaced with Reset window layout to the default...
       - new MDI modes: Toplevel / Childframe / Tab Page (like the old one ) and the new default IDEAl mode
-      - documentation can appear in a new tab or a separate toolview
+      - preview, documentation and plugins can appear in a new tab or a separate toolview
 
     - new features:
       - Next / Previous Bookmark actions
       - add a toolbar for CSS
       - list the opened files as bold in the treeviews
       - allow closing of opened files from the treeviews
+      - option to control the visibility of hidden files in the treeviews
       - add description field for project files
       - Select Current Tag Area action created
       - option to control loading of last opened files/project on startup
@@ -69,9 +58,9 @@ Version 3.3 BE 2 (Release date: 05-05-2004; Started 26-01-2004):
         - QuantaIf: selectors() and idSelectors()
         - SettingsIf: dtep(), encoding(), quotationChar()
 
-
     - enhancements:
       - improve multiline script autocompletion
+      - improve the problem reporter
       - warn if there is a closing tag without opening tag in the document
       - show also the column number in the error reporting dialog
       - multiline, formatted CSS insertion from the CSS editor dialog
@@ -80,9 +69,13 @@ Version 3.3 BE 2 (Release date: 05-05-2004; Started 26-01-2004):
       - list the defined CSS selectors in the autocompletion and tag dialogs for class and
         id attributes
       - added some useful templates and template examples
+      - added descriptions for all scripts
+      - added installation script for Gubed PHP debugger
 
 Version 3.2.2 (Release data: xx-xx-2004; Started 01-03-2004):
     - bugfixes:
+        - VPL:
+            - don't lose the comment text from inside a comment
         - make removal of top folders added with "New Top Folder" possible [#76498, #76573]
         - never crash when invoking the CSS editor on an empty document
         - don't crash when invoking the CSS editor after a <style> without the closing </style>
@@ -92,6 +85,9 @@ Version 3.2.2 (Release data: xx-xx-2004; Started 01-03-2004):
         - fix preview when preview prefix is used
         - don't crash when parsing an included file.[#76478]
         - give an error message when saving to remote files failed
+
+    - performance:
+        - parse the included files less often
 
     - behavioral changes:
         - remove the < and > from the misc. tag
