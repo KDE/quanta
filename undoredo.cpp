@@ -57,6 +57,20 @@ void undoRedo::addNewModifsSet(NodeModifsSet modifs)
 	bool noMerge = false;
 	bool textTyped;
 
+#ifdef 0
+	//for the release
+	for(it2 = modifs.NodeModifList.begin(); it2 != modifs.NodeModifList.end(); it2++)
+	{
+		if((*it2).type == undoRedo::NodeRemoved || (*it2).type ==
+			undoRedo::NodeAndChildsRemoved || (*it2).type ==
+			undoRedo::NodeTreeRemoved)
+			delete (*it2).node;
+		else if((*it2).type == undoRedo::NodeModified)
+			delete (*it2).tag;
+	}
+	return;
+#endif
+
 	if(_mergeNext)
 	{
 		//we merge modifs with the previous NodeModifsSet
@@ -232,13 +246,33 @@ void undoRedo::addNewModifsSet(NodeModifsSet modifs)
 				it++;
 				while(it != end())
 				{
+					for(it2 = (*it).NodeModifList.begin(); it2 != (*it).NodeModifList.end(); it2++)
+					{
+						if((*it2).type == undoRedo::NodeAdded || (*it2).type ==
+							undoRedo::NodeAndChildsAdded || (*it2).type ==
+							undoRedo::NodeTreeAdded)
+							delete (*it2).node;
+						else if((*it2).type == undoRedo::NodeModified)
+							delete (*it2).tag;
+					}
 					it = erase(it);
 				}
 			}
 		}
 		append(modifs);
 		while(count() > (unsigned)_listLimit)
+		{
+			for(it2 = (*begin()).NodeModifList.begin(); it2 != (*begin()).NodeModifList.end(); it2++)
+			{
+				if((*it2).type == undoRedo::NodeRemoved || (*it2).type ==
+					undoRedo::NodeAndChildsRemoved || (*it2).type ==
+					undoRedo::NodeTreeRemoved)
+					delete (*it2).node;
+				else if((*it2).type == undoRedo::NodeModified)
+					delete (*it2).tag;
+			}
 			remove(begin());
+		}
 		editorIterator = fromLast();
 	}
 
