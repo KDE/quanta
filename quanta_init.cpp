@@ -1854,18 +1854,16 @@ void QuantaApp::slotBuildPluginMenu()
   // so that we can skip all of this work if nothing has changed
 
   QDict<QuantaPlugin> plugins = m_pluginInterface->plugins();
-
   QDictIterator<QuantaPlugin> it(plugins);
   for(;it.current() != 0;++it)
   {
        QuantaPlugin *curPlugin = it.current();
-
        if(curPlugin)
        {
 //         int id = m_pluginMenu->insertItem(curPlugin->pluginName());
 //         if(curPlugin->isRunning())
 //           m_pluginMenu->setItemChecked(id, TRUE);
-         curPlugin->m_action->plug(m_pluginMenu);
+           curPlugin->m_action->plug(m_pluginMenu);
        }
   }
 }
@@ -1915,12 +1913,10 @@ void QuantaApp::slotPluginsEdit()
   editor->setSearchPaths(m_pluginInterface->searchPaths());
   editor->setPlugins(m_pluginInterface->plugins());
 
-  if(editor->exec())
-  {
-    m_pluginInterface->setSearchPaths(editor->searchPathList());
-    m_pluginInterface->setPlugins(editor->plugins());
-    m_pluginInterface->writeConfig();
-  }
+  editor->exec();
+  m_pluginInterface->setSearchPaths(editor->searchPathList());
+  m_pluginInterface->setPlugins(editor->plugins());
+  m_pluginInterface->writeConfig();
 }
 
 void QuantaApp::slotPluginsValidate()
