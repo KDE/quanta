@@ -53,19 +53,19 @@
     <configurations>
       <default>
         <configargs>--enable-debug=full --prefix=/opt/kde3 --enable-editors</configargs>
-        <builddir>/home/andris/development/build/kde-head/kdewebdev</builddir>
+        <builddir>/home/andris/development/build/kde-head/kdewebdev-3.4</builddir>
         <ccompiler>kdevgccoptions</ccompiler>
         <cxxcompiler>kdevgppoptions</cxxcompiler>
         <f77compiler>kdevpgf77options</f77compiler>
-        <ccompilerbinary/>
-        <cxxcompilerbinary/>
-        <f77compilerbinary/>
+        <ccompilerbinary></ccompilerbinary>
+        <cxxcompilerbinary></cxxcompilerbinary>
+        <f77compilerbinary></f77compilerbinary>
         <cflags>-DKDE_NO_COMPAT -DQT_NO_COMPAT</cflags>
         <cxxflags>-DKDE_NO_COMPAT -DQT_NO_COMPAT -DDEBUG_PARSER</cxxflags>
-        <f77flags/>
-        <topsourcedir>/home/andris/development/sources/kde-head/kdewebdev</topsourcedir>
-        <cppflags/>
-        <ldflags/>
+        <f77flags></f77flags>
+        <topsourcedir>/home/andris/development/sources/kde-branch/kdewebdev</topsourcedir>
+        <cppflags></cppflags>
+        <ldflags></ldflags>
         <envvars>
           <envvar value="kommander klinkstatus kfilereplace kxsldbg kimagemapeditor" name="DO_NOT_COMPILE_2" />
         </envvars>
@@ -186,16 +186,16 @@
   </kdevdoctreeview>
   <kdevdebugger>
     <general>
-      <dbgshell/>
-      <programargs/>
+      <dbgshell></dbgshell>
+      <programargs></programargs>
       <gdbpath>/usr/bin/</gdbpath>
       <breakonloadinglibs>true</breakonloadinglibs>
       <separatetty>false</separatetty>
       <floatingtoolbar>false</floatingtoolbar>
       <runappinappdirectory>true</runappinappdirectory>
-      <configGdbScript/>
-      <runShellScript/>
-      <runGdbScript/>
+      <configGdbScript></configGdbScript>
+      <runShellScript></runShellScript>
+      <runGdbScript></runGdbScript>
     </general>
     <display>
       <staticmembers>false</staticmembers>
@@ -265,7 +265,7 @@
       <pcs>KDElibs</pcs>
     </references>
     <creategettersetter>
-      <prefixGet/>
+      <prefixGet></prefixGet>
       <prefixSet>set</prefixSet>
       <prefixVariable>m_,_</prefixVariable>
       <parameterName>theValue</parameterName>
