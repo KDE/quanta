@@ -750,6 +750,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeCompletions( DTD
               completion.type = "attribute";
               completion.userdata = startsWith+"|"+tag->name();
 
+              //list specified attributes for this tag
               AttributeList *list = tag->attributes();
               for (uint i = 0; i < list->count(); i++)
               {
@@ -762,6 +763,21 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeCompletions( DTD
                 }
               }
 
+              //list common attributes for this tag
+              for (QStringList::Iterator it = tag->commonGroups.begin(); it != tag->commonGroups.end(); ++it)
+              {
+                AttributeList *attrs = tag->parentDTD->commonAttrs->find(*it);
+                for (uint j = 0; j < attrs->count(); j++)
+                {
+                  QString name = attrs->at(j)->name;
+                  if (name.upper().startsWith(startsWith))
+                  {
+                    completion.text = QuantaCommon::attrCase(name);
+                    completion.comment = attrs->at(j)->type;
+                    completions->append( completion );
+                  }
+                }
+              }
 
               if (tag->name().contains("!doctype",false)) //special case, list all the known document types
               {
