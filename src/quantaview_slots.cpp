@@ -751,7 +751,7 @@ void QuantaView::slotUndo ()
 #ifdef BUILD_KAFKAPART
   if(hadLastFocus() == QuantaView::kafkaFocus)
   {
-    KMessageBox::information(this, i18n("Sorry, VPL does not support this functionality yet."),
+    KMessageBox::information(this, i18n("VPL does not support this functionality yet."),
       QString::null, "show undo unavailable");
     return;
   }
@@ -774,7 +774,7 @@ void QuantaView::slotRedo ()
 #ifdef BUILD_KAFKAPART
   if(hadLastFocus() == QuantaView::kafkaFocus)
   {
-    KMessageBox::information(this, i18n("Sorry, VPL does not support this functionality yet."),
+    KMessageBox::information(this, i18n("VPL does not support this functionality yet."),
       QString::null, "show redo unavailable");
     return;
   }
@@ -797,7 +797,7 @@ void QuantaView::slotCut ()
 #ifdef BUILD_KAFKAPART
   if(hadLastFocus() == QuantaView::kafkaFocus)
   {
-    KMessageBox::information(this, i18n("Sorry, VPL does not support this functionality yet."),
+    KMessageBox::information(this, i18n("VPL does not support this functionality yet."),
       QString::null, "show cut unavailable");
     return;
   }
@@ -813,7 +813,7 @@ void QuantaView::slotCopy ()
 #ifdef BUILD_KAFKAPART
   if(hadLastFocus() == QuantaView::kafkaFocus)
   {
-    KMessageBox::information(this, i18n("Sorry, VPL does not support this functionality yet."),
+    KMessageBox::information(this, i18n("VPL does not support this functionality yet."),
       QString::null, "show copy unavailable");
     return;
   }
@@ -832,7 +832,7 @@ void QuantaView::slotPaste ()
 #ifdef BUILD_KAFKAPART
   if(hadLastFocus() == QuantaView::kafkaFocus)
   {
-    KMessageBox::information(this, i18n("Sorry, VPL does not support this functionality yet."),
+    KMessageBox::information(this, i18n("VPL does not support this functionality yet."),
       QString::null, "show paste unavailable");
     return;
   }

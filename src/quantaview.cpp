@@ -567,7 +567,7 @@ void QuantaView::slotShowKafkaPart()
   }
   if(write()->defaultDTD()->name.contains("HTML", false) == 0)
   {
-    KMessageBox::information(this, i18n("Sorry, for the moment, the VPL Mode does not support the current DTD : %1").arg(write()->defaultDTD()->nickName));
+    KMessageBox::information(this, i18n("The VPL Mode does not support the current DTD, at the moment: %1").arg(write()->defaultDTD()->nickName));
     if(ta2)
       ta2->setChecked(true);
     return;
@@ -636,7 +636,7 @@ void QuantaView::slotShowKafkaAndQuanta()
   }
   if(write()->defaultDTD()->name.contains("HTML", false) == 0)
   {
-    KMessageBox::information(this, i18n("Sorry, for the moment, the VPL Mode does not support the current DTD : %1").arg(write()->defaultDTD()->nickName));
+    KMessageBox::information(this, i18n("The VPL Mode does not support the current DTD, at the moment: %1").arg(write()->defaultDTD()->nickName));
     if(ta2)
       ta2->setChecked(true);
     return;

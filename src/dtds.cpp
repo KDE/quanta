@@ -179,7 +179,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
   if (!QFile::exists(dtd->fileName)) return false;
 
   kapp->setOverrideCursor( QCursor(Qt::WaitCursor) );
-  quantaApp->slotStatusMsg(i18n("loading DTD's..."));
+  quantaApp->slotStatusMsg(i18n("Loading DTD's..."));
 
   KConfig *dtdConfig = new KConfig(dtd->fileName, true);
   

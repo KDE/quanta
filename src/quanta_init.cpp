@@ -919,7 +919,7 @@ void QuantaInit::initActions()
                         DTDs::ref(), SLOT( slotLoadDTEP() ),
                         ac, "load_dtep" );
 
-    (void) new KAction( i18n( "Send DTD Package (DTEP) in E-&Mail..." ), 0,
+    (void) new KAction( i18n( "Send DTD Package (DTEP) in E&mail..." ), 0,
                         m_quanta, SLOT( slotEmailDTEP() ),
                         ac, "send_dtep" );
 
