@@ -47,6 +47,7 @@ Tag::Tag()
 Tag::Tag( const Tag &t)
 {
   name = t.name;
+  nameSpace = t.nameSpace;
   dtd = t.dtd;
   single = t.single;
   closingMissing = t.closingMissing;
@@ -63,6 +64,10 @@ Tag::Tag( const Tag &t)
   m_nameCol = t.m_nameCol;
   attrs = t.attrs;
   validXMLTag = t.validXMLTag;
+#ifdef BUILD_KAFKAPART
+  cleanStrBuilt = t.cleanStrBuilt;
+  notInTree = t.notInTree;
+#endif
 }
 
 Tag::~Tag()

@@ -2156,6 +2156,7 @@ void Parser::parseForScriptGroup(Node *node)
           includedFilesDTD.append(dtd);
           includeWatch->addFile(url.path());
         }
+        node->groupTag = newTag;
       }
     }
   }

@@ -705,7 +705,7 @@ void StructTreeView::slotOpenFile()
   StructTreeTag *item = dynamic_cast<StructTreeTag*>(currentItem());
   if (item->node)
   {
-    QString text = item->node->tag->name;
+    QString text = item->groupTag->name;
     text.remove(item->fileNameRx);
     KURL url;
     QuantaCommon::setUrl(url, text.stripWhiteSpace());
