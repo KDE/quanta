@@ -32,8 +32,6 @@
 
 /* OTHER INCLUDES */
 #include "quantaplugininterface.h"
-#include "quantakpartplugin.h"
-#include "quantacmdplugin.h"
 #include "../resource.h"
 #include "../quanta.h"
 
