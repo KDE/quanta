@@ -3,6 +3,7 @@
                              -------------------
     begin                : Втр Май  9 13:29:57 EEST 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
+                           (C) 2001-2003 Andras Mantia <amantia@freemail.hu>
     email                : pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com
  ***************************************************************************/
 
@@ -34,7 +35,7 @@
 #include <kmessagebox.h>
 #include <kdirwatch.h>
 #include <kdeversion.h>
-//#include <kdebug.h>
+#include <kdebug.h>
 
 #include <ktexteditor/configinterface.h>
 #include <ktexteditor/highlightinginterface.h>
@@ -181,30 +182,30 @@ void QuantaDoc::openDocument(const KURL& url, QString encoding)
       changeFileTabName();
       quantaApp->fileRecent->addURL( w->url() );
 
-      emit newStatus();
       quantaApp->repaintPreview();
 
-      quantaApp->processDTD();
-      quantaApp->reparse();
-
-      loaded = true;
-
-      write()->kate_view->setIconBorder(qConfig.iconBar);
-      write()->kate_view->setLineNumbersOn(qConfig.lineNumbers);
+      w->kate_view->setIconBorder(qConfig.iconBar);
+      w->kate_view->setLineNumbersOn(qConfig.lineNumbers);
       quantaApp->viewBorder->setChecked(qConfig.iconBar);
       quantaApp->viewLineNumbers->setChecked(qConfig.lineNumbers);
 
-  #if (KDE_VERSION > 308)
+    #if (KDE_VERSION > 308)
       dynamic_cast<KTextEditor::DynWordWrapInterface*>(w->view())->setDynWordWrap(qConfig.dynamicWordWrap);
       quantaApp->viewDynamicWordWrap->setChecked(dynamic_cast<KTextEditor::DynWordWrapInterface*>(w->view())->dynWordWrap());
-  #endif
+    #endif
 
-      write()->createTempFile();
-      emit title( write()->url().prettyURL() );
-      write()->view()->setFocus();     
-    } 
+      w->createTempFile();
+      w->view()->setFocus();
+
+      quantaApp->processDTD();
+      quantaApp->reparse(true);
+
+      emit title( w->url().prettyURL() );
+      emit newStatus();
+      loaded = true;
+    }
   }
- if (!loaded && !url.isEmpty()) //the open of the document has failed
+ if (!loaded && !url.isEmpty()) //the open of the document has failed*/
  {
    KMessageBox::error(quantaApp, i18n("Cannot open document \"%1\".").arg(url.prettyURL()));
    closeDocument();
@@ -425,8 +426,8 @@ Document* QuantaDoc::newWrite()
   int i = 1;
   QString fname;
   while ( isOpened(fname.sprintf("Untitled%i."+dtd->defaultExtension,i))) i++;
-  
-#if KDE_VERSION > 308  
+
+#if KDE_VERSION > 308
   KTextEditor::Document *doc = KTextEditor::createDocument ("libkatepart", this, "Kate::Document");
 /*                               KTextEditor::EditorChooser::createDocument(
                                 quantaApp->view->writeTab,
@@ -438,7 +439,8 @@ Document* QuantaDoc::newWrite()
                                QString::null,
                                quantaApp->view->writeTab, 0,
                                quantaApp->view->writeTab, 0 );
-#endif                               
+#endif
+  connect(doc, SIGNAL(completed()), SLOT(slotOpenCompleted()));
 
   Document *w = new Document(quantaApp->projectBaseURL(), doc, quantaApp->getProject(),
                              quantaApp->m_pluginInterface, quantaApp->view->writeTab);
@@ -485,10 +487,14 @@ void QuantaDoc::slotAttribPopup()
   Document *w = write();
 
   attribMenu->clear();
-  DTDStruct *dtd = w->currentDTD();
-  Tag *tag = w->tagAt(dtd);
-  if (tag)
+  uint line, col;
+  w->viewCursorIf->cursorPositionReal(&line, &col);
+
+  baseNode = parser->parse(w);
+  Node *node = parser->nodeAt(line, col, false);
+  if (node && node->tag)
   {
+    Tag *tag = node->tag;
     QString tagName = tag->name;
     QStrIList attrList = QStrIList();
     QString name;
@@ -536,7 +542,11 @@ void QuantaDoc::slotAttribPopup()
       {
         attribMenu->setActiveItem( 0);
 
-        QPoint globalPos = w->getGlobalCursorPos();
+        QPoint globalPos = w->mapToGlobal(w->viewCursorIf->cursorCoordinates());
+        quantaApp->config->setGroup("Kate Document");
+        QFont font;
+        font.fromString(quantaApp->config->readEntry("Font"));
+        globalPos.setY(globalPos.y() + QFontMetrics(font).height());
         attribMenu->exec( globalPos );
       }
     }
@@ -544,17 +554,18 @@ void QuantaDoc::slotAttribPopup()
       QString message = i18n("Unknown tag: %1").arg(tagName);
       quantaApp->slotStatusMsg( message.data() );
     }
-    delete tag;
   }
 }
 
 void QuantaDoc::slotInsertAttrib( int id )
 {
   Document *w = write();
-  DTDStruct *dtd = w->currentDTD();
-  Tag *tag = w->tagAt(dtd);
-  if (tag)
+  uint line, col;
+  w->viewCursorIf->cursorPositionReal(&line, &col);
+  Node *node = parser->nodeAt(line, col);
+  if (node && node->tag)
   {
+    Tag *tag = node->tag;
     QString tagName = tag->name;
     if ( QuantaCommon::isKnownTag(w->getDTDIdentifier(),tagName) )
     {
@@ -579,13 +590,16 @@ void QuantaDoc::slotInsertAttrib( int id )
           }
         }
       }
-      w->insertAttrib( attrStr);
+      //now insert the new attribute into the tag
+      int el, ec;
+      tag->endPos(el, ec);
+      w->viewCursorIf->setCursorPositionReal( el, ec );
+      w->insertTag( " " + QuantaCommon::attrCase(attrStr) + "=\"", "\"" );
     }
 
     delete attribMenu;
     attribMenu = new KPopupMenu(i18n("Tag :"));
     connect( attribMenu, SIGNAL(activated(int)), this, SLOT(slotInsertAttrib(int)));
-    delete tag;
   }
 }
 
@@ -663,9 +677,14 @@ Document* QuantaDoc::isOpened(const KURL& url)
     {
       w = dynamic_cast<Document*>(tab->page(i));
       break;
-    } 
+    }
   }
   return w;
+}
+
+
+void QuantaDoc::slotOpenCompleted()
+{
 }
 
 #include "quantadoc.moc"

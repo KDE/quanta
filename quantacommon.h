@@ -2,7 +2,7 @@
                           quantacommon.h  -  description
                              -------------------
     begin                : Sat Jul 27 2002
-    copyright            : (C) 2002 by Andras Mantia
+    copyright            : (C) 2002, 2003 by Andras Mantia
     email                : amantia@freemail.hu
  ***************************************************************************/
 

@@ -26,6 +26,7 @@
 //standard library includes
 #include <stdio.h>
 #include <ctype.h>
+#include <iostream.h>
 
 //app includes
 #include "parser.h"
@@ -107,14 +108,14 @@ bool Parser::scriptParser(Node *startNode)
           pos2 += specialEndStr.length() - 1;
           if (n > 0)
           {
-            ec = pos2 - s.findRev("\n");
+            ec = pos2 - s.findRev("\n") - 1;
           } else
           {
             ec = node_bc + pos2;
           }
           s = text.mid(pos, pos2 - pos + 1);
           //build the tag
-          Tag *tag = new Tag;
+          Tag *tag = new Tag();
           tag->setWrite(write);
           tag->setStr(s);
           tag->setTagPosition(bl, bc, el, ec);
@@ -151,42 +152,31 @@ bool Parser::scriptParser(Node *startNode)
   return found;
 }
 
-
-/** Parse the whole text from Document w and build the internal structure tree
-    from Nodes */
-Node *Parser::parse(Document *w)
+/** Parse a string, using as start position sLine, sCol. */
+Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, Node **lastNode, Node *a_node)
 {
-  QTime t;
-  t.start();
-
-  write = w;
-  m_dtd = w->defaultDTD();
   //first parse as an XML document
   QString textLine;
-  int line, col;
-  line = col = 0;
+  textLine.fill(' ', startCol);
+  int line = startLine;
+  int col = 0;;
   int tagStartCol, tagStartLine, tagEndLine, tagEndCol;
   int tagStartPos, specialStartPos;
-  int maxLine = w->editIf->numLines() - 1;
-  int lastLineLength = w->editIf->lineLength(maxLine);
+  int lastLineLength = write->editIf->lineLength(endLine);
   int specialAreaCount = m_dtd->specialAreas.count();
   bool nodeFound = false;
   bool goUp;
   Node *rootNode = 0L;
-  Node *parentNode = 0L;
-  Node *currentNode = 0L;
+  Node *parentNode = a_node;
+  Node *currentNode = a_node;
+  if (currentNode)
+      parentNode = currentNode->parent;
   Tag *tag;
-  textLine = w->editIf->textLine(line);
-  int count = 1;
-  while (line < maxLine)
+  textLine.append(write->text(startLine, startCol, startLine, write->editIf->lineLength(startLine)));
+  while (line <= endLine)
   {
-/*
-    if (t.elapsed() > 20*count)
-    {
-      kapp->processEvents();
-      count++;
-    }
-*/
+    if (line == endLine)
+        textLine.truncate(endCol);
     nodeFound = false;
     goUp = false;
     tagStartPos = textLine.find('<', col);
@@ -199,10 +189,12 @@ Node *Parser::parse(Document *w)
       QString specialEndStr = m_dtd->specialAreas[foundText];
       int pos = specialStartPos + foundText.length();
       tagEndCol = lastLineLength;
-      tagEndLine = maxLine;
-      while (line < maxLine)
+      tagEndLine = endLine;
+      while (line <= endLine)
       {
-        textLine = w->editIf->textLine(line);
+        textLine = write->editIf->textLine(line);
+        if (line == endLine)
+            textLine.truncate(endCol);
         pos = textLine.find(specialEndStr, pos);
         if (pos != -1)
         {
@@ -215,17 +207,17 @@ Node *Parser::parse(Document *w)
           pos = 0;
         }
       }
-      tagStartCol = specialStartPos ;
+      tagStartCol = specialStartPos;
       col = tagEndCol;
       nodeFound = true;
 
       //build a special node here
       tag = new Tag();
       tag->setTagPosition(tagStartLine, tagStartCol, tagEndLine, tagEndCol);
-      QString tagStr = w->text(tagStartLine, tagStartCol, tagEndLine, tagEndCol);
+      QString tagStr = write->text(tagStartLine, tagStartCol, tagEndLine, tagEndCol);
       tag->setStr(tagStr);
       tag->type = Tag::NeedsParsing;
-      tag->setWrite(w);
+      tag->setWrite(write);
       tag->single = true;
       tag->dtd = dtds->find(m_dtd->specialAreaNames[foundText]);
       if (!tag->dtd)
@@ -241,15 +233,30 @@ Node *Parser::parse(Document *w)
     {
       int openNum = 1;
       tagStartLine = line;
-      tagEndLine = maxLine;
-      tagEndCol = w->editIf->lineLength(maxLine);
+      tagEndLine = endLine;
+      tagEndCol = lastLineLength;
       int sCol = tagStartPos + 1;
-      while (line < maxLine && openNum > 0)
+      int firstStartCol = lastLineLength + 1;
+      int firstStartLine = endLine;
+      bool firstOpenFound = false;
+      while (line <= endLine && openNum > 0)
       {
-        textLine = w->editIf->textLine(line);
+        textLine = write->editIf->textLine(line);
+        if (line == endLine)
+            textLine.truncate(endCol);
         for (uint i = sCol; i < textLine.length(); i++)
         {
-           if (textLine[i] == '<') openNum++;
+           if (textLine[i] == '<')
+           {
+             openNum++;
+             if (!firstOpenFound)
+             {
+               firstStartCol = i;
+               firstStartLine = line;
+               firstOpenFound = true;
+             }
+
+           } else
            if (textLine[i] == '>') openNum--;
            if (openNum == 0)
            {
@@ -262,14 +269,27 @@ Node *Parser::parse(Document *w)
         if (openNum != 0)
             line++;
       }
-
+      if (openNum != 0)
+      {
+        tagEndLine = firstStartLine;
+        tagEndCol = firstStartCol - 1;
+        if (tagEndCol < 0)
+        {
+          tagEndLine--;
+          if (tagEndLine < 0)
+              tagEndLine = 0;
+          tagEndCol = write->editIf->lineLength(tagEndLine);
+        }
+        line = tagEndLine;
+        textLine = write->editIf->textLine(line);
+      }
       col = tagEndCol;
       nodeFound = true;
       //build an xml tag node here
       tag = new Tag();
       tag->setTagPosition(tagStartLine, tagStartPos, tagEndLine, tagEndCol);
-      QString tagStr = w->text(tagStartLine, tagStartPos, tagEndLine, tagEndCol);
-      tag->parse(tagStr , w);
+      QString tagStr = write->text(tagStartLine, tagStartPos, tagEndLine, tagEndCol);
+      tag->parse(tagStr , write);
       tag->type = Tag::XmlTag;
       tag->dtd = m_dtd;
       tag->single = QuantaCommon::isSingleTag(m_dtd->name, tag->name);
@@ -291,7 +311,7 @@ Node *Parser::parse(Document *w)
         endRx.setPattern("/"+tag->name+"\\s*>");
         endRx.setCaseSensitive(m_dtd->caseSensitive);
         int bl, bc, el, ec;
-        if (! w->find(endRx, line, tagEndCol, bl, bc, el, ec).isEmpty())
+        if (! write->find(endRx, line, tagEndCol, bl, bc, el, ec).isEmpty())
         {
           QString structBeginStr = tagStr;
           tagEndLine = el;
@@ -300,10 +320,10 @@ Node *Parser::parse(Document *w)
           delete tag;
           tag = new Tag();
           tag->setTagPosition(tagStartLine, tagStartPos, tagEndLine, tagEndCol);
-          QString tagStr = w->text(tagStartLine, tagStartPos, tagEndLine, tagEndCol);
+          QString tagStr = write->text(tagStartLine, tagStartPos, tagEndLine, tagEndCol);
           tag->type = Tag::NeedsParsing;
           tag->setStr(tagStr);
-          tag->setWrite(w);
+          tag->setWrite(write);
           tag->single = true;
           tag->dtd = dtds->find(s);
           if (!tag->dtd)
@@ -312,7 +332,7 @@ Node *Parser::parse(Document *w)
           tag->structBeginStr = structBeginStr;
           line = tagEndLine;
           col = tagEndCol;
-          textLine = w->editIf->textLine(line);
+          textLine = write->editIf->textLine(line);
         }
 
       }
@@ -350,14 +370,14 @@ Node *Parser::parse(Document *w)
       {
         currentNode->tag->endPos(el, ec);
       }
-      QString s = w->text(el, ec + 1, tagStartLine, tagStartPos -1);
+      QString s = write->text(el, ec + 1, tagStartLine, tagStartPos -1);
 
       if (el !=0 || ec !=0)
       {
         textTag = new Tag();
         textTag->setStr(s);
         textTag->setTagPosition(el, ec+1, tagStartLine, tagStartPos -1);
-        textTag->setWrite(w);
+        textTag->setWrite(write);
         textTag->single = true;
         textTag->dtd = m_dtd;
         if (s.simplifyWhiteSpace().isEmpty())
@@ -403,6 +423,7 @@ Node *Parser::parse(Document *w)
         node->prev = parentNode;
         parentNode->next = node;
         parentNode = parentNode->parent;
+        node->closesPrevious = true;
       } else
       {
         node = new Node(parentNode);
@@ -445,7 +466,7 @@ Node *Parser::parse(Document *w)
     {
       line++;
       col = 0;
-      textLine = w->editIf->textLine(line);
+      textLine = write->editIf->textLine(line);
     }
 
   }
@@ -459,13 +480,13 @@ Node *Parser::parse(Document *w)
   {
     currentNode->tag->endPos(el, ec);
   }
-  QString s = w->text(el, ec + 1, maxLine, lastLineLength);
-  if (el !=0 || ec !=0)
+  QString s = write->text(el, ec + 1, endLine, endCol);
+  if ( /*!s.isEmpty() &&*/ (el !=0 || ec !=0) )
   {
     textTag = new Tag();
     textTag->setStr(s);
-    textTag->setTagPosition(el, ec+1, maxLine, lastLineLength);
-    textTag->setWrite(w);
+    textTag->setTagPosition(el, ec+1, endLine, endCol);
+    textTag->setWrite(write);
     textTag->single = true;
     textTag->dtd = m_dtd;
     if (s.simplifyWhiteSpace().isEmpty()) //create a node with Empty tag type
@@ -481,6 +502,7 @@ Node *Parser::parse(Document *w)
       node->prev = parentNode;
       parentNode->next = node;
       parentNode = parentNode->parent;
+      //node->closesPrevious = true;
       goUp = false;
     } else
     {
@@ -499,13 +521,36 @@ Node *Parser::parse(Document *w)
     }
 
     node->tag = textTag;
+    currentNode = node;
   }
 
-  m_text = w->editIf->text();
-  m_node = rootNode;
-  kdDebug(24000) << "New parser ("<< maxLine << " lines): " << t.elapsed() << " ms\n";
- // coutTree(rootNode, 2);
+  *lastNode = currentNode;
   return rootNode;
+}
+
+/** Parse the whole text from Document w and build the internal structure tree
+    from Nodes */
+Node *Parser::parse(Document *w)
+{
+  QTime t;
+  t.start();
+
+  if (baseNode)
+  {
+    delete baseNode;
+    baseNode = 0L;
+    m_node = 0L;
+  }
+  Node *lastNode;
+  write = w;
+  m_dtd = w->defaultDTD();
+  m_text = w->editIf->text();
+  maxLines = w->editIf->numLines() - 1;
+  if (maxLines >= 0)
+      m_node = parseArea(0, 0, maxLines, w->editIf->lineLength(maxLines), &lastNode);
+  kdDebug(24000) << "New parser ("<< maxLines << " lines): " << t.elapsed() << " ms\n";
+ // coutTree(rootNode, 2); -1
+  return m_node;
 }
 
 /** Parses the found special (like script, css and such) areas.*/
@@ -517,7 +562,7 @@ void Parser::specialAreaParser(Node *startNode)
  QString s, name;
  int pos = 0;
  int l;
-
+ bool goUp = false;
  /* parse this special node for scripts. If a script is found inside, then
  replace the script area with spaces, so it won't mess up our block searching.
  */
@@ -617,6 +662,7 @@ void Parser::specialAreaParser(Node *startNode)
   }
   while (pos != -1)
   {
+    goUp = false;
     pos  = dtd->structRx.search(str, lastPos);
     rootNode->tag->endPos(el, ec);
     if (pos != -1)
@@ -664,6 +710,7 @@ void Parser::specialAreaParser(Node *startNode)
         currentNode = rootNode;
         rootNode = rootNode->parent;
         rootNode->tag->endPos(el, ec); //get the end coordinates for the new root node
+        goUp = true;
       }
       node = new Node(rootNode);
       if (!rootNode->child)
@@ -675,6 +722,11 @@ void Parser::specialAreaParser(Node *startNode)
         currentNode->next = node;
       }
       node->tag = tag;
+      if (goUp)
+      {
+        node->closesPrevious = true;
+        goUp = false;
+      }
       currentNode = node;
 
       lastPos = pos + 1;
@@ -720,7 +772,8 @@ void Parser::specialAreaParser(Node *startNode)
           eCol = lastPos2 - n - 2 - startPos;
         }
         tag->name = name.stripWhiteSpace();
-        tag->setStr(name);
+        //tag->setStr(name);
+        tag->setStr(s);
         tag->cleanStr = str.mid(startPos, lastPos - startPos - 1);
         tag->setWrite(write);
         tag->setTagPosition(bLine, bCol, eLine, eCol);
@@ -734,6 +787,7 @@ void Parser::specialAreaParser(Node *startNode)
         {
           currentNode = rootNode;
           rootNode = rootNode->parent;
+          goUp = true;
         }
 
         node = new Node(rootNode);
@@ -746,6 +800,8 @@ void Parser::specialAreaParser(Node *startNode)
           currentNode->next = node;
         }
         node->tag = tag;
+        if (goUp)
+            node->closesPrevious = true;
 
         currentNode = node;
         rootNode = node;
@@ -756,7 +812,8 @@ void Parser::specialAreaParser(Node *startNode)
     {
       startNode->tag->endPos(eLine, eCol);
       tag = new Tag();
-      tag->setStr(tagStr.mid(lastPos));//s.replace(dtd->commentsRx,"").stripWhiteSpace());
+      s = tagStr.mid(lastPos);
+      tag->setStr(s);//s.replace(dtd->commentsRx,"").stripWhiteSpace());
       tag->cleanStr = str.mid(lastPos);
       tag->setWrite(write);
       tag->setTagPosition(bLine, bCol, eLine, eCol);
@@ -775,6 +832,7 @@ void Parser::specialAreaParser(Node *startNode)
         currentNode = rootNode;
         rootNode = rootNode->parent;
         rootNode->tag->endPos(el, ec); //get the end coordinates for the new root node
+        goUp = true;
       }
       node = new Node(rootNode);
       if (!rootNode->child)
@@ -786,12 +844,14 @@ void Parser::specialAreaParser(Node *startNode)
         currentNode->next = node;
       }
       node->tag = tag;
+      if (goUp)
+          node->closesPrevious = true;
       currentNode = node;
     }
   }
 
 //if the block has no nodes inside, create a Text node with its content.
-  if (!startNode->child)
+  if (currentNode == startNode->child)
   {
     tag = new Tag(*startNode->tag);
     tag->type = Tag::Text;
@@ -810,12 +870,15 @@ void Parser::coutTree(Node *node, int indent)
  QString output;
  while (node)
  {
-	output="";
-   for (int i =0; i < indent; i++) output +=" ";
-   if (node->tag->type != Tag::Text) output += node->tag->name;
-   else output+= node->tag->tagStr();
-   kdDebug(24000) <<output<<" (" << node->tag->type << ")"<<endl;
-   if (node->child) coutTree(node->child, indent + 4);
+   output = "";
+   output.fill('_', indent);
+   if (node->tag->type != Tag::Text)
+       output += node->tag->name;
+   else
+       output+= node->tag->tagStr();
+   cout << output <<" (" << node->tag->type << ")\n";
+   if (node->child)
+       coutTree(node->child, indent + 4);
    node = node->next;
  }
 }
@@ -826,219 +889,9 @@ void Parser::clear()
   m_text = "";
 }
 
-void Parser::rebuildDTDList()
-{
-  int delta = maxLines - oldMaxLines;
-  uint line, col;
-  write->viewCursorIf->cursorPositionReal(&line, &col);
-  QString start, end;
-  DTDListNode dtdNode;
-  for (uint i = 0; i < dtdList.count(); i++)
-  {
-    dtdNode = dtdList[i];
-    if (dtdNode.bLine >= (int)line) dtdNode.bLine += delta;
-    if (dtdNode.eLine >= (int)line) dtdNode.eLine += delta;
-    if (dtdNode.startText.startsWith("<script") ||
-        dtdNode.startText.startsWith("!doctype") )
-    {
-      start = write->editIf->textLine(dtdNode.bLine).remove(0, dtdNode.bCol - dtdNode.startText.length()).lower();
-    } else
-    {
-      start = write->editIf->textLine(dtdNode.bLine).remove(0, dtdNode.bCol).lower();
-    }
-    end = write->editIf->textLine(dtdNode.eLine).remove(0, dtdNode.eCol).lower();
-    if (!start.startsWith(dtdNode.startText) || !end.startsWith(dtdNode.endText) )
-    {
-      parseForDTD(write, true);
-      break;
-    }
-    dtdList[i] = dtdNode;
-  }
-  oldMaxLines = maxLines;
-}
-
-/** Builds an internal tree to reflect the areas where each real & pseudo dtd is active. */
-void Parser::parseForDTD(Document *w, bool force)
-{
- QTime t;
- t.start();
-
- write = w;
- maxLines = write->editIf->numLines();
- if (!force)
- {
-   if (oldMaxLines != maxLines) rebuildDTDList();
-   kdDebug(24000) << "Parse for DTD (rebuild; " << maxLines <<" lines): " << t.elapsed() << " ms\n";
-   return;
- }
- oldMaxLines = maxLines;
- uint line = 0;
- uint col = 0;
- int pos = 0;
- uint startCol = 0;
- QString text = write->editIf->text();
- uint length = text.length();
- QString foundText;
- Tag *tag;
- QRegExp rx = scriptBeginRx;
- rx.setPattern(scriptBeginRx.pattern()+"|"+scriptEndRx.pattern()+"|\\!doctype");
- rx.setCaseSensitive(false);
- DTDListNode dtdNode;
- dtdList.clear();
- while (startCol < length && pos != -1)
- {
-   pos = rx.search(text, startCol);
-   if (pos != -1)
-   {
-     line = text.left(pos).contains("\n");
-     foundText = rx.cap(0).lower();
-     startCol = pos + foundText.length();
-     col = pos - text.left(pos).findRev("\n")-1;
-     if (foundText == "<script") //script begin
-     {
-       tag = write->findXMLTag(line, col, true);
-       if (tag)
-       {
-         int eLine, eCol;
-         dtdNode.startText = tag->tagStr().lower();
-         foundText = tag->attributeValue("language").lower();
-         tag->endPos(eLine, eCol);
-         delete tag;
-         dtdNode.dtd = dtds->find(foundText);
-         dtdNode.eLine = -1;
-         dtdNode.bLine = eLine;
-         dtdNode.bCol = eCol+1;
-         dtdList.append(dtdNode);
-       }
-     } else
-       if (foundText == "/script>") //script end
-       {
-         for (int i = dtdList.count() -1; i >=0; i--)     //search for the first non-closed <script> tag
-         {
-           if (dtdList[i].startText.startsWith("<script") && dtdList[i].eLine == -1)
-           {
-             dtdList[i].eLine = line;
-             dtdList[i].eCol = col;
-             dtdList[i].endText = foundText;
-             break;
-           }
-         }
-       } else
-       {
-         if (foundText == "!doctype")
-         {
-           for (int i = dtdList.count() -1; i >=0; i--)     //search for the first non-closed <script> tag
-           {
-             if (dtdList[i].startText.startsWith("!doctype") && dtdList[i].eLine == -1)
-             {
-               dtdList[i].endText = "";
-               dtdList[i].eLine = line;
-               dtdList[i].eCol = col - 1;
-               break;
-             }
-           }
-           pos = write->editIf->textLine(line).findRev("<", col);
-           tag = write->findXMLTag(line, pos, true);
-           if (tag)
-           {
-             QString docText = tag->tagStr();
-             dtdNode.startText = docText.lower();
-             pos = docText.find("public",0,false);
-             if (pos == -1) //if no PUBLIC info, use the word after !DOCTYPE as the doc.type
-             {
-               foundText = tag->attribute(0);
-             } else
-             {             //use the quoted string after PUBLIC as doc. type
-               pos = docText.find("\"", pos+1);
-               if (pos !=-1)
-               {
-                 int endPos = docText.find("\"",pos+1);
-                 foundText = docText.mid(pos+1, endPos-pos-1);
-               }
-             }
-             int eLine, eCol;
-             tag->endPos(eLine, eCol);
-             delete tag;
-             dtdNode.dtd = dtds->find(foundText.lower());
-             dtdNode.eLine = -1;
-             dtdNode.bLine = eLine;
-             dtdNode.bCol = eCol;
-             dtdList.append(dtdNode);
-           } // if (tag)
-         } else
-         {
-           bool found = false;
-           QDictIterator<DTDStruct> it(*dtds);
-           for( ; it.current(); ++it )
-           {
-              DTDStruct *dtd = it.current();
-              if (dtd->family == Script)
-              {
-                 int index = dtd->scriptTagStart.findIndex(foundText);
-                 if (index !=-1)          //script begin
-                 {
-                   dtdNode.startText = foundText;
-                   dtdNode.dtd = dtd;
-                   dtdNode.eLine = -1;
-                   dtdNode.bLine = line;
-                   dtdNode.bCol = col;
-                   dtdList.append(dtdNode);
-                   found = true;
-                   break;
-                 }
-                 index = dtd->scriptTagEnd.findIndex(foundText); //script end, search for the first non-closed script begin
-                 if (index != -1)
-                 {
-                   for (int i = dtdList.count(); i >=0; i--)
-                   {
-                     //FIXME: Valgrind says there is an uninitalized variable used here
-                     if (dtdList[i].dtd == dtd && dtdList[i].eLine == -1)
-                     {
-                       dtdList[i].eLine = line;
-                       dtdList[i].eCol = col;
-                       dtdList[i].endText = foundText;
-                       found = true;
-                       break;
-                     }
-                   } //for i
-                 }
-              } // if (dtd.Family == Script)
-             if (found) break;
-           } //for iterator
-         } //else
-       } //else
-   } //if (pos != -1)
- } //while
- for (int i = dtdList.count() -1; i >=0; i--)     //search for the first non-closed <script> tag
- {
-   if (dtdList[i].eLine == -1)
-   {
-     dtdList[i].eLine = maxLines;
-     dtdList[i].eCol = 0;
-   }
- }
-
- kdDebug(24000) << "Parse for DTD (" << maxLines << " lines): " << t.elapsed() << " ms\n";
-}
-
 /** No descriptions */
 DTDStruct * Parser::currentDTD(int line, int col)
 {
-/*
-  DTDStruct *dtd = 0L;
-  DTDListNode dtdNode;
-  for (uint i = 0; i < dtdList.count(); i++)
-  {
-    dtdNode = dtdList[i];
-    if (QuantaCommon::isBetween(line, col, dtdNode.bLine,dtdNode.bCol, dtdNode.eLine, dtdNode.eCol) == 0)
-    {
-      dtd = dtdNode.dtd;
-    }
-  }
-
-  return dtd;
-*/
-
   DTDStruct *dtd = m_dtd;
   Node *node = nodeAt(line, col);
   if (node)
@@ -1051,7 +904,7 @@ DTDStruct * Parser::currentDTD(int line, int col)
 
 /** Returns the node for position (line, column). As more than one node can
 contain the same area, it return the "deepest" node. */
-Node *Parser::nodeAt(int line, int col)
+Node *Parser::nodeAt(int line, int col, bool findDeepest)
 {
   Node *node = m_node;
   int bl, bc, el, ec;
@@ -1089,7 +942,7 @@ Node *Parser::nodeAt(int line, int col)
     }
   }
 
-  if (node && node->tag->type == Tag::Empty)
+  if (findDeepest && node && node->tag->type == Tag::Empty)
   {
      if (node->parent)
      {
@@ -1103,3 +956,275 @@ Node *Parser::nodeAt(int line, int col)
   return node;
 }
 
+Node *Parser::rebuild(Document *w)
+{
+ QTime t;
+ t.start();
+ if (w != write || !m_node)
+ {
+   return parse(w);
+ } else
+ {
+   oldMaxLines = maxLines;
+   maxLines = w->editIf->numLines() - 1;
+   int lineDiff = maxLines - oldMaxLines;
+   int bl, bc, el, ec;
+   int bLine, bCol, eLine, eCol; //the coordinates of the invalid area
+   bLine = bCol = 0;
+   eLine = maxLines;
+   eCol = w->editIf->lineLength(maxLines);
+   QString text;
+   QString tagStr;
+   bool moveNodes = false;
+   uint line, col;
+   m_text = w->editIf->text();
+   QStringList textLines = QStringList::split('\n', m_text, true);
+   w->viewCursorIf->cursorPositionReal(&line, &col);
+   Node *node = nodeAt(line, col, false);
+   Node *startNode = node;
+   if (node)
+   {
+     node->tag->beginPos(bl, bc);
+     bLine = bl;
+     bCol = bc;
+   }
+
+   Node *firstNode = node;
+   Node *lastNode = 0L;
+//find the first unchanged (non empty) node and store it as firstNode
+   while (node)
+   {
+     node->tag->beginPos(bl, bc);
+     node->tag->endPos(el, ec);
+     text = w->text(bl, bc, el, ec);
+     tagStr = node->tag->tagStr();
+     if (tagStr != text || node->tag->type == Tag::Empty)
+     {
+       node = node->previousSibling();
+     } else
+     {
+       firstNode = node;
+       break;
+     }
+   }
+
+//find the last unchanged node and store it as lastNode;
+//move the nodes if they were shifted
+   node = startNode;
+   while (node)
+   {
+     node->tag->beginPos(bl, bc);
+     node->tag->endPos(el, ec);
+     if (!moveNodes)
+     {
+        text = w->text(bl + lineDiff, bc, el + lineDiff, ec);
+        tagStr = node->tag->tagStr();
+        if (tagStr == text )
+        {
+            if (!lastNode)
+                lastNode = node;
+
+            if (lineDiff != 0)
+            {
+              moveNodes = true;
+              node->tag->setTagPosition(bl + lineDiff, bc, el + lineDiff, ec);
+            } else
+            {
+              break;
+            }
+
+        }
+     } else
+     {
+       node->tag->setTagPosition(bl + lineDiff, bc, el + lineDiff, ec);
+     }
+     node = node->nextSibling();
+   }
+
+   node = firstNode->nextSibling();
+   if (node)
+       node->tag->beginPos(bLine, bCol);
+   if (lastNode)
+   {
+     lastNode->tag->beginPos(eLine, eCol);
+     eCol--;
+     if (eCol < 0)
+     {
+       eLine--;
+       if (eLine < 0)
+           eLine = 0;
+       eCol = w->editIf->lineLength(eLine);
+     }
+   }
+
+   //delete all the nodes between the firstNode and lastNode
+ /*  if (lastNode)
+   {
+     if (lastNode->prev)
+     {
+       lastNode->prev->next = 0L;
+       lastNode->prev = 0L;
+     } else
+     {
+       if (lastNode->parent)
+       {
+          lastNode->parent->child = 0L;
+          if (lastNode->parent->next)
+          {
+            lastNode->parent->next->prev = 0L;
+            lastNode->parent->next=0L;
+          }
+       }
+     }
+   }
+
+   delete node;
+   node=0L;*/
+   while (node && node != lastNode )
+   {
+     Node *nextNode = node->nextSibling();
+     node->removeAll = false;
+     Node *child = node->child;
+     Node *parent = node->parent;
+     Node *next = node->next;
+     Node *prev = node->prev;
+     bool closesPrevious = node->closesPrevious;
+     if (nextNode->prev == node)
+     {
+       nextNode->prev = prev;
+     }
+     if (next && next->closesPrevious)
+      next->closesPrevious = false;
+
+     delete node;
+     node = 0L;
+     if (child)
+     {
+       Node *n = child;
+       Node *m = child;
+       while (n)
+       {
+         m = n;
+         n->parent = parent;
+         n = n->next;
+       }
+       if (prev)
+       {
+         child->prev = prev;
+         prev->next = child;
+       } else
+       {
+         if (parent)
+            parent->child = child;
+       }
+       prev = m;
+     }
+
+     if (prev)
+     {
+       node = prev;
+       node->next = next;
+       if (next)
+          next->prev = prev;
+       while (node->child)
+       {
+         node = node->child;
+         while (node->next)
+              node = node->next;
+       }
+       if (next && closesPrevious)
+       {
+         if (prev->child)
+         {
+            next->prev = node;
+            node->next = next;
+         } else
+         {
+           prev->child = next;
+           next->prev = 0L;
+         }
+         prev->next = 0L;
+         Node *n = next;
+         while (n)
+         {
+           n->parent = prev;
+           n = n->next;
+         }
+       }
+     } else
+     {
+       if (next && closesPrevious)
+       {
+         Node *n = next;
+         while (n)
+         {
+           n->parent = prev;
+           n = n->next;
+         }
+         next->prev = 0L;
+       }
+       node = parent;
+       if (node)
+           node->child = next;
+     }
+     node = nextNode;
+   }
+
+   QString invalidStr = QString("Invalid area: %1,%2,%3,%4").arg(bLine).arg(bCol).arg(eLine).arg(eCol);
+   kdDebug(24000) << invalidStr << "\n";
+
+   Node *lastInserted = 0L;
+   node = parseArea(bLine, bCol, eLine, eCol, &lastInserted, firstNode);
+
+   if (lastNode && lastInserted)
+   {
+   bool goUp = ( lastInserted->parent &&
+               ( (lastNode->tag->type == Tag::XmlTagEnd &&
+                  "/"+lastInserted->parent->tag->name.lower() == lastNode->tag->name.lower() ) ||
+                  lastInserted->parent->tag->single )
+             );
+      if (lastInserted->parent && !goUp)
+      {
+        QTag *qTag = QuantaCommon::tagFromDTD(m_dtd, lastInserted->parent->tag->name);
+        if ( qTag )
+        {
+          QString searchFor = (m_dtd->caseSensitive)?lastNode->tag->name:lastNode->tag->name.upper();
+          if ( qTag->stoppingTags.contains( searchFor ) )
+          {
+            lastInserted->parent->tag->closingMissing = true; //parent is single...
+            goUp = true;
+          }
+        }
+      }
+
+    if (goUp)
+    {
+      lastInserted->parent->next = lastNode;
+      lastNode->prev = lastInserted->parent;
+      node = lastNode;
+      while (node)
+      {
+          node->parent = lastInserted->parent->parent;
+          node =  node->next;
+      }
+
+    } else
+    {
+      lastInserted->next = lastNode;
+      lastNode->prev = lastInserted;
+      node = lastNode;
+      while (node)
+      {
+          node->parent = lastInserted->parent;
+          node =  node->next;
+      }
+    }
+
+   }
+
+ //  coutTree(m_node, 2);
+//   cout << endl;
+ }
+ kdDebug(24000) << "Rebuild: " << t.elapsed() << " ms \n";
+ return m_node;
+}

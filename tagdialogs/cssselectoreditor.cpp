@@ -2,7 +2,8 @@
                           cssselectoreditor.cpp  -  description
                              -------------------
     begin                : dom ago 25 2002
-    copyright            : (C) 2002 by Andras Mantia, Andrea Bergia
+    copyright            : (C) 2002 by Andrea Bergia
+                           (C) 2002-2003 Andras Mantia <amantia@freemail.hu>
     email                : amantia@freemail.hu, andreabergia@yahoo.it
  ***************************************************************************/
 

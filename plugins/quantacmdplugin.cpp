@@ -3,6 +3,7 @@
                              -------------------
     begin                : Wed Sep 18 2002
     copyright            : (C) 2002 by Marc Britton
+                           (C) 2003 Andras Mantia <amantia@freemail.hu>
     email                : consume@optushome.com.au
  ***************************************************************************/
 

@@ -3,6 +3,7 @@
                              -------------------
     begin                : Втр Май  9 13:29:57 EEST 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
+                           (C) 2001-2003 by Andras Mantia <amantia@freemail.hu>
     email                : pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com
  ***************************************************************************/
 
@@ -56,8 +57,8 @@ QuantaView::QuantaView(QWidget *parent, const char *name )
 	
   writeTab = new QTabWidget(this);
   writeTab ->setTabPosition( QTabWidget::Bottom );
-  connect( writeTab,	SIGNAL(currentChanged(QWidget*)), quantaApp, SLOT(slotUpdateStatus(QWidget*)));
-  connect( writeTab,	SIGNAL(selected(const QString &)), quantaApp, SLOT(reparse()));
+  connect( writeTab,SIGNAL(currentChanged(QWidget*)), quantaApp, SLOT(slotUpdateStatus(QWidget*)));
+//  connect( writeTab,SIGNAL(selected(const QString &)), quantaApp, SLOT(slotReparse()));
   writeTab ->setFocusPolicy( QWidget::NoFocus );
 
   toolbarTab = new QTabWidget(this);
@@ -123,6 +124,7 @@ Document* QuantaView::removeWrite()
   {
     Document *w = write();
     writeTab->removePage( w );
+    delete w;
   }
   return dynamic_cast<Document *>(writeTab->currentPage()); //don't call write() here
 }

@@ -3,7 +3,7 @@
                              -------------------
     begin                : Thu Mar 9 2000
     copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky
-                           (C) 2002 by Andras Mantia
+                           (C) 2002, 2003 by Andras Mantia
     email                : pdima@mail.univ.kiev.ua
  ***************************************************************************/
 
@@ -82,18 +82,18 @@ void QuantaView::slotEditCurrentTag()
   Document *w = write();
   uint line,col;
   w->viewCursorIf->cursorPositionReal(&line, &col);
-  DTDStruct *dtd = w->currentDTD();
-  QString dtdName = dtd->name;
-  Tag *tag = w->tagAt(dtd, line, col);
+  baseNode = parser->parse(w);
+  Node *node = parser->nodeAt(line, col, false);
   bool isUnknown = true;
   QString tagName;
-  if (tag)
+  if (node && node->tag)
   {
+    Tag *tag = node->tag;
     tagName = tag->name;
-    if ( QuantaCommon::isKnownTag(dtd->name,tagName) )
+    if ( QuantaCommon::isKnownTag(tag->dtd->name,tagName) )
     {
       isUnknown = false;
-      TagDialog *dlg = new TagDialog( QuantaCommon::tagFromDTD(dtd,tagName), tag, baseURL() );
+      TagDialog *dlg = new TagDialog( QuantaCommon::tagFromDTD(tag->dtd,tagName), tag, baseURL() );
       if (dlg->exec())
       {
        w->changeTag(tag, dlg->getAttributes() );
@@ -101,13 +101,12 @@ void QuantaView::slotEditCurrentTag()
 
       delete dlg;
     }
-    delete tag;
   }
-
+/*
   if (isUnknown)
   {
-    dtd = w->defaultDTD();
-    tag = w->tagAt(dtd, line, col, false, true);
+    DTDStruct *dtd = w->defaultDTD();
+    Tag *tag = w->tagAt(dtd, line, col, false, true);
     if (tag)
     {
       tagName = tag->name;
@@ -125,6 +124,7 @@ void QuantaView::slotEditCurrentTag()
       delete tag;
     }
   }
+*/
   if (isUnknown)
   {
     QString message = i18n("Unknown tag: %1").arg(tagName);
@@ -135,26 +135,18 @@ void QuantaView::slotEditCurrentTag()
 /** edit tag */
 void QuantaView::slotInsertCSS()
 {
- Document *w = write();
-/*
- CSSEditor* dlg = new CSSEditor("", 0L, "CSS Editor");
- if (dlg->exec())
- {
-   w->insertTag( dlg->code() );
-  // Todo
- }
-
-  delete dlg;*/
+  Document *w = write();
   QString code="";
-  
+
   uint line, col;
   w->viewCursorIf->cursorPositionReal(&line, &col);
 
+//TODO: Edit only real CSS selectors, not any text between { }
   bool insertNew = true;
-  QRegExp rx("\\b[a-zA-z_]+\\b");
-  Tag *tag = w->findScriptText(w->currentDTD(true), line, col, rx);
-  if (tag)
+  Node * node = parser->nodeAt(line, col);
+  if (node)
   {
+    Tag *tag = node->tag;
     int bLine, bCol, eLine, eCol;
     tag->beginPos(bLine,bCol);
     tag->endPos(eLine,eCol);
@@ -171,7 +163,6 @@ void QuantaView::slotInsertCSS()
         w->insertText(dlg->code());
     	}
 
-      delete tag;
       delete dlg;
       insertNew = false;
     }
@@ -689,12 +680,12 @@ void QuantaView::slotPaste ()
 
 void QuantaView::slotSelectAll ()
 {
-  dynamic_cast<KTextEditor::SelectionInterface*>(write()->doc())->selectAll();
+  write()->selectionIf->selectAll();
 }
 
 void QuantaView::slotDeselectAll ()
 {
-  dynamic_cast<KTextEditor::SelectionInterface*>(write()->doc())->clearSelection ();
+  write()->selectionIf->clearSelection ();
 }
 
 void QuantaView::toggleVertical()

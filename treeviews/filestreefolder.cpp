@@ -3,7 +3,7 @@
                              -------------------
     begin                : Mon Feb 21 2000
     copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavski
-                           (C) 2002 Andras Mantia
+                           (C) 2002-2003 Andras Mantia
     email                : pdima@mail.univ.kiev.ua, amantia@freemail.hu
  ***************************************************************************/
 

@@ -3,7 +3,7 @@
                              -------------------
     begin                : ?? ???  9 13:29:57 EEST 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
-                           (C) 2001-2003 by Andras Mantia
+                           (C) 2001-2003 by Andras Mantia <amantia@freemail.hu>
     email                : pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com
  ***************************************************************************/
 
@@ -61,7 +61,6 @@
 #include "resource.h"
 #include "document.h"
 
-
 #include "project/project.h"
 
 #include "widgets/whtmlpart.h"
@@ -91,7 +90,7 @@
                          //change is made to quantaui.rc. And of course, update
                          //the version in quantaui.rc!
 
-QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
+QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta"), DCOPObject("WindowManagerIf")
 {
   quantaStarted = true;
   tempFileList.setAutoDelete(true);
@@ -216,7 +215,7 @@ void QuantaApp::initQuanta()
           this, SLOT(gotoFileAndLine(QString,int)));
 
   refreshTimer = new QTimer( this );
-  connect(refreshTimer, SIGNAL(timeout()), SLOT(reparse()));
+  connect(refreshTimer, SIGNAL(timeout()), SLOT(slotReparse()));
   refreshTimer->start( qConfig.refreshFrequency*1000, false ); //update the structure tree every 5 seconds
   if (qConfig.refreshFrequency == 0)
   {
@@ -478,7 +477,7 @@ void QuantaApp::initView()
   connect( sTab, SIGNAL(newCursorPosition(int,int)), SLOT(setCursorPosition(int,int)));
 //  connect( sTab, SIGNAL(onTag(const QString &)), SLOT( slotStatusHelpMsg(const QString &)));
   connect( sTab, SIGNAL(selectArea(int,int,int,int)), SLOT( selectArea(int,int,int,int)));
-  connect( sTab, SIGNAL(needReparse()),    SLOT(reparse()));
+  connect( sTab, SIGNAL(needReparse()),    SLOT(slotForceReparse()));
   connect( sTab, SIGNAL(parsingDTDChanged(QString)), SLOT(slotParsingDTDChanged(QString)));
   connect( dTab, SIGNAL(openURL(QString)), SLOT(openDoc(QString)));
 
@@ -567,13 +566,16 @@ void QuantaApp::saveOptions()
     config->writeEntry("Top folders", fTTab->topURLList.toStringList());
     config->writeEntry("List of opened files", doc->openedFiles().toStringList());
     config->writeEntry("Version", VERSION); // version
-    doc    ->writeConfig(config); // kwrites
-    project->writeConfig(config); // project
-    config->setGroup  ("General Options");
-    config->deleteGroup("RecentFiles");
-    fileRecent->saveEntries(config);
     config->writeEntry ("Enable Debugger", debuggerStyle!="None");
     config->writeEntry ("PHP Debugger style", debuggerStyle);
+    config->deleteGroup("RecentFiles");
+    fileRecent->saveEntries(config);
+    config->setGroup("Quanta View");
+    config->writeEntry("LineNumbers", qConfig.lineNumbers);
+    config->writeEntry("Iconbar", qConfig.iconBar);
+    config->writeEntry("DynamicWordWrap",qConfig.dynamicWordWrap);
+    doc    ->writeConfig(config); // kwrites
+    project->writeConfig(config); // project
     writeDockConfig(config);
     saveMainWindowSettings(config);
     spellChecker->writeConfig(config);
@@ -587,8 +589,6 @@ void QuantaApp::readOptions()
   config->setGroup("General Options");
   //if (2>config->readNumEntry("Version",0)) config = new KConfig();
 
-  FileMasks dlg(this);
-  dlg.setToDefault();
   qConfig.markupMimeTypes = config->readEntry("Markup mimetypes", qConfig.markupMimeTypes);
   qConfig.scriptMimeTypes = config->readEntry("Script mimetypes", qConfig.scriptMimeTypes);
   qConfig.imageMimeTypes = config->readEntry("Image mimetypes", qConfig.imageMimeTypes);
@@ -625,10 +625,7 @@ void QuantaApp::readOptions()
 */
   fTab->raiseWidget(0);
 
-  fileRecent ->loadEntries(config);
-
   QSize s(800,580);
-  config->setGroup("General Options");
   resize( config->readSizeEntry("Geometry", &s));
 
   if (!config->readBoolEntry("Show Toolbar",true))
@@ -654,11 +651,10 @@ void QuantaApp::readOptions()
   showToolbarAction  ->setChecked(config->readBoolEntry("Show Toolbar",   true));
   showStatusbarAction->setChecked(config->readBoolEntry("Show Statusbar", true));
   qConfig.enableDTDToolbar = config->readBoolEntry("Show DTD Toolbar",true);
+  showDTDToolbar->setChecked(qConfig.enableDTDToolbar);
 
-  slotToggleDTDToolbar(qConfig.enableDTDToolbar);
-  showDTDToolbar->setEnabled(qConfig.enableDTDToolbar);
-
-  config->setGroup("Kate View");
+  fileRecent ->loadEntries(config);
+  config->setGroup("Quanta View");
   qConfig.lineNumbers = config->readBoolEntry("LineNumbers", false);
   qConfig.iconBar = config->readBoolEntry("Iconbar", false);
   qConfig.dynamicWordWrap = config->readBoolEntry("DynamicWordWrap",false);
@@ -666,7 +662,7 @@ void QuantaApp::readOptions()
   viewLineNumbers->setChecked(qConfig.lineNumbers);
 #if (KDE_VERSION > 308)
   viewDynamicWordWrap->setChecked(qConfig.dynamicWordWrap);
-#endif  
+#endif
   readDockConfig(config);
 
   showPreviewAction  ->setChecked( false );
@@ -1410,14 +1406,15 @@ void QuantaApp::initActions()
 //Settings
   viewBorder =  new KToggleAction(i18n("Show &Icon Border"), Qt::SHIFT+Qt::Key_F9, view,
                     SLOT(toggleIconBorder()), actionCollection(), "view_border");
-  viewLineNumbers =  new KToggleAction(i18n("Show &Line Numbers"), Key_F9, view,
+  viewLineNumbers =  new KToggleAction(i18n("Show &Line Numbers"), Key_F11, view,
                         SLOT(toggleLineNumbers()), actionCollection(), "view_line_numbers");
 
-  if (KDE_VERSION >= 308)
-  {
+  #if (KDE_VERSION > 308)
+//    viewFoldingMarkes =  new KToggleAction(i18n("Show Folding &Markers"), Key_F9, view,
+//                              SLOT(toggleFoldingMarkers()), actionCollection(), "view_folding_markers");
     viewDynamicWordWrap = new KToggleAction(i18n("&Dynamic Word Wrap"), Key_F10, view,
                               SLOT(toggleDynamicWordWrap()), actionCollection(), "view_dynamic_word_wrap");
-  }                                                         
+  #endif
 
   (void) new KAction( i18n( "Configure &Editor..." ), SmallIcon("configure"), 0,
                       view, SLOT( slotEditorOptions() ), actionCollection(), "editor_options" );

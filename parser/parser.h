@@ -53,22 +53,25 @@ public:
   contain any scripts. */
   bool scriptParser(Node *startNode);
 
+  /** Parse a string, using as start position sLine, sCol. */
+  Node *parseArea(int startLine, int startCol, int endLine, int endCol, Node **lastNode, Node *a_node = 0L);
+
   /** Parse the whole text from Document w and build the internal structure tree
   from Nodes */
-	Node *parse( Document *w);
+	Node *parse(Document *w);
 
   /** Parses the found special (like script, css and such) areas.*/
   void specialAreaParser(Node *startNode);
 
   /** Returns the node for position (line, column). As more than one node can
   contain the same area, it return the "deepest" node. */
-  Node *nodeAt(int line, int col);
+  Node *nodeAt(int line, int col, bool findDeepest = true);
+
+  /** Rebuild the nodes */
+  Node *rebuild(Document *w);
 
   /** Clear the parser internal text, thus forcing the reparsing. */
   void clear();
-
-  /** Builds an internal tree to reflect the areas where each real & pseudo dtd is active. */
-  void parseForDTD(Document *w, bool force = false);
 
   /** No descriptions */
   DTDStruct * currentDTD(int line, int col);
@@ -87,7 +90,6 @@ private:
   /** Print the doc structure tree to the standard output.
       Only for debugging purposes. */
   void coutTree(Node *node, int indent);
-  void rebuildDTDList();
 };
 
 #endif

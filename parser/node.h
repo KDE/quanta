@@ -3,6 +3,7 @@
                              -------------------
     begin                : Sun Apr 16 2000
     copyright            : (C) 2000 by Dmitry Poplavsky
+                           (C) 2001-2003 Andras Mantia <amantia@freemail.hu>
     email                : pdima@mail.univ.kiev.ua
  ***************************************************************************/
 
@@ -29,17 +30,22 @@
 class Node {
 
 public:
-	Node( Node *parent );
-	~Node();
-	
-	Node *next;
-	Node *prev;
-	Node *parent;
-	Node *child;
-  
-  QListViewItem *listItem;	
-	Tag *tag;
-  bool opened;
+ Node( Node *parent );
+ ~Node();
+
+ Node *next;
+ Node *prev;
+ Node *parent;
+ Node *child;
+
+ Node *nextSibling();
+ Node *previousSibling();
+
+ QListViewItem *listItem;
+ Tag *tag;
+ bool closesPrevious; //this node "closes" the tag from previous node
+ bool opened;
+ bool removeAll; //set to false if you don't want to remove the "next" and "child" when deleting the node.
 };
 
 #endif

@@ -55,7 +55,11 @@ int UploadTreeView::checkboxTree( QListViewItem *it )
   
 	QListViewItem *itIter = 0;
 	if (it == 0) itIter = firstChild();
-	else itIter = it->firstChild();
+	else
+  {
+    itIter = it->firstChild();
+    if (!itIter) itIter = it;
+  }
   // bitFlag structure: (0/1)all children exist (0/1)no children exist.
   // We don't need some children as a bit flag, because that's implied if the bits are "00".
 
@@ -137,13 +141,75 @@ void UploadTreeView::selectAllUnderNode( QListViewItem* it, bool select )
 
 void UploadTreeView::slotSelectFile( QListViewItem *it )
 {
+  UploadTreeFolder *itF = dynamic_cast<UploadTreeFolder *>(it);
   // This need a bit of special behavior for clicking on directories.
-  if ( dynamic_cast<UploadTreeFolder *>(it) )
+  if ( itF )
   {
     selectAllUnderNode( it, it->isSelected() );
   }
 
-  checkboxTree(it);
+//set the correct checkbox for this item, if it was a folder  
+  int hadCheckFlags = checkboxTree(it);
+  if ( itF )
+  {
+    if (hadCheckFlags == 2) {
+      // All children exist.
+      itF->setWhichPixmap( "check" );
+      itF->setSelected( true );
+    }
+    else if (hadCheckFlags == 1) {
+      // No children exist.
+      itF->setWhichPixmap( "check_clear" );
+      itF->setSelected( false );
+    }
+    else {
+      // Some children exist.
+      itF->setWhichPixmap( "check_grey" );
+      itF->setSelected( true );
+    }
+
+    itF = itF->parentFolder;
+  }
+  else
+  {
+    itF = dynamic_cast<UploadTreeFile*>(it)->parentFolder;
+  }
+
+  //iterate through the item's parents and set the correct checkboxes for them
+  while (itF)
+  {
+    bool hasSelected = false;
+    bool allSelected = true;
+    //check if the item has any children's selected
+    QListViewItemIterator iter(itF->firstChild());
+    while ( iter.current() && iter.current() != itF->nextSibling())
+    {    
+       if ( iter.current()->isSelected() )
+       {
+         hasSelected = true;
+       } else
+       {
+         allSelected = false;
+       }
+       ++iter;
+    }
+    if (hasSelected)
+    {
+      if (allSelected)
+      {
+        itF->setWhichPixmap( "check" );
+      } else
+      {
+        itF->setWhichPixmap( "check_grey" );
+      }
+      itF->setSelected( true );
+    } else
+    {
+      itF->setWhichPixmap( "check_clear" );
+      itF->setSelected( false );
+    }
+    itF = itF->parentFolder;
+  }
 }
 
 void UploadTreeView::slotSelectFile( )

@@ -2,7 +2,8 @@
                           tagaction.cpp  -  description
                              -------------------
     begin                : ?
-    copyright            : (C) ? Dmitry Poplavsky, (C) 2002 by Andras Mantia
+    copyright            : (C) ? Dmitry Poplavsky
+                           (C) 2002-2003 Andras Mantia <amantia@freemail.hu>
     email                : amantia@freemail.hu
  ***************************************************************************/
 
@@ -75,7 +76,7 @@ void TagAction::insertTag()
   unsigned int line, col;
 
   Document *w = m_view->write();
-  dynamic_cast<KTextEditor::ViewCursorInterface *> (w->view())->cursorPosition(&line, &col);
+  w->viewCursorIf->cursorPositionReal(&line, &col);
 	space.fill( ' ', col);
 
   QString type = tag.attribute("type","");
@@ -167,12 +168,12 @@ void TagAction::insertTag()
     scriptErrorDest  = script.attribute("error","none");
 
     if ( inputType == "current" ) {
-    	buffer = dynamic_cast<KTextEditor::EditInterface*> (w->doc())->text();
+    	buffer = w->editIf->text();
       proc->writeStdin( buffer.local8Bit(), buffer.length() );
     }
 
     if ( inputType == "selected" ) {
-    	buffer = dynamic_cast<KTextEditor::SelectionInterface*>(w->doc())->selection();
+    	buffer = w->selectionIf->selection();
       proc->writeStdin( buffer.local8Bit(), buffer.length() );
     }
     proc->closeStdin();
@@ -187,12 +188,23 @@ void TagAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
   Document *w = m_view->write();
 
   if ( scriptOutputDest == "cursor" )
-      w->insertTag( text );
+  {
+     if ( firstOutput )
+     {
+#if (KDE_VERSION >= 309)
+       int line = dynamic_cast<KTextEditor::SelectionInterfaceExt*>(w->doc())->selEndLine();
+       int col = dynamic_cast<KTextEditor::SelectionInterfaceExt*>(w->doc())->selEndCol();
+       w->viewCursorIf->setCursorPositionReal(line, col);     
+#endif
+       w->selectionIf->removeSelectedText();
+     }
+     w->insertTag( text );
+  }
 
   if ( scriptOutputDest == "replace" )
   {
     if ( firstOutput )
-       dynamic_cast<KTextEditor::EditInterface*>(w->doc())->clear();
+       w->editIf->clear();
     w->insertTag( text );
   }
 
@@ -235,7 +247,7 @@ void TagAction::slotGetScriptError( KProcess *, char *buffer, int buflen )
   if ( scriptErrorDest == "replace" )
   {
     if ( firstOutput )
-       dynamic_cast<KTextEditor::EditInterface*>(w->doc())->clear();
+       w->editIf->clear();
     w->insertTag( text );
   }
 

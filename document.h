@@ -3,6 +3,7 @@
                              -------------------
     begin                : Tue Jun 6 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
+                           (C) 2001-2003 Andras Mantia <amantia@freemail.hu>
     email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com
  ***************************************************************************/
 
@@ -66,11 +67,8 @@ public:
 
   bool isUntitled();
   void setUntitledUrl(QString);
-  /** Return a node Tag according to line,col (or current cursor pos if p_line==p_col==-1), and
-      according to dtd. If forwardOnly is true, the text is parsed from (p_line,p_col) forward.*/
-  Tag *tagAt( DTDStruct *dtd, int p_line = -1, int p_col = -1, bool forwardOnly=false, bool useSimpleRx = false);
   /** Returns tag name at specified position */
-  QString getTagNameAt(DTDStruct *dtd, int line, int col );
+  QString getTagNameAt(int line, int col );
 
   void selectText(int x1, int y1, int x2, int y2 );
   void replaceSelected(QString s);
@@ -79,8 +77,6 @@ public:
   void insertTag( QString s1,QString s2 = "" );
   /** Change the current tag's attributes with those from dict */
   void changeTag(Tag *tag, QDict<QString> *dict );
-  /** add attrib to end of current tag */
-  void insertAttrib(QString attr);
   /** No descriptions */
   void insertFile(const KURL& url);
   /** Inserts text at the current cursor position */
@@ -146,12 +142,7 @@ work correctly. */
   /** No descriptions */
   void parseVariables();
 
-  Tag *findScriptText(DTDStruct *dtd, int line, int col, const QRegExp& keywordRx);
-  Tag *findStruct(DTDStruct *dtd, int line, int col, const QRegExp& keywordRx);
-
   Tag *findXMLTag(int line, int col, bool forwardOnly = false, bool useSimpleRx = false);
-  Tag *findScriptTag(int line, int col, QRegExp tagRx);
-  Tag *findText(int line, int col, bool forwardOnly = false);
   /** Find the word until the first word boundary backwards */
   QString findWordRev(const QString& textToSearch);
 

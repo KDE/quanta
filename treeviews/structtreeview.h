@@ -65,7 +65,7 @@ public:
 
 public slots: // Public slots
   /** repaint document structure */
-  void slotReparse(Node* node, int openLevel = 3 );
+  void slotReparse(Document *w, Node* node, int openLevel = 3 );
   void slotMouseClicked(int button, QListViewItem*, const QPoint&, int);
   void slotDoubleClicked( QListViewItem * );
 

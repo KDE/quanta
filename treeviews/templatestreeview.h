@@ -2,7 +2,7 @@
                           templatestreeview.h  -  description
                              -------------------
     begin                : Thu Dec 20 2001
-    copyright            : (C) 2001 by Andras Mantia
+    copyright            : (C) 2001-2002 by Andras Mantia
     email                : amantia@freemail.hu
  ***************************************************************************/
 

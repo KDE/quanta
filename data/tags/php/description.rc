@@ -19,7 +19,7 @@ ScriptTagBorders = <? ?>, <* *>
 
 ScriptRegExp = (<\?.+\?>) | (<\*.+\*>)
 
-StructGroupsCount = 4
+StructGroupsCount = 5
 
 [Parsing rules]
 AreaBorders = <? ?>, <* *>
@@ -59,3 +59,10 @@ No_Name = No Classes
 Icon = classnew
 SearchRx = \bclass[\\s]+[0-9a-zA-Z_\x7f-\xff]*[\\s]*
 ClearRx = (?:class[\s]+|\n)
+
+[StructGroup_5]
+Name = Objects
+No_Name = No Objects
+Icon = classnew
+SearchRx =  \$+[a-zA-Z0-9_\x7f-\xff]*[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*[\\s]*=[\\s]*new[\\s]
+ClearRx = (?:=[\\s]*new[\\s]|\$)

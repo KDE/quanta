@@ -749,6 +749,16 @@ void Project::slotRenameFinished( KIO::Job * job)
     for (uint i = 0; i < nl.count(); i++ )
     {
       el = nl.item(i).toElement();
+      tmpString = el.attribute("url");
+      if (tmpString == newStr)
+      {
+        el.parentNode().removeChild( el );
+        break;
+      }
+    }
+    for (uint i = 0; i < nl.count(); i++ )
+    {
+      el = nl.item(i).toElement();
       tmpString = el.attribute("url");    
       oldString = tmpString;
       tmpString = tmpString.replace(QRegExp(oldStr),newStr);

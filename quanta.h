@@ -3,7 +3,7 @@
                              -------------------
     begin                : ?? ???  9 13:29:57 EEST 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
-    								  (C) 2001 by Andras Mantia
+                           (C) 2001-2003 by Andras Mantia <amantia@freemail.hu>
     email                : pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com
  ***************************************************************************/
 
@@ -49,6 +49,7 @@
 #include "quantacommon.h"
 #include "qextfileinfo.h"
 #include "resource.h"
+#include "dcopwindowmanagerif.h"
 
 // forward declaration
 class QuantaPluginInterface;
@@ -100,9 +101,9 @@ typedef struct ToolbarEntry{
 };
 
 /**
-  * The base class for Quanta application windows. 
+  * The base class for Quanta application windows.
   */
-class QuantaApp : public KDockMainWindow
+class QuantaApp : public KDockMainWindow, virtual public DCOPWindowManagerIf
 {
   Q_OBJECT
 
@@ -111,6 +112,8 @@ friend class QuantaView;
 friend class ActionEditDlg;
 
 public:
+  StructTreeView *sTab;
+
   QuantaApp();
   ~QuantaApp();
 
@@ -152,7 +155,11 @@ public:
   /** Returns the project (if there is one loaded) or global default encoding. */
   QString defaultEncoding();
   /** Returns the project (if there is one loaded) or global new file type. */
+  int currentEditorIfNum() const;
   QString newFileType();
+
+  /** reparse current document and initialize node. */
+  void reparse(bool force);
 
 public slots:
 
@@ -246,9 +253,6 @@ public slots:
   void enablePhp3Debug(bool);
   void enablePhp4Debug(bool);
 
-  /** reparse current document and initialize node. */
-  void reparse();
-	
   void setCursorPosition( int row, int col );
   void gotoFileAndLine  ( QString filename, int line );
 
@@ -301,6 +305,9 @@ public slots:
   void slotPluginsValidate();
   /** No descriptions */
   void slotBuildPrjToolbarsMenu();
+
+  void slotReparse();
+  void slotForceReparse();
 
 protected slots:
   void initToolBars();
@@ -380,7 +387,6 @@ private:
   DocTreeView 	*dTab;
   FilesTreeView	*fTTab;
   FilesListView		*fLTab;
-  StructTreeView *sTab;
   TemplatesTreeView	 *tTab;
 
   QWidgetStack *rightWidgetStack;
@@ -440,6 +446,7 @@ private:
 
   KToggleAction *viewBorder;
   KToggleAction *viewLineNumbers;
+  //KToggleAction *viewFoldingMarkers;
   KToggleAction *viewDynamicWordWrap;
   Kate::ActionMenu *setHighlight;
 

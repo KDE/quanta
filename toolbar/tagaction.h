@@ -2,7 +2,8 @@
                           tagaction.h  -  description
                              -------------------
     begin                : ?
-    copyright            : (C) ? Dmitry Poplavsky, (C) 2002 by Andras Mantia
+    copyright            : (C) ? Dmitry Poplavsky
+                           (C) 2002-2003 Andras Mantia <amantia@freemail.hu>
     email                : amantia@freemail.hu
  ***************************************************************************/
 

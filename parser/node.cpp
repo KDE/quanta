@@ -3,6 +3,7 @@
                              -------------------
     begin                : Sun Apr 16 2000
     copyright            : (C) 2000 by Dmitry Poplavsky
+                           (C) 2001-2003 Andras Mantia <amantia@freemail.hu>
     email                : pdima@mail.univ.kiev.ua
  ***************************************************************************/
 
@@ -24,12 +25,69 @@ Node::Node( Node *parent )
   tag = 0L;
   listItem = 0L;
   opened = false;
+  removeAll = true;
+  closesPrevious = false;
 }
 
 
 Node::~Node()
 {
-  if (child) { delete(child); child = 0L;}
-  if (next)  { delete(next); next = 0L;}
-  if ( tag ) { delete(tag); tag = 0L;}
+  if (removeAll)
+  {
+   if (child) { delete child; child = 0L;}
+   if (next)  { delete next; next = 0L;}
+  }
+  if ( tag ) { delete tag; tag = 0L;}
+}
+
+
+Node *Node::nextSibling()
+{
+  Node *result = 0L;
+  if (child)
+  {
+    result = child;
+  } else
+  if (next)
+  {
+    result = next;
+  } else
+  {
+    Node *n = this;
+    while (n)
+    {
+      if (n->parent && n->parent->next)
+      {
+        result = n->parent->next;
+        break;
+      } else
+      {
+        n = n->parent;
+      }
+    }
+  }
+
+  return result;
+}
+
+
+Node *Node::previousSibling()
+{
+  Node *result = 0L;
+  if (prev)
+  {
+     Node *n = prev;
+     while (n->child)
+     {
+       n = n->child;
+       while (n->next)
+         n = n->next;
+     }
+     result = n;
+  } else
+  {
+    result = parent;
+  }
+
+  return result;
 }

@@ -3,6 +3,7 @@
                              -------------------
     begin                : Tue Jun 6 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
+                           (C) 2001-2003 Andras Mantia <amantia@freemail.hu>
     email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com
  ***************************************************************************/
 
@@ -48,6 +49,9 @@
 #include "dialogs/dirtydlg.h"
 #include "project/project.h"
 #include "plugins/quantaplugininterface.h"
+
+#include "quanta.h"
+#include "treeviews/structtreeview.h"
 
 #define STEP 1
 Document::Document(const KURL& p_baseURL, KTextEditor::Document *doc,
@@ -100,6 +104,8 @@ Document::Document(const KURL& p_baseURL, KTextEditor::Document *doc,
 
 Document::~Document()
 {
+  delete m_view;
+  delete m_doc;
 }
 
 void Document::resizeEvent(QResizeEvent *e)
@@ -141,200 +147,6 @@ void Document::insertTag(QString s1,QString s2)
 
   insertText(s1+selection);
   insertText(s2, FALSE); // don't adjust cursor, thereby leaving it in the middle of tag
-}
-
-
-/** Return a node Tag according to line,col (or current cursor pos if p_line==p_col==-1), and
-    according to dtd. If forwardOnly is true, the text is parsed from (p_line,p_col) forward.*/
-Tag *Document::tagAt(DTDStruct *dtd, int p_line, int p_col, bool forwardOnly, bool useSimpleRx )
-{
-  Node *node = parser->nodeAt(p_line, p_col);
-  if (node)
-  {
-    return new Tag(*node->tag);
-  } else
-  {
-    kdDebug(24000) << "tagAt: Node is NULL!" << endl;
-    return new Tag(*baseNode->tag);
-  }
-
-  uint line;
-  uint col;
-
-  if ( (p_line < 0) && (p_col < 0))
-  {
-    viewCursorIf->cursorPositionReal(&line, &col);
-  } else
-  {
-    line = p_line;
-    col = p_col;
-  }
-
-  Tag *tag = 0L;
-  if (dtd->family == Xml)
-  {
-    if (!tag) tag = findXMLTag(line, col, forwardOnly, useSimpleRx);
-    if (!tag) tag = findText(line, col, forwardOnly);
-  }
-  if (dtd->family == Script)
-  {
-    QRegExp keywordRx(dtd->structKeywordsRxStr);
-    
-    if (!tag) tag = findScriptText(dtd, line, col, keywordRx);
-    if (!tag) tag = findStruct(dtd, line, col, keywordRx);
-    if (!tag)
-    {
-      QString textLine = text(line, col, line+1, 0);
-      if (textLine.startsWith(dtd->structEndStr))
-      {
-        tag = new Tag();
-        tag->setTagPosition(line, col, line, col);
-        tag->type = Tag::ScriptStructureEnd;
-        tag->name = "Structure End";
-        tag->setStr("}");
-        tag->single = false;
-        tag->setWrite(this);
-      }
-    }
-  }
-  return tag;
-}
-
-Tag *Document::findScriptText(DTDStruct *dtd, int line, int col, const QRegExp& keywordRx)
-{
-  int bl, bc, el, ec;
-  int bLine = line;
-  int bCol = col;
-  int eLine = line;
-  int eCol = col;
-  Tag *tag = 0L;
-  QString textLine;
-  QRegExp rx(dtd->structRxStr);
-
-  //find the structure begin or end string backward
-  QString s = findRev(rx, line, col, bl, bc, el, ec);
-  if (!s.isEmpty())
-  {
-    bCol = bc +1;
-    bLine = bl;
-  }
-
-  //find the first structure begin or end string forward
-  s = find(rx, line, col, bl, bc, el, ec);
-  if (s.isEmpty())
-  {
-    eLine = editIf->numLines()-1;
-    eCol = editIf->lineLength(eLine);
-  }
-  if (s == dtd->structBeginStr)
-  {
-
-    eLine = el;
-    eCol = ec - 1;
-    s = findRev(keywordRx, bl, bc, bl, bc, el, ec);
-    if (!s.isEmpty())
-    {
-      eLine = bl;
-      eCol = bc - 1;
-    }
-
-  } else
-    if (s == dtd->structEndStr)
-    {
-      eLine = el;
-      eCol = ec - 1;
-    }
-  
-  if (eCol < 0)
-  {
-    eLine = (eLine >0)?eLine-1:0;
-    eCol = editIf->lineLength(eLine);
-  }
-
-  if (QuantaCommon::isBetween(line, col, bLine, bCol, eLine, eCol) == 0)
-  {
-    QString tagStr = text(bLine, bCol, eLine, eCol);
-    s = tagStr.stripWhiteSpace();
-    if (!s.isEmpty() && s != " ")
-    {
-      tag = new Tag();
-      tag->setTagPosition(bLine, bCol, eLine, eCol);
-      tag->type = Tag::Text;
-      tag->name = "Text";
-      tag->single = true;
-      tag->setWrite(this);
-      tag->setStr(tagStr);
-    } else
-    {
-      tag = new Tag();
-      tag->setTagPosition(bLine, bCol, eLine, eCol);
-      tag->type = Tag::Skip;
-    }
-  }
-  return tag;
-}
-
-Tag *Document::findStruct(DTDStruct *dtd,int line, int col, const QRegExp& keywordRx)
-{
-  Tag *tag = 0L;
-  int bLine = 0;
-  int bCol = 0;
-  int eLine = 0;
-  int eCol = 0;
-  int bl, bc, el, ec;
-
-  QRegExp rx(dtd->structRxStr);
-
-  QString s = find(rx, line, col, bLine, bCol, eLine, eCol);
-
-  if (s != dtd->structEndStr && !s.isEmpty())
-  {
-    s = findRev(keywordRx, bLine, bCol, bl, bc, el, ec);
-    if (!s.isEmpty())
-    {
-      bLine = bl;
-      bCol = bc;
-    }
-
-    if (QuantaCommon::isBetween(line, col, bLine, bCol, eLine, eCol) == 0)
-    {
-      QString tagStr = text(bLine, bCol, eLine, eCol);
-      tag = new Tag();
-      tag->setTagPosition(bLine, bCol, eLine, eCol);
-      tag->type = Tag::ScriptStructureBegin;
-      tag->single = false;
-      tag->setWrite(this);
-      tag->setStr(tagStr);
-      tag->name = tagStr.left(tagStr.find("{")).simplifyWhiteSpace();
-  /*    QRegExp fnRx = QRegExp("function[\\s]*",false);
-      if (tag->name.contains(fnRx)) //it is a function
-      {
-        QString name = tag->name;
-        name.replace(fnRx,"");
-        QString paramStr = name.mid(name.find('(')+1);
-        paramStr = paramStr.left(paramStr.find(')',-1));
-        name = name.left(name.find('(')).stripWhiteSpace();
-        if (!userTagList.find(name))
-        {
-          QTag *newTag = new QTag();
-          newTag->setName(name);
-          newTag->type = "function";
-          newTag->parentDTD = dtds->find(m_parsingDTD);
-          QStringList params = QStringList::split(",",paramStr);
-          for (uint i = 0; i < params.count(); i++)
-          {
-            Attribute *attr = new Attribute;
-            attr->name = params[i].stripWhiteSpace();
-            newTag->addAttribute(attr);           
-            delete attr;
-          }
-          userTagList.insert(name, newTag);
-        }
-      } */
-    }
-  }
-
-  return tag;
 }
 
 Tag *Document::findXMLTag(int line, int col, bool forwardOnly, bool useSimpleRx)
@@ -394,124 +206,6 @@ Tag *Document::findXMLTag(int line, int col, bool forwardOnly, bool useSimpleRx)
   return tag;
 }
 
-Tag *Document::findScriptTag(int line, int col,  QRegExp tagRx)
-{
-  Tag *tag = 0L;
-  int bLine, bCol, eLine, eCol;
-  bLine = bCol = eLine = eCol = 0;
-  int sLine = line;
-  int sCol = col;
-  bool tagFound = false;
-  QString foundText;
-  //search backwards
-  foundText = findRev(tagRx, line, col, bLine, bCol, eLine, eCol);
-  if (!foundText.isEmpty())
-  {
-    if (QuantaCommon::isBetween(line, col, bLine, bCol, eLine, eCol) == 0)
-    {
-      tagFound = true;
-    } else
-    {
-      sLine = eLine;
-      sCol = eCol+1;
-    }
-  } else
-  {
-    sLine = sCol = 0;
-  }
-  //if not found, search forward
-  if (!tagFound)
-  {
-   foundText = find(tagRx, sLine, sCol, bLine, bCol, eLine, eCol);
-   if (!foundText.isEmpty() &&
-       QuantaCommon::isBetween(line, col, bLine, bCol, eLine, eCol) == 0)
-   {
-      tagFound = true;
-   }
-  }
-
-  if (tagFound) //build the Tag object
-  {
-      tag = new Tag();
-      tag->setTagPosition(bLine, bCol,eLine, eCol);
-      tag->parse(foundText, this);
-      tag->type = Tag::ScriptTag;
-      tag->single = true;
-  }
-
-  return tag;
-}
-
-//findXMLTag must be called before
-Tag *Document::findText(int line, int col, bool forwardOnly)
-{
-  int bLine = 0;
-  int bCol = 0;
-  int eLine = 0;
-  int eCol = 0;
-  Tag *tag = 0L;
-  int t_bLine, t_bCol, t_eLine, t_eCol;
-  t_bLine = t_bCol = t_eLine = t_eCol = -1;
-  QString foundText;
-  QRegExp xmlTagRx("<(?:[^>]*(?:\"(?:[^\"]*(?:<[^\"]*>)+[^\"<]*)*\")*(?:'(?:[^']*(?:<[^']*>)+[^'<]*)*')*[^>]*)*>",false);
-
-  if (!forwardOnly)
-  {
-    //search backwards
-    foundText = findRev(xmlTagRx, line, col, bLine, bCol, eLine, eCol);
-    if (!foundText.isEmpty())
-    {
-      t_bCol = eCol+1;
-      t_bLine = eLine;
-      if (t_bCol > editIf->lineLength(eLine))
-      {
-        t_bCol = 0;
-        t_bLine++;
-      }
-    } else
-    {
-      t_bCol = t_bLine = 0;
-    }
-  } //if (!forwardOnly)
-  else
-  {
-    t_bLine = line;
-    t_bCol = col;
-  }
-  foundText = find(xmlTagRx, line, col, bLine, bCol, eLine, eCol);
-  if (!foundText.isEmpty())
-  {
-    t_eCol = bCol-1;
-    t_eLine = bLine;
-    if (t_eCol < 0 )
-    {
-      t_eLine = (t_eLine > 0)?t_eLine -1:0;
-      t_eCol = editIf->lineLength(t_eLine);
-    }
-  } else
-  {
-    t_eLine = editIf->numLines()-1;
-    t_eCol = editIf->lineLength(t_eLine);
-  }
-
-  tag = new Tag();
-  tag->setTagPosition(t_bLine, t_bCol, t_eLine, t_eCol);
-  QString s = text(t_bLine, t_bCol, t_eLine, t_eCol);
-  s.replace(QRegExp("\\n"),"");
-  s = s.stripWhiteSpace();
-  if (s.isEmpty() || s == " ")  //whitespaces are not text
-  {
-    tag->type = Tag::Skip;
-  } else
-  {
-    tag->type = Tag::Text;
-    tag->setStr(s);
-    tag->setWrite(this);
-    tag->name = "Text";
-  }
- return tag;
-}
-
 /** Change the current tag's attributes with those from dict */
 void Document::changeTag(Tag *tag, QDict<QString> *dict )
 {
@@ -562,27 +256,6 @@ void Document::changeTag(Tag *tag, QDict<QString> *dict )
   insertText(tagStr);
 }
 
-// return global( on the desktop ) position of text cursor
-QPoint Document::getGlobalCursorPos()
-{
- // return kate_view->mapToGlobal(viewCursorIf->cursorCoordinates());
-  return viewCursorIf->cursorCoordinates();
-}
-
-void Document::insertAttrib(QString attr)
-{
-  int line, col;
-  DTDStruct *dtd = currentDTD();
-  Tag *tag = tagAt(dtd);
-  if (tag)
-  {
-    tag->endPos(line, col);
-    viewCursorIf->setCursorPositionReal( line, col - 1 );
-    insertTag( QString(" ") + QuantaCommon::attrCase(attr) + "=\"", QString( "\"" ) );
-    delete tag;
-  }
-}
-
 /**  */
 void Document::selectText(int x1, int y1, int x2, int y2 )
 {
@@ -605,20 +278,11 @@ void Document::readConfig(KConfig *config)
   bool m = m_doc->isModified();
   dynamic_cast<KTextEditor::ConfigInterface*>(m_doc)->readConfig( config );
   m_doc->setModified(m);
-  //read the line number & icon border setting from the General section
-//  config->setGroup("General Options");
-//  qConfig.lineNumbers = config->readBoolEntry("LineNumbers", false);
-//  qConfig.iconBar = config->readBoolEntry("Iconbar", false);
 }
 
 void Document::writeConfig(KConfig *config)
 {
   dynamic_cast<KTextEditor::ConfigInterface*>(m_doc)->writeConfig( config );
-  //store the line number & icon border setting also in the General section
-  config->setGroup("Kate View");
-  config->writeEntry("LineNumbers", qConfig.lineNumbers);
-  config->writeEntry("Iconbar", qConfig.iconBar);
-  config->writeEntry("DynamicWordWrap", qConfig.dynamicWordWrap);
 }
 
 /** No descriptions */
@@ -811,28 +475,40 @@ bool Document::saveIt()
     It will work even if the tag has not been completed yet. An
     empty string will be returned if no tag is found.
 */
-QString Document::getTagNameAt(DTDStruct *dtd, int line, int col )
+QString Document::getTagNameAt(int line, int col )
 {
  QString name = "";
- Tag *tag = tagAt(dtd, line, col, false, true);
- if (tag)
+ Node *node = parser->nodeAt(line, col, false);
+
+ if (node && node->tag)
  {
+   Tag *tag = new Tag;
+   int bl, bc;
+   uint el, ec;
+   node->tag->beginPos(bl, bc);
+   viewCursorIf->cursorPositionReal(&el, &ec);
+   tag->parse(text(bl,bc,el,ec), this);
+
    name = tag->name;
-   if (tag->type == Tag::Text)
+/*   if (tag->type != Tag::XmlTag) */
+   if (name.isEmpty())
    {
      QString s = tag->tagStr();
      int pos = s.find("<");
      if (pos !=-1)
-     {   
+     {
        s.remove(0,pos);
        pos = 0;
-       while (pos < (int)s.length() && !s[pos].isSpace()) pos++;
+       while (pos < (int)s.length() &&
+              !s[pos].isSpace() &&
+              s[pos] != '>') pos++;
        name = s.mid(1, pos -1).stripWhiteSpace();
      } else
      {
        name = "";
      }
    }
+   kdDebug(24000) << name << " | "<< tag->tagStr() << "\n";
    delete tag;
  }
  return name;
@@ -962,7 +638,7 @@ bool Document::xmlAutoCompletion(DTDStruct* dtd, int line, int column, const QSt
   QTag *tag;
   QString tagName;
   bool handled = false;
-  tagName = getTagNameAt(dtd, line, column);
+  tagName = getTagNameAt(line, column);
 
   tag = QuantaCommon::tagFromDTD(dtd, tagName);
   if (!tag) tag = userTagList.find(tagName.lower());
@@ -1254,6 +930,7 @@ QString Document::findDTDName(Tag **tag)
  QString foundText = "";
  int pos = 0;
  int i = 0;
+ int line, startPos;
  QString text;
  do
  {
@@ -1262,25 +939,57 @@ QString Document::findDTDName(Tag **tag)
    pos = text.find("!doctype",0,false);
    if (pos != -1) //parse the found !DOCTYPE tag
    {
-    *tag = findXMLTag(i, pos-1, true);
-    if (*tag)
-    {
-      text = (*tag)->tagStr();
-      pos = text.find("public",0,false);
-      if (pos == -1) //if no PUBLIC info, use the word after !DOCTYPE as the doc.type
-      {
-        foundText = (*tag)->attribute(0);
-      } else
-      {             //use the quoted string after PUBLIC as doc. type
-        pos = text.find("\"", pos+1);
-        if (pos !=-1)
-        {
-          int endPos = text.find("\"",pos+1);
-          foundText = text.mid(pos+1, endPos-pos-1);
-        }
-      }
-      break;
-    }
+     line = i;
+     startPos = text.findRev('<',pos);
+     while (startPos == -1 && line >=0)
+     {
+       text = editIf->textLine(line);
+       startPos = text.findRev('<');
+       line--;
+     }
+     if (startPos == -1)
+     {
+        i++;
+        continue;
+     }
+     int bl, bc, el, ec;
+     bl = line++;
+     bc = startPos;
+     line = i;
+     text = editIf->textLine(i);
+     startPos = text.find('>',pos);
+     while (startPos == -1 && line < endLine)
+     {
+       text = editIf->textLine(line);
+       startPos = text.find('>');
+       line++;
+     }
+     if (startPos == -1)
+     {
+        i++;
+        continue;
+     }
+     el = line--;
+     ec = startPos + 1;
+     *tag = new Tag();
+     (*tag)->setTagPosition(bl, bc, el, ec);
+     text = this->text(bl, bc, el, ec);
+     (*tag)->parse(text, this);
+     (*tag)->type = Tag::XmlTag;
+     pos = text.find("public",0,false);
+     if (pos == -1) //if no PUBLIC info, use the word after !DOCTYPE as the doc.type
+     {
+       foundText = (*tag)->attribute(0);
+     } else
+     {             //use the quoted string after PUBLIC as doc. type
+       pos = text.find("\"", pos+1);
+       if (pos !=-1)
+       {
+         int endPos = text.find("\"",pos+1);
+         foundText = text.mid(pos+1, endPos-pos-1);
+       }
+     }
+     break;
    }
    i++;
  } while (i < endLine);
@@ -1539,9 +1248,10 @@ QString Document::findWordRev(const QString& textToSearch)
 bool Document::xmlCodeCompletion(DTDStruct *dtd, int line, int col)
 {
   bool handled = false;
-  Tag * tag = tagAt(dtd,line,col);
-  if (tag)
+  Node *node = parser->nodeAt(line, col);
+  if (node && node->tag)
   {
+    Tag *tag = node->tag;
     int bLine, bCol;
     tag->beginPos(bLine, bCol);
     QString s;
@@ -1578,7 +1288,6 @@ bool Document::xmlCodeCompletion(DTDStruct *dtd, int line, int col)
         }
       }
     }
-    delete tag;
   }
   return handled;
 }
@@ -1732,12 +1441,20 @@ void Document::parseVariables()
 /** No descriptions */
 void Document::slotTextChanged()
 {
- return;
+  return;
+
+  baseNode = parser->rebuild(this);
+  //if (baseNode)
+  {
+    quantaApp->sTab->slotReparse(this, baseNode , 2);
+  }
+
 
  //TODO: This can be made even faster. The idea is to force the reparsing only when it
  //is necessary. It shouldn't be done when no dtd definition beginning or end was moved!
  //Currently it is forced for every change when the current line contains a dtd
  //definition
+ /*
  bool force = false;
  uint line, col;
  viewCursorIf->cursorPositionReal(&line, &col);
@@ -1758,7 +1475,7 @@ void Document::slotTextChanged()
    }
  }
 
- parser->parseForDTD(this, force);
+ parser->parseForDTD(this, force); */
 }
 
 #include "document.moc"

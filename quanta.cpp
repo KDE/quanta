@@ -3,7 +3,7 @@
                              -------------------
     begin                : ?? ???  9 13:29:57 EEST 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
-                           (C) 2001, 2002 by Andras Mantia
+                           (C) 2001-2003 by Andras Mantia <amantia@freemail.hu>
     email                : pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com
  ***************************************************************************/
 
@@ -518,13 +518,17 @@ void QuantaApp::slotImageOpen(const KURL& url)
 /** insert <img> tag for images or <a> for other */
 void QuantaApp::slotInsertTag(const KURL& url, DirInfo dirInfo)
 {
-  KURL relURL = QExtFileInfo::toRelative( url,projectBaseURL());
+  KURL baseURL = projectBaseURL();
+  KURL relURL = QExtFileInfo::toRelative( url, baseURL);
+  QString urlStr = relURL.url();
+  if (relURL.protocol() == baseURL.protocol())
+      urlStr = relURL.path();
   Document *w = view->write();
   bool isImage = false;
   
   if (!dirInfo.preText.isEmpty() || !dirInfo.postText.isEmpty())
   {
-	   w->insertTag(dirInfo.preText+relURL.url()+dirInfo.postText);
+	   w->insertTag(dirInfo.preText+urlStr+dirInfo.postText);
   } else
   {
     if (url.isLocalFile())
@@ -535,13 +539,13 @@ void QuantaApp::slotInsertTag(const KURL& url, DirInfo dirInfo)
         QString width,height;
         width.setNum( img.width () );
     	  height.setNum( img.height() );
-        w->insertTag("<img src=\""+relURL.url()+"\" width=\""+width+"\" height=\""+height+"\" border=\"0\">");
+        w->insertTag("<img src=\""+urlStr+"\" width=\""+width+"\" height=\""+height+"\" border=\"0\">");
         isImage = true;
       }
     }
     if (!isImage)
     {
-      w->insertTag( "<a href=\""+relURL.url()+"\">","</a>");
+      w->insertTag( "<a href=\""+urlStr+"\">","</a>");
     }
   }
 //  w->view()->setFocus();
@@ -591,6 +595,7 @@ void QuantaApp::slotNewStatus()
     viewLineNumbers->setChecked(w->kate_view->lineNumbersOn());
 
 #if (KDE_VERSION > 308)
+     //viewFoldingMarkers->setChecked(w->kate_view->lineNumbersOn());
      viewDynamicWordWrap->setChecked(dynamic_cast<KTextEditor::DynWordWrapInterface*>(w->view())->dynWordWrap());
 #endif
     if (setHighlight) setHighlight->updateMenu (w->kate_doc);
@@ -637,7 +642,7 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
   newWrite->checkDirtyStatus();
   if (newWrite != view->oldWrite)
     sTab->useOpenLevelSetting = true;
-  reparse();
+  reparse(true);
   slotNewUndo();
   slotNewStatus();
   slotNewLineColumn();
@@ -780,13 +785,12 @@ void QuantaApp::slotOptionsConfigureActions()
 
 void QuantaApp::slotOptions()
 {
+  KDialogBase *kd = new KDialogBase(KDialogBase::IconList,
+              i18n("Configure Quanta"),
+              KDialogBase::Ok | KDialogBase::Cancel,
+              KDialogBase::Ok, this, "tabdialog");
 
-	KDialogBase *kd = new KDialogBase(KDialogBase::IconList,
-				    i18n("Configure Quanta"),
-				    KDialogBase::Ok | KDialogBase::Cancel,
-				    KDialogBase::Ok, this, "tabdialog");
-
-	// Tag Style options
+  // Tag Style options
   QVBox *page=kd->addVBoxPage(i18n("Tag Style"), QString::null, BarIcon("kwrite", KIcon::SizeMedium ) );
   StyleOptionsS *styleOptionsS = new StyleOptionsS( (QWidget *)page );
 
@@ -819,7 +823,6 @@ void QuantaApp::slotOptions()
        break;
      }
   }
-  fileMasks->hideDTDToolbar->setChecked(!qConfig.enableDTDToolbar);
 
   // Preview options
   page=kd->addVBoxPage(i18n("Preview"), QString::null, BarIcon("kview", KIcon::SizeMedium ) );
@@ -856,11 +859,11 @@ void QuantaApp::slotOptions()
 
   if (KDE_VERSION >= 308)
   {
-//Spelling options  
+//Spelling options
     page=kd->addVBoxPage(i18n("Spelling"), QString::null, BarIcon("spellcheck", KIcon::SizeMedium ) );
     new KSpellConfig( (QWidget *)page, 0L, qConfig.spellConfig, false );
   }
-     
+
   if ( kd->exec() )
   {
     qConfig.tagCase = styleOptionsS->tagCase->currentItem();
@@ -870,14 +873,11 @@ void QuantaApp::slotOptions()
     qConfig.useAutoCompletion = styleOptionsS->useAutoCompletion->isChecked();
 
     qConfig.markupMimeTypes = fileMasks->lineMarkup->text();
-  	qConfig.scriptMimeTypes  = fileMasks->lineScript->text();
-	  qConfig.imageMimeTypes= fileMasks->lineImage->text();
-  	qConfig.textMimeTypes = fileMasks->lineText->text();
-   
+    qConfig.scriptMimeTypes  = fileMasks->lineScript->text();
+    qConfig.imageMimeTypes= fileMasks->lineImage->text();
+    qConfig.textMimeTypes = fileMasks->lineText->text();
+
     qConfig.defaultEncoding = fileMasks->encodingCombo->currentText();
-    qConfig.enableDTDToolbar = !fileMasks->hideDTDToolbar->isChecked();
-    showDTDToolbar->setEnabled(qConfig.enableDTDToolbar);
-    slotToggleDTDToolbar(showDTDToolbar->isChecked());
 
     qConfig.refreshFrequency = parserOptions->refreshFrequency->value();
     if (qConfig.refreshFrequency > 0)
@@ -1047,44 +1047,49 @@ void QuantaApp::slotNewLineColumn()
   statusBar()->changeItem(linenumber.data(), IDS_STATUS_CLM);
 }
 
-/** reparse current document and initialize node. */
-void QuantaApp::reparse()
+
+void QuantaApp::slotReparse()
 {
-//TODO: This function is very ugly...
-  if (view->writeExists())view->write()->parseVariables();
-  if (view->writeExists() )// && stabdock->isVisible())
+  baseNode = parser->parse(view->write());
+//  reparse(false);
+}
+
+void QuantaApp::slotForceReparse()
+{
+  reparse(true);
+}
+
+/** reparse current document and initialize node. */
+void QuantaApp::reparse(bool force)
+{
+  if (view->writeExists())
   {
     Document *w = view->write();
-    
-    QString s = w->editIf->text();
-    if (s != parser->m_text)  //rebuild the node tree only if the text has changed
+//  w->parseVariables();
+    if (force)
     {
-      if (baseNode)
-      {
-        delete baseNode;
-        baseNode = 0L;
-      }
-      if (dtds->find(w->getDTDIdentifier()))
-      {
-        baseNode = parser->parse(w);
-        sTab->setParsingDTD(w->parsingDTD());
-      }
-    
-      sTab->deleteList();
-      if (baseNode)
-      {
-        config->setGroup("Parser options");
-        int expandLevel = config->readNumEntry("Expand level",8);
-        if ( expandLevel == 0 ) expandLevel = 40;
-        sTab->slotReparse(baseNode , expandLevel );
-
-        uint line;
-        uint col;
-        w->viewCursorIf->cursorPositionReal(&line, &col);
-        sTab->showTagAtPos(line,col);
-      } // if (stabdock->isVisible())
+      baseNode = parser->parse(w);
+    } else
+    {
+      baseNode = parser->rebuild(w);
     }
-  } // if (view->writeExists())
+    sTab->setParsingDTD(w->parsingDTD());
+//TODO: Do not delete the list, but modify it
+    sTab->deleteList();
+//TODO: Store the expandLevel in qConfig, don't read so often from disk
+    config->setGroup("Parser options");
+    int expandLevel = config->readNumEntry("Expand level",8);
+    if ( expandLevel == 0 ) expandLevel = 40;
+    
+    sTab->slotReparse(w, baseNode , expandLevel );
+
+    uint line;
+    uint col;
+    w->viewCursorIf->cursorPositionReal(&line, &col);
+    sTab->showTagAtPos(line,col);
+  }
+
+  return;
 }
 
 void QuantaApp::setCursorPosition( int row, int col )
@@ -2153,7 +2158,7 @@ void QuantaApp::slotToolsChangeDTD()
   }
 
   loadToolbarForDTD(w->getDTDIdentifier());
-  reparse();
+  reparse(true);
 //  parser->parseForDTD(w, true);
 
   delete dlg;
@@ -2302,14 +2307,14 @@ void QuantaApp::removeToolbar(const QString& name)
 /** Show or hide the DTD toolbar */
 void QuantaApp::slotToggleDTDToolbar(bool show)
 {
-  if (show && qConfig.enableDTDToolbar)
+  if (show)
   {
     view->toolbarTab->show();
   } else
   {
     view->toolbarTab->hide();
   }
-  showDTDToolbar->setChecked(show);
+  qConfig.enableDTDToolbar = show;
 }
 
 
@@ -2317,8 +2322,7 @@ void QuantaApp::slotToggleDTDToolbar(bool show)
 void QuantaApp::slotParsingDTDChanged(QString newDTDName)
 {
   view->write()->setParsingDTD(newDTDName);
-  parser->clear();
-  reparse();
+  reparse(true);
 }
 
 /** Returns the project's base URL if it exists, the HOME dir if there is no project and no opened document (or the current opened document was not saved yet), and the base URL of the opened document, if it is saved somewhere. */
@@ -2425,7 +2429,8 @@ ToolbarEntry *QuantaApp::toolbarByURL(const KURL& url)
 /** Returns true if all toolbars are hidden, false otherwise. */
 bool QuantaApp::allToolbarsHidden()
 {
-
+  bool result = true;
+  showDTDToolbar->setEnabled(false);
   ToolbarEntry *p_toolbar = 0L;
   QDictIterator<ToolbarEntry> iter(toolbarList);
   for( ; iter.current(); ++iter )
@@ -2433,11 +2438,15 @@ bool QuantaApp::allToolbarsHidden()
     p_toolbar = iter.current();
     if (p_toolbar->visible)
     {
-       return false;
+       showDTDToolbar->setEnabled(true);
+       result = false;
+       break;
     }
   }
 
-  return true;
+  if (!showDTDToolbar->isChecked())
+      result = true;
+  return result;
 }
 
 /** No descriptions */
@@ -2528,7 +2537,16 @@ void QuantaApp::slotEmailDTD()
    kapp->invokeMailer(toStr, nullString, nullString, subjectStr, message, nullString, dtdFile);
   }
   delete mailDlg;
-  
+
 }
 
+/** No descriptions */
+int QuantaApp::currentEditorIfNum() const
+{
+  return view->write()->editIf->editInterfaceNumber();
+}
+
+
 #include "quanta.moc"
+
+

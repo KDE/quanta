@@ -115,7 +115,7 @@ StructTreeView::~StructTreeView(){
 /** builds the structure tree */
 void StructTreeView::buildTree(Node *baseNode, int openLevel)
 {
-  if (baseNode)
+//  if (baseNode)
   {
     top = new StructTreeTag( this, i18n("Document Structure") );
     top->setOpen(topOpened);
@@ -150,13 +150,15 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
         count++;
       }
       */
+    //  if (!parentItem)
+        //parentItem = top;
       title = "";
       item = new StructTreeTag(parentItem, currentNode, title, currentItem);
       item->setOpen(level < openLevel);
 
       if (currentNode->tag->type == Tag::Empty)
       {
-          item->setVisible(false);
+         // item->setVisible(false);
       }
 
       if (m_parsingDTD->family == Xml)
@@ -368,12 +370,12 @@ void StructTreeView::deleteList()
 }
 
 /** repaint document structure */
-void StructTreeView::slotReparse(Node* node, int openLevel)
+void StructTreeView::slotReparse(Document *w, Node* node, int openLevel)
 {
   timer.restart();
   deleteList();
   groupsCount = m_parsingDTD->structTreeGroups.count();
-  write = node->tag->write();
+  write = w;
   buildTree(node, openLevel);
 
   kdDebug(24000) << "StructTreeView building: " << timer.elapsed() << " ms\n";

@@ -3,6 +3,7 @@
                              -------------------
     begin                : Втр Май  9 13:29:57 EEST 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
+                           (C) 2001-2002 Andras Mantia <amantia@freemail.hu>
     email                : pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com
  ***************************************************************************/
 
@@ -92,6 +93,7 @@ public slots:
   void invertSelect();
   /** Called when a file on the disk has changed. */
   void slotFileDirty(const QString& fileName);
+  void slotOpenCompleted();
  	
 signals:
   void newStatus();

@@ -3,6 +3,7 @@
                              -------------------
     begin                : Jan 12 2001
     copyright            : (C) 2001 by Dmitry Poplavsky
+                           (C) 2002 Andras Mantia <amantia@freemail.hu>
     email                : dima@kde.org
  ***************************************************************************/
 
