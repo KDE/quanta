@@ -61,6 +61,7 @@ public slots:
   void addPlugin();
   void removePlugin();
   void configurePlugin();
+  void configurePlugin(QListViewItem*, const QPoint&, int);
   void refreshPlugins();
 
 protected:

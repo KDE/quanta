@@ -58,6 +58,8 @@ QuantaPluginEditor::QuantaPluginEditor(QWidget *a_parent, const char *a_name)
   connect(m_pluginEditorWidget->removeButton, SIGNAL(clicked()), SLOT(removePlugin()));
   connect(m_pluginEditorWidget->addSearchPathButton, SIGNAL(clicked()), SLOT(addSearchPath()));
   connect(m_pluginEditorWidget->configureButton, SIGNAL(clicked()), SLOT(configurePlugin()));
+  connect(m_pluginEditorWidget->pluginList, SIGNAL(doubleClicked(QListViewItem*, const QPoint&, int)),
+     SLOT(configurePlugin(QListViewItem*, const QPoint&, int)));
 }
 
 QuantaPluginEditor::~QuantaPluginEditor()
@@ -142,6 +144,12 @@ void QuantaPluginEditor::configurePlugin()
 
     emit pluginsChanged();
   }
+}
+
+void QuantaPluginEditor::configurePlugin(QListViewItem* item, const QPoint&, int)
+{
+  if (item)
+    configurePlugin();
 }
 
 void QuantaPluginEditor::refreshPlugins()
