@@ -259,7 +259,6 @@ void QuantaApp::slotFileSave()
       view()->write()->docUndoRedo->fileSaved();
 #endif
     }
-    w->removeBackup(m_config);
     slotUpdateStatus(w);
   }
 }
@@ -286,7 +285,7 @@ bool QuantaApp::slotFileSaveAs()
       if (pTab->currentKFileTreeViewItem() && pTab->currentKFileTreeViewItem()->isDir())
         saveAsPath = saveAsUrl.url();
       else
-        saveAsPath = saveAsUrl.directory(); 	
+        saveAsPath = saveAsUrl.directory();
       gotPath = true;
     }
     else if(ftabdock->isVisible())
@@ -295,7 +294,7 @@ bool QuantaApp::slotFileSaveAs()
       if (fTab->currentKFileTreeViewItem() && fTab->currentKFileTreeViewItem()->isDir())
         saveAsPath = saveAsUrl.url();
       else
-        saveAsPath = saveAsUrl.directory(); 
+        saveAsPath = saveAsUrl.directory();
       gotPath = true;
     }
 
@@ -325,13 +324,13 @@ bool QuantaApp::slotFileSaveAs()
       oldURL = saveUrl;
       if (  Project::ref()->hasProject() && !Project::ref()->contains(saveUrl)  &&
            KMessageBox::Yes == KMessageBox::questionYesNo(0,i18n("<qt>Do you want to add the<br><b>%1</b><br>file to project?</qt>").arg(saveUrl.prettyURL(0, KURL::StripFileProtocol)))
-        )	
+        )
       {
         if (saveUrl.isLocalFile())
         {
           QDir dir(saveUrl.path());
           saveUrl.setPath(dir.canonicalPath());
-        }        
+        }
         Project::ref()->insertFile(saveUrl, true);
       }
 #ifdef BUILD_KAFKAPART
@@ -342,7 +341,6 @@ bool QuantaApp::slotFileSaveAs()
     }
     if (oldURL.isLocalFile())
         fileWatcher->addFile(oldURL.path());
-    w->removeBackup(m_config);
   }
   return result;
 }
@@ -686,7 +684,7 @@ void QuantaApp::slotRepaintPreview()
       if ( text.isEmpty() )
       {
         text = i18n( "<center><h3>The current document is empty...</h3></center>" );
-      } 
+      }
       part->closeURL();
       part->begin( Project::ref()->projectBaseURL(), xOffset, yOffset );
       part->write( text );

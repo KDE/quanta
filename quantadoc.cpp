@@ -188,8 +188,8 @@ void QuantaDoc::openDocument(const KURL& urlToOpen, const QString &a_encoding, b
     dynamic_cast<KTextEditor::EncodingInterface*>(w->doc())->setEncoding(encoding);
 
 #if KDE_IS_VERSION(3,1,90)
-    connect(w->doc(), SIGNAL(completed()), this, SLOT(slotOpeningCompleted()));  
-#endif    
+    connect(w->doc(), SIGNAL(completed()), this, SLOT(slotOpeningCompleted()));
+#endif
     if (w->doc()->openURL( url ))
     {
       loaded = true;
@@ -197,7 +197,7 @@ void QuantaDoc::openDocument(const KURL& urlToOpen, const QString &a_encoding, b
       slotOpeningCompleted();
 #endif
     }
-  } 
+  }
   if (!loaded && !url.isEmpty()) //the open of the document has failed*/
   {
     bool signalStatus = signalsBlocked();
@@ -236,43 +236,44 @@ void QuantaDoc::slotOpeningCompleted()
   emit title( w->url().prettyURL() );
   emit newStatus();
 #if KDE_IS_VERSION(3,1,90)
-   disconnect(w->doc(), SIGNAL(completed()), this, SLOT(slotOpeningCompleted()));  
-#endif    
+   disconnect(w->doc(), SIGNAL(completed()), this, SLOT(slotOpeningCompleted()));
+#endif
 }
 
 bool QuantaDoc::saveDocument(const KURL& url)
 {
   if (url.isEmpty())
     return false;
-    
+
   m_saveResult = true;
   Document *w = write();
   KURL oldURL = w->url();
   if (oldURL.isLocalFile())
     fileWatcher->removeFile(oldURL.path());
-    
+
   if (url.isLocalFile())
-  {    
+  {
     if (!w->doc()->saveAs(url))
     {
 #if KDE_VERSION < KDE_MAKE_VERSION(3,1,90)
       KMessageBox::error(quantaApp, i18n("<qt>Saving of the document <b>%1</b>failed.<br>Maybe you should try to save in another directory.</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)));
 #endif
-      fileWatcher->addFile(oldURL.path());  
+      fileWatcher->addFile(oldURL.path());
       return false; //saving to a local file failed
     } else //successful saving to a local file
     {
       w->closeTempFile();
       w->createTempFile();
       w->setDirtyStatus(false);
-      fileWatcher->addFile(w->url().path());      
+      w->removeBackup(quantaApp->config());
+      fileWatcher->addFile(w->url().path());
     }
   } else //saving to a remote file
   {
     KTextEditor::Document *wdoc = w->doc();
     m_eventLoopStarted = false;
-    connect(wdoc, SIGNAL(canceled(const QString &)), this, SLOT(slotSavingFailed(const QString &)));  
-    connect(wdoc, SIGNAL(completed()), this, SLOT(slotSavingCompleted()));  
+    connect(wdoc, SIGNAL(canceled(const QString &)), this, SLOT(slotSavingFailed(const QString &)));
+    connect(wdoc, SIGNAL(completed()), this, SLOT(slotSavingCompleted()));
     m_saveResult = wdoc->saveAs(url);
     if (m_saveResult)
     {
@@ -287,7 +288,7 @@ bool QuantaDoc::saveDocument(const KURL& url)
         fileWatcher->addFile(oldURL.path());
       return false;
     }
-  } 
+  }
   // everything went fine
   if (oldURL != w->url())
   {
@@ -300,9 +301,9 @@ bool QuantaDoc::saveDocument(const KURL& url)
 void QuantaDoc::slotSavingFailed(const QString &error)
 {
   m_saveResult = false;
-  disconnect(write()->doc(), SIGNAL(canceled(const QString &)), this,  SLOT(slotSavingFailed(const QString &))); 
+  disconnect(write()->doc(), SIGNAL(canceled(const QString &)), this,  SLOT(slotSavingFailed(const QString &)));
   if (m_eventLoopStarted)
-    qApp->exit_loop(); 
+    qApp->exit_loop();
 }
 
 void QuantaDoc::slotSavingCompleted()
@@ -312,7 +313,8 @@ void QuantaDoc::slotSavingCompleted()
   w->closeTempFile();
   w->createTempFile();
   w->setDirtyStatus(false);
-  disconnect(w->doc(), SIGNAL(completed()), this, SLOT(slotSavingCompleted()));  
+  w->removeBackup(quantaApp->config());
+  disconnect(w->doc(), SIGNAL(completed()), this, SLOT(slotSavingCompleted()));
   if (m_eventLoopStarted)
     qApp->exit_loop();
 }
