@@ -1411,7 +1411,9 @@ void QuantaApp::readTagDir(QString &dirName)
       group.name = dtdConfig->readEntry("Name").stripWhiteSpace();
       group.noName = dtdConfig->readEntry("No_Name").stripWhiteSpace();
       group.icon = dtdConfig->readEntry("Icon").stripWhiteSpace();
-      group.searchRx = dtdConfig->readEntry("SearchRx").stripWhiteSpace();
+      tmpStr = dtdConfig->readEntry("SearchRx").stripWhiteSpace();
+      kdDebug(24000) << "SearchRx: " << tmpStr << endl;
+      group.searchRx.setPattern(tmpStr);
       group.hasSearchRx = !group.searchRx.pattern().isEmpty();
       group.isMinimalSearchRx = dtdConfig->readBoolEntry("SearchRx_Minimal", false);
       group.clearRx = dtdConfig->readEntry("ClearRx").stripWhiteSpace();
