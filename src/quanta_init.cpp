@@ -876,7 +876,7 @@ void QuantaInit::initActions()
     KStdAction::keyBindings(m_quanta, SLOT( slotOptionsConfigureKeys() ), ac, "configure_shortcuts");
     KStdAction::configureToolbars( m_quanta, SLOT( slotOptionsConfigureToolbars() ), ac, "options_configure_toolbars");
     KStdAction::preferences(m_quanta, SLOT( slotOptions() ), ac, "general_options");
-    new KAction(i18n("Configure &Browser Part..."), SmallIcon("konqueror"), 0, m_quanta, SLOT(slotPreviewOptions()), ac, "preview_options");
+    new KAction(i18n("Configure Pre&view..."), SmallIcon("konqueror"), 0, m_quanta, SLOT(slotPreviewOptions()), ac, "preview_options");
 
     // Toolbars actions
     m_quanta->projectToolbarFiles = new KRecentFilesAction(i18n("Load &Project Toolbar"),0,

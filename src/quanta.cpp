@@ -1082,6 +1082,7 @@ void QuantaApp::slotOptionsConfigureActions()
 
 void QuantaApp::slotPreviewOptions()
 {
+    KMessageBox::information(this, i18n("Changes made in the preview configuration dialog are global and have effect on every application using the KHTML part to display web pages, including Konqueror."), i18n("Warning"), "configure_preview_warning");
     KApplication::startServiceByDesktopName("quanta_preview_config");
 }
 
