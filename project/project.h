@@ -128,7 +128,7 @@ signals:
 
   void setLocalFiles( bool );
 
-  void messages( QString );
+  void messages(const QString& );
   void selectMessageWidget();
   void disableMessageWidget();
 

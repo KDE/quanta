@@ -31,22 +31,21 @@ class SelectableArea : public KHTMLPart  {
    Q_OBJECT
 
    public :
-	   SelectableArea(QWidget *parent=0, const char *name=0);
-	   ~SelectableArea();
-	   QString getIdLabel() const { return idLabel; }
+     SelectableArea(QWidget *parent=0, const char *name=0);
+     ~SelectableArea();
+     QString getIdLabel() const { return idLabel; }
            void setIdLabel(QString i) { idLabel = i; }
-	   void setSource(const QString& s) { if(!s.isEmpty()) openURL( KURL(s) ); }
+     void setSource(const QString& s) { if(!s.isEmpty()) openURL( KURL(s) ); }
 
    protected :
-            virtual bool eventFilter(QObject*, QEvent*);
-	    virtual void khtmlMousePressEvent(khtml::MousePressEvent *event);
+     virtual bool eventFilter(QObject*, QEvent*);
 
    private :
       QString idLabel;
 
     signals :
-	   void selected(QString);
-           void Resized(QRect,QString);
+     void selected(QString);
+     void Resized(QRect);
 };
 
 

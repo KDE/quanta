@@ -43,10 +43,10 @@ class areaAttribute : public QObject{
       QString getSrc() const{ return attributeMap["src"]; }
       QString getAttributeValue(QString l) { return getAttributeMap()[l];}
       QMap<QString,QString> getAttributeMap() { return attributeMap; }
-      void setGeometry(QRect g) { geometry = g; }
+
 
     public slots:
-      void setGeometry(QRect g,QString l) { geometry = g; Q_UNUSED(l);}
+      void setGeometry(QRect g) { geometry = g; }
 };
 
 #endif

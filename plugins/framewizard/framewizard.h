@@ -27,14 +27,14 @@ class QStringList;
 /** FrameWizard is the base class of the project */
 class FrameWizard : public FrameWizardS
 {
-  Q_OBJECT 
+  Q_OBJECT
   private:
-    bool saved; // if saved = false the the file containing the frameset structure 
-                // has been not saved on so you cannot edit the frame 
-	        // This is for me: se non si salva il file no si riesce a conoscere il
-	        // percorso relativo dei file da mettere nell'attributo src
-    QString framesetFileCurrentPath; 
-    //QStringList existingStructure;     
+    bool saved; // if saved = false the the file containing the frameset structure
+                // has been not saved on so you cannot edit the frame
+          // This is for me: se non si salva il file no si riesce a conoscere il
+          // percorso relativo dei file da mettere nell'attributo src
+    QString framesetFileCurrentPath;
+
   public:
     /** construtor */
     FrameWizard( QWidget* parent=0, const char *name=0);

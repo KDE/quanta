@@ -33,7 +33,7 @@
         </size>
     </property>
     <property name="caption">
-        <string>fmRCeditor</string>
+        <string>Rows Columns Editor</string>
     </property>
     <grid>
         <property name="name">

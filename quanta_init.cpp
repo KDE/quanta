@@ -322,8 +322,8 @@ void QuantaApp::initProject()
   connect(m_project,  SIGNAL(disableMessageWidget()),
           this,     SLOT  (slotMessageWidgetDisable()));
 
-  connect(m_project,  SIGNAL(messages(QString)),
-          messageOutput, SLOT(showMessage(QString)));
+  connect(m_project,  SIGNAL(messages(const QString&)),
+          messageOutput, SLOT(showMessage(const QString&)));
 
   connect(m_project,  SIGNAL(saveAllFiles()),
           this, SLOT(slotFileSaveAll()));

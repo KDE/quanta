@@ -43,6 +43,12 @@ void treeNode::addChildNode(QString l) {
    childrenList.append( new treeNode(l,parentLabel) );
 }
 
+ void treeNode::removeChildNode(QString l,bool autoDelete) {
+ childrenList.setAutoDelete(autoDelete);
+ childrenList.remove(findChild(l));
+ }
+
+
 treeNode* treeNode::findChild(QString l){
 
   QPtrListIterator<treeNode> it( childrenList );
@@ -81,9 +87,9 @@ void tree::refreshGeometries(treeNode *n){
    if(n->hasChildren()){
 
       n->firstChild();
-	   while(n->getCurrentChild()){
-	      refreshGeometries(n->getCurrentChild());
-	      n->nextChild();
+     while(n->getCurrentChild()){
+        refreshGeometries(n->getCurrentChild());
+        n->nextChild();
        }
       QPtrList<treeNode> list=n->getChildrenList();
       QPtrListIterator<treeNode> it( list );
@@ -160,7 +166,7 @@ QString tree::RCvalue(treeNode *n)
 }
 
 /*
-dummySrc is the src value obtained from the frame editor dialog and has absolute path 
+dummySrc is the src value obtained from the frame editor dialog and has absolute path
 including the name of the file used as src.
 path is the the absolute path of the file containing the frameset structure
 */
@@ -183,13 +189,15 @@ QString tree::createFrameTag(areaAttribute *a){
 
   QString tagBegin="<frame",
           tagEnd=">\n",
-          tagMiddle="";
+          tagMiddle=QString::null;
 
- 
 
-if( !Src.isEmpty() )       {qWarning("%s",Src.latin1());tagMiddle+=(" src=\""+relativize(Src,reldPath)+"\"");}
-  
-  if( !Longdesc.isEmpty() )  tagMiddle+=(" longdesc=\""+Longdesc+"\"");
+
+
+  if( !Src.isEmpty() )
+      tagMiddle+= (" src=\""+relativize(Src,reldPath)+"\"");
+  if( !Longdesc.isEmpty() )
+      tagMiddle+= (" longdesc=\""+Longdesc+"\"");
   //if( !Name.isEmpty() )
   tagMiddle+=(" name=\""+Name+"\"");
   if( Scrolling!="auto" && !Scrolling.isEmpty() )    tagMiddle+=(" scrolling=\""+Scrolling+"\"");
@@ -218,14 +226,14 @@ if(n->hasChildren()) {
 
         if(n->getSplit()=="v")
           nonFormattedStructure.append("<frameset cols=\""+RCvalue(n)+"\">\n");
-        else 
+        else
         if(n->getSplit()=="h")
           nonFormattedStructure.append("<frameset rows=\""+RCvalue(n)+"\">\n");
         n->firstChild();
-	while(n->getCurrentChild()){
-	    createStructure(n->getCurrentChild());
-	    n->nextChild();
-	}
+  while(n->getCurrentChild()){
+      createStructure(n->getCurrentChild());
+      n->nextChild();
+  }
           nonFormattedStructure.append("</frameset>\n");
     }
     else
@@ -243,6 +251,7 @@ QString tree::formatStructure(){
         for(int i=1;i<=tabNum;i++)
           s+='\t';
     }
+  nonFormattedStructure.clear();
   return s;
 }
 
@@ -281,8 +290,8 @@ void tree::reinitialize(){
   nodeList.clear();
 }
 
-void tree::removeChildNode(QString l,QString ll){
-  findNode(l)->removeChildNode(ll);
+void tree::removeChildNode(QString l,QString ll,bool autoDelete){
+  findNode(l)->removeChildNode(ll,autoDelete);
 }
 
 

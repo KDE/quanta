@@ -33,8 +33,7 @@ class VisualFrameEditor : public QHBox  {
    Q_OBJECT
    private:
       tree *t;
-      QPtrList<QSplitter> splitterList;
-      QPtrList<SelectableArea> SAList;
+      SelectableArea *firstInsertedSA;
       QStringList existingStructure;
 
       void build(QString,QString);
@@ -49,7 +48,7 @@ class VisualFrameEditor : public QHBox  {
       void loadExistingStructure(QStringList,QString);
       QString framesetStructure(QString path){ return (t->framesetStructure(path)); }
       void setNodeSplitMode(QString node,QString mode){ t->findNode(node)->setSplit(mode); }
-      void reset(){ t->reinitialize(); }
+      void reset();//{ t->reinitialize(); }
       void removeNode(QString l);
       void split(QString,int,QString);
       void setAllAttributes(QString l,QMap<QString,QString> map) { (t->findAreaAttribute(l)->setAllAttributes(map)); }

@@ -44,14 +44,14 @@ bool SelectableArea::eventFilter(QObject *o, QEvent *event)
                            emit selected(idLabel);
                            return true;
                            };
-			   break;
+         break;
       case QEvent::FocusOut : {
                            view()->setFrameShape(QFrame::NoFrame);
                            return true;
                            }
                            break;
       case QEvent::Resize : {
-                             emit Resized( view()->geometry(),idLabel );
+                             emit Resized( view()->geometry() );
                              view()->hide();
                              view()->show();
                              return true;
@@ -62,27 +62,4 @@ bool SelectableArea::eventFilter(QObject *o, QEvent *event)
 
 }
 
-void SelectableArea::khtmlMousePressEvent(khtml::MousePressEvent *event){
-  /*QMouseEvent *_mouse =event->qmouseEvent();
-  if(_mouse->button() == LeftButton)) qWarning("%s","sinistro");
-  if(_mouse->button() == RightButton)) qWarning("%s","destro");*/
-  
-
-  
-  
-  
-}
-
-
-
 #include "selectablearea.moc"
-
-
-
-
-
-
-
-
-
-
