@@ -23,6 +23,7 @@ Version 3.3 BE 3 (Release date: xx-xx-2004; Started 07-05-2004):
 
   - enhancements:
         - warn about missing runtime dependencies
+        - make the browser part configuration available from the Settings menu
 
 Version 3.3 BE 2 (Release date: 07-05-2004; Started 26-01-2004):
     - bugfixes:

@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="quanta" version="32049">
+<kpartgui name="quanta" version="32050">
   <MenuBar noMerge="1">
 
     <Menu name="file" noMerge="1"><text>&amp;File</text>
@@ -134,10 +134,10 @@
 
     <Menu name="settings" noMerge="1"><text>&amp;Settings</text>
       <Action name="general_options"/>
-      <Action name="editor_options"/>
-      <Merge/>
+      <Action name="preview_options"/>
       <Action name="configure_actions"/>
       <Action name="configure_plugins" />
+      <Merge/>
       <Separator />
       <Action name="options_configure_toolbars"/>
       <Action name="configure_shortcuts"/>

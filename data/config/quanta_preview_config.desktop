@@ -1,0 +1,7 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+Exec=kcmshell --caption %c %i khtml_behavior khtml_java_js khtml_fonts cookies cache proxy kcmcss crypto useragent khtml_plugins
+Icon=konqueror
+DocPath=konqueror/index.html
+Name=Configure KHTML Browser Part

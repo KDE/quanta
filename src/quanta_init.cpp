@@ -863,7 +863,7 @@ void QuantaInit::initActions()
 
     // Options actions
     //
-    KStdAction::showToolbar  ( m_quanta, SLOT( slotViewToolBar() ), ac, "view_toolbar" );
+    KStdAction::showToolbar(m_quanta, SLOT( slotViewToolBar() ), ac, "view_toolbar");
     m_quanta->showStatusbarAction = KStdAction::showStatusbar( m_quanta, SLOT( slotViewStatusBar() ), ac, "view_statusbar" );
 
 
@@ -871,9 +871,10 @@ void QuantaInit::initActions()
                         m_quanta, SLOT( slotOptionsConfigureActions() ),
                         ac, "configure_actions" );
 
-    KStdAction::keyBindings      ( m_quanta, SLOT( slotOptionsConfigureKeys() ), ac, "configure_shortcuts" );
-    KStdAction::configureToolbars( m_quanta, SLOT( slotOptionsConfigureToolbars() ), ac, "options_configure_toolbars" );
-    KStdAction::preferences      ( m_quanta, SLOT( slotOptions() ), ac, "general_options" );
+    KStdAction::keyBindings(m_quanta, SLOT( slotOptionsConfigureKeys() ), ac, "configure_shortcuts");
+    KStdAction::configureToolbars( m_quanta, SLOT( slotOptionsConfigureToolbars() ), ac, "options_configure_toolbars");
+    KStdAction::preferences(m_quanta, SLOT( slotOptions() ), ac, "general_options");
+    new KAction(i18n("Configure &Browser Part..."), SmallIcon("konqueror"), 0, m_quanta, SLOT(slotPreviewOptions()), ac, "preview_options");
 
     // Toolbars actions
     m_quanta->projectToolbarFiles = new KRecentFilesAction(i18n("Load &Project Toolbar"),0,
@@ -1281,6 +1282,8 @@ void QuantaInit::checkRuntimeDependencies()
     errorStr += QString(stdErrorMsg).arg(i18n("Kommander")).arg("http://kommander.kdewebdev.org").arg(i18n("various script based dialogs including the Quick Start dialog"));
   if (KStandardDirs::findExe("tidy").isNull())
     errorStr += QString(stdErrorMsg).arg("Tidy").arg("http://tidy.sourceforge.net").arg(i18n("HTML syntax checking"));
+  if (KStandardDirs::findExe("kcmshell").isNull())
+    errorStr += QString(stdErrorMsg).arg("KControl (kdebase)").arg("http://www.kde.org").arg(i18n("preview browser configuration"));
   if (!QuantaPlugin::validatePlugin(m_quanta->m_pluginInterface->plugin("KFileReplace")))
     errorStr += QString(stdErrorMsg).arg("KFileReplace").arg("http://kfilereplace.kdewebdev.org").arg(i18n("search and replace in files"));
   if (!QuantaPlugin::validatePlugin(m_quanta->m_pluginInterface->plugin("CVS Management (Cervisia)")))

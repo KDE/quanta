@@ -10,3 +10,4 @@ else
 install-data-hook:
 #no hook
 endif
+kde_services_DATA = quanta_preview_config.desktop

@@ -1095,6 +1095,10 @@ void QuantaApp::slotOptionsConfigureActions()
   dlg.exec();
 }
 
+void QuantaApp::slotPreviewOptions()
+{
+    KApplication::startServiceByDesktopName("quanta_preview_config");
+}
 
 void QuantaApp::slotOptions()
 {
