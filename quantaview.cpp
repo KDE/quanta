@@ -128,7 +128,7 @@ Document* QuantaView::write()
   Document *w = dynamic_cast<Document *>(m_writeTab->currentPage());
   if (!w)
   {
-    KMessageBox::error(this, i18n("If you see this, you are in big trouble as Quanta may crash."));
+    KMessageBox::error(this, i18n("If you see this Quanta has encountered a problem and may crash. Please report this to the developers."));
   }
 
   return w;
