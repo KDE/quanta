@@ -139,7 +139,11 @@ Document::Document(KTextEditor::Document *doc,
 
 Document::~Document()
 {
+#if KDE_VERSION < KDE_MAKE_VERSION(3, 1, 90)
+ m_doc->closeURL(); //TODO: Workaround for a Kate bug. Remove when KDE < 3.2.0 support is dropped.
+#else
  m_doc->closeURL(false); //TODO: Workaround for a Kate bug. Remove when KDE < 3.2.0 support is dropped.
+#endif
  delete m_view;
  delete m_doc;
 }
