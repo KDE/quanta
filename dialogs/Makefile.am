@@ -12,18 +12,16 @@ DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 libdialogs_a_METASOURCES = AUTO
 libdialogs_a_SOURCES = \
 		filemasks.cpp\
-		filemaskss.cpp\
 		grepdialog.cpp\
 		parseroptions.cpp\
 		previewfontoptions.cpp\
 		previewoptions.cpp\
-		previewoptionss.cpp\
-		styleoptionss.cpp
+		styleoptionss.cpp\
+		filemaskss.ui\
+		previewoptionss.ui
 EXTRA_DIST = \
 		filemasks.cpp\
 		filemasks.h\
-		filemaskss.cpp\
-		filemaskss.h\
 		grepdialog.cpp\
 		grepdialog.h\
 		parseroptions.cpp\
@@ -32,10 +30,10 @@ EXTRA_DIST = \
 		previewfontoptions.h\
 		previewoptions.cpp\
 		previewoptions.h\
-		previewoptionss.cpp\
-		previewoptionss.h\
 		styleoptionss.cpp\
-		styleoptionss.h
+		styleoptionss.h\
+		filemaskss.ui\
+		previewoptionss.ui
 ##############################################################
 ####                  END KDEStudio part                  ####
 #2########################################################!@#$
