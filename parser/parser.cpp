@@ -1268,9 +1268,9 @@ Node *Parser::nodeAt(int line, int col, bool findDeepest)
   {
     node->tag->beginPos(bl, bc);
     bc++;
-    if (node->next)
+    if (node->nextNotChild())
     {
-      node->next->tag->beginPos(el, ec);
+      node->nextNotChild()->tag->beginPos(el, ec);
     } else
     {
        el = write->editIf->numLines();
@@ -1315,7 +1315,7 @@ Node *Parser::nodeAt(int line, int col, bool findDeepest)
        node = node->prev;
      }
   } else
-  if (node && (el < line || (el == line && ec < col)))
+  if (node && (el < line || (el == line && ec + 1 < col)))
   {
     Node *n = node->nextSibling();
     if (n && n->nextSibling()) //don't set it to the last, always empty node
@@ -1768,7 +1768,7 @@ Node *Parser::rebuild(Document *w)
 
     if (goUp) //lastnode closes the node->parent
     {
-      if (lastNode->prev)
+      if (lastNode->prev && lastNode->prev->next == lastNode)
         lastNode->prev->next = 0L;
       if (lastNode->parent && lastNode->parent->child == lastNode)
           lastNode->parent->child = 0L;
@@ -1790,6 +1790,7 @@ Node *Parser::rebuild(Document *w)
     }
     node = lastNode;
     lastNode = lastNode->nextNotChild();
+    coutTree(m_node, 2);
    }
  }
 /*   kdDebug(24000)<< "END"<< endl;
@@ -1800,12 +1801,12 @@ Node *Parser::rebuild(Document *w)
 #endif
  }
   kdDebug(24000) << "Rebuild: " << t.elapsed() << " ms \n";
- /*
- treeSize = 0;
+
+/* treeSize = 0;
  coutTree(m_node, 2);
- kdDebug(24000) << "Size of tree: " << treeSize << endl;
- cout << "\n";
- */
+ kdDebug(24000) << "Size of tree: " << treeSize << endl; */
+// cout << "\n";
+
  return m_node;
 }
 
