@@ -939,7 +939,7 @@ void Project::slotRemove(const KURL& urlToRemove)
 void Project::slotNewProject()
 {
   wiz = new QWizard( this, "new", true);
-  wiz->setCaption(i18n("New project wizard"));
+  wiz->setCaption(i18n("New Project Wizard"));
   //wiz->setMinimumSize(620,440);
 
   png = new ProjectNewGeneral( wiz );

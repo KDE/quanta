@@ -105,7 +105,7 @@
                                                 <cstring>paramValueLabel</cstring>
                                             </property>
                                             <property name="text">
-                                                <string>Parameter Value:</string>
+                                                <string>Parameter value:</string>
                                             </property>
                                         </widget>
                                         <widget class="QLineEdit">
@@ -145,7 +145,7 @@
                                                 <cstring>paramNameLabel</cstring>
                                             </property>
                                             <property name="text">
-                                                <string>Parameter Name:</string>
+                                                <string>Parameter name:</string>
                                             </property>
                                         </widget>
                                         <widget class="QLineEdit">
@@ -367,7 +367,7 @@
                                 </size>
                             </property>
                             <property name="text">
-                                <string>Apply</string>
+                                <string>&amp;Apply</string>
                             </property>
                         </widget>
                         <widget class="QPushButton">
@@ -389,7 +389,7 @@
                                 </size>
                             </property>
                             <property name="text">
-                                <string>Cancel</string>
+                                <string>&amp;Cancel</string>
                             </property>
                         </widget>
                         <spacer>
@@ -461,7 +461,7 @@
                                         <cstring>outputFileLabel</cstring>
                                     </property>
                                     <property name="text">
-                                        <string>Output File:  </string>
+                                        <string>Output file:</string>
                                     </property>
                                 </widget>
                                 <widget class="QLineEdit">
@@ -509,7 +509,7 @@
                                         <cstring>xmlSourceLabel</cstring>
                                     </property>
                                     <property name="text">
-                                        <string>XML Data:   </string>
+                                        <string>XML data:</string>
                                     </property>
                                 </widget>
                                 <widget class="QLineEdit">
@@ -557,7 +557,7 @@
                                         <cstring>xslSourceLabel</cstring>
                                     </property>
                                     <property name="text">
-                                        <string>XSL Source:</string>
+                                        <string>XSL source:</string>
                                     </property>
                                 </widget>
                                 <widget class="QLineEdit">

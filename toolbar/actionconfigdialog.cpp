@@ -794,7 +794,7 @@ void ActionConfigDialog::slotAddContainerToolbar()
   {
     bool ok = FALSE;
     QString res = QInputDialog::getItem(
-                    i18n( "Add Action To Toolbar" ),
+                    i18n( "Add Action to Toolbar" ),
                     i18n( "Please select a toolbar:" ), lst, 0, FALSE, &ok, this );
 
     if (ok)

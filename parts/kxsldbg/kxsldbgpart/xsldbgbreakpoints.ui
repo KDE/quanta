@@ -10,11 +10,11 @@
             <x>0</x>
             <y>0</y>
             <width>498</width>
-            <height>442</height>
+            <height>522</height>
         </rect>
     </property>
     <property name="caption">
-        <string>Xsldbg breakpoints</string>
+        <string>Xsldbg Breakpoints</string>
     </property>
     <vbox>
         <property name="name">
@@ -51,7 +51,7 @@
             </column>
             <column>
                 <property name="text">
-                    <string>File name            </string>
+                    <string>File Name            </string>
                 </property>
                 <property name="clickable">
                     <bool>true</bool>
@@ -62,7 +62,7 @@
             </column>
             <column>
                 <property name="text">
-                    <string>Line number</string>
+                    <string>Line Number</string>
                 </property>
                 <property name="clickable">
                     <bool>true</bool>
@@ -130,7 +130,7 @@
                                 <cstring>idLabel</cstring>
                             </property>
                             <property name="text">
-                                <string>ID :</string>
+                                <string>ID:</string>
                             </property>
                         </widget>
                         <widget class="QLabel" row="4" column="0">

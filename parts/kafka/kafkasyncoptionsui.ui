@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
 <class>KafkaSyncOptionsUI</class>
 <widget class="QWidget">
     <property name="name">
@@ -24,7 +24,7 @@
                 <cstring>views</cstring>
             </property>
             <property name="title">
-                <string>Dual views mode synchronization</string>
+                <string>Dual Views Mode Synchronization</string>
             </property>
             <grid>
                 <property name="name">

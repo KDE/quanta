@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>480</width>
-            <height>491</height>
+            <width>858</width>
+            <height>662</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -437,7 +437,7 @@ is obscured, saving the password in any file is a security risk. Use this option
                 </sizepolicy>
             </property>
             <property name="text">
-                <string>Ok</string>
+                <string>&amp;OK</string>
             </property>
         </widget>
         <widget class="QPushButton" row="10" column="4">
@@ -445,7 +445,7 @@ is obscured, saving the password in any file is a security risk. Use this option
                 <cstring>pushButton3_2</cstring>
             </property>
             <property name="text">
-                <string>Cancel</string>
+                <string>&amp;Cancel</string>
             </property>
         </widget>
     </grid>

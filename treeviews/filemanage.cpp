@@ -228,10 +228,10 @@ void FileManage::slotPropertiesApplied()
 /** No descriptions */
 int FileManage::denyBinaryInsert()
 {
- // KMessageBox::sorry(this, i18n("Can't insert binary file as text"), i18n("Wrong type"), FALSE);
+ // KMessageBox::sorry(this, i18n("Can't insert binary file as text"), i18n("Wrong Type"), FALSE);
   int result = KMessageBox::warningYesNo(this, i18n("The file type is not recognized. \
   Opening binary files may confuse Quanta.\n Are you sure you want to open this file?"),
-  i18n("Unknown type"), KStdGuiItem::yes(), KStdGuiItem::no(), "Open Everything");
+  i18n("Unknown Type"), KStdGuiItem::yes(), KStdGuiItem::no(), "Open Everything");
  return result; //not used yet
 }
 

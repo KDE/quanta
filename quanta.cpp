@@ -990,7 +990,7 @@ void QuantaApp::slotOptions()
 
 #ifdef BUILD_KAFKAPART
   //kafka options
-  page = kd->addVBoxPage(i18n("VPL view"), QString::null, BarIcon("files", KIcon::SizeMedium));
+  page = kd->addVBoxPage(i18n("VPL View"), QString::null, BarIcon("files", KIcon::SizeMedium));
   KafkaSyncOptions *kafkaOptions = new KafkaSyncOptions( m_config, (QWidget *)page );
 #endif
 
