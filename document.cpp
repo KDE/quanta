@@ -34,6 +34,7 @@
 Document::Document( KWriteDoc *doc, QWidget *parent, const char *name , QString fname)
 	:	KWrite( doc, parent, name),filename(fname)
 {
+ 
 }
 
 Document::~Document()
@@ -407,7 +408,7 @@ QString Document::tagCase( QString  tag)
 QString Document::attrCase( QString  attr)
 {
   QString sAttr = attr;
-
+  
   if ( attrCapital )
     sAttr = sAttr.upper();
   else

@@ -47,21 +47,27 @@ void MessageOutput::insertItem(QString s)
   setBottomItem(count()-1);
 }
 
+void MessageOutput::addToLastItem(QString s)
+{
+  int ind = count()-1;
+  if ( ind != -1 ) 
+    changeItem( text( ind )+s, ind );
+}
+
+
 void MessageOutput::showMessage( QString message ) 
 {
   int endPos;
-  if ( message.right(1) == "\n" ) 
-    message.remove( message.length()-1,1 );
-    
-  if ( message.left(1) == "\n" ) 
-    message.remove( 0,1 );
-  
-  
+  if ( !count() )
+    insertItem("");
+
   while ( ( endPos = message.find('\n') ) != -1 ) {
-    insertItem( message.left(endPos) );
+    addToLastItem( message.left(endPos) );
+    insertItem("");
     message.remove(0,endPos+1);
   }
-  insertItem( message );
+  
+  addToLastItem( message );
   setBottomItem(count()-1);
 }
 
@@ -77,7 +83,7 @@ void MessageOutput::clickItem( QListBoxItem * l_item )
    MessageItem *item = dynamic_cast<MessageItem*>(l_item);
    if ( item )  {
      if ( item->line() != -1  )
-       emit clicked( item->fileName(), item->line() );  
+       emit clicked( item->fileName(), item->line()-1 );  
    }
 }
 

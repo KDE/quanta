@@ -146,18 +146,18 @@ QuantaApp::QuantaApp()
            messageOutput, SLOT(endPhpConnect()) );
   connect( debugger,      SIGNAL(data(QString)),
            messageOutput, SLOT(phpDebug(QString)) );
-  connect( messageOutput, SIGNAL(clicked(QString,int)),
-           this,          SLOT(slotGoToError(QString,int)));
+  connect( messageOutput, SIGNAL(clicked(const QString&,int)),
+           this,          SLOT(gotoFileAndLine(const QString&,int)));
            
   if ( !debugger->ok() ) {
     QString s;
-	  messageOutput->insertItem("\nPhp Debugger:\t\tSorry, but I can't listen port N "+
-	    s.sprintf("%i",phpDebugPort)+"\n" );
+	  messageOutput->insertItem("Can't bind port "+
+	    s.sprintf("%i",phpDebugPort)+" , PHP debugger disabled" );
 	}
 	else {
 	  QString s;
-	  messageOutput->insertItem("\nPhp Debugger listens port N "+
-	    s.sprintf("%i",phpDebugPort)+"\n" );
+	  messageOutput->insertItem("Php Debugger listens port "+
+	    s.sprintf("%i",phpDebugPort)+"" );
 	}
 
   ///////////////////////////////////////////////////////////////////

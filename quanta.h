@@ -278,7 +278,6 @@ class QuantaApp : public KTMainWindow
     void slotShowLeftPanel();
 
     void slotFtpClient();
-    void slotFtpClientClose();
     
     void slotInsertTag(QString);
 
@@ -311,8 +310,6 @@ class QuantaApp : public KTMainWindow
 	
 	  void slotSelectMessageWidget();
 	  void slotDisableMessageWidget();
-	  
-	  void slotGoToError( QString fname, int line );
 	  
 	protected:
 	  KParts::BrowserExtension *browserExtension() {

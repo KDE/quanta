@@ -35,16 +35,17 @@ class MessageItem : public QListBoxText {
     MessageItem( QListBox *listbox, const QString &text=QString::null, int line=-1, const QString &fname=QString::null);
     
     /** return line number for file , associated with this message */
-    int line() { return lineNumber; }
+    int line();
     /** return name of file , associated with this message */
     QString fileName() { return filename; }
     
-    void setLine( int line ) { lineNumber = line; }
+    void setLine( int line ) { lineNumber = line; lineDefined=true;  }
     void setFileName( QString fileName ) { filename = fileName; }
   private:
   
     // line number and filename , associated with this line
     int lineNumber;
+    bool lineDefined;
     QString filename;
   
 };

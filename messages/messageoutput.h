@@ -35,9 +35,10 @@ public:
 	
 public slots:	
   /**  */
-	void insertItem(QString s);
+	void insertItem( QString s );
 	/** insert message for each line of s */
-	void showMessage(QString s);
+	void showMessage( QString s );
+	void addToLastItem( QString s );
 	
 	/** php debugger stuff */
 	void phpDebug(QString s);
@@ -56,7 +57,7 @@ public:
   void checkMaxItems();
   
 signals:
-  void clicked( QString fname, int line );
+  void clicked( const QString &fname, int line );
   
 protected slots:
   void clickItem( QListBoxItem *);  

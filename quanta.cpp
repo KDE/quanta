@@ -1359,7 +1359,7 @@ void QuantaApp::gotoFileAndLine( const QString &filename, int line )
 {
   doc->openDocument( filename );
   setCaption(doc->getTitle());
-  if ( view->write()->numLines() > line )
+  if ( view->write()->numLines() > line && line >= 0 )
     view->write()->setCursorPosition( line, 0 );
   view->write()->view()->setFocus();
 }
@@ -1493,11 +1493,6 @@ void QuantaApp::slotFtpClient()
 	else debug("Library not found");
 }
 
-void QuantaApp::slotFtpClientClose()
-{
-	bool stat = toolMenu -> isItemChecked( ID_VIEW_FTP );
-}
-
 void QuantaApp::slotViewMessages()
 {
 #ifdef NEW_STUFF
@@ -1517,13 +1512,6 @@ void QuantaApp::slotViewMessages()
 #ifndef NEW_STUFF
   viewMenu->setItemChecked(ID_VIEW_MES, !stat);
 #endif
-}
-
-void QuantaApp::slotGoToError( QString fname, int line ) 
-{
-   if ( ! fname.isEmpty() )
-     slotFileOpen( fname );
-   setCursorPosition( line-1, 1 );
 }
 
 void QuantaApp::slotToolSyntaxCheck()
