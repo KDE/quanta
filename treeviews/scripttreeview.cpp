@@ -292,4 +292,4 @@ QString ScriptTreeView::infoOptionValue(const KURL& a_infoURL, const QString& a_
   return value;
 }
 
- #include "scripttreeview.moc"
+#include "scripttreeview.moc"
