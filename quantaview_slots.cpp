@@ -72,7 +72,7 @@
 #include "tagdialogs/tagmiscdlg.h"
 
 #include "plugins/spellchecker.h"
-//#include "plugins/framewizard/framewizard.h"
+#include "plugins/framewizard/framewizard.h"
 
 #include "qdom.h"
 
@@ -112,20 +112,17 @@ void QuantaView::slotEditCurrentTag()
 
 void QuantaView::slotFrameWizard()
 {
-  if (!writeExists()) return;
+  if (!writeExists())
+      return;
   Document *w = write();
-  QStringList l; //only to pass to framewizard a list
   QStringList list = w->tagAreas("frameset", true);
 
-  //list.pop_back();
-  //QStringList structure=QStringList::split("\n",list.first());
-
-  l = QStringList::split('\n',list[0],true);
-  for ( QStringList::Iterator it = l.begin(); it != l.end(); ++it ) {
+  QStringList l = QStringList::split('\n',list.first(),true);
+  /*for ( QStringList::Iterator it = l.begin(); it != l.end(); ++it ) {
         qWarning("line %s",(*it).latin1());
     }
-  qWarning("%d",list.count());
-/*
+  qWarning("%d",list.count()); */
+
   FrameWizard *dlg = new FrameWizard();
 
   if (!w->isUntitled())
@@ -142,7 +139,7 @@ void QuantaView::slotFrameWizard()
 QString("\n")+dlg->generateFramesetStructure()+QString("\n");
     write()->insertTag(tag);
   }
-  delete dlg;*/
+  delete dlg;
 }
 
 
