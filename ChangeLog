@@ -47,14 +47,14 @@ Version 3.4 (Release date: xx-xx-2005; Started 20-08-2004):
         - open the frames in the correct place [#66233]
         - get the encoding correctly from Quanta in the QuickStart dialog [#96696]
         - parse multiline quotation strings in PHP correctly
-	- enable full copy/paste from documentation and preview. Until now it worked
-	  only with the mouse through the selection. [#92936]
-	- don't show directories that were removed from the project in the upload
-	  dialog [#87186]
-	- follow symlinks in the project, project rescan, project upload [#71649, #92522]
-	- don't show the Upload File item in the tab context menu if the current item is not part of a project.
-	- parse PHP statements ending with a one-line comment ( //comment ?>)
-	  correctly [#80289, #97437]
+        - enable full copy/paste from documentation and preview. Until now it worked
+          only with the mouse through the selection. [#92936]
+        - don't show directories that were removed from the project in the upload
+          dialog [#87186]
+        - follow symlinks in the project, project rescan, project upload [#71649, #92522]
+        - don't show the Upload File item in the tab context menu if the current item is not part of a project.
+        - parse PHP statements ending with a one-line comment ( //comment ?>)
+          correctly [#80289, #97437]
         - correctly select modified files for upload [#94167]
         - fix a bug in the auto tag updating: do not update non-XML tags [#95743]
 
@@ -63,6 +63,13 @@ Version 3.4 (Release date: xx-xx-2005; Started 20-08-2004):
         - extended Open With menu in the treeviews, showing the
           list of applications that can open the current file
         - don't show the project toolbar when no project is loaded
+        - shortcut changes to avoid conflicts with global shortcuts:
+            Reload: Shift+F5 (was Ctrl+F5)
+            View with Konqueror: F12 (was Ctrl+F6)
+            View with Mozilla: Shift+F12 (was Shift+F6)
+            View with Netscape: Shift+F6 (was Ctrl+Alt+F6)
+            View with Opera: Alt+F6 (was Ctrl+Shift+F6)
+            View with Lynx: None (was Shift+F6)
 
   - enhancements/new features:
 	- VPL:

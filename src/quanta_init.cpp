@@ -710,7 +710,7 @@ void QuantaInit::initActions()
     m_quanta->saveAllAction = new KAction( i18n( "Save All..." ), "save_all", SHIFT+KStdAccel::shortcut(KStdAccel::Save).keyCodeQt(),
                         m_quanta, SLOT( slotFileSaveAll() ),
                         ac, "file_save_all" );
-    (void)  new KAction(i18n("Reloa&d"), "revert", CTRL+Key_F5, m_quanta,
+    (void)  new KAction(i18n("Reloa&d"), "revert", SHIFT+Key_F5, m_quanta,
                         SLOT(slotFileReload()), ac, "file_reload");
 //    (void)  new KAction(i18n("Reload All "), 0, 0, m_quanta,
 //                        SLOT(slotFileReloadAll()), ac, "file_reload_all");
@@ -954,7 +954,7 @@ void QuantaInit::initActions()
                                   ac, "show_preview_no_frames" );
     act->plug(m_quanta->showPreviewAction->popupMenu());
 
-    act = new KAction( i18n( "View with &Konqueror" ), "konqueror", CTRL+Key_F6,
+    act = new KAction( i18n( "View with &Konqueror" ), "konqueror", Key_F12,
                         m_quanta, SLOT( slotViewInKFM() ),
                         ac, "view_with_konqueror" );
     act->plug(m_quanta->showPreviewAction->popupMenu());
@@ -971,7 +971,7 @@ void QuantaInit::initActions()
     if (act)
       act->plug(m_quanta->showPreviewAction->popupMenu());
 
-    act = new KAction( i18n( "View with L&ynx" ), "terminal", SHIFT+Key_F6,
+    act = new KAction( i18n( "View with L&ynx" ), "terminal", 0,
                         m_quanta, SLOT( slotViewInLynx() ),
                         ac, "view_with_lynx" );
     act->plug(m_quanta->showPreviewAction->popupMenu());
