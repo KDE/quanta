@@ -4026,7 +4026,7 @@ void QuantaApp::slotInsertCSS()
 
     styleNode->next->tag->beginPos(eLine, eCol);
     QString styleTagContent(w->text(bLine, bCol+1, eLine, eCol-1).remove("<!--").remove("-->"));// <style></style> block content
-	kdDebug(24000) << "Style tag contains: " << endl << styleTagContent << endl;
+        kdDebug(24000) << "Style tag contains: " << endl << styleTagContent << endl;
     CSSSelector *dlg = new CSSSelector;
 
     dlg->setForInitialPreview(fullDocument);
@@ -4049,7 +4049,7 @@ void QuantaApp::slotInsertCSS()
   } else if (!node || fullDocument.isEmpty() ||
       w->currentDTD(true)->name == "text/css") //empty document or pure CSS file, invoke the selector editor
   {
-	kdDebug(24000) << "[CSS editor] This is a pure CSS document";
+        kdDebug(24000) << "[CSS editor] This is a pure CSS document";
 
     CSSSelector *dlg = new CSSSelector;
     dlg->setForInitialPreview(QString::null);
@@ -4066,7 +4066,7 @@ void QuantaApp::slotInsertCSS()
   } else
   if (parentNode && parentNode->tag->type == Tag::XmlTag)
   {
-	kdDebug(24000) << "[CSS editor] We will add a style attribute to: " << parentNode->tag->name << endl;
+        kdDebug(24000) << "[CSS editor] We will add a style attribute to: " << parentNode->tag->name << endl;
     CSSEditor *dlg = new CSSEditor(this);
     dlg->setForInitialPreview(fullDocument);
 
@@ -4569,6 +4569,7 @@ void QuantaApp::initTabWidget(bool closeButtonsOnly)
             tab->setHoverCloseButton(false);
         }
     }
+    setToolviewStyle(qConfig.toolviewTabs);
 #endif
 }
 

@@ -185,7 +185,6 @@ void QuantaInit::initQuanta()
   int mdiMode = m_config->readNumEntry("MDI mode", -1);
   if (mdiMode != -1 && layout != "Default")
       m_quanta->readDockConfig(m_config); //FIXME: This causes the visible widget construction on startup, but is needed to restore the window layout...
-//  m_quanta->setToolviewStyle(qConfig.toolviewTabs);
   qConfig.windowLayout = "Custom";
   //FIXME: This is a hack to workaround the starting problem when we are in Toplevel mode.
   //Without this, the editor becomes the child of the widget holding the menus and toolbars...
@@ -418,11 +417,10 @@ void QuantaInit::initView()
    m_kafkaDocument->getKafkaWidget()->view()->setMinimumHeight(50);
    loadVPLConfig();
 #endif
-   (void) ToolbarTabWidget::ref(quantaApp);
-   m_config->setGroup  ("General Options");
-   qConfig.toolviewTabs = m_config->readNumEntry("MDI style", 3);
-   m_quanta->setIDEAlModeStyle(qConfig.toolviewTabs);
-    m_quanta->initTabWidget();
+  (void) ToolbarTabWidget::ref(quantaApp);
+  m_config->setGroup  ("General Options");
+  qConfig.toolviewTabs = m_config->readNumEntry("MDI style", 3);
+  m_quanta->initTabWidget();
 
   m_quanta->setStandardMDIMenuEnabled(false);
   m_quanta->setManagedDockPositionModeEnabled(true);
