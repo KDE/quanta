@@ -33,6 +33,7 @@
 #include <qrect.h>
 #include <qspinbox.h>
 #include <qstring.h>
+#include <qvaluevector.h>
 
 //own includes
 #include "tagdialog.h"
@@ -230,6 +231,8 @@ void TableEditor::slotEditTableBody()
 
 bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser *docParser )
 {
+  const uint pInitialTableSize = 20;
+  
   m_bLine = bLine;
   m_bCol = bCol;
   m_eLine = eLine;
@@ -256,10 +259,10 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
   m_colSpin = 0L;
   m_dataTable = 0L;
   QValueList<TableNode> tableRowTags;
-  TableNode mergeMatrix[100][100];
-  for (uint i = 0; i < 100; i++)
-    for (uint j = 0; j < 100; j++)
-      mergeMatrix[i][j].node = 0L;
+  QValueVector< QValueVector<TableNode> > mergeMatrix;
+  mergeMatrix.resize(pInitialTableSize);
+  for (uint i=0; i<pInitialTableSize; i++)
+    mergeMatrix[i].resize(pInitialTableSize);
   TableNode tableNode;
   Node *n = node;
   while (n != lastNode->nextSibling())
@@ -382,6 +385,12 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
         m_tbody->parse("<tbody>", m_write);
       }
       nRow++;
+      if ((uint)nRow >= mergeMatrix.size()) {  // Check if there are enough rows in mergeMatriz
+        mergeMatrix.resize(2 * mergeMatrix.size());
+        for (uint i=mergeMatrix.size() / 2; i<mergeMatrix.size(); i++)
+          mergeMatrix[i].resize(mergeMatrix[0].size());
+      }
+            
       m_rowSpin->setValue(nRow);
       nCol = 0;
       tableNode.node = new Node(0L);
@@ -432,6 +441,10 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
           tableRowTags.append(tableNode);
           col++;
           nCol++;
+          if ((uint)nCol >= mergeMatrix[0].size())  // Check if there are enough cols 
+            for (uint i=0; i<mergeMatrix.size(); i++)
+              mergeMatrix[i].resize(2 * mergeMatrix[i].size());
+            
         }
         nCol++;
         if (m_rowSpin && m_colSpin && m_dataTable)
@@ -483,6 +496,17 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
           if (ok & rowValue > 1)
           {
             lastCol--;
+            // Check if there are enough columns in mergeMatriz
+            if ((uint)(lastCol + colValue) >= mergeMatrix[0].size())
+              for (uint i=0; i<mergeMatrix.size(); i++)
+                mergeMatrix[i].resize(2 * mergeMatrix[i].size());
+            // Check if there are enough rows in mergeMatriz
+            if ((uint)(nRow + rowValue) >= mergeMatrix.size()) {
+              mergeMatrix.resize(2 * mergeMatrix.size());
+              for (uint i=mergeMatrix.size() / 2; i<mergeMatrix.size(); i++)
+                mergeMatrix[i].resize(mergeMatrix[0].size());
+            }
+            
             for (int i = 0; i < rowValue - 1; i++)
               for (int j = 0; j < colValue; j++) {
                 mergeMatrix[nRow + i][lastCol + j].mergedRow = nRow - 1;

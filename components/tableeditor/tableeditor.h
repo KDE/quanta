@@ -27,7 +27,19 @@ class KPopupMenu;
 class Tag;
 struct DTDStruct;
 class Node;
-typedef struct TableNode {   Node *node; bool merged; int mergedRow; int mergedCol; };
+
+class TableNode 
+{   
+public:
+  Node *node; 
+  bool merged; 
+  int mergedRow; 
+  int mergedCol; 
+  TableNode()    {node = 0;}
+};
+
+
+
 typedef struct NestedTable{ Node *node; int row; int col; int bLine; int bCol; int eLine; int eCol; QString nestedData;};
 class Parser;
 
