@@ -1,14 +1,18 @@
-//
-// C++ Implementation: tableitem
-//
-// Description: 
-//
-//
-// Author: Andras Mantia <amantia@kde.org>, (C) 2004
-//
-// Copyright: See COPYING file that comes with this distribution
-//
-//
+/***************************************************************************
+                          tableitem.cpp -  description
+                             -------------------
+    begin                : Mon 15 Mar 2004
+    copyright            : (C) 2004 by Michal Rudolf <mrudolf@kdewebdev.org>
+ ***************************************************************************/
+
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************/
 
 #include <qtextedit.h>
 #include <qpainter.h>
@@ -59,9 +63,9 @@ void TableItem::setContentFromEditor(QWidget *w)
 void TableItem::paint(QPainter* p, const QColorGroup& cg, const QRect& cr, bool selected)
 {
    if (m_header) {
-     QFont F = p->font();
-     F.setBold(true);
-     p->setFont(F);
+     QFont editFont = p->font();
+     editFont.setBold(true);
+     p->setFont(editFont);
    }
    QRect cr0 = cr;
    cr0.setTop(0);
