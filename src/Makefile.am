@@ -3,6 +3,11 @@ LIB_KAFKA = $(top_builddir)/quanta/parts/kafka/libkafkalibrary.la
 KAFKAINCLUDE = -I$(top_srcdir)/quanta/parts/kafka -I$(top_builddir)/quanta/parts/kafka
 endif
 
+if include_cvsservice
+CVSSERVICE_INCLUDE = -I$(top_srcdir)/quanta/components/cvsservice
+LIB_CVSSERVICE = $(top_builddir)/quanta/components/cvsservice/libcvsservice.la -lcvsservice
+endif
+
 bin_PROGRAMS = quanta_be
 
 quanta_be_SOURCES = quanta_init.cpp quantaview.cpp quantadoc.cpp main.cpp document.cpp kqapp.cpp quanta.cpp dcopwindowmanagerif.skel dcopsettingsif.skel dcopquantaif.skel dcopsettings.cpp dtds.cpp dcopquanta.cpp viewmanager.cpp
@@ -24,7 +29,8 @@ quanta_be_LDADD = $(top_builddir)/quanta/project/libproject.la \
 	$(top_builddir)/quanta/parts/preview/libpreview.la \
 	$(top_builddir)/quanta/utility/libutility.la \
 	$(top_builddir)/lib/libquantamodule.la \
-	-lkatepartinterfaces $(LIB_KAFKA) $(LIB_KMDI) $(LIBXML_LIBS) $(LIBXSLT_LIBS) $(LIB_KABC) $(LIB_KSPELL) $(LIB_KHTML)
+	-lkatepartinterfaces $(LIB_KAFKA) $(LIB_CVSSERVICE) \
+	$(LIB_KMDI) $(LIBXML_LIBS) $(LIBXSLT_LIBS) $(LIB_KABC) $(LIB_KSPELL) $(LIB_KHTML)
 #	$(top_builddir)/lib/compatibility/libcompat.la 
 
 AM_CPPFLAGS = -I$(top_srcdir)/quanta/dialogs \
@@ -51,7 +57,7 @@ AM_CPPFLAGS = -I$(top_srcdir)/quanta/dialogs \
 	-I$(top_builddir)/quanta/components/framewizard \
 	-I$(top_builddir)/quanta/components/tableeditor \
 	-I$(top_builddir)/quanta/plugins \
-	$(KAFKAINCLUDE) $(KMDI_INCLUDES) $(all_includes)
+	$(KAFKAINCLUDE) $(CVSSERVICE_INCLUDE) $(KMDI_INCLUDES) $(all_includes)
 #	-I$(top_srcdir)/lib/compatibility 
 
 quanta_be_METASOURCES = AUTO

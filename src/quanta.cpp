@@ -15,6 +15,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <time.h>
+
 // include files for QT
 #include <qaction.h>
 #include <qdir.h>
@@ -55,8 +57,9 @@
 #include <kconfig.h>
 #include <khtmlview.h>
 #include <kdialogbase.h>
+#include <kdeversion.h>
 #include <kkeydialog.h>
-#include <kstandarddirs.h>
+#include <kinputdialog.h>
 #include <klibloader.h>
 #include <kdockwidget.h>
 #include <kstatusbar.h>
@@ -72,7 +75,8 @@
 #include <kcharsets.h>
 #include <kdirwatch.h>
 #include <kspell.h>
-#include <kdeversion.h>
+#include <kstandarddirs.h>
+#include <ktabwidget.h>
 #include <ktip.h>
 #include <kmimetype.h>
 #include <kparts/partmanager.h>
@@ -94,10 +98,10 @@
 
 #include <kio/netaccess.h>
 
-#include <ktabwidget.h>
-#include <kinputdialog.h>
+#ifdef ENABLE_CVSSERVICE
+#include "cvsservice.h"
+#endif
 
-#include <time.h>
 
 // application specific includes
 #include "document.h"
@@ -1954,6 +1958,13 @@ void QuantaApp::slotContextMenuAboutToShow()
         }
       }
     }
+#ifdef ENABLE_CVSSERVICE
+   if (CVSService::ref()->exists())
+   {
+     popup->insertSeparator();
+     popup->insertItem(SmallIcon("cervisia"), i18n("CVS"), CVSService::ref()->menu());
+   }
+#endif
   }
 
 }

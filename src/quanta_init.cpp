@@ -95,6 +95,10 @@
 #include "scripttreeview.h"
 #include "toolbartabwidget.h"
 
+#ifdef ENABLE_CVSSERVICE
+#include "cvsservice.h"
+#endif
+
 #include "quantaplugin.h"
 #include "quantaplugininterface.h"
 
@@ -1269,7 +1273,22 @@ void QuantaInit::checkRuntimeDependencies()
   if (!QuantaPlugin::validatePlugin(m_quanta->m_pluginInterface->plugin("KFileReplace")))
     errorStr += QString(stdErrorMsg).arg("KFileReplace").arg("http://kfilereplace.kdewebdev.org").arg(i18n("search and replace in files"));
   if (!QuantaPlugin::validatePlugin(m_quanta->m_pluginInterface->plugin("CVS Management (Cervisia)")))
-    errorStr += QString(stdErrorMsg).arg("Cervisia").arg("http://www.kde.org/apps/cervisia").arg(i18n("CVS management"));
+    errorStr += QString(stdErrorMsg).arg("Cervisia").arg("http://www.kde.org/apps/cervisia").arg(i18n("CVS management plugin"));
+
+#ifdef ENABLE_CVSSERVICE
+  QString error;
+  QCString appId;
+
+  KApplication::startServiceByDesktopName("cvsservice", QStringList(), &error,
+                                            &appId);
+  if (appId.isEmpty())
+  {
+     errorStr += QString(stdErrorMsg).arg("Cervisia (cvsservice)").arg("http://www.kde.org/apps/cervisia").arg(i18n("integrated CVS management"));
+  } else
+  {
+     CVSService::ref(m_quanta->actionCollection())->setAppId(appId);
+  }
+#endif
 
   if (!errorStr.isEmpty())
   {
