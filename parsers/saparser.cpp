@@ -312,7 +312,7 @@ bool SAParser::slotParseOneLine()
 #ifdef DEBUG_PARSER                  
                   kdDebug(24000) << "Calling slotParseOneLine from parseArea (opening group struct)." << endl;
 #endif                  
-                  QTimer::singleShot(0, this, SLOT(slotParseOneLine()));
+                  QTimer::singleShot(50, this, SLOT(slotParseOneLine()));
                 }
                 return true;  
               } else  //it's a closing group structure element (like "}")
@@ -328,7 +328,7 @@ bool SAParser::slotParseOneLine()
 #ifdef DEBUG_PARSER                    
                     kdDebug(24000) << "Calling slotParseOneLine from parseArea (closing group struct)." << endl;
 #endif                    
-                    QTimer::singleShot(0, this, SLOT(slotParseOneLine()));
+                    QTimer::singleShot(50, this, SLOT(slotParseOneLine()));
                   }
                   return true;
                 }
@@ -385,7 +385,7 @@ bool SAParser::slotParseOneLine()
 #ifdef DEBUG_PARSER                
                   kdDebug(24000) << "Calling slotParseOneLine from parseArea (group structure)." << endl;
 #endif                  
-                  QTimer::singleShot(0, this, SLOT(slotParseOneLine()));
+                  QTimer::singleShot(50, this, SLOT(slotParseOneLine()));
                 }
                 return true;
               }
@@ -436,7 +436,7 @@ bool SAParser::slotParseOneLine()
 #ifdef DEBUG_PARSER              
                 kdDebug(24000) << "Calling slotParseOneLine from slotParseOneLine (nested area)." << endl;
 #endif                
-                QTimer::singleShot(0, this, SLOT(slotParseOneLine()));
+                QTimer::singleShot(50, this, SLOT(slotParseOneLine()));
                 return true;
               }
             }
@@ -675,7 +675,7 @@ bool SAParser::slotParseOneLine()
 #ifdef DEBUG_PARSER    
       kdDebug(24000) << "Calling slotParseOneLine from slotParseOneLine." << endl;
 #endif      
-      QTimer::singleShot(0, this, SLOT(slotParseOneLine()));
+      QTimer::singleShot(50, this, SLOT(slotParseOneLine()));
 }      
   } else
   {
@@ -771,7 +771,7 @@ Node* SAParser::parseArea(const AreaStruct &specialArea,
 #ifdef DEBUG_PARSER    
       kdDebug(24000) << "Calling slotParseOneLine from parseArea." << endl;
 #endif      
-      QTimer::singleShot(0, this, SLOT(slotParseOneLine()));
+      QTimer::singleShot(50, this, SLOT(slotParseOneLine()));
       return 0L;
     }
   } 
@@ -806,7 +806,7 @@ Node *SAParser::parsingDone()
 #ifdef DEBUG_PARSER        
           kdDebug(24000) << "Calling slotParseNodeInDetail from parsingDone (use return values)" << endl;
 #endif          
-          QTimer::singleShot(0, this, SLOT(slotParseNodeInDetail()));
+          QTimer::singleShot(50, this, SLOT(slotParseNodeInDetail()));
           return m_lastParsedNode;
         }
         else
@@ -867,7 +867,7 @@ Node *SAParser::parsingDone()
 #ifdef DEBUG_PARSER      
         kdDebug(24000) << "Calling slotParseNodeInDetail from parsingDone." << endl;
 #endif        
-        QTimer::singleShot(0, this, SLOT(slotParseNodeInDetail()));
+        QTimer::singleShot(50, this, SLOT(slotParseNodeInDetail()));
       }
       else
       {
@@ -908,7 +908,7 @@ void SAParser::slotParseNodeInDetail()
 #ifdef DEBUG_PARSER
   kdDebug(24000) << "slotParseNodeInDetail. Enabled: " << m_parsingEnabled << " Synch: " << m_synchronous << endl; 
 #endif  
-  if (m_currentNode && (m_parsingEnabled || m_synchronous))
+  if (m_currentNode && m_parsingEnabled)
   {
     if (m_currentNode->tag->type == Tag::ScriptTag)
     {
@@ -953,7 +953,7 @@ void SAParser::slotParseNodeInDetail()
 #ifdef DEBUG_PARSER      
         kdDebug(24000) << "Calling slotParseNodeInDetail from slotParseNodeInDetail." << endl;
 #endif        
-        QTimer::singleShot(0, this, SLOT(slotParseNodeInDetail()));
+        QTimer::singleShot(50, this, SLOT(slotParseNodeInDetail()));
       } else
       {
 #ifdef DEBUG_PARSER      
@@ -988,7 +988,7 @@ void SAParser::slotParseForScriptGroup()
       return;
     }
     else
-      QTimer::singleShot(0, this, SLOT(slotParseForScriptGroup()));
+      QTimer::singleShot(50, this, SLOT(slotParseForScriptGroup()));
   } else
   {
 #ifdef DEBUG_PARSER  
