@@ -1,7 +1,8 @@
 <!DOCTYPE tags>
-<tags>	<tag name="qdom_error" type="function" returnType="string">
+<tags>
+	<tag name="qdom_error" type="function" returnType="string">
 	</tag>
 	<tag name="qdom_tree" type="function" returnType="object">
-		<attr name="stringN" type="string" status="optional"></attr>
+		<attr name="doc" type="string"></attr>
 	</tag>
 </tags>

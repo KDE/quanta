@@ -1,5 +1,14 @@
 <!DOCTYPE tags>
-<tags>	<tag name="apache_child_terminate" type="function" returnType="bool">
+<tags>
+	<tag name="apache_child_terminate" type="function" returnType="bool">
+	</tag>
+	<tag name="apache_get_modules" type="function" returnType="array">
+	</tag>
+	<tag name="apache_get_version" type="function" returnType="string">
+	</tag>
+	<tag name="apache_getenv" type="function" returnType="string">
+		<attr name="variable" type="string"></attr>
+		<attr name="walk_to_top" type="bool" status="optional"></attr>
 	</tag>
 	<tag name="apache_lookup_uri" type="function" returnType="object">
 		<attr name="filename" type="string"></attr>
@@ -13,19 +22,19 @@
 	<tag name="apache_response_headers" type="function" returnType="array">
 	</tag>
 	<tag name="apache_setenv" type="function" returnType="int">
-		<attr name="variable" type="string" status="optional"></attr>
-		<attr name="value" type="string" status="optional"></attr>
+		<attr name="variable" type="string"></attr>
+		<attr name="value" type="string"></attr>
 		<attr name="walk_to_top" type="bool" status="optional"></attr>
 	</tag>
 	<tag name="ascii2ebcdic" type="function" returnType="int">
-		<attr name="ascii_str" type="string" status="optional"></attr>
+		<attr name="ascii_str" type="string"></attr>
 	</tag>
 	<tag name="ebcdic2ascii" type="function" returnType="int">
-		<attr name="ebcdic_str" type="string" status="optional"></attr>
+		<attr name="ebcdic_str" type="string"></attr>
 	</tag>
 	<tag name="getallheaders" type="function" returnType="array">
 	</tag>
 	<tag name="virtual" type="function" returnType="int">
-		<attr name="filename" type="string" status="optional"></attr>
+		<attr name="filename" type="string"></attr>
 	</tag>
 </tags>

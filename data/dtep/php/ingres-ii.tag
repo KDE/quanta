@@ -1,5 +1,6 @@
 <!DOCTYPE tags>
-<tags>	<tag name="ingres_autocommit" type="function" returnType="bool">
+<tags>
+	<tag name="ingres_autocommit" type="function" returnType="bool">
 		<attr name="link" type="resource" status="optional"></attr>
 	</tag>
 	<tag name="ingres_close" type="function" returnType="bool">
@@ -25,27 +26,27 @@
 		<attr name="link" type="resource" status="optional"></attr>
 	</tag>
 	<tag name="ingres_field_length" type="function" returnType="int">
-		<attr name="index" type="int" status="optional"></attr>
+		<attr name="index" type="int"></attr>
 		<attr name="link" type="resource" status="optional"></attr>
 	</tag>
 	<tag name="ingres_field_name" type="function" returnType="string">
-		<attr name="index" type="int" status="optional"></attr>
+		<attr name="index" type="int"></attr>
 		<attr name="link" type="resource" status="optional"></attr>
 	</tag>
 	<tag name="ingres_field_nullable" type="function" returnType="bool">
-		<attr name="index" type="int" status="optional"></attr>
+		<attr name="index" type="int"></attr>
 		<attr name="link" type="resource" status="optional"></attr>
 	</tag>
 	<tag name="ingres_field_precision" type="function" returnType="int">
-		<attr name="index" type="int" status="optional"></attr>
+		<attr name="index" type="int"></attr>
 		<attr name="link" type="resource" status="optional"></attr>
 	</tag>
 	<tag name="ingres_field_scale" type="function" returnType="int">
-		<attr name="index" type="int" status="optional"></attr>
+		<attr name="index" type="int"></attr>
 		<attr name="link" type="resource" status="optional"></attr>
 	</tag>
 	<tag name="ingres_field_type" type="function" returnType="string">
-		<attr name="index" type="int" status="optional"></attr>
+		<attr name="index" type="int"></attr>
 		<attr name="link" type="resource" status="optional"></attr>
 	</tag>
 	<tag name="ingres_num_fields" type="function" returnType="int">
@@ -60,7 +61,7 @@
 		<attr name="password" type="string" status="optional"></attr>
 	</tag>
 	<tag name="ingres_query" type="function" returnType="bool">
-		<attr name="query" type="string" status="optional"></attr>
+		<attr name="query" type="string"></attr>
 		<attr name="link" type="resource" status="optional"></attr>
 	</tag>
 	<tag name="ingres_rollback" type="function" returnType="bool">
