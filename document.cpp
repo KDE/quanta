@@ -573,7 +573,7 @@ QString Document::getTagNameAt(int line, int col )
    tag->setTagPosition(bl, bc, el, ec);
    tag->parse(text(bl,bc,el,ec), this);
 
-   name = tag->name;
+   name = (tag->nameSpace.isEmpty()) ? tag->name : tag->nameSpace + ":" + tag->name;
    if (name.isEmpty())
    {
      QString s = tag->tagStr();
