@@ -899,6 +899,8 @@ void QuantaApp::initActions()
                         this, SLOT( slotFileSaveSelectionAsProjectTemplate() ),
                         actionCollection(), "save_selection_project_template" );
 
+    KStdAction::print( this, SLOT( slotFilePrint() ), actionCollection() );
+
     KStdAction::quit( this, SLOT( slotFileQuit() ), actionCollection() );
 
    (void) new KAction( i18n( "&File List" ), 0,this, SLOT( slotShowOpenFileList() ),

@@ -76,10 +76,10 @@ class QuantaDoc : public QObject
 		void writeConfig( KConfig * );
 		
 		QStringList openedFiles(bool noUntitled=true);
+    void changeFileTabName(QString oldUrl, QString newUrl = QString::null );
 		
   private:
     bool newDocument (const KURL&);
-    void changeFileTabName(QString oldUrl, QString newUrl = QString::null );
     Document *newWrite(QWidget *parent);
 	
   public slots:

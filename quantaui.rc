@@ -18,6 +18,8 @@
       </Menu>
       <Action name="save_all" append="save_merge"/>
       <Separator />
+      <Action name="file_print" />
+      <Separator />
       <Action name="file_close" />
       <Action name="close_all" append="close_merge"/>
       <Separator />
@@ -248,6 +250,8 @@
     <Separator/>
     <Action name="file_save"    />
     <Action name="save_all"     />
+    <Separator/>
+    <Action name="file_print"   />
     <Separator/>
     <Action name="file_close"   />
     <Separator/>

@@ -83,6 +83,7 @@
 #include "dialogs/parseroptions.h"
 #include "dialogs/debuggeroptionss.h"
 #include "dialogs/grepdialog.h"
+#include "dialogs/katefiledialog.h"
 
 #include "treeviews/filestreeview.h"
 #include "treeviews/fileslistview.h"
@@ -129,9 +130,19 @@ void QuantaApp::slotFileNew()
 
 void QuantaApp::slotFileOpen()
 {
-  KURL url = KFileDialog::getOpenURL( QString::null, QString::null, this);
-    
-  if ( !url.url().isEmpty() ) slotFileOpen( url );
+//  KURL url = KFileDialog::getOpenURL( QString::null, QString::null, this);
+ QString myEncoding = QString::fromLatin1(QTextCodec::codecForLocale()->name());
+
+ KateFileDialog *dialog = new KateFileDialog (QString::null,myEncoding, this, i18n ("Open File"));
+ KateFileDialogData data = dialog->exec ();
+ delete dialog;
+
+//  if ( !url.url().isEmpty() ) slotFileOpen( url );
+ for (KURL::List::Iterator i=data.urls.begin(); i != data.urls.end(); ++i)
+ {
+    slotFileOpen( *i );
+    doc->write()->kate_view->setEncoding(data.encoding);
+ }
 
   slotUpdateStatus(view->write());
 }
@@ -172,29 +183,26 @@ void QuantaApp::slotFileSave()
 
 void QuantaApp::slotFileSaveAs()
 {
-  KURL url;
-  int query;
+  QString oldUrl = doc->url().url();
 
-  do {
-    query = KMessageBox::Yes;
-    
-    url = KFileDialog::getSaveURL(doc->basePath(), QString::null, this);
-    
-    if (url.isEmpty()) return;
+  if (doc->write()->kate_view->saveAs() == Kate::View::SAVE_OK)
+  {
+    doc->write()->closeTempFile();
+    doc->write()->createTempFile();
 
-    query = doc->write()->checkOverwrite( url );
-  } 
-  while (query != KMessageBox::Yes);
+    KURL url = doc->write()->doc()->url();
 
-  if( query == KMessageBox::Cancel ) return;
-                            
-  doc->saveDocument( url );
-    
-  if ( project->hasProject() ) 
-    if ( KMessageBox::Yes == KMessageBox::questionYesNo(0,"Add file\n " +url.url()+"\n to project ? "))
+    if ( ( project->hasProject() ) &&
+         ( KMessageBox::Yes == KMessageBox::questionYesNo(0,"Add file\n " +url.url()+"\n to project ? ")) )
+    {
       project->insertFile(url.url(),true);
+    }
 
-  slotUpdateStatus(view->write());
+    if ( oldUrl != url.url() ) doc->changeFileTabName( oldUrl );
+
+    slotUpdateStatus(view->write());
+  }
+
 }
 
 void QuantaApp::saveAsTemplate(bool projectTemplate,bool selectionOnly)
@@ -317,6 +325,7 @@ void QuantaApp::slotFilePrev()
 
 void QuantaApp::slotFilePrint()
 {
+ doc->write()->kate_doc->printDialog();
 }
 
 void QuantaApp::slotFileQuit()
