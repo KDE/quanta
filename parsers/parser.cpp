@@ -1249,7 +1249,6 @@ void Parser::clearGroups()
       if (!groupElement->deleted)
       {
         Node *n = groupElement->node;
-        kdDebug(24000) << "clear " << &(n->m_groupElements) << endl;
         n->m_groupElements.clear();
       }
       groupElement->group = 0L;
