@@ -1357,7 +1357,7 @@ const DTDStruct* Document::currentDTD(bool fallback)
 }
 
 /** Get a pointer to the default DTD (document, or app). */
-const DTDStruct* Document::defaultDTD()
+const DTDStruct* Document::defaultDTD() const
 {
   const DTDStruct* dtd = DTDs::ref()->find(dtdName);
   if (!dtd) dtd = DTDs::ref()->find(Project::ref()->defaultDTD());

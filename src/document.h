@@ -123,7 +123,7 @@ public:
   /** Get a pointer to the current active DTD. If fallback is true, this always gives back a valid and known DTD pointer: the active, the document specified and in last case the application default document type. */
   const DTDStruct* currentDTD(bool fallback = true);
   /** Get a pointer to the default DTD (document, or app). */
-  const DTDStruct* defaultDTD();
+  const DTDStruct* defaultDTD() const;
   /** Find the DTD name for a part of the document. */
   QString findDTDName(Tag **tag);
   /** Retrives the text from the specified rectangle. The KTextEditor::EditInterface::text seems to not
