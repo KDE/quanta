@@ -92,7 +92,7 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   addColumn(i18n("Project Files"), -1);
   addColumn(i18n("Description"), -1);
   setFullWidth(true);
-  setDragEnabled(true);
+  setDragEnabled(false);
 
   setFocusPolicy(QWidget::ClickFocus);
 
@@ -219,9 +219,15 @@ void ProjectTreeView::slotNewProjectLoaded(const QString &name, const KURL &base
   m_baseURL = baseURL;
   m_projectName = name;
   if (!m_projectName.isNull())
+  {
     m_projectDir->root()->setText( 0, name);
+    setDragEnabled(true);
+  }
   else
+  {
     m_projectDir->root()->setText( 0, i18n("No Project"));
+    setDragEnabled(false);
+  }
 }
 
 void ProjectTreeView::slotReloadTree( const ProjectUrlList &fileList, bool buildNewTree)
