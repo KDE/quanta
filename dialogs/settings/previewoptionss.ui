@@ -40,81 +40,17 @@
         <property name="spacing">
             <number>6</number>
         </property>
+        <widget class="QCheckBox" row="1" column="0">
+            <property name="name">
+                <cstring>resetLayout</cstring>
+            </property>
+            <property name="text">
+                <string>Reset window layout to the default on the next startup</string>
+            </property>
+        </widget>
         <widget class="QLayoutWidget" row="0" column="0">
             <property name="name">
-                <cstring>layout1</cstring>
-            </property>
-            <grid>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="QButtonGroup" row="0" column="0">
-                    <property name="name">
-                        <cstring>buttonGroup2</cstring>
-                    </property>
-                    <property name="title">
-                        <string>Window Layout</string>
-                    </property>
-                    <grid>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <widget class="QRadioButton" row="0" column="0">
-                            <property name="name">
-                                <cstring>radioDefault</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Separate attribute tree (default)</string>
-                            </property>
-                        </widget>
-                        <widget class="QRadioButton" row="1" column="0">
-                            <property name="name">
-                                <cstring>radioTabbed</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Tabbed treeviews</string>
-                            </property>
-                        </widget>
-                        <widget class="QRadioButton" row="2" column="0">
-                            <property name="name">
-                                <cstring>radioCustom</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Custom setting</string>
-                            </property>
-                        </widget>
-                    </grid>
-                </widget>
-                <widget class="QLabel" row="0" column="1">
-                    <property name="name">
-                        <cstring>windowPixmap</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>0</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                        <size>
-                            <width>180</width>
-                            <height>130</height>
-                        </size>
-                    </property>
-                    <property name="cursor">
-                        <cursor>5</cursor>
-                    </property>
-                    <property name="scaledContents">
-                        <bool>true</bool>
-                    </property>
-                </widget>
-            </grid>
-        </widget>
-        <widget class="QLayoutWidget" row="1" column="0">
-            <property name="name">
-                <cstring>layout2</cstring>
+                <cstring>layout3</cstring>
             </property>
             <grid>
                 <property name="name">
@@ -137,14 +73,6 @@
                         <property name="spacing">
                             <number>6</number>
                         </property>
-                        <widget class="QRadioButton" row="0" column="0">
-                            <property name="name">
-                                <cstring>radioEditor</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Editor area</string>
-                            </property>
-                        </widget>
                         <widget class="QRadioButton" row="1" column="0">
                             <property name="name">
                                 <cstring>radioToolview</cstring>
@@ -153,82 +81,68 @@
                                 <string>Separate toolview</string>
                             </property>
                         </widget>
+                        <widget class="QRadioButton" row="0" column="0">
+                            <property name="name">
+                                <cstring>radioEditor</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Editor area</string>
+                            </property>
+                        </widget>
                     </grid>
                 </widget>
-                <widget class="QLabel" row="0" column="1">
+                <widget class="QButtonGroup" row="0" column="1">
                     <property name="name">
-                        <cstring>pixmap</cstring>
+                        <cstring>buttonGroup3</cstring>
                     </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>0</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
+                    <property name="title">
+                        <string>Close buttons on tabs</string>
                     </property>
-                    <property name="minimumSize">
-                        <size>
-                            <width>180</width>
-                            <height>130</height>
-                        </size>
-                    </property>
-                    <property name="scaledContents">
-                        <bool>true</bool>
-                    </property>
+                    <grid>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="QRadioButton" row="1" column="0">
+                            <property name="name">
+                                <cstring>radioShowCloseButtons</cstring>
+                            </property>
+                            <property name="text">
+                                <string>&amp;Always show</string>
+                            </property>
+                            <property name="accel">
+                                <string>Alt+A</string>
+                            </property>
+                            <property name="checked">
+                                <bool>true</bool>
+                            </property>
+                        </widget>
+                        <widget class="QRadioButton" row="0" column="0">
+                            <property name="name">
+                                <cstring>radioNoCloseButtons</cstring>
+                            </property>
+                            <property name="text">
+                                <string>&amp;Don't show</string>
+                            </property>
+                            <property name="accel">
+                                <string>Alt+D</string>
+                            </property>
+                        </widget>
+                        <widget class="QRadioButton" row="2" column="0">
+                            <property name="name">
+                                <cstring>radioDelayedCloseButtons</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Show de&amp;layed</string>
+                            </property>
+                            <property name="accel">
+                                <string>Alt+L</string>
+                            </property>
+                        </widget>
+                    </grid>
                 </widget>
             </grid>
         </widget>
-        <widget class="QButtonGroup" row="2" column="0">
-            <property name="name">
-                <cstring>buttonGroup3</cstring>
-            </property>
-            <property name="title">
-                <string>Close buttons on tabs</string>
-            </property>
-            <grid>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="QRadioButton" row="1" column="0">
-                    <property name="name">
-                        <cstring>radioShowCloseButtons</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Always show</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+A</string>
-                    </property>
-                    <property name="checked">
-                        <bool>true</bool>
-                    </property>
-                </widget>
-                <widget class="QRadioButton" row="0" column="0">
-                    <property name="name">
-                        <cstring>radioNoCloseButtons</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Don't show</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+D</string>
-                    </property>
-                </widget>
-                <widget class="QRadioButton" row="2" column="0">
-                    <property name="name">
-                        <cstring>radioDelayedCloseButtons</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Show de&amp;layed</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+L</string>
-                    </property>
-                </widget>
-            </grid>
-        </widget>
-        <spacer row="3" column="0">
+        <spacer row="2" column="0">
             <property name="name">
                 <cstring>Spacer1</cstring>
             </property>
@@ -248,9 +162,6 @@
     </grid>
 </widget>
 <tabstops>
-    <tabstop>radioDefault</tabstop>
-    <tabstop>radioTabbed</tabstop>
-    <tabstop>radioCustom</tabstop>
     <tabstop>radioEditor</tabstop>
     <tabstop>radioToolview</tabstop>
     <tabstop>radioNoCloseButtons</tabstop>

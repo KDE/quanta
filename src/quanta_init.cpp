@@ -488,7 +488,6 @@ void QuantaInit::initView()
   connect(m_viewManager, SIGNAL(dragInsert(QDropEvent *)), tTab, SLOT(slotDragInsert(QDropEvent *)));
 
   qConfig.windowLayout = "Default";
-  m_quanta->layoutDockWidgets(qConfig.windowLayout);
 }
 
 KMdiToolViewAccessor* QuantaInit::addToolTreeView(QWidget *widget, const QString &name, const QPixmap &icon, KDockWidget::DockPosition position)
@@ -590,14 +589,11 @@ void QuantaInit::readOptions()
   SpellChecker::ref()->readConfig(m_config);
 
   m_config->setGroup  ("General Options");
-  QString layout = m_config->readEntry("Window layout", "Custom");
+  QString layout = m_config->readEntry("Window layout", "Default");
   QString mdiMode = m_config->readEntry("MDI mode", "");
-  if (!mdiMode.isEmpty())
+  if (!mdiMode.isEmpty() && layout != "Default")
       m_quanta->readDockConfig(m_config);
-
-  m_quanta->layoutDockWidgets(layout);
-  qConfig.windowLayout = layout;
-
+  qConfig.windowLayout = "Custom";
 }
 
 void QuantaInit::openLastFiles()

@@ -1263,10 +1263,7 @@ void QuantaApp::slotOptions()
 
     slotShowPreviewWidget(false);
     qConfig.previewPosition = previewOptions->position();
-
-    QString layout = previewOptions->layout();
-    layoutDockWidgets(layout);
-    qConfig.windowLayout = layout;
+    qConfig.windowLayout = previewOptions->layout();
 
     m_htmlPart->closeURL();
     m_htmlPart->begin( Project::ref()->projectBaseURL());
@@ -3575,13 +3572,6 @@ void QuantaApp::slotActivePartChanged(KParts::Part * part)
       guiFactory()->addClient(m_oldKTextEditor);
   }
 }
-
-
-void QuantaApp::layoutDockWidgets(const QString& layout)
-{
-//TODO: use this method to set up predefined layouts
-}
-
 
 void QuantaApp::slotConvertCase()
 {

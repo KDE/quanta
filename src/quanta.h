@@ -3,7 +3,7 @@
                              -------------------
     begin                : ?? ???  9 13:29:57 EEST 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon <pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com>
-                           (C) 2001-2003 by Andras Mantia <amantia@kde.org>
+                           (C) 2001-2004 by Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -419,7 +419,6 @@ protected:
       toolbar from the file */
   void showToolbarFile(const KURL &url);
   void setTitle(const QString&);
-  void layoutDockWidgets(const QString &layout);
   /** Updates the structure and attribute treeview. */
   void updateTreeViews();
 

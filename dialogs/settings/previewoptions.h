@@ -34,10 +34,6 @@ public:
   void setPosition(const QString& );
   void setWindowLayout(const QString& );
   void setCloseButtons(const QString& );
-
-public slots:
-  void slotToggleWindowLayout();
-  void slotTogglePreview();
 };
 
 #endif

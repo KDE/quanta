@@ -17,25 +17,14 @@
 #include "previewoptions.h"
 #include "previewoptions.moc"
 // qt includes
-#include <qlabel.h>
 #include <qradiobutton.h>
+#include <qcheckbox.h>
 
 // kde includes
-#include <kiconloader.h>
 
 PreviewOptions::PreviewOptions(QWidget *parent, const char *name)
   : PreviewOptionsS(parent,name)
 {
-  connect(radioEditor, SIGNAL(toggled(bool)),
-          this,  SLOT(slotTogglePreview()));
-  connect(radioToolview, SIGNAL(toggled(bool)),
-          this,  SLOT(slotTogglePreview()));
-  connect(radioDefault, SIGNAL(toggled(bool)),
-          this,  SLOT(slotToggleWindowLayout()));
-  connect(radioTabbed, SIGNAL(toggled(bool)),
-          this,  SLOT(slotToggleWindowLayout()));
-  connect(radioCustom, SIGNAL(toggled(bool)),
-          this,  SLOT(slotToggleWindowLayout()));
 }
 
 PreviewOptions::~PreviewOptions(){
@@ -43,9 +32,8 @@ PreviewOptions::~PreviewOptions(){
 
 void PreviewOptions::setWindowLayout(const QString& layout )
 {
-  if ( layout == "Default") radioDefault->setChecked(true);
-  if ( layout == "Tabbed" ) radioTabbed->setChecked(true);
-  if ( layout == "Custom") radioCustom->setChecked(true);
+  if ( layout == "Default") resetLayout->setChecked(true);
+  else resetLayout->setChecked(false);
 }
 
 void PreviewOptions::setPosition(const QString& position )
@@ -70,11 +58,8 @@ QString PreviewOptions::position()
 QString PreviewOptions::layout()
 {
   QString layout = "Custom";
-  if ( radioDefault->isChecked() )
+  if ( resetLayout->isChecked() )
       layout = "Default";
-  if ( radioTabbed->isChecked() )
-      layout = "Tabbed";
-
   return layout;
 }
 
@@ -93,23 +78,5 @@ void PreviewOptions::setCloseButtons(const QString &state)
    if (state == "ShowAlways")  radioShowCloseButtons->setChecked(true);
    if (state == "ShowDelayed")  radioDelayedCloseButtons->setChecked(true);
    if (state == "Disabled")  radioNoCloseButtons->setChecked(true);
-}
-
-void PreviewOptions::slotTogglePreview()
-{
-  if ( radioToolview->isChecked() )
-      pixmap->setPixmap( UserIcon("preview1") );
-  if ( radioEditor->isChecked() )
-      pixmap->setPixmap( UserIcon("preview2") );
-}
-
-void PreviewOptions::slotToggleWindowLayout()
-{
-  if ( radioDefault->isChecked() )
-      windowPixmap->setPixmap( UserIcon("layout1") );
-  if ( radioTabbed->isChecked() )
-      windowPixmap->setPixmap( UserIcon("layout2") );
-  if ( radioCustom->isChecked() )
-      windowPixmap->setPixmap( UserIcon("customlayout") );
 }
 
