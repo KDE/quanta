@@ -1,7 +1,7 @@
 /***************************************************************************
                           quanta.cpp  -  description
                              -------------------
-    begin                : Ÿ?? ???  9 13:29:57 EEST 2000
+    begin                : ?? ???  9 13:29:57 EEST 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
     email                : pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com
  ***************************************************************************/
@@ -300,10 +300,9 @@ void QuantaApp::initView()
   topWidgetStack->addWidget( htmlPartTop->view(), 1 );
   topWidgetStack->raiseWidget(0);
 
-  doc->addView( view );
-//  setView( topWidgetStack );
+  doc->addView    ( view );
   setCentralWidget( topWidgetStack );
-  setCaption( doc->getTitle());
+  setCaption      ( doc->getTitle());
 
   connect( 	fTTab,SIGNAL(openFile(QString)),
   					this, SLOT(slotFileOpen(QString)));
@@ -332,7 +331,6 @@ void QuantaApp::initView()
   connect( 	pTab,SIGNAL(insertTag(QString)),
   					this, SLOT(slotInsertTag(QString)));
   					
-  					
   connect( 	fLTab,SIGNAL(activatePreview()),
   					this, SLOT(slotActivatePreview()));
   connect( 	fTTab,SIGNAL(activatePreview()),
@@ -355,7 +353,6 @@ void QuantaApp::initView()
   connect( sTab, SIGNAL(needReparse()), SLOT(reparse()));
 
   connect( dTab, SIGNAL(openURL(QString)), SLOT(openDoc(QString)));
-
 
   connect( leftPanel, SIGNAL(currentChanged(QWidget*)), this, SLOT( slotLeftTabChanged(QWidget*)));
 }
@@ -558,11 +555,6 @@ void QuantaApp::readOptions()
 //    enableStatusBar(KStatusBar::Hide);
   }
 
-  // bar position settings
-  KToolBar::BarPosition toolBarPos;
-  toolBarPos=(KToolBar::BarPosition) config->readNumEntry("ToolBarPos", KToolBar::Top);
-  toolBar()->setBarPos(toolBarPos);
-	
   // initialize the recent file list
   recentFiles.setAutoDelete(true);
   config->readListEntry("Recent Files", recentFiles);

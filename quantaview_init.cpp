@@ -77,59 +77,6 @@ QuantaView::~QuantaView()
 {
 }
 
-void QuantaView::updateToolBars( ToolBars *t)
-{
-  // remove all items from toolbar
-  for ( WToolBar *tb = wtoolbars.first(); tb!=0; tb = wtoolbars.next() ) {
-    int id = toolbarStack->id(tb);
-    toolbarStack->removeWidget(tb);
-    tabBar->removeTab( tabBar->tab(id) );
-  }
-  wtoolbars.clear();
-
-  // insert toolbars
-  for ( int i=0; i < t->count(); i++ ) 
-  {
-    WToolBar *tb = new WToolBar(app);
-    tb -> setFocusPolicy(QWidget::NoFocus);
-    wtoolbars.append(tb);
-
-    QDomNodeList list = t->actions(i);
-    for ( unsigned int ai=0; ai<list.count(); ai++ ) 
-    {
-
-      QDomElement el = list.item(ai).toElement();
-      int id = el.attribute("id","-1").toInt();
-
-      if ( el.attribute("type") != "separator") 
-      {
-        QString tooltip = el.attribute("name","");
-        
-        QDomNodeList nl = el.childNodes();
-        for ( unsigned int i=0; i<nl.count(); i++ )
-        {
-       		QDomElement el = nl.item(i).toElement();
-       		if ( el.nodeName() == "tooltip" )	tooltip = el.text();
-        }
-        tooltip.replace( QRegExp("&lt;"), "<" );
-        tooltip.replace( QRegExp("&gt;"), ">" );
-        
-        tb->insertButton( t->actionIcon(id),  el.attribute("id","-1").toInt(), true, i18n( tooltip ));
-      }
-      else
-        tb->insertSeparator();
-    }
-
-    toolbarStack->addWidget( tb, tabBar->insertTab( new QTab( i18n( t->toolbarName(i) ))));
-
-    connect( tb, SIGNAL(clicked(int)), this, SLOT(userToolbarCallback(int)));
-  }
-
-  tabBar->repaint();
-  toolbarStack->raiseWidget( wtoolbars.first() );
-
-}
-
 QuantaDoc *QuantaView::getDocument() const
 {
   QuantaApp *theApp=(QuantaApp *) parentWidget();
@@ -316,7 +263,7 @@ void QuantaView::initActions()
     
     tagDivJustify->setTag( start, end );
 
-    (void) new KAction( i18n( "Insert CSS..." ), 0,
+    (void) new KAction( i18n( "Insert CSS..." ), "mini-modules", 0,
                         this, SLOT( slotInsertCSS() ),
                         actionCollection, "insert_css" );
 
@@ -400,7 +347,7 @@ void QuantaView::initActions()
                         this, SLOT( slotTagTableHead() ),
                         actionCollection, "tag_table_head" );
                         
-    (void) new KAction( i18n( "Table Body" ), "table_body", 0,
+    (void) new KAction( i18n( "Table Body" ), "tag_table_body", 0,
                         this, SLOT( slotTagTableBody() ),
                         actionCollection, "tag_table_body" );                    
                         

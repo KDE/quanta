@@ -100,97 +100,55 @@ class QuantaView : public QWidget
 
 	public slots:
 
-  /** insert <img > tag */
   void slotTagImg();
-  /** for <a href> tag */
   void slotTagA();
-  /** fro <a href=mailto> tag  */
   void slotTagMail();
-  /** quick html text generate */
   void slotTagQuickStart();
-  /** insert  <font> tag in document */
   void slotTagFont();
-  /** insert tag <basefont> */
   void slotTagBaseFont();
-  /** for tag <table> */
   void slotTagTable();
-  /** do quick list */
   void slotTagQuickList();
-  /** for quick create table */
   void slotTagQuickTable();
-  /** for row properties */
   void slotTagTableRow();
-  /** head properties */
   void slotTagTableHead();
-  /** table data properties */
+  void slotTagTableBody();
   void slotTagTableData();
-  /** Open color Dialog and
-insert color in the text */
   void slotTagColor();
-  /**  */
   void slotTagFormRadio();
-  /** insert TextArea tag */
   void slotTagFormTextArea();
-  /** insert Form tag */
   void slotTagForm();
-  /**  */
   void slotTagFormCheck();
-  /**  */
   void slotTagFormPas();
-  /**  */
   void slotTagFormLineEdit();
-  /** insert  &nbsp; */
-  void slotTagNbsp();
-  /** insert  &szlig; */
-  void slotTagSzlig();
-  /** insert  &auml; */
-  void slotTagauml();
-  /** insert  &uuml; */
-  void slotTaguuml();
-  /** insert  &ouml; */
-  void slotTagouml();
-  /** insert  &Auml; */
-  void slotTagAuml();
-  /** insert  &Uuml; */
-  void slotTagUuml();
-  /** insert  &Ouml; */
-  void slotTagOuml();
-  /** insert  &amp; */
-  void slotTagAmp();
-  /** insert  &lt; */
-  void slotTagLt();
-  /** insert  &gt; */
-  void slotTagGt();
-  /** insert <br> tag */
-  void slotTagBr();
-  /** insert date */
-  void slotTagDate();
-  /** for select form */
-  void slotTagSelect();
-  /**  */
-  void slotViewInKFM();
-  /** view in external browser netscape */
-  void slotViewInNetscape();
-  /** check netscape status */
-  void slotNetscapeStatus(KProcess *proc);
-  /** view in external browser lynx */
-  void slotViewInLynx();
-
-  /** insert tags from tree view */
-  void slotInsertTagFromTree(QString name);
-
-  /**  */
-  void slotInsertCSS();
-
-  void slotNewCurPos();
-  /** edit tag */
-  void slotEditCurrentTag();
-  /**  */
   void slotTagFormReset();
-  /**  */
   void slotTagFormSubmit();
-  /** slot for user toolbar */
-  void userToolbarCallback(int);
+  void slotTagNbsp();
+  void slotTagSzlig();
+  void slotTagauml();
+  void slotTaguuml();
+  void slotTagouml();
+  void slotTagAuml();
+  void slotTagUuml();
+  void slotTagOuml();
+  void slotTagAmp();
+  void slotTagLt();
+  void slotTagGt();
+  void slotTagBr();
+  void slotTagDate();
+  void slotTagSelect();
+  
+  void slotInsertCSS();
+  
+  void slotNewCurPos();
+  
+  void slotEditCurrentTag();
+  
+  void slotInsertTagFromTree(QString name);
+   
+  void slotViewInKFM();
+  void slotViewInNetscape();
+  void slotNetscapeStatus(KProcess *proc);
+  void slotViewInLynx();
 
   void slotGetScriptOutput(KProcess *proc, char *buffer, int buflen);
   void slotGetScriptError (KProcess *proc, char *buffer, int buflen);
@@ -199,22 +157,22 @@ insert color in the text */
   void slotPasteURLEncoded();
 
 
-  signals: // Signals
-  /**  */
-  void newCurPos();
-  /** emit when select document from tabbar */
-  void writeSelected(int);
+  signals:
+    void newCurPos();
+    
+    /** emit when select document from tabbar */
+    void writeSelected(int);
 	
   private:
   	/** Quanta classes */
   	QuantaApp *app;
   	QuantaDoc *doc;
   	
-  	QList <WToolBar> wtoolbars;
   	QTabBar *tabBar;
   	QWidgetStack *toolbarStack;
   	
   	QTabWidget   *writeTab;
+    
     /** collum of cursor position */
     int column;
     QString space;

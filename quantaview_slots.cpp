@@ -140,6 +140,13 @@ void QuantaView::slotTagTableData()
   dlg->show();
 }
 
+// tbody
+void QuantaView::slotTagTableBody()
+{
+  TagDialog *dlg = new TagDialog( write(), "tbody");
+  dlg->show();
+}
+
 /** insert TextArea tag */
 void QuantaView::slotTagFormTextArea()
 {
@@ -438,119 +445,6 @@ void QuantaView::slotNewCurPos()
 {
    emit newCurPos();
 }
-
-
-/** slot for user toolbar */
-void QuantaView::userToolbarCallback(int id)
-{
-
-  space="";
-	space.fill( ' ',write()->currentColumn() );
-
-  QDomElement action = app->toolbars->action(id);
-  QString type = action.attribute("type","");
-
-  if ( type == "tag" ) {
-     QDomElement  tag = action.namedItem("tag").toElement();
-     QDomElement xtag = action.namedItem("xtag").toElement();
-
-     if ( tag.attribute("useDialog","false") == "true" ) {
-         QString s = tag.text();
-
-         if ( s[0] == '<' )
-            s.remove(0,1);
-
-         if ( s.right(1) == ">" )
-            s.remove( s.length()-1, 1 );
-
-         s = s.stripWhiteSpace();
-
-         int i = 0;
-         while ( !s[i].isSpace() && !s[i].isNull() )	i++;
-
-         QString name = s.left(i);
-
-         s = s.remove(0,i).stripWhiteSpace();
-
-         TagDialog *dlg = new TagDialog( write(), name, s, xtag.attribute("inLine","true") == "true" );
-         dlg->show();
-
-     }
-     else {
-       if ( xtag.attribute("use","false") == "true" ) {
-         if ( xtag.attribute("inLine","true") == "true" )
-           write()->insertTag( tag.text(), xtag.text() );
-         else
-           write()->insertTag( tag.text()+"\n"+space+"  ", "\n"+space+xtag.text() );
-       }
-       else
-         write()->insertTag( tag.text() );
-     }
-  }
-
-  if ( type == "text" )
-    write()->insertTag( action.namedItem("text").toElement().text() );
-
-  if ( type == "standard" ) {
-    QString name = action.namedItem("standard").toElement().text();
-
-    if ( name == "Quick start" ) slotTagQuickStart();
-    if ( name == "Quick list" )  slotTagQuickList();
-    if ( name == "Quick table" ) slotTagQuickTable();
-    if ( name == "CSS" ) slotInsertCSS();
-    if ( name == "Insert color" ) slotTagColor();
-  }
-
-  if ( type == "script" ) {
-
-  	KProcess *proc = new KProcess();
-    proc ->clearArguments();
-
-    QDomElement script = action.namedItem("script").toElement();
-    QString command = script.text();
-
-
-    if ( write()->hasFileName() ) {
-      QString fname = write()->fileName();
-      if ( fname.left(5) == "file:")
-        fname.remove(0,5);
-      command.replace( QRegExp("%f"), fname );
-    }
-
-    *proc << "sh";
-    *proc << "-c" << command;
-
-    beginOfScriptOutput = true;
-    beginOfScriptError  = true;
-
-    connect( proc, SIGNAL(receivedStdout(   KProcess*,char*,int)), this,
-                 SLOT(  slotGetScriptOutput(KProcess*,char*,int)));
-
-		connect( proc, SIGNAL(receivedStderr(   KProcess*,char*,int)), this,
-                 SLOT(  slotGetScriptError(KProcess*,char*,int)));
-
-    proc->start(KProcess::NotifyOnExit, KProcess::All);
-
-    QString buffer;
-
-    QString inputType = script.attribute("input","none");
-    scriptOutputDest = script.attribute("output","none");
-    scriptErrorDest  = script.attribute("error","none");
-
-    if ( inputType == "current" ) {
-    	buffer = write()->text();
-      proc->writeStdin( buffer.local8Bit(), buffer.length() );
-    }
-
-    if ( inputType == "selected" ) {
-    	buffer = write()->markedText();
-      proc->writeStdin( buffer.local8Bit(), buffer.length() );
-    }
-    proc->closeStdin();
-  }
-
-}
-
 
 /** get output */
 void QuantaView::slotGetScriptOutput(KProcess *, char *buffer, int buflen)
