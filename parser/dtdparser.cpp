@@ -98,7 +98,7 @@ bool DTDParser::parse()
   m_nickName = w.nickName->text();
   m_doctype = w.doctype->text();
   m_doctype.replace(QRegExp("<!doctype", false), "");
-  m_doctype = m_doctype.left(m_doctype.findRev(">") - 1);
+  m_doctype = m_doctype.left(m_doctype.findRev(">"));
   m_dtdURLLine = w.dtdURL->text();
   m_defaultExtension = w.defaultExtension->text();
   m_caseSensitive = w.caseSensitive->isChecked();
@@ -152,6 +152,7 @@ void saveElement(xmlElementPtr elem, xmlBufferPtr buf)
     if ( file.open( IO_WriteOnly ) )
     {
       QTextStream stream( &file );
+      stream << "<?xml version="1.0" encoding="UTF-8"?>" endl;
       stream << "<!DOCTYPE TAGS>" << endl
              << "<TAGS>" << endl
              << "<tag name=\"" << elemName << "\">" << endl << endl;
@@ -228,6 +229,7 @@ void saveElement(xmlElementPtr elem, xmlBufferPtr buf)
         }
 
         stream << "</children>" << endl;
+        stream << endl;
       }
       /*
       xmlElementContentPtr content_ptr = el_ptr->content;
