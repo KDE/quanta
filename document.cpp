@@ -745,7 +745,6 @@ void Document::slotFilterCompletion( KTextEditor::CompletionEntry *completion ,Q
 */
 void Document::slotCharactersInserted(int line,int column,const QString& string)
 {
- const DTDStruct *dtd = currentDTD();
  if ( (string == ">") || 
       (string == "<") )
  {
@@ -1353,6 +1352,7 @@ QString Document::findDTDName(Tag **tag)
 bool Document::scriptAutoCompletion(int line, int column)
 {
  bool handled = false;
+ 
  QString s = editIf->textLine(line).left(column + 1);
  QString s2 = s;
  int i = column;
