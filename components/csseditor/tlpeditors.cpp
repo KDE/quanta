@@ -32,7 +32,7 @@
 #include "resource.h"
 #include "tlpeditors.h"
 #include "fontfamilychooser.h"
-    
+
 TLPEditor::TLPEditor(QWidget *parent, const char* name) : QHBox(parent,name){
   m_label = new QLabel(this);
   m_le = new QLineEdit(this);
@@ -62,14 +62,14 @@ void TLPEditor::setToolTip(QString s){
 }
 
 URIEditor::URIEditor(QWidget *parent, const char* name) : TLPEditor(parent,name){
-  m_Mode = single;
+  m_Mode = Single;
   setLabelText(" Uri  :");
   setButtonIcon("fileopen");
   setToolTip(i18n("Open the URI selector"));
 
-  if( m_Mode == single )
+  if( m_Mode == Single )
     connect(m_le, SIGNAL(textChanged ( const QString & )), this, SLOT(URI(const QString&)));
-  connect(m_pb, SIGNAL(clicked()), this, SLOT(openFileDialog()));  
+  connect(m_pb, SIGNAL(clicked()), this, SLOT(openFileDialog()));
 }
 
 void URIEditor::URI(const QString & s){
@@ -88,15 +88,15 @@ void URIEditor::openFileDialog(){
   }
 
   bool multi=false;
-  
-  if( m_Mode == single){
+
+  if( m_Mode == Single){
     fd->setMode(QFileDialog::ExistingFile);
   }
   else {
     fd->setMode(QFileDialog::ExistingFiles);
     multi=true;
   }
-  
+
   if( fd->exec() == QDialog::Accepted ){
     if( !multi)
       URI( fd->selectedFile() );
@@ -104,8 +104,8 @@ void URIEditor::openFileDialog(){
       QStringList selectedFiles = fd->selectedFiles();
       KURL u;
       for ( QStringList::Iterator it = selectedFiles.begin(); it != selectedFiles.end(); ++it )
-      {      
-        u.setPath(*it);   
+      {
+        u.setPath(*it);
         m_sFiles.append( "url(\'" + QExtFileInfo::toRelative(u, quantaApp->projectBaseURL()).path() + "\')");
       }
       emit valueChanged(m_sFiles.join(","));
@@ -118,14 +118,14 @@ fontEditor::fontEditor(QWidget *parent, const char* name) : TLPEditor(parent,nam
   setLabelText(" Font  :");
   setButtonIcon("fonts");
   setToolTip(i18n("Open font family chooser"));
-  
+
   connect(m_pb, SIGNAL(clicked()), this, SLOT(openFontChooser()));
   connect(m_le, SIGNAL(textChanged ( const QString & )), this, SIGNAL( valueChanged( const QString& ) ) );
 }
 
 void fontEditor::openFontChooser(){
   fontFamilyChooser *dlg = new fontFamilyChooser( this );
-  
+
   if( dlg->exec() == QDialog::Accepted ){
     emit valueChanged( dlg->fontList().join(", "));
   }

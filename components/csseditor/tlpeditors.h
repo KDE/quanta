@@ -60,7 +60,7 @@ class fontEditor : public TLPEditor{
 class URIEditor : public TLPEditor {
   Q_OBJECT
   public:
-    enum mode{ multi, single };
+    enum mode{ Multi, Single };
     enum URIResourceType{ audio, image, mousePointer };
 
   private:
