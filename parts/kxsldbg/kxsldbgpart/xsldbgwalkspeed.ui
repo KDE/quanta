@@ -13,7 +13,7 @@
         </rect>
     </property>
     <property name="caption">
-        <string>Configure xsldbg's Walk Speed </string>
+        <string>Configure xsldbg's Walk Speed</string>
     </property>
     <property name="toolTip" stdset="0">
         <string></string>

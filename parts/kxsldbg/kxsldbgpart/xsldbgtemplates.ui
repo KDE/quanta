@@ -29,7 +29,7 @@
         <widget class="QListView" row="0" column="0">
             <column>
                 <property name="text">
-                    <string>Name         </string>
+                    <string>Name</string>
                 </property>
                 <property name="clickable">
                     <bool>true</bool>
@@ -51,7 +51,7 @@
             </column>
             <column>
                 <property name="text">
-                    <string>Source File Name                </string>
+                    <string>Source File Name</string>
                 </property>
                 <property name="clickable">
                     <bool>true</bool>

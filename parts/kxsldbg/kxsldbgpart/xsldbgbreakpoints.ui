@@ -62,7 +62,7 @@
             </column>
             <column>
                 <property name="text">
-                    <string>File Name            </string>
+                    <string>File Name</string>
                 </property>
                 <property name="clickable">
                     <bool>true</bool>
@@ -304,7 +304,7 @@
                                 <cstring>sourceFileLabel</cstring>
                             </property>
                             <property name="text">
-                                <string>File  name:</string>
+                                <string>File name:</string>
                             </property>
                         </widget>
                     </grid>
@@ -384,7 +384,7 @@
                         <string>Add</string>
                     </property>
                     <property name="toolTip" stdset="0">
-                        <string>Add breakpoint using file  name with line number or a template name</string>
+                        <string>Add breakpoint using file name with line number or a template name</string>
                     </property>
                 </widget>
                 <spacer>
