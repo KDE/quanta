@@ -114,7 +114,7 @@ int KQUniqueApplication::newInstance()
   args = KCmdLineArgs::parsedArgs();
   if (mainWidget())
   {
-    KWin::setActiveWindow(mainWidget()->winId());
+    KWin::activateWindow(mainWidget()->winId());
     quantaApp = static_cast<QuantaApp*>(mainWidget());
     for (int i = 0; i < args->count(); i++)
     {
