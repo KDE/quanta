@@ -583,8 +583,11 @@ Node* SAParser::parseArea(const AreaStruct &specialArea,
   s_dtd = 0L;
   if (s_parentNode && !areaStartString.isEmpty())
   {
-    s_dtd = DTDs::ref()->find(s_parentNode->tag->dtd->specialAreaNames[areaStartString]);
-    s_areaEndString = s_parentNode->tag->dtd->specialAreas[areaStartString];
+    const DTDStruct *parentDTD = m_dtd;
+    if (s_parentNode->parent)
+      parentDTD = s_parentNode->parent->tag->dtd;
+    s_dtd = DTDs::ref()->find(parentDTD->specialAreaNames[areaStartString]);
+    s_areaEndString = parentDTD->specialAreas[areaStartString];
     s_searchForAreaEnd = true;
   }
   if (!forcedAreaEndString.isEmpty())

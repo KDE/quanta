@@ -108,6 +108,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
       currentNode->tag->single))
       parentNode = currentNode->parent;
   Tag *tag = 0L;
+  QTag *qTag = 0L;
   textLine.append(write->text(startLine, startCol, startLine, write->editIf->lineLength(startLine)));
   if (line == endLine)
   {
@@ -280,6 +281,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
           continue;
         }
   
+        qTag = 0L; 
         goUp = ( parentNode &&
                 ( (tag->type == Tag::XmlTagEnd && QuantaCommon::closesTag(parentNode->tag, tag)
                   ) ||
@@ -287,7 +289,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
               );
         if (parentNode && !goUp)
         {
-          QTag *qTag = QuantaCommon::tagFromDTD(m_dtd, parentNode->tag->name);
+          qTag = QuantaCommon::tagFromDTD(m_dtd, parentNode->tag->name);
           if ( qTag )
           {
             QString searchFor = (m_dtd->caseSensitive)?tag->name:tag->name.upper();
@@ -324,7 +326,30 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
             {
               parentNode = parentNode->parent;
             }
+          } else
+          if (qTag && tag->type != Tag::XmlTagEnd)
+          {
+            Node *n = parentNode;
+            QString searchFor = (m_dtd->caseSensitive)?tag->name:tag->name.upper();
+            while (qTag && n)
+            {
+              qTag = QuantaCommon::tagFromDTD(m_dtd, n->tag->name);
+              if ( qTag )
+              {
+                if ( qTag->stoppingTags.contains(searchFor) )
+                {
+                  n->tag->closingMissing = true; //parent is single...
+                  if (n->parent)
+                    parentNode = n;
+                  n = n->parent;
+                } else
+                {
+                  break;
+                }
+              }
+            }
           }
+          
           node = new Node(parentNode->parent);
           nodeNum++;
           node->prev = parentNode;

@@ -344,7 +344,6 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
         newNum++;
         m_tbody->parse("<tbody>", m_write);
       }
-      tableRowTags.clear();
       nRow++;
       m_rowSpin->setValue(nRow);
       nCol = 0;
@@ -369,7 +368,9 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
           tableNode.merged = false;
           tableRowTags.append(tableNode);
         }
-        m_tableTags->append(tableRowTags);
+        if (!tableRowTags.isEmpty())
+          m_tableTags->append(tableRowTags);
+        tableRowTags.clear();
       }
     }
     else if (tagName == "th" || tagName == "td")
