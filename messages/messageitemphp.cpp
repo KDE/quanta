@@ -1,4 +1,5 @@
 #include "messageitemphp.h"
+#include <qpainter.h>
 
 MessageItemPHP::MessageItemPHP( QListBox *listbox, const QString &text )
   :MessageItem( listbox )

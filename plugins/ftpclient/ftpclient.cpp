@@ -8,6 +8,7 @@
 #include <qurloperator.h>
 #include <qlayout.h>
 #include <qmessagebox.h>
+#include <qdir.h>
 
 // Kde includes
 #include <klocale.h>

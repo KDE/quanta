@@ -35,6 +35,7 @@
 #include <qwidgetstack.h>
 #include <qbuttongroup.h>
 #include <qurloperator.h>
+#include <qlineedit.h>
 
 // include files for KDE
 #include <kurl.h>

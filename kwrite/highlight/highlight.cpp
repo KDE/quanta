@@ -3359,6 +3359,7 @@ void FontChanger::charsetChanged(const QString& charset) {
 void FontChanger::displayCharsets() {
   int z;
   QString charset;
+#if QT_VERSION < 300
   KCharsets *charsets;
 
   charsets = KGlobal::charsets();
@@ -3373,6 +3374,9 @@ void FontChanger::displayCharsets() {
   charset = "any";
   charsetCombo->insertItem(charset);
   if (/*(QString)*/ font->charset == charset) charsetCombo->setCurrentItem(z);
+#else
+  charsetCombo->insertItem("any");
+#endif
 }
 
 //---------

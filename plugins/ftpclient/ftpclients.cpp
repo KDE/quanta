@@ -88,7 +88,11 @@ FtpClientS::FtpClientS( QWidget* parent,  const char* name, WFlags fl )
     Layout22->addLayout( Layout21, 1, 1 );
 
     toolBar = new KToolBar( this, "toolBar" );
+#if QT_VERSION < 300
     toolBar->setMinimumSize( QSize( 0, 22 ) );
+#else
+    toolBar->setMinimumSize( 0, 22 );
+#endif
 
     Layout22->addMultiCellWidget( toolBar, 0, 0, 0, 1 );
 

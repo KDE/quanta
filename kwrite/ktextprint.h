@@ -276,7 +276,11 @@ class KPipe : public QIODevice {
     virtual void close();
     virtual void flush() {}
 
+#if QT_VERSION < 300
     virtual uint size() const {return 0;}
+#else
+    virtual Q_ULONG size() const {return 0;}
+#endif
 
     virtual int readBlock(char *, uint) {return 0;}
     virtual int writeBlock(const char *data, uint len);
