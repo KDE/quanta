@@ -173,6 +173,7 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
       delete currentNode->child;
       currentNode->child = 0L;
       AreaStruct area(currentNode->tag->area());
+      Node *next = 0L;
       if (currentNode->next)
       {
         AreaStruct area2(currentNode->next->tag->area());
@@ -181,14 +182,18 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
         if (currentNode->next->closesPrevious)
         {
           currentNode->next->removeAll = false;
+          next = currentNode->next->next;
           delete currentNode->next;
         }
       } else
       {
-        area.eLine = currentNode->tag->write()->editIf->numLines() - 1;
-        area.eCol = currentNode->tag->write()->editIf->lineLength(area.eLine);
+        area.eLine = write->editIf->numLines() - 1;
+        area.eCol = write->editIf->lineLength(area.eLine);
       }
-      parser->parseSpecialArea(area, currentNode->tag->tagStr(), "", currentNode, area.eLine, area.eCol, true); //we don't care about the returned value      
+      Node *node = parser->parseSpecialArea(area, currentNode->tag->tagStr(), "", currentNode, area.eLine, area.eCol, true); 
+      node->next = next;
+      if (next)
+        next->prev = node;
     }
     title = "";
     item = new StructTreeTag(parentItem, currentNode, title, currentItem);
