@@ -1241,7 +1241,7 @@ void QuantaApp::slotShowOpenFileList()
      if (tmpString.left(5) == "file:") tmpString.remove(0,5);
      if (tmpString.left(1) == "/")
     {
-       	tmpString = QExtFileInfo::toRelative(tmpString,project->basePath);
+       	tmpString = QExtFileInfo::toRelative(tmpString,doc->basePath());
        	if (tmpString.contains("../"))
        	{
         	tmpString.replace(QRegExp("\\.\\./"),"");

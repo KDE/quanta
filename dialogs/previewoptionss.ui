@@ -8,9 +8,15 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>341</width>
-            <height>159</height>
+            <width>350</width>
+            <height>220</height>
         </rect>
+    </property>
+    <property name="minimumSize">
+        <size>
+            <width>350</width>
+            <height>220</height>
+        </size>
     </property>
     <property name="caption">
         <string>Form1</string>
@@ -99,7 +105,7 @@
             </grid>
         </widget>
         <spacer row="1" column="1">
-            <property name="name">
+            <property name="name" stdset="0">
                 <cstring>Spacer1</cstring>
             </property>
             <property name="orientation">
@@ -107,6 +113,12 @@
             </property>
             <property name="sizeType">
                 <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
             </property>
         </spacer>
     </grid>

@@ -8,9 +8,23 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>334</width>
-            <height>139</height>
+            <width>350</width>
+            <height>220</height>
         </rect>
+    </property>
+    <property name="sizePolicy">
+        <sizepolicy>
+            <hsizetype>3</hsizetype>
+            <vsizetype>3</vsizetype>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+        </sizepolicy>
+    </property>
+    <property name="minimumSize">
+        <size>
+            <width>350</width>
+            <height>220</height>
+        </size>
     </property>
     <property name="caption">
         <string>Form2</string>
@@ -62,7 +76,7 @@
                 <x>5</x>
                 <y>6</y>
                 <width>325</width>
-                <height>120</height>
+                <height>130</height>
             </rect>
         </property>
         <grid>

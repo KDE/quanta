@@ -39,9 +39,9 @@ ListDlg::ListDlg(QStringList &entryList,QWidget* parent, const char *name )
    {
       listbox->setCurrentItem(0);
     }
-   listbox->setMinimumSize(listbox->sizeHint());
+   listbox->setMinimumSize(350,150);
    adjustSize();
-   resize(minimumSize());
+   resize(sizeHint());
 
    connect(listbox,SIGNAL(doubleClicked( QListBoxItem * )), SLOT(slotOk()));
 }

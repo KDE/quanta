@@ -204,12 +204,7 @@ QString QExtFileInfo::cdUp(QString &dir)
 
 QString QExtFileInfo::shortName(QString fileName)
 {
-  int pos;
-  QString fname = fileName;
-  while ( (pos = (int)fname.find('/')) != -1 )
-    fname.remove(0,pos+1);
-  
-  return fname;
+  return fileName.section("/",-1);
 }
 
 QString QExtFileInfo::path( KURL &url )

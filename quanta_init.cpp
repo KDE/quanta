@@ -664,6 +664,9 @@ void QuantaApp::setAttributes(QDomDocument *dom, QTag* tag)
   tag->setOptional(true);
  }
 
+ tag->type = el.attribute("type","xmltag");
+ tag->returnType = el.attribute("returnType","");
+
  for ( QDomNode n = dom->firstChild().firstChild().firstChild(); !n.isNull(); n = n.nextSibling() )
  {
    if (n.nodeName() == "stoppingtags") //read what tag can act as closing tag
@@ -1039,7 +1042,7 @@ void QuantaApp::initActions()
 
     KStdAction::quit( this, SLOT( slotFileQuit() ), actionCollection() );
 
-   (void) new KAction( i18n( "&File List" ), 0,this, SLOT( slotShowOpenFileList() ),
+   (void) new KAction( i18n( "&File List" ), ALT+Key_0,this, SLOT( slotShowOpenFileList() ),
                         actionCollection(), "file_list" );
 
     // Edit actions

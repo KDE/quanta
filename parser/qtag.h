@@ -104,6 +104,8 @@ public:
   /** The tag has the attributes of the above common groups */
   QStringList commonGroups;
   QStringList stoppingTags;
+  QString type; //function, class, xmltag, etc.
+  QString returnType;  //useful is type="function"; may be int, string or whatever
 
 protected: // Protected attributes
   /** List of the possible attributes */

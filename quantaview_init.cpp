@@ -113,7 +113,8 @@ Document* QuantaView::write()
 void QuantaView::addWrite( Document* w , QString label )
 {
 	QIconSet emptyIcon ( UserIcon("empty1x16"));
-	writeTab->addTab  ( w,  emptyIcon,  label );
+	writeTab->addTab  ( w,  emptyIcon,  label.section("/",-1) );
+  writeTab->setTabToolTip(w, label);
 	writeTab->showPage( w );
 	connect( w->view(),
            SIGNAL(cursorPositionChanged()), this, SLOT(slotNewCurPos()));

@@ -189,12 +189,15 @@ Node * Parser::subParse( Node * parent, int &line, int &col )
            }
       case Tag::ScriptStructureEnd:
            {
-             Node *node = new Node( parent->parent );
-             node->tag = tag;
-             parent->next = node;
-             node->prev = parent;
-             tag->endPos(line, col);
-             return firstNode;
+             if (parent)
+             {
+               Node *node = new Node( parent->parent );
+               node->tag = tag;
+               parent->next = node;
+               node->prev = parent;
+               tag->endPos(line, col);
+               return firstNode;
+             }
              break;
            }
       case 100:

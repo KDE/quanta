@@ -142,7 +142,7 @@ bool QuantaDoc::newDocument( const KURL& url )
 
     if ( newfile ) furl = w->url().url();
 
-  	app ->view->addWrite( w, QExtFileInfo::shortName(w->url().url()) );
+  	app ->view->addWrite( w, w->url().url() );
 
     app->processDTD(defaultDocType);
   	
@@ -641,8 +641,11 @@ void QuantaDoc::changeFileTabName( QString oldUrl, QString newUrl )
 {
 	if ( newUrl.isNull() ) newUrl = url().url();
          
-	if ( app->view->writeTab->tabLabel(write()) != QExtFileInfo::shortName( newUrl ))
-		  app->view->writeTab->changeTab( write(), QExtFileInfo::shortName( newUrl ));
+	if ( app->view->writeTab->tabToolTip(write()) != newUrl )
+	{
+    app->view->writeTab->changeTab( write(), QExtFileInfo::shortName( newUrl));
+    app->view->writeTab->setTabToolTip( write(), newUrl );
+  }
 	
   if ( oldUrl != newUrl )
   {
@@ -693,9 +696,11 @@ void QuantaDoc::changeFileTabName( QString oldUrl, QString newUrl )
         }
     }     	
  		
-		if ( app->view->writeTab->tabLabel(it1.current()) != shortUrl)
- 		  app->view->writeTab->changeTab( it1.current() , shortUrl );
-
+		if ( app->view->writeTab->tabToolTip(it1.current()) != shortUrl)
+    {
+ 		  app->view->writeTab->changeTab( it1.current() , shortUrl.section("/",-1) );
+ 		  app->view->writeTab->setTabToolTip( it1.current() , shortUrl );
+    }
  		++it1;
  	}
 }

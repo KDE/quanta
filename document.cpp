@@ -284,6 +284,7 @@ Tag *Document::findScriptText(int line, int col)
   } else
   {
    eCol = pos-1;
+   if (eCol < col) eCol = col;
    if (eCol < 0)
    {
     eLine = (eLine >0)?eLine-1:0;
@@ -1151,9 +1152,15 @@ void Document::scriptAutoCompletion(DTDStruct *dtd, int line, int column, const 
      for (int i =0; i < tag->attributeCount(); i++)
      {
        Attribute* attr = tag->attributeAt(i);
-       arguments = arguments + attr->type +" "+attr->name +",";
+       if (attr->status == "optional")
+       {
+         arguments = arguments + "["+attr->type +" "+attr->name +"],";
+       } else
+       {
+         arguments = arguments + attr->type +" "+attr->name +",";
+       }
      }
-     arguments = tag->name() + "("+arguments.left(arguments.length()-1)+")";
+     arguments = tag->returnType +" "+tag->name() + "("+arguments.left(arguments.length()-1)+")";
      argList.append(arguments);
      codeCompletionIf->showArgHint(argList, "()" ,",");
    }
