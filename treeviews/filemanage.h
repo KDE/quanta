@@ -19,6 +19,7 @@ email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,se
 #ifndef FILEMANAGE_H
 #define FILEMANAGE_H
 
+#include <qregexp.h>
 #include <klistview.h>
 
 #include <kfileitem.h>
@@ -27,7 +28,6 @@ email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,se
 
 class QPopupMenu;
 class KDirLister;
-class QRegExp;
 
 /**
   *@author Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon & Andras Mantia
