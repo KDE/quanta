@@ -200,6 +200,9 @@ public:
   void slotFileClosed();
   void setTabToolTip(QWidget *w, const QString& toolTipStr);
 
+  void createPreviewPart();
+  void createDocPart();
+
   /** Clicked word or selected text for context sensitive menu in editor */
   QString popupWord;
 
@@ -369,6 +372,9 @@ public slots:
 
   /** Called when the CVS command working on files was executed successfully. */
   void slotCVSCommandExecuted(const QString &command, const QStringList &files);
+
+  /** Called when the preview or documentation part is deleted. */
+  void slotHTMLPartDeleted(QObject *object);
 
 //Overridden KMdiMainFrm slots
   virtual void closeAllViews();

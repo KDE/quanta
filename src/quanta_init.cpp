@@ -458,19 +458,8 @@ void QuantaInit::initView()
   m_quanta->m_problemOutput = new MessageOutput(m_quanta, "Problems");
   m_quanta->m_problemOutput->setFocusPolicy(QWidget::NoFocus);
 
-  m_quanta->m_htmlPart = new WHTMLPart(m_quanta, "rightHTML");
-  m_quanta->m_htmlPart->view()->resize(0, 0);
-  m_quanta->m_htmlPart->view()->setIcon(UserIcon("preview"));
-  m_quanta->m_htmlPart->view()->setCaption(i18n("Preview"));
-  m_quanta->slotNewPart(m_quanta->m_htmlPart, false);
-  connect(m_quanta->m_htmlPart, SIGNAL(previewHasFocus(bool)), m_quanta, SLOT(slotPreviewHasFocus(bool)));
-
-
-  m_quanta->m_htmlPartDoc = new WHTMLPart(m_quanta, "docHTML");
-  m_quanta->m_htmlPartDoc->view()->resize(0, 0);
-  m_quanta->m_htmlPartDoc->view()->setIcon(SmallIcon("contents"));
-  m_quanta->m_htmlPartDoc->view()->setCaption(i18n("Documentation"));
-  m_quanta->slotNewPart(m_quanta->m_htmlPartDoc, false);
+  m_quanta->createPreviewPart();
+  m_quanta->createDocPart();
 
   connect(m_quanta, SIGNAL(reloadAllTrees()),
           m_quanta->fTab, SLOT(slotReloadAllTrees()));
@@ -558,7 +547,7 @@ void QuantaInit::readOptions()
   qConfig.smartTagInsertion = m_config->readBoolEntry("Smart Tag Insertion", false);
   KAction *action = quantaApp->actionCollection()->action("smart_tag_insertion");
   (static_cast<KToggleAction* >(action))->setChecked(qConfig.smartTagInsertion);
-  
+
   QSize s(800,580);
   m_quanta->resize( m_config->readSizeEntry("Geometry", &s));
   qConfig.autosaveInterval = m_config->readNumEntry("Autosave interval", 1);
@@ -790,8 +779,8 @@ void QuantaInit::initActions()
     (void) new KAction( i18n( "&Document Properties" ), 0,
                         m_quanta, SLOT( slotDocumentProperties() ),
                         ac, "tools_document_properties" );
-                        
-    (void) new KAction ( i18n ("F&ormat XML Code"), 0, 
+
+    (void) new KAction ( i18n ("F&ormat XML Code"), 0,
                         m_quanta, SLOT( slotCodeFormatting() ),
                         ac, "tools_code_formatting");
 #endif
@@ -869,7 +858,7 @@ void QuantaInit::initActions()
     new KAction(i18n("Re&name User Toolbar..."), 0, m_quanta, SLOT(slotRenameToolbar()), ac, "toolbars_rename");
     new KAction(i18n("Send Toolbar in E&mail..."), "mail_send", 0, m_quanta, SLOT(slotSendToolbar()), ac, "toolbars_send");
     new KAction(i18n("&Download Toolbar..." ), "network", 0, m_quanta, SLOT(slotDownloadToolbar()), ac, "toolbars_download" );
-    
+
 #ifdef BUILD_KAFKAPART
     KToggleAction *toggle = new KToggleAction( i18n("Smart Tag Insertion"), 0, ac, "smart_tag_insertion");
     connect(toggle, SIGNAL(toggled(bool)), m_quanta, SLOT(slotSmartTagInsertion()));
