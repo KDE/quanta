@@ -687,14 +687,15 @@
     <forward>struct DTDStruct</forward>
     <forward>class Document</forward>
     <forward>class Node</forward>
+    <forward>typedef struct TableNode {   Node *node;   bool isFromDocument;  }  </forward>
 </forwards>
 <variables>
-    <variable>QValueList&lt;QValueList&lt;Node*&gt; &gt; *m_tableTags;</variable>
-    <variable>QValueList&lt;QValueList&lt;Node*&gt; &gt; *m_tableFooterTags;</variable>
-    <variable>QValueList&lt;QValueList&lt;Node*&gt; &gt; *m_tableHeaderTags;</variable>
-    <variable>QValueList&lt;Node *&gt; *m_tableFooterRows;</variable>
-    <variable>QValueList&lt;Node *&gt; *m_tableHeaderRows;</variable>
-    <variable>QValueList&lt;Node *&gt; *m_tableRows;</variable>
+    <variable>QValueList&lt;QValueList&lt;TableNode&gt; &gt; *m_tableTags;</variable>
+    <variable>QValueList&lt;QValueList&lt;TableNode&gt; &gt; *m_tableFooterTags;</variable>
+    <variable>QValueList&lt;QValueList&lt;TableNode&gt; &gt; *m_tableHeaderTags;</variable>
+    <variable>QValueList&lt;TableNode&gt; *m_tableFooterRows;</variable>
+    <variable>QValueList&lt;TableNode&gt; *m_tableHeaderRows;</variable>
+    <variable>QValueList&lt;TableNode&gt; *m_tableRows;</variable>
     <variable>Document* m_write;</variable>
     <variable>Tag *m_table;</variable>
     <variable>Tag *m_tfoot;</variable>
@@ -709,8 +710,8 @@
     <variable>KPopupMenu *m_popup;</variable>
     <variable>KURL m_baseURL;</variable>
     <variable>DTDStruct *m_dtd;</variable>
-    <variable>QValueList&lt;QValueList&lt;Node*&gt; &gt; *m_tableDataTags;</variable>
-    <variable>QValueList&lt;Node *&gt; *m_tableDataRows;</variable>
+    <variable>QValueList&lt;QValueList&lt;TableNode&gt; &gt; *m_tableDataTags;</variable>
+    <variable>QValueList&lt;TableNode&gt; *m_tableDataRows;</variable>
     <variable>QTable *m_dataTable;</variable>
 </variables>
 <slots>
@@ -741,6 +742,8 @@
     <function access="protected" returnType="QString">cellValue( int row, int col )</function>
     <function access="protected" returnType="QString">tableToString()</function>
     <function access="protected" returnType="QString">tagContent( Node * node )</function>
+    <function access="protected">deleteList( QValueList&lt;TableNode&gt; * table )</function>
+    <function access="protected">deleteMatrix( QValueList&lt;QValueList&lt;TableNode&gt;&gt; * matrix )</function>
 </functions>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>

@@ -52,13 +52,13 @@ void TableEditor::init()
   m_table = 0L;
   m_dtd = 0L;
   m_write = 0L;
-  m_tableDataTags = new QValueList<QValueList<Node*> >;
-  m_tableHeaderTags = new QValueList<QValueList<Node*> >;
-  m_tableFooterTags = new QValueList<QValueList<Node*> >;
+  m_tableDataTags = new QValueList<QValueList<TableNode> >;
+  m_tableHeaderTags = new QValueList<QValueList<TableNode> >;
+  m_tableFooterTags = new QValueList<QValueList<TableNode> >;
   m_tableTags = 0L;
-  m_tableDataRows = new QValueList<Node*>;
-  m_tableHeaderRows = new QValueList<Node*>;
-  m_tableFooterRows = new QValueList<Node*>;
+  m_tableDataRows = new QValueList<TableNode>;
+  m_tableHeaderRows = new QValueList<TableNode>;
+  m_tableFooterRows = new QValueList<TableNode>;
   m_tableRows = 0L;
 }
 
@@ -69,12 +69,12 @@ void TableEditor::destroy()
   delete m_thead;
   delete m_tfoot;
   delete m_table;
-  delete m_tableDataTags;
-  delete m_tableHeaderTags;
-  delete m_tableFooterTags;
-  delete m_tableDataRows;
-  delete m_tableHeaderRows;
-  delete m_tableFooterRows;
+  deleteMatrix(m_tableDataTags);
+  deleteMatrix(m_tableHeaderTags);
+  deleteMatrix(m_tableFooterTags);
+  deleteList(m_tableDataRows);
+  deleteList(m_tableHeaderRows);
+  deleteList(m_tableFooterRows);
 }
 
 void TableEditor::slotContextMenuRequested( int row, int col, const QPoint & pos )
@@ -90,14 +90,14 @@ void TableEditor::slotContextMenuRequested( int row, int col, const QPoint & pos
 
 void TableEditor::slotEditCell()
 {
-  TagDialog dlg(QuantaCommon::tagFromDTD(m_dtd, "td"), (*m_tableTags)[m_row][m_col]->tag, m_baseURL);
+  TagDialog dlg(QuantaCommon::tagFromDTD(m_dtd, "td"), (*m_tableTags)[m_row][m_col].node->tag, m_baseURL);
   dlg.exec();
 }
 
 
 void TableEditor::slotEditRow()
 {
-  TagDialog dlg(QuantaCommon::tagFromDTD(m_dtd,"tr"), (*m_tableRows)[m_row]->tag, m_baseURL);
+  TagDialog dlg(QuantaCommon::tagFromDTD(m_dtd,"tr"), (*m_tableRows)[m_row].node->tag, m_baseURL);
   dlg.exec();
 }
 
@@ -143,7 +143,8 @@ void TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol )
   QSpinBox *rowSpin = 0L;
   QSpinBox *colSpin = 0L;
   m_dataTable = 0L;
-  QValueList<Node*> tableRowTags;
+  QValueList<TableNode> tableRowTags;
+  TableNode tableNode;
   Node *n = node;
   while (n != lastNode->nextSibling())
   {
@@ -235,7 +236,9 @@ void TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol )
         tableRowTags.clear();
         nRow++;
         nCol = 0;
-        m_tableRows->append(n);
+        tableNode.node = n;
+        tableNode.isFromDocument = true;
+        m_tableRows->append(tableNode);
       }
     }
     else if (tagName == "/tr")
@@ -245,7 +248,11 @@ void TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol )
         maxCol = (nCol > maxCol) ? nCol : maxCol;
         for (int i = 0; i < maxCol - nCol; i++)
         {
-          tableRowTags.append(0L);
+          tableNode.node = new Node(0L);
+          tableNode.node->tag = new Tag();
+          tableNode.node->tag->parse("<td>", m_write);
+          tableNode.isFromDocument = false;
+          tableRowTags.append(tableNode);
         }
         m_tableTags->append(tableRowTags);
       }
@@ -261,7 +268,9 @@ void TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol )
           if (colSpin->value() < nCol)
             colSpin->setValue(nCol);
           m_dataTable->setText(nRow - 1, nCol - 1, tagContent(n));
-          tableRowTags.append(n);
+          tableNode.node = n;
+          tableNode.isFromDocument = true;
+          tableRowTags.append(tableNode);
         }
         QString colspanValue = n->tag->attributeValue("colspan");
         if (!colspanValue.isEmpty())
@@ -278,7 +287,9 @@ void TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol )
             {
               m_dataTable->setText(nRow - 1, lastCol + i, i18n("Merged with column #%1.").arg(lastCol));
               m_dataTable->item(nRow-1, lastCol + i)->setEnabled(false);
-              tableRowTags.append(n);
+              tableNode.node = n;
+              tableNode.isFromDocument = true;
+              tableRowTags.append(tableNode);
             }
           }
         }
@@ -427,7 +438,7 @@ QString TableEditor::cellValue( int row, int col )
   if (!m_dataTable || !m_tableTags)
     return QString::null;
  QString str;
- Node *node = (*m_tableTags)[row][col];
+ Node *node = (*m_tableTags)[row][col].node;
  if (!node)
    return QString::null;
 
@@ -443,7 +454,7 @@ QString TableEditor::tableToString()
     QString tableStr;
     for (int i = 0; i < m_dataTable->numRows(); i++) {
       tableStr += indent(4);
-      Node *node = (*m_tableRows)[i];
+      Node *node = (*m_tableRows)[i].node;
       Tag *tag = 0L;
       if (node)
           tag = node->tag;
@@ -452,7 +463,7 @@ QString TableEditor::tableToString()
       else
         tableStr += QuantaCommon::tagCase("<tr>");
       for (int j = 0; j < m_dataTable->numCols(); j++)  {
-        if ((*m_tableTags)[i][j])
+        if ((*m_tableTags)[i][j].node)
         {
           tableStr += indent(6);
           tableStr += cellValue(i, j);
@@ -502,15 +513,23 @@ void TableEditor::slotInsertRow()
   if (m_row >= 0)
      num = m_row;
   m_dataTable->insertRows(num);
-  QValueList<Node *>::Iterator rowIt = m_tableRows->at(num);
-  if (rowIt != m_tableRows->end())
-    m_tableRows->insert(rowIt, 0L);
+  TableNode tableNode;
+  tableNode.node = new Node(0L);
+  tableNode.node->tag = new Tag();
+  tableNode.node->tag->parse("<tr>", m_write);
+  QValueList<TableNode>::Iterator rowIt = m_tableRows->at(num);
+  if (rowIt != m_tableRows->end()) 
+    m_tableRows->insert(rowIt, tableNode);
   else
-    m_tableRows->append(0L);
-  QValueList<Node*> tableRowTags;
-  for (int i = 0; i < m_dataTable->numCols(); i++)
-    tableRowTags.append(0L);
-  QValueList<QValueList<Node*> >::Iterator it = m_tableTags->at(num);
+    m_tableRows->append(tableNode);
+  QValueList<TableNode> tableRowTags;
+  for (int i = 0; i < m_dataTable->numCols(); i++) {    
+    tableNode.node = new Node(0L);
+    tableNode.node->tag = new Tag();
+    tableNode.node->tag->parse("<td>", m_write);
+    tableRowTags.append(tableNode);
+  }
+  QValueList<QValueList<TableNode> >::Iterator it = m_tableTags->at(num);
   if (it != m_tableTags->end())
     m_tableTags->insert(it, tableRowTags);
   else
@@ -525,8 +544,12 @@ void TableEditor::slotInsertCol()
   if (m_col >= 0)
       num = m_col;
   m_dataTable->insertColumns(num);
-  for (QValueList<QValueList<Node*> >::Iterator it = m_tableTags->begin(); it != m_tableTags->end(); ++it) {
-    (*it).append(0L);
+  TableNode tableNode;
+  for (QValueList<QValueList<TableNode> >::Iterator it = m_tableTags->begin(); it != m_tableTags->end(); ++it) {
+    tableNode.node = new Node(0L);
+    tableNode.node->tag = new Tag();
+    tableNode.node->tag->parse("<td>", m_write);
+    (*it).append(tableNode);
   }
 
   colSpinBox->setValue(num + 1);
@@ -595,4 +618,27 @@ void TableEditor::createNewTable(Document *write, DTDStruct *dtd)
   m_tableTags = m_tableDataTags;
   m_tableRows = m_tableDataRows;
   m_dataTable = tableData;
+}
+
+
+void TableEditor::deleteList( QValueList<TableNode> *table )
+{
+  for (QValueList<TableNode>::Iterator it = table->begin(); it != table->end(); ++it) {
+    if (!(*it).isFromDocument)
+      delete (*it).node;
+  }
+  delete table;
+}
+
+
+void TableEditor::deleteMatrix( QValueList<QValueList<TableNode> > *matrix )
+{
+    for (QValueList<QValueList<TableNode> >::Iterator it = matrix->begin(); it != matrix->end(); ++it) {
+      for (QValueList<TableNode>::Iterator it2 = (*it).begin(); it2 != (*it).end(); ++it2) {
+        if (!(*it2).isFromDocument)
+          delete (*it2).node;
+      }      
+  }
+  delete matrix;
+
 }
