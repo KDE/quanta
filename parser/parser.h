@@ -37,41 +37,26 @@ public:
 	Parser();
 	~Parser();
 	
-	Node *parse( QString text, QString dtdName = QString::null);
-	int xy2pos( int x, int y );
+	Node *parse( Document *w);
+  void coutTree(Node *node, int indent);
+/*	int xy2pos( int x, int y );
 	int pos2y(int pos);
-	int pos2x(int pos);
+	int pos2x(int pos);*/
 	
-	QString tagsListForPoint(int pos);
-	bool textChanged() {return m_textChanged;}
   /** No descriptions */
   void deleteNode();
 
-	QString m_text;
+	QString m_text;  //FIXME: having an internal copy of text is absolutely useless
 private:
+  enum { Unknown = 0, XmlTag,  XmlTagEnd, Text, Comment, Script }; // types of token
 
-
-  Node * subParse( Node* parent , QString tag = QString::null );
-  QString subList( Node* node, int pos);
-
-  enum { EndText = 0, Text,  TagStart, TagEnd, Comment, PHP }; // types of token
-  int tokenType(); // return type of next token
-
-  int skipSpaces(); // return pos of next nonspace symbol
-
-  void parseText();
-  Tag* parseTag();
-  QString parseTagEnd();
-  void parseComment();
-  void parsePHP();
-
-  int pos;
-  int lastpos;
-  int lasttype;
   Node* m_node;
   QString m_dtdName;
-	bool m_textChanged;
+  Document *write;
 
+  Node * subParse( Node* parent , int &line, int &col);
+  void nextPos(int &line, int &col);
+  int tokenType(Tag *tag); // return type of next token
 };
 
 #endif

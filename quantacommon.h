@@ -19,6 +19,7 @@
 #define QUANTACOMMON_H
 
 #include "parser/qtag.h"
+#include "parser/node.h"
 
 class QuantaApp;
 class QString;

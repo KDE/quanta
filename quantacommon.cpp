@@ -23,12 +23,11 @@
 #include <kurl.h>
 
 #include "quantacommon.h"
+
 #include "quanta.h"
 #include "quantadoc.h"
 #include "document.h"
 #include "project/project.h"
-#include "resource.h"
-
 
 uint tagsCase;
 uint attrsCase;
@@ -40,6 +39,9 @@ QString defaultDocType;
 QuantaApp *QuantaCommon::quantaApp;
 
 QDict<AttributeList> *tagsDict;
+QDict<DTDStruct> *dtds; //holds all the known tags with attributes for each DTD.
+
+Node *baseNode;
 
 QuantaCommon::QuantaCommon(){
 }

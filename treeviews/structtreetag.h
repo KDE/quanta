@@ -20,8 +20,9 @@
 
 #include <qwidget.h>
 #include <qlistview.h>
-#include "../parser/tag.h"
 
+class Tag;
+class Node;
 /**tag in structure widget
   *@author Yacovlev Alexander & Dmitry Poplavsky
   */
@@ -30,11 +31,11 @@ class StructTreeTag : public QListViewItem  {
 
 public: 
 	StructTreeTag(QListView *parent, QString name = QString::null );
-	StructTreeTag(StructTreeTag *parent, Tag *tag, QString name = QString::null );
+	StructTreeTag(StructTreeTag *parent, Node *p_node, QString name = QString::null );
 	StructTreeTag(StructTreeTag *parent, QString name = QString::null );
 	~StructTreeTag();
 	
-	int pos1,pos2;
+	Node *node;
 	
 private: // Private methods
   /** set pixmap of tag */

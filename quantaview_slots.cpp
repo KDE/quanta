@@ -46,6 +46,8 @@
 #include "quantaview.h"
 #include "resource.h"
 #include "qextfileinfo.h"
+
+#include "parser/tag.h"
 #include "project/project.h"
 #include "messages/messageoutput.h"
 
@@ -69,25 +71,19 @@ void QuantaView::slotEditCurrentTag()
   w->viewCursorIf->cursorPosition(&line, &col);
   QString dtdName = w->findDTDName(line, 0); //call currentTag, so should be before
 
-  w->currentTag();
-  QString tag = w->getTagAttr(0);
-  if ( QuantaCommon::isKnownTag(dtdName,tag) )
+  Tag *tag = w->currentTag();
+  if (!tag) return;
+  QString tagName = tag->name;
+  if ( QuantaCommon::isKnownTag(dtdName,tagName) )
   {
-    QString attrs = "";
-    for (int i=1; i < w->tagAttrNum; i++ )
-    {
-//      QString *attr = new QString(w->getTagAttr(i));
-//      QString *val = new QString(w->getTagAttrValue(i));
-//      dlg->insertAttribute(attr,val);
-     attrs += QString(w->getTagAttr(i)) + "=" + QString(w->getTagAttrValue(i)) + " ";
-    }
-
-    TagDialog *dlg = new TagDialog( QuantaCommon::tagFromDTD(dtdName,tag), attrs );
-
+    TagDialog *dlg = new TagDialog( QuantaCommon::tagFromDTD(dtdName,tagName), tag );
 
     if (dlg->exec())
     {
      w->changeCurrentTag( dlg->getAttributes() );
+     int eLine, eCol;
+     tag->getTagEndPos(eLine, eCol);
+     w->viewCursorIf->setCursorPosition(eLine, eCol);
     }
 
     delete dlg;
@@ -95,37 +91,24 @@ void QuantaView::slotEditCurrentTag()
   else
   {
     QString message = i18n("Unknown tag: ");
-    message += tag;
+    message += tagName;
     app->slotStatusMsg( message.data() );
   }
+  delete tag;
 }
 
 /** edit tag */
 void QuantaView::slotInsertCSS()
 {
- static const QString code =
-		"P {\n"
-			"\tfont-weight: bold; \n"
-			"\tcolor: green; \n"
-			"\tfont-style: italic; \n"
-			"\tfont-family: sans-serif;\n"
-		"}\n"
-		;
-
  Document *w = write();
 
- CSSEditor* dlg = new CSSEditor(code, 0L, "CSS Editor");
+ CSSEditor* dlg = new CSSEditor("", 0L, "CSS Editor");
  if (dlg->exec())
  {
    w->insertTag( dlg->code() );
   // Todo
  }
 
-/*  CSSDialogI *dlg = new CSSDialogI( doc->basePath(), 0L, "CSS dialog", true );
- if ( dlg->exec() ) {
-    w->insertTag( dlg->data() );
-  }
-*/
   delete dlg;
 }
 

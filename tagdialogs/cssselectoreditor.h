@@ -21,7 +21,8 @@
 class CSSSelectorEditor : public CSSEditSelectorS  {
    Q_OBJECT
 public:
-	CSSSelectorEditor(QString code, QWidget *parent=0, const char *name=0);
+	CSSSelectorEditor(QString code, bool inlin,
+		QWidget *parent=0, const char *name=0);
 	~CSSSelectorEditor();
 
 	/** Get the CSS code based on the widget's values */
@@ -34,4 +35,7 @@ protected:
 	/** Split a string in the form top [right]? [bottom]? [left]? into the
 	four variables */
 	void splitValueTRBL(QString value, QString&, QString&, QString&, QString&);
+
+private:
+	bool code_inline;
 };

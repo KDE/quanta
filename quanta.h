@@ -279,7 +279,6 @@ class QuantaApp : public KDockMainWindow
 	
   public:
 
-
 	  	QDomDocument *actions() { return m_actions; }
 
 	protected:

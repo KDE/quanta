@@ -50,6 +50,7 @@ typedef struct DTDStruct
      QString name;                    //DTD name
      QString nickName;                //DTD nickname
      bool caseSensitive;              //the tags&attributes in DTD are case sensitive or not
+     QString family;                  //xml, script type
      QTagList* tagsList;              //the list of all tags in the DTD
      QString fileName;                //the DTD decription.rc with path
      AttributeListDict* commonAttrs;  //the attributes of the common groups

@@ -62,6 +62,10 @@ public slots: // Public slots
   void slotCloseSubTree();
   void showTagAtPos(int x, int y);
   void changeFollowCursor() { setFollowCursor( !followCursor() ); }
+  /** No descriptions */
+  void slotCollapsed(QListViewItem *item);
+  /** No descriptions */
+  void slotExpanded(QListViewItem *);
 
 signals:
   void newCursorPosition( int col, int row );

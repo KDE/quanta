@@ -24,15 +24,7 @@
 
 #include <qdict.h>
 #include "parser/qtag.h"
-
-       /*
-extern QDict<QString> *tagsList; // list of known tags
-extern QStrList *quotedAttribs; // list of attribs, that have quoted values ( alt, src ... )
-extern QStrList *lCore;          // list of core attributes ( id, class, style ... )
-extern QStrList *lI18n;
-extern QStrList *lScript;
-extern QStrList *singleTags; // tags without end  part </ >
-extern QStrList *optionalTags; // tags with optional end part */
+#include "parser/node.h"
 
 extern QDict<DTDStruct> *dtds;
 
@@ -48,5 +40,6 @@ extern QString fileMaskPhp;
 extern QString fileMaskJava;
 extern QString fileMaskText;
 extern QString fileMaskImage;
+extern Node *baseNode;
 
 #endif // RESOURCE_H

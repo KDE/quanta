@@ -21,15 +21,15 @@ Node::Node( Node *parent )
 {
   this->parent = parent;
   next = child = 0L;
-  type = tDefault;
+//  type = tDefault;
   tag = 0L;
+  opened = false;
 }
 
 
 Node::~Node()
 {
-  if (child) delete(child);
-  if (next) delete(next);
-  if ( tag )
-  	delete(tag);
+  if (child) { delete(child); child = 0L;}
+  if (next)  { delete(next); next = 0L;}
+  if ( tag ) { delete(tag); tag = 0L;}
 }

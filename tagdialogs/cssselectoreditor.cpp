@@ -38,8 +38,9 @@
 #include "filecombo.h"
 
 
-CSSSelectorEditor::CSSSelectorEditor(QString code, QWidget *parent, const char *name)
-	: CSSEditSelectorS (parent, name)
+CSSSelectorEditor::CSSSelectorEditor(QString code, bool inlin,
+	QWidget *parent, const char *name)
+	: CSSEditSelectorS (parent, name), code_inline (inlin)
 {
 	// UI things
 	setCaption(name);
@@ -335,26 +336,50 @@ QString CSSSelectorEditor::code()
 	// Let's create the final CSS code
 	if (properties.size() == 0)
 		return "";
-	QString text = lineSelector->text() + "{\n";
-	for (QStringList::Iterator it = properties.begin();
-		it != properties.end(); it++) {
-		text += "\t" + *it + ";\n";
+	QString text;
+	if (!code_inline) {
+		bool ind = checkCodeInline->isChecked();
+
+		text = lineSelector->text() + "{";
+		if (ind)
+			text += "\n";
+		for (QStringList::Iterator it = properties.begin();
+			it != properties.end(); it++) {
+			if (ind)
+				text += "\t";
+			text += *it;
+			if (ind)
+				text += "\n";
+		}
+		text += "}";
+		if (ind)
+			text += "\n";
+	} else {
+		for (QStringList::Iterator it = properties.begin();
+		it != properties.end(); ++it) {
+			text += *it + "; ";
+		}
 	}
-	text += "}\n";
 	return text;
 }
 
 /** From the code, insert the values on the widgets */;
 void CSSSelectorEditor::widgetFromCode(QString code)
-{	
-	// Parse the selector name
-	QString sel = code;
-	sel.truncate(sel.find("{"));
-	lineSelector->setText(sel.simplifyWhiteSpace());
+{
+	QStringList values;
+	if (code_inline) {
+		// Parse the selector name
+		QString sel = code;
+		sel.truncate(sel.find("{"));
+		lineSelector->setText(sel.simplifyWhiteSpace());
 
-	// Split the code into a list of pairs property: value
-	QString values_code = code.mid(sel.length() + 1, code.find("}") - 1).simplifyWhiteSpace();
-	QStringList values = QStringList::split( ";", values_code);
+		// Split the code into a list of pairs property: value
+		QString values_code = code.mid(sel.length() + 1, code.find("}") - 1).simplifyWhiteSpace();
+		values = QStringList::split( ";", values_code);
+	} else {
+		lineSelector->setEnabled (false);
+		values = QStringList::split( ";", code);
+	}
 
 	// Now iter on each pair, and insert it into the correct widget
 	QStringList::Iterator it = values.begin();

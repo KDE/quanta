@@ -37,20 +37,12 @@
   *@author Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon & Andras Mantia
   */
 
-struct TagAttr {
-  QString text;
-  QString value;
-  int textlen;
-  int valuelen;
-  int x;
-  int endx;
-  int y;
-  bool quotes;
-};
+
 
 class KConfig;
 class QStringList;
 class KTempFile;
+class Tag;
 
 class Document : public QWidget{
    Q_OBJECT
@@ -66,10 +58,10 @@ public:
   bool isUntitled();
   void setUntitledUrl(QString);
   
-  /** return qstring with current tag for parse */
-  QString currentTag(int line=-1, int col=-1);
+  /** Return a node Tag accroding to line,col (or current cursor pos if line==col==-1) */
+  Tag *currentTag(int p_line=-1, int p_col=-1);
   /** return qstring with tag at line,col for parse */
-  QString tagAt(int line, int col) {return currentTag(line,col);}
+  Tag *tagAt(int line, int col) {return currentTag(line,col);}
 
   void selectText(int x1, int y1, int x2, int y2 );
   
@@ -80,26 +72,16 @@ public:
 
   /** add attrib to end of current tag */
   void insertAttrib(QString attr);
-
+/*
 	int pos2y (int pos);
 	int pos2x (int pos);
 	int xy2pos(int x, int y );
-
+  */
 public:
 
   void readConfig (KConfig *);
   void writeConfig(KConfig *);
-  
-  QString findBeginOfTag( QString tag, int x, int y);
-  QString findEndOfTag  ( QString tag, int x, int y);
-  
-  void parseTag    ();
-  void parseTagAttr( QString t,int &x,int &y);
-  
-  QString getLine        (int y);
-  QString getTagAttr     (int i);
-  QString getTagAttrValue(int i);
-  
+
   void changeCurrentTag( QDict<QString> *dict );
   
   QPoint getGlobalCursorPos();
@@ -152,14 +134,8 @@ public:
   void setDTDIdentifier(QString id);
   /** Find the DTD name for a part of the document. Search all the document if startLine=endLine=-1.*/
   QString findDTDName(int startLine, int endLine, bool checkCursorPos = true);
-  /** No descriptions */
-  QString getTagAttrValueByName(QString attr);
-
-
-
-  TagAttr tagAttr[50];
-  int tagAttrNum;
-  int tagBeginX, tagBeginY, tagEndX, tagEndY;
+  /** Builds a tree with Node* elements. This is the internal representation of the document. */
+  void buildDocumentTree();
 
   bool oldstat;
   bool busy;
@@ -198,6 +174,16 @@ private:
 
 	int spellMoved;
   QString dtdName;
+
+  QString findBeginOfTag( QString tag, int line, int col, int &beginLine, int &beginCol, QString beginStr = "<",QString endStr=">");
+  QString findEndOfTag  ( QString tag, int line, int col, int &endLine, int &endCol, QString beginStr = "<",QString endStr=">");
+  Tag *findXMLTag(int line, int col);
+  Tag *findText(int line, int col);
+  Tag *findComment(int line, int col);
+  /** Called whenever a user inputs text in an XML type document. */
+  void xmlAutoCompletion(int , int , const QString & );
+  /** Called whenever a user inputs text in a script type document. */
+  void scriptAutoCompletion(int , int , const QString & );
 };
 
 #endif

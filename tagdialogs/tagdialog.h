@@ -34,6 +34,7 @@ class Document;
 class TagWidget;
 class Tagxml;
 class QTag;
+class Tag;
 
 class TagDialog : public QTabDialog  {
    Q_OBJECT
@@ -48,7 +49,8 @@ public:
                </a>
 
   */
-	TagDialog(QTag* tag, QString attr = QString::null, QString base = QString::null);
+	TagDialog(QTag* dtdTag, Tag* tag, QString base = QString::null);
+	TagDialog(QTag* dtdTag, QString attrs=QString::null, QString base = QString::null);
 	~TagDialog();
   /** Insert an attribute to dict*/
   void insertAttribute(QString *attr, QString *value);
@@ -72,7 +74,6 @@ public:
   QWidget 				*mainDlg;
 
   QDict<QString> *dict;
-  QTag* tag;
   QString basePath;
 
 public slots: // Public slots
@@ -80,8 +81,12 @@ public slots: // Public slots
 
 private:
   bool deleteTag;
+  Tag *m_tag;
+  QTag* dtdTag;
 
   QPtrList<Tagxml> *extraPageList;
+
+  void init(QTag* dtdTag, QString base);
   void parseAttributes( QString attrs );
 };
 

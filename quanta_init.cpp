@@ -76,8 +76,6 @@ QString fileMaskJava  = "*.jss *.js *.JSS *.JS ";
 QString fileMaskText  = "*.txt; *.TXT";
 QString fileMaskImage = "*.gif *.jpg *.png *.jpeg *.bmp *.xpm *.GIF *.JPG *.PNG *.JPEG *.BMP ";
 
-QDict<DTDStruct> *dtds; //holds all the known tags with attributes for each DTD.
-
 #include <kaction.h>
 #include <kstdaction.h>
 
@@ -89,6 +87,7 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
   toolbarGUIClientList.setAutoDelete(true);
   toolbarDomList.setAutoDelete(true);
   userToolbarsCount = 0;
+  baseNode = 0L;
 
   globalDataDir = KGlobal::dirs()->findResourceDir("data","quanta/toolbar/quantalogo.png");
 
@@ -748,11 +747,11 @@ void QuantaApp::readTagDir(QString &dirName)
  KConfig *dtdConfig = new KConfig(dtd->fileName);
  dtdConfig->setGroup("General");
  QString dtdName = dtdConfig->readEntry("Name", "Unknown");
- QString dtdNickName = dtdConfig->readEntry("NickName", dtdName);
  bool caseSensitive = dtdConfig->readBoolEntry("CaseSensitive");
  dtd->name = dtdName;
- dtd->nickName = dtdNickName;
+ dtd->nickName = dtdConfig->readEntry("NickName", dtdName);
  dtd->caseSensitive = caseSensitive;
+ dtd->family = (dtdConfig->readEntry("Family", "xml")).lower();
  int numOfTags = 0;
 
  //read the attributes for each common group

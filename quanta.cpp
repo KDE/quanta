@@ -926,28 +926,17 @@ void QuantaApp::reparse()
   if (view->writeExists())
   {
     Document *w = view->write();
-	  if ( stabdock->isVisible() )
+	  if ( stabdock->isVisible() && baseNode)
 	  {
-		  Node *node = parser->parse( w->editIf->text(), w->getDTDIdentifier() );
-      if (node)
-      {
-		    //sTab->s = parser->s;
-		    if ( parser->textChanged() )
-        {
-		      config->setGroup("Parser options");
-		      int expandLevel = config->readNumEntry("Expand level",8);
-		      if ( expandLevel == 0 ) expandLevel = 40;
-		  	
-  		    sTab->slotReparse( node , expandLevel );
+      config->setGroup("Parser options");
+      int expandLevel = config->readNumEntry("Expand level",8);
+      if ( expandLevel == 0 ) expandLevel = 40;
+      sTab->slotReparse(baseNode , expandLevel );
 		  
-          uint x;
-          uint y;
-          w->viewCursorIf->cursorPosition(&y, &x);
-
-          sTab->showTagAtPos(x,y);
-		    }
-  		  parser->deleteNode();
-      } //if (node)
+      uint x;
+      uint y;
+      w->viewCursorIf->cursorPosition(&y, &x);
+      sTab->showTagAtPos(x,y);
 	  } // if (stabdock->isVisible())
   } // if (view->writeExists())
 }
@@ -1922,6 +1911,9 @@ void QuantaApp::processDTD(QString documentType)
  {
    w->setDTDIdentifier(documentType);w->setDTDIdentifier(documentType);
  }
+
+  if (baseNode) delete baseNode;
+  baseNode = parser->parse(w);
 }
 
 /** No descriptions */

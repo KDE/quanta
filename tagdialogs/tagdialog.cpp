@@ -38,37 +38,15 @@
 #include "../resource.h"
 #include "../parser/qtag.h"
 
-TagDialog::TagDialog(QTag* tag ,QString attr, QString base)
+TagDialog::TagDialog(QTag* dtdTag, Tag *tag, QString base)
     : QTabDialog( 0L, "tagdialog", true)
 {
-  setOkButton(i18n("&OK"));
-  setCancelButton(i18n("&Cancel"));
+  init(dtdTag, base);
 
-  connect( this, SIGNAL(applyButtonPressed()),  SLOT(slotAccept()) );
-  connect( this, SIGNAL(cancelButtonPressed()), SLOT(reject()) );
-
-  if (!tag)   //the tag is invalid, let's create a default one
+  m_tag = tag;
+  for (int i = 0; i < m_tag->attrCount; i++)
   {
-    this->tag = new QTag();
-    QString s = "Unknown tag";
-    this->tag->setName(s);
-    deleteTag = true;
-  } else
-  {
-    this->tag = tag;
-    deleteTag = false;
-  }
-  dict = new QDict<QString>(1,false);
-  basePath = base;
-
-  QString caption = i18n("Tag Properties: ");
-  caption += this->tag->name();
-  setCaption( caption);
-  this->resize(420,400);
-
-  if ( !attr.isNull() )
-  {
-    parseAttributes(attr);
+   dict->insert(m_tag->attribute(i), new QString(m_tag->attributeValue(i)));
   }
 
   mainDlg = 0L;
@@ -76,46 +54,89 @@ TagDialog::TagDialog(QTag* tag ,QString attr, QString base)
 
 }
 
+TagDialog::TagDialog(QTag* dtdTag, QString attrs, QString base)
+    : QTabDialog( 0L, "tagdialog", true)
+{
+  init(dtdTag, base);
+  if ( !attrs.isNull() )
+  {
+    parseAttributes(attrs);
+  }
+  mainDlg = 0L;
+  m_tag = 0L;
+  parseTag();
+}
+
 TagDialog::~TagDialog()
 {
   if (deleteTag)
   {
-    delete tag;
+    delete dtdTag;
   }
+  delete dict;
 }
 
+
+void TagDialog::init(QTag *dtdTag, QString base)
+{
+  setOkButton(i18n("&OK"));
+  setCancelButton(i18n("&Cancel"));
+
+  connect( this, SIGNAL(applyButtonPressed()),  SLOT(slotAccept()) );
+  connect( this, SIGNAL(cancelButtonPressed()), SLOT(reject()) );
+
+  if (!dtdTag)   //the tag is invalid, let's create a default one
+  {
+    this->dtdTag = new QTag();
+    QString s = "Unknown tag";
+    this->dtdTag->setName(s);
+    deleteTag = true;
+  } else
+  {
+    this->dtdTag = dtdTag;
+    deleteTag = false;
+  }
+  dict = new QDict<QString>(1,false);
+  dict->setAutoDelete(true);
+  basePath = base;
+
+  QString caption = i18n("Tag Properties: ");
+  caption += this->dtdTag->name();
+  setCaption( caption);
+  this->resize(420,400);
+}
 /**  */
 void TagDialog::parseTag()
 {
-  if (tag->name() != "Unknown tag") //read from the extra tags
+  if (dtdTag->name() != "Unknown tag") //read from the extra tags
   {
     QDomDocument doc;
     //read the tag file it is available
-    if (QFileInfo(tag->fileName()).exists())
+    if (QFileInfo(dtdTag->fileName()).exists())
     {
- 		 QFile f( tag->fileName() );
+ 		 QFile f( dtdTag->fileName() );
 		 f.open( IO_ReadOnly );
 	   if ( doc.setContent( &f ) )
      {
-       mainDlg = new Tagxml( doc, tag->parentDTD, this );
+       mainDlg = new Tagxml( doc, dtdTag->parentDTD, this );
        ((Tagxml    *)mainDlg)->writeAttributes( dict );
      }
      f.close();
     }
     else
     {
-      if (tag->name().lower() == "img") //NOTE: HTML specific code!
+      if (dtdTag->name().lower() == "img") //NOTE: HTML specific code!
       {
          mainDlg = new TagImgDlg( this);
         ((TagImgDlg *)mainDlg)->writeAttributes( dict );
       } else
       {
         QString docString = "<!DOCTYPE TAGS>\n<TAGS>\n";
-        docString += QString("<tag name=\"%1\">\n").arg(tag->name());
-        docString += QuantaCommon::xmlFromAttributes(tag->attributes());
+        docString += QString("<tag name=\"%1\">\n").arg(dtdTag->name());
+        docString += QuantaCommon::xmlFromAttributes(dtdTag->attributes());
         docString += "</tag>\n</TAGS>\n";
         doc.setContent(docString);
-        mainDlg = new Tagxml( doc, tag->parentDTD, this );
+        mainDlg = new Tagxml( doc, dtdTag->parentDTD, this );
       }
     }
 
@@ -124,7 +145,7 @@ void TagDialog::parseTag()
     addTab( mainDlg, i18n("Main") );
   }
 
-  KConfig *dtdConfig = new KConfig(tag->parentDTD->fileName);
+  KConfig *dtdConfig = new KConfig(dtdTag->parentDTD->fileName);
   dtdConfig->setGroup("General");
   int numOfPages = dtdConfig->readNumEntry("NumOfPages");
   extraPageList = new QPtrList<Tagxml>();
@@ -144,9 +165,9 @@ void TagDialog::parseTag()
     for (uint j = 0; j < groupList.count(); j++)
     {
       QString groupName = QString(groupList.at(j)).stripWhiteSpace();
-      if (tag->commonGroups.contains(groupName)) //add the attributes of this common tag to a new tab
+      if (dtdTag->commonGroups.contains(groupName)) //add the attributes of this common tag to a new tab
       {
-        AttributeList *groupAttrs = tag->parentDTD->commonAttrs->find(groupName);
+        AttributeList *groupAttrs = dtdTag->parentDTD->commonAttrs->find(groupName);
         for (uint k = 0; k < groupAttrs->count(); k++)
         {
           attrs->append(groupAttrs->at(k));
@@ -159,7 +180,7 @@ void TagDialog::parseTag()
     if (addPage)
     {
       extraDoc.setContent(docString);
-      extraPage = new Tagxml( extraDoc, tag->parentDTD, this );
+      extraPage = new Tagxml( extraDoc, dtdTag->parentDTD, this );
       extraPage->writeAttributes( dict );
       addTab( extraPage, i18n(title) );
       extraPageList->append(extraPage);
@@ -257,17 +278,17 @@ void TagDialog::parseAttributes( QString attrs )
 
   t = t.stripWhiteSpace();
 
-  while ( !t.isEmpty() ) {
-  	
-  	int i = 0;
-  	while ( !t[i].isSpace() && !t[i].isNull() && t[i] != '=' )	i++;
-  	
-  	QString attr = t.left(i);
-  	QString *value = new QString();
-  	
-  	t = t.remove(0,i).stripWhiteSpace();
-  	
-  	if ( t[0] == '=' ) {
+  while ( !t.isEmpty() )
+  {
+    int i = 0;
+    while ( !t[i].isSpace() && !t[i].isNull() && t[i] != '=' )	i++;
+
+    QString attr = t.left(i);
+    QString *value = new QString();
+
+    t = t.remove(0,i).stripWhiteSpace();
+
+   if ( t[0] == '=' ) {
   		t = t.remove(0,1).stripWhiteSpace();
   		
   		if ( t[0] == '"' ) {
@@ -304,7 +325,7 @@ void TagDialog::parseAttributes( QString attrs )
   		
   	
    }
-   qDebug("attr :%s; value :%s;",attr.data(),value->data() );
+   // qDebug("attr :%s; value :%s;",attr.data(),value->data() );
    dict->insert( attr , value );
  }
   	
@@ -314,9 +335,9 @@ void TagDialog::parseAttributes( QString attrs )
 void TagDialog::insertTag(Document *w, bool insertInLine)
 {
    QString newTag = getAttributeString();
-   newTag = QString("<")+QuantaCommon::tagCase(tag->name())+newTag+">";
+   newTag = QString("<")+QuantaCommon::tagCase(dtdTag->name())+newTag+">";
 
-   QString secondPartOfTag = QString("</")+QuantaCommon::tagCase(tag->name())+">";
+   QString secondPartOfTag = QString("</")+QuantaCommon::tagCase(dtdTag->name())+">";
 
    if ( !insertInLine )
    {
@@ -326,7 +347,7 @@ void TagDialog::insertTag(Document *w, bool insertInLine)
     secondPartOfTag = "\n" + space + secondPartOfTag;
    }
 
-   if ( (!useCloseTag) || (tag->isSingle()) )
+   if ( (!useCloseTag) || (dtdTag->isSingle()) )
    {
     secondPartOfTag = "";
    }

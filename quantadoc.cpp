@@ -478,20 +478,21 @@ void QuantaDoc::slotAttribPopup()
   Document *w = write();
 
   attribMenu->clear();
-  w->currentTag();
-  QString tag = w->getTagAttr(0);
+  Tag *tag = w->currentTag();
+  if (!tag) return;
+  QString tagName = tag->name;
   QStrIList attrList = QStrIList();
   QString name;
 
-  for (int i=1; i < w->tagAttrNum; i++ )
-      attrList.append( w->getTagAttr(i) );
+  for (int i=1; i < tag->attrCount; i++ )
+      attrList.append( tag->attribute(i) );
 
-  if ( QuantaCommon::isKnownTag(w->getDTDIdentifier(),tag) )
+  if ( QuantaCommon::isKnownTag(w->getDTDIdentifier(),tagName) )
   {
-    QString caption = QString(i18n("Attributes of <"))+tag+">";
+    QString caption = QString(i18n("Attributes of <"))+tagName+">";
     attribMenu->setTitle( caption );
 
-    AttributeList *list = QuantaCommon::tagAttributes(w->getDTDIdentifier(),tag );
+    AttributeList *list = QuantaCommon::tagAttributes(w->getDTDIdentifier(),tagName );
     uint menuId = 0;
     for ( uint i = 0; i < list->count(); i++ )
     {
@@ -504,7 +505,7 @@ void QuantaDoc::slotAttribPopup()
       menuId++;
     }
 
-    QTag* qtag = QuantaCommon::tagFromDTD(w->getDTDIdentifier(), tag);
+    QTag* qtag = QuantaCommon::tagFromDTD(w->getDTDIdentifier(), tagName);
     for (QStringList::Iterator it = qtag->commonGroups.begin(); it != qtag->commonGroups.end(); ++it)
     {
      QPopupMenu* popUpMenu = new QPopupMenu(attribMenu, (*it).latin1());
@@ -532,21 +533,24 @@ void QuantaDoc::slotAttribPopup()
   }
   else {
     QString message = i18n("Unknown tag: ");
-    message += tag;
+    message += tagName;
     app->slotStatusMsg( message.data() );
   }
+
+  delete tag;
 }
 
 void QuantaDoc::slotInsertAttrib( int id )
 {
   Document *w = write();
-  w->currentTag();
-  QString tag = w->getTagAttr(0);
+  Tag *tag = w->currentTag();
+  if (!tag) return;
+  QString tagName = tag->name;
   
-  if ( QuantaCommon::isKnownTag(w->getDTDIdentifier(),tag) )
+  if ( QuantaCommon::isKnownTag(w->getDTDIdentifier(),tagName) )
   {
     int menuId;
-    AttributeList *list = QuantaCommon::tagAttributes(w->getDTDIdentifier(),tag.data() );
+    AttributeList *list = QuantaCommon::tagAttributes(w->getDTDIdentifier(),tagName.data() );
     menuId = list->count();
     QString attrStr;
     if (id <= menuId)
@@ -554,7 +558,7 @@ void QuantaDoc::slotInsertAttrib( int id )
       attrStr = list->at(id)->name;
     } else
     {
-      QTag* qtag = QuantaCommon::tagFromDTD(w->getDTDIdentifier(), tag);
+      QTag* qtag = QuantaCommon::tagFromDTD(w->getDTDIdentifier(), tagName);
       for (QStringList::Iterator it = qtag->commonGroups.begin(); it != qtag->commonGroups.end(); ++it)
       {
         AttributeList *attrs = qtag->parentDTD->commonAttrs->find(*it);
@@ -569,6 +573,7 @@ void QuantaDoc::slotInsertAttrib( int id )
     w->insertAttrib( attrStr);
   }
 
+  delete tag;
   delete attribMenu;
   attribMenu = new KPopupMenu(i18n("Tag :"));
   connect( attribMenu, SIGNAL(activated(int)), this, SLOT(slotInsertAttrib(int)));

@@ -21,42 +21,45 @@
 // app includes
 #include "structtreetag.h"
 #include "../parser/tag.h"
+#include "../parser/node.h"
 
 
 StructTreeTag::StructTreeTag(QListView *parent, QString name )
 	: QListViewItem(parent,name)
 {
-	pos1 = pos2 = 1;
+	node = 0L;
 	
 }
 
-StructTreeTag::StructTreeTag(StructTreeTag *parent, Tag *tag, QString name )
+StructTreeTag::StructTreeTag(StructTreeTag *parent, Node *p_node, QString name )
 	: QListViewItem(parent,name)
 {
-	pos1 = pos2 = 1;
+	node = p_node;
 	
+  if (!node) return;
+  Tag *tag = node->tag;
 	QString sname(name);
 	QString space = " ";
 	
 	if ( sname.left(4) == "font" ) {
 		setPixmap( 0, UserIcon("tag_font_small") );
-		if ( tag->attrcount )
-			setText(0, space + tag->attr[0] + "=" + tag->value[0]);
+		if ( tag->attrCount )
+			setText(0, space + tag->attribute(0) + "=" + tag->attributeValue(0));
 		else
 			setText(0,"");
 	} else
 	
 	if ( sname.left(3) == "img" ) {
 		setPixmap( 0, SmallIcon("image") );
-		setText(0, space + tag->attrValue("src") );
+		setText(0, space + tag->attributeValue("src") );
 	} else
 		
 	if ( sname == "a" ) {
 		setPixmap( 0, SmallIcon("www") );
-		if ( tag->haveAttrib("href") )
-			setText(0,space + "href "+ tag->attrValue("href"));
-		if ( tag->haveAttrib("name") )
-			setText(0,space + "name "+ tag->attrValue("name"));	
+		if ( tag->hasAttribute("href") )
+			setText(0,space + "href "+ tag->attributeValue("href"));
+		if ( tag->hasAttribute("name") )
+			setText(0,space + "name "+ tag->attributeValue("name"));	
 	} else
 		
 	/*
@@ -95,7 +98,7 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, Tag *tag, QString name )
 StructTreeTag::StructTreeTag(StructTreeTag *parent, QString name )
 	: QListViewItem(parent,name)
 {
-  pos1 = pos2 = 1;
+  node = 0L;
 }
 
 

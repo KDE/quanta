@@ -63,7 +63,7 @@ CSSEditor::~CSSEditor()
 /** Show the window to add a selector */
 void CSSEditor::slotAddSelector()
 {
-	CSSSelectorEditor* dlg = new CSSSelectorEditor ("", this,
+	CSSSelectorEditor* dlg = new CSSSelectorEditor ("", false, this,
 		i18n ("Insert a new selector"));
 	if (dlg->exec()) {
 		selectors += dlg->code();
@@ -81,7 +81,7 @@ void CSSEditor::slotEditSelector()
 		i18n ("Sorry, but you must select an item before trying to edit it."));
 		return;
 	}
-	CSSSelectorEditor* dlg = new CSSSelectorEditor (selectors[i], this,
+	CSSSelectorEditor* dlg = new CSSSelectorEditor (selectors[i], false, this,
 		i18n ("Edit an existing CSS selector"));
 	if (dlg->exec()) {
 		selectors[i] = dlg->code();
@@ -143,7 +143,7 @@ void CSSEditor::slotShowSelectors()
 QString CSSEditor::code()
 {
 	QString text = "";
-	for (int i = 0; i < selectors.size(); i++)
+	for (unsigned i = 0; i < selectors.size(); i++)
 		text += selectors[i] + "\n";
 	return text;
 }
