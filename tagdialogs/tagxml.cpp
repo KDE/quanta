@@ -99,8 +99,11 @@ Tagxml::Tagxml( QDomDocument &d, QWidget *parent, const char *name)
      if ( n.nodeName() == "attr" ) //an attribute
      {
 
+     		QDomElement el = n.toElement();
+        QString type = el.attribute("type","input");
+
      	  QDomElement ltext = findChild(n,"text").toElement();
-     	  if ( !ltext.isNull() ) //if there is a text label for the attribute
+     	  if ( !ltext.isNull() && (type!="check") ) //if there is a text label for the attribute
         {
      	    QLabel *label = new QLabel(this);
      	  	label->setText( ltext.text() );
@@ -112,8 +115,6 @@ Tagxml::Tagxml( QDomDocument &d, QWidget *parent, const char *name)
           grid->addMultiCellWidget( label, textrow, textrow+textrowspan, textcol,  textcol+textcolspan );
         }
 
-     		QDomElement el = n.toElement();
-        QString type = el.attribute("type","input");
 
         //look for the different attribute types
         if ( type == "input" )
