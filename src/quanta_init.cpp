@@ -870,7 +870,7 @@ void QuantaInit::initActions()
                         ac, "configure_actions" );
 
     KStdAction::keyBindings      ( m_quanta, SLOT( slotOptionsConfigureKeys() ), ac, "configure_shortcuts" );
-    KStdAction::configureToolbars( m_quanta, SLOT( slotOptionsConfigureToolbars() ), ac, "configure_toolbars" );
+    KStdAction::configureToolbars( m_quanta, SLOT( slotOptionsConfigureToolbars() ), ac, "options_configure_toolbars" );
     KStdAction::preferences      ( m_quanta, SLOT( slotOptions() ), ac, "general_options" );
 
     // Toolbars actions

@@ -1011,7 +1011,10 @@ void QuantaApp::slotConfigureToolbars(const QString& defaultToolbar)
  saveMainWindowSettings(KGlobal::config(), autoSaveGroup());
  KEditToolbar *dlg;
 #if KDE_IS_VERSION(3,1,90)
-  dlg = new KEditToolbar(defaultToolbar, factory(), this);
+  if (defaultToolbar)
+    dlg = new KEditToolbar(defaultToolbar, factory(), this);
+  else
+    dlg = new KEditToolbar(factory(), this);
 #else
   dlg = new KEditToolbar(factory(), this);
 #endif
