@@ -1,13 +1,13 @@
 <tip category="IO">
 <html>
-<p>...that you can use ftp for file operations by using
+<p>...that you can use ftp for file operations by using 
 <b>ftp://user:pwd@domain/path</b> in the file dialog?
 </html>
 </tip>
 
 <tip category="IO">
 <html>
-<p>...that you can use SSH/SCP for file operations by using
+<p>...that you can use SSH/SCP for file operations by using 
 <b>fish://user@domain/path</b> in the file dialog?
 </html>
 </tip>
@@ -15,14 +15,14 @@
 <tip category="Editor">
 <html>
 <p>...that you can turn on line numbering and the icon border
-by default from <b>Settings &gt;Configure Editor::Defaults</b>?
+by default from <b>Sebings&gt;Configure editor::Defaults</b>?
 </html>
 </tip>
 
 <tip category="Application">
 <html>
 <p>...that you can create actions that will run scripts from
- <b>Settings &gt; Configure Actions</b> and place them on the toolbar?
+ <b>Sebings&gt;Configure Actions</b> and place them on the toolbar?
 </html>
 </tip>
 
@@ -35,14 +35,14 @@ specific?
 
 <tip category="Project">
 <html>
-<p>...that you can create remote projects and manage them with the
+<p>...that you can create remote projects and manage them with the 
  <b>kio slave of your choice</b>?
 </html>
 </tip>
 
 <tip category="Project">
 <html>
-<p>...that you can open and close groups of files in projects with
+<p>...that you can open and close groups of files in projects with 
  <b>Project Views</b>? You can even include project toolbars in the views.
 </html>
 </tip>
@@ -50,7 +50,7 @@ specific?
 <tip category="Application">
 <html>
 <p>...that you can view a summary of PHP classes, functions and variables
-in the structure tree with <b>RMB Show Groups For &gt; PHP</b>?
+in the structure tree with <b>RMB Show Groups For&gt;PHP</b>?
 </html>
 </tip>
 
@@ -60,3 +60,11 @@ in the structure tree with <b>RMB Show Groups For &gt; PHP</b>?
 </html>
 </tip>
 
+
+<tip category="Application">
+<html>
+<p>...that you can cause make Quanta open files from Konqueror into the
+  currently open window by adding a <b>--unique</b> switch to your .desktop
+  file or menu entry? It would look like this: '[path/]quanta --unique'.
+</html>
+</tip>
