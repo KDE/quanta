@@ -370,6 +370,8 @@ void QuantaView::slotTagMisc()
   {
     QString tag;
     element = miscWidget->elementName->text();
+    element.remove('<');
+    element.remove('>');
     if ( !element.isEmpty())
     {
       tag += "<" + QuantaCommon::attrCase(element)+">";
