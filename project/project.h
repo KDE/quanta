@@ -145,6 +145,7 @@ signals:
   void newProjectLoaded();
   /** No descriptions */
   void templateURLChanged(const KURL &);
+  void hideSplash();
 
 public:
   QDomDocument dom;

@@ -22,6 +22,7 @@
 #include <kuniqueapplication.h>
 
 class KCmdLineArgs;
+class QMouseEvent;
 
 class KSplash : public QFrame
 {
@@ -31,6 +32,9 @@ class KSplash : public QFrame
     KSplash();
     ~KSplash();
 
+  protected:
+    virtual void mouseReleaseEvent(QMouseEvent * e);
+
 };
 
 class KQApplicationPrivate
@@ -38,10 +42,10 @@ class KQApplicationPrivate
   public:
     KQApplicationPrivate() {};
     ~KQApplicationPrivate() {};
-    
+
   protected:
     void init();
-   
+
     KSplash *splash;
     KCmdLineArgs *args;
 };
@@ -53,7 +57,7 @@ class KQApplication : public KApplication, KQApplicationPrivate
   public:
     KQApplication();
     ~KQApplication();
-  public slots:  
+  public slots:
     /** No descriptions */
     void slotInit();
 

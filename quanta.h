@@ -186,6 +186,8 @@ public:
 signals: // Signals
   /** The tree views should be updated due to some changes on the disk. */
   void reloadTreeviews();
+  /** signal used to hide the splash screen */
+  void showSplash(bool);
 
 public slots:
   /** Delayed initialization. */
@@ -357,6 +359,8 @@ public slots:
   void slotAutosaveTimer();
 
   void slotLoadDTD();
+
+  void slotHideSplash() {emit showSplash(false);}
 
 protected slots:
   /** No descriptions */

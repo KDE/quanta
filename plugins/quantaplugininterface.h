@@ -58,10 +58,14 @@ public:
   virtual QStringList searchPaths();
   /** Sets the search paths */
   virtual void setSearchPaths(QStringList);
+
 protected:
   void readConfigFile(const QString& configFile);
 
   QDict<QuantaPlugin> m_plugins;
+
+signals:
+  void hideSplash();
 };
 
 #endif

@@ -16,6 +16,7 @@
     Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, US
 */
 
+#include <qevent.h>
 #include <qtimer.h>
 
 #include <kwin.h>
@@ -57,6 +58,11 @@ KSplash::~KSplash()
 {
 }
 
+void KSplash::mouseReleaseEvent(QMouseEvent *e)
+{
+  setShown(false);
+}
+
 KQApplication::KQApplication()
  : KApplication()
 {
@@ -78,7 +84,10 @@ KQApplication::KQApplication()
      KConfig *config = quantaApp->config();
      config->setGroup("General Options");
      if (config->readBoolEntry("Show Splash", true) && args->isSet("logo"))
-         splash = new KSplash();
+     {
+       splash = new KSplash();
+       connect(quantaApp, SIGNAL(showSplash(bool)), splash, SLOT(setShown(bool)));
+     }
      setMainWidget(quantaApp);
      slotInit();
    }
@@ -124,7 +133,10 @@ int KQUniqueApplication::newInstance()
     KConfig *config = quantaApp->config();
     config->setGroup("General Options");
     if (config->readBoolEntry("Show Splash", true) && args->isSet("logo"))
-        splash = new KSplash();
+    {
+      splash = new KSplash();
+      connect(quantaApp, SIGNAL(showSplash(bool)), splash, SLOT(setShown(bool)));
+    }
     setMainWidget(quantaApp);
     slotInit();
   }
@@ -155,9 +167,6 @@ void KQApplicationPrivate::init()
       else
         initialFiles += arg;
     }
-    delete splash;
-    splash = 0L;
-    
     quantaApp->loadInitialProject(initialProject);
     quantaApp->recoverCrashed();
     for(QStringList::Iterator it = initialFiles.begin();it != initialFiles.end();++it)

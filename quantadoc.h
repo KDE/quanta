@@ -88,6 +88,7 @@ public slots:
 signals:
   void newStatus();
   void title(QString);
+  void hideSplash();
 
 private:
   KPopupMenu *attribMenu;

@@ -177,6 +177,8 @@ void QuantaApp::initQuanta()
   readOptions();
 
   m_pluginInterface = new QuantaPluginInterface();
+  connect(m_pluginInterface, SIGNAL(hideSplash()), SLOT(slotHideSplash()));
+  m_pluginInterface->readConfig();
 
   createGUI( QString::null, false /* conserveMemory */ );
 
@@ -259,6 +261,9 @@ void QuantaApp::initQuanta()
    m_config->sync();
   }
   qConfig.backedupFilesEntryList = m_config->readEntry("List of backedup files",qConfig.backedupFilesEntryList);
+
+  connect(m_doc, SIGNAL(hideSplash()), SLOT(slotHideSplash()));
+  connect(m_project, SIGNAL(hideSplash()), SLOT(slotHideSplash()));
 }
 
 
@@ -2185,6 +2190,7 @@ void QuantaApp::recoverCrashed()
        delete item;
        if (QFileInfo(autosavedVersion.path()).exists())
        {
+          emit showSplash(false);
           DirtyDlg *dlg = new DirtyDlg(autosavedVersion.path(), originalVersion.path(), false, this);
           dlg->setCaption(i18n("Restore file"));
           dlg->textLabel->setText(i18n("<qt>A backup copy of a file was found:<br><br>"

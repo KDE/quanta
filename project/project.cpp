@@ -376,6 +376,7 @@ void Project::slotOpenProject(const KURL &url)
   {
     if ( !QExtFileInfo::exists(url) )
     {
+      emit hideSplash();
       if (KMessageBox::questionYesNo( this,
            i18n("<qt>The file <b>%1</b> does not exist.<br> Do you want to remove it from the list?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)) )
            == KMessageBox::Yes)
@@ -476,6 +477,7 @@ void Project::slotLoadProject(const KURL &a_url)
 
   if (!url.isValid())
   {
+      emit hideSplash();
       KMessageBox::sorry(this, i18n("<qt>Malformed URL: <b>%1</b></qt>").arg(url.prettyURL()));
   } else
   {
@@ -511,11 +513,13 @@ void Project::slotLoadProject(const KURL &a_url)
         emit newProjectLoaded();
       } else
       {
+        emit hideSplash();
         KMessageBox::error(this, i18n("<qt>Cannot open the file <b>%1</b> for reading.</qt>").arg(tmpName));
       }
       KIO::NetAccess::removeTempFile( tmpName);
     } else
     {
+      emit hideSplash();
       KMessageBox::error(this,i18n("<qt>Cannot access the project file <b>%1</b>.</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)));
     }
   }
@@ -531,6 +535,7 @@ void Project::loadProjectXML()
 
   if ( projectNode.isNull() || projectName.isEmpty() )
   {
+    emit hideSplash();
     KMessageBox::sorry( this, i18n("Invalid project file.") );
     return;
   }
