@@ -1,7 +1,7 @@
 /****************************************************************************
-** Form implementation generated from reading ui file 'iface.ui'
+** Form implementation generated from reading ui file 'ftp-client-2.ui'
 **
-** Created: Fri Jan 12 17:23:34 2001
+** Created: Fri Jan 12 20:05:00 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!

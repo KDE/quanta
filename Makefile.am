@@ -18,7 +18,6 @@ quanta_LDADD = \
 		$(top_srcdir)/quanta/widgets/libwidgets.a\
 		$(top_srcdir)/quanta/toolbar/libtoolbar.a\
 		$(top_srcdir)/quanta/phpdebug/libphpdebug.a\
-		$(top_srcdir)/quanta/plugins/ftpclient/libftpclient.la\
 		-lSM -lICE\
 		-lX11 $\
 		-lpng -lz -lm\
