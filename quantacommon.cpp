@@ -131,7 +131,7 @@ bool QuantaCommon::isKnownTag(QString dtdName, QString tag)
 
 AttributeList*  QuantaCommon::tagAttributes(QString dtdName, QString tag)
 {
-  AttributeList* attrs;
+  AttributeList* attrs = 0L;
 
   DTDStruct* dtd = dtds->find(dtdName);
   if (dtd)
@@ -208,9 +208,14 @@ QStringList* QuantaCommon::tagAttributeValues(QString dtdName, QString tag, QStr
 {
   AttributeList* attrs = tagAttributes(dtdName, tag); 
   Attribute *attr;
-  for ( attr = attrs->first(); attr; attr = attrs->next() ) {
-    if (attr->name == attribute) {
-      return &attr->values;
+  if (attrs)
+  {
+    for ( attr = attrs->first(); attr; attr = attrs->next() )
+    {
+      if (attr->name == attribute)
+      {
+        return &attr->values;
+      }
     }
   }
   return 0L;
