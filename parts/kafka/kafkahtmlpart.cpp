@@ -2149,7 +2149,7 @@ void KafkaWidget::removeSelection()
     cursorPos->setCursorNode(cursorNode);
     cursorPos->setCursorOffset(cursorOffset);
     
-    ViewManager::ref()->activeDocument()->docUndoRedo->addNewModifsSet(m_modifs, undoRedo::NodeTreeModif);
+    ViewManager::ref()->activeDocument()->docUndoRedo->addNewModifsSet(m_modifs, undoRedo::NodeTreeModif, cursorPos);
 
     delete cursorPos;
 
