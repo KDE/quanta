@@ -392,3 +392,37 @@ void QuantaCommon::dirCreationError(QWidget *widget, const KURL& url)
                            .arg(url.prettyURL())
                            .arg(url.protocol()+"://"+url.user()+"@"+url.host()));
 }
+
+/** Returns the translated a_str in English. A "back-translation" useful e.g in case of CSS elements selected from a listbox. */
+QString QuantaCommon::i18n2normal(const QString& a_str)
+{
+//TODO: a QMap lookup would be faster, but we need a pre-built QMap<QString,QString>
+  const int keywordNum = 15 *5;
+  const QString keywords[keywordNum] =
+                            {"normal",  "italic",  "oblique",   "serif",      "sans-serif",
+                             "cursive", "fantasy", "monospace", "small-caps", "lighter",
+                             "bold",    "bolder",  "xx-small",  "x-small",    "small",
+                             "medium",  "large",   "x-large",   "xx-large",   "smaller",
+                             "larger",  "repeat",  "repeat-x",  "repeat-y",   "no-repeat",
+                             "scroll",  "fixed",   "top",       "center",     "bottom",
+                             "left",    "right",   "none",      "underline",  "overline"
+                             "line-through", "blibk", "justify","baseline",   "sub",
+                             "super",   "text-top","text-bottom","capitalize","uppercase",
+                             "lowercase","thin",   "thick",  "[length value]","dotted",
+                             "dashed",  "solid",   "double",    "groove",     "ridge",
+                             "inset",   "outset",  "block",     "inline",     "list-item",
+                             "none",    "pre",     "nowrap",    "disc",       "circle",
+                             "square",  "decimal", "lower-roman","upper-roman","lower-alpha",
+                             "upper-alpha","inside","outside",  "auto",        "both" };
+  QString str = a_str;                             
+  for (int i = 0; i < keywordNum; i++)
+  {
+    if (a_str == i18n(keywords[i]))
+    {
+      str = keywords[i];
+      break;
+    }
+  }  
+
+  return str;  
+}

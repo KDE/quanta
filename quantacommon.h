@@ -129,6 +129,8 @@ pointer must be deleted by the caller!! */
   static QString qUrl(const KURL& url);
   /** No descriptions */
   static void dirCreationError(QWidget *widget, const KURL& url);
+  /** Returns the translated a_str in English. A "back-translation" useful e.g in case of CSS elements selected from a listbox. */
+  static QString i18n2normal(const QString& a_str);
 
 };
 
