@@ -798,9 +798,15 @@ void QuantaApp::repaintPreview( bool clear )
 	
 	if ( project->hasProject() && !project->previewPrefix.isEmpty() )
 	{
+		static QString oldname = "";
+		if ( clear )   oldname = "";
+		
 		fname = doc->write()->fileName();
 		fname = QExtFileInfo::toRelative( fname, project->basePath );
 		if ( fname.left(2) != ".." ) usePrefix = true;
+		
+		if ( fname == oldname && !doc->isModified() ) return;
+		else oldname = fname;
 	}
 
   QWidgetStack *s = (QWidgetStack *)part-> parent();
@@ -819,23 +825,24 @@ void QuantaApp::repaintPreview( bool clear )
 
   int xOffset = html->contentsX(), yOffset = html->contentsY();
 
-	part->closeURL();
-	
 	if ( usePrefix )
 	{
+   	if ( doc->isModified() ) doc->saveDocument( doc->getAbsFilePath() );
+	
+   	KParts::URLArgs args(true, browserExtension()->xOffset(), browserExtension()->yOffset());
+   	browserExtension()->setURLArgs( args );
+
+		part->closeURL();
 		part->begin( project->previewPrefix+fname, xOffset, yOffset );
-		if ( clear )	part->openURL( part->url() );
-		else				  part->openURL( KURL( project->previewPrefix+fname ) );
+		part->openURL( KURL( project->previewPrefix+fname ) );
 		part->end();
 	}
 	else {
+		part->closeURL();
 		part->begin( KURL( doc->basePath() ), xOffset, yOffset );
-  	if ( text.isNull() )	part->write( "" );
-  	else									part->write( text );
+  	part->write( text );
 		part->end();
 	}
-
-  part->show();
 
   oldtext = text;
 }

@@ -30,6 +30,9 @@
 #include <kapp.h>
 #include <ktmainwindow.h>
 #include <kaccel.h>
+#include <khtml_part.h>
+#include "widgets/whtmlpart.h"
+#include <kparts/browserextension.h>
 
 // forward declaration of the Quanta classes
 class QuantaDoc;
@@ -288,6 +291,11 @@ class QuantaApp : public KTMainWindow
 	  void slotSelectMessageWidget();
 	  void slotDisableMessageWidget();
 
+	protected:
+	  KParts::BrowserExtension *browserExtension() {
+      return static_cast<KParts::BrowserExtension *>(((KParts::ReadOnlyPart *)htmlPart())->child( 0L, "KParts::BrowserExtension" ));
+    }
+	
   private:
     /** project class */
     Project *project;
