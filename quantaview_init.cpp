@@ -43,7 +43,6 @@
 #include "kwrite/highlight/highlight.h"
 
 #include <kaction.h>
-#include "quanta_actions.h"
 #include "toolbar/tagaction.h"
 
 QuantaView::QuantaView( QuantaApp *app, QWidget *parent, const char *name )
@@ -170,7 +169,7 @@ void QuantaView::initActions()
                         this, SLOT( slotPasteURLEncoded() ),
                         actionCollection, "edit_paste_url_encoded" );
                         
-    (void) new KAction( i18n( "Insert CSS..." ), 0,
+    (void) new KAction( i18n( "Insert CSS..." ),"mini-modules", 0,
                         this, SLOT( slotInsertCSS() ),
                         actionCollection, "insert_css" );
                         

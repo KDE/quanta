@@ -43,8 +43,7 @@ quanta_SOURCES = \
 		quantadoc.cpp\
 		quantaview.cpp\
 		quantaview_init.cpp\
-		quantaview_slots.cpp\
-		quanta_actions.cpp
+		quantaview_slots.cpp
 EXTRA_DIST = \
 		document.cpp\
 		document.h\
@@ -62,9 +61,8 @@ EXTRA_DIST = \
 		quantaview_init.cpp\
 		quantaview_slots.cpp\
 		resource.h\
-		quanta_actions.cpp\
-		quanta_actions.h\
-		quantaui.rc
+		quantaui.rc\
+		newstuff.h
 ##############################################################
 ####                  END KDEStudio part                  ####
 #2########################################################!@#$
