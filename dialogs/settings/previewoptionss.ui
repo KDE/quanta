@@ -156,37 +156,18 @@
                         </property>
                         <widget class="QRadioButton" row="0" column="0">
                             <property name="name">
-                                <cstring>radioRight</cstring>
+                                <cstring>radioEditor</cstring>
                             </property>
                             <property name="text">
-                                <string>Right</string>
+                                <string>Editor area</string>
                             </property>
                         </widget>
                         <widget class="QRadioButton" row="1" column="0">
                             <property name="name">
-                                <cstring>radioBottom</cstring>
+                                <cstring>radioToolview</cstring>
                             </property>
                             <property name="text">
-                                <string>Bottom</string>
-                            </property>
-                        </widget>
-                        <widget class="QRadioButton" row="2" column="0">
-                            <property name="name">
-                                <cstring>radioFullworkspace</cstring>
-                            </property>
-                            <property name="enabled">
-                                <bool>false</bool>
-                            </property>
-                            <property name="text">
-                                <string>Full workspace</string>
-                            </property>
-                        </widget>
-                        <widget class="QRadioButton" row="3" column="0">
-                            <property name="name">
-                                <cstring>radioDisabled</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Disabled</string>
+                                <string>Separate toolview</string>
                             </property>
                         </widget>
                     </grid>

@@ -19,7 +19,6 @@
       <part>KDevDoxygen</part>
       <part>KDevdistpart</part>
       <part>KDevPerforce</part>
-      <part>KDevQuickOpen</part>
     </ignoreparts>
     <projectdirectory>.</projectdirectory>
     <absoluteprojectpath>false</absoluteprojectpath>

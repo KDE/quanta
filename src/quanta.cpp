@@ -3,7 +3,7 @@
                              -------------------
     begin                : ?? ???  9 13:29:57 EEST 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon <pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com>
-                           (C) 2001-2003 by Andras Mantia <amantia@kde.org>
+                           (C) 2001-2004 by Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -767,8 +767,6 @@ void QuantaApp::slotRepaintPreview()
 
 void QuantaApp::slotOpenFileInPreview(const KURL& a_url)
 {
-  if ( qConfig.previewPosition == "Disabled" )
-     return;
   WHTMLPart *part = m_htmlPart;
   if ( !part  )
      return;
@@ -780,9 +778,6 @@ void QuantaApp::slotOpenFileInPreview(const KURL& a_url)
 /** view image in preview */
 void QuantaApp::slotImageOpen(const KURL& url)
 {
-  if ( qConfig.previewPosition == "Disabled" )
-     return;
-
   slotShowPreviewWidget(true);
   WHTMLPart *part = m_htmlPart;
   QString text = "<html>\n<body>\n<div align=\"center\">\n<img src=\"";
@@ -1217,6 +1212,7 @@ void QuantaApp::slotOptions()
 
 //    checkCommand( ID_VIEW_PREVIEW, false );
 
+    slotShowPreviewWidget(false);
     qConfig.previewPosition = previewOptions->position();
 
     QString layout = previewOptions->layout();
@@ -1246,16 +1242,32 @@ void QuantaApp::slotShowPreviewWidget(bool show)
   if (!view) return;
   if (show)
   {
-    view->addCustomWidget(m_htmlPart->view(), QString::null);
+    if (qConfig.previewPosition == "Editor")
+    {
+      view->addCustomWidget(m_htmlPart->view(), QString::null);
+    } else
+    {
+      m_htmlPart->view()->setIcon(UserIcon("preview"));
+      m_htmlPart->view()->setCaption(i18n("Preview"));
+      KMdiToolViewAccessor* p = addToolWindow(m_htmlPart->view(), KDockWidget::DockBottom, getMainDockWidget());
+      m_htmlPart->view()->show();
+      p->show();
+    }
     m_previewVisible = true;
   } else
   {
-    view->addCustomWidget(0L, QString::null);
     m_htmlPart->view()->reparent(this, 0, QPoint(), false);
     m_htmlPart->view()->resize(0, 0);
     m_htmlPart->view()->hide();
     m_previewVisible = false;
     m_noFramesPreview = false;
+    if (qConfig.previewPosition == "Editor")
+    {
+      view->addCustomWidget(0L, QString::null);
+    } else
+    {
+      deleteToolWindow(m_htmlPart->view());
+    }
     if (view)
       view->document()->setFocus();
   }
@@ -3652,7 +3664,7 @@ void QuantaApp::saveOptions()
     m_config->writeEntry("Default encoding", qConfig.defaultEncoding);
     m_config->writeEntry("Default DTD", qConfig.defaultDocType);
 
-    m_config->writeEntry("Preview position", qConfig.previewPosition);
+    m_config->writeEntry("Preview area", qConfig.previewPosition);
     m_config->writeEntry("Window layout", qConfig.windowLayout);
     m_config->writeEntry("Follow Cursor", StructTreeView::ref()->followCursor() );
     //If user choose the timer interval, it needs to restart the timer too

@@ -511,7 +511,7 @@ void QuantaInit::readOptions()
 
   StructTreeView::ref()->setFollowCursor( m_config->readBoolEntry("Follow Cursor", true));
 
-  qConfig.previewPosition   = m_config->readEntry("Preview position","Right");
+  qConfig.previewPosition   = m_config->readEntry("Preview area","Editor");
 
   QSize s(800,580);
   m_quanta->resize( m_config->readSizeEntry("Geometry", &s));

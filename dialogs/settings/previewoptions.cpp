@@ -26,13 +26,9 @@
 PreviewOptions::PreviewOptions(QWidget *parent, const char *name)
   : PreviewOptionsS(parent,name)
 {
-  connect(radioBottom, SIGNAL(toggled(bool)),
+  connect(radioEditor, SIGNAL(toggled(bool)),
           this,  SLOT(slotTogglePreview()));
-  connect(radioRight, SIGNAL(toggled(bool)),
-          this,  SLOT(slotTogglePreview()));
-  connect(radioDisabled, SIGNAL(toggled(bool)),
-          this,  SLOT(slotTogglePreview()));
-  connect(radioFullworkspace, SIGNAL(toggled(bool)),
+  connect(radioToolview, SIGNAL(toggled(bool)),
           this,  SLOT(slotTogglePreview()));
   connect(radioDefault, SIGNAL(toggled(bool)),
           this,  SLOT(slotToggleWindowLayout()));
@@ -54,27 +50,20 @@ void PreviewOptions::setWindowLayout(const QString& layout )
 
 void PreviewOptions::setPosition(const QString& position )
 {
-  radioBottom->setChecked(true);
+  radioEditor->setChecked(true);
 
-  if ( position == "Disabled") radioDisabled->setChecked(true);
-  if ( position == "Bottom"  ) radioBottom->setChecked(true);
-  if ( position == "Right"   ) radioRight->setChecked(true);
-  if ( position == "FWSpace" ) radioFullworkspace->setChecked(true);
+  if ( position == "Editor") radioEditor->setChecked(true);
+  if ( position == "Toolview"  ) radioToolview->setChecked(true);
 }
 
 QString PreviewOptions::position()
 {
   QString position = "Bottom";
 
-  if ( radioBottom->isChecked() )
-      position = "Bottom";
-  if ( radioRight->isChecked() )
-      position = "Right";
-  if ( radioFullworkspace->isChecked() )
-      position = "FWSpace";
-  if ( radioDisabled->isChecked() )
-      position = "Disabled";
-
+  if ( radioEditor->isChecked() )
+      position = "Editor";
+  if ( radioToolview->isChecked() )
+      position = "Toolview";
   return position;
 }
 
@@ -91,14 +80,10 @@ QString PreviewOptions::layout()
 
 void PreviewOptions::slotTogglePreview()
 {
-  if ( radioBottom->isChecked() )
+  if ( radioToolview->isChecked() )
       pixmap->setPixmap( UserIcon("preview1") );
-  if ( radioRight->isChecked() )
+  if ( radioEditor->isChecked() )
       pixmap->setPixmap( UserIcon("preview2") );
-  if ( radioFullworkspace->isChecked() )
-      pixmap->setPixmap( UserIcon("preview3") );
-  if ( radioDisabled->isChecked() )
-      pixmap->setPixmap( UserIcon("preview4") );
 }
 
 void PreviewOptions::slotToggleWindowLayout()
