@@ -188,7 +188,12 @@ void QuantaDoc::slotOpeningCompleted()
 
   w->createTempFile();
   w->view()->setFocus();
-
+  QuantaView *view = ViewManager::ref()->activeView();
+  if (view)
+  {
+     view->setMDICaption(w->url().prettyURL());
+     view->setCaption(w->url().fileName());
+  }
   quantaApp->processDTD();
   quantaApp->reparse(true);
 
