@@ -554,7 +554,8 @@ void Document::changeTag(Tag *tag, QDict<QString> *dict )
 // return global( on the desktop ) position of text cursor
 QPoint Document::getGlobalCursorPos()
 {
-  return kate_view->mapToGlobal(viewCursorIf->cursorCoordinates());
+ // return kate_view->mapToGlobal(viewCursorIf->cursorCoordinates());
+  return viewCursorIf->cursorCoordinates();
 }
 
 void Document::insertAttrib(QString attr)

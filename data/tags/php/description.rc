@@ -25,6 +25,8 @@ StructEndStr = }
 StructRx = \\{|\\}
 StructGroupsCount = 4
 
+CommentsRx = //[^\n]*|/\*.*\*/
+
 [StructGroup_1]
 Name = Inclusions
 No_Name = No Inclusions

@@ -48,6 +48,7 @@
 #if KDE_VERSION >= 308
 #include <ktexteditor/encodinginterface.h>
 #include <ktexteditor/dynwordwrapinterface.h>
+#include <ktexteditor/editorchooser.h>
 #endif
 
 #include <kparts/componentfactory.h>
@@ -425,11 +426,19 @@ Document* QuantaDoc::newWrite()
   QString fname;
   while ( isOpened(fname.sprintf("Untitled%i."+dtd->defaultExtension,i))) i++;
   
+#if KDE_VERSION > 308  
+  KTextEditor::Document *doc = KTextEditor::createDocument ("libkatepart", this, "Kate::Document");
+/*                               KTextEditor::EditorChooser::createDocument(
+                                quantaApp->view->writeTab,
+                                "KTextEditor::Document"
+                                );*/
+#else
   KTextEditor::Document *doc = KParts::ComponentFactory::createPartInstanceFromQuery<KTextEditor::Document>(
                                "KTextEditor/Document",
                                QString::null,
                                quantaApp->view->writeTab, 0,
                                quantaApp->view->writeTab, 0 );
+#endif                               
 
   Document *w = new Document(quantaApp->projectBaseURL(), doc, quantaApp->getProject(),
                              quantaApp->m_pluginInterface, quantaApp->view->writeTab);

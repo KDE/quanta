@@ -116,6 +116,11 @@ BooleanAttributes = simple
 Single Tag Style = html
 StructGroupsCount = 2
 
+InsideDTDs = PHP
+SpecialAreas = <!-- -->, <? ?>, <* *>
+SpecialAreaNames = comment, php, php
+SpecialTags = script(language), style(css)
+
 [StructGroup_1]
 Name = Images
 No_Name = No Images
@@ -127,3 +132,8 @@ Name = Links
 No_Name = No Links
 Icon = www
 Tag = a(name,href)
+
+
+
+
+

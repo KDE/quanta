@@ -30,6 +30,7 @@
 #include <qdict.h>
 #include <qptrlist.h>
 #include <qstringlist.h>
+#include <qregexp.h>
 
 //app includes
 
@@ -75,6 +76,21 @@ typedef struct DTDStruct
      QString singleTagStyle;          //"xml" or "html" (<tag/> or <tag>)
      QString defaultAttrType;         //"input", "string" or whatever
      
+/****************** FOR THE NEW PARSER **********************/     
+     //special, not to be parsed areas. It is the area of the nested DTD's (script, css) and
+     //special area like comments
+     QStringList specialAreaBegin;    
+     QStringList specialAreaEnd;
+     QRegExp     specialAreaStartRx;
+     QStringList specialAreaNames;
+     
+     QStringList specialTags;
+     QStringList specialTagNames;
+     
+     QStringList insideDTDs;
+     
+     QString     commentsRxStr;
+/****************** END FOR THE NEW PARSER **********************/
      
      QString structKeywordsRx;        //regular expression to match the keywords that can appear before a structrue
      QString structRx;

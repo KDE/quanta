@@ -94,17 +94,23 @@ public:
   /** Return the index of attr. */
   int attributeIndex(QString attr);
 	
-  enum TokenType {Unknown = 0, XmlTag,  XmlTagEnd, Text, Comment, CSS, ScriptTag, ScriptStructureBegin, ScriptStructureEnd, Skip = 100 }; // types of token
+  enum TokenType {Unknown = 0, XmlTag,  XmlTagEnd, Text, Comment, CSS, ScriptTag, ScriptStructureBegin, ScriptStructureEnd, NeedsParsing = 500, Skip = 1000 }; // types of token
+
+  //TODO: write setting/retrieving methods for the below attributes, and add
+  //them the m_ prefix
 	QString name;
   int type;   //one of the TokenType
 	bool single; // tags like <tag />
   bool closingMissing; //closing tag is optional and missing
   int attrCount;
+  QString parsingDTDName;
+
 private:
   int beginLine; //where the tag begins in the doc
   int beginCol;
   int endLine;   //where the tag ends in the doc
   int endCol;
+  
   TagAttr attrs[MAX_ATTR_NUM];  //attributes in a tag
   QString m_tagStr;   //the tag in string format (as it is in the document)
   Document *m_write;  //the document

@@ -194,22 +194,19 @@ QString QuantaCommon::xmlFromAttributes(AttributeList* attributes)
   for ( uint i = 0; i< attributes->count();i++)
   {
     Attribute *attribute = attributes->at(i);
-    QString name = attribute->name.left(1).upper()+attribute->name.right(attribute->name.length()-1);
-
-    stream << "  <attr name=\"" + attribute->name +"\" type=\""+attribute->type+"\"";
-    if (!attribute->defaultValue.isEmpty())
-            stream  << " defaultValue=\"" + attribute->defaultValue + "\"";
-    if (!attribute->status.isEmpty())
-            stream  << " status=\"" + attribute->status + "\"";
-
-    stream << ">" << endl;
-    stream << "    <text>" << name << "</text>" << endl;
-
-    if (attribute->type != "check")
-    {
-      stream  << "    <textlocation col=\"0\" row=\"" << row << "\" />" << endl;
-    }
-    stream  << "    <location col=\"1\" row=\"" << row << "\" />" << endl;
+    QString name = attribute->name.left(1).upper()+attribute->name.right(attribute->name.length()-1);   
+    stream << "  <attr name=\"" + attribute->name +"\"type=\""+attribute->type+"\"";
+    if (!attribute->defaultValue.isEmpty())        
+        stream  << " defaultValue=\"" + attribute->defaultValue + "\"";    
+    if (!attribute->status.isEmpty()) 
+        stream  << " status=\"" + attribute->status + "\"";    
+        stream << ">" << endl;
+        stream << "    <text>" << name << "</text>" << endl;    
+        if (attribute->type != "check")    
+        {      
+          stream  << "    <textlocation col=\"0\" row=\"" << row << "\" />" << endl;    
+        }
+        stream  << "    <location col=\"1\" row=\"" << row << "\" />" << endl;
 
     if (attribute->type == "list")
     {
@@ -229,29 +226,29 @@ QString QuantaCommon::xmlFromAttributes(AttributeList* attributes)
 }
 
 /** Returns list of values for attribute */
-QStringList* QuantaCommon::tagAttributeValues(QString dtdName, QString tag, QString attribute)
-{
+QStringList* QuantaCommon::tagAttributeValues(QString dtdName, QString tag, 
+QString attribute){
   QStringList *values = 0L;
   
   DTDStruct* dtd = dtds->find(dtdName.lower());
   if (dtd)
   {
-    QString searchForAttr = (dtd->caseSensitive) ? attribute : attribute.upper();
-    AttributeList* attrs = tagAttributes(dtdName, tag);
+    QString searchForAttr = (dtd->caseSensitive) ? attribute : 
+attribute.upper();    AttributeList* attrs = tagAttributes(dtdName, tag);
     Attribute *attr;
     if (attrs)
     {
       for ( attr = attrs->first(); attr; attr = attrs->next() )
       {
-        QString attrName = (dtd->caseSensitive) ? attr->name : attr->name.upper();
-        if (attrName == searchForAttr)
+        QString attrName = (dtd->caseSensitive) ? attr->name : 
+attr->name.upper();        if (attrName == searchForAttr)
         {
           if (attr->type == "url") {
             Project *project = quantaApp->getProject();
             if (project->hasProject()) {
-              values = new QStringList(project->fileNameList(true).toStringList());
-              values->append("mailto:" + project->email);
-            } else {
+              values = new 
+QStringList(project->fileNameList(true).toStringList());              
+values->append("mailto:" + project->email);            } else {
               QDir dir = QDir(quantaApp->getDoc()->write()->url().directory());
               values = new QStringList(dir.entryList());
             }
@@ -302,10 +299,10 @@ QString QuantaCommon::getDTDNickNameFromName(QString name)
   return nickName;
 }
 
-  /** Returns 0 if the (line,col) is inside the area specified by the other arguments,
-      -1 if it is before the area and 1 if it is after. */
-int QuantaCommon::isBetween(int line, int col, int bLine, int bCol, int eLine, int eCol)
-{
+  /** Returns 0 if the (line,col) is inside the area specified by the other 
+arguments,      -1 if it is before the area and 1 if it is after. */
+int QuantaCommon::isBetween(int line, int col, int bLine, int bCol, int eLine, 
+int eCol){
   int pos = 0;
   if (line < bLine || (line == bLine && (col < bCol) )) pos = -1; //it is before
   if (line > eLine || (line == eLine && (col > eCol) )) pos = 1;  //it is after
@@ -313,9 +310,9 @@ int QuantaCommon::isBetween(int line, int col, int bLine, int bCol, int eLine, i
  return pos;
 }
 
-/** Returns a pointer to a KStandardDirs object usable for plugin searchup. type is the plugin binary type (exe or lib). The returned 
-pointer must be deleted by the caller!! */
-KStandardDirs* QuantaCommon::pluginDirs(const char *type)
+/** Returns a pointer to a KStandardDirs object usable for plugin searchup. type 
+is the plugin binary type (exe or lib). The returned pointer must be deleted by 
+the caller!! */KStandardDirs* QuantaCommon::pluginDirs(const char *type)
 {
  KStandardDirs *dirs = new KStandardDirs();
  dirs->addKDEDefaults();
@@ -335,8 +332,8 @@ bool QuantaCommon::checkMimeGroup(const KURL& url, const QString& group)
  mimetype = mimetype.section('/',-1);
  for ( it = list.begin(); it != list.end(); ++it )
  {
-    if ( ((*it)->name().contains(group)) && ((*it)->name().find(mimetype) != -1) )
-    {
+    if ( ((*it)->name().contains(group)) && ((*it)->name().find(mimetype) != -1) 
+)    {
       status = true;
       break;
     }
@@ -388,7 +385,31 @@ QString QuantaCommon::qUrl(const KURL &url)
 /** No descriptions */
 void QuantaCommon::dirCreationError(QWidget *widget, const KURL& url)
 {
-  KMessageBox::error(widget, i18n("Can't create directory \n\"%1\".\nCheck that you have write permission in the parent directory orthat the connection to\n\"%2\"\n is valid!")
-                           .arg(url.prettyURL())
-                           .arg(url.protocol()+"://"+url.user()+"@"+url.host()));
+  KMessageBox::error(widget, i18n("Can't create directory \n\"%1\".\nCheck that you have write permission in the parent directory orthat the connection to\n\"%2\"\n is valid!")                           
+                             .arg(url.prettyURL())
+                             .arg(url.protocol()+"://"+url.user()+"@"+url.host()));}
+
+/**
+Adds the backslash before the special chars (like ?, *, . ) so the returned 
+string can be used in regular expressions.*/
+QString QuantaCommon::makeRxCompatible(const QString s)
+{
+  const uint max = 5; 
+  const QRegExp rxs[max]={QRegExp("\\?"),
+                        QRegExp("\\*"),
+                        QRegExp("\\."),
+                        QRegExp("\\^"),
+                        QRegExp("\\$")};
+  const QString strs[max]={QString("\\?"),
+                         QString("\\*"),
+                         QString("\\."),
+                         QString("\\^"),
+                         QString("\\$")};
+  QString str = s;                     
+  for (uint i = 0; i < max - 1; i++)
+  {
+    str.replace(rxs[i], strs[i]);
+  }
+  
+  return str; 
 }

@@ -1079,6 +1079,51 @@ void QuantaApp::readTagDir(QString &dirName)
  dtd->tagsList = tagList;
 
  dtdConfig->setGroup("Extra rules");
+ 
+/**** Code for the new parser *****/
+
+//Which DTD can be present in this one?
+ dtd->insideDTDs = dtdConfig->readListEntry("InsideDTDs");
+ for (uint i = 0; i < dtd->insideDTDs.count(); i++)
+ {
+   dtd->insideDTDs[i] = dtd->insideDTDs[i].stripWhiteSpace().lower();
+ }
+//Read the special areas
+ QStringList tagBorders = dtdConfig->readListEntry("SpecialAreas");
+ QString specialAreaStartRxStr;
+ for (uint i = 0; i < tagBorders.count(); i++)
+ {
+   QString s;
+   QStringList slist = QStringList::split(" ",tagBorders[i].stripWhiteSpace());
+   s = slist[0].stripWhiteSpace();
+   dtd->specialAreaBegin.append(s);
+   specialAreaStartRxStr.append("(?:"+QuantaCommon::makeRxCompatible(s)+")|");
+   s = slist[1].stripWhiteSpace();
+   dtd->specialAreaEnd.append(s);   
+ }
+ dtd->specialAreaStartRx.setPattern(specialAreaStartRxStr.left(specialAreaStartRxStr.length() - 1));
+
+//Read the special area names 
+ dtd->specialAreaNames = dtdConfig->readListEntry("SpecialAreaNames");
+ for (uint i = 0; i < dtd->specialAreaNames.count(); i++)
+ {
+   dtd->specialAreaNames[i] = dtd->specialAreaNames[i].stripWhiteSpace().lower();
+ }
+ 
+ //Read the special tags
+ QStringList specialTagList = dtdConfig->readListEntry("SpecialTags");
+ for (uint i = 0; i < specialTagList.count(); i++)
+ { 
+   QString s = specialTagList[i];
+   int pos = s.find('(');
+   dtd->specialTags.append(s.left(pos).stripWhiteSpace());
+   dtd->specialTagNames.append(s.mid(pos+1, s.findRev(')')-pos-1).lower());
+ }
+ 
+ dtd->commentsRxStr = dtdConfig->readEntry("CommentsRx").stripWhiteSpace().replace(QRegExp("\\"),"\\\\");
+ //dtd->commentsRxStr = dtdConfig->readEntry("CommentsRx").stripWhiteSpace();
+/**** End of code for the new parser *****/
+  
  dtd->scriptName = (dtdConfig->readEntry("ScriptName")).lower();
  if (!dtd->scriptName.isEmpty())
  {
@@ -1086,28 +1131,17 @@ void QuantaApp::readTagDir(QString &dirName)
    dtd->scriptTagEnd.append("/script>");
  }
  dtd->scriptRegExpStr = dtdConfig->readEntry("ScriptRegExp");
- QStringList tagBorders = dtdConfig->readListEntry("ScriptTagBorders");
-
+ tagBorders = dtdConfig->readListEntry("ScriptTagBorders");
  for (uint i = 0; i < tagBorders.count(); i++)
  {
    QString s;
    QStringList slist = QStringList::split(" ",tagBorders[i].stripWhiteSpace());
    s = slist[0].stripWhiteSpace();
    dtd->scriptTagStart.append(s);
-   s.replace(QRegExp("\\?"),"\\?");
-   s.replace(QRegExp("\\*"),"\\*");
-   s.replace(QRegExp("\\."),"\\.");
-   s.replace(QRegExp("\\^"),"\\^");
-   s.replace(QRegExp("\\$"),"\\$");
-   scriptBeginRxStr.append("|(?:"+s+")");
+   scriptBeginRxStr.append("|(?:"+QuantaCommon::makeRxCompatible(s)+")");
    s = slist[1].stripWhiteSpace();
    dtd->scriptTagEnd.append(s);
-   s.replace(QRegExp("\\?"),"\\?");
-   s.replace(QRegExp("\\*"),"\\*");
-   s.replace(QRegExp("\\."),"\\.");
-   s.replace(QRegExp("\\^"),"\\^");
-   s.replace(QRegExp("\\$"),"\\$");
-   scriptEndRxStr.append("|("+s+")");
+   scriptEndRxStr.append("|("+QuantaCommon::makeRxCompatible(s)+")");
  }
 
  dtd->booleanAttributes = dtdConfig->readEntry("BooleanAttributes","extended");

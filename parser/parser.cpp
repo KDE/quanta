@@ -21,6 +21,7 @@
 #include <qcstring.h>
 #include <qstringlist.h>
 #include <qstrlist.h>
+#include <qdatetime.h>
 
 //standard library includes
 #include <stdio.h>
@@ -34,7 +35,9 @@
 #include "../quantacommon.h"
 #include "../document.h"
 
+//kde includes
 #include <kdebug.h>
+#include <klocale.h>
 
 Parser::Parser()
 {
@@ -47,9 +50,513 @@ Parser::~Parser()
 {
 }
 
+
+Node *Parser::newParse(Document *w)
+{
+  QTime t;
+  t.start();
+
+  write = w;
+  m_dtd = dtds->find(w->parsingDTD()); 
+  //first parse as an XML document
+  QString textLine;
+  int line, col;
+  line = col = 0;
+  int tagStartCol, tagStartLine, tagEndLine, tagEndCol;
+  int tagStartPos, specialStartPos;
+  int maxLine = w->editIf->numLines() - 1;
+  int lastLineLength = w->editIf->lineLength(maxLine);
+  int parsingDTDIndex; //the index inside specialAreaNames or specialTagNames
+  bool nodeFound = false;
+  bool goUp;
+  Node *rootNode = 0;
+  Node *parentNode = 0L;
+  Node *currentNode = 0L;
+  Tag *tag;
+  textLine = w->editIf->textLine(line);
+  while (line < maxLine)
+  {
+    nodeFound = false;
+    goUp = false;
+    tagStartPos = textLine.find('<', col);
+    specialStartPos = textLine.find(m_dtd->specialAreaStartRx, col);
+    if ( specialStartPos != -1 && 
+         (specialStartPos <= tagStartPos || tagStartPos == -1) ) //a special tag beginning was found
+    {
+      tagStartLine = line;
+      QString foundText = m_dtd->specialAreaStartRx.cap();
+      QString specialEndStr;
+      for (uint i = 0; i < m_dtd->specialAreaBegin.count(); i++)
+      {
+        if (m_dtd->specialAreaBegin[i] == foundText)
+        {
+          specialEndStr = m_dtd->specialAreaEnd[i];
+          parsingDTDIndex = i;
+          break;
+        }
+      }
+      int pos = specialStartPos + foundText.length();
+      tagEndCol = lastLineLength;
+      while (line < maxLine)
+      {
+        textLine = w->editIf->textLine(line);
+        pos = textLine.find(specialEndStr, pos);
+        if (pos != -1)
+        {
+          tagEndLine = line;
+          tagEndCol = pos + specialEndStr.length() - 1;
+          break;
+        } else
+        {
+          line++;
+          pos = 0;
+        }
+      }
+      tagStartCol = specialStartPos;
+      col = tagEndCol;
+      nodeFound = true;
+
+      //build a special node here
+      tag = new Tag();
+      tag->setTagPosition(tagStartLine, tagStartCol, tagEndLine, tagEndCol);
+      QString tagStr = w->text(tagStartLine, tagStartCol, tagEndLine, tagEndCol);
+      tag->setStr(tagStr);
+      tag->type = Tag::NeedsParsing;
+      tag->setWrite(w);
+      tag->single = true;
+      tag->parsingDTDName = m_dtd->specialAreaNames[parsingDTDIndex];
+      tag->name = i18n("%1 block").arg(tag->parsingDTDName.upper());
+      
+      goUp = (parentNode && parentNode->tag->single);
+    }
+    
+    if ( tagStartPos != -1 && 
+         (tagStartPos < specialStartPos || specialStartPos == -1) ) //do we found a tag?
+    {
+      int openNum = 1;
+      tagStartLine = line;
+      tagEndLine = maxLine;
+      tagEndCol = w->editIf->lineLength(maxLine);
+      int sCol = tagStartPos + 1;
+      while (line < maxLine && openNum > 0)
+      {
+        textLine = w->editIf->textLine(line);
+        for (uint i = sCol; i < textLine.length(); i++)
+        {
+           if (textLine[i] == '<') openNum++;
+           if (textLine[i] == '>') openNum--;
+           if (openNum == 0)
+           {
+             tagEndCol = i;
+             tagEndLine = line;
+             break;
+           }
+        }
+        sCol = 0;
+        if (openNum != 0)
+            line++;
+      }
+      col = tagEndCol;
+      nodeFound = true;
+      //build an xml tag node here
+      tag = new Tag();
+      tag->setTagPosition(tagStartLine, tagStartPos, tagEndLine, tagEndCol);
+      QString tagStr = w->text(tagStartLine, tagStartPos, tagEndLine, tagEndCol);
+      tag->parse(tagStr , w);
+      tag->type = Tag::XmlTag;
+      tag->single = QuantaCommon::isSingleTag(m_dtd->name, tag->name);
+      if (tag->name[0] == '/') 
+      { 
+        tag->type = Tag::XmlTagEnd;
+        tag->single = true;
+      }
+      if (tagStr.right(2) == "/>") tag->single = true;
+      
+      int tagPos = m_dtd->specialTags.findIndex(tag->name.lower());
+      if (tagPos != -1)
+      {
+        QRegExp endRx;
+        endRx.setPattern("/"+tag->name.lower()+"\\s*>");
+        endRx.setCaseSensitive(false);
+        int bl, bc, el, ec;
+        if (! w->find(endRx, line, tagEndCol, bl, bc, el, ec).isEmpty())
+        {
+          tagEndLine = el;
+          tagEndCol = ec;
+          QString s = tag->attributeValue(m_dtd->specialTagNames[tagPos]);
+          if (s.isEmpty())
+              s = i18n("unknown");
+          delete tag;
+          tag = new Tag();
+          tag->setTagPosition(tagStartLine, tagStartPos, tagEndLine, tagEndCol);
+          QString tagStr = w->text(tagStartLine, tagStartPos, tagEndLine, tagEndCol);
+          tag->type = Tag::NeedsParsing;
+          tag->setStr(tagStr);
+          tag->setWrite(w);
+          tag->single = true;
+          tag->parsingDTDName = s; 
+          tag->name = i18n("%1 block").arg(tag->parsingDTDName.upper());
+          line = tagEndLine;
+          col = tagEndCol;
+        }
+        
+      }
+    
+      goUp = ( parentNode &&
+               ( (tag->type == Tag::XmlTagEnd && 
+                  "/"+parentNode->tag->name.lower() == tag->name.lower() ) ||
+                  parentNode->tag->single )
+             );
+      if (parentNode && !goUp)
+      {
+        QTag *qTag = QuantaCommon::tagFromDTD(m_dtd, parentNode->tag->name);
+        if ( qTag )
+        {
+          QString searchFor = (m_dtd->caseSensitive)?tag->name:tag->name.upper();
+          if ( qTag->stoppingTags.contains( searchFor ) )
+          {
+            parentNode->tag->closingMissing = true; //parent is single...
+            goUp = true;
+          }
+        }
+      }
+      
+    }
+    
+    col++;
+    if (nodeFound)
+    {
+      //build also the text node which is between two tag nodes
+      Tag *textTag = 0L;
+      Node *node = 0L;
+      int el = 0;
+      int ec = 0;
+      if (currentNode)
+      {
+        currentNode->tag->endPos(el, ec);
+      }
+      QString s = w->text(el, ec + 1, tagStartLine, tagStartPos -1);
+      if (!s.simplifyWhiteSpace().isEmpty())
+      {
+        textTag = new Tag();
+        textTag->setStr(s);
+        textTag->setTagPosition(el, ec+1, tagStartLine, tagStartPos -1);
+        textTag->setWrite(w);
+        textTag->type = Tag::Text;
+        textTag->single = true;
+        
+        if (parentNode && parentNode->tag->single)
+        {
+          node = new Node(parentNode->parent);
+          node->prev = parentNode;
+          parentNode->next = node;
+          parentNode = parentNode->parent;
+          goUp = false;
+        } else
+        {
+          node = new Node(parentNode);
+          if (currentNode && currentNode != parentNode) 
+          {
+            currentNode->next = node;
+            node->prev = currentNode;
+          } else
+          {
+            if (parentNode) 
+                parentNode->child = node;
+            node->prev = 0;
+          }
+          if (!tag->single)
+              parentNode = node;
+        }
+        
+        node->tag = textTag;
+        currentNode = node;
+        if (!rootNode) 
+            rootNode = node;
+      }
+      
+      if (goUp)
+      {
+        node = new Node(parentNode->parent);
+        node->prev = parentNode;
+        parentNode->next = node;
+        parentNode = parentNode->parent;
+      } else
+      {
+        node = new Node(parentNode);
+        if (currentNode && currentNode != parentNode) 
+        {
+          currentNode->next = node;
+          node->prev = currentNode;
+        } else
+        {
+          if (parentNode) 
+              parentNode->child = node;
+          node->prev = 0;
+        }
+        if (!tag->single)
+            parentNode = node;
+      }
+      
+      node->tag = tag;
+      
+      if (tag->type == Tag::NeedsParsing)
+      {
+        if (tag->parsingDTDName != "comment")
+        {
+          parseInside(node);
+          node->tag->type = Tag::ScriptTag;
+        } else
+        {
+          node->tag->type = Tag::Comment;
+        }
+      }
+      
+      currentNode = node;
+      if (!rootNode) 
+          rootNode = node;
+    } else
+    {
+      line++;
+      col = 0;
+      textLine = w->editIf->textLine(line);
+    }
+    
+  }
+  
+  m_text = w->editIf->text();
+  kdDebug(24000) << "New parser ("<< maxLine << " lines): " << t.elapsed() << " ms\n";
+ // coutTree(rootNode, 2);
+  return rootNode;
+}
+
+void Parser::parseInside(Node *startNode)
+{
+ const QString quotationStr = "\\\\\"|\\\\'";
+  
+ QRegExp commentsRx;
+ DTDStruct *dtd = dtds->find(startNode->tag->parsingDTDName);
+ if (!dtd) 
+    dtd = m_dtd;  //fallback
+ if (dtd->commentsRxStr.isEmpty())
+ {
+   commentsRx.setPattern("("+quotationStr+")");
+ } else
+ {
+   commentsRx.setPattern("("+dtd->commentsRxStr+"|"+quotationStr+")");
+ }
+ 
+ QString str = startNode->tag->tagStr();
+ QString tagStr = str;
+ //Replace all the commented strings and the escaped quotation marks (\", \')
+ // with spaces so they will not mess up our parsing
+ int pos = 0;
+ int l;
+ while (pos != -1)
+ {
+   pos = commentsRx.search(str, pos);
+   if (pos != -1)
+   {
+    l = commentsRx.matchedLength();
+    for (int i = pos; i < pos + l ; i++)
+    {
+      str[i] = ' ';
+    }
+   }
+ }
+ 
+ //Now replace the quoted strings with spaces
+ const QRegExp strRx("(\"[^\"]*\"|'[^']*')");
+ pos = 0;
+ while (pos != -1)
+ {
+   pos = strRx.search(str, pos);
+   if (pos != -1)
+   {
+    l = strRx.matchedLength();
+    for (int i = pos; i < pos + l ; i++)
+    {
+      str[i] = ' ';
+    }
+   }
+ }
+ 
+ //kdDebug(24000) << "str: " << str << "\n";
+ 
+  QRegExp keywordRx(dtd->structKeywordsRx);
+  QRegExp startEndRx(dtd->structRx);
+  QString s, name;
+  pos = 0;
+  int lastPos = 0;
+  int lastPos2;
+  int bLine, bCol, eLine, eCol;
+  int el, ec; //the end coordinates of the root node
+  int startPos; // where the sturcture really starts (e.g in "function {}")
+  int matchNum;
+  startNode->tag->beginPos(bLine, bCol);
+  Tag *tag;
+  Node *node;
+  Node *currentNode = 0L;
+  Node *rootNode = startNode;
+  bool findStruct; //true if there is a need to search for the structure end
+  int n;
+  
+  while (pos != -1)
+  {
+    pos  = startEndRx.search(str, lastPos);
+    rootNode->tag->endPos(el, ec);
+    if (pos != -1)
+    {
+      if (startEndRx.cap() == dtd->structBeginStr)
+      {   
+        startPos = keywordRx.searchRev(str, pos);
+        findStruct = true;
+      } else 
+      {
+        startPos = -1;
+        findStruct = false;
+      }
+      if (startPos == -1 || startPos <= lastPos) 
+          startPos = pos; 
+      //create a Text node from the string between lastPos and pos    
+      s = tagStr.mid(lastPos, startPos - lastPos);
+      eLine = bLine + s.contains('\n');
+      n = s.findRev('\n');
+      if (n == -1)
+      {
+        eCol = startPos - lastPos + bCol - 1;
+      } else
+      {
+        eCol = startPos - n - 2 - lastPos; 
+      }
+      if (!s.simplifyWhiteSpace().isEmpty())
+      {
+        tag = new Tag();
+        tag->setStr(s.replace(commentsRx,"").stripWhiteSpace());
+        tag->setWrite(write);
+        tag->setTagPosition(bLine, bCol, eLine, eCol);
+        tag->type = Tag::Text;
+        tag->single = true;
+       
+        if ( bLine > el ||               //the beginning of the tag is after the end of the
+            (bLine == el && bCol > ec) ) //root, so go up one level
+        {
+          currentNode = rootNode;
+          rootNode = rootNode->parent;
+          rootNode->tag->endPos(el, ec); //get the end coordinates for the new root node
+        } 
+        node = new Node(rootNode);
+        if (!rootNode->child)
+        {
+          rootNode->child = node;
+          node->prev = 0L;
+        } else
+        {
+          node->prev = currentNode;
+          currentNode->next = node;
+        }
+        node->tag = tag;
+        currentNode = node;
+      } 
+      lastPos = pos + 1;
+      name = "";
+      bLine = eLine;
+      bCol = eCol + 1;
+      if (findStruct)
+      {
+        //find the matching structure end string (})
+        lastPos2 = pos + 1;
+        matchNum = 1;
+        name = tagStr.mid(startPos, pos - startPos);
+        pos = 0;
+        while (matchNum != 0 && pos != -1)
+        {
+          pos = startEndRx.search(str, lastPos2);
+          if (pos != -1)
+          {
+            s = startEndRx.cap();       
+            if (s == dtd->structBeginStr) 
+            {
+              matchNum++;
+            } else
+            {
+              matchNum--;
+            }
+            lastPos2 = pos + s.length();
+          }
+        }
+        pos = 0;
+        if (matchNum != 0) 
+            lastPos2 = str.length();
+
+        tag = new Tag();
+        s = tagStr.mid(startPos, lastPos2 - startPos);
+        eLine = bLine + s.contains('\n');
+        n = s.findRev('\n');
+        if (n == -1)
+        {
+          eCol = lastPos2 - startPos + bCol - 1;
+        } else
+        {
+          eCol = lastPos2 - n - 2 - startPos; 
+        }
+        tag->name = name.stripWhiteSpace();
+        tag->setStr(s);
+        tag->setWrite(write);
+        tag->setTagPosition(bLine, bCol, eLine, eCol);
+        tag->type = Tag::ScriptStructureBegin;
+        tag->single = true;
+
+        if ( bLine > el ||                //the beginning of the tag is after the end of the
+            (bLine == el && bCol > ec) )  //root, so go up one level
+        {
+          currentNode = rootNode;
+          rootNode = rootNode->parent;
+        } 
+        
+        node = new Node(rootNode);
+        if (!rootNode->child)            
+        {
+          rootNode->child = node;
+          node->prev = 0L;
+        } else
+        {
+          node->prev = currentNode;
+          currentNode->next = node;
+        }
+        node->tag = tag;
+        
+        currentNode = node;
+        rootNode = node;
+      } 
+      
+      bCol += name.length() + 1;
+
+      
+      /* 1. keywordPos-tol lastPos-ig: Text
+        2. letrehozni egy node-ot a fenti Text-el, single tipusu, nem lesz gyereke
+        3. pos-tol tovabbkeresni a megfelelo }-ra, eddig lesz egy Struct
+        4. letrehozni egy node-ot a fentivel, parentNode ez lesz
+        5. node letrehozasanal, ha kezdo pozicio > parentNode vegso pozicio, akkor
+            feljebb kell lepni 
+        6. az egeszet addig kell ismetelni, mig nem talalunk {-t.  
+        7. node letrehozasakor a lastPos-t es a keywordPos-t at kell 
+            alakitani koordinataka, es a tagStr-be az eredeti string reszet kell
+            berakni, nem ami a str-ben van
+        8. Szimpla stringre valo kereseskor nem szukseges QRegExp-et hasznalni 
+      */
+    }
+  }
+
+}
+
+
 /** Parse the whole text from Document w and build the internal structure tree from Nodes */
 Node *Parser::parse(Document *w)
 {
+  QTime t;
+  t.start();
+  
   write = w;
   m_dtdName = w->parsingDTD();
   m_dtd = dtds->find(m_dtdName);
@@ -64,6 +571,8 @@ Node *Parser::parse(Document *w)
   parse2();
 
 //  coutTree(m_node,0); //debug printout
+  
+  kdDebug(24000) << "Old parser: " << t.elapsed() << " ms\n";
 
   return m_node;
 }

@@ -129,6 +129,10 @@ pointer must be deleted by the caller!! */
   static QString qUrl(const KURL& url);
   /** No descriptions */
   static void dirCreationError(QWidget *widget, const KURL& url);
+  /**
+  Adds the backslash before the special chars (like ?, *, . ) so the returned string can be used in regular expressions.
+  */
+  static QString makeRxCompatible(const QString s);
 
 };
 

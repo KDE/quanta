@@ -1054,6 +1054,7 @@ void QuantaApp::reparse()
   if (view->writeExists() )// && stabdock->isVisible())
   {
     Document *w = view->write();
+    
     QString s = w->editIf->text();
     if (s != parser->m_text)  //rebuild the node tree only if the text has changed
     {
@@ -1064,23 +1065,25 @@ void QuantaApp::reparse()
       }
       if (dtds->find(w->getDTDIdentifier()))
       {
-        baseNode = parser->parse(w);
+       // baseNode = parser->parse(w);
+        baseNode = parser->newParse(w);
         sTab->setParsingDTD(w->parsingDTD());
       }
-    }
-    sTab->deleteList();
-	  if (baseNode)
-	  {
-      config->setGroup("Parser options");
-      int expandLevel = config->readNumEntry("Expand level",8);
-      if ( expandLevel == 0 ) expandLevel = 40;
-      sTab->slotReparse(baseNode , expandLevel );
+    
+      sTab->deleteList();
+      if (baseNode)
+      {
+        config->setGroup("Parser options");
+        int expandLevel = config->readNumEntry("Expand level",8);
+        if ( expandLevel == 0 ) expandLevel = 40;
+        sTab->slotReparse(baseNode , expandLevel );
 
-      uint line;
-      uint col;
-      w->viewCursorIf->cursorPositionReal(&line, &col);
-      sTab->showTagAtPos(line,col);
-	  } // if (stabdock->isVisible())
+        uint line;
+        uint col;
+        w->viewCursorIf->cursorPositionReal(&line, &col);
+        sTab->showTagAtPos(line,col);
+      } // if (stabdock->isVisible())
+    }
   } // if (view->writeExists())
 }
 

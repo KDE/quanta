@@ -46,6 +46,8 @@ public:
 	~Parser();
 	
   /** Parse the whole text from Document w and build the internal structure tree from Nodes */
+	Node *newParse( Document *w);
+  void parseInside(Node *startNode);
 	Node *parse( Document *w);
   /** Print the doc structure tree to the standard output.
       Only for debugging purposes. */

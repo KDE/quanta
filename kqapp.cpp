@@ -150,10 +150,7 @@ void KQApplicationPrivate::init()
       QuantaCommon::setUrl(url, *it);
       quantaApp->slotFileOpen(url, quantaApp->defaultEncoding());  // load initial files
     }    
-    if (!quantaApp->getProject()->hasProject())
-    {
-      quantaApp->openLastFiles();
-    }
+    quantaApp->openLastFiles();
   }
   args->clear();
   if (splash) delete splash;

@@ -20,6 +20,7 @@
 #include <qpixmap.h>
 #include <qheader.h>
 #include <qregexp.h>
+#include <qdatetime.h>
 
 // KDE headers
 #include <kapp.h>
@@ -27,6 +28,7 @@
 #include <kpopupmenu.h>
 #include <klocale.h>
 #include <kconfig.h>
+#include <kdebug.h>
 
 // app includes
 #include "../parser/node.h"
@@ -59,7 +61,7 @@ StructTreeView::StructTreeView(Parser *parser, KConfig *config, QWidget *parent,
 
   setFrameStyle( Panel | Sunken );
   setLineWidth( 2 );
-  addColumn( i18n("Name"), 600 );
+  addColumn( i18n("Name"), 1600 );
 
   setFocusPolicy(QWidget::ClickFocus);
 
@@ -145,6 +147,7 @@ void StructTreeView::createList(Node *node, StructTreeTag *parent, int openLevel
    currentNode = currentNode->next;
  }
   
+ StructTreeTag *lastItem = 0L;
  QRegExp startWithLetterRx("\\s*[a-zA-Z_\x7f-\xff].*");
  currentNode = lastNode;
  while (currentNode)
@@ -185,7 +188,7 @@ void StructTreeView::createList(Node *node, StructTreeTag *parent, int openLevel
                }
              }
              
-             item = new StructTreeTag( parent, currentNode, currentNode->tag->name );
+             item = new StructTreeTag(parent, currentNode, currentNode->tag->name, lastItem);
              parseForGroups = true;
              break;
            }
@@ -195,13 +198,13 @@ void StructTreeView::createList(Node *node, StructTreeTag *parent, int openLevel
              QString text = currentNode->tag->tagStr();      
              text = text.left(70).stripWhiteSpace();
              text.replace( QRegExp("&nbsp;|\\n")," ");
-             item = new StructTreeTag(parent,currentNode,text);
+             item = new StructTreeTag(parent,currentNode,text, lastItem);
              parseForGroups = true;
              break;
            }
       case Tag::Comment:
            {
-             item = new StructTreeTag( parent, currentNode, "comment" );
+             item = new StructTreeTag( parent, currentNode, "comment", lastItem );
              QString text = currentNode->tag->tagStr();
              text.replace( QRegExp("&nbsp;|\\n")," ");
              text.replace(QRegExp("<!--"),"");
@@ -215,7 +218,7 @@ void StructTreeView::createList(Node *node, StructTreeTag *parent, int openLevel
            }
       case Tag::CSS:
            {
-             item = new StructTreeTag( parent, currentNode, "css" );
+             item = new StructTreeTag( parent, currentNode, "css", lastItem );
              QString text = currentNode->tag->tagStr();
              text.replace( QRegExp("&nbsp;|\\n")," ");
              text.replace(QRegExp("<!--"),"");
@@ -227,17 +230,24 @@ void StructTreeView::createList(Node *node, StructTreeTag *parent, int openLevel
            {
              QString text = currentNode->tag->name;
 
-             item = new StructTreeTag(parent,currentNode,currentNode->tag->name);
+             item = new StructTreeTag(parent,currentNode,currentNode->tag->name, lastItem);
              parseForGroups = true;
              break;
            }
+      case Tag::ScriptTag:
+           {
+            item = new StructTreeTag(parent, currentNode, currentNode->tag->name, lastItem);
+            break;
+           }
    }
+	 
    if (currentNode->child)
    {
      createList(currentNode->child, item, openLevel - 1);
      if (item && item->node->opened) item->setOpen( true );
      if (item && useOpenLevelSetting) item->setOpen(openLevel > 0);
    }
+	// lastItem = item;
 
    if (parseForGroups)
    {
@@ -393,6 +403,7 @@ void StructTreeView::createList(Node *node, StructTreeTag *parent, int openLevel
      }
    }
    currentNode = currentNode->prev;
+   //currentNode = currentNode->next;
  }
 }
 
@@ -417,9 +428,15 @@ void StructTreeView::deleteList()
 /** repaint document structure */
 void StructTreeView::slotReparse(Node* node, int openLevel)
 {
+  QTime t;
+  
+  t.start();
   deleteList();
   write = node->tag->write(); 
   createList(node,0L,openLevel);
+  
+  kdDebug(24000) << "StructTreeView building: " << t.elapsed() << " ms\n";
+  
   for (uint i = 0; i < groupsCount; i++)
   {
     if (groups[i]->childCount() == 0)  
