@@ -1136,14 +1136,28 @@ QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomEleme
   QString tabname = element.attribute( "tabname", "" );
   
   if ( element.tagName().lower() == "toolbar" && !tabname.isEmpty() ) {
-    KToolBar *tb = new KToolBar(this);
-    view->toolbarStack->addWidget( tb, view->tabBar->insertTab( new QTab( i18n( tabname ))));
+    KToolBar *tb = new KToolBar( view->toolbarStack );
     tb->loadState( element );
+    view->toolbarStack->addWidget( tb, view->tabBar->addTab( new QTab( i18n( tabname ))));
     return tb;
   }
   
-  else {
-    return KMainWindow::createContainer( parent, index, element, id );
+  return KMainWindow::createContainer( parent, index, element, id );
+  
+}
+
+void QuantaApp::removeContainer( QWidget *container, QWidget *parent, QDomElement &element, int id )
+{
+  debug( QString("name:") + container->parent()->name() );
+  
+  if ( container->parent() && QString(container->parent()->name()) == QString("ToolBar stack") ) {
+    ((KToolBar*)container)->saveState( element );
+    int id = view->toolbarStack->id( container );
+    qDebug("id: %d",id);
+    view->toolbarStack->removeWidget( container );
+    view->tabBar->removeTab( view->tabBar->tab(id) );
   }
+  else
+    KMainWindow::removeContainer( container, parent, element, id );
 }
 

@@ -52,7 +52,7 @@ QuantaView::QuantaView( QuantaApp *app, QWidget *parent, const char *name )
 	QGridLayout *layout = new QGridLayout( this );
 	
   tabBar = new QTabBar( this);
-  toolbarStack = new QWidgetStack(this);
+  toolbarStack = new QWidgetStack(this,"ToolBar stack");
 
 	tabBar 			-> setFocusPolicy(QWidget::NoFocus);
 	toolbarStack-> setFocusPolicy(QWidget::NoFocus);

@@ -87,8 +87,8 @@ class QuantaApp : public KMainWindow
     /** from @see KXMLGUIBuilder, for tollbars in tabbar ( tags,... )
      *
      */
-    QWidget* createContainer( QWidget *parent, int index, const QDomElement &element, int &id );
- 	
+    QWidget* createContainer( QWidget *parent, int index, const QDomElement &element, int &id );  
+    void removeContainer( QWidget *container, QWidget *parent, QDomElement &element, int id );
 
   protected:
   
