@@ -44,6 +44,7 @@
 #include <kcombobox.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
+#include <kencodingfiledialog.h>
 #include <kfiledialog.h>
 #include <kmenubar.h>
 #include <klocale.h>
@@ -177,12 +178,11 @@ void QuantaApp::slotFileOpen()
  encoding = data.encoding;
  delete dialog;
 #else
- KFileDialog dialog(startDir, myEncoding, i18n("Open File"), KFileDialog::Opening);
- if (dialog.exec())
- {
-   urls = dialog.selectedURLs();
-   encoding = dialog.selectedEncoding();
- }
+ KEncodingFileDialog::Result data;
+ data = KEncodingFileDialog::getOpenURLsAndEncoding(myEncoding, startDir,
+        "all/allfiles text/plain", this, i18n("Open File"));
+ urls = data.URLs;
+ encoding = data.encoding;
 #endif
 
  m_doc->blockSignals(true);
@@ -304,12 +304,11 @@ bool QuantaApp::slotFileSaveAs()
     saveUrl = data.url;
     encoding = data.encoding;
 #else
-   KFileDialog dialog(saveAsPath+saveAsFileName, myEncoding, i18n("Save File"), KFileDialog::Saving);
-   if (dialog.exec())
-    {
-      saveUrl = dialog.selectedURL();
-      encoding = dialog.selectedEncoding();
-    }
+    KEncodingFileDialog::Result data;
+    data = KEncodingFileDialog::getSaveURLAndEncoding(myEncoding, saveAsPath+saveAsFileName,
+            "all/allfiles text/plain", this, i18n("Save File"));
+    saveUrl = data.URLs[0];
+    encoding = data.encoding;
 #endif
     dynamic_cast<KTextEditor::EncodingInterface*>(w->doc())->setEncoding(encoding);
     if (w->checkOverwrite(saveUrl) == KMessageBox::Yes && m_doc->saveDocument(saveUrl))
