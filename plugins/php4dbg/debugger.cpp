@@ -40,6 +40,7 @@ PHP4Debugger::~PHP4Debugger()
 {
   listener->stop(true);
   listener->logstatus();
+  delete sn;
 
   delete listener;
 }
