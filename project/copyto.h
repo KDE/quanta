@@ -18,6 +18,7 @@
 #ifndef COPYTO_H
 #define COPYTO_H
 
+#include "copytos.h"
 /**
   *@author Yacovlev Alexander & Dmitry Poplavsky
   */

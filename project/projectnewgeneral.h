@@ -18,6 +18,8 @@
 #ifndef PROJECTNEWGENERAL_H
 #define PROJECTNEWGENERAL_H
 
+#include "projectnewgenerals.h"
+
 /**
   *@author Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
   */
@@ -27,6 +29,8 @@ class ProjectNewGeneral : public ProjectNewGeneralS  {
 public: 
 	ProjectNewGeneral(QWidget *parent=0, const char *name=0);
 	~ProjectNewGeneral();
+	
+	QString type();
 	
 public slots:
 	void slotButtonDir();
