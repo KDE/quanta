@@ -32,7 +32,6 @@
 #include <qfile.h>
 #include <qtextstream.h>
 #include <qdatetime.h>
-#include <qclipboard.h> 
 
 #include "document.h"
 #include "viewmanager.h"
@@ -48,7 +47,6 @@
 #include "kafkacommon.h"
 #include "kafkaresource.h"
 #include "cursors.h"
-#include "kafkadragobject.h"
 
 #include "wkafkapart.moc"
 
@@ -449,23 +447,6 @@ void KafkaDocument::disconnectDomNodeFromQuantaNode(DOM::Node _domNode)
 void KafkaDocument::disconnectAllDomNodes()
 {
 	domNodeProps.clear();
-}
-
-void KafkaDocument::getSelection(Node* startNode, int& startOffset, 
-                                 Node* endNode, int& endOffset)
-{
-    DOM::Node startDomNode;
-    DOM::Node endDomNode;
-    long long_startOffset;
-    long long_endOffset;
-    
-    m_kafkaPart->selection(startDomNode, long_startOffset, endDomNode, long_endOffset);
-    startNode = getNode(startDomNode);
-    endNode = getNode(endDomNode);
-    startOffset = (int)long_startOffset;
-    endOffset = (int)long_endOffset;
-    translateKafkaIntoNodeCursorPosition(startDomNode, long_startOffset, &startNode, startOffset);
-    translateKafkaIntoNodeCursorPosition(endDomNode, long_endOffset, &endNode, endOffset);    
 }
 
 void KafkaDocument::setCursorAndSelection(NodeSelectionInd *nodeSelection)
@@ -2234,71 +2215,4 @@ void KafkaDocument::slotdomNodeNewCursorPos(DOM::Node, int)
 	//dont calculate cursor pos until the next view update
 	//getQuantaCursorPosition(line, col);
 	//emit newCursorPosition(line, col);
-}
-
-void KafkaDocument::slotCut()
-{
-    
-    DOM::Node startDomNode;
-    DOM::Node endDomNode;
-    DOM::Node cursorDomNode;
-    int cursorOffset;
-    int startOffset;
-    int endOffset;
-    long long_startOffset;
-    long long_endOffset;
-    
-    m_kafkaPart->selection(startDomNode, long_startOffset, endDomNode, long_endOffset);
-    Node* startNode = getNode(startDomNode);
-    Node* endNode = getNode(endDomNode);
-    startOffset = (int)long_startOffset;
-    endOffset = (int)long_endOffset;
-    translateKafkaIntoNodeCursorPosition(startDomNode, long_startOffset, &startNode, startOffset);
-    translateKafkaIntoNodeCursorPosition(endDomNode, long_endOffset, &endNode, endOffset);
-    
-    /*
-    Node* startNode = 0;
-    Node* endNode = 0;
-    int startOffset = 0;
-    int endOffset = 0;
-    getSelection(startNode, startOffset, endNode, endOffset);
-    
-    DOM::Node cursorDomNode;
-    int cursorOffset;
-    */
-    m_kafkaPart->getCurrentNode(cursorDomNode, cursorOffset);
-    Node* cursorNode = getNode(cursorDomNode);
-    
-    if(!startNode || !endNode)
-        return;
-    
-    NodeModifsSet *modifs = new NodeModifsSet();
-    Node* subtree_root = kafkaCommon::extractNodeSubtree(startNode, startOffset, endNode, endOffset, 
-                                    &cursorNode, cursorOffset, modifs);
-    
-    m_currentDoc->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);
-    
-    if(subtree_root)
-    {
-        KafkaDragObject* drag_object = new KafkaDragObject(subtree_root);
-        QApplication::clipboard()->setData(drag_object);
-    }
-}
-
-void KafkaDocument::slotCopy()
-{
-    
-}
-
-void KafkaDocument::slotPaste()
-{
-    QClipboard *cb = QApplication::clipboard();
-    QMimeSource* e = cb->data();
-    Node* node = new Node(baseNode);
-    
-    if(KafkaDragObject::decode(e, node))
-    {
-        NodeModifsSet *modifs = new NodeModifsSet();
-        kafkaCommon::insertNodeSubtree(node, baseNode, node->nextSibling(), modifs);
-    }
 }

@@ -450,16 +450,6 @@ public:
 	 */
 	static void extractAndDeleteNode(Node *node, NodeModifsSet *modifs, bool deleteChildren = true,
 		bool deleteClosingTag = true, bool mergeAndFormat = true);
-    
-    /**
-     * Extarct a node subtree in the tree. WARNING This function will log that the nodes were added.
-     * @param node The root node of the Node subtree to insert.
-     * @param modifs The changes made are logged into modifs. Put 0L if you don't want to log
-     * and if you know what you're doing!
-     * @return Returns a pointer to the node inserted.
-     */
-    static Node* extractNodeSubtree(Node *startNode, int startOffset, Node *endNode, int endOffset, 
-                                    Node **cursorNode, int &cursorOffset, NodeModifsSet *modifs);
 
 	/**
 	 * An enumeration of all the possible return states of DTDExtractNode
