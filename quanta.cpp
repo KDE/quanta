@@ -387,7 +387,7 @@ void QuantaApp::slotFileQuit()
 
 void QuantaApp::slotEditFindInFiles()
 {
-  if (!grepDialog) 
+  if (!grepDialog)
   {
     QString startDir = QDir::homeDirPath();
     KURL pBase = projectBaseURL();
@@ -595,7 +595,7 @@ void QuantaApp::slotNewStatus()
     saveAction   ->setEnabled(m_doc->isModified());
     saveAllAction->setEnabled(m_doc->isModifiedAll());
     saveprjAction->setEnabled(m_project->isModified());
-   
+
     bool projectExists = m_project->hasProject();
     closeprjAction     ->setEnabled(projectExists);
     openPrjViewAction  ->setEnabled(projectExists);
@@ -695,7 +695,7 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
   currentWrite->kate_view->setLineNumbersOn(qConfig.lineNumbers);
   viewBorder->setChecked(qConfig.iconBar);
   viewLineNumbers->setChecked(qConfig.lineNumbers);
-  
+
 #if (KDE_VERSION > 308)
   dynamic_cast<KTextEditor::DynWordWrapInterface*>(currentWrite->view())->setDynWordWrap(qConfig.dynamicWordWrap);
   viewDynamicWordWrap->setChecked(dynamic_cast<KTextEditor::DynWordWrapInterface*>(currentWrite->view())->dynWordWrap());
@@ -1387,11 +1387,6 @@ QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomEleme
 
 void QuantaApp::removeContainer( QWidget *container, QWidget *parent, QDomElement &element, int id )
 {
-  kdDebug(24000) <<  QString("name:") + container->name() << "\n";
-
-  if(container->parent())
-  kdDebug(24000) <<  QString("parent name:") + container->parent()->name() << "\n";
-
   if ( container->parent() &&  QString(container->parent()->name()) == "ToolbarHoldingWidget")
   {
     m_view->toolbarTab()->removePage(container);
@@ -1898,7 +1893,7 @@ void QuantaApp::saveToolbar(bool localToolbar,const QString& toolbarToSave)
   } while (query != KMessageBox::Yes);
 
   if( query != KMessageBox::Cancel )
-  {          
+  {
     KURL tarName = saveToolbarToFile(toolbarName, url);
     if (!localToolbar) m_project->insertFile(tarName, true);
   }
@@ -1947,7 +1942,7 @@ void QuantaApp::slotAddToolbar()
   p_toolbar->visible = true;
   p_toolbar->menu = 0L; //TODO
   toolbarList.insert(name.lower(), p_toolbar);
-  
+
   slotToggleDTDToolbar(!allToolbarsHidden());
  }
 }
@@ -2365,13 +2360,13 @@ void QuantaApp::loadToolbarForDTD(const QString& dtdName)
             p_toolbar->visible = false;
             if (p_toolbar->menu) delete p_toolbar->menu;
             p_toolbar->menu = 0L;
-            break;          
-          }         
+            break;
+          }
        }
      }
    }
 
-   //Load the toolbars for dtdName   
+   //Load the toolbars for dtdName
    for (uint i = 0; i < newDtd->toolbars.count(); i++)
    {
       KURL url;
@@ -2521,7 +2516,7 @@ QString QuantaApp::defaultEncoding()
   if (m_project && m_project->hasProject())
   {
     encoding = m_project->defaultEncoding();
-  } 
+  }
   return encoding;
 }
 

@@ -21,7 +21,7 @@
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
-#endif 
+#endif
 
 // include files for Qt
 #include <qwidget.h>
@@ -81,8 +81,6 @@ public:
   bool writeExists();
 
 public slots:
-  void slotDelayedInit();
-
   void slotTagMail();
   void slotTagQuickStart();
   void slotTagQuickList();

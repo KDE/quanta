@@ -116,7 +116,7 @@ void Document::resizeEvent(QResizeEvent *e)
   QWidget *wd=dynamic_cast<QWidget*>(parent());
   int w = wd->width() -5 ;
   int h = wd->height() - 9;
-  m_view->resize(w,h); 
+  m_view->resize(w,h);
 }
 
 void Document::setUntitledUrl(QString url)
@@ -194,7 +194,7 @@ void Document::changeTag(Tag *tag, QDict<QString> *dict )
     tagStr.append(" /");
   }
   tagStr.append(">");
-  
+
   int bLine, bCol, eLine, eCol;
   tag->beginPos(bLine,bCol);
   tag->endPos(eLine,eCol);
@@ -350,10 +350,10 @@ KTextEditor::Document* Document::doc()
 bool Document::isModified()
 {
   bool modified = false;
-  if ( m_doc )  
+  if ( m_doc )
    modified = m_doc->isModified();
 
-  return modified;  
+  return modified;
 }
 /** Sets the modifiedFlag value. */
 void Document::setModified(bool flag)
@@ -595,7 +595,7 @@ bool Document::xmlAutoCompletion(DTDStruct* dtd, int line, int column, const QSt
 
   tag = QuantaCommon::tagFromDTD(dtd, tagName);
   if (!tag) tag = userTagList.find(tagName.lower());
-  
+
   if ( !tag || tagName.isEmpty() )  //we are outside of any tag
   {
     if ( string == "<" )  // a tag is started
@@ -718,7 +718,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(DTDStruct 
       tagNameList += it2.current()->name();
     }
   }
-  
+
   tagNameList.sort();
   for (uint i = 0; i < tagNameList.count(); i++)
   {
@@ -816,7 +816,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeValueCompletions
       }
     }
   }
-  
+
 //  completionInProgress = true;
   return completions;
 }
@@ -984,9 +984,9 @@ bool Document::scriptAutoCompletion(DTDStruct *dtd, int line, int column, const 
  if (string == "$")
  {
    showCodeCompletions( getVariableCompletions(dtd, line, column) );
-   handled = true; 
+   handled = true;
  }
- 
+
  return handled;
 }
 
@@ -1024,7 +1024,7 @@ QString Document::find(const QRegExp& regExp, int sLine, int sCol, int& fbLine, 
  int maxLine = editIf->numLines();
  QString textToSearch = text(sLine, sCol, sLine, editIf->lineLength(sLine));
  int pos;
- int line = sLine;  
+ int line = sLine;
  do
  {
    pos = rx.search(textToSearch);
@@ -1267,7 +1267,7 @@ bool Document::scriptCodeCompletion(DTDStruct *dtd, int line, int col)
        scriptAutoCompletion(dtd, line, col, "$");
        goAhead = false;
        handled = true;
-     }  
+     }
    }
 
    if (goAhead)
@@ -1304,21 +1304,42 @@ void Document::checkDirtyStatus()
   fileWatcher->stopScan();
   if (m_dirty)
   {
-    createTempFile();
-    DirtyDlg *dlg = new DirtyDlg(url().path(), m_tempFileName, this);
-    if (!m_pluginInterface || !(m_pluginInterface->pluginAvailable("kompare")))
+    if (url().isLocalFile())
     {
-       dlg->buttonCompare->setEnabled(false);
-       dlg->buttonLoad->setChecked(true);
+      //check if the file is changed, also by file content. Might help to reduce
+      //unwanted warning on NFS
+      QFile f(url().path());
+      if (f.open(IO_ReadOnly))
+      {
+        QString content;
+        QTextStream stream(&f);
+        content = stream.read();
+        if (content == editIf->text())
+        {
+          m_dirty = false;
+        }
+        f.close();
+      }
+
     }
-    if (dlg->exec())
+    if (m_dirty)
     {
-        m_doc->setModified(false);
-        m_doc->openURL(url());
-        createTempFile();
+      createTempFile();
+      DirtyDlg *dlg = new DirtyDlg(url().path(), m_tempFileName, this);
+      if (!m_pluginInterface || !(m_pluginInterface->pluginAvailable("kompare")))
+      {
+        dlg->buttonCompare->setEnabled(false);
+        dlg->buttonLoad->setChecked(true);
+      }
+      if (dlg->exec())
+      {
+          m_doc->setModified(false);
+          m_doc->openURL(url());
+          createTempFile();
+      }
+      delete dlg;
     }
     m_dirty = false;
-    delete dlg;
   }
   fileWatcher->startScan();
 }

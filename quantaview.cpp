@@ -56,24 +56,13 @@ QuantaView::QuantaView(QWidget *parent, const char *name )
 {
   doc = quantaApp->doc();
   initActions();
-  slotDelayedInit();
-}
-
-QuantaView::~QuantaView()
-{
-}
-
-void QuantaView::slotDelayedInit()
-{
-
   m_writeTab = new QTabWidget(this);
   m_writeTab ->setTabPosition( QTabWidget::Bottom );
-//  m_writeTab ->setFocusPolicy( QWidget::NoFocus );
+  m_writeTab ->setFocusPolicy( QWidget::NoFocus );
   connect( m_writeTab,SIGNAL(currentChanged(QWidget*)), quantaApp, SLOT(slotUpdateStatus(QWidget*)));
 
   m_toolbarTab = new ToolbarTabWidget(this);
- // m_toolbarTab ->setFocusPolicy( QWidget::NoFocus );
-//  m_toolbarTab->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+  m_toolbarTab ->setFocusPolicy( QWidget::NoFocus );
 
   connect(m_toolbarTab, SIGNAL(removeToolbar(const QString&)),
           quantaApp, SLOT(slotRemoveToolbar(const QString&)));
@@ -85,26 +74,18 @@ void QuantaView::slotDelayedInit()
   layout2->setRowStretch(1,1);
   layout2->addWidget( m_toolbarTab     ,0,0);
   layout2->addWidget( m_writeTab     ,1,0);
-/*
-  QWidget *w = new QWidget(m_toolbarTab);
-  KToolBar *tb = new KToolBar(w);
-  tb->insertButton("aaa",1);
-  m_toolbarTab->insertTab(tb, "xxx");
-//Find with this trick the correct needed size for the toolbar holding QTabWidget
-  m_toolbarTab->setMinimumHeight(tb->minimumSizeHint().height()+m_toolbarTab->height());
-  m_toolbarTab->removePage(tb);
-  delete w;
-*/
   m_writeTab->show();
-//  m_toolbarTab->adjustSize();
-//  m_toolbarTab->show();
-
 
   oldWrite = 0L;
   oldTab = 0L;
 
   setAcceptDrops(TRUE); // [MB02] Accept drops on the view
 }
+
+QuantaView::~QuantaView()
+{
+}
+
 
 /** return current KWrite class */
 Document* QuantaView::write()
@@ -252,7 +233,7 @@ void QuantaView::insertTag( const char *tag)
     startTag.append(" /");
   }
   startTag.append(">");
-  
+
   if ( (qConfig.closeTags && !single && !optional) ||
        (qConfig.closeOptionalTags && optional) )
   {
