@@ -1,6 +1,6 @@
 /***************************************************************************
-                          grepdialog.cpp  -  grep frontend
-                             -------------------
+                          grepdialog.cpp  -  grep frontend                              
+                             -------------------                                         
     copyright            : (C) 1999 by Bernd Gehrmann
     email                : bernd@physik.hu-berlin.de
 
@@ -13,13 +13,12 @@
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
  *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
+ *   (at your option) any later version.                                   * 
  *                                                                         *
  ***************************************************************************/
 
 
 #include "grepdialog.h"
-#include "grepdialog.moc"
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
@@ -41,11 +40,11 @@
 enum quoteEnum { NO_QUOTE=0, SINGLE_QUOTE, DOUBLE_QUOTE };
 
 GrepDialog::GrepDialog(const QString &dirname, QWidget *parent, const char *name)
-    : QDialog( parent, name, false ),
+    : QDialog( parent, name, false ), 
     childproc(0)
 {
     setCaption(i18n("Search in Files..."));
-
+    
     QGridLayout *layout = new QGridLayout(this, 6, 3, 10, 4);
     layout->setColStretch(0, 10);
     layout->addColSpacing(1, 10);
@@ -56,7 +55,7 @@ GrepDialog::GrepDialog(const QString &dirname, QWidget *parent, const char *name
     layout->setRowStretch(2, 10);
     layout->addRowSpacing(4, 10);
     layout->setRowStretch(4, 0);
-
+    
     QGridLayout *input_layout = new QGridLayout(4, 2, 4);
     layout->addLayout(input_layout, 0, 0);
     input_layout->setColStretch(0, 0);
@@ -71,7 +70,7 @@ GrepDialog::GrepDialog(const QString &dirname, QWidget *parent, const char *name
     pattern_edit->setFocus();
     pattern_edit->setMinimumSize(pattern_edit->sizeHint());
     input_layout->addWidget(pattern_edit, 0, 1);
-
+    
     QLabel *files_label = new QLabel(i18n("&Files:"), this);
     files_label->setFixedSize(files_label->sizeHint());
     input_layout->addWidget(files_label, 2, 0, AlignRight | AlignVCenter);
@@ -92,7 +91,7 @@ GrepDialog::GrepDialog(const QString &dirname, QWidget *parent, const char *name
 
     QBoxLayout *dir_layout = new QHBoxLayout(4);
     input_layout->addLayout(dir_layout, 3, 1);
-
+    
     dir_edit = new QLineEdit(this);
     dir_label->setBuddy(dir_edit);
     dir_edit->setText(dirname);
@@ -104,7 +103,7 @@ GrepDialog::GrepDialog(const QString &dirname, QWidget *parent, const char *name
     dir_button->setFixedHeight(dir_edit->sizeHint().height());
     dir_button->setFixedWidth(30);
     dir_layout->addWidget(dir_button);
-
+    
     recursive_box = new QCheckBox(i18n("&Recursive"), this);
     recursive_box->setMinimumWidth(recursive_box->sizeHint().width());
     recursive_box->setChecked(true);
@@ -155,7 +154,7 @@ GrepDialog::GrepDialog(const QString &dirname, QWidget *parent, const char *name
     layout->activate();
 
     QWhatsThis::add(pattern_edit,
-		    i18n("<qt><p>Enter the regular expression for which you want to search.</p>"
+		    i18n("<qt><p>Enter the regular expression you want to search for here.</p>"
 			 "Possible meta characters are:<br/>"
              "<ul>"
 			 "<li><b>.</b> - Matches any character.</li>"
@@ -175,15 +174,15 @@ GrepDialog::GrepDialog(const QString &dirname, QWidget *parent, const char *name
 			 "<li><b>{<i>n</i>,<i>m</i>}</b> - The preceding item is matched at least <i>n</i>,"
 			 " but at most <i>m</i> times.</li>"
 			 "</ul>"
-			 "<p>Furthermore, back-references to bracketed subexpressions are "
+			 "<p>Furthermore, backreferences to bracketed subexpressions are"
 			 "available via the notation \\\\<i>n</i>.</p></qt>"
 			 ));
     QWhatsThis::add(files_combo,
-		    i18n("<qt>Enter the file name pattern of the files to search. "
+		    i18n("<qt>Enter the file name pattern of the files to search here. "
 			 "You may give several patterns separated by commas.</qt>"));
     QWhatsThis::add(resultbox,
 		    i18n("<qt>The results of the grep run are listed here. Select a "
-			 "filename/line number combination and press Enter or double-click "
+			 "filename/line number combination and press Enter or doubleclick "
 			 "on the item to show the respective line in the editor.</qt>"));
 
     connect( dir_button, SIGNAL(clicked()),
@@ -217,7 +216,7 @@ void GrepDialog::itemSelected(const QString &item)
 {
   int pos;
   QString filename, linenumber;
-
+  
   QString str = item;
   if ( (pos = str.find(':')) != -1)
     {
@@ -243,7 +242,7 @@ void GrepDialog::processOutput()
 	resultbox->insertItem(item);
       buf = buf.right(buf.length()-pos-1);
     }
-
+  
   QString str;
   str.setNum(resultbox->count());
   str += i18n(" matches");
@@ -256,12 +255,12 @@ void GrepDialog::slotSearch()
   search_button->setEnabled(false);
   stop_button->setEnabled(true);
   resultbox->clear();
-
+  
   //
   // Build the find command string
   //
   QString files_temp = files_combo->currentText();
-  if ( files_temp.right(1) != "," ) {
+  if ( files_temp.right(1) != "," ) { 
       files_temp = files_temp + ",";
   }
 
@@ -343,7 +342,7 @@ void GrepDialog::slotStop()
 void GrepDialog::childExited()
 {
     if ( childproc->normalExit() ) {
-        int status = childproc->exitStatus();
+        int status = childproc->exitStatus();   
         finish();
 
         status_label->setText( (status == 1)? i18n("No matches found")
@@ -409,7 +408,7 @@ void StringTokenizer::tokenize( const char *str, const char *_separators )
     const char *src = str;
     end = buffer;
     int quoted = NO_QUOTE;
-
+    
     for ( ; *src != '\0'; src++ )
     {
 	char *x = strchr( _separators, *src );
