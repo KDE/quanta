@@ -52,13 +52,21 @@ void TagAttributeTree::newCursorPosition(Node *node)
       return;
   clear();
   AttributeItem *item;
+  QString attrName;
   QTag *qTag = QuantaCommon::tagFromDTD(node->tag->dtd, node->tag->name);
   if (qTag)
   {
     TopLevelItem *group = new TopLevelItem(this, i18n("Attributes"));
     for (int i = 0; i < qTag->attributeCount(); i++)
     {
-      item = new AttributeItem(this, group, qTag->attributeAt(i)->name, node->tag->attributeValue(qTag->attributeAt(i)->name));
+      Attribute *attr = qTag->attributeAt(i);
+      if (attr->type == "check")
+      {
+        item = new AttributeBoolItem(this, node->tag->dtd, group, attr->name, node->tag->attributeValue(attr->name));
+      } else
+      {
+        item = new AttributeItem(this, node->tag->dtd, group, attr->name, node->tag->attributeValue(attr->name));
+      }
       item->setRenameEnabled(1, true);
     }
     group->setOpen(true);
@@ -68,8 +76,14 @@ void TagAttributeTree::newCursorPosition(Node *node)
       AttributeList *groupAttrs = qTag->parentDTD->commonAttrs->find(qTag->commonGroups[i]);
       for (uint j = 0; j < groupAttrs->count(); j++)
       {
-        QString attrName = groupAttrs->at(j)->name;
-        item = new AttributeItem(this, group, attrName, node->tag->attributeValue(attrName));
+        attrName = groupAttrs->at(j)->name;
+        if (groupAttrs->at(j)->type == "check")
+        {
+          item = new AttributeBoolItem(this, node->tag->dtd, group, attrName, node->tag->attributeValue(attrName));
+        } else
+        {
+          item = new AttributeItem(this, node->tag->dtd, group, attrName, node->tag->attributeValue(attrName));
+        }
         item->setRenameEnabled(1, true);
       }
       group->setOpen(true);
