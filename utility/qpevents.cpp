@@ -65,7 +65,8 @@ QPEvents::~QPEvents()
 void QPEvents::slotEventHappened(const QString& name, const QString& argument1, const QString& argument2)
 {
   EventActions *events = Project::ref()->events();
-  if (events && events->contains(name))
+  if (!events) return;
+  if (events->contains(name))
   {
     EventAction ev = (*events)[name];
     if (ev.type == EventAction::Internal)
@@ -194,7 +195,8 @@ void QPEvents::slotEventHappened(const QString& name, const QString& argument1, 
         ev.arguments << argument1;
         handleEvent(ev);
       }
-  }
+  } else
+    KMessageBox::sorry(0L, i18n("<qt>Unsupported event <b>%1</b>.</qt>"), i18n("Event Handling Error"));
 }
 
 bool QPEvents::handleEvent(const EventAction& ev)
