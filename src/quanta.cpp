@@ -228,8 +228,8 @@ QuantaApp::QuantaApp(int mdiMode) : DCOPObject("WindowManagerIf"), KMdiMainFrm( 
   m_oldKTextEditor = 0L;
   m_previewToolView = 0L;
   m_documentationToolView = 0L;
-
-
+  m_previewedDocument = 0L;
+  m_previewVisible =  false;
 }
 
 QuantaApp::~QuantaApp()
@@ -665,6 +665,7 @@ void QuantaApp::slotRepaintPreview()
   if (!m_previewVisible) return;
   if (!m_previewToolView && qConfig.previewPosition != "Editor" ) return;
 
+  m_previewedDocument = 0L;
   previewCopyMade = false;
 
   KHTMLView *html = m_htmlPart->view();
@@ -719,9 +720,11 @@ void QuantaApp::slotRepaintPreview()
   //if it's  not untitled, than it was loaded from somewhere. In this case show it from that place
       url = w->url();
 
-      if ( w->isModified() ) //m_doc->saveDocument( m_doc->url() );
-          w->saveIt();
-
+      if ( w->isModified() )
+      {
+          w->saveIt(); //saves the file so the preview will show the current content
+          m_previewedDocument = w;
+      }
       url = Project::ref()->urlWithPrefix(url);
 
       m_htmlPart->openURL(url);
@@ -1179,6 +1182,9 @@ void QuantaApp::slotOptions()
   kd->adjustSize();
   if ( kd->exec() )
   {
+    bool uiRebuildNeeded = false;
+    bool previewSettingsChanged = false;
+
     qConfig.tagCase = styleOptionsS->tagCase->currentItem();
     qConfig.attrCase = styleOptionsS->attributeCase->currentItem();
     qConfig.attrValueQuotation = styleOptionsS->attributeQuotation->currentItem() == 0 ? '"': '\'';
@@ -1202,9 +1208,16 @@ void QuantaApp::slotOptions()
     m_config->writeEntry("Reload Files", fileMasks->reloadFiles->isChecked());
 
     qConfig.defaultEncoding = fileMasks->encodingCombo->currentText();
-    qConfig.showCloseButtons = uiOptions->closeButtons();
-    qConfig.toolviewTabs = uiOptions->toolviewTabs();
-    initTabWidget(true);
+    QString tmpStr = uiOptions->closeButtons();
+    if (tmpStr != qConfig.showCloseButtons)
+        uiRebuildNeeded = true;
+    qConfig.showCloseButtons = tmpStr;
+    uint tmp = uiOptions->toolviewTabs();
+    if (tmp != qConfig.toolviewTabs)
+        uiRebuildNeeded = true;
+    qConfig.toolviewTabs = tmp;
+    if (uiRebuildNeeded)
+        initTabWidget();
     qConfig.showHiddenFiles = uiOptions->hiddenFiles();
 
     qConfig.showEmptyNodes = parserOptions->showEmptyNodes->isChecked();
@@ -1246,7 +1259,16 @@ void QuantaApp::slotOptions()
     qConfig.spellConfig->setReplaceAllList(spellOptions->replaceAllList());
     qConfig.spellConfig->setClient(spellOptions->client());
 
-    qConfig.previewPosition = uiOptions->position();
+    tmpStr = uiOptions->position();
+    if (tmpStr != qConfig.previewPosition)
+    {
+       if (m_previewVisible || m_previewToolView)
+         previewSettingsChanged = true;
+       slotShowPreviewWidget(false);
+    }
+    qConfig.previewPosition = tmpStr;
+    if (previewSettingsChanged)
+      slotShowPreviewWidget(true);
     qConfig.docPosition = uiOptions->docPosition();
     qConfig.windowLayout = uiOptions->layout();
 
@@ -1255,8 +1277,6 @@ void QuantaApp::slotOptions()
     m_htmlPart->write(" ");
     m_htmlPart->end();
 
-    slotShowPreviewWidget(false);
-    slotRepaintPreview();
     reparse(true);
     slotNewStatus();
   }
@@ -1291,27 +1311,27 @@ void QuantaApp::slotShowPreviewWidget(bool show)
       m_previewToolView->show();
     }
     m_previewVisible = true;
+    slotRepaintPreview();
   } else
   {
     m_noFramesPreview = false;
+    m_htmlPart->view()->reparent(this, 0, QPoint(), false);
+    m_htmlPart->view()->resize(0, 0);
+    m_htmlPart->view()->hide();
     if (qConfig.previewPosition == "Editor")
     {
-        m_htmlPart->view()->reparent(this, 0, QPoint(), false);
-        m_htmlPart->view()->resize(0, 0);
-        m_htmlPart->view()->hide();
         view->addCustomWidget(0L, QString::null);
         delete m_previewToolView;
         m_previewToolView = 0L;
     } else
     {
-      //hiding the preview when it's in a toolview means that the current tab has changed,
-      //so we just repaint the content.
-        m_previewVisible = true;
-        slotRepaintPreview();
-    }
+       delete m_previewToolView;
+       m_previewToolView = 0L;
+   }
     m_previewVisible = false;
-    if (view->document())
-        view->document()->view()->setFocus();
+    Document *w = view->document();
+    if (w)
+        w->setFocus();
   }
 
 #ifdef BUILD_KAFKAPART
@@ -1335,20 +1355,42 @@ void QuantaApp::slotShowPreviewWidget(bool show)
   }
 }
 
+void QuantaApp::slotChangePreviewStatus()
+{
+    if (qConfig.previewPosition == "Editor")
+    {
+        slotShowPreviewWidget(false);
+    } else
+    if (m_previewToolView && m_htmlPart->view()->isVisible())
+    {
+      //hiding the preview when it's in a toolview means that the current tab has changed,
+      //so we just repaint the content and restore the document on the disc.
+        m_previewVisible = true;
+        slotRepaintPreview();
+        restoreFromTempfile(m_previewedDocument);
+        m_previewedDocument = 0L;
+        Document *w = ViewManager::ref()->activeDocument();
+        if (w)
+          w->setFocus();
+    }
+}
+
 void QuantaApp::slotPreviewHasFocus(bool focus)
 {
-/*
+
    if (m_previewToolView)
    {
       if (focus)
         slotRepaintPreview();
       else
-        slotShowPreview();
+      {
+          restoreFromTempfile(m_previewedDocument);
+          m_previewedDocument = 0L;
+      }
    }
-   */
 }
 
-void QuantaApp::slotShowPreview()
+void QuantaApp::slotToggleShowPreview()
 {
   Document *w  =ViewManager::ref()->activeDocument();
   if (!w)
@@ -1356,39 +1398,33 @@ void QuantaApp::slotShowPreview()
     m_previewVisible = false;
     return;
   }
-   if (m_previewToolView)
-   {
-     m_previewVisible = m_htmlPart->view()->isVisible();
-   }
-  if (!m_previewVisible)
+  if (m_previewToolView)
   {
-    slotShowPreviewWidget(true);
-    slotRepaintPreview();
-    m_previewVisible = true;
-  } else
-  {
-    slotShowPreviewWidget(false);
-    if (w->isModified())
-    {
-      KURL origUrl = w->url();
-      if (origUrl.isLocalFile())
-          fileWatcher->removeFile(origUrl.path());
-      KURL tempUrl;
-      tempUrl.setPath(w->tempFileName());
-      kdDebug(24000) << "Restoring tempfile " << w->tempFileName() << " for " << w->url() << endl;
-      QExtFileInfo::copy(tempUrl, origUrl, -1, true, false, this);
-      if (origUrl.isLocalFile())
-          fileWatcher->addFile(origUrl.path());
-    }
-    m_previewVisible = false;
+    m_previewVisible = m_htmlPart->view()->isVisible();
   }
+  slotShowPreviewWidget(!m_previewVisible);
   m_noFramesPreview = false;
 }
 
 void QuantaApp::slotShowNoFramesPreview()
 {
   m_noFramesPreview = true;
-  slotShowPreview();
+  slotToggleShowPreview();
+}
+
+void QuantaApp::restoreFromTempfile(Document *w)
+{
+  if (!w) return;
+
+  KURL origUrl = w->url();
+  if (origUrl.isLocalFile())
+      fileWatcher->removeFile(origUrl.path());
+  KURL tempUrl;
+  tempUrl.setPath(w->tempFileName());
+//  kdDebug(24000) << "Restoring tempfile " << w->tempFileName() << " for " << w->url() << endl;
+  QExtFileInfo::copy(tempUrl, origUrl, -1, true, false, this);
+  if (origUrl.isLocalFile())
+      fileWatcher->addFile(origUrl.path());
 }
 
 void QuantaApp::newCursorPosition(QString file, int lineNumber, int columnNumber)
@@ -4549,12 +4585,6 @@ void QuantaApp::initTabWidget(bool closeButtonsOnly)
     KTabWidget *tab = tabWidget();
     if (tab)
     {
-        if (!closeButtonsOnly)
-        {
-            tab->setTabPosition(QTabWidget::Bottom);
-            connect(tab, SIGNAL( contextMenu( QWidget *, const QPoint & ) ), ViewManager::ref(), SLOT(slotTabContextMenu( QWidget *, const QPoint & ) ) );
-            setTabWidgetVisibility(KMdi::AlwaysShowTabs);
-        }
         if (qConfig.showCloseButtons == "ShowAlways")
         {
             tab->setHoverCloseButton(true);
@@ -4568,8 +4598,15 @@ void QuantaApp::initTabWidget(bool closeButtonsOnly)
         {
             tab->setHoverCloseButton(false);
         }
+        if (!closeButtonsOnly)
+        {
+            tab->setTabPosition(QTabWidget::Bottom);
+            connect(tab, SIGNAL( contextMenu( QWidget *, const QPoint & ) ), ViewManager::ref(), SLOT(slotTabContextMenu( QWidget *, const QPoint & ) ) );
+            setTabWidgetVisibility(KMdi::AlwaysShowTabs);
+        }
     }
-    setToolviewStyle(qConfig.toolviewTabs);
+    if (!closeButtonsOnly)
+      setToolviewStyle(qConfig.toolviewTabs);
 #endif
 }
 
@@ -4602,6 +4639,18 @@ void QuantaApp::closeActiveView()
 void QuantaApp::closeAllViews()
 {
    ViewManager::ref()->closeAll();
+}
+
+void QuantaApp::switchToToplevelMode()
+{
+   KMdiMainFrm::switchToToplevelMode();
+   initTabWidget();
+}
+
+void QuantaApp::switchToChildframeMode()
+{
+   KMdiMainFrm::switchToChildframeMode();
+   initTabWidget();
 }
 
 void QuantaApp::switchToIDEAlMode()

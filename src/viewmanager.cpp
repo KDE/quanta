@@ -79,7 +79,7 @@ QuantaView* ViewManager::createView()
     connect(view, SIGNAL(cursorPositionChanged()), quantaApp, SLOT(slotNewLineColumn()));
     connect(view, SIGNAL(title(const QString &)), quantaApp, SLOT(slotNewLineColumn()));
     connect(view, SIGNAL(dragInsert(QDropEvent*)), this, SIGNAL(dragInsert(QDropEvent *)));
-    connect(view, SIGNAL(hidePreview()), quantaApp, SLOT(slotHidePreview()));
+    connect(view, SIGNAL(hidePreview()), quantaApp, SLOT(slotChangePreviewStatus()));
     disconnect(view, SIGNAL(childWindowCloseRequest( KMdiChildView *)), 0, 0 );
     connect(view, SIGNAL(childWindowCloseRequest( KMdiChildView*)), this, SLOT(slotCloseRequest(KMdiChildView*)));
 
@@ -180,7 +180,10 @@ void ViewManager::slotViewActivated(KMdiChildView *view)
    if (m_lastActiveView == view)
      return;
    if (m_lastActiveView)
+   {
      m_lastActiveView->deactivated();
+     quantaApp->restoreFromTempfile(static_cast<QuantaView*>(m_lastActiveView)->document());
+   }
    QuantaView *qView = static_cast<QuantaView*>(view);
    qView->activated();
 

@@ -571,7 +571,7 @@ int Document::createTempFile()
 
  m_tempFileName = QFileInfo(*(tempFile->file())).filePath();
  tempFile->close();
-kdDebug(24000) << "Creating tempfile " << m_tempFileName << " for " << url() << endl;
+ //kdDebug(24000) << "Creating tempfile " << m_tempFileName << " for " << url() << endl;
  return 1;
 }
 
@@ -1861,6 +1861,7 @@ void Document::save()
     m_doc->save();
     m_dirty = false;
   }
+  kdDebug(24000) << "Document " << url() << " saved." << endl;
 }
 
 /** No descriptions */
@@ -2274,7 +2275,7 @@ QString Document::hashFilePath(const QString& p)
   default: {
              int sign = 1,
                  sum = 0;
-	     uint plen = p.length();
+             uint plen = p.length();
              for (uint i = 0; i+1 < plen; i++)
              {
                sum += int(p[i]) + int(p[i + 1]) * sign;

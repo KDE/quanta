@@ -184,11 +184,15 @@ void QuantaInit::initQuanta()
   QString layout = m_config->readEntry("Window layout", "Default");
   int mdiMode = m_config->readNumEntry("MDI mode", -1);
   if (mdiMode != -1 && layout != "Default")
+  {
       m_quanta->readDockConfig(m_config); //FIXME: This causes the visible widget construction on startup, but is needed to restore the window layout...
+      if (mdiMode != KMdi::IDEAlMode)
+        m_quanta->setToolviewStyle(qConfig.toolviewTabs);
+   }
   qConfig.windowLayout = "Custom";
   //FIXME: This is a hack to workaround the starting problem when we are in Toplevel mode.
   //Without this, the editor becomes the child of the widget holding the menus and toolbars...
-  if (mdiMode == 1)
+  if (mdiMode == KMdi::ToplevelMode)
   {
       m_quanta->switchToChildframeMode();
       QTimer::singleShot(0, m_quanta, SLOT(switchToToplevelMode()));
@@ -418,6 +422,7 @@ void QuantaInit::initView()
    loadVPLConfig();
 #endif
   (void) ToolbarTabWidget::ref(quantaApp);
+  //set the toolview and close button style before the GUI is created
   m_config->setGroup  ("General Options");
   qConfig.toolviewTabs = m_config->readNumEntry("MDI style", 3);
   m_quanta->initTabWidget();
@@ -580,9 +585,10 @@ void QuantaInit::readOptions()
   qConfig.enableDTDToolbar = m_config->readBoolEntry("Show DTD Toolbar",true);
   m_quanta->showDTDToolbar->setChecked(qConfig.enableDTDToolbar);
   qConfig.showCloseButtons = m_config->readEntry("Close Buttons", "ShowDelayed");
-  m_quanta->initTabWidget(true);
+//  m_quanta->initTabWidget(true);
   m_quanta->fileRecent ->loadEntries(m_config);
   qConfig.showHiddenFiles = m_config->readBoolEntry("Show Hidden Files", true);
+  qConfig.toolviewTabs = m_config->readNumEntry("MDI style", 3);
 
   m_config->setGroup("Parser options");
   qConfig.showEmptyNodes = m_config->readBoolEntry("Show Empty Nodes", false);
@@ -819,7 +825,7 @@ void QuantaInit::initActions()
 
      m_quanta->showPreviewAction =
       new KToolBarPopupAction( i18n( "&Preview" ), "preview", Key_F6,
-                         m_quanta, SLOT( slotShowPreview() ),
+                         m_quanta, SLOT( slotToggleShowPreview() ),
                          ac, "show_preview" );
 
      m_quanta->showPreviewAction->popupMenu()->insertItem(i18n("Preview Without Frames"), 0);

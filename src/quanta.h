@@ -169,6 +169,8 @@ public:
   /** Show the toolbar which is in url. If it was not loaded yet, it loads the
       toolbar from the file */
   void showToolbarFile(const KURL &url);
+  /** Restores the original document from the temporary backup */
+  void restoreFromTempfile(Document *w);
 
     /** tabs for left panel */
   DocTreeView *dTab;
@@ -246,10 +248,17 @@ public slots:
 
   /** repaint preview */
   void slotRepaintPreview();
-  /** show preview ( F6 )*/
-  void slotShowPreview();
+  /** toggles showing the preview */
+  void slotToggleShowPreview();
+  /** Shows the preview widget and repaints the preview or
+        hides the preview widget and restores the original document
+  */
   void slotShowPreviewWidget(bool show);
-  void slotHidePreview() {slotShowPreviewWidget(false);}
+  /** Called from the view manager when the status of the preview must change:
+        - hide if the preview was in the editor area
+        - update if the preview is in a toolview
+   */
+  void slotChangePreviewStatus();
   /** Called when the preview widget got or lost the focus */
   void slotPreviewHasFocus(bool focus);
 
@@ -350,6 +359,8 @@ public slots:
 //Overridden KMdiMainFrm slots
   virtual void closeAllViews();
   virtual void closeActiveView();
+  virtual void switchToToplevelMode();
+  virtual void switchToChildframeMode();
   virtual void switchToIDEAlMode();
   virtual void switchToTabPageMode();
 
@@ -452,6 +463,7 @@ private:
   KMdiToolViewAccessor* m_problemsOutputView;
   KMdiToolViewAccessor* m_previewToolView;
   KMdiToolViewAccessor* m_documentationToolView;
+  Document *m_previewedDocument;
 
   // Debugger
   DebuggerManager *m_debugger;
