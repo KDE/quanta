@@ -46,6 +46,8 @@
 StructTreeView::StructTreeView(KConfig *config, QWidget *parent, const char *name )
 : KListView(parent,name)
 {
+  for (int i = 0; i < 5; i++)
+    groupOpened[i] = false;
   top = 0L;
   lastTag = 0L;
   groupsCount = 0;

@@ -53,7 +53,7 @@ KafkaWidget *kafkaWidget;
 KafkaDocument *kafkaDoc;
 
 KafkaDocument::KafkaDocument(QWidget *parent, QWidget *widgetParent, const char *name)
-:domNodeProps(1021)
+:domNodeProps(1021), _docLoaded(false)
 {
 // i18n reserve
 QString a = i18n("Selector");QString b = i18n("Attribute");QString c = i18n("Class");
@@ -82,7 +82,6 @@ QString ab = i18n("Ident all");
 	m_kafkaPart = new KafkaWidget(parent, widgetParent,this, name);
 	kafkaWidget = m_kafkaPart;
 	//m_kafkaPart->showDomTree();
-	_docLoaded = false;
 	m_currentDoc = 0L;
 	mainEnhancer =  new HTMLEnhancer(this);
 	domNodeProps.setAutoDelete(false);

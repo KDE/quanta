@@ -70,6 +70,9 @@
 
 QuantaView::QuantaView(QWidget *parent, const char *name )
   : QWidget( parent, name)
+  , currentFocus(quantaFocus)
+  , quantaUpdateTimer(-1)
+  , kafkaUpdateTimer(-1)
 {
   doc = quantaApp->doc();
   initActions();
@@ -657,8 +660,8 @@ void QuantaView::slotShowKafkaAndQuanta()
     splitter->setCollapsible(kafkaInterface->getKafkaWidget()->view(), false);
 #endif
     splitter->show();
-    killTimer(quantaUpdateTimer);
-    killTimer(kafkaUpdateTimer);
+    if (quantaUpdateTimer != -1) killTimer(quantaUpdateTimer);
+    if (kafkaUpdateTimer != -1) killTimer(kafkaUpdateTimer);
     if(currentFocus == QuantaView::quantaFocus && !qConfig.kafkaRefreshOnFocus)
       kafkaUpdateTimer = startTimer(qConfig.kafkaRefreshDelay);
     else if(currentFocus == QuantaView::kafkaFocus && !qConfig.quantaRefreshOnFocus)
@@ -715,8 +718,8 @@ void QuantaView::slotKafkaGetFocus(bool focus)
     //We reload the kafka part from the Node Tree
     if(currentViewsLayout == QuantaView::QuantaAndKafkaViews && currentFocus == QuantaView::quantaFocus)
     {
-      killTimer(kafkaUpdateTimer);
-      killTimer(quantaUpdateTimer);
+      if (kafkaUpdateTimer != -1) killTimer(kafkaUpdateTimer);
+      if (quantaUpdateTimer != -1) killTimer(quantaUpdateTimer);
       if(!qConfig.quantaRefreshOnFocus)
         quantaUpdateTimer = startTimer(qConfig.quantaRefreshDelay);
       contentsX = kafkaInterface->getKafkaWidget()->view()->contentsX();
@@ -800,8 +803,8 @@ void QuantaView::slotQuantaGetFocus(Kate::View *)
   //We reload the quanta view from the Node Tree.
   if(currentViewsLayout == QuantaView::QuantaAndKafkaViews && currentFocus == QuantaView::kafkaFocus)
   {
-    killTimer(quantaUpdateTimer);
-    killTimer(kafkaUpdateTimer);
+    if (quantaUpdateTimer != -1) killTimer(quantaUpdateTimer);
+    if (kafkaUpdateTimer != -1) killTimer(kafkaUpdateTimer);
     if(!qConfig.kafkaRefreshOnFocus)
       kafkaUpdateTimer = startTimer(qConfig.kafkaRefreshDelay);
     write()->docUndoRedo->reloadQuantaEditor();
@@ -938,8 +941,8 @@ void QuantaView::readConfig(KConfig *m_config)
   /**reloadUpdateTimers();*/
 
   //reload the Timers.
-  killTimer(quantaUpdateTimer);
-  killTimer(kafkaUpdateTimer);
+  if (quantaUpdateTimer != -1) killTimer(quantaUpdateTimer);
+  if (kafkaUpdateTimer != -1) killTimer(kafkaUpdateTimer);
   if(kafkaInterface->isLoaded() && currentViewsLayout == QuantaView::QuantaAndKafkaViews)
   {
     if(currentFocus == QuantaView::quantaFocus && !qConfig.kafkaRefreshOnFocus)
