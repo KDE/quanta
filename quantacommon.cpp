@@ -337,7 +337,7 @@ bool QuantaCommon::checkMimeGroup(const KURL& url, const QString& group)
  KMimeType::List::iterator it;
  bool status = false;
  QString mimetype;
-
+          /*
  if (url.isLocalFile())
  {
    mimetype = KMimeType::findByFileContent(url.path())->name();
@@ -350,7 +350,7 @@ bool QuantaCommon::checkMimeGroup(const KURL& url, const QString& group)
         break;
       }
    }
- } else
+ } else     */
  {
    mimetype = KMimeType::findByURL(url)->name();
    mimetype = mimetype.section('/',-1);
@@ -372,13 +372,13 @@ bool QuantaCommon::checkMimeType(const KURL& url, const QString& type)
 {
  bool status = false;
  QString mimetype;
-
+                 /*
  if (url.isLocalFile())
  {
    mimetype = KMimeType::findByFileContent(url.path())->name();
    mimetype = mimetype.section('/',-1);
    if (mimetype == type) status = true;
- } else
+ } else        */
  {
    mimetype = KMimeType::findByURL(url)->name();
    mimetype = mimetype.section('/',-1);
@@ -393,12 +393,12 @@ bool QuantaCommon::checkExactMimeType(const KURL& url, const QString& type)
 {
  bool status = false;
  QString mimetype;
-
+                   /*
  if (url.isLocalFile())
  {
    mimetype = KMimeType::findByFileContent(url.path())->name();
    if (mimetype == type) status = true;
- } else
+ } else              */
  {
    mimetype = KMimeType::findByURL(url)->name();
    if (mimetype == type) status = true;

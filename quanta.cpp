@@ -2013,6 +2013,8 @@ void QuantaApp::processDTD(QString documentType)
 
   loadToolbarForDTD(w->getDTDIdentifier());
   sTab->useOpenLevelSetting = true;
+
+  parser->parseForDTD(w);
 }
 
 /** No descriptions */

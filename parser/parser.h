@@ -41,12 +41,14 @@ struct DTDNode {
     int eLine, eCol;
   };
 
-struct DTDListNode {
-    QString name;
-    int line, col;
-  };
-
 class Document;
+
+struct DTDListNode {
+    DTDStruct *dtd;
+    QString foundText;
+    int bLine, bCol;
+    int eLine, eCol;
+  };
 
 class Parser {
 public: 
@@ -64,6 +66,8 @@ public:
   void clear();
   /** Builds an internal tree to reflect the areas where each real & pseudo dtd is active. */
   void parseForDTD(Document *w);
+  /** No descriptions */
+  DTDStruct * currentDTD(int line, int col);
 
 	QString m_text;  //FIXME: having an internal copy of text is absolutely useless
 private:

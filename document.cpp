@@ -93,6 +93,7 @@ Document::Document(const KURL& p_baseURL, KTextEditor::Document *doc,
 
   connect( m_view, SIGNAL(filterInsertString(KTextEditor::CompletionEntry*,QString *)),
            this,  SLOT(  slotFilterCompletion(KTextEditor::CompletionEntry*,QString *)) );
+  connect( m_doc, SIGNAL(textChanged()), SLOT(slotTextChanged()));
 }
 
 Document::~Document()
@@ -1195,6 +1196,7 @@ DTDStruct* Document::currentDTD(bool fallback)
 
  // parser->parseForDTD(this);
   DTDStruct* dtd = dtds->find(findDTDName(line, 0));
+//  DTDStruct *dtd = parser->currentDTD(line, col);
   if (fallback)
   {
     if (!dtd) dtd = dtds->find(dtdName.lower());

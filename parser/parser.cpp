@@ -341,54 +341,106 @@ void Parser::parseForDTD(Document *w)
  col = 0;
  Tag *tag;
  QRegExp rx = scriptBeginRx;
- rx.setPattern(scriptBeginRx.pattern()+"|\\!doctype");
+ rx.setPattern(scriptBeginRx.pattern()+"|"+scriptEndRx.pattern()+"|\\!doctype");
+ rx.setCaseSensitive(false);
  DTDListNode dtdNode;
  dtdList.clear();
  while (col < length && pos != -1)
  {
    pos = rx.search(text, col);
-   if (pos != -1) //a script definition was found
+   if (pos != -1)
    {
      line = text.left(pos).contains("\n");
      foundText = rx.cap(0).lower();
      col = pos + foundText.length();
-     if (foundText.startsWith("<script"))
+     if (foundText.startsWith("<script")) //script begin
      {
        tag = write->findXMLTag(line, pos, true);
        if (tag)
        {
+         dtdNode.foundText = foundText;
          foundText = tag->attributeValue("language").lower();
          delete tag;
+         dtdNode.dtd = dtds->find(foundText);
+         dtdNode.eLine = -1;
+         dtdNode.bLine = line;
+         dtdNode.bCol = col;
+         dtdList.append(dtdNode);
        }
      } else
-     {
-       if (foundText.startsWith("!doctype"))
+       if (foundText.startsWith("/script>")) //script end
        {
-         //TODO:
+         for (int i = dtdList.count() -1; i >=0; i--)     //search for the first non-closed <script> tag
+         {
+           if (dtdList[i].foundText == "<script" && dtdList[i].eLine == -1)
+           {
+             dtdList[i].eLine = line;
+             dtdList[i].eCol = pos;
+             break;
+           }
+         }
        } else
        {
-         QDictIterator<DTDStruct> it(*dtds);
-         for( ; it.current(); ++it )
+         if (foundText.startsWith("!doctype"))
          {
-            DTDStruct *dtd = it.current();
-            if (dtd->family == Script)
-            {
-               int index = dtd->scriptTagStart.findIndex(foundText);
-               if (index !=-1)
-               {
-                 foundText = dtd->name.lower();
-                 break;
-               }
-            }
-         }
-       }
-     }
-     dtdNode.line = line;
-     dtdNode.col = col;
-     dtdNode.name = foundText;
-     dtdList.append(dtdNode);
-   }
- }
+           //TODO:
+         } else
+         {
+           bool found = false;
+           QDictIterator<DTDStruct> it(*dtds);
+           for( ; it.current(); ++it )
+           {
+              DTDStruct *dtd = it.current();
+              if (dtd->family == Script)
+              {
+                 int index = dtd->scriptTagStart.findIndex(foundText);
+                 if (index !=-1)          //script begin
+                 {
+                   dtdNode.foundText = foundText;
+                   dtdNode.dtd = dtd;
+                   dtdNode.eLine = -1;
+                   dtdNode.bLine = line;
+                   dtdNode.bCol = col;
+                   dtdList.append(dtdNode);
+                   found = true;
+                   break;
+                 }
+                 index = dtd->scriptTagEnd.findIndex(foundText); //script end, search for the first non-closed script begin
+                 if (index != -1)
+                 {
+                   for (int i = dtdList.count(); i >=0; i--)
+                   {
+                     if (dtdList[i].dtd == dtd && dtdList[i].eLine == -1)
+                     {
+                       dtdList[i].eLine = line;
+                       dtdList[i].eCol = pos;
+                       found = true;
+                       break;
+                     }
+                   } //for i
+                 }
+              } // if (dtd.Family == Script)
+             if (found) break;
+           } //for iterator
+         } //else
+       } //else
+   } //if (pos != -1)
+ } //while
+}
 
+/** No descriptions */
+DTDStruct * Parser::currentDTD(int line, int col)
+{
+  DTDStruct *dtd = 0L;
+  DTDListNode dtdNode;
+  for (uint i = 0 ;i < dtdList.count(); i++)
+  {
+    dtdNode = dtdList[i];
+    if (QuantaCommon::isBetween(line, col, dtdNode.bLine,dtdNode.bCol, dtdNode.eLine, dtdNode.eCol) == 0)
+    {
+      dtd = dtdNode.dtd;
+    }
+  }
 
+  return dtd;
 }
