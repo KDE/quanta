@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <iostream.h>
 #include <qstring.h>
+#include <cstdarg>
  
 #include "debugger.h"
 #include "dbgbase/ThreadBase.h"
