@@ -212,14 +212,17 @@ void QuantaApp::slotFileOpenRecent(const KURL &url )
 
 void QuantaApp::slotFileSave()
 {
-  Document *w = m_view->write();
-  w->checkDirtyStatus();
-  if ( w->isUntitled() )
-    slotFileSaveAs();
-  else
-    m_doc->saveDocument( w->url() );
+  if (m_view->writeExists())
+  {
+    Document *w = m_view->write();
+    w->checkDirtyStatus();
+    if ( w->isUntitled() )
+      slotFileSaveAs();
+    else
+      m_doc->saveDocument( w->url() );
 
-  slotUpdateStatus(w);
+    slotUpdateStatus(w);
+  Ú
 }
 
 bool QuantaApp::slotFileSaveAs()
@@ -350,18 +353,21 @@ void QuantaApp::slotFileSaveAll()
 
 void QuantaApp::slotFileClose()
 {
-//[MB]  QWidget *activeWidget = rightWidgetStack->visibleWidget();
-#ifdef BUILD_KAFKAPART
-  kafkaPart->unloadDocument();
-#endif
-  m_doc->closeDocument();
-  WHTMLPart *part = htmlPart();
-  part->closeURL();
-  part->begin(projectBaseURL());
-  part->write( "" );
-   part->end();
+  if (m_view->writeExists())
+  {
+  //[MB]  QWidget *activeWidget = rightWidgetStack->visibleWidget();
+  #ifdef BUILD_KAFKAPART
+    kafkaPart->unloadDocument();
+  #endif
+    m_doc->closeDocument();
+    WHTMLPart *part = htmlPart();
+    part->closeURL();
+    part->begin(projectBaseURL());
+    part->write( "" );
+    part->end();
 
-  slotUpdateStatus(m_view->write());
+    slotUpdateStatus(m_view->write());
+  }
 }
 
 void QuantaApp::slotFileCloseAll()
@@ -375,7 +381,7 @@ void QuantaApp::slotFileCloseAll()
   part->closeURL();
   part->begin(projectBaseURL());
   part->write( "" );
-   part->end();
+  part->end();
 
   slotNewStatus();
 }
@@ -647,7 +653,7 @@ void QuantaApp::slotNewStatus()
     if (setHighlight) setHighlight->updateMenu (w->kate_doc);
 
     QIconSet floppyIcon( UserIcon("save_small"));
-    QIconSet  emptyIcon( UserIcon("empty1x16" ));
+    QIconSet  emptyIcon( UserIcon("empty16x16" ));
 
     QTabWidget *wTab = m_view->writeTab();
     w = static_cast<Document*>(wTab->currentPage());
@@ -670,6 +676,31 @@ void QuantaApp::slotNewStatus()
  }
 }
 
+void QuantaApp::slotClosePage(QWidget *w)
+{
+  QTabWidget *writeTab = m_view->writeTab();
+  QString tabTitle = writeTab->tabLabel(w);
+  QuantaKPartPlugin *plugin = dynamic_cast<QuantaKPartPlugin *>(m_pluginInterface->plugin(tabTitle));
+  if (plugin)
+  {
+    plugin->unload();
+    plugin->m_action->setChecked(false);
+  } else
+  {
+    Document *write = dynamic_cast<Document *>(w);
+    if (write)
+    {
+      write->closeTempFile();
+      if (!write->isUntitled())
+        fileWatcher->removeFile(write->url().path());
+      writeTab->removePage(w);
+    }
+  }
+  if (!writeTab->currentPage())
+  {
+    m_doc->openDocument(KURL());
+  }
+}
 
 void QuantaApp::slotUpdateStatus(QWidget* w)
 {

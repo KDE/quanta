@@ -210,6 +210,7 @@ public slots:
   void slotNewStatus();
   void slotNewLineColumn();
   void slotUpdateStatus(QWidget*);
+  void slotClosePage(QWidget*);
 
   void slotDockStatusChanged();
   void slotDockChanged();

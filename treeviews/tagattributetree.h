@@ -39,6 +39,9 @@ public:
 public slots:
   void editorContentChanged();
 
+signals:
+  void newNodeSelected(Node *node);
+
 private:
   Node *m_node;
   bool rebuildEnabled;

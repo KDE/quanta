@@ -164,7 +164,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
 {
   //first parse as an XML document
   QString textLine;
-  textLine.fill(' ', startCol);
+  textLine.fill(space, startCol);
   int line = startLine;
   int col = 0;;
   int tagStartCol, tagStartLine = 0;
@@ -1990,8 +1990,8 @@ void Parser::removeCommentsAndQuotes(QString &str, DTDStruct *dtd)
      s = dtd->commentsStartRx.cap();
      if (s == "\\\"" || s == "\\'")
      {
-       str[pos] = ' ';
-       str[pos+1] = ' ';
+       str[pos] = space;
+       str[pos+1] = space;
        pos += 2;
      } else
      {
@@ -2000,7 +2000,7 @@ void Parser::removeCommentsAndQuotes(QString &str, DTDStruct *dtd)
        l = (l == -1) ? str.length() : l;
        for (int i = pos; i < l ; i++)
        {
-         str[i] = ' ';
+         str[i] = space;
        }
        pos = l + s.length();
      }
@@ -2018,7 +2018,7 @@ void Parser::removeCommentsAndQuotes(QString &str, DTDStruct *dtd)
     l = strRx.matchedLength();
     for (int i = pos; i < pos + l ; i++)
     {
-      str[i] = ' ';
+      str[i] = space;
     }
     pos += l;
    }

@@ -37,6 +37,11 @@
 #include <kiconloader.h>
 #include <kmessagebox.h>
 #include <kurldrag.h>
+#include <kdeversion.h>
+
+#if KDE_VERSION >= KDE_MAKE_VERSION(3,1,90)
+#include <ktabwidget.h>
+#endif
 
 #include <ktexteditor/viewcursorinterface.h>
 
@@ -56,7 +61,13 @@ QuantaView::QuantaView(QWidget *parent, const char *name )
 {
   doc = quantaApp->doc();
   initActions();
+#if KDE_VERSION >= KDE_MAKE_VERSION(3,1,90)
+  m_writeTab = new KTabWidget(this);
+  static_cast<KTabWidget*>(m_writeTab)->setHoverCloseButton(true);
+  connect(m_writeTab, SIGNAL(closeRequest(QWidget *)), quantaApp, SLOT(slotClosePage(QWidget *)));
+#else
   m_writeTab = new QTabWidget(this);
+#endif
   m_writeTab ->setTabPosition( QTabWidget::Bottom );
   m_writeTab ->setFocusPolicy( QWidget::NoFocus );
   connect( m_writeTab,SIGNAL(currentChanged(QWidget*)), quantaApp, SLOT(slotUpdateStatus(QWidget*)));
@@ -104,7 +115,7 @@ Document* QuantaView::write()
 /** Add new kwrite class to writeStack and return id in stack */
 void QuantaView::addWrite( QWidget* w , QString label )
 {
-  QIconSet emptyIcon ( UserIcon("empty1x16"));
+  QIconSet emptyIcon ( UserIcon("empty16x16"));
   m_writeTab->addTab  ( w,  emptyIcon,  label.section("/",-1) );
   m_writeTab->setTabToolTip(w, label);
   m_writeTab->showPage( w );
@@ -123,10 +134,10 @@ QWidget* QuantaView::removeWrite()
     Document *w = write();
     m_writeTab->removePage(w);
     delete w;
-  } else
+  }/* else
   {
     m_writeTab->removePage( m_writeTab->currentPage() );
-  }
+  }*/
   oldWrite = dynamic_cast<Document*>(m_writeTab->currentPage()); //don't call write() here
   return oldWrite;
 }
