@@ -364,6 +364,7 @@ void ProjectUpload::startUpload()
       }
     }
   }
+  buttonUpload->setEnabled(true);
   uploadInProgress = false;
 }
 
@@ -415,6 +416,8 @@ void ProjectUpload::upload()
         if (!QExtFileInfo::createDir(dir))
         {
           QuantaCommon::dirCreationError(this, KURL( dir.prettyURL(0, KURL::StripFileProtocol) ));
+          buttonUpload->setEnabled(true);
+          uploadInProgress = false;
           return;
         }
       }
@@ -442,6 +445,7 @@ void ProjectUpload::upload()
       }
   }
   saveRemoteUploadInfo();
+  buttonUpload->setEnabled(true);
   uploadInProgress = false;
   reject();
 }
@@ -454,6 +458,7 @@ void ProjectUpload::uploadFinished( KIO::Job *job )
    {
       job->showErrorDialog( this  );
       uploadInProgress = false;
+      buttonUpload->setEnabled(true);
       return;
    }
    KIO::FileCopyJob *fJob = dynamic_cast<KIO::FileCopyJob *>(job);
