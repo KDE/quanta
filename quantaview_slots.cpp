@@ -45,7 +45,6 @@
 // dialogs headers
 #include "tagdialogs/tagdialog.h"
 
-#include "tagdialogs/tagmaildlg.h"
 #include "tagdialogs/tagquickstart.h"
 #include "tagdialogs/tagquicklistdlg.h"
 #include "tagdialogs/tagquicktable.h"
@@ -67,7 +66,7 @@ void QuantaView::slotEditCurrentTag()
   QString tag = w->getTagAttr(0);
 
   if ( tagsList->find( tag.upper()) != -1 ) {
-    QTabDialog *dlg = new TagDialog( w );
+    TagDialog *dlg = new TagDialog( w );
     dlg->show();
   } else {
     QString message = i18n("Unknown tag : ");
@@ -205,12 +204,6 @@ void QuantaView::slotTagFormReset()
 /** for <a href=mailto> tag  */
 void QuantaView::slotTagMail()
 {
-	TagMailDlg *mailDlg = new TagMailDlg(app->project->email,this,i18n("Enter E-Mail adress..."));
-	
-  if ( mailDlg->exec() ) {
-     write()->insertTag(QString("<a href=\"mailto:")+mailDlg->comboBoxMail->currentText()+QString("\">"),QString("</a>"));
-  }
-  delete(mailDlg);
 }
 
 /** quick html text generate */

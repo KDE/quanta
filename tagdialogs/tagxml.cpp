@@ -24,7 +24,8 @@
 #include <qtooltip.h>
 #include <qwhatsthis.h>
 
-Tagxml::Tagxml( QDomDocument &d, QWidget *parent, const char *name) : TagWidget(parent, name), doc(d)
+Tagxml::Tagxml( QDomDocument &d, QWidget *parent, const char *name)
+	:TagWidget(parent,name), QWidget(parent,name), doc(d)
 {
    QGridLayout *grid = new QGridLayout( this );
    grid->setSpacing( 13 );

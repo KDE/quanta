@@ -18,11 +18,11 @@
 #include "tagwidget.h"
 
 #include <qdict.h>
-
+#include <qlineedit.h>
 
 CoreWidgetDlg::CoreWidgetDlg(QWidget *parent, const char *name)
-  : TagWidget(parent,name){
-	initDialog();
+  :CoreWidgetDlgS(parent,name), TagWidget(parent,name)
+{
 }
 
 CoreWidgetDlg::~CoreWidgetDlg(){

@@ -29,7 +29,7 @@
 static const char *align[] = { "", "left", "right", "top", "bottom", "middle",0};
 
 TagImgDlg::TagImgDlg(QWidget *parent, const char *name)
-    : TagWidget(parent,name)
+  : QWidget(parent,name), TagWidget(parent,name)
 {
 	img = 0L;
 	setCaption(name);

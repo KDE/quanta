@@ -19,7 +19,7 @@
 #include <qdict.h>
 
 EventsWidgetDlg::EventsWidgetDlg(QWidget *parent, const char *name)
-  : TagWidget(parent,name)
+  : QWidget(parent,name), TagWidget(parent,name)
 {
 	initDialog();
 }

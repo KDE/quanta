@@ -31,7 +31,7 @@
   *@author Yacovlev Alexander & Dmitry Poplavsky
   */
 
-class EventsWidgetDlg : public TagWidget  {
+class EventsWidgetDlg : public QWidget, TagWidget {
    Q_OBJECT
 public: 
 	EventsWidgetDlg(QWidget *parent=0, const char *name=0);

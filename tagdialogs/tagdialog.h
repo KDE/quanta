@@ -63,9 +63,9 @@ public:
 public:
   bool  fEdit;
 
-  CoreWidgetDlg *coreDlg;
+  CoreWidgetDlg 	*coreDlg;
   EventsWidgetDlg *eventsDlg;
-  TagWidget *mainDlg;
+  QWidget 				*mainDlg;
 
   Document *write;
   QDict<QString> *dict;

@@ -12,7 +12,7 @@
 #include <qtooltip.h>
 #include "tagquickstart.h"
 
-extern const char *colorsList[];
+//extern const char *colorsList[];
 
 void  TagQuickStart::initDialog()
 {
@@ -60,7 +60,7 @@ void  TagQuickStart::initDialog()
   comboBGColor= new QComboBox(true,this,"NoName");
   comboBGColor->setGeometry(170,70,190,25);
   comboBGColor->setMinimumSize(0,0);
-  comboBGColor->insertStrList( colorsList );
+  //comboBGColor->insertStrList( colorsList );
 
   cButtonBGColor= new KColorButton(QColor("#FFFFFF"),this,"NoName");
   cButtonBGColor->setGeometry(370,70,40,25);
@@ -70,7 +70,7 @@ void  TagQuickStart::initDialog()
   comboTextColor= new QComboBox(true,this,"NoName");
   comboTextColor->setGeometry(170,100,190,25);
   comboTextColor->setMinimumSize(0,0);
-  comboTextColor->insertStrList( colorsList );
+  //comboTextColor->insertStrList( colorsList );
 
   cButtonTextColor= new KColorButton(this,"NoName");
   cButtonTextColor->setGeometry(370,100,40,25);
@@ -80,7 +80,7 @@ void  TagQuickStart::initDialog()
   comboLinkColor= new QComboBox(true,this,"NoName");
   comboLinkColor->setGeometry(170,130,190,25);
   comboLinkColor->setMinimumSize(0,0);
-  comboLinkColor->insertStrList( colorsList );
+  //comboLinkColor->insertStrList( colorsList );
 
   cButtonLinkColor= new KColorButton(this,"NoName");
   cButtonLinkColor->setGeometry(370,130,40,25);
@@ -90,7 +90,7 @@ void  TagQuickStart::initDialog()
   comboALinkColor= new QComboBox(true,this,"NoName");
   comboALinkColor->setGeometry(170,160,190,25);
   comboALinkColor->setMinimumSize(0,0);
-  comboALinkColor->insertStrList( colorsList );
+  //comboALinkColor->insertStrList( colorsList );
 
   cButtonALinkColor= new KColorButton(this,"NoName");
   cButtonALinkColor->setGeometry(370,160,40,25);
@@ -105,7 +105,7 @@ void  TagQuickStart::initDialog()
   comboVLinkColor= new QComboBox(true,this,"NoName");
   comboVLinkColor->setGeometry(170,190,190,25);
   comboVLinkColor->setMinimumSize(0,0);
-  comboVLinkColor->insertStrList( colorsList );
+  //comboVLinkColor->insertStrList( colorsList );
 
   cButtonVLinkColor= new KColorButton(this,"NoName");
   cButtonVLinkColor->setGeometry(370,190,40,25);

@@ -30,8 +30,7 @@
 #include "tagattr.h"
 #include "tagwidget.h"
 
-class Tagxml : public TagWidget
-{
+class Tagxml : public QWidget, TagWidget {
   Q_OBJECT 
   public:
     /** construtor */

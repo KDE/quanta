@@ -18,23 +18,16 @@
 #ifndef COREWIDGETDLG_H
 #define COREWIDGETDLG_H
 
-//Generated area. DO NOT EDIT!!!(begin)
-#include <qwidget.h>
-#include <qlabel.h>
-#include <klineedit.h>
-#include <kseparator.h>
-//Generated area. DO NOT EDIT!!!(end)
-
-#include <qwidget.h>
 #include <qdict.h>
 
 #include "tagwidget.h"
+#include "corewidgetdlgs.h"
 
 /**
   *@author Yacovlev Alexander & Dmitry Poplavsky
   */
 
-class CoreWidgetDlg : public TagWidget  {
+class CoreWidgetDlg : public CoreWidgetDlgS, TagWidget {
    Q_OBJECT
 public: 
 	CoreWidgetDlg(QWidget *parent=0, const char *name=0);
@@ -44,29 +37,9 @@ public:
   void writeAttributes( QDict<QString> *d );
 	
 public:
-	void initDialog();
-  /**  */
   void disableI18nAttribs();
-  /**  */
   void disableCoreAttribs();
-	//Generated area. DO NOT EDIT!!!(begin)
-	QLabel *QLabel_1;
-	QLabel *QLabel_2;
-	QLabel *QLabel_3;
-	QLabel *QLabel_4;
-	KLineEdit *lineId;
-	KLineEdit *lineClass;
-	KLineEdit *lineStyle;
-	KLineEdit *lineTitle;
-	KSeparator *KSeparator_1;
-	QLabel *QLabel_5;
-	QLabel *QLabel_6;
-	QLabel *QLabel_7;
-	KLineEdit *lineLang;
-	KLineEdit *lineDir;
-	//Generated area. DO NOT EDIT!!!(end)
 
-private: 
 };
 
 #endif

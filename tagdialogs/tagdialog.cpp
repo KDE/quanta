@@ -32,18 +32,7 @@
 #include "eventswidgetdlg.h"
 
 #include "tagwidget.h"
-
-#include "tagfontdlg.h"
-#include "tagform.h"
-#include "tagformbutton.h"
-#include "tagformtext.h"
-#include "tagformtextareadlg.h"
-#include "tagforminput.h"
 #include "tagimgdlg.h"
-#include "tagtabledlg.h"
-#include "tagtablehead.h"
-#include "tagtablerow.h"
-
 #include "tagxml.h"
 
 extern QStrList *tagsList; // list of known tags
@@ -86,7 +75,6 @@ TagDialog::TagDialog( Document *write, QString tag ,QString attr,bool insertInLi
   mainDlg = 0L;
   parseTag();
 
-  if ( mainDlg )   mainDlg->  writeAttributes( dict );
   if ( coreDlg )   coreDlg->  writeAttributes( dict );
   if ( eventsDlg ) eventsDlg->writeAttributes( dict );
 
@@ -149,17 +137,7 @@ void TagDialog::parseTag()
 
 
   if ( !findXMLConfig ) {
-     if ( t == "font" )      mainDlg = new TagFontDlg( this);
-     if ( t == "basefont" )  mainDlg = new TagFontDlg( this);
-     if ( t == "form" )      mainDlg = new TagForm( this);
-     if ( t == "button" )    mainDlg = new TagFormButton( this);
-     if ( t == "input" )     mainDlg = new TagFormInput( this);
-     if ( t == "textarea" )  mainDlg = new TagFormTextareaDlg( this);
      if ( t == "img" )       mainDlg = new TagImgDlg( this);
-     if ( t == "table" )     mainDlg = new TagTableDlg(this);
-     if ( t == "th" )        mainDlg = new TagTableHead(this);
-     if ( t == "tr" )        mainDlg = new TagTableRow(this);
-     if ( t == "td" )        mainDlg = new TagTableHead(this);
   }
 
   if ( fEdit ) {
@@ -188,12 +166,16 @@ void TagDialog::parseTag()
 
   if ( tagsScript->find(t) != -1 )
     eventsDlg = new EventsWidgetDlg( this);
+
+  if ( !findXMLConfig ) {
+  if ( t.lower() == "img" ) ((TagImgDlg *)mainDlg)->writeAttributes( dict ); }
+  else 											((Tagxml    *)mainDlg)->writeAttributes( dict );
 }
 /**  */
 void TagDialog::slotAccept()
 {
 
-  if ( mainDlg )   mainDlg->readAttributes( dict );
+  if ( mainDlg )   ((Tagxml *)mainDlg)->readAttributes( dict );
   if ( coreDlg )   coreDlg->readAttributes( dict );
   if ( eventsDlg ) eventsDlg->readAttributes( dict );
 

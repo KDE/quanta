@@ -22,7 +22,7 @@
 #include <qdict.h>
 
 class QComboBox;
-class KLineEdit;
+class QLineEdit;
 class QSpinBox;
 class QCheckBox;
 class KColorButton;
@@ -31,22 +31,21 @@ class KColorButton;
   *@author Yacovlev Alexander & Dmitry Poplavsky
   */
 
-class TagWidget : public QWidget  {
-   Q_OBJECT
-public: 
-	TagWidget(QWidget *parent=0, const char *name=0);
-	~TagWidget();
+class TagWidget {
+public:
+	TagWidget(QObject *parent=0, const char *name=0);
+	virtual ~TagWidget();
 	
   virtual void readAttributes( QDict<QString> * ) {};
   virtual void writeAttributes( QDict<QString> * ) {};
   /**  */
   void updateDict( QString attr, QComboBox *combo );
-  void updateDict( QString attr, KLineEdit *line );
+  void updateDict( QString attr, QLineEdit *line );
   void updateDict( QString attr, QSpinBox *spin );
   void updateDict( QString attr, QCheckBox *check );
 
   void setValue( QString val, QComboBox *combo);
-  void setValue( QString val, KLineEdit *line);
+  void setValue( QString val, QLineEdit *line);
   void setValue( QString val, QSpinBox  *spin);
   void setValue( QString val, KColorButton *button);
 

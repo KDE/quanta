@@ -36,7 +36,7 @@ class QImage;
   *@author Dmitry Poplavsky & Yacovlev Alexander
   */
 
-class TagImgDlg : public TagWidget  {
+class TagImgDlg : public QWidget, TagWidget {
    Q_OBJECT
 public: 
 	TagImgDlg(QWidget *parent=0, const char *name=0);
