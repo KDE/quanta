@@ -1845,9 +1845,9 @@ void KafkaDocument::slotDomNodeModified(DOM::Node domNode)
 			node->setRootNode(ptDomNode);
 			ptDomNode = new DOM::Node(domNode);
 			node->setLeafNode(ptDomNode);
-			//Warning, it can merge Nodes (nice, but looks at your pointers!)!
+			//avoid the merging of Text Nodes
 			node = kafkaCommon::insertNode(node, getNode(parentDomNode),
-				getNode(nextSiblingDomNode), modifs);
+				getNode(nextSiblingDomNode), modifs, false);
 			props->setNode(node);
 			modifs->addNodeModif(modif);
 			m_currentDoc->docUndoRedo->addNewModifsSet(modifs, undoRedo::KafkaModif);
