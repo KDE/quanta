@@ -44,6 +44,8 @@ public:
    */
   void fillWithVPLCursorSelection();
   
+  bool hasSelection() const;
+  
   /**---------------------------------- GET/SET --------------------------------------------*/
 
   /**

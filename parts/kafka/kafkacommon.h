@@ -27,6 +27,7 @@ namespace DOM
 }
 class Node;
 class NodeModifsSet;
+class NodeSelectionInd;
 class Document;
 struct DTDStruct;
 
@@ -193,7 +194,14 @@ public:
 	static Node* createNode(const QString &nodeName, const QString &tagString, int nodeType,
 		Document *doc);
 
-	/**
+    /**
+     * Restore a Node that has been pasted, i.e., his doc and dtd pointers.
+     * @param node The Node to be restored.
+     * @param doc The document the Node will belong to.
+     */
+    static void restorePastedNode(Node* node, Document* doc);
+    
+    /**
 	 * Create a !doctype Node with all the necessary attributes. It has a child and a closing Node.
 	 * @param doc It needs the document where the !doctype node will be inserted in order to
 	 * build the right attributes.
@@ -331,9 +339,19 @@ public:
 	 * @return Returns a pointer to the node inserted.
 	 */
 	static Node* insertNodeSubtree(Node *node, Node* parentNode, Node* nextSibling,
-		Node* nextEndSibling, NodeModifsSet *modifs, bool merge = true);
+                                   Node* nextEndSibling, NodeModifsSet *modifs, bool merge = true);
 
 	/**
+     * Split the Nodes as necessary, then check that the subtree is allowed to be inserted 
+     * and then insert the subtree. 
+     * @param node The root node of the Node subtree to insert.
+     * @param selection contains the cursor Node where the insertion will take place.
+     * @param modifs The changes made are logged into modifs.
+     */
+    static Node* DTDInsertNodeSubtree(Node *node, NodeSelectionInd& selection, 
+                                      Node **cursorNode, int& cursorOffset, NodeModifsSet *modifs);
+	
+    /**
 	 * Create a Node of name nodeName, of type nodeType, (see tag.h) connected to the document doc,
 	 * and nextSibling as Node's next sibling.
 	 * This function does not try to know if the location of the new Node is valid.
@@ -442,7 +460,7 @@ public:
 		bool removeClosingTag = false/**, bool removeEmbeddedTags = false*/);
 
 	/**
-	 * It behaves essentially the above function.
+	 * It behaves essentially like the above function.
 	 * Extract and BUT NOT DELETE RIGHT NOW node from the Tree. The undo/redo system will delete it
 	 * when necessary.
 	 * TODO: remove it, and use extractNode instead.
@@ -450,8 +468,37 @@ public:
 	 */
 	static void extractAndDeleteNode(Node *node, NodeModifsSet *modifs, bool deleteChildren = true,
 		bool deleteClosingTag = true, bool mergeAndFormat = true);
+    
+    /**
+     * Extarct a node subtree in the tree. WARNING This function will log that the nodes were added.
+     * @param node The root node of the Node subtree to insert.
+     * @param modifs The changes made are logged into modifs. Put 0L if you don't want to log
+     * and if you know what you're doing!
+     * @return Returns a pointer to the node inserted.
+     */
+    static Node* DTDExtractNodeSubtree(Node *startNode, int startOffset, Node *endNode, int endOffset, 
+                                       Node **cursorNode, int &cursorOffset, NodeModifsSet *modifs);
+    
+    /**
+     * It behaves essentially like the above function. Provided for convenience.
+     */
+    static Node* DTDRemoveSelection(NodeSelectionInd& selection, 
+                                    Node **cursorNode, int& cursorOffset, NodeModifsSet *modifs);
 
-	/**
+    /**
+     * Get a node subtree from the tree. It is similar to extractNodeSubtree() 
+     * but it doesn't extract anything. 
+     * It's useful to get a copy of the Node subtree from a selection, for example.
+     * @param startNode The starting Node.
+     * @param startOffset If firstNode is a text, specify at which offset the new start Node will be splitted.
+     * @param endNode The ending Node.
+     * @param endOffset If endNode is a text, specify at which offset the new end Node will be splitted.
+     * @return Returns a pointer to the Node subtree.
+     */
+    static Node* getNodeSubtree(Node *startNode, int startOffset, Node *endNode, int endOffset/*, 
+            NodeModifsSet *modifs*/);
+	
+    /**
 	 * An enumeration of all the possible return states of DTDExtractNode
 	 */
 	enum extractNodeStatus
@@ -500,7 +547,7 @@ public:
 	 * @param merge Specifies if it should try to merge the Node at its new location.
 	 */
 	static void moveNode(Node *nodeToMove, Node *newParent, Node *newNextSibling,
-		NodeModifsSet *modifs, bool merge = true);
+                         NodeModifsSet *modifs, bool merge = true, bool moveClosingNode = false);
 
 	/**
 	 * Split a Text Node at offset offset. If offset or n is invalid, nothing is done.
@@ -567,10 +614,10 @@ public:
 	 */
 	static void setTagStringAndFitsNodes(Node *node, const QString &newTagString, NodeModifsSet* modifs);
         
-        /**
-         * This function behaves exactly like Node::editAttribute except that the change is logged inside a NodeModifsSet.
-         */
-        static void editNodeAttribute(Node* node, const QString& name, const QString& value, NodeModifsSet* modifs);
+    /**
+     * This function behaves exactly like Node::editAttribute except that the change is logged inside a NodeModifsSet.
+     */
+    static void editNodeAttribute(Node* node, const QString& name, const QString& value, NodeModifsSet* modifs);
 
 	/**
 	 * Gets the location of a Node in a pointer-independant suit of ints e.g. 1,3,5 means

@@ -124,16 +124,16 @@ public:
 	 * Disconnects all the domNode from their Quanta Node.
 	 */
 	void disconnectAllDomNodes();
+                
         
-        
-        /* --------------------------- CURSOR AND SELECTION  HANDLING --------------------------*/
+    /* --------------------------- CURSOR AND SELECTION  HANDLING --------------------------*/
 
         /**
          * Set the cursor and selection coordinates.
          * @param nodeSelection The coordinates of the selection and cursor.
          */
         void setCursorAndSelection(NodeSelectionInd *nodeSelection);
-         
+        
 
 	/* --------------------------- KAFKA/QUANTA NODES CREATION -----------------------------*/
 
@@ -261,7 +261,7 @@ public:
          * @param node Returns the node where is located the node internal offset.
          * @param offset Returns the node internal corresponding offset.
          */
-        void translateQuantaIntoNodeCursorPosition(uint line, uint col, Node **node, int &offset);
+    void translateQuantaIntoNodeCursorPosition(uint line, uint col, Node **node, int &offset);
 
 	/**
 	 * Returns the internal Node offset corresponding to the kafka cursor position.
@@ -441,6 +441,10 @@ public slots:
 	 * Called whenever a DOM::Node get the focus
 	 */
 	void slotdomNodeNewCursorPos(DOM::Node _domNode, int offset);
+    
+    void slotCut();
+    void slotCopy();
+    void slotPaste();
 
 public:
 	//use a QPtrList aferwards
@@ -452,7 +456,7 @@ private:
 	 */
 	KafkaDocument(QWidget *parent, QWidget *widgetParent, const char *name);
 
-        QMap<QString, QString> decodedChars;
+    QMap<QString, QString> decodedChars;
 	QMap<QString, QString> encodedChars;
 	QPtrDict<kNodeAttrs> domNodeProps;
 	KafkaWidget *m_kafkaPart;

@@ -25,6 +25,7 @@
 #include <ktexteditor/selectioninterface.h>
 #include <kstandarddirs.h>
 #include <klocale.h>
+#include <kmultipledrag.h> 
 //#include <kglobal.h>
 //#include <kcharsets.h>
 
@@ -32,6 +33,7 @@
 #include <qfile.h>
 #include <qtextstream.h>
 #include <qdatetime.h>
+#include <qclipboard.h> 
 
 #include "document.h"
 #include "viewmanager.h"
@@ -46,6 +48,8 @@
 #include "htmlenhancer.h"
 #include "kafkacommon.h"
 #include "kafkaresource.h"
+#include "cursors.h"
+#include "kafkadragobject.h"
 #include "cursors.h"
 
 #include "wkafkapart.moc"
@@ -2203,4 +2207,104 @@ void KafkaDocument::slotdomNodeNewCursorPos(DOM::Node, int)
 	//dont calculate cursor pos until the next view update
 	//getQuantaCursorPosition(line, col);
 	//emit newCursorPosition(line, col);
+}
+
+void KafkaDocument::slotCut()
+{
+    QString text = m_kafkaPart->selectedText();
+        
+    NodeSelectionInd selection_ind;
+    selection_ind.fillWithVPLCursorSelection();
+    
+    int startOffset = selection_ind.cursorOffset();
+    int endOffset = selection_ind.cursorOffsetEndSel();
+    Node* startNode = kafkaCommon::getNodeFromLocation(selection_ind.cursorNode());
+    Node* endNode = kafkaCommon::getNodeFromLocation(selection_ind.cursorNodeEndSel());
+    
+    DOM::Node cursorDomNode;
+    int cursorOffset;
+    
+    m_kafkaPart->getCurrentNode(cursorDomNode, cursorOffset);
+    Node* cursorNode = getNode(cursorDomNode);
+    
+    if(!startNode || !endNode)
+        return;
+    
+    NodeModifsSet *modifs = new NodeModifsSet();
+    Node* subtree_root = kafkaCommon::DTDExtractNodeSubtree(startNode, startOffset, endNode, endOffset, 
+            &cursorNode, cursorOffset, modifs);
+    
+    m_currentDoc->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);
+    
+    if(subtree_root)
+    {        
+        KafkaDragObject* node_drag = new KafkaDragObject(subtree_root);
+        QTextDrag* text_drag = new QTextDrag(text);
+        KMultipleDrag* drag_object = new KMultipleDrag();
+        drag_object->addDragObject(node_drag);
+        drag_object->addDragObject(text_drag);
+        
+        QApplication::clipboard()->setData(drag_object);
+#ifdef LIGHT_DEBUG
+        kafkaCommon::coutTree(subtree_root, 3);
+#endif
+    }
+}
+
+void KafkaDocument::slotCopy()
+{
+    QString text = m_kafkaPart->selectedText();
+        
+    NodeSelectionInd selection_ind;
+    selection_ind.fillWithVPLCursorSelection();
+    
+    int startOffset = selection_ind.cursorOffset();
+    int endOffset = selection_ind.cursorOffsetEndSel();
+    Node* startNode = kafkaCommon::getNodeFromLocation(selection_ind.cursorNode());
+    Node* endNode = kafkaCommon::getNodeFromLocation(selection_ind.cursorNodeEndSel());
+
+    if(!startNode || !endNode)
+        return;
+    
+    Node* subtree_root = kafkaCommon::getNodeSubtree(startNode, startOffset, endNode, endOffset);
+    
+    if(subtree_root)
+    {
+        KafkaDragObject* node_drag = new KafkaDragObject(subtree_root);
+        QTextDrag* text_drag = new QTextDrag(text);
+        KMultipleDrag* drag_object = new KMultipleDrag();
+        drag_object->addDragObject(node_drag);
+        drag_object->addDragObject(text_drag);
+        
+        QApplication::clipboard()->setData(drag_object);
+        // FIXME delete the subtree 
+#ifdef LIGHT_DEBUG
+        kafkaCommon::coutTree(subtree_root, 3);
+#endif
+    }
+}
+
+void KafkaDocument::slotPaste()
+{
+    QClipboard *cb = QApplication::clipboard();
+    QMimeSource* e = cb->data();
+    Node* node = new Node(0);
+    
+    if(KafkaDragObject::decode(e, node))
+    {
+        NodeSelectionInd selection_ind;
+        selection_ind.fillWithVPLCursorSelection();
+    
+        Node* cursorNode = kafkaCommon::getNodeFromLocation(selection_ind.cursorNode());
+        int cursorOffset = selection_ind.cursorOffset();
+        
+        NodeModifsSet *modifs = new NodeModifsSet();
+        
+        if(selection_ind.hasSelection())
+            kafkaCommon::DTDRemoveSelection(selection_ind, &cursorNode, cursorOffset, modifs);
+        
+        kafkaCommon::DTDInsertNodeSubtree(node, selection_ind, &cursorNode, cursorOffset, modifs);
+        
+        m_currentDoc->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);
+    }
 }

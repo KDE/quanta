@@ -61,7 +61,7 @@ void NodeSelectionInd::fillWithVPLCursorSelection()
 
   kafkaDoc = KafkaDocument::ref();
   kafkaDoc->getKafkaWidget()->getCurrentNode(domNode, domOffset);
-  KafkaDocument::ref()->translateKafkaIntoNodeCursorPosition(domNode, domOffset, &node, offset);
+  kafkaDoc->translateKafkaIntoNodeCursorPosition(domNode, domOffset, &node, offset);
   m_cursorNode = kafkaCommon::getLocation(node);
   m_cursorOffset = offset;
   
@@ -82,4 +82,9 @@ void NodeSelectionInd::fillWithVPLCursorSelection()
       m_cursorOffset = offset;
     }
   }
+}
+
+bool NodeSelectionInd::hasSelection() const
+{
+    return KafkaDocument::ref()->getKafkaWidget()->hasSelection();
 }

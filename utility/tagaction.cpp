@@ -684,7 +684,7 @@ void TagAction::insertOutputInTheNodeTree(QString str1, QString str2, Node *node
 						view->document());
 					nodeOffset = 0;
 					kafkaCommon::insertNodeSubtree(node, nodeParent, 0L, 0L, modifs);
-                                        nodeTreeModified = true;
+                    nodeTreeModified = true;
 					break;
 				}
 				nodeParent = nodeParent->parent;
