@@ -38,6 +38,7 @@ Parser::Parser()
   pos = 0;
   node = 0L;
 
+  tagsStop.setAutoDelete( true );
   textChanged = true;
 
   QStringList * list = new QStringList();
