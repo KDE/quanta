@@ -1,0 +1,6 @@
+a:link { text-decoration: none; color: #00CC00; }
+a:visited { text-decoration: none; color: #993333; }
+a:active { text-decoration: none; color: #FF6666; }
+a:hover { text-decoration: underline; color: #FF0000; }
+.firstchar {color: #805417; font-weight: bold; font-size: larger}
+.minihdr {color: #008080; font-weight: bold; font-size: larger}

@@ -711,7 +711,7 @@ void QuantaApp::slotDockChanged()
   	rightWidgetStack -> raiseWidget(2);
   	if ( first )
   	{
-  		openDoc( locate("appdata","doc/documentation.html") );
+  		openDoc( locate("appdata","doc/intro.html") );
   		first = false;
   	}
   	docTabOpened = true;

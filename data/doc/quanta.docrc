@@ -6,7 +6,9 @@ Doc dir=../doc
 #top level elements
 Top Element=Quanta documentation
 
-Quanta documentation=Quanta Tag Dialog Definition XML
+Quanta documentation=Welcome,Quanta Documentation,Quanta Tag Dialog Definition XML
+Welcome=intro.html
+Quanta Documentation=maindoc.html
 Quanta Tag Dialog Definition XML=quanta-dialog-xml.html
 
 
