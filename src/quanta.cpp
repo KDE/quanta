@@ -1118,6 +1118,7 @@ void QuantaApp::slotOptions()
   fileMasks->showDTDSelectDialog->setChecked(qConfig.showDTDSelectDialog);
   m_config->setGroup("Notification Messages");
   fileMasks->warnBinaryOpening->setChecked(m_config->readEntry("Open Everything") != "Yes");
+  fileMasks->warnEventActions->setChecked((m_config->readEntry("Warn about internal actions", "Yes") != "Yes") && (m_config->readEntry("Warn about external actions", "Yes") != "Yes"));
   m_config->setGroup("General Options");
   fileMasks->showSplash->setChecked(m_config->readBoolEntry("Show Splash", true));
   fileMasks->reloadProject->setChecked(m_config->readBoolEntry("Reload Project", true));
@@ -1206,6 +1207,8 @@ void QuantaApp::slotOptions()
     autosaveTimer->start(60000 * qConfig.autosaveInterval, false);
     m_config->setGroup("Notification Messages");
     m_config->writeEntry("Open Everything", fileMasks->warnBinaryOpening->isChecked() ? "" : "Yes");
+    m_config->writeEntry("Warn about internal actions", fileMasks->warnEventActions->isChecked() ? "" : "Yes");
+    m_config->writeEntry("Warn about external actions", fileMasks->warnEventActions->isChecked() ? "" : "Yes");
     m_config->setGroup("General Options");
     m_config->writeEntry("Show Splash", fileMasks->showSplash->isChecked());
     m_config->writeEntry("Reload Project", fileMasks->reloadProject->isChecked());

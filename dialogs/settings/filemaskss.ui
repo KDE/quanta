@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>FileMasksS</class>
 <comment>/***************************************************************************
  *                                                                         *
@@ -17,7 +17,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>554</width>
+            <width>547</width>
             <height>523</height>
         </rect>
     </property>
@@ -35,6 +35,9 @@
             <height>0</height>
         </size>
     </property>
+    <property name="caption">
+        <string>FileMasksS</string>
+    </property>
     <grid>
         <property name="name">
             <cstring>unnamed</cstring>
@@ -42,25 +45,6 @@
         <widget class="QComboBox" row="1" column="1">
             <property name="name">
                 <cstring>encodingCombo</cstring>
-            </property>
-        </widget>
-        <widget class="QLabel" row="1" column="0">
-            <property name="name">
-                <cstring>TextLabel1_2</cstring>
-            </property>
-            <property name="text">
-                <string>Default character encoding:</string>
-            </property>
-            <property name="alignment">
-                <set>AlignVCenter|AlignLeft</set>
-            </property>
-        </widget>
-        <widget class="QLabel" row="2" column="0">
-            <property name="name">
-                <cstring>TextLabel1_2_3</cstring>
-            </property>
-            <property name="text">
-                <string>Default DTD:</string>
             </property>
         </widget>
         <widget class="QComboBox" row="2" column="1">
@@ -109,7 +93,10 @@
                         <cstring>buttonDefault</cstring>
                     </property>
                     <property name="text">
-                        <string>Reset to &amp;Default</string>
+                        <string>&amp;Reset to Default</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+R</string>
                     </property>
                 </widget>
                 <widget class="QLabel" row="3" column="0">
@@ -117,7 +104,10 @@
                         <cstring>TextLabel4_2</cstring>
                     </property>
                     <property name="text">
-                        <string>Texts:</string>
+                        <string>&amp;Texts:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>lineText</cstring>
                     </property>
                 </widget>
                 <widget class="QLabel" row="0" column="0">
@@ -125,7 +115,10 @@
                         <cstring>TextLabel1_3</cstring>
                     </property>
                     <property name="text">
-                        <string>Markups:</string>
+                        <string>&amp;Markups:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>lineMarkup</cstring>
                     </property>
                 </widget>
                 <widget class="QLabel" row="2" column="0">
@@ -133,7 +126,10 @@
                         <cstring>TextLabel3_2</cstring>
                     </property>
                     <property name="text">
-                        <string>Images:</string>
+                        <string>&amp;Images:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>lineImage</cstring>
                     </property>
                 </widget>
                 <widget class="QLineEdit" row="3" column="1" rowspan="1" colspan="2">
@@ -163,10 +159,13 @@
                         </size>
                     </property>
                     <property name="text">
-                        <string>Scripts:</string>
+                        <string>&amp;Scripts:</string>
                     </property>
                     <property name="scaledContents">
                         <bool>false</bool>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>lineScript</cstring>
                     </property>
                 </widget>
                 <spacer row="4" column="1">
@@ -196,48 +195,76 @@
                 </widget>
             </grid>
         </widget>
-        <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>warnBinaryOpening</cstring>
-            </property>
-            <property name="text">
-                <string>&amp;Warn about opening binary/unknown files</string>
-            </property>
-        </widget>
         <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>showDTDSelectDialog</cstring>
             </property>
             <property name="text">
-                <string>&amp;Show the DTD selection dialog when loading files with unknown DTD</string>
+                <string>Show the DTD selection dialog when loading files with &amp;unknown DTD</string>
+            </property>
+            <property name="accel">
+                <string>Alt+U</string>
             </property>
         </widget>
-        <widget class="QCheckBox" row="5" column="0" rowspan="1" colspan="2">
+        <widget class="QLabel" row="1" column="0">
+            <property name="name">
+                <cstring>TextLabel1_2</cstring>
+            </property>
+            <property name="text">
+                <string>Default character &amp;encoding:</string>
+            </property>
+            <property name="alignment">
+                <set>AlignVCenter|AlignLeft</set>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>encodingCombo</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="2" column="0">
+            <property name="name">
+                <cstring>TextLabel1_2_3</cstring>
+            </property>
+            <property name="text">
+                <string>Default &amp;DTD:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>defaultDTDCombo</cstring>
+            </property>
+        </widget>
+        <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>showSplash</cstring>
             </property>
             <property name="text">
                 <string>S&amp;how splashscreen on startup</string>
             </property>
+            <property name="accel">
+                <string>Alt+H</string>
+            </property>
         </widget>
-        <spacer row="10" column="0">
+        <widget class="QCheckBox" row="5" column="0" rowspan="1" colspan="2">
             <property name="name">
-                <cstring>spacer2</cstring>
+                <cstring>reloadProject</cstring>
             </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
+            <property name="text">
+                <string>&amp;Load last-opened project on startup</string>
             </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
+            <property name="accel">
+                <string>Alt+L</string>
             </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>30</height>
-                </size>
+        </widget>
+        <widget class="QCheckBox" row="6" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>reloadFiles</cstring>
             </property>
-        </spacer>
-        <widget class="QLayoutWidget" row="9" column="0">
+            <property name="text">
+                <string>L&amp;oad last-opened files on startup</string>
+            </property>
+            <property name="accel">
+                <string>Alt+O</string>
+            </property>
+        </widget>
+        <widget class="QLayoutWidget" row="7" column="0">
             <property name="name">
                 <cstring>layout2</cstring>
             </property>
@@ -277,22 +304,58 @@
                 </widget>
             </hbox>
         </widget>
-        <widget class="QCheckBox" row="6" column="0" rowspan="1" colspan="2">
+        <widget class="QButtonGroup" row="8" column="0" rowspan="1" colspan="2">
             <property name="name">
-                <cstring>reloadProject</cstring>
+                <cstring>buttonGroup1</cstring>
             </property>
-            <property name="text">
-                <string>&amp;Load last-opened project on startup</string>
+            <property name="title">
+                <string>&amp;Warning Messages</string>
             </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QCheckBox" row="0" column="0">
+                    <property name="name">
+                        <cstring>warnBinaryOpening</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Warn about opening &amp;binary/unknown files</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+B</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="1" column="0">
+                    <property name="name">
+                        <cstring>warnEventActions</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Warn when executing &amp;actions associated with events</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+A</string>
+                    </property>
+                </widget>
+            </grid>
         </widget>
-        <widget class="QCheckBox" row="7" column="0" rowspan="1" colspan="2">
+        <spacer row="9" column="1">
             <property name="name">
-                <cstring>reloadFiles</cstring>
+                <cstring>spacer3</cstring>
             </property>
-            <property name="text">
-                <string>L&amp;oad last-opened files on startup</string>
+            <property name="orientation">
+                <enum>Vertical</enum>
             </property>
-        </widget>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
     </grid>
 </widget>
 <tabstops>
