@@ -541,26 +541,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
       }
       else if (tag->type == Tag::XmlTag)
            {
-             xmlGroupIt = node->tag->dtd->xmlStructTreeGroups.find(node->tag->name.lower());
-             if (xmlGroupIt != node->tag->dtd->xmlStructTreeGroups.end())
-             {
-                XMLStructGroup group = xmlGroupIt.data();
-                Tag *newTag = new Tag(*node->tag);
-                QString title = "";
-                for (uint j = 0; j < group.attributes.count(); j++)
-                {
-                  if (newTag->hasAttribute(group.attributes[j]))
-                  {
-                      title.append(newTag->attributeValue(group.attributes[j]).left(100));
-                      title.append(" | ");
-                  }
-                }
-                title = title.left(title.length()-3);
-                title.remove('\n');
-                newTag->name = title;
-                node->groupTag = newTag;
-                node->group = const_cast<XMLStructGroup*>(&(xmlGroupIt.data()));
-             }
+             parseForXMLGroup(node);
              //search for scripts inside the XML tag
              scriptParser(node);
            }
@@ -682,9 +663,9 @@ Node *Parser::parse(Document *w)
   if (maxLines >= 0)
       m_node = parseArea(0, 0, maxLines, w->editIf->lineLength(maxLines), &lastNode);
   kdDebug(24000) << "New parser ("<< maxLines << " lines): " << t.elapsed() << " ms\n";
-  t.restart();
-  parseForGroups();
-  kdDebug(24000) << "Group parser " << t.elapsed() << " ms\n";
+//  t.restart();
+//  parseForGroups();
+//  kdDebug(24000) << "Group parser " << t.elapsed() << " ms\n";
   t.restart();
   parseIncludedFiles();
   kdDebug(24000) << "External parser " << t.elapsed() << " ms\n";
@@ -833,6 +814,7 @@ Node* Parser::specialAreaParser(Node *startNode)
         node->closesPrevious = true;
         goUp = false;
       }
+      parseForScriptGroup(node);
       currentNode = node;
 
       lastPos = pos + 1;
@@ -912,6 +894,7 @@ Node* Parser::specialAreaParser(Node *startNode)
         node->insideSpecial = true;
         if (goUp)
             node->closesPrevious = true;
+        parseForScriptGroup(node);
 
         int l = name.length();
         s = tagStr.mid(startPos + l + 1, lastPos2 - startPos - l - 1);
@@ -940,6 +923,7 @@ Node* Parser::specialAreaParser(Node *startNode)
         nextToRoot->tag = tag;
         nextToRoot->closesPrevious = true;
         nextToRoot->insideSpecial = true;
+        parseForScriptGroup(nextToRoot);
 
         currentNode = node;
         rootNode = node;
@@ -989,6 +973,7 @@ Node* Parser::specialAreaParser(Node *startNode)
       node->insideSpecial = true;
       if (goUp)
           node->closesPrevious = true;
+      parseForScriptGroup(node);
       currentNode = node;
     }
   }
@@ -1082,7 +1067,7 @@ Node* Parser::specialAreaParser(Node *startNode)
     node->prev = startNode;
     startNode->next = node;
     startNode->tag->single = false;
-
+    parseForScriptGroup(node);
     rootNode = node;
   }
 
@@ -1101,6 +1086,7 @@ Node* Parser::specialAreaParser(Node *startNode)
     node->tag = tag;
     node->insideSpecial = true;
     tag->dtd = dtd;
+    parseForScriptGroup(node);
   } else
   {
     currentNode->tag->beginPos(bLine, bCol);
@@ -1565,9 +1551,9 @@ Node *Parser::rebuild(Document *w)
    }
  }
   kdDebug(24000) << "Rebuild: " << t.elapsed() << " ms \n";
-  t.restart();
-  parseForGroups();
-  kdDebug(24000) << "Group parser " << t.elapsed() << " ms\n";
+//  t.restart();
+//  parseForGroups();
+//  kdDebug(24000) << "Group parser " << t.elapsed() << " ms\n";
  /*
  treeSize = 0;
  coutTree(m_node, 2);
@@ -1575,122 +1561,6 @@ Node *Parser::rebuild(Document *w)
  cout << "\n";
  */
  return m_node;
-}
-
-void Parser::parseForGroups(Node *currentNode)
-{
-  GroupElementList* groupElementList;
-  GroupElementMapList* groupElementMapList;
-  DTDStruct *dtd;
-  QString str;
-  QString tagStr;
-  QString tmpStr;
-  QString title;
-  GroupElement groupElement;
-  StructTreeGroup group;
-  int bl, bc, el, ec;
-  int pos;
-  Node *node;
-  KURL baseURL = QExtFileInfo::path(write->url());
-
-  currentNode->tag->beginPos(bl, bc);
-  str = currentNode->tag->cleanStr;
-  tagStr = currentNode->tag->tagStr();
-  dtd = currentNode->tag->dtd;
-  if (dtd->family == Script)
-  {
-    for (uint i = 0; i < dtd->structTreeGroups.count(); i++)
-    {
-      group = dtd->structTreeGroups[i];
-      if (!group.hasSearchRx)
-         continue;
-      groupElementMapList = &m_groups[group.name];
-      pos = 0;
-      while (pos != -1)
-      {
-        pos = group.searchRx.search(str, pos);
-        if (pos != -1)
-        {
-          title = tagStr.mid(pos, group.searchRx.matchedLength());
-          Tag *newTag = new Tag(*currentNode->tag);
-          newTag->beginPos(bl, bc);
-          tmpStr = tagStr.left(pos);
-          int newLines = tmpStr.contains('\n');
-          bl += newLines;
-          int l = tmpStr.findRev('\n'); //the last EOL
-          bc = (l == -1) ? bc+pos : pos - l - 1;
-          newLines = title.contains('\n');
-          l = title.length();
-          el = bl + newLines;
-          ec = (newLines > 0) ? l - title.findRev('\n') : bc + l - 1;
-          newTag->setTagPosition(bl, bc, el, ec);
-          newTag->setStr(title);
-          pos += l;
-          title.remove(group.clearRx);
-          newTag->name = title;
-          node = new Node(0L);
-          node->tag = newTag;
-          groupElement.node = node;
-          groupElement.originalNode = currentNode;
-          node = groupElement.originalNode;
-          while (node && node->tag->dtd == dtd && node->tag->type != Tag::ScriptStructureBegin)
-          {
-            node = node->parent;
-          }
-          if (node && node->tag->type == Tag::ScriptStructureBegin)
-          {
-            groupElement.parentNode = node;
-          } else
-          {
-            groupElement.parentNode = 0L;
-          }
-          groupElement.global = false;
-          groupElementList = & (*groupElementMapList)[title];
-          groupElementList->append(groupElement);
-          if (group.hasFileName && group.parseFile)
-          {
-            title.remove(group.fileNameRx);
-            KURL url;
-            QuantaCommon::setUrl(url, title.stripWhiteSpace());
-            url = QExtFileInfo::toAbsolute(url, baseURL);
-            includedFiles += url.path();
-            includedFilesDTD.append(dtd);
-            includeWatch->addFile(url.path());
-          }
-        }
-      }
-    }
-  } else
-  {
-    QMap<QString, XMLStructGroup>::ConstIterator it = dtd->xmlStructTreeGroups.find(node->tag->name.lower());
-    if (it != dtd->xmlStructTreeGroups.end())
-    {
-      XMLStructGroup group = it.data();
-      groupElementMapList = &m_groups[group.name];
-      node = new Node(0L);
-      Tag *newTag = new Tag(*currentNode->tag);
-      title = "";
-      for (uint j = 0; j < group.attributes.count(); j++)
-      {
-        if (newTag->hasAttribute(group.attributes[j]))
-        {
-            title.append(newTag->attributeValue(group.attributes[j]).left(100));
-            title.append(" | ");
-        }
-      }
-      title = title.left(title.length()-3);
-      title.remove('\n');
-      newTag->name = title;
-
-      node->tag = newTag;
-      groupElement.node = node;
-      groupElement.originalNode = currentNode;
-      groupElement.parentNode = 0L; //doesn\t matter
-      groupElementList = & (*groupElementMapList)[title];
-      groupElementList->append(groupElement);
-    }
- }
-
 }
 
 void Parser::clearGroups()
@@ -1802,36 +1672,7 @@ void Parser::parseForGroups()
           }
         }
       }
-    } /*else
-    {
-      QMap<QString, XMLStructGroup>::ConstIterator it = dtd->xmlStructTreeGroups.find(currentNode->tag->name.lower());
-      if (it != dtd->xmlStructTreeGroups.end())
-      {
-        XMLStructGroup group = it.data();
-        groupElementMapList = &m_groups[group.name];
-        node = new Node(0L);
-        Tag *newTag = new Tag(*currentNode->tag);
-        title = "";
-        for (uint j = 0; j < group.attributes.count(); j++)
-        {
-          if (newTag->hasAttribute(group.attributes[j]))
-          {
-              title.append(newTag->attributeValue(group.attributes[j]).left(100));
-              title.append(" | ");
-          }
-        }
-        title = title.left(title.length()-3);
-        title.remove('\n');
-        newTag->name = title;
-
-        node->tag = newTag;
-        groupElement.node = node;
-        groupElement.originalNode = currentNode;
-        groupElement.parentNode = 0L; //doesn\t matter
-        groupElementList = & (*groupElementMapList)[title];
-        groupElementList->append(groupElement);
-      }
-  }*/
+    }
     //Go to the next node
     currentNode = currentNode->nextSibling();
   }
@@ -2047,6 +1888,109 @@ void Parser::removeCommentsAndQuotes(QString &str, DTDStruct *dtd)
    }
  }
 
+}
+
+void Parser::parseForXMLGroup(Node *node)
+{
+  xmlGroupIt = node->tag->dtd->xmlStructTreeGroups.find(node->tag->name.lower());
+  if (xmlGroupIt != node->tag->dtd->xmlStructTreeGroups.end())
+  {
+    XMLStructGroup group = xmlGroupIt.data();
+    Tag *newTag = new Tag(*node->tag);
+    QString title = "";
+    for (uint j = 0; j < group.attributes.count(); j++)
+    {
+      if (newTag->hasAttribute(group.attributes[j]))
+      {
+          title.append(newTag->attributeValue(group.attributes[j]).left(100));
+          title.append(" | ");
+      }
+    }
+    title = title.left(title.length()-3);
+    title.remove('\n');
+    newTag->name = title;
+    node->groupTag = newTag;
+    node->group = const_cast<XMLStructGroup*>(&(xmlGroupIt.data()));
+  }
+}
+
+void Parser::parseForScriptGroup(Node *node)
+{
+  int bl, bc, el, ec;
+  int pos;
+  QString title;
+  QString tmpStr;
+  StructTreeGroup group;
+  GroupElement groupElement;
+  GroupElementList* groupElementList;
+  GroupElementMapList* groupElementMapList;
+  KURL baseURL = QExtFileInfo::path(write->url());
+  QString str = node->tag->cleanStr;
+  QString tagStr = node->tag->tagStr();
+  DTDStruct* dtd = node->tag->dtd;
+  node->tag->beginPos(bl, bc);
+  for (uint i = 0; i < dtd->structTreeGroups.count(); i++)
+  {
+    group = dtd->structTreeGroups[i];
+    if (!group.hasSearchRx)
+      continue;
+    groupElementMapList = &m_groups[group.name];
+    pos = 0;
+    while (pos != -1)
+    {
+      pos = group.searchRx.search(str, pos);
+      if (pos != -1)
+      {
+        title = tagStr.mid(pos, group.searchRx.matchedLength());
+        Tag *newTag = new Tag(*node->tag);
+        newTag->beginPos(bl, bc);
+        tmpStr = tagStr.left(pos);
+        int newLines = tmpStr.contains('\n');
+        bl += newLines;
+        int l = tmpStr.findRev('\n'); //the last EOL
+        bc = (l == -1) ? bc+pos : pos - l - 1;
+        newLines = title.contains('\n');
+        l = title.length();
+        el = bl + newLines;
+        ec = (newLines > 0) ? l - title.findRev('\n') : bc + l - 1;
+        newTag->setTagPosition(bl, bc, el, ec);
+        newTag->setStr(title);
+        pos += l;
+        title.remove(group.clearRx);
+        newTag->name = title;
+        node->groupTag = newTag;
+        Node *newNode = new Node(0L);
+        newNode->tag = newTag;
+        groupElement.node = newNode;
+        groupElement.originalNode = node;
+        node = groupElement.originalNode;
+        while (node && node->tag->dtd == dtd && node->tag->type != Tag::ScriptStructureBegin)
+        {
+          node = node->parent;
+        }
+        if (node && node->tag->type == Tag::ScriptStructureBegin)
+        {
+          groupElement.parentNode = node;
+        } else
+        {
+          groupElement.parentNode = 0L;
+        }
+        groupElement.global = false;
+        groupElementList = & (*groupElementMapList)[title];
+        groupElementList->append(groupElement);
+        if (group.hasFileName && group.parseFile)
+        {
+          title.remove(group.fileNameRx);
+          KURL url;
+          QuantaCommon::setUrl(url, title.stripWhiteSpace());
+          url = QExtFileInfo::toAbsolute(url, baseURL);
+          includedFiles += url.path();
+          includedFilesDTD.append(dtd);
+          includeWatch->addFile(url.path());
+        }
+      }
+    }
+  }
 }
 
 #include "parser.moc"

@@ -90,18 +90,16 @@ public:
 
   /** Rebuild the nodes */
   Node *rebuild(Document *w);
-
   /** No descriptions */
   DTDStruct * currentDTD(int line, int col);
-
-  /** Parse for groups (variables, inclusions) in the node. */
-  void parseForGroups(Node *node);
   /** Parse for groups (variables, inclusions) in the node tree. */
   void parseForGroups();
   /** Remove the found groups from the memeber variables */
   void clearGroups();
   void parseIncludedFiles();
   void removeCommentsAndQuotes(QString& str, DTDStruct* dtd);
+  void parseForXMLGroup(Node *node);
+  void parseForScriptGroup(Node *node);
 
   QMap<QString, GroupElementMapList> m_groups; //a list of groups (variables, inclusions)
   QStringList includedFiles;
