@@ -69,6 +69,7 @@ Parser::Parser()
   oldMaxLines = 0;
   m_parsingEnabled = true;
   m_parsingNeeded = true;
+  m_parseIncludedFiles = true;
   m_saParser = new SAParser();
   connect(m_saParser, SIGNAL(rebuildStructureTree()), SIGNAL(rebuildStructureTree()));
   connect(m_saParser, SIGNAL(cleanGroups()), SLOT(cleanGroups()));
@@ -1256,6 +1257,7 @@ void Parser::clearGroups()
   delete ParserCommon::includeWatch;
   ParserCommon::includeWatch = new KDirWatch();
   connect(ParserCommon::includeWatch, SIGNAL(dirty(const QString&)), SLOT(slotIncludedFileChanged(const QString&)));
+  m_parseIncludedFiles = true;
 }
 
 void Parser::cleanGroups()
@@ -1281,14 +1283,19 @@ void Parser::cleanGroups()
        }
     }
   }
-  delete ParserCommon::includeWatch;
-  ParserCommon::includeWatch = new KDirWatch();
-  connect(ParserCommon::includeWatch, SIGNAL(dirty(const QString&)), SLOT(slotIncludedFileChanged(const QString&)));
-  parseIncludedFiles();
+  if (m_parseIncludedFiles)
+  {
+      delete ParserCommon::includeWatch;
+      ParserCommon::includeWatch = new KDirWatch();
+      connect(ParserCommon::includeWatch, SIGNAL(dirty(const QString&)), SLOT(slotIncludedFileChanged(const QString&)));
+      parseIncludedFiles();
+      m_parseIncludedFiles = false;
+  }
 }
 
 void Parser::parseIncludedFiles()
 {
+  kdDebug(24000) << "parseIncludedFiles" << endl;
   IncludedGroupElementsMap::Iterator includedMapIt;
   uint listCount;
   for (includedMapIt = includedMap.begin(); includedMapIt != includedMap.end(); ++includedMapIt)
