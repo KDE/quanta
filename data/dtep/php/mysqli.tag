@@ -7,10 +7,6 @@
 		<attr name="link" type="object" status="required"></attr>
 		<attr name="mode" type="bool" status="required"></attr>
 	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
 	<tag name="mysqli_change_user" type="function" returnType="bool" version="PHP 5">
 		<attr name="link" type="object" status="required"></attr>
 		<attr name="user" type="string" status="required"></attr>
@@ -19,8 +15,6 @@
 	</tag>
 	<tag name="mysqli_character_set_name" type="function" returnType="string" version="PHP 5">
 		<attr name="link" type="object" status="required"></attr>
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
 	</tag>
 	<tag name="mysqli_close" type="function" returnType="bool" version="PHP 5">
 		<attr name="link" type="object" status="required"></attr>
@@ -71,10 +65,6 @@
 	<tag name="mysqli_error" type="function" returnType="string" version="PHP 5">
 		<attr name="link" type="object" status="required"></attr>
 	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
 	<tag name="mysqli_fetch_array" type="function" returnType="mixed" version="PHP 5">
 		<attr name="result" type="object" status="required"></attr>
 		<attr name="resulttype" type="int" status="required"></attr>
@@ -101,8 +91,6 @@
 	<tag name="mysqli_fetch_row" type="function" returnType="mixed" version="PHP 5">
 		<attr name="result" type="object" status="required"></attr>
 	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
 	<tag name="mysqli_field_count" type="function" returnType="int" version="PHP 5">
 		<attr name="link" type="object" status="required"></attr>
 	</tag>
@@ -122,8 +110,6 @@
 	</tag>
 	<tag name="mysqli_get_host_info" type="function" returnType="string" version="PHP 5">
 		<attr name="link" type="object" status="required"></attr>
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
 	</tag>
 	<tag name="mysqli_get_proto_info" type="function" returnType="int" version="PHP 5">
 		<attr name="link" type="object" status="required"></attr>
@@ -170,8 +156,6 @@
 		<attr name="link" type="object" status="required"></attr>
 		<attr name="option" type="int" status="required"></attr>
 		<attr name="value" type="mixed" status="required"></attr>
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
 	</tag>
 	<tag name="mysqli_ping" type="function" returnType="bool" version="PHP 5">
 		<attr name="link" type="object" status="required"></attr>
@@ -222,8 +206,6 @@
 		<attr name="link" type="object" status="required"></attr>
 		<attr name="dbname" type="string" status="required"></attr>
 	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
 	<tag name="mysqli_send_query" type="function" returnType="bool" version="PHP 5">
 		<attr name="link" type="resource" status="required"></attr>
 		<attr name="query" type="string" status="required"></attr>
@@ -233,8 +215,6 @@
 	<tag name="mysqli_server_init" type="function" returnType="bool" version="PHP 5">
 		<attr name="server" type="array" status="optional"></attr>
 		<attr name="groups" type="array" status="optional"></attr>
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
 	</tag>
 	<tag name="mysqli_sqlstate" type="function" returnType="string" version="PHP 5">
 		<attr name="link" type="object" status="required"></attr>

@@ -1,7 +1,5 @@
 <!DOCTYPE tags>
 <tags>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
 	<tag name="pdf_add_bookmark" type="function" returnType="int" version="PHP 4 &gt;= 4.0.1, PHP 5">
 		<attr name="pdfdoc" type="resource" status="required"></attr>
 		<attr name="text" type="string" status="required"></attr>
@@ -35,8 +33,6 @@
 		<attr name="title" type="string" status="required"></attr>
 		<attr name="icon" type="string" status="required"></attr>
 		<attr name="open" type="int" status="required"></attr>
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
 	</tag>
 	<tag name="pdf_add_pdflink" type="function" returnType="bool" version="PHP 3&gt;= 3.0.12, PHP 4 , PHP 5">
 		<attr name="pdfdoc" type="resource" status="required"></attr>
@@ -173,8 +169,6 @@
 	<tag name="pdf_end_template" type="function" returnType="bool" version="PHP 4 &gt;= 4.0.5, PHP 5">
 		<attr name="pdfdoc" type="resource" status="required"></attr>
 	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
 	<tag name="pdf_fill_stroke" type="function" returnType="bool" version="PHP 3&gt;= 3.0.6, PHP 4 , PHP 5">
 		<attr name="pdfdoc" type="resource" status="required"></attr>
 	</tag>
@@ -189,16 +183,6 @@
 	</tag>
 	<tag name="pdf_get_buffer" type="function" returnType="string" version="PHP 4 &gt;= 4.0.5, PHP 5">
 		<attr name="pdfdoc" type="resource" status="required"></attr>
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
 	</tag>
 	<tag name="pdf_get_majorversion" type="function" returnType="int" version="PHP 4 &gt;= 4.2.0, PHP 5">
 	</tag>
@@ -246,7 +230,7 @@
 		<attr name="y" type="float" status="required"></attr>
 	</tag>
 	<tag name="pdf_new" type="function" returnType="resource" version="PHP 4 &gt;= 4.0.5, PHP 5">
-		<attr name="" type="" status="required"></attr>
+		<attr name="</methodparam>" type="" status="required"></attr>
 	</tag>
 	<tag name="pdf_open_ccitt" type="function" returnType="int" version="PHP 4 &gt;= 4.0.5, PHP 5">
 		<attr name="pdfdoc" type="resource" status="required"></attr>
@@ -260,8 +244,6 @@
 	<tag name="pdf_open_file" type="function" returnType="bool" version="PHP 4 &gt;= 4.0.5, PHP 5">
 		<attr name="pdfdoc" type="resource" status="required"></attr>
 		<attr name="filename" type="string" status="required"></attr>
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
 	</tag>
 	<tag name="pdf_open_image_file" type="function" returnType="int" version="PHP 3 CVS only, PHP 4 , PHP 5">
 		<attr name="pdfdoc" type="resource" status="required"></attr>
@@ -282,8 +264,6 @@
 		<attr name="bpc" type="int" status="required"></attr>
 		<attr name="params" type="string" status="required"></attr>
 	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
 	<tag name="pdf_open_memory_image" type="function" returnType="int" version="PHP 3&gt;= 3.0.10, PHP 4 , PHP 5">
 		<attr name="pdfdoc" type="resource" status="required"></attr>
 		<attr name="image" type="resource" status="required"></attr>
@@ -299,12 +279,6 @@
 		<attr name="filename" type="string" status="required"></attr>
 		<attr name="stringparam" type="string" status="required"></attr>
 		<attr name="intparam" type="int" status="required"></attr>
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
 	</tag>
 	<tag name="pdf_place_image" type="function" returnType="bool" version="PHP 3&gt;= 3.0.7, PHP 4 , PHP 5">
 		<attr name="pdfdoc" type="resource" status="required"></attr>
@@ -359,53 +333,25 @@
 		<attr name="style" type="string" status="required"></attr>
 		<attr name="width" type="float" status="required"></attr>
 	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
 	<tag name="pdf_set_info" type="function" returnType="bool" version="PHP 4 &gt;= 4.0.1, PHP 5">
 		<attr name="pdfdoc" type="resource" status="required"></attr>
 		<attr name="key" type="string" status="required"></attr>
 		<attr name="value" type="string" status="required"></attr>
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
 	</tag>
 	<tag name="pdf_set_parameter" type="function" returnType="bool" version="PHP 4 , PHP 5">
 		<attr name="pdfdoc" type="resource" status="required"></attr>
 		<attr name="key" type="string" status="required"></attr>
 		<attr name="value" type="string" status="required"></attr>
 	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
 	<tag name="pdf_set_text_pos" type="function" returnType="bool" version="PHP 3&gt;= 3.0.6, PHP 4 , PHP 5">
 		<attr name="pdfdoc" type="resource" status="required"></attr>
 		<attr name="x" type="float" status="required"></attr>
 		<attr name="y" type="float" status="required"></attr>
 	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
 	<tag name="pdf_set_value" type="function" returnType="bool" version="PHP 4 &gt;= 4.0.1, PHP 5">
 		<attr name="pdfdoc" type="resource" status="required"></attr>
 		<attr name="key" type="string" status="required"></attr>
 		<attr name="value" type="float" status="required"></attr>
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
 	</tag>
 	<tag name="pdf_setcolor" type="function" returnType="bool" version="PHP 4 &gt;= 4.0.5, PHP 5">
 		<attr name="pdfdoc" type="resource" status="required"></attr>
@@ -466,8 +412,6 @@
 	<tag name="pdf_setmiterlimit" type="function" returnType="bool" version="PHP 3&gt;= 3.0.6, PHP 4 , PHP 5">
 		<attr name="pdfdoc" type="resource" status="required"></attr>
 		<attr name="miter" type="float" status="required"></attr>
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
 	</tag>
 	<tag name="pdf_setrgbcolor_fill" type="function" returnType="bool" version="PHP 3&gt;= 3.0.6, PHP 4 , PHP 5">
 		<attr name="pdfdoc" type="resource" status="required"></attr>

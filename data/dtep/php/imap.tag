@@ -101,8 +101,6 @@
 		<attr name="ref" type="string" status="required"></attr>
 		<attr name="pattern" type="string" status="required"></attr>
 	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
 	<tag name="imap_headerinfo" type="function" returnType="object" version="PHP 3, PHP 4 , PHP 5">
 		<attr name="imap_stream" type="resource" status="required"></attr>
 		<attr name="msg_number" type="int" status="required"></attr>
@@ -120,15 +118,11 @@
 		<attr name="ref" type="string" status="required"></attr>
 		<attr name="pattern" type="string" status="required"></attr>
 	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
 	<tag name="imap_listscan" type="function" returnType="array" version="">
 		<attr name="imap_stream" type="resource" status="required"></attr>
 		<attr name="ref" type="string" status="required"></attr>
 		<attr name="pattern" type="string" status="required"></attr>
 		<attr name="content" type="string" status="required"></attr>
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
 	</tag>
 	<tag name="imap_lsub" type="function" returnType="array" version="PHP 3&gt;= 3.0.4, PHP 4 , PHP 5">
 		<attr name="imap_stream" type="resource" status="required"></attr>
@@ -210,8 +204,6 @@
 		<attr name="mailbox" type="string" status="required"></attr>
 		<attr name="host" type="string" status="required"></attr>
 		<attr name="personal" type="string" status="required"></attr>
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
 	</tag>
 	<tag name="imap_search" type="function" returnType="array" version="PHP 3&gt;= 3.0.12, PHP 4 , PHP 5">
 		<attr name="imap_stream" type="resource" status="required"></attr>

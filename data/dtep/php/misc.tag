@@ -17,8 +17,6 @@
 	<tag name="defined" type="function" returnType="bool" version="PHP 3, PHP 4 , PHP 5">
 		<attr name="name" type="string" status="required"></attr>
 	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
 	<tag name="eval" type="function" returnType="mixed" version="">
 		<attr name="code_str" type="string" status="required"></attr>
 	</tag>
@@ -51,8 +49,6 @@
 	</tag>
 	<tag name="php_strip_whitespace" type="function" returnType="string" version="PHP 5">
 		<attr name="filename" type="string" status="required"></attr>
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
 	</tag>
 	<tag name="sleep" type="function" returnType="void" version="PHP 3, PHP 4 , PHP 5">
 		<attr name="seconds" type="int" status="required"></attr>

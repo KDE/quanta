@@ -87,12 +87,6 @@
 		<attr name="&amp;errstr" type="string" status="optional"></attr>
 		<attr name="timeout" type="int" status="optional"></attr>
 	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
 	<tag name="syslog" type="function" returnType="int" version="PHP 3, PHP 4 , PHP 5">
 		<attr name="priority" type="int" status="required"></attr>
 		<attr name="message" type="string" status="required"></attr>

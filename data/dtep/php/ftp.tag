@@ -120,8 +120,6 @@
 	<tag name="ftp_pwd" type="function" returnType="string" version="PHP 3&gt;= 3.0.13, PHP 4 , PHP 5">
 		<attr name="ftp_stream" type="resource" status="required"></attr>
 	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
 	<tag name="ftp_raw" type="function" returnType="array" version="PHP 5">
 		<attr name="ftp_stream" type="resource" status="required"></attr>
 		<attr name="command" type="string" status="required"></attr>

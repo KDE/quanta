@@ -10,8 +10,6 @@
 	<tag name="bin2hex" type="function" returnType="string" version="PHP 3&gt;= 3.0.9, PHP 4 , PHP 5">
 		<attr name="str" type="string" status="required"></attr>
 	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
 	<tag name="chr" type="function" returnType="string" version="PHP 3, PHP 4 , PHP 5">
 		<attr name="ascii" type="int" status="required"></attr>
 	</tag>
@@ -87,8 +85,6 @@
 	<tag name="implode" type="function" returnType="string" version="PHP 3, PHP 4 , PHP 5">
 		<attr name="glue" type="string" status="required"></attr>
 		<attr name="pieces" type="array" status="required"></attr>
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
 	</tag>
 	<tag name="levenshtein" type="function" returnType="int" version="PHP 3&gt;= 3.0.17, PHP 4 &gt;= 4.0.1, PHP 5">
 		<attr name="str1" type="string" status="required"></attr>
@@ -226,8 +222,6 @@
 	<tag name="strcasecmp" type="function" returnType="int" version="PHP 3&gt;= 3.0.2, PHP 4 , PHP 5">
 		<attr name="str1" type="string" status="required"></attr>
 		<attr name="str2" type="string" status="required"></attr>
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
 	</tag>
 	<tag name="strcmp" type="function" returnType="int" version="PHP 3, PHP 4 , PHP 5">
 		<attr name="str1" type="string" status="required"></attr>

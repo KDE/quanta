@@ -6,8 +6,6 @@
 	<tag name="session_cache_limiter" type="function" returnType="string" version="PHP 4 &gt;= 4.0.3, PHP 5">
 		<attr name="cache_limiter" type="string" status="optional"></attr>
 	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
 	<tag name="session_decode" type="function" returnType="bool" version="PHP 4 , PHP 5">
 		<attr name="data" type="string" status="required"></attr>
 	</tag>

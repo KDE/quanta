@@ -34,8 +34,6 @@
 	</tag>
 	<tag name="get_magic_quotes_runtime" type="function" returnType="int" version="PHP 3&gt;= 3.0.6, PHP 4 , PHP 5">
 	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
 	<tag name="getenv" type="function" returnType="string" version="PHP 3, PHP 4 , PHP 5">
 		<attr name="varname" type="string" status="required"></attr>
 	</tag>
@@ -56,8 +54,6 @@
 	<tag name="getrusage" type="function" returnType="array" version="PHP 3&gt;= 3.0.7, PHP 4 , PHP 5">
 		<attr name="who" type="int" status="optional"></attr>
 	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
 	<tag name="ini_get_all" type="function" returnType="array" version="PHP 4 &gt;= 4.2.0, PHP 5">
 		<attr name="extension" type="string" status="optional"></attr>
 	</tag>
@@ -70,8 +66,6 @@
 	<tag name="ini_set" type="function" returnType="string" version="PHP 4 , PHP 5">
 		<attr name="varname" type="string" status="required"></attr>
 		<attr name="newvalue" type="string" status="required"></attr>
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
 	</tag>
 	<tag name="memory_get_usage" type="function" returnType="int" version="PHP 4 &gt;= 4.3.2, PHP 5">
 	</tag>

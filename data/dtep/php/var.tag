@@ -3,8 +3,6 @@
 	<tag name="debug_zval_dump" type="function" returnType="void" version="PHP 4 &gt;= 4.2.0, PHP 5">
 		<attr name="variable" type="mixed" status="required"></attr>
 	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
 	<tag name="empty" type="function" returnType="bool" version="">
 		<attr name="var" type="mixed" status="required"></attr>
 	</tag>
@@ -38,17 +36,11 @@
 		<attr name="syntax_only" type="bool" status="optional"></attr>
 		<attr name="&amp;callable_name" type="string" status="optional"></attr>
 	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
 	<tag name="is_float" type="function" returnType="bool" version="PHP 3, PHP 4 , PHP 5">
 		<attr name="var" type="mixed" status="required"></attr>
 	</tag>
 	<tag name="is_int" type="function" returnType="bool" version="PHP 3, PHP 4 , PHP 5">
 		<attr name="var" type="mixed" status="required"></attr>
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
 	</tag>
 	<tag name="is_null" type="function" returnType="bool" version="PHP 4 &gt;= 4.0.4, PHP 5">
 		<attr name="var" type="mixed" status="required"></attr>
@@ -58,8 +50,6 @@
 	</tag>
 	<tag name="is_object" type="function" returnType="bool" version="PHP 3, PHP 4 , PHP 5">
 		<attr name="var" type="mixed" status="required"></attr>
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
 	</tag>
 	<tag name="is_resource" type="function" returnType="bool" version="PHP 4 , PHP 5">
 		<attr name="var" type="mixed" status="required"></attr>

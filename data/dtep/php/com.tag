@@ -58,12 +58,6 @@
 		<attr name="dispinterface" type="string" status="optional"></attr>
 		<attr name="wantsink" type="bool" status="optional"></attr>
 	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
 	<tag name="com_release" type="function" returnType="void" version="PHP 4 &gt;= 4.1.0">
 	</tag>
 	<tag name="com_set" type="function" returnType="void" version="PHP 3&gt;= 3.0.3, PHP 4 &gt;= 4.0.5">

@@ -9,6 +9,4 @@
 		<attr name="request" type="string" status="required"></attr>
 		<attr name="string" type="string" status="required"></attr>
 	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
 </tags>

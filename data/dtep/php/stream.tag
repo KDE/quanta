@@ -61,8 +61,6 @@
 	</tag>
 	<tag name="stream_get_wrappers" type="function" returnType="array" version="PHP 5">
 	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
 	<tag name="stream_select" type="function" returnType="int" version="PHP 4 &gt;= 4.3.0, PHP 5">
 		<attr name="&amp;read" type="array" status="required"></attr>
 		<attr name="&amp;write" type="array" status="required"></attr>

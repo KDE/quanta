@@ -39,8 +39,6 @@
 		<attr name="object" type="object" status="required"></attr>
 		<attr name="class_name" type="string" status="required"></attr>
 	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
 	<tag name="deaggregate" type="function" returnType="void" version="PHP 4 &gt;= 4.2.0">
 		<attr name="object" type="object" status="required"></attr>
 		<attr name="class_name" type="string" status="optional"></attr>

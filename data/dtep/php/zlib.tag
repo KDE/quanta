@@ -47,8 +47,6 @@
 	<tag name="gzpassthru" type="function" returnType="int" version="PHP 3, PHP 4 , PHP 5">
 		<attr name="zp" type="resource" status="required"></attr>
 	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
 	<tag name="gzread" type="function" returnType="string" version="PHP 3, PHP 4 , PHP 5">
 		<attr name="zp" type="resource" status="required"></attr>
 		<attr name="length" type="int" status="required"></attr>

@@ -78,8 +78,6 @@
 		<attr name="result" type="resource" status="required"></attr>
 		<attr name="decode_binary" type="bool" status="optional"></attr>
 	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
 	<tag name="sqlite_field_name" type="function" returnType="string" version="PHP 5">
 		<attr name="result" type="resource" status="required"></attr>
 		<attr name="field_index" type="int" status="required"></attr>

@@ -252,7 +252,7 @@
 		<attr name="url_prefixes" type="array" status="optional"></attr>
 	</tag>
 	<tag name="hw_root" type="function" returnType="int" version="PHP 3&gt;= 3.0.3, PHP 4 ">
-		<attr name="" type="" status="required"></attr>
+		<attr name="</methodparam>" type="" status="required"></attr>
 	</tag>
 	<tag name="hw_setlinkroot" type="function" returnType="void" version="PHP 3&gt;= 3.0.3, PHP 4 ">
 		<attr name="link" type="int" status="required"></attr>

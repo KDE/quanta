@@ -15,8 +15,6 @@
 		<attr name="database_name" type="string" status="required"></attr>
 		<attr name="link_identifier" type="resource" status="optional"></attr>
 	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
 	<tag name="msql_data_seek" type="function" returnType="bool" version="PHP 3, PHP 4 , PHP 5">
 		<attr name="query_identifier" type="resource" status="required"></attr>
 		<attr name="row_number" type="int" status="required"></attr>
@@ -25,8 +23,6 @@
 		<attr name="database" type="string" status="required"></attr>
 		<attr name="query" type="string" status="required"></attr>
 		<attr name="link_identifier" type="resource" status="optional"></attr>
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
 	</tag>
 	<tag name="msql_drop_db" type="function" returnType="int" version="PHP 3, PHP 4 , PHP 5">
 		<attr name="database_name" type="string" status="required"></attr>
@@ -73,16 +69,6 @@
 		<attr name="query_identifier" type="resource" status="required"></attr>
 		<attr name="field_offset" type="int" status="required"></attr>
 	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
 	<tag name="msql_free_result" type="function" returnType="int" version="PHP 3, PHP 4 , PHP 5">
 		<attr name="query_identifier" type="resource" status="required"></attr>
 	</tag>
@@ -104,10 +90,6 @@
 	<tag name="msql_num_rows" type="function" returnType="int" version="PHP 3, PHP 4 , PHP 5">
 		<attr name="query_identifier" type="resource" status="required"></attr>
 	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
 	<tag name="msql_pconnect" type="function" returnType="int" version="PHP 3, PHP 4 , PHP 5">
 		<attr name="server" type="string" status="optional"></attr>
 		<attr name="username" type="string" status="optional"></attr>
@@ -117,8 +99,6 @@
 		<attr name="query" type="string" status="required"></attr>
 		<attr name="link_identifier" type="resource" status="optional"></attr>
 	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
 	<tag name="msql_result" type="function" returnType="string" version="PHP 3, PHP 4 , PHP 5">
 		<attr name="query_identifier" type="resource" status="required"></attr>
 		<attr name="row" type="int" status="required"></attr>
@@ -127,9 +107,5 @@
 	<tag name="msql_select_db" type="function" returnType="bool" version="PHP 3, PHP 4 , PHP 5">
 		<attr name="database_name" type="string" status="required"></attr>
 		<attr name="link_identifier" type="resource" status="optional"></attr>
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
 	</tag>
 </tags>

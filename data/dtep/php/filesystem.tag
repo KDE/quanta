@@ -34,8 +34,6 @@
 	<tag name="disk_total_space" type="function" returnType="float" version="PHP 4 &gt;= 4.1.0, PHP 5">
 		<attr name="directory" type="string" status="required"></attr>
 	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
 	<tag name="fclose" type="function" returnType="bool" version="PHP 3, PHP 4 , PHP 5">
 		<attr name="handle" type="resource" status="required"></attr>
 	</tag>
@@ -134,8 +132,6 @@
 		<attr name="delimiter" type="string" status="optional"></attr>
 		<attr name="enclosure" type="string" status="optional"></attr>
 	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
 	<tag name="fread" type="function" returnType="string" version="PHP 3, PHP 4 , PHP 5">
 		<attr name="handle" type="resource" status="required"></attr>
 		<attr name="length" type="int" status="required"></attr>
@@ -189,8 +185,6 @@
 	</tag>
 	<tag name="is_writable" type="function" returnType="bool" version="PHP 4 , PHP 5">
 		<attr name="filename" type="string" status="required"></attr>
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
 	</tag>
 	<tag name="link" type="function" returnType="bool" version="PHP 3, PHP 4 , PHP 5">
 		<attr name="target" type="string" status="required"></attr>
@@ -249,8 +243,6 @@
 	<tag name="rmdir" type="function" returnType="bool" version="PHP 3, PHP 4 , PHP 5">
 		<attr name="dirname" type="string" status="required"></attr>
 		<attr name="context" type="resource" status="optional"></attr>
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
 	</tag>
 	<tag name="stat" type="function" returnType="array" version="PHP 3, PHP 4 , PHP 5">
 		<attr name="filename" type="string" status="required"></attr>

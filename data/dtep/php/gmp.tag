@@ -37,8 +37,6 @@
 		<attr name="d" type="resource" status="required"></attr>
 		<attr name="round" type="int" status="optional"></attr>
 	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
 	<tag name="gmp_divexact" type="function" returnType="resource" version="PHP 4 &gt;= 4.0.4, PHP 5">
 		<attr name="n" type="resource" status="required"></attr>
 		<attr name="d" type="resource" status="required"></attr>

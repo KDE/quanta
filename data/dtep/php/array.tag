@@ -282,8 +282,6 @@
 	<tag name="next" type="function" returnType="mixed" version="PHP 3, PHP 4 , PHP 5">
 		<attr name="&amp;array" type="array" status="required"></attr>
 	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
 	<tag name="prev" type="function" returnType="mixed" version="PHP 3, PHP 4 , PHP 5">
 		<attr name="&amp;array" type="array" status="required"></attr>
 	</tag>
@@ -301,8 +299,6 @@
 	</tag>
 	<tag name="shuffle" type="function" returnType="bool" version="PHP 3&gt;= 3.0.8, PHP 4 , PHP 5">
 		<attr name="&amp;array" type="array" status="required"></attr>
-	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
 	</tag>
 	<tag name="sort" type="function" returnType="bool" version="PHP 3, PHP 4 , PHP 5">
 		<attr name="&amp;array" type="array" status="required"></attr>

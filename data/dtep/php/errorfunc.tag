@@ -28,6 +28,4 @@
 		<attr name="error_msg" type="string" status="required"></attr>
 		<attr name="error_type" type="int" status="optional"></attr>
 	</tag>
-	<tag name="" type="function" returnType="" version="; as the functiontable at ">
-	</tag>
 </tags>
