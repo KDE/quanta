@@ -258,6 +258,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
         //a trick here: replace the node's DTD with this one
         const DTDStruct *savedDTD = node->tag->dtd;
         node->tag->dtd = dtd;
+        node->tag->type = Tag::ScriptTag;
         //now parse the special area
         area.bLine = area.eLine;
         area.bCol = area.eCol + 1;
@@ -265,7 +266,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
         area.eCol = endCol;
         currentNode = m_saParser->parseArea(area, "", "</"+tag->name+"\\s*>", node, false, true);
         //restore & set the new variables
-        node->tag->dtd = savedDTD;
+       // node->tag->dtd = savedDTD;
         line = m_saParser->lastParsedLine();
         textLine = ParserCommon::getLine(write, line, endLine, endCol);
         col = m_saParser->lastParsedColumn();
@@ -345,7 +346,9 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
       {
         if (tag->name.lower().startsWith("comment"))
         {
+#ifdef DEBUG_PARSER
           kdDebug(24000) << "COMMENT!" << endl;
+#endif          
           node->tag->type = Tag::Comment;
         }
       }
@@ -481,8 +484,8 @@ void Parser::coutTree(Node *node, int indent)
 {
          QString output;
         int bLine, bCol, eLine, eCol, j;
-        if(!node)
-                kdDebug(24000)<< "undoRedo::coutTree() - bad node!" << endl;
+        if (!node)
+           kdDebug(24000)<< "undoRedo::coutTree() - bad node!" << endl;
         while (node)
         {
                 output = "";

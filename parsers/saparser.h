@@ -113,7 +113,7 @@ private:
   Document* m_write;
   Node* m_baseNode;
   Node* m_lastParsedNode;
-  Node* m_currentNode;
+  Node* m_currentNode; ///< the currently parsed script node for details. Changes only after the whole area between m_currentNode and m_currentNode->next is parsed.
   int m_lastParsedLine, m_lastParsedCol;
   const DTDStruct *m_dtd;
   GroupElementMapList *m_groups;
@@ -138,7 +138,7 @@ private:
   ContextStruct s_context;
   QValueStack<ContextStruct> s_contextStack;
   ContextStruct s_previousContext;
-  Node *s_currentNode;
+  Node *s_currentNode; ///< the current detailed node while parsing for details
   Node *s_returnNode;
   bool s_useReturnVars;
   Node *s_next;
