@@ -178,3 +178,4 @@ void FileManage::slotInsertTag()
   emit insertTag( currentFileName() );
 }
 
+#include "filemanage.moc"

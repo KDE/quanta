@@ -154,3 +154,4 @@ void TemplatesTreeView::slotNewDocument()
 	    emit insertFile(currentFileName());
 	}
 }
+#include "templatestreeview.moc"

@@ -36,3 +36,4 @@ void QuantaTreeView::slotReloadTree( QStringList fileList, bool newtree)
 {
 
 }
+#include "quantatreeview.moc"

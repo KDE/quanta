@@ -379,3 +379,4 @@ void ProjectTreeView::slotUploadSingleFolder()
 	if ( !currentItem() ) return;
 	emit uploadSingleFolder( currentFileName() );
 }
+#include "projecttreeview.moc"

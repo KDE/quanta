@@ -235,3 +235,4 @@ void FilesTreeView::slotAddToTop()
 	  }
 	}
 }
+#include "filestreeview.moc"
