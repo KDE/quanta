@@ -2180,7 +2180,6 @@ void QuantaApp::showToolbarFile(const KURL &url)
     }
     m_tagsMenu->insertItem(p_toolbar->name,menu);
     p_toolbar->menu = menu;
-   kdDebug(24000) << p_toolbar->name << endl;
     guiFactory()->addClient(p_toolbar->guiClient);
     p_toolbar->visible = true;
   }
@@ -3076,7 +3075,6 @@ void QuantaApp::loadToolbarForDTD(const QString& dtdName)
             p_toolbar = iter.current();
             if (p_toolbar->url == url || p_toolbar->url == urlLocal)
             {
-               kdDebug(24000) << "Removeclient: " << p_toolbar->name << endl;
               guiFactory()->removeClient(p_toolbar->guiClient);
               p_toolbar->visible = false;
               delete p_toolbar->menu;
