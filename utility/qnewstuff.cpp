@@ -1,5 +1,5 @@
 /***************************************************************************
-                          qnewdtepstuff.cpp  -  description
+                          qnewstuff.cpp  -  description
                              -------------------
     begin                : Tue Jun 22 12:19:55 2004
     copyright          : (C) 2004 by Andras Mantia <amantia@kde.org>
@@ -22,12 +22,12 @@
 #include <ktempdir.h>
 
 //app includes
-#include "qnewdtepstuff.h"
+#include "qnewstuff.h"
 #include "dtds.h"
 #include "resource.h"
 #include "security.h"
 
-QNewDTEPStuff::QNewDTEPStuff(const QString &type,  QWidget *parentWidget)
+QNewStuff::QNewStuff(const QString &type,  QWidget *parentWidget)
  : KNewStuff(type, parentWidget)
 {
   connect(Security::ref(), SIGNAL(validityResult(int)), this, SLOT(slotValidated(int)));
@@ -35,11 +35,11 @@ QNewDTEPStuff::QNewDTEPStuff(const QString &type,  QWidget *parentWidget)
 }
 
 
-QNewDTEPStuff::~QNewDTEPStuff()
+QNewStuff::~QNewStuff()
 {
 }
 
-bool QNewDTEPStuff::install(const QString &fileName)
+bool QNewStuff::install(const QString &fileName)
 {
   bool ok = true;
 
@@ -71,11 +71,11 @@ bool QNewDTEPStuff::install(const QString &fileName)
   } else
       ok = false;
   if (!ok)
-    KMessageBox::error(parentWidget(), i18n("There was an error with the downloaded DTEP tarball file. Possible causes are damaged archive or invalid directory structure in the archive."), i18n("DTEP Installation Error"));
+    KMessageBox::error(parentWidget(), i18n("There was an error with the downloaded resource tarball file. Possible causes are damaged archive or invalid directory structure in the archive."), i18n("Resource Installation Error"));
   return ok;
 }
 
-void QNewDTEPStuff::slotValidated(int result)
+void QNewStuff::slotValidated(int result)
 {
    QString errorString;
    QString signatureStr;
@@ -120,42 +120,47 @@ void QNewDTEPStuff::slotValidated(int result)
   if (!valid)
   {
       signatureStr.prepend( "<br>");
-      if (KMessageBox::warningYesNo(parentWidget(), i18n("<qt>There is a problem with the DTEP resource file you have downloaded. The errors are :<b>%1</b><br>%2<br><br>Installation of the resource is <b>not recommended</b>.<br><br>Do you want to proceed with the installation?</qt>").arg(errorString).arg(signatureStr), i18n("Problematic Resource File")) == KMessageBox::Yes)
+      if (KMessageBox::warningYesNo(parentWidget(), i18n("<qt>There is a problem with the resource file you have downloaded. The errors are :<b>%1</b><br>%2<br><br>Installation of the resource is <b>not recommended</b>.<br><br>Do you want to proceed with the installation?</qt>").arg(errorString).arg(signatureStr), i18n("Problematic Resource File")) == KMessageBox::Yes)
           valid = true;
   } else
     KMessageBox::information(parentWidget(), i18n("<qt>%1<br><br>Press OK to install it.</qt>").arg(signatureStr), i18n("Valid Resource"), "Show Valid Signature Information");
   if (valid)
   {
-      bool ok = true;
-      KTar tar(m_tarName, "application/x-gzip");
-      if (tar.open(IO_ReadOnly))
-      {
-          const KArchiveDirectory *directory = tar.directory();
-          QString dtepDir =KGlobal::dirs()->saveLocation("data") + resourceDir + "dtep/";
-          QString dtdName = (*directory->entries().at(0));
-          if (dtdName.isEmpty())
-          {
-            ok = false;
-          } else
-          {
-            directory->copyTo(dtepDir, true);
-            DTDs::ref()->slotLoadDTEP(dtepDir + dtdName, false);
-          }
-          tar.close();
-      } else
-          ok = false;
-      if (!ok)
-          KMessageBox::error(parentWidget(), i18n("There was an error with the downloaded DTEP tarball file. Possible causes are damaged archive or invalid directory structure in the archive."), i18n("DTEP Installation Error"));
+     installResource();
   }
     KIO::NetAccess::del(KURL().fromPathOrURL(m_tempDir->name()), parentWidget());
     delete m_tempDir;
     m_tempDir = 0L;
 }
 
-bool QNewDTEPStuff::createUploadFile(const QString &fileName)
+bool QNewStuff::createUploadFile(const QString &fileName)
 {
   Q_UNUSED(fileName);
   return true; //upload is not supported yet
 }
 
-#include "qnewdtepstuff.moc"
+void QNewDTEPStuff::installResource()
+{
+    bool ok = true;
+    KTar tar(m_tarName, "application/x-gzip");
+    if (tar.open(IO_ReadOnly))
+    {
+        const KArchiveDirectory *directory = tar.directory();
+        QString dtepDir =KGlobal::dirs()->saveLocation("data") + resourceDir + "dtep/";
+        QString dtdName = (*directory->entries().at(0));
+        if (dtdName.isEmpty())
+        {
+          ok = false;
+        } else
+        {
+          directory->copyTo(dtepDir, true);
+          DTDs::ref()->slotLoadDTEP(dtepDir + dtdName, false);
+        }
+        tar.close();
+    } else
+        ok = false;
+    if (!ok)
+        KMessageBox::error(parentWidget(), i18n("There was an error with the downloaded DTEP tarball file. Possible causes are damaged archive or invalid directory structure in the archive."), i18n("DTEP Installation Error"));
+}
+
+#include "qnewstuff.moc"

@@ -1,5 +1,5 @@
 /***************************************************************************
-                          qnewdtepstuff.h  -  description
+                          qnewstuff.h  -  description
                              -------------------
     begin                : Tue Jun 22 12:19:55 2004
     copyright          : (C) 2004 by Andras Mantia <amantia@kde.org>
@@ -13,8 +13,11 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef QNEWDTEPSTUFF_H
-#define QNEWDTEPSTUFF_H
+ /* This file and the corresponding .cpp file contains the general framework to download
+ resources from a server and the resource specific classes which inherit from it */
+
+#ifndef QNEWSTUFF_H
+#define QNEWSTUFF_H
 
 //qt includes
 #include <qobject.h>
@@ -24,30 +27,45 @@
 
 class KTempDir;
 /**
-Makes possible downloading and installing new DTEP packages
+Makes possible downloading and installing resource files from the server
 
 @author Andras Mantia
 */
-class QNewDTEPStuff : public  QObject, public KNewStuff
+class QNewStuff : public  QObject, public KNewStuff
 {
   Q_OBJECT
 
 public:
-    QNewDTEPStuff(const QString &type,  QWidget *parentWidget=0);
-    ~QNewDTEPStuff();
+    QNewStuff(const QString &type,  QWidget *parentWidget=0);
+    ~QNewStuff();
 
-    /** Installs the downloaded DTEP tarball */
+    /** Installs the downloaded resource */
     bool install( const QString &fileName );
-    /** Creates a DTEP tarball to be uploaded */
+    /** Creates a tarball to be uploaded */
     bool createUploadFile( const QString &fileName );
 
 private slots:
     /** Checks the validity of the downloaded tarball and installs it*/
     void slotValidated(int result);
 
-private:
+protected:
+    virtual void installResource() = 0;
+
     KTempDir *m_tempDir;
     QString m_tarName;
+};
+
+class QNewDTEPStuff: public QNewStuff
+{
+   Q_OBJECT
+
+public:
+    QNewDTEPStuff(const QString &type,  QWidget *parentWidget=0)
+      :QNewStuff(type, parentWidget){};
+    ~QNewDTEPStuff() {};
+
+private:
+     virtual void installResource();
 };
 
 #endif

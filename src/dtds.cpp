@@ -139,6 +139,8 @@ bool DTDs::readTagDir(const QString &dirName, bool loadAll)
       dtd->toplevel = dtdConfig->readBoolEntry("TopLevel", false);
   else
       dtd->toplevel = true;
+  dtd->tagsList = 0L;
+  dtd->commonAttrs = 0L;
 
   //Read the areas that define the areas
   dtdConfig->setGroup("Parsing rules");
