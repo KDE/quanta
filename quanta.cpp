@@ -44,7 +44,6 @@
 #include <kcombobox.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
-#include <kencodingfiledialog.h>
 #include <kfiledialog.h>
 #include <kmenubar.h>
 #include <klocale.h>
@@ -135,6 +134,8 @@
 
 #if KDE_VERSION < KDE_MAKE_VERSION(3,1,90)
 #include "dialogs/katefiledialog.h"
+#else
+#include <kencodingfiledialog.h>
 #endif
 
 #include "plugins/quantakpartplugin.h"
