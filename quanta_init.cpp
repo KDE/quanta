@@ -1502,6 +1502,7 @@ void QuantaApp::initActions()
 
     fileRecent =  KStdAction::openRecent(this, SLOT(slotFileOpenRecent(const KURL&)),
                                          actionCollection(), "qfile_open_recent");
+    fileRecent->setMaxItems(32);
 
     (void) new KAction( i18n( "Close All" ), 0, this,
                         SLOT( slotFileCloseAll() ),
@@ -1652,6 +1653,7 @@ void QuantaApp::initActions()
       KStdAction::openRecent(m_project, SLOT(slotOpenProject(const KURL&)),
                              actionCollection(), "project_open_recent");
     m_project->projectRecent->setText(i18n("Open Recent Project"));
+    m_project->projectRecent->setMaxItems(32);
 
     saveprjAction =  new KAction( i18n( "&Save Project" ), SmallIcon("save"), 0,
                          m_project, SLOT( slotSaveProject() ),
