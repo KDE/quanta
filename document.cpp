@@ -106,7 +106,6 @@ Document::Document(const KURL& p_baseURL, KTextEditor::Document *doc,
   connect( m_doc, SIGNAL(textChanged()), SLOT(slotTextChanged()));
 
 //  setFocusProxy(m_view);
-
 }
 
 Document::~Document()
@@ -1729,7 +1728,7 @@ void Document::slotDelayedTextChanged()
     if (qConfig.updateClosingTags)
     {
       viewCursorIf->cursorPositionReal(&line, &column);
-      node = parser->nodeAt(line, column, true);
+      node = parser->nodeAt(line, column, false);
       if (node)
       {
         Tag *tag;
@@ -1752,6 +1751,7 @@ void Document::slotDelayedTextChanged()
     baseNode = parser->rebuild(this);
     if (qConfig.updateClosingTags && currentNode)
     {
+      viewCursorIf->cursorPositionReal(&line, &column);
       node = parser->nodeAt(line, column, false);
       if (node && node->tag->name != currentNode->tag->name && (node->tag->type == Tag::XmlTag || node->tag->type == Tag::XmlTagEnd) && node->tag->validXMLTag)
       {

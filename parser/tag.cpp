@@ -56,6 +56,7 @@ Tag::Tag( const Tag &t)
   m_nameLine = t.m_nameLine;
   m_nameCol = t.m_nameCol;
   attrs = t.attrs;
+  validXMLTag = t.validXMLTag;
 }
 
 Tag::~Tag()

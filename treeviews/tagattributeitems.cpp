@@ -93,7 +93,6 @@ ParentItem::ParentItem(TagAttributeTree *listView, QListViewItem* parent)
 
 ParentItem::~ParentItem()
 {
-  kdDebug(24000) << "ParentItem deleted" << endl;
   showList(false);
   delete comboBox;
 }

@@ -605,13 +605,15 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
   {
     currentNode->tag->endPos(el, ec);
   }
-
   QString s = write->text(el, ec + 1, endLine, endCol);
-  if ( (el !=0 || ec !=0) && !(el == endLine && ec == endCol) )
+  if ( (el !=0 || ec !=0) )//&& !(el == endLine && ec == endCol) )
   {
     textTag = new Tag();
     textTag->setStr(s);
-    textTag->setTagPosition(el, ec+1, endLine, endCol);
+    if (el == endLine && ec == endCol)
+      textTag->setTagPosition(el, ec+1, endLine+1, -1);
+    else
+      textTag->setTagPosition(el, ec+1, endLine, endCol);
     textTag->setWrite(write);
     textTag->single = true;
     textTag->dtd = m_dtd;
@@ -1297,7 +1299,7 @@ Node *Parser::nodeAt(int line, int col, bool findDeepest)
        node = node->prev;
      }
   } else
-  if (node && (el < line || (el == line && ec < col)))
+  if (node && (el < line || (el == line && ec < col)) && !findDeepest)
   {
     Node *n = node->nextSibling();
     if (n && n->nextSibling()) //don't set it to the last, always empty node
@@ -1585,7 +1587,6 @@ Node *Parser::rebuild(Document *w)
 
    QString invalidStr = QString("Invalid area: %1,%2,%3,%4").arg(bLine).arg(bCol).arg(eLine).arg(eCol);
    kdDebug(24000) << invalidStr << "\n";
-   coutTree(baseNode,  2);
    //something strange has happened, like moving text with D&D inside the editor
    if (eLine < bLine || (eLine == bLine && eCol <= bCol))
    {
@@ -1607,8 +1608,6 @@ Node *Parser::rebuild(Document *w)
    firstNode->child = 0L;
    Node *lastInserted = 0L;
    node = parseArea(bLine, bCol, eLine, eCol, &lastInserted, firstNode);
-   kdDebug(24000) << "After parseArea: "<< endl;
-   coutTree(baseNode,  2);
 
    Node *swapNode = firstNode->nextSibling();
    Node *p = (lastInserted)?lastInserted->nextSibling():lastInserted;
@@ -1701,6 +1700,7 @@ Node *Parser::rebuild(Document *w)
       }
 
     node = lastInserted;
+
     while (node && lastNode)
     {
       goUp = ( node->parent &&
@@ -1739,26 +1739,17 @@ Node *Parser::rebuild(Document *w)
       lastNode->closesPrevious = true;
     } else
     {
-     /* if (node->tag->type == Tag::XmlTag)
-      {
-        node->child = lastNode;
-        node->next = 0L;
-        lastNode->parent = node;
-        lastNode->prev = 0L;
-      } else*/
-      {
       if (lastNode->prev && lastNode->prev->next == lastNode)
           lastNode->prev->next = 0L;
       node->next = lastNode;
       lastNode->prev = node;
       lastNode->parent = node->parent;
-      }
     }
     node = lastNode;
     lastNode = lastNode->nextNotChild();
    }
  }
-   /**kdDebug(24000)<< "END"<< endl;
+/*   kdDebug(24000)<< "END"<< endl;
    coutTree(baseNode,  2);
    kdDebug(24000)<< "************* End User Modification *****************" << endl;*/
    w->docUndoRedo.addNewModifsSet(modifs, false);
