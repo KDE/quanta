@@ -62,12 +62,12 @@ FilesTreeViewItem::FilesTreeViewItem( KFileTreeViewItem *parent, KFileItem* item
 
 QString FilesTreeViewItem::key(int column, bool ascending) const
 {
-  if (ascending) 
+  if (ascending)
     if (isDir())
       return text(column).prepend(" ");
     else
       return text(column);
-  else  
+  else
     if (isDir())
       return text(column);
     else
@@ -94,18 +94,18 @@ void FilesTreeViewItem::paintCell(QPainter *p, const QColorGroup &cg,
   } else
   {
     int h, s, v;
-#if KDE_IS_VERSION(3,1,90)    
+#if KDE_IS_VERSION(3,1,90)
     p->pen().color().getHsv(&h, &s, &v);
 #else
     p->pen().color().getHsv(h, s, v);
-#endif    
+#endif
     v = (v < 155 ? v + 100 : 255);
     _cg.setColor(QColorGroup::Text, QColor(h, s, v, QColor::Hsv));
   };
   KFileTreeViewItem::paintCell( p, _cg, column, width, align );
 }
-    
-    
+
+
 //FilesTreeBranch implementation
 FilesTreeBranch::FilesTreeBranch(KFileTreeView *parent, const KURL& url,
                                  const QString& name, const QPixmap& pix,
@@ -161,7 +161,7 @@ FilesTreeView::FilesTreeView(KURL::List topList, QWidget *parent, const char *na
   setAcceptDrops(true);
   setShowSortIndicator(true);
   setDragEnabled(true);
-  
+
   connect(this, SIGNAL(dropped(KURL::List&, KURL&)),
           this, SLOT(slotDropped(KURL::List&, KURL&)));
 
@@ -181,7 +181,7 @@ FilesTreeView::FilesTreeView(KURL::List topList, QWidget *parent, const char *na
   m_fileMenu->insertItem(SmallIcon("editdelete"), i18n("&Delete"), this, SLOT(slotDelete()));
   m_fileMenu->insertItem(SmallIcon("info"), i18n("Properties"), this, SLOT(slotProperties()));
   m_fileMenu->insertSeparator();
-  m_fileMenu->insertItem(i18n("Reload"), this, SLOT(slotReload()));
+  m_fileMenu->insertItem(SmallIcon("reload"), i18n("Reload"), this, SLOT(slotReload()));
 
 
   m_folderMenu = new KPopupMenu();
@@ -195,11 +195,11 @@ FilesTreeView::FilesTreeView(KURL::List topList, QWidget *parent, const char *na
   m_menuDel = m_folderMenu->insertItem( SmallIcon("editdelete"), i18n("&Delete"), this, SLOT(slotDelete()));
   m_folderMenu->insertItem(SmallIcon("info"), i18n("Properties"), this, SLOT(slotProperties()));
   m_folderMenu->insertSeparator();
-  m_folderMenu->insertItem(i18n("Reload"), this, SLOT(slotReload()));
+  m_folderMenu->insertItem(SmallIcon("reload"), i18n("Reload"), this, SLOT(slotReload()));
 
   m_emptyMenu = new KPopupMenu();
 
-  m_emptyMenu->insertItem(i18n("New Top Folder..."), this, SLOT(slotNewTopFolder()), 0, -1 , 0);
+  m_emptyMenu->insertItem(SmallIcon("folder_new"),  i18n("New Top Folder..."), this, SLOT(slotNewTopFolder()), 0, -1 , 0);
 
   addColumn(i18n("Files Tree"), -1);
   addColumn("");
@@ -238,7 +238,7 @@ KFileTreeBranch* FilesTreeView::newBranch(const KURL& url)
   {
     if (url.isLocalFile() && url.equals(KURL(QDir::homeDirPath()), true))
     {
-      newBrnch = new FilesTreeBranch(this, url, i18n("Home Folder"), SmallIcon("home_blue"), true);
+      newBrnch = new FilesTreeBranch(this, url, i18n("Home Folder"), SmallIcon("folder_home"), true);
     } else
     {
       QString s = url.fileName();

@@ -1011,7 +1011,7 @@ void QuantaApp::initActions()
                 SLOT(slotIndent()), ac, "edit_indent");
     new KAction(i18n("Unindent"), "unindent", CTRL+SHIFT+Key_I, m_view,
                 SLOT(slotUnIndent()), ac, "edit_unindent");
-    new KAction(i18n("Cl&ean Indentation"), "cleanindent", 0, m_view,
+    new KAction(i18n("Cl&ean Indentation"), 0, m_view,
                 SLOT(slotCleanIndent()), ac, "edit_cleanindent");
 
     new KAction(i18n("Co&mment"),  CTRL+Qt::Key_NumberSign,
@@ -1091,10 +1091,10 @@ void QuantaApp::initActions()
 
     KStdAction::saveAs( this, SLOT( slotFileSaveAs() ), ac );
 
-    saveAllAction = new KAction( i18n( "Save All..." ), UserIconSet("save_all"), SHIFT+KStdAccel::shortcut(KStdAccel::Save).keyCodeQt(),
+    saveAllAction = new KAction( i18n( "Save All..." ), "save_all", SHIFT+KStdAccel::shortcut(KStdAccel::Save).keyCodeQt(),
                         this, SLOT( slotFileSaveAll() ),
                         ac, "file_save_all" );
-    (void)  new KAction(i18n("Reloa&d"), UserIconSet("reload"), CTRL+Key_F5, this,
+    (void)  new KAction(i18n("Reloa&d"), "reload", CTRL+Key_F5, this,
                         SLOT(slotFileReload()), ac, "file_reload");
 //    (void)  new KAction(i18n("Reload All "), 0, 0, this,
 //                        SLOT(slotFileReloadAll()), ac, "file_reload_all");
@@ -1209,7 +1209,7 @@ void QuantaApp::initActions()
                          this, SLOT( slotShowATabDock() ),
                          ac, "show_atab_tree" );
     showDTabAction =
-      new KToggleAction( i18n( "Show Documentation Tree" ), BarIcon ("contents2"), 0,
+      new KToggleAction( i18n( "Show Documentation Tree" ), BarIcon ("contents"), 0,
                          this, SLOT( slotShowDTabDock() ),
                          ac, "show_dtab_tree" );
 
@@ -1287,12 +1287,12 @@ void QuantaApp::initActions()
                         m_project, SLOT( slotNewProject() ),
                         ac, "project_new" );
 
-    (void) new KAction( i18n( "&Open Project..." ), BarIcon("folder_new"), 0,
+    (void) new KAction( i18n( "&Open Project..." ), "project_open", 0,
                         m_project, SLOT( slotOpenProject() ),
                         ac, "project_open" );
 #if KDE_VERSION < KDE_MAKE_VERSION(3,1,92)
     m_project -> projectRecent = new KQRecentFilesAction(i18n("Op&en Recent Project"),
-                                 "folder_new", 0,
+                                 "project_open", 0,
                                   m_project, SLOT(slotOpenProject(const KURL&)),
                                   ac, "project_open_recent");
 #else
@@ -1300,7 +1300,7 @@ void QuantaApp::initActions()
       KStdAction::openRecent(m_project, SLOT(slotOpenProject(const KURL&)),
                              ac, "project_open_recent");
     m_project->projectRecent->setText(i18n("Open Recent Project"));
-    m_project->projectRecent->setIcon("folder_new");
+    m_project->projectRecent->setIcon("project_open");
 #endif
     m_project->projectRecent->setMaxItems(32);
     m_project->projectRecent->setToolTip(i18n("Open / Open Recent Project"));
@@ -1336,7 +1336,7 @@ void QuantaApp::initActions()
                         m_project, SLOT( slotAddDirectory() ),
                         ac, "project_insert_directory" );
 
-    rescanPrjDirAction = new KAction( i18n( "&Rescan Project Folder" ), SmallIcon("reload"), 0,
+    rescanPrjDirAction = new KAction( i18n( "&Rescan Project Folder" ), "reload", 0,
                         m_project, SLOT( slotRescanPrjDir() ),
                         ac, "project_rescan" );
 

@@ -120,7 +120,7 @@ TemplatesTreeView::TemplatesTreeView(QWidget *parent, const char *name )
   m_fileMenu->insertItem(SmallIcon("editdelete"), i18n("&Delete"), this, SLOT(slotDelete()));
   m_fileMenu->insertItem(SmallIcon("info"), i18n("Properties"), this, SLOT(slotProperties()));
   m_fileMenu->insertSeparator();
-  m_fileMenu->insertItem(i18n("Reload"), this, SLOT(slotReload()));
+  m_fileMenu->insertItem(SmallIcon("reload"), i18n("Reload"), this, SLOT(slotReload()));
 
   m_folderMenu = new KPopupMenu();
 
@@ -133,7 +133,7 @@ TemplatesTreeView::TemplatesTreeView(QWidget *parent, const char *name )
   m_deleteMenuId = m_folderMenu->insertItem(SmallIcon("editdelete"), i18n("&Delete"), this, SLOT(slotDelete()));
   m_folderMenu->insertItem(SmallIcon("info"), i18n("Properties"), this, SLOT(slotProperties()));
   m_folderMenu->insertSeparator();
-  m_folderMenu->insertItem(i18n("Reload"), this, SLOT(slotReload()));
+  m_folderMenu->insertItem(SmallIcon("reload"), i18n("Reload"), this, SLOT(slotReload()));
 
   setRootIsDecorated( true );
   //header()->hide();
