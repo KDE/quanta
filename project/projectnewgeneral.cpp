@@ -25,6 +25,7 @@
 
 // kde includes
 #include <kfiledialog.h>
+#include <kiconloader.h>
 
 #include "projectnewgeneral.h"
 #include "projectnewgeneral.moc"

@@ -29,6 +29,7 @@
 #include <qfileinfo.h>
 #include <qtabdialog.h>
 #include <qfiledialog.h>
+#include <qpushbutton.h> 
 #include <qtextstream.h>
 #include <qstringlist.h>
 #include <qradiobutton.h>

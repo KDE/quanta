@@ -14,6 +14,7 @@
 #include <qfile.h>
 #include <qregexp.h>
 #include <qlayout.h>
+#include <qpushbutton.h>
 #include <qradiobutton.h>
 #include <qspinbox.h>
 #include <qcheckbox.h>

@@ -19,6 +19,7 @@
 // qt includes
 #include <qdir.h>
 #include <qlineedit.h>
+#include <qpushbutton.h>
 
 // kde includes
 #include <kio/job.h>
