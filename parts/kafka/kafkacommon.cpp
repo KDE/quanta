@@ -1336,7 +1336,7 @@ bool kafkaCommon::DTDinsertNode(Node *newNode, Node *startNode, int startOffset,
 
     /**if(!lastValidEndParent || !lastValidStartParent)
     {
-        delete newNode;
+    delete newNode;
         return false;
     }*/
 
@@ -2313,14 +2313,28 @@ Node* kafkaCommon::getNodeSubtree(Node *startNode, int startOffset, Node *endNod
         if(splitNode(new_start_node, startOffset, 0))
         {
             //</TEMPORARY>
+            /*
             if(startNode == commonParentStartChild)
                 commonParentStartChild = commonParentStartChild->nextSibling();
+            */
+            /*
             if(startNode == endNode)
             {
                 endNode = endNode->nextSibling();
                 endOffset -= startOffset;
+                
+                Node* node_to_get = new_start_node->next;
+                splitNode(node_to_get, endOffset - startOffset, 0);
+                delete extractNode(node_to_get->next, 0);
+                return extractNode(node_to_get, 0);
             }
+            */
             new_start_node = extractNode(startNode->parent->SLastChild(), 0);
+            if(startNode == endNode)
+            {
+                splitNode(new_start_node, endOffset - startOffset, 0);
+                return new_start_node;
+            }
         }
         else if(startOffset == (signed)startNode->tag->tagStr().length())
         {

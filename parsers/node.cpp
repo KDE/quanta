@@ -16,7 +16,7 @@
  ***************************************************************************/
 //qt includes
 #include <qlistview.h>
-#include <qdom.h> 
+#include <qdom.h>
 
 #include <kdebug.h>
 
@@ -31,54 +31,54 @@ GroupElementMapList globalGroupMap;
 
 Node::Node( Node *parent )
 {
-  this->parent = parent;
-  prev = next = child = 0L;
-  tag = 0L;
-  groupTag = 0L;
-  group = 0L;
-  mainListItem = 0L;
-  opened = false;
-  removeAll = true;
-  closesPrevious = false;
-  insideSpecial = false;
-  _closingNode = 0L;
-  m_rootNode = 0L;
-  m_leafNode = 0L;
-  groupElementLists.clear();
+    this->parent = parent;
+    prev = next = child = 0L;
+    tag = 0L;
+    groupTag = 0L;
+    group = 0L;
+    mainListItem = 0L;
+    opened = false;
+    removeAll = true;
+    closesPrevious = false;
+    insideSpecial = false;
+    _closingNode = 0L;
+    m_rootNode = 0L;
+    m_leafNode = 0L;
+    groupElementLists.clear();
 }
 
 
 Node::~Node()
 {
-  //It has no use, except to know when it crash why it has crashed.
-  //If it has crashed here, the Node doesn't exist anymore.
-  // If it has crashed the next line, it is a GroupElements bug.
-  tag->setCleanStrBuilt(false);
+    //It has no use, except to know when it crash why it has crashed.
+    //If it has crashed here, the Node doesn't exist anymore.
+    // If it has crashed the next line, it is a GroupElements bug.
+    tag->setCleanStrBuilt(false);
 
-  detachNode();
-  if (prev && prev->next == this)
-      prev->next = 0L;
-  if (parent && parent->child == this)
-      parent->child = 0L;
-  if (removeAll)
-  {
-    delete child;
-    child = 0L;
-    delete next;
-    next = 0L;
-  }
+    detachNode();
+    if (prev && prev->next == this)
+        prev->next = 0L;
+    if (parent && parent->child == this)
+        parent->child = 0L;
+    if (removeAll)
+    {
+        delete child;
+        child = 0L;
+        delete next;
+        next = 0L;
+    }
 
-  delete tag;
-  tag = 0L;
-  delete groupTag;
-  groupTag = 0L;
-  delete m_rootNode;
-  delete m_leafNode;
+    delete tag;
+    tag = 0L;
+    delete groupTag;
+    groupTag = 0L;
+    delete m_rootNode;
+    delete m_leafNode;
 }
 
 void Node::save(QDomElement& element) const
 {
-    //kdDebug(25001) << "Save:\n" << element.ownerDocument().toString() << endl;
+    kdDebug(25001) << "Save:\n" << element.ownerDocument().toString() << endl;
     QDomElement child_element;
     if(next)
     {
@@ -94,9 +94,12 @@ void Node::save(QDomElement& element) const
     }
     if(_closingNode)
     {
-        child_element = element.ownerDocument().createElement("nodeClosing");
-        element.appendChild(child_element);
-        _closingNode->save(child_element);
+        if(_closingNode != next)
+        {
+            child_element = element.ownerDocument().createElement("nodeClosing");
+            element.appendChild(child_element);
+            _closingNode->save(child_element);
+        }
     }
     
     Q_ASSERT(tag);
@@ -110,55 +113,52 @@ void Node::save(QDomElement& element) const
     element.setAttribute("insideSpecial", insideSpecial);             // bool
     element.setAttribute("specialInsideXml", specialInsideXml);             // bool
     element.setAttribute("fileName", fileName);                         // QString
-    /*
+
     QString s_element;
     QTextStream stream(&s_element, IO_WriteOnly);
     element.save(stream, 3);
-    kdDebug(25001) << "Load:\n" << s_element << endl;    
+    kdDebug(25001) << "Load:\n" << s_element << endl;
     kdDebug(25001) << "Save:\n" << element.ownerDocument().toString() << endl;
-    */
 }
 
 bool Node::load(QDomElement const& element)
 {
-    /*
     QString s_element;
     QTextStream stream(&s_element, IO_WriteOnly);
     element.save(stream, 3);
-    kdDebug(25001) << "Load:\n" << s_element << endl;    
-    */
+    kdDebug(25001) << "Load:\n" << s_element << endl;
+
     QDomNodeList list = element.childNodes();
-    for(unsigned int i = 0; i != list.count(); ++i) 
+    for(unsigned int i = 0; i != list.count(); ++i)
     {
-        if(list.item(i).isElement()) 
+        if(list.item(i).isElement())
         {
             QDomElement e = list.item(i).toElement();
-            if(e.tagName() == "nodeNext") 
+            if(e.tagName() == "nodeNext")
             {
                 next = new Node(0);
-                next->prev = this;
-                next->parent = this->parent;
                 next->load(e);
+                next->prev = this;
             }
-            else if(e.tagName() == "nodeChild") 
+            else if(e.tagName() == "nodeChild")
             {
                 child = new Node(0);
-                child->parent = this;
                 child->load(e);
+                child->parent = this;
             }
-            else if(e.tagName() == "nodeClosing") 
+            else if(e.tagName() == "nodeClosing")
             {
                 _closingNode = new Node(0);
                 _closingNode->load(e);
             }
-            else if(e.tagName() == "tag") 
+            else if(e.tagName() == "tag")
             {
                 tag = new Tag();
                 tag->load(e);
             }
         }
-    }    
-    
+    }
+
     closesPrevious = QString(element.attribute("closesPrevious")).toInt();  // bool
     opened = QString(element.attribute("opened")).toInt();     // bool
     removeAll = QString(element.attribute("removeAll")).toInt(); // bool
@@ -167,344 +167,353 @@ bool Node::load(QDomElement const& element)
     fileName = element.attribute("fileName");                         // QString
 
     //kafkaCommon::coutTree(this, 3);
-    
+
     return true;
 }
 
 Node *Node::nextSibling()
 {
-  Node *result = 0L;
-  if (child)
-  {
-    result = child;
-  } else
-  if (next)
-  {
-    result = next;
-  } else
-  {
-    Node *n = this;
-    while (n)
+    Node *result = 0L;
+    if (child)
     {
-      if (n->parent && n->parent->next)
-      {
-        result = n->parent->next;
-        break;
-      } else
-      {
-        n = n->parent;
-      }
+        result = child;
     }
-  }
+    else
+        if (next)
+        {
+            result = next;
+        }
+        else
+        {
+            Node *n = this;
+            while (n)
+            {
+                if (n->parent && n->parent->next)
+                {
+                    result = n->parent->next;
+                    break;
+                }
+                else
+                {
+                    n = n->parent;
+                }
+            }
+        }
 
-  return result;
+    return result;
 }
 
 
 Node *Node::previousSibling()
 {
-  Node *result = 0L;
-  if (prev)
-  {
-     Node *n = prev;
-     while (n->child)
-     {
-       n = n->child;
-       while (n->next)
-         n = n->next;
-     }
-     result = n;
-  } else
-  {
-    result = parent;
-  }
+    Node *result = 0L;
+    if (prev)
+    {
+        Node *n = prev;
+        while (n->child)
+        {
+            n = n->child;
+            while (n->next)
+                n = n->next;
+        }
+        result = n;
+    }
+    else
+    {
+        result = parent;
+    }
 
-  return result;
+    return result;
 }
 
 Node *Node::nextNotChild()
 {
-  if (next)
-      return next;
-  else
-  {
-    Node *n = this;
-    while (n)
+    if (next)
+        return next;
+    else
     {
-      if (n->parent && n->parent->next)
-      {
-        n = n->parent->next;
-        break;
-      } else
-      {
-        n = n->parent;
-      }
-    }
+        Node *n = this;
+        while (n)
+        {
+            if (n->parent && n->parent->next)
+            {
+                n = n->parent->next;
+                break;
+            }
+            else
+            {
+                n = n->parent;
+            }
+        }
 
-    return n;
-  }
+        return n;
+    }
 }
 
 QString Node::nodeName()
 {
-  if(tag)
-    return tag->name;
-  return QString::null;
+    if(tag)
+        return tag->name;
+    return QString::null;
 }
 
 QString Node::nodeValue()
 {
-  if(tag)
-    return tag->tagStr();
-  return QString::null;
+    if(tag)
+        return tag->tagStr();
+    return QString::null;
 }
 
 void Node::setNodeValue(QString value)
 {
-  if(!tag)
-    tag = new Tag();
-  tag->setStr(value);
-  kdDebug(24000) << "Node::setNodeValue: dtd is 0L for " << value << endl;
+    if(!tag)
+        tag = new Tag();
+    tag->setStr(value);
+    kdDebug(24000) << "Node::setNodeValue: dtd is 0L for " << value << endl;
 }
 
 Node* Node::lastChild()
 {
-  Node *n;
-  n = child;
-  while(n && n->next)
-    n = n->next;
-  return n;
+    Node *n, *m;
+    n = child;
+    while(n)
+    {
+        m = n;
+        n = n->next;
+    }
+    return m;
 }
 
 Node *Node::nextNE()
 {
-  Node *n = next;
-  while(n && n->tag->type == Tag::Empty)
-          n = n->next;
-  return n;
+    Node *n = next;
+    while(n && n->tag->type == Tag::Empty)
+        n = n->next;
+    return n;
 }
 
 Node *Node::prevNE()
 {
-  Node *n = prev;
-  while(n && n->tag->type == Tag::Empty)
-          n = n->prev;
-  return n;
+    Node *n = prev;
+    while(n && n->tag->type == Tag::Empty)
+        n = n->prev;
+    return n;
 }
 
 Node *Node::firstChildNE()
 {
-  Node *n = child;
-  while(n && n->tag->type == Tag::Empty)
-    n = n->next;
-  return n;
+    Node *n = child;
+    while(n && n->tag->type == Tag::Empty)
+        n = n->next;
+    return n;
 }
 
 Node *Node::lastChildNE()
 {
-  Node *n = lastChild();
-  while(n && n->tag->type == Tag::Empty)
-    n = n->prev;
-  return n;
+    Node *n = lastChild();
+    while(n && n->tag->type == Tag::Empty)
+        n = n->prev;
+    return n;
 }
 
 Node *Node::SPrev()
 {
-  Node *node = prev;
-  int bCol, bLine, eCol, eLine, col, line;
+    Node *node = prev;
+    int bCol, bLine, eCol, eLine, col, line;
 
-  if(parent)
-  {
-    parent->tag->beginPos(bLine, bCol);
-    parent->tag->endPos(eLine, eCol);
-  }
-
-  while(node && node->tag->type != Tag::XmlTag && node->tag->type != Tag::Text)
-  {
-    if(node->tag->type == Tag::ScriptTag)
+    if(parent)
     {
-       //Check if it is an embedded ScriptTag. If it is, continue.
-       node->tag->beginPos(line, col);
-       if(QuantaCommon::isBetween(line, col, bLine, bCol, eLine, eCol) != 0)
-         break;
+        parent->tag->beginPos(bLine, bCol);
+        parent->tag->endPos(eLine, eCol);
     }
-    node = node->prev;
-  }
 
-  return node;
+    while(node && node->tag->type != Tag::XmlTag && node->tag->type != Tag::Text)
+    {
+        if(node->tag->type == Tag::ScriptTag)
+        {
+            //Check if it is an embedded ScriptTag. If it is, continue.
+            node->tag->beginPos(line, col);
+            if(QuantaCommon::isBetween(line, col, bLine, bCol, eLine, eCol) != 0)
+                break;
+        }
+        node = node->prev;
+    }
+
+    return node;
 }
 
 Node *Node::SNext()
 {
-  Node *node = next;
-  int bCol, bLine, eCol, eLine, col, line;
+    Node *node = next;
+    int bCol, bLine, eCol, eLine, col, line;
 
-  if(parent)
-  {
-    tag->beginPos(bLine, bCol);
-    tag->endPos(eLine, eCol);
-  }
-
-  while(node && node->tag->type != Tag::XmlTag && node->tag->type != Tag::Text)
-  {
-    if(node->tag->type == Tag::ScriptTag)
+    if(parent)
     {
-       //Check if it is an embedded ScriptTag. If it is, continue.
-       node->tag->beginPos(line, col);
-       if(QuantaCommon::isBetween(line, col, bLine, bCol, eLine, eCol) != 0)
-         break;
+        tag->beginPos(bLine, bCol);
+        tag->endPos(eLine, eCol);
     }
-     node = node->next;
-  }
 
-  return node;
+    while(node && node->tag->type != Tag::XmlTag && node->tag->type != Tag::Text)
+    {
+        if(node->tag->type == Tag::ScriptTag)
+        {
+            //Check if it is an embedded ScriptTag. If it is, continue.
+            node->tag->beginPos(line, col);
+            if(QuantaCommon::isBetween(line, col, bLine, bCol, eLine, eCol) != 0)
+                break;
+        }
+        node = node->next;
+    }
+
+    return node;
 }
 
 Node *Node::SFirstChild()
 {
-  Node *node = child;
-  int bCol, bLine, eCol, eLine, col, line;
+    Node *node = child;
+    int bCol, bLine, eCol, eLine, col, line;
 
-  tag->beginPos(bLine, bCol);
-  tag->endPos(eLine, eCol);
-  while(node && node->tag->type != Tag::XmlTag && node->tag->type != Tag::Text)
-  {
-    if(node->tag->type == Tag::ScriptTag)
+    tag->beginPos(bLine, bCol);
+    tag->endPos(eLine, eCol);
+    while(node && node->tag->type != Tag::XmlTag && node->tag->type != Tag::Text)
     {
-       //Check if it is an embedded ScriptTag. If it is, continue.
-       node->tag->beginPos(line, col);
-       if(QuantaCommon::isBetween(line, col, bLine, bCol, eLine, eCol) != 0)
-         break;
+        if(node->tag->type == Tag::ScriptTag)
+        {
+            //Check if it is an embedded ScriptTag. If it is, continue.
+            node->tag->beginPos(line, col);
+            if(QuantaCommon::isBetween(line, col, bLine, bCol, eLine, eCol) != 0)
+                break;
+        }
+        node = node->next;
     }
-     node = node->next;
-  }
 
-  return node;
+    return node;
 }
 
 Node *Node::SLastChild()
 {
-  Node *node = lastChild();
-  int bCol, bLine, eCol, eLine, col, line;
+    Node *node = lastChild();
+    int bCol, bLine, eCol, eLine, col, line;
 
-  tag->beginPos(bLine, bCol);
-  tag->endPos(eLine, eCol);
-  while(node && node->tag->type != Tag::XmlTag && node->tag->type != Tag::Text)
-  {
-    if(node->tag->type == Tag::ScriptTag)
+    tag->beginPos(bLine, bCol);
+    tag->endPos(eLine, eCol);
+    while(node && node->tag->type != Tag::XmlTag && node->tag->type != Tag::Text)
     {
-       //Check if it is an embedded ScriptTag. If it is, continue.
-       node->tag->beginPos(line, col);
-       if(QuantaCommon::isBetween(line, col, bLine, bCol, eLine, eCol) != 0)
-         break;
+        if(node->tag->type == Tag::ScriptTag)
+        {
+            //Check if it is an embedded ScriptTag. If it is, continue.
+            node->tag->beginPos(line, col);
+            if(QuantaCommon::isBetween(line, col, bLine, bCol, eLine, eCol) != 0)
+                break;
+        }
+        node = node->prev;
     }
-     node = node->prev;
-  }
 
-  return node;
+    return node;
 }
 
 bool Node::hasForChild(Node *node)
 {
-  //TODO: NOT EFFICIENT AT ALL!! Change by using kafkaCommon::getLocation() and compare!
-  Node *n;
-  bool goUp = false;
+    //TODO: NOT EFFICIENT AT ALL!! Change by using kafkaCommon::getLocation() and compare!
+    Node *n;
+    bool goUp = false;
 
-  if(child)
-  {
-    n = child;
-    goUp = false;
-    while(n)
+    if(child)
     {
-      if(n == node)
-              return true;
-      n = kafkaCommon::getNextNode(n, goUp, this);
+        n = child;
+        goUp = false;
+        while(n)
+        {
+            if(n == node)
+                return true;
+            n = kafkaCommon::getNextNode(n, goUp, this);
+        }
     }
-  }
-  return false;
+    return false;
 }
 
 Node *Node::getClosingNode()
 {
-  Node* n = next;
+    Node* n = next;
 
-  if(next && tag && (tag->type == Tag::XmlTag || tag->type == Tag::ScriptTag) && !tag->single)
-  {
-    while (n && n->tag->type == Tag::Empty)
-      n = n->next;
-    if (n && n->tag->type == Tag::XmlTagEnd && ((tag->type == Tag::XmlTag && QuantaCommon::closesTag(tag, n->tag)) || (tag->type == Tag::ScriptTag && n->tag->name.isEmpty())))
-      return n;
-  }
-  return 0L;
+    if(next && tag && (tag->type == Tag::XmlTag || tag->type == Tag::ScriptTag) && !tag->single)
+    {
+        while (n && n->tag->type == Tag::Empty)
+            n = n->next;
+        if (n && n->tag->type == Tag::XmlTagEnd && ((tag->type == Tag::XmlTag && QuantaCommon::closesTag(tag, n->tag)) || (tag->type == Tag::ScriptTag && n->tag->name == "")))
+            return n;
+    }
+    return 0L;
 }
 
 Node *Node::getOpeningNode()
 {
-  Node *n = prev;
-  if(prev && tag && tag->type == Tag::XmlTagEnd)
-  {
-    while(n && n->tag->type == Tag::Empty)
-      n = n->prev;
-    if(n && ((n->tag->type == Tag::XmlTag && QuantaCommon::closesTag(n->tag, tag))
-      || (n->tag->type == Tag::ScriptTag && tag->name.isEmpty())))
-      return n;
-  }
-  return 0L;
+    Node *n = prev;
+    if(prev && tag && tag->type == Tag::XmlTagEnd)
+    {
+        while(n && n->tag->type == Tag::Empty)
+            n = n->prev;
+        if(n && ((n->tag->type == Tag::XmlTag && QuantaCommon::closesTag(n->tag, tag))
+                 || (n->tag->type == Tag::ScriptTag && tag->name == "")))
+            return n;
+    }
+    return 0L;
 }
 
 int Node::size()
 {
-  int l = tag->size();
-  l += 5*sizeof(Node*) + sizeof(QListViewItem*) + 2*sizeof(Tag*) + 2*sizeof(DOM::Node);
-  return l;
+    int l = tag->size();
+    l += 5*sizeof(Node*) + sizeof(QListViewItem*) + 2*sizeof(Tag*) + 2*sizeof(DOM::Node);
+    return l;
 }
 
 void Node::operator =(Node* node)
 {
-  (*this) = (*node);
-  prev = 0L;
-  next = 0L;
-  parent = 0L;
-  child = 0L;
-  mainListItem = 0L;
-  groupElementLists.clear();
-  group = 0L;
-  groupTag = 0L;
-  setRootNode(0L);
-  setLeafNode(0L);
-  tag = new Tag(*(node->tag));
+    (*this) = (*node);
+    prev = 0L;
+    next = 0L;
+    parent = 0L;
+    child = 0L;
+    mainListItem = 0L;
+    groupElementLists.clear();
+    group = 0L;
+    groupTag = 0L;
+    setRootNode(0L);
+    setLeafNode(0L);
+    tag = new Tag(*(node->tag));
 }
 
 void Node::detachNode()
 {
-  //Remove the references to this node from the list of group elements.
-  //They are actually stored in globalGroupMap.
-  QPtrListIterator<GroupElementList> iter(groupElementLists);
-  GroupElementList *groupElementList;
-  while ((groupElementList = iter.current()) != 0)
-  {
-    ++iter;
-    GroupElementList::Iterator it = groupElementList->begin();
-    while (it != groupElementList->end())
+    //Remove the references to this node from the list of group elements.
+    //They are actually stored in globalGroupMap.
+    QPtrListIterator<GroupElementList> iter(groupElementLists);
+    GroupElementList *groupElementList;
+    while ((groupElementList = iter.current()) != 0)
     {
-      if ((*it).node == this)
-      {
-       // it = groupElementList->erase(it);
-        (*it).node = 0L;
-        (*it).tag = 0L;
-        (*it).deleted = true;
-      } else
-        ++it;
+        ++iter;
+        GroupElementList::Iterator it = groupElementList->begin();
+        while (it != groupElementList->end())
+        {
+            if ((*it).node == this)
+            {
+                // it = groupElementList->erase(it);
+                (*it).node = 0L;
+                (*it).tag = 0L;
+                (*it).deleted = true;
+            }
+            else
+                ++it;
+        }
     }
-  }
 
-  QValueListIterator<QListViewItem*> listItem;
-  for ( listItem = listItems.begin(); listItem != listItems.end(); ++listItem)
-  {
-    static_cast<StructTreeTag*>(*listItem)->node = 0L;
-    static_cast<StructTreeTag*>(*listItem)->groupTag = 0L;
-  }
-  mainListItem = 0L;
-  listItems.clear();
-  groupElementLists.clear();
+    QValueListIterator<QListViewItem*> listItem;
+    for ( listItem = listItems.begin(); listItem != listItems.end(); ++listItem)
+    {
+        static_cast<StructTreeTag*>(*listItem)->node = 0L;
+        static_cast<StructTreeTag*>(*listItem)->groupTag = 0L;
+    }
+    mainListItem = 0L;
+    listItems.clear();
+    groupElementLists.clear();
 }
