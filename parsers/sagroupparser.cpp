@@ -165,17 +165,6 @@ void SAGroupParser::parseForScriptGroup(Node *node)
         newTag->setStr(title);
         newTag->name = s;
 
-        if (dtd->name == "PHP" && group.name == "Functions")
-        {
-          QTag *qTag = m_parent->write()->userTagList.find(s.lower());
-          if (!qTag)
-          {
-            QTag *qTag = new QTag();
-            qTag->setName(s.left(s.find('(')));
-            m_parent->write()->userTagList.insert(s.lower(), qTag);
-          }
-        }
-
         groupElement = new GroupElement;
         groupElement->deleted = false;
         groupElement->tag = newTag;
@@ -207,6 +196,30 @@ void SAGroupParser::parseForScriptGroup(Node *node)
           }
           tmpNode = tmpNode->parent;
         }
+
+        if (dtd->name == "PHP" && group.name == "Functions")
+        {
+          QTag *qTag = m_parent->write()->userTagList.find(s.lower());
+          if (!qTag)
+          {
+            QTag *qTag = new QTag();
+            qTag->setName(s.left(s.find('(')));
+            if (groupElement->parentNode)
+            {
+              for (QValueList<GroupElement *>::ConstIterator it = groupElement->parentNode->m_groupElements.constBegin(); it != groupElement->parentNode->m_groupElements.constEnd(); ++it)
+              {
+                if ((*it)->group->name == "Classes")
+                {
+                  kdDebug(24000) << "Functions parent: " << (*it)->tag->name << endl;
+                  qTag->className = (*it)->tag->name;
+                }
+              }
+            }
+            m_parent->write()->userTagList.insert(s.lower(), qTag);
+          }
+        }
+
+
         if (!group.typeRx.pattern().isEmpty() && group.typeRx.search(title) != -1)
           groupElement->type = group.typeRx.cap(1);
 #ifdef DEBUG_PARSER

@@ -1206,11 +1206,13 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(int line, 
   QDictIterator<QTag> it2(userTagList);
   for( ; it2.current(); ++it2 )
   {
-    if (it2.current()->name().upper().startsWith(word))
+    QTag *tag = it2.current();
+    if ((tag->className == classStr ||
+         isDerivatedFrom(classStr, tag->className)) && tag->name().upper().startsWith(word))
     {
-      tagName = it2.current()->name() + QString("%1").arg(i, 3);
+      tagName = tag->name() + QString("%1").arg(i, 3);
       tagNameList += tagName;
-      comments.insert(tagName, it2.current()->comment);
+      comments.insert(tagName, tag->comment);
       i++;
     }
   }
