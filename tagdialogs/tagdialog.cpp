@@ -50,7 +50,8 @@ TagDialog::TagDialog(QTag* tag ,QString attr, QString base)
   if (!tag)   //the tag is invalid, let's create a default one
   {
     this->tag = new QTag();
-    tag->setName("Unknown tag");
+    QString s = "Unknown tag";
+    tag->setName(s);
     deleteTag = true;
   } else
   {
