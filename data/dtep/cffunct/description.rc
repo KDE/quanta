@@ -9,7 +9,7 @@ Family = 2
 TagAutoCompleteAfter = none
 
 [Parsing rules]
-AreaBorders = # #,<cfscript> </cfscript>
+AreaBorders = <cfscript> </cfscript>
 Tags = script(language)
 Comments = // EOL
 maycontain = cffunct
