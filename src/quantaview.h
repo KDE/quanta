@@ -92,7 +92,6 @@ public:
   void addPlugin(QuantaPlugin *plugin);
 
   QWidget* documentArea() {return m_documentArea;}
-  QWidget* VPLArea() {return m_VPLArea;}
 
    bool saveDocument(const KURL&);
    // "save modified" - asks the user
@@ -196,8 +195,7 @@ private:
   bool m_kafkaReloadingEnabled, m_quantaReloadingEnabled;
 #endif
 
-  QWidget *m_documentArea;///< the area of the view where the source is visible
-  QWidget *m_VPLArea;///< the area of the view where the VPL/preview is visible
+  QWidget *m_documentArea;///< the area of the view which can be used to show the source/VPL
   Document *m_document;
   QuantaPlugin *m_plugin;
   QWidget *m_customWidget; ///<view holds a custom widget, eg. a documentation

@@ -87,7 +87,6 @@ QuantaView::QuantaView(QWidget *parent, const char *name )
 {
 //create the source and VPL holding widgets
   m_documentArea = new QWidget(this);
-  m_VPLArea = new QWidget(this);
 
 //get the reference to the user toolbar holding widget
   ToolbarTabWidget *m_toolbarTab = ToolbarTabWidget::ref(this);
@@ -95,7 +94,7 @@ QuantaView::QuantaView(QWidget *parent, const char *name )
   m_toolbarTab ->setFocusPolicy( QWidget::NoFocus );
 
 //create a splitter to separate the VPL and document area
-  m_splitter = new QSplitter(this);
+  m_splitter = new QSplitter(Qt::Vertical, this);
 //place the widgets in a grid
   m_viewLayout = new QGridLayout(this, 2, 0);
   m_viewLayout->setRowStretch(0, 0);
@@ -111,9 +110,9 @@ QuantaView::QuantaView(QWidget *parent, const char *name )
   oldTab = 0L;
 
   currentViewsLayout = QuantaView::QuantaViewOnly;//TODO: load it from the config
-
-  setAcceptDrops(TRUE); // [MB02] Accept drops on the view
 */
+  setAcceptDrops(TRUE); // [MB02] Accept drops on the view
+
 }
 
 QuantaView::~QuantaView()
@@ -152,8 +151,6 @@ void QuantaView::addDocument(Document *document)
    if (!document)
      return;
    m_document = document;
-   m_document->view()->reparent(m_documentArea, 0, QPoint(), true);
-   m_document->view()->resize(m_documentArea->size());
    connect(m_document->view(), SIGNAL(gotFocus(Kate::View *)),
                   this, SLOT(slotSourceGetFocus(Kate::View *)));
     connect(m_document->view(), SIGNAL(cursorPositionChanged()), this, SIGNAL(cursorPositionChanged()));
@@ -161,7 +158,6 @@ void QuantaView::addDocument(Document *document)
 
 #ifdef BUILD_KAFKAPART
    m_kafkaDocument =KafkaDocument::ref();
-   m_kafkaDocument->getKafkaWidget()->view()->reparent(m_VPLArea, 0, QPoint(), false);
 
   connect(m_kafkaDocument->getKafkaWidget(), SIGNAL(hasFocus(bool)),
     this, SLOT(slotVPLGetFocus(bool)));
@@ -177,16 +173,6 @@ void QuantaView::addDocument(Document *document)
 //init the VPL part
 #ifdef BUILD_KAFKAPART
 
-//FIXME: Does this belong here??
-//load the VPL options
-  KConfig *m_config = quantaApp->config();
-  m_config->setGroup("Kafka Synchronization options");
-  qConfig.quantaRefreshOnFocus = (m_config->readEntry("Source refresh", "delay") == "focus");
-  qConfig.quantaRefreshDelay = m_config->readNumEntry("Source refresh delay", 500);
-  qConfig.kafkaRefreshOnFocus = (m_config->readEntry("Kafka refresh", "focus") == "focus");
-  qConfig.kafkaRefreshDelay = m_config->readNumEntry("Kafka refresh delay", 4000);
-  /**reloadUpdateTimers();*/
-
  //reload the Timers.
   if (m_quantaUpdateTimer != -1)
     killTimer(m_quantaUpdateTimer);
@@ -200,7 +186,7 @@ void QuantaView::addDocument(Document *document)
         m_quantaUpdateTimer = startTimer(qConfig.quantaRefreshDelay);
   }
 
-  m_kafkaDocument->readConfig(m_config);
+  m_kafkaDocument->readConfig(quantaApp->config());
 #endif
 
 #endif
@@ -265,7 +251,6 @@ void QuantaView::slotSetSourceLayout()
 
 #ifdef BUILD_KAFKAPART
    //hide the VPL widget
-   m_VPLArea->hide();
    if (m_currentViewsLayout == SourceAndVPL)
    {
       if(m_kafkaDocument->getKafkaWidget()->view()->hasFocus())
@@ -277,11 +262,12 @@ void QuantaView::slotSetSourceLayout()
        m_kafkaDocument->unloadDocument();
 #endif
 //show the document if full size
-   m_documentArea->reparent(this, 0, QPoint(), true);
-   m_viewLayout->addWidget(m_documentArea, 1, 0);
-   m_document->view()->show();
-   m_document->view()->setFocus();
    m_splitter->hide();
+   m_document->view()->reparent(m_documentArea, 0, QPoint(), true);
+   m_document->view()->resize(m_documentArea->size());
+   m_viewLayout->addWidget(m_documentArea, 1, 0);
+   m_document->view()->setFocus();
+   m_documentArea->show();
 
    m_currentViewsLayout = SourceOnly;
 }
@@ -308,11 +294,8 @@ void QuantaView::slotSetSourceAndVPLLayout()
    if (ta)
        ta->setChecked(true);
 
-   m_VPLArea->reparent(m_splitter, 0, QPoint(), true);
-   m_kafkaDocument->getKafkaWidget()->view()->reparent(m_VPLArea, 0, QPoint(), true);
-   m_documentArea->reparent(m_splitter, 0, QPoint(), true);
-   m_splitter->moveToFirst(m_kafkaDocument->getKafkaWidget()->view());
-   m_splitter->show();
+    m_viewLayout->addWidget(m_splitter, 1, 0);
+    m_splitter->show();
 
     if (!m_kafkaDocument->isLoaded())
         m_kafkaDocument->loadDocument(m_document);
@@ -320,6 +303,11 @@ void QuantaView::slotSetSourceAndVPLLayout()
     {
       reloadSourceView();
     }
+    m_kafkaDocument->getKafkaWidget()->view()->reparent(m_splitter, 0, QPoint(), true);
+    m_splitter->moveToFirst(m_kafkaDocument->getKafkaWidget()->view());
+    m_kafkaDocument->getKafkaWidget()->view()->show();
+    m_document->view()->reparent(m_splitter, 0, QPoint(), true);
+    m_document->view()->show();
 
     if (m_quantaUpdateTimer != -1)
         killTimer(m_quantaUpdateTimer);
@@ -364,16 +352,13 @@ void QuantaView::slotSetVPLOnlyLayout()
    if (ta)
        ta->setChecked(true);
 
-   m_documentArea->hide();
    m_splitter->hide();
    if (!m_kafkaDocument->isLoaded())
         m_kafkaDocument->loadDocument(m_document);
 
-   m_VPLArea->reparent(this, 0, QPoint(), true);
-   m_kafkaDocument->getKafkaWidget()->view()->reparent(m_VPLArea, 0, QPoint(), true);
+   m_kafkaDocument->getKafkaWidget()->view()->reparent(m_documentArea, 0, QPoint(), true);
    m_kafkaDocument->getKafkaWidget()->view()->resize(m_documentArea->size());
-   m_viewLayout->addWidget(m_VPLArea, 1, 0);
-   m_VPLArea->show();
+   m_viewLayout->addWidget(m_documentArea, 1, 0);
    m_kafkaDocument->getKafkaWidget()->view()->setFocus();
 
    if ( m_currentViewsLayout == SourceOnly &&
@@ -715,6 +700,27 @@ void QuantaView::activated()
   m_document->checkDirtyStatus();
   StructTreeView::ref()->useOpenLevelSetting = true;
   quantaApp->loadToolbarForDTD(m_document->getDTDIdentifier());
+  switch (m_currentViewsLayout)
+  {
+      case SourceOnly:
+        {
+           KToggleAction *ta = (KToggleAction *) quantaApp->actionCollection()->action( "show_quanta_editor" );
+           if (ta) ta->setChecked(true);
+           break;
+        }
+      case SourceAndVPL:
+        {
+           KToggleAction *ta = (KToggleAction *) quantaApp->actionCollection()->action( "show_kafka_and_quanta" );
+           if (ta) ta->setChecked(true);
+           break;
+        }
+      case VPLOnly:
+        {
+            KToggleAction *ta = (KToggleAction *) quantaApp->actionCollection()->action( "show_kafka_view" );
+            if (ta) ta->setChecked(true);
+            break;
+        }
+  }
 }
 
 

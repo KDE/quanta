@@ -57,6 +57,7 @@ public:
   /** Delayed initialization. */
   void initQuanta();
   void openLastFiles();
+  void loadVPLConfig();
 
 signals: // Signals
   /** signal used to hide the splash screen */

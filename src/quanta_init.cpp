@@ -351,6 +351,10 @@ void QuantaInit::initView()
   ViewManager *m_viewManager = ViewManager::ref(m_quanta);
   connect(m_quanta, SIGNAL(viewActivated (KMdiChildView *)), m_viewManager, SLOT(slotViewActivated(KMdiChildView*)));
 //   connect(m_quanta, SIGNAL(viewDeactivated(KMdiChildView *)), m_viewManager, SLOT(slotViewDeactivated(KMdiChildView*)));
+  KafkaDocument *m_kafkaDocument = KafkaDocument::ref(0, 0, "KafkaPart");
+  m_kafkaDocument->getKafkaWidget()->view()->setMinimumHeight(50);
+  loadVPLConfig();
+
 #if KDE_IS_VERSION(3,2,90)
   m_quanta->setIDEAlModeStyle(KMultiTabBar::KDEV3ICON);
   m_quanta->tabWidget()->setTabPosition( QTabWidget::Bottom );
@@ -1259,6 +1263,19 @@ QString QuantaInit::retrievePID(const QString& filename)
 QString QuantaInit::retrieveBaseFileName(const QString& filename)
 {
  return filename.left(filename.findRev("."));
+}
+
+void QuantaInit::loadVPLConfig()
+{
+#ifdef BUILD_KAFKAPART
+  //load the VPL options
+  m_config->setGroup("Kafka Synchronization options");
+  qConfig.quantaRefreshOnFocus = (m_config->readEntry("Source refresh", "delay") == "focus");
+  qConfig.quantaRefreshDelay = m_config->readNumEntry("Source refresh delay", 500);
+  qConfig.kafkaRefreshOnFocus = (m_config->readEntry("Kafka refresh", "focus") == "focus");
+  qConfig.kafkaRefreshDelay = m_config->readNumEntry("Kafka refresh delay", 4000);
+  /**reloadUpdateTimers();*/
+#endif
 }
 
 #include "quanta_init.moc"
