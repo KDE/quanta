@@ -343,8 +343,9 @@ public slots:
   virtual void switchToIDEAlMode();
   virtual void switchToTabPageMode();
 
-
 protected slots:
+  void slotDockWidgetHasUndocked(KDockWidget *widget);
+  void slotPreviewBeingClosed();
   /** No descriptions */
   void slotMakeDonation();
   /** No descriptions */

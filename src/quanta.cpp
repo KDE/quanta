@@ -231,6 +231,7 @@ QuantaApp::QuantaApp(int mdiMode) : DCOPObject("WindowManagerIf"), KMdiMainFrm( 
   // the builder updates (recreates) the GUI
   connect(m_partManager, SIGNAL(activePartChanged(KParts::Part * )),
           this, SLOT(slotActivePartChanged(KParts::Part * )));
+   connect(this, SIGNAL(dockWidgetHasUndocked(KDockWidget *)), this, SLOT(slotDockWidgetHasUndocked(KDockWidget *)));
 
   m_oldContextCut = 0L;
   m_oldContextCopy = 0L;
@@ -1274,7 +1275,11 @@ void QuantaApp::slotShowPreviewWidget(bool show)
     } else
     {
       if (!m_previewToolView)
+      {
         m_previewToolView= addToolWindow(m_htmlPart->view(), KDockWidget::DockBottom, getMainDockWidget());
+        connect(m_previewToolView->wrapperWidget(), SIGNAL(iMBeingClosed
+()), this, SLOT(slotPreviewBeingClosed()));
+      }
       m_htmlPart->view()->show();
       m_previewToolView->show();
     }
@@ -4484,6 +4489,19 @@ void QuantaApp::switchToTabPageMode()
 {
     KMdiMainFrm::switchToTabPageMode();
     initTabWidget();
+}
+
+void QuantaApp::slotPreviewBeingClosed()
+{
+    m_previewVisible = false;
+    m_noFramesPreview = false;
+    m_previewToolView = 0L; //this automatically deleted, so set to 0L
+ }
+
+void QuantaApp::slotDockWidgetHasUndocked(KDockWidget *widget)
+{
+   if (m_previewToolView && m_previewToolView->wrapperWidget() == widget)
+       slotPreviewBeingClosed();
 }
 
 #include "quanta.moc"
