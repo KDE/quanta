@@ -158,10 +158,10 @@ void TagAction::insertTag(bool inputFromFile, bool outputToFile)
        }
 
        QString s2;
-       if (qConfig.closeTags)
-          s2 = QuantaCommon::tagCase(xtag.text());
        if ( xtag.attribute("use","false") == "true" )
        {
+         if (qConfig.closeTags)
+            s2 = QuantaCommon::tagCase(xtag.text());
          if ( xtag.attribute("inLine","true") == "true" )
          {
 #ifdef BUILD_KAFKAPART

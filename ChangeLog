@@ -21,6 +21,7 @@ Version 3.3 BE (Release date: xx-xx-2004; Started 26-01-2004):
         - report bugs for "quanta" module, not for "quanta_be"
         - use the correct quotation and case when inserting a link to a file from the treeviews [#76663]
         - don't break the opening tag when some new tag is pasted inside an existing one
+    	- don't insert the closing tag for a Tag action if it is not requested to do so.
 
     - performance:
 
