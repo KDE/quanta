@@ -885,12 +885,25 @@ void QuantaApp::slotNewStatus()
     QuantaView *view = ViewManager::ref()->activeView();
     if (w->isModified())
     {
-       view->setIcon(UserIcon("save_small"));
-       view->setMDICaption(urlStr + " " + i18n("[modified]"));
+       if (qConfig.showCloseButtons == "ShowAlways")
+       {
+          view->setIcon(SmallIcon("fileclose"));
+          view->setMDICaption(urlStr + " " + i18n("[modified]"));
+       } else
+       {
+          view->setIcon(UserIcon("save_small"));
+          view->setMDICaption(urlStr);
+       }
     } else
     {
-      view->setIcon(mimeIcon.pixmap());
-      view->setMDICaption(urlStr);
+       if (qConfig.showCloseButtons == "ShowAlways")
+       {
+          view->setIcon(SmallIcon("fileclose"));
+       } else
+       {
+         view->setIcon(mimeIcon.pixmap());
+       }
+       view->setMDICaption(urlStr);
     }
  }
 }
@@ -1264,7 +1277,7 @@ void QuantaApp::slotOptions()
 
     slotRepaintPreview();
     reparse(true);
-
+    slotNewStatus();
   }
 
   m_config->sync();
