@@ -1,5 +1,5 @@
  Quanta Plus - a WEB Development tool for the K Desktop Environment.
- Version: 3.3 line
+ Version: 3.4 line
  Last updated: 2004-08-04
 
 Table of contents
@@ -67,7 +67,7 @@ announcements, merchandise and you can make some donation to support
 Quanta.
  An alternative way to use the latest and greatest version is to get it
 from CVS. More info about getting the sources from KDE CVS can be found
-at: http://developer.kde.org/source/. The module name for Quanta is 
+at: http://developer.kde.org/source/. The module name for Quanta is
 "kdewebdev".
 
 5. Installation
@@ -195,8 +195,12 @@ directories. The rule is: install Quanta in the KDE dir, or if you wish to have
 more than one Quanta version, install both of them in another dir than the KDE
 one! In this case you should remove the $KDEDIR/share/apps/quanta directory.
   d) If you removed the editor/treeviews from the main window and you cannot dock
-them back anymore, locate your local quantarc file, and remove the whole
-[dock_setting_default] group.
+them back anymore, do one of the following (in order of preference):
+    - check the Settings->Configure Quanta->User Intreface->Reset window layout to the default
+       on the next startup and restart Quanta
+    - start Quanta with the --resetlayout command line switch (quanta ---resetlayout)
+    - as a last resort, locate your local quantarc file, and remove the whole [dock_setting_default]
+       group.
 
 7. Reporting bugs
 -----------------
