@@ -23,6 +23,7 @@
 
 // qt includes
 #include <qpixmap.h>
+#include <qnetwork.h>
 
 // app includes
 #include "quanta.h"
@@ -65,6 +66,8 @@ int main(int argc, char *argv[])
   f->setLineWidth(0);
   						
   f->show();
+
+  qInitNetworkProtocols();
 	
   if (app.isRestored())
   {

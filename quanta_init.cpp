@@ -642,6 +642,9 @@ void QuantaApp::initProject()
 					this,			SLOT  (slotDisableMessageWidget()));
 	connect(project,	SIGNAL(messages(QString)),
 					messageOutput, SLOT(insertAtEnd(QString)));
+
+	connect(project,	SIGNAL(saveAllFiles()),
+					this, SLOT(slotFileSaveAll()));					
 }
 
 void QuantaApp::initView()
