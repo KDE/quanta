@@ -87,7 +87,7 @@
                             </stringlist>
                         </property>
                         <property name="toolTip" stdset="0">
-                            <string>Enter the script name with the extention</string>
+                            <string>Enter the script name with the extension</string>
                         </property>
                     </widget>
                     <widget class="QLabel" row="8" column="0">
@@ -124,7 +124,7 @@
                             </stringlist>
                         </property>
                         <property name="toolTip" stdset="0">
-                            <string>The location of your up to date file on the web</string>
+                            <string>The location of your up-to-date file on the web</string>
                         </property>
                     </widget>
                     <widget class="QLabel" row="3" column="0">

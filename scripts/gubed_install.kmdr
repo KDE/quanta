@@ -215,7 +215,7 @@
             </stringlist>
         </property>
         <property name="toolTip" stdset="0">
-            <string>Uncheck this if you don't want to see the installation log. The log may provide important information in case of installation failure.</string>
+            <string>Uncheck this if you do not want to see the installation log. The log may provide important information in case of installation failure.</string>
         </property>
     </widget>
     <widget class="CloseButton">

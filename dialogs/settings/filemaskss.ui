@@ -288,7 +288,7 @@
                 <cstring>reloadProject</cstring>
             </property>
             <property name="text">
-                <string>&amp;Load last opened project on startup</string>
+                <string>&amp;Load last-opened project on startup</string>
             </property>
             <property name="accel">
                 <string>Alt+L</string>
@@ -299,7 +299,7 @@
                 <cstring>reloadFiles</cstring>
             </property>
             <property name="text">
-                <string>L&amp;oad last opened files on startup</string>
+                <string>L&amp;oad last-opened files on startup</string>
             </property>
             <property name="accel">
                 <string>Alt+O</string>

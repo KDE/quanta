@@ -115,7 +115,7 @@
                 <cstring>caseSensitive</cstring>
             </property>
             <property name="text">
-                <string>Case sensitive tags and attributes</string>
+                <string>Case-sensitive tags and attributes</string>
             </property>
             <property name="checked">
                 <bool>true</bool>

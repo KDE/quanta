@@ -294,7 +294,7 @@ instances of Quanta running.</string>
                                     <cstring>ParseAsHTML</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>force XHTML to well formed HTML</string>
+                                    <string>force XHTML to well-formed HTML</string>
                                 </property>
                                 <property name="associations" stdset="0">
                                     <stringlist>
@@ -309,7 +309,7 @@ instances of Quanta running.</string>
                                     <cstring>ParseAsXHTML</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>convert HTML to well formed XHTML</string>
+                                    <string>convert HTML to well-formed XHTML</string>
                                 </property>
                                 <property name="associations" stdset="0">
                                     <stringlist>
@@ -354,7 +354,7 @@ instances of Quanta running.</string>
                                     <cstring>ParseXML</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>specify the input is well formed XML</string>
+                                    <string>specify the input is well-formed XML</string>
                                 </property>
                                 <property name="associations" stdset="0">
                                     <stringlist>
@@ -456,7 +456,7 @@ instances of Quanta running.</string>
                                     <cstring>ParseAsXML</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>convert HTML to well formed XML</string>
+                                    <string>convert HTML to well-formed XML</string>
                                 </property>
                                 <property name="associations" stdset="0">
                                     <stringlist>
@@ -775,7 +775,7 @@ instances of Quanta running.</string>
                                     <cstring>RadioButton16</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Bah, encoding, schmencoding</string>
+                                    <string>Do not specify an encoding</string>
                                 </property>
                                 <property name="checked">
                                     <bool>true</bool>

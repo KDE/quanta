@@ -629,7 +629,7 @@ echo "$PADDING&lt;/style&gt;"</string>
                                 </stringlist>
                             </property>
                             <property name="toolTip" stdset="0">
-                                <string>limit to 8, seperate with commas</string>
+                                <string>limit to 8, separate with commas</string>
                             </property>
                         </widget>
                         <widget class="CheckBox" row="1" column="0">

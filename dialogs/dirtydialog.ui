@@ -104,7 +104,7 @@
                         </sizepolicy>
                     </property>
                     <property name="text">
-                        <string>(If you save later the document, you will lose what was on the disk.)</string>
+                        <string>(If you later save the document, you will lose what was on the disk.)</string>
                     </property>
                     <property name="alignment">
                         <set>WordBreak|AlignVCenter</set>

@@ -105,7 +105,7 @@
                                 <cstring>radioNoCloseButtons</cstring>
                             </property>
                             <property name="text">
-                                <string>&amp;Don't show</string>
+                                <string>&amp;Do not show</string>
                             </property>
                             <property name="accel">
                                 <string>Alt+D</string>

@@ -84,7 +84,7 @@
                         </sizepolicy>
                     </property>
                     <property name="text">
-                        <string>&amp;Don't Save</string>
+                        <string>&amp;Do Not Save</string>
                     </property>
                 </widget>
                 <widget class="KPushButton">

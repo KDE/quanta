@@ -285,7 +285,7 @@
                 <string>Alt+X</string>
             </property>
             <property name="whatsThis" stdset="0">
-                <string>The files listed in &lt;i&gt;.cvsignore&lt;/i&gt; files will not appear in the project tree, nor will be shown when you rescan the project folder or upload the project. Files matching the &lt;i&gt;.cvsignore&lt;/i&gt; entries that were already present in the project will be removed from it, but they won't be removed from the disc.&lt;br&gt;
+                <string>The files listed in &lt;i&gt;.cvsignore&lt;/i&gt; files will not appear in the project tree, nor will be shown when you rescan the project folder or upload the project. Files matching the &lt;i&gt;.cvsignore&lt;/i&gt; entries that were already present in the project will be removed from it, but they will not be removed from the disc.&lt;br&gt;
 &lt;b&gt;NOTE:&lt;/b&gt; This feature works only for local projects.</string>
             </property>
         </widget>

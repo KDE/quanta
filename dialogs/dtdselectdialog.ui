@@ -91,7 +91,7 @@ Dialog message2:</string>
                 <cstring>useClosestMatching</cstring>
             </property>
             <property name="text">
-                <string>Don't show this dialog, use the closest matching DTD</string>
+                <string>Do not show this dialog, use the closest matching DTD</string>
             </property>
         </widget>
     </grid>
