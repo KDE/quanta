@@ -72,13 +72,13 @@ KXsldbgPart::KXsldbgPart( QWidget *parentWidget, const char *widgetName,
     QVBox *frame = new QVBox(parentWidget);
     QHBox *h = new QHBox(frame);
     newXPath = new QLineEdit(h);
-    xPathBtn = new QPushButton(tr("Goto XPath"), h);
+    xPathBtn = new QPushButton(i18n("Goto XPath"), h);
     h = new QHBox(frame);
     newSearch = new QLineEdit(h);
-    searchBtn = new QPushButton(tr("Search"), h);
+    searchBtn = new QPushButton(i18n("Search"), h);
     h = new QHBox(frame);
     newEvaluate = new QLineEdit(h);
-    evaluateBtn = new QPushButton(tr("Evaluate"), h);
+    evaluateBtn = new QPushButton(i18n("Evaluate"), h);
 
     QSplitter *splitter = new QSplitter(QSplitter::Vertical, frame);
 
@@ -96,114 +96,114 @@ KXsldbgPart::KXsldbgPart( QWidget *parentWidget, const char *widgetName,
 
     // set our XML-UI resource file
     setXMLFile("kxsldbg_part.rc");
-   (void) new KAction( "Configure",
+   (void) new KAction( i18n("Configure"),
                         "configure", Key_C,
                         this, SLOT(configureCmd_activated()),
                         actionCollection(), "configureCmd" );
 
-    (void) new KAction( "Inspect",
+    (void) new KAction( i18n("Inspect"),
                         "find", Key_I,
                         this, SLOT(inspectorCmd_activated()),
                         actionCollection(), "inspectCmd" );
 
 
     // Motions commands
-    (void) new KAction( "Run",
+    (void) new KAction( i18n("Run"),
                         "run", Key_F5,
                         this, SLOT(runCmd_activated()),
                         actionCollection(), "runCmd" );
 
-    (void) new KAction( "Continue",
+    (void) new KAction( i18n("Continue"),
                         "1downarrow", Key_F4,
                         this, SLOT(continueCmd_activated()),
                         actionCollection(), "continueCmd" );
 
-    (void) new KAction( "Step",
+    (void) new KAction( i18n("Step"),
                         "step", Key_F8,
                         this, SLOT(stepCmd_activated()),
                         actionCollection(), "stepCmd" );
 
-    (void) new KAction( "Next",
+    (void) new KAction( i18n("Next"),
                         "next", Key_F10,
                         this, SLOT(nextCmd_activated()),
                         actionCollection(), "nextCmd" );
 
-    (void) new KAction( "StepUp",
+    (void) new KAction( i18n("Step Up"),
                         "xsldbg_stepup", Key_F6,
                         this, SLOT(stepupCmd_activated()),
                         actionCollection(), "stepupCmd" );
 
-    (void) new KAction( "StepDown",
+    (void) new KAction( i18n("Step Down"),
                         "xsldbg_stepdown", Key_F7,
                         this, SLOT(stepCmd_activated()),
                         actionCollection(), "stepdownCmd" );
 
     // Breakpoint commands
-    (void) new KAction( "Break",
+    (void) new KAction( i18n("Break"),
                         "xsldbg_break", Key_F2,
                         this, SLOT(breakCmd_activated()),
                         actionCollection(), "breakCmd" );
 
-    (void) new KAction( "Enable/Disable",
+    (void) new KAction( i18n("Enable/Disable"),
                         "xsldbg_enable", Key_F3,
                         this, SLOT(enableCmd_activated()),
                         actionCollection(), "enableCmd" );
 
-    (void) new KAction( "Delete",
+    (void) new KAction( i18n("Delete"),
                         "xsldbg_delete", Key_Delete,
                         this, SLOT(deleteCmd_activated()),
                         actionCollection(), "deleteCmd" );
 
-    (void) new KAction( "Source",
+    (void) new KAction( i18n("Source"),
                         "xsldbg_source", Key_S,
                         this, SLOT(sourceCmd_activated()),
                         actionCollection(), "sourceCmd" );
 
-    (void) new KAction( "Data",
+    (void) new KAction( i18n("Data"),
                         "xsldbg_data", Key_D,
                         this, SLOT(dataCmd_activated()),
                         actionCollection(), "dataCmd" );
 
-    (void) new KAction( "Output",
+    (void) new KAction( i18n("Output"),
                         "xsldbg_output", Key_O,
                         this, SLOT(outputCmd_activated()),
                         actionCollection(), "outputCmd" );
 
-    (void) new KAction( "Reload current file from disk",
+    (void) new KAction( i18n("Reload current file from disk"),
                         "xsldbg_refresh", CTRL + Key_F5,
                         this, SLOT(refreshCmd_activated()),
                         actionCollection(), "refreshCmd" );
 
     /* tracing and walking */
-    (void) new KAction( "Walk through the stylesheet",
+    (void) new KAction( i18n("Walk through the stylesheet"),
                         Key_W,
                         this, SLOT(walkCmd_activated()),
                         actionCollection(), "walkCmd" );
-    (void) new KAction( "Stop walking through stylesheet",
+    (void) new KAction( i18n("Stop walking through stylesheet"),
                         Key_K,
                         this, SLOT(walkStopCmd_activated()),
                         actionCollection(), "walkStopCmd" );
-    (void) new KAction( "Trace execution of stylesheet",
+    (void) new KAction( i18n("Trace execution of stylesheet"),
                         Key_C,
                         this, SLOT(traceCmd_activated()),
                         actionCollection(), "traceCmd" );
-    (void) new KAction( "Stop tracing of stylesheet",
+    (void) new KAction( i18n("Stop tracing of stylesheet"),
                         Key_K,
                         this, SLOT(traceStopCmd_activated()),
                         actionCollection(), "traceStopCmd" );
 
-    (void) new KAction( "Evaluate an expression",
+    (void) new KAction( i18n("Evaluate an expression"),
                         Key_E,
                         this, SLOT(evaluateCmd_activated()),
                         actionCollection(), "evaluateCmd" );
 
-    (void) new KAction( "Goto XPath",
+    (void) new KAction( i18n("Goto XPath"),
                         Key_X,
                         this, SLOT(gotoXPathCmd_activated()),
                         actionCollection(), "gotoXPathCmd" );
 
     /*
-    (void) new KAction( "Exit KXsldbg",
+    (void) new KAction( i18n("Exit KXsldbg"),
                         "xsldbg_output", CTRL + Key_Q,
                         this, SLOT(exitCmd_activated()),
                         actionCollection(), "exitCmd" );
@@ -275,8 +275,8 @@ bool KXsldbgPart::checkDebugger()
 {
   bool result = debugger != 0L;
   if (!result){
-    QMessageBox::information(0L, "Debugger not ready",
-			      "Configure and start the debugger first",
+    QMessageBox::information(0L, i18n("Debugger not ready"),
+			      i18n("Configure and start the debugger first!"),
 			      QMessageBox::Ok);
   }
 
@@ -292,8 +292,8 @@ void KXsldbgPart::lookupSystemID( QString systemID)
 
    if (systemID.isEmpty()){
      systemID = QInputDialog::getText(
-			      tr( "Lookup SystemID" ),
-			      tr( "Please enter SystemID to find" ),
+			      i18n( "Lookup SystemID" ),
+			      i18n( "Please enter SystemID to find" ),
 			      QLineEdit::Normal, QString::null, &ok,
 			      m_editWidget);
    }else{
@@ -301,7 +301,7 @@ void KXsldbgPart::lookupSystemID( QString systemID)
    }
   if ( ok && !systemID.isEmpty() ){
       // user entered something and pressed ok
-	QString msg = "system ";
+	QString msg = i18n("system ");
 	msg.append(systemID);
 	debugger->fakeInput(msg, TRUE);
   }
@@ -317,15 +317,15 @@ void KXsldbgPart::lookupPublicID(QString publicID)
 
    if (publicID.isEmpty()){
      publicID = QInputDialog::getText(
-			      tr( "Lookup PulicID" ),
-			      tr( "Please enter PublicID to find" ),
+			      i18n( "Lookup PulicID" ),
+			      i18n( "Please enter PublicID to find" ),
 			      QLineEdit::Normal, QString::null, &ok, m_editWidget );
    }else{
      ok = TRUE;
    }
    if ( ok && !publicID.isEmpty()){
      // user entered something and pressed ok
-	QString msg = "public ";
+	QString msg = i18n("public ");
 	msg.append(publicID);
 	debugger->fakeInput(msg, TRUE);
   }
@@ -538,10 +538,10 @@ void KXsldbgPart::breakCmd_activated()
 void KXsldbgPart::evaluateCmd_activated()
 {
 #if KDE_IS_VERSION(3,1,90)
-  QString expression = KInputDialog::getText("Evalute expression", "XPath:");
+  QString expression = KInputDialog::getText(i18n("Evalute expression"), i18n("XPath:"));
 #else
-  QString expression = KLineEditDlg::getText("Evalute expression", "XPath:");
-#endif  
+  QString expression = KLineEditDlg::getText(i18n("Evalute expression"), i18n("XPath:"));
+#endif
   if (checkDebugger()  && (expression.length() > 0)){
     debugger->slotCatCmd( expression);
   }
@@ -550,10 +550,10 @@ void KXsldbgPart::evaluateCmd_activated()
 void KXsldbgPart::gotoXPathCmd_activated()
 {
 #if KDE_IS_VERSION(3,1,90)
-  QString xpath = KInputDialog::getText("Goto XPath", "XPath:");
+  QString xpath = KInputDialog::getText(i18n("Goto XPath"), i18n("XPath:"));
 #else
-  QString xpath = KLineEditDlg::getText("Goto XPath", "XPath:");
-#endif  
+  QString xpath = KLineEditDlg::getText(i18n("Goto XPath"), i18n("XPath:"));
+#endif
   if (checkDebugger() && xpath.length() > 0){
     debugger->slotCdCmd( xpath );
   }
@@ -631,7 +631,7 @@ void  KXsldbgPart::deleteBreakPoint(int lineNumber)
 void KXsldbgPart::slotSearch()
 {
   if ((newSearch != 0L)  && checkDebugger() ) {
-    QString msg("search ");
+    QString msg(i18n("search "));
     msg.append(newSearch->text());
  		debugger->fakeInput(msg, false);
   }
@@ -657,8 +657,8 @@ void KXsldbgPart::slotGotoXPath()
 void KXsldbgPart::slotProcResolveItem(QString URI)
 {
   if (!URI.isEmpty()){
-    QMessageBox::information(m_editWidget, "SystemID or PublicID resolution result",
-        QString ("SystemID or PublicID has been resolved to\n") + URI,
+    QMessageBox::information(m_editWidget, i18n("SystemID or PublicID resolution result"),
+        i18n("SystemID or PublicID has been resolved to\n.%1").arg(URI),
 	QMessageBox::Ok);
   }
 }

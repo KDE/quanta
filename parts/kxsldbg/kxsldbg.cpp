@@ -7,6 +7,7 @@
 
 #include <kkeydialog.h>
 #include <kconfig.h>
+#include <klocale.h>
 
 #include <kedittoolbar.h>
 
@@ -61,7 +62,7 @@ KXsldbg::KXsldbg()
     {
         // if we couldn't find our Part, we exit since the Shell by
         // itself can't do anything useful
-        KMessageBox::error(this, "Could not find our Part!");
+        KMessageBox::error(this, i18n("Could not find our Part!"));
         kapp->quit();
     }
 }
@@ -143,17 +144,13 @@ void KXsldbg::applyNewToolbarConfig()
 void KXsldbg::newCursorPosition(const QString &file, int lineNumber)
 {
     statusBar()->clear();
-    statusBar()->message( QString("Line :") +
-                        QString::number(lineNumber) + " " +
-                             (char *) file.latin1() );
+    statusBar()->message( i18n("Line: %1 %2").arg(lineNumber).arg(file));
 }
 
 void KXsldbg::newDebuggerPosition(const QString &file, int lineNumber)
 {
     statusBar()->clear();
-    statusBar()->message( QString("Stopped at Line :") +
-                        QString::number(lineNumber) + " " +
-                             (char *) file.latin1() );
+    statusBar()->message( i18n("Stopped at line: %1 %2").arg(lineNumber).arg(file) );
 
 }
 
