@@ -39,7 +39,7 @@
 #include "../resource.h"
 
 TagAction::TagAction( QDomElement *element, KActionCollection *parent)
-  : KAction( element->attribute("text"), 0, 0, 0, parent, element->attribute("name") ),
+  : KAction( element->attribute("text"), element->attribute("shortcut"), 0, 0, parent, element->attribute("name") ),
     tag(*element)
 {
    m_view = quantaApp->getView();
@@ -50,7 +50,7 @@ TagAction::TagAction( QDomElement *element, KActionCollection *parent)
 }
 
 TagAction::TagAction( QDomElement *element, QuantaView *a_view, KActionCollection *parent)
-  : KAction( element->attribute("text"), 0, 0, 0, parent, element->attribute("name") ),
+  : KAction( element->attribute("text"), element->attribute("shortcut"), 0, 0, parent, element->attribute("name") ),
     tag(*element)
 {
    m_view = a_view;

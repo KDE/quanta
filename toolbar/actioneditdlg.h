@@ -9,6 +9,7 @@
 #include <qdom.h>
 
 class TagAction;
+class KShortcut;
 
 /** configure actions
   *@author Dmitry Poplavsky, Andras Mantia
@@ -27,9 +28,11 @@ public slots:
     virtual void newAction();
     virtual void actionSelected();
     virtual void accept() { saveAction(action); ActionEditDlgS::accept(); }
+private slots:
+    void slotShortcutCaptured(const KShortcut&);
 protected:
     TagAction *action;
-    
+
     void loadAction( TagAction *);
     void saveAction( TagAction *);
     TagAction *selectedAction();

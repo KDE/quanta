@@ -32,6 +32,7 @@
 #include <kaction.h>
 #include <kiconloader.h>
 #include <kicondialog.h>
+#include <kkeybutton.h>
 #include <kstandarddirs.h>
 #include <kdebug.h>
 #include <kxmlguiclient.h>
@@ -98,6 +99,8 @@ ActionEditDlg::ActionEditDlg( QWidget* parent, const char* name, bool modal, WFl
   {
     toolbarCombo->insertItem(tb->label(i));
   }
+
+  connect(shortcutKeyButton, SIGNAL(capturedShortcut(const KShortcut &)), SLOT(slotShortcutCaptured(const KShortcut &)));
 }
 
 ActionEditDlg::~ActionEditDlg()
@@ -197,6 +200,17 @@ void ActionEditDlg::loadAction( TagAction *a )
     lineText->setText( el.attribute("text") );
     lineToolTip->setText( el.attribute("tooltip") );
     lineStatusText->setText( el.attribute("statustext") );
+    QString shortcutText = a->shortcut().toString();
+    if (shortcutText.isEmpty())
+    {
+      noShortcut->setChecked(true);
+      shortcutKeyButton->setText(i18n("None"));
+    } else
+    {
+      customShortcut->setChecked(true);
+      shortcutKeyButton->setShortcut(KShortcut(shortcutText));
+      shortcutKeyButton->setText(shortcutText);
+    }
 
     QDomElement elxtag = el.namedItem("xtag").toElement();
     QDomElement eltag = el.namedItem("tag").toElement();
@@ -254,6 +268,15 @@ void ActionEditDlg::saveAction( TagAction *a )
     el.setAttribute("text", lineText->text() );
     el.setAttribute("tooltip", lineToolTip->text() );
     el.setAttribute("statustext", lineStatusText->text() );
+    if (customShortcut->isChecked())
+    {
+      el.setAttribute("shortcut", shortcutKeyButton->text());
+      a->setShortcut(KShortcut(shortcutKeyButton->text()));
+    } else
+    {
+      el.setAttribute("shortcut", "");
+      a->setShortcut(KShortcut());
+    }
     QString stab = actionTab->tabLabel( actionTab->currentPage() );
 
     a->setText( lineText->text() );
@@ -351,5 +374,9 @@ void ActionEditDlg::saveAction( TagAction *a )
 
 }
 
+void ActionEditDlg::slotShortcutCaptured(const KShortcut &shortcut)
+{
+  shortcutKeyButton->setText(shortcut.toString());
+}
 
 #include "actioneditdlg.moc"
