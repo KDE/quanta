@@ -19,6 +19,7 @@
 #define UPLOADTREEFILE_H
 
 #include <klistview.h>
+#include <sys/types.h>
 
 #include "uploadtreefolder.h"
 
