@@ -210,7 +210,6 @@ void GrepDialog::dirButtonClicked()
     dir_edit->setText(KFileDialog::getExistingDirectory(dir_edit->text()));
 }
 
-#include <iostream.h>
 void GrepDialog::itemSelected(const QString &item)
 {
   int pos;
