@@ -77,7 +77,7 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   addColumn(i18n("Project Files"), -1);
   addColumn("");
   setFullWidth(true);
-  setDragEnabled(true);
+  setDragEnabled(false);
 
   setFocusPolicy(QWidget::ClickFocus);
 
@@ -218,9 +218,15 @@ void ProjectTreeView::slotReloadTree( const KURL::List &urlList, bool buildNewTr
     addBranch(m_projectDir);
     m_projectDir->urlList = m_urlList;  // set list for filter
     if (hasProject)
+    {
+      setDragEnabled(true);
       m_projectDir->populate(m_projectDir->rootUrl(), m_projectDir->root());
+    }
     else
+    {
+      setDragEnabled(false);
       m_projectDir->root()->setEnabled(false);
+    }
 
     if ( m_urlList.isEmpty() )
       m_projectDir->root()->setExpandable( false );
