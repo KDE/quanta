@@ -261,7 +261,7 @@ void Tagxml::readAttributes( QDict<QString> *d )
       } else
       if (dynamic_cast<Attr_file *>(attr))
       {
-        value = KURL::encode_string(value);
+//        value = KURL::encode_string(value);
         d->replace(name, new QString(value));
       } else {
         value.replace(QRegExp("&(?!amp;)"), "&amp;");
