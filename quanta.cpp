@@ -1657,7 +1657,7 @@ QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomEleme
       node = node.nextSibling();
     }
     //kdDebug(24000) << "QuantaToolBar minimumSizeHeight :" << tb->minimumSizeHint().height() << endl;
-    if (tb->minimumSizeHint().height() != 0)
+    if (tb->minimumSizeHint().height() > 30)
     {
       if (toolbarTab->tabHeight() < 30)
         toolbarTab->setFixedHeight(tb->minimumSizeHint().height() + 30);
@@ -1667,7 +1667,7 @@ QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomEleme
       tb->setGeometry(0,0, toolbarTab->width(), tb->height());
     } else //this happens if the toolbar does not contain any buttons
     {
-      tb->setGeometry(0,0, toolbarTab->width(), 22);
+      tb->setGeometry(0,0, toolbarTab->width(), 30);
       if (toolbarTab->tabHeight() < 30)
         toolbarTab->setFixedHeight(tb->height() + 30);
       else
