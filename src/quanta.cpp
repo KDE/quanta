@@ -241,7 +241,9 @@ QuantaApp::QuantaApp(int mdiMode) : DCOPObject("WindowManagerIf"), KMdiMainFrm( 
 QuantaApp::~QuantaApp()
 {
 // kdDebug(24000) << "QuantaApp::~QuantaApp" << endl;
+#ifdef ENABLE_CVSSERVICE
  delete CVSService::ref();
+#endif
  delete m_debugger;
  m_debugger = 0L;
  quantaApp = 0L;
