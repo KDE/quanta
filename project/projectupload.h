@@ -75,6 +75,7 @@ protected slots:
 signals: // Signals
   /** No descriptions */
   void uploadNext();
+  void eventHappened(const QString&, const QString&, const QString&);
 
 private:
   void buildSelectedItemList();

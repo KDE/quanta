@@ -36,16 +36,18 @@ QPEvents::QPEvents(QObject *parent, const char *name)
 {
    m_eventNames["before_save"] = i18n("Before document save");
    m_eventNames["after_save"] = i18n("After document save");
-   m_eventNames["after_open"] = i18n("After document opening");
-   m_eventNames["after_project_open"] = i18n("After project opening");
-   m_eventNames["after_project_save"] = i18n("After project save");
+   m_eventNames["after_open"] = i18n("After document open");
+   m_eventNames["before_close"] = i18n("Before document close");
+   m_eventNames["after_close"] = i18n("After document close");
+   m_eventNames["after_project_open"] = i18n("After project open");
+   m_eventNames["after_project_close"] = i18n("After project close");
    m_eventNames["before_upload"] = i18n("Before upload");
    m_eventNames["after_upload"] = i18n("After upload");
    m_eventNames["after_project_add"] = i18n("After addition to project");
    m_eventNames["after_project_remove"] = i18n("After removal from project");
    m_eventNames["after_commit"] = i18n("After committing to CVS");
    m_eventNames["after_file_move"] = i18n("After moving a file inside the project");
-   m_eventNames["after_multiple_save"] = i18n("After saving more files at once (like Save All)");
+//   m_eventNames["after_multiple_save"] = i18n("After saving more files at once (like Save All)");
 
    m_actionNames["email"] = i18n("Send email");
    m_actionNames["log"] = i18n("Log event");
@@ -57,7 +59,7 @@ QPEvents::~QPEvents()
 {
 }
 
-void QPEvents::slotEventHappened(const QString& name)
+void QPEvents::slotEventHappened(const QString& name, const QString& argument1, const QString& argument2)
 {
   EventActions *events = Project::ref()->events();
   if (events && events->contains(name))
@@ -72,24 +74,90 @@ void QPEvents::slotEventHappened(const QString& name)
        if (KMessageBox::warningYesNo(0L, i18n("<qt>An external action (<i>%1</i>) associated with an event (<i>%2</i>) will be executed.  Do you want to allow the execution of this action?</qt>").arg(ev.action).arg(name), i18n("Event Triggered"), KStdGuiItem::yes(), KStdGuiItem::no(), "Warn about external actions") == KMessageBox::No)
          return;
     }
-    if (name == "after_save")
+    KURL url = KURL::fromPathOrURL(argument1);
+    KURL url2 = KURL::fromPathOrURL(argument2);
+    if (url.isValid())
     {
-        Document *w = ViewManager::ref()->activeDocument();
-        if (w && Project::ref()->contains(w->url()))
+        if (url2.isValid())
         {
-          ev.arguments << i18n("Document saved");
-          ev.arguments << QExtFileInfo::toRelative(w->url(), Project::ref()->projectBaseURL()).path();
-          handleEvent(ev);
-        }
-     } else
-     if (name == "before_save")
-     {
-        Document *w = ViewManager::ref()->activeDocument();
-        if (w && Project::ref()->contains(w->url()))
+            if (name == "before_upload")
+            {
+              ev.arguments << i18n("About to upload a document");
+              ev.arguments << url.path();
+              ev.arguments << url2.path();
+              handleEvent(ev);
+            } else
+            if (name == "after_upload")
+            {
+              ev.arguments << i18n("Document uploaded");
+              ev.arguments << url.path();
+              ev.arguments << url2.path();
+              handleEvent(ev);
+            } else
+            if (name == "after_file_move")
+            {
+              ev.arguments << i18n("Document moved");
+              ev.arguments << url.path();
+              ev.arguments << url2.path();
+              handleEvent(ev);
+            }
+        } else
         {
-          ev.arguments << i18n("About to save");
-          ev.arguments << QExtFileInfo::toRelative(w->url(), Project::ref()->projectBaseURL()).path();
-          handleEvent(ev);
+            QString relativePath = QExtFileInfo::toRelative(url, Project::ref()->projectBaseURL()).path();
+            if (name == "after_save")
+            {
+              ev.arguments << i18n("Document saved");
+              ev.arguments << relativePath;
+              handleEvent(ev);
+            } else
+            if (name == "before_save")
+            {
+              ev.arguments << i18n("About to save a document");
+              ev.arguments << relativePath;
+              handleEvent(ev);
+            } else
+            if (name == "after_open")
+            {
+              ev.arguments << i18n("Document opened");
+              ev.arguments << relativePath;
+              handleEvent(ev);
+            } else
+            if (name == "after_close")
+            {
+              ev.arguments << i18n("Document closed");
+              ev.arguments << relativePath;
+              handleEvent(ev);
+            } else
+            if (name == "before_close")
+            {
+              ev.arguments << i18n("About to close a document");
+              ev.arguments << relativePath;
+              handleEvent(ev);
+            } else
+            if (name == "after_project_open")
+            {
+                ev.arguments << i18n("Project opened");
+                ev.arguments <<  url.path();
+                handleEvent(ev);
+            } else
+            if (name == "after_project_close")
+            {
+                ev.arguments << i18n("Project closed");
+                ev.arguments <<  url.path();
+                handleEvent(ev);
+            }
+            if (name == "after_project_add")
+            {
+                ev.arguments << i18n("Document added to project");
+                ev.arguments <<  url.path();
+                handleEvent(ev);
+            } else
+            if (name == "after_project_remove")
+            {
+                ev.arguments << i18n("Document removed from project");
+                ev.arguments <<  url.path();
+                handleEvent(ev);
+            }
         }
      }
   }
@@ -127,7 +195,10 @@ bool QPEvents::handleEvent(const EventAction& ev)
           QString name = ev.arguments[0];
           TagAction *action = dynamic_cast<TagAction*>(quantaApp->actionCollection()->action(name));
           if (action)
+          {
+            action->addArguments(ev.arguments);
             action->execute();
+          }
           else
             KMessageBox::sorry(0L, i18n("<qt>The <b>%1</b> script action was not found on your system.</qt>").arg(name), i18n("Action Execution Error"));
       }  else

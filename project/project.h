@@ -113,10 +113,12 @@ public:
   QValueList<SubProject>* subprojects();
   QStringList tasks();
   QMap<QString, TeamMember> allMembers();
-  
+
+  /** Called when an url was moved inside the project with drag &drop */
+  void urlMoved(const KURL& srcURL, const KURL &destURL);
   /**
        test if application can close
-       
+
        @return true if close is possible
   */
   bool Project::queryClose();
@@ -171,6 +173,7 @@ signals:
   void loadToolbarFile(const KURL &);
   /** ask for the tree status for saving in project */
   void getTreeStatus(QStringList *);
+  void eventHappened(const QString&, const QString&, const QString& );
 
 private:
   /** The constructor is privat because we use singleton patter.

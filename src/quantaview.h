@@ -199,6 +199,8 @@ signals:
   /** emitted if this view contained an editor and it is closed */
   void documentClosed(const KURL&);
 
+  void eventHappened(const QString&, const QString&, const QString& );
+
 private:
 #ifdef BUILD_KAFKAPART
 /** Kafka stuff */

@@ -211,7 +211,7 @@ signals: // Signals
   void reloadAllTrees();
 
   /** Emitted when some kind of event that can have associated actions has happened. */
-  void eventHappened(const QString&);
+  void eventHappened(const QString&, const QString&, const QString& );
 
 public slots:
   void slotFileNew();

@@ -100,6 +100,7 @@ bool QuantaNetAccess::move( const KURL::List& srcList, const KURL& target, QWidg
 {
   KURL targetURL = adjustURL(target);
   bool oldConfirm = confirm;
+  bool moveInsideProject = false;
   bool targetInProject = Project::ref()->projectBaseURL().isParentOf(targetURL);
   KURL url;
   // first we ask about the URLs in the list without actually removing them from the project
@@ -109,6 +110,7 @@ bool QuantaNetAccess::move( const KURL::List& srcList, const KURL& target, QWidg
     if (targetInProject && Project::ref()->projectBaseURL().isParentOf(url) )
     {
       confirm = false;
+      moveInsideProject = true;
     }
     if ( !checkProjectRemove(*it, window, confirm, false)) {
       return false;
@@ -128,6 +130,7 @@ bool QuantaNetAccess::move( const KURL::List& srcList, const KURL& target, QWidg
       url.adjustPath(+1);
       url.setFileName((*it).fileName());
       checkProjectInsert(url, window, confirm);
+      Project::ref()->urlMoved(*it, url);
    }
   } else {
     if (confirm)

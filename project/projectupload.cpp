@@ -418,6 +418,7 @@ void ProjectUpload::upload()
      // qDebug("%s -> %s", from.url().data(), to.url().data() );
       if (!from.fileName(false).isEmpty() && fileItem)
       {
+        emit eventHappened("before_upload", from.url(), to.url());
         KIO::FileCopyJob *job = KIO::file_copy( from, to, fileItem->permissions(), true, false, false );
 
         connect( job, SIGNAL( result( KIO::Job * ) ),this,
@@ -451,6 +452,9 @@ void ProjectUpload::uploadFinished( KIO::Job *job )
       uploadInProgress = false;
       return;
    }
+   KIO::FileCopyJob *fJob = dynamic_cast<KIO::FileCopyJob *>(job);
+   if (fJob)
+    emit eventHappened("after_upload", fJob->srcURL().url(), fJob->destURL().url());
    slotUploadNext();
 }
 

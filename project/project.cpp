@@ -370,6 +370,7 @@ void ProjectPrivate::insertFiles( KURL::List files )
           el.setAttribute("url", QuantaCommon::qUrl(QExtFileInfo::toRelative(url, baseURL)));
           dom.firstChild().firstChild().appendChild(el);
           m_projectFiles.insert( new ProjectURL(url, "", 1, false, el) );
+          emit eventHappened("after_project_add", url.url(), QString::null);
           m_modified = true;
         }
         url.setPath(url.directory(false));
@@ -381,6 +382,7 @@ void ProjectPrivate::insertFiles( KURL::List files )
         el.setAttribute("url", QuantaCommon::qUrl(QExtFileInfo::toRelative(url, baseURL)));
         dom.firstChild().firstChild().appendChild(el);
         m_projectFiles.insert( new ProjectURL(url, "", 1, false, el) );
+        emit eventHappened("after_project_add", url.url(), QString::null);
         m_modified = true;
       }
     }
@@ -1119,6 +1121,7 @@ void ProjectPrivate::slotCloseProject()
     if (KMessageBox::warningYesNo(m_parent, i18n("Saving of project failed. Do you want to continue with closing (might cause data loss)?"), i18n("Project Saving Error")) == KMessageBox::No)
       return;
   }
+  emit eventHappened("after_project_close", baseURL.url(), QString::null);
   // empty dom tree
   dom.clear();
   m_events->clear();
@@ -1471,6 +1474,7 @@ Project::Project(KMainWindow *parent)
         : QObject()
 {
   d = new ProjectPrivate(this);
+  connect(d, SIGNAL(eventHappened(const QString&, const QString&, const QString& )), this, SIGNAL(eventHappened(const QString&, const QString&, const QString& )));
   d->m_parent = parent;
   keepPasswd = true;
   d->initActions(parent->actionCollection());
@@ -1512,7 +1516,7 @@ void Project::insertFile(const KURL& nameURL, bool repaint )
     if ( !destination.isEmpty() )
     {
       CopyTo *dlg = new CopyTo(d->baseURL);
-      connect(dlg, SIGNAL(deleteDialog(CopyTo*)),
+      connect(dlg, SIGNAL(deleteDialog(CopyTo*)), d,
                    SLOT(slotDeleteCopytoDlg(CopyTo*)));
       url = dlg->copy( nameURL, destination );
     }
@@ -1533,6 +1537,7 @@ void Project::insertFile(const KURL& nameURL, bool repaint )
     }
     url.setPath(url.directory(false));
   }
+  emit eventHappened("after_project_add", url.url(), QString::null);
   setModified();
   if ( repaint )
   {
@@ -1629,6 +1634,7 @@ void Project::slotOpenProject(const KURL &url)
     } else
     {
       d->loadProject ( url );
+      emit eventHappened("after_project_open", url.url(), QString::null);
     }
   }
 }
@@ -1666,7 +1672,7 @@ void Project::slotAddDirectory(const KURL& p_dirURL, bool showDlg)
         CopyTo *dlg = new CopyTo(d->baseURL);
         connect(dlg, SIGNAL(addFilesToProject(const KURL::List&)),
                      SLOT  (slotInsertFilesAfterCopying(const KURL::List&)));
-        connect(dlg, SIGNAL(deleteDialog(CopyTo *)),
+        connect(dlg, SIGNAL(deleteDialog(CopyTo *)), d,
                      SLOT  (slotDeleteCopytoDlg(CopyTo *)));
         //if ( rdir.right(1) == "/" ) rdir.remove( rdir.length()-1,1);
         dirURL = dlg->copy(dirURL, destination);
@@ -1762,6 +1768,7 @@ void Project::slotRemove(const KURL& urlToRemove)
     {
       d->m_projectFiles.removeFromListAndXML(url);
       d->m_modified = true;
+      emit eventHappened("after_project_remove", url.url(), QString::null);
       if (! isFolder)
         break;
     }
@@ -2155,17 +2162,19 @@ void Project::slotUpload()
     return;
 
   ProjectUpload *dlg = new ProjectUpload(KURL(), false, i18n("Upload project items..."));
+  connect(dlg, SIGNAL(eventHappened(const QString&, const QString&, const QString& )), this, SIGNAL(eventHappened(const QString&, const QString&, const QString& )));
   dlg->show();
 }
 
 void Project::slotUploadURL(const KURL& urlToUpload)
 {
-  if (! ViewManager::ref()->saveAll())
+  if (!ViewManager::ref()->saveAll())
     return;
 
   KURL url = QExtFileInfo::toRelative( urlToUpload, d->baseURL);
 
   ProjectUpload *dlg = new ProjectUpload(url, false, i18n("Upload project items..."));
+  connect(dlg, SIGNAL(eventHappened(const QString&, const QString&, const QString& )), this, SIGNAL(eventHappened(const QString&, const QString&, const QString& )));
   dlg->show();
 }
 
@@ -2517,6 +2526,10 @@ QMap<QString, TeamMember> Project::allMembers()
    return members;
 }
 
+void Project::urlMoved(const KURL& srcURL, const KURL &destURL)
+{
+   emit eventHappened("after_file_move", srcURL.url(), destURL.url());
+}
 
 bool Project::queryClose()
 {
@@ -2530,6 +2543,8 @@ bool Project::queryClose()
       if (KMessageBox::warningYesNo(d->m_parent, i18n("Saving of project failed. Do you want to continue with exit (might cause data loss)?"), i18n("Project Saving Error")) == KMessageBox::Yes)
           canExit = true;
     }
+    if (canExit)
+      emit eventHappened("after_project_close", d->baseURL.url(), QString::null);
   }
   return canExit;
 }

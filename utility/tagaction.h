@@ -57,6 +57,7 @@ public:
     bool isModified() const {return m_modified;}
     void setOutputFile(QFile* file);
     void setInputFileName(const QString& fileName);
+    void addArguments(const QStringList& arguments);
     void execute();
     QString type();
     /**
@@ -95,6 +96,7 @@ private:
     QFile* m_file;
     QString m_inputFileName;
     MessageOutput *m_appMessages;
+    QStringList m_argsList;
 };
 
 

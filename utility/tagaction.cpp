@@ -291,7 +291,14 @@ bool TagAction::insertTag(bool inputFromFile, bool outputToFile)
    //       kdDebug(24000) << "Modified argument list: " << args << endl;
         }
       }
+      int pos = args.find("%userarguments");
+      if (pos != -1)
+      {
+         QString s = m_argsList.join(" ");
+         args.replace("%userarguments", s);
+      }
       QStringList argsList = QStringList::split(' ', args);
+      m_argsList.clear();
       *proc << argsList;
     }
     firstOutput = true;
@@ -494,6 +501,11 @@ void TagAction::slotProcessExited(KProcess *)
     loopStarted = false;
   }
   m_appMessages->showMessage( i18n("The \"%1\" script has exited.").arg(actionText()) );
+}
+
+void TagAction::addArguments(const QStringList &arguments)
+{
+  m_argsList = arguments;
 }
 
 void TagAction::execute()

@@ -354,6 +354,7 @@ void QuantaInit::initProject()
   connect(m_project, SIGNAL(reloadTree(ProjectList *, bool, const QStringList &)),
           pTab, SLOT(slotReloadTree(ProjectList *, bool, const QStringList &)));
   connect(m_project, SIGNAL(closeFiles()), ViewManager::ref(), SLOT(closeAll()));
+  connect(m_project, SIGNAL(eventHappened(const QString&, const QString&, const QString& )), QPEvents::ref(m_quanta), SLOT(slotEventHappened(const QString&, const QString&, const QString& )));
 
   connect(m_quanta->fTab, SIGNAL(insertDirInProject(const KURL&)),
           m_project, SLOT(slotAddDirectory(const KURL&)));
@@ -650,7 +651,7 @@ void QuantaInit::loadInitialProject(const QString& url)
       // Get config
       KConfig *config = m_quanta->config();
       config->setGroup("General Options");
-  
+
       // Reload last project if setting is enabled
       Project::ref()->loadLastProject(config->readBoolEntry("Reload Project", true));
     }
@@ -1017,7 +1018,8 @@ void QuantaInit::initActions()
     connect( char_action, SIGNAL(activated()),
              m_quanta, SLOT(slotInsertChar()) );
 
-    connect(m_quanta, SIGNAL(eventHappened(const QString&)), QPEvents::ref(m_quanta), SLOT(slotEventHappened(const QString&)));
+    connect(m_quanta, SIGNAL(eventHappened(const QString&, const QString&, const QString& )), QPEvents::ref(m_quanta), SLOT(slotEventHappened(const QString&, const QString&, const QString& )));
+    connect(ViewManager::ref(), SIGNAL(eventHappened(const QString&, const QString&, const QString& )), QPEvents::ref(m_quanta), SLOT(slotEventHappened(const QString&, const QString&, const QString& )));
 }
 
 /** Initialize the plugin architecture. */

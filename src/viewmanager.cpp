@@ -44,6 +44,7 @@
 #include "toolbartabwidget.h"
 #include "parser.h"
 #include "qextfileinfo.h"
+#include "qpevents.h"
 
 #define SEPARATOR_INDEX 3
 #define RELOAD_ID 11
@@ -82,6 +83,7 @@ QuantaView* ViewManager::createView()
     disconnect(view, SIGNAL(childWindowCloseRequest( KMdiChildView *)), 0, 0 );
     connect(view, SIGNAL(childWindowCloseRequest( KMdiChildView*)), this, SLOT(slotCloseRequest(KMdiChildView*)));
     connect(view, SIGNAL(documentClosed(const KURL&)), this, SLOT(slotDocumentClosed(const KURL&)));
+    connect(view, SIGNAL(eventHappened(const QString&, const QString&, const QString& )), QPEvents::ref(), SLOT(slotEventHappened(const QString&, const QString&, const QString& )));
 
     return view;
 }
@@ -288,6 +290,7 @@ bool ViewManager::saveAll(bool dont_ask)
           {
               if (dont_ask && !w->isUntitled())
               {
+                  emit eventHappened("before_save", w->url().url(), QString::null);
 #ifdef BUILD_KAFKAPART
                   w->docUndoRedo->fileSaved();
 #endif
@@ -297,6 +300,7 @@ bool ViewManager::saveAll(bool dont_ask)
                   w->removeBackup(quantaApp->config());
                   if (w->isModified())
                       flagsave = false;
+                  emit eventHappened("after_save", w->url().url(), QString::null);
               } else
               {
                   if (!view->saveModified())

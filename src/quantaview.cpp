@@ -144,19 +144,22 @@ bool QuantaView::mayRemove()
           return false;
       if (m_document)
       {
+        KURL url = m_document->url();
+        emit eventHappened("before_close", url.url(), QString::null);
         m_currentViewsLayout  = -1;
 #ifdef BUILD_KAFKAPART
         slotSetSourceLayout(); //set the layout to source only, otherwise it crashes...
         m_kafkaDocument->getKafkaWidget()->view()->reparent(0, 0, QPoint(), false);
 #endif
           m_document->closeTempFile();
-          if (!m_document->isUntitled() && m_document->url().isLocalFile())
+          if (!m_document->isUntitled() && url.isLocalFile())
           {
-            fileWatcher->removeFile(m_document->url().path());
-            kdDebug(24000) << "removeFile[mayRemove]: " << m_document->url().path() << endl;
+            fileWatcher->removeFile(url.path());
+            kdDebug(24000) << "removeFile[mayRemove]: " << url.path() << endl;
           }
           quantaApp->menuBar()->activateItemAt(-1);
           quantaApp->guiFactory()->removeClient(m_document->view());
+          emit eventHappened("after_close", url.url(), QString::null);
       }
 /*      kdDebug(24000) << "Calling reparse from close " << endl;
       parser->setSAParserEnabled(true);
@@ -487,7 +490,7 @@ void QuantaView::reloadUpdateTimers()
 {
 #ifdef BUILD_KAFKAPART
     QuantaView* view=ViewManager::ref()->activeView();
-    
+
     m_sourceUpdateTimer.stop();
     m_VPLUpdateTimer.stop();
 
@@ -911,6 +914,7 @@ bool QuantaView::saveDocument(const KURL& url)
   if (url.isEmpty())
     return false;
 
+  emit eventHappened("before_save", url.url(), QString::null);
   m_saveResult = true;
   KURL oldURL = m_document->url();
   if (!m_document->isUntitled() && oldURL.isLocalFile())
@@ -965,6 +969,7 @@ bool QuantaView::saveDocument(const KURL& url)
   {
       setCaption(m_document->url().fileName());
   }
+  emit eventHappened("after_save", m_document->url().url(), QString::null);
   return true;
 }
 

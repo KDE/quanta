@@ -70,7 +70,7 @@ public:
 
 public slots:
  /** Called when an event has happened */
-   void slotEventHappened(const QString& name);
+   void slotEventHappened(const QString& name, const QString& argument1, const QString& argument2);
 
 private:
     QPEvents(QObject *parent = 0, const char *name = 0);

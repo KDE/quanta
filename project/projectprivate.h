@@ -141,7 +141,7 @@ upload.*/
       @return false if there was nothing to save or an error occured during save
   */
   bool saveProject();
-  
+
   /**
       adds information about the current open project into config
    */
@@ -149,14 +149,14 @@ upload.*/
 
   /**
       removes the project from the list of open projects in config
-      
+
       @param the url string of the project to remove
    */
   void removeFromConfig(const QString & urlStr);
 
   /**
       test if a project is in the list of open projects in config
-      
+
       @param the url string of the project to test
    */
   bool projectAlreadyOpen(const QString & urlStr);
@@ -199,6 +199,7 @@ public slots:
 
 signals:
   void setLocalFiles( bool );
+  void eventHappened(const QString&, const QString&, const QString& );
 
 private:
   QStringList treeStatusFromXML();

@@ -98,6 +98,7 @@ signals:
   void viewActivated(const KURL &);
   /** emitted when a view was closed */
   void documentClosed(const KURL&);
+  void eventHappened(const QString&, const QString&, const QString& );
 
 private slots:
  /** called before the file list menu shows up, so it can be updated */

@@ -353,6 +353,8 @@ void QuantaApp::slotFileOpen(const KURL &url)
 void QuantaApp::slotFileOpen( const KURL &url, const QString& encoding )
 {
   m_doc->openDocument( url, encoding );
+  emit eventHappened("after_open", url.url(), QString::null);
+
 //  slotUpdateStatus(m_view->write()); //FIXME:
 }
 
@@ -374,7 +376,7 @@ void QuantaApp::slotFileOpenRecent(const KURL &url)
   if (QuantaCommon::checkMimeGroup(url, "text") ||
       QuantaCommon::denyBinaryInsert() == KMessageBox::Yes)
   {
-    m_doc->openDocument(url);
+    slotFileOpen(url);
   }
   fileRecent->setCurrentItem(-1);
   ViewManager::ref()->activeDocument()->view()->setFocus();
@@ -386,7 +388,6 @@ void QuantaApp::slotFileSave()
   Document *w = view->document();
   if (w)
   {
-    emit eventHappened("before_save");
     w->checkDirtyStatus();
     if ( w->isUntitled() )
       slotFileSaveAs();
@@ -397,7 +398,6 @@ void QuantaApp::slotFileSave()
       w->docUndoRedo->fileSaved();
 #endif
     }
-    emit eventHappened("after_save");
   }
 }
 
@@ -616,7 +616,9 @@ void QuantaApp::slotFileClose(const KURL &url)
 {
   QuantaView *view = ViewManager::ref()->isOpened(url);
   if (view)
+  {
     ViewManager::ref()->removeView(view);
+  }
 }
 
 
