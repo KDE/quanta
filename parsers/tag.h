@@ -134,18 +134,18 @@ public:
 
   enum TokenType {
     Unknown = 0,
-    XmlTag,
-    XmlTagEnd,
-    Text,
-    Comment,
-    CSS,
-    ScriptTag,
-    ScriptStructureBegin,
-    ScriptStructureEnd,
-    LocalVariable,
-    GlobalVariable,
+    XmlTag, //1
+    XmlTagEnd, //2
+    Text, //3
+    Comment, //4
+    CSS, //5
+    ScriptTag, //6
+    ScriptStructureBegin, //7
+    ScriptStructureEnd, //8
+    LocalVariable, //9
+    GlobalVariable, //10
     NeedsParsing = 500,
-    Empty,
+    Empty, //501
     Skip = 1000 }; // types of token
 
   //TODO: write setting/retrieving methods for the below attributes, and add

@@ -494,11 +494,12 @@ Node *Parser::parse(Document *w, bool force)
       m_node = parseArea(0, 0, maxLines, w->editIf->lineLength(maxLines) - 1, &lastNode);
   kdDebug(24000) << "Parsing time ("<< maxLines << " lines): " << t.elapsed() << " ms\n";
   m_parsingNeeded = false;
- /*
+/*
  treeSize = 0;
+ kdDebug(24000) << "Basenode : " << m_node << endl;
  coutTree(m_node, 2);
  kdDebug(24000) << "Size of tree: " << treeSize << endl;
- */
+*/
 
 //FIXME: What is the use of two pointer to the same Node???
  baseNode = m_node;
@@ -521,35 +522,35 @@ Node *Parser::parse(Document *w, bool force)
 
 void Parser::coutTree(Node *node, int indent)
 {
-         QString output;
-        int bLine, bCol, eLine, eCol, j;
-        if (!node)
-           kdDebug(24000)<< "undoRedo::coutTree() - bad node!" << endl;
-        while (node)
-        {
-                output = "";
-                output.fill('.', indent);
-                node->tag->beginPos(bLine, bCol);
-                node->tag->endPos(eLine, eCol);
-                if (node->tag->type != Tag::Text)
-                        output += node->tag->name.replace('\n'," ");
-                else
-                        output+= node->tag->tagStr().replace('\n'," ");
-                kdDebug(24000) << output <<" (" << node->tag->type << ") at pos " <<
-                        bLine << ":" << bCol << " - " << eLine << ":" << eCol << endl;
-                for(j = 0; j < node->tag->attrCount(); j++)
-                {
-                        kdDebug(24000)<< " attr" << j << " " <<
-                                node->tag->getAttribute(j).nameLine << ":" <<
-                                node->tag->getAttribute(j).nameCol << " - " <<
-                                node->tag->getAttribute(j).valueLine << ":" <<
-                                node->tag->getAttribute(j).valueCol << endl;
-                }
+    QString output;
+    int bLine, bCol, eLine, eCol, j;
+    if (!node)
+        kdDebug(24000)<< "undoRedo::coutTree() - bad node!" << endl;
+    while (node)
+    {
+            output = "";
+            output.fill('.', indent);
+            node->tag->beginPos(bLine, bCol);
+            node->tag->endPos(eLine, eCol);
+            if (node->tag->type != Tag::Text)
+                    output += node->tag->name.replace('\n'," ");
+            else
+                    output+= node->tag->tagStr().replace('\n'," ");
+            kdDebug(24000) << output <<" (" << node->tag->type << ") at pos " <<
+                    bLine << ":" << bCol << " - " << eLine << ":" << eCol << " This: "<< node << " Parent: " << node->parent << " Prev: " << node->prev << " Next: " << node->next << endl;
+            for(j = 0; j < node->tag->attrCount(); j++)
+            {
+                    kdDebug(24000)<< " attr" << j << " " <<
+                            node->tag->getAttribute(j).nameLine << ":" <<
+                            node->tag->getAttribute(j).nameCol << " - " <<
+                            node->tag->getAttribute(j).valueLine << ":" <<
+                            node->tag->getAttribute(j).valueCol << endl;
+            }
 
-                if (node->child)
-                        coutTree(node->child, indent + 4);
-                node = node->next;
-        }
+            if (node->child)
+                    coutTree(node->child, indent + 4);
+            node = node->next;
+    }
 }
 
 
@@ -614,7 +615,8 @@ Node *Parser::nodeAt(int line, int col, bool findDeepest, bool exact)
     } else
     if (result == -1)
     {
-      node = node->parent;
+      if (node->parent)
+          node = node->parent;
       break; //we found the node
     } else
     {

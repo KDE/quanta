@@ -128,7 +128,7 @@ bool SAParser::slotParseOneLine()
           if (!s_contextFound && commentPos != -1)  //is it a comment?
           {
             if ( (commentPos < groupKeywordPos || groupKeywordPos == -1) &&
-                (commentPos < specialAreaPos || specialAreaPos == -1) &&
+                (commentPos <= specialAreaPos || specialAreaPos == -1) &&
                 (commentPos < areaEndPos || areaEndPos == -1) )
             {
               s_context.type = Comment;
@@ -406,6 +406,9 @@ bool SAParser::slotParseOneLine()
               s_currentNode->insideSpecial = true;
               s_currentNode->specialInsideXml = m_specialInsideXml;
             } else
+            if (s_currentContext.area.bLine < s_currentContext.area.eLine ||
+                (s_currentContext.area.bLine == s_currentContext.area.eLine &&
+                 s_currentContext.area.bCol < s_currentContext.area.eCol))
             {
               //create a tag from the s_currentContext
               Tag *tag = new Tag(s_currentContext.area, m_write, s_dtd);
@@ -785,7 +788,7 @@ Node *SAParser::parsingDone()
 
 void SAParser::parseInDetail(bool synchronous)
 {
-  //synchronous = true; //for testing. Uncomment to test the parser in synchronous mode
+ //synchronous = true; //for testing. Uncomment to test the parser in synchronous mode
 //  return; //for testing. Uncomment to disable the detailed parser
 #ifdef DEBUG_PARSER
   kdDebug(24001) << "parseInDetail. Enabled: " << m_parsingEnabled << endl;
@@ -812,7 +815,10 @@ void SAParser::slotParseNodeInDetail()
 #endif
   if (m_currentNode && m_parsingEnabled)
   {
-    if (m_currentNode->insideSpecial)
+    if (m_currentNode->insideSpecial &&
+        m_currentNode->tag->type != Tag::Comment &&
+        m_currentNode->tag->type != Tag::Text &&
+        m_currentNode->tag->type != Tag::Empty)
     {
       m_parsingLastNode = true;
       Node *n = m_currentNode->nextSibling();
