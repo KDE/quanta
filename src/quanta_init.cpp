@@ -314,6 +314,7 @@ void QuantaInit::initStatusBar()
           m_quanta, SLOT(statusBarTimeout()));
 
   progressBar = new KProgress(m_quanta->statusBar());
+  progressBar->setTextEnabled(false);
   progressBar->show();
   m_quanta->statusBar()->insertItem(i18n(IDS_DEFAULT),IDS_STATUS, 1);
   m_quanta->statusBar()->addWidget(progressBar);

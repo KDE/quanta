@@ -592,7 +592,7 @@ void BaseTreeView::slotDelete()
 void BaseTreeView::slotPopulateFinished(KFileTreeViewItem *item)
 {
   progressBar->setTotalSteps(1);
-  progressBar->setValue(0);
+  progressBar->setProgress(-1);
   progressBar->setTextEnabled(false);
 
   if ( !item ) return;
@@ -727,7 +727,9 @@ void BaseTreeView::slotJobFinished(KIO::Job *job)
   if ( job->error() )
       job->showErrorDialog(this);
 
-  progressBar->reset();  //FIXME: this is not correct
+  progressBar->setTotalSteps(1);
+  progressBar->setProgress(-1);
+  progressBar->setTextEnabled(false);
 }
 
 
