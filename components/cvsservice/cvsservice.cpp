@@ -19,9 +19,11 @@
 #include <qradiobutton.h>
 #include <qtextedit.h>
 #include <qtextstream.h>
+#include <qtimer.h>
 
 //kde includes
 #include <kaction.h>
+#include <kapplication.h>
 #include <kcombobox.h>
 #include <kdeversion.h>
 #include <kiconloader.h>
@@ -39,6 +41,8 @@
 #include "cvsservice.h"
 #include "cvscommitdlgs.h"
 #include "cvsupdatetodlgs.h"
+
+#define CVSSERVICE_TIMEOUT 1000*60
 
 CVSService::CVSService(KActionCollection *ac)
 {
@@ -99,12 +103,15 @@ CVSService::CVSService(KActionCollection *ac)
   m_cvsService =0L;
   m_commitDlg = new CVSCommitDlgS();
   m_updateToDlg = new CVSUpdateToDlgS();
+  m_timer = new QTimer(this);
+  connect(m_timer, SIGNAL(timeout()), this, SLOT(slotTimeout()));
 }
 
 CVSService::~CVSService()
 {
   if (m_cvsService)
     m_cvsService->quit();
+  delete m_cvsService;
   delete m_menu;
   delete m_repository;
   m_repository = 0L;
@@ -116,22 +123,21 @@ CVSService::~CVSService()
 void CVSService::setAppId(const QCString &id)
 {
   m_appId = id;
-  if (m_cvsService)
-    m_cvsService->quit();
-  delete m_cvsService;
   m_cvsService = new CvsService_stub(m_appId, "CvsService");
+  m_timer->start(CVSSERVICE_TIMEOUT, true); 
 }
 
 void CVSService::setRepository(const QString &repository)
 {
-   delete m_repository;
-   m_repository = new Repository_stub(m_appId, "CvsRepository");
-   if (m_repository->setWorkingCopy(repository))
-   {
-      m_repositoryPath = repository;
-      if (!m_repositoryPath.endsWith("/"))
-        m_repositoryPath += "/";
-   }
+  startService(); 
+  delete m_repository;
+  m_repository = new Repository_stub(m_appId, "CvsRepository");
+  if (m_repository->setWorkingCopy(repository))
+  {
+    m_repositoryPath = repository;
+    if (!m_repositoryPath.endsWith("/"))
+      m_repositoryPath += "/";
+  }
 }
 
 void CVSService::slotUpdate()
@@ -152,6 +158,7 @@ void CVSService::slotUpdate()
 
 void CVSService::slotUpdate(const QStringList &files)
 {
+   startService(); 
    if (m_repository && !m_appId.isEmpty())
    {
       emit clearMessages();
@@ -186,6 +193,7 @@ void CVSService::slotUpdateToTag()
 
 void CVSService::slotUpdateToTag(const QStringList &files)
 {
+  startService(); 
   if (m_repository && !m_appId.isEmpty() && m_updateToDlg->exec())
   {
     QString extraOpts;
@@ -231,6 +239,7 @@ void CVSService::slotUpdateToHead()
 
 void CVSService::slotUpdateToHead(const QStringList &files)
 {
+  startService();
   if (m_repository && !m_appId.isEmpty())
   {
     emit clearMessages();
@@ -265,6 +274,7 @@ void CVSService::slotCommit()
 
 void CVSService::slotCommit(const QStringList &files)
 {
+   startService(); 
    m_commitDlg->fileList->clear();
    m_commitDlg->fileList->insertStringList(files);
    m_commitDlg->logEdit->clear();
@@ -309,6 +319,7 @@ void CVSService::slotRevert()
 
 void CVSService::slotRevert(const QStringList &files)
 {
+  startService(); 
   if (m_repository && !m_appId.isEmpty())
   {
     emit clearMessages();
@@ -343,6 +354,7 @@ void CVSService::slotAdd()
 
 void CVSService::slotAdd(const QStringList &files)
 {
+  startService(); 
   if (m_repository && !m_appId.isEmpty() && (KMessageBox::questionYesNoList(0, i18n("Add the following files to repository?"), files, i18n("CVS Add")) == KMessageBox::Yes))
   {
     emit clearMessages();
@@ -377,6 +389,7 @@ void CVSService::slotRemove()
 
 void CVSService::slotRemove(const QStringList &files)
 {
+  startService(); 
   if (m_repository && !m_appId.isEmpty() && (KMessageBox::warningContinueCancelList(0, i18n("<qt>Remove the following files from the repository?<br>This will remove your <b>working copy</b> as well.</qt>"), files, i18n("CVS Remove")) == KMessageBox::Continue))
   {
     emit clearMessages();
@@ -395,6 +408,7 @@ void CVSService::slotRemove(const QStringList &files)
 
 void CVSService::slotBrowseLog()
 {
+  startService(); 
   if (!m_defaultFile.isEmpty())
   {
     if (m_defaultFile.startsWith(m_repositoryPath))
@@ -529,18 +543,38 @@ void CVSService::slotJobExited(bool normalExit, int exitStatus)
 
 void CVSService::slotReceivedStdout(QString output)
 {
-   emit showMessage(output, false);
+  emit showMessage(output, false);
 }
 
 void CVSService::slotReceivedStderr(QString output)
 {
-   emit showMessage(output, false);
+  emit showMessage(output, false);
 }
 
 void CVSService::notInRepository()
 {
-    emit clearMessages();
-    emit showMessage(i18n("Error: \"%1\" is not part of the\n\"%2\" repository.").arg(m_defaultFile).arg(m_repositoryPath), false);
+  emit clearMessages();
+  emit showMessage(i18n("Error: \"%1\" is not part of the\n\"%2\" repository.").arg(m_defaultFile).arg(m_repositoryPath), false);
 }
 
- #include "cvsservice.moc"
+void CVSService::startService()
+{
+  if (!m_cvsService) 
+  {
+    QString error;
+    KApplication::startServiceByDesktopName("cvsservice", QStringList(), &error,
+                                            &m_appId);
+    m_cvsService = new CvsService_stub(m_appId, "CvsService");
+  }
+  m_timer->start(CVSSERVICE_TIMEOUT, true);  
+}
+
+void CVSService::slotTimeout()
+{
+  if (m_cvsService)
+    m_cvsService->quit();
+  delete m_cvsService;
+  m_cvsService = 0L;
+}
+
+#include "cvsservice.moc"

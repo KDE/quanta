@@ -25,6 +25,7 @@
 //own includes
 #include "cvsservicedcopif.h"
 
+class QTimer;
 class KPopupMenu;
 class KActionCollection;
 class CvsJob_stub;
@@ -91,9 +92,13 @@ signals:
   void showMessage(const QString &msg, bool append);
   void commandExecuted(const QString& command, const QStringList& files);
 
+private slots:  
+  void slotTimeout();
+  
 private:
   CVSService(KActionCollection *ac);
   void notInRepository();
+  void startService();
 
   QCString m_appId;
   KPopupMenu *m_menu;
@@ -107,6 +112,7 @@ private:
   CVSCommitDlgS *m_commitDlg;
   CVSUpdateToDlgS *m_updateToDlg;
   DCOPRef m_job;
+  QTimer *m_timer;
 };
 
 #endif
