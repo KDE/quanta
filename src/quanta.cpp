@@ -1535,10 +1535,11 @@ void QuantaApp::slotShowProjectTree()
 
 void QuantaApp::newCursorPosition(QString file, int lineNumber, int columnNumber)
 {
+  kdDebug(24000) << "newCursorPosition" << endl;
   Q_UNUSED(file);
   typingInProgress = true;
   idleTimer->start(500, true);
-  updateTreeViews();
+ // updateTreeViews();
   QString linenumber;
   linenumber = i18n("Line: %1 Col: %2").arg(lineNumber).arg(columnNumber);
   statusBar()->changeItem(linenumber, IDS_STATUS_CLM);
@@ -1561,7 +1562,7 @@ void QuantaApp::slotNewLineColumn()
 {
   typingInProgress = true;
   idleTimer->start(500, true);
-  updateTreeViews();
+ // updateTreeViews();
   QString linenumber;
   oldCursorLine = cursorLine;
   oldCursorCol = cursorCol;
@@ -1590,6 +1591,7 @@ void QuantaApp::updateTreeViews()
 void QuantaApp::slotIdleTimerExpired()
 {
   typingInProgress = false;
+  updateTreeViews();
 }
 
 void QuantaApp::slotReparse()
