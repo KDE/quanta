@@ -2500,6 +2500,7 @@ void Document::slotOpeningCompleted()
       kdDebug(24000) << "addFile[Document::open]: " << u.path() << endl;
   }
   disconnect(m_doc, SIGNAL(completed()), this, SLOT(slotOpeningCompleted()));
+  disconnect(m_doc, SIGNAL(canceled(const QString&)), this, SLOT(slotOpeningFailed(const QString&)));
   m_dirty = false;
   createTempFile();
   m_view->setFocus();
@@ -2512,6 +2513,7 @@ void Document::slotOpeningFailed(const QString &errorMessage)
   Q_UNUSED(errorMessage); //TODO: append the error message to our own error message
   if (!url().isLocalFile())
     qApp->exit_loop();
+  disconnect(m_doc, SIGNAL(completed()), this, SLOT(slotOpeningCompleted()));
   disconnect(m_doc, SIGNAL(canceled(const QString&)), this, SLOT(slotOpeningFailed(const QString&)));
   emit openingFailed(url());
 }
