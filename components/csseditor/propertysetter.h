@@ -77,21 +77,21 @@ class propertySetter : public QHBox  {
   public:
     propertySetter(QWidget *parent=0, const char *name=0);
     ~propertySetter();
-    void setFontEditor();
+    void setFontEditor(const QString& s=QString::null);
     void setComboBox();
     void setSpinBox(const QString& initialValue="0", const QString& min="0", const QString& max="9999", const QString& s=QString::null);
     void setLineEdit();
-    void setLengthEditor(QString s);
-    void setDoubleLengthEditor(QString s);
-    void setDoublePercentageEditor(QString s);
+    void setLengthEditor(const QString& s=QString::null);
+    void setDoubleLengthEditor(const QString& s=QString::null);
+    void setDoublePercentageEditor(const QString& s=QString::null);
     void setDoubleComboBoxEditor();
-    void setPercentageEditor(QString s);
+    void setPercentageEditor(const QString& s=QString::null);
     void setUriEditor();
-    void setFrequencyEditor(QString s);
-    void setTimeEditor(QString s);
-    void setAngleEditor(QString s);
-    void setColorRequester();
-    void setPredefinedColorListEditor();
+    void setFrequencyEditor(const QString& s=QString::null);
+    void setTimeEditor(const QString& s=QString::null);
+    void setAngleEditor(const QString& s=QString::null);
+    void setColorRequester(const QString& s=QString::null);
+    void setPredefinedColorListEditor(const QString& s=QString::null);
     void reset();
     void addButton();
     QComboBox* ComboBox() const { return m_cb; }

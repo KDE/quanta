@@ -2,1505 +2,573 @@
 <css version="2.1">
 <mediagroup type="aural">
 
- <azimuth applies="all" hasSub="no">
-  <mixed>
-   <selectable> 
-    <value name="leftwards"/>  
-    <value name="rightwards"/>  
-    <value name="inherit"/> 
-   </selectable>
-   <doubleSelectable>
-    <sx>
-     <value name="left-side"/> 
-     <value name="far-left"/> 
-     <value name="left"/>  
-     <value name="center-left"/>   
-     <value name="center"/>   
-     <value name="center-right"/>   
-     <value name="right"/>   
-     <value name="far-right"/>   
-     <value name="right-side"/> 
-    </sx>
-    <dx>  
-     <value name="behind"/> 
-    </dx> 
-   </doubleSelectable>
-   <numeric>
-    <value type="angle"/>
-   </numeric>
-  </mixed>
- </azimuth>
+  <azimuth>
+    <list value="leftwards,rightwards,inherit"/>
+    <doubleList>
+      <leftList value="left-side,far-left,left,center-left,center,center-right,right,far-right,right-side"/> 
+      <rightList value="behind"/> 
+   </doubleList>
+   <angle/>  
+  </azimuth>
  
- <cue hasSub="yes">
+  <cue hasSub="yes">   
+    <cue-after>  
+      <uri mode="single" resourceType="audio"/> 
+      <list value="none,inherit"/>   
+    </cue-after>    
+    <cue-before>
+      <uri mode="single" resourceType="audio"/>   
+      <list value="none,inherit"/>       
+    </cue-before>  
+  </cue>
    
-  <cue-after hasSub="no">
-   <mixed>
-    <selectable>
-     <value name="none"/>   
-     <value name="inherit"/>  
-    </selectable>
-    <string>
-     <value type="uri" mode="single" resourceType="audio"/>
-    </string>
-   </mixed>
-  </cue-after>
-     
-  <cue-before hasSub="no">
-   <mixed>
-    <selectable>
-     <value name="none"/>   
-     <value name="inherit"/>  
-    </selectable>
-    <string>
-     <value type="uri" mode="single" resourceType="audio"/>
-    </string>
-   </mixed>
-  </cue-before>
+  <elevation>  
+    <list value="below,level,above,higher,lower,inherit"/>  
+    <angle/> 
+  </elevation>
    
- </cue>
+  <pitch> 
+    <list value="inherit,x-low,medium,high,x-high,low"/>
+    <frequency/> 
+  </pitch>
    
- <elevation hasSub="no">
-  <mixed>
-   <selectable>
-    <value name="below"/>  
-    <value name="level"/>  
-    <value name="above"/>  
-    <value name="higher"/>  
-    <value name="lower"/>  
-    <value name="inherit"/>  
-   </selectable>
-   <numeric>
-    <value type="angle"/>
-   </numeric>
-  </mixed>
- </elevation>
+  <pitch-range>    
+    <number/>
+    <list value="inherit"/>
+  </pitch-range>
    
- <pitch hasSub="no">
-  <mixed>
-   <selectable> 
-    <value name="inherit"/> 
-    <value name="x-low"/> 
-    <value name="medium "/> 
-    <value name="high"/> 
-    <value name="x-high"/> 
-    <value name="low"/> 
-   </selectable>
-   <numeric>
-    <value type="frequency"/>
-   </numeric>
-  </mixed>
- </pitch>
-   
- <pitch-range hasSub="no">
-  <mixed>
-   <selectable> 
-    <value name="inherit"/>  
-   </selectable>
-   <numeric>
-    <value type="number"/>
-   </numeric>
-  </mixed>
- </pitch-range>
-   
- <play-during hasSub="no">
-  <mixed>
-   <selectable> 
-    <value name="inherit"/>  
-    <value name="none"/> 
-    <value name="auto"/> 
-   </selectable>
-   <string>
-    <value type="uri" mode="single" resourceType="audio"/>
-   </string>
-  </mixed>
- </play-during>
+  <play-during>
+    <list value="inherit,none,auto"/> 
+    <uri mode="single" resourceType="audio"/>
+  </play-during>
  
- <pause hasSub="yes">
-        
-  <pause-after hasSub="no">
-   <mixed>
-    <selectable>   
-     <value name="inherit"/>  
-    </selectable>
-    <numeric>
-     <value type="time"/>
-     <value type="percentage"/>
-    </numeric>
-   </mixed>
-  </pause-after>
+  <pause hasSub="yes">     
+    <pause-after>           
+      <time/>
+      <percentage/> 
+      <list value="inherit"/>
+    </pause-after>    
+    <pause-before> 
+      <time/>
+      <percentage/> 
+      <list value="inherit"/> 
+    </pause-before>   
+  </pause>
+ 
+  <richness>    
+    <number/>
+    <list value="inherit"/>
+  </richness>
+   
+  <speach-rate>
+    <list value="inherit,x-slow,medium,slow,fast,x-fast,faster,slower"/> 
+    <number/>
+  </speach-rate>
+   
+  <speak>
+    <list value="normal,none,spell-out,inherit"/>  
+  </speak>
+   
+  <speak-punctuation>
+    <list value="code,none,inherit"/> 
+  </speak-punctuation>
      
-  <pause-before hasSub="no">
-   <mixed>
-    <selectable>   
-     <value name="inherit"/>  
-    </selectable>
-    <numeric>
-     <value type="time"/>
-     <value type="percentage"/>
-    </numeric>
-   </mixed>
-  </pause-before>
-     
- </pause>
-
+  <speak-header>
+    <list value="once,always,inherit"/> 
+  </speak-header>
    
- <richness hasSub="no">
-  <mixed>
-   <selectable> 
-    <value name="inherit"/>  
-   </selectable>
-   <numeric>
-    <value type="number"/>
-   </numeric>
-  </mixed>
- </richness>
+  <speak-numeral>
+    <list value="digits,continuous,inherit"/>  
+  </speak-numeral>
    
- <speach-rate hasSub="no">
-  <mixed>
-   <selectable> 
-    <value name="inherit"/>  
-    <value name="x-slow"/>
-    <value name="medium"/>
-    <value name="slow"/>
-    <value name="fast"/>
-    <value name="x-fast "/>
-    <value name="faster"/>
-    <value name="slower"/>
-   </selectable>
-   <numeric>
-    <value type="number"/>
-   </numeric>
-  </mixed>
- </speach-rate>
+  <stress>   
+    <number/>
+    <list value="inherit"/> 
+  </stress>
    
- <speak hasSub="no">
-  <selectable>
-   <value name="normal"/>
-   <value name="none"/> 
-   <value name="spell-out"/>
-   <value name="inherit"/> 
-  </selectable>
- </speak>
+  <voice-family>      
+    <edit/>
+     <list value="inherit"/> 
+  </voice-family>
    
- <speak-punctuation hasSub="no">
-  <selectable>
-   <value name="code"/> 
-   <value name="none"/> 
-   <value name="inherit"/>
-  </selectable>
- </speak-punctuation>
-     
- <speak-header hasSub="no">
-  <selectable>
-   <value name="once"/> 
-   <value name="always"/>
-   <value name="inherit"/> 
-  </selectable>
- </speak-header>
-   
- <speak-numeral hasSub="no">
-  <selectable>
-   <value name="digits"/> 
-   <value name="continuous"/> 
-   <value name="inherit"/> 
-  </selectable>
- </speak-numeral>
-   
- <stress hasSub="no">
-  <mixed>
-   <selectable> 
-    <value name="inherit"/>  
-   </selectable>
-   <numeric>
-    <value type="number"/>
-   </numeric>
-  </mixed>
- </stress>
-   
- <voice-family hasSub="no">
-  <mixed>
-   <selectable>
-    <value name="inherit"/>   
-   </selectable>
-   <string>
-    <value type="edit"/>
-   </string>
-  </mixed>
- </voice-family>
-   
- <volume hasSub="no">
-  <mixed>
-   <selectable>
-    <value name="silent"/>   
-    <value name="x-soft"/>  
-    <value name="soft"/>   
-    <value name="medium"/> 
-    <value name="loud "/>   
-    <value name="x-loud "/> 
-   </selectable>
-   <numeric>
-    <value type="number"/>
-    <value type="percentage"/>
-   </numeric>
-  </mixed>
- </volume>
+  <volume>
+    <list value="silent,x-soft,soft,medium,loud,x-loud,inherit"/>   
+    <number/>
+    <percentage/> 
+  </volume>
   
 </mediagroup>
 
 <mediagroup type="visual">
 
- <background hasSub="yes">
-   
-  <background-attachment hasSub="no">
-   <selectable>
-    <value name="scroll"/> 
-    <value name="fixed"/> 
-    <value name="inherit"/>
-   </selectable>
-  </background-attachment>
-      
-  <background-color hasSub="no">
-   <mixed>
-    <selectable>
-     <value name="transparent"/>   
-     <value name="inherit"/>  
-    </selectable>
-    <string>
-     <value type="color"/>
-     <value type="predefinedColorList"/>
-    </string>
-   </mixed>
-  </background-color>
-     
-  <background-image hasSub="no">
-   <mixed>
-    <selectable>
-     <value name="none"/>   
-     <value name="inherit"/>  
-    </selectable>
-    <string>
-     <value type="uri" mode="single" resourceType="image"/>
-    </string>
-   </mixed>
-  </background-image>
-     
-  <background-position hasSub="no" aplliesTo="block,replaced">
-   <mixed>
-    <selectable>  
-     <value name="inherit"/>  
-    </selectable>
-    <doubleSelectable> 
-     <sx> 
-      <value name="top"/> 
-      <value name="center"/>
-      <value name="bottom"/>
-     </sx>
-     <dx> 
-      <value name="left"/>
-      <value name="center"/>
-      <value name="right"/> 
-     </dx>         
-    </doubleSelectable>
-    <string>
-     <value type="edit"/>
-    </string>
-    <numeric>
-     <value type="doubleLength"/>
-     <value type="doublePercentage"/>
-    </numeric>
-   </mixed>
-  </background-position>
-     
-  <background-repeat hasSub="no">
-   <selectable>
-    <value name="repeat"/> 
-    <value name="repeat-x"/> 
-    <value name="repeat-y"/> 
-    <value name="no-repeat"/> 
-    <value name="inherit"/>
-   </selectable>
-  </background-repeat>  
-     
- </background>
+  <background hasSub="yes"> 
+    <background-attachment>
+      <list value="scroll,fixed,inherit"/>  
+    </background-attachment>     
+    <background-color> 
+      <colors/>
+      <list value="transparent,inherit"/>       
+    </background-color>     
+    <background-image>    
+      <uri mode="single" resourceType="image"/>
+      <list value="none,inherit"/>
+    </background-image>   
+    <background-position>      
+      <doubleList> 
+        <leftList value="top,center,bottom"/>
+        <rightList value="left,center,right"/>      
+      </doubleList>
+      <edit/>
+      <doubleLength/>
+      <doublePercentage/> 
+      <list value="inherit" editable="yes"/>
+    </background-position> 
+    <background-repeat>
+      <list value="repeat,repeat-x,repeat-y,no-repeat,inherit"/>  
+    </background-repeat>      
+  </background>
 
- <border hasSub="yes">
-   
-  <border-collapse hasSub="no" appliesToSpecificSelector="table">
-   <selectable>
-    <value name="collapse"/> 
-    <value name="separate"/> 
-    <value name="inherit"/>
-   </selectable>
-  </border-collapse>  
-       
-  <border-color hasSub="no">
-   <mixed>
-    <selectable>
-     <value name="transparent"/>   
-     <value name="inherit"/>  
-    </selectable>
-    <string>
-     <value type="color"/>
-     <value type="predefinedColorList"/>
-    </string>
-   </mixed>
-  </border-color>
-     
-  <border-spacing hasSub="no" appliesToSpecificSelector="table">
-   <mixed>
-    <selectable>  
-     <value name="inherit"/>  
-    </selectable>
-    <string>
-     <value type="edit"/>
-    </string>
-    <numeric>
-     <value type="doubleLength"/>
-    </numeric>
-   </mixed>
-  </border-spacing>
-     
-  <border-style hasSub="no">
-   <selectable> 
-    <value name="none"/> 
-    <value name="hidden"/>  
-    <value name="dotted"/>  
-    <value name="dashed"/>  
-    <value name="solid"/>  
-    <value name="double"/>  
-    <value name="groove"/> 
-    <value name="ridge"/>  
-    <value name="inset"/>  
-    <value name="outset"/>   
-   </selectable>
-  </border-style>
-     
-  <border-top hasSub="yes">
-     
-   <border-top-color hasSub="no">
-    <mixed>
-     <selectable>
-      <value name="transparent"/>   
-      <value name="inherit"/>  
-     </selectable>
-     <string>
-      <value type="color"/>
-      <value type="predefinedColorList"/>
-     </string>
-    </mixed>
-   </border-top-color>
-       
-   <border-top-style hasSub="no">
-    <selectable> 
-     <value name="none"/> 
-     <value name="hidden"/>  
-     <value name="dotted"/>  
-     <value name="dashed"/>  
-     <value name="solid"/>  
-     <value name="double"/>  
-     <value name="groove"/> 
-     <value name="ridge"/>  
-     <value name="inset"/>  
-     <value name="outset"/>   
-    </selectable>
-   </border-top-style>
-       
-   <border-top-width hasSub="no">
-    <mixed>
-     <selectable>
-      <value name="thin "/> 
-      <value name="medium "/> 
-      <value name="thick "/> 
-      <value name="inherit"/>  
-     </selectable>
-     <numeric>
-      <value type="length"/>
-     </numeric>
-    </mixed>
-   </border-top-width> 
-  
+  <border hasSub="yes">
+    <border-collapse>
+      <list value="collapse,separate,inherit"/>   
+    </border-collapse>       
+    <border-color>     
+      <colors/>
+      <list value="transparent,inherit" editable="yes"/>
+    </border-color>   
+    <border-spacing>     
+      <edit/>
+      <doubleLength/>
+      <list value="inherit" editable="yes"/> 
+    </border-spacing>  
+    <border-style>
+      <list value="none,hidden,dotted,dashed,solid,double,groove,ridge,inset,outset,inherit" editable="yes"/>    
+    </border-style>   
+    <border-top hasSub="yes">  
+      <border-top-color>  
+        <colors/> 
+        <list value="transparent,inherit"/>     
+      </border-top-color>
+      <border-top-style>
+        <list value="none,hidden,dotted,dashed,solid,double,groove,ridge,inset,outset,inherit"/>      
+      </border-top-style>
+      <border-top-width>           
+        <length/> 
+        <list value="thin,medium,thick,inherit"/>
+      </border-top-width> 
   </border-top>
      
-  <border-left hasSub="yes">
+ <border-left hasSub="yes">
      
-   <border-left-color hasSub="no">
-    <mixed>
-     <selectable>
-      <value name="transparent"/>   
-      <value name="inherit"/>  
-     </selectable>
-     <string>
-      <value type="color"/>
-      <value type="predefinedColorList"/>
-     </string>
-    </mixed>
+   <border-left-color>        
+     <colors/>
+     <list value="transparent,inherit"/>
    </border-left-color>
      
-   <border-left-style hasSub="no">
-    <selectable> 
-     <value name="none"/> 
-     <value name="hidden"/>  
-     <value name="dotted"/>  
-     <value name="dashed"/>  
-     <value name="solid"/>  
-     <value name="double"/>  
-     <value name="groove"/> 
-     <value name="ridge"/>  
-     <value name="inset"/>  
-     <value name="outset"/>   
-    </selectable>
+   <border-left-style>
+     <list value="none,hidden,dotted,dashed,solid,double,groove,ridge,inset,outset,inherit"/>   
    </border-left-style>
        
-   <border-left-width hasSub="no">
-    <mixed>
-     <selectable>
-      <value name="thin "/> 
-      <value name="medium "/> 
-      <value name="thick "/> 
-      <value name="inherit"/>  
-     </selectable>
-     <numeric>
-      <value type="length"/>
-     </numeric>
-    </mixed>
+   <border-left-width> 
+    <length/>  
+    <list value="thin,medium,thick,inherit"/>
    </border-left-width>
+   
   </border-left>
      
   <border-right hasSub="yes">
      
-   <border-right-color hasSub="yes">
-    <mixed>
-     <selectable>
-      <value name="transparent"/>   
-      <value name="inherit"/>  
-     </selectable>
-     <string>
-      <value type="color"/>
-      <value type="predefinedColorList"/>
-     </string>
-    </mixed>
-   </border-right-color>
+   <border-right-color>   
+   <colors/>
+   <list value="transparent,inherit"/>
+ </border-right-color>
       
-   <border-right-style hasSub="no">
-    <selectable> 
-     <value name="none"/> 
-     <value name="hidden"/>  
-     <value name="dotted"/>  
-     <value name="dashed"/>  
-     <value name="solid"/>  
-     <value name="double"/>  
-     <value name="groove"/> 
-     <value name="ridge"/>  
-     <value name="inset"/>  
-     <value name="outset"/>   
-    </selectable>
+   <border-right-style>
+    <list value="none,hidden,dotted,dashed,solid,double,groove,ridge,inset,outset,inherit"/>     
    </border-right-style>
        
-   <border-right-width hasSub="no">
-    <mixed>
-     <selectable>
-      <value name="thin "/> 
-      <value name="medium "/> 
-      <value name="thick "/> 
-      <value name="inherit"/>  
-     </selectable>
-     <numeric>
-      <value type="length"/>
-     </numeric>
-    </mixed>
-   </border-right-width>
+  <border-right-width>    
+    <length/> 
+    <list value="thin,medium,thick,inherit"/>
+  </border-right-width>
    
   </border-right> 
      
-  <border-bottom hasSub="yes" appliesTo="positioned">
+  <border-bottom hasSub="yes">
      
-   <border-bottom-color hasSub="no">
-    <mixed>
-     <selectable>
-      <value name="transparent"/>   
-      <value name="inherit"/>  
-     </selectable>
-     <string>
-      <value type="color"/>
-      <value type="predefinedColorList"/>
-     </string>
-    </mixed>
-   </border-bottom-color>
+  <border-bottom-color>
+    <colors/>
+    <list value="transparent,inherit"/>
+  </border-bottom-color>
        
-   <border-bottom-style hasSub="no">
-    <selectable> 
-     <value name="none"/> 
-     <value name="hidden"/>  
-     <value name="dotted"/>  
-     <value name="dashed"/>  
-     <value name="solid"/>  
-     <value name="double"/>  
-     <value name="groove"/> 
-     <value name="ridge"/>  
-     <value name="inset"/>  
-     <value name="outset"/>   
-    </selectable>
-   </border-bottom-style>
+  <border-bottom-style>
+    <list value="none,hidden,dotted,dashed,solid,double,groove,ridge,inset,outset,inherit"/>  
+  </border-bottom-style>
        
-   <border-bottom-width hasSub="no">
-    <mixed>
-     <selectable>
-      <value name="thin "/> 
-      <value name="medium "/> 
-      <value name="thick "/> 
-      <value name="inherit"/>  
-     </selectable>
-     <numeric>
-      <value type="length"/>
-     </numeric>
-    </mixed>
-   </border-bottom-width>
+  <border-bottom-width> 
+    <length/>
+    <list value="thin,medium,thick,inherit"/> 
+  </border-bottom-width>
      
   </border-bottom> 
        
-  <border-width hasSub="no">
-   <mixed>
-    <selectable> 
-     <value name="inherit"/>  
-    </selectable>
-    <string>
-     <value type="edit"/>
-    </string>
-   </mixed>
+  <border-width>      
+    <edit/>
+    <list value="inherit" editable="yes"/>  
   </border-width>
      
- </border>
+  </border>
 
- <bottom hasSub="no">
-  <mixed>
-   <selectable>
-    <value name="auto"/>  
-    <value name="inherit"/>  
-   </selectable>
-   <numeric>
-    <value type="length"/>
-    <value type="percentage"/>
-   </numeric>
-  </mixed>
- </bottom>
+  <bottom>      
+    <length/>
+    <percentage/>
+    <list value="auto,inherit"/>
+  </bottom>
     
- <caption-side hasSub="no" appliesToSpecificSelector="caption">
-  <selectable>
-   <value name="top"/> 
-   <value name="bottom"/> 
-   <value name="inherit"/>
-  </selectable>
+ <caption-side>
+  <list value="top,bottom,inherit"/> 
  </caption-side>
    
- <clear hasSub="no" appliesTo="block">
-  <selectable>
-   <value name="none"/> 
-   <value name="left"/> 
-   <value name="right"/> 
-   <value name="both"/> 
-   <value name="inherit"/>
-  </selectable>
+ <clear>
+  <list value="none,left,right,both,inherit"/> 
  </clear> 
    
- <clip hasSub="no" appliesTo="block,repalced">
-  <mixed>
-   <selectable>
-    <value name="auto"/>    
-   </selectable>
-   <string>
-    <value type="edit"/>
-   </string>
-  </mixed>
+ <clip> 
+   <list value="auto,inherit" editable="yes"/>       
  </clip> 
  
- <color hasSub="no">
-  <mixed>
-   <selectable>   
-    <value name="inherit"/>  
-   </selectable>
-   <string>
-    <value type="color"/>
-    <value type="predefinedColorList"/>
-   </string>
-  </mixed>
+ <color> 
+   <colors/>
+   <list value="inherit"/>
  </color>
-    
- <cursor hasSub="no">
-  <mixed>
-   <selectable>   
-    <value name="inherit"/> 
-    <value name="auto"/> 
-    <value name="crosshair"/>   
-    <value name="default"/>   
-    <value name="pointer"/>   
-    <value name="move"/>   
-    <value name="e-resize"/>   
-    <value name="ne-resize"/>   
-    <value name="nw-resize"/>   
-    <value name="n-resize"/>   
-    <value name="se-resize"/>   
-    <value name="sw-resize"/>   
-    <value name="s-resize"/>   
-    <value name="w-resize"/>  
-    <value name="text"/>   
-    <value name="wait"/>   
-    <value name="help"/>  
-    <value name="progress"/> 
-   </selectable>
-   <string>
-    <value type="uri" mode="multi" resourceType="mousePointer"/>
-   </string>
-  </mixed>
+     
+ <cursor> 
+   <list value="inherit,auto,crosshair,default,pointer,move,e-resize,ne-resize,nw-resize,n-resize,se-resize,sw-resize,s-resize,w-resize,text,wait,help,progress"/>   
+   <uri mode="multi" resourceType="mousePointer"/> 
  </cursor>
     
- <direction hasSub="no">
-  <selectable>
-   <value name="ltr"/> 
-   <value name="rtl"/> 
-   <value name="inherit"/>
-  </selectable>
+ <direction>
+  <list value="ltr,rtl,inherit"/> 
  </direction>
    
- <empty-cells hasSub="no" appliesToSpecificSelector="table">
-  <selectable>
-   <value name="show"/> 
-   <value name="hide"/> 
-   <value name="inherit"/>
-  </selectable>
+ <empty-cells>
+  <list value="show,hide,inherit"/> 
  </empty-cells>
    
- <float hasSub="no" notAppliesToSpecialCase="position:absolute">
-  <selectable>
-   <value name="left"/> 
-   <value name="right"/> 
-   <value name="none"/> 
-   <value name="inherit"/>
-  </selectable>
+ <float>
+  <list value="left,right,none,inherit"/> 
  </float>
  
-   <font hasSub="no">
-    <selectable>
-     <value name="caption"/> 
-     <value name="icon"/> 
-     <value name="menu"/> 
-     <value name="message-box"/>
-     <value name="small-caption"/>
-     <value name="status-bar"/>
-    </selectable>
+   <font>
+    <list value="caption,icon,menu,message-box,small-caption,status-bar"/>
    </font>
    
    <font hasSub="yes">
    
-     <font-family hasSub="no">
-     <mixed>
-       <string>
-         <value type="fontDialog"/>
-       </string>
-      </mixed>
+     <font-family>   
+       <fontDialog/>
      </font-family>
      
-     <font-size hasSub="no">
-     <mixed>
-      <selectable>
-         <value name="xx-small"/>  
-           <value name="x-small"/>  
-           <value name="small"/>   
-           <value name="medium"/>  
-           <value name="large"/>   
-           <value name="x-large"/>   
-           <value name="xx-large"/>  
-           <value name="larger"/>   
-           <value name="smaller"/>   
-           <value name="inherit"/>  
-      </selectable>
-      <numeric>
-         <value type="length"/>
-         <value type="percentage"/>
-      </numeric>
-     </mixed>
+     <font-size>           
+      <length/>
+      <percentage/>  
+      <list value="xx-small,x-small,small,medium,large,x-large,xx-large,larger,smaller,inherit"/> 
      </font-size> 
       
-     <font-style hasSub="no">
-      <selectable>
-        <value name="normal"/> 
-        <value name="italic"/> 
-        <value name="oblique"/> 
-        <value name="inherit"/> 
-      </selectable>
+     <font-style>
+      <list value="normal,italic,oblique,inherit"/>     
      </font-style>  
       
-     <font-variant hasSub="no">
-      <selectable>
-        <value name="normal"/> 
-        <value name="small-caps"/> 
-        <value name="inherit"/>
-      </selectable>
+     <font-variant>
+      <list value="normal,small-caps,inherit"/>     
      </font-variant>  
       
-     <font-weight hasSub="no">
-      <selectable>
-        <value name="normal"/> 
-        <value name="bold"/> 
-        <value name="bolder"/> 
-        <value name="lighter"/> 
-        <value name="100"/> 
-        <value name="200"/> 
-        <value name="300"/> 
-        <value name="400"/> 
-        <value name="500"/> 
-        <value name="600"/> 
-        <value name="700"/> 
-        <value name="800"/> 
-        <value name="900"/> 
-        <value name="inherit"/>
-      </selectable>
+     <font-weight>
+      <list value="normal,bold,bolder,lighter,100,200,300,400,500,600,700,800,900,inherit"/>
      </font-weight>  
          
    </font>
    
-    <height hasSub="no">
-    <mixed>
-      <selectable>
-       <value name="auto"/> 
-       <value name="inherit"/>     
-      </selectable>
-      <numeric>
-       <value type="length"/>
-       <value type="percentage"/>
-      </numeric>
-     </mixed> 
+    <height>       
+      <length/>
+      <percentage/>  
+      <list value="auto,inherit"/>   
     </height>
     
-    <left hasSub="no">
-     <mixed>
-      <selectable>
-       <value name="auto"/> 
-       <value name="inherit"/>     
-      </selectable>
-      <numeric>
-       <value type="length"/>
-       <value type="percentage"/>
-      </numeric>
-     </mixed> 
+    <left>         
+       <length/>
+       <percentage/>
+       <list value="auto,inherit"/>
     </left>
     
-    <letter-spacing hasSub="no"> 
-     <mixed>
-      <selectable>
-       <value name="normal"/> 
-       <value name="inherit"/>     
-      </selectable>
-      <numeric>
-       <value type="length"/>
-      </numeric>
-     </mixed> 
+    <letter-spacing>            
+       <length/> 
+       <list value="normal,inherit"/>  
     </letter-spacing>
     
-    <line-height hasSub="no">
-    <mixed>
-      <selectable>
-       <value name="normal"/> 
-       <value name="inherit"/>     
-      </selectable>
-      <numeric>
-       <value type="length"/>
-       <value type="percentage"/>
-       <value type="number"/>
-      </numeric>
-     </mixed> 
+    <line-height>        
+      <length/>
+      <percentage/>    
+      <number/>
+      <list value="normal,inherit"/>
     </line-height>
     
-    <margin hasSub="yes">
-     <margin-left hasSub="no">
-      <mixed>
-       <selectable> 
-        <value name="auto"/>     
-       </selectable>
-       <numeric>
-        <value type="length"/>
-        <value type="percentage"/>
-       </numeric>
-      </mixed> 
-     </margin-left>
-     
-     
-     <margin-bottom hasSub="no">
-     <mixed>
-      <selectable> 
-       <value name="auto"/>     
-      </selectable>
-      <numeric>
-       <value type="length"/>
-       <value type="percentage"/>
-      </numeric>
-     </mixed> 
-     </margin-bottom>
-      
-     <margin-right hasSub="no">
-     <mixed>
-      <selectable> 
-       <value name="auto"/>     
-      </selectable>
-      <numeric>
-       <value type="length"/>
-       <value type="percentage"/>
-      </numeric>
-     </mixed> 
-     </margin-right>
-     
-     <margin-top hasSub="no">
-     <mixed>
-      <selectable> 
-       <value name="auto"/>     
-      </selectable>
-      <numeric>
-       <value type="length"/>
-       <value type="percentage"/>
-      </numeric>
-     </mixed> 
-     </margin-top>
-     
-   </margin>
-    
-    <max-height hasSub="no">
-     <mixed>
-      <selectable>
-       <value name="none"/> 
-       <value name="inherit"/>     
-      </selectable>
-      <numeric>
-       <value type="length"/>
-       <value type="percentage"/>
-      </numeric>
-     </mixed> 
-    </max-height>
-    
-    <max-width hasSub="no">
-     <mixed>
-      <selectable>
-       <value name="none"/> 
-       <value name="inherit"/>     
-      </selectable>
-      <numeric>
-       <value type="length"/>
-       <value type="percentage"/>
-      </numeric>
-     </mixed> 
-    </max-width>
-    
-    <min-height hasSub="no">
-     <mixed>
-      <selectable>
-       <value name="none"/> 
-       <value name="inherit"/>     
-      </selectable>
-      <numeric>
-       <value type="length"/>
-       <value type="percentage"/>
-      </numeric>
-     </mixed> 
-    </min-height> 
-     
-    <min-width hasSub="no">
-     <mixed>
-      <selectable>
-       <value name="none"/> 
-       <value name="inherit"/>     
-      </selectable>
-      <numeric>
-       <value type="length"/>
-       <value type="percentage"/>
-      </numeric>
-     </mixed> 
-    </min-width> 
-    
-    <overflow hasSub="no">
-      <selectable>
-        <value name="visible"/> 
-        <value name="hidden"/> 
-        <value name="scroll"/> 
-        <value name="auto"/> 
-        <value name="inherit"/>
-      </selectable>
-   </overflow>
-   
-   <page hasSub="no"> 
-      <mixed>
-        <selectable>
-         <value name="auto"/>    
-       </selectable>
-       <string>
-         <value type="edit"/>
-      </string>
-     </mixed>
-    </page>
-    
-      <page-break-after hasSub="no">
-       <selectable>
-         <value name="auto"/> 
-         <value name="always"/> 
-         <value name="avoid"/> 
-         <value name="left"/> 
-         <value name="right"/> 
-         <value name="inherit"/>
-      </selectable>
-     </page-break-after> 
-       
-      <page-break-before hasSub="no">
-       <selectable>
-        <value name="auto"/> 
-        <value name="always"/> 
-        <value name="avoid"/> 
-        <value name="left"/> 
-        <value name="right"/> 
-        <value name="inherit"/> 
-       </selectable>
-     </page-break-before>  
-        
-      <page-break-inside hasSub="no">
-       <selectable>
-         <value name="avoid"/> 
-         <value name="auto"/> 
-         <value name="inherit"/>
-       </selectable>
-     </page-break-inside> 
-       
-    <position hasSub="no">
-      <selectable>
-        <value name="static"/> 
-        <value name="relative"/> 
-        <value name="absolute"/>
-        <value name="fixed"/> 
-        <value name="inherit"/>
-      </selectable>
-   </position>
-   
-   <quotes hasSub="no">
-    <mixed>
-      <selectable>
-         <value name="none"/>  
-         <value name="inherit"/>  
-      </selectable>
-      <string>
-         <value type="edit"/>
-      </string>
-     </mixed>
-    </quotes>
-    
-    <right hasSub="no">
-    <mixed>
-      <selectable>
-         <value name="auto"/>  
-         <value name="inherit"/>  
-      </selectable>
-      <numeric>
-         <value type="length"/>
-         <value type="percentage"/>
-      </numeric>
-     </mixed>
-    </right>
-    
-   <table-layout hasSub="no">
-      <selectable>
-        <value name="auto"/> 
-        <value name="fixed"/> 
-        <value name="inherit"/>
-      </selectable>
-   </table-layout>
-   
-    <text-align hasSub="no">
-    <mixed>
-      <selectable>
-       <value name="center"/> 
-       <value name="justify "/> 
-       <value name="right"/> 
-       <value name="left"/> 
-       <value name="inherit"/>     
-      </selectable>
-     </mixed>   
-    </text-align>
-     
-    <text-decoration hasSub="no">
-     <selectable>
-      <value name="none"/> 
-      <value name="underline"/> 
-      <value name="overline"/> 
-      <value name="line-through"/> 
-      <value name="blink"/> 
-      <value name="inherit"/> 
-     </selectable>
-    </text-decoration>
-    
-    <text-indent hasSub="no"> 
-    <mixed>
-      <selectable>
-         <value name="inherit"/>  
-      </selectable>
-      <numeric>
-         <value type="length"/>
-         <value type="percentage"/>
-      </numeric>
-     </mixed>
-    </text-indent>
-       
-    <text-transform hasSub="no"> 
-      <selectable>
-        <value name="capitalize"/> 
-        <value name="uppercase"/> 
-        <value name="lowercase"/> 
-        <value name="none"/> 
-        <value name="inherit"/>
-      </selectable>
-   </text-transform>
-   
-    <top hasSub="no">
-     <mixed>
-      <selectable>
-       <value name="auto"/> 
-       <value name="inherit"/>     
-      </selectable>
-      <numeric>
-       <value type="length"/>
-       <value type="percentage"/>
-      </numeric>
-     </mixed> 
-    </top> 
-    
-    <unicode-bidi hasSub="no">
-      <selectable>
-        <value name="normal"/> 
-        <value name="embed"/> 
-        <value name="bidi-override"/> 
-        <value name="inherit"/>
-      </selectable>
-   </unicode-bidi> 
-   
-    <vertical-align hasSub="no">
-     <mixed>
-      <selectable>
-       <value name="baseline"/> 
-       <value name="inherit"/>   
-       <value name="sub"/>   
-       <value name="super"/>   
-       <value name="top"/>   
-       <value name="text-top"/>   
-       <value name="middle"/>   
-       <value name="bottom"/>   
-       <value name="text-bottom"/>  
-      </selectable>
-      <numeric>
-       <value type="length"/>
-       <value type="percentage"/>
-      </numeric>
-     </mixed>    
-    </vertical-align>
-     
-    <visibility hasSub="no">
-      <selectable>
-        <value name="visible"/> 
-        <value name="hidden"/> 
-        <value name="collapse"/> 
-        <value name="inherit"/> 
-      </selectable>
-    </visibility>
-      
-    <white-space hasSub="no">
-      <selectable>
-        <value name="normal"/> 
-        <value name="pre"/>  
-        <value name="pre-wrap"/> 
-        <value name="pre-line"/>  
-        <value name="nowrap"/> 
-        <value name="inherit"/>
-      </selectable>
-    </white-space>
-    
-
-    
-    <width hasSub="no">
-     <mixed>
-      <selectable>
-         <value name="auto"/>  
-         <value name="inherit"/>  
-      </selectable>
-      <numeric>
-         <value type="length"/>
-         <value type="percentage"/>
-      </numeric>
-     </mixed>
-    </width>
-    
-    <word-spacing hasSub="no">
-      <mixed>
-      <selectable>
-         <value name="auto"/>  
-         <value name="inherit"/>  
-      </selectable>
-      <numeric>
-         <value type="length"/>
-      </numeric>
-     </mixed>
-    </word-spacing>
-     
-    <z-index hasSub="no">
-    <mixed>
-      <selectable> 
-       <value name="inherit"/>  
-       <value name="auto"/>   
-      </selectable>
-      <numeric>
-       <value type="integer"/>
-      </numeric>
-     </mixed>
-    </z-index>
-      
- <list-style hasSub="yes">
-   
-     <list-style-image hasSub="no">
-      <mixed>
-       <selectable>
-         <value name="none"/>   
-         <value name="inherit"/>  
-       </selectable>
-       <string>
-         <value type="uri" mode="single" resourceType="image"/>
-      </string>
-     </mixed>
+    <list-style hasSub="yes">   
+    <list-style-image>       
+      <uri mode="single" resourceType="image"/> 
+      <list value="none,inherit"/>  
     </list-style-image> 
+    <list-style-position>
+      <list value="inside,outside,inherit"/>     
+    </list-style-position>       
+    <list-style-type>
+      <list value="disc,circle,square,decimal,decimal-leading-zero,lower-roman,upper-roman,lower-greek,lower-alpha,lower-latin,upper-alpha,upper-latin,hebrew,armenian,georgian,cjk-ideographic,hiragana,katakana,hiragana-iroha,katakana-iroha,none,inherit"/>   
+    </list-style-type>          
+  </list-style>
+   
+  <margin hasSub="yes">
+    <margin-left>          
+      <length/>
+      <percentage/>  
+      <list value="auto"/>   
+    </margin-left> 
+    <margin-bottom>        
+      <length/>
+      <percentage/>  
+      <list value="auto"/>   
+    </margin-bottom>
+    <margin-right>     
+      <length/>
+      <percentage/>  
+      <list value="auto"/> 
+    </margin-right> 
+    <margin-top>        
+      <length/>
+      <percentage/>  
+      <list value="auto"/>   
+    </margin-top>  
+  </margin>
     
-     <list-style-position hasSub="no">
-      <selectable>
-        <value name="inside"/> 
-        <value name="outside"/> 
-        <value name="inherit"/>
-      </selectable>
-     </list-style-position>  
+  <max-height>      
+    <length/>
+    <percentage/>
+    <list value="none,inherit"/>   
+  </max-height>
+    
+  <max-width>     
+    <length/>
+    <percentage/>  
+    <list value="none,inherit"/>  
+  </max-width>
+    
+  <min-height>    
+    <length/>
+    <percentage/> 
+    <list value="none,inherit"/>    
+  </min-height> 
+     
+  <min-width>         
+    <length/>
+    <percentage/>  
+    <list value="none,inherit"/>   
+  </min-width>
+  
+  <outline hasSub="yes">
+    <outline-color>  
+      <colors/>
+      <list value="invert,inherit"/>
+    </outline-color>   
+    <outline-style>
+      <list value="none,hidden,dotted,dashed,solid,double,groove,ridge,inset,outset,inherit"/>    
+    </outline-style>    
+    <outline-width> 
+      <length/> 
+      <list value="thin,medium,thick,inherit"/>  
+    </outline-width>    
+  </outline> 
+  
+  <overflow>
+    <list value="visible,hidden,scroll,auto,inherit"/>   
+  </overflow>
+   
+  <padding hasSub="yes">
+    <padding-top>  
+      <length/>  
+      <list value="thin,medium,thick,inherit"/>
+    </padding-top> 
+    <padding-right> 
+      <length/>
+      <list value="thin,medium,thick,inherit"/>
+    </padding-right>
+    <padding-bottom>
+      <length/>
+      <list value="thin,medium,thick,inherit"/>
+    </padding-bottom>  
+    <padding-left> 
+      <length/>
+      <list value="thin,medium,thick,inherit"/>
+    </padding-left>  
+  </padding>
+       
+  <page>               
+    <edit/>  
+    <list value="auto"/> 
+  </page>
+    
+  <page-break-after>
+    <list value="auto,always,avoid,left,right,inherit"/>   
+  </page-break-after> 
+       
+  <page-break-before>
+    <list value="auto,always,avoid,left,right,inherit"/>   
+  </page-break-before>  
+        
+  <page-break-inside>
+    <list value="avoid,auto,inherit"/> 
+  </page-break-inside> 
+       
+  <position>
+    <list value="static,relative,absolute,fixed,inherit"/>    
+  </position>
+   
+  <quotes>    
+    <list value="none,inherit" editable="yes"/>          
+  </quotes>
+    
+  <right>  
+    <length/>
+    <percentage/>
+    <list value="auto,inherit"/>   
+  </right>
+    
+  <table-layout>
+    <list value="auto,fixed,inherit"/>     
+  </table-layout>
+   
+  <text-align>
+    <list value="center,justify,right,left,inherit"/>         
+  </text-align>
+     
+  <text-decoration>
+   <list value="none,underline,overline,line-through,blink,inherit"/>  
+   <doubleList> 
+        <leftList value="none,underline,overline,line-through,blink,inherit"/>
+        <rightList value="none,underline,overline,line-through,blink,inherit"/>      
+      </doubleList> 
+  </text-decoration>
+    
+  <text-indent>           
+    <length/>
+    <percentage/>  
+    <list value="inherit"/>    
+  </text-indent>
+       
+  <text-transform> 
+    <list value="capitalize,uppercase,lowercase,none,inherit"/>    
+  </text-transform>
+   
+  <top>           
+    <length/>
+    <percentage/> 
+    <list value="auto,inherit"/> 
+  </top> 
+    
+  <unicode-bidi>
+    <list value="normal,embed,bidi-override,inherit"/>     
+  </unicode-bidi> 
+   
+  <vertical-align>     
+    <list value="baseline,inherit,sub,super,top,text-top,middle,bottom,text-bottom"/>      
+    <length/>
+    <percentage/>     
+  </vertical-align>
+     
+  <visibility>
+    <list value="visible,hidden,collapse,inherit"/>      
+  </visibility>
       
-     <list-style-type hasSub="no">
-      <selectable>
-        <value name="disc"/> 
-        <value name="circle"/> 
-        <value name="square"/> 
-        <value name="decimal"/> 
-        <value name="decimal-leading-zero"/> 
-        <value name="lower-roman"/> 
-        <value name="upper-roman"/> 
-        <value name="lower-greek"/> 
-        <value name="lower-alpha"/> 
-        <value name="lower-latin"/> 
-        <value name="upper-alpha"/> 
-        <value name="upper-latin"/> 
-        <value name="hebrew"/> 
-        <value name="armenian"/> 
-        <value name="georgian"/> 
-        <value name="cjk-ideographic"/> 
-        <value name="hiragana"/> 
-        <value name="katakana"/> 
-        <value name="hiragana-iroha"/> 
-        <value name="katakana-iroha"/> 
-        <value name="none"/> 
-        <value name="inherit"/>
-      </selectable>
-     </list-style-type>  
+  <white-space>
+    <list value="normal,pre,pre-wrap,pre-line,nowrap,inherit"/>     
+  </white-space>
+    
+  <width>         
+    <length/>
+    <percentage/>
+    <list value="auto,inherit"/>  
+  </width>
+    
+  <word-spacing>          
+    <length/> 
+    <list value="auto,inherit"/> 
+  </word-spacing>
+     
+  <z-index>      
+    <integer minValue="-9999"/>  
+    <list value="inherit,auto"/> 
+  </z-index>
          
-   </list-style>
-   
- 
-   <outline hasSub="yes">
-   
-     <outline-color hasSub="no"> 
-      <mixed>
-       <selectable>   
-         <value name="invert"/> 
-         <value name="inherit"/>  
-       </selectable>
-       <string>
-         <value type="color"/>
-         <value type="predefinedColorList"/>
-       </string>
-      </mixed>
-     </outline-color>
-     
-     <outline-style hasSub="no">
-       <selectable>
-        <value name="none"/> 
-        <value name="hidden"/>  
-        <value name="dotted"/>  
-        <value name="dashed"/>  
-        <value name="solid"/>  
-        <value name="double"/>  
-        <value name="groove"/>  
-        <value name="ridge"/>  
-        <value name="inset"/>  
-        <value name="outset"/>  
-        <value name="inherit"/>  
-       </selectable>
-      </outline-style> 
-     
-     <outline-width hasSub="no">
-      <mixed>
-       <selectable>
-         <value name="thin "/> 
-         <value name="medium "/> 
-         <value name="thick "/> 
-         <value name="inherit"/>  
-       </selectable>
-       <numeric>
-         <value type="length"/>
-      </numeric>
-     </mixed>
-     </outline-width>
-     
-   </outline> 
-   
- <padding hasSub="yes">
- 
-  <padding-top hasSub="no"> 
-   <mixed>
-    <selectable>
-     <value name="thin "/> 
-     <value name="medium "/> 
-     <value name="thick "/> 
-     <value name="inherit"/>  
-    </selectable>
-    <numeric>
-     <value type="length"/>
-    </numeric>
-   </mixed>
-  </padding-top> 
-   
-  <padding-right hasSub="no"> 
-   <mixed>
-    <selectable>
-     <value name="thin "/> 
-     <value name="medium "/> 
-     <value name="thick "/> 
-     <value name="inherit"/>  
-    </selectable>
-    <numeric>
-     <value type="length"/>
-    </numeric>
-   </mixed>
-  </padding-right>
-  
-  <padding-bottom hasSub="no">
-   <mixed>
-    <selectable>
-     <value name="thin "/> 
-     <value name="medium "/> 
-     <value name="thick "/> 
-     <value name="inherit"/>  
-    </selectable>
-    <numeric>
-     <value type="length"/>
-    </numeric>
-   </mixed>
-  </padding-bottom> 
-  
-  <padding-left hasSub="no"> 
-   <mixed>
-    <selectable>
-     <value name="thin "/> 
-     <value name="medium "/> 
-     <value name="thick "/> 
-     <value name="inherit"/>  
-    </selectable>
-    <numeric>
-     <value type="length"/>
-    </numeric>
-   </mixed>
-  </padding-left> 
-  
- </padding>
-   
 </mediagroup>
 
 <mediagroup type="paged">
        
-    <page hasSub="no"> 
-      <mixed>
-        <selectable>
-         <value name="auto"/>    
-       </selectable>
-       <string>
-         <value type="edit"/>
-      </string>
-     </mixed>
-    </page>
-    
-      <page-break-after hasSub="no">
-       <selectable>
-         <value name="auto"/> 
-         <value name="always"/> 
-         <value name="avoid"/> 
-         <value name="left"/> 
-         <value name="right"/> 
-         <value name="inherit"/>
-      </selectable>
-     </page-break-after> 
+  <page>    
+    <list value="auto"/>            
+    <edit/> 
+  </page> 
+     
+  <page-break-after>
+    <list value="auto,always,avoid,left,right,inherit"/>    
+  </page-break-after> 
        
-      <page-break-before hasSub="no">
-       <selectable>
-        <value name="auto"/> 
-        <value name="always"/> 
-        <value name="avoid"/> 
-        <value name="left"/> 
-        <value name="right"/> 
-        <value name="inherit"/> 
-       </selectable>
-     </page-break-before>  
+  <page-break-before>
+    <list value="auto,always,avoid,left,right,inherit"/>     
+  </page-break-before>  
         
-      <page-break-inside hasSub="no">
-       <selectable>
-         <value name="avoid"/> 
-         <value name="auto"/> 
-         <value name="inherit"/>
-       </selectable>
-     </page-break-inside> 
+  <page-break-inside>
+    <list value=",avoid,auto,inherit"/>    
+  </page-break-inside> 
       
 </mediagroup>
 
 <mediagroup type="interactive">
   
- <cursor hasSub="no">
-  <mixed>
-   <selectable>   
-    <value name="inherit"/> 
-    <value name="auto"/> 
-    <value name="crosshair"/>   
-    <value name="default"/>   
-    <value name="pointer"/>   
-    <value name="move"/>   
-    <value name="e-resize"/>   
-    <value name="ne-resize"/>   
-    <value name="nw-resize"/>   
-    <value name="n-resize"/>   
-    <value name="se-resize"/>   
-    <value name="sw-resize"/>   
-    <value name="s-resize"/>   
-    <value name="w-resize"/>  
-    <value name="text"/>   
-    <value name="wait"/>   
-    <value name="help"/> 
-    <value name="progress"/>  
-   </selectable>
-   <string>
-    <value type="uri" mode="multi" resourceType="mousePointer"/>
-   </string>
-  </mixed>
-    
- </cursor>
+  <cursor> 
+    <list value="inherit,auto,crosshair,default,pointer,move,e-resize,ne-resize,nw-resize,n-resize,se-resize,sw-resize,s-resize,w-resize,text,wait,help,progress"/>  
+    <uri mode="multi" resourceType="mousePointer"/>   
+  </cursor>
    
- <outline hasSub="yes">
-    
-   <outline-color hasSub="no"> 
-    <mixed>
-     <selectable>   
-      <value name="invert"/> 
-      <value name="inherit"/>  
-     </selectable>
-     <string>
-      <value type="color"/>
-      <value type="predefinedColorList"/>
-     </string>
-    </mixed>
-   </outline-color>
-         
-   <outline-style hasSub="no">
-    <selectable>
-     <value name="none"/> 
-     <value name="hidden"/>  
-     <value name="dotted"/>  
-     <value name="dashed"/>  
-     <value name="solid"/>  
-     <value name="double"/>  
-     <value name="groove"/>  
-     <value name="ridge"/>  
-     <value name="inset"/>  
-     <value name="outset"/>  
-     <value name="inherit"/>  
-    </selectable>
-   </outline-style>  
-      
-   <outline-width hasSub="no">
-    <mixed>
-     <selectable>
-      <value name="thin "/> 
-      <value name="medium "/> 
-      <value name="thick "/> 
-      <value name="inherit"/>  
-     </selectable>
-     <numeric>
-      <value type="length"/>
-    </numeric>
-   </mixed>
-  </outline-width>
-      
+  <outline hasSub="yes">  
+    <outline-color>     
+      <colors/>
+      <list value="invert,inherit"/>
+    </outline-color>    
+    <outline-style>
+      <list value="none,hidden,dotted,dashed,solid,double,groove,ridge,inset,outset,inherit"/>   
+    </outline-style>      
+    <outline-width>    
+      <length/> 
+      <list value="thin,medium,thick,inherit"/> 
+    </outline-width>      
  </outline>
     
 </mediagroup>
 
 <mediagroup type="all">
 
-  <content hasSub="no">
-   <mixed>
-    <selectable>  
-     <value name="inherit"/>  
-     <value name="open-quote"/> 
-     <value name="close-quote"/>  
-     <value name="no-open-quote"/>  
-     <value name="no-close-quote"/> 
-    </selectable>
-    <string>
-     <value type="edit"/>
-    </string>
-   </mixed>
+  <content> 
+    <list value="open-quote,close-quote,no-open-quote,no-close-quote,inherit" editable="yes"/>     
   </content>
     
-  <counter-increment hasSub="no">
-   <mixed>
-   <selectable>
-    <value name="inherit"/>  
-    <value name="none"/>  
-   </selectable>
-   <string>
-    <value type="edit"/>
-   </string>
-  </mixed>
+  <counter-increment>  
+    <list value="none,inherit" editable="yes"/>  
   </counter-increment>
   
-  <counter-reset hasSub="no">
-   <mixed>
-   <selectable>
-    <value name="inherit"/> 
-    <value name="none"/>  
-   </selectable>
-   <string>
-    <value type="edit"/>
-   </string>
-  </mixed>
+  <counter-reset>   
+    <list value="none,inherit" editable="yes"/>  
   </counter-reset>
     
-  <display hasSub="no">
-   <selectable>
-    <value name="inline"/> 
-    <value name="inline-block"/> 
-    <value name="block"/>  
-    <value name="list-item"/> 
-    <value name="run-in"/>     
-    <value name="table"/>  
-    <value name="inline-table"/>  
-    <value name="table-row-group"/>  
-    <value name="table-header-group"/>  
-    <value name="table-footer-group"/>  
-    <value name="table-row"/>  
-    <value name="table-column-group"/>  
-    <value name="table-column"/>  
-    <value name="table-cell"/>  
-    <value name="table-caption"/>  
-    <value name="none"/>  
-    <value name="inherit"/> 
-   </selectable>
+  <display>
+    <list value="inline,inline-block,block,list-item,run-in,table,inline-table,table-row-group,table-header-group,table-footer-group,table-row,table-column-group,table-column,table-cell,table-caption,none,inherit"/> 
   </display>
     
  </mediagroup>

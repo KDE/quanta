@@ -25,10 +25,11 @@
 #include <qregexp.h>
 
 #include <kpushbutton.h>
-//#include <kdebug.h>
+#include <kdebug.h>
 #include <kdialog.h>
 #include <kiconloader.h>
 #include <klocale.h>
+#include <klineedit.h>
 
 #include "colorrequester.h"
 #include "specialsb.h"
@@ -70,10 +71,11 @@ void propertySetter::reset(){
   m_ind=0;
 }
 
-void propertySetter::setFontEditor()
+void propertySetter::setFontEditor(const QString& s)
 {
   m_ftE = new fontEditor(this);
   connect(m_ftE, SIGNAL(valueChanged(const QString&)), this, SIGNAL(valueChanged(const QString&)));
+  m_ftE->setInitialValue(s);
   m_list.append(m_ftE);
 }
 
@@ -81,6 +83,7 @@ void propertySetter::setComboBox()
 {
   m_cb = new QComboBox(this);
   connect(m_cb, SIGNAL(activated(const QString&)), this, SIGNAL(valueChanged(const QString&)));
+  connect(m_cb, SIGNAL(textChanged(const QString&)), this, SIGNAL(valueChanged(const QString&)));
   m_list.append(m_cb);
 }
 
@@ -100,7 +103,7 @@ void propertySetter::setLineEdit()
   m_list.append(m_le);
 }
 
-void propertySetter::setLengthEditor(QString s){
+void propertySetter::setLengthEditor(const QString& s){
   m_lE = new lengthEditor(this);
   QRegExp pattern("\\d("+m_lE->cbValueList().join("|")+")");
   if(s.contains(pattern) > 0  ) {
@@ -112,7 +115,7 @@ void propertySetter::setLengthEditor(QString s){
   m_list.append(m_lE);
 }
 
-void propertySetter::setDoubleLengthEditor(QString s){
+void propertySetter::setDoubleLengthEditor(const QString& s){
   QString temp(s.simplifyWhiteSpace()),
                sx(temp.section(" ",0,0)),
                dx(temp.section(" ",1,1));
@@ -123,7 +126,7 @@ void propertySetter::setDoubleLengthEditor(QString s){
   m_list.append(m_dlE);
 }
 
-void propertySetter::setFrequencyEditor(QString s){
+void propertySetter::setFrequencyEditor(const QString& s){
   m_fe = new frequencyEditor(this);
   QRegExp pattern("\\d("+m_fe->cbValueList().join("|")+")");
   
@@ -137,7 +140,7 @@ void propertySetter::setFrequencyEditor(QString s){
   m_list.append(m_fe);
 }
 
-void propertySetter::setTimeEditor(QString s){
+void propertySetter::setTimeEditor(const QString& s){
   m_te = new timeEditor(this);
   QRegExp pattern("\\d("+m_te->cbValueList().join("|")+")");
   
@@ -151,7 +154,7 @@ void propertySetter::setTimeEditor(QString s){
   m_list.append(m_te);
 }
 
-void propertySetter::setAngleEditor(QString s){
+void propertySetter::setAngleEditor(const QString& s){
   m_ae = new angleEditor(this);
   QRegExp pattern("\\d("+m_ae->cbValueList().join("|")+")");
   
@@ -171,7 +174,7 @@ void propertySetter::setUriEditor(){
   m_list.append(m_ue);
 }
 
-void propertySetter::setDoublePercentageEditor(QString s)
+void propertySetter::setDoublePercentageEditor(const QString& s)
 {
   QString temp(s.simplifyWhiteSpace()),
                sx(temp.section(" ",0,0)),
@@ -189,43 +192,43 @@ void propertySetter::setDoubleComboBoxEditor()
   m_list.append(m_dcbe);
 }
 
-void propertySetter::setPercentageEditor(QString s)
+void propertySetter::setPercentageEditor(const QString& s)
 {
   m_pe = new percentageEditor(s, this);
   connect(m_pe, SIGNAL(valueChanged(const QString&)), this, SIGNAL(valueChanged(const QString&)));
   m_list.append(m_pe);
 }
 
-void propertySetter::setColorRequester()
+void propertySetter::setColorRequester(const QString& s)
 {
   m_cr = new colorRequester(this);
+  m_cr->lineEdit()->setText(s);
+  m_cr->setInitialValue();
   connect(m_cr, SIGNAL(textChanged(const QString&)), this, SIGNAL(valueChanged(const QString&)));
   m_list.append(m_cr);
 }
 
-void propertySetter::setPredefinedColorListEditor()
+void propertySetter::setPredefinedColorListEditor(const QString& s)
 {
   m_pcb = new QComboBox(this);
-  m_pcb->insertStringList(QStringList::split(",",HTMLColors));
+  m_pcb->insertStringList(CSSEditorGlobals::HTMLColors);
   connect(m_pcb, SIGNAL(activated(const QString&)), this, SIGNAL(valueChanged(const QString&)));
   m_list.append(m_pcb);
 }
 
 void propertySetter::Show(){
-
   QWidget *w;
   for ( w = m_list.first(); w; w = m_list.next() )  w->hide();
   m_list.at(m_ind)->show();
-  if(m_list.count() == 1)
-    {
-      if(m_pb)
-        m_pb->hide();
+  if(m_list.count() == 1) {
+    if(m_pb) m_pb->hide();
+  }
+  else  
+    if(m_ind<m_list.count()-1) { 
+      m_ind++;
+      m_pb->show();
     }
-  else  if(m_ind<m_list.count()-1)
-          { m_ind++;
-            m_pb->show();
-            }
-  else m_ind=0;
+    else m_ind=0;
 }
 
 void propertySetter::addButton(){

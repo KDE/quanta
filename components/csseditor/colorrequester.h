@@ -12,9 +12,11 @@ class colorRequester : public QHBox{
     colorRequester(QWidget *parent, const char* name=0);
     ~colorRequester();
     KLineEdit * lineEdit() const;
-    KPushButton * button() const;
+    KPushButton * button() const { return myButton; }
+    //void setInitialValue(const QString&);
   public slots:
     void openColorDialog();
+    void setInitialValue(/*const QString&*/);
   protected:
     void init();
   signals:
@@ -25,5 +27,6 @@ class colorRequester : public QHBox{
     KPushButton *myButton;
     class colorRequesterPrivate;
           colorRequesterPrivate *d;
+    QColor m_initialValue;      
 };
 #endif

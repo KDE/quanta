@@ -32,7 +32,7 @@
 #include <khtml_part.h>
 #include <khtmlview.h>
 #include <kstandarddirs.h>
-#include <kdebug.h>
+//#include <kdebug.h>
 
 #include "propertysetter.h"
 #include "qmyhighlighter.h"
@@ -136,35 +136,41 @@ void CSSEditor::activatePreview() {
 }
 
 void CSSEditor::setCurrentPropOn(const QString& s){
-  if( (m_currentProp = static_cast<myCheckListItem*>(lvVisual->findItem( s,0 )) ))
+ if( (m_currentProp = static_cast<myCheckListItem*>(lvVisual->findItem( s,0 )) )) 
     m_currentProp->setOn(true);
-  else
-  if( (m_currentProp = static_cast<myCheckListItem*>(lvAll->findItem( s,0 )) ))
-    m_currentProp->setOn(true);
-  else
-  if( (m_currentProp = static_cast<myCheckListItem*>(lvAural->findItem( s,0 )) ))
-    m_currentProp->setOn(true);
-  else
-  if( (m_currentProp = static_cast<myCheckListItem*>(lvInteractive->findItem( s,0 )) ))
-    m_currentProp->setOn(true);
-  else
-  if( (m_currentProp = static_cast<myCheckListItem*>(lvPaged->findItem( s,0 )) ))
-    m_currentProp->setOn(true);
-
+  else  
+  if( (m_currentProp = static_cast<myCheckListItem*>(lvAll->findItem( s,0 )) )) 
+    m_currentProp->setOn(true); 
+  else  
+  if( (m_currentProp = static_cast<myCheckListItem*>(lvAural->findItem( s,0 )) )) 
+    m_currentProp->setOn(true);   
+  else  
+  if( (m_currentProp = static_cast<myCheckListItem*>(lvInteractive->findItem( s,0 )) )) 
+    m_currentProp->setOn(true); 
+  else  
+  if( (m_currentProp = static_cast<myCheckListItem*>(lvPaged->findItem( s,0 )) )) 
+    m_currentProp->setOn(true); 
+            
   if( m_currentProp && m_currentProp->depth() ) {
     myCheckListItem *p = static_cast<myCheckListItem*>(m_currentProp->parent());
     while(p) {
       p->setOn(true);
       p=static_cast<myCheckListItem*>(p->parent());
     }
-  }
-}
+  }  
+}  
+  
 
  void CSSEditor::addAndSetPropertyOn(const QString& property, const QString& value){
    addProperty(property,value);
    setCurrentPropOn(property);
  }
 
+ void CSSEditor::hidePreviewer(){ 
+   m_previewer->view()->hide(); 
+   fPreview->setEnabled(false);
+ }
+ 
 void CSSEditor::initialize()
 {
   QFileInfo fi(quantaApp->currentURL());
@@ -274,6 +280,7 @@ void CSSEditor::initialize()
     if(normalMode)//normal mode editing
       temp+="}";
     display->setText(temp);
+    
 }
 
 CSSEditor::CSSEditor(QListViewItem *i, QWidget *parent, const char *name) : CSSEditorS(parent, name){
@@ -293,129 +300,144 @@ CSSEditor::~CSSEditor() {
       delete m_testFile;
       m_testFile=0L;
     }
-    if(QFile::exists(m_testFileName))
-      QFile::remove(m_testFileName);
+    if(QFile::exists(m_testFileName)) QFile::remove(m_testFileName);
 }
 
-void CSSEditor::setMiniEditors(QListViewItem* i)
-{
+void CSSEditor::setMiniEditors(QListViewItem* i){
+  
   m_ps->reset();
-
-  if(i->childCount()==0) {
-
+  
+  if(i->childCount()==0) { 
     m_currentProp = static_cast<myCheckListItem*>(i);
-
-    QDomElement type = m_doc.elementsByTagName(i->text(0)).item(0).firstChild().toElement();
-
-    if(type.tagName() == "selectable") {
-
-      QDomNodeList values = type.childNodes();
-      unsigned int i;
-      m_ps->setComboBox();
-      for(i=0; i<values.length(); i++) {
-        m_ps->ComboBox()->insertItem(values.item(i).toElement().attribute("name"));
+    QDomNodeList valueTypes = m_doc.elementsByTagName(i->text(0)).item(0).childNodes();
+    unsigned int i;
+    for(i=0; i<valueTypes.length(); i++) {
+      QDomElement curr =valueTypes.item(i).toElement();
+      QString valueTypeName(curr.tagName());
+      
+      if(valueTypeName =="list") {
+        m_ps->setComboBox();
+        m_ps->ComboBox()->insertStringList(QStringList::split(",",curr.attribute("value")));
+        if(m_properties.contains(m_currentProp->text(0)) !=0 )
+            m_ps->ComboBox()->setCurrentText(m_properties[m_currentProp->text(0)]); 
+        if(curr.attribute("editable") == "yes"){
+          m_ps->ComboBox()->setEditable(true);
+          /*if(m_properties.contains(m_currentProp->text(0)) !=0 )
+            m_ps->ComboBox()->setEditText(m_properties[m_currentProp->text(0)]); */ 
+        } 
       }
-    }
-    else
-    if(type.tagName() == "mixed") {
-
-      QDomNodeList subTypes = type.childNodes();
-      unsigned int i;
-      for(i=0; i<subTypes.length(); i++) {
-        QDomElement curr =subTypes.item(i).toElement();
-        if(curr.tagName()=="selectable") {
-          QDomNodeList values = curr.childNodes();
-          unsigned int k;
-          m_ps->setComboBox();
-          for(k=0; k<values.length(); k++) {
-            m_ps->ComboBox()->insertItem(values.item(k).toElement().attribute("name"));
+      else  
+  
+      /*if( typeName == "spinbox") {
+            m_ps->setSpinBox("0", values.item(k).toElement().attribute("minValue"),
+            values.item(k).toElement().attribute("maxValue"),
+            values.item(k).toElement().attribute("suffix"));
           }
+         
+      else*/
+      if( valueTypeName == "number") m_ps->setLineEdit();
+      else
+      if( valueTypeName == "integer") {
+        if(m_properties.contains(m_currentProp->text(0)) !=0 ) {
+          if(curr.attribute("minValue") != QString::null )
+            m_ps->setSpinBox(m_properties[m_currentProp->text(0)],curr.attribute("minValue"));  
+          else 
+            m_ps->setSpinBox(m_properties[m_currentProp->text(0)]);              
         }
-
-        if(curr.tagName()=="numeric") {
-
-          QDomNodeList values = curr.childNodes();
-          unsigned int k;
-          for(k=0; k<values.length(); k++) {
-
-            QString typeName(values.item(k).toElement().attribute("type"));
-
-            if( typeName == "spinbox") {
-              m_ps->setSpinBox("0", values.item(k).toElement().attribute("minValue"),
-              values.item(k).toElement().attribute("maxValue"),
-              values.item(k).toElement().attribute("suffix"));
-            }
-
-            if( typeName == "edit") {
-              m_ps->ComboBox()->setEditable(true);
-              m_ps->ComboBox()->lineEdit()->clear();
-            }
-
-            if( typeName == "length") m_ps->setLengthEditor(m_properties[m_currentProp->text(0)]);
-            if( typeName == "percentage") m_ps->setPercentageEditor(m_properties[m_currentProp->text(0)]);
-            if( typeName == "doubleLength") m_ps->setDoubleLengthEditor(m_properties[m_currentProp->text(0)]);
-            if( typeName == "doublePercentage") m_ps->setDoublePercentageEditor(m_properties[m_currentProp->text(0)]);
-            if( typeName == "integer") m_ps->setSpinBox(m_properties[m_currentProp->text(0)]);
-            if( typeName == "number") m_ps->setLineEdit();
-            if( typeName == "frequency") m_ps->setFrequencyEditor(m_properties[m_currentProp->text(0)]);
-            if( typeName == "time") m_ps->setTimeEditor(m_properties[m_currentProp->text(0)]);
-            if( typeName == "angle") m_ps->setAngleEditor(m_properties[m_currentProp->text(0)]);
-          }
-        }
+        else 
+          if(curr.attribute("minValue") != QString::null )
+            m_ps->setSpinBox("0",curr.attribute("minValue"));  
+          else 
+            m_ps->setSpinBox();         
+      }
+      else           
+      if( valueTypeName == "length") {
+        if(m_properties.contains(m_currentProp->text(0)) !=0 )
+          m_ps->setLengthEditor(m_properties[m_currentProp->text(0)]);  
+        else m_ps->setLengthEditor();   
+      }
+      else
+      if( valueTypeName == "percentage") {
+        if(m_properties.contains(m_currentProp->text(0)) !=0 )
+          m_ps->setPercentageEditor(m_properties[m_currentProp->text(0)]);
+        else m_ps->setPercentageEditor();  
+      }
+      else
+      if( valueTypeName == "doubleLength") {
+        if(m_properties.contains(m_currentProp->text(0)) !=0 )
+          m_ps->setDoubleLengthEditor(m_properties[m_currentProp->text(0)]);
+        else m_ps->setDoubleLengthEditor();  
+      }
+      else
+      if( valueTypeName == "doublePercentage") {
+        if(m_properties.contains(m_currentProp->text(0)) !=0 )
+          m_ps->setDoublePercentageEditor(m_properties[m_currentProp->text(0)]);  
+        else m_ps->setDoublePercentageEditor();  
+      }
+      else
+      if( valueTypeName == "frequency") {
+        if(m_properties.contains(m_currentProp->text(0)) !=0 )
+          m_ps->setFrequencyEditor(m_properties[m_currentProp->text(0)]); 
+        else m_ps->setFrequencyEditor();  
+      }
+      else
+      if( valueTypeName == "time") {
+        if(m_properties.contains(m_currentProp->text(0)) !=0 )
+          m_ps->setTimeEditor(m_properties[m_currentProp->text(0)]);
+        else m_ps->setTimeEditor();  
+      }     
+      else
+      if( valueTypeName == "angle") {
+        if(m_properties.contains(m_currentProp->text(0)) !=0 )
+          m_ps->setAngleEditor(m_properties[m_currentProp->text(0)]); 
+        else m_ps->setAngleEditor();  
+      }    
+      /*else
+      if( valueTypeName == "edit") {
+        m_ps->ComboBox()->setEditable(true);
+        m_ps->ComboBox()->lineEdit()->clear();
+      }*/
+      else
+      if( valueTypeName == "uri") {
+        m_ps->setUriEditor();
+        if(curr.attribute("mode") == "multi") m_ps->UriEditor()->setMode(URIEditor::Multi);
+            
+        if(curr.attribute("resourceType") == "audio") m_ps->UriEditor()->setResourceType(URIEditor::audio);
         else
-        if(curr.tagName()=="string") {
-
-          QDomNodeList values = curr.childNodes();
-          unsigned int k;
-          for(k=0; k<values.length(); k++) {
-
-            QString typeName(values.item(k).toElement().attribute("type"));
-            if( typeName == "uri") {
-              m_ps->setUriEditor();
-              if(values.item(k).toElement().attribute("mode") == "multi")
-                m_ps->UriEditor()->setMode(URIEditor::Multi);
-              if(values.item(k).toElement().attribute("resourceType") == "audio")
-                m_ps->UriEditor()->setResourceType(URIEditor::audio);
-              else
-              if(values.item(k).toElement().attribute("resourceType") == "image")
-                m_ps->UriEditor()->setResourceType(URIEditor::image);
-              else
-              if(values.item(k).toElement().attribute("resourceType") == "mousePointer")
-                m_ps->UriEditor()->setResourceType(URIEditor::mousePointer);
-            }
-
-            if( typeName == "edit") {
-              m_ps->ComboBox()->setEditable(true);
-              m_ps->ComboBox()->lineEdit()->clear();
-            }
-
-            if( typeName == "color") m_ps->setColorRequester();
-            if( typeName == "predefinedColorList") m_ps->setPredefinedColorListEditor();
-            if( typeName == "fontDialog" ) m_ps->setFontEditor();
-          }
-
-            }
-            else
-          if(curr.tagName()=="doubleSelectable")
-            {
-              m_ps->setDoubleComboBoxEditor();
-              unsigned int k;
-              QDomNodeList sxValues = curr.firstChild().childNodes();
-              for(k=0; k<sxValues.length(); k++){
-                m_ps->DoubleComboBoxEditor()->cbSx()->insertItem(sxValues.item(k).toElement().attribute("name"));
-              }
-
-              QDomNodeList dxValues = curr.lastChild().childNodes();
-              for(k=0; k<dxValues.length(); k++){
-                m_ps->DoubleComboBoxEditor()->cbDx()->insertItem(dxValues.item(k).toElement().attribute("name"));
-              }
-            }
+           if(curr.attribute("resourceType") == "image") m_ps->UriEditor()->setResourceType(URIEditor::image);  
+           else
+             if(curr.attribute("resourceType") == "mousePointer") m_ps->UriEditor()->setResourceType(URIEditor::mousePointer); 
+      }      
+      else
+      if( valueTypeName == "colors") {
+        if(m_properties.contains(m_currentProp->text(0)) !=0 ){
+          m_ps->setColorRequester(m_properties[m_currentProp->text(0)]);
+          m_ps->setPredefinedColorListEditor(m_properties[m_currentProp->text(0)]);
         }
-       m_ps->addButton();
-
-     }// end "mixed" if
-     m_ps->Show();
+        else {
+          m_ps->setColorRequester();
+          m_ps->setPredefinedColorListEditor();
+        }
+        
+      }         
+      else
+      if( valueTypeName =="doubleList") {
+        m_ps->setDoubleComboBoxEditor();
+        m_ps->DoubleComboBoxEditor()->cbSx()->insertStringList(QStringList::split(",",curr.firstChild().toElement().attribute("value")));
+        m_ps->DoubleComboBoxEditor()->cbDx()->insertStringList(QStringList::split(",",curr.lastChild().toElement().attribute("value")));          
+      } 
+      else
+        if( valueTypeName == "fontDialog" ){
+          if(m_properties.contains(m_currentProp->text(0)) !=0 )
+            m_ps->setFontEditor(m_properties[m_currentProp->text(0)]);
+          else m_ps->setFontEditor(); 
+        } 
     }
+    m_ps->addButton();
+    m_ps->Show();
+  }
+  
+  
 }
 
 void CSSEditor::checkProperty(const QString& v){
@@ -457,6 +479,11 @@ QString CSSEditor::generateProperties(){
     return props;
   }
   else {
+    for ( it = m_properties.begin(); it != m_properties.end(); ++it ) {
+     
+    
+    }
+    
     ShorthandFormer sf(m_properties);
     return sf.compress();
   }

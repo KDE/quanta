@@ -34,18 +34,17 @@ class CSSSelector : public CSSSelectorS {
     QListView *m_currentListView;
     QString m_header,
                  m_footer,
-                 m_initialPreviewText,
-                 m_currentDocumentDTD;  
+                 m_initialPreviewText;  
     //QString m_sourceFileName;             
-     
+    bool m_hideEditorPreviewer; 
     void Connect();   
     
             
   public: 
-    CSSSelector(QString dtd=QString::null, QWidget *parent=0, const char* name=0);
+    CSSSelector(QWidget *parent=0, const char* name=0);
     ~CSSSelector();
     
-  public slots:
+  public :
     void loadExistingStyleSection(QString);
     void loadCSSFileContent(QString s){ loadExistingStyleSection(s); }
     void setForInitialPreview(const QString& s) { m_initialPreviewText = s;}   
@@ -54,9 +53,9 @@ class CSSSelector : public CSSSelectorS {
     QString generateStyleSection();  
     QString generateFormattedStyleSection();         
     //void setSourceFileName(const QString& n) { m_sourceFileName = n; }
-    //QString SourceFileName() const { return m_sourceFileName; }    
-    void setCurrentDocumentDTD(const QString& s){ m_currentDocumentDTD = s; }
+    //QString sourceFileName() const { return m_sourceFileName; }    
     void setDTDTags(const QString&);
+    void hideEditorPreviewer(bool b){ m_hideEditorPreviewer = b; }
     
   private slots: 
     void openCSSEditor(QListViewItem *);  

@@ -105,6 +105,7 @@ class CSSEditor : public CSSEditorS
     void setForInitialPreview(const QString& s) { m_initialPreviewText = s; } 
     QString generateProperties();
     // void setSourceFileName(const QString& n) { sourceFileName = n; }
+    void hidePreviewer();
 
   signals:
     void signalUpdatePreview();

@@ -34,7 +34,6 @@ void colorRequester::init()
      d->edit = new KLineEdit( this, "line edit" );
 
      myButton = new KPushButton( this, "kfile button");
-     //QIconSet iconSet = SmallIconSet(QString::fromLatin1("xpaint"));
      QIconSet iconSet = SmallIconSet(QString::fromLatin1("colorize"));
      QPixmap pixMap = iconSet.pixmap( QIconSet::Small, QIconSet::Normal );
      myButton->setIconSet( iconSet );
@@ -48,7 +47,7 @@ void colorRequester::init()
 
      d->connectSignals( this );
      connect( myButton, SIGNAL( clicked() ), this, SLOT( openColorDialog() ));
-
+     connect( d->edit, SIGNAL( textChanged ( const QString & ) ), this, SLOT( setInitialValue(/*const QString&*/ ) ));
  
      KAccel *accel = new KAccel( this );
      accel->insert( KStdAccel::Open, this, SLOT( openColorDialog() ));
@@ -56,22 +55,53 @@ void colorRequester::init()
  }
 
 void colorRequester::openColorDialog(){
-  QColor myColor;
-  int result = KColorDialog::getColor( myColor );
-  if ( result == KColorDialog::Accepted ){
-    d->edit->setText(myColor.name());
-    emit textChanged(myColor.name());
-  }
+ KColorDialog dlg(this,"dlg",true);
+ dlg.setColor(QColor(m_initialValue));
+ if(dlg.exec()){
+   QColor myColor(dlg.color());
+   d->edit->setText(myColor.name());
+   emit textChanged(myColor.name());
+ }
 }
  
 KLineEdit * colorRequester::lineEdit() const{
   return d->edit;
 }
-KPushButton * colorRequester::button() const{
-  return myButton;
+#include <kdebug.h>
+void colorRequester::setInitialValue(/*const QString& s*/){
+  QString temp = d->edit->text();
+  temp.remove(" ");
+ if( temp.contains("#") != 0){  
+   temp.remove("#");
+   if(temp.length() == 3) {
+     QString temp2;
+     temp2.append(temp[0]);
+     temp2.append(temp[0]);
+     temp2.append(temp[1]);
+     temp2.append(temp[1]);
+     temp2.append(temp[2]);
+     temp2.append(temp[2]);
+     temp = temp2;
+   }
+   bool ok;
+   int r = temp.left(2).toInt( &ok, 16 );
+   int g = temp.mid(2,2).toInt( &ok, 16 );
+   int b = temp.right(2).toInt( &ok, 16 );
+   m_initialValue.setRgb(r,g,b);
+ }
+ else
+ 
+   if( temp.contains("rgb(") != 0){
+     temp.remove("rgb(").remove(")");
+     QStringList rgbValues = QStringList::split(",",temp);
+     bool ok;
+     int r = rgbValues[0].toInt();
+     int g = rgbValues[1].toInt();
+     int b = rgbValues[2].toInt();
+     m_initialValue.setRgb(r,g,b);
+   }
+   else
+      m_initialValue.setNamedColor(d->edit->text());   
 }
-
-
-
 
 #include "colorrequester.moc"

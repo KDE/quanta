@@ -31,10 +31,10 @@
 #include <klocale.h>
 //#include <kdebug.h>
 
-CSSSelector::CSSSelector(QString dtd, QWidget *parent, const char* name) : CSSSelectorS (parent,name), m_currentDocumentDTD(dtd) {
+CSSSelector::CSSSelector(QWidget *parent, const char* name) : CSSSelectorS (parent,name) {
 
   m_currentItem = 0L;
-
+  m_hideEditorPreviewer = false;
   Connect();
   QString configDir = locate("appdata", "csseditor/config.xml");
   configDir = QFileInfo(configDir).dirPath() + "/";
@@ -69,7 +69,8 @@ CSSSelector::CSSSelector(QString dtd, QWidget *parent, const char* name) : CSSSe
   }
   file.close();
 
- QStringList dtdNames,dtdNickNames;
+ QStringList dtdNames,
+                    dtdNickNames;                 
  docElem = doc.documentElement();
  n = docElem.firstChild();
   while( !n.isNull() ) {
@@ -77,26 +78,16 @@ CSSSelector::CSSSelector(QString dtd, QWidget *parent, const char* name) : CSSSe
     if( !e.isNull() ) {
       dtdNames.append(e.attribute("name"));
       dtdNickNames.append(e.attribute("nickName"));
+      if(e.attribute("default") == "yes") {
+        QStringList tagList = QStringList::split( ',',e.text() );
+        tagList.sort();
+        cbTag->insertStringList( tagList );
+        cbTag->setAutoCompletion(true);
+      }
     }
     n = n.nextSibling();
   }
-
-  if( !m_currentDocumentDTD.isEmpty() ) {
-    if( dtdNames.contains( m_currentDocumentDTD ) ) {
-      n = docElem.firstChild();
-      while( !n.isNull() ) {
-        if( n.toElement().attribute("name") == m_currentDocumentDTD ){
-          break;
-        }
-        n = n.nextSibling();
-      }
-      QStringList tagList = QStringList::split( ',',n.toElement().text() );
-      cbTag->insertStringList( tagList );
-      cbTag->setAutoCompletion(true);
-      cbDTD->setDisabled(true);
-    }
-  }
-  else  cbDTD->insertStringList( dtdNickNames );
+  cbDTD->insertStringList( dtdNickNames );
 }
 
 CSSSelector::~CSSSelector(){
@@ -232,6 +223,7 @@ void CSSSelector::openCSSEditor(QListViewItem * i){
   dlg->setSelectors(s);
   dlg->setFooter(m_footer);
   dlg->initialize();
+  if(m_hideEditorPreviewer) dlg->hidePreviewer();
   if(dlg->exec())  i->setText(1,dlg->generateProperties());
   delete dlg;
 }

@@ -140,6 +140,12 @@
                                         <verstretch>0</verstretch>
                                     </sizepolicy>
                                 </property>
+                                <property name="allColumnsShowFocus">
+                                    <bool>true</bool>
+                                </property>
+                                <property name="showSortIndicator">
+                                    <bool>true</bool>
+                                </property>
                                 <property name="resizeMode">
                                     <enum>LastColumn</enum>
                                 </property>
@@ -376,6 +382,12 @@
                                 <verstretch>0</verstretch>
                             </sizepolicy>
                         </property>
+                        <property name="allColumnsShowFocus">
+                            <bool>true</bool>
+                        </property>
+                        <property name="showSortIndicator">
+                            <bool>true</bool>
+                        </property>
                         <property name="resizeMode">
                             <enum>LastColumn</enum>
                         </property>
@@ -574,6 +586,12 @@
                                 <verstretch>0</verstretch>
                             </sizepolicy>
                         </property>
+                        <property name="allColumnsShowFocus">
+                            <bool>true</bool>
+                        </property>
+                        <property name="showSortIndicator">
+                            <bool>true</bool>
+                        </property>
                         <property name="resizeMode">
                             <enum>LastColumn</enum>
                         </property>
@@ -771,6 +789,12 @@
                                 <horstretch>1</horstretch>
                                 <verstretch>0</verstretch>
                             </sizepolicy>
+                        </property>
+                        <property name="allColumnsShowFocus">
+                            <bool>true</bool>
+                        </property>
+                        <property name="showSortIndicator">
+                            <bool>true</bool>
                         </property>
                         <property name="resizeMode">
                             <enum>LastColumn</enum>

@@ -21,7 +21,8 @@
 #include <qregexp.h>
 #include <qstringlist.h>
 
-const QString HTMLColors("aliceblue,antiquewhite,aqua,aquamarine,azure,beige,bisque,black,blanchedalmond,"
+namespace CSSEditorGlobals {
+const QStringList HTMLColors(QStringList::split(",",QString("aliceblue,antiquewhite,aqua,aquamarine,azure,beige,bisque,black,blanchedalmond,"
                                    "blue,blueviolet,brown,burlywood,cadetblue,chartreuse,chocolate,coral,cornflowerblue,"
                                    "cornsilk,crimson,cyan,darkblue,darkcyan,darkgoldenrod,darkgray,darkgreen,"
                                    "darkkhaki,darkmagenta,darkolivegreen,darkorange,darkorchid,darkred,darksalmon,"
@@ -38,9 +39,16 @@ const QString HTMLColors("aliceblue,antiquewhite,aqua,aquamarine,azure,beige,bis
                                    "peachpuff,peru,pink,plum,powderblue,purple,red,rosybrown,royalblue,saddlebrown,"
                                    "salmon,sandybrown,seagreen,seashell,sienna,silver,skyblue,slateblue,slategray,snow,"
                                    "springgreen,steelblue,tan,teal,thistle,tomato,turquoise,violet,wheat,white,whitesmoke,"
-                                   "yellow,yellowgreen");
+                                   "yellow,yellowgreen")));
+                                   
+
+  const QStringList lengthUnits(QStringList::split(",",QString("cm,em,ex,in,mm,pc,pt,px"))); 
+  const QStringList frequencyUnits(QStringList::split(",",QString("Hz,kHz")));
+  const QStringList angleUnits(QStringList::split(",",QString("deg,rad,grad")));
+  const QStringList timeUnits(QStringList::split(",",QString("s,ms")));
+};                                                                   
+
                                                                    
-                                                                    
 class mySpinBox : public QSpinBox{
     Q_OBJECT
   public:

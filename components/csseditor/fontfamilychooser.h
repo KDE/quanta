@@ -18,27 +18,35 @@
 #define FONTFAMILYCHOOSER_H
 
 #include "fontfamilychoosers.h"
-
+#include <qmap.h>
 class QStringList;
 
 class fontFamilyChooser : public fontFamilyChooserS
 {
   Q_OBJECT
   private:
+    enum FontOrigin { available, generic };
     QString m_currentSelectedFont;
+    FontOrigin m_fontOrigin;
     int  m_currentSelectedFontIndex;
+    QMap<QString,FontOrigin> m_selectedFontMap;
   
   private slots:
     void updatePreview(const QString &);
-    void setCurrentSelectedFont( const QString&);
-    void setCurrentSelectedFont( int );
+    void setCurrentSelectedAvailableFamilyFont(const QString&); 
+    void setCurrentSelectedGenericFamilyFont(const QString&);
+    void setCurrentSelectedFont( int i) { m_currentSelectedFontIndex = i; }
+    void setCurrentSelectedFont( const QString& f ) { m_currentSelectedFont = f; }
     void addFont();
     void removeFont();
+    void moveFontUp();
+    void moveFontDown();
     
   public:    
     fontFamilyChooser(QWidget* parent, const char *name=0);
     ~fontFamilyChooser(); 
     QStringList fontList();
+    void setInitialValue(const QString& s);
 };
 
 #endif

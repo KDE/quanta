@@ -17,7 +17,6 @@
 
 #include <qlineedit.h>
 #include <qcombobox.h>
-#include <qfiledialog.h>
 #include <qlabel.h>
 #include <qtooltip.h>
 
@@ -35,7 +34,7 @@
 #include "tlpeditors.h"
 #include "fontfamilychooser.h"
 #include "project.h"
-
+    
 TLPEditor::TLPEditor(QWidget *parent, const char* name) : QHBox(parent,name){
   m_label = new QLabel(this);
   m_le = new QLineEdit(this);
@@ -80,9 +79,8 @@ void URIEditor::URI(const QString & s){
    u.setPath(s);
    emit valueChanged("url(\'" + QExtFileInfo::toRelative(u, quantaApp->projectBaseURL()).path() + "\')");
  }
-
-
- void URIEditor::openFileDialog(){
+ 
+void URIEditor::openFileDialog(){
   
   KFileDialog* fd = new KFileDialog( Project::ref()->projectBaseURL().url(), "*.*", this, "file dialog", TRUE );
   switch(m_resourceType) {
@@ -123,20 +121,18 @@ void URIEditor::URI(const QString & s){
   }
   delete fd;
 }
- 
 
-fontEditor::fontEditor(QWidget *parent, const char* name) : TLPEditor(parent,name){
-  setLabelText(" Font  :");
+fontEditor::fontEditor(QWidget *parent, const char* name) : TLPEditor(parent,name), m_initialValue(QString::null){
+  setLabelText(" Font  family :");
   setButtonIcon("fonts");
   setToolTip(i18n("Open font family chooser"));
-
   connect(m_pb, SIGNAL(clicked()), this, SLOT(openFontChooser()));
   connect(m_le, SIGNAL(textChanged ( const QString & )), this, SIGNAL( valueChanged( const QString& ) ) );
 }
 
 void fontEditor::openFontChooser(){
   fontFamilyChooser *dlg = new fontFamilyChooser( this );
-
+  dlg->setInitialValue(m_initialValue);
   if( dlg->exec() == QDialog::Accepted ){
     emit valueChanged( dlg->fontList().join(", "));
   }

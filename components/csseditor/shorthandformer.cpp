@@ -20,12 +20,12 @@
 #include "shorthandformer.h"
 #include <qstringlist.h>
 #include "cssshpropertyparser.h"
-//#include <kdebug.h>
+#include <kdebug.h>
 #include "csseditor_globals.h" 
 
  QRegExp globalPercentagePattern("\\d%"),
                           globalLengthPattern("\\dex|em|px|cm|pt|pc|in|mm"),
-                          globalColorPattern("#[\\w\\d]{6}|{3}"),
+                          globalColorPattern("#([\\w\\d]{6})|([\\w\\d]{3})"),
                           globalNumberPattern("\\d*");
                 
 static const QString borderStyleValueString("none,hidden,dotted,dashed,solid,double,groove,ridge,inset,outset,inherit");               
@@ -46,8 +46,6 @@ static const QStringList fontWeightValueList = QStringList::split(",",fontWeight
 static const QStringList fontStyleValueList = QStringList::split(",",fontStyleValueString);
 static const QStringList fontVariantValueList = QStringList::split(",",fontVariantValueString);
 static const QStringList backgroundRepeatValueList = QStringList::split(",",backgroundRepeatValueString);
-
-QStringList HTMLColorList(QStringList::split(",",HTMLColors));
 
 ShorthandFormer::ShorthandFormer(){}
 
@@ -392,7 +390,7 @@ QString ShorthandFormer::compressBackgroundProp(){
 }    
 
 QString ShorthandFormer::compressPaddingProp(){
-  return compressImplementation( "padding" ,padding_top, padding_bottom, padding_right, padding_left, "medium");
+  return compressImplementation( "padding" ,padding_top, padding_bottom, padding_right, padding_left, "0");
 }
 
 QString ShorthandFormer::compressMarginProp(){  
@@ -430,6 +428,7 @@ QString ShorthandFormer::compressImplementation2( QString prop, QString after, Q
 }  
 
 QString ShorthandFormer::compressImplementation( QString prop, QString t, QString b, QString r, QString l, QString defValue){
+  
   QString props, 
                top(t.stripWhiteSpace()),
                bottom(b.stripWhiteSpace()),
@@ -441,43 +440,18 @@ QString ShorthandFormer::compressImplementation( QString prop, QString t, QStrin
   if( left.isEmpty() ) left  = defValue;
   if( right.isEmpty() ) right  = defValue;  
   
-  unsigned int defaultValueOccurence = 0;
-
-  if( top == defValue ) defaultValueOccurence += 1;  
-  if( bottom == defValue ) defaultValueOccurence += 2;
-  if( left == defValue ) defaultValueOccurence += 4;
-  if( right == defValue ) defaultValueOccurence += 8; 
   
-  switch( defaultValueOccurence ) {
-    case 0: props += ( top + " "+ right + " " + bottom + " " + left ); break;
-    case 1: if( left == right ) props   += ( defValue + " "+ right + " " + bottom ); 
-                 else props   += ( defValue + " " + right + " " +bottom + " " + left );  
-                 break;
-    case 2: if( left == right ) props   += ( top + " " + right + " " + defValue ); 
-                 else props   += ( top + " " + right + " " + bottom + " " + defValue );  
-                 break;
-    case 3: if( left == right ) props   += ( defValue + " " + right ); 
-                 else props   += ( defValue + " " + right + " " + defValue + " " + left );
-                 break;
-    case 4: 
-    case 5: 
-    case 6: 
-    case 7:
-    case 8: 
-    case 9: 
-    case 10: 
-    case 11: props   += ( top + " " + right + " " + bottom + " " + left );break;
-    case 12: if( top == bottom ) props   += ( top + " " + defValue ); 
-                   else props   += ( top + " " + defValue + " " + bottom );  
-                   break;
-    case 13: 
-    case 14: props   += ( top + " " + defValue + " " + bottom);break;
-    case 15: break;
-    default:break;
-  }   
-                 
-  if(props.isEmpty()) return QString::null;
-  else return ( prop +" : " + props + "; ");
+  if( top == defValue and bottom == defValue and right == defValue and left == defValue)
+  return QString::null;
+    
+  if( top == bottom and bottom == right and right == left )
+  return ( prop +" : " + top + "; ");
+  
+  if( right == left ) {
+    if( top == bottom ) return ( prop +" : " + top + " " + right + "; ");
+    else return ( prop +" : " + top + " " + right + " " + bottom + "; ");
+   }
+  else return (prop +" : " + top + " " + right + " " + bottom + " " + left + "; "); 
 }
 
 
@@ -557,7 +531,7 @@ QMap<QString,QString>  ShorthandFormer::expandBackgroundProp(QStringList l){
         expandedProps["background-attachment"] = (*it);
       }
       else
-      if( (*it).contains(globalColorPattern) or HTMLColorList.contains((*it))!=0 or temp == "transparent" or temp == "inherit" ){
+      if( (*it).contains("rgb(") or (*it).contains(globalColorPattern) or CSSEditorGlobals::HTMLColors.contains((*it))!=0 or temp == "transparent" or temp == "inherit" ){
         expandedProps["background-color"] = (*it);
       } 
       else
@@ -689,7 +663,7 @@ QMap<QString,QString>  ShorthandFormer::expandOutlineProp( QStringList l){
       QString temp((*it).stripWhiteSpace());
       if( borderStyleValueList.contains(temp)!=0 ) expandedProps["outline-style"] = (*it);            
       else
-      if(  (*it).contains(globalColorPattern) or HTMLColorList.contains((*it))!=0 or temp == "invert" or temp == "inherit")
+      if(  (*it).contains(globalColorPattern) or CSSEditorGlobals::HTMLColors.contains((*it))!=0 or temp == "invert" or temp == "inherit")
           expandedProps["outline-color"] = (*it) ;           
       else
       if( (*it).contains(globalLengthPattern) or widthValueList.contains(temp)!=0)
@@ -707,7 +681,7 @@ QMap<QString,QString>  ShorthandFormer::expandBoxSide(QString subPropName, QStri
        QString temp((*it).stripWhiteSpace());
       if( borderStyleValueList.contains(temp)!=0 ) expandedProps[subPropName + "-style"] = (*it);           
       else
-      if(  (*it).contains(globalColorPattern) or HTMLColorList.contains((*it))!=0 or temp == "transparent" or temp == "inherit")
+      if(  (*it).contains(globalColorPattern) or CSSEditorGlobals::HTMLColors.contains((*it))!=0 or temp == "transparent" or temp == "inherit")
           expandedProps[subPropName + "-color"] = (*it) ;     
       else
       if( (*it).contains(globalLengthPattern) or widthValueList.contains(temp)!=0)
@@ -729,7 +703,7 @@ QMap<QString,QString>  ShorthandFormer::expandBorderProp(QStringList l){
         expandedProps["border-bottom-style"] = (*it);
       }       
       else
-      if(  (*it).contains(globalColorPattern) or HTMLColorList.contains((*it))!=0 or temp == "transparent" or temp == "inherit"){
+      if(  (*it).contains(globalColorPattern) or CSSEditorGlobals::HTMLColors.contains((*it))!=0 or temp == "transparent" or temp == "inherit"){
         expandedProps["border-top-color"] = (*it);
         expandedProps["border-left-color"] = (*it);
         expandedProps["border-right-color"] = (*it);

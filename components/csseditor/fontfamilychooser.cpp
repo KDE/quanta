@@ -14,7 +14,6 @@
  *                                                                         *
  ***************************************************************************/
 
-
 #include "fontfamilychooser.h"
  
 #include <qfontdatabase.h>
@@ -29,6 +28,8 @@
 #include <kglobalsettings.h>
 #include <qregexp.h>
 #include <qlineedit.h>
+
+//#include<kdebug.h>
 
 fontFamilyChooser::fontFamilyChooser(QWidget* parent, const char *name) : fontFamilyChooserS(parent,name){
 
@@ -50,22 +51,34 @@ fontFamilyChooser::fontFamilyChooser(QWidget* parent, const char *name) : fontFa
   if( families.count() != 0 ) lbAvailable->insertStringList(families);
   
        
-  QIconSet iconSet = SmallIconSet(QString::fromLatin1("1rightarrow"));
+  QIconSet iconSet = SmallIconSet(QString::fromLatin1("forward"));
   QPixmap pixMap = iconSet.pixmap( QIconSet::Small, QIconSet::Normal );
-  pbAddAvailable->setIconSet(iconSet);
-  pbAddAvailable->setFixedSize( pixMap.width()+8, pixMap.height()+8 );
-  pbAddGeneric->setIconSet(iconSet);
-  pbAddGeneric->setFixedSize( pixMap.width()+8, pixMap.height()+8 );
+  pbAdd->setIconSet(iconSet);
+  pbAdd->setFixedSize( pixMap.width()+8, pixMap.height()+8 );
+  
+  iconSet = SmallIconSet(QString::fromLatin1("back"));
+  pbRemove->setIconSet(iconSet);
+  pbRemove->setFixedSize( pixMap.width()+8, pixMap.height()+8 );
+  
+   iconSet = SmallIconSet(QString::fromLatin1("up"));
+  pbMoveUp->setIconSet(iconSet);
+  pbMoveUp->setFixedSize( pixMap.width()+8, pixMap.height()+8 );
+  
+  iconSet = SmallIconSet(QString::fromLatin1("down"));
+  pbMoveDown->setIconSet(iconSet);
+  pbMoveDown->setFixedSize( pixMap.width()+8, pixMap.height()+8 );
 
-  connect(pbAddAvailable, SIGNAL(clicked()), this ,SLOT( addFont() ));
-  connect(pbAddGeneric, SIGNAL(clicked()), this ,SLOT( addFont() ));
+  connect(pbAdd, SIGNAL(clicked()), this ,SLOT( addFont() ));
   connect( lbAvailable, SIGNAL( highlighted( const QString& ) ), this, SLOT( updatePreview( const QString&) ) );
-  connect( lbAvailable, SIGNAL( highlighted( const QString& ) ), this, SLOT( setCurrentSelectedFont( const QString&) ) );
+  connect( lbAvailable, SIGNAL( highlighted( const QString& ) ), this, SLOT( setCurrentSelectedAvailableFamilyFont( const QString&) ) );
   connect( lbGeneric, SIGNAL( highlighted( const QString& ) ), this, SLOT( updatePreview( const QString&) ) );
-  connect( lbGeneric, SIGNAL( highlighted( const QString& ) ), this, SLOT( setCurrentSelectedFont( const QString&) ) );
+  connect( lbGeneric, SIGNAL( highlighted( const QString& ) ), this, SLOT( setCurrentSelectedGenericFamilyFont( const QString&) ) );
   connect( lbSelected, SIGNAL( highlighted( const QString& ) ), this, SLOT( updatePreview( const QString&) ) );
   connect( lbSelected, SIGNAL( highlighted( int ) ), this, SLOT( setCurrentSelectedFont( int ) ) );
+  connect( lbSelected, SIGNAL( highlighted( const QString& ) ), this, SLOT( setCurrentSelectedFont( const QString&) ) );
   connect( pbRemove, SIGNAL( clicked() ), this, SLOT( removeFont() ) );
+  connect( pbMoveUp, SIGNAL( clicked() ), this, SLOT( moveFontUp() ) );
+  connect( pbMoveDown, SIGNAL( clicked() ), this, SLOT( moveFontDown() ) );
 }
  
 fontFamilyChooser::~fontFamilyChooser(){} 
@@ -74,20 +87,59 @@ void fontFamilyChooser::updatePreview(const QString& s){
   lePreview->setFont(QFont(s,20));
 }
 
-void fontFamilyChooser::setCurrentSelectedFont( const QString& s){
-  m_currentSelectedFont = s;
-}
-
-void fontFamilyChooser::setCurrentSelectedFont( int i){
-  m_currentSelectedFontIndex = i;
-}
-
 void fontFamilyChooser::addFont(){
   lbSelected->insertItem( m_currentSelectedFont );
+  switch(m_fontOrigin) {
+    case available: lbAvailable->removeItem(lbAvailable->index(lbAvailable->findItem(m_currentSelectedFont)));
+                             break;
+    case generic : lbGeneric->removeItem(lbGeneric->index(lbGeneric->findItem(m_currentSelectedFont)));
+                             break;
+  }
+}
+
+void fontFamilyChooser::setCurrentSelectedAvailableFamilyFont(const QString& f){
+  m_fontOrigin = available;
+  m_currentSelectedFont = f;
+   m_selectedFontMap[f] = available;
+}
+
+void fontFamilyChooser::setCurrentSelectedGenericFamilyFont(const QString& f){
+  m_fontOrigin = generic;
+  m_currentSelectedFont =f;
+  m_selectedFontMap[f] = generic;
+}
+
+void  fontFamilyChooser::moveFontUp(){ 
+  if(m_currentSelectedFontIndex == 0) return;
+  int dummyIndex = m_currentSelectedFontIndex; 
+  lbSelected->insertItem( lbSelected->text(m_currentSelectedFontIndex ), dummyIndex -1); 
+  lbSelected->removeItem(dummyIndex + 1);
+  lbSelected->setSelected( dummyIndex -1, true);                            
+}
+
+void  fontFamilyChooser::moveFontDown(){
+  if((unsigned int)m_currentSelectedFontIndex == lbSelected->count()) return;
+  int dummyIndex = m_currentSelectedFontIndex;
+  lbSelected->insertItem( lbSelected->text(m_currentSelectedFontIndex ), dummyIndex + 2);
+  lbSelected->removeItem(dummyIndex);
+  lbSelected->setSelected(dummyIndex +1, true);
 }
 
 void fontFamilyChooser::removeFont(){
+  QString dummyFont(m_currentSelectedFont);// since removeItem emits highlighted signal, after
+                                                                           //  removeItem call the value of m_currentSelectedFont
+                                                                           // is actually the font after m_currentSelectedFont and so
+                                                                           // we must save m_currentSelectedFont value in dummyFont
   lbSelected->removeItem( m_currentSelectedFontIndex );
+  switch(m_selectedFontMap[dummyFont]) {
+    case available: lbAvailable->insertItem(dummyFont);
+                             lbAvailable->sort();
+                             break;
+    case generic : lbGeneric->insertItem(dummyFont);
+                            lbGeneric->sort();
+                            break;
+  }
+  
 }
 
 QStringList fontFamilyChooser::fontList(){
@@ -101,5 +153,13 @@ QStringList fontFamilyChooser::fontList(){
   return list;
 }
 
+void fontFamilyChooser::setInitialValue(const QString& s){
+  QStringList familyList = QStringList::split(",",s);                 
+  for ( QStringList::Iterator it = familyList.begin(); it != familyList.end(); ++it ) {
+    (*it).remove("'");
+    (*it).remove("\"");
+    lbSelected->insertItem((*it).stripWhiteSpace());
+  }  
+}
 
 #include "fontfamilychooser.moc"
