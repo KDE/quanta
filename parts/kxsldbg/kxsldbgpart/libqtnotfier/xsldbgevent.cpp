@@ -20,6 +20,7 @@
 #include <qapplication.h>
 #include <qtimer.h>
 #include <qfile.h>
+#include <kurl.h>
 #include <qtextstream.h>
 
 #include <libxslt/xsltInternals.h>
@@ -198,7 +199,13 @@ XsldbgEventData *XsldbgEvent::createEventData(XsldbgMessageEnum type, const void
                                  * Free form text in file */
       /* this is actualy the  file to load */
       {
-	QString fileName = XsldbgDebuggerBase::fromUTF8((xmlChar*)msgData);
+	KURL url(XsldbgDebuggerBase::fromUTF8FileName((xmlChar*)msgData));
+	if (!url.isLocalFile()){
+	    qDebug("Remote path to temp file %s unsupported, unable to read message from xsldbg", url.prettyURL().local8Bit().data());
+	    break;
+	}
+	    
+	QString fileName = url.path();
 	QString outputText;
 	if (fileName != QString::null){
 	  QFile file (fileName);
@@ -428,7 +435,7 @@ void XsldbgEvent::handleLineNoChanged(XsldbgEventData *eventData, const  void *m
     if (beenCreated == false){
       /* add our specific data to eventData*/
       if (xsldbgUrl() != 0L){
-	eventData->setText(0, XsldbgDebuggerBase::fromUTF8(xsldbgUrl()));
+	eventData->setText(0, XsldbgDebuggerBase::fromUTF8FileName(xsldbgUrl()));
 	eventData->setInt(0, xsldbgLineNo());
 	eventData->setInt(1, msgData != 0L);
       }
@@ -465,7 +472,7 @@ void XsldbgEvent::handleBreakpointItem(XsldbgEventData *eventData, const  void *
       if (msgData != 0L){
 	breakPointPtr breakItem = (breakPointPtr)msgData;
 	/* set the file name*/
-	eventData->setText(0, XsldbgDebuggerBase::fromUTF8(breakItem->url));
+	eventData->setText(0, XsldbgDebuggerBase::fromUTF8FileName(breakItem->url));
 	/* line number*/
 	eventData->setInt(0, (int)breakItem->lineNo);
 
@@ -505,13 +512,13 @@ void XsldbgEvent::handleGlobalVariableItem(XsldbgEventData *eventData, const  vo
 
 	/* variable name*/
 	if (item->nameURI)
-	  name = (XsldbgDebuggerBase::fromUTF8(item->nameURI)).append(":");
+	  name = (XsldbgDebuggerBase::fromUTF8FileName(item->nameURI)).append(":");
 	name.append(XsldbgDebuggerBase::fromUTF8(item->name));
 
 
 
 	if (item->comp && item->comp->inst && item->comp->inst->doc){
-	  fileName = XsldbgDebuggerBase::fromUTF8(item->comp->inst->doc->URL);
+	  fileName = XsldbgDebuggerBase::fromUTF8FileName(item->comp->inst->doc->URL);
 	  lineNumber= xmlGetLineNo(item->comp->inst);
 	}
 
@@ -542,7 +549,7 @@ void XsldbgEvent::handleLocalVariableItem(XsldbgEventData *eventData, const  voi
 
 	/* variable name */
 	if (item->nameURI)
-	  name = (XsldbgDebuggerBase::fromUTF8(item->nameURI)).append(":");
+	  name = (XsldbgDebuggerBase::fromUTF8FileName(item->nameURI)).append(":");
 	name.append(XsldbgDebuggerBase::fromUTF8(item->name));
 
 	if (item->comp && item->comp->inst){
@@ -564,7 +571,7 @@ void XsldbgEvent::handleLocalVariableItem(XsldbgEventData *eventData, const  voi
 	  }
 
 	  if (varXmlNode->doc)  {
-	    fileName = XsldbgDebuggerBase::fromUTF8(varXmlNode->doc->URL);
+	    fileName = XsldbgDebuggerBase::fromUTF8FileName(varXmlNode->doc->URL);
 	    lineNumber = xmlGetLineNo(varXmlNode);
 	  }
 
@@ -597,7 +604,7 @@ if (eventData != 0L){
 	int lineNumber = -1;
 
 	if (item->nameURI)
-	  name.append(XsldbgDebuggerBase::fromUTF8(item->nameURI)).append(":");
+	  name.append(XsldbgDebuggerBase::fromUTF8FileName(item->nameURI)).append(":");
 
 	if (item->name)
 	  name.append(XsldbgDebuggerBase::fromUTF8(item->name));
@@ -607,7 +614,7 @@ if (eventData != 0L){
 	mode = XsldbgDebuggerBase::fromUTF8(item->mode);
 
 	if (item->elem && item->elem->doc){
-	  fileName = XsldbgDebuggerBase::fromUTF8(item->elem->doc->URL);
+	  fileName = XsldbgDebuggerBase::fromUTF8FileName(item->elem->doc->URL);
 	  lineNumber = xmlGetLineNo(item->elem);
 	}
 	eventData->setText(0, name);
@@ -638,10 +645,10 @@ void XsldbgEvent::handleIncludedSourceItem(XsldbgEventData *eventData, const  vo
 	int lineNumber = -1;
 
 	if (item->doc)
-	  name = XsldbgDebuggerBase::fromUTF8(item->doc->URL);
+	  name = XsldbgDebuggerBase::fromUTF8FileName(item->doc->URL);
 
 	if (item->parent && item->parent->doc){
-	  fileName = XsldbgDebuggerBase::fromUTF8(item->parent->doc->URL);
+	  fileName = XsldbgDebuggerBase::fromUTF8FileName(item->parent->doc->URL);
 	  lineNumber = xmlGetLineNo((xmlNodePtr)item->parent->doc);
 	}
 	eventData->setText(0, name);
@@ -668,10 +675,10 @@ void XsldbgEvent::handleSourceItem(XsldbgEventData *eventData, const  void *msgD
 	int lineNumber = -1;
 
 	if (item->doc)
-	  name = XsldbgDebuggerBase::fromUTF8(item->doc->URL);
+	  name = XsldbgDebuggerBase::fromUTF8FileName(item->doc->URL);
 
 	if (item->parent && item->parent->doc){
-	  fileName = XsldbgDebuggerBase::fromUTF8(item->parent->doc->URL);
+	  fileName = XsldbgDebuggerBase::fromUTF8FileName(item->parent->doc->URL);
 	  lineNumber = xmlGetLineNo((xmlNodePtr)item->parent->doc);
 	}
 
@@ -725,7 +732,7 @@ void XsldbgEvent::handleCallStackItem(XsldbgEventData *eventData, const  void *m
 	/* template name */
 	if (item->info){
 	  templateName = XsldbgDebuggerBase::fromUTF8(item->info->templateName);
-	  fileName = XsldbgDebuggerBase::fromUTF8(item->info->url);
+	  fileName = XsldbgDebuggerBase::fromUTF8FileName(item->info->url);
 	  lineNumber = item->lineNo;
 	}
 
@@ -752,7 +759,7 @@ void XsldbgEvent::handleEntityItem(XsldbgEventData *eventData, const  void *msgD
 	QString SystemID, PublicID;
 
 	entityInfoPtr info =  (entityInfoPtr)msgData;
-	SystemID = XsldbgDebuggerBase::fromUTF8(info->SystemID);
+	SystemID = XsldbgDebuggerBase::fromUTF8FileName(info->SystemID);
 	PublicID = XsldbgDebuggerBase::fromUTF8(info->PublicID);
 
 	eventData->setText(0, SystemID);
@@ -773,7 +780,7 @@ void XsldbgEvent::handleResolveItem(XsldbgEventData *eventData, const  void *msg
     if (beenCreated == false){
       /* add our specific data to eventData*/
       if (msgData != 0L){
-	QString URI = XsldbgDebuggerBase::fromUTF8((const xmlChar*)msgData);
+	QString URI = XsldbgDebuggerBase::fromUTF8FileName((const xmlChar*)msgData);
 
 	eventData->setText(0, URI);
       }

@@ -16,10 +16,10 @@
  ************************************************************************************/
 
 #include <klocale.h>
+#include <kurl.h>
 
 #include <libxml/tree.h>
 #include <libxslt/xsltInternals.h>
-//#include <libxslt/xsltutils.h>
 #include "xsldbgdebugger.h"
 
 #include <libxsldbg/xsldbgthread.h>
@@ -31,6 +31,19 @@ extern int xsldbgStop;
 
 #include "xsldbgwalkspeedimpl.h"
 #include <qmessagebox.h>
+
+static QString fixLocalPaths(QString & file)
+{
+    QString result;
+    KURL url(file);
+    if (url.isLocalFile()){
+        // libxml2 does not like file:/<localfilepath>
+        result = "file://" + url.encodedPathAndQuery();
+    }else{
+        result = url.url();
+    }
+    return result;
+}
 
 XsldbgDebugger::XsldbgDebugger()
 {
@@ -111,7 +124,7 @@ QString XsldbgDebugger::sourceFileName()
 	QString fileName;
 
 	if (optionsGetStringOption(OPTIONS_SOURCE_FILE_NAME) != 0L)
-		fileName = (const char*)optionsGetStringOption(OPTIONS_SOURCE_FILE_NAME);
+		fileName = KURL::decode_string((const char*)optionsGetStringOption(OPTIONS_SOURCE_FILE_NAME));
 
 	return fileName;
 }
@@ -121,7 +134,7 @@ QString XsldbgDebugger::dataFileName()
 	QString fileName;
 
 	if (optionsGetStringOption(OPTIONS_DATA_FILE_NAME) != 0L)
-		fileName = (const char*)optionsGetStringOption(OPTIONS_DATA_FILE_NAME);
+		fileName = KURL::decode_string((const char*)optionsGetStringOption(OPTIONS_DATA_FILE_NAME));
 
 	return fileName;
 }
@@ -131,7 +144,7 @@ QString XsldbgDebugger::outputFileName()
 	QString fileName;
 
 	if (optionsGetStringOption(OPTIONS_OUTPUT_FILE_NAME) != 0L)
-		fileName = (const char*)optionsGetStringOption(OPTIONS_OUTPUT_FILE_NAME);
+		fileName = KURL::decode_string((const char*)optionsGetStringOption(OPTIONS_OUTPUT_FILE_NAME));
 
 	return fileName;
 }
@@ -151,6 +164,7 @@ void XsldbgDebugger::setOption(const char* name, bool value)
 
 void XsldbgDebugger::fakeInput(QString text, bool wait)
 {
+        Q_UNUSED(wait);
 	commandQue.append(text);
 }
 
@@ -276,7 +290,7 @@ void XsldbgDebugger::slotBreakCmd(QString fileName, int lineNumber)
   }
 
 	QString msg("break -l \"");
-	msg.append(fileName).append("\" ").append(QString::number(lineNumber));
+	msg.append(fixLocalPaths(fileName)).append("\" ").append(QString::number(lineNumber));
 
 	if (start())
 		fakeInput(msg, TRUE);
@@ -314,7 +328,7 @@ void XsldbgDebugger::slotEnableCmd(QString fileName, int lineNumber)
   }
 
   QString msg("enable -l \"");
-	msg.append(fileName).append("\" ").append(QString::number(lineNumber));
+	msg.append(fixLocalPaths(fileName)).append("\" ").append(QString::number(lineNumber));
 	if (start())
 		fakeInput(msg, TRUE);
 
@@ -354,7 +368,7 @@ void XsldbgDebugger::slotDeleteCmd(QString fileName, int lineNumber)
   }
 
 	QString msg("delete -l \"");
-	msg.append(fileName).append("\" ").append(QString::number(lineNumber));
+	msg.append(fixLocalPaths(fileName)).append("\" ").append(QString::number(lineNumber));
 	if (start())
 		fakeInput(msg, TRUE);
 	if (inspector != 0L)

@@ -61,9 +61,11 @@ class XsldbgDebuggerBase : public QObject
 
   /** Convert from libxslt UTF8 to a QString */	
   static QString fromUTF8(const char *text);
+  static QString fromUTF8FileName(const char *text);
 	
   /** Convert from libxslt UTF8 to a QString */	
   static QString fromUTF8(const xmlChar *text);
+  static QString fromUTF8FileName(const xmlChar *text);
 
   /* list of command yet to be processed */
   QStringList commandQueue(void) {return _commandQueue ;};
