@@ -3,7 +3,7 @@
                              -------------------
     begin                : Sat Apr 29 2000
     copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky
-                           (C) 2002 Andras Mantia
+                           (C) 2002, 2003 Andras Mantia
     email                : pdima@mail.univ.kiev.ua, amantia@freemail.hu
  ***************************************************************************/
 
@@ -32,9 +32,9 @@ class Node;
 class StructTreeTag : public KListViewItem  {
 
 public: 
-	StructTreeTag(QListView *parent, QString name = QString::null );
-	StructTreeTag(StructTreeTag *parent, Node *p_node, QString name = QString::null, QListViewItem *after = 0L);
-	StructTreeTag(StructTreeTag *parent, QString name = QString::null );
+	StructTreeTag(QListView *parent, const QString a_title = QString::null );
+	StructTreeTag(StructTreeTag *parent, Node *a_node, QString a_title = QString::null, QListViewItem *after = 0L);
+	StructTreeTag(StructTreeTag *parent, const QString a_title = QString::null );
 	~StructTreeTag();
 	
 	Node *node;

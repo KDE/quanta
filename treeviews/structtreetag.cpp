@@ -3,7 +3,7 @@
                              -------------------
     begin                : Sat Apr 29 2000
     copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky
-                           (C) 2002 Andras Mantia
+                           (C) 2002, 2003 Andras Mantia
     email                : pdima@mail.univ.kiev.ua, amantia@freemail.hu
  ***************************************************************************/
 
@@ -25,96 +25,119 @@
 #include "structtreetag.h"
 #include "../parser/tag.h"
 #include "../parser/node.h"
+#include "../resource.h"
 
 
-StructTreeTag::StructTreeTag(QListView *parent, QString name )
-	: KListViewItem(parent,name)
+StructTreeTag::StructTreeTag(QListView *parent, QString a_title)
+	: KListViewItem(parent, a_title)
 {
 	node = 0L;
-	
+
 }
 
-StructTreeTag::StructTreeTag(StructTreeTag *parent, Node *p_node, QString name, QListViewItem *after )
-	: KListViewItem(parent, after, name)
+StructTreeTag::StructTreeTag(StructTreeTag *parent, Node *a_node, const QString a_title,
+                             QListViewItem *after )
+: KListViewItem(parent, after, a_title)
 {
-	node = p_node;
-	
-  if (!node) return;
-  Tag *tag = node->tag;
-	QString sname = name;
-  sname.replace(QRegExp("\\n")," ");
-	QString space = " ";
-	
-	if ( sname.left(4) == "font" ) {
-		setPixmap( 0, UserIcon("tag_font_small") );
-		if ( tag->attrCount )
-			setText(0, space + tag->attribute(0) + "=" + tag->attributeValue(0));
-		else
-			setText(0,"");
-	} else
-	
-	if ( sname.left(3) == "img" ) {
-		setPixmap( 0, SmallIcon("image") );
-		setText(0, space + tag->attributeValue("src") );
-	} else
-		
-	if ( sname == "a" ) {
-		setPixmap( 0, SmallIcon("www") );
-		if ( tag->hasAttribute("href") )
-			setText(0,space + "href "+ tag->attributeValue("href"));
-		if ( tag->hasAttribute("name") )
-			setText(0,space + "name "+ tag->attributeValue("name"));	
-	} else
-		
-	/*
-	if ( sname == "p") {
-		setPixmap( 0, UserIcon("tag_p") );
-		setText(0,"");
-	}*/
-	
-	if ( sname.lower() == "br") {
-		setPixmap( 0, UserIcon("tag_br_small") );
-		setText(0,"");
-	} else
-	
-	if ( sname == "hr") {
-		setPixmap( 0, UserIcon("tag_hr_small") );
-		setText(0,"");
-	} else
-	
-	if ( sname == "li") {
-		setPixmap( 0, UserIcon("ball") );
-		setText(0,"");
-	} else
-	
-	if ( sname == "php" ) {
-		setText(0,"< php >");
-	} else
-	
-  if ( sname == "comment" ) {
-	  setPixmap( 0, UserIcon("tag_comm") );
-    //TODO: make it generic
-    QString text = node->tag->tagStr();
-    text.replace(QRegExp("&nbsp;|\\n")," ");
-    text.replace(QRegExp("<!--"),"");
-    text.replace(QRegExp("-->"),"");
-    text.replace(QRegExp("/*"),"");
-    text.replace(QRegExp("*/"),"");
-    text.replace(QRegExp("^//"),"");
-    text.replace(QRegExp("^#"),"");
-		setText(0,text.stripWhiteSpace());
-	}
+  static const QString space = " ";
+  static const QRegExp nbspRx("&nbsp;|\\n");
+  node = a_node;
 
-  if ( sname.contains("css", false) ) {
-	  setPixmap( 0, UserIcon("mini-modules") );
-		//setText(0,"");
-	}
+  if (node)
+  {
+    Tag *tag = node->tag;
+    QString title = tag->name.lower();
+    if (a_title.isEmpty())
+    {
+      switch (tag->type)
+      {
+        case Tag::XmlTag:
+            {
+              if (title == "font")
+              {
+                setPixmap( 0, UserIcon("tag_font_small") );
+                if ( tag->attrCount )
+                  title = space + tag->attribute(0) + "=" + tag->attributeValue(0);
+                else
+                  title = "";
+              } else
+              if (title == "img")
+              {
+                setPixmap( 0, SmallIcon("image") );
+                title = space + tag->attributeValue("src");
 
-//  setText(0, text(0)+QString(" ["+tag->tagStr()+" ; %1]").arg(tag->type)); //debug
+              } else
+              if (title == "a")
+              {
+                setPixmap( 0, SmallIcon("www") );
+                if ( tag->hasAttribute("href") )
+                  title = space + "href "+ tag->attributeValue("href");
+                if ( tag->hasAttribute("name") )
+                  title = space + "name "+ tag->attributeValue("name");
+              } else
+              if ( title == "br")
+              {
+                  setPixmap( 0, UserIcon("tag_br_small") );
+                  title = "";
+              } else
+              if ( title == "hr")
+              {
+                setPixmap( 0, UserIcon("tag_hr_small") );
+                title = "";
+              } else
+              if ( title == "li")
+              {
+                setPixmap( 0, UserIcon("ball") );
+                title = "";
+              } else
+              if ( title == "p")
+              {
+                setPixmap( 0, UserIcon("tag_p") );
+                title = "";
+              }
+
+              break;
+            }
+        case Tag::Text:
+            {
+              title = tag->tagStr();
+              title = title.left(70).stripWhiteSpace();
+              title.replace( nbspRx," ");
+              break;
+            }
+        case Tag::Comment:
+            {
+              setPixmap( 0, UserIcon("tag_comm") );
+              title = tag->tagStr();
+              title = title.left(70).stripWhiteSpace();
+              title.replace( nbspRx," ");
+              break;
+            }
+         case Tag::ScriptTag:
+            {
+              title = tag->name;
+              break;
+            }
+         default:
+            {
+              title = tag->tagStr().left(70).stripWhiteSpace();
+              title.replace(newLineRx," ");
+            }
+
+
+      }
+    } else
+    {
+      title = a_title;
+      title.replace(newLineRx," ");
+    }
+
+    setText(0, title);
+  }
 }
 
-StructTreeTag::StructTreeTag(StructTreeTag *parent, QString name )
-	: KListViewItem(parent,name)
+StructTreeTag::StructTreeTag(StructTreeTag *parent, QString a_title )
+: KListViewItem(parent, a_title)
 {
   node = 0L;
 }

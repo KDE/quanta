@@ -102,12 +102,13 @@ bool Parser::scriptParser(Node *startNode, DTDStruct *dtd)
         s = text.left(pos2);
         n = s.contains('\n');
         el = node_bl + n;
+        pos2 += specialEndStr.length();
         if (n > 0)
         {
           ec = pos2 - s.findRev("\n");
         } else
         {
-          ec = node_bc + pos2 + specialEndStr.length() - 1;
+          ec = node_bc + pos2;
         }
         s = text.mid(pos, pos2 - pos);
         //build the tag
@@ -188,7 +189,7 @@ Node *Parser::newParse(Document *w)
         if (pos != -1)
         {
           tagEndLine = line;
-          tagEndCol = pos + specialEndStr.length() - 1;
+          tagEndCol = pos + specialEndStr.length();
           break;
         } else
         {
@@ -364,7 +365,7 @@ Node *Parser::newParse(Document *w)
         if (!rootNode) 
             rootNode = node;
       }
-      
+
       if (goUp)
       {
         node = new Node(parentNode->parent);
@@ -553,12 +554,12 @@ void Parser::parseInside(Node *startNode)
       if (!s.simplifyWhiteSpace().isEmpty())
       {
         tag = new Tag();
-        tag->setStr(s.replace(dtd->commentsRx,"").stripWhiteSpace());
+        tag->setStr(s);//s.replace(dtd->commentsRx,"").stripWhiteSpace());
         tag->setWrite(write);
         tag->setTagPosition(bLine, bCol, eLine, eCol);
         tag->type = Tag::Text;
         tag->single = true;
-       
+
         if ( bLine > el ||               //the beginning of the tag is after the end of the
             (bLine == el && bCol > ec) ) //root, so go up one level
         {
@@ -570,7 +571,6 @@ void Parser::parseInside(Node *startNode)
         if (!rootNode->child)
         {
           rootNode->child = node;
-          node->prev = 0L;
         } else
         {
           node->prev = currentNode;
@@ -578,7 +578,7 @@ void Parser::parseInside(Node *startNode)
         }
         node->tag = tag;
         currentNode = node;
-      } 
+      }
       lastPos = pos + 1;
       name = "";
       bLine = eLine;
@@ -646,15 +646,25 @@ void Parser::parseInside(Node *startNode)
           currentNode->next = node;
         }
         node->tag = tag;
-        
+
         currentNode = node;
         rootNode = node;
-      } 
-      
+      }
+
       bCol += name.length() + 1;
     }
   }
 
+//if the block has no nodes inside, create a Text node with its content.
+  if (!startNode->child)
+  {
+    tag = new Tag(*startNode->tag);
+    tag->type = Tag::Text;
+    tag->single = true;
+    node = new Node(startNode);
+    startNode->child = node;
+    node->tag = tag;
+  }
 }
 
 
@@ -663,7 +673,7 @@ Node *Parser::parse(Document *w)
 {
   QTime t;
   t.start();
-  
+
   write = w;
   m_dtdName = w->parsingDTD();
   m_dtd = dtds->find(m_dtdName);

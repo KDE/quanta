@@ -3,7 +3,7 @@
                              -------------------
     begin                : Sat Apr 29 2000
     copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky
-                           (C) 2002 Andras Mantia
+                           (C) 2002, 2003 Andras Mantia
     email                : pdima@mail.univ.kiev.ua, amantia@freemail.hu
  ***************************************************************************/
 
@@ -103,7 +103,7 @@ StructTreeView::StructTreeView(Parser *parser, KConfig *config, QWidget *parent,
 
   connect(this, SIGNAL(expanded(QListViewItem *)), SLOT(slotExpanded(QListViewItem *)));
   connect(this, SIGNAL(collapsed(QListViewItem *)), SLOT(slotCollapsed(QListViewItem *)));
-  
+
   write = 0L;
 }
 
@@ -113,17 +113,19 @@ StructTreeView::~StructTreeView(){
 
 void StructTreeView::buildTree(Node *baseNode, int openLevel)
 {
-  if (baseNode) 
+  if (baseNode)
   {
     top = new StructTreeTag( this, i18n("Document Structure") );
     top->setOpen(topOpened);
-    
+
     Node *currentNode = baseNode;
     StructTreeTag *currentItem = top; //after this
     StructTreeTag *item;
     StructTreeTag *parentItem = top; //under this
     int level = 0;
     QString title;
+    QString tagStr;
+    QString tmpStr;
     StructTreeGroup group;
     for (uint i = 0; i < groupsCount; i++)          
     {
@@ -135,53 +137,17 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
        }
        groups[i]->setOpen(groupOpened[i]);
     }
-    
+
     while (currentNode)
     {
-      switch (currentNode->tag->type)
-      {
-        case Tag::XmlTag:
-             {
-               title = currentNode->tag->name;
-               break;
-             }
-        case Tag::Text:
-             {
-               title = currentNode->tag->tagStr();      
-               title = title.left(70).stripWhiteSpace();
-               title.replace( QRegExp("&nbsp;|\\n")," ");
-               break;
-             }
-        case Tag::Comment:
-             {
-               title = "comment";
-               break;
-             }
-        case Tag::ScriptStructureBegin:
-             { 
-               title = currentNode->tag->name;
-               break;
-             }
-        case Tag::ScriptTag:
-             {
-               title = currentNode->tag->name;
-               break;
-             }
-        default:
-             {
-               title = currentNode->tag->tagStr().left(70).stripWhiteSpace();
-             }
-             
-      }           
-      
-      item = new StructTreeTag(parentItem, currentNode,
-                               title, currentItem);
+      title = "";
+      item = new StructTreeTag(parentItem, currentNode, title, currentItem);
       item->setOpen(level < openLevel);
-      
+
       if (currentNode->tag->type == Tag::XmlTagEnd)
           item->setVisible(false);
-          
-      for (uint i = 0; i < groupsCount; i++)          
+
+      for (uint i = 0; i < groupsCount; i++)
       {
         group = m_parsingDTD->structTreeGroups[i];
         if (m_parsingDTD->family == Xml)
@@ -189,7 +155,7 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
           if (currentNode->tag->name.lower() == group.tag)
           {
             title = "";
-            for (uint j = 0; j < group.attributes.count(); j++)        
+            for (uint j = 0; j < group.attributes.count(); j++)
             {
               if (currentNode->tag->hasAttribute(group.attributes[j]))
               {           
@@ -199,14 +165,14 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
             }
             title = title.left(title.length()-3);
             title.replace(newLineRx,"");
-             
+
             //Find the group and the item (if there is already an item with this
             //name) under we should insert the new node
             QListViewItem *insertUnder = groups[i];
             QListViewItem *insertAfter = insertUnder;
             QListViewItemIterator it(insertUnder);
-            while ( it.current() && it.current() != insertUnder->nextSibling() ) 
-            {      
+            while ( it.current() && it.current() != insertUnder->nextSibling() )
+            {
               if (it.current()->text(0) == title) //we have already an item with this text
               {
                 insertUnder = it.current();
@@ -219,44 +185,63 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
                 insertAfter = insertAfter->nextSibling();
             new StructTreeTag(dynamic_cast<StructTreeTag*>(insertUnder), currentNode, title, insertAfter);
           }
-        } else
+        }  else
         if (currentNode->tag->type == Tag::Text ||
             currentNode->tag->type == Tag::ScriptStructureBegin)
         {
           //parse the node for groups (function/variable/inclusion/etc.) definitions
-          QString text;
-          QString tagStr = currentNode->tag->tagStr();       
-          QRegExp rx;
+          tagStr = currentNode->tag->tagStr();
           int pos = 0;
           while (pos != -1)
           {
             pos = group.searchRx.search(tagStr, pos);
             if (pos != -1)
             {
-              text = group.searchRx.cap(0);
+              title = group.searchRx.cap();
+              //build a new tag for this group entry
               Tag *newTag = new Tag(*currentNode->tag);
-              int newLines = tagStr.left(pos).contains('\n');
+              tmpStr = tagStr.left(pos);
+              int newLines = tmpStr.contains('\n');
               int bl, bc, el, ec;
-              newTag->beginPos(bl,bc);
-              bl = bl + newLines;
-              int lastEol = tagStr.left(pos).findRev('\n');
-              if ( lastEol != -1)
-              {
-                bc = pos - lastEol - 1;
-              } else
-              {
-                bc += pos;
-              }
-
-              newLines = text.contains('\n');
+              newTag->beginPos(bl, bc);
+              bl += newLines;
+              int l = tmpStr.findRev('\n'); //the last EOL
+              bc = (l == -1) ? bc+pos : pos - l - 1;
+              newLines = title.contains('\n');
+              l = title.length();
               el = bl + newLines;
-              if (newLines > 0) //is there really such case?
+              ec = (newLines > 0) ? l - title.findRev('\n') : bc + l - 1;
+              newTag->setTagPosition(bl, bc, el, ec);
+              newTag->setStr(title);
+              pos += l;
+              title.replace(group.clearRx,"");
+
+              //build a node for the entry
+              Node *node = new Node(currentNode);
+              node->tag = newTag;
+
+              //Find the group and the item (if there is already an item with this
+              //name) under we should insert the new node
+              QListViewItem *insertUnder = groups[i];
+              QListViewItem *insertAfter = insertUnder;
+              QListViewItemIterator it(insertUnder);
+              while ( it.current() && it.current() != insertUnder->nextSibling() )
               {
-                ec = text.length() - text.findRev('\n');
-              } else
-              {
-                ec = bc + text.length() - 1;
+                if (it.current()->text(0) == title) //we have already an item with this text
+                {
+                  insertUnder = it.current();
+                  break;
+                }
+                ++it;
               }
+              insertAfter = insertUnder->firstChild();
+              while (insertAfter && insertAfter->nextSibling())
+                  insertAfter = insertAfter->nextSibling();
+              new StructTreeTag(dynamic_cast<StructTreeTag*>(insertUnder), node, title, insertAfter);
+            }
+          }
+
+/*
               newTag->setTagPosition(bl, bc, el, ec);
               newTag->setStr(text);
               pos += text.length();
@@ -271,8 +256,8 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
               //name) under we should insert the new node
               QListViewItem *insertUnder = groups[i];
               QListViewItemIterator it(groups[i]);
-              while ( it.current() ) 
-              {      
+              while ( it.current() )
+              {
                 if (it.current()->text(0) == text) //we have already an item with this text
                 {
                   insertUnder = it.current();
@@ -298,7 +283,7 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
 
               //now do some sorting by finding the item after we insert the new node.
               //In case of toplevel nodes (just under the group) the sorting is
-              //alphabetical, and for items with the same text, 
+              //alphabetical, and for items with the same text,
               //the sorting is done according to the tag->beginLine attribute
               QListViewItem *item2 = insertUnder->firstChild();
               QListViewItem *insertAfter = 0L;
@@ -321,11 +306,11 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
               new StructTreeTag(dynamic_cast<StructTreeTag*>(insertUnder), node, text, insertAfter);
             }
           }
-       
+       */
         }
       }
-                               
-      currentNode->listItem = item;                               
+
+      currentNode->listItem = item;
       //go to the child node, if it exists
       if (currentNode->child)
       {
@@ -334,9 +319,9 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
         currentItem = 0L;
         level++;
       } else
-      { 
+      {
         //go to the next node if it exists
-        if (currentNode->next) 
+        if (currentNode->next)
         {
           currentNode = currentNode->next;
           currentItem = item;
