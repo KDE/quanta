@@ -175,7 +175,15 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
   int tagStartCol, tagStartLine = 0;
   int tagEndLine, tagEndCol;
   int tagStartPos, specialStartPos;
-  int lastLineLength = write->editIf->lineLength(endLine);
+  int lastLineLength;
+  if (endCol == 0)
+  {
+    if (endLine > 0)
+        endLine--;
+    lastLineLength = write->editIf->lineLength(endLine);
+    endCol = lastLineLength;
+  } else
+    lastLineLength = write->editIf->lineLength(endLine);
   int specialAreaCount = m_dtd->specialAreas.count();
   bool nodeFound = false;
   bool goUp;
@@ -546,7 +554,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
       }
       else if (tag->type == Tag::XmlTag)
            {
-             parseForXMLGroup(node);
+                parseForXMLGroup(node);
              //search for scripts inside the XML tag
              scriptParser(node);
            }
@@ -574,7 +582,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
   }
 
   QString s = write->text(el, ec + 1, endLine, endCol);
-  if ( el !=0 || ec !=0 )
+  if ( ( el !=0 || ec !=0) )
   {
     textTag = new Tag();
     textTag->setStr(s);
@@ -626,7 +634,18 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
         } else
         {
           if (parentNode)
-              parentNode->child = node;
+          {
+            Node *n = parentNode->child;
+            if (!n)
+                parentNode->child = node;
+            else
+            {
+              while (n->next)
+                n = n->next;
+              n->next = node;
+              node->prev = n;
+            }
+          }
         }
         if (!textTag->single)
             parentNode = node;
