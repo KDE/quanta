@@ -8,7 +8,7 @@
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
     (at your option) any later version.
-*/    
+*/
 
 
 //qt includes
@@ -114,13 +114,13 @@ KURL::List QExtFileInfo::allFilesRelative( const KURL& path, const QString& mask
 {
   QExtFileInfo internalFileInfo;
   KURL::List r = internalFileInfo.allFilesInternal( path, mask);
-  
+
   KURL::List::Iterator it;
   for ( it = r.begin(); it != r.end(); ++it )
   {
     *it = QExtFileInfo::toRelative( *it, path );
   }
-  
+
   return r;
 }
 
@@ -146,7 +146,7 @@ bool QExtFileInfo::createDir( const KURL& path )
     i++;
   }
  result = exists(path);
- return result; 
+ return result;
 }
 
 KURL QExtFileInfo::cdUp(const KURL &url)
@@ -209,14 +209,14 @@ KURL::List QExtFileInfo::allFilesInternal(const KURL& startURL, const QString& m
     QStringList list = QStringList::split( ' ', mask );
     for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
        lstFilters.append( new QRegExp(*it, false, true ) );
-    
+
     bJobOK = true;
     KIO::ListJob *job = KIO::listRecursive(startURL, false, true);
     connect(job, SIGNAL(entries(KIO::Job *, const KIO::UDSEntryList&)),
             this, SLOT(slotNewEntries(KIO::Job *, const KIO::UDSEntryList&)));
     connect( job, SIGNAL( result (KIO::Job *) ),
              this, SLOT( slotResult (KIO::Job *) ) );
-            
+
  //   kdDebug(24000) << "Now listing: " << startURL.url() << endl;
     enter_loop();
     lstFilters.clear();
@@ -242,15 +242,15 @@ bool QExtFileInfo::internalExists(const KURL& url)
   connect( job, SIGNAL( result (KIO::Job *) ),
            this, SLOT( slotResult (KIO::Job *) ) );
 
-  //To avoid lock-ups, start a timer.         
+  //To avoid lock-ups, start a timer.
   timer = new QTimer(this);
   connect(timer, SIGNAL(timeout()), SLOT(slotTimeout()));
-  timer->start(10*1000, true);         
+  timer->start(10*1000, true);
 //  kdDebug(24000)<<"QExtFileInfo::internalExists:before enter_loop"<<endl;
   enter_loop();
 //  kdDebug(24000)<<"QExtFileInfo::internalExists:after enter_loop"<<endl;
 
-  return bJobOK; 
+  return bJobOK;
 }
 
 void qt_enter_modal( QWidget *widget );
@@ -268,7 +268,7 @@ void QExtFileInfo::enter_loop()
 
 void QExtFileInfo::slotResult( KIO::Job * job )
 {
-  if (timer) delete timer;
+  delete timer;
   bJobOK = !job->error();
   if ( !bJobOK )
   {

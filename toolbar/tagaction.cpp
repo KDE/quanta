@@ -344,6 +344,7 @@ void TagAction::execute()
   timer->start(10*1000, true);
   QExtFileInfo internalFileInfo;
   internalFileInfo.enter_loop();
+  delete timer;
 }
 
 /** Timeout occured while waiting for some network function to return. */
