@@ -509,7 +509,16 @@ if (!m_synchronous)
       {
         int pos = s_textLine.find(s_dtd->comments[s_currentContext.startString], s_col);
         if (pos == -1 && s_dtd->comments[s_currentContext.startString] == "\n")
-          pos = s_textLine.length();
+        {
+          int pos2 = s_textLine.find(s_areaEndString);
+          if (pos2 != -1)
+          {
+            pos = pos2 - 1;
+          } else
+          {
+            pos = s_textLine.length();
+          }
+        }
         if (pos != -1)
         {
           s_currentContext.area.eLine = s_line;
