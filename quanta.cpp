@@ -471,7 +471,7 @@ void QuantaApp::slotFileClose()
     part->write( "" );
     part->end();
 
-    slotUpdateStatus(m_view->write());
+    slotUpdateStatus(m_view->writeTab()->currentPage());
   } else {
     QWidget *kietWidget;
     kietWidget = m_view->writeTab()->currentPage();
