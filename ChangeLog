@@ -113,6 +113,11 @@ Version 3.4 (Release date: xx-xx-2005; Started 20-08-2004):
         - add useful entries to the context menus invoked at empty areas of the various
           treeviews
         - better save on close dialog for multiple files
+        - more supported CVS commands in the context menus:
+            - update to HEAD
+            - update to tag/date
+        - added possibility to execute CVS commands on the main project directory
+      
 
 Version 3.3.0 (Release date: 18-08-2004; Started 07-05-2004):
 NOTE: Unfortunately I failed to update the changelog regulary, thus some new features and

@@ -2,7 +2,7 @@
                                               cvsservice.h  -  description
                                              ------------------------------
     begin                : Sun May 16 17:50:25 2004
-    copyright          : (C) 2004 by Andras Mantia <amantia@kde.org>
+    copyright          : (C) 2004, 2005 by Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -32,6 +32,7 @@ class CvsService_stub;
 class Repository_stub;
 
 class CVSCommitDlgS;
+class CVSUpdateToDlgS;
 
 /** @short This class manages the CVS repositories from withing Quanta with the help of "cvsservice"
  *
@@ -65,6 +66,10 @@ public:
 public slots:
   void slotUpdate();
   void slotUpdate(const QStringList &files);
+  void slotUpdateToTag();
+  void slotUpdateToTag(const QStringList &files);
+  void slotUpdateToHead();
+  void slotUpdateToHead(const QStringList &files);
   void slotCommit();
   void slotCommit(const QStringList &files);
 
@@ -91,6 +96,7 @@ private:
   QString m_cvsCommand;
   QStringList m_files;
   CVSCommitDlgS *m_commitDlg;
+  CVSUpdateToDlgS *m_updateToDlg;
   DCOPRef m_job;
 };
 

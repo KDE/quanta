@@ -1,6 +1,7 @@
 noinst_LTLIBRARIES = libcvsservice.la
 
-libcvsservice_la_SOURCES = cvsservice.cpp cvscommitdlgs.ui cvsservicedcopif.skel
+libcvsservice_la_SOURCES = cvsservice.cpp cvscommitdlgs.ui \
+	cvsservicedcopif.skel cvsupdatetodlgs.ui
 libcvsservice_la_METASOURCES = AUTO
 
 AM_CPPFLAGS = -I$(top_srcdir)/quanta/src \

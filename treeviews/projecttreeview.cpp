@@ -229,7 +229,10 @@ void ProjectTreeView::slotMenu(KListView *listView, QListViewItem *item, const Q
   CVSService::ref()->setRepository(m_projectBaseURL.path());
   if (url.isLocalFile())
   {
-    CVSService::ref()->setCurrentFile(url.path());
+    QString path = url.path();
+    if (path == m_projectBaseURL.path())
+      path += "/.";
+    CVSService::ref()->setCurrentFile(path);
   }
   else
     CVSService::ref()->setCurrentFile("");
@@ -640,6 +643,8 @@ void ProjectTreeView::plugCVSMenu()
   m_fileMenu->insertItem(SmallIcon("cervisia"), i18n("C&VS"), CVSService::ref()->menu());
   m_folderMenu->insertSeparator();
   m_folderMenu->insertItem(SmallIcon("cervisia"), i18n("C&VS"), CVSService::ref()->menu());
+  m_projectMenu->insertSeparator();
+  m_projectMenu->insertItem(SmallIcon("cervisia"), i18n("C&VS"), CVSService::ref()->menu());
 #endif
 
 }

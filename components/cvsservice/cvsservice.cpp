@@ -2,7 +2,7 @@
                                               cvsservice.cpp  -  description
                                              ------------------------------
     begin                : Sun May 16 17:50:25 2004
-    copyright          : (C) 2004 by Andras Mantia <amantia@kde.org>
+    copyright          : (C) 2004, 2005 by Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -14,12 +14,14 @@
  ***************************************************************************/
 
 //qt include
+#include <qradiobutton.h>
 #include <qtextedit.h>
 
 //kde includes
 #include <kaction.h>
 #include <kcombobox.h>
 #include <kdeversion.h>
+#include <klineedit.h>
 #include <klistbox.h>
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -32,14 +34,15 @@
 
 #include "cvsservice.h"
 #include "cvscommitdlgs.h"
+#include "cvsupdatetodlgs.h"
 
 CVSService::CVSService(KActionCollection *ac)
 {
   m_menu = new KPopupMenu();
 #if KDE_VERSION < KDE_MAKE_VERSION(3,2,90)
-  KAction *action = new KAction(i18n("&Commit"), 0, this, SLOT(slotCommit()), ac);
+  KAction *action = new KAction(i18n("&Commit..."), 0, this, SLOT(slotCommit()), ac);
 #else
-  KAction *action = new KAction(i18n("&Commit"), "vcs_commit", 0, this, SLOT(slotCommit()), ac);
+  KAction *action = new KAction(i18n("&Commit..."), "vcs_commit", 0, this, SLOT(slotCommit()), ac);
 #endif
   action->plug(m_menu);
 #if KDE_VERSION < KDE_MAKE_VERSION(3,2,90)
@@ -48,10 +51,25 @@ CVSService::CVSService(KActionCollection *ac)
   action = new KAction(i18n("&Update"), "vcs_update", 0, this, SLOT(slotUpdate()), ac);
 #endif
   action->plug(m_menu);
+  KPopupMenu *updateToMenu = new KPopupMenu(m_menu);
+  m_menu->insertItem(i18n("Update To"), updateToMenu);
+#if KDE_VERSION < KDE_MAKE_VERSION(3,2,90)
+  action = new KAction(i18n("&Update to Tag/Date..."), 0, this, SLOT(slotUpdateToTag()), ac);
+#else
+  action = new KAction(i18n("&Update to Tag/Date..."), "vcs_update_to_tag", 0, this, SLOT(slotUpdateToTag()), ac);
+#endif
+  action->plug(updateToMenu);
+#if KDE_VERSION < KDE_MAKE_VERSION(3,2,90)
+  action = new KAction(i18n("&Update to HEAD"), 0, this, SLOT(slotUpdateToHead()), ac);
+#else
+  action = new KAction(i18n("&Update to HEAD"), "vcs_update_to_tag", 0, this, SLOT(slotUpdateToHead()), ac);
+#endif
+  action->plug(updateToMenu);
   m_cvsJob = 0L;
   m_repository = 0L;
   m_cvsService =0L;
   m_commitDlg = new CVSCommitDlgS();
+  m_updateToDlg = new CVSUpdateToDlgS();
 }
 
 CVSService::~CVSService()
@@ -64,6 +82,7 @@ CVSService::~CVSService()
   m_repository = 0L;
   m_cvsService = 0L;
   delete m_commitDlg;
+  delete m_updateToDlg;
 }
 
 void CVSService::setAppId(const QCString &id)
@@ -121,6 +140,85 @@ void CVSService::slotUpdate(const QStringList &files)
    }
 }
 
+void CVSService::slotUpdateToTag()
+{
+  QStringList files;
+  if (!m_defaultFile.isEmpty())
+  {
+    if (m_defaultFile.startsWith(m_repositoryPath))
+    {
+      files += m_defaultFile.remove(m_repositoryPath);
+      slotUpdateToTag(files);
+    } else
+    {
+      notInRepository();
+    }
+  }
+}
+
+void CVSService::slotUpdateToTag(const QStringList &files)
+{
+  if (m_repository && !m_appId.isEmpty() && m_updateToDlg->exec())
+  {
+    QString extraOpts;
+    QString commandStr;
+    if (m_updateToDlg->tagRadioButton->isChecked())
+    {
+      extraOpts = "-r " + m_updateToDlg->tagCombo->currentText();
+      commandStr = i18n("Updating to revision %1 ...").arg(m_updateToDlg->tagCombo->currentText());
+    } else
+    {
+      extraOpts = "-D " + m_updateToDlg->dateLineEdit->text();
+      commandStr = i18n("Updating to the version from %1 ...").arg(+ m_updateToDlg->dateLineEdit->text());
+    }
+    emit clearMessages();
+    emit showMessage(commandStr, false);
+    m_files = files;
+    m_job = m_cvsService->update(files, true, true, true, extraOpts);
+    m_cvsCommand = "update";
+    m_cvsJob = new CvsJob_stub(m_job.app(), m_job.obj());
+
+    connectDCOPSignal(m_job.app(), m_job.obj(), "jobExited(bool, int)", "slotJobExited(bool, int)", true);
+    connectDCOPSignal(m_job.app(), m_job.obj(), "receivedStdout(QString)", "slotReceivedStdout(QString)", true);
+    connectDCOPSignal(m_job.app(), m_job.obj(), "receivedStderr(QString)", "slotReceivedStderr(QString)", true);
+    m_cvsJob->execute();
+  }
+}
+
+void CVSService::slotUpdateToHead()
+{
+  QStringList files;
+  if (!m_defaultFile.isEmpty())
+  {
+    if (m_defaultFile.startsWith(m_repositoryPath))
+    {
+      files += m_defaultFile.remove(m_repositoryPath);
+      slotUpdateToHead(files);
+    } else
+    {
+      notInRepository();
+    }
+  }
+}
+
+void CVSService::slotUpdateToHead(const QStringList &files)
+{
+  if (m_repository && !m_appId.isEmpty())
+  {
+    emit clearMessages();
+    emit showMessage(i18n("Updating to HEAD..."), false);
+    m_files = files;
+    m_job = m_cvsService->update(files, true, true, true, "-A");
+    m_cvsCommand = "update";
+    m_cvsJob = new CvsJob_stub(m_job.app(), m_job.obj());
+
+    connectDCOPSignal(m_job.app(), m_job.obj(), "jobExited(bool, int)", "slotJobExited(bool, int)", true);
+    connectDCOPSignal(m_job.app(), m_job.obj(), "receivedStdout(QString)", "slotReceivedStdout(QString)", true);
+    connectDCOPSignal(m_job.app(), m_job.obj(), "receivedStderr(QString)", "slotReceivedStderr(QString)", true);
+    m_cvsJob->execute();
+  }
+}
+
 void CVSService::slotCommit()
 {
   QStringList files;
@@ -175,8 +273,8 @@ void CVSService::slotJobExited(bool normalExit, int exitStatus)
     disconnectDCOPSignal(m_job.app(), m_job.obj(), "jobExited(bool, int)", "slotJobExited(bool, int)");
     disconnectDCOPSignal(m_job.app(), m_job.obj(), "receivedStdout(QString)", "slotReceivedStdout(QString)");
     disconnectDCOPSignal(m_job.app(), m_job.obj(), "receivedStderr(QString)", "slotReceivedStderr(QString)");
-    delete m_cvsJob;
-    m_cvsJob = 0L;
+    //delete m_cvsJob;
+    //m_cvsJob = 0L;
     emit showMessage(i18n("CVS command finished."), false);
 }
 
