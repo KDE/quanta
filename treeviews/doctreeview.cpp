@@ -50,6 +50,7 @@ DocTreeView::DocTreeView(QWidget *parent, const char *name )
   addColumn( i18n("Name"), 600 );
 
   projectDocFolder = new KListViewItem(this, i18n("Project documentation"));
+  projectDocFolder->setOpen(true);
 
   QStringList docDirs = KGlobal::instance()->dirs()->findDirs("appdata", "doc");
 
@@ -125,7 +126,10 @@ void DocTreeView::slotDoubleClicked(QListViewItem *item )
 
 void DocTreeView::addProjectDoc(const KURL& url)
 {
-  new DocItem(projectDocFolder, url.prettyURL(), url.url());
+  QString path = url.path();
+  int pos = path.find("/doc/");
+  path = path.mid(pos + 5);
+  new DocItem(projectDocFolder, path, url.url());
 }
 
 #include "doctreeview.moc"
