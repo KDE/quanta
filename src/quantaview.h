@@ -197,6 +197,7 @@ signals:
   /** emitted if this view contained an editor and it is closed */
   void documentClosed();
 
+private:
 #ifdef BUILD_KAFKAPART
 /** Kafka stuff */
   QValueList<int> m_splitterSizes;
