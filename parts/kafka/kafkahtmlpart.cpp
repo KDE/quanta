@@ -437,8 +437,8 @@ bool KafkaWidget::eventFilter(QObject *, QEvent *event)
 
 	if(event->type() == QEvent::KeyPress)
 	{
-		QKeyEvent *keyevent = static_cast<QKeyEvent *>(event);
-
+		QKeyEvent *keyevent = dynamic_cast<QKeyEvent *>(event);
+        Q_ASSERT(keyevent);
 		switch(keyevent->key())
 		{
 			case Key_Left:
@@ -495,6 +495,7 @@ bool KafkaWidget::eventFilter(QObject *, QEvent *event)
 				if(!m_currentNode.isNull() &&
 					w->getAttrs(m_currentNode)->chCurFoc() != kNodeAttrs::no)
 				{
+                    // @todo check tab settings in Quanta
 					insertText("    ", -1);
 					makeCursorVisible();
 				}
@@ -588,10 +589,7 @@ bool KafkaWidget::eventFilter(QObject *, QEvent *event)
 		d->m_cursorOffset << " (" << event->type() << ")" << endl;
 #endif
 
-	if(!forgetEvent)
-		return false;
-	else
-		return true;
+    return forgetEvent;
 }
 
 #if 0
