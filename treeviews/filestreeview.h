@@ -55,7 +55,7 @@ public:
   KURL::List topURLList;
 
 public slots:
-  void slotMenu(QListViewItem *, const QPoint &, int);
+  virtual void slotMenu(QListViewItem *, const QPoint &, int);
   virtual void slotSelectFile(QListViewItem *);
   void slotSelectAnyFile(QListViewItem *);
   void slotSelectImage(QListViewItem *);

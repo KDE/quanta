@@ -111,6 +111,8 @@ FilesTreeView::FilesTreeView(KURL::List topList, QWidget *parent, const char *na
           s = "/";
         s += " ["+url.prettyURL()+"]";
         FilesTreeFolder *dir = new FilesTreeFolder( this, s, url);
+        KFileItem fileItem(KFileItem::Unknown, KFileItem::Unknown, url);
+        dir->setIcon(fileItem.iconName());
         dir->setOpen( false);
       }
   }
@@ -199,7 +201,7 @@ void FilesTreeView::slotSelectFile(QListViewItem *item)
     FilesTreeFolder *parent = (FilesTreeFolder *) item->parent();
     if ( parent && !dynamic_cast<FilesTreeFolder *>(item) )
     {
-       KURL urlToOpen = currentURL();
+      KURL urlToOpen = currentURL();
       if (!urlToOpen.isEmpty())
       {
         if ( QuantaCommon::checkMimeGroup(urlToOpen,"text") )

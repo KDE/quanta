@@ -19,7 +19,9 @@
 
 #include "filestreeview.h"
 
+class QListViewItem;
 class KURL;
+class FilesTreeFolder;
 
 class ScriptTreeView : public FilesTreeView  {
    Q_OBJECT
@@ -27,8 +29,18 @@ public:
    ScriptTreeView(const KURL& projectBaseURL, QWidget *parent=0, const char *name=0);
   ~ScriptTreeView();
 
+public slots:
+  virtual void slotMenu(QListViewItem *, const QPoint &, int);
+  virtual void slotSelectFile(QListViewItem *);
+  void slotEditScript();
+  void slotEditInQuanta();
+  void slotEditDescription();
+
 private:
-   KURL m_baseURL;
+  KURL m_baseURL;
+  FilesTreeFolder *m_globalDir;
+  FilesTreeFolder *m_localDir;
+
 };
 
 #endif
