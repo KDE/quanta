@@ -2627,9 +2627,11 @@ void QuantaApp::slotDeleteAction(KAction *action)
   action = 0L;
 }
 
-void QuantaApp::slotRemoveAction(const QString& toolbarName, const QString& actionName)
+void QuantaApp::slotRemoveAction(const QString& toolbarName, const QString& a_actionName)
 {
   KAction *action = 0L;
+  QString actionName = a_actionName;
+  actionName.replace('&',"&&");
   for (uint i = 0; i < actionCollection()->count(); i++)
   {
     if (actionCollection()->action(i)->text() == actionName)

@@ -84,7 +84,7 @@ ActionConfigDialog::ActionConfigDialog( QWidget* parent, const char* name, bool 
           action = quantaApp->actionCollection()->action(node.toElement().attribute("name"));
           if (action)
           {
-            oldActionItem = new KListViewItem(item, oldActionItem, action->text().replace('&',""), action->shortcut().toString(), action->name());
+            oldActionItem = new KListViewItem(item, oldActionItem, action->text().replace(QRegExp("\\&(?!\\&)"),""), action->shortcut().toString(), action->name());
             oldActionItem->setPixmap(0, BarIcon(action->icon()) );
           }
         }
@@ -119,7 +119,7 @@ ActionConfigDialog::ActionConfigDialog( QWidget* parent, const char* name, bool 
   for (uint i = 0; i < quantaApp->actionCollection()->count(); i++)
   {
     action = quantaApp->actionCollection()->action(i);
-    item = new KListViewItem(allActionsItem, action->text().replace('&',""), action->shortcut().toString(), action->name());
+    item = new KListViewItem(allActionsItem, action->text().replace(QRegExp("\\&(?!\\&)"),""), action->shortcut().toString(), action->name());
     item->setPixmap(0, BarIcon(action->icon()) );
   }
   allActionsItem->sortChildItems(0, true);
@@ -211,7 +211,7 @@ void ActionConfigDialog::slotEditToolbar()
             action = quantaApp->actionCollection()->action(node.toElement().attribute("name"));
             if (action)
             {
-              oldItem = new KListViewItem(item, oldItem, action->text().replace('&',""), action->shortcut().toString(), action->name());
+              oldItem = new KListViewItem(item, oldItem, action->text().replace(QRegExp("\\&(?!\\&)"),""), action->shortcut().toString(), action->name());
               oldItem->setPixmap(0, BarIcon(action->icon()));
             }
           }
@@ -248,7 +248,9 @@ void ActionConfigDialog::slotSelectionChanged(QListViewItem *item)
     for (uint i = 0; i < quantaApp->actionCollection()->count(); i++)
     {
       KAction *a = quantaApp->actionCollection()->action(i);
-      if (a && a->text() == item->text(0) && a->inherits("TagAction"))
+      QString actionText = a->text();
+      actionText.replace(QRegExp("\\&(?!\\&)"),"");
+      if (a && actionText == item->text(0) && a->inherits("TagAction"))
       {
         action = static_cast<TagAction*>(a);
         actionProperties->setEnabled(true);
@@ -273,7 +275,9 @@ void ActionConfigDialog::slotSelectionChanged(QListViewItem *item)
           s = QFileInfo(s).fileName();
         actionIcon->setIcon(s);
       }
-      lineText->setText( el.attribute("text") );
+      QString actionText = el.attribute("text");
+      actionText.replace(QRegExp("\\&(?!\\&)"),"");
+      lineText->setText(actionText);
       lineToolTip->setText( el.attribute("tooltip") );
       QString shortcutText = action->shortcut().toString();
       if (shortcutText.isEmpty())
@@ -433,6 +437,7 @@ void ActionConfigDialog::saveCurrentAction()
   currentAction->setIcon(s);
   QString oldText = el.attribute("text");
   s = lineText->text();
+  s.replace('&', "&&");
   el.setAttribute("text", s);
   currentAction->setText(s);
   s = lineToolTip->text();

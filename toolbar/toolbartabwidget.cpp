@@ -185,8 +185,9 @@ void QuantaToolBar::mousePressEvent(QMouseEvent *e)
         if (QRect(p1, p2).contains(p))
         {
           currentActionName = w->textLabel();
-          m_popupMenu->insertItem(i18n("Remove Action - %1").arg(currentActionName), this, SLOT(slotRemoveAction()));
-          m_popupMenu->insertItem(i18n("Edit Action - %1").arg(currentActionName), this, SLOT(slotEditAction()));
+          QString actionName = currentActionName;
+          m_popupMenu->insertItem(i18n("Remove Action - %1").arg(actionName.replace('&',"&&")), this, SLOT(slotRemoveAction()));
+          m_popupMenu->insertItem(i18n("Edit Action - %1").arg(actionName), this, SLOT(slotEditAction()));
           m_popupMenu->insertSeparator();
           break;
         }
