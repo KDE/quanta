@@ -474,7 +474,7 @@ void QuantaDebuggerGubed::processCommand(QString data)
   // Show the contents of a variable
   else if(m_command == "showcondition")
   {
-    showWatch(data);
+    showCondition(data);
   }
   else if(m_command == "sentwatches")
   {
@@ -633,6 +633,28 @@ void QuantaDebuggerGubed::removeWatch(DebuggerVariable *variable)
   //sendCommand("unwatchvariable", var->name());
 }
 
+// Show conditional breakpoint state
+void QuantaDebuggerGubed::showCondition(const QString &expression)
+{
+  QString condition = expression.left(expression.find(":"));
+  QString value = expression.mid(expression.find(":") + 1);
+
+  DebuggerBreakpoint *bp = debuggerInterface()->newDebuggerBreakpoint();
+  bp->setCondition(condition);
+  bp->setLine(0);
+  bp->setFilePath("");
+
+  if(value == "F")
+    bp->setState(DebuggerBreakpointStates::Unfulfilled);
+  else if(value == "T")
+    bp->setState(DebuggerBreakpointStates::Fulfilled);
+  else if(value == "-")
+    bp->setState(DebuggerBreakpointStates::Error);
+  else
+    bp->setState(DebuggerBreakpointStates::Undefined);
+
+  debuggerInterface()->showBreakpoint(*bp);
+}
 
 // Read configuration
 void QuantaDebuggerGubed::readConfig(QDomNode node)

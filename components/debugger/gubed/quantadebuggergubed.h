@@ -85,6 +85,7 @@ class QuantaDebuggerGubed : public DebuggerClient
     // Breakpoints
     void addBreakpoint(DebuggerBreakpoint* breakpoint);
     void removeBreakpoint(DebuggerBreakpoint* breakpoint);
+    void showCondition(const QString &expression);
 
     // Variables
     void addWatch(const QString &variable);

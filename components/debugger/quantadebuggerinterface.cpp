@@ -31,6 +31,8 @@
 #include "debuggermanager.h"
 #include "debuggerui.h"
 
+class DebuggerBreakpoint;
+
 QuantaDebuggerInterface::QuantaDebuggerInterface (QObject *myparent, const char* name)
     : DebuggerInterface(myparent, name)
 {
@@ -81,10 +83,21 @@ void QuantaDebuggerInterface::parsePHPVariables(const QString &varstring)
   m_manager->UI()->parsePHPVariables(varstring);
 }
 
+void QuantaDebuggerInterface::showBreakpoint(const DebuggerBreakpoint &bp)
+{
+  m_manager->UI()->showBreakpoint(bp);
+}
+
 void QuantaDebuggerInterface::refreshBreakpoints()
 {
   m_manager->refreshBreakpoints();
 }
+
+DebuggerBreakpoint *QuantaDebuggerInterface::newDebuggerBreakpoint()
+{
+  return m_manager->newDebuggerBreakpoint();
+}
+
 /*
 void QuantaDebuggerInterface::preWatchUpdate()
 {

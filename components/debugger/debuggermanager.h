@@ -26,6 +26,7 @@ class QuantaDebuggerInterface;
 class DebuggerBreakpointList;
 class DebuggerUI;
 class DebuggerVariable;
+class DebuggerBreakpoint;
 
 class DebuggerManager : public QObject
 {
@@ -39,7 +40,6 @@ class DebuggerManager : public QObject
     DebuggerUI * m_debuggerui;
 
     // Internal help functions
-    void setMark(QString, long, bool, int);
     void initActions();
     void initClientActions();
     QString m_currentFile;
@@ -56,10 +56,12 @@ class DebuggerManager : public QObject
     // Breakpoints
     void haveBreakpoint (QString file, int line);
     void refreshBreakpoints();
+    DebuggerBreakpoint *newDebuggerBreakpoint();
 
     // Public help functions
     bool showStatus(QString message, bool log);
     bool setActiveLine (QString file, int line);
+    void setMark(QString filename, long line, bool set, int mark);
 
     void enableAction(QString action, bool enable);
     void fileOpened(QString file);
@@ -81,6 +83,7 @@ class DebuggerManager : public QObject
     void toggleBreakpoint();
     void clearBreakpoints();
     void slotConditionalBreakpoint();
+    void slotRemoveBreakpoint(DebuggerBreakpoint* bp);
 
     // Watches
     void slotAddWatch();

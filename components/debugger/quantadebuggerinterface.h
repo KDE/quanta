@@ -52,8 +52,11 @@ class QuantaDebuggerInterface : public DebuggerInterface
     //void postWatchUpdate();
     //DebuggerVariable* newDebuggerVariable(const QString& name, const QString& value, int type);
     //void addVariable(DebuggerVariable*);
-    void parsePHPVariables(const QString &);
 
+    // Breakpoints
+    void parsePHPVariables(const QString &);
+    void showBreakpoint(const DebuggerBreakpoint &bp);
+    DebuggerBreakpoint * newDebuggerBreakpoint();
 };
 
 #endif

@@ -18,6 +18,7 @@
 #include "debuggerui.h"
 
 #include "variableslistview.h"
+#include "debuggerbreakpointview.h"
 #include "debuggervariable.h"
 
 #include "quantacommon.h"
@@ -33,23 +34,39 @@
 DebuggerUI::DebuggerUI(QObject *parent, const char *name)
     : QObject(parent, name), m_variablesListView(0)
 {
+  // Variable watch tree
   m_variablesListView = new VariablesListView(quantaApp->getMainDockWidget(), "debuggerVariables");
   m_variablesListView->setIcon(SmallIcon("math_brace"));
   m_variablesListView->setCaption(i18n("Variables"));
   m_variableListViewTVA = quantaApp->addToolWindow(m_variablesListView, KDockWidget::DockLeft, quantaApp->getMainDockWidget());
+
+  // Breakpointlist
+  m_debuggerBreakpointView = new DebuggerBreakpointView(quantaApp->getMainDockWidget(), "debuggerBreakpoints");
+  m_debuggerBreakpointView->setIcon(SmallIcon("debug_breakpoint"));
+  m_debuggerBreakpointView->setCaption(i18n("Breakpoints"));
+  m_debuggerBreakpointViewTVA = quantaApp->addToolWindow(m_debuggerBreakpointView, KDockWidget::DockBottom, quantaApp->getMainDockWidget());
   showMenu();
+
+  // Show debugger toolbar
   quantaApp->toolBar("debugger_toolbar")->show();
 
   connect(m_variablesListView, SIGNAL(removeVariable(DebuggerVariable* )), parent, SLOT(slotRemoveVariable(DebuggerVariable* )));
 
+  connect(m_debuggerBreakpointView, SIGNAL(removeBreakpoint(DebuggerBreakpoint* )), parent, SLOT(slotRemoveBreakpoint(DebuggerBreakpoint* )));
 }
 
 DebuggerUI::~DebuggerUI()
 {
   hideMenu();
   quantaApp->toolBar("debugger_toolbar")->hide();
+
+  // Remove Variable tree
   quantaApp->deleteToolWindow(m_variableListViewTVA);
   m_variableListViewTVA = 0L;
+
+  // Remove breakpointlist
+  quantaApp->deleteToolWindow(m_debuggerBreakpointViewTVA);
+  m_debuggerBreakpointViewTVA = 0L;
 }
 
 void DebuggerUI::showMenu()
@@ -84,6 +101,14 @@ void DebuggerUI::parsePHPVariables(const QString &varstring)
   m_variablesListView->parsePHPVariables(varstring);
 }
 
+void DebuggerUI::showBreakpoint(const DebuggerBreakpoint &bp)
+{
+  m_debuggerBreakpointView->showBreakpoint(bp);
+}
+void DebuggerUI::deleteBreakpoint(const DebuggerBreakpoint &bp)
+{
+  m_debuggerBreakpointView->deleteBreakpoint(bp);
+}
 
 /*void DebuggerUI::preWatchUpdate()
 {

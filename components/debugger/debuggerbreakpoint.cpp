@@ -73,37 +73,37 @@ void DebuggerBreakpoint::setSkipHits(int skipHits)
   m_skipHits = skipHits;
 }
 
-const QString& DebuggerBreakpoint::filePath()
+const QString& DebuggerBreakpoint::filePath() const
 {
   return m_filePath;
 }
 
-int DebuggerBreakpoint::line()
+int DebuggerBreakpoint::line() const
 {
   return m_line;
 }
 
-const QString& DebuggerBreakpoint::condition()
+const QString& DebuggerBreakpoint::condition() const
 {
   return m_conditionExpr;
 }
 
-int DebuggerBreakpoint::state()
+int DebuggerBreakpoint::state() const
 {
   return m_state;
 }
 
-bool DebuggerBreakpoint::isTemp()
+bool DebuggerBreakpoint::isTemp() const
 {
   return m_isTemp;
 }
 
-int DebuggerBreakpoint::hitCount()
+int DebuggerBreakpoint::hitCount() const
 {
   return m_hitCount;
 }
 
-int DebuggerBreakpoint::skipHits()
+int DebuggerBreakpoint::skipHits() const
 {
   return m_skipHits;
 }

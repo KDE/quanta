@@ -23,6 +23,8 @@
 #include <kurl.h>
 
 #include "debuggervariable.h"
+#include "debuggerbreakpoint.h"
+
 
 class DebuggerInterface : public QObject
 {
@@ -51,8 +53,11 @@ class DebuggerInterface : public QObject
     //virtual DebuggerVariable* newDebuggerVariable(const QString& name, const QString& value, int type) = 0;
     //virtual void addVariable(DebuggerVariable*) = 0;
     virtual void parsePHPVariables(const QString &) = 0;
-    virtual void refreshBreakpoints() = 0;
 
+    // Breakpoints
+    virtual void showBreakpoint(const DebuggerBreakpoint &bp) = 0;
+    virtual void refreshBreakpoints() = 0;
+    virtual DebuggerBreakpoint * newDebuggerBreakpoint() = 0;
 };
 
 #endif

@@ -1,8 +1,8 @@
 /***************************************************************************
-                               debuggerui.h
+                           Breakpoinlistview.h
                          ------------------------
-    begin                : 2004-04-04
-    copyright            : (C) 2004 Thiago Silva
+    begin                : 2004-06-27
+    copyright            : (C) 2004 Linus McCabe
 
  ***************************************************************************/
 
@@ -16,46 +16,42 @@
  ***************************************************************************/
 
 
-#ifndef DEBUGGERUI_H
-#define DEBUGGERUI_H
+#ifndef DEBUGGERBREAKPOINTVIEW_H
+#define DEBUGGERBREAKPOINTVIEW_H
 
-#include <qobject.h>
+#include <klistview.h>
+#include <kpopupmenu.h>
 #include <qptrlist.h>
-#include <kmditoolviewaccessor.h>
 
-
-class VariablesListView;
-class DebuggerBreakpointView;
 class DebuggerBreakpoint;
-class DebuggerVariable;
 
-class DebuggerUI : public QObject
+class DebuggerBreakpointView : public KListView
 {
     Q_OBJECT
 
   public:
-    DebuggerUI(QObject *parent = 0, const char *name = 0);
-    ~DebuggerUI();
+    DebuggerBreakpointView(QWidget *parent = 0, const char *name = 0);
+    ~DebuggerBreakpointView();
 
-    // Watches
-    void preWatchUpdate();
-    void postWatchUpdate();
-
-    void setVariables(const QPtrList<DebuggerVariable>&);
-    void addVariable(DebuggerVariable* var);
     void showBreakpoint(const DebuggerBreakpoint& bp);
     void deleteBreakpoint(const DebuggerBreakpoint& bp);
-    void parsePHPVariables(const QString &);
 
-    void showMenu();
-    void hideMenu();
+    DebuggerBreakpoint* selected();
+
+    void clear();
+
+  public slots:
+    void slotRemoveSelected();
+    void slotBreakpointContextMenu(KListView *list, QListViewItem * item, const QPoint& point);
+
+  signals:
+    void removeBreakpoint(DebuggerBreakpoint*);
 
   private:
-    VariablesListView* m_variablesListView;
-    KMdiToolViewAccessor* m_variableListViewTVA;
-    DebuggerBreakpointView* m_debuggerBreakpointView;
-    KMdiToolViewAccessor* m_debuggerBreakpointViewTVA;
-    int m_debuggerMenuID;
+    void keyPressEvent(QKeyEvent *e);
+    QListViewItem* findBreakpoint(const DebuggerBreakpoint& bp, bool addIfNotExist = true);
+
+    KPopupMenu *m_breakpointPopup;
 };
 
 #endif

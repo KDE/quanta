@@ -19,12 +19,24 @@
 #define DEBUGGERBREAKPOINT_H
 #include <qstring.h>
 
+namespace DebuggerBreakpointStates
+{
+  enum States
+  {
+    Undefined = 0,
+    Unfulfilled,
+    Fulfilled,
+    Error
+  };
+}
+
+
 class DebuggerBreakpoint
 {
   public:
     DebuggerBreakpoint();
     DebuggerBreakpoint(const QString& filePath, int line,
-                       const QString& conditionExpr = "", int state = 0,
+                       const QString& conditionExpr = "", int state = DebuggerBreakpointStates::Undefined,
                        bool isTemp = false, int hitCount = 0, int skipHits = 0);
 
     virtual ~DebuggerBreakpoint();
@@ -37,13 +49,13 @@ class DebuggerBreakpoint
     virtual void setHitCount(int hitCount);
     virtual void setSkipHits(int skipHits);
 
-    virtual const QString& filePath();
-    virtual int line();
-    virtual const QString& condition();
-    virtual int state();
-    virtual bool isTemp();
-    virtual int hitCount();
-    virtual int skipHits();
+    virtual const QString& filePath() const;
+    virtual int line() const;
+    virtual const QString& condition() const;
+    virtual int state() const;
+    virtual bool isTemp() const;
+    virtual int hitCount() const;
+    virtual int skipHits() const;
 
   protected:
     QString m_filePath;

@@ -241,6 +241,15 @@ void DebuggerManager::slotRemoveVariable(DebuggerVariable* var)
 
 }
 
+void DebuggerManager::slotRemoveBreakpoint(DebuggerBreakpoint* bp)
+{
+  if(!m_client)
+    return;
+  m_breakpointList->remove(bp);
+  m_client->removeBreakpoint(bp);
+
+}
+
 
 void DebuggerManager::slotAddWatch()
 {
@@ -288,6 +297,7 @@ void DebuggerManager::slotConditionalBreakpoint()
   {
     DebuggerBreakpoint * bp = new DebuggerBreakpoint("", 0, condition);
     m_client->addBreakpoint(bp);
+    m_breakpointList->add(bp);
   }
 }
 
@@ -524,5 +534,9 @@ void DebuggerManager::clearBreakpoints ()
   m_breakpointList->clear();
 }
 
+DebuggerBreakpoint *DebuggerManager::newDebuggerBreakpoint()
+{
+  return new DebuggerBreakpoint();
+}
 
 #include "debuggermanager.moc"
