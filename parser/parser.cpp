@@ -537,6 +537,9 @@ Node *Parser::nodeAt(int line, int col, bool findDeepest)
 {
   if (!write)
       return 0L;
+  if (!baseNode)
+     baseNode = parse(write, true); //FIXME: this most likely hides a bug: new documents are not parsed
+           
   Node *node = m_node;
   int bl, bc, el, ec;
   int result;
