@@ -42,6 +42,7 @@ Version 3.4 (Release date: xx-xx-2005; Started 20-08-2004):
 	- don't show directories that were removed from the project in the upload
 	  dialog [#87186]
 	- follow symlink in the project, project reescan, project upload [#71649, #92522]
+	- don't show the Upload File item in the tab context menu if the current item is not part of a project.
 
 
   - behavioral/user interface changes:
