@@ -83,6 +83,10 @@ void QuantaPluginInterface::readConfig()
       {
         newPlugin = new CervisiaPlugin(m_app);
       }
+      if (newPlugin)
+      {
+        newPlugin->setStandardName(stdName);
+      }
     } else
     {
       if(pluginType == "KPart")
@@ -133,6 +137,7 @@ void QuantaPluginInterface::writeConfig()
       config->writeEntry("Arguments", curPlugin->arguments());
       config->writeEntry("OutputWindow", curPlugin->outputWindow());
       config->writeEntry("Standard", curPlugin->isStandard());
+      if (curPlugin->isStandard()) config->writeEntry("Standard Name", curPlugin->standardName());
     }    
   }
   config->sync();

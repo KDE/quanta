@@ -42,7 +42,7 @@ QuantaPlugin::QuantaPlugin(const QString &a_name, const QString &a_type,
   setFileName(a_fileName);  
   setArguments(a_arguments);
   setOutputWindow(a_outputWindow);  
-  
+  m_standard = false;
   load();
 }
 
@@ -211,3 +211,13 @@ bool QuantaPlugin::isStandard() const
   return m_standard;
 }
 
+/** No descriptions */
+QString QuantaPlugin::standardName()
+{
+ return m_standardName;
+}
+/** No descriptions */
+void QuantaPlugin::setStandardName(const QString& a_stdName)
+{
+ m_standardName = a_stdName;
+}

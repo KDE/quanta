@@ -81,7 +81,8 @@ QuantaDoc::~QuantaDoc()
 
 KURL QuantaDoc::url()
 {
-  KURL furl = "Untitled1.html";
+  KURL furl;
+  furl.setPath("Untitled1.html");
 
   if (app->view->writeExists()) furl = write()->url();
 
@@ -237,7 +238,7 @@ void QuantaDoc::finishLoadURL(KWrite *_w)
 
 void QuantaDoc::saveDocument(const KURL& url)
 {
-	QString defUrl = this->url().url();
+	QString oldUrl = this->url().url();
   Document *w = write();
 
   if ( !url.url().isEmpty())
@@ -254,7 +255,12 @@ void QuantaDoc::saveDocument(const KURL& url)
   }
 
   // fix
-  if ( defUrl != url.url() ) changeFileTabName( defUrl );
+  if ( oldUrl != url.url() )
+  {
+    changeFileTabName( oldUrl );
+    m_docList->remove(oldUrl);
+    m_docList->insert(url.url(), w);
+  }
 
   emit title( this->url().url() );
 
@@ -266,19 +272,21 @@ bool QuantaDoc::saveAll(bool dont_ask)
   bool flagsave = true;
 
 //FIXME: I don't like the switching through the pages... We must optimize this. (Andras)
- Document *currentDoc = static_cast<Document*>(app ->view->writeTab->currentPage());
+  Document *currentDoc = static_cast<Document*>(app ->view->writeTab->currentPage());
 
   QDictIterator<Document> it( *m_docList );
 
-  while ( Document *w = it.current() )
+  QTabWidget *docTab =app->getView()->writeTab;
+  Document *w;
+  for (int i = docTab->count() -1; i >=0; i--) 
   {
+    docTab->setCurrentPage(i);
+    w = dynamic_cast<Document*>(docTab->currentPage());
     if ( w->isModified() )
     {
-    app ->view->writeTab->showPage( w );
-
-      QString oldUrl = w->url().url();
-
-      if ( dont_ask )
+      fileWatcher->removeFile(w->url().path());
+      app->view->writeTab->showPage( w );
+      if ( dont_ask && !w->isUntitled())
       {
       	w->save();
         w->closeTempFile();
@@ -287,12 +295,12 @@ bool QuantaDoc::saveAll(bool dont_ask)
       }
       else
       	if ( !saveModified() ) flagsave = false;
-      changeFileTabName( oldUrl );
+       
+      if (w->url().isLocalFile()) fileWatcher->addFile(w->url().path());
     }
-    ++it;
   }
 
-    app ->view->writeTab->showPage( currentDoc );
+  app->view->writeTab->showPage( currentDoc );
   return flagsave;
 }
 
@@ -353,12 +361,13 @@ void QuantaDoc::writeConfig( KConfig *config )
 bool QuantaDoc::saveModified()
 {
   bool completed=true;
+  QString fileName = app->getView()->writeTab->label(app->getView()->writeTab->currentPageIndex());
 
   if( isModified() )
   {
     int want_save
       = KMessageBox::warningYesNoCancel(app,
-          i18n("The current file has been modified.\nDo you want to save it?"),
+          i18n("The file \"%1\" has been modified.\nDo you want to save it?").arg(fileName),
           i18n("Warning"));
 
     switch(want_save)

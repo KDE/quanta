@@ -1,6 +1,6 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="quanta" version="3.0-CVS">
-  <MenuBar noMerge="1">
+<kpartgui name="quanta" version="3.0">
+  <MenuBar>
 
     <Menu name="file" noMerge="1"><text>&amp;File</text>
       <Action name="file_new"/>    

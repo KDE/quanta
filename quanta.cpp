@@ -128,7 +128,7 @@ void QuantaApp::setTitle(QString title)
 
 void QuantaApp::slotFileNew()
 {
-  doc->openDocument( KURL() );
+    doc->openDocument( KURL() );
   if (!setHighlight)
      setHighlight = view->write()->kate_doc->hlActionMenu (i18n("&Highlight Mode"), actionCollection(), "set_highlight");
 
@@ -208,8 +208,12 @@ void QuantaApp::slotFileSaveAs()
       project->insertFile(url.url(),true);
     }
 
-    if ( oldUrl != url.url() ) doc->changeFileTabName( oldUrl );
-
+    if ( oldUrl != url.url() )
+    {
+      doc->changeFileTabName( oldUrl );
+      doc->docList()->remove(oldUrl);
+      doc->docList()->insert(url.url(), w);
+    }
     slotUpdateStatus(w);
   }
   fileWatcher->startScan();

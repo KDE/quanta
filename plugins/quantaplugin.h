@@ -81,6 +81,10 @@ public slots:
   virtual QString fileName() const;
   /** Returns whether the plugin is loaded or not */
   virtual bool isLoaded() const;
+  /** No descriptions */
+  void setStandardName(const QString& a_stdName);
+  /** No descriptions */
+  QString standardName();
 protected:
   /** Superficial name of plugin */
   QString m_fileName;
@@ -92,6 +96,9 @@ protected:
   /** True, if it is not a user added plugin. Special handling code may be necessary for standard plugins. */
   bool m_standard;
   bool m_isRunning;
+private: // Private attributes
+  /**  */
+  QString m_standardName;
 };
 
 #endif

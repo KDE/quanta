@@ -104,6 +104,7 @@ bool QuantaKPartPlugin::run()
 
   if(isLoaded())
   {
+    m_app->guiFactory()->addClient(m_part);
     QWidgetStack *stack = m_app->widgetStackOfHtmlPart();
     stack->raiseWidget(m_part->widget());
     m_part->widget()->show();
@@ -118,6 +119,7 @@ bool QuantaKPartPlugin::unload()
   if(!isLoaded())
     return FALSE;
 
+  m_app->guiFactory()->removeClient(m_part);
   QWidgetStack *stack = m_app->widgetStackOfHtmlPart();
   stack->removeWidget(m_part->widget());
   delete m_part;
