@@ -83,6 +83,8 @@ void DTEPEditDlg::readGeneral()
   nameEdit->setText(m_config->readEntry("Name"));
   nickNameEdit->setText(m_config->readEntry("NickName"));
   m_family = m_config->readNumEntry("Family", 1) - 1;
+  extensionEdit->setText(m_config->readEntry("DefaultExtension"));
+  mimeTypeEdit->setText(m_config->readEntry("MimeTypes"));
   typeCombo->setCurrentItem(m_family);
   rulesWidgetStack->raiseWidget(m_family);
   generalWidgetStack->raiseWidget(m_family);
@@ -201,7 +203,7 @@ void DTEPEditDlg::saveResult()
     {
       if (KMessageBox::questionYesNo(this, i18n("<qt>The file <b>%1</b> is not writable.<br>Do you want to save the configuration to a different file?</qt>").arg(f.filePath()),i18n("Save As")) == KMessageBox::Yes)
       {
-        targetFile = KFileDialog::getSaveFileName(locateLocal("data", resourceDir + "dtep/"), i18n("*.rc|DTEP description"), this, i18n("Save Description As"));
+        targetFile = KFileDialog::getSaveFileName(locateLocal("data", resourceDir + "dtep/description.rc"), i18n("*.rc|DTEP description"), this, i18n("Save Description As"));
       } else
         targetFile = "";
     }
@@ -233,7 +235,7 @@ void DTEPEditDlg::writeGeneral(KConfig *config)
   writeEntry(config, "URL", urlEdit->text());
   writeEntry(config, "DoctypeString", doctypeEdit->text());
   writeEntry(config, "DefaultExtension", extensionEdit->text());
-  writeEntry(config, "MimeTypes", extensionEdit->text());
+  writeEntry(config, "MimeTypes", mimeTypeEdit->text());
   if (m_family == 1)
     config->writeEntry("TopLevel", topLevel->isChecked());
   
@@ -253,35 +255,35 @@ void DTEPEditDlg::writePages(KConfig *config)
       num++;
       config->setGroup(QString("Page%1").arg(num));
       writeEntry(config, "Title", pageTitleEdit1->text());
-      writeEntry(config, "Group", groupsEdit1->text());
+      writeEntry(config, "Groups", groupsEdit1->text());
     }
     if (enablePage2->isChecked())
     {
       num++;
       config->setGroup(QString("Page%1").arg(num));
       writeEntry(config, "Title", pageTitleEdit2->text());
-      writeEntry(config, "Group", groupsEdit2->text());
+      writeEntry(config, "Groups", groupsEdit2->text());
     }
     if (enablePage3->isChecked())
     {
       num++;
       config->setGroup(QString("Page%1").arg(num));
       writeEntry(config, "Title", pageTitleEdit3->text());
-      writeEntry(config, "Group", groupsEdit3->text());
+      writeEntry(config, "Groups", groupsEdit3->text());
     }
     if (enablePage4->isChecked())
     {
       num++;
       config->setGroup(QString("Page%1").arg(num));
       writeEntry(config, "Title", pageTitleEdit4->text());
-      writeEntry(config, "Group", groupsEdit4->text());
+      writeEntry(config, "Groups", groupsEdit4->text());
     }
     if (enablePage5->isChecked())
     {
       num++;
       config->setGroup(QString("Page%1").arg(num));
       writeEntry(config, "Title", pageTitleEdit5->text());
-      writeEntry(config, "Group", groupsEdit5->text());
+      writeEntry(config, "Groups", groupsEdit5->text());
     }
     config->setGroup("General");
     config->writeEntry("NumOfPages", num);
