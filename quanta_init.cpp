@@ -1921,6 +1921,7 @@ void QuantaApp::initActions()
                          this, SLOT( slotShowPreview() ),
                          ac, "show_preview" );
      showPreviewAction->setExclusiveGroup("view");
+    QString noframesPreviewStr = i18n("Preview Without Frames");
 
     (void) new KAction( i18n( "&Reload Preview" ), "reload",
                         KStdAccel::shortcut(KStdAccel::Reload).keyCodeQt(),
