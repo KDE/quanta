@@ -662,9 +662,9 @@ void CSSEditor::activatePreview() {
 
         QFileInfo fi(m_fileToPreview);
         KParts::URLArgs a;
-        if(fi.extension().lower() == "xml" or fi.extension().lower() == "xhtml")
+        if(fi.extension().lower() == "xml" || fi.extension().lower() == "xhtml")
           a.serviceType="text/xml";
-        if(fi.extension().lower() == "html" or fi.extension().lower() == "html")
+        if(fi.extension().lower() == "html" || fi.extension().lower() == "html")
           a.serviceType="text/xml";
         m_previewer->browserExtension()->setURLArgs(a);
         QTextStream stream( &file );

@@ -33,7 +33,7 @@ int stylesheetParser::whiteSpaces(int d){
   int ws=0;
   for( unsigned int i=d;i<m_styleSheet.length();i++){
     QString temp;
-    if(m_styleSheet[i] == ' ' or m_styleSheet[i] == '\n'  or m_styleSheet[i] == '\t' ) 
+    if(m_styleSheet[i] == ' ' || m_styleSheet[i] == '\n'  || m_styleSheet[i] == '\t' ) 
       ws++;
     else break; 
   }
