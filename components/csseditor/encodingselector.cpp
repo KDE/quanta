@@ -43,3 +43,5 @@ encodingSelector::encodingSelector(QWidget *parent, const char* name) :  encodin
 encodingSelector::~encodingSelector(){}
 
  
+
+#include "encodingselector.moc"

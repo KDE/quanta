@@ -104,3 +104,5 @@ QStringList fontFamilyChooser::fontList(){
   return list;
 }
 
+
+#include "fontfamilychooser.moc"
