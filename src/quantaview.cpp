@@ -210,21 +210,38 @@ void QuantaView::addPlugin(QuantaPlugin *plugin)
 
 void QuantaView::addCustomWidget(QWidget *widget, const QString &label)
 {
-   m_customWidget = widget;
-   if (m_customWidget)
+   if (widget)
    {
       m_splitter->hide();
-      m_customWidget->reparent(m_documentArea, 0, QPoint(), true);
-      m_customWidget->resize(m_documentArea->size());
+      widget->reparent(m_documentArea, 0, QPoint(), true);
+      widget->resize(m_documentArea->size());
       if (!label.isEmpty())
       {
           widget->setCaption(label);
           updateTab();
       }
-      m_documentArea->reparent(this, 0, QPoint(), false);
       m_viewLayout->addWidget(m_documentArea, 1, 0);
       m_documentArea->show();
+   } else
+   if (m_customWidget)
+   {
+      m_customWidget = 0L; //avoid infinite recursion
+      int currentViewsLayout = m_currentViewsLayout;
+      m_currentViewsLayout = -1; //force loading of this layout
+      switch (currentViewsLayout)
+      {
+            case SourceOnly:
+                slotSetSourceLayout();
+                break;
+            case SourceAndVPL:
+                slotSetSourceAndVPLLayout();
+                break;
+            case VPLOnly:
+                slotSetVPLOnlyLayout();
+                break;
+      }
    }
+   m_customWidget = widget;
 }
 
 

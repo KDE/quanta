@@ -1318,8 +1318,9 @@ void QuantaApp::slotShowPreviewWidget(bool show)
   else if (viewLayout == QuantaView::VPLOnly)
     ta = (KToggleAction *) actionCollection()->action( "show_kafka_view" );
   else if (viewLayout == QuantaView::SourceAndVPL)
+  {
     ta = (KToggleAction *) actionCollection()->action( "show_kafka_and_quanta" );
-
+  }
   if (ta)
   {
     ta->setChecked(!show);
