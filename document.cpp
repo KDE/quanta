@@ -781,7 +781,7 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
       handled = true;
     } else
     if (string == ">" && !tagName.isEmpty() && tagName[0] != '!' &&
-        tagName[0] != '/' && !tagName.endsWith("/") &&
+        tagName[0] != '/' && !tagName.endsWith("/") && !s.endsWith("/>") &&
         qConfig.closeTags &&
         currentDTD(true)->family == Xml) //close unknown tags
     {
