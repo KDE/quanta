@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>473</width>
-            <height>535</height>
+            <height>548</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -28,6 +28,8 @@
     </property>
     <property name="associations" stdset="0">
         <stringlist>
+            <string></string>
+            <string></string>
             <string></string>
         </stringlist>
     </property>
@@ -221,7 +223,7 @@ echo '&lt;/html&gt;'
                             </property>
                             <property name="associations" stdset="0">
                                 <stringlist>
-                                    <string></string>
+                                    <string>@null</string>
                                     <string></string>
                                     <string>&lt;? include_once("@phpFooterFile") ?&gt;</string>
                                 </stringlist>
@@ -236,7 +238,7 @@ echo '&lt;/html&gt;'
                             </property>
                             <property name="associations" stdset="0">
                                 <stringlist>
-                                    <string></string>
+                                    <string>@null</string>
                                     <string></string>
                                     <string>&lt;? include_once("@phpHeaderFile") ?&gt;</string>
                                 </stringlist>
@@ -256,7 +258,7 @@ echo '&lt;/html&gt;'
                     </property>
                     <property name="associations" stdset="0">
                         <stringlist>
-                            <string></string>
+                            <string>@null</string>
                             <string>@DTEPselect
 echo "$DTD"</string>
                             <string>echo "$DTD"</string>
@@ -362,7 +364,7 @@ esac
                     </property>
                     <property name="associations" stdset="0">
                         <stringlist>
-                            <string></string>
+                            <string>@null</string>
                             <string></string>
                             <string>echo '&lt;head&gt;'
 @LETitle
@@ -387,7 +389,7 @@ echo '&lt;/head&gt;'</string>
                     </property>
                     <property name="associations" stdset="0">
                         <stringlist>
-                            <string></string>
+                            <string>@null</string>
                             <string></string>
                             <string>&lt;!-- $Id$ --&gt;</string>
                         </stringlist>
@@ -445,7 +447,7 @@ fi
                             </property>
                             <property name="associations" stdset="0">
                                 <stringlist>
-                                    <string></string>
+                                    <string>@null</string>
                                     <string></string>
                                     <string>echo "$PADDING&lt;meta name=\"AUTHOR\" content=\"@LEMetaAuthor\"$TAGEND"</string>
                                 </stringlist>
@@ -460,7 +462,7 @@ fi
                             </property>
                             <property name="associations" stdset="0">
                                 <stringlist>
-                                    <string></string>
+                                    <string>@null</string>
                                     <string></string>
                                     <string>echo "$PADDING&lt;meta http-equiv=\"Content-Type\" content=\"text/html; charset=@ComboMetachar\"$TAGEND"</string>
                                 </stringlist>
@@ -475,7 +477,7 @@ fi
                             </property>
                             <property name="associations" stdset="0">
                                 <stringlist>
-                                    <string></string>
+                                    <string>@null</string>
                                     <string></string>
                                     <string>echo "$PADDING&lt;style type=\"text/css\"&gt;"
 if [ $XHTML = true ]; then
@@ -659,7 +661,7 @@ echo "$PADDING&lt;/style&gt;"</string>
                             </property>
                             <property name="associations" stdset="0">
                                 <stringlist>
-                                    <string></string>
+                                    <string>@null</string>
                                     <string></string>
                                     <string>echo "$PADDING&lt;meta name=\"GENERATOR\" content=\"Quanta Plus\"$TAGEND"</string>
                                 </stringlist>
@@ -674,7 +676,7 @@ echo "$PADDING&lt;/style&gt;"</string>
                             </property>
                             <property name="associations" stdset="0">
                                 <stringlist>
-                                    <string></string>
+                                    <string>@null</string>
                                     <string></string>
                                     <string>echo"$PADDING&lt;meta name=\"KEYWORDS\" content=\"@LEMetaKeywords\"$TAGEND"</string>
                                 </stringlist>
@@ -689,7 +691,7 @@ echo "$PADDING&lt;/style&gt;"</string>
                             </property>
                             <property name="associations" stdset="0">
                                 <stringlist>
-                                    <string></string>
+                                    <string>@null</string>
                                     <string></string>
                                     <string>echo "$PADDING&lt;link rel=\"stylesheet\" type=\"text/css\" href=\"@cssFile\"$TAGEND"</string>
                                 </stringlist>
@@ -738,7 +740,7 @@ echo "$PADDING&lt;/style&gt;"</string>
                             </property>
                             <property name="associations" stdset="0">
                                 <stringlist>
-                                    <string></string>
+                                    <string>@null</string>
                                     <string></string>
                                     <string>echo "$PADDING&lt;script language=\"javascript\" type=\"text/javascript\"&gt;"
 
