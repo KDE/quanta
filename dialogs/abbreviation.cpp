@@ -38,6 +38,7 @@ Abbreviation::Abbreviation(QWidget *parent, const char *name):
     Abbreviations(parent, name)
 {
   m_dtd = 0L;
+  oldItem = 0L;
 }
 
 Abbreviation::~Abbreviation()
@@ -108,6 +109,7 @@ void Abbreviation::slotRemoveTemplate()
   {
     m_dtd->abbreviations.remove(item->text(0)+" "+item->text(1));
     delete item;
+    oldItem = 0L;
   }
 }
 
