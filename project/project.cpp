@@ -3,7 +3,7 @@
                              -------------------
     begin                : Thu Mar 16 2000
     copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky
-                           (C) 2001, 2002 by Andras Mantia
+                           (C) 2001-2003 by Andras Mantia
     email                : pdima@mail.univ.kiev.ua, amantia@freemail.hu
  ***************************************************************************/
 
@@ -87,6 +87,8 @@ Project::Project( QWidget *, const char *name )
   olfwprj=false;
   usePreviewPrefix=false;
   m_defaultDTD = qConfig.defaultDocType;
+  excludeRx.setPattern(".*~$");
+  excludeList.append("*~");
 }
 
 Project::~Project()
@@ -106,22 +108,25 @@ KURL::List Project::fileNameList(bool check)
 {
   KURL::List list;
 
-  //cout << dom.toString() << "\n";  
+  //cout << dom.toString() << "\n";
   QDomNodeList nl = dom.elementsByTagName("item");
-  
+
   for ( unsigned int i=0; i < nl.count(); i++ )
   {
     QDomElement el = nl.item(i).cloneNode().toElement();
     KURL url = baseURL;
     QuantaCommon::setUrl(url,el.attribute("url"));
-    if (url.isLocalFile() && check)
+    if (!excludeRx.exactMatch(url.path()))
     {
-      QFileInfo fi(baseURL.path(1)+url.path());
-      if (fi.exists()) list.append(url);
-    } else
-    {
-//      entry.toolTip = el.attribute("tooltip", url.prettyURL());
-      list.append(url);
+      if (url.isLocalFile() && check)
+      {
+        QFileInfo fi(baseURL.path(1)+url.path());
+        if (fi.exists()) list.append(url);
+      } else
+      {
+  //      entry.toolTip = el.attribute("tooltip", url.prettyURL());
+        list.append(url);
+      }
     }
   }
   return list;
@@ -129,6 +134,8 @@ KURL::List Project::fileNameList(bool check)
 
 void Project::insertFile(const KURL& nameURL, bool repaint )
 {
+  if (excludeRx.exactMatch(nameURL.path()))
+      return;
   KURL relNameURL = QExtFileInfo::toRelative( nameURL, baseURL);
 
   if ( relNameURL.path().startsWith("/") || relNameURL.path().startsWith(".")  )
@@ -153,7 +160,7 @@ void Project::insertFile(const KURL& nameURL, bool repaint )
 
   QDomElement  el;
   QDomNodeList nl = dom.elementsByTagName("item");
-  
+
   for ( uint i = 0; i < nl.count(); i++ )
   {
     el = nl.item(i).toElement();
@@ -212,9 +219,12 @@ void Project::insertFiles( KURL::List files )
     {
         el = dom.createElement("item");
         KURL url = *it;
-        el.setAttribute("url", QuantaCommon::qUrl(url));
-        dom.firstChild().firstChild().appendChild( el );
-        modified = true;
+        if (!excludeRx.exactMatch(url.path()))
+        {
+          el.setAttribute("url", QuantaCommon::qUrl(url));
+          dom.firstChild().firstChild().appendChild( el );
+          modified = true;
+        }
       }
   }
   emit newStatus();
@@ -504,7 +514,7 @@ void Project::loadProjectXML()
 
   no = projectNode.namedItem("autoload");
   currentProjectView = no.toElement().attribute("projectview");
-            
+
   no = projectNode.namedItem("templates");
   tmpString = no.firstChild().nodeValue();
   templateURL = baseURL;
@@ -562,6 +572,26 @@ void Project::loadProjectXML()
   }
   toolbarURL = QExtFileInfo::toAbsolute(toolbarURL, baseURL);
 
+  no = projectNode.namedItem("exclude");
+  QString excludeStr = no.firstChild().nodeValue();
+  QString regExpStr = "";
+  excludeList = QStringList::split(';', excludeStr);
+  for (uint i = 0; i < excludeList.count(); i++)
+  {
+    excludeStr = excludeList[i].stripWhiteSpace();
+    if (!excludeStr.endsWith("*"))
+      excludeStr.append("$");
+    if (!excludeStr.startsWith("*"))
+      excludeStr.prepend("^");
+    excludeStr.replace(".","\\.");
+    excludeStr.replace("*",".*");
+    excludeStr.replace("?",".");
+    regExpStr.append(excludeStr);
+    if (i+1 < excludeList.count())
+      regExpStr.append("|");
+  }
+  excludeRx.setPattern(regExpStr);
+
   KURL::List fileList;
   QDomNodeList nl = dom.firstChild().firstChild().childNodes();
   quantaApp->slotStatusMsg( i18n("Reading the project file...") );
@@ -585,20 +615,27 @@ void Project::loadProjectXML()
     if ( el.nodeName() == "item" )
     {
       //remove non-existent local files
-       if ( url.isLocalFile() )
+      if (!excludeRx.exactMatch(url.path()))
       {
-        QFileInfo fi( baseURL.path(1)+url.path());
-        if ( !fi.exists() )
+        if ( url.isLocalFile() )
         {
-          el.parentNode().removeChild( el );
-          i--;
+          QFileInfo fi( baseURL.path(1)+url.path());
+          if ( !fi.exists() )
+          {
+            el.parentNode().removeChild( el );
+            i--;
+          } else
+          {
+            fileList.append(url);
+          }
         } else
         {
           fileList.append(url);
         }
       } else
       {
-        fileList.append(url);
+        el.parentNode().removeChild( el );
+        i--;
       }
     }
     progressBar->advance(1);
@@ -613,9 +650,9 @@ void Project::loadProjectXML()
   emit reloadTree( fileList, true);
 
   emit showTree();
-  emit newStatus();                  
-  
-  passwd = "";   
+  emit newStatus();
+
+  passwd = "";
 }
 
 // slot for insert file
@@ -629,7 +666,7 @@ void Project::slotAddFiles()
 {
   KURL::List list = KFileDialog::getOpenURLs(
     baseURL.url(),  i18n("*"), this, i18n("Insert Files in Project"));
-    
+
   if ( !list.isEmpty() )
   {
     KURL firstURL = list.first();
@@ -767,13 +804,16 @@ void Project::slotRenameFinished( KIO::Job * job)
     for (uint i = 0; i < nl.count(); i++ )
     {
       el = nl.item(i).toElement();
-      tmpString = el.attribute("url");    
-      oldString = tmpString;
-      tmpString = tmpString.replace(oldStr,newStr);
-      if (oldString != tmpString )
+      tmpString = el.attribute("url");
+      if (tmpString.startsWith(oldStr))
       {
-        el.setAttribute("url",tmpString);
-        el.setAttribute("upload_time","");
+        oldString = tmpString;
+        tmpString = tmpString.replace(oldStr,newStr);
+        if (oldString != tmpString )
+        {
+          el.setAttribute("url",tmpString);
+          el.setAttribute("upload_time","");
+        }
       }
     }
     oldURL = KURL();
@@ -781,6 +821,7 @@ void Project::slotRenameFinished( KIO::Job * job)
     modified = true;
 
     emit reloadTree( fileNameList(), false );
+    emit newStatus();
   }
 }
 
@@ -1122,7 +1163,15 @@ void Project::slotOptions()
 
   optionsPage->lineAuthor->setText( author );
   optionsPage->lineEmail->setText( email );
-  
+
+  QString excludeStr;
+  for (uint i = 0; i < excludeList.count(); i++)
+  {
+    excludeStr.append(excludeList[i]);
+    excludeStr.append(";");
+  }
+  optionsPage->lineExclude->setText(excludeStr);
+
   optionsPage->linePrefix->setText(previewPrefix.url());
   QString name;
   int index;
@@ -1151,7 +1200,7 @@ void Project::slotOptions()
        break;
      }
   }
-  
+
 
   QStringList list;
   QDomNodeList nl = dom.elementsByTagName("projectview");
@@ -1205,40 +1254,59 @@ void Project::slotOptions()
     {
       QuantaCommon::dirCreationError(this, toolbarURL);
     }
-    
+
     QuantaCommon::setUrl(previewPrefix,optionsPage->linePrefix->text()+"/");
     previewPrefix.adjustPath(1);
     usePreviewPrefix = optionsPage->checkPrefix->isChecked();
 
     QDomElement el;
 
-     el = dom.firstChild().firstChild().toElement();
-     el.setAttribute("name",projectName);
-     el.setAttribute("previewPrefix", previewPrefix.url() );
-     el.setAttribute("usePreviewPrefix", usePreviewPrefix );
+    el = dom.firstChild().firstChild().toElement();
+    el.setAttribute("name",projectName);
+    el.setAttribute("previewPrefix", previewPrefix.url() );
+    el.setAttribute("usePreviewPrefix", usePreviewPrefix );
     el.setAttribute("encoding", m_defaultEncoding);
 
-     el = dom.firstChild().firstChild().namedItem("author").toElement();
-     if (el.isNull())
-     {
-       el = dom.createElement("author");
-      dom.firstChild().firstChild().appendChild( el );
-          el.appendChild( dom.createTextNode( author ) );
-     } else
-     {
-       el.firstChild().setNodeValue(author);
-     }
+    el = dom.firstChild().firstChild().namedItem("author").toElement();
+    if (!el.isNull())
+       el.parentNode().removeChild(el);
+    el = dom.createElement("author");
+    dom.firstChild().firstChild().appendChild( el );
+    el.appendChild( dom.createTextNode( author ) );
 
-     el = dom.firstChild().firstChild().namedItem("email").toElement();
-     if (el.isNull())
-     {
-       el = dom.createElement("email");
-      dom.firstChild().firstChild().appendChild( el );
-          el.appendChild( dom.createTextNode( email ) );
-     } else
-     {
-       el.firstChild().setNodeValue(email);
-     }
+    el = dom.firstChild().firstChild().namedItem("email").toElement();
+    if (!el.isNull())
+       el.parentNode().removeChild(el);
+    el = dom.createElement("email");
+    dom.firstChild().firstChild().appendChild( el );
+    el.appendChild( dom.createTextNode( email ) );
+
+    excludeStr = optionsPage->lineExclude->text();
+    el = dom.firstChild().firstChild().namedItem("exclude").toElement();
+    if (!el.isNull())
+       el.parentNode().removeChild(el);
+    el = dom.createElement("exclude");
+    dom.firstChild().firstChild().appendChild( el );
+    el.appendChild( dom.createTextNode( excludeStr ) );
+
+    QString regExpStr = "";
+    excludeList = QStringList::split(';', excludeStr);
+    for (uint i = 0; i < excludeList.count(); i++)
+    {
+      excludeStr = excludeList[i].stripWhiteSpace();
+      if (!excludeStr.endsWith("*"))
+        excludeStr.append("$");
+      if (!excludeStr.startsWith("*"))
+        excludeStr.prepend("^");
+      excludeStr.replace(".","\\.");
+      excludeStr.replace("*",".*");
+      excludeStr.replace("?",".");
+      regExpStr.append(excludeStr);
+      if (i+1 < excludeList.count())
+        regExpStr.append("|");
+    }
+    excludeRx.setPattern(regExpStr);
+
 
     el = dom.firstChild().firstChild().namedItem("defaultDTD").toElement();
     if(el.isNull())
@@ -1292,6 +1360,7 @@ void Project::slotOptions()
         el.setAttribute("projectview", defaultView);
        }
     }
+    loadProjectXML();
     modified = true;
     
     emit setProjectName( projectName );
@@ -1336,7 +1405,7 @@ void Project::slotGetMessages(QString data)
 
 void Project::slotRescanPrjDir()
 {
-  RescanPrj *dlg = new RescanPrj( fileNameList(), baseURL, this, i18n("New Files in Project's Directory"));
+  RescanPrj *dlg = new RescanPrj( fileNameList(), baseURL, excludeRx, this, i18n("New Files in Project's Directory"));
   if ( dlg->exec() )
   {
     insertFiles( dlg->files() );

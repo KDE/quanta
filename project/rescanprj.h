@@ -3,7 +3,7 @@
                              -------------------
     begin                : ?
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
-                           (C) 2002 Andras Mantia <amantia@freemail.hu>
+                           (C) 2002,2003 Andras Mantia <amantia@freemail.hu>
     email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com
  ***************************************************************************/
 
@@ -22,12 +22,10 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
+#include <qregexp.h>
 #include <kio/job.h>
 
 #include "rescanprjdir.h"
-
-
 
 struct URLListEntry{
    KURL url;
@@ -37,26 +35,27 @@ struct URLListEntry{
 
 class RescanPrj : public RescanPrjDir  {
    Q_OBJECT
-public: 
-  RescanPrj(KURL::List p_prjFileList, const KURL& p_baseURL, QWidget *parent=0, const char *name=0, bool modal = true);
+public:
+  RescanPrj(KURL::List p_prjFileList, const KURL& p_baseURL, QRegExp &p_excludeRx, QWidget *parent=0, const char *name=0, bool modal = true);
   ~RescanPrj();
-  
+
 public slots:
   void slotSelect();
   void slotDeselect();
   void slotInvert();
   void slotExpand();
   void slotCollapse();
-  
+
   virtual void resizeEvent( QResizeEvent * );
 
   KURL::List files();
-  
+
   void addEntries(KIO::Job *,const KIO::UDSEntryList &);
-  
+
 private:
   KURL baseURL;
   KURL::List prjFileList;
+  QRegExp excludeRx;
   QValueList<URLListEntry> urlList;
 protected slots: // Protected slots
   /** No descriptions */

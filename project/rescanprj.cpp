@@ -3,7 +3,7 @@
                              -------------------
     begin                : ?
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
-                           (C) 2002 Andras Mantia <amantia@freemail.hu>
+                           (C) 2002, 2003 Andras Mantia <amantia@freemail.hu>
     email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com
  ***************************************************************************/
 
@@ -22,7 +22,6 @@
 #include <qlistview.h>
 #include <qpushbutton.h>
 #include <qlayout.h>
-#include <qregexp.h>
 #include <qlabel.h>
 
 // kde includes
@@ -40,7 +39,7 @@
 #include "../treeviews/uploadtreeview.h"
 #include "../resource.h"
 
-RescanPrj::RescanPrj(KURL::List p_prjFileList, const KURL& p_baseURL, QWidget *parent, const char *name, bool modal )
+RescanPrj::RescanPrj(KURL::List p_prjFileList, const KURL& p_baseURL, QRegExp &p_excludeRx, QWidget *parent, const char *name, bool modal )
   : RescanPrjDir(parent,name,modal)
 {
   setCaption(name);
@@ -50,6 +49,7 @@ RescanPrj::RescanPrj(KURL::List p_prjFileList, const KURL& p_baseURL, QWidget *p
   baseURL.adjustPath(1);
 
   prjFileList = p_prjFileList;
+  excludeRx = p_excludeRx;
 
   progressText->setText(i18n("Reading directory:"));
   KIO::ListJob *job = KIO::listRecursive( baseURL, false );
@@ -92,7 +92,7 @@ void RescanPrj::addEntries(KIO::Job *job,const KIO::UDSEntryList &list)
   {
     KFileItem item( *it, url, false, true );
     name = item.name();
-    if ( ! name.isEmpty() && name != dot && name != dotdot)
+    if ( ! name.isEmpty() && name != dot && name != dotdot && !excludeRx.exactMatch(name))
     {
       itemURL = item.url();
       if (item.isDir()) itemURL.adjustPath(1);
@@ -183,9 +183,10 @@ void RescanPrj::slotListDone(KIO::Job *)
     listView->addItem(urlEntry.url, urlEntry.size, urlEntry.date);
     progress->advance(1);
   }
-  
+
+  progress->setTotalSteps(1);
   progress->setValue(0);
   progress->setTextEnabled(false);
-  slotSelect();
   progressText->setText(i18n("Progress:"));
+  slotSelect();
 }

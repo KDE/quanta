@@ -3,7 +3,7 @@
                              -------------------
     begin                : Thu Mar 16 2000
     copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky
-                           (C) 2001, 2002 by Andras Mantia
+                           (C) 2001-2003 by Andras Mantia
     email                : pdima@mail.univ.kiev.ua, amantia@freemail.hu
  ***************************************************************************/
 
@@ -23,6 +23,7 @@
 #include <qbuffer.h>
 #include <qwidget.h>
 #include <qstringlist.h>
+#include <qregexp.h>
 
 #include <kio/job.h>
 
@@ -180,6 +181,8 @@ private:
   bool olfwprj; //for internal use
   
   QBuffer buff;
+  QRegExp excludeRx;
+  QStringList excludeList;
 protected: // Protected attributes
   /** Default DTD for this project. */
   QString m_defaultDTD;
