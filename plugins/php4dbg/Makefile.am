@@ -9,7 +9,6 @@ EXTRA_DIST = idesite.cpp debugger.cpp listener.h listener.cpp thread.h idesite.h
 noinst_LIBRARIES = libphp4dbg.a
 
 INCLUDES = -I$(top_srcdir)/quanta/plugins/php4dbg/dbgbase $(all_includes)
-DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 libphp4dbg_a_METASOURCES = AUTO
 libphp4dbg_a_SOURCES = \
 		debugger.cpp\

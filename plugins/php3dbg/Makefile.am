@@ -7,7 +7,6 @@ EXTRA_DIST = debugger.cpp debugger.h
 noinst_LIBRARIES = libphp3dbg.a
 
 INCLUDES = $(all_includes)
-DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 libphp3dbg_a_METASOURCES = AUTO
 libphp3dbg_a_SOURCES = \
 		debugger.cpp

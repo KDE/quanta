@@ -1,15 +1,4 @@
-####### kdevelop will overwrite this part!!! (begin)##########
-
 SUBDIRS = html xml wml-1-2 tagxml schema cfml kde-docbook docbook
 
-install-data-local:
-	$(mkinstalldirs) ${kde_datadir}/quanta/toolbars/
-	$(INSTALL_DATA) $(srcdir)/docbook.toolbar.tgz ${kde_datadir}/quanta/toolbars/docbook.toolbar.tgz
-	$(mkinstalldirs) ${kde_datadir}/quanta/toolbars/
-	$(INSTALL_DATA) $(srcdir)/kde_docbook.toolbar.tgz ${kde_datadir}/quanta/toolbars/kde_docbook.toolbar.tgz
-
-uninstall-local:
-	-rm -f ${kde_datadir}/quanta/toolbars/docbook.toolbar.tgz
-	-rm -f ${kde_datadir}/quanta/toolbars/kde_docbook.toolbar.tgz
-
-####### kdevelop will overwrite this part!!! (end)############
+toolbarsdir = $(kde_datadir)/quanta/toolbars
+toolbars_DATA = docbook.toolbars.tgz kde_docbook.toolbar.tgz

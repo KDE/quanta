@@ -87,7 +87,7 @@ typedef struct QConfig{
 typedef struct {
      bool text : 1;
      enum { NoCompression=0, GZipCompression } compression : 4;
-     int dummy : 27;
+     unsigned int dummy : 27;
   } Format;
 #endif
 

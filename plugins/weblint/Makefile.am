@@ -1,3 +1,3 @@
-datadir = ${kde_datadir}/quanta/plugins
+quantapluginsdir = ${kde_datadir}/quanta/plugins
 
-data_DATA = weblint 
+quantaplugins_DATA = weblint 

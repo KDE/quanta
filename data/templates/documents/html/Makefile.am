@@ -1,13 +1,4 @@
-####### kdevelop will overwrite this part!!! (begin)##########
-
-
 EXTRA_DIST = demo.html 
 
-install-data-local:
-	$(mkinstalldirs) ${kde_datadir}/quanta/templates/documents/html/
-	$(INSTALL_DATA) $(srcdir)/demo.html ${kde_datadir}/quanta/templates/documents/html/demo.html
-
-uninstall-local:
-	-rm -f ${kde_datadir}/quanta/templates/documents/html/demo.html
-
-####### kdevelop will overwrite this part!!! (end)############
+templatesdocumentshtmldir = $(kde_datadir)/quanta/templates/documents/html
+templatesdocumentshtml_DATA = demo.html

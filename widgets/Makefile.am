@@ -13,7 +13,6 @@ EXTRA_DIST = whtmlpart.h whtmlpart.cpp
 ####### kdevelop will overwrite this part!!! (end)############
 
 INCLUDES = $(all_includes)
-DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 AM_CFLAGS = 
 AM_CXXFLAGS = 
 AM_FFLAGS = 
