@@ -74,7 +74,6 @@ class KRecentFilesAction;
 class Node;
 class Parser;
 class DocTreeView;
-class FilesListView;
 class FilesTreeView;
 class StructTreeView;
 class ProjectTreeView;
@@ -208,7 +207,6 @@ public slots:
   void slotUpdateStatus(QWidget*);
 
   void slotDockChanged();
-  void slotSwapLeftPanelMode();
 
   /** repaint preview */
   void repaintPreview( bool clear = false);
@@ -383,15 +381,13 @@ private:
   KConfig *m_config;
 
   /** widget stack for left panel */
-  QWidgetStack *fTab;
   QWidgetStack *rightWidgetStack;
   QWidgetStack *bottomWidgetStack;
 
   /** tabs for left panel */
   ProjectTreeView *pTab;
   DocTreeView *dTab;
-  FilesTreeView *fTTab;
-  FilesListView *fLTab;
+  FilesTreeView *fTab;
   TemplatesTreeView *tTab;
   StructTreeView *sTab;
 

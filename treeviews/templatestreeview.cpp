@@ -60,8 +60,8 @@ TemplatesTreeView::TemplatesTreeView(const KURL& projectBaseURL, QWidget *parent
 {
   baseURL = projectBaseURL;
 
-   fileMenu = new QPopupMenu();
-  
+  fileMenu = new QPopupMenu();
+
   openId = fileMenu -> insertItem( UserIcon("open"),  i18n("&Open"),     this ,SLOT(slotInsert()));
   fileMenu -> insertItem(i18n("Open for Editing"),   this ,SLOT(slotOpen()));
   fileMenu -> insertSeparator();
@@ -72,7 +72,6 @@ TemplatesTreeView::TemplatesTreeView(const KURL& projectBaseURL, QWidget *parent
   fileMenu -> insertItem( i18n("Properties"),   this ,SLOT(slotProperties()));
   fileMenu -> insertSeparator();
   fileMenu -> insertItem( i18n("Reload"),   this ,SLOT(slotReload()));
-
 
   folderMenu = new QPopupMenu();
 
@@ -91,7 +90,7 @@ TemplatesTreeView::TemplatesTreeView(const KURL& projectBaseURL, QWidget *parent
   globalDir->setOpen( true );
 
   url.setPath(locateLocal("data","quanta/templates/"));
-   localDir = new FilesTreeFolder( this , i18n("Local Templates"),url);
+  localDir = new FilesTreeFolder( this , i18n("Local Templates"),url);
   localDir->setPixmap( 0, SmallIcon("folder"));
   localDir->setOpen( true );
 

@@ -50,7 +50,6 @@ DocTreeView::DocTreeView(QWidget *parent, const char *name )
 
   QStringList docDirs = KGlobal::instance()->dirs()->findDirs("appdata", "doc");
 
-
   for ( QStringList::Iterator it = docDirs.begin(); it != docDirs.end(); ++it )
   {
      QString docDir = *it;

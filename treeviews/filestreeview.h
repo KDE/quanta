@@ -52,26 +52,25 @@ public:
   QPtrList<QListViewItem> getItems(const KURL& p_url);
 
   KURL::List topURLList;
-  
+
 public slots:
   void slotMenu(QListViewItem *, const QPoint &, int);
   void slotSelectFile   (QListViewItem *);
   void slotSelectAnyFile(QListViewItem *);
   void slotSelectImage  (QListViewItem *);
   void slotAddToTop     ();
-  void slotNewMode();
   /** No descriptions */
   virtual void slotInsertTag();
   virtual void slotReload();
   virtual void slotProperties();
-    
+
 protected:
   virtual KURL currentURL();
   virtual void itemRenamed(const KURL& , const KURL& ) {};
   void addFileInfoPage(KPropertiesDialog *propDlg);
 
   //FilesTreeFolder *topFolders;
-  
+
 protected slots: // Private slots
   /** No descriptions */
   virtual void slotDirListNewItems(const KFileItemList& items);

@@ -68,11 +68,6 @@ FilesTreeView::FilesTreeView(KURL::List topList, QWidget *parent, const char *na
   addColumn( i18n("Files Tree"), 600 );
 
   setFocusPolicy(QWidget::ClickFocus);
-
-/*  
-  fileMenu -> insertItem( i18n("List Mode"), this ,SLOT(slotNewMode()));
-  folderMenu -> insertItem( i18n("List Mode"), this ,SLOT(slotNewMode()));
-*/  
   folderMenu -> insertItem( i18n("Add Folder to Top"), this ,SLOT(slotAddToTop()), 0, ID_TOP, 0);
 
   connect(  this, SIGNAL(executed(QListViewItem *)),
@@ -114,21 +109,15 @@ FilesTreeView::FilesTreeView(KURL::List topList, QWidget *parent, const char *na
         dir->setOpen( false);
       }
   }
-/*  
+/*
   topFolders = new FilesTreeFolder(this, i18n("Top folders"), KURL());
   topFolders->setPixmap( 0, SmallIcon("folder"));
   topFolders->setOpen( false);
-*/  
+*/
 }
 
 FilesTreeView::~FilesTreeView()
 {
-}
-
-/** Change the mode to ListView */
-void FilesTreeView::slotNewMode()
-{
-  emit changeMode();
 }
 
 /** Reload the current directory (not the full tree-view) */

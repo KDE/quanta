@@ -72,7 +72,6 @@
 
 #include "toolbar/tagaction.h"
 
-#include "treeviews/fileslistview.h"
 #include "treeviews/filestreeview.h"
 #include "treeviews/projecttreeview.h"
 #include "treeviews/doctreeview.h"
@@ -274,14 +273,10 @@ void QuantaApp::initProject()
   connect(m_project,  SIGNAL(templateURLChanged(const KURL &)),
           tTab,     SLOT  (slotSetTemplateURL(const KURL &)));
 
-  connect(fLTab,    SIGNAL(insertDirInProject(const KURL&)),
-          m_project,  SLOT  (slotAddDirectory(const KURL&)));
-  connect(fTTab,    SIGNAL(insertDirInProject(const KURL&)),
+  connect(fTab,    SIGNAL(insertDirInProject(const KURL&)),
           m_project,  SLOT  (slotAddDirectory(const KURL&)));
 
-  connect(fLTab,    SIGNAL(insertFileInProject(const KURL&)),
-          m_project,  SLOT  (slotInsertFile(const KURL&)));
-  connect(fTTab,    SIGNAL(insertFileInProject(const KURL&)),
+  connect(fTab,    SIGNAL(insertFileInProject(const KURL&)),
           m_project,  SLOT  (slotInsertFile(const KURL&)));
 
   connect(pTab,     SIGNAL(renameInProject(const KURL&)),
@@ -324,15 +319,15 @@ void QuantaApp::initView()
   maindock = createDockWidget( "Editor", UserIcon("textarea"  ), 0L, i18n("Editor"), 0L);
   bottdock = createDockWidget( "Output", UserIcon("output_win"), 0L, i18n("Output"), 0L);
 
-  ftabdock = createDockWidget("Files", UserIcon("ftab"), 0L, ""/*i18n("Files")*/);
+  ftabdock = createDockWidget("Files", UserIcon("ftab"), 0L, "");
   ftabdock->setToolTipString(i18n("Files tree view"));
-  ptabdock = createDockWidget("Project", UserIcon("ptab"), 0L, ""/*i18n("Project")*/);
+  ptabdock = createDockWidget("Project", UserIcon("ptab"), 0L, "");
   ptabdock->setToolTipString(i18n("Project tree view"));
-  ttabdock = createDockWidget("Templates", UserIcon("ttab"),     0L,"" /*i18n("Templates")*/);
+  ttabdock = createDockWidget("Templates", UserIcon("ttab"), 0L,"");
   ttabdock->setToolTipString(i18n("Templates tree view"));
-  stabdock = createDockWidget("Struct", BarIcon ("view_sidetree"),0L,"" /*i18n("Struct")*/);
+  stabdock = createDockWidget("Struct", BarIcon ("view_sidetree"), 0L,"");
   stabdock->setToolTipString(i18n("Structure view (DOM tree)"));
-  dtabdock = createDockWidget("Docs", BarIcon ("contents2"),    0L,"" /*i18n("Docs")*/);
+  dtabdock = createDockWidget("Docs", BarIcon ("contents2"), 0L,"");
   dtabdock->setToolTipString(i18n("Documentation"));
 
   QStringList topStrList;
@@ -348,128 +343,98 @@ void QuantaApp::initView()
   }
   url = KURL();
   url.setPath("/");
-  if (!topList.contains(url)) topList.append(url);
+  if (!topList.contains(url))
+      topList.append(url);
   url = KURL();
   url.setPath(QDir::homeDirPath()+"/");
-  if (!topList.contains(url)) topList.append(url);
+  if (!topList.contains(url))
+      topList.append(url);
 
-  fTab = new QWidgetStack( ftabdock );
-  fTTab = new FilesTreeView(topList, fTab );
-  fLTab = new FilesListView( QDir::homeDirPath()+"/" , 0L, fTab );
-
-  fTab -> addWidget( fTTab, 0 );
-  fTab -> addWidget( fLTab, 1 );
-  fTab -> raiseWidget( 0 );
-
-  pTab  = new ProjectTreeView( ptabdock );
-
-  tTab = new TemplatesTreeView( "" , ttabdock );
+  fTab = new FilesTreeView(topList, ftabdock);
+  pTab = new ProjectTreeView(ptabdock );
+  tTab = new TemplatesTreeView("" , ttabdock);
+  dTab = new DocTreeView(dtabdock);
+  sTab = new StructTreeView(parser, m_config, stabdock ,"struct");
 
 
-  dTab  = new DocTreeView    ( dtabdock );
-
-  sTab = new StructTreeView( parser, m_config, stabdock ,"struct");
-
-
-  rightWidgetStack = new QWidgetStack( maindock );
-  bottomWidgetStack = new QWidgetStack( bottdock);
+  rightWidgetStack = new QWidgetStack(maindock);
+  bottomWidgetStack = new QWidgetStack(bottdock);
   m_view = new QuantaView(rightWidgetStack);
-//  m_view->slotDelayedInit();
-  connect(m_view, SIGNAL(dragInsert(QDropEvent *)), tTab, SLOT(slotDragInsert(QDropEvent *)));
+  connect(m_view, SIGNAL(dragInsert(QDropEvent *)), tTab,
+                  SLOT(slotDragInsert(QDropEvent *)));
 
+  maindock->setWidget(rightWidgetStack);
+  bottdock->setWidget(bottomWidgetStack);
+  ftabdock->setWidget(fTab);
+  ptabdock->setWidget(pTab);
+  ttabdock->setWidget(tTab);
+  stabdock->setWidget(sTab);
+  dtabdock->setWidget(dTab);
 
-  maindock ->setWidget( rightWidgetStack );
-  bottdock ->setWidget( bottomWidgetStack );
-  ftabdock ->setWidget( fTab );
-  ptabdock ->setWidget( pTab );
-  ttabdock ->setWidget( tTab );
-  stabdock ->setWidget( sTab );
-  dtabdock ->setWidget( dTab );
+  maindock->setFocusPolicy(QWidget::StrongFocus);
 
-  fTab  ->setFocusPolicy(QWidget::NoFocus);
-  fTTab ->setFocusPolicy(QWidget::ClickFocus);
-  fLTab ->setFocusPolicy(QWidget::ClickFocus);
-  pTab  ->setFocusPolicy(QWidget::NoFocus);
-  tTab  ->setFocusPolicy(QWidget::NoFocus);
-  sTab  ->setFocusPolicy(QWidget::NoFocus);
-  dTab  ->setFocusPolicy(QWidget::NoFocus);
+  rightWidgetStack->setMinimumHeight(1);
 
-  maindock      ->setFocusPolicy(QWidget::StrongFocus);
+  htmlpart = new WHTMLPart(rightWidgetStack,"rightHTML");
+  htmlPartDoc = new WHTMLPart(rightWidgetStack, "docHTML");
 
-  rightWidgetStack  ->setMinimumHeight( 1 );
-
-  htmlpart       = new WHTMLPart( rightWidgetStack,  "rightHTML");
-  htmlPartDoc    = new WHTMLPart( rightWidgetStack,  "docHTML");
-
-  rightWidgetStack->addWidget( m_view, 0 );
-  rightWidgetStack->addWidget( htmlpart   ->view(), 1 );
-  rightWidgetStack->addWidget( htmlPartDoc->view(), 2 );
+  rightWidgetStack->addWidget(m_view, 0);
+  rightWidgetStack->addWidget(htmlpart->view(), 1);
+  rightWidgetStack->addWidget(htmlPartDoc->view(), 2);
   rightWidgetStack->raiseWidget(0);
 
-  messageOutput = new MessageOutput( bottomWidgetStack );
-  messageOutput ->setFocusPolicy(QWidget::NoFocus);
+  messageOutput = new MessageOutput(bottomWidgetStack);
+  messageOutput->setFocusPolicy(QWidget::NoFocus);
 
   bottomWidgetStack->addWidget(messageOutput, 0);
 //  bottomWidgetStack->addWidget( htmlpart   ->view(), 1 );
 //  bottomWidgetStack->addWidget( htmlPartDoc->view(), 2 );
 
-  connect(   fTTab,SIGNAL(openFile  (const KURL &, const QString&)),
-            this, SLOT(slotFileOpen(const KURL &, const QString&)));
-  connect(   fLTab,SIGNAL(openFile  (const KURL &, const QString&)),
-            this, SLOT(slotFileOpen(const KURL &, const QString&)));
+  connect(fTab, SIGNAL(openFile  (const KURL &, const QString&)),
+          this, SLOT(slotFileOpen(const KURL &, const QString&)));
+  connect(fTab, SIGNAL(openImage(const KURL&)),
+          this, SLOT  (slotImageOpen(const KURL&)));
 
-  connect(   fTTab,SIGNAL(openImage(const KURL&)),
-            this, SLOT  (slotImageOpen(const KURL&)));
-  connect(   fLTab,SIGNAL(openImage(const KURL&)),
-            this, SLOT  (slotImageOpen(const KURL&)));
+  connect(pTab, SIGNAL(openFile  (const KURL &, const QString&)),
+          this, SLOT(slotFileOpen(const KURL &, const QString&)));
+  connect(pTab, SIGNAL(openImage  (const KURL&)),
+          this, SLOT(slotImageOpen(const KURL&)));
+  connect(pTab, SIGNAL(loadToolbarFile  (const KURL&)),
+          this, SLOT(slotLoadToolbarFile(const KURL&)));
 
-  connect(  fLTab,SIGNAL(changeMode()),
-            this, SLOT(slotSwapLeftPanelMode()));
-  connect(  fTTab,SIGNAL(changeMode()),
-            this, SLOT(slotSwapLeftPanelMode()));
+  connect(tTab, SIGNAL(openImage  (const KURL&)),
+          this, SLOT(slotImageOpen(const KURL&)));
+  connect(tTab, SIGNAL(openFile  (const KURL &, const QString&)),
+          this, SLOT(slotFileOpen(const KURL &, const QString&)));
+  connect(tTab, SIGNAL(insertFile  (const KURL &)),
+          this, SLOT(slotInsertFile(const KURL &)));
+  connect(tTab, SIGNAL(insertTag(const KURL &, DirInfo)),
+          this, SLOT(slotInsertTag(const KURL &, DirInfo)));
 
-  connect(   pTab, SIGNAL(openFile  (const KURL &, const QString&)),
-            this, SLOT(slotFileOpen(const KURL &, const QString&)));
-  connect(   pTab, SIGNAL(openImage  (const KURL&)),
-            this, SLOT(slotImageOpen(const KURL&)));
-  connect(   pTab, SIGNAL(loadToolbarFile  (const KURL&)),
-            this, SLOT(slotLoadToolbarFile(const KURL&)));
+  connect(fTab, SIGNAL(insertTag(const KURL &, DirInfo)),
+          this, SLOT(slotInsertTag(const KURL &, DirInfo)));
+  connect(pTab, SIGNAL(insertTag(const KURL &, DirInfo)),
+          this, SLOT(slotInsertTag(const KURL &, DirInfo)));
 
-  connect(   tTab, SIGNAL(openImage  (const KURL&)),
-            this, SLOT(slotImageOpen(const KURL&)));
-  connect(   tTab, SIGNAL(openFile  (const KURL &, const QString&)),
-            this, SLOT(slotFileOpen(const KURL &, const QString&)));
-  connect(   tTab, SIGNAL(insertFile  (const KURL &)),
-            this, SLOT(slotInsertFile(const KURL &)));
-  connect(   tTab,SIGNAL(insertTag(const KURL &, DirInfo)),
-            this, SLOT(slotInsertTag(const KURL &, DirInfo)));
+  connect(fTab, SIGNAL(activatePreview()),
+          this, SLOT(slotActivatePreview()));
+  connect(pTab, SIGNAL(activatePreview()),
+          this, SLOT(slotActivatePreview()));
 
-  connect(   fTTab,SIGNAL(insertTag(const KURL &, DirInfo)),
-            this, SLOT(slotInsertTag(const KURL &, DirInfo)));
-  connect(   fLTab,SIGNAL(insertTag(const KURL &, DirInfo)),
-            this, SLOT(slotInsertTag(const KURL &, DirInfo)));
-  connect(   pTab,SIGNAL(insertTag(const KURL &, DirInfo)),
-            this, SLOT(slotInsertTag(const KURL &, DirInfo)));
-
-  connect(   fLTab,SIGNAL(activatePreview()),
-            this, SLOT(slotActivatePreview()));
-  connect(   fTTab,SIGNAL(activatePreview()),
-            this, SLOT(slotActivatePreview()));
-  connect(   pTab, SIGNAL(activatePreview()),
-            this, SLOT(slotActivatePreview()));
-
-  connect(  htmlpart,       SIGNAL(onURL(const QString&)), this, SLOT(slotStatusMsg(const QString&)));
-  connect(  htmlPartDoc,    SIGNAL(onURL(const QString&)), this, SLOT(slotStatusMsg(const QString&)));
+  connect(htmlpart, SIGNAL(onURL(const QString&)),
+              this, SLOT(slotStatusMsg(const QString&)));
+  connect(htmlPartDoc, SIGNAL(onURL(const QString&)),
+                 this, SLOT(slotStatusMsg(const QString&)));
 //  connect(  htmlPartDoc,    SIGNAL(updateStatus(bool, bool)), SLOT(updateNavButtons( bool, bool)));
 
-  connect( m_view, SIGNAL(newCurPos()), this, SLOT(slotNewLineColumn()));
+  connect(m_view, SIGNAL(newCurPos()), this, SLOT(slotNewLineColumn()));
 
-  connect( sTab, SIGNAL(newCursorPosition(int,int)), SLOT(setCursorPosition(int,int)));
+  connect(sTab, SIGNAL(newCursorPosition(int,int)), SLOT(setCursorPosition(int,int)));
 //  connect( sTab, SIGNAL(onTag(const QString &)), SLOT( slotStatusHelpMsg(const QString &)));
-  connect( sTab, SIGNAL(selectArea(int,int,int,int)), SLOT( selectArea(int,int,int,int)));
-  connect( sTab, SIGNAL(needReparse()),    SLOT(slotForceReparse()));
-  connect( sTab, SIGNAL(parsingDTDChanged(const QString&)), SLOT(slotParsingDTDChanged(const QString&)));
-  connect( dTab, SIGNAL(openURL(QString)), SLOT(openDoc(QString)));
+  connect(sTab, SIGNAL(selectArea(int,int,int,int)), SLOT( selectArea(int,int,int,int)));
+  connect(sTab, SIGNAL(needReparse()), SLOT(slotForceReparse()));
+  connect(sTab, SIGNAL(parsingDTDChanged(const QString&)), SLOT(slotParsingDTDChanged(const QString&)));
+  connect(dTab, SIGNAL(openURL(QString)), SLOT(openDoc(QString)));
 
   connect(m_view, SIGNAL(dragInsert(QDropEvent *)), tTab, SLOT(slotDragInsert(QDropEvent *)));
 
@@ -547,10 +512,9 @@ void QuantaApp::saveOptions()
     m_config->writeEntry("Default DTD", qConfig.defaultDocType);
 
     m_config->writeEntry("Preview position",qConfig.previewPosition);
-    m_config->writeEntry("Left panel mode", fTab->id( fTab->visibleWidget()));
     m_config->writeEntry("Follow Cursor", sTab->followCursor() );
     m_config->writeEntry("PHP Debugger Port", phpDebugPort );
-    m_config->writeEntry("Top folders", fTTab->topURLList.toStringList());
+    m_config->writeEntry("Top folders", fTab->topURLList.toStringList());
     m_config->writeEntry("List of opened files", m_doc->openedFiles().toStringList());
     m_config->writeEntry("Version", VERSION); // version
     m_config->writeEntry ("Enable Debugger", debuggerStyle!="None");
@@ -608,11 +572,6 @@ void QuantaApp::readOptions()
   sTab->setFollowCursor( m_config->readBoolEntry("Follow Cursor", true));
 
   qConfig.previewPosition   = m_config->readEntry("Preview position","Right");
-  int mode = m_config->readNumEntry("Left panel mode", 0);
-/* List Mode disabled!!
-  if ( mode == 0 || mode == 1 ) fTab->raiseWidget(mode);
-*/
-  fTab->raiseWidget(0);
 
   QSize s(800,580);
   resize( m_config->readSizeEntry("Geometry", &s));

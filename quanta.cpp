@@ -104,7 +104,6 @@
 #include "dialogs/donationdialog.h"
 
 #include "treeviews/filestreeview.h"
-#include "treeviews/fileslistview.h"
 #include "treeviews/filestreefolder.h"
 #include "treeviews/structtreeview.h"
 #include "treeviews/structtreetag.h"
@@ -975,25 +974,6 @@ void QuantaApp::slotOptions()
 
   delete kd;
 }
-
-
-void QuantaApp::slotSwapLeftPanelMode()
-{
-  if ( fTab->id( fTab->visibleWidget() ) == 0 )
-  {
-    FilesTreeFolder *p = dynamic_cast<FilesTreeFolder *>(fTTab->currentItem()->parent());
-    if (!p) return;
-
-    QString dir = p->fullName();
-
-    fLTab->dir = dir;
-    fLTab->slotReload();
-
-    fTab->raiseWidget(1);
-  }
-  else if ( fTab->id( fTab->visibleWidget() ) == 1 ) fTab->raiseWidget(0);
-}
-
 
 void QuantaApp::slotActivatePreview()
 {

@@ -33,7 +33,6 @@ Doc tree
 class KConfig;
 
 class DocFolder : public KListViewItem  {
-//   Q_OBJECT
 public:
   DocFolder(QListViewItem *parent, QString _name, KConfig *config, QString basePath);
   DocFolder(QListView *parent, QString _name, KConfig *config, QString basePath);
@@ -42,10 +41,10 @@ public:
   void setup();
   /**  */
   void setOpen( bool o);
-  
+
 public:
   QString url;
-  QString name;  
+  QString name;
   bool topLevel;
 };
 

@@ -52,7 +52,7 @@ public:
   QPopupMenu *folderMenu;
   KDirLister *dirLister;
 
-public slots:  
+public slots:
   void slotOpen();
   void slotOpenWith();
   void slotOpenInQuanta();
@@ -60,17 +60,17 @@ public slots:
   void slotPaste();
   void slotDelete();
   virtual void slotProperties();
-  
+
   void slotInsertInProject();
   void slotInsertDirInProject();
-  
+
   virtual void slotInsertTag();
-  
+
   virtual void slotReload();
   void slotJobFinished( KIO::Job *);
   /** No descriptions */
   virtual void slotPropertiesApplied();
-  
+
 protected slots: // Private slots
   /** No descriptions */
   virtual void slotDirListNewItems(const KFileItemList& items);
@@ -94,14 +94,13 @@ protected:
 signals:
   void open( QListViewItem *name );
   void openInQuanta( QListViewItem *name );
-  
+
   void insertDirInProject( const KURL& );
   void insertFileInProject( const KURL& );
-  
+
   void insertTag(const KURL &, DirInfo);
-  
+
   void jobFinished();
-  void changeMode();
 
   /** No descriptions */
   void reloadTreeviews();
