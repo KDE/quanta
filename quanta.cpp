@@ -692,8 +692,9 @@ void QuantaApp::slotDockChanged()
     if ( docTabOpened )
     {
     	rightWidgetStack -> raiseWidget(0);
-    	doc ->write()->setFocus();
+    	
     }
+    doc ->write()->setFocus();
   	docTabOpened = false;
   }
 }

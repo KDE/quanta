@@ -276,6 +276,7 @@ class KWriteView : public QWidget {
 
     void doDrag();
 
+    virtual bool event(QEvent *e);
     virtual void focusInEvent(QFocusEvent *);
     virtual void focusOutEvent(QFocusEvent *);
     virtual void keyPressEvent(QKeyEvent *e);

@@ -1131,7 +1131,7 @@ void KWriteView::focusInEvent(QFocusEvent *) {
 
 void KWriteView::focusOutEvent(QFocusEvent *) {
 //  debug("lost focus %d", cursorTimer);
-
+  
   if (cursorTimer) {
     killTimer(cursorTimer);
     cursorTimer = 0;
@@ -3642,4 +3642,22 @@ int SConfig::search(QString &text, int index) {
     }
   }
   return index;
+}
+
+bool KWriteView::event(QEvent *e)
+{
+#ifdef KeyPress
+#undef KeyPress
+#endif
+  if ( e->type() == QEvent::KeyPress )
+  {
+    QKeyEvent *k = (QKeyEvent *)e;
+    if (k->key() == Key_Tab)
+    {
+      keyPressEvent(k);
+      return true;
+    }
+  }
+  
+  return QWidget::event(e);
 }

@@ -63,8 +63,8 @@
 #include "parser/parser.h"
 
 
-QString fileMaskHtml 	= "*.*html *.*htm *.php* *.asp *.cfm *.css *.inc* *.*HTML *.*HTM *.PHP* *.ASP *.CFM *.CSS *.INC* *.xml *.XML";
-QString fileMaskPhp 	= "*.*PHP* *.*php* ";
+QString fileMaskHtml   = "*.*html *.*htm *.php* *.asp *.cfm *.css *.inc* *.*HTML *.*HTM *.PHP* *.ASP *.CFM *.CSS *.INC* *.xml *.XML";
+QString fileMaskPhp   = "*.*PHP* *.*php* ";
 QString fileMaskJava  = "*.jss *.js *.JSS *.JS ";
 QString fileMaskText  = "*.txt *.TXT ";
 QString fileMaskImage = "*.gif *.jpg *.png *.jpeg *.bmp *.xpm *.GIF *.JPG *.PNG *.JPEG *.BMP ";
@@ -91,7 +91,7 @@ QDict <QStrList> *tagsDict;
 
 QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
 {
-  grepDialog	= 0L;
+  grepDialog  = 0L;
 
   config=kapp->config();
 
@@ -130,14 +130,14 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
            
   if ( !debugger->ok() ) {
     QString s;
-	  messageOutput->insertItem("Can't bind port "+
-	    s.sprintf("%i",phpDebugPort)+" , PHP debugger disabled" );
-	}
-	else {
-	  QString s;
-	  messageOutput->insertItem("Php Debugger listens port "+
-	    s.sprintf("%i",phpDebugPort)+"" );
-	}
+    messageOutput->insertItem("Can't bind port "+
+      s.sprintf("%i",phpDebugPort)+" , PHP debugger disabled" );
+  }
+  else {
+    QString s;
+    messageOutput->insertItem("Php Debugger listens port "+
+      s.sprintf("%i",phpDebugPort)+"" );
+  }
 }
 
 QuantaApp::~QuantaApp()
@@ -182,48 +182,48 @@ void QuantaApp::initDocument()
 
 void QuantaApp::initProject()
 {
-	project = new Project(this);
-	
-	connect(project, 	SIGNAL(openFile    (KURL &)),
-					this, 		SLOT  (slotFileOpen(KURL &)));
-	connect(project, 	SIGNAL(reloadTree(QStringList,bool,bool)),
-					pTab, 		SLOT  (slotReloadTree(QStringList,bool,bool)));
-	connect(project, 	SIGNAL(setBasePath(QString)),
-					pTab, 		SLOT  (slotSetBasePath(QString)));
-	connect(project, 	SIGNAL(setProjectName(QString)),
-					pTab, 		SLOT  (slotSetProjectName(QString)));
-	connect(project,	SIGNAL(closeFiles()),
-					doc,			SLOT	(closeAll()));
-	connect(project,  SIGNAL(showTree()),
-	        this,     SLOT  (slotShowProjectTree()));
-					
-	connect(fLTab,		SIGNAL(insertDirInProject(QString)),
-					project,	SLOT	(addDirectory(QString)));
-	connect(fTTab,		SIGNAL(insertDirInProject(QString)),
-					project,	SLOT	(addDirectory(QString)));
-					
-	connect(fLTab,		SIGNAL(insertFileInProject(QString)),
-					project,	SLOT	(insertFile(QString)));
-	connect(fTTab,		SIGNAL(insertFileInProject(QString)),
-					project,	SLOT	(insertFile(QString)));
-					
-	connect(pTab,			SIGNAL(removeFileFromProject(QString)),
-					project,	SLOT	(slotRemoveFile(QString)));
-	connect(pTab,			SIGNAL(removeFolderFromProject(QString)),
-					project,	SLOT	(slotRemoveFolder(QString)));
-					
-	connect(project,	SIGNAL(selectMessageWidget()),
-					this,			SLOT  (slotSelectMessageWidget()));
-	connect(project,	SIGNAL(disableMessageWidget()),
-					this,			SLOT  (slotDisableMessageWidget()));
-					
-	connect(project,	SIGNAL(messages(QString)),
-					messageOutput, SLOT(showMessage(QString)));
+  project = new Project(this);
+  
+  connect(project,   SIGNAL(openFile    (KURL &)),
+          this,     SLOT  (slotFileOpen(KURL &)));
+  connect(project,   SIGNAL(reloadTree(QStringList,bool,bool)),
+          pTab,     SLOT  (slotReloadTree(QStringList,bool,bool)));
+  connect(project,   SIGNAL(setBasePath(QString)),
+          pTab,     SLOT  (slotSetBasePath(QString)));
+  connect(project,   SIGNAL(setProjectName(QString)),
+          pTab,     SLOT  (slotSetProjectName(QString)));
+  connect(project,  SIGNAL(closeFiles()),
+          doc,      SLOT  (closeAll()));
+  connect(project,  SIGNAL(showTree()),
+          this,     SLOT  (slotShowProjectTree()));
+          
+  connect(fLTab,    SIGNAL(insertDirInProject(QString)),
+          project,  SLOT  (addDirectory(QString)));
+  connect(fTTab,    SIGNAL(insertDirInProject(QString)),
+          project,  SLOT  (addDirectory(QString)));
+          
+  connect(fLTab,    SIGNAL(insertFileInProject(QString)),
+          project,  SLOT  (insertFile(QString)));
+  connect(fTTab,    SIGNAL(insertFileInProject(QString)),
+          project,  SLOT  (insertFile(QString)));
+          
+  connect(pTab,      SIGNAL(removeFileFromProject(QString)),
+          project,  SLOT  (slotRemoveFile(QString)));
+  connect(pTab,      SIGNAL(removeFolderFromProject(QString)),
+          project,  SLOT  (slotRemoveFolder(QString)));
+          
+  connect(project,  SIGNAL(selectMessageWidget()),
+          this,      SLOT  (slotSelectMessageWidget()));
+  connect(project,  SIGNAL(disableMessageWidget()),
+          this,      SLOT  (slotDisableMessageWidget()));
+          
+  connect(project,  SIGNAL(messages(QString)),
+          messageOutput, SLOT(showMessage(QString)));
 
-	connect(project,	SIGNAL(saveAllFiles()),
-					this, SLOT(slotFileSaveAll()));
-	connect(project,	SIGNAL(newStatus()),
-					this, SLOT(slotNewStatus()));
+  connect(project,  SIGNAL(saveAllFiles()),
+          this, SLOT(slotFileSaveAll()));
+  connect(project,  SIGNAL(newStatus()),
+          this, SLOT(slotNewStatus()));
 }
 
 void QuantaApp::initView()
@@ -249,22 +249,14 @@ void QuantaApp::initView()
   fTTab = new FilesTreeView( QDir::homeDirPath()+"/" , topList, fTab );
   fLTab = new FilesListView( QDir::homeDirPath()+"/" , 0L, fTab );
 
-  fTab  ->setFocusPolicy(QWidget::NoFocus);
-  fTTab ->setFocusPolicy(QWidget::NoFocus);
-  fLTab ->setFocusPolicy(QWidget::NoFocus);
-
   fTab -> addWidget( fTTab, 0 );
   fTab -> addWidget( fLTab, 1 );
   fTab -> raiseWidget( 0 );
 
-  pTab	= new ProjectTreeView( ptabdock );
-  dTab	= new DocTreeView    ( dtabdock );
-
-  pTab -> setFocusPolicy(QWidget::NoFocus);
-  dTab -> setFocusPolicy(QWidget::NoFocus);
+  pTab  = new ProjectTreeView( ptabdock );
+  dTab  = new DocTreeView    ( dtabdock );
 
   sTab = new StructTreeView( parser, config, stabdock ,"struct");
-	sTab ->setFocusPolicy(QWidget::NoFocus);
 
   rightWidgetStack = new QWidgetStack( maindock );
 
@@ -273,7 +265,6 @@ void QuantaApp::initView()
   view->doc = doc;
   
   messageOutput = new MessageOutput( bottdock );
-  messageOutput ->setFocusPolicy(QWidget::NoFocus);
 
   maindock ->setWidget( rightWidgetStack );
   bottdock ->setWidget( messageOutput );
@@ -282,50 +273,60 @@ void QuantaApp::initView()
   stabdock ->setWidget( sTab );
   dtabdock ->setWidget( dTab );
   
+  fTab  ->setFocusPolicy(QWidget::NoFocus);
+  fTTab ->setFocusPolicy(QWidget::ClickFocus);
+  fLTab ->setFocusPolicy(QWidget::ClickFocus);
+  pTab  ->setFocusPolicy(QWidget::NoFocus);
+  sTab  ->setFocusPolicy(QWidget::NoFocus);
+  dTab  ->setFocusPolicy(QWidget::NoFocus);
+  
+  maindock      ->setFocusPolicy(QWidget::StrongFocus);
+  messageOutput ->setFocusPolicy(QWidget::NoFocus);
+  
   rightWidgetStack  ->setMinimumHeight( 1 );
 
-  htmlpart    	 = new WHTMLPart( rightWidgetStack,  "rightHTML");
-  htmlPartDoc 	 = new WHTMLPart( rightWidgetStack,  "docHTML");
+  htmlpart       = new WHTMLPart( rightWidgetStack,  "rightHTML");
+  htmlPartDoc    = new WHTMLPart( rightWidgetStack,  "docHTML");
 
   rightWidgetStack->addWidget( view, 0 );
   rightWidgetStack->addWidget( htmlpart   ->view(), 1 );
   rightWidgetStack->addWidget( htmlPartDoc->view(), 2 );
   rightWidgetStack->raiseWidget(0);
 
-  connect( 	fTTab,SIGNAL(openFile  (KURL &)),
-  					this, SLOT(slotFileOpen(KURL &)));
-  connect( 	fLTab,SIGNAL(openFile  (KURL &)),
-  					this, SLOT(slotFileOpen(KURL &)));
-  					
-  connect( 	fTTab,SIGNAL(openImage(QString)),
-  					this, SLOT  (slotImageOpen(QString)));
-  connect( 	fLTab,SIGNAL(openImage(QString)),
-  					this, SLOT  (slotImageOpen(QString)));
-  					
-  connect(	fLTab,SIGNAL(changeMode()),
-  					this, SLOT(slotSwapLeftPanelMode()));
-  connect(	fTTab,SIGNAL(changeMode()),
-  					this, SLOT(slotSwapLeftPanelMode()));
-  					
-  connect( 	pTab, SIGNAL(openFile  (KURL &)),
-  					this, SLOT(slotFileOpen(KURL &)));
-  connect( 	pTab, SIGNAL(openImage  (QString)),
-  					this, SLOT(slotImageOpen(QString)));
-  					
-  connect( 	fTTab,SIGNAL(insertTag(QString)),
-  					this, SLOT(slotInsertTag(QString)));
-  connect( 	fLTab,SIGNAL(insertTag(QString)),
-  					this, SLOT(slotInsertTag(QString)));
-  connect( 	pTab,SIGNAL(insertTag(QString)),
-  					this, SLOT(slotInsertTag(QString)));
-  					
-  connect( 	fLTab,SIGNAL(activatePreview()),
-  					this, SLOT(slotActivatePreview()));
-  connect( 	fTTab,SIGNAL(activatePreview()),
-  					this, SLOT(slotActivatePreview()));
-  connect( 	pTab, SIGNAL(activatePreview()),
-  					this, SLOT(slotActivatePreview()));
-  					
+  connect(   fTTab,SIGNAL(openFile  (KURL &)),
+            this, SLOT(slotFileOpen(KURL &)));
+  connect(   fLTab,SIGNAL(openFile  (KURL &)),
+            this, SLOT(slotFileOpen(KURL &)));
+            
+  connect(   fTTab,SIGNAL(openImage(QString)),
+            this, SLOT  (slotImageOpen(QString)));
+  connect(   fLTab,SIGNAL(openImage(QString)),
+            this, SLOT  (slotImageOpen(QString)));
+            
+  connect(  fLTab,SIGNAL(changeMode()),
+            this, SLOT(slotSwapLeftPanelMode()));
+  connect(  fTTab,SIGNAL(changeMode()),
+            this, SLOT(slotSwapLeftPanelMode()));
+            
+  connect(   pTab, SIGNAL(openFile  (KURL &)),
+            this, SLOT(slotFileOpen(KURL &)));
+  connect(   pTab, SIGNAL(openImage  (QString)),
+            this, SLOT(slotImageOpen(QString)));
+            
+  connect(   fTTab,SIGNAL(insertTag(QString)),
+            this, SLOT(slotInsertTag(QString)));
+  connect(   fLTab,SIGNAL(insertTag(QString)),
+            this, SLOT(slotInsertTag(QString)));
+  connect(   pTab,SIGNAL(insertTag(QString)),
+            this, SLOT(slotInsertTag(QString)));
+            
+  connect(   fLTab,SIGNAL(activatePreview()),
+            this, SLOT(slotActivatePreview()));
+  connect(   fTTab,SIGNAL(activatePreview()),
+            this, SLOT(slotActivatePreview()));
+  connect(   pTab, SIGNAL(activatePreview()),
+            this, SLOT(slotActivatePreview()));
+            
   connect(  htmlpart,       SIGNAL(onURL(const QString&)), this, SLOT(slotStatusMsg(const QString&)));
   connect(  htmlPartDoc,    SIGNAL(onURL(const QString&)), this, SLOT(slotStatusMsg(const QString&)));
   connect(  htmlPartDoc,    SIGNAL(updateStatus(bool, bool)), SLOT(updateNavButtons( bool, bool)));
@@ -366,7 +367,7 @@ QWidgetStack *QuantaApp::widgetStackOfHtmlPart()
 }
 
 void QuantaApp::saveOptions()
-{	
+{  
   config->setGroup  ("General Options");
   
   config->writeEntry("Geometry", size());
@@ -409,11 +410,11 @@ void QuantaApp::readOptions()
   config->setGroup("General Options");
   //if (2>config->readNumEntry("Version",0)) config = new KConfig();
 
-  fileMaskHtml  = config->readEntry("Html mask", 	fileMaskHtml)	+" ";
+  fileMaskHtml  = config->readEntry("Html mask",   fileMaskHtml)  +" ";
   fileMaskImage = config->readEntry("Images mask",fileMaskImage)+" ";
-  fileMaskPhp   = config->readEntry("Php mask", 	fileMaskPhp)	+" ";
-  fileMaskJava  = config->readEntry("Java mask", 	fileMaskJava)	+" ";
-  fileMaskText  = config->readEntry("Text mask", 	fileMaskText)	+" ";
+  fileMaskPhp   = config->readEntry("Php mask",   fileMaskPhp)  +" ";
+  fileMaskJava  = config->readEntry("Java mask",   fileMaskJava)  +" ";
+  fileMaskText  = config->readEntry("Text mask",   fileMaskText)  +" ";
 
   tagsCapital = config->readBoolEntry("Capitals for tags",     false);
   attrCapital = config->readBoolEntry("Capitals for attr",     false);
@@ -447,7 +448,7 @@ void QuantaApp::openLastFiles()
   config->setGroup("General Options");
 
   QStrList urls;
- 	config->readListEntry("List of opened files", urls);
+   config->readListEntry("List of opened files", urls);
 
   for ( urls.last();urls.current();urls.prev() )
   {
@@ -502,7 +503,7 @@ void QuantaApp::initTagDict()
 
   char *tag, *t;
   for ( tag = tagsList->first(); tag; tag = tagsList->next() )
-	{
+  {
     QStrList *attrList = new QStrList();
     config->readListEntry(tag, *attrList);
 

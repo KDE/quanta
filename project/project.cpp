@@ -312,6 +312,7 @@ void Project::closeProject()
   emit setProjectName	( i18n( "No project" ) );
   emit reloadTree 		( fileNameList(), true, false );
 
+  url  = KURL();
   name = QString::null;
   
   emit newStatus();
@@ -365,6 +366,8 @@ void Project::loadProject(const KURL &url)
     if ( !f.open(IO_ReadOnly))  { KMessageBox::sorry( this, i18n("Can't open for IO_ReadOnly") );return;}
     if ( !dom.setContent( &f )) { KMessageBox::sorry( this, i18n("Not found XML info in file") );return;}
   
+    this->url = url;
+    
     loadProjectXML();
   }
 
@@ -373,8 +376,6 @@ void Project::loadProject(const KURL &url)
 void Project::slotProjectReadFinish(KIO::Job *job)
 {
   if ( job->error() ) job->showErrorDialog();
-  
-  debug( QString(buff.buffer()) );
   
   QString s(buff.buffer());
   
@@ -395,18 +396,18 @@ void Project::loadProjectXML()
   QDomNode    no;
   QDomElement el;
 	
-	if ((no=dom.firstChild().firstChild()).isNull())      { KMessageBox::sorry( this, i18n("Wrong project's file") );return;}
-	if ((name=no.toElement().attribute("name")).isNull()) { KMessageBox::sorry( this, i18n("Wrong project's file") );return;}
+  if ((no=dom.firstChild().firstChild()).isNull())      { KMessageBox::sorry( this, i18n("Wrong project's file") );return;}
+  if ((name=no.toElement().attribute("name")).isNull()) { KMessageBox::sorry( this, i18n("Wrong project's file") );return;}
 	
-	QString s = no.toElement().attribute("preview");
-	if ( s.right(1) != "/" && !s.isEmpty() ) s+="/";
-	previewPrefix = s;
+  QString s = no.toElement().attribute("preview");
+  if ( s.right(1) != "/" && !s.isEmpty() ) s+="/";
+  previewPrefix = s;
 		
-	QDomNodeList nl = dom.firstChild().firstChild().childNodes();
+  QDomNodeList nl = dom.firstChild().firstChild().childNodes();
 	
-	for ( unsigned int i=0; i<nl.count(); i++ )
+  for ( unsigned int i=0; i<nl.count(); i++ )
   {
-		el = nl.item(i).toElement();
+    el = nl.item(i).toElement();
 		
   	if ( el.nodeName() == "openfile" ) 
   	{
@@ -416,24 +417,22 @@ void Project::loadProjectXML()
   		
   	if ( el.nodeName() == "item" )
   	{
-  		if ( url.isLocalFile() )
-  		{
-  		  QFileInfo fi( basePath+el.attribute("url") );
-  		  if ( !fi.exists() ) 
-  		  {
-  			  el.parentNode().removeChild( el );
-  			  i--;
-  		  }
-  		}
+     	if ( url.isLocalFile() )
+    	{
+    	  QFileInfo fi( basePath+el.attribute("url") );
+    	  if ( !fi.exists() ) 
+    	  {
+    		  el.parentNode().removeChild( el );
+    		  i--;
+    	  }
+    	}
   	}
   }
 
-  this->url = url;
-
   emit setBasePath		( basePath );
   emit setProjectName	( name );
-	emit reloadTree 		( fileNameList(true), true, false );
-	emit   showTree     ();
+  emit reloadTree 		( fileNameList(true), true, false );
+  emit   showTree       ();
 }
 
 // slot for insert file

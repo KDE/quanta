@@ -355,10 +355,13 @@ Document* QuantaDoc::newWrite(QWidget *parent)
  	
  	w  -> installPopup( (QPopupMenu *)app->factory()->container("popup_editor", app));
 
+ 	w->parentWidget()->setFocusProxy(w);
  	connect( w, SIGNAL(newStatus    ()),app, SLOT(slotNewStatus    ()));
  	connect( w, SIGNAL(newUndo      ()),app, SLOT(slotNewUndo      ()));
  	connect( w, SIGNAL(newMarkStatus()),app, SLOT(slotNewMarkStatus()));
  	connect( w, SIGNAL(statusMsg(const QString &)),app, SLOT(slotStatusMsg(const QString &)));
+ 	w->clearFocus();
+ 	w->setFocus();
  	
  	return w;
 }
