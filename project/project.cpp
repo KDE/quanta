@@ -193,7 +193,7 @@ void Project::initActions(KActionCollection *ac)
                         this, SLOT( slotUpload() ),
                         ac, "project_upload" );
 
-  projectOptionAction = new KAction( i18n( "&Project Properties..." ), Key_F7,
+  projectOptionAction = new KAction( i18n( "&Project Properties..." ), SHIFT + Key_F7,
                         this, SLOT( slotOptions() ),
                         ac, "project_options" );
 
