@@ -89,8 +89,9 @@ public slots:
 	/**
 	 * Called whenever a DOM::Node is inserted in the Kafka tree.
 	 * @param _domNode is the Node inserted.
+	 * @param insertChilds Specifies if the _domNode's child should be inserted
 	 */
-	void slotDomNodeInserted(DOM::Node _domNode);
+	void slotDomNodeInserted(DOM::Node _domNode, bool insertChilds);
 
 	/**
 	 * Called whenever DOM::Node's attributes are modified.

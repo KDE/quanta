@@ -215,7 +215,7 @@ bool KafkaHTMLPart::insertNode(DOM::Node node, DOM::Node panode, bool insertBefo
 
 	panode.applyChanges();
 
-	emit domNodeInserted(node);
+	emit domNodeInserted(node, false);
 	emit domChanged();
 	return true;
 }
@@ -263,7 +263,7 @@ void KafkaHTMLPart::insertText(DOM::Node node, const QString &text, int position
 			DOM::Text textNode = document().createTextNode(text);
 			DOM::Node parent = node.parentNode();
 			parent.insertBefore(textNode, node.nextSibling());
-			emit domNodeInserted(textNode);
+			emit domNodeInserted(textNode, false);
 			//parent.applyChanges();
 			m_currentNode = textNode;
 			d->m_cursorOffset = 1;
@@ -640,7 +640,7 @@ void KafkaHTMLPart::keyReturn()
 		if(d->m_cursorOffset == 0)
 		{
 			m_currentNode.parentNode().insertBefore(brNode, m_currentNode);
-			emit domNodeInserted(brNode);
+			emit domNodeInserted(brNode, false);
 		}
 		else if((unsigned)d->m_cursorOffset ==
 			(static_cast<DOM::CharacterData>(m_currentNode)).length())
@@ -650,7 +650,7 @@ void KafkaHTMLPart::keyReturn()
 			else
 				m_currentNode.parentNode().insertBefore(brNode,
 					m_currentNode.nextSibling());
-			emit domNodeInserted(brNode);
+			emit domNodeInserted(brNode, false);
 			m_currentNode = brNode;
 			d->m_cursorOffset = 1;
 			postprocessCursorPosition();
@@ -660,9 +660,9 @@ void KafkaHTMLPart::keyReturn()
 		{
 			secondPartOfText = (static_cast<DOM::Text>(m_currentNode)).splitText(d->m_cursorOffset);
 			emit domNodeModified(m_currentNode);
-			emit domNodeInserted(secondPartOfText);
+			emit domNodeInserted(secondPartOfText, false);
 			m_currentNode.parentNode().insertBefore(brNode, secondPartOfText);
-			emit domNodeInserted(brNode);
+			emit domNodeInserted(brNode, false);
 			m_currentNode = secondPartOfText;
 			d->m_cursorOffset = 0;
 			emit domNodeNewCursorPos(m_currentNode, d->m_cursorOffset);
@@ -770,7 +770,7 @@ bool KafkaHTMLPart::eventFilter(QObject *object, QEvent *event)
 				tmpNode.attributes().setNamedItem(attr);
 				m_currentNode.parentNode().appendChild(tmpNode);
 				d->stuckCursorHorizontalPos = false;
-				emit domNodeInserted(tmpNode);*/
+				emit domNodeInserted(tmpNode, false);*/
 				break;
 			case Key_Insert:
 				break;
@@ -818,8 +818,8 @@ bool KafkaHTMLPart::eventFilter(QObject *object, QEvent *event)
 						insertText(keyevent->text(), -1);
 					makeCursorVisible();
 				}
-				if(keyevent->key() == Qt::Key_Space)
-					forgetEvent = true;
+				//if(keyevent->key() == Qt::Key_Space)
+				forgetEvent = true;
 				d->stuckCursorHorizontalPos = false;
 				break;
 		}
@@ -863,8 +863,29 @@ void KafkaHTMLPart::keyDelete()
 			endl;
 		DOM::Node _node = m_currentNode;
 		bool b = false;
-		//WARNING : we assume that there is no cursor node left because of
-		//posprocessCursorPosition() which move the cursor to another one if one
+		while(1)
+		{//try to find a prev node from which we can delete the node
+			_node = getPrevNode(_node, b);
+			if(_node == 0) break;
+			if(_node.nodeType() == DOM::Node::TEXT_NODE)
+			{
+				m_currentNode = _node;
+				d->m_cursorOffset =
+					(static_cast<DOM::CharacterData>(_node)).length();
+				keyDelete();
+				emit domNodeNewCursorPos(m_currentNode, d->m_cursorOffset);
+				return;
+			}
+			if(d->TagsDeletable.contains(_node.nodeName().string().upper()))
+			{
+				m_currentNode = _node;
+				d->m_cursorOffset = 1;
+				keyDelete();
+				emit domNodeNewCursorPos(m_currentNode, d->m_cursorOffset);
+				return;
+			}
+		}
+		b = false;
 		while(1)
 		{//try to find a next node from which we can delete the node
 			_node = getNextNode(_node, b);
@@ -886,7 +907,7 @@ void KafkaHTMLPart::keyDelete()
 		_node.removeChild(m_currentNode);
 		m_currentNode = document().createTextNode("");
 		_node.appendChild(m_currentNode);
-		emit domNodeInserted(m_currentNode);
+		emit domNodeInserted(m_currentNode, false);
 		emit domNodeNewCursorPos(m_currentNode, d->m_cursorOffset);
 	}
 
@@ -981,7 +1002,7 @@ void KafkaHTMLPart::keyDelete()
 			tmp = _nodeNext.parentNode().removeChild(_nodeNext);
 			_node.parentNode().insertBefore(tmp,_node);
 			_nodeNext.parentNode().applyChanges();
-			emit domNodeInserted(tmp);
+			emit domNodeInserted(tmp, false);
 			continue;
 		}
 	}
@@ -1057,7 +1078,7 @@ void KafkaHTMLPart::keyBackspace()
 		_node.removeChild(m_currentNode);
 		m_currentNode = document().createTextNode("");
 		_node.appendChild(m_currentNode);
-		emit domNodeInserted(m_currentNode);
+		emit domNodeInserted(m_currentNode, false);
 		emit domNodeNewCursorPos(m_currentNode, d->m_cursorOffset);
 
 	}
@@ -1175,13 +1196,13 @@ void KafkaHTMLPart::keyBackspace()
 			tmp = _nodePrev.parentNode().removeChild(_nodePrev);
 			_nodePrev.parentNode().appendChild(tmp);
 			_nodePrev.parentNode().applyChanges();
-			emit domNodeInserted(tmp);
+			emit domNodeInserted(tmp, false);
 			continue;
 		}
 	}
 }
 
-DOM::Node KafkaHTMLPart::getNextNode(DOM::Node _node, bool &goingTowardsRootNode, bool skipParentNodes, bool dontBlock)
+DOM::Node KafkaHTMLPart::getNextNode(DOM::Node _node, bool &goingTowardsRootNode, bool skipParentNodes, bool dontBlock, DOM::Node _endNode)
 {
 	if(_node == 0)
 		return 0;
@@ -1193,6 +1214,8 @@ DOM::Node KafkaHTMLPart::getNextNode(DOM::Node _node, bool &goingTowardsRootNode
 		kdDebug(25001)<< "KafkaHTMLPart::getNextNode() - descending from node : " <<
 			_node.nodeName().string() << " to " <<
 			_node.firstChild().nodeName().string() << endl;
+		if(_endNode == _node.firstChild())
+			return 0L;
 		return _node.firstChild();
 	}
 	if(_node.nextSibling() != 0)
@@ -1201,6 +1224,8 @@ DOM::Node KafkaHTMLPart::getNextNode(DOM::Node _node, bool &goingTowardsRootNode
 		kdDebug(25001)<< "KafkaHTMLPart::getNextNode() - going from node : " <<
 			_node.nodeName().string() <<
 		 	" to " << _node.nextSibling().nodeName().string() << endl;
+		if(_endNode == _node.nextSibling())
+			return 0L;
 		return _node.nextSibling();
 	}
 	if(_node.nextSibling() == 0)
@@ -1219,10 +1244,18 @@ DOM::Node KafkaHTMLPart::getNextNode(DOM::Node _node, bool &goingTowardsRootNode
 					" node : " <<
 					_node.nodeName().string() << " to an empty Node" << endl;
 			if(skipParentNodes)
+			{
+				if(_endNode == _node.parentNode())
+					return 0L;
 				return getNextNode(_node.parentNode(), goingTowardsRootNode,
 					skipParentNodes, dontBlock);
+			}
 			else
+			{
+				if(_endNode == _node.parentNode())
+					return 0L;
 				return _node.parentNode();
+			}
 		}
 		else
 			return 0;
@@ -1231,7 +1264,7 @@ DOM::Node KafkaHTMLPart::getNextNode(DOM::Node _node, bool &goingTowardsRootNode
 	return 0;
 }
 
-DOM::Node KafkaHTMLPart::getPrevNode(DOM::Node _node, bool &goingTowardsRootNode, bool skipParentNodes, bool dontBlock)
+DOM::Node KafkaHTMLPart::getPrevNode(DOM::Node _node, bool &goingTowardsRootNode, bool skipParentNodes, bool dontBlock, DOM::Node _endNode)
 {
 	if(_node == 0)
 		return 0;
@@ -1243,6 +1276,8 @@ DOM::Node KafkaHTMLPart::getPrevNode(DOM::Node _node, bool &goingTowardsRootNode
 		kdDebug(25001)<< "KafkaHTMLPart::getPrevNode() - descending from node : " <<
 			_node.nodeName().string() << " to " <<
 			_node.lastChild().nodeName().string() << endl;
+		if(_endNode == _node.lastChild())
+			return 0L;
 		return _node.lastChild();
 	}
 	if(_node.previousSibling() != 0)
@@ -1251,6 +1286,8 @@ DOM::Node KafkaHTMLPart::getPrevNode(DOM::Node _node, bool &goingTowardsRootNode
 		kdDebug(25001)<< "KafkaHTMLPart::getPrevNode() - going from node : " <<
 			_node.nodeName().string() <<
 		 	" to " << _node.previousSibling().nodeName().string() << endl;
+		if(_endNode == _node.previousSibling())
+			return 0L;
 		return _node.previousSibling();
 	}
 	if(_node.previousSibling() == 0)
@@ -1268,10 +1305,18 @@ DOM::Node KafkaHTMLPart::getPrevNode(DOM::Node _node, bool &goingTowardsRootNode
 					" node : " << _node.nodeName().string() << " to an " <<
 					"empty Node" << endl;
 			if (skipParentNodes)
+			{
+				if(_endNode == _node.parentNode())
+					return 0L;
 				return getPrevNode(_node.parentNode(), goingTowardsRootNode,
 					skipParentNodes, dontBlock);
+			}
 			else
+			{
+				if(_endNode == _node.parentNode())
+					return 0L;
 				return _node.parentNode();
+			}
 		}
 		else
 			return 0;

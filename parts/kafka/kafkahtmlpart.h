@@ -120,14 +120,16 @@ public:
 	 * @param skipParentNodes Specifies if we should skip the parent Node when going up :
 	 * this implies that some Nodes will not be returned two times.
 	 * @param dontBlock Specifies if the search should or not be blocked by BlockingTags.
+	 * @param _endNode Specifies at which DOM::Node the search should end. It is useful
+	 * when setting skipParentNodes to true.
 	 * @return Returns the next Node :)
 	 */
-	DOM::Node getNextNode(DOM::Node _node, bool &goingTowardsRootNode, bool skipParentNodes = false, bool dontBlock = false);
+	DOM::Node getNextNode(DOM::Node _node, bool &goingTowardsRootNode, bool skipParentNodes = false, bool dontBlock = false, DOM::Node _endNode = 0L);
 
 	/**
 	 * The same that above, but this function search the previous DOM::Node.
 	 */
-	DOM::Node getPrevNode(DOM::Node _node, bool &goingTowardsRootNode, bool skipParentNodes = false, bool dontBlock = false);
+	DOM::Node getPrevNode(DOM::Node _node, bool &goingTowardsRootNode, bool skipParentNodes = false, bool dontBlock = false, DOM::Node _endNode = 0L);
 
 	/**
 	 * Category: Temporary function
@@ -227,8 +229,9 @@ signals:
 	 * Category: HTML Editing Signal
 	 * Is emitted whenever a dom Node is inserted to the tree.
 	 * @param _node is the node created.
+	 * @param insertChilds Specifies if we should insert the _node's childs
 	 */
-	void domNodeInserted(DOM::Node _node);
+	void domNodeInserted(DOM::Node _node, bool insertChilds);
 
 	/**
 	 * Category: HTML Editing Signal

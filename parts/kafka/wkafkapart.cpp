@@ -36,6 +36,8 @@
 
 #include "wkafkapart.moc"
 
+#define EDITOR_MAX_COL 70
+
 WKafkaPart::WKafkaPart(QWidget *parent, QWidget *widgetParent, const char *name)
 :domNodeToNode(1021)
 {
@@ -61,8 +63,8 @@ WKafkaPart::WKafkaPart(QWidget *parent, QWidget *widgetParent, const char *name)
 		file.close();
 	}
 
-	connect(_kafkaPart, SIGNAL(domNodeInserted(DOM::Node)),
-		this, SLOT(slotDomNodeInserted(DOM::Node)));
+	connect(_kafkaPart, SIGNAL(domNodeInserted(DOM::Node, bool)),
+		this, SLOT(slotDomNodeInserted(DOM::Node, bool)));
 	connect(_kafkaPart, SIGNAL(domNodeModified(DOM::Node)),
 		this, SLOT(slotDomNodeModified(DOM::Node)));
 	connect(_kafkaPart, SIGNAL(domNodeIsAboutToBeRemoved(DOM::Node, bool)),
@@ -186,39 +188,34 @@ void WKafkaPart::slotUpdateQuantaTree()
 
 }
 
-void WKafkaPart::slotDomNodeInserted(DOM::Node _domNode)
+void WKafkaPart::slotDomNodeInserted(DOM::Node _domNode, bool insertChilds)
 {
-	/** TODO: for the moment, we suppose that _domNode has no child*/
-	/** TODO: avoid to put all the nodes in the same line */
+	/** TODO: avoid to put all the nodes string in the same line */
 	kdDebug(25001)<< "WKafkaPart::slotDomNodeInserted() - node :" <<
 		_domNode.nodeName().string() << endl;
 	Node *_nodeParent = 0L, *_nodePrev = 0L, *_node = 0L;
+	DOM::Node tmpDomNode;
+	bool b = false;
+	QTime t;
 
-	if(_domNode.hasChildNodes())
-	{
-		kdDebug(25001)<< "WKafkaPart::slotDomNodeInserted() - doesnt support" <<
-		 "inserting nodes with childs for the moment. Sorry" << endl;
-		return;
-	}
+	t.start();
 	if(!_rootNode)
 	{//we are in the case when a minimal kafka tree has been set
-		DOM::Node domNode;
-		bool b = false;
 		_rootNode = buildNodeFromKafkaNode(_kafkaPart->htmlDocument().firstChild(),
 			0L, 0L);
-		domNode = _kafkaPart->htmlDocument().firstChild();
-		while(!domNode.isNull())
+		tmpDomNode = _kafkaPart->htmlDocument().firstChild();
+		while(!tmpDomNode.isNull())
 		{
-			domNode = _kafkaPart->getNextNode(domNode, b, true, true);
-			if(domNode.isNull() || domNode.nodeName().string() == "#document") break;
-			buildNodeFromKafkaNode(domNode,
-				searchCorrespondingNode(domNode.parentNode()), 0L, true);
+			tmpDomNode = _kafkaPart->getNextNode(tmpDomNode, b, true, true);
+			if(tmpDomNode.isNull() || tmpDomNode.nodeName().string() == "#document")
+				break;
+			buildNodeFromKafkaNode(tmpDomNode,
+				searchCorrespondingNode(tmpDomNode.parentNode()), 0L, true);
 		}
 		coutTree(_rootNode, 2);
 		return;
 	}
 
-	//TODO:remplace with a QPtrDict
 	_nodeParent = searchCorrespondingNode(_domNode.parentNode());
 
 	if(!_nodeParent)
@@ -239,9 +236,24 @@ void WKafkaPart::slotDomNodeInserted(DOM::Node _domNode)
 	}
 
 	_node = buildNodeFromKafkaNode(_domNode, _nodeParent, _nodePrev);
+	if(insertChilds && _domNode.hasChildNodes())
+	{/** TODO: chekc if it is working */
+		tmpDomNode = _domNode;
+		while(!tmpDomNode.isNull())
+		{
+			tmpDomNode = _kafkaPart->getNextNode(tmpDomNode, b, true,
+				true, _domNode);
+			if(tmpDomNode.isNull())
+				break;
+			buildNodeFromKafkaNode(tmpDomNode,
+				searchCorrespondingNode(tmpDomNode.parentNode()), 0L, true);
+		}
+	}
 
 	baseNode = parser->parse(_currentDoc);
-	//coutTree(_rootNode, 2);
+	kdDebug(25001)<< "WKafkaPart::slotDomNodeInserted in " << t.elapsed() <<
+		" ms only!" << endl;
+	coutTree(_rootNode, 2);
 }
 
 void WKafkaPart::slotDomNodeModified(DOM::Node _domNode)
@@ -251,7 +263,9 @@ void WKafkaPart::slotDomNodeModified(DOM::Node _domNode)
 	int beginLine, beginCol, endLine, endCol;
 	int oldTaglenCol, oldTaglenLine, taglenCol, taglenLine;
 	bool b = false;
+	QTime t;
 
+	t.start();
 	if(!_rootNode)
 	{//we are in the case when a minimal kafka tree has been set
 		DOM::Node domNode;
@@ -286,7 +300,9 @@ void WKafkaPart::slotDomNodeModified(DOM::Node _domNode)
 	_currentDoc->editIf->removeText(beginLine, beginCol, endLine, endCol + 1);
 	buildNodeFromKafkaNode(_node, _domNode);
 
-	//coutTree(_rootNode, 2);
+	coutTree(_rootNode, 2);
+	kdDebug(25001)<< "WKafkaPart::slotDomNodeModified in " << t.elapsed() <<
+		" ms only!" << endl;
 	//I still don't know why it crashs if i don't reparse... :/
 	baseNode = parser->parse(_currentDoc);
 }
@@ -303,9 +319,9 @@ void WKafkaPart::slotDomNodeAboutToBeRemoved(DOM::Node _domNode, bool deleteChil
 	int taglenCol, taglenLine, closingTaglenCol, closingTaglenLine;
 	int startLine2, startCol2, endLine2, endCol2;
 	bool hasClosingNode = false, b;
+	QTime t;
 
-	coutTree(_rootNode, 2);
-	kdDebug(25001)<< "===================================" << endl;
+	t.start();
 
 	/** FIRST PART: remove the HTML code from the editor*/
 
@@ -451,9 +467,6 @@ void WKafkaPart::slotDomNodeAboutToBeRemoved(DOM::Node _domNode, bool deleteChil
 	if(_nodeParentClosingBackup)
 		_nodeParentClosingBackup = getNextNode(_nodeParentClosingBackup, b);
 
-	coutTree(_rootNode, 2);
-	kdDebug(25001)<< "===================================" << endl;
-
 	if(hasClosingNode && !deleteChilds)
 	{
 		if(_nodeChilds)
@@ -479,7 +492,8 @@ void WKafkaPart::slotDomNodeAboutToBeRemoved(DOM::Node _domNode, bool deleteChil
 	}
 
 	coutTree(_rootNode, 2);
-
+	kdDebug(25001)<< "WKafkaPart::slotDomNodeDeleted in " << t.elapsed() <<
+		" ms only!" << endl;
 	baseNode = parser->parse(_currentDoc);
 }
 
@@ -801,7 +815,7 @@ void WKafkaPart::fitsNodesPosition(Node* _startNode, int colMovement, int lineMo
 
 	_startNode->tag->beginPos(SNbeginLine, SNbeginCol);
 	//_startNode->tag->endPos(SNlastLine, SNlastCol);
-	
+
 	while(_node)
 	{
 		_node->tag->beginPos(beginLine, beginCol);
@@ -899,6 +913,23 @@ void WKafkaPart::buildNodeFromKafkaNode(Node *_node, DOM::Node _domNode)
 	{
 		domText = getEncodedText(_domNode.nodeValue().string());
 		//TODO:try to keep the indentation
+		/**i = -1;
+		endLine = beginLine;
+		endCol = beginCol;
+		while((unsigned)++i < domText.length())
+		{
+			if(endCol > EDITOR_MAX_COL && domText[i].isSpace())
+			{
+				domText.insert((i+1), "\n");
+				endCol = -1;
+				endLine++;
+			}
+			else
+			{
+				endCol++;
+			}
+		}
+		endCol--;*/
 		_node->tag->setStr(domText);
 		endLine = beginLine;
 		endCol = beginCol + domText.length() - 1;
@@ -1149,11 +1180,9 @@ void WKafkaPart::getQuantaCursorPosition(int &line, int &col)
 	while((unsigned)++i < decodedText.length())
 	{
 		Encodedchar = getEncodedChar(QString(decodedText[i]),
-			(i>=1)?QString(decodedText[i-1]):QString(""));
-		decodedText.remove(i,1);
-		decodedText.insert(i, Encodedchar);
-		currentChar = currentLine.mid(curCol, Encodedchar.length());
-		while(currentLine.mid(curCol, Encodedchar.length()) != Encodedchar ||
+			(i>=1)?currentChar:QString(""));
+		while((currentLine.mid(curCol, Encodedchar.length()) != Encodedchar &&
+			currentLine.mid(curCol, 1) != QString(decodedText[i])) ||
 			(QString(currentLine.mid(curCol, Encodedchar.length())).at(0).isSpace()
 			&& Encodedchar != " "))
 		{
@@ -1174,14 +1203,30 @@ void WKafkaPart::getQuantaCursorPosition(int &line, int &col)
 				curCol++;
 		}
 		if(_break) break;
-		if(offset == (currentOffset + 1))
+		currentChar = QString(decodedText[i]);
+		if(currentLine.mid(curCol, Encodedchar.length()) == Encodedchar)
 		{
-			if(cursorAfterChar)
-				curCol += Encodedchar.length();
-			break;
+			decodedText.remove(i,1);
+			decodedText.insert(i, Encodedchar);
+			if(offset == (currentOffset + 1))
+			{
+				if(cursorAfterChar)
+					curCol += Encodedchar.length();
+				break;
+			}
+			i += Encodedchar.length() - 1;
+			curCol += Encodedchar.length();
 		}
-		i += Encodedchar.length() - 1;
-		curCol += Encodedchar.length();
+		else if(currentLine.mid(curCol, 1) == QString(decodedText[i]))
+		{
+			if(offset == (currentOffset + 1))
+			{
+				if(cursorAfterChar)
+					curCol++;
+				break;
+			}
+			curCol ++;
+		}
 		currentOffset++;
 	}
 
