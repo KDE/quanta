@@ -58,7 +58,7 @@ QuantaDebuggerGubed::QuantaDebuggerGubed (QObject *parent, const char* name, con
 QuantaDebuggerGubed::~QuantaDebuggerGubed ()
 {
 
-  kdDebug(24000) << k_funcinfo << ", m_server: " << m_server << ", m_socket" << m_socket << endl;
+  kdDebug(24002) << k_funcinfo << ", m_server: " << m_server << ", m_socket" << m_socket << endl;
 
   if(m_socket)
   {
@@ -74,7 +74,7 @@ QuantaDebuggerGubed::~QuantaDebuggerGubed ()
 void QuantaDebuggerGubed::startSession()
 {
 
-  kdDebug(24000) << k_funcinfo << ", m_server: " << m_server << ", m_socket" << m_socket << endl;
+  kdDebug(24002) << k_funcinfo << ", m_server: " << m_server << ", m_socket" << m_socket << endl;
   if(m_useproxy)
   {
     if(!m_socket)
@@ -91,7 +91,7 @@ void QuantaDebuggerGubed::startSession()
       debuggerInterface()->enableAction("debug_connect", true);
       debuggerInterface()->enableAction("debug_disconnect", false);
       debuggerInterface()->enableAction("debug_request", false);
-      kdDebug(24000) << k_funcinfo << ", proxy:" << m_serverHost << ", " << m_serverPort.toUInt() << endl;
+      kdDebug(24002) << k_funcinfo << ", proxy:" << m_serverHost << ", " << m_serverPort.toUInt() << endl;
     }
   }
   else
@@ -104,7 +104,7 @@ void QuantaDebuggerGubed::startSession()
       connect(m_server, SIGNAL(readyAccept()), this, SLOT(slotReadyAccept()));
 
       int err = m_server->listen();
-      kdDebug(24000) << k_funcinfo << ", listen:" << m_listenPort.toUInt() << " " << err << " " << m_server->systemError() << " " << KExtendedSocket::strError(err, m_server->systemError()) << endl;
+      kdDebug(24002) << k_funcinfo << ", listen:" << m_listenPort.toUInt() << " " << err << " " << m_server->systemError() << " " << KExtendedSocket::strError(err, m_server->systemError()) << endl;
       if(err)
       {
         debuggerInterface()->showStatus(KExtendedSocket::strError(err, m_server->systemError()), false);
@@ -129,7 +129,7 @@ void QuantaDebuggerGubed::startSession()
 void QuantaDebuggerGubed::endSession()
 {
 
-  kdDebug(24000) << k_funcinfo << ", m_server: " << m_server << ", m_socket" << m_socket << endl;
+  kdDebug(24002) << k_funcinfo << ", m_server: " << m_server << ", m_socket" << m_socket << endl;
 
   // Close the socket
   if(m_socket)
@@ -188,7 +188,7 @@ void QuantaDebuggerGubed::setExecutionState(State newstate)
     debuggerInterface()->enableAction("debug_pause", m_executionState != Pause);
   }
 
-  kdDebug(24000) << k_funcinfo << ", " << m_executionState << endl;
+  kdDebug(24002) << k_funcinfo << ", " << m_executionState << endl;
 
 }
 
@@ -221,18 +221,18 @@ const uint QuantaDebuggerGubed::supports(DebuggerClientCapabilities::Capabilitie
 // Socket errors
 void QuantaDebuggerGubed::slotError(int error)
 {
-  kdDebug(24000) << k_funcinfo << ", m_server: " << m_server << ", m_socket" << m_socket << endl;
+  kdDebug(24002) << k_funcinfo << ", m_server: " << m_server << ", m_socket" << m_socket << endl;
   if(m_socket)
     endSession();
 
   if(m_server)
   {
-    kdDebug(24000) << k_funcinfo << ", " << KExtendedSocket::strError(error, m_server->systemError()) << endl;
+    kdDebug(24002) << k_funcinfo << ", " << KExtendedSocket::strError(error, m_server->systemError()) << endl;
     debuggerInterface()->showStatus(KExtendedSocket::strError(error,m_server->systemError()), false);
   }
   else if(m_socket)
   {
-    kdDebug(24000) << k_funcinfo << ", " << KExtendedSocket::strError(error, m_socket->systemError()) << endl;
+    kdDebug(24002) << k_funcinfo << ", " << KExtendedSocket::strError(error, m_socket->systemError()) << endl;
     debuggerInterface()->showStatus(KExtendedSocket::strError(error,m_socket->systemError()), false);
   }
 }
@@ -241,7 +241,7 @@ void QuantaDebuggerGubed::slotError(int error)
 void QuantaDebuggerGubed::slotReadyAccept()
 {
 
-  kdDebug(24000) << k_funcinfo << ", m_server: " << m_server << ", m_socket" << m_socket << endl;
+  kdDebug(24002) << k_funcinfo << ", m_server: " << m_server << ", m_socket" << m_socket << endl;
   if(!m_socket)
   {
     int error;
@@ -251,7 +251,7 @@ void QuantaDebuggerGubed::slotReadyAccept()
     error = m_server->accept(m_socket);
     if(error == 0)
     {
-      kdDebug(24000) << k_funcinfo << ", ready" << endl;
+      kdDebug(24002) << k_funcinfo << ", ready" << endl;
       m_socket->enableRead(true);
       m_socket->setSocketFlags(KExtendedSocket::inetSocket |  KExtendedSocket::inputBufferedSocket);
       m_socket->setBufferSize(-1);
@@ -263,7 +263,7 @@ void QuantaDebuggerGubed::slotReadyAccept()
     }
     else
     {
-      kdDebug(24000) << k_funcinfo << ", " << KExtendedSocket::strError(error, m_server->systemError()) << endl;
+      kdDebug(24002) << k_funcinfo << ", " << KExtendedSocket::strError(error, m_server->systemError()) << endl;
       delete m_socket;
       m_socket = NULL;
     }
@@ -274,7 +274,7 @@ void QuantaDebuggerGubed::slotReadyAccept()
 // Connection established
 void QuantaDebuggerGubed::slotConnected()
 {
-  kdDebug(24000) << k_funcinfo << endl;
+  kdDebug(24002) << k_funcinfo << endl;
 
   sendCommand("wait" ,"");
   debuggerInterface()->enableAction("debug_connect", false);
@@ -287,11 +287,11 @@ void QuantaDebuggerGubed::slotConnected()
 // Connectio closed
 void QuantaDebuggerGubed::slotConnectionClosed(int state)
 {
-  kdDebug(24000) << k_funcinfo << ", state: " << state << ", m_server: " << m_server << ", m_socket" << m_socket << endl;
+  kdDebug(24002) << k_funcinfo << ", state: " << state << ", m_server: " << m_server << ", m_socket" << m_socket << endl;
 
   // Check if we have more data to read
   slotReadyRead();
-  kdDebug(24000) << k_funcinfo << "buffer: " << m_buffer << endl;
+  kdDebug(24002) << k_funcinfo << "buffer: " << m_buffer << endl;
 
   if(m_socket)
   {
@@ -371,7 +371,7 @@ void QuantaDebuggerGubed::slotReadyRead()
 // Process a gubed command
 void QuantaDebuggerGubed::processCommand(QString data)
 {
-  kdDebug(24000) << k_funcinfo << ", " << m_command << " : " << data << endl;
+  kdDebug(24002) << k_funcinfo << ", " << m_command << " : " << data << endl;
 
   // See what command we got and act accordingly..
   if(m_command == "commandme")
@@ -539,7 +539,7 @@ void QuantaDebuggerGubed::processCommand(QString data)
   {}
   else
     // Unimplemented command - log to debug output
-    kdDebug(24000) << "QuantaDebuggerGubed::slotReadyRead Unknown: " << m_command << ":" << data << endl;
+    kdDebug(24002) << "QuantaDebuggerGubed::slotReadyRead Unknown: " << m_command << ":" << data << endl;
 }
 
 // Turn on/off actions related to a debugging session
@@ -566,7 +566,7 @@ void QuantaDebuggerGubed::sendWatches()
 // Send a command to gubed
 bool QuantaDebuggerGubed::sendCommand(QString command, QString data)
 {
-  kdDebug(24000) << k_lineinfo << ", command: " << command << ", data " << data << endl;
+  kdDebug(24002) << k_lineinfo << ", command: " << command << ", data " << data << endl;
   if(!m_socket || m_socket->socketStatus() != KExtendedSocket::connected)
     return false;
 
@@ -602,7 +602,7 @@ void QuantaDebuggerGubed::request()
   //  request.remove(0, m_localBasedir.length());
 
   //request = m_startsession + request;
-  kdDebug(24000) << k_funcinfo << ", request: " << request << endl;
+  kdDebug(24002) << k_funcinfo << ", request: " << request << endl;
   debuggerInterface()->sendRequest(request);
 }
 
@@ -771,14 +771,14 @@ void QuantaDebuggerGubed::readConfig(QDomNode node)
 
   valuenode = node.namedItem("errormask");
   m_errormask = valuenode.firstChild().nodeValue().toLong();
-  kdDebug(24000) << k_funcinfo << ", m_errormask = " << m_errormask << endl;
+  kdDebug(24002) << k_funcinfo << ", m_errormask = " << m_errormask << endl;
 }
 
 
 // Show configuration
 void QuantaDebuggerGubed::showConfig(QDomNode node)
 {
-  GubedSettings set;
+  GubedSettings set(protocolversion);
 
   readConfig(node);
 
@@ -889,7 +889,7 @@ void QuantaDebuggerGubed::showConfig(QDomNode node)
                   + (set.checkBreakOnUserNotice->isChecked() ? QuantaDebuggerGubed::User_Notice : 0)
                   + (set.checkBreakOnUserWarning->isChecked() ? QuantaDebuggerGubed::User_Warning : 0)
                   + (set.checkBreakOnUserError->isChecked() ? QuantaDebuggerGubed::User_Error : 0);
-    kdDebug(24000) << k_funcinfo << ", m_errormask = " << m_errormask << endl;
+    kdDebug(24002) << k_funcinfo << ", m_errormask = " << m_errormask << endl;
     el.appendChild( node.ownerDocument().createTextNode(QString::number(m_errormask)));
 
   }

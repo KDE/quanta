@@ -96,7 +96,7 @@ const QString QuantaDebuggerInterface::activeFileParts(const QString & str)
   newstr.replace("%apd", Project::ref()->projectBaseURL().path());
   newstr.replace("%add", Project::ref()->documentFolderForURL(ViewManager::ref()->activeDocument()->url()).directory());
 
-  kdDebug(24000) << k_funcinfo << ", BaseURL " << Project::ref()->projectBaseURL().path() << ", active doc : " << ViewManager::ref()->activeDocument()->url().path() << ", documentFolderForURL" << Project::ref()->documentFolderForURL(ViewManager::ref()->activeDocument()->url()) << ", newstr" << newstr << endl;
+  kdDebug(24002) << k_funcinfo << ", BaseURL " << Project::ref()->projectBaseURL().path() << ", active doc : " << ViewManager::ref()->activeDocument()->url().path() << ", documentFolderForURL" << Project::ref()->documentFolderForURL(ViewManager::ref()->activeDocument()->url()) << ", newstr" << newstr << endl;
 
   return newstr;
 }

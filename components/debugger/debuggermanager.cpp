@@ -72,7 +72,7 @@ void DebuggerManager::slotNewProjectLoaded(const QString &projectname, const KUR
     delete m_debuggerui;
     m_debuggerui = NULL;
   }
-  //kdDebug(24000) << "DebuggerManager::slotNewProjectLoaded " << projectname << ", " << Project::ref()->debuggerClient << endl;
+  //kdDebug(24002) << "DebuggerManager::slotNewProjectLoaded " << projectname << ", " << Project::ref()->debuggerClient << endl;
 
   // Load new client
   if(!projectname.isEmpty())
@@ -88,7 +88,7 @@ void DebuggerManager::slotNewProjectLoaded(const QString &projectname, const KUR
         int errCode = 0;
         m_client = KParts::ComponentFactory::createInstanceFromService<DebuggerClient::DebuggerClient>(service, this, 0, QStringList(), &errCode);
 
-        //kdDebug(24000) << service->name() << " (" << m_client << ")" << endl;
+        //kdDebug(24002) << service->name() << " (" << m_client << ")" << endl;
 
         if(!m_client)
         {
@@ -265,7 +265,7 @@ void DebuggerManager::slotRemoveBreakpoint(DebuggerBreakpoint* bp)
 
 void DebuggerManager::slotAddWatch()
 {
-  kdDebug(24000) << "DebuggerManager::slotAddWatch() " << endl;
+  kdDebug(24002) << "DebuggerManager::slotAddWatch() " << endl;
   if(!m_client)
     return;
 
@@ -280,7 +280,7 @@ void DebuggerManager::slotAddWatch()
 
 void DebuggerManager::slotVariableSet()
 {
-  kdDebug(24000) << "DebuggerManager::slotVariableSet(" << quantaApp->popupWord << ") " << endl;
+  kdDebug(24002) << "DebuggerManager::slotVariableSet(" << quantaApp->popupWord << ") " << endl;
   if(!m_client)
     return;
 
@@ -299,7 +299,7 @@ void DebuggerManager::slotVariableSet()
 
 void DebuggerManager::slotConditionalBreakpoint()
 {
-  kdDebug(24000) << "DebuggerManager::slotConditionalBreakpoint() " << quantaApp->popupWord << endl;
+  kdDebug(24002) << "DebuggerManager::slotConditionalBreakpoint() " << quantaApp->popupWord << endl;
   if(!m_client)
     return;
 

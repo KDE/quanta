@@ -326,7 +326,7 @@ DebuggerVariable* VariablesListView::parsePHPVariables(QString &str)
   }
   else
   {
-    kdDebug(24000) << "VariablesListView::parsePHPVariables: Unknown variable type " << type << endl;
+    kdDebug(24002) << "VariablesListView::parsePHPVariables: Unknown variable type " << type << endl;
     debuggervar = new DebuggerVariable(key, i18n("<Unimplemented type>"), DebuggerVariableTypes::Error);
   }
 

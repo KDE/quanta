@@ -17,13 +17,17 @@
 
 #include "qlineedit.h"
 #include "gubedsettings.h"
+#include <ktextbrowser.h>
 
-GubedSettings::GubedSettings(QWidget* parent, const char* name, bool modal, WFlags fl)
-    : GubedSettingsS(parent,name, modal,fl)
-{}
+GubedSettings::GubedSettings(const QString &protocolversion)
+    : GubedSettingsS(0, "GubedSettings", false, 0)
+{
+  textAbout->setText(textAbout->text().replace("%PROTOCOLVERSION%", protocolversion));
+}
 
 GubedSettings::~GubedSettings()
-{}
+{
+}
 
 void GubedSettings::slotUseProxyToggle( bool useproxy)
 {
