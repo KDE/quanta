@@ -95,9 +95,6 @@
                     <property name="text">
                         <string>Use preview &amp;prefix</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+P</string>
-                    </property>
                 </widget>
                 <widget class="QLayoutWidget" row="11" column="0" rowspan="1" colspan="4">
                     <property name="name">
