@@ -314,7 +314,7 @@ void Document::insertFile(const KURL& url)
   QString fileName;
   if (url.isLocalFile())
   {
-    fileName == url.path();
+    fileName = url.path();
   } else
   {
     if (!KIO::NetAccess::download(url, fileName))
