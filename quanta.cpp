@@ -2189,7 +2189,8 @@ KURL QuantaApp::saveToolbarToFile(const QString& toolbarName, const KURL& destFi
 
   QBuffer buffer;
   buffer.open(IO_ReadWrite);
-  QTextStream toolStr(&buffer);
+  QString toolStr;
+  QTextStream toolStream(&toolStr, IO_ReadWrite);
 
   QBuffer buffer2;
   buffer2.open(IO_WriteOnly);
@@ -2197,7 +2198,7 @@ KURL QuantaApp::saveToolbarToFile(const QString& toolbarName, const KURL& destFi
 
   QDomNodeList nodeList, nodeList2;
 
-  toolStr << QString("<!DOCTYPE kpartgui SYSTEM \"kpartgui.dtd\">\n<kpartgui name=\"quanta\" version=\"2\">\n");
+  toolStream << "<!DOCTYPE kpartgui SYSTEM \"kpartgui.dtd\">\n<kpartgui name=\"quanta\" version=\"2\">\n";
   actStr << QString("<!DOCTYPE actionsconfig>\n<actions>\n");
 
 //look up the clients
@@ -2231,20 +2232,26 @@ KURL QuantaApp::saveToolbarToFile(const QString& toolbarName, const KURL& destFi
            }
            n = n.nextSibling();
           }
-          nodeList.item(i).save(toolStr,2);
+          nodeList.item(i).save(toolStream,2);
         }
       }
   }
-  toolStr << QString("\n</kpartgui>");
+  toolStream << QString("\n</kpartgui>");
   actStr << QString("\n</actions>");
-  buffer.flush();
+  //buffer.flush();
 
   ToolbarEntry *p_toolbar = toolbarList[toolbarName.lower()];
   delete p_toolbar->dom;
   QDomDocument *dom = new QDomDocument();
-  dom->setContent(toolStr.read());
+  QString s = toolStr;
+  QString error;
+  int el, ec;
+  if (!dom->setContent(s, &error, &el, &ec))
+      kdDebug(24000) << QString("Error %1 at (%2, %3)").arg(error).arg(el).arg(ec)<<endl;
   p_toolbar->dom = dom;
 
+  QTextStream bufferStr(&buffer);
+  bufferStr << toolStr;
   buffer.close();
   buffer2.close();
 

@@ -2153,7 +2153,7 @@ void QuantaApp::slotPluginsValidate()
 }
 void QuantaApp::recoverCrashed()
 {
- m_config->setGroup  ("Projects");
+  m_config->setGroup  ("Projects");
   QString pu = m_config->readPathEntry("Last Project");
 
   KURL u;
@@ -2245,13 +2245,9 @@ void QuantaApp::recoverCrashed()
      m_config->setGroup("General Options");
      m_config->writeEntry(qConfig.autosaveEntryKey,QString::null);
      m_config->writeEntry(qConfig.backedupFilesEntryKey,QString::null);
-     qConfig.autosaveEntryList = "";
     }
-
   }
-
-
-
+  qConfig.autosaveEntryList = "";
 }
 
 
