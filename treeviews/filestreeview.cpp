@@ -794,7 +794,7 @@ void FilesTreeView::findDrop(const QPoint &pos, QListViewItem *&parent, QListVie
 }
 
 
-void FilesTreeView::slotNewProjectLoaded(const QString &name, const KURL &baseURL, const KURL &)
+void FilesTreeView::slotNewProjectLoaded(const QString &name, const KURL &baseURL, const KURL &, const KURL &)
 {
   m_projectName = name;
   m_projectBaseURL = baseURL;

@@ -579,7 +579,7 @@ void Project::slotCloseProject()
   m_projectFiles.clear();
   emit closeFiles();
 
-  emit newProjectLoaded(projectName, baseURL, templateURL);
+  emit newProjectLoaded(projectName, baseURL, templateURL, m_documentRootURL);
   emit reloadTree( m_projectFiles, true);
   adjustActions();
   emit newStatus();
@@ -675,7 +675,12 @@ void Project::loadProjectXML()
   {
     m_defaultEncoding = qConfig.defaultEncoding;
   }
-
+  m_documentRootURL = baseURL;
+  tmpString = projectNode.toElement().attribute("documentRoot");
+  if (!tmpString.isEmpty())
+  {
+    QuantaCommon::setUrl(m_documentRootURL, tmpString);
+  }
   no = projectNode.namedItem("author");
   author = no.firstChild().nodeValue();
   no = projectNode.namedItem("email");
@@ -815,6 +820,8 @@ void Project::loadProjectXML()
   progressBar->setTotalSteps(nl.count() - 1);
   progressBar->setValue(0);
   progressBar->setTextEnabled(true);
+  QString relTemplateUrlStr = QExtFileInfo::toRelative(templateURL, baseURL).url();
+  QString docRootUrlStr = m_documentRootURL.url();
   QString path;
   uint nlCount = nl.count();
   for ( uint i = 0; i < nlCount; i++ )
@@ -837,7 +844,13 @@ void Project::loadProjectXML()
       //remove non-existent local files
       if (!excludeRx.exactMatch(path))
       {
-        ProjectURL file(url, el.attribute("desc"), el.attribute("uploadstatus", "1").toInt());
+        int defaultUploadStatus = 0;
+        if (url.url().startsWith(docRootUrlStr) || url.url().startsWith(relTemplateUrlStr) )
+          defaultUploadStatus = 1;
+        int uploadStatus = el.attribute("uploadstatus", "-1").toInt();
+        if (uploadStatus == -1)
+          el.setAttribute("uploadstatus", defaultUploadStatus);
+        ProjectURL file(url, el.attribute("desc"), el.attribute("uploadstatus").toInt());
         if ( url.isLocalFile() )
         {
           QFileInfo fi( baseURL.path(1)+path);
@@ -875,7 +888,7 @@ void Project::loadProjectXML()
 
   emit statusMsg(QString::null);
 
-  emit newProjectLoaded(projectName, baseURL, templateURL);
+  emit newProjectLoaded(projectName, baseURL, templateURL, m_documentRootURL);
   emit reloadTree(m_projectFiles, true);
 
   emit showTree();
@@ -1348,7 +1361,7 @@ void Project::slotAcceptCreateProject()
      url = QExtFileInfo::toRelative(toolbarURL, baseURL);
      el.firstChild().setNodeValue(QuantaCommon::qUrl(url));
 
-     emit newProjectLoaded(projectName, baseURL, templateURL);
+     emit newProjectLoaded(projectName, baseURL, templateURL, m_documentRootURL);
      fileNameList();
      emit reloadTree( m_projectFiles, true );
      emit showTree();
@@ -1738,7 +1751,7 @@ void Project::slotUploadURL(const KURL& urlToUpload)
 void Project::slotReloadProject()
 {
     loadProjectXML();
-    emit newProjectLoaded(projectName, baseURL, templateURL);
+    emit newProjectLoaded(projectName, baseURL, templateURL, m_documentRootURL);
     // exclude filter might have changed
     fileNameList(false);
     emit reloadTree( m_projectFiles, false );
@@ -1990,6 +2003,8 @@ void Project::slotFileDescChanged(const KURL& url, const QString& desc)
 void Project::slotUploadStatusChanged(const KURL& url, int status)
 {
    QString urlStr = QExtFileInfo::toRelative(url, baseURL).url();
+   if (url == baseURL)
+     urlStr = "";
    QString statusStr = QString("%1").arg(status);
    ProjectUrlList::Iterator it;
    for (it = m_projectFiles.begin(); it != m_projectFiles.end(); ++it)
@@ -2013,6 +2028,15 @@ void Project::slotUploadStatusChanged(const KURL& url, int status)
        }
    }
 }
+
+void Project::slotDocumentRootChanged(const KURL &url)
+{
+   KURL relUrl = QExtFileInfo::toRelative(url, baseURL);
+   dom.firstChild().firstChild().toElement().setAttribute("documentRoot", QuantaCommon::qUrl(relUrl));
+   m_documentRootURL = relUrl;
+   setModified(true);
+}
+
 
 /** Returns the project's base URL if it exists, the HOME dir if there is no project and no opened document (or the current opened document was not saved yet), and the base URL of the opened document, if it is saved somewhere. */
 KURL Project::projectBaseURL()

@@ -116,7 +116,7 @@ public slots:
   virtual void slotInsertDirInProject();
   void slotReturnPressed(QListViewItem *item);
   /** Sets new project informations */
-  void slotNewProjectLoaded(const QString &, const KURL &, const KURL &);
+  void slotNewProjectLoaded(const QString &, const KURL &, const KURL &, const KURL &);
   /** triggers repaint of treeview */
   void slotDocumentClosed();
 

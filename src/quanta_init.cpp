@@ -166,8 +166,8 @@ void QuantaInit::initQuanta()
 
   // Initialize debugger
   m_quanta->m_debugger = new DebuggerManager(m_quanta);
-  connect(Project::ref(), SIGNAL(newProjectLoaded(const QString &, const KURL &, const KURL &)),
-          m_quanta->m_debugger, SLOT(slotNewProjectLoaded(const QString &, const KURL &, const KURL &)));
+  connect(Project::ref(), SIGNAL(newProjectLoaded(const QString &, const KURL &, const KURL &, const KURL &)),
+          m_quanta->m_debugger, SLOT(slotNewProjectLoaded(const QString &, const KURL &, const KURL &, const KURL &)));
   connect(m_quanta->m_debugger, SIGNAL(hideSplash()), m_quanta, SLOT(slotHideSplash()));
 
   m_quanta->m_pluginInterface->readConfig(); //call here, so the plugin actions are created before the GUI
@@ -406,16 +406,18 @@ void QuantaInit::initProject()
   connect(m_project, SIGNAL(newStatus()),
           m_quanta, SLOT(slotNewStatus()));
 
-  connect(m_project, SIGNAL(newProjectLoaded(const QString &, const KURL &, const KURL &)),
-          TemplatesTreeView::ref(), SLOT(slotNewProjectLoaded(const QString &, const KURL &, const KURL &)));
-  connect(m_project, SIGNAL(newProjectLoaded(const QString &, const KURL &, const KURL &)),
-          pTab, SLOT(slotNewProjectLoaded(const QString &, const KURL &, const KURL &)));
-  connect(m_project, SIGNAL(newProjectLoaded(const QString &, const KURL &, const KURL &)),
-          m_quanta->fTab, SLOT(slotNewProjectLoaded(const QString &, const KURL &, const KURL &)));
+  connect(m_project, SIGNAL(newProjectLoaded(const QString &, const KURL &, const KURL &, const KURL &)),
+          TemplatesTreeView::ref(), SLOT(slotNewProjectLoaded(const QString &, const KURL &, const KURL &, const KURL &)));
+  connect(m_project, SIGNAL(newProjectLoaded(const QString &, const KURL &, const KURL &, const KURL &)),
+          pTab, SLOT(slotNewProjectLoaded(const QString &, const KURL &, const KURL &, const KURL &)));
+  connect(m_project, SIGNAL(newProjectLoaded(const QString &, const KURL &, const KURL &, const KURL &)),
+          m_quanta->fTab, SLOT(slotNewProjectLoaded(const QString &, const KURL &, const KURL &, const KURL &)));
   connect(pTab, SIGNAL(changeFileDescription(const KURL&, const QString&)),
           m_project, SLOT(slotFileDescChanged(const KURL&, const QString&)));
   connect(pTab, SIGNAL(changeUploadStatus(const KURL&, int)),
           m_project, SLOT(slotUploadStatusChanged(const KURL&, int)));
+  connect(pTab, SIGNAL(changeDocumentRoot(const KURL&)),
+          m_project, SLOT(slotDocumentRootChanged(const KURL&)));
 
   connect(m_project, SIGNAL(hideSplash()), m_quanta, SLOT(slotHideSplash()));
 

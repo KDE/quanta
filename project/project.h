@@ -95,6 +95,8 @@ public:
    */
   KURL projectBaseURL();
 
+  KURL documentRootURL() {return m_documentRootURL;}
+
 public slots:
 
   void slotNewProject();
@@ -136,6 +138,7 @@ public slots:
   void slotDeleteProjectView();
   void slotFileDescChanged(const KURL& url, const QString& desc);
   void slotUploadStatusChanged(const KURL& url, int status);
+  void slotDocumentRootChanged(const KURL& url);
 
   /** Debugger options */
   void slotDebuggerOptions();
@@ -159,7 +162,7 @@ signals:
   void newStatus();
   void statusMsg(const QString &);
   /** No descriptions */
-  void newProjectLoaded(const QString &, const KURL &, const KURL &);
+  void newProjectLoaded(const QString &, const KURL &, const KURL &, const KURL&);
   void hideSplash();
 
 public:
@@ -179,6 +182,12 @@ private:
   QString projectName;
 /** Points to the directory of the .webprj file */
   KURL baseURL;
+/** Points to the document root inside the project. Item under this folder
+are treated as the actual documents belonging to the site. They are automatically selected
+for upload, searching in project default to this directory, etc. Items outside of the
+document root are treated as external, control files and they are by default not selected for
+upload.*/
+  KURL m_documentRootURL;
 
   KURL previewPrefix;
   bool usePreviewPrefix;

@@ -45,6 +45,18 @@ Version 3.3 BE 3 (Release date: xx-xx-2004; Started 07-05-2004):
              - Never: the item is never selected for upload
              - Confirm: the item is selected for upload if it was modified, but a second confirmation
                              is needed by the user.
+          Implements wish #62721.
+        - introduce the concept of separate project and document root. Document root holds the
+          documents belonging to the actual project. Outside of the document root are project
+          administrative files, that usually are not uploaded. Files under document root are by
+          default uploaded (if they were modified), while files outside of the document root are
+          not marked to be uploaded, even if they are modified. Exception is the directory which
+          holds the project templates, which is marked to be uploaded. The user can override
+          the default setting both for files/folder inside and outside of document root. See above.
+          For old projects, the document root is the same as project root. The document root can be
+          changed from the project treeview context menu.
+          Implements wish #64742 (in somewhat different way, but the result is the same).
+
         - dragging a tab holding a document puts the document URL in the drag object [#80649]
         - possibility of as-you-type replacing of accented chars [#23164]
 

@@ -24,6 +24,14 @@
 
 class KIO::Job;
 
+class ProjectTreeViewItem : public FilesTreeViewItem {
+
+public:
+  ProjectTreeViewItem( KFileTreeViewItem *parent, KFileItem* item, KFileTreeBranch *brnch );
+  /** makes document root italics */
+  void paintCell(QPainter *p, const QColorGroup &cg, int column, int width, int align);
+};
+
 class ProjectTreeBranch : public FilesTreeBranch {
 
 public:
@@ -59,6 +67,9 @@ public:
   }
 
   virtual ~ProjectTreeView();
+  void setDocumentRootItem(ProjectTreeViewItem* item) {m_documentRootItem = item;}
+  ProjectTreeViewItem* documentRootItem() {return m_documentRootItem;}
+  KURL documentRootURL() {return m_documentRootURL;}
 
 public slots: // Public slots
   void slotOpen();
@@ -68,7 +79,7 @@ public slots: // Public slots
   void slotMenu(KListView *listView, QListViewItem *item, const QPoint &point);
   void slotReloadTree(const ProjectUrlList &a_fileList, bool buildNewtree);
   /** Sets new project informations */
-  void slotNewProjectLoaded(const QString &, const KURL &, const KURL &);
+  void slotNewProjectLoaded(const QString &, const KURL &, const KURL &, const KURL &);
   /** reloads the tree again with current settings */
   void slotReload();
   virtual void slotPopulateFinished(KFileTreeViewItem* );
@@ -85,6 +96,7 @@ signals: // Signals
   void uploadProject();
   void changeFileDescription(const KURL& url, const QString& desc);
   void changeUploadStatus(const KURL& url, int status);
+  void changeDocumentRoot(const KURL& url);
   void reloadProject();
 
 private:
@@ -100,12 +112,15 @@ private:
   KURL m_oldURL;
   KURL m_newURL;
   KURL m_baseURL;
+  KURL m_documentRootURL;
+  ProjectTreeViewItem *m_documentRootItem;
   KPopupMenu *m_projectMenu;
   KPopupMenu *m_uploadStatusMenu;
   QString m_projectName;
   ProjectUrlList m_projectFiles;
 
   int m_openInQuantaId;  ///< remembers the menu entry
+  int m_setDocumentRootId;
   int m_alwaysUploadId;
   int m_neverUploadId;
   int m_confirmUploadId;
@@ -130,6 +145,7 @@ private slots: // Private slots
   void slotNeverUpload();
   void slotConfirmUpload();
   void slotUploadMenuAboutToShow();
+  void slotSetDocumentRoot();
 };
 
 #endif

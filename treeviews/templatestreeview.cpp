@@ -712,7 +712,7 @@ void TemplatesTreeView::slotDragInsert(QDropEvent *e)
    }
 }
 
-void TemplatesTreeView::slotNewProjectLoaded(const QString &projectName, const KURL &baseURL, const KURL &templateURL)
+void TemplatesTreeView::slotNewProjectLoaded(const QString &projectName, const KURL &baseURL, const KURL &templateURL, const KURL &)
 {
   Q_UNUSED(baseURL);
   m_projectName = projectName;
