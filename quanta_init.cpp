@@ -482,6 +482,7 @@ void QuantaApp::saveOptions()
 
   config->writeEntry("Default encoding",defaultEncoding);
   config->writeEntry("Default DTD",defaultDocType);
+  config->writeEntry("Use MimeTypes",useMimeTypes);
 
   config->writeEntry("Refresh frequency",refreshFrequency);
 
@@ -531,6 +532,7 @@ void QuantaApp::readOptions()
   defaultDocType = config->readEntry("Default DTD",DEFAULT_DTD);
   defaultEncoding = config->readEntry("Default encoding", QTextCodec::codecForLocale()->name());
   previewPosition   = config->readEntry("Preview position","Right");
+  useMimeTypes = config->readBoolEntry("Use MimeTypes", false);
 
   refreshFrequency = config->readNumEntry("Refresh frequency",5);
 
@@ -948,12 +950,8 @@ void QuantaApp::readTagDir(QString &dirName)
 
  dtdConfig->setGroup("Extra rules");
  dtd->scriptName = (dtdConfig->readEntry("ScriptName")).lower();
- uint startEndVariations = dtdConfig->readNumEntry("Start/end variations");
- for (uint i = 0 ; i < startEndVariations; i++)
- {
-   dtd->startTags.append(dtdConfig->readEntry(QString("Start%1").arg(i)));
-   dtd->endTags.append(dtdConfig->readEntry(QString("End%1").arg(i)));
- }
+ dtd->scriptRegExpStr = (dtdConfig->readEntry("ScriptRegExp"));
+
  dtd->booleanAttributes = dtdConfig->readEntry("BooleanAttributes","extended");
  dtd->booleanTrue = dtdConfig->readEntry("BooleanTrue","true");
  dtd->booleanFalse = dtdConfig->readEntry("BooleanFalse","false");

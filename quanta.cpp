@@ -140,7 +140,7 @@ void QuantaApp::slotFileNew()
 void QuantaApp::slotFileOpen()
 {
 //  KURL url = KFileDialog::getOpenURL( QString::null, QString::null, this);
- QString myEncoding = QString::fromLatin1(QTextCodec::codecForLocale()->name());
+ QString myEncoding = QString::fromLatin1(QTextCodec::codecForName(defaultEncoding.latin1())->name());
 
  KateFileDialog *dialog = new KateFileDialog (QString::null,myEncoding, this, i18n ("Open File"));
  KateFileDialogData data = dialog->exec();
@@ -797,6 +797,7 @@ void QuantaApp::slotOptions()
   }
 
   parserOptions->refreshFrequency->setValue(refreshFrequency);
+  parserOptions->useMimeTypes->setChecked(useMimeTypes);
   page=kd->addVBoxPage(i18n("PHP Debug"), QString::null, BarIcon("gear", KIcon::SizeMedium ) );
   DebuggerOptionsS *debuggerOptions = new DebuggerOptionsS( (QWidget *)page );
 
@@ -819,6 +820,7 @@ void QuantaApp::slotOptions()
 
     refreshFrequency = parserOptions->refreshFrequency->value();
     refreshTimer->changeInterval(refreshFrequency*1000);
+    useMimeTypes = parserOptions->useMimeTypes->isChecked();
 
     parserOptions->updateConfig();
     defaultDocType = QuantaCommon::getDTDNameFromNickName(parserOptions->dtdName->currentText());
@@ -1944,7 +1946,7 @@ void QuantaApp::processDTD(QString documentType)
 
  if (documentType.isEmpty())
  {
-   foundName = w->findDTDName(-1,-1, false); //look up the whole file for DTD definition
+   foundName = w->findDTDName(-1,-1); //look up the whole file for DTD definition
    bool found = false;
    if (!foundName.isEmpty())   //!DOCTYPE found in file
    {

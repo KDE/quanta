@@ -14,12 +14,8 @@ apache_lookup_uri = filename
 
 [Extra rules]
 ScriptName = php
+ScriptRegExp = (<\?.+\?>)|(<\*.+\*>)
 
-Start/end variations = 2
-Start1 = <?
-End1 = ?>
-Start2 = <%
-End2 = %>
 
 Block variations = 1
 Block1 = %controlstructure% %expr% { %statement% }

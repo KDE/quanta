@@ -360,7 +360,7 @@ Tag *Document::findXMLTag(int line, int col, bool forwardOnly)
 //  QRegExp quotedTextRx("(((\\(?=[\"]))\")*[^\"]*)*");
   int bLine, bCol, eLine, eCol;
   bLine = bCol = eLine = eCol = 0;
-  QRegExp xmlTagRx("<([^>]*(\"([^\"]*(<[^\"]*>)+[^\"<]*)*\")*('([^']*(<[^']*>)+[^'<]*)*')*[^>]*)*>","i");
+  QRegExp xmlTagRx("<([^>]*(\"([^\"]*(<[^\"]*>)+[^\"<]*)*\")*('([^']*(<[^']*>)+[^'<]*)*')*[^>]*)*>",false);
   int sLine = line;
   int sCol = col;
   bool tagFound = false;
@@ -409,6 +409,54 @@ Tag *Document::findXMLTag(int line, int col, bool forwardOnly)
   return tag;
 }
 
+Tag *Document::findScriptTag(int line, int col,  QRegExp tagRx)
+{
+  Tag *tag = 0L;
+  int bLine, bCol, eLine, eCol;
+  bLine = bCol = eLine = eCol = 0;
+  int sLine = line;
+  int sCol = col;
+  bool tagFound = false;
+  QString foundText;
+  //search backwards
+  foundText = findRev(tagRx, line, col, bLine, bCol, eLine, eCol);
+  if (!foundText.isEmpty())
+  {
+    if (QuantaCommon::isBetween(line, col, bLine, bCol, eLine, eCol) == 0)
+    {
+      tagFound = true;
+    } else
+    {
+      sLine = eLine;
+      sCol = eCol+1;
+    }
+  } else
+  {
+    sLine = sCol = 0;
+  }
+  //if not found, search forward
+  if (!tagFound)
+  {
+   foundText = find(tagRx, sLine, sCol, bLine, bCol, eLine, eCol);
+   if (!foundText.isEmpty() &&
+       QuantaCommon::isBetween(line, col, bLine, bCol, eLine, eCol) == 0)
+   {
+      tagFound = true;
+   }
+  }
+
+  if (tagFound) //build the Tag object
+  {
+      tag = new Tag();
+      tag->setTagPosition(bLine, bCol,eLine, eCol);
+      tag->parse(foundText, this);
+      tag->type = Tag::ScriptTag;
+      tag->single = true;
+  }
+
+  return tag;
+}
+
 //findXMLTag must be called before
 Tag *Document::findText(int line, int col, bool forwardOnly)
 {
@@ -420,7 +468,7 @@ Tag *Document::findText(int line, int col, bool forwardOnly)
   int t_bLine, t_bCol, t_eLine, t_eCol;
   t_bLine = t_bCol = t_eLine = t_eCol = -1;
   QString foundText;
-  QRegExp xmlTagRx("<([^>]*(\"([^\"]*(<[^\"]*>)+[^\"<]*)*\")*('([^']*(<[^']*>)+[^'<]*)*')*[^>]*)*>","i");
+  QRegExp xmlTagRx("<([^>]*(\"([^\"]*(<[^\"]*>)+[^\"<]*)*\")*('([^']*(<[^']*>)+[^'<]*)*')*[^>]*)*>",false);
 
   if (!forwardOnly)
   {
@@ -752,10 +800,9 @@ bool Document::saveIt()
     It will work even if the tag has not been completed yet. An
     empty string will be returned if no tag is found.
 */
-QString Document::getTagNameAt( int line, int col )
+QString Document::getTagNameAt(DTDStruct *dtd, int line, int col )
 {
  QString name = "";
- DTDStruct *dtd = currentDTD();
  Tag *tag = tagAt(dtd, line, col);
  if (tag)
  {
@@ -859,11 +906,11 @@ void Document::xmlAutoCompletion(DTDStruct* dtd, int line, int column, const QSt
 {
   QTag *tag;
   QString tagName;
-  tagName = getTagNameAt( line, column );
+  tagName = getTagNameAt(dtd, line, column);
 
   tag = QuantaCommon::tagFromDTD(dtd, tagName);
 
-  if ( tagName == "" )  //we are outside of any tag
+  if ( !tag )  //we are outside of any tag
   {
     if ( string == "<" )  // a tag is started
     {
@@ -1062,122 +1109,93 @@ DTDStruct* Document::currentDTD(bool fallback)
 }
 
 /** Find the DTD name for a part of the document. Search all the document if startLine=endLine=-1. */
-QString Document::findDTDName(int startLine, int endLine, bool checkCursorPos)
+QString Document::findDTDName(int startLine, int endLine)
 {
+
  //Do some magic to find the document type
  if ( (startLine == -1) && (endLine == -1) )
  {
    startLine = 0;
    endLine = editIf->numLines();
  }
- int i=startLine;
- int dir = (startLine > endLine)?-1:1;
- int pos = 0;
- QString foundName = "";
- bool endReached;
  uint line, col;
- viewCursorIf->cursorPositionReal(&line,&col);
- do
+ viewCursorIf->cursorPositionReal(&line,&col); //current cursor position
+
+ bool found = false;
+ QString foundText = "";
+
+//Look if we are inside of a script style definition, like <? ?> <* *> for php
+ QString scriptRxStr;
+ Tag *tag;
+ QDictIterator<DTDStruct> it(*dtds);
+ for( ; it.current(); ++it )
  {
-    QString s = editIf->textLine(i);
-    //search for !DOCTYPE definitions
-    pos = s.find("!doctype",0,false);
-    if (pos != -1) //parse the found !DOCTYPE tag
+   DTDStruct *dtd = it.current();
+   if (dtd->family == Script)
+   {
+     scriptRxStr = dtd->scriptRegExpStr;
+     if (!dtd->scriptName.isEmpty())
+     {
+       if (!scriptRxStr.isEmpty()) scriptRxStr = "("+scriptRxStr+")|";
+       scriptRxStr.append("(<script[^>]+(language=\"");
+       scriptRxStr.append(dtd->scriptName);
+       scriptRxStr.append("\").+/script>)");
+     }
+     if (!scriptRxStr.isEmpty())
+     {
+       tag = findScriptTag(line, col, QRegExp(scriptRxStr,false));
+       if (tag)
+       {
+        foundText = dtd->name;
+        found = true;
+        delete tag;
+        break;
+       }
+     }
+   }
+ }
+
+ if (!found)
+ {
+   int direction = (startLine > endLine)?-1:1; //search direction
+   int pos = 0;
+   //search for !DOCTYPE tags
+   int i = startLine;
+   bool endReached;
+   QString text;
+   do
+   {
+     QString text = editIf->textLine(i);
+     pos = text.find("!doctype",0,false);
+     if (pos != -1) //parse the found !DOCTYPE tag
+     {
+      tag = findXMLTag(i, pos-1, true);
+      if (tag)
       {
-        Tag *tag = findXMLTag(i, pos-1, true);
-        if (!tag) return foundName;
-        s = tag->tagStr();
-        pos = s.find("public",0,false);
+        text = tag->tagStr();
+        pos = text.find("public",0,false);
         if (pos == -1) //if no PUBLIC info, use the word after !DOCTYPE as the doc.type
         {
-          foundName = tag->attribute(0);
+          foundText = tag->attribute(0);
         } else
         {             //use the quoted string after PUBLIC as doc. type
-          pos = s.find("\"", pos+1);
+          pos = text.find("\"", pos+1);
           if (pos !=-1)
           {
-            int endPos = s.find("\"",pos+1);
-            foundName = s.mid(pos+1, endPos-pos-1);
+            int endPos = text.find("\"",pos+1);
+            foundText = text.mid(pos+1, endPos-pos-1);
           }
         }
         delete tag;
+        break;
       }
-    //search for script type definitions
-    QDictIterator<DTDStruct> it(*dtds);
-    for( ; it.current(); ++it )
-    {
-      DTDStruct *dtd = it.current();
-
-      if (!dtd->scriptName.isEmpty()) //it may be defined as <script language="name">
-      {
-        pos = s.find("<script",false);
-        if ( (pos != -1) && ( ((int)line != i) || (pos < (int) col) )) //script tag found
-        {
-          Tag *tag2 = findXMLTag(i, pos-1, true);
-          if (tag2)
-          {
-            QString s2 = tag2->attributeValue("language");
-            if (s2.lower() == dtd->scriptName)
-            {
-              //now check if we are after the closing tag
-              bool afterClosingTag = false;
-              int j = i;
-              while (j != startLine - dir)
-              {
-                s2 = editIf->textLine(j);
-                pos = s2.find("</script",false);
-                if ( (pos != -1) && ( ((int)line != j) || (pos < (int)col) ) )
-                {
-                 afterClosingTag = true;
-                 break;
-                }
-                j -= dir;
-              }
-              if (!afterClosingTag)
-              {
-                foundName = dtd->name;
-                break;
-              }
-            } //if this script was found
-          } //if (tag2)
-        } //if script tag was found
-      } //if it has a scriptName
-
-     for ( QStringList::Iterator tagIt = dtd->startTags.begin(); tagIt != dtd->startTags.end(); ++tagIt )
-     {
-       pos = s.find(*tagIt,false);
-       if ( (pos != -1) && ( !checkCursorPos || ((int)line != i) || (pos < (int)col) )) //start tag found
-       {
-         //now check if we are after the closing tag
-         bool afterClosingTag = false;
-         int j = i;
-         while (j != startLine - dir)
-         {
-           QString s2 = editIf->textLine(j);
-           pos = s2.find(dtd->endTags[dtd->startTags.findIndex(*tagIt)],false);
-           if ( (pos != -1) && (!checkCursorPos || ((int)line != j) || (pos < (int)col) ) )
-           {
-             afterClosingTag = true;
-             break;
-           }
-           j -= dir;
-         }
-         if (!afterClosingTag)
-         {
-            foundName = dtd->name;
-            break;
-         }
-        } //if start tag was found
      }
-     if (!foundName.isEmpty()) break;
-    } //dtd->startTags interation (for cycle)
+     i += direction;
+     endReached = (direction < 0)?(i < endLine):(i > endLine);
+   } while (!endReached);
+ }
 
-   i += dir;
-   endReached = (dir < 0)?(i < endLine):(i > endLine);
- } while ((foundName.isEmpty()) && (!endReached));
-
- if (foundName.isEmpty()) foundName = dtdName;
- return foundName;
+ return foundText;
 }
 
 /** Called whenever a user inputs text in a script type document. */
@@ -1472,6 +1490,5 @@ void Document::save()
   m_doc->save();
   m_dirty = false;
 }
-
 
 #include "document.moc"

@@ -36,6 +36,7 @@ extern QString attrsQuotation;
 extern bool useAutoCompletion; //enable auto completion of tags
 extern bool closeOptionalTags;
 extern bool closeTags;
+extern bool useMimeTypes;
 extern uint refreshFrequency;
 extern QString defaultDocType;
 

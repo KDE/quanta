@@ -65,7 +65,7 @@ public:
   /** return a pointet to the Node according to p_line, p_col (or current cursor pos, if both are -1)  */
   Node *nodeAt(int p_line = -1, int p_col = -1);
   /** Returns tag name at specified position */
-  QString getTagNameAt( int line, int col );
+  QString getTagNameAt(DTDStruct *dtd, int line, int col );
 
   void selectText(int x1, int y1, int x2, int y2 );
   void replaceSelected(QString s);
@@ -117,7 +117,7 @@ public:
   /** Get a pointer to the current active DTD. If fallback is true, this always gives back a valid and known DTD pointer: the active, the document specified and in last case the application default document type. */
   DTDStruct* currentDTD(bool fallback = true);
   /** Find the DTD name for a part of the document. Search all the document if startLine=endLine=-1.*/
-  QString findDTDName(int startLine, int endLine, bool checkCursorPos = true);
+  QString findDTDName(int startLine, int endLine);
   /** Retriwes the text from the specified rectangle. The KTextEditor::EditInterface::text seems to not
 work correctly. */
   QString text(int bLine, int bCol, int eLine, int eCol);
@@ -177,6 +177,7 @@ private:
   Tag *findScriptStruct(int line, int col);
 
   Tag *findXMLTag(int line, int col, bool forwardOnly = false);
+  Tag *findScriptTag(int line, int col, QRegExp tagRx);
   Tag *findText(int line, int col, bool forwardOnly = false);
 
   /** Brings up list of code completions */

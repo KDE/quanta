@@ -36,6 +36,7 @@ QString attrsQuotation;
 bool closeOptionalTags;
 bool closeTags;
 bool useAutoCompletion;
+bool useMimeTypes;
 uint refreshFrequency;
 QString globalDataDir;
 QString defaultDocType;
