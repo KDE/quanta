@@ -6,6 +6,7 @@ Groups =
 NumOfPages = 0
 CaseSensitive = true
 Family = 2
+TopLevel = true
 
 [Extra rules]
 StructGroupsCount = 1

@@ -980,7 +980,7 @@ void Project::slotNewProject()
   {
     index = -1;
     name = it.current()->name;
-    if (it.current()->family == Xml)
+    if (it.current()->toplevel)
     {
       if (name.lower() == qConfig.defaultDocType) index = 0;
       pnf->dtdCombo->insertItem(QuantaCommon::getDTDNickNameFromName(name), index);
@@ -1228,7 +1228,7 @@ void Project::slotOptions()
   QDictIterator<DTDStruct> it(*dtds);
   for( ; it.current(); ++it )
   {
-    if (it.current()->family == Xml)
+    if (it.current()->toplevel)
     {
       lst << it.current()->nickName;
     }

@@ -935,7 +935,7 @@ void QuantaApp::slotOptions()
   QDictIterator<DTDStruct> it(*dtds);
   for( ; it.current(); ++it )
   {
-    if (it.current()->family == Xml)
+    if (it.current()->toplevel)
     {
       lst << it.current()->nickName;
     }
@@ -2576,7 +2576,7 @@ void QuantaApp::processDTD(const QString& documentType)
       QDictIterator<DTDStruct> it(*dtds);
       for( ; it.current(); ++it )
       {
-        if (it.current()->family == Xml)
+        if (it.current()->toplevel)
         {
           lst << it.current()->nickName;
         }
@@ -2658,7 +2658,8 @@ void QuantaApp::processDTD(const QString& documentType)
       {
         qConfig.showDTDSelectDialog = !dlg->useClosestMatching->isChecked();
         w->setDTDIdentifier(QuantaCommon::getDTDNameFromNickName(dlg->dtdCombo->currentText()));
-        if (dlg->convertDTD->isChecked())
+        DTDStruct *dtd = dtds->find(w->getDTDIdentifier());
+        if (dlg->convertDTD->isChecked() && dtd->family == Xml)
         {
           QDict<QString> attrDict;
           uint tagCase = qConfig.tagCase;
@@ -2668,7 +2669,6 @@ void QuantaApp::processDTD(const QString& documentType)
           uint line, col;
           w->viewCursorIf->cursorPositionReal(&line, &col);
           if (col > 0) w->viewCursorIf->setCursorPositionReal(line, col-1);
-          DTDStruct *dtd = dtds->find(w->getDTDIdentifier());
           w->insertText(dtd->doctypeStr);
           delete tag;
         }
@@ -2709,7 +2709,7 @@ void QuantaApp::slotToolsChangeDTD()
     QStringList lst;
     for (; it.current(); ++it)
     {
-      if (it.current()->family == Xml)
+      if (it.current()->toplevel)
       {
         lst << it.current()->nickName;
       }
@@ -2732,7 +2732,8 @@ void QuantaApp::slotToolsChangeDTD()
     if (dlg->exec())
     {
       w->setDTDIdentifier(QuantaCommon::getDTDNameFromNickName(dlg->dtdCombo->currentText()));
-      if (dlg->convertDTD->isChecked())
+      DTDStruct *dtd = dtds->find(w->getDTDIdentifier());
+      if (dlg->convertDTD->isChecked() && dtd->family == Xml)
       {
         if (tag)
         {
@@ -2744,13 +2745,11 @@ void QuantaApp::slotToolsChangeDTD()
           uint line, col;
           w->viewCursorIf->cursorPositionReal(&line, &col);
           if (col > 0) w->viewCursorIf->setCursorPositionReal(line, col-1);
-          DTDStruct *dtd = dtds->find(w->getDTDIdentifier());
           w->insertText(dtd->doctypeStr);
           delete tag;
         } else
         {
           w->viewCursorIf->setCursorPositionReal(0,0);
-          DTDStruct *dtd = dtds->find(w->getDTDIdentifier());
           w->insertText("<!DOCTYPE" + dtd->doctypeStr + ">\n");
         }
       }
