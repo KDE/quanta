@@ -1190,8 +1190,8 @@ void QuantaApp::slotOptions()
     qConfig.imageMimeTypes = fileMasks->lineImage->text();
     qConfig.textMimeTypes = fileMasks->lineText->text();
     qConfig.showDTDSelectDialog = fileMasks->showDTDSelectDialog->isChecked();
-    qConfig.autosaveInterval =  QString::number(fileMasks->sbAutoSave->value(), 10);
-    autosaveTimer->start(60000 * qConfig.autosaveInterval.toInt(), false);
+    qConfig.autosaveInterval =  fileMasks->sbAutoSave->value();
+    autosaveTimer->start(60000 * qConfig.autosaveInterval, false);
     m_config->setGroup("Notification Messages");
     m_config->writeEntry("Open Everything", fileMasks->warnBinaryOpening->isChecked() ? "" : "Yes");
     m_config->setGroup("General Options");

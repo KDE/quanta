@@ -90,7 +90,7 @@ typedef struct QConfig{
           QString textMimeTypes;
           QString previewPosition;
           QString windowLayout;
-	  QString autosaveInterval;
+	  uint autosaveInterval;
 	  QString backupDirPath;
 	  QString quantaPID;
 
