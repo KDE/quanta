@@ -3,13 +3,14 @@ Name = PHP
 Groups =
 NumOfPages = 0
 CaseSensitive = true
+Family = 2
 
 [Extra tags]
 
-List = abs, acos, acosh, array
+List = apache_lookup_uri
+DefaultAttrType = string
 
-abs = int
-acos = float
+apache_lookup_uri = filename
 
 [Extra rules]
 ScriptName = php
@@ -19,3 +20,14 @@ Start1 = <?
 End1 = ?>
 Start2 = <%
 End2 = %>
+
+Block variations = 1
+Block1 = %controlstructure% %expr% { %statement% }
+Block2 = %controlstructure%  %expr% %statement%
+Block5 = else { %statement% }
+Block6 = else %statement% 
+Block9 = do { %statememt% } while %expr%
+    
+ControlStructures = while, if, elseif, for, foreach, switch, declare
+Expr = (%text%)
+Statement = %text%;
