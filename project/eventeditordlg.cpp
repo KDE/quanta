@@ -17,6 +17,7 @@
 //qt includes
 #include <qlabel.h>
 #include <qregexp.h>
+#include <qtooltip.h>
 
 //kde includes
 #include <kaction.h>
@@ -225,6 +226,10 @@ void EventEditorDlg::slotActionChanged(const QString &name)
    argument2Combo->clear();
    argument3Combo->clear();
    argument4Combo->clear();
+   QToolTip::remove(argument1Combo);
+   QToolTip::remove(argument2Combo);
+   QToolTip::remove(argument3Combo);
+   QToolTip::remove(argument4Combo);
    if (name == QPEvents::ref()->fullActionName("email"))
    {
        argument1Label->setEnabled(true);
@@ -249,6 +254,7 @@ void EventEditorDlg::slotActionChanged(const QString &name)
        argument1Label->setEnabled(true);
        argument1Label->setText(i18n("Log file:"));
        argument1Combo->setEnabled(true);
+       QToolTip::add(argument1Combo, i18n("A relative file to the project folder or a file outside of the project folder in which case the full path must be specified."));
    } else
    if (name == QPEvents::ref()->fullActionName("script"))
    {
