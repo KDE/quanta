@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file './projectuploads.ui'
 **
-** Created: Tue Feb 6 13:25:13 2001
+** Created: Sun Feb 11 21:16:47 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -14,13 +14,13 @@
 class QVBoxLayout; 
 class QHBoxLayout; 
 class QGridLayout; 
+class QComboBox;
 class QLabel;
 class QLineEdit;
 class QListView;
 class QListViewItem;
 class QProgressBar;
 class QPushButton;
-class QSpinBox;
 
 class ProjectUploadS : public QDialog
 { 
@@ -30,24 +30,26 @@ public:
     ProjectUploadS( QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0 );
     ~ProjectUploadS();
 
+    QListView* list;
+    QProgressBar* ProgressBar1;
+    QLabel* labelCurFile;
     QPushButton* buttonAll;
     QPushButton* buttonModified;
     QPushButton* buttonClear;
-    QListView* list;
-    QPushButton* buttonCancel;
     QPushButton* buttonUpload;
-    QProgressBar* ProgressBar1;
+    QPushButton* buttonCancel;
     QLabel* TextLabel2_2;
-    QLabel* TextLabel4;
     QLabel* TextLabel2;
-    QLabel* labelCurFile;
-    QLineEdit* lineUser;
-    QLabel* TextLabel3;
     QLineEdit* linePasswd;
-    QLineEdit* linePath;
-    QSpinBox* spinPort;
-    QLabel* TextLabel1_2;
     QLineEdit* lineHost;
+    QComboBox* comboProtocol;
+    QLabel* TextLabel1;
+    QLineEdit* lineUser;
+    QLabel* TextLabel4;
+    QLabel* TextLabel1_2;
+    QLineEdit* port;
+    QLineEdit* linePath;
+    QLabel* TextLabel3;
 
 public slots:
     virtual void clearSelection();
@@ -57,6 +59,8 @@ public slots:
 
 protected:
     QGridLayout* ProjectUploadSLayout;
+    QVBoxLayout* Layout1;
+    QGridLayout* Layout3;
 };
 
 #endif // PROJECTUPLOADS_H

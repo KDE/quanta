@@ -24,21 +24,23 @@
 #include <qpushbutton.h>
 #include <qstringlist.h>
 #include <qlabel.h>
-#include <qurloperator.h>
-#include <qcstring.h>
-#include <qspinbox.h>
 #include <qlistview.h>
 #include <qprogressbar.h>
+#include <qcombobox.h>
 
 #include <kurl.h>
 #include <qurl.h>
 #include <kio/job.h>
 #include <kmessagebox.h>
+#include <kprotocolinfo.h>
+
 
 ProjectUpload::ProjectUpload( Project* prg, QWidget* parent,  const char* name, bool modal, WFlags fl )
   :ProjectUploadS( parent,  name, modal, fl )
 {
 	p = prg;
+	
+	baseUrl = new KURL();
 	
 	list->setMultiSelection(true);
 	
@@ -56,7 +58,20 @@ ProjectUpload::ProjectUpload( Project* prg, QWidget* parent,  const char* name, 
 	lineHost -> setText(uploadEl.attribute("remote_host",""));
 	lineUser -> setText(uploadEl.attribute("user",""));
 	linePath -> setText(uploadEl.attribute("remote_path",""));
-	spinPort -> setValue( uploadEl.attribute("remote_port","21").toInt() );
+	port -> setText( uploadEl.attribute("remote_port","") );
+	QString def_p = uploadEl.attribute("remote_protocol","ftp");
+	
+	QStringList protocols = KProtocolInfo::protocols();
+	for ( uint i=0; i<protocols.count(); i++ ) {
+	  QString p = protocols[i];
+	  if ( KProtocolInfo::supportsWriting(p) &&
+	       KProtocolInfo::supportsMakeDir(p) &&
+	       KProtocolInfo::supportsDeleting(p) ) {
+       comboProtocol->insertItem(p);
+       if ( p == def_p )
+         comboProtocol->setCurrentItem( comboProtocol->count()-1 );
+    }
+	}
 	
 	for ( unsigned int i=0; i<nl.count(); i++ )
   {
@@ -91,7 +106,9 @@ ProjectUpload::ProjectUpload( Project* prg, QWidget* parent,  const char* name, 
 
 }
 
-ProjectUpload::~ProjectUpload(){
+ProjectUpload::~ProjectUpload()
+{
+  delete baseUrl;
 }
 
 void ProjectUpload::startUpload()
@@ -101,20 +118,17 @@ void ProjectUpload::startUpload()
 	
 	uploadEl.setAttribute("remote_host", lineHost->text() );
 	uploadEl.setAttribute("remote_path", linePath->text() );
-	uploadEl.setAttribute("remote_port", spinPort->value() );
+	uploadEl.setAttribute("remote_port", port->text() );
 	uploadEl.setAttribute("user", lineUser->text() );
+	uploadEl.setAttribute("remote_protocol", comboProtocol->currentText() );
 	
+	baseUrl->setProtocol( comboProtocol->currentText() );
+	baseUrl->setPort( port->text().toInt() );
+	baseUrl->setHost( lineHost->text() );
+	baseUrl->setPath( linePath->text() );
+	baseUrl->setPass( linePasswd->text() );
 	
-	QString url = "ftp://" + lineHost->text();
-	
-	op = url;
-	op.setPath( linePath->text() );
-	op.setUser( lineUser->text() );
-	op.setPassword( linePasswd->text() );
-	op.setPort(21);
-	
-	connect(&op, SIGNAL(finished(QNetworkOperation*)), this, SLOT(uploadFinished(QNetworkOperation*)));
-	connect(&op, SIGNAL(dataTransferProgress(int,int,QNetworkOperation*)), this, SLOT(uploadProgress(int,int,QNetworkOperation*)));
+	debug( baseUrl->url() );
 	
 	upload();
 }
@@ -122,51 +136,75 @@ void ProjectUpload::startUpload()
 void ProjectUpload::upload()
 {
 	if ( stopUpload ) return;
-		
+	QString pass = linePasswd->text();
+	QString user = lineUser->text();
+	
   for ( QListViewItem *it = list->firstChild(); it; it = it->nextSibling() ) {
   		if ( it->isSelected() ) {	
   			currentFile = it->text(0);
-  			list->ensureItemVisible(it);
+  			list->ensureItemVisible(it);                                                
   			
-  			QString dir = QUrl(currentFile).dirPath();
-  			dir.truncate( dir.length()-1 );  // remove '/' from end of dir
   			
-  			QString sfrom = QUrl(p->basePath + currentFile);
-  			QUrl sto(op, dir);
+  			KURL from; 
+  			from.setPath(p->basePath + currentFile);
   			
-  			if ( !madeDirs.contains( dir ) && dir != "." ) {
-  				currentFile = "";
-  				madeDirs.append(dir);
-  				op.mkdir(dir);
+      KURL to( *baseUrl );
+      to.addPath( currentFile );
+      
+      KURL dir( to.upURL() );
+      
+      to.setUser( user );
+      to.setPass( pass );
+      
+      dir.setUser( user );
+      dir.setPass( pass );
+			
+  			if ( !madeDirs.contains(dir.url()) ) {
+  				//currentFile = "";
+  				madeDirs.append( dir.url() );
+  				KIO::Job *job = KIO::mkdir(dir);
+  				/*
+  			  connect( job, SIGNAL( result( KIO::Job * ) ),
+              this, SLOT( uploadFinished( KIO::Job * ) ) );
+        connect( job, SIGNAL( percent( KIO::Job *,unsigned long ) ),
+              this, SLOT( uploadProgress( KIO::Job *,unsigned long ) ) );
+        connect( job, SIGNAL( infoMessage( KIO::Job *,const QString& ) ),
+              this, SLOT( uploadMessage( KIO::Job *,const QString& ) ) );
+
   				return;
-  			}
+  				*/
+  			} 
+			
   			
-  			qDebug("%s -> %s", QString(sfrom).data(), QString(sto).data() );
-  			//debug( QString(op) );
+  			qDebug("%s -> %s", from.url().data(), to.url().data() );
+  			qDebug( dir.url() );
   			
- 			op.copy( sfrom, sto );
- 			// op.copy( sfrom, op );
+      KIO::FileCopyJob *job = KIO::file_copy( from, to, -1, true, false, false );
+      
+  			connect( job, SIGNAL( result( KIO::Job * ) ),
+              this, SLOT( uploadFinished( KIO::Job * ) ) );
+      connect( job, SIGNAL( percent( KIO::Job *,unsigned long ) ),
+              this, SLOT( uploadProgress( KIO::Job *,unsigned long ) ) );
+      connect( job, SIGNAL( infoMessage( KIO::Job *,const QString& ) ),
+              this, SLOT( uploadMessage( KIO::Job *,const QString& ) ) );
  			
   			labelCurFile->setText( currentFile );
   			ProgressBar1->setProgress( 0 );
-  			return;
+			return;
   		}
   }
   reject();
 
 }
 
-void ProjectUpload::uploadFinished( QNetworkOperation *res )
+void ProjectUpload::uploadFinished( KIO::Job *job )
 {
-   if ( !res )  	return;
-   if ( res->state() == QNetworkProtocol::StFailed) {
-   	 // KMessageBox::error(this, res->protocolDetail() );
-   	 // stopUpload = true;
-   	 debug( res->protocolDetail() );
-   	 return;
+   if ( !job )  	return;
+   
+   if ( job->error() ) {
+      job->showErrorDialog( this  );
+      return;
    }
-
-   if ( res->state() == QNetworkProtocol::StDone) {
 
      for ( QListViewItem *it = list->firstChild(); it; it = it->nextSibling() )
     		if ( it->text(0) == currentFile ) {
@@ -185,13 +223,19 @@ void ProjectUpload::uploadFinished( QNetworkOperation *res )
 				}
     		}
    	upload();
-   }
+
 }
 
-void ProjectUpload::uploadProgress (int bytesDone, int bytesTotal, QNetworkOperation * ) {
-	ProgressBar1->setProgress( int( 100*bytesDone/bytesTotal ) );
+void ProjectUpload::uploadProgress ( KIO::Job *, unsigned long percent  ) 
+{
+	ProgressBar1->setProgress( percent );
 }
 
+void ProjectUpload::uploadMessage ( KIO::Job *, const QString & msg )
+{
+  labelCurFile->setText( currentFile + " : " + msg );
+  debug("msg:"+currentFile + " : " + msg);
+}
 
 void ProjectUpload::selectAll()
 {

@@ -548,6 +548,7 @@ void QuantaApp::initToolBar()
 #ifndef NEW_STUFF
   toolBar()->insertButton(UserIcon("tree_win"),   ID_VIEW_TREE,     true, i18n("View tree"));
   toolBar()->insertButton(UserIcon("preview"),    ID_VIEW_PREVIEW,  true, i18n("Preview"));
+  toolBar()->insertButton(UserIcon("output_win"),    ID_VIEW_MES,      true, i18n("Show Messages"));
 
   toolBar()->setToggle(ID_VIEW_PREVIEW);
   toolBar()->setToggle(ID_VIEW_TREE);

@@ -21,7 +21,7 @@
 #include "projectuploads.h"
 #include "project.h"
 #include <qstringlist.h>
-#include <qurloperator.h>
+#include <kio/job.h>
 
 /**
   *@author Dmitry Poplavsky & Alexander Yakovlev
@@ -36,8 +36,9 @@ public:
 protected slots:
 	void startUpload();
 	void upload();
-	void uploadFinished( QNetworkOperation * );
-	void uploadProgress ( int bytesDone, int bytesTotal, QNetworkOperation * res );
+	void uploadFinished( KIO::Job *job );
+	void uploadProgress ( KIO::Job *job, unsigned long percent );
+	void uploadMessage ( KIO::Job *, const QString & msg );
 		
   void clearSelection();
   void selectAll();
@@ -52,10 +53,8 @@ private:
   QString currentFile;  // file in progress of upload
   QStringList madeDirs;
   Project *p;
-  QUrlOperator op;
+  KURL *baseUrl;
   bool stopUpload;
-
-
 
 };
 
