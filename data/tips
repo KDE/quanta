@@ -276,3 +276,17 @@ Just go to <b>Settings > Configure Shortcuts</b>.
 </html>
 </tip>
 
+<tip category="Application">
+<html>
+<p>...that Quanta has <b>four types of templates</b>? There are document (page), text snippet, binary (linked files) and site (tgz files holding entire trees) templates. These all go in folders for each  type.
+</p>
+</html>
+</tip>
+
+<tip category="Application">
+<html>
+<p>...that Quanta has a deeply <b>integrated PHP debugger</b>? you can enable it from your <i>Project Settings</i>.
+</p>
+</html>
+</tip>
+
