@@ -76,6 +76,9 @@ public:
   void changeTag(Tag *tag, QDict<QString> *dict );
   /**Change the attr value of the called attrName to attrValue*/
   void changeTagAttribute(Tag *tag, const QString& attrName, const QString&attrValue);
+  /**Change the namespace in a tag. Add if it's not present, or remove if the
+  namespace argument is empty*/
+  void changeTagNamespace(Tag *tag, const QString& nameSpace);
   /** No descriptions */
   void insertFile(const KURL& url);
   /** Inserts text at the current cursor position */

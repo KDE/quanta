@@ -86,6 +86,14 @@ private:
     QLineEdit* lin;
 };
 
+class AttributeNameSpaceItem:public AttributeItem
+{
+public:
+    AttributeNameSpaceItem(QListViewItem* parent, const QString& title, const QString& title2): AttributeItem(parent, title, title2){};
+    AttributeNameSpaceItem(TagAttributeTree *listView, QListViewItem* parent, const QString& title, const QString& title2):AttributeItem(listView, parent, title, title2){};
+
+};
+
 class AttributeBoolItem : public AttributeItem
 {
 public:

@@ -201,6 +201,31 @@ void Document::changeTag(Tag *tag, QDict<QString> *dict )
   insertText(tagStr);
 }
 
+/**Change the namespace in a tag. Add if it's not present, or remove if the
+namespace argument is empty*/
+void Document::changeTagNamespace(Tag *tag, const QString& nameSpace)
+{
+  int bl, bc;
+  int nl, nc;
+  if (!tag->nameSpace.isEmpty())
+  {
+    tag->beginPos(bl, bc);
+    tag->namePos(nl, nc);
+    reparseEnabled = false;
+    editIf->removeText(bl, bc+1, nl, nc-1);
+    reparseEnabled = true;
+  }
+  if (nameSpace.isEmpty())
+  {
+    slotDelayedTextChanged();
+  } else
+  {
+    viewCursorIf->setCursorPositionReal((uint)bl, (uint)(bc+1));
+    insertText(nameSpace);
+  }
+  quantaApp->slotNewLineColumn();
+}
+
 /**Change the attr value of the called attrName to attrValue*/
 void Document::changeTagAttribute(Tag *tag, const QString& attrName, const QString& attrValue)
 {

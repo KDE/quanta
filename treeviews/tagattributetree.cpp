@@ -79,11 +79,11 @@ void TagAttributeTree::setCurrentNode(Node *node)
   }
   if (group)
      group->setOpen(true);
-  if (!node->tag->nameSpace.isEmpty())
+//  if (!node->tag->nameSpace.isEmpty())
   {
     group = new TopLevelItem(this, group, i18n("Namespace"));
-        item = new AttributeBoolItem(this, group, i18n("name"), node->tag->nameSpace);
-
+    item = new AttributeNameSpaceItem(this, group, i18n("name"), node->tag->nameSpace);
+    group->setOpen(true);
   }
   if (qTag)
   {
@@ -156,7 +156,13 @@ void TagAttributeTree::editorContentChanged()
   if (m_node && item )
   {
     rebuildEnabled = false;
-    m_node->tag->write()->changeTagAttribute(m_node->tag, item->text(0), item->editorText());
+    if (dynamic_cast<AttributeNameSpaceItem*>(item))
+    {
+      m_node->tag->write()->changeTagNamespace(m_node->tag, item->editorText());
+    } else
+    {
+      m_node->tag->write()->changeTagAttribute(m_node->tag, item->text(0), item->editorText());
+    }
     rebuildEnabled = true;
   }
 }
