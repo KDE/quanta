@@ -137,14 +137,14 @@ bool QuantaView::mayRemove()
    {
      if (m_customWidget)
          m_customWidget->reparent(0L, 0, QPoint(), false);
+     if (!saveModified())
+         return false;
      if (dynamic_cast<QuantaView *>(quantaApp->activeWindow()) == this)
      {
          parser->setSAParserEnabled(false);
          delete baseNode;
          baseNode = 0L;
      }
-     if (!saveModified())
-          return false;
       if (m_document)
       {
         KURL url = m_document->url();
