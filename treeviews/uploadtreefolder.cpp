@@ -15,10 +15,6 @@
  *                                                                         *
  ***************************************************************************/
 
-// app includes
-#include "uploadtreefolder.h"
-#include "uploadtreefile.h"
-#include "../resource.h"
 
 // QT includes
 #include <qdir.h>
@@ -28,13 +24,19 @@
 
 // KDE includes
 #include <kiconloader.h>
+#include <kurl.h>
 
+// app includes
+#include "uploadtreefolder.h"
+#include "uploadtreefile.h"
+#include "../resource.h"
 
-UploadTreeFolder::UploadTreeFolder( UploadTreeFolder * parent, const char * name )
+UploadTreeFolder::UploadTreeFolder(const KURL &a_url, UploadTreeFolder * parent, const char * name )
     : QListViewItem( parent, name, "", "", "" )
 {
 	parentFolder = parent;
-  folderName = name;
+  m_url = a_url;
+  m_url.adjustPath(1);
   //file = name;
 
 	readable = true;
@@ -43,16 +45,18 @@ UploadTreeFolder::UploadTreeFolder( UploadTreeFolder * parent, const char * name
 
   setPixmap( 0, SmallIcon("folder") );
   setPixmap( 1, SmallIcon("check") );
+  setText(0, m_url.fileName());
 
 	//setDragEnabled(true);
 	//setDropEnabled(true);
 }
 
-UploadTreeFolder::UploadTreeFolder( QListView * parent, const char * name )
+UploadTreeFolder::UploadTreeFolder(const KURL &a_url, QListView * parent, const char * name )
     : QListViewItem( parent, name, "", "", "" )
 {
 	parentFolder = 0L;
-  folderName = name;
+  m_url = a_url;
+  m_url.adjustPath(1);
   //file = name;
 
 	readable 	= true;
@@ -60,6 +64,7 @@ UploadTreeFolder::UploadTreeFolder( QListView * parent, const char * name )
 
   setPixmap( 0, SmallIcon("folder") );
   setPixmap( 1, SmallIcon("check") );
+  setText(0, m_url.fileName());
 
 	//setDragEnabled(true);
 	//setDropEnabled(true);
@@ -73,6 +78,7 @@ void UploadTreeFolder::setOpen( bool open )
 }
 
 /** retun full name of the folder */
+//TODO: This should go away. Use url() instead.
 QString UploadTreeFolder::fullName()
 {
 	QString s="";
@@ -82,10 +88,10 @@ QString UploadTreeFolder::fullName()
   if ( parentFolder )
   {
 		s = parentFolder->fullName();
-		s += folderName+"/";
+		s += m_url.fileName()+"/";
   }
   else {
-		s = folderName;
+		s = m_url.fileName();
   }
 
   return s;

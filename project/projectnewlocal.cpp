@@ -284,7 +284,11 @@ void ProjectNewLocal::slotReloadTree( KURL::List fileList, bool newtree)
       item = item->nextSibling();
     }
     if (fname.isEmpty()) neednew = false;
-    if ( neednew ) new ProjectTreeFile( folder, fname, KURL(fname) ); //TODO
+    if ( neednew )
+    {
+      ProjectTreeFile *item = new ProjectTreeFile( folder, fname, KURL(fname) ); //TODO
+      item->setIcon(KURL(fname)); //TODO
+    }
   }
 
   projectDirTree->sortChildItems(0,true);

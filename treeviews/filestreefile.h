@@ -35,7 +35,7 @@ public:
 	
 	/** set icon for the item */
 	void setDirIcon();
-  void setIcon(QString name);
+  void setIcon(const KURL& a_url);
   /** No descriptions */
   virtual void sortChildItems(int column, bool ascending);
 

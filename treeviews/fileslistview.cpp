@@ -111,7 +111,7 @@ void FilesListView::loadDir( QString path )
 	for ( it = fileList.begin(); it != fileList.end(); ++it )
 	{
 	  item = new FilesTreeFile( this, *it, dir+(*it) );
-	  item->setIcon( *it );
+	  item->setIcon(dir+(*it));
 	}
 
 	FilesTreeFile *ditem;

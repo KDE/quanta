@@ -54,11 +54,11 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
 
 	setFocusPolicy(QWidget::ClickFocus);
 	
-	projectDir =  new ProjectTreeFolder( this, "No project", baseURL);
+	projectDir =  new ProjectTreeFolder( this, i18n("No project"), baseURL);
 	projectDir -> setPixmap( 0, SmallIcon("folder"));
 	projectDir -> setOpen( true );
 
-	fileMenu = new QPopupMenu();
+	fileMenu = new QPopupMenu(this);
 
 	fileMenu -> insertItem( UserIcon("open"), i18n("&Open"), this, SLOT(slotOpen()));
 	fileMenu -> insertItem( i18n("Open With..."), this, SLOT(slotOpenWith()));
@@ -73,8 +73,9 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
 	fileMenu -> insertItem( i18n("Properties..."), this, SLOT(slotProperties()));
 	fileMenu -> insertSeparator();
 	fileMenu -> insertItem(SmallIcon("reload"),i18n( "&Rescan Project Directory" ),  this, SLOT(slotRescan()));
+	fileMenu -> insertItem(i18n( "Project &Options" ),  this, SLOT(slotOptions()));
 
-	folderMenu = new QPopupMenu();
+	folderMenu = new QPopupMenu(this);
 
 	folderMenu -> insertItem( UserIcon("open"), i18n("&Open"), this, SLOT(slotOpen()));
  	folderMenu -> insertSeparator();
@@ -87,6 +88,12 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
 	folderMenu -> insertItem( i18n("Properties..."), this, SLOT(slotProperties()));
 	folderMenu -> insertSeparator();
 	folderMenu -> insertItem(SmallIcon("reload"),i18n( "&Rescan Project Directory" ),  this, SLOT(slotRescan()));
+	folderMenu -> insertItem(i18n( "Project &Options" ),  this, SLOT(slotOptions()));
+
+  projectMenu = new QPopupMenu(this);
+	projectMenu -> insertItem(SmallIcon("reload"),i18n( "&Rescan Project Directory" ),  this, SLOT(slotRescan()));
+	projectMenu -> insertItem(i18n( "Project &Options" ),  this, SLOT(slotOptions()));
+  
 
 
   connect(this, SIGNAL(doubleClicked(QListViewItem *)),
@@ -129,25 +136,31 @@ KURL ProjectTreeView::currentURL()
 /** slot for right button menu */
 void ProjectTreeView::slotMenu(QListViewItem *item, const QPoint& point, int)
 {
-  if ( item && item != projectDir )
+  if ( item )
   {
-    setSelected(item, true);
-    ProjectTreeFile *f = dynamic_cast<ProjectTreeFile *>( item);
-    if ( f )
+    if (item == projectDir)
     {
-      if (currentURL().fileName().endsWith(toolbarExtension))
+     projectMenu->popup( point);
+    } else
+    {
+      setSelected(item, true);
+      ProjectTreeFile *f = dynamic_cast<ProjectTreeFile *>( item);
+      if ( f )
       {
-        fileMenu->changeItem(openInQuantaId, i18n("Load Toolbar File"));
-      } else
-      {
-        fileMenu->changeItem(openInQuantaId, i18n("Open in Quanta"));
+        if (currentURL().fileName().endsWith(toolbarExtension))
+        {
+          fileMenu->changeItem(openInQuantaId, i18n("Load Toolbar File"));
+        } else
+        {
+          fileMenu->changeItem(openInQuantaId, i18n("Open in Quanta"));
+        }
+        fileMenu->popup( point);
       }
-      fileMenu->popup( point);
-    }	
-    ProjectTreeFolder *d = dynamic_cast<ProjectTreeFolder *>( item);
-    if ( d )
-    {
-      if ( d->text(0) != "CVS") folderMenu->popup( point);
+      ProjectTreeFolder *d = dynamic_cast<ProjectTreeFolder *>( item);
+      if ( d )
+      {
+        if ( d->text(0) != "CVS") folderMenu->popup( point);
+      }
     }
   }
 }
@@ -236,7 +249,8 @@ void ProjectTreeView::slotReloadTree( const KURL::List &a_urlList, bool buildNew
 
       if ( neednew )
       {
-        new ProjectTreeFile( folder, path, url );
+        ProjectTreeFile *item = new ProjectTreeFile( folder, path, url );
+        item->setIcon(QExtFileInfo::toAbsolute(url, baseURL));
       }
     }
   }
@@ -382,6 +396,12 @@ void ProjectTreeView::slotUploadSingleURL()
 void ProjectTreeView::slotRescan()
 {
   emit rescanProjectDir();
+}
+
+/** Bring up the project options dialog */
+void ProjectTreeView::slotOptions()
+{
+  emit showProjectOptions();
 }
 
 #include "projecttreeview.moc"

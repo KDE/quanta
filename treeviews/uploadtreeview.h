@@ -36,8 +36,8 @@ class UploadTreeView : public QListView {
 public:
   UploadTreeView( QWidget *parent, const char *name=0L );
   ~UploadTreeView();
-  UploadTreeFile* addItem( QString, QString, QString );
-  QListViewItem* findItem( QString );
+  UploadTreeFile* addItem( const KURL &a_url, QString, QString );
+  QListViewItem* findItem( const QString& );
   int checkboxTree( QListViewItem *it );
   void expandAll( QListViewItem * = 0 );
   void collapseAll( QListViewItem * = 0 );
@@ -50,8 +50,8 @@ public slots:
   void selectAllUnderNode( QListViewItem *it, bool select );
 
 private:
-  UploadTreeFolder* findFolder( UploadTreeFolder *, QString );
-  UploadTreeFolder* printTree( UploadTreeFolder *, QString );
+  UploadTreeFolder* findFolder( UploadTreeFolder *, const QString&);
+  UploadTreeFolder* printTree( UploadTreeFolder *, QString);
 };
 
 #endif

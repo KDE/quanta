@@ -28,15 +28,18 @@
   *@author Andras Mantia
   */
 
+class KURL;
+  
 class UploadTreeFolder : public QListViewItem  {
 public:
-	UploadTreeFolder( QListView * parent, const char * name);
-	UploadTreeFolder( UploadTreeFolder * parent, const char * name );
+	UploadTreeFolder( const KURL &a_url, QListView * parent, const char * name);
+	UploadTreeFolder( const KURL &a_url, UploadTreeFolder * parent, const char * name );
 	virtual ~UploadTreeFolder();
 
 	/** used for sorting */
 	virtual QString key ( int column, bool ascending ) const;
   QString fullName();
+  KURL url() {return m_url;}
 
 	virtual void setOpen( bool );
 	void setup();
@@ -44,7 +47,7 @@ public:
 
 public:
 	UploadTreeFolder * parentFolder;
-	QString folderName;
+	KURL m_url;
 	QStringList openedList;
 
 	bool readable;

@@ -8,11 +8,14 @@
 // kde includes
 #include <kurl.h>
 #include <klocale.h>
+#include <kfileitem.h>
+#include <kglobal.h>
 
 // app includes
 #include "rescanprj.h"
 #include "../qextfileinfo.h"
 #include "../quantacommon.h"
+#include "../treeviews/uploadtreefolder.h"
 
 RescanPrj::RescanPrj(KURL::List p_prjFileList, const KURL& p_baseURL, QWidget *parent, const char *name, bool modal )
 	: RescanPrjDir(parent,name,modal)
@@ -47,11 +50,46 @@ RescanPrj::RescanPrj(KURL::List p_prjFileList, const KURL& p_baseURL, QWidget *p
 RescanPrj::~RescanPrj(){
 }
 
-void RescanPrj::addEntries(KIO::Job *,const KIO::UDSEntryList &list)
+void RescanPrj::addEntries(KIO::Job *job,const KIO::UDSEntryList &list)
 {
+  KURL url = static_cast<KIO::ListJob *>(job)->url();
+  url.adjustPath(-1);
+  // avoid creating these QStrings again and again
+  static const QString& dot = KGlobal::staticQString(".");
+  static const QString& dotdot = KGlobal::staticQString("..");
+
   KIO::UDSEntryListConstIterator it  = list.begin();
   KIO::UDSEntryListConstIterator end = list.end();
+  KURL itemURL;
+  for ( ; it != end; ++it )
+   {
+     QString name;
 
+     // find out about the name
+     KIO::UDSEntry::ConstIterator entit = (*it).begin();
+     for( ; entit != (*it).end(); ++entit )
+       if ( (*entit).m_uds == KIO::UDS_NAME )
+       {
+         name = (*entit).m_str;
+         break;
+       }
+     //TODO: Get also the file date
+     if ( ! name.isEmpty() && name != dot && name != dotdot) 
+     {
+       KFileItem* item = new KFileItem( *it, url, false, true );
+       itemURL = item->url();
+       if (item->isDir()) itemURL.adjustPath(1);
+       itemURL = QExtFileInfo::toRelative(itemURL, baseURL);
+       if (prjFileList.findIndex(itemURL) == -1 )
+       {
+         QString s = QString("%1").arg( (long int)item->size() );
+         this->list.append(itemURL);
+         listView->addItem(itemURL, s, "");
+       }
+       delete item;
+     }
+   }
+/*
   for (; it != end; ++it)
   {
     KIO::UDSEntry::ConstIterator it2 = (*it).begin();
@@ -80,16 +118,22 @@ void RescanPrj::addEntries(KIO::Job *,const KIO::UDSEntryList &list)
 
     KURL u = baseURL;
     QuantaCommon::setUrl(u, name);
-    if ( !isDir && name != QString::fromLatin1("..") &&
+    if ( name != QString::fromLatin1("..") &&
+         name != QString::fromLatin1(".") &&
          prjFileList.findIndex(u) == -1 )
     {
+      if (isDir)
+      {
+        u.adjustPath(1);
+        name += "/";
+      }
 	    this->list.append(u);
 
   	  QString s = QString("%1").arg( size );
-      listView->addItem(name, s, "");
+      listView->addItem(u, s, "");
     }
   }
-
+*/
   slotSelect();
 }
 
@@ -141,6 +185,14 @@ KURL::List RescanPrj::files()
    {
      KURL u = baseURL;
      u.setPath(baseURL.path(1)+item->text(0));
+     if (dynamic_cast<UploadTreeFolder*>(item))
+     {
+      u = dynamic_cast<UploadTreeFolder*>(item)->url();
+     } else
+     {
+      u = dynamic_cast<UploadTreeFile*>(item)->url();
+     }
+     
      r.append(u);
    }
   }

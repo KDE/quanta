@@ -18,9 +18,6 @@
 
 #include <iostream.h>
 
- //own includes
-#include "projectupload.h"
-#include "project.h"
 
 //qt includes
 #include <qdatetime.h>
@@ -47,6 +44,10 @@
 #include <kcompletion.h>
 #include <kprogress.h>
 
+ //own includes
+#include "projectupload.h"
+#include "project.h"
+#include "../quantacommon.h"
 
 ProjectUpload::ProjectUpload(const KURL& url, Project* prg, QWidget *parent, const char* name, bool modal, WFlags fl)
   :ProjectUploadS( parent, name, modal, fl)
@@ -85,7 +86,9 @@ ProjectUpload::ProjectUpload(const KURL& url, Project* prg, QWidget *parent, con
     					date.replace( QRegExp(" "), "0" );
 
     					//QListViewItem *it = new QListViewItem( list, url, date, size );
-    					QListViewItem *it = list->addItem( url, size, date );
+              KURL u = p->baseURL;
+              QuantaCommon::setUrl(u, url);                //TODO
+    					QListViewItem *it = list->addItem( u, size, date );
 
               if ( it != 0 )
               {
@@ -117,7 +120,9 @@ ProjectUpload::ProjectUpload(const KURL& url, Project* prg, QWidget *parent, con
 
   		//QListViewItem *it = new QListViewItem( list, file, size, date );
   		//QListViewItem *it = list->addItem( url, size, date );
-  		QListViewItem *it = list->addItem( file, size, date );
+      KURL u = p->baseURL;                 //TODO
+      QuantaCommon::setUrl(u, file);
+  		QListViewItem *it = list->addItem( u, size, date );
 
   		modified.append( file );
   		it->setSelected(true);
@@ -157,6 +162,8 @@ ProjectUpload::ProjectUpload( Project* prg, QWidget* parent,  const char* name, 
 	      	date.sprintf( "%4i.%2i.%2i", d.year(), d.month(), d.day() );
 	      	date.replace( QRegExp(" "), "0" );
 
+              KURL u = p->baseURL;
+              QuantaCommon::setUrl(u, url);                //TODO
 				QListViewItem *it = list->addItem( url, size, date );
         if ( it != 0 )
         {

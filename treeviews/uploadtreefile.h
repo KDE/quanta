@@ -27,8 +27,8 @@
 
 class UploadTreeFile : public QListViewItem  {
 public: 
-	UploadTreeFile( UploadTreeFolder *parent, QString, QString, QString);
-	UploadTreeFile( QListView *parent, QString, QString, QString );
+	UploadTreeFile( UploadTreeFolder *parent, const KURL &a_url, QString, QString);
+	UploadTreeFile( QListView *parent, const KURL &a_url, QString, QString );
 	~UploadTreeFile();
 	
 	/** set icon for the item */
@@ -38,9 +38,11 @@ public:
 
 	/** used for sorting */
 	virtual QString key ( int column, bool ascending ) const;
+  /** No descriptions */
+  KURL url();
 
 public:
-	QString fname;
+	KURL m_url;
 	bool isDir;
 };
 

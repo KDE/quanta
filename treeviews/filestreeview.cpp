@@ -454,12 +454,12 @@ void FilesTreeView::slotDirListNewItems(const KFileItemList& items)
          {
            FilesTreeFolder* parent = dynamic_cast<FilesTreeFolder*>(listItem);
            fileItem = new FilesTreeFile(parent, item->name(), url);
-           fileItem->setIcon(item->name());
+           fileItem->setIcon(url);
          }
        } else
        {
          fileItem = new FilesTreeFile(this, item->name(), url);
-         fileItem->setIcon(item->name());
+         fileItem->setIcon(url);
        }
     }
   }

@@ -102,7 +102,7 @@ KURL::List Project::fileNameList(bool check)
 {
 	KURL::List list;
 
-  //cout << dom.toString() << "\n";  
+  cout << dom.toString() << "\n";  
 	QDomNodeList nl = dom.elementsByTagName("item");
 	
 	for ( unsigned int i=0; i < nl.count(); i++ )
@@ -546,7 +546,7 @@ void Project::loadProjectXML()
     url = QExtFileInfo::toRelative(toolbarURL, baseURL);
     if(el.isNull())
     {
-      el = dom.createElement("templates");
+      el = dom.createElement("toolbars");
       dom.firstChild().firstChild().appendChild(el);
       el.appendChild(dom.createTextNode(QuantaCommon::qUrl(url)));
     }
@@ -810,7 +810,7 @@ void Project::slotRemove(const KURL& urlToRemove)
       else break;
     }
   }
-  
+  emit reloadTree( fileNameList(), false );
   emit newStatus();
 }
 
@@ -976,10 +976,10 @@ void Project::slotAcceptCreateProject()
          QuantaCommon::dirCreationError(this, templateURL);
        }
      }
-     el = dom.createElement("templates");
-     dom.firstChild().firstChild().appendChild( el );
+     //the nodes are already created in loadProjectXML() called from createEmptyDom()
+     el = dom.firstChild().firstChild().namedItem("templates").toElement();
      url = QExtFileInfo::toRelative(templateURL, baseURL);
-     el.appendChild( dom.createTextNode(QuantaCommon::qUrl(url)) );
+     el.firstChild().setNodeValue(QuantaCommon::qUrl(url));
 
     //setup the toolbars directory
      toolbarURL = baseURL;
@@ -990,10 +990,9 @@ void Project::slotAcceptCreateProject()
      {
        QuantaCommon::dirCreationError(this, toolbarURL);
      }
-     el = dom.createElement("toolbars");
-     dom.firstChild().firstChild().appendChild( el );
+     el = dom.firstChild().firstChild().namedItem("toolbars").toElement();
      url = QExtFileInfo::toRelative(toolbarURL, baseURL);
-     el.appendChild( dom.createTextNode(QuantaCommon::qUrl(url)) );
+     el.firstChild().setNodeValue(QuantaCommon::qUrl(url));
 
      emit closeFiles();
      emit setBaseURL( baseURL );

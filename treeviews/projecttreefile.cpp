@@ -33,22 +33,9 @@ ProjectTreeFile::ProjectTreeFile( ProjectTreeFolder *parent, QString name, const
     : FilesTreeFile( parent, name, p_url )
 {
   url = p_url;
-  setIcon( url );
 }
 
 ProjectTreeFile::~ProjectTreeFile(){
-}
-
-/**  */
-void ProjectTreeFile::setIcon(const KURL& url)
-{
-//TODO
-  if (QuantaCommon::checkMimeType(url,"html")) setPixmap( 0, SmallIcon("www"));
-  else
-    if (QuantaCommon::checkMimeType(url,"x-java") ) setPixmap( 0, SmallIcon("info"));
-    else
-      if (QuantaCommon::checkMimeGroup(url,"text")) setPixmap( 0, SmallIcon("txt"));
-      else  if (QuantaCommon::checkMimeGroup(url,"image")) setPixmap( 0, SmallIcon("image") );
 }
 
 /** used for sorting */

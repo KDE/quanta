@@ -17,9 +17,12 @@
 
 #include <iostream.h>
 
-#include "uploadtreeview.h"
 
 #include <klocale.h>
+#include <kurl.h>
+
+#include "uploadtreeview.h"
+#include "../quantacommon.h"
 
 UploadTreeView::UploadTreeView( QWidget *parent, const char *name ) :
 	QListView(parent, name)
@@ -144,7 +147,7 @@ void UploadTreeView::slotSelectFile( )
   checkboxTree( );
 }
 
-UploadTreeFolder* UploadTreeView::findFolder( UploadTreeFolder *it, QString folderName )
+UploadTreeFolder* UploadTreeView::findFolder( UploadTreeFolder *it, const QString& folderName )
 {
 	QListViewItem *itIter = 0;
 	if (it == 0) itIter = firstChild();
@@ -178,7 +181,7 @@ UploadTreeFolder* UploadTreeView::printTree( UploadTreeFolder *it = 0, QString i
 // :NOTE: AFAIK, safe to use only if you are sure the item searched for
 // is already in here.  It might be safe otherwise, but use at your own
 // peril.
-QListViewItem* UploadTreeView::findItem( QString path )
+QListViewItem* UploadTreeView::findItem(const QString& path )
 {
 	QString item = path;
 	UploadTreeFolder *it = 0;
@@ -204,22 +207,26 @@ QListViewItem* UploadTreeView::findItem( QString path )
 	return 0;
 }
 
-UploadTreeFile* UploadTreeView::addItem( QString item, QString date, QString size )
+UploadTreeFile* UploadTreeView::addItem(const KURL &a_url, QString date, QString size )
 {
+  QString item = a_url.path(); //TODO: do with real KURL's
 	QString fname = item;
 	int i;
 	UploadTreeFolder *it = 0;
+  KURL u;
 	while ( ( i = item.find('/') ) >= 0 )
 	{
 		UploadTreeFolder *itTemp = findFolder(it, item.left(i));
 		if ( itTemp == 0 )
 		{
+      u = a_url;
+      QuantaCommon::setUrl(u,item.left(i));
 			if ( it == 0 )
 			{
-				it = new UploadTreeFolder(this, item.left(i));
+				it = new UploadTreeFolder(u, this, "");
 			}
 			else {
-				it = new UploadTreeFolder(it, item.left(i));
+				it = new UploadTreeFolder(u, it, "");
 			}
 		}
 		else
@@ -232,11 +239,11 @@ UploadTreeFile* UploadTreeView::addItem( QString item, QString date, QString siz
   if ( !item.isEmpty() ) {
     if (it == 0)
     {
-    file = new UploadTreeFile(this, item, date, size);
+    file = new UploadTreeFile(this, a_url, date, size);
     }
     else
     {
-      file = new UploadTreeFile(it, item, date, size);
+      file = new UploadTreeFile(it, a_url, date, size);
     }
   }
 	return file;

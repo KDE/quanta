@@ -57,6 +57,8 @@ public slots: // Public slots
   void slotSetProjectName( QString name );
   /** No descriptions */
   void slotRescan();
+  /** Bring up the project options dialog */
+  void slotOptions();
 
 signals: // Signals
 	void open( QListViewItem *name );
@@ -65,6 +67,8 @@ signals: // Signals
   void removeFromProject( const KURL& );
   /** No descriptions */
   void rescanProjectDir();
+  /** No descriptions */
+  void showProjectOptions();
   void uploadSingleURL( const KURL& );
   void loadToolbarFile( const KURL& );
 
@@ -73,6 +77,7 @@ public:
 
 private:
 	KURL baseURL;
+  QPopupMenu *projectMenu;
 	QString projectName;
 	
   int openInQuantaId;

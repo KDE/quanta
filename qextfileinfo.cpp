@@ -70,16 +70,17 @@ KURL QExtFileInfo::toRelative(const KURL& urlToConvert,const KURL& baseURL)
       };
     }
 
-    resultURL.setPath(path);
+    resultURL.setPath(QDir::cleanDirPath(path));
   }
 
+  if (urlToConvert.path().endsWith("/")) resultURL.adjustPath(1);
   return resultURL;
 }
 /** convert relative filename to absolute */
 KURL QExtFileInfo::toAbsolute(const KURL& urlToConvert,const KURL& baseURL)
 {
   KURL resultURL = urlToConvert;
-  if (urlToConvert.protocol() == baseURL.protocol())
+  if (urlToConvert.protocol() == baseURL.protocol() && !urlToConvert.path().startsWith("/"))
   {
     int pos;
     QString cutname = urlToConvert.path();
@@ -90,9 +91,10 @@ KURL QExtFileInfo::toAbsolute(const KURL& urlToConvert,const KURL& baseURL)
        cutdir.remove( cutdir.length()-1, 1 );
        cutdir.remove( cutdir.findRev('/')+1 , 1000);
     }
-    resultURL.setPath(cutdir+cutname);
+    resultURL.setPath(QDir::cleanDirPath(cutdir+cutname));
   }
 
+  if (urlToConvert.path().endsWith("/")) resultURL.adjustPath(1);
   return resultURL;
 }
 
@@ -141,7 +143,8 @@ bool QExtFileInfo::createDir( const KURL& path )
 		result = KIO::NetAccess::mkdir(dir2);
 		i++;
 	}
- result = exists(path); 
+ result = exists(path);
+ return result; 
 }
 
 KURL QExtFileInfo::cdUp(const KURL &url)

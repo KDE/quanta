@@ -52,12 +52,15 @@ FilesTreeFile::~FilesTreeFile(){
 }
 
 /** set icon of item  */
-void FilesTreeFile::setIcon( QString name )
+void FilesTreeFile::setIcon(const KURL& a_url)
 {
-  if ( QDir::match( fileMaskHtml,  name) ) setPixmap( 0, SmallIcon("www")   );
-  if ( QDir::match( fileMaskText,  name) ) setPixmap( 0, SmallIcon("txt")   );
-  if ( QDir::match( fileMaskImage, name) ) setPixmap( 0, SmallIcon("image") );
-  if ( QDir::match( fileMaskJava,  name) ) setPixmap( 0, SmallIcon("info")  );
+//TODO
+  if (QuantaCommon::checkMimeType(a_url,"html")) setPixmap( 0, SmallIcon("www"));
+  else
+    if (QuantaCommon::checkMimeType(a_url,"x-java") ) setPixmap( 0, SmallIcon("info"));
+    else
+      if (QuantaCommon::checkMimeGroup(a_url,"text")) setPixmap( 0, SmallIcon("txt"));
+      else  if (QuantaCommon::checkMimeGroup(a_url,"image")) setPixmap( 0, SmallIcon("image") );
 }
 
 /** set icon of item  */
