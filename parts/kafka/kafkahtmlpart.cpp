@@ -127,7 +127,7 @@ void KafkaHTMLPart::newDocument()
 	QString newPageHTMLCode = "<html>\n"
 		"<head>\n"
 		"<title>" + i18n("New Homepage") + "</title>\n"
-  		"<meta name=\"GENERATOR\" content=\"Quanta Plus"+attrValueQuotation+">\n"
+  		"<meta name=\"GENERATOR\" content=\"Quanta Plus\">\n"
 		"</head>\n"
 		"<body bgColor=\"#FFFFFF\" text=\"#000000\">\n"
 		"</body>\n"

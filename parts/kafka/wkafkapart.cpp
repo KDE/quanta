@@ -688,7 +688,7 @@ QString WKafkaPart::getEncodedText(QString decodedText)
 	while((unsigned)++i < decodedText.length())
 	{
 		Encodedchar = getEncodedChar(QString(decodedText[i]),
-			(i>=1)?QString(decodedText[i-1]):"");
+			(i>=1)?QString(decodedText[i-1]):QString(""));
 		decodedText.remove(i,1);
 		decodedText.insert(i, Encodedchar);
 		i += Encodedchar.length() - 1;
@@ -1148,7 +1148,7 @@ void WKafkaPart::getQuantaCursorPosition(int &line, int &col)
 		if(offset == currentOffset)
 			break;
 		Encodedchar = getEncodedChar(QString(decodedText[i]),
-			(i>=1)?QString(decodedText[i-1]):"");
+			(i>=1)?QString(decodedText[i-1]):QString(""));
 		decodedText.remove(i,1);
 		decodedText.insert(i, Encodedchar);
 		while(currentLine.mid(i, Encodedchar.length()) != decodedText)
