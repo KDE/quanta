@@ -104,7 +104,7 @@ bool Parser::scriptParser(Node *startNode)
           s = text.left(pos2);
           n = s.contains('\n');
           el = node_bl + n;
-          pos2 += specialEndStr.length();
+          pos2 += specialEndStr.length() - 1;
           if (n > 0)
           {
             ec = pos2 - s.findRev("\n");
@@ -112,7 +112,7 @@ bool Parser::scriptParser(Node *startNode)
           {
             ec = node_bc + pos2;
           }
-          s = text.mid(pos, pos2 - pos);
+          s = text.mid(pos, pos2 - pos + 1);
           //build the tag
           Tag *tag = new Tag;
           tag->setWrite(write);
@@ -182,7 +182,7 @@ Node *Parser::parse(Document *w)
   {
     if (t.elapsed() > 20*count)
     {
-      kapp->processEvents();
+      //kapp->processEvents();
       count++;
     }
     nodeFound = false;
@@ -205,7 +205,7 @@ Node *Parser::parse(Document *w)
         if (pos != -1)
         {
           tagEndLine = line;
-          tagEndCol = pos + specialEndStr.length();
+          tagEndCol = pos + specialEndStr.length() - 1;
           break;
         } else
         {
@@ -230,11 +230,11 @@ Node *Parser::parse(Document *w)
            tag->dtd = m_dtd;  //fallback
       tag->name = i18n("%1 block").arg(m_dtd->specialAreaNames[foundText].upper());
       tag->structBeginStr = foundText;
-      
+
       goUp = (parentNode && parentNode->tag->single);
     }
-    
-    if ( tagStartPos != -1 && 
+
+    if ( tagStartPos != -1 &&
          (tagStartPos < specialStartPos || specialStartPos == -1) ) //do we found a tag?
     {
       int openNum = 1;
@@ -407,10 +407,10 @@ Node *Parser::parse(Document *w)
           if (parentNode)
               parentNode->child = node;
         }
-        if (!tag->single)
-            parentNode = node;
       }
-      
+      if (!tag->single)
+          parentNode = node;
+
       node->tag = tag;
       
       if (tag->type == Tag::NeedsParsing)
@@ -442,7 +442,55 @@ Node *Parser::parse(Document *w)
 
   }
 
+//create a text node from the last tag until the end of file
+  Tag *textTag = 0L;
+  Node *node = 0L;
+  int el = 0;
+  int ec = 0;
+  if (currentNode)
+  {
+    currentNode->tag->endPos(el, ec);
+  }
+  QString s = w->text(el, ec + 1, tagStartLine, tagStartPos -1);
+  if (!s.simplifyWhiteSpace().isEmpty() &&
+      (el !=0 || ec !=0) )
+  {
+    textTag = new Tag();
+    textTag->setStr(s);
+    textTag->setTagPosition(el, ec+1, tagStartLine, tagStartPos -1);
+    textTag->setWrite(w);
+    textTag->type = Tag::Text;
+    textTag->single = true;
+    textTag->dtd = m_dtd;
+
+    if (parentNode && parentNode->tag->single)
+    {
+      node = new Node(parentNode->parent);
+      node->prev = parentNode;
+      parentNode->next = node;
+      parentNode = parentNode->parent;
+      goUp = false;
+    } else
+    {
+      node = new Node(parentNode);
+      if (currentNode && currentNode != parentNode)
+      {
+        currentNode->next = node;
+        node->prev = currentNode;
+      } else
+      {
+        if (parentNode)
+            parentNode->child = node;
+      }
+      if (!textTag->single)
+          parentNode = node;
+    }
+
+    node->tag = textTag;
+  }
+
   m_text = w->editIf->text();
+  m_node = rootNode;
   kdDebug(24000) << "New parser ("<< maxLine << " lines): " << t.elapsed() << " ms\n";
  // coutTree(rootNode, 2);
   return rootNode;
@@ -925,6 +973,7 @@ void Parser::parseForDTD(Document *w, bool force)
 /** No descriptions */
 DTDStruct * Parser::currentDTD(int line, int col)
 {
+
   DTDStruct *dtd = 0L;
   DTDListNode dtdNode;
   for (uint i = 0; i < dtdList.count(); i++)
@@ -937,4 +986,17 @@ DTDStruct * Parser::currentDTD(int line, int col)
   }
 
   return dtd;
+  /*
+
+  DTDStruct *dtd;
+  Node *node = m_node;
+  uint bl, bc, el, ec;
+  while (node)
+  {
+    node->tag->endPos(el, ec);
+    node->tag->beginPos(bl,bc);
+    if (el > line)
+  }
+
+  return dtd; */
 }
