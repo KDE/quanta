@@ -129,7 +129,7 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
   QTimer *t = new QTimer( this );
   connect( t, SIGNAL(timeout()), SLOT(reparse()) );
   t->start( 2000, false );
- // slotFileNew();
+  slotFileNew();
 
   setHighlight = view->write()->kate_doc->hlActionMenu (i18n("&Highlight Mode"), actionCollection(), "set_highlight");
 
