@@ -38,7 +38,7 @@ public:
   ~UploadTreeView();
   UploadTreeFile* addItem( const KURL &a_url, QString, QString );
   QListViewItem* findItem( const QString& );
-  int checkboxTree( QListViewItem *it );
+  int checkboxTree( QListViewItem *it = 0);
   void expandAll( QListViewItem * = 0 );
   void collapseAll( QListViewItem * = 0 );
   void invertAll( QListViewItem * = 0 );

@@ -16,7 +16,7 @@
  ***************************************************************************/
 
 
-
+#include <kcursor.h>
 #include <klocale.h>
 #include <kurl.h>
 
@@ -28,6 +28,7 @@ UploadTreeView::UploadTreeView( QWidget *parent, const char *name ) :
 {
 	setRootIsDecorated( true );
 	setSorting( 0 );
+  setMultiSelection(true);
 
 	setFrameStyle( Panel | Sunken );
 	setLineWidth( 2 );
@@ -38,18 +39,20 @@ UploadTreeView::UploadTreeView( QWidget *parent, const char *name ) :
 
 	setFocusPolicy(QWidget::ClickFocus);
 
+  connect( this, SIGNAL(selectionChanged()), SLOT(slotSelectFile()));
 	connect(  this, SIGNAL(selectionChanged(QListViewItem *)),
-						this, SLOT(slotSelectFile(QListViewItem *)));
-	connect(  this, SIGNAL(executed(QListViewItem *)),
-						this, SLOT(slotSelectFile(QListViewItem *)));
+						this, SLOT(slotSelectFile(QListViewItem *))); 
+
 }
 
 UploadTreeView::~UploadTreeView()
 {
 }
 
-int UploadTreeView::checkboxTree( QListViewItem *it = 0 )
+int UploadTreeView::checkboxTree( QListViewItem *it )
 {
+  parentWidget()->setCursor(KCursor::workingCursor());
+  
 	QListViewItem *itIter = 0;
 	if (it == 0) itIter = firstChild();
 	else itIter = it->firstChild();
@@ -57,6 +60,7 @@ int UploadTreeView::checkboxTree( QListViewItem *it = 0 )
   // We don't need some children as a bit flag, because that's implied if the bits are "00".
 
   int bitFlags = 3;
+  int retVal = 1;
 
   if ( itIter != 0 )
   {
@@ -103,13 +107,12 @@ int UploadTreeView::checkboxTree( QListViewItem *it = 0 )
 
       }
 	  }
-  }
-  else
-  {
-    return 1;
-  }
+    retVal = bitFlags;
+  } 
 
-  return bitFlags;
+  parentWidget()->setCursor(KCursor::arrowCursor());
+ 
+  return retVal;
 }
 
 void UploadTreeView::selectAllUnderNode( QListViewItem* it, bool select )
@@ -120,8 +123,15 @@ void UploadTreeView::selectAllUnderNode( QListViewItem* it, bool select )
 
 	for( ; itIter != 0; itIter = itIter->nextSibling() )
 	{
-    itIter->setSelected(select);
-		selectAllUnderNode(itIter, select);
+		//if ( dynamic_cast<UploadTreeFolder *>(itIter) )
+    {
+          itIter->setSelected(select);
+      selectAllUnderNode(itIter, select);
+    } //else
+    {
+      if (itIter->isSelected() != select)
+          itIter->setSelected(select);
+    }
 	}
 }
 
@@ -133,13 +143,12 @@ void UploadTreeView::slotSelectFile( QListViewItem *it )
     selectAllUnderNode( it, it->isSelected() );
   }
 
-  slotSelectFile();
+  checkboxTree(it);
 }
 
 void UploadTreeView::slotSelectFile( )
 {
-  // All that is known is that a change occurred.  Need to traverse through the tree to do the update.
-  checkboxTree( );
+  slotSelectFile(currentItem());
 }
 
 //TODO: This should search based on url's rather than on text(0)
