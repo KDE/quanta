@@ -13,6 +13,8 @@ Version 3.3 BE 3 (Release date: xx-xx-2004; Started 07-05-2004):
         - don't crash when saving files while the structure tree is visible [#79803]
         - fix a major memory leak, cause of many crashes and instability
         - <fieldset> is not a single tag [#79926]
+        - don't be confused by quotation marks inside a script area which is inside a tag value
+          (like <a href="<? echo "foo" ?>">) [#80683]
 
   - behavioral/user interface changes:
         - enable the configure toolbars item in the toolbar context menu [#80643]
