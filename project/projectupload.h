@@ -44,12 +44,17 @@ public:
   ~ProjectUpload();
   QString defaultProfile();
 
+public slots: // Public slots
+  /** No descriptions */
+  void slotBuildTree();
+
 protected slots:
   void startUpload();
   void upload();
   void uploadFinished( KIO::Job *job );
   void uploadProgress ( KIO::Job *job, unsigned long percent );
   void uploadMessage ( KIO::Job *, const QString & msg );
+  void slotUploadNext();
 
   void clearSelection();
   void selectAll();
@@ -67,11 +72,19 @@ protected slots:
   virtual void resizeEvent( QResizeEvent * );
   virtual void reject();
 
+signals: // Signals
+  /** No descriptions */
+  void uploadNext();
+
 private:
   void buildSelectedItemList();
   void fillProfileDlg(UploadProfileDlgS *profileDlg);
   void readProfileDlg(UploadProfileDlgS *profileDlg);
   void setProfileTooltip();
+  void loadRemoteUploadInfo();
+  void saveRemoteUploadInfo();
+  void initProjectInfo();
+  void initBaseUrl(); /// Reads the current profile setting and initialize the baseUrl from it
 
   KURL::List modified; // modified files
   QValueList<QListViewItem*> needsConfirmation;
@@ -85,28 +98,13 @@ private:
   bool uploadInProgress;
   bool suspendUpload;
   QString m_lastPassword;
-  QString password;
-  QString user;
   Project *m_project;
   QString m_defaultProfile;
   QDomElement m_currentProfileElement;
   QDomElement m_lastEditedProfileElement;
   QDomNode m_profilesNode;
+  QMap<QString, QString> m_uploadTimeList;
   bool m_profilesOnly;
-
-  void initProjectInfo();
-
-private slots: // Private slots
-  /** No descriptions */
-  void slotUploadNext();
-
-
-signals: // Signals
-  /** No descriptions */
-  void uploadNext();
-public slots: // Public slots
-  /** No descriptions */
-  void slotBuildTree();
 };
 
 #endif

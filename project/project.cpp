@@ -825,6 +825,9 @@ void Project::loadProjectXML()
         el.setAttribute("url", QuantaCommon::qUrl(url));
         m_modified = true;
       }
+      //just clean up the old project files
+      el.removeAttribute("upload_time");
+      el.removeAttribute("modified_time");
     }
     path = url.path();
     if ( el.nodeName() == "item" )
@@ -1049,7 +1052,7 @@ void Project::slotRenamed(const KURL& oldURL, const KURL& newURL)
       if (oldString != tmpString )
       {
         el.setAttribute("url",tmpString);
-        el.setAttribute("upload_time", "");
+//        el.setAttribute("upload_time", "");
       }
     }
     progressBar->advance(1);
@@ -1891,6 +1894,7 @@ bool Project::contains(const KURL& url)
 
 void Project::updateTimeStamp(const KURL& url, int modifiedTime)
 {
+  return;
   ProjectUrlList::Iterator it = m_projectFiles.find(QExtFileInfo::toRelative(url, baseURL));
   if (it != m_projectFiles.end())
   {
