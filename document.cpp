@@ -1096,6 +1096,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeValueCompletions
       }
     }
   }
+  delete values;
   int andSignPos = startsWith.find('&');
   if (andSignPos != -1)
   {
