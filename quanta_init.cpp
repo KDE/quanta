@@ -746,10 +746,10 @@ bool QuantaApp::queryClose()
   {
     exitingFlag = true;
     saveOptions();
-    removeToolbars();
     canExit = m_doc->saveAll(false);
     if (canExit)
     {
+      removeToolbars();
       //avoid double question about saving files, so set the "modified"
       //flags to "false". This is safe here.
       Document *w;
@@ -1666,7 +1666,8 @@ void QuantaApp::initActions()
     if ( f.open( IO_ReadOnly ))
     {
       kdDebug(24000) << "Setting content for m_actions from global actions.rc\n";
-      if (m_actions->setContent(&f))
+      QByteArray buffer = f.readAll();
+      if (m_actions->setContent(buffer))
       {
         QDomElement docElem = m_actions->documentElement();
 
@@ -1689,8 +1690,9 @@ void QuantaApp::initActions()
       f.setName(s);
       if ( f.open( IO_ReadOnly ))
       {
+        QByteArray buffer = f.readAll();
         kdDebug(24000) << "Setting content for m_actions from local actions.rc\n";
-        if (m_actions->setContent(&f))
+        if (m_actions->setContent(buffer))
         {
           QDomElement docElem = m_actions->documentElement();
 
