@@ -1,7 +1,7 @@
 # KDE Config File
 [Tree]
 
-Doc dir=quanta
+Doc dir=../doc
 
 #top level elements
 Top Element=Quanta documentation

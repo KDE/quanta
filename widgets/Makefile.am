@@ -13,6 +13,10 @@ INCLUDES = $(all_includes)\
 		-I$(top_srcdir)/quanta/toolbar\
 		-I$(top_srcdir)/quanta/data\
 		-I$(top_srcdir)/quanta/data/icons\
+		-I$(top_srcdir)/quanta/data/icons/48x48\
+		-I$(top_srcdir)/quanta/data/icons/32x32\
+		-I$(top_srcdir)/quanta/data/icons/22x22\
+		-I$(top_srcdir)/quanta/data/icons/16x16\
 		-I$(top_srcdir)/quanta/data/po\
 		-I$(top_srcdir)/quanta/data/doc\
 		-I$(top_srcdir)/quanta/data/tags\
