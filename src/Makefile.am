@@ -77,14 +77,14 @@ messages: rc.cpp
 	for toolbar in $$toolbars; do \
 	 tar Oxfz $$toolbar  >> extrafiles; \
 	done ;\
-	cat data/actions.rc >> extrafiles; \
+	cat ../data/config/actions.rc >> extrafiles; \
 	$(EXTRACTRC) `find $$dirs -maxdepth 1 -name "*.ui"` >> rc.cpp ;\
 	$(EXTRACTRC) `find $$dirs -maxdepth 1 -name "*.rc"` >> rc.cpp ;\
 	$(EXTRACTRC) `find $$dirs -maxdepth 1 -name "*.kmdr"` >> rc.cpp ;\
-	cat data/chars | perl -e 'while(<STDIN>) { chomp ; s/\"/\\\"/ ; print "i18n(\"$$_\");\n"; }' >> rc.cpp ;\
+	cat ../data/chars | perl -e 'while(<STDIN>) { chomp ; s/\"/\\\"/ ; print "i18n(\"$$_\");\n"; }' >> rc.cpp ;\
 	$(EXTRACTRC) extrafiles >> rc.cpp ;\
 	cat extrafiles | perl -e 'while(<STDIN>) { if (/\<action .* text="(.*)"/) { print "i18n(\"$$1\");\n"; }}' >> rc.cpp
-	(cd data && $(PREPARETIPS) >> ../tips.cpp)
+	(cd ../data && $(PREPARETIPS) >> ../src/tips.cpp)
 	$(XGETTEXT) rc.cpp tips.cpp `cat files` -o $(podir)/quanta.pot
 	rm -f extrafiles tips.cpp files dirs 
 
