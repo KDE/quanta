@@ -1,0 +1,108 @@
+\CurrentEntry 0 Change Log
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Helvetica">
+<p>Initial Version 2004-01-21 Eric Laffoon<br />(this is semi obsoleted by being in CVS)<br /><br />Please list the topics and date you add or change like so...<br />Date Who Where                              What<br />01-21 ELL Plugins::Knowit Planner - added<br />01-21 ELL New Features::KMDI - added<br />01-21 ELL FE::Toolbars::Phase 2 explanation - added</p>
+</body></html>
+
+
+\NewEntry 0 Feature Enhancements
+
+\NewEntry 1 Actions
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Helvetica">
+<p>Actions should get new triggers.<br />* File Save<br />* Project open<br />* Project close<br />* cron</p>
+</body></html>
+
+\NewEntry 1 DCOP
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Helvetica">
+<p>More things should be exported to DCOP<br />* CSS selectors<br />* DTEP Groups?</p>
+</body></html>
+
+\NewEntry 1 KHTML
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Helvetica">
+<p>Use XSLT file indicated in (enhanced) project file to preview XML</p>
+</body></html>
+
+\NewEntry 1 Toolbars
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Helvetica">
+<p>Toolbars need serious attention!<br />Phase 1:<br />1) Clean up for current usage<br />2) Create quick &quot;add this tag to a toolbar&quot; RMB function<br />3) Make toolbars abide by tag relationships like auto complete<br /><br />Phase 2:<br />1) Add drop down icon group ability to manage larger sets (like on file folder icons) This will require a new type on the action dialog with a new sub dialog to list tags<br />2) Create toolbar modalities. Allow for recognition of edting type like tables, forms, data, layout and user defined tasks where entering a portion of a document, opening a view or directly selecting the mode changes selected toolbar or even toolbars and groupings. <br /><br />The idea is that the user could teach Quanta how to provide optimal tools for various tasks and instead of a static layout the layout and presentation become dynamic. This will require balance and good icons to be more productive.</p>
+</body></html>
+
+\NewEntry 2 Phase 2 explanation
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Helvetica">
+<p><span style="font-style:italic;color:#3300ff">&gt;       - Phase 2/2 sounds a little complicated to me and I'm also not sure that I understood it completely.</span></p>
+<p>Think of it as personalities. The idea is that Quanta could interpret some aspects of what I am doing and offer toolbar presentations based on that. How to best go about it is not totally clear. Initially I had thought to have Quanta offer the relevent toolbar so the user didn't have to select it, but this is not completely effective it you think about it. Another possibility is to construct a toolbar on the fly from relevent tags... intriguing but probably not very fast or fluid. The advantage to the toolbars we have is that you know where the icons are. The disadvantage is you could end up switching between 3-4 of them building a formatted data form, which is not intuitive.</p>
+<p>In balancing these several concepts seem to offer counterpoints.<br />familiar layout &lt;-&gt; specifically applicable actions<br />pre-made toolbars &lt;-&gt; dynamicly created toolbars<br />feature oriented toolbars &lt;-&gt; task oriented toolbars</p>
+<p>Currently Quanta is solidly to the left and only to the left on all three of these points. I began considering adding task oriented toolbars. Which is better? If you could be certain that the toolbar would do the following you would have perfection:</p>
+<p>1) orient correctly to every task<br />2) retain familiarity of layout for variations and segue to next task<br />3) offer only proper tag relationships</p>
+<p>Inherently some tasks cannot be discerned from context but could be defined by the user. Selecting a task modality could convert all toolbars to the applicable tagging, not just one. However you may want to be in a standard layout in one situation (certainly in a blank page) but assume modal personalities in others (common data design scenarios).</p>
+<p>So we can say this about the ultimate solution:</p>
+<p>1) I don't think anybody is really anal enough to already be doing it.</p>
+<p>2) If it could be accomplished it would be very very cool and get a lot of press.</p>
+<p>3) It cannot be a single solution, thus it's multiple &quot;personalities&quot;</p>
+<p>4) Basic structure and layout will take experimentation, and user feedback. In fact it would take a fair amount of study and refinement.</p>
+<p>5) No single solution is possible so it must allow for easy user extensibility</p>
+<p>Because we hope to be able to make VPL play a larger role we cannot discount the importance of good toolbar layout. Making toolbars load with a DTEP is a good start as are user toolbars. Extending intelligent context sensitive task extentions will make a big difference, especially when dealing with the huge diversity of tasks and preponderance of tags out there.</p>
+<p>My vision is not just someone saving a toolbar for a task, but saving a whole personality. Imagine these as dowloadable resources. ;-)</p>
+<p></p>
+</body></html>
+
+
+\NewEntry 1 Templates
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Helvetica">
+<p>This was never really finished.<br />1) Linked information needs to be managed so that linked files are uploaded maintaining the links<br />2) tgz groupings need to be added as a new type<br />3) I need to search for the rest of the list I had assembled</p>
+</body></html>
+
+\NewEntry 1 projects
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Helvetica">
+<p>Projects have several needs besides group abilities.<br />1) Project root can be below display root<br />2) Files can be marked for upload as normal (default), only with specific confirmation and never<br />3) CVS integration should at least add files to CVS when adding to the project to reduce duplication of user effort. Duplicating effort is bad!<br />4) Project views need to be reviewed and discussed. Originally I intended they would not close all other files on open and could be closed as a view. Now I am not sure if the current behavior is actually adequate.<br />5) Additional data will be available and the file will have local and remote entities. This will be covered in new features.</p>
+</body></html>
+
+\NewEntry 1 VPL
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Helvetica">
+<p>Undoubtably there will be many things we want to do here. I'll start the list... This is not really prioritized.<br /><br />1) Visual Table editor<br />2) Integration of visual CSS using our dialogs and tools<br />3) XSLT translation layer for XML<br />4) Script integration edit mode - very tricky but we should conceptually explore being able to interpret and edit elements of PHP in a loop for instance to create a visual mode for editing the layout or CSS visually in data layout. I'm suggesting merely exploring what is possible here as something exceptional if we had any degree of success.</p>
+</body></html>
+
+\NewEntry 0 New Features
+
+\NewEntry 1 Script Debug
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Helvetica">
+<p>I would very much like to see the work on integrating debuggers progress. Along with that I'd like to see the ability to add preprocessing to the file being sent to PHP so I could request back data that would take a lot of edits to the page without editing, but via automation.</p>
+</body></html>
+
+\NewEntry 1 KMDI
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Helvetica">
+<p>We need to bring this feature to Quanta ASAP.</p>
+</body></html>
+
+
+\NewEntry 1 Form Debug
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Helvetica">
+<p>KDE 2 had a program called getvars which provided some interesting form debugging solutions. We need to get creative here because forms are a hassle.<br /><br />1) load and save form data for testing<br />2) flyover info on form fields<br />3) RMB functionality (I wish I coudllremember all getvars did) to view and edit element values<br />4) indicate hidden values<br />5) show variables passed to and from form<br />6) create multi page form dumps to review order systems<br />7) Automated test - Insure no name duplication errors, etc.<br />8) Receiver creation dump - Take a created form and have it dump all the element names in various formats to ease creation of processing script</p>
+</body></html>
+
+\NewEntry 1 Cookie Test
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Helvetica">
+<p>Use the excellent cookie management integrated into Quanta to test cookies - we probably just need to call the cookies dialog from Quanta.</p>
+</body></html>
+
+\NewEntry 1 Annotations
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Helvetica">
+<p>Amaya has come up witha way to do annotations. We need to review and create one or use theirs.</p>
+</body></html>
+
+\NewEntry 1 Group Projects
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Helvetica">
+<p>This is extensive! Andras and I have exchanged emails on this. In simple terms...<br /><br />1) Complete redesign of project files<br />2) Private and project areas of file<br />3) Local and shared files provide full information<br />4) Permission and authorization systems with owner<br />5) Various methodologies for accomplishing group efforts</p>
+</body></html>
+
+\NewEntry 1 RAD Site
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Helvetica">
+<p>This has largely been under wraps except a few teasers. It's going to be my baby.<br /><br />RAD design has not come to web development because of the diverse approaches. It's rather difficult to even use code other people build in PHP because it's largely built with the assumption that it's the only systematic approach on your site intstead of a good object model as a part of what exists that abstracts well and plays together well. If I build it you won't use it because it's not your style and vice versa. That's where this is different.<br /><br />1) Based on templates - this allows the user to develop the framework in layers<br />2) User defines abstractions - when you have a modular element in your design you define what the public and private interface is to it<br />3) Learning ability - because creating something like this is complex and involved the burden is lessened by enabling the system to assist in creation by learning<br />4) New abstract interface - the key to integrate this is an interface that uses &quot;set&quot;definitions starting with a page and defined elements in the page where the user defines relationships. Then there are the physical aspects in directory relationships (which are tracked) and group set assignments for style or layout which assist in painting an even interface. <br />5) The interface can be viewed panning various levels and perspectives and remembering view arrangements. Perspective would be things such as<br />- physical layout<br />- conceptual group<br />- style grouping<br />- layout grouping<br />Level views would include<br />- overview<br />- concept/style/layout group<br />- page elements/relationships<br />- element definitions<br />- various configuration dialogs<br /><br />The concept here is that extremely anal content management can be done with tight control of abstrated design elements... or you could ease particular elements of a basic site design with nominal effort. Results would be up to the user and their design base.<br /><br />Some aspects:<br />* moving files automatically manages links<br />* Minimal application speeds development and manages framework<br />* Page component templates function dynamically<br />* Would use comment system and or generated file to manage elements<br />* would be able to offer limited functionaliy directly importing existing sites<br />* Extreme application could completely manage an abstracted site where a site manager could request elements from contributors - combined with group projects and versioning a good manager can take skilled crafts people and clueless fools and weave a quality project. ;-)</p>
+</body></html>
+
+\NewEntry 0 Plug Ins
+
+\NewEntry 1 Knowit Planner
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Helvetica">
+<p>I would like to see multiple view abilities in Knowit but over all it's a great tool. I'd like to see it made into a part and integrate it with Quanta for planning. I've discussed this with the author and he likes the idea.<br /><br />It would also be nice if Knowit self annotated. ;-)</p>
+</body></html>
+

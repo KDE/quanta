@@ -1,0 +1,41 @@
+Some items that needs to be done:
+
+Urgent fixes:
+
+GUI/framework:
+ - fix the parts (editor/html/plugin) GUI addition. Look at the FIXME in quanta.cpp
+   before "void QuantaApp::slotFind()"
+
+Parsing:
+ - do not reparse the whole document when a <? or <script > or similar thing is
+   added. Now the whole reparse is triggered if the parsed (invalid) area has a
+   special block without end, like <? without ?> or <script> without </script>.
+   This will speed up Quanta.
+ - do not reparse the whole special area when something is changed inside.
+   Reparse only the changed nodes. This will speed up Quanta.
+ - do not reparse the whole file when a text is moved inside the document
+   (cut&paste in one step, like when doing d&d). I don't have any idea how to do
+   it... This will speed up Quanta.
+ - get rid of the global baseNode
+ - provide a method to rebuild a specified area (by coordinates or start/end not pairs)
+
+Structure tree:
+ - do not delete and rebuild the structure tree when it's not necessary. Delete and rebuild
+ only the changed nodes. This will speed up Quanta.
+
+Plugins:
+  - Kallery
+  - config dialog rework
+
+Misc:
+ - WYSIWYG
+ - remove unneeded header file dependencies
+ - re-structure the files in the project. Now it's quite a mess.
+ - fix the session restoration, especially if users still say that
+   the current implementation is not acceptable
+
+Bugs discovered:
+ - slow editing even for XML (kde-features.xml)
+ - autoclosing closes also single (unknown) tags
+ - autoclosing does not always closes a tag
+ - attribute tree is updated and redrew on every keypress
