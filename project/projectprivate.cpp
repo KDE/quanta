@@ -1546,7 +1546,7 @@ void ProjectPrivate::removeFromConfig(const QString & urlStr)
     projectList.remove(projectList.at(i));
     config->writePathEntry("ProjectTempFiles", projectList);
     projectList = config->readPathListEntry("ProjectSessionTempFiles");
-    if (projectList.count() > i)
+    if (projectList.count() > (uint)i)
     {
       projectList.remove(projectList.at(i));
       config->writePathEntry("ProjectSessionTempFiles", projectList);
