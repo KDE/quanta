@@ -187,7 +187,7 @@ void Abbreviation::saveTemplates()
     s.append("/abbreviations");
 
     QFile f(s);
-    if (f.open(IO_WriteOnly))
+    if (f.open(IO_WriteOnly | IO_Truncate))
     {
       QTextStream str(&f);
       str << doc.toString();

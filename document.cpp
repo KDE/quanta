@@ -212,8 +212,11 @@ void Document::changeTagNamespace(Tag *tag, const QString& nameSpace)
     tag->beginPos(bl, bc);
     tag->namePos(nl, nc);
     reparseEnabled = false;
-    editIf->removeText(bl, bc+1, nl, nc-1);
+    editIf->removeText(bl, bc+1, nl, nc);
     reparseEnabled = true;
+  } else
+  {
+    tag->beginPos(bl, bc);
   }
   if (nameSpace.isEmpty())
   {
@@ -221,7 +224,7 @@ void Document::changeTagNamespace(Tag *tag, const QString& nameSpace)
   } else
   {
     viewCursorIf->setCursorPositionReal((uint)bl, (uint)(bc+1));
-    insertText(nameSpace);
+    insertText(nameSpace+":");
   }
   quantaApp->slotNewLineColumn();
 }

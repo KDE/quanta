@@ -1422,10 +1422,21 @@ void QuantaApp::readTagDir(QString &dirName)
   }
  //read the abbreviations files
   QString abbrevFile = dirName;
-  if (dirName.startsWith(qConfig.globalDataDir))
+  tmpStr = dirName;
+  QStringList resourceDirs = KGlobal::dirs()->resourceDirs("data");
+  bool dirFound = false;
+  for (uint i = 0; i < resourceDirs.count(); i++)
   {
-    abbrevFile = dirName.right(dirName.length() - qConfig.globalDataDir.length());
-    abbrevFile = KGlobal::dirs()->saveLocation("data", abbrevFile) +"/";
+    if (tmpStr.startsWith(resourceDirs[i]))
+    {
+      dirFound = true;
+      tmpStr = tmpStr.right(tmpStr.length() - resourceDirs[i].length());
+      break;
+    }
+  }
+  if (dirFound)
+  {
+    abbrevFile = KGlobal::dirs()->saveLocation("data", tmpStr) +"/";
   }
   abbrevFile.append("abbreviations");
   if (!QFile::exists(abbrevFile))
