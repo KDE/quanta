@@ -65,7 +65,7 @@ DocTreeView::DocTreeView(QWidget *parent, const char *name )
 
    		QString relDocDir = config.readEntry("Doc dir");
 
-   		DocFolder *folder = new DocFolder(this, config.readEntry("Top Element"), &config , docDir+relDocDir+"/");
+   		DocFolder *folder = new DocFolder(this, config.readEntry("Top Element"), &config , QDir::cleanDirPath(docDir+relDocDir)+"/");
    		folder->setPixmap( 0, SmallIcon("folder_open") );
    	  folder->topLevel = true;
    	  folder->setOpen( true );
@@ -77,7 +77,7 @@ DocTreeView::DocTreeView(QWidget *parent, const char *name )
    	  for ( unsigned int i=0; i<list.count(); i++ )
    	  {
         QString keyword = list.at(i);
-        QString *url = new QString( docDir + relDocDir + "/" + config.readEntry( list.at(i) ) );
+        QString *url = new QString(QDir::cleanDirPath(docDir + relDocDir + "/" + config.readEntry( list.at(i) )));
         contextHelpDict->insert( keyword, url );
       }
     	}
@@ -100,7 +100,7 @@ void DocTreeView::clickItem( QListViewItem *)
 	DocItem *dit = dynamic_cast< DocItem *>(it);
 	if ( dit )
 	  if ( ! dit->url.isEmpty() )
-    		emit openURL( dit->url );
+    		emit openURL( dit->url);
 
 	DocFolder *dfol = dynamic_cast< DocFolder *>(it);
 	if ( dfol )
