@@ -36,6 +36,7 @@ Version 3.4 (Release date: xx-xx-2005; Started 20-08-2004):
           various problems like non-responding Quanta after upload and possibly the
           bug described in #88892.
         - don't try to add a newly created action to a non-existent All toolbar.
+        - don't crash on exit if the user removed an action
 
   - behavioral/user interface changes:
         - Toolbars->Add User Toolbar renamed to New User Toolbar
