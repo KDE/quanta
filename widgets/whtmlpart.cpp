@@ -28,11 +28,15 @@ WHTMLPart::WHTMLPart(QWidget *parent, const char *name )
    
    konqConfig.setGroup("HTML Settings");
    
-   setCharset( konqConfig.readEntry("DefaultEncoding") );
-   setEncoding( konqConfig.readEntry("DefaultEncoding") );
-   setStandardFont( konqConfig.readEntry("StandardFont") );
-   setFixedFont( konqConfig.readEntry("FixedFont") );
-   updateFontSize( konqConfig.readNumEntry("FontSize"));
+   const KHTMLSettings * set = settings(); 
+   
+   ( const_cast<KHTMLSettings *>(set) )->init( &konqConfig, false );
+   
+//   setCharset( konqConfig.readEntry("DefaultEncoding") );
+//   setEncoding( konqConfig.readEntry("DefaultEncoding") );
+//   setStandardFont( konqConfig.readEntry("StandardFont") );
+//   setFixedFont( konqConfig.readEntry("FixedFont") );
+//   updateFontSize( konqConfig.readNumEntry("FontSize"));
 }
 
 WHTMLPart::~WHTMLPart()
