@@ -227,7 +227,9 @@ protected:
     virtual void khtmlMouseReleaseEvent(khtml::MouseReleaseEvent *event);
     virtual void khtmlDrawContentsEvent(khtml::DrawContentsEvent *event);
 
+private slots:
 
+    void slotContextMenuRequested(const QString& url, const QPoint& point);
 
 private:
 #if 0
@@ -286,6 +288,8 @@ private:
     KafkaWidgetPrivate *d;
     KafkaDocument *w;
     friend class KafkaWidgetPrivate;
+    
+    QPopupMenu* m_contextPopupMenu;
 };
 
 #endif

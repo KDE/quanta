@@ -24,6 +24,7 @@
 #include <qmainwindow.h>
 #include <qtimer.h>
 #include <qtooltip.h>
+#include <qpopupmenu.h> 
 
 #include <kapplication.h>
 #include <kdebug.h>
@@ -32,11 +33,13 @@
 #include <ktrader.h>
 #include <klibloader.h>
 #include <kparts/factory.h>
+#include <dom/dom_node.h>
 #include <dom/dom_text.h>
 #include <dom/dom_exception.h>
 #include <dom/dom_string.h>
 #include <dom/dom2_range.h>
 #include <khtml_events.h>
+//#include <khtml_part.h>
 
 #include "kafkacommon.h"
 #ifdef HEAVY_DEBUG
@@ -51,6 +54,7 @@
 #include "quanta.h"
 #include "quantaview.h"
 #include "tagattributetree.h"
+#include "tagactionmanager.h"
 
 #include "viewmanager.h"
 
@@ -68,8 +72,8 @@ public:
     	original node X pos like a good text editor :=) */
     bool stuckCursorHorizontalPos;
     int stuckedCursorPosX;
+    
 #ifdef HEAVY_DEBUG
-
     KafkaDOMTreeDialog *domdialog;
 #endif
 };
@@ -79,6 +83,8 @@ KafkaWidget::KafkaWidget(QWidget *parent, QWidget *widgetParent, KafkaDocument *
         : KHTMLPart(new KafkaHTMLView(this, widgetParent, name), parent, name),
         w(part)
 {
+    m_contextPopupMenu = new QPopupMenu();
+    
     d = new KafkaWidgetPrivate();
 
     d->m_cursorOffset = 0;
@@ -94,6 +100,9 @@ KafkaWidget::KafkaWidget(QWidget *parent, QWidget *widgetParent, KafkaDocument *
     connect(this, SIGNAL(caretPositionChanged(const DOM::Node &, long)),
             this, SLOT(slotNewCursorPos(const DOM::Node &, long)));
     setCaretDisplayPolicyNonFocused(KHTMLPart::CaretVisible);
+    
+    connect(this, SIGNAL(popupMenu(const QString&, const QPoint&)),
+            this, SLOT(slotContextMenuRequested(const QString&, const QPoint&)));
 
     view()->setMouseTracking(true);
     view()->installEventFilter(this);
@@ -651,6 +660,15 @@ bool KafkaWidget::eventFilter(QObject *, QEvent *event)
 
     return forgetEvent;
 }
+
+void KafkaWidget::slotContextMenuRequested(const QString& /*url*/, const QPoint& point)
+{
+    TagActionManager::self()->fillWithTagActions(m_contextPopupMenu, nodeUnderMouse());
+
+    if(m_contextPopupMenu->count() != 0)
+        m_contextPopupMenu->popup(point);
+}
+
 
 #if 0
 void KafkaWidget::keyDeleteNodes(DOM::Node &startNode, long &offset, bool backspace)

@@ -869,7 +869,7 @@ void QuantaApp::slotNewStatus()
         statusBar()->changeItem(i18n(" R/O "),IDS_INS_OVR);
     statusBar()->changeItem(w->isModified() ? " * " : "",IDS_MODIFIED);
 
-    saveAction   ->setEnabled(w->isModified());
+    saveAction->setEnabled(w->isModified());
     saveAllAction->setEnabled(ViewManager::ref()->isOneModified());
 
     bool projectExists = Project::ref()->hasProject();
