@@ -194,7 +194,6 @@ void WKafkaPart::slotDomNodeInserted(DOM::Node _domNode)
 	kdDebug(25001)<< "WKafkaPart::slotDomNodeInserted() node :" <<
 		_domNode.nodeName().string() << endl;
 	Node *_nodeParent = 0L, *_nodePrev = 0L, *_node = 0L;
-	int beginCol, beginLine, lastCol, lastLine, taglenCol, taglenLine;
 
 	/** FIRST PART: create the new Quanta node and insert it into the tree */
 

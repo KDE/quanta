@@ -111,11 +111,9 @@ KafkaHTMLPart::KafkaHTMLPart(QWidget *parent, QWidget *widgetParent, const char 
 //for debug purposes, we add a DOM tree view
 #ifdef KAFKA_DEBUG_UTILITIES
 	domdialog = new KafkaDOMTreeDialog(view(), this);
-	//connect(this, SIGNAL(domChanged()), DOMTreeWidget, SLOT(showTree(const DOM::Node &pNode)));
 #endif
-//end
-
-	//newDocument();
+	//IMPORTANT:without him, no htmlDocument() is created in khtmlPart
+	newDocument();
 }
 
 KafkaHTMLPart::~KafkaHTMLPart()
@@ -124,13 +122,14 @@ KafkaHTMLPart::~KafkaHTMLPart()
 
 void KafkaHTMLPart::newDocument()
 {
- QChar attrValueQuotation = '"'; //FIXME: Somehow we should get it from Quanta settings: qConfig.attrValueQuotation
+ //FIXME: Somehow we should get it from Quanta settings: qConfig.attrValueQuotation
+ //-->No need for that: Quotations aren't stored in the DOM::Nodes
 	QString newPageHTMLCode = "<html>\n"
 		"<head>\n"
 		"<title>" + i18n("New Homepage") + "</title>\n"
-  		"<meta name="+attrValueQuotation+"GENERATOR"+attrValueQuotation+" content="+attrValueQuotation+"Quanta Plus"+attrValueQuotation+">\n"
+  		"<meta name=\"GENERATOR\" content=\"Quanta Plus"+attrValueQuotation+">\n"
 		"</head>\n"
-		"<body bgColor="+attrValueQuotation+"#FFFFFF"+attrValueQuotation+" text="+attrValueQuotation+"#000000"+attrValueQuotation+">\n"
+		"<body bgColor=\"#FFFFFF\" text=\"#000000\">\n"
 		"</body>\n"
 		"</html>\n";
 
