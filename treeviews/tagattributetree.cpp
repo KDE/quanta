@@ -257,7 +257,7 @@ void TagAttributeTree::setCurrentNode(Node *node)
 #ifdef BUILD_KAFKAPART
 #ifdef HEAVY_DEBUG
   kafkaCommon::coutTree(baseNode, 2);
-  quantaApp->view()->kafkaInterface()->coutLinkTree(baseNode, 2);
+  KafkaDocument::ref()->coutLinkTree(baseNode, 2);
 #endif
 #endif
   AttributeItem *item = 0L;
