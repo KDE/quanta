@@ -58,6 +58,7 @@ public slots:
   void saveProject();
   void closeProject();
   void loadProject(QString fname);
+  void options();
 
   void addFiles();
   void addDirectory();

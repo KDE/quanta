@@ -182,9 +182,10 @@ void ProjectTreeView::slotSetBasePath( QString dir )
 void ProjectTreeView::slotSetProjectName( QString name )
 {
 	projectName = name;
+	projectDir -> setText( 0, name);
 }
 
-void ProjectTreeView::slotReloadTree( QStringList fileList, bool newtree, bool opened )
+void ProjectTreeView::slotReloadTree( QStringList fileList, bool newtree, bool )
 {
 	if ( newtree )
 	{

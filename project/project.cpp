@@ -26,11 +26,13 @@
 #include <qdom.h>
 #include <qcheckbox.h>
 #include <qfileinfo.h>
+#include <qtabdialog.h>
 #include <qfiledialog.h>
 #include <qtextstream.h>
 #include <qstringlist.h>
 #include <qradiobutton.h>
 #include <qwidgetstack.h>
+#include <qbuttongroup.h>
 
 // include files for KDE
 #include <kurl.h>
@@ -433,12 +435,11 @@ void Project::newProject()
 	
 	wiz->addPage( png,   i18n("General setting of project..."));
 	wiz->addPage( stack, i18n("Insert files in project..."));
-	wiz->addPage( pnf,  i18n("Some settings of project..."));
+	wiz->addPage( pnf,   i18n("Some settings of project..."));
 	
 	wiz->setNextEnabled  ( png,   false );
 	wiz->setBackEnabled  ( stack, true  );
 	wiz->setNextEnabled  ( stack, true  );
-	wiz->setFinishEnabled( stack, true  );
 	wiz->setNextEnabled  ( pnf, 	false );
 	wiz->setFinishEnabled( pnf, 	true  );
 	
@@ -453,6 +454,8 @@ void Project::newProject()
 					this, SLOT  (slotSelectProjectType(const QString &)));
 
 	if ( wiz->exec() ) slotAcceptCreateProject();
+	
+	delete wiz;
 }
 
 void Project::slotSelectProjectType(const QString &title)
@@ -519,36 +522,39 @@ void Project::slotAcceptCreateProject()
 	saveProject();
 }
 
-/** for ok button on new project wizard */
-/*
-void Project::acceptNewPrj()
+void Project::options()
 {
+	QTabDialog *dlg = new QTabDialog(0L, i18n("Project options"), true);
 
-    if ( !QString(pageNewPrj2->lineSiteUrl->text()).isEmpty() )
-    {
-      emit selectMessageWidget();
-        
-      chdir( basePath.data() );
-      
-      KProcess *proc = new KProcess();
-
-      proc -> clearArguments();
-
-      *proc << "wget";
-      *proc << "-c" << "-np" << "-r" << "--level=5" << "-nH";
-      *proc << pageNewPrj2->lineSiteUrl->text();
-
-      connect( proc, SIGNAL(receivedStdout(   KProcess*,char*,int)), this,
-                     SLOT(  slotGetWgetOutput(KProcess*,char*,int)));
-      connect( proc, SIGNAL(receivedStderr(   KProcess*,char*,int)), this,
-                     SLOT(  slotGetWgetOutput(KProcess*,char*,int)));
-      connect( proc, SIGNAL(processExited(    KProcess*)), this,
-                     SLOT(  slotGetWgetExited(KProcess*)));
-      proc->start(KProcess::NotifyOnExit, KProcess::AllOutput);
-    }
-
+	png = new ProjectNewGeneral( dlg );
+	pnf = new ProjectNewFinalS ( dlg );
+		
+	dlg->addTab( png, i18n("General") );
+	dlg->addTab( pnf, i18n("Network") );
+	
+	dlg->setOkButton();
+	dlg->setCancelButton();
+	
+	png->linePrjDir ->setEnabled( false );
+	png->linePrjFile->setEnabled( false );
+	png->buttonDir  ->setEnabled( false );
+	
+	delete png->ButtonGroup1_2;
+	
+	png->linePrjDir ->setText( basePath );
+	png->linePrjName->setText( projectName );
+	png->linePrjFile->setText( projectFileName );
+	
+	if ( dlg->exec() )
+	{
+		projectName = png->linePrjName->text();
+		
+		emit setProjectName( projectName );
+	}
+	
+	delete dlg;
 }
-*/
+
 void Project::slotGetWgetExited(KProcess*)
 {
 	emit disableMessageWidget();
