@@ -2528,6 +2528,7 @@ void PhpHighlight::makeContextList() {
     c->items.append(new HlHtmlTagUnknown(17,13));
     c->items.append(new HlHtmlAttribUnknown(18,13));
 // end (pdima)
+    c->items.append(new Hl2CharDetect(12,13,'?','>'));
     c->items.append(new HlCharDetect(12,0,'>'));
 	contextList[14] = c = new HlContext(10,14);
     c->items.append(new HlStringDetect(10,0,"-->"));

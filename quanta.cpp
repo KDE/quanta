@@ -438,7 +438,19 @@ void QuantaApp::slotOptionsConfigureToolbars()
 {
     KEditToolbar dlg( actionCollection(), QString::null, true, this );
     
-    if ( dlg.exec() ) createGUI();
+    if ( dlg.exec() ) {
+    
+      // clear tags toolbars
+      while ( view->tabBar->count() ) {
+      
+          int id = view->tabBar->currentTab();
+          
+          view->toolbarStack->removeWidget( view->toolbarStack->widget(id) );
+          view->tabBar->removeTab( view->tabBar->tab(id) );
+      }
+
+      createGUI();
+    }
 }
 
 void QuantaApp::slotOptionsConfigureActions()
@@ -837,14 +849,14 @@ QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomEleme
 
 void QuantaApp::removeContainer( QWidget *container, QWidget *parent, QDomElement &element, int id )
 {
-  debug( QString("name:") + container->parent()->name() );
+//  debug( QString("name:") + container->parent()->name() );
   
   if ( container->parent() && QString(container->parent()->name()) == QString("ToolBar stack") ) {
-    ((KToolBar*)container)->saveState( element );
+/*    ((KToolBar*)container)->saveState( element );
     int id = view->toolbarStack->id( container );
     qDebug("id: %d",id);
     view->toolbarStack->removeWidget( container );
-    view->tabBar->removeTab( view->tabBar->tab(id) );
+    view->tabBar->removeTab( view->tabBar->tab(id) ); */
   }
   else
     KMainWindow::removeContainer( container, parent, element, id );
