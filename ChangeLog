@@ -8,6 +8,7 @@ Version 3.3.2 (Release date: xx-10-2004; Started 07-10-2004):
         - don't crash on column removal form a table
         - read the tables correctly also if the doctype definition is wrong
           (for example HTML tables inside XHTML)
+        - fix node tree corruption while parsing scripts inside a tag [#91508]
  
 	
 Version 3.3.1 (Release date: xx-10-2004; Started 20-08-2004):

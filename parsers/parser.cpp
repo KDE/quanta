@@ -389,7 +389,18 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
           } else
           {
             if (parentNode)
+            {
+              if (!parentNode->child)
                 parentNode->child = node;
+              else
+              {
+                Node *n = parentNode->child;
+                while (n->next)
+                  n = n->next;
+                n->next = node;
+                node->prev = n;
+              }
+            }
           }
         }
         if (!tag->single)
