@@ -2,7 +2,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file './dtdselectdialog.ui'
 **
-** Created: Tue Sep 24 15:39:12 2002
+** Created: Tue Oct 1 12:23:51 2002
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -46,15 +46,15 @@ DTDSelectDialog::DTDSelectDialog( QWidget* parent,  const char* name, bool modal
 
     Layout1->addWidget( dtdCombo, 0, 1 );
 
-    TextLabel1_2 = new QLabel( privateLayoutWidget, "TextLabel1_2" );
-    TextLabel1_2->setText( tr2i18n( "Current DTD:" ) );
+    textLabel = new QLabel( privateLayoutWidget, "textLabel" );
+    textLabel->setText( tr2i18n( "Current DTD:" ) );
 
-    Layout1->addWidget( TextLabel1_2, 1, 0 );
+    Layout1->addWidget( textLabel, 1, 0 );
 
-    TextLabel1 = new QLabel( privateLayoutWidget, "TextLabel1" );
-    TextLabel1->setText( tr2i18n( "Select DTD:" ) );
+    comboLabel = new QLabel( privateLayoutWidget, "comboLabel" );
+    comboLabel->setText( tr2i18n( "Select DTD:" ) );
 
-    Layout1->addWidget( TextLabel1, 0, 0 );
+    Layout1->addWidget( comboLabel, 0, 0 );
 
     currentDTD = new QLineEdit( privateLayoutWidget, "currentDTD" );
     currentDTD->setReadOnly( TRUE );

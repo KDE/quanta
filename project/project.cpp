@@ -24,7 +24,7 @@
 #include <iostream.h>
 
 // include QT files
-#include <qdir.h>
+#include <qdict.h>
 #include <qdom.h>
 #include <qlabel.h>
 #include <qcheckbox.h>
@@ -60,14 +60,19 @@
 
 // application headers
 #include "../dialogs/copyto.h"
+#include "../dialogs/dtdselectdialog.h"
 #include "../qextfileinfo.h"
 #include "projectnewgeneral.h"
 #include "projectnewlocal.h"
 #include "projectnewweb.h"
 #include "projectnewfinal.h"
 #include "projectupload.h"
+#include "projectoptions.h"
 #include "rescanprj.h"
 #include "../resource.h"
+#include "../document.h"
+#include "../quanta.h"
+#include "../quantadoc.h"
 
 Project::Project( QWidget *, const char *name )
         : QWidget(0L,name)
@@ -403,6 +408,7 @@ void Project::slotCloseProject()
 
   projectName = QString::null;
   m_defaultDTD = qConfig.defaultDocType;
+  currentProjectView = QString::null;
 
   emit closeFiles();
 
@@ -413,7 +419,7 @@ void Project::slotCloseProject()
 
   projectURL  = KURL();
   modified = false;
-  passwd = "";
+  passwd = "";  
 
   emit newStatus();
 }
@@ -422,8 +428,9 @@ void Project::slotCloseProject()
 void Project::slotLoadProject(const KURL &a_url)
 {
   KURL url = a_url;
-  projectURL =KURL();
-  projectName=QString::null;
+  projectURL = KURL();
+  projectName = QString::null;
+  currentProjectView = QString::null;
   
   if (url.isMalformed())
   {
@@ -441,6 +448,7 @@ void Project::slotLoadProject(const KURL &a_url)
         baseURL.setPath(url.directory(true, true));
         dom.setContent( &f );
         loadProjectXML();
+        openCurrentView();
         emit newProjectLoaded();
       } else
       {
@@ -488,7 +496,10 @@ void Project::loadProjectXML()
   author = no.firstChild().nodeValue();
   no = projectNode.namedItem("email");
   email = no.firstChild().nodeValue();
-  
+
+  no = projectNode.namedItem("autoload");
+  currentProjectView = no.toElement().attribute("projectview");
+    
   no = projectNode.namedItem("templates");
   tmpString = no.firstChild().nodeValue();
   templateURL = baseURL;
@@ -593,6 +604,7 @@ void Project::loadProjectXML()
   }
   progressBar->setValue(0);
   progressBar->setTextEnabled(false);
+
 
   emit setBaseURL(baseURL);
   emit setProjectName( projectName );
@@ -836,8 +848,8 @@ void Project::slotNewProject()
 					 wiz, SLOT(setNextEnabled(QWidget*,bool)));
 	connect( png, SIGNAL(enableNextButton(QWidget *,bool)),
 					 pnl, SLOT(slotSetDestDir(QWidget*,bool)));
-	connect( png, SIGNAL(setBasePath(QString)),
-					 pnw, SLOT(  setBasePath(QString)));
+	connect( png, SIGNAL(setBaseURL(const KURL&)),
+					 pnw, SLOT(  setBaseURL(const KURL&)));
 	connect( this,SIGNAL(setLocalFiles(bool)),
 					 pnl, SLOT(slotSetFiles(bool)));
 
@@ -1006,37 +1018,27 @@ void Project::slotOptions()
 	QTabDialog *dlg = new QTabDialog(0L, i18n("Project Options"), true);
   KURL url;
 
-	png = new ProjectNewGeneral( dlg );
-	pnf = new ProjectNewFinal  ( dlg );
+	ProjectOptions* optionsPage = new ProjectOptions( dlg );
 
-//	png ->setMargin(10);
+  pnf = new ProjectNewFinal( dlg );
 //	pnf ->setMargin(10);
-
-	png ->imagelabel->hide();
 	pnf ->imagelabel->hide();
 
-	png ->bGroupSources->hide();
 
-	dlg->addTab( png, i18n("General") );
+	dlg->addTab( optionsPage, i18n("General") );
 	dlg->addTab( pnf, i18n("Network") );
 
 	dlg->setOkButton();
 	dlg->setCancelButton();
 
-	png->linePrjDir ->setEnabled( false );
-	png->linePrjFile->setEnabled( false );
-	png->buttonDir->setEnabled( false );
-	
-	png->linePrjDir->setText( baseURL.url() );
-	png->linePrjName->setText( projectName );
-	png->linePrjFile->setText( projectURL.url() );
+  optionsPage->linePrjName->setText( projectName );
   url = QExtFileInfo::toRelative(templateURL, baseURL);
-  png->linePrjTmpl->setText(QuantaCommon::qUrl(url));
+  optionsPage->linePrjTmpl->setText(QuantaCommon::qUrl(url));
   url = QExtFileInfo::toRelative(toolbarURL, baseURL);
-  png->linePrjToolbar->setText( QuantaCommon::qUrl(url) );
+  optionsPage->linePrjToolbar->setText( QuantaCommon::qUrl(url) );
 
-  png->lineAuthor->setText( author );
-	png->lineEmail->setText( email );
+  optionsPage->lineAuthor->setText( author );
+	optionsPage->lineEmail->setText( email );
 	
 	pnf->linePrefix->setText(previewPrefix.url());
   QDictIterator<DTDStruct> it(*dtds);
@@ -1046,20 +1048,42 @@ void Project::slotOptions()
     {
       int index = -1;
       if (it.current()->name == m_defaultDTD) index = 0;
-      png->dtdCombo->insertItem(QuantaCommon::getDTDNickNameFromName(it.current()->name), index);
+      optionsPage->dtdCombo->insertItem(QuantaCommon::getDTDNickNameFromName(it.current()->name), index);
     }
   }
+
+  QStringList list;
+  QDomNodeList nl = dom.elementsByTagName("projectview");
+  QDomElement el;
+  for (uint i = 0; i < nl.count(); i++)
+  {
+    el = nl.item(i).cloneNode().toElement();
+    list += el.attribute("name");
+  }
+  list.sort();
+
+  QString defaultView = dom.firstChild().firstChild().namedItem("autoload").toElement().attribute("projectview");
+  optionsPage->viewCombo->insertStringList(list);
+  for (uint i = 0; i < list.count(); i++)
+  {
+    if (list[i] == defaultView)
+    {
+      optionsPage->viewCombo->setCurrentItem(i);
+      break;
+    }
+  }
+  
 
 	pnf->checkPrefix->setChecked(usePreviewPrefix);
 
 	if ( dlg->exec() )
 	{
-		projectName = png->linePrjName->text();
-		author		= png->lineAuthor ->text();
-		email			= png->lineEmail	->text();
-    m_defaultDTD = QuantaCommon::getDTDNameFromNickName(png->dtdCombo->currentText());
+		projectName = optionsPage->linePrjName->text();
+		author		= optionsPage->lineAuthor ->text();
+		email			= optionsPage->lineEmail	->text();
+    m_defaultDTD = QuantaCommon::getDTDNameFromNickName(optionsPage->dtdCombo->currentText());
 
-    QuantaCommon::setUrl(templateURL, png->linePrjTmpl->text());
+    QuantaCommon::setUrl(templateURL, optionsPage->linePrjTmpl->text());
     templateURL.adjustPath(1);
     templateURL = QExtFileInfo::toAbsolute(templateURL, baseURL);
     if (!QExtFileInfo::createDir(templateURL))
@@ -1067,7 +1091,7 @@ void Project::slotOptions()
       QuantaCommon::dirCreationError(this, templateURL);
     }
 
-    QuantaCommon::setUrl(toolbarURL, png->linePrjToolbar->text());
+    QuantaCommon::setUrl(toolbarURL, optionsPage->linePrjToolbar->text());
     toolbarURL.adjustPath(1);
     toolbarURL = QExtFileInfo::toAbsolute(toolbarURL, baseURL);
     if (!QExtFileInfo::createDir(toolbarURL))
@@ -1146,7 +1170,19 @@ void Project::slotOptions()
       el.firstChild().setNodeValue(QuantaCommon::qUrl(url));
     }
 
- 		modified = true;
+    defaultView = optionsPage->viewCombo->currentText();
+ 		el = dom.firstChild().firstChild().namedItem("autoload").toElement();
+ 		if (el.isNull())
+ 		{
+ 		  el = dom.createElement("autoload");
+      el.setAttribute("projectview", defaultView);
+		  dom.firstChild().firstChild().appendChild( el );
+ 		} else
+ 		{
+      el.setAttribute("projectview", defaultView);
+ 		}
+
+    modified = true;
 		
 		emit setProjectName( projectName );
     emit templateURLChanged( templateURL );
@@ -1228,5 +1264,134 @@ void Project::setDefaultDTD( const QString& p_defaultDTD)
 {
 	m_defaultDTD = p_defaultDTD;
 }
+
+void Project::openCurrentView()
+{
+ if (!currentProjectView.isEmpty())
+ {
+   QDomNodeList nl = dom.elementsByTagName("projectview");
+   QDomElement el;
+   for (uint i = 0; i < nl.count(); i++)
+   {
+      el = nl.item(i).cloneNode().toElement();
+      if (el.attribute("name") == currentProjectView)
+      {
+        quantaApp->slotFileCloseAll(); //TODO: make a signal for closeAll
+        QDomNodeList itemNodes = el.childNodes();
+        for (uint j = 0; j < itemNodes.count(); j++)
+        {
+          QDomElement el2 = itemNodes.item(j).cloneNode().toElement();
+          KURL url = baseURL;
+          QuantaCommon::setUrl(url,el2.attribute("url"));
+          url = QExtFileInfo::toAbsolute(url, baseURL);
+          if (el2.nodeName() == "item")
+          {
+            emit openFile(url, qConfig.defaultEncoding);
+          }
+          if (el2.nodeName() == "toolbar")
+          {
+            quantaApp->slotLoadToolbarFile(url);
+          }
+        }
+        break;
+      }
+   }
+ }  
+}
+
+/** Opens a project view (toolbars & files). */
+void Project::slotOpenProjectView()
+{
+  DTDSelectDialog dlg(this);
+  dlg.setCaption(i18n("Open project view"));
+  dlg.messageLabel->setText(i18n("Select a project view to open."));
+  dlg.comboLabel->setText(i18n("Available views"));
+  dlg.textLabel->hide();
+  dlg.currentDTD->hide();
+
+  QStringList list;
+  QDomNodeList nl = dom.elementsByTagName("projectview");
+  QDomElement el;
+  for (uint i = 0; i < nl.count(); i++)
+  {
+    el = nl.item(i).cloneNode().toElement();
+    list += el.attribute("name");
+  }
+  list.sort();
+  dlg.dtdCombo->insertStringList(list);
+  
+  if ( dlg.exec() )
+  {
+    currentProjectView = dlg.dtdCombo->currentText();
+    openCurrentView();
+  }
+}
+
+/** Saves a project view (group of files & toolbars) asking for a name. */
+void Project::slotSaveAsProjectView(bool askForName)
+{
+  KLineEditDlg dlg(i18n("Enter the name of the view:"), "", this);
+  dlg.setCaption(i18n("Save project view as"));
+
+  if ( !askForName || dlg.exec() )
+  {
+    if (askForName) currentProjectView = dlg.text().lower();
+    QDomNodeList nl = dom.elementsByTagName("projectview");
+    for (uint i =0 ;i < nl.count(); i++)
+    {
+      QDomNode node = nl.item(i);
+      if (node.toElement().attribute("name") == currentProjectView)
+      {
+        if (!askForName ||
+            KMessageBox::questionYesNo(this, i18n("A project view named \"%1\" already exists.\nDo you want to overwrite it?")
+                                             .arg(currentProjectView)) == KMessageBox::Yes)
+        {
+          node.parentNode().removeChild(node);
+          break;
+        } else
+        {
+          return;
+        }
+      }
+    }
+    
+    KURL::List fileList = fileNameList();
+    QDomElement el = dom.createElement("projectview");
+    el.setAttribute("name", currentProjectView);
+    QDictIterator<Document> it( * quantaApp->getDoc()->docList());
+    QDomElement item;
+    while ( Document *w = it.current() )
+    {
+      KURL url = w->url();
+      url = QExtFileInfo::toRelative(url, baseURL);
+      if (!w->isUntitled() && fileList.contains(url))
+      {
+       item = dom.createElement("item");
+       item.setAttribute("url", QuantaCommon::qUrl(url) );
+       el.appendChild(item);
+      }
+      ++it;
+    }
+
+    KURL::List toolbarList = quantaApp->userToolbarFiles();
+    for (uint i =0 ; i < toolbarList.count(); i++)
+    {
+      item = dom.createElement("toolbar");
+      item.setAttribute("url", QuantaCommon::qUrl(toolbarList[i]) );
+      el.appendChild(item);
+    }
+    
+    dom.firstChild().firstChild().appendChild( el );
+    slotSaveProject();
+  }
+
+}
+
+/** Saves a project view (group of files & toolbars) without asking for a name. */
+void Project::slotSaveProjectView()
+{
+  slotSaveAsProjectView(currentProjectView.isEmpty());
+}
+
 
 #include "project.moc"

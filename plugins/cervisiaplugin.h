@@ -24,11 +24,9 @@
   *@author Andras Mantia
   */
 
-class QuantaApp;
-
 class CervisiaPlugin : public QuantaKPartPlugin  {
 public: 
-	CervisiaPlugin(QuantaApp *);
+	CervisiaPlugin();
 	~CervisiaPlugin();
 public slots:
   virtual bool run();

@@ -29,8 +29,9 @@
 #include "cervisiaplugin.h"
 #include "../quanta.h"
 #include "../quantadoc.h"
+#include "../resource.h"
 
-CervisiaPlugin::CervisiaPlugin(QuantaApp *a_app):QuantaKPartPlugin(a_app)
+CervisiaPlugin::CervisiaPlugin():QuantaKPartPlugin()
 {
 }
 
@@ -45,11 +46,11 @@ bool CervisiaPlugin::run()
 
   if(isLoaded())
   {
-    m_part->openURL(m_app->projectBaseURL());
-    m_app->guiFactory()->addClient(m_part);
-    QWidgetStack *stack = m_app->widgetStackOfHtmlPart();
+    m_part->openURL(quantaApp->projectBaseURL());
+    quantaApp->guiFactory()->addClient(m_part);
+    QWidgetStack *stack = quantaApp->widgetStackOfHtmlPart();
     stack->raiseWidget(m_part->widget());
-    m_part->widget()->show();   
+    m_part->widget()->show();
     setRunning(TRUE);
     return TRUE;
   }
@@ -61,8 +62,8 @@ bool CervisiaPlugin::unload()
   if(!isLoaded())
     return FALSE;
 
-  m_app->guiFactory()->removeClient(m_part);  
-  QWidgetStack *stack = m_app->widgetStackOfHtmlPart();
+  quantaApp->guiFactory()->removeClient(m_part);
+  QWidgetStack *stack = quantaApp->widgetStackOfHtmlPart();
   stack->removeWidget(m_part->widget());
   delete m_part;
   m_part = 0;

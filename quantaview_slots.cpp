@@ -121,7 +121,7 @@ void QuantaView::slotEditCurrentTag()
   if (isUnknown)
   {
     QString message = i18n("Unknown tag: %1").arg(tagName);
-    app->slotStatusMsg( message.data() );
+    quantaApp->slotStatusMsg( message.data() );
   }
 }
 
@@ -237,7 +237,7 @@ void QuantaView::slotTagMisc()
 
 /** quick html text generate */
 void QuantaView::slotTagQuickStart(){
-	TagQuickStart *quickDlg = new TagQuickStart( app->projectBaseURL(), this, i18n("Generate HTML Text"));
+	TagQuickStart *quickDlg = new TagQuickStart( quantaApp->projectBaseURL(), this, i18n("Generate HTML Text"));
 
   if ( quickDlg->exec() ) {
     const QString chset = QTextCodec::codecForLocale()->mimeName();
@@ -418,7 +418,7 @@ void QuantaView::slotViewInNetscape()
     {
       if (w->isUntitled())
       {
-       getApp()->slotFileSaveAs();
+       quantaApp->slotFileSaveAs();
       }
       else
       {
@@ -432,7 +432,7 @@ void QuantaView::slotViewInNetscape()
   if ( !w->isUntitled() )
   {
     KProcess *show = new KProcess();
-    KURL url = app->project->urlWithPrefix(w->url());
+    KURL url = quantaApp->project->urlWithPrefix(w->url());
 
     *show << "netscape" << "-remote" << QString(QString("openURL(")+url.url()+")").data();
     connect( show, SIGNAL(processExited(KProcess *)), this, SLOT(slotNetscapeStatus(KProcess *)));
@@ -452,7 +452,7 @@ void QuantaView::slotViewInKFM()
     {
       if (w->isUntitled())
       {
-       getApp()->slotFileSaveAs();
+       quantaApp->slotFileSaveAs();
       }
       else
       {
@@ -466,7 +466,7 @@ void QuantaView::slotViewInKFM()
   if ( !w->isUntitled() )
   {
     KProcess *show = new KProcess();
-    KURL url = app->project->urlWithPrefix(w->url());
+    KURL url = quantaApp->project->urlWithPrefix(w->url());
     *show << "kfmclient" << "exec" << url.url();
     show->start( KProcess::DontCare );
   }
@@ -484,7 +484,7 @@ void QuantaView::slotViewInLynx()
     {
       if (w->isUntitled())
       {
-       getApp()->slotFileSaveAs();
+       quantaApp->slotFileSaveAs();
       }
       else
       {
@@ -498,7 +498,7 @@ void QuantaView::slotViewInLynx()
   if ( !w->isUntitled() )
   {
     KProcess *show = new KProcess();
-    KURL url = app->project->urlWithPrefix(w->url());
+    KURL url = quantaApp->project->urlWithPrefix(w->url());
     *show << "konsole"
           << "--nohist"
           << "--notoolbar"
@@ -517,7 +517,7 @@ void QuantaView::slotNetscapeStatus(KProcess *proc)
   if ( proc->exitStatus() )
   {
     KProcess *show = new KProcess();
-    KURL url = app->project->urlWithPrefix(write()->url());
+    KURL url = quantaApp->project->urlWithPrefix(write()->url());
     *show << "netscape" << url.url();
     show->start( KProcess::DontCare );
   }
@@ -560,13 +560,13 @@ void QuantaView::slotGetScriptOutput(KProcess *, char *buffer, int buflen)
   if ( scriptOutputDest == "message" ) {
 
 			if ( beginOfScriptOutput ) {
-        //if ( !app->viewMenu->isItemChecked(ID_VIEW_MES) )
-        //  app->slotViewMes();
-        app->messageOutput->clear();
-        app->messageOutput->insertItem(i18n("Script output:\n"));
+        //if ( !quantaApp->viewMenu->isItemChecked(ID_VIEW_MES) )
+        //  quantaApp->slotViewMes();
+        quantaApp->messageOutput->clear();
+        quantaApp->messageOutput->insertItem(i18n("Script output:\n"));
       }
 
-      app->messageOutput->showMessage(output);
+      quantaApp->messageOutput->showMessage(output);
   }
 
   if ( scriptOutputDest == "new" )
@@ -605,13 +605,13 @@ void QuantaView::slotGetScriptError(KProcess *, char *buffer, int buflen)
   if ( scriptErrorDest == "message" ) {
 
 			if ( beginOfScriptError ) {
-        //if ( !app->viewMenu->isItemChecked(ID_VIEW_MES) )
-        //  app->slotViewMes();
-        app->messageOutput->clear();
-        app->messageOutput->insertItem(i18n("Script output:\n"));
+        //if ( !quantaApp->viewMenu->isItemChecked(ID_VIEW_MES) )
+        //  quantaApp->slotViewMes();
+        quantaApp->messageOutput->clear();
+        quantaApp->messageOutput->insertItem(i18n("Script output:\n"));
       }
 
-      app->messageOutput->showMessage( output );
+      quantaApp->messageOutput->showMessage( output );
   }
 
   if ( scriptErrorDest == "new" )
@@ -796,7 +796,7 @@ void QuantaView::toggleLineNumbers()
 void QuantaView::slotEditorOptions()
 {
   dynamic_cast<KTextEditor::ConfigInterface *>(write()->doc())->configDialog();
-  write()->writeConfig(app->config);
+  write()->writeConfig(quantaApp->config);
 }
 
 void QuantaView::setEol(int which)

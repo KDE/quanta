@@ -556,10 +556,14 @@ void QuantaApp::slotNewStatus()
 
     saveAction   ->setEnabled(doc->isModified());
     saveAllAction->setEnabled(doc->isModifiedAll());
-    saveprjAction     ->setEnabled(project->isModified());
+    saveprjAction->setEnabled(project->isModified());
 
     bool projectExists = project->hasProject();
     closeprjAction     ->setEnabled(projectExists);
+    openPrjViewAction  ->setEnabled(projectExists);
+    savePrjViewAction  ->setEnabled(projectExists);
+    saveAsPrjViewAction->setEnabled(projectExists);
+
     insertFileAction   ->setEnabled(projectExists);
     insertDirAction    ->setEnabled(projectExists);
     rescanPrjDirAction ->setEnabled(projectExists);
@@ -744,7 +748,7 @@ void QuantaApp::slotOptionsConfigureActions()
 {
  int currentPageIndex = view->toolbarTab->currentPageIndex();
 
- ActionEditDlg dlg( this, this, "actions_edit_dlg", true); //actionCollection(), QString::null, true, this );
+ ActionEditDlg dlg( this, "actions_edit_dlg", true); //actionCollection(), QString::null, true, this );
 
  if ( dlg.exec() )
  {
@@ -1535,7 +1539,7 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
     if (! actionCollection()->action(actionName))
     {
       m_actions->firstChild().appendChild(el);
-      TagAction *a = new TagAction(&el, view, actionCollection() );
+      TagAction *a = new TagAction(&el );
       actionCollection()->insert(a);
     }
    }
@@ -1584,7 +1588,7 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
    pstr->append(name.lower());
    toolbarNames.insert(url.prettyURL(),pstr);
    toolbarURLs.insert(name.lower(), new KURL(url));
-
+   m_userToolbarFileList.append(url);
    slotToggleDTDToolbar(toolbarNames.count() != 0);
  }
 }
@@ -1607,7 +1611,7 @@ void QuantaApp::slotLoadGlobalToolbar()
 {
  KURL url;
 
- url = KFileDialog::getOpenURL(qConfig.globalDataDir +"quanta/toolbars/", "*."+toolbarExtension+"\n*", this);
+ url = KFileDialog::getOpenURL(qConfig.globalDataDir +"quanta/toolbars/", "*"+toolbarExtension+"\n*", this);
  if (! url.isEmpty())
  {
    slotLoadToolbarFile(url.path());
@@ -1812,7 +1816,8 @@ void QuantaApp::slotAddToolbar()
   KURL *url = new KURL();
   QuantaCommon::setUrl(*url,tempFile->name());
   toolbarURLs.insert(name.lower(), url);
-
+  m_userToolbarFileList.append(*url);
+  
   slotToggleDTDToolbar(toolbarNames.count() != 0);
  }
 }
@@ -2108,7 +2113,10 @@ void QuantaApp::loadToolbarForDTD(const QString& dtdName)
        fileName = locateLocal("data", "quanta/toolbars/"+oldDtd->toolbars[i]);
        QuantaCommon::setUrl(url, fileName);
        toolbarName = toolbarNames[url.prettyURL()];
-       if (toolbarName) removeToolbar(*toolbarName);
+       if (toolbarName)
+       {
+         removeToolbar(*toolbarName);
+       }
      }
    }
 
@@ -2121,7 +2129,11 @@ void QuantaApp::loadToolbarForDTD(const QString& dtdName)
       {
         KURL url;
         QuantaCommon::setUrl(url, fileName);
-        if (!toolbarNames[url.prettyURL()]) slotLoadToolbarFile(url);
+        if (!toolbarNames[url.prettyURL()])
+        {
+          slotLoadToolbarFile(url);
+          m_userToolbarFileList.remove(url); //it's not a user toolbar, so remove from list
+        }
       } else
       {
         fileName = qConfig.globalDataDir + "quanta/toolbars/"+newDtd->toolbars[i];
@@ -2129,7 +2141,11 @@ void QuantaApp::loadToolbarForDTD(const QString& dtdName)
         {
           KURL url;
           QuantaCommon::setUrl(url, fileName);
-          if (!toolbarNames[url.prettyURL()]) slotLoadToolbarFile(url);
+          if (!toolbarNames[url.prettyURL()])
+          {
+            slotLoadToolbarFile(url);
+            m_userToolbarFileList.remove(url); //it's not a user toolbar, so remove from list
+          }
         }
       }
    }
@@ -2169,6 +2185,7 @@ void QuantaApp::removeToolbar(const QString& name)
      QString s = name;
      toolbarNames.remove(url->prettyURL());
      toolbarURLs.remove(s);
+     m_userToolbarFileList.remove(*url);
     }
   }
 
@@ -2214,6 +2231,7 @@ KURL QuantaApp::projectBaseURL()
   		result = QExtFileInfo::path(view->write()->url());
   	}
   }
-  return result;}
+  return result;
+}
 
 #include "quanta.moc"

@@ -37,14 +37,14 @@
 #include "../quantacommon.h"
 #include "../resource.h"
 
-TagAction::TagAction( QDomElement *element, QuantaView *view,KActionCollection *collection )
-  : KAction( element->attribute("text"), 0, collection, element->attribute("name") ),
-    tag(*element),
-    view_(view)
+TagAction::TagAction( QDomElement *element)
+  : KAction( element->attribute("text"), 0, quantaApp->actionCollection(), element->attribute("name") ),
+    tag(*element)
 {
+   m_view = quantaApp->getView();
    setIcon( tag.attribute("icon","") );
 
-   if ( view_ )
+   if ( m_view )
         connect( this, SIGNAL(activated()), SLOT(insertTag()) );
 }
 
@@ -57,13 +57,13 @@ TagAction::~TagAction()
 
 void TagAction::insertTag()
 {
-  if ( !view_ )
+  if ( !m_view )
      return;
 
   QString space="";
   unsigned int line, col;
 
-  Document *w = view_->write();
+  Document *w = m_view->write();
   dynamic_cast<KTextEditor::ViewCursorInterface *> (w->view())->cursorPosition(&line, &col);
 	space.fill( ' ', col);
 
@@ -87,7 +87,7 @@ void TagAction::insertTag()
      if ( otag.attribute("useDialog","false") == "true" )
      {
 
-         view_->insertNewTag(name, attr, xtag.attribute("inLine","true") == "true");
+         m_view->insertNewTag(name, attr, xtag.attribute("inLine","true") == "true");
      }
      else
      {
@@ -173,7 +173,7 @@ void TagAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
 {
   QCString tmp( buffer, buflen + 1 );
   QString text( QString::fromLocal8Bit(tmp) );
-  Document *w = view_->write();
+  Document *w = m_view->write();
 
   if ( scriptOutputDest == "cursor" )
       w->insertTag( text );
@@ -188,13 +188,13 @@ void TagAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
   if ( scriptOutputDest == "new" )
   {
     if ( firstOutput )
-        view_->getDoc()->openDocument( KURL() );
+        quantaApp->getDoc()->openDocument( KURL() );
     w->insertTag( text );
   }
 
   if ( scriptOutputDest == "message" )
   {
-    MessageOutput *appMessages = view_->getApp()->getMessages();
+    MessageOutput *appMessages = quantaApp->getMessages();
     if ( firstOutput )
     {
       appMessages->clear();
@@ -208,7 +208,7 @@ void TagAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
 
 void TagAction::slotGetScriptError( KProcess *, char *buffer, int buflen )
 {
-  Document *w = view_->write();
+  Document *w = m_view->write();
   QCString tmp( buffer, buflen + 1 );
   QString text( QString::fromLocal8Bit(tmp) );
 
@@ -231,13 +231,13 @@ void TagAction::slotGetScriptError( KProcess *, char *buffer, int buflen )
   if ( scriptErrorDest == "new" )
   {
     if ( firstOutput )
-       view_->getDoc()->openDocument( KURL() );
+       quantaApp->getDoc()->openDocument( KURL() );
     w->insertTag( text );
   }
 
   if ( scriptErrorDest == "message" )
   {
-    MessageOutput *appMessages = view_->getApp()->getMessages();
+    MessageOutput *appMessages = quantaApp->getMessages();
     if ( firstError )
     {
       appMessages->clear();

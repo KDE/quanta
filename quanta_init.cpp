@@ -95,7 +95,6 @@ QString fileMaskImage = "*.gif *.jpg *.png *.jpeg *.bmp *.xpm *.GIF *.JPG *.PNG 
 QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
 {
   quantaStarted = true;
-  QuantaCommon::quantaApp = this;
   tempFileList.setAutoDelete(true);
   toolbarGUIClientList.setAutoDelete(true);
   toolbarDomList.setAutoDelete(true);
@@ -241,7 +240,7 @@ void QuantaApp::statusBarTimeout()
 
 void QuantaApp::initDocument()
 {
-  doc = new QuantaDoc(this,this);
+  doc = new QuantaDoc(this);
   connect(doc, SIGNAL(newStatus()),    this, SLOT(slotNewStatus()));
 }
 
@@ -358,9 +357,7 @@ void QuantaApp::initView()
 
   rightWidgetStack = new QWidgetStack( maindock );
 
-  view = new QuantaView( this, rightWidgetStack );
-  view->app = this;
-  view->doc = doc;
+  view = new QuantaView( rightWidgetStack );
 
   messageOutput = new MessageOutput( bottdock );
 
@@ -1303,46 +1300,61 @@ void QuantaApp::initActions()
     //
     newPrjAction = new KAction( i18n( "&New Project..." ), 0,
                         project, SLOT( slotNewProject() ),
-                        actionCollection(), "new_project" );
+                        actionCollection(), "project_new" );
 
     openPrjAction = new KAction( i18n( "&Open Project..." ), BarIcon("folder_new"), 0,
                         project, SLOT( slotOpenProject() ),
-                        actionCollection(), "open_project" );
+                        actionCollection(), "project_open" );
 
     project -> projectRecent =
       KStdAction::openRecent(project, SLOT(slotOpenProject(const KURL&)),
                              actionCollection(), "project_open_recent");
-
+    project->projectRecent->setText(i18n("Open Recent Project..."));
+  /*
     connect(project,                SIGNAL(checkOpenAction(bool)),
             newPrjAction,           SLOT(setEnabled(bool)));
     connect(project,                SIGNAL(checkOpenAction(bool)),
             openPrjAction,          SLOT(setEnabled(bool)));
     connect(project,                SIGNAL(checkOpenAction(bool)),
             project->projectRecent, SLOT(setEnabled(bool)));
-
+ */
     saveprjAction =  new KAction( i18n( "&Save Project" ), SmallIcon("save"), 0,
                          project, SLOT( slotSaveProject() ),
-                         actionCollection(), "save_project" );
+                         actionCollection(), "project_save" );
 
     closeprjAction =  new KAction( i18n( "&Close Project" ), SmallIcon("fileclose"), 0,
                          project, SLOT( slotCloseProject() ),
-                         actionCollection(), "close_project" );
+                         actionCollection(), "project_close" );
+
+
+    openPrjViewAction = new KAction( i18n( "Open Project View..." ), 0,
+                        project, SLOT( slotOpenProjectView() ),
+                        actionCollection(), "project_view_open" );
+
+    savePrjViewAction = new KAction( i18n( "Save Project View..." ), 0,
+                        project, SLOT( slotSaveProjectView() ),
+                        actionCollection(), "project_view_save" );
+    saveAsPrjViewAction = new KAction( i18n( "Save Project View As..." ), 0,
+                        project, SLOT( slotSaveAsProjectView() ),
+                        actionCollection(), "project_view_save_as" );
+                         
+
 
     insertFileAction = new KAction( i18n( "&Insert Files..." ), 0,
                         project, SLOT( slotAddFiles() ),
-                        actionCollection(), "insert_file" );
+                        actionCollection(), "project_insert_file" );
 
     insertDirAction = new KAction( i18n( "&Insert Directory..." ), 0,
                         project, SLOT( slotAddDirectory() ),
-                        actionCollection(), "insert_directory" );
+                        actionCollection(), "project_insert_directory" );
 
     rescanPrjDirAction = new KAction( i18n( "&Rescan Project Directory" ), SmallIcon("reload"), 0,
                         project, SLOT( slotRescanPrjDir() ),
-                        actionCollection(), "rescan_prjdir" );
+                        actionCollection(), "project_rescan" );
 
     uploadProjectAction = new KAction( i18n( "&Upload Project..." ), Key_F8,
                         project, SLOT( slotUpload() ),
-                        actionCollection(), "upload_project" );
+                        actionCollection(), "project_upload" );
 
     projectOptionAction = new KAction( i18n( "&Project Options..." ), Key_F7,
                         project, SLOT( slotOptions() ),
@@ -1385,7 +1397,7 @@ void QuantaApp::initActions()
 /** Initialize the plugin architecture. */
 void QuantaApp::initPlugins()
 {
-  m_pluginInterface = new QuantaPluginInterface(this);
+  m_pluginInterface = new QuantaPluginInterface();
   // TODO : read option from plugins.rc to see if we should validate the plugins
 
   m_pluginMenu = new QPopupMenu(this);
@@ -1467,7 +1479,6 @@ void QuantaApp::slotPluginsEdit()
   QuantaPluginEditor *editor = new QuantaPluginEditor(getView(), "plugin_editor");
   editor->setSearchPaths(m_pluginInterface->searchPaths());
   editor->setPlugins(m_pluginInterface->plugins());
-  editor->setApp(this);
 
   if(editor->exec())
   {

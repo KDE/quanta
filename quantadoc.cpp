@@ -62,9 +62,8 @@
 #include "project/project.h"
 #include "plugins/quantaplugininterface.h"
 
-QuantaDoc::QuantaDoc( QuantaApp *app, QWidget *parent, const char *name) : QObject(parent, name)
+QuantaDoc::QuantaDoc(QWidget *parent, const char *name) : QObject(parent, name)
 {
-	this->app = app;
 
   m_docList = new QDict<Document>(1);
 
@@ -85,7 +84,7 @@ KURL QuantaDoc::url()
   KURL furl;
   furl.setPath("Untitled1.html");
 
-  if (app->view->writeExists()) furl = write()->url();
+  if (quantaApp->view->writeExists()) furl = write()->url();
 
   return furl;
 }
@@ -93,12 +92,12 @@ KURL QuantaDoc::url()
 KURL QuantaDoc::baseURL()
 {
   KURL result;
-  if  ( app->project->hasProject())
+  if  ( quantaApp->project->hasProject())
   {
-     result = app->project->baseURL;
+     result = quantaApp->project->baseURL;
   } else
   {
-  	if  ( !app->view->writeExists() || write()->isUntitled() )
+  	if  ( !quantaApp->view->writeExists() || write()->isUntitled() )
   	{
     	result = QExtFileInfo::home();
   	} else
@@ -134,7 +133,7 @@ bool QuantaDoc::newDocument( const KURL& url )
   if ( !m_docList->find( furl ) || newfile ) // open new
   {
     // no modi and new -> we can remove                           !!!!
-    if (app->view->writeExists())
+    if (quantaApp->view->writeExists())
     {
       w = write();
       if ( !w->isModified() &&
@@ -142,14 +141,14 @@ bool QuantaDoc::newDocument( const KURL& url )
     }
 
     // now we can create new kwrite
-    w = newWrite( app->view->writeTab);
-    w->readConfig(app->config);
+    w = newWrite( quantaApp->view->writeTab);
+    w->readConfig(quantaApp->config);
 
     if ( newfile ) furl = w->url().url();
 
-  	app ->view->addWrite( w, w->url().url() );
+  	quantaApp ->view->addWrite( w, w->url().url() );
 
-    app->processDTD(app->getProject()->defaultDTD());
+    quantaApp->processDTD(quantaApp->getProject()->defaultDTD());
 
   	m_docList->insert( w->url().url(), w );
   }
@@ -157,7 +156,7 @@ bool QuantaDoc::newDocument( const KURL& url )
   {
     w = m_docList->find( furl );
     w->checkDirtyStatus();
-    app ->view->writeTab->showPage( w );
+    quantaApp ->view->writeTab->showPage( w );
   	return false; // don't need loadURL
   }
 
@@ -182,7 +181,7 @@ void QuantaDoc::openDocument(const KURL& url, QString encoding)
     Document *w = write();
     if (encoding.isEmpty()) encoding = qConfig.defaultEncoding;
     w->kate_doc->setEncoding(encoding);
-    w->readConfig(app->config);
+    w->readConfig(quantaApp->config);
     if (w->doc()->openURL( url ))
     {
       w->setDirtyStatus(false);
@@ -195,15 +194,15 @@ void QuantaDoc::openDocument(const KURL& url, QString encoding)
   	    ++it;
    	  }
 
-      app ->view->writeTab->showPage( w );
+      quantaApp ->view->writeTab->showPage( w );
       changeFileTabName(defUrl);
-      app->fileRecent->addURL( w->url() );
+      quantaApp->fileRecent->addURL( w->url() );
 
       emit newStatus();
-      app->repaintPreview();
+      quantaApp->repaintPreview();
 
-      app->processDTD();
-      app->reparse();
+      quantaApp->processDTD();
+      quantaApp->reparse();
     }
   }
   write()->createTempFile();
@@ -225,17 +224,17 @@ void QuantaDoc::finishLoadURL(KWrite *_w)
  	  ++it;
  	}
 
-    app ->view->writeTab->showPage( w );
+    quantaApp ->view->writeTab->showPage( w );
 
  changeFileTabName(defUrl);
 
-  app->fileRecent->addURL( w->url() );
+  quantaApp->fileRecent->addURL( w->url() );
 
   emit newStatus();
-  app->repaintPreview();
+  quantaApp->repaintPreview();
 
   w -> busy = false;
-  app->reparse();
+  quantaApp->reparse();
 }     */
 
 void QuantaDoc::saveDocument(const KURL& url)
@@ -248,7 +247,7 @@ void QuantaDoc::saveDocument(const KURL& url)
     fileWatcher->removeFile(oldURL.path());
     if (!w->doc()->saveAs( url ))
     {
-      KMessageBox::error(app, i18n("Saving of the document\n%1\nfailed.\nMaybe you should try to save in another directory.").arg(url.prettyURL()));
+      KMessageBox::error(quantaApp, i18n("Saving of the document\n%1\nfailed.\nMaybe you should try to save in another directory.").arg(url.prettyURL()));
     }
     w->closeTempFile();
     w->createTempFile();
@@ -277,11 +276,11 @@ bool QuantaDoc::saveAll(bool dont_ask)
   bool flagsave = true;
 
 //FIXME: I don't like the switching through the pages... We must optimize this. (Andras)
-  Document *currentDoc = static_cast<Document*>(app ->view->writeTab->currentPage());
+  Document *currentDoc = static_cast<Document*>(quantaApp ->view->writeTab->currentPage());
 
   QDictIterator<Document> it( *m_docList );
 
-  QTabWidget *docTab =app->getView()->writeTab;
+  QTabWidget *docTab =quantaApp->getView()->writeTab;
   Document *w;
   for (int i = docTab->count() -1; i >=0; i--) 
   {
@@ -290,7 +289,7 @@ bool QuantaDoc::saveAll(bool dont_ask)
     if ( w->isModified() )
     {
       if (!w->url().path().isEmpty()) fileWatcher->removeFile(w->url().path());
-      app->view->writeTab->showPage( w );
+      quantaApp->view->writeTab->showPage( w );
       if ( dont_ask && !w->isUntitled())
       {
       	w->save();
@@ -305,7 +304,7 @@ bool QuantaDoc::saveAll(bool dont_ask)
     }
   }
 
-  app->view->writeTab->showPage( currentDoc );
+  quantaApp->view->writeTab->showPage( currentDoc );
   return flagsave;
 }
 
@@ -317,7 +316,7 @@ void QuantaDoc::closeDocument()
     w->closeTempFile();
     if (!w->url().path().isEmpty()) fileWatcher->removeFile(w->url().path());
   	m_docList->remove( w->url().url() );
-  	if ( !app->view->removeWrite()) openDocument( KURL() );
+  	if ( !quantaApp->view->removeWrite()) openDocument( KURL() );
   }
 }
 
@@ -326,7 +325,7 @@ void QuantaDoc::closeAll()
   Document *w;
   do
   {
-    if (app->view->writeExists())
+    if (quantaApp->view->writeExists())
     {
 	    if (saveModified() )
       {
@@ -340,7 +339,7 @@ void QuantaDoc::closeAll()
       }
     }
 	}
-	while ( app->view->removeWrite());
+	while ( quantaApp->view->removeWrite());
 
   //all documents were removed, so open an empty one
 	openDocument( KURL() );
@@ -376,12 +375,12 @@ void QuantaDoc::writeConfig( KConfig *config )
 bool QuantaDoc::saveModified()
 {
   bool completed=true;
-  QString fileName = app->getView()->writeTab->label(app->getView()->writeTab->currentPageIndex());
+  QString fileName = quantaApp->getView()->writeTab->label(quantaApp->getView()->writeTab->currentPageIndex());
 
   if( isModified() )
   {
     int want_save
-      = KMessageBox::warningYesNoCancel(app,
+      = KMessageBox::warningYesNoCancel(quantaApp,
           i18n("The file \"%1\" has been modified.\nDo you want to save it?").arg(fileName),
           i18n("Warning"));
 
@@ -390,7 +389,7 @@ bool QuantaDoc::saveModified()
       case KMessageBox::Yes :
            if ( write()->isUntitled() )
            {
-             app->slotFileSaveAs();
+             quantaApp->slotFileSaveAs();
            }
            else
            {
@@ -418,7 +417,7 @@ bool QuantaDoc::saveModified()
 
 bool QuantaDoc::isModified()
 {
-  if (app->view->writeExists())
+  if (quantaApp->view->writeExists())
   {
     return write()->isModified();
   } else
@@ -448,7 +447,7 @@ void QuantaDoc::setModified(bool flag)
 
 Document* QuantaDoc::write()
 {
-	return app->view->write();
+	return quantaApp->view->write();
 }
 
 
@@ -465,18 +464,18 @@ Document* QuantaDoc::newWrite(QWidget *_parent)
 													      _parent, 0,
 													      this, 0 );
 
-  Document  *w    = new Document (app->projectBaseURL(), doc, app->getProject(), _parent, 0, 0, app->m_pluginInterface);
+  Document  *w    = new Document (quantaApp->projectBaseURL(), doc, quantaApp->getProject(), _parent, 0, 0, quantaApp->m_pluginInterface);
   KTextEditor::View * v = w->view();
 
   //[MB02] connect all kate views for drag and drop
-  connect((QObject *)w->view(), SIGNAL(dropEventPass(QDropEvent *)), (QObject *)app->tTab, SLOT(slotDragInsert(QDropEvent *)));
+  connect((QObject *)w->view(), SIGNAL(dropEventPass(QDropEvent *)), (QObject *)quantaApp->tTab, SLOT(slotDragInsert(QDropEvent *)));
 
-  app->config->setGroup("General Options");
-  int tabWidth = app->config->readNumEntry("TabWidth",4);
-  app->config->writeEntry("TabWidth",tabWidth);
-  w->readConfig( app->config );
+  quantaApp->config->setGroup("General Options");
+  int tabWidth = quantaApp->config->readNumEntry("TabWidth",4);
+  quantaApp->config->writeEntry("TabWidth",tabWidth);
+  w->readConfig( quantaApp->config );
  	w->setUntitledUrl( fname );
-  w->kate_view->installPopup((QPopupMenu *)app->factory()->container("popup_editor", app));
+  w->kate_view->installPopup((QPopupMenu *)quantaApp->factory()->container("popup_editor", quantaApp));
 
   for (unsigned int i=0; i< w->kate_doc->hlModeCount(); i++)
   {
@@ -487,19 +486,19 @@ Document* QuantaDoc::newWrite(QWidget *_parent)
   }
 
 //FIXME:set to HTML
-//  dynamic_cast<KTextEditor::PopupMenuInterface *>(v)->installPopup((QPopupMenu *)app->factory()->container("popup_editor", app));
-//  dynamic_cast<KTextEditor::PopupMenuInterface *>(v)->installPopup((QPopupMenu *)app->factory()->container("rb_popup", app));
+//  dynamic_cast<KTextEditor::PopupMenuInterface *>(v)->installPopup((QPopupMenu *)quantaApp->factory()->container("popup_editor", quantaApp));
+//  dynamic_cast<KTextEditor::PopupMenuInterface *>(v)->installPopup((QPopupMenu *)quantaApp->factory()->container("rb_popup", quantaApp));
 
  	w->parentWidget()->setFocusProxy(w);
 
- 	connect( v, SIGNAL(newStatus()),app, SLOT(slotNewStatus()));
+ 	connect( v, SIGNAL(newStatus()),quantaApp, SLOT(slotNewStatus()));
 
 /* !!!!
  	connect( dynamic_cast<KTextEditor::UndoInterface *>(v), SIGNAL(undoChanged()),
-           app, SLOT(slotNewUndo()) );
+           quantaApp, SLOT(slotNewUndo()) );
 */
 
-// 	connect( w, SIGNAL(statusMsg(const QString &)),app, SLOT(slotStatusMsg(const QString &)));
+// 	connect( w, SIGNAL(statusMsg(const QString &)),quantaApp, SLOT(slotStatusMsg(const QString &)));
 
 // 	w->clearFocus();
 // 	w->setFocus();
@@ -570,7 +569,7 @@ void QuantaDoc::slotAttribPopup()
     }
     else {
       QString message = i18n("Unknown tag: %1").arg(tagName);
-      app->slotStatusMsg( message.data() );
+      quantaApp->slotStatusMsg( message.data() );
     }
     delete tag;
   }
@@ -619,7 +618,7 @@ void QuantaDoc::slotInsertAttrib( int id )
 
 void QuantaDoc::prevDocument()
 {
-  QTabWidget *tab = app->view->writeTab;
+  QTabWidget *tab = quantaApp->view->writeTab;
   Document *d =dynamic_cast<Document*>(tab->currentPage());
 
   Document *new_d;
@@ -642,7 +641,7 @@ void QuantaDoc::prevDocument()
 
 void QuantaDoc::nextDocument()
 {
-  QTabWidget *tab = app->view->writeTab;
+  QTabWidget *tab = quantaApp->view->writeTab;
   Document *d =dynamic_cast<Document*>(tab->currentPage());
 
   Document *new_d = 0 , *prev = 0;
@@ -670,16 +669,16 @@ void QuantaDoc::nextDocument()
 void QuantaDoc::changeFileTabName(const KURL& oldURL, KURL newURL)
 {
   Document *w = write();
-  
+
 	if (newURL.isEmpty())
   {
     newURL = w->url();
   }
 
-	if ( app->view->writeTab->tabToolTip(w) != newURL.prettyURL() )
+	if ( quantaApp->view->writeTab->tabToolTip(w) != newURL.prettyURL() )
 	{
-    app->view->writeTab->changeTab( w, QExtFileInfo::shortName(newURL.path()) );
-    app->view->writeTab->setTabToolTip( w, newURL.prettyURL() );
+    quantaApp->view->writeTab->changeTab( w, QExtFileInfo::shortName(newURL.path()) );
+    quantaApp->view->writeTab->setTabToolTip( w, newURL.prettyURL() );
   }
 
   if ( oldURL != newURL )
@@ -690,7 +689,7 @@ void QuantaDoc::changeFileTabName(const KURL& oldURL, KURL newURL)
 
 
   //TODO Why is this useful??
-/*  
+/*
   QDictIterator<Document> it1(*m_docList);
 // QDictIterator<Document> it2(*m_docList);
 
@@ -720,7 +719,7 @@ void QuantaDoc::changeFileTabName(const KURL& oldURL, KURL newURL)
  			}
  			++it2;
  		}
- 		QString shortUrl = name1.right( len );  
+ 		QString shortUrl = name1.right( len );
   	 QString shortUrl = KURL(name1).prettyURL();
   	 if (shortUrl.left(5) == "file:") shortUrl.remove(0,5);
      if (shortUrl.left(1) == "/")
@@ -733,10 +732,10 @@ void QuantaDoc::changeFileTabName(const KURL& oldURL, KURL newURL)
         }
     }
 
-		if ( app->view->writeTab->tabToolTip(it1.current()) != shortUrl)
+		if ( quantaApp->view->writeTab->tabToolTip(it1.current()) != shortUrl)
     {
- 		  app->view->writeTab->changeTab( it1.current() , shortUrl.section("/",-1) );
- 		  app->view->writeTab->setTabToolTip( it1.current() , shortUrl );
+ 		  quantaApp->view->writeTab->changeTab( it1.current() , shortUrl.section("/",-1) );
+ 		  quantaApp->view->writeTab->setTabToolTip( it1.current() , shortUrl );
     }                                       
  		++it1;
  	}

@@ -53,7 +53,6 @@ typedef struct QConfig{
 
         }; 
 
-class QuantaApp;
 class QString;
 class KURL;
 class KStandardDirs;
@@ -116,9 +115,6 @@ pointer must be deleted by the caller!! */
   /** No descriptions */
   static void dirCreationError(QWidget *widget, const KURL& url);
 
-public: // Public attributes
-  /**  */
-  static QuantaApp *quantaApp;
 };
 
 #endif

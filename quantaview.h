@@ -26,13 +26,9 @@
 #include <qwidget.h>
 #include <qlist.h>
 
-#include "quanta.h"
-
-class QuantaApp;
-class QuantaDoc;
-
 class WToolBar;
 
+class QuantaDoc;
 class Document;
 class QTabWidget;
 class KProcess;
@@ -59,11 +55,9 @@ class QuantaView : public QWidget
 
   public:
   
-    QuantaView( QuantaApp *app, QWidget *parent = 0, const char *name=0);
+    QuantaView(QWidget *parent = 0, const char *name=0);
     ~QuantaView();
 
-    QuantaApp *getApp() const { return app; }
-    QuantaDoc *getDoc() const { return app->getDoc(); }
     QTabWidget *getToolbarTab() const {return toolbarTab;}
 
     /** return current KWrite class */
@@ -78,7 +72,7 @@ class QuantaView : public QWidget
 	  /** initialise tags menu */
 	  void initMenu();
 
-      void initActions();
+     void initActions();
 
 	  void insertTag( const char *tag);
 	 	
@@ -172,14 +166,11 @@ class QuantaView : public QWidget
     /** emitted when a file from the template view is dropped on the view */
     void dragInsert(QDropEvent *);
 	
-  private:
-  	/** Quanta classes */
-  	QuantaApp *app;
-  	QuantaDoc *doc;
-  	
-    QTabWidget *toolbarTab;
+  private:  	
+    QuantaDoc *doc;
 
-  	QTabWidget   *writeTab;
+    QTabWidget *toolbarTab;
+  	QTabWidget *writeTab;
 
     /** collum of cursor position */
     int column;

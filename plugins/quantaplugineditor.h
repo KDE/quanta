@@ -35,7 +35,6 @@
 
 /* FORWARD DECLARATIONS */
 class QWidget;
-class QuantaApp;
 
 class QuantaPluginEditor : public PluginEditor
 {
@@ -57,11 +56,9 @@ public slots:
   void removePlugin();
   void configurePlugin();
   void refreshPlugins();
-  void setApp(QuantaApp *);
 protected slots:
   void accept();
 protected:
- QuantaApp *m_app;
   QDict<QuantaPlugin> m_plugins;
 };
 

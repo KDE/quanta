@@ -39,7 +39,7 @@
 
 QConfig qConfig; //holds the main configuration settings
 
-QuantaApp *QuantaCommon::quantaApp;
+extern QuantaApp *quantaApp;
 
 QDict<DTDStruct> *dtds; //holds all the known tags with attributes for each DTD.
 QRegExp scriptBeginRx;

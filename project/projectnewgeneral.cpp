@@ -3,7 +3,7 @@
                              -------------------
     begin                : Fri Oct 27 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
-    								  (C)	 2001 by Andras Mantia
+    								       (C) 2001,2002 by Andras Mantia
     email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com
  ***************************************************************************/
 
@@ -28,7 +28,11 @@
 #include <kfiledialog.h>
 #include <kiconloader.h>
 #include <klocale.h>
+#include <kurl.h>
+
+//app includes
 #include "projectnewgeneral.h"
+#include "../quantacommon.h"
 
 ProjectNewGeneral::ProjectNewGeneral(QWidget *parent, const char *name )
 	: ProjectNewGeneralS(parent,name)
@@ -87,7 +91,9 @@ void ProjectNewGeneral::slotChangeNames( const QString &text )
 	linePrjFile->setText( fname+".webprj" );
 	linePrjDir ->setText( QDir::homeDirPath()+"/"+fname );
 
-	emit setBasePath(linePrjDir->text());
+  KURL url;
+  QuantaCommon::setUrl( url, linePrjDir->text());
+	emit setBaseURL(url);
 }
 
 QString ProjectNewGeneral::type()

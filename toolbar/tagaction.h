@@ -41,7 +41,7 @@ public:
     /**
      * Create an insert from dom element.
      */
-    TagAction( QDomElement *element, QuantaView *view, KActionCollection* );
+    TagAction( QDomElement *element);
 
     virtual ~TagAction();
     
@@ -63,7 +63,7 @@ private:
     QString scriptErrorDest;
   
     QDomElement tag;
-    QuantaView *view_;
+    QuantaView *m_view;
 };
 
 

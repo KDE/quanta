@@ -30,7 +30,6 @@
 /* OTHER INCLUDES */
 #include "quantaplugin.h"
 
-class QuantaApp;
 
 /**Provides an interface to the installed plugins
   *@author Marc Britton
@@ -39,7 +38,7 @@ class QuantaPluginInterface : public QObject
 {
   Q_OBJECT
 public: 
-	QuantaPluginInterface(QuantaApp *);
+	QuantaPluginInterface();
 	~QuantaPluginInterface();
   /** Returns a list of the known types */
   static QStringList pluginTypes();
@@ -67,10 +66,7 @@ public:
   virtual QStringList searchPaths();
   /** Sets the search paths */
   virtual void setSearchPaths(QStringList);
-  /** Sets the app pointer, to pass to plugins */
-  void setApp(QuantaApp *);
 protected:
-  QuantaApp *m_app;    
   QDict<QuantaPlugin> m_plugins;
   QStringList m_pluginNames;
 };

@@ -21,8 +21,6 @@
 
 #include <kuniqueapplication.h>
 
-class QuantaApp;
-
 class KSplash : public QFrame
 {
   Q_OBJECT
@@ -42,7 +40,6 @@ class KQApplicationPrivate
   protected:
     void init();
    
-    QuantaApp *quanta;
     KSplash *splash;
 };
 

@@ -60,7 +60,7 @@
             </widget>
             <widget class="QLabel" row="1" column="0">
                 <property name="name">
-                    <cstring>TextLabel1_2</cstring>
+                    <cstring>textLabel</cstring>
                 </property>
                 <property name="text">
                     <string>Current DTD:</string>
@@ -68,7 +68,7 @@
             </widget>
             <widget class="QLabel" row="0" column="0">
                 <property name="name">
-                    <cstring>TextLabel1</cstring>
+                    <cstring>comboLabel</cstring>
                 </property>
                 <property name="text">
                     <string>Select DTD:</string>

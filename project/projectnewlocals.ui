@@ -8,7 +8,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>500</width>
+            <width>530</width>
             <height>410</height>
         </rect>
     </property>
@@ -22,13 +22,13 @@
     </property>
     <property name="minimumSize">
         <size>
-            <width>500</width>
+            <width>530</width>
             <height>410</height>
         </size>
     </property>
     <property name="maximumSize">
         <size>
-            <width>500</width>
+            <width>530</width>
             <height>410</height>
         </size>
     </property>
@@ -85,14 +85,14 @@
     </widget>
     <widget class="QLayoutWidget">
         <property name="name">
-            <cstring>Layout17</cstring>
+            <cstring>Layout28</cstring>
         </property>
         <property name="geometry">
             <rect>
                 <x>130</x>
                 <y>5</y>
-                <width>365</width>
-                <height>148</height>
+                <width>390</width>
+                <height>360</height>
             </rect>
         </property>
         <grid>
@@ -105,135 +105,135 @@
             <property name="spacing">
                 <number>6</number>
             </property>
-            <widget class="QCheckBox" row="0" column="0">
+            <widget class="QListView" row="2" column="0">
+                <column>
+                    <property name="text">
+                        <string>Name</string>
+                    </property>
+                    <property name="clickable">
+                        <bool>true</bool>
+                    </property>
+                    <property name="resizeable">
+                        <bool>true</bool>
+                    </property>
+                </column>
                 <property name="name">
-                    <cstring>checkInsert</cstring>
+                    <cstring>listFiles</cstring>
+                </property>
+            </widget>
+            <widget class="QLayoutWidget" row="0" column="0">
+                <property name="name">
+                    <cstring>Layout17</cstring>
+                </property>
+                <grid>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <property name="margin">
+                        <number>0</number>
+                    </property>
+                    <property name="spacing">
+                        <number>6</number>
+                    </property>
+                    <widget class="QCheckBox" row="0" column="0">
+                        <property name="name">
+                            <cstring>checkInsert</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Insert files from</string>
+                        </property>
+                    </widget>
+                    <widget class="QLineEdit" row="4" column="0">
+                        <property name="name">
+                            <cstring>mask</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="3" column="0">
+                        <property name="name">
+                            <cstring>checkInsertWithMask</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Insert files with the specific file mask</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="1" column="0">
+                        <property name="name">
+                            <cstring>checkInsertWeb</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Insert only web files and images</string>
+                        </property>
+                    </widget>
+                    <widget class="QLineEdit" row="2" column="0">
+                        <property name="name">
+                            <cstring>webmask</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                    </widget>
+                </grid>
+            </widget>
+            <widget class="QLabel" row="1" column="0">
+                <property name="name">
+                    <cstring>TextLabel8</cstring>
                 </property>
                 <property name="text">
-                    <string>Insert files from</string>
-                </property>
-            </widget>
-            <widget class="QLineEdit" row="4" column="0">
-                <property name="name">
-                    <cstring>mask</cstring>
-                </property>
-                <property name="enabled">
-                    <bool>false</bool>
-                </property>
-            </widget>
-            <widget class="QCheckBox" row="3" column="0">
-                <property name="name">
-                    <cstring>checkInsertWithMask</cstring>
-                </property>
-                <property name="text">
-                    <string>Insert files with the specific file mask</string>
-                </property>
-            </widget>
-            <widget class="QCheckBox" row="1" column="0">
-                <property name="name">
-                    <cstring>checkInsertWeb</cstring>
-                </property>
-                <property name="text">
-                    <string>Insert only web files and images</string>
-                </property>
-            </widget>
-            <widget class="QLineEdit" row="2" column="0">
-                <property name="name">
-                    <cstring>webmask</cstring>
-                </property>
-                <property name="enabled">
-                    <bool>false</bool>
+                    <string>Included files:</string>
                 </property>
             </widget>
         </grid>
     </widget>
-    <widget class="QLabel">
+    <widget class="QLayoutWidget">
         <property name="name">
-            <cstring>TextLabel8</cstring>
+            <cstring>Layout26</cstring>
         </property>
         <property name="geometry">
             <rect>
-                <x>135</x>
-                <y>160</y>
-                <width>282</width>
-                <height>16</height>
+                <x>160</x>
+                <y>375</y>
+                <width>325</width>
+                <height>29</height>
             </rect>
         </property>
-        <property name="text">
-            <string>Included files:</string>
-        </property>
-    </widget>
-    <widget class="QListView">
-        <column>
-            <property name="text">
-                <string>Name</string>
+        <grid>
+            <property name="name">
+                <cstring>unnamed</cstring>
             </property>
-            <property name="clickable">
-                <bool>true</bool>
+            <property name="margin">
+                <number>0</number>
             </property>
-            <property name="resizeable">
-                <bool>true</bool>
+            <property name="spacing">
+                <number>6</number>
             </property>
-        </column>
-        <property name="name">
-            <cstring>listFiles</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>130</x>
-                <y>180</y>
-                <width>365</width>
-                <height>195</height>
-            </rect>
-        </property>
-    </widget>
-    <widget class="QPushButton">
-        <property name="name">
-            <cstring>addFiles</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>150</x>
-                <y>380</y>
-                <width>95</width>
-                <height>26</height>
-            </rect>
-        </property>
-        <property name="text">
-            <string>&amp;Add Files...</string>
-        </property>
-    </widget>
-    <widget class="QPushButton">
-        <property name="name">
-            <cstring>addFolder</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>270</x>
-                <y>380</y>
-                <width>95</width>
-                <height>26</height>
-            </rect>
-        </property>
-        <property name="text">
-            <string>A&amp;dd Folder...</string>
-        </property>
-    </widget>
-    <widget class="QPushButton">
-        <property name="name">
-            <cstring>clearList</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>390</x>
-                <y>380</y>
-                <width>95</width>
-                <height>26</height>
-            </rect>
-        </property>
-        <property name="text">
-            <string>&amp;Clear List</string>
-        </property>
+            <widget class="QPushButton" row="0" column="2">
+                <property name="name">
+                    <cstring>clearList</cstring>
+                </property>
+                <property name="text">
+                    <string>&amp;Clear List</string>
+                </property>
+            </widget>
+            <widget class="QPushButton" row="0" column="0">
+                <property name="name">
+                    <cstring>addFiles</cstring>
+                </property>
+                <property name="text">
+                    <string>&amp;Add Files...</string>
+                </property>
+            </widget>
+            <widget class="QPushButton" row="0" column="1">
+                <property name="name">
+                    <cstring>addFolder</cstring>
+                </property>
+                <property name="text">
+                    <string>A&amp;dd Folder...</string>
+                </property>
+            </widget>
+        </grid>
     </widget>
 </widget>
 <connections>

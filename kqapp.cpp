@@ -27,7 +27,8 @@
 #include "quanta.h"
 #include "kqapp.h"
 
-//QuantaApp *quanta = 0L;
+
+QuantaApp *quantaApp = 0L; //global pointer to the main application object
 
 KSplash::KSplash()
  : QFrame( 0L, QString("Quanta")+VERSION,
@@ -64,7 +65,7 @@ KQApplication::KQApplication()
    }
    else
    {
-     quanta = new QuantaApp();
+     quantaApp = new QuantaApp();
      QTimer::singleShot(10, this, SLOT( slotInit()));
    }
 }
@@ -102,7 +103,7 @@ int KQUniqueApplication::newInstance()
     splash = 0L;
     if (args->isSet("logo")) splash = new KSplash();
 
-    quanta = new QuantaApp();
+    quantaApp = new QuantaApp();
     QTimer::singleShot(10, this, SLOT( slotInit()));
   }
 
@@ -117,10 +118,10 @@ void KQUniqueApplication::slotInit()
 void KQApplicationPrivate::init()
 {
   KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-  if (quanta->quantaStarted)
+  if (quantaApp->quantaStarted)
   {
-    quanta->initQuanta();
-    quanta->show();
+    quantaApp->initQuanta();
+    quantaApp->show();
 
     QString initialProject;
     QStringList initialFiles;
@@ -134,12 +135,12 @@ void KQApplicationPrivate::init()
         initialFiles += arg;
     }
 
-    quanta->loadInitialProject(initialProject);
+    quantaApp->loadInitialProject(initialProject);
 
     for(QStringList::Iterator it = initialFiles.begin();it != initialFiles.end();++it)
-      quanta->slotFileOpen(KURL(*it), qConfig.defaultEncoding);  // load initial files
+      quantaApp->slotFileOpen(KURL(*it), qConfig.defaultEncoding);  // load initial files
 
-    quanta->openLastFiles();
+    quantaApp->openLastFiles();
   }
   args->clear();
   if (splash) delete splash;

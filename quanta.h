@@ -134,6 +134,8 @@ public:
   /** Returns the project's base URL if it exists, the HOME dir if there is no project and no opened document (or the current opened document was not saved yet), and the base URL of the opened document, if it is saved somewhere. */
   KURL projectBaseURL();
 
+  KURL::List userToolbarFiles() {return m_userToolbarFileList;}
+
 public slots:
 
   void slotFileNew ();
@@ -405,7 +407,8 @@ private:
     *saveprjAction, *closeprjAction, *insertFileAction, *insertDirAction,
     *newPrjAction, *openPrjAction,  *uploadProjectAction,  *rescanPrjDirAction,
     *projectOptionAction, *saveAsLocalTemplateAction, *saveAsProjectTemplateAction,
-    *saveSelectionAsLocalTemplateAction, *saveSelectionAsProjectTemplateAction;
+    *saveSelectionAsLocalTemplateAction, *saveSelectionAsProjectTemplateAction,
+    *openPrjViewAction, *savePrjViewAction, *saveAsPrjViewAction;
 
   KAction *editUndo, *editRedo, *bookmarkToggle, *bookmarkClear;
 
@@ -425,6 +428,7 @@ private:
   QDict<QPopupMenu> toolbarMenuList;
   QDict<QString> toolbarNames; //list of toolbar names according to their filename
   QDict<KURL> toolbarURLs; //list of toolbar filenames according to their name
+  KURL::List m_userToolbarFileList; //contains the filenames of user (non DTD) toolbars
 
   uint userToolbarsCount;
   /**  */

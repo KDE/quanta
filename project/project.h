@@ -103,6 +103,12 @@ public slots:
   void slotGetMessages(QString);
   
   void slotRescanPrjDir();
+  /** Saves a project view (group of files & toolbars) asking for a name if askForName==true. */
+  void slotSaveAsProjectView(bool askForName = true);
+  /** Opens a project view (toolbars & files). */
+  void slotOpenProjectView();
+  /** Saves a project view (group of files & toolbars) without asking for a name. */
+  void slotSaveProjectView();
   
 signals:
 	
@@ -124,7 +130,7 @@ signals:
   void saveAllFiles();
   void newStatus();
   void statusMsg(QString);
-  void checkOpenAction(bool);
+//  void checkOpenAction(bool);
   /** No descriptions */
   void removeFromProject(int);
   /** No descriptions */
@@ -159,6 +165,7 @@ public:
 private:
 	QWizard *wiz;
 	QWidgetStack *stack;
+  QString currentProjectView;
 	
 	ProjectNewGeneral		*png;
 	ProjectNewLocal		  *pnl;
@@ -178,6 +185,8 @@ protected: // Protected attributes
   KURL oldURL;
   /** The new name of the url (used when renaming an url). */
   KURL newURL;
+
+  void openCurrentView();
 };
 
 #endif

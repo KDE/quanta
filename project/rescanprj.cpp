@@ -3,6 +3,7 @@
 // qt includes
 #include <qlistview.h>
 #include <qpushbutton.h>
+#include <qlayout.h>
 
 // kde includes
 #include <kurl.h>
@@ -12,8 +13,6 @@
 #include "rescanprj.h"
 #include "../qextfileinfo.h"
 #include "../quantacommon.h"
-
-//TODO Redo with KURLs and KDIRLister.
 
 RescanPrj::RescanPrj(KURL::List p_prjFileList, const KURL& p_baseURL, QWidget *parent, const char *name, bool modal )
 	: RescanPrjDir(parent,name,modal)
@@ -87,9 +86,6 @@ void RescanPrj::addEntries(KIO::Job *,const KIO::UDSEntryList &list)
 	    this->list.append(u);
 
   	  QString s = QString("%1").arg( size );
-
-      
-//  	  new QListViewItem(listView, name, s);
       listView->addItem(name, s, "");
     }
   }
@@ -101,6 +97,7 @@ void RescanPrj::resizeEvent ( QResizeEvent *t )
 {
   RescanPrjDir::resizeEvent(t);
 //  listView->setColumnWidth(0,listView->width()-listView->columnWidth(1)-20);
+//  MainLayout->setGeometry(childrenRect());
 }
 
 void RescanPrj::slotSelect()

@@ -70,16 +70,15 @@ void replaceDomItem( QDomElement &el, QString name, QString value )
   }
 
 
-ActionEditDlg::ActionEditDlg( QuantaApp *a, QWidget* parent, const char* name, bool modal, WFlags fl )
+ActionEditDlg::ActionEditDlg( QWidget* parent, const char* name, bool modal, WFlags fl )
     :ActionEditDlgS( parent, name, modal, fl ),
-     action(0),
-     app(a)
+     action(0)
 {
-   scriptPath->setBaseURL(app->projectBaseURL());
+   scriptPath->setBaseURL(quantaApp->projectBaseURL());
    scriptPath->setReturnAbsolutePath(true);
    actionIcon->setIconType(KIcon::User,KIcon::Any,true);
 
-   QValueList<KAction*> actions = app->actionCollection()->actions();
+   QValueList<KAction*> actions = quantaApp->actionCollection()->actions();
 
    QValueList<KAction*>::Iterator it;
    for( it = actions.begin(); it != actions.end(); ++it ) {
@@ -89,7 +88,7 @@ ActionEditDlg::ActionEditDlg( QuantaApp *a, QWidget* parent, const char* name, b
    }
    actionsList->sort();
 
-  QTabWidget *tb = a->getView()->getToolbarTab();
+  QTabWidget *tb = quantaApp->getView()->getToolbarTab();
   for (int i = 0; i < tb->count(); i++)
   {
     toolbarCombo->insertItem(tb->label(i));
@@ -108,16 +107,16 @@ void ActionEditDlg::deleteAction()
    if ( KMessageBox::questionYesNo(this, i18n("Removing the action removes all the references to it.\nAre you sure you want to remove the current action ?")) == KMessageBox::Yes )
    {
 //remove all references to this action
-     app->actions()->firstChild().removeChild( action->data() );
+     quantaApp->actions()->firstChild().removeChild( action->data() );
      QString actionText = action->name();
 
-     QPtrList<KXMLGUIClient> guiClients = app->factory()->clients();
+     QPtrList<KXMLGUIClient> guiClients = quantaApp->factory()->clients();
      KXMLGUIClient *guiClient = 0;
      QDomNodeList nodeList;
      for (uint i = 0; i < guiClients.count(); i++)
      {
       guiClient = guiClients.at(i);
-      app->factory()->removeClient(guiClient);
+      quantaApp->factory()->removeClient(guiClient);
       nodeList = guiClient->domDocument().elementsByTagName("Action");
       for (uint j = 0; j < nodeList.count(); j++)
       {
@@ -131,9 +130,9 @@ void ActionEditDlg::deleteAction()
       }
         guiClient ->setXMLGUIBuildDocument( QDomDocument() );
         guiClient->reloadXML();
-        app->guiFactory()->addClient(guiClient);
+        quantaApp->guiFactory()->addClient(guiClient);
      }
-//       app->actionCollection()->remove(action);
+//       quantaApp->actionCollection()->remove(action);
        action = 0;
        actionsList->removeItem( actionsList->currentItem() );
    }
@@ -143,12 +142,12 @@ void ActionEditDlg::deleteAction()
 void ActionEditDlg::newAction()
 {
    qDebug("new action");
-   QDomElement el = app->actions()->createElement("action");
+   QDomElement el = quantaApp->actions()->createElement("action");
    el.setAttribute( "name", "user_"+KApplication::randomString(10) );
    el.setAttribute( "icon", "ball" );
-   app->actions()->firstChild().appendChild(el);
+   quantaApp->actions()->firstChild().appendChild(el);
 
-   TagAction *a = new TagAction(&el, app->view, app->actionCollection() );
+   TagAction *a = new TagAction(&el);
    ActionListItem *it = new ActionListItem(a);
 
    actionsList->insertItem( it );
@@ -156,7 +155,7 @@ void ActionEditDlg::newAction()
    actionsList->setCurrentItem( it );
    actionsList->centerCurrentItem( );
 
-   app->actionCollection()->insert( a );
+   quantaApp->actionCollection()->insert( a );
 
 }
 
@@ -304,11 +303,11 @@ void ActionEditDlg::saveAction( TagAction *a )
 
   if (placeOnToolbar->isChecked())
   {
-    QPtrList<KXMLGUIClient> guiClients = app->factory()->clients();
+    QPtrList<KXMLGUIClient> guiClients = quantaApp->factory()->clients();
     QDomNodeList nodeList;
     QDomNode foundNode;
     QString tabName = toolbarCombo->currentText().lower();
-    QPopupMenu *menu = app->toolbarMenu(tabName);
+    QPopupMenu *menu = quantaApp->toolbarMenu(tabName);
     a->plug(menu);
 
     KXMLGUIClient *guiClient = 0;
@@ -341,16 +340,16 @@ void ActionEditDlg::saveAction( TagAction *a )
       for (i = 0; i < guiClients.count(); i++)
       {
         guiClient = guiClients.at(i);
-        app->guiFactory()->removeClient(guiClient);
+        quantaApp->guiFactory()->removeClient(guiClient);
         guiClient ->setXMLGUIBuildDocument( QDomDocument() );
         guiClient->reloadXML();
-        app->guiFactory()->addClient(guiClient);
+        quantaApp->guiFactory()->addClient(guiClient);
       }
     }
 
-    app->menuBar()->removeItem(app->tagsMenuId());
-    int id = app->menuBar()->insertItem(i18n("&Tags"),app->tagsMenu(),-1,5);
-    app->setTagsMenuId(id);
+    quantaApp->menuBar()->removeItem(quantaApp->tagsMenuId());
+    int id = quantaApp->menuBar()->insertItem(i18n("&Tags"),quantaApp->tagsMenu(),-1,5);
+    quantaApp->setTagsMenuId(id);
   }
 
 }

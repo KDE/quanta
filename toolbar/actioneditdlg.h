@@ -8,7 +8,6 @@
 #include "actioneditdlgs.h"
 #include <qdom.h>
 
-class QuantaApp;
 class TagAction;
 
 /** configure actions
@@ -20,7 +19,7 @@ class ActionEditDlg : public ActionEditDlgS {
   
 public:
   
-  ActionEditDlg( QuantaApp *a, QWidget* parent = 0, const char* name = 0, bool modal = true, WFlags fl = 0 );
+  ActionEditDlg( QWidget* parent = 0, const char* name = 0, bool modal = true, WFlags fl = 0 );
   ~ActionEditDlg();
   
 public slots:
@@ -30,7 +29,6 @@ public slots:
     virtual void accept() { saveAction(action); ActionEditDlgS::accept(); }
 protected:
     TagAction *action;
-    QuantaApp *app;
     
     void loadAction( TagAction *);
     void saveAction( TagAction *);

@@ -35,9 +35,10 @@
 #include "../messages/messageoutput.h"
 #include "../quantadoc.h"
 #include "../document.h"
+#include "../resource.h"
 
-QuantaCmdPlugin::QuantaCmdPlugin(QuantaApp *a_app)
-  : QuantaPlugin(), m_firstOutput(FALSE), m_process(0), m_app(a_app)
+QuantaCmdPlugin::QuantaCmdPlugin()
+  : QuantaPlugin(), m_firstOutput(FALSE), m_process(0)
 {
 }
 
@@ -75,9 +76,9 @@ bool QuantaCmdPlugin::load()
   QString args = arguments();
 
   /* TODO
-  QString text = m_app->getDoc()->write()->editIf->text();
+  QString text = quantaApp->getDoc()->write()->editIf->text();
   args.replace(QRegExp("document"), text);
-  text = m_app->getDoc()->write()->selectionIf->selection();
+  text = quantaApp->getDoc()->write()->selectionIf->selection();
   args.replace(QRegExp("selection"), text); */
 
   QString loc = location(); // locate first if location not specified
@@ -102,12 +103,12 @@ bool QuantaCmdPlugin::load()
   }
   else if(ow == "Message Window")
   {
-    *m_process << loc << args;    
+    *m_process << loc << args;
   }
   else
     qWarning("Unknown output window %s", ow.latin1());
 
-  return TRUE;    
+  return TRUE;
 }
 
 bool QuantaCmdPlugin::run()
@@ -129,7 +130,7 @@ bool QuantaCmdPlugin::run()
   else
     return FALSE;
 
-  setRunning(TRUE);   
+  setRunning(TRUE);
   return TRUE;
 }
 
@@ -145,9 +146,9 @@ void QuantaCmdPlugin::writeOutput(KProcess *, char *a_buffer, int a_len)
   QString ow = outputWindow();
   if(ow == "Message Window")
   {
-    if(m_app)
+    if(quantaApp)
     {
-      m_app->getMessages()->showMessage(text);
+      quantaApp->getMessages()->showMessage(text);
     }
   }
   else if(ow == "Konsole")

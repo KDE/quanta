@@ -3,6 +3,7 @@
                              -------------------
     begin                : Fri Oct 27 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
+    								       (C) 2001, 2002 by Andras Mantia
     email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com
  ***************************************************************************/
 
@@ -24,6 +25,8 @@
   *@author Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
   */
 
+class KURL;  
+
 class ProjectNewGeneral : public ProjectNewGeneralS  {
    Q_OBJECT
 public: 
@@ -44,7 +47,7 @@ public slots:
 
 		
 signals:
-  void setBasePath(QString);
+  void setBaseURL(const KURL&);
 	void enableNextButton(QWidget *, bool);
 };
 

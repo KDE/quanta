@@ -35,9 +35,10 @@
 #include "quantaplugin.h"
 #include "../quanta.h"
 #include "../quantacommon.h"
+#include "../resource.h"
 
-QuantaKPartPlugin::QuantaKPartPlugin(QuantaApp *a_app)
-  : QuantaPlugin(), m_app(a_app), m_part(0)
+QuantaKPartPlugin::QuantaKPartPlugin()
+  : QuantaPlugin(), m_part(0)
 {
 }
 
@@ -72,7 +73,7 @@ bool QuantaKPartPlugin::load()
   QString ow = outputWindow();
   if(ow == "Editor View")
   {
-    QWidgetStack *stack = m_app->widgetStackOfHtmlPart();
+    QWidgetStack *stack = quantaApp->widgetStackOfHtmlPart();
 
     if(loc.isEmpty())
     {
@@ -80,7 +81,7 @@ bool QuantaKPartPlugin::load()
       return FALSE;
     }
 
-    QFileInfo partInfo(loc);    
+    QFileInfo partInfo(loc);
     m_part = KParts::ComponentFactory::createPartInstanceFromLibrary<KParts::ReadOnlyPart>(partInfo.baseName().latin1(), stack, 0, stack, 0, QStringList(arguments()));
     if(!m_part)
     {
@@ -105,8 +106,8 @@ bool QuantaKPartPlugin::run()
 
   if(isLoaded())
   {
-    m_app->guiFactory()->addClient(m_part);
-    QWidgetStack *stack = m_app->widgetStackOfHtmlPart();
+    quantaApp->guiFactory()->addClient(m_part);
+    QWidgetStack *stack = quantaApp->widgetStackOfHtmlPart();
     stack->raiseWidget(m_part->widget());
     m_part->widget()->show();
     setRunning(TRUE);
@@ -120,8 +121,8 @@ bool QuantaKPartPlugin::unload()
   if(!isLoaded())
     return FALSE;
 
-  m_app->guiFactory()->removeClient(m_part);
-  QWidgetStack *stack = m_app->widgetStackOfHtmlPart();
+  quantaApp->guiFactory()->removeClient(m_part);
+  QWidgetStack *stack = quantaApp->widgetStackOfHtmlPart();
   stack->removeWidget(m_part->widget());
   delete m_part;
   m_part = 0;

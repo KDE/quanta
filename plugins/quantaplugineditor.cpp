@@ -40,9 +40,10 @@
 #include "quantapluginconfig.h"
 #include "quantaplugininterface.h"
 #include "../quanta.h"
+#include "../resource.h"
 
 QuantaPluginEditor::QuantaPluginEditor(QWidget *a_parent, const char *a_name)
-  : PluginEditor(a_parent, a_name), m_app(0)
+  : PluginEditor(a_parent, a_name)
 {
  // m_plugins.setAutoDelete(TRUE);
 
@@ -91,9 +92,9 @@ void QuantaPluginEditor::addPlugin()
     QuantaPlugin *newPlugin = 0;
     QString pluginType = configDlg->pluginType->currentText();
     if(pluginType == "KPart")
-      newPlugin = new QuantaKPartPlugin(m_app);
+      newPlugin = new QuantaKPartPlugin();
     else if(pluginType == "Command Line")
-      newPlugin = new QuantaCmdPlugin(m_app);
+      newPlugin = new QuantaCmdPlugin();
     else
     {
       qWarning("Tried to create unknown plugin type %s", pluginType.latin1());
@@ -213,11 +214,6 @@ void QuantaPluginEditor::setPlugins(QDict<QuantaPlugin> a_plugins)
   m_plugins = a_plugins;
   
   emit pluginsChanged();
-}
-
-void QuantaPluginEditor::setApp(QuantaApp *a_app)
-{
-  m_app = a_app;
 }
 
 PluginEditorItem::PluginEditorItem(QListView *a_parent)

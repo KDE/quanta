@@ -50,18 +50,16 @@
 #include <kaction.h>
 #include "toolbar/tagaction.h"
 
-QuantaView::QuantaView( QuantaApp *app, QWidget *parent, const char *name )
+QuantaView::QuantaView(QWidget *parent, const char *name )
 	: QWidget( parent, name)
 {
-	this->app = app;
-	this->doc = app->doc;
-	
+  doc = quantaApp->doc;
 	initActions();
 	
   writeTab = new QTabWidget(this);
   writeTab ->setTabPosition( QTabWidget::Bottom );
-  connect( writeTab,	SIGNAL(currentChanged(QWidget*)), app, SLOT(slotUpdateStatus(QWidget*)));
-  connect( writeTab,	SIGNAL(selected(const QString &)), app, SLOT(reparse()));
+  connect( writeTab,	SIGNAL(currentChanged(QWidget*)), quantaApp, SLOT(slotUpdateStatus(QWidget*)));
+  connect( writeTab,	SIGNAL(selected(const QString &)), quantaApp, SLOT(reparse()));
   writeTab ->setFocusPolicy( QWidget::NoFocus );
 
   toolbarTab = new QTabWidget(this);
@@ -89,7 +87,7 @@ QuantaView::QuantaView( QuantaApp *app, QWidget *parent, const char *name )
 
   oldWrite = 0L;
 
-  connect(this, SIGNAL(dragInsert(QDropEvent *)), getApp()->tTab, SLOT(slotDragInsert(QDropEvent *)));
+  connect(this, SIGNAL(dragInsert(QDropEvent *)), quantaApp->tTab, SLOT(slotDragInsert(QDropEvent *)));
   setAcceptDrops(TRUE); // [MB02] Accept drops on the view
 }
 
@@ -133,7 +131,7 @@ Document* QuantaView::removeWrite()
 
 void QuantaView::initActions()
 {
-    KActionCollection *actionCollection = app->actionCollection();
+    KActionCollection *actionCollection = quantaApp->actionCollection();
 
     (void) new KAction( i18n( "Quick Start..." ), "quick_start", 0,
                         this, SLOT( slotTagQuickStart() ),
@@ -147,23 +145,23 @@ void QuantaView::initActions()
                         this, SLOT( slotTagQuickList() ),
                         actionCollection, "tag_quick_list" );
                 
-    app->m_actions = new QDomDocument();
+    quantaApp->m_actions = new QDomDocument();
     QFile f( locate("appdata","actions.rc") );
     if ( !f.open( IO_ReadOnly ) )
       return;
-    if ( !app->actions()->setContent( &f ) ) {
+    if ( !quantaApp->actions()->setContent( &f ) ) {
       f.close();
       return;
     }
     f.close();
 
-    QDomElement docElem = app->actions()->documentElement();
+    QDomElement docElem = quantaApp->actions()->documentElement();
 
     QDomNode n = docElem.firstChild();
     while( !n.isNull() ) {
        QDomElement e = n.toElement(); // try to convert the node to an element.
        if( !e.isNull() ) { // the node was really an element.
-           new TagAction( &e, this, actionCollection); 
+           new TagAction( &e ); 
        }
        n = n.nextSibling();
     }

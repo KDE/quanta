@@ -26,6 +26,7 @@
 
 class KDirWatch;
 class KProgress;
+class QuantaApp;
 
 extern QConfig qConfig;
 
@@ -47,5 +48,6 @@ extern QString fileMaskImage;
 extern const QString toolbarExtension;
 
 extern KProgress *progressBar;
+extern QuantaApp *quantaApp;
 
 #endif // RESOURCE_H

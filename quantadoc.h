@@ -47,7 +47,7 @@ friend class QuantaView;
 
 public:
     
-  QuantaDoc( QuantaApp *app, QWidget *parent, const char *name=0);
+  QuantaDoc( QWidget *parent, const char *name=0);
   ~QuantaDoc();
 
   void openDocument (const KURL&, QString encoding = QString::null);
@@ -101,7 +101,6 @@ signals:
   void title(QString);
 
 private:
-  	QuantaApp *app;
     /** list with documents( kwrites ) */
     QDict<Document> *m_docList;
     /** manager for bookmarks */

@@ -34,8 +34,7 @@
 #include "../resource.h"
 #include "../quanta.h"
 
-QuantaPluginInterface::QuantaPluginInterface(QuantaApp *a_app)
-  : m_app(a_app)
+QuantaPluginInterface::QuantaPluginInterface()
 {
  // m_plugins.setAutoDelete(TRUE);
   
@@ -82,7 +81,7 @@ void QuantaPluginInterface::readConfig()
       QString stdName = config->readEntry("Standard Name");
       if (stdName == "cervisia_kpart")
       {
-        newPlugin = new CervisiaPlugin(m_app);
+        newPlugin = new CervisiaPlugin();
       }
       if (newPlugin)
       {
@@ -91,9 +90,9 @@ void QuantaPluginInterface::readConfig()
     } else
     {
       if(pluginType == "KPart")
-        newPlugin = new QuantaKPartPlugin(m_app);
+        newPlugin = new QuantaKPartPlugin();
       else if(pluginType == "Command Line")
-        newPlugin = new QuantaCmdPlugin(m_app);
+        newPlugin = new QuantaCmdPlugin();
     }
     if (!newPlugin)
     {
@@ -109,7 +108,7 @@ void QuantaPluginInterface::readConfig()
     newPlugin->setOutputWindow(config->readEntry("OutputWindow"));
 
     m_plugins.insert(newPlugin->pluginName(), newPlugin);
-  } 
+  }
   delete config;
 }
 
@@ -120,14 +119,14 @@ void QuantaPluginInterface::writeConfig()
   KConfig *config = new KConfig(locateLocal("appdata", "plugins.rc"));
 
   QStringList names = pluginNames();
-  
+
   config->setGroup("General");
   config->writeEntry("Plugins", names);
   config->writeEntry("SearchPaths", searchPaths());
 
   for(QStringList::Iterator it = names.begin();it != names.end(); ++it)
   {
-    config->setGroup(*it);    
+    config->setGroup(*it);
 
     QuantaPlugin *curPlugin = m_plugins[*it];
     if(curPlugin)
@@ -139,7 +138,7 @@ void QuantaPluginInterface::writeConfig()
       config->writeEntry("OutputWindow", curPlugin->outputWindow());
       config->writeEntry("Standard", curPlugin->isStandard());
       if (curPlugin->isStandard()) config->writeEntry("Standard Name", curPlugin->standardName());
-    }    
+    }
   }
   config->sync();
   delete config;
@@ -163,7 +162,7 @@ bool QuantaPluginInterface::pluginAvailable(const QString &a_name)
   QuantaPlugin *availPlugin = m_plugins.find(a_name);
   if(availPlugin && QuantaPlugin::validatePlugin(availPlugin))
     return TRUE;
-    
+
   return FALSE;
 }
 
@@ -182,7 +181,7 @@ QStringList QuantaPluginInterface::pluginNames() const
   QDictIterator<QuantaPlugin> it(m_plugins);
   for(;it.current();++it)
   {
-    names << (*it)->pluginName();    
+    names << (*it)->pluginName();
   }
   return names;
 }
@@ -229,10 +228,5 @@ QStringList QuantaPluginInterface::outputWindows(const QString &a_type)
 QuantaPlugin *QuantaPluginInterface::plugin(const QString &a_name)
 {
   return m_plugins[a_name];
-}
-
-void QuantaPluginInterface::setApp(QuantaApp *a_app)
-{
-  m_app = a_app;
 }
 

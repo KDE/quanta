@@ -93,18 +93,22 @@
     <Separator />
   </Menu>
 
-  <Menu name="qproject" noMerge="1"><text>&amp;Project</text>
-      <Action name="new_project"/>
-      <Action name="open_project"/>
+  <Menu name="project" noMerge="1"><text>&amp;Project</text>
+      <Action name="project_new"/>
+      <Action name="project_open"/>
       <Action name="project_open_recent"/>
-      <Action name="save_project"/>
-      <Action name="close_project"/>
+      <Action name="project_save"/>
+      <Action name="project_close"/>
       <Separator/>
-      <Action name="insert_file"/>
-      <Action name="insert_directory"/>
-      <Action name="rescan_prjdir"/>
+      <Action name="project_view_open"/>
+      <Action name="project_view_save"/>
+      <Action name="project_view_save_as"/>
       <Separator/>
-      <Action name="upload_project"/>
+      <Action name="project_insert_file"/>
+      <Action name="project_insert_directory"/>
+      <Action name="project_rescan"/>
+      <Separator/>
+      <Action name="project_upload"/>
       <Action name="project_options"/>
     </Menu>
     

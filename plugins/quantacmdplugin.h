@@ -30,19 +30,17 @@
 
 class KProcess;
 
-class QuantaApp;
 class QWidget;
 
 class QuantaCmdPlugin : public QuantaPlugin
 {
   Q_OBJECT
 public: 
-	QuantaCmdPlugin(QuantaApp *);
+	QuantaCmdPlugin();
 	~QuantaCmdPlugin();
 protected:
   bool m_firstOutput;
   KProcess *m_process;
-  QuantaApp *m_app;
 public slots:
   virtual bool unload();
   virtual bool load();

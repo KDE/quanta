@@ -29,13 +29,12 @@
   */
 
 class QWidget;
-class QuantaApp;
 
 class QuantaKPartPlugin : public QuantaPlugin
 {
   Q_OBJECT
 public: 
-  QuantaKPartPlugin(QuantaApp *);
+  QuantaKPartPlugin();
   ~QuantaKPartPlugin();
 public slots:
   virtual bool load();
@@ -43,7 +42,6 @@ public slots:
   virtual bool unload();
   virtual bool isLoaded() const;
 protected:
-  QuantaApp *m_app;
   KParts::ReadOnlyPart *m_part;
 };
 
