@@ -303,18 +303,18 @@ void QuantaApp::initView()
   // create the main widget here that is managed by KTMainWindow's view-region and
   // connect the widget to your document to display document contents.
 
-  maindock = createDockWidget( i18n("Editor"), UserIcon("textarea"  ), 0L, i18n("Editor"));
-  bottdock = createDockWidget( i18n("Output"), UserIcon("output_win"), 0L, i18n("Output"));
+  maindock = createDockWidget( "Editor", UserIcon("textarea"  ), 0L, i18n("Editor"), 0L);
+  bottdock = createDockWidget( "Output", UserIcon("output_win"), 0L, i18n("Output"), 0L);
 
-  ftabdock = createDockWidget( i18n("Files"),  UserIcon("ftab"),     0L, "");
+  ftabdock = createDockWidget("Files", UserIcon("ftab"), 0L, ""/*i18n("Files")*/);
   ftabdock->setToolTipString(i18n("Files tree view"));
-  ptabdock = createDockWidget( i18n("Project"), UserIcon("ptab"),     0L, "");
+  ptabdock = createDockWidget("Project", UserIcon("ptab"), 0L, ""/*i18n("Project")*/);
   ptabdock->setToolTipString(i18n("Project tree view"));
-  ttabdock = createDockWidget( i18n("Templates"), UserIcon("ttab"),     0L, "");
+  ttabdock = createDockWidget("Templates", UserIcon("ttab"),     0L,"" /*i18n("Templates")*/);
   ttabdock->setToolTipString(i18n("Templates tree view"));
-  stabdock = createDockWidget( i18n("Struct"), BarIcon ("view_sidetree"),0L, "");
+  stabdock = createDockWidget("Struct", BarIcon ("view_sidetree"),0L,"" /*i18n("Struct")*/);
   stabdock->setToolTipString(i18n("Structure view (DOM tree)"));
-  dtabdock = createDockWidget( i18n("Docs"), BarIcon ("contents2"),    0L, "");
+  dtabdock = createDockWidget("Docs", BarIcon ("contents2"),    0L,"" /*i18n("Docs")*/);
   dtabdock->setToolTipString(i18n("Documentation"));
 
   QStringList topStrList;
@@ -519,7 +519,7 @@ void QuantaApp::saveOptions()
     fileRecent->saveEntries(config);
     config->writeEntry ("Enable Debugger", debuggerStyle!="None");
     config->writeEntry ("PHP Debugger style", debuggerStyle);
-    writeDockConfig();
+    writeDockConfig(config);
     saveMainWindowSettings(config);
     config->sync(); 
   }
@@ -599,7 +599,7 @@ void QuantaApp::readOptions()
   viewBorder->setChecked(qConfig.iconBar);
   viewLineNumbers->setChecked(qConfig.lineNumbers);
 
-  readDockConfig();
+  readDockConfig(config);
 
   showPreviewAction  ->setChecked( false );
   showMessagesAction ->setChecked( bottdock->parent() != 0L );
@@ -1154,12 +1154,11 @@ void QuantaApp::initActions()
     // File actions
     //
     KStdAction::openNew( this, SLOT( slotFileNew()  ), actionCollection());
-    KStdAction::open   ( this, SLOT( slotFileOpen() ), actionCollection());
+    KStdAction::open   ( this, SLOT( slotFileOpen() ), actionCollection(), "qfile_open");
     KStdAction::close  ( this, SLOT( slotFileClose()), actionCollection());
 
-    fileRecent =
-      KStdAction::openRecent(this, SLOT(slotFileOpenRecent(const KURL&)),
-                             actionCollection());
+    fileRecent =  KStdAction::openRecent(this, SLOT(slotFileOpenRecent(const KURL&)),
+                                         actionCollection(), "qfile_open_recent");
 
     (void) new KAction( i18n( "Close All" ), 0, this,
                         SLOT( slotFileCloseAll() ),

@@ -342,7 +342,7 @@ void ActionEditDlg::saveAction( TagAction *a )
       guiClient->actionCollection()->insert(a);
       KXMLGUIFactory::saveConfigFile(guiClient->domDocument(), guiClient->localXMLFile());
       //reload all the clients
-      for (i = 0; i < guiClients.count(); i++)
+      for (i = 1; i < guiClients.count(); i++)
       {
         guiClient = guiClients.at(i);
         quantaApp->guiFactory()->removeClient(guiClient);

@@ -48,7 +48,7 @@ bool CervisiaPlugin::run()
   if(isLoaded())
   {
     m_part->openURL(quantaApp->projectBaseURL());
-    quantaApp->factory()->addClient(m_part);
+    quantaApp->guiFactory()->addClient(m_part);
     QWidgetStack *stack = quantaApp->widgetStackOfHtmlPart();
     stack->raiseWidget(m_part->widget());
     m_part->widget()->show();

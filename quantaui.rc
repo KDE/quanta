@@ -4,8 +4,8 @@
 
     <Menu name="file" noMerge="1"><text>&amp;File</text>
       <Action name="file_new"/>    
-      <Action name="file_open"/>    
-      <Action name="file_open_recent"/>    
+      <Action name="qfile_open"/>    
+      <Action name="qfile_open_recent"/>    
       <Separator />
       <Action name="file_save" />
       <Action name="file_save_as" />

@@ -682,7 +682,7 @@ void QuantaApp::slotOptionsConfigureToolbars()
  menu = 0L;
  KXMLGUIClient *guiClient = 0;
  QPtrList<KXMLGUIClient> guiClients = factory()->clients();
- for (uint i = 0; i < guiClients.count(); i++)
+ for (uint i = 1; i < guiClients.count(); i++)
  {
     guiClient = guiClients.at(i);
     if (result == QDialog::Accepted)
@@ -693,7 +693,7 @@ void QuantaApp::slotOptionsConfigureToolbars()
       if (p_toolbar && p_toolbar->menu) delete p_toolbar->menu;
       menu = new QPopupMenu(m_tagsMenu);
       //remove all inserted toolbars
-      factory()->removeClient(guiClient);
+      guiFactory()->removeClient(guiClient);
     }
     //plug the actions in again
     nodeList = guiClient->domDocument().elementsByTagName("Action");
