@@ -18,6 +18,9 @@
 #ifndef FILESTREEVIEW_H
 #define FILESTREEVIEW_H
 
+//qt includes
+#include <qmap.h>
+
 // quanta includes
 #include "basetreeview.h"
 
@@ -35,6 +38,7 @@ public:
   FilesTreeView(KConfig *config, QWidget *parent, const char *name = 0L);
   virtual ~FilesTreeView();
   KURL::List topURLList;
+  QMap<QString, QString> topURLAliases;
   void plugCVSMenu();
 
 protected slots:
@@ -48,7 +52,11 @@ protected slots:
   creates a new branch from the current url
   */
   void slotAddToTop();
-  
+  /**
+  Changes the alias (alternative name) for a top folder
+   */
+  void slotChangeAlias();
+
 protected:
   virtual KFileTreeBranch* newBranch(const KURL& url);
 
@@ -64,6 +72,8 @@ protected:
 
 private:
   int m_menuTop;
+  int m_menuChangeAlias;
+  int m_menuFolderRename;
   int m_menuDel;
   int m_reloadMenuId;
 };

@@ -20,6 +20,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kiconloader.h>
+#include <kinputdialog.h>
 #include <kopenwith.h>
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
@@ -51,14 +52,18 @@ FilesTreeView::FilesTreeView(KConfig *config, QWidget *parent, const char *name)
   // I must read this here because quanta_init has not done it yet
   qConfig.showHiddenFiles = m_config->readBoolEntry("Show Hidden Files", true);
   qConfig.saveTrees = m_config->readBoolEntry("Save Local Trees", true);
-  QStringList topStrList;
-  topStrList = m_config->readPathListEntry("Top folders");
+  QStringList topStrList = m_config->readPathListEntry("Top folders");
+  QStringList topStrAliasList = m_config->readPathListEntry("Top folder aliases");
   KURL url;
   for (uint i = 0; i < topStrList.count(); i++)
   {
     url = KURL();
     QuantaCommon::setUrl(url, topStrList[i]);
     topURLList.append(url);
+    if (i < topStrAliasList.count())
+      topURLAliases.insert(url.url(), topStrAliasList[i]);
+    else
+      topURLAliases.insert(url.url(), url.fileName());
   }
 
   m_config->setGroup("General Options");
@@ -101,7 +106,8 @@ FilesTreeView::FilesTreeView(KConfig *config, QWidget *parent, const char *name)
   m_insertFolderInProject = m_folderMenu->insertItem(i18n("&Insert in Project..."), this, SLOT(slotInsertDirInProject()));
   m_folderMenu->insertItem(SmallIcon("editcopy"), i18n("&Copy"), this, SLOT(slotCopy()));
   m_menuPasteFolder = m_folderMenu->insertItem(SmallIcon("editpaste"), i18n("&Paste"), this, SLOT(slotPaste()));
-  m_folderMenu->insertItem(i18n("Re&name"), this, SLOT(slotStartRename()));
+  m_menuChangeAlias = m_folderMenu->insertItem(i18n("&Change Alias..."), this, SLOT(slotChangeAlias()));
+  m_menuFolderRename = m_folderMenu->insertItem(i18n("Re&name"), this, SLOT(slotStartRename()));
   m_menuDel = m_folderMenu->insertItem( SmallIcon("editdelete"), i18n("&Delete"), this, SLOT(slotDelete()));
   m_folderMenu->insertSeparator();
   m_folderMenu->insertItem(SmallIcon("info"), i18n("&Properties"), this, SLOT(slotProperties()));
@@ -152,6 +158,8 @@ KFileTreeBranch* FilesTreeView::newBranch(const KURL& url)
       QString s = url.fileName();
       if (s.isEmpty())
         s = "/";
+      if (topURLAliases.contains(url.url()))
+        s = topURLAliases[url.url()];
       s += " [" + url.prettyURL() + "]";
       newBrnch = new BaseTreeBranch(this, url, s, SmallIcon(fileItem.iconName()), true);
     }
@@ -183,6 +191,8 @@ void FilesTreeView::slotMenu(KListView* listView, QListViewItem *item, const QPo
   if (item)
   {
     bool hasProject = !m_projectName.isNull();
+    m_folderMenu->setItemVisible(m_menuChangeAlias, false);
+    m_folderMenu->setItemVisible(m_menuFolderRename, true);
     m_folderMenu->setItemVisible(m_insertFolderInProject, hasProject);
     m_fileMenu->setItemVisible(m_insertFileInProject, hasProject);
     setSelected(item, true);
@@ -199,8 +209,10 @@ void FilesTreeView::slotMenu(KListView* listView, QListViewItem *item, const QPo
       KURL url = curItem->url();
       if ( curItem == curItem->branch()->root() )
       {
-        m_folderMenu ->setItemVisible( m_menuDel, false);
-        m_folderMenu ->changeItem( m_menuTop, i18n("Remove From &Top"));
+        m_folderMenu->setItemVisible(m_menuDel, false);
+        m_folderMenu->changeItem(m_menuTop, i18n("Remove From &Top"));
+        m_folderMenu->setItemVisible(m_menuChangeAlias, true);
+        m_folderMenu->setItemVisible(m_menuFolderRename, false);
 
         m_config->setGroup("General Options");
         if ((url == KURL("file:/") || url == KURL("file:" + QDir::homeDirPath()+"/")) &&
@@ -239,6 +251,11 @@ void FilesTreeView::slotAddToTop()
       if (topURLList.findIndex(url) == -1)
       {
         topURLList.append(url);
+        bool ok;
+        QString aliasName = KInputDialog::getText(i18n("Set Alias"), i18n("Alternative folder name:"), url.fileName(), &ok, this);
+        if (!ok)
+          aliasName = url.fileName();
+        topURLAliases.insert(url.url(), aliasName);
         newBranch(url);
       } else {
         KMessageBox::information(this, i18n("<qt><b>%1</b> is already a toplevel entry.</qt>").arg(url.url()));
@@ -246,6 +263,7 @@ void FilesTreeView::slotAddToTop()
     } else
     { // remove
       topURLList.remove(url);
+      topURLAliases.remove(url.url());
       removeBranch(curItem->branch());
     }
   }
@@ -258,6 +276,11 @@ void FilesTreeView::slotNewTopFolder()
   url.adjustPath(+1);
   if (topURLList.findIndex(url) == -1)
   {
+    bool ok;
+    QString aliasName = KInputDialog::getText(i18n("Set Alias"), i18n("Alternative folder name:"), url.fileName(), &ok, this);
+    if (!ok)
+      aliasName = url.fileName();
+    topURLAliases.insert(url.url(), aliasName);
     newBranch(url);
     topURLList.append(url);
   } else {
@@ -274,6 +297,34 @@ void FilesTreeView::plugCVSMenu()
   m_folderMenu->insertSeparator();
   m_folderMenu->insertItem(SmallIcon("cervisia"), i18n("C&VS"), CVSService::ref()->menu());
 #endif
+}
+
+void FilesTreeView::slotChangeAlias()
+{
+  KFileTreeViewItem *curItem = currentKFileTreeViewItem();
+  if ( !curItem ) return;
+
+  if ( curItem->isDir() )
+  {
+    KURL url(currentURL().url());
+    url.adjustPath(+1);
+    if ( curItem == curItem->branch()->root() )  //it is not a top folder
+    {
+      if (topURLList.findIndex(url) != -1)
+      {
+        bool ok;
+        QString aliasName = KInputDialog::getText(i18n("Change Alias"), i18n("Alternative folder name:"), topURLAliases[url.url()], &ok, this);
+        if (ok)
+        {
+          topURLAliases.replace(url.url(), aliasName);
+          removeBranch(curItem->branch());
+          newBranch(url);
+        }
+      } else {
+        KMessageBox::information(this, i18n("<qt><b>%1</b> is already a toplevel entry.</qt>").arg(url.url()));
+      }
+    }
+  }
 }
 
 

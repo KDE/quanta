@@ -3840,6 +3840,12 @@ void QuantaApp::saveOptions()
     //If user choose the timer interval, it needs to restart the timer too
     m_config->writeEntry("Autosave interval", qConfig.autosaveInterval);
     m_config->writePathEntry("Top folders", fTab->topURLList.toStringList());
+    QStringList aliasList;
+    for (KURL::List::Iterator it2 = fTab->topURLList.begin(); it2 != fTab->topURLList.end(); ++it2)
+    {
+      aliasList.append(fTab->topURLAliases[(*it2).url()]);
+    }
+    m_config->writePathEntry("Top folder aliases", aliasList);
     m_config->writePathEntry("List of opened files", ViewManager::ref()->openedFiles().toStringList());
     m_config->writeEntry("Version", QUANTA_VERSION); // version
     m_config->writeEntry("Close Buttons", qConfig.showCloseButtons);
