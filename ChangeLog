@@ -75,6 +75,7 @@ Version 3.3 BE 2 (Release date: 07-05-2004; Started 26-01-2004):
                                           Layout->Window Layout replaced with Reset window layout to the default...
       - new MDI modes: Toplevel / Childframe / Tab Page (like the old one ) and the new default IDEAl mode
       - preview, documentation and plugins can appear in a new tab or a separate toolview
+      - "View with..." menus moved under an External Preview submenu
 
     - new features:
       - Next / Previous Bookmark actions

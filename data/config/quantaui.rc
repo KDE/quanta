@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="quanta" version="32050">
+<kpartgui name="quanta" version="32051">
   <MenuBar noMerge="1">
 
     <Menu name="file" noMerge="1"><text>&amp;File</text>
@@ -52,16 +52,17 @@
       <Action name="show_kafka_view"/>
       <Action name="show_kafka_and_quanta"/>
       <Action name="show_preview"/>
+      <Menu name="external_preview"><text>E&amp;xternal Preview</text>
+          <Action name="view_with_konqueror"/>
+          <Action name="view_with_mozilla"/>
+          <Action name="view_with_netscape"/>
+          <Action name="view_with_opera"/>
+          <Action name="view_with_lynx"/>
+      </Menu>
       <Separator/>
+      <Action name="reload"/>
       <Action name="w_back"/>
       <Action name="w_forward"/>
-      <Action name="reload"/>
-      <Separator/>
-      <Action name="view_with_konqueror"/>
-      <Action name="view_with_mozilla"/>
-      <Action name="view_with_netscape"/>
-      <Action name="view_with_opera"/>
-      <Action name="view_with_lynx"/>
     </Menu>
 
   <Menu name="bookmarks"><text>&amp;Bookmarks</text>
