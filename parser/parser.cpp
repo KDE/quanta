@@ -208,7 +208,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
     }
     nodeFound = false;
     goUp = false;
-    //fint the first "<" and the first special area start definition in this line
+    //find the first "<" and the first special area start definition in this line
     tagStartPos = textLine.find('<', col);
     specialStartPos = specialAreaCount ? textLine.find(m_dtd->specialAreaStartRx, col): -1;
     //if the special area start definition is before the first "<" it means
@@ -368,7 +368,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
         if (tag->name.endsWith("/"))
             tag->name.truncate(tag->name.length() - 1);
       }
-
+      //the tag we found indicates the beginning of a special area, like <script type=... >
       if (m_dtd->specialTags.contains(tag->name.lower()))
       {
         QRegExp endRx;
@@ -731,7 +731,11 @@ Node* Parser::specialAreaParser(Node *startNode)
       {
         specialEndStr = dtd->specialAreas[dtd->specialAreaStartRx.cap()];
         l = str.find(specialEndStr, pos);
-        str.replace(pos, l + specialEndStr.length() - pos, &space, l + specialEndStr.length() - pos);
+        if (l == -1)
+            l = str.length() - pos;
+        else
+            l = l + specialEndStr.length() - pos;
+        str.replace(pos, l, &space, l);
         col = l;
       }
     }
