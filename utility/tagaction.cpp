@@ -344,7 +344,7 @@ void TagAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
 {
   QCString tmp( buffer, buflen + 1 );
   QString text( QString::fromLocal8Bit(tmp) );
-  kdDebug(24000) << "Script output received: |" << text << "|" << endl;
+//  kdDebug(24000) << "Script output received: |" << text << "|" << endl;
   Document *w = ViewManager::ref()->activeDocument();
   if (!w)
   {

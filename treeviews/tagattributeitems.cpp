@@ -289,8 +289,8 @@ AttributeBoolItem::AttributeBoolItem(TagAttributeTree* listView, QListViewItem* 
 {
   m_listView = listView;
   combo = new QComboBox( m_listView->viewport() );
-  combo->insertItem((static_cast<TagAttributeTree *>(m_listView))->node()->tag->dtd->booleanTrue);
-  combo->insertItem((static_cast<TagAttributeTree *>(m_listView))->node()->tag->dtd->booleanFalse);
+  combo->insertItem((static_cast<TagAttributeTree *>(m_listView))->node()->tag->dtd()->booleanTrue);
+  combo->insertItem((static_cast<TagAttributeTree *>(m_listView))->node()->tag->dtd()->booleanFalse);
   combo->hide();
   QObject::connect( combo, SIGNAL( activated(int) ), m_listView, SLOT( editorContentChanged() ) );
  }
@@ -309,7 +309,7 @@ void AttributeBoolItem::showEditor(int)
 {
   placeEditor(combo);
   combo->show();
-  if (text(1) == (static_cast<TagAttributeTree *>(m_listView))->node()->tag->dtd->booleanTrue)
+  if (text(1) == (static_cast<TagAttributeTree *>(m_listView))->node()->tag->dtd()->booleanTrue)
       combo->setCurrentItem(0);
   else
       combo->setCurrentItem(1);
@@ -381,7 +381,7 @@ AttributeListItem::AttributeListItem(EditableTree* listView, QListViewItem* pare
   m_listView = listView;
   combo = new QComboBox( m_listView->viewport() );
   Node *node = (static_cast<TagAttributeTree *>(m_listView))->node();
-  QTag *qTag = QuantaCommon::tagFromDTD(node->tag->dtd, node->tag->name);
+  QTag *qTag = QuantaCommon::tagFromDTD(node);
   if (qTag)
   {
     if (!attr)
@@ -428,7 +428,7 @@ void AttributeListItem::showEditor(int)
   combo->show();
   int index = -1;
   Node *node = (static_cast<TagAttributeTree *>(m_listView))->node();
-  QTag *qTag = QuantaCommon::tagFromDTD(node->tag->dtd, node->tag->name);
+  QTag *qTag = QuantaCommon::tagFromDTD(node);
   if (qTag)
   {
     Attribute *attr = qTag->attribute(text(0));

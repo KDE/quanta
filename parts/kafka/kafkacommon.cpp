@@ -707,9 +707,9 @@ Node* kafkaCommon::createNode(const QString &nodeName, const QString &tagString,
 	//Create the corresponding Tag.
 	node->tag = new Tag();
 	if(doc)
-		node->tag->dtd = doc->defaultDTD();
+		node->tag->setDtd(doc->defaultDTD());
 	else
-		node->tag->dtd = 0L;
+		node->tag->setDtd(0L);
 	node->tag->setWrite(doc);
 	node->tag->type = nodeType;
 	node->tag->name = QuantaCommon::tagCase(nodeName);
@@ -1103,7 +1103,7 @@ bool kafkaCommon::DTDinsertNode(Node *newNode, Node *startNode, int startOffset,
 	oldParentNode = startNode;
 	while(parentNode && parentNode != commonParent->parent)
 	{
-		parentNodeQTag = QuantaCommon::tagFromDTD(parentNode->tag->dtd, parentNode->tag->name);
+		parentNodeQTag = QuantaCommon::tagFromDTD(parentNode);
 		if(parentNodeQTag && parentNodeQTag->isChild(newNode) &&
 			lastNewNodeQTag->isChild(oldParentNode))
 			lastValidStartParent = parentNode;
@@ -1118,7 +1118,7 @@ bool kafkaCommon::DTDinsertNode(Node *newNode, Node *startNode, int startOffset,
 	oldParentNode = endNode;
 	while(parentNode && parentNode != commonParent->parent)
 	{
-		parentNodeQTag = QuantaCommon::tagFromDTD(parentNode->tag->dtd, parentNode->tag->name);
+		parentNodeQTag = QuantaCommon::tagFromDTD(parentNode);
 		if(parentNodeQTag && parentNodeQTag->isChild(newNode) &&
 			lastNewNodeQTag->isChild(oldParentNode))
 			lastValidEndParent = parentNode;
@@ -1404,8 +1404,7 @@ bool kafkaCommon::addNodeRecursively(Node *newNode, Node *leafNode,
 
 	if(currentNode && currentNode->parent)
 	{
-		currentNodeParentQTag = QuantaCommon::tagFromDTD(currentNode->parent->tag->dtd,
-			currentNode->parent->tag->name);
+		currentNodeParentQTag = QuantaCommon::tagFromDTD(currentNode->parent);
 		if(currentNodeParentQTag && currentNodeParentQTag->isChild(newNode))
 			validCurNodeParent = true;
 	}
@@ -1674,7 +1673,7 @@ Node* kafkaCommon::extractNode(Node *node, NodeModifsSet *modifs, bool deleteChi
 	type = node->tag->type;
 	namespaceName = node->tag->nameSpace;
 	nodeName = node->tag->name;
-	caseSensitive = node->tag->dtd->caseSensitive;
+	caseSensitive = node->tag->dtd()->caseSensitive;
 
 	//logging
 	if(modifs)
@@ -1756,7 +1755,7 @@ Node* kafkaCommon::extractNode(Node *node, NodeModifsSet *modifs, bool deleteChi
 		{
 			closingNamespaceName = next->tag->nameSpace;
 			closingNodeName = next->tag->name;
-			closingCaseSensitive = next->tag->dtd->caseSensitive;
+			closingCaseSensitive = next->tag->dtd()->caseSensitive;
 			if(QuantaCommon::closesTag(namespaceName, nodeName, caseSensitive,
 				closingNamespaceName, closingNodeName, closingCaseSensitive))
 				extractNode(next, modifs, false, false);
@@ -1784,7 +1783,7 @@ void kafkaCommon::extractAndDeleteNode(Node *node, NodeModifsSet *modifs, bool d
 	isSingle = node->tag->single;
 	nodeName = node->tag->name;
 	namespaceName = node->tag->nameSpace;
-	caseSensitive = node->tag->dtd->caseSensitive;
+	caseSensitive = node->tag->dtd()->caseSensitive;
 	nodePrev = node->prev;
 	nodeNext = node->next;
 	if(!node->child)
@@ -1801,7 +1800,7 @@ void kafkaCommon::extractAndDeleteNode(Node *node, NodeModifsSet *modifs, bool d
 		{
 			closingNodeName = curNode->tag->name;
 			namespaceName2 = curNode->tag->nameSpace;
-			caseSensitive2 = curNode->tag->dtd->caseSensitive;
+			caseSensitive2 = curNode->tag->dtd()->caseSensitive;
 			if(QuantaCommon::closesTag(namespaceName, nodeName, caseSensitive,
 				namespaceName2, closingNodeName, caseSensitive2))
 			{
@@ -1811,7 +1810,7 @@ void kafkaCommon::extractAndDeleteNode(Node *node, NodeModifsSet *modifs, bool d
 					nodeNext2 = curNode->next;
 					closingNodeName = curNode->tag->name;
 					namespaceName2 = curNode->tag->nameSpace;
-					caseSensitive2 = curNode->tag->dtd->caseSensitive;
+					caseSensitive2 = curNode->tag->dtd()->caseSensitive;
 					curNode = extractNode(curNode, modifs, deleteChildren);
 					curNode = nodeNext2;
 					if(QuantaCommon::closesTag(namespaceName, nodeName, caseSensitive,
@@ -2570,7 +2569,7 @@ DOM::Node kafkaCommon::createDomNode(Node *node, DOM::Document rootNode)
 	if(!node)
 		return DOM::Node();
 
-	return createDomNode(node->tag->name, node->tag->dtd, rootNode);
+	return createDomNode(node->tag->name, node->tag->dtd(), rootNode);
 }
 
 DOM::Node kafkaCommon::createTextDomNode(const QString &textString, DOM::Document rootNode)
@@ -2608,7 +2607,7 @@ DOM::Node kafkaCommon::createDomNodeAttribute(Node* node, const QString &attrNam
 	if(!node)
 		return DOM::Node();
 
-	return createDomNodeAttribute(node->tag->name, node->tag->dtd, attrName, "", rootNode);
+	return createDomNodeAttribute(node->tag->name, node->tag->dtd(), attrName, "", rootNode);
 }
 
 //DOM::node kafkaCommon::createDomNodeAttribute(DOM::Node node, const QString &attrName,
@@ -2658,7 +2657,7 @@ bool kafkaCommon::editDomNodeAttribute(DOM::Node domNode, Node* node,
 	if(!node)
 		return false;
 
-	return editDomNodeAttribute(domNode, node->tag->name, node->tag->dtd,
+	return editDomNodeAttribute(domNode, node->tag->name, node->tag->dtd(),
 		attrName, attrValue, rootNode);
 }
 

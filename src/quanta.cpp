@@ -1432,7 +1432,6 @@ void QuantaApp::slotShowNoFramesPreview()
 
 void QuantaApp::newCursorPosition(QString file, int lineNumber, int columnNumber)
 {
-  kdDebug(24000) << "newCursorPosition" << endl;
   Q_UNUSED(file);
   typingInProgress = true;
   if (m_idleTimerEnabled && idleTimer)
@@ -1823,13 +1822,13 @@ void QuantaApp::slotContextMenuAboutToShow()
     Node *node = parser->nodeAt(line, col, false);
     if (node)
     {
-      if (node->tag->dtd->family == Script)
+      if (node->tag->dtd()->family == Script)
       {
         StructTreeGroup group;
-        uint count = node->tag->dtd->structTreeGroups.count();
+        uint count = node->tag->dtd()->structTreeGroups.count();
         for (uint i = 0; i < count; i++)
         {
-          group = node->tag->dtd->structTreeGroups[i];
+          group = node->tag->dtd()->structTreeGroups[i];
           if (group.hasFileName)
           {
             if (!group.hasSearchRx )
@@ -1870,12 +1869,12 @@ void QuantaApp::slotContextMenuAboutToShow()
         }
       } else
       {
-        QMap<QString, XMLStructGroup>::ConstIterator it = node->tag->dtd->xmlStructTreeGroups.find(node->tag->name.lower());
+        QMap<QString, XMLStructGroup>::ConstIterator it = node->tag->dtd()->xmlStructTreeGroups.find(node->tag->name.lower());
 
 #if KDE_IS_VERSION(3, 2, 0)
-        if (it != node->tag->dtd->xmlStructTreeGroups.constEnd())
+        if (it != node->tag->dtd()->xmlStructTreeGroups.constEnd())
 #else
-        if (it != node->tag->dtd->xmlStructTreeGroups.end())
+        if (it != node->tag->dtd()->xmlStructTreeGroups.end())
 #endif
         {
           XMLStructGroup group = it.data();
@@ -3945,10 +3944,10 @@ void QuantaApp::slotEditCurrentTag()
   {
     Tag *tag = node->tag;
     tagName = tag->name;
-    if ( QuantaCommon::isKnownTag(tag->dtd->name,tagName) )
+    if ( QuantaCommon::isKnownTag(tag->dtd()->name,tagName) )
     {
       isUnknown = false;
-      TagDialog *dlg = new TagDialog( QuantaCommon::tagFromDTD(tag->dtd,tagName), tag, ViewManager::ref()->activeView()->baseURL() );
+      TagDialog *dlg = new TagDialog( QuantaCommon::tagFromDTD(tag->dtd(),tagName), tag, ViewManager::ref()->activeView()->baseURL() );
       if (dlg->exec())
       {
         w->changeTag(tag, dlg->getAttributes() );
@@ -4076,7 +4075,7 @@ void QuantaApp::slotInsertCSS()
   if (styleNode->tag->type == Tag::XmlTagEnd && styleNode->prev)
     styleNode = styleNode->prev;
 
-  while (styleNode && styleNode->parent && styleNode->tag->name.lower() != "style" && styleNode->tag->dtd->name == "text/css")
+  while (styleNode && styleNode->parent && styleNode->tag->name.lower() != "style" && styleNode->tag->dtd()->name == "text/css")
     styleNode = styleNode->parent;
 
   Node *parentNode = node;
@@ -4322,7 +4321,7 @@ void QuantaApp::slotTagEditTable()
     Node *node = parser->nodeAt(line, col);
     const DTDStruct *dtd = w->defaultDTD();
     if (node)
-      dtd = node->tag->dtd;
+      dtd = node->tag->dtd();
     bLine = line;
     bCol = col;
     eLine = line;

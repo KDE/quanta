@@ -142,7 +142,8 @@ public:
  void setLeafNode(DOM::Node *leafNode) {m_leafNode = leafNode;}
  Node* _closingNode;
 #endif
- QListViewItem *listItem; ///<points to the listview item which represents this node in the structure tree
+ QValueList<QListViewItem *> listItems; ///<points to the listview items which represents this node in the structure tree
+ QListViewItem *mainListItem; ///< the main listview item (from under the root node) associated with this node
  Tag *tag;
  bool closesPrevious; //this node "closes" the tag from previous node
  bool opened;

@@ -14,6 +14,7 @@
  ***************************************************************************/
 
 #include <ctype.h>
+#include <assert.h>
 
 #include <qdict.h>
 #include <qstring.h>
@@ -36,9 +37,8 @@ Tag::Tag(const AreaStruct &area, Document *write, const DTDStruct *dtd, bool doP
   init();
   QString s = write->text(area);
   m_area = area;
-  if (!dtd)
-  kdDebug(24000) << "Tag::Tag: dtd is 0L!!! for " << s << endl;
-  this->dtd = dtd;
+  assert(dtd);
+  m_dtd = dtd;
   if (doParse)
   {
     parse(s, write);
@@ -54,7 +54,7 @@ Tag::Tag( const Tag &t)
 {
   name = t.name;
   nameSpace = t.nameSpace;
-  dtd = t.dtd;
+  m_dtd = t.m_dtd;
   single = t.single;
   closingMissing = t.closingMissing;
   m_area = t.m_area;
@@ -80,7 +80,7 @@ Tag::~Tag()
 void Tag::init()
 {
   name = "";
-  dtd = 0L;
+  m_dtd = 0L;
   m_write = 0L;
   type = Unknown;
   single = false;
@@ -150,7 +150,7 @@ void Tag::parse(const QString &p_tagStr, Document *p_write)
             attr.nameCol = sPos + m_area.bCol;
         else
             attr.nameCol = m_tagStr.left(sPos).section('\n',-1).length();
-        attr.value = (dtd != 0) ? dtd->booleanTrue : QString("checked");
+        attr.value = (m_dtd != 0) ? m_dtd->booleanTrue : QString("checked");
         attr.valueCol = attr.nameCol;
         attr.valueLine = attr.nameLine;
         attr.quoted = false;
@@ -158,7 +158,7 @@ void Tag::parse(const QString &p_tagStr, Document *p_write)
       }
       break;
     }
-    if (dtd && !dtd->caseSensitive)
+    if (m_dtd && !m_dtd->caseSensitive)
         attr.name = attr.name.lower();
     attr.nameLine = m_tagStr.left(sPos).contains('\n') + m_area.bLine;
     if (attr.nameLine == m_area.bLine)
@@ -172,7 +172,7 @@ void Tag::parse(const QString &p_tagStr, Document *p_write)
     //treate it as a "true" boolean
     if (m_tagStr[pos] != '=' || pos == strLength)
     {
-      attr.value = (dtd != 0) ? dtd->booleanTrue : QString("checked");
+      attr.value = (m_dtd != 0) ? m_dtd->booleanTrue : QString("checked");
       attr.valueCol = attr.nameCol;
       attr.valueLine = attr.nameLine;
       attr.quoted = false;
@@ -221,12 +221,12 @@ void Tag::parse(const QString &p_tagStr, Document *p_write)
  }
 
  //add the tag to the document usertag list if it's not present in the dtd
-  if (m_tagStr.startsWith("<") && m_tagStr.endsWith(">") && dtd)
+  if (m_tagStr.startsWith("<") && m_tagStr.endsWith(">") && m_dtd)
   {
     //QString tagName = (m_parsingDTD->caseSensitive) ? name : name.upper();
     QString tagName = name.lower();
     //add the new xml tags to the userTagList
-    if ( !QuantaCommon::isKnownTag(dtd->name, tagName) &&
+    if ( !QuantaCommon::isKnownTag(m_dtd->name, tagName) &&
           name[0] != '/' )
     {
       QTag *newTag = m_write->userTagList.find(tagName);
@@ -235,7 +235,7 @@ void Tag::parse(const QString &p_tagStr, Document *p_write)
       {
         newTag = new QTag();
         newTag->setName(name);
-        newTag->parentDTD = dtd;
+        newTag->parentDTD = m_dtd;
       }
       for (int i = 0; i >attrCount(); i++)
       {
@@ -281,7 +281,7 @@ QString Tag::attributeValue(QString attr)
  {
 
   if ( attr == attrs[i].name ||
-      (!dtd->caseSensitive && attrs[i].name == attr.lower()))
+      (!m_dtd->caseSensitive && attrs[i].name == attr.lower()))
   {
     val = attrs[i].value;
     break;
@@ -296,7 +296,7 @@ bool Tag::hasAttribute( const QString &attr )
   for (uint i = 0; i < attrs.count(); i++)
   {
     if ( attrs[i].name ==  attr ||
-         (!dtd->caseSensitive && attrs[i].name == attr.lower()))
+         (!m_dtd->caseSensitive && attrs[i].name == attr.lower()))
       return true;
   }
   return false;
@@ -337,7 +337,7 @@ int Tag::attributeIndex(QString attr)
   uint i = 0;
   do{
     if (attrs[i].name == attr ||
-       (!dtd->caseSensitive && attrs[i].name == attr.lower()))
+       (!m_dtd->caseSensitive && attrs[i].name == attr.lower()))
        index = i;
     i++;
   } while (index == -1 && i < attrs.count());
@@ -400,7 +400,7 @@ int Tag::size()
   int l = sizeof(name) +  8*sizeof(int) + 2*sizeof(bool);
   l += sizeof(cleanStr) + sizeof(m_tagStr);
   l += sizeof(structBeginStr) + sizeof(attrs);
-  l += sizeof(dtd) + sizeof(m_write);
+  l += sizeof(m_dtd) + sizeof(m_write);
 
   return l;
 }
@@ -434,7 +434,7 @@ void Tag::editAttribute(const QString& attrName, const QString& attrValue)
   for (uint i = 0 ; i < attrs.count(); i++)
   {
     if ( attrName == attrs[i].name ||
-      (!dtd->caseSensitive && attrs[i].name.lower() == attrName.lower()))
+      (!m_dtd->caseSensitive && attrs[i].name.lower() == attrName.lower()))
     {
       attr = attrs[i];
       attr.value = attrValue;
@@ -455,7 +455,7 @@ void Tag::deleteAttribute(const QString& attrName)
   for (uint i = 0 ; i < attrs.count(); i++)
   {
     if ( attrName == attrs[i].name ||
-      (!dtd->caseSensitive && attrs[i].name == attrName.lower()))
+      (!m_dtd->caseSensitive && attrs[i].name == attrName.lower()))
     {
       attrs.remove(attrs.at(i));
     }
@@ -464,7 +464,7 @@ void Tag::deleteAttribute(const QString& attrName)
 
 void Tag::modifyAttributes(QDict<QString> *attrDict)
 {
-  QTag *qTag = QuantaCommon::tagFromDTD(dtd, name);
+  QTag *qTag = QuantaCommon::tagFromDTD(m_dtd, name);
   QDictIterator<QString> it(*attrDict);
   QString attribute;
   QString value;
@@ -491,7 +491,7 @@ void Tag::modifyAttributes(QDict<QString> *attrDict)
 
 QString Tag::toString()
 {
-  QTag *qTag = QuantaCommon::tagFromDTD(dtd, name);
+  QTag *qTag = QuantaCommon::tagFromDTD(m_dtd, name);
   QValueList<TagAttr>::Iterator it;
   TagAttr attr;
   QString attrString;
@@ -543,4 +543,10 @@ void Tag::setAttributeSpecial(int index, bool special)
  {
    attrs[index].special = special;
  }
+}
+
+void Tag::setDtd(const DTDStruct *dtd)
+{
+ // assert(dtd);
+  m_dtd = dtd;
 }

@@ -70,7 +70,7 @@ void appendAreaToTextNode(Document *write, const AreaStruct &area, Node *node)
     }
   }
   QString cleanedTagStr = tagStr;
-  QuantaCommon::removeCommentsAndQuotes(cleanedTagStr, node->tag->dtd);
+  QuantaCommon::removeCommentsAndQuotes(cleanedTagStr, node->tag->dtd());
   node->tag->cleanStr = cleanStr + cleanedTagStr;
   int bLine, bCol;
   node->tag->beginPos(bLine, bCol);
@@ -89,7 +89,7 @@ Node* createTextNode(Document *write, Node *node, int eLine, int eCol, Node *par
     node->tag->endPos(bLine, bCol);
   }
   if (parentNode)
-    dtd = parentNode->tag->dtd;
+    dtd = parentNode->tag->dtd();
   eCol--;
   if (bLine == 0 && bCol == 0)
     bCol = -1;
@@ -166,11 +166,11 @@ Node* createScriptTagNode(Document *write, const AreaStruct &area, const QString
   tag->setTagPosition(area);
   tag->setStr(areaName);
   tag->setWrite(write);
-  tag->dtd = DTDs::ref()->find(dtd->specialAreaNames[areaName]);
-  if (!tag->dtd)
-      tag->dtd = dtd;
-  if (!tag->dtd)
-      kdDebug(24000) << "createScriptTagNode: dtd is 0L!!! for " << areaName << endl;
+  const DTDStruct *d = DTDs::ref()->find(dtd->specialAreaNames[areaName]);
+  if (d)
+     tag->setDtd(d);
+  else
+      tag->setDtd(dtd);
   tag->name = i18n("%1 block").arg(dtd->specialAreaNames[areaName].upper());
   tag->type = Tag::ScriptTag;
 

@@ -131,6 +131,8 @@ public:
   void setAttributeSpecial(int index, bool special);
 
   int size();
+  const DTDStruct* dtd() {return m_dtd;}
+  void setDtd(const DTDStruct *dtd);
 
   enum TokenType {
     Unknown = 0,
@@ -156,7 +158,6 @@ public:
   int type;   //one of the TokenType
   bool single; // tags like <tag />
   bool closingMissing; //closing tag is optional and missing
-  const DTDStruct* dtd; //the tag belongs to this DTD
   QString structBeginStr; //if it's a special block, contains the block beginning definition string (like <? or <style language="foo">)
   bool validXMLTag; //false if the closing ">" was not found
 #ifdef BUILD_KAFKAPART
@@ -176,6 +177,7 @@ private:
   AreaStruct m_area; //where the tag is in the doc
   int m_nameLine;//where the tag name begins
   int m_nameCol;
+  const DTDStruct* m_dtd; //the tag belongs to this DTD
 
   QValueList<TagAttr> attrs;  //attributes in a tag
   QString m_tagStr;   //the tag in string format (as it is in the document)

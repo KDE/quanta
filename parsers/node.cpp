@@ -37,7 +37,7 @@ Node::Node( Node *parent )
   tag = 0L;
   groupTag = 0L;
   group = 0L;
-  listItem = 0L;
+  mainListItem = 0L;
   opened = false;
   removeAll = true;
   closesPrevious = false;
@@ -386,7 +386,7 @@ void Node::operator =(Node* node)
   next = 0L;
   parent = 0L;
   child = 0L;
-  listItem = 0L;
+  mainListItem = 0L;
   groupElementLists.clear();
   group = 0L;
   groupTag = 0L;
@@ -419,10 +419,14 @@ void Node::detachNode()
         ++it;
     }
   }
-  if (listItem)
+
+  QValueListIterator<QListViewItem*> listItem;
+  for ( listItem = listItems.begin(); listItem != listItems.end(); ++listItem)
   {
-    static_cast<StructTreeTag*>(listItem)->node = 0L;
-    static_cast<StructTreeTag*>(listItem)->groupTag = 0L;
+    static_cast<StructTreeTag*>(*listItem)->node = 0L;
+    static_cast<StructTreeTag*>(*listItem)->groupTag = 0L;
   }
+  mainListItem = 0L;
+  listItems.clear();
   groupElementLists.clear();
 }

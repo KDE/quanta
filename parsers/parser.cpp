@@ -283,7 +283,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
               dtd = m_dtd;
           //a trick here: replace the node's DTD with this one //Note: with the new SAParser, the top level nodes must be Tag::ScriptTag-s!
          // const DTDStruct *savedDTD = node->tag->dtd;
-          node->tag->dtd = dtd;
+          node->tag->setDtd(dtd);
           node->tag->type = Tag::ScriptTag;
           //now parse the special area
           area.bLine = area.eLine;
@@ -551,7 +551,7 @@ void Parser::coutTree(Node *node, int indent)
             else
                     output+= node->tag->tagStr().replace('\n'," ");
             kdDebug(24000) << output <<" (" << node->tag->type << ") at pos " <<
-                    bLine << ":" << bCol << " - " << eLine << ":" << eCol << " This: "<< node << " Parent: " << node->parent << " Prev: " << node->prev << " Next: " << node->next << "Child: " << node->child << endl;
+                    bLine << ":" << bCol << " - " << eLine << ":" << eCol << " This: "<< node << " Parent: " << node->parent << " Prev: " << node->prev << " Next: " << node->next << " Child: " << node->child << endl;
  /*           for(j = 0; j < node->tag->attrCount(); j++)
             {
                     kdDebug(24000)<< " attr" << j << " " <<
@@ -575,7 +575,7 @@ const DTDStruct * Parser::currentDTD(int line, int col)
   Node *node = nodeAt(line, col, false, true);
   if (node)
   {
-    dtd = node->tag->dtd;
+    dtd = node->tag->dtd();
   }
 
   return dtd;
@@ -1308,7 +1308,9 @@ void Parser::cleanGroups()
 
 void Parser::parseIncludedFiles()
 {
+#ifdef DEBUG_PARSER
   kdDebug(24000) << "parseIncludedFiles" << endl;
+#endif
   IncludedGroupElementsMap::Iterator includedMapIt;
   uint listCount;
   for (includedMapIt = includedMap.begin(); includedMapIt != includedMap.end(); ++includedMapIt)
@@ -1440,9 +1442,7 @@ void Parser::parseIncludedFile(const QString& fileName, const DTDStruct *dtd)
                 {
                   Tag *tag = new Tag();
                   tag->name = s;
-                  tag->dtd = dtd;
-                  if (!tag->dtd)
-                    kdDebug(24000) << "parser:1433: dtd is 0L!!! for " << s << endl;
+                  tag->setDtd(dtd);
                   QString s2 = content.left(areaPos + pos);
                   int newLineNum = s2.contains('\n');
                   int tmpCol = s2.length() - s2.findRev('\n') - 1;
@@ -1482,8 +1482,8 @@ void Parser::slotIncludedFileChanged(const QString& fileName)
 
 void Parser::parseForXMLGroup(Node *node)
 {
-  xmlGroupIt = node->tag->dtd->xmlStructTreeGroups.find(node->tag->name.lower());
-  if (xmlGroupIt != node->tag->dtd->xmlStructTreeGroups.end())
+  xmlGroupIt = node->tag->dtd()->xmlStructTreeGroups.find(node->tag->name.lower());
+  if (xmlGroupIt != node->tag->dtd()->xmlStructTreeGroups.end())
   {
     XMLStructGroup group = xmlGroupIt.data();
     Tag *newTag = new Tag(*node->tag);
@@ -1509,7 +1509,7 @@ void Parser::parseForXMLGroup(Node *node)
 bool Parser::parseScriptInsideTag(Node *startNode)
 {
   bool found = false;
-  const DTDStruct *dtd = startNode->tag->dtd;
+  const DTDStruct *dtd = startNode->tag->dtd();
   if (dtd->specialAreas.count())
   {
     QString foundText;

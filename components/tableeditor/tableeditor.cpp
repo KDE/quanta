@@ -232,7 +232,7 @@ void TableEditor::slotEditTableBody()
 bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser *docParser )
 {
   const uint pInitialTableSize = 20;
-  
+
   m_bLine = bLine;
   m_bCol = bCol;
   m_eLine = eLine;
@@ -247,7 +247,7 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
   if (!node || !lastNode)
     return false;
   m_write = node->tag->write();
-  m_dtd = node->tag->dtd;
+  m_dtd = node->tag->dtd();
   if ( !QuantaCommon::closesTag(node->tag, lastNode->tag) ) {
     return false;
   }
@@ -390,7 +390,7 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
         for (uint i=mergeMatrix.size() / 2; i<mergeMatrix.size(); i++)
           mergeMatrix[i].resize(mergeMatrix[0].size());
       }
-            
+
       m_rowSpin->setValue(nRow);
       nCol = 0;
       tableNode.node = new Node(0L);
@@ -409,7 +409,7 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
           tableNode.node = new Node(0L);
           newNum++;
           tableNode.node->tag = new Tag();
-          tableNode.node->tag->dtd = m_dtd;
+          tableNode.node->tag->setDtd(m_dtd);
           tableNode.node->tag->parse("<td>", m_write);
           tableNode.merged = false;
           tableRowTags.append(tableNode);
@@ -441,10 +441,10 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
           tableRowTags.append(tableNode);
           col++;
           nCol++;
-          if ((uint)nCol >= mergeMatrix[0].size())  // Check if there are enough cols 
+          if ((uint)nCol >= mergeMatrix[0].size())  // Check if there are enough cols
             for (uint i=0; i<mergeMatrix.size(); i++)
               mergeMatrix[i].resize(2 * mergeMatrix[i].size());
-            
+
         }
         nCol++;
         if (m_rowSpin && m_colSpin && m_dataTable)
@@ -506,7 +506,7 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
               for (uint i=mergeMatrix.size() / 2; i<mergeMatrix.size(); i++)
                 mergeMatrix[i].resize(mergeMatrix[0].size());
             }
-            
+
             for (int i = 0; i < rowValue - 1; i++)
               for (int j = 0; j < colValue; j++) {
                 mergeMatrix[nRow + i][lastCol + j].mergedRow = nRow - 1;
@@ -774,7 +774,7 @@ void TableEditor::slotInsertRow()
     tableNode.node = new Node(0L);
     newNum++;
     tableNode.node->tag = new Tag();
-    tableNode.node->tag->dtd = m_dtd;
+    tableNode.node->tag->setDtd(m_dtd);
     tableNode.node->tag->parse("<tr>", m_write);
     QValueList<TableNode>::Iterator rowIt = m_tableRows->at(num);
     if (rowIt != m_tableRows->end())
@@ -787,7 +787,7 @@ void TableEditor::slotInsertRow()
       tableNode.node = new Node(0L);
       newNum++;
       tableNode.node->tag = new Tag();
-      tableNode.node->tag->dtd = m_dtd;
+      tableNode.node->tag->setDtd(m_dtd);
       if (m_tableTags == m_tableHeaderTags) {
         tableNode.node->tag->parse("<th>", m_write);
       } else {
@@ -819,7 +819,7 @@ void TableEditor::slotInsertCol()
       tableNode.node = new Node(0L);
       newNum++;
       tableNode.node->tag = new Tag();
-      tableNode.node->tag->dtd = m_dtd;
+      tableNode.node->tag->setDtd(m_dtd);
       if (m_tableTags == m_tableHeaderTags) {
         tableNode.node->tag->parse("<th>", m_write);
       } else {
@@ -919,19 +919,19 @@ void TableEditor::createNewTable(Document *write, const DTDStruct *dtd)
   m_write = write;
   m_dtd = dtd;
   m_table = new Tag();
-  m_table->dtd = m_dtd;
+  m_table->setDtd(m_dtd);
   newNum++;
   m_table->parse("<table>", m_write);
   m_thead = new Tag();
-  m_thead->dtd = m_dtd;
+  m_thead->setDtd(m_dtd);
   newNum++;
   m_thead->parse("<thead>", m_write);
   m_tfoot = new Tag();
-  m_tfoot->dtd = m_dtd;
+  m_tfoot->setDtd(m_dtd);
   newNum++;
   m_tfoot->parse("<tfoot>", m_write);
   m_tbody = new Tag();
-  m_tbody->dtd = m_dtd;
+  m_tbody->setDtd(m_dtd);
   newNum++;
   m_tbody->parse("<tbody>", m_write);
   //by default the current page is the data handling page
@@ -1035,7 +1035,7 @@ void TableEditor::slotUnmergeCells()
               newTableNode.node = new Node(0L);
               newNum++;
               newTableNode.node->tag = new Tag();
-              newTableNode.node->tag->dtd = m_dtd;
+              newTableNode.node->tag->setDtd(m_dtd);
               if (m_tableTags == m_tableHeaderTags) {
                 newTableNode.node->tag->parse("<th>", m_write);
               } else {

@@ -265,7 +265,7 @@ void TagAttributeTree::setCurrentNode(Node *node)
   AttributeItem *item = 0L;
   TopLevelItem *group = 0L;
   QString attrName;
-  QTag *qTag = QuantaCommon::tagFromDTD(node->tag->dtd, node->tag->name);
+  QTag *qTag = QuantaCommon::tagFromDTD(node);
   Node *n = node->parent;
   while (n)
   {
@@ -738,8 +738,7 @@ void EnhancedTagAttributeTree::deleteNode()
   //Then we see if the new parent - child relationships are valid, and if not, delete the child and restart
   if(oldCurNodeParent)
   {
-    oldCurNodeParentQTag = QuantaCommon::tagFromDTD(oldCurNodeParent->tag->dtd,
-      oldCurNodeParent->tag->name);
+    oldCurNodeParentQTag = QuantaCommon::tagFromDTD(oldCurNodeParent);
     if(oldCurNodeParentQTag)
     {
       child = oldCurNodeParent->child;

@@ -10,6 +10,8 @@ Version 3.3 BE 3 (Release date: xx-xx-2004; Started 07-05-2004):
         - don't hang when parsing (broken) PHP code, like  <a href="<? foo ?>"">
         - don't treat text after a special area start tag as part of the special area, if the
           starting tag is a single tag (like <style type="text/css" />) [#80491]
+        - don't crash when saving files while the structure tree is visible [#79803]
+        - fix a major memory leak, cause of many crashes and instability
 
 Version 3.3 BE 2 (Release date: 07-05-2004; Started 26-01-2004):
     - bugfixes:

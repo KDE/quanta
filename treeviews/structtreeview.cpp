@@ -172,6 +172,7 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
     title = "";
     item = new StructTreeTag(parentItem, currentNode, title, currentItem);
     item->setOpen(level < openLevel);
+    currentNode->mainListItem = item;
 
     if ( (!qConfig.showEmptyNodes && currentNode->tag->type == Tag::Empty) ||
           (!qConfig.showClosingTags &&
@@ -180,8 +181,7 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
     {
       item->setVisible(false);
     }
-    currentNode->listItem = item;
-    if (currentNode->tag->dtd->family == Xml)
+    if (currentNode->tag->dtd()->family == Xml)
     {
       if (currentNode->groupTag &&
           groupIds.contains(currentNode->group->name))
@@ -241,10 +241,10 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
         if (currentNode)
         {
           if (currentNode->prev)
-              currentItem = static_cast<StructTreeTag*>(currentNode->prev->listItem);
+              currentItem = static_cast<StructTreeTag*>(currentNode->prev->mainListItem);
           if (currentNode->parent)
           {
-            parentItem = static_cast<StructTreeTag*>(currentNode->parent->listItem);
+            parentItem = static_cast<StructTreeTag*>(currentNode->parent->mainListItem);
             if (!parentItem)
             {
               parentItem = top;
@@ -601,10 +601,10 @@ void StructTreeView::showTagAtPos(Node *node)
 {
   if (followCursorFlag)
   {
-    if (node->listItem)
+    if (node->mainListItem)
     {
-      ensureItemVisible(node->listItem);
-      setSelected(node->listItem, true);
+      ensureItemVisible(node->mainListItem);
+      setSelected(node->mainListItem, true);
     }
   } //if (followCursorFlag)
 }

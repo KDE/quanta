@@ -46,6 +46,8 @@ SAParser::SAParser()
   m_currentNode = 0L;
   m_quotesRx = QRegExp("\"|'");
   m_specialInsideXml = false;
+  m_parsingEnabled = true;
+  m_synchronous = true;
 }
 
 SAParser::~SAParser()
@@ -80,7 +82,7 @@ bool SAParser::slotParseOneLine()
         int quotedStringPos = -1;
         int commentPos = -1;
         int groupKeywordPos = -1;
-        if (s_searchContent || (s_parentNode && s_parentNode->tag->dtd->family == Xml))
+        if (s_searchContent || (s_parentNode && s_parentNode->tag->dtd()->family == Xml))
         {
           //search for different s_contexts
           if (s_searchContent) //search for quoted strings, comments, groups only in non-comment special areas
@@ -226,9 +228,7 @@ bool SAParser::slotParseOneLine()
                 tag->setStr(foundText);
                 tag->setWrite(m_write);
                 tag->setTagPosition(s_line, groupKeywordPos, s_line, s_col);
-                tag->dtd = s_dtd;
-                if (!tag->dtd)
-                    kdDebug(24000) << "saparser:231: dtd is 0L!!! for " << foundText << endl;
+                tag->setDtd(s_dtd);
                 tag->type = Tag::ScriptStructureEnd;
                 tag->single = true;
                 Node *node = new Node(s_currentContext.parentNode);
@@ -347,9 +347,7 @@ bool SAParser::slotParseOneLine()
           Tag *tag = new Tag();
           tag->setTagPosition(s_line, areaEndPos, s_line, m_lastParsedCol);
           tag->parse(s_areaEndString, m_write);
-          tag->dtd = s_dtd;
-                if (!tag->dtd)
-                    kdDebug(24000) << "saparser:341: dtd is 0L!!! for " << tag->tagStr() << endl;
+          tag->setDtd(s_dtd);
           tag->type = Tag::XmlTagEnd;
           tag->validXMLTag = false; //FIXME: this is more or less a workaround. We should introduce and handle Tag::ScriptTagEnd
           tag->single = true;
@@ -605,7 +603,7 @@ Node* SAParser::parseArea(const AreaStruct &specialArea,
   {
     const DTDStruct *parentDTD = m_dtd;
     if (s_parentNode->parent)
-      parentDTD = s_parentNode->parent->tag->dtd;
+      parentDTD = s_parentNode->parent->tag->dtd();
     s_dtd = DTDs::ref()->find(parentDTD->specialAreaNames[areaStartString]);
     s_areaEndString = parentDTD->specialAreas[areaStartString];
     s_searchForAreaEnd = true;
@@ -617,7 +615,7 @@ Node* SAParser::parseArea(const AreaStruct &specialArea,
     s_searchForForcedAreaEnd = true;
     s_searchForAreaEnd = false;
     if (s_parentNode)
-      s_dtd = s_parentNode->tag->dtd;
+      s_dtd = s_parentNode->tag->dtd();
   }
   s_searchContent = true;
   if (s_parentNode && s_parentNode->tag->type == Tag::Comment)
@@ -625,7 +623,7 @@ Node* SAParser::parseArea(const AreaStruct &specialArea,
   if (!s_dtd)
   {
     if (s_parentNode)
-      s_dtd = s_parentNode->tag->dtd; //fallback, usually when the special area is a comment
+      s_dtd = s_parentNode->tag->dtd(); //fallback, usually when the special area is a comment
     else
       s_dtd = m_dtd; //fallback when there is no s_parentNode
   }
@@ -794,8 +792,8 @@ Node *SAParser::parsingDone()
 
 void SAParser::parseInDetail(bool synchronous)
 {
- //synchronous = true; //for testing. Uncomment to test the parser in synchronous mode
- // return; //for testing. Uncomment to disable the detailed parser
+//  synchronous = true; //for testing. Uncomment to test the parser in synchronous mode
+//  return; //for testing. Uncomment to disable the detailed parser
 #ifdef DEBUG_PARSER
   kdDebug(24001) << "parseInDetail. Enabled: " << m_parsingEnabled << endl;
 #endif
@@ -863,7 +861,7 @@ void SAParser::slotParseNodeInDetail()
       kdDebug(24001) << "Calling parseArea from slotParseNodeInDetail." << endl;
 #endif
       QString areaStartString = m_currentNode->tag->tagStr();
-      if (m_currentNode->tag->dtd->specialAreaNames[areaStartString].isEmpty())
+      if (m_currentNode->tag->dtd()->specialAreaNames[areaStartString].isEmpty())
       {
         AreaStruct area2(m_currentNode->tag->area());
         area.bLine = area2.eLine;
@@ -973,7 +971,7 @@ void SAGroupParser::parseForScriptGroup(Node *node)
   KURL baseURL = QExtFileInfo::path(m_parent->write()->url());
   QString str = node->tag->cleanStr;
   QString tagStr = node->tag->tagStr();
-  const DTDStruct* dtd = node->tag->dtd;
+  const DTDStruct* dtd = node->tag->dtd();
   node->tag->beginPos(bl, bc);
   QValueList<StructTreeGroup>::ConstIterator it;
   for (it = dtd->structTreeGroups.begin(); it != dtd->structTreeGroups.end(); ++it)
@@ -1038,7 +1036,7 @@ void SAGroupParser::parseForScriptGroup(Node *node)
         //Find out if the current node is inside a script structure or not.
         //This is used to define local/global scope of the group elements.
         Node *tmpNode = node;
-        while (tmpNode && tmpNode->tag->dtd == dtd && tmpNode->tag->type != Tag::ScriptStructureBegin)
+        while (tmpNode && tmpNode->tag->dtd() == dtd && tmpNode->tag->type != Tag::ScriptStructureBegin)
         {
           tmpNode = tmpNode->parent;
         }
@@ -1051,9 +1049,9 @@ void SAGroupParser::parseForScriptGroup(Node *node)
         }
         groupElement.global = true;
         tmpNode = node->parent;
-        while (tmpNode && tmpNode->tag->dtd == dtd)
+        while (tmpNode && tmpNode->tag->dtd() == dtd)
         {
-          if ( tmpNode->tag->type == Tag::ScriptStructureBegin && tmpNode->tag->dtd->localScopeKeywordsRx.search(tmpNode->tag->cleanStr) != -1)
+          if ( tmpNode->tag->type == Tag::ScriptStructureBegin && tmpNode->tag->dtd()->localScopeKeywordsRx.search(tmpNode->tag->cleanStr) != -1)
           {
             groupElement.global = false;
             groupElement.parentNode = tmpNode;
