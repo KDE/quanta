@@ -433,6 +433,9 @@ protected slots:
 //Edit
   void slotUndo ();
   void slotRedo ();
+  void slotCut();
+  void slotCopy();
+  void slotPaste();
 
 //Tools
   void slotSpellcheck ();

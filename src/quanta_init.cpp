@@ -735,6 +735,9 @@ void QuantaInit::initActions()
 //Edit menu
     KStdAction::undo(m_quanta, SLOT(slotUndo()), ac);
     KStdAction::redo(m_quanta, SLOT(slotRedo()), ac);
+    KStdAction::cut(m_quanta, SLOT(slotCut()), ac);
+    KStdAction::copy(m_quanta, SLOT(slotCopy()), ac) ;
+    KStdAction::pasteText(m_quanta, SLOT(slotPaste()), ac);
 
 //Tools menu
     KStdAction::spelling(m_quanta, SLOT(slotSpellcheck()), ac);

@@ -97,6 +97,7 @@
 #include <ktexteditor/encodinginterface.h>
 #include <ktexteditor/undointerface.h>
 #include <ktexteditor/view.h>
+#include <ktexteditor/clipboardinterface.h>
 
 #include <kio/netaccess.h>
 
@@ -4664,6 +4665,66 @@ void QuantaApp::slotInsertChar()
     SpecialCharDialog S( this, "special_char" );
     if (S.exec())
       w->insertTag(S.selection());
+  }
+}
+
+void QuantaApp::slotCut()
+{
+  QuantaView* view = ViewManager::ref()->activeView();
+  Document *w = ViewManager::ref()->activeDocument();
+#ifdef BUILD_KAFKAPART
+  if(view && view->hadLastFocus() == QuantaView::VPLFocus)
+  {
+    KMessageBox::information(this, i18n("Sorry, VPL does not support this functionality yet."),
+      QString::null, "show cut unavailable");
+    return;
+  }
+#endif
+  if(w)
+  {
+    KTextEditor::ClipboardInterface* clip = dynamic_cast<KTextEditor::ClipboardInterface*>(w->view());
+    if(clip)
+      clip->cut();
+  }
+}
+
+void QuantaApp::slotCopy()
+{
+  QuantaView* view = ViewManager::ref()->activeView();
+  Document *w = ViewManager::ref()->activeDocument();
+#ifdef BUILD_KAFKAPART
+  if(view && view->hadLastFocus() == QuantaView::VPLFocus)
+  {
+    KMessageBox::information(this, i18n("Sorry, VPL does not support this functionality yet."),
+      QString::null, "show copy unavailable");
+    return;
+  }
+#endif
+  if(w)
+  {
+    KTextEditor::ClipboardInterface* clip = dynamic_cast<KTextEditor::ClipboardInterface*>(w->view());
+    if(clip)
+      clip->copy();
+  }
+}
+
+void QuantaApp::slotPaste()
+{
+  QuantaView* view = ViewManager::ref()->activeView();
+  Document *w = ViewManager::ref()->activeDocument();
+#ifdef BUILD_KAFKAPART
+  if(view && view->hadLastFocus() == QuantaView::VPLFocus)
+  {
+    KMessageBox::information(this, i18n("Sorry, VPL does not support this functionality yet."),
+      QString::null, "show paste unavailable");
+    return;
+  }
+#endif
+  if(w)
+  {
+    KTextEditor::ClipboardInterface* clip = dynamic_cast<KTextEditor::ClipboardInterface*>(w->view());
+    if(clip)
+      clip->paste();
   }
 }
 

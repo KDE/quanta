@@ -128,6 +128,18 @@ Document::Document(KTextEditor::Document *doc,
   a = m_view->actionCollection()->action( "tools_spelling" );
   if (a)
     m_view->actionCollection()->take(a);
+  //because they are not implemented in VPL
+
+  a = m_view->actionCollection()->action( "edit_copy" );
+  if (a)
+    m_view->actionCollection()->take(a);
+  a = m_view->actionCollection()->action( "edit_cut" );
+  if (a)
+    m_view->actionCollection()->take(a);
+  a = m_view->actionCollection()->action( "edit_paste" );
+  if (a)
+    m_view->actionCollection()->take(a);
+
   KAction *viewborderAction = m_view->actionCollection()->action( "view_border" );
   if (viewborderAction)
     viewborderAction->setShortcut(Qt::SHIFT + Qt::Key_F9);

@@ -980,6 +980,4 @@ void QuantaView::slotSavingCompleted()
     qApp->exit_loop();
 }
 
-
-
 #include "quantaview.moc"
