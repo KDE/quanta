@@ -3700,9 +3700,10 @@ void QuantaApp::slotGetScriptError(KProcess* ,char* buf,int buflen)
  Q_UNUSED(buflen);
 }
 /** Notify when process exits*/
-void QuantaApp::slotProcessExited(KProcess* )
+void QuantaApp::slotProcessExited(KProcess* process)
 {
   slotProcessTimeout();
+  delete process;
 }
 
 /** Timeout occurred while waiting for some network function to return. */

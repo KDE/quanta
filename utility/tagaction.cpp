@@ -484,7 +484,7 @@ QString TagAction::actionText()
 }
 
 
-void TagAction::slotProcessExited(KProcess *)
+void TagAction::slotProcessExited(KProcess *process)
 {
   if (loopStarted)
   {
@@ -492,6 +492,7 @@ void TagAction::slotProcessExited(KProcess *)
     loopStarted = false;
   }
   m_appMessages->showMessage( i18n("The \"%1\" script has exited.").arg(actionText()) );
+  delete process;
 }
 
 void TagAction::addArguments(const QStringList &arguments)
