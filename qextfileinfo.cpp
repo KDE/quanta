@@ -125,6 +125,12 @@ KURL::List QExtFileInfo::allFilesRelative( const KURL& path, const QString& mask
   return r;
 }
 
+QDict<KFileItem> QExtFileInfo::allFilesDetailed( const KURL& path, const QString& mask)
+{
+  QExtFileInfo internalFileInfo;
+  return internalFileInfo.allFilesDetailedInternal(path, mask);
+}
+
 bool QExtFileInfo::createDir(const KURL& path)
 {
   int i = 0;
@@ -170,7 +176,7 @@ KURL QExtFileInfo::cdUp(const KURL &url)
 
 QString QExtFileInfo::shortName(const QString &fname)
 {
-  return fname.section("/",-1);
+  return fname.section("/", -1);
 }
 
 KURL QExtFileInfo::path( const KURL &url )
@@ -205,7 +211,7 @@ bool QExtFileInfo::exists(const KURL& a_url)
  }
 }
 
-/* Synchronouse copy, like NetAccess::file_copy in KDE 3.2 */
+/* Synchronous copy, like NetAccess::file_copy in KDE 3.2 */
 bool QExtFileInfo::copy( const KURL& src, const KURL& target, int permissions,
  bool overwrite, bool resume, QWidget* window )
 {
@@ -243,6 +249,40 @@ KURL::List QExtFileInfo::allFilesInternal(const KURL& startURL, const QString& m
     }
   }
   return dirListItems;
+}
+
+/** No descriptions */
+QDict<KFileItem> QExtFileInfo::allFilesDetailedInternal(const KURL& startURL, const QString& mask)
+{
+  detailedDirListItems.setAutoDelete(true);
+  detailedDirListItems.clear();
+  detailedDirListItems.setAutoDelete(false);
+  if (internalExists(startURL))
+  {
+    lstFilters.setAutoDelete(true);
+    lstFilters.clear();
+    // Split on white space
+    QStringList list = QStringList::split( ' ', mask );
+    for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
+       lstFilters.append( new QRegExp(*it, false, true ) );
+
+    bJobOK = true;
+    KIO::ListJob *job = KIO::listRecursive(startURL, false, true);
+    connect(job, SIGNAL(entries(KIO::Job *, const KIO::UDSEntryList&)),
+            this, SLOT(slotNewDetailedEntries(KIO::Job *, const KIO::UDSEntryList&)));
+    connect( job, SIGNAL( result (KIO::Job *) ),
+             this, SLOT( slotResult (KIO::Job *) ) );
+
+ //   kdDebug(24000) << "Now listing: " << startURL.url() << endl;
+    enter_loop();
+    lstFilters.clear();
+    if (!bJobOK)
+    {
+ //     kdDebug(24000) << "Error while listing "<< startURL.url() << endl;
+      detailedDirListItems.clear();
+    }
+  }
+  return detailedDirListItems;
 }
 
 
@@ -342,6 +382,46 @@ void QExtFileInfo::slotNewEntries(KIO::Job *job, const KIO::UDSEntryList& udsLis
       if ( filterIt.current()->exactMatch( item->text() ) )
            dirListItems.append(itemURL);
       delete item;
+    }
+  }
+}
+
+void QExtFileInfo::slotNewDetailedEntries(KIO::Job *job, const KIO::UDSEntryList& udsList)
+{
+  KURL url = static_cast<KIO::ListJob *>(job)->url();
+  url.adjustPath(-1);
+  // avoid creating these QStrings again and again
+  static const QString& dot = KGlobal::staticQString(".");
+  static const QString& dotdot = KGlobal::staticQString("..");
+
+  KIO::UDSEntryListConstIterator it = udsList.begin();
+  KIO::UDSEntryListConstIterator end = udsList.end();
+  KURL itemURL;
+  for ( ; it != end; ++it )
+  {
+    QString name;
+
+    // find out about the name
+    KIO::UDSEntry::ConstIterator entit = (*it).begin();
+    for( ; entit != (*it).end(); ++entit )
+      if ( (*entit).m_uds == KIO::UDS_NAME )
+      {
+        name = (*entit).m_str;
+        break;
+      }
+
+    if ( ! name.isEmpty() && name != dot && name != dotdot)
+    {
+      KFileItem *item=  new KFileItem(*it, url, false, true );
+      bool added = false;
+      for ( QPtrListIterator<QRegExp> filterIt( lstFilters ); filterIt.current(); ++filterIt )
+        if ( filterIt.current()->exactMatch( item->text() ) )
+        {
+          detailedDirListItems.insert(item->url().url(), item);
+          added = true;    
+        }
+      if (!added) 
+        delete item; 
     }
   }
 }

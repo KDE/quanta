@@ -1587,7 +1587,6 @@ void Project::slotUpload()
 
   ProjectUpload *dlg = new ProjectUpload(this, KURL(), 0, i18n("Upload project items..."), false, Qt::WDestructiveClose);
   dlg->show();
-  m_modified = true;
 }
 
 void Project::slotUploadURL(const KURL& urlToUpload)
@@ -1597,7 +1596,6 @@ void Project::slotUploadURL(const KURL& urlToUpload)
 
   ProjectUpload *dlg = new ProjectUpload(this, url, 0, i18n("Upload project items..."), false, Qt::WDestructiveClose);
   dlg->show();
-  m_modified = true;
 }
 
 void Project::slotEnableMessages(bool enable)

@@ -219,7 +219,7 @@ public:
   /** No descriptions */
   bool isOptional();
   /** Returns true if tag is a possible child of this tag, or if
-  there are no children defined and trueIfNoChildsDefined is set to true. */
+  there are no children defined and if trueIfNoChildsDefined is set to true. */
   bool isChild(const QString& tag, bool trueIfNoChildsDefined = true);
   //prefer using this variant, it handle Text, Empty, XmlTagEnd nodes!
   bool isChild(Node *node, bool trueIfNoChildsDefined = true);

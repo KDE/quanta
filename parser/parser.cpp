@@ -1394,6 +1394,17 @@ void Parser::parseForScriptGroup(Node *node)
         {
           selectors.append(s);
         }
+        if (dtd->name == "php" && group.name == "Functions")
+        {
+          QTag *qTag = write->userTagList.find(s.lower());
+          if (!qTag)
+          {
+            QTag *qTag = new QTag();
+            qTag->setName(s.left(s.find('(')));
+            write->userTagList.insert(s.lower(), qTag);
+          }          
+        }
+        
         groupElement.tag = newTag;
         groupElement.node = node;
         //Find out if the current node is inside a script structure or not.
@@ -1740,11 +1751,14 @@ Node* Parser::parseSpecialArea(const AreaStruct &specialArea,
           node->closesPrevious = true;
 
           Node *n = parentNode->child;
-          while (n && n != currentNode)
+          while (n)
           {
             if (n->tag->type == Tag::Text || n->tag->type == Tag::ScriptStructureBegin)
               parseForScriptGroup(n);
-            n = n->nextSibling();
+            if (n != currentNode)  
+              n = n->nextSibling();
+            else 
+              break;  
           }
 
           return node;

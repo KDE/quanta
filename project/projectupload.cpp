@@ -135,6 +135,8 @@ void ProjectUpload::slotBuildTree()
  totalProgress->setValue(0);
  totalText->setText(i18n("Scanning project files..."));
 
+ QDict<KFileItem> projectDirFiles = QExtFileInfo::allFilesDetailed(p->baseURL, "*");
+ 
  KURL u = p->baseURL;
  KURL absUrl = u;
  for (uint i = 0; i < nl.count(); i++)
@@ -145,8 +147,13 @@ void ProjectUpload::slotBuildTree()
    {
      QuantaCommon::setUrl(u, s);
      absUrl.setPath(p->baseURL.path(1)+u.path());
+     KFileItem *p_item = projectDirFiles.find(absUrl.url());
+     if (!p_item)
+       continue;       
+     KFileItem item(*p_item);
+     /*
      KIO::NetAccess::stat(absUrl, entry);
-     KFileItem item(entry, absUrl, false, true);
+     KFileItem item(entry, absUrl, false, true); */
      s = QString("%1").arg( (long int)item.size() );
      UploadTreeFile *it = list->addItem(u, item);
      if ( it != 0 )
@@ -154,8 +161,8 @@ void ProjectUpload::slotBuildTree()
        int uploadTime = el.attribute("upload_time","1").toInt();
        int modifiedTime = item.time(KIO::UDS_MODIFICATION_TIME);
        el.setAttribute("modified_time", modifiedTime);
-//       kdDebug(24000) << "Last upload at: " << uploadTime << endl;
-//       kdDebug(24000) << "Last modified at: " << modifiedTime << endl;
+       //kdDebug(24000) << "Last upload at: " << uploadTime << endl;
+       //kdDebug(24000) << "Last modified at: " << modifiedTime << endl;
 
        if ( uploadTime < modifiedTime)
        {
@@ -166,8 +173,11 @@ void ProjectUpload::slotBuildTree()
      }
    }
  }
+ projectDirFiles.setAutoDelete(true);
+ projectDirFiles.clear();
+ projectDirFiles.setAutoDelete(false);
  totalText->setText(i18n("Building the tree..."));
- kapp->eventLoop()->processEvents( QEventLoop::ExcludeUserInput | QEventLoop::ExcludeSocketNotifiers);
+// kapp->eventLoop()->processEvents( QEventLoop::ExcludeUserInput | QEventLoop::ExcludeSocketNotifiers);
  list->checkboxTree();
  if (!startUrl.isEmpty())
       expandAll();
