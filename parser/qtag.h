@@ -88,6 +88,7 @@ public:
   DTDStruct *parentDTD;
   /** The tag has the attributes of the above common groups */
   QStringList commonGroups;
+  QStringList stoppingTags;
 
 protected: // Protected attributes
   /** List of the possible attributes */

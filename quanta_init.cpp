@@ -75,16 +75,7 @@ QString fileMaskPhp   = "*.*PHP* *.*php* ";
 QString fileMaskJava  = "*.jss *.js *.JSS *.JS ";
 QString fileMaskText  = "*.txt; *.TXT";
 QString fileMaskImage = "*.gif *.jpg *.png *.jpeg *.bmp *.xpm *.GIF *.JPG *.PNG *.JPEG *.BMP ";
- /*
-QDict<QString> *tagsList; // list of known tags
-QStrList *quotedAttribs; // list of attribs, that have quoted values ( alt, src ... )
-QStrList *lCore;          // list of core attributes ( id, class, style ... )
-QStrList *lI18n;
-QStrList *lScript;
-QStrList *singleTags; // tags without end  part </ >
-QStrList *optionalTags; // tags with optional end part
 
-   */
 QDict<DTDStruct> *dtds; //holds all the known tags with attributes for each DTD.
 
 #include <kaction.h>
@@ -680,6 +671,18 @@ void QuantaApp::setAttributes(QDomDocument *dom, QTag* tag)
 
  for ( QDomNode n = dom->firstChild().firstChild().firstChild(); !n.isNull(); n = n.nextSibling() )
  {
+   if (n.nodeName() == "stoppingtags") //read what tag can act as closing tag
+   {
+     QDomElement el = n.toElement();
+     QDomElement item = el.firstChild().toElement();
+     while ( !item.isNull() )
+     {
+       QString stopTag = item.text();
+       if (!tag->parentDTD->caseSensitive) stopTag = stopTag.upper();
+       tag->stoppingTags.append(stopTag);
+       item = item.nextSibling().toElement();
+     }
+   }
    if ( n.nodeName() == "attr" ) //an attribute
    {
      attr = new Attribute;
@@ -839,7 +842,17 @@ void QuantaApp::initTagDict()
         continue; //skip this tag
       }
       tag->parentDTD = dtd;
+      //read the possible stopping tags
+      QStrList stoppingTags;
+      dtdConfig->readListEntry(tag->name() + "_stoppingtags",stoppingTags);
+      for (uint j = 0; j < stoppingTags.count(); j++)
+      {
+       QString stopTag = QString(stoppingTags.at(j)).stripWhiteSpace();
+       if (!dtd->caseSensitive) stopTag = stopTag.upper();
+       tag->stoppingTags.append(stopTag);
+      }
       QStrList optionsList;
+      //read the possible tag options
       dtdConfig->readListEntry(tag->name() + "_options",optionsList);
       for (uint j = 0; j < optionsList.count(); j++)
       {

@@ -3,7 +3,8 @@
                              -------------------
     begin                : Sun Apr 16 2000
     copyright            : (C) 2000 by Dmitry Poplavsky
-    email                : pdima@mail.univ.kiev.ua
+                           (C) 2002 by Andras Mantia
+    email                : pdima@mail.univ.kiev.ua, amantia@freemail.hu
  ***************************************************************************/
 
 /***************************************************************************
@@ -26,7 +27,7 @@
 
 
 /**
-  *@author Dmitry Poplavsky
+  *@author Dmitry Poplavsky, Andras Mantia
   */
 
 class Document;
@@ -69,9 +70,6 @@ private:
   int lasttype;
   Node* node;
   QString m_dtdName;
-
-  QDict<QStringList> tagsStop; // list of tag, can stop area of curren tag ( <tr> stop <td> )
-
 };
 
 #endif

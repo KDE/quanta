@@ -3,7 +3,8 @@
                              -------------------
     begin                : Sun Apr 16 2000
     copyright            : (C) 2000 by Dmitry Poplavsky
-    email                : pdima@mail.univ.kiev.ua
+                           (C) 2002 by Andras Mantia
+    email                : pdima@mail.univ.kiev.ua, amantia@freemail.hu
  ***************************************************************************/
 
 /***************************************************************************
@@ -15,10 +16,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "parser.h"
-#include "node.h"
-#include "tag.h"
-
 #include <qstring.h>
 #include <qregexp.h>
 #include <qcstring.h>
@@ -28,6 +25,10 @@
 #include <stdio.h>
 #include <ctype.h>
 
+#include "parser.h"
+#include "node.h"
+#include "tag.h"
+#include "qtag.h"
 #include "../resource.h"
 #include "../quantacommon.h"
 #include "../document.h"
@@ -37,52 +38,7 @@ Parser::Parser()
   s = QString::null;
   pos = 0;
   node = 0L;
-
-  tagsStop.setAutoDelete( true );
   textChanged = true;
-
-  QStringList * list = new QStringList();
-  list->append("p");
-  list->append("li");
-  list->append("td");
-  list->append("tr");
-  list->append("th");
-  list->append("dt");
-  list->append("dd");
-  tagsStop.insert("p",list);
-
-  list = new QStringList();
-  list->append("li");
-  tagsStop.insert("li",list);
-  
-  list = new QStringList();
-  list->append("select");
-  tagsStop.insert("select",list);
-
-  list = new QStringList();
-  list->append("td");
-  list->append("tr");
-  list->append("th");
-  tagsStop.insert("td",list);
-
-  list = new QStringList();
-  list->append("tr");
-  list->append("tfoot");
-  tagsStop.insert("tr",list);
-
-  list = new QStringList();
-  list->append("dt");
-  list->append("dd");
-  tagsStop.insert("dt",list);
-
-  list = new QStringList();
-  list->append("dt");
-  list->append("dd");
-  tagsStop.insert("dd",list);
-  
-  list = new QStringList();
-  list->append("option");
-  tagsStop.insert("option",list);
 }
 
 Parser::~Parser()
@@ -157,13 +113,17 @@ Node * Parser::subParse( Node * parent, QString tag )
         Tag *tagData = parseTag();
 
         if ( !tag.isEmpty() ) {  // check if this tag stop area of previous
-          QStringList *list = tagsStop[tag];
-          if ( list )
-            if ( list->contains( tagData->name.lower() ) ) {
+          QTag *qTag = QuantaCommon::tagFromDTD(m_dtdName, tag);
+          if ( qTag )
+          {
+            QString searchFor = (qTag->parentDTD->caseSensitive)?tagData->name:tagData->name.upper();
+            if ( qTag->stoppingTags.contains( searchFor ) )
+            {
               pos = oldpos;  // return to pos before tag
               delete (tagData);
               return firstNode;
             }
+          }
         }
 
         Node *tnode = new Node( parent );
