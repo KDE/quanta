@@ -46,9 +46,8 @@ private slots:
   void slotEditTemplate();
 
 private:
-  const DTDStruct *m_dtd;
-  QListViewItem *oldItem;
-  Abbreviation *currentAbbrev;
+  QListViewItem *m_oldItem;
+  Abbreviation *m_currentAbbrev;
 };
 
 #endif

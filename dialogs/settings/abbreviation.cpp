@@ -44,9 +44,8 @@
 AbbreviationDlg::AbbreviationDlg(QWidget *parent, const char *name):
     AbbreviationDlgS(parent, name)
 {
-  m_dtd = 0L;
-  oldItem = 0L;
-  currentAbbrev = 0L;
+  m_oldItem = 0L;
+  m_currentAbbrev = 0L;
 
   QMapConstIterator<QString, Abbreviation> it;
   for (it = qConfig.abbreviations.constBegin(); it != qConfig.abbreviations.constEnd(); ++it)
@@ -64,24 +63,24 @@ void AbbreviationDlg::slotGroupChanged(const QString& newGroupName)
 {
   //save the current template
   QListViewItem *item = templatesList->currentItem();
-  if (item && currentAbbrev)
-     currentAbbrev->abbreviations.insert(item->text(0) + " " + item->text(1), codeEdit->text());
+  if (item && m_currentAbbrev)
+     m_currentAbbrev->abbreviations.insert(item->text(0) + " " + item->text(1), codeEdit->text());
   dtepList->clear();
   templatesList->clear();
   codeEdit->clear();
-  oldItem = 0L;
-  currentAbbrev = &qConfig.abbreviations[newGroupName];
+  m_oldItem = 0L;
+  m_currentAbbrev = &qConfig.abbreviations[newGroupName];
   QString templateStr;
   QString templateName;
   QMap<QString, QString>::ConstIterator it;
-  for ( it = currentAbbrev->abbreviations.constBegin(); it != currentAbbrev->abbreviations.constEnd(); ++it )
+  for ( it = m_currentAbbrev->abbreviations.constBegin(); it != m_currentAbbrev->abbreviations.constEnd(); ++it )
   {
     templateStr = it.key();
     templateName = templateStr.mid(templateStr.find(' ') + 1);
     templateStr = templateStr.left(templateStr.find(' '));
     new KListViewItem(templatesList, templateStr, templateName);
   }
-  for ( QStringList::ConstIterator dtepit = currentAbbrev->dteps.constBegin(); dtepit != currentAbbrev->dteps.constEnd(); ++dtepit )
+  for ( QStringList::ConstIterator dtepit = m_currentAbbrev->dteps.constBegin(); dtepit != m_currentAbbrev->dteps.constEnd(); ++dtepit )
   {
       dtepList->insertItem(DTDs::ref()->getDTDNickNameFromName(*dtepit));
   }
@@ -121,7 +120,7 @@ void AbbreviationDlg::slotAddDTEP()
   if (ok)
   {
       dtepList->insertItem(res);
-      currentAbbrev->dteps.append(DTDs::ref()->getDTDNameFromNickName(res));
+      m_currentAbbrev->dteps.append(DTDs::ref()->getDTDNameFromNickName(res));
   }
 }
 
@@ -133,7 +132,7 @@ void AbbreviationDlg::slotRemoveDTEP()
     KMessageBox::error(this, i18n("<qt>Select a DTEP from the list before using <b>Remove</b>.</qt>"), i18n("No DTEP Selected"));
   } else
   {
-    currentAbbrev->dteps.remove(DTDs::ref()->getDTDNameFromNickName(dtepList->currentText()));
+    m_currentAbbrev->dteps.remove(DTDs::ref()->getDTDNameFromNickName(dtepList->currentText()));
     dtepList->removeItem(currentItem);
   }
 }
@@ -142,16 +141,16 @@ void AbbreviationDlg::slotTemplateSelectionChanged(QListViewItem* item)
 {
   if (!item)
       return;
-  //QListViewItem *oldItem = templatesList->currentItem();
-  if (oldItem)
+  //QListViewItem *m_oldItem = templatesList->currentItem();
+  if (m_oldItem)
   {
-    QString key = oldItem->text(0)+" " +oldItem->text(1);
-    currentAbbrev->abbreviations.insert(key, codeEdit->text());
+    QString key = m_oldItem->text(0)+" " +m_oldItem->text(1);
+    m_currentAbbrev->abbreviations.insert(key, codeEdit->text());
   }
 
-  QString code = currentAbbrev->abbreviations[item->text(0)+" " +item->text(1)];
+  QString code = m_currentAbbrev->abbreviations[item->text(0)+" " +item->text(1)];
   codeEdit->setText(code);
-  oldItem = item;
+  m_oldItem = item;
 }
 
 void AbbreviationDlg::slotAddTemplate()
@@ -181,9 +180,9 @@ void AbbreviationDlg::slotRemoveTemplate()
   if (item &&
       KMessageBox::questionYesNo(this, i18n("<qt>Do you really want to remove the <b>%1</b> template?</qt>").arg(item->text(1))) == KMessageBox::Yes)
   {
-    currentAbbrev->abbreviations.remove(item->text(0)+" "+item->text(1));
+    m_currentAbbrev->abbreviations.remove(item->text(0)+" "+item->text(1));
     delete item;
-    oldItem = 0L;
+    m_oldItem = 0L;
     slotTemplateSelectionChanged(templatesList->currentItem());
   }
 }
@@ -200,10 +199,10 @@ void AbbreviationDlg::slotEditTemplate()
   w.descriptionEdit->setText(item->text(1));
   if (dlg.exec())
   {
-    currentAbbrev->abbreviations.remove(item->text(0)+" "+item->text(1));
+    m_currentAbbrev->abbreviations.remove(item->text(0)+" "+item->text(1));
     item->setText(0, w.templateEdit->text());
     item->setText(1, w.descriptionEdit->text());
-    currentAbbrev->abbreviations.insert(item->text(0) + " " + item->text(1), codeEdit->text());
+    m_currentAbbrev->abbreviations.insert(item->text(0) + " " + item->text(1), codeEdit->text());
   }
 }
 
@@ -211,8 +210,8 @@ void AbbreviationDlg::slotEditTemplate()
 void AbbreviationDlg::saveTemplates()
 {
   QListViewItem *item = templatesList->currentItem();
-  if (item && currentAbbrev)
-     currentAbbrev->abbreviations.insert(item->text(0) + " " + item->text(1), codeEdit->text());
+  if (item && m_currentAbbrev)
+     m_currentAbbrev->abbreviations.insert(item->text(0) + " " + item->text(1), codeEdit->text());
   QString abbrevFile = KGlobal::dirs()->saveLocation("data") + resourceDir + "abbreviations.xml";
   QString s = "<!DOCTYPE Templates>\n<Templates>\n</Templates>\n";
   QString s2;
