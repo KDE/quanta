@@ -5,10 +5,10 @@ noinst_LIBRARIES = libtoolbar.a
 
 libtoolbar_a_METASOURCES = AUTO
 
-libtoolbar_a_SOURCES = toolbarxmlgui.cpp actioneditdlgs.ui actioneditdlg.cpp tagaction.cpp actioneditdlgs.cpp 
+libtoolbar_a_SOURCES = toolbarxmlgui.cpp actioneditdlgs.ui actioneditdlg.cpp tagaction.cpp
 
 
-EXTRA_DIST = actioneditdlgs.cpp actioneditdlg.h actioneditdlgs.h tagaction.cpp actioneditdlg.cpp actioneditdlgs.ui tagaction.h toolbarxmlgui.cpp toolbarxmlgui.h 
+EXTRA_DIST = actioneditdlg.h tagaction.cpp actioneditdlg.cpp actioneditdlgs.ui tagaction.h toolbarxmlgui.cpp toolbarxmlgui.h 
 
 ####### kdevelop will overwrite this part!!! (end)############
 
