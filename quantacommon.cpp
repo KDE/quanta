@@ -425,7 +425,7 @@ QString QuantaCommon::i18n2normal(const QString& a_str)
   {
     for (int i = 0; i < keywordNum; i++)
     {
-      if (a_str == i18n(keywords[i]))
+      if (!keywords[i].isEmpty() && a_str == i18n(keywords[i]))
       {
         str = keywords[i];
         break;

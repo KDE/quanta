@@ -39,6 +39,7 @@ FileCombo::FileCombo(const KURL& a_baseURL, QWidget *parent, const char *name )
   QHBoxLayout *layout = new QHBoxLayout(this);
 
   combo   = new QComboBox(true,this);
+  combo->setEditable(true);
   button  = new QPushButton(this);
 
   button  ->setFixedSize(35,25);

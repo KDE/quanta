@@ -46,7 +46,7 @@ CSSSelectorEditor::CSSSelectorEditor(QString code, bool editSelector,
   // UI things
   setCaption(name);
 
-    lineSelector->setEnabled (editSelector);
+  lineSelector->setEnabled (editSelector);
 
   connect(buttonOk, SIGNAL(clicked()), SLOT(accept()));
   connect(buttonCancel, SIGNAL(clicked()), SLOT(reject()));
@@ -465,7 +465,7 @@ void CSSSelectorEditor::widgetFromCode(QString code)
     else if (pname == "text-transform")
       comboTextTransform->setCurrentText(pvalue);
     else if (pname == "text-indent")
-      comboTextIndent->setCurrentText(pvalue);
+      comboTextIndent->setEditText(pvalue);
     else if (pname == "line-height")
       comboLineHeight->setCurrentText(pvalue);
 
