@@ -537,7 +537,11 @@ void Document::slotFilterCompletion( KTextEditor::CompletionEntry *completion ,Q
 
   if ( completion->type == "attributeValue")
   {
-    string->append(completionDTD->tagSeparator);
+    uint line, col;
+    viewCursorIf->cursorPositionReal(&line, &col);
+    QString textLine = editIf->textLine(line);
+    if (textLine[col] != completionDTD->tagSeparator)
+        string->append(completionDTD->tagSeparator);
   }
   if ( completion->type == "attribute" )
   {
