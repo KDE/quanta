@@ -813,8 +813,7 @@ void QuantaApp::slotConfigureToolbars(const QString& defaultToolbar)
   Q_UNUSED(defaultToolbar);
   dlg = new KEditToolbar(factory(), this);
 #else
-  //dlg = new KEditToolbar(defaultToolbar, factory());
-  dlg = new KEditToolbar(factory(), this, defaultToolbar);
+  dlg = new KEditToolbar(defaultToolbar, factory(), this);
 #endif
 #else
   dlg = new KEditToolbar(factory(), this);
