@@ -443,7 +443,9 @@ void StructTreeView::slotGotoTag( QListViewItem *item )
     kdDebug(24000) << "Node str: " << tag->tagStr() << endl;
     kdDebug(24000) << "Node cleanstr: " << tag->cleanStr << endl;
 */
-    emit newCursorPosition(line, col + 1);
+    if (tag->type == Tag::XmlTag || tag->type == Tag::XmlTagEnd)
+      col++; //position the cursor inside the tag
+    emit newCursorPosition(line, col);
     Document *w = ViewManager::ref()->activeDocument();
     if (w)
       w->view()->setFocus();
