@@ -18,6 +18,7 @@
 #include <kstaticdeleter.h>
 #include <kactioncollection.h>
 #include <kaction.h>
+#include <khtmlview.h>
 #include <klocale.h>
 #include <dom/dom_node.h>
 

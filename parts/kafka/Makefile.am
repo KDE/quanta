@@ -4,9 +4,9 @@ KDE_CXXFLAGS = $(USE_EXCEPTIONS)
 noinst_LTLIBRARIES = libkafkalibrary.la
 
 libkafkalibrary_la_SOURCES = htmlenhancer.cpp domtreeview.cpp kafkacommon.cpp \
-	kafkahtmlpart.cpp kafkahtmlview.cpp nodeproperties.cpp wkafkapart.cpp undoredo.cpp \
-	kafkasyncoptionsui.ui htmldocumentpropertiesui.ui kafkasyncoptions.cpp \
-	htmldocumentproperties.cpp cursors.cpp kafkadragobject.cpp tagactionmanager.cpp tagactionset.cpp
+	kafkahtmlpart.cpp nodeproperties.cpp wkafkapart.cpp undoredo.cpp kafkasyncoptionsui.ui \
+	htmldocumentpropertiesui.ui kafkasyncoptions.cpp htmldocumentproperties.cpp cursors.cpp \
+	kafkadragobject.cpp tagactionmanager.cpp tagactionset.cpp
 
 libkafkalibrary_la_METASOURCES = AUTO
 libkafkalibrary_la_LDFLAGS = $(all_libraries)

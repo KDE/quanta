@@ -64,7 +64,7 @@ Version 3.4 (Release date: xx-xx-2005; Started 20-08-2004):
           debugger enabled [#96723]
         - close the file that was deleted, not something else when using delete from
           the tab context menu [#98265]
-
+        - restore the correct mouse cursor when the VPL area is left [#98177]
 
   - behavioral/user interface changes:
         - Toolbars->Add User Toolbar renamed to New User Toolbar
@@ -100,7 +100,7 @@ Version 3.4 (Release date: xx-xx-2005; Started 20-08-2004):
       	- possibility to disable the event actions added (without the need to
           remove them one by one)
         - support loading of more than one toolbar at a time
-        - don't ask for toolbar saving if the toolbar names was modified by
+        - don't ask for toolbar saving if the toolbar names were modified by
           Quanta to add (1), (2), etc. at the end
         - disable the Quanta Template page in properties if you don't have
           writing rights to the directory

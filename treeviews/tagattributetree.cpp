@@ -28,6 +28,7 @@
 #include <kstringhandler.h>
 #include <kdebug.h>
 #include <kiconloader.h>
+#include <khtmlview.h>
 #include <ktexteditor/editinterface.h>
 #include <ktexteditor/viewcursorinterface.h>
 #include <ktexteditor/view.h>

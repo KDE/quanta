@@ -32,10 +32,6 @@
 #include <dom/dom_node.h>
 #include <dom/dom_element.h>
 
-#include "kafkahtmlview.h"
-
-
-
 class DOMString;
 class KafkaWidgetPrivate;
 class KafkaDocument;

@@ -35,6 +35,7 @@
 #include <kaction.h>
 #include <kdebug.h>
 #include <kdirwatch.h>
+#include <khtmlview.h>
 #include <klocale.h>
 #include <kstandarddirs.h>
 #include <kmenubar.h>

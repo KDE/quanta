@@ -20,6 +20,7 @@
 #include <dom/dom_string.h>
 #include <dom/css_stylesheet.h>
 #include <kdebug.h>
+#include <khtmlview.h>
 #include <kstandarddirs.h>
 #include <ktexteditor/editinterface.h>
 #include <ktexteditor/selectioninterface.h>

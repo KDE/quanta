@@ -26,9 +26,9 @@
 #include <qtooltip.h>
 #include <qpopupmenu.h> 
 
-#include <kapplication.h>
 #include <kdebug.h>
 #include <klocale.h>
+#include <khtmlview.h>
 #include <kmessagebox.h>
 #include <ktrader.h>
 #include <klibloader.h>
@@ -83,7 +83,7 @@ public:
 
 KafkaWidget::KafkaWidget(QWidget *parent, QWidget *widgetParent, KafkaDocument *part,
                          const char *name)
-        : KHTMLPart(new KafkaHTMLView(this, widgetParent, name), parent, name),
+        : KHTMLPart(new KHTMLView(this, widgetParent, name), parent, name),
         w(part)
 {
     m_contextPopupMenu = new QPopupMenu();
@@ -486,7 +486,7 @@ bool KafkaWidget::eventFilter(QObject *, QEvent *event)
 
         emit hasFocus(false);
     }
-
+    
     if(event->type() == QEvent::KeyPress)
     {
         QKeyEvent *keyevent = static_cast<QKeyEvent *>(event);
@@ -1958,11 +1958,13 @@ void KafkaWidget::khtmlMouseMoveEvent(khtml::MouseMoveEvent *event)
     DOM::Node mouseNode = event->innerNode();
 
     if(mouseNode == 0)
-        return;
+    {
+      return;
+    }
     if(mouseNode.nodeType() == DOM::Node::TEXT_NODE)
-        KApplication::setOverrideCursor(Qt::ibeamCursor);
+      view()->setCursor(Qt::ibeamCursor);
     else
-        KApplication::setOverrideCursor(Qt::arrowCursor);
+      view()->setCursor(Qt::arrowCursor);
 
     KHTMLPart::khtmlMouseMoveEvent(event);
 }
