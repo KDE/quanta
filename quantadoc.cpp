@@ -241,7 +241,7 @@ bool QuantaDoc::saveDocument(const KURL& url)
        {
          uint line,col;
          w->viewCursorIf->cursorPositionReal(&line, &col);
-	 wdoc->setModified(false); //workaround for fish
+         wdoc->setModified(false); //workaround for fish
          wdoc->openURL(url);
          w->viewCursorIf->setCursorPosition(line, col);
      }

@@ -171,32 +171,25 @@ QString("\n")+dlg->generateFramesetStructure()+QString("\n");
 void QuantaView::slotInsertCSS()
 {
   if (!writeExists()) return;
-
   Document *w = write();
-
+  
   uint line, col;
   int bLine, bCol, eLine, eCol;
   bLine = bCol = eLine = eCol = 0;
   w->viewCursorIf->cursorPositionReal(&line, &col);
   Node *node = parser->nodeAt(line, col);
-  if (node)
-      node->tag->endPos(bLine,bCol);
-  if (node && node->next)
+  unsigned int lastLine = w->editIf->numLines() - 1;
+  unsigned int lastCol = w->editIf->lineLength(lastLine);
+ 
+  if(node && node->tag->name.contains("style")) 
+  {  
+    node->tag->endPos(bLine,bCol);
+    const QString header(w->text(0, 0,bLine, bCol));// beginning part of the file
     node->next->tag->endPos(eLine,eCol);
-  else
-  {
-    eLine = bLine;
-    eCol = bCol;
-  }
-
-  const QString header(w->text(0, 0,bLine, bCol));// beginning part of the file
-  const QString footer("</style>"+w->text(eLine, eCol+1,200,200)); // ending part of the file
-  if (node)
-      node->tag->endPos(bLine,bCol);
-
-  if(node && node->tag->name.contains("style")) {
+    const QString footer("</style>"+w->text(eLine, eCol+1,lastLine, lastCol)); // ending part of the file
+    
     node->next->tag->beginPos(eLine,eCol);
-    QString styleTagContent(w->text(bLine, bCol+1, eLine, eCol-1));// <style></style> block content
+    QString styleTagContent(w->text(bLine, bCol+1, eLine, eCol-1).remove("<!--").remove("-->"));// <style></style> block content
 
     CSSSelector *dlg = new CSSSelector;
 
@@ -213,52 +206,54 @@ void QuantaView::slotInsertCSS()
       w->editIf->removeText(bLine, bCol+1, eLine, eCol);
       w->viewCursorIf->setCursorPositionReal((uint)bLine, (uint)bCol+1);
       w->activateParser(true);
-      w->insertTag(dlg->generateStyleSection());
+      w->insertTag( "\n<!--" + dlg->generateStyleSection() + "-->\n");
     }
     delete dlg;
 
   }
   else {
-
-
     CSSEditor *dlg = new CSSEditor(this);
     dlg->setForInitialPreview(w->editIf->text());
 
-    if(node){
+    if (node)
+    {
       node->tag->beginPos(bLine, bCol);
       node->tag->endPos(eLine, eCol);
     }
-
-    dlg->setFooter(w->text(eLine, eCol,200, 200));
+    dlg->setFooter(">" + w->text(eLine, eCol + 1, lastLine, lastCol));
 
     QString temp(QString::null);
-
-    if( node)
-      if( node->tag->hasAttribute("style") ) {
-        dlg->setInlineStyleContent(node->tag->attributeValue("style"));
-        node->tag->deleteAttribute("style");
-        temp=node->tag->toString();
-      }
-    else{
-       dlg->setInlineStyleContent(QString::null);
-       temp=node->tag->toString();
+    QString tempStyleContent(QString::null);
+    if(node && node->tag->hasAttribute("style")) 
+    {
+      dlg->setInlineStyleContent(node->tag->attributeValue("style"));
+      tempStyleContent = node->tag->attributeValue("style");
+      node->tag->deleteAttribute("style");
+      temp=node->tag->toString();
+    } else {
+      dlg->setInlineStyleContent(QString::null);
+      if (node)
+        temp = node->tag->toString();
+      else
+        temp = "";
     }
     //using QString::mid sometimes generates strange results; maybe this is due to a (random) blank in temp
-    temp=temp.left(temp.length()-1);//remove >
-    temp=temp.right(temp.length()-1);//remove <
-    dlg->setHeader(w->text(0, 0,bLine, bCol)+temp);
+    temp = temp.left(temp.length()-1);//remove >
+    temp = temp.right(temp.length()-1);//remove <
+    dlg->setHeader(w->text(0, 0, bLine, bCol) + temp);
 
     dlg->initialize();
-    if( dlg->exec() ){
+    if( dlg->exec() )
+    {
 
       QDict<QString> attr;
       attr.setAutoDelete(true);
-      attr.insert("style",new QString( dlg->generateProperties() ) );
-
+      attr.insert("style",new QString(dlg->generateProperties()));
       if (node)
         w->changeTag(node->tag, &attr);
-      else
-          w->insertText(*attr["style"]); //FIXME!!
+    } else {
+      if (node)
+       node->tag->editAttribute("style", tempStyleContent);
     }
     delete dlg;
    }

@@ -14,13 +14,13 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
-#ifndef DOUBLEEDITORS_H
-#define DOUBLEEDITORS_H
-#include <qhbox.h>
+ #ifndef DOUBLEEDITORS_H
+ #define DOUBLEEDITORS_H
+ #include <qhbox.h>
  class specialSB;
  class QSpinBox;
  class QComboBox;
-
+ 
  class doublePercentageEditor : public QHBox /*multipleSpinBox*/  {
      Q_OBJECT
    private:
@@ -78,7 +78,7 @@ class doubleLengthEditor : public QHBox  {
      void ssbDxValueSlot(const QString&);
 
    signals:
-     void valueChanged(const QString&);
+     void valueChanged(const QString&);  
 };
 
 #endif

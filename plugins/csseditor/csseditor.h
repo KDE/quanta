@@ -71,8 +71,7 @@ class CSSEditor : public CSSEditorS
     propertySetter *ps;
     myCheckListItem *currentProp;
     KHTMLPart *previewer;
-    QDomDocument doc,
-                            shortHandDefDoc ;
+    QDomDocument doc;
     QMap<QString,QString> properties;
     QString selectorName,
                 initialProperties,
@@ -98,12 +97,7 @@ class CSSEditor : public CSSEditorS
     ~CSSEditor();
     void addProperty(const QString& property, const QString& value) { properties[property] = value; }
     void addAndSetPropertyOn(const QString& property, const QString& value);
-    void setForInitialPreview(const QString& s) { initialPreviewText = s; }
-    
-    void initShortHandForm();
-    //QString fromShortHandForm(QString,QString){}
-    //QString toShortHandForm(QString s){}
-    
+    void setForInitialPreview(const QString& s) { initialPreviewText = s; }  
     void setCurrentPropOn(const QString& s);
 
   public slots:

@@ -14,11 +14,11 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
-#include "doubleeditors.h"
-#include "specialsb.h"
-#include <qcombobox.h>
-#include <qspinbox.h>
-
+ #include "doubleeditors.h"
+ #include "specialsb.h"
+ #include <qcombobox.h>
+ #include <qspinbox.h>
+ 
  doubleLengthEditor::doubleLengthEditor(QWidget *parent, const char *name) : QHBox(parent,name)
 {
   ssbSx = new specialSB(this);

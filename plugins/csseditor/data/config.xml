@@ -670,6 +670,17 @@
    <value name="inherit"/>
   </selectable>
  </float>
+ 
+   <font hasSub="no">
+    <selectable>
+     <value name="caption"/> 
+     <value name="icon"/> 
+     <value name="menu"/> 
+     <value name="message-box"/>
+     <value name="small-caption"/>
+     <value name="status-bar"/>
+    </selectable>
+   </font>
    
    <font hasSub="yes">
    
