@@ -454,6 +454,14 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
   dtd->booleanTrue = dtdConfig->readEntry("BooleanTrue","true");
   dtd->booleanFalse = dtdConfig->readEntry("BooleanFalse","false");
   dtd->singleTagStyle = dtdConfig->readEntry("Single Tag Style", "xml").lower();
+  dtd->variableGroupIndex = dtdConfig->readNumEntry("VariableGroupIndex", 0) - 1;
+  dtd->functionGroupIndex = dtdConfig->readNumEntry("FunctionGroupIndex", 0) - 1;
+  dtd->classGroupIndex = dtdConfig->readNumEntry("ClassGroupIndex", 0) - 1;
+  if (dtd->classGroupIndex != -1)
+  {
+    tmpStr = dtdConfig->readEntry("MemberAutoCompleteAfter").stripWhiteSpace();
+    dtd->memberAutoCompleteAfter.setPattern(tmpStr);
+  }
 
   //read the definition of different structure groups, like links, images, functions
   //classes, etc.
@@ -473,6 +481,10 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
         group.name = dtdConfig->readEntry("Name").stripWhiteSpace();
         group.noName = dtdConfig->readEntry("No_Name").stripWhiteSpace();
         group.icon = dtdConfig->readEntry("Icon").stripWhiteSpace();
+        tmpStr = dtdConfig->readEntry("DefinitionRx").stripWhiteSpace();
+        group.definitionRx.setPattern(tmpStr);
+        tmpStr = dtdConfig->readEntry("UsageRx").stripWhiteSpace();
+        group.usageRx.setPattern(tmpStr);
         tmpStr = dtdConfig->readEntry("SearchRx").stripWhiteSpace();
         group.searchRx.setPattern(tmpStr);
         group.hasSearchRx = !group.searchRx.pattern().isEmpty();
@@ -546,6 +558,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
         }
       }
     }
+
   delete dtdConfig;
   dtd->loaded = true;
   resolveInherited(dtd);
@@ -703,8 +716,9 @@ void DTDs::setAttributes(QDomNode *dom, QTag* tag, bool &common)
       tag->setOptional(true);
     }
 
-    tag->type = el.attribute("type","xmltag");
-    tag->returnType = el.attribute("returnType","");
+    tag->type = el.attribute("type", "xmltag");
+    tag->returnType = el.attribute("returnType", "");
+    tag->className = el.attribute("class", "");
     tag->comment = el.attribute("comment", "");
     if (!tag->comment.isEmpty())
       tag->comment = " [" + i18n(tag->comment) + "] ";

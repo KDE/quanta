@@ -40,6 +40,7 @@ QTag::QTag( QTag &t)
   commonGroups = t.commonGroups;
   stoppingTags = t.stoppingTags;
   childTags = t.childTags;
+  className = t.className;
 
   for (int i=0; i < t.attributeCount(); i++)
   {
@@ -173,6 +174,7 @@ QTag QTag::operator = (QTag &t)
   comment = t.comment;
   commonGroups = t.commonGroups;
   stoppingTags = t.stoppingTags;
+  className = t.className;
 
   for (int i=0; i < t.attributeCount(); i++)
   {

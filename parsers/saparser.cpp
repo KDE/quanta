@@ -1104,5 +1104,4 @@ void SAGroupParser::parseForScriptGroup(Node *node)
 #endif
 }
 
-
 #include "saparser.moc"

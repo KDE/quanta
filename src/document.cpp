@@ -178,7 +178,6 @@ Document::Document(KTextEditor::Document *doc,
   m_backupEntry = false;
   //path of the backup copy file of the document
   m_backupPathValue = QString::null;
-  userTagList.setAutoDelete(true);
 
   connect( m_doc,  SIGNAL(charactersInteractivelyInserted (int ,int ,const QString&)),
            this,  SLOT(slotCharactersInserted(int ,int ,const QString&)) );
@@ -1115,6 +1114,22 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(int line, 
       parentQTag = QuantaCommon::tagFromDTD(node);
   QString textLine = editIf->textLine(line).left(col);
   QString word = findWordRev(textLine, completionDTD).upper();
+  QString classStr = "";
+  if (completionDTD->classGroupIndex != -1)
+  {
+    textLine = textLine.left(textLine.length() - word.length());
+    int pos = completionDTD->memberAutoCompleteAfter.searchRev(textLine);
+    if (pos != -1)
+    {
+      textLine = textLine.left(pos);
+      QRegExp *r =  &(completionDTD->structTreeGroups[completionDTD->classGroupIndex].usageRx);
+      pos = r->searchRev(textLine);
+      if (pos != -1)
+      {
+        classStr = r->cap(1);
+      }
+    }
+  }
   completion.userdata = word +"|";
   QStringList tagNameList;
   QMap<QString, QString> comments;
@@ -1122,14 +1137,18 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(int line, 
   QDictIterator<QTag> it(*(completionDTD->tagsList));
   for( ; it.current(); ++it )
   {
-    tagName = it.current()->name();
-    if (tagName.upper().startsWith(word))
+    QTag *tag = it.current();
+    if (tag->className == classStr)
     {
-      if (!parentQTag || (parentQTag && parentQTag->isChild(tagName)))
+      tagName = tag->name();
+      if (!tagName.isEmpty() && tagName.upper().startsWith(word))
       {
-        tagName = it.current()->name();
-        tagNameList += tagName;
-        comments.insert(tagName, it.current()->comment);
+        if (!parentQTag || (parentQTag && parentQTag->isChild(tagName)))
+        {
+          tagName = tag->name();
+          tagNameList += tagName;
+          comments.insert(tagName, tag->comment);
+        }
       }
     }
   }
@@ -1499,6 +1518,7 @@ bool Document::scriptAutoCompletion(int line, int column)
      tag = userTagList.find(word.lower());
    if (tag)
    {
+     kdDebug(24000) << tag->name() << endl;
      QStringList argList;
      QString arguments;
      if (tag->type != "property")

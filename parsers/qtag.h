@@ -54,6 +54,8 @@ typedef struct StructTreeGroup{
         QString name;        //the name of the group
         QString noName;      //the text when there are no elements in the group
         QString icon;        //the icon of the group
+        QRegExp definitionRx; //regular experssion to help us find the group element definition - for pseudo DTDs
+        QRegExp usageRx; //regexp to find the usage of a group element in the document
         QRegExp searchRx;    //regular experssion to help us find the group - for pseudo DTDs
         bool hasSearchRx;    //true if searchRx should be used
         bool isMinimalSearchRx; // true if the searchRx should be non-greedy
@@ -179,7 +181,7 @@ defined in the structure after the keyword have local scope */
      mutable QRegExp localScopeKeywordsRx;
 
 /* A list of structure tree groups definition */
-     QValueList<StructTreeGroup> structTreeGroups;
+     mutable QValueList<StructTreeGroup> structTreeGroups;
      QMap<QString, XMLStructGroup> xmlStructTreeGroups;
 
 /****************** END FOR THE NEW PARSER **********************/
@@ -192,6 +194,13 @@ defined in the structure after the keyword have local scope */
      QChar attrAutoCompleteAfter;
      QChar attributeSeparator;
      QChar tagSeparator;
+
+     /* Script language related items */
+     int variableGroupIndex; ///< the index of the structure tree group holding the variables. -1 if there is no such group.
+     int functionGroupIndex; ///< the index of the structure tree group holding the functions. -1 if there is no such group.
+     int classGroupIndex; ///< the index of the structure tree group holding the classes. -1 if there is no such group.
+     mutable QRegExp memberAutoCompleteAfter; ///< the regular expression after which a list with the existing member methods and variables for a class should be shown. Makes sense only if the language supports classes.
+
     };
 
 class QTag {
@@ -244,6 +253,7 @@ public:
   QMap<QString, bool> childTags; ///<list of the possible child tags. If the value is true, the child is mandatory
   QString type; ///<function, class, xmltag, etc.
   QString returnType;  ///<useful is type="function"; may be int, string or whatever
+  QString className; ///< the name of the class where the tag belongs to. Used only for script DTEP tags
   QString comment; ///< comment associated to the tag. Will appear as a tooltip in the autocompletion box. Useful for specifying version information (eg. since PHP5)
 
 protected: // Protected attributes

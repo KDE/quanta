@@ -16,6 +16,10 @@ apache_lookup_uri = filename
 [Extra rules]
 StructGroupsCount = 5
 TagAutoCompleteAfter = none
+VariableGroupIndex = 2
+FunctionGroupIndex = 3
+ClassGroupIndex = 4
+MemberAutoCompleteAfter = (?:\.|->)$
 
 [Parsing rules]
 AreaBorders = <? ?>, <* *>, <% %>
@@ -43,14 +47,19 @@ FileNameRx = (?:^include|^require|^include_once|^require_once|\(|\)|\"|\'|;$)
 Name = Variables
 No_Name = No Variables
 Icon = abs
+DefinitionRx = \$+([a-zA-Z0-9_\x7f-\xff]*[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)
+UsageRx = \$+([a-zA-Z0-9_\x7f-\xff]*[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)
+AutoCompleteAfter = \$+[a-zA-Z0-9_\x7f-\xff]*$
+
 SearchRx = \$+[a-zA-Z0-9_\x7f-\xff]*[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*
 ClearRx = \$
-AutoCompleteAfter = \$+[a-zA-Z0-9_\x7f-\xff]*$
 
 [StructGroup_3]
 Name = Functions
 No_Name = No Functions
 Icon = mini-modules
+DefinitionRx = \bfunction[\\s]+([0-9a-zA-Z_\x7f-\xff]*[\\s]*(?:\(.*\)){0,1})
+
 SearchRx = \bfunction[\\s]+[0-9a-zA-Z_\x7f-\xff]*[\\s]*(?:\(.*\)){0,1}
 ClearRx = function[\\s]+
 
@@ -58,6 +67,9 @@ ClearRx = function[\\s]+
 Name = Classes
 No_Name = No Classes
 Icon = classnew
+DefinitonRx = \bclass[\\s]+([0-9a-zA-Z_\x7f-\xff]*)[\\s]*
+UsageRx = \B\$+([a-zA-Z0-9_\x7f-\xff]*[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)$
+
 SearchRx = \bclass[\\s]+[0-9a-zA-Z_\x7f-\xff]*[\\s]*
 ClearRx = (?:class[\s]+|\n)
 AutoCompleteAfter = \bnew[\\s]+$
