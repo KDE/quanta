@@ -40,17 +40,11 @@ KSplash::KSplash()
    QPixmap pm( UserIcon("quantalogo") );
 
    setBackgroundPixmap(pm);
-#if defined(KDE_MAKE_VERSION)
- #if KDE_VERSION >= KDE_MAKE_VERSION(3,1,90)
-   QRect desk = KGlobalSettings::splashScreenDesktopGeometry();
-   setGeometry( desk.center().x()-225, desk.center().y()-150, 450, 300 );
- #else
-   setGeometry( QApplication::desktop()->width ()/2-225,
-                QApplication::desktop()->height()/2-150,
-                450, 300 );
- #endif
+#if KDE_VERSION >= KDE_MAKE_VERSION(3,1,90)
+  QRect desk = KGlobalSettings::splashScreenDesktopGeometry();
+  setGeometry( desk.center().x()-225, desk.center().y()-150, 450, 300 );
 #else
-   setGeometry( QApplication::desktop()->width ()/2-225,
+  setGeometry( QApplication::desktop()->width ()/2-225,
                 QApplication::desktop()->height()/2-150,
                 450, 300 );
 #endif

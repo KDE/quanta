@@ -340,6 +340,20 @@ bool QuantaCommon::checkMimeGroup(const KURL& url, const QString& group)
     }
  }
 
+ if (!status && group == "text" && url.isLocalFile())
+ {
+#if KDE_VERSION < KDE_MAKE_VERSION(3,1,90)
+   Format f = findFormatByFileContent(url.path());
+   if (f.text && f.compression == Format::NoCompression)
+       status = true;
+#else
+   KMimeType::Format f = KMimeType::findFormatByFileContent(url.path());
+   if (f.text && f.compression == KMimeType::Format::NoCompression)
+       status = true;
+
+#endif
+ }
+
  return status;
 }
 
@@ -451,3 +465,30 @@ QString QuantaCommon::i18n2normal(const QString& a_str)
   return str;
 }
 
+#if KDE_VERSION < KDE_MAKE_VERSION(3,1,90)
+
+#define GZIP_MAGIC1     0x1f
+#define GZIP_MAGIC2     0x8b
+
+Format QuantaCommon::findFormatByFileContent( const QString &fileName )
+{
+  Format result;
+  result.compression = Format::NoCompression;
+  KMimeType::Ptr mime = KMimeType::findByFileContent(fileName);
+
+  result.text = mime->name().startsWith("text/");
+  QVariant v = mime->property("X-KDE-text");
+  if (v.isValid())
+     result.text = v.toBool();
+
+  QFile f(fileName);
+  if (f.open(IO_ReadOnly))
+  {
+     unsigned char buf[10+1];
+     int l = f.readBlock((char *)buf, 10);
+     if ((l > 2) && (buf[0] == GZIP_MAGIC1) && (buf[1] == GZIP_MAGIC2))
+        result.compression = Format::GZipCompression;
+  }
+  return result;
+}
+#endif

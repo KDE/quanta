@@ -18,6 +18,8 @@
 #ifndef QUANTACOMMON_H
 #define QUANTACOMMON_H
 
+#include <kdeversion.h>
+
 #include "parser/qtag.h"
 #include "parser/node.h"
 #include "parser/parser.h"
@@ -25,6 +27,10 @@
 /**Some common, mostly static functions.
   *@author Andras Mantia
   */
+
+#if !defined(KDE_MAKE_VERSION)
+#define KDE_MAKE_VERSION( a,b,c ) (((a) << 16) | ((b) << 8) | (c))
+#endif
 
 #define DEFAULT_DTD QString("-//W3C//DTD HTML 4.01 Transitional//EN")
 #define TAGS_MENU_PLACE 6
@@ -75,13 +81,20 @@ typedef struct QConfig{
           KSpellConfig *spellConfig;
         };
 
+#if KDE_VERSION < KDE_MAKE_VERSION(3,1,90)
+typedef struct {
+     bool text : 1;
+     enum { NoCompression=0, GZipCompression } compression : 4;
+     int dummy : 27;
+  } Format;
+#endif
 
 /**Some common, mostly static functions.
   *@author Andras Mantia
   */
 
 class QuantaCommon {
-public: 
+public:
   QuantaCommon();
   ~QuantaCommon();
 
@@ -139,6 +152,9 @@ pointer must be deleted by the caller!! */
   /** Returns the translated a_str in English. A "back-translation" useful e.g in case of CSS elements selected from a listbox. */
   static QString i18n2normal(const QString& a_str);
 
+#if KDE_VERSION < KDE_MAKE_VERSION(3,1,90)
+  static Format findFormatByFileContent( const QString &fileName );
+#endif
 };
 
 #endif
