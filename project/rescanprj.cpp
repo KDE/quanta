@@ -22,6 +22,7 @@
 #include <qlabel.h>
 
 // kde includes
+#include <kdebug.h>
 #include <kurl.h>
 #include <klocale.h>
 #include <kfileitem.h>
@@ -36,6 +37,7 @@
 #include "uploadtreeview.h"
 #include "resource.h"
 #include "projectlist.h"
+
 
 RescanPrj::RescanPrj(const ProjectList &p_prjFileList, const KURL& p_baseURL, const QRegExp &p_excludeRx,
                        QWidget *parent, const char *name, bool modal )
@@ -52,6 +54,7 @@ RescanPrj::RescanPrj(const ProjectList &p_prjFileList, const KURL& p_baseURL, co
 
   progressText->setText(i18n("Reading directory:"));
   KIO::ListJob *job = KIO::listRecursive( baseURL, false );
+  m_listJobCount = 1;
 
   connect( job, SIGNAL(entries(KIO::Job *,const KIO::UDSEntryList &)),
            this,SLOT  (addEntries(KIO::Job *,const KIO::UDSEntryList &)));
@@ -93,23 +96,40 @@ void RescanPrj::addEntries(KIO::Job *job,const KIO::UDSEntryList &list)
   KURL itemURL;
   URLListEntry urlEntry;
   QString name;
+  QPtrList<KFileItem> linkItems;
+  linkItems.setAutoDelete(true);
   for ( ; it != end; ++it )
   {
     KFileItem item( *it, url, false, true );
     name = item.name();
-    if ( ! name.isEmpty() && name != dot && name != dotdot && !excludeRx.exactMatch(name))
+    if (item.isDir() && item.isLink())
+    {
+      linkItems.append(new KFileItem(item));
+      //kdDebug(24000) << "Got link: " << name << " Points to:" << item.linkDest() << endl;
+    }
+    if (!name.isEmpty() && name != dot && name != dotdot && !excludeRx.exactMatch(name))
     {
       itemURL = item.url();
       if (item.isDir())
-        itemURL.adjustPath(+1);      
+        itemURL.adjustPath(+1);
       ProjectURL *proUrl = prjFileList.find(itemURL);
-      if (! proUrl)
+      if (!proUrl)
       {
         urlEntry.url = prjFileList.toRelative(itemURL);
         urlEntry.fileItem = new KFileItem(item);
         urlList.append(urlEntry);
       }
     }
+  }
+  for (QPtrList<KFileItem>::ConstIterator it = linkItems.constBegin(); it != linkItems.constEnd(); ++it)
+  {
+    KIO::ListJob *ljob = KIO::listRecursive( (*it)->url(), false );
+    m_listJobCount++;
+
+    connect( ljob, SIGNAL(entries(KIO::Job *,const KIO::UDSEntryList &)),
+             this,SLOT  (addEntries(KIO::Job *,const KIO::UDSEntryList &)));
+    connect( ljob, SIGNAL(result(KIO::Job *)),
+             this,SLOT  (slotListDone(KIO::Job *)));
   }
 }
 
@@ -177,23 +197,28 @@ KURL::List RescanPrj::files()
 /** No descriptions */
 void RescanPrj::slotListDone(KIO::Job *)
 {
-  progressText->setText(i18n("Building tree:"));
-  progressText->repaint();
-  progress->setTotalSteps(urlList.count());
-  progress->setValue(0);
-  URLListEntry urlEntry;
-  for (uint i = 0; i < urlList.count(); i++)
+  m_listJobCount--;
+ // kdDebug(24000) << "slotListDone " << m_listJobCount << endl;
+  if (m_listJobCount == 0)
   {
-    urlEntry = urlList[i];
-    listView->addItem(urlEntry.url, *(urlEntry.fileItem));
-    progress->advance(1);
-  }
+    progressText->setText(i18n("Building tree:"));
+    progressText->repaint();
+    progress->setTotalSteps(urlList.count());
+    progress->setValue(0);
+    URLListEntry urlEntry;
+    for (uint i = 0; i < urlList.count(); i++)
+    {
+      urlEntry = urlList[i];
+      listView->addItem(urlEntry.url, *(urlEntry.fileItem));
+      progress->advance(1);
+    }
 
-  progress->setTotalSteps(1);
-  progress->setValue(0);
-  progress->setTextEnabled(false);
-  progressText->setText(i18n("Progress:"));
-  slotSelect();
+    progress->setTotalSteps(1);
+    progress->setValue(0);
+    progress->setTextEnabled(false);
+    progressText->setText(i18n("Progress:"));
+    slotSelect();
+  }
 }
 
 #include "rescanprj.moc"

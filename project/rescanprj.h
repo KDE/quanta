@@ -57,6 +57,8 @@ private:
   ProjectList prjFileList;
   QRegExp excludeRx;
   QValueList<URLListEntry> urlList;
+  int m_listJobCount;
+
 protected slots: // Protected slots
   /** No descriptions */
   void slotListDone(KIO::Job *);

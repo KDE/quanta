@@ -41,6 +41,7 @@ Version 3.4 (Release date: xx-xx-2005; Started 20-08-2004):
 	  only with the mouse through the selection. [#92936]
 	- don't show directories that were removed from the project in the upload
 	  dialog [#87186]
+	- follow symlink in the project, project reescan, project upload [#71649, #92522]
 
 
   - behavioral/user interface changes:
