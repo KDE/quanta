@@ -514,13 +514,17 @@ void QuantaApp::slotImageOpen(const KURL& url)
 /** insert <img> tag for images or <a> for other */
 void QuantaApp::slotInsertTag(const KURL& url, DirInfo dirInfo)
 {
-  KURL relURL = QExtFileInfo::toRelative( url,projectBaseURL());
+  KURL baseURL = projectBaseURL();
+  KURL relURL = QExtFileInfo::toRelative( url, baseURL);
+  QString urlStr = relURL.url();
+  if (relURL.protocol() == baseURL.protocol())
+      urlStr = relURL.path();
   Document *w = view->write();
   bool isImage = false;
   
   if (!dirInfo.preText.isEmpty() || !dirInfo.postText.isEmpty())
   {
-	   w->insertTag(dirInfo.preText+relURL.url()+dirInfo.postText);
+	   w->insertTag(dirInfo.preText+urlStr+dirInfo.postText);
   } else
   {
     if (url.isLocalFile())
@@ -531,13 +535,13 @@ void QuantaApp::slotInsertTag(const KURL& url, DirInfo dirInfo)
         QString width,height;
         width.setNum( img.width () );
     	  height.setNum( img.height() );
-        w->insertTag("<img src=\""+relURL.url()+"\" width=\""+width+"\" height=\""+height+"\" border=\"0\">");
+        w->insertTag("<img src=\""+urlStr+"\" width=\""+width+"\" height=\""+height+"\" border=\"0\">");
         isImage = true;
       }
     }
     if (!isImage)
     {
-      w->insertTag( "<a href=\""+relURL.url()+"\">","</a>");
+      w->insertTag( "<a href=\""+urlStr+"\">","</a>");
     }
   }
 //  w->view()->setFocus();

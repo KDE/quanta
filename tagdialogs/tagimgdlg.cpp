@@ -95,9 +95,9 @@ void TagImgDlg::slotFileSelect()
  KURL url = KFileDialog::getOpenURL( baseURL.url(), "*.gif *.jpg *.png *.jpeg *.bmp *.GIF *.JPG *.PNG *.JPEG *.BMP"+i18n("|Image files\n*|All files"));
  if ( !url.isEmpty() )
   {
+    slotImageSet( url );
     url = QExtFileInfo::toRelative(url, baseURL);
     lineImgSource->setText( url.path() );
-    slotImageSet( url );
   }
 }
 
@@ -130,8 +130,9 @@ void TagImgDlg::writeAttributes( QDict<QString> *d )
   if (( t=d->find("src") ))
   {
     lineImgSource->setText(*t);
-    KURL url = baseURL;
-    url.setPath(url.path(1) + *t);
+    KURL url;
+    QuantaCommon::setUrl(url, *t);
+    url = QExtFileInfo::toAbsolute(url, baseURL);
     slotImageSet( url );
   }
   if (( t=d->find("alt") ))     setValue(*t, lineAltText);
