@@ -61,7 +61,15 @@ bool HTMLEnhancer::enhanceNode(Node *node, DOM::Node parentDNode, DOM::Node next
 	if(node->tag->type == Tag::ScriptTag && node->tag->name.lower().contains("style"))
 	{
 		domNode =  m_wkafkapart->getKafkaPart()->createNode("style");
-		parentDNode.appendChild(domNode);
+		try
+		{
+			parentDNode.appendChild(domNode);
+		}
+		catch(DOM::DOMException e)
+		{
+			kdDebug(25001)<< "HTMLEnhancer::enhanceNode() ERROR 1" << endl;
+			return false;
+		}
 		node->_rootNode = domNode;
 		node->_leafNode = domNode;
 		m_wkafkapart->connectDomNodeToQuantaNode(domNode, node);
@@ -78,7 +86,15 @@ bool HTMLEnhancer::enhanceNode(Node *node, DOM::Node parentDNode, DOM::Node next
 #endif
 		domNode2 = m_wkafkapart->getKafkaPart()->createNode("TEXT");
 		domNode2.setNodeValue(DOM::DOMString(text));
-		domNode.appendChild(domNode2);
+		try
+		{
+			domNode.appendChild(domNode2);
+		}
+		catch(DOM::DOMException e)
+		{
+			kdDebug(25001)<< "HTMLEnhancer::enhanceNode() ERROR 2" << endl;
+			return false;
+		}
 		m_wkafkapart->connectDomNodeToQuantaNode(domNode2, node);
 	}
 

@@ -456,6 +456,11 @@
     <attr name="axis"> </attr>
     <attr name="char"> </attr>
     <attr name="charoff"> </attr>
+	<stoppingtags>
+		<stoppingtag name="td" />
+		<stoppingtag name="tr" />
+		<stoppingtag name="th" />
+	</stoppingtags>
 <children>
 <child name="a" />
 <child name="abbr" />
