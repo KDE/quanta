@@ -45,7 +45,13 @@ public:
 	Parser();
 	~Parser();
 	
-  bool scriptParser(Node *startNode);
+  /** Searches for scripts inside the text from startNode. It looks only for the
+  script begin/and delimiters, and not for the <script> or other special tags.
+  Useful when parsing for script inside scripts, or inside the quoted attribute 
+  values of the xml tags. 
+  Returns: true if a script area is found, false if the parsed text does not
+  contain any scripts. */
+  bool scriptParser(Node *startNode, DTDStruct *dtd);
   /** Parse the whole text from Document w and build the internal structure tree from Nodes */  
 	Node *newParse( Document *w);
   void parseInside(Node *startNode);

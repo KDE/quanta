@@ -106,7 +106,7 @@ public:
   bool closingMissing; //closing tag is optional and missing
   int attrCount;
   QString parsingDTDName;
-  int offset; //if the text in tag is parsed, shift it with offset
+  QString structBeginStr; //if it's a special block, contains the block beginning definition string (like <? or <style language="foo">)
 
 private:
   int beginLine; //where the tag begins in the doc

@@ -53,10 +53,10 @@ Parser::~Parser()
 /** Searches for scripts inside the text from startNode. It looks only for the
 script begin/and delimiters, and not for the <script> or other special tags.
 Useful when parsing for script inside scripts, or inside the quoted attribute 
-values of the xml tags.
+values of the xml tags. 
  Returns: true if a script area is found, false if the parsed text does not
 contain any scripts. */
-bool Parser::scriptParser(Node *startNode)
+bool Parser::scriptParser(Node *startNode, DTDStruct *dtd)
 {
  
   QString foundText;
@@ -67,7 +67,7 @@ bool Parser::scriptParser(Node *startNode)
   int pos = 0;
   int pos2;
   int parsingDTDIndex = 0;
-  int col = startNode->tag->offset;
+  int col = startNode->tag->structBeginStr.length();
   int bl, bc, el, ec;
   int node_bl, node_bc, node_el, node_ec;
   int n;
@@ -78,10 +78,10 @@ bool Parser::scriptParser(Node *startNode)
   
   while (pos != -1)
   {
-    pos = text.find(m_dtd->specialAreaStartRx, col); //FIXME: m_dtd nem jo...
+    pos = text.find(dtd->specialAreaStartRx, col);
     if (pos != -1)
     {
-      foundText = m_dtd->specialAreaStartRx.cap();
+      foundText = dtd->specialAreaStartRx.cap();
       //Calculate the beginning coordinates
       s = text.left(pos);
       n = s.contains('\n');
@@ -94,11 +94,11 @@ bool Parser::scriptParser(Node *startNode)
         bc = node_bc + pos;
       }
       //What is the closing string?
-      for (uint i = 0; i < m_dtd->specialAreaBegin.count(); i++)
+      for (uint i = 0; i < dtd->specialAreaBegin.count(); i++)
       {
-        if (m_dtd->specialAreaBegin[i] == foundText)
+        if (dtd->specialAreaBegin[i] == foundText)
         {
-          specialEndStr = m_dtd->specialAreaEnd[i];
+          specialEndStr = dtd->specialAreaEnd[i];
           parsingDTDIndex = i;
           break;
         }
@@ -124,12 +124,13 @@ bool Parser::scriptParser(Node *startNode)
         tag->setStr(s);
         tag->setTagPosition(bl, bc, el, ec);
         tag->single = true;
-        tag->parsingDTDName = m_dtd->specialAreaNames[parsingDTDIndex];
+        tag->parsingDTDName = dtd->specialAreaNames[parsingDTDIndex];
         tag->name = i18n("%1 block").arg(tag->parsingDTDName.upper());
-        tag->offset = foundText.length();
+        tag->structBeginStr = foundText;
         Node *node = new Node(startNode);
         node->tag = tag;
         node->tag->type = Tag::ScriptTag;
+        //Insert the node into the tree under startNode
         if (!currentNode)
         {
           startNode->child = node;
@@ -170,7 +171,7 @@ Node *Parser::newParse(Document *w)
   int parsingDTDIndex = -1; //the index inside specialAreaNames or specialTagNames
   bool nodeFound = false;
   bool goUp;
-  Node *rootNode = 0;
+  Node *rootNode = 0L;
   Node *parentNode = 0L;
   Node *currentNode = 0L;
   Tag *tag;
@@ -228,7 +229,7 @@ Node *Parser::newParse(Document *w)
       tag->single = true;
       tag->parsingDTDName = m_dtd->specialAreaNames[parsingDTDIndex];
       tag->name = i18n("%1 block").arg(tag->parsingDTDName.upper());
-      tag->offset = foundText.length();
+      tag->structBeginStr = foundText;
       
       goUp = (parentNode && parentNode->tag->single);
     }
@@ -290,6 +291,7 @@ Node *Parser::newParse(Document *w)
         int bl, bc, el, ec;
         if (! w->find(endRx, line, tagEndCol, bl, bc, el, ec).isEmpty())
         {
+          QString structBeginStr = tagStr;
           tagEndLine = el;
           tagEndCol = ec;
           QString s = tag->attributeValue(m_dtd->specialTagNames[tagPos]);
@@ -305,8 +307,9 @@ Node *Parser::newParse(Document *w)
           tag->single = true;
           tag->parsingDTDName = s; 
           tag->name = i18n("%1 block").arg(tag->parsingDTDName.upper());
+          tag->structBeginStr = structBeginStr;
           line = tagEndLine;
-          col = tagEndCol;
+          col = tagEndCol;         
         }
         
       }
@@ -421,7 +424,8 @@ Node *Parser::newParse(Document *w)
       }       
       else if (tag->type == Tag::XmlTag)
            {
-             scriptParser(node);
+             //search for scripts inside the XML tag
+             scriptParser(node, m_dtd); 
            }
       
       currentNode = node;
@@ -469,7 +473,7 @@ void Parser::parseInside(Node *startNode)
  /* parse this special node for scripts. If a script is found inside, then
  replace the script area with spaces, so it won't mess up our block searching.
  */
- if (scriptParser(startNode))
+ if (scriptParser(startNode, dtd))
  {
     int col = 0;
     QString specialEndStr;
@@ -533,20 +537,34 @@ void Parser::parseInside(Node *startNode)
   QRegExp startEndRx(dtd->structRx);
   QString s, name;
   pos = 0;
-  int lastPos = 0;
+  int lastPos = startNode->tag->structBeginStr.length();
   int lastPos2;
   int bLine, bCol, eLine, eCol;
   int el, ec; //the end coordinates of the root node
   int startPos; // where the sturcture really starts (e.g in "function {}")
   int matchNum;
+  int n;
   startNode->tag->beginPos(bLine, bCol);
+
+  n = startNode->tag->structBeginStr.contains("\n");
+  bLine += n;
+  bCol += lastPos;
+  if (n > 0)  
+  {
+    bCol -= startNode->tag->structBeginStr.findRev("\n");
+  } 
+  
   Tag *tag;
   Node *node;
-  Node *currentNode = 0L;
+  Node *currentNode = startNode->child;
   Node *rootNode = startNode;
   bool findStruct; //true if there is a need to search for the structure end
-  int n;
   
+  if (currentNode)
+  {
+    while (currentNode->next)
+      currentNode = currentNode->next;
+  }
   while (pos != -1)
   {
     pos  = startEndRx.search(str, lastPos);
@@ -598,12 +616,6 @@ void Parser::parseInside(Node *startNode)
           node->prev = 0L;
         } else
         {
-          if (!currentNode)
-          {
-            currentNode = rootNode->child;
-            while (currentNode->next)
-               currentNode = currentNode->next;
-          }
           node->prev = currentNode;
           currentNode->next = node;
         }

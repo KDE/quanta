@@ -27,6 +27,10 @@ StructGroupsCount = 4
 
 CommentsRx = //[^\n]*|/\*.*\*/
 
+[Parsing rules]
+May_Contain = php
+
+
 [StructGroup_1]
 Name = Inclusions
 No_Name = No Inclusions

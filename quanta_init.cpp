@@ -1078,12 +1078,12 @@ void QuantaApp::readTagDir(QString &dirName)
  }
  dtd->tagsList = tagList;
 
- dtdConfig->setGroup("Extra rules");
  
 /**** Code for the new parser *****/
 
+ dtdConfig->setGroup("Parsing rules");
 //Which DTD can be present in this one?
- dtd->insideDTDs = dtdConfig->readListEntry("InsideDTDs");
+ dtd->insideDTDs = dtdConfig->readListEntry("May_Contain");
  for (uint i = 0; i < dtd->insideDTDs.count(); i++)
  {
    dtd->insideDTDs[i] = dtd->insideDTDs[i].stripWhiteSpace().lower();
@@ -1127,6 +1127,7 @@ void QuantaApp::readTagDir(QString &dirName)
  //dtd->commentsRxStr = dtdConfig->readEntry("CommentsRx").stripWhiteSpace();
 /**** End of code for the new parser *****/
   
+ dtdConfig->setGroup("Extra rules");
  dtd->scriptName = (dtdConfig->readEntry("ScriptName")).lower();
  if (!dtd->scriptName.isEmpty())
  {
@@ -1221,11 +1222,12 @@ void QuantaApp::initTagDict()
     readTagDir(*it);
   }
 
-//Now resolve the inheritence
+  DTDStruct *dtd;
+//Resolve the inheritence
   QDictIterator<DTDStruct> it(*dtds);
   for( ; it.current(); ++it )
   {
-    DTDStruct* dtd = it.current();
+    dtd = it.current();
     if (!dtd->inheritsTagsFrom.isEmpty())
     {
       DTDStruct *parent = dtds->find(dtd->inheritsTagsFrom);
@@ -1243,7 +1245,29 @@ void QuantaApp::initTagDict()
     }
   }
 
-
+//Read the pseudo DTD area definition strings (special area/tag string)
+//from the DTD's which may be present in an other DTD (May_Contain setting)
+  it.toFirst();
+  for( ; it.current(); ++it)
+  {
+    dtd = it.current();
+    QString specialAreaStartRxStr = dtd->specialAreaStartRx.pattern();
+    if (!specialAreaStartRxStr.isEmpty())
+        specialAreaStartRxStr += "|";
+    for (uint i = 0; i < dtd->insideDTDs.count(); i++)
+    {
+      DTDStruct *insideDTD = dtds->find(dtd->insideDTDs[i]);
+      for (uint j = 1; j < insideDTD->scriptTagStart.count(); j++)
+      {        
+        dtd->specialAreaBegin.append(insideDTD->scriptTagStart[j]);
+        specialAreaStartRxStr.append("(?:"+QuantaCommon::makeRxCompatible(insideDTD->scriptTagStart[j])+")|");
+        dtd->specialAreaEnd.append(insideDTD->scriptTagEnd[j]);   
+        dtd->specialAreaNames.append(dtd->insideDTDs[i]);
+      }
+    }
+    dtd->specialAreaStartRx.setPattern(specialAreaStartRxStr.left(specialAreaStartRxStr.length() - 1));    
+  }
+  
   scriptBeginRx.setCaseSensitive(false);
   scriptBeginRx.setPattern(scriptBeginRxStr);
   scriptEndRx.setCaseSensitive(false);
@@ -1314,7 +1338,7 @@ void QuantaApp::initActions()
 
   if (KDE_VERSION >= 308)
   {
-    viewDynamicWordWrap = new KToggleAction(i18n("&Dynamic Word Wrap"), Key_F12, view,
+    viewDynamicWordWrap = new KToggleAction(i18n("&Dynamic Word Wrap"), Key_F10, view,
                               SLOT(toggleDynamicWordWrap()), actionCollection(), "view_dynamic_word_wrap");
   }                                                         
 

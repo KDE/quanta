@@ -116,10 +116,11 @@ BooleanAttributes = simple
 Single Tag Style = html
 StructGroupsCount = 2
 
-InsideDTDs = PHP
-SpecialAreas = <!-- -->, <? ?>, <* *>
-SpecialAreaNames = comment, php, php
-SpecialTags = script(language), style(css)
+[Parsing rules]
+May_Contain = php
+SpecialAreas = <!-- -->
+SpecialAreaNames = comment
+SpecialTags = script(language), style(type)
 
 [StructGroup_1]
 Name = Images
