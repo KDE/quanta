@@ -61,6 +61,9 @@ class QuantaDebuggerGubed : public DebuggerClient {
     void addBreakpoint(DebuggerBreakpoint* breakpoint);
     void removeBreakpoint(DebuggerBreakpoint* breakpoint);
   
+    // Variables
+    void addWatch(const QString &variable);
+    
   private:
     QSocket *m_socket;
     QString m_command;

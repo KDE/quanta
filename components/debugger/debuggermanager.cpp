@@ -61,7 +61,7 @@ void DebuggerManager::slotNewProjectLoaded(const QString &projectname, const KUR
   }
   enableAction("*", false);
     
-  kdDebug(24000) << "DebuggerManager::slotNewProjectLoaded " << projectname << ", " << Project::ref()->debuggerClient << endl;
+  //kdDebug(24000) << "DebuggerManager::slotNewProjectLoaded " << projectname << ", " << Project::ref()->debuggerClient << endl;
   
   // Load new client
   if(!projectname.isEmpty())
@@ -149,6 +149,7 @@ void DebuggerManager::initActions()
   new KAction(i18n("End Session"), SmallIcon("debug_disconnect"), 0,
         this, SLOT(slotDebugEndSession()), ac, "debug_disconnect");
 
+  connect(quantaApp, SIGNAL(debuggerAddWatch(const QString&)), this, SLOT(slotAddWatch(const QString&)));
   
 }
 
@@ -198,6 +199,14 @@ void DebuggerManager::enableAction(QString action, bool enable)
 }
 
 
+void DebuggerManager::slotAddWatch(const QString &var)
+{
+  kdDebug(24000) << "DebuggerManager::slotAddWatch " << var << endl;
+  if(!m_client)
+    return;
+  
+  m_client->addWatch(var);
+}
 
 void DebuggerManager::slotDebugStartSession()
 {

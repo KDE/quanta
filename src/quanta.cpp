@@ -1859,7 +1859,60 @@ void QuantaApp::slotContextMenuAboutToShow()
     {
       action->setEnabled(Project::ref()->contains(w->url()));
     }
+    action = actionCollection()->action("debug_addwatch");
+    if (action)
+    {
+      QPopupMenu *popup = static_cast<QPopupMenu*>(factory()->container("popup_editor",this));
+      if (popup) {
+        if(debugger() && debugger()->hasClient())
+        {
+          int startpos;
+          QString word;
+          if(w->selectionIf->hasSelection())
+          {
+            word = w->selectionIf->selection();
+          }
+          else
+          {
+            word =  w->editIf->textLine(w->viewCursorIf->cursorLine());
+            startpos = word.findRev(QRegExp("$|[^a-zA-Z0-9_]"), w->viewCursorIf->cursorColumn());
+            
+            word.remove(0, startpos);
+            if(word.left(1) != "$")
+              word.remove(0, 1);;
+            
+            word = word.left(word.find(QRegExp("[^a-zA-Z0-9_]"), 1));
+          }
+          startpos = word.find("\n");
+          if(startpos > 0)
+            word.remove(0, startpos);
+            
+          popupWord = word;
+          if(word.length() > 15) 
+          {
+            word.remove(0, 12);
+            word += "...";
+          }
+          action->setText(i18n("Add Watch: %1").arg(word));
+          action->setEnabled(word != "");
+          
+          if(!action->isPlugged(popup))
+            action->plug(popup);
+        }
+        else
+        {
+          if(action->isPlugged(popup))
+            action->unplug(popup);
+        }
+      }
+    }
   }
+  
+}
+
+void QuantaApp::slotDebuggerAddWatch()
+{
+  emit debuggerAddWatch(popupWord);
 }
 
 void QuantaApp::slotOpenFileUnderCursor()

@@ -121,4 +121,9 @@ void DebuggerClient::readConfig(QDomNode)
    
 }
 
+void DebuggerClient::addWatch(const QString &variable)
+{
+   KMessageBox::error(NULL, i18n("%1 does not support watches.").arg(this->getName()), i18n("Settings"));
 
+}
+    

@@ -60,6 +60,8 @@ class DebuggerManager : public QObject {
     void enableAction(QString action, bool enable);
     void fileOpened(QString file);
   
+    bool hasClient() { return m_client != 0; };
+    
   public slots:
     /** Execution control slots **/
     void slotDebugRun();
@@ -71,9 +73,12 @@ class DebuggerManager : public QObject {
     void slotDebugPause();
     void slotDebugKill();
     
-    //Breakpoint
+    // Breakpoint
     void toggleBreakpoint();
     void clearBreakpoints();
+    
+    // Watches
+    void slotAddWatch(const QString &var);
     
     // Connection related slots
     void slotDebugStartSession();

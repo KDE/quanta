@@ -77,7 +77,8 @@ class DebuggerClient : public QObject
     virtual void fileOpened(QString file);
     virtual void addBreakpoint(DebuggerBreakpoint* breakpoint);
     virtual void removeBreakpoint(DebuggerBreakpoint* breakpoint);
-
+    virtual void addWatch(const QString &);
+    
     bool isActive();    
     DebuggerInterface *debuggerInterface();
 

@@ -317,6 +317,14 @@ void QuantaDebuggerGubed::fileOpened(QString)
   sendCommand("reinitialize", "");
 }
 
+// Watch a variable
+void QuantaDebuggerGubed::addWatch(const QString &variable)
+{
+   sendCommand("watchvariable", variable);
+
+}
+
+
 // Read configuration
 void QuantaDebuggerGubed::readConfig(QDomNode node)
 {
