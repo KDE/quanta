@@ -78,24 +78,13 @@ Node::~Node()
 
 void Node::save(QDomElement& element) const
 {
+    kdDebug(25001) << "Save:\n" << element.ownerDocument().toString() << endl;
     QDomElement child_element;
     if(next)
     {
         child_element = element.ownerDocument().createElement("nodeNext");
         element.appendChild(child_element);
         next->save(child_element);
-    }
-    if(prev)
-    {
-        child_element = element.ownerDocument().createElement("nodePrev");
-        element.appendChild(child_element);
-        prev->save(child_element);
-    }
-    if(parent)
-    {
-        child_element = element.ownerDocument().createElement("nodeParent");
-        element.appendChild(child_element);
-        parent->save(child_element);
     }
     if(child)
     {
@@ -121,10 +110,21 @@ void Node::save(QDomElement& element) const
     element.setAttribute("insideSpecial", insideSpecial);             // bool
     element.setAttribute("specialInsideXml", specialInsideXml);             // bool
     element.setAttribute("fileName", fileName);                         // QString
+    
+    QString s_element;
+    QTextStream stream(&s_element, IO_WriteOnly);
+    element.save(stream, 3);
+    kdDebug(25001) << "Load:\n" << s_element << endl;    
+    kdDebug(25001) << "Save:\n" << element.ownerDocument().toString() << endl;
 }
 
 bool Node::load(QDomElement const& element)
 {
+    QString s_element;
+    QTextStream stream(&s_element, IO_WriteOnly);
+    element.save(stream, 3);
+    kdDebug(25001) << "Load:\n" << s_element << endl;    
+    
     QDomNodeList list = element.childNodes();
     for(unsigned int i = 0; i != list.count(); ++i) 
     {
@@ -135,21 +135,13 @@ bool Node::load(QDomElement const& element)
             {
                 next = new Node(0);
                 next->load(e);
-            }
-            else if(e.tagName() == "nodePrev") 
-            {
-                prev = new Node(0);
-                prev->load(e);
-            }
-            else if(e.tagName() == "nodeParent") 
-            {
-                parent = new Node(0);
-                parent->load(e);
+                next->prev = this;
             }
             else if(e.tagName() == "nodeChild") 
             {
                 child = new Node(0);
                 child->load(e);
+                child->parent = this;
             }
             else if(e.tagName() == "nodeClosing") 
             {
@@ -171,6 +163,8 @@ bool Node::load(QDomElement const& element)
     specialInsideXml = QString(element.attribute("specialInsideXml")).toInt();  // bool
     fileName = element.attribute("fileName");                         // QString
 
+    //kafkaCommon::coutTree(this, 3);
+    
     return true;
 }
 
