@@ -2,6 +2,7 @@
 // qt includes
 #include <qmessagebox.h>
 #include <qserversocket.h>
+#include <qsocket.h>
 
 // app includes
 #include "debugger.h"
