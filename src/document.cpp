@@ -111,9 +111,6 @@ Document::Document(KTextEditor::Document *doc,
   if (viewborderAction)
     viewborderAction->setShortcut(Qt::SHIFT + Qt::Key_F9);
 
-  kate_doc = dynamic_cast<Kate::Document*>(m_doc);
-  kate_view = dynamic_cast<Kate::View*>(m_view);
-
   editIf = dynamic_cast<KTextEditor::EditInterface *>(m_doc);
 #ifdef BUILD_KAFKAPART
   editIfExt = dynamic_cast<KTextEditor::EditInterfaceExt *>(m_doc);
@@ -172,11 +169,13 @@ Document::Document(KTextEditor::Document *doc,
 
 Document::~Document()
 {
+
 #if KDE_VERSION < KDE_MAKE_VERSION(3, 1, 90)
  m_doc->closeURL(); //TODO: Workaround for a Kate bug. Remove when KDE < 3.2.0 support is dropped.
 #else
  m_doc->closeURL(false); //TODO: Workaround for a Kate bug. Remove when KDE < 3.2.0 support is dropped.
 #endif
+
  delete m_view;
  delete m_doc;
 }
@@ -404,14 +403,16 @@ void Document::insertText(const QString &text, bool adjustCursor, bool reparse)
   if(adjustCursor)
   {
     unsigned textLength = text.length();
-    unsigned int wordWrapAt = 80; //TODO: get a good value for non Kate editors
-    if (kate_doc)
-        wordWrapAt = kate_doc->wordWrapAt();
+    unsigned int wordWrapAt = 80;
+    bool noWordWrap = false;
+    KTextEditor::WordWrapInterface *wordWrapIf = dynamic_cast<KTextEditor::WordWrapInterface *>(m_doc);
+    if (wordWrapIf)
+    {
+        wordWrapAt = wordWrapIf->wordWrapAt();
+        noWordWrap = !(wordWrapIf->wordWrap());
+     }
     uint i=0, j=0;
     int wordLength;
-    bool noWordWrap = false; //TODO: get a good value for non Kate editors
-    if (kate_doc)
-      noWordWrap = !(kate_doc->wordWrap());
     const char *ascii = text.latin1(); // use ascii for maximum speed
     bool lineLock =false;
 
@@ -1668,6 +1669,20 @@ void Document::codeCompletionHintRequested()
     //if (pos > pos2 )
        scriptAutoCompletion(line, col - 1);
   }
+}
+
+QString Document::currentWord()
+{
+  uint line, col;
+  viewCursorIf->cursorPositionReal(&line, &col);
+  QString textLine = editIf->textLine(line);
+  int startPos = textLine.findRev(QRegExp("\\W"), col);
+  int endPos = textLine.find(QRegExp("\\W"), col);
+  if (startPos == -1)
+     startPos = 0;
+  if (endPos == -1)
+     endPos = textLine.length();
+  return textLine.mid(startPos, endPos - startPos);
 }
 
 /** Find the word until the first word boundary backwards */

@@ -1506,9 +1506,7 @@ void QuantaApp::slotContextHelp()
            currentWord = node->tag->name;
         } else
         {
-            //TODO: This is Kate specific!
-            if (w->kate_view)
-               currentWord = w->kate_view->currentWord();
+           currentWord = w->currentWord();
         }
         QString *url = dTab->contextHelp(currentWord);
         openDoc(*url);

@@ -67,13 +67,13 @@ void ViewManager::createNewDocument()
 #ifdef ENABLE_EDITORS
   KTextEditor::Document *doc =
                               KTextEditor::EditorChooser::createDocument(
-                                quantaApp,
+                                0,
                                 "KTextEditor::Document"
                                 );
 #else
-  KTextEditor::Document *doc = KTextEditor::createDocument ("libkatepart", quantaApp, "KTextEditor::Document");
+  KTextEditor::Document *doc = KTextEditor::createDocument ("libkatepart", 0, "KTextEditor::Document");
 #endif
-  Document *w = new Document(doc, quantaApp);
+  Document *w = new Document(doc, view);
   QString encoding = quantaApp->defaultEncoding();
   KTextEditor::EncodingInterface* encodingIf = dynamic_cast<KTextEditor::EncodingInterface*>(doc);
   if (encodingIf)

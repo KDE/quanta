@@ -565,7 +565,6 @@ void QuantaView::closeEvent(QCloseEvent *e)
   ToolbarTabWidget::ref()->reparent(0L, 0, QPoint(), false);
   if (m_customWidget)
      m_customWidget->reparent(0L, 0, QPoint(), false);
-  delete m_document;
   m_document = 0L;
   e->accept();
 }

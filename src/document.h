@@ -172,6 +172,9 @@ work correctly. */
   void clearErrorMarks();
   void convertCase();
 
+  /** returns the word under the cursor */
+  QString currentWord();
+
   bool busy;
 
   KTextEditor::ViewCursorInterface *viewCursorIf;
@@ -185,10 +188,8 @@ work correctly. */
   KTextEditor::ConfigInterface* configIf;
   KTextEditor::MarkInterface* markIf;
 
-  Kate::Document *kate_doc;
   /** Hold the list of user tags (real or not, like functions) that are in the document*/
   QTagList userTagList;
-  Kate::View *kate_view;
 #ifdef BUILD_KAFKAPART
   /** The undo/redo stack */
   undoRedo *docUndoRedo;
