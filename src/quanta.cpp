@@ -305,7 +305,7 @@ QuantaApp::~QuantaApp()
  m_execCommandPS = 0L;
  delete dcopSettings;
  delete dcopQuanta;
- delete m_partManager;
+// delete m_partManager;
 }
 
 void QuantaApp::setTitle(const QString& title)

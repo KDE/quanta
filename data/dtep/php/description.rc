@@ -71,5 +71,5 @@ RemoveFromAutoCompleteWord = \bnew[\\s]*
 Name = Objects
 No_Name = No Objects
 Icon = classnew
-DefinitionRx =\$+([a-zA-Z0-9_\x7f-\xff]*[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)[\\s]*=[\\s]*new[\\s]*[a-zA-Z0-9_\x7f-\xff]*[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*[\\s]*
+DefinitionRx =\$+([a-zA-Z0-9_\x7f-\xff]*[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)[\\s]*=[\\s]*new[\\s]*[a-zA-Z0-9_\x7f-\xff]*[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*[\\s]*;
 TypeRx = [\\s]*new[\\s]*([a-zA-Z0-9_\x7f-\xff]*[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)[\\s]*

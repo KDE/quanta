@@ -1153,7 +1153,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(int line, 
   for( ; it.current(); ++it )
   {
     QTag *tag = it.current();
-    if (tag->className == classStr || (completionDTD->classInheritance.contains(classStr) && completionDTD->classInheritance[classStr].contains(tag->className)))
+    if (tag->className == classStr || (!tag->className.isEmpty() && completionDTD->classInheritance.contains(classStr) && completionDTD->classInheritance[classStr].contains(tag->className)))
     {
       tagName = tag->name();
       if (!tagName.isEmpty() && tagName.upper().startsWith(word))
@@ -1543,13 +1543,13 @@ bool Document::scriptAutoCompletion(int line, int column)
         Attribute* attr = tag->attributeAt(i);
         if (attr->status == "optional")
         {
-          arguments = arguments + "["+attr->type +" "+attr->name +"],";
+          arguments = arguments + "["+attr->type +" "+attr->name +"], ";
         } else
         {
-          arguments = arguments + attr->type +" "+attr->name +",";
+          arguments = arguments + attr->type +" "+attr->name +", ";
         }
       }
-      arguments = tag->returnType +" "+tag->name() + "("+arguments.left(arguments.length()-1)+")";
+      arguments = tag->returnType +" "+tag->name() + "("+arguments.left(arguments.length()-2)+")";
       argList.append(arguments);
       codeCompletionIf->showArgHint(argList, "()" , completionDTD->attributeSeparator);
       argHintVisible = true;
@@ -1580,7 +1580,7 @@ bool Document::scriptAutoCompletion(int line, int column)
      }
    }
  }
- if ( !handled && (s[i] == completionDTD->tagAutoCompleteAfter || completionDTD->tagAutoCompleteAfter == '\1') && !argHintVisible)
+ if ( !handled && (s[i] == completionDTD->tagAutoCompleteAfter || completionDTD->tagAutoCompleteAfter == '\1' || completionDTD->memberAutoCompleteAfter.searchRev(s) != -1) && !argHintVisible)
  {
    showCodeCompletions(getTagCompletions(line, column + 1));
    handled = true;

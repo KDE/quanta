@@ -156,7 +156,9 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel, bool groupOnly)
           groupTag->setPixmap(0, SmallIcon(group.icon));
         }
         groupTag->setOpen(groupOpened[groupId]);
-        //kdDebug(24000) << "Grouptag created: " << groupId << " " << groupTag->text(0) << endl;
+#ifdef DEBUG_PARSER
+        kdDebug(24000) << "Grouptag created: " << groupId << " " << groupTag->text(0) << " "<< groupTag << endl;
+#endif
         groups.append(groupTag);
         groupIds.insert(group.name + parsingDTD->name, groupId);
         groupId++;
@@ -173,7 +175,9 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel, bool groupOnly)
           groupTag->setPixmap(0, SmallIcon(group.icon));
         }
         groupTag->setOpen(groupOpened[groupId]);
-        //kdDebug(24000) << "Grouptag created: " << groupId << " " << groupTag->text(0) << endl;
+#ifdef DEBUG_PARSER
+        kdDebug(24001) << "Grouptag created: " << groupId << " " << groupTag->text(0) << " "<< groupTag << endl;
+#endif
         groups.append(groupTag);
         groupIds.insert(group.name + parsingDTD->name, groupId);
         groupId++;
@@ -211,8 +215,8 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel, bool groupOnly)
       StructTreeTag *groupItem = groups[groupIds[groupElement->group->name + dtd->name]];
       QListViewItem* insertAfter = 0L;
       QListViewItem* insertUnder = groupItem;
-      if (groupItems.contains(groupElement->tag->name))
-        insertUnder = groupItems[groupElement->tag->name];
+      if (groupItems.contains(groupElement->group->name + groupElement->tag->name))
+        insertUnder = groupItems[groupElement->group->name  + groupElement->tag->name];
       if (lastItemInGroup.contains(groupElement->group->name))
         insertAfter = lastItemInGroup[groupElement->group->name];
 
@@ -220,12 +224,14 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel, bool groupOnly)
       item->groupTag = groupElement->tag;
       if (insertUnder == groupItem)
       {
-        groupItems[groupElement->tag->name] = item;
+        groupItems[groupElement->group->name + groupElement->tag->name] = item;
         lastItemInGroup[groupElement->group->name] = item;
       }
       item->hasOpenFileMenu = groupElement->group->hasFileName;
       item->fileNameRx = groupElement->group->fileNameRx;
-
+#ifdef DEBUG_PARSER
+      kdDebug(24001) << "Tree element "<< groupElement->tag->tagStr() << "[" << groupElement->group->name<<"]"<< " inserted: " << item << " under " <<insertUnder << " after " << insertAfter << endl;
+#endif
     }
 
     //go to the child node, if it exists
@@ -334,7 +340,10 @@ void StructTreeView::deleteList(bool groupOnly)
   for (uint i = 0; i < groupsCount; i++)
   {
     groupOpened.append(groups[i]->isOpen());
-    //kdDebug(24000) << "Grouptag deleted: " << i << " " << groups[i]->text(0) << endl;
+#ifdef DEBUG_PARSER
+    kdDebug(24001) << "Grouptag deleted: " << i << " " <<
+#endif
+    groups[i]->text(0) << endl;
     delete groups[i];
   }
   groups.clear();

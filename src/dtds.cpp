@@ -724,6 +724,7 @@ void DTDs::setAttributes(QDomNode *dom, QTag* tag, bool &common)
  {
    common = true;
  }
+ QString attrList;
  for ( QDomNode n = dom->firstChild(); !n.isNull(); n = n.nextSibling() )
  {
    tmpStr = n.nodeName();
@@ -805,10 +806,21 @@ void DTDs::setAttributes(QDomNode *dom, QTag* tag, bool &common)
        attr->values.append("Teal");
        attr->values.append("Aqua");
      } else if ( attr->type == "url" ) {
+       //not treated yet
      } else if ( attr->type == "input" ) {
-     } else {
+       //not treated yet
      }
 
+     if (tag->type == "function" || tag->type == "method")
+     {
+      if (attr->status == "optional")
+      {
+        attrList = attrList + "["+attr->type +" "+attr->name +"], ";
+      } else
+      {
+        attrList = attrList + attr->type +" "+attr->name +", ";
+      }
+     }
      if (!attr->name.isEmpty())
      {
        tag->addAttribute(attr);
@@ -816,7 +828,8 @@ void DTDs::setAttributes(QDomNode *dom, QTag* tag, bool &common)
      delete attr;
    }
  }
-
+ if (!attrList.isEmpty())
+   tag->comment.prepend(attrList.left(attrList.length() - 2) + "; ");
 }
 
 
