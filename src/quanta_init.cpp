@@ -797,7 +797,7 @@ void QuantaApp::readOptions()
   if (m_view->writeExists() && m_view->write()->isUntitled())
   {
     m_doc->closeDocument();
-    m_doc->newDocument(KURL());
+    m_doc->openDocument(KURL());
   }
 
   m_config->setGroup  ("General Options");
