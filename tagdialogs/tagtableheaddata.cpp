@@ -21,19 +21,19 @@ void  TagTableHead::initDialog()
   QLabel_1->setMinimumSize(0,0);
   QLabel_1->setText(i18n("Width"));
 
-  lineWidth= new QLineEdit(this,"NoName");
+  lineWidth= new KLineEdit(this,"NoName");
   lineWidth->setGeometry(120,10,80,25);
   lineWidth->setMinimumSize(0,0);
 
-	lineHeight= new QLineEdit(this,"NoName");
+	lineHeight= new KLineEdit(this,"NoName");
   lineHeight->setGeometry(120,40,80,25);
   lineHeight->setMinimumSize(0,0);
 
-  lineColSpan= new QLineEdit(this,"NoName");
+  lineColSpan= new KLineEdit(this,"NoName");
   lineColSpan->setGeometry(310,10,80,25);
   lineColSpan->setMinimumSize(0,0); 
 	
-	lineRowSpan= new QLineEdit(this,"NoName");
+	lineRowSpan= new KLineEdit(this,"NoName");
   lineRowSpan->setGeometry(310,40,80,25);
   lineRowSpan->setMinimumSize(0,0);
 

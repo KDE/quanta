@@ -34,19 +34,19 @@ void  CoreWidgetDlg::initDialog(){
   QLabel_4->setMinimumSize(0,0);
   QLabel_4->setText(i18n("Title"));
 
-  lineId= new QLineEdit(this,"NoName");
+  lineId= new KLineEdit(this,"NoName");
   lineId->setGeometry(130,10,260,25);
   lineId->setMinimumSize(0,0);
 
-  lineClass= new QLineEdit(this,"NoName");
+  lineClass= new KLineEdit(this,"NoName");
   lineClass->setGeometry(130,40,260,25);
   lineClass->setMinimumSize(0,0);
 
-  lineStyle= new QLineEdit(this,"NoName");
+  lineStyle= new KLineEdit(this,"NoName");
   lineStyle->setGeometry(130,70,260,25);
   lineStyle->setMinimumSize(0,0);
 
-  lineTitle= new QLineEdit(this,"NoName");
+  lineTitle= new KLineEdit(this,"NoName");
   lineTitle->setGeometry(130,100,260,25);
   lineTitle->setMinimumSize(0,0);
 
@@ -70,11 +70,11 @@ void  CoreWidgetDlg::initDialog(){
   QLabel_7->setMinimumSize(0,0);
   QLabel_7->setText(i18n("Dir"));
 
-  lineLang= new QLineEdit(this,"NoName");
+  lineLang= new KLineEdit(this,"NoName");
   lineLang->setGeometry(130,170,260,25);
   lineLang->setMinimumSize(0,0);
 
-  lineDir= new QLineEdit(this,"NoName");
+  lineDir= new KLineEdit(this,"NoName");
   lineDir->setGeometry(130,200,260,25);
   lineDir->setMinimumSize(0,0);
 

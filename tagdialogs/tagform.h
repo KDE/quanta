@@ -22,7 +22,7 @@
 #include <qwidget.h>
 #include <qpushbutton.h>
 #include <qlabel.h>
-#include <qlineedit.h>
+#include <klineedit.h>
 #include <qcombobox.h>
 //Generated area. DO NOT EDIT!!!(end)
 
@@ -45,7 +45,7 @@ public:
 	void initDialog();
 	//Generated area. DO NOT EDIT!!!(begin)
 	QLabel *QLabel_1;
-	QLineEdit *lineAction;
+	KLineEdit *lineAction;
 	QLabel *QLabel_2;
 	QComboBox *comboMethod;
 	QLabel *QLabel_3;

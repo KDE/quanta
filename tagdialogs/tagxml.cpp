@@ -17,7 +17,7 @@
 
 #include "tagxml.h"
 #include "tagattr.h"
-#include <qlineedit.h>
+#include <klineedit.h>
 #include <qcheckbox.h>
 #include <qlayout.h>
 #include <qlabel.h>
@@ -61,7 +61,7 @@ Tagxml::Tagxml( QDomDocument &d, QWidget *parent, const char *name) : TagWidget(
         QString type = el.attribute("type","input");
 
         if ( type == "input" ) {
-        	 QLineEdit *w = new QLineEdit(this);
+        	 KLineEdit *w = new KLineEdit(this);
         	 grid->addMultiCellWidget( w, row, row+rowspan, col,  col+colspan );
         	
         	 Attr_line *attr = new Attr_line(&el,w);

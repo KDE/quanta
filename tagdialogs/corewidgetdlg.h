@@ -21,7 +21,7 @@
 //Generated area. DO NOT EDIT!!!(begin)
 #include <qwidget.h>
 #include <qlabel.h>
-#include <qlineedit.h>
+#include <klineedit.h>
 #include <kseparator.h>
 //Generated area. DO NOT EDIT!!!(end)
 
@@ -54,16 +54,16 @@ public:
 	QLabel *QLabel_2;
 	QLabel *QLabel_3;
 	QLabel *QLabel_4;
-	QLineEdit *lineId;
-	QLineEdit *lineClass;
-	QLineEdit *lineStyle;
-	QLineEdit *lineTitle;
+	KLineEdit *lineId;
+	KLineEdit *lineClass;
+	KLineEdit *lineStyle;
+	KLineEdit *lineTitle;
 	KSeparator *KSeparator_1;
 	QLabel *QLabel_5;
 	QLabel *QLabel_6;
 	QLabel *QLabel_7;
-	QLineEdit *lineLang;
-	QLineEdit *lineDir;
+	KLineEdit *lineLang;
+	KLineEdit *lineDir;
 	//Generated area. DO NOT EDIT!!!(end)
 
 private: 

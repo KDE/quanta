@@ -22,7 +22,7 @@
 #include <qwidget.h>
 #include <qlabel.h>
 #include <qcombobox.h>
-#include <qlineedit.h>
+#include <klineedit.h>
 #include <kcolorbtn.h>
 #include <qpushbutton.h>
 #include <qcheckbox.h>
@@ -47,17 +47,17 @@ public:
 	void initDialog();
 	//Generated area. DO NOT EDIT!!!(begin)
 	QLabel *QLabel_1;
-	QLineEdit *lineWidth;
+	KLineEdit *lineWidth;
 	QLabel *QLabel_2;
 	QComboBox *comboAlign;
 	QLabel *QLabel_3;
-	QLineEdit *lineColSpan;
+	KLineEdit *lineColSpan;
 	QLabel *QLabel_4;
-	QLineEdit *lineHeight;
+	KLineEdit *lineHeight;
 	QLabel *QLabel_5;
 	QComboBox *comboVAlign;
 	QLabel *QLabel_6;
-	QLineEdit *lineRowSpan;
+	KLineEdit *lineRowSpan;
 	QLabel *QLabel_7;
 	QComboBox *comboBGColor;
 	KColorButton *colorButton;

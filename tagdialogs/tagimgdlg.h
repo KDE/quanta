@@ -21,7 +21,7 @@
 //Generated area. DO NOT EDIT!!!(begin)
 #include <qwidget.h>
 #include <qlabel.h>
-#include <qlineedit.h>
+#include <klineedit.h>
 #include <qpushbutton.h>
 #include <qcombobox.h>
 //Generated area. DO NOT EDIT!!!(end)
@@ -46,19 +46,19 @@ public:
 	void initDialog();
 	//Generated area. DO NOT EDIT!!!(begin)
 	QLabel *labelImgSource;
-	QLineEdit *lineImgSource;
+	KLineEdit *lineImgSource;
 	QPushButton *buttonImgSource;
 	QPushButton *buttonRecalcImgSize;
 	QLabel *QLabel_4;
-	QLineEdit *lineWidth;
+	KLineEdit *lineWidth;
 	QLabel *QLabel_5;
-	QLineEdit *lineHeight;
+	KLineEdit *lineHeight;
 	QLabel *QLabel_6;
-	QLineEdit *lineHSpace;
+	KLineEdit *lineHSpace;
 	QLabel *QLabel_7;
-	QLineEdit *lineVSpace;
+	KLineEdit *lineVSpace;
 	QLabel *QLabel_8;
-	QLineEdit *lineAltText;
+	KLineEdit *lineAltText;
 	QLabel *QLabel_9;
 	QSpinBox *spinBorder;
 	QLabel *QLabel_10;

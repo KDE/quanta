@@ -21,7 +21,7 @@ void  TagImgDlg::initDialog(){
   labelImgSource->setMinimumSize(0,0);
   labelImgSource->setText(i18n("Image Source"));
 
-  lineImgSource= new QLineEdit(this,"lineImgSource");
+  lineImgSource= new KLineEdit(this,"lineImgSource");
   lineImgSource->setGeometry(130,10,220,25);
   lineImgSource->setMinimumSize(0,0);
 
@@ -35,7 +35,7 @@ void  TagImgDlg::initDialog(){
   QLabel_4->setMinimumSize(0,0);
   QLabel_4->setText(i18n("Width"));
 
-  lineWidth= new QLineEdit(this,"NoName");
+  lineWidth= new KLineEdit(this,"NoName");
   lineWidth->setGeometry(130,40,60,25);
   lineWidth->setMinimumSize(0,0);
 
@@ -44,7 +44,7 @@ void  TagImgDlg::initDialog(){
   QLabel_5->setMinimumSize(0,0);
   QLabel_5->setText(i18n("Height"));
 
-  lineHeight= new QLineEdit(this,"NoName");
+  lineHeight= new KLineEdit(this,"NoName");
   lineHeight->setGeometry(290,40,60,25);
   lineHeight->setMinimumSize(0,0);
   
@@ -58,7 +58,7 @@ void  TagImgDlg::initDialog(){
   QLabel_6->setMinimumSize(0,0);
   QLabel_6->setText(i18n("HSpace"));
 
-  lineHSpace= new QLineEdit(this,"NoName");
+  lineHSpace= new KLineEdit(this,"NoName");
   lineHSpace->setGeometry(130,70,60,25);
   lineHSpace->setMinimumSize(0,0);
 
@@ -67,7 +67,7 @@ void  TagImgDlg::initDialog(){
   QLabel_7->setMinimumSize(0,0);
   QLabel_7->setText(i18n("VSpace"));
 
-  lineVSpace= new QLineEdit(this,"NoName");
+  lineVSpace= new KLineEdit(this,"NoName");
   lineVSpace->setGeometry(290,70,60,25);
   lineVSpace->setMinimumSize(0,0);
 
@@ -76,7 +76,7 @@ void  TagImgDlg::initDialog(){
   QLabel_8->setMinimumSize(0,0);
   QLabel_8->setText(i18n("Alternate Text"));
 
-  lineAltText= new QLineEdit(this,"NoName");
+  lineAltText= new KLineEdit(this,"NoName");
   lineAltText->setGeometry(130,100,260,25);
   lineAltText->setMinimumSize(0,0);
 

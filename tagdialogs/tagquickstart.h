@@ -21,7 +21,7 @@
 //Generated area. DO NOT EDIT!!!(begin)
 #include <qwidget.h>
 #include <qlabel.h>
-#include <qlineedit.h>
+#include <klineedit.h>
 #include <qpushbutton.h>
 #include <qcombobox.h>
 #include <kcolorbtn.h>
@@ -47,8 +47,8 @@ public:
 	QLabel *labelBGColor;
 	QLabel *labelTextColor;
 	QLabel *labelActiveLinkColor;
-	QLineEdit *lineTitle;
-	QLineEdit *lineBGImage;
+	KLineEdit *lineTitle;
+	KLineEdit *lineBGImage;
 	QPushButton *buttonFileSelect;
 	QComboBox *comboBGColor;
 	KColorButton *cButtonBGColor;

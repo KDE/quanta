@@ -22,7 +22,7 @@
 #include <qwidget.h>
 #include <qpushbutton.h>
 #include <qlabel.h>
-#include <qlineedit.h>
+#include <klineedit.h>
 #include <qspinbox.h>
 //Generated area. DO NOT EDIT!!!(end)
 
@@ -46,13 +46,13 @@ protected:
 public:	
 	//Generated area. DO NOT EDIT!!!(begin)
 	QLabel *QLabel_1;
-	QLineEdit *lineName;
+	KLineEdit *lineName;
 	QLabel *QLabel_2;
-	QLineEdit *lineValue;
+	KLineEdit *lineValue;
 	QLabel *QLabel_3;
-	QLineEdit *lineSize;
+	KLineEdit *lineSize;
 	QLabel *QLabel_4;
-	QLineEdit *lineMaxLen;
+	KLineEdit *lineMaxLen;
 	//Generated area. DO NOT EDIT!!!(end)
 
 private: 

@@ -397,8 +397,8 @@ void QuantaApp::initMenuBar()
   projectMenu->insertItem(i18n("Open &Recent Project"),recentProjectsMenu, ID_PROJECT_OPEN_RECENT);
   projectMenu->insertItem(i18n("&Close Project"),         ID_PROJECT_CLOSE);
   projectMenu->insertSeparator();
-  projectMenu->insertItem(i18n("&Insert File(s)"),   ID_PROJECT_ADD_FILE);
-  projectMenu->insertItem(i18n("Insert &Directory"), ID_PROJECT_ADD_DIRECTORY);
+  projectMenu->insertItem(i18n("&Insert File(s)..."),   ID_PROJECT_ADD_FILE);
+  projectMenu->insertItem(i18n("Insert &Directory..."), ID_PROJECT_ADD_DIRECTORY);
 //  projectMenu->insertItem(i18n("Rescan project's directory"), ID_PROJECT_RESCAN_FILES);
 //  projectMenu->insertItem(UserIcon("file_properties"), i18n("&File properties"), ID_PROJECT_FILE_PROPERTIES);
 //  projectMenu->insertSeparator();

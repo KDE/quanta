@@ -21,7 +21,7 @@
 //Generated area. DO NOT EDIT!!!(begin)
 #include <qwidget.h>
 #include <qlabel.h>
-#include <qlineedit.h>
+#include <klineedit.h>
 #include <qpushbutton.h>
 //Generated area. DO NOT EDIT!!!(end)
 
@@ -41,26 +41,26 @@ public:
 	void initDialog();
 	//Generated area. DO NOT EDIT!!!(begin)
 	QLabel *QLabel_1;
-	QLineEdit *linePrjName;
+	KLineEdit *linePrjName;
 	QLabel *QLabel_2;
-	QLineEdit *linePrjDir;
+	KLineEdit *linePrjDir;
 	QPushButton *buttonDir;
 	QLabel *QLabel_3;
-	QLineEdit *linePrjFile;
+	KLineEdit *linePrjFile;
 	QLabel *QLabel_4;
-	QLineEdit *lineBaseURL;
+	KLineEdit *lineBaseURL;
 	QLabel *QLabel_5;
-	QLineEdit *lineAuthor;
+	KLineEdit *lineAuthor;
 	QLabel *QLabel_6;
-	QLineEdit *lineEmail;
+	KLineEdit *lineEmail;
 	QLabel *QLabel_7;
 	QLabel *QLabel_8;
 	QLabel *QLabel_9;
-	QLineEdit *lineImagesDir;
+	KLineEdit *lineImagesDir;
 	QPushButton *buttonImagesDir;
-	QLineEdit *lineCgiDir;
+	KLineEdit *lineCgiDir;
 	QPushButton *buttonCgiDir;
-	QLineEdit *lineScriptsDir;
+	KLineEdit *lineScriptsDir;
 	QPushButton *buttonScriptsDir;
 	//Generated area. DO NOT EDIT!!!(end)
 

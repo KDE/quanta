@@ -29,15 +29,15 @@ void  TagFormTextareaDlg::initDialog(){
   QLabel_3->setMinimumSize(0,0);
   QLabel_3->setText(i18n("Cols"));
 
-  lineName= new QLineEdit(this,"NoName");
+  lineName= new KLineEdit(this,"NoName");
   lineName->setGeometry(130,10,260,25);
   lineName->setMinimumSize(0,0);
 
-  lineRows= new QLineEdit(this,"NoName");
+  lineRows= new KLineEdit(this,"NoName");
   lineRows->setGeometry(130,40,260,25);
   lineRows->setMinimumSize(0,0);
 
-  lineCols= new QLineEdit(this,"NoName");
+  lineCols= new KLineEdit(this,"NoName");
   lineCols->setGeometry(130,70,260,25);
   lineCols->setMinimumSize(0,0);
 

@@ -21,7 +21,7 @@
 //Generated area. DO NOT EDIT!!!(begin)
 #include <qwidget.h>
 #include <qlabel.h>
-#include <qlineedit.h>
+#include <klineedit.h>
 //Generated area. DO NOT EDIT!!!(end)
 
 #include <qwidget.h>
@@ -44,25 +44,25 @@ protected:
 	void initDialog();
 	//Generated area. DO NOT EDIT!!!(begin)
 	QLabel *QLabel_1;
-	QLineEdit *lineClick;
+	KLineEdit *lineClick;
 	QLabel *QLabel_2;
 	QLabel *QLabel_3;
-	QLineEdit *lineDblClick;
-	QLineEdit *lineMouseDown;
+	KLineEdit *lineDblClick;
+	KLineEdit *lineMouseDown;
 	QLabel *QLabel_4;
-	QLineEdit *lineMouseUp;
+	KLineEdit *lineMouseUp;
 	QLabel *QLabel_5;
-	QLineEdit *lineMouseOver;
+	KLineEdit *lineMouseOver;
 	QLabel *QLabel_6;
-	QLineEdit *lineMouseMove;
+	KLineEdit *lineMouseMove;
 	QLabel *QLabel_7;
-	QLineEdit *lineMouseOut;
+	KLineEdit *lineMouseOut;
 	QLabel *QLabel_8;
-	QLineEdit *lineKeyPress;
+	KLineEdit *lineKeyPress;
 	QLabel *QLabel_9;
-	QLineEdit *lineKeyDown;
+	KLineEdit *lineKeyDown;
 	QLabel *QLabel_10;
-	QLineEdit *lineKeyUp;
+	KLineEdit *lineKeyUp;
 	//Generated area. DO NOT EDIT!!!(end)
 
 private: 

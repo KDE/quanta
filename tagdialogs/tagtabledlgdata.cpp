@@ -19,19 +19,19 @@ void  TagTableDlg::initDialog(){
   QLabel_1->setMinimumSize(0,0);
   QLabel_1->setText(i18n("Cell Padding"));
 
-  lineWidth= new QLineEdit(this,"NoName");
+  lineWidth= new KLineEdit(this,"NoName");
   lineWidth->setGeometry(130,10,60,25);
   lineWidth->setMinimumSize(0,0);
 
-  lineBorder= new QLineEdit(this,"NoName");
+  lineBorder= new KLineEdit(this,"NoName");
   lineBorder->setGeometry(130,40,60,25);
   lineBorder->setMinimumSize(0,0);
 
-  lineCellSpacing= new QLineEdit(this,"NoName");
+  lineCellSpacing= new KLineEdit(this,"NoName");
   lineCellSpacing->setGeometry(330,10,60,25);
   lineCellSpacing->setMinimumSize(0,0);
 
-  lineCellPadding= new QLineEdit(this,"NoName");
+  lineCellPadding= new KLineEdit(this,"NoName");
   lineCellPadding->setGeometry(330,40,60,25);
   lineCellPadding->setMinimumSize(0,0);
 

@@ -16,7 +16,7 @@
  ***************************************************************************/
 
 #include "cssdialogi.h"
-#include <qlineedit.h>
+#include <klineedit.h>
 #include <qcombobox.h>
 #include <qcheckbox.h>
 #include <qradiobutton.h>

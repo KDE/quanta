@@ -38,7 +38,7 @@ void  TagFormInput::initDialog(){
   QLabel_2->setMinimumSize(0,0);
   QLabel_2->setText(i18n("Name:"));
 
-  lineName= new QLineEdit(this,"NoName");
+  lineName= new KLineEdit(this,"NoName");
   lineName->setGeometry(100,40,290,25);
   lineName->setMinimumSize(0,0);
 
@@ -47,7 +47,7 @@ void  TagFormInput::initDialog(){
   QLabel_3->setMinimumSize(0,0);
   QLabel_3->setText(i18n("Value"));
 
-  lineValue= new QLineEdit(this,"NoName");
+  lineValue= new KLineEdit(this,"NoName");
   lineValue->setGeometry(100,70,290,25);
   lineValue->setMinimumSize(0,0);
 
@@ -56,7 +56,7 @@ void  TagFormInput::initDialog(){
   QLabel_4->setMinimumSize(0,0);
   QLabel_4->setText(i18n("Size"));
 
-  lineSize= new QLineEdit(this,"NoName");
+  lineSize= new KLineEdit(this,"NoName");
   lineSize->setGeometry(100,100,80,25);
   lineSize->setMinimumSize(0,0);
 
@@ -65,7 +65,7 @@ void  TagFormInput::initDialog(){
   QLabel_5->setMinimumSize(0,0);
   QLabel_5->setText(i18n("Max Len :"));
 
-  lineMaxLen= new QLineEdit(this,"NoName");
+  lineMaxLen= new KLineEdit(this,"NoName");
   lineMaxLen->setGeometry(280,100,110,25);
   lineMaxLen->setMinimumSize(0,0);
 
@@ -74,7 +74,7 @@ void  TagFormInput::initDialog(){
   QLabel_6->setMinimumSize(0,0);
   QLabel_6->setText(i18n("Image src"));
 
-  lineSrc= new QLineEdit(this,"NoName");
+  lineSrc= new KLineEdit(this,"NoName");
   lineSrc->setGeometry(100,130,250,25);
   lineSrc->setMinimumSize(0,0);
 
@@ -88,7 +88,7 @@ void  TagFormInput::initDialog(){
   QLabel_7->setMinimumSize(0,0);
   QLabel_7->setText(i18n("Alt  text :"));
 
-  lineAlt= new QLineEdit(this,"NoName");
+  lineAlt= new KLineEdit(this,"NoName");
   lineAlt->setGeometry(100,160,290,25);
   lineAlt->setMinimumSize(0,0);
 
@@ -127,7 +127,7 @@ void  TagFormInput::initDialog(){
   QLabel_9->setMinimumSize(0,0);
   QLabel_9->setText(i18n("On Focus:"));
 
-  lineOnFocus= new QLineEdit(this,"NoName");
+  lineOnFocus= new KLineEdit(this,"NoName");
   lineOnFocus->setGeometry(100,250,100,25);
   lineOnFocus->setMinimumSize(0,0);
 
@@ -136,7 +136,7 @@ void  TagFormInput::initDialog(){
   QLabel_10->setMinimumSize(0,0);
   QLabel_10->setText(i18n("  On Blur:"));
 
-  lineOnBlur= new QLineEdit(this,"NoName");
+  lineOnBlur= new KLineEdit(this,"NoName");
   lineOnBlur->setGeometry(290,250,100,25);
   lineOnBlur->setMinimumSize(0,0);
 
@@ -145,7 +145,7 @@ void  TagFormInput::initDialog(){
   QLabel_11->setMinimumSize(0,0);
   QLabel_11->setText(i18n("On Select:"));
 
-  lineOnSelect= new QLineEdit(this,"NoName");
+  lineOnSelect= new KLineEdit(this,"NoName");
   lineOnSelect->setGeometry(100,280,100,25);
   lineOnSelect->setMinimumSize(0,0);
 
@@ -154,7 +154,7 @@ void  TagFormInput::initDialog(){
   QLabel_12->setMinimumSize(0,0);
   QLabel_12->setText(i18n(" On Change"));
 
-  lineOnChange= new QLineEdit(this,"NoName");
+  lineOnChange= new KLineEdit(this,"NoName");
   lineOnChange->setGeometry(290,280,100,25);
   lineOnChange->setMinimumSize(0,0);
 

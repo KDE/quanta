@@ -19,7 +19,7 @@ void  TagFormButton::initDialog(){
   QLabel_1->setMinimumSize(0,0);
   QLabel_1->setText(i18n("Name:"));
 
-  lineName= new QLineEdit(this,"NoName");
+  lineName= new KLineEdit(this,"NoName");
   lineName->setGeometry(130,10,260,25);
   lineName->setMinimumSize(0,0);
 
@@ -28,7 +28,7 @@ void  TagFormButton::initDialog(){
   QLabel_2->setMinimumSize(0,0);
   QLabel_2->setText(i18n("Value:"));
 
-  lineValue= new QLineEdit(this,"NoName");
+  lineValue= new KLineEdit(this,"NoName");
   lineValue->setGeometry(130,40,260,25);
   lineValue->setMinimumSize(0,0);
 

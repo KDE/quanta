@@ -17,7 +17,7 @@
 
 // QT files
 #include <qcombobox.h>
-#include <qlineedit.h>
+#include <klineedit.h>
 #include <qstring.h>
 #include <qspinbox.h>
 #include <qcheckbox.h>
@@ -61,7 +61,7 @@ void TagWidget::setValue( QString val, QComboBox *combo)
   if ( !found ) combo->setEditText( val);
 }
 
-void TagWidget::setValue( QString val, QLineEdit *line)
+void TagWidget::setValue( QString val, KLineEdit *line)
 {
   line->setText( val);
 }
@@ -81,7 +81,7 @@ void TagWidget::setValue( QString val, KColorButton *button)
   button->setColor( value.data() );
 }
 
-void TagWidget::updateDict( QString attr, QLineEdit *line )
+void TagWidget::updateDict( QString attr, KLineEdit *line )
 {
   QString *s = new QString(line->text());
   if ( s->isEmpty() ) dict->remove(attr);

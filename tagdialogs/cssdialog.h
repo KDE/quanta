@@ -36,7 +36,7 @@ class QComboBox;
 class QRadioButton;
 class QFrame;
 class QLabel;
-class QLineEdit;
+class KLineEdit;
 class QPushButton;
 class QTabWidget;
 class QWidget;
@@ -51,7 +51,7 @@ public:
     ~CSSDialog();
 
     QLabel* TextLabel26;
-    QLineEdit* selector;
+    KLineEdit* selector;
     QPushButton* buttonOk;
     QPushButton* buttonCancel;
     QTabWidget* TabWidget2;

@@ -20,7 +20,7 @@
 
 //Generated area. DO NOT EDIT!!!(begin)
 #include <qwidget.h>
-#include <qlineedit.h>
+#include <klineedit.h>
 #include <qpushbutton.h>
 //Generated area. DO NOT EDIT!!!(end)
 
@@ -43,7 +43,7 @@ public slots: // Public slots
 public:
 	void initDialog();
 	//Generated area. DO NOT EDIT!!!(begin)
-	QLineEdit *lineDir;
+	KLineEdit *lineDir;
 	QPushButton *buttonDir;
 	QPushButton *buttonOk;
 	QPushButton *buttonCancel;

@@ -21,7 +21,7 @@
 //Generated area. DO NOT EDIT!!!(begin)
 #include <qwidget.h>
 #include <qlabel.h>
-#include <qlineedit.h>
+#include <klineedit.h>
 //Generated area. DO NOT EDIT!!!(end)
 
 #include "tagwidget.h"
@@ -45,9 +45,9 @@ protected:
 	QLabel *QLabel_1;
 	QLabel *QLabel_2;
 	QLabel *QLabel_3;
-	QLineEdit *lineName;
-	QLineEdit *lineRows;
-	QLineEdit *lineCols;
+	KLineEdit *lineName;
+	KLineEdit *lineRows;
+	KLineEdit *lineCols;
 	//Generated area. DO NOT EDIT!!!(end)
 
 private: 

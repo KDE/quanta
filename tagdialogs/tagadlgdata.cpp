@@ -42,7 +42,7 @@ void  TagADlg::initDialog(){
   QLabel_3->setMinimumSize(0,0);
   QLabel_3->setText(i18n("Name"));
 
-  lineName= new QLineEdit(this,"NoName");
+  lineName= new KLineEdit(this,"NoName");
   lineName->setGeometry(110,70,280,25);
   lineName->setMinimumSize(0,0);
 
@@ -51,7 +51,7 @@ void  TagADlg::initDialog(){
   QLabel_4->setMinimumSize(0,0);
   QLabel_4->setText(i18n("Description"));
 
-  lineDescription= new QLineEdit(this,"NoName");
+  lineDescription= new KLineEdit(this,"NoName");
   lineDescription->setGeometry(110,100,280,25);
   lineDescription->setMinimumSize(0,0);
 }

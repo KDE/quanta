@@ -28,7 +28,7 @@
 #include <qcombobox.h>
 #include <qframe.h>
 #include <qlabel.h>
-#include <qlineedit.h>
+#include <klineedit.h>
 #include <qpushbutton.h>
 #include <qtabwidget.h>
 #include <qwidget.h>
@@ -78,7 +78,7 @@ CSSDialog::CSSDialog( QString basePath, QWidget* parent,  const char* name, bool
     QSpacerItem* spacer_5 = new QSpacerItem( 113, 20, QSizePolicy::Expanding, QSizePolicy::Fixed );
     grid->addItem( spacer_5, 1, 2 );
 
-    selector = new QLineEdit( this, "selector" );
+    selector = new KLineEdit( this, "selector" );
 
     grid->addMultiCellWidget( selector, 0, 0, 2, 3 );
 

@@ -780,7 +780,11 @@ void QuantaApp::repaintPreview( bool clear )
 
   if ( !qstrcmp( text, oldtext ) ) return;
 
-	KHTMLView *html = part->view();
+  if ( text.isNull() ) {
+      text = i18n( "<i>The current document is empty</i>" );
+  }
+
+  KHTMLView *html = part->view();
 
   int xOffset = html->contentsX(), yOffset = html->contentsY();
 

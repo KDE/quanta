@@ -43,11 +43,11 @@ void  TagQuickStart::initDialog()
   labelActiveLinkColor->setMinimumSize(0,0);
   labelActiveLinkColor->setText(i18n("Active Link Color"));
 
-  lineTitle= new QLineEdit(this,"NoName");
+  lineTitle= new KLineEdit(this,"NoName");
   lineTitle->setGeometry(120,10,290,25);
   lineTitle->setMinimumSize(0,0);
 
-  lineBGImage= new QLineEdit(this,"NoName");
+  lineBGImage= new KLineEdit(this,"NoName");
   lineBGImage->setGeometry(120,40,245,25);
   lineBGImage->setMinimumSize(0,0);
 

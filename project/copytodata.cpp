@@ -12,7 +12,7 @@
 
 void  CopyTo::initDialog(){
   this->setMinimumSize(0,0);
-  lineDir= new QLineEdit(this,"NoName");
+  lineDir= new KLineEdit(this,"NoName");
   lineDir->setGeometry(10,10,300,30);
   lineDir->setMinimumSize(0,0);
   lineDir->setFocus();

@@ -23,7 +23,7 @@
 #include <qlabel.h>
 #include <qbuttongroup.h>
 #include <qcheckbox.h>
-#include <qlineedit.h>
+#include <klineedit.h>
 #include <qpushbutton.h>
 //Generated area. DO NOT EDIT!!!(end)
 
@@ -47,13 +47,13 @@ public:
 	QCheckBox *checkInsertFiles;
 	QCheckBox *checkWebFiles;
 	QLabel *QLabel_6;
-	QLineEdit *lineFilesMask;
+	KLineEdit *lineFilesMask;
 	QLabel *QLabel_2;
 	QButtonGroup *QButtonGroup_2;
 	QLabel *QLabel_3;
-	QLineEdit *lineSiteUrl;
+	KLineEdit *lineSiteUrl;
 	QLabel *QLabel_4;
-	QLineEdit *lineWgetOption;
+	KLineEdit *lineWgetOption;
 	QLabel *QLabel_5;
 	QPushButton *buttonEditRcFile;
 	//Generated area. DO NOT EDIT!!!(end)

@@ -19,7 +19,7 @@ void  TagForm::initDialog(){
   QLabel_1->setMinimumSize(0,0);
   QLabel_1->setText(i18n("Action:"));
 
-  lineAction= new QLineEdit(this,"NoName");
+  lineAction= new KLineEdit(this,"NoName");
   lineAction->setGeometry(100,10,290,25);
   lineAction->setMinimumSize(0,0);
 

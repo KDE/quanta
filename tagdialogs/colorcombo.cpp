@@ -38,7 +38,7 @@
 #include <qimage.h>
 #include <qlabel.h>
 #include <qlayout.h>
-#include <qlineedit.h>
+#include <klineedit.h>
 #include <qvalidator.h>
 #include <qpainter.h>
 #include <qpushbutton.h>

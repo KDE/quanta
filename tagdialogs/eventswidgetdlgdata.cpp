@@ -19,7 +19,7 @@ void  EventsWidgetDlg::initDialog(){
   QLabel_1->setMinimumSize(0,0);
   QLabel_1->setText(i18n("OnClick"));
 
-  lineClick= new QLineEdit(this,"NoName");
+  lineClick= new KLineEdit(this,"NoName");
   lineClick->setGeometry(130,10,260,25);
   lineClick->setMinimumSize(0,0);
 
@@ -33,11 +33,11 @@ void  EventsWidgetDlg::initDialog(){
   QLabel_3->setMinimumSize(0,0);
   QLabel_3->setText(i18n("OnMouseDown"));
 
-  lineDblClick= new QLineEdit(this,"NoName");
+  lineDblClick= new KLineEdit(this,"NoName");
   lineDblClick->setGeometry(130,40,260,25);
   lineDblClick->setMinimumSize(0,0);
 
-  lineMouseDown= new QLineEdit(this,"NoName");
+  lineMouseDown= new KLineEdit(this,"NoName");
   lineMouseDown->setGeometry(130,70,260,25);
   lineMouseDown->setMinimumSize(0,0);
 
@@ -46,7 +46,7 @@ void  EventsWidgetDlg::initDialog(){
   QLabel_4->setMinimumSize(0,0);
   QLabel_4->setText(i18n("OnMouseUp"));
 
-  lineMouseUp= new QLineEdit(this,"NoName");
+  lineMouseUp= new KLineEdit(this,"NoName");
   lineMouseUp->setGeometry(130,100,260,25);
   lineMouseUp->setMinimumSize(0,0);
 
@@ -55,7 +55,7 @@ void  EventsWidgetDlg::initDialog(){
   QLabel_5->setMinimumSize(0,0);
   QLabel_5->setText(i18n("OnMouseOver"));
 
-  lineMouseOver= new QLineEdit(this,"NoName");
+  lineMouseOver= new KLineEdit(this,"NoName");
   lineMouseOver->setGeometry(130,130,260,25);
   lineMouseOver->setMinimumSize(0,0);
 
@@ -64,7 +64,7 @@ void  EventsWidgetDlg::initDialog(){
   QLabel_6->setMinimumSize(0,0);
   QLabel_6->setText(i18n("OnMouseMove"));
 
-  lineMouseMove= new QLineEdit(this,"NoName");
+  lineMouseMove= new KLineEdit(this,"NoName");
   lineMouseMove->setGeometry(130,160,260,25);
   lineMouseMove->setMinimumSize(0,0);
 
@@ -73,7 +73,7 @@ void  EventsWidgetDlg::initDialog(){
   QLabel_7->setMinimumSize(0,0);
   QLabel_7->setText(i18n("OnMouseOut"));
 
-  lineMouseOut= new QLineEdit(this,"NoName");
+  lineMouseOut= new KLineEdit(this,"NoName");
   lineMouseOut->setGeometry(130,190,260,25);
   lineMouseOut->setMinimumSize(0,0);
 
@@ -82,7 +82,7 @@ void  EventsWidgetDlg::initDialog(){
   QLabel_8->setMinimumSize(0,0);
   QLabel_8->setText(i18n("OnKeyPress"));
 
-  lineKeyPress= new QLineEdit(this,"NoName");
+  lineKeyPress= new KLineEdit(this,"NoName");
   lineKeyPress->setGeometry(130,220,260,25);
   lineKeyPress->setMinimumSize(0,0);
 
@@ -91,7 +91,7 @@ void  EventsWidgetDlg::initDialog(){
   QLabel_9->setMinimumSize(0,0);
   QLabel_9->setText(i18n("OnKeyDown"));
 
-  lineKeyDown= new QLineEdit(this,"NoName");
+  lineKeyDown= new KLineEdit(this,"NoName");
   lineKeyDown->setGeometry(130,250,260,25);
   lineKeyDown->setMinimumSize(0,0);
 
@@ -100,7 +100,7 @@ void  EventsWidgetDlg::initDialog(){
   QLabel_10->setMinimumSize(0,0);
   QLabel_10->setText(i18n("OnKeyUp"));
 
-  lineKeyUp= new QLineEdit(this,"NoName");
+  lineKeyUp= new KLineEdit(this,"NoName");
   lineKeyUp->setGeometry(130,280,260,25);
   lineKeyUp->setMinimumSize(0,0);
 

@@ -17,7 +17,7 @@ void  ProjectNewGeneral::initDialog(){
   QLabel_1->setMinimumSize(0,0);
   QLabel_1->setText(i18n("Project Name :"));
 
-  linePrjName= new QLineEdit(this,"NoName");
+  linePrjName= new KLineEdit(this,"NoName");
   linePrjName->setGeometry(150,30,240,25);
   linePrjName->setMinimumSize(0,0);
 
@@ -26,7 +26,7 @@ void  ProjectNewGeneral::initDialog(){
   QLabel_2->setMinimumSize(0,0);
   QLabel_2->setText(i18n("Project Directory :"));
 
-  linePrjDir= new QLineEdit(this,"NoName");
+  linePrjDir= new KLineEdit(this,"NoName");
   linePrjDir->setGeometry(150,60,240,25);
   linePrjDir->setMinimumSize(0,0);
 
@@ -40,7 +40,7 @@ void  ProjectNewGeneral::initDialog(){
   QLabel_3->setMinimumSize(0,0);
   QLabel_3->setText(i18n("Project File :"));
 
-  linePrjFile= new QLineEdit(this,"NoName");
+  linePrjFile= new KLineEdit(this,"NoName");
   linePrjFile->setGeometry(150,90,240,25);
   linePrjFile->setMinimumSize(0,0);
 
@@ -49,7 +49,7 @@ void  ProjectNewGeneral::initDialog(){
   QLabel_4->setMinimumSize(0,0);
   QLabel_4->setText(i18n("Base URL:"));
 
-  lineBaseURL= new QLineEdit(this,"NoName");
+  lineBaseURL= new KLineEdit(this,"NoName");
   lineBaseURL->setGeometry(150,120,240,25);
   lineBaseURL->setMinimumSize(0,0);
 
@@ -58,7 +58,7 @@ void  ProjectNewGeneral::initDialog(){
   QLabel_5->setMinimumSize(0,0);
   QLabel_5->setText(i18n("Author :"));
 
-  lineAuthor= new QLineEdit(this,"NoName");
+  lineAuthor= new KLineEdit(this,"NoName");
   lineAuthor->setGeometry(150,150,240,25);
   lineAuthor->setMinimumSize(0,0);
 
@@ -67,7 +67,7 @@ void  ProjectNewGeneral::initDialog(){
   QLabel_6->setMinimumSize(0,0);
   QLabel_6->setText(i18n("E-Mail :"));
 
-  lineEmail= new QLineEdit(this,"NoName");
+  lineEmail= new KLineEdit(this,"NoName");
   lineEmail->setGeometry(150,180,240,25);
   lineEmail->setMinimumSize(0,0);
 
@@ -86,7 +86,7 @@ void  ProjectNewGeneral::initDialog(){
   QLabel_9->setMinimumSize(0,0);
   QLabel_9->setText(i18n("Project Scripts Dir:"));
 
-  lineImagesDir= new QLineEdit(this,"NoName");
+  lineImagesDir= new KLineEdit(this,"NoName");
   lineImagesDir->setGeometry(150,220,240,25);
   lineImagesDir->setMinimumSize(0,0);
 
@@ -95,7 +95,7 @@ void  ProjectNewGeneral::initDialog(){
   buttonImagesDir->setMinimumSize(0,0);
   buttonImagesDir->setText(i18n("..."));
 
-  lineCgiDir= new QLineEdit(this,"NoName");
+  lineCgiDir= new KLineEdit(this,"NoName");
   lineCgiDir->setGeometry(150,250,240,25);
   lineCgiDir->setMinimumSize(0,0);
 
@@ -104,7 +104,7 @@ void  ProjectNewGeneral::initDialog(){
   buttonCgiDir->setMinimumSize(0,0);
   buttonCgiDir->setText(i18n("..."));
 
-  lineScriptsDir= new QLineEdit(this,"NoName");
+  lineScriptsDir= new KLineEdit(this,"NoName");
   lineScriptsDir->setGeometry(150,280,240,25);
   lineScriptsDir->setMinimumSize(0,0);
 

@@ -22,7 +22,7 @@
 #include <qwidget.h>
 #include <qlabel.h>
 #include <qcombobox.h>
-#include <qlineedit.h>
+#include <klineedit.h>
 #include <qpushbutton.h>
 #include <qcheckbox.h>
 //Generated area. DO NOT EDIT!!!(end)
@@ -53,31 +53,31 @@ protected:
 	QLabel *QLabel_1;
 	QComboBox *comboType;
 	QLabel *QLabel_2;
-	QLineEdit *lineName;
+	KLineEdit *lineName;
 	QLabel *QLabel_3;
-	QLineEdit *lineValue;
+	KLineEdit *lineValue;
 	QLabel *QLabel_4;
-	QLineEdit *lineSize;
+	KLineEdit *lineSize;
 	QLabel *QLabel_5;
-	QLineEdit *lineMaxLen;
+	KLineEdit *lineMaxLen;
 	QLabel *QLabel_6;
-	QLineEdit *lineSrc;
+	KLineEdit *lineSrc;
 	QPushButton *buttonSrc;
 	QLabel *QLabel_7;
-	QLineEdit *lineAlt;
+	KLineEdit *lineAlt;
 	QLabel *QLabel_8;
 	QComboBox *comboAlign;
 	QCheckBox *checkCheck;
 	QCheckBox *checkReadOnly;
 	QCheckBox *checkDisabled;
 	QLabel *QLabel_9;
-	QLineEdit *lineOnFocus;
+	KLineEdit *lineOnFocus;
 	QLabel *QLabel_10;
-	QLineEdit *lineOnBlur;
+	KLineEdit *lineOnBlur;
 	QLabel *QLabel_11;
-	QLineEdit *lineOnSelect;
+	KLineEdit *lineOnSelect;
 	QLabel *QLabel_12;
-	QLineEdit *lineOnChange;
+	KLineEdit *lineOnChange;
 	//Generated area. DO NOT EDIT!!!(end)
 
 private:

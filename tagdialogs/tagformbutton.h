@@ -22,7 +22,7 @@
 #include <qwidget.h>
 #include <qpushbutton.h>
 #include <qlabel.h>
-#include <qlineedit.h>
+#include <klineedit.h>
 #include <qcheckbox.h>
 //Generated area. DO NOT EDIT!!!(end)
 
@@ -45,9 +45,9 @@ public:
 	void initDialog();
 	//Generated area. DO NOT EDIT!!!(begin)
 	QLabel *QLabel_1;
-	QLineEdit *lineName;
+	KLineEdit *lineName;
 	QLabel *QLabel_2;
-	QLineEdit *lineValue;
+	KLineEdit *lineValue;
 	QCheckBox *checkChecked;
 	//Generated area. DO NOT EDIT!!!(end)
 

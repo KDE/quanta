@@ -23,9 +23,9 @@
 #endif
 
 #include <qstring.h>
-#include <qlineedit.h>
-#include <qcombobox.h>
+#include <klineedit.h>
 #include <qcheckbox.h>
+#include <qcombobox.h>
 #include <qdom.h>
 #include "colorcombo.h"
 #include "filecombo.h"

@@ -38,7 +38,7 @@ void  ProjectNewGetFiles::initDialog(){
   QLabel_6->setMinimumSize(0,0);
   QLabel_6->setText(i18n("Files Mask:"));
 
-  lineFilesMask= new QLineEdit(QButtonGroup_1,"NoName");
+  lineFilesMask= new KLineEdit(QButtonGroup_1,"NoName");
   lineFilesMask->setGeometry(110,70,310,25);
   lineFilesMask->setMinimumSize(0,0);
 
@@ -56,7 +56,7 @@ void  ProjectNewGetFiles::initDialog(){
   QLabel_3->setMinimumSize(0,0);
   QLabel_3->setText(i18n("Site URL:"));
 
-  lineSiteUrl= new QLineEdit(QButtonGroup_2,"NoName");
+  lineSiteUrl= new KLineEdit(QButtonGroup_2,"NoName");
   lineSiteUrl->setGeometry(110,10,310,25);
   lineSiteUrl->setMinimumSize(0,0);
 
@@ -65,7 +65,7 @@ void  ProjectNewGetFiles::initDialog(){
   QLabel_4->setMinimumSize(0,0);
   QLabel_4->setText(i18n("wget options"));
 
-  lineWgetOption= new QLineEdit(QButtonGroup_2,"NoName");
+  lineWgetOption= new KLineEdit(QButtonGroup_2,"NoName");
   lineWgetOption->setGeometry(110,40,310,25);
   lineWgetOption->setMinimumSize(0,0);
 
