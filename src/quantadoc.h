@@ -19,8 +19,6 @@
 #define QUANTADOC_H
 
 // include files for QT
-#include <qptrlist.h>
-#include <qdict.h>
 
 // forward declaration of the Quanta classes
 class Document;

@@ -242,6 +242,14 @@ QuantaApp::QuantaApp(int mdiMode) : DCOPObject("WindowManagerIf"), KMdiMainFrm( 
 
 QuantaApp::~QuantaApp()
 {
+// kdDebug(24000) << "QuantaApp::~QuantaApp" << endl;
+ quantaApp = 0L;
+ delete m_doc;
+ m_doc = 0L;
+ delete parser;
+ parser = 0L;
+ delete idleTimer;
+ idleTimer = 0L;
  tempFileList.clear();
  QDictIterator<ToolbarEntry> iter(toolbarList);
  ToolbarEntry *p_toolbar;
@@ -269,7 +277,6 @@ QuantaApp::~QuantaApp()
  delete dcopSettings;
  delete dcopQuanta;
  delete m_partManager;
- quantaApp = 0L;
 }
 
 void QuantaApp::setTitle(const QString& title)
@@ -677,7 +684,7 @@ void QuantaApp::slotStatusMsg(const QString &msg)
   statusBar()->changeItem(" " + KStringHandler::csqueeze(msg, progressBar->x() / statusBar()->fontMetrics().width('a')), IDS_STATUS);
 #endif
   statusBar()->repaint();
-  kapp->processEvents();
+  kapp->processEvents(QEventLoop::ExcludeUserInput | QEventLoop::ExcludeSocketNotifiers);
   statusbarTimer->start(10000, true);
 }
 
@@ -1416,8 +1423,20 @@ void QuantaApp::updateTreeViews()
 
 void QuantaApp::slotIdleTimerExpired()
 {
-  typingInProgress = false;
-  updateTreeViews();
+  kdDebug(24000) << "slotIdleTimerExpired" << endl;
+  if (idleTimer)
+  {
+    typingInProgress = false;
+    updateTreeViews();
+  }
+}
+
+void QuantaApp::enableIdleTimer(bool enable)
+{
+   if (enable)
+     idleTimer->start(500, true);
+   else
+     idleTimer->stop();
 }
 
 void QuantaApp::slotReparse()
@@ -1433,6 +1452,8 @@ void QuantaApp::slotForceReparse()
 /** reparse current document and initialize node. */
 void QuantaApp::reparse(bool force)
 {
+  if (!parser)
+    return;
   //temp
 //  if (!parser->activated()) return;
   typingInProgress = false;
@@ -3754,7 +3775,7 @@ void QuantaApp::slotEditCurrentTag()
   if (isUnknown)
   {
     QString message = i18n("Unknown tag: %1").arg(tagName);
-    quantaApp->slotStatusMsg( message );
+    slotStatusMsg( message );
   }
 }
 

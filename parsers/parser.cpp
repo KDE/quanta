@@ -465,9 +465,10 @@ Node *Parser::parse(Document *w, bool force)
 {
   QTime t;
   t.start();
+ QuantaView *view = ViewManager::ref()->activeView();
 #ifdef BUILD_KAFKAPART
   //If VPL is loaded, there shouldn't be any rebuild
-  if(ViewManager::ref()->activeView()->hadLastFocus() == QuantaView::VPLFocus && !force)
+  if(view && view->hadLastFocus() == QuantaView::VPLFocus && !force)
     return m_node;
 #endif
 
@@ -509,7 +510,8 @@ Node *Parser::parse(Document *w, bool force)
 #ifdef BUILD_KAFKAPART
  //We need to reload Kafka to refresh the DOM::Node->Node links.
  //FIXME: make a function which only update the DOM::Node->Node links.
-  ViewManager::ref()->activeView()->reloadVPLView(true);
+  if (view)
+    view->reloadVPLView(true);
 #endif
 
  emit nodeTreeChanged();

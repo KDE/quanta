@@ -182,7 +182,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
   if (!QFile::exists(dtd->fileName)) return false;
 
   kapp->setOverrideCursor( QCursor(Qt::WaitCursor) );
-  quantaApp->slotStatusMsg(i18n("Loading DTD's..."));
+//  quantaApp->slotStatusMsg(i18n("Loading DTD's..."));
 
   KConfig *dtdConfig = new KConfig(dtd->fileName, true);
 
@@ -214,7 +214,9 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
   QString dirName = dirURL.path(1);
   if (QFile::exists(dirName + "common.tag"))
     readTagFile(dirName + "common.tag", dtd, 0L);
+  quantaApp->enableIdleTimer(false);
   KURL::List files = QExtFileInfo::allFilesRelative(dirURL, "*.tag");
+  quantaApp->enableIdleTimer(true);
   QString tmpStr;
   for ( KURL::List::Iterator it_f = files.begin(); it_f != files.end(); ++it_f )
   {
@@ -582,7 +584,6 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
   delete dtdConfig;
   dtd->loaded = true;
   resolveInherited(dtd);
-  quantaApp->slotStatusMsg("");
   kapp->restoreOverrideCursor();
   return true;
 }

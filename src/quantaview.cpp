@@ -110,6 +110,8 @@ QuantaView::QuantaView(QWidget *parent, const char *name )
 
 QuantaView::~QuantaView()
 {
+   delete m_document;
+   m_document = 0L;
 }
 
 bool QuantaView::mayRemove()

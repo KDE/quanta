@@ -186,6 +186,7 @@ public:
 
   ScriptTreeView *scriptToolView() {return scriptTab;}
   FilesTreeView *filesToolView() {return fTab;}
+  void enableIdleTimer(bool enable);
 
 signals: // Signals
   /** signal used to hide the splash screen */
@@ -229,6 +230,10 @@ public slots:
   void slotViewStatusBar();
 
   void statusBarTimeout();
+  /** Shows the message in the status bar.
+       WARNING: Don't use in place where nothing should happen until the function
+       exits (like in startup code, DTD reading, etc.) as it calls processEvents() and
+       unexpected things may happen. */
   void slotStatusMsg(const QString &text);
 
   void slotNewStatus();

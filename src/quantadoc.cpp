@@ -88,6 +88,7 @@ QuantaDoc::QuantaDoc(QWidget *parent, const char *name) : QObject(parent, name)
 
 QuantaDoc::~QuantaDoc()
 {
+  //kdDebug(24000) << "QuantaDoc::~QuantaDoc: " << endl;
 }
 
 
@@ -122,7 +123,8 @@ bool QuantaDoc::newDocument( const KURL& url, bool switchToExisting )
   return true;
 }
 
-void QuantaDoc::openDocument(const KURL& urlToOpen, const QString &a_encoding, bool switchToExisting)
+void QuantaDoc::openDocument(const KURL& urlToOpen, const QString &a_encoding,
+bool switchToExisting)
 {
   KURL url = urlToOpen;
   if (url.isLocalFile())
@@ -147,7 +149,8 @@ void QuantaDoc::openDocument(const KURL& urlToOpen, const QString &a_encoding, b
     if (encoding.isEmpty())
         encoding = quantaApp->defaultEncoding();
 
-  KTextEditor::EncodingInterface* encodingIf = dynamic_cast<KTextEditor::EncodingInterface*>(w->doc());
+  KTextEditor::EncodingInterface* encodingIf =
+dynamic_cast<KTextEditor::EncodingInterface*>(w->doc());
   if (encodingIf)
       encodingIf->setEncoding(encoding);
 
