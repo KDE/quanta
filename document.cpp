@@ -1078,8 +1078,8 @@ bool Document::scriptAutoCompletion(int line, int column)
    {
      group = completionDTD->structTreeGroups[j];
      if (!group.autoCompleteAfterRx.pattern().isEmpty() &&
-         ( group.autoCompleteAfterRx.exactMatch(s2) ||
-           group.autoCompleteAfterRx.exactMatch(s) ) )
+         ( group.autoCompleteAfterRx.search(s2) != -1||
+           group.autoCompleteAfterRx.search(s) != -1) )
      {
        showCodeCompletions(getGroupCompletions(group, line, column + 1));
        handled = true;

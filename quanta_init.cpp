@@ -579,7 +579,7 @@ void QuantaApp::saveOptions()
     m_config->writeEntry("DynamicWordWrap",qConfig.dynamicWordWrap);
    // m_doc->writeConfig(m_config); // kwrites
     m_project->writeConfig(m_config); // project
-    writeDockConfig(m_config);
+    manager()->writeConfig(m_config);
     saveMainWindowSettings(m_config);
     m_spellChecker->writeConfig(m_config);
     m_config->sync();
@@ -664,7 +664,7 @@ void QuantaApp::readOptions()
 #if (KDE_VERSION > 308)
   viewDynamicWordWrap->setChecked(qConfig.dynamicWordWrap);
 #endif
-  readDockConfig(m_config);
+  manager()->readConfig(m_config);
 
   showPreviewAction  ->setChecked( false );
   #ifdef BUILD_KAFKAPART
