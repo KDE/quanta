@@ -159,7 +159,7 @@ public:
 	/**
 	 * Create a simple Node, without taking care of building the closing Node.
 	 */
-	static Node* createNode(QString nodeName, QString tagString, int nodeType, Document *doc);
+	static Node* createNode(const QString &nodeName, const QString &tagString, int nodeType, Document *doc);
 
 	/**
 	 * Insert node in the tree. WARNING This function will log that node was added.
@@ -243,7 +243,7 @@ public:
 	 * @param nextSibling The next sibling of the Node.
 	 * @return Returns a pointer to the newly created Node.
 	 */
-	static Node *createAndInsertNode(QString nodeName, QString tagString, int nodeType, Document *doc,
+	static Node *createAndInsertNode(const QString &nodeName, const QString &tagString, int nodeType, Document *doc,
 		Node* parent, Node* nextSibling, NodeModifsSet &modifs, bool indentation = true,
 		bool merge = true);
 
@@ -259,7 +259,7 @@ public:
 	 * @param indentation Specifies if we should add/delete Empty Nodes in order to let the undoRedo system
 	 * create a nice indentation.
 	 */
-	static Node *createAndInsertNode(QString nodeName, QString tagString, int nodeType, Document *doc,
+	static Node *createAndInsertNode(const QString &nodeName, const QString &tagString, int nodeType, Document *doc,
 		Node *parent, Node *nextSibling, Node *nextEndSibling, NodeModifsSet &modifs, bool indentation = true);
 
 	/**
@@ -272,7 +272,7 @@ public:
 	 * @param startOffset The first Node will be splitted at offset startOffset, the right part will be enclosed.
 	 * @param endOffset The last Node will be splitted at offset endOffset, the left part will be enclosed.
 	 */
-	static Node *createAndInsertNode(QString nodeName, QString tagString, int nodeType, Document *doc,
+	static Node *createAndInsertNode(const QString &nodeName, const QString &tagString, int nodeType, Document *doc,
 		Node *parent, Node *startNodeToSurround, Node *endNodeToSurround, int startOffset, int endOffset,
 		NodeModifsSet &modifs);
 
@@ -281,7 +281,7 @@ public:
 	 * allows it.
 	 * @return Returns false if it wasn't possible to insert the tag because e.g. of an invalid parent.
 	 */
-	static bool DTDcreateAndInsertNode(QString nodeName, QString tagString, int nodeType, Document *doc,
+	static bool DTDcreateAndInsertNode(const QString &nodeName, const QString &tagString, int nodeType, Document *doc,
 		Node *parent, Node *startNodeToSurround, Node *endNodeToSurround, int startOffset, int endOffset,
 		NodeModifsSet &modifs);
 
@@ -296,7 +296,7 @@ public:
 	 * @param endOffset If endNode is a text, specify at which offset the new Node must stop to surround.
 	 * @return Returns false if it wasn't possible to insert the tag because e.g. of an invalid parent.
 	 */
-	static bool DTDcreateAndInsertNode(QString nodeName, QString tagString, int nodeType, Document *doc,
+	static bool DTDcreateAndInsertNode(const QString &nodeName, const QString &tagString, int nodeType, Document *doc,
 		Node *startNode, int startOffset, Node *endNode, int endOffset, NodeModifsSet &modifs);
 
 	/**
@@ -374,7 +374,7 @@ public:
 	 * @param eLine Returns the line of the last letter of tagString.
 	 * @param eCol Returns the col of the last letter of tagString.
 	 */
-	static void getEndPosition(QString tagString, int bLine, int bCol, int &eLine, int &eCol);
+	static void getEndPosition(const QString & tagString, int bLine, int bCol, int &eLine, int &eCol);
 
 	/**
 	 * It behaves essentially like the above function except that the string is the Tag String of Node.
@@ -387,13 +387,13 @@ public:
 	 * @param node The node which get the new tag string.
 	 * @param newTagString The new tag String :-)
 	 */
-	static void setTagString(Node *node, QString newTagString);
+	static void setTagString(Node *node, const QString &newTagString);
 
 	/**
 	 * This function behaves essentially like the above function except that all the others Nodes' position
 	 * are updated too.
 	 */
-	static void setTagStringAndFitsNodes(Node *node, QString newTagString);
+	static void setTagStringAndFitsNodes(Node *node, const QString &newTagString);
 
 	/**
 	 * Gets the location of a Node in a pointer-independant suit of ints e.g. 1,3,5 means

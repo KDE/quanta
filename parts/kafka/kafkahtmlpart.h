@@ -95,7 +95,7 @@ public:
 	 * @param The name of the DOM::Node to be created
 	 * @return Return the DOM::Node created
 	 */
-	DOM::Node createNode(QString NodeName);
+	DOM::Node createNode(const QString &NodeName);
 
 	/**
 	 * Category: Standart Function

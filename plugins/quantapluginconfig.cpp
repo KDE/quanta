@@ -42,6 +42,7 @@ QuantaPluginConfig::QuantaPluginConfig(QWidget *a_parent, const char *a_name)
   connect(locationButton, SIGNAL(clicked()), this, SLOT(selectLocation()));
 
   QStringList windows;
+  i18n("Message Area Tab");
   windows << i18n("Editor Tab") << i18n("Editor Frame") << i18n("Message Frame");
   outputWindow->insertStringList(windows);
   iconButton->setStrictIconSize(false);

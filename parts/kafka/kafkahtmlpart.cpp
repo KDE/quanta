@@ -1286,7 +1286,7 @@ void KafkaHTMLPart::khtmlDrawContentsEvent(khtml::DrawContentsEvent *event)
 	KHTMLPart::khtmlDrawContentsEvent(event);
 }
 
-DOM::Node KafkaHTMLPart::createNode(QString NodeName)
+DOM::Node KafkaHTMLPart::createNode(const QString &NodeName)
 {
 	//this will change with the futur DTDs support
 	DOM::Node dn;

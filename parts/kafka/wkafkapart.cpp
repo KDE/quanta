@@ -1024,7 +1024,7 @@ Node * WKafkaPart::buildNodeFromKafkaNode(DOM::Node _domNode, Node *_nodeParent,
 	return _node;
 }
 
-QString WKafkaPart::getDecodedChar(QString encodedChar)
+QString WKafkaPart::getDecodedChar(const QString &encodedChar)
 {
 	QMap<QString, QString>::Iterator it = encodedChars.find(encodedChar);
 	if(it == encodedChars.end())
@@ -1032,7 +1032,7 @@ QString WKafkaPart::getDecodedChar(QString encodedChar)
 	return it.data();
 }
 
-QString WKafkaPart::getEncodedChar(QString decodedChar, QString previousDecodedChar)
+QString WKafkaPart::getEncodedChar(const QString &decodedChar, const QString &previousDecodedChar)
 {
 	if(decodedChar[0].isSpace() && !previousDecodedChar[0].isSpace())
 		return " ";
@@ -1046,8 +1046,9 @@ QString WKafkaPart::getEncodedChar(QString decodedChar, QString previousDecodedC
 	return it.data();
 	}
 
-QString WKafkaPart::getDecodedText(QString encodedText)
+QString WKafkaPart::getDecodedText(const QString &a_encodedText)
 {
+        QString encodedText = a_encodedText;
 	QString decodedChar;
 	int i, j;
 #ifdef LIGHT_DEBUG
@@ -1092,8 +1093,9 @@ QString WKafkaPart::getDecodedText(QString encodedText)
 	//return KGlobal::charsets()->resolveEntities(encodedText); =>nice but not sufficient
 }
 
-QString WKafkaPart::getEncodedText(QString decodedText, int bLine, int bCol, int &eLine, int &eCol)
+QString WKafkaPart::getEncodedText(const QString &a_decodedText, int bLine, int bCol, int &eLine, int &eCol)
 {
+        QString decodedText = a_decodedText;
 	QString Encodedchar;
 	QString decodedChar, previousDecodedChar;
 #ifdef LIGHT_DEBUG
@@ -1133,7 +1135,7 @@ QString WKafkaPart::getEncodedText(QString decodedText, int bLine, int bCol, int
 	return decodedText;
 }
 
-QString WKafkaPart::getEncodedText(QString decodedText)
+QString WKafkaPart::getEncodedText(const QString& decodedText)
 {
 	int a = 0, b = 0, c, d;
 	return getEncodedText(decodedText, a, b, c, d);

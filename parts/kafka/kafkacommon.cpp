@@ -561,7 +561,7 @@ int kafkaCommon::getNodeDisplay(const QString &nodeNam, bool closingNodeToo)
 	}
 }
 
-Node* kafkaCommon::createNode(QString nodeName, QString tagString, int nodeType, Document *doc)
+Node* kafkaCommon::createNode(const QString &nodeName, const QString &tagString, int nodeType, Document *doc)
 {
 	Node *node;
 
@@ -962,7 +962,7 @@ bool kafkaCommon::DTDinsertNode(Node *newNode, Node *startNode, int startOffset,
 	return true;
 }
 
-Node *kafkaCommon::createAndInsertNode(QString nodeName, QString tagString, int nodeType, Document *doc,
+Node *kafkaCommon::createAndInsertNode(const QString &nodeName, const QString &tagString, int nodeType, Document *doc,
 	Node* parent, Node* nextSibling, NodeModifsSet &modifs, bool indentation, bool merge)
 {
 #ifdef LIGHT_DEBUG
@@ -980,7 +980,7 @@ Node *kafkaCommon::createAndInsertNode(QString nodeName, QString tagString, int 
 	return node;
 }
 
-Node *kafkaCommon::createAndInsertNode(QString nodeName, QString tagString, int nodeType, Document *doc,
+Node *kafkaCommon::createAndInsertNode(const QString &nodeName, const QString &tagString, int nodeType, Document *doc,
 	Node *parent, Node *nextSibling, Node *nextEndSibling, NodeModifsSet &modifs, bool indentation)
 {
 #ifdef LIGHT_DEBUG
@@ -998,7 +998,7 @@ Node *kafkaCommon::createAndInsertNode(QString nodeName, QString tagString, int 
 	return node;
 }
 
-Node *kafkaCommon::createAndInsertNode(QString nodeName, QString tagString, int nodeType, Document *doc,
+Node *kafkaCommon::createAndInsertNode(const QString &nodeName, const QString &tagString, int nodeType, Document *doc,
 	Node *parent, Node *startNodeToSurround, Node *endNodeToSurround, int startOffset, int endOffset,
 	NodeModifsSet &modifs)
 {
@@ -1022,7 +1022,7 @@ Node *kafkaCommon::createAndInsertNode(QString nodeName, QString tagString, int 
 
 }
 
-bool kafkaCommon::DTDcreateAndInsertNode(QString nodeName, QString tagString, int nodeType, Document *doc,
+bool kafkaCommon::DTDcreateAndInsertNode(const QString &nodeName, const QString &tagString, int nodeType, Document *doc,
 	Node *parent, Node *startNodeToSurround, Node *endNodeToSurround, int startOffset, int endOffset,
 	NodeModifsSet &modifs)
 {
@@ -1044,7 +1044,7 @@ bool kafkaCommon::DTDcreateAndInsertNode(QString nodeName, QString tagString, in
 }
 
 
-bool kafkaCommon::DTDcreateAndInsertNode(QString nodeName, QString tagString, int nodeType, Document *doc,
+bool kafkaCommon::DTDcreateAndInsertNode(const QString &nodeName, const QString &tagString, int nodeType, Document *doc,
 	Node *startNode, int startOffset, Node *endNode, int endOffset, NodeModifsSet &modifs)
 {
 #ifdef LIGHT_DEBUG
@@ -1468,7 +1468,7 @@ bool kafkaCommon::isInline(const QString &nodeNam)
 		return false;
 }
 
-void kafkaCommon::getEndPosition(QString tagString, int bLine, int bCol, int &eLine, int &eCol)
+void kafkaCommon::getEndPosition(const QString &tagString, int bLine, int bCol, int &eLine, int &eCol)
 {
 	int result, oldResult;
 
@@ -1503,7 +1503,7 @@ void kafkaCommon::getEndPosition(Node *node, int bLine, int bCol, int &eLine, in
 	getEndPosition(node->tag->tagStr(), bLine, bCol, eLine, eCol);
 }
 
-void kafkaCommon::setTagString(Node *node, QString newTagString)
+void kafkaCommon::setTagString(Node *node, const QString &newTagString)
 {
 	int eLine, eCol, bLine, bCol;
 
@@ -1516,7 +1516,7 @@ void kafkaCommon::setTagString(Node *node, QString newTagString)
 	node->tag->setTagPosition(bLine, bCol, eLine, eCol);
 }
 
-void kafkaCommon::setTagStringAndFitsNodes(Node *node, QString newTagString)
+void kafkaCommon::setTagStringAndFitsNodes(Node *node, const QString &newTagString)
 {
 	int eLine, eCol, oldELine, oldECol;
 	bool b = false;

@@ -127,14 +127,14 @@ public:
 	 * from its encoded form (e.g. &nbsp;)
 	 * @return Returns the special character.
 	 */
-	QString getDecodedChar(QString encodedChar);
+	QString getDecodedChar(const QString &encodedChar);
 
 	/**
 	 * This function returns the text decoded from its XML-encoded form.
 	 * @param encodedText The text to decode.
 	 * @return Returns the text decoded.
 	 */
-	QString getDecodedText(QString encodedText);
+	QString getDecodedText(const QString &encodedText);
 
 	/**
 	 * This function synchronizes the Node from the DOM::Node. If the Node is a text Node,
@@ -145,17 +145,17 @@ public:
 	void buildNodeFromKafkaNode(Node *_node, DOM::Node _domNode);
 
 	/**
-	 * This function creates and synchronize a Node from the DOM::Node. It adds 
+	 * This function creates and synchronize a Node from the DOM::Node. It adds
 	 * the closing Node if necessary, and the node and its closing Node can surround Nodes
 	 * and thus make them its childs. Usefull when adding a Node on a selected range of Nodes.
 	 * It also create empty Nodes between Nodes.
 	 * @param _domNode The Node returned is synchronized from this DOM::Node.
 	 * @param _nodeParent The parent Node of the Node returned.
 	 * @param _beginNode The new Node will be placed before or within _beginNode.
-	 * @param beginOffset NOT IMLEMENTED If set to 0 or -1, the new Node will be placed before _beginNode, 
-	 * else _beginNode will be splitted at offset #beginOffset and the new Node will be placed 
+	 * @param beginOffset NOT IMLEMENTED If set to 0 or -1, the new Node will be placed before _beginNode,
+	 * else _beginNode will be splitted at offset #beginOffset and the new Node will be placed
 	 * inbetween.
-	 * @param _endNode NOT IMPLEMENTED If not null and if the new Node has a closing tag, set the closing node 
+	 * @param _endNode NOT IMPLEMENTED If not null and if the new Node has a closing tag, set the closing node
 	 * after or within _endNode.
 	 * @param endOffset NOT IMPLEMENTED If set to -1, the closing node will be placed after _endNode, else _endNode
 	 * will be splitted at offset #endOffset and the closing Node will be placed inbetween.
@@ -173,7 +173,7 @@ public:
 	 * @param previousDecodedchar The previous decoded character.
 	 * @return Returns the XML-encoded character.
 	 */
-	QString getEncodedChar(QString decodedChar, QString previousDecodedChar);
+	QString getEncodedChar(const QString &decodedChar, const QString &previousDecodedChar);
 
 	/**
 	 * This function returns the text with all the special XML characters encoded.
@@ -184,13 +184,13 @@ public:
 	 * @param eCol Returns the end col of the return encoded text.
 	 * @return Return the XML-encoded text.
 	 */
-	QString getEncodedText(QString decodedText, int bLine, int bCol, int &eLine, int &eCol);
+	QString getEncodedText(const QString &decodedText, int bLine, int bCol, int &eLine, int &eCol);
 
 	/**
 	 * This function behaves essentially like the above function except that it doesn't
 	 * return the position of the encoded text.
 	 */
-	QString getEncodedText(QString decodedText);
+	QString getEncodedText(const QString &decodedText);
 
 	/**
 	 * This function generates the code corresponding to the XML node.

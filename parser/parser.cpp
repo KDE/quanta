@@ -2076,7 +2076,8 @@ void Parser::parseForScriptGroup(Node *node)
         node->tag->type == Tag::XmlTag ||
         node->tag->type == Tag::XmlTagEnd ||
         node->tag->type == Tag::Comment ||
-        node->tag->type == Tag::Empty
+        node->tag->type == Tag::Empty ||
+        ( group.tagType != Tag::Text && node->tag->type != group.tagType)
         )
       continue;
     pos = 0;

@@ -679,7 +679,7 @@ void QuantaDoc::changeFileTabName(const KURL &newURL)
   {
     if (w->isModified())
     {
-      tab->changeTab( w, SmallIcon("fileclose"), tab->tabLabel(w) + "[!]");
+      tab->changeTab( w, SmallIcon("fileclose"), tab->tabLabel(w) + i18n("[modified]"));
     } else
     {
       tab->changeTab( w, SmallIcon("fileclose"), tab->tabLabel(w));

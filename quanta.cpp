@@ -784,7 +784,7 @@ void QuantaApp::slotNewStatus()
     {
       if (w->isModified())
       {
-        wTab->changeTab( w, SmallIcon("fileclose"), QExtFileInfo::shortName(w->url().path()) + "[!]");
+        wTab->changeTab( w, SmallIcon("fileclose"), QExtFileInfo::shortName(w->url().path()) + i18n("[modified]"));
       } else
       {
         wTab->changeTab( w, SmallIcon("fileclose"), QExtFileInfo::shortName(w->url().path()));
