@@ -683,11 +683,11 @@ void QuantaApp::slotClosePage(QWidget *w)
       m_doc->closeDocument();
       if (oldPage != w)
           writeTab->showPage(oldPage);
+      reparse(true);
   }
   if (!writeTab->currentPage())
   {
     m_doc->openDocument(KURL());
-    reparse(true);
   }
 }
 
