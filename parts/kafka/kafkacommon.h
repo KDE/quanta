@@ -85,9 +85,25 @@ public:
 	static Node* getPrevNodeNE(Node *node, Node *endNode = 0L);
 
     
+    /**
+     * Returns the first common parent to startNode and endNode that isn't inline.
+     * @param startNode Start node.
+     * @param endNode End node.
+     * @param commonParentStartChildLocation  Is the child of commonParent which is parent of startNode
+     * @param commonParentEndChildLocation Is the child of commonParent which is parent of endNode
+     * @param nodeSubtree When startNode and endNode doesn't belong to the current document tree. Pass 0 if they do.
+     * @return The first, non inline, common parent of startNode and endNode.
+     */
     static Node* DTDGetNonInlineCommonParent(Node* startNode, Node* endNode, 
                                              QValueList<int>& commonParentStartChildLocation, 
                                              QValueList<int>& commonParentEndChildLocation, Node* nodeSubtree);
+
+    /**
+     * Same as above, only that the common parent can be inline.
+     */
+    static Node* DTDGetCommonParent(Node* startNode, Node* endNode, 
+                                    QValueList<int>& commonParentStartChildLocation, 
+                                    QValueList<int>& commonParentEndChildLocation, Node* nodeSubtree);
 
 	/**
 	 * This function returns the next DOM::Node after node : the first child of
@@ -112,7 +128,37 @@ public:
 	 * @return Returns the previous DOM::Node of node.
 	 */
 	static DOM::Node getPrevDomNode(DOM::Node node, DOM::Node endNode = DOM::Node());
+ 
+     /**
+      * If node is not a text node or the cursor is at the end of node's tag string, this method return the next
+      * text node at offset 0, or a null pointer.
+      * This is particular useful when finding start and end nodes of a selection, because you can have a closing node
+      * as the start node, etc.
+      * @param startNode The current start node. startNode isn't changed inside the method.
+      * @param startOffset The current start offset. startOffset is changed inside the method.
+      * @return The next text node or a null pointer.
+      */
+     static Node* getCorrectStartNode(Node* startNode, int& startOffset);
     
+     /**
+      * If node is not a text node or the cursor is at the beggining of node's tag string, this method return the previous
+      * text node at offset at the end of the tag string, or a null pointer.
+      * This is particular useful when finding start and end nodes of a selection, because you can have a closing node
+      * as the start node, etc.
+      * @param endNode The current start node.
+      * @param endOffset The current start offset.
+      * @return The next text node or a null pointer.
+      */
+     static Node* getCorrectEndNode(Node* endNode, int& endOffset);
+     
+     /**
+      * Get the first child of commonParent which is parent of node
+      * @param node 
+      * @param commonParent 
+      * @return 
+      */
+     static Node* getCommonParentChild(Node* node, Node* commonParent);
+
 
 	/** ----------------------- NODE INDENTATION STUFF -------------------------------------*/
 
@@ -313,7 +359,7 @@ public:
 	 * from the area, by calling DTDExtractNode. If newNode wasn't present, it will then insert it by
 	 * calling DTDinsertNode.
 	 * This is the key function making the toolbars working.
-         * @return Returns true if a modification was done (Node inserted/removed)
+     * @return Returns true if a modification was done (Node inserted/removed)
 	 */
 	static bool DTDinsertRemoveNode(Node *newNode, Node *startNode, int startOffset, Node *endNode,
 		int endOffset, Document *doc, Node **cursorNode, int &cursorOffset, NodeModifsSet *modifs);
@@ -568,7 +614,8 @@ public:
 	 * Moves a Node somewhere else.
 	 * @param nodeToMove The node to move :-)
 	 * @param newParent The new parent of nodeToMove.
-	 * @param newNextSibling The new next Sibling of nodeToMove.
+     * @param newNextSibling The new next Sibling of nodeToMove. If null, node will be appended at
+     * the child list of parentNode.
 	 * @param modifs The changes made are logged into modifs.
 	 * @param merge Specifies if it should try to merge the Node at its new location.
 	 */
@@ -583,13 +630,67 @@ public:
 	 * @return Returns if the node was splitted.
 	 */
 	static bool splitNode(Node *n, int offset, NodeModifsSet *modifs);
-    
-    static void splitStartNodeSubtree(Node* startNode, Node* commonParent, 
-                                      QValueList<int>& commonParentStartChildLocation, NodeModifsSet* modifs);
-    static void splitEndNodeSubtree(Node* endNode, Node* commonParent, 
-                                    QValueList<int>& commonParentStartChildLocation, 
-                                    QValueList<int>& commonParentEndChildLocation, 
-                                    bool subTree, NodeModifsSet* modifs);
+ 
+    /**
+     * This method takes care of spliting start and end nodes, if needed, finding the commonParent, 
+     * commonParentStartChild and commonParentEndChild and split the start and end node subtrees, 
+     * calling splitStartNodeSubtree and splitEndNodeSubtree.
+     * The following tree:
+     *  <body>
+     *      <b>                     --> commonParent
+     *          <i>                 --> commonParentStartChild
+     *              select|
+     *              here            --> startNode  
+     *          </i>
+     *          continue
+     *          <u>                 --> commonParentEndChild
+     *              stop|           --> endNode
+     *              more
+     *          </u>
+     *          text
+     *      </b>
+     *  <body>
+     * Is changed to:
+     *  <body>
+     *      <b>
+     *          <i>
+     *              select|
+     *          </i>
+     *      </b>
+     *      <b>
+     *          <i>
+     *              here
+     *          </i>
+     *          continue
+     *          <u>
+     *              stop
+     *          </u>
+     *      </b>
+     *      <b>
+     *          <u>
+     *              more
+     *          </u>
+     *          text
+     *      </b>
+     *  </body>
+     * @param startNode The node where a selection starts, for example.
+     * @param startOffset
+     * @param endNode The node where a selection ends, for example.
+     * @param endOffset
+     * @param commonParent This is the common parent between start and end node. 
+     * If 0, it tries to find the commonParent, else it uses the passed node.
+     * @param commonParentStartChildLocation The first child of commonParent which is parent of startNode is stored here.
+     * @param commonParentEndChildLocation The first child of commonParent which is parent of endNode is stored here.
+     * @param cursorNode The cursor node is stored here.
+     * @param cursorOffset The cursor offset is stored here.
+     * @param subTree The node corresponding to the start of a subtree that doesn't belong to the current document, or 0.
+     * @param modifs The changes made are logged into modifs.
+     */
+    static void splitStartAndEndNodeSubtree(Node*& startNode, int startOffset, Node*& endNode, int endOffset, Node*& commonParent, 
+                                            QValueList<int>& commonParentStartChildLocation, 
+                                            QValueList<int>& commonParentEndChildLocation, 
+                                            Node*& cursorNode, int& cursorOffset, 
+                                            Node* subTree, NodeModifsSet* modifs);
 
 	/**
 	 * If n and n2 are both Text or Empty Nodes, merge them into one.
@@ -745,7 +846,12 @@ public:
 	 */
 	static Node* hasParent(Node *node, const QString &name);
 
+    /**
+     * Tries to find the common parent to startNode and endNode, in the same conditions as above.
+     */
+    static Node* hasParent(Node* startNode, Node* endNode, const QString &name);
 
+    
 	/** ----------------- DOM::NODE TREE MODIFICATIONS --------------------*/
 
 	/**
@@ -907,6 +1013,117 @@ public:
 	 * @param indent The number of little dots per parent relationship.
 	 */
 	static void coutTree(Node *node, int indent);
+ 
+    /**
+     * Returns whether a range is surrounded by a tag.
+     * @param start_node The start of the range to be checked.
+     * @param end_node The end of the range to be checked.
+     * @param tag_name The name of the tag, e.g., "strong".
+     * @return  -1 is not inside tag_name
+     *          1 is inside tag_name
+     *          0 mixed 
+     */
+    static int isInsideTag(Node* start_node, Node* end_node, QString const& tag_name);
+    
+    /**
+     * Return whether the offset is placed between two words in a text node.
+     * @pre node is a Node of type text.
+     * @pre offset >= 0
+     * @param node The text node to be checked.
+     * @param offset The position in text we want to see if it's between words.
+     * @return true if is a space between words or if it's in the limit of a word.
+     */
+    static bool isbetweenWords(Node* node, int offset);
+    
+private:
+    /**
+     * Split the last valid start parent (commonParentStartChild) into two.
+     * This and the method above are related and are used in sequence.
+     * The following tree:
+     *  <body>
+     *      <b>                     --> commonParent
+     *          <i>                 --> commonParentStartChild
+     *              select|
+     *              here            --> startNode
+     *          </i>
+     *          continue
+     *          <u>
+     *          stop|more
+     *          </u>
+     *          text
+     *      </b>
+     *  <body>
+     * Is changed to:
+     *  <body>
+     *      <b>
+     *          <i>
+     *              select|
+     *          </i>
+     *      </b>
+     *      <b>
+     *          <i>
+     *              here
+     *          </i>
+     *          continue
+     *          <u>
+     *              stop|more
+     *          </u>
+     *          text
+     *      </b>
+     *  </body>
+     * @param startNode The node where a selection starts, for example.
+     * @param commonParent This is the common parent between start and end node.
+     * @param commonParentStartChildLocation The first child of commonParent which is parent of startNode
+     * @param modifs The changes made are logged into modifs.
+     */
+    static void splitStartNodeSubtree(Node* startNode, Node* commonParent, 
+                                      QValueList<int>& commonParentStartChildLocation, NodeModifsSet* modifs);
+    /**
+     * Split the last valid start parent (commonParentStartChild) into two.
+     * The following tree:
+     *  <body>
+     *      <b>                     --> commonParent
+     *          <i>                 --> commonParentStartChild
+     *              select|
+     *              here     
+     *          </i>
+     *          continue
+     *          <u>                 --> commonParentEndChild
+     *              stop|           --> endNode
+     *              more
+     *          </u>
+     *          text
+     *      </b>
+     *  <body>
+     * Is changed to:
+     *  <body>
+     *      <b>
+     *          <i>
+     *              select|here
+     *          </i>
+     *          continue
+     *          <u>
+     *              stop|
+     *          </u>
+     *      </b>
+     *      <b>
+     *          <u>
+     *              more
+     *          </u>
+     *          text
+     *      </b>
+     *  </body>
+     * @param endNode The node where a selection ends, for example.
+     * @param commonParent This is the common parent between start and end node.
+     * @param commonParentStartChildLocation The first child of commonParent which is parent of startNode.
+     * @param commonParentEndChildLocation The first child of commonParent which is parent of endNode.
+     * @param subTree True if we are dealing with a tree that doesn't belong to the current document.
+     * @param modifs The changes made are logged into modifs.
+     */
+    static void splitEndNodeSubtree(Node* endNode, Node* commonParent, 
+                                    QValueList<int>& commonParentStartChildLocation, 
+                                    QValueList<int>& commonParentEndChildLocation, 
+                                    bool subTree, NodeModifsSet* modifs);
 };
 
 #endif
