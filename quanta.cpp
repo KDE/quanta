@@ -860,6 +860,7 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
     plugin = m_pluginInterface->plugin(tabTitle);
     if (plugin)
        plugin->showGui(true);
+    m_view->oldTab = w;
     return;
   }
   dynamic_cast<KTextEditor::PopupMenuInterface*>(newWrite->view())->installPopup((QPopupMenu *)factory()->container("popup_editor", quantaApp));

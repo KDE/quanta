@@ -231,10 +231,10 @@ QWidget* QuantaView::removeWrite()
       this, SLOT(slotQuantaGetFocus(Kate::View *)));
 #endif
     delete w;
-  }/* else
+  } else
   {
-    m_writeTab->removePage( m_writeTab->currentPage() );
-  }*/
+    //m_writeTab->removePage( m_writeTab->currentPage() );
+  }
 #ifdef BUILD_KAFKAPART
   oldTab = m_writeTab->currentPage();
   if(!writeExists())
