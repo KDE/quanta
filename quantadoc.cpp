@@ -41,6 +41,8 @@
 #include "kwrite/kwdoc.h"
 #include "kwrite/highlight/highlight.h"
 
+#include "project/project.h"
+
 extern QDict <QStrList> *tagsDict;
 
 QuantaDoc::QuantaDoc( QuantaApp *app, QWidget *parent, const char *name) : QObject(parent, name)
@@ -83,7 +85,7 @@ QString QuantaDoc::basePath()
 {
 	KURL furl = url();
 	
-	return (write()->isUntitled()) ? QExtFileInfo::home() : QExtFileInfo::path( furl );
+	return (write()->isUntitled()) ? ( app->project->hasProject()?app->project->basePath:QExtFileInfo::home() ) : QExtFileInfo::path( furl );
 }
 
 QStringList QuantaDoc::openedFiles(bool noUntitled)

@@ -136,9 +136,6 @@
       <Action name="view_with_netscape"/>
       <Action name="view_with_konqueror"/>
       <Action name="view_with_lynx"/>
-      <Separator/>
-      <Action name="previous_file"/>
-      <Action name="next_file"/>
     </Menu>
          
     <Menu name="qproject"><text>&amp;Project</text>

@@ -17,6 +17,7 @@ TagAction::TagAction( QDomElement *element, QuantaView *view,KActionCollection *
     view_(view)
 {
    setIcon( tag.attribute("icon","") );
+   
    if ( view_ )
         connect( this, SIGNAL(activated()), SLOT(insertTag()) );
 }

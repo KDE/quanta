@@ -173,5 +173,5 @@ void QuantaView::initActions()
                         this, SLOT( slotInsertCSS() ),
                         actionCollection, "insert_css" );
                         
-
+//    qDebug("ctrl+enter: " + QString::number(CTRL+Key_Enter) );
 }

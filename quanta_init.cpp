@@ -129,11 +129,11 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
   if ( !debugger->ok() ) {
     QString s;
     messageOutput->insertItem("Can't bind port "+
-      s.sprintf("%i",phpDebugPort)+" , PHP debugger disabled" );
+      s.sprintf("%i",phpDebugPort)+" , PHP3 debugger disabled" );
   }
   else {
     QString s;
-    messageOutput->insertItem("Php Debugger listens port "+
+    messageOutput->insertItem("PHP3 Debugger listens port "+
       s.sprintf("%i",phpDebugPort)+"" );
   }
 }

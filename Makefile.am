@@ -28,11 +28,10 @@ quanta_LDADD = \
 		-lkfile\
 		-lkhtml\
 		-lkspell
-LDFLAGS =   -lktexteditor
+LDFLAGS =  -s -lktexteditor
 INCLUDES = $(all_includes)\
 		-I$(top_srcdir)/quanta/kwrite\
 		-I$(top_srcdir)/quanta/kwrite/highlight
-CXXFLAGS = -g3 
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 quanta_METASOURCES = AUTO
 quanta_SOURCES = \
