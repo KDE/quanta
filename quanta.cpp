@@ -1197,7 +1197,7 @@ void QuantaApp::slotNewLineColumn()
   if (node)
   {
     sTab->showTagAtPos(node);
-    aTab->newCursorPosition(node);
+    aTab->setCurrentNode(node);
   }
   linenumber.sprintf(i18n("Line: %d Col: %d"),line+1,col+1);
 

@@ -22,6 +22,7 @@ class QLineEdit;
 class QComboBox;
 
 class TagAttributeTree;
+class Node;
 
 class TopLevelItem : public KListViewItem
 {
@@ -36,6 +37,24 @@ protected:
 
     void paintCell( QPainter *p, const QColorGroup &cg,
                     int column, int width, int align );
+};
+
+class ParentItem : public KListViewItem
+{
+
+public:
+    ParentItem(QListViewItem *parent, QListViewItem* after, Node *node);
+
+    virtual ~ParentItem();
+    Node *node() const {return m_node;}
+
+protected:
+
+    void paintCell( QPainter *p, const QColorGroup &cg,
+                    int column, int width, int align );
+
+private:
+    Node *m_node;
 };
 
 class AttributeItem : public KListViewItem

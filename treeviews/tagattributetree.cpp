@@ -48,18 +48,29 @@ TagAttributeTree::~TagAttributeTree()
 {
 }
 
-void TagAttributeTree::newCursorPosition(Node *node)
+void TagAttributeTree::setCurrentNode(Node *node)
 {
   m_node = node;
   if (!rebuildEnabled)
       return;
   clear();
-  AttributeItem *item;
+  AttributeItem *item = 0L;
+  TopLevelItem *group;
   QString attrName;
   QTag *qTag = QuantaCommon::tagFromDTD(node->tag->dtd, node->tag->name);
+  group = new TopLevelItem(this, i18n("Parent tags"));
+  ParentItem *it = 0L;
+  Node *n = node->parent;
+  while (n)
+  {
+    if (n->tag->type == Tag::XmlTag)
+        it = new ParentItem(group, it, n);
+    n = n->parent;
+  }
+  group->setOpen(true);
   if (qTag)
   {
-    TopLevelItem *group = new TopLevelItem(this, i18n("Attributes"));
+    group = new TopLevelItem(this, group, i18n("Attributes"));
     for (int i = 0; i < qTag->attributeCount(); i++)
     {
       Attribute *attr = qTag->attributeAt(i);
@@ -135,11 +146,16 @@ void TagAttributeTree::setCurrentItem( QListViewItem *item )
 {
   if ( item )
   {
-    if ( dynamic_cast<AttributeItem*>(currentItem()) )
-         static_cast<AttributeItem*>(currentItem())->hideEditor();
+    QListViewItem *it = currentItem();
+    if ( dynamic_cast<AttributeItem*>(it) )
+         static_cast<AttributeItem*>(it)->hideEditor();
     KListView::setCurrentItem(item);
-    if ( dynamic_cast<AttributeItem*>(currentItem()) )
-         static_cast<AttributeItem*>(currentItem())->showEditor();
+    it = currentItem();
+    if ( dynamic_cast<AttributeItem*>(it) )
+         static_cast<AttributeItem*>(it)->showEditor();
+    else
+    if (dynamic_cast<ParentItem*>(it) )
+        setCurrentNode(static_cast<ParentItem*>(it)->node());
   }
 }
 

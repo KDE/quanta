@@ -32,7 +32,7 @@ public:
   TagAttributeTree(QWidget *parent=0, const char *name=0);
   ~TagAttributeTree();
 
-  void newCursorPosition(Node *node);
+  void setCurrentNode(Node *node);
   virtual void setCurrentItem( QListViewItem *i );
   Node *node() const {return m_node;}
 

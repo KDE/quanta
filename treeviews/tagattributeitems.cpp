@@ -71,8 +71,36 @@ void TopLevelItem::paintCell(QPainter *p, const QColorGroup &cg,
     }
 }
 
+ParentItem::ParentItem(QListViewItem* parent, QListViewItem* after, Node *node)
+: KListViewItem(parent, after)
+{
+  m_node = node;
+  if (node)
+  {
+    setText(0, node->tag->name);
+    setText(1, node->tag->cleanStr);
+  }
+}
 
-//Generic attribute item
+ParentItem::~ParentItem()
+{
+}
+
+
+void ParentItem::paintCell(QPainter *p, const QColorGroup &cg,
+                           int column, int width, int align)
+{
+    if ( !p )
+        return;
+
+    KListViewItem::paintCell( p, cg, column, width, align );
+    if (column == 0)
+    {
+      p->setPen(QPen(QColor(0,0,0)));
+      p->drawLine( width - 1, 0, width - 1, height());
+    }
+}
+
 //Generic attribute item
 AttributeItem::AttributeItem(QListViewItem* parent, const QString &title, const QString& title2)
 : KListViewItem(parent, title, title2)
