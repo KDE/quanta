@@ -122,6 +122,7 @@ void Tag::parse(const QString &p_tagStr, Document *p_write)
  }
  QString attrStr;
  TagAttr attr;
+ attr.special = false; //by default non of the attributes are special
  while (pos < strLength && m_tagStr[pos].isSpace())
         pos++;
  int sPos = pos;
@@ -527,4 +528,12 @@ QString Tag::toString()
 bool Tag::isClosingTag()
 {
   return (name[0] == '/' || nameSpace[0] == '/');
+}
+
+void Tag::setAttributeSpecial(int index, bool special)
+{
+ if ( index != -1 && index < (int)attrs.count() )
+ {
+   attrs[index].special = special;
+ }
 }

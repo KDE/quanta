@@ -2034,6 +2034,15 @@ bool Parser::parseScriptInsideTag(Node *startNode)
         int lastLine, lastCol;
         currentNode = parseSpecialArea(area2, foundText, "", currentNode, lastLine, lastCol);
         col = write->text(node_bl, node_bc, lastLine, lastCol).length();
+        int firstSpecialAttrIndex = startNode->tag->attributeIndexAtPos(bl, bc);
+        if (firstSpecialAttrIndex != -1)
+        {
+          int lastSpecialAttrIndex = startNode->tag->attributeIndexAtPos(lastLine, lastCol);
+          for (int i = firstSpecialAttrIndex; i <= lastSpecialAttrIndex; i++)
+          {
+            startNode->tag->setAttributeSpecial(i, true);
+          }
+        }
       }
     }
   }
