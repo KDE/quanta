@@ -94,6 +94,7 @@ public slots:
   void slotEditCurrentTag();
 
   void slotInsertCSS();
+  void slotFrameWizard();
   void slotNewCurPos();
 
   void slotViewInKFM();

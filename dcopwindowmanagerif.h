@@ -31,7 +31,7 @@ class DCOPWindowManagerIf : virtual public DCOPObject
   virtual QString currentURL() const = 0;
   virtual QString projectURL() const = 0;
   virtual QStringList openedURLs() const = 0;
-  virtual QStringList tagAreas(const QString& tag) const = 0;
+  virtual QStringList tagAreas(const QString& tag, bool skipFoundContent) const = 0;
 };
 
 #endif

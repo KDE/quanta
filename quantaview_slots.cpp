@@ -72,6 +72,7 @@
 #include "tagdialogs/tagmiscdlg.h"
 
 #include "plugins/spellchecker.h"
+#include "plugins/framewizard/framewizard.h"
 
 #include "qdom.h"
 
@@ -108,7 +109,43 @@ void QuantaView::slotEditCurrentTag()
   }
 }
 
-/** edit tag */
+
+void QuantaView::slotFrameWizard()
+{
+  if (!writeExists()) return;
+  Document *w = write();
+  QStringList l; //only to pass to framewizard a list
+  QStringList list = w->tagAreas("frameset", true);
+
+  //list.pop_back();
+  //QStringList structure=QStringList::split("\n",list.first());
+
+  for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it ) {
+        qWarning("line %s",(*it).latin1());
+    }
+  qWarning("%d",list.count());
+/*
+  FrameWizard *dlg = new FrameWizard();
+
+  if (!w->isUntitled())
+      {
+       dlg->setSaved(true);
+      }
+  dlg->setFramesetFileCurrentPath(quantaApp->projectBaseURL().path());
+  dlg->loadExistingFramesetStructure(l);
+
+  if ( dlg->exec() )
+   {
+
+    QString tag =
+QString("\n")+dlg->generateFramesetStructure()+QString("\n");
+    write()->insertTag(tag);
+  }
+  delete dlg;*/
+}
+
+
+/** edit/insert CSS */
 void QuantaView::slotInsertCSS()
 {
   if (!writeExists()) return;

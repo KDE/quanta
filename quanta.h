@@ -157,7 +157,7 @@ public:
   QString projectURL() const;
   /** Return the list of opened URLs and their editor interface numbers*/
   QStringList openedURLs() const;
-  QStringList tagAreas(const QString& name) const;
+  QStringList tagAreas(const QString& name, bool skipFoundContent) const;
 
   /** reparse current document and initialize node. */
   void reparse(bool force);

@@ -1075,7 +1075,7 @@ void QuantaApp::readTagDir(QString &dirName)
  dtd->caseSensitive = caseSensitive;
  dtd->family = dtdConfig->readNumEntry("Family", Xml);
  if (dtd->family != Xml)
-     dtd->toplevel = dtdConfig->readBoolEntry("TopLevel", "false");
+     dtd->toplevel = dtdConfig->readBoolEntry("TopLevel", false);
  else
      dtd->toplevel = true;
  int numOfTags = 0;

@@ -3340,10 +3340,10 @@ bool QuantaApp::structTreeVisible() const
   return stabdock->isVisible();
 }
 
-QStringList QuantaApp::tagAreas(const QString &tag) const
+QStringList QuantaApp::tagAreas(const QString &tag, bool skipFoundContent) const
 {
   if (view()->writeExists())
-    return view()->write()->tagAreas(tag);
+    return view()->write()->tagAreas(tag, skipFoundContent);
   else
     return QStringList();
 }
