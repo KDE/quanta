@@ -150,8 +150,11 @@ void ProjectUpload::slotBuildTree()
      {
        int uploadTime = el.attribute("upload_time","1").toInt();
        int modifiedTime = item.time(KIO::UDS_MODIFICATION_TIME);
+       el.setAttribute("modified_time", modifiedTime);
+       kdDebug(24000) << "Last upload at: " << uploadTime << endl;
+       kdDebug(24000) << "Last modified at: " << modifiedTime << endl;
 
-       if ( uploadTime < modifiedTime )
+       if ( uploadTime < modifiedTime)
        {
          modified.append( u );
          it->setSelected(true);
@@ -399,13 +402,8 @@ void ProjectUpload::slotUploadNext()
       QDomElement el = nl.item(i).toElement();
       if ( el.nodeName() == "item"  &&  el.attribute("url") == QuantaCommon::qUrl(currentURL) )
       {
-        QDateTime stime;
-        stime.setTime_t(1);
-        el.setAttribute( "upload_time", stime.secsTo( QDateTime::currentDateTime() ) );
+        el.setAttribute( "upload_time", el.attribute("modified_time") );
         kdDebug(24000) << "Upload time for " << el.attribute("url") << " is: " << el.attribute("upload_time") << "\n";
-//        time_t stime;
-//        time(&stime);
-//        el.setAttribute( "upload_time", (int)stime);
         break;
       }
     }
@@ -420,9 +418,7 @@ void ProjectUpload::clearProjectModified()
   for ( unsigned int i=0; i<nl.count(); i++ )
   {
     QDomElement el = nl.item(i).toElement();
-    QDateTime stime;
-    stime.setTime_t(1);
-    el.setAttribute( "upload_time", stime.secsTo( QDateTime::currentDateTime() ) );
+    el.setAttribute( "upload_time", el.attribute("modified_time"));
   }
   modified.clear();
   list->clearSelection();

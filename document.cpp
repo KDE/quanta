@@ -1492,7 +1492,7 @@ void Document::slotDelayedTextChanged()
     if (qConfig.updateClosingTags && currentNode)
     {
       node = parser->nodeAt(line, column, false);
-      if (node && (node->tag->type == Tag::XmlTag || node->tag->type == Tag::XmlTagEnd))
+      if (node && (node->tag->type == Tag::XmlTag || node->tag->type == Tag::XmlTagEnd) && node->tag->validXMLTag)
       {
         int bl, bc, bl2, bc2;
         node->tag->beginPos(bl, bc);
