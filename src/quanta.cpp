@@ -4862,7 +4862,7 @@ void QuantaApp::slotCVSCommandExecuted(const QString& command, const QStringList
    for (uint i = 0; i < files.count(); i++)
    {
       file = files[i];
-    //  if (Project::ref()->contains(KURL::fromPathOrURL(file)))
+      if (Project::ref()->contains(KURL::fromPathOrURL(file)))
       {
          emit eventHappened("after_" + command, file, QString::null);
       }

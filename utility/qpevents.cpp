@@ -88,7 +88,8 @@ void QPEvents::slotEventHappened(const QString& name, const QString& argument1, 
     KURL url2 = KURL::fromPathOrURL(argument2);
     if (url.isValid())
     {
-        if (url2.isValid())
+        bool inProject = Project::ref()->contains(url);
+        if (inProject && url2.isValid())
         {
             if (name == "before_upload")
             {
@@ -114,31 +115,31 @@ void QPEvents::slotEventHappened(const QString& name, const QString& argument1, 
         } else
         {
             QString relativePath = QExtFileInfo::toRelative(url, Project::ref()->projectBaseURL()).path();
-            if (name == "after_save")
+            if (inProject && name == "after_save")
             {
               ev.arguments << i18n("Document saved");
               ev.arguments << relativePath;
               handleEvent(ev);
             } else
-            if (name == "before_save")
+            if (inProject && name == "before_save")
             {
               ev.arguments << i18n("About to save a document");
               ev.arguments << relativePath;
               handleEvent(ev);
             } else
-            if (name == "after_open")
+            if (inProject && name == "after_open")
             {
               ev.arguments << i18n("Document opened");
               ev.arguments << relativePath;
               handleEvent(ev);
             } else
-            if (name == "after_close")
+            if (inProject && name == "after_close")
             {
               ev.arguments << i18n("Document closed");
               ev.arguments << relativePath;
               handleEvent(ev);
             } else
-            if (name == "before_close")
+            if (inProject && name == "before_close")
             {
               ev.arguments << i18n("About to close a document");
               ev.arguments << relativePath;
