@@ -1571,13 +1571,10 @@ void QuantaApp::slotPluginsEdit()
   QuantaPluginEditor *editor = new QuantaPluginEditor(getView(), "plugin_editor");
   editor->setSearchPaths(m_pluginInterface->searchPaths());
   editor->setPlugins(m_pluginInterface->plugins());
-
-  if(editor->exec())
-  {
-    m_pluginInterface->setSearchPaths(editor->searchPathList());
-    m_pluginInterface->setPlugins(editor->plugins());
-    m_pluginInterface->writeConfig();
-  }
+  editor->exec();    
+  m_pluginInterface->setSearchPaths(editor->searchPathList());
+  m_pluginInterface->setPlugins(editor->plugins());
+  m_pluginInterface->writeConfig();
 }
 
 void QuantaApp::slotPluginsValidate()
