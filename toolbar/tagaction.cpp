@@ -200,7 +200,7 @@ void TagAction::insertTag(bool inputFromFile, bool outputToFile)
     args = args.stripWhiteSpace();
     if (!args.isEmpty())
     {
-      pos = args.find("%script_dir");
+      pos = args.find("%scriptdir");
       QString scriptname;
       if (pos != -1)
       {
