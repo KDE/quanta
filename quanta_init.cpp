@@ -365,14 +365,15 @@ void QuantaApp::initView()
 
   sTab = new StructTreeView( parser, config, stabdock ,"struct");
 
-  rightWidgetStack = new QWidgetStack( maindock );
 
+  rightWidgetStack = new QWidgetStack( maindock );
+  bottomWidgetStack = new QWidgetStack( bottdock);
+  
   view = new QuantaView( rightWidgetStack );
 
-  messageOutput = new MessageOutput( bottdock );
 
   maindock ->setWidget( rightWidgetStack );
-  bottdock ->setWidget( messageOutput );
+  bottdock ->setWidget( bottomWidgetStack );
   ftabdock ->setWidget( fTab );
   ptabdock ->setWidget( pTab );
   ttabdock ->setWidget( tTab );
@@ -388,7 +389,6 @@ void QuantaApp::initView()
   dTab  ->setFocusPolicy(QWidget::NoFocus);
 
   maindock      ->setFocusPolicy(QWidget::StrongFocus);
-  messageOutput ->setFocusPolicy(QWidget::NoFocus);
 
   rightWidgetStack  ->setMinimumHeight( 1 );
 
@@ -396,10 +396,17 @@ void QuantaApp::initView()
   htmlPartDoc    = new WHTMLPart( rightWidgetStack,  "docHTML");
 
   rightWidgetStack->addWidget( view, 0 );
-  rightWidgetStack->addWidget( htmlpart   ->view(), 1 );
-  rightWidgetStack->addWidget( htmlPartDoc->view(), 2 );
+//  rightWidgetStack->addWidget( htmlpart   ->view(), 1 );
+//  rightWidgetStack->addWidget( htmlPartDoc->view(), 2 );
   rightWidgetStack->raiseWidget(0);
 
+  messageOutput = new MessageOutput( bottomWidgetStack );
+  messageOutput ->setFocusPolicy(QWidget::NoFocus);
+
+  bottomWidgetStack->addWidget(messageOutput, 0);
+//  bottomWidgetStack->addWidget( htmlpart   ->view(), 1 );
+//  bottomWidgetStack->addWidget( htmlPartDoc->view(), 2 );
+  
   connect(   fTTab,SIGNAL(openFile  (const KURL &, const QString&)),
             this, SLOT(slotFileOpen(const KURL &, const QString&)));
   connect(   fLTab,SIGNAL(openFile  (const KURL &, const QString&)),
@@ -485,7 +492,22 @@ WHTMLPart * QuantaApp::htmlPart()
 
 QWidgetStack *QuantaApp::widgetStackOfHtmlPart()
 {
-  return rightWidgetStack;
+  QWidgetStack *s;
+  if (qConfig.previewPosition == "Bottom")
+  {
+    s = bottomWidgetStack;
+  } else
+  {
+    s = rightWidgetStack;
+  }
+//TODO: This should be done on startup and after the setting has changed
+  if (htmlpart->view()->parentWidget() != s)
+  {
+    s->addWidget( htmlpart->view(), 1 );
+    s->addWidget( htmlPartDoc->view(), 2 );
+  }
+
+  return s;
 }
 
 void QuantaApp::saveOptions()
@@ -519,6 +541,7 @@ void QuantaApp::saveOptions()
 
     config->writeEntry("Refresh frequency", qConfig.refreshFrequency);
 
+    config->writeEntry("Preview position",qConfig.previewPosition);
     config->writeEntry("Left panel mode", fTab->id( fTab->visibleWidget()));
     config->writeEntry("Follow Cursor", sTab->followCursor() );
     config->writeEntry("PHP Debugger Port", phpDebugPort );
@@ -561,7 +584,6 @@ void QuantaApp::readOptions()
   qConfig.defaultDocType = config->readEntry("Default DTD",DEFAULT_DTD);
   qConfig.newFileType = config->readEntry("New File Type", qConfig.defaultDocType);
   qConfig.defaultEncoding = config->readEntry("Default encoding", QTextCodec::codecForLocale()->name());
-  previewPosition   = config->readEntry("Preview position","Right");
   qConfig.useMimeTypes = config->readBoolEntry("Use MimeTypes", false);
 
   qConfig.refreshFrequency = config->readNumEntry("Refresh frequency",5);
@@ -570,6 +592,7 @@ void QuantaApp::readOptions()
 
   sTab->setFollowCursor( config->readBoolEntry("Follow Cursor", true));
 
+  qConfig.previewPosition   = config->readEntry("Preview position","Right");
   int mode = config->readNumEntry("Left panel mode", 0);
 /* List Mode disabled!!
   if ( mode == 0 || mode == 1 ) fTab->raiseWidget(mode);

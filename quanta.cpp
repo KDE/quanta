@@ -471,12 +471,13 @@ void QuantaApp::repaintPreview( bool clear )
     part->write( text );
  }
  part->end();
+ part->show();
 }
 
 /** view image in preview */
 void QuantaApp::slotImageOpen(const KURL& url)
 {
-  if ( previewPosition == "Disabled" )
+  if ( qConfig.previewPosition == "Disabled" )
      return;
 
   WHTMLPart *part = htmlPart();
@@ -637,7 +638,13 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
   currentWrite->kate_view->setLineNumbersOn(qConfig.lineNumbers);
   viewBorder->setChecked(qConfig.iconBar);
   viewLineNumbers->setChecked(qConfig.lineNumbers);
-
+  
+  QWidgetStack *s = widgetStackOfHtmlPart();
+  if (s->id(s->visibleWidget()) == 1)
+  {
+   repaintPreview(true);
+  }
+  
   emit reloadTreeviews();
 }
 
@@ -799,7 +806,7 @@ void QuantaApp::slotOptions()
   page=kd->addVBoxPage(i18n("Preview"), QString::null, BarIcon("kview", KIcon::SizeMedium ) );
   PreviewOptions *previewOptions = new PreviewOptions( (QWidget *)page );
 
-  previewOptions->setPosition( previewPosition );
+  previewOptions->setPosition( qConfig.previewPosition );
 
   page=kd->addVBoxPage(i18n("Parser"), QString::null, BarIcon("kcmsystem", KIcon::SizeMedium ) );
   ParserOptions *parserOptions = new ParserOptions( config, (QWidget *)page );
@@ -889,7 +896,7 @@ void QuantaApp::slotOptions()
 	 	}
 //    checkCommand( ID_VIEW_PREVIEW, false );
 
-  	previewPosition = previewOptions->position();
+  	qConfig.previewPosition = previewOptions->position();
 
   	htmlpart->closeURL();
   	htmlpart->begin( projectBaseURL());
@@ -987,7 +994,7 @@ void QuantaApp::slotShowPreview()
 //		enableCommand(ID_VIEW_FORWARD);
 //		enableCommand(ID_VIEW_REPAINT);
 
-	  if ( previewPosition == "Bottom" )
+	  if ( qConfig.previewPosition == "Bottom" )
 	  {
 	  }
 
@@ -1094,7 +1101,8 @@ void QuantaApp::slotDockChanged()
   if ( dtabdock->isVisible() )
   {
     static bool first = true;
-  	rightWidgetStack -> raiseWidget(2);
+//  	rightWidgetStack -> raiseWidget(2);
+    widgetStackOfHtmlPart()->raiseWidget(2);
   	if ( first )
   	{
   		openDoc( locate("appdata","doc/intro.html") );
@@ -1105,7 +1113,8 @@ void QuantaApp::slotDockChanged()
   else {
     if ( docTabOpened )
     {
-    	rightWidgetStack -> raiseWidget(0);
+  //  	rightWidgetStack -> raiseWidget(0);
+      widgetStackOfHtmlPart()->raiseWidget(0);
  	    docTabOpened = false;
     }
     if ( !exitingFlag )
@@ -1166,7 +1175,8 @@ void QuantaApp::slotContextHelp()
   if (  id_w == 1 || id_w == 2 )
   {
     if ( !m_oldTreeViewWidget->isVisible() ) m_oldTreeViewWidget->changeHideShowState();
-    rightWidgetStack->raiseWidget(0);
+      widgetStackOfHtmlPart()->raiseWidget(0);
+//    rightWidgetStack->raiseWidget(0);
 //    view->write()->view()->setFocus();
   }
   else
@@ -1183,7 +1193,8 @@ void QuantaApp::slotContextHelp()
       if (dtabdock->isVisible()) m_oldTreeViewWidget = dtabdock;
       if ( !dtabdock->isVisible() ) dtabdock->changeHideShowState();
 
-      rightWidgetStack->raiseWidget(2);
+//      rightWidgetStack->raiseWidget(2);
+      widgetStackOfHtmlPart()->raiseWidget(2);
       htmlPartDoc->view()->setFocus();
 
   		openDoc(*url);
@@ -1303,16 +1314,26 @@ void QuantaApp::removeContainer( QWidget *container, QWidget *parent, QDomElemen
 
 void QuantaApp::slotBack()
 {
-  if ( rightWidgetStack->id( rightWidgetStack->visibleWidget()) == 0 ) slotFilePrev();
-  if ( rightWidgetStack->id( rightWidgetStack->visibleWidget()) == 1 ) htmlpart->back();
-  if ( rightWidgetStack->id( rightWidgetStack->visibleWidget()) == 2 ) htmlPartDoc->back();
+  QWidgetStack *s = widgetStackOfHtmlPart();
+  if ( rightWidgetStack->id( rightWidgetStack->visibleWidget()) == 0 )
+  {
+     slotFilePrev();
+     return; //TODO: switching between files has precedence now!
+  }
+  if ( s->id( s->visibleWidget()) == 1 ) htmlpart->back();
+  if ( s->id( s->visibleWidget()) == 2 ) htmlPartDoc->back();
 }
 
 void QuantaApp::slotForward()
 {
-  if ( rightWidgetStack->id( rightWidgetStack->visibleWidget()) == 0 ) slotFileNext();
-  if ( rightWidgetStack->id( rightWidgetStack->visibleWidget()) == 1 ) htmlpart->forward();
-  if ( rightWidgetStack->id( rightWidgetStack->visibleWidget()) == 2 ) htmlPartDoc->forward();
+  QWidgetStack *s = widgetStackOfHtmlPart();
+  if ( rightWidgetStack->id( rightWidgetStack->visibleWidget()) == 0 )
+  {
+    slotFileNext();
+    return; //TODO: switching between files has precedence now!
+  }
+  if ( s->id( s->visibleWidget()) == 1 ) htmlpart->forward();
+  if ( s->id( s->visibleWidget()) == 2 ) htmlPartDoc->forward();
 }
 
 void QuantaApp::slotMessageWidgetEnable()

@@ -383,9 +383,8 @@ private:
   StructTreeView *sTab;
   TemplatesTreeView	 *tTab;
 
-  QString previewPosition;
-
   QWidgetStack *rightWidgetStack;
+  QWidgetStack *bottomWidgetStack;
 
   KDockWidget *leftdock;
   KDockWidget *maindock;

@@ -173,7 +173,7 @@ void QuantaView::slotInsertCSS()
   }
   if (insertNew)
   {
-  	CSSSelectorEditor* dlg = new CSSSelectorEditor (code, false, this,
+  	CSSSelectorEditor* dlg = new CSSSelectorEditor (code, true, this,
   		i18n ("Insert a new selector"));
   	if (dlg->exec()) {
   		 w->insertTag( dlg->code() );
