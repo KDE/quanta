@@ -1081,11 +1081,14 @@ void ProjectPrivate::slotNewProject()
 void ProjectPrivate::slotCloseProject()
 {
   if (!parent->hasProject()) return;
+  connect(ViewManager::ref(), SIGNAL(filesClosed(bool)), this, SLOT(slotProceedWithCloseProject(bool)));
   parent->closeFiles();
 }
 
-void ProjectPrivate::closeProject()
+void ProjectPrivate::slotProceedWithCloseProject(bool success)
 {
+  disconnect(ViewManager::ref(), SIGNAL(filesClosed(bool)), this, SLOT(slotProceedWithCloseProject(bool)));
+  if (!success) return;
   emit eventHappened("before_project_close", baseURL.url(), QString::null);
   if (!uploadProjectFile())
   {

@@ -165,9 +165,6 @@ upload.*/
   */
   bool saveProject();
   
-  /** Proceed with project closing.*/
-  void closeProject();
-
   /**
       adds information about the current open project into config
    */
@@ -207,6 +204,9 @@ public slots:
   /** iniate closing of the project and the edited files */
   void slotCloseProject();
 
+  /** Proceed with project closing.*/
+  void slotProceedWithCloseProject(bool success);
+  
   void slotAddDirectory();
 
   void slotAddFiles();

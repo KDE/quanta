@@ -158,7 +158,6 @@ public slots:
   void slotShowProjectToolbar(bool show);
 
   void setModified(bool b = true);
-  void slotFilesClosed(bool success);
 
 signals:
 

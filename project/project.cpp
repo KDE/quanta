@@ -1235,10 +1235,4 @@ void Project::saveBookmarks(const KURL &url, KTextEditor::MarkInterface *markIf)
   }
 }
 
-void Project::slotFilesClosed(bool success)
-{
-  if (success)
-    d->closeProject();
-}
-
 #include "project.moc"
