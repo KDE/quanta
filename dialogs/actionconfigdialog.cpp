@@ -790,9 +790,12 @@ void ActionConfigDialog::slotNewAction()
     item->setText(2, currentAction->name());
     item->setPixmap(0, BarIcon("ball"));
     actionTreeView->setCurrentItem(item);
-    toolbarListBox->insertItem(parentItem->text(0));
-    toolbarListBox->setCurrentItem(0);
-    toolbarListBox->setSelected(0, true);
+    if (parentItem != allActionsItem)
+    {
+      toolbarListBox->insertItem(parentItem->text(0));
+      toolbarListBox->setCurrentItem(0);
+      toolbarListBox->setSelected(0, true);
+    }
   }
   actionTreeView->ensureItemVisible(item);
   buttonApply->setEnabled(true);
