@@ -1,9 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TAGS>
 <TAGS>
 <tag name="input" hasScript="1" hasCore="1" hasI18n="1" single="1">
 
     <attr name="type" type="list">
-      <text>Type</text>
+      <text>type</text>
       <textlocation col="0" row="0" colspan="1" />
       <items>
         <item>text</item>
@@ -18,126 +19,105 @@
         <item>button</item>
       </items>
       <location col="1" row="0" colspan="1" />
-      <tooltip>What - no kparts?</tooltip>
     </attr>
 
     <attr name="disabled" type="check">
-      <text>Disabled</text>
+      <text>disabled</text>
       <location col="2" row="0" colspan="1" />
       <tooltip>Disable the element</tooltip>
     </attr>
 
     <attr name="checked" type="check">
-      <text>Checked</text>
+      <text>checked</text>
       <location col="3" row="0" colspan="1" />
       <tooltip>For radio button or check box</tooltip>
     </attr>
 
     <attr name="name" type="input">
-      <text>Name</text>
+      <text>name</text>
       <textlocation col="0" row="1" colspan="1" />
       <location col="1" row="1" colspan="1" />
     </attr>
 
     <attr name="value" type="input">
-      <text>Value</text>
+      <text>value</text>
       <textlocation col="2" row="1" colspan="1" />
       <location col="3" row="1" colspan="1" />
     </attr>
 
     <attr name="size" type="input">
-      <text>Size</text>
+      <text>size</text>
       <textlocation col="0" row="2" colspan="1" />
       <location col="1" row="2" colspan="1" />
-      <tooltip>No of characters for text input</tooltip>
+      <tooltip>Number of characters for text input</tooltip>
     </attr>
 
     <attr name="maxlength" type="input">
-      <text>Max length</text>
+      <text>maxlength</text>
       <textlocation col="2" row="2" colspan="1" />
       <location col="3" row="2" colspan="1" />
       <tooltip>Max characters allowed</tooltip>
     </attr>
 
     <attr name="alt" type="input">
-      <text>Alt</text>
+      <text>alt</text>
       <textlocation col="0" row="3" colspan="1" />
       <location col="1" row="3" colspan="3" />
       <tooltip>Alternate text for image</tooltip>
     </attr>
 
     <attr name="src" type="url">
-      <text>Img src</text>
+      <text>src</text>
       <textlocation col="0" row="4" colspan="1" />
       <location col="1" row="4" colspan="3" />
       <tooltip>URL for image to use</tooltip>
     </attr>
 
-    <attr name="usemap" type="url">
-<!--  <text>Use map</text>
-      <textlocation col="0" row="5" colspan="1" />
-      <location col="1" row="5" colspan="3" /> -->
-    </attr>
+    <attr name="usemap" type="url" />
 
     <attr name="tabindex" type="input">
-      <text>Tab index</text>
+      <text>tabindex</text>
       <textlocation col="0" row="5" colspan="1" />
       <location col="1" row="5" colspan="1" />
-      <tooltip>NA in NS4</tooltip>
     </attr>
 
     <attr name="readonly" type="check">
-      <text>Read only</text>
+      <text>readonly</text>
       <location col="3" row="5" colspan="1" />
-      <tooltip>NA in NS4</tooltip>
-    </attr>
-
-    <attr name="align" type="list">
-      <text>Align</text>
-      <textlocation col="0" row="6" colspan="1" />
-      <items>
-        <item>top</item>
-        <item>middle</item>
-        <item>bottom</item>
-        <item>left</item>
-        <item>right</item>
-      </items>
-      <location col="1" row="6" colspan="1" />
-      <tooltip>Depricated in HTML 4.0</tooltip>
     </attr>
 
     <attr name="accesskey" type="input">
-      <text>Accesskey</text>
+      <text>accesskey</text>
       <textlocation col="2" row="6" colspan="1" />
       <location col="3" row="6" colspan="1" />
-      <tooltip>Shortcut - NA in NS4</tooltip>
+      <tooltip>Shortcut</tooltip>
     </attr>
 
     <attr name="onfocus" type="input">
-      <text>On focus</text>
+      <text>onfocus</text>
       <textlocation col="0" row="8" colspan="1" />
       <location col="1" row="8" colspan="1" />
     </attr>
 
     <attr name="onselect" type="input">
-      <text>On select</text>
+      <text>onselect</text>
       <textlocation col="2" row="8" colspan="1" />
       <location col="3" row="8" colspan="1" />
     </attr>
 
     <attr name="onblur" type="input">
-      <text>On blur</text>
+      <text>onblur</text>
       <textlocation col="0" row="9" colspan="1" />
       <location col="1" row="9" colspan="1" />
     </attr>
-    
+
     <attr name="onchange" type="input">
-      <text>On change</text>
+      <text>onchange</text>
       <textlocation col="2" row="9" colspan="1" />
       <location col="3" row="9" colspan="1" />
     </attr>
 
-    <attr name="accept"> </attr>
+    <attr name="accept" type="input" />
 
 </tag>
 </TAGS>

@@ -1,62 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TAGS>
 <TAGS>
 <tag name="link" hasScript="1" hasCore="1" hasI18n="1" single="1">
-    <attr name="rel" type="list">
-        <text>Rel</text>
+    <attr name="rel" type="input">
+        <text>rel</text>
         <textlocation col="0" row="0" />
         <location col="1" row="0" colspan="2"  />
-        <items>
-                <item>Alternate</item>
-                <item>StyleSheet</item>
-                <item>Start</item>
-                <item>Next</item>
-                <item>Prev</item>
-                <item>Contents</item>
-                <item>Index</item>
-                <item>Glossary</item>
-                <item>Copyright</item>
-                <item>Made</item>
-                <item>Chapter</item>
-                <item>Section</item>
-                <item>Subsection</item>
-                <item>Appendix</item>
-                <item>Help</item>
-                <item>Bookmark</item>
-        </items>
     </attr>
 
-    <attr name="rev" type="list">
-        <text>Rev</text>
+    <attr name="rev" type="input">
+        <text>rev</text>
         <textlocation col="0" row="1" />
         <location col="1" row="1" colspan="2" />
-        <items>
-                <item>Alternate</item>
-                <item>StyleSheet</item>
-                <item>Start</item>
-                <item>Next</item>
-                <item>Prev</item>
-                <item>Contents</item>
-                <item>Index</item>
-                <item>Glossary</item>
-                <item>Copyright</item>
-                <item>Made</item>
-                <item>Chapter</item>
-                <item>Section</item>
-                <item>Subsection</item>
-                <item>Appendix</item>
-                <item>Help</item>
-                <item>Bookmark</item>
-        </items>
     </attr>
 
     <attr name="href" type="url">
-        <text>HREF</text>
+        <text>href</text>
         <textlocation col="0" row="2" />
         <location col="1" row="2" colspan="2" />
     </attr>
 
     <attr name="type" type="list">
-        <text>Type</text>
+        <text>type</text>
         <textlocation col="0" row="3" />
         <location col="1" row="3" colspan="2" />
         <items>
@@ -72,64 +37,23 @@
         </items>
     </attr>
 
-    <attr name="target" type="list">
-        <text>Target</text>
-        <textlocation col="0" row="4" />
-        <location col="1" row="4" colspan="2"  />
-        <items>
-                <item>_blank</item>
-                <item>_self</item>
-                <item>_parent</item>
-                <item>_top</item>
-        </items>
-    </attr>
-
-    <attr name="media" type="list">
-        <text>Media</text>
+    <attr name="media" type="input">
+        <text>media</text>
         <textlocation col="0" row="5" />
         <location col="1" row="5" colspan="2" />
-        <items>
-                <item>screen</item>
-                <item>tty</item>
-                <item>tv</item>
-                <item>projection</item>
-                <item>handheld</item>
-                <item>print</item>
-                <item>braille</item>
-                <item>aural</item>
-                <item>all</item>
-        </items>
     </attr>
 
     <attr name="hreflang" type="input">
-        <text>HREF lang</text>
+        <text>hreflang</text>
         <textlocation col="0" row="6" />
         <location col="1" row="6" colspan="2" />
     </attr>
 
     <attr name="charset" type="input">
-        <text>Charset</text>
+        <text>charset</text>
         <textlocation col="0" row="7" />
         <location col="1" row="7" colspan="2" />
     </attr>
-
-
-    <spacer orientation="h">
-        <location col="0" row="8" />
-    </spacer>
-
-    <spacer orientation="h">
-        <location col="1" row="8" />
-    </spacer>
-
-    <spacer orientation="h">
-        <location col="2" row="8" />
-    </spacer>
-
-    <spacer orientation="v">
-        <location col="0" row="9" colspan="3" />
-    </spacer>
-
 
 </tag>
 </TAGS>
