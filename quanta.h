@@ -135,6 +135,7 @@ class QuantaApp : public KDockMainWindow
     void slotEditFindInFiles   ();
     
     void slotToolSyntaxCheck();
+    void slotSpellCheck();
 
     /// open url in documentation window
     void openDoc( QString url );

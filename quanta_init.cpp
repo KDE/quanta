@@ -642,7 +642,7 @@ void QuantaApp::initActions()
                         view, SLOT( slotEditCurrentTag() ),
                         actionCollection(), "edit_current_tag" );
 
-    KStdAction::spelling( view->write(), SLOT( slotSpellCheck() ), 
+    KStdAction::spelling( this, SLOT( slotSpellCheck() ), 
                           actionCollection(), "text_spelling" )->setAccel( Key_F9 );
     
     (void) new KAction( i18n( "&Syntax check" ), 0, 

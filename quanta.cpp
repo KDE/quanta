@@ -880,6 +880,10 @@ void QuantaApp::slotToolSyntaxCheck()
   }
 }
 
+void QuantaApp::slotSpellCheck() {
+   view->write()->slotSpellCheck();
+}
+
     
 QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomElement &element, int &id )
 {
