@@ -63,6 +63,10 @@ int main(int argc, char *argv[])
     "Tag dialog definition documentation",
     "rich@kde.org");
     
+  aboutData.addCredit("Matthew Colton",
+    "Cool splash screen for quanta",
+    "mat.colton@web-xs.de");
+    
 	KCmdLineArgs::init( argc, argv, &aboutData );
 	KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
 	
