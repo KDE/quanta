@@ -129,10 +129,10 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   m_fileMenu->insertItem(i18n("Insert &Tag"), this, SLOT(slotInsertTag()));
   m_menuClose = m_fileMenu->insertItem(SmallIcon("fileclose"), i18n("Clos&e"), this, SLOT(slotClose()));
   m_fileMenu->insertSeparator();
-  m_fileMenu->insertItem(SmallIcon("editdelete"), i18n("&Delete"), this, SLOT(slotDelete()));
-  m_fileMenu->insertItem( i18n("&Remove From Project"), this, SLOT(slotRemoveFromProject(int)));
   m_fileMenu->insertItem(SmallIcon("up"), i18n("&Upload File"), this, SLOT(slotQuickUploadURL()));
   m_fileMenu->insertItem(i18n("Re&name"), this, SLOT(slotStartRename()));
+  m_fileMenu->insertItem( i18n("&Remove From Project"), this, SLOT(slotRemoveFromProject(int)));
+  m_fileMenu->insertItem(SmallIcon("editdelete"), i18n("&Delete"), this, SLOT(slotDelete()));
   m_fileMenu->insertSeparator();
   m_fileMenu->insertItem(i18n("Upload &Status"), m_uploadStatusMenu);
   m_fileMenu->insertItem(SmallIcon("info"), i18n("&Properties"), this, SLOT(slotProperties()));
@@ -145,12 +145,12 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
 
   m_folderMenu->insertItem(SmallIcon("empty"), i18n("&Create New"), createNewMenu);
   m_folderMenu->insertSeparator();
-  m_folderMenu->insertItem(SmallIcon("editdelete"), i18n("&Delete"), this, SLOT(slotDelete()));
-  m_folderMenu->insertItem(i18n("&Remove From Project"), this, SLOT(slotRemoveFromProject(int)));
   m_folderMenu->insertItem(SmallIcon("up"), i18n("&Upload Folder..."), this, SLOT(slotUploadSingleURL()));
   m_folderMenu->insertItem(SmallIcon("up"), i18n("&Quick Folder Upload"), this, SLOT(slotQuickUploadURL()));
   m_folderMenu->insertItem(i18n("Create Site &Template..."), this, SLOT(slotCreateSiteTemplate()));
   m_folderMenu->insertItem(i18n("Re&name"), this, SLOT(slotStartRename()));
+  m_folderMenu->insertItem(i18n("&Remove From Project"), this, SLOT(slotRemoveFromProject(int)));
+  m_folderMenu->insertItem(SmallIcon("editdelete"), i18n("&Delete"), this, SLOT(slotDelete()));
   m_folderMenu->insertSeparator();
   m_setDocumentRootId = m_folderMenu->insertItem(i18n("Document-&Base Folder"), this, SLOT(slotChangeDocumentFolderStatus()));
   m_folderMenu->insertItem(i18n("Upload &Status"), m_uploadStatusMenu);
