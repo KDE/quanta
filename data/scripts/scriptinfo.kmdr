@@ -8,298 +8,306 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>485</width>
-            <height>466</height>
+            <width>482</width>
+            <height>492</height>
         </rect>
     </property>
     <property name="caption">
         <string>Quanta Script Info Editor</string>
     </property>
-    <widget class="QLabel">
+    <widget class="TabWidget">
         <property name="name">
-            <cstring>TextLabel1</cstring>
+            <cstring>TabWidget1</cstring>
         </property>
         <property name="geometry">
             <rect>
-                <x>10</x>
-                <y>20</y>
-                <width>90</width>
-                <height>21</height>
+                <x>0</x>
+                <y>1</y>
+                <width>481</width>
+                <height>490</height>
             </rect>
         </property>
-        <property name="text">
-            <string>Script Name:</string>
-        </property>
-    </widget>
-    <widget class="QLabel">
-        <property name="name">
-            <cstring>TextLabel2</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>10</x>
-                <y>50</y>
-                <width>100</width>
-                <height>21</height>
-            </rect>
-        </property>
-        <property name="text">
-            <string>Script Author:</string>
-        </property>
-    </widget>
-    <widget class="LineEdit">
-        <property name="name">
-            <cstring>Author</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>110</x>
-                <y>50</y>
-                <width>250</width>
-                <height>21</height>
-            </rect>
-        </property>
-        <property name="associations" stdset="0">
-            <stringlist>
-                <string>&lt;author&gt;@widgetText&lt;/author&gt;</string>
-            </stringlist>
-        </property>
-    </widget>
-    <widget class="QLabel">
-        <property name="name">
-            <cstring>TextLabel3</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>11</x>
-                <y>80</y>
-                <width>100</width>
-                <height>21</height>
-            </rect>
-        </property>
-        <property name="text">
-            <string>Author Email:</string>
-        </property>
-    </widget>
-    <widget class="QLabel">
-        <property name="name">
-            <cstring>TextLabel1_2</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>10</x>
-                <y>110</y>
-                <width>91</width>
-                <height>21</height>
-            </rect>
-        </property>
-        <property name="text">
-            <string>Web Address:</string>
-        </property>
-    </widget>
-    <widget class="QLabel">
-        <property name="name">
-            <cstring>TextLabel5</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>10</x>
-                <y>200</y>
-                <width>90</width>
-                <height>21</height>
-            </rect>
-        </property>
-        <property name="text">
-            <string>About Script:</string>
-        </property>
-    </widget>
-    <widget class="ComboBox">
-        <item>
-            <property name="text">
-                <string>GPL</string>
+        <widget class="QWidget">
+            <property name="name">
+                <cstring>tab</cstring>
             </property>
-        </item>
-        <item>
-            <property name="text">
-                <string>LGPL</string>
-            </property>
-        </item>
-        <item>
-            <property name="text">
-                <string>BSD</string>
-            </property>
-        </item>
-        <item>
-            <property name="text">
-                <string>Public Domain</string>
-            </property>
-        </item>
-        <item>
-            <property name="text">
-                <string>Other</string>
-            </property>
-        </item>
-        <property name="name">
-            <cstring>license</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>110</x>
-                <y>170</y>
-                <width>251</width>
-                <height>20</height>
-            </rect>
-        </property>
-        <property name="associations" stdset="0">
-            <stringlist>
-                <string>&lt;license&gt;@widgetText&lt;/license&gt;</string>
-            </stringlist>
-        </property>
-        <property name="toolTip" stdset="0">
-            <string>If other include in about</string>
-        </property>
-    </widget>
-    <widget class="QLabel">
-        <property name="name">
-            <cstring>TextLabel6</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>10</x>
-                <y>390</y>
-                <width>105</width>
-                <height>21</height>
-            </rect>
-        </property>
-        <property name="text">
-            <string>Script Location:</string>
-        </property>
-    </widget>
-    <widget class="TextEdit">
-        <property name="name">
-            <cstring>about</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>110</x>
-                <y>200</y>
-                <width>351</width>
-                <height>181</height>
-            </rect>
-        </property>
-        <property name="associations" stdset="0">
-            <stringlist>
-                <string>&lt;about&gt;@widgetText&lt;/about&gt;</string>
-            </stringlist>
-        </property>
-    </widget>
-    <widget class="QLabel">
-        <property name="name">
-            <cstring>TextLabel4</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>10</x>
-                <y>170</y>
-                <width>101</width>
-                <height>21</height>
-            </rect>
-        </property>
-        <property name="text">
-            <string>Script License:</string>
-        </property>
-    </widget>
-    <widget class="QLabel">
-        <property name="name">
-            <cstring>TextLabel2_2</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>10</x>
-                <y>141</y>
-                <width>101</width>
-                <height>20</height>
-            </rect>
-        </property>
-        <property name="text">
-            <string>Version Number:</string>
-        </property>
-    </widget>
-    <widget class="LineEdit">
-        <property name="name">
-            <cstring>email</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>110</x>
-                <y>80</y>
-                <width>251</width>
-                <height>21</height>
-            </rect>
-        </property>
-        <property name="associations" stdset="0">
-            <stringlist>
-                <string>&lt;email&gt;@widgetText&lt;/email&gt;</string>
-            </stringlist>
-        </property>
-    </widget>
-    <widget class="LineEdit">
-        <property name="name">
-            <cstring>website</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>110</x>
-                <y>110</y>
-                <width>351</width>
-                <height>21</height>
-            </rect>
-        </property>
-        <property name="associations" stdset="0">
-            <stringlist>
-                <string>&lt;website&gt;@widgetText&lt;/website&gt;</string>
-            </stringlist>
-        </property>
-        <property name="toolTip" stdset="0">
-            <string>The location of your up to date file on the web</string>
-        </property>
-    </widget>
-    <widget class="LineEdit">
-        <property name="name">
-            <cstring>version</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>110</x>
-                <y>140</y>
-                <width>141</width>
-                <height>21</height>
-            </rect>
-        </property>
-        <property name="associations" stdset="0">
-            <stringlist>
-                <string>&lt;version&gt;@widgetText&lt;/version&gt;</string>
-            </stringlist>
-        </property>
-    </widget>
-    <widget class="CloseButton">
-        <property name="name">
-            <cstring>CloseButton1</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>190</x>
-                <y>430</y>
-                <width>110</width>
-                <height>20</height>
-            </rect>
-        </property>
-        <property name="text">
-            <string>Write File</string>
-        </property>
-        <property name="associations" stdset="0">
-            <stringlist>
-                <string>echo "&lt;!DOCTYPE QuantaScriptInfo&gt;
+            <attribute name="title">
+                <string>Enter Info</string>
+            </attribute>
+            <widget class="QLabel">
+                <property name="name">
+                    <cstring>TextLabel2_2</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>20</x>
+                        <y>161</y>
+                        <width>101</width>
+                        <height>20</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Version Number:</string>
+                </property>
+            </widget>
+            <widget class="LineEdit">
+                <property name="name">
+                    <cstring>website</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>120</x>
+                        <y>130</y>
+                        <width>351</width>
+                        <height>21</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>http://</string>
+                </property>
+                <property name="associations" stdset="0">
+                    <stringlist>
+                        <string>&lt;website&gt;@widgetText&lt;/website&gt;</string>
+                    </stringlist>
+                </property>
+                <property name="toolTip" stdset="0">
+                    <string>The location of your up to date file on the web</string>
+                </property>
+            </widget>
+            <widget class="ComboBox">
+                <item>
+                    <property name="text">
+                        <string>GPL</string>
+                    </property>
+                </item>
+                <item>
+                    <property name="text">
+                        <string>LGPL</string>
+                    </property>
+                </item>
+                <item>
+                    <property name="text">
+                        <string>BSD</string>
+                    </property>
+                </item>
+                <item>
+                    <property name="text">
+                        <string>Public Domain</string>
+                    </property>
+                </item>
+                <item>
+                    <property name="text">
+                        <string>Other</string>
+                    </property>
+                </item>
+                <property name="name">
+                    <cstring>license</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>120</x>
+                        <y>190</y>
+                        <width>251</width>
+                        <height>20</height>
+                    </rect>
+                </property>
+                <property name="associations" stdset="0">
+                    <stringlist>
+                        <string>&lt;license&gt;@widgetText&lt;/license&gt;</string>
+                    </stringlist>
+                </property>
+                <property name="toolTip" stdset="0">
+                    <string>If other include in about</string>
+                </property>
+            </widget>
+            <widget class="QLabel">
+                <property name="name">
+                    <cstring>TextLabel1_2</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>20</x>
+                        <y>130</y>
+                        <width>91</width>
+                        <height>21</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Web Address:</string>
+                </property>
+            </widget>
+            <widget class="LineEdit">
+                <property name="name">
+                    <cstring>version</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>120</x>
+                        <y>160</y>
+                        <width>141</width>
+                        <height>21</height>
+                    </rect>
+                </property>
+                <property name="associations" stdset="0">
+                    <stringlist>
+                        <string>&lt;version&gt;@widgetText&lt;/version&gt;</string>
+                    </stringlist>
+                </property>
+            </widget>
+            <widget class="FileSelector">
+                <property name="name">
+                    <cstring>FileSelector1</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>120</x>
+                        <y>410</y>
+                        <width>350</width>
+                        <height>21</height>
+                    </rect>
+                </property>
+                <property name="associations" stdset="0">
+                    <stringlist>
+                        <string>@widgetText@Name.info</string>
+                    </stringlist>
+                </property>
+                <property name="selectionType">
+                    <enum>Directory</enum>
+                </property>
+                <property name="toolTip" stdset="0">
+                    <string>Select the directory to write the .info file to</string>
+                </property>
+            </widget>
+            <widget class="QLabel">
+                <property name="name">
+                    <cstring>TextLabel6</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>20</x>
+                        <y>410</y>
+                        <width>105</width>
+                        <height>21</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Script Location:</string>
+                </property>
+            </widget>
+            <widget class="QLabel">
+                <property name="name">
+                    <cstring>TextLabel1_3</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>121</x>
+                        <y>10</y>
+                        <width>250</width>
+                        <height>20</height>
+                    </rect>
+                </property>
+                <property name="font">
+                    <font>
+                        <family>helvetica [Adobe]</family>
+                        <pointsize>11</pointsize>
+                        <bold>1</bold>
+                        <italic>1</italic>
+                    </font>
+                </property>
+                <property name="text">
+                    <string>Please fill in all fields</string>
+                </property>
+            </widget>
+            <widget class="QLabel">
+                <property name="name">
+                    <cstring>TextLabel5</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>20</x>
+                        <y>220</y>
+                        <width>90</width>
+                        <height>21</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>About Script:</string>
+                </property>
+            </widget>
+            <widget class="LineEdit">
+                <property name="name">
+                    <cstring>Name</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>120</x>
+                        <y>40</y>
+                        <width>171</width>
+                        <height>21</height>
+                    </rect>
+                </property>
+                <property name="associations" stdset="0">
+                    <stringlist>
+                        <string>@widgetText</string>
+                    </stringlist>
+                </property>
+                <property name="toolTip" stdset="0">
+                    <string>Enter the script name without the extention</string>
+                </property>
+            </widget>
+            <widget class="LineEdit">
+                <property name="name">
+                    <cstring>Author</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>120</x>
+                        <y>70</y>
+                        <width>250</width>
+                        <height>21</height>
+                    </rect>
+                </property>
+                <property name="associations" stdset="0">
+                    <stringlist>
+                        <string>&lt;author&gt;@widgetText&lt;/author&gt;</string>
+                    </stringlist>
+                </property>
+            </widget>
+            <widget class="QLabel">
+                <property name="name">
+                    <cstring>TextLabel3</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>21</x>
+                        <y>100</y>
+                        <width>100</width>
+                        <height>21</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Author Email:</string>
+                </property>
+            </widget>
+            <widget class="CloseButton">
+                <property name="name">
+                    <cstring>CloseButton1</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>200</x>
+                        <y>433</y>
+                        <width>110</width>
+                        <height>20</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Write File</string>
+                </property>
+                <property name="associations" stdset="0">
+                    <stringlist>
+                        <string>echo "&lt;?xml version=\"1.0\" encoding=\"UTF-8\"?&gt;
+&lt;!DOCTYPE QuantaScriptInfo&gt;
 &lt;INFO&gt;
 &lt;name&gt;@Name&lt;/name&gt;
 @Author
@@ -309,67 +317,133 @@
 @license
 @about
 &lt;/INFO&gt;" &gt; @FileSelector1</string>
-            </stringlist>
-        </property>
-        <property name="writeStdout">
-            <bool>true</bool>
-        </property>
-    </widget>
-    <widget class="LineEdit">
-        <property name="name">
-            <cstring>Name</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>110</x>
-                <y>20</y>
-                <width>171</width>
-                <height>21</height>
-            </rect>
-        </property>
-        <property name="associations" stdset="0">
-            <stringlist>
-                <string>@widgetText</string>
-            </stringlist>
-        </property>
-        <property name="toolTip" stdset="0">
-            <string>Enter the script name without the extention</string>
-        </property>
-    </widget>
-    <widget class="FileSelector">
-        <property name="name">
-            <cstring>FileSelector1</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>110</x>
-                <y>390</y>
-                <width>350</width>
-                <height>21</height>
-            </rect>
-        </property>
-        <property name="associations" stdset="0">
-            <stringlist>
-                <string>@widgetText@Name.info</string>
-            </stringlist>
-        </property>
-        <property name="selectionType">
-            <enum>Directory</enum>
-        </property>
-        <property name="toolTip" stdset="0">
-            <string>Select the directory to write the .info file to</string>
-        </property>
+                    </stringlist>
+                </property>
+                <property name="writeStdout">
+                    <bool>true</bool>
+                </property>
+            </widget>
+            <widget class="LineEdit">
+                <property name="name">
+                    <cstring>email</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>120</x>
+                        <y>100</y>
+                        <width>251</width>
+                        <height>21</height>
+                    </rect>
+                </property>
+                <property name="associations" stdset="0">
+                    <stringlist>
+                        <string>&lt;email&gt;@widgetText&lt;/email&gt;</string>
+                    </stringlist>
+                </property>
+            </widget>
+            <widget class="QLabel">
+                <property name="name">
+                    <cstring>TextLabel2</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>20</x>
+                        <y>70</y>
+                        <width>100</width>
+                        <height>21</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Script Author:</string>
+                </property>
+            </widget>
+            <widget class="QLabel">
+                <property name="name">
+                    <cstring>TextLabel4</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>20</x>
+                        <y>190</y>
+                        <width>101</width>
+                        <height>21</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Script License:</string>
+                </property>
+            </widget>
+            <widget class="QLabel">
+                <property name="name">
+                    <cstring>TextLabel1</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>20</x>
+                        <y>40</y>
+                        <width>90</width>
+                        <height>21</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Script Name:</string>
+                </property>
+            </widget>
+            <widget class="TextEdit">
+                <property name="name">
+                    <cstring>about</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>120</x>
+                        <y>220</y>
+                        <width>351</width>
+                        <height>181</height>
+                    </rect>
+                </property>
+                <property name="associations" stdset="0">
+                    <stringlist>
+                        <string>&lt;about&gt;@widgetText&lt;/about&gt;</string>
+                    </stringlist>
+                </property>
+            </widget>
+        </widget>
+        <widget class="QWidget">
+            <property name="name">
+                <cstring>tab</cstring>
+            </property>
+            <attribute name="title">
+                <string>About</string>
+            </attribute>
+            <widget class="TextEdit">
+                <property name="name">
+                    <cstring>TextEdit3</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>10</x>
+                        <y>11</y>
+                        <width>460</width>
+                        <height>440</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>&lt;html&gt;&lt;head&gt;&lt;meta name="qrichtext" content="1" /&gt;&lt;/head&gt;&lt;body style="font-size:-1pt;font-family:helvetica"&gt;
+&lt;p style="margin-top:16px"&gt;&lt;span style="font-weight:600"&gt;Quanta Plus Sumitter Info Files&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;The purpose of these files is to provide developers with proper credit, expose licensing information and give users thumbnail information about scripts and templates at a glance. We ask that you try to do several things here.&lt;/p&gt;
+&lt;ul type="disc"&gt;&lt;li&gt;Fill in all the fields. They are all there for a reason.&lt;/li&gt;
+&lt;li&gt;Contact the appropriate Quanta script and template maintainer or a member of our team when you have new releases so we can include them. As we plan to build a huge repository we have to rely on you here.&lt;/li&gt;&lt;/ul&gt;
+&lt;p&gt;The additional information serves as a backup. Any time a user wants they can click the link to go to your site and get updates, docs or whatever they require. Thank you for helping us to make this a great feature&lt;/p&gt;
+&lt;p align="center" style="margin-top:14px"&gt;&lt;span style="font-weight:600"&gt;Contact Information&lt;/span&gt;&lt;/p&gt;
+&lt;p align="center"&gt;Quanta Resource Maintainer - (none at this time)&lt;br /&gt;Lead Developer - Andras Mantia &lt;a href="mailto:amantia@freemail.hu?subject=ScriptInfo"&gt;amantia@freemail.hu&lt;/a&gt;&lt;br /&gt;Project Lead - Eric Laffoon &lt;a href="mailto:sequitur@kde.org?subject=ScriptInfo"&gt;sequitur@kde.org&lt;/a&gt;&lt;/p&gt;
+&lt;/body&gt;&lt;/html&gt;
+</string>
+                </property>
+            </widget>
+        </widget>
     </widget>
 </widget>
 <tabstops>
-    <tabstop>Name</tabstop>
-    <tabstop>Author</tabstop>
-    <tabstop>email</tabstop>
-    <tabstop>website</tabstop>
-    <tabstop>version</tabstop>
-    <tabstop>license</tabstop>
-    <tabstop>about</tabstop>
-    <tabstop>CloseButton1</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>
