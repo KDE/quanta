@@ -1,7 +1,7 @@
 This files contains the changes since Quanta 2.0 until the current 3.3, which
 is still under heavy development.
 
-Version 3.3 BE (Release date: xx-xx-2004; Started 26-01-2004):
+Version 3.3 BE 2 (Release date: 05-05-2004; Started 26-01-2004):
     - bugfixes:
         - VPL:
             - show the parent tag in the tag attribute view when editing text
@@ -30,6 +30,7 @@ Version 3.3 BE (Release date: xx-xx-2004; Started 26-01-2004):
           directory
         - don't save the shortcuts as localized strings [#80115]
         - don't crash when canceling a failed upload
+        - don't hang for 3 minutes if a filtering script action cannot be found
 
     - performance:
         - parse the included files less often
@@ -63,12 +64,22 @@ Version 3.3 BE (Release date: xx-xx-2004; Started 26-01-2004):
       - add description field for project files
       - Select Current Tag Area action created
       - option to control loading of last opened files/project on startup
+      - support for PHP debugger (currently Gubed - http://gubed.sf.net is supported)
+      - new DCOP interfaces and methods:
+        - QuantaIf: selectors() and idSelectors()
+        - SettingsIf: dtep(), encoding(), quotationChar()
+
 
     - enhancements:
       - improve multiline script autocompletion
       - warn if there is a closing tag without opening tag in the document
       - show also the column number in the error reporting dialog
       - multiline, formatted CSS insertion from the CSS editor dialog
+      - possibility to invoke the CSS editor from the tag dialogs and the attribute editor
+      - CSS autocompletion improvements
+      - list the defined CSS selectors in the autocompletion and tag dialogs for class and
+        id attributes
+      - added some useful templates and template examples
 
 Version 3.2.2 (Release data: xx-xx-2004; Started 01-03-2004):
     - bugfixes:
