@@ -1,5 +1,10 @@
 [General]
-
-Plugins=kompare, kallery, kfilereplace
+Plugins=Kompare
 SearchDirs=
 
+[Kompare]
+FileName=kompare
+Type=Command Line
+Location=
+Arguments=
+outputWindow=Message Window
