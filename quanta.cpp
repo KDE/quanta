@@ -1600,7 +1600,7 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
    m_tagsMenu->insertItem(name,menu);
    p_toolbar->menu = menu;
 
-   factory()->addClient(toolbarGUI);
+   guiFactory()->addClient(toolbarGUI);
 
    view->toolbarTab->setCurrentPage(view->toolbarTab->count()-1);
 
@@ -1646,7 +1646,7 @@ void QuantaApp::showToolbarFile(const KURL &url)
     }
     m_tagsMenu->insertItem(p_toolbar->name,menu);
     p_toolbar->menu = menu;
-    factory()->addClient(p_toolbar->guiClient);
+    guiFactory()->addClient(p_toolbar->guiClient);
     p_toolbar->visible = true;
   }
 }
@@ -2281,7 +2281,7 @@ void QuantaApp::removeToolbar(const QString& name)
       }
      }
 
-     factory()->removeClient(toolbarGUI);
+     guiFactory()->removeClient(toolbarGUI);
      if (p_toolbar->dom) delete p_toolbar->dom;
      if (p_toolbar->guiClient) delete p_toolbar->guiClient;
      if (p_toolbar->menu) delete p_toolbar->menu;

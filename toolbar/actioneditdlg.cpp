@@ -117,7 +117,7 @@ void ActionEditDlg::deleteAction()
      QPtrList<KXMLGUIClient> guiClients = quantaApp->factory()->clients();
      KXMLGUIClient *guiClient = 0;
      QDomNodeList nodeList;
-     for (uint i = 0; i < guiClients.count(); i++)
+     for (uint i = 1; i < guiClients.count(); i++)
      {
       guiClient = guiClients.at(i);
       quantaApp->factory()->removeClient(guiClient);
