@@ -2827,7 +2827,11 @@ void kafkaCommon::coutDomTree(DOM::Node, int)
         if (node.nodeType() != DOM::Node::TEXT_NODE)
             output += node.nodeName().string().replace('\n'," ");
         else
+        {
+            output += "\"";
             output+= node.nodeValue().string().replace('\n'," ");
+            output += "\"";
+        }
         kdDebug(25001) << output <<" (" << node.nodeType() << ") "<<
         node.handle() <<  endl;
         kdDebug(25001)<< dots << "  +++ prev " << node.previousSibling().handle() << " next " <<
@@ -2865,7 +2869,11 @@ void kafkaCommon::coutTree(Node *node, int indent)
                 node->tag->type == Tag::ScriptTag)
             output += node->tag->name.replace('\n',"<return>");
         else
+        {
+            output += "\"";
             output+= node->tag->tagStr().replace('\n',"<return>");
+            output += "\"";
+        }
         kdDebug(25001) << output <<" (" << node->tag->type << ", " << node->tag->cleanStrBuilt
         << ") "<< node << " at pos " << bLine << ":" << bCol << " - " <<
         eLine << ":" << eCol << endl;
