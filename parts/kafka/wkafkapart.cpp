@@ -2266,7 +2266,7 @@ void KafkaDocument::slotCopy()
     if(!startNode || !endNode)
         return;
     
-    Node* subtree_root = kafkaCommon::getNodeSubtree(startNode, startOffset, endNode, endOffset);
+    Node const* subtree_root = kafkaCommon::getNodeSubtree(startNode, startOffset, endNode, endOffset);
     
     if(subtree_root)
     {
@@ -2306,7 +2306,8 @@ void KafkaDocument::slotPaste()
         
         if(selection_ind.hasSelection())
             kafkaCommon::DTDRemoveSelection(selection_ind, &cursorNode, cursorOffset, modifs);
-        
+        else
+            cursorNode = 0; // use selection_ind
         kafkaCommon::DTDInsertNodeSubtree(node, selection_ind, &cursorNode, cursorOffset, modifs);
         
         m_currentDoc->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);

@@ -31,18 +31,18 @@ class KafkaDragObject: public QStoredDrag
     Q_OBJECT
 
 public:
-    KafkaDragObject(Node* item, QWidget* dragSource = 0, const char* name = 0);
+    KafkaDragObject(Node const* item, QWidget* dragSource = 0, const char* name = 0);
     ~KafkaDragObject();
 
     QByteArray encodedData(const char* c) const;
-    Node* getItem();
+    Node const* getItem() const;
     
     static bool canDecode(QMimeSource*);
     static bool decode(QMimeSource*, Node* node);
 
 private:
     QByteArray m_array;
-    Node* m_item;    
+    Node const* m_item;    
     
     static char const* m_mimetype;
 };

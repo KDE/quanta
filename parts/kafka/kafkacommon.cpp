@@ -1058,8 +1058,12 @@ Node* kafkaCommon::DTDInsertNodeSubtree(Node *newNode, NodeSelectionInd& selecti
 {
     Q_ASSERT(!selection.hasSelection());
 
-    //Node* startNode = selection.cursorNode();
-    Node* startNode = *cursorNode;
+    Node* startNode = 0;
+    if(!(*cursorNode)) // see KafkaDocument::slotPaste()
+        startNode = getNodeFromLocation(selection.cursorNode());
+    else
+        startNode = *cursorNode;
+    
     Node* endNode = 0;
     if(!cursorNode)
         return 0;
@@ -1130,8 +1134,8 @@ Node* kafkaCommon::DTDInsertNodeSubtree(Node *newNode, NodeSelectionInd& selecti
         }
     }
     
-    if(isInline(newNode->tag->name) ||
-       newNode->tag->type == Tag::Text || newNode->tag->type == Tag::Empty)
+    if(isInline(newNode->tag->name) &&
+       (newNode->tag->type == Tag::Text || newNode->tag->type == Tag::Empty))
     {
         return insertNode(newNode, newNode->parent, endNode, modifs);
     }
@@ -2346,9 +2350,9 @@ Node* kafkaCommon::getNodeSubtree(Node *startNode, int startOffset, Node *endNod
         }
     }
     Node* new_end_node = duplicateNode(endNode);
-    //new_end_node->parent = endNode->parent; // for the split
     if(endNode->tag->type == Tag::Text || endNode->tag->type == Tag::Empty)
     {
+        new_end_node->parent = endNode->parent; // for the split
         if(!splitNode(new_end_node, endOffset, 0) && endOffset == 0)
         {
             //No need to update startNode. If startNode == endNode && startOffset == endOffset,
@@ -2357,9 +2361,12 @@ Node* kafkaCommon::getNodeSubtree(Node *startNode, int startOffset, Node *endNod
                 commonParentEndChild = commonParentEndChild->previousSibling();
             new_end_node = duplicateNode(endNode->previousSibling());
         }
+        delete extractNode(endNode->parent->SLastChild(), 0);
+        new_end_node = extractNode(new_end_node, 0);
     }
 
     Node* start_subtree = duplicateNodeSubtree(commonParentStartChild);
+    /*
     Node* node = commonParentStartChild;
     Node* new_node = start_subtree;
     while(node)
@@ -2396,6 +2403,7 @@ Node* kafkaCommon::getNodeSubtree(Node *startNode, int startOffset, Node *endNod
         node = node->nextSibling();
         new_node = new_node->nextSibling();
     }
+    */
 #ifdef LIGHT_DEBUG
     coutTree(start_subtree, 3);
 #endif

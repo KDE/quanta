@@ -132,14 +132,15 @@ bool Node::load(QDomElement const& element)
             if(e.tagName() == "nodeNext")
             {
                 next = new Node(0);
-                next->load(e);
                 next->prev = this;
+                next->parent = this->parent;
+                next->load(e);
             }
             else if(e.tagName() == "nodeChild")
             {
                 child = new Node(0);
-                child->load(e);
                 child->parent = this;
+                child->load(e);
             }
             else if(e.tagName() == "nodeClosing")
             {

@@ -26,7 +26,7 @@
 
 char const* KafkaDragObject::m_mimetype = "application/kafka-nodeselection";
 
-KafkaDragObject::KafkaDragObject(Node* item, QWidget* dragSource, const char* name)
+KafkaDragObject::KafkaDragObject(Node const* item, QWidget* dragSource, const char* name)
     : QStoredDrag(m_mimetype, dragSource, name), m_item(item)
 {
     QDomDocument doc("KafkaSelection");
@@ -59,7 +59,7 @@ QByteArray KafkaDragObject::encodedData(const char* mimetype) const
     return QByteArray();
 }
 
-Node* KafkaDragObject::getItem()
+Node const* KafkaDragObject::getItem() const
 {
     return m_item;
 }
