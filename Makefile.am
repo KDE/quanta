@@ -3,7 +3,9 @@ if include_qextmdi
 KMDI_SUBDIR = kmdi
 endif
 
-SUBDIRS = data dialogs messages parser parts plugins project tagdialogs toolbar treeviews widgets $(KMDI_SUBDIR)
+#disable kmdi unconditionally for now
+#SUBDIRS = data dialogs messages parser parts plugins project tagdialogs toolbar treeviews widgets $(KMDI_SUBDIR)
+SUBDIRS = data dialogs messages parser parts plugins project tagdialogs toolbar treeviews widgets
 
 bin_PROGRAMS = quanta
 
