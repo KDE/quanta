@@ -203,7 +203,7 @@ bool QuantaNetAccess::checkProjectRemove(const KURL& src, QWidget* window, bool 
   {
     if (confirm)
     {
-       QString nice = QExtFileInfo::toRelative(url, baseURL).path();
+      QString nice = QExtFileInfo::toRelative(url, baseURL).path();
       nice = KStringHandler::lsqueeze(nice, 60);
       if ( KMessageBox::Yes != KMessageBox::warningYesNo(window, i18n("<qt>Do you really want to remove <br><b>%1</b><br> from the project?</qt>").arg(nice), i18n("Remove From Project"), KStdGuiItem::yes(), KStdGuiItem::no(), "RemoveFromProject") )
       {

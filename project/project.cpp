@@ -369,7 +369,7 @@ void Project::slotRemove(const KURL& urlToRemove)
       d->m_projectFiles.removeFromListAndXML(url);
       d->m_modified = true;
       emit eventHappened("after_project_remove", url.url(), QString::null);
-      if (! isFolder)
+      if (!isFolder)
         break;
     }
     progressBar->advance(1);
@@ -386,6 +386,34 @@ void Project::slotRemove(const KURL& urlToRemove)
   emit closeFile(urlToRemove);
   emit reloadTree( &(d->m_projectFiles), false, QStringList() );
   emit newStatus();
+  
+  QString urlPath = QExtFileInfo::toRelative(urlToRemove, d->baseURL).path();
+  QString nice = urlPath;
+  nice = KStringHandler::lsqueeze(nice, 60);
+  if (KMessageBox::warningYesNo(d->m_mainWindow, i18n("<qt>Do you really want to remove <br><b>%1</b><br> from the server(s) as well?</qt>").arg(nice), i18n("Remove From Server"), KStdGuiItem::yes(), KStdGuiItem::no(), "RemoveFromServer") == KMessageBox::Yes )
+  {
+    QDomNode profilesNode = d->dom.firstChild().firstChild().namedItem("uploadprofiles");
+    QDomNodeList profileList = profilesNode.toElement().elementsByTagName("profile");
+    QDomElement e;
+    QString s;
+    for (uint i = 0; i < profileList.count(); i++)
+    {
+      e = profileList.item(i).toElement();
+      QString path = e.attribute("remote_path","");
+      if (!path.startsWith("/"))
+        path.prepend("/");
+      KURL baseUrl;
+      baseUrl.setProtocol(e.attribute("remote_protocol","ftp"));
+      baseUrl.setPort(e.attribute("remote_port","").toInt());
+      baseUrl.setHost(e.attribute("remote_host",""));
+      baseUrl.setPath(path);
+      baseUrl.setUser(e.attribute("user",""));
+      QString passwd = password(e.attribute("remote_protocol") + "://" + e.attribute("user") + "@" + e.attribute("remote_host"));
+      baseUrl.setPass(passwd);
+      baseUrl.addPath(urlPath);
+      KIO::NetAccess::del(baseUrl, d->m_mainWindow);
+    }  
+  }
 }
 
 
