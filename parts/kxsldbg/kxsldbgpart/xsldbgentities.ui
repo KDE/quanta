@@ -1,166 +1,141 @@
-<!DOCTYPE UI><UI>
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
 <class>XsldbgEntities</class>
 <author>Keith Isdale</author>
-<widget>
-    <class>QWidget</class>
-    <property stdset="1">
-        <name>name</name>
+<widget class="QWidget">
+    <property name="name">
         <cstring>XsldbgEntities</cstring>
     </property>
-    <property stdset="1">
-        <name>geometry</name>
+    <property name="geometry">
         <rect>
             <x>0</x>
             <y>0</y>
             <width>610</width>
-            <height>462</height>
+            <height>464</height>
         </rect>
     </property>
-    <property stdset="1">
-        <name>sizePolicy</name>
+    <property name="sizePolicy">
         <sizepolicy>
             <hsizetype>5</hsizetype>
             <vsizetype>5</vsizetype>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
         </sizepolicy>
     </property>
-    <property stdset="1">
-        <name>caption</name>
-        <string>Xsldbg entities</string>
+    <property name="caption">
+        <string>Xsldbg Entities</string>
     </property>
     <grid>
-        <property stdset="1">
-            <name>margin</name>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
             <number>11</number>
         </property>
-        <property stdset="1">
-            <name>spacing</name>
+        <property name="spacing">
             <number>6</number>
         </property>
-        <widget row="0"  column="0" >
-            <class>QListView</class>
+        <widget class="QListView" row="0" column="0">
             <column>
-                <property>
-                    <name>text</name>
+                <property name="text">
                     <string>PublicID               </string>
                 </property>
-                <property>
-                    <name>clickable</name>
+                <property name="clickable">
                     <bool>true</bool>
                 </property>
-                <property>
-                    <name>resizeable</name>
+                <property name="resizable">
                     <bool>true</bool>
                 </property>
             </column>
             <column>
-                <property>
-                    <name>text</name>
+                <property name="text">
                     <string>SystemID                  </string>
                 </property>
-                <property>
-                    <name>clickable</name>
+                <property name="clickable">
                     <bool>true</bool>
                 </property>
-                <property>
-                    <name>resizeable</name>
+                <property name="resizable">
                     <bool>true</bool>
                 </property>
             </column>
-            <property stdset="1">
-                <name>name</name>
+            <property name="name">
                 <cstring>entitiesListView</cstring>
             </property>
-            <property stdset="1">
-                <name>sizePolicy</name>
+            <property name="sizePolicy">
                 <sizepolicy>
                     <hsizetype>5</hsizetype>
                     <vsizetype>5</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
                 </sizepolicy>
             </property>
         </widget>
-        <spacer row="3"  column="0" >
-            <property>
-                <name>name</name>
+        <spacer row="3" column="0">
+            <property name="name">
                 <cstring>Spacer3_2_2</cstring>
             </property>
-            <property stdset="1">
-                <name>orientation</name>
+            <property name="orientation">
                 <enum>Vertical</enum>
             </property>
-            <property stdset="1">
-                <name>sizeType</name>
+            <property name="sizeType">
                 <enum>Fixed</enum>
             </property>
-            <property>
-                <name>sizeHint</name>
+            <property name="sizeHint">
                 <size>
                     <width>20</width>
                     <height>20</height>
                 </size>
             </property>
         </spacer>
-        <widget row="4"  column="0" >
-            <class>QLayoutWidget</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QLayoutWidget" row="4" column="0">
+            <property name="name">
                 <cstring>Layout3</cstring>
             </property>
             <hbox>
-                <property stdset="1">
-                    <name>margin</name>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
                     <number>0</number>
                 </property>
-                <property stdset="1">
-                    <name>spacing</name>
+                <property name="spacing">
                     <number>6</number>
                 </property>
                 <spacer>
-                    <property>
-                        <name>name</name>
+                    <property name="name">
                         <cstring>Spacer4</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>orientation</name>
+                    <property name="orientation">
                         <enum>Horizontal</enum>
                     </property>
-                    <property stdset="1">
-                        <name>sizeType</name>
+                    <property name="sizeType">
                         <enum>Expanding</enum>
                     </property>
-                    <property>
-                        <name>sizeHint</name>
+                    <property name="sizeHint">
                         <size>
                             <width>20</width>
                             <height>20</height>
                         </size>
                     </property>
                 </spacer>
-                <widget>
-                    <class>QPushButton</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QPushButton">
+                    <property name="name">
                         <cstring>refreshBtn</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Refresh</string>
                     </property>
                 </widget>
                 <spacer>
-                    <property>
-                        <name>name</name>
+                    <property name="name">
                         <cstring>Spacer5</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>orientation</name>
+                    <property name="orientation">
                         <enum>Horizontal</enum>
                     </property>
-                    <property stdset="1">
-                        <name>sizeType</name>
+                    <property name="sizeType">
                         <enum>Expanding</enum>
                     </property>
-                    <property>
-                        <name>sizeHint</name>
+                    <property name="sizeHint">
                         <size>
                             <width>20</width>
                             <height>20</height>
@@ -178,6 +153,9 @@
         <receiver>XsldbgEntities</receiver>
         <slot>refresh()</slot>
     </connection>
-    <slot access="public">refresh()</slot>
 </connections>
+<slots>
+    <slot>refresh()</slot>
+</slots>
+<layoutdefaults spacing="6" margin="11"/>
 </UI>

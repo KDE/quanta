@@ -7,7 +7,7 @@
     <property name="geometry">
         <rect>
             <x>0</x>
-            <y>0</y>
+            <y>1</y>
             <width>300</width>
             <height>150</height>
         </rect>
@@ -116,7 +116,10 @@
                         <cstring>pbOk</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Ok</string>
+                        <string>&amp;OK</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+O</string>
                     </property>
                 </widget>
                 <widget class="QPushButton">

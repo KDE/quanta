@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>640</width>
-            <height>480</height>
+            <height>482</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -103,7 +103,10 @@
                                 <cstring>pbOk</cstring>
                             </property>
                             <property name="text">
-                                <string>&amp;Ok</string>
+                                <string>&amp;OK</string>
+                            </property>
+                            <property name="accel">
+                                <string>Alt+O</string>
                             </property>
                         </widget>
                         <widget class="QPushButton">
@@ -198,7 +201,7 @@
                                         <cstring>pbVertical</cstring>
                                     </property>
                                     <property name="text">
-                                        <string>vertical</string>
+                                        <string>Vertical</string>
                                     </property>
                                 </widget>
                                 <widget class="QPushButton" row="0" column="0">
@@ -206,7 +209,7 @@
                                         <cstring>pbHorizontal</cstring>
                                     </property>
                                     <property name="text">
-                                        <string>horizontal</string>
+                                        <string>Horizontal</string>
                                     </property>
                                 </widget>
                             </grid>

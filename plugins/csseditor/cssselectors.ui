@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>600</width>
-            <height>480</height>
+            <width>621</width>
+            <height>482</height>
         </rect>
     </property>
     <property name="caption">
@@ -65,7 +65,10 @@
                                 <cstring>pbOk</cstring>
                             </property>
                             <property name="text">
-                                <string>&amp;Ok</string>
+                                <string>&amp;OK</string>
+                            </property>
+                            <property name="accel">
+                                <string>Alt+O</string>
                             </property>
                         </widget>
                         <widget class="QPushButton">
@@ -139,7 +142,7 @@
                                     </font>
                                 </property>
                                 <property name="text">
-                                    <string>Remove Sel.</string>
+                                    <string>Remove Selected</string>
                                 </property>
                             </widget>
                             <widget class="QPushButton">
@@ -252,7 +255,7 @@
                                     </font>
                                 </property>
                                 <property name="text">
-                                    <string>Remove Sel.</string>
+                                    <string>Remove Selected</string>
                                 </property>
                             </widget>
                             <widget class="QPushButton">
@@ -345,7 +348,7 @@
                                     </font>
                                 </property>
                                 <property name="text">
-                                    <string>Remove Sel.</string>
+                                    <string>Remove Selected</string>
                                 </property>
                             </widget>
                             <widget class="QPushButton">
@@ -438,7 +441,7 @@
                                     </font>
                                 </property>
                                 <property name="text">
-                                    <string>Remove Sel.</string>
+                                    <string>Remove Selected</string>
                                 </property>
                             </widget>
                             <widget class="QPushButton">
@@ -556,7 +559,7 @@
                                     </font>
                                 </property>
                                 <property name="text">
-                                    <string>Remove Sel.</string>
+                                    <string>Remove Selected</string>
                                 </property>
                             </widget>
                             <widget class="QPushButton">
