@@ -1,0 +1,18 @@
+[General]
+Name = XML Schema
+NickName = XML Schema 1.0
+DefaultExtension = xsd
+NumOfPages = 0
+CaseSensitive = true
+Family = 1
+
+[Toolbars]
+Location = schema
+Names = main,complex,simple,attributes,facets,documentation,misc
+
+[Extra rules]
+Single Tag Style = XML
+
+[Parsing rules]
+SpecialAreas = <!-- -->
+SpecialAreaNames = comment
