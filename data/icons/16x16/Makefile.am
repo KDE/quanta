@@ -5,7 +5,7 @@
 
 datadir = ${kde_datadir}/quanta/toolbar
 
-data_DATA = delete.png empty1x16.png java.png mini-book1.png mini-book2.png mini-modules.png quanta.png save_small.png tag_br_small.png tag_font_small.png tag_hr_small.png 
+data_DATA = delete.png empty1x16.png java.png mini-book1.png mini-book2.png mini-modules.png quanta.png save_small.png tag_br_small.png tag_font_small.png tag_hr_small.png empty16x16.png 
 EXTRA_DIST = \
 		delete.png\
 		empty1x16.png\
@@ -17,7 +17,8 @@ EXTRA_DIST = \
 		save_small.png\
 		tag_br_small.png\
 		tag_font_small.png\
-		tag_hr_small.png
+		tag_hr_small.png\
+		empty16x16.png
 ##############################################################
 ####                  END KDEStudio part                  ####
 #2########################################################!@#$

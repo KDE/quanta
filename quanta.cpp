@@ -1414,10 +1414,16 @@ void QuantaApp::selectArea(int col1, int row1, int col2, int row2)
 
 void QuantaApp::openDoc( QString url )
 {
+   static QString oldUrl("");
+
+   if ( url == oldUrl ) return;
+     		
    htmlPartDoc->closeURL();
    htmlPartDoc->openURL(url);
 	 htmlPartDoc->show();
 	 htmlPartDoc->addToHistory(url);
+	 
+	 oldUrl = url;
 }
 
 void QuantaApp::updateNavButtons( bool back, bool forward )
@@ -1445,7 +1451,7 @@ void QuantaApp::contextHelp()
 
      if ( url ) {
         leftPanel->showPage(dTab);
-     		openDoc(*url);
+   		  openDoc(*url);
      }
    }
 }
@@ -1498,18 +1504,23 @@ void QuantaApp::slotViewMessages()
     KToggleAction *ta = (KToggleAction *) actionCollection()->action( "show_messages" );
 	bool stat = !ta->isChecked();
 #else	
-    bool stat = viewMenu -> isItemChecked( ID_VIEW_MES );
+  bool stat = viewMenu -> isItemChecked( ID_VIEW_MES );
 #endif
   
-  static int oldpos = 850;
+  static int oldpos = (hSplit->getPos() > 850) ? 850 : hSplit->getPos();
+  
   int pos = hSplit->getPos();
   
-  if ( pos >  850 && !stat )  hSplit->setPos(850);
-  if ( pos <= 850 && !stat )  hSplit->setPos(oldpos);
-  if ( stat ) {hSplit->setPos(1000);oldpos=hSplit->getPos();}
+  if ( stat ) 
+  {
+    oldpos=( pos > 850) ? 850 : pos;
+    hSplit->setPos(1000);
+  }
+  else hSplit->setPos(oldpos);
   
 #ifndef NEW_STUFF
   viewMenu->setItemChecked(ID_VIEW_MES, !stat);
+  checkCommand( ID_VIEW_MES, !stat );
 #endif
 }
 

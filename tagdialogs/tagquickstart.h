@@ -18,70 +18,33 @@
 #ifndef TAGQUICKSTART_H
 #define TAGQUICKSTART_H
 
-//Generated area. DO NOT EDIT!!!(begin)
-#include <qwidget.h>
-#include <qlabel.h>
-#include <klineedit.h>
-#include <qpushbutton.h>
-#include <qcombobox.h>
-#include <kcolorbtn.h>
-//Generated area. DO NOT EDIT!!!(end)
+#include "tagquickstarts.h"
 
-#include <qdialog.h>
-
-/**
-  *@author Dmitry Poplavsky & Yacovlev Alexander
-  */
-
-class TagQuickStart : public QDialog  {
+class TagQuickStart : public TagQuickStartS  {
    Q_OBJECT
 public: 
 	TagQuickStart( QString basePath, QWidget *parent=0, const char *name=0);
 	~TagQuickStart();
 
-public:
-	void initDialog();
-	//Generated area. DO NOT EDIT!!!(begin)
-	QLabel *labelTitle;
-	QLabel *labelBGImage;
-	QLabel *labelBGColor;
-	QLabel *labelTextColor;
-	QLabel *labelActiveLinkColor;
-	KLineEdit *lineTitle;
-	KLineEdit *lineBGImage;
-	QPushButton *buttonFileSelect;
-	QComboBox *comboBGColor;
-	KColorButton *cButtonBGColor;
-	QComboBox *comboTextColor;
-	KColorButton *cButtonTextColor;
-	QComboBox *comboLinkColor;
-	KColorButton *cButtonLinkColor;
-	QComboBox *comboALinkColor;
-	KColorButton *cButtonALinkColor;
-	QLabel *QLabel_8;
-	QComboBox *comboVLinkColor;
-	KColorButton *cButtonVLinkColor;
-	QLabel *QLabel_7;
-	QPushButton *buttonOk;
-	QPushButton *buttonCancel;
-	//Generated area. DO NOT EDIT!!!(end)
-
 private:
 	QString basePath;
 	
 public slots: // Public slots
-  /** select BG Image */
+  
   void slotFileSelect();
-  /** insert BG color in combo */
-  void slotBGColor(const QColor &newColor);
-  /** insert text color in combo */
-  void slotTextColor(const QColor &newColor);
-  /** insert link color in combo */
-  void slotLinkColor(const QColor &newColor);
-  /** insert active link color in combo */
+  
+  void slotBGColor   (const QColor &newColor);
+  void slotTextColor (const QColor &newColor);
+  void slotLinkColor (const QColor &newColor);
   void slotALinkColor(const QColor &newColor);
-  /** insert visited link color in combo */
   void slotVLinkColor(const QColor &newColor);
+  
+  void slotColorBG   (const QString &newColor);
+  void slotColorText (const QString &newColor);
+  void slotColorLink (const QString &newColor);
+  void slotColorALink(const QString &newColor);
+  void slotColorVLink(const QString &newColor);
+
 };
 
 #endif

@@ -27,11 +27,11 @@ libtagdialogs_a_SOURCES = \
 		tagquicklistdlg.cpp\
 		tagquicklistdlgdata.cpp\
 		tagquickstart.cpp\
-		tagquickstartdata.cpp\
 		tagquicktable.cpp\
 		tagquicktabledata.cpp\
 		tagwidget.cpp\
-		tagxml.cpp
+		tagxml.cpp\
+		tagquickstarts.ui
 EXTRA_DIST = \
 		colorcombo.cpp\
 		colorcombo.h\
@@ -63,14 +63,14 @@ EXTRA_DIST = \
 		tagquicklistdlgdata.cpp\
 		tagquickstart.cpp\
 		tagquickstart.h\
-		tagquickstartdata.cpp\
 		tagquicktable.cpp\
 		tagquicktable.h\
 		tagquicktabledata.cpp\
 		tagwidget.cpp\
 		tagwidget.h\
 		tagxml.cpp\
-		tagxml.h
+		tagxml.h\
+		tagquickstarts.ui
 ##############################################################
 ####                  END KDEStudio part                  ####
 #2########################################################!@#$

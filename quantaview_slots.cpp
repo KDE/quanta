@@ -19,27 +19,25 @@
 #include <time.h>
 
 // include files for QT
-
-#include <qregexp.h>
 #include <qdir.h>
+#include <qregexp.h>
 #include <qcstring.h>
+#include <qlineedit.h>
 #include <qclipboard.h>
 
 // include files for KDE
 #include <kapp.h>
-#include <kcolordlg.h>
-#include <kprocess.h>
 #include <klocale.h>
+#include <kprocess.h>
+#include <kcolordlg.h>
 
 // application specific includes
 #include "quanta.h"
-#include "quantaview.h"
 #include "quantadoc.h"
+#include "quantaview.h"
 #include "resource.h"
-
 #include "document.h"
 #include "qextfileinfo.h"
-
 #include "project/project.h"
 #include "messages/messageoutput.h"
 
@@ -54,11 +52,6 @@
 #include "toolbar/toolbars.h"
 #include "qdom.h"
 
-
-//#include "dialogs/toolbarconfig.h"
-
-
-/** edit tag */
 void QuantaView::slotEditCurrentTag()
 {
 

@@ -414,22 +414,22 @@ void QuantaApp::initMenuBar()
 
   toolMenu->insertSeparator();
 
-  toolMenu->insertItem( i18n("Context Help..."),  		  ID_CONTEXT_HELP);
+  toolMenu->insertItem( i18n("Context Help"),  		  ID_CONTEXT_HELP);
   toolMenu->insertItem( i18n("Tag Attributes"),  		ID_ATTRIB_POPUP);
-  toolMenu->insertItem( i18n("&Edit Current Tag..."),  ID_EDIT_CURRENT_TAG);
+  toolMenu->insertItem( i18n("&Edit Current Tag"),  ID_EDIT_CURRENT_TAG);
 
   toolMenu->insertSeparator();
 
-  toolMenu->insertItem(UserIcon("spellcheck"),i18n("Spe&lling..."),		ID_EDIT_SPELL);
-  toolMenu->insertItem(UserIcon("ftpclient"),	i18n("&Ftp client..."),	ID_VIEW_FTP);
-  toolMenu->insertItem( 	i18n("&Syntax check..."),	ID_TOOL_SYNTAX_CHECK);
+  toolMenu->insertItem(UserIcon("spellcheck"),i18n("Spe&lling"),		ID_EDIT_SPELL);
+  toolMenu->insertItem(UserIcon("ftpclient"),	i18n("&Ftp client"),	ID_VIEW_FTP);
+  toolMenu->insertItem( 	i18n("&Syntax check"),	ID_TOOL_SYNTAX_CHECK);
  
 
   ///////////////////////////////////////////////////////////////////
   // menuBar entry viewMenu
   viewMenu = new QPopupMenu();
   viewMenu->setCheckable(true);
-  viewMenu->insertItem(i18n("Show &Toolbar"), 	ID_VIEW_TOOLBAR);
+  //viewMenu->insertItem(i18n("Show &Toolbar"), 	ID_VIEW_TOOLBAR);
   viewMenu->insertItem(i18n("Show &Statusbar"),ID_VIEW_STATUSBAR);
 
   viewMenu->insertItem(UserIcon("tree_win"),	i18n("Show Tr&ee"),    ID_VIEW_TREE);
@@ -455,17 +455,17 @@ void QuantaApp::initMenuBar()
   ///////////////////////////////////////////////////////////////////
   // menuBar entry projectMenu
   projectMenu = new QPopupMenu();
-  projectMenu->insertItem(SmallIcon("idea"),      i18n("&New Project..."),   ID_PROJECT_NEW);
-  projectMenu->insertItem(UserIcon("openprj"),    i18n("&Open Project..."),  ID_PROJECT_OPEN);
+  projectMenu->insertItem(SmallIcon("idea"),      i18n("&New Project"),    ID_PROJECT_NEW);
+  projectMenu->insertItem(UserIcon("openprj"),    i18n("&Open Project..."),ID_PROJECT_OPEN);
   projectMenu->insertItem(i18n("Open &Recent Project"),recentProjectsMenu, ID_PROJECT_OPEN_RECENT);
   projectMenu->insertItem(SmallIcon("fileclose"), i18n("&Close Project"),         ID_PROJECT_CLOSE);
   projectMenu->insertSeparator();
   projectMenu->insertItem(i18n("&Insert File(s)..."),   ID_PROJECT_ADD_FILE);
   projectMenu->insertItem(i18n("Insert &Directory..."), ID_PROJECT_ADD_DIRECTORY);
-  projectMenu->insertItem(SmallIcon("reload"), i18n("Rescan project dir"),   ID_PROJECT_RESCAN_FILES);
+  projectMenu->insertItem(SmallIcon("reload"), i18n("Rescan project directory"),ID_PROJECT_RESCAN_FILES);
   projectMenu->insertSeparator();
-  projectMenu->insertItem(i18n("&Upload project..."),   ID_PROJECT_UPLOAD_PROJECT);
-  projectMenu->insertItem(i18n("&Project options..."), ID_PROJECT_PROPERTIES);
+  projectMenu->insertItem(i18n("&Upload project"),  ID_PROJECT_UPLOAD_PROJECT);
+  projectMenu->insertItem(i18n("&Project options"), ID_PROJECT_PROPERTIES);
 //  projectMenu->insertItem(i18n("Rescan project's directory"), ID_PROJECT_RESCAN_FILES);
 
   ///////////////////////////////////////////////////////////////////
@@ -1077,6 +1077,17 @@ void QuantaApp::readOptions()
 
   hSplit->setPos( config->readNumEntry("HSplit position", 850) );
   vSplit->setPos( config->readNumEntry("VSplit position", 300 ) );
+  
+#ifndef NEW_STUFF
+  if ( hSplit->getPos() < 1000 )
+  {
+    viewMenu->setItemChecked(ID_VIEW_MES, true);
+    checkCommand( ID_VIEW_MES, true );
+    
+    int pos = hSplit->getPos();
+    hSplit->setPos( (pos > 850) ? 850 : pos);
+  }
+#endif
 
   phpDebugPort = config->readNumEntry("PHP Debugger Port", 7869 );
   

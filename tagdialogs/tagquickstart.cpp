@@ -14,35 +14,50 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
+
+#include <stdio.h>
+ 
+// quanta app
+#include "colorcombo.h"
 #include "tagquickstart.h"
 #include "../qextfileinfo.h"
 
-#include <kfiledialog.h>
+// qt includes
 #include <qcolor.h>
-#include <stdio.h>
+#include <qlineedit.h>
+
+// kde includes
+#include <kfiledialog.h>
+
 
 TagQuickStart::TagQuickStart(QString basePath, QWidget *parent, const char *name)
-    : QDialog(parent,name,true)
+    : TagQuickStartS(parent,name,true)
 {
 	this->basePath = basePath;
 	setCaption(name);
 	
-	initDialog();
+	colorBG   ->setColor("#ffffff");
+	colorText ->setColor("#000000");
+	colorLink ->setColor("#0000a0");
+	colorALink->setColor("#008080");
+	colorVLink->setColor("#c06060");
 	
-	cButtonBGColor    ->setColor("#ffffff");
-	cButtonTextColor  ->setColor("#000000");
-	cButtonLinkColor  ->setColor("#0000a0");
-	cButtonALinkColor ->setColor("#008080");
-	cButtonVLinkColor ->setColor("#c06060");
-	
-	connect( buttonOk, SIGNAL(clicked()), SLOT(accept()) );
-	connect( buttonCancel, SIGNAL(clicked()), SLOT(reject()) );
 	connect( buttonFileSelect, SIGNAL(clicked()), this, SLOT(slotFileSelect()) );
-	connect( cButtonBGColor, SIGNAL(changed(const QColor &)), this, SLOT(slotBGColor(const QColor &)) );
-	connect( cButtonTextColor, SIGNAL(changed(const QColor &)), this, SLOT(slotTextColor(const QColor &)) );
-	connect( cButtonLinkColor, SIGNAL(changed(const QColor &)), this, SLOT(slotLinkColor(const QColor &)) );
-	connect( cButtonALinkColor, SIGNAL(changed(const QColor &)), this, SLOT(slotALinkColor(const QColor &)) );
-	connect( cButtonVLinkColor, SIGNAL(changed(const QColor &)), this, SLOT(slotVLinkColor(const QColor &)) );
+	
+	connect( colorBG,    SIGNAL(activated(const QColor &)), this, SLOT(slotBGColor   (const QColor &)) );
+	connect( colorText,  SIGNAL(activated(const QColor &)), this, SLOT(slotTextColor (const QColor &)) );
+	connect( colorLink,  SIGNAL(activated(const QColor &)), this, SLOT(slotLinkColor (const QColor &)) );
+	connect( colorALink, SIGNAL(activated(const QColor &)), this, SLOT(slotALinkColor(const QColor &)) );
+	connect( colorVLink, SIGNAL(activated(const QColor &)), this, SLOT(slotVLinkColor(const QColor &)) );
+	
+	connect( comboBGColor,    SIGNAL(activated(const QString &)), this, SLOT(slotColorBG   (const QString &)) );
+	connect( comboTextColor,  SIGNAL(activated(const QString &)), this, SLOT(slotColorText (const QString &)) );
+	connect( comboLinkColor,  SIGNAL(activated(const QString &)), this, SLOT(slotColorLink (const QString &)) );
+	connect( comboALinkColor, SIGNAL(activated(const QString &)), this, SLOT(slotColorALink(const QString &)) );
+	connect( comboVLinkColor, SIGNAL(activated(const QString &)), this, SLOT(slotColorVLink(const QString &)) );
+	
+	connect( buttonOk,     SIGNAL(clicked()), SLOT(accept()) );
+	connect( buttonCancel, SIGNAL(clicked()), SLOT(reject()) );
 }
 
 TagQuickStart::~TagQuickStart(){
@@ -52,60 +67,49 @@ TagQuickStart::~TagQuickStart(){
 void TagQuickStart::slotFileSelect()
 {
 	QString fileName = KFileDialog::getOpenFileName( basePath, "*.gif *.png *.jpg| Image files\n*|All files");
+	
 	if (fileName.isEmpty()) return;
 		
 	QExtFileInfo file(fileName);
 	file.convertToRelative( basePath );
 	QString shortName = file.filePath();
+	
 	lineBGImage->setText(shortName);
 }
 
-/** insert BG color in combo */
-void TagQuickStart::slotBGColor(const QColor &newColor){
-	char c[8];
-	
-	sprintf(c,"#%2X%2X%2X",newColor.red(),newColor.green(),newColor.blue());
-	for (int i=0;i<7;i++) if (c[i] == ' ') c[i] = '0';
-	
-	comboBGColor->setEditText((char *)c);
+void TagQuickStart::slotBGColor(const QColor &)
+{
+	QString color = colorBG->colorName();
+	comboBGColor->insertItem( (color[0]=='#') ? color.upper() : color ,0);
 }
 
-/** insert text color in combo */
-void TagQuickStart::slotTextColor(const QColor &newColor){
-	char c[8];
-	
-	sprintf(c,"#%2X%2X%2X",newColor.red(),newColor.green(),newColor.blue());
-	for (int i=0;i<7;i++) if (c[i] == ' ') c[i] = '0';
-	
-	comboTextColor->setEditText((char *)c);
+void TagQuickStart::slotTextColor(const QColor &)
+{
+	QString color = colorText->colorName();
+	comboTextColor->insertItem( (color[0]=='#') ? color.upper() : color ,0);
 }
 
-/** insert link color in combo */
-void TagQuickStart::slotLinkColor(const QColor &newColor){
-	char c[8];
-	
-	sprintf(c,"#%2X%2X%2X",newColor.red(),newColor.green(),newColor.blue());
-	for (int i=0;i<7;i++) if (c[i] == ' ') c[i] = '0';
-	
-	comboLinkColor->setEditText((char *)c);
+void TagQuickStart::slotLinkColor(const QColor &)
+{
+	QString color = colorLink->colorName();
+	comboLinkColor->insertItem( (color[0]=='#') ? color.upper() : color ,0);
 }
 
-/** insert active link color in combo */
-void TagQuickStart::slotALinkColor(const QColor &newColor){
-	char c[8];
-	
-	sprintf(c,"#%2X%2X%2X",newColor.red(),newColor.green(),newColor.blue());
-	for (int i=0;i<7;i++) if (c[i] == ' ') c[i] = '0';
-	
-	comboALinkColor->setEditText((char *)c);
+void TagQuickStart::slotALinkColor(const QColor &)
+{
+	QString color = colorALink->colorName();
+	comboALinkColor->insertItem( (color[0]=='#') ? color.upper() : color ,0);
 }
 
-/** insert visited link color in combo */
-void TagQuickStart::slotVLinkColor(const QColor &newColor){
-	char c[8];
-	
-	sprintf(c,"#%2X%2X%2X",newColor.red(),newColor.green(),newColor.blue());
-	for (int i=0;i<7;i++) if (c[i] == ' ') c[i] = '0';
-	
-	comboVLinkColor->setEditText((char *)c);
+void TagQuickStart::slotVLinkColor(const QColor &)
+{
+	QString color = colorVLink->colorName();
+	comboVLinkColor->insertItem( (color[0]=='#') ? color.upper() : color ,0);
 }
+
+void TagQuickStart::slotColorBG   (const QString &newColor){colorBG   ->setColor(QColor(newColor));}
+void TagQuickStart::slotColorText (const QString &newColor){colorText ->setColor(QColor(newColor));}
+void TagQuickStart::slotColorLink (const QString &newColor){colorLink ->setColor(QColor(newColor));}
+void TagQuickStart::slotColorALink(const QString &newColor){colorALink->setColor(QColor(newColor));}
+void TagQuickStart::slotColorVLink(const QString &newColor){colorVLink->setColor(QColor(newColor));}
+
