@@ -49,6 +49,7 @@
 #include <kwizard.h>
 #include <klocale.h>
 #include <kaction.h>
+#include <kapplication.h>
 #include <ktempfile.h>
 #include <kstdaction.h>
 #include <kstandarddirs.h>
@@ -1479,6 +1480,7 @@ void Project::openCurrentView()
           {
             quantaApp->slotLoadToolbarFile(url);
           }
+          kapp->processEvents();
         }
         break;
       }

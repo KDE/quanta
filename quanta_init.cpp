@@ -742,6 +742,7 @@ void QuantaApp::openLastFiles()
 
     if (!isPrj || fu.isLocalFile())
         m_doc->openDocument(fu, QString::null, false);
+    kapp->processEvents();
   }
   m_doc->blockSignals(false);
   m_view->writeTab()->blockSignals(false);

@@ -162,12 +162,18 @@ void QuantaApp::slotFileOpen()
  KateFileDialogData data = dialog->exec();
  delete dialog;
 
+ m_doc->blockSignals(true);
+ m_view->writeTab()->blockSignals(true);
  for (KURL::List::Iterator i=data.urls.begin(); i != data.urls.end(); ++i)
  {
-    slotFileOpen( *i , data.encoding);
+   slotFileOpen( *i , data.encoding);
+   kapp->processEvents();
  }
-
-  slotUpdateStatus(m_view->write());
+ m_doc->blockSignals(false);
+ m_view->writeTab()->blockSignals(false);
+ Document *w = m_view->write();
+ setCaption(w->url().prettyURL() );
+ slotUpdateStatus(w);
 }
 
 void QuantaApp::slotFileOpen( const KURL &url, const QString& encoding )
