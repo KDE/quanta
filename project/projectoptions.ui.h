@@ -15,13 +15,12 @@
  *                                                                         *
  ***************************************************************************/
 
- #include <kcombobox.h>
+#include <kcombobox.h>
 #include <kfiledialog.h>
 #include <kdeversion.h>
 #include <kmessagebox.h>
 #include <klocale.h>
 
-#include "projectupload.h"
 
 void ProjectOptions::buttonTemplate_clicked()
 {
@@ -48,13 +47,4 @@ void ProjectOptions::buttonToolbar_clicked()
 void ProjectOptions::comboDebuggerClient_activated( int idx)
 {
     buttonDebuggerOptions->setEnabled(idx > 0);
-}
-
-
-void ProjectOptions::buttonEditProfiles_clicked()
-{
-   ProjectUpload* dlg = new ProjectUpload(KURL(), true);
-   dlg->exec();
-   profileLabel->setText(dlg->defaultProfile());
-   delete dlg;
 }

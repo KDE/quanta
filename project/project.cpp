@@ -84,6 +84,7 @@
 #include "projectnewfinal.h"
 #include "projectupload.h"
 #include "projectoptions.h"
+#include "uploadprofilespage.h"
 #include "rescanprj.h"
 #include "resource.h"
 #include "document.h"
@@ -1206,7 +1207,7 @@ void ProjectPrivate::loadProjectFromTemp(const KURL &url, const QString &tempFil
 /** load project from file: url */
 void ProjectPrivate::loadProject(const KURL &url)
 {
-  if (projectURL == url) 
+  if (projectURL == url)
     return;
   if (!url.isValid())
   {
@@ -1824,9 +1825,6 @@ void Project::slotOptions()
       optionsPage.buttonDebuggerOptions->setEnabled(true);
     }
   }
-  QDomElement uploadEl = d->dom.firstChild().firstChild().namedItem("uploadprofiles").toElement();
-  optionsPage.profileLabel->setText(uploadEl.attribute("defaultProfile"));
-  optionsPage.checkShowUploadTreeviews->setChecked(d->m_showUploadTreeviews);
 
   QString excludeStr;
   for (uint i = 0; i < d->excludeList.count(); i++)
@@ -1884,6 +1882,15 @@ void Project::slotOptions()
   }
 
   optionsPage.checkPrefix->setChecked(d->usePreviewPrefix);
+
+//add upload profiles page
+  page = optionsDlg.addPage(i18n("Up&load Profiles"));
+  UploadProfilesPage uploadProfilesPage(page);
+  topLayout = new QVBoxLayout( page, 0, KDialog::spacingHint() );
+  topLayout->addWidget(&uploadProfilesPage);
+  QDomElement uploadEl = d->dom.firstChild().firstChild().namedItem("uploadprofiles").toElement();
+  uploadProfilesPage.profileLabel->setText(uploadEl.attribute("defaultProfile"));
+  uploadProfilesPage.checkShowUploadTreeviews->setChecked(d->m_showUploadTreeviews);
 
 //add the team members page
   page = optionsDlg.addPage(i18n("Team Configuration"));
@@ -2049,7 +2056,7 @@ void Project::slotOptions()
         el.setAttribute("projectview", defaultView);
        }
     }
-    uploadEl.setAttribute("showtreeviews", optionsPage.checkShowUploadTreeviews->isChecked() ? "true" : "false");
+    uploadEl.setAttribute("showtreeviews", uploadProfilesPage.checkShowUploadTreeviews->isChecked() ? "true" : "false");
 
     QDomNode teamNode = projectNode.namedItem("teamdata");
     if (!teamNode.isNull())
