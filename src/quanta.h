@@ -493,6 +493,7 @@ protected:
   only the close button behavior is changed. */
   void initTabWidget(bool closeButtonsOnly = false);
 
+  void resetDockLayout();
 
   bool eventFilter(QObject *object, QEvent *event);
 
