@@ -121,6 +121,8 @@ class QuantaApp : public KDockMainWindow
     
     virtual bool queryExit();
     void saveAsTemplate (bool projectTemplate, bool selectionOnly = false);
+    /* Saves the toolbar and the actions. Returns the name of the actions file*/
+    QString saveToolBar(QString& toolbarName, QString destFile);
 
   public slots:
     

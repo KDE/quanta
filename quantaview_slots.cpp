@@ -228,8 +228,8 @@ void QuantaView::slotTagMail()
   	   	tag += "\"";
   	}
   	
-  	if ( !QString(mailDlg->lineTitle->text()).isEmpty())
-	   		tag += attrCase(" title=\"")+mailDlg->lineTitle->text()+"\"";
+  	if ( !QString(mailDlg->titleEdit->text()).isEmpty())
+	   		tag += attrCase(" title=\"")+mailDlg->titleEdit->text()+"\"";
     tag += QString(">");
     write()->insertTag(tag,tagCase("</a>"));
   }

@@ -30,6 +30,7 @@
 #include <qimage.h>
 #include <qtimer.h>
 #include <qtextstream.h>
+#include <qtextedit.h>
 #include <qiodevice.h>
 #include <qcombobox.h>
 
@@ -49,6 +50,7 @@
 #include <kstatusbar.h>
 #include <kprocess.h>
 #include <ktempfile.h>
+#include <kdebug.h>
 
 #include <kparts/componentfactory.h>
 
@@ -88,6 +90,7 @@
 #include "treeviews/templatestreeview.h"
 
 #include "tagdialogs/listdlg.h"
+#include "tagdialogs/tagmaildlg.h"
 
 #include "parser/parser.h"
 
@@ -95,6 +98,7 @@
 
 #include "toolbar/actioneditdlg.h"
 #include "toolbar/toolbarxmlgui.h"
+#include "toolbar/tagaction.h"
 
 #include <kedittoolbar.h>
 #include <kaction.h>
@@ -1300,7 +1304,7 @@ void QuantaApp::slotLoadToolbar()
 {
  KURL url;
 
- url = KFileDialog::getOpenURL(doc->basePath(), QString::null, this);
+ url = KFileDialog::getOpenURL(doc->basePath(), "*.toolbar\n*", this);
  if (url.isEmpty()) return;
 
  ToolbarXMLGUI * toolbarGUI = new ToolbarXMLGUI(url.path());
@@ -1342,6 +1346,38 @@ void QuantaApp::slotLoadToolbar()
    }
   if (found) break;
  }
+
+//Load the actions from the associated .action file
+ QString actionFile;
+ if (QFileInfo(url.path()).extension(false) != "toolbar")
+ {
+   actionFile = url.path() + ".actions";
+ }else
+ {
+   actionFile = QFileInfo(url.path()).dirPath() + "/"+QFileInfo(url.path()).baseName()+".actions";
+ }
+
+ QDomDocument actionDom;
+ QFile f(actionFile);
+ if ( f.open( IO_ReadOnly ) )
+ {
+  actionDom.setContent( &f );
+ }
+ f.close();
+ nodeList = actionDom.elementsByTagName("action");
+ for (uint i = 0; i < nodeList.count(); i++)
+ {
+   QDomElement el = nodeList.item(i).toElement();
+   QString actionName = el.attribute("name");
+   //if there is no such action yet, add to the available actions
+   if (! actionCollection()->action(actionName))
+   {
+     actions()->firstChild().appendChild(el);
+     TagAction *a = new TagAction(&el, view, actionCollection() );
+     actionCollection()->insert(a);
+   }
+ }
+
  userToolbarsCount++;
 
 //Change the name also in the XML File -> create a temp XML file
@@ -1378,7 +1414,85 @@ void QuantaApp::slotLoadToolbar()
 
 
  tempFileList.append(tempFile);
- toolbarGUIClientList.insert(name,toolbarGUI);
+ toolbarGUIClientList.insert(name.lower(),toolbarGUI);
+}
+
+QString QuantaApp::saveToolBar(QString& toolbarName, QString destFile)
+{
+
+  QString toolbarFile = destFile;
+  QString actionFile;
+
+  if (QFileInfo(toolbarFile).extension(false) != "toolbar")
+  {
+   toolbarFile = destFile + ".toolbar";
+   actionFile = destFile + ".actions";
+  } else
+  {
+    actionFile = QFileInfo(toolbarFile).dirPath();
+    actionFile += "/"+QFileInfo(toolbarFile).baseName()+".actions";
+  }
+
+
+  QFile toolFile(toolbarFile);
+  QFile actFile(actionFile);
+  QDomNodeList nodeList, nodeList2;
+  QStringList actionNameList;
+
+  QString s = actions()->toString();
+
+  if ( (toolFile.open(IO_ReadWrite | IO_Truncate)) && (actFile.open(IO_ReadWrite | IO_Truncate)) )
+  {
+    QTextStream toolStr(&toolFile);
+    QTextStream actStr(&actFile);
+    toolStr << QString("<!DOCTYPE kpartgui SYSTEM \"kpartgui.dtd\">\n<kpartgui name=\"quanta\" version=\"2\">\n");
+    actStr << QString("<!DOCTYPE actionsconfig>\n<actions>\n");
+//look up the clients
+    QPtrList<KXMLGUIClient> xml_clients = factory()->clients();
+    for (uint index = 0; index < xml_clients.count(); index++)
+    {
+      nodeList = xml_clients.at(index)->domDocument().elementsByTagName("ToolBar");
+      for (uint i = 0; i < nodeList.count(); i++)
+      {
+      //find the actual toolbar in the XML GUI
+       if ((nodeList.item(i).toElement().attribute("name") ) == toolbarName)
+       {
+          nodeList.item(i).save(toolStr,2);
+          //find the actions registered to the toolbar
+          QDomNode n = nodeList.item(i).firstChild();
+          while (! n.isNull())
+          {
+           QDomElement e = n.toElement();
+           if (e.tagName()=="Action")
+           {
+            actionNameList += e.attribute("name");
+           }
+           n = n.nextSibling();
+          }
+
+          nodeList2 = actions()->elementsByTagName("action");
+          for (uint k =0; k < nodeList2.count(); k++)
+          {
+            if (actionNameList.contains(nodeList2.item(k).toElement().attribute("name")) > 0)
+            {
+                nodeList2.item(k).save(actStr,1);
+            }
+          }       
+       }
+      }
+    }
+    toolStr << QString("\n</kpartgui>");
+    actStr << QString("\n</actions>");
+
+    toolFile.close();
+    actFile.close();
+
+    return actionFile;
+  }
+  else
+  {
+    return QString::null;
+  }
 }
 
 /** Saves a toolbar as local or project specific. */
@@ -1413,10 +1527,10 @@ void QuantaApp::slotSaveToolbar(bool localToolbar)
 
     if (localToolbar)
     {
-  	  url = KFileDialog::getSaveURL(locateLocal("data","quanta/toolbars/"), QString::null, this);
+  	  url = KFileDialog::getSaveURL(locateLocal("data","quanta/toolbars/"), "*.toolbar\n*", this);
   	} else
   	{
-  	  url = KFileDialog::getSaveURL(doc->basePath()+"toolbars/", QString::null, this);
+  	  url = KFileDialog::getSaveURL(doc->basePath()+"toolbars/", "*.toolbar\n*", this);
   	}
 
     if (url.isEmpty()) return;
@@ -1436,29 +1550,7 @@ void QuantaApp::slotSaveToolbar(bool localToolbar)
 
   if( query == KMessageBox::Cancel ) return;
 
-  QFile file(url.path());
-  QDomNodeList nodeList;
-
-  if (file.open(IO_ReadWrite))
-  {
-    QTextStream str(&file);
-    str << QString("<!DOCTYPE kpartgui SYSTEM \"kpartgui.dtd\">\n<kpartgui name=\"quanta\" version=\"2\">\n");
-//look up the clients
-    QPtrList<KXMLGUIClient> xml_clients = factory()->clients();
-    for (uint index = 0; index < xml_clients.count(); index++)
-    {
-      nodeList = xml_clients.at(index)->domDocument().elementsByTagName("ToolBar");
-      for (uint i = 0; i < nodeList.count(); i++)
-      {
-       if ((nodeList.item(i).toElement().attribute("name") ) == toolbarName)
-        {
-          nodeList.item(i).save(str,2);
-        }
-      }
-    }
-    str << QString("</kpartgui>");
-    file.close();
-  }
+  saveToolBar(toolbarName, url.path());
 }
 
 /** Saves a toolbar as localspecific. */
@@ -1476,10 +1568,10 @@ void QuantaApp::slotSaveProjectToolbar()
 void QuantaApp::slotAddToolbar()
 {
  ToolBarsDlg * dlg = new ToolBarsDlg(this, i18n("New toolbar"));
- userToolbarsCount++;
  dlg->nameEdit->setText(i18n("User_%1").arg(userToolbarsCount));
  if (dlg->exec())
  {
+  userToolbarsCount++;
   QString name = dlg->nameEdit->text();
 
 
@@ -1493,7 +1585,7 @@ void QuantaApp::slotAddToolbar()
   factory()->addClient(toolbarGUI);
   view->toolbarTab->setCurrentPage(view->toolbarTab->count()-1);
   tempFileList.append(tempFile);
-  toolbarGUIClientList.insert(name,toolbarGUI);
+  toolbarGUIClientList.insert(name.lower(),toolbarGUI);
  }
 
  delete dlg;
@@ -1512,7 +1604,7 @@ void QuantaApp::slotRemoveToolbar()
  combo->setGeometry(QRect(135,25,115,24));
  for (i = 0; i < tb->count(); i++)
  {
-  if (toolbarGUIClientList[tb->label(i)]) combo->insertItem(tb->label(i));
+  if (toolbarGUIClientList[tb->label(i).lower()]) combo->insertItem(tb->label(i));
  }
 
  if (dlg->exec())
@@ -1525,11 +1617,11 @@ void QuantaApp::slotRemoveToolbar()
    tb->removePage(tb->page(i));
 //   delete tb->page(i); // not sure if we need to do this or not
 
-   KXMLGUIClient* toolbarGUI = toolbarGUIClientList[combo->currentText()];
+   KXMLGUIClient* toolbarGUI = toolbarGUIClientList[combo->currentText().lower()];
    if (toolbarGUI)
    {
     factory()->removeClient(toolbarGUI);
-    toolbarGUIClientList.remove(combo->currentText());
+    toolbarGUIClientList.remove(combo->currentText().lower());
    }
  }
 
@@ -1540,6 +1632,65 @@ void QuantaApp::slotRemoveToolbar()
 /** Sends a toolbar in mail. */
 void QuantaApp::slotSendToolbar()
 {
+  QTabWidget *tb = view->toolbarTab;
+  ToolBarsDlg * dlg = new ToolBarsDlg(this, i18n("Send toolbar"));
+  QComboBox * combo = new QComboBox(dlg);
+  dlg->nameEdit->hide();
+  combo->setGeometry(QRect(135,25,115,24));
+  for (int i = 0; i < tb->count(); i++)
+  {
+    combo->insertItem(tb->label(i));
+  }
+
+  if (! dlg->exec())
+  {
+    delete dlg;
+    return;
+  }
+  QString toolbarName = combo->currentText().lower();
+  delete dlg;
+
+  QStringList toolbarFile;
+
+  QString prefix="quanta";
+  QString extension=".toolbar";
+  KTempFile* tempFile = new KTempFile(locateLocal("tmp", prefix), extension);;
+  tempFile->setAutoDelete(true);
+  toolbarFile += saveToolBar(toolbarName, tempFile->name());
+  tempFile->close();
+  tempFileList.append(tempFile);
+
+  toolbarFile += tempFile->name();
+
+  TagMailDlg *mailDlg = new TagMailDlg( this, i18n("Send toolbar by e-mail"));
+  QString toStr;
+  QString message = i18n("Hi,\n This is a Quanta Plus [http://quanta.sourceforge.net] toolbar.\n\nHave fun.\n");
+  QString titleStr;
+  QString subjectStr;
+
+  mailDlg->TitleLabel->setText(i18n("Content"));
+  mailDlg->titleEdit->setFixedHeight(60);
+  mailDlg->titleEdit->setVScrollBarMode(QTextEdit::Auto);
+  mailDlg->titleEdit->setHScrollBarMode(QTextEdit::Auto);
+  if ( mailDlg->exec() ) {
+  	if ( !mailDlg->lineEmail->text().isEmpty())
+  	{
+      toStr = +mailDlg->lineEmail->text();
+	  	subjectStr = (mailDlg->lineSubject->text().isEmpty())?i18n("Quanta Plus toolbar"):mailDlg->lineSubject->text();
+    	if ( !mailDlg->titleEdit->text().isEmpty())
+        message = mailDlg->titleEdit->text();
+  	} else
+    {
+      KMessageBox::error(this,i18n("No destination address was specified./n Sending is aborted."),i18n("Error sending e-mail"));
+      delete mailDlg;
+      return;
+    }
+
+    QString nullString="";
+    kapp->invokeMailer(toStr, nullString, nullString, subjectStr, message, nullString, toolbarFile);
+
+  }
+  delete mailDlg;
 }
 
 /** No descriptions */

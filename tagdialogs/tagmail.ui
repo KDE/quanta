@@ -9,74 +9,12 @@
             <x>0</x>
             <y>0</y>
             <width>413</width>
-            <height>163</height>
+            <height>195</height>
         </rect>
     </property>
     <property name="caption">
         <string>Form1</string>
     </property>
-    <widget class="QLayoutWidget">
-        <property name="name">
-            <cstring>Layout9</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>10</x>
-                <y>130</y>
-                <width>403</width>
-                <height>28</height>
-            </rect>
-        </property>
-        <hbox>
-            <property name="name">
-                <cstring>unnamed</cstring>
-            </property>
-            <property name="margin">
-                <number>0</number>
-            </property>
-            <property name="spacing">
-                <number>6</number>
-            </property>
-            <widget class="QPushButton">
-                <property name="name">
-                    <cstring>buttonHelp</cstring>
-                </property>
-                <property name="text">
-                    <string>Help</string>
-                </property>
-            </widget>
-            <spacer>
-                <property name="name">
-                    <cstring>Spacer1</cstring>
-                </property>
-                <property name="orientation">
-                    <enum>Horizontal</enum>
-                </property>
-                <property name="sizeType">
-                    <enum>Expanding</enum>
-                </property>
-            </spacer>
-            <widget class="QPushButton">
-                <property name="name">
-                    <cstring>buttonOk</cstring>
-                </property>
-                <property name="text">
-                    <string>&amp;OK</string>
-                </property>
-                <property name="default">
-                    <bool>true</bool>
-                </property>
-            </widget>
-            <widget class="QPushButton">
-                <property name="name">
-                    <cstring>buttonCancel</cstring>
-                </property>
-                <property name="text">
-                    <string>Cancel</string>
-                </property>
-            </widget>
-        </hbox>
-    </widget>
     <widget class="QLayoutWidget">
         <property name="name">
             <cstring>Layout8</cstring>
@@ -101,7 +39,7 @@
             </property>
             <widget class="QLabel">
                 <property name="name">
-                    <cstring>TextLabel2</cstring>
+                    <cstring>AddressLabel</cstring>
                 </property>
                 <property name="text">
                     <string>E-mail address</string>
@@ -109,7 +47,7 @@
             </widget>
             <widget class="QLabel">
                 <property name="name">
-                    <cstring>TextLabel2_2</cstring>
+                    <cstring>SubjectLabel</cstring>
                 </property>
                 <property name="text">
                     <string>Subject</string>
@@ -117,52 +55,10 @@
             </widget>
             <widget class="QLabel">
                 <property name="name">
-                    <cstring>TextLabel1</cstring>
+                    <cstring>TitleLabel</cstring>
                 </property>
                 <property name="text">
                     <string>Title</string>
-                </property>
-            </widget>
-        </vbox>
-    </widget>
-    <widget class="QLayoutWidget">
-        <property name="name">
-            <cstring>Layout2</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>125</x>
-                <y>15</y>
-                <width>250</width>
-                <height>100</height>
-            </rect>
-        </property>
-        <vbox>
-            <property name="name">
-                <cstring>unnamed</cstring>
-            </property>
-            <property name="margin">
-                <number>0</number>
-            </property>
-            <property name="spacing">
-                <number>6</number>
-            </property>
-            <widget class="QLineEdit">
-                <property name="name">
-                    <cstring>lineEmail</cstring>
-                </property>
-            </widget>
-            <widget class="QLineEdit">
-                <property name="name">
-                    <cstring>lineSubject</cstring>
-                </property>
-            </widget>
-            <widget class="QLineEdit">
-                <property name="name">
-                    <cstring>lineTitle</cstring>
-                </property>
-                <property name="toolTip" stdset="0">
-                    <string>Some browsers use this field as the subject</string>
                 </property>
             </widget>
         </vbox>
@@ -197,15 +93,136 @@
             <string>...</string>
         </property>
     </widget>
+    <widget class="QLayoutWidget">
+        <property name="name">
+            <cstring>Layout9</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>5</x>
+                <y>160</y>
+                <width>403</width>
+                <height>28</height>
+            </rect>
+        </property>
+        <hbox>
+            <property name="name">
+                <cstring>unnamed</cstring>
+            </property>
+            <property name="margin">
+                <number>0</number>
+            </property>
+            <property name="spacing">
+                <number>6</number>
+            </property>
+            <widget class="QPushButton">
+                <property name="name">
+                    <cstring>buttonHelp</cstring>
+                </property>
+                <property name="text">
+                    <string>Help</string>
+                </property>
+            </widget>
+            <spacer>
+                <property name="name">
+                    <cstring>Spacer1</cstring>
+                </property>
+                <property name="orientation">
+                    <enum>Horizontal</enum>
+                </property>
+                <property name="sizeType">
+                    <enum>Expanding</enum>
+                </property>
+                <property name="sizeHint">
+                    <size>
+                        <width>20</width>
+                        <height>0</height>
+                    </size>
+                </property>
+            </spacer>
+            <widget class="QPushButton">
+                <property name="name">
+                    <cstring>buttonOk</cstring>
+                </property>
+                <property name="text">
+                    <string>&amp;OK</string>
+                </property>
+                <property name="default">
+                    <bool>true</bool>
+                </property>
+            </widget>
+            <widget class="QPushButton">
+                <property name="name">
+                    <cstring>buttonCancel</cstring>
+                </property>
+                <property name="text">
+                    <string>Cancel</string>
+                </property>
+            </widget>
+        </hbox>
+    </widget>
+    <widget class="QLayoutWidget">
+        <property name="name">
+            <cstring>Layout6</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>130</x>
+                <y>20</y>
+                <width>245</width>
+                <height>56</height>
+            </rect>
+        </property>
+        <grid>
+            <property name="name">
+                <cstring>unnamed</cstring>
+            </property>
+            <property name="margin">
+                <number>0</number>
+            </property>
+            <property name="spacing">
+                <number>6</number>
+            </property>
+            <widget class="QLineEdit" row="0" column="0">
+                <property name="name">
+                    <cstring>lineEmail</cstring>
+                </property>
+            </widget>
+            <widget class="QLineEdit" row="1" column="0">
+                <property name="name">
+                    <cstring>lineSubject</cstring>
+                </property>
+            </widget>
+        </grid>
+    </widget>
+    <widget class="QTextEdit">
+        <property name="name">
+            <cstring>titleEdit</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>130</x>
+                <y>85</y>
+                <width>245</width>
+                <height>24</height>
+            </rect>
+        </property>
+        <property name="vScrollBarMode">
+            <enum>AlwaysOff</enum>
+        </property>
+        <property name="hScrollBarMode">
+            <enum>AlwaysOff</enum>
+        </property>
+    </widget>
 </widget>
 <tabstops>
     <tabstop>lineEmail</tabstop>
     <tabstop>buttonAddressSelect</tabstop>
     <tabstop>lineSubject</tabstop>
-    <tabstop>lineTitle</tabstop>
+    <tabstop>titleEdit</tabstop>
+    <tabstop>buttonHelp</tabstop>
     <tabstop>buttonOk</tabstop>
     <tabstop>buttonCancel</tabstop>
-    <tabstop>buttonHelp</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>
