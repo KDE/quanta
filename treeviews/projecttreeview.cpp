@@ -375,7 +375,7 @@ void ProjectTreeView::slotRemoveFromProject(int askForRemove)
   if (item)
   {
     KURL url = currentURL();
-    QString nice = QExtFileInfo::toRelative(url, m_projectBaseURL).prettyURL(0, KURL::StripFileProtocol);
+    QString nice = QExtFileInfo::toRelative(url, m_projectBaseURL).path();
     nice = KStringHandler::lsqueeze(nice, 60);
     if ( !askForRemove ||
          KMessageBox::warningYesNo(this,i18n("<qt>Do you really want to remove <br><b>%1</b><br> from the project?</qt>").arg(nice), i18n("Remove From Project"), KStdGuiItem::yes(), KStdGuiItem::no(), "RemoveFromProject") == KMessageBox::Yes )
