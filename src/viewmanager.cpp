@@ -572,26 +572,38 @@ void ViewManager::slotTabContextMenu(QWidget *widget, const QPoint& point)
 {
    if (m_separatorVisible)
        m_tabPopup->removeItemAt(SEPARATOR_INDEX);
-   m_contextView = dynamic_cast<QuantaView*>(widget);
-   if (m_contextView && m_contextView->document())
+   m_separatorVisible = false;
+   m_contextView = dynamic_cast<QuantaView*>(widget);   
+   Document *w = 0L;
+   if (m_contextView)
+    w = m_contextView->document();       
+   if (w)
    {
-       m_tabPopup->insertSeparator(SEPARATOR_INDEX);
-       m_tabPopup->setItemVisible(RELOAD_ID, true);
-       if (Project::ref()->hasProject() && Project::ref()->contains(m_contextView->document()->url()))
+       if (!w->isUntitled())
+       {
+         m_separatorVisible = true;
+         m_tabPopup->insertSeparator(SEPARATOR_INDEX);
+       }
+       if (Project::ref()->hasProject() && Project::ref()->contains(w->url()))
          m_tabPopup->setItemVisible(UPLOAD_ID, true);
        else
          m_tabPopup->setItemVisible(UPLOAD_ID, false);
-       m_tabPopup->setItemVisible(DELETE_ID, true);
-       m_separatorVisible = true;
+       if (w->isUntitled())
+       {
+         m_tabPopup->setItemVisible(RELOAD_ID, false);
+         m_tabPopup->setItemVisible(DELETE_ID, false);
+       } else
+       {
+         m_tabPopup->setItemVisible(RELOAD_ID, true);
+         m_tabPopup->setItemVisible(DELETE_ID, true);
+       }
    } else
    {
        m_tabPopup->setItemVisible(RELOAD_ID, false);
        m_tabPopup->setItemVisible(UPLOAD_ID, false);
        m_tabPopup->setItemVisible(DELETE_ID, false);
-       m_separatorVisible = false;
    }
    bool bookmarksFound = false;
-   Document *w = m_contextView->document();
    if (w && w->markIf)
    {
      m_bookmarks->setDocument(w);           
