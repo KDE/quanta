@@ -1,7 +1,7 @@
 /***************************************************************************
                           main.cpp  -  description
                              -------------------
-    begin                : Втр Май  9 13:29:57 EEST 2000
+    begin                : О©╫О©╫О©╫О©╫ 9 13:29:57 EEST 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon <pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com>
                            (C) 2001-2002 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
@@ -53,8 +53,8 @@ versions of Quanta. \
 static KCmdLineOptions options[] =
 {
   { "+[File]", I18N_NOOP("File to open"), 0 },
-  { "unique", I18N_NOOP("Whether we start as a one-instance application."), 0 },
-  { "nologo", I18N_NOOP("Do not show the nice logo during startup."), 0 },
+  { "unique", I18N_NOOP("Whether we start as a one-instance application"), 0 },
+  { "nologo", I18N_NOOP("Do not show the nice logo during startup"), 0 },
   KCmdLineLastOption
   // INSERT YOUR COMMANDLINE OPTIONS HERE
 };
