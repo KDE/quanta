@@ -1931,4 +1931,14 @@ void QuantaApp::slotToolsChangeDTD()
   delete dlg;
 }
 
+/** No descriptions */
+void QuantaApp::focusInEvent(QFocusEvent* e)
+{
+ if (doc->write())
+ {
+    doc->write()->view()->setFocus();
+ }
+ KDockMainWindow::focusInEvent(e);
+}
+
 #include "quanta.moc"
