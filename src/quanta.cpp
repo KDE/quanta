@@ -1653,8 +1653,7 @@ void QuantaApp::selectArea(int line1, int col1, int line2, int col2)
 
 void QuantaApp::openDoc(const QString& url)
 {
-  KURL u;
-  u.setPath(url);
+  KURL u("file:"+url);
   if (u == m_htmlPartDoc->url())
     return;
 

@@ -31,6 +31,7 @@ Version 3.3 BE (Release date: xx-xx-2004; Started 26-01-2004):
         - make insertion and renaming in the project tree view work as expected
 	- make the New Project wizard usable on lower resolutions [#75192]
 	- fix creation of remote projects [#73172]
+	- fix opening of documentation pages with references [#70345]
         - various parsing fixes        
         - report bugs for "quanta" module, not for "quanta_be"        
     - performance:
