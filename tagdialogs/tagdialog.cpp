@@ -45,11 +45,13 @@ TagDialog::TagDialog(QTag* dtdTag, Tag *tag, KURL a_baseURL)
   init(dtdTag, a_baseURL);
 
   m_tag = tag;
-  for (int i = 0; i < m_tag->attrCount(); i++)
+  if (m_tag)
   {
-   dict->insert(m_tag->attribute(i), new QString(m_tag->attributeValue(i)));
+    for (int i = 0; i < m_tag->attrCount(); i++)
+    {
+    dict->insert(m_tag->attribute(i), new QString(m_tag->attributeValue(i)));
+    }
   }
-
   mainDlg = 0L;
   parseTag();
 

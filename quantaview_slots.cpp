@@ -413,7 +413,6 @@ void QuantaView::slotTagEditTable()
   TableEditor *editor = new TableEditor();
   if (tableExists)
   {
-    editor->setDTD(w->defaultDTD());
     editor->setBaseURL(baseURL());
     editor->setTableArea(bl, bc, el, ec);
   }

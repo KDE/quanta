@@ -12,7 +12,7 @@
 /* Copyright: (C) 2003 Andras Mantia &lt;amantia@kde.org&gt; */
 </comment>
 <author>Andras Mantia &lt;amantia@kde.org&gt;</author>
-<widget class="QDialog">
+<widget class="KDialog">
     <property name="name">
         <cstring>TableEditor</cstring>
     </property>
@@ -20,8 +20,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>625</width>
-            <height>537</height>
+            <width>682</width>
+            <height>697</height>
         </rect>
     </property>
     <property name="caption">
@@ -45,7 +45,7 @@
                 <property name="spacing">
                     <number>6</number>
                 </property>
-                <widget class="QPushButton">
+                <widget class="KPushButton">
                     <property name="name">
                         <cstring>buttonHelp</cstring>
                     </property>
@@ -76,7 +76,7 @@
                         </size>
                     </property>
                 </spacer>
-                <widget class="QPushButton">
+                <widget class="KPushButton">
                     <property name="name">
                         <cstring>buttonOk</cstring>
                     </property>
@@ -93,7 +93,7 @@
                         <bool>true</bool>
                     </property>
                 </widget>
-                <widget class="QPushButton">
+                <widget class="KPushButton">
                     <property name="name">
                         <cstring>buttonCancel</cstring>
                     </property>
@@ -111,7 +111,7 @@
         </widget>
         <widget class="QTabWidget" row="0" column="0">
             <property name="name">
-                <cstring>tabWidget2</cstring>
+                <cstring>tabWidget</cstring>
             </property>
             <widget class="QWidget">
                 <property name="name">
@@ -237,7 +237,7 @@
                             </size>
                         </property>
                     </spacer>
-                    <widget class="QPushButton" row="0" column="3">
+                    <widget class="KPushButton" row="0" column="3">
                         <property name="name">
                             <cstring>pushButton7</cstring>
                         </property>
@@ -245,7 +245,7 @@
                             <string>Table properties</string>
                         </property>
                     </widget>
-                    <widget class="QPushButton" row="1" column="3">
+                    <widget class="KPushButton" row="1" column="3">
                         <property name="name">
                             <cstring>pushButton7_2</cstring>
                         </property>
@@ -390,9 +390,12 @@
                             </size>
                         </property>
                     </spacer>
-                    <widget class="QPushButton" row="0" column="2">
+                    <widget class="KPushButton" row="0" column="2">
                         <property name="name">
                             <cstring>pushButton7_3</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
                         </property>
                         <property name="text">
                             <string>Header properties</string>
@@ -535,9 +538,12 @@
                             </size>
                         </property>
                     </spacer>
-                    <widget class="QPushButton" row="0" column="2">
+                    <widget class="KPushButton" row="0" column="2">
                         <property name="name">
                             <cstring>pushButton7_4</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
                         </property>
                         <property name="text">
                             <string>Footer properties</string>
@@ -639,30 +645,72 @@
         <receiver>TableEditor</receiver>
         <slot>slotEditTableFooter()</slot>
     </connection>
+    <connection>
+        <sender>headerCheckBox</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>pushButton7_3</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>footerCheckBox</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>pushButton7_4</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>headerTableData</sender>
+        <signal>contextMenuRequested(int,int,const QPoint&amp;)</signal>
+        <receiver>TableEditor</receiver>
+        <slot>slotContextMenuRequested(int,int,const QPoint&amp;)</slot>
+    </connection>
+    <connection>
+        <sender>footerTableData</sender>
+        <signal>contextMenuRequested(int,int,const QPoint&amp;)</signal>
+        <receiver>TableEditor</receiver>
+        <slot>slotContextMenuRequested(int,int,const QPoint&amp;)</slot>
+    </connection>
+    <connection>
+        <sender>tabWidget</sender>
+        <signal>currentChanged(QWidget*)</signal>
+        <receiver>TableEditor</receiver>
+        <slot>slotTabChanged(QWidget*)</slot>
+    </connection>
 </connections>
 <includes>
     <include location="local" impldecl="in declaration">kurl.h</include>
+    <include location="local" impldecl="in declaration">qvaluelist.h</include>
     <include location="local" impldecl="in implementation">tableeditor.ui.h</include>
 </includes>
 <forwards>
     <forward>class KPopupMenu</forward>
     <forward>class Tag</forward>
     <forward>struct DTDStruct</forward>
+    <forward>class Document</forward>
+    <forward>class Node</forward>
 </forwards>
 <variables>
-    <variable>Tag *m_table;</variable>
-    <variable>Tag *m_tfoot;</variable>
-    <variable>Tag *m_thead;</variable>
-    <variable>int newVariable;</variable>
-    <variable>Tag *m_tbody;</variable>
-    <variable>int m_colEditId;</variable>
-    <variable>int m_rowEditId;</variable>
-    <variable>int m_cellEditId;</variable>
-    <variable>int m_col;</variable>
-    <variable>int m_row;</variable>
-    <variable>KPopupMenu *m_popup;</variable>
-    <variable>KURL m_baseURL;</variable>
+    <variable>QValueList&lt;Node *&gt; *m_tableDataRows;</variable>
+    <variable>QValueList&lt;QValueList&lt;Node*&gt; &gt; *m_tableDataTags;</variable>
     <variable>DTDStruct *m_dtd;</variable>
+    <variable>KURL m_baseURL;</variable>
+    <variable>KPopupMenu *m_popup;</variable>
+    <variable>int m_row;</variable>
+    <variable>int m_col;</variable>
+    <variable>int m_cellEditId;</variable>
+    <variable>int m_rowEditId;</variable>
+    <variable>int m_colEditId;</variable>
+    <variable>Tag *m_tbody;</variable>
+    <variable>int newVariable;</variable>
+    <variable>Tag *m_thead;</variable>
+    <variable>Tag *m_tfoot;</variable>
+    <variable>Tag *m_table;</variable>
+    <variable>Document* m_write;</variable>
+    <variable>QValueList&lt;Node *&gt; *m_tableRows;</variable>
+    <variable>QValueList&lt;Node *&gt; *m_tableHeaderRows;</variable>
+    <variable>QValueList&lt;Node *&gt; *m_tableFooterRows;</variable>
+    <variable>QValueList&lt;QValueList&lt;Node*&gt; &gt; *m_tableHeaderTags;</variable>
+    <variable>QValueList&lt;QValueList&lt;Node*&gt; &gt; *m_tableFooterTags;</variable>
+    <variable>QValueList&lt;QValueList&lt;Node*&gt; &gt; *m_tableTags;</variable>
 </variables>
 <slots>
     <slot>slotContextMenuRequested( int row, int col, const QPoint &amp; pos )</slot>
@@ -673,13 +721,23 @@
     <slot>slotEditTableBody()</slot>
     <slot>slotEditTableHeader()</slot>
     <slot>slotEditTableFooter()</slot>
+    <slot>slotTabChanged( QWidget * w )</slot>
 </slots>
 <functions>
     <function>init()</function>
     <function>destroy()</function>
     <function>setTableArea( int bLine, int bCol, int eLine, int eCol )</function>
-    <function>setDTD( DTDStruct * dtd )</function>
     <function>setBaseURL( const KURL &amp; url )</function>
 </functions>
 <layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>kdialog.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+</includehints>
 </UI>
