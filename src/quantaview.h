@@ -223,12 +223,9 @@ protected:
   virtual void dropEvent(QDropEvent *e);
   virtual void dragEnterEvent(QDragEnterEvent *e);
 
-#ifdef BUILD_KAFKAPART
   /** Reimplemented, as we never should delete the ToolBarTabWidget singleton, which
   might be the child of this view */
   virtual void closeEvent(QCloseEvent *e);
-
-#endif
 };
 
 #endif // QUANTAVIEW_H
