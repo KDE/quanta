@@ -27,7 +27,18 @@ class kNodeAttrs
 public:
 	kNodeAttrs();
 	~kNodeAttrs();
-
+	int getType() {return type;}
+	Node *getNode() {return node;}
+	bool cbDel() {return cbDeleted;}
+	bool cbMod() {return cbModified;}
+	int chCurFoc() {return chCursorFocus;}
+	bool ccanEnter() {return ccEnter;}
+	void setType(int _type) {type = _type;}
+	void setNode(Node *_node) {node = _node;}
+	void setCBDeleted(bool _cbDeleted) {cbDeleted = _cbDeleted;}
+	void setCBModified(bool _cbModified) {cbModified = _cbModified;}
+	void setCHCursorFocus(int _chCursorFocus) {chCursorFocus = _chCursorFocus;}
+	void setCCEnter(bool _ccEnter) {ccEnter = _ccEnter;}
 
 enum cursorFocus {
 	no = 0,
@@ -39,6 +50,7 @@ enum cursorFocus {
 	textNode
 };
 
+private:
 	int type;
 	Node* node;
 	bool cbDeleted;

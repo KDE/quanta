@@ -33,9 +33,6 @@
 #include <dom/dom2_range.h>
 #include <dom/dom_element.h>
 
-//#include "kafkahtmlpartplugin.h"
-
-
 
 //*** if you want a very useful DOMTreeView attached to the kafkahtmlPart ***//
 #define KAFKA_DEBUG_UTILITIES
@@ -46,6 +43,7 @@ class KafkaDOMTreeDialog;
 
 class DOMString;
 class KafkaHTMLPartPrivate;
+class WKafkaPart;
 
 /*
  * The main kafka class which handles user input(keyboard, mouse), DOM object
@@ -56,7 +54,8 @@ class KafkaHTMLPart : public KHTMLPart
 {
 Q_OBJECT
 public:
-	KafkaHTMLPart(QWidget *parent, QWidget *widgetParent, const char *name);
+	KafkaHTMLPart(QWidget *parent, QWidget *widgetParent, WKafkaPart *part,
+		const char *name = 0);
 	~KafkaHTMLPart();
 
 	/**
@@ -328,6 +327,7 @@ private:
 	DOM::Node m_currentNode;
 	DOM::Range m_currentSelection;
 	KafkaHTMLPartPrivate *d;
+	WKafkaPart *w;
 	friend class KafkaHTMLPartPrivate;
 };
 

@@ -41,7 +41,7 @@
 WKafkaPart::WKafkaPart(QWidget *parent, QWidget *widgetParent, const char *name)
 :domNodeProps(1021)
 {
-	_kafkaPart = new KafkaHTMLPart(parent, widgetParent, name);
+	_kafkaPart = new KafkaHTMLPart(parent, widgetParent,this, name);
 	_kafkaPart->showDomTree();
 	_docLoaded = false;
 	_rootNode = 0L;
@@ -762,8 +762,13 @@ Node *WKafkaPart::searchCorrespondingNode(DOM::Node _domNode)
 			" Corresponding Node not Found!!!" << endl;
 		return 0L;
 	}
-	return props->node;
+	return props->getNode();
 	//return domNodeToNode[_domNode.handle()];
+}
+
+kNodeAttrs *WKafkaPart::getAttrs(DOM::Node _domNode)
+{
+	return domNodeProps[_domNode.handle()];
 }
 
 void WKafkaPart::coutTree(Node *node, int indent)
@@ -1260,30 +1265,30 @@ void WKafkaPart::connectDomNodeToQuantaNode(DOM::Node _domNode, Node *_node)
 			" canBeModified:" << qtag->canBeModified() <<
 			" canHaveCursorFocus:" << qtag->canHaveCursorFocus() <<
 			" cursorCanEnter:" << qtag->cursorCanEnter() << endl;
-		props->cbDeleted = qtag->canBeDeleted();
-		props->cbModified = qtag->canBeModified();
-		props->chCursorFocus = qtag->canHaveCursorFocus();
-		props->ccEnter = qtag->cursorCanEnter();
+		props->setCBDeleted(qtag->canBeDeleted());
+		props->setCBModified(qtag->canBeModified());
+		props->setCHCursorFocus(qtag->canHaveCursorFocus());
+		props->setCCEnter(qtag->cursorCanEnter());
 	}
 	else if(_domNode.nodeType() == DOM::Node::TEXT_NODE)
 	{
 		kdDebug(25001)<< "WKafkaPart::connectDomNodeToQuantaNode() - " <<
 			"Text Node, setting default text parameters" << endl;
-		props->cbDeleted = true;
-		props->cbModified = true;
-		props->chCursorFocus = kNodeAttrs::textNode;
-		props->ccEnter = true;
+		props->setCBDeleted(true);
+		props->setCBModified(true);
+		props->setCHCursorFocus(kNodeAttrs::textNode);
+		props->setCCEnter(true);
 	}
 	else
 	{
 		kdDebug(25001)<< "WKafkaPart::connectDomNodeToQuantaNode () - " <<
 			"No QTag found! Setting default parameters..." << endl;
-		props->cbDeleted = false;
-		props->cbModified = false;
-		props->chCursorFocus = kNodeAttrs::no;
-		props->ccEnter = false;
+		props->setCBDeleted(false);
+		props->setCBModified(false);
+		props->setCHCursorFocus(kNodeAttrs::no);
+		props->setCCEnter(false);
 	}
-	props->node = _node;
+	props->setNode(_node);
 	domNodeProps.insert(_domNode.handle(), props);
 }
 

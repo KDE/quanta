@@ -111,8 +111,13 @@ void TagDialog::parseTag()
   if (dtdTag->name() != i18n("Unknown tag")) //read from the extra tags
   {
     QDomDocument doc;
+    if (dtdTag->name().lower() == "img") //NOTE: HTML specific code!
+    {
+       mainDlg = new TagImgDlg( this);
+      ((TagImgDlg *)mainDlg)->writeAttributes( dict );
+    }
     //read the tag file it is available
-    if (QFileInfo(dtdTag->fileName()).exists())
+    else if (QFileInfo(dtdTag->fileName()).exists())
     {
       QFile f( dtdTag->fileName() );
      f.open( IO_ReadOnly );
@@ -132,20 +137,13 @@ void TagDialog::parseTag()
     }
     else
     {
-      if (dtdTag->name().lower() == "img") //NOTE: HTML specific code!
-      {
-         mainDlg = new TagImgDlg( this);
-        ((TagImgDlg *)mainDlg)->writeAttributes( dict );
-      } else
-      {
-        QString docString = "<!DOCTYPE TAGS>\n<TAGS>\n";
-        docString += QString("<tag name=\"%1\">\n").arg(dtdTag->name());
-        docString += QuantaCommon::xmlFromAttributes(dtdTag->attributes());
-        docString += "</tag>\n</TAGS>\n";
-        doc.setContent(docString);
-        QDomNode domNode2 = doc.firstChild().firstChild();
-        mainDlg = new Tagxml( domNode2, dtdTag->parentDTD, this );
-      }
+      QString docString = "<!DOCTYPE TAGS>\n<TAGS>\n";
+      docString += QString("<tag name=\"%1\">\n").arg(dtdTag->name());
+      docString += QuantaCommon::xmlFromAttributes(dtdTag->attributes());
+      docString += "</tag>\n</TAGS>\n";
+      doc.setContent(docString);
+      QDomNode domNode2 = doc.firstChild().firstChild();
+      mainDlg = new Tagxml( domNode2, dtdTag->parentDTD, this );
     }
 
   if ( mainDlg )

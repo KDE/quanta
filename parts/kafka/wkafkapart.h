@@ -22,7 +22,6 @@ namespace DOM
 {
 	class Node;
 }
-class KafkaHTMLPart;
 class Document;
 class Node;
 class Parser;
@@ -31,7 +30,6 @@ class kNodeAttrs;
 #include <qmap.h>
 #include <qobject.h>
 #include <qptrdict.h>
-
 #include "kafkahtmlpart.h"
 
 /**
@@ -72,6 +70,12 @@ public:
 	 * @return Returns the current Document.
 	 */
 	Document *getCurrentDoc() {return _currentDoc;}
+
+	/**
+	 * @param _node The DOM::Node we want the attributess.
+	 * @return Return the corresponding kNodeAttrs of the DOM::Node.
+	 */
+	kNodeAttrs *getAttrs(DOM::Node _domNode);
 
 public slots:
 	/**
