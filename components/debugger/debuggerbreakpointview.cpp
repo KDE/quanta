@@ -104,7 +104,7 @@ void DebuggerBreakpointView::showBreakpoint(const DebuggerBreakpoint &bp)
     }
   item->setText(DebuggerBreakpointViewColumns::File, bp.filePath());
   item->setText(DebuggerBreakpointViewColumns::Expression, bp.condition());
-  item->setText(DebuggerBreakpointViewColumns::Line, (bp.condition().isEmpty() ? QString::number((bp.line())) : ""));
+  item->setText(DebuggerBreakpointViewColumns::Line, (bp.condition().isEmpty() ? QString::number((bp.line())) : QString()));
 
 }
 
@@ -116,7 +116,7 @@ QListViewItem* DebuggerBreakpointView::findBreakpoint(const DebuggerBreakpoint& 
   {
     if(item->text(DebuggerBreakpointViewColumns::File) == bp.filePath()
     && item->text(DebuggerBreakpointViewColumns::Expression) == bp.condition()
-    && item->text(DebuggerBreakpointViewColumns::Line) == (bp.condition().isEmpty() ? QString::number(bp.line()) : "")
+    && item->text(DebuggerBreakpointViewColumns::Line) == (bp.condition().isEmpty() ? QString::number(bp.line()) : QString())
     )
       break;
 
