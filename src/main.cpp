@@ -21,9 +21,11 @@
 #include <klocale.h>
 #include <kaboutdata.h>
 #include <kiconloader.h>
-#include <kcmdlineargs.h>
 #include <ksimpleconfig.h>
-//#include <kdebug.h>
+#include <kdebug.h>
+#include <kcmdlineargs.h>
+#include <dcopclient.h>
+#include <dcopref.h>
 
 // qt includes
 #include <qpixmap.h>
@@ -33,8 +35,8 @@
 #include <qfileinfo.h>
 
 // app includes
-#include "config.h"
 #include "kqapp.h"
+#include "config.h"
 
 static const char *description =
   I18N_NOOP("Quanta Plus Web Development Environment");
@@ -138,7 +140,7 @@ int main(int argc, char *argv[])
     I18N_NOOP("Splash screen and icon for 3.2"),
     "luci@sh.ground.cz");
 
-  KCmdLineArgs::init( argc, argv, &aboutData );
+  KCmdLineArgs::init( argc, argv, &aboutData);
   KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
 
   // this defeats the purpose of KCmdLineArgs, but there is no other
@@ -156,14 +158,26 @@ int main(int argc, char *argv[])
   KApplication *app;
   KApplication::disableAutoDcopRegistration();
 
+
   if (isUnique) {
+      KUniqueApplication::dcopClient()->registerAs("quanta-foo");
+      if (KUniqueApplication::dcopClient()->isApplicationRegistered("quanta"))
+      {
+          KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+           for (int i = 0; i < args->count(); i++)
+          {
+              QString s = args->url(i).url();
+              DCOPRef("quanta", "WindowManagerIf").call("openFile(QString, int, int)", s, 1, 1); // Activate it
+          }
+          DCOPRef("quanta", PACKAGE).call("newInstance()");
+          exit(0);
+      }
 //  if (!KQUniqueApplication::start())
 //    exit(0);
   app = new KQUniqueApplication;
   } else {
   app = new KQApplication;
   }
-
   qInitNetworkProtocols();
 
 //  kdDebug(24000)<<"Calling app->exec()"<<endl;

@@ -3739,9 +3739,14 @@ QString QuantaApp::saveCurrentFile()
 
 void QuantaApp::slotReportBug()
 {
-  KAboutData aboutData( "quanta", I18N_NOOP("Quanta"), VERSION);
+  KAboutData aboutData("quanta", I18N_NOOP("Quanta"), VERSION);
   KBugReport bugReportDlg(this, true, &aboutData);
   bugReportDlg.exec();
+}
+
+void QuantaApp::slotHelpContents()
+{
+  kapp->invokeHelp("", "quanta_be");
 }
 
 void QuantaApp::slotNewPart(KParts::Part *newPart, bool setActiv)

@@ -126,6 +126,7 @@ bool QuantaDoc::newDocument( const KURL& url, bool switchToExisting )
 void QuantaDoc::openDocument(const KURL& urlToOpen, const QString &a_encoding,
 bool switchToExisting)
 {
+  kdDebug(24000) << urlToOpen << endl;
   KURL url = urlToOpen;
   if (url.isLocalFile())
   {

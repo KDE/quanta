@@ -28,13 +28,13 @@
 #include <kglobalsettings.h>
 #include <dcopclient.h>
 
-#include "config.h"
 #include "quantacommon.h"
 #include "project.h"
 #include "quanta.h"
 #include "quanta_init.h"
 #include "kqapp.h"
 
+#include "config.h"
 
 QuantaApp *quantaApp = 0L; //global pointer to the main application object
 
@@ -107,12 +107,13 @@ KQApplication::~KQApplication()
 {
 }
 
+
 KQUniqueApplication::KQUniqueApplication()
  : KUniqueApplication()
 {
   KGlobal::dirs()->addPrefix(PREFIX);
+  dcopClient()->registerAs("quanta", false);
 }
-
 
 KQUniqueApplication::~KQUniqueApplication()
 {
@@ -138,7 +139,6 @@ int KQUniqueApplication::newInstance()
   }
   else
   {
-    dcopClient()->registerAs("quanta", false);
     splash = 0L;
     KConfig *config = kapp->config();
     config->setGroup("General Options");

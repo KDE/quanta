@@ -72,7 +72,6 @@ class KQUniqueApplication : public KUniqueApplication, KQApplicationPrivate
   public slots:
     /** No descriptions */
     void slotInit();
-
 };
 
 #endif

@@ -675,6 +675,8 @@ void QuantaInit::initActions()
                         ac, "expand_abbreviation" );
 
     new KAction(i18n("&Report Bug..."), 0, m_quanta, SLOT(slotReportBug()), ac, "help_reportbug"); //needed, because quanta_be bugs should be reported for quanta
+    new KAction(i18n("Quanta &Handbook2"),   "contents", m_quanta, SLOT( slotHelpContents()), ac, "m2y_help_contents" );
+
     //Kate actions
 
 //Edit menu
