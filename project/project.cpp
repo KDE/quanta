@@ -1563,7 +1563,7 @@ void Project::openCurrentView()
           {
             quantaApp->slotLoadToolbarFile(url);
           }
-          kapp->eventLoop()->processEvents( QEventLoop::ExcludeUserInput | QEventLoop::ExcludeSocketNotifiers);
+          //kapp->eventLoop()->processEvents( QEventLoop::ExcludeUserInput | QEventLoop::ExcludeSocketNotifiers);
         }
         break;
       }
