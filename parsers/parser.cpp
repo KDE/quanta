@@ -272,7 +272,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
           area.eCol = endCol;
           currentNode = m_saParser->parseArea(area, "", "</"+tag->name+"\\s*>", node, false, true);
           //restore & set the new variables
-        // node->tag->dtd = savedDTD;
+          node->tag->dtd = savedDTD;
           line = m_saParser->lastParsedLine();
           textLine = ParserCommon::getLine(write, line, endLine, endCol);
           col = m_saParser->lastParsedColumn();

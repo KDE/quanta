@@ -429,6 +429,7 @@ bool SAParser::slotParseOneLine()
               if (m_synchronous)
               {
                 //slotParseOneLine();
+                return true;
               }
               else
               {
