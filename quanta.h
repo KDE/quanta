@@ -236,6 +236,7 @@ public slots:
   void viewMenuAboutToShow();
   void settingsMenuAboutToShow();
   void setEOLMenuAboutToShow();
+  void slotContextMenuAboutToShow();
   void bookmarkMenuAboutToShow();
   void gotoBookmark(int n);
 
@@ -333,6 +334,7 @@ protected slots:
   void slotHelpTip();
   /** Show the user mailing list sign up */
   void slotHelpUserList();
+  void slotOpenFileUnderCursor();
 
 protected:
   WHTMLPart *htmlPart();
@@ -487,6 +489,7 @@ protected: // Protected attributes
 
   /* Store the old shortcuts from the local quantaui.rc */
   QMap<QString, QString> oldShortcuts;
+  KURL urlUnderCursor;
 
 public: //TODO: check if it's worth to make a read method for them
   QPtrList<KTempFile> tempFileList;

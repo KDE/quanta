@@ -223,6 +223,8 @@ void QuantaApp::initQuanta()
   QPopupMenu *toolbarsMenu  = (QPopupMenu*)guiFactory()->container("toolbars_load", this);
   connect(toolbarsMenu, SIGNAL(aboutToShow()), this, SLOT(slotBuildPrjToolbarsMenu()));
 
+  connect(guiFactory()->container("popup_editor", quantaApp), SIGNAL(aboutToShow()), this, SLOT(slotContextMenuAboutToShow()));
+
   connect(messageOutput, SIGNAL(clicked(const QString&,int)),
           this, SLOT(gotoFileAndLine(const QString&,int)));
 
@@ -1795,6 +1797,8 @@ void QuantaApp::initActions()
 
     KStdAction::back(this, SLOT( slotBack() ), ac, "w_back");
     KStdAction::forward(this, SLOT( slotForward() ), ac, "w_forward");
+
+    new KAction(i18n("Open File: none"), 0, this, SLOT(slotOpenFileUnderCursor()), ac, "open_file_under_cursor");
 
     m_actions = new QDomDocument();
 //load the global actions

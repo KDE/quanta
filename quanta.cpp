@@ -1589,6 +1589,112 @@ void QuantaApp::setEOLMenuAboutToShow()
   }
 }
 
+void QuantaApp::slotContextMenuAboutToShow()
+{
+  if (m_view->writeExists())
+  {
+    QString name;
+    uint line, col;
+    int bl, bc, el, ec;
+    QString tagStr;
+    m_view->write()->viewCursorIf->cursorPositionReal(&line, &col);
+    Node *node = parser->nodeAt(line, col, false);
+    if (node)
+    {
+      StructTreeGroup group;
+      for (uint i = 0; i < node->tag->dtd->structTreeGroups.count(); i++)
+      {
+        group = node->tag->dtd->structTreeGroups[i];
+        if (group.hasFileName)
+        {
+          if (node->tag->dtd->family == Script)
+          {
+            if (!group.hasSearchRx )
+              continue;
+            tagStr =  node->tag->tagStr();
+            int pos = 0;
+            while (pos != -1)
+            {
+              pos = group.searchRx.search(node->tag->cleanStr, pos);
+              if (pos != -1)
+              {
+                name = tagStr.mid(pos, group.searchRx.matchedLength());
+                node->tag->beginPos(bl, bc);
+                QString tmpStr = tagStr.left(pos);
+                int newLines = tmpStr.contains('\n');
+                bl += newLines;
+                int l = tmpStr.findRev('\n'); //the last EOL
+                bc = (l == -1) ? bc+pos : pos - l - 1;
+                newLines = name.contains('\n');
+                l = name.length();
+                el = bl + newLines;
+                ec = (newLines > 0) ? l - name.findRev('\n') : bc + l - 1;
+                pos += l;
+                name.remove(group.clearRx);
+                if (QuantaCommon::isBetween(line, col, bl, bc, el, ec) == 0)
+                {
+                  break;
+                } else
+                {
+                  name = "";
+                }
+              }
+            }
+          } else
+          if (node->tag->name.lower() == group.tag)
+          {
+            for (uint j = 0; j < group.attributes.count(); j++)
+            {
+              if (node->tag->hasAttribute(group.attributes[j]))
+              {
+                name.append(node->tag->attributeValue(group.attributes[j]));
+                name.append(" | ");
+              }
+            }
+            name = name.left(name.length()-3);
+            name.remove('\n');
+          }
+          name.remove(group.fileNameRx);
+          if (!name.isEmpty())
+          break;
+        }
+      }
+    }
+    QPopupMenu *menu = dynamic_cast<QPopupMenu*>(factory()->container("popup_editor", quantaApp));
+    KAction *action = actionCollection()->action("open_file_under_cursor");
+    if (menu && !name.isEmpty())
+    {
+      QuantaCommon::setUrl(urlUnderCursor, name.stripWhiteSpace());
+      KURL baseUrl = QExtFileInfo::path(m_view->write()->url());
+      urlUnderCursor = QExtFileInfo::toAbsolute(urlUnderCursor, baseUrl);
+      if (action)
+      {
+        action->setText(i18n("Open File: %1").arg(urlUnderCursor.prettyURL()));
+        action->setEnabled(true);
+      }
+    } else
+    if (action)
+    {
+      action->setText(i18n("Open File: none"));
+      action->setEnabled(false);
+    }
+  }
+}
+
+void QuantaApp::slotOpenFileUnderCursor()
+{
+  if ( QuantaCommon::checkMimeGroup(urlUnderCursor,"text" ) )
+  {
+    slotFileOpen( urlUnderCursor, defaultEncoding() );
+  }
+  else if ( QuantaCommon::checkMimeGroup(urlUnderCursor,"image" ) )
+  {
+    slotActivatePreview();
+    slotImageOpen( urlUnderCursor );
+  }
+
+}
+
 void QuantaApp::bookmarkMenuAboutToShow()
 {
   if (m_view->writeExists())
