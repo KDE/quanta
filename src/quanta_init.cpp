@@ -115,7 +115,7 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta"), DCOPObject("WindowManager
   {
     quantaStarted = false;
     kdWarning() << "***************************************************************************" << endl
-                << i18n("Quanta data files were not found.\nYou might forgot to run \"make install\","
+                << i18n("Quanta data files were not found.\nYou may have forgotten to run \"make install\","
                         "or your KDEDIR, KDEDIRS or PATH is not set correctly.!") << endl
                 << "***************************************************************************" << endl;
     QTimer::singleShot(20, kapp, SLOT(quit()));
@@ -536,7 +536,7 @@ void QuantaApp::initView()
           this, SLOT(slotImageOpen(const KURL&)));
   connect(sTab, SIGNAL(showPreviewWidget(bool)),
           this, SLOT(slotShowPreviewWidget(bool)));
-  connect(parser, SIGNAL(nodeTreeChanged()), sTab, SLOT(slotNodeTreeChanged()));        
+  connect(parser, SIGNAL(nodeTreeChanged()), sTab, SLOT(slotNodeTreeChanged()));
 
   connect(dTab, SIGNAL(openURL(const QString&)), SLOT(openDoc(const QString&)));
 
@@ -829,7 +829,7 @@ void QuantaApp::openLastFiles()
  //   kapp->eventLoop()->processEvents( QEventLoop::ExcludeUserInput | QEventLoop::ExcludeSocketNotifiers);
   }
   m_config->sync();
-  m_doc->blockSignals(false);  
+  m_doc->blockSignals(false);
   m_view->writeTab()->blockSignals(false);
   Document *w = m_view->write();
   if (w) //w==0 might happen on quick close on startup
@@ -2172,7 +2172,7 @@ void QuantaApp::slotPluginsValidate()
   {
     if(!QuantaPlugin::validatePlugin(it.current()))
     {
-      int answer = KMessageBox::warningYesNo(m_view, i18n("You have plugins installed that aren't currently valid. Do you want to edit the plugins?"), i18n("Invalid Plugins"));
+      int answer = KMessageBox::warningYesNo(m_view, i18n("You have plugins installed that are not currently valid. Do you want to edit the plugins?"), i18n("Invalid Plugins"));
       if(answer == KMessageBox::Yes)
       {
         slotPluginsEdit();
@@ -2327,7 +2327,7 @@ void QuantaApp::recoverCrashed(QStringList& recoveredFileNameList)
      }
     }
   }
-  
+
   m_view->writeTab()->blockSignals(false);
  }
  void QuantaApp::execCommandPS(const QString& cmd)

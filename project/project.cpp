@@ -188,15 +188,15 @@ void Project::insertFile(const KURL& nameURL, bool repaint )
     return;
   KURL url = relNameURL;
   url.setPath(relNameURL.directory(false));
-  while (!url.path().isEmpty())  
+  while (!url.path().isEmpty())
   {
     if (!m_projectFiles.contains(url))
     {
       el = dom.createElement("item");
-      el.setAttribute("url", QuantaCommon::qUrl(url));      
+      el.setAttribute("url", QuantaCommon::qUrl(url));
       dom.firstChild().firstChild().appendChild( el );
       m_projectFiles.append(url);
-    }      
+    }
     url.setPath(url.directory(false));
   }
 
@@ -252,16 +252,16 @@ void Project::insertFiles( KURL::List files )
     {
       KURL url = *it;
       url.setPath(url.directory(false));
-      while (!url.path().isEmpty())  
+      while (!url.path().isEmpty())
       {
         if (!m_projectFiles.contains(url))
         {
           el = dom.createElement("item");
           el.setAttribute("url", QuantaCommon::qUrl(url));
-          dom.firstChild().firstChild().appendChild(el);   
+          dom.firstChild().firstChild().appendChild(el);
           m_projectFiles.append(url);
           m_modified = true;
-        }      
+        }
         url.setPath(url.directory(false));
       }
       el = dom.createElement("item");
@@ -326,7 +326,7 @@ bool Project::createEmptyDom()
   if (!result)
   {
     emit hideSplash();
-    KMessageBox::sorry(this, i18n("<qt>Can't open file <b>%1</b> for writing.</qt>").arg(projectURL.prettyURL(0, KURL::StripFileProtocol)));
+    KMessageBox::sorry(this, i18n("<qt>Cannot open file <b>%1</b> for writing.</qt>").arg(projectURL.prettyURL(0, KURL::StripFileProtocol)));
     return false;
   }
 

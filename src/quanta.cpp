@@ -794,9 +794,9 @@ void QuantaApp::slotNewStatus()
       KToggleAction *a = dynamic_cast<KToggleAction*>(w->view()->actionCollection()->action("set_insert"));
       if (a)
       {
-        statusBar()->changeItem(a->isChecked() ? i18n(" OVR ") : i18n(" INS "),IDS_INS_OVR); 
+        statusBar()->changeItem(a->isChecked() ? i18n(" OVR ") : i18n(" INS "),IDS_INS_OVR);
       }
-    }        
+    }
     else
         statusBar()->changeItem(i18n(" R/O "),IDS_INS_OVR);
     statusBar()->changeItem(w->isModified() ? " * " : "",IDS_MODIFIED);
@@ -889,7 +889,7 @@ void QuantaApp::slotNewStatus()
     wTab->setCurrentPage(pageId);
 #ifdef BUILD_KAFKAPART
     view()->setKafkaReloadingEnabled(true);
-#endif    
+#endif
     parser->setParsingEnabled(true);
     wTab->blockSignals(block);
  }
@@ -2083,7 +2083,7 @@ void QuantaApp::bookmarkMenuAboutToShow()
     pm_bookmark->insertSeparator ();
     bookmarkPrev->plug (pm_bookmark);
     bookmarkNext->plug (pm_bookmark);
- 
+
     Document *w = m_view->write();
     markList = dynamic_cast<KTextEditor::MarkInterface*>(w->doc())->marks();
   //Based on Kate code
@@ -2178,7 +2178,7 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
    }
    if ( (toolbarDom->toString().isEmpty()) ) //|| (actionContent.isEmpty()))
    {
-     KMessageBox::error(this, i18n("Cannot load the toolbars from the archive.\nCheck that the filenames inside the archives begin with the archive name!"));
+     KMessageBox::error(this, i18n("Cannot load the toolbars from the archive.\nCheck that the filenames inside the archives begin with the archive name."));
      return;
    }
 
@@ -3771,8 +3771,8 @@ void QuantaApp::slotDeleteFile()
 }
 
 //FIXME: Do it right and add the GUI and shortcuts of the current part (editor, html, plugin)
-//so we don't have to catch ourselves the different actions. Would reduce the code. The 
-//reason behind the current implementation is that I like to have a control about 
+//so we don't have to catch ourselves the different actions. Would reduce the code. The
+//reason behind the current implementation is that I like to have a control about
 //disabled/enabled actions, like the save, copy, etc. And idea would be to get the actions
 //each time in slotNewStatus() from the part's actionCollection, but I don't know what would
 //be the performance impact. This is a must to do in 3.3!!

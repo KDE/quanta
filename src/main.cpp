@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
 
   //aboutData.otherText(&othertext);
 
-   aboutData.addAuthor("Eric Laffoon",I18N_NOOP("Project Lead - public liason"), "sequitur@kde.org");
+   aboutData.addAuthor("Eric Laffoon",I18N_NOOP("Project Lead - public liaison"), "sequitur@kde.org");
    aboutData.addAuthor("Andras Mantia",I18N_NOOP("Program Lead - bug squisher"), "amantia@kde.org");
    aboutData.addAuthor("Dmitry Poplavsky",I18N_NOOP("Inactive - left for commercial version"), "dima@kde.org");
    aboutData.addAuthor("Alexander Yakovlev",I18N_NOOP("Inactive - left for commercial version"), "yshurik@kde.org");

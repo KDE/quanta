@@ -332,7 +332,7 @@ void htmlDocumentProperties::newCSSRule()
 void htmlDocumentProperties::editCSSRule()
 {
 //Make this using the big CSS dialog, need parsing!!
-	KMessageBox::information(this, i18n("Sorry, VPL doesn't support this functionality yet!"));
+	KMessageBox::information(this, i18n("Sorry, VPL does not support this functionality yet."));
 }
 
 void htmlDocumentProperties::deleteCurrentCSSRule()

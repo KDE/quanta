@@ -23,11 +23,11 @@
 #include <klocale.h>
 #include <qstringlist.h>
 
-static const QString info1=i18n("You must select an area!"),
-		     info2=i18n("Before editing a frame you must save the file!");
-		     
+static const QString info1=i18n("You must select an area."),
+		     info2=i18n("Before editing a frame you must save the file.");
+
 FrameWizard::FrameWizard(QWidget *parent, const char *name) : FrameWizardS(parent, name),
-saved(false),framesetFileCurrentPath(QString::null) 
+saved(false),framesetFileCurrentPath(QString::null)
 {
   hasSelected = false;
   currSA=vfe->initSA();
@@ -101,14 +101,14 @@ void FrameWizard::showFrameEditorDlg()
     else KMessageBox::information( this, info1, i18n("Warning") );
     hasSelected=false;
     }
-  else  KMessageBox::information( this, info2, i18n("Warning") ); 
+  else  KMessageBox::information( this, info2, i18n("Warning") );
 }
 
 void FrameWizard::reset(){
     vfe->reset();
     draw();
 }
-    
+
 void FrameWizard::remove()
 {
     if(hasSelected) {

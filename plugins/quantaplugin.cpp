@@ -122,7 +122,7 @@ bool QuantaPlugin::load()
   }
   else
   {
-    KMessageBox::error(quantaApp, i18n("Invalid output window setting!"));
+    KMessageBox::error(quantaApp, i18n("Invalid output window setting."));
     return false;
   }
   if (m_readOnlyPart)
@@ -131,7 +131,7 @@ bool QuantaPlugin::load()
     m_part = KParts::ComponentFactory::createPartInstanceFromLibrary<KParts::ReadWritePart>(partInfo.baseName().latin1(), targetWidget, 0, targetWidget, 0 );
   if(!m_part)
   {
-    KMessageBox::error(quantaApp, i18n("<qt>The <b>%1</b> plugin could not be loaded!<br>Possible reasons are:<br>    - <b>%2</b> is not installed;<br>    - the file <i>%3</i> is not installed or it is not reachable.").arg(m_name).arg(m_name).arg(m_fileName));
+    KMessageBox::error(quantaApp, i18n("<qt>The <b>%1</b> plugin could not be loaded.<br>Possible reasons are:<br>    - <b>%2</b> is not installed;<br>    - the file <i>%3</i> is not installed or it is not reachable.").arg(m_name).arg(m_name).arg(m_fileName));
     return false;
   }
   return true;

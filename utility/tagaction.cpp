@@ -327,7 +327,7 @@ void TagAction::insertTag(bool inputFromFile, bool outputToFile)
       proc->closeStdin();
     } else
     {
-      KMessageBox::error(quantaApp, i18n("<qt>There was an error running <b>%1</b>.<br>Check that you have the <i>%2</i> executable installed and it is accessible!</qt>").arg(command + " " + args).arg(command), i18n("Script Not Found"));
+      KMessageBox::error(quantaApp, i18n("<qt>There was an error running <b>%1</b>.<br>Check that you have the <i>%2</i> executable installed and it is accessible.</qt>").arg(command + " " + args).arg(command), i18n("Script Not Found"));
     }
   }
 #ifdef BUILD_KAFKAPART
@@ -343,7 +343,7 @@ void TagAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
   Document *w = m_view->write();
   if (!w)
   {
-    kdDebug(24000) << "Document not found!" << endl;
+    kdDebug(24000) << "Document not found." << endl;
     return;
   }
   if ( scriptOutputDest == "cursor" )

@@ -79,7 +79,7 @@
 
 void QuantaView::slotEditCurrentTag()
 {
-  if (!writeExists()) 
+  if (!writeExists())
     return;
   Document *w = write();
   if (parser->parsingNeeded())
@@ -167,7 +167,7 @@ void QuantaView::slotInsertCSS()
 {
   if (!writeExists()) return;
   Document *w = write();
-  
+
   uint line, col;
   int bLine, bCol, eLine, eCol;
   bLine = bCol = eLine = eCol = 0;
@@ -186,18 +186,18 @@ void QuantaView::slotInsertCSS()
   if (parentNode->tag->type == Tag::XmlTagEnd && parentNode->prev)
     parentNode = parentNode->prev;
   else
-    while (parentNode && parentNode->parent && 
-           parentNode->tag->type != Tag::XmlTag)  
+    while (parentNode && parentNode->parent &&
+           parentNode->tag->type != Tag::XmlTag)
       parentNode = parentNode->parent;
-  QString fullDocument = w->editIf->text().stripWhiteSpace();          
- 
+  QString fullDocument = w->editIf->text().stripWhiteSpace();
+
   if (styleNode && styleNode->tag->name.lower() == "style")  //inside <style> invoke the selector editor
-  {      
+  {
     styleNode->tag->endPos(bLine, bCol);
     QString header(w->text(0, 0, bLine, bCol));// beginning part of the file
     styleNode->next->tag->endPos(eLine, eCol);
     QString footer("</style>" + w->text(eLine, eCol+1, lastLine, lastCol)); // ending part of the file
-    
+
     styleNode->next->tag->beginPos(eLine, eCol);
     QString styleTagContent(w->text(bLine, bCol+1, eLine, eCol-1).remove("<!--").remove("-->"));// <style></style> block content
 
@@ -228,7 +228,7 @@ void QuantaView::slotInsertCSS()
     dlg->setForInitialPreview(QString::null);
     if (!fullDocument.isEmpty())
       dlg->loadExistingStyleSection(fullDocument);
-    if (dlg->exec()) 
+    if (dlg->exec())
     {
       w->activateParser(false);
       w->editIf->clear();
@@ -236,7 +236,7 @@ void QuantaView::slotInsertCSS()
       w->insertTag(dlg->generateStyleSection());
     }
     delete dlg;
-  } else 
+  } else
   if (parentNode && parentNode->tag->type == Tag::XmlTag)
   {
     CSSEditor *dlg = new CSSEditor(this);
@@ -248,7 +248,7 @@ void QuantaView::slotInsertCSS()
 
     QString temp(QString::null);
     QString tempStyleContent(QString::null);
-    if (parentNode->tag->hasAttribute("style")) 
+    if (parentNode->tag->hasAttribute("style"))
     {
       tempStyleContent = parentNode->tag->attributeValue("style");
       dlg->setInlineStyleContent(tempStyleContent);
@@ -272,7 +272,7 @@ void QuantaView::slotInsertCSS()
     }
     delete dlg;
    } else
-   KMessageBox::sorry(this, i18n("The CSS Editor cannot be invoked at this place!"));
+   KMessageBox::sorry(this, i18n("The CSS Editor cannot be invoked at this place."));
 }
 
 /** for <a href=mailto> tag  */
@@ -696,7 +696,7 @@ void QuantaView::slotUndo ()
 #ifdef BUILD_KAFKAPART
   if(hadLastFocus() == QuantaView::kafkaFocus)
   {
-    KMessageBox::information(this, i18n("Sorry, VPL doesn't support this functionality yet!"),
+    KMessageBox::information(this, i18n("Sorry, VPL does not support this functionality yet."),
       QString::null, "show undo unavailable");
     return;
   }
@@ -719,7 +719,7 @@ void QuantaView::slotRedo ()
 #ifdef BUILD_KAFKAPART
   if(hadLastFocus() == QuantaView::kafkaFocus)
   {
-    KMessageBox::information(this, i18n("Sorry, VPL doesn't support this functionality yet!"),
+    KMessageBox::information(this, i18n("Sorry, VPL does not support this functionality yet."),
       QString::null, "show redo unavailable");
     return;
   }
@@ -742,7 +742,7 @@ void QuantaView::slotCut ()
 #ifdef BUILD_KAFKAPART
   if(hadLastFocus() == QuantaView::kafkaFocus)
   {
-    KMessageBox::information(this, i18n("Sorry, VPL doesn't support this functionality yet!"),
+    KMessageBox::information(this, i18n("Sorry, VPL does not support this functionality yet."),
       QString::null, "show cut unavailable");
     return;
   }
@@ -758,7 +758,7 @@ void QuantaView::slotCopy ()
 #ifdef BUILD_KAFKAPART
   if(hadLastFocus() == QuantaView::kafkaFocus)
   {
-    KMessageBox::information(this, i18n("Sorry, VPL doesn't support this functionality yet!"),
+    KMessageBox::information(this, i18n("Sorry, VPL does not support this functionality yet."),
       QString::null, "show copy unavailable");
     return;
   }
@@ -777,7 +777,7 @@ void QuantaView::slotPaste ()
 #ifdef BUILD_KAFKAPART
   if(hadLastFocus() == QuantaView::kafkaFocus)
   {
-    KMessageBox::information(this, i18n("Sorry, VPL doesn't support this functionality yet!"),
+    KMessageBox::information(this, i18n("Sorry, VPL does not support this functionality yet."),
       QString::null, "show paste unavailable");
     return;
   }
@@ -950,19 +950,19 @@ void QuantaView::slotPreviousBookmark()
     QPtrList<KTextEditor::Mark> marks = markinterface->marks();
     if (marks.isEmpty())
       return;
-  
+
     uint line, col;
     w->viewCursorIf->cursorPositionReal(&line, &col);
     int found = -1;
-  
+
     for (uint i = 0; i < marks.count(); i++)
     {
-      if ( (marks.at(i)->type & KTextEditor::MarkInterface::markType01) && 
-           (marks.at(i)->line < line) && 
+      if ( (marks.at(i)->type & KTextEditor::MarkInterface::markType01) &&
+           (marks.at(i)->line < line) &&
            ((found == -1) || (uint(found) < marks.at(i)->line)))
         found = marks.at(i)->line;
     }
-  
+
     if (found != -1)
       w->viewCursorIf->setCursorPositionReal(found, 0);
   }
@@ -977,19 +977,19 @@ void QuantaView::slotNextBookmark()
     QPtrList<KTextEditor::Mark> marks = markinterface->marks();
     if (marks.isEmpty())
       return;
-  
+
     uint line, col;
     w->viewCursorIf->cursorPositionReal(&line, &col);
     int found = -1;
-  
+
     for (uint i = 0; i < marks.count(); i++)
     {
-      if ( (marks.at(i)->type & KTextEditor::MarkInterface::markType01) && 
-           (marks.at(i)->line > line) && 
+      if ( (marks.at(i)->type & KTextEditor::MarkInterface::markType01) &&
+           (marks.at(i)->line > line) &&
            ((found == -1) || (uint(found) > marks.at(i)->line)))
         found = marks.at(i)->line;
     }
-  
+
     if (found != -1)
       w->viewCursorIf->setCursorPositionReal(found, 0);
   }

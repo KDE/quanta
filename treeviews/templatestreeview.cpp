@@ -106,7 +106,7 @@ TemplatesTreeView::TemplatesTreeView(const KURL& projectBaseURL, QWidget *parent
   addColumn("");
   setFullWidth(true);
   setShowSortIndicator(true);
-  
+
   KURL url;
   url.setPath(qConfig.globalDataDir + resourceDir + "templates/");
   m_globalDir = new FilesTreeBranch(this, url, i18n("Global Templates"), SmallIcon("ttab"));
@@ -236,7 +236,7 @@ void TemplatesTreeView::slotInsert()
 {
  QString menuText = m_fileMenu->text(m_openId);
 
- if (menuText == i18n(textMenu.utf8())) 
+ if (menuText == i18n(textMenu.utf8()))
    slotInsertInDocument();
  if (menuText == i18n(binaryMenu.utf8()))
    slotInsertTag();
@@ -302,7 +302,7 @@ void TemplatesTreeView::slotNewDir()
    if (!dir.mkdir(startDir+"/"+createDirDlg->dirName->text()))
    {
       KMessageBox::error(this,i18n("Error while creating the new folder.\n \
-                   Maybe you don't have permission to write in the %1 folder.").arg(startDir));
+                   Maybe you do not have permission to write in the %1 folder.").arg(startDir));
       return;
    }
    if (! createDirDlg->parentAttr->isChecked())
@@ -371,7 +371,7 @@ void TemplatesTreeView::contentsDropEvent(QDropEvent *e)
         {
           if (!KIO::NetAccess::upload(tempFile->name(),  url))
           {
-            KMessageBox::error(this,i18n("<qt>Couldn't write to file <b>%1</b>.<br>Check if you have rights to write there or that your connection is working.</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)));
+            KMessageBox::error(this,i18n("<qt>Could not write to file <b>%1</b>.<br>Check if you have rights to write there or that your connection is working.</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)));
           }
         }
         delete tempFile;
