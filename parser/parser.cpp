@@ -777,9 +777,20 @@ void Parser::deleteNodes(Node *firstNode, Node *lastNode, NodeModifsSet *modifs)
       {
         if (!child)      //when there is no child, connect the next as the first child of the parent
           child = next;
-        if (parent)
+        else
+        if (next)
+        {
+          n = child;
+          while (n->next)
+            n = n->next;
+          n->next = next;
+          next->prev = n;  
+        }  
+        if (parent && !parent->child)
+        {          
           parent->child = child;
-      }      
+        }  
+      }
     } else
     {
       //change the parent of children, so the prev will be the new parent
@@ -842,104 +853,6 @@ void Parser::deleteNodes(Node *firstNode, Node *lastNode, NodeModifsSet *modifs)
         
       }
     }
-/*    
-    if (child)
-    {
-      Node *par = parent;
-      if (closesPrevious)
-        par = prev;
-      Node *n = child;
-      Node *m = child;
-      while (n)
-      {
-        m = n;
-        n->parent = par;
-        n = n->next;
-        i++;
-      }
-      if (prev)
-      {
-        if (!closesPrevious)
-        {
-          child->prev = prev;
-          prev->next = child;
-        } else
-        {
-          n = prev;
-          while (n->child)
-          {
-            n = n->child;
-            while (n->next)
-                  n = n->next;
-          }
-          if (prev->child)
-          {
-            child->prev = n;
-            n->next = child;
-          } else
-          {
-            prev->child = child;
-          }
-          m = prev;
-        }
-      } else
-      {
-        if (parent)
-            parent->child = child;
-      }
-      prev = m;
-    }
-
-    if (prev)
-    {
-      node = prev;
-      node->next = next;
-      if (next)
-          next->prev = prev;
-      while (node->child)
-      {
-        node = node->child;
-        while (node->next)
-              node = node->next;
-      }
-      if (next && closesPrevious) //if there is a node after the deleted one and the deleted node closed the previous one
-      {
-        if (prev->child) //if the previous node has a child, append the next node after the last child
-        {
-            next->prev = node;
-            node->next = next;
-        } else // else append it as the first child of the previous
-        {
-          prev->child = next;
-          next->prev = 0L;
-        }
-        //all the nodes after the previous are going UNDER the previous, as the one closing node was deleted
-        //and the tree starting with next is moved under prev (see the above lines)
-        prev->next = 0L;
-        Node *n = next;
-        while (n)
-        {
-          n->parent = prev;
-          n = n->next;
-          j++;
-        }
-      }
-    } else
-    {
-      if (next && closesPrevious)
-      {
-        Node *n = next;
-        while (n)
-        {
-          n->parent = prev;
-          n = n->next;
-        }
-        next->prev = 0L;
-      }
-      node = parent;
-      if (node)
-          node->child = next;
-    } */
 #ifdef BUILD_KAFKAPART
     modif->setChildrenMovedUp(i);
     modif->setNeighboursMovedDown(j);
@@ -947,8 +860,8 @@ void Parser::deleteNodes(Node *firstNode, Node *lastNode, NodeModifsSet *modifs)
 #endif
     node = nextNode;
 
-    kdDebug(24000)<< "Node removed!" << endl;
-coutTree(m_node, 2);
+ //   kdDebug(24000)<< "Node removed!" << endl;
+//    coutTree(m_node, 2);
   }
   coutTree(m_node, 2);
 #ifndef BUILD_KAFKAPART

@@ -299,7 +299,7 @@ bool QExtFileInfo::internalExists(const KURL& url)
            this, SLOT( slotResult (KIO::Job *) ) );
 
   //To avoid lock-ups, start a timer.
-  QTimer::singleShot(10*1000, this,SLOT(slotTimeout()));
+  QTimer::singleShot(60*1000, this,SLOT(slotTimeout()));
 //  kdDebug(24000)<<"QExtFileInfo::internalExists:before enter_loop"<<endl;
   enter_loop();
 //  kdDebug(24000)<<"QExtFileInfo::internalExists:after enter_loop"<<endl;
