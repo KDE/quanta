@@ -57,7 +57,7 @@ signals:
   void updateStatus( bool back, bool forward );
   void previewHasFocus(bool focus);
   void showPreview(bool show);
-  void openFile(const KURL&, const QString&);
+  void openFile(const KURL&, const QString&, bool);
 
 protected:
   virtual void urlSelected( const QString &url, int button, int state, const QString &_target, KParts::URLArgs args = KParts::URLArgs());

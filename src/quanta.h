@@ -209,9 +209,10 @@ signals: // Signals
 public slots:
   void slotFileNew();
   void slotFileOpen();
-  void slotFileOpen(const KURL &);
-  void slotFileOpen( const KURL &, const QString& );
-  void slotFileOpen( const KURL::List &urls, const QString& encoding );
+  void slotFileOpen(const KURL &url);
+  void slotFileOpen(const KURL &url, const QString &encoding);
+  void slotFileOpen(const KURL &url, const QString &encoding, bool readOnly);
+  void slotFileOpen(const KURL::List &urls, const QString& encoding);
   void slotFileSave();
   bool slotFileSaveAs(QuantaView *viewToSave = 0L);
   void slotFileSaveAsLocalTemplate();
@@ -227,9 +228,9 @@ public slots:
   void slotFileCloseAll();
   void slotFileQuit();
 
-  void slotOpenFileInPreview(const KURL&);
-  void slotImageOpen(const KURL&);
-  void slotFileOpenRecent(const KURL&);
+  void slotOpenFileInPreview(const KURL &url);
+  void slotImageOpen(const KURL &url);
+  void slotFileOpenRecent(const KURL &url);
   void slotInsertTag(const KURL&, DirInfo);
 
   void slotEditFindInFiles();

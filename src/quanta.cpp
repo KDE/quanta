@@ -370,6 +370,11 @@ void QuantaApp::slotFileOpen(const KURL &url, const QString& encoding)
   m_doc->openDocument(url, encoding);
 }
 
+void QuantaApp::slotFileOpen(const KURL &url, const QString& encoding, bool readOnly)
+{
+  m_doc->openDocument(url, encoding, true, readOnly);
+}
+
 void QuantaApp::slotFileOpenRecent(const KURL &url)
 {
   if (!QExtFileInfo::exists(url))
@@ -5060,7 +5065,7 @@ void QuantaApp::createPreviewPart()
   slotNewPart(m_htmlPart, false);
   connect(m_htmlPart, SIGNAL(previewHasFocus(bool)), this, SLOT(slotPreviewHasFocus(bool)));
   connect(m_htmlPart, SIGNAL(destroyed(QObject *)), this, SLOT(slotHTMLPartDeleted(QObject *)));
-  connect(m_htmlPart, SIGNAL(openFile(const KURL&, const QString&)), this, SLOT(slotFileOpen(const KURL&, const QString&)));
+  connect(m_htmlPart, SIGNAL(openFile(const KURL&, const QString&, bool)), this, SLOT(slotFileOpen(const KURL&, const QString&, bool)));
   connect(m_htmlPart, SIGNAL(showPreview(bool)), this, SLOT(slotShowPreviewWidget(bool)));
 
 }

@@ -174,7 +174,7 @@ void WHTMLPart::popupMenu(const QString &/*url*/, const QPoint &point)
 
 void WHTMLPart::slotViewSource()
 {  
-  KTempFile *tmpFile = new KTempFile(tmpDir, ".html");
+  KTempFile *tmpFile = new KTempFile(tmpDir + "-preview-", ".html");
   QString tempFileName = QFileInfo(*(tmpFile->file())).filePath();
   tmpFile->setAutoDelete(true);
   tmpFile->textStream()->setCodec(QTextCodec::codecForName("utf8"));
@@ -186,7 +186,7 @@ void WHTMLPart::slotViewSource()
   tmpFile->close();
   tempFileList.append(tmpFile);
   emit showPreview(false);
-  emit openFile(KURL::fromPathOrURL(tmpFile->name()), "utf8");
+  emit openFile(KURL::fromPathOrURL(tmpFile->name()), "utf8", true);
 }
 
 #include "whtmlpart.moc"

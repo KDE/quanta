@@ -146,7 +146,7 @@ bool QuantaDoc::newDocument( const KURL& url, bool switchToExisting )
 }
 
 void QuantaDoc::openDocument(const KURL& urlToOpen, const QString &a_encoding,
-bool switchToExisting)
+                             bool switchToExisting, bool readOnly)
 {
   bool idleTimerStatus = quantaApp->slotEnableIdleTimer(false);
   KURL url = urlToOpen;
@@ -163,6 +163,13 @@ bool switchToExisting)
      return;
   }
   Document *w = ViewManager::ref()->activeDocument();
+  if (readOnly)
+  {
+    //might work only with Kate part
+    KAction *writeLockAction =  w->view()->actionCollection()->action("tools_toggle_write_lock");
+    if (writeLockAction)
+      writeLockAction->activate();
+  }
   if (!url.isEmpty())
   {
     if (QExtFileInfo::exists(url))

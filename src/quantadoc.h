@@ -35,7 +35,7 @@ public:
   ~QuantaDoc();
 
   bool newDocument(const KURL&, bool switchToExisting = true);
-  void openDocument(const KURL&, const QString& a_encoding = QString::null, bool switchToExisting = true);
+  void openDocument(const KURL&, const QString& a_encoding = QString::null, bool switchToExisting = true, bool readOnly = false);
 
 public slots:
   /** close documents. */
