@@ -153,7 +153,7 @@ void QuantaView::addDocument(Document *document)
      return;
    m_document = document;
    m_document->view()->reparent(m_documentArea, 0, QPoint(), true);
-    m_document->view()->resize(m_documentArea->size());
+   m_document->view()->resize(m_documentArea->size());
    connect(m_document->view(), SIGNAL(gotFocus(Kate::View *)),
                   this, SLOT(slotSourceGetFocus(Kate::View *)));
     connect(m_document->view(), SIGNAL(cursorPositionChanged()), this, SIGNAL(cursorPositionChanged()));
@@ -308,8 +308,9 @@ void QuantaView::slotSetSourceAndVPLLayout()
    if (ta)
        ta->setChecked(true);
 
-   m_VPLArea->reparent(m_splitter, 0, QPoint(), false);
-   m_documentArea->reparent(m_splitter, 0, QPoint(), false);
+   m_VPLArea->reparent(m_splitter, 0, QPoint(), true);
+   m_kafkaDocument->getKafkaWidget()->view()->reparent(m_VPLArea, 0, QPoint(), true);
+   m_documentArea->reparent(m_splitter, 0, QPoint(), true);
    m_splitter->moveToFirst(m_kafkaDocument->getKafkaWidget()->view());
    m_splitter->show();
 
@@ -369,6 +370,8 @@ void QuantaView::slotSetVPLOnlyLayout()
         m_kafkaDocument->loadDocument(m_document);
 
    m_VPLArea->reparent(this, 0, QPoint(), true);
+   m_kafkaDocument->getKafkaWidget()->view()->reparent(m_VPLArea, 0, QPoint(), true);
+   m_kafkaDocument->getKafkaWidget()->view()->resize(m_documentArea->size());
    m_viewLayout->addWidget(m_VPLArea, 1, 0);
    m_VPLArea->show();
    m_kafkaDocument->getKafkaWidget()->view()->setFocus();

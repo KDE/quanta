@@ -248,6 +248,7 @@ bool ViewManager::saveAll(bool dont_ask)
 
 void ViewManager::closeAll(bool createNew)
 {
+  disconnect(quantaApp, SIGNAL(viewActivated (KMdiChildView *)), this, SLOT(slotViewActivated(KMdiChildView*)));
   KMdiIterator<KMdiChildView*> *it = quantaApp->createIterator();
   QuantaView *view;
   for (it->first(); !it->isDone(); it->next())
@@ -269,12 +270,14 @@ void ViewManager::closeAll(bool createNew)
               } else
               {
                 delete it;
+               connect(quantaApp, SIGNAL(viewActivated (KMdiChildView *)), this, SLOT(slotViewActivated(KMdiChildView*)));
                 return;
                }
           }
       }
   }
   delete it;
+  connect(quantaApp, SIGNAL(viewActivated (KMdiChildView *)), this, SLOT(slotViewActivated(KMdiChildView*)));
   if (createNew)
       createNewDocument();
 }
