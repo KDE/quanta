@@ -71,23 +71,27 @@ QuantaDoc::QuantaDoc( QuantaApp *app, QWidget *parent, const char *name) : QObje
 	
   docList = new QDict<Document>(1);
 
-#warning fix Alt->Down menu
-//  attribMenu = new KPopupMenu("Tag :");
-//  connect( attribMenu, SIGNAL(activated(int)), this, SLOT(slotInsertAttrib(int)));
+  attribMenu = new KPopupMenu("Tag :");
+  connect( attribMenu, SIGNAL(activated(int)), this, SLOT(slotInsertAttrib(int)));
 
-//  attribCoreMenu = new QPopupMenu();
-//  char *attr;
-//  for ( attr = lCore->first(); lCore->current(); attr = lCore->next() )
-//    attribCoreMenu->insertItem( attr, lCore->at() );
+  attribCoreMenu = new QPopupMenu();
+  char *attr;
+  for ( attr = lCore->first(); lCore->current(); attr = lCore->next() )
+    attribCoreMenu->insertItem( attr, lCore->at() );
 
-//  connect( attribCoreMenu, SIGNAL(activated(int)), this, SLOT(slotInsertCoreAttrib(int)));
+  connect( attribCoreMenu, SIGNAL(activated(int)), this, SLOT(slotInsertCoreAttrib(int)));
 
-  
-//  attribEventsMenu = new QPopupMenu();
-//  for ( attr = lScript->first(); lScript->current(); attr = lScript->next() )
-//    attribEventsMenu->insertItem( attr, lScript->at() );
+  attribI18nMenu = new QPopupMenu();
+  for ( attr = lI18n->first(); lI18n->current(); attr = lI18n->next() )
+    attribI18nMenu->insertItem( attr, lI18n->at() );
 
-//  connect( attribEventsMenu, SIGNAL(activated(int)), this, SLOT(slotInsertEventsAttrib(int)));
+  connect( attribI18nMenu, SIGNAL(activated(int)), this, SLOT(slotInsertI18nAttrib(int)));
+
+  attribEventsMenu = new QPopupMenu();
+  for ( attr = lScript->first(); lScript->current(); attr = lScript->next() )
+    attribEventsMenu->insertItem( attr, lScript->at() );
+
+  connect( attribEventsMenu, SIGNAL(activated(int)), this, SLOT(slotInsertEventsAttrib(int)));
 }
 
 QuantaDoc::~QuantaDoc()
@@ -167,7 +171,7 @@ bool QuantaDoc::newDocument( const KURL& url )
     Document *w = newWrite( app->view->writeTab);
 
     if ( newfile ) furl = w->url().url();
-    
+
   	app ->view  ->addWrite( w, QExtFileInfo::shortName(w->url().url()) );
   	
   	docList->insert( w->url().url(), w );
@@ -235,14 +239,14 @@ void QuantaDoc::finishLoadURL(KWrite *_w)
  	}
  	
     app ->view->writeTab->showPage( w );
- 	
+
  changeFileTabName(defUrl);
-  
+
   app->fileRecent->addURL( w->url() );
-  
+
   emit newStatus();
   app->repaintPreview();
-  
+
   w -> busy = false;
   app->reparse();
 }     */
@@ -251,14 +255,14 @@ void QuantaDoc::saveDocument(const KURL& url)
 {
 	QString defUrl = this->url().url();
 
-  if ( !url.url().isEmpty()) 
+  if ( !url.url().isEmpty())
   {
     write()->doc()->saveAs( url );
     write()->closeTempFile();
     write()->createTempFile();
 //    write()->setURL( url, false );
   }
-  
+
   // fix
   if ( defUrl != url.url() ) changeFileTabName( defUrl );
   
@@ -499,7 +503,6 @@ Document* QuantaDoc::newWrite(QWidget *_parent)
 /** show popup menu with list of attributes for current tag */
 void QuantaDoc::slotAttribPopup()
 {
-/*  
   attribMenu->clear();
 
   write()->currentTag();
@@ -513,9 +516,6 @@ void QuantaDoc::slotAttribPopup()
   {
     QString caption = QString("Attributes of <")+tag+">";
     attribMenu->setTitle( caption );
-//    attribMenu->insertItem( caption.data() );
-//    attribMenu->insertSeparator();
-//    attribMenu->insertSeparator();
 
     QStrList *list = tagsDict->find( tag );
     char * item = list->first();
@@ -534,7 +534,12 @@ void QuantaDoc::slotAttribPopup()
       haveAttributes = true;
       attribMenu->insertItem("Core", attribCoreMenu, -2);
     }
-
+    
+    if ( tagsI18n->find(tag.upper()) != -1 ) {
+      haveAttributes = true;
+      attribMenu->insertItem("I18n", attribI18nMenu, -2);
+    }
+    
     if ( tagsScript->find(tag.upper()) != -1 ) {
       haveAttributes = true;
       attribMenu->insertItem("Script", attribEventsMenu, -2);
@@ -547,13 +552,12 @@ void QuantaDoc::slotAttribPopup()
 
     QPoint globalPos = write()->getGlobalCursorPos();
     attribMenu->exec( globalPos );
-  } 
+  }
   else {
     QString message = i18n("Unknown tag : ");
     message += tag;
     app->slotStatusMsg( message.data() );
   }
-  */
 }
 
 void QuantaDoc::slotInsertAttrib( int id )
@@ -573,6 +577,11 @@ void QuantaDoc::slotInsertAttrib( int id )
 void QuantaDoc::slotInsertCoreAttrib( int id )
 {
   write()->insertAttrib( lCore->at(id) );
+}
+
+void QuantaDoc::slotInsertI18nAttrib( int id )
+{
+  write()->insertAttrib( lI18n->at(id) );
 }
 
 void QuantaDoc::slotInsertEventsAttrib( int id )

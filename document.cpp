@@ -20,6 +20,7 @@
 #include <qfile.h>
 #include <qfileinfo.h>
 #include <qtextstream.h>
+//#include <qregexp.h>
 
 // KDE includes
 #include <kapp.h>
@@ -37,7 +38,11 @@
 #include <ktexteditor/wordwrapinterface.h>
 
 #include "document.h"
+#include "resource.h"
 
+#include <cctype>
+
+extern QDict <QStrList> *tagsDict;
 
 Document::Document(const QString& basePath, KTextEditor::Document *doc, QWidget *parent,
                    const char *name, WFlags f ) : QWidget(parent, name, f)
@@ -57,8 +62,18 @@ Document::Document(const QString& basePath, KTextEditor::Document *doc, QWidget 
   editIf = dynamic_cast<KTextEditor::EditInterface *>(_doc);
   selectionIf = dynamic_cast<KTextEditor::SelectionInterface *>(_doc);
   viewCursorIf = dynamic_cast<KTextEditor::ViewCursorInterface *>(_view);
+  codeCompletionIf = dynamic_cast<KTextEditor::CodeCompletionInterface *>(_view);
   this->basePath = basePath;
   tempFile = 0;
+
+  connect( _doc,  SIGNAL(charactersInteractivelyInserted (int ,int ,const QString&)),
+           this,  SLOT(slotCharactersInserted(int ,int ,const QString&)) );
+
+  connect( _view, SIGNAL(completionDone(KTextEditor::CompletionEntry)),
+           this,  SLOT(  slotCompletionDone(KTextEditor::CompletionEntry)) );
+
+  connect( _view, SIGNAL(filterInsertString(KTextEditor::CompletionEntry*,QString *)),
+           this,  SLOT(  slotFilterCompletion(KTextEditor::CompletionEntry*,QString *)) );
 }
 
 Document::~Document()
@@ -92,8 +107,8 @@ void Document::insertTag(QString s1,QString s2)
       selectionIf->removeSelectedText();
   	}
 
-	unsigned int line,col; // cursor position
-  viewCursorIf->cursorPositionReal(&line,&col);
+//	unsigned int line,col; // cursor position
+//  viewCursorIf->cursorPositionReal(&line,&col);
 /*  editIf->insertText(line, col, s1+selection+s2);
 
    KTextEditor::WordWrapInterface *ww = dynamic_cast<KTextEditor::WordWrapInterface*>(_doc);
@@ -108,10 +123,13 @@ void Document::insertTag(QString s1,QString s2)
   viewCursorIf->setCursorPosition(line,col);
   */
 
- kate_view->insertText(s1+selection+s2);
+// kate_view->insertText(s1+selection+s2);
 // viewCursorIf->setCursorPosition(pos2y(line),pos2x(col));
- for (unsigned int i=0; i < s2.length(); i++)
-   kate_view->cursorLeft();
+/* for (unsigned int i=0; i < s2.length(); i++)
+   kate_view->cursorLeft();*/
+
+  insertText(s1+selection);
+  insertText(s2, FALSE); // don't adjust cursor, thereby leaving it in the middle of tag
 }
 
 //FIXME: This method can go away
@@ -276,6 +294,7 @@ QString Document::getTagAttrValue(int i)
   return val;
 }
 
+#include <cctype>
 
 /** return qstring with current tag for parse */
 QString Document::currentTag()
@@ -394,13 +413,7 @@ void Document::changeCurrentTag( QDict<QString> *dict )
 // return global( on the desktop ) position of text cursor
 QPoint Document::getGlobalCursorPos()
 {
-/*  int h, y, x;
-
-  h = kWriteDoc->fontHeight;
-  y = h*kWriteView->cursor.y - kWriteView->yPos;
-  x = kWriteView->cXPos - (kWriteView->xPos-2);
-
-  return kWriteView->mapToGlobal( QPoint(x,y) );*/
+  return kate_view->mapToGlobal(viewCursorIf->cursorCoordinates());
 }
 
 
@@ -520,10 +533,88 @@ void Document::insertFile(QString fileName)
 
   QTextStream stream( &file );
 
-  kate_view->insertText(stream.read());
+  //kate_view->insertText(stream.read());
+  insertText(stream.read());
 
   file.close();
 }
+
+/** Inserts text at the current cursor position */
+void Document::insertText(QString text, bool adjustCursor)
+{
+  if(text.isEmpty())
+    return;
+
+  unsigned int line, col;
+
+  viewCursorIf->cursorPosition(&line, &col);
+  editIf->insertText(line, col, text);
+
+  // calculate new cursor position
+  // counts the words and whitespace of the text so we can place the
+  // cursor correctly and quickly with the viewCursorInterace, avoiding
+  // the Kate::View::insertText method
+  if(adjustCursor)
+  {
+    unsigned textLength = text.length(), wordWrapAt = kate_doc->wordWrapAt();
+    int i=0, j=0, wordLength;
+    bool noWordWrap = !(kate_doc->wordWrap());
+    const char *ascii = text.latin1(); // use ascii for maximum speed
+    bool lineLock =false;
+
+    while(i < textLength)
+    {
+      if(ascii[i] == '\n') // add a line, first column
+      {
+         ++line; col=0; ++i; lineLock = false;
+      }
+      else if(ascii[i] == '\r')
+      {
+        col = 0; ++i;
+      }
+      else if(!noWordWrap && !(isspace(ascii[i]))) // new word, see if it wraps
+      {
+      // TOO SLOW  int wordLength = (text.mid(i).section(QRegExp("[ \t\r\n]"), 0, 0).length());
+        wordLength = -1;
+        for(j = i+1;ascii[j];++j) // get word size, ascii is MUCH faster
+        {
+            if(isspace(ascii[j]))
+            {
+              wordLength = j-i;
+              break;
+           }
+        }
+        if(wordLength == -1)
+          wordLength = (textLength)-i;
+          
+        if((wordLength+col) > wordWrapAt)
+        {
+          if(col && !lineLock) // wraps onto new line unless locked by kate
+          {
+            col=0;
+            ++line;
+          }
+        }
+        col += wordLength;
+        i += wordLength;
+        if(wordLength > wordWrapAt)
+          lineLock = true; // words > wordWrapAt lock the rest of the line
+      }
+      else // whitespace
+      {
+        ++col; ++i;
+        if(!noWordWrap)
+          if(col > wordWrapAt && !lineLock)  // wrap like words
+          {
+            col -= wordWrapAt;
+            ++line;
+          }
+      }
+    }
+    viewCursorIf->setCursorPosition(line, col);
+  }
+}
+
 /** Get the view of the document */
 KTextEditor::View* Document::view()
 {
@@ -612,4 +703,192 @@ bool Document::saveIt()
  bool modifyStatus = _doc->isModified();
  _doc->save();
  _doc->setModified(modifyStatus);
+}
+
+/** This will return the current tag name at the given position.
+    It will work even if the tag has not been completed yet. An
+    empty string will be returned if no tag is found.
+*/
+QString Document::getTagNameAt( int line, int col )
+{
+  if ( line == -1 ) return "";
+
+  QString text = editIf->textLine( line );
+
+  if ( col == -1 ) col = text.length();
+
+  int tagBegin = text.findRev( '<', col );
+  int previousTagEnd = text.findRev( '>', col);
+
+  if ( tagBegin != -1  && tagBegin > previousTagEnd ) {
+    int tagEnd = text.find( '>', col );
+    int nextTagBegin = text.find( '>', col);
+    int firstSpace = text.find( ' ', tagBegin);
+
+    if ( tagEnd != -1 && ( tagEnd < firstSpace || firstSpace == -1 ) && ( tagEnd < nextTagBegin || nextTagBegin == -1 ) ) {
+      text.remove( tagEnd, text.length() );
+    } else if ( firstSpace != -1 ) {
+      text.remove( firstSpace, text.length() );
+    } else {
+      text.remove( col+1, text.length() );
+    }
+
+    text.remove( 0, tagBegin+1 );
+    return text;
+
+  } else if ( previousTagEnd != -1 ) {
+    return "";
+
+  } else {
+    return getTagNameAt( line-1, -1 );
+  }
+}
+
+/** Show the code completions passed in as an argument */
+void Document::showCodeCompletions( QValueList<KTextEditor::CompletionEntry> *completions ) {
+  codeCompletionIf->showCompletionBox( *completions, false );
+}
+
+/** Once the completed text has been inserted into the document we
+    want to update the cursor position.
+*/
+void Document::slotCompletionDone( KTextEditor::CompletionEntry completion )
+{
+  if (completion.type == "attribute") {
+    unsigned int row,col;
+    viewCursorIf->cursorPositionReal(&row,&col);
+    viewCursorIf->setCursorPositionReal(row,col-1);
+    showCodeCompletions( getAttributeValueCompletions(completion.userdata, completion.text) );
+  } else if (completion.type == "attributeValue") {
+    unsigned int row,col;
+    viewCursorIf->cursorPositionReal(&row,&col);
+    viewCursorIf->setCursorPositionReal(row,col+1);
+  }
+}
+
+/** This is called when the user selects a completion. We
+    can filter this completion to allow more intelligent
+    code compeltions
+*/
+void Document::slotFilterCompletion( KTextEditor::CompletionEntry *completion ,QString *string ) {
+  if ( completion->type == "attribute" ) {
+    string->append("=\"\"");
+  }
+}
+
+/** Called when a user types in a character. From this we can show possibile
+    completions based on what they are trying to input.
+*/
+void Document::slotCharactersInserted(int line,int column,const QString& string)
+{
+  QString tag;
+  if ( string == ">")
+    tag = getTagNameAt( line, column-1 );
+  else
+    tag = getTagNameAt( line, column );
+
+  if ( tag == "" ) {
+    if ( string == "<" ) {
+      //we need to complete a tag name
+      showCodeCompletions( getTagCompletions() );
+    } else if ( string == "&") {
+      //complete character codes
+      //showCodeCompletions( getCharacterCompletions() );
+    }
+  } else {
+    if ( string == ">" && tag[0] != '/' && tagsList->find(tag.upper()) != -1 && singleTags->find(tag.upper()) == -1 && ( optionalTags->find(tag.upper()) != -1 || useCloseTag )) {
+      //add closing tag if wanted
+      column++;
+      editIf->insertText(line, column, "</" + tag + ">");
+      viewCursorIf->setCursorPosition( line, column );
+    } else if ( string == " " ) {
+      //suggest attribute completions
+      showCodeCompletions( getAttributeCompletions(tag) );
+    } else if ( string == "\"" ) {
+      //we need to find the attribute name
+      //QString attribute = "";
+      //showCodeCompletions( getAttributeValueCompletions(tag, attribute) );
+    }
+  }
+}
+
+/** Return a list of possible tag name completions */
+QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions()
+{
+  QValueList<KTextEditor::CompletionEntry> *completions = new QValueList<KTextEditor::CompletionEntry>();
+  KTextEditor::CompletionEntry completion;
+  completion.type = "tag";
+
+  QString item;
+  for ( item = tagsList->first(); tagsList->current(); item = tagsList->next() ) {
+    completion.text = tagCase( item );
+    completions->append( completion );
+  }
+
+  return completions;
+}
+
+/** Return a list of valid attributes for the given tag */
+QValueList<KTextEditor::CompletionEntry>* Document::getAttributeCompletions( QString tag )
+{
+  QValueList<KTextEditor::CompletionEntry> *completions = new QValueList<KTextEditor::CompletionEntry>();
+  KTextEditor::CompletionEntry completion;
+  completion.type = "attribute";
+  completion.userdata = tag;
+
+  if ( tagsList->find( tag.upper()) != -1 )
+  {
+    QStrList *list = tagsDict->find( tag );
+    QString item = list->first();
+    while ( item ) {
+      if ( !((lCore->find(item)!=-1) || (lI18n->find(item)!=-1) || (lScript->find(item)!=-1))) {
+        completion.text = item;
+        completions->append( completion );
+      }
+      item = list->next();
+    }
+
+    if ( tagsCore->find(tag.upper()) != -1 ) {
+      for ( item = lCore->first(); lCore->current(); item = lCore->next() ) {
+        completion.text = item;
+        completions->append( completion );
+      }
+    }
+
+    if ( tagsI18n->find(tag.upper()) != -1 ) {
+      for ( item = lI18n->first(); lI18n->current(); item = lI18n->next() ) {
+        completion.text = item;
+        completions->append( completion );
+      }
+    }
+
+    if ( tagsScript->find(tag.upper()) != -1 ) {
+      for ( item = lScript->first(); lScript->current(); item = lScript->next() ) {
+        completion.text = item;
+        completions->append( completion );
+      }
+    }
+  }
+
+  return completions;
+}
+
+/** Return a list of valid attribute values for the given tag and attribute */
+QValueList<KTextEditor::CompletionEntry>* Document::getAttributeValueCompletions( QString tag, QString attribute )
+{
+  QValueList<KTextEditor::CompletionEntry> *completions = new QValueList<KTextEditor::CompletionEntry>();
+
+  //need to get this information from something
+
+  return completions;
+}
+
+/** Return a list of chatacter completions (like &nbsp; ...) */
+QValueList<KTextEditor::CompletionEntry>* Document::getCharacterCompletions()
+{
+  QValueList<KTextEditor::CompletionEntry> *completions = new QValueList<KTextEditor::CompletionEntry>();
+
+  //need to get this information from something
+
+  return completions;
 }

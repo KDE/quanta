@@ -92,6 +92,7 @@ class QuantaDoc : public QObject
     /** show popup menu with list of attributes for current tag */
     void slotInsertAttrib      ( int id );
     void slotInsertCoreAttrib  ( int id );
+    void slotInsertI18nAttrib  ( int id );
     void slotInsertEventsAttrib( int id );
     void slotAttribPopup();
 
@@ -109,11 +110,12 @@ class QuantaDoc : public QObject
     QDict<Document> *docList;
     /** manager for bookmarks */
     //KWriteManager *writeManager;
-/*
+
     KPopupMenu *attribMenu;
     QPopupMenu *attribCoreMenu;
+    QPopupMenu *attribI18nMenu;
     QPopupMenu *attribEventsMenu;
-*/
+
 
 };
 

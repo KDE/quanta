@@ -804,11 +804,11 @@ void QuantaApp::initActions()
     (void) new KAction( i18n( "Context &Help..." ), CTRL+Key_H, 
                         this, SLOT( contextHelp() ),
                         actionCollection(), "context_help" );
-  /*
+
     (void) new KAction( i18n( "Tag &Attributes" ), ALT+Key_Down,
                         doc, SLOT( slotAttribPopup() ),
                         actionCollection(), "tag_attributes" );
-     */
+
     (void) new KAction( i18n( "&Edit Current Tag..." ), CTRL+Key_E,
                         view, SLOT( slotEditCurrentTag() ),
                         actionCollection(), "edit_current_tag" );

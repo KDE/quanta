@@ -30,6 +30,7 @@
 #include <ktexteditor/viewcursorinterface.h>
 #include <ktexteditor/editinterface.h>
 #include <ktexteditor/selectioninterface.h>
+#include <ktexteditor/codecompletioninterface.h>
 
 
 /**
@@ -108,6 +109,7 @@ public:
   QString attrCase( QString  attr);
   /** No descriptions */
   void insertFile(QString fileName);
+  void insertText(QString, bool=true);
   /** Get the view of the document */
   KTextEditor::View* view();
   /** Get the KTextEditor::Document of the document */
@@ -129,6 +131,24 @@ public:
   /** No descriptions */
   bool saveIt();
 
+  /** Returns tag name at specified position */
+  QString getTagNameAt( int line, int col );
+
+  /** Brings up list of code completions */
+  void showCodeCompletions( QValueList<KTextEditor::CompletionEntry> *completions );
+
+  /** Get list of possibile tag name completions */
+  QValueList<KTextEditor::CompletionEntry>* getTagCompletions();
+  
+  /** Get list of possibile tag attribute completions */
+  QValueList<KTextEditor::CompletionEntry>* getAttributeCompletions( QString tag );
+  
+  /** Get list of possibile tag attribute value completions */
+  QValueList<KTextEditor::CompletionEntry>* getAttributeValueCompletions( QString tag, QString attribute );
+  
+  /** Get list of possibile completions in normal text input (nt creating a tag) */
+  QValueList<KTextEditor::CompletionEntry>* getCharacterCompletions();
+
   TagAttr tagAttr[50];
   int tagAttrNum;
   int tagBeginX, tagBeginY, tagEndX, tagEndY;
@@ -140,9 +160,21 @@ public:
   KTextEditor::ViewCursorInterface *viewCursorIf;
   KTextEditor::SelectionInterface *selectionIf;
   KTextEditor::EditInterface *editIf;
+  KTextEditor::CodeCompletionInterface *codeCompletionIf;
 
   Kate::Document *kate_doc;
   Kate::View *kate_view;
+  
+public slots:
+
+  /* Called after a completion is inserted */
+  void slotCompletionDone( KTextEditor::CompletionEntry completion );
+  
+  /* Called when a user selects a completion, we then can modify it */
+  void slotFilterCompletion(KTextEditor::CompletionEntry*,QString *);
+  
+  /* Called whenever a user inputs text */
+  void slotCharactersInserted(int ,int ,const QString&);
 
 private:
 
