@@ -147,7 +147,7 @@ void QuantaDoc::openDocument(const KURL& url)
   
   changeFileTabName(defUrl);
   
-  emit title( this->url().url() );
+  emit title( url.url() );
   emit newStatus();
   
   app->repaintPreview();

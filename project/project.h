@@ -19,6 +19,7 @@
 #define PROJECT_H
 
 #include <qdom.h>
+#include <qbuffer.h>
 #include <qwidget.h>
 #include <qstringlist.h>
 
@@ -32,6 +33,7 @@ class QWizard;
 class QWidgetStack;
 
 class KConfig;
+class KTempFile;
 class KRecentFilesAction;
 
 class ProjectNewWeb;
@@ -47,6 +49,7 @@ public:
 	
 	bool hasProject();
 	QStringList fileNameList(bool check = false);
+	void loadProjectXML();
 	
   void insertFile ( QString name, bool repaint );
   void insertFiles( QString path, QString mask );
@@ -64,7 +67,7 @@ public slots:
   void openProject(const KURL&);
   bool saveProject();
   void closeProject();
-  void loadProject(QString fname);
+  void loadProject(const KURL &url);
   void options();
   void upload();
 
@@ -87,6 +90,10 @@ public slots:
   
   void slotRescanPrjDir();
   
+  void slotProjectReadFinish(KIO::Job *);
+  void slotProjectReadData  (KIO::Job *,const QByteArray &);
+
+  
 signals:
 	
 	void openFile				 ( KURL& );
@@ -106,12 +113,13 @@ signals:
 
   void saveAllFiles();
   void newStatus();
+  void statusMsg(QString);
 
 public:
   QDomDocument dom;
 
-  QString projectName;
-  QString projectFileName;
+  KURL    url;
+  QString name;
 
   QString basePath;
   QString remoteDir;
@@ -132,6 +140,9 @@ private:
 	ProjectNewWeb 			*pnw;
 	ProjectNewFinal 		*pnf;
 	
+  QBuffer buff;
+
+  KTempFile *m_tempSaveFile;
 };
 
 #endif
