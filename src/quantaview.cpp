@@ -232,8 +232,10 @@ void QuantaView::slotSetSourceLayout()
    if (m_currentViewsLayout == SourceOnly || !m_document)
      return;
 
+#ifdef BUILD_KAFKAPART
    if(m_currentViewsLayout == SourceAndVPL)
      m_splitterSizes = m_splitter->sizes();
+#endif
 
    KToggleAction *ta = (KToggleAction *) quantaApp->actionCollection()->action( "show_quanta_editor" );
    if (ta)
@@ -527,19 +529,24 @@ void QuantaView::reloadSourceView(bool force)
       m_document->docUndoRedo->reloadQuantaEditor(force);
 }
 
+#endif
+
 void QuantaView::VPLUpdateTimerTimeout()
 {
+#ifdef BUILD_KAFKAPART
   if(m_currentFocus == SourceFocus)
     reloadVPLView();
+#endif
 }
 
 void QuantaView::sourceUpdateTimerTimeout()
 {
+#ifdef BUILD_KAFKAPART
   if(m_currentFocus == VPLFocus)
     reloadSourceView();
+#endif
 }
 
-#endif
 
 void QuantaView::closeEvent(QCloseEvent *e)
 {

@@ -168,7 +168,6 @@ public slots:
 private slots:
   void slotSavingCompleted();
   void slotSavingFailed(const QString& error);
-#ifdef BUILD_KAFKAPART
 
   /**
    * Called to update VPL.
@@ -179,7 +178,6 @@ private slots:
    * Called to update the source.
    */
   void sourceUpdateTimerTimeout();
-#endif
 
 signals:
   /** emitted when a file from the template view is dropped on the view */
