@@ -256,7 +256,7 @@ void TagAction::insertTag(bool inputFromFile, bool outputToFile)
     else
         scriptOutputDest = "file";
     scriptErrorDest  = script.attribute("error","none");
-    if (scriptOutputDest == "message" || scriptErrorDest == "message")
+    if (scriptOutputDest == "message")
     {
       quantaApp->slotShowBottDock(true);
     }
@@ -391,6 +391,7 @@ void TagAction::slotGetScriptError( KProcess *, char *buffer, int buflen )
   {
     if ( firstError )
     {
+      quantaApp->slotShowBottDock(true);
       m_appMessages->showMessage( i18n( "\"%1\" script output:\n" ).arg(tag.attribute("text")) );
     }
     m_appMessages->showMessage( text );

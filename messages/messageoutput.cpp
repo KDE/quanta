@@ -37,7 +37,8 @@ MessageOutput::MessageOutput(QWidget *parent, const char *name )
   setPalette(pal);
   setFocusPolicy( NoFocus );
 
-  connect( this, SIGNAL(pressed(QListBoxItem*)), SLOT(clickItem(QListBoxItem*)) );
+//  connect( this, SIGNAL(pressed(QListBoxItem*)), SLOT(clickItem(QListBoxItem*)) );
+  connect( this, SIGNAL(selected(QListBoxItem*)), SLOT(clickItem(QListBoxItem*)) );
 }
 
 MessageOutput::~MessageOutput()

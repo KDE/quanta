@@ -431,11 +431,11 @@ void QuantaView::slotTagEditTable()
     l.remove(l.begin());
   }
 
-  TableEditor editor;
+  TableEditor *editor = new TableEditor();
   if (tableExists)
   {
-    editor.setBaseURL(baseURL());
-    editor.setTableArea(bLine, bCol, eLine, eCol);
+    editor->setBaseURL(baseURL());
+    editor->setTableArea(bLine, bCol, eLine, eCol);
   } else
   {
     Node *node = parser->nodeAt(line, col);
@@ -446,11 +446,11 @@ void QuantaView::slotTagEditTable()
     bCol = col;
     eLine = line;
     eCol = col;
-    editor.createNewTable(w, dtd);
+    editor->createNewTable(w, dtd);
   }
-  if (editor.exec())
+  if (editor->exec())
   {
-    QString tableString = editor.readModifiedTable();
+    QString tableString = editor->readModifiedTable();
     w->activateParser(false);
     if (eLine != bLine || (eLine == bLine && eCol != bCol))
       w->editIf->removeText(bLine, bCol, eLine, eCol + 1);
@@ -458,6 +458,7 @@ void QuantaView::slotTagEditTable()
     w->insertText(tableString, false);
     w->viewCursorIf->setCursorPositionReal(line, col);
   }
+  delete editor;
 }
 
 /** for quick create table */

@@ -36,6 +36,7 @@
 #include <kdirwatch.h>
 #include <kdeversion.h>
 #include <kdebug.h>
+#include <kiconloader.h>
 
 #include <ktexteditor/configinterface.h>
 #include <ktexteditor/highlightinginterface.h>
@@ -656,6 +657,13 @@ void QuantaDoc::changeFileTabName(const KURL &newURL)
     tab->changeTab( w, QExtFileInfo::shortName(url.path()));
     tab->setTabToolTip( w, url.prettyURL() );
   }
+
+  // try to set the icon from mimetype
+  QIconSet mimeIcon (KMimeType::pixmapForURL(url, 0, KIcon::Small));
+  if (mimeIcon.isNull())
+    mimeIcon = QIconSet(SmallIcon("document"));
+
+  tab->setTabIconSet( w, mimeIcon);
 }
 
 /// SLOTS

@@ -22,6 +22,8 @@
 #include <kpopupmenu.h>
 
 //qt includes
+#include <qpoint.h>
+#include <qrect.h>
 #include <qstring.h>
 
 //own includes
@@ -41,7 +43,7 @@ void TableEditor::init()
   m_rowEditId = m_popup->insertItem(i18n("Edit &Row Properties"), this ,SLOT(slotEditRow()));//  m_colEditId = m_popup->insertItem(i18n("Edit &Column Properties"), this ,SLOT(slotEditCol()));
   m_mergeSeparatorId = m_popup->insertSeparator();
   m_mergeCellsId = m_popup->insertItem(i18n("Merge Cells"), this, SLOT(slotMergeCells()));
-  m_unmergeCellsId = m_popup->insertItem(i18n("Unmerge Cells"), this, SLOT(slotUnmergeCells()));
+  m_unmergeCellsId = m_popup->insertItem(i18n("Break Merging"), this, SLOT(slotUnmergeCells()));
 
   m_popup->insertSeparator();
   m_popup->insertItem(i18n("&Insert Row"), this, SLOT(slotInsertRow()));
@@ -100,6 +102,13 @@ void TableEditor::slotContextMenuRequested( int row, int col, const QPoint & pos
     if (tableNode.merged) {
       m_popup->setItemVisible(m_unmergeCellsId, true);
       m_popup->setItemVisible(m_mergeSeparatorId, true);
+    }
+    QTableSelection selection = m_dataTable->selection(m_dataTable->currentSelection());
+    QRect rect(QPoint(selection.topRow(), selection.leftCol()) ,
+               QPoint(selection.bottomRow(), selection.rightCol()));
+    if (rect.isValid() && (rect.width() > 1 || rect.height() > 1) && rect.contains(m_row, m_col)) {
+       m_popup->setItemVisible(m_mergeCellsId, true);
+       m_popup->setItemVisible(m_mergeSeparatorId, true);
     }
   }
   m_popup->popup(pos);
@@ -750,45 +759,74 @@ void TableEditor::deleteMatrix( QValueList<QValueList<TableNode> > *matrix )
 
 void TableEditor::slotMergeCells()
 {
+  slotUnmergeCells(); //first unmerge all cells from the selection
 
+  QTableSelection selection = m_dataTable->selection(m_dataTable->currentSelection());
+  int tRow, bRow, lCol, rCol;
+  tRow = selection.topRow();
+  bRow = selection.bottomRow();
+  lCol = selection.leftCol();
+  rCol = selection.rightCol();
+  TableNode mainTableNode = (*m_tableTags)[tRow][lCol];
+  mainTableNode.node->tag->editAttribute("colspan", QString("%1").arg(rCol - lCol + 1));
+  mainTableNode.node->tag->editAttribute("rowSpan", QString("%1").arg(bRow - tRow + 1));
 }
 
 
 void TableEditor::slotUnmergeCells()
 {
-  TableNode tableNode = (*m_tableTags)[m_row][m_col];
-  TableNode newTableNode;
-  int i = 0;
-  QValueList<QValueList<TableNode> >::Iterator it = m_tableTags->at(m_row);
-  QValueList<TableNode>::Iterator it2 = (*it).at(m_col);
-  while (it2 != (*it).end()) {
-    if ((*it2).merged &&
-        tableNode.mergedRow == (*it2).mergedRow &&
-        tableNode.mergedCol == (*it2).mergedCol) {
-        if (!(*it2).isFromDocument)
-          delete (*it2).node;
-        it2 = (*it).erase(it2);
-        newTableNode.isFromDocument = false;
-        newTableNode.merged = false;
-        newTableNode.node = new Node(0L);
-        newTableNode.node->tag = new Tag();
-        newTableNode.node->tag->dtd = m_dtd;
-        if (m_tableTags == m_tableHeaderTags) {
-          newTableNode.node->tag->parse("<th>", m_write);
-        } else {
-          newTableNode.node->tag->parse("<td>", m_write);
-        }
-        (*it).insert(it2, newTableNode);
-        m_dataTable->setText(m_row, m_col + i, tagContent(newTableNode.node));
-        m_dataTable->item(m_row, m_col + i)->setEnabled(true);
-    } else {
-      ++it2;
-    }
-    i++;
+  int tRow, bRow, lCol, rCol;
+  int selectionNum = m_dataTable->currentSelection();
+  if (selectionNum != -1) {
+    QTableSelection selection = m_dataTable->selection(selectionNum);
+    tRow = selection.topRow();
+    bRow = selection.bottomRow();
+    lCol = selection.leftCol();
+    rCol = selection.rightCol();
+  } else {
+    tRow = m_row;
+    bRow = m_row;
+    lCol = m_col;
+    rCol = m_col;
   }
-  newTableNode = (*m_tableTags)[tableNode.mergedRow][tableNode.mergedCol];
-  if (m_col - tableNode.mergedCol == 1)
-    newTableNode.node->tag->deleteAttribute("colspan");
-  else
-    newTableNode.node->tag->editAttribute("colspan",  QString("%1").arg(m_col - tableNode.mergedCol));
+  for (int row = tRow; row <= bRow; ++row)
+    for (int col = lCol; col <= rCol; ++col) {
+      TableNode tableNode = (*m_tableTags)[row][col];
+      TableNode newTableNode;
+      int i = 0;
+      int j = 0;
+      for (QValueList<QValueList<TableNode> >::Iterator it = m_tableTags->begin(); it != m_tableTags->end(); ++it) {
+        j = 0;
+        QValueList<TableNode>::Iterator it2 = (*it).begin();
+        while (it2 != (*it).end()) {
+          if ((*it2).merged &&
+              tableNode.mergedRow == (*it2).mergedRow &&
+              tableNode.mergedCol == (*it2).mergedCol) {
+              if (!(*it2).isFromDocument)
+                delete (*it2).node;
+              it2 = (*it).erase(it2);
+              newTableNode.isFromDocument = false;
+              newTableNode.merged = false;
+              newTableNode.node = new Node(0L);
+              newTableNode.node->tag = new Tag();
+              newTableNode.node->tag->dtd = m_dtd;
+              if (m_tableTags == m_tableHeaderTags) {
+                newTableNode.node->tag->parse("<th>", m_write);
+              } else {
+                newTableNode.node->tag->parse("<td>", m_write);
+              }
+              (*it).insert(it2, newTableNode);
+              m_dataTable->setText(i, j, tagContent(newTableNode.node));
+              m_dataTable->item(i, j)->setEnabled(true);
+          } else {
+            ++it2;
+          }
+          j++;
+        }
+        i++;
+      }
+      newTableNode = (*m_tableTags)[tableNode.mergedRow][tableNode.mergedCol];
+      newTableNode.node->tag->deleteAttribute("colspan");
+      newTableNode.node->tag->deleteAttribute("rowspan");
+    }
 }

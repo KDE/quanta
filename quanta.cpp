@@ -68,6 +68,7 @@
 #include <kspell.h>
 #include <kdeversion.h>
 #include <ktip.h>
+#include <kmimetype.h>
 #include <kparts/componentfactory.h>
 
 #include <ktexteditor/editinterface.h>
@@ -771,15 +772,18 @@ void QuantaApp::slotNewStatus()
     if (setHighlight) setHighlight->updateMenu (w->kate_doc);
 
     QIconSet floppyIcon( UserIcon("save_small"));
-    QIconSet  emptyIcon( SmallIcon("document" ));
 
     QTabWidget *wTab = m_view->writeTab();
     w = static_cast<Document*>(wTab->currentPage());
+    // try to set the icon from mimetype
+    QIconSet mimeIcon (KMimeType::pixmapForURL(w->url(), 0, KIcon::Small));
+    if (mimeIcon.isNull())
+      mimeIcon = QIconSet(SmallIcon("document"));
 
     if ( w->isModified() )
-       wTab->changeTab( w,  floppyIcon, wTab->tabLabel(w));
+      wTab->changeTab( w,  floppyIcon, wTab->tabLabel(w));
     else
-     wTab->changeTab( w,  emptyIcon,  wTab->tabLabel(w));
+      wTab->changeTab( w,  mimeIcon,  wTab->tabLabel(w));
 
 //This is a really dirty fix for the QTabWidget problem. After the changeTab call,
 //it will reset itself and you will see the first tabs, even if the actual page is on
@@ -1290,6 +1294,7 @@ void QuantaApp::slotShowPreview()
     if ( qConfig.previewPosition == "Bottom" )
     {
       //TODO: ???
+      slotShowBottDock(true);
     }
     slotShowPreviewWidget(true);
     repaintPreview(false);
@@ -1424,6 +1429,7 @@ void QuantaApp::gotoFileAndLine(const QString& filename, int line )
 void QuantaApp::slotDockStatusChanged()
 {
   qConfig.windowLayout = "Custom";
+  showMessagesAction->setChecked(bottdock->isVisible());
 }
 
 void QuantaApp::slotDockChanged()
@@ -1945,8 +1951,12 @@ void QuantaApp::bookmarkMenuAboutToShow()
           hassep = true;
         }
         QString bText = w->editIf->textLine(markList.at(i)->line);
-        bText.truncate(32);
-        bText.append ("...");
+        bText = bText.stripWhiteSpace();
+        if (bText.length() > 35)
+        {
+          bText.truncate(32);
+          bText.append ("...");
+        }
         pm_bookmark->insertItem ( QString("%1 - \"%2\"").arg(markList.at(i)->line+1).arg(bText),
                                   this, SLOT (gotoBookmark(int)), 0, i );
       }
