@@ -195,6 +195,7 @@ void Abbreviation::saveTemplates()
     if (f.open(IO_WriteOnly | IO_Truncate))
     {
       QTextStream str(&f);
+      str.setEncoding(QTextStream::UnicodeUTF8);
       str << doc.toString();
       f.close();
     } else

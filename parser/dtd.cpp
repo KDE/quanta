@@ -95,7 +95,7 @@ void DTD::writeTagFiles()
     QFile file( dirName + tag.lower() + ".tag" );
     if ( file.open( IO_WriteOnly ) ) {
       QTextStream stream( &file );
-
+      stream.setEncoding(QTextStream::UnicodeUTF8);
       stream << "<!DOCTYPE TAGS>" << endl
              << "<TAGS>" << endl
              << "<tag name=\"" << tag << "\">" << endl << endl;
@@ -131,6 +131,7 @@ bool DTD::parseDTD(const KURL &url)
   if (file.open(IO_ReadOnly))
   {
     QTextStream fileStream(&file);
+    fileStream.setEncoding(QTextStream::UnicodeUTF8);
     QString entireDTD = fileStream.read();
     file.close();
     removeComments(entireDTD);

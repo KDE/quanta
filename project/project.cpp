@@ -278,6 +278,7 @@ bool Project::createEmptyDom()
 {
   QString str;
   QTextStream stream( &str, IO_WriteOnly );
+  stream.setEncoding(QTextStream::UnicodeUTF8);
 
   stream << "<!DOCTYPE webproject ><webproject>" << endl;
   stream << "\t<project name=\"" << projectName << "\">" << endl;
@@ -291,6 +292,7 @@ bool Project::createEmptyDom()
   {
     KTempFile *tempFile = new KTempFile(tmpDir);
     tempFile->setAutoDelete(true);
+    tempFile->textStream()->setEncoding(QTextStream::UnicodeUTF8);
     *(tempFile->textStream()) << str;
     tempFile->close();
     result = QExtFileInfo::createDir(baseURL);
@@ -302,6 +304,7 @@ bool Project::createEmptyDom()
     if (f.open( IO_WriteOnly ))
     {
       QTextStream fstream(&f);
+      fstream.setEncoding(QTextStream::UnicodeUTF8);
       fstream << str;
     } else
     {
@@ -427,6 +430,7 @@ bool Project::slotSaveProject()
     }
 
     KTempFile *tmpFile = new KTempFile(tmpDir);
+    tmpFile->textStream()->setEncoding(QTextStream::UnicodeUTF8);
     tmpFile->setAutoDelete(true);
     dom.save(*(tmpFile->textStream()), 0);
     tmpFile->close();

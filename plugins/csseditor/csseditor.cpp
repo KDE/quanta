@@ -272,6 +272,7 @@ void CSSEditor::initialize()
   
   testFile = new KTempFile(tmpDir,".html");
   testFile->setAutoDelete(true);
+  testFile->textStream()->setEncoding(QTextStream::UnicodeUTF8);
   
   previewer->openURL(testFile->name());
 

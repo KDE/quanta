@@ -152,6 +152,7 @@ void saveElement(xmlElementPtr elem, xmlBufferPtr buf)
     if ( file.open( IO_WriteOnly ) )
     {
       QTextStream stream( &file );
+      stream.setEncoding(QTextStream::UnicodeUTF8);
       stream << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << endl;
       stream << "<!DOCTYPE TAGS>" << endl
              << "<TAGS>" << endl

@@ -336,7 +336,6 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
                   firstStartLine = line;
                   firstOpenFound = true;
                 }
-
               } else
               if (textLine[i] == '>') openNum--;
            }

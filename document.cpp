@@ -328,6 +328,7 @@ void Document::insertFile(const KURL& url)
   if (file.open(IO_ReadOnly))
   {
     QTextStream stream( &file );
+    stream.setEncoding(QTextStream::UnicodeUTF8);
 //  kate_view->insertText(stream.read());
     insertText(stream.read());
     file.close();
@@ -509,6 +510,7 @@ int Document::createTempFile()
  closeTempFile();
  tempFile = new KTempFile(tmpDir);
  tempFile->setAutoDelete(true);
+ tempFile->textStream()->setEncoding(QTextStream::UnicodeUTF8);
  * (tempFile->textStream()) << editIf->text();
 
  m_tempFileName = QFileInfo(*(tempFile->file())).filePath();
@@ -1713,9 +1715,11 @@ void Document::checkDirtyStatus()
       {
         QString content;
         QTextStream stream(&f);
+        stream.setEncoding(QTextStream::UnicodeUTF8);
         content = stream.read();
         QString tmpContent;
         QTextStream tmpStream(&tmpFile);
+        tmpStream.setEncoding(QTextStream::UnicodeUTF8);
         tmpContent = tmpStream.read();
         if (content == tmpContent)
         {
@@ -2108,6 +2112,7 @@ void Document::createBackup(KConfig* config)
      if(file.open(IO_WriteOnly))
      {
       QTextStream stream(&file);
+      stream.setEncoding(QTextStream::UnicodeUTF8);
       stream << editIf->text();
       file.close();
      }

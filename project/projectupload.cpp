@@ -424,7 +424,7 @@ void ProjectUpload::slotUploadNext()
       if ( el.nodeName() == "item"  &&  el.attribute("url") == QuantaCommon::qUrl(currentURL) )
       {
         el.setAttribute( "upload_time", el.attribute("modified_time") );
-//        kdDebug(24000) << "Upload time for " << el.attribute("url") << " is: " << el.attribute("upload_time") << "\n";
+      //  kdDebug(24000) << "Upload time for " << el.attribute("url") << " is: " << el.attribute("upload_time") << "\n";
         break;
       }
     }

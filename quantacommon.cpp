@@ -205,6 +205,7 @@ QString QuantaCommon::xmlFromAttributes(AttributeList* attributes)
 {
  QString xmlStr;
  QTextStream stream( &xmlStr, IO_WriteOnly );
+ stream.setEncoding(QTextStream::UnicodeUTF8);
  if (attributes)
  {
   int row = 0;

@@ -125,7 +125,7 @@ void ToolbarTabWidget::mousePressEvent ( QMouseEvent * e )
         tab = 0L;
     }
     tabUnderMouse = tab ? tab->text() : label(currentPageIndex());
-    m_popupMenu->changeTitle(1, i18n("Toolbar Menu") + " - " + i18n(tabUnderMouse));
+    m_popupMenu->changeTitle(1, i18n("Toolbar Menu") + " - " + i18n(tabUnderMouse.utf8()));
     m_popupMenu->popup(p);
   }
 }
@@ -176,7 +176,7 @@ void QuantaToolBar::mousePressEvent(QMouseEvent *e)
     {
       m_toolbarTab->tabUnderMouse = m_toolbarTab->label(m_toolbarTab->currentPageIndex());
       m_popupMenu->insertTitle(i18n("Toolbar Menu") + " - "
-                               + i18n(m_toolbarTab->tabUnderMouse));
+                               + i18n(m_toolbarTab->tabUnderMouse.utf8()));
       QObjectList* childrenList = queryList("KToolBarButton");
       for (uint i = 0; i < childrenList->count(); i++)
       {

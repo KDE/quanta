@@ -390,6 +390,7 @@ void QuantaView::initActions()
     QFile file( locate("appdata","chars") );
     if ( file.open(IO_ReadOnly) ) {    // file opened successfully
         QTextStream t( &file );        // use a text stream
+        t.setEncoding(QTextStream::UnicodeUTF8);
         QString s;
         while ( !t.eof() ) {           // until end of file...
             charList << i18n(t.readLine()); // line excluding '\n'

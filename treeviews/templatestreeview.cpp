@@ -352,7 +352,8 @@ void TemplatesTreeView::contentsDropEvent(QDropEvent *e)
         //now save the file
         KTempFile* tempFile = new KTempFile(tmpDir);
         tempFile->setAutoDelete(true);
-        * (tempFile->textStream()) << content;
+        tempFile->textStream()->setEncoding(QTextStream::UnicodeUTF8);
+        *(tempFile->textStream()) << content;
         tempFile->close();
         bool proceed = true;
         if (QExtFileInfo::exists(url))

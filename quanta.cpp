@@ -396,6 +396,7 @@ void QuantaApp::saveAsTemplate(bool projectTemplate,bool selectionOnly)
     QFile templateFile(fileName);
     templateFile.open(IO_WriteOnly);
     QTextStream stream(&templateFile);
+    stream.setEncoding(QTextStream::UnicodeUTF8);
     stream << content;
     templateFile.flush();
     templateFile.close();
@@ -2076,6 +2077,7 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
  QDomDocument *toolbarDom = new QDomDocument();
 
  QTextStream str;
+ str.setEncoding(QTextStream::UnicodeUTF8);
  QString fileName = url.path();
 
  if ( url.fileName().endsWith(toolbarExtension) )
@@ -2110,7 +2112,7 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
    //search for another toolbar with the same name
    QPtrList<KXMLGUIClient> xml_clients = guiFactory()->clients();
    QString newName = name;
-   QString i18nName = i18n(name);
+   QString i18nName = i18n(name.utf8());
    QString origName = name;
    bool found = false;
    int count = 2;
@@ -2128,7 +2130,7 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
          if ((nodeList.item(i).cloneNode().toElement().attribute("name") ) == name.lower())
          {
            newName = origName + QString(" (%1)").arg(count);
-           i18nName = i18n(origName) + QString(" (%1)").arg(count);
+           i18nName = i18n(origName.utf8()) + QString(" (%1)").arg(count);
            count++;
            found = true;
            break;
@@ -2164,7 +2166,7 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
    el.setAttribute("i18ntabname", i18nName);
    nodeList = toolbarDom->elementsByTagName("text");
    el.firstChild().setNodeValue(name);
-
+   tempFile->textStream()->setEncoding(QTextStream::UnicodeUTF8);
    * (tempFile->textStream()) << toolbarDom->toString();
    tempFile->close();
 
@@ -2301,10 +2303,12 @@ KURL QuantaApp::saveToolbarToFile(const QString& toolbarName, const KURL& destFi
   buffer.open(IO_ReadWrite);
   QString toolStr;
   QTextStream toolStream(&toolStr, IO_ReadWrite);
+  toolStream.setEncoding(QTextStream::UnicodeUTF8);
 
   QBuffer buffer2;
   buffer2.open(IO_WriteOnly);
   QTextStream actStr(&buffer2);
+  actStr.setEncoding(QTextStream::UnicodeUTF8);
 
   QDomNodeList nodeList, nodeList2;
 
@@ -2365,6 +2369,7 @@ KURL QuantaApp::saveToolbarToFile(const QString& toolbarName, const KURL& destFi
   p_toolbar->dom = dom;
 
   QTextStream bufferStr(&buffer);
+  bufferStr.setEncoding(QTextStream::UnicodeUTF8);
   bufferStr << toolStr;
   buffer.close();
   buffer2.close();
@@ -2497,6 +2502,7 @@ void QuantaApp::slotAddToolbar()
 
   KTempFile* tempFile = new KTempFile(tmpDir);
   tempFile->setAutoDelete(true);
+  tempFile->textStream()->setEncoding(QTextStream::UnicodeUTF8);
   * (tempFile->textStream()) << QString("<!DOCTYPE kpartgui SYSTEM \"kpartgui.dtd\">\n<kpartgui name=\"quanta\" version=\"2\">\n<ToolBar name=\"%1\" tabname=\"%2\" i18ntabname=\"%3\">\n<text>%4</text>\n</ToolBar>\n</kpartgui>\n")\
                .arg(name.lower()).arg(name).arg(name).arg(name);
   tempFile->close();
@@ -2690,8 +2696,8 @@ void QuantaApp::slotRenameToolbar(const QString& name)
       {
         if (tb->label(i).lower() == name)
         {
-          tb->setTabLabel(tb->page(i)->parentWidget(), i18n(p_toolbar->name));
-          m_tagsMenu->changeItem(m_tagsMenu->idAt(i + 2), i18n(p_toolbar->name));
+          tb->setTabLabel(tb->page(i)->parentWidget(), i18n(p_toolbar->name.utf8()));
+          m_tagsMenu->changeItem(m_tagsMenu->idAt(i + 2), i18n(p_toolbar->name.utf8()));
           break;
         }
       }
@@ -2732,6 +2738,7 @@ bool QuantaApp::removeToolbars()
     if (!m_actions->firstChild().firstChild().isNull())
     {
       QTextStream qts(&f);
+      qts.setEncoding(QTextStream::UnicodeUTF8);
       m_actions->save(qts,0);
       f.close();
     } else
