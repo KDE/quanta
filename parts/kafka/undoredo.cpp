@@ -64,6 +64,11 @@ NodeModif::~NodeModif()
 
 void NodeModif::setNode(Node *node)
 {
+//FIXME: Andras: I don't have the slightest idea what this is supposed to do and what the
+//below comment means, but without a real delete we are seriously leaking memory
+        m_node = 0L;
+        delete node;
+        return;
 	//TEMPORARY to avoid the Node::~Node bug which seems to come from the fact
 	//the node is deleted a while after it is removed and thus some pointer are invalid
 	//cf Node::~Node
