@@ -423,9 +423,9 @@ void StructTreeView::slotMouseClicked(int button, QListViewItem *item, const QPo
   {
     config->setGroup("Parser options");
 
-    QString handleMBM = config->readEntry("MBM", i18n("Select tag area"));
+    QString handleMBM = config->readEntry("MBM", i18n("Select Tag Area"));
     QString handleLBM = config->readEntry("LBM", i18n("Find tag"));
-    QString handleDoubleClick = config->readEntry("Double click", i18n("Select tag area"));
+    QString handleDoubleClick = config->readEntry("Double click", i18n("Select Tag Area"));
 
     setSelected(item, true);
 
@@ -459,7 +459,7 @@ void StructTreeView::slotMouseClicked(int button, QListViewItem *item, const QPo
         slotGotoTag(item);
       }
 
-      if ( handleMBM == i18n("Select tag area"))
+      if ( handleMBM == i18n("Select Tag Area"))
            slotSelectTag();
 
       if ( handleMBM == i18n("Go to End of Tag"))
