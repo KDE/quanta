@@ -52,11 +52,12 @@ extern uint attrsCase; // use capital letters for attributes of tag
 extern bool useCloseTag; // use close tag if optional
 
 
-TagDialog::TagDialog(QString tag ,QString attr)
+TagDialog::TagDialog(QString tag ,QString attr, QString base)
     : QTabDialog( 0L, tag, true)
 {
   dict = new QDict<QString>(1,false);
   this->tag = tag;
+  basePath = base;
 
   if ( !attr.isNull() )
   {
@@ -239,22 +240,6 @@ QString TagDialog::getBasePath()
  return basePath;
 }
 
-/** set document path */
-void TagDialog::setBasePath(Document *w)
-{
-	if ( !w->isUntitled() )
-	{
-		QString name = w->url().prettyURL();
-		if ( name.left(5) == "file:" ) name.remove(0,5);
-		QFileInfo fileInfo( name );
-		basePath = fileInfo.dirPath()+"/";
-	} else
-	{
-    basePath = w->basePath;
-	}
-		
-	//return QDir::currentDirPath()+"/";
-}
 
 void TagDialog::parseAttributes( QString attrs )
 {

@@ -50,7 +50,7 @@ public:
                </a>
 
   */
-	TagDialog(QString tag = QString::null, QString attr = QString::null);
+	TagDialog(QString tag = QString::null, QString attr = QString::null, QString base = QString::null);
 	~TagDialog();
   /** Insert an attribute to dict*/
   void insertAttribute(QString *attr, QString *value);
@@ -58,8 +58,7 @@ public:
   void parseTag();
   /** returen doc path */
 	QString getBasePath();
-  /** set document path */
-  void setBasePath(Document *w);
+
 
   /** Return the attributes in QDict<QString> format*/
   QDict<QString> * getAttributes();

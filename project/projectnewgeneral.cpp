@@ -44,6 +44,8 @@ ProjectNewGeneral::ProjectNewGeneral(QWidget *parent, const char *name )
 					 this,				SLOT(slotLinePrjFile(const QString &)));
   connect( linePrjDir,  SIGNAL(textChanged(const QString &)),
            this,        SLOT(slotLinePrjTmpl(const QString &)));
+  connect( linePrjDir,  SIGNAL(textChanged(const QString &)),
+           this,        SLOT(slotLinePrjToolbar(const QString &)));
 	connect( buttonDir,		SIGNAL(clicked()),
 					 this,				SLOT(slotButtonDir()));
 	connect( linePrjName, SIGNAL(textChanged(const QString &)),

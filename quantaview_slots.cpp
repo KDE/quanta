@@ -898,14 +898,33 @@ void QuantaView::slotInsertChar(const QString &selected){
 /** Insert a new tag by bringing up the TagDialog. */
 void QuantaView::insertNewTag(QString tag, QString attr,bool insertInLine)
 {
+
   Document *w = write();
 
-  TagDialog *dlg = new TagDialog(tag, attr);
-  dlg->setBasePath(w); //It is very important to call this function!!!
+  TagDialog *dlg = new TagDialog(tag, attr, basePath());
+//  dlg->setBasePath(w); //It is very important to call this function!!!
   if (dlg->exec())
   {
    dlg->insertTag(w, insertInLine);
   }
 
   delete dlg;
+}
+/** Returns the basePath of the document. */
+QString QuantaView::basePath()
+{
+  Document *w = write();
+  QString base;
+	if ( !w->isUntitled() )
+	{
+		QString name = w->url().prettyURL();
+		if ( name.left(5) == "file:" ) name.remove(0,5);
+		QFileInfo fileInfo( name );
+		base = fileInfo.dirPath()+"/";
+	} else
+	{
+    base = w->basePath;
+	}
+
+  return base;
 }

@@ -89,6 +89,8 @@ class QuantaView : public QWidget
   void resizeEvent (QResizeEvent *);
   /** Insert a new tag by bringing up the TagDialog. */
   void insertNewTag(QString tag, QString attr = QString::null,bool insertInLine = true);
+  /** Returns the basePath of the document. */
+  QString basePath();
 
 	public slots:
 
