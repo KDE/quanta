@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="quanta" version="32052">
+<kpartgui name="quanta" version="32053">
   <MenuBar noMerge="1">
 
     <Menu name="file" noMerge="1"><text>&amp;File</text>
@@ -64,9 +64,6 @@
       <Action name="w_back"/>
       <Action name="w_forward"/>
     </Menu>
-
-  <Menu name="bookmarks"><text>&amp;Bookmarks</text>
-  </Menu>
 
   <Menu name="project" noMerge="1"><text>&amp;Project</text>
       <Action name="project_new"/>
