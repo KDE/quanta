@@ -146,3 +146,4 @@ MayContain = pseudo DTDs can contain other pseudo DTDs
 
 B. Tag file structure
 ---------------------
+Tag files are described in the Quanta doc tab under Quanta Tag Dialog Definition XML.
