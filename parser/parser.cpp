@@ -1351,7 +1351,7 @@ Node *Parser::rebuild(Document *w)
      {
        firstNode = node;
        //temporary : firstNode might not be the first unchanged node e.g. text nodes
-       while(firstNode->tag->type == Tag::Text)
+       while(firstNode->previousSibling() && firstNode->tag->type == Tag::Text)
          firstNode = firstNode->previousSibling();
        break;
      }
