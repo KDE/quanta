@@ -416,7 +416,7 @@ void QuantaApp::initView()
   scripttabdock->setToolTipString(i18n("Scripts tree view"));
   stabdock = createDockWidget("Struct", BarIcon ("view_sidetree"), 0L, i18n("Structure view (DOM tree)"), "");
   stabdock->setToolTipString(i18n("Structure view (DOM tree)"));
-  dtabdock = createDockWidget("Docs", BarIcon ("contents2"), 0L, i18n("Documentation"), "");
+  dtabdock = createDockWidget("Docs", BarIcon ("contents"), 0L, i18n("Documentation"), "");
   dtabdock->setToolTipString(i18n("Documentation"));
 
   m_oldTreeViewWidget = ptabdock;
