@@ -108,6 +108,8 @@ Document::Document(KTextEditor::Document *doc,
   m_view = m_doc->createView(parent, 0L);
   completionInProgress = false;
   argHintVisible = false;
+  completionRequested = false;
+
   // remove the unwanted actions
   KAction *a = m_view->actionCollection()->action( "file_export" );
   if (a)
@@ -1164,7 +1166,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(int line, 
           if (!(*it)->tag)
             continue;
 #ifdef DEBUG_PARSER
-          kdDebug(24001) << "GroupElement: " << (*it) << " " << (*it)->tag->area().bLine << " " << (*it)->tag->area().bCol << " "<< (*it)->tag->area().eLine << " "<< (*it)->tag->area().eCol << " " << (*it)->tag->tagStr() << " " << (*it)->type << endl;
+          kdDebug(24000) << "GroupElement: " << (*it) << " " << (*it)->tag->area().bLine << " " << (*it)->tag->area().bCol << " "<< (*it)->tag->area().eLine << " "<< (*it)->tag->area().eCol << " " << (*it)->tag->tagStr() << " " << (*it)->type << endl;
 #endif
           if (!(*it)->type.isEmpty())
           {
@@ -1216,10 +1218,13 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(int line, 
   tagNameList.sort();
   for (uint i = 0; i < tagNameList.count(); i++)
   {
-   completion.text = QuantaCommon::tagCase(tagNameList[i]);
-   completion.text = completion.text.left(completion.text.length() - 3);
-   completion.comment = comments[tagNameList[i]];
-   completions->append( completion );
+    if (completionDTD->family == Xml)
+      completion.text = QuantaCommon::tagCase(tagNameList[i]);
+    else
+      completion.text = tagNameList[i];
+    completion.text = completion.text.left(completion.text.length() - 3);
+    completion.comment = comments[tagNameList[i]];
+    completions->append( completion );
   }
 
 //  completionInProgress = true;
@@ -1624,7 +1629,7 @@ bool Document::scriptAutoCompletion(int line, int column)
      }
    }
  }
- if ( !handled && (s[i] == completionDTD->tagAutoCompleteAfter || completionDTD->tagAutoCompleteAfter == '\1' || completionDTD->memberAutoCompleteAfter.searchRev(s) != -1) && !argHintVisible)
+ if ( !handled && (completionRequested || s[i] == completionDTD->tagAutoCompleteAfter || completionDTD->tagAutoCompleteAfter == '\1' || completionDTD->memberAutoCompleteAfter.searchRev(s) != -1) && !argHintVisible)
  {
    showCodeCompletions(getTagCompletions(line, column + 1));
    handled = true;
@@ -1778,9 +1783,11 @@ QString Document::findRev(const QRegExp& regExp, int sLine, int sCol, int& fbLin
 /** Code completion was requested by the user. */
 void Document::codeCompletionRequested()
 {
+  completionRequested = true;
   completionInProgress = false;
   argHintVisible = false;
   handleCodeCompletion();
+  completionRequested = false;
 }
 
 void Document::handleCodeCompletion()
@@ -1829,6 +1836,7 @@ void Document::handleCodeCompletion()
 /** Bring up the code completion tooltip. */
 void Document::codeCompletionHintRequested()
 {
+  completionRequested = true;
   slotDelayedTextChanged(true);
   uint line, col;
   viewCursorIf->cursorPositionReal(&line, &col);
@@ -1841,6 +1849,7 @@ void Document::codeCompletionHintRequested()
     //if (pos > pos2 )
        scriptAutoCompletion(line, col - 1);
   }
+  completionRequested = false;
 }
 
 QString Document::currentWord()

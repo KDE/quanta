@@ -270,6 +270,7 @@ private:
 
   bool changed;
   bool completionInProgress;
+  bool completionRequested; ///< true if the code completion was explicitely requested by the user
   bool argHintVisible;
   bool reparseEnabled;
   bool repaintEnabled;

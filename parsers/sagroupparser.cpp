@@ -165,7 +165,7 @@ void SAGroupParser::parseForScriptGroup(Node *node)
         newTag->setStr(title);
         newTag->name = s;
 
-        if (dtd->name == "php" && group.name == "Functions")
+        if (dtd->name == "PHP" && group.name == "Functions")
         {
           QTag *qTag = m_parent->write()->userTagList.find(s.lower());
           if (!qTag)
