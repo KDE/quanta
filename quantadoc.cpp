@@ -140,8 +140,15 @@ bool QuantaDoc::newDocument( const KURL& url, bool switchToExisting )
   return true;
 }
 
-void QuantaDoc::openDocument(const KURL& url, const QString &a_encoding, bool switchToExisting)
+void QuantaDoc::openDocument(const KURL& urlToOpen, const QString &a_encoding, bool switchToExisting)
 {
+  KURL url = urlToOpen;
+  if (url.isLocalFile())
+  {
+    QString path = QDir(url.path()).canonicalPath();
+    if (!path.isEmpty())
+        url.setPath(path);
+  }
   QString encoding = a_encoding;
   if (!newDocument(url, switchToExisting))
       return;
