@@ -8,39 +8,23 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>337</width>
-            <height>157</height>
+            <width>445</width>
+            <height>190</height>
         </rect>
     </property>
     <property name="caption">
         <string>DTD Selector</string>
     </property>
-    <widget class="QPushButton">
-        <property name="name">
-            <cstring>okButton</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>130</x>
-                <y>130</y>
-                <width>80</width>
-                <height>22</height>
-            </rect>
-        </property>
-        <property name="text">
-            <string>&amp;OK</string>
-        </property>
-    </widget>
     <widget class="QLayoutWidget">
         <property name="name">
-            <cstring>Layout1</cstring>
+            <cstring>Layout2</cstring>
         </property>
         <property name="geometry">
             <rect>
                 <x>10</x>
-                <y>60</y>
-                <width>315</width>
-                <height>60</height>
+                <y>10</y>
+                <width>430</width>
+                <height>137</height>
             </rect>
         </property>
         <grid>
@@ -53,58 +37,93 @@
             <property name="spacing">
                 <number>6</number>
             </property>
-            <widget class="QComboBox" row="0" column="1">
-                <property name="name">
-                    <cstring>dtdCombo</cstring>
-                </property>
-            </widget>
-            <widget class="QLabel" row="1" column="0">
-                <property name="name">
-                    <cstring>textLabel</cstring>
-                </property>
-                <property name="text">
-                    <string>Current DTD:</string>
-                </property>
-            </widget>
             <widget class="QLabel" row="0" column="0">
                 <property name="name">
-                    <cstring>comboLabel</cstring>
+                    <cstring>messageLabel</cstring>
                 </property>
                 <property name="text">
-                    <string>Select DTD:</string>
+                    <string>Dialog message:
+Dialog message2:</string>
+                </property>
+                <property name="scaledContents">
+                    <bool>true</bool>
+                </property>
+                <property name="alignment">
+                    <set>WordBreak|AlignVCenter</set>
                 </property>
             </widget>
-            <widget class="QLineEdit" row="1" column="1">
+            <widget class="QLayoutWidget" row="1" column="0">
                 <property name="name">
-                    <cstring>currentDTD</cstring>
+                    <cstring>Layout1</cstring>
                 </property>
-                <property name="readOnly">
+                <grid>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <property name="margin">
+                        <number>0</number>
+                    </property>
+                    <property name="spacing">
+                        <number>6</number>
+                    </property>
+                    <widget class="QComboBox" row="0" column="1">
+                        <property name="name">
+                            <cstring>dtdCombo</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="1" column="0">
+                        <property name="name">
+                            <cstring>textLabel</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Current DTD:</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="0" column="0">
+                        <property name="name">
+                            <cstring>comboLabel</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Select DTD:</string>
+                        </property>
+                    </widget>
+                    <widget class="QLineEdit" row="1" column="1">
+                        <property name="name">
+                            <cstring>currentDTD</cstring>
+                        </property>
+                        <property name="readOnly">
+                            <bool>true</bool>
+                        </property>
+                    </widget>
+                </grid>
+            </widget>
+            <widget class="QCheckBox" row="2" column="0">
+                <property name="name">
+                    <cstring>convertDTD</cstring>
+                </property>
+                <property name="text">
+                    <string>&amp;Convert the document to the selected DTD</string>
+                </property>
+                <property name="checked">
                     <bool>true</bool>
                 </property>
             </widget>
         </grid>
     </widget>
-    <widget class="QLabel">
+    <widget class="QPushButton">
         <property name="name">
-            <cstring>messageLabel</cstring>
+            <cstring>okButton</cstring>
         </property>
         <property name="geometry">
             <rect>
-                <x>15</x>
-                <y>10</y>
-                <width>310</width>
-                <height>40</height>
+                <x>190</x>
+                <y>160</y>
+                <width>80</width>
+                <height>22</height>
             </rect>
         </property>
         <property name="text">
-            <string>Dialog message:
-Dialog message2:</string>
-        </property>
-        <property name="scaledContents">
-            <bool>true</bool>
-        </property>
-        <property name="alignment">
-            <set>WordBreak|AlignVCenter</set>
+            <string>&amp;OK</string>
         </property>
     </widget>
 </widget>
@@ -113,6 +132,7 @@ Dialog message2:</string>
 <tabstops>
     <tabstop>dtdCombo</tabstop>
     <tabstop>currentDTD</tabstop>
+    <tabstop>convertDTD</tabstop>
     <tabstop>okButton</tabstop>
 </tabstops>
 <includes>

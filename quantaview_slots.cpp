@@ -32,6 +32,7 @@
 
 // include files for KDE
 #include <kapp.h>
+#include <kconfig.h>
 #include <klocale.h>
 #include <kprocess.h>
 #include <kcolordlg.h>
@@ -797,6 +798,7 @@ void QuantaView::slotEditorOptions()
 {
   dynamic_cast<KTextEditor::ConfigInterface *>(write()->doc())->configDialog();
   write()->writeConfig(quantaApp->config);
+  quantaApp->config->sync();
 }
 
 void QuantaView::setEol(int which)

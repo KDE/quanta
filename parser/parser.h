@@ -45,7 +45,8 @@ class Document;
 
 struct DTDListNode {
     DTDStruct *dtd;
-    QString foundText;
+    QString startText;
+    QString endText;
     int bLine, bCol;
     int eLine, eCol;
   };

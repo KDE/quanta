@@ -85,7 +85,7 @@ void Parser::coutTree(Node *node, int indent)
 
 void Parser::parse2()
 {
- Node * node = m_node;
+// Node * node = m_node;
 }
 
 /** Recursive parsing algorithm. Actually this does the parsing and tree building. */
@@ -333,15 +333,30 @@ void Parser::rebuildDTDList()
   int delta = maxLines - oldMaxLines;
   uint line, col;
   write->viewCursorIf->cursorPositionReal(&line, &col);
-  DTDListNode dtdNode;
+  QString start, end;
+  DTDListNode dtdNode;  
   for (uint i = 0; i < dtdList.count(); i++)
   {
     dtdNode = dtdList[i];
-    if (dtdNode.bLine >= line) dtdNode.bLine += delta;
-    if (dtdNode.eLine >= line) dtdNode.eLine += delta;
+    if (dtdNode.bLine >= (int)line) dtdNode.bLine += delta;
+    if (dtdNode.eLine >= (int)line) dtdNode.eLine += delta;
+    if (dtdNode.startText.startsWith("<script") ||
+        dtdNode.startText.startsWith("!doctype") )
+    {
+      start = write->editIf->textLine(dtdNode.bLine).remove(0, dtdNode.bCol - dtdNode.startText.length()).lower();
+    } else
+    {
+      start = write->editIf->textLine(dtdNode.bLine).remove(0, dtdNode.bCol).lower();
+    }
+    end = write->editIf->textLine(dtdNode.eLine).remove(0, dtdNode.eCol).lower();
+    if (!start.startsWith(dtdNode.startText) || !end.startsWith(dtdNode.endText) )
+    {
+      parseForDTD(write, true);
+      break;
+    }
     dtdList[i] = dtdNode;
   }
-
+  oldMaxLines = maxLines;
 }
 
 /** Builds an internal tree to reflect the areas where each real & pseudo dtd is active. */
@@ -358,7 +373,7 @@ void Parser::parseForDTD(Document *w, bool force)
  uint line = 0;
  uint col = 0;
  int pos = 0;
- int startCol = 0;
+ uint startCol = 0;
  QString text = write->editIf->text();
  uint length = text.length();
  QString foundText;
@@ -383,14 +398,14 @@ void Parser::parseForDTD(Document *w, bool force)
        if (tag)
        {
          int eLine, eCol;
-         dtdNode.foundText = foundText;
+         dtdNode.startText = tag->tagStr().lower();
          foundText = tag->attributeValue("language").lower();
          tag->endPos(eLine, eCol);
          delete tag;
          dtdNode.dtd = dtds->find(foundText);
          dtdNode.eLine = -1;
          dtdNode.bLine = eLine;
-         dtdNode.bCol = eCol;
+         dtdNode.bCol = eCol+1;
          dtdList.append(dtdNode);
        }
      } else
@@ -398,10 +413,11 @@ void Parser::parseForDTD(Document *w, bool force)
        {
          for (int i = dtdList.count() -1; i >=0; i--)     //search for the first non-closed <script> tag
          {
-           if (dtdList[i].foundText == "<script" && dtdList[i].eLine == -1)
+           if (dtdList[i].startText.startsWith("<script") && dtdList[i].eLine == -1)
            {
              dtdList[i].eLine = line;
              dtdList[i].eCol = col;
+             dtdList[i].endText = foundText;
              break;
            }
          }
@@ -409,20 +425,22 @@ void Parser::parseForDTD(Document *w, bool force)
        {
          if (foundText == "!doctype")
          {
-           dtdNode.foundText = foundText;
            for (int i = dtdList.count() -1; i >=0; i--)     //search for the first non-closed <script> tag
            {
-             if (dtdList[i].foundText == "!doctype" && dtdList[i].eLine == -1)
+             if (dtdList[i].startText.startsWith("!doctype") && dtdList[i].eLine == -1)
              {
+               dtdList[i].endText = "";
                dtdList[i].eLine = line;
                dtdList[i].eCol = col - 1;
                break;
              }
            }
-           tag = write->findXMLTag(line, col, true);
+           pos = write->editIf->textLine(line).findRev("<", col);
+           tag = write->findXMLTag(line, pos, true);
            if (tag)
            {
              QString docText = tag->tagStr();
+             dtdNode.startText = docText.lower();
              pos = docText.find("public",0,false);
              if (pos == -1) //if no PUBLIC info, use the word after !DOCTYPE as the doc.type
              {
@@ -457,7 +475,7 @@ void Parser::parseForDTD(Document *w, bool force)
                  int index = dtd->scriptTagStart.findIndex(foundText);
                  if (index !=-1)          //script begin
                  {
-                   dtdNode.foundText = foundText;
+                   dtdNode.startText = foundText;
                    dtdNode.dtd = dtd;
                    dtdNode.eLine = -1;
                    dtdNode.bLine = line;
@@ -475,6 +493,7 @@ void Parser::parseForDTD(Document *w, bool force)
                      {
                        dtdList[i].eLine = line;
                        dtdList[i].eCol = col;
+                       dtdList[i].endText = foundText;
                        found = true;
                        break;
                      }

@@ -2,7 +2,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file './dtdselectdialog.ui'
 **
-** Created: Mon Oct 7 18:05:29 2002
+** Created: Tue Oct 8 16:33:18 2002
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -10,6 +10,7 @@
 #include "dtdselectdialog.h"
 
 #include <qvariant.h>
+#include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qlabel.h>
 #include <qlineedit.h>
@@ -31,16 +32,22 @@ DTDSelectDialog::DTDSelectDialog( QWidget* parent,  const char* name, bool modal
 {
     if ( !name )
 	setName( "DTDSelectDialog" );
-    resize( 337, 157 ); 
+    resize( 445, 190 ); 
     setCaption( tr2i18n( "DTD Selector" ) );
 
-    okButton = new QPushButton( this, "okButton" );
-    okButton->setGeometry( QRect( 130, 130, 80, 22 ) ); 
-    okButton->setText( tr2i18n( "&OK" ) );
+    QWidget* privateLayoutWidget = new QWidget( this, "Layout2" );
+    privateLayoutWidget->setGeometry( QRect( 10, 10, 430, 137 ) ); 
+    Layout2 = new QGridLayout( privateLayoutWidget, 1, 1, 0, 6, "Layout2"); 
 
-    QWidget* privateLayoutWidget = new QWidget( this, "Layout1" );
-    privateLayoutWidget->setGeometry( QRect( 10, 60, 315, 60 ) ); 
-    Layout1 = new QGridLayout( privateLayoutWidget, 1, 1, 0, 6, "Layout1"); 
+    messageLabel = new QLabel( privateLayoutWidget, "messageLabel" );
+    messageLabel->setText( tr2i18n( "Dialog message:\n"
+"Dialog message2:" ) );
+    messageLabel->setScaledContents( TRUE );
+    messageLabel->setAlignment( int( QLabel::WordBreak | QLabel::AlignVCenter ) );
+
+    Layout2->addWidget( messageLabel, 0, 0 );
+
+    Layout1 = new QGridLayout( 0, 1, 1, 0, 6, "Layout1"); 
 
     dtdCombo = new QComboBox( FALSE, privateLayoutWidget, "dtdCombo" );
 
@@ -61,18 +68,24 @@ DTDSelectDialog::DTDSelectDialog( QWidget* parent,  const char* name, bool modal
 
     Layout1->addWidget( currentDTD, 1, 1 );
 
-    messageLabel = new QLabel( this, "messageLabel" );
-    messageLabel->setGeometry( QRect( 15, 10, 310, 40 ) ); 
-    messageLabel->setText( tr2i18n( "Dialog message:\n"
-"Dialog message2:" ) );
-    messageLabel->setScaledContents( TRUE );
-    messageLabel->setAlignment( int( QLabel::WordBreak | QLabel::AlignVCenter ) );
+    Layout2->addLayout( Layout1, 1, 0 );
+
+    convertDTD = new QCheckBox( privateLayoutWidget, "convertDTD" );
+    convertDTD->setText( tr2i18n( "&Convert the document to the selected DTD" ) );
+    convertDTD->setChecked( TRUE );
+
+    Layout2->addWidget( convertDTD, 2, 0 );
+
+    okButton = new QPushButton( this, "okButton" );
+    okButton->setGeometry( QRect( 190, 160, 80, 22 ) ); 
+    okButton->setText( tr2i18n( "&OK" ) );
 
     // signals and slots connections
 
     // tab order
     setTabOrder( dtdCombo, currentDTD );
-    setTabOrder( currentDTD, okButton );
+    setTabOrder( currentDTD, convertDTD );
+    setTabOrder( convertDTD, okButton );
     init();
 }
 

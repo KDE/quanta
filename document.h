@@ -124,8 +124,8 @@ public:
   DTDStruct* currentDTD(bool fallback = true);
   /** Get a pointer to the default DTD (document, or app). */
   DTDStruct* defaultDTD();
-  /** Find the DTD name for a part of the document. Search all the document if startLine=endLine=-1.*/
-  QString findDTDName(int startLine, int endLine,bool searchPseudoDTD = true);
+  /** Find the DTD name for a part of the document. */
+  QString findDTDName(Tag **tag);
   /** Retriwes the text from the specified rectangle. The KTextEditor::EditInterface::text seems to not
 work correctly. */
   QString text(int bLine, int bCol, int eLine, int eCol);

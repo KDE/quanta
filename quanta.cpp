@@ -641,16 +641,6 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
 
   loadToolbarForDTD(newWrite->getDTDIdentifier());
 
-//Add the Kate menus
-/*
-  if (view->oldWrite != 0L)
-  {
-    view->oldWrite->writeConfig(config);
-    guiFactory()->removeClient(view->oldWrite->view());
-  }
-  guiFactory()->addClient(dynamic_cast<Document *>(w)->view());
-*/
-
   newWrite->readConfig(config);
 
   Document *currentWrite = view->write();
@@ -1956,10 +1946,10 @@ void QuantaApp::processDTD(QString documentType)
  QString foundName;
  QString projectDTD = project->defaultDTD();
  w->setDTDIdentifier(projectDTD);
-
+ Tag *tag = 0L;
  if (documentType.isEmpty())
- {
-   foundName = w->findDTDName(-1,-1, false); //look up the whole file for DTD definition
+ { 
+   foundName = w->findDTDName(&tag); //look up the whole file for DTD definition
    bool found = false;
    if (!foundName.isEmpty())   //!DOCTYPE found in file
    {
@@ -1979,15 +1969,8 @@ void QuantaApp::processDTD(QString documentType)
     }
 
 //    dlg->dtdCombo->insertItem(i18n("Create new DTD info."));
-    if (foundName.isEmpty())
-    {
-      dlg->messageLabel->setText(i18n("No DTD info was found. Choose a DTD or create a new one."));
-      dlg->currentDTD->setText(i18n("Not found"));
-    } else
-    {
-      dlg->messageLabel->setText(i18n("This DTD is not known for Quanta. Choose a DTD or create a new one."));
-      dlg->currentDTD->setText(QuantaCommon::getDTDNickNameFromName(foundName));
-    }
+    dlg->messageLabel->setText(i18n("This DTD is not known for Quanta. Choose a DTD or create a new one."));
+    dlg->currentDTD->setText(QuantaCommon::getDTDNickNameFromName(foundName));
 
     for (int i = 0; i < dlg->dtdCombo->count(); i++)
     {
@@ -2000,6 +1983,16 @@ void QuantaApp::processDTD(QString documentType)
     if (!found && dlg->exec())
     {
       w->setDTDIdentifier(QuantaCommon::getDTDNameFromNickName(dlg->dtdCombo->currentText()));
+      if (dlg->convertDTD->isChecked())
+      {
+        QDict<QString> attrDict;
+        w->changeTag(tag, &attrDict);
+        uint line, col;
+        w->viewCursorIf->cursorPositionReal(&line, &col);
+        if (col > 0) w->viewCursorIf->setCursorPositionReal(line, col-1);
+        w->insertText(QuantaCommon::attrCase(" public \""+w->getDTDIdentifier()+"\""));
+        delete tag;
+      }
     }
     delete dlg;
   } else //DOCTYPE not found in file
@@ -2026,7 +2019,9 @@ void QuantaApp::slotToolsChangeDTD()
   int pos = -1;
   QDictIterator<DTDStruct> it(*dtds);
   int defaultIndex = 0;
-
+  
+  Tag *tag = 0L;
+  w->findDTDName(&tag);
   QString oldDtdName = w->getDTDIdentifier();
   QString defaultDocType = project->defaultDTD();
   for( ; it.current(); ++it )
@@ -2046,10 +2041,28 @@ void QuantaApp::slotToolsChangeDTD()
   if (dlg->exec())
   {
     w->setDTDIdentifier(QuantaCommon::getDTDNameFromNickName(dlg->dtdCombo->currentText()));
+    if (dlg->convertDTD->isChecked())
+    {
+      if (tag)
+      {
+         QDict<QString> attrDict;
+         w->changeTag(tag, &attrDict);
+         uint line, col;
+         w->viewCursorIf->cursorPositionReal(&line, &col);
+         if (col > 0) w->viewCursorIf->setCursorPositionReal(line, col-1);
+         w->insertText(QuantaCommon::attrCase(" public \""+w->getDTDIdentifier()+"\""));
+         delete tag;
+      } else
+      {
+        w->viewCursorIf->setCursorPositionReal(0,0);
+        w->insertText(QuantaCommon::tagCase("<!doctype")+QuantaCommon::attrCase(" public \""+w->getDTDIdentifier()+"\">\n"));
+      }
+    }
   }
 
   loadToolbarForDTD(w->getDTDIdentifier());
   reparse();
+  parser->parseForDTD(w, true);
 
   delete dlg;
 }

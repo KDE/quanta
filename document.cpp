@@ -831,7 +831,7 @@ QString Document::getTagNameAt(DTDStruct *dtd, int line, int col )
      {   
        s.remove(0,pos);
        pos = 0;
-       while (pos < s.length() && !s[pos].isSpace()) pos++;
+       while (pos < (int)s.length() && !s[pos].isSpace()) pos++;
        name = s.mid(1, pos -1).stripWhiteSpace();
      } else
      {
@@ -912,23 +912,6 @@ void Document::slotFilterCompletion( KTextEditor::CompletionEntry *completion ,Q
 */
 void Document::slotCharactersInserted(int line,int column,const QString& string)
 {
- QString word;
- QDictIterator<DTDStruct> it(*dtds);
- QString text = editIf->textLine(line).left(column);
- for( ; it.current(); ++it )
- {
-   DTDStruct *dtd = it.current();
-   for (uint i = 0; i < dtd->scriptTagStart.count(); i++)
-   {
-     if ( text.endsWith(dtd->scriptTagStart[i]) || text.endsWith(dtd->scriptTagEnd[i]) )
-     {
-        //KMessageBox::error(this, dtd->name);
-        parser->parseForDTD(this, true);
-        break;
-     }
-   }
- }
-
  bool handled = false;
  if (qConfig.useAutoCompletion)
  {
@@ -1210,9 +1193,7 @@ DTDStruct* Document::currentDTD(bool fallback)
   uint line, col;
   viewCursorIf->cursorPositionReal(&line, &col);
 
- // parser->parseForDTD(this);
-  DTDStruct* dtd = dtds->find(findDTDName(line, 0));
-//  DTDStruct *dtd = parser->currentDTD(line, col);
+  DTDStruct *dtd = parser->currentDTD(line, col);
   if (fallback)
   {
     if (!dtd) dtd = dtds->find(dtdName.lower());
@@ -1233,79 +1214,30 @@ DTDStruct* Document::defaultDTD()
   return dtd;
 }
 
-/** Find the DTD name for a part of the document. Search all the document if startLine=endLine=-1. */
-QString Document::findDTDName(int startLine, int endLine, bool searchPseudoDTD)
+/** Find the DTD name for a part of the document. */
+QString Document::findDTDName(Tag **tag)
 {
-
  //Do some magic to find the document type
- if ( (startLine == -1) && (endLine == -1) )
- {
-   startLine = 0;
-   endLine = editIf->numLines();
- }
- uint line, col;
- viewCursorIf->cursorPositionReal(&line,&col); //current cursor position
-
+ int endLine = editIf->numLines();
  QString foundText = "";
- Tag *tag;
- int direction = (startLine > endLine)?-1:1; //search direction
  int pos = 0;
- int i = startLine;
- bool endReached;
+ int i = 0;
  QString text;
  do
  {
    text = editIf->textLine(i);
-
-   if (searchPseudoDTD)
-   {
-     if (i == startLine) text = this->text(i, 0, i, col);
-     pos = scriptBeginRx.searchRev(text);
-     if (pos != -1)
-     {
-       foundText = scriptBeginRx.cap(0).lower();
-       if (foundText.startsWith("<script"))
-       {
-         tag = findXMLTag(i, pos, true);
-         if (tag)
-         {
-           foundText = tag->attributeValue("language");
-           delete tag;
-         }
-         searchPseudoDTD = false;
-       } else
-       {
-         QDictIterator<DTDStruct> it(*dtds);
-         for( ; it.current(); ++it )
-         {
-           DTDStruct *dtd = it.current();
-           if (dtd->family == Script)
-           {
-             int index = dtd->scriptTagStart.findIndex(foundText);
-             if (index !=-1)
-             {
-               foundText = dtd->name;
-             }
-             searchPseudoDTD = false;
-             break; //exit the for
-           }
-         }
-       }
-       if (!searchPseudoDTD) break;
-     }
-   }
    //search for !DOCTYPE tags
    pos = text.find("!doctype",0,false);
    if (pos != -1) //parse the found !DOCTYPE tag
    {
-    tag = findXMLTag(i, pos-1, true);
-    if (tag)
+    *tag = findXMLTag(i, pos-1, true);
+    if (*tag)
     {
-      text = tag->tagStr();
+      text = (*tag)->tagStr();
       pos = text.find("public",0,false);
       if (pos == -1) //if no PUBLIC info, use the word after !DOCTYPE as the doc.type
       {
-        foundText = tag->attribute(0);
+        foundText = (*tag)->attribute(0);
       } else
       {             //use the quoted string after PUBLIC as doc. type
         pos = text.find("\"", pos+1);
@@ -1315,13 +1247,11 @@ QString Document::findDTDName(int startLine, int endLine, bool searchPseudoDTD)
           foundText = text.mid(pos+1, endPos-pos-1);
         }
       }
-      delete tag;
       break;
     }
    }
-   i += direction;
-   endReached = (direction < 0)?(i < endLine):(i > endLine);
- } while (!endReached);
+   i++;
+ } while (i < endLine);
 
  return foundText.lower();
 }
@@ -1758,7 +1688,31 @@ void Document::parseVariables()
 /** No descriptions */
 void Document::slotTextChanged()
 {
-  parser->parseForDTD(this);
+ //TODO: This can be made even faster. The idea is to force the reparsing only when it
+ //is necessary. It shouldn't be done when no dtd definition beginning or end was moved!
+ //Currently it is forced for every change when the current line contains a dtd
+ //definition
+ bool force = false;
+ uint line, col;
+ viewCursorIf->cursorPositionReal(&line, &col);
+ QDictIterator<DTDStruct> it(*dtds);
+ QString text = editIf->textLine(line).lower();
+ for( ; it.current(); ++it )
+ {
+   DTDStruct *dtd = it.current();
+   for (uint i = 0; i < dtd->scriptTagStart.count(); i++)
+   {
+     if ( text.find(dtd->scriptTagStart[i]) != -1 ||
+          text.find(dtd->scriptTagEnd[i]) != -1 ||
+          text.find("!doctype") != -1)
+     {
+       force = true;
+       break;
+     }
+   }
+ }
+
+ parser->parseForDTD(this, force);
 }
 
 #include "document.moc"

@@ -523,11 +523,13 @@ void QuantaApp::saveOptions()
     doc    ->writeConfig(config); // kwrites
     project->writeConfig(config); // project
     config->setGroup  ("General Options");
+    config->deleteGroup("RecentFiles");
     fileRecent->saveEntries(config);
     config->writeEntry ("Enable Debugger", debuggerStyle!="None");
     config->writeEntry ("PHP Debugger style", debuggerStyle);
     writeDockConfig();
     saveMainWindowSettings(config);
+    config->sync();
   }
 }
 
@@ -863,7 +865,7 @@ void QuantaApp::readTagDir(QString &dirName)
  dtdConfig->setGroup("General");
  QString dtdName = dtdConfig->readEntry("Name", "Unknown");
  bool caseSensitive = dtdConfig->readBoolEntry("CaseSensitive");
- dtd->name = dtdName;
+ dtd->name = dtdName.lower();
  dtd->nickName = dtdConfig->readEntry("NickName", dtdName);
  dtd->caseSensitive = caseSensitive;
  dtd->family = dtdConfig->readNumEntry("Family", Xml);

@@ -301,7 +301,7 @@ void Project::writeConfig(KConfig *config)
 {
   config->setGroup  ("Projects");
   config->writeEntry("Last Project", projectURL.url());
-  
+  config->deleteGroup("RecentProjects");
   projectRecent->saveEntries(config, "RecentProjects");
   
   slotSaveProject();
@@ -1310,7 +1310,7 @@ void Project::slotOpenProjectView()
   dlg.comboLabel->setText(i18n("Available views"));
   dlg.textLabel->hide();
   dlg.currentDTD->hide();
-
+  dlg.convertDTD->hide();
   QStringList list;
   QDomNodeList nl = dom.elementsByTagName("projectview");
   QDomElement el;
