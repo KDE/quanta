@@ -43,9 +43,9 @@ class QStringList;
 
 class Document : public KWrite  {
    Q_OBJECT
-   friend KWrite;
-   friend KWriteDoc;
-   friend KWriteView;
+   friend class KWrite;
+   friend class KWriteDoc;
+   friend class KWriteView;
    
 public: 
 	Document( KWriteDoc *doc, QWidget *parent=0, const char *name=0);
