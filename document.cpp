@@ -885,3 +885,54 @@ QValueList<KTextEditor::CompletionEntry>* Document::getCharacterCompletions()
 
   return completions;
 }
+
+/** Returns the DTD identifier for the document */
+QString Document::getDTDIdentifier()
+{
+  return dtdName;
+}
+
+/** Sets the DTD identifier */
+void Document::setDTDIdentifier(QString id)
+{
+  dtdName = id;
+}
+
+/** Find the DTD name for a part of the document. Search all the document if startLine=endLine=0. */
+QString Document::findDTDName(int startLine, int endLine)
+{
+ //Do some magic to find the document type
+ if ( (startLine == 0) && (endLine ==0) )
+ {
+   endLine = editIf->numLines();
+ }
+ int i=startLine;
+ int dir = (startLine > endLine)?-1:1;
+ int pos = 0;
+ QString foundName = "";
+ do
+ {
+    QString s = editIf->textLine(i);
+    pos = s.find("!doctype",0,false);
+    if (pos != -1) //parse the found !DOCTYPE tag
+      {
+        s = tagAt(i,pos);
+        pos = s.find("public",0,false);
+        if (pos == -1) //if no PUBLIC info, use the word after !DOCTYPE as the doc.type
+        {
+          foundName = getTagAttr(1);
+        } else
+        {             //use the quoted string after PUBLIC as doc. type
+          pos = s.find("\"", pos+1);
+          if (pos !=-1)
+          {
+            int endPos = s.find("\"",pos+1);
+            foundName = s.mid(pos+1, endPos-pos-1);
+          }
+         }
+      }
+   i += dir;
+ } while ((foundName.isEmpty()) && (i + dir != endLine));
+
+ return foundName;
+}

@@ -215,6 +215,19 @@
             </widget>
         </grid>
     </widget>
+    <widget class="QComboBox">
+        <property name="name">
+            <cstring>dtdName</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>180</x>
+                <y>145</y>
+                <width>155</width>
+                <height>20</height>
+            </rect>
+        </property>
+    </widget>
     <widget class="QLabel">
         <property name="name">
             <cstring>TextLabel3</cstring>
@@ -229,19 +242,6 @@
         </property>
         <property name="text">
             <string>Default DTD:</string>
-        </property>
-    </widget>
-    <widget class="QLineEdit">
-        <property name="name">
-            <cstring>dtdName</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>180</x>
-                <y>145</y>
-                <width>155</width>
-                <height>20</height>
-            </rect>
         </property>
     </widget>
 </widget>

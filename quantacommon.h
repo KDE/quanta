@@ -51,6 +51,10 @@ public:
   static QString xmlFromAttributes(AttributeList* attributes);
   /** Returns list of values for attribute */
   static QStringList* tagAttributeValues(QString dtdName, QString tag, QString attribute);
+  /** Returns the DTD name (identifier) corresponding to the DTD's nickname */
+  static QString getDTDNameFromNickName(QString nickName);
+  /** Returns the DTD iddentifier from the given nickname */
+  static QString getDTDNickNameFromName(QString name);
 
 };
 

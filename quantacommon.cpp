@@ -220,3 +220,39 @@ QStringList* QuantaCommon::tagAttributeValues(QString dtdName, QString tag, QStr
   }
   return 0L;
 }
+
+
+/** Returns the DTD name (identifier) corresponding to the DTD's nickname */
+QString QuantaCommon::getDTDNameFromNickName(QString nickName)
+{
+  QString name = nickName;
+  QDictIterator<DTDStruct> it(*dtds);
+  for( ; it.current(); ++it )
+  {
+    if (it.current()->nickName == nickName)
+    {
+     name = it.current()->name;
+     break;
+    }
+  }
+
+ return name;
+}
+
+/** Returns the DTD iddentifier from the given nickname */
+QString QuantaCommon::getDTDNickNameFromName(QString name)
+{
+  QString nickName = name;
+  QDictIterator<DTDStruct> it(*dtds);
+  for( ; it.current(); ++it )
+ {
+    if (it.current()->name == name)
+    {
+      nickName = it.current()->nickName;
+      break;
+    }
+  }
+
+  return nickName;
+}
+

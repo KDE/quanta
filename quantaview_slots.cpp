@@ -68,7 +68,7 @@ void QuantaView::slotEditCurrentTag()
   w->currentTag();
   QString tag = w->getTagAttr(0);
 
-  if ( QuantaCommon::isKnownTag(write()->dtdName,tag) )
+  if ( QuantaCommon::isKnownTag(write()->getDTDIdentifier(),tag) )
   {
     QString attrs = "";
     for (int i=1; i < w->tagAttrNum; i++ )
@@ -79,7 +79,7 @@ void QuantaView::slotEditCurrentTag()
      attrs += QString(w->getTagAttr(i)) + "=" + QString(w->getTagAttrValue(i)) + " ";
     }
 
-    TagDialog *dlg = new TagDialog( QuantaCommon::tagFromDTD(write()->dtdName,tag), attrs );
+    TagDialog *dlg = new TagDialog( QuantaCommon::tagFromDTD(write()->getDTDIdentifier(),tag), attrs );
 
 
     if (dlg->exec())
@@ -737,7 +737,7 @@ void QuantaView::insertNewTag(QString tag, QString attr,bool insertInLine)
 
   Document *w = write();
 
-  TagDialog *dlg = new TagDialog(QuantaCommon::tagFromDTD(w->dtdName,tag), attr, basePath());
+  TagDialog *dlg = new TagDialog(QuantaCommon::tagFromDTD(w->getDTDIdentifier(),tag), attr, basePath());
 //  dlg->setBasePath(w); //It is very important to call this function!!!
   if (dlg->exec())
   {

@@ -71,8 +71,7 @@ void TagQuickTable::slotChangeColumnNumber(int columnNum)
 /** No descriptions */
 void TagQuickTable::slotEditColumn(QListViewItem *item)
 {
-//FIXME: hardcoded DTD name
-  TagDialog *dlg = new TagDialog(QuantaCommon::tagFromDTD("-//W3C//DTD HTML 4.0//EN","col"));
+  TagDialog *dlg = new TagDialog(QuantaCommon::tagFromDTD(write->getDTDIdentifier(),"col"));
 
   if (dlg->exec())
   {

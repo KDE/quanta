@@ -480,7 +480,7 @@ void QuantaApp::readOptions()
   attrsQuotation = config->readEntry("Attribute quotation", "double");
   useCloseTag = config->readBoolEntry("Close tag if optional", true);
   useAutoCompletion = config->readBoolEntry("Auto completion",true);
-  defaultDocType = config->readEntry("Default DTD","-//W3C//DTD HTML 4.0//EN");
+  defaultDocType = config->readEntry("Default DTD","-//W3C//DTD HTML 4.01//EN");
 
   previewPosition   = config->readEntry("Preview position","Right");
 
@@ -736,8 +736,10 @@ void QuantaApp::readTagDir(QString &dirName)
  KConfig *dtdConfig = new KConfig(dtd->fileName);
  dtdConfig->setGroup("General");
  QString dtdName = dtdConfig->readEntry("Name", "Unknown");
+ QString dtdNickName = dtdConfig->readEntry("NickName", dtdName);
  bool caseSensitive = dtdConfig->readBoolEntry("CaseSensitive");
  dtd->name = dtdName;
+ dtd->nickName = dtdNickName;
  dtd->caseSensitive = caseSensitive;
  int numOfTags = 0;
 

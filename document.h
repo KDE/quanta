@@ -145,6 +145,15 @@ public:
   
   /** Get list of possibile completions in normal text input (nt creating a tag) */
   QValueList<KTextEditor::CompletionEntry>* getCharacterCompletions();
+  /** Returns the DTD identifier for the document */
+  QString getDTDIdentifier();
+
+  /** Sets the DTD identifier */
+  void setDTDIdentifier(QString id);
+  /** Find the DTD name for a part of the document. Search all the document if startLine=endLine=0. */
+  QString findDTDName(int startLine, int endLine);
+
+
 
   TagAttr tagAttr[50];
   int tagAttrNum;
@@ -162,8 +171,6 @@ public:
   Kate::Document *kate_doc;
   Kate::View *kate_view;
 
-  QString dtdName;
-  
 public slots:
 
   /* Called after a completion is inserted */
@@ -188,6 +195,7 @@ private:
   KURL tempUrl;
 
 	int spellMoved;
+  QString dtdName;
 };
 
 #endif
