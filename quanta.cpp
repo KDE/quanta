@@ -114,10 +114,7 @@
 #include "parts/kafka/htmldocumentproperties.h"
 #endif
 
-#include "treeviews/filestreeview.h"
-#include "treeviews/filestreefolder.h"
 #include "treeviews/structtreeview.h"
-#include "treeviews/structtreetag.h"
 #include "treeviews/doctreeview.h"
 #include "treeviews/templatestreeview.h"
 #include "treeviews/tagattributetree.h"
@@ -695,7 +692,15 @@ void QuantaApp::slotInsertTag(const KURL& url, DirInfo dirInfo)
 {
   if (m_view->writeExists())
   {
-    KURL baseURL = projectBaseURL();
+    KURL baseURL ;
+    if  ( m_view->write()->isUntitled() )
+    {
+      baseURL = projectBaseURL();
+    } else
+    {
+      baseURL = m_view->write()->url();
+      baseURL.setFileName("");
+    }
     KURL relURL = QExtFileInfo::toRelative( url, baseURL);
     QString urlStr = relURL.url();
     if (relURL.protocol() == baseURL.protocol())
@@ -725,7 +730,7 @@ void QuantaApp::slotInsertTag(const KURL& url, DirInfo dirInfo)
         w->insertTag( "<a href=\""+urlStr+"\">","</a>");
       }
     }
-  //  w->view()->setFocus();
+    w->view()->setFocus();
   }
 }
 
@@ -1591,7 +1596,16 @@ void QuantaApp::slotContextHelp()
 void QuantaApp::slotShowFTabDock() { ftabdock->changeHideShowState();}
 void QuantaApp::slotShowPTabDock() { ptabdock->changeHideShowState();}
 void QuantaApp::slotShowTTabDock() { ttabdock->changeHideShowState();}
-void QuantaApp::slotShowScriptTabDock() { scripttabdock->changeHideShowState();}
+void QuantaApp::slotShowScriptTabDock() {
+  if (scripttabdock->isVisible())
+  {
+    scripttabdock->hide();
+  } else {
+    if (scripttabdock->parentDockTabGroup())
+      scripttabdock->parentDockTabGroup()->show();
+    scripttabdock->show();
+  }
+}
 void QuantaApp::slotShowSTabDock() { stabdock->changeHideShowState();}
 void QuantaApp::slotShowATabDock() { atabdock->changeHideShowState();}
 void QuantaApp::slotShowDTabDock() { dtabdock->changeHideShowState();}
@@ -2520,13 +2534,13 @@ void QuantaApp::slotSendToolbar()
   if ( mailDlg->exec() ) {
     if ( !mailDlg->lineEmail->text().isEmpty())
     {
-      toStr = +mailDlg->lineEmail->text();
+      toStr = mailDlg->lineEmail->text();
       subjectStr = (mailDlg->lineSubject->text().isEmpty())?i18n("Quanta Plus toolbar"):mailDlg->lineSubject->text();
       if ( !mailDlg->titleEdit->text().isEmpty())
         message = mailDlg->titleEdit->text();
     } else
     {
-      KMessageBox::error(this,i18n("No destination address was specified./n Sending is aborted."),i18n("Error Sending Email"));
+      KMessageBox::error(this,i18n("No destination address was specified.\n Sending is aborted."),i18n("Error Sending Email"));
       delete mailDlg;
       return;
     }
@@ -3405,13 +3419,13 @@ void QuantaApp::slotEmailDTEP()
     {
       if ( !mailDlg->lineEmail->text().isEmpty())
       {
-        toStr = +mailDlg->lineEmail->text();
+        toStr = mailDlg->lineEmail->text();
         subjectStr = (mailDlg->lineSubject->text().isEmpty())?i18n("Quanta Plus DTD"):mailDlg->lineSubject->text();
         if ( !mailDlg->titleEdit->text().isEmpty())
             message = mailDlg->titleEdit->text();
       } else
       {
-        KMessageBox::error(this,i18n("No destination address was specified./n Sending is aborted."),i18n("Error Sending Email"));
+        KMessageBox::error(this,i18n("No destination address was specified.\n Sending is aborted."),i18n("Error Sending Email"));
         delete mailDlg;
         return;
       }

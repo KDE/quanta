@@ -15,38 +15,39 @@
 #ifndef SCRIPTTREEVIEW_H
 #define SCRIPTTREEVIEW_H
 
+//own includes
 #include "filestreeview.h"
-
-class QListViewItem;
-class KURL;
-class FilesTreeFolder;
 
 class ScriptTreeView : public FilesTreeView  {
    Q_OBJECT
+
+
 public:
-   ScriptTreeView(QWidget *parent=0, const char *name=0);
+   ScriptTreeView(QWidget *parent = 0L, const char *name = 0L);
   ~ScriptTreeView();
 
 public slots:
-  virtual void slotMenu(QListViewItem *, const QPoint &, int);
-  virtual void slotSelectFile(QListViewItem *);
+  virtual void slotMenu(KListView *listView, QListViewItem *item, const QPoint &point);
+  virtual void slotSelectFile(QListViewItem *item);
   void slotEditScript();
   void slotEditInQuanta();
   void slotEditDescription();
   void slotRun();
   void slotAssignAction();
   void slotSendScriptInMail();
+  void slotProperties();
 
 signals:
   void openFileInPreview(const KURL&);
   void assignActionToScript(const KURL&, const QString&);
 
 private:
-  KURL infoFile(const KURL& a_url);
-  QString infoOptionValue(const KURL& a_infoURL, const QString& a_optionName);
+  KURL infoFile(const KURL& url);
+  QString infoOptionValue(const KURL& infoURL, const QString& optionName);
 
-  FilesTreeFolder *m_globalDir;
-  FilesTreeFolder *m_localDir;
+  FilesTreeBranch *m_globalDir;
+  FilesTreeBranch *m_localDir;
+
 };
 
 #endif

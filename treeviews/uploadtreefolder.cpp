@@ -21,7 +21,6 @@
 
 // KDE includes
 #include <kiconloader.h>
-#include <kurl.h>
 
 // app includes
 #include "uploadtreefolder.h"

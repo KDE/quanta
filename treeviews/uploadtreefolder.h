@@ -22,6 +22,7 @@
 #include <qstringlist.h>
 
 #include <klistview.h>
+#include <kurl.h>
 
 /**
   *@author Andras Mantia

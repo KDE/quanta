@@ -222,7 +222,7 @@ void TagAction::insertTag(bool inputFromFile, bool outputToFile)
       buffer = w->selectionIf->selection();
     }
     command.replace("%input", buffer);
-
+    command = command.stripWhiteSpace();
     int pos = command.find(' ');
     QString args;
     if (pos != -1)

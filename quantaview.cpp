@@ -61,7 +61,6 @@
 #include "quantaview.h"
 #include "quantadoc.h"
 #include "quanta.h"
-#include "treeviews/templatestreeview.h"
 
 #include "toolbar/tagaction.h"
 #include "toolbar/toolbartabwidget.h"

@@ -45,7 +45,6 @@
 
 //app includes
 #include "parser/qtag.h"
-#include "treeviews/filestreeview.h"
 #include "quantacommon.h"
 #include "qextfileinfo.h"
 #include "resource.h"

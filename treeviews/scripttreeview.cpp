@@ -16,7 +16,9 @@
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <kpopupmenu.h>
 #include <kprocess.h>
+#include <kpropertiesdialog.h>
 #include <krun.h>
 #include <kstandarddirs.h>
 #include <ktar.h>
@@ -25,18 +27,17 @@
 
 
 //qt includes
+#include <qdir.h>
 #include <qdom.h>
 #include <qfile.h>
 #include <qfileinfo.h>
 #include <qlabel.h>
 #include <qlineedit.h>
-#include <qpopupmenu.h>
+#include <qregexp.h>
 #include <qstringlist.h>
 #include <qtextedit.h>
 
 //app includes
-#include "filestreefile.h"
-#include "filestreefolder.h"
 #include "scripttreeview.h"
 #include "../resource.h"
 #include "../quanta.h"
@@ -45,77 +46,92 @@
 ScriptTreeView::ScriptTreeView(QWidget *parent, const char *name )
   : FilesTreeView(parent,name)
 {
-  excludeFilterRx.setPattern(".*\\.info$|.*\\.css$");
-
-  KURL url;
-  url.setPath(qConfig.globalDataDir +"quanta/scripts/");
-  m_globalDir = new FilesTreeFolder( this , i18n("Global scripts"), url);
-  m_globalDir->setPixmap( 0, SmallIcon("folder"));
-  m_globalDir->setOpen( true );
-
-  url.setPath(locateLocal("data","quanta/scripts/"));
-  m_localDir = new FilesTreeFolder( this , i18n("Local scripts"), url);
-  m_localDir->setPixmap( 0, SmallIcon("folder"));
-  m_localDir->setOpen( true );
-
   setRootIsDecorated( true );
   //header()->hide();
   setSorting( 0 );
 
   setFrameStyle( Panel | Sunken );
   setLineWidth( 2 );
-  addColumn( i18n("Scripts"), 600 );
+  addColumn(i18n("Scripts"), 600);
+
+  KURL url;
+  url.setPath(qConfig.globalDataDir + "quanta/scripts/");
+
+  m_globalDir = new FilesTreeBranch(this, url, i18n("Global scripts"), SmallIcon("run"));
+  addBranch(m_globalDir);
+
+  QDir dir(url.path(), "", QDir::All & !QDir::Hidden);
+  if ( dir.count() != 2 ) {
+    m_globalDir->root()->setExpandable(true);     //   . and .. are always there
+    m_globalDir->setOpen( true );
+  }
+  url.setPath(locateLocal("data","quanta/scripts/"));
+  m_localDir = new FilesTreeBranch(this, url, i18n("Local scripts"), SmallIcon("run"));
+  addBranch(m_localDir);
+
+  dir.setPath(url.path());
+  if ( dir.count() != 2 ) {
+    m_localDir->root()->setExpandable(true);     //   . and .. are always there
+    m_localDir->setOpen( true );
+  }
+  const QString excludeString = ".*\\.info$|.*\\.css$";
+  m_globalDir->excludeFilterRx.setPattern(excludeString);
+  m_localDir->excludeFilterRx.setPattern(excludeString);
 
   setFocusPolicy(QWidget::ClickFocus);
 
-  fileMenu = new QPopupMenu();
-  fileMenu->insertItem(i18n("Run Script"), this ,SLOT(slotRun()));
-  fileMenu->insertSeparator();
-  fileMenu->insertItem(i18n("Edit Script"), this ,SLOT(slotEditScript()));
-  fileMenu->insertItem(i18n("Edit in Quanta"), this ,SLOT(slotEditInQuanta()));
-  fileMenu->insertItem(i18n("Edit Description"), this ,SLOT(slotEditDescription()));
-  fileMenu->insertSeparator();
-  fileMenu->insertItem(i18n("Assign Action"), this ,SLOT(slotAssignAction()));
-  fileMenu->insertItem(i18n("Send in E-Mail"), this ,SLOT(slotSendScriptInMail()));
+  m_fileMenu = new KPopupMenu();
+  m_fileMenu->insertItem(SmallIcon("info"), i18n("Description"), this, SLOT(slotProperties()));
+  m_fileMenu->insertItem(SmallIcon("run"), i18n("Run Script"), this, SLOT(slotRun()));
+  m_fileMenu->insertSeparator();
+  m_fileMenu->insertItem(i18n("Edit Script"), this, SLOT(slotEditScript()));
+  m_fileMenu->insertItem(i18n("Edit in Quanta"), this, SLOT(slotEditInQuanta()));
+  m_fileMenu->insertItem(i18n("Edit Description"), this, SLOT(slotEditDescription()));
+  m_fileMenu->insertSeparator();
+  m_fileMenu->insertItem(UserIcon("ball"), i18n("Assign Action"), this, SLOT(slotAssignAction()));
+  m_fileMenu->insertItem(SmallIcon("mail_send"), i18n("Send in E-Mail"), this, SLOT(slotSendScriptInMail()));
 
 
-  connect(  this, SIGNAL(executed(QListViewItem *)),
-            this, SLOT(slotSelectFile(QListViewItem *)));
-  connect( this, SIGNAL(rightButtonPressed(QListViewItem*, const QPoint&, int)),
-           this, SLOT(slotMenu(QListViewItem*, const QPoint&, int)));
+  connect(this, SIGNAL(executed(QListViewItem *)),
+          this, SLOT(slotSelectFile(QListViewItem *)));
+
+  connect(this, SIGNAL(returnPressed(QListViewItem *)),
+          this, SLOT(slotSelectFile(QListViewItem *)));
+
+  connect(this, SIGNAL(contextMenu(KListView*, QListViewItem*, const QPoint&)),
+          this, SLOT(slotMenu(KListView*, QListViewItem*, const QPoint&)));
+
 }
 
 ScriptTreeView::~ScriptTreeView()
 {
 }
 
-void ScriptTreeView::slotMenu(QListViewItem *item, const QPoint &point, int)
+void ScriptTreeView::slotMenu(KListView *, QListViewItem *item, const QPoint &point)
 {
-  if (!item)
-      return;
+  if (!item) return;
   setSelected(item, true);
 
-  FilesTreeFile *f = dynamic_cast<FilesTreeFile *>( item);
-  if (f)
+  if ( !currentKFileTreeViewItem()->isDir() )
   {
-   fileMenu->popup( point);
+    m_fileMenu->popup(point);
   }
 }
 
 void ScriptTreeView::slotSelectFile(QListViewItem *item)
 {
-  FilesTreeFile *f = dynamic_cast<FilesTreeFile*>(item);
-  if (f)
-  {
-    KURL urlToOpen = infoFile(currentURL());
-    emit openFileInPreview(urlToOpen);
+  if (item) {
+    if ( !currentKFileTreeViewItem()->isDir() )
+    {
+      KURL urlToOpen = infoFile(currentURL());
+      emit openFileInPreview(urlToOpen);
+    }
   }
 }
 
 void ScriptTreeView::slotEditDescription()
 {
-  FilesTreeFile *f = dynamic_cast<FilesTreeFile*>(currentItem());
-  if (f)
+  if ( !currentKFileTreeViewItem()->isDir() )
   {
     KURL urlToOpen = infoFile(currentURL());
     emit showPreviewWidget(false);
@@ -125,8 +141,7 @@ void ScriptTreeView::slotEditDescription()
 
 void ScriptTreeView::slotEditScript()
 {
-  FilesTreeFile *f = dynamic_cast<FilesTreeFile*>(currentItem());
-  if (f)
+  if ( !currentKFileTreeViewItem()->isDir() )
   {
     emit showPreviewWidget(false);
     KURL urlToOpen = currentURL();
@@ -146,8 +161,7 @@ void ScriptTreeView::slotEditScript()
 
 void ScriptTreeView::slotRun()
 {
-  FilesTreeFile *f = dynamic_cast<FilesTreeFile*>(currentItem());
-  if (f)
+  if ( !currentKFileTreeViewItem()->isDir() )
   {
     KURL urlToOpen = currentURL();
     KURL infoUrl = infoFile(urlToOpen);
@@ -170,8 +184,7 @@ void ScriptTreeView::slotRun()
 
 void ScriptTreeView::slotEditInQuanta()
 {
-  FilesTreeFile *f = dynamic_cast<FilesTreeFile*>(currentItem());
-  if (f)
+  if ( !currentKFileTreeViewItem()->isDir() )
   {
     KURL urlToOpen = currentURL();
     emit showPreviewWidget(false);
@@ -181,8 +194,7 @@ void ScriptTreeView::slotEditInQuanta()
 
 void ScriptTreeView::slotAssignAction()
 {
-  FilesTreeFile *f = dynamic_cast<FilesTreeFile*>(currentItem());
-  if (f)
+  if ( !currentKFileTreeViewItem()->isDir() )
   {
     KURL url = currentURL();
     KURL infoURL = infoFile(url);
@@ -195,8 +207,7 @@ void ScriptTreeView::slotAssignAction()
 
 void ScriptTreeView::slotSendScriptInMail()
 {
-  FilesTreeFile *f = dynamic_cast<FilesTreeFile*>(currentItem());
-  if (f)
+  if ( !currentKFileTreeViewItem()->isDir() )
   {
     KURL url = currentURL();
     KURL infoURL = infoFile(url);
@@ -242,13 +253,13 @@ void ScriptTreeView::slotSendScriptInMail()
     {
       if ( !mailDlg->lineEmail->text().isEmpty())
       {
-        toStr = +mailDlg->lineEmail->text();
+        toStr = mailDlg->lineEmail->text();
         subjectStr = (mailDlg->lineSubject->text().isEmpty())?i18n("Quanta Plus Script"):mailDlg->lineSubject->text();
         if ( !mailDlg->titleEdit->text().isEmpty())
             message = mailDlg->titleEdit->text();
       } else
       {
-        KMessageBox::error(this,i18n("No destination address was specified./n Sending is aborted."),i18n("Error Sending Email"));
+        KMessageBox::error(this,i18n("No destination address was specified.\n Sending is aborted."),i18n("Error Sending Email"));
         delete mailDlg;
         return;
       }
@@ -261,20 +272,20 @@ void ScriptTreeView::slotSendScriptInMail()
   }
 }
 
-KURL ScriptTreeView::infoFile(const KURL& a_url)
+KURL ScriptTreeView::infoFile(const KURL& url)
 {
-  KURL url = a_url;
-  QString fileName = url.fileName();
+  KURL returnUrl = url;
+  QString fileName = returnUrl.fileName();
   //fileName.truncate(fileName.length() - QFileInfo(fileName).extension().length() - 1);
   fileName.append(".info");
-  url.setFileName(fileName);
-  return url;
+  returnUrl.setFileName(fileName);
+  return returnUrl;
 }
 
-QString ScriptTreeView::infoOptionValue(const KURL& a_infoURL, const QString& a_optionName)
+QString ScriptTreeView::infoOptionValue(const KURL& infoURL, const QString& optionName)
 {
   QString value;
-  QFile f(a_infoURL.path());
+  QFile f(infoURL.path());
   if (f.open(IO_ReadOnly))
   {
     QDomDocument doc;
@@ -284,10 +295,19 @@ QString ScriptTreeView::infoOptionValue(const KURL& a_infoURL, const QString& a_
     if (nodes.count() > 0)
     {
       QDomElement el = nodes.item(0).toElement();
-      value = el.attribute(a_optionName);
+      value = el.attribute(optionName);
     }
   }
   return value;
 }
+
+
+void ScriptTreeView::slotProperties()
+{
+  KFileTreeViewItem *item = currentKFileTreeViewItem();
+  if (item)
+      slotSelectFile(item);
+}
+
 
 #include "scripttreeview.moc"

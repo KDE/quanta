@@ -106,6 +106,13 @@ typedef struct {
   } Format;
 #endif
 
+typedef struct DirInfo{
+      QString mimeType;
+      QString preText;
+      QString postText;
+      bool    usePrePostText;
+    };
+
 /**Some common, mostly static functions.
   *@author Andras Mantia
   */

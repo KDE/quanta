@@ -39,6 +39,7 @@
 #include <kdirwatch.h>
 #include <kdebug.h>
 #include <kprogress.h>
+#include <kio/netaccess.h>
 
 #include <ktexteditor/cursorinterface.h>
 #include <ktexteditor/clipboardinterface.h>
@@ -310,17 +311,27 @@ void Document::writeConfig(KConfig *config)
 /** No descriptions */
 void Document::insertFile(const KURL& url)
 {
+  QString fileName;
   if (url.isLocalFile())
   {
-    QFile file(url.path());
-    file.open(IO_ReadOnly);
-
-    QTextStream stream( &file );
-  //  kate_view->insertText(stream.read());
-    insertText(stream.read());
-
-    file.close();
+    fileName == url.path();
+  } else
+  {
+    if (!KIO::NetAccess::download(url, fileName))
+    {
+      KMessageBox::error(0, i18n("<qt>Cannot download <b>%1</b>.</qt>").arg( url.prettyURL(0, KURL::StripFileProtocol)));
+      return;
+    }
   }
+  QFile file(fileName);
+  if (file.open(IO_ReadOnly))
+  {
+    QTextStream stream( &file );
+//  kate_view->insertText(stream.read());
+    insertText(stream.read());
+    file.close();
+  } else
+    KMessageBox::error(this, i18n("<qt>Cannot open <b>%1</b> for reading.</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)));
 }
 
 /** Inserts text at the current cursor position */

@@ -46,7 +46,7 @@ DocTreeView::DocTreeView(QWidget *parent, const char *name )
 
   setFrameStyle( Panel | Sunken );
   setLineWidth( 2 );
-  addColumn( i18n("Name"), 600 );
+  addColumn(i18n("Name"), 600);
 
   projectDocFolder = new KListViewItem(this, i18n("Project documentation"));
   projectDocFolder->setOpen(true);
@@ -87,7 +87,9 @@ DocTreeView::DocTreeView(QWidget *parent, const char *name )
   setFocusPolicy(QWidget::ClickFocus);
 
   connect(this, SIGNAL(executed(QListViewItem *)), SLOT(clickItem(QListViewItem *)) );
+  connect(this, SIGNAL(returnPressed(QListViewItem *)), SLOT(clickItem(QListViewItem *)));
   connect(this, SIGNAL(doubleClicked(QListViewItem *)), SLOT(slotDoubleClicked(QListViewItem *)));
+
 }
 
 

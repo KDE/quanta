@@ -3,7 +3,7 @@
                              -------------------
     begin                : Tue Mar 14 2000
     copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky <pdima@mail.univ.kiev.ua>
-                           (C) 2001, 2002 Andras Mantia <amantia@kde.org>
+                           (C) 2001-2003 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -18,46 +18,46 @@
 #ifndef PROJECTTREEVIEW_H
 #define PROJECTTREEVIEW_H
 
-#include <qwidget.h>
-#include <qlistview.h>
-#include <qvaluelist.h>
-
-#include <kurl.h>
-
+//own includes
 #include "filestreeview.h"
 
+class ProjectTreeBranch : public FilesTreeBranch {
 
-class QPopupMenu;
-class ProjectTreeFolder;
-/**
-  *@author Yacovlev Alexander & Dmitry Poplavsky & Andras Mantia
-  */
+public:
+  ProjectTreeBranch(KFileTreeView *parent, const KURL& url,
+                    const QString& name, const QPixmap& pix,
+                    bool showHidden = false, KFileTreeViewItem *branchRoot = 0L);
+
+  /** check for CVS */
+  virtual KFileTreeViewItem* createTreeViewItem(KFileTreeViewItem *parent,
+                                                KFileItem *fileItem );
+};
+
+
 
 class ProjectTreeView : public FilesTreeView  {
   friend class Project;
   Q_OBJECT
 
 public:
-  ProjectTreeView(QWidget *parent=0, const char *name=0);
+  ProjectTreeView(QWidget *parent = 0L, const char *name = 0L);
   virtual ~ProjectTreeView();
-  virtual KURL currentURL();
-  /** Open a subfolder. */
-  void openFolder(ProjectTreeFolder *folder);
 
+  /** adds the baseURL of project */
+  KURL addBaseURL(const KURL& );
 
 public slots: // Public slots
   void slotOpen();
-  void slotOpenWith();
   void slotOpenInQuanta();
   void slotRemove();
-  void slotRemoveFromProject(int askForRemove=1);
+  void slotRemoveFromProject(int askForRemove = 1);
   void slotUploadSingleURL();
   void slotRename();
 
-  void slotMenu(QListViewItem*, const QPoint&, int);
+  void slotMenu(KListView *listView, QListViewItem *item, const QPoint &point);
   void slotReloadTree(const KURL::List &a_urlList, bool buildNewtree);
-  void slotSetBaseURL( const KURL& url );
-  void slotSetProjectName(const QString& name );
+  void slotSetBaseURL(const KURL& url);
+  void slotSetProjectName(const QString& name);
   /** No descriptions */
   void slotRescan();
   /** Bring up the project options dialog */
@@ -76,16 +76,14 @@ signals: // Signals
   void loadToolbarFile( const KURL& );
   void uploadProject();
 
-public:
-  ProjectTreeFolder *projectDir;
-
 private:
-  KURL baseURL;
-  KURL::List urlList;
-  QPopupMenu *projectMenu;
-  QString projectName;
+  FilesTreeBranch *m_projectDir;
+  KURL m_baseURL;
+  KURL::List m_urlList;
+  QPopupMenu *m_projectMenu;
+  QString m_projectName;
 
-  int openInQuantaId;
+  int m_openInQuantaId;
 
 protected:
   virtual void itemRenamed(const KURL& , const KURL& ) {};
@@ -93,9 +91,6 @@ protected:
 private slots: // Private slots
   /** No descriptions */
   void slotUploadProject();
-protected slots: // Protected slots
-  /** No descriptions */
-//  void slotOnItem(QListViewItem* item);
 };
 
 #endif

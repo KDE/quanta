@@ -20,7 +20,6 @@
 #include <qpixmap.h>
 #include <qheader.h>
 
-#include "filemanage.h"
 #include "uploadtreefolder.h"
 #include "uploadtreefile.h"
 

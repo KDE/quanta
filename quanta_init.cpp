@@ -334,6 +334,12 @@ void QuantaApp::initProject()
   connect(fTab,    SIGNAL(insertFileInProject(const KURL&)),
           m_project,  SLOT  (slotInsertFile(const KURL&)));
 
+  connect(tTab,    SIGNAL(insertDirInProject(const KURL&)),
+          m_project,  SLOT  (slotAddDirectory(const KURL&)));
+
+  connect(tTab,    SIGNAL(insertFileInProject(const KURL&)),
+          m_project,  SLOT  (slotInsertFile(const KURL&)));
+
   connect(pTab,     SIGNAL(renameInProject(const KURL&)),
           m_project,  SLOT  (slotRename(const KURL&)));
   connect(pTab,     SIGNAL(removeFromProject(const KURL&)),
@@ -406,6 +412,8 @@ void QuantaApp::initView()
     QuantaCommon::setUrl(url, topStrList[i]);
     topList.append(url);
   }
+
+//always add the HOME and rootd directory to the treeview
   url = KURL();
   url.setPath("/");
   if (!topList.contains(url))

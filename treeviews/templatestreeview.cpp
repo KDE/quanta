@@ -2,7 +2,7 @@
                           templatestreeview.cpp  -  description
                              -------------------
     begin                : Thu Dec 20 2001
-    copyright            : (C) 2001-2002 by Andras Mantia <amantia@kde.org>
+    copyright            : (C) 2001-2003 by Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -23,8 +23,8 @@
 #include <qpoint.h>
 #include <qlayout.h>
 #include <qtextedit.h>
-#include <qpopupmenu.h>
 #include <qregexp.h>
+#include <qlabel.h>
 
 // KDE includes
 #include <krun.h>
@@ -35,95 +35,111 @@
 #include <kmimetype.h>
 #include <kmessagebox.h>
 #include <kcombobox.h>
+#include <kpopupmenu.h>
 #include <kpropertiesdialog.h>
 #include <kurlrequesterdlg.h>
 #include <ktempfile.h>
 #include <kio/netaccess.h>
 #include <kurldrag.h>
+#include <ktar.h>
+#include <kdebug.h>
+
 
 #include "templatestreeview.h"
-#include "templatestreeview.moc"
-#include "filestreefolder.h"
-#include "filestreefile.h"
 #include "newtemplatedirdlg.h"
 #include "quantapropertiespage.h"
 #include "../toolbar/tagaction.h"
 #include "../dialogs/copyto.h"
 #include "../resource.h"
-#include "../quantacommon.h"
 #include "../qextfileinfo.h"
 #include "../quanta.h"
+#include "../tagdialogs/tagmaildlg.h"
+#include "../project/project.h"
+
+#define EXCLUDE ".*\\.tmpl$"
+#define TMPL ".tmpl"
+#define NONE "None"
+
 
 const QString textMenu = I18N_NOOP("Insert as Text");
 const QString binaryMenu = I18N_NOOP("Insert Link to File");
 const QString docMenu = I18N_NOOP("New Document Based on This");
 
 TemplatesTreeView::TemplatesTreeView(const KURL& projectBaseURL, QWidget *parent, const char *name )
-  : FilesTreeView(parent,name), projectDir(0)
+  : FilesTreeView(parent,name), m_projectDir(0)
 {
-  baseURL = projectBaseURL;
+  Q_UNUSED(projectBaseURL);
 
-  fileMenu = new QPopupMenu();
+  m_fileMenu = new KPopupMenu();
 
-  openId = fileMenu -> insertItem( UserIcon("open"),  i18n("&Open"),     this ,SLOT(slotInsert()));
-  fileMenu -> insertItem(i18n("Open for Editing"),   this ,SLOT(slotOpen()));
-  fileMenu -> insertSeparator();
-  fileMenu -> insertItem( i18n("&New Directory..."),     this ,SLOT(slotNewDir()));
-  fileMenu -> insertItem( UserIcon("copy"),  i18n("&Copy"),     this ,SLOT(slotCopy()));
-  fileMenu -> insertItem( UserIcon("paste"), i18n("&Paste"),    this ,SLOT(slotPaste()));
-  fileMenu -> insertItem( UserIcon("delete"),i18n("&Delete"),   this ,SLOT(slotDelete()));
-  fileMenu -> insertItem( i18n("Properties"),   this ,SLOT(slotProperties()));
-  fileMenu -> insertSeparator();
-  fileMenu -> insertItem( i18n("Reload"),   this ,SLOT(slotReload()));
+  m_openId = m_fileMenu->insertItem(SmallIcon("fileopen"), i18n("&Open"), this ,SLOT(slotInsert()));
+  m_fileMenu->insertItem(i18n("Open for Editing"), this, SLOT(slotOpen()));
+  m_fileMenu->insertItem(SmallIcon("mail_send"), i18n("Send in E-Mail"), this, SLOT(slotSendInMail()));
+  m_insertFileInProject = m_fileMenu->insertItem(i18n("Insert in Project..."), this, SLOT(slotInsertInProject()));
+  m_fileMenu->insertSeparator();
+  m_fileMenu->insertItem(SmallIcon("editcopy"), i18n("&Copy"), this, SLOT(slotCopy()));
+  m_fileMenu->insertItem(SmallIcon("editpaste"), i18n("&Paste"), this, SLOT(slotPaste()));
+  m_fileMenu->insertItem(SmallIcon("editdelete"), i18n("&Delete"), this, SLOT(slotDelete()));
+  m_fileMenu->insertItem(SmallIcon("info"), i18n("Properties"), this, SLOT(slotProperties()));
+  m_fileMenu->insertSeparator();
+  m_fileMenu->insertItem(i18n("Reload"), this, SLOT(slotReload()));
 
-  folderMenu = new QPopupMenu();
+  m_folderMenu = new KPopupMenu();
 
-  folderMenu -> insertItem( i18n("&New Directory..."),     this ,SLOT(slotNewDir()));
-  folderMenu -> insertItem( UserIcon("copy"),  i18n("&Copy"),     this ,SLOT(slotCopy()));
-  folderMenu -> insertItem( UserIcon("paste"), i18n("&Paste"),    this ,SLOT(slotPaste()));
-  deleteMenuId = folderMenu -> insertItem( UserIcon("delete"),i18n("&Delete"),   this ,SLOT(slotDelete()));
-  folderMenu -> insertItem( i18n("Properties"),   this ,SLOT(slotProperties()));
-  folderMenu -> insertSeparator();
-  folderMenu -> insertItem( i18n("Reload"),   this ,SLOT(slotReload()));
-
-  KURL url;
-  url.setPath(qConfig.globalDataDir +"quanta/templates/");
-  globalDir = new FilesTreeFolder( this , i18n("Global Templates"), url);
-  globalDir->setPixmap( 0, SmallIcon("folder"));
-  globalDir->setOpen( true );
-
-  url.setPath(locateLocal("data","quanta/templates/"));
-  localDir = new FilesTreeFolder( this , i18n("Local Templates"),url);
-  localDir->setPixmap( 0, SmallIcon("folder"));
-  localDir->setOpen( true );
+  m_folderMenu->insertItem(SmallIcon("folder_new"), i18n("&New Directory..."), this, SLOT(slotNewDir()));
+  m_folderMenu->insertItem(SmallIcon("mail_send"), i18n("Send in E-Mail"), this, SLOT(slotSendInMail()));
+  m_insertFolderInProject = m_folderMenu->insertItem(i18n("Insert in Project..."), this, SLOT(slotInsertDirInProject()));
+  m_folderMenu->insertSeparator();
+  m_folderMenu->insertItem(SmallIcon("editcopy"), i18n("&Copy"), this, SLOT(slotCopy()));
+  m_folderMenu->insertItem(SmallIcon("editpaste"), i18n("&Paste"), this, SLOT(slotPaste()));
+  m_deleteMenuId = m_folderMenu->insertItem(SmallIcon("editdelete"), i18n("&Delete"), this, SLOT(slotDelete()));
+  m_folderMenu->insertItem(SmallIcon("info"), i18n("Properties"), this, SLOT(slotProperties()));
+  m_folderMenu->insertSeparator();
+  m_folderMenu->insertItem(i18n("Reload"), this, SLOT(slotReload()));
 
   setRootIsDecorated( true );
   //header()->hide();
   setSorting( 0 );
-
   setFrameStyle( Panel | Sunken );
   setLineWidth( 2 );
-  addColumn( i18n("Templates"), 600 );
+  addColumn(i18n("Templates"), 600);
+
+  KURL url;
+  url.setPath(qConfig.globalDataDir + "quanta/templates/");
+  m_globalDir = new FilesTreeBranch(this, url, i18n("Global Templates"), SmallIcon("ttab"));
+  addBranch(m_globalDir);
+
+  QDir dir(url.path(), "", QDir::All & !QDir::Hidden);
+  m_globalDir->root()->setExpandable(dir.count() != 2);     //   . and .. are always there
+
+  url.setPath(locateLocal("data","quanta/templates/"));
+  m_localDir = new FilesTreeBranch(this, url, i18n("Local Templates"), SmallIcon("ttab"));
+  addBranch(m_localDir);
+
+  dir.setPath(url.path());
+  m_localDir->root()->setExpandable(dir.count() != 2);     //   . and .. are always there
+
+  m_globalDir->excludeFilterRx.setPattern(EXCLUDE);
+  m_localDir->excludeFilterRx.setPattern(EXCLUDE);
 
   setFocusPolicy(QWidget::ClickFocus);
 
   connect(  this, SIGNAL(executed(QListViewItem *)),
             this, SLOT(slotSelectFile(QListViewItem *)));
-  connect(  this, SIGNAL(selectionChanged(QListViewItem *)),
-            this, SLOT(slotSelectImage(QListViewItem *)));
+
   connect(  this, SIGNAL(returnPressed(QListViewItem *)),
             this, SLOT(slotSelectFile(QListViewItem *)));
 
-  connect( this, SIGNAL(rightButtonPressed(QListViewItem*, const QPoint&, int)),
-           this, SLOT(slotMenu(QListViewItem*, const QPoint&, int)));
+  connect( this, SIGNAL(contextMenu(KListView*, QListViewItem*, const QPoint&)),
+           this, SLOT(slotMenu(KListView*, QListViewItem*, const QPoint&)));
 
   connect(  this, SIGNAL(open(QListViewItem *)),
             this,  SLOT(slotSelectFile(QListViewItem *)));
 
   setAcceptDrops(true);
   setSelectionMode(QListView::Single);
-  viewport()->setAcceptDrops(true);
-  excludeFilterRx.setPattern(".*\\.tmpl$");
+  setDropHighlighter(true);
+  setDragEnabled(true);
 }
 
 TemplatesTreeView::~TemplatesTreeView()
@@ -148,40 +164,41 @@ void TemplatesTreeView::slotInsertInDocument()
 
 }
 
-void TemplatesTreeView::slotMenu(QListViewItem *item, const QPoint &point, int)
+void TemplatesTreeView::slotMenu(KListView*, QListViewItem *item, const QPoint &point)
 {
   if ( !item ) return;
   setSelected(item, true);
+  m_folderMenu->setItemEnabled(m_insertFolderInProject, quantaApp->project()->hasProject());
+  m_fileMenu->setItemEnabled(m_insertFileInProject, quantaApp->project()->hasProject());
 
-  FilesTreeFolder *d = dynamic_cast<FilesTreeFolder *>( item);
-  if ( d )
+  KFileTreeViewItem *curItem = currentKFileTreeViewItem();
+  if ( curItem->isDir() )
   {
-    if ( d->text(0) == i18n("Global Templates") || d->text(0) == i18n("Local Templates" )
-         || d->text(0) == i18n("Project Templates") )
-          folderMenu ->setItemEnabled( deleteMenuId, false);
-    else  folderMenu ->setItemEnabled( deleteMenuId, true );
+    if ( curItem == curItem->branch()->root())
+          m_folderMenu ->setItemEnabled(m_deleteMenuId, false);
+    else  m_folderMenu ->setItemEnabled(m_deleteMenuId, true);
 
-    folderMenu ->popup     ( point);
+    m_folderMenu ->popup(point);
   } else
   {
    readDirInfo();
 
    QString menuText = "";
 
-   if (dirInfo.mimeType.upper().contains("TEXT")) menuText = i18n(textMenu);
-   if (dirInfo.mimeType.upper().contains("FILE")) menuText = i18n(binaryMenu);
-   if (dirInfo.mimeType.upper().contains("TEMPLATE")) menuText = i18n(docMenu);
+   if (m_dirInfo.mimeType.upper().contains("TEXT")) menuText = i18n(textMenu);
+   if (m_dirInfo.mimeType.upper().contains("FILE")) menuText = i18n(binaryMenu);
+   if (m_dirInfo.mimeType.upper().contains("TEMPLATE")) menuText = i18n(docMenu);
 
    if (menuText.isEmpty())
    {
-     fileMenu->setItemEnabled(openId, false);
+     m_fileMenu->setItemEnabled(m_openId, false);
    } else
    {
-     fileMenu->setItemEnabled(openId, true);
-     fileMenu->changeItem(openId, menuText);
+     m_fileMenu->setItemEnabled(m_openId, true);
+     m_fileMenu->changeItem(m_openId, menuText);
    }
 
-   fileMenu->popup( point);
+   m_fileMenu->popup( point);
   }
 }
 /** No descriptions */
@@ -193,28 +210,19 @@ void TemplatesTreeView::slotNewDocument()
    QListViewItem *item = currentItem();
    if (item )
    {
-      FilesTreeFolder *parent = (FilesTreeFolder *) item->parent();
-       if ( parent && !dynamic_cast<FilesTreeFolder *>(item) )
-      {
+     if ( currentKFileTreeViewItem() != currentKFileTreeViewItem()->branch()->root())
+     {
        emit openFile(KURL(), quantaApp->defaultEncoding());
-        emit insertFile(url);
-      }
-    }
+       emit insertFile(url);
+     }
+   }
  }
-}
-
-void TemplatesTreeView::slotReload()
-{
-  globalDir->reloadList();
-  localDir->reloadList();
-  if (projectDir)
-    projectDir->reloadList();
 }
 
 /** Insert the template as text, image, new document. */
 void TemplatesTreeView::slotInsert()
 {
- QString menuText = fileMenu->text(openId);
+ QString menuText = m_fileMenu->text(m_openId);
 
  if (menuText == i18n(textMenu)) slotInsertInDocument();
  if (menuText == i18n(binaryMenu)) slotInsertTag();
@@ -223,17 +231,17 @@ void TemplatesTreeView::slotInsert()
 
 void TemplatesTreeView::slotSelectFile(QListViewItem *item)
 {
-  FilesTreeFile *f = dynamic_cast<FilesTreeFile*>(item);
-  if (f)
+  if ( !item ) return;
+
+  if ( !currentKFileTreeViewItem()->isDir() )
   {
     readDirInfo();
-    if (dirInfo.mimeType.upper().contains("TEXT"))
+    if (m_dirInfo.mimeType.upper().contains("TEXT"))
         slotInsertInDocument();
-    if (dirInfo.mimeType.upper().contains("FILE"))
+    if (m_dirInfo.mimeType.upper().contains("FILE"))
         slotInsertTag();
-    if (dirInfo.mimeType.upper().contains("TEMPLATE"))
+    if (m_dirInfo.mimeType.upper().contains("TEMPLATE"))
         slotNewDocument();
-
   }
 }
 
@@ -252,21 +260,19 @@ void TemplatesTreeView::slotNewDir()
 
   readDirInfo();
 
-   if (dirInfo.mimeType.isEmpty())
+   if (m_dirInfo.mimeType.isEmpty())
    {
     createDirDlg->parentAttr->setText(i18n("&Inherit parent attribute (nothing)"));
    } else
    {
-     createDirDlg->parentAttr->setText(i18n("&Inherit parent attribute (%1)").arg(dirInfo.mimeType));
+     createDirDlg->parentAttr->setText(i18n("&Inherit parent attribute (%1)").arg(m_dirInfo.mimeType));
    }
    if (createDirDlg->exec())
    {
     QDir dir;
 
-   QListViewItem *item = currentItem();
    QString startDir = "";
-   FilesTreeFile *f = dynamic_cast<FilesTreeFile *>( item);
-   if ( f )
+   if ( !currentKFileTreeViewItem()->isDir() )
    {
     startDir = currentURL().path();
    } else
@@ -282,9 +288,9 @@ void TemplatesTreeView::slotNewDir()
    }
    if (! createDirDlg->parentAttr->isChecked())
    {
-      dirInfo.mimeType = createDirDlg->typesCombo->currentText();
-      dirInfo.preText = "";
-      dirInfo.postText = "";
+      m_dirInfo.mimeType = createDirDlg->typesCombo->currentText();
+      m_dirInfo.preText = "";
+      m_dirInfo.postText = "";
       writeDirInfo(startDir+"/"+createDirDlg->dirName->text()+"/.dirinfo");
    }
    slotReload();
@@ -294,8 +300,11 @@ void TemplatesTreeView::slotNewDir()
 
 QDragObject * TemplatesTreeView::dragObject ()
 {
+  // don't drag folders
+  if ( ! currentKFileTreeViewItem() || ! currentKFileTreeViewItem()->isDir() ) return 0;
+
   readDirInfo();
-  if(!dirInfo.mimeType.isEmpty()) // only drag when the template type is specified
+  if(!m_dirInfo.mimeType.isEmpty()) // only drag when the template type is specified
   {
     KURLDrag *drag = KURLDrag::newDrag(KURL::List(currentURL()), this);
     return drag;
@@ -310,15 +319,14 @@ void TemplatesTreeView::contentsDropEvent(QDropEvent *e)
 
  if (item)
  {
-   FilesTreeFolder *parent = dynamic_cast<FilesTreeFolder *> (item->parent());
-   QString dest = "";
-   if ( !parent ) // top level element
+   KURL dest;
+   if ( currentKFileTreeViewItem()->isDir() )
    {
-     dest = ((FilesTreeFolder *)item)->fullName();
+     dest = currentURL();
    }
    else
    {
-     dest = parent->fullName()+item->text(0);
+     dest = currentURL().directory(false);
    }
    if (KURLDrag::canDecode(e))
    {
@@ -329,18 +337,15 @@ void TemplatesTreeView::contentsDropEvent(QDropEvent *e)
      KURLDrag::decode(e, fileList);    //TODO: Make it workable for non local files
      if(fileList.empty()) return;
 
-     source = fileList.front();
-     KIO::Job *job = KIO::copy(source,dest);
+     KIO::Job *job = KIO::copy(fileList, dest);
      connect( job, SIGNAL( result( KIO::Job *) ), this , SLOT( slotJobFinished( KIO::Job *) ) );
    } else
      if (QTextDrag::canDecode(e))
      {
        QString content;
        QTextDrag::decode(e, content);
-       QListViewItem *item = itemAt(contentsToViewport(e->pos()));
-       if (dynamic_cast<FilesTreeFolder *> (item)) dest +="/";
-       dest = QFileInfo(dest).dirPath()+"/";
-       KURL url =KURLRequesterDlg::getURL( dest + "template.txt", this, i18n("Save selection as template file: "));
+       KURL url =KURLRequesterDlg::getURL( dest.path() + "template.txt",
+                                           this, i18n("Save selection as template file: "));
        if ( !url.isEmpty() )
        {
   //       KMessageBox::information(this,content, "Decode Drop" + dest);
@@ -379,12 +384,10 @@ void TemplatesTreeView::contentsDragEnterEvent(QDragEnterEvent *event)
 void TemplatesTreeView::readDirInfo(const QString& dir)
 {
   QString startDir = dir;
-  QListViewItem *item = currentItem();
 
   if (startDir.isEmpty())
   {
-    FilesTreeFile *f = dynamic_cast<FilesTreeFile *>( item);
-    if ( f )
+    if ( !currentKFileTreeViewItem()->isDir() )
     {
       startDir = currentURL().path();
     } else
@@ -401,24 +404,22 @@ void TemplatesTreeView::readDirInfo(const QString& dir)
   }
 
   KConfig *config = new KConfig(dotFileInfo.filePath());
-  dirInfo.mimeType = config->readEntry("Type");
-  dirInfo.preText = config->readEntry("PreText");
-  dirInfo.postText = config->readEntry("PostText");
-  dirInfo.usePrePostText = config->readBoolEntry("UsePrePostText", false);
+  m_dirInfo.mimeType = config->readEntry("Type");
+  m_dirInfo.preText = config->readEntry("PreText");
+  m_dirInfo.postText = config->readEntry("PostText");
+  m_dirInfo.usePrePostText = config->readBoolEntry("UsePrePostText", false);
 
   delete config;
 }
 
 /** Writes a .dirinfo file from the selected item's path */
-void TemplatesTreeView::writeDirInfo(const QString& dirInfoFile)
+void TemplatesTreeView::writeDirInfo(const QString& m_dirInfoFile)
 {
-  QListViewItem *item = currentItem();
   QString startDir = "";
 
-  if (dirInfoFile.isEmpty())
+  if (m_dirInfoFile.isEmpty())
   {
-    FilesTreeFile *f = dynamic_cast<FilesTreeFile *>( item);
-    if ( f )
+    if ( !currentKFileTreeViewItem()->isDir() )
     {
       startDir = currentURL().path();
     } else
@@ -427,16 +428,16 @@ void TemplatesTreeView::writeDirInfo(const QString& dirInfoFile)
     }
   } else
   {
-    startDir = dirInfoFile;
+    startDir = m_dirInfoFile;
   }
 
   QFileInfo dotFileInfo(QFileInfo(startDir).dirPath()+"/.dirinfo");
 
   KConfig *config = new KConfig(dotFileInfo.filePath());
-  config->writeEntry("Type", dirInfo.mimeType);
-  config->writeEntry("PreText", dirInfo.preText);
-  config->writeEntry("PostText", dirInfo.postText);
-  config->writeEntry("UsePrePostText", dirInfo.usePrePostText);
+  config->writeEntry("Type", m_dirInfo.mimeType);
+  config->writeEntry("PreText", m_dirInfo.preText);
+  config->writeEntry("PostText", m_dirInfo.postText);
+  config->writeEntry("UsePrePostText", m_dirInfo.usePrePostText);
   config->sync();
 
   delete config;
@@ -451,53 +452,53 @@ void TemplatesTreeView::slotProperties()
 //Always add the Quanta directory page
   QFrame *quantaDirPage = propDlg->dialog()->addPage(i18n("Quanta Template"));
   QVBoxLayout *topLayout = new QVBoxLayout( quantaDirPage);
-  quantaProperties = new QuantaPropertiesPage( quantaDirPage, i18n("Quanta") );
+  m_quantaProperties = new QuantaPropertiesPage( quantaDirPage, i18n("Quanta") );
 
-  quantaProperties->typesCombo->insertItem("text/all");
-  quantaProperties->typesCombo->insertItem("file/all");
-  quantaProperties->typesCombo->insertItem("template/all");
+  m_quantaProperties->typesCombo->insertItem("text/all");
+  m_quantaProperties->typesCombo->insertItem("file/all");
+  m_quantaProperties->typesCombo->insertItem("template/all");
 
   readDirInfo();
 
-  quantaProperties->typesCombo->setCurrentItem(dirInfo.mimeType);
+  m_quantaProperties->typesCombo->setCurrentItem(m_dirInfo.mimeType);
 
-  QListViewItem *item = currentItem();
   QString startDir = "";
-  FilesTreeFile *f = dynamic_cast<FilesTreeFile *>( item);
-  if ( f )
+  if (  !currentKFileTreeViewItem()->isDir() )
   {
    startDir = currentURL().path();
-   quantaProperties->prePostGroup->hide();
+   m_quantaProperties->prePostGroup->hide();
   } else
   {
    startDir = currentURL().path() + "/dummy_file";
   }
   QFileInfo dotFileInfo(QFileInfo(startDir).dirPath()+"/.dirinfo");
-  if (!dotFileInfo.exists()) quantaProperties->parentAttr->setChecked(true);
-  if (dirInfo.mimeType.isEmpty())
+  if (!dotFileInfo.exists()) m_quantaProperties->parentAttr->setChecked(true);
+  if (m_dirInfo.mimeType.isEmpty())
    {
-    quantaProperties->parentAttr->setText(i18n("&Inherit parent attribute (nothing)"));
+    m_quantaProperties->parentAttr->setText(i18n("&Inherit parent attribute (nothing)"));
    } else
    {
-    quantaProperties->parentAttr->setText(i18n("&Inherit parent attribute (%1)").arg(dirInfo.mimeType));
+    m_quantaProperties->parentAttr->setText(i18n("&Inherit parent attribute (%1)").arg(m_dirInfo.mimeType));
    }
-   quantaProperties->preTextEdit->setText(dirInfo.preText);
-   quantaProperties->postTextEdit->setText(dirInfo.postText);
-   if (dirInfo.usePrePostText)
+   m_quantaProperties->preTextEdit->setText(m_dirInfo.preText);
+   m_quantaProperties->postTextEdit->setText(m_dirInfo.postText);
+   if (m_dirInfo.usePrePostText)
    {
-    quantaProperties->usePrePostText->setChecked(true);
+    m_quantaProperties->usePrePostText->setChecked(true);
    }
 
-   topLayout->addWidget( quantaProperties );
-//   connect( propDlg, SIGNAL( applied() ), this , SLOT( slotPropertiesApplied) );
+   topLayout->addWidget( m_quantaProperties );
+   connect( propDlg, SIGNAL( applied() ), this , SLOT( slotPropertiesApplied()) );
 
-  QString name = currentURL().path() + ".tmpl";
+  QString name = currentURL().path() + TMPL;
   KConfig config(name);
   config.setGroup("Filtering");
-  name = config.readEntry("Action", i18n("None"));
+  name = config.readEntry("Action", NONE);
+  if ( name = NONE )
+     name = i18n(NONE);
   uint pos = 0;
   uint j = 1;
-  quantaProperties->actionCombo->insertItem(i18n("None"));
+  m_quantaProperties->actionCombo->insertItem(i18n(NONE));
   KActionCollection *ac = quantaApp->actionCollection();
   for (uint i = 0; i < ac->count(); i++)
   {
@@ -508,14 +509,14 @@ void TemplatesTreeView::slotProperties()
       QString type = el.attribute("type", "tag");
       if (type == "script")
       {
-        quantaProperties->actionCombo->insertItem(action->text());
+        m_quantaProperties->actionCombo->insertItem(action->text());
         if (action->text() == name)
             pos = j;
         j++;
       }
     }
   }
-  quantaProperties->actionCombo->setCurrentItem(pos);
+  m_quantaProperties->actionCombo->setCurrentItem(pos);
 
 //If the item is a file, add the Quanta file info page
   addFileInfoPage(propDlg);
@@ -532,28 +533,28 @@ void TemplatesTreeView::slotProperties()
 /** No descriptions */
 void TemplatesTreeView::slotPropertiesApplied()
 {
-  DirInfo localDirInfo;
+  DirInfo m_localDirInfo;
 
-  if (!quantaProperties->parentAttr->isChecked())
+  if (!m_quantaProperties->parentAttr->isChecked())
   {
-    localDirInfo.mimeType = quantaProperties->typesCombo->currentText();
+    m_localDirInfo.mimeType = m_quantaProperties->typesCombo->currentText();
   } else
   {
-    localDirInfo.mimeType = dirInfo.mimeType;
+    m_localDirInfo.mimeType = m_dirInfo.mimeType;
   }
 
-  localDirInfo.usePrePostText = quantaProperties->usePrePostText->isChecked();
-  localDirInfo.preText = quantaProperties->preTextEdit->text();
-  localDirInfo.postText = quantaProperties->postTextEdit->text();
+  m_localDirInfo.usePrePostText = m_quantaProperties->usePrePostText->isChecked();
+  m_localDirInfo.preText = m_quantaProperties->preTextEdit->text();
+  m_localDirInfo.postText = m_quantaProperties->postTextEdit->text();
 
-  if ( (dirInfo.mimeType != localDirInfo.mimeType) ||
-       (dirInfo.preText != localDirInfo.preText) ||
-       (dirInfo.postText != localDirInfo.postText))
+  if ( (m_dirInfo.mimeType != m_localDirInfo.mimeType) ||
+       (m_dirInfo.preText != m_localDirInfo.preText) ||
+       (m_dirInfo.postText != m_localDirInfo.postText))
   {
-    dirInfo.mimeType = localDirInfo.mimeType;
-    dirInfo.preText = localDirInfo.preText;
-    dirInfo.postText = localDirInfo.postText;
-    dirInfo.usePrePostText = localDirInfo.usePrePostText;
+    m_dirInfo.mimeType = m_localDirInfo.mimeType;
+    m_dirInfo.preText = m_localDirInfo.preText;
+    m_dirInfo.postText = m_localDirInfo.postText;
+    m_dirInfo.usePrePostText = m_localDirInfo.usePrePostText;
     writeDirInfo();
   }
 
@@ -566,7 +567,8 @@ void TemplatesTreeView::slotInsertTag()
  if (currentItem())
  {
   readDirInfo();
-  emit insertTag( currentURL(), dirInfo);
+  KURL url = currentURL();
+  emit insertTag( url, m_dirInfo);
  }
 }
 
@@ -590,9 +592,9 @@ void TemplatesTreeView::slotDragInsert(QDropEvent *e)
    QString mimeType = KMimeType::findByPath(localFileName)->name();
 
    /* First, see if the type of the file is specified in the .dirinfo file */
-   if(!dirInfo.mimeType.isEmpty())
+   if(!m_dirInfo.mimeType.isEmpty())
    {
-     if(dirInfo.mimeType == "text/all") // default to inserting in document
+     if(m_dirInfo.mimeType == "text/all") // default to inserting in document
      {
       if(!mimeType.contains("text", false) && denyBinaryInsert() != KMessageBox::Yes)
       {
@@ -601,13 +603,13 @@ void TemplatesTreeView::slotDragInsert(QDropEvent *e)
       emit insertFile(localFileName);
      }
 
-     if(dirInfo.mimeType == "file/all")
+     if(m_dirInfo.mimeType == "file/all")
      {
        // whatever this is, insert it with a tag (image or link or prefix/postfix)
-       emit insertTag(localFileName, dirInfo);
+       emit insertTag(localFileName, m_dirInfo);
      }
      else
-     if(dirInfo.mimeType == "template/all")
+     if(m_dirInfo.mimeType == "template/all")
      {
        if(!mimeType.contains("text", false) && denyBinaryInsert() != KMessageBox::Yes)
        {
@@ -629,19 +631,18 @@ void TemplatesTreeView::slotDragInsert(QDropEvent *e)
 /** Sets the project template directory */
 void TemplatesTreeView::slotSetTemplateURL(const KURL& newTemplateURL)
 {
-  if(projectDir)
-  {
-    delete projectDir;
-  }
-  projectDir = 0;
-
+  if (m_projectDir)
+    removeBranch(m_projectDir);
   if(!newTemplateURL.isEmpty())
   {
-    projectDir = new FilesTreeFolder(this, i18n("Project Templates"), newTemplateURL);
-    projectDir->setPixmap(0, SmallIcon("folder"));
-    projectDir->setOpen(true);
-  }
+    m_projectDir =new FilesTreeBranch(this, newTemplateURL, i18n("Project Templates"), SmallIcon("ptab"));
+    addBranch(m_projectDir);
 
+    QDir dir (newTemplateURL.path(), "", QDir::All & !QDir::Hidden);
+    m_projectDir->root()->setExpandable(dir.count() != 2);     //   . and .. are always there
+
+    m_projectDir->excludeFilterRx.setPattern(EXCLUDE);
+  }
   slotReload();
 }
 
@@ -652,10 +653,13 @@ void TemplatesTreeView::slotSetTemplateURL(const KURL& newTemplateURL)
  */
 void TemplatesTreeView::writeTemplateInfo()
 {
-  QString fileName = currentURL().path() + ".tmpl";
+  QString fileName = currentURL().path() + TMPL;
   KConfig config(fileName);
   config.setGroup("Filtering");
-  config.writeEntry("Action", quantaProperties->actionCombo->currentText());
+  if ( m_quantaProperties->actionCombo->currentText() = i18n(NONE) )
+    config.writeEntry("Action", NONE);
+  else
+    config.writeEntry("Action", m_quantaProperties->actionCombo->currentText());
   config.sync();
 }
 
@@ -671,11 +675,12 @@ void TemplatesTreeView::slotPaste()
     for (uint i = 0; i < j; i++)
     {
       url = list[i];
-      url.setFileName(url.fileName()+".tmpl");
-      if (QFileInfo(url.path()).exists())
+      url.setFileName(url.fileName() + TMPL);
+      if (url.isLocalFile() && QFileInfo(url.path()).exists())
           list += url;
     }
     url = currentURL();
+    url.setFileName("");   // don't paste on files but in dirs
     KIO::Job *job = KIO::copy( list, url);
     connect( job, SIGNAL( result( KIO::Job *) ), this , SLOT( slotJobFinished( KIO::Job *) ) );
   }
@@ -686,13 +691,21 @@ void TemplatesTreeView::slotDelete()
   if (currentItem())
   {
     KURL url = currentURL();
-    if ( KMessageBox::warningYesNo(this,i18n("Do you really want to delete file \n%1?\n").arg(url.path())) == KMessageBox::Yes )
+    QString msg;
+    if ( currentKFileTreeViewItem()->isDir() )
+      msg = i18n("Do you really want to delete folder \n%1 ?\n").arg(url.path());
+    else
+      msg = i18n("Do you really want to delete file \n%1 ?\n").arg(url.path());
+
+    if ( KMessageBox::warningYesNo(this, msg) == KMessageBox::Yes )
     {
       KIO::Job *job = KIO::del(url);
       connect( job, SIGNAL( result( KIO::Job *) ), this , SLOT( slotJobFinished( KIO::Job *) ) );
-      url.setFileName(url.fileName()+".tmpl");
-      KIO::Job *job2 = KIO::del(url);
-      connect( job2, SIGNAL( result( KIO::Job *) ), this , SLOT( slotJobFinished( KIO::Job *) ) );
+      url.setFileName(url.fileName()+ TMPL);
+      if ( QFileInfo(url.path()).exists() ) {
+        KIO::Job *job2 = KIO::del(url);
+        connect( job2, SIGNAL( result( KIO::Job *) ), this , SLOT( slotJobFinished( KIO::Job *) ) );
+      };
     }
   }
 }
@@ -702,10 +715,10 @@ template file */
 KURL TemplatesTreeView::filterTemplate()
 {
  KURL url = currentURL();
- QString name = url.path() + ".tmpl";
+ QString name = url.path() + TMPL;
  KConfig config(name);
  config.setGroup("Filtering");
- name = config.readEntry("Action", i18n("None"));
+ name = config.readEntry("Action", NONE);
  TagAction *filterAction = 0L;
  KActionCollection *ac = quantaApp->actionCollection();
  for (uint i = 0; i < ac->count(); i++)
@@ -734,3 +747,81 @@ KURL TemplatesTreeView::filterTemplate()
  return url;
 }
 
+
+void TemplatesTreeView::slotSendInMail()
+{
+  if ( ! currentKFileTreeViewItem() ) return;
+
+    KURL url = currentURL();
+    KURL dirURL (url);
+    dirURL.setPath(dirURL.directory(false));
+
+    QString prefix="quanta";
+    KTempFile* tempFile = new KTempFile(tmpDir, ".tgz");
+    tempFile->setAutoDelete(true);
+
+  //pack the files into a .tgz file
+    KTar tar(tempFile->name(), "application/x-gzip");
+    tar.open(IO_WriteOnly);
+//    tar.setOrigFileName("");
+
+    KURL::List files;
+    if ( ! currentKFileTreeViewItem()->isDir() )
+      files.append(url);
+    else {
+      files = QExtFileInfo::allFiles(dirURL, "*") ;
+      dirURL = dirURL.upURL();
+    }
+
+    for ( KURL::List::Iterator it_f = files.begin(); it_f != files.end(); ++it_f )
+    {
+      if ( (*it_f).fileName(false) != "" ) {
+        url = QExtFileInfo::toRelative( (*it_f).path(), dirURL) ;
+
+        QFile file((*it_f).path());
+        file.open(IO_ReadOnly);
+        QByteArray bArray = file.readAll();
+        tar.writeFile(url.path(), "user", "group", bArray.size(), bArray.data());
+        file.close();
+      };
+    }
+    tar.close();
+
+    tempFile->close();
+    tempFileList.append(tempFile);
+
+    QStringList attachmentFile;
+    attachmentFile += tempFile->name();
+
+    TagMailDlg *mailDlg = new TagMailDlg( this, i18n("Send template in email"));
+    QString toStr;
+    QString message = i18n("Hi,\n This is a Quanta Plus [http://quanta.sourceforge.net] template tarball.\n\nHave fun.\n");
+    QString titleStr;
+    QString subjectStr;
+
+    mailDlg->TitleLabel->setText(i18n("Content:"));
+    mailDlg->titleEdit->setFixedHeight(60);
+    mailDlg->titleEdit->setVScrollBarMode(QTextEdit::Auto);
+    mailDlg->titleEdit->setHScrollBarMode(QTextEdit::Auto);
+    if ( mailDlg->exec() )
+    {
+      if ( !mailDlg->lineEmail->text().isEmpty())
+      {
+        toStr = mailDlg->lineEmail->text();
+        subjectStr = (mailDlg->lineSubject->text().isEmpty())?i18n("Quanta Plus Template"):mailDlg->lineSubject->text();
+        if ( !mailDlg->titleEdit->text().isEmpty())
+            message = mailDlg->titleEdit->text();
+      } else
+      {
+        KMessageBox::error(this,i18n("No destination address was specified.\n Sending is aborted."),i18n("Error Sending Email"));
+        delete mailDlg;
+        return;
+      }
+
+      QString nullString="";
+      kapp->invokeMailer(toStr, nullString, nullString, subjectStr, message, nullString, attachmentFile);
+    }
+    delete mailDlg;
+}
+
+#include "templatestreeview.moc"

@@ -110,8 +110,12 @@ int main(int argc, char *argv[])
     I18N_NOOP("Crash recovery"),
     "emi_barbarossa@yahoo.it");
 
+  aboutData.addCredit("Jens Herden",
+    I18N_NOOP("Cleanup of the treeview code, code review"),
+    "jhe@epost.de");
+
   aboutData.addCredit("Andrea Bergia",
-    I18N_NOOP("CSS editor"),
+    I18N_NOOP("Original CSS editor"),
     "andreabergia@yahoo.it");
 
   aboutData.addCredit("Matthew Colton",
@@ -131,7 +135,7 @@ int main(int argc, char *argv[])
     "k_isdale@tpg.com.au");
 
   aboutData.addCredit("Lukas Masek",
-    I18N_NOOP("Splash screen for 3.2"),
+    I18N_NOOP("Splash screen and icon for 3.2"),
     "luci@sh.ground.cz");
 
   KCmdLineArgs::init( argc, argv, &aboutData );

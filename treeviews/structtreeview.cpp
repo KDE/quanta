@@ -60,7 +60,7 @@ StructTreeView::StructTreeView(KConfig *config, QWidget *parent, const char *nam
 
   setFrameStyle( Panel | Sunken );
   setLineWidth( 2 );
-  addColumn( i18n("Name"), 1600 );
+  addColumn( i18n("Name"), -1 );
 
   setFocusPolicy(QWidget::ClickFocus);
 

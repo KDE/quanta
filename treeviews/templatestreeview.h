@@ -2,7 +2,7 @@
                           templatestreeview.h  -  description
                              -------------------
     begin                : Thu Dec 20 2001
-    copyright            : (C) 2001-2002 by Andras Mantia <amantia@kde.org>
+    copyright            : (C) 2001-2003 by Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -16,28 +16,23 @@
 #ifndef TEMPLATESTREEVIEW_H
 #define TEMPLATESTREEVIEW_H
 
+//own includes
 #include "filestreeview.h"
+#include "../quantacommon.h"
 
-#include <qwidget.h>
-#include <qlistview.h>
-
-/**
-  *@author Andras Mantia
-  */
-
-class FilesTreeFolder;
-class KURL;
+//forward declarations
 class QuantaPropertiesPage;
+
 
 class TemplatesTreeView : public FilesTreeView  {
    Q_OBJECT
 public:
-  TemplatesTreeView(const KURL& projectBaseURL,QWidget *parent=0, const char *name=0);
+  TemplatesTreeView(const KURL& projectBaseURL, QWidget *parent = 0L, const char *name = 0L);
   ~TemplatesTreeView();
   /** Writes a .dirinfo file from the selected item's path */
-  void writeDirInfo(const QString& dirInfoFile="");
+  void writeDirInfo(const QString& dirInfoFile = QString::null);
   /** Reads a .dirinfo file from the selected item's path */
-  void readDirInfo(const QString& dir = "");
+  void readDirInfo(const QString& dir = QString::null);
 
 
 public slots:
@@ -45,38 +40,37 @@ public slots:
   void slotSetTemplateURL(const KURL& newTemplateURL);
   /** No descriptions */
   void slotInsertInDocument();
-  void slotMenu(QListViewItem *item, const QPoint &point, int);
+  void slotMenu(KListView *listView, QListViewItem *item, const QPoint &point);
   /** No descriptions */
   void slotNewDocument();
   /** Insert the template as text, image, new document. */
   void slotInsert();
-  virtual void slotSelectFile(QListViewItem *);
-  virtual void slotOpen();
   /** No descriptions */
   void slotNewDir();
-  virtual void slotReload();
+ /** Handles dropping on the document from the template tree */
+  void slotDragInsert(QDropEvent *);
+  /** No descriptions */
+  void contentsDragEnterEvent(QDragEnterEvent *event);
+  /** packs and sends files or folders */
+  void slotSendInMail();
+  virtual void slotSelectFile(QListViewItem *item);
+  virtual void slotOpen();
   virtual void slotPaste();
   virtual void slotDelete();
   /** Properties dialog for template view */
   virtual void slotProperties();
   /** Property application for template view */
   virtual void slotPropertiesApplied();
- /** Handles dropping on the document from the template tree */
-  void slotDragInsert(QDropEvent *);
   virtual void slotInsertTag();
-  /** No descriptions */
-  void contentsDragEnterEvent(QDragEnterEvent *event);
 
 private:
-  KURL baseURL;
 
-  FilesTreeFolder *globalDir;
-  FilesTreeFolder *localDir;
-  /**  */
-  int deleteMenuId;
-  int openId;
-  FilesTreeFolder *projectDir;
-  QuantaPropertiesPage *quantaProperties;
+  FilesTreeBranch *m_globalDir;
+  FilesTreeBranch *m_localDir;
+  FilesTreeBranch *m_projectDir;
+  int m_deleteMenuId;
+  int m_openId;
+  QuantaPropertiesPage *m_quantaProperties;
   /** Filters the template through and action, and returns the modified/filtered
   template file */
   KURL filterTemplate();
@@ -87,10 +81,11 @@ signals: // Signals
 
 protected: // Protected methods
   /** No descriptions */
-  virtual QDragObject * dragObject ();
+  virtual QDragObject * dragObject();
+  DirInfo m_dirInfo;
 //  virtual void startDrag();
   /** No descriptions */
-  void contentsDropEvent(QDropEvent *);
+  void contentsDropEvent(QDropEvent *event);
   void writeTemplateInfo();
 };
 
