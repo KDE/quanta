@@ -1,0 +1,62 @@
+[General]
+Name = -//W3C//DTD XHTML 1.1//EN
+NickName = XHTML 1.1
+URL = http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd
+DoctypeString = HTML PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"
+DefaultExtension = html
+Groups = Core, I18n, Script
+NumOfPages = 2
+CaseSensitive = true
+
+[Toolbars]
+Location = html
+Names = standard, tables, lists, forms, other
+
+[Core]
+Attributes = id, class, style, title
+
+[I18n]
+Attributes = xml:lang, dir
+
+[Script]
+Attributes = onclick,ondblclick,onmousedown,onmouseup,onmouseover,onmousemove,onmouseout,onkeypress,onkeydown,onkeyup
+
+[Page1]
+Title = Core and i18n
+Groups = Core, I18n
+
+[Page2]
+Title = Events
+Groups = Script
+
+[Extra tags]
+
+List =!doctype,?
+
+!doctype=html,public,
+!doctype_options = single
+?=version,encoding
+?_options = single
+
+[Extra rules]
+BooleanAttributes = simple
+Single Tag Style = XML
+StructGroupsCount = 2
+
+[Parsing rules]
+SpecialAreas = <!-- -->
+SpecialAreaNames = comment
+SpecialTags = script(language)
+MayContain = php
+
+[StructGroup_1]
+Name = Images
+No_Name = No Images
+Icon = image
+Tag = img(src)
+
+[StructGroup_2]
+Name = Links
+No_Name = No Links
+Icon = www
+Tag = a(name,href)

@@ -1,19 +1,13 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="html" hasI18n="1">
-    
-    <attr name="version" type="input">
-        <text>Version</text>
+<tag name="">
+
+    <attr name="rows" type="input">
+        <text>Rows</text>
         <textlocation col="0" row="0" />
-        <location col="1" row="0" colspan="2" />
+        <location col="1" row="0" />
     </attr>
 
-	<attr name="xmlns" type="url">
-        <text>Version</text>
-        <textlocation col="0" row="0" />
-        <location col="1" row="0" colspan="2" />
-    </attr>
-	
     <spacer orientation="h">
         <location col="0" row="8" />
     </spacer>

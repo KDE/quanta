@@ -1,20 +1,20 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="a" hasCore="1" hasI18n="1" hasScript="1" hasFocus="1">
+<tag name="a" hasCore="1" hasI18n="1" hasScript="1">
 
     <attr name="href" type="url">
         <text>HREF</text> 
         <textlocation col="0" row="0" />
         <location col="1" row="0" colspan="3"/>
     </attr>
-
-    <attr name="name" type="input">
-        <text>Name</text>
+	
+	<attr name="hreflang" type="input">
+        <text>HrefLang</text>
         <textlocation col="0" row="1" />
         <location col="1" row="1" colspan="3" />
     </attr>
-
-    <attr name="rel" type="list">
+	
+   <attr name="rel" type="list">
         <text>Rel</text>
         <textlocation col="0" row="2" />
         <location col="1" row="2" />
@@ -84,24 +84,23 @@
         </items>
     </attr>
     
-    <attr name="onfocus" type="input">
-        <text>OnFocus</text>
-        <textlocation col="0" row="8" />
-        <location col="1" row="8" colspan="3" />
+	<attr name="charset" type="input">
+        <text>Charset</text>
+        <textlocation col="0" row="4" />
+        <location col="1" row="4" colspan="3" />
     </attr>
-
-    <attr name="onblur" type="input">
-        <text>OnBlur</text>
-        <textlocation col="0" row="9" />
-        <location col="1" row="9" colspan="3" />
-    </attr>
-
-    <attr name="hreflang"></attr>
-    <attr name="charset"> </attr>
-    <attr name="accesskey"> </attr>
-    <attr name="tabindex"> </attr>
-    <attr name="shape"> </attr>
-    <attr name="coords"> </attr>
 	
+	<attr name="accesskey" type="input">
+        <text>AccessKey</text>
+        <textlocation col="0" row="5" />
+        <location col="1" row="5" colspan="1" />
+    </attr>
+	
+	<attr name="tabindex" type="input">
+        <text>TabIndex</text>
+        <textlocation col="0" row="6" />
+        <location col="1" row="6" colspan="1" />
+    </attr>
+	   
 </tag>
 </TAGS>

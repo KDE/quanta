@@ -1,17 +1,18 @@
 [General]
-Name = -//W3C//DTD XHTML 1.0 Strict//EN
-NickName = XHTML 1.0 Strict
-URL = http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd
-DoctypeString = HTML PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
+Name = -//W3C//DTD XHTML 1.0 Transitional//EN
+NickName = XHTML 1.0 Transitional
+URL = http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd
+DoctypeString = HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"
+Inherits = -//W3C//DTD XHTML 1.0 Strict//EN
 DefaultExtension = html
 Groups = Core, I18n, Script, Focus
 NumOfPages = 3
-QuotedAttributes=abbr,accept-charset,accept,accesskey,action,align,alt,archive,axis,border,cellpadding,cellspacing,char,charoff,charset,checked,cite,class,classid,codebase,codetype,cols,colspan,content,coords,data,datetime,declare,defer,dir,disabled,enctype,for,frame,headers,height,href,hreflang,http-equiv,id,ismap,label,lang,longdesc,maxlength,media,method,multiple,name,nohref,onblur,onchange,onclick,ondblclick,onfocus,onkeydown,onkeypress,onkeyup,onload,onmousedown,onmousemove,onmouseout,onmouseover,onmouseup,onreset,onselect,onsubmit,onunload,profile,readonly,rel,rev,rows,rowspan,rules,scheme,scope,selected,shape,size,span,src,standby,style,summary,tabindex,title,type,usemap,valign,value,valuetype,width,xmlns
+QuotedAttributes=abbr,accept-charset,accept,accesskey,action,align,alink,alt,archive,axis,background,bgcolor,border,cellpadding,cellspacing,char,charoff,charset,checked,cite,class,classid,clear,code,codebase,codetype,color,cols,colspan,compact,content,coords,data,datetime,declare,defer,dir,disabled,enctype,face,for,frame,frameborder,headers,height,href,hreflang,hspace,http-equiv,id,ismap,label,lang,language,link,longdesc,marginheight,marginwidth,maxlength,media,method,multiple,name,nohref,noshade,nowrap,object,onblur,onchange,onclick,ondblclick,onfocus,onkeydown,onkeypress,onkeyup,onload,onmousedown,onmousemove,onmouseout,onmouseover,onmouseup,onreset,onselect,onsubmit,onunload,profile,prompt,readonly,rel,rev,rows,rowspan,rules,scheme,scope,scrolling,selected,shape,size,span,src,standby,start,style,summary,tabindex,target,text,title,type,usemap,valign,value,valuetype,vlink,vspace,width,xmlns
 CaseSensitive = true
 
 [Toolbars]
 Location = html
-Names = standard, tables, lists, forms, other
+Names = standard, fonts, tables, lists, forms, other
 
 [Core]
 Attributes = id, class, style, title
@@ -39,7 +40,7 @@ Groups=Focus
 
 [Extra tags]
 
-List =!doctype,abbr,acronym,address,b,bdo,big,button,caption,cite,code,dd,del,dfn,dl,dt,em,fieldset,i,img,ins,kbd,label,legend,map,noscript,object,optgroup,param,pre,q,samp,small,span,strong,sub,sup,title,tt,var,?
+List =!doctype,abbr,acronym,address,applet,b,bdo,big,button,caption,center,cite,code,dd,del,dfn,dir,dl,dt,em,fieldset,i,iframe,img,ins,kbd,label,legend,map,menu,noframes,noscript,object,optgroup,param,pre,q,s,samp,small,span,strike,strong,sub,sup,title,tt,u,var,?
 
 
 !doctype=html,public,
@@ -48,6 +49,8 @@ List =!doctype,abbr,acronym,address,b,bdo,big,button,caption,cite,code,dd,del,df
 abbr_options = hasCore, hasI18n, hasScript
 acronym_options = hasCore, hasI18n, hasScript
 address_options = hasCore, hasI18n, hasScript
+applet = code,codebase,width,height,archive,object,name,alt,align,hspace,vspace
+applet_options = hasCore
 b_options = hasCore, hasI18n, hasScript
 bdo = dir,lang
 bdo_options = hasCore
@@ -55,6 +58,7 @@ big_options = hasCore, hasI18n, hasScript
 button = name,value,type,disabled
 button_options = hasCore, hasI18n, hasScript
 caption_options = hasCore, hasI18n, hasScript
+center_options = hasCore, hasI18n, hasScript
 cite_options = hasCore, hasI18n, hasScript
 code_options = hasCore, hasI18n, hasScript
 dd_options = hasCore, hasI18n, hasScript, optional
@@ -62,13 +66,17 @@ dd_stoppingtags = dt, dd
 del = cite, datetime
 del_options = hasCore, hasI18n, hasScript
 dfn_options = hasCore, hasI18n, hasScript
-dl = compact
+dir = compact
+dir_options = hasCore, hasI18n, hasScript
+dl=compact
 dl_options = hasCore, hasI18n, hasScript
 dt_options = hasCore, hasI18n, hasScript, optional
 dt_stoppingtags = dt, dd
 em_options = hasCore, hasI18n, hasScript
 fieldset_options = hasCore, hasI18n, hasScript
 i_options = hasCore, hasI18n, hasScript
+iframe=src,name,longdesc,width,height,align,frameborder,marginwidth,marginheight,scrolling
+iframe_options = hasCore
 img = src,alt,longdesc,width,height,usemap,ismap,align,border,hspace,vspace,name
 img_options = single
 ins = cite, datetime
@@ -80,25 +88,31 @@ legend = accesskey,align
 legend_options = hasCore, hasI18n, hasScript
 location_options = single
 map = id, class, style, title, name
-map_options = hasCore, hasI18n, hasScript
+map_options = hasI18n, hasScript
+menu = compact
+menu_options = hasCore, hasI18n, hasScript
+noframes_options = hasCore, hasI18n, hasScript
 noscript_options = hasCore, hasI18n, hasScript
 object = data,classid,archive,codebase,width,height,name,usemap,type,codetype,standby,tabindex,declare,align,border,hspace,vspace
 object_options = hasCore, hasI18n, hasScript
 optgroup = label,disabled
 optgroup_options = hasCore, hasI18n, hasScript
-param=name,value,valuetype,type,id,
+param = name,value,valuetype,type,id,
 param_options = single
 pre = width, xml:space
 pre__options = hasCore, hasI18n, hasScript
 q_options = hasCore, hasI18n, hasScript
+s_options = hasCore, hasI18n, hasScript
 samp_options = hasCore, hasI18n, hasScript
 small_options = hasCore, hasI18n, hasScript
 span_options = hasCore, hasI18n, hasScript
+strike_options = hasCore, hasI18n, hasScript
 strong_options = hasCore, hasI18n, hasScript
 sub_options = hasCore, hasI18n, hasScript
 sup_options = hasCore, hasI18n, hasScript
 title_options = hasI18n
 tt_options = hasCore, hasI18n, hasScript
+u_options = hasCore, hasI18n, hasScript
 var_options = hasCore, hasI18n, hasScript
 
 [Extra rules]

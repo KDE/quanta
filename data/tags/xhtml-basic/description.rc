@@ -1,0 +1,86 @@
+[General]
+Name = -//W3C//DTD XHTML Basic 1.0//EN
+NickName = XHTML Basic 1.0
+URL = http://www.w3.org/TR/xhtml-basic/xhtml-basic10.dtd
+DoctypeString = HTML PUBLIC "-//W3C//DTD XHTML Basic 1.0//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic10.dtd"
+DefaultExtension = html
+Groups = Core, I18n, Script, Focus
+NumOfPages = 1
+QuotedAttributes=abbr,accesskey,action,align,alt,archive,axis,charset,checked,cite,class,classid,codebase,codetype,cols,colspan,content,data,declare,enctype,for,headers,height,href,hreflang,http-equiv,id,longdesc,maxlength,media,method,multiple,name,profile,rel,rev,rows,rowspan,scheme,scope,selected,size,src,standby,summary,tabindex,title,type,valign,value,valuetype,width,XHTML,xml:lang,xmlns
+CaseSensitive = true
+
+[Toolbars]
+Location = html
+Names = standard, tables, lists, forms, other
+
+[Core]
+Attributes = id, class, title
+
+[I18n]
+Attributes = xml:lang
+
+[Page1]
+Title = Core and i18n
+Groups = Core, I18n
+
+[Extra tags]
+
+List =!doctype,abbr,acronym,address,caption,cite,code,dd,dfn,dl,dt,em,img,kbd,label,object,param,pre,q,samp,span,strong,title,var,?
+
+
+!doctype=html,public,
+!doctype_options = single
+?_options = single
+abbr_options = hasCore, hasI18n
+acronym_options = hasCore, hasI18n
+address_options = hasCore, hasI18n
+caption_options = hasCore, hasI18n
+cite_options = hasCore, hasI18n
+code_options = hasCore, hasI18n
+dd_options = hasCore, hasI18n
+dd_stoppingtags = dt, dd
+dfn_options = hasCore, hasI18n
+dl_options = hasCore, hasI18n
+dt_options = hasCore, hasI18n
+dt_stoppingtags = dt, dd
+em_options = hasCore, hasI18n
+img = alt,height,longdesc,src,width
+img_options = hasCore, hasI18n,single
+kbd_options = hasCore, hasI18n
+label = for,accesskey
+label_options = hasCore, hasI18n
+object = archive,classid,codebase,codetype,data,declare,height,name,standby,tabindex,type,width
+object_options = hasCore, hasI18n
+param = name,value,valuetype,type
+param_options = hasCore, single
+pre__options = hasCore, hasI18n
+q = cite
+q_options = hasCore, hasI18n
+samp_options = hasCore, hasI18n
+span_options = hasCore, hasI18n
+strong_options = hasCore, hasI18n
+title_options = hasI18n
+var_options = hasCore, hasI18n
+
+[Extra rules]
+BooleanAttributes = simple
+Single Tag Style = XML
+StructGroupsCount = 2
+
+[Parsing rules]
+SpecialAreas = <!-- -->
+SpecialAreaNames = comment
+SpecialTags = script(language)
+MayContain = php
+
+[StructGroup_1]
+Name = Images
+No_Name = No Images
+Icon = image
+Tag = img(src)
+
+[StructGroup_2]
+Name = Links
+No_Name = No Links
+Icon = www
+Tag = a(name,href)

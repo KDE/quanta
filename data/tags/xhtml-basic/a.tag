@@ -1,17 +1,11 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="a" hasCore="1" hasI18n="1" hasScript="1" hasFocus="1">
+<tag name="a" hasCore="1" hasI18n="1">
 
     <attr name="href" type="url">
         <text>HREF</text> 
         <textlocation col="0" row="0" />
         <location col="1" row="0" colspan="3"/>
-    </attr>
-
-    <attr name="name" type="input">
-        <text>Name</text>
-        <textlocation col="0" row="1" />
-        <location col="1" row="1" colspan="3" />
     </attr>
 
     <attr name="rel" type="list">
@@ -83,25 +77,15 @@
 				<item>text/xml</item>
         </items>
     </attr>
-    
-    <attr name="onfocus" type="input">
-        <text>OnFocus</text>
-        <textlocation col="0" row="8" />
-        <location col="1" row="8" colspan="3" />
-    </attr>
-
-    <attr name="onblur" type="input">
-        <text>OnBlur</text>
-        <textlocation col="0" row="9" />
-        <location col="1" row="9" colspan="3" />
-    </attr>
-
+        
     <attr name="hreflang"></attr>
     <attr name="charset"> </attr>
+	<attr name="class"></attr>
+	<attr name="id"></attr>
     <attr name="accesskey"> </attr>
     <attr name="tabindex"> </attr>
-    <attr name="shape"> </attr>
-    <attr name="coords"> </attr>
-	
+	<attr name="title"> </attr>
+	<attr name="xml:lang"> </attr>
+    		
 </tag>
 </TAGS>
