@@ -93,13 +93,6 @@ public:
 	 */
 	DOM::Node getPrevNode(DOM::Node _node, bool &goUp, bool skipParentNodes = false, bool dontBlock = false, DOM::Node _endNode = DOM::Node());
 
-	/**
-	 * Category: Temporary function
-	 * For debugging purposes only, shows the kafka DOM tree
-	 * @return Return the view widget
-	 */
-	void showDomTree();
-
 public slots:
 
 	/**

@@ -1260,9 +1260,9 @@ void undoRedo::reloadQuantaEditor(bool force, bool syncQuantaCursor)
 {
 	QString text, allText;
 	Node *node = baseNode;
-	int bCol, bLine, eCol, eLine;
+	int bCol, bLine, eCol, eLine, bCol2, bLine2;
 	KafkaDocument *kafkaInterface = quantaApp->view()->getKafkaInterface();
-	bool updateClosing;
+	bool updateClosing, goUp;
 
 #ifdef LIGHT_DEBUG
 	kdDebug(25001)<< "undoRedo::reloadQuantaEditor()" << endl;
@@ -1313,11 +1313,30 @@ void undoRedo::reloadQuantaEditor(bool force, bool syncQuantaCursor)
 	}
 
 	node = baseNode;
+	goUp = false;
 	while(node)
 	{
 		//kdDebug(25001)<< "CurNode : " << _node->tag->name << " - " << _node->tag->tagStr() << endl;
-		allText += node->tag->tagStr();
-		node = node->nextSibling();
+		if(node->parent)
+		{
+			node->parent->tag->beginPos(bLine, bCol);
+			node->parent->tag->endPos(eLine, eCol);
+		}
+		node->tag->beginPos(bLine2, bCol2);
+
+		//if we are in a Script inside a tag e.g. <a href="<? PHP stuff here ?>">, skip it
+		if(node->tag->type == Tag::ScriptTag && node->parent &&
+			QuantaCommon::isBetween(bLine2, bCol2, bLine, bCol, eLine,eCol) == 0)
+		{
+			goUp = true;
+
+			//if we found the closing script tag, skip it too
+			if(node->next && node->next->tag->type == Tag::XmlTagEnd)
+				node = node->next;
+		}
+		else
+			allText += node->tag->tagStr();
+		node = kafkaCommon::getNextNode(node, goUp);
 	}
 
 	//temp

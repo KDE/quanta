@@ -439,7 +439,6 @@ bool KafkaWidget::eventFilter(QObject *, QEvent *event)
 				break;
 
 			default:
-				kdDebug(25001) << "KafkaWidget::eventFilter() Text" << endl;
 				if(m_currentNode.isNull())
 				{
 #ifdef LIGHT_DEBUG
@@ -454,7 +453,13 @@ bool KafkaWidget::eventFilter(QObject *, QEvent *event)
 					kdDebug(25001) << "KafkaWidget::eventFilter() Text - " <<
 						keyevent->text() << endl;
 #endif
-					if(( keyevent->state() & Qt::ShiftButton) || ( keyevent->state() == Qt::NoButton))
+					//if(( keyevent->state() & Qt::ShiftButton) || ( keyevent->state() == Qt::NoButton))
+					if( keyevent->text().length() &&
+						( !( keyevent->state() & ControlButton ) &&
+						!( keyevent->state() & AltButton ) &&
+						!( keyevent->state() & MetaButton ) ||
+						( ( (keyevent->state()&ControlButton) | AltButton ) == (ControlButton|AltButton) ) ) &&
+						( !keyevent->ascii() || keyevent->ascii() >= 32 || keyevent->text() == "\t" ) )
 						insertText(keyevent->text(), -1);
 					makeCursorVisible();
 #ifdef HEAVY_DEBUG
@@ -1261,8 +1266,6 @@ void KafkaWidget::finishedLoading()
 	DOM::Node _node = document();
         bool b = false;
 
-	if(_node == 0)
-		kdDebug(25001)<< "KafkaWidget::finishedLoading() ERROR : no document()!" << endl;
 	while(_node != 0)
 	{
 		_node = getNextNode(_node, b);

@@ -835,6 +835,7 @@ bool kafkaCommon::DTDinsertNode(Node *newNode, Node *parent, Node *startNodeToSu
 		insertNodeAroundSelection = true;
 
 	//Add the new Node only when the child relationship is DTD valid.
+	//NEED TO CLEAN this
 	curNode = startNodeToSurround;
 	while(curNode || (startNodeToSurround == endNodeToSurround))
 	{
@@ -1913,6 +1914,48 @@ bool kafkaCommon::editDomNodeAttribute(DOM::Node domNode, Node* node,
 }
 
 #ifdef HEAVY_DEBUG
+void kafkaCommon::coutDomTree(DOM::Node rootNode, int indent)
+#else
+void kafkaCommon::coutDomTree(DOM::Node, int)
+#endif
+{
+#ifdef HEAVY_DEBUG
+	QString output, dots;
+	int j;
+	DOM::Node node;
+	if(rootNode.isNull())
+		kdDebug(25001)<< "kafkaCommon::coutDomTree() - bad node!" << endl;
+
+	node = rootNode;
+	while (!node.isNull())
+	{
+		dots = "";
+		dots.fill('_', indent);
+		output = dots;
+		if (node.nodeType() != DOM::Node::TEXT_NODE)
+			output += node.nodeName().string().replace('\n'," ");
+		else
+			output+= node.nodeValue().string().replace('\n'," ");
+		kdDebug(25001) << output <<" (" << node.nodeType() << ") "<<
+			node.handle() <<  endl;
+		kdDebug(25001)<< dots << "  +++ prev " << node.previousSibling().handle() << " next " <<
+			node.nextSibling().handle() << " parent " <<
+			node.parentNode().handle() << " child " << node.firstChild().handle() << endl;
+		for(j = 0; j < (int)node.attributes().length(); j++)
+		{
+			kdDebug(25001)<< dots << " *** attr" << j << " " <<
+				node.attributes().item(j).nodeName().string() <<  " - " <<
+				node.attributes().item(j).nodeValue().string() << endl;
+		}
+
+		if (node.hasChildNodes())
+			coutDomTree(node.firstChild(), indent + 4);
+		node = node.nextSibling();
+	}
+#endif
+}
+
+#ifdef HEAVY_DEBUG
 void kafkaCommon::coutTree(Node *node, int indent)
 #else
 void kafkaCommon::coutTree(Node *, int)
@@ -1923,6 +1966,7 @@ void kafkaCommon::coutTree(Node *, int)
 	int bLine, bCol, eLine, eCol, j;
 	if(!node)
 		kdDebug(25001)<< "kafkaCommon::coutTree() - bad node!" << endl;
+
 	while (node)
 	{
 		dots = "";
@@ -1930,7 +1974,8 @@ void kafkaCommon::coutTree(Node *, int)
 		output = dots;
 		node->tag->beginPos(bLine, bCol);
 		node->tag->endPos(eLine, eCol);
-		if (node->tag->type != Tag::Text)
+		if (node->tag->type == Tag::XmlTag || node->tag->type == Tag::XmlTagEnd ||
+			node->tag->type == Tag::ScriptTag)
 			output += node->tag->name.replace('\n'," ");
 		else
 			output+= node->tag->tagStr().replace('\n'," ");

@@ -188,11 +188,13 @@ void KafkaDocument::loadDocument(Document *doc)
 			_node->tag->type << "; tagstr : " << _node->tag->tagStr() <<
 			" is opened :" << _node->opened << endl;
 #endif
-		buildKafkaNodeFromNode(_node);
+		if(!buildKafkaNodeFromNode(_node))
+			emit loadingError(_node);
 		_node = _node->nextSibling();
 	}
 	m_kafkaPart->finishedLoading();
 	_docLoaded = true;
+
 #ifdef LIGHT_DEBUG
 	kdDebug(25001)<< "KafkaDocument::loadDocument() in " << t.elapsed() << " ms only!" << endl;
 #endif
@@ -200,6 +202,7 @@ void KafkaDocument::loadDocument(Document *doc)
 	m_currentDoc->docUndoRedo->kafkaLoaded();
 	emit loaded();
 #ifdef HEAVY_DEBUG
+	kafkaCommon::coutDomTree(m_kafkaPart->document(), 2);
 	coutLinkTree(baseNode, 2);
 #endif
 }
@@ -392,14 +395,6 @@ bool KafkaDocument::buildKafkaNodeFromNode(Node *node, bool insertNode)
 
 	if(node->tag->type == Tag::XmlTag || (node->tag->type == Tag::Text && !node->insideSpecial))
 	{
-		if(!node->tag->single && node->next && node->next->tag->type != Tag::XmlTagEnd)
-		{
-			//TODO: ERROR missing closing tags, set the kafka behavior according to this
-#ifdef HEAVY_DEBUG
-			kdDebug(25001)<< "KafkaDocument::buildKafkaNodeFromNode() - Node missing closing Tag" <<
-				endl;
-#endif
-		}
 		str = node->tag->name.lower();
 
 		//The basics DOM::Nodes HTML, HEAD and BODY are loaded anyway, but we must now
@@ -481,7 +476,7 @@ bool KafkaDocument::buildKafkaNodeFromNode(Node *node, bool insertNode)
 #ifdef LIGHT_DEBUG
 			kdDebug(25001)<< "KafkaDocument::buildKafkaNodeFromNode() - ERROR null newNode" << endl;
 #endif
-			return true;
+			return false;
 		}
 
 		connectDomNodeToQuantaNode(newNode, node);
@@ -1323,6 +1318,11 @@ void KafkaDocument::translateKafkaIntoQuantaCursorPosition(DOM::Node _currentDom
 			currentOffset--;
 		}
 	}
+	else if(_currentNode->tag->type == Tag::XmlTag)
+	{
+		_currentNode->tag->endPos(curLine, curCol);
+		curCol++;
+	}
 
 	m_currentDoc->selectionIf->setSelection(curLine, curCol, curLine, curCol);
 	line = curLine;
@@ -1362,10 +1362,11 @@ void KafkaDocument::coutLinkTree(Node *, int)
 	Node *n = 0L;
 	if(!node)
 		kdDebug(25001)<< "kafkaDocument::coutTree() - bad node!" << endl;
+
 	while (node)
 	{
 		dots = "";
-		dots.fill('.', indent);
+		dots.fill('*', indent);
 		output = dots;
 		if (node->tag->type != Tag::Text)
 			output += node->tag->name.replace('\n'," ");

@@ -560,9 +560,16 @@ public:
 	 static bool isInline(const QString &nodename);
 
 	/**
+	 * Prints in stdout the current DOM::Node tree.
+	 * @param rootNode The root Node of the DOM::Node Tree (usually document())
+	 * @param indent The indentation.
+	 */
+	static void coutDomTree(DOM::Node rootNode, int indent);
+
+	/**
 	 * Prints in stdout the current Node tree.
-	 * @node The startNode
-	 * @indent The number of little dots per parent relationship.
+	 * @param node The startNode
+	 * @param indent The number of little dots per parent relationship.
 	 */
 	static void coutTree(Node *node, int indent);
 

@@ -69,21 +69,9 @@ bool HTMLEnhancer::enhanceNode(Node *node, DOM::Node parentDNode, DOM::Node next
 
 	//THEN if it is the style element, add a DOM::Node::TEXT_NODE child gathering all the CSS
 	//by default, the parser parse it as a script, which can't be translated in DOM::Nodes.
-	if((node->tag->type == Tag::ScriptTag && node->tag->name.lower().contains("style")) ||
-		(node->tag->type == Tag::XmlTag && node->tag->name.lower() == "style"))
+	if(node->tag->type == Tag::XmlTag && node->tag->name.lower() == "style")
 	{
-		if(node->tag->type == Tag::ScriptTag && node->tag->name.lower().contains("style"))
-		{
-			domNode = kafkaCommon::createDomNode("style", m_wkafkapart->defaultDTD(),
-				m_wkafkapart->getKafkaWidget()->document());
-			if(!kafkaCommon::insertDomNode(domNode, parentDNode))
-				return false;
-			node->_rootNode = domNode;
-			node->_leafNode = domNode;
-			m_wkafkapart->connectDomNodeToQuantaNode(domNode, node);
-		}
-		else
-			domNode = node->_rootNode;
+		domNode = node->_rootNode;
 		n = node->child;
 		text = "";
 		goUp = false;

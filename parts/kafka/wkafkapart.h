@@ -281,6 +281,12 @@ public:
 
 signals:
 	/**
+	 * Emitted when an error occurs when loading kafka. Can be called multiple times.
+	 * @param node The node which caused this error.
+	 */
+	void loadingError(Node *node);
+
+	/**
 	 * Called whenever a DOM::Node get the focus
 	 */
 	void newCursorPosition(int col, int row);

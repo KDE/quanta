@@ -103,7 +103,7 @@ htmlDocumentProperties::htmlDocumentProperties( QWidget* parent, const char* nam
 				linkNode = node;
 			if(nodeName == "meta")
 				loadMetaNode(node);
-			if(nodeName.contains("style"))
+			if(nodeName == "style")
 				loadCSS(node);
 			node = node->next;
 		}
@@ -125,7 +125,7 @@ htmlDocumentProperties::htmlDocumentProperties( QWidget* parent, const char* nam
 					linkNode = node;
 				if(nodeName == "meta")
 					loadMetaNode(node);
-				if(nodeName.contains("style"))
+				if(nodeName == "style")
 					loadCSS(node);
 				node = node->next;
 			}
@@ -146,7 +146,7 @@ htmlDocumentProperties::htmlDocumentProperties( QWidget* parent, const char* nam
 					linkNode = node;
 				if(nodeName == "meta")
 					loadMetaNode(node);
-				if(nodeName.contains("style"))
+				if(nodeName == "style")
 					loadCSS(node);
 				node = node->next;
 			}
@@ -163,7 +163,7 @@ htmlDocumentProperties::htmlDocumentProperties( QWidget* parent, const char* nam
 					linkNode = node;
 				if(nodeName == "meta")
 					loadMetaNode(node);
-				if(nodeName.contains("style"))
+				if(nodeName == "style")
 					loadCSS(node);
 				node = node->next;
 			}
@@ -253,6 +253,7 @@ void htmlDocumentProperties::loadMetaNode(Node *node)
 void htmlDocumentProperties::loadCSS(Node *node)
 {
 	NodeLinkedViewItem *item;
+	QString selector;
 
 	CSSNode = node;
 	node = node->child;
@@ -260,11 +261,13 @@ void htmlDocumentProperties::loadCSS(Node *node)
 	{
 		if(node->tag->type == Tag::ScriptStructureBegin)
 		{
+			selector = node->tag->tagStr();
+			selector = selector.left((uint)selector.find("{")).stripWhiteSpace();
 			if(node->child)
-				item = new NodeLinkedViewItem(cssRules, node->tag->name,
+				item = new NodeLinkedViewItem(cssRules, selector,
 					node->child->tag->tagStr());
 			else
-				item = new NodeLinkedViewItem(cssRules, node->tag->name, "");
+				item = new NodeLinkedViewItem(cssRules, selector, "");
 			item->node = node;
 			CSSList.append(item);
 		}
@@ -376,7 +379,7 @@ void htmlDocumentProperties::aboutToClose()
 			while(node)
 			{
 				nodeNext = node->next;
-				kafkaCommon::extractAndDeleteNode(node, modifs);
+				kafkaCommon::extractAndDeleteNode(node, modifs, true, false);
 				node = nodeNext;
 			}
 		}
@@ -450,6 +453,7 @@ void htmlDocumentProperties::aboutToClose()
 			{
 				if((static_cast<NodeLinkedViewItem *>(item))->node)
 				{
+					//Delete the CSS Node
 					node = (static_cast<NodeLinkedViewItem *>(item))->node;
 					if(node->prev && node->next->tag->type == Tag::ScriptStructureEnd)
 						kafkaCommon::extractAndDeleteNode(node->next, modifs);
@@ -467,8 +471,10 @@ void htmlDocumentProperties::aboutToClose()
 						addBasicCssNodes(modifs);
 						//create the CSS Nodes!
 						node = kafkaCommon::createAndInsertNode(
-							(static_cast<AttributeItem *>(item))->editorText(0), "",Tag::ScriptStructureBegin,
-							quantaApp->view()->write(), CSSNode, 0L, 0L, modifs);
+							(static_cast<AttributeItem *>(item))->editorText(0),
+							(static_cast<AttributeItem *>(item))->editorText(0) + "{",
+							Tag::ScriptStructureBegin, quantaApp->view()->write(),
+							CSSNode, 0L, 0L, modifs);
 						(void)kafkaCommon::createAndInsertNode("#text", "",Tag::Text,
 							quantaApp->view()->write(), node, 0L, 0L, modifs);
 						nodeNext = kafkaCommon::createAndInsertNode("", "}",Tag::ScriptStructureEnd,
@@ -528,8 +534,6 @@ void htmlDocumentProperties::addBasicCssNodes(NodeModifsSet *modifs)
 	//TODO:quick hack, modify createAndInsertNode
 	CSSNode = kafkaCommon::createAndInsertNode("style", "", Tag::XmlTag, quantaApp->view()->write(),
 		headNode, 0L, 0L, modifs);
-	CSSNode->tag->type = Tag::ScriptTag;
-	CSSNode->tag->name = "style |  block";
 }
 
 void htmlDocumentProperties::addBasicNodes(NodeModifsSet *modifs)
