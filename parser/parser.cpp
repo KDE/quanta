@@ -121,7 +121,7 @@ QString Parser::subList( Node* node, int pos)
 		
 	if ( node->type == Node::tTag ) {
 		if ( pos>node->start && pos<node->end )
-			s = node->tag.name + " / " + s;
+			s = node->tag->name + " / " + s;
 	}
 	
 	return s;
@@ -146,13 +146,14 @@ Node * Parser::subParse( Node * parent, QString tag )
       case TagStart : {
 
         int oldpos = pos;
-        Tag tagData = parseTag();
+        Tag *tagData = parseTag();
 
         if ( !tag.isEmpty() ) {  // check if this tag stop area of previous
           QStrList *list = tagsStop[tag];
           if ( list )
-            if ( list->find( tagData.name.lower() ) != -1 ) {
+            if ( list->find( tagData->name.lower() ) != -1 ) {
               pos = oldpos;  // return to pos before tag
+              delete (tagData);
               return firstNode;
             }
         }
@@ -170,8 +171,8 @@ Node * Parser::subParse( Node * parent, QString tag )
           prevNode->next = tnode;
         prevNode = tnode;
 
-        if ( singleTags->find(tagData.name.upper()) == -1 ) { // not single tag
-          tnode->child = subParse( tnode , tagData.name );
+        if ( singleTags->find(tagData->name.upper()) == -1 ) { // not single tag
+          tnode->child = subParse( tnode , tagData->name );
 
         	tnode->endContext = pos-1;
         	tnode->end = pos-1;
@@ -179,7 +180,7 @@ Node * Parser::subParse( Node * parent, QString tag )
         	if ( tokenType() == TagEnd ) {
           	int oldpos = pos;
           	QString tagend = parseTagEnd();
-          	if ( tagend.lower() != tnode->tag.name.lower() ) {
+          	if ( tagend.lower() != tnode->tag->name.lower() ) {
            	 pos = oldpos;
            	 //delete tagData;
            	 return firstNode;
@@ -252,16 +253,20 @@ int Parser::tokenType()
   if ( pos >= (int) s.length() )
     return EndText;
 
-  if ( s[pos] != '<')
+  static QChar ch1('<');
+  if ( s[pos] != ch1 )
     return Text;
 
-  if ( s[pos+1] == '/' )
+  static QChar ch2('/');
+  if ( s[pos+1] == ch2 )
     return TagEnd;
 
-  if ( s[pos+1] == '?' )
+  static QChar ch3('?');
+  if ( s[pos+1] == ch3 )
     return PHP;
 
-  if ( s.mid(pos,4) ==  "<!--" )
+  static QString str1("<!--");
+  if ( s.mid(pos,4) ==  str1 )
     return Comment;
 
 
@@ -274,13 +279,14 @@ int Parser::skipSpaces()
   return pos;
 }
 
-Tag Parser::parseTag()
+Tag* Parser::parseTag()
 {
-  Tag tag;// = new Tag();
+  Tag *tag = new Tag();
   int tpos = pos+1;
-  while ( s[tpos] != '>' && !s[tpos].isNull() ) tpos++;
+  static QChar ch1('>');
+  while ( s[tpos] != ch1 && !s[tpos].isNull() ) tpos++;
 
-  tag.parseStr( s.mid( pos+1, tpos-pos-1 ) );
+  tag->parseStr( s.mid( pos+1, tpos-pos-1 ) );
 
   pos = tpos;
   if ( !s[pos].isNull() ) pos++;
@@ -304,14 +310,16 @@ QString Parser::parseTagEnd()
 void Parser::parseText()
 {
   int len = s.length();
-  while ( s[pos] != '<' && pos < len ) pos++;
+  static QChar ch1('<');
+  while ( s[pos] != ch1 && pos < len ) pos++;
 }
 
 
 void Parser::parseComment()
 {
   int len = s.length();
-  while ( s.mid(pos,3) != "-->" && pos < len ) pos++;
+  static QString str1("-->");
+  while ( s.mid(pos,3) != str1 && pos < len ) pos++;
   if ( s < len )
     pos+=3;
 }
@@ -320,7 +328,8 @@ void Parser::parsePHP()
 {
   int len = s.length();
 
-  while ( s.mid(pos,2) != "?>" && pos < len ) pos++;
+  static QString str1("?>");
+  while ( s.mid(pos,2) != str1 && pos < len ) pos++;
   if ( s < len )
     pos+=2;
 }

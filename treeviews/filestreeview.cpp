@@ -15,6 +15,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#define ID_TOP  777
+
 // QT includes
 #include <qdir.h>
 #include <qpixmap.h>
@@ -34,16 +36,17 @@
 // include icons
 #include "pix/home.xpm"
 #include "pix/folder_red.xpm"
+#include "pix/folder_top.xpm"
 
 extern QString fileMaskHtml;
 extern QString fileMaskJava;
 extern QString fileMaskText;
 extern QString fileMaskImage;
 
-FilesTreeView::FilesTreeView( QString dir, QStringList dirList, QWidget *parent, const char *name)
+FilesTreeView::FilesTreeView( QString dir, QStrList topList, QWidget *parent, const char *name)
 	: FileManage(parent,name)
 {
-	this->dirList = dirList;	
+	this->dirList = topList;	
 	
 	setRootIsDecorated( true );
   header()->hide();
@@ -66,6 +69,7 @@ FilesTreeView::FilesTreeView( QString dir, QStringList dirList, QWidget *parent,
 	fileMenu -> insertItem( i18n("List mode"), this ,SLOT(slotNewMode()));
 	
 	folderMenu -> insertItem( i18n("List mode"), this ,SLOT(slotNewMode()));
+	folderMenu -> insertItem( i18n("Add folder to top"), this ,SLOT(slotAddToTop()), 0, ID_TOP, 0);
 	
 	connect(  this, SIGNAL(doubleClicked(QListViewItem *)),
 						this, SLOT(slotSelectFile(QListViewItem *)));
@@ -81,6 +85,19 @@ FilesTreeView::FilesTreeView( QString dir, QStringList dirList, QWidget *parent,
 						this,	SLOT(slotSelectFile(QListViewItem *)));
 	connect(	this, SIGNAL(openInQuanta(QListViewItem *)),
 						this,	SLOT(slotSelectAnyFile(QListViewItem *)));
+						
+	// generate top list of directories
+	for ( topList.first(); topList.current(); topList.next() )
+	{
+	  QString f = topList.current();
+	  QString fname = f;
+    int i;
+    while ( ( i = f.find('/')) >= 0 ) f.remove(0,i+1);
+	
+	  FilesTreeFolder *dir = new FilesTreeFolder( this , " "+f, fname+"/");
+	  dir->setPixmap( 0, QPixmap((const char**)folder_top_xpm) );
+	  dir->setOpen( false);
+	}
 }
 
 FilesTreeView::~FilesTreeView()
@@ -110,7 +127,17 @@ void FilesTreeView::slotMenu(QListViewItem *item, const QPoint &point, int)
 	if ( f ) fileMenu->popup( point);
 	
 	FilesTreeFolder *d = dynamic_cast<FilesTreeFolder *>( item);
-	if ( d ) folderMenu->popup( point);
+	if ( d )
+	{
+	  if ( !d->parentFolder )folderMenu ->changeItem( ID_TOP, i18n("Remove from top"));
+	  else                   folderMenu ->changeItem( ID_TOP, i18n("Add folder to top"));
+	
+	  if ( d->text(0) == "Home" || d->text(0) == "Root" )
+	        folderMenu ->setItemEnabled( ID_TOP, false);
+	  else  folderMenu ->setItemEnabled( ID_TOP, true );
+	
+	  folderMenu ->popup     ( point);
+	}
 }
 
 QString FilesTreeView::currentFileName()
@@ -146,7 +173,7 @@ void FilesTreeView::slotSelectFile(QListViewItem *item)
 		emit openImage( nameToOpen );
 		return;
 	}
-	KRun *rk = new KRun( KURL(nameToOpen), 0, true );
+	new KRun( KURL(nameToOpen), 0, true );
 }
 
 void FilesTreeView::slotSelectAnyFile(QListViewItem *item)
@@ -173,5 +200,33 @@ void FilesTreeView::slotSelectImage(QListViewItem *item)
 	if ( QDir::match( fileMaskImage, nameToOpen) )
 	{
 		emit openImage( nameToOpen );
+	}
+}
+
+void FilesTreeView::slotAddToTop()
+{
+  FilesTreeFolder *d = dynamic_cast<FilesTreeFolder *>( currentItem() );
+	if ( d )
+	{
+	  if ( d->parentFolder )
+	  { // add
+	    QString f = currentFileName();
+	    QString fname = f;
+      int i;
+      while ( ( i = f.find('/')) >= 0 ) f.remove(0,i+1);
+	
+      if ( dirList.find( fname ) != -1) return;
+
+	    FilesTreeFolder *dir = new FilesTreeFolder( this , " "+f, fname+"/");
+  	  dir->setPixmap( 0, QPixmap((const char**)folder_top_xpm) );
+	    dir->setOpen( false);
+	    dirList.append( fname );
+	  }
+	  else { // remove
+	    QString f = currentFileName();
+	    f = f.remove( f.length()-1, 1 );
+	    dirList.remove( f );
+	    delete( d );
+	  }
 	}
 }

@@ -42,6 +42,9 @@ FileCombo::FileCombo(QString basePath, QWidget *parent, const char *name )
   button  ->setFixedSize(35,25);
   button  ->setText(i18n("..."));
 
+  //button  ->setPixmap( UserIcon("open") );
+  //button  ->setAutoRaise(true);
+
   layout  ->addWidget( combo );
   layout  ->addWidget( button );
 

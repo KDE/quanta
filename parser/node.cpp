@@ -22,6 +22,7 @@ Node::Node( Node *parent )
   this->parent = parent;
   next = child = 0L;
   type = tDefault;
+  tag = 0L;
 }
 
 
@@ -29,4 +30,6 @@ Node::~Node()
 {
   if (child) delete(child);
   if (next) delete(next);
+  if ( tag )
+  	delete(tag);
 }

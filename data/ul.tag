@@ -10,23 +10,10 @@
     <attr name="type" type="list">
         <location col="1" row="0" colspan="2" />
         <items>
-            <item>1</item>
-            <item>a</item>
-            <item>A</item>
-            <item>i</item>
-            <item>I</item>
+            <item>disk</item>
+            <item>square</item>
+            <item>circle</item>
         </items>
-    </attr>
-
-
-    <label>
-        <text>Start :</text>
-        <location col="0" row="1" />
-    </label>
-
-
-    <attr name="start" type="input">
-        <location col="1" row="1" colspan="2" />
     </attr>
 
 

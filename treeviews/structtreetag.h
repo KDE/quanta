@@ -30,7 +30,7 @@ class StructTreeTag : public QListViewItem  {
 
 public: 
 	StructTreeTag(QListView *parent, const char *name = 0 );
-	StructTreeTag(StructTreeTag *parent, Tag &tag, const char *name = 0 );
+	StructTreeTag(StructTreeTag *parent, Tag *tag, const char *name = 0 );
 	StructTreeTag(StructTreeTag *parent, const char *name = 0 );
 	~StructTreeTag();
 	

@@ -57,7 +57,7 @@ private:
   int skipSpaces(); // return pos of next nonspace symbol
 
   void parseText();
-  Tag  parseTag();
+  Tag* parseTag();
   QString parseTagEnd();
   void parseComment();
   void parsePHP();

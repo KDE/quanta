@@ -635,7 +635,11 @@ void QuantaApp::initView()
 
   fTab = new QWidgetStack( leftPanel );
 
-  fTTab = new FilesTreeView( QDir::homeDirPath()+"/" , 0L, fTab );
+  QStrList topList;
+  config->setGroup("General Options");
+  config->readListEntry("Top folders", topList);
+
+  fTTab = new FilesTreeView( QDir::homeDirPath()+"/" , topList, fTab );
   fLTab = new FilesListView( QDir::homeDirPath()+"/" , 0L, fTab );
 
   fTab  ->setFocusPolicy(QWidget::NoFocus);
@@ -897,7 +901,8 @@ void QuantaApp::saveOptions()
     ++it;
   }
 
-  config->writeEntry("List of opened files",fileList);
+  config->writeEntry("List of opened files", fileList);
+  config->writeEntry("Top folders", fTTab->dirList);
 
   if ( project->hasProject() )
   {
@@ -980,6 +985,8 @@ void QuantaApp::readOptions()
 
 void QuantaApp::openLastFiles()
 {
+	doc->newDocument();
+
   config->setGroup("General Options");
 
   QString projectFileName = config->readEntry("Last Project");
@@ -1000,7 +1007,7 @@ void QuantaApp::openLastFiles()
 
   if ( doc->docList.count() == 0 ) // no documents opened
   {
-  	doc->newDocument();
+  	
   }
 }
 

@@ -1,39 +1,33 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="ol">
+<tag name="base">
 
     <label>
-        <text>Type :</text>
+        <text>HREF </text>
         <location col="0" row="0" />
     </label>
 
-    <attr name="type" type="list">
-        <location col="1" row="0" colspan="2" />
-        <items>
-            <item>1</item>
-            <item>a</item>
-            <item>A</item>
-            <item>i</item>
-            <item>I</item>
-        </items>
-    </attr>
-
-
     <label>
-        <text>Start :</text>
+        <text>Target </text>
         <location col="0" row="1" />
     </label>
 
 
-    <attr name="start" type="input">
+    <attr name="href" type="input">
+        <location col="1" row="0" colspan="2" />
+    </attr>
+
+    <attr name="target" type="list">
         <location col="1" row="1" colspan="2" />
+        <items>
+                <item>_blank</item>
+                <item>_self</item>
+                <item>_parent</item>
+                <item>_top</item>
+        </items>
     </attr>
 
 
-    <attr name="compact" type="check">
-        <text>compact</text>
-        <location col="0" row="2" colspan="2" />
-    </attr>
 
     <spacer orientation="h">
         <location col="0" row="8" />
@@ -50,6 +44,7 @@
     <spacer orientation="v">
         <location col="0" row="9" colspan="3" />
     </spacer>
+
 
 
 </tag>

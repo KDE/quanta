@@ -343,14 +343,8 @@ void Document::changeCurrentTag( QDict<QString> *dict )
     if ( val ) // change attr
     {
       QString t;
-      QString value = *val;
-      bool trans;          // if val is number, dont use ""
-      value.toInt( &trans);
 
-      if ( !trans )
-        t = attr+"=\""+*val+"\"";
-      else
-        t = attr+"="+*val;
+      t = attr+"=\""+*val+"\"";
 
       if ( val->isEmpty() )  // for checkboxes ( without val) don't print =""
         t = attr;

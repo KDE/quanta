@@ -140,21 +140,21 @@ void StructTreeView::createList(Node *node, StructTreeTag *parent, int openLevel
 //			item = new StructTreeTag( parent, tnode->tag, tnode->tag.name.data() );
 //			item->pos = tnode->start;
 			
-			if ( tnode->tag.name == "img") {
-				item = new StructTreeTag( images, tnode->tag, tnode->tag.attrValue("src").left(50) );
+			if ( tnode->tag->name == "img") {
+				item = new StructTreeTag( images, tnode->tag, tnode->tag->attrValue("src").left(50) );
 				item->pos1 = tnode->start-1;
 				item->pos2 = tnode->end;
 				imagesCount++;
 			}
 			
-			if ( tnode->tag.name == "a") {
+			if ( tnode->tag->name == "a") {
 			  QString text = "";
 			  
-			  if ( tnode->tag.haveAttrib("name") )
-			    text = tnode->tag.attrValue("name").left(50);
+			  if ( tnode->tag->haveAttrib("name") )
+			    text = tnode->tag->attrValue("name").left(50);
 			    
-			  if ( tnode->tag.haveAttrib("href") )
-			    text = tnode->tag.attrValue("href").left(50);
+			  if ( tnode->tag->haveAttrib("href") )
+			    text = tnode->tag->attrValue("href").left(50);
 			  
 				item = new StructTreeTag( links, tnode->tag, text );
 				item->pos1 = tnode->start-1;
@@ -163,7 +163,7 @@ void StructTreeView::createList(Node *node, StructTreeTag *parent, int openLevel
 				
 			}
 			
-			item = new StructTreeTag( parent, tnode->tag, tnode->tag.name.data() );
+			item = new StructTreeTag( parent, tnode->tag, tnode->tag->name.data() );
 			item->pos1 = tnode->start-1;
 			item->pos2 = tnode->end;
 

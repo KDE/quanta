@@ -30,7 +30,7 @@ StructTreeTag::StructTreeTag(QListView *parent, const char *name )
 	
 }
 
-StructTreeTag::StructTreeTag(StructTreeTag *parent, Tag &tag, const char *name )
+StructTreeTag::StructTreeTag(StructTreeTag *parent, Tag *tag, const char *name )
 	: QListViewItem(parent,name)
 {
 	pos1 = pos2 = 1;
@@ -40,23 +40,23 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, Tag &tag, const char *name )
 	
 	if ( sname.left(4) == "font" ) {
 		setPixmap( 0, UserIcon("tag_font_small") );
-		if ( tag.attrcount )
-			setText(0, space + tag.attr[0] + "=" + tag.value[0]);
+		if ( tag->attrcount )
+			setText(0, space + tag->attr[0] + "=" + tag->value[0]);
 		else
 			setText(0,"");
 	}
 	
 	if ( sname.left(3) == "img" ) {
 		setPixmap( 0, UserIcon("image") );
-		setText(0, space + tag.attrValue("src") );
+		setText(0, space + tag->attrValue("src") );
 	}
 		
 	if ( sname == "a" ) {
 		setPixmap( 0, UserIcon("html") );
-		if ( tag.haveAttrib("href") )
-			setText(0,space + "href "+ tag.attrValue("href"));
-		if ( tag.haveAttrib("name") )
-			setText(0,space + "name "+ tag.attrValue("name"));	
+		if ( tag->haveAttrib("href") )
+			setText(0,space + "href "+ tag->attrValue("href"));
+		if ( tag->haveAttrib("name") )
+			setText(0,space + "name "+ tag->attrValue("name"));	
 	}
 		
 	/*

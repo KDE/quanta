@@ -44,7 +44,7 @@ public:
 	int startContext;
 	int endContext;
 	
-	Tag tag;
+	Tag *tag;
 };
 
 #endif

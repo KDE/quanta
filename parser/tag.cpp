@@ -34,7 +34,7 @@ Tag::Tag( const Tag &t)
 {
 	name = t.name;
 	
-	for (int i=0; i<20; i++) {
+	for (int i=0; i<t.attrcount; i++) {
 	  attr[i] = t.attr[i];
 	  value[i] = t.value[i];
   }
@@ -117,7 +117,7 @@ Tag Tag::operator = (const Tag &t)
 {
 	name = t.name;
 	
-	for (int i=0; i<20; i++) {
+	for (int i=0; i<t.attrcount; i++) {
 	  attr[i]  = t.attr[i];
 	  value[i] = t.value[i];
  	}

@@ -357,9 +357,6 @@ void QuantaApp::slotFileNew()
 
   setCaption(doc->getTitle());
 
-  #warning add options when need to repaint preview
-  //repaintPreview();
-
   slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
 }
 
@@ -934,6 +931,13 @@ void QuantaApp::slotOptions()
     attrCapital = styleOptions->checkAttrCapital->isChecked();
     useCloseTag = styleOptions->checkEndTag->isChecked();
 
+    fileMaskHtml = filesMask->lineHTML->text();
+  	fileMaskPhp  = filesMask->linePHP->text();
+	  fileMaskImage= filesMask->lineImages->text();
+  	fileMaskText = filesMask->lineText->text();
+
+
+
     parserOptions->updateConfig();
 
     QWidgetStack *s;
@@ -1021,7 +1025,7 @@ void QuantaApp::slotActivatePreview()
 
 void QuantaApp::slotShowPreview()
 {
-	static hSplitPos = 1000;
+	static int hSplitPos = 1000;
 	
 	WHTMLPart *part = htmlPart();
 	if ( !part ) return;
@@ -1038,7 +1042,8 @@ void QuantaApp::slotShowPreview()
 	      hSplit -> setPos( 1000 );
 	  }
 		
-		s->raiseWidget( 0 );
+		s   ->raiseWidget( 0 );
+		doc ->write()->setFocus();
 	}
 	else {
 		enableCommand(ID_VIEW_BACK);
@@ -1062,7 +1067,7 @@ void QuantaApp::slotShowPreview()
 
 void QuantaApp::slotShowLeftPanel()
 {
-	static vSplitPos = 0;
+	static int vSplitPos = 0;
 	
 	bool stat = viewMenu -> isItemChecked( ID_VIEW_TREE );
 	
@@ -1161,7 +1166,10 @@ void QuantaApp::slotLeftTabChanged(QWidget *)
   }
   else {
     if ( docTabOpened )
+    {
     	rightWidgetStack -> raiseWidget(0);
+    	doc ->write()->setFocus();
+    }
   	docTabOpened = false;
   }
 }

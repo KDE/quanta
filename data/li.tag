@@ -1,6 +1,6 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="ol">
+<tag name="li">
 
     <label>
         <text>Type :</text>
@@ -10,6 +10,9 @@
     <attr name="type" type="list">
         <location col="1" row="0" colspan="2" />
         <items>
+            <item>disk</item>
+            <item>square</item>
+            <item>circle</item>
             <item>1</item>
             <item>a</item>
             <item>A</item>
@@ -20,12 +23,12 @@
 
 
     <label>
-        <text>Start :</text>
+        <text>Value :</text>
         <location col="0" row="1" />
     </label>
 
 
-    <attr name="start" type="input">
+    <attr name="value" type="input">
         <location col="1" row="1" colspan="2" />
     </attr>
 
