@@ -189,6 +189,7 @@ void QuantaInit::initQuanta()
       if (mdiMode != KMdi::IDEAlMode)
         m_quanta->setToolviewStyle(qConfig.toolviewTabs);
    }
+  m_quanta->initTabWidget(true);
   qConfig.windowLayout = "Custom";
   //FIXME: This is a hack to workaround the starting problem when we are in Toplevel mode.
   //Without this, the editor becomes the child of the widget holding the menus and toolbars...
