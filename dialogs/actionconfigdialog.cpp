@@ -689,21 +689,28 @@ void ActionConfigDialog::slotShortcutCaptured(const KShortcut &shortcut)
 
   if (global.isEmpty())
   {
-    for (uint i = 0; i < quantaApp->actionCollection()->count(); i++)
+    QPtrList<KXMLGUIClient> clients = quantaApp->guiFactory()->clients();
+    for( QPtrListIterator<KXMLGUIClient> it( clients ); it.current(); ++it )
     {
-      KAction *action = quantaApp->actionCollection()->action(i);
-      if (action->shortcut().toString().contains(shortcutText))
-      {
-        global = action->text();
-        break;
+        KActionCollection *ac = (*it)->actionCollection();
+        for (uint i = 0; i < ac->count(); i++)
+        {
+          KAction *action = ac->action(i);
+          if (action->shortcut().toString().contains(shortcutText))
+          {
+            global = action->text();
+            break;
+          }
+          if (!shortcutText2.isEmpty() && action->shortcut().toString().contains(shortcutText))
+          {
+            shortcutText = shortcutText2;
+            global = action->text();
+            break;
+          }
+        }
+         if (!global.isEmpty())
+           break;
       }
-      if (!shortcutText2.isEmpty() && action->shortcut().toString().contains(shortcutText))
-      {
-        shortcutText = shortcutText2;
-        global = action->text();
-        break;
-      }
-    }
   }
 
   if (global.isEmpty())
