@@ -836,7 +836,7 @@ QString KafkaDocument::generateCodeFromNode(Node *node, int bLine, int bCol, int
 			bCol += node->tag->attribute(j).length();
 
 			//doctype have only attrNames.
-			if(node->tag->name.lower() != "!doctype")
+			if(node->tag->name.lower() != "!doctype" && !node->tag->getAttribute(j).special)
 			{
 				text += "=";
 				bCol++;

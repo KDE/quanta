@@ -44,11 +44,16 @@ namespace Kate {
 class Document;
 
 struct TagAttr {
+  TagAttr() {nameLine = nameCol = valueLine = valueCol = 0; quoted = true; special = false;}
   QString name;           //attr name
   QString value;          //attr value
   int nameLine, nameCol;  //where the attr name begins
   int valueLine, valueCol;//where the attr value begins
   bool quoted;            //quote or not the attribute
+  bool special;           //true if the attribute is not a real one, instead it's only part 
+                          //of a special area that's present in the tag. Example: 
+                          //Tag: <a <? echo $a ?> href="x">, <?, echo, $a and ?> are special attributes
+                          //This is important, otherwise they would be wrongly treated as booleans.
 };
 
 struct AreaStruct{
@@ -130,6 +135,8 @@ public:
   QString toString();
   /** returns true if the tag is a closing tag (name or namespace starts with "/") */
   bool isClosingTag();
+  /** Sets the special flag of attribute at index*/
+  void setAttributeSpecial(int index, bool special);
 
   int size();
 

@@ -1845,6 +1845,15 @@ void Document::slotTextChanged()
 
 void Document::slotDelayedTextChanged()
 {
+/*   if (typingInProgress)
+   {
+    // kdDebug(24000) << "Reparsing delayed!" << endl;
+     parser->setParsingNeeded(true);
+     QTimer::singleShot(250, this, SLOT(slotDelayedTextChanged()));
+     reparseEnabled = false;
+     return;
+   }
+*/
     uint line, column;
     QString oldNodeName = "";
     Node *node;
@@ -1969,6 +1978,7 @@ void Document::slotDelayedTextChanged()
       typingInProgress = false;
       quantaApp->getsTab()->slotReparse(this, baseNode , qConfig.expandLevel);
     }
+    reparseEnabled = true;
 }
 
 /** Returns list of values for attribute */

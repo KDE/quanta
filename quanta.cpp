@@ -109,7 +109,6 @@
 #include "dialogs/filemasks.h"
 #include "dialogs/styleoptionss.h"
 #include "dialogs/previewoptions.h"
-#include "dialogs/previewfontoptions.h"
 #include "dialogs/parseroptions.h"
 #include "dialogs/debuggeroptionss.h"
 #include "dialogs/dtdselectdialog.h"
@@ -871,7 +870,7 @@ void QuantaApp::slotNewStatus()
     int pageId = wTab->currentPageIndex();
     bool block=wTab->signalsBlocked();
     wTab->blockSignals(true);
-    //If we don't disable the parser, it wil parse page 0 and then reload kafka
+    //If we don't disable the parser, it will parse page 0 and then reload kafka
     //even if the signals are supposed to be blocked ;(
     parser->setParsingEnabled(false);
 #ifdef BUILD_KAFKAPART

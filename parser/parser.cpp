@@ -61,6 +61,7 @@ Parser::Parser()
   m_groups.clear();
   m_quotesRx = QRegExp("\"|'");
   m_parsingEnabled = true;
+  m_parsingNeeded = true;
 }
 
 Parser::~Parser()
@@ -409,6 +410,12 @@ Node *Parser::parse(Document *w)
   QTime t;
   t.start();
 
+#ifdef BUILD_KAFKAPART
+  //If VPL is loaded, there shouldn't be any rebuild
+  if(quantaApp->view()->hadLastFocus() == QuantaView::kafkaFocus)
+    return m_node;
+#endif
+
   if(!m_parsingEnabled)
     return baseNode;
 
@@ -433,6 +440,7 @@ Node *Parser::parse(Document *w)
   t.restart();
   parseIncludedFiles();
   kdDebug(24000) << "External parser: " << t.elapsed() << " ms\n";
+  m_parsingNeeded = false;
  /*
  treeSize = 0;
  coutTree(m_node, 2);
@@ -872,6 +880,7 @@ void Parser::deleteNodes(Node *firstNode, Node *lastNode, NodeModifsSet *modifs)
  //   kdDebug(24000)<< "Node removed!" << endl;
 //    coutTree(m_node, 2);
   }
+//  coutTree(m_node, 2);
 #ifndef BUILD_KAFKAPART
   Q_UNUSED(modifs);
 #endif
@@ -881,7 +890,12 @@ Node *Parser::rebuild(Document *w)
 {
  QTime t;
  t.start();
+
 #ifdef BUILD_KAFKAPART
+  //If VPL is loaded, there shouldn't be any rebuild
+  if(quantaApp->view()->hadLastFocus() == QuantaView::kafkaFocus)
+    return m_node;
+
  NodeModifsSet *modifs = new NodeModifsSet();
  NodeModif *modif;
 #endif
@@ -1101,6 +1115,7 @@ Node *Parser::rebuild(Document *w)
 // cout << "\n";
 
  emit nodeTreeChanged();
+ m_parsingNeeded = false;
  return m_node;
 }
 
@@ -2030,6 +2045,15 @@ bool Parser::parseScriptInsideTag(Node *startNode)
         int lastLine, lastCol;
         currentNode = parseSpecialArea(area2, foundText, "", currentNode, lastLine, lastCol);
         col = write->text(node_bl, node_bc, lastLine, lastCol).length();
+        int firstSpecialAttrIndex = startNode->tag->attributeIndexAtPos(bl, bc);
+        if (firstSpecialAttrIndex != -1)
+        {
+          int lastSpecialAttrIndex = startNode->tag->attributeIndexAtPos(lastLine, lastCol);
+          for (int i = firstSpecialAttrIndex; i <= lastSpecialAttrIndex; i++)
+          {
+            startNode->tag->setAttributeSpecial(i, true);
+          }
+        }
       }
     }
   }
@@ -2182,6 +2206,5 @@ Node* Parser::createScriptTagNode(const AreaStruct &area, const QString &areaNam
   }
   return node;
 }
-
 
 #include "parser.moc"
