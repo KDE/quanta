@@ -44,6 +44,7 @@
 #include <klineedit.h>
 #include <kcompletion.h>
 #include <kprogress.h>
+#include <kpassdlg.h>
 
 //standard includes
 #include <time.h>

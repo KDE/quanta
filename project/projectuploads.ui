@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>700</width>
-            <height>586</height>
+            <height>599</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -316,31 +316,6 @@
                 </sizepolicy>
             </property>
         </widget>
-        <widget class="QLineEdit" row="1" column="3" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>linePasswd</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>7</hsizetype>
-                    <vsizetype>1</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="font">
-                <font>
-                    <family>Lucida Console [Xft]</family>
-                    <pointsize>10</pointsize>
-                </font>
-            </property>
-            <property name="echoMode">
-                <enum>Password</enum>
-            </property>
-            <property name="alignment">
-                <set>AlignAuto</set>
-            </property>
-        </widget>
         <widget class="QLabel" row="1" column="2">
             <property name="name">
                 <cstring>TextLabel3</cstring>
@@ -352,6 +327,11 @@
         <widget class="QLineEdit" row="1" column="1">
             <property name="name">
                 <cstring>lineUser</cstring>
+            </property>
+        </widget>
+        <widget class="KPasswordEdit" row="1" column="3" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>linePasswd</cstring>
             </property>
         </widget>
     </grid>
@@ -440,7 +420,6 @@
     <tabstop>comboProtocol</tabstop>
     <tabstop>port</tabstop>
     <tabstop>lineUser</tabstop>
-    <tabstop>linePasswd</tabstop>
     <tabstop>keepPasswd</tabstop>
     <tabstop>linePath</tabstop>
     <tabstop>buttonUpload</tabstop>
@@ -471,5 +450,6 @@
     <includehint>kprogress.h</includehint>
     <includehint>kprogress.h</includehint>
     <includehint>uploadtreeview.h</includehint>
+    <includehint>kpassdlg.h</includehint>
 </includehints>
 </UI>

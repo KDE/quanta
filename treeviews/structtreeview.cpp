@@ -251,6 +251,8 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
       }
       if (!insertUnder->firstChild())
           delete insertUnder;
+      else
+          insertUnder->sortChildItems(0, true);
     }
     groups[i]->sortChildItems(0, true);
   }

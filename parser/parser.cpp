@@ -1688,22 +1688,82 @@ void Parser::parseIncludedFile(const QString& fileName, DTDStruct *dtd)
     QTextStream str(&file);
     content = str.read();
     file.close();
-    for (uint j = 0; j < dtd->structTreeGroups.count(); j++)
+    if (dtd->specialAreas.count())
     {
-      group = dtd->structTreeGroups[j];
-      int pos = 0;
-      while (pos != -1)
+      int areaPos = 0;
+      int lastAreaPos = 0;
+      QString foundStr;
+      QString specialEndStr;
+      while (areaPos != -1)
       {
-        pos = group.searchRx.search(content, pos);
-        if (pos != -1)
+        areaPos = content.find(dtd->specialAreaStartRx, lastAreaPos);
+        if (areaPos != -1)
         {
-          QString s = content.mid(pos, group.searchRx.matchedLength());
-          pos += s.length();
-          s.remove(group.clearRx);
-          if (!(*elements)[group.name].contains(s))
-              (*elements)[group.name] += s;
-        }
-      }
+          foundStr = dtd->specialAreaStartRx.cap();
+          specialEndStr = dtd->specialAreas[foundStr];
+          int areaPos2 = content.find(specialEndStr, areaPos);
+          if (areaPos2 == -1)
+          {
+            areaPos2 = content.length();
+            foundStr = content.mid(areaPos, areaPos2 - areaPos + 1);
+            areaPos = -1;
+          } else
+          {
+            foundStr = content.mid(areaPos, areaPos2 - areaPos + 1);
+            lastAreaPos = areaPos2 + 1;
+          }
+          removeCommentsAndQuotes(foundStr, dtd);
+          //find the structure blocks and remove the text inside them
+          int structPos = 0;
+          while (structPos !=-1)
+          {
+            structPos = foundStr.find(dtd->structBeginStr, structPos);
+            if (structPos != -1)
+            {
+              int openNum = 1;
+              int pos = structPos + dtd->structBeginStr.length();
+              while (openNum !=0 && pos != -1)
+              {
+                pos = dtd->structRx.search(foundStr, pos);
+                if (pos != -1)
+                {
+                  if (dtd->structRx.cap() == dtd->structBeginStr)
+                      openNum++;
+                  else
+                      openNum--;
+                  pos++;
+                }
+              }
+              if (pos == -1)
+                  pos = foundStr.length();
+              structPos = foundStr.findRev(dtd->structKeywordsRx, structPos);
+              for (int j = structPos; j < pos + 1; j++)
+              {
+                foundStr[j] = ' ';
+              }
+              structPos =  pos + 1;
+            }
+          }
+
+          for (uint j = 0; j < dtd->structTreeGroups.count(); j++)
+          {
+            group = dtd->structTreeGroups[j];
+            int pos = 0;
+            while (pos != -1)
+            {
+              pos = group.searchRx.search(foundStr, pos);
+              if (pos != -1)
+              {
+                QString s = foundStr.mid(pos, group.searchRx.matchedLength());
+                pos += s.length();
+                s.remove(group.clearRx);
+                if (!(*elements)[group.name].contains(s))
+                    (*elements)[group.name] += s;
+              }
+            }
+          } //for
+        } //if (areaPos != -1)
+      }// while (areaPos != -1)
     }
   }
 }

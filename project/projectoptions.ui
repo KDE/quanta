@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>623</width>
-            <height>421</height>
+            <width>620</width>
+            <height>569</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -33,7 +33,7 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QPushButton" row="1" column="3">
+        <widget class="QPushButton" row="1" column="2">
             <property name="name">
                 <cstring>buttonTmpl</cstring>
             </property>
@@ -53,12 +53,12 @@
                 <string>...</string>
             </property>
         </widget>
-        <widget class="QLineEdit" row="1" column="2">
+        <widget class="QLineEdit" row="1" column="1">
             <property name="name">
                 <cstring>linePrjTmpl</cstring>
             </property>
         </widget>
-        <widget class="QLabel" row="2" column="0" rowspan="1" colspan="2">
+        <widget class="QLabel" row="2" column="0">
             <property name="name">
                 <cstring>TextLabel1_2_2</cstring>
             </property>
@@ -66,7 +66,7 @@
                 <string>Toolbars directory:</string>
             </property>
         </widget>
-        <widget class="QLabel" row="0" column="0" rowspan="1" colspan="2">
+        <widget class="QLabel" row="0" column="0">
             <property name="name">
                 <cstring>TextLabel1</cstring>
             </property>
@@ -82,7 +82,7 @@
                 <string>Project name:</string>
             </property>
         </widget>
-        <widget class="QLabel" row="5" column="0" rowspan="1" colspan="2">
+        <widget class="QLabel" row="5" column="0">
             <property name="name">
                 <cstring>textLabel1</cstring>
             </property>
@@ -90,12 +90,12 @@
                 <string>Exclude from project:</string>
             </property>
         </widget>
-        <widget class="QLineEdit" row="5" column="2" rowspan="1" colspan="2">
+        <widget class="QLineEdit" row="5" column="1" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>lineExclude</cstring>
             </property>
         </widget>
-        <widget class="QPushButton" row="2" column="3">
+        <widget class="QPushButton" row="2" column="2">
             <property name="name">
                 <cstring>buttonToolbar</cstring>
             </property>
@@ -115,7 +115,7 @@
                 <string>...</string>
             </property>
         </widget>
-        <widget class="QLabel" row="1" column="0" rowspan="1" colspan="2">
+        <widget class="QLabel" row="1" column="0">
             <property name="name">
                 <cstring>TextLabel1_2</cstring>
             </property>
@@ -123,12 +123,12 @@
                 <string>Templates directory:</string>
             </property>
         </widget>
-        <widget class="QLineEdit" row="2" column="2">
+        <widget class="QLineEdit" row="2" column="1">
             <property name="name">
                 <cstring>linePrjToolbar</cstring>
             </property>
         </widget>
-        <widget class="QLineEdit" row="0" column="2" rowspan="1" colspan="2">
+        <widget class="QLineEdit" row="0" column="1" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>linePrjName</cstring>
             </property>
@@ -150,7 +150,7 @@
                 <string></string>
             </property>
         </widget>
-        <widget class="QLabel" row="8" column="0">
+        <widget class="QLabel" row="0" column="0">
             <property name="name">
                 <cstring>TextLabel1_4</cstring>
             </property>
@@ -161,23 +161,52 @@
                 <string>Prefix:</string>
             </property>
         </widget>
-        <widget class="QCheckBox" row="7" column="0" rowspan="1" colspan="4">
+        <widget class="QLabel" row="3" column="0">
             <property name="name">
-                <cstring>checkPrefix</cstring>
+                <cstring>TextLabel4</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>7</hsizetype>
+                    <vsizetype>5</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
             </property>
             <property name="text">
-                <string>Use preview &amp;prefix</string>
+                <string>Author:</string>
             </property>
         </widget>
-        <widget class="QLineEdit" row="8" column="1" rowspan="1" colspan="3">
+        <widget class="QLabel" row="4" column="0">
             <property name="name">
-                <cstring>linePrefix</cstring>
+                <cstring>TextLabel5</cstring>
             </property>
-            <property name="enabled">
-                <bool>false</bool>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>5</hsizetype>
+                    <vsizetype>5</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="text">
+                <string>Email:</string>
             </property>
         </widget>
-        <widget class="QGroupBox" row="6" column="0" rowspan="1" colspan="4">
+        <widget class="QLineEdit" row="4" column="1" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>lineEmail</cstring>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="3" column="1" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>lineAuthor</cstring>
+            </property>
+        </widget>
+        <widget class="QGroupBox" row="6" column="0" rowspan="1" colspan="3">
             <property name="name">
                 <cstring>GroupBox5</cstring>
             </property>
@@ -238,66 +267,106 @@
                 </widget>
             </grid>
         </widget>
-        <widget class="QLabel" row="3" column="0" rowspan="1" colspan="2">
+        <widget class="QGroupBox" row="7" column="0" rowspan="1" colspan="3">
             <property name="name">
-                <cstring>TextLabel4</cstring>
+                <cstring>GroupBox5_2</cstring>
             </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>7</hsizetype>
-                    <vsizetype>5</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
+            <property name="title">
+                <string>Project Upload</string>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLineEdit" row="0" column="3">
+                    <property name="name">
+                        <cstring>port</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="2" column="0">
+                    <property name="name">
+                        <cstring>TextLabel2_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Path:</string>
+                    </property>
+                </widget>
+                <widget class="QComboBox" row="0" column="2">
+                    <property name="name">
+                        <cstring>comboProtocol</cstring>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="2" column="1" rowspan="1" colspan="3">
+                    <property name="name">
+                        <cstring>linePath</cstring>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="0" column="1">
+                    <property name="name">
+                        <cstring>lineHost</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="0">
+                    <property name="name">
+                        <cstring>TextLabel2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>User:</string>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="1" column="1">
+                    <property name="name">
+                        <cstring>lineUser</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="0" column="0">
+                    <property name="name">
+                        <cstring>TextLabel4_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Host:</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="1" column="3">
+                    <property name="name">
+                        <cstring>keepPasswd</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Keep password</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Keep the password for this session. It will not be saved, and you have to reenter after you reopen the project.</string>
+                    </property>
+                </widget>
+                <widget class="KPasswordEdit" row="1" column="2">
+                    <property name="name">
+                        <cstring>linePasswd</cstring>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+        <widget class="QCheckBox" row="8" column="0" rowspan="1" colspan="3">
+            <property name="name">
+                <cstring>checkPrefix</cstring>
             </property>
             <property name="text">
-                <string>Author:</string>
+                <string>Use preview &amp;prefix</string>
             </property>
         </widget>
-        <widget class="QLabel" row="4" column="0" rowspan="1" colspan="2">
+        <widget class="QLineEdit" row="9" column="0" rowspan="1" colspan="3">
             <property name="name">
-                <cstring>TextLabel5</cstring>
+                <cstring>linePrefix</cstring>
             </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>5</hsizetype>
-                    <vsizetype>5</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="text">
-                <string>Email:</string>
-            </property>
-        </widget>
-        <widget class="QLineEdit" row="4" column="2" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>lineEmail</cstring>
-            </property>
-            <property name="text">
-                <string></string>
-            </property>
-        </widget>
-        <widget class="QLineEdit" row="3" column="2" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>lineAuthor</cstring>
+            <property name="enabled">
+                <bool>false</bool>
             </property>
         </widget>
     </grid>
 </widget>
 <connections>
-    <connection>
-        <sender>checkPrefix</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>linePrefix</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>checkPrefix</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>TextLabel1_4</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
     <connection>
         <sender>buttonTmpl</sender>
         <signal>clicked()</signal>
@@ -309,6 +378,18 @@
         <signal>clicked()</signal>
         <receiver>ProjectOptions</receiver>
         <slot>buttonToolbar_clicked()</slot>
+    </connection>
+    <connection>
+        <sender>checkPrefix</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>linePrefix</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>checkPrefix</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>TextLabel1_4</receiver>
+        <slot>setEnabled(bool)</slot>
     </connection>
 </connections>
 <tabstops>
@@ -334,4 +415,7 @@
     <slot>buttonToolbar_clicked()</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>kpassdlg.h</includehint>
+</includehints>
 </UI>
