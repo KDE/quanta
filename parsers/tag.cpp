@@ -516,8 +516,6 @@ QString Tag::toString()
   attrString.append(QuantaCommon::tagCase(name));
   tagString.prepend(attrString);
 
-  tagString.prepend(attrString);
-
   if (attrs.isEmpty() && qTag && qTag->parentDTD->singleTagStyle == "xml" &&
       (qTag->isSingle() ||
       (!qConfig.closeOptionalTags && qTag->isOptional()) || single)

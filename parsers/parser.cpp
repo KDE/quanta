@@ -68,8 +68,8 @@ Parser::Parser()
   m_saParser = new SAParser();
   connect(m_saParser, SIGNAL(rebuildStructureTree()), SIGNAL(rebuildStructureTree()));
   connect(m_saParser, SIGNAL(cleanGroups()), SLOT(cleanGroups()));
-  m_saParser->includeWatch = new KDirWatch();
-  connect(m_saParser->includeWatch, SIGNAL(dirty(const QString&)), SLOT(slotIncludedFileChanged(const QString&)));
+  ParserCommon::includeWatch = new KDirWatch();
+  connect(ParserCommon::includeWatch, SIGNAL(dirty(const QString&)), SLOT(slotIncludedFileChanged(const QString&)));
 }
 
 Parser::~Parser()
@@ -1171,9 +1171,9 @@ void Parser::clearGroups()
   globalGroupMap.clear();
   ParserCommon::includedFiles.clear();
   ParserCommon::includedFilesDTD.clear();
-  delete m_saParser->includeWatch;
-  m_saParser->includeWatch = new KDirWatch();
-  connect(m_saParser->includeWatch, SIGNAL(dirty(const QString&)), SLOT(slotIncludedFileChanged(const QString&)));
+  delete ParserCommon::includeWatch;
+  ParserCommon::includeWatch = new KDirWatch();
+  connect(ParserCommon::includeWatch, SIGNAL(dirty(const QString&)), SLOT(slotIncludedFileChanged(const QString&)));
 }
 
 void Parser::cleanGroups()
@@ -1199,9 +1199,9 @@ void Parser::cleanGroups()
        }
     }
   }
-  delete m_saParser->includeWatch;
-  m_saParser->includeWatch = new KDirWatch();
-  connect(m_saParser->includeWatch, SIGNAL(dirty(const QString&)), SLOT(slotIncludedFileChanged(const QString&)));
+  delete ParserCommon::includeWatch;
+  ParserCommon::includeWatch = new KDirWatch();
+  connect(ParserCommon::includeWatch, SIGNAL(dirty(const QString&)), SLOT(slotIncludedFileChanged(const QString&)));
   parseIncludedFiles();
 }
 
