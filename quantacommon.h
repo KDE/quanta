@@ -72,6 +72,11 @@ typedef struct QConfig{
           KSpellConfig *spellConfig;
         };
 
+typedef struct {
+     bool text : 1;
+     enum { NoCompression=0, GZipCompression } compression : 4;
+     int dummy : 27;
+  } Format;
 
 /**Some common, mostly static functions.
   *@author Andras Mantia
@@ -132,6 +137,7 @@ pointer must be deleted by the caller!! */
   /** Returns the translated a_str in English. A "back-translation" useful e.g in case of CSS elements selected from a listbox. */
   static QString i18n2normal(const QString& a_str);
 
+  static Format findFormatByFileContent( const QString &fileName );
 };
 
 #endif
