@@ -860,8 +860,10 @@ void QuantaView::deactivated()
   {
     quantaApp->statusBar()->changeItem("", IDS_STATUS);
   }
+#ifdef BUILD_KAFKAPART
   m_sourceUpdateTimer.stop();
   m_VPLUpdateTimer.stop();
+#endif
 }
 
 bool QuantaView::saveModified()
