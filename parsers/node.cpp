@@ -269,14 +269,11 @@ void Node::setNodeValue(QString value)
 
 Node* Node::lastChild()
 {
-  Node *n, *m;
+  Node *n;
   n = child;
-  while(n)
-  {
-          m = n;
-          n = n->next;
-  }
-  return m;
+  while(n && n->next)
+    n = n->next;
+  return n;
 }
 
 Node *Node::nextNE()

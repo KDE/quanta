@@ -449,15 +449,15 @@ public:
 	 * This mean that the undo/redo system will delete it when necessary so don't reuse it!!!!
 	 * @param node The node to delete.
 	 * @param modifs The changes made are logged into modifs.
-	 * @param deleteChilds If we remove or move up the children. WARNING: it don't check
+	 * @param extractChilds If we extract or move up the children. WARNING: it don't check
 	 * if the children of node are legal childs of the parent of node.
-	 * @param removeClosingTag Delete the closingTag if node isn't single and is Tag::XmlTag.
+	 * @param removeClosingTag Extract the closingTag if node isn't single and is Tag::XmlTag.
 	 * TODO: @param removeEmbeddedTags Specifies if we delete the embedded Nodes e.g.
 	 * <a href="<? boo ?>" > : the PHP block is an embedded block.
 	 * @return Returns the node extracted with its childs
 	 */
-	static Node* extractNode(Node *node, NodeModifsSet *modifs, bool removeChildren = true,
-		bool removeClosingTag = false/**, bool removeEmbeddedTags = false*/);
+	static Node* extractNode(Node *node, NodeModifsSet *modifs, bool extractChildren = true,
+		bool extractClosingTag = false/**, bool removeEmbeddedTags = false*/);
 
 	/**
 	 * It behaves essentially like the above function.

@@ -1908,27 +1908,29 @@ Node *kafkaCommon::duplicateNodeSubtree(Node *node)
     return newRootNode;
 }
 
-Node* kafkaCommon::extractNode(Node *node, NodeModifsSet *modifs, bool deleteChildren,
-                               bool deleteClosingTag)
+Node* kafkaCommon::extractNode(Node *node, NodeModifsSet *modifs, bool extractChildren,
+                               bool extractClosingTag)
 {
-    NodeModif *modif;
+    NodeModif *modif, *modifChild;
     Node *lastChild, *curNode;
-    Node *parent, *prev, *next, *child;
+    Node *parent, *prev, *next, *child, *n;
     bool isSingle;
     int type;
     QString namespaceName, nodeName, caseSensitive;
     QString closingNamespaceName, closingNodeName, closingCaseSensitive;
+    QValueList<int> location;
 
     if(!node)
         return 0L;
 
     if(!node->child)
-        deleteChildren = true;
+        extractChildren = true;
 
     parent = node->parent;
     next = node->next;
     prev = node->prev;
     child = node->child;
+    lastChild = node->lastChild();
     isSingle = node->tag->single;
     type = node->tag->type;
     namespaceName = node->tag->nameSpace;
@@ -1939,23 +1941,40 @@ Node* kafkaCommon::extractNode(Node *node, NodeModifsSet *modifs, bool deleteChi
     if(modifs)
     {
         modif = new NodeModif();
-        if(deleteChildren)
+        if(extractChildren)
             modif->setType(NodeModif::NodeAndChildsRemoved);
         else
             modif->setType(NodeModif::NodeRemoved);
         modif->setLocation(getLocation(node));
+        
+        //log the children move if we don't extract the children
+        if(!extractChildren)
+        {
+          location = getLocation(node);
+          location.last()++;
+          n = lastChild;
+          while(n)
+          {
+            modifChild = new NodeModif();
+            modifChild->setType(NodeModif::NodeAndChildsMoved);
+            modifChild->setLocation(getLocation(n));
+            modifChild->setFinalLocation(location);
+            modifs->addNodeModif(modifChild);
+            n = n->prev;
+          }
+        }
     }
 
     //starting to extract.
     if(node == baseNode)
     {
-        if(deleteChildren)
+        if(extractChildren)
             baseNode = 0L;
         else
             baseNode = node->child;
         parser->setRootNode(baseNode);
     }
-    if(!deleteChildren)
+    if(!extractChildren)
     {
         curNode = node->child;
         while(curNode)
@@ -1966,7 +1985,7 @@ Node* kafkaCommon::extractNode(Node *node, NodeModifsSet *modifs, bool deleteChi
     }
     if(node->parent && node->parent->child == node)
     {
-        if(deleteChildren)
+        if(extractChildren)
             node->parent->child = node->next;
         else
             node->parent->child = node->child;
@@ -1974,7 +1993,7 @@ Node* kafkaCommon::extractNode(Node *node, NodeModifsSet *modifs, bool deleteChi
     node->parent = 0L;
     if(node->prev)
     {
-        if(deleteChildren)
+        if(extractChildren)
             node->prev->next = node->next;
         else
         {
@@ -1984,20 +2003,20 @@ Node* kafkaCommon::extractNode(Node *node, NodeModifsSet *modifs, bool deleteChi
     }
     if(node->next)
     {
-        if(deleteChildren)
+        if(extractChildren)
             node->next->prev = node->prev;
         else
         {
-            lastChild = node->child;
+            /**lastChild = node->child;
             while(lastChild->next)
-                lastChild = lastChild->next;
+                lastChild = lastChild->next;*/
             node->next->prev = lastChild;
             lastChild->next = node->next;
         }
     }
     node->prev = 0L;
     node->next = 0L;
-    if(!deleteChildren)
+    if(!extractChildren)
         node->child = 0L;
 
     if(modifs)
@@ -2006,8 +2025,8 @@ Node* kafkaCommon::extractNode(Node *node, NodeModifsSet *modifs, bool deleteChi
         modifs->addNodeModif(modif);
     }
 
-    //delete the closing Tag
-    if(deleteClosingTag && type == Tag::XmlTag && !isSingle && next)
+    //extract the closing Tag
+    if(extractClosingTag && type == Tag::XmlTag && !isSingle && next)
     {
         while(next && next->tag->type == Tag::Empty)
             next = next->next;
@@ -2484,7 +2503,7 @@ int kafkaCommon::DTDExtractNode(const QString &nodeName, Document *doc, Node *st
 
     //Then, process startNode and endNode : look if a nodeName parent is one of
     //startNode/endNode's inline parents and if it is the case, split the necessary Nodes.
-    //The comparaison is made in lower, even in xml : it could be strange, for an user, to have
+    //The comparaison is made in lowercase, even in xml : it could be strange, for an user, to have
     //its nodes not removed because there are in the wrong case.
     node = startNode;
     lastNodeNameStartNode = 0L;
