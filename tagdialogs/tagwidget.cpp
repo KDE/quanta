@@ -38,14 +38,14 @@ TagWidget::TagWidget(QWidget *parent, const char *name )
 TagWidget::~TagWidget(){
 }
 
-void TagWidget::updateDict( const char *attr, QComboBox *combo )
+void TagWidget::updateDict( QString attr, QComboBox *combo )
 {
   QString *s = new QString(combo->currentText());
   if ( s->isEmpty() ) dict->remove(attr);
-  else dict->replace(attr, s->data() );
+  else dict->replace(attr, s );
 }
 
-void TagWidget::setValue( const char *val, QComboBox *combo)
+void TagWidget::setValue( QString val, QComboBox *combo)
 {
   bool found = false;
   QString value = val;
@@ -61,12 +61,12 @@ void TagWidget::setValue( const char *val, QComboBox *combo)
   if ( !found ) combo->setEditText( val);
 }
 
-void TagWidget::setValue( const char *val, QLineEdit *line)
+void TagWidget::setValue( QString val, QLineEdit *line)
 {
   line->setText( val);
 }
 
-void TagWidget::setValue( const char *val, QSpinBox *spin)
+void TagWidget::setValue( QString val, QSpinBox *spin)
 {
   QString value = val;
   int valint = value.toInt();
@@ -74,33 +74,33 @@ void TagWidget::setValue( const char *val, QSpinBox *spin)
   spin->setValue( valint);
 }
 
-void TagWidget::setValue( const char *val, KColorButton *button)
+void TagWidget::setValue( QString val, KColorButton *button)
 {
   QString value = val;
 
   button->setColor( value.data() );
 }
 
-void TagWidget::updateDict( const char *attr, QLineEdit *line )
+void TagWidget::updateDict( QString attr, QLineEdit *line )
 {
   QString *s = new QString(line->text());
   if ( s->isEmpty() ) dict->remove(attr);
-  else dict->replace(attr, s->data() );
+  else dict->replace(attr, s );
 }
 
-void TagWidget::updateDict( const char *attr, QSpinBox *spin )
+void TagWidget::updateDict( QString attr, QSpinBox *spin )
 {
   QString *s = new QString(spin->text());
   if ( s->isEmpty() ) dict->remove(attr);
-  else dict->replace(attr, s->data() );
+  else dict->replace(attr, s );
 }
 
-void TagWidget::updateDict( const char *attr, QCheckBox *check )
+void TagWidget::updateDict( QString attr, QCheckBox *check )
 {
   if ( !check->isChecked() )
     dict->remove( attr );
   else {
     if ( !dict->find(attr) )
-      dict->insert(attr,"");
+      dict->insert(attr, new QString("") );
   }
 }

@@ -40,8 +40,8 @@ public:
 	TagTableHead(QWidget *parent=0, const char *name=0);
 	~TagTableHead();
 	
-	void readAttributes( QDict<char> *d);
-  void writeAttributes( QDict<char> *d );
+	void readAttributes( QDict<QString> *d);
+  void writeAttributes( QDict<QString> *d );
 
 public:
 	void initDialog();

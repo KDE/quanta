@@ -45,8 +45,8 @@ public:
 	void initDialog();
   /**  */
 
-  void readAttributes( QDict<char> *d);
-  void writeAttributes( QDict<char> *d );
+  void readAttributes( QDict<QString> *d);
+  void writeAttributes( QDict<QString> *d );
 
 	//Generated area. DO NOT EDIT!!!(begin)
 	QLabel *QLabel_1;

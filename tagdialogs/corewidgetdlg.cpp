@@ -28,7 +28,7 @@ CoreWidgetDlg::CoreWidgetDlg(QWidget *parent, const char *name)
 CoreWidgetDlg::~CoreWidgetDlg(){
 }
 
-void CoreWidgetDlg::readAttributes( QDict<char> *d )
+void CoreWidgetDlg::readAttributes( QDict<QString> *d )
 {
   dict = d;
 
@@ -42,18 +42,18 @@ void CoreWidgetDlg::readAttributes( QDict<char> *d )
 
 }
 
-void CoreWidgetDlg::writeAttributes( QDict<char> *d )
+void CoreWidgetDlg::writeAttributes( QDict<QString> *d )
 {
   dict = d;
-  char *t; // value of attr.
+  QString *t; // value of attr.
 
-  if (( t=d->find("id") ))    setValue(t, lineId);
-  if (( t=d->find("class") )) setValue(t, lineClass);
-  if (( t=d->find("style") )) setValue(t, lineStyle);
-  if (( t=d->find("title") )) setValue(t, lineTitle);
+  if (( t=d->find("id") ))    setValue(*t, lineId);
+  if (( t=d->find("class") )) setValue(*t, lineClass);
+  if (( t=d->find("style") )) setValue(*t, lineStyle);
+  if (( t=d->find("title") )) setValue(*t, lineTitle);
 
-  if (( t=d->find("lang") ))  setValue(t, lineLang);
-  if (( t=d->find("dir") ))   setValue(t, lineDir);
+  if (( t=d->find("lang") ))  setValue(*t, lineLang);
+  if (( t=d->find("dir") ))   setValue(*t, lineDir);
 }
 
 

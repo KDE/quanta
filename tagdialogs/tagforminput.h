@@ -39,8 +39,8 @@ public:
 	TagFormInput(QWidget *parent=0, const char *name=0);
 	~TagFormInput();
 
-  void readAttributes( QDict<char> *d);
-  void writeAttributes( QDict<char> *d );
+  void readAttributes( QDict<QString> *d);
+  void writeAttributes( QDict<QString> *d );
 
 public slots:
   void slotSrcSelect();	

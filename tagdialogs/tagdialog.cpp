@@ -22,6 +22,7 @@
 // include kde headers
 #include <kapp.h>
 #include <klocale.h>
+#include <kstddirs.h>
 
 #include "../document.h"
 
@@ -33,7 +34,6 @@
 #include "tagwidget.h"
 
 #include "tagadlg.h"
-#include "tagbody.h"
 #include "tagfontdlg.h"
 #include "tagform.h"
 #include "tagformbutton.h"
@@ -44,6 +44,8 @@
 #include "tagtabledlg.h"
 #include "tagtablehead.h"
 #include "tagtablerow.h"
+
+#include "tagxml.h"
 
 extern QStrList *tagsList; // list of known tags
 extern QStrList *tagsCore; // list of tags, allowed core attributes ( id, class, id, title )
@@ -61,16 +63,16 @@ extern bool attrCapital; // use capital letters for attributes of tag
 extern bool useCloseTag; // use close tag if optional
 
 
-TagDialog::TagDialog( Document *write, const char *tag ,const char *attr, const char *val)
+TagDialog::TagDialog( Document *write, QString tag ,QString attr, QString val)
     : QTabDialog( 0L, tag)
 {
   this->write = write;
-  dict = new QDict<char>(1,false);
+  dict = new QDict<QString>(1,false);
 
   if ( tag )
   {
     this->tag = tag;
-    if ( attr && val ) dict->insert( attr , val );
+    if ( !attr.isNull() && !val.isNull() ) dict->insert( attr , new QString(val) );
     fEdit = false; // new tag
   }
   else {
@@ -111,19 +113,53 @@ void TagDialog::parseTag()
 {
   QString t = tag.lower();
 
-  if ( t == "a" )         mainDlg = new TagADlg( this);
-  if ( t == "body" )      mainDlg = new TagBody( this);
-  if ( t == "font" )      mainDlg = new TagFontDlg( this);
-  if ( t == "basefont" )  mainDlg = new TagFontDlg( this);
-  if ( t == "form" )      mainDlg = new TagForm( this);
-  if ( t == "button" )    mainDlg = new TagFormButton( this);
-  if ( t == "input" )     mainDlg = new TagFormInput( this);
-  if ( t == "textarea" )  mainDlg = new TagFormTextareaDlg( this);
-  if ( t == "img" )       mainDlg = new TagImgDlg( this);
-  if ( t == "table" )     mainDlg = new TagTableDlg(this);
-  if ( t == "th" )        mainDlg = new TagTableHead(this);
-  if ( t == "tr" )        mainDlg = new TagTableRow(this);
-  if ( t == "td" )        mainDlg = new TagTableHead(this);
+  bool findXMLConfig = false;
+
+  QStringList tagsDirs = KGlobal::instance()->dirs()->findDirs("appdata", "tags");
+
+  for ( QStringList::Iterator it = tagsDirs.begin(); it != tagsDirs.end(); ++it ) {
+  	QString tagDir = *it;
+  	QDir dir(tagDir, "*.tag");
+  	QStringList files = dir.entryList();
+  	
+  	for ( QStringList::Iterator it_f = files.begin(); it_f != files.end(); ++it_f ) {
+  	
+  	   if ( *it_f != t+".tag" )
+  	   	 continue;
+  	
+  		 QString fname = tagDir + *it_f ;
+  		 QFile f( fname );
+
+			 f.open( IO_ReadOnly );
+
+		   QDomDocument doc;
+		   if ( !doc.setContent( &f ) )
+		   	 continue;
+
+  		 mainDlg = new Tagxml( doc, this );
+  		 findXMLConfig = true;
+  		 break;
+  	}
+  	
+  	if ( findXMLConfig )
+  		break;
+  }
+
+
+  if ( !findXMLConfig ) {
+     if ( t == "a" )         mainDlg = new TagADlg( this);
+     if ( t == "font" )      mainDlg = new TagFontDlg( this);
+     if ( t == "basefont" )  mainDlg = new TagFontDlg( this);
+     if ( t == "form" )      mainDlg = new TagForm( this);
+     if ( t == "button" )    mainDlg = new TagFormButton( this);
+     if ( t == "input" )     mainDlg = new TagFormInput( this);
+     if ( t == "textarea" )  mainDlg = new TagFormTextareaDlg( this);
+     if ( t == "img" )       mainDlg = new TagImgDlg( this);
+     if ( t == "table" )     mainDlg = new TagTableDlg(this);
+     if ( t == "th" )        mainDlg = new TagTableHead(this);
+     if ( t == "tr" )        mainDlg = new TagTableRow(this);
+     if ( t == "td" )        mainDlg = new TagTableHead(this);
+  }
 
   if ( fEdit ) {
     for (int i=1; i < write->tagAttrNum; i++ )
@@ -131,7 +167,7 @@ void TagDialog::parseTag()
       QString *attr = new QString(write->getTagAttr(i));
       QString *val = new QString(write->getTagAttrValue(i));
 
-      dict->insert( attr->data() , val->data() );
+      dict->insert( *attr , val );
     }
   }
 
@@ -171,13 +207,13 @@ void TagDialog::slotAccept()
 /** form new tag from dict */
 void TagDialog::formeTag()
 {
-  QDictIterator<char> it( *dict );
+  QDictIterator<QString> it( *dict );
 
   QString newTag("");
 
   while ( it.current() ) {
     QString attr  = it.currentKey();
-    QString val   = it.current();
+    QString val   = *it.current();
 
     bool trans;
     val.toInt( &trans );
@@ -209,7 +245,7 @@ void TagDialog::formeTag()
 }
 
 /** convert tag to upper or lower case */
-QString TagDialog::tagCase( const char*  tag)
+QString TagDialog::tagCase( QString  tag)
 {
   QString sTag = tag;
 
@@ -222,7 +258,7 @@ QString TagDialog::tagCase( const char*  tag)
 }
 
 /** convert attr of tag to upper or lower case */
-QString TagDialog::attrCase( const char*  attr)
+QString TagDialog::attrCase( QString  attr)
 {
   QString sAttr = attr;
 

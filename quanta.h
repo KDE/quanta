@@ -103,6 +103,8 @@ class QuantaApp : public KTMainWindow
     /** members of app */
     QuantaDoc *getDoc() { return doc;};
     QuantaView *getView() { return view;};
+
+    void openLastFiles();
      	
 
   protected:
@@ -268,6 +270,9 @@ class QuantaApp : public KTMainWindow
     /** configure keybindings */
     void slotOptionsConfigureKeys();
 
+    /** set highlight of document */
+    void slotSetHl(int);
+
     /** reparse current document and initialize node. */
 	  void reparse();
 	
@@ -304,6 +309,8 @@ class QuantaApp : public KTMainWindow
     QPopupMenu *bookmarksMenu;
     QPopupMenu *optionsMenu;
     QPopupMenu *helpMenu_;
+
+    QPopupMenu *highlightMenu;
 
     /** child menus(insert) */
     QPopupMenu *insertStandardMenu;

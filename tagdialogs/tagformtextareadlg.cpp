@@ -25,7 +25,7 @@ TagFormTextareaDlg::TagFormTextareaDlg(QWidget *parent, const char *name)
 TagFormTextareaDlg::~TagFormTextareaDlg(){
 }
 
-void TagFormTextareaDlg::readAttributes( QDict<char> *d )
+void TagFormTextareaDlg::readAttributes( QDict<QString> *d )
 {
   dict = d;
 
@@ -34,12 +34,12 @@ void TagFormTextareaDlg::readAttributes( QDict<char> *d )
   updateDict("cols", lineCols );
 }
 
-void TagFormTextareaDlg::writeAttributes( QDict<char> *d )
+void TagFormTextareaDlg::writeAttributes( QDict<QString> *d )
 {
   dict = d;
-  char *t; // value of attr.
+  QString *t; // value of attr.
 
-  if (( t=d->find("name") ))    setValue(t, lineName);
-  if (( t=d->find("rows") ))    setValue(t, lineRows);
-  if (( t=d->find("cols") ))    setValue(t, lineCols);
+  if (( t=d->find("name") ))    setValue(*t, lineName);
+  if (( t=d->find("rows") ))    setValue(*t, lineRows);
+  if (( t=d->find("cols") ))    setValue(*t, lineCols);
 }

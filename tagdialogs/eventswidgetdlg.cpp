@@ -28,7 +28,7 @@ EventsWidgetDlg::~EventsWidgetDlg(){
 }
 
 
-void EventsWidgetDlg::readAttributes( QDict<char> *d )
+void EventsWidgetDlg::readAttributes( QDict<QString> *d )
 {
   dict = d;
 
@@ -45,21 +45,21 @@ void EventsWidgetDlg::readAttributes( QDict<char> *d )
 
 }
 
-void EventsWidgetDlg::writeAttributes( QDict<char> *d )
+void EventsWidgetDlg::writeAttributes( QDict<QString> *d )
 {
   dict = d;
-  char *t; // value of attr.
+  QString *t; // value of attr.
 
-  if (( t=d->find("onClick") ))     setValue(t, lineClick);
-  if (( t=d->find("onDblClick") ))  setValue(t, lineDblClick);
-  if (( t=d->find("onMouseDown") )) setValue(t, lineMouseDown);
-  if (( t=d->find("onMouseUp") ))   setValue(t, lineMouseUp);
-  if (( t=d->find("onMouseOver") )) setValue(t, lineMouseOver);
-  if (( t=d->find("onMouseMove") )) setValue(t, lineMouseMove);
-  if (( t=d->find("onMouseOut") ))  setValue(t, lineMouseOut);
-  if (( t=d->find("onKeyPress") ))  setValue(t, lineKeyPress);
-  if (( t=d->find("onKeyDown") ))   setValue(t, lineKeyDown);
-  if (( t=d->find("onKeyUp") ))     setValue(t, lineKeyUp);
+  if (( t=d->find("onClick") ))     setValue(*t, lineClick);
+  if (( t=d->find("onDblClick") ))  setValue(*t, lineDblClick);
+  if (( t=d->find("onMouseDown") )) setValue(*t, lineMouseDown);
+  if (( t=d->find("onMouseUp") ))   setValue(*t, lineMouseUp);
+  if (( t=d->find("onMouseOver") )) setValue(*t, lineMouseOver);
+  if (( t=d->find("onMouseMove") )) setValue(*t, lineMouseMove);
+  if (( t=d->find("onMouseOut") ))  setValue(*t, lineMouseOut);
+  if (( t=d->find("onKeyPress") ))  setValue(*t, lineKeyPress);
+  if (( t=d->find("onKeyDown") ))   setValue(*t, lineKeyDown);
+  if (( t=d->find("onKeyUp") ))     setValue(*t, lineKeyUp);
 
 }
 

@@ -284,32 +284,32 @@ QString Document::currentTag()
   return tag;
 }
 
-void Document::changeCurrentTag( QDict<char> *dict )
+void Document::changeCurrentTag( QDict<QString> *dict )
 {
-  QDictIterator<char> it( *dict ); // iterator for dict
-  QDict<char> oldAttr(1,false);
+  QDictIterator<QString> it( *dict ); // iterator for dict
+  QDict<QString> oldAttr(1,false);
 
   VConfig c;
   kWriteView->getVConfig( c);
   kWriteDoc ->recordStart( c, KWActionGroup::ugNone ); // start action
 
   for ( int i=1; i<tagAttrNum; i++ )
-    oldAttr.insert( getTagAttr(i), getTagAttrValue(i) );
+    oldAttr.insert( getTagAttr(i), new QString(getTagAttrValue(i)) );
 
   while ( it.current() ) { // for insert new attr
 
     QString attr = attrCase(it.currentKey());
-    const char *val = it.current();
+    QString *val = it.current();
 
     if ( ! oldAttr.find(attr) ) // insert this attr. in end of tag
     {
-      QString value = val;
+      QString value = *val;
 
       QString attrval;
 
-      attrval = QString(" ")+attr+"=\""+val+"\"";
+      attrval = QString(" ")+attr+"=\""+*val+"\"";
 
-      if ( *val == 0 )  // for checkboxes ( without val) don't print =""
+      if ( val->isEmpty() )  // for checkboxes ( without val) don't print =""
         attrval = QString(" ")+attr;
 
       PointStruc cursor;
@@ -331,7 +331,7 @@ void Document::changeCurrentTag( QDict<char> *dict )
     else
       attr = tagCase( getTagAttr(i) );
 
-    const char *val   = dict->find(attr);
+    QString *val   = dict->find(attr);
 
     int x1 = tagAttr[i].x;
     int x2 = tagAttr[i].endx;
@@ -343,16 +343,16 @@ void Document::changeCurrentTag( QDict<char> *dict )
     if ( val ) // change attr
     {
       QString t;
-      QString value = val;
+      QString value = *val;
       bool trans;          // if val is number, dont use ""
       value.toInt( &trans);
 
       if ( !trans )
-        t = attr+"=\""+val+"\"";
+        t = attr+"=\""+*val+"\"";
       else
-        t = attr+"="+val;
+        t = attr+"="+*val;
 
-      if ( *val == 0 )  // for checkboxes ( without val) don't print =""
+      if ( val->isEmpty() )  // for checkboxes ( without val) don't print =""
         t = attr;
 
       // replace attribut on new value
@@ -609,7 +609,7 @@ void Document::slotSpellMis(QString originalword, QStringList *, unsigned pos)
 
 }
 
-void Document::slotSpellCorrect( QString originalword, QString newword, unsigned pos)
+void Document::slotSpellCorrect( QString originalword, QString newword, unsigned )
 {
 	if ( originalword == newword )
 		return;

@@ -38,7 +38,7 @@ TagFormInput::~TagFormInput(){
 }
 
 
-void TagFormInput::readAttributes( QDict<char> *d )
+void TagFormInput::readAttributes( QDict<QString> *d )
 {
   dict = d;
 
@@ -59,23 +59,23 @@ void TagFormInput::readAttributes( QDict<char> *d )
   updateDict("onchange",  lineOnChange);
 }
 
-void TagFormInput::writeAttributes( QDict<char> *d )
+void TagFormInput::writeAttributes( QDict<QString> *d )
 {
   dict = d;
-  char *t;
+  QString *t;
 
-  if (( t=d->find("type") ))      setValue(t,  comboType);
-  if (( t=d->find("name") ))      setValue(t,  lineName);
-  if (( t=d->find("value") ))     setValue(t,  lineValue);
-  if (( t=d->find("size") ))      setValue(t,  lineSize);
-  if (( t=d->find("maxlength") )) setValue(t,  lineMaxLen);
-  if (( t=d->find("src") ))       setValue(t,  lineSrc);
-  if (( t=d->find("alt") ))       setValue(t,  lineAlt);
-  if (( t=d->find("align") ))     setValue(t,  comboAlign);
-  if (( t=d->find("onfocus") ))   setValue(t,  lineOnFocus);
-  if (( t=d->find("onblur") ))    setValue(t,  lineOnBlur);
-  if (( t=d->find("onselect") ))  setValue(t,  lineOnSelect);
-  if (( t=d->find("onchange") ))  setValue(t,  lineOnChange);
+  if (( t=d->find("type") ))      setValue(*t,  comboType);
+  if (( t=d->find("name") ))      setValue(*t,  lineName);
+  if (( t=d->find("value") ))     setValue(*t,  lineValue);
+  if (( t=d->find("size") ))      setValue(*t,  lineSize);
+  if (( t=d->find("maxlength") )) setValue(*t,  lineMaxLen);
+  if (( t=d->find("src") ))       setValue(*t,  lineSrc);
+  if (( t=d->find("alt") ))       setValue(*t,  lineAlt);
+  if (( t=d->find("align") ))     setValue(*t,  comboAlign);
+  if (( t=d->find("onfocus") ))   setValue(*t,  lineOnFocus);
+  if (( t=d->find("onblur") ))    setValue(*t,  lineOnBlur);
+  if (( t=d->find("onselect") ))  setValue(*t,  lineOnSelect);
+  if (( t=d->find("onchange") ))  setValue(*t,  lineOnChange);
 
   checkCheck    -> setChecked( d->find("checked") != 0 );
   checkDisabled -> setChecked( d->find("disabled") != 0 );

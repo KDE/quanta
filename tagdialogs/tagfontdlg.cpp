@@ -61,7 +61,7 @@ void TagFontDlg::slotColor(const QColor &newColor){
 	comboColor->setEditText((char *)c);
 }
 
-void TagFontDlg::readAttributes( QDict<char> *d )
+void TagFontDlg::readAttributes( QDict<QString> *d )
 {
   dict = d;
 
@@ -70,15 +70,15 @@ void TagFontDlg::readAttributes( QDict<char> *d )
   updateDict("face",    comboFont );
 }
 
-void TagFontDlg::writeAttributes( QDict<char> *d )
+void TagFontDlg::writeAttributes( QDict<QString> *d )
 {
   dict = d;
-  char *t; // value of attr.
+  QString *t; // value of attr.
 
-  if (( t=d->find("size") ))    setValue(t, comboIncDec);
+  if (( t=d->find("size") ))    setValue(*t, comboIncDec);
   if (( t=d->find("color") )) {
-    setValue(t, comboColor);
-    setValue(t, colorButton);
+    setValue(*t, comboColor);
+    setValue(*t, colorButton);
   }
-  if (( t=d->find("face") ))    setValue(t, comboFont);
+  if (( t=d->find("face") ))    setValue(*t, comboFont);
 }

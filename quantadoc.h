@@ -34,6 +34,7 @@ class QuantaView;
 class QPopupMenu;
 class KPopupMenu;
 
+class KConfig;
 class Document;
 class KWriteManager;
 
@@ -99,6 +100,9 @@ class QuantaDoc : public QObject
 		
 		/** change file name in dict and tabbar  from old ones to current */
 		void changeFileName(QString oldname);
+		
+		/** write Config */
+		void writeConfig( KConfig * );
 		
 		/** set RB menu for KWrite */
 		void setRBMenu( QPopupMenu * rbMenu ) { this->rbMenu = rbMenu; }

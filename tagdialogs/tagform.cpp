@@ -26,7 +26,7 @@ TagForm::TagForm(QWidget *parent, const char *name)
 TagForm::~TagForm(){
 }
 
-void TagForm::readAttributes( QDict<char> *d )
+void TagForm::readAttributes( QDict<QString> *d )
 {
   dict = d;
 
@@ -36,13 +36,13 @@ void TagForm::readAttributes( QDict<char> *d )
   updateDict("target",  comboTarget );
 }
 
-void TagForm::writeAttributes( QDict<char> *d )
+void TagForm::writeAttributes( QDict<QString> *d )
 {
   dict = d;
-  char *t; // value of attr.
+  QString *t; // value of attr.
 
-  if (( t=d->find("action") ))  setValue(t, lineAction);
-  if (( t=d->find("method") ))  setValue(t, comboMethod);
-  if (( t=d->find("enctype") )) setValue(t, comboEnctype);
-  if (( t=d->find("target") ))  setValue(t, comboTarget);
+  if (( t=d->find("action") ))  setValue(*t, lineAction);
+  if (( t=d->find("method") ))  setValue(*t, comboMethod);
+  if (( t=d->find("enctype") )) setValue(*t, comboEnctype);
+  if (( t=d->find("target") ))  setValue(*t, comboTarget);
 }

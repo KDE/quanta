@@ -45,7 +45,7 @@ QuantaView::QuantaView( QuantaApp *app, QWidget *parent, const char *name )
 	this->app = app;
 	this->doc = app->doc;
 	
-	QBoxLayout *layout = new QVBoxLayout( this );
+	QGridLayout *layout = new QGridLayout( this );
 	
   QTabBar *tabBar = new QTabBar( this);
 
@@ -151,9 +151,9 @@ QuantaView::QuantaView( QuantaApp *app, QWidget *parent, const char *name )
   writeTab ->setTabPosition( QTabWidget::Bottom );
   writeTab ->setFocusPolicy( QWidget::NoFocus );
 
-  layout->addWidget( tabBar);
-  layout->addWidget( toolbarStack );
-  layout->addWidget( writeTab );
+  layout->addWidget( tabBar       ,0,0);
+  layout->addWidget( toolbarStack ,1,0);
+  layout->addWidget( writeTab     ,2,0);
 
   connect( bStandard, SIGNAL(clicked(int)), this, SLOT(slotToolbarCallback(int)) );
   connect( bFonts,    SIGNAL(clicked(int)), this, SLOT(slotToolbarCallback(int)) );

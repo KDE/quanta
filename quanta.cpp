@@ -42,6 +42,8 @@
 
 #include "project/project.h"
 
+#include "kwrite/highlight/highlight.h"
+
 #include "widgets/whtmlpart.h"
 #include "widgets/wsplitter.h"
 
@@ -252,7 +254,7 @@ void QuantaApp::commandCallback(int id_)
          doc->write()->editorOptions();
 
          config->setGroup("General Options");
-         doc->write()->writeConfig(config);
+         doc->writeConfig(config);
          break;
 
     case ID_OPTIONS_HIGHLIGHT:
@@ -1205,4 +1207,12 @@ void QuantaApp::contextHelp()
      		openDoc(*url);
      }
    }
+}
+
+void QuantaApp::slotSetHl( int _hl )
+{
+  HlManager *hl = new HlManager();
+  doc->write()->setHl( hl->nameFind( highlightMenu->text( _hl )) );
+  view->repaint();
+  delete hl;
 }

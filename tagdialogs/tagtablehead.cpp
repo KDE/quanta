@@ -47,7 +47,7 @@ void TagTableHead::slotColor(const QColor &newColor){
 	comboBGColor->setEditText((char *)c);
 }
 
-void TagTableHead::readAttributes( QDict<char> *d )
+void TagTableHead::readAttributes( QDict<QString> *d )
 {
   dict = d;
 
@@ -60,19 +60,19 @@ void TagTableHead::readAttributes( QDict<char> *d )
   updateDict("bgcolor", comboBGColor);
 }
 
-void TagTableHead::writeAttributes( QDict<char> *d )
+void TagTableHead::writeAttributes( QDict<QString> *d )
 {
   dict = d;
-  char *t; // value of attr.
+  QString *t; // value of attr.
 
-  if (( t=d->find("rowspan") ))  setValue(t, lineRowSpan);
-  if (( t=d->find("colspan") ))  setValue(t, lineColSpan);
-  if (( t=d->find("align") ))    setValue(t, comboAlign);
-  if (( t=d->find("valign") ))   setValue(t, comboVAlign);
-  if (( t=d->find("width") ))    setValue(t, lineWidth);
-  if (( t=d->find("height") ))   setValue(t, lineHeight);
+  if (( t=d->find("rowspan") ))  setValue(*t, lineRowSpan);
+  if (( t=d->find("colspan") ))  setValue(*t, lineColSpan);
+  if (( t=d->find("align") ))    setValue(*t, comboAlign);
+  if (( t=d->find("valign") ))   setValue(*t, comboVAlign);
+  if (( t=d->find("width") ))    setValue(*t, lineWidth);
+  if (( t=d->find("height") ))   setValue(*t, lineHeight);
   if (( t=d->find("bgcolor") )) {
-    setValue(t, comboBGColor);
-    setValue(t, colorButton);
+    setValue(*t, comboBGColor);
+    setValue(*t, colorButton);
   }
 }

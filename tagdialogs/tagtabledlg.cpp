@@ -45,7 +45,7 @@ void TagTableDlg::slotColor(const QColor &newColor){
 	comboBGColor->setEditText((char *)c);
 }
 
-void TagTableDlg::readAttributes( QDict<char> *d )
+void TagTableDlg::readAttributes( QDict<QString> *d )
 {
   dict = d;
 
@@ -57,18 +57,18 @@ void TagTableDlg::readAttributes( QDict<char> *d )
   updateDict("bgcolor",     comboBGColor );
 }
 
-void TagTableDlg::writeAttributes( QDict<char> *d )
+void TagTableDlg::writeAttributes( QDict<QString> *d )
 {
   dict = d;
-  char *t; // value of attr.
+  QString *t; // value of attr.
 
-  if (( t=d->find("width") ))       setValue(t, lineWidth);
-  if (( t=d->find("border") ))      setValue(t, lineBorder);
-  if (( t=d->find("cellspacing") )) setValue(t, lineCellPadding);
-  if (( t=d->find("cellpadding") )) setValue(t, lineCellSpacing);
-  if (( t=d->find("align") ))       setValue(t, comboAlign);
+  if (( t=d->find("width") ))       setValue(*t, lineWidth);
+  if (( t=d->find("border") ))      setValue(*t, lineBorder);
+  if (( t=d->find("cellspacing") )) setValue(*t, lineCellPadding);
+  if (( t=d->find("cellpadding") )) setValue(*t, lineCellSpacing);
+  if (( t=d->find("align") ))       setValue(*t, comboAlign);
   if (( t=d->find("bgcolor") )) {
-    setValue(t, comboBGColor);
-    setValue(t, colorButton);
+    setValue(*t, comboBGColor);
+    setValue(*t, colorButton);
   }
 }

@@ -43,7 +43,7 @@ class TagDialog : public QTabDialog  {
    Q_OBJECT
 public:
   /** constructor: edit tag if "tag" == 0L or insert new tag if tag != 0L */
-	TagDialog( Document *write, const char *tag=0L, const char *attr=0L, const char *val=0L);
+	TagDialog( Document *write, QString tag = QString::null, QString attr = QString::null, QString val = QString::null);
 	~TagDialog();
 	/**  */
   void parseTag();
@@ -60,7 +60,7 @@ public:
   TagWidget *mainDlg;
 
   Document *write;
-  QDict<char> *dict;
+  QDict<QString> *dict;
   QString tag;
 
 public slots: // Public slots
@@ -69,9 +69,9 @@ public slots: // Public slots
 
 private:
   /** convert tag to upper or lower case */
-  QString tagCase( const char*  tag);
+  QString tagCase( QString tag);
   /** convert attribute of tag to upper or lower case */
-  QString attrCase( const char*  attr);
+  QString attrCase( QString  attr);
 };
 
 #endif

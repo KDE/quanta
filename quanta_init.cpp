@@ -125,16 +125,10 @@ QuantaApp::QuantaApp()
   disableCommand(ID_BOOKMARKS_SET);
   disableCommand(ID_BOOKMARKS_ADD);
   disableCommand(ID_BOOKMARKS_CLEAR);
-
-  if ( doc->docList.count() == 0 ) // no documents opened
-  {
-  	doc->newDocument();
-  }
 }
 
 QuantaApp::~QuantaApp()
 {
-
 }
 
 void QuantaApp::initKeyAccel()
@@ -418,9 +412,16 @@ void QuantaApp::initMenuBar()
   ///////////////////////////////////////////////////////////////////
   // menuBar entry optionsmenu
   optionsMenu = new QPopupMenu();
-//  optionsMenu->insertItem(i18n("&Editor options"),  ID_OPTIONS_EDITOR );
-//  optionsMenu->insertItem(i18n("Editor &colors"),   ID_OPTIONS_COLORS );
-  optionsMenu->insertItem(i18n("&Highliting..."),       ID_OPTIONS_HIGHLIGHT );
+  optionsMenu ->insertItem(i18n("&Highlighting..."),       ID_OPTIONS_HIGHLIGHT );
+
+  highlightMenu = new QPopupMenu();
+
+  for (int z = 0; z < HlManager::self()->highlights(); z++)
+    highlightMenu -> insertItem( i18n(HlManager::self()->hlName(z)) );
+
+  optionsMenu->insertItem(i18n("Highlighting mode"), highlightMenu );
+  connect( highlightMenu, SIGNAL(activated(int)), this, SLOT(slotSetHl(int)));
+
   optionsMenu->insertItem(i18n("&Editor options..."),   ID_OPTIONS_EDITOR);
   optionsMenu->insertItem(i18n("Configure &key bindings..."),   ID_OPTIONS_KEYS);
   optionsMenu->insertSeparator();
@@ -975,6 +976,11 @@ void QuantaApp::readOptions()
     resize(size);
   } else
   	resize( QSize(800,580) );
+}
+
+void QuantaApp::openLastFiles()
+{
+  config->setGroup("General Options");
 
   QString projectFileName = config->readEntry("Last Project");
   QFileInfo fi( projectFileName );
@@ -990,6 +996,11 @@ void QuantaApp::readOptions()
   else {
   	project->loadProject( projectFileName );
   	leftPanel-> showPage( (QWidget *)pTab );
+  }
+
+  if ( doc->docList.count() == 0 ) // no documents opened
+  {
+  	doc->newDocument();
   }
 }
 

@@ -77,8 +77,8 @@ public slots: // Public slots
   void slotFileSelect();
   void slotLineFileSelect();
 
-  void readAttributes( QDict<char> *d );
-  void writeAttributes( QDict<char> *d );
+  void readAttributes( QDict<QString> *d );
+  void writeAttributes( QDict<QString> *d );
   /** recalculate image size */
   void slotRecalcImgSize();
 };

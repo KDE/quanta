@@ -95,7 +95,7 @@ void TagImgDlg::slotLineFileSelect(){
 		slotImageSet( lineImgSource->text().data() );
 }
 
-void TagImgDlg::readAttributes( QDict<char> *d )
+void TagImgDlg::readAttributes( QDict<QString> *d )
 {
   dict = d;
 
@@ -109,20 +109,20 @@ void TagImgDlg::readAttributes( QDict<char> *d )
   updateDict("border",spinBorder );
 }
 
-void TagImgDlg::writeAttributes( QDict<char> *d )
+void TagImgDlg::writeAttributes( QDict<QString> *d )
 {
   dict = d;
-  char *t; // value of attr.
+  QString *t; // value of attr.
 
   if (( t=d->find("src") ))     {
-    lineImgSource   ->setText(t);
-    slotImageSet( basePath  + "/" + t );
+    lineImgSource   ->setText(*t);
+    slotImageSet( basePath  + "/" + *t );
   }
-  if (( t=d->find("alt") ))     setValue(t, lineAltText);
-  if (( t=d->find("width") ))   setValue(t, lineWidth);
-  if (( t=d->find("height") ))  setValue(t, lineHeight);
-  if (( t=d->find("hspace") ))  setValue(t, lineHSpace);
-  if (( t=d->find("vspace") ))  setValue(t, lineVSpace);
-  if (( t=d->find("align") ))   setValue(t, comboAlign);
-  if (( t=d->find("border") ))  setValue(t, spinBorder);
+  if (( t=d->find("alt") ))     setValue(*t, lineAltText);
+  if (( t=d->find("width") ))   setValue(*t, lineWidth);
+  if (( t=d->find("height") ))  setValue(*t, lineHeight);
+  if (( t=d->find("hspace") ))  setValue(*t, lineHSpace);
+  if (( t=d->find("vspace") ))  setValue(*t, lineVSpace);
+  if (( t=d->find("align") ))   setValue(*t, comboAlign);
+  if (( t=d->find("border") ))  setValue(*t, spinBorder);
 }

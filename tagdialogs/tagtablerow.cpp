@@ -47,7 +47,7 @@ void TagTableRow::slotColor(const QColor &newColor){
 	comboColor->setEditText((char *)c);
 }
 
-void TagTableRow::readAttributes( QDict<char> *d )
+void TagTableRow::readAttributes( QDict<QString> *d )
 {
   dict = d;
 
@@ -56,15 +56,15 @@ void TagTableRow::readAttributes( QDict<char> *d )
   updateDict("bgcolor", comboColor );
 }
 
-void TagTableRow::writeAttributes( QDict<char> *d )
+void TagTableRow::writeAttributes( QDict<QString> *d )
 {
   dict = d;
-  char *t; // value of attr.
+  QString *t; // value of attr.
 
-  if (( t=d->find("align") ))   setValue(t, comboAlign);
-  if (( t=d->find("valign") ))  setValue(t, comboVAlign);
+  if (( t=d->find("align") ))   setValue(*t, comboAlign);
+  if (( t=d->find("valign") ))  setValue(*t, comboVAlign);
   if (( t=d->find("bgcolor") )) {
-    setValue(t, comboColor);
-    setValue(t, colorButton);
+    setValue(*t, comboColor);
+    setValue(*t, colorButton);
   }
 }

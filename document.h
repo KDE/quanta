@@ -106,7 +106,7 @@ public:
   QString getLine(int y);
   QString getTagAttr(int i);
   QString getTagAttrValue(int i);
-  void changeCurrentTag( QDict<char> *dict );
+  void changeCurrentTag( QDict<QString> *dict );
   QPoint getGlobalCursorPos();
 
   /** convert tag to upper or lower case */

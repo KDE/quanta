@@ -1,9 +1,9 @@
 /***************************************************************************
-                          tagformbutton.cpp  -  description
+                          filecombo.h  -  description
                              -------------------
-    begin                : Mon Feb 21 2000
-    copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavski
-    email                : pdima@mail.univ.kiev.ua
+    begin                : Wed Sep 27 2000
+    copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
+    email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -14,31 +14,36 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
-#include "tagformbutton.h"
 
-TagFormButton::TagFormButton(QWidget *parent, const char *name)
-  : TagWidget(parent,name)
-{
-	setCaption(name);
-	initDialog();
-}
+#ifndef FILECOMBO_H
+#define FILECOMBO_H
 
-TagFormButton::~TagFormButton(){
-}
+#include <qwidget.h>
 
-void TagFormButton::readAttributes( QDict<QString> *d )
-{
-  dict = d;
+/**
+  *@author Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
+  */
 
-  updateDict("name",  lineName );
-  updateDict("value", lineValue );
-}
+class QComboBox;
+class QPushButton;
 
-void TagFormButton::writeAttributes( QDict<QString> *d )
-{
-  dict = d;
-  QString *t; // value of attr.
+class FileCombo : public QWidget  {
+   Q_OBJECT
+public: 
+	FileCombo(QString basePath, QWidget *parent=0, const char *name=0);
+	~FileCombo();
+	
+	QString text();
+	void setText( QString );
 
-  if (( t=d->find("name") ))   setValue(*t, lineName);
-  if (( t=d->find("value") ))  setValue(*t, lineValue);
-}
+public slots:
+  void slotFileSelect();
+		
+protected:
+  QString     basePath;
+  QComboBox   *combo;
+  QPushButton *button;
+
+};
+
+#endif

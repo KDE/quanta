@@ -55,6 +55,7 @@ int main(int argc, char *argv[])
   {
     QuantaApp *quanta = new QuantaApp();
     quanta->show();
+    quanta->openLastFiles();
 
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 		

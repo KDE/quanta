@@ -37,21 +37,21 @@ public:
 	TagWidget(QWidget *parent=0, const char *name=0);
 	~TagWidget();
 	
-  virtual void readAttributes( QDict<char> * ) {};
-  virtual void writeAttributes( QDict<char> * ) {};
+  virtual void readAttributes( QDict<QString> * ) {};
+  virtual void writeAttributes( QDict<QString> * ) {};
   /**  */
-  void updateDict( const char *attr, QComboBox *combo );
-  void updateDict( const char *attr, QLineEdit *line );
-  void updateDict( const char *attr, QSpinBox *spin );
-  void updateDict( const char *attr, QCheckBox *check );
+  void updateDict( QString attr, QComboBox *combo );
+  void updateDict( QString attr, QLineEdit *line );
+  void updateDict( QString attr, QSpinBox *spin );
+  void updateDict( QString attr, QCheckBox *check );
 
-  void setValue( const char *val, QComboBox *combo);
-  void setValue( const char *val, QLineEdit *line);
-  void setValue( const char *val, QSpinBox  *spin);
-  void setValue( const char *val, KColorButton *button);
+  void setValue( QString val, QComboBox *combo);
+  void setValue( QString val, QLineEdit *line);
+  void setValue( QString val, QSpinBox  *spin);
+  void setValue( QString val, KColorButton *button);
 
 protected:
-  QDict<char> *dict; // dictionary of attributes and values
+  QDict<QString> *dict; // dictionary of attributes and values
   QString basePath;
 };
 

@@ -171,7 +171,6 @@ void QuantaDoc::changeFileName( QString oldname )
  	}
 }
 
-
 /** save all files */
 bool QuantaDoc::saveAll(bool dont_ask){
   bool flagsave = true;
@@ -202,7 +201,18 @@ bool QuantaDoc::saveAll(bool dont_ask){
   return flagsave;
 }
 
+void QuantaDoc::writeConfig( KConfig *config )
+{
+  write()->writeConfig( config );
 
+  QDictIterator<Document> it( docList ); // iterator for dict
+
+  while ( Document *twrite = it.current() ) {
+    ++it;
+
+    twrite->readConfig( config );
+  }
+}
 
 bool QuantaDoc::saveModified()
 {

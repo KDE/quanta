@@ -26,7 +26,7 @@ TagFormText::TagFormText(QWidget *parent, const char *name)
 TagFormText::~TagFormText(){
 }
 
-void TagFormText::readAttributes( QDict<char> *d )
+void TagFormText::readAttributes( QDict<QString> *d )
 {
   dict = d;
 
@@ -36,13 +36,13 @@ void TagFormText::readAttributes( QDict<char> *d )
   updateDict("maxlength", lineMaxLen );
 }
 
-void TagFormText::writeAttributes( QDict<char> *d )
+void TagFormText::writeAttributes( QDict<QString> *d )
 {
   dict = d;
-  char *t; // value of attr.
+  QString *t; // value of attr.
 
-  if (( t=d->find("name") ))      setValue(t, lineName);
-  if (( t=d->find("value") ))     setValue(t, lineValue);
-  if (( t=d->find("size") ))      setValue(t, lineSize);
-  if (( t=d->find("maxlength") )) setValue(t, lineMaxLen);
+  if (( t=d->find("name") ))      setValue(*t, lineName);
+  if (( t=d->find("value") ))     setValue(*t, lineValue);
+  if (( t=d->find("size") ))      setValue(*t, lineSize);
+  if (( t=d->find("maxlength") )) setValue(*t, lineMaxLen);
 }

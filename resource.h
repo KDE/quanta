@@ -117,7 +117,6 @@
 #define ID_OPTIONS_KEYS		          14050
 
 
-
 ///////////////////////////////////////////////////////////////////
 // tags-menu entries
 #define ID_MENU_STANDARD            15010

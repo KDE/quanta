@@ -48,7 +48,7 @@ void TagADlg::slotFileSelect()
 		comboHREF->setEditText(shortName);
 }
 
-void TagADlg::readAttributes( QDict<char> *d )
+void TagADlg::readAttributes( QDict<QString> *d )
 {
   dict = d;
 
@@ -57,14 +57,14 @@ void TagADlg::readAttributes( QDict<char> *d )
   updateDict("name",  lineName );
 }
 
-void TagADlg::writeAttributes( QDict<char> *d )
+void TagADlg::writeAttributes( QDict<QString> *d )
 {
   dict = d;
-  char *t; // value of attr.
+  QString *t; // value of attr.
 
-  if (( t=d->find("href") ))    setValue(t, comboHREF);
-  if (( t=d->find("target") ))  setValue(t, comboTarget);
-  if (( t=d->find("name") ))    setValue(t, lineName);
+  if (( t=d->find("href") ))    setValue(*t, comboHREF);
+  if (( t=d->find("target") ))  setValue(*t, comboTarget);
+  if (( t=d->find("name") ))    setValue(*t, lineName);
 
   lineDescription->setEnabled(false);
 }

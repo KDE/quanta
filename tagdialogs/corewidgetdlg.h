@@ -40,8 +40,8 @@ public:
 	CoreWidgetDlg(QWidget *parent=0, const char *name=0);
 	~CoreWidgetDlg();
 	
-  void readAttributes( QDict<char> *d );
-  void writeAttributes( QDict<char> *d );
+  void readAttributes( QDict<QString> *d );
+  void writeAttributes( QDict<QString> *d );
 	
 public:
 	void initDialog();
