@@ -1347,6 +1347,9 @@ void QuantaApp::readTagDir(QString &dirName)
  if (tmpStr.upper() == "NONE")
     dtd->tagAutoCompleteAfter = '\0';
  else
+ if (tmpStr.upper() == "ALWAYS")
+    dtd->tagAutoCompleteAfter = '\1';
+ else
     dtd->tagAutoCompleteAfter = tmpStr.at(0);
  dtd->attrAutoCompleteAfter = dtdConfig->readEntry("AttributeAutoCompleteAfter","(").stripWhiteSpace().at(0);
  dtd->attributeSeparator = dtdConfig->readEntry("AttributeSeparator").stripWhiteSpace().at(0);

@@ -1229,7 +1229,7 @@ void Parser::coutTree(Node *node, int indent)
 DTDStruct * Parser::currentDTD(int line, int col)
 {
   DTDStruct *dtd = m_dtd;
-  Node *node = nodeAt(line, col);
+  Node *node = nodeAt(line, col, false);
   if (node)
   {
     dtd = node->tag->dtd;
