@@ -140,10 +140,10 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
         Node *node = ParserCommon::createScriptTagNode(write, area, foundText, m_dtd, parentNode, currentNode);
         if (node->tag->name.lower().startsWith("comment"))
           node->tag->type = Tag::Comment;
-  
+
         if (!rootNode)
           rootNode = node;
-  
+
         area.eLine = endLine;
         area.eCol = endCol;
         currentNode = m_saParser->parseArea(area, foundText, "", node, false, true);
@@ -280,8 +280,8 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
           col = m_saParser->lastParsedColumn();
           continue;
         }
-  
-        qTag = 0L; 
+
+        qTag = 0L;
         goUp = ( parentNode &&
                 ( (tag->type == Tag::XmlTagEnd && QuantaCommon::closesTag(parentNode->tag, tag)
                   ) ||
@@ -302,7 +302,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
           }
         }
       }
-  
+
       col++;
       if (nodeFound)
       {
@@ -313,7 +313,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
             goUp = false;
         if (!rootNode)
             rootNode = currentNode;
-  
+
         Node *node = 0L;
         if (goUp)
         {
@@ -350,7 +350,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
               }
             }
           }
-          
+
           node = new Node(parentNode->parent);
           nodeNum++;
           node->prev = parentNode;
@@ -373,7 +373,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
         }
         if (!tag->single)
             parentNode = node;
-  
+
         node->tag = tag;
         if (tag->type == Tag::NeedsParsing)
         {
@@ -381,7 +381,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
           {
 #ifdef DEBUG_PARSER
             kdDebug(24000) << "COMMENT!" << endl;
-#endif          
+#endif
             node->tag->type = Tag::Comment;
           }
         }
@@ -391,7 +391,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
               //search for scripts inside the XML tag
               parseScriptInsideTag(node);
             }
-  
+
         currentNode = node;
         if (!rootNode)
             rootNode = node;
@@ -401,7 +401,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
         col = 0;
         textLine = ParserCommon::getLine(write, line, endLine, endCol);
       }
-  
+
     }
   }
 
@@ -470,7 +470,7 @@ Node *Parser::parse(Document *w, bool force)
     return baseNode;
 
   bool saParserEnabled = m_saParser->parsingEnabled();
-  m_saParser->setParsingEnabled(false); 
+  m_saParser->setParsingEnabled(false);
   m_saParser->init(0L, w);
  // clearGroups();
   if (baseNode)
@@ -570,7 +570,7 @@ Node *Parser::nodeAt(int line, int col, bool findDeepest)
       return 0L;
   if (!baseNode)
    baseNode = parse(write, true); //FIXME: this most likely hides a bug: new documents are not parsed
-    
+
   Node *node = m_node;
   int bl, bc, el, ec;
   int result;
@@ -602,9 +602,9 @@ Node *Parser::nodeAt(int line, int col, bool findDeepest)
           node->parent->tag->endPos(parentEl, parentEc);
           if (QuantaCommon::isBetween(line, col, bl, bc, parentEl, parentEc) == 0)
           {
-            node = node->parent;      
-          }               
-        }            
+            node = node->parent;
+          }
+        }
         break; //we found the node
       }
     } else
@@ -868,12 +868,12 @@ void Parser::deleteNodes(Node *firstNode, Node *lastNode, NodeModifsSet *modifs)
           while (n->next)
             n = n->next;
           n->next = next;
-          next->prev = n;  
-        }  
+          next->prev = n;
+        }
         if (parent && !parent->child)
-        {          
+        {
           parent->child = child;
-        }  
+        }
       }
     } else
     {
@@ -888,7 +888,7 @@ void Parser::deleteNodes(Node *firstNode, Node *lastNode, NodeModifsSet *modifs)
           n->parent = prev;
           n = n->next;
           i++;
-        }      
+        }
         if (prev->child)
         {
           n = prev;
@@ -934,7 +934,7 @@ void Parser::deleteNodes(Node *firstNode, Node *lastNode, NodeModifsSet *modifs)
           n = n->next;
           j++;
         }
-        
+
       }
     }
 #ifdef BUILD_KAFKAPART
@@ -984,7 +984,7 @@ Node *Parser::rebuild(Document *w)
    return parse(w);
  } else
  {
-   m_saParser->setParsingEnabled(false); 
+   m_saParser->setParsingEnabled(false);
    m_saParser->init(0L, w);
    parsingEnabled = true;
    QString text;
@@ -1110,7 +1110,7 @@ Node *Parser::rebuild(Document *w)
 
     node = lastInserted;
 
-    QTag *qTag = 0L;  
+    QTag *qTag = 0L;
     while (node && lastNode)
     {
       qTag = 0L;
@@ -1132,10 +1132,10 @@ Node *Parser::rebuild(Document *w)
           }
         }
       }
-      if (goUp && 
+      if (goUp &&
           ( (m_dtd->caseSensitive && node->tag->name == node->parent->tag->name) ||
             (!m_dtd->caseSensitive && node->tag->name.lower() == node->parent->tag->name.lower())) )
-          goUp = false; //it can happen that the tag closes the previous and not the parent  
+          goUp = false; //it can happen that the tag closes the previous and not the parent
 
     if (goUp) //lastnode closes the node->parent
     {
@@ -1213,7 +1213,7 @@ Node *Parser::rebuild(Document *w)
 
  m_saParser->init(m_node, w);
  if (saParserEnabled)
-   QTimer::singleShot(0, this, SLOT(slotParseInDetail())); 
+   QTimer::singleShot(0, this, SLOT(slotParseInDetail()));
  emit nodeTreeChanged();
  m_parsingNeeded = false;
  return m_node;
@@ -1519,11 +1519,14 @@ bool Parser::parseScriptInsideTag(Node *startNode)
         ec = bc + foundText.length() - 1;
         AreaStruct area(bl, bc, el, ec);
         currentNode = ParserCommon::createScriptTagNode(write, area, foundText, dtd, startNode, currentNode);
+        currentNode->specialInsideXml = true;
 
         found = true;
         AreaStruct area2(bl, bc, node_el, node_ec);
         int lastLine, lastCol;
-        currentNode = m_saParser->parseArea(area2, foundText, "", currentNode, false, true);
+        m_saParser->setSpecialInsideXml(true);
+        currentNode = m_saParser->parseArea(area2, foundText, "", currentNode, true, true);
+        m_saParser->setSpecialInsideXml(false);
         lastLine = m_saParser->lastParsedLine();
         lastCol = m_saParser->lastParsedColumn();
         col = write->text(node_bl, node_bc, lastLine, lastCol).length();

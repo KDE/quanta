@@ -148,6 +148,7 @@ public:
  bool opened;
  bool removeAll; //set to false if you don't want to remove the "next" and "child" when deleting the node.
  bool insideSpecial; //true if the node is part of a special area
+ bool specialInsideXml; //< true if the node is a special area defined inside a tag, like the PHP in <a href="<? echo $a ?>">
  QString fileName; //the node is in this file. If empty, it's in the current document
 
 //The below fields are set during parsing for XML groups. See the
