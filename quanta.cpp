@@ -314,8 +314,8 @@ bool QuantaApp::slotFileSaveAs()
     if (w->checkOverwrite(saveUrl) == KMessageBox::Yes && m_doc->saveDocument(saveUrl))
     {
       oldURL = saveUrl;
-      if ( ( m_project->hasProject() ) &&
-          ( KMessageBox::Yes == KMessageBox::questionYesNo(0,i18n("Add file\n %1 \n to project?").arg(saveUrl.prettyURL())) )
+      if (  m_project->hasProject() && !m_project->contains(saveUrl)  &&
+           KMessageBox::Yes == KMessageBox::questionYesNo(0,i18n("<qt>Do you want to add the<br><b>%1</b><br>file to project?</qt>").arg(saveUrl.prettyURL()))
         )
       {
         m_project->insertFile(saveUrl, true);
