@@ -235,7 +235,7 @@ bool QuantaApp::slotFileSaveAs()
 
     KateFileDialog dialog(projectBaseURL().path(), myEncoding, this, i18n ("Save File"), KateFileDialog::saveDialog);
     KateFileDialogData data = dialog.exec();
-    if (m_doc->saveDocument(data.url))
+    if (w->checkOverwrite(data.url) == KMessageBox::Yes && m_doc->saveDocument(data.url))
     {
       if ( ( m_project->hasProject() ) &&
           ( KMessageBox::Yes == KMessageBox::questionYesNo(0,i18n("Add file\n %1 \n to project?").arg(data.url.prettyURL())) )

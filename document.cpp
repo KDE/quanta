@@ -404,19 +404,18 @@ void Document::setModified(bool flag)
 }
 
 /** No descriptions */
-int Document::checkOverwrite(KURL u)
+int Document::checkOverwrite(const KURL& u)
 {
   int query = KMessageBox::Yes;
 
-  if( u.isLocalFile() )
+  if (QExtFileInfo::exists(u))
   {
-    QFileInfo info;
-    QString name( u.path() );
-    info.setFile( name );
-    if( info.exists() )
-      query = KMessageBox::warningYesNoCancel( this,
-              i18n( "A Document with this name already exists.\nDo you want to overwrite it?" ) );
+    QString s = (u.isLocalFile()) ? u.path(): u.prettyURL();
+    query = KMessageBox::warningYesNo( this,
+            i18n( "<qt>The file <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>" ).arg(s) );
+
   }
+
   return query;
 }
 
