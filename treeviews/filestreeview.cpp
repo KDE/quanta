@@ -45,7 +45,7 @@ FilesTreeView::FilesTreeView(KConfig *config, QWidget *parent, const char *name)
   setAcceptDrops(true);
   setDragEnabled(true);
   setSaveOpenFolder(true);
-  
+
   m_config = config;
   m_config->setGroup("General Options");
   // I must read this here because quanta_init has not done it yet
@@ -86,7 +86,7 @@ FilesTreeView::FilesTreeView(KConfig *config, QWidget *parent, const char *name)
   m_fileMenu->insertItem(SmallIcon("editdelete"), i18n("&Delete"), this, SLOT(slotDelete()));
   m_fileMenu->insertItem(i18n("Re&name"), this, SLOT(slotStartRename()));
   m_fileMenu->insertSeparator();
-  m_fileMenu->insertItem(SmallIcon("info"), i18n("&Properties..."), this, SLOT(slotProperties()));
+  m_fileMenu->insertItem(SmallIcon("info"), i18n("&Properties"), this, SLOT(slotProperties()));
 
   m_folderMenu = new KPopupMenu();
 
@@ -100,7 +100,7 @@ FilesTreeView::FilesTreeView(KConfig *config, QWidget *parent, const char *name)
   m_menuDel = m_folderMenu->insertItem( SmallIcon("editdelete"), i18n("&Delete"), this, SLOT(slotDelete()));
   m_folderMenu->insertItem(i18n("Re&name"), this, SLOT(slotStartRename()));
   m_folderMenu->insertSeparator();
-  m_folderMenu->insertItem(SmallIcon("info"), i18n("&Properties..."), this, SLOT(slotProperties()));
+  m_folderMenu->insertItem(SmallIcon("info"), i18n("&Properties"), this, SLOT(slotProperties()));
   m_reloadMenuId = m_folderMenu->insertItem(SmallIcon("reload"), i18n("&Reload"), this, SLOT(slotReload()));
 
   m_emptyMenu = new KPopupMenu();
@@ -124,7 +124,7 @@ FilesTreeView::FilesTreeView(KConfig *config, QWidget *parent, const char *name)
   restoreLayout(m_config, className());
   // the restored size of the first column might be too large for the current content
   // we set it to 10 and the listview will adjust it to the size of the largest entry
-  setColumnWidth(0, 10); 
+  setColumnWidth(0, 10);
 }
 
 FilesTreeView::~FilesTreeView()
@@ -236,7 +236,7 @@ void FilesTreeView::slotAddToTop()
         topURLList.append(url);
         newBranch(url);
       } else {
-        KMessageBox::information(this, i18n("<qt><b>%1</b> is already a toplevel entry.</qt>").arg(url.url()));    
+        KMessageBox::information(this, i18n("<qt><b>%1</b> is already a toplevel entry.</qt>").arg(url.url()));
       }
     } else
     { // remove
@@ -256,7 +256,7 @@ void FilesTreeView::slotNewTopFolder()
     newBranch(url);
     topURLList.append(url);
   } else {
-    KMessageBox::information(this, i18n("<qt><b>%1</b> is already a toplevel entry.</qt>").arg(url.url()));    
+    KMessageBox::information(this, i18n("<qt><b>%1</b> is already a toplevel entry.</qt>").arg(url.url()));
   }
 }
 

@@ -174,7 +174,7 @@ void ProjectPrivate::initActions(KActionCollection *ac)
                         parent, SLOT( slotUpload() ),
                         ac, "project_upload" );
 
-  projectOptionAction = new KAction( i18n( "&Project Properties..." ), "configure", SHIFT + Key_F7,
+  projectOptionAction = new KAction( i18n( "&Project Properties" ), "configure", SHIFT + Key_F7,
                         parent, SLOT( slotOptions() ),
                         ac, "project_options" );
 

@@ -70,13 +70,13 @@ ScriptTreeView::ScriptTreeView(QWidget *parent, const char *name )
   url.setPath(qConfig.globalDataDir + resourceDir + "scripts/");
 
   BaseTreeBranch *m_globalDir;
-  m_globalDir = new BaseTreeBranch(this, url, i18n("Global scripts"), SmallIcon("run"), true);
+  m_globalDir = new BaseTreeBranch(this, url, i18n("Global Scripts"), SmallIcon("run"), true);
   addBranch(m_globalDir);
-  
+
   url.setPath(locateLocal("data", resourceDir + "scripts/"));
 
   BaseTreeBranch *m_localDir;
-  m_localDir = new BaseTreeBranch(this, url, i18n("Local scripts"), SmallIcon("run"), true);
+  m_localDir = new BaseTreeBranch(this, url, i18n("Local Scripts"), SmallIcon("run"), true);
   addBranch(m_localDir);
 
   // here you define which files should not be visible for the users
@@ -93,7 +93,7 @@ ScriptTreeView::ScriptTreeView(QWidget *parent, const char *name )
   m_fileMenu->insertItem(i18n("Edit Description"), this, SLOT(slotEditDescription()));
   m_fileMenu->insertSeparator();
   m_fileMenu->insertItem(UserIcon("ball"), i18n("Assign Action"), this, SLOT(slotAssignAction()));
-  m_fileMenu->insertItem(SmallIcon("mail_send"), i18n("Send in E-Mail"), this, SLOT(slotSendScriptInMail()));
+  m_fileMenu->insertItem(SmallIcon("mail_send"), i18n("Send in Email"), this, SLOT(slotSendScriptInMail()));
 
 
   connect(this, SIGNAL(contextMenu(KListView*, QListViewItem*, const QPoint&)),
@@ -102,7 +102,7 @@ ScriptTreeView::ScriptTreeView(QWidget *parent, const char *name )
   restoreLayout( kapp->config(), className() );
   // the restored size of the first column might be too large for the current content
   // we set it to 10 and the listview will adjust it to the size of the largest entry
-  setColumnWidth(0, 10); 
+  setColumnWidth(0, 10);
 }
 
 ScriptTreeView::~ScriptTreeView()

@@ -100,7 +100,7 @@
                         <cstring>buttonNewProfile</cstring>
                     </property>
                     <property name="text">
-                        <string>New</string>
+                        <string>New...</string>
                     </property>
                 </widget>
                 <widget class="KPushButton">
@@ -108,7 +108,7 @@
                         <cstring>buttonEditProfile</cstring>
                     </property>
                     <property name="text">
-                        <string>Edit</string>
+                        <string>Edit...</string>
                     </property>
                 </widget>
                 <widget class="KPushButton">

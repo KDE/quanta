@@ -599,15 +599,15 @@ void EnhancedTagAttributeTree::showCaption()
     if(curNode->tag->type == Tag::XmlTag || curNode->tag->type == Tag::XmlTagEnd ||
       curNode->tag->type == Tag::ScriptTag)
     {
-      QString s = i18n("Current Tag: <b>%1</b>").arg(curNode->tag->name);
+      QString s = i18n("Current tag: <b>%1</b>").arg(curNode->tag->name);
       nodeName->setText(KStringHandler::rPixelSqueeze(s, nodeName->fontMetrics(), attrTree->width()- 50));
     }
     else if(curNode->tag->type == Tag::Text)
-      nodeName->setText(i18n("Current Tag: <b>text</b>"));
+      nodeName->setText(i18n("Current tag: <b>text</b>"));
     else if(curNode->tag->type == Tag::Comment)
-      nodeName->setText(i18n("Current Tag: <b>comment</b>"));
+      nodeName->setText(i18n("Current tag: <b>comment</b>"));
     else
-      nodeName->setText(i18n("Current Tag:"));
+      nodeName->setText(i18n("Current tag:"));
   }
 }
 

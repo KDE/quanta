@@ -51,7 +51,7 @@ DocTreeView::DocTreeView(QWidget *parent, const char *name )
   addColumn("");
   setFullWidth(true);
 
-  projectDocFolder = new KListViewItem(this, i18n("Project documentation"));
+  projectDocFolder = new KListViewItem(this, i18n("Project Documentation"));
   projectDocFolder->setOpen(true);
 
   QStringList docDirs = KGlobal::instance()->dirs()->findDirs("appdata", "doc");

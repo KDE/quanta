@@ -136,7 +136,7 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   m_fileMenu->insertItem(i18n("Re&name"), this, SLOT(slotStartRename()));
   m_fileMenu->insertSeparator();
   m_fileMenu->insertItem(i18n("Upload &Status"), m_uploadStatusMenu);
-  m_fileMenu->insertItem(SmallIcon("info"), i18n("&Properties..."), this, SLOT(slotProperties()));
+  m_fileMenu->insertItem(SmallIcon("info"), i18n("&Properties"), this, SLOT(slotProperties()));
 
   m_folderMenu = new KPopupMenu(this);
 
@@ -150,14 +150,14 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   m_folderMenu->insertSeparator();
   m_setDocumentRootId = m_folderMenu->insertItem(i18n("Document-&Base Folder"), this, SLOT(slotChangeDocumentFolderStatus()));
   m_folderMenu->insertItem(i18n("Upload &Status"), m_uploadStatusMenu);
-  m_folderMenu->insertItem(SmallIcon("info"), i18n("&Properties..."), this, SLOT(slotProperties()));
+  m_folderMenu->insertItem(SmallIcon("info"), i18n("&Properties"), this, SLOT(slotProperties()));
 
   m_projectMenu = new KPopupMenu(this);
   m_projectMenu->insertItem(SmallIcon("folder_new"), i18n("&Create Folder..."), this, SLOT(slotCreateFolder()));
   m_projectMenu->insertSeparator();
   m_projectMenu->insertItem(SmallIcon("up"), i18n("&Upload Project..."), this, SLOT(slotUploadProject()));
   m_projectMenu->insertItem(SmallIcon("reload"), i18n("Re&scan Project Folder..."), this, SLOT(slotRescan()));
-  m_projectMenu->insertItem(SmallIcon("configure"), i18n("Project &Properties..."), this, SLOT(slotOptions()));
+  m_projectMenu->insertItem(SmallIcon("configure"), i18n("Project &Properties"), this, SLOT(slotOptions()));
   m_projectMenu->insertItem(SmallIcon("reload"), i18n("&Reload"), this, SLOT(slotReload()));
   m_projectMenu->insertSeparator();
   m_projectMenu->insertItem(i18n("Upload &Status"), m_uploadStatusMenu);
@@ -172,7 +172,7 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   restoreLayout(kapp->config(), className());
   // the restored size of the first column might be too large for the current content
   // we set it to 10 and the listview will adjust it to the size of the largest entry
-  setColumnWidth(0, 10); 
+  setColumnWidth(0, 10);
 }
 
 ProjectTreeView::~ProjectTreeView(){

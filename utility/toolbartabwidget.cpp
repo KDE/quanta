@@ -211,7 +211,7 @@ void QuantaToolBar::mousePressEvent(QMouseEvent *e)
         }
       }
       m_popupMenu->insertItem(i18n("Remove Toolbar"), m_toolbarTab, SLOT(slotRemoveToolbar()));
-      m_popupMenu->insertItem(i18n("Rename Toolbar"), m_toolbarTab, SLOT(slotRenameToolbar()));
+      m_popupMenu->insertItem(i18n("Rename Toolbar..."), m_toolbarTab, SLOT(slotRenameToolbar()));
       m_popupMenu->insertItem(SmallIconSet("configure_toolbars"), i18n("Configure Toolbars..."), m_toolbarTab, SLOT(slotEditToolbar()));
     }
     m_popupMenu->popup(p);

@@ -22,6 +22,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
+#include <kiconloader.h>
 
 // Qt includes
 #include <qclipboard.h>
@@ -45,10 +46,10 @@ MessageOutput::MessageOutput(QWidget *parent, const char *name )
   m_popupMenu = new KPopupMenu(this);
   connect(this, SIGNAL(contextMenuRequested(QListBoxItem*, const QPoint&)),
      this, SLOT(showMenu(QListBoxItem*, const QPoint&)));
-  m_popupMenu->insertItem( i18n("&Copy"), this, SLOT(copyContent()) ) ;
-  m_popupMenu->insertItem( i18n("&Save..."), this, SLOT(saveContent()) ) ;
+  m_popupMenu->insertItem( SmallIconSet("editcopy"), i18n("&Copy"), this, SLOT(copyContent()) ) ;
+  m_popupMenu->insertItem( SmallIconSet("filesaveas"), i18n("&Save As..."), this, SLOT(saveContent()) ) ;
   m_popupMenu->insertSeparator();
-  m_popupMenu->insertItem( i18n("Clear"), this, SLOT(clear()) ) ;
+  m_popupMenu->insertItem( SmallIconSet("editclear"), i18n("Clear"), this, SLOT(clear()) ) ;
 
   connect( this, SIGNAL(selected(QListBoxItem*)), SLOT(clickItem(QListBoxItem*)) );
 

@@ -82,8 +82,8 @@ htmlDocumentProperties::htmlDocumentProperties( QWidget* parent, const char* nam
 	currentDTD->setText(ViewManager::ref()->activeDocument()->defaultDTD()->nickName);
 
 	//set the metaItems DualEditableTree
-	metaItems->addColumn("name");
-	metaItems->addColumn("content");
+	metaItems->addColumn(i18n("Name"));
+	metaItems->addColumn(i18n("Content"));
 	metaItems->setFrameStyle( QFrame::Panel | QFrame::Sunken );
 	metaItems->setLineWidth( 2 );
 	metaItems->setSorting(0, true);
@@ -91,8 +91,8 @@ htmlDocumentProperties::htmlDocumentProperties( QWidget* parent, const char* nam
 
 	//set the cssRules KListView
 	//cssRules->setEditable(false);
-	cssRules->addColumn("selector");
-	cssRules->addColumn("rule");
+	cssRules->addColumn(i18n("Selector"));
+	cssRules->addColumn(i18n("Rule"));
 	cssRules->setFrameStyle( QFrame::Panel | QFrame::Sunken );
 	cssRules->setLineWidth( 2 );
 	//cssRules->setFocusPolicy(QWidget::ClickFocus);

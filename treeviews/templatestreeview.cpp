@@ -67,10 +67,10 @@ const QString textMenu = I18N_NOOP("Insert as &Text");
 const QString binaryMenu = I18N_NOOP("Insert &Link to File");
 const QString docMenu = I18N_NOOP("&New Document Based on This");
 const QString siteMenu = I18N_NOOP("&Extract Site Template To...");
-const QString textType = I18N_NOOP("Text snippet");
-const QString binaryType = I18N_NOOP("Binary file");
-const QString documentType = I18N_NOOP("Document template");
-const QString siteType = I18N_NOOP("Site template");
+const QString textType = I18N_NOOP("Text Snippet");
+const QString binaryType = I18N_NOOP("Binary File");
+const QString documentType = I18N_NOOP("Document Template");
+const QString siteType = I18N_NOOP("Site Template");
 
 
 //TemplatesTreeBranch implementation
@@ -131,26 +131,26 @@ TemplatesTreeView::TemplatesTreeView(QWidget *parent, const char *name )
 
   m_openId = m_fileMenu->insertItem(i18n("Open"), this ,SLOT(slotInsert()));
   m_fileMenu->insertItem(SmallIcon("fileopen"), i18n("&Open"), this ,SLOT(slotOpen()));
-  m_fileMenu->insertItem(SmallIcon("mail_send"), i18n("Send in E-&Mail..."), this, SLOT(slotSendInMail()));
+  m_fileMenu->insertItem(SmallIcon("mail_send"), i18n("Send in E&mail..."), this, SLOT(slotSendInMail()));
   m_insertFileInProject = m_fileMenu->insertItem(i18n("&Insert in Project..."), this, SLOT(slotInsertInProject()));
   m_menuClose = m_fileMenu->insertItem(SmallIcon("fileclose"), i18n("Clos&e"), this, SLOT(slotClose()));
   m_fileMenu->insertSeparator();
   m_fileMenu->insertItem(SmallIcon("editcopy"), i18n("&Copy"), this, SLOT(slotCopy()));
   m_fileMenu->insertItem(SmallIcon("editdelete"), i18n("&Delete"), this, SLOT(slotDelete()));
   m_fileMenu->insertSeparator();
-  m_fileMenu->insertItem(SmallIcon("info"), i18n("&Properties..."), this, SLOT(slotProperties()));
+  m_fileMenu->insertItem(SmallIcon("info"), i18n("&Properties"), this, SLOT(slotProperties()));
 
   m_folderMenu = new KPopupMenu();
 
   m_folderMenu->insertItem(SmallIcon("folder_new"), i18n("&New Folder..."), this, SLOT(slotNewDir()));
-  m_folderMenu->insertItem(SmallIcon("mail_send"), i18n("Send in E-&Mail..."), this, SLOT(slotSendInMail()));
+  m_folderMenu->insertItem(SmallIcon("mail_send"), i18n("Send in E&mail..."), this, SLOT(slotSendInMail()));
   m_insertFolderInProject = m_folderMenu->insertItem(i18n("&Insert in Project..."), this, SLOT(slotInsertDirInProject()));
   m_folderMenu->insertSeparator();
   m_folderMenu->insertItem(SmallIcon("editcopy"), i18n("&Copy"), this, SLOT(slotCopy()));
   m_menuPasteFolder = m_folderMenu->insertItem(SmallIcon("editpaste"), i18n("&Paste"), this, SLOT(slotPaste()));
   m_deleteMenuId = m_folderMenu->insertItem(SmallIcon("editdelete"), i18n("&Delete"), this, SLOT(slotDelete()));
   m_folderMenu->insertSeparator();
-  m_folderMenu->insertItem(SmallIcon("info"), i18n("&Properties..."), this, SLOT(slotProperties()));
+  m_folderMenu->insertItem(SmallIcon("info"), i18n("&Properties"), this, SLOT(slotProperties()));
   m_reloadMenuId = m_folderMenu->insertItem(SmallIcon("reload"), i18n("&Reload"), this, SLOT(slotReload()));
 
   addColumn(i18n("Templates"), -1);
@@ -175,7 +175,7 @@ TemplatesTreeView::TemplatesTreeView(QWidget *parent, const char *name )
   restoreLayout( kapp->config(), className() );
   // the restored size of the first column might be too large for the current content
   // we set it to 10 and the listview will adjust it to the size of the largest entry
-  setColumnWidth(0, 10); 
+  setColumnWidth(0, 10);
 }
 
 TemplatesTreeView::~TemplatesTreeView()
