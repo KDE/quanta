@@ -28,44 +28,23 @@
 #include <qobjectlist.h>
 #include <qregexp.h>
 #include <qfileinfo.h>
+#include <qfiledialog.h> 
 #include <kstandarddirs.h>
+#include <klocale.h>
 #include "csseditor_globals.h"
+#include "../framewizard/fwglobal.h"
+#include "../../resource.h"
+#include "../../quanta.h"
 
-CSSSelector::CSSSelector(QWidget *parent, const char* name) : CSSSelectorS (parent,name) {
-
-  connect(pbAddTag,SIGNAL(clicked()), this ,SLOT(addTag()));
-  connect(pbAddClass,SIGNAL(clicked()), this ,SLOT(addClass()));
-  connect(pbAddID,SIGNAL(clicked()), this ,SLOT(addID()));
-  connect(pbAddPseudo,SIGNAL(clicked()), this ,SLOT(addPseudo()));
-  connect(pbAddAtRules,SIGNAL(clicked()), this ,SLOT(addAtRules()));
-
-  connect(lvTags, SIGNAL(doubleClicked( QListViewItem *  )), this, SLOT(openCSSEditor(QListViewItem *)));
-  connect(lvClasses, SIGNAL(doubleClicked( QListViewItem *  )), this, SLOT(openCSSEditor(QListViewItem *)));
-  connect(lvIDs, SIGNAL(doubleClicked( QListViewItem *  )), this, SLOT(openCSSEditor(QListViewItem *)));
-  connect(lvPseudo, SIGNAL(doubleClicked( QListViewItem *  )), this, SLOT(openCSSEditor(QListViewItem *)));
-
-  connect(lvTags, SIGNAL(selectionChanged( QListViewItem *  )), this, SLOT(setCurrentItem(QListViewItem *)));
-  connect(lvClasses, SIGNAL(selectionChanged( QListViewItem *  )), this, SLOT(setCurrentItem(QListViewItem *)));
-  connect(lvIDs, SIGNAL(selectionChanged( QListViewItem *  )), this, SLOT(setCurrentItem(QListViewItem *)));
-  connect(lvPseudo, SIGNAL( selectionChanged( QListViewItem *  )), this, SLOT(setCurrentItem(QListViewItem *)));
-
-  connect(pbRemoveSelectedTag,SIGNAL(clicked()), this ,SLOT(removeSelected()));
-  connect(pbRemoveSelectedClass,SIGNAL(clicked()), this ,SLOT(removeSelected()));
-  connect(pbRemoveSelectedID,SIGNAL(clicked()), this ,SLOT(removeSelected()));
-  connect(pbRemoveSelectedPseudo,SIGNAL(clicked()), this ,SLOT(removeSelected()));
-  connect(pbRemoveSelectedAtRules,SIGNAL(clicked()), this ,SLOT(removeSelected()));
-
-  connect(twSelectors,SIGNAL(currentChanged ( QWidget * )), this ,SLOT(setCurrentListView( QWidget * )));
-
-  connect(pbRemoveAllTags,SIGNAL(clicked()), this ,SLOT(removeAll()));
-  connect(pbRemoveAllClasses,SIGNAL(clicked()), this ,SLOT(removeAll()));
-  connect(pbRemoveAllIDs,SIGNAL(clicked()), this ,SLOT(removeAll()));
-  connect(pbRemoveAllPseudo,SIGNAL(clicked()), this ,SLOT(removeAll()));
-  connect(pbRemoveAllAtRules,SIGNAL(clicked()), this ,SLOT(removeAll()));
-
-  header = QString::null;
-  footer = QString::null;
-
+CSSSelector::CSSSelector(QString dtd, QWidget *parent, const char* name) : CSSSelectorS (parent,name), currentDocumentDTD(dtd) {
+  
+  lvTags->setAllColumnsShowFocus(true);
+  lvClasses->setAllColumnsShowFocus(true);
+  lvIDs->setAllColumnsShowFocus(true);
+  lvPseudo->setAllColumnsShowFocus(true);
+  lvAtRules->setAllColumnsShowFocus(true);
+  
+  Connect();
   QString configDir = locate("appdata", "csseditor/config.xml");
   configDir = QFileInfo(configDir).dirPath() + "/";
 
@@ -90,7 +69,7 @@ CSSSelector::CSSSelector(QWidget *parent, const char* name) : CSSSelectorS (pare
     n = n.nextSibling();
   }
 
-  file.setName( configDir+"atrules.xml" );
+ file.setName( configDir+"atrules.xml" );
   if ( !file.open( IO_ReadOnly ) )
     return;
   if ( !doc.setContent( &file ) ) {
@@ -98,8 +77,7 @@ CSSSelector::CSSSelector(QWidget *parent, const char* name) : CSSSelectorS (pare
     return;
   }
   file.close();
-
-  docElem = doc.documentElement();
+ docElem = doc.documentElement();
 
   n = docElem.firstChild();
   while( !n.isNull() ) {
@@ -109,26 +87,62 @@ CSSSelector::CSSSelector(QWidget *parent, const char* name) : CSSSelectorS (pare
     }
     n = n.nextSibling();
   }
-
-
 }
 
 CSSSelector::~CSSSelector(){
 }
 
+void CSSSelector::Connect(){
+    
+  connect(pbAddTag,SIGNAL(clicked()), this ,SLOT(addTag()));
+  connect(pbAddClass,SIGNAL(clicked()), this ,SLOT(addClass()));
+  connect(pbAddID,SIGNAL(clicked()), this ,SLOT(addID()));
+  connect(pbAddPseudo,SIGNAL(clicked()), this ,SLOT(addPseudo()));
+  connect(pbAddAtRules,SIGNAL(clicked()), this ,SLOT(addAtRules()));
+
+  connect(lvTags, SIGNAL(doubleClicked( QListViewItem *  )), this, SLOT(openCSSEditor(QListViewItem *)));
+  connect(lvClasses, SIGNAL(doubleClicked( QListViewItem *  )), this, SLOT(openCSSEditor(QListViewItem *)));
+  connect(lvIDs, SIGNAL(doubleClicked( QListViewItem *  )), this, SLOT(openCSSEditor(QListViewItem *)));
+  connect(lvPseudo, SIGNAL(doubleClicked( QListViewItem *  )), this, SLOT(openCSSEditor(QListViewItem *)));
+  connect(lvAtRules, SIGNAL(doubleClicked( QListViewItem *  )), this, SLOT(openAtRulesEditor(QListViewItem *)));
+   
+  connect(lvTags, SIGNAL(selectionChanged( QListViewItem *  )), this, SLOT(setCurrentItem(QListViewItem *)));
+  connect(lvClasses, SIGNAL(selectionChanged( QListViewItem *  )), this, SLOT(setCurrentItem(QListViewItem *)));
+  connect(lvIDs, SIGNAL(selectionChanged( QListViewItem *  )), this, SLOT(setCurrentItem(QListViewItem *)));
+  connect(lvPseudo, SIGNAL( selectionChanged( QListViewItem *  )), this, SLOT(setCurrentItem(QListViewItem *)));
+  connect(lvAtRules, SIGNAL( selectionChanged( QListViewItem *  )), this, SLOT(setCurrentItem(QListViewItem *)));
+  
+  connect(pbRemoveSelectedTag,SIGNAL(clicked()), this ,SLOT(removeSelected()));
+  connect(pbRemoveSelectedClass,SIGNAL(clicked()), this ,SLOT(removeSelected()));
+  connect(pbRemoveSelectedID,SIGNAL(clicked()), this ,SLOT(removeSelected()));
+  connect(pbRemoveSelectedPseudo,SIGNAL(clicked()), this ,SLOT(removeSelected()));
+  connect(pbRemoveSelectedAtRules,SIGNAL(clicked()), this ,SLOT(removeSelected()));
+
+  connect(twSelectors,SIGNAL(currentChanged ( QWidget * )), this ,SLOT(setCurrentListView( QWidget * )));
+
+  connect(pbRemoveAllTags,SIGNAL(clicked()), this ,SLOT(removeAll()));
+  connect(pbRemoveAllClasses,SIGNAL(clicked()), this ,SLOT(removeAll()));
+  connect(pbRemoveAllIDs,SIGNAL(clicked()), this ,SLOT(removeAll()));
+  connect(pbRemoveAllPseudo,SIGNAL(clicked()), this ,SLOT(removeAll()));
+  connect(pbRemoveAllAtRules,SIGNAL(clicked()), this ,SLOT(removeAll()));
+}
+
 void CSSSelector::addTag(){
   QListViewItem *item = new QListViewItem(lvTags);
-  item->setText(0,cbTag->currentText());
+  if(!cbTag->currentText().isEmpty())
+    item->setText(0,cbTag->currentText());
 }
 
 void CSSSelector::addClass(){
   QListViewItem *item = new QListViewItem(lvClasses);
-  item->setText(0,leClass->text());
+  if(!leClass->text().isEmpty())
+    item->setText(0,leClass->text());
 }
 
 void CSSSelector::addID(){
   QListViewItem *item = new QListViewItem(lvIDs);
-  item->setText(0,leID->text());
+  if(!leID->text().isEmpty())
+    item->setText(0,leID->text());
 }
 
 void CSSSelector::addPseudo(){
@@ -138,7 +152,7 @@ void CSSSelector::addPseudo(){
 
 void CSSSelector::addAtRules(){
   QListViewItem *item = new QListViewItem(lvAtRules);
-  item->setText(0,"@"+cbAtRules->currentText());
+  item->setText(0,"@" +cbAtRules->currentText());
 }
 
 void CSSSelector::openCSSEditor(QListViewItem * i){
@@ -197,11 +211,11 @@ void CSSSelector::openCSSEditor(QListViewItem * i){
     temp = temp->nextSibling();
   }
 
-  dlg->setForInitialPreview(initialPreviewText);
+  dlg->setForInitialPreview(m_initialPreviewText);
   
-  dlg->setHeader(header);
+  dlg->setHeader(m_header);
   dlg->setSelectors(s);
-  dlg->setFooter(footer);
+  dlg->setFooter(m_footer);
   dlg->initialize();
   if(dlg->exec()){
      i->setText(1,dlg->generateProperties());
@@ -211,37 +225,34 @@ void CSSSelector::openCSSEditor(QListViewItem * i){
 
 void CSSSelector::setCurrentListView(QWidget* w){
   QObjectList *l = w->queryList( "QListView" );
-  currentListView = static_cast<QListView*>(l->first());
+  m_currentListView = static_cast<QListView*>(l->first());
 }
 
 void CSSSelector::removeAll(){
-   currentListView->clear();
+   m_currentListView->clear();
 }
 
 void CSSSelector::removeSelected(){
-  delete currentItem;
+  delete m_currentItem;
 }
 
 void CSSSelector::loadExistingStyleSection(QString s){
-
-
+  s.remove("\n");
+  s.remove("\t");
   uint lf,rt;
-  while(true)
-  {
+  while(true){
    lf=s.find("/*",0);
    rt=s.find("*/",0);
    if(s.contains("/*") == 0 || s.contains("*/") == 0 ) break;
    s.remove(lf,rt+2-lf);
   }
+  
+  int  atPos=s.find("@");
 
-  int  atPos=s.contains("@");
+  QString tempStr,
+               atRuleType;
 
-  QString tempStr=QString::null;
-
-  QString atRuleType(QString::null);
-
-
-  while(atPos){
+  while(atPos >=0 ){
     int openParePos=s.find("{",atPos);
     if(openParePos>=0){
       if(s.mid(atPos,openParePos-atPos).contains(";")){
@@ -249,37 +260,36 @@ void CSSSelector::loadExistingStyleSection(QString s){
         tempStr=s.mid(atPos,SCPos-atPos).simplifyWhiteSpace();
         tempStr.remove("\n");
         tempStr.remove("\t");
-	QListViewItem *item;
+        QListViewItem *item;
         item = new QListViewItem(lvAtRules);
         item->setText(0,tempStr.left( tempStr.find(" ") ) );
-	tempStr.remove(0,tempStr.find(" ") );
-	item->setText(1,tempStr);
+        tempStr.remove(0,tempStr.find(" ") );
+        item->setText(1,tempStr);
         s.remove(atPos,SCPos-atPos+1);
-
       }
       else{
         int closedParePos = s.find("}",atPos);
         if(closedParePos>=0){
           int closedPareNum = 1;
-	  int openPareNum = s.mid(atPos,closedParePos-atPos).contains("{");
-	  while( closedPareNum != openPareNum ){
-	    int oldClosedParePos = closedParePos;
-	    closedParePos = s.find("}",closedParePos+1);
-	    if(s.mid(oldClosedParePos,closedParePos-oldClosedParePos).contains("{"))
-	      openPareNum++;
-	    closedPareNum++;
-	  }
+          int openPareNum = s.mid(atPos,closedParePos-atPos).contains("{");
+          while( closedPareNum != openPareNum ){
+            int oldClosedParePos = closedParePos;
+            closedParePos = s.find("}",closedParePos+1);
+            if(s.mid(oldClosedParePos,closedParePos-oldClosedParePos).contains("{"))
+              openPareNum++;
+            closedPareNum++;
+          }
         }
 
-	tempStr=s.left(closedParePos+1).simplifyWhiteSpace();
-	tempStr.remove("\n");
+        tempStr=s.left(closedParePos+1).simplifyWhiteSpace();
+        tempStr.remove("\n");
         tempStr.remove("\t");
-	QListViewItem *item;
+        QListViewItem *item;
         item = new QListViewItem(lvAtRules);
         item->setText(0,tempStr.left( tempStr.find("{") ) );
-	tempStr.remove(0,tempStr.find("{") );
+        tempStr.remove(0,tempStr.find("{") );
 
-	item->setText(1,tempStr);
+        item->setText(1,tempStr);
         s.remove(atPos,closedParePos-atPos+1);
 
       }
@@ -288,54 +298,44 @@ void CSSSelector::loadExistingStyleSection(QString s){
     else{
       int SCPos=s.find(";",atPos);
       if(SCPos){
-        tempStr=s.mid(atPos,SCPos-atPos).simplifyWhiteSpace();
+        tempStr=s.mid(atPos,SCPos-atPos);
+        s.remove(tempStr+";");
         tempStr.remove("\n");
         tempStr.remove("\t");
-	QListViewItem *item;
+        QListViewItem *item;
         item = new QListViewItem(lvAtRules);
         item->setText(0,tempStr.left( tempStr.find(" ") ) );
-	tempStr.remove(0,tempStr.find(" ") );
-	item->setText(1,tempStr);
-        s.remove(atPos,SCPos-atPos+1);
+        tempStr.remove(0,tempStr.find(" ") );
+        item->setText(1,tempStr);
       }
       else{
-       // qWarning("stopped");
-	break;
+        break;
       }
     }
-
-    atPos=s.contains("@");
+    atPos=s.find("@");
   }
 
-
-
-
-
   QMap<QString,QString> styleTagEntities;
-    QStringList temp = QStringList::split("}",s);
-    temp.pop_back();// the last element of the list is empty
+    QStringList temp = QStringList::split("}",s.stripWhiteSpace());  
     for ( QStringList::Iterator it = temp.begin(); it != temp.end(); ++it ) {
       (*it).remove("\n");
       (*it).remove("\t");
       styleTagEntities[(*it).section("{",0,0).simplifyWhiteSpace()]=(*it).section("{",1,1).simplifyWhiteSpace();
     }
 
-
-
-
   QMap<QString,QString>::Iterator it;
-  for ( it = /*m*/styleTagEntities.begin(); it != /*m*/styleTagEntities.end(); ++it ) {
+  for ( it = styleTagEntities.begin(); it != styleTagEntities.end(); ++it ) {
     QListViewItem *item;
-    if(it.key().startsWith("#")){
+    if(it.key().contains(":")){
+      item = new QListViewItem(lvPseudo);
+    }
+    else
+    if(it.key().contains("#")){
       item = new QListViewItem(lvIDs);
     }
     else
-    if(it.key().startsWith(".")){
-      item = new QListViewItem(lvClasses);
-    }
-    else
-    if(it.key().contains(":")){
-      item = new QListViewItem(lvPseudo);
+    if(it.key().contains(".")){
+      item = new QListViewItem(lvClasses); 
     }
     else {
       item = new QListViewItem(lvTags);
@@ -350,7 +350,6 @@ QString CSSSelector::generateStyleSection(){
 
   QListViewItem *temp;
   QString styleSection;
-
 
   temp = lvTags->firstChild();
   while(temp){
@@ -372,13 +371,25 @@ QString CSSSelector::generateStyleSection(){
 
   temp = lvPseudo->firstChild();
   while(temp){
-    styleSection+=(temp->text(0)+" { "+temp->text(1)+" } \n\t");
+    styleSection+=(temp->text(0)+" "+temp->text(1)+"\n\t");
     temp = temp->nextSibling();
     }
+   
+  temp = lvAtRules->firstChild();
+  while(temp){
+    if( temp->text(0) == "@charset" )
+      styleSection+=(temp->text(0)+" \"" + temp->text(1) + "\";\n\t");
+    else
+    if( temp->text(0) == "@import" )
+      styleSection+=(temp->text(0)+ " url('" + temp->text(1) + "');\n\t");
+    temp = temp->nextSibling();
+    }
+      
   styleSection.truncate(styleSection.length()-1); //we elminate the last \t
-  return "\n\t"+styleSection;
 
+  return QString("\n\t")+styleSection;
 }
+
 
 
 

@@ -41,30 +41,9 @@ class timeEditor;
 
 
 
-/**this
-  *@author simone
+/**
+  *@author gulmini luciano
   */
-
-
-/*class comboBoxEditor :public QHBox{
-
-  Q_OBJECT
-
-   private:
-     QComboBox *cb;
-     QStringList valuesBuffer;
-     
-   public:
-     comboBoxEditor(QWidget *parent, const char* name=0);
-     ~comboBoxEditor();
-     QComboBox* getComboBox() const { return cb; }
-   public slots:
-     
-   signals:
-     void valueChanged(const QString&);   
-  
-}
- */
 
 class multipleSpinBox : public QHBox{
    Q_OBJECT
@@ -110,17 +89,13 @@ class URIEditor : public QHBox {
      void valueChanged(const QString&);   
 };
    
-
-
-
-
 class percentageEditor : public QHBox  {
      Q_OBJECT
    private:
      QSpinBox *sb;
    public:
-	   percentageEditor(QWidget *parent=0, const char *name=0);
-	   ~percentageEditor();
+           percentageEditor(QWidget *parent=0, const char *name=0);
+           ~percentageEditor();
    signals:
      void valueChanged(const QString&);  
 };
@@ -147,8 +122,8 @@ class propertySetter : public QHBox  {
      colorRequester *cr;
      KPushButton *pb;     
    public:
-	   propertySetter(QWidget *parent=0, const char *name=0);
-	   ~propertySetter();
+           propertySetter(QWidget *parent=0, const char *name=0);
+           ~propertySetter();
      void setComboBox();
      void setSpinBox(const QString& min="0", const QString& max="9999", const QString& s=QString::null);
      void setLineEdit();
@@ -170,11 +145,11 @@ class propertySetter : public QHBox  {
      doubleComboBoxEditor* getDoubleComboBoxEditor() const { return dcbe; }
      URIEditor* getURIEditor() const { return ue; }
      
-   public slots:
-     void analyze(const QString&);
-     void Show();  
-   signals:
-     void valueChanged(const QString&);
+  public slots:
+    void Show();  
+    
+  signals:
+    void valueChanged(const QString&);
 };
 
 #endif

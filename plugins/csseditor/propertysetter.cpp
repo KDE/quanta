@@ -206,12 +206,6 @@ void propertySetter::addButton(){
   connect(pb, SIGNAL(clicked()), this ,SLOT(Show()));
 }
 
-void propertySetter::analyze(const QString& s){
-
-
-}
-
-
 URIEditor::URIEditor(QWidget *parent, const char* name) : QHBox(parent,name)
 {
   Mode = single;

@@ -27,22 +27,26 @@ class QStringList;
   */
 
 class CSSSelector : public CSSSelectorS {
-     Q_OBJECT
+  Q_OBJECT
+  
   private:
-     QListViewItem *currentItem;
-     QListView *currentListView;
-     //QString sourceFileName;
-     QString header,
-             footer;
-             
-     QString initialPreviewText;        
+     QListViewItem *m_currentItem;
+     QListView *m_currentListView;
+     //QString m_sourceFileName;
+     QString m_header,
+                  m_footer,
+                  m_initialPreviewText;     
+     
+     QString currentDocumentDTD;  
+     
+     void Connect();   
             
   public: 
-	  CSSSelector(QWidget *parent=0, const char* name=0);
-	  ~CSSSelector();
-  public slots:
-    void openCSSEditor(QListViewItem *);
+    CSSSelector(QString dtd=QString::null, QWidget *parent=0, const char* name=0);
+    ~CSSSelector();
     
+  public slots:
+    void openCSSEditor(QListViewItem *);  
     void addTag();
     void addClass();
     void addID();
@@ -50,18 +54,20 @@ class CSSSelector : public CSSSelectorS {
     void addAtRules();
     void removeAll();
     void removeSelected();
-    void setCurrentItem(QListViewItem* i) { currentItem = i; }
+    void setCurrentItem(QListViewItem* i) { m_currentItem = i; }
     void setCurrentListView(QWidget*);
-    void loadExistingStyleSection(/*QMap<QString,QString> m*/QString);
-    void setForInitialPreview(const QString& s) { initialPreviewText = s;}
+    void loadExistingStyleSection(QString);
+    void loadCSSFileContent(QString s){ loadExistingStyleSection(s); }
+    void setForInitialPreview(const QString& s) { m_initialPreviewText = s;}   
+    void setHeader(const QString& h) { m_header = h; }
+    void setFooter(const QString& f) { m_footer = f; }
+    QString generateStyleSection();      
+        
+    //void setSourceFileName(const QString& n) { m_sourceFileName = n; }
+    //QString SourceFileName() const { return m_sourceFileName; }
     
-    //void setSourceFileName(const QString& n) { sourceFileName = n; }
-    
-    void setHeader(const QString& h) { header = h; }
-    void setFooter(const QString& f) { footer = f; }
-    QString generateStyleSection();
-    //QString getSourceFileName() const { return sourceFileName; }
-  
+        
+    void setCurrentDocumentDTD(const QString& s){ currentDocumentDTD = s; }
    };
 
 #endif
