@@ -1582,6 +1582,7 @@ void QuantaApp::gotoFileAndLine(const QString& filename, int line, int column)
     {
       w->viewCursorIf->setCursorPositionReal(line, column);
     }
+    w->view()->setFocus();
   }
 }
 
