@@ -112,6 +112,7 @@
 #include "tagactionmanager.h"
 #include "tagactionset.h"
 
+
 QuantaInit::QuantaInit(QuantaApp * quantaApp)
         : QObject()
 {
@@ -1277,25 +1278,114 @@ void QuantaInit::loadVPLConfig()
   qConfig.inlineNodeIndentation = m_config->readBoolEntry("Inline Node Indentation");
 }
 
+struct Dependency{
+  QString name;
+  QString execName;
+  QString url;
+  QString description;
+  enum Type{
+    Executable = 0,
+    Plugin
+  };
+  Type type;
+};
+  
 void QuantaInit::checkRuntimeDependencies()
 {
-  QString stdErrorMsg = i18n("<br><b>-    %1</b> [<i>%2</i>] - %3 will not be available;");
+  
+  QValueList<Dependency> dependencies;
+  Dependency dependency;
+  dependency.name = "Kommander";
+  dependency.execName = "kmdr-executor";
+  dependency.url = "http://kommander.kdewebdev.org";
+  dependency.description = i18n("various script based dialogs including the Quick Start dialog");
+  dependency.type = Dependency::Executable;
+  dependencies.append(dependency);
+  
+  dependency.name = "Tidy";
+  dependency.execName = "tidy";
+  dependency.url = "http://tidy.sourceforge.net";
+  dependency.description = i18n("HTML syntax checking");
+  dependency.type = Dependency::Executable;
+  dependencies.append(dependency);
+  
+  dependency.name = "Kompare";
+  dependency.execName = "kompare";
+  dependency.url = "http://bruggie.dnsalias.org/kompare";
+  dependency.description = i18n("comparing of files by content");
+  dependency.type = Dependency::Executable;
+  dependencies.append(dependency);
+  
+    
+  dependency.name = i18n("Control Center (kdebase)");
+  dependency.execName = "kcmshell";
+  dependency.url = "http://www.kde.org";
+  dependency.description = i18n("preview browser configuration");
+  dependency.type = Dependency::Executable;
+  dependencies.append(dependency);
+  
+  dependency.name = "GPG (OpenPGP)";
+  dependency.execName = "gpg";
+  dependency.url = "http://www.gnupg.de";
+  dependency.description = i18n("preview browser configuration");
+  dependency.type = Dependency::Executable;
+  dependencies.append(dependency);
+  
+  dependency.name = "KFileReplace)";
+  dependency.execName = "KFileReplace";
+  dependency.url = "http://kfilereplace.kdewebdev.org";
+  dependency.description = i18n("search and replace in files");
+  dependency.type = Dependency::Plugin;
+  dependencies.append(dependency);
+  
+  dependency.name = "KXSLDbg";
+  dependency.execName = "XSLT Debugger";
+  dependency.url = "http://xsldbg.sourceforge.net/";
+  dependency.description = i18n("XSLT debugging");
+  dependency.type = Dependency::Plugin;
+  dependencies.append(dependency);
+  
+    
+  dependency.name = "KImageMapEditor";
+  dependency.execName = "KImageMapEditor";
+  dependency.url = "http://www.nongnu.org/kimagemap/";
+  dependency.description = i18n("editing HTML image maps");
+  dependency.type = Dependency::Plugin;
+  dependencies.append(dependency);
+  
+    
+  dependency.name = "KLinkStatus";
+  dependency.execName = "Link Checker";
+  dependency.url = "http://kde-apps.org/content/show.php?content=12318";
+  dependency.description = i18n("link validity checking");
+  dependency.type = Dependency::Plugin;
+  dependencies.append(dependency);
+  
+  dependency.name = "Cervisia";
+  dependency.execName = "CVS Management (Cervisia)";
+  dependency.url = "http://www.kde.org/apps/cervisia";
+  dependency.description = i18n("CVS management plugin");
+  dependency.type = Dependency::Plugin;
+  dependencies.append(dependency);
+  
   QString errorStr;
-  if (KStandardDirs::findExe("kmdr-executor").isNull())
-    errorStr += QString(stdErrorMsg).arg(i18n("Kommander")).arg("http://kommander.kdewebdev.org").arg(i18n("various script based dialogs including the Quick Start dialog"));
-  if (KStandardDirs::findExe("tidy").isNull())
-    errorStr += QString(stdErrorMsg).arg("Tidy").arg("http://tidy.sourceforge.net").arg(i18n("HTML syntax checking"));
-  if (KStandardDirs::findExe("kompare").isNull())
-    errorStr += QString(stdErrorMsg).arg("Kompare").arg("http://bruggie.dnsalias.org/kompare").arg(i18n("comparing of files by content"));
-  if (KStandardDirs::findExe("kcmshell").isNull())
-    errorStr += QString(stdErrorMsg).arg("KControl (kdebase)").arg("http://www.kde.org").arg(i18n("preview browser configuration"));
-  if (KStandardDirs::findExe("gpg").isNull())
-    errorStr += QString(stdErrorMsg).arg("GPG (OpenPGP)").arg("http://www.gnupg.de").arg(i18n("resource signing and validating"));
-  if (!QuantaPlugin::validatePlugin(m_quanta->m_pluginInterface->plugin("KFileReplace")))
-    errorStr += QString(stdErrorMsg).arg("KFileReplace").arg("http://kfilereplace.kdewebdev.org").arg(i18n("search and replace in files"));
-  if (!QuantaPlugin::validatePlugin(m_quanta->m_pluginInterface->plugin("CVS Management (Cervisia)")))
-    errorStr += QString(stdErrorMsg).arg("Cervisia").arg("http://www.kde.org/apps/cervisia").arg(i18n("CVS management plugin"));
-
+  QString stdErrorMsg = i18n("<br><b>-    %1</b> [<i>%2</i>] - %3 will not be available;");
+  for (QValueList<Dependency>::ConstIterator it = dependencies.constBegin(); it != dependencies.constEnd(); ++it)
+  {
+    dependency = *it;
+    if (dependency.type == Dependency::Executable)
+    {
+      if (KStandardDirs::findExe(dependency.execName).isNull())
+        errorStr += QString(stdErrorMsg).arg(dependency.name).arg(dependency.url).arg(dependency.description);
+    
+    } else
+    if (dependency.type == Dependency::Plugin)
+    {
+      if (!QuantaPlugin::validatePlugin(m_quanta->m_pluginInterface->plugin(dependency.execName)))
+        errorStr += QString(stdErrorMsg).arg(dependency.name).arg(dependency.url).arg(dependency.description);
+    }
+  }
+  
 #ifdef ENABLE_CVSSERVICE
   QString error;
   QCString appId;

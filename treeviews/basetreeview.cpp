@@ -16,6 +16,7 @@
  ***************************************************************************/
 
 // QT includes
+#include <qeventloop.h>
 #include <qlayout.h>
 #include <qfileinfo.h>
 #include <qlabel.h>
@@ -290,7 +291,7 @@ void BaseTreeBranch::updateOpenFolder()
   while (item) {
     if (item->isDir() && item->isOpen()) {
       updateDirectory( item->url() );
-      kapp->processEvents();
+      kapp->processEvents(QEventLoop::ExcludeUserInput | QEventLoop::ExcludeSocketNotifiers);
       // dive into the tree first
       newItem = dynamic_cast<KFileTreeViewItem *>(item->firstChild());
       if (newItem) {

@@ -1347,7 +1347,7 @@ void ProjectPrivate::writeConfig()
       config->writePathEntry("OpenProjects", projectList);
       // add the temp file to list
       projectList = config->readPathListEntry("ProjectTempFiles");
-      projectList.append(m_tmpProjectFile);
+      projectList.append(KURL::fromPathOrURL(m_tmpProjectFile).url());
       config->writePathEntry("ProjectTempFiles", projectList);
     }
   }
