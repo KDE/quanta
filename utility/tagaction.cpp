@@ -3,7 +3,7 @@
                              -------------------
     begin                : ?
     copyright            : (C) ? Dmitry Poplavsky
-                           (C) 2002-2003 Andras Mantia <amantia@kde.org>
+                           (C) 2002-2005 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -76,6 +76,8 @@ TagAction::TagAction( QDomElement *element, KActionCollection *parent)
   : KAction( element->attribute("text").isEmpty() ? QString("") : i18n(element->attribute("text").utf8()), KShortcut(element->attribute("shortcut")), 0, 0, parent, element->attribute("name") )
 {
   m_modified = false;
+  m_useInputFile = false;
+  m_useOutputFile = false;
   tag = element->cloneNode().toElement();
   QString s = tag.attribute("icon");
   if (!QFileInfo(s).exists())
@@ -86,7 +88,7 @@ TagAction::TagAction( QDomElement *element, KActionCollection *parent)
   m_file = 0L;
   loopStarted = false;
   m_appMessages = quantaApp->messageOutput();
-  connect( this, SIGNAL(activated()), SLOT(insertTag()) );
+  connect( this, SIGNAL(activated()), SLOT(slotActionActivated()) );
 }
 
 TagAction::~TagAction()
@@ -98,7 +100,7 @@ QString TagAction::type()
    return tag.attribute("type","");
 }
 
-bool TagAction::insertTag(bool inputFromFile, bool outputToFile)
+bool TagAction::slotActionActivated()
 {
   QuantaView *view = ViewManager::ref()->activeView();
   if ( !view || !view->document())
@@ -307,7 +309,7 @@ bool TagAction::insertTag(bool inputFromFile, bool outputToFile)
 
 
 
-    if (!outputToFile)
+    if (!m_useOutputFile)
         scriptOutputDest = script.attribute("output","none");
     else
         scriptOutputDest = "file";
@@ -317,7 +319,7 @@ bool TagAction::insertTag(bool inputFromFile, bool outputToFile)
       quantaApp->slotShowMessagesView();
     }
 
-    if (inputFromFile)
+    if (m_useInputFile)
     {
       *proc << m_inputFileName;
     }
@@ -326,7 +328,7 @@ bool TagAction::insertTag(bool inputFromFile, bool outputToFile)
     {
       m_appMessages->clear();
       m_appMessages->showMessage( i18n("The \"%1\" script started.\n").arg(actionText()) );
-      if (!inputFromFile)
+      if (!m_useInputFile)
       {
         if ( inputType == "current" || inputType == "selected" )
         {
@@ -508,20 +510,30 @@ void TagAction::addArguments(const QStringList &arguments)
   m_argsList = arguments;
 }
 
-void TagAction::execute()
+void TagAction::execute(bool blocking)
 {
-  if (insertTag(!m_inputFileName.isEmpty(), m_file))
+  m_useInputFile = false;
+  m_useOutputFile = false;
+  if (blocking)
   {
-    //To avoid lock-ups, start a timer.
-      timer = new QTimer(this);
-      connect(timer, SIGNAL(timeout()), SLOT(slotTimeout()));
-      timer->start(180*1000, true);
-      QExtFileInfo internalFileInfo;
-      loopStarted = true;
-      m_killCount = 0;
-      internalFileInfo.enter_loop();
-      delete timer;
-  }
+    m_useInputFile = !m_inputFileName.isEmpty();
+    m_useOutputFile = (m_file);
+    if (slotActionActivated())
+    {
+      //To avoid lock-ups, start a timer.
+        timer = new QTimer(this);
+        connect(timer, SIGNAL(timeout()), SLOT(slotTimeout()));
+        timer->start(180*1000, true);
+        QExtFileInfo internalFileInfo;
+        loopStarted = true;
+        m_killCount = 0;
+        internalFileInfo.enter_loop();
+        delete timer;
+        m_useInputFile = false;
+        m_useOutputFile = false;
+    }
+  } else
+    slotActionActivated();
 }
 
 /** Timeout occurred while waiting for some network function to return. */

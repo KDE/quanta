@@ -330,10 +330,7 @@ bool QPEvents::handleEvent(const EventAction& ev)
             EventAction event = ev;
             event.arguments.remove(event.arguments.at(1));
             tagAction->addArguments(event.arguments);
-            if (blocking)
-              tagAction->execute();
-            else
-              tagAction->insertTag();
+            tagAction->execute(blocking);
           }
           else
           if (action)

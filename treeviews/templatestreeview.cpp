@@ -923,7 +923,7 @@ KURL TemplatesTreeView::filterTemplate()
    KTempFile* tempFile = new KTempFile(tmpDir);
    filterAction->setOutputFile(tempFile->file());
    filterAction->setInputFileName(url.path());
-   filterAction->execute();
+   filterAction->execute(true);
    filterAction->setOutputFile(0L);
    filterAction->setInputFileName(QString::null);
    tempFile->close();

@@ -3,7 +3,7 @@
                              -------------------
     begin                : ?
     copyright            : (C) ? Dmitry Poplavsky
-                           (C) 2002-2003 Andras Mantia <amantia@kde.org>
+                           (C) 2002-2005 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -58,7 +58,10 @@ public:
     void setOutputFile(QFile* file);
     void setInputFileName(const QString& fileName);
     void addArguments(const QStringList& arguments);
-    void execute();
+    /** Activates the action.
+      @param blocking in case of script actions, the script is run in blocking mode, if this argument is true
+    */
+    void execute(bool blocking);
     QString type();
     /**
      * Remove accelerator from tag action name *
@@ -70,16 +73,13 @@ public:
      */
     void insertOutputInTheNodeTree(const QString &str1, const QString &str2 = QString::null, Node *node = 0L);
 
-public slots:
-    virtual bool insertTag(bool inputFromFile = false, bool outputToFile = false);
-
-
 protected slots:
     virtual void slotGetScriptOutput( KProcess *, char *buffer, int buflen );
     virtual void slotGetScriptError( KProcess *, char *buffer, int buflen );
     virtual void scriptDone();
     void slotTimeout();
     void slotProcessExited(KProcess *);
+    virtual bool slotActionActivated();
 
 private:
     KProcess *proc;
@@ -87,6 +87,8 @@ private:
     bool firstOutput;
     bool m_modified;
     bool loopStarted;
+    bool m_useInputFile;
+    bool m_useOutputFile;
     QString scriptOutputDest;
     QString scriptErrorDest;
     QTimer* timer;
