@@ -186,7 +186,7 @@ public:
 
   ScriptTreeView *scriptToolView() {return scriptTab;}
   FilesTreeView *filesToolView() {return fTab;}
-  void enableIdleTimer(bool enable);
+  bool enableIdleTimer(bool enable);
 
 signals: // Signals
   /** signal used to hide the splash screen */
@@ -533,6 +533,7 @@ public: //TODO: check if it's worth to make a read method for them
   /** True when the whole quanta is initialized. */
   bool quantaStarted;
   bool m_loopStarted; //true if an internal event loop has been started
+  bool m_idleTimerEnabled;
   QuantaInit *m_quantaInit;  ///< the pointer to all the init stuff
 };
 

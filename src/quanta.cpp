@@ -218,6 +218,7 @@ QuantaApp::QuantaApp(int mdiMode) : DCOPObject("WindowManagerIf"), KMdiMainFrm( 
   qConfig.spellConfig = new KSpellConfig();
   idleTimer = new QTimer(this);
   connect(idleTimer, SIGNAL(timeout()), SLOT(slotIdleTimerExpired()));
+  m_idleTimerEnabled = true;
 
   // connect up signals from KXXsldbgPart
   connectDCOPSignal(0, 0, "debuggerPositionChangedQString,int)", "newDebuggerPosition(QString,int)", false );
@@ -1376,7 +1377,8 @@ void QuantaApp::newCursorPosition(QString file, int lineNumber, int columnNumber
   kdDebug(24000) << "newCursorPosition" << endl;
   Q_UNUSED(file);
   typingInProgress = true;
-  idleTimer->start(500, true);
+  if (m_idleTimerEnabled)
+    idleTimer->start(500, true);
  // updateTreeViews();
   QString linenumber;
   linenumber = i18n("Line: %1 Col: %2").arg(lineNumber).arg(columnNumber);
@@ -1399,7 +1401,8 @@ void QuantaApp::openFile(QString file, int lineNumber, int columnNumber)
 void QuantaApp::slotNewLineColumn()
 {
   typingInProgress = true;
-  idleTimer->start(500, true);
+  if (m_idleTimerEnabled)
+    idleTimer->start(500, true);
  // updateTreeViews();
   QString linenumber;
   oldCursorLine = cursorLine;
@@ -1440,12 +1443,15 @@ void QuantaApp::slotIdleTimerExpired()
   }
 }
 
-void QuantaApp::enableIdleTimer(bool enable)
+bool QuantaApp::enableIdleTimer(bool enable)
 {
+   bool status = m_idleTimerEnabled;
    if (enable)
      idleTimer->start(500, true);
    else
      idleTimer->stop();
+   m_idleTimerEnabled = enable;
+   return status;
 }
 
 void QuantaApp::slotReparse()
