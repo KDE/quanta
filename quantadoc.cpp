@@ -60,6 +60,7 @@
 #include "resource.h"
 
 #include "project/project.h"
+#include "plugins/quantaplugininterface.h"
 
 QuantaDoc::QuantaDoc( QuantaApp *app, QWidget *parent, const char *name) : QObject(parent, name)
 {
@@ -440,12 +441,11 @@ Document* QuantaDoc::newWrite(QWidget *_parent)
 													      _parent, 0,
 													      this, 0 );
 
-  Document  *w    = new Document (basePath(), doc, app->getProject(), _parent);
+  Document  *w    = new Document (basePath(), doc, app->getProject(), _parent, 0, 0, app->m_pluginInterface);
   KTextEditor::View * v = w->view();
 
   //[MB02] connect all kate views for drag and drop
   connect((QObject *)w->view(), SIGNAL(dropEventPass(QDropEvent *)), (QObject *)app->tTab, SLOT(slotDragInsert(QDropEvent *)));
-  // TODO : find out what's wrong with this connect
 
   app->config->setGroup("General Options");
   int tabWidth = app->config->readNumEntry("TabWidth",4);

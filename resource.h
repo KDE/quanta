@@ -35,7 +35,9 @@ extern QRegExp scriptEndRx;
 extern Node *baseNode;
 extern Parser *parser;
 
+#if 0 //not needed in our new plugin arch [MB]
 extern QValueList<QString> pluginsList; //holds the names of available plugins
+#endif
 extern KDirWatch *fileWatcher;
 
 extern QString fileMaskHtml;

@@ -292,7 +292,7 @@ TAGS:
 
 #>- DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 #>+ 4
-KDE_DIST=call-template.tag processing-instruction.tag text.tag template.tag key.tag attribute-set.tag value-of.tag strip-space.tag import.tag sort.tag otherwise.tag stylesheet.tag variable.tag if.tag preserve-space.tag transform.tag message.tag comment.tag choose.tag namespace-alias.tag param.tag attribute.tag element.tag for-each.tag copy-of.tag decimal-format.tag output.tag description.rc with-param.tag when.tag number.tag fallback.tag apply-imports.tag 
+KDE_DIST=call-template.tag processing-instruction.tag text.tag template.tag key.tag attribute-set.tag value-of.tag strip-space.tag import.tag sort.tag otherwise.tag stylesheet.tag variable.tag preserve-space.tag if.tag transform.tag message.tag comment.tag choose.tag namespace-alias.tag param.tag attribute.tag element.tag for-each.tag copy-of.tag output.tag decimal-format.tag with-param.tag description.rc when.tag number.tag fallback.tag apply-imports.tag 
 
 DISTFILES= $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST) $(KDE_DIST)
 

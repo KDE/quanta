@@ -303,6 +303,7 @@ void QuantaApp::slotFileSaveAll()
 
 void QuantaApp::slotFileClose()
 {
+//[MB]  QWidget *activeWidget = rightWidgetStack->visibleWidget();
   doc->closeDocument();
 
   htmlPart()->closeURL();
@@ -721,7 +722,7 @@ void QuantaApp::slotOptionsConfigureToolbars()
     }
  }
 
- m_tagsMenuId = menuBar()->insertItem(i18n("&Tags"),m_tagsMenu,-1,5);
+ m_tagsMenuId = menuBar()->insertItem(i18n("&Tags"),m_tagsMenu,-1,6);
  view->toolbarTab->setCurrentPage(currentPageIndex);
 }
 

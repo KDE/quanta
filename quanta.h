@@ -50,14 +50,17 @@
 #include "qextfileinfo.h"
 #include "resource.h"
 
-
 // forward declaration
+class QuantaPluginInterface;
+
 class QuantaDoc;
 class QuantaView;
 
 class QTabWidget;
 class QWidgetStack;
 class QListViewItem;
+
+class QPopupMenu;
 
 class WHTMLPart;
 class KHTMLView;
@@ -115,6 +118,7 @@ public:
   bool quantaStarted;
 
   MessageOutput *getMessages() { return messageOutput; }
+  QWidgetStack *widgetStackOfHtmlPart();
 
   /** Loads the initial project */
   void loadInitialProject(QString url="");
@@ -266,6 +270,14 @@ public slots:
   void slotShowCompletionHint();
   /** No descriptions */
   void slotParsingDTDChanged(QString newDTDName);
+  /** Runs the plugin specified by id */
+  void slotPluginRun(int);
+  /** Builds the plugins menu dynamically */
+  void slotBuildPluginMenu();
+  /** Brings up the plugin editor menu */
+  void slotPluginsEdit();
+  /** Validates the currently loaded plugins */
+  void slotPluginsValidate();
 
 protected slots:
   void initToolBars();
@@ -311,13 +323,20 @@ protected:
   void loadToolbarForDTD(const QString& dtdName);
   /** Remove the toolbar named "name". */
   void removeToolbar(const QString& name);
-
+ 
 private:
+
+  /** Messaage output window */
+  MessageOutput *messageOutput;
+  
+  /** plugin classes */
+  QuantaPluginInterface *m_pluginInterface;
+  QPopupMenu *m_pluginMenu;
+  
   /** project class */
   Project *project;
 
   WHTMLPart    *htmlPart();
-  QWidgetStack *widgetStackOfHtmlPart();
 
   // config
   KConfig *config;
@@ -349,9 +368,6 @@ private:
  	/** HTML class for preview */
   WHTMLPart *htmlpart;
   WHTMLPart *htmlPartDoc;
-
-  /** Messaage output window */
-  MessageOutput *messageOutput;
 
   /** Grep window */
   GrepDialog *grepDialog;

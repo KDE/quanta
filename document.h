@@ -47,13 +47,14 @@ class KTempFile;
 class Tag;
 class Node;
 class Project;
+class QuantaPluginInterface;
 
 class Document : public QWidget{
    Q_OBJECT
 
 public: 
 	Document(const QString& basePath, KTextEditor::Document *doc, Project *project,
-           QWidget *parent = 0, const char *name = 0, WFlags f=0);
+           QWidget *parent = 0, const char *name = 0, WFlags f=0, QuantaPluginInterface * =0);
 	~Document();
 
   void resizeEvent(QResizeEvent* e);
@@ -182,6 +183,8 @@ public slots:
 
 private:
 
+  QuantaPluginInterface *m_pluginInterface;
+  
   QString untitledUrl;
 
   QString         spellText;

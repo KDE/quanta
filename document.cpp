@@ -45,6 +45,7 @@
 #include "resource.h"
 #include "dialogs/dirtydlg.h"
 #include "project/project.h"
+#include "plugins/quantaplugininterface.h"
 
 #include <cctype>
 
@@ -52,7 +53,8 @@
 
 Document::Document(const QString& basePath, KTextEditor::Document *doc,
                    Project *project, QWidget *parent,
-                   const char *name, WFlags f ) : QWidget(parent, name, f)
+                   const char *name, WFlags f, QuantaPluginInterface *a_pIf )
+  : QWidget(parent, name, f)
 {
   m_dirty   = false;
   busy    = false;
@@ -77,6 +79,9 @@ Document::Document(const QString& basePath, KTextEditor::Document *doc,
   tempFile = 0;
   dtdName = project->defaultDTD();
   m_parsingDTD = dtdName;
+
+  //need access to plugin interface. and we can't get to app from here ..
+  m_pluginInterface = a_pIf;
 
   connect( m_doc,  SIGNAL(charactersInteractivelyInserted (int ,int ,const QString&)),
            this,  SLOT(slotCharactersInserted(int ,int ,const QString&)) );
@@ -1639,7 +1644,7 @@ void Document::checkDirtyStatus()
   {
     createTempFile();
     DirtyDlg *dlg = new DirtyDlg(url().path(), m_tempFileName, this);
-    if (!QuantaCommon::pluginAvailable("kompare"))
+    if (!m_pluginInterface || !(m_pluginInterface->pluginAvailable("kompare")))
     {
        dlg->buttonCompare->setEnabled(false);
        dlg->buttonLoad->setChecked(true);

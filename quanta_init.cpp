@@ -31,7 +31,7 @@
 #include <qfile.h>
 #include <qfileinfo.h>
 #include <qtextcodec.h>
-
+#include <qpopupmenu.h>
 
 // include files for KDE
 #include <kaccel.h>
@@ -69,6 +69,12 @@
 #include "treeviews/doctreeview.h"
 #include "treeviews/structtreeview.h"
 #include "treeviews/templatestreeview.h"
+
+#include "plugins/quantaplugininterface.h"
+#include "plugins/quantaplugin.h"
+#include "plugins/quantakpartplugin.h"
+#include "plugins/quantacmdplugin.h"
+#include "plugins/quantaplugineditor.h"
 
 #include "plugins/php3dbg/debugger.h"
 #include "plugins/php4dbg/debugger.h"
@@ -137,7 +143,6 @@ void QuantaApp::initQuanta()
 {
   parser = new Parser();
 
-  initPlugins  ();
   initTagDict  ();
   initStatusBar();
   initDocument ();
@@ -173,8 +178,11 @@ void QuantaApp::initQuanta()
 
 
   createGUI( QString::null, false );
+
+  initPlugins  ();
+  
   m_tagsMenu = new QPopupMenu(this);
-  m_tagsMenuId = menuBar()->insertItem(i18n("&Tags"),m_tagsMenu,-1,5);
+  m_tagsMenuId = menuBar()->insertItem(i18n("&Tags"),m_tagsMenu,-1,6);                                                                     
 
   pm_set  = (QPopupMenu*)guiFactory()->container("settings", this);
   connect(pm_set, SIGNAL(aboutToShow()), this, SLOT(settingsMenuAboutToShow()));
@@ -1378,6 +1386,7 @@ void QuantaApp::initActions()
 /** Initialize the plugin architecture. */
 void QuantaApp::initPlugins()
 {
+#if 0
  KConfig *config = new KConfig(locate("appdata","plugins.rc"));
  config->setGroup("General");
  QStrList pList;
@@ -1389,4 +1398,116 @@ void QuantaApp::initPlugins()
       pluginsList.append(name);
  }
  delete config;
+#else
+  m_pluginInterface = new QuantaPluginInterface(this);
+  // TODO : read option from plugins.rc to see if we should validate the plugins
+
+  m_pluginMenu = new QPopupMenu(this);
+  m_pluginMenu->setCheckable(TRUE);
+  connect(m_pluginMenu, SIGNAL(aboutToShow()), this, SLOT(slotBuildPluginMenu()));
+  connect(m_pluginMenu, SIGNAL(activated(int)), this, SLOT(slotPluginRun(int)));
+
+  menuBar()->insertItem("P&lugins", m_pluginMenu, -1, 4);
+#endif
 }
+
+/** Builds the plugins menu dynamically */
+void QuantaApp::slotBuildPluginMenu()
+{
+  m_pluginMenu->clear();
+  m_pluginMenu->insertItem("&Edit", this, SLOT(slotPluginsEdit()), 0);
+  m_pluginMenu->insertItem("&Validate", this, SLOT(slotPluginsValidate()), 0);
+  m_pluginMenu->insertSeparator();
+
+  // TODO : We should have a QuantaPluginInterface::isModified function
+  // so that we can skip all of this work if nothing has changed
+
+  QDict<QuantaPlugin> plugins = m_pluginInterface->plugins();
+
+  QDictIterator<QuantaPlugin> it(plugins);
+  for(;it.current() != 0;++it)
+  {
+       QuantaPlugin *curPlugin = it.current();
+
+       if(curPlugin)
+       {
+         int id = m_pluginMenu->insertItem(curPlugin->pluginName());
+         if(curPlugin->isRunning())
+           m_pluginMenu->setItemChecked(id, TRUE);
+       }
+  }
+}
+
+/** Runs the plugin specified by id */
+void QuantaApp::slotPluginRun(int a_id)
+{ 
+  QString pluginName = m_pluginMenu->text(a_id);
+  if(pluginName.isEmpty() || pluginName == "&Edit" || pluginName == "&Validate")
+    return;
+    
+  if(pluginName != QString::null)
+  {
+    QuantaPlugin *plugin = m_pluginInterface->plugin(pluginName);
+    if(plugin)
+    {
+      if(plugin->type() == "KPart") // special case
+      {
+        /*
+         Currently there's no easy way to determine when a KPart has been closed
+         by the user, so they have to manually stop it by unchecking it in the
+         plugins menu
+        */
+        if(m_pluginMenu->isItemChecked(a_id))
+        {
+          plugin->unload();
+        }
+        else
+        {
+          plugin->load();
+          plugin->run();
+        }
+        m_pluginMenu->setItemChecked(a_id, TRUE);
+        return;
+      }
+      plugin->load();
+      plugin->run();
+    }    
+  }
+}
+
+
+
+void QuantaApp::slotPluginsEdit()
+{
+  QuantaPluginEditor *editor = new QuantaPluginEditor(getView(), "plugin_editor");
+  editor->setPlugins(m_pluginInterface->plugins());
+  editor->setApp(this);
+
+  if(editor->exec())
+  {
+    m_pluginInterface->setPlugins(editor->plugins());
+    m_pluginInterface->writeConfig();
+  }
+}
+
+void QuantaApp::slotPluginsValidate()
+{
+  QDict<QuantaPlugin> plugins = m_pluginInterface->plugins();
+
+  QDictIterator<QuantaPlugin> it(plugins);
+  for(;it.current();++it)
+  {
+    if(!QuantaPlugin::validatePlugin(it.current()))
+    {
+      int answer = KMessageBox::warningYesNo(getView(), "You have plugins installed that aren't currently valid. Do you want to edit the plugins?", "Invalid Plugins");
+      if(answer == KMessageBox::Yes)
+      {
+        slotPluginsEdit();
+      }
+      return;      
+    }
+  }
+  statusBar()->message("All plugins validated successfully.");
+}
+
+

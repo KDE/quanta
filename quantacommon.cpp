@@ -42,7 +42,10 @@ QRegExp scriptEndRx;
 Node *baseNode;
 Parser *parser;
 
+#if 0 // Not needed in our new plugin arch [MB]
 QValueList<QString> pluginsList; //holds the names of available plugins
+#endif
+
 KDirWatch *fileWatcher;
 
 QuantaCommon::QuantaCommon(){
@@ -311,6 +314,7 @@ int QuantaCommon::isBetween(int line, int col, int bLine, int bCol, int eLine, i
 }
 
 
+#if 0 // Redundant in new plugin architecture, use QuantaPluginInterface::pluginAvailable
 /** Read property of QDict<bool> pluginsAvailable. */
 bool QuantaCommon::pluginAvailable(const QString& name)
 {
@@ -322,3 +326,4 @@ bool QuantaCommon::pluginAvailable(const QString& name)
 
   return result;
 }
+#endif
