@@ -39,6 +39,7 @@ AM_CPPFLAGS = -I$(top_srcdir)/quanta/dialogs \
 	-I$(top_srcdir)/quanta/parsers \
 	-I$(top_srcdir)/quanta/parsers/dtd \
 	-I$(top_srcdir)/quanta/parts/preview \
+	-I$(top_srcdir)/quanta/parts/kafka \
 	-I$(top_srcdir)/quanta/messages \
 	-I$(top_srcdir)/lib \
 	-I$(top_srcdir)/lib/compatibility \
