@@ -2,7 +2,7 @@
                           quantacommon.cpp  -  description
                              -------------------
     begin                : Sat Jul 27 2002
-    copyright            : (C) 2002 by Andras Mantia
+    copyright            : (C) 2002, 2003 by Andras Mantia
     email                : amantia@freemail.hu
  ***************************************************************************/
 
@@ -52,6 +52,7 @@ KDirWatch *fileWatcher;
 KProgress *progressBar;
 
 const QString toolbarExtension = ".toolbar.tgz";
+const QRegExp newLineRx("\\n");
 
 QuantaCommon::QuantaCommon(){
 }
@@ -194,22 +195,19 @@ QString QuantaCommon::xmlFromAttributes(AttributeList* attributes)
   for ( uint i = 0; i< attributes->count();i++)
   {
     Attribute *attribute = attributes->at(i);
-    QString name = attribute->name.left(1).upper()+attribute->name.right(attribute->name.length()-1);
-
-    stream << "  <attr name=\"" + attribute->name +"\" type=\""+attribute->type+"\"";
-    if (!attribute->defaultValue.isEmpty())
-            stream  << " defaultValue=\"" + attribute->defaultValue + "\"";
-    if (!attribute->status.isEmpty())
-            stream  << " status=\"" + attribute->status + "\"";
-
-    stream << ">" << endl;
-    stream << "    <text>" << name << "</text>" << endl;
-
-    if (attribute->type != "check")
-    {
-      stream  << "    <textlocation col=\"0\" row=\"" << row << "\" />" << endl;
-    }
-    stream  << "    <location col=\"1\" row=\"" << row << "\" />" << endl;
+    QString name = attribute->name.left(1).upper()+attribute->name.right(attribute->name.length()-1);   
+    stream << "  <attr name=\"" + attribute->name +"\"type=\""+attribute->type+"\"";
+    if (!attribute->defaultValue.isEmpty())        
+        stream  << " defaultValue=\"" + attribute->defaultValue + "\"";    
+    if (!attribute->status.isEmpty()) 
+        stream  << " status=\"" + attribute->status + "\"";    
+        stream << ">" << endl;
+        stream << "    <text>" << name << "</text>" << endl;    
+        if (attribute->type != "check")    
+        {      
+          stream  << "    <textlocation col=\"0\" row=\"" << row << "\" />" << endl;    
+        }
+        stream  << "    <location col=\"1\" row=\"" << row << "\" />" << endl;
 
     if (attribute->type == "list")
     {
@@ -229,29 +227,29 @@ QString QuantaCommon::xmlFromAttributes(AttributeList* attributes)
 }
 
 /** Returns list of values for attribute */
-QStringList* QuantaCommon::tagAttributeValues(QString dtdName, QString tag, QString attribute)
-{
+QStringList* QuantaCommon::tagAttributeValues(QString dtdName, QString tag, 
+QString attribute){
   QStringList *values = 0L;
   
   DTDStruct* dtd = dtds->find(dtdName.lower());
   if (dtd)
   {
-    QString searchForAttr = (dtd->caseSensitive) ? attribute : attribute.upper();
-    AttributeList* attrs = tagAttributes(dtdName, tag);
+    QString searchForAttr = (dtd->caseSensitive) ? attribute : 
+attribute.upper();    AttributeList* attrs = tagAttributes(dtdName, tag);
     Attribute *attr;
     if (attrs)
     {
       for ( attr = attrs->first(); attr; attr = attrs->next() )
       {
-        QString attrName = (dtd->caseSensitive) ? attr->name : attr->name.upper();
-        if (attrName == searchForAttr)
+        QString attrName = (dtd->caseSensitive) ? attr->name : 
+attr->name.upper();        if (attrName == searchForAttr)
         {
           if (attr->type == "url") {
             Project *project = quantaApp->getProject();
             if (project->hasProject()) {
-              values = new QStringList(project->fileNameList(true).toStringList());
-              values->append("mailto:" + project->email);
-            } else {
+              values = new 
+QStringList(project->fileNameList(true).toStringList());              
+values->append("mailto:" + project->email);            } else {
               QDir dir = QDir(quantaApp->getDoc()->write()->url().directory());
               values = new QStringList(dir.entryList());
             }
@@ -302,10 +300,10 @@ QString QuantaCommon::getDTDNickNameFromName(QString name)
   return nickName;
 }
 
-  /** Returns 0 if the (line,col) is inside the area specified by the other arguments,
-      -1 if it is before the area and 1 if it is after. */
-int QuantaCommon::isBetween(int line, int col, int bLine, int bCol, int eLine, int eCol)
-{
+  /** Returns 0 if the (line,col) is inside the area specified by the other 
+arguments,      -1 if it is before the area and 1 if it is after. */
+int QuantaCommon::isBetween(int line, int col, int bLine, int bCol, int eLine, 
+int eCol){
   int pos = 0;
   if (line < bLine || (line == bLine && (col < bCol) )) pos = -1; //it is before
   if (line > eLine || (line == eLine && (col > eCol) )) pos = 1;  //it is after
@@ -313,9 +311,9 @@ int QuantaCommon::isBetween(int line, int col, int bLine, int bCol, int eLine, i
  return pos;
 }
 
-/** Returns a pointer to a KStandardDirs object usable for plugin searchup. type is the plugin binary type (exe or lib). The returned 
-pointer must be deleted by the caller!! */
-KStandardDirs* QuantaCommon::pluginDirs(const char *type)
+/** Returns a pointer to a KStandardDirs object usable for plugin searchup. type 
+is the plugin binary type (exe or lib). The returned pointer must be deleted by 
+the caller!! */KStandardDirs* QuantaCommon::pluginDirs(const char *type)
 {
  KStandardDirs *dirs = new KStandardDirs();
  dirs->addKDEDefaults();
@@ -351,8 +349,10 @@ bool QuantaCommon::checkMimeType(const KURL& url, const QString& type)
  bool status = false;
  QString mimetype = KMimeType::findByURL(url)->name();
  mimetype = mimetype.section('/',-1);
- if (mimetype == type) status = true;
-
+ if (mimetype == type)
+ {
+   status = true;
+ } 
  return status;
 }
 
@@ -388,9 +388,9 @@ QString QuantaCommon::qUrl(const KURL &url)
 /** No descriptions */
 void QuantaCommon::dirCreationError(QWidget *widget, const KURL& url)
 {
-  KMessageBox::error(widget, i18n("Can't create directory \n\"%1\".\nCheck that you have write permission in the parent directory orthat the connection to\n\"%2\"\n is valid!")
-                           .arg(url.prettyURL())
-                           .arg(url.protocol()+"://"+url.user()+"@"+url.host()));
+  KMessageBox::error(widget, i18n("Can't create directory \n\"%1\".\nCheck that you have write permission in the parent directory orthat the connection to\n\"%2\"\n is valid!")                           
+                             .arg(url.prettyURL())
+                             .arg(url.protocol()+"://"+url.user()+"@"+url.host()));
 }
 
 /** Returns the translated a_str in English. A "back-translation" useful e.g in case of CSS elements selected from a listbox. */
@@ -414,15 +414,18 @@ QString QuantaCommon::i18n2normal(const QString& a_str)
                              "none",    "pre",     "nowrap",    "disc",       "circle",
                              "square",  "decimal", "lower-roman","upper-roman","lower-alpha",
                              "upper-alpha","inside","outside",  "auto",        "both" };
-  QString str = a_str;                             
-  for (int i = 0; i < keywordNum; i++)
+  QString str = a_str;
+  if (!a_str.isEmpty())
   {
-    if (a_str == i18n(keywords[i]))
+    for (int i = 0; i < keywordNum; i++)
     {
-      str = keywords[i];
-      break;
+      if (a_str == i18n(keywords[i]))
+      {
+        str = keywords[i];
+        break;
+      }
     }
-  }  
-
-  return str;  
+  }
+  return str;
 }
+

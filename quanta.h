@@ -154,8 +154,11 @@ public:
   QString defaultEncoding();
   /** Returns the project (if there is one loaded) or global new file type. */
   QString newFileType();
-  /** No descriptions */
+  
+  /** Returns the interface number for the currently active editor. */
   int currentEditorIfNum() const;
+  /** Return the URL of the currently active document */
+  QString currentURL() const;
 
 public slots:
 
