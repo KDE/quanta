@@ -1,5 +1,5 @@
 [General]
-Name = HTML 4.0
+Name = -//W3C//DTD HTML 4.0//EN
 Groups = Core, I18n, Script
 NumOfPages = 2
 QuotedAttributes=src,href,color,bgcolor,background,text,link,vlink,alink,rows,cols,name,type,title,face
