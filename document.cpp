@@ -248,6 +248,47 @@ Tag *Document::findScriptText(int line, int col, const QRegExp& keywordRx)
     s = tagStr.stripWhiteSpace();
     if (!s.isEmpty() && s != " ")
     {
+/*    
+      s = find(QRegExp("(include|require)[\\s]+[^;]*(;|\\?>)"),bLine, bCol, bl, bc, el, ec);   
+      if (!s.isEmpty() && QuantaCommon::isBetween(bl, bc, bLine, bCol, eLine, eCol) == 0)
+      {
+        if (bLine == bl && bCol == bc)
+        {
+          eLine = el;
+          eCol = ec;
+        } else
+        {
+          eLine = bl;
+          eCol = bc-1;
+        }
+        if (s.endsWith("?>"))
+        {
+          eCol = eCol - 2;
+        }
+        if (eCol < 0)
+        {
+          eLine = (eLine >0)?eLine-1:0;
+          eCol = editIf->lineLength(eLine);
+        }        
+        tagStr = text(bLine, bCol, eLine, eCol);
+      }
+      s = tagStr.stripWhiteSpace();
+      if (!s.isEmpty() && s != " ")
+      {
+        tag = new Tag();
+        tag->setTagPosition(bLine, bCol, eLine, eCol);
+        tag->type = Tag::Text;
+        tag->name = "Text";
+        tag->single = true;
+        tag->setWrite(this);
+        tag->setStr(tagStr);
+      } else
+      {
+        tag = new Tag();
+        tag->setTagPosition(bLine, bCol, eLine, eCol);
+        tag->type = Tag::Skip;
+      }
+    */
       tag = new Tag();
       tag->setTagPosition(bLine, bCol, eLine, eCol);
       tag->type = Tag::Text;
@@ -285,6 +326,11 @@ Tag *Document::findStruct(int line, int col, const QRegExp& keywordRx)
     {
       bLine = bl;
       bCol = bc;
+    }
+    
+    if (s == "include" || s == "require")
+    {      
+      s = find(QRegExp(";"), bLine, bCol, bl, bc, eLine, eCol);
     }
 
     if (QuantaCommon::isBetween(line, col, bLine, bCol, eLine, eCol) == 0)

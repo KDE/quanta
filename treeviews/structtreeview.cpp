@@ -176,9 +176,19 @@ void StructTreeView::createList(Node *node, StructTreeTag *parent, int openLevel
       if ( currentNode->tag->type == Tag::Text )
       {
         QString text = currentNode->tag->tagStr();
-        text = text.left(70);
-        text.replace( QRegExp("&nbsp;|\\n")," ");
-        item = new StructTreeTag(parent,currentNode,text);
+        QRegExp inclRx = QRegExp("(include|require)[\\s]+[^;]*(;|\\?>)");
+        if (inclRx.search(text) != -1)
+        {
+          text = inclRx.cap(0);
+          text = text.left(text.find(QRegExp("\\n|\\?>")));
+          item = new StructTreeTag( links, currentNode, text);
+          linksCount++;
+        } else
+        {
+          text = text.left(70).stripWhiteSpace();
+          text.replace( QRegExp("&nbsp;|\\n")," ");
+          item = new StructTreeTag(parent,currentNode,text);
+        }
 
       }
       if ( currentNode->tag->type == Tag::Comment )
@@ -192,7 +202,7 @@ void StructTreeView::createList(Node *node, StructTreeTag *parent, int openLevel
         text.replace(QRegExp("*/"),"");
         text.replace(QRegExp("^//"),"");
         text.replace(QRegExp("^#"),"");
-        item->setText(0, text);
+        item->setText(0, text.stripWhiteSpace());
       }
       if ( currentNode->tag->type == Tag::CSS )
       {
@@ -201,7 +211,7 @@ void StructTreeView::createList(Node *node, StructTreeTag *parent, int openLevel
         text.replace( QRegExp("&nbsp;|\\n")," ");
         text.replace(QRegExp("<!--"),"");
         text.replace(QRegExp("-->"),"");
-        item->setText(0, text);
+        item->setText(0, text.stripWhiteSpace());
       }
       if ( currentNode->tag->type == Tag::ScriptStructureBegin )
       {
@@ -210,7 +220,7 @@ void StructTreeView::createList(Node *node, StructTreeTag *parent, int openLevel
         if (text.contains(fnRx))
         {
           text.replace(fnRx,"");
-          item = new StructTreeTag( links, currentNode, text);
+          item = new StructTreeTag( links, currentNode, text.stripWhiteSpace());
           linksCount++;
         }
         item = new StructTreeTag(parent,currentNode,currentNode->tag->name);
