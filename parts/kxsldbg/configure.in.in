@@ -125,6 +125,11 @@ dnl
 dnl Do we have we fix for included xml files
 dnl
 
+save_LDFLAGS="$LDFLAGS"
+save_CFLAGS="$CFLAGS"
+LDFLAGS="$LDFLAGS $LIBXML_LIBS"
+CFLAGS="$CFLAGS $LIBXML_CFLAGS"
+
 AC_CHECK_LIB(xml2, xmlSetEntityReferenceFunc,
   [AC_DEFINE(HAVE_INCLUDE_FIX)],
   [AC_MSG_RESULT(
@@ -135,6 +140,8 @@ AC_CHECK_LIB(xml2, xmlSetEntityReferenceFunc,
   See also --enable-includefix)
   RUNTEST10="false"
   ])
+LDFLAGS="$save_LDFLAGS"
+CFLAGS="$save_CFLAGS" 
 
 AC_ARG_ENABLE(includefix, [  --enable-includefix   Do you want to force the use of include fix (no)],
   [if test "x${enableval}" = "xyes"
