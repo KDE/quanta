@@ -196,17 +196,17 @@ QString QuantaCommon::xmlFromAttributes(AttributeList* attributes)
   for ( uint i = 0; i< attributes->count();i++)
   {
     Attribute *attribute = attributes->at(i);
-    QString name = attribute->name.left(1).upper()+attribute->name.right(attribute->name.length()-1);   
+    QString name = attribute->name.left(1).upper()+attribute->name.right(attribute->name.length()-1);
     stream << "  <attr name=\"" + attribute->name +"\"type=\""+attribute->type+"\"";
     if (!attribute->defaultValue.isEmpty())
-        stream  << " defaultValue=\"" + attribute->defaultValue + "\"";    
-    if (!attribute->status.isEmpty()) 
-        stream  << " status=\"" + attribute->status + "\"";    
+        stream  << " defaultValue=\"" + attribute->defaultValue + "\"";
+    if (!attribute->status.isEmpty())
+        stream  << " status=\"" + attribute->status + "\"";
         stream << ">" << endl;
-        stream << "    <text>" << name << "</text>" << endl;    
-        if (attribute->type != "check")    
-        {      
-          stream  << "    <textlocation col=\"0\" row=\"" << row << "\" />" << endl;    
+        stream << "    <text>" << name << "</text>" << endl;
+        if (attribute->type != "check")
+        {
+          stream  << "    <textlocation col=\"0\" row=\"" << row << "\" />" << endl;
         }
         stream  << "    <location col=\"1\" row=\"" << row << "\" />" << endl;
 
@@ -261,7 +261,7 @@ QString QuantaCommon::getDTDNickNameFromName(const QString& name)
   return nickName;
 }
 
-  /** Returns 0 if the (line,col) is inside the area specified by the other 
+  /** Returns 0 if the (line,col) is inside the area specified by the other
 arguments,      -1 if it is before the area and 1 if it is after. */
 int QuantaCommon::isBetween(int line, int col, int bLine, int bCol, int eLine,
 int eCol){
@@ -272,8 +272,8 @@ int eCol){
  return pos;
 }
 
-/** Returns a pointer to a KStandardDirs object usable for plugin searchup. type 
-is the plugin binary type (exe or lib). The returned pointer must be deleted by 
+/** Returns a pointer to a KStandardDirs object usable for plugin searchup. type
+is the plugin binary type (exe or lib). The returned pointer must be deleted by
 the caller!! */
 KStandardDirs* QuantaCommon::pluginDirs(const char *type)
 {
@@ -295,7 +295,7 @@ bool QuantaCommon::checkMimeGroup(const KURL& url, const QString& group)
  mimetype = mimetype.section('/',-1);
  for ( it = list.begin(); it != list.end(); ++it )
  {
-    if ( ((*it)->name().contains(group)) && ((*it)->name().find(mimetype) != -1) 
+    if ( ((*it)->name().contains(group)) && ((*it)->name().find(mimetype) != -1)
 )    {
       status = true;
       break;
@@ -362,7 +362,7 @@ QString QuantaCommon::qUrl(const KURL &url)
 /** No descriptions */
 void QuantaCommon::dirCreationError(QWidget *widget, const KURL& url)
 {
-  KMessageBox::error(widget, i18n("Can't create directory \n\"%1\".\nCheck that you have write permission in the parent directory or that the connection to\n\"%2\"\n is valid!")                           
+  KMessageBox::error(widget, i18n("Can't create directory \n\"%1\".\nCheck that you have write permission in the parent directory or that the connection to\n\"%2\"\n is valid!")
                              .arg(url.prettyURL())
                              .arg(url.protocol()+"://"+url.user()+"@"+url.host()));}
 
@@ -382,13 +382,13 @@ QString QuantaCommon::makeRxCompatible(const QString& s)
                          QString("\\."),
                          QString("\\^"),
                          QString("\\$")};
-  QString str = s;                     
+  QString str = s;
   for (uint i = 0; i < max - 1; i++)
   {
     str.replace(rxs[i], strs[i]);
   }
-  
-  return str; 
+
+  return str;
 }
 
 /** Returns the translated a_str in English. A "back-translation" useful e.g in case of CSS elements selected from a listbox. */
@@ -442,7 +442,8 @@ Format QuantaCommon::findFormatByFileContent( const QString &fileName )
   QVariant v = mime->property("X-KDE-text");
   if (v.isValid())
      result.text = v.toBool();
-
+  if (mime->name().startsWith("inode/"))
+     return result;
   QFile f(fileName);
   if (f.open(IO_ReadOnly))
   {

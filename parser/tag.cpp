@@ -148,18 +148,32 @@ void Tag::parse(const QString &p_tagStr, Document *p_write)
  m_nameLine = beginLine;
  m_nameCol = beginCol;
  int line = beginLine;
- int col = beginCol + 1;
+ int col = beginCol;
+ if ( ( beginLine == endLine && col < endCol) ||
+      ( beginLine != endLine) )
+     col++;
  int begin;
 
  QString textLine = m_write->editIf->textLine(line);
 
- while (  textLine[col].isSpace() && !textLine[col].isNull())
+ while ( (textLine[col].isSpace() || textLine[col] == '>') &&
+         !textLine[col].isNull() &&
+         ( ( beginLine == endLine && col < endCol) ||
+           ( beginLine != endLine) )
+       )
+ {
    col++;
-
- begin = col++;
+ }
+ begin = col;
+ if ( ( beginLine == endLine && col < endCol) ||
+      ( beginLine != endLine) )
+     col++;
  while ( !textLine[col].isSpace() &&
           textLine[col] != '>' &&
-         !textLine[col].isNull())
+         !textLine[col].isNull() &&
+         ( ( beginLine == endLine && col < endCol) ||
+           ( beginLine != endLine) )
+       )
  {
    col++;
  }

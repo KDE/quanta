@@ -439,6 +439,8 @@ QString Document::getTagNameAt(int line, int col )
    uint el, ec;
    node->tag->beginPos(bl, bc);
    viewCursorIf->cursorPositionReal(&el, &ec);
+   ec--;
+   tag->setTagPosition(bl, bc, el, ec);
    tag->parse(text(bl,bc,el,ec), this);
 
    name = tag->name;
