@@ -36,7 +36,7 @@
     <Action name="edit_cut" />
     <Action name="edit_copy" />
     <Action name="edit_paste" />
-    <Menu name="paste_special" append="edit_paste_merge"><text>Paste Specia&amp;l</text>
+    <Menu name="paste_special" append="edit_paste_merge"><text>Paste Special</text>
          <Action name="edit_paste_html_quoted"/>
          <Action name="edit_paste_url_encoded"/>
       </Menu>
@@ -66,7 +66,7 @@
   </Menu>
 
     <Menu name="view"><text>&amp;View</text>
-      <Menu name="treeviews"><text>&amp;Tree Views</text>
+      <Menu name="treeviews"><text>Tree Views</text>
          <Action name="show_ftab_tree"/>
          <Action name="show_ptab_tree"/>
          <Action name="show_ttab_tree"/>

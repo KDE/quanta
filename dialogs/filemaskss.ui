@@ -204,7 +204,7 @@
                 <cstring>warnBinaryOpening</cstring>
             </property>
             <property name="text">
-                <string>Warn about opening binary/unknown files</string>
+                <string>&amp;Warn about opening binary/unknown files</string>
             </property>
         </widget>
         <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
@@ -212,7 +212,7 @@
                 <cstring>showDTDSelectDialog</cstring>
             </property>
             <property name="text">
-                <string>Show the DTD selection dialog when loading files with unknown DTD</string>
+                <string>&amp;Show the DTD selection dialog when loading files with unknown DTD</string>
             </property>
         </widget>
         <widget class="QCheckBox" row="5" column="0" rowspan="1" colspan="2">
@@ -220,7 +220,7 @@
                 <cstring>showSplash</cstring>
             </property>
             <property name="text">
-                <string>Show splashscreen on startup</string>
+                <string>S&amp;how splashscreen on startup</string>
             </property>
         </widget>
         <spacer row="8" column="0">
@@ -285,7 +285,7 @@
                 <cstring>showCloseButton</cstring>
             </property>
             <property name="text">
-                <string>Show close button on the tabs</string>
+                <string>Show close &amp;button on the tabs</string>
             </property>
         </widget>
     </grid>

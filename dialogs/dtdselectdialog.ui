@@ -83,7 +83,7 @@ Dialog message2:</string>
                 <cstring>convertDTD</cstring>
             </property>
             <property name="text">
-                <string>&amp;Convert the document to the selected DTD</string>
+                <string>Conver&amp;t the document to the selected DTD</string>
             </property>
         </widget>
         <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="2">

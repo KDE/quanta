@@ -222,7 +222,7 @@
                 <cstring>buttonInvert</cstring>
             </property>
             <property name="text">
-                <string>I&amp;nvert</string>
+                <string>&amp;Invert</string>
             </property>
         </widget>
         <widget class="QLabel" row="3" column="7">

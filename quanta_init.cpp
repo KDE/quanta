@@ -1665,9 +1665,9 @@ void QuantaApp::initActions()
 
     KStdAction::selectAll(m_view, SLOT(slotSelectAll()), ac);
     KStdAction::deselect(m_view, SLOT(slotDeselectAll()), ac);
-    (void) new KAction( i18n( "&Toggle Block Selection" ), Key_F4, m_view,
+    (void) new KAction( i18n( "Toggle &Block Selection" ), Key_F4, m_view,
                         SLOT( toggleVertical() ), ac, "set_verticalSelect" );
-    new KAction(i18n("Toggle &Insert"), Key_Insert, m_view, SLOT(toggleInsert()), ac, "set_insert" );
+    new KAction(i18n("Toggle Insert"), Key_Insert, m_view, SLOT(toggleInsert()), ac, "set_insert" );
 
 
     KStdAction::find(this, SLOT(slotFind()), ac);
@@ -1677,9 +1677,9 @@ void QuantaApp::initActions()
 
     new KAction(i18n("&Indent"), "indent", CTRL+Key_I, m_view,
                 SLOT(slotIndent()), ac, "edit_indent");
-    new KAction(i18n("&Unindent"), "unindent", CTRL+SHIFT+Key_I, m_view,
+    new KAction(i18n("Unindent"), "unindent", CTRL+SHIFT+Key_I, m_view,
                 SLOT(slotUnIndent()), ac, "edit_unindent");
-    new KAction(i18n("&Clean Indentation"), "cleanindent", 0, m_view,
+    new KAction(i18n("Cl&ean Indentation"), "cleanindent", 0, m_view,
                 SLOT(slotCleanIndent()), ac, "edit_cleanindent");
 
     new KAction(i18n("Co&mment"),  CTRL+Qt::Key_NumberSign,
@@ -1687,7 +1687,7 @@ void QuantaApp::initActions()
     new KAction(i18n("Unc&omment"),
                 CTRL+SHIFT+Qt::Key_NumberSign, m_view, SLOT(slotUnComment()),
                 ac, "edit_uncomment");
-    new KAction(i18n("Apply Word Wrap"), "", 0, m_view, SLOT(slotApplyWordWrap()),
+    new KAction(i18n("Apply &Word Wrap"), "", 0, m_view, SLOT(slotApplyWordWrap()),
                 ac, "edit_apply_wordwrap");
 
 
@@ -1699,7 +1699,7 @@ void QuantaApp::initActions()
 //Bookmarks
     bookmarkToggle = new KAction(i18n("Toggle &Bookmark"), Qt::CTRL+Qt::Key_B,
           m_view, SLOT(toggleBookmark()), ac, "bookmarks_toggle");
-    bookmarkClear = new KAction(i18n("Clear Bookmarks"), 0, m_view,
+    bookmarkClear = new KAction(i18n("&Clear Bookmarks"), 0, m_view,
           SLOT(clearBookmarks()), ac, "bookmarks_clear");
 
 //Settings
@@ -1721,7 +1721,7 @@ void QuantaApp::initActions()
                       m_view, SLOT( slotEditorOptions() ), ac, "editor_options" );
 
 
-    setEndOfLine = new KSelectAction(i18n("&End of Line"), 0, ac,"set_eol");
+    setEndOfLine = new KSelectAction(i18n("End of &Line"), 0, ac,"set_eol");
     connect(setEndOfLine, SIGNAL(activated(int)), m_view, SLOT(setEol(int)));
     connect(setEndOfLine->popupMenu(), SIGNAL(aboutToShow()), this, SLOT(setEOLMenuAboutToShow()));
 
@@ -1804,7 +1804,7 @@ void QuantaApp::initActions()
 
     // Tool actions
 
-    (void) new KAction( i18n( "&Context Help..." ), CTRL+Key_H,
+    (void) new KAction( i18n( "Context &Help..." ), CTRL+Key_H,
                         this, SLOT( slotContextHelp() ),
                         ac, "context_help" );
 
@@ -1824,7 +1824,7 @@ void QuantaApp::initActions()
                         m_doc, SLOT( slotAttribPopup() ),
                         ac, "tag_attributes" );
 
-    (void) new KAction( i18n( "&Change The DTD..." ), 0,
+    (void) new KAction( i18n( "&Change the DTD..." ), 0,
                         this, SLOT( slotChangeDTD() ),
                         ac, "change_dtd" );
 
@@ -1841,12 +1841,12 @@ void QuantaApp::initActions()
                         ac, "send_dtep" );
 
 #ifdef BUILD_KAFKAPART
-    (void) new KAction( i18n( "Document Properties" ), 0,
+    (void) new KAction( i18n( "&Document Properties" ), 0,
                         this, SLOT( slotDocumentProperties() ),
                         ac, "tools_document_properties" );
 #endif
 
-    (void) new KAction( i18n( "Convert Tag And Attribute Case..."), 0,
+    (void) new KAction( i18n( "&Convert Tag and Attribute Case..."), 0,
                         this, SLOT(slotConvertCase()),
                         ac, "tools_change_case");
 
@@ -1905,7 +1905,7 @@ void QuantaApp::initActions()
      showKafkaAction->setExclusiveGroup("view");
 
      ta =
-      new KToggleAction( i18n("V&PL && Source Editors"), "show_kafka_and_quanta", Key_F9,
+      new KToggleAction( i18n("VPL && So&urce Editors"), "show_kafka_and_quanta", Key_F9,
                          m_view, SLOT( slotShowKafkaAndQuanta() ),
                           ac, "show_kafka_and_quanta");
      ta->setExclusiveGroup("view");
@@ -1930,10 +1930,10 @@ void QuantaApp::initActions()
                         this, SLOT( slotViewRepaint() ),
                         ac, "reload" );
 
-    (void) new KAction( i18n( "View with Net&scape" ), "netscape", CTRL+ALT+Key_F6,
+    (void) new KAction( i18n( "View with &Net&cape" ), "netscape", CTRL+ALT+Key_F6,
                         m_view, SLOT( slotViewInNetscape() ),
                         ac, "view_with_netscape" );
-    (void) new KAction( i18n( "View with &Mozilla" ), "mozilla", ALT+Key_F6,
+    (void) new KAction( i18n( "View with Mo&zilla" ), "mozilla", ALT+Key_F6,
                         m_view, SLOT( slotViewInMozilla() ),
                         ac, "view_with_mozilla" );
     (void) new KAction( i18n( "View with &Opera" ), "opera", CTRL+SHIFT+Key_F6,
@@ -1966,7 +1966,7 @@ void QuantaApp::initActions()
                         m_project, SLOT( slotOpenProject() ),
                         ac, "project_open" );
 #if KDE_VERSION < KDE_MAKE_VERSION(3,1,92)
-    m_project -> projectRecent = new KQRecentFilesAction(i18n("Open Recent Project"),
+    m_project -> projectRecent = new KQRecentFilesAction(i18n("Op&en Recent Project"),
                                  "folder_new", 0,
                                   m_project, SLOT(slotOpenProject(const KURL&)),
                                   ac, "project_open_recent");
@@ -1987,17 +1987,17 @@ void QuantaApp::initActions()
                          ac, "project_close" );
 
 
-    openPrjViewAction = new KAction( i18n( "Open Project View..." ), 0,
+    openPrjViewAction = new KAction( i18n( "Open Project &View..." ), 0,
                         m_project, SLOT( slotOpenProjectView() ),
                         ac, "project_view_open" );
 
-    savePrjViewAction = new KAction( i18n( "Save Project View" ), 0,
+    savePrjViewAction = new KAction( i18n( "&Save Project View" ), 0,
                         m_project, SLOT( slotSaveProjectView() ),
                         ac, "project_view_save" );
-    saveAsPrjViewAction = new KAction( i18n( "Save Project View As..." ), 0,
+    saveAsPrjViewAction = new KAction( i18n( "Save Project View &As..." ), 0,
                         m_project, SLOT( slotSaveAsProjectView() ),
                         ac, "project_view_save_as" );
-    deletePrjViewAction = new KAction( i18n( "Delete Project View..." ), 0,
+    deletePrjViewAction = new KAction( i18n( "&Delete Project View..." ), 0,
                         m_project, SLOT( slotDeleteProjectView() ),
                         ac, "project_view_delete" );
 
@@ -2007,7 +2007,7 @@ void QuantaApp::initActions()
                         m_project, SLOT( slotAddFiles() ),
                         ac, "project_insert_file" );
 
-    insertDirAction = new KAction( i18n( "&Insert Directory..." ), 0,
+    insertDirAction = new KAction( i18n( "Insert &Directory..." ), 0,
                         m_project, SLOT( slotAddDirectory() ),
                         ac, "project_insert_directory" );
 

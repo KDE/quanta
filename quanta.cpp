@@ -162,7 +162,7 @@ void QuantaApp::slotFileNew()
 {
   m_doc->openDocument( KURL() );
   if (!setHighlight)
-     setHighlight = m_view->write()->kate_doc->hlActionMenu (i18n("&Highlight Mode"), actionCollection(), "set_highlight");
+     setHighlight = m_view->write()->kate_doc->hlActionMenu (i18n("Highlight &Mode"), actionCollection(), "set_highlight");
 }
 
 void QuantaApp::slotFileOpen()

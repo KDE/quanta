@@ -10,7 +10,7 @@ Type=KPart
 Input=3
 
 [General]
-Plugins=KFileReplace, CVS Management (Cervisia),XSLT debugger
+Plugins=KFileReplace, CVS Management (Cervisia),XSLT Debugger
 SearchPaths=
 
 [KFileReplace]
@@ -24,7 +24,7 @@ ReadOnly=true
 Standard=false
 Type=KPart
 
-[XSLT debugger]
+[XSLT Debugger]
 Arguments=
 FileName=kde3/libkxsldbgpart.la
 Icon=xsltproc.png
