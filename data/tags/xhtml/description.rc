@@ -2,6 +2,7 @@
 Name = -//W3C//DTD XHTML 1.0 Transitional//EN
 NickName = XHTML 1.0 Transitional
 URL = http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd
+DoctypeString = HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"
 DefaultExtension = xhtml
 Groups = Core, I18n, Script, Focus
 NumOfPages = 3

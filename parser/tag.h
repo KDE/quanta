@@ -20,6 +20,7 @@
 
 #include <qstring.h>
 #include <qdict.h>
+#include "qtag.h"
 
 /**
   This is the a tag inside the document. It contains only the attributes and values as
@@ -106,7 +107,7 @@ public:
 	bool single; // tags like <tag />
   bool closingMissing; //closing tag is optional and missing
   int attrCount;
-  QString parsingDTDName;
+  DTDStruct* dtd; //the tag belongs to this DTD
   QString structBeginStr; //if it's a special block, contains the block beginning definition string (like <? or <style language="foo">)
 
 private:

@@ -57,10 +57,10 @@ Useful when parsing for script inside scripts, or inside the quoted attribute
 values of the xml tags. 
  Returns: true if a script area is found, false if the parsed text does not
 contain any scripts. */
-bool Parser::scriptParser(Node *startNode, DTDStruct *dtd)
+bool Parser::scriptParser(Node *startNode)
 {
   bool found = false;
-
+  DTDStruct *dtd = startNode->tag->dtd;
   if (dtd->specialAreas.count())
   {
     QString foundText;
@@ -119,8 +119,11 @@ bool Parser::scriptParser(Node *startNode, DTDStruct *dtd)
           tag->setStr(s);
           tag->setTagPosition(bl, bc, el, ec);
           tag->single = true;
-          tag->parsingDTDName = dtd->specialAreaNames[foundText];
-          tag->name = i18n("%1 block").arg(tag->parsingDTDName.upper());
+          tag->dtd = dtds->find(dtd->specialAreaNames[foundText]);
+          if (!tag->dtd)
+              tag->dtd = m_dtd;  //fallback
+
+          tag->name = i18n("%1 block").arg(dtd->specialAreaNames[foundText].upper());
           tag->structBeginStr = foundText;
           Node *node = new Node(startNode);
           node->tag = tag;
@@ -137,7 +140,7 @@ bool Parser::scriptParser(Node *startNode, DTDStruct *dtd)
           currentNode = node;
           found = true;
 
-          parseInside(node);
+          specialAreaParser(node);
 
           col = pos2 + 1;
         } else
@@ -148,7 +151,10 @@ bool Parser::scriptParser(Node *startNode, DTDStruct *dtd)
   return found;
 }
 
-Node *Parser::newParse(Document *w)
+
+/** Parse the whole text from Document w and build the internal structure tree
+    from Nodes */
+Node *Parser::parse(Document *w)
 {
   QTime t;
   t.start();
@@ -171,8 +177,14 @@ Node *Parser::newParse(Document *w)
   Node *currentNode = 0L;
   Tag *tag;
   textLine = w->editIf->textLine(line);
+  int count = 1;
   while (line < maxLine)
   {
+    if (t.elapsed() > 20*count)
+    {
+      kapp->processEvents();
+      count++;
+    }
     nodeFound = false;
     goUp = false;
     tagStartPos = textLine.find('<', col);
@@ -213,8 +225,10 @@ Node *Parser::newParse(Document *w)
       tag->type = Tag::NeedsParsing;
       tag->setWrite(w);
       tag->single = true;
-      tag->parsingDTDName = m_dtd->specialAreaNames[foundText];
-      tag->name = i18n("%1 block").arg(tag->parsingDTDName.upper());
+      tag->dtd = dtds->find(m_dtd->specialAreaNames[foundText]);
+      if (!tag->dtd)
+           tag->dtd = m_dtd;  //fallback
+      tag->name = i18n("%1 block").arg(m_dtd->specialAreaNames[foundText].upper());
       tag->structBeginStr = foundText;
       
       goUp = (parentNode && parentNode->tag->single);
@@ -246,7 +260,7 @@ Node *Parser::newParse(Document *w)
         if (openNum != 0)
             line++;
       }
-      
+
       col = tagEndCol;
       nodeFound = true;
       //build an xml tag node here
@@ -255,19 +269,20 @@ Node *Parser::newParse(Document *w)
       QString tagStr = w->text(tagStartLine, tagStartPos, tagEndLine, tagEndCol);
       tag->parse(tagStr , w);
       tag->type = Tag::XmlTag;
+      tag->dtd = m_dtd;
       tag->single = QuantaCommon::isSingleTag(m_dtd->name, tag->name);
-      if (tag->name[0] == '/') 
-      { 
+      if (tag->name[0] == '/')
+      {
         tag->type = Tag::XmlTagEnd;
         tag->single = true;
       }
-      if (tagStr.right(2) == "/>") 
+      if (tagStr.right(2) == "/>")
       {
         tag->single = true;
         if (tag->name.endsWith("/"))
             tag->name.truncate(tag->name.length() - 1);
       }
-      
+
       if (m_dtd->specialTags.contains(tag->name.lower()))
       {
         QRegExp endRx;
@@ -288,18 +303,20 @@ Node *Parser::newParse(Document *w)
           tag->setStr(tagStr);
           tag->setWrite(w);
           tag->single = true;
-          tag->parsingDTDName = s;
-          tag->name = i18n("%1 block").arg(tag->parsingDTDName.upper());
+          tag->dtd = dtds->find(s);
+          if (!tag->dtd)
+              tag->dtd = m_dtd;  //fallback
+          tag->name = i18n("%1 block").arg(s);
           tag->structBeginStr = structBeginStr;
           line = tagEndLine;
           col = tagEndCol;
           textLine = w->editIf->textLine(line);
         }
-        
+
       }
-    
+
       goUp = ( parentNode &&
-               ( (tag->type == Tag::XmlTagEnd && 
+               ( (tag->type == Tag::XmlTagEnd &&
                   "/"+parentNode->tag->name.lower() == tag->name.lower() ) ||
                   parentNode->tag->single )
              );
@@ -318,7 +335,7 @@ Node *Parser::newParse(Document *w)
       }
       
     }
-    
+
     col++;
     if (nodeFound)
     {
@@ -341,7 +358,8 @@ Node *Parser::newParse(Document *w)
         textTag->setWrite(w);
         textTag->type = Tag::Text;
         textTag->single = true;
-        
+        textTag->dtd = m_dtd;
+
         if (parentNode && parentNode->tag->single)
         {
           node = new Node(parentNode->parent);
@@ -352,22 +370,22 @@ Node *Parser::newParse(Document *w)
         } else
         {
           node = new Node(parentNode);
-          if (currentNode && currentNode != parentNode) 
+          if (currentNode && currentNode != parentNode)
           {
             currentNode->next = node;
             node->prev = currentNode;
           } else
           {
-            if (parentNode) 
+            if (parentNode)
                 parentNode->child = node;
           }
           if (!textTag->single)
               parentNode = node;
         }
-        
+
         node->tag = textTag;
         currentNode = node;
-        if (!rootNode) 
+        if (!rootNode)
             rootNode = node;
       }
 
@@ -397,21 +415,21 @@ Node *Parser::newParse(Document *w)
       
       if (tag->type == Tag::NeedsParsing)
       {
-        if (tag->parsingDTDName != "comment")
-        {
-          parseInside(node);
-          node->tag->type = Tag::ScriptTag;
-        } else
+        if (tag->name.lower().startsWith("comment"))
         {
           node->tag->type = Tag::Comment;
+        } else
+        {
+          specialAreaParser(node);
+          node->tag->type = Tag::ScriptTag;
         }
-      }       
+      }
       else if (tag->type == Tag::XmlTag)
            {
              //search for scripts inside the XML tag
-             scriptParser(node, m_dtd);
+             scriptParser(node);
            }
-      
+
       currentNode = node;
       if (!rootNode)
           rootNode = node;
@@ -421,21 +439,19 @@ Node *Parser::newParse(Document *w)
       col = 0;
       textLine = w->editIf->textLine(line);
     }
-    
+
   }
-  
+
   m_text = w->editIf->text();
   kdDebug(24000) << "New parser ("<< maxLine << " lines): " << t.elapsed() << " ms\n";
  // coutTree(rootNode, 2);
   return rootNode;
 }
 
-void Parser::parseInside(Node *startNode)
+/** Parses the found special (like script, css and such) areas.*/
+void Parser::specialAreaParser(Node *startNode)
 {
- DTDStruct *dtd = dtds->find(startNode->tag->parsingDTDName);
- if (!dtd) 
-    dtd = m_dtd;  //fallback
-
+ DTDStruct *dtd = startNode->tag->dtd;
  QString str = startNode->tag->tagStr();
  QString tagStr = str;
  QString s, name;
@@ -445,7 +461,7 @@ void Parser::parseInside(Node *startNode)
  /* parse this special node for scripts. If a script is found inside, then
  replace the script area with spaces, so it won't mess up our block searching.
  */
- if (scriptParser(startNode, dtd))
+ if (scriptParser(startNode))
  {
     int col = 0;
     QString specialEndStr;
@@ -509,8 +525,6 @@ void Parser::parseInside(Node *startNode)
     pos += l;
    }
  }
- 
- //kdDebug(24000) << "str: " << str << "\n";
 
   pos = 0;
   int lastPos = startNode->tag->structBeginStr.length();
@@ -525,17 +539,17 @@ void Parser::parseInside(Node *startNode)
   n = startNode->tag->structBeginStr.contains("\n");
   bLine += n;
   bCol += lastPos;
-  if (n > 0)  
+  if (n > 0)
   {
     bCol -= startNode->tag->structBeginStr.findRev("\n");
-  } 
-  
+  }
+
   Tag *tag;
   Node *node;
   Node *currentNode = startNode->child;
   Node *rootNode = startNode;
   bool findStruct; //true if there is a need to search for the structure end
-  
+
   if (currentNode)
   {
     while (currentNode->next)
@@ -557,7 +571,7 @@ void Parser::parseInside(Node *startNode)
         findStruct = false;
       }
       if (startPos == -1 || startPos <= lastPos) 
-          startPos = pos; 
+          startPos = pos;
       //create a Text node from the string between lastPos and pos
       s = tagStr.mid(lastPos, startPos - lastPos);
       eLine = bLine + s.contains('\n');
@@ -578,6 +592,7 @@ void Parser::parseInside(Node *startNode)
         tag->setTagPosition(bLine, bCol, eLine, eCol);
         tag->type = Tag::Text;
         tag->single = true;
+        tag->dtd = dtd;
 
         while ( bLine > el ||               //the beginning of the tag is after the end of the
               (bLine == el && bCol > ec) ) //root, so go up one level
@@ -614,8 +629,8 @@ void Parser::parseInside(Node *startNode)
           pos = dtd->structRx.search(str, lastPos2);
           if (pos != -1)
           {
-            s = dtd->structRx.cap();       
-            if (s == dtd->structBeginStr) 
+            s = dtd->structRx.cap();
+            if (s == dtd->structBeginStr)
             {
               matchNum++;
             } else
@@ -626,7 +641,7 @@ void Parser::parseInside(Node *startNode)
           }
         }
         pos = 0;
-        if (matchNum != 0) 
+        if (matchNum != 0)
             lastPos2 = str.length();
 
         tag = new Tag();
@@ -647,6 +662,7 @@ void Parser::parseInside(Node *startNode)
         tag->setTagPosition(bLine, bCol, eLine, eCol);
         tag->type = Tag::ScriptStructureBegin;
         tag->single = true;
+        tag->dtd = dtd;
 
         bLine += name.contains("\n");
         if ( bLine > el ||                //the beginning of the tag is after the end of the
@@ -654,10 +670,10 @@ void Parser::parseInside(Node *startNode)
         {
           currentNode = rootNode;
           rootNode = rootNode->parent;
-        } 
-        
+        }
+
         node = new Node(rootNode);
-        if (!rootNode->child)            
+        if (!rootNode->child)
         {
           rootNode->child = node;
         } else
@@ -684,34 +700,8 @@ void Parser::parseInside(Node *startNode)
     node = new Node(startNode);
     startNode->child = node;
     node->tag = tag;
+    tag->dtd = dtd;
   }
-}
-
-
-/** Parse the whole text from Document w and build the internal structure tree from Nodes */
-Node *Parser::parse(Document *w)
-{
-  QTime t;
-  t.start();
-
-  write = w;
-  m_dtdName = w->parsingDTD();
-  m_dtd = dtds->find(m_dtdName);
-  if (!m_dtd) m_dtd = dtds->find(qConfig.defaultDocType); //we should set this to projectDTD
-  m_text = w->editIf->text();
-//  if (m_node) delete m_node;
-  int line = 0;
-  int col = 0;
-  maxLines = write->editIf->numLines();
-  m_node = subParse(0L, line, col);
-
-  parse2();
-
-//  coutTree(m_node,0); //debug printout
-  
-  kdDebug(24000) << "Old parser: " << t.elapsed() << " ms\n";
-
-  return m_node;
 }
 
 /** Print the doc structure tree to the standard output.
@@ -731,186 +721,6 @@ void Parser::coutTree(Node *node, int indent)
  }
 }
 
-void Parser::parse2()
-{
-// Node * node = m_node;
-}
-
-/** Recursive parsing algorithm. Actually this does the parsing and tree building. */
-Node * Parser::subParse( Node * parent, int &line, int &col )
-{
-  Node * node = 0L;
-  Node * prevNode = 0L;
-  Node * firstNode = 0L;
-  while (line < maxLines)
-  {
-    Tag *tag = write->tagAt(m_dtd, line, col,true);
-    if (tag)
-    {
-      switch ( tag->type )
-      {
-        case Tag::XmlTag :
-             {
-               if (prevNode && !prevNode->tag->name.startsWith("/"))
-               {
-                 prevNode->tag->closingMissing = true; //prevNode is single...
-               }
-               if ( parent )   // check if this tag stop area of previous
-               {
-                 QTag *qTag = QuantaCommon::tagFromDTD(m_dtd, parent->tag->name);
-                 if ( qTag )
-                 {
-                   QString searchFor = (m_dtd->caseSensitive)?tag->name:tag->name.upper();
-                   if ( qTag->stoppingTags.contains( searchFor ) )
-                   {
-                     parent->tag->closingMissing = true; //parent is single...
-                     col--;
-                     return firstNode;
-                   }
-                 }
-               } //if (parent)
-
-               Node *tnode = new Node( parent );
-               if ( !firstNode ) firstNode = tnode;
-
-               tnode->tag = tag;
-               tnode->next = 0L;
-               if ( prevNode ) prevNode->next = tnode;
-               tnode->prev = prevNode;
-               prevNode = tnode;
-
-               if ( !tag->single && !QuantaCommon::isSingleTag(m_dtdName, tag->name) )  // not single tag
-               {
-                 tag->endPos(line, col);
-                 nextPos(line, col);
-                 tnode->child = subParse( tnode , line, col ); //tag can have other elements inside
-               } else
-               {
-                 tag->endPos(line, col);
-                }
-               if (tnode->next) prevNode = tnode->next;
-               break;
-             } //case XMLTag
-      case Tag::XmlTagEnd:
-             {
-               if (parent)
-               {
-//                 DTDStruct *dtd = dtds->find(m_dtdName);
-                 QString startName = (m_dtd->caseSensitive) ? parent->tag->name: parent->tag->name.upper();
-                 QString endName = (m_dtd->caseSensitive) ? tag->name: tag->name.upper();
-                 if ("/"+startName == endName)
-                 {
-                   Node *tnode = new Node( parent->parent );
-                   tnode->tag = tag;
-                   parent->next = tnode;
-                   tnode->prev = parent;
-                   tag->endPos(line, col);
-                   return firstNode;
-                 }
-               }
-               break;
-             }
-
-      case Tag::Comment:
-      case Tag::Text:
-           {
-             if (parent &&
-                 parent->tag->name.lower() == "style" &&
-                 parent->tag->attributeValue("type").lower() == "text/css")
-             {
-               node = new Node( parent );
-               if ( !firstNode )
-                   firstNode = node;
-               if ( prevNode )
-                   prevNode->next = node;
-               tag->type = Tag::CSS;    
-               node->tag = tag;
-               node->prev = prevNode;
-               node->next = 0L;
-               prevNode = node;
-               tag->endPos(line, col);
-             } else
-             {
-               node = new Node( parent );
-               if ( !firstNode )
-                   firstNode = node;
-               if ( prevNode )
-                   prevNode->next = node;
-               node->tag = tag;
-               node->prev = prevNode;
-               node->next = 0L;
-               prevNode = node;
-               tag->endPos(line, col);
-             }
-             break;
-           }
-      case Tag::ScriptStructureBegin:
-           {
-             node = new Node(parent);
-             if ( !firstNode )
-                 firstNode = node;
-             if ( prevNode )
-                 prevNode->next = node;
-             node->tag = tag;
-             node->prev = prevNode;
-             node->next = 0L;
-             prevNode = node;
-             tag->endPos(line, col);
-             nextPos(line, col);
-             node->child = subParse( node , line, col );
-             if (node->next) prevNode = node->next;
-             break;
-           }
-      case Tag::ScriptStructureEnd:
-           {
-             if (parent)
-             {
-               Node *node = new Node( parent->parent );
-               node->tag = tag;
-               parent->next = node;
-               node->prev = parent;
-               tag->endPos(line, col);
-               return firstNode;
-             }
-             break;
-           }
-      case Tag::Skip:
-           {
-             tag->endPos(line, col);
-             delete tag;
-             break;
-           }
-
-      }
-
-    } //if tag;
-    nextPos(line, col);
-  } // while
-  return firstNode;
-}
-
-/** Delete the internal m_node */
-void Parser::deleteNode()
-{
-  if (m_node)
-  {
-    delete m_node;
-    m_node = 0L;
-  }
-}
-
-/** Go to the next column, or to the next line if we are at the end of line */
-void Parser::nextPos(int &line, int &col)
-{
-  if (col < write->editIf->lineLength(line) - 1)
-  {
-      col++;
-  } else
-  {
-      col = 0;
-      line++;
-  }
-}
 /** Clear the parser internal text, thus forcing the reparsing. */
 void Parser::clear()
 {
@@ -923,7 +733,7 @@ void Parser::rebuildDTDList()
   uint line, col;
   write->viewCursorIf->cursorPositionReal(&line, &col);
   QString start, end;
-  DTDListNode dtdNode;  
+  DTDListNode dtdNode;
   for (uint i = 0; i < dtdList.count(); i++)
   {
     dtdNode = dtdList[i];
@@ -951,11 +761,15 @@ void Parser::rebuildDTDList()
 /** Builds an internal tree to reflect the areas where each real & pseudo dtd is active. */
 void Parser::parseForDTD(Document *w, bool force)
 {
+ QTime t;
+ t.start();
+
  write = w;
  maxLines = write->editIf->numLines();
  if (!force)
  {
    if (oldMaxLines != maxLines) rebuildDTDList();
+   kdDebug(24000) << "Parse for DTD (rebuild; " << maxLines <<" lines): " << t.elapsed() << " ms\n";
    return;
  }
  oldMaxLines = maxLines;
@@ -1079,7 +893,7 @@ void Parser::parseForDTD(Document *w, bool force)
                    for (int i = dtdList.count(); i >=0; i--)
                    {
                      //FIXME: Valgrind says there is an uninitalized variable used here
-                     if (dtdList[i].dtd == dtd && dtdList[i].eLine == -1) 
+                     if (dtdList[i].dtd == dtd && dtdList[i].eLine == -1)
                      {
                        dtdList[i].eLine = line;
                        dtdList[i].eCol = col;
@@ -1104,6 +918,8 @@ void Parser::parseForDTD(Document *w, bool force)
      dtdList[i].eCol = 0;
    }
  }
+
+ kdDebug(24000) << "Parse for DTD (" << maxLines << " lines): " << t.elapsed() << " ms\n";
 }
 
 /** No descriptions */

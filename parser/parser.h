@@ -2,7 +2,7 @@
                           parser.h  -  description
                              -------------------
     begin                : Sun Sep 1 2002
-    copyright            : (C) 2002 by Andras Mantia
+    copyright            : (C) 2002, 2003 by Andras Mantia
     email                : amantia@freemail.hu
  ***************************************************************************/
 
@@ -41,34 +41,40 @@ struct DTDListNode {
   };
 
 class Parser {
-public: 
+public:
 	Parser();
 	~Parser();
-	
+
   /** Searches for scripts inside the text from startNode. It looks only for the
   script begin/and delimiters, and not for the <script> or other special tags.
-  Useful when parsing for script inside scripts, or inside the quoted attribute 
-  values of the xml tags. 
+  Useful when parsing for script inside scripts, or inside the quoted attribute
+  values of the xml tags.
   Returns: true if a script area is found, false if the parsed text does not
   contain any scripts. */
-  bool scriptParser(Node *startNode, DTDStruct *dtd);
-  /** Parse the whole text from Document w and build the internal structure tree from Nodes */  
-	Node *newParse( Document *w);
-  void parseInside(Node *startNode);
+  bool scriptParser(Node *startNode);
+
+  /** Parse the whole text from Document w and build the internal structure tree
+  from Nodes */
 	Node *parse( Document *w);
+
+  /** Parses the found special (like script, css and such) areas.*/
+  void specialAreaParser(Node *startNode);
+
   /** Print the doc structure tree to the standard output.
       Only for debugging purposes. */
   void coutTree(Node *node, int indent);
-  /** Delete the internal m_node */
-  void deleteNode();
+
   /** Clear the parser internal text, thus forcing the reparsing. */
   void clear();
+
   /** Builds an internal tree to reflect the areas where each real & pseudo dtd is active. */
   void parseForDTD(Document *w, bool force = false);
+
   /** No descriptions */
   DTDStruct * currentDTD(int line, int col);
 
 	QString m_text;  //FIXME: having an internal copy of text is absolutely useless
+
 private:
   Node* m_node;       //the internal Node pointer
   QString m_dtdName;  //the DTD name of write
@@ -78,11 +84,6 @@ private:
   int oldMaxLines;
   QValueList<DTDListNode> dtdList;
 
-  /** Recursive parsing algorithm. Actually this does the parsing and tree building. */
-  Node * subParse( Node* parent , int &line, int &col);
-  void parse2();
-  /** Go to the next column, or to the next line if we are at the end of line */
-  void nextPos(int &line, int &col);
   void rebuildDTDList();
 };
 

@@ -26,7 +26,7 @@
 Tag::Tag()
 {
   name = "";
-  parsingDTDName = "";
+  dtd = 0L;
   type = Unknown;
   single = false;
   closingMissing = false;
@@ -38,7 +38,7 @@ Tag::Tag()
 Tag::Tag( const Tag &t)
 {
   name = t.name;
-  parsingDTDName = t.parsingDTDName;
+  dtd = t.dtd;
   single = t.single;
   closingMissing = t.closingMissing;
   beginLine = t.beginLine;

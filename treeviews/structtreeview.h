@@ -3,7 +3,7 @@
                              -------------------
     begin                : Sat Apr 29 2000
     copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky
-                           (C) 2002 Andras Mantia
+                           (C) 2002, 2003 Andras Mantia
     email                : pdima@mail.univ.kiev.ua, amantia@freemail.hu
  ***************************************************************************/
 
@@ -33,6 +33,7 @@ class Parser;
 class QPopupMenu;
 class QuantaApp;
 class KConfig;
+class QTime;
 
 class StructTreeView : public KListView  {
    Q_OBJECT
@@ -92,9 +93,8 @@ signals:
   void parsingDTDChanged(QString);
 
 private:
+  /** builds the structure tree */
   void buildTree(Node *baseNode, int openLevel);
-  /** create items in the level */
-  void createList(Node *node, StructTreeTag *parent = 0L, int openLevel = 3);	
   /** Do the recursive opening or closing of the trees */
   void setOpenSubTree( QListViewItem *it, bool open);
 
@@ -117,6 +117,7 @@ protected: // Protected attributes
   /**  */
   DTDStruct* m_parsingDTD;
   Document *write;
+  QTime timer;
 };
 
 #endif
