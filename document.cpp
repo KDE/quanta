@@ -1111,7 +1111,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeValueCompletions
   return completions;
 }
 
-/** Return a list of chatacter completions (like &nbsp; ...) */
+/** Return a list of character completions (like &nbsp; ...) */
 QValueList<KTextEditor::CompletionEntry>* Document::getCharacterCompletions(const QString& startsWith)
 {
   QValueList<KTextEditor::CompletionEntry> *completions = new QValueList<KTextEditor::CompletionEntry>();

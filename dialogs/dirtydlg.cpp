@@ -55,8 +55,12 @@ void DirtyDlg::slotOKPressed()
    okButton->setEnabled(false);
    cancelButton->setEnabled(false);
  } else
+ if (buttonLoad->isChecked())
  {
     accept();
+ } else
+ {
+     reject();
  }
 }
 

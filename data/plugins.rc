@@ -10,10 +10,10 @@ Type=KPart
 Input=3
 
 [General]
-Plugins=KFileReplace, Kompare,CVS Management (Cervisia)
+Plugins=KFileReplace, kompare,CVS Management (Cervisia)
 SearchPaths=
 
-[Kompare]
+[kompare]
 Arguments=
 FileName=kompare
 Icon=kompare
