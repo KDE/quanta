@@ -120,7 +120,8 @@ void QuantaView::slotFrameWizard()
   //list.pop_back();
   //QStringList structure=QStringList::split("\n",list.first());
 
-  for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it ) {
+  l = QStringList::split('\n',list[0],true);
+  for ( QStringList::Iterator it = l.begin(); it != l.end(); ++it ) {
         qWarning("line %s",(*it).latin1());
     }
   qWarning("%d",list.count());
