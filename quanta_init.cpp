@@ -250,8 +250,8 @@ void QuantaApp::initView()
   fLTab = new FilesListView( QDir::homeDirPath()+"/" , 0L, fTab );
 
   fTab  ->setFocusPolicy(QWidget::NoFocus);
-  fTTab ->setFocusPolicy(QWidget::ClickFocus);
-  fLTab ->setFocusPolicy(QWidget::ClickFocus);
+  fTTab ->setFocusPolicy(QWidget::NoFocus);
+  fLTab ->setFocusPolicy(QWidget::NoFocus);
 
   fTab -> addWidget( fTTab, 0 );
   fTab -> addWidget( fLTab, 1 );
