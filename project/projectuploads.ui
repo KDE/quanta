@@ -1,0 +1,347 @@
+<!DOCTYPE UI><UI>
+<class>ProjectUploadS</class>
+<widget>
+    <class>QDialog</class>
+    <property stdset="1">
+        <name>name</name>
+        <cstring>ProjectUploadS</cstring>
+    </property>
+    <property stdset="1">
+        <name>geometry</name>
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>439</width>
+            <height>458</height>
+        </rect>
+    </property>
+    <property stdset="1">
+        <name>caption</name>
+        <string>Upload project files</string>
+    </property>
+    <property stdset="1">
+        <name>sizeGripEnabled</name>
+        <bool>true</bool>
+    </property>
+    <grid>
+        <property stdset="1">
+            <name>margin</name>
+            <number>11</number>
+        </property>
+        <property stdset="1">
+            <name>spacing</name>
+            <number>6</number>
+        </property>
+        <widget row="3"  column="5" >
+            <class>QPushButton</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>buttonAll</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>All</string>
+            </property>
+        </widget>
+        <widget row="4"  column="5" >
+            <class>QPushButton</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>buttonModified</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Modified</string>
+            </property>
+        </widget>
+        <widget row="5"  column="5" >
+            <class>QPushButton</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>buttonClear</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Clear</string>
+            </property>
+        </widget>
+        <widget row="3"  column="0"  rowspan="6"  colspan="5" >
+            <class>QListView</class>
+            <column>
+                <property>
+                    <name>text</name>
+                    <string>File name</string>
+                </property>
+                <property>
+                    <name>clickable</name>
+                    <bool>true</bool>
+                </property>
+                <property>
+                    <name>resizeable</name>
+                    <bool>true</bool>
+                </property>
+            </column>
+            <column>
+                <property>
+                    <name>text</name>
+                    <string>Date</string>
+                </property>
+                <property>
+                    <name>clickable</name>
+                    <bool>true</bool>
+                </property>
+                <property>
+                    <name>resizeable</name>
+                    <bool>true</bool>
+                </property>
+            </column>
+            <column>
+                <property>
+                    <name>text</name>
+                    <string>Size</string>
+                </property>
+                <property>
+                    <name>clickable</name>
+                    <bool>true</bool>
+                </property>
+                <property>
+                    <name>resizeable</name>
+                    <bool>true</bool>
+                </property>
+            </column>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>list</cstring>
+            </property>
+        </widget>
+        <widget row="8"  column="5" >
+            <class>QPushButton</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>buttonCancel</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Cancel</string>
+            </property>
+            <property stdset="1">
+                <name>autoDefault</name>
+                <bool>true</bool>
+            </property>
+        </widget>
+        <widget row="7"  column="5" >
+            <class>QPushButton</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>buttonUpload</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Upload</string>
+            </property>
+            <property stdset="1">
+                <name>autoDefault</name>
+                <bool>true</bool>
+            </property>
+            <property stdset="1">
+                <name>default</name>
+                <bool>true</bool>
+            </property>
+        </widget>
+        <spacer row="6"  column="5" >
+            <property>
+                <name>name</name>
+                <cstring>Spacer1</cstring>
+            </property>
+            <property stdset="1">
+                <name>orientation</name>
+                <enum>Vertical</enum>
+            </property>
+            <property stdset="1">
+                <name>sizeType</name>
+                <enum>Expanding</enum>
+            </property>
+            <property>
+                <name>sizeHint</name>
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <widget row="11"  column="0"  rowspan="1"  colspan="6" >
+            <class>QProgressBar</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>ProgressBar1</cstring>
+            </property>
+        </widget>
+        <spacer row="9"  column="0"  rowspan="1"  colspan="5" >
+            <property>
+                <name>name</name>
+                <cstring>Spacer3</cstring>
+            </property>
+            <property stdset="1">
+                <name>orientation</name>
+                <enum>Horizontal</enum>
+            </property>
+            <property stdset="1">
+                <name>sizeType</name>
+                <enum>Expanding</enum>
+            </property>
+            <property>
+                <name>sizeHint</name>
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <widget row="1"  column="0" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>TextLabel2_2</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Path</string>
+            </property>
+        </widget>
+        <widget row="0"  column="0" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>TextLabel4</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Host:</string>
+            </property>
+        </widget>
+        <widget row="2"  column="0" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>TextLabel2</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>User</string>
+            </property>
+        </widget>
+        <widget row="10"  column="0"  rowspan="1"  colspan="6" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>labelCurFile</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string></string>
+            </property>
+        </widget>
+        <widget row="2"  column="1" >
+            <class>QLineEdit</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>lineUser</cstring>
+            </property>
+        </widget>
+        <widget row="2"  column="2" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>TextLabel3</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Password</string>
+            </property>
+        </widget>
+        <widget row="2"  column="3"  rowspan="1"  colspan="2" >
+            <class>QLineEdit</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>linePasswd</cstring>
+            </property>
+            <property stdset="1">
+                <name>echoMode</name>
+                <enum>Password</enum>
+            </property>
+        </widget>
+        <widget row="1"  column="1"  rowspan="1"  colspan="4" >
+            <class>QLineEdit</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>linePath</cstring>
+            </property>
+        </widget>
+        <widget row="0"  column="4" >
+            <class>QSpinBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>spinPort</cstring>
+            </property>
+            <property stdset="1">
+                <name>value</name>
+                <number>21</number>
+            </property>
+        </widget>
+        <widget row="0"  column="3" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>TextLabel1_2</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Port:</string>
+            </property>
+        </widget>
+        <widget row="0"  column="1"  rowspan="1"  colspan="2" >
+            <class>QLineEdit</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>lineHost</cstring>
+            </property>
+        </widget>
+    </grid>
+</widget>
+<connections>
+    <connection>
+        <sender>buttonCancel</sender>
+        <signal>clicked()</signal>
+        <receiver>ProjectUploadS</receiver>
+        <slot>reject()</slot>
+    </connection>
+    <connection>
+        <sender>buttonAll</sender>
+        <signal>clicked()</signal>
+        <receiver>ProjectUploadS</receiver>
+        <slot>selectAll()</slot>
+    </connection>
+    <connection>
+        <sender>buttonModified</sender>
+        <signal>clicked()</signal>
+        <receiver>ProjectUploadS</receiver>
+        <slot>selectModified()</slot>
+    </connection>
+    <connection>
+        <sender>buttonClear</sender>
+        <signal>clicked()</signal>
+        <receiver>ProjectUploadS</receiver>
+        <slot>clearSelection()</slot>
+    </connection>
+    <connection>
+        <sender>buttonUpload</sender>
+        <signal>clicked()</signal>
+        <receiver>ProjectUploadS</receiver>
+        <slot>startUpload()</slot>
+    </connection>
+    <slot access="public">clearSelection()</slot>
+    <slot access="public">startUpload()</slot>
+    <slot access="public">selectAll()</slot>
+    <slot access="public">selectModified()</slot>
+</connections>
+</UI>

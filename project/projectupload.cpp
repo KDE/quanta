@@ -42,6 +42,10 @@ ProjectUpload::ProjectUpload( Project* prg, QWidget* parent,  const char* name, 
 	
 	list->setMultiSelection(true);
 	
+	list->setColumnAlignment(1,Qt::AlignRight);
+	list->setColumnAlignment(2,Qt::AlignRight);
+	list->setShowSortIndicator (true);
+	
 	QDomNodeList nl = p->dom.firstChild().firstChild().childNodes();
 	
 	QDateTime stime;
@@ -61,9 +65,19 @@ ProjectUpload::ProjectUpload( Project* prg, QWidget* parent,  const char* name, 
 			QString url = el.attribute("url");
 			files.append( url );
 			
-			QListViewItem *it = new QListViewItem( list, url );
-			
 			QFileInfo fi( p->basePath + url );
+			
+			QString size;
+      size.sprintf( "%i", fi.size() );
+      
+      QDate d = fi.lastModified().date();
+      QString date;
+      
+      date.sprintf( "%4i.%2i.%2i", d.year(), d.month(), d.day() );
+			date.replace( QRegExp(" "), "0" );
+      
+			QListViewItem *it = new QListViewItem( list, url, date, size );
+			
 			int uploadTime = el.attribute("upload_time","1").toInt();
 			int modifiedTime = stime.secsTo( fi.lastModified() );
 			
@@ -196,4 +210,9 @@ void ProjectUpload::clearSelection()
 	list->selectAll(false);
 }
 
+void ProjectUpload::resizeEvent ( QResizeEvent *t )
+{
+  ProjectUploadS::resizeEvent(t);
+  list->setColumnWidth(0,list->width()-list->columnWidth(1)-list->columnWidth(2)-20);
+}
 

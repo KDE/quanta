@@ -1,7 +1,7 @@
 /****************************************************************************
-** Form interface generated from reading ui file 'project-upload.ui'
+** Form interface generated from reading ui file './projectuploads.ui'
 **
-** Created: Fri Dec 1 13:10:54 2000
+** Created: Tue Feb 6 13:25:13 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -56,7 +56,7 @@ public slots:
     virtual void selectModified();
 
 protected:
-    QGridLayout* grid;
+    QGridLayout* ProjectUploadSLayout;
 };
 
 #endif // PROJECTUPLOADS_H

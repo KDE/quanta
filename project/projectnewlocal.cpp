@@ -40,6 +40,8 @@ ProjectNewLocal::ProjectNewLocal(QWidget *parent, const char *name )
 {
 	imagelabel->setPixmap( UserIcon("wiznewprjloc") );
 	
+	listFiles->setColumnAlignment(1,Qt::AlignRight);
+	
 	mask->setText("*");
 	webmask->setText( fileMaskPhp+
 										fileMaskHtml+
@@ -64,6 +66,7 @@ void ProjectNewLocal::setDestDir(QWidget *w,bool)
 	ProjectNewGeneral *png = (ProjectNewGeneral *)w;
 	
 	dir = png->linePrjDir->text();
+	if ( dir.right(1) != "/" ) dir+="/";
 	
 	checkInsert->setText(i18n("Insert files from ")+dir);
 }
@@ -94,6 +97,17 @@ void ProjectNewLocal::setFiles(bool)
 	QStringList list = files(true);
 	for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
 	{
-		listFiles->insertItem( new QListViewItem( listFiles, *it ) );
+		QFileInfo fi( dir+*it );
+    QString size;
+    size.sprintf( "%i", fi.size() );
+		
+		listFiles->insertItem( new QListViewItem( listFiles, *it, size ) );
+		listFiles->setColumnWidth(0,listFiles->width()-listFiles->columnWidth(1)-20);
   }
+}
+
+void ProjectNewLocal::resizeEvent ( QResizeEvent *t )
+{
+  ProjectNewLocalS::resizeEvent(t);
+  listFiles->setColumnWidth(0,listFiles->width()-listFiles->columnWidth(1)-20);
 }

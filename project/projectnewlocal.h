@@ -37,6 +37,8 @@ public:
 public slots:
 	void setFiles(bool);
   void setDestDir(QWidget*,bool);
+  
+  virtual void resizeEvent( QResizeEvent * );
 
 private:
 	QString dir;

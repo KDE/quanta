@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>474</width>
+            <width>470</width>
             <height>357</height>
         </rect>
     </property>
@@ -134,6 +134,10 @@
                                     <property stdset="1">
                                         <name>name</name>
                                         <cstring>lineEmail</cstring>
+                                    </property>
+                                    <property stdset="1">
+                                        <name>text</name>
+                                        <string></string>
                                     </property>
                                 </widget>
                                 <widget row="4"  column="1"  rowspan="1"  colspan="2" >
@@ -323,7 +327,7 @@
                                             </property>
                                             <property stdset="1">
                                                 <name>text</name>
-                                                <string>Local files</string>
+                                                <string>Add local files</string>
                                             </property>
                                             <property stdset="1">
                                                 <name>checked</name>
@@ -338,7 +342,7 @@
                                             </property>
                                             <property stdset="1">
                                                 <name>text</name>
-                                                <string>Web files</string>
+                                                <string>Use wget to download files from site</string>
                                             </property>
                                         </widget>
                                         <widget>
@@ -349,7 +353,7 @@
                                             </property>
                                             <property stdset="1">
                                                 <name>text</name>
-                                                <string>CVS project</string>
+                                                <string>Get files from CVS repository ( cvs checkout )</string>
                                             </property>
                                             <property stdset="1">
                                                 <name>enabled</name>

@@ -38,7 +38,6 @@ ProjectNewWeb::ProjectNewWeb(QWidget *parent, const char *name )
   
   imagelabel->setPixmap( UserIcon("wiznewprjweb") );
   
-  listFiles->setColumnWidthMode(0,QListView::Manual);
   listFiles->setColumnAlignment(1,Qt::AlignRight);
   
   connect( commandLine, SIGNAL(textChanged(const QString&)),

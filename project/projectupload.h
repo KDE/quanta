@@ -43,7 +43,8 @@ protected slots:
   void selectAll();
   void selectModified();
 	
-		
+	virtual void resizeEvent( QResizeEvent * );
+  	
 private:	
   QStringList files;    // list of all files
   QStringList modified; // modified files

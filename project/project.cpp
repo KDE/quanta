@@ -440,9 +440,9 @@ void Project::newProject()
 	stack->addWidget( pnl, 0);
 	stack->addWidget( pnw, 1 );
 	
-	wiz->addPage( png,   i18n("General setting of project..."));
-	wiz->addPage( stack, i18n("Insert files in project..."));
-	wiz->addPage( pnf,   i18n("Some settings of project..."));
+	wiz->addPage( png,   i18n("<b>General setting of project...</b>"));
+	wiz->addPage( stack, i18n("<b>Insert files in project...</b>"));
+	wiz->addPage( pnf,   i18n("<b>Some settings of project...</b>"));
 	
 	wiz->setNextEnabled  ( png,   false );
 	wiz->setBackEnabled  ( stack, true  );
@@ -551,6 +551,7 @@ void Project::options()
 
 	png = new ProjectNewGeneral( dlg );
 	pnf = new ProjectNewFinalS ( dlg );
+	pnf ->imagelabel->setPixmap( UserIcon("wiznewprjfin") );
 		
 	dlg->addTab( png, i18n("General") );
 	dlg->addTab( pnf, i18n("Network") );
