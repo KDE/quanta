@@ -108,7 +108,7 @@ void propertySetter::setLengthEditor(const QString& s){
   QRegExp pattern("\\d("+m_lE->cbValueList().join("|")+")");
   if(s.contains(pattern) > 0  ) {
     QString temp1(s.stripWhiteSpace()),
-                 temp2(s.stripWhiteSpace());  
+                 temp2(s.stripWhiteSpace());
     m_lE->setInitialValue(temp1.remove(QRegExp("\\D")), temp2.remove(QRegExp("\\d")));
   }
   connect(m_lE, SIGNAL(valueChanged(const QString&)), this ,SIGNAL(valueChanged(const QString&)));
@@ -129,11 +129,11 @@ void propertySetter::setDoubleLengthEditor(const QString& s){
 void propertySetter::setFrequencyEditor(const QString& s){
   m_fe = new frequencyEditor(this);
   QRegExp pattern("\\d("+m_fe->cbValueList().join("|")+")");
-  
+
   if(s.contains(pattern)) {
     QString temp1(s.stripWhiteSpace()),
                  temp2(s.stripWhiteSpace());
-  
+
     m_fe->setInitialValue(temp1.remove(QRegExp("\\D")), temp2.remove(QRegExp("\\d")));
   }
   connect(m_fe, SIGNAL(valueChanged(const QString&)), this ,SIGNAL(valueChanged(const QString&)));
@@ -143,11 +143,11 @@ void propertySetter::setFrequencyEditor(const QString& s){
 void propertySetter::setTimeEditor(const QString& s){
   m_te = new timeEditor(this);
   QRegExp pattern("\\d("+m_te->cbValueList().join("|")+")");
-  
+
   if(s.contains(pattern)) {
     QString temp1(s.stripWhiteSpace()),
                  temp2(s.stripWhiteSpace());
-  
+
     m_te->setInitialValue(temp1.remove(QRegExp("\\D")), temp2.remove(QRegExp("\\d")));
   }
   connect(m_te, SIGNAL(valueChanged(const QString&)), this ,SIGNAL(valueChanged(const QString&)));
@@ -157,11 +157,11 @@ void propertySetter::setTimeEditor(const QString& s){
 void propertySetter::setAngleEditor(const QString& s){
   m_ae = new angleEditor(this);
   QRegExp pattern("\\d("+m_ae->cbValueList().join("|")+")");
-  
+
   if(s.contains(pattern)) {
     QString temp1(s.stripWhiteSpace()),
                  temp2(s.stripWhiteSpace());
-  
+
     m_ae->setInitialValue(temp1.remove(QRegExp("\\D")), temp2.remove(QRegExp("\\d")));
   }
   connect(m_ae, SIGNAL(valueChanged(const QString&)), this ,SIGNAL(valueChanged(const QString&)));
@@ -218,13 +218,15 @@ void propertySetter::setPredefinedColorListEditor(const QString& s)
 
 void propertySetter::Show(){
   QWidget *w;
-  for ( w = m_list.first(); w; w = m_list.next() )  w->hide();
-  m_list.at(m_ind)->show();
+  for (w = m_list.first(); w; w = m_list.next())
+      w->hide();
+  if (m_list.at(m_ind))
+    m_list.at(m_ind)->show();
   if(m_list.count() == 1) {
     if(m_pb) m_pb->hide();
   }
-  else  
-    if(m_ind<m_list.count()-1) { 
+  else
+    if(m_ind<m_list.count()-1) {
       m_ind++;
       m_pb->show();
     }
@@ -243,7 +245,7 @@ void propertySetter::addButton(){
   m_pb->hide();
   connect(m_pb, SIGNAL(clicked()), this ,SLOT(Show()));
 }
-    
+
 percentageEditor::percentageEditor(const QString& initialValue, QWidget *parent, const char *name) : QHBox(parent,name)
 {
   QString temp(initialValue);
