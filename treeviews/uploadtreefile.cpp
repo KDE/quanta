@@ -36,9 +36,6 @@ UploadTreeFile::UploadTreeFile( UploadTreeFolder *parent, const KURL &a_url, QSt
 
   setWhichPixmap("check_clear");
   setText(0, m_url.fileName());
-
-  //setDragEnabled(true);
-  //setDropEnabled(true);
 }
 
 UploadTreeFile::UploadTreeFile( QListView *parent, const KURL &a_url, QString date, QString size )
@@ -50,25 +47,10 @@ UploadTreeFile::UploadTreeFile( QListView *parent, const KURL &a_url, QString da
   //setPixmap( 1, SmallIcon("check") );
   setWhichPixmap("check_clear");
   setText(0, m_url.fileName());
-
-	//setDragEnabled(true);
-	//setDropEnabled(true);
 }
 
 
 UploadTreeFile::~UploadTreeFile(){
-}
-
-/** set icon of item  */
-void UploadTreeFile::setIcon( QString name )
-{
-//TODO: possible UploadTreeFile should inherit from somewhere??? This code is duplicate
-  if (QuantaCommon::checkMimeType(m_url,"html")) setPixmap( 0, SmallIcon("www"));
-  else
-    if (QuantaCommon::checkMimeType(m_url,"x-java") ) setPixmap( 0, SmallIcon("info"));
-    else
-      if (QuantaCommon::checkMimeGroup(m_url,"text")) setPixmap( 0, SmallIcon("txt"));
-      else  if (QuantaCommon::checkMimeGroup(m_url,"image")) setPixmap( 0, SmallIcon("image") );
 }
 
 

@@ -28,13 +28,12 @@ UploadTreeView::UploadTreeView( QWidget *parent, const char *name ) :
 	QListView(parent, name)
 {
 	setRootIsDecorated( true );
-	//header()->hide();
 	setSorting( 0 );
 
 	setFrameStyle( Panel | Sunken );
 	setLineWidth( 2 );
 	addColumn( i18n("Name") );
-    addColumn( i18n("Upload") );
+  addColumn( i18n("Upload") );
 	addColumn( i18n("Size") );
 	addColumn( i18n("Date") );
 
@@ -44,8 +43,6 @@ UploadTreeView::UploadTreeView( QWidget *parent, const char *name ) :
 						this, SLOT(slotSelectFile(QListViewItem *)));
 	connect(  this, SIGNAL(clicked(QListViewItem *)),
 						this, SLOT(slotSelectFile(QListViewItem *)));
-
-	//rootDir = new FilesTreeFolder( this , i18n("Root Directory"), "/");
 }
 
 UploadTreeView::~UploadTreeView()
@@ -63,7 +60,6 @@ int UploadTreeView::checkboxTree( QListViewItem *it = 0 )
   int bitFlags = 3;
 
   if ( itIter != 0 )
-  //if ( 1 == 1 )
   {
     for( ; itIter != 0; itIter = itIter->nextSibling() )
     {
@@ -172,7 +168,7 @@ UploadTreeFolder* UploadTreeView::printTree( UploadTreeFolder *it = 0, QString i
 
 	for( ; itIter != 0; itIter = itIter->nextSibling() )
 	{
-    cout << indent << itIter->text(0) << endl;
+//    cout << indent << itIter->text(0) << endl;
     if ( dynamic_cast<UploadTreeFolder *>(itIter) )
     	printTree( (UploadTreeFolder *)itIter, indent + "  " );
 	}
@@ -213,7 +209,7 @@ UploadTreeFile* UploadTreeView::addItem(const KURL &a_url, QString date, QString
   QString item = a_url.path(); //TODO: do with real KURL's
 	QString fname = item;
 	int i;
-  int col = 0;
+  uint col = 0;
 	UploadTreeFolder *it = 0;
   KURL u;
 	while ( ( i = item.find('/', col) ) >= 0 )
@@ -235,7 +231,6 @@ UploadTreeFile* UploadTreeView::addItem(const KURL &a_url, QString date, QString
 		{
 			it = itTemp;
 		}
-		//item.remove(0,i+1);
     col = i + 1;
 	}
   UploadTreeFile *file = 0;

@@ -78,6 +78,7 @@ public:
 
 private:
 	KURL baseURL;
+  KURL::List urlList;
   QPopupMenu *projectMenu;
 	QString projectName;
 	

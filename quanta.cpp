@@ -1168,7 +1168,6 @@ void QuantaApp::contextHelp()
   }
 }
 
-void QuantaApp::slotShowLeftDock() {  }
 void QuantaApp::slotShowFTabDock() { ftabdock->changeHideShowState();}
 void QuantaApp::slotShowPTabDock() { ptabdock->changeHideShowState();}
 void QuantaApp::slotShowTTabDock() { ttabdock->changeHideShowState();}
@@ -1349,21 +1348,6 @@ void QuantaApp::slotShowOpenFileList()
 /** No descriptions */
 void QuantaApp::slotNewProjectLoaded()
 {
-/*  delete tTab;
-  tTab = new TemplatesTreeView( project->baseURL, ttabdock );
-  ttabdock->setWidget( tTab );
-  tTab->setFocusPolicy(QWidget::NoFocus);
-  connect( tTab, SIGNAL(openFile(const KURL &, const QString&)),
-           this, SLOT(slotFileOpen(const KURL &, const QString&)));
-  connect( tTab, SIGNAL(insertFile(const KURL &)),
-           this, SLOT(slotInsertFile(const KURL &)));
-  connect( tTab, SIGNAL(insertTag(const KURL &, DirInfo)),
-           this, SLOT(slotInsertTag(const KURL &, DirInfo)));
-
-  connect( getView(), SIGNAL(dragInsert(QDropEvent *)),
-           tTab, SLOT(slotDragInsert(QDropEvent *))); // [MB02]
-  connect( project, SIGNAL(templateURLChanged(const KURL &)),
-           tTab, SLOT(slotSetTemplateURL(const KURL &)));*/
   tTab->slotSetTemplateURL(project->templateURL);
 }
 
@@ -1523,7 +1507,7 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
    {
     QDomNode node = nodeList.item(i).cloneNode();
     QDomElement el = node.toElement();
-    cout << el.text() << "\n";
+//    cout << el.text() << "\n";
     QString actionName = el.attribute("name");
     //if there is no such action yet, add to the available actions
     if (! actionCollection()->action(actionName))
@@ -1628,15 +1612,6 @@ KURL QuantaApp::saveToolBar(const QString& toolbarName, const KURL& destFile)
 
   QDomNodeList nodeList, nodeList2;
   QStringList actionNameList;
-
-/*
-  QFile f( KGlobal::instance()->dirs()->saveLocation("data")+"quanta/actions.rc" );
-  f.open( IO_ReadWrite | IO_Truncate );
-  QTextStream qts(&f);
-  m_actions->save(qts,0);
-  f.close();
-  QString s = actions()->toString();
-*/
 
   toolStr << QString("<!DOCTYPE kpartgui SYSTEM \"kpartgui.dtd\">\n<kpartgui name=\"quanta\" version=\"2\">\n");
   actStr << QString("<!DOCTYPE actionsconfig>\n<actions>\n");

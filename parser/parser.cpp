@@ -269,65 +269,6 @@ void Parser::clear()
   m_text = "";
 }
 
-
-DTDNode *Parser::subParseForDTD(DTDNode *parent, int& line, int& col)
-{
-  DTDNode *node;
-  QString text;
-  QString foundText;
-  int pos;
-  Tag *tag;
-  bool found ;
-  int nextLine, nextCol;
-
-  while (line < maxLines)
-  {
-    found = false;
-    text = write->editIf->textLine(line);
-    pos = scriptBeginRx.search(text, col);
-    if (pos != -1) //a script DTD has been found
-    {
-      foundText = scriptBeginRx.cap(0).lower();
-      if (foundText.startsWith("<script"))
-      {
-        tag = write->findXMLTag(line, pos, true);
-        if (tag)
-        {
-          foundText = tag->attributeValue("language");
-          tag->endPos(nextLine, nextCol);
-          delete tag;
-        }
-      } else
-      {
-         QDictIterator<DTDStruct> it(*dtds);
-         for( ; it.current(); ++it )
-         {
-            DTDStruct *dtd = it.current();
-            if (dtd->family == Script)
-            {
-               int index = dtd->scriptTagStart.findIndex(foundText);
-               if (index !=-1)
-               {
-                 foundText = dtd->name;
-                 break;
-               }
-            }
-         }
-       }
-       found = true;
-       node = new DTDNode;
-       node->bLine = line;
-       node->bCol = pos;
-       node->name = foundText.lower();
-       node->parent = parent;
-//       node->child = subParseForDTD(node, nextLine, nextCol+1);
-     }  //if (pos !=-1)
-
-  } //while
-  return node;
-}
-
-
 void Parser::rebuildDTDList()
 {
   int delta = maxLines - oldMaxLines;

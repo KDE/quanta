@@ -88,9 +88,6 @@ void QuantaView::slotEditCurrentTag()
       if (dlg->exec())
       {
        w->changeTag(tag, dlg->getAttributes() );
- /*      int eLine, eCol;
-       tag->endPos(eLine, eCol);
-       w->viewCursorIf->setCursorPositionReal(eLine, eCol);*/
       }
 
       delete dlg;
@@ -523,23 +520,6 @@ void QuantaView::slotNetscapeStatus(KProcess *proc)
     show->start( KProcess::DontCare );
   }
 }
-
-/** insert tags from tree view */
-/*
-void QuantaView::slotInsertTagFromTree(QString name)
-{
-	QExtFileInfo file( name );
-	file.convertToRelative( doc->basePath() );
-	QString shortName = file.filePath();
-
-	if ( QDir::match( fileMaskImage, name) )
-	{
-		write()->insertTag( QuantaCommon::tagCase("<img")+QuantaCommon::attrCase(" src=\"")+shortName+"\">");
-	}
-	else {
-	  write()->insertTag( QuantaCommon::tagCase("<a")+QuantaCommon::attrCase(" href=\"")+shortName+"\">",QuantaCommon::tagCase("</a>"));
-	}
-} */
 
 /**  */
 void QuantaView::slotNewCurPos()

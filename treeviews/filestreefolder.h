@@ -54,21 +54,10 @@ public:
   FilesTreeFolder * parentFolder;
   QString name;
   KURL url;
-  QStringList openedList;
-
-  bool readable;
-  bool opened;
-  bool showall;
 
 public slots: // Public slots
   	/** reload file list */
   	void reloadList();
-private: // Private methods
-  /** No descriptions */
-  void restoreOpenStatus();
-private: // Private methods
-  /** No descriptions */
-  void saveOpenStatus();
 protected: // Protected methods
   /** No descriptions */
   virtual void dropped(QDropEvent *e);

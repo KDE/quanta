@@ -63,6 +63,7 @@ private:
   KURL::List madeDirs;
   Project *p;
   KURL *baseUrl;
+  KURL startUrl;
   bool stopUpload;
   bool uploadInProgress;
   bool suspendUpload;
@@ -76,6 +77,9 @@ private slots: // Private slots
 signals: // Signals
   /** No descriptions */
   void uploadNext();
+public slots: // Public slots
+  /** No descriptions */
+  void slotBuildTree();
 };
 
 #endif

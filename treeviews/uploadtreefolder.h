@@ -48,18 +48,9 @@ public:
 public:
 	UploadTreeFolder * parentFolder;
 	KURL m_url;
-	QStringList openedList;
-
-	bool readable;
-	bool opened;
-	bool showall;
 
 public slots: // Public slots
 	void reloadList();
-
-private: // Private methods
-	void restoreOpenStatus();
-	void saveOpenStatus();
 
 };
 

@@ -30,6 +30,7 @@
 #include <qcombobox.h>
 #include <qurl.h>
 #include <qcheckbox.h>
+#include <qtimer.h>
 
 //kde includes
 #include <kurl.h>
@@ -54,47 +55,8 @@ ProjectUpload::ProjectUpload(Project* prg, const KURL& url, QWidget *parent, con
   :ProjectUploadS( parent, name, modal, fl)
 {
     initProjectInfo(prg);
-
-    KIO::UDSEntry entry;
-    QString strUrl = QuantaCommon::qUrl(url);
-    QString s;
-    QDomElement el;
-    QDomNodeList nl = p->dom.elementsByTagName("item");    
-    progressBar->setTotalSteps(nl.count() - 1 );
-    progressBar->setValue(0);
-    progressBar->setTextEnabled(true);
-
-    for (uint i = 0; i < nl.count(); i++)
-    {
-      el = nl.item(i).toElement();
-      s = el.attribute("url");
-      if (s.startsWith(strUrl))
-      {
-        KURL u = p->baseURL;
-        QuantaCommon::setUrl(u, s);
-        KURL absUrl = QExtFileInfo::toAbsolute(u, p->baseURL);
-        KIO::NetAccess::stat(absUrl, entry);
-        KFileItem item(entry, absUrl, false, true);
-        s = QString("%1").arg( (long int)item.size() );
-        QListViewItem *it = list->addItem(u, s, item.timeString());
-        if ( it != 0 )
-        {
-          int uploadTime = el.attribute("upload_time","1").toInt();
-          int modifiedTime = item.time(KIO::UDS_MODIFICATION_TIME);
-
-          if ( uploadTime < modifiedTime )
-          {
-            modified.append( url ); //TODO
-            it->setSelected(true);
-          }
-        }
-      }
-      progressBar->advance(1);
-    }
-
- progressBar->setValue(0);
- progressBar->setTextEnabled(false);
- list->slotSelectFile();
+    startUrl = url;
+    QTimer::singleShot(10, this, SLOT(slotBuildTree())); 
 }
 
 
@@ -112,11 +74,7 @@ void  ProjectUpload::initProjectInfo(Project *prg)
 
 	list->setMultiSelection(true);
 
-	list->setColumnAlignment(1,Qt::AlignRight);
-	list->setColumnAlignment(2,Qt::AlignRight);
-	list->setShowSortIndicator (true);
-
-	QDomElement uploadEl = p->dom.firstChild().firstChild().namedItem("upload").toElement();
+  QDomElement uploadEl = p->dom.firstChild().firstChild().namedItem("upload").toElement();
 
 	lineHost -> setText(uploadEl.attribute("remote_host",""));
 	lineUser -> setText(uploadEl.attribute("user",""));
@@ -154,6 +112,53 @@ void  ProjectUpload::initProjectInfo(Project *prg)
   connect( this, SIGNAL( uploadNext() ), SLOT( slotUploadNext() ) );
 
   lineHost->setFocus();
+}
+
+/** No descriptions */
+void ProjectUpload::slotBuildTree()
+{
+ KIO::UDSEntry entry;
+ QString strUrl = QuantaCommon::qUrl(startUrl);
+ QString s;
+ QDomElement el;
+ QDomNodeList nl = p->dom.elementsByTagName("item");
+ totalProgress->setTotalSteps(nl.count() - 1 );
+ totalProgress->setValue(0);
+ totalText->setText(i18n("Scanning project files..."));
+
+ KURL u = p->baseURL;
+ KURL absUrl = u;
+ for (uint i = 0; i < nl.count(); i++)
+ {
+   el = nl.item(i).toElement();
+   s = el.attribute("url");
+   if (startUrl.isEmpty() || s.startsWith(strUrl))
+   {
+     QuantaCommon::setUrl(u, s);
+//      list->addItem(u, "", "");
+     absUrl.setPath(p->baseURL.path(1)+u.path());
+     KIO::NetAccess::stat(absUrl, entry);
+     KFileItem item(entry, absUrl, false, true);
+     s = QString("%1").arg( (long int)item.size() );
+     QListViewItem *it = list->addItem(u, s, item.timeString());
+     if ( it != 0 )
+     {
+       int uploadTime = el.attribute("upload_time","1").toInt();
+       int modifiedTime = item.time(KIO::UDS_MODIFICATION_TIME);
+
+       if ( uploadTime < modifiedTime )
+       {
+         modified.append( u );
+         it->setSelected(true);
+       }
+     }
+   }
+   totalProgress->advance(1);
+ }
+
+ list->slotSelectFile();
+ totalText->setText(i18n("Total:"));
+ totalProgress->setValue(0);
 }
 
 

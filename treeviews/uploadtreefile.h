@@ -31,9 +31,6 @@ public:
 	UploadTreeFile( QListView *parent, const KURL &a_url, QString, QString );
 	~UploadTreeFile();
 	
-	/** set icon for the item */
-	void setDirIcon();
-	void setIcon( QString name );
   void setWhichPixmap( QString );
 
 	/** used for sorting */

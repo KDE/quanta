@@ -141,57 +141,6 @@ void Document::insertTag(QString s1,QString s2)
   insertText(s2, FALSE); // don't adjust cursor, thereby leaving it in the middle of tag
 }
 
-/** return a pointet to the Node according to p_line, p_col (or current cursor pos, if both are -1)  */
-Node *Document::nodeAt(int p_line, int p_col)
-{
-  Node *foundNode = 0L;
-  if (baseNode)
-  {
-    uint line;
-    uint col;
-    if ( (p_line < 0) && (p_col < 0))
-    {
-      viewCursorIf->cursorPositionReal(&line, &col);
-    } else
-    {
-      line = p_line;
-      col = p_col;
-    }
-    Node *currentNode = baseNode;
-    int bLine, bCol, eLine, eCol;
-    int foundPos; //-1 before, 0 between, 1 after
-    while (currentNode && !foundNode)
-    {
-      currentNode->tag->beginPos(bLine, bCol);
-      currentNode->tag->endPos(eLine, eCol);
-      foundPos = QuantaCommon::isBetween(line, col, bLine, bCol, eLine, eCol);
-      switch (foundPos)
-      {
-        case 0: {
-                  foundNode = currentNode;
-                  break;
-                }
-        case 1: {
-                  if (currentNode->next) currentNode = currentNode->next;
-                  else currentNode = currentNode->child;
-                  break;
-                }
-        case -1:{
-                  if (currentNode->prev)
-                  {
-                    currentNode = currentNode->prev->child;
-                  }
-                  break;
-                }
-      } //switch
-    }  //while
-    if (!foundNode)
-    {
-      KMessageBox::error(this, i18n("Node for current position not found.\n This should never happen."));
-    }
-  } //if
-  return foundNode;
-}
 
 /** Return a node Tag according to line,col (or current cursor pos if p_line==p_col==-1), and
     according to dtd. If forwardOnly is true, the text is parsed from (p_line,p_col) forward.*/

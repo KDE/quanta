@@ -78,36 +78,6 @@ QuantaDoc::~QuantaDoc()
 {
 }
 
-/*
-KURL QuantaDoc::url()
-{
-  KURL furl;
-  furl.setPath("Untitled1.html");
-
-  if (quantaApp->view->writeExists()) furl = write()->url();
-
-  return furl;
-}
-
-KURL QuantaDoc::baseURL()
-{
-  KURL result;
-  if  ( quantaApp->project->hasProject())
-  {
-     result = quantaApp->project->baseURL;
-  } else
-  {
-  	if  ( !quantaApp->view->writeExists() || write()->isUntitled() )
-  	{
-    	result = QExtFileInfo::home();
-  	} else
-  	{
-  		result =  QExtFileInfo::path( url() );
-  	}
-  }
-  return result;
-}                */
-
 KURL::List QuantaDoc::openedFiles(bool noUntitled)
 {
   KURL::List list;
@@ -217,33 +187,6 @@ void QuantaDoc::openDocument(const KURL& url, QString encoding)
  }
  
 }
-
-/*!!!!
-void QuantaDoc::finishLoadURL(KWrite *_w)
-{
-  Document *w = (Document *)_w;
-
-  QDictIterator<Document> it(*m_docList);
-
- 	QString defUrl;
- 	while ( it.current() )
- 	{
- 	  if ( w == it.current() ) defUrl = it.currentKey();
- 	  ++it;
- 	}
-
-    quantaApp ->view->writeTab->showPage( w );
-
- changeFileTabName(defUrl);
-
-  quantaApp->fileRecent->addURL( w->url() );
-
-  emit newStatus();
-  quantaApp->repaintPreview();
-
-  w -> busy = false;
-  quantaApp->reparse();
-}     */
 
 void QuantaDoc::saveDocument(const KURL& url)
 {

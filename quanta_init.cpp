@@ -151,7 +151,6 @@ void QuantaApp::initQuanta()
   readOptions();
 
 //Check for an existing quanatui.rc
-//  QString uiFileName = QString(getenv("KDEHOME"))+"/share/apps/quanta/quantaui.rc";
   QString uiFileName = locateLocal("appdata","quantaui.rc");
   if (QFileInfo(uiFileName).exists())
   {
@@ -164,7 +163,6 @@ void QuantaApp::initQuanta()
        QDomElement el = doc.firstChild().toElement();
        if (el.attribute("version","old") != QString(VERSION))
        {
-//         KMessageBox::information(0, i18n("An old quantaui.rc was found at %1.\nIt will be renamed to quantaui.rc.old").arg(uiFileName));
          QString command = "mv "+uiFileName+" "+uiFileName+".old";
          system(QFile::encodeName(command));
        }
@@ -1256,11 +1254,6 @@ void QuantaApp::initActions()
                          this, SLOT( slotShowDTabDock() ),
                          actionCollection(), "show_dtab_tree" );
 
-//    showTreeAction =
-//      new KToggleAction( i18n( "Show &Tree" ), "tree_win", CTRL+Key_T,
-//                         this, SLOT( slotShowLeftDock() ),
-//                         actionCollection(), "show_tree" );
-
     showMessagesAction =
       new KToggleAction( i18n( "Show &Messages" ), "output_win", CTRL+Key_M,
                          this, SLOT( slotShowBottDock() ),
@@ -1316,14 +1309,7 @@ void QuantaApp::initActions()
       KStdAction::openRecent(project, SLOT(slotOpenProject(const KURL&)),
                              actionCollection(), "project_open_recent");
     project->projectRecent->setText(i18n("Open Recent Project..."));
-  /*
-    connect(project,                SIGNAL(checkOpenAction(bool)),
-            newPrjAction,           SLOT(setEnabled(bool)));
-    connect(project,                SIGNAL(checkOpenAction(bool)),
-            openPrjAction,          SLOT(setEnabled(bool)));
-    connect(project,                SIGNAL(checkOpenAction(bool)),
-            project->projectRecent, SLOT(setEnabled(bool)));
- */
+
     saveprjAction =  new KAction( i18n( "&Save Project" ), SmallIcon("save"), 0,
                          project, SLOT( slotSaveProject() ),
                          actionCollection(), "project_save" );

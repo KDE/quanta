@@ -41,7 +41,7 @@ FilesTreeFolder::FilesTreeFolder(QListView* parentListView, FilesTreeFolder *par
 {
   parentView = dynamic_cast<FilesTreeView*>(parentListView);
   parentFolder 	= parent;
-  opened 		= false;
+//  opened 		= false;
   name = p_url.fileName();
   url = p_url;
   init();
@@ -65,8 +65,8 @@ FilesTreeFolder::~FilesTreeFolder()
 /** No descriptions */
 void FilesTreeFolder::init()
 {
-  readable 	= true;
-  showall 	= true;
+//  readable 	= true;
+//  showall 	= true;
   setDragEnabled(true);
   setDropEnabled(true);
   url.adjustPath(1);   //add an ending "/" to the directory urls
@@ -83,6 +83,10 @@ void FilesTreeFolder::setOpen( bool open )
   }
 
   QListViewItem::setOpen(open);
+  if (open)
+    setPixmap( 0, SmallIcon("folder_open") );
+  else
+    setPixmap( 0, SmallIcon("folder") );
 }
 
 /** retun full name of the folder */
@@ -120,7 +124,6 @@ void FilesTreeFolder::setup()
 /** reload file list */
 void FilesTreeFolder::reloadList()
 {
-//  saveOpenStatus();
   setOpen( false );
 
   QListViewItem *child;
@@ -128,7 +131,6 @@ void FilesTreeFolder::reloadList()
     removeItem( child );
 
   setOpen( true );
-//  restoreOpenStatus();
 }
 
 /** need for sorting */
@@ -137,51 +139,6 @@ QString FilesTreeFolder::key ( int, bool ) const
   return " 0"+text(0);
 }
 
-
-/** No descriptions */
-void FilesTreeFolder::saveOpenStatus()
-{
- QListViewItem *child = firstChild();
- FilesTreeFolder *folder;
-
- openedList.clear();
- QString s;
-
- while (child)
- {
-    folder = dynamic_cast<FilesTreeFolder *> (child);
-  	if ( folder )
-    {
-     s = folder->fullName();
-     folder->saveOpenStatus();
-     if (folder->isOpen())
-     {
-        openedList.append(s);
-     }
-    }
-    child = child->nextSibling();
- }
-}
-/** No descriptions */
-void FilesTreeFolder::restoreOpenStatus()
-{
- QListViewItem *child = firstChild();
- FilesTreeFolder *folder;
- QString s;
-
- while (child )
-   {
-    folder = dynamic_cast<FilesTreeFolder *> (child);
-  	if ( folder )
-    {
-      s = folder->fullName();
-      if (openedList.contains(s))
-         folder->setOpen(true);
-      folder->restoreOpenStatus();
-    }
-    child = child->nextSibling();
-   }
-}
 /** No descriptions */
 void FilesTreeFolder::dropped(QDropEvent *e)
 {

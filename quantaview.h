@@ -100,8 +100,6 @@ class QuantaView : public QWidget
     void slotNewCurPos();
     
     void slotEditCurrentTag();
-    
-//    void slotInsertTagFromTree(QString name);
      
     void slotViewInKFM();
     void slotViewInNetscape();

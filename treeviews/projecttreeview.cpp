@@ -210,16 +210,16 @@ void ProjectTreeView::slotReloadTree( const KURL::List &a_urlList, bool buildNew
 	ProjectTreeFolder *newFolder = 0L;
 	ProjectTreeFolder *folder = projectDir;
 
-  KURL::List urlList = a_urlList;
+  urlList = a_urlList;
 	KURL url;
 	KURL::List::Iterator it;
   uint col;
   for ( it = urlList.begin(); it != urlList.end(); ++it )
 	{
-    folder = projectDir;
     url = *it;
+    folder = projectDir;
     QString path = url.path();
-    col = 0;
+   col = 0;
     //insert first the directories
     while ( ( pos = path.find('/', col)) > 0 )
     {
@@ -236,7 +236,7 @@ void ProjectTreeView::slotReloadTree( const KURL::List &a_urlList, bool buildNew
         item = item->nextSibling();
       }
 
-      if ( !newFolder )
+      if ( !newFolder ) 
       {
         KURL u = url;
         u.setPath(url.path().left(pos)+"/");
@@ -245,10 +245,12 @@ void ProjectTreeView::slotReloadTree( const KURL::List &a_urlList, bool buildNew
 
       folder = newFolder;
       col = pos+1;
-    } //while
+    } //while 
 
-    if ( col < path.length())
+    if ( col < path.length()) 
     {
+//      if ( (pos = path.find("/")) > 0) path = path.left(pos);
+//      else
       path = url.fileName();
       QListViewItem *item = folder->firstChild();
       bool neednew = true;
@@ -262,9 +264,17 @@ void ProjectTreeView::slotReloadTree( const KURL::List &a_urlList, bool buildNew
 
       if ( neednew )
       {
+  /*      if ( (pos = url.path().find("/")) > 0)
+        {
+          KURL u = url;
+          u.setPath(url.path().left(pos)+"/");
+        	newFolder = new ProjectTreeFolder( folder, u); //no dir was found, so create it
+        } else*/
+        {
         ProjectTreeFile *item = new ProjectTreeFile( folder, url.fileName(), url );
         item->setIcon(url);//QExtFileInfo::toAbsolute(url, baseURL));
-      }
+        }
+      }       
     }
     progressBar->advance(1);
   }

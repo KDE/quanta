@@ -37,18 +37,11 @@ UploadTreeFolder::UploadTreeFolder(const KURL &a_url, UploadTreeFolder * parent,
 	parentFolder = parent;
   m_url = a_url;
   m_url.adjustPath(1);
-  //file = name;
-
-	readable = true;
-	opened = false;
-	showall = true;
 
   setPixmap( 0, SmallIcon("folder") );
   setPixmap( 1, SmallIcon("check") );
   setText(0, m_url.fileName());
 
-	//setDragEnabled(true);
-	//setDropEnabled(true);
 }
 
 UploadTreeFolder::UploadTreeFolder(const KURL &a_url, QListView * parent, const char * name )
@@ -57,23 +50,15 @@ UploadTreeFolder::UploadTreeFolder(const KURL &a_url, QListView * parent, const 
 	parentFolder = 0L;
   m_url = a_url;
   m_url.adjustPath(1);
-  //file = name;
-
-	readable 	= true;
-	showall 	= true;
 
   setPixmap( 0, SmallIcon("folder") );
   setPixmap( 1, SmallIcon("check") );
   setText(0, m_url.fileName());
-
-	//setDragEnabled(true);
-	//setDropEnabled(true);
 }
 
 
 void UploadTreeFolder::setOpen( bool open )
 {
-  opened = open;
   QListViewItem::setOpen( open );
 }
 
@@ -83,8 +68,6 @@ QString UploadTreeFolder::fullName()
 {
 	QString s="";
 	
-//  if (!item) item = this;
-
   if ( parentFolder )
   {
 		s = parentFolder->fullName();
@@ -107,7 +90,6 @@ void UploadTreeFolder::setup()
 /** reload file list */
 void UploadTreeFolder::reloadList()
 {
-  saveOpenStatus();
   setOpen( false );
 
   QListViewItem *child;
@@ -115,7 +97,6 @@ void UploadTreeFolder::reloadList()
     removeItem( child );
 
   setOpen( true );
-  restoreOpenStatus();
 }
 
 /** need for sorting */
@@ -130,51 +111,6 @@ QString UploadTreeFolder::key ( int, bool ) const
 
 UploadTreeFolder::~UploadTreeFolder()
 {
-}
-
-/** No descriptions */
-void UploadTreeFolder::saveOpenStatus()
-{
- QListViewItem *child = firstChild();
- UploadTreeFolder *folder;
-
- openedList.clear();
- QString s;
-
- while (child)
- {
-    folder = dynamic_cast<UploadTreeFolder *> (child);
-  	if ( folder )
-    {
-     s = folder->fullName();
-     folder->saveOpenStatus();
-     if (folder->isOpen())
-     {
-        openedList.append(s);
-     }
-    }
-    child = child->nextSibling();
- }
-}
-/** No descriptions */
-void UploadTreeFolder::restoreOpenStatus()
-{
- QListViewItem *child = firstChild();
- UploadTreeFolder *folder;
- QString s;
-
- while (child )
-   {
-    folder = dynamic_cast<UploadTreeFolder *> (child);
-  	if ( folder )
-    {
-      s = folder->fullName();
-      if (openedList.contains(s))
-         folder->setOpen(true);
-      folder->restoreOpenStatus();
-    }
-    child = child->nextSibling();
-   }
 }
 
 void UploadTreeFolder::setWhichPixmap( QString pixmap )

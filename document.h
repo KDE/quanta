@@ -68,8 +68,6 @@ public:
   /** Return a node Tag according to line,col (or current cursor pos if p_line==p_col==-1), and
       according to dtd. If forwardOnly is true, the text is parsed from (p_line,p_col) forward.*/
   Tag *tagAt( DTDStruct *dtd, int p_line = -1, int p_col = -1, bool forwardOnly=false, bool useSimpleRx = false);
-  /** return a pointet to the Node according to p_line, p_col (or current cursor pos, if both are -1)  */
-  Node *nodeAt(int p_line = -1, int p_col = -1);
   /** Returns tag name at specified position */
   QString getTagNameAt(DTDStruct *dtd, int line, int col );
 

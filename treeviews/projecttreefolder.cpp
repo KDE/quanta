@@ -68,8 +68,7 @@ void ProjectTreeFolder::setOpen( bool open )
     setPixmap( 0, SmallIcon("folder") );
   	
   if ( text(0) == "CVS" ) setPixmap( 0, SmallIcon("log") );
-  	
-  opened = open;
+
 }
 
 

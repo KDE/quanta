@@ -56,10 +56,7 @@ public:
 
   void prevDocument();
   void nextDocument();
-/*
-  KURL    url();
-	KURL baseURL();
-*/
+
   bool isModified();
   bool isModifiedAll();
   void setModified(bool flag = true);
@@ -103,8 +100,6 @@ signals:
 private:
     /** list with documents( kwrites ) */
     QDict<Document> *m_docList;
-    /** manager for bookmarks */
-    //KWriteManager *writeManager;
 
     KPopupMenu *attribMenu;
 

@@ -200,7 +200,6 @@ public slots:
   /** Repaint preview ( slot ) */
   void slotViewRepaint();
 
-  void slotShowLeftDock();
   void slotShowBottDock();
   void slotShowFTabDock();
   void slotShowPTabDock();
