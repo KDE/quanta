@@ -12,7 +12,7 @@ class QuantaApp;
 class TagAction;
 
 /** configure actions
-  *@author Dmitry Poplavsky
+  *@author Dmitry Poplavsky, Andras Mantia
   */
   
 class ActionEditDlg : public ActionEditDlgS {

@@ -64,6 +64,7 @@ class QuantaView : public QWidget
 
     QuantaApp *getApp() const { return app; }
     QuantaDoc *getDoc() const { return app->getDoc(); }
+    QTabWidget *getToolbarTab() const {return toolbarTab;}
 
     /** contains the implementation for printing functionality */
     void print(QPrinter *pPrinter);

@@ -258,9 +258,9 @@ class QuantaApp : public KDockMainWindow
 	
   public:
 
-	  	
+
 	  	QDomDocument *actions() { return m_actions; }
-	  	  
+
 	protected:
 	  KParts::BrowserExtension *browserExtension() {
       return static_cast<KParts::BrowserExtension *>(((KParts::ReadOnlyPart *)htmlPart())->child( 0L, "KParts::BrowserExtension" ));

@@ -35,6 +35,7 @@
 #include "tagxml.h"
 
 #include "../document.h"
+#include "../qextfileinfo.h"
 
 
 extern QStrList *tagsList; // list of known tags
@@ -102,12 +103,12 @@ void TagDialog::parseTag()
   for ( QStringList::Iterator it = tagsDirs.begin(); it != tagsDirs.end(); ++it )
   {
   	QString tagDir = *it;
-  	QDir dir(tagDir, "*.tag");
-  	QStringList files = dir.entryList();
-  	
+//  	QDir dir(tagDir, "*.tag");
+//  	QStringList files = dir.entryList();
+  	QStringList files = QExtFileInfo::allFilesRelative(tagDir, "*.tag");
   	for ( QStringList::Iterator it_f = files.begin(); it_f != files.end(); ++it_f )
     {
-  	   if ( *it_f != t+".tag" )
+  	   if ( QFileInfo(*it_f).baseName() != t)
          continue;
   	
   		 QString fname = tagDir + *it_f ;

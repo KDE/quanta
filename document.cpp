@@ -533,7 +533,7 @@ void Document::insertFile(QString fileName)
 
   QTextStream stream( &file );
 
-  //kate_view->insertText(stream.read());
+//  kate_view->insertText(stream.read());
   insertText(stream.read());
 
   file.close();

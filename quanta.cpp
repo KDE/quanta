@@ -575,7 +575,7 @@ void QuantaApp::slotOptionsConfigureKeys()
 
 void QuantaApp::slotOptionsConfigureToolbars()
 {
-// saveMainWindowSettings( KGlobal::config(), "MainWindow" );
+ int currentPageIndex = view->toolbarTab->currentPageIndex();
 
  //clear all the actions - this is also to avoid duplicate actions in the list
  QDictIterator<KXMLGUIClient> iter(toolbarGUIClientList);
@@ -583,7 +583,6 @@ void QuantaApp::slotOptionsConfigureToolbars()
  KAction *action;
  for( ; iter.current(); ++iter )
  {
-   nodeList = iter.current()->domDocument().elementsByTagName("Action");
    int actionCount = iter.current()->actionCollection()->count();
    for (int i = 0; i < actionCount; i++)
    {
@@ -617,20 +616,25 @@ void QuantaApp::slotOptionsConfigureToolbars()
     //and add them again. Is there a better way to do this?
     if (result == QDialog::Accepted) factory()->addClient(it.current());
  }
+
+ view->toolbarTab->setCurrentPage(currentPageIndex);
 }
 
 void QuantaApp::slotOptionsConfigureActions()
 {
-    ActionEditDlg dlg( this, this, "actions_edit_dlg", true); //actionCollection(), QString::null, true, this );
+ int currentPageIndex = view->toolbarTab->currentPageIndex();
+
+ ActionEditDlg dlg( this, this, "actions_edit_dlg", true); //actionCollection(), QString::null, true, this );
     
-    if ( dlg.exec() ) {
+ if ( dlg.exec() )
+ {
     QFile f( KGlobal::instance()->dirs()->saveLocation("data")+"quanta/actions.rc" );
     f.open( IO_ReadWrite | IO_Truncate );
     QTextStream qts(&f);
     m_actions->save(qts,0);
     f.close();
-
-    }
+    view->toolbarTab->setCurrentPage(currentPageIndex);
+ }
 }
 
 

@@ -56,7 +56,7 @@
       <Action name="syntax_check"/>
     </Menu>
 
-    <Menu name="toolbars" ><text>&amp;Toolbars</text>
+    <Menu name="toolbars" ><text>Too&amp;lbars</text>
       <Action name="toolbars_load"/>
       <Menu name="toolbars_save" ><text>&amp;Save Toolbars</text>
        <Action name="toolbars_save_local"/>

@@ -8,7 +8,8 @@
  ***************************************************************************/
 
  /***************************************************************************
-    copyright            : (C) 2001 by Dmitry Poplavsky 
+    copyright            : (C) 2001 by Dmitry Poplavsky
+                           (C) 2002 by Andras Mantia <amantia@freemail.hu>
     email                : dima@kde.org
  ***************************************************************************/
 
@@ -19,17 +20,22 @@
 #include <qradiobutton.h>
 #include <qmultilineedit.h>
 #include <qtabwidget.h>
+#include <qtextstream.h>
+#include <qfile.h>
 
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kaction.h>
 #include <kiconloader.h>
 #include <kicondialog.h>
+#include <kstandarddirs.h>
+#include <kdebug.h>
 
 #include "actioneditdlg.h"
 #include "tagaction.h"
 #include "../tagdialogs/filecombo.h"
 #include "../quanta.h"
+#include "../quantaview.h"
 
 class ActionListItem : public QListBoxPixmap {
 private:
@@ -73,6 +79,11 @@ ActionEditDlg::ActionEditDlg( QuantaApp *a, QWidget* parent, const char* name, b
    }
    actionsList->sort();
 
+  QTabWidget *tb = a->getView()->getToolbarTab();
+  for (int i = 0; i < tb->count(); i++)
+  {
+    toolbarCombo->insertItem(tb->label(i));
+  }
 }
 
 ActionEditDlg::~ActionEditDlg()
@@ -246,8 +257,52 @@ void ActionEditDlg::saveAction( TagAction *a )
       if ( errorNew       ->isChecked() ) script.setAttribute("error","new");
       if ( errorReplace   ->isChecked() ) script.setAttribute("error","replace");
     }
+
+  if (placeOnToolbar->isChecked())
+  {
+    QPtrList<KXMLGUIClient> guiClients = app->factory()->clients();
+    QDomNodeList nodeList;
+    QDomNode foundNode;
+    QString tabName = toolbarCombo->currentText().lower();
+    KXMLGUIClient *guiClient = 0;
+    uint i =0;
+    do {
+      nodeList = guiClients.at(i)->domDocument().elementsByTagName("ToolBar");
+      for (uint j = 0; j < nodeList.count(); j++)
+      {
+        //we found the right toolbar
+        if (nodeList.item(j).toElement().attribute("name") == tabName)
+        {
+          guiClient = guiClients.at(i);
+          foundNode = nodeList.item(j);
+        }
+      }
+     i++;
+    } while ( (!guiClient) && (i < guiClients.count()) );
+
+    // modify the client's XML
+    if (guiClient)
+    {
+      QDomElement e = guiClient->domDocument().createElement("Action");
+      e.setAttribute("name",el.attribute("name"));
+      foundNode.appendChild(e);
+      kdDebug() << guiClient->domDocument().toString() << endl;
+      //if it is a user toolbar, reload them
+      guiClient->actionCollection()->insert(a);
+      KXMLGUIFactory::saveConfigFile(guiClient->domDocument(), guiClient->localXMLFile());
+      //reload all the clients
+      for (i = 0; i < guiClients.count(); i++)
+      {
+        guiClient = guiClients.at(i);
+        app->factory()->removeClient(guiClient);
+        guiClient ->setXMLGUIBuildDocument( QDomDocument() );
+        guiClient->reloadXML();
+        app->guiFactory()->addClient(guiClient);
+      }
+    }
+
+  }
   
 }
-
 
 #include "actioneditdlg.moc"
