@@ -1167,11 +1167,6 @@ bool Document::scriptAutoCompletion(int line, int column)
      handled = true;
    }
  } else
- if ( s[i] == completionDTD->tagAutoCompleteAfter || completionDTD->tagAutoCompleteAfter == '\1')
- {
-   showCodeCompletions(getTagCompletions(line, column + 1));
-   handled = true;
- } else
  {
    StructTreeGroup group;
    for (uint j = 0; j < completionDTD->structTreeGroups.count(); j++)
@@ -1188,6 +1183,12 @@ bool Document::scriptAutoCompletion(int line, int column)
      }
    }
  }
+ if ( !handled && (s[i] == completionDTD->tagAutoCompleteAfter || completionDTD->tagAutoCompleteAfter == '\1'))
+ {
+   showCodeCompletions(getTagCompletions(line, column + 1));
+   handled = true;
+ } else
+
  return handled;
 }
 
