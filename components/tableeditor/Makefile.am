@@ -1,6 +1,6 @@
 noinst_LTLIBRARIES = libtableeditor.la
 
-libtableeditor_la_SOURCES = tableeditors.ui dummy.cpp tableeditor.cpp tableitem.cpp
+libtableeditor_la_SOURCES = tableeditors.ui tableeditor.cpp tableitem.cpp
 
 METASOURCES = AUTO
 

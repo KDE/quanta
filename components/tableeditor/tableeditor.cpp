@@ -11,7 +11,7 @@
  *   the Free Software Foundation; version 2 of the License.
  *
  ***************************************************************************/
- 
+
 //kde includes
 #include <kapplication.h>
 #include <kdebug.h>
@@ -48,7 +48,7 @@
 
 int newNum;
 
-TableEditor::TableEditor(QWidget* parent, const char* name) 
+TableEditor::TableEditor(QWidget* parent, const char* name)
   : TableEditorS(parent, name)
 {
   m_popup = new KPopupMenu();
@@ -89,7 +89,7 @@ TableEditor::TableEditor(QWidget* parent, const char* name)
   m_tableRows = 0L;
   m_createNodes = true;
   newNum += 7;
-  
+
   connect(headerColSpinBox, SIGNAL(valueChanged(int)), SLOT(slotAddRemoveCol(int)));
   connect(headerRowSpinBox, SIGNAL(valueChanged(int)), SLOT(slotAddRemoveRow(int)));
   connect(rowSpinBox, SIGNAL(valueChanged(int)), SLOT(slotAddRemoveRow(int)));
@@ -1190,3 +1190,4 @@ void TableEditor::configureCell(int row, int col, Node * node)
    item->setVAlignment(flags);
 }
 
+#include "tableeditor.moc"
