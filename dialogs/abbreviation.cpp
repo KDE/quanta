@@ -92,6 +92,7 @@ void Abbreviation::slotAddTemplate()
   KDialogBase dlg(this, 0, true, i18n("Add Code Template"), KDialogBase::Ok | KDialogBase::Cancel);
   CodeTemplateDlgS w(&dlg);
   dlg.setMainWidget(&w);
+  w.templateEdit->setFocus();
   if (dlg.exec())
   {
     QString templateName = w.templateEdit->text();

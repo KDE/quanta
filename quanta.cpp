@@ -3565,8 +3565,8 @@ void QuantaApp::slotExpandAbbreviation()
     DTDStruct *dtd = w->currentDTD();
     uint line, col;
     w->viewCursorIf->cursorPositionReal(&line, &col);
-    QString text = w->text(line, 0, line, col);
-    text = w->findWordRev(text)+" ";
+    QString text = w->text(line, 0, line, col - 1);
+    text = w->findWordRev(text) + " ";
     QString textToInsert;
     QMap<QString, QString>::Iterator it;
     for (it = dtd->abbreviations.begin(); it != dtd->abbreviations.end(); ++it)
