@@ -10,7 +10,7 @@ Type=KPart
 Input=3
 
 [General]
-Plugins=KFileReplace, CVS Management (Cervisia),XSLT Debugger
+Plugins=KFileReplace, CVS Management (Cervisia),XSLT Debugger, KImageMapEditor
 SearchPaths=
 
 [KFileReplace]
@@ -29,6 +29,16 @@ Arguments=
 FileName=kde3/libkxsldbgpart.la
 Icon=xsltproc.png
 Input=0
+Location=
+OutputWindow=Editor Tab
+ReadOnly=true
+Standard=false
+Type=KPart
+
+[KImageMapEditor]
+FileName=kde3/libkimagemapeditor.la
+Icon=kimagemapeditor
+Input=1
 Location=
 OutputWindow=Editor Tab
 ReadOnly=true
