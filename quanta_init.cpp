@@ -666,13 +666,11 @@ void QuantaApp::setAttributes(QDomDocument *dom, QTag* tag)
 
  if (el.attribute("single") == "1")
  {
-  //singleTags->append(el.attribute("name").upper());
   tag->setSingle(true);
  }
 
  if (el.attribute("optional") == "1")
  {
-//  optionalTags->append(el.attribute("name").upper());
   tag->setOptional(true);
  }
 
@@ -757,6 +755,8 @@ void QuantaApp::initTagDict()
     dtdConfig->setGroup("General");
     QString dtdName = dtdConfig->readEntry("Name", "Unknown");
     bool caseSensitive = dtdConfig->readBoolEntry("CaseSensitive");
+    dtd->name = dtdName;
+    dtd->caseSensitive = caseSensitive;
 
     //read the attributes for each common group
     QStrList * groupList = new QStrList();
@@ -827,6 +827,39 @@ void QuantaApp::initTagDict()
     {
       QTag *tag = new QTag();
       tag->setName(QString(extraTagsList.at(i)).stripWhiteSpace());
+
+      QString searchForTag = (dtd->caseSensitive) ? tag->name() : tag->name().upper();
+      if (tagList->find(searchForTag)) //the tag is already defined in a .tag file
+      {
+        delete tag;
+        continue; //skip this tag
+      }
+      tag->parentDTD = dtd;
+      QStrList optionsList;
+      dtdConfig->readListEntry(tag->name() + "_options",optionsList);
+      for (uint j = 0; j < optionsList.count(); j++)
+      {
+       QString option = QString(optionsList.at(j)).stripWhiteSpace();
+       QDictIterator<AttributeList> it(*(dtd->commonAttrs));
+       for( ; it.current(); ++it )
+       {
+         QString lookForAttr = "has"+QString(it.currentKey()).stripWhiteSpace();
+         if (option == lookForAttr)
+         {
+           tag->commonGroups += QString(it.currentKey()).stripWhiteSpace();
+         }
+       }
+
+       if (option == "single")
+       {
+         tag->setSingle(true);
+       }
+
+       if (option == "optional")
+       {
+          tag->setOptional(true);
+       }
+      }
       QStrList attrList;
       dtdConfig->readListEntry(tag->name(), attrList);
       for (uint j = 0; j < attrList.count(); j++)
@@ -846,10 +879,8 @@ void QuantaApp::initTagDict()
       }
     }
 
-    dtd->name = dtdName;
-    dtd->tagsList = tagList;
-    dtd->caseSensitive = caseSensitive;
-    dtds->insert(dtdName, dtd);//insert the taglist into the full list7
+   dtd->tagsList = tagList;
+   dtds->insert(dtdName, dtd);//insert the taglist into the full list7
   }
 
   delete dtdConfig;

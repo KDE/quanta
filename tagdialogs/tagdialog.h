@@ -79,6 +79,8 @@ public slots: // Public slots
   void slotAccept();
 
 private:
+  bool deleteTag;
+
   QPtrList<Tagxml> *extraPageList;
   void parseAttributes( QString attrs );
 };

@@ -39,8 +39,23 @@
 #include "../parser/qtag.h"
 
 TagDialog::TagDialog(QTag* tag ,QString attr, QString base)
-    : QTabDialog( 0L, tag->name(), true)
+    : QTabDialog( 0L, "tagdialog", true)
 {
+  setOkButton(i18n("&OK"));
+  setCancelButton(i18n("&Cancel"));
+
+  connect( this, SIGNAL(applyButtonPressed()),  SLOT(slotAccept()) );
+  connect( this, SIGNAL(cancelButtonPressed()), SLOT(reject()) );
+
+  if (!tag)   //the tag is invalid, let's create a default one
+  {
+    this->tag = new QTag();
+    tag->setName("Unknown tag");
+    deleteTag = true;
+  } else
+  {
+    deleteTag = false;
+  }
   dict = new QDict<QString>(1,false);
   this->tag = tag;
   basePath = base;
@@ -58,14 +73,14 @@ TagDialog::TagDialog(QTag* tag ,QString attr, QString base)
   mainDlg = 0L;
   parseTag();
 
-  setOkButton(i18n("&OK"));
-  setCancelButton(i18n("&Cancel"));
-
-  connect( this, SIGNAL(applyButtonPressed()),  SLOT(slotAccept()) );
-  connect( this, SIGNAL(cancelButtonPressed()), SLOT(reject()) );
 }
 
-TagDialog::~TagDialog(){
+TagDialog::~TagDialog()
+{
+  if (deleteTag)
+  {
+    delete tag;
+  }
 }
 
 /**  */
@@ -90,6 +105,17 @@ void TagDialog::parseTag()
     {
        mainDlg = new TagImgDlg( this);
        ((TagImgDlg *)mainDlg)->writeAttributes( dict );
+    } else
+    {
+      if (tag->name() != "Unknown tag") //read from the extra tags
+      {
+        QString docString = "<!DOCTYPE TAGS>\n<TAGS>\n";
+        docString += QString("<tag name=\"%1\">\n").arg(tag->name());
+        docString += QuantaCommon::xmlFromAttributes(tag->attributes());
+        docString += "</tag>\n</TAGS>\n";
+        doc.setContent(docString);
+        mainDlg = new Tagxml( doc, this );
+      }
     }
   }
 

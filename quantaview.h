@@ -94,40 +94,11 @@ class QuantaView : public QWidget
 
 	public slots:
 
-    void slotTagImg();
-    void slotTagA();
     void slotTagMail();
     void slotTagQuickStart();
-    void slotTagFont();
-    void slotTagBaseFont();
-    void slotTagTable();
     void slotTagQuickList();
     void slotTagQuickTable();
-    void slotTagTableRow();
-    void slotTagTableHead();
-    void slotTagTableBody();
-    void slotTagTableData();
     void slotTagColor();
-    void slotTagFormRadio();
-    void slotTagFormTextArea();
-    void slotTagForm();
-    void slotTagFormCheck();
-    void slotTagFormPas();
-    void slotTagFormLineEdit();
-    void slotTagFormReset();
-    void slotTagFormSubmit();
-    void slotTagNbsp();
-    void slotTagSzlig();
-    void slotTagauml();
-    void slotTaguuml();
-    void slotTagouml();
-    void slotTagAuml();
-    void slotTagUuml();
-    void slotTagOuml();
-    void slotTagAmp();
-    void slotTagLt();
-    void slotTagGt();
-    void slotTagBr();
     void slotTagDate();
     void slotTagSelect();
     

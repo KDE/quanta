@@ -582,7 +582,7 @@ void TemplatesTreeView::slotSetTemplateDir(const QString &Dir)
 
   if(!Dir.isEmpty())
   {
-    projectDir = new FilesTreeFolder(this, i18n("Project Templates"), Dir);
+    projectDir = new FilesTreeFolder(this, i18n("Project Templates"), Dir+"/");
     projectDir->setPixmap(0, SmallIcon("folder"));
     projectDir->setOpen(true);
   }
