@@ -1276,8 +1276,8 @@ QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomEleme
     }
     tb->adjustSize();
     view->toolbarTab->insertTab(tb, i18n(tabname));
-    view->toolbarTab->setFixedHeight(tb->minimumSizeHint().height()+
-                                     view->toolbarTab->tabHeight());
+    if (tb->minimumSizeHint().height() > 20)
+      view->toolbarTab->setFixedHeight(tb->minimumSizeHint().height()+view->toolbarTab->tabHeight());
     qInstallMsgHandler( oldHandler );
     return tb;
   }
