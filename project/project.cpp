@@ -1171,19 +1171,25 @@ void Project::slotOptions()
   optionsPage->lineExclude->setText(excludeStr);
 
   optionsPage->linePrefix->setText(previewPrefix.url());
-  QString name;
-  int index;
+  QStringList lst;
   QDictIterator<DTDStruct> it(*dtds);
   for( ; it.current(); ++it )
   {
-    index = -1;
-    name = it.current()->name;
     if (it.current()->family == Xml)
     {
-      if (name.lower() == m_defaultDTD) index = 0;
-      optionsPage->dtdCombo->insertItem(QuantaCommon::getDTDNickNameFromName(name), index);
+      lst << it.current()->nickName;
     }
   }
+  lst.sort();
+  uint pos = 0;
+  for (uint i = 0; i < lst.count(); i++)
+  {
+    optionsPage->dtdCombo->insertItem(lst[i]);
+    if (lst[i] == QuantaCommon::getDTDNickNameFromName(m_defaultDTD))
+       pos = i;
+  }
+  optionsPage->dtdCombo->setCurrentItem(pos);
+
 
   QStringList availableEncodingNames(KGlobal::charsets()->availableEncodingNames());
   optionsPage->encodingCombo->insertStringList( availableEncodingNames );

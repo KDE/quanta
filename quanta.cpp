@@ -742,7 +742,7 @@ KEditToolbar *dlg;
   dlg = new KEditToolbar(defaultToolbar, factory(), this);
 #endif
 #else
-  dlg = new KEditToolbarfactory(), this);
+  dlg = new KEditToolbar(factory(), this);
 #endif
 
  //remove the manually added menus BEFORE the dlg shows up
@@ -851,19 +851,24 @@ void QuantaApp::slotOptions()
 
   page=kd->addVBoxPage(i18n("Parser"), QString::null, BarIcon("kcmsystem", KIcon::SizeMedium ) );
   ParserOptions *parserOptions = new ParserOptions( m_config, (QWidget *)page );
-  QString name;
-  int index;
+  QStringList lst;
   QDictIterator<DTDStruct> it(*dtds);
   for( ; it.current(); ++it )
   {
-    index = -1;
-    name = it.current()->name;
     if (it.current()->family == Xml)
     {
-      if (name.lower() == qConfig.defaultDocType.lower()) index = 0;
-      fileMasks->defaultDTDCombo->insertItem(QuantaCommon::getDTDNickNameFromName(name), index);
+      lst << it.current()->nickName;
     }
   }
+  lst.sort();
+  uint pos = 0;
+  for (uint i = 0; i < lst.count(); i++)
+  {
+    fileMasks->defaultDTDCombo->insertItem(lst[i]);
+    if (lst[i] == QuantaCommon::getDTDNickNameFromName(qConfig.defaultDocType.lower()))
+       pos = i;
+  }
+  fileMasks->defaultDTDCombo->setCurrentItem(pos);
 
   parserOptions->refreshFrequency->setValue(qConfig.refreshFrequency);
   parserOptions->instantUpdate->setChecked(qConfig.instantUpdate);
@@ -2438,18 +2443,19 @@ KURL QuantaApp::projectBaseURL()
 /** No descriptions */
 void QuantaApp::slotBuildPrjToolbarsMenu()
 {
-    if (m_project && m_project->hasProject())
+  KURL::List toolbarList;
+  if (m_project && m_project->hasProject())
+  {
+    toolbarList = QExtFileInfo::allFiles(m_project->toolbarURL, "*"+toolbarExtension);
+    projectToolbarFiles->setMaxItems(toolbarList.count());
+    for (uint i = 0; i < toolbarList.count(); i++)
     {
-      KURL::List toolbarList = QExtFileInfo::allFiles(m_project->toolbarURL, "*"+toolbarExtension);
-      projectToolbarFiles->setMaxItems(toolbarList.count());
-      for (uint i = 0; i < toolbarList.count(); i++)
-      {
-          projectToolbarFiles->addURL(toolbarList[i]);
-      }
-    } else
-    {
-      projectToolbarFiles->clearURLList();
+        projectToolbarFiles->addURL(toolbarList[i]);
     }
+  } else
+  {
+    projectToolbarFiles->clearURLList();
+  }
 }
 
 /** Returns the project (if there is one loaded) or global default encoding. */
