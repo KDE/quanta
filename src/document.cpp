@@ -943,7 +943,7 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
       if (node && node->parent )
       {
         node = node->parent;
-        if (!node->next || !QuantaCommon::closesTag(node->tag, node->next->tag))
+        if (node->tag->type == Tag::XmlTag && (!node->next || !QuantaCommon::closesTag(node->tag, node->next->tag)))
         {
             QString name = node->tag->name;
             name = name.left(name.find(" | "));

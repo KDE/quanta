@@ -1,8 +1,20 @@
 This files contains the changes since Quanta 2.0 until the current 3.3.x series.
 
-Version 3.3 (Targeted release date: 18-08-2004; Started 07-05-2004):
+Version 3.4 (Release date: xx-xx-2005; Started 20-08-2004):
+  - bugfixes:
+	- VPL:
+	    - enable VPL on KDE 3.3.x
+        - show (again) the full filename in a tooltip
+        - don't crash if the preview widget is closed with a JavaScript command from the
+          code itself [#87533]
+        - possible crash on startup fixed
+        - don't try to autofill a closing tag for non-xml tags [#89212]
+
+
+
+Version 3.3.0 (Release date: 18-08-2004; Started 07-05-2004):
 NOTE: Unfortunately I failed to update the changelog regulary, thus some new features and
-bugfixes might not be listed here. 
+bugfixes might not be listed here.
 
   - bugfixes:
         - VPL:
@@ -10,11 +22,11 @@ bugfixes might not be listed here.
 	    - fix a huge memory leakage
 	    - don't crash when opening/creating a new file while VPL is visible [#82754]
 	    - fix insertion of extra spaces around text in some conditions
-	    - fix a nasty bug : put VPL/Source view, go to another file in Source view, the cursor 
+	    - fix a nasty bug : put VPL/Source view, go to another file in Source view, the cursor
 	      will be stuck at position 0:0
 	    - don't forget to set the document as modified when in VPL view
 	    - fix the LINK bug : the stylesheet wasn't loaded
-	    - fix the return key bugs (sometimes the breakline is simply not inserted, sometime the 
+	    - fix the return key bugs (sometimes the breakline is simply not inserted, sometime the
 	      cursor disappear)
 	    - other bugfixes
         - correctly load the plugins toolbar [#81031]
@@ -42,7 +54,7 @@ bugfixes might not be listed here.
         - fix toolbar configuration and removal for non-English versions
         - don't show the file changed dialog when previewing after Save All or Project Upload
           was called. Fixes also for similar bugs (File Changed dialog appeared when it shouldn't).
-        - don't confuse the user when changing the icon for a remote root directory. Use the icon 
+        - don't confuse the user when changing the icon for a remote root directory. Use the icon
 	  associated with root and home folders, not the hardcoded files. [#81130]
 	- enable the Configure Toolbars... and Toolbar items in the toolbar context menu [#80643]
 	- don't crash when a part is removed without noticing us (eg. Konsole is removed from RMB->Close Terminal Emulator)
@@ -51,15 +63,15 @@ bugfixes might not be listed here.
 	- don't crash when the parser returns and empty node. For example it happens in case of empty CSS documents [#83130]
 	- use the global doctype setting for new document if there is no project loaded
 	- disable the autocompletion inside comments [#84660]
-	- make image preview work also for images outside of the project  
-	- build the node tree correctly when there is no space between the closing tag and the immediately 
+	- make image preview work also for images outside of the project
+	- build the node tree correctly when there is no space between the closing tag and the immediately
 	  following special area
 	- fix autocompletion for simple special areas like <? a ?>
 	- don't use fixed sized dialogs [#86026]
 	- display correctly the index of the main cell in case of merges in the table editor [#86027]
 	- fix layout of the img tag dialog [#85077]
 	- fix meta keyword generation in the QuickStart dialog [#83872]
-	- make save as dialog work with a remote url 
+	- make save as dialog work with a remote url
 	- fix autocompletion for tag having ampersand in an attribute value [#85710]
 	- honour the command line arguments for the script executor specified in the .info files
 	- don't crash when invoking the CSS editor in an empty CSS file [#86523]
@@ -72,7 +84,7 @@ bugfixes might not be listed here.
 	- Remove From Disc (and Project) renamed to Delete in the Project Tree
 	- you cannot open the same project file in two different Quanta instances anymore
 
-  - enhancements/new features: 
+  - enhancements/new features:
 	- VPL:
 	    - speedup of VPL
  	    - added a icon which represent a comment, and which is used in VPL like the current PHP icon
@@ -122,16 +134,16 @@ bugfixes might not be listed here.
              QString WindowManagerIf::urlWithPreviewPrefix(QString url);
 	- team development support for projects
 	- event action support for projects (email, log, script actions)
-	- support %userarguments (useful for event arguments) and %projectbase for script actions    
+	- support %userarguments (useful for event arguments) and %projectbase for script actions
 	- add possibility to download resources (DTEP, toolbar, script and template packages) from
 	  our main server
 	- create a new toolbar for easier project view usage
 	- basic integrated CVS support (Commit and Update)
 	- improved CSS editor
-	- several treeview enhancements (inline renaming; tooltips - configurable from the quantarc, 
+	- several treeview enhancements (inline renaming; tooltips - configurable from the quantarc,
 	  ShowToolTips entry; inline editing of descriptions; save and reload the tree state; improved D&D)
-	- support for tgz site templates. Site templates are tgz files that can be extracted 
-	  to an user defined directory.	  
+	- support for tgz site templates. Site templates are tgz files that can be extracted
+	  to an user defined directory.
 	- added possibility to configure the preview part (has effect on the whole KHTML, including
 	  Konqueror!)
 
