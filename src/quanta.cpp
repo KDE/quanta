@@ -3906,7 +3906,7 @@ void QuantaApp::slotInsertCSS()
       w->editIf->removeText(bLine, bCol+1, eLine, eCol);
       w->viewCursorIf->setCursorPositionReal((uint)bLine, (uint)bCol+1);
       w->activateParser(true);
-      w->insertTag( "\n<!--" + dlg->generateStyleSection() + "-->\n");
+      w->insertTag( /*"\n<!--" + */ dlg->generateFormattedStyleSection()  /*+ "-->\n"*/);
     }
     delete dlg;
 
@@ -3924,7 +3924,7 @@ void QuantaApp::slotInsertCSS()
       w->activateParser(false);
       w->editIf->clear();
       w->activateParser(true);
-      w->insertTag(dlg->generateStyleSection());
+      w->insertTag(dlg->generateFormattedStyleSection());
     }
     delete dlg;
   } else
@@ -3941,7 +3941,6 @@ void QuantaApp::slotInsertCSS()
     QString temp;
     if (parentNode->tag->hasAttribute("style"))
     {
-      parentNode->tag->attributeValue("style");
       dlg->setInlineStyleContent(parentNode->tag->attributeValue("style"));
       Tag tempTag(*(parentNode->tag));
       tempTag.deleteAttribute("style");

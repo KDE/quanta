@@ -32,9 +32,9 @@
 //#include <kdebug.h>
 
 CSSSelector::CSSSelector(QString dtd, QWidget *parent, const char* name) : CSSSelectorS (parent,name), m_currentDocumentDTD(dtd) {
-  
+
   m_currentItem = 0L;
-  
+
   Connect();
   QString configDir = locate("appdata", "csseditor/config.xml");
   configDir = QFileInfo(configDir).dirPath() + "/";
@@ -68,8 +68,8 @@ CSSSelector::CSSSelector(QString dtd, QWidget *parent, const char* name) : CSSSe
     return;
   }
   file.close();
- 
- QStringList dtdNames,dtdNickNames; 
+
+ QStringList dtdNames,dtdNickNames;
  docElem = doc.documentElement();
  n = docElem.firstChild();
   while( !n.isNull() ) {
@@ -80,7 +80,7 @@ CSSSelector::CSSSelector(QString dtd, QWidget *parent, const char* name) : CSSSe
     }
     n = n.nextSibling();
   }
-    
+
   if( !m_currentDocumentDTD.isEmpty() ) {
     if( dtdNames.contains( m_currentDocumentDTD ) ) {
       n = docElem.firstChild();
@@ -96,31 +96,31 @@ CSSSelector::CSSSelector(QString dtd, QWidget *parent, const char* name) : CSSSe
       cbDTD->setDisabled(true);
     }
   }
-  else  cbDTD->insertStringList( dtdNickNames );   
+  else  cbDTD->insertStringList( dtdNickNames );
 }
 
 CSSSelector::~CSSSelector(){
 }
 
 void CSSSelector::Connect(){
-  
+
   connect(cbDTD,SIGNAL(activated(const QString&)),this,SLOT(setDTDTags(const QString&)));
-  
+
   connect(pbAddTag,SIGNAL(clicked()), this ,SLOT(addTag()));
   connect(pbAddClass,SIGNAL(clicked()), this ,SLOT(addClass()));
   connect(pbAddID,SIGNAL(clicked()), this ,SLOT(addID()));
   connect(pbAddPseudo,SIGNAL(clicked()), this ,SLOT(addPseudo()));
-  
+
   connect(lvTags, SIGNAL(doubleClicked( QListViewItem *  )), this, SLOT(openCSSEditor(QListViewItem *)));
   connect(lvClasses, SIGNAL(doubleClicked( QListViewItem *  )), this, SLOT(openCSSEditor(QListViewItem *)));
   connect(lvIDs, SIGNAL(doubleClicked( QListViewItem *  )), this, SLOT(openCSSEditor(QListViewItem *)));
   connect(lvPseudo, SIGNAL(doubleClicked( QListViewItem *  )), this, SLOT(openCSSEditor(QListViewItem *)));
-     
+
   connect(lvTags, SIGNAL(selectionChanged( QListViewItem *  )), this, SLOT(setCurrentItem(QListViewItem *)));
   connect(lvClasses, SIGNAL(selectionChanged( QListViewItem *  )), this, SLOT(setCurrentItem(QListViewItem *)));
   connect(lvIDs, SIGNAL(selectionChanged( QListViewItem *  )), this, SLOT(setCurrentItem(QListViewItem *)));
   connect(lvPseudo, SIGNAL( selectionChanged( QListViewItem *  )), this, SLOT(setCurrentItem(QListViewItem *)));
-    
+
   connect(pbRemoveSelectedTag,SIGNAL(clicked()), this ,SLOT(removeSelected()));
   connect(pbRemoveSelectedClass,SIGNAL(clicked()), this ,SLOT(removeSelected()));
   connect(pbRemoveSelectedID,SIGNAL(clicked()), this ,SLOT(removeSelected()));
@@ -135,12 +135,12 @@ void CSSSelector::Connect(){
 }
 
 void CSSSelector::setDTDTags(const QString& s){
-  
+
   QString configDir = locate("appdata", "csseditor/config.xml");
   configDir = QFileInfo(configDir).dirPath() + "/";
 
   QDomDocument doc;
- 
+
   QFile file( configDir+"dtdTags.xml" );
   if ( !file.open( IO_ReadOnly ) )
     return;
@@ -149,7 +149,7 @@ void CSSSelector::setDTDTags(const QString& s){
     return;
   }
   file.close();
- 
+
   QStringList dtdNames;
   QDomElement docElem = doc.documentElement();
   QDomNode n = docElem.firstChild();
@@ -192,12 +192,12 @@ void CSSSelector::openCSSEditor(QListViewItem * i){
   QListView *lv = i->listView();
   QListViewItem *temp;
   QString s;
-  
+
   QObjectList *l = queryList( "QListView" );
   QObjectListIt it( *l ); // iterate over the listviews
   QObject *obj;
 
-  while ( (obj = it.current()) != 0 ) { 
+  while ( (obj = it.current()) != 0 ) {
     QListView *lvTemp = (QListView*)obj;
     if( lv != lvTemp){
       temp = lvTemp->firstChild();
@@ -206,10 +206,10 @@ void CSSSelector::openCSSEditor(QListViewItem * i){
         temp = temp->nextSibling();
       }
     }
-    ++it; 
+    ++it;
   }
-  delete l; // delete the list, not the objects  
-  
+  delete l; // delete the list, not the objects
+
   temp = lv->firstChild();
 
   while(temp){
@@ -227,7 +227,7 @@ void CSSSelector::openCSSEditor(QListViewItem * i){
   CSSEditor *dlg = new CSSEditor(i);
   //dlg->setSourceFileName(sourceFileName);
   dlg->setForInitialPreview(m_initialPreviewText);
-  
+
   dlg->setHeader(m_header);
   dlg->setSelectors(s);
   dlg->setFooter(m_footer);
@@ -249,7 +249,7 @@ void CSSSelector::removeSelected(){
   if( m_currentItem ) {
     delete m_currentItem;
     m_currentItem = 0L;
-  } 
+  }
 }
 
 void CSSSelector::loadExistingStyleSection(QString s){
@@ -262,7 +262,7 @@ void CSSSelector::loadExistingStyleSection(QString s){
    if(s.contains("/*") == 0 || s.contains("*/") == 0 ) break;
    s.remove(lf,rt+2-lf);
   }
-  
+
   int  atPos=s.find("@");
 
   QString tempStr,
@@ -320,7 +320,7 @@ void CSSSelector::loadExistingStyleSection(QString s){
 
   QMap<QString,QString> styleTagEntities;
     QStringList temp = QStringList::split("}",s.stripWhiteSpace());
-        
+
     for ( QStringList::Iterator it = temp.begin(); it != temp.end(); ++it ) {
       (*it).remove("\n");
       (*it).remove("\t");
@@ -339,7 +339,7 @@ void CSSSelector::loadExistingStyleSection(QString s){
     }
     else
     if(it.key().contains(".")){
-      item = new QListViewItem(lvClasses); 
+      item = new QListViewItem(lvClasses);
     }
     else {
       item = new QListViewItem(lvTags);
@@ -354,20 +354,20 @@ QString CSSSelector::generateStyleSection(){
 
   QListViewItem *temp;
   QString styleSection;
-  
+
   QObjectList *l = queryList( "QListView" );
   QObjectListIt it( *l ); // iterate over the listviews
   QObject *obj;
 
-  while ( (obj = it.current()) != 0 ) { 
+  while ( (obj = it.current()) != 0 ) {
     temp = ((QListView*)obj)->firstChild();
     while(temp){
     styleSection+=(temp->text(0)+" { "+temp->text(1)+" } \n\t");
     temp = temp->nextSibling();
     }
-    ++it; 
+    ++it;
   }
-  delete l; // delete the list, not the objects  
+  delete l; // delete the list, not the objects
 
   styleSection.truncate(styleSection.length()-1); //we elminate the last \t
 
@@ -379,32 +379,33 @@ QString CSSSelector::generateFormattedStyleSection(){
   QListViewItem *temp;
   QString styleSection,tmpStr;
   unsigned int indentWidth,
-                      indentDisplacement = 10;
-                      
+                      indentDisplacement = 2;
+
   QObjectList *l = queryList( "QListView" );
   QObjectListIt it( *l ); // iterate over the listviews
   QObject *obj;
 
-  while ( (obj = it.current()) != 0 ) { 
+  while ( (obj = it.current()) != 0 ) {
     temp = ((QListView*)obj)->firstChild();
     while(temp){
       styleSection += temp->text(0);
       styleSection += " {\n";
-      indentWidth = ( temp->text(0).length() + indentDisplacement );
+      indentWidth = indentDisplacement + 2;
       QStringList props = QStringList::split(";",temp->text(1));
+      QString indentStr;
+      indentStr.fill(' ',indentWidth);
       for ( QStringList::Iterator it = props.begin(); it != props.end(); ++it ) {
-        QString indentStr;
-        indentStr.fill(' ',indentWidth);
         if((*it).startsWith(" ")) tmpStr += ( indentStr + (*it).remove(0,1) + ";\n");
         else tmpStr += (indentStr + (*it) + ";\n");
       }
-      styleSection += ( tmpStr + "\t}\n\n");
+      indentStr.fill(' ', indentDisplacement);
+      styleSection += ( tmpStr + indentStr + "}\n\n");
       tmpStr = QString::null;
       temp = temp->nextSibling();
-    }   
-    ++it; 
+    }
+    ++it;
   }
-    delete l; // delete the list, not the objects                    
+    delete l; // delete the list, not the objects
 
   return "\n"+styleSection;
 }
