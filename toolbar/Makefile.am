@@ -1,7 +1,7 @@
-noinst_LIBRARIES = libtoolbar.a
+noinst_LTLIBRARIES = libtoolbar.la
 
-libtoolbar_a_SOURCES = toolbarxmlgui.cpp tagaction.cpp actionconfigdialog.cpp actionconfigdialogs.ui toolbartabwidget.cpp
+libtoolbar_la_SOURCES = toolbarxmlgui.cpp tagaction.cpp actionconfigdialog.cpp actionconfigdialogs.ui toolbartabwidget.cpp
 
-libtoolbar_a_METASOURCES = AUTO
+METASOURCES = AUTO
 
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/quanta/tagdialogs $(all_includes)

@@ -4,13 +4,8 @@
 EXTRA_DIST = debugger.cpp debugger.h 
 
 ####### kdevelop will overwrite this part!!! (end)############
-noinst_LIBRARIES = libphp3dbg.a
+noinst_LTLIBRARIES = libphp3dbg.la
 
 INCLUDES = $(all_includes)
-libphp3dbg_a_METASOURCES = AUTO
-libphp3dbg_a_SOURCES = \
-		debugger.cpp
-AM_CFLAGS = 
-AM_CXXFLAGS = 
-AM_FFLAGS = 
-SUBDIRS = 
+METASOURCES = AUTO
+libphp3dbg_la_SOURCES = debugger.cpp

@@ -5,7 +5,7 @@ if BUILD_WYSIWYG
 KAFKALIB = $(top_builddir)/quanta/parts/kafka/libkafkalibrary.la
 endif
 
-quanta_LDADD = $(top_builddir)/quanta/project/libproject.a $(top_builddir)/quanta/plugins/libplugins.a $(top_builddir)/quanta/widgets/libwidgets.a $(top_builddir)/quanta/parser/libparser.a $(top_builddir)/quanta/treeviews/libtreeviews.a $(top_builddir)/quanta/toolbar/libtoolbar.a $(top_builddir)/quanta/tagdialogs/libtagdialogs.a $(top_builddir)/quanta/dialogs/libdialogs.a $(top_builddir)/quanta/messages/libmessages.a $(top_builddir)/quanta/plugins/php4dbg/libphp4dbg.a $(top_builddir)/quanta/plugins/php4dbg/dbgbase/libdbgbase.a $(top_builddir)/quanta/plugins/framewizard/libframewizard.a $(top_builddir)/quanta/plugins/php3dbg/libphp3dbg.a -lkatepartinterfaces  $(KAFKALIB) $(LIB_KABC) $(LIB_KSPELL) $(LIB_KHTML)
+quanta_LDADD = $(top_builddir)/quanta/project/libproject.la $(top_builddir)/quanta/plugins/libplugins.la $(top_builddir)/quanta/widgets/libwidgets.la $(top_builddir)/quanta/parser/libparser.la $(top_builddir)/quanta/treeviews/libtreeviews.la $(top_builddir)/quanta/toolbar/libtoolbar.la $(top_builddir)/quanta/tagdialogs/libtagdialogs.la $(top_builddir)/quanta/dialogs/libdialogs.la $(top_builddir)/quanta/messages/libmessages.la $(top_builddir)/quanta/plugins/php4dbg/libphp4dbg.la $(top_builddir)/quanta/plugins/php4dbg/dbgbase/libdbgbase.la $(top_builddir)/quanta/plugins/framewizard/libframewizard.la $(top_builddir)/quanta/plugins/php3dbg/libphp3dbg.la -lkatepartinterfaces  $(KAFKALIB) $(LIB_KABC) $(LIB_KSPELL) $(LIB_KHTML)
 
 SUBDIRS = data messages dialogs tagdialogs toolbar treeviews parser widgets plugins project parts
 

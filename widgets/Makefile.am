@@ -1,19 +1,14 @@
 ####### kdevelop will overwrite this part!!! (begin)##########
-noinst_LIBRARIES = libwidgets.a
+noinst_LTLIBRARIES = libwidgets.la
 
 ## INCLUDES were found outside kdevelop specific part
 
-libwidgets_a_METASOURCES = AUTO
+METASOURCES = AUTO
 
-libwidgets_a_SOURCES = whtmlpart.cpp 
-
+libwidgets_la_SOURCES = whtmlpart.cpp 
 
 EXTRA_DIST = whtmlpart.h whtmlpart.cpp 
 
 ####### kdevelop will overwrite this part!!! (end)############
 
 INCLUDES = $(all_includes)
-AM_CFLAGS = 
-AM_CXXFLAGS = 
-AM_FFLAGS = 
-SUBDIRS = 
