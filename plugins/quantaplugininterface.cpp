@@ -51,7 +51,10 @@ void QuantaPluginInterface::readConfig()
   m_plugins.clear();
 
   // read the plugins.rc
-  KConfig *config = new KConfig(locate("appdata", "plugins.rc"));
+  QString configFile = locateLocal("appdata", "plugins.rc");
+  if (!QFileInfo(configFile).exists()) configFile = qConfig.globalDataDir +"quanta/plugins.rc";
+  
+  KConfig *config = new KConfig(configFile);
   config->setGroup("General");
   QStringList pList = config->readListEntry("Plugins");
   for(QStringList::Iterator it = pList.begin();it != pList.end(); ++it)
@@ -96,7 +99,7 @@ void QuantaPluginInterface::readConfig()
 void QuantaPluginInterface::writeConfig()
 {
   // write the plugin settings to the rc file
-  KConfig *config = new KConfig(locate("appdata", "plugins.rc"));
+  KConfig *config = new KConfig(locateLocal("appdata", "plugins.rc"));
 
   QStringList names = pluginNames();
   
