@@ -118,8 +118,10 @@ KafkaHTMLPart::KafkaHTMLPart(QWidget *parent, QWidget *widgetParent, const char 
 #ifdef KAFKA_DEBUG_UTILITIES
 	domdialog = new KafkaDOMTreeDialog(view(), this);
 #endif
-	//IMPORTANT:without him, no htmlDocument() is created in khtmlPart
-	newDocument();
+	//IMPORTANT:without him, no document() is created in khtmlPart
+	begin();
+	write("<html></html>");
+	end();
 }
 
 KafkaHTMLPart::~KafkaHTMLPart()
@@ -242,7 +244,7 @@ void KafkaHTMLPart::insertText(DOM::Node node, const QString &text, int position
 		{
 			DOM::DOMString textNode = node.nodeValue();
 			DOM::DOMString textSplitted = textNode.split(position);
-			node.setNodeValue(textNode + text + textSplitted);
+			node.setNodeValue(textNode + text.latin1() + textSplitted);
 			//node.parentNode().applyChanges();
 			d->m_cursorOffset += text.length();
 			emit domNodeNewCursorPos(m_currentNode, d->m_cursorOffset);
