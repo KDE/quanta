@@ -510,7 +510,10 @@ QString Tag::toString()
     }
     tagString.prepend(attrString);
   }
-  attrString = "<" + QuantaCommon::tagCase(name);
+  attrString = "<";
+  if (!nameSpace.isEmpty())
+    attrString += nameSpace + ":";
+  attrString.append(QuantaCommon::tagCase(name));
   tagString.prepend(attrString);
 
   if (attrs.isEmpty() && qTag && qTag->parentDTD->singleTagStyle == "xml" &&
