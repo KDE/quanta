@@ -8,7 +8,7 @@ Family = 1
 
 [Toolbars]
 Location = cfml
-Names = standard, fonts, tables, lists, forms, cfml, other
+Names = standard, fonts, tables, lists, forms, cfml
 
 [Extra rules]
 BooleanAttributes = simple

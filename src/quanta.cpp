@@ -986,9 +986,9 @@ void QuantaApp::slotOptionsConfigureKeys()
 void QuantaApp::slotConfigureToolbars(const QString& defaultToolbar)
 {
  currentPageIndex = ToolbarTabWidget::ref()->currentPageIndex();
-
  QDomNodeList nodeList;
  ToolbarEntry *p_toolbar = 0L;
+#if KDE_VERSION < KDE_MAKE_VERSION(3,2,90)
  QDictIterator<ToolbarEntry> iter(toolbarList);
  for( ; iter.current(); ++iter )
  {
@@ -1003,6 +1003,7 @@ void QuantaApp::slotConfigureToolbars(const QString& defaultToolbar)
    KXMLGUIFactory::saveConfigFile(p_toolbar->guiClient->domDocument(),
         p_toolbar->guiClient->xmlFile(), p_toolbar->guiClient->instance());
  }
+#endif
  saveMainWindowSettings(KGlobal::config(), autoSaveGroup());
  KEditToolbar *dlg;
 #if KDE_IS_VERSION(3,1,90)
@@ -1630,6 +1631,7 @@ QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomEleme
     QuantaToolBar *tb = new QuantaToolBar(w, element.attribute("name"), true, true);
     tb->loadState(element);
     tb->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
+#if KDE_VERSION < KDE_MAKE_VERSION(3,2,90)
     KAction *action;
     QDomNode node = element.firstChild();
     while (!node.isNull())
@@ -1651,6 +1653,7 @@ QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomEleme
         tb->insertLineSeparator();
       node = node.nextSibling();
     }
+#endif
     //kdDebug(24000) << "QuantaToolBar minimumSizeHeight :" << tb->minimumSizeHint().height() << endl;
     if (tb->minimumSizeHint().height() > 30)
     {
@@ -2075,9 +2078,19 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
     el = node.toElement();
     QString actionName = el.attribute("name");
     //if there is no such action yet, add to the available actions
-    if (! actionCollection()->action(actionName))
+    if (!actionCollection()->action(actionName))
     {
       TagAction *tagAction = new TagAction(&el, actionCollection() );
+
+#if KDE_IS_VERSION(3,2,90)
+     //add the actions to every toolbar xmlguiclient
+      QDictIterator<ToolbarEntry> it(toolbarList);
+      while (it.current())
+      {
+        it.current()->guiClient->actionCollection()->insert(tagAction);
+        ++it;
+      }
+#endif
 
     //Compatility code (read the action shortcuts from quantaui.rc)
     //TODO: Remove after upgrade from 3.1 is not supported
@@ -2094,6 +2107,12 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
           tagAction->setModified(true);
     }
    }
+
+#if KDE_IS_VERSION(3,2,90)
+   //add all actions to the xmlguiclient of this toolbar
+   for (uint i = 0 ; i < actionCollection()->count(); i++)
+      toolbarGUI->actionCollection()->insert(actionCollection()->action(i));
+#endif
 
    guiFactory()->addClient(toolbarGUI);
 
@@ -2155,7 +2174,8 @@ void QuantaApp::showToolbarFile(const KURL &url)
     }
     m_tagsMenu->insertItem(p_toolbar->name,menu);
     p_toolbar->menu = menu;
-    factory()->addClient(p_toolbar->guiClient);
+   kdDebug(24000) << p_toolbar->name << endl;
+    guiFactory()->addClient(p_toolbar->guiClient);
     p_toolbar->visible = true;
   }
 }
@@ -2402,6 +2422,13 @@ void QuantaApp::slotAddToolbar()
   tempFile->close();
 
   ToolbarXMLGUI * toolbarGUI = new ToolbarXMLGUI(tempFile->name());
+
+#if KDE_IS_VERSION(3,2,90)
+//add all actions to the xmlguiclient of this toolbar
+  for (uint i = 0 ; i < actionCollection()->count(); i++)
+     toolbarGUI->actionCollection()->insert(actionCollection()->action(i));
+#endif
+
   guiFactory()->addClient(toolbarGUI);
   ToolbarTabWidget::ref()->setCurrentPage(ToolbarTabWidget::ref()->count()-1);
   tempFileList.append(tempFile);
@@ -2604,12 +2631,11 @@ void QuantaApp::slotRenameToolbar(const QString& name)
 bool QuantaApp::removeToolbars()
 {
   QDictIterator<ToolbarEntry> it(toolbarList);
-  ToolbarEntry *p_toolbar;
+  QStringList toolbarNameList;
   while (it.current())
   {
-    p_toolbar = it.current();
-    ++it;
-    if (!slotRemoveToolbar(p_toolbar->name.lower()))
+    toolbarNameList += it.current()->name.lower();
+    if (!slotRemoveToolbar(it.current()->name.lower()))
         return false;
   }
 
@@ -3044,6 +3070,7 @@ void QuantaApp::loadToolbarForDTD(const QString& dtdName)
             p_toolbar = iter.current();
             if (p_toolbar->url == url || p_toolbar->url == urlLocal)
             {
+               kdDebug(24000) << "Removeclient: " << p_toolbar->name << endl;
               guiFactory()->removeClient(p_toolbar->guiClient);
               p_toolbar->visible = false;
               delete p_toolbar->menu;
@@ -3164,6 +3191,7 @@ bool QuantaApp::slotRemoveToolbar(const QString& name)
 
       }
      }
+
      guiFactory()->removeClient(toolbarGUI);
      delete p_toolbar->menu;
 //unplug the actions and remove them if they are not used in other places
@@ -3179,7 +3207,18 @@ bool QuantaApp::slotRemoveToolbar(const QString& name)
          if (dynamic_cast<TagAction*>(action) &&
              !dynamic_cast<TagAction*>(action)->isModified())
          {
-           delete action;
+#if KDE_IS_VERSION(3,2,90)
+             //take out the action from every toolbar's xmlguiclient
+             //this avoid a crash when removing a toolbar
+            QDictIterator<ToolbarEntry> it(toolbarList);
+            QStringList toolbarNameList;
+            while (it.current())
+            {
+              it.current()->guiClient->actionCollection()->take(action);
+              ++it;
+            }
+#endif
+            delete action;
          }
        }
      }
