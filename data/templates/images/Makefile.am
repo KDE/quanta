@@ -1,6 +1,6 @@
 ####### kdevelop will overwrite this part!!! (begin)##########
 
-SUBDIRS = jpg png others buttons banners 
+SUBDIRS = jpg png others 
 
 EXTRA_DIST = dirinfo 
 

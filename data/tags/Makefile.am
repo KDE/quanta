@@ -1,6 +1,6 @@
 ####### kdevelop will overwrite this part!!! (begin)##########
 
-SUBDIRS = html 
+SUBDIRS = tagxml 
 
 ####### kdevelop will overwrite this part!!! (end)############
 

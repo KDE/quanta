@@ -1,6 +1,6 @@
 ####### kdevelop will overwrite this part!!! (begin)##########
 
-SUBDIRS = doc tags icons templates toolbars 
+SUBDIRS = doc tags icons templates 
 
 EXTRA_DIST = syntax.xml tagdata.rc actions.rc php.xml 
 
