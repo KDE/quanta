@@ -490,7 +490,7 @@ void QuantaDoc::slotAttribPopup()
   uint line, col;
   w->viewCursorIf->cursorPositionReal(&line, &col);
 
-  baseNode = parser->parse(w);
+  quantaApp->reparse(true);
   Node *node = parser->nodeAt(line, col, false);
   if (node && node->tag)
   {

@@ -82,7 +82,7 @@ void QuantaView::slotEditCurrentTag()
   Document *w = write();
   uint line,col;
   w->viewCursorIf->cursorPositionReal(&line, &col);
-  baseNode = parser->parse(w);
+  quantaApp->reparse(true);
   Node *node = parser->nodeAt(line, col, false);
   bool isUnknown = true;
   QString tagName;

@@ -1050,8 +1050,8 @@ void QuantaApp::slotNewLineColumn()
 
 void QuantaApp::slotReparse()
 {
-  baseNode = parser->parse(view->write());
-//  reparse(false);
+//  baseNode = parser->parse(view->write());
+  reparse(true);
 }
 
 void QuantaApp::slotForceReparse()
@@ -2090,8 +2090,6 @@ void QuantaApp::processDTD(QString documentType)
 
   loadToolbarForDTD(w->getDTDIdentifier());
   sTab->useOpenLevelSetting = true;
-
-//  parser->parseForDTD(w, true);
 }
 
 /** No descriptions */
@@ -2159,7 +2157,6 @@ void QuantaApp::slotToolsChangeDTD()
 
   loadToolbarForDTD(w->getDTDIdentifier());
   reparse(true);
-//  parser->parseForDTD(w, true);
 
   delete dlg;
 }

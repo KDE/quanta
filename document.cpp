@@ -490,7 +490,6 @@ QString Document::getTagNameAt(int line, int col )
    tag->parse(text(bl,bc,el,ec), this);
 
    name = tag->name;
-/*   if (tag->type != Tag::XmlTag) */
    if (name.isEmpty())
    {
      QString s = tag->tagStr();
@@ -508,7 +507,6 @@ QString Document::getTagNameAt(int line, int col )
        name = "";
      }
    }
-   kdDebug(24000) << name << " | "<< tag->tagStr() << "\n";
    delete tag;
  }
  return name;
@@ -1448,34 +1446,7 @@ void Document::slotTextChanged()
   {
     quantaApp->sTab->slotReparse(this, baseNode , 2);
   }
-
-
- //TODO: This can be made even faster. The idea is to force the reparsing only when it
- //is necessary. It shouldn't be done when no dtd definition beginning or end was moved!
- //Currently it is forced for every change when the current line contains a dtd
- //definition
- /*
- bool force = false;
- uint line, col;
- viewCursorIf->cursorPositionReal(&line, &col);
- QDictIterator<DTDStruct> it(*dtds);
- QString text = editIf->textLine(line).lower();
- for( ; it.current(); ++it )
- {
-   DTDStruct *dtd = it.current();
-   for (uint i = 0; i < dtd->scriptTagStart.count(); i++)
-   {
-     if ( text.find(dtd->scriptTagStart[i]) != -1 ||
-          text.find(dtd->scriptTagEnd[i]) != -1 ||
-          text.find("!doctype") != -1)
-     {
-       force = true;
-       break;
-     }
-   }
- }
-
- parser->parseForDTD(this, force); */
+  
 }
 
 #include "document.moc"

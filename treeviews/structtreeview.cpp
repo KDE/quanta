@@ -140,25 +140,15 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
        groups[i]->setOpen(groupOpened[i]);
     }
 
-    int count = 1;
     while (currentNode)
     {
-      /*
-      if (timer.elapsed() > 20*count)
-      {
-        kapp->processEvents();
-        count++;
-      }
-      */
-    //  if (!parentItem)
-        //parentItem = top;
       title = "";
       item = new StructTreeTag(parentItem, currentNode, title, currentItem);
       item->setOpen(level < openLevel);
 
       if (currentNode->tag->type == Tag::Empty)
       {
-         // item->setVisible(false);
+          item->setVisible(false);
       }
 
       if (m_parsingDTD->family == Xml)
