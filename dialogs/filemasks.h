@@ -15,47 +15,20 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef FILESMASK_H
-#define FILESMASK_H
+#ifndef FILEMASKS_H
+#define FILEMASKS_H
 
-//Generated area. DO NOT EDIT!!!(begin)
-#include <qwidget.h>
-#include <qlabel.h>
-#include <kseparator.h>
-#include <qlineedit.h>
-#include <qpushbutton.h>
-//Generated area. DO NOT EDIT!!!(end)
+#include "filemaskss.h"
 
-#include <qwidget.h>
 
-/**
-  *@author Yacovlev Alexander & Dmitry Poplavsky
-  */
-
-class FilesMask : public QWidget  {
+class FileMasks : public FileMasksS
+{
    Q_OBJECT
 public: 
 	FilesMask(QWidget *parent=0, const char *name=0);
 	~FilesMask();
 
-public:
-	void initDialog();
-	//Generated area. DO NOT EDIT!!!(begin)
-	QLabel *QLabel_1;
-	QLabel *QLabel_2;
-	KSeparator *KSeparator_1;
-	QLabel *QLabel_3;
-	QLabel *QLabel_4;
-	QLabel *QLabel_5;
-	QLineEdit *lineHTML;
-	QLineEdit *linePHP;
-	QLineEdit *lineImages;
-	QLineEdit *lineText;
-	QPushButton *buttonDefault;
-	//Generated area. DO NOT EDIT!!!(end)
-
 public slots:
-  /** set masks to default */
   void setToDefault();
 };
 
