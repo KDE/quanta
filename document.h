@@ -40,8 +40,6 @@
   *@author Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon & Andras Mantia
   */
 
-
-
 class KConfig;
 class QStringList;
 class KTempFile;
@@ -53,7 +51,7 @@ class QuantaPluginInterface;
 class Document : public QWidget{
    Q_OBJECT
 
-public: 
+public:
   Document(const KURL& p_baseURL, KTextEditor::Document *doc, Project *project,
            QuantaPluginInterface * =0,
            QWidget *parent = 0, const char *name = 0, WFlags f=0);
@@ -179,7 +177,7 @@ public slots:
 private:
 
   QuantaPluginInterface *m_pluginInterface;
-  
+
   QString untitledUrl;
 
   QString         spellText;
@@ -214,7 +212,7 @@ private:
   /** Code completion is manually invoked for script type languages. */
   bool scriptCodeCompletion(DTDStruct *dtd, int line, int col);
   /** Returns list of values for attribute */
-  QStringList* tagAttributeValues(const QString& dtdName, const QString& tag, const QString& attribute);  
+  QStringList* tagAttributeValues(const QString& dtdName, const QString& tag, const QString& attribute);
 protected: // Protected attributes
   /**  */
   bool completionInProgress;
@@ -227,6 +225,7 @@ protected: // Protected attributes
 protected: // Protected methods
   /** Returns true if the number of " (excluding \") inside text is even. */
   bool evenQuotes(const QString &text);
+
 };
 
 #endif
