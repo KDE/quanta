@@ -1290,17 +1290,6 @@ QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomEleme
     tb->enableMoving(false);
     tb->setEnableContextMenu(true);
 
-/*    KAction *action;
-    QDomNodeList nodeList = element.elementsByTagName("Action");
-    for (uint i = 0; i < nodeList.count(); i++)
-    {
-      action = actionCollection()->action(nodeList.item(i).cloneNode().toElement().attribute("name") );
-      if (action)
-      {
-        action->plug(tb);
-      }
-    }
-*/
     KAction *action;
     QDomNode node = element.firstChild();
     while (!node.isNull())
