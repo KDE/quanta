@@ -3,6 +3,7 @@ Encoding=UTF-8
 Name=Quanta Plus BE
 Name[fa]=کوانتا پلاس (Quanta Plus BE)
 Name[xx]=xxQuanta Plus BExx
+GenericName=Web Development Environment
 Exec=quanta_be
 Icon=quanta_be
 Type=Application
