@@ -58,7 +58,7 @@ VariablesListView::VariablesListView(QWidget *parent, const char *name)
   m_variablePopup->insertItem(SmallIcon("editdelete"), i18n("&Remove"), this, SLOT(slotRemoveSelected()));
 
   if(quantaApp->debugger()->client()->supports(DebuggerClientCapabilities::VariableSetValue))
-    m_variablePopup->insertItem(SmallIcon("edit"), i18n("&Set value"), this, SLOT(slotVariableSetValue()));
+    m_variablePopup->insertItem(SmallIcon("edit"), i18n("&Set Value"), this, SLOT(slotVariableSetValue()));
 
   connect(this, SIGNAL( contextMenu( KListView *, QListViewItem *, const QPoint & ) ), this, SLOT(slotVariableContextMenu(KListView *, QListViewItem *, const QPoint &)));
 }

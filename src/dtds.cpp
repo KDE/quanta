@@ -842,7 +842,7 @@ void DTDs::slotLoadDTD()
 
 void DTDs::slotLoadDTEP()
 {
-  QString dirName = KFileDialog::getExistingDirectory(QString::null, 0, i18n("Select A DTEP Directory"));
+  QString dirName = KFileDialog::getExistingDirectory(QString::null, 0, i18n("Select DTEP Directory"));
   if (!dirName.isEmpty())
   {
     dirName += "/";
