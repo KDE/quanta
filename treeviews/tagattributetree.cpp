@@ -171,8 +171,9 @@ bool DualEditableTree::eventFilter(QObject *object, QEvent *event)
   return KListView::eventFilter(object, event);;
 }
 
-void DualEditableTree::resizeEvent(QResizeEvent *)
+void DualEditableTree::resizeEvent(QResizeEvent *ev)
 {
+  KListView::resizeEvent(ev);
   if(!currentItem()) return;
   AttributeItem *item = dynamic_cast<AttributeItem*>(currentItem());
   if(item)
