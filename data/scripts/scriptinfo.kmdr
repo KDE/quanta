@@ -180,22 +180,6 @@
             </widget>
             <widget class="QLabel">
                 <property name="name">
-                    <cstring>TextLabel6</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>20</x>
-                        <y>410</y>
-                        <width>105</width>
-                        <height>21</height>
-                    </rect>
-                </property>
-                <property name="text">
-                    <string>Script Location:</string>
-                </property>
-            </widget>
-            <widget class="QLabel">
-                <property name="name">
                     <cstring>TextLabel1_3</cstring>
                 </property>
                 <property name="geometry">
@@ -407,6 +391,22 @@
                     </stringlist>
                 </property>
             </widget>
+            <widget class="QLabel">
+                <property name="name">
+                    <cstring>TextLabel6</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>20</x>
+                        <y>410</y>
+                        <width>90</width>
+                        <height>21</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Script Location:</string>
+                </property>
+            </widget>
         </widget>
         <widget class="QWidget">
             <property name="name">
@@ -443,7 +443,5 @@
         </widget>
     </widget>
 </widget>
-<tabstops>
-</tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>
