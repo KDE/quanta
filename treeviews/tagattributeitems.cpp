@@ -94,7 +94,7 @@ ParentItem::ParentItem(TagAttributeTree *listView, QListViewItem* parent)
 
 ParentItem::~ParentItem()
 {
-  showList(false);
+//  showList(false); //why is this needed? Causes a signal/slot connection warning...
   delete comboBox;
 }
 
