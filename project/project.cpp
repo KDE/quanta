@@ -317,6 +317,10 @@ void ProjectPrivate::openCurrentView()
       break;
     }
   }
+  QStringList viewList = projectViewList();
+  int i = viewList.findIndex(currentProjectView);
+  if (i > -1)
+    openPrjViewAction->setCurrentItem(i);
   adjustViewActions();
 }
 
