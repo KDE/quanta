@@ -499,7 +499,11 @@ bool KafkaDocument::buildKafkaNodeFromNode(Node *node, bool insertNode)
 
 //     This is a hack to not created DOM::Nodes from quanta empty nodes if outside body, because KHTML
 //     moves a node in that condition into the body and then the trees become desynchronized.
-    bool isInsideBody = kafkaCommon::hasParent(node, "body");
+    bool isInsideBody = false;
+    if(!m_currentDoc->defaultDTD()->name.contains("HTML", false))
+        isInsideBody = true;
+    else
+        isInsideBody = kafkaCommon::hasParent(node, "body");
     
     if(node->tag->type == Tag::XmlTag || 
        ((node->tag->type == Tag::Text || (node->tag->type == Tag::Empty && isInsideBody)) && !node->insideSpecial))
