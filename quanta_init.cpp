@@ -33,6 +33,7 @@
 #include <qfileinfo.h>
 #include <qtextcodec.h>
 #include <qpopupmenu.h>
+#include <qdatetime.h>
 
 // include files for KDE
 #include <kaccel.h>
@@ -360,8 +361,8 @@ void QuantaApp::initView()
 
   rightWidgetStack = new QWidgetStack( maindock );
   bottomWidgetStack = new QWidgetStack( bottdock);
-
-  m_view = new QuantaView( rightWidgetStack );
+  m_view = new QuantaView(rightWidgetStack);
+//  m_view->slotDelayedInit();
   connect(m_view, SIGNAL(dragInsert(QDropEvent *)), tTab, SLOT(slotDragInsert(QDropEvent *)));
 
 
@@ -1666,9 +1667,7 @@ void QuantaApp::initActions()
     QFile f(qConfig.globalDataDir + "quanta/actions.rc");
     if ( f.open( IO_ReadOnly ))
     {
-      kdDebug(24000) << "Setting content for m_actions from global actions.rc\n";
-      QByteArray buffer = f.readAll();
-      if (m_actions->setContent(buffer))
+      if (m_actions->setContent(&f))
       {
         QDomElement docElem = m_actions->documentElement();
 
@@ -1688,12 +1687,10 @@ void QuantaApp::initActions()
     QString s = locateLocal("appdata","actions.rc");
     if (!s.isEmpty())
     {
-      QFile f2(s);
-      if ( f2.open( IO_ReadOnly ))
+      f.setName(s);
+      if ( f.open( IO_ReadOnly ))
       {
-        QByteArray buffer = f2.readAll();
-        kdDebug(24000) << "Setting content for m_actions from local actions.rc\n";
-        if (m_actions->setContent(buffer))
+        if (m_actions->setContent(&f))
         {
           QDomElement docElem = m_actions->documentElement();
 
@@ -1708,12 +1705,10 @@ void QuantaApp::initActions()
             n = n.nextSibling();
           }
         }
-        f2.close();
+        f.close();
       }
     } else
     {
-      kdDebug(24000) << "Setting content for m_actions from a string\n";
-      s = "<!DOCTYPE actionsconfig>\n<actions>\n</actions>\n";
       m_actions->setContent(s);
     }
 

@@ -116,7 +116,7 @@ void Document::resizeEvent(QResizeEvent *e)
   QWidget *wd=dynamic_cast<QWidget*>(parent());
   int w = wd->width() -5 ;
   int h = wd->height() - 9;
-  m_view->resize(w,h);
+  m_view->resize(w,h); 
 }
 
 void Document::setUntitledUrl(QString url)

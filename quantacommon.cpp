@@ -198,7 +198,7 @@ QString QuantaCommon::xmlFromAttributes(AttributeList* attributes)
     Attribute *attribute = attributes->at(i);
     QString name = attribute->name.left(1).upper()+attribute->name.right(attribute->name.length()-1);   
     stream << "  <attr name=\"" + attribute->name +"\"type=\""+attribute->type+"\"";
-    if (!attribute->defaultValue.isEmpty())        
+    if (!attribute->defaultValue.isEmpty())
         stream  << " defaultValue=\"" + attribute->defaultValue + "\"";    
     if (!attribute->status.isEmpty()) 
         stream  << " status=\"" + attribute->status + "\"";    
@@ -362,16 +362,16 @@ QString QuantaCommon::qUrl(const KURL &url)
 /** No descriptions */
 void QuantaCommon::dirCreationError(QWidget *widget, const KURL& url)
 {
-  KMessageBox::error(widget, i18n("Can't create directory \n\"%1\".\nCheck that you have write permission in the parent directory orthat the connection to\n\"%2\"\n is valid!")                           
+  KMessageBox::error(widget, i18n("Can't create directory \n\"%1\".\nCheck that you have write permission in the parent directory or that the connection to\n\"%2\"\n is valid!")                           
                              .arg(url.prettyURL())
                              .arg(url.protocol()+"://"+url.user()+"@"+url.host()));}
 
 /**
-Adds the backslash before the special chars (like ?, *, . ) so the returned 
+Adds the backslash before the special chars (like ?, *, . ) so the returned
 string can be used in regular expressions.*/
 QString QuantaCommon::makeRxCompatible(const QString& s)
 {
-  const uint max = 5; 
+  const uint max = 5;
   const QRegExp rxs[max]={QRegExp("\\?"),
                         QRegExp("\\*"),
                         QRegExp("\\."),

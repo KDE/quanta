@@ -17,7 +17,7 @@
 
 #include "toolbarxmlgui.h"
 
-ToolbarXMLGUI::ToolbarXMLGUI(QString xmlFile)
+ToolbarXMLGUI::ToolbarXMLGUI(const QString& xmlFile)
  : KXMLGUIClient()
 {
   setLocalXMLFile(xmlFile);

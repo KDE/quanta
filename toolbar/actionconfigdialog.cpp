@@ -33,6 +33,7 @@
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
 #include <kpushbutton.h>
+#include <kstandarddirs.h>
 
 //app includes
 #include "../resource.h"
@@ -42,6 +43,7 @@
 
 #include "actionconfigdialog.h"
 #include "tagaction.h"
+#include "toolbartabwidget.h"
 
 ActionConfigDialog::ActionConfigDialog( QWidget* parent, const char* name, bool modal, WFlags fl )
     :ActionConfigDialogS( parent, name, modal, fl )
@@ -54,7 +56,8 @@ ActionConfigDialog::ActionConfigDialog( QWidget* parent, const char* name, bool 
                           SLOT(slotSelectionChanged(QListViewItem *)));
   connect(shortcutKeyButton, SIGNAL(capturedShortcut(const KShortcut &)),
                              SLOT(slotShortcutCaptured(const KShortcut &)));
-  connect(scriptPath, SIGNAL(activated(const QString&)), SLOT(slotTextChanged(const QString&)));
+  connect(scriptPath, SIGNAL(activated(const QString&)),
+                      SLOT(slotTextChanged(const QString&)));
 //fill up the tree view with the toolbars and actions
   actionTreeView->setSorting(-1);
   allActionsItem = new KListViewItem(actionTreeView, i18n("All"));
@@ -62,7 +65,7 @@ ActionConfigDialog::ActionConfigDialog( QWidget* parent, const char* name, bool 
   QListViewItem *item, *oldItem = allActionsItem;
   KAction *action;
   QString toolbarName;
-  QTabWidget *tb = quantaApp->view()->toolbarTab();
+  ToolbarTabWidget *tb = quantaApp->view()->toolbarTab();
   for (int i = 0; i < tb->count(); i++)
   {
     toolbarName = tb->label(i);
@@ -81,7 +84,7 @@ ActionConfigDialog::ActionConfigDialog( QWidget* parent, const char* name, bool 
           action = quantaApp->actionCollection()->action(node.toElement().attribute("name"));
           if (action)
           {
-            oldActionItem = new KListViewItem(item, oldActionItem, action->text(), action->shortcut().toString(), action->name());
+            oldActionItem = new KListViewItem(item, oldActionItem, action->text().replace('&',""), action->shortcut().toString(), action->name());
             oldActionItem->setPixmap(0, BarIcon(action->icon()) );
           }
         }
@@ -123,7 +126,7 @@ void ActionConfigDialog::slotAddToolbar()
   quantaApp->slotAddToolbar();
   QString toolbarName;
   QListViewItem *item;
-  QTabWidget *tb = quantaApp->view()->toolbarTab();
+  ToolbarTabWidget *tb = quantaApp->view()->toolbarTab();
   for (int i = 0; i < tb->count(); i++)
   {
     toolbarName = tb->label(i);
@@ -151,7 +154,7 @@ void ActionConfigDialog::slotRemoveToolbar()
   {
     if ( KMessageBox::questionYesNo(this, i18n("Do you really want to remove the \"%1\" toolbar?").arg(s)) == KMessageBox::Yes )
     {
-      quantaApp->removeToolbar(s.lower());
+      quantaApp->slotRemoveToolbar(s.lower());
       actionTreeView->setCurrentItem(allActionsItem);
       delete item;
     }
@@ -172,7 +175,7 @@ void ActionConfigDialog::slotEditToolbar()
 
     //update the tree view
     KAction *action;
-    QTabWidget *tb = quantaApp->view()->toolbarTab();
+    ToolbarTabWidget *tb = quantaApp->view()->toolbarTab();
     for (int i = 0; i < tb->count(); i++)
     {
       toolbarName = tb->label(i);
@@ -191,7 +194,7 @@ void ActionConfigDialog::slotEditToolbar()
             action = quantaApp->actionCollection()->action(node.toElement().attribute("name"));
             if (action)
             {
-              oldItem = new KListViewItem(item, oldItem, action->text(), action->shortcut().toString(), action->name());
+              oldItem = new KListViewItem(item, oldItem, action->text().replace('&',""), action->shortcut().toString(), action->name());
               oldItem->setPixmap(0, BarIcon(action->icon()));
             }
           }
@@ -267,7 +270,7 @@ void ActionConfigDialog::slotSelectionChanged(QListViewItem *item)
       toolbarListBox->clear();
       int current = 0;
       int count = 0;
-      QTabWidget *tb = quantaApp->view()->toolbarTab();
+      ToolbarTabWidget *tb = quantaApp->view()->toolbarTab();
       for (int i = 0; i < tb->count(); i++)
       {
         QString toolbarName = tb->label(i);
@@ -539,7 +542,7 @@ void ActionConfigDialog::saveCurrentAction()
         break;
       }
   }
-  QTabWidget *tb = quantaApp->view()->toolbarTab();
+  ToolbarTabWidget *tb = quantaApp->view()->toolbarTab();
   for (int i = 0; i < tb->count(); i++)
   {
     QString toolbarName = tb->label(i);
@@ -604,6 +607,19 @@ void ActionConfigDialog::saveCurrentAction()
     KXMLGUIFactory::saveConfigFile(p_toolbar->guiClient->domDocument(),
         p_toolbar->guiClient->xmlFile(), p_toolbar->guiClient->instance());
   }
+  int currentPage = quantaApp->view()->toolbarTab()->currentPageIndex();
+//reload the GUI clients
+  QPtrList<KXMLGUIClient> guiClients = quantaApp->factory()->clients();
+  KXMLGUIClient *guiClient = 0;
+  for (uint i = 1; i < guiClients.count(); i++)
+  {
+      guiClient = guiClients.at(i);
+      quantaApp->factory()->removeClient(guiClient);
+      guiClient ->setXMLGUIBuildDocument( QDomDocument() );
+      guiClient->reloadXML();
+      quantaApp->guiFactory()->addClient(guiClient);
+  }
+  quantaApp->view()->toolbarTab()->setCurrentPage(currentPage);
 }
 
 void ActionConfigDialog::slotShortcutCaptured(const KShortcut &shortcut)
@@ -773,7 +789,7 @@ void ActionConfigDialog::slotApply()
 
 void ActionConfigDialog::slotAddContainerToolbar()
 {
-  QTabWidget *tb = quantaApp->view()->toolbarTab();
+  ToolbarTabWidget *tb = quantaApp->view()->toolbarTab();
   int i;
 
   QStringList lst;

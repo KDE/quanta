@@ -23,6 +23,7 @@
 #include <kprocess.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <kshortcut.h>
 #include <ktexteditor/cursorinterface.h>
 #include <ktexteditor/viewcursorinterface.h>
 #include <ktexteditor/editinterface.h>
@@ -40,7 +41,7 @@
 #include "../resource.h"
 
 TagAction::TagAction( QDomElement *element, KActionCollection *parent)
-  : KAction( element->attribute("text"), element->attribute("shortcut"), 0, 0, parent, element->attribute("name") )
+  : KAction( element->attribute("text"), KShortcut(element->attribute("shortcut")), 0, 0, parent, element->attribute("name") )
 {
   tag = element->cloneNode().toElement();
   m_view = quantaApp->view();

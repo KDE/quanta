@@ -21,6 +21,7 @@
 #include <qpainter.h>
 #include <qtabbar.h>
 #include <qtabwidget.h>
+#include <qtimer.h>
 #include <qlayout.h>
 #include <qwidgetstack.h>
 #include <qdom.h>
@@ -30,6 +31,7 @@
 #include <qwidget.h>
 
 // include files for KDE
+#include <kaction.h>
 #include <klocale.h>
 #include <kstandarddirs.h>
 #include <kmenubar.h>
@@ -46,41 +48,55 @@
 #include "quanta.h"
 #include "treeviews/templatestreeview.h"
 
-#include <kaction.h>
 #include "toolbar/tagaction.h"
+#include "toolbar/toolbartabwidget.h"
 
 QuantaView::QuantaView(QWidget *parent, const char *name )
   : QWidget( parent, name)
 {
   doc = quantaApp->doc();
   initActions();
+  slotDelayedInit();
+}
+
+QuantaView::~QuantaView()
+{
+}
+
+void QuantaView::slotDelayedInit()
+{
 
   m_writeTab = new QTabWidget(this);
   m_writeTab ->setTabPosition( QTabWidget::Bottom );
+//  m_writeTab ->setFocusPolicy( QWidget::NoFocus );
   connect( m_writeTab,SIGNAL(currentChanged(QWidget*)), quantaApp, SLOT(slotUpdateStatus(QWidget*)));
-//  connect( m_writeTab,SIGNAL(selected(const QString &)), quantaApp, SLOT(slotReparse()));
-  m_writeTab ->setFocusPolicy( QWidget::NoFocus );
 
-  m_toolbarTab = new QTabWidget(this);
-  m_toolbarTab ->setTabPosition( QTabWidget::Top );
-  m_toolbarTab ->setFocusPolicy( QWidget::NoFocus );
+  m_toolbarTab = new ToolbarTabWidget(this);
+ // m_toolbarTab ->setFocusPolicy( QWidget::NoFocus );
+//  m_toolbarTab->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
 
-  KToolBar *tb = new KToolBar(m_toolbarTab);
+  connect(m_toolbarTab, SIGNAL(removeToolbar(const QString&)),
+          quantaApp, SLOT(slotRemoveToolbar(const QString&)));
+  connect(m_toolbarTab, SIGNAL(renameToolbar(const QString&)),
+          quantaApp, SLOT(slotRenameToolbar(const QString&)));
+
+  QGridLayout *layout2 = new QGridLayout(this, 1, 2);
+  layout2->setRowStretch(0,0);
+  layout2->setRowStretch(1,1);
+  layout2->addWidget( m_toolbarTab     ,0,0);
+  layout2->addWidget( m_writeTab     ,1,0);
+/*
+  QWidget *w = new QWidget(m_toolbarTab);
+  KToolBar *tb = new KToolBar(w);
   tb->insertButton("aaa",1);
-  m_toolbarTab->addTab(tb, "xxx");
+  m_toolbarTab->insertTab(tb, "xxx");
 //Find with this trick the correct needed size for the toolbar holding QTabWidget
   m_toolbarTab->setMinimumHeight(tb->minimumSizeHint().height()+m_toolbarTab->height());
   m_toolbarTab->removePage(tb);
-  delete tb;
-  
-  QGridLayout *layout = new QGridLayout( this );
-  layout->setRowStretch(0,0);
-  layout->setRowStretch(1,1);
-  layout->addWidget( m_toolbarTab     ,0,0);
-  layout->addWidget( m_writeTab     ,1,0);
-
-
+  delete w;
+*/
   m_writeTab->show();
+//  m_toolbarTab->adjustSize();
 //  m_toolbarTab->show();
 
 
@@ -88,10 +104,6 @@ QuantaView::QuantaView(QWidget *parent, const char *name )
   oldTab = 0L;
 
   setAcceptDrops(TRUE); // [MB02] Accept drops on the view
-}
-
-QuantaView::~QuantaView()
-{
 }
 
 /** return current KWrite class */
@@ -196,12 +208,16 @@ void QuantaView::initActions()
     char_action->setComboWidth(150);
 }
 
-/** No descriptions */
-void QuantaView::resizeEvent (QResizeEvent *)
+/** No descriptions /
+void QuantaView::resizeEvent (QResizeEvent *e)
 {
+  m_toolbarTab->resize(QSize(width(), m_toolbarTab->height()));
   if (writeExists())
      write()->view()->resize(m_writeTab->size().width()-5, m_writeTab->size().height()-35);
+  QWidget::resizeEvent(e);
 }
+
+*/
 
 void QuantaView::dragEnterEvent(QDragEnterEvent *e)
 {

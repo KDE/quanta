@@ -36,6 +36,7 @@ class QTabBar;
 class QWidgetStack;
 class QDropEvent;
 class QPopupMenu;
+class ToolbarTabWidget;
 
 /** The QuantaView class provides the view widget for the QuantaApp
  * instance.  The View instance inherits QWidget as a base class and
@@ -55,7 +56,7 @@ public:
   QuantaView(QWidget *parent = 0, const char *name=0);
   ~QuantaView();
 
-  QTabWidget *toolbarTab() const {return m_toolbarTab;}
+  ToolbarTabWidget *toolbarTab() const {return m_toolbarTab;}
   QTabWidget *writeTab() const {return m_writeTab;}
 
   /** return current KWrite class */
@@ -71,7 +72,7 @@ public:
   void insertTag( const char *tag);
 
   /** No descriptions */
-  void resizeEvent (QResizeEvent *);
+ // void resizeEvent (QResizeEvent *);
   /** Insert a new tag by bringing up the TagDialog. */
   void insertNewTag(QString tag, QString attr = QString::null,bool insertInLine = true);
   /** Returns the baseURL of the document. */
@@ -80,6 +81,7 @@ public:
   bool writeExists();
 
 public slots:
+  void slotDelayedInit();
 
   void slotTagMail();
   void slotTagQuickStart();
@@ -171,10 +173,9 @@ private:
   bool beginOfScriptError;
   QString scriptOutputDest;
   QString scriptErrorDest;
-  QTabWidget *m_toolbarTab;
+  ToolbarTabWidget *m_toolbarTab;
   QTabWidget *m_writeTab;
   QString dontShowSavePreview;
-  QPopupMenu *m_toolbarPopup;
 
 protected:
   virtual void dropEvent(QDropEvent *e);

@@ -26,7 +26,7 @@
 
 class ToolbarXMLGUI : public KXMLGUIClient  {
 public:
-  ToolbarXMLGUI(QString xmlFile);
+  ToolbarXMLGUI(const QString& xmlFile);
   ~ToolbarXMLGUI();
 };
 

@@ -155,12 +155,8 @@ public:
 
   /** reparse current document and initialize node. */
   void reparse(bool force);
-  /** Remove the toolbar named "name". */
-  void removeToolbar(const QString& name);
   /** Configure toolbars, show defaultToolbar by default */
   void configureToolbars(const QString& defaultToolbar = QString::null);
-  /** Rename the toolbar named "name". */
-  void renameToolbar(const QString& name);
 
 signals: // Signals
   /** The tree views should be updated due to some changes on the disk. */
@@ -282,6 +278,10 @@ public slots:
   void slotLoadToolbar();
   /** Load a global toolbar from the disk. */
   void slotLoadGlobalToolbar();
+  /** Remove the toolbar named "name". */
+  void slotRemoveToolbar(const QString& name);
+  /** Rename the toolbar named "name". */
+  void slotRenameToolbar(const QString& name);
   /** Rename the toolbar. */
   void slotRenameToolbar();
   /** No descriptions */
@@ -450,6 +450,7 @@ private:
   QPtrList<KTextEditor::Mark> markList;
   QPtrList<KTempFile> tempFileList;
 
+  int currentPageIndex;
   uint userToolbarsCount;
   bool previewCopyMade;
   KTempFile *previewTmpFile;
