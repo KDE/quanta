@@ -48,6 +48,17 @@ TagAction::TagAction( QDomElement *element)
         connect( this, SIGNAL(activated()), SLOT(insertTag()) );
 }
 
+TagAction::TagAction( QDomElement *element, QuantaView *a_view)
+  : KAction( element->attribute("text"), 0, quantaApp->actionCollection(), element->attribute("name") ),
+    tag(*element)
+{
+   m_view = a_view;
+   setIcon( tag.attribute("icon","") );
+
+   if ( m_view )
+        connect( this, SIGNAL(activated()), SLOT(insertTag()) );
+}
+
 
 TagAction::~TagAction()
 {

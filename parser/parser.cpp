@@ -333,9 +333,62 @@ void Parser::parseForDTD(Document *w)
  write = w;
  uint line, col;
  line = 0;
- int pos;
- maxLines = w->editIf->numLines();
- QString text;
+ int pos = 0;
+ maxLines = write->editIf->numLines();
+ QString text = write->editIf->text();
+ uint length = text.length();
  QString foundText;
+ col = 0;
+ Tag *tag;
+ QRegExp rx = scriptBeginRx;
+ rx.setPattern(scriptBeginRx.pattern()+"|\\!doctype");
+ DTDListNode dtdNode;
+ dtdList.clear();
+ while (col < length && pos != -1)
+ {
+   pos = rx.search(text, col);
+   if (pos != -1) //a script definition was found
+   {
+     line = text.left(pos).contains("\n");
+     foundText = rx.cap(0).lower();
+     col = pos + foundText.length();
+     if (foundText.startsWith("<script"))
+     {
+       tag = write->findXMLTag(line, pos, true);
+       if (tag)
+       {
+         foundText = tag->attributeValue("language").lower();
+         delete tag;
+       }
+     } else
+     {
+       if (foundText.startsWith("!doctype"))
+       {
+         //TODO:
+       } else
+       {
+         QDictIterator<DTDStruct> it(*dtds);
+         for( ; it.current(); ++it )
+         {
+            DTDStruct *dtd = it.current();
+            if (dtd->family == Script)
+            {
+               int index = dtd->scriptTagStart.findIndex(foundText);
+               if (index !=-1)
+               {
+                 foundText = dtd->name.lower();
+                 break;
+               }
+            }
+         }
+       }
+     }
+     dtdNode.line = line;
+     dtdNode.col = col;
+     dtdNode.name = foundText;
+     dtdList.append(dtdNode);
+   }
+ }
+
 
 }

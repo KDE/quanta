@@ -42,6 +42,7 @@ public:
      * Create an insert from dom element.
      */
     TagAction( QDomElement *element);
+    TagAction( QDomElement *element, QuantaView *a_view);
 
     virtual ~TagAction();
     

@@ -357,7 +357,7 @@ Tag *Document::findXMLTag(int line, int col, bool forwardOnly, bool useSimpleRx)
 //  QRegExp quotedTextRx("(((\\(?=[\"]))\")*[^\"]*)*");
   int bLine, bCol, eLine, eCol;
   bLine = bCol = eLine = eCol = 0;
-  QRegExp xmlTagRx("<([^>]*(\"([^\"]*(<[^\"]*>)+[^\"<]*)*\")*('([^']*(<[^']*>)+[^'<]*)*')*[^>]*)*>",false);
+  QRegExp xmlTagRx("<(?:[^>]*(?:\"(?:[^\"]*(?:<[^\"]*>)+[^\"<]*)*\")*(?:'(?:[^']*(?:<[^']*>)+[^'<]*)*')*[^>]*)*>",false);
   if (useSimpleRx) xmlTagRx.setPattern("<[^<>]+>");
   int sLine = line;
   int sCol = col;
@@ -467,7 +467,7 @@ Tag *Document::findText(int line, int col, bool forwardOnly)
   int t_bLine, t_bCol, t_eLine, t_eCol;
   t_bLine = t_bCol = t_eLine = t_eCol = -1;
   QString foundText;
-  QRegExp xmlTagRx("<([^>]*(\"([^\"]*(<[^\"]*>)+[^\"<]*)*\")*('([^']*(<[^']*>)+[^'<]*)*')*[^>]*)*>",false);
+  QRegExp xmlTagRx("<(?:[^>]*(?:\"(?:[^\"]*(?:<[^\"]*>)+[^\"<]*)*\")*(?:'(?:[^']*(?:<[^']*>)+[^'<]*)*')*[^>]*)*>",false);
 
   if (!forwardOnly)
   {
@@ -1193,6 +1193,7 @@ DTDStruct* Document::currentDTD(bool fallback)
   uint line, col;
   viewCursorIf->cursorPositionReal(&line, &col);
 
+ // parser->parseForDTD(this);
   DTDStruct* dtd = dtds->find(findDTDName(line, 0));
   if (fallback)
   {

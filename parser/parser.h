@@ -41,6 +41,11 @@ struct DTDNode {
     int eLine, eCol;
   };
 
+struct DTDListNode {
+    QString name;
+    int line, col;
+  };
+
 class Document;
 
 class Parser {
@@ -68,6 +73,7 @@ private:
   DTDStruct *m_dtd; //the dtd used for main parsing
   Document *write;    //pointer to the parsed document
   int maxLines; // how many lines are in the current document
+  QValueList<DTDListNode> dtdList;
 
   /** Recursive parsing algorithm. Actually this does the parsing and tree building. */
   Node * subParse( Node* parent , int &line, int &col);

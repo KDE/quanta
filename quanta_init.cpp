@@ -1015,7 +1015,7 @@ void QuantaApp::readTagDir(QString &dirName)
    s.replace(QRegExp("\\."),"\\.");
    s.replace(QRegExp("\\^"),"\\^");
    s.replace(QRegExp("\\$"),"\\$");
-   scriptBeginRxStr.append("|("+s+")");
+   scriptBeginRxStr.append("|(?:"+s+")");
    s = slist[1].stripWhiteSpace();
    dtd->scriptTagEnd.append(s);
    s.replace(QRegExp("\\?"),"\\?");
