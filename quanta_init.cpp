@@ -1286,6 +1286,7 @@ void QuantaApp::readTagDir(QString &dirName)
      tmpStr = attrRx.cap();
      tmpStrList = QStringList::split(',', tmpStr.mid(1, tmpStr.length()-2));
      group.tag = tagStr.left(tagStr.find('(')).lower();
+     group.attributes.clear();
      for (uint i = 0; i < tmpStrList.count(); i++)
        group.attributes += tmpStrList[i].stripWhiteSpace();
    }
