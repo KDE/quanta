@@ -87,7 +87,8 @@ void ViewManager::createNewDocument()
 
   quantaApp->slotNewPart(doc, true);  // register new part in partmanager and make active
   view->addDocument(w);
-  view->activate();
+  view->activate(); //if we don't call this manually, the activeView() won't return the newly created view
+  view->activated(); //the previous activate does not call this, because it detects that the view was not changed (createView() also calls activate())
 }
 
 bool ViewManager::removeView(QuantaView *view, bool force)
