@@ -601,35 +601,36 @@ QString Document::tempFileName()
 /** No descriptions */
 bool Document::saveIt()
 {
-//use our own save method, as otherwise the modified flag of the KTextEditor::Document is reset
-  KTempFile *tmpFile = new KTempFile(tmpDir);
-  QString tempFileName = QFileInfo(*(tmpFile->file())).filePath();
-  tmpFile->setAutoDelete(true);
-  QString encoding = quantaApp->defaultEncoding();
-  KTextEditor::EncodingInterface* encodingIf = dynamic_cast<KTextEditor::EncodingInterface*>(m_doc);
-  if (encodingIf)
-        encoding = encodingIf->encoding();
-  if (encoding.isEmpty())
-      encoding = "utf8";  //final fallback
-  tmpFile->textStream()->setCodec(QTextCodec::codecForName(encoding));
-  *(tmpFile->textStream()) << editIf->text();
-  tmpFile->close();
   QString fileName;
   fileName = url().path();
   if (url().isLocalFile())
   {
     fileWatcher->removeFile(fileName);
     kdDebug(24000) << "removeFile[saveIt]: " <<url().path() << endl;
-  }
-  QExtFileInfo::copy(KURL::fromPathOrURL(tempFileName), url(), -1, true);
-  if (url().isLocalFile())
-  {
+    bool modifiedStatus = m_doc->isModified();
+    m_doc->save();
+    m_doc->setModified(modifiedStatus);
     fileWatcher->addFile(fileName);
     kdDebug(24000) << "addFile[saveIt]: " << url().path() << endl;
+  } else
+  {
+  //use our own save method for remote files, as otherwise the modified flag of the KTextEditor::Document is reset
+    KTempFile *tmpFile = new KTempFile(tmpDir);
+    QString tempFileName = QFileInfo(*(tmpFile->file())).filePath();
+    tmpFile->setAutoDelete(true);
+    QString encoding = quantaApp->defaultEncoding();
+    KTextEditor::EncodingInterface* encodingIf = dynamic_cast<KTextEditor::EncodingInterface*>(m_doc);
+    if (encodingIf)
+          encoding = encodingIf->encoding();
+    if (encoding.isEmpty())
+        encoding = "utf8";  //final fallback
+    tmpFile->textStream()->setCodec(QTextCodec::codecForName(encoding));
+    *(tmpFile->textStream()) << editIf->text();
+    tmpFile->close();
+    QExtFileInfo::copy(KURL::fromPathOrURL(tempFileName), url(), -1, true);
+    delete tmpFile;
   }
   m_dirty = false;
-  tmpFile->unlink();
-  delete tmpFile;
   return true;   //not used yet
 }
 
