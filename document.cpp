@@ -1436,46 +1436,6 @@ bool Document::evenQuotes(const QString &text)
  return (num /2 *2 == num);
 }
 
-/** No descriptions */
-void Document::parseVariables()
-{
- QTime t;
- t.start();
- variableList.clear();
- QString text = editIf->text();
-//TODO: Make general for all script languages
- int pos = 0;
- int pos2 = 0;
-
- QRegExp varRx("\\$+[a-zA-Z_\\x7f-\\xff][a-zA-Z0-9_\\x7f-\\xff]*",false);
- QRegExp inclRx("((?:include|require|include_once|require_once)[\\s]+[^;]*)(;|\\?>|\\n)");
- QString variable;
-
- while (pos != -1)
- {
-   pos = varRx.search(text,pos);
-   if (pos != -1)
-   {
-     variable = varRx.cap();
-     pos += variable.length();
-     variable.replace(QRegExp("\\$"),"");
-     if (!variableList.contains(variable))
-     {
-       variableList.append(variable);
-     }
-   }
-   pos2 = inclRx.search(text, pos2);
-   if (pos2 != -1)
-   {
-    variable = inclRx.cap(1);
-    pos2 += inclRx.cap().length();
-    includeList.append(variable);
-   }
- }
-
- variableList.sort();
- kdDebug(24000) << "parseVariables: " << t.elapsed() << " ms\n";
-}
 
 /** No descriptions */
 void Document::slotTextChanged()

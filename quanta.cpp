@@ -1178,7 +1178,6 @@ void QuantaApp::reparse(bool force)
   if (m_view->writeExists())
   {
     Document *w = m_view->write();
-   // w->parseVariables();
     if (force)
     {
       baseNode = parser->parse(w);
@@ -2991,6 +2990,22 @@ QString QuantaApp::currentURL() const
 QString QuantaApp::projectURL() const
 {
   return projectBaseURL().url();
+}
+
+QStringList QuantaApp::openedURLs() const
+{
+  QTabWidget *docTab =m_view->writeTab();
+  Document *w;
+  QStringList list;
+  for (int i = docTab->count() -1; i >=0; i--)
+  {
+    w = dynamic_cast<Document*>(docTab->page(i));
+    if ( w )
+    {
+      list.prepend( QString("%1:%2").arg(w->editIf->editInterfaceNumber()).arg(w->url().url()));
+    }
+  }
+  return list;
 }
 
 void QuantaApp::slotExpandAbbreviation()

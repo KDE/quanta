@@ -150,7 +150,7 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
       {
         item->setVisible(false);
       }
-
+/*
       if (m_parsingDTD->family == Xml)
       {
         for (uint i = 0; i < groupsCount; i++)
@@ -252,7 +252,7 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
           }
         }
       }
-
+*/
       currentNode->listItem = item;
       //go to the child node, if it exists
       if (currentNode->child)
@@ -306,6 +306,33 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
       }
     }
   }
+  GroupElementList* groupElementList;
+  GroupElementMapList* groupElementMapList;
+  StructTreeGroup group;
+  GroupElementMapList::Iterator it;
+  for (uint i = 0; i < groupsCount; i++)
+  {
+    group = m_parsingDTD->structTreeGroups[i];
+    groupElementMapList = &(parser->m_groups[group.name]);
+    for (it = groupElementMapList->begin(); it != groupElementMapList->end(); ++it)
+    {
+      QListViewItem *insertUnder = groups[i];
+      QListViewItem *insertAfter = insertUnder;
+      QListViewItem *item;
+      bool first = true;
+      groupElementList = & (it.data());
+      for (uint j = 0; j < groupElementList->count(); j++)
+      {
+        item = new StructTreeTag(dynamic_cast<StructTreeTag*>(insertUnder), (*groupElementList)[j].node, (*groupElementList)[j].node->tag->name);
+        if (first)
+        {
+          insertUnder = item;
+          first = false;
+        }
+      }
+    }
+  }
+
 }
 
 /*TODO: move this code to some other place

@@ -42,9 +42,10 @@ struct DTDListNode {
   };
 
 struct GroupElement{
-    Tag *tag;
-    /*The node which contains the element */
+    /* The node which point to the exact place inside the parentNode */
     Node *node;
+    /*The node which contains the element */
+    Node *parentNode;
   };
 
 typedef QValueList<GroupElement> GroupElementList;

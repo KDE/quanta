@@ -137,8 +137,6 @@ work correctly. */
   QString parsingDTD();
   /** No descriptions */
   void setParsingDTD(const QString& dtdName);
-  /** No descriptions */
-  void parseVariables();
   /** Find the word until the first word boundary backwards */
   QString findWordRev(const QString& textToSearch, DTDStruct *dtd = 0L);
 

@@ -155,6 +155,8 @@ public:
   QString currentURL() const;
   /** Return the URL of the currently project */
   QString projectURL() const;
+  /** Return the list of opened URLs and their editor interface numbers*/
+  QStringList openedURLs() const;
 
   /** reparse current document and initialize node. */
   void reparse(bool force);

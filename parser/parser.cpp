@@ -634,7 +634,7 @@ Node *Parser::parse(Document *w)
     {
       for (uint i = 0 ; i < it.data().count(); i++)
       {
-        delete it.data()[i].tag;
+        delete it.data()[i].node;
       }
     }
   }
@@ -1589,6 +1589,7 @@ void Parser::parseForGroups()
   int bl, bc, el, ec;
   int pos;
   Node *currentNode = m_node;
+  Node *node;
   while (currentNode)
   {
     currentNode->tag->beginPos(bl, bc);
@@ -1623,8 +1624,10 @@ void Parser::parseForGroups()
           pos += l;
           title.replace(group.clearRx,"");
           newTag->name = title;
-          groupElement.tag = newTag;
-          groupElement.node = currentNode;
+          node = new Node(0L);
+          node->tag = newTag;
+          groupElement.node = node;
+          groupElement.parentNode = currentNode;
           groupElementList = & (*groupElementMapList)[title];
           groupElementList->append(groupElement);
         }

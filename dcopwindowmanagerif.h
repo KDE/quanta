@@ -19,6 +19,7 @@
 #define DCOPWINDOWMANAGERIF_H
 
 #include <dcopobject.h>
+#include <qstringlist.h>
 
 class DCOPWindowManagerIf : virtual public DCOPObject
 {
@@ -29,6 +30,7 @@ class DCOPWindowManagerIf : virtual public DCOPObject
   virtual int currentEditorIfNum() const = 0;
   virtual QString currentURL() const = 0;
   virtual QString projectURL() const = 0;
+  virtual QStringList openedURLs() const = 0;
 };
 
 #endif
