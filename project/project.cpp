@@ -1090,7 +1090,7 @@ void Project::slotAcceptCreateProject()
   baseURL.setPort(png->linePort->text().toInt());
   baseURL.setProtocol(png->comboProtocol->currentText());
   if (baseURL.protocol() == i18n("Local")) baseURL.setProtocol("file");
-  QuantaCommon::setUrl(baseURL, basePath);
+  baseURL.setPath(basePath);
   baseURL.adjustPath(1);
   if (!baseURL.path().startsWith("/")) baseURL.setPath("/"+baseURL.path());
   if (!QExtFileInfo::createDir( baseURL ))
