@@ -23,7 +23,7 @@
 #include <qcheckbox.h>
 
 // KDE files
-#include <kcolorbtn.h>
+#include <kcolorbutton.h>
 
 // application's headers
 #include "tagwidget.h"

@@ -22,7 +22,7 @@
 // include kde headers
 #include <kapp.h>
 #include <klocale.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 
 #include "../document.h"
 
