@@ -37,6 +37,7 @@
 #include <kcolordialog.h>
 #include <kmessagebox.h>
 #include <kdeversion.h>
+#include <kstatusbar.h>
 
 #include <ktexteditor/configinterface.h>
 #include <ktexteditor/clipboardinterface.h>
@@ -739,8 +740,9 @@ void QuantaView::toggleInsert()
 {
   if (writeExists())
   {
-    write()->kate_view->setOverwriteMode(!write()->kate_view->isOverwriteMode());
-  }
+    Document *w = write();
+    w->kate_view->setOverwriteMode(!w->kate_view->isOverwriteMode());
+    quantaApp->statusBar()->changeItem(w->kate_view->isOverwriteMode() ? i18n(" OVR ") : i18n(" INS "),IDS_INS_OVR); }
 }
 
 

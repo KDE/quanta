@@ -154,8 +154,6 @@ void QuantaApp::slotFileNew()
 
 void QuantaApp::slotFileOpen()
 {
- //QTextCodec *codec = QTextCodec::codecForName(defaultEncoding().upper().latin1());
- //QString myEncoding = QString::fromLatin1(codec->name());
  QString myEncoding = defaultEncoding();
 
  KateFileDialog *dialog = new KateFileDialog (QString::null,myEncoding, this, i18n ("Open File"));
@@ -593,12 +591,10 @@ void QuantaApp::slotNewStatus()
     Document *w = m_view->write();
     setTitle( w->url().prettyURL() );
 
-  /*  int  m_config   = w->config();
-    bool readOnly = w->isReadOnly();
-
-    if (readOnly) statusBar()->changeItem(i18n(" R/O "),IDS_INS_OVR);
-    else          statusBar()->changeItem(m_config & KWriteView::cfOvr ? i18n(" OVR ") : i18n(" INS "),IDS_INS_OVR);
-                 */
+    if (w->doc()->isReadWrite())
+        statusBar()->changeItem(w->kate_view->isOverwriteMode() ? i18n(" OVR ") : i18n(" INS "),IDS_INS_OVR);
+    else
+        statusBar()->changeItem(i18n(" R/O "),IDS_INS_OVR);
     statusBar()->changeItem(w->isModified() ? " * " : "",IDS_MODIFIED);
 
     saveAction   ->setEnabled(m_doc->isModified());

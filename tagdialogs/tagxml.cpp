@@ -3,7 +3,7 @@
                              -------------------
     begin                : Пнд Сен 25 14:34:07 EEST 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
-                           (C) 2002 by Andras Mantia
+                           (C) 2002-2003 by Andras Mantia
     email                : pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com, amantia@freemail.hu
  ***************************************************************************/
 
@@ -34,18 +34,18 @@ Tagxml::Tagxml( QDomDocument &d, DTDStruct *dtd, QWidget *parent, const char *na
    QGridLayout *grid = new QGridLayout( this );
    grid->setSpacing( 13 );
    grid->setMargin( 11 );
-
+   m_firstItem = 0L;
 //parse the tag XML file, in order to build up the dialog
    for ( QDomNode n = d.firstChild().firstChild().firstChild(); !n.isNull(); n = n.nextSibling() )
    {
      QDomNode location = findChild(n,"location");
      if ( location.isNull() )
         continue;
-       
+
      //debug( n.nodeName() );
 
      QDomElement el = location.toElement();
-       
+
      int row = el.attribute("row","0").toInt();
      int col = el.attribute("col","0").toInt();
      int colspan = el.attribute("colspan","1").toInt()-1;
@@ -101,7 +101,7 @@ Tagxml::Tagxml( QDomDocument &d, DTDStruct *dtd, QWidget *parent, const char *na
      {
 
          QDomElement el = n.toElement();
-        QString type = el.attribute("type","input");
+         QString type = el.attribute("type","input");
 
          QDomElement ltext = findChild(n,"text").toElement();
          if ( !ltext.isNull() && (type!="check") ) //if there is a text label for the attribute
@@ -130,17 +130,19 @@ Tagxml::Tagxml( QDomDocument &d, DTDStruct *dtd, QWidget *parent, const char *na
 
            Attr_line *attr = new Attr_line(&el,w);
            attributes.append(attr);
+           if (!m_firstItem)
+              m_firstItem = w;
         }
 
         if ( type == "check" )
         {
            QCheckBox *w = new QCheckBox(this);
            grid->addMultiCellWidget( w, row, row+rowspan, col,  col+colspan );
-          
+
            QDomElement ltext = findChild(n,"text").toElement();
             if ( !ltext.isNull() )
               w->setText( ltext.text() );
-          
+
              if ( !tip.isNull() )
                  QToolTip::add( w, tip );
              if ( !whatsThis.isNull() )
@@ -148,13 +150,15 @@ Tagxml::Tagxml( QDomDocument &d, DTDStruct *dtd, QWidget *parent, const char *na
 
            Attr_check *attr = new Attr_check(&el,w);
            attributes.append(attr);
+           if (!m_firstItem)
+              m_firstItem = w;
         }
 
         if ( type == "list" )
         {
            QComboBox *w = new QComboBox(true,this);
            grid->addMultiCellWidget( w, row, row+rowspan, col,  col+colspan );
-          
+
              if ( !tip.isNull() )
                  QToolTip::add( w, tip );
              if ( !whatsThis.isNull() )
@@ -162,13 +166,15 @@ Tagxml::Tagxml( QDomDocument &d, DTDStruct *dtd, QWidget *parent, const char *na
 
            Attr_list *attr = new Attr_list(&el,w);
            attributes.append(attr);
+           if (!m_firstItem)
+              m_firstItem = w;
         }
 
         if ( type == "color" )
         {
            ColorCombo *w = new ColorCombo(this);
            grid->addMultiCellWidget( w, row, row+rowspan, col,  col+colspan );
-          
+
              if ( !tip.isNull() )
                  QToolTip::add( w, tip );
              if ( !whatsThis.isNull() )
@@ -176,6 +182,8 @@ Tagxml::Tagxml( QDomDocument &d, DTDStruct *dtd, QWidget *parent, const char *na
 
            Attr_color *attr = new Attr_color(&el,w);
            attributes.append(attr);
+           if (!m_firstItem)
+              m_firstItem = w;
         }
 
         if ( type == "url" )
@@ -190,24 +198,24 @@ Tagxml::Tagxml( QDomDocument &d, DTDStruct *dtd, QWidget *parent, const char *na
 
            Attr_file *attr = new Attr_file(&el,w);
            attributes.append(attr);
+           if (!m_firstItem)
+              m_firstItem = w;
         }
-
-       
      }
 
      if ( n.nodeName() == "spacer")
      {
         QDomElement el = n.toElement();
-       
+
         QSpacerItem* spacer;
-       
+
         if ( el.attribute("orientation","v") == "v" )
           spacer = new QSpacerItem( 5, 10, QSizePolicy::Fixed, QSizePolicy::Expanding );
         else
            spacer = new QSpacerItem( 10, 5, QSizePolicy::Expanding, QSizePolicy::Fixed );
         grid->addItem(spacer,row,col);
      }
-       
+
    }
 
 }
@@ -216,6 +224,10 @@ Tagxml::~Tagxml()
 {
 }
 
+void Tagxml::focusToFirstItem()
+{
+  m_firstItem->setFocus();
+}
 
 void Tagxml::readAttributes( QDict<QString> *d )
 {
@@ -225,7 +237,7 @@ void Tagxml::readAttributes( QDict<QString> *d )
    while ( attr ) {
      name = attr->attrName();
      value = attr->value();
-   
+
      if ( value.isEmpty() ) d->remove(name);
     else {
       if ( dynamic_cast<Attr_check *>(attr) ) // checkbox
@@ -249,7 +261,7 @@ void Tagxml::readAttributes( QDict<QString> *d )
         d->replace(name, new QString(value) );
     }
 
-        
+
     attr = attributes.next();
   }
 
@@ -261,9 +273,9 @@ void Tagxml::writeAttributes( QDict<QString> *d )
 
   Attr * attr = attributes.first();
    while ( attr ) {
-     
+
      name = attr->attrName();
-   
+
      QString *v = d->find(name);
      if ( v ) {
        if ( dynamic_cast<Attr_check *>(attr) ) // checkbox
@@ -272,10 +284,10 @@ void Tagxml::writeAttributes( QDict<QString> *d )
          value = *v;
     }
     else value = "";
-     
-   
+
+
      attr->setValue( value );
-        
+
     attr = attributes.next();
   }
 
