@@ -68,7 +68,7 @@
 #include "tagdialogs/tagmiscdlg.h"
 #include "tagdialogs/tableeditor.h"
 
-//#define NEW_CSS_EDITOR
+#define NEW_CSS_EDITOR
 
 #ifdef NEW_CSS_EDITOR
 #include "plugins/csseditor/csseditor.h"
