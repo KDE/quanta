@@ -1747,39 +1747,40 @@ void Project::slotOptions()
     d->previewPrefix.adjustPath(-1);
     d->usePreviewPrefix = optionsPage.checkPrefix->isChecked();
 
+    QDomNode projectNode = d->dom.firstChild().firstChild();
     QDomElement el;
 
-    el = d->dom.firstChild().firstChild().toElement();
+    el = projectNode.toElement();
     el.setAttribute("name",d->projectName);
     el.setAttribute("previewPrefix", d->previewPrefix.url() );
     el.setAttribute("usePreviewPrefix", d->usePreviewPrefix );
     el.setAttribute("encoding", d->m_defaultEncoding);
 
-    el =d->dom.firstChild().firstChild().namedItem("author").toElement();
+    el =projectNode.namedItem("author").toElement();
     if (!el.isNull())
        el.parentNode().removeChild(el);
     el =d->dom.createElement("author");
-    d->dom.firstChild().firstChild().appendChild( el );
+    projectNode.appendChild( el );
     el.appendChild(d->dom.createTextNode( d->author ) );
 
-    el =d->dom.firstChild().firstChild().namedItem("email").toElement();
+    el = projectNode.namedItem("email").toElement();
     if (!el.isNull())
        el.parentNode().removeChild(el);
     el =d->dom.createElement("email");
-    d->dom.firstChild().firstChild().appendChild( el );
+    projectNode.appendChild( el );
     el.appendChild(d->dom.createTextNode( d->email ) );
 
     // Debugger
-    el =d->dom.firstChild().firstChild().namedItem("debuggerclient").toElement();
+    el =projectNode.namedItem("debuggerclient").toElement();
     if (!el.isNull())
        el.parentNode().removeChild(el);
     el =d->dom.createElement("debuggerclient");
-    d->dom.firstChild().firstChild().appendChild( el );
+    projectNode.appendChild( el );
     el.appendChild(d->dom.createTextNode( d->debuggerClient ) );
 
     d->m_excludeCvsignore = optionsPage.checkCvsignore->isChecked();
     excludeStr = optionsPage.lineExclude->text();
-    el =d->dom.firstChild().firstChild().namedItem("exclude").toElement();
+    el =projectNode.namedItem("exclude").toElement();
     if (!el.isNull())
        el.parentNode().removeChild(el);
     el =d->dom.createElement("exclude");
@@ -1787,14 +1788,14 @@ void Project::slotOptions()
       el.setAttribute("cvsignore", "true");
     else
       el.setAttribute("cvsignore", "false");
-    d->dom.firstChild().firstChild().appendChild( el );
+    projectNode.appendChild( el );
     el.appendChild(d->dom.createTextNode( excludeStr ) );
 
-    el =d->dom.firstChild().firstChild().namedItem("defaultDTD").toElement();
+    el =projectNode.namedItem("defaultDTD").toElement();
     if(el.isNull())
     {
       el =d->dom.createElement("defaultDTD");
-     d->dom.firstChild().firstChild().appendChild(el);
+      projectNode.appendChild(el);
       el.appendChild(d->dom.createTextNode(d->m_defaultDTD));
     }
     else
@@ -1802,12 +1803,12 @@ void Project::slotOptions()
       el.firstChild().setNodeValue(d->m_defaultDTD);
     }
 
-    el =d->dom.firstChild().firstChild().namedItem("templates").toElement();
+    el = projectNode.namedItem("templates").toElement();
     url = QExtFileInfo::toRelative(d->templateURL, d->baseURL);
     if(el.isNull())
     {
       el =d->dom.createElement("templates");
-      d->dom.firstChild().firstChild().appendChild(el);
+      projectNode.appendChild(el);
       el.appendChild(d->dom.createTextNode(QuantaCommon::qUrl(url)));
     }
     else
@@ -1816,11 +1817,11 @@ void Project::slotOptions()
     }
 
     url = QExtFileInfo::toRelative(d->toolbarURL, d->baseURL);
-    el =d->dom.firstChild().firstChild().namedItem("toolbars").toElement();
+    el = projectNode.namedItem("toolbars").toElement();
     if(el.isNull())
     {
       el =d->dom.createElement("toolbars");
-      d->dom.firstChild().firstChild().appendChild(el);
+      projectNode.appendChild(el);
       el.appendChild(d->dom.createTextNode(QuantaCommon::qUrl(url)));
     }
     else
@@ -1830,20 +1831,19 @@ void Project::slotOptions()
 
     if (optionsPage.viewCombo->isEnabled())
     {
-      defaultView = optionsPage.viewCombo->currentText();
-       el =d->dom.firstChild().firstChild().namedItem("autoload").toElement();
+       defaultView = optionsPage.viewCombo->currentText();
+       el = projectNode.namedItem("autoload").toElement();
        if (el.isNull())
        {
          el =d->dom.createElement("autoload");
-        el.setAttribute("projectview", defaultView);
-       d->dom.firstChild().firstChild().appendChild( el );
+         el.setAttribute("projectview", defaultView);
+         projectNode.appendChild( el );
        } else
        {
         el.setAttribute("projectview", defaultView);
        }
     }
 
-    QDomNode projectNode = d->dom.firstChild().firstChild();
     QDomNode teamNode = projectNode.namedItem("teamdata");
     if (!teamNode.isNull())
       projectNode.removeChild(teamNode);
