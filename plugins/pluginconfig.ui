@@ -234,7 +234,7 @@
                     </item>
                     <item>
                         <property name="text">
-                            <string>Project Directory</string>
+                            <string>Project Folder</string>
                         </property>
                     </item>
                     <property name="name">

@@ -86,7 +86,7 @@ TemplatesTreeView::TemplatesTreeView(const KURL& projectBaseURL, QWidget *parent
 
   m_folderMenu = new KPopupMenu();
 
-  m_folderMenu->insertItem(SmallIcon("folder_new"), i18n("&New Directory..."), this, SLOT(slotNewDir()));
+  m_folderMenu->insertItem(SmallIcon("folder_new"), i18n("&New Folder..."), this, SLOT(slotNewDir()));
   m_folderMenu->insertItem(SmallIcon("mail_send"), i18n("Send in E-Mail"), this, SLOT(slotSendInMail()));
   m_insertFolderInProject = m_folderMenu->insertItem(i18n("Insert in Project..."), this, SLOT(slotInsertDirInProject()));
   m_folderMenu->insertSeparator();
@@ -253,7 +253,7 @@ void TemplatesTreeView::slotOpen()
 /** No descriptions */
 void TemplatesTreeView::slotNewDir()
 {
-  NewTemplateDirDlg *createDirDlg = new NewTemplateDirDlg(this,i18n("Create New Template Directory"));
+  NewTemplateDirDlg *createDirDlg = new NewTemplateDirDlg(this,i18n("Create New Template Folder"));
   createDirDlg->typesCombo->insertItem("text/all");
   createDirDlg->typesCombo->insertItem("file/all");
   createDirDlg->typesCombo->insertItem("template/all");
@@ -282,8 +282,8 @@ void TemplatesTreeView::slotNewDir()
    startDir = QFileInfo(startDir).dirPath();
    if (!dir.mkdir(startDir+"/"+createDirDlg->dirName->text()))
    {
-      KMessageBox::error(this,i18n("Error while creating the new directory.\n \
-                   Maybe you don't have permission to write in the %1 directory.").arg(startDir));
+      KMessageBox::error(this,i18n("Error while creating the new folder.\n \
+                   Maybe you don't have permission to write in the %1 folder.").arg(startDir));
       return;
    }
    if (! createDirDlg->parentAttr->isChecked())

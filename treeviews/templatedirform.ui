@@ -23,7 +23,7 @@
         </rect>
     </property>
     <property name="caption">
-        <string>Create Template Directory</string>
+        <string>Create Template Folder</string>
     </property>
     <grid>
         <property name="name">

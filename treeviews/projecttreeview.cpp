@@ -95,7 +95,7 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   m_fileMenu->insertItem(i18n("Rename..."), this, SLOT(slotRename()));
   m_fileMenu->insertItem(SmallIcon("info"), i18n("Properties"), this, SLOT(slotProperties()));
   m_fileMenu->insertSeparator();
-  m_fileMenu->insertItem(SmallIcon("reload"), i18n("&Rescan Project Directory"), this, SLOT(slotRescan()));
+  m_fileMenu->insertItem(SmallIcon("reload"), i18n("&Rescan Project Folder"), this, SLOT(slotRescan()));
   m_fileMenu->insertItem(i18n("Project &Options"), this, SLOT(slotOptions()));
 
   m_folderMenu = new KPopupMenu(this);
@@ -112,13 +112,13 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   m_folderMenu->insertItem(i18n("Rename..."), this, SLOT(slotRename()));
   m_folderMenu->insertItem(SmallIcon("info"), i18n("Properties"), this, SLOT(slotProperties()));
   m_folderMenu->insertSeparator();
-  m_folderMenu->insertItem(SmallIcon("reload"), i18n("&Rescan Project Directory"), this, SLOT(slotRescan()));
+  m_folderMenu->insertItem(SmallIcon("reload"), i18n("&Rescan Project Folder"), this, SLOT(slotRescan()));
   m_folderMenu->insertItem(i18n("Project &Options"), this, SLOT(slotOptions()));
 
   m_projectMenu = new QPopupMenu(this);
   m_projectMenu->insertItem(SmallIcon("dirsynch"), i18n("&Upload Project..."), this, SLOT(slotUploadProject()));
   m_projectMenu->insertSeparator();
-  m_projectMenu->insertItem(SmallIcon("reload"), i18n("&Rescan Project Directory"), this, SLOT(slotRescan()));
+  m_projectMenu->insertItem(SmallIcon("reload"), i18n("&Rescan Project Folder"), this, SLOT(slotRescan()));
   m_projectMenu->insertItem(i18n("Project &Options"), this, SLOT(slotOptions()));
 
 

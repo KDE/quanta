@@ -786,7 +786,7 @@ void Project::slotAddDirectory()
 {
  KURL url = KURL();
  url = KFileDialog::getExistingURL(baseURL.prettyURL(), this,
-                i18n("Insert Directory in Project"));
+                i18n("Insert Folder in Project"));
  slotAddDirectory(url);
 }
 
@@ -939,7 +939,7 @@ void Project::slotRename(const KURL& url)
   if (folderRename)
   {
     oldName = url.fileName(true);
-    caption = i18n("Rename Directory");
+    caption = i18n("Rename Folder");
   } else
   {
     oldName = url.fileName();
@@ -1584,7 +1584,7 @@ void Project::slotGetMessages(const QString& data)
 
 void Project::slotRescanPrjDir()
 {
-  RescanPrj *dlg = new RescanPrj( m_projectFiles, baseURL, excludeRx, this, i18n("New Files in Project's Directory"));
+  RescanPrj *dlg = new RescanPrj( m_projectFiles, baseURL, excludeRx, this, i18n("New Files in Project's Folder"));
   if ( dlg->exec() )
   {
     insertFiles( dlg->files() );

@@ -23,7 +23,7 @@
 void ProjectOptions::buttonTmpl_clicked()
 {
    KURL url = KFileDialog::getExistingURL(linePrjTmpl->text(), this,
-                              i18n("Select Project Template Directory"));
+                              i18n("Select Project Template Folder"));
    if (!url.isEmpty())
    {
      linePrjTmpl->setText(url.url());
@@ -35,7 +35,7 @@ void ProjectOptions::buttonTmpl_clicked()
 void ProjectOptions::buttonToolbar_clicked()
 {
    KURL url = KFileDialog::getExistingURL(linePrjToolbar->text(), this,
-                              i18n("Select Project Toolbar & Actions Directory"));
+                              i18n("Select Project Toolbar & Actions Folder"));
    if (!url.isEmpty())
    {
      linePrjToolbar->setText(url.url());

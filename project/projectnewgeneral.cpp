@@ -86,7 +86,7 @@ ProjectNewGeneral::~ProjectNewGeneral(){
 void ProjectNewGeneral::slotButtonDir()
 {
    KURL url = KFileDialog::getExistingURL(linePrjDir->text(), this,
-                              i18n("Select Project Directory"));
+                              i18n("Select Project Folder"));
    if (!url.isEmpty())
    {
      linePrjDir->setText(url.url());
@@ -163,7 +163,7 @@ void ProjectNewGeneral::setMargin(int i)
 void ProjectNewGeneral::slotButtonTmpl()
 {
    KURL url = KFileDialog::getExistingURL(linePrjTmpl->text(), this,
-                              i18n("Select Project Template Directory"));
+                              i18n("Select Project Template Folder"));
    if (!url.isEmpty())
    {
      linePrjTmpl->setText(url.url());
@@ -173,7 +173,7 @@ void ProjectNewGeneral::slotButtonTmpl()
 void ProjectNewGeneral::slotButtonToolbar()
 {
    KURL url = KFileDialog::getExistingURL(linePrjToolbar->text(), this,
-                              i18n("Select Project Toolbar & Actions Directory"));
+                              i18n("Select Project Toolbar & Actions Folder"));
    if (!url.isEmpty())
    {
      linePrjToolbar->setText(url.url());

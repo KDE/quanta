@@ -2002,7 +2002,7 @@ void QuantaApp::initActions()
                         m_project, SLOT( slotAddDirectory() ),
                         ac, "project_insert_directory" );
 
-    rescanPrjDirAction = new KAction( i18n( "&Rescan Project Directory" ), SmallIcon("reload"), 0,
+    rescanPrjDirAction = new KAction( i18n( "&Rescan Project Folder" ), SmallIcon("reload"), 0,
                         m_project, SLOT( slotRescanPrjDir() ),
                         ac, "project_rescan" );
 

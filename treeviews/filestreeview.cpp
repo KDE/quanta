@@ -183,12 +183,12 @@ KFileTreeBranch* FilesTreeView::newBranch(const KURL& url)
   FilesTreeBranch* newBrnch = 0;
   if (url.isLocalFile() && url.path() == "/")
   {
-    newBrnch = new FilesTreeBranch(this, url, i18n("Root Directory"), SmallIcon("folder_red"));
+    newBrnch = new FilesTreeBranch(this, url, i18n("Root Folder"), SmallIcon("folder_red"));
   } else
   {
     if (url.isLocalFile() && url.equals(KURL(QDir::homeDirPath()), true))
     {
-      newBrnch = new FilesTreeBranch(this, url, i18n("Home Directory"), SmallIcon("home_blue"));
+      newBrnch = new FilesTreeBranch(this, url, i18n("Home Folder"), SmallIcon("home_blue"));
     } else
     {
       QString s = url.fileName();
@@ -300,7 +300,7 @@ void FilesTreeView::slotAddToTop()
 
 void FilesTreeView::slotNewTopFolder()
 {
-  KURL url = KFileDialog::getExistingURL(QString::null, this, i18n("Choose Local or Remote Directory"));
+  KURL url = KFileDialog::getExistingURL(QString::null, this, i18n("Choose Local or Remote Folder"));
   if (!url.isEmpty() && topURLList.findIndex(url) == -1)
   {
     newBranch(url);
