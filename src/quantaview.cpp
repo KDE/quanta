@@ -80,6 +80,7 @@ QuantaView::QuantaView(QWidget *parent, const char *name )
   , m_plugin(0L)
   , m_customWidget(0L)
   , m_currentFocus(SourceFocus)
+  , m_kafkaDocument(0L)
 {
 //Connect the VPL update timers
   connect(&m_sourceUpdateTimer, SIGNAL(timeout()), this, SLOT(sourceUpdateTimerTimeout()));
@@ -175,7 +176,7 @@ void QuantaView::addDocument(Document *document)
    connect(m_document->view(), SIGNAL(cursorPositionChanged()), this, SIGNAL(cursorPositionChanged()));
 
 
-   m_kafkaDocument =KafkaDocument::ref();
+   m_kafkaDocument = KafkaDocument::ref();
 
   connect(m_kafkaDocument->getKafkaWidget(), SIGNAL(hasFocus(bool)),
     this, SLOT(slotVPLGetFocus(bool)));

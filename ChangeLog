@@ -2,12 +2,12 @@ This files contains the changes since Quanta 2.0 until the current 3.3.x series.
 
 Version 3.4 (Release date: xx-xx-2005; Started 20-08-2004):
   - bugfixes:
-	- VPL:
-	    - enable VPL on KDE 3.3.x
-	    - Update cursor position in VPL when return key is pressed. [#94816]
-	    - Fix cursor disapearing. [#85292]
-	    - Fix crash that happened when using backspace to delete a link.
-	    - Normal editing behaviour with selected text. [#94921]
+      - VPL:
+          - enable VPL on KDE 3.3.x
+          - Update cursor position in VPL when return key is pressed. [#94816]
+          - Fix cursor disapearing. [#85292]
+          - Fix crash that happened when using backspace to delete a link.
+          - Normal editing behaviour with selected text. [#94921]
 	    - Other bug fixes.
         - show (again) the full filename in a tooltip
         - don't crash if the preview widget is closed with a JavaScript command
@@ -42,6 +42,8 @@ Version 3.4 (Release date: xx-xx-2005; Started 20-08-2004):
           bug described in #88892.
         - don't try to add a newly created action to a non-existent All toolbar.
         - don't crash on exit if the user removed an action
+        - don't crash when previewing a page with frames twices in a row or when
+          downloading a documentation packages from the Welcome screen [#95465]
 	- enable full copy/paste from documentation and preview. Until now it worked
 	  only with the mouse through the selection. [#92936]
 	- don't show directories that were removed from the project in the upload
