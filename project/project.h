@@ -201,7 +201,7 @@ private:
   Project(KMainWindow *parent);
   /** setup of the actions */
   void initActions(KActionCollection *ac);
-  void Project::adjustActions();
+  void adjustActions();
   void loadProjectXML();
 
   bool createEmptyDom();

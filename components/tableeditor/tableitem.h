@@ -40,7 +40,7 @@ public:
   // Paint cell - handle alignment (horizontal and vertical) and bold for header
   virtual void paint(QPainter* p, const QColorGroup& cg, const QRect& cr, bool selected);
   // Return A bit larger sizeHint because QTextEdit has some margin around
-  virtual QSize TableItem::sizeHint() const;
+  virtual QSize sizeHint() const;
   // Get and set vertical aligment
   Qt::AlignmentFlags vAlignment()	{return m_valign;}
   void setVAlignment(Qt::AlignmentFlags flags)	{m_valign = flags;}
