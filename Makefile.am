@@ -15,7 +15,10 @@ quanta_METASOURCES = AUTO
 
 INCLUDES = $(all_includes)\
                 -I$(top_srcdir)/quanta/kwrite\
-                -I$(top_srcdir)/quanta/kwrite/highlight
+                -I$(top_srcdir)/quanta/kwrite/highlight\
+                -I./tagdialogs\
+                -I./dialogs\
+                -I./toolbar
 
 # the library search path.
 quanta_LDFLAGS = $(all_libraries) $(KDE_RPATH)
