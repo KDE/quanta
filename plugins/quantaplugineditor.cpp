@@ -40,8 +40,8 @@
 #include "quantaplugininterface.h"
 #include "pluginconfig.h"
 #include "plugineditor.h"
-#include "../quanta.h"
-#include "../resource.h"
+#include "quanta.h"
+#include "resource.h"
 
 QuantaPluginEditor::QuantaPluginEditor(QWidget *a_parent, const char *a_name)
   : KDialogBase(a_parent, a_name, true, i18n("Edit Plugins"), KDialogBase::Ok | KDialogBase::Cancel)

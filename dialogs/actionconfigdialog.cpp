@@ -25,6 +25,7 @@
 #include <qtabwidget.h>
 
 //kde includes
+#include <kconfig.h>
 #include <kdebug.h>
 #include <kicondialog.h>
 #include <kiconloader.h>
@@ -42,10 +43,10 @@
 #endif
 
 //app includes
-#include "../resource.h"
-#include "../quanta.h"
-#include "../quantaview.h"
-#include "../tagdialogs/filecombo.h"
+#include "resource.h"
+#include "quanta.h"
+#include "quantaview.h"
+#include "filecombo.h"
 
 #include "actionconfigdialog.h"
 #include "tagaction.h"

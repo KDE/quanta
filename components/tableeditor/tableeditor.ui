@@ -731,7 +731,7 @@
 <includes>
     <include location="local" impldecl="in declaration">kurl.h</include>
     <include location="local" impldecl="in declaration">qvaluelist.h</include>
-    <include location="local" impldecl="in declaration">../document.h</include>
+    <include location="local" impldecl="in declaration">document.h</include>
     <include location="local" impldecl="in implementation">tableeditor.ui.h</include>
 </includes>
 <forwards>

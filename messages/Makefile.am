@@ -1,5 +1,6 @@
 noinst_LTLIBRARIES = libmessages.la
 
-INCLUDES = $(all_includes)
+libmessages_la_SOURCES = messageoutput.cpp messageitem.cpp
 METASOURCES = AUTO
-libmessages_la_SOURCES = messageoutput.cpp messageitem.cpp messageitemphp.cpp messageitemphp4.cpp
+
+AM_CPPFLAGS = $(all_includes)

@@ -51,9 +51,9 @@
 //own includes
 #include "projectupload.h"
 #include "project.h"
-#include "../quantacommon.h"
-#include "../qextfileinfo.h"
-#include "../resource.h"
+#include "quantacommon.h"
+#include "qextfileinfo.h"
+#include "resource.h"
 
 ProjectUpload::ProjectUpload(Project* prg, const KURL& url, QWidget *parent, const char* name, bool modal, WFlags fl)
   :ProjectUploadS( parent, name, modal, fl)

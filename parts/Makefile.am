@@ -1,5 +1,5 @@
 if BUILD_WYSIWYG
  KAFKA_SUBDIR=kafka
 endif
-SUBDIRS = kfilereplace $(KAFKA_SUBDIR) kxsldbg kimagemapeditor
+SUBDIRS = preview $(KAFKA_SUBDIR)
 

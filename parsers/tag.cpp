@@ -20,9 +20,9 @@
 #include <qcstring.h>
 
 #include "tag.h"
-#include "../document.h"
-#include "../quantacommon.h"
-#include "../resource.h"
+#include "document.h"
+#include "quantacommon.h"
+#include "resource.h"
 
 Tag::Tag()
 {

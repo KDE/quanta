@@ -1,7 +1,7 @@
-noinst_LTLIBRARIES = libwidgets.la
+noinst_LTLIBRARIES = libpreview.la
 
 METASOURCES = AUTO
 
-libwidgets_la_SOURCES = whtmlpart.cpp
+libpreview_la_SOURCES = whtmlpart.cpp
 
-INCLUDES = $(all_includes)
+AM_CPPFLAGS = $(all_includes)

@@ -38,12 +38,12 @@
 //app includes
 #include "projectnewlocal.h"
 #include "projectnewgeneral.h"
-#include "../dialogs/copyto.h"
-#include "../qextfileinfo.h"
-#include "../treeviews/uploadtreefolder.h"
-#include "../treeviews/uploadtreeview.h"
-#include "../resource.h"
-#include "../quantacommon.h"
+#include "copyto.h"
+#include "qextfileinfo.h"
+#include "uploadtreefolder.h"
+#include "uploadtreeview.h"
+#include "resource.h"
+#include "quantacommon.h"
 
 ProjectNewLocal::ProjectNewLocal(QWidget *parent, const char *name )
   : ProjectNewLocalS(parent,name)

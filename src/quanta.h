@@ -24,9 +24,7 @@
 #define IDS_STATUS_CLM  4
 #define IDS_DEFAULT     "Ready."
 
-#ifdef HAVE_CONFIG_H
 #include <config.h>
-#endif
 
 // include files for Qt
 #include <qmap.h>
@@ -38,16 +36,12 @@
 #include <kapplication.h>
 #include <kdockwidget.h>
 #include "kqapp.h"
-#include "widgets/whtmlpart.h"
 #include <kparts/browserextension.h>
 #include <kate/document.h>
 #include <ktempfile.h>
 
 //app includes
-#include "parser/qtag.h"
-#include "quantacommon.h"
-#include "qextfileinfo.h"
-#include "resource.h"
+#include "qtag.h"
 #include "dcopwindowmanagerif.h"
 
 // forward declaration
@@ -90,9 +84,8 @@ class MessageOutput;
 class QDomDocument;
 class Document;
 
-class PHP3Debugger;
-class PHP4Debugger;
 class SpellChecker;
+struct DirInfo;
 
 typedef struct ToolbarEntry{
   KXMLGUIClient *guiClient;
@@ -292,9 +285,6 @@ public slots:
   /** Configure toolbars, show defaultToolbar by default */
   void slotConfigureToolbars(const QString& defaultToolbar = QString::null);
   void slotOptionsConfigureActions();
-
-  void enablePhp3Debug(bool);
-  void enablePhp4Debug(bool);
 
   void setCursorPosition(int row, int col );
   void gotoFileAndLine(const QString& filename, int line );
@@ -508,12 +498,6 @@ private:
 
   /** parsered tree of document  */
   QTimer *statusbarTimer;
-
-  // debugger
-  int phpDebugPort;
-  PHP3Debugger* dbg3;
-  PHP4Debugger* dbg4;
-  QString debuggerStyle;
 
   // ACTIONS
   KRecentFilesAction *projectToolbarFiles;

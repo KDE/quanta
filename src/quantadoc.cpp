@@ -61,11 +61,16 @@
 #include "quantadoc.h"
 #include "quantaview.h"
 
+#include "quantacommon.h"
 #include "qextfileinfo.h"
 #include "resource.h"
 
-#include "project/project.h"
-#include "plugins/quantaplugininterface.h"
+#include "project.h"
+#include "quantaplugininterface.h"
+
+#ifdef BUILD_KAFKAPART
+#include "undoredo.h"
+#endif
 
 QuantaDoc::QuantaDoc(QWidget *parent, const char *name) : QObject(parent, name)
 {

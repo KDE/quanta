@@ -31,8 +31,9 @@
 
 /* OTHER INCLUDES */
 #include "quantaplugininterface.h"
-#include "../resource.h"
-#include "../quanta.h"
+#include "resource.h"
+#include "quanta.h"
+#include "quantacommon.h"
 
 QuantaPluginInterface::QuantaPluginInterface()
 {

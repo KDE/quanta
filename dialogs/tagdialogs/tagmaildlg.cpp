@@ -16,8 +16,8 @@
 
 #include "tagmaildlg.h"
 #include "listdlg.h"
-#include "../resource.h"
-#include "../quantacommon.h"
+#include "resource.h"
+#include "quantacommon.h"
 
 //kde includes
 #include <kapplication.h>

@@ -1,5 +1,5 @@
-SUBDIRS = doc tags icons templates toolbars scripts
+SUBDIRS = doc dtep icons pics templates toolbars config
 
 quantadir = ${quanta_datadir}
 
-quanta_DATA = plugins.rc actions.rc chars tips
+quanta_DATA = chars tips

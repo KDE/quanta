@@ -33,8 +33,8 @@
 //app includes
 #include "abbreviation.h"
 #include "codetemplatedlgs.h"
-#include "../resource.h"
-#include "../quantacommon.h"
+#include "resource.h"
+#include "quantacommon.h"
 
 
 Abbreviation::Abbreviation(QWidget *parent, const char *name):

@@ -44,11 +44,11 @@
 #endif
 #include "wkafkapart.h"
 #include "nodeproperties.h"
-#include "../../document.h"
-#include "../../resource.h"
-#include "../../quanta.h"
-#include "../../quantaview.h"
-#include "../../treeviews/tagattributetree.h"
+#include "document.h"
+#include "resource.h"
+#include "quanta.h"
+#include "quantaview.h"
+#include "tagattributetree.h"
 #include "kafkahtmlpart.moc"
 
 class KafkaWidgetPrivate

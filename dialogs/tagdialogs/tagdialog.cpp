@@ -33,13 +33,13 @@
 #include "tagimgdlg.h"
 #include "tagxml.h"
 
-#include "../document.h"
-#include "../qextfileinfo.h"
-#include "../quantacommon.h"
-#include "../resource.h"
-#include "../parser/qtag.h"
+#include "document.h"
+#include "qextfileinfo.h"
+#include "quantacommon.h"
+#include "resource.h"
+#include "qtag.h"
 #ifdef BUILD_KAFKAPART
-#include "../parts/kafka/kafkacommon.h"
+#include "kafkacommon.h"
 #endif
 
 TagDialog::TagDialog(QTag* dtdTag, Tag *tag, KURL a_baseURL)

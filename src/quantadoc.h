@@ -18,21 +18,16 @@
 #ifndef QUANTADOC_H
 #define QUANTADOC_H
 
-#ifdef HAVE_CONFIG_H
 #include <config.h>
-#endif
 
 // include files for QT
 #include <qptrlist.h>
 #include <qdict.h>
-#include <qobject.h>
-#include <qstring.h>
-
-#include <kurl.h>
 
 // forward declaration of the Quanta classes
 class Document;
 class KConfig;
+class KURL;
 
 class QuantaDoc : public QObject
 {

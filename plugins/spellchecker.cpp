@@ -31,8 +31,8 @@
 
 //app includes
 #include "spellchecker.h"
-#include "../quantacommon.h"
-#include "../resource.h"
+#include "quantacommon.h"
+#include "resource.h"
 
 SpellChecker::SpellChecker(QObject *parent, const char *name ) : QObject(parent,name)
 {

@@ -67,36 +67,35 @@
 #include "quantadoc.h"
 #include "resource.h"
 #include "document.h"
+#include "qextfileinfo.h"
 #include <kapplication.h>
 #include <dcopclient.h>
 
-#include "project/project.h"
+#include "project.h"
 
-#include "widgets/whtmlpart.h"
-#include "messages/messageoutput.h"
+#include "whtmlpart.h"
+#include "messageoutput.h"
 
-#include "toolbar/tagaction.h"
+#include "tagaction.h"
 
-#include "treeviews/filestreeview.h"
-#include "treeviews/projecttreeview.h"
-#include "treeviews/doctreeview.h"
-#include "treeviews/structtreeview.h"
-#include "treeviews/templatestreeview.h"
-#include "treeviews/tagattributetree.h"
-#include "treeviews/scripttreeview.h"
+#include "filestreeview.h"
+#include "projecttreeview.h"
+#include "doctreeview.h"
+#include "structtreeview.h"
+#include "templatestreeview.h"
+#include "tagattributetree.h"
+#include "scripttreeview.h"
 
-#include "plugins/quantaplugininterface.h"
-#include "plugins/quantaplugin.h"
-#include "plugins/quantaplugineditor.h"
+#include "quantaplugininterface.h"
+#include "quantaplugin.h"
+#include "quantaplugineditor.h"
 
-#include "plugins/php3dbg/debugger.h"
-#include "plugins/php4dbg/debugger.h"
-#include "plugins/spellchecker.h"
+#include "spellchecker.h"
 
-#include "parser/parser.h"
-#include "dialogs/filemasks.h"
-#include "dialogs/dirtydlg.h"
-#include "dialogs/dirtydialog.h"
+#include "parser.h"
+#include "filemasks.h"
+#include "dirtydlg.h"
+#include "dirtydialog.h"
 
 QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta"), DCOPObject("WindowManagerIf")
 {
@@ -624,7 +623,6 @@ void QuantaApp::saveOptions()
     m_config->writeEntry("Preview position", qConfig.previewPosition);
     m_config->writeEntry("Window layout", qConfig.windowLayout);
     m_config->writeEntry("Follow Cursor", sTab->followCursor() );
-    m_config->writeEntry("PHP Debugger Port", phpDebugPort );
     //If user choose the timer interval, it needs to restart the timer too
     m_config->writeEntry("Autosave interval", qConfig.autosaveInterval);
 #if KDE_IS_VERSION(3,1,3)
@@ -635,8 +633,6 @@ void QuantaApp::saveOptions()
     m_config->writeEntry("List of opened files", m_doc->openedFiles().toStringList());
 #endif
     m_config->writeEntry("Version", VERSION); // version
-    m_config->writeEntry ("Enable Debugger", debuggerStyle!="None");
-    m_config->writeEntry ("PHP Debugger style", debuggerStyle);
     m_config->writeEntry("Show Close Buttons", qConfig.showCloseButtons);
 
     if (m_view->writeExists())
@@ -691,8 +687,6 @@ void QuantaApp::readOptions()
      qConfig.defaultDocType = DEFAULT_DTD;
 
   qConfig.defaultEncoding = m_config->readEntry("Default encoding", QTextCodec::codecForLocale()->name());
-
-  phpDebugPort = m_config->readNumEntry("PHP Debugger Port", 7869);
 
   sTab->setFollowCursor( m_config->readBoolEntry("Follow Cursor", true));
 
@@ -780,13 +774,7 @@ void QuantaApp::readOptions()
     m_doc->newDocument(KURL());
   }
 
-  debuggerStyle = "None";
   m_config->setGroup  ("General Options");
-  if (m_config->readBoolEntry("Enable Debugger", false))
-    if (m_config->readEntry("PHP Debugger style","None") == "PHP4")
-         enablePhp4Debug(true);
-    else enablePhp3Debug(true);
-
   m_spellChecker->readConfig(m_config);
   readDockConfig(m_config);
 
@@ -795,37 +783,6 @@ void QuantaApp::readOptions()
   layoutDockWidgets(layout);
   qConfig.windowLayout = layout;
 
-}
-
-void QuantaApp::enablePhp3Debug(bool enable)
-{
-  if (enable) {
-    dbg3 = new PHP3Debugger( phpDebugPort,0,0);
-
-    connect( dbg3,          SIGNAL(newConnect()),
-             m_messageOutput, SLOT(newPhpConnect()) );
-    connect( dbg3,          SIGNAL(endConnect()),
-             m_messageOutput, SLOT(endPhpConnect()) );
-    connect( dbg3,          SIGNAL(data(const QString&)),
-             m_messageOutput, SLOT(phpDebug(const QString&)) );
-
-    if ( !dbg3->ok() )
-        m_messageOutput->insertItem(i18n("Can't bind port %1, PHP3 debugger disabled").arg(phpDebugPort));
-    else
-        m_messageOutput->insertItem(i18n("PHP3 debugger listens at port %1").arg(phpDebugPort));
-    debuggerStyle = "PHP3";
-  } else delete dbg3;
-}
-
-void QuantaApp::enablePhp4Debug(bool enable)
-{
-  if (enable) {
-    dbg4 = new PHP4Debugger(0L,0L);
-    connect( dbg4,          SIGNAL(message(const QString&)),
-             m_messageOutput, SLOT(php4Debug(const QString&)) );
-    dbg4->init();
-    debuggerStyle = "PHP4";
-  } else delete dbg4;
 }
 
 void QuantaApp::openLastFiles()

@@ -18,14 +18,16 @@
 #ifndef QUANTAVIEW_H
 #define QUANTAVIEW_H
 
-#ifdef HAVE_CONFIG_H
 #include <config.h>
-#endif
 
 // include files for Qt
 #include <qwidget.h>
 #include <qptrlist.h>
 #include <qvaluelist.h>
+
+#ifdef BUILD_KAFKAPART
+#include <dom/dom_node.h>
+#endif
 
 class QuantaDoc;
 class Document;

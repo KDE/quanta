@@ -32,14 +32,15 @@
 #include <qtextstream.h>
 #include <qdatetime.h>
 
-#include "../../document.h"
-#include "../../quanta.h"
-#include "../../quantaview.h"
-#include "../../resource.h"
+#include "document.h"
+#include "quanta.h"
+#include "quantacommon.h"
+#include "quantaview.h"
+#include "resource.h"
 #include "undoredo.h"
-#include "../../parser/node.h"
-#include "../../parser/parser.h"
-#include "../../parser/tag.h"
+#include "node.h"
+#include "parser.h"
+#include "tag.h"
 #include "nodeproperties.h"
 #include "htmlenhancer.h"
 #include "kafkacommon.h"

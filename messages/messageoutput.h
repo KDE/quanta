@@ -40,14 +40,6 @@ public slots:
   void showMessage(const QString& s );
   void addToLastItem(const QString& s );
 
-  /** php3 debugger stuff */
-  void phpDebug(const QString& s);
-  void newPhpConnect();
-  void endPhpConnect();
-
-  /** php4 debugger stuff */
-  void php4Debug(const QString& s);
-
 public:
   uint maxItems() const { return max_items; }
   void setMaxItems( uint items ) {  max_items = items; }

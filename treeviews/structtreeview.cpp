@@ -30,14 +30,15 @@
 #include <kdebug.h>
 
 // app includes
-#include "../messages/messageoutput.h"
-#include "../parser/node.h"
-#include "../parser/qtag.h"
-#include "../document.h"
-#include "../resource.h"
-#include "../qextfileinfo.h"
-#include "../quanta.h"
-#include "../quantaview.h"
+#include "messageoutput.h"
+#include "node.h"
+#include "qtag.h"
+#include "document.h"
+#include "resource.h"
+#include "qextfileinfo.h"
+#include "quanta.h"
+#include "quantaview.h"
+#include "quantacommon.h"
 
 #include "structtreetag.h"
 #include "structtreeview.h"

@@ -1,7 +1,13 @@
 noinst_LTLIBRARIES = libdialogs.la
 
-libdialogs_la_SOURCES = copyto.cpp dirtydialog.ui dirtydlg.cpp donationdialog.ui parseroptionsui.ui dtdselectdialog.ui katefiledialog.cpp parseroptions.cpp previewoptionss.ui previewoptions.cpp debuggeroptionss.ui filemaskss.ui filemasks.cpp styleoptionss.ui kategrepdialog.cpp abbreviations.ui abbreviation.cpp codetemplatedlgs.ui fourbuttonmessagebox.ui casewidget.ui
+libdialogs_la_SOURCES = copyto.cpp dirtydialog.ui dirtydlg.cpp donationdialog.ui dtdselectdialog.ui kategrepdialog.cpp fourbuttonmessagebox.ui casewidget.ui actionconfigdialogs.ui actionconfigdialog.cpp filecombo.cpp
 
 METASOURCES = AUTO
 
-INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/quanta/tagdialogs $(all_includes)
+AM_CPPFLAGS = -I$(top_srcdir)/lib \
+	-I$(top_srcdir)/quanta/utility \
+	-I$(top_srcdir)/quanta/parsers \
+	-I$(top_srcdir)/quanta/src \
+	$(all_includes)
+
+SUBDIRS = settings tagdialogs

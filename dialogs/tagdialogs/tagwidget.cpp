@@ -28,7 +28,7 @@
 // application's headers
 #include "tagwidget.h"
 #include "tagdialog.h"
-#include "../resource.h"
+#include "resource.h"
 
 TagWidget::TagWidget(QObject *parent, const char *)
 {

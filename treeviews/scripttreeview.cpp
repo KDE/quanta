@@ -39,9 +39,10 @@
 
 //app includes
 #include "scripttreeview.h"
-#include "../resource.h"
-#include "../quanta.h"
-#include "../tagdialogs/tagmaildlg.h"
+#include "resource.h"
+#include "quanta.h"
+#include "quantacommon.h"
+#include "tagmaildlg.h"
 
 ScriptTreeView::ScriptTreeView(QWidget *parent, const char *name )
   : FilesTreeView(parent,name)

@@ -37,12 +37,12 @@
 
 #include "propertysetter.h"
 #include "qmyhighlighter.h"
-#include "../../resource.h"
+#include "resource.h"
 #include "cssshpropertyparser.h"
 #include "shorthandformer.h"
-#include "../framewizard/fwglobal.h"
-#include "../../resource.h"
-#include "../../quanta.h"
+#include "fwglobal.h"
+#include "resource.h"
+#include "quanta.h"
 
    
 myCheckListItem::myCheckListItem(QListView * parent, const QString & text):QCheckListItem(parent, text, QCheckListItem::CheckBox),m_checkedChildren(0){

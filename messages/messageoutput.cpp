@@ -19,8 +19,6 @@
 
 #include "messageoutput.h"
 #include "messageitem.h"
-#include "messageitemphp.h"
-#include "messageitemphp4.h"
 
 MessageOutput::MessageOutput(QWidget *parent, const char *name )
   : QListBox(parent,name)
@@ -92,38 +90,5 @@ void MessageOutput::clickItem( QListBoxItem * l_item )
    }
 }
 
-void MessageOutput::phpDebug(const QString& s)
-{
-   static QString data = "";
-   data += s;
-   int pos1;
-   QString res;
-
-   if ( (pos1=data.find(") end: ")) != -1 )  {
-     res = data.left(pos1+7);
-     data.remove(0, pos1+7);
-     if ( (pos1=res.find(") start: ")) != -1  )
-       res.remove(0,pos1-1 );
-     new MessageItemPHP( this, res );
-     setBottomItem(count()>0?count()-1:0);
-   }
-
-}
-
-void MessageOutput::php4Debug(const QString& s)
-{
-  new MessageItemPHP4( this, s );
-  setBottomItem(count()-1);
-}
-
-void MessageOutput::newPhpConnect()
-{
-   insertItem(i18n("PHP debugger started"));
-}
-
-void MessageOutput::endPhpConnect()
-{
-   insertItem("");
-}
 
 #include "messageoutput.moc"

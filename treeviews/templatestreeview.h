@@ -18,7 +18,7 @@
 
 //own includes
 #include "filestreeview.h"
-#include "../quantacommon.h"
+#include "quantacommon.h"
 
 //forward declarations
 class QuantaPropertiesPage;

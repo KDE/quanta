@@ -101,52 +101,55 @@
 #include "qextfileinfo.h"
 #include "resource.h"
 
-#include "project/project.h"
+#include "project.h"
 
-#include "widgets/whtmlpart.h"
+#include "whtmlpart.h"
 
-#include "dialogs/abbreviation.h"
-#include "dialogs/filemasks.h"
-#include "dialogs/styleoptionss.h"
-#include "dialogs/previewoptions.h"
-#include "dialogs/parseroptions.h"
-#include "dialogs/debuggeroptionss.h"
-#include "dialogs/dtdselectdialog.h"
-#include "dialogs/donationdialog.h"
-#include "dialogs/fourbuttonmessagebox.h"
+#include "abbreviation.h"
+#include "filemasks.h"
+#include "styleoptionss.h"
+#include "previewoptions.h"
+#include "parseroptions.h"
+#include "dtdselectdialog.h"
+#include "donationdialog.h"
+#include "fourbuttonmessagebox.h"
 #ifdef BUILD_KAFKAPART
-#include "parts/kafka/kafkasyncoptions.h"
-#include "parts/kafka/htmldocumentproperties.h"
+#include "kafkasyncoptions.h"
+#include "htmldocumentproperties.h"
+#include "undoredo.h"
 #endif
 
-#include "treeviews/structtreeview.h"
-#include "treeviews/doctreeview.h"
-#include "treeviews/templatestreeview.h"
-#include "treeviews/tagattributetree.h"
-#include "treeviews/projecttreeview.h"
+#include "structtreeview.h"
+#include "doctreeview.h"
+#include "templatestreeview.h"
+#include "tagattributetree.h"
+#include "projecttreeview.h"
 
-#include "tagdialogs/listdlg.h"
-#include "tagdialogs/tagmaildlg.h"
+#include "listdlg.h"
+#include "tagmaildlg.h"
 
-#include "parser/parser.h"
-#include "parser/dtdparser.h"
+#include "parser.h"
+#include "dtdparser.h"
 
-#include "messages/messageoutput.h"
+#include "messageoutput.h"
 
-#include "toolbar/actionconfigdialog.h"
-#include "toolbar/toolbarxmlgui.h"
-#include "toolbar/tagaction.h"
-#include "toolbar/toolbartabwidget.h"
+#include "actionconfigdialog.h"
+#include "toolbarxmlgui.h"
+#include "tagaction.h"
+#include "toolbartabwidget.h"
 
-#include "dialogs/kategrepdialog.h"
+#include "kategrepdialog.h"
 
 #if KDE_VERSION < KDE_MAKE_VERSION(3,1,90)
-#include "dialogs/katefiledialog.h"
+#include "katefiledialog.h"
 #else
 #include <kencodingfiledialog.h>
 #endif
 
-#include "plugins/quantaplugininterface.h"
+#include "quantaplugininterface.h"
+
+const QString resourceDir = QString(PACKAGE) + "/";
+
 
 // from kfiledialog.cpp - avoid qt warning in STDERR (~/.xsessionerrors)
 static void silenceQToolBar(QtMsgType, const char *){}
@@ -1215,12 +1218,6 @@ void QuantaApp::slotOptions()
   if (!defaultDTDNickName.isEmpty())
     abbreviationOptions->slotDTDChanged(defaultDTDNickName);
 
-  page=kd->addVBoxPage(i18n("PHP Debug"), QString::null, BarIcon("gear", KIcon::SizeMedium ) );
-  DebuggerOptionsS *debuggerOptions = new DebuggerOptionsS( (QWidget *)(page) );
-
-  if (debuggerStyle=="PHP3") debuggerOptions->radioPhp3->setChecked(true);
-  if (debuggerStyle=="None") debuggerOptions->checkDebugger->setChecked(false);
-
 //Spelling options
   page=kd->addVBoxPage(i18n("Spelling"), QString::null, BarIcon("spellcheck", KIcon::SizeMedium ) );
   KSpellConfig *spellOptions = new KSpellConfig( (QWidget *)page, 0L, qConfig.spellConfig, false );
@@ -1290,20 +1287,6 @@ void QuantaApp::slotOptions()
 
 #endif
     qConfig.defaultDocType = QuantaCommon::getDTDNameFromNickName(fileMasks->defaultDTDCombo->currentText());
-
-    if (!debuggerOptions->checkDebugger->isChecked()) {
-      if (debuggerStyle=="PHP3") enablePhp3Debug(false);
-      if (debuggerStyle=="PHP4") enablePhp4Debug(false);
-      debuggerStyle="None";
-    } else if (debuggerOptions->radioPhp3->isChecked()) {
-      if (   debuggerStyle=="PHP4") enablePhp4Debug(false);
-      if (!(debuggerStyle=="PHP3")) enablePhp3Debug(true);
-      debuggerStyle="PHP3";
-    } else {
-      if (   debuggerStyle=="PHP3") enablePhp3Debug(false);
-      if (!(debuggerStyle=="PHP4")) enablePhp4Debug(true);
-      debuggerStyle="PHP4";
-    }
 
     abbreviationOptions->saveTemplates();
 

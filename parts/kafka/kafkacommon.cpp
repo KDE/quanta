@@ -23,13 +23,14 @@
 #include <dom/dom_element.h>
 #include <dom/dom_text.h>
 
-#include "../../parser/node.h"
-#include "../../parser/tag.h"
-#include "../../document.h"
-#include "../../resource.h"
-#include "../../quantacommon.h"
+#include "node.h"
+#include "tag.h"
+#include "document.h"
+#include "resource.h"
+#include "quantacommon.h"
 
 #include "kafkacommon.h"
+#include "undoredo.h"
 
 Node *kafkaCommon::getNextNode(Node *node, bool &goUp, Node *endNode)
 {

@@ -35,9 +35,9 @@
 #include <qfontdatabase.h> 
 #include <qtooltip.h>
 
-#include "../framewizard/fwglobal.h"
-#include "../../resource.h"
-#include "../../quanta.h"
+#include "fwglobal.h"
+#include "resource.h"
+#include "quanta.h"
 #include "fontfamilychooser.h"
 
 #include <kdebug.h>

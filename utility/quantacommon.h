@@ -18,9 +18,9 @@
 
 #include <kdeversion.h>
 
-#include "parser/qtag.h"
-#include "parser/node.h"
-#include "parser/parser.h"
+#include "qtag.h"
+#include "node.h"
+#include "parser.h"
 
 /**Some common, mostly static functions.
   *@author Andras Mantia

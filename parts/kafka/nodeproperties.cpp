@@ -15,7 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "../../parser/node.h"
+#include "node.h"
 
 #include "nodeproperties.h"
 

@@ -20,9 +20,9 @@
 #include "node.h"
 #include "tag.h"
 #include "qtag.h"
-#include "../quantacommon.h"
+#include "quantacommon.h"
 #ifdef BUILD_KAFKAPART
-#include "../parts/kafka/kafkacommon.h"
+#include "kafkacommon.h"
 #endif
 
 Node::Node( Node *parent )

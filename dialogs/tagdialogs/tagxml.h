@@ -18,9 +18,7 @@
 #ifndef TAGXML_H
 #define TAGXML_H
 
-#ifdef HAVE_CONFIG_H
 #include <config.h>
-#endif
 
 #include <qwidget.h>
 #include <qdom.h>
@@ -28,7 +26,7 @@
 
 #include "tagattr.h"
 #include "tagwidget.h"
-#include "../parser/qtag.h"
+#include "qtag.h"
 
 class Tagxml : public QWidget, TagWidget {
   Q_OBJECT

@@ -43,8 +43,8 @@
 #include "dtdparser.h"
 #include "qtag.h"
 #include "dtepcreationdlg.h"
-#include "../quantacommon.h"
-#include "../qextfileinfo.h"
+#include "quantacommon.h"
+#include "qextfileinfo.h"
 
 #define MAX_CHILD_ELEMENTS 100
 

@@ -37,9 +37,9 @@
 
 // app includes
 #include "projecttreeview.h"
-#include "../quantacommon.h"
-#include "../qextfileinfo.h"
-#include "../resource.h"
+#include "quantacommon.h"
+#include "qextfileinfo.h"
+#include "resource.h"
 
 //ProjectTreeBranch implementation
 ProjectTreeBranch::ProjectTreeBranch(KFileTreeView *parent, const KURL& url,

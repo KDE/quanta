@@ -25,13 +25,13 @@
 #include <dom/dom_node.h>
 #include <dom/dom_exception.h>
 
-#include "../../document.h"
-#include "../../quanta.h"
-#include "../../quantaview.h"
-#include "../../quantacommon.h"
-#include "../../parser/node.h"
-#include "../../parser/tag.h"
-#include "../../resource.h"
+#include "document.h"
+#include "quanta.h"
+#include "quantaview.h"
+#include "quantacommon.h"
+#include "node.h"
+#include "tag.h"
+#include "resource.h"
 #include "wkafkapart.h"
 #include "kafkacommon.h"
 #include "kafkaresource.h"

@@ -30,11 +30,11 @@
 
 // app includes
 #include "rescanprj.h"
-#include "../qextfileinfo.h"
-#include "../quantacommon.h"
-#include "../treeviews/uploadtreefolder.h"
-#include "../treeviews/uploadtreeview.h"
-#include "../resource.h"
+#include "qextfileinfo.h"
+#include "quantacommon.h"
+#include "uploadtreefolder.h"
+#include "uploadtreeview.h"
+#include "resource.h"
 
 RescanPrj::RescanPrj(KURL::List p_prjFileList, const KURL& p_baseURL, QRegExp &p_excludeRx, QWidget *parent, const char *name, bool modal )
   : RescanPrjDir(parent,name,modal)

@@ -31,22 +31,21 @@
 //app includes
 #include "tagattributetree.h"
 #include "tagattributeitems.h"
-#include "../parser/qtag.h"
-#include "../parser/node.h"
-#include "../parser/parser.h"
-#include "../quantacommon.h"
-#include "../document.h"
-#include "../quantaview.h"
-#include "../parser/tag.h"
-#include "../parser/node.h"
-#include "../resource.h"
-#include "../quanta.h"
+#include "qtag.h"
+#include "node.h"
+#include "parser.h"
+#include "quantacommon.h"
+#include "document.h"
+#include "quantaview.h"
+#include "tag.h"
+#include "resource.h"
+#include "quanta.h"
 #ifdef BUILD_KAFKAPART
 #include <dom/dom_node.h>
 #include <kaction.h>
-#include "../parts/kafka/wkafkapart.h"
-#include "../parts/kafka/kafkacommon.h"
-#include "../parts/kafka/undoredo.h"
+#include "wkafkapart.h"
+#include "kafkacommon.h"
+#include "undoredo.h"
 #endif
 
 EditableTree::EditableTree(QWidget *parent, const char *name)

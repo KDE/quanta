@@ -33,14 +33,15 @@
 #include "parser.h"
 #include "node.h"
 #include "tag.h"
-#include "../resource.h"
-#include "../quantaview.h"
-#include "../quantacommon.h"
-#include "../document.h"
-#include "../quanta.h"
-#include "../qextfileinfo.h"
+#include "resource.h"
+#include "quantaview.h"
+#include "quantacommon.h"
+#include "document.h"
+#include "quanta.h"
+#include "qextfileinfo.h"
 #ifdef BUILD_KAFKAPART
-#include "../parts/kafka/kafkacommon.h"
+#include "kafkacommon.h"
+#include "undoredo.h"
 #endif
 
 //kde includes

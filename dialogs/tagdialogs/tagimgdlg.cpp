@@ -28,8 +28,8 @@
 
 //app includes
 #include "pictureview.h"
-#include "../qextfileinfo.h"
-#include "../quantacommon.h"
+#include "qextfileinfo.h"
+#include "quantacommon.h"
 #include "tagdialog.h"
 #include "tagimgdlg.h"
 #include "tagimgdlg.moc"
