@@ -759,7 +759,8 @@ Node* SAParser::parseArea(const AreaStruct &specialArea,
   if (s_line <= s_endLine)
   {
     if (m_synchronous)
-    {
+    { 
+      s_next = 0L;
       while (slotParseOneLine()); //actually this parses the whole area, as synchronous == true
       if (s_useReturnVars) //this is true if the special area end was found
       {

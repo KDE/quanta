@@ -437,6 +437,7 @@ Node *Parser::parse(Document *w, bool force)
 
   m_saParser->setParsingEnabled(false); 
   m_saParser->init(0L, w);
+  clearGroups();
   if (baseNode)
   {
     delete baseNode;
@@ -448,7 +449,6 @@ Node *Parser::parse(Document *w, bool force)
   write = w;
   m_dtd = w->defaultDTD();
   maxLines = w->editIf->numLines() - 1;
-  clearGroups();
   parsingEnabled = true;
   nodeNum = 0;
   if (maxLines >= 0)

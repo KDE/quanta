@@ -116,6 +116,9 @@ StructTreeView::~StructTreeView(){
 /** builds the structure tree */
 void StructTreeView::buildTree(Node *baseNode, int openLevel)
 {
+#ifdef DEBUG_PARSER
+  kdDebug(24000) << "Starting to rebuild the structure tree." << endl;
+#endif
   quantaApp->problemOutput()->clear();
   top = new StructTreeTag( this, i18n("Document Structure") );
   top->setOpen(topOpened);
