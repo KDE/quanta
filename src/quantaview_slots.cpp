@@ -920,7 +920,7 @@ void QuantaView::clearBookmarks ()
   {
     KTextEditor::Mark* mark;
     KTextEditor::MarkInterface *markinterface = dynamic_cast<KTextEditor::MarkInterface*>(write()->doc());
-    QPtrList<KTextEditor::Mark> marks= dynamic_cast<KTextEditor::MarkInterface*>(write()->doc())->marks();
+    QPtrList<KTextEditor::Mark> marks= markinterface->marks();
     for ( mark = marks.first(); mark; mark = marks.next() )
     {
       markinterface->removeMark(mark->line,  KTextEditor::MarkInterface::markType01);
@@ -937,6 +937,61 @@ void QuantaView::gotoMark (KTextEditor::Mark *mark)
       Document *w = write();
       w->viewCursorIf->setCursorPositionReal(mark->line, 0);
     }
+  }
+}
+
+
+void QuantaView::slotPreviousBookmark()
+{
+  if (writeExists())
+  {
+    Document *w = write();
+    KTextEditor::MarkInterface *markinterface = dynamic_cast<KTextEditor::MarkInterface*>(w->doc());
+    QPtrList<KTextEditor::Mark> marks = markinterface->marks();
+    if (marks.isEmpty())
+      return;
+  
+    uint line, col;
+    w->viewCursorIf->cursorPositionReal(&line, &col);
+    int found = -1;
+  
+    for (uint i = 0; i < marks.count(); i++)
+    {
+      if ( (marks.at(i)->type & KTextEditor::MarkInterface::markType01) && 
+           (marks.at(i)->line < line) && 
+           ((found == -1) || (uint(found) < marks.at(i)->line)))
+        found = marks.at(i)->line;
+    }
+  
+    if (found != -1)
+      w->viewCursorIf->setCursorPositionReal(found, 0);
+  }
+}
+
+void QuantaView::slotNextBookmark()
+{
+  if (writeExists())
+  {
+    Document *w = write();
+    KTextEditor::MarkInterface *markinterface = dynamic_cast<KTextEditor::MarkInterface*>(w->doc());
+    QPtrList<KTextEditor::Mark> marks = markinterface->marks();
+    if (marks.isEmpty())
+      return;
+  
+    uint line, col;
+    w->viewCursorIf->cursorPositionReal(&line, &col);
+    int found = -1;
+  
+    for (uint i = 0; i < marks.count(); i++)
+    {
+      if ( (marks.at(i)->type & KTextEditor::MarkInterface::markType01) && 
+           (marks.at(i)->line > line) && 
+           ((found == -1) || (uint(found) > marks.at(i)->line)))
+        found = marks.at(i)->line;
+    }
+  
+    if (found != -1)
+      w->viewCursorIf->setCursorPositionReal(found, 0);
   }
 }
 

@@ -210,6 +210,8 @@ public slots:
   void toggleBookmark();
   void clearBookmarks();
   void gotoMark (KTextEditor::Mark *mark);
+  void slotPreviousBookmark();
+  void slotNextBookmark();
 
 //Settings
   void toggleDynamicWordWrap();

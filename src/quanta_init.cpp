@@ -1693,6 +1693,10 @@ void QuantaApp::initActions()
           m_view, SLOT(toggleBookmark()), ac, "bookmarks_toggle");
     bookmarkClear = new KAction(i18n("&Clear Bookmarks"), 0, m_view,
           SLOT(clearBookmarks()), ac, "bookmarks_clear");
+    bookmarkPrev = new KAction(i18n("&Previous Bookmark"), Qt::ALT+Qt::Key_PageDown, m_view,
+          SLOT(slotPreviousBookmark()), ac, "bookmarks_previous");
+    bookmarkNext = new KAction(i18n("&Next Bookmark"), Qt::ALT+Qt::Key_PageUp, m_view,
+          SLOT(slotNextBookmark()), ac, "bookmarks_next");
 
 //Settings
   viewBorder =  new KToggleAction(i18n("Show &Icon Border"), Qt::SHIFT+Qt::Key_F9, m_view,

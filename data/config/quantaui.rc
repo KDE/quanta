@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="quanta" version="32033">
+<kpartgui name="quanta" version="32034">
   <MenuBar noMerge="1">
 
     <Menu name="file" noMerge="1"><text>&amp;File</text>
@@ -105,6 +105,9 @@
   <Menu name="bookmarks" noMerge="1"><text>&amp;Bookmarks</text>
     <Action name="bookmarks_toggle" />
     <Action name="bookmarks_clear" />
+    <Separator/>
+    <Action name="bookmarks_previous" />
+    <Action name="bookmarks_next" />
     <Separator />
   </Menu>
 

@@ -2080,7 +2080,10 @@ void QuantaApp::bookmarkMenuAboutToShow()
     pm_bookmark->clear ();
     bookmarkToggle->plug (pm_bookmark);
     bookmarkClear->plug (pm_bookmark);
-
+    pm_bookmark->insertSeparator ();
+    bookmarkPrev->plug (pm_bookmark);
+    bookmarkNext->plug (pm_bookmark);
+ 
     Document *w = m_view->write();
     markList = dynamic_cast<KTextEditor::MarkInterface*>(w->doc())->marks();
   //Based on Kate code
