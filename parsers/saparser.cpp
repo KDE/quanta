@@ -497,7 +497,7 @@ bool SAParser::slotParseOneLine()
             g_node = s_parentNode->child;
             g_endNode = s_currentNode;
             if (g_node && g_node == g_endNode)
-              g_endNode = g_node->next;
+              g_endNode = s_parentNode->next;
 #ifdef DEBUG_PARSER            
             kdDebug(24000) << "Calling slotParseForScriptGroup from slotParseOneLine." << endl;
 #endif            
