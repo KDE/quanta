@@ -39,9 +39,9 @@ KSplash::KSplash()
 	QPixmap pm( UserIcon("quantalogo") );
 
 	setBackgroundPixmap(pm);
-	setGeometry( QApplication::desktop()->width ()/2-160,
-				QApplication::desktop()->height()/2-120,
-							320, 240 );
+	setGeometry( QApplication::desktop()->width ()/2-225,
+				QApplication::desktop()->height()/2-150,
+							450, 300 );
 	setLineWidth(0);
 	show();
 }
