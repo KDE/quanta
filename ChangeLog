@@ -4,6 +4,11 @@ Version 3.4 (Release date: xx-xx-2005; Started 20-08-2004):
   - bugfixes:
 	- VPL:
 	    - enable VPL on KDE 3.3.x
+	    - Update cursor position in VPL when return key is pressed. [#94816]
+	    - Fix cursor disapearing. [#85292]
+	    - Fix crash that happened when using backspace to delete a link.
+	    - Normal editing behaviour with selected text. [#94921]
+	    - Other bug fixes.
         - show (again) the full filename in a tooltip
         - don't crash if the preview widget is closed with a JavaScript command
           from the code itself [#87533]
@@ -55,6 +60,10 @@ Version 3.4 (Release date: xx-xx-2005; Started 20-08-2004):
         - don't show the project toolbar when no project is loaded
 
   - enhancements/new features:
+	- VPL:
+		- Undo/Redo.
+		- Copy/Cut/Paste supported in VPL.
+		- Context menu for table actions.
         - smart tag insertion support in text editing mode as well
         - New Toolbar menu entry added to the toolbar context menu [#80647]
         - New Action menu entry added to the toolbar context menu
