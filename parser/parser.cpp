@@ -357,13 +357,12 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
           tag->setTagPosition(tagStartLine, tagStartPos, tagEndLine, tagEndCol);
           QString tagStr = write->text(tagStartLine, tagStartPos, tagEndLine, tagEndCol);
           tag->type = Tag::NeedsParsing;
-          tag->setStr(tagStr);
-          tag->setWrite(write);
+          tag->parse(tagStr, write);
           tag->single = true;
           tag->dtd = dtds->find(s);
           if (!tag->dtd)
               tag->dtd = m_dtd;  //fallback
-          tag->name = i18n("%1 block").arg(s);
+          tag->name += " | "+i18n("%1 block").arg(s);
           tag->structBeginStr = structBeginStr;
           line = tagEndLine;
           col = tagEndCol;

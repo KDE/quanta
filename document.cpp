@@ -673,8 +673,17 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
     }
     else if ( string == " " )
          {
+           bool showAttributes = true;
+           Node *node = parser->nodeAt(line, column);
+           if (node)
+           {
+             int index = node->tag->valueIndexAtPos(line, column);
+             if (index != -1)
+                showAttributes = false;
+           }
           //suggest attribute completions
-          showCodeCompletions( getAttributeCompletions(tagName) );
+          if (showAttributes)
+              showCodeCompletions( getAttributeCompletions(tagName) );
          }
     else if ( string == "\"" )
           {
@@ -1298,7 +1307,8 @@ bool Document::xmlCodeCompletion(int line, int col)
     tag->beginPos(bLine, bCol);
     QString s;
     int index;
-    if (col <= (int)(bCol+tag->name.length()+1)) //we are inside a tag name, so show the possible tags
+    QString tagName = tag->name.section('|', 0, 0).stripWhiteSpace();
+    if (col <= (int)(bCol + tagName.length()+1)) //we are inside a tag name, so show the possible tags
     {
      showCodeCompletions( getTagCompletions(line, col) );
      handled = true;
@@ -1309,7 +1319,7 @@ bool Document::xmlCodeCompletion(int line, int col)
       {
         tag->attributeValuePos(index, bLine, bCol);
         s = tag->attributeValue(index).left(col - bCol);
-        showCodeCompletions( getAttributeValueCompletions(tag->name, tag->attribute(index), s) );
+        showCodeCompletions( getAttributeValueCompletions(tagName, tag->attribute(index), s) );
         handled = true;
       } else
       {
@@ -1325,7 +1335,7 @@ bool Document::xmlCodeCompletion(int line, int col)
           {
             s="";
           }
-          showCodeCompletions( getAttributeCompletions(tag->name, s) );
+          showCodeCompletions( getAttributeCompletions(tagName, s) );
           handled = true;
         }
       }
