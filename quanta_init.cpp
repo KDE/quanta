@@ -87,6 +87,10 @@
 #include "parser/parser.h"
 #include "dialogs/filemasks.h"
 
+#define UI_VERSION 32001 //3.2.0, v.01; modify this whenever something incompatible
+                         //change is made to quantaui.rc. And of course, update
+                         //the version in quantaui.rc!
+
 QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
 {
   quantaStarted = true;
@@ -169,7 +173,9 @@ void QuantaApp::initQuanta()
      {
        f.close();
        QDomElement el = doc.firstChild().toElement();
-       if (el.attribute("version","old") != QString(VERSION))
+       bool ok;
+       uint uiversion = el.attribute("version","0").toUInt(&ok);
+       if ( uiversion != UI_VERSION || !ok)
        {
          ::rename(QFile::encodeName(uiFileName), QFile::encodeName(uiFileName+".old"));
        }
@@ -197,8 +203,8 @@ void QuantaApp::initQuanta()
   connect(pm_set, SIGNAL(aboutToShow()), this, SLOT(settingsMenuAboutToShow()));
 
   pm_bookmark  = (QPopupMenu*)guiFactory()->container("bookmarks", this);
-  connect(pm_bookmark, SIGNAL(
-  aboutToShow()), this, SLOT(bookmarkMenuAboutToShow()));
+  connect(pm_bookmark, SIGNAL(aboutToShow()),
+          this, SLOT(bookmarkMenuAboutToShow()));
 
   QPopupMenu* pm_view = (QPopupMenu*)guiFactory()->container("view", this);
   connect(pm_view,SIGNAL(aboutToShow()), this, SLOT(viewMenuAboutToShow()));
@@ -206,15 +212,16 @@ void QuantaApp::initQuanta()
   QPopupMenu *toolbarsMenu  = (QPopupMenu*)guiFactory()->container("toolbars_load", this);
   connect(toolbarsMenu, SIGNAL(aboutToShow()), this, SLOT(slotBuildPrjToolbarsMenu()));
 
-  connect( messageOutput, SIGNAL(clicked(QString,int)),
-           this,          SLOT(gotoFileAndLine(QString,int)));
+  connect(messageOutput, SIGNAL(clicked(QString,int)),
+          this, SLOT(gotoFileAndLine(QString,int)));
 
   refreshTimer = new QTimer( this );
-  connect( refreshTimer, SIGNAL(timeout()), SLOT(reparse()) );
+  connect(refreshTimer, SIGNAL(timeout()), SLOT(reparse()));
+  refreshTimer->start( qConfig.refreshFrequency*1000, false ); //update the structure tree every 5 seconds
   if (qConfig.refreshFrequency == 0)
   {
     refreshTimer->stop();
-  }
+  } 
 
   slotFileNew();
   initToolBars();

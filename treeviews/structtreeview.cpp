@@ -119,10 +119,10 @@ void StructTreeView::createList(Node *node, StructTreeTag *parent, int openLevel
    top = new StructTreeTag( this, i18n("Document Structure") );
    groupsCount = m_parsingDTD->structGroups.count();
    QString name;
-   for (uint i=0; i < groupsCount; i++)
+   for (uint i = 0; i < groupsCount; i++)
    {
      name = m_parsingDTD->structGroups[i];
-     name = name.section(';',0,0).stripWhiteSpace();
+     name = name.section(';', 0, 0).stripWhiteSpace();
      groups[i] = new StructTreeTag(this, i18n(name));
      if (!m_parsingDTD->groupIcons[i].isEmpty())
      {
@@ -156,17 +156,19 @@ void StructTreeView::createList(Node *node, StructTreeTag *parent, int openLevel
       case Tag::XmlTag:
            {
              QString name = currentNode->tag->name;
+             //QString tagName = (m_parsingDTD->caseSensitive) ? name : name.upper();
+             QString tagName = name.lower();
              //add the new xml tags to the userTagList       
-             if ( !QuantaCommon::isKnownTag(m_parsingDTD->name, name) &&
+             if ( !QuantaCommon::isKnownTag(m_parsingDTD->name, tagName) &&
                    startWithLetterRx.exactMatch(name) )
              {
                Document *w = currentNode->tag->write();       
-               QTag *newTag = w->userTagList.find(currentNode->tag->name);
+               QTag *newTag = w->userTagList.find(tagName);
                bool insertNew = !newTag;     
                if (insertNew)
                {
                  newTag = new QTag();
-                 newTag->setName(currentNode->tag->name);
+                 newTag->setName(name);
                  newTag->parentDTD = m_parsingDTD;
                }
                for (int i = 0; i < currentNode->tag->attrCount; i++)
@@ -178,7 +180,9 @@ void StructTreeView::createList(Node *node, StructTreeTag *parent, int openLevel
                  delete attr;
                }
                if (insertNew)
-                   w->userTagList.insert(currentNode->tag->name, newTag);                 
+               {
+                 w->userTagList.insert(tagName, newTag);                 
+               }
              }
              
              item = new StructTreeTag( parent, currentNode, currentNode->tag->name );

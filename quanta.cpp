@@ -1051,7 +1051,7 @@ void QuantaApp::reparse()
 {
 //TODO: This function is very ugly...
   if (view->writeExists())view->write()->parseVariables();
-  if (view->writeExists() && stabdock->isVisible())
+  if (view->writeExists() )// && stabdock->isVisible())
   {
     Document *w = view->write();
     QString s = w->editIf->text();

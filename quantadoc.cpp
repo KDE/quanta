@@ -425,10 +425,11 @@ Document* QuantaDoc::newWrite()
   QString fname;
   while ( isOpened(fname.sprintf("Untitled%i."+dtd->defaultExtension,i))) i++;
   
-  KTextEditor::Document *doc = KParts::ComponentFactory::createPartInstanceFromQuery<KTextEditor::Document>( "KTextEditor/Document",
-													     QString::null,
-													     quantaApp->view->writeTab, 0,
-													     quantaApp->view->writeTab, 0 );
+  KTextEditor::Document *doc = KParts::ComponentFactory::createPartInstanceFromQuery<KTextEditor::Document>(
+                               "KTextEditor/Document",
+                               QString::null,
+                               quantaApp->view->writeTab, 0,
+                               quantaApp->view->writeTab, 0 );
 
   Document *w = new Document(quantaApp->projectBaseURL(), doc, quantaApp->getProject(),
                              quantaApp->m_pluginInterface, quantaApp->view->writeTab);
@@ -441,7 +442,7 @@ Document* QuantaDoc::newWrite()
   int tabWidth = quantaApp->config->readNumEntry("TabWidth",4);
   quantaApp->config->writeEntry("TabWidth",tabWidth);
   w->readConfig( quantaApp->config );
- 	w->setUntitledUrl( fname );
+  w->setUntitledUrl( fname );
 
   for (unsigned int i=0; i< dynamic_cast<KTextEditor::HighlightingInterface*>(w->doc())->hlModeCount(); i++)
   {
@@ -453,11 +454,11 @@ Document* QuantaDoc::newWrite()
   }
   dynamic_cast<KTextEditor::PopupMenuInterface*>(w->view())->installPopup((QPopupMenu *)quantaApp->factory()->container("popup_editor", quantaApp));
 
- 	quantaApp->setFocusProxy(w->view());
+  quantaApp->setFocusProxy(w->view());
   w->view()->setFocusPolicy(QWidget::WheelFocus);
 /*  quantaApp->setFocusPolicy(QWidget::StrongFocus);
   */
- 	connect( v, SIGNAL(newStatus()),quantaApp, SLOT(slotNewStatus()));
+  connect( v, SIGNAL(newStatus()),quantaApp, SLOT(slotNewStatus()));
 
 /* !!!!
  	connect( dynamic_cast<KTextEditor::UndoInterface *>(v), SIGNAL(undoChanged()),
@@ -466,7 +467,7 @@ Document* QuantaDoc::newWrite()
 
 // 	connect( w, SIGNAL(statusMsg(const QString &)),quantaApp, SLOT(slotStatusMsg(const QString &)));
 
- 	return w;
+  return w;
 }
 
 /** show popup menu with list of attributes for current tag */

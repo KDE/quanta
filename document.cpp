@@ -950,7 +950,7 @@ bool Document::xmlAutoCompletion(DTDStruct* dtd, int line, int column, const QSt
   tagName = getTagNameAt(dtd, line, column);
 
   tag = QuantaCommon::tagFromDTD(dtd, tagName);
-  if (!tag) tag = userTagList.find(tagName);
+  if (!tag) tag = userTagList.find(tagName.lower());
   
   if ( !tag || tagName.isEmpty() )  //we are outside of any tag
   {
@@ -960,11 +960,20 @@ bool Document::xmlAutoCompletion(DTDStruct* dtd, int line, int column, const QSt
       showCodeCompletions( getTagCompletions(dtd, line, column) );
       handled = true;
     }
-    else if ( string == "&")
-         {
+    if ( string == "&")
+    {
           //complete character codes
           //showCodeCompletions( getCharacterCompletions() );
-         }
+    }
+    if (string == ">" && tagName[0] != '/') //close unknown tags
+    {
+      //add closing tag if wanted
+      column++;
+      editIf->insertText(line, column, "</" + tagName + ">");
+      viewCursorIf->setCursorPositionReal( line, column );
+      handled = true;
+    }
+         
   }
   else  // we are inside of a tag
   {
@@ -1085,8 +1094,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeCompletions( DTD
   QTag *tag = QuantaCommon::tagFromDTD(dtd, tagName);
   if (!tag)
   {
-    QString searchForTag = (dtd->caseSensitive) ? tagName : tagName.upper();
-    tag = userTagList.find(searchForTag);
+    tag = userTagList.find(tagName.lower());
   }
   startsWith = startsWith.upper();
   if (tag)
@@ -1273,7 +1281,7 @@ bool Document::scriptAutoCompletion(DTDStruct *dtd, int line, int column, const 
    QString textLine = editIf->textLine(line).left(column);
    QString word = findWordRev(textLine);
    QTag *tag = dtd->tagsList->find(word);
-   if (!tag) tag = userTagList.find(word);
+   if (!tag) tag = userTagList.find(word.lower());
    if (tag)
    {
      QStringList argList;
