@@ -155,7 +155,9 @@ void KQApplicationPrivate::init()
       else
         initialFiles += arg;
     }
-
+    delete splash;
+    splash = 0L;
+    quantaApp->recoverCrashed();
     quantaApp->loadInitialProject(initialProject);
     for(QStringList::Iterator it = initialFiles.begin();it != initialFiles.end();++it)
     {
@@ -163,8 +165,6 @@ void KQApplicationPrivate::init()
       QuantaCommon::setUrl(url, *it);
       quantaApp->slotFileOpen(url, quantaApp->defaultEncoding());  // load initial files
     }
-    delete splash;
-    splash = 0L;
     quantaApp->openLastFiles();
   }
   args->clear();

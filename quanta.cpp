@@ -1121,7 +1121,7 @@ void QuantaApp::slotOptions()
     qConfig.textMimeTypes = fileMasks->lineText->text();
     qConfig.showDTDSelectDialog = fileMasks->showDTDSelectDialog->isChecked();
     qConfig.autosaveInterval =  fileMasks->sbAutoSave->value();
-    autosaveTimer->start( 1000*qConfig.autosaveInterval*60, false );
+    autosaveTimer->start( 60000*qConfig.autosaveInterval, false );
     m_config->setGroup("Notification Messages");
     m_config->writeEntry("Open Everything", fileMasks->warnBinaryOpening->isChecked() ? "" : "Yes");
     m_config->setGroup("General Options");
@@ -2865,7 +2865,10 @@ void QuantaApp::slotToolsChangeDTD()
     dlg->dtdCombo->setCurrentItem(pos);
     dlg->messageLabel->setText(i18n("Change the current DTD."));
     dlg->currentDTD->setText(QuantaCommon::getDTDNickNameFromName(w->getDTDIdentifier()));
-    dlg->useClosestMatching->setShown(false);
+    //dlg->useClosestMatching->setShown(false);
+    delete dlg->useClosestMatching;
+    dlg->useClosestMatching = 0L;
+    dlg->updateGeometry();
     if (dlg->exec())
     {
       w->setDTDIdentifier(QuantaCommon::getDTDNameFromNickName(dlg->dtdCombo->currentText()));
@@ -3580,19 +3583,18 @@ void QuantaApp::slotAutosaveTimer()
 
 QString QuantaApp::searchPathListEntry(QString s,QString autosaveUrls)
 {
- s = s.right(s.length()-s.findRev("/",s.length()-1));
+KURL k(s);
+
  QStringList urls=QStringList::split(",",autosaveUrls);
- qWarning("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
  QStringList::Iterator it;
  for ( it = urls.begin(); it != urls.end(); ++it )
   {
-   QString path = (*it);
-   int posFileName = path.findRev("/",path.length()-1);
-   path = path.right(path.length()-posFileName);
-   if(s == path) return (*it);
+   QString HashedPath;
+   int posHashedPath = (*it).findRev(".",(*it).length()-1);
+   HashedPath = (*it).right((*it).length() - posHashedPath -1);
+   if(Document::hashedFilePath(k.path()) == HashedPath) return (*it);
   }
 
-  qWarning("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
   return QString::null;
 }
 

@@ -202,6 +202,8 @@ work correctly. */
   void setAutosaveDocumentEntryValue(const QString& ev );
   /* Removes automatic backup copies */
   void removeBackup(KConfig *config);
+  /* create a string using document path string */
+ static QString hashedFilePath(const QString& p); 
 
 
 protected:

@@ -30,14 +30,16 @@
 //app includes
 #include "dirtydlg.h"
 #include "../resource.h"
+#include "../qextfileinfo.h"
 
-DirtyDlg::DirtyDlg(const QString& srcName, const QString& destName, QWidget *parent, const char *name ) : DirtyDialog(parent,name)
+DirtyDlg::DirtyDlg(const QString& srcName, const QString& destName, bool createBackup, QWidget *parent, const char *name ) : DirtyDialog(parent,name)
 {
  m_src.setPath(srcName);
  m_dest.setPath(destName);
  connect(okButton,SIGNAL(clicked()),SLOT(slotOKPressed()));
  connect(cancelButton,SIGNAL(clicked()),SLOT(reject()));
  m_busy = false;
+ m_createBackup = createBackup;
 }
 
 DirtyDlg::~DirtyDlg(){
@@ -60,7 +62,7 @@ void DirtyDlg::slotOKPressed()
     accept();
  } else
  {
-     reject();
+    reject();
  }
 }
 
@@ -69,10 +71,21 @@ void DirtyDlg::slotCompareDone(KProcess* proc)
 {
  delete proc;
 
+ if (m_createBackup)
+ {
+   KURL backupURL = m_src;
+   backupURL.setPath(backupURL.path()+".backup");
+   //TODO: Replace with KIO::NetAccess::file_copy, when KDE 3.1 support
+   //is dropped
+   QExtFileInfo::copy(m_src, backupURL, -1, true, false, this);
+ }
+
  KIO::UDSEntry entry;
  KIO::NetAccess::stat(m_src, entry);
  KFileItem item(entry, m_src, false, true);
  m_permissions = item.permissions();
+ //TODO: Replace with KIO::NetAccess::file_move, when KDE 3.1 support
+ //is dropped
  KIO::FileCopyJob *job = KIO::file_move(m_dest, m_src, m_permissions, true, false,false );
  connect( job, SIGNAL(result( KIO::Job *)),
                  SLOT  (slotResult( KIO::Job *)));

@@ -8,9 +8,23 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>609</width>
-            <height>332</height>
+            <width>610</width>
+            <height>351</height>
         </rect>
+    </property>
+    <property name="sizePolicy">
+        <sizepolicy>
+            <hsizetype>5</hsizetype>
+            <vsizetype>5</vsizetype>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+        </sizepolicy>
+    </property>
+    <property name="minimumSize">
+        <size>
+            <width>400</width>
+            <height>350</height>
+        </size>
     </property>
     <property name="caption">
         <string>File Changed</string>
@@ -68,7 +82,7 @@
                 </widget>
                 <widget class="QLabel" row="3" column="1">
                     <property name="name">
-                        <cstring>TextLabel2</cstring>
+                        <cstring>warningLabel</cstring>
                     </property>
                     <property name="sizePolicy">
                         <sizepolicy>
@@ -106,7 +120,7 @@
         </widget>
         <widget class="QLabel" row="0" column="0">
             <property name="name">
-                <cstring>TextLabel1</cstring>
+                <cstring>textLabel</cstring>
             </property>
             <property name="text">
                 <string>The file was changed outside of the Quanta editor.</string>

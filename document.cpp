@@ -1684,7 +1684,7 @@ void Document::checkDirtyStatus()
     if (m_dirty)
     {
       createTempFile();
-      DirtyDlg *dlg = new DirtyDlg(url().path(), m_tempFileName, this);
+      DirtyDlg *dlg = new DirtyDlg(url().path(), m_tempFileName, false, this);
       if (!m_pluginInterface || !(m_pluginInterface->pluginAvailable("kompare")))
       {
         dlg->buttonCompare->setEnabled(false);
@@ -2009,11 +2009,6 @@ void Document::clearErrorMarks()
   }
 }
 
-/** ??? */
-bool Document::isBackedUp()
-{
- return m_backupCreated;
-}
 /** if exists an entry for this document then return true */
 bool Document::existsBackupEntry()
 {
@@ -2031,15 +2026,18 @@ void Document::setBackupEntry(bool b)
 {
    m_backupEntry = b;
 }
+
+
 /** if the document is modified then backup it and insert an entry in quantarc */
 void Document::createBackup(KConfig* config)
 {
     if(isModified())
     {
-     //thanks for the hint Andras & Fredi :-)
-     QString backupPath=KGlobal::instance()->dirs()->saveLocation("data", "quanta/backups/");
 
-     autosaveDocumentEntryValue = backupPath+url().fileName();
+     //thanks for the hint Andras & Fredi :-)
+     QString backupPath = KGlobal::instance()->dirs()->saveLocation("data", "quanta/backups/");
+
+     autosaveDocumentEntryValue = backupPath+url().fileName()+"."+hashedFilePath(url().path());
 
      //creates an entry string in quantarc if it does not exist yet
      if(!existsBackupEntry())
@@ -2049,6 +2047,10 @@ void Document::createBackup(KConfig* config)
        entryList.append(autosaveDocumentEntryValue);
        qConfig.autosaveEntryList = entryList.join(",");
        config->writeEntry(qConfig.autosaveEntryKey,qConfig.autosaveEntryList);
+       QStringList bkEntryList = QStringList::split(",",qConfig.backedupFilesEntryList);
+       bkEntryList.append(url().path());
+       qConfig.backedupFilesEntryList = bkEntryList.join(",");
+       config->writeEntry(qConfig.backedupFilesEntryKey,qConfig.backedupFilesEntryList);
        config->sync();
        setBackupEntry(true);
      }
@@ -2061,9 +2063,9 @@ void Document::createBackup(KConfig* config)
       stream << editIf->text();
       file.close();
      }
+
     }
 }
-
 QString Document::getAutosaveDocumentEntryValue()
 {
    return autosaveDocumentEntryValue;
@@ -2081,8 +2083,12 @@ void Document::removeBackup(KConfig *config)
  QStringList entryList = QStringList::split(",",qConfig.autosaveEntryList);
  entryList.remove(autosaveDocumentEntryValue);
  qConfig.autosaveEntryList = entryList.join(",");
-
  config->writeEntry(qConfig.autosaveEntryKey,qConfig.autosaveEntryList);
+
+ QStringList bkEntryList = QStringList::split(",",qConfig.backedupFilesEntryList);
+ bkEntryList.remove(url().path());
+ qConfig.backedupFilesEntryList = bkEntryList.join(",");
+ config->writeEntry(qConfig.backedupFilesEntryKey,qConfig.backedupFilesEntryList);
  config->sync();
 
  setBackupEntry(false);
@@ -2090,7 +2096,31 @@ void Document::removeBackup(KConfig *config)
  if(QFile::exists(autosaveDocumentEntryValue))
     QFile::remove(autosaveDocumentEntryValue);
 }
+/** creates a string by hashing a little the path string of this document */
+QString Document::hashedFilePath(const QString& p)
+{
+ if(p.length() == 1)
+ {
+  int c = int(p[0]);
+  return QString::number(c,10)+"P";
+ }
 
+ if(p.length() == 2)
+ {
+  int c = int(p[1])*2;
+  return QString::number(c,10)+"P";
+ }
 
+ uint i;
+ int sign = 1;
+ int sum = 0;
+ for (i = 0; i < (p.length()-1); i++)
+ {
+  sum += int(p[i]) + int(p[i+1])*sign;
+  sign *= -1;
+ }
+ if( sum >= 0 ) return QString::number(sum,10)+"P";
+ else                 return QString::number(sum*(-1),10)+"N";
+}
 
 #include "document.moc"

@@ -169,8 +169,10 @@ public:
 
     //return the old Cursor position
   void oldCursorPos(uint &line, uint &col) {line = oldCursorLine; col = oldCursorCol;}
-  //search for s in autosaveUrls and return a file path
+  /** search for s in autosaveUrls and return a file path */
   QString searchPathListEntry(QString s,QString autosaveUrls);
+  /** if there are backup files, ask user whether wants to restore them or to mantain the originals */
+  void recoverCrashed();
 
     /** tabs for left panel */
   ProjectTreeView *pTab;
@@ -398,7 +400,7 @@ protected:
   void initView();
   void initProject();
   void initTagDict();
-
+  
   /** Reads the tags for the tag files. Returns the number of read tags. */
   uint readTagFile(const QString& fileName, DTDStruct* parentDTD, QTagList *tagList);
   /** Parse the dom document and retrieve the tag attributes */

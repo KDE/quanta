@@ -32,6 +32,7 @@
 #include <qtextcodec.h>
 #include <qpopupmenu.h>
 #include <qdatetime.h>
+#include <qradiobutton.h>
 
 // include files for KDE
 #include <kaccel.h>
@@ -91,6 +92,7 @@
 
 #include "parser/parser.h"
 #include "dialogs/filemasks.h"
+#include "dialogs/dirtydlg.h"
 
 QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta"), DCOPObject("WindowManagerIf")
 {
@@ -173,7 +175,6 @@ void QuantaApp::initQuanta()
   initDocument ();
   initView     ();
   initProject  ();
-
   initActions();
 
   readOptions();
@@ -242,16 +243,25 @@ void QuantaApp::initQuanta()
 
   autosaveTimer = new QTimer( this );
   connect(autosaveTimer, SIGNAL(timeout()), SLOT(slotAutosaveTimer()));
-  autosaveTimer->start( 1000*qConfig.autosaveInterval*60, false );
+  autosaveTimer->start( 60000*qConfig.autosaveInterval, false );
+
+  m_config->setGroup("General Options");
 
   qConfig.autosaveEntryKey = "Autosave List";
-  m_config->setGroup("General Options");
   if(!m_config->hasKey(qConfig.autosaveEntryKey))
   {
    m_config->writeEntry(qConfig.autosaveEntryKey,QString::null);
    m_config->sync();
   }
   qConfig.autosaveEntryList = m_config->readEntry(qConfig.autosaveEntryKey,qConfig.autosaveEntryList);
+
+  qConfig.backedupFilesEntryKey="List of backedup files";
+  if(!m_config->hasKey(qConfig.backedupFilesEntryKey))
+  {
+   m_config->writeEntry(qConfig.backedupFilesEntryKey,QString::null);
+   m_config->sync();
+  }
+  qConfig.backedupFilesEntryList = m_config->readEntry(qConfig.backedupFilesEntryKey,qConfig.backedupFilesEntryList);
 }
 
 
@@ -836,64 +846,13 @@ void QuantaApp::openLastFiles()
 
 #if KDE_IS_VERSION(3,1,3)
   QStringList urls = m_config->readPathListEntry("List of opened files");
-  QStringList autosaveUrls = m_config->readPathListEntry("Autosave List");
 #else
   QStringList urls = m_config->readListEntry("List of opened files");
-  QStringList autosaveUrls = m_config->readListEntry("Autosave List");
 #endif
   m_doc->blockSignals(true);
   m_view->writeTab()->blockSignals(true);
   for ( QStringList::Iterator it = urls.begin(); it != urls.end(); ++it )
   {
-    // when quanta crash and file autoreloading option is on
-    // then if user restart quanta, the backup copies will reload
-    QString autosavePath = searchPathListEntry((*it),autosaveUrls.join(","));
-    if(!autosavePath.isEmpty())
-    {
-     KURL originalVersion;
-     QuantaCommon::setUrl(originalVersion, *it);
-     KURL autosavedVersion;
-     QuantaCommon::setUrl(autosavedVersion,autosavePath);
-
-     if (!isPrj || originalVersion.isLocalFile())
-     {
-       KIO::UDSEntry entry;
-       KIO::NetAccess::stat(originalVersion, entry);
-       KFileItem* item= new KFileItem(entry, originalVersion, false, true);
-       QString origTime = item->timeString();
-       KIO::filesize_t origSize = item->size();
-       delete item;
-       KIO::NetAccess::stat(autosavedVersion, entry);
-       item= new KFileItem(entry, autosavedVersion, false, true);
-       QString backupTime = item->timeString();
-       KIO::filesize_t backupSize = item->size();
-       delete item;
-       if (QFileInfo(autosavedVersion.path()).exists() &&
-           KMessageBox::questionYesNo(this, i18n("<qt>A backup copy of a file was found:<br><br>"
-           "Original file: <b>%1</b><br>"
-           "Original file size: <b>%2</b><br>"
-           "Original file last modified on: <b>%3</b><br><br>"
-           "Backup file size: <b>%4</b><br>"
-           "Backup created on: <b>%5</b><br><br>"
-           "Do you want to restore it and use the backup copy instead of the original one?</qt>").arg(originalVersion.prettyURL(0, KURL::StripFileProtocol ))
-           .arg(KIO::convertSize(origSize)).arg(origTime)
-           .arg(KIO::convertSize(backupSize)).arg(backupTime), i18n("Restore file")) == KMessageBox::Yes)
-       {
-          KURL backupURL = originalVersion;
-          backupURL.setPath(backupURL.path()+".backup");
-         //TODO: Replace with KIO::NetAccess::file_move, when KDE 3.1 support
-//is dropped
-          QExtFileInfo::copy(originalVersion, backupURL, -1, true, false, this);
-         //TODO: Replace with KIO::NetAccess::file_copy, when KDE 3.1 support
-//is dropped
-          QExtFileInfo::copy(autosavedVersion, originalVersion, -1, true, false, this);
-          QFile::remove(autosavedVersion.path());
-
-       }
-     }
-     m_config->setGroup("General Options");
-     m_config->writeEntry(qConfig.autosaveEntryKey,QString::null);
-    }
     KURL fu;
     QuantaCommon::setUrl(fu, *it);
 
@@ -2191,6 +2150,129 @@ void QuantaApp::slotPluginsValidate()
     }
   }
   statusBar()->message(i18n("All plugins validated successfully."));
+}
+void QuantaApp::recoverCrashed()
+{
+ m_config->setGroup  ("Projects");
+  QString pu = m_config->readPathEntry("Last Project");
+
+  KURL u;
+  QuantaCommon::setUrl(u, pu);
+  bool isPrj = true;
+  if (pu.isEmpty())
+     isPrj = false;
+  if (!u.isValid())
+     isPrj = false;
+
+  m_config->setGroup("General Options");
+
+#if KDE_IS_VERSION(3,1,3)
+  QStringList urls = m_config->readPathListEntry("List of backedup files");
+  QStringList autosaveUrls = m_config->readPathListEntry("Autosave List");
+#else
+  QStringList urls = m_config->readListEntry("List of backedup files");
+  QStringList autosaveUrls = m_config->readListEntry("Autosave List");
+#endif
+  m_doc->blockSignals(true);
+  m_view->writeTab()->blockSignals(true);
+
+  for ( QStringList::Iterator it = urls.begin(); it != urls.end(); ++it )
+  {
+   // when quanta crash and file autoreloading option is on
+    // then if user restart quanta, the backup copies will reload
+   QString autosavePath = searchPathListEntry((*it),autosaveUrls.join(","));
+
+    if(!autosavePath.isEmpty())
+    {
+     KURL originalVersion;
+     QuantaCommon::setUrl(originalVersion, *it);
+     KURL autosavedVersion;
+     QuantaCommon::setUrl(autosavedVersion,autosavePath);
+
+     if (!isPrj || originalVersion.isLocalFile())
+     {
+       KIO::UDSEntry entry;
+       KIO::NetAccess::stat(originalVersion, entry);
+       KFileItem* item= new KFileItem(entry, originalVersion, false, true);
+       QString origTime = item->timeString();
+       KIO::filesize_t origSize = item->size();
+       delete item;
+       KIO::NetAccess::stat(autosavedVersion, entry);
+       item= new KFileItem(entry, autosavedVersion, false, true);
+       QString backupTime = item->timeString();
+       KIO::filesize_t backupSize = item->size();
+        delete item;
+/*       if (QFileInfo(autosavedVersion.path()).exists() &&
+           KMessageBox::questionYesNo(this, i18n("<qt>A backup copy of a file was found:<br><br>"
+           "Original file: <b>%1</b><br>"
+           "Original file size: <b>%2</b><br>"
+           "Original file last modified on: <b>%3</b><br><br>"
+           "Backup file size: <b>%4</b><br>"
+           "Backup created on: <b>%5</b><br><br>"
+           "Do you want to restore it and use the backup copy instead of the original one?</qt>").arg(originalVersion.prettyURL(0, KURL::StripFileProtocol ))
+           .arg(origSize).arg(origTime)
+           .arg(backupSize).arg(backupTime), i18n("Restore file")) == KMessageBox::Yes)
+       {
+          KURL backupURL = originalVersion;
+          backupURL.setPath(backupURL.path()+".backup");
+         //TODO: Replace with KIO::NetAccess::file_move, when KDE 3.1 support
+//is dropped
+          QExtFileInfo::copy(originalVersion, backupURL, -1, true, false, this);
+         //TODO: Replace with KIO::NetAccess::file_copy, when KDE 3.1 support
+	 //is dropped
+          QExtFileInfo::copy(autosavedVersion, originalVersion, -1, true, false, this);
+          QFile::remove(autosavedVersion.path());
+          slotFileOpenRecent(originalVersion);
+       } */
+       if (QFileInfo(autosavedVersion.path()).exists())
+       {
+          DirtyDlg *dlg = new DirtyDlg(autosavedVersion.path(), originalVersion.path(), false, this);
+          dlg->setCaption(i18n("Restore file"));
+          dlg->textLabel->setText(i18n("<qt>A backup copy of a file was found:<br><br>"
+           "Original file: <b>%1</b><br>"
+           "Original file size: <b>%2</b><br>"
+           "Original file last modified on: <b>%3</b><br><br>"
+           "Backup file size: <b>%4</b><br>"
+           "Backup created on: <b>%5</b><br><br>"
+           "</qt>")
+           .arg(originalVersion.prettyURL(0, KURL::StripFileProtocol ))
+           .arg(origSize).arg(origTime)
+           .arg(backupSize).arg(backupTime));
+          dlg->buttonLoad->setText(i18n("&Restore the file from backup"));
+          dlg->buttonIgnore->setText(i18n("Do &not restore the file from backup"));
+          delete dlg->warningLabel;
+          dlg->warningLabel = 0L;
+          if (!m_pluginInterface || !(m_pluginInterface->pluginAvailable("kompare")))
+          {
+            dlg->buttonCompare->setEnabled(false);
+            dlg->buttonLoad->setChecked(true);
+          }
+          if (dlg->exec())
+          {
+            KURL backupURL = originalVersion;
+            backupURL.setPath(backupURL.path()+".backup");
+          //TODO: Replace with KIO::NetAccess::file_move, when KDE 3.1 support
+  //is dropped
+            QExtFileInfo::copy(originalVersion, backupURL, -1, true, false, this);
+          //TODO: Replace with KIO::NetAccess::file_copy, when KDE 3.1 support
+          //is dropped
+            QExtFileInfo::copy(autosavedVersion, originalVersion, -1, true, false, this);
+            QFile::remove(autosavedVersion.path());
+            slotFileOpenRecent(originalVersion);
+          }
+          delete dlg;
+       }
+     }
+     m_config->setGroup("General Options");
+     m_config->writeEntry(qConfig.autosaveEntryKey,QString::null);
+     m_config->writeEntry(qConfig.backedupFilesEntryKey,QString::null);
+     qConfig.autosaveEntryList = "";
+    }
+
+  }
+
+
+
 }
 
 
