@@ -371,6 +371,7 @@ void QuantaInit::initProject()
           m_project, SLOT(slotInsertFile(const KURL&)));
   connect(TemplatesTreeView::ref(), SIGNAL(downloadTemplate()),
           m_quanta, SLOT(slotDownloadTemplate()));
+  connect(TemplatesTreeView::ref(), SIGNAL(uploadTemplate(const QString&)), m_quanta, SLOT(slotUploadTemplate(const QString&)));
 
   // inform project if something was renamed
   connect(pTab, SIGNAL(renamed(const KURL&, const KURL&)),
@@ -489,6 +490,7 @@ void QuantaInit::initView()
   connect(m_quanta->scriptTab, SIGNAL(assignActionToScript(const KURL &, const QString&)),
           m_quanta, SLOT(slotAssignActionToScript(const KURL &, const QString&)));
   connect(m_quanta->scriptTab, SIGNAL(downloadScript()), m_quanta, SLOT(slotDownloadScript()));
+  connect(m_quanta->scriptTab, SIGNAL(uploadScript(const QString&)), m_quanta, SLOT(slotUploadScript(const QString&)));
   connect(m_quanta->dTab, SIGNAL(downloadDoc()), m_quanta, SLOT(slotDownloadDoc()));
 
   connect(m_quanta->m_htmlPart, SIGNAL(onURL(const QString&)),

@@ -146,6 +146,7 @@ TemplatesTreeView::TemplatesTreeView(QWidget *parent, const char *name )
   m_openId = m_fileMenu->insertItem(i18n("Open"), this ,SLOT(slotInsert()));
   m_fileMenu->insertItem(SmallIcon("fileopen"), i18n("&Open"), this ,SLOT(slotOpen()));
   m_fileMenu->insertItem(SmallIcon("mail_send"), i18n("Send in E&mail..."), this, SLOT(slotSendInMail()));
+  m_fileMenu->insertItem(SmallIcon("network"), i18n("&Upload Template..."), this, SLOT(slotUploadTemplate()));
   m_insertFileInProject = m_fileMenu->insertItem(i18n("&Insert in Project..."), this, SLOT(slotInsertInProject()));
   m_menuClose = m_fileMenu->insertItem(SmallIcon("fileclose"), i18n("Clos&e"), this, SLOT(slotClose()));
   m_fileMenu->insertSeparator();
@@ -158,6 +159,7 @@ TemplatesTreeView::TemplatesTreeView(QWidget *parent, const char *name )
 
   m_folderMenu->insertItem(SmallIcon("folder_new"), i18n("&New Folder..."), this, SLOT(slotNewDir()));
   m_folderMenu->insertItem(SmallIcon("mail_send"), i18n("Send in E&mail..."), this, SLOT(slotSendInMail()));
+  m_folderMenu->insertItem(SmallIcon("network"), i18n("&Upload Template..."), this, SLOT(slotUploadTemplate()));
   m_insertFolderInProject = m_folderMenu->insertItem(i18n("&Insert in Project..."), this, SLOT(slotInsertDirInProject()));
   m_folderMenu->insertSeparator();
   m_folderMenu->insertItem(SmallIcon("editcopy"), i18n("&Copy"), this, SLOT(slotCopy()));
@@ -928,48 +930,54 @@ KURL TemplatesTreeView::filterTemplate()
  return url;
 }
 
+QString TemplatesTreeView::createTemplateTarball()
+{
+  KURL url = currentURL();
+  KURL dirURL (url);
+  if (!currentKFileTreeViewItem()->isDir())
+    dirURL.setPath(dirURL.directory(false));
+
+  KTempDir* tempDir = new KTempDir(tmpDir);
+  tempDir->setAutoDelete(true);
+  tempDirList.append(tempDir);
+  QString tempFileName=tempDir->name() + url.fileName() + ".tgz";
+  //pack the files into a .tgz file
+  KTar tar(tempFileName, "application/x-gzip");
+  tar.open(IO_WriteOnly);
+//    tar.setOrigFileName("");
+
+  KURL::List files;
+  if ( ! currentKFileTreeViewItem()->isDir() )
+    files.append(url);
+  else {
+    files = QExtFileInfo::allFiles(dirURL, "*") ;
+    dirURL = dirURL.upURL();
+  }
+
+  for ( KURL::List::Iterator it_f = files.begin(); it_f != files.end(); ++it_f )
+  {
+    if (!(*it_f).fileName(false).isEmpty()) {
+      url = QExtFileInfo::toRelative( (*it_f), dirURL) ;
+
+      QFile file((*it_f).path());
+      file.open(IO_ReadOnly);
+      QByteArray bArray = file.readAll();
+      tar.writeFile(url.path(), "user", "group", bArray.size(), bArray.data());
+      file.close();
+    };
+  }
+  tar.close();
+
+  return tempFileName;
+}
 
 void TemplatesTreeView::slotSendInMail()
 {
   if ( ! currentKFileTreeViewItem() ) return;
 
-    KURL url = currentURL();
-    KURL dirURL (url);
-    dirURL.setPath(dirURL.directory(false));
-
-    KTempDir* tempDir = new KTempDir(tmpDir);
-    tempDir->setAutoDelete(true);
-    tempDirList.append(tempDir);
-    QString tempFileName=tempDir->name() + url.fileName() + ".tgz";
-  //pack the files into a .tgz file
-    KTar tar(tempFileName, "application/x-gzip");
-    tar.open(IO_WriteOnly);
-//    tar.setOrigFileName("");
-
-    KURL::List files;
-    if ( ! currentKFileTreeViewItem()->isDir() )
-      files.append(url);
-    else {
-      files = QExtFileInfo::allFiles(dirURL, "*") ;
-      dirURL = dirURL.upURL();
-    }
-
-    for ( KURL::List::Iterator it_f = files.begin(); it_f != files.end(); ++it_f )
-    {
-      if (!(*it_f).fileName(false).isEmpty()) {
-        url = QExtFileInfo::toRelative( (*it_f), dirURL) ;
-
-        QFile file((*it_f).path());
-        file.open(IO_ReadOnly);
-        QByteArray bArray = file.readAll();
-        tar.writeFile(url.path(), "user", "group", bArray.size(), bArray.data());
-        file.close();
-      };
-    }
-    tar.close();
 
     QStringList attachmentFile;
-    attachmentFile += tempFileName;
+    attachmentFile += createTemplateTarball();
 
     TagMailDlg *mailDlg = new TagMailDlg( this, i18n("Send template in email"));
     QString toStr;
@@ -998,6 +1006,12 @@ void TemplatesTreeView::slotSendInMail()
       kapp->invokeMailer(toStr, QString::null, QString::null, subjectStr, message, QString::null, attachmentFile);
     }
     delete mailDlg;
+}
+
+void TemplatesTreeView::slotUploadTemplate()
+{
+  if ( ! currentKFileTreeViewItem() ) return;
+  emit uploadTemplate(createTemplateTarball());
 }
 
 bool TemplatesTreeView::acceptDrag(QDropEvent* e ) const

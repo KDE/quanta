@@ -3477,9 +3477,16 @@ void QuantaApp::slotSmartTagInsertion()
 
 void QuantaApp::slotDownloadTemplate()
 {
-    if (!m_newTemplateStuff)
-      m_newTemplateStuff = new QNewTemplateStuff("quanta/template", this);
-    m_newTemplateStuff->downloadResource();
+  if (!m_newTemplateStuff)
+    m_newTemplateStuff = new QNewTemplateStuff("quanta/template", this);
+  m_newTemplateStuff->downloadResource();
+}
+
+void QuantaApp::slotUploadTemplate(const QString &fileName)
+{
+  if (!m_newTemplateStuff)
+    m_newTemplateStuff = new QNewTemplateStuff("quanta/template", this);
+  tempDirList.append(m_newTemplateStuff->uploadResource(fileName));
 }
 
 void QuantaApp::slotDownloadScript()
@@ -3487,6 +3494,13 @@ void QuantaApp::slotDownloadScript()
     if (!m_newScriptStuff)
       m_newScriptStuff = new QNewScriptStuff("quanta/script", this);
     m_newScriptStuff->downloadResource();
+}
+
+void QuantaApp::slotUploadScript(const QString &fileName)
+{
+  if (!m_newScriptStuff)
+    m_newScriptStuff = new QNewScriptStuff("quanta/script", this);
+  tempDirList.append(m_newScriptStuff->uploadResource(fileName));
 }
 
 void QuantaApp::slotDownloadDoc()

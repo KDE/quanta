@@ -97,6 +97,7 @@ public slots:
    *  packs and sends files or folders as attachment to an email
    */
   void slotSendInMail();
+  void slotUploadTemplate();
   virtual void slotSelectFile(QListViewItem *item);
   void slotOpen();
   void slotPaste();
@@ -143,18 +144,17 @@ private:
   int m_menuPasteFolder;          ///< remembers the menu entry
 
 signals: // Signals
-  /** No descriptions */
   void insertFile(const KURL &);
   void downloadTemplate();
+  void uploadTemplate(const QString&);
 
 protected: // Protected methods
   KFileTreeBranch* newBranch(const KURL& url);
-  /** No descriptions */
   virtual QDragObject * dragObject();
 //  virtual void startDrag();
-  /** No descriptions */
   void contentsDropEvent(QDropEvent *event);
   bool acceptDrag(QDropEvent* e ) const;
+  QString createTemplateTarball();
 };
 
 #endif

@@ -93,7 +93,8 @@ ScriptTreeView::ScriptTreeView(QWidget *parent, const char *name )
   m_fileMenu->insertItem(i18n("Edi&t Description"), this, SLOT(slotEditDescription()));
   m_fileMenu->insertSeparator();
   m_fileMenu->insertItem(UserIcon("ball"), i18n("&Assign Action"), this, SLOT(slotAssignAction()));
-  m_fileMenu->insertItem(SmallIcon("mail_send"), i18n("&Send in Email"), this, SLOT(slotSendScriptInMail()));
+  m_fileMenu->insertItem(SmallIcon("mail_send"), i18n("&Send in Email..."), this, SLOT(slotSendScriptInMail()));
+  m_fileMenu->insertItem(SmallIcon("network"), i18n("&Upload Script..."), this, SLOT(slotUploadScript()));
 
   m_folderMenu = new KPopupMenu(this);
   m_downloadMenuId = m_folderMenu->insertItem(SmallIcon("network"), i18n("&Download Script..."), this, SIGNAL(downloadScript()));
@@ -228,38 +229,44 @@ void ScriptTreeView::slotAssignAction()
   }
 }
 
+QString ScriptTreeView::createScriptTarball()
+{
+  KURL url = currentURL();
+  KURL infoURL = infoFile(url);
+
+  KTempDir* tempDir = new KTempDir(tmpDir);
+  tempDir->setAutoDelete(true);
+  tempDirList.append(tempDir);
+  QString tempFileName=tempDir->name() + url.fileName() + ".tgz";
+
+  //pack the .tag files and the description.rc into a .tgz file
+  KTar tar(tempFileName, "application/x-gzip");
+  tar.open(IO_WriteOnly);
+
+  KURL::List files;
+  files.append(url);
+  files.append(infoURL);
+  files.append(KURL().fromPathOrURL(qConfig.globalDataDir + resourceDir + "scripts/info.xsl"));
+  for ( KURL::List::Iterator it_f = files.begin(); it_f != files.end(); ++it_f )
+  {
+    QFile file((*it_f).path());
+    file.open(IO_ReadOnly);
+    QByteArray bArray = file.readAll();
+    tar.writeFile((*it_f).fileName(), "user", "group", bArray.size(), bArray.data());
+    file.close();
+  }
+  tar.close();
+  
+  return tempFileName;
+}
+
 void ScriptTreeView::slotSendScriptInMail()
 {
   if ( !currentKFileTreeViewItem()->isDir() )
   {
-    KURL url = currentURL();
-    KURL infoURL = infoFile(url);
-
-    KTempDir* tempDir = new KTempDir(tmpDir);
-    tempDir->setAutoDelete(true);
-    tempDirList.append(tempDir);
-    QString tempFileName=tempDir->name() + url.fileName() + ".tgz";
-
-  //pack the .tag files and the description.rc into a .tgz file
-    KTar tar(tempFileName, "application/x-gzip");
-    tar.open(IO_WriteOnly);
-
-    KURL::List files;
-    files.append(url);
-    files.append(infoURL);
-    files.append(KURL().fromPathOrURL(qConfig.globalDataDir + resourceDir + "scripts/info.xsl"));
-    for ( KURL::List::Iterator it_f = files.begin(); it_f != files.end(); ++it_f )
-    {
-      QFile file((*it_f).path());
-      file.open(IO_ReadOnly);
-      QByteArray bArray = file.readAll();
-      tar.writeFile((*it_f).fileName(), "user", "group", bArray.size(), bArray.data());
-      file.close();
-    }
-    tar.close();
 
     QStringList attachmentFile;
-    attachmentFile += tempFileName;
+    attachmentFile += createScriptTarball();
 
     TagMailDlg *mailDlg = new TagMailDlg( this, i18n("Send script in email"));
     QString toStr;
@@ -289,6 +296,15 @@ void ScriptTreeView::slotSendScriptInMail()
     }
     delete mailDlg;
 
+  }
+}
+
+void ScriptTreeView::slotUploadScript()
+{
+  if ( !currentKFileTreeViewItem()->isDir() )
+  {
+    QString fileName = createScriptTarball();
+    emit uploadScript(fileName);
   }
 }
 

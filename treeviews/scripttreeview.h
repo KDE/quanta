@@ -122,6 +122,13 @@ protected slots:
   /**
    *  slot for the RBM
    *
+   *  packs and uploads the script to the main server
+   */
+  void slotUploadScript();
+  
+  /**
+   *  slot for the RBM
+   *
    *  shows .info file for the script
    *
    *  calls @ref slotSelectFile
@@ -156,7 +163,16 @@ signals:
    *  emited to make the script describtion visible
    */
   void showPreviewWidget(bool);
+  
+  /**
+  *  emitted to request downloading of a script from the main server
+  */
   void downloadScript();
+  
+  /** 
+  *  request to upload the @ref fileName script tarball
+  */
+  void uploadScript(const QString& fileName);
 
 private:
    /**
@@ -186,6 +202,11 @@ private:
    *  @return the value of the option
    */
   QString infoOptionValue(const KURL& infoURL, const QString& optionName);
+  
+  /** Create a script tarball which can be uploaded or sent in email. Returns
+   *   the name of the created file or QString::null if creation has failed.
+   */
+  QString createScriptTarball();
 
   /**
    *  remember the menu for manipulation

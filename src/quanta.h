@@ -417,8 +417,12 @@ protected slots:
   void slotSmartTagInsertion();
   /** Downloads a template from the main server */
   void slotDownloadTemplate();
+  /** Uploads a template to the main server */
+  void slotUploadTemplate(const QString &fileName);
   /** Downloads a script from the main server */
   void slotDownloadScript();
+  /** Uploads a script to the main server */
+  void slotUploadScript(const QString &fileName);
   /** Downloads a documentation from the main server */
   void slotDownloadDoc();
   /** Shows tip of the day */
