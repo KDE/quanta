@@ -197,14 +197,6 @@ signals:
   /** emitted if this view contained an editor and it is closed */
   void documentClosed();
 
-public:
-  Document *oldWrite;
-  QWidget *oldTab;
-
-private:
-  /** collum of cursor position */
-  int column;
-
 #ifdef BUILD_KAFKAPART
 /** Kafka stuff */
   QValueList<int> m_splitterSizes;
