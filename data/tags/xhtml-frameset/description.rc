@@ -2,7 +2,7 @@
 Name = -//W3C//DTD XHTML 1.0 Frameset//EN
 NickName = XHTML 1.0 Frameset
 URL = http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd
-DoctypeString = HTML PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd"
+DoctypeString = html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd"
 Inherits = -//W3C//DTD XHTML 1.0 Strict//EN
 DefaultExtension = html
 Groups = Core, I18n, Script, Focus
