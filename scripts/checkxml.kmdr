@@ -235,6 +235,9 @@ checkXML index.docbook</string>
                                     <string>@widgetText</string>
                                 </stringlist>
                             </property>
+                            <property name="selectionType">
+                                <enum>Directory</enum>
+                            </property>
                         </widget>
                     </grid>
                 </widget>

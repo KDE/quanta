@@ -157,6 +157,9 @@
                                     <string>@widgetText</string>
                                 </stringlist>
                             </property>
+                            <property name="selectionType">
+                                <enum>Directory</enum>
+                            </property>
                         </widget>
                     </hbox>
                 </widget>
@@ -170,7 +173,7 @@
                     <property name="associations" stdset="0">
                         <stringlist>
                             <string>@null</string>
-                            <string>@widgetText
+                            <string>konqueror index.html
 </string>
                         </stringlist>
                     </property>
@@ -212,10 +215,7 @@ fi
 cd $DIR
 rm -f *.html
 meinproc index.docbook
-if [ @PrevKonq ]
-then
- konqueror index.html
-fi</string>
+@PrevKonq</string>
                 </stringlist>
             </property>
         </widget>
