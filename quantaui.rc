@@ -240,81 +240,98 @@
     <Action name="tag_font_dec"/>
   </ToolBar>
 
-  <ToolBar name="objectsToolBar" hidden="true">
-  <text>Objects ToolBar</text>
-    <Action name="tag_img"/>
-    <Action name="tag_a"/>
-    <Action name="tag_font"/>
+  <ToolBar name="standard" tabname="Standard">
+  <text>Standard</text>
+    <Action name="tag_quick_start"/>
+    <Separator lineSeparator="true"/>
+    <Action name="tag_b"/>
+    <Action name="tag_i"/>
+    <Action name="tag_u"/>  
     <Separator lineSeparator="true"/>
     <Action name="tag_br"/>
-    <Action name="tag_nbsp"/>
-    <Action name="tag_hr"/>
-    <Separator lineSeparator="true"/>
-    <Action name="tag_color"/>
-    <Action name="tag_mail"/>
-    <Action name="tag_date"/>
-  </ToolBar>
-
-  <ToolBar name="paragraphStylesToolBar" hidden="true">
-  <text>Paragraph Styles ToolBar</text>
-    <Action name="tag_h1"/>
-    <Action name="tag_h2"/>
-    <Action name="tag_h3"/>
-    <Action name="tag_h4"/>
-    <Action name="tag_h5"/>
-    <Separator lineSeparator="true"/>
     <Action name="tag_p"/>
-    <Action name="tag_pre"/>
-  </ToolBar>
-
-  <ToolBar name="TextFlowStylesToolBar" hidden="true">
-  <text>Text Flow Styles ToolBar</text>
+    <Action name="tag_nbsp"/>
+    <Separator lineSeparator="true"/>
+    <Action name="tag_a"/>
+    <Action name="tag_img"/>
+    <Action name="tag_hr"/>
+    <Action name="tag_comment"/>
+    <Separator lineSeparator="true"/>
     <Action name="tag_div_left"/>
     <Action name="tag_div_center"/>
     <Action name="tag_div_right"/>
     <Action name="tag_div_justify"/>
   </ToolBar>
 
-  <ToolBar name="TablesToolBar" hidden="true">
-  <text>Tables ToolBar</text>
+  <ToolBar name="fonts" tabname="Fonts">
+  <text>Fonts</text>
+    <Action name="tag_font"/>
+    <Separator lineSeparator="true"/>
+    <Action name="tag_font_inc"/>
+    <Action name="tag_font_dec"/>
+    <Separator lineSeparator="true"/>
+    <Action name="tag_pre"/>
+    <Action name="tag_sub"/>
+    <Action name="tag_sup"/>
+    <Separator lineSeparator="true"/>
+    <Action name="tag_h1"/>
+    <Action name="tag_h2"/>
+    <Action name="tag_h3"/>
+    <Action name="tag_h4"/>
+    <Action name="tag_h5"/>
+  </ToolBar>
+  
+  <ToolBar name="tables" tabname="Tables">
+  <text>Tables</text>
+    <Action name="tag_quick_table"/>
+    <Separator lineSeparator="true"/>
     <Action name="tag_table"/>
     <Action name="tag_table_row"/>
+    <Action name="tag_table_body"/>
     <Action name="tag_table_head"/>
-    <Action name="tag_table_data"/>
-    <Separator lineSeparator="true"/>
-    <Action name="tag_th"/>
-    <Action name="tag_tr"/>
-    <Action name="tag_td"/>
-    <Action name="tag_caption"/>
+   	<Action name="tag_table_data"/>
+   	<Separator lineSeparator="true"/>
+   	<Action name="tag_th"/>
+   	<Action name="tag_tr"/>
+   	<Action name="tag_td"/>
+   	<Action name="tag_caption"/>
   </ToolBar>
-
-  <ToolBar name="FormsToolBar" hidden="true">
-  <text>Forms ToolBar</text>
-    <Action name="tag_form"/>
+  
+  <ToolBar name="lists" tabname="Lists">
+  <text>Lists</text>
+    <Action name="tag_quick_list"/>
     <Separator lineSeparator="true"/>
-    <Action name="tag_form_radio"/>
-    <Action name="tag_form_check"/>
-    <Action name="tag_form_select"/>
-    <Separator lineSeparator="true"/>
-    <Action name="tag_form_lineedit"/>
-    <Action name="tag_form_passedit"/>
-    <Action name="tag_form_textarea"/>
-    <Separator lineSeparator="true"/>
-    <Action name="tag_form_submit"/>
-    <Action name="tag_form_reset"/>
-  </ToolBar>
-
-  <ToolBar name="ListsToolBar" hidden="true">
-  <text>Lists ToolBar</text>
     <Action name="tag_ul"/>
     <Action name="tag_ol"/>
     <Action name="tag_li"/>
-    <Separator lineSeparator="true"/>
+   	<Separator lineSeparator="true"/>
     <Action name="tag_dl"/>
     <Action name="tag_dt"/>
     <Action name="tag_dd"/>
+  </ToolBar>
+  
+  <ToolBar name="forms" tabname="Forms">
+  <text>Forms</text>
+    <Action name="tag_form"/>
+   	<Separator lineSeparator="true"/>
+   	<Action name="tag_form_select"/>
+    <Action name="tag_form_check"/>
+   	<Action name="tag_form_radio"/>
+   	<Separator lineSeparator="true"/>
+   	<Action name="tag_form_textarea"/>
+   	<Action name="tag_form_passedit"/>
+   	<Action name="tag_form_lineedit"/>
+   	<Separator lineSeparator="true"/>
+   	<Action name="tag_form_submit"/>
+   	<Action name="tag_form_reset"/>
+  </ToolBar>
+  
+  <ToolBar name="other" tabname="Other">
+  <text>Other</text>
+    <Action name="tag_mail"/>
+    <Action name="tag_date"/>
     <Separator lineSeparator="true"/>
-    <Action name="tag_menu"/>
+    <Action name="insert_css"/>
   </ToolBar>
   
 </kpartgui>

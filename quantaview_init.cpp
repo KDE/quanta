@@ -391,12 +391,19 @@ void QuantaView::initActions()
     (void) new KAction( i18n( "Table..." ), "tag_table", 0,
                         this, SLOT( slotTagTable() ),
                         actionCollection, "tag_table" );
+                        
     (void) new KAction( i18n( "Table Row" ), "tag_table_row", 0,
                         this, SLOT( slotTagTableRow() ),
                         actionCollection, "tag_table_row" );
+                        
     (void) new KAction( i18n( "Table Head" ), "table_head", 0,
                         this, SLOT( slotTagTableHead() ),
                         actionCollection, "tag_table_head" );
+                        
+    (void) new KAction( i18n( "Table Body" ), "table_body", 0,
+                        this, SLOT( slotTagTableBody() ),
+                        actionCollection, "tag_table_body" );                    
+                        
     (void) new KAction( i18n( "Table Data" ), "table_data", 0,
                         this, SLOT( slotTagTableData() ),
                         actionCollection, "tag_table_data" );
