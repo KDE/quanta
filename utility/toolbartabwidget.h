@@ -45,14 +45,15 @@ public:
 
 public slots:
   virtual void removePage(QWidget * w );
-
   virtual void resizeEvent(QResizeEvent *);
+
 private slots:
   void slotRemoveToolbar();
   void slotRenameToolbar();
   void slotEditToolbar();
 
 signals:
+  void addToolbar();
   void removeToolbar(const QString&);
   void renameToolbar(const QString&);
   void editToolbar(const QString&);
