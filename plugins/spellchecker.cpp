@@ -63,7 +63,7 @@ void SpellChecker::readConfig(KConfig *config)
 
   config->setGroup("Spelling");
   QString dictionary = config->readEntry("Dictionary", defaultConfig->dictionary());
-  qConfig.spellConfig->setDictionary(dictionary.isNull() ? "" : dictionary);
+  qConfig.spellConfig->setDictionary(dictionary.isNull() ? QString() : dictionary);
   bool noRootAffix = config->readBoolEntry("NoRootAffix", defaultConfig->noRootAffix());
   qConfig.spellConfig->setNoRootAffix(noRootAffix);
   bool runTogether = config->readBoolEntry("RunTogether", defaultConfig->runTogether());
