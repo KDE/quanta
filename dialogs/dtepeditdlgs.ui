@@ -1659,7 +1659,7 @@ Example: &lt;b&gt;//&amp;nbsp;EOL,&amp;nbsp;/*&amp;nbsp;*/&lt;/b&gt;</string>
                             <cstring>addStructButton</cstring>
                         </property>
                         <property name="text">
-                            <string>&amp;Add</string>
+                            <string>&amp;Add...</string>
                         </property>
                     </widget>
                     <widget class="KPushButton" row="2" column="1">
@@ -1667,7 +1667,7 @@ Example: &lt;b&gt;//&amp;nbsp;EOL,&amp;nbsp;/*&amp;nbsp;*/&lt;/b&gt;</string>
                             <cstring>editStructButton</cstring>
                         </property>
                         <property name="text">
-                            <string>&amp;Edit</string>
+                            <string>&amp;Edit...</string>
                         </property>
                     </widget>
                     <widget class="KPushButton" row="2" column="2">

@@ -453,7 +453,7 @@ void Project::slotOptions()
   KTrader::OfferList offers = KTrader::self()->query("Quanta/Debugger");
   KTrader::OfferList::ConstIterator iterDbg;
   optionsPage.comboDebuggerClient->clear();
-  optionsPage.comboDebuggerClient->insertItem(i18n("No debugger"));
+  optionsPage.comboDebuggerClient->insertItem(i18n("No Debugger"));
   int idxDbg = 0;
   d->m_debuggerClientEdit = d->debuggerClient;
   optionsPage.buttonDebuggerOptions->setEnabled(false);

@@ -39,29 +39,29 @@
 QPEvents::QPEvents(QObject *parent, const char *name)
  : QObject(parent, name)
 {
-   m_eventNames["before_save"] = i18n("Before document save");
-   m_eventNames["after_save"] = i18n("After document save");
-   m_eventNames["after_open"] = i18n("After document open");
-   m_eventNames["before_close"] = i18n("Before document close");
-   m_eventNames["after_close"] = i18n("After document close");
-   m_eventNames["after_project_open"] = i18n("After project open");
-   m_eventNames["before_project_close"] = i18n("Before project close");
-   m_eventNames["after_project_close"] = i18n("After project close");
-   m_eventNames["before_upload"] = i18n("Before upload");
-   m_eventNames["after_upload"] = i18n("After upload");
-   m_eventNames["after_project_add"] = i18n("After addition to project");
-   m_eventNames["after_project_remove"] = i18n("After removal from project");
-   m_eventNames["after_commit"] = i18n("After commit to CVS");
-   m_eventNames["after_update"] = i18n("After update from CVS");
-   m_eventNames["after_file_move"] = i18n("After moving a file inside the project");
-   m_eventNames["quanta_start"] = i18n("Quanta start");
-   m_eventNames["quanta_exit"] = i18n("Quanta exit");
+   m_eventNames["before_save"] = i18n("Before Document Save");
+   m_eventNames["after_save"] = i18n("After Document Save");
+   m_eventNames["after_open"] = i18n("After Document Open");
+   m_eventNames["before_close"] = i18n("Before Document Close");
+   m_eventNames["after_close"] = i18n("After Document Close");
+   m_eventNames["after_project_open"] = i18n("After Project Open");
+   m_eventNames["before_project_close"] = i18n("Before Project Close");
+   m_eventNames["after_project_close"] = i18n("After Project Close");
+   m_eventNames["before_upload"] = i18n("Before Upload");
+   m_eventNames["after_upload"] = i18n("After Upload");
+   m_eventNames["after_project_add"] = i18n("After Addition to Project");
+   m_eventNames["after_project_remove"] = i18n("After Removal From Project");
+   m_eventNames["after_commit"] = i18n("After Commit to CVS");
+   m_eventNames["after_update"] = i18n("After Update From CVS");
+   m_eventNames["after_file_move"] = i18n("After Moving File Inside Project");
+   m_eventNames["quanta_start"] = i18n("Quanta Start");
+   m_eventNames["quanta_exit"] = i18n("Quanta Exit");
 //   m_eventNames["after_multiple_save"] = i18n("After saving more files at once (like Save All)");
 
-   m_actionNames["email"] = i18n("Send email");
-   m_actionNames["log"] = i18n("Log event");
-   m_actionNames["script"] = i18n("Script action");
-   m_actionNames["action"] = i18n("Non-script action");
+   m_actionNames["email"] = i18n("Send Email");
+   m_actionNames["log"] = i18n("Log Event");
+   m_actionNames["script"] = i18n("Script Action");
+   m_actionNames["action"] = i18n("Non-Script Action");
 }
 
 

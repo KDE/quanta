@@ -32,7 +32,7 @@
                         <cstring>addMemberButton</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Add</string>
+                        <string>&amp;Add...</string>
                     </property>
                 </widget>
                 <spacer row="1" column="3">
@@ -57,7 +57,7 @@
                         <cstring>editMemberButton</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Edit</string>
+                        <string>&amp;Edit...</string>
                     </property>
                 </widget>
                 <spacer row="1" column="1">
