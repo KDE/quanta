@@ -233,7 +233,7 @@ QStringList QuantaPluginInterface::outputWindows(const QString &a_type)
   }
   else if(a_type == i18n("Command Line"))
   {
-    windows << i18n("Message Window") << i18n("Konsole");
+    windows << i18n("Message Window") << i18n("Konsole") << i18n("None");
   }
   else
     qWarning("QuantaPluginInterface::outputWindows - Unknown type %s", a_type.latin1());

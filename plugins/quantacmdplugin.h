@@ -56,13 +56,14 @@ public slots:
 signals:
   void wroteStdout(const QString &);
   void wroteStderr(const QString &);
-protected:
-  /** Does post process cleanup */
-  void cleanupProcess(KProcess *);
+protected slots:
   /** Writes (inserts or appends) processes stdout */
   void writeStdout(KProcess *, char *, int);
   /** Writes (inserts or appends) processes stderr */
   void writeStderr(KProcess *, char *, int);
+  /** Does post process cleanup */
+  void cleanupProcess(KProcess *);
+protected:
   /** Creates a QString from an array of char */
   QString makeQString(const char *, int);
 
