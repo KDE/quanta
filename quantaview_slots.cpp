@@ -631,9 +631,9 @@ void QuantaView::slotPasteHTMLQuoted()
 
     if ( ( !text.isNull() ) && (!text.isEmpty() ) )
     {
-      text.replace( QRegExp( "&" ), "&amp;" );
-      text.replace( QRegExp( "<" ), "&lt;" );
-      text.replace( QRegExp( "\"" ), "&quot;" );
+      text.replace( "&", "&amp;" );
+      text.replace( "<", "&lt;" );
+      text.replace( "\"", "&quot;" );
       unsigned int line, col;
       w->viewCursorIf->cursorPositionReal(&line, &col);
       w->editIf->insertText(line, col, text );

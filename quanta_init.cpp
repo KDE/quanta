@@ -1829,7 +1829,7 @@ void QuantaApp::slotBuildPluginMenu()
 void QuantaApp::slotPluginRun(int a_id)
 {
   QString pluginName = m_pluginMenu->text(a_id);
-  if(pluginName.isEmpty() || pluginName == "&Edit" || pluginName == "&Validate")
+  if(pluginName.isEmpty() || pluginName == i18n("&Edit") || pluginName == i18n("&Validate"))
     return;
 
   if(!pluginName.isNull())
