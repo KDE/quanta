@@ -1113,7 +1113,7 @@ See the &lt;b&gt;True&lt;/b&gt; and &lt;b&gt;False&lt;/b&gt; boxes to define the
                                             </property>
                                             <property name="whatsThis" stdset="0">
                                                 <string>The beginning and closing string of special areas, separated by a comma.&lt;br&gt;
- Special areas are not parsed according to this DTD's rules, but accroding to their own rules.&lt;br&gt;
+ Special areas are not parsed according to this DTD's rules, but according to their own rules.&lt;br&gt;
     A special area can be a pseudo DTD, a comment or something like that, for example &lt;i&gt;&amp;lt;!--&amp;nbsp;--&amp;gt;&lt;/i&gt;.</string>
                                             </property>
                                         </widget>
@@ -1141,7 +1141,7 @@ See the &lt;b&gt;True&lt;/b&gt; and &lt;b&gt;False&lt;/b&gt; boxes to define the
                                                 <cstring>specialAreaNamesEdit</cstring>
                                             </property>
                                             <property name="toolTip" stdset="0">
-                                                <string>Comma separated list of the names for the above definied special areas</string>
+                                                <string>Comma-separated list of the names for the above-defined special areas</string>
                                             </property>
                                         </widget>
                                         <widget class="QLabel" row="1" column="0">
@@ -1155,7 +1155,7 @@ See the &lt;b&gt;True&lt;/b&gt; and &lt;b&gt;False&lt;/b&gt; boxes to define the
                                                 <cstring>kLineEdit12</cstring>
                                             </property>
                                             <property name="toolTip" stdset="0">
-                                                <string>Comma separated list of the names for the above definied special areas</string>
+                                                <string>Comma-separated list of the names for the above-defined special areas</string>
                                             </property>
                                         </widget>
                                         <widget class="QLabel" row="2" column="0">
@@ -1203,7 +1203,7 @@ Example:&lt;b&gt;script(language)&lt;/b&gt; means that any &lt;b&gt;&amp;lt;scri
                                                 <cstring>textLabel21</cstring>
                                             </property>
                                             <property name="text">
-                                                <string>Definiton tags:</string>
+                                                <string>Definition tags:</string>
                                             </property>
                                             <property name="buddy" stdset="0">
                                                 <cstring>kLineEdit14</cstring>
@@ -1370,7 +1370,7 @@ Example: &lt;b&gt;Tags=style(type[text/css])&lt;/b&gt; means that both &lt;b&gt;
                                                 <cstring>textLabel25</cstring>
                                             </property>
                                             <property name="text">
-                                                <string>Strucure end:</string>
+                                                <string>Structure end:</string>
                                             </property>
                                             <property name="buddy" stdset="0">
                                                 <cstring>kLineEdit18</cstring>
@@ -1420,8 +1420,8 @@ Example:&lt;br&gt;
 - we have a class called &lt;b&gt;foo&lt;/b&gt; with some member variables&lt;br&gt;
 - the object of type &lt;b&gt;foo&lt;/b&gt; is used in the document as $&lt;b&gt;objFoo&lt;/b&gt;&lt;br&gt;
 - the members can appear as &lt;b&gt;$objFoo-&gt;member&lt;/b&gt; or &lt;b&gt;$objFoo.member&lt;/b&gt;
-- in the above case this entry shoul look like &lt;b&gt;(?:-&amp;gt;|\.)$&lt;/b&gt; (autocomplete if the object is followed by &lt;b&gt;-&amp;gt;&lt;/b&gt; or &lt;b&gt;.&lt;/b&gt;)&lt;br&gt;
-    The regular experssion must be terminated with &lt;b&gt;$&lt;/b&gt; (match end of line).</string>
+- in the above case this entry should look like &lt;b&gt;(?:-&amp;gt;|\.)$&lt;/b&gt; (autocomplete if the object is followed by &lt;b&gt;-&amp;gt;&lt;/b&gt; or &lt;b&gt;.&lt;/b&gt;)&lt;br&gt;
+    The regular expression must be terminated with &lt;b&gt;$&lt;/b&gt; (match end of line).</string>
                                             </property>
                                         </widget>
                                         <widget class="QLabel" row="6" column="0" rowspan="1" colspan="2">
@@ -1527,10 +1527,10 @@ Example: &lt;b&gt;//&amp;nbsp;EOL,&amp;nbsp;/*&amp;nbsp;*/&lt;/b&gt;</string>
                             <cstring>kLineEdit25</cstring>
                         </property>
                         <property name="toolTip" stdset="0">
-                            <string>Comma separater list of DTEPs that can be present inside this DTEP</string>
+                            <string>Comma-separated list of DTEPs that can be present inside this DTEP</string>
                         </property>
                         <property name="whatsThis" stdset="0">
-                            <string>Comma separater list of DTEPs that can be present inside this DTEP. The list consist usually of pseudo DTEPs.</string>
+                            <string>Comma-separated list of DTEPs that can be present inside this DTEP. The list consist usually of pseudo DTEPs.</string>
                         </property>
                     </widget>
                     <widget class="QLabel" row="4" column="0" rowspan="1" colspan="2">
@@ -1607,10 +1607,10 @@ Example: &lt;b&gt;//&amp;nbsp;EOL,&amp;nbsp;/*&amp;nbsp;*/&lt;/b&gt;</string>
                             <cstring>mayContainEdit</cstring>
                         </property>
                         <property name="toolTip" stdset="0">
-                            <string>Comma separater list of DTEPs that can be present inside this DTEP</string>
+                            <string>Comma-separated list of DTEPs that can be present inside this DTEP</string>
                         </property>
                         <property name="whatsThis" stdset="0">
-                            <string>Comma separater list of DTEPs that can be present inside this DTEP. The list consist usually of pseudo DTEPs.</string>
+                            <string>Comma-separated list of DTEPs that can be present inside this DTEP. The list consist usually of pseudo DTEPs.</string>
                         </property>
                     </widget>
                 </grid>

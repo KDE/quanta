@@ -307,7 +307,7 @@ So the type of &lt;b&gt;$fooObj&lt;/b&gt; is &lt;b&gt;foo&lt;/b&gt;.</string>
                         <cstring>textLabel35</cstring>
                     </property>
                     <property name="text">
-                        <string>Definiton e&amp;xpression:</string>
+                        <string>Definition e&amp;xpression:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>definitionRxEdit</cstring>
