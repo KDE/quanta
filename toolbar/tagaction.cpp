@@ -15,6 +15,10 @@
  *                                                                         *
  ***************************************************************************/
 
+//other includes
+#include <sys/types.h>
+#include <unistd.h>
+
 //qt includes
 #include <qdom.h>
 
@@ -163,6 +167,19 @@ void TagAction::insertTag()
       command.replace( QRegExp("%f"), fname );
     }
 
+    pid_t pid = getpid();
+    command.replace("%pid", QString("%1").arg(pid));
+    QString buffer;
+    QString inputType = script.attribute("input","none");
+		
+    if ( inputType == "current" ) {
+       buffer = w->editIf->text();
+    } else
+    if ( inputType == "selected" ) {
+       buffer = w->selectionIf->selection();
+    }
+    command.replace("%input", buffer);
+			    
     int pos = command.find(' ');
     QString args;
     if (pos != -1)
@@ -190,19 +207,10 @@ void TagAction::insertTag()
 
     proc->start(KProcess::NotifyOnExit, KProcess::All);
 
-    QString buffer;
-
-    QString inputType = script.attribute("input","none");
     scriptOutputDest = script.attribute("output","none");
     scriptErrorDest  = script.attribute("error","none");
 
-    if ( inputType == "current" ) {
-    	buffer = dynamic_cast<KTextEditor::EditInterface*> (w->doc())->text();
-      proc->writeStdin( buffer.local8Bit(), buffer.length() );
-    }
-
-    if ( inputType == "selected" ) {
-    	buffer = dynamic_cast<KTextEditor::SelectionInterface*>(w->doc())->selection();
+    if ( inputType == "current" || inputType == "selected" ) {
       proc->writeStdin( buffer.local8Bit(), buffer.length() );
     }
     proc->closeStdin();
