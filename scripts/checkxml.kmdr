@@ -80,7 +80,7 @@
                                 <enum>TabFocus</enum>
                             </property>
                             <property name="text">
-                                <string>Validate</string>
+                                <string>&amp;Validate</string>
                             </property>
                             <property name="on">
                                 <bool>false</bool>
@@ -114,7 +114,7 @@ checkXML index.docbook</string>
                                 <cstring>CloseButton1</cstring>
                             </property>
                             <property name="text">
-                                <string>Close</string>
+                                <string>&amp;Close</string>
                             </property>
                         </widget>
                     </hbox>
@@ -160,7 +160,7 @@ checkXML index.docbook</string>
                                         <cstring>CheckBox4</cstring>
                                     </property>
                                     <property name="text">
-                                        <string>Current Working Folder</string>
+                                        <string>Current working folder</string>
                                     </property>
                                     <property name="autoRepeat">
                                         <bool>false</bool>
@@ -203,7 +203,7 @@ checkXML index.docbook</string>
                                 <bool>false</bool>
                             </property>
                             <property name="text">
-                                <string>Other Folder:</string>
+                                <string>Other folder:</string>
                             </property>
                         </widget>
                         <spacer row="1" column="1">

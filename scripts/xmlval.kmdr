@@ -89,7 +89,7 @@ CMDLINE="$VALSTR $FILE"</string>
                                 <cstring>CheckBox4</cstring>
                             </property>
                             <property name="text">
-                                <string>Current File</string>
+                                <string>Current file</string>
                             </property>
                             <property name="autoRepeat">
                                 <bool>false</bool>
@@ -152,7 +152,7 @@ fi</string>
                                 <bool>false</bool>
                             </property>
                             <property name="text">
-                                <string>Other File:</string>
+                                <string>Other file:</string>
                             </property>
                         </widget>
                         <spacer>
@@ -206,7 +206,7 @@ fi</string>
                                 <cstring>TextLabel4</cstring>
                             </property>
                             <property name="text">
-                                <string>Validate Against:</string>
+                                <string>Validate against:</string>
                             </property>
                         </widget>
                         <spacer>
@@ -267,22 +267,22 @@ DTD2='--dtdvalid'
 ################################
 # Set validation type
 
-case "@widgetText" in 
-"XML Schema" ) 
+case "@widgetText" in
+"XML Schema" )
 	VAL="$WXS"
-;; 
-"RelaxNG Schema" ) 
+;;
+"RelaxNG Schema" )
 	VAL="$RNGS"
-;; 
-"DTD (Internal)" ) 
+;;
+"DTD (Internal)" )
 	VAL="$DTD1"
-;; 
-"DTD (External)" ) 
+;;
+"DTD (External)" )
 	VAL="$DTD1"
-;; 
-* ) 
+;;
+* )
 	VAL=""
-;; 
+;;
 esac</string>
                                 </stringlist>
                             </property>
@@ -315,7 +315,7 @@ esac</string>
                                 <cstring>CheckBox3</cstring>
                             </property>
                             <property name="text">
-                                <string>Well-formed Checking Only</string>
+                                <string>Well-formed checking only</string>
                             </property>
                             <property name="associations" stdset="0">
                                 <stringlist>
@@ -413,7 +413,7 @@ fi
                 <enum>TabFocus</enum>
             </property>
             <property name="text">
-                <string>Validate</string>
+                <string>&amp;Validate</string>
             </property>
             <property name="on">
                 <bool>false</bool>
@@ -434,7 +434,7 @@ xmllint --noout $CMDLINE</string>
                 <cstring>CloseButton1</cstring>
             </property>
             <property name="text">
-                <string>Close</string>
+                <string>&amp;Close</string>
             </property>
         </widget>
         <spacer row="1" column="0">

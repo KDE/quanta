@@ -32,7 +32,7 @@
                 <cstring>cmdClose</cstring>
             </property>
             <property name="text">
-                <string>Close</string>
+                <string>&amp;Close</string>
             </property>
         </widget>
         <widget class="ExecButton" row="1" column="1">
@@ -40,7 +40,7 @@
                 <cstring>cmdOK</cstring>
             </property>
             <property name="text">
-                <string>OK</string>
+                <string>&amp;OK</string>
             </property>
             <property name="associations" stdset="0">
                 <stringlist>
@@ -74,7 +74,7 @@
                             <cstring>lblProject</cstring>
                         </property>
                         <property name="text">
-                            <string>Full Project Path</string>
+                            <string>Full project path:</string>
                         </property>
                     </widget>
                     <widget class="CheckBox" row="4" column="0">
@@ -82,7 +82,7 @@
                             <cstring>chkDebug</cstring>
                         </property>
                         <property name="text">
-                            <string>Show Debug Messages</string>
+                            <string>Show debug messages</string>
                         </property>
                     </widget>
                     <widget class="LineEdit" row="3" column="0">
@@ -103,7 +103,7 @@
                             <cstring>lblScript</cstring>
                         </property>
                         <property name="text">
-                            <string>Script Location</string>
+                            <string>Script location:</string>
                         </property>
                     </widget>
                     <widget class="LineEdit" row="1" column="0">

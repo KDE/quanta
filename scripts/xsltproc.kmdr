@@ -63,7 +63,7 @@
                         <cstring>ExecButton1</cstring>
                     </property>
                     <property name="text">
-                        <string>Translate</string>
+                        <string>&amp;Translate</string>
                     </property>
                     <property name="associations" stdset="0">
                         <stringlist>
@@ -78,7 +78,7 @@ xsltproc $CMDLINE</string>
                         <cstring>CloseButton1</cstring>
                     </property>
                     <property name="text">
-                        <string>Close</string>
+                        <string>&amp;Close</string>
                     </property>
                 </widget>
             </hbox>
@@ -140,7 +140,7 @@ CMDLINE="-o $HOME/$OPFILE $STYLESHEET $FILE"</string>
                                 <cstring>CheckBox1</cstring>
                             </property>
                             <property name="text">
-                                <string>Current File</string>
+                                <string>Current file</string>
                             </property>
                             <property name="checked">
                                 <bool>true</bool>
@@ -181,7 +181,7 @@ fi</string>
                                         <bool>false</bool>
                                     </property>
                                     <property name="text">
-                                        <string>File Location:</string>
+                                        <string>File location:</string>
                                     </property>
                                 </widget>
                                 <widget class="FileSelector">
@@ -218,7 +218,7 @@ fi</string>
                                         <cstring>TextLabel2</cstring>
                                     </property>
                                     <property name="text">
-                                        <string>Stylesheet Location:</string>
+                                        <string>Stylesheet location:</string>
                                     </property>
                                 </widget>
                                 <widget class="FileSelector">
@@ -252,7 +252,7 @@ fi</string>
                                         <cstring>TextLabel1_2</cstring>
                                     </property>
                                     <property name="text">
-                                        <string>Output File Name:</string>
+                                        <string>Output file name:</string>
                                     </property>
                                 </widget>
                                 <widget class="LineEdit">

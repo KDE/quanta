@@ -231,7 +231,7 @@
             </rect>
         </property>
         <property name="text">
-            <string>&amp;Start installation</string>
+            <string>&amp;Start Installation</string>
         </property>
         <property name="associations" stdset="0">
             <stringlist>

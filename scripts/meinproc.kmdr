@@ -32,7 +32,7 @@
                 <cstring>CloseButton1</cstring>
             </property>
             <property name="text">
-                <string>Close</string>
+                <string>&amp;Close</string>
             </property>
         </widget>
         <widget class="GroupBox" row="0" column="0" rowspan="1" colspan="3">
@@ -76,7 +76,7 @@
                                 <cstring>CheckBox4</cstring>
                             </property>
                             <property name="text">
-                                <string>Current Working Folder in Quanta</string>
+                                <string>Current working folder in Quanta</string>
                             </property>
                             <property name="autoRepeat">
                                 <bool>false</bool>
@@ -136,7 +136,7 @@
                                 <bool>false</bool>
                             </property>
                             <property name="text">
-                                <string>Other Folder:</string>
+                                <string>Other folder:</string>
                             </property>
                         </widget>
                         <spacer>
@@ -179,7 +179,7 @@
                         <cstring>PrevKonq</cstring>
                     </property>
                     <property name="text">
-                        <string>View In Konqueror?</string>
+                        <string>View in Konqueror?</string>
                     </property>
                     <property name="associations" stdset="0">
                         <stringlist>
@@ -199,7 +199,7 @@
                 <enum>TabFocus</enum>
             </property>
             <property name="text">
-                <string>Process</string>
+                <string>&amp;Process</string>
             </property>
             <property name="on">
                 <bool>false</bool>

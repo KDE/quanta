@@ -66,7 +66,7 @@
                             <cstring>TextLabel1</cstring>
                         </property>
                         <property name="text">
-                            <string>Script Name:</string>
+                            <string>Script name:</string>
                         </property>
                     </widget>
                     <widget class="LineEdit" row="1" column="1">
@@ -95,7 +95,7 @@
                             <cstring>TextLabel5</cstring>
                         </property>
                         <property name="text">
-                            <string>About Script:</string>
+                            <string>About script:</string>
                         </property>
                     </widget>
                     <widget class="TextEdit" row="8" column="1" rowspan="1" colspan="2">
@@ -132,7 +132,7 @@
                             <cstring>TextLabel2</cstring>
                         </property>
                         <property name="text">
-                            <string>Script Author:</string>
+                            <string>Script author:</string>
                         </property>
                     </widget>
                     <widget class="QLabel" row="7" column="0">
@@ -140,7 +140,7 @@
                             <cstring>TextLabel4</cstring>
                         </property>
                         <property name="text">
-                            <string>Script License:</string>
+                            <string>Script license:</string>
                         </property>
                     </widget>
                     <widget class="FileSelector" row="9" column="1" rowspan="1" colspan="2">
@@ -213,7 +213,7 @@
                             <cstring>TextLabel3</cstring>
                         </property>
                         <property name="text">
-                            <string>Author Email:</string>
+                            <string>Author email:</string>
                         </property>
                     </widget>
                     <widget class="QLabel" row="5" column="0">
@@ -221,7 +221,7 @@
                             <cstring>TextLabel1_2</cstring>
                         </property>
                         <property name="text">
-                            <string>Web Address:</string>
+                            <string>Web address:</string>
                         </property>
                     </widget>
                     <widget class="QLabel" row="6" column="0">
@@ -229,7 +229,7 @@
                             <cstring>TextLabel2_2</cstring>
                         </property>
                         <property name="text">
-                            <string>Version Number:</string>
+                            <string>Version number:</string>
                         </property>
                     </widget>
                     <widget class="LineEdit" row="3" column="1" rowspan="1" colspan="2">
@@ -349,7 +349,7 @@
                             <cstring>TextLabel6</cstring>
                         </property>
                         <property name="text">
-                            <string>Script Location:</string>
+                            <string>Script location:</string>
                         </property>
                     </widget>
                     <widget class="CloseButton" row="10" column="1" rowspan="1" colspan="2">

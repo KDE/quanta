@@ -160,7 +160,7 @@ echo '&lt;/html&gt;'
                         <cstring>TextLabel1_2</cstring>
                     </property>
                     <property name="text">
-                        <string>DTD / Schema</string>
+                        <string>DTD / Schema:</string>
                     </property>
                 </widget>
                 <widget class="GroupBox" row="4" column="0" rowspan="1" colspan="2">
@@ -219,7 +219,7 @@ echo '&lt;/html&gt;'
                                 <cstring>CBPHPFooter</cstring>
                             </property>
                             <property name="text">
-                                <string>PHP Footer Include</string>
+                                <string>PHP footer include:</string>
                             </property>
                             <property name="associations" stdset="0">
                                 <stringlist>
@@ -234,7 +234,7 @@ echo '&lt;/html&gt;'
                                 <cstring>CBPHPHeader</cstring>
                             </property>
                             <property name="text">
-                                <string>PHP Header Include</string>
+                                <string>PHP header include:</string>
                             </property>
                             <property name="associations" stdset="0">
                                 <stringlist>
@@ -357,7 +357,7 @@ esac
                         <cstring>CBHead</cstring>
                     </property>
                     <property name="text">
-                        <string>Head Area</string>
+                        <string>Head area</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>
@@ -385,7 +385,7 @@ echo '&lt;/head&gt;'</string>
                         <cstring>CBCVS</cstring>
                     </property>
                     <property name="text">
-                        <string>CVS Tag in Comment</string>
+                        <string>CVS tag in comment</string>
                     </property>
                     <property name="associations" stdset="0">
                         <stringlist>
@@ -443,7 +443,7 @@ fi
                                 <cstring>CBMetaAuthor</cstring>
                             </property>
                             <property name="text">
-                                <string>Meta Author</string>
+                                <string>Meta author:</string>
                             </property>
                             <property name="associations" stdset="0">
                                 <stringlist>
@@ -458,7 +458,7 @@ fi
                                 <cstring>CBMetaChar</cstring>
                             </property>
                             <property name="text">
-                                <string>Meta Character Set</string>
+                                <string>Meta character set:</string>
                             </property>
                             <property name="associations" stdset="0">
                                 <stringlist>
@@ -473,7 +473,7 @@ fi
                                 <cstring>CBStyleArea</cstring>
                             </property>
                             <property name="text">
-                                <string>Style Area</string>
+                                <string>Style area</string>
                             </property>
                             <property name="associations" stdset="0">
                                 <stringlist>
@@ -694,7 +694,7 @@ echo "$PADDING&lt;/style&gt;"</string>
                                 <cstring>CBBasedir</cstring>
                             </property>
                             <property name="text">
-                                <string>Base Directory</string>
+                                <string>Base directory:</string>
                             </property>
                             <property name="associations" stdset="0">
                                 <stringlist>
@@ -727,7 +727,7 @@ echo "$PADDING&lt;/style&gt;"</string>
                                 <cstring>CBMetaKeywords</cstring>
                             </property>
                             <property name="text">
-                                <string>Meta Keywords</string>
+                                <string>Meta keywords:</string>
                             </property>
                             <property name="associations" stdset="0">
                                 <stringlist>
@@ -744,7 +744,7 @@ echo "\"$TAGEND"</string>
                                 <cstring>CBStyle</cstring>
                             </property>
                             <property name="text">
-                                <string>Linked Style Sheet</string>
+                                <string>Linked style sheet:</string>
                             </property>
                             <property name="associations" stdset="0">
                                 <stringlist>
@@ -785,7 +785,7 @@ echo "\"$TAGEND"</string>
                                 <cstring>TextLabel2</cstring>
                             </property>
                             <property name="text">
-                                <string>Title</string>
+                                <string>Title:</string>
                             </property>
                         </widget>
                         <widget class="CheckBox" row="7" column="1">
@@ -793,7 +793,7 @@ echo "\"$TAGEND"</string>
                                 <cstring>CBJavascript</cstring>
                             </property>
                             <property name="text">
-                                <string>Javascript Area</string>
+                                <string>JavaScript area</string>
                             </property>
                             <property name="associations" stdset="0">
                                 <stringlist>
@@ -824,7 +824,7 @@ echo "$PADDING&lt;/script&gt;"</string>
                 <cstring>CloseButton1_2</cstring>
             </property>
             <property name="text">
-                <string>Cancel</string>
+                <string>&amp;Cancel</string>
             </property>
             <property name="flat">
                 <bool>false</bool>
@@ -843,7 +843,7 @@ echo "$PADDING&lt;/script&gt;"</string>
                 <cstring>CloseButton1</cstring>
             </property>
             <property name="text">
-                <string>OK</string>
+                <string>&amp;OK</string>
             </property>
             <property name="flat">
                 <bool>false</bool>
