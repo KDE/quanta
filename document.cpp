@@ -41,6 +41,7 @@
 #include <ktexteditor/clipboardinterface.h>
 #include <ktexteditor/configinterface.h>
 #include <ktexteditor/wordwrapinterface.h>
+#include <ktexteditor/markinterfaceextension.h>
 
 #include "parser/tag.h"
 #include "quantacommon.h"
@@ -77,6 +78,9 @@ Document::Document(const KURL& p_baseURL, KTextEditor::Document *doc,
   configIf = dynamic_cast<KTextEditor::ConfigInterface*>(m_doc);
   viewCursorIf = dynamic_cast<KTextEditor::ViewCursorInterface *>(m_view);
   codeCompletionIf = dynamic_cast<KTextEditor::CodeCompletionInterface *>(m_view);
+  markIf = dynamic_cast<KTextEditor::MarkInterface *>(m_doc);
+  KTextEditor::MarkInterfaceExtension* iface = dynamic_cast<KTextEditor::MarkInterfaceExtension*>( m_doc );
+  iface->setPixmap(KTextEditor::MarkInterface::markType10, SmallIcon("stop"));
   baseURL = p_baseURL;
   m_project = project;
   tempFile = 0;
@@ -1935,6 +1939,22 @@ QStringList Document::tagAreas(const QString& tag, bool includeCoordinates, bool
   }
 
   return result;
+}
+
+void Document::setErrorMark(int line)
+{
+  markIf->setMark(line, KTextEditor::MarkInterface::markType10);
+}
+
+void Document::clearErrorMarks()
+{
+  QPtrList<KTextEditor::Mark> marks = markIf->marks();
+  KTextEditor::Mark* mark;
+  for (mark = marks.first(); mark; mark = marks.next())
+  {
+    if (mark->type == KTextEditor::MarkInterface::markType10)
+        markIf->removeMark(mark->line, KTextEditor::MarkInterface::markType10);
+  }
 }
 
 #include "document.moc"

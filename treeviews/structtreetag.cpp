@@ -27,6 +27,7 @@
 #include "../parser/tag.h"
 #include "../parser/node.h"
 #include "../resource.h"
+#include "../document.h"
 
 
 StructTreeTag::StructTreeTag(QListView *parent, QString a_title)
@@ -99,6 +100,18 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, Node *a_node, const QString 
                 setPixmap( 0, UserIcon("tag_p") );
                 title = "";
               }
+
+              QTag *parentQTag = 0L;
+             if (node->parent)
+               parentQTag = QuantaCommon::tagFromDTD(node->parent->tag->dtd, node->parent->tag->name);
+              QString qTagName = node->tag->dtd->caseSensitive ? node->tag->name : node->tag->name.upper();
+             if (parentQTag && !parentQTag->childTags.contains(qTagName) &&
+             !parentQTag->childTags.isEmpty())
+             {
+               int line, col;
+               node->tag->beginPos(line, col);
+               node->tag->write()->setErrorMark(line);
+             }
 
               break;
             }

@@ -44,6 +44,7 @@
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kdirwatch.h>
+#include <kiconloader.h>
 #include <klocale.h>
 
 static const QChar space(' ');
@@ -578,7 +579,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
       }
       else if (tag->type == Tag::XmlTag)
            {
-                parseForXMLGroup(node);
+             parseForXMLGroup(node);
              //search for scripts inside the XML tag
              scriptParser(node);
            }

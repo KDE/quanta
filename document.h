@@ -33,6 +33,8 @@
 #include <ktexteditor/editinterface.h>
 #include <ktexteditor/selectioninterface.h>
 #include <ktexteditor/codecompletioninterface.h>
+#include <ktexteditor/markinterface.h>
+
 
 #include "undoredo.h"
 #include "parser/qtag.h"
@@ -159,9 +161,12 @@ work correctly. */
   /** returns all the areas that are between tag and it's closing pair */
   QStringList tagAreas(const QString &tag, bool includeCoordinates, bool skipFoundContent);
 
- /** disable/enable the repaint of the Kate view */
- void activateRepaintView(bool activation) {repaintEnabled = activation;}
- bool RepaintViewActivated() {return repaintEnabled;}
+   /** disable/enable the repaint of the Kate view */
+   void activateRepaintView(bool activation) {repaintEnabled = activation;}
+   bool RepaintViewActivated() {return repaintEnabled;}
+
+   void setErrorMark(int line);
+  void clearErrorMarks();
 
   bool busy;
   KURL baseURL;
@@ -171,6 +176,7 @@ work correctly. */
   KTextEditor::EditInterface *editIf;
   KTextEditor::CodeCompletionInterface *codeCompletionIf;
   KTextEditor::ConfigInterface* configIf;
+  KTextEditor::MarkInterface* markIf;
 
   Kate::Document *kate_doc;
   /** Hold the list of user tags (real or not, like functions) that are in the document*/

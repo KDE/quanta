@@ -110,7 +110,10 @@ void QTag::setName(const QString& theName)
 /** No descriptions */
 QString QTag::name()
 {
-  return tagName;
+  if (!parentDTD || parentDTD->caseSensitive)
+      return tagName;
+  else
+      return tagName.upper();
 }
 /** No descriptions */
 bool QTag::isSingle()

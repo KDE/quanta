@@ -380,6 +380,7 @@ void StructTreeView::slotReparse(Document *w, Node* node, int openLevel)
   deleteList();
   groupsCount = m_parsingDTD->structTreeGroups.count();
   write = w;
+  write->clearErrorMarks();
   buildTree(node, openLevel);
 
   kdDebug(24000) << "StructTreeView building: " << timer.elapsed() << " ms\n";
