@@ -87,7 +87,7 @@ void TableEditor::destroy()
   deleteList(m_tableDataRows);
   deleteList(m_tableHeaderRows);
   deleteList(m_tableFooterRows);
-  kdDebug(24000) << "Undelete new: " << newNum << endl;
+  kdDebug(24000) << "Undeleted new: " << newNum << endl;
 }
 
 void TableEditor::slotContextMenuRequested( int row, int col, const QPoint & pos )
@@ -188,6 +188,10 @@ void TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol )
   QSpinBox *colSpin = 0L;
   m_dataTable = 0L;
   QValueList<TableNode> tableRowTags;
+  TableNode mergeMatrix[100][100];
+  for (uint i = 0; i < 100; i++)
+    for (uint j = 0; j < 100; j++)
+      mergeMatrix[i][j].node = 0L;
   TableNode tableNode;
   Node *n = node;
   while (n != lastNode->nextSibling())
@@ -291,6 +295,7 @@ void TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol )
       {
         tableRowTags.clear();
         nRow++;
+        rowSpin->setValue(nRow);
         nCol = 0;
         tableNode.node = new Node(0L);
         tableNode.node->tag = new Tag(*(n->tag));
@@ -321,6 +326,24 @@ void TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol )
     {
       if (countRows)
       {
+        int col = nCol;
+        while (mergeMatrix[nRow - 1][col].node != 0L) {
+          if (colSpin->value() < col)
+              colSpin->setValue(col);
+          TableNode tableN = mergeMatrix[nRow - 1][col];
+          Node *n = tableN.node;
+          m_dataTable->setText(nRow - 1, col, i18n("Merged with (%1, %2).").arg(tableN.mergedRow).arg(tableN.mergedCol));
+          m_dataTable->item(nRow-1, col)->setEnabled(false);
+          tableNode.node = new Node(0L);
+          tableNode.node->tag = new Tag(*(n->tag));
+          newNum++;
+          tableNode.merged = true;
+          tableNode.mergedRow = tableN.mergedRow;
+          tableNode.mergedCol = tableN.mergedCol;
+          tableRowTags.append(tableNode);
+          col++;
+          nCol++;
+        }
         nCol++;
         if (rowSpin && colSpin && m_dataTable)
         {
@@ -335,19 +358,20 @@ void TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol )
           tableRowTags.append(tableNode);
         }
         QString colspanValue = n->tag->attributeValue("colspan");
+        int colValue = 1;
+        int lastCol = nCol;
         if (!colspanValue.isEmpty())
         {
           bool ok;
-          int value = colspanValue.toInt(&ok, 10);
-          if (ok & value > 1)
+          colValue = colspanValue.toInt(&ok, 10);
+          if (ok & colValue > 1)
           {
-            int lastCol = nCol;
-            nCol += (value - 1);
+            nCol += (colValue - 1);
             if (colSpin->value() < nCol)
               colSpin->setValue(nCol);
-            for (int i = 0; i < value - 1; i++)
+            for (int i = 0; i < colValue - 1; i++)
             {
-              m_dataTable->setText(nRow - 1, lastCol + i, i18n("Merged with column #%1.").arg(lastCol));
+              m_dataTable->setText(nRow - 1, lastCol + i, i18n("Merged with (%1, %2).").arg(nRow).arg(lastCol));
               m_dataTable->item(nRow-1, lastCol + i)->setEnabled(false);
               tableNode.node = new Node(0L);
               tableNode.node->tag = new Tag(*(n->tag));
@@ -357,6 +381,23 @@ void TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol )
               tableNode.mergedCol = lastCol - 1;
               tableRowTags.append(tableNode);
             }
+          } else
+            colValue = 1;
+        }
+        QString rowspanValue = n->tag->attributeValue("rowspan");
+        if (!rowspanValue.isEmpty())
+        {
+          bool ok;
+          int rowValue = rowspanValue.toInt(&ok, 10);
+          if (ok & rowValue > 1)
+          {
+            lastCol--;
+            for (int i = 0; i < rowValue - 1; i++)
+              for (int j = 0; j < colValue; j++) {
+                mergeMatrix[nRow + i][lastCol + j].mergedRow = nRow - 1;
+                mergeMatrix[nRow + i][lastCol + j].mergedCol = lastCol;
+                mergeMatrix[nRow + i][lastCol + j].node = n;
+              }
           }
         }
       }
@@ -854,5 +895,6 @@ void TableEditor::slotUnmergeCells()
       iter2 = (*iter1).erase(iter2);
       (*iter1).insert(iter2, newTableNode);
       delete tmpNode.node;
+      newNum--;
     }
 }
