@@ -597,7 +597,7 @@ void FilesTreeView::slotProperties()
 
   if (!currentKFileTreeViewItem()->isDir())
   {
-    KPropertiesDialog *propDlg = new KPropertiesDialog( url, this, 0L, false, false);
+    KPropertiesDialog *propDlg = new KPropertiesDialog( url, this, 0L, false, false); //autodeletes itself
     addFileInfoPage(propDlg);
     if (propDlg->exec())
     {
@@ -606,11 +606,9 @@ void FilesTreeView::slotProperties()
         itemRenamed(url, propDlg->kurl());
       }
     }
-    delete propDlg;
   } else
   {
-    KPropertiesDialog *propDlg = new KPropertiesDialog(url, this);
-    Q_UNUSED(propDlg);
+    (void) new KPropertiesDialog(url, this);
   }
 }
 

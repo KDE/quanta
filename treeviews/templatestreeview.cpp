@@ -447,7 +447,7 @@ void TemplatesTreeView::slotProperties()
   if ( !currentItem() ) return;
   KURL url = currentURL();
 
-  KPropertiesDialog *propDlg = new KPropertiesDialog( url, this, 0L, false, false);
+  KPropertiesDialog *propDlg = new KPropertiesDialog( url, this, 0L, false, false); //autodeletes itself
 
 //Always add the Quanta directory page
   QFrame *quantaDirPage = propDlg->dialog()->addPage(i18n("Quanta Template"));
@@ -529,8 +529,6 @@ void TemplatesTreeView::slotProperties()
     slotPropertiesApplied();
     slotReload();
    }
-
-  delete propDlg;
 }
 
 
