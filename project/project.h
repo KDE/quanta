@@ -51,7 +51,7 @@ class Project : public QWidget  {
 public:
   Project( QWidget *parent=0, const char *name=0);
   ~Project();
-  
+
   bool hasProject();
   KURL::List fileNameList(bool check = false);
   void loadProjectXML();
@@ -66,7 +66,8 @@ public:
   void readLastConfig(KConfig *c=0);
   void writeConfig(KConfig *);
   /** No descriptions */
-  bool isModified() {return modified;}
+  bool isModified() {return m_modified;}
+  void setModified(bool modified);
   /** Returns the relative url with the prefix inserted. */
   KURL urlWithPrefix(const KURL& url);
   /** Write property of QString defaultDTD. */
@@ -123,7 +124,7 @@ signals:
 
   void showTree();
   void reloadTree(const KURL::List &, bool);
-  
+
   void setLocalFiles( bool );
 
   void messages( QString );
@@ -157,7 +158,7 @@ public:
 
   QString email;
   QString author;
-  
+
   KRecentFilesAction *projectRecent;
 
     /** Holds the upload password. It is not saved, and it is lost after the project is closed. */
@@ -169,17 +170,17 @@ private:
   QWizard *wiz;
   QWidgetStack *stack;
   QString currentProjectView;
-  
+
   ProjectNewGeneral    *png;
   ProjectNewLocal      *pnl;
   ProjectNewWeb       *pnw;
   ProjectNewFinal     *pnf;
-  
+
   KConfig *config;
-  
-  bool modified;
+
+  bool m_modified;
   bool olfwprj; //for internal use
-  
+
   QBuffer buff;
   QRegExp excludeRx;
   QStringList excludeList;

@@ -83,7 +83,7 @@ Project::Project( QWidget *, const char *name )
 {
   projectName = QString::null;
   config = 0L;
-  modified=false;
+  m_modified=false;
   olfwprj=false;
   usePreviewPrefix=false;
   m_defaultDTD = qConfig.defaultDocType;
@@ -172,7 +172,7 @@ void Project::insertFile(const KURL& nameURL, bool repaint )
   el.setAttribute("url", QuantaCommon::qUrl(relNameURL) );
 
   dom.firstChild().firstChild().appendChild( el );
-  modified = true;
+  m_modified = true;
 
   if ( repaint )
   {
@@ -223,7 +223,7 @@ void Project::insertFiles( KURL::List files )
         {
           el.setAttribute("url", QuantaCommon::qUrl(url));
           dom.firstChild().firstChild().appendChild( el );
-          modified = true;
+          m_modified = true;
         }
       }
   }
@@ -395,7 +395,7 @@ bool Project::slotSaveProject()
     }
 
     delete tmpFile;
-    modified = false;
+    m_modified = false;
     emit newStatus();
   } else
   {
@@ -409,7 +409,7 @@ bool Project::slotSaveProject()
 void Project::slotCloseProject()
 {
   //fix: add save/no for remote
-  if (modified) slotSaveProject();
+  if (m_modified) slotSaveProject();
 
   dom.clear();
 
@@ -425,7 +425,7 @@ void Project::slotCloseProject()
   emit reloadTree( fileNameList(), true);
 
   projectURL  = KURL();
-  modified = false;
+  m_modified = false;
   passwd = "";
 
   emit newStatus();
@@ -484,7 +484,7 @@ void Project::loadProjectXML()
     return;
   }
 
-  modified = false;
+  m_modified = false;
   QString tmpString = projectNode.toElement().attribute("previewPrefix");
   if ( !tmpString.isEmpty())
   {
@@ -493,7 +493,7 @@ void Project::loadProjectXML()
     if (tmpString != previewPrefix.url()) //compatibility
     {
       projectNode.toElement().setAttribute("previewPrefix",previewPrefix.url());
-      modified = true;
+      m_modified = true;
     }
   }
 
@@ -521,7 +521,7 @@ void Project::loadProjectXML()
   if(no.isNull()) // compatability
   {
     templateURL.setPath("templates/");
-    modified = true;
+    m_modified = true;
   }
   else
   {
@@ -549,7 +549,7 @@ void Project::loadProjectXML()
   if(no.isNull()) // compatability
   {
     toolbarURL.setPath(baseURL.path(1) + "toolbars/");
-    modified = true;
+    m_modified = true;
   }
   else
   {
@@ -609,7 +609,7 @@ void Project::loadProjectXML()
       if (tmpString != QuantaCommon::qUrl(url))
       {
         el.setAttribute("url", QuantaCommon::qUrl(url));
-        modified = true;
+        m_modified = true;
       }
     }
     if ( el.nodeName() == "item" )
@@ -818,7 +818,7 @@ void Project::slotRenameFinished( KIO::Job * job)
     }
     oldURL = KURL();
     newURL = KURL();
-    modified = true;
+    m_modified = true;
 
     emit reloadTree( fileNameList(), false );
     emit newStatus();
@@ -889,7 +889,7 @@ void Project::slotRemove(const KURL& urlToRemove)
        )
     {
       el.parentNode().removeChild( el );
-      modified = true;
+      m_modified = true;
       if (isFolder)
       {
        i--;
@@ -1130,7 +1130,7 @@ void Project::slotAcceptCreateProject()
      emit showTree();
      emit newProjectLoaded();
 
-     modified = true;
+     m_modified = true;
 
      slotSaveProject();
    }
@@ -1365,7 +1365,7 @@ void Project::slotOptions()
        }
     }
     loadProjectXML();
-    modified = true;
+    m_modified = true;
 
     emit setProjectName( projectName );
     emit templateURLChanged( templateURL );
@@ -1578,5 +1578,10 @@ void Project::slotSaveProjectView()
   slotSaveAsProjectView(currentProjectView.isEmpty());
 }
 
+void Project::setModified(bool modified)
+{
+  m_modified = modified;
+  emit newStatus();
+}
 
 #include "project.moc"
