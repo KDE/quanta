@@ -8,12 +8,12 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>470</width>
-            <height>529</height>
+            <width>473</width>
+            <height>531</height>
         </rect>
     </property>
     <property name="caption">
-        <string>Quanta Script Info Editor</string>
+        <string>Quanta Script Info Generator</string>
     </property>
     <widget class="TabWidget">
         <property name="name">
@@ -71,6 +71,14 @@
                     <property name="name">
                         <cstring>Name</cstring>
                     </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>7</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
                     <property name="associations" stdset="0">
                         <stringlist>
                             <string>@widgetText</string>
@@ -96,6 +104,9 @@
                         <stringlist>
                             <string>&lt;about&gt;@widgetText&lt;/about&gt;</string>
                         </stringlist>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Formatting may be done with XHTML tags</string>
                     </property>
                 </widget>
                 <widget class="LineEdit" row="5" column="1" rowspan="1" colspan="2">
@@ -136,7 +147,7 @@
                     </property>
                     <property name="associations" stdset="0">
                         <stringlist>
-                            <string>@widgetText@Name.info</string>
+                            <string>@widgetText/@Name.info</string>
                         </stringlist>
                     </property>
                     <property name="selectionType">
@@ -260,6 +271,21 @@
                             <string>kmdr-editor</string>
                         </property>
                     </item>
+                    <item>
+                        <property name="text">
+                            <string>kwrite</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>kate</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>kdevelop</string>
+                        </property>
+                    </item>
                     <property name="name">
                         <cstring>editor</cstring>
                     </property>
@@ -270,6 +296,9 @@
                         <stringlist>
                             <string>@widgetText</string>
                         </stringlist>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Optional: Editor other than Quanta to use for this script</string>
                     </property>
                 </widget>
                 <widget class="ComboBox" row="2" column="2">
@@ -283,6 +312,16 @@
                             <string>kmdr-executor</string>
                         </property>
                     </item>
+                    <item>
+                        <property name="text">
+                            <string>perl</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>php</string>
+                        </property>
+                    </item>
                     <property name="name">
                         <cstring>executor</cstring>
                     </property>
@@ -293,6 +332,9 @@
                         <stringlist>
                             <string>@widgetText</string>
                         </stringlist>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Optional: External program executor</string>
                     </property>
                 </widget>
                 <widget class="QLabel" row="9" column="0">
@@ -339,8 +381,7 @@ $options&lt;name&gt;@Name&lt;/name&gt;
 @version
 @license
 @about
-&lt;/INFO&gt;" 
-#&gt; @FileSelector1</string>
+&lt;/INFO&gt;" &gt; @FileSelector1</string>
                         </stringlist>
                     </property>
                     <property name="writeStdout">
@@ -362,9 +403,9 @@ $options&lt;name&gt;@Name&lt;/name&gt;
                 </property>
                 <property name="geometry">
                     <rect>
-                        <x>10</x>
-                        <y>11</y>
-                        <width>460</width>
+                        <x>5</x>
+                        <y>10</y>
+                        <width>457</width>
                         <height>470</height>
                     </rect>
                 </property>
