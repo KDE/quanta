@@ -659,7 +659,7 @@ void QuantaApp::reparse()
 		  config->setGroup("Parser options");
 		  int expandLevel = config->readNumEntry("Expand level",8);
 		  if ( expandLevel == 0 )
-		  	expandLevel = 100;
+		  	expandLevel = 40;
 		  	
 		  sTab->slotReparse( node , expandLevel );
 		}

@@ -31,13 +31,13 @@ public:
 	Tag( const Tag&);
 	~Tag();
 	
-	void parseStr ( const QString tag );
+	void parseStr ( const QString &tag );
 	
 	Tag operator = ( const Tag& );
 
-  QString attrValue( const QString attr);
+  QString attrValue( const QString &attr);
 
-  bool haveAttrib( const QString attr );
+  bool haveAttrib( const QString &attr );
 	
 	QString name;
 	

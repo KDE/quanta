@@ -168,6 +168,7 @@ void QuantaDoc::finishLoadURL(KWrite *_w)
   app->repaintPreview();
   
   w -> busy = false;
+  app->reparse();
 }
 
 void QuantaDoc::saveDocument(const KURL& url)

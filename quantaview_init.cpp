@@ -71,6 +71,8 @@ QuantaView::QuantaView( QuantaApp *app, QWidget *parent, const char *name )
 
   connect( writeTab,	SIGNAL(selected(const QString &)), app, SLOT(slotUpdateStatus(const QString &)));
   connect( tabBar,		SIGNAL(selected(int)), toolbarStack, SLOT(raiseWidget(int)));
+  connect( writeTab,	SIGNAL(selected(const QString &)), app, SLOT(reparse()));
+  
 
   writeTab->show();
 }

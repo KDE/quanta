@@ -48,7 +48,7 @@ Tag::~Tag()
 {
 }
 
-void Tag::parseStr ( const QString tag )
+void Tag::parseStr ( const QString &tag )
 {
   QString t = tag;
 
@@ -138,7 +138,7 @@ Tag Tag::operator = (const Tag &t)
 	
 }
 
-bool Tag::haveAttrib( const QString attr )
+bool Tag::haveAttrib( const QString &attr )
 {
 	for (int i=0; i<attrcount;i++)
 		if ( attr.lower() ==  this->attr[i].lower()  )
@@ -146,7 +146,7 @@ bool Tag::haveAttrib( const QString attr )
 	return false;
 }
 /**  */
-QString Tag::attrValue( const QString attr)
+QString Tag::attrValue( const QString &attr)
 {
 	for (int i=0; i<attrcount;i++)
 		if ( attr.lower() ==  this->attr[i].lower() )
