@@ -169,8 +169,8 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
   Node *rootNode = 0L;
   Node *parentNode = a_node;
   Node *currentNode = a_node;
-  if (currentNode)
-      parentNode = currentNode->parent;
+  //if (currentNode)
+      //parentNode = currentNode->parent;
   Tag *tag;
   textLine.append(write->text(startLine, startCol, startLine, write->editIf->lineLength(startLine)));
   while (line <= endLine)
@@ -871,11 +871,11 @@ void Parser::coutTree(Node *node, int indent)
  while (node)
  {
    output = "";
-   output.fill('_', indent);
+   output.fill('.', indent);
    if (node->tag->type != Tag::Text)
-       output += node->tag->name;
+       output += node->tag->name.replace(QRegExp("\n")," ");
    else
-       output+= node->tag->tagStr();
+       output+= node->tag->tagStr().replace(QRegExp("\n")," ");
    cout << output <<" (" << node->tag->type << ")\n";
    if (node->child)
        coutTree(node->child, indent + 4);
@@ -1089,7 +1089,7 @@ Node *Parser::rebuild(Document *w)
      Node *next = node->next;
      Node *prev = node->prev;
      bool closesPrevious = node->closesPrevious;
-     if (nextNode->prev == node)
+     if (nextNode && nextNode->prev == node)
      {
        nextNode->prev = prev;
      }
@@ -1176,22 +1176,26 @@ Node *Parser::rebuild(Document *w)
    Node *lastInserted = 0L;
    node = parseArea(bLine, bCol, eLine, eCol, &lastInserted, firstNode);
 
+   bool goUp;
    if (lastNode && lastInserted)
    {
-   bool goUp = ( lastInserted->parent &&
-               ( (lastNode->tag->type == Tag::XmlTagEnd &&
-                  "/"+lastInserted->parent->tag->name.lower() == lastNode->tag->name.lower() ) ||
-                  lastInserted->parent->tag->single )
-             );
-      if (lastInserted->parent && !goUp)
+      node = lastInserted;
+      while (node && lastNode)
       {
-        QTag *qTag = QuantaCommon::tagFromDTD(m_dtd, lastInserted->parent->tag->name);
+      goUp = ( node->parent &&
+               ( (lastNode->tag->type == Tag::XmlTagEnd &&
+                  "/"+node->parent->tag->name.lower() == lastNode->tag->name.lower() ) ||
+                  node->parent->tag->single )
+             );
+      if (node->parent && !goUp)
+      {
+        QTag *qTag = QuantaCommon::tagFromDTD(m_dtd, node->parent->tag->name);
         if ( qTag )
         {
           QString searchFor = (m_dtd->caseSensitive)?lastNode->tag->name:lastNode->tag->name.upper();
           if ( qTag->stoppingTags.contains( searchFor ) )
           {
-            lastInserted->parent->tag->closingMissing = true; //parent is single...
+            node->parent->tag->closingMissing = true; //parent is single...
             goUp = true;
           }
         }
@@ -1199,31 +1203,46 @@ Node *Parser::rebuild(Document *w)
 
     if (goUp)
     {
-      lastInserted->parent->next = lastNode;
-      lastNode->prev = lastInserted->parent;
-      node = lastNode;
-      while (node)
-      {
-          node->parent = lastInserted->parent->parent;
-          node =  node->next;
-      }
-
+      node->parent->next = lastNode;
+      lastNode->prev = node->parent;
+      if (node->parent)
+        lastNode->parent = node->parent->parent;
+      else
+        lastNode->parent = 0L;
+      node->next = 0L;
     } else
     {
-      lastInserted->next = lastNode;
-      lastNode->prev = lastInserted;
-      node = lastNode;
-      while (node)
+      if (lastNode->prev && lastNode->prev->next == lastNode)
+          lastNode->prev->next = 0L;
+      node->next = lastNode;
+      lastNode->prev = node;
+      lastNode->parent = node->parent;
+    }
+    node = lastNode;
+    if (lastNode->next)
+    {
+      lastNode = lastNode->next;
+    } else
+    {
+      lastNode = lastNode->parent;
+      while (lastNode)
       {
-          node->parent = lastInserted->parent;
-          node =  node->next;
+        if (lastNode->parent && lastNode->parent->next)
+        {
+          lastNode = lastNode->parent->next;
+          break;
+        } else
+        {
+          lastNode = lastNode->parent;
+        }
       }
     }
 
+    }
    }
 
- //  coutTree(m_node, 2);
-//   cout << endl;
+   coutTree(m_node, 2);
+   cout << endl;
  }
  kdDebug(24000) << "Rebuild: " << t.elapsed() << " ms \n";
  return m_node;
