@@ -12,6 +12,10 @@
 #ifndef DTEPEDITDLG_H
 #define DTEPEDITDLG_H
 
+//qt includes
+#include <qvaluelist.h>
+
+//own includes
 #include "dtepeditdlgs.h"
 
 /**
@@ -19,6 +23,31 @@
 */
 
 class KConfig;
+class DTEPStructureEditDlgS;
+
+struct StructGroup {
+  QString name;   ///<the name of the group
+  QString noName; ///<the text when there are no elements in the group
+  QString icon;   ///<the icon of the group
+  QString tag;
+  bool hasFileName;
+  QString fileNameRx;
+  bool appendToTags;
+  QString parentGroup;
+  QString definitionRx;
+  bool definitionRxMinimal;
+  QString usageRx;
+  QString typeRx;
+  QString tagType;
+  bool parseFile;
+  QString completeAfterRx;
+  QString removeRx;
+  bool simpleGroup;
+  bool variableGroup;
+  bool functionGroup;
+  bool classGroup;
+  bool objectGroup;
+};
 
 class DTEPEditDlg : public DTEPEditDlgS
 {
@@ -28,21 +57,28 @@ class DTEPEditDlg : public DTEPEditDlgS
     ~DTEPEditDlg();
     void saveResult();
     void slotFamilyChanged(int family);
+    void slotEditStructGroup();
+    void slotAddStructGroup();
+    void slotDeleteStructGroup();
     
   private:  
     void init();
     void readGeneral();
     void readPages();
     void readParserRules();
+    void readStructures();
+    StructGroup readFromStructDlg(DTEPStructureEditDlgS *structDlg);
     
     void writeGeneral(KConfig *config);
     void writePages(KConfig *config);
     void writeParserRules(KConfig *config);
+    void writeStructures(KConfig *config);
     
   QString m_descriptionFile;
   KConfig *m_config;
   int m_family;
   QWidget *m_pagesWidget;
+  QValueList<StructGroup> m_structGroups;
 };
 
 #endif

@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>600</width>
-            <height>421</height>
+            <width>628</width>
+            <height>666</height>
         </rect>
     </property>
     <property name="caption">
@@ -27,12 +27,12 @@
                 <string>&amp;Name:</string>
             </property>
             <property name="buddy" stdset="0">
-                <cstring>namEdit</cstring>
+                <cstring>nameEdit</cstring>
             </property>
         </widget>
         <widget class="KLineEdit" row="0" column="1" rowspan="1" colspan="3">
             <property name="name">
-                <cstring>namEdit</cstring>
+                <cstring>nameEdit</cstring>
             </property>
         </widget>
         <widget class="QLabel" row="0" column="4">
@@ -76,111 +76,6 @@
             <property name="text">
                 <string></string>
             </property>
-        </widget>
-        <widget class="QGroupBox" row="6" column="0" rowspan="1" colspan="6">
-            <property name="name">
-                <cstring>pseudoGroupBox</cstring>
-            </property>
-            <property name="title">
-                <string>&amp;Pseudo DTEP sepcific settings</string>
-            </property>
-            <grid>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="KLineEdit" row="1" column="1">
-                    <property name="name">
-                        <cstring>usageRxEdit</cstring>
-                    </property>
-                </widget>
-                <widget class="QCheckBox" row="4" column="1">
-                    <property name="name">
-                        <cstring>definesObjects</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Defines &amp;objects</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+O</string>
-                    </property>
-                </widget>
-                <widget class="QCheckBox" row="3" column="1">
-                    <property name="name">
-                        <cstring>definesFunctions</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Defines function&amp;s</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+S</string>
-                    </property>
-                </widget>
-                <widget class="QCheckBox" row="4" column="0">
-                    <property name="name">
-                        <cstring>definesClasses</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Defines c&amp;lasses</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+L</string>
-                    </property>
-                </widget>
-                <widget class="QCheckBox" row="3" column="0">
-                    <property name="name">
-                        <cstring>definesVariables</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Defines &amp;variables</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+V</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="2" column="0">
-                    <property name="name">
-                        <cstring>textLabel37</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Element type expression:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>typeRxEdit</cstring>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="1" column="0">
-                    <property name="name">
-                        <cstring>textLabel36</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Usage expression:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>usageRxEdit</cstring>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="0" column="0">
-                    <property name="name">
-                        <cstring>textLabel35</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Definiton expression:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>definitionRxEdit</cstring>
-                    </property>
-                </widget>
-                <widget class="KLineEdit" row="2" column="1">
-                    <property name="name">
-                        <cstring>typeRxEdit</cstring>
-                    </property>
-                </widget>
-                <widget class="KLineEdit" row="0" column="1">
-                    <property name="name">
-                        <cstring>definitionRxEdit</cstring>
-                    </property>
-                </widget>
-            </grid>
         </widget>
         <widget class="QLabel" row="5" column="0" rowspan="1" colspan="2">
             <property name="name">
@@ -246,6 +141,9 @@
             <property name="name">
                 <cstring>tagEdit</cstring>
             </property>
+            <property name="enabled">
+                <bool>true</bool>
+            </property>
         </widget>
         <spacer row="1" column="3">
             <property name="name">
@@ -264,6 +162,253 @@
                 </size>
             </property>
         </spacer>
+        <widget class="QCheckBox" row="6" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>appendToTags</cstring>
+            </property>
+            <property name="text">
+                <string>Use elements as tags</string>
+            </property>
+        </widget>
+        <widget class="QGroupBox" row="7" column="0" rowspan="1" colspan="6">
+            <property name="name">
+                <cstring>pseudoGroupBox</cstring>
+            </property>
+            <property name="title">
+                <string>&amp;Pseudo DTEP specific settings</string>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="KLineEdit" row="4" column="1" rowspan="1" colspan="4">
+                    <property name="name">
+                        <cstring>typeRxEdit</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="3" column="0">
+                    <property name="name">
+                        <cstring>textLabel36</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Usage expression:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>usageRxEdit</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="4" column="0">
+                    <property name="name">
+                        <cstring>textLabel37</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Element type expression:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>typeRxEdit</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="2" column="0">
+                    <property name="name">
+                        <cstring>textLabel35</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Definiton expression:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>definitionRxEdit</cstring>
+                    </property>
+                </widget>
+                <widget class="KLineEdit" row="3" column="1" rowspan="1" colspan="4">
+                    <property name="name">
+                        <cstring>usageRxEdit</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="0" column="0">
+                    <property name="name">
+                        <cstring>textLabel41</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Parent group:</string>
+                    </property>
+                </widget>
+                <widget class="KLineEdit" row="0" column="1" rowspan="1" colspan="4">
+                    <property name="name">
+                        <cstring>parentGroupEdit</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="0">
+                    <property name="name">
+                        <cstring>textLabel42</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Searched tags:</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="6" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>textLabel44</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Remove when autocompleting:</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="5" column="0">
+                    <property name="name">
+                        <cstring>textLabel43</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Autocomplete after:</string>
+                    </property>
+                </widget>
+                <widget class="KLineEdit" row="5" column="2" rowspan="1" colspan="3">
+                    <property name="name">
+                        <cstring>autoCompleteRxEdit</cstring>
+                    </property>
+                </widget>
+                <widget class="KLineEdit" row="6" column="2" rowspan="1" colspan="3">
+                    <property name="name">
+                        <cstring>removeRxEdit</cstring>
+                    </property>
+                </widget>
+                <widget class="KComboBox" row="1" column="1" rowspan="1" colspan="2">
+                    <item>
+                        <property name="text">
+                            <string>Text</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>XmlTag</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>XmlTagEnd</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>Comment</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>CSS</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>ScriptTag</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>ScriptStructureBegin</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>ScriptStructureEnd</string>
+                        </property>
+                    </item>
+                    <property name="name">
+                        <cstring>tagTypeCombo</cstring>
+                    </property>
+                </widget>
+                <spacer row="1" column="3" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>spacer13</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>340</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="QCheckBox" row="7" column="0">
+                    <property name="name">
+                        <cstring>parseFile</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Parse file</string>
+                    </property>
+                </widget>
+                <widget class="QButtonGroup" row="8" column="0" rowspan="1" colspan="5">
+                    <property name="name">
+                        <cstring>buttonGroup1</cstring>
+                    </property>
+                    <property name="title">
+                        <string>Type</string>
+                    </property>
+                    <grid>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="QRadioButton" row="0" column="0">
+                            <property name="name">
+                                <cstring>simpleGroup</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Simple</string>
+                            </property>
+                        </widget>
+                        <widget class="QRadioButton" row="1" column="0">
+                            <property name="name">
+                                <cstring>variableGroup</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Variable group</string>
+                            </property>
+                        </widget>
+                        <widget class="QRadioButton" row="0" column="1">
+                            <property name="name">
+                                <cstring>functionGroup</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Function group</string>
+                            </property>
+                        </widget>
+                        <widget class="QRadioButton" row="1" column="1">
+                            <property name="name">
+                                <cstring>classGroup</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Class Group</string>
+                            </property>
+                        </widget>
+                        <widget class="QRadioButton" row="0" column="2">
+                            <property name="name">
+                                <cstring>objectGroup</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Object group</string>
+                            </property>
+                        </widget>
+                    </grid>
+                </widget>
+                <widget class="KLineEdit" row="2" column="1" rowspan="1" colspan="3">
+                    <property name="name">
+                        <cstring>definitionRxEdit</cstring>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="2" column="4">
+                    <property name="name">
+                        <cstring>definitionRxMinimal</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Minimal search mode</string>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
     </grid>
 </widget>
 <customwidgets>
@@ -283,19 +428,27 @@
     </connection>
 </connections>
 <tabstops>
-    <tabstop>namEdit</tabstop>
+    <tabstop>nameEdit</tabstop>
     <tabstop>iconButton</tabstop>
     <tabstop>noNameEdit</tabstop>
     <tabstop>tagEdit</tabstop>
     <tabstop>hasFilename</tabstop>
     <tabstop>fileNameRxEdit</tabstop>
+    <tabstop>appendToTags</tabstop>
+    <tabstop>parentGroupEdit</tabstop>
+    <tabstop>tagTypeCombo</tabstop>
     <tabstop>definitionRxEdit</tabstop>
+    <tabstop>definitionRxMinimal</tabstop>
     <tabstop>usageRxEdit</tabstop>
     <tabstop>typeRxEdit</tabstop>
-    <tabstop>definesVariables</tabstop>
-    <tabstop>definesFunctions</tabstop>
-    <tabstop>definesClasses</tabstop>
-    <tabstop>definesObjects</tabstop>
+    <tabstop>autoCompleteRxEdit</tabstop>
+    <tabstop>removeRxEdit</tabstop>
+    <tabstop>parseFile</tabstop>
+    <tabstop>simpleGroup</tabstop>
+    <tabstop>functionGroup</tabstop>
+    <tabstop>objectGroup</tabstop>
+    <tabstop>variableGroup</tabstop>
+    <tabstop>classGroup</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>

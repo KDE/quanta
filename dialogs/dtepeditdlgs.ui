@@ -1579,6 +1579,12 @@
         <receiver>falseEdit</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
+    <connection>
+        <sender>structuresList</sender>
+        <signal>doubleClicked(QListBoxItem*)</signal>
+        <receiver>editStructButton</receiver>
+        <slot>animateClick()</slot>
+    </connection>
 </connections>
 <tabstops>
     <tabstop>tabWidget</tabstop>

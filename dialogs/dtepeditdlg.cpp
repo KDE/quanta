@@ -15,6 +15,8 @@
 #include <qcheckbox.h>
 #include <qfile.h>
 #include <qfileinfo.h>
+#include <qgroupbox.h>
+#include <qradiobutton.h>
 #include <qtabwidget.h>
 #include <qwidgetstack.h>
 
@@ -23,6 +25,8 @@
 #include <kcombobox.h>
 #include <kconfig.h>
 #include <kfiledialog.h>
+#include <kicondialog.h>
+#include <klistbox.h>
 #include <klineedit.h>
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -30,6 +34,7 @@
 
 //own includes
 #include "dtepeditdlg.h"
+#include "dtepstructureeditdlgs.h"
 #include "dtds.h"
 #include "resource.h"
 
@@ -68,6 +73,7 @@ void DTEPEditDlg::init()
   else
     tabWidget->removePage(m_pagesWidget);
   readParserRules();
+  readStructures();
 }
 
 void DTEPEditDlg::readGeneral()
@@ -209,6 +215,7 @@ void DTEPEditDlg::saveResult()
     writeGeneral(newConfig);
     writePages(newConfig);
     writeParserRules(newConfig);
+    writeStructures(newConfig);
     newConfig->sync();
     delete newConfig;        
   }
@@ -318,7 +325,217 @@ void DTEPEditDlg::writeParserRules(KConfig *config)
     config->writeEntry("StructEndStr", structEndEdit->text());
     config->writeEntry("StructRx", structRxEdit->text());
   }
-
 }
+
+void DTEPEditDlg::readStructures()
+{
+  m_config->setGroup("Extra rules");
+  int variableGroupId = m_config->readNumEntry("VariableGroupIndex", -1);
+  int functionGroupId = m_config->readNumEntry("FunctionGroupIndex", -1);
+  int classGroupId = m_config->readNumEntry("ClassGroupIndex", -1);
+  int objectGroupId = m_config->readNumEntry("ObjectGroupIndex", -1);
+  
+  int i = 1; 
+  while (m_config->hasGroup(QString("StructGroup_%1").arg(i)))
+  {
+    StructGroup group;
+    m_config->setGroup(QString("StructGroup_%1").arg(i));
+    group.name = m_config->readEntry("Name");
+    group.noName = m_config->readEntry("No_Name");
+    group.icon = m_config->readEntry("Icon");
+    group.tag = m_config->readEntry("Tag");
+    group.hasFileName = m_config->readBoolEntry("HasFileName", false);
+    group.fileNameRx = m_config->readEntry("FileNameRx");
+    group.appendToTags = m_config->readBoolEntry("AppendToTags", false);
+    group.parentGroup = m_config->readEntry("ParentGroup");
+    group.definitionRx = m_config->readEntry("DefinitionRx");
+    group.definitionRxMinimal = m_config->readBoolEntry("DefinitionRx_Minimal", false);
+    group.usageRx = m_config->readEntry("UsageRx");
+    group.typeRx = m_config->readEntry("TypeRx");
+    group.tagType = m_config->readEntry("TagType");
+    group.parseFile = m_config->readBoolEntry("ParseFile", false);
+    group.completeAfterRx = m_config->readEntry("AutoCompleteAfter");
+    group.removeRx = m_config->readEntry("RemoveFromAutoCompleteWord");
+    group.variableGroup = (variableGroupId == i);
+    group.functionGroup = (functionGroupId == i);
+    group.classGroup = (classGroupId == i);
+    group.objectGroup = (objectGroupId == i);
+    group.simpleGroup = (!group.variableGroup && !group.functionGroup && !group.classGroup && !group.objectGroup);
+    
+    m_structGroups.append(group);    
+    i++;
+  }  
+  for (QValueList<StructGroup>::ConstIterator it = m_structGroups.constBegin(); it != m_structGroups.constEnd(); ++it)
+  {
+    structuresList->insertItem((*it).name);
+  }
+}
+
+void DTEPEditDlg::writeStructures(KConfig *config)
+{
+  config->setGroup("Extra rules");
+  config->writeEntry("StructGroupsCount", m_structGroups.count());
+  
+  int i = 1; 
+  for (QValueList<StructGroup>::ConstIterator it = m_structGroups.constBegin(); it != m_structGroups.constEnd(); ++it)
+  {
+    StructGroup group = *it;
+    config->setGroup(QString("StructGroup_%1").arg(i));
+    config->writeEntry("Name", group.name);
+    config->writeEntry("No_Name", group.noName);
+    config->writeEntry("Icon", group.icon);
+    config->writeEntry("Tag", group.tag);
+    config->writeEntry("HasFileName", group.hasFileName);
+    config->writeEntry("FileNameRx", group.fileNameRx);
+    config->writeEntry("AppendToTags", group.appendToTags);
+    if (m_family == 1)
+    {
+      config->writeEntry("ParentGroup", group.parentGroup);
+      config->writeEntry("DefinitionRx", group.definitionRx);
+      config->writeEntry("DefinitionRx_Minimal", group.definitionRxMinimal);
+      config->writeEntry("UsageRx", group.usageRx);
+      config->writeEntry("TypeRx", group.typeRx);
+      config->writeEntry("TagType", group.tagType);
+      config->writeEntry("ParseFile", group.parseFile);
+      config->writeEntry("AutoCompleteAfter", group.completeAfterRx);
+      config->writeEntry("RemoveFromAutoCompleteWord", group.removeRx);
+      if (group.variableGroup)
+      {
+        config->setGroup("Extra rules");
+        config->writeEntry("VariableGroupIndex", i);
+      } else
+      if (group.functionGroup)
+      {
+        config->setGroup("Extra rules");
+        config->writeEntry("FunctionGroupIndex", i);
+      } else
+      if (group.classGroup)
+      {
+        config->setGroup("Extra rules");
+        config->writeEntry("ClassGroupIndex", i);
+      } else
+      if (group.objectGroup)
+      {
+        config->setGroup("Extra rules");
+        config->writeEntry("ObjectGroupIndex", i);
+      } 
+    }
+    
+    i++;
+  }  
+  for (QValueList<StructGroup>::ConstIterator it = m_structGroups.constBegin(); it != m_structGroups.constEnd(); ++it)
+  {
+    structuresList->insertItem((*it).name);
+  }
+}
+
+void DTEPEditDlg::slotEditStructGroup()
+{
+  int currentItem = structuresList->currentItem();
+  if (currentItem != -1)
+  {
+    KDialogBase editDlg(this, "edit_group", true, i18n("Edit Structure Group"), KDialogBase::Ok | KDialogBase::Cancel);
+    DTEPStructureEditDlgS structDlg(&editDlg);
+    editDlg.setMainWidget(&structDlg);
+    
+    StructGroup group = m_structGroups[currentItem];
+    structDlg.nameEdit->setText(group.name);
+    structDlg.noNameEdit->setText(group.noName);
+    structDlg.iconButton->setIcon(group.icon);
+    structDlg.tagEdit->setText(group.tag);
+    structDlg.hasFilename->setChecked(group.hasFileName);
+    structDlg.fileNameRxEdit->setText(group.fileNameRx);
+    structDlg.appendToTags->setChecked(group.appendToTags);
+    structDlg.parentGroupEdit->setText(group.parentGroup);
+    for (int i = 0; i < structDlg.tagTypeCombo->count(); i++)
+    {
+      if (structDlg.tagTypeCombo->text(i) == group.tagType)
+      {
+        structDlg.tagTypeCombo->setCurrentItem(i);
+        break;
+      }
+    }
+  
+    structDlg.definitionRxEdit->setText(group.definitionRx);
+    structDlg.definitionRxMinimal->setChecked(group.definitionRxMinimal);
+    structDlg.usageRxEdit->setText(group.usageRx);
+    structDlg.typeRxEdit->setText(group.typeRx);
+    structDlg.autoCompleteRxEdit->setText(group.completeAfterRx);
+    structDlg.removeRxEdit->setText(group.removeRx);
+    structDlg.parseFile->setChecked(group.parseFile);
+    structDlg.simpleGroup->setChecked(group.simpleGroup);
+    structDlg.variableGroup->setChecked(group.variableGroup);
+    structDlg.functionGroup->setChecked(group.functionGroup);
+    structDlg.classGroup->setChecked(group.classGroup);
+    structDlg.objectGroup->setChecked(group.objectGroup);
+    
+    if (m_family == 0)
+      structDlg.pseudoGroupBox->setEnabled(false);
+    
+    if (editDlg.exec())
+    {
+      StructGroup group = readFromStructDlg(&structDlg);
+      m_structGroups[currentItem] = group;
+      structuresList->removeItem(currentItem);
+      structuresList->insertItem(group.name, currentItem);
+    }
+  }
+}
+
+void DTEPEditDlg::slotAddStructGroup()
+{
+  KDialogBase editDlg(this, "edit_group", true, i18n("Add Structure Group"), KDialogBase::Ok | KDialogBase::Cancel);
+  DTEPStructureEditDlgS structDlg(&editDlg);
+  editDlg.setMainWidget(&structDlg);
+  if (editDlg.exec())
+  {
+    StructGroup group = readFromStructDlg(&structDlg);
+    m_structGroups.append(group);
+    structuresList->insertItem(group.name);
+  }
+}
+
+StructGroup DTEPEditDlg::readFromStructDlg(DTEPStructureEditDlgS *structDlg)
+{
+  StructGroup group;
+  
+  group.name = structDlg->nameEdit->text();
+  group.noName = structDlg->noNameEdit->text();
+  group.icon = structDlg->iconButton->icon();
+  group.tag = structDlg->tagEdit->text();
+  group.hasFileName = structDlg->hasFilename->isChecked();
+  group.fileNameRx = structDlg->fileNameRxEdit->text();
+  group.appendToTags = structDlg->appendToTags->isChecked();
+  group.parentGroup = structDlg->parentGroupEdit->text();
+  group.tagType = structDlg->tagTypeCombo->currentText();
+  group.definitionRx = structDlg->definitionRxEdit->text();
+  group.definitionRxMinimal = structDlg->definitionRxMinimal->isChecked();
+  group.usageRx = structDlg->usageRxEdit->text();
+  group.typeRx = structDlg->typeRxEdit->text();
+  group.completeAfterRx = structDlg->autoCompleteRxEdit->text();
+  group.removeRx = structDlg->removeRxEdit->text();
+  group.parseFile = structDlg->parseFile->isChecked();
+  group.simpleGroup = structDlg->simpleGroup->isChecked();
+  group.variableGroup = structDlg->variableGroup->isChecked();
+  group.functionGroup = structDlg->functionGroup->isChecked();
+  group.classGroup = structDlg->classGroup->isChecked();
+  group.objectGroup = structDlg->objectGroup->isChecked();
+  
+  return group;
+}
+
+void DTEPEditDlg::slotDeleteStructGroup()
+{
+  int currentItem = structuresList->currentItem();
+  if (currentItem != -1)
+  {
+    if (KMessageBox::warningYesNo(this, i18n("<qt>Do you really want to delete the <b>%1</b> group?</qt>").arg(structuresList->currentText()), i18n("Delete Group")) == KMessageBox::Yes)
+    {
+      m_structGroups.remove(m_structGroups.at(currentItem));
+      structuresList->removeItem(currentItem);
+    }
+  }  
+}
+
 
 #include "dtepeditdlg.moc"

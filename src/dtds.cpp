@@ -491,7 +491,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
         tmpStr = dtdConfig->readEntry("TypeRx").stripWhiteSpace();
         group.typeRx.setPattern(tmpStr);
         group.hasDefinitionRx = !group.definitionRx.pattern().isEmpty();
-        group.isMinimalDefinitionRx = dtdConfig->readBoolEntry("SearchRx_Minimal", false);
+        group.isMinimalDefinitionRx = dtdConfig->readBoolEntry("DefinitionRx_Minimal", false);
         group.appendToTags = dtdConfig->readBoolEntry("AppendToTags", false);
         group.parentGroup = dtdConfig->readEntry("ParentGroup").stripWhiteSpace();
         tagStr = dtdConfig->readEntry("TagType", "Text").stripWhiteSpace();
