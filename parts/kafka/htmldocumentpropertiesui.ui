@@ -380,7 +380,6 @@
     <tabstop>cancel</tabstop>
 </tabstops>
 <slots>
-    <slot access="protected" specifier="pure virtual">aboutToClose()</slot>
     <slot access="protected" specifier="pure virtual">newMetaItem()</slot>
     <slot access="protected" specifier="pure virtual">deleteCurrentMetaItem()</slot>
     <slot access="protected" specifier="pure virtual">newCSSRule()</slot>

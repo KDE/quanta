@@ -43,7 +43,7 @@
 
 #include "viewmanager.h"
 
-htmlDocumentProperties::htmlDocumentProperties( QWidget* parent, const char* name,
+htmlDocumentProperties::htmlDocumentProperties( QWidget* parent, bool forceInsertionOfBasicNodes, const char* name,
  	bool modal, WFlags fl) :
 	htmlDocumentPropertiesui(parent, name, modal, fl), titleNode( 0L ), htmlNode( 0L ),
 	headNode( 0L ), linkNode( 0L ), bodyNode( 0L), doctypeNode( 0L ), CSSNode ( 0L ),
@@ -54,6 +54,8 @@ htmlDocumentProperties::htmlDocumentProperties( QWidget* parent, const char* nam
 	bool b;
 	int index;
 	KURL url, baseURL;
+        
+        m_forceInsertionOfBasicNodes = forceInsertionOfBasicNodes;
 
 	//set the "autodefault" property
 	metaItemsAdd->setAutoDefault(false);
@@ -227,8 +229,8 @@ htmlDocumentProperties::htmlDocumentProperties( QWidget* parent, const char* nam
         cancel->setIconSet(SmallIconSet("button_cancel"));
 
 	//connect buttons
-	connect(ok, SIGNAL(clicked()), this, SLOT(aboutToClose()));
-	connect(cancel, SIGNAL(clicked()), this, SLOT(close()));
+	connect(ok, SIGNAL(clicked()), this, SLOT(accept()));
+	connect(cancel, SIGNAL(clicked()), this, SLOT(reject()));
 	connect(cssRulesAdd, SIGNAL(clicked()), this, SLOT(newCSSRule()));
 	connect(cssRulesEdit, SIGNAL(clicked()), this, SLOT(editCSSRule()));
 	connect (cssRulesDelete, SIGNAL(clicked()), this, SLOT(deleteCurrentCSSRule()));
@@ -374,7 +376,7 @@ void htmlDocumentProperties::linkChanged( const QString& )
 }
 
 
-void htmlDocumentProperties::aboutToClose()
+void htmlDocumentProperties::accept()
 {
 	Node *node, *nodeNext;
 	NodeLinkedViewItem *item;
@@ -542,11 +544,26 @@ void htmlDocumentProperties::aboutToClose()
 		linkNode->tag->setCleanStrBuilt(false);
 	}
 
+        if(m_forceInsertionOfBasicNodes)
+          addBasicNodes(modifs);
+        
 	view->document()->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);
 
 	view->reloadBothViews();
 
-	close();
+	done(0);
+}
+
+void htmlDocumentProperties::reject()
+{
+  NodeModifsSet *modifs = new NodeModifsSet();
+  
+  if(m_forceInsertionOfBasicNodes)
+    addBasicNodes(modifs);
+    
+  ViewManager::ref()->activeDocument()->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);
+    
+  done(0);
 }
 
 void htmlDocumentProperties::addBasicCssNodes(NodeModifsSet *modifs)

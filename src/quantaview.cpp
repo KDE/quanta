@@ -414,7 +414,7 @@ void QuantaView::slotSetSourceAndVPLLayout()
          (!baseNode || (baseNode->tag->type == Tag::Empty &&
           !baseNode->next && !baseNode->child)))
     {
-        quantaApp->slotDocumentProperties();
+        quantaApp->documentProperties(true);
     }
 
    m_currentViewsLayout = SourceAndVPL;
@@ -458,7 +458,7 @@ void QuantaView::slotSetVPLOnlyLayout()
          (!baseNode || (baseNode->tag->type == Tag::Empty &&
           !baseNode->next && !baseNode->child)))
    {
-      quantaApp->slotDocumentProperties();
+      quantaApp->documentProperties(true);
    }
 
    m_currentViewsLayout = VPLOnly;
