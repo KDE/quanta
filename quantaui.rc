@@ -8,6 +8,7 @@
       <Action name="file_open_recent"/>    
       <Separator />
       <Action name="file_save" />
+      <Action name="file_save_as" />
       <Menu name="save_as_template" append="save_merge"><text>Save As Template</text>
       	<Action name="save_local_template"/>
       	<Action name="save_project_template"/>
