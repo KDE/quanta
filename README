@@ -13,7 +13,8 @@ Table of contents
     3. Release notes
     4. Getting Quanta Plus
     5. Installation
-       5.1 Common installation and compilation problems
+       5.1 Installing two versions in parallel
+       5.2 Common installation and compilation problems
     6. Common runtime problems
     7. Reporting bugs
     8. Developer info
@@ -116,7 +117,27 @@ following:
  For more information regarding the configuration and make process read the
 instructions from the INSTALL file, and run the ./configure --help command.
 
-5.1. Common installation and compilation problems
+5.1. Installing two versions in parallel
+----------------------------------------
+ If you wish to install Quanta BE and still keep your stable Quanta, you don't have
+to do anything special, just follow the above instructions. The Quanta BE executable
+name is quanta_be and all the resource directories and files are under a different
+name than for the stable Quanta.
+ If you wish to install two stable versions in parallel, you have to install them using
+different prefixes (see above). Before running the one installed outside of the
+KDE tree, you should do:
+export KDEDIRS=$prefix-of-second-instace:$KDEDIRS
+export PATH=$prefix-of-second-instace/bin:$PATH
+export LD_LIBRARY_PATH=$prefix-of-second-instace/lib:$LD_LIBRARY_PATH
+and run "quanta".
+
+NOTE: In case of the whole kdewebdev module, only the Quanta BE executable name is
+different of the stable version, for the other applications when installing into the
+same directory as the old versions are, the old versions will be upgraded. To avoid this,
+use the way descibed above for the whole kdewebdev module.
+
+
+5.2. Common installation and compilation problems
 -------------------------------------------------
 Possible problem sources can be:
   - old autoconf was used (2.52 or newer is required). Check with
