@@ -292,6 +292,8 @@ void QuantaDebuggerGubed::slotConnectionClosed(int state)
   debuggerInterface()->enableAction("debug_breakpoints_toggle", true);
   debuggerInterface()->enableAction("debug_breakpoints_clear", true);
 
+  debuggerInterface()->setActiveLine("", 0);
+
   m_active = false;
 }
 
@@ -370,6 +372,8 @@ void QuantaDebuggerGubed::processCommand(QString data)
       sendCommand("runnodisplay", "");
     else if(m_executionState == RunDisplay)
       sendCommand("rundisplay", "");
+
+    sendCommand("seterrormask", QString::number(m_errormask));
   }
   // Just some status info, display on status line
   else if(m_command == "status")

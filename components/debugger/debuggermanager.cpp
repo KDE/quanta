@@ -438,6 +438,17 @@ bool DebuggerManager::setActiveLine (QString file, int line )
   //Get local filename
   QString filename = file;
 
+  // Remove old active line mark
+  setMark(m_currentFile, m_currentLine, false, KTextEditor::MarkInterface::markType05);
+
+  // Update vars with active line
+  m_currentFile = filename;
+  m_currentLine = line;
+
+  // No new current position
+  if(filename.isEmpty())
+    return true;
+
   // Find new position in editor
   if(ViewManager::ref()->isOpened(filename) || QExtFileInfo::exists(filename))
     quantaApp->gotoFileAndLine(filename, line, 0);
@@ -445,14 +456,6 @@ bool DebuggerManager::setActiveLine (QString file, int line )
   {
     kdDebug(24000) << k_lineinfo << "File does not exist: " << filename << endl;
   }
-
-  // Remove old active line mark
-  setMark(m_currentFile, m_currentLine, false, KTextEditor::MarkInterface::markType05);
-
-
-  // Update vars with active line
-  m_currentFile = filename;
-  m_currentLine = line;
 
   // Add new active line mark
   setMark(filename, line, true, KTextEditor::MarkInterface::markType05);
