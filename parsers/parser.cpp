@@ -1232,6 +1232,7 @@ void Parser::clearGroups()
   GroupElementMapList::Iterator it;
   GroupElementList::Iterator elementIt;
   GroupElementList *list;
+  int count = 0;
   for (it = globalGroupMap.begin(); it != globalGroupMap.end(); ++it)
   {
     list = & it.data();
@@ -1252,8 +1253,12 @@ void Parser::clearGroups()
        }
        delete groupElement;
        elementIt = list->erase(elementIt);
+       count++;
     }
   }
+#ifdef DEBUG_PARSER
+      kdDebug(24000) << count << "GroupElement deleted." << endl;
+#endif
   globalGroupMap.clear();
   ParserCommon::includedFiles.clear();
   ParserCommon::includedFilesDTD.clear();
@@ -1269,6 +1274,7 @@ void Parser::cleanGroups()
   GroupElementMapList::Iterator it;
   GroupElementList::Iterator elementIt;
   GroupElementList *list;
+  int count = 0;
   for (it = globalGroupMap.begin(); it != globalGroupMap.end(); ++it)
   {
     list = & it.data();
@@ -1286,12 +1292,16 @@ void Parser::cleanGroups()
          delete groupElement->tag;
          delete groupElement;
          elementIt = list->erase(elementIt);
+         count++;
        } else
        {
          ++elementIt;
        }
     }
   }
+#ifdef DEBUG_PARSER
+      kdDebug(24000) << count << "GroupElement deleted." << endl;
+#endif
   if (m_parseIncludedFiles)
   {
       delete ParserCommon::includeWatch;

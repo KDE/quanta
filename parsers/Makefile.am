@@ -2,7 +2,8 @@ SUBDIRS = dtd
 METASOURCES = AUTO
 
 noinst_LTLIBRARIES = libparser.la
-libparser_la_SOURCES = qtag.cpp node.cpp tag.cpp parser.cpp saparser.cpp parsercommon.cpp
+libparser_la_SOURCES = qtag.cpp node.cpp tag.cpp parser.cpp saparser.cpp \
+	parsercommon.cpp sagroupparser.cpp
 
 AM_CPPFLAGS = -I$(top_srcdir)/quanta/utility \
 	-I$(top_srcdir)/quanta/src \
@@ -12,4 +13,4 @@ AM_CPPFLAGS = -I$(top_srcdir)/quanta/utility \
 	$(KMDI_INCLUDES) $(all_includes)
 
 
-noinst_HEADERS =  saparser.h parsercommon.h
+noinst_HEADERS = saparser.h parsercommon.h sagroupparser.h

@@ -23,7 +23,6 @@
 #include <qvaluestack.h>
 
 //own includes
-#include "node.h" //for GroupElementMapList
 #include "tag.h" //for AreaStruct
 
 //forward definitions
@@ -143,41 +142,6 @@ private:
   Node *s_returnNode;
   bool s_useReturnVars;
   Node *s_next;
-};
-
-class SAGroupParser: public QObject {
-
- Q_OBJECT
-
- public:
-   SAGroupParser(SAParser *parent, Node *startNode, Node *endNode, bool synchronous, bool parsingLastNode, bool paringLastGroup)
-     { g_node = startNode;
-       g_endNode = endNode;
-       m_synchronous = synchronous;
-       m_lastGroupParsed = paringLastGroup;
-       m_parsingLastNode = parsingLastNode;
-       m_parent = parent;
-     }
-   ~SAGroupParser() {};
-
-
- public slots:
-  void slotParseForScriptGroup();
-
- signals:
-  void rebuildStructureTree(bool);
-  void cleanGroups();
-  void parsingDone(SAGroupParser*);
-
- private:
-  void parseForScriptGroup(Node *node);
-
-  bool m_lastGroupParsed;
-  bool m_parsingLastNode;
-  bool m_synchronous;
-  SAParser *m_parent;
-  Node* g_node;
-  Node* g_endNode;
 };
 
 #endif

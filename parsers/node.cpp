@@ -479,6 +479,7 @@ void Node::operator =(Node* node)
 
 void Node::detachNode()
 {
+  int count = 0;
   //Remove the references to this node from the list of group elements.
   //They are actually stored in globalGroupMap.
   for (QValueListIterator<GroupElement*> it = m_groupElements.begin(); it != m_groupElements.end(); ++it)
@@ -489,7 +490,11 @@ void Node::detachNode()
 #ifdef DEBUG_PARSER
     kdDebug(24001) << "GroupElement scheduled for deletion: " << groupElement << " "<< groupElement->tag->area().bLine << " " << groupElement->tag->area().bCol << " "<< groupElement->tag->area().eLine << " "<< groupElement->tag->area().eCol << " " << groupElement->tag->tagStr() << " " << groupElement->type << endl;
 #endif
+    count++;
   }
+#ifdef DEBUG_PARSER
+  //if (count > 0) kdDebug(24000) << count << " GroupElement scheduled for deletion." << endl;
+#endif
 
   QValueListIterator<QListViewItem*> listItem;
   for ( listItem = listItems.begin(); listItem != listItems.end(); ++listItem)
