@@ -406,7 +406,6 @@ private:
   KSelectAction *setEndOfLine;
 
   KAction *saveAction, *saveAllAction, *undoAction, *redoAction,
-    *backAction, *forwardAction,
     *saveprjAction, *closeprjAction, *insertFileAction, *insertDirAction,
     *newPrjAction, *openPrjAction,  *uploadProjectAction,  *rescanPrjDirAction,
     *projectOptionAction, *saveAsLocalTemplateAction, *saveAsProjectTemplateAction,

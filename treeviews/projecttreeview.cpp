@@ -46,8 +46,8 @@
 #include "../quanta.h"
 
 ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
-  //: QListView(parent,name)
 {
+  QListView::QListView(parent, name);
   setRootIsDecorated( true );
   header()->hide();
   setSorting( 0 );
