@@ -1477,8 +1477,11 @@ Node *Parser::rebuild(Document *w)
        }
        if (prev)
        {
-         child->prev = prev;
-         prev->next = child;
+         if (!closesPrevious)
+         {
+           child->prev = prev;
+           prev->next = child;
+         }
        } else
        {
          if (parent)
