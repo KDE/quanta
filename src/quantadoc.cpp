@@ -177,6 +177,28 @@ bool switchToExisting)
   {
     quantaApp->processDTD();
     quantaApp->reparse(true);
+    KTextEditor::HighlightingInterface* highlightIf = dynamic_cast<KTextEditor::HighlightingInterface*>(w->doc());
+    if (highlightIf)
+    {
+      QString hlName;
+      int htmlIdx, xmlIdx;
+      for (uint i = 0; i < highlightIf->hlModeCount(); i++)
+      {
+          hlName = highlightIf->hlModeName(i);
+          if (hlName == "HTML")
+            htmlIdx = i;
+          if (hlName == "XML")
+            xmlIdx = i;
+      }
+      const DTDStruct *dtd = w->defaultDTD();
+      if (dtd->family == 1)
+      {
+          if (dtd->singleTagStyle == "xml")
+            highlightIf->setHlMode(xmlIdx);
+          else
+            highlightIf->setHlMode(htmlIdx);
+      }
+    }
     emit newStatus();
   }
 }
