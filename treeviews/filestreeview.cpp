@@ -88,6 +88,7 @@ FilesTreeView::FilesTreeView(KURL::List topList, QWidget *parent, const char *na
 
 
   // generate top list of directories
+  QString s;
   for (uint i = 0; i <  topList.count(); i++)
   {
     KURL url = topURLList[i];
@@ -104,16 +105,15 @@ FilesTreeView::FilesTreeView(KURL::List topList, QWidget *parent, const char *na
         dir->setOpen( true );
       } else
       {
-        FilesTreeFolder *dir = new FilesTreeFolder( this, url.fileName()+" ["+url.path()+"]", url);
+        s = url.fileName();
+        if (s.isEmpty())
+          s = "/";
+        s += " ["+url.prettyURL()+"]";
+        FilesTreeFolder *dir = new FilesTreeFolder( this, s, url);
         dir->setPixmap( 0, SmallIcon("folder") );
         dir->setOpen( false);
       }
   }
-/*
-  topFolders = new FilesTreeFolder(this, i18n("Top folders"), KURL());
-  topFolders->setPixmap( 0, SmallIcon("folder"));
-  topFolders->setOpen( false);
-*/
 }
 
 FilesTreeView::~FilesTreeView()
