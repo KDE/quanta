@@ -46,6 +46,7 @@
 #include "htmlenhancer.h"
 #include "kafkacommon.h"
 #include "kafkaresource.h"
+#include "cursors.h"
 
 #include "wkafkapart.moc"
 

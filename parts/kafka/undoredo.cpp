@@ -33,15 +33,17 @@
 #include "quanta.h"
 #include "quantaview.h"
 #include "quantacommon.h"
+#include "viewmanager.h"
 #include "node.h"
 #include "tag.h"
 #include "resource.h"
 #include "wkafkapart.h"
 #include "kafkacommon.h"
 #include "kafkaresource.h"
+ #include "cursors.h"
 
 #include "undoredo.h"
-#include "viewmanager.h"
+
 
 NodeModif::NodeModif()
 {
@@ -175,6 +177,7 @@ void undoRedo::addNewModifsSet(NodeModifsSet *modifs, int modifLocation)
         NodeModifsSet *NMSet;
         QValueList<int> loc;
         int curFocus, foo, foo2;
+        uint diff, diff2;
         NodeSelectionInd *nodeSelection;
         Node *node;
         bool goUp;
@@ -185,6 +188,26 @@ void undoRedo::addNewModifsSet(NodeModifsSet *modifs, int modifLocation)
           delete modifs;
           return;
         }
+        
+        //If the previous NodeModifsSet contains some text insertion/deletion and if
+        //the current one is doing the same thing, compress the two NodeModifsSet : delete modifs
+        /**if(modifs->nodeModifList().count() == 1 && modifs->nodeModifList().at(0)->type() == NodeModif::NodeModified)
+        {
+          QPrtListIterator<NodeModifsSet> it(m_undoList);
+          it = documentIterator;
+          --it;
+          if((*it) && (*it)->nodeModifList().count() == 1 && (*it)->nodeModifList().at(0)->type() == NodeModif::NodeModified)
+          {
+            node = kafkaCommon::getNodeFromLocation(modifs->nodeModifList().at(0)->location());
+            diff = modifs->nodeModifList().at(0)->tag()->tagStr().length() - (*it)->nodeModifList().at(0)->tag()->tagStr().length();
+            diff2 = node->tag->tagStr().length() - modifs->nodeModifList().at(0)->tag()->tagStr().length();
+            
+
+            if(lineBreakCount == lineBreakCount2 && ((diff > 0 && diff2 > diff) || (diff < 0 && diff2 < diff)))
+              return;
+          }
+          
+        }*/
 
         //Once the changes have been made, we will generate the "clean" string for Text Nodes only, and
         //we will add the empty indentation Nodes.
