@@ -49,7 +49,6 @@
 #include <kpassdlg.h>
 #include <kpushbutton.h>
 #include <ktempfile.h>
-#include <kmdcodec.h>
 
 //standard includes
 #include <time.h>
@@ -166,14 +165,6 @@ void ProjectUpload::slotBuildTree()
 
  KURL u = m_project->projectBaseURL();
  KURL absUrl = u;
- const char *ch = "foo";
- KMD5 md5(ch);
- KTempFile *tempFile = new KTempFile(tmpDir);
- tempFile->setAutoDelete(true);
- tempFile->close();
- KURL tmpURL = KURL::fromPathOrURL(tempFile->name());
- bool ftpProject = absUrl.protocol() == "ftp";
- bool missed = false;
  for (uint i = 0; i < nl.count(); i++)
  {
    el = nl.item(i).toElement();
@@ -182,8 +173,8 @@ void ProjectUpload::slotBuildTree()
    {
      QuantaCommon::setUrl(u, s);
      absUrl.setPath(m_project->projectBaseURL().path(1)+u.path(-1));
-     if (!QExtFileInfo::exists(absUrl))
-       continue;
+/*     if (!QExtFileInfo::exists(absUrl))
+       continue; */
      KFileItem *p_item = projectDirFiles.find(absUrl.url());
      if (!p_item)
        continue;
@@ -191,36 +182,13 @@ void ProjectUpload::slotBuildTree()
      UploadTreeFile *it = list->addItem(u, item);
      if ( it != 0 )
      {
-       QString uploadedSum;
+       int uploadedTime;
        if (m_uploadTimeList.contains(s))
-         uploadedSum = m_uploadTimeList[s];
-       md5.reset();
-       QExtFileInfo::copy(absUrl, tmpURL, -1, true, false, this);
-       QFile f(tempFile->name());
-
-  /*     QString tmp;
-       KIO::NetAccess::download(absUrl, tmp, this);
-       QFile f(tmp);*/
-       if (ftpProject) //fix for the KIO_FTP caused weirdness visible here
-       {
-         int k = 0;
-         while (!f.exists() && k < 10000) k++;
-       }
-       if (!f.open(IO_ReadOnly))
-       {
-         kdDebug(24000) << "Cannot open: " << f.name() << ". The error was: " << f.errorString() << endl;
-         missed = true;
-       }
-       else
-       {
-        md5.update(f);
-        f.close();
-       }
-       //KIO::NetAccess::removeTempFile(tmp);
-       QString currentSum(md5.hexDigest());
-       el.setAttribute("md5sum", currentSum);
+         uploadedTime = m_uploadTimeList[s];
+       int modifiedTime = item.time(KIO::UDS_MODIFICATION_TIME);
+       el.setAttribute("modified_time", modifiedTime);
        int uploadStatus = el.attribute("uploadstatus").toInt();
-       if ((uploadedSum != currentSum || uploadedSum.isEmpty()) && uploadStatus != 0)
+       if (uploadedTime != modifiedTime && uploadStatus != 0)
        {
          modified.append( u );
          it->setSelected(true);
@@ -233,7 +201,6 @@ void ProjectUpload::slotBuildTree()
  }
  projectDirFiles.setAutoDelete(true);
  projectDirFiles.clear();
- tempFile->unlink();
  totalText->setText(i18n("Building the tree..."));
  list->checkboxTree();
  if (!startUrl.isEmpty())
@@ -243,8 +210,6 @@ void ProjectUpload::slotBuildTree()
  totalProgress->setTotalSteps(1);
  totalProgress->setValue(0);
  kdDebug(24000) << "Build time: " << t.elapsed() << endl;
- if (missed)
-   KMessageBox::error(this, i18n("Calculating of the MD5 sum for some files failed. This means that unmodified files might be marked as modified ones and vice-versa. This error usually happens with the FTP protocol and restarting the upload dialog might help."), i18n("KIO Error"));
 }
 
 
@@ -345,9 +310,10 @@ void ProjectUpload::startUpload()
       el = nl.item(i).toElement();
       if ( selectedList.contains(el.attribute("url")))
       {
-        m_uploadTimeList[el.attribute("url")] = el.attribute("md5sum");
+        m_uploadTimeList[el.attribute("url")] = el.attribute("modified_time").toInt();
       }
     }
+    saveRemoteUploadInfo();
     accept();
   } else
   {
@@ -564,7 +530,7 @@ void ProjectUpload::slotUploadNext()
       el = nl.item(i).toElement();
       if ( el.attribute("url") == QuantaCommon::qUrl(currentURL) )
       {
-        m_uploadTimeList[el.attribute("url")] = el.attribute("md5sum");
+        m_uploadTimeList[el.attribute("url")] = el.attribute("modified_time").toInt();
         break;
       }
     }
@@ -576,10 +542,10 @@ void ProjectUpload::slotUploadNext()
 void ProjectUpload::clearProjectModified()
 {
   QDomNodeList nl = m_project->dom.elementsByTagName("item");
-  for ( unsigned int i=0; i<nl.count(); i++ )
+  for (uint i=0; i<nl.count(); i++)
   {
     QDomElement el = nl.item(i).toElement();
-    m_uploadTimeList[el.attribute("url")] = el.attribute("md5sum");
+    m_uploadTimeList[el.attribute("url")] = el.attribute("modified_time").toInt();
   }
   modified.clear();
   list->clearSelection();
@@ -723,7 +689,10 @@ void ProjectUpload::slotNewProfileSelected(const QString& profileName)
   m_project->setModified(true);
   setProfileTooltip();
   if (!m_profilesOnly)
-    loadRemoteUploadInfo();
+  {
+    list->clear();
+    slotBuildTree();
+  }
 }
 
 QString ProjectUpload::defaultProfile()
@@ -768,77 +737,29 @@ void ProjectUpload::setProfileTooltip()
 
 void ProjectUpload::loadRemoteUploadInfo()
 {
-   initBaseUrl();
-   m_uploadTimeList.clear();
-   KURL url = *baseUrl;
-   url.setPath(url.path() + "/status.xml");
-   KTempFile *tempFile = new KTempFile(tmpDir);
-   tempFile->setAutoDelete(true);
-   KURL u = KURL::fromPathOrURL(tempFile->name());
-   tempFile->close();
-   if (QExtFileInfo::exists(url))
-   {
-      QExtFileInfo::copy(url, u, -1, true);
-      QFile f(tempFile->name());
-      int k = 0;
-      if (url.protocol() == "ftp")
-      {
-        //fix for the KIO_FTP caused weirdness visible here
-        while (!f.exists() && k < 1000000) k++;
-      }
-      if (f.open(IO_ReadOnly))
-      {
-        QDomDocument dom;
-        bool statusFileLoaded = dom.setContent(&f);
-        if (statusFileLoaded)
-        {
-            QDomNodeList nl = dom.elementsByTagName("item");
-            for (uint i=0; i<nl.count(); i++)
-            {
-              QDomElement el = nl.item(i).toElement();
-              m_uploadTimeList[el.attribute("url")] = el.attribute("md5sum");
-            }
-        } else
-            KMessageBox::error(this, i18n("The status information file is broken. Quanta cannot detect if your files were already uploaded or not. Your files will be marked as modified, except those that you marked to not upload."),
-          i18n("Bad Status File"));
-        f.close();
-      } else
-      kdDebug(24000) << tempFile->name() << " " << k << " : io error: " << f.errorString() << endl;
-      //KIO::NetAccess::removeTempFile(tmpFile);
-   } else
-     KMessageBox::sorry(this, i18n("The status information file was not found on the remote machine. Quanta cannot detect if your files were already uploaded or not. Your files will be marked as modified, except those that you marked to not upload."),
-   i18n("Missing Status File"));
-
-   tempFile->unlink();
+    QDomNodeList nl = m_currentProfileElement.elementsByTagName("uploadeditem");
+    for (uint i = 0; i < nl.count(); i++)
+    {
+      QDomElement el = nl.item(i).toElement();
+      m_uploadTimeList[el.attribute("url")] = el.attribute("upload_time").toInt();
+    }
 }
 
 void ProjectUpload::saveRemoteUploadInfo()
 {
-    QString str;
-    QTextStream stream( &str, IO_WriteOnly );
-    stream.setEncoding(QTextStream::UnicodeUTF8);
-
-    stream << "<!DOCTYPE uploadstatus ><uploadstatus>" << endl;
-    stream << "</uploadstatus>" << endl;
-    QDomDocument dom;
-    dom.setContent(str);
-    QMap<QString, QString>::ConstIterator it;
+    QDomNode parent = m_currentProfileElement.parentNode();
+    QDomNode profileNode = m_currentProfileElement.cloneNode(false);
+    parent.removeChild(m_currentProfileElement);
+    parent.appendChild(profileNode);
+    QMap<QString, int>::ConstIterator it;
     for (it = m_uploadTimeList.constBegin(); it != m_uploadTimeList.constEnd(); ++it)
     {
-      QDomElement el = dom.createElement("item");
+      QDomElement el = m_uploadStatusDom.createElement("uploadeditem");
       el.setAttribute("url", it.key());
-      el.setAttribute("md5sum", it.data());
-      dom.firstChild().appendChild(el);
+      el.setAttribute("upload_time", it.data());
+      profileNode.appendChild(el);
     }
-    KTempFile *tempFile = new KTempFile(tmpDir);
-    tempFile->setAutoDelete(true);
-    tempFile->textStream()->setEncoding(QTextStream::UnicodeUTF8);
-    *(tempFile->textStream()) << dom.toString(2);
-    tempFile->close();
-    KURL url = *baseUrl;
-    url.setPath(url.path() + "/status.xml");
-    KIO::NetAccess::upload(tempFile->name(), url, this);
-    tempFile->unlink();
+    m_project->setModified(true);
 }
 
 

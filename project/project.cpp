@@ -825,9 +825,6 @@ void Project::loadProjectXML()
         el.setAttribute("url", QuantaCommon::qUrl(url));
         m_modified = true;
       }
-      //just clean up the old project files
-      el.removeAttribute("upload_time");
-      el.removeAttribute("modified_time");
     }
     path = url.path();
     if ( el.nodeName() == "item" )
@@ -1894,26 +1891,37 @@ bool Project::contains(const KURL& url)
 
 void Project::updateTimeStamp(const KURL& url, int modifiedTime)
 {
-  return;
   ProjectUrlList::Iterator it = m_projectFiles.find(QExtFileInfo::toRelative(url, baseURL));
   if (it != m_projectFiles.end())
   {
     QDomNodeList nl = dom.elementsByTagName("item");
+    QDomElement itemEl;
     QString qurl = QuantaCommon::qUrl(*it);
-    const uint nlCount = nl.count();
+    int origModifTime = 0;
+    uint nlCount = nl.count();
+    for (uint i = 0; i < nlCount; ++i)
+    {
+      itemEl = nl.item(i).toElement();
+      if (itemEl.attribute("url") == qurl)
+      {
+        origModifTime = itemEl.attribute("modified_time","1").toInt();
+        break;
+      }
+    }
+    nl = dom.elementsByTagName("uploadeditem");
+    nlCount = nl.count();
     for (uint i = 0; i < nlCount; ++i)
     {
       QDomElement el = nl.item(i).toElement();
-      if (el.attribute("url") == qurl) {
+      if (el.attribute("url") == qurl)
+      {
         int uploadTime = el.attribute("upload_time","1").toInt();
-        int origModifTime = el.attribute("modified_time","1").toInt();
         if (uploadTime == origModifTime)
         {
-          el.setAttribute("modified_time", modifiedTime);
+          itemEl.setAttribute("modified_time", modifiedTime);
           el.setAttribute("upload_time", modifiedTime);
           m_modified = true;
         }
-        break;
       }
     }
   }

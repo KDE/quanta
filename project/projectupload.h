@@ -103,7 +103,8 @@ private:
   QDomElement m_currentProfileElement;
   QDomElement m_lastEditedProfileElement;
   QDomNode m_profilesNode;
-  QMap<QString, QString> m_uploadTimeList;
+  QDomDocument m_uploadStatusDom;
+  QMap<QString, int> m_uploadTimeList;
   bool m_profilesOnly;
 };
 
