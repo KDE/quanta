@@ -524,6 +524,63 @@ void QuantaCommon::removeCommentsAndQuotes(QString &str, DTDStruct *dtd)
 
 }
 
+bool QuantaCommon::insideCommentsOrQuotes(int position, const QString &string, DTDStruct *dtd)
+{
+ //Return true if position is inside a commented or quoted string 
+ QString str = string;
+ int pos = 0;
+ int l;
+ QString s;
+ while (pos != -1)
+ {
+   pos = dtd->commentsStartRx.search(str, pos);
+   if (pos == position)
+     return true;
+   if (pos != -1)
+   {
+     s = dtd->commentsStartRx.cap();
+     if (s == "\\\"" || s == "\\'")
+     {
+       str[pos] = space;
+       str[pos+1] = space;
+       pos += 2;
+     } else
+     {
+       s = dtd->comments[s];
+       l = str.find(s, pos);
+       l = (l == -1) ? str.length() : l;
+       for (int i = pos; i < l ; i++)
+       {
+         str[i] = space;
+         if (i == position)
+           return true;
+       }
+       pos = l + s.length();
+     }
+   }
+ }
+
+ //Now replace the quoted strings with spaces
+ const QRegExp strRx("(\"[^\"]*\"|'[^']*')");
+ pos = 0;
+ while (pos != -1)
+ {
+   pos = strRx.search(str, pos);
+   if (pos != -1)
+   {
+    l = strRx.matchedLength();
+    for (int i = pos; i < pos + l ; i++)
+    {
+      str[i] = space;
+      if (i == position)
+        return true;
+    }
+    pos += l;
+   }
+ }
+
+  return false;
+}
 
 #if KDE_VERSION < KDE_MAKE_VERSION(3,1,90)
 

@@ -188,7 +188,7 @@ pointer must be deleted by the caller!! */
     QString namespaceName2, QString tagName2, bool caseSensitive2);
   static int denyBinaryInsert();
   static void removeCommentsAndQuotes(QString& str, DTDStruct* dtd);
-
+  static bool insideCommentsOrQuotes(int position, const QString &string, DTDStruct *dtd);
 };
 
 
