@@ -1,11 +1,26 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Quanta Plus
+Name[fa]=کوانتا پلاس (Quanta Plus)
+Name[xx]=xxQuanta Plusxx
 Exec=quanta
 Icon=quanta
 Type=Application
 MimeType=text/html
 DocPath=quanta/index.html
 Comment=Web Development Environment
-Comment[ru]=����� ���������� ���-��������
+Comment[ca]=Entorn de desenvolupament web
+Comment[cs]=Vývojové prostředí pro web
+Comment[da]=Webudviklermiljø
+Comment[es]=Entorno de desarrollo Web
+Comment[et]=Veebiarenduskeskkond
+Comment[fa]=محیط برنامه‌نویسی اینترنتی
+Comment[hu]=Webfejlesztő környezet
+Comment[it]=Ambiente per lo sviluppo Web
+Comment[pt]=Ambiente de desenvolvimento Web
+Comment[pt_BR]=Ambiente de Desenvolvimento Web
+Comment[ru]=Среда для веб-разработки
+Comment[sr]=Средина за веб развој
+Comment[sv]=Webbutvecklingsmiljö
+Comment[xx]=xxWeb Development Environmentxx
 Categories=Qt;KDE;Development
