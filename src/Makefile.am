@@ -50,6 +50,7 @@ AM_CPPFLAGS = -I$(top_srcdir)/quanta/dialogs \
 	-I$(top_srcdir)/quanta/parts/kafka \
 	-I$(top_srcdir)/quanta/messages \
 	-I$(top_srcdir)/lib \
+	-I$(top_srcdir)/lib/newstuff \
 	-I$(top_builddir)/quanta/dialogs \
 	-I$(top_builddir)/quanta/dialogs/tagdialogs \
 	-I$(top_builddir)/quanta/dialogs/settings \

@@ -177,7 +177,7 @@
 #include "quanta_init.h"
 #include "viewmanager.h"
 #include "debuggerui.h"
-#include "qnewstuff.h"
+#include "newstuff.h"
 
 
 #define BOOKMARK_MENU_POSITION 3
