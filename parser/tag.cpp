@@ -69,50 +69,55 @@ void Tag::parseStr ( const QString tag )
   t = t.remove(0,i).stripWhiteSpace();
 
   while ( !t.isEmpty() ) {
-  	attrcount++;
-  	i=0;
-  	while ( !t[i].isSpace() && !t[i].isNull() && t[i] != '=' )	i++;
-  	
-  	attr[attrcount] = t.left(i);
-  	t = t.remove(0,i).stripWhiteSpace();
-  	
-  	if ( t[0] == '=' ) {
-  		t = t.remove(0,1).stripWhiteSpace();
-  		
-  		if ( t[0] == '"' ) {
-  			i = 1;
-  			while ( t[i] != '"' && !t[i].isNull() ) i++;
-  			if ( t[i] == '"' )
-  				value[attrcount] = t.mid(1,i-1);
-  			else
-  			  value[attrcount] = t.mid(1,i);
-  			t = t.remove(0,i).stripWhiteSpace();
-  		}
-  		else
-  		if ( t[0] == '\'' ) {
-  			i = 1;
-  			while ( t[i] != '\'' && !t[i].isNull() ) i++;
-  			if ( t[i] == '\'' )
-  				value[attrcount] = t.mid(1,i-1);
-  			else
-  			  value[attrcount] = t.mid(1,i);
-  			t = t.remove(0,i).stripWhiteSpace();
-  		}
-  		else {
-  		
-    		i=0;
-  	  	while ( !t[i].isSpace() && !t[i].isNull() )	i++;
-    	
-    		value[attrcount] = t.left(i);
-    		t = t.remove(0,i).stripWhiteSpace();
-  		}
-  		
-  		// debug ( name+" , "+attr[attrcount]+"="+value[attrcount]+";" );
-  	
-  	}
-  	else {
-  	  value[attrcount]="";
-  	}
+  
+   	attrcount++;
+   	
+   	if ( attrcount >= 20 )
+   	  break;
+   	  
+   	i=0;
+   	while ( !t[i].isSpace() && !t[i].isNull() && t[i] != '=' )	i++;
+   	
+   	attr[attrcount] = t.left(i);
+   	t = t.remove(0,i).stripWhiteSpace();
+   	
+   	if ( t[0] == '=' ) {
+   		t = t.remove(0,1).stripWhiteSpace();
+   		
+   		if ( t[0] == '"' ) {
+   			i = 1;
+   			while ( t[i] != '"' && !t[i].isNull() ) i++;
+   			if ( t[i] == '"' )
+   				value[attrcount] = t.mid(1,i-1);
+   			else
+   			  value[attrcount] = t.mid(1,i);
+   			t = t.remove(0,i).stripWhiteSpace();
+   		}
+   		else
+   		if ( t[0] == '\'' ) {
+   			i = 1;
+   			while ( t[i] != '\'' && !t[i].isNull() ) i++;
+   			if ( t[i] == '\'' )
+   				value[attrcount] = t.mid(1,i-1);
+   			else
+   			  value[attrcount] = t.mid(1,i);
+   			t = t.remove(0,i).stripWhiteSpace();
+   		}
+   		else {
+   		
+     		i=0;
+   	  	while ( !t[i].isSpace() && !t[i].isNull() )	i++;
+     	
+     		value[attrcount] = t.left(i);
+     		t = t.remove(0,i).stripWhiteSpace();
+   		}
+   		
+   		// debug ( name+" , "+attr[attrcount]+"="+value[attrcount]+";" );
+   	
+   	}
+   	else {
+   	  value[attrcount]="";
+   	}
   	
   }
 
