@@ -26,6 +26,7 @@
 #include <qptrlist.h>
 #include <qvaluelist.h>
 #include <qmap.h>
+class QDomElement;
 
 class Tag;
 class QListViewItem;
@@ -71,6 +72,10 @@ public:
   * The groupElementsList is cleared.
   */
  void operator =(Node* node);
+ 
+ /** For Kafka copy/paste */
+ void save(QDomElement& element) const;
+ bool load(QDomElement const& element);
 
  Node *next;
  Node *prev;

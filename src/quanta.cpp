@@ -119,6 +119,9 @@
 
 #include "project.h"
 
+// For Kafka cut/copy/paste
+#include "wkafkapart.h"
+
 #include "whtmlpart.h"
 
 #include "abbreviation.h"
@@ -4598,9 +4601,13 @@ void QuantaApp::slotCut()
   Document *w = ViewManager::ref()->activeDocument();
   if(view && view->hadLastFocus() == QuantaView::VPLFocus)
   {
+    /*
     KMessageBox::information(this, i18n("Sorry, VPL does not support this functionality yet."),
       QString::null, "show cut unavailable");
+    */
+    KafkaDocument::ref()->slotCut();
     return;
+    
   }
   if(w)
   {
@@ -4634,8 +4641,9 @@ void QuantaApp::slotPaste()
   Document *w = ViewManager::ref()->activeDocument();
   if(view && view->hadLastFocus() == QuantaView::VPLFocus)
   {
-    KMessageBox::information(this, i18n("Sorry, VPL does not support this functionality yet."),
-      QString::null, "show paste unavailable");
+    //KMessageBox::information(this, i18n("Sorry, VPL does not support this functionality yet."),
+      //QString::null, "show paste unavailable");
+    KafkaDocument::ref()->slotPaste();
     return;
   }
   if(w)

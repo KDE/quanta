@@ -19,6 +19,7 @@
 #include <qdict.h>
 #include <qstring.h>
 #include <qcstring.h>
+#include <qdom.h> 
 
 #include <kdebug.h>
 
@@ -29,6 +30,33 @@
 
 #include "parser.h"
 #include "node.h"
+
+
+void TagAttr::save(QDomElement& element) const
+{
+    element.setAttribute("name", name);             // QString
+    element.setAttribute("value", value);           // QString
+    element.setAttribute("nameLine", nameLine);     // int
+    element.setAttribute("nameCol", nameCol);       // int
+    element.setAttribute("valueLine", valueLine);   // int
+    element.setAttribute("valueCol", valueCol);     // int
+    element.setAttribute("quoted", quoted);         // bool
+    element.setAttribute("special", special);       // bool
+}
+
+bool TagAttr::load(QDomElement const& element)
+{
+    name = element.attribute("name");
+    value = element.attribute("value");
+    nameLine = QString(element.attribute("nameLine")).toInt();
+    nameCol = QString(element.attribute("nameCol")).toInt();
+    valueLine = QString(element.attribute("valueLine")).toInt();
+    valueCol = QString(element.attribute("valueCol")).toInt();
+    quoted = QString(element.attribute("quoted")).toInt();
+    special = QString(element.attribute("special")).toInt();
+
+    return true;
+}
 
 
 Tag::Tag()
@@ -96,6 +124,69 @@ void Tag::init()
   m_cleanStrBuilt = true;
   m_indentationDone = true;
   m_notInTree = false;
+}
+
+void Tag::save(QDomElement& element) const
+{
+    element.setAttribute("name", name);                         // QString
+    element.setAttribute("nameSpace", nameSpace);               // QString
+    element.setAttribute("cleanStr", cleanStr);                 // QString
+    element.setAttribute("type", type);                         // int
+    element.setAttribute("single", single);                     // bool
+    element.setAttribute("closingMissing", closingMissing);     // bool
+    element.setAttribute("structBeginStr", structBeginStr);     // QString
+    element.setAttribute("validXMLTag", validXMLTag);           // bool
+    element.setAttribute("cleanStrBuilt", m_cleanStrBuilt);     // bool
+    element.setAttribute("indentationDone", m_indentationDone); // bool
+    element.setAttribute("notInTree", m_notInTree);             // bool
+    element.setAttribute("nameLine", m_nameLine);               // int
+    element.setAttribute("nameCol", m_nameCol);                 // int
+
+    QValueList<TagAttr>::const_iterator it;
+    for (it = attrs.begin(); it != attrs.end(); ++it) 
+    {
+        QDomElement child_element = element.ownerDocument().createElement("tagAttr");
+        element.appendChild(child_element);
+        (*it).save(child_element);
+    }
+
+    element.setAttribute("tagStr", m_tagStr);                   // QString    
+}
+
+bool Tag::load(QDomElement const& element)
+{
+    name = element.attribute("name");                         // QString
+    nameSpace = element.attribute("nameSpace");               // QString
+    cleanStr = element.attribute("cleanStr");                 // QString
+    type = QString(element.attribute("type")).toInt();                         // int
+    single = QString(element.attribute("single")).toInt();                     // bool
+    closingMissing = QString(element.attribute("closingMissing")).toInt();     // bool
+    structBeginStr = element.attribute("structBeginStr");     // QString
+    validXMLTag = QString(element.attribute("validXMLTag")).toInt();           // bool
+    m_cleanStrBuilt = QString(element.attribute("cleanStrBuilt")).toInt();     // bool
+    m_indentationDone = QString(element.attribute("indentationDone")).toInt(); // bool
+    m_notInTree = QString(element.attribute("notInTree")).toInt();             // bool
+    m_nameLine = QString(element.attribute("nameLine")).toInt();               // int
+    m_nameCol = QString(element.attribute("nameCol")).toInt();                 // int
+
+    QDomNodeList list = element.childNodes();
+    for (unsigned int i = 0; i != list.count(); ++i) 
+    {
+        if (list.item(i).isElement()) 
+        {
+            QDomElement e = list.item(i).toElement();
+            if (e.tagName() == "tagAttr") 
+            {
+                TagAttr tag_attr;
+                tag_attr.load(e);
+                addAttribute(tag_attr);
+            }
+        }
+    }
+    
+    m_tagStr = element.attribute("tagStr");                   // QString    
+
+    return true;
 }
 
 void Tag::parse(const QString &p_tagStr, Document *p_write)

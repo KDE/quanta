@@ -124,6 +124,16 @@ public:
 	 */
 	void disconnectAllDomNodes();
         
+    /**
+     * Translate Kafka selection info into Quanta's info
+       @param startNode Selection starting node.
+       @param startOffset Offset of startNode.
+       @param startNode Selection ending node.
+       @param startOffset Offset of endNode.
+     */
+    void getSelection(Node* startNode, int& startOffset, 
+                      Node* endNode, int& endOffset);
+         
         
         /* --------------------------- CURSOR AND SELECTION  HANDLING --------------------------*/
 
@@ -132,7 +142,7 @@ public:
          * @param nodeSelection The coordinates of the selection and cursor.
          */
         void setCursorAndSelection(NodeSelectionInd *nodeSelection);
-         
+        
 
 	/* --------------------------- KAFKA/QUANTA NODES CREATION -----------------------------*/
 
@@ -436,6 +446,10 @@ public slots:
 	 * Called whenever a DOM::Node get the focus
 	 */
 	void slotdomNodeNewCursorPos(DOM::Node _domNode, int offset);
+    
+    void slotCut();
+    void slotCopy();
+    void slotPaste();
 
 public:
 	//use a QPtrList aferwards

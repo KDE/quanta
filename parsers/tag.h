@@ -19,6 +19,7 @@
 #include <qstring.h>
 #include <qdict.h>
 #include <qvaluelist.h>
+class QDomElement;
 
 #include "qtag.h"
 
@@ -36,6 +37,11 @@ class Document;
 
 struct TagAttr {
   TagAttr() {nameLine = nameCol = valueLine = valueCol = 0; quoted = true; special = false;}
+  
+  /** For Kafka copy/paste */
+  void save(QDomElement& element) const;
+  bool load(QDomElement const& element);
+  
   QString name;           //attr name
   QString value;          //attr value
   int nameLine, nameCol;  //where the attr name begins
@@ -66,6 +72,10 @@ public:
   ~Tag();
   Tag operator = ( const Tag& );
 
+  /** For Kafka copy/paste */
+  void save(QDomElement& element) const;
+  bool load(QDomElement const& element);
+  
   /** Parse the p_tagStr in p_write and build up the tag's attributes and values */
   void parse (const QString &p_tagStr, Document *p_write);
   /** Return the attribute at index*/

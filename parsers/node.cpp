@@ -16,6 +16,7 @@
  ***************************************************************************/
 //qt includes
 #include <qlistview.h>
+#include <qdom.h> 
 
 #include <kdebug.h>
 
@@ -73,6 +74,104 @@ Node::~Node()
   groupTag = 0L;
   delete m_rootNode;
   delete m_leafNode;
+}
+
+void Node::save(QDomElement& element) const
+{
+    QDomElement child_element;
+    if(next)
+    {
+        child_element = element.ownerDocument().createElement("nodeNext");
+        element.appendChild(child_element);
+        next->save(child_element);
+    }
+    if(prev)
+    {
+        child_element = element.ownerDocument().createElement("nodePrev");
+        element.appendChild(child_element);
+        prev->save(child_element);
+    }
+    if(parent)
+    {
+        child_element = element.ownerDocument().createElement("nodeParent");
+        element.appendChild(child_element);
+        parent->save(child_element);
+    }
+    if(child)
+    {
+        child_element = element.ownerDocument().createElement("nodeChild");
+        element.appendChild(child_element);
+        child->save(child_element);
+    }
+    if(_closingNode)
+    {
+        child_element = element.ownerDocument().createElement("nodeClosing");
+        element.appendChild(child_element);
+        _closingNode->save(child_element);
+    }
+    
+    Q_ASSERT(tag);
+    child_element = element.ownerDocument().createElement("tag");
+    element.appendChild(child_element);
+    tag->save(child_element);
+
+    element.setAttribute("closesPrevious", closesPrevious);           // bool
+    element.setAttribute("opened", opened);     // bool
+    element.setAttribute("removeAll", removeAll); // bool
+    element.setAttribute("insideSpecial", insideSpecial);             // bool
+    element.setAttribute("specialInsideXml", specialInsideXml);             // bool
+    element.setAttribute("fileName", fileName);                         // QString
+}
+
+bool Node::load(QDomElement const& element)
+{
+    QDomNodeList list = element.childNodes();
+    for(unsigned int i = 0; i != list.count(); ++i) 
+    {
+        if(list.item(i).isElement()) 
+        {
+            QDomElement e = list.item(i).toElement();
+            if(e.tagName() == "nodeNext") 
+            {
+                next = new Node(0);
+                next->load(e);
+            }
+            else if(e.tagName() == "nodePrev") 
+            {
+                prev = new Node(0);
+                prev->load(e);
+            }
+            else if(e.tagName() == "nodeParent") 
+            {
+                parent = new Node(0);
+                parent->load(e);
+            }
+            else if(e.tagName() == "nodeChild") 
+            {
+                child = new Node(0);
+                child->load(e);
+            }
+            else if(e.tagName() == "nodeClosing") 
+            {
+                _closingNode = new Node(0);
+                _closingNode->load(e);
+            }
+            else if(e.tagName() == "tag") 
+            {
+                tag = new Tag();
+                tag->load(e);
+            }
+        }
+    }    
+    
+    closesPrevious = QString(element.attribute("closesPrevious")).toInt();  // bool
+    opened = QString(element.attribute("opened")).toInt();     // bool
+    removeAll = QString(element.attribute("removeAll")).toInt(); // bool
+    insideSpecial = QString(element.attribute("insideSpecial")).toInt();    // bool
+    specialInsideXml = QString(element.attribute("specialInsideXml")).toInt();  // bool
+    fileName = element.attribute("fileName");                         // QString
+
+    return true;
 }
 
 Node *Node::nextSibling()
