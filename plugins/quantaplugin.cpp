@@ -134,6 +134,7 @@ bool QuantaPlugin::load()
     KMessageBox::error(quantaApp, i18n("<qt>The <b>%1</b> plugin could not be loaded!<br>Possible reasons are:<br>    - <b>%2</b> is not installed;<br>    - the file <i>%3</i> is not installed or it is not reachable.").arg(m_name).arg(m_name).arg(m_fileName));
     return false;
   }
+  m_part->widget()->setName(m_name);
   return true;
 }
 
