@@ -3650,7 +3650,7 @@ bool QuantaApp::queryClose()
     if (canExit)
     {
       //avoid double question about saving files, so set the "modified"
-      //flags to "false". This is safe here.
+      //flags to "false". This is safe here, as exiting cannot be canceled anymore.
       Document *w;
       KMdiIterator<KMdiChildView*> *it = quantaApp->createIterator();
       QuantaView *view;
@@ -3665,7 +3665,7 @@ bool QuantaApp::queryClose()
       }
       delete it;
 
-      Project::ref()->slotCloseProject();
+      Project::ref()->slotSaveProject();
       ViewManager::ref()->closeAll(false);
       disconnect(this, SIGNAL(lastChildViewClosed()), ViewManager::ref(), SLOT(slotLastViewClosed()));
     }
