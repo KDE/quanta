@@ -33,6 +33,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kshortcut.h>
+#include <kstandarddirs.h>
 #include <ktempfile.h>
 #include <ktexteditor/cursorinterface.h>
 #include <ktexteditor/viewcursorinterface.h>
@@ -212,7 +213,7 @@ void TagAction::insertTag(bool inputFromFile, bool outputToFile)
               end = args.find('\'', pos);
         }  else
         {
-          end = args.find('"', pos)'
+          end = args.find('"', pos);
         }
         if (begin == -1 || end != -1)
         {
@@ -224,13 +225,12 @@ void TagAction::insertTag(bool inputFromFile, bool outputToFile)
               end = args.length();
         }
         scriptname = args.mid(begin, end - begin);
-        kdDebug(24000) << "Script name is: " << scriptname << endl;
-        scriptname = scriptname.section('/', -1);
+        scriptname.replace("%scriptdir","scripts");
+//        kdDebug(24000) << "Script name is: " << scriptname << endl;
         scriptname = locate("appdata", scriptname);
-        kdDebug(24000) << "Script found at: " << scriptname << endl;
+//        kdDebug(24000) << "Script found at: " << scriptname << endl;
         args.replace(begin, end - begin, scriptname);
-        kdDebug(24000) << "Modified argument list: " << args << endl;
-
+//        kdDebug(24000) << "Modified argument list: " << args << endl;
       }
       *proc << args;
     }
