@@ -21,6 +21,8 @@
 #include <qcheckbox.h>
 #include <qlayout.h>
 #include <qlabel.h>
+#include <qtooltip.h>
+#include <qwhatsthis.h>
 
 Tagxml::Tagxml( QDomDocument &d, QWidget *parent, const char *name) : TagWidget(parent, name), doc(d)
 {
@@ -30,7 +32,6 @@ Tagxml::Tagxml( QDomDocument &d, QWidget *parent, const char *name) : TagWidget(
 
    for ( QDomNode n = d.firstChild().firstChild().firstChild(); !n.isNull(); n = n.nextSibling() )
    {
-
      QDomNode location = findChild(n,"location");
      if ( location.isNull() )
      	 continue;
@@ -46,11 +47,36 @@ Tagxml::Tagxml( QDomDocument &d, QWidget *parent, const char *name) : TagWidget(
 
      // qDebug("%s col:%d row:%d cs:%d, rs:%d", n.nodeName().data(), col,row,colspan,rowspan );
 
+     QString tip;
+     QDomNode tooltip = findChild( n ,"tooltip" );
+     if ( !tooltip.isNull() ) {
+         if ( tooltip.firstChild().isText() ) {
+             QDomText text = tooltip.firstChild().toText();
+             tip = text.data();
+         }
+     }
+     QString whatsThis;
+     QDomNode what = findChild( n ,"whatsthis" );
+     if ( !what.isNull() ) {
+         if ( what.firstChild().isText() ) {
+             QDomText text = what.firstChild().toText();
+             whatsThis = text.data();
+         }
+     }
+
+     warning( "quanta: tooltip '%s'\n", (const char *) tip );
+     warning( "quanta: whatsthis '%s'\n", (const char *) whatsThis );
+
      if ( n.nodeName() == "label" ) {
      	  QLabel *label = new QLabel(this);
      	  QDomElement ltext = findChild(n,"text").toElement();
      	  if ( !ltext.isNull() )
      	  	label->setText( ltext.text() );
+
+          if ( tip != QString::null )
+              QToolTip::add( label, tip );
+          if ( whatsThis != QString::null )
+              QWhatsThis::add( label, whatsThis );
      	  	
      	  grid->addMultiCellWidget( label, row, row+rowspan, col,  col+colspan );
      }
@@ -63,7 +89,12 @@ Tagxml::Tagxml( QDomDocument &d, QWidget *parent, const char *name) : TagWidget(
         if ( type == "input" ) {
         	 KLineEdit *w = new KLineEdit(this);
         	 grid->addMultiCellWidget( w, row, row+rowspan, col,  col+colspan );
-        	
+
+             if ( tip != QString::null )
+                 QToolTip::add( w, tip );
+             if ( whatsThis != QString::null )
+                 QWhatsThis::add( w, whatsThis );
+
         	 Attr_line *attr = new Attr_line(&el,w);
         	 attributes.append(attr);
         }
@@ -76,6 +107,11 @@ Tagxml::Tagxml( QDomDocument &d, QWidget *parent, const char *name) : TagWidget(
 		     	 if ( !ltext.isNull() )
     	 	  	 w->setText( ltext.text() );
         	
+             if ( tip != QString::null )
+                 QToolTip::add( w, tip );
+             if ( whatsThis != QString::null )
+                 QWhatsThis::add( w, whatsThis );
+
         	 Attr_check *attr = new Attr_check(&el,w);
         	 attributes.append(attr);
         }
@@ -84,6 +120,11 @@ Tagxml::Tagxml( QDomDocument &d, QWidget *parent, const char *name) : TagWidget(
         	 QComboBox *w = new QComboBox(true,this);
         	 grid->addMultiCellWidget( w, row, row+rowspan, col,  col+colspan );
         	
+             if ( tip != QString::null )
+                 QToolTip::add( w, tip );
+             if ( whatsThis != QString::null )
+                 QWhatsThis::add( w, whatsThis );
+
         	 Attr_list *attr = new Attr_list(&el,w);
         	 attributes.append(attr);
         }
@@ -92,6 +133,11 @@ Tagxml::Tagxml( QDomDocument &d, QWidget *parent, const char *name) : TagWidget(
         	 ColorCombo *w = new ColorCombo(this);
         	 grid->addMultiCellWidget( w, row, row+rowspan, col,  col+colspan );
         	
+             if ( tip != QString::null )
+                 QToolTip::add( w, tip );
+             if ( whatsThis != QString::null )
+                 QWhatsThis::add( w, whatsThis );
+
         	 Attr_color *attr = new Attr_color(&el,w);
         	 attributes.append(attr);
         }
@@ -100,6 +146,11 @@ Tagxml::Tagxml( QDomDocument &d, QWidget *parent, const char *name) : TagWidget(
         	 FileCombo *w = new FileCombo(basePath, this);
         	 grid->addMultiCellWidget( w, row, row+rowspan, col,  col+colspan );
         	
+             if ( tip != QString::null )
+                 QToolTip::add( w, tip );
+             if ( whatsThis != QString::null )
+                 QWhatsThis::add( w, whatsThis );
+
         	 Attr_file *attr = new Attr_file(&el,w);
         	 attributes.append(attr);
         }
