@@ -3,13 +3,13 @@
 <tag name="p" hasScript="1" hasCore="1" hasI18n="1">
     
 	<stoppingtags>
-        <stoppingtag>p</stoppingtag>
-        <stoppingtag>li</stoppingtag>
-        <stoppingtag>td</stoppingtag>
-        <stoppingtag>tr</stoppingtag>
-        <stoppingtag>th</stoppingtag>
-        <stoppingtag>dt</stoppingtag>
-        <stoppingtag>dd</stoppingtag>
+        <stoppingtag name="p" />
+        <stoppingtag name="li" />
+        <stoppingtag name="td" />
+        <stoppingtag name="tr" />
+        <stoppingtag name="th" />
+        <stoppingtag name="dt" />
+        <stoppingtag name="dd" />
     </stoppingtags>
 
 </tag>

@@ -42,8 +42,8 @@
     </attr>
 	
     <stoppingtags>
-        <stoppingtag>tr</stoppingtag>
-        <stoppingtag>tfoot</stoppingtag>
+        <stoppingtag name="tr" />
+        <stoppingtag name="tfoot" />
     </stoppingtags>
 </tag>
 </TAGS>

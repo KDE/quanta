@@ -66,13 +66,13 @@
   </attr>
 
   <stoppingtags>
-   <stoppingtag>include</stoppingtag>
-   <stoppingtag>import</stoppingtag>
-   <stoppingtag>redefine</stoppingtag>
-   <stoppingtag>simpleType</stoppingtag>
-   <stoppingtag>complexType</stoppingtag>
-   <stoppingtag>element</stoppingtag>
-   <stoppingtag>notation</stoppingtag>
+   <stoppingtag name="include" />
+   <stoppingtag name="import" />
+   <stoppingtag name="redefine" />
+   <stoppingtag name="simpleType" />
+   <stoppingtag name="complexType" />
+   <stoppingtag name="element" />
+   <stoppingtag name="notation" />
   </stoppingtags>
  </tag>
 </TAGS>

@@ -30,7 +30,7 @@
     </spacer>
     
     <stoppingtags>
-	<stoppingtag>option</stoppingtag>
+	<stoppingtag name="option" />
     </stoppingtags>
 
 </tag>

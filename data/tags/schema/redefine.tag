@@ -22,12 +22,12 @@
   </attr>
 
   <stoppingtags>
-   <stoppingtag>include</stoppingtag>
-   <stoppingtag>import</stoppingtag>
-   <stoppingtag>redefine</stoppingtag>
-   <stoppingtag>element</stoppingtag>
-   <stoppingtag>attribute</stoppingtag>
-   <stoppingtag>notation</stoppingtag>
+   <stoppingtag name="include" />
+   <stoppingtag name="import" />
+   <stoppingtag name="redefine" />
+   <stoppingtag name="element" />
+   <stoppingtag name="attribute" />
+   <stoppingtag name="notation" />
   </stoppingtags>
  </tag>
 </TAGS>

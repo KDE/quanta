@@ -20,7 +20,7 @@
     </spacer>
 
     <stoppingtags>
-        <stoppingtag>select</stoppingtag>
+        <stoppingtag name="select" />
     </stoppingtags>
 
 

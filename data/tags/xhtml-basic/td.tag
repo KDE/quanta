@@ -74,9 +74,9 @@
     <attr name="axis"> </attr>
     
     <stoppingtags>
-        <stoppingtag>td</stoppingtag>
-        <stoppingtag>tr</stoppingtag>
-        <stoppingtag>th</stoppingtag>
+        <stoppingtag name="td" />
+        <stoppingtag name="tr" />
+        <stoppingtag name="th" />
     </stoppingtags>
 
 </tag>

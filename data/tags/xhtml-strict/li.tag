@@ -46,7 +46,7 @@
     </spacer>
 
     <stoppingtags>
-        <stoppingtag>li</stoppingtag>
+        <stoppingtag name="li" />
     </stoppingtags>
 </tag>
 </TAGS>

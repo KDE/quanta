@@ -110,7 +110,7 @@
     </spacer>
 
     <stoppingtags>
-        <stoppingtag>li</stoppingtag>
+        <stoppingtag name="li" />
     </stoppingtags>
 
     <kafkainfos>

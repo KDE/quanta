@@ -2,8 +2,8 @@
 <TAGS>
 <tag name="dd" hasCore="1" hasI18n="1" hasScript="1" optional="1">
 	<stoppingtags>
-		<stoppingtag>dt</stoppingtag>
-		<stoppingtag>dd</stoppingtag>
+		<stoppingtag name="dt" />
+		<stoppingtag name="dd" />
 	</stoppingtags>
 	<kafkainfos>
 		<rootnode canbedeleted="true" canbemodified="true" canhavecursorfocus="no" cursorcanenter="true">
@@ -81,8 +81,8 @@
 </tag>
 <tag name="dt" hasCore="1" hasI18n="1" hasScript="1" optional="1">
 	<stoppingtags>
-		<stoppingtag>dt</stoppingtag>
-		<stoppingtag>dd</stoppingtag>
+		<stoppingtag name="dt" />
+		<stoppingtag name="dd" />
 	</stoppingtags>
 	<kafkainfos>
 		<rootnode canbedeleted="true" canbemodified="true" canhavecursorfocus="no" cursorcanenter="true">

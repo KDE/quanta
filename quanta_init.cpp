@@ -897,10 +897,13 @@ void QuantaApp::setAttributes(QDomNode *dom, QTag* tag)
      QDomElement item = el.firstChild().toElement();
      while ( !item.isNull() )
      {
-       QString childTag = item.tagName();
-       if (!tag->parentDTD->caseSensitive)
-           childTag = childTag.upper();
-       tag->childTags.insert(childTag, item.attribute("usage") == "required");
+		   if (item.tagName() == "child")
+			 {
+					QString childTag = item.attribute("name");
+					if (!tag->parentDTD->caseSensitive)
+							childTag = childTag.upper();
+					tag->childTags.insert(childTag, item.attribute("usage") == "required");
+			 }
        item = item.nextSibling().toElement();
      }
    }
@@ -910,9 +913,13 @@ void QuantaApp::setAttributes(QDomNode *dom, QTag* tag)
      QDomElement item = el.firstChild().toElement();
      while ( !item.isNull() )
      {
-       QString stopTag = item.text();
-       if (!tag->parentDTD->caseSensitive) stopTag = stopTag.upper();
-       tag->stoppingTags.append(stopTag);
+       if (item.tagName() == "stoppingtag")
+       {
+         QString stopTag = item.attribute("name");
+         if (!tag->parentDTD->caseSensitive)
+			      stopTag = stopTag.upper();
+         tag->stoppingTags.append(stopTag);
+       }
        item = item.nextSibling().toElement();
      }
    } else
