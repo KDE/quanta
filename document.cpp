@@ -1147,12 +1147,10 @@ QString Document::findDTDName(int startLine, int endLine, bool searchPseudoDTD)
  uint line, col;
  viewCursorIf->cursorPositionReal(&line,&col); //current cursor position
 
- bool found = false;
  QString foundText = "";
  Tag *tag;
  int direction = (startLine > endLine)?-1:1; //search direction
  int pos = 0;
- int pos2;
  int i = startLine;
  bool endReached;
  QString text;
@@ -1164,34 +1162,37 @@ QString Document::findDTDName(int startLine, int endLine, bool searchPseudoDTD)
    {
      if (i == startLine) text = this->text(i, 0, i, col);
      pos = scriptBeginRx.searchRev(text);
-     pos2 = scriptEndRx.searchRev(text);
-     if (pos > pos2) //a script begin area was found
+     if (pos != -1)
      {
-       if (text.mid(pos,7).lower() == "<script")
-       {
-         tag = findXMLTag(i, pos, true);
-         foundText = tag->attributeValue("language");
-       } else
-       {
-         foundText = scriptBeginRx.cap(0);
+         foundText = scriptBeginRx.cap(0).lower();
          QDictIterator<DTDStruct> it(*dtds);
          for( ; it.current(); ++it )
          {
            DTDStruct *dtd = it.current();
            if (dtd->family == Script)
            {
-             if (dtd->scriptTagStart.contains(foundText))
+             int index = dtd->scriptTagStart.findIndex(foundText);
+             if (index !=-1)
              {
-               foundText = dtd->name;
-               break; //exit the for
+               QString t = this->text(i, pos, line, col);
+               if (t.find(dtd->scriptTagEnd[index],0,false) == -1)
+               {
+                 if (text.mid(pos,7).lower() == "<script")
+                 {
+                   tag = findXMLTag(i, pos, true);
+                   foundText = tag->attributeValue("language");
+                   delete tag;
+                 } else
+                 {
+                   foundText = dtd->name;
+                 }
+                 searchPseudoDTD = false;
+                 break; //exit the for
+               }
              }
            }
          } //FOR
-       }
-       break; //exit the while
-     } else
-     {
-       if (pos2 != -1) searchPseudoDTD = false;
+         if (!searchPseudoDTD) break;
      }
    }
    //search for !DOCTYPE tags

@@ -950,6 +950,11 @@ void QuantaApp::readTagDir(QString &dirName)
 
  dtdConfig->setGroup("Extra rules");
  dtd->scriptName = (dtdConfig->readEntry("ScriptName")).lower();
+ if (!dtd->scriptName.isEmpty())
+ {
+   dtd->scriptTagStart.append("<script");
+   dtd->scriptTagEnd.append("/script>");
+ }
  dtd->scriptRegExpStr = dtdConfig->readEntry("ScriptRegExp");
  QStringList tagBorders = dtdConfig->readListEntry("ScriptTagBorders");
 
@@ -974,6 +979,7 @@ void QuantaApp::readTagDir(QString &dirName)
    s.replace(QRegExp("\\$"),"\\$");
    scriptEndRxStr.append("|("+s+")");
  }
+
  dtd->booleanAttributes = dtdConfig->readEntry("BooleanAttributes","extended");
  dtd->booleanTrue = dtdConfig->readEntry("BooleanTrue","true");
  dtd->booleanFalse = dtdConfig->readEntry("BooleanFalse","false");

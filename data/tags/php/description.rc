@@ -14,7 +14,9 @@ apache_lookup_uri = filename
 
 [Extra rules]
 ScriptName = php
-ScriptRegExp = (<\?.+\?>)|(<\*.+\*>)
+ScriptTagBorders = <? ?>, <* *>
+
+ScriptRegExp = (<\?.+\?>) | (<\*.+\*>)
 
 
 Block variations = 1
