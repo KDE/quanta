@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="quanta" version="32008">
+<kpartgui name="quanta" version="32009">
   <MenuBar noMerge="1">
 
     <Menu name="file" noMerge="1"><text>&amp;File</text>
@@ -34,7 +34,7 @@
     <Action name="edit_cut" />
     <Action name="edit_copy" />
     <Action name="edit_paste" />
-    <Menu name="paste_special" append="edit_paste_merge"><text>Paste &amp;Special</text>
+    <Menu name="paste_special" append="edit_paste_merge"><text>Paste Specia&amp;l</text>
          <Action name="edit_paste_html_quoted"/>
          <Action name="edit_paste_url_encoded"/>
       </Menu>
