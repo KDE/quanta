@@ -89,6 +89,8 @@ install-data-local:
 	$(INSTALL_DATA) $(srcdir)/upload_file.png $(kde_datadir)/quanta/toolbar/upload_file.png
 	$(INSTALL_DATA) $(srcdir)/options.png $(kde_datadir)/quanta/toolbar/options.png
 	$(INSTALL_DATA) $(srcdir)/ftpclient.png $(kde_datadir)/quanta/toolbar/ftpclient.png
+	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/apps/
+	$(INSTALL_DATA) $(srcdir)/quanta.png $(kde_icondir)/hicolor/22x22/apps/quanta.png
 
 
 uninstall-local:
@@ -178,3 +180,4 @@ uninstall-local:
 	-rm -f $(kde_datadir)/quanta/toolbar/upload_file.png
 	-rm -f $(kde_datadir)/quanta/toolbar/options.png
 	-rm -f $(kde_datadir)/quanta/toolbar/ftpclient.png
+	-rm -f $(kde_icondir)/hicolor/48x48/apps/quanta.png

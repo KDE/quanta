@@ -7,11 +7,11 @@ SUBDIRS = icons widgets kwrite treeviews tagdialogs data dialogs parser project 
 EXTRA_DIST = main.cpp quanta.cpp quanta.h quantadoc.cpp quantadoc.h quantaview.cpp quantaview.h resource.h quanta.desktop quanta.xpm mini-quanta.xpm quanta_init.cpp quantaview_init.cpp document.cpp document.h quantaview_slots.cpp qextfileinfo.cpp qextfileinfo.h 
 
 install-data-local:
-	$(mkinstalldirs) $(kde_appsdir)/Applications/
-	$(INSTALL_DATA) $(srcdir)/quanta.desktop $(kde_appsdir)/Applications/quanta.desktop
+	$(mkinstalldirs) $(kde_appsdir)/Office/
+	$(INSTALL_DATA) $(srcdir)/quanta.desktop $(kde_appsdir)/Office/quanta.desktop
 
 uninstall-local:
-	-rm -f $(kde_appsdir)/Applications/quanta.desktop
+	-rm -f $(kde_appsdir)/Office/quanta.desktop
 
 # set the include path for X, qt and KDE
 INCLUDES= $(all_includes)

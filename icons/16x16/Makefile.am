@@ -31,8 +31,8 @@ install-data-local:
 	$(INSTALL_DATA) $(srcdir)/tag_br_small.png $(kde_datadir)/quanta/toolbar/tag_br_small.png
 	$(INSTALL_DATA) $(srcdir)/tag_font_small.png $(kde_datadir)/quanta/toolbar/tag_font_small.png
 	$(INSTALL_DATA) $(srcdir)/tag_hr_small.png $(kde_datadir)/quanta/toolbar/tag_hr_small.png
-	$(mkinstalldirs) $(kde_icondir)/locolor/16x16/apps/
-	$(INSTALL_DATA) $(srcdir)/quanta.png $(kde_icondir)/locolor/16x16/apps/quanta.png
+	$(mkinstalldirs) $(kde_icondir)/hicolor/16x16/apps/
+	$(INSTALL_DATA) $(srcdir)/quanta.png $(kde_icondir)/hicolor/16x16/apps/quanta.png
 
 uninstall-local:
 	-rm -f $(kde_datadir)/quanta/toolbar/delete.png
@@ -63,4 +63,4 @@ uninstall-local:
 	-rm -f $(kde_datadir)/quanta/toolbar/tag_br_small.png
 	-rm -f $(kde_datadir)/quanta/toolbar/tag_font_small.png
 	-rm -f $(kde_datadir)/quanta/toolbar/tag_hr_small.png
-	-rm -f $(kde_icondir)/locolor/16x16/apps/quanta.png
+	-rm -f $(kde_icondir)/hicolor/16x16/apps/quanta.png
