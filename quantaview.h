@@ -191,6 +191,10 @@ insert color in the text */
   void slotGetScriptOutput(KProcess *proc, char *buffer, int buflen);
   void slotGetScriptError (KProcess *proc, char *buffer, int buflen);
 
+  void slotPasteHTMLQuoted();
+  void slotPasteURLEncoded();
+
+
   signals: // Signals
   /**  */
   void newCurPos();

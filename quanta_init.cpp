@@ -91,7 +91,7 @@ QDict <QStrList> *tagsDict;
 //
 // Enable this define to test the KAction/XMLGUI code (Rich).
 //
-// #define NEW_STUFF
+#define NEW_STUFF
 //
 
 #ifdef NEW_STUFF
@@ -1329,7 +1329,7 @@ void QuantaApp::initActions()
     (void) new KAction( i18n( "Show Tr&ee" ), "tree_win", CTRL+Key_T,
                         this, SLOT( slotShowLeftPanel() ),
                         actionCollection(), "show_tree" );
-    (void) new KAction( i18n( "Show &Messages" ), CTRL+Key_B, this, SLOT( slotViewMessages() ),
+    (void) new KAction( i18n( "Show &Messages" ), CTRL+Key_M, this, SLOT( slotViewMessages() ),
                         actionCollection(), "show_messages" );
     (void) new KAction( i18n( "&Preview" ), "preview", Key_F6, this, SLOT( slotShowPreview() ),
                         actionCollection(), "show_preview" );

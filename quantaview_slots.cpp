@@ -23,6 +23,7 @@
 #include <qregexp.h>
 #include <qdir.h>
 #include <qcstring.h>
+#include <qclipboard.h>
 
 // include files for KDE
 #include <kapp.h>
@@ -620,4 +621,30 @@ void QuantaView::slotGetScriptError(KProcess *, char *buffer, int buflen)
 
   beginOfScriptError = false;
 
+}
+
+/** insert clipboard contents (but quote them for HTML first) */
+void QuantaView::slotPasteHTMLQuoted()
+{
+    QClipboard *cb = qApp->clipboard();
+    QString text = cb->text();
+
+    if ( ( !text.isNull() ) && (!text.isEmpty() ) ) {
+        text.replace( QRegExp( I18N_NOOP( "&" ) ), I18N_NOOP( "&amp;" ) );
+        text.replace( QRegExp( I18N_NOOP( "<" ) ), I18N_NOOP( "&lt;" ) );
+        text.replace( QRegExp( I18N_NOOP( "\"" ) ), I18N_NOOP( "&quot;" ) );
+        write()->insertText( text );
+    }
+}
+
+/** insert clipboard contents (but quote them as a URL first) */
+void QuantaView::slotPasteURLEncoded()
+{
+    QClipboard *cb = qApp->clipboard();
+    QString text = cb->text();
+
+    if ( ( !text.isNull() ) && (!text.isEmpty() ) ) {
+        text = KURL::encode_string( text );
+        write()->insertText( text );
+    }
 }

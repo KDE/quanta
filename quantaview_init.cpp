@@ -43,7 +43,7 @@
 //
 // Enable this define to test the KAction/XMLGUI code (Rich).
 //
-// #define NEW_STUFF
+#define NEW_STUFF
 //
 
 #ifdef NEW_STUFF
@@ -560,31 +560,60 @@ void QuantaView::initActions()
                         this, SLOT( slotTagFont() ),
                         actionCollection, "tag_font" );
 
+    (void) new KAction( i18n( "Color..." ), "color", CTRL+Key_NumberSign,
+                        this, SLOT( slotTagColor() ),
+                        actionCollection, "tag_color" );
+    (void) new KAction( i18n( "Date..." ), "date", 0,
+                        this, SLOT( slotTagDate() ),
+                        actionCollection, "tag_date" );
+    (void) new KAction( i18n( "EMail..." ), "tag_mail", 0,
+                        this, SLOT( slotTagMail() ),
+                        actionCollection, "tag_mail" );
+
+    (void) new KAction( i18n( "Paste &HTML Quoted" ), "editpaste", 0,
+                        this, SLOT( slotPasteHTMLQuoted() ),
+                        actionCollection, "edit_paste_html_quoted" );
+    (void) new KAction( i18n( "Paste &URL Encoded" ), "editpaste", 0,
+                        this, SLOT( slotPasteURLEncoded() ),
+                        actionCollection, "edit_paste_url_encoded" );
+
     //
     // Standard style tags
     //
-    QuantaTagAction *tagB = new QuantaTagAction( i18n( "Bold" ), "tag_bold", 0,
+    QuantaTagAction *tagB = new QuantaTagAction( i18n( "Bold" ), "tag_bold", CTRL+Key_B,
                                                  this, SLOT( slotTag() ),
                                                  actionCollection, "tag_b" );
     tagB->setTag( I18N_NOOP( "b" ) );
 
-    QuantaTagAction *tagI = new QuantaTagAction( i18n( "Italic" ), "tag_i", 0,
+    QuantaTagAction *tagI = new QuantaTagAction( i18n( "Italic" ), "tag_i", CTRL+Key_I,
                                                  this, SLOT( slotTag() ),
                                                  actionCollection, "tag_i" );
     tagI->setTag( I18N_NOOP( "i" ) );
 
-    QuantaTagAction *tagU = new QuantaTagAction( i18n( "Underline" ), "tag_u", 0,
+    QuantaTagAction *tagU = new QuantaTagAction( i18n( "Underline" ), "tag_u", CTRL+Key_U,
                                                  this, SLOT( slotTag() ),
                                                  actionCollection, "tag_u" );
     tagU->setTag( I18N_NOOP( "u" ) );
-    // TODO: BR
-    QuantaTagAction *tagP = new QuantaTagAction( i18n( "Paragraph" ), "tag_p", 0,
+
+    QuantaTagAction *tagBr = new QuantaTagAction( i18n( "New Line" ), "tag_br", CTRL+Key_Enter,
+                                                 this, SLOT( slotTag() ),
+                                                 actionCollection, "tag_br" );
+    tagBr->setTag( I18N_NOOP( "br" ) );
+
+    QuantaTagAction *tagP = new QuantaTagAction( i18n( "Paragraph" ), "tag_p", CTRL+Key_0,
                                                  this, SLOT( slotTag() ),
                                                  actionCollection, "tag_p" );
     tagP->setTag( I18N_NOOP( "p" ) );
-    // TODO: nbsp
-    // TODO: BR
-    // TODO: HR
+
+    (void) new KAction( i18n( "Non-Breaking Space" ), "tag_nbsp", CTRL+Key_Space,
+                        this, SLOT( slotTagNbsp() ),
+                        actionCollection, "tag_nbsp" );
+
+    QuantaTagAction *tagHr = new QuantaTagAction( i18n( "Horizontal Rule" ), "tag_hr", CTRL+Key_Equal,
+                                                  this, SLOT( slotTag() ),
+                                                  actionCollection, "tag_hr" );
+    tagHr->setTag( I18N_NOOP( "hr" ) );
+
     QuantaTagAction *tagComment = new QuantaTagAction( i18n( "Comment" ), "tag_comm", 0,
                                                  this, SLOT( slotTag() ),
                                                  actionCollection, "tag_comment" );
@@ -596,7 +625,7 @@ void QuantaView::initActions()
     QString start = tagCase( I18N_NOOP("<div %1>") );
     QString end = tagCase( I18N_NOOP("</div>") );
     start = start.arg( attrCase( I18N_NOOP("align%2") ) );
-    start = start.arg( "=\"left\"" );
+    start = start.arg( I18N_NOOP("=\"left\"") );
     tagDivLeft->setTag( start, end );
 
     QuantaTagAction *tagDivCenter = new QuantaTagAction( i18n( "Align Center" ), "div_center", 0,
@@ -605,7 +634,7 @@ void QuantaView::initActions()
     start = tagCase( I18N_NOOP("<div %1>") );
     end = tagCase( I18N_NOOP("</div>") );
     start = start.arg( attrCase( I18N_NOOP("align%2") ) );
-    start = start.arg( "=\"center\"" );
+    start = start.arg( I18N_NOOP("=\"center\"") );
     tagDivCenter->setTag( start, end );
 
     QuantaTagAction *tagDivRight = new QuantaTagAction( i18n( "Align Right" ), "div_right", 0,
@@ -614,7 +643,7 @@ void QuantaView::initActions()
     start = tagCase( I18N_NOOP("<div %1>") );
     end = tagCase( I18N_NOOP("</div>") );
     start = start.arg( attrCase( I18N_NOOP("align%2") ) );
-    start = start.arg( "=\"right\"" );
+    start = start.arg( I18N_NOOP("=\"right\"") );
     tagDivRight->setTag( start, end );
 
     QuantaTagAction *tagDivJustify = new QuantaTagAction( i18n( "Align Justify" ), "div_justify", 0,
@@ -623,7 +652,7 @@ void QuantaView::initActions()
     start = tagCase( I18N_NOOP("<div %1>") );
     end = tagCase( I18N_NOOP("</div>") );
     start = start.arg( attrCase( I18N_NOOP("align%2") ) );
-    start = start.arg( "=\"justify\"" );
+    start = start.arg( I18N_NOOP("=\"justify\"") );
     tagDivJustify->setTag( start, end );
     // TODO: CSS
 
@@ -670,23 +699,23 @@ void QuantaView::initActions()
     //
     // Headings
     //
-    QuantaTagAction *tagH1 = new QuantaTagAction( i18n( "Heading 1" ), "tag_h1", 0,
+    QuantaTagAction *tagH1 = new QuantaTagAction( i18n( "Heading 1" ), "tag_h1", CTRL+Key_1,
                                                    this, SLOT( slotTag() ),
                                                    actionCollection, "tag_h1" );
     tagH1->setTag( I18N_NOOP( "h1" ) );
-    QuantaTagAction *tagH2 = new QuantaTagAction( i18n( "Heading 2" ), "tag_h2", 0,
+    QuantaTagAction *tagH2 = new QuantaTagAction( i18n( "Heading 2" ), "tag_h2", CTRL+Key_2,
                                                    this, SLOT( slotTag() ),
                                                    actionCollection, "tag_h2" );
     tagH2->setTag( I18N_NOOP( "h2" ) );
-    QuantaTagAction *tagH3 = new QuantaTagAction( i18n( "Heading 3" ), "tag_h3", 0,
+    QuantaTagAction *tagH3 = new QuantaTagAction( i18n( "Heading 3" ), "tag_h3", CTRL+Key_3,
                                                    this, SLOT( slotTag() ),
                                                    actionCollection, "tag_h3" );
     tagH3->setTag( I18N_NOOP( "h3" ) );
-    QuantaTagAction *tagH4 = new QuantaTagAction( i18n( "Heading 4" ), "tag_h4", 0,
+    QuantaTagAction *tagH4 = new QuantaTagAction( i18n( "Heading 4" ), "tag_h4", CTRL+Key_4,
                                                    this, SLOT( slotTag() ),
                                                    actionCollection, "tag_h4" );
     tagH4->setTag( I18N_NOOP( "h4" ) );
-    QuantaTagAction *tagH5 = new QuantaTagAction( i18n( "Heading 5" ), "tag_h5", 0,
+    QuantaTagAction *tagH5 = new QuantaTagAction( i18n( "Heading 5" ), "tag_h5", CTRL+Key_5,
                                                    this, SLOT( slotTag() ),
                                                    actionCollection, "tag_h5" );
     tagH5->setTag( I18N_NOOP( "h5" ) );
@@ -766,7 +795,7 @@ void QuantaView::initActions()
     //
     // Lists
     //
-    QuantaTagAction *tagUl = new QuantaTagAction( i18n( "Unordered List" ), "tag_ul", 0,
+    QuantaTagAction *tagUl = new QuantaTagAction( i18n( "Unordered List" ), "tag_ul", CTRL+Key_U,
                         this, SLOT( slotTag() ),
                         actionCollection, "tag_ul" );
     tagUl->setTag( I18N_NOOP( "ul" ) );
@@ -776,7 +805,7 @@ void QuantaView::initActions()
                         actionCollection, "tag_ol" );
     tagOl->setTag( I18N_NOOP( "ol" ) );
 
-    QuantaTagAction *tagLi = new QuantaTagAction( i18n( "List Item" ), "tag_li", 0,
+    QuantaTagAction *tagLi = new QuantaTagAction( i18n( "List Item" ), "tag_li", CTRL+Key_L,
                         this, SLOT( slotTag() ),
                         actionCollection, "tag_li" );
     tagLi->setTag( I18N_NOOP( "li" ) );
