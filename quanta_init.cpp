@@ -1044,18 +1044,23 @@ void QuantaApp::readTagDir(QString &dirName)
 {
  if (!QFile::exists(dirName + "description.rc"))
      return;
- QString tmpStr;
+ QString tmpStr = dirName + "description.rc";
  QStringList tmpStrList;
+ KConfig *dtdConfig = new KConfig(tmpStr);
+ dtdConfig->setGroup("General");
+ QString dtdName = dtdConfig->readEntry("Name", "Unknown");
+ if (dtds->find(dtdName.lower()))
+ {
+   delete dtdConfig;
+   return;
+ }
 
  //read the general DTD info
  DTDStruct *dtd = new DTDStruct;
- dtd->fileName = dirName + "description.rc";
+ dtd->fileName = tmpStr;
  dtd->commonAttrs = new AttributeListDict();
  dtd->commonAttrs->setAutoDelete(true);
 
- KConfig *dtdConfig = new KConfig(dtd->fileName);
- dtdConfig->setGroup("General");
- QString dtdName = dtdConfig->readEntry("Name", "Unknown");
  bool caseSensitive = dtdConfig->readBoolEntry("CaseSensitive");
  dtd->name = dtdName.lower();
  dtd->nickName = dtdConfig->readEntry("NickName", dtdName);
@@ -1473,7 +1478,7 @@ void QuantaApp::initTagDict()
   dtds = new QDict<DTDStruct>(119, false); //optimized for max 119 DTD. This should be enough.
   dtds->setAutoDelete(true);
 
-  QStringList tagsResourceDirs = KGlobal::instance()->dirs()->findDirs("appdata", "tags");
+  QStringList tagsResourceDirs = KGlobal::instance()->dirs()->findDirs("appdata", "dtep");
   QStringList tagsDirs;
   for ( QStringList::Iterator it = tagsResourceDirs.begin(); it != tagsResourceDirs.end(); ++it )
   {

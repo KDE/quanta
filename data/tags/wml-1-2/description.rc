@@ -4,7 +4,6 @@ NickName = WML 1.2
 DefaultExtension = wml
 Groups = Core
 NumOfPages = 1
-QuotedAttributes=title,columns,align,mode,xml:lang,http-equiv,name,forua,content,scheme,href,accesskey,alt,src,localsrc,vspace,hspace,height,width,value,format,emptyok,size,maxlength,tabindex,onpick,iname,ivalue,multiple,accept-chars,enctype,method,sendreferer,href,domain,path,onenterforward,onenterbackward,ontimer,optional,type,label,onpick,newcontext,ordered,xml:space
 CaseSensitive = true
 
 [Toolbars]

@@ -2,5 +2,5 @@ data_DATA = base.tag body.tag description.rc form.tag headings.tag input.tag \
             link.tag ol.tag p.tag table.tag textarea.tag tr.tag a.tag blockquote.tag \
             br.tag div.tag head.tag html.tag li.tag meta.tag option.tag select.tag \
             td.tag th.tag ul.tag
-datadir = ${kde_datadir}/quanta/tags/xhtml-basic
+datadir = ${kde_datadir}/quanta/dtep/xhtml-basic
 

@@ -14,5 +14,5 @@ text-align.tag text-decoration.tag text-indent.tag text-shadow.tag text-transfor
 top.tag unicode-bidi.tag vertical-align.tag visibility.tag white-space.tag width.tag \
 word-spacing.tag z-index.tag
 
-datadir = ${kde_datadir}/quanta/tags/css
+datadir = ${kde_datadir}/quanta/dtep/css
 

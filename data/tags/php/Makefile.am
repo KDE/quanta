@@ -112,5 +112,5 @@ yaz.tag \
 zip.tag \
 zlib.tag
 
-datadir = ${kde_datadir}/quanta/tags/php
+datadir = ${kde_datadir}/quanta/dtep/php
 

@@ -6,7 +6,6 @@ DoctypeString = html PUBLIC "-//W3C//DTD XHTML Basic 1.0//EN" "http://www.w3.org
 DefaultExtension = html
 Groups = Core, I18n, Script, Focus
 NumOfPages = 1
-QuotedAttributes=abbr,accesskey,action,align,alt,archive,axis,charset,checked,cite,class,classid,codebase,codetype,cols,colspan,content,data,declare,enctype,for,headers,height,href,hreflang,http-equiv,id,longdesc,maxlength,media,method,multiple,name,profile,rel,rev,rows,rowspan,scheme,scope,selected,size,src,standby,summary,tabindex,title,type,valign,value,valuetype,width,XHTML,xml:lang,xmlns
 CaseSensitive = true
 
 [Toolbars]

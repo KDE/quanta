@@ -14,11 +14,6 @@ DefaultAttrType = string
 apache_lookup_uri = filename
 
 [Extra rules]
-ScriptName = php
-ScriptTagBorders = <? ?>, <* *>, <% %>
-
-ScriptRegExp = (<\?.+\?>) | (<\*.+\*>) | (<\%.+\%>)
-
 StructGroupsCount = 5
 TagAutoCompleteAfter = none
 
