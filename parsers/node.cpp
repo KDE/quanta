@@ -26,6 +26,7 @@
 #include "quantacommon.h"
 #include "structtreetag.h"
 #include "kafkacommon.h"
+#include "wkafkapart.h"
 
 GroupElementMapList globalGroupMap;
 
@@ -78,7 +79,7 @@ Node::~Node()
 
 void Node::save(QDomElement& element) const
 {
-    kdDebug(25001) << "Save:\n" << element.ownerDocument().toString() << endl;
+    //kdDebug(25001) << "Save:\n" << element.ownerDocument().toString() << endl;
     QDomElement child_element;
     if(next)
     {
@@ -110,21 +111,23 @@ void Node::save(QDomElement& element) const
     element.setAttribute("insideSpecial", insideSpecial);             // bool
     element.setAttribute("specialInsideXml", specialInsideXml);             // bool
     element.setAttribute("fileName", fileName);                         // QString
-    
+    /*
     QString s_element;
     QTextStream stream(&s_element, IO_WriteOnly);
     element.save(stream, 3);
     kdDebug(25001) << "Load:\n" << s_element << endl;    
     kdDebug(25001) << "Save:\n" << element.ownerDocument().toString() << endl;
+    */
 }
 
 bool Node::load(QDomElement const& element)
 {
+    /*
     QString s_element;
     QTextStream stream(&s_element, IO_WriteOnly);
     element.save(stream, 3);
     kdDebug(25001) << "Load:\n" << s_element << endl;    
-    
+    */
     QDomNodeList list = element.childNodes();
     for(unsigned int i = 0; i != list.count(); ++i) 
     {
@@ -134,14 +137,15 @@ bool Node::load(QDomElement const& element)
             if(e.tagName() == "nodeNext") 
             {
                 next = new Node(0);
-                next->load(e);
                 next->prev = this;
+                next->parent = this->parent;
+                next->load(e);
             }
             else if(e.tagName() == "nodeChild") 
             {
                 child = new Node(0);
-                child->load(e);
                 child->parent = this;
+                child->load(e);
             }
             else if(e.tagName() == "nodeClosing") 
             {
@@ -163,6 +167,7 @@ bool Node::load(QDomElement const& element)
     specialInsideXml = QString(element.attribute("specialInsideXml")).toInt();  // bool
     fileName = element.attribute("fileName");                         // QString
 
+    kafkaCommon::restorePastedNode(this, KafkaDocument::ref()->getCurrentDoc());
     //kafkaCommon::coutTree(this, 3);
     
     return true;
