@@ -13,6 +13,7 @@ Comment[et]=Quanta siluriplugin koostööks PHP siluriga Gubed (vaata http://gub
 Comment[fr]=Module de débogage de Quanta pour interagir avec le débogueur PHP Gubed ; consulter http://gubed.sf.net.
 Comment[hu]=Quanta-nyomkövető (bővítőmodulként) a Gubed PHP-nyomkövetőhöz, lásd: http://gubed.sf.net
 Comment[it]=Plugin debugger di Quanta per interagire con il debugger PHP Gubed, vedi http://gubed.sf.net
+Comment[ja]=Gubed PHPデバッガと相互作用をするQuantaデバッガプラグイン。http://gubed.sf.net 参照のこと。
 Comment[ms]=Plug masuk penyah-ralat Quanta untuk berinteraksi dengan penyah-ralat Gubed PHP, lihat http://gubed.sf.net
 Comment[nl]=Quanta debugger plugin om te communiceren met de Gubed PHP debugger, zie http://gubed.sf.net
 Comment[pl]=Wtyczka debuggera Quanty współpracująca z debuggerem PHP Gubed , patrz http://gubed.sf.net
