@@ -122,6 +122,7 @@ bool QuantaPlugin::load()
     return false;
   }
   m_part->setName(m_name);  // for better debug output
+  m_part->widget()->setName(m_name); //needed to be able to dock the same plugin twice in separate toolviews
   quantaApp->slotNewPart(m_part, false);  // register the part in the partmanager
   return true;
 }
