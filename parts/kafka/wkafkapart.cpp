@@ -224,6 +224,7 @@ void KafkaDocument::loadDocument(Document *doc)
 	m_currentDoc->docUndoRedo->kafkaLoaded();
 	emit loaded();
 
+    m_currentDoc->docUndoRedo->syncKafkaCursorAndSelection(0);
 	//m_kafkaPart->document().updateRendering();
 
 #ifdef LIGHT_DEBUG
