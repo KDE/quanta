@@ -520,7 +520,6 @@ void ActionConfigDialog::saveCurrentAction()
             currentAction->unplug(tb->page(i));
             currentAction->unplug(p_toolbar->menu);
             node.parentNode().removeChild(node);
-            KXMLGUIFactory::saveConfigFile(p_toolbar->guiClient->domDocument(), p_toolbar->guiClient->localXMLFile());
             QListViewItemIterator iter(actionTreeView);
             while (iter.current())
             {
@@ -547,7 +546,6 @@ void ActionConfigDialog::saveCurrentAction()
         item = p_toolbar->guiClient->domDocument().createElement("Action");
         item.setAttribute("name",el.attribute("name"));
         p_toolbar->guiClient->domDocument().firstChild().firstChild().appendChild(item);
-        KXMLGUIFactory::saveConfigFile(p_toolbar->guiClient->domDocument(), p_toolbar->guiClient->localXMLFile());
       //put it also in the treeview
         listItem = actionTreeView->findItem(toolbarName, 0);
         if (listItem)
@@ -562,6 +560,8 @@ void ActionConfigDialog::saveCurrentAction()
         }
       }
     }
+    KXMLGUIFactory::saveConfigFile(p_toolbar->guiClient->domDocument(),
+        p_toolbar->guiClient->xmlFile(), p_toolbar->guiClient->instance());
   }
 
 }
@@ -574,7 +574,6 @@ void ActionConfigDialog::slotShortcutCaptured(const KShortcut &shortcut)
   QMap<QString, QString>::Iterator it;
   for ( it = globalShortcuts.begin(); it != globalShortcuts.end(); ++it )
   {
-    kdDebug(24000) << it.data() << "\n";
     if (it.data().contains(shortcutText))
     {
       global = it.key();

@@ -731,7 +731,9 @@ void QuantaApp::slotOptionsConfigureToolbars()
    {
      nodeList.item(i).toElement().setTagName("Separator");
    }
- }
+   KXMLGUIFactory::saveConfigFile(p_toolbar->guiClient->domDocument(),
+        p_toolbar->guiClient->xmlFile(), p_toolbar->guiClient->instance());
+}
  saveMainWindowSettings(KGlobal::config(), autoSaveGroup());
  KEditToolbar dlg(factory(), this);
 
