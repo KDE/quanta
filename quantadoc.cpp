@@ -100,7 +100,7 @@ KURL::List QuantaDoc::openedFiles(bool noUntitled)
   return list;
 }
 
-bool QuantaDoc::newDocument( const KURL& url )
+bool QuantaDoc::newDocument( const KURL& url, bool switchToExisting )
 {
   bool newfile = false;
   QString furl = url.url();
@@ -135,6 +135,7 @@ bool QuantaDoc::newDocument( const KURL& url )
   #endif
   }
   else // select opened
+  if (switchToExisting)
   {
     w = isOpened(furl);
     w->checkDirtyStatus();
@@ -145,10 +146,11 @@ bool QuantaDoc::newDocument( const KURL& url )
   return true;
 }
 
-void QuantaDoc::openDocument(const KURL& url, const QString &a_encoding)
+void QuantaDoc::openDocument(const KURL& url, const QString &a_encoding, bool switchToExisting)
 {
   QString encoding = a_encoding;
-  if ( !newDocument( url )) return;
+  if (!newDocument(url, switchToExisting))
+      return;
   bool loaded = false;
   if ( !url.isEmpty() && QExtFileInfo::exists(url))
   {
@@ -159,7 +161,8 @@ void QuantaDoc::openDocument(const KURL& url, const QString &a_encoding)
     }
 
     Document *w = write();
-    if (encoding.isEmpty()) encoding = quantaApp->defaultEncoding();
+    if (encoding.isEmpty())
+        encoding = quantaApp->defaultEncoding();
 
     #if KDE_VERSION >= 308
       dynamic_cast<KTextEditor::EncodingInterface*>(w->doc())->setEncoding(encoding);
@@ -167,12 +170,10 @@ void QuantaDoc::openDocument(const KURL& url, const QString &a_encoding)
       w->kate_doc->setEncoding(encoding);
     #endif
 
-    w->readConfig(quantaApp->config());
     if (w->doc()->openURL( url ))
     {
       w->setDirtyStatus(false);
 
-      quantaApp->view()->writeTab()->showPage( w );
       changeFileTabName();
       quantaApp->fileRecent->addURL( w->url() );
 

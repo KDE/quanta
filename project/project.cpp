@@ -1454,6 +1454,10 @@ void Project::openCurrentView()
  {
    QDomNodeList nl = dom.elementsByTagName("projectview");
    QDomElement el;
+   QuantaDoc* doc = quantaApp->doc();
+   QuantaView* view = quantaApp->view();
+   doc->blockSignals(true);
+   view->writeTab()->blockSignals(true);
    for (uint i = 0; i < nl.count(); i++)
    {
       el = nl.item(i).cloneNode().toElement();
@@ -1469,7 +1473,7 @@ void Project::openCurrentView()
           url = QExtFileInfo::toAbsolute(url, baseURL);
           if (el2.nodeName() == "viewitem")
           {
-            quantaApp->slotFileOpen(url, m_defaultEncoding);
+            doc->openDocument(url, m_defaultEncoding, false);
           }
           if (el2.nodeName() == "viewtoolbar")
           {
@@ -1479,6 +1483,11 @@ void Project::openCurrentView()
         break;
       }
    }
+   doc->blockSignals(false);
+   view->writeTab()->blockSignals(false);
+   Document *w = view->write();
+   quantaApp->setCaption(w->url().prettyURL() );
+   quantaApp->slotUpdateStatus(w);
  }
 }
 

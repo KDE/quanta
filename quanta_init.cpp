@@ -723,7 +723,8 @@ void QuantaApp::openLastFiles()
   m_config->setGroup  ("Projects");
   QString pu = m_config->readEntry("Last Project");
 
-  KURL u(pu);
+  KURL u;
+  QuantaCommon::setUrl(u, pu);
   bool isPrj = true;
   if ( pu.isEmpty())    isPrj = false;
   if ( u.isMalformed()) isPrj = false;
@@ -732,14 +733,21 @@ void QuantaApp::openLastFiles()
 
   QStringList urls = m_config->readListEntry("List of opened files");
 
+  m_doc->blockSignals(true);
+  m_view->writeTab()->blockSignals(true);
   for ( QStringList::Iterator it = urls.begin(); it != urls.end(); ++it )
   {
     KURL fu;
     QuantaCommon::setUrl(fu, *it);
 
-    if ( !isPrj || fu.isLocalFile() )
-      m_doc->openDocument( fu );
+    if (!isPrj || fu.isLocalFile())
+        m_doc->openDocument(fu, QString::null, false);
   }
+  m_doc->blockSignals(false);
+  m_view->writeTab()->blockSignals(false);
+  Document *w = m_view->write();
+  setCaption(w->url().prettyURL() );
+  slotUpdateStatus(w);
 }
 
 /** Loads the initial project */

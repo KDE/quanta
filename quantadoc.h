@@ -44,8 +44,8 @@ public:
   QuantaDoc(QWidget *parent, const char *name=0);
   ~QuantaDoc();
 
-  bool newDocument(const KURL&);
-  void openDocument(const KURL&, const QString& a_encoding = QString::null);
+  bool newDocument(const KURL&, bool switchToExisting = true);
+  void openDocument(const KURL&, const QString& a_encoding = QString::null, bool switchToExisting = true);
   void saveDocument(const KURL&);
   void closeDocument();
 

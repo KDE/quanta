@@ -684,7 +684,7 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
   if (newWrite != m_view->oldWrite)
     sTab->useOpenLevelSetting = true;
   reparse(true);
-  slotNewUndo();
+  //slotNewUndo();
   slotNewStatus();
   slotNewLineColumn();
 
