@@ -281,7 +281,7 @@ QString Document::getTagAttrValue(int i)
 QString Document::currentTag()
 {
   tagAttrNum = 0;
-  
+
   unsigned int y;// = currentLine();
   unsigned int ox;// = currentColumn(); // need to reorganise ;)
 
@@ -293,35 +293,38 @@ QString Document::currentTag()
   unsigned int i=0;
 
   int tab = kate_view->tabWidth();
-  
-  while (i<ox) 
+
+  while (i<ox)
   {
     if (t[x] == '\t' ) i = ((i+tab)/tab)*tab;
     else               i++;
     x++;
   }
-  
+
+  int origTagBeginY = tagBeginY;
+  int origTagBeginX = tagBeginX;
+  int origTagEndY = tagEndY;
+  int origTagEndX = tagEndX;
 
   QString begTag = findBeginOfTag( QString(""), x, y); // find begin
   QString endTag = findEndOfTag(   QString(""), x, y); // end
 
-  QString tag = begTag+endTag;
-
-  //debug( "tag : "+tag );
-
-  if ( !tag.isEmpty() ) parseTag(); // if have tag parse it
-
-  return tag;
+  if ( begTag.isEmpty() || endTag.isEmpty() ) {
+    tagBeginY = origTagBeginY;
+    tagBeginX = origTagBeginX;
+    tagEndY = origTagEndY;
+    tagEndX = origTagEndX;
+    return QString("");
+  } else {
+    parseTag(); // if have tag parse it
+    return begTag+endTag;
+  }
 }
 
 void Document::changeCurrentTag( QDict<QString> *dict )
-{          /*
+{
   QDictIterator<QString> it( *dict ); // iterator for dict
   QDict<QString> oldAttr(1,false);
-
-  VConfig c;
-  kWriteView->getVConfig( c);
-  kWriteDoc ->recordStart( c, KWActionGroup::ugNone ); // start action
 
   for ( int i=1; i<tagAttrNum; i++ )
     oldAttr.insert( getTagAttr(i), new QString(getTagAttrValue(i)) );
@@ -333,20 +336,15 @@ void Document::changeCurrentTag( QDict<QString> *dict )
 
     if ( ! oldAttr.find(attr) ) // insert this attr. in end of tag
     {
-      QString value = *val;
-
       QString attrval;
-
-      attrval = QString(" ")+attr+"=\""+*val+"\"";
 
       if ( val->isEmpty() )  // for checkboxes ( without val) don't print =""
         attrval = QString(" ")+attr;
+      else
+        attrval = QString(" ")+attr+"=\""+*val+"\"";
 
-      PointStruc cursor;
-      cursor.x = tagEndX;
-      cursor.y = tagEndY;
-      // insert attribut
-      kWriteDoc->recordReplace( cursor, 0, attrval );
+      // insert attribute
+      editIf->insertText(tagEndY, tagEndX, attrval);
     }
 
     ++it;
@@ -356,6 +354,7 @@ void Document::changeCurrentTag( QDict<QString> *dict )
   {
 
     QString attr;
+
     if ( i )
       attr = attrCase( getTagAttr(i) );
     else
@@ -365,10 +364,7 @@ void Document::changeCurrentTag( QDict<QString> *dict )
 
     int x1 = tagAttr[i].x;
     int x2 = tagAttr[i].endx;
-
-    PointStruc cursor;
-    cursor.x = x1;
-    cursor.y = tagAttr[i].y;
+    int y = tagAttr[i].y;
 
     if ( val ) // change attr
     {
@@ -380,23 +376,19 @@ void Document::changeCurrentTag( QDict<QString> *dict )
         t = attr;
 
       // replace attribut on new value
-      kWriteDoc->recordReplace( cursor, x2-x1, t );
+      editIf->removeText(y, x1, y, x2);
+      editIf->insertText(y, x1, t);
     }
     else {
       if ( i ) { // remove attr
-        cursor.x -= 1;
-        // delete attribut
-        kWriteDoc->recordReplace( cursor, x2-x1+1, QString("") );
+        // delete attribute
+        editIf->removeText(y, x1-1, y, x2);
       } else { // insert tag name
-        kWriteDoc->recordReplace( cursor, x2-x1, attr );
+        editIf->removeText(y, x1, y, x2);
+        editIf->insertText(y, x1, attr);
       }
     }
   }
-  // end of action
-  kWriteDoc->recordEnd( c );
-
-//  kWriteDoc->updateLines( tagBeginY, tagEndY, 0 );
-  kWriteView->repaint();                            */
 }
 
 // return global( on the desktop ) position of text cursor

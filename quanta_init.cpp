@@ -38,6 +38,8 @@
 #include <kstddirs.h>
 #include <kstatusbar.h>
 
+#include <kparts/componentfactory.h>
+
 // application specific includes
 
 #include "quanta.h"
@@ -132,6 +134,8 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
   slotFileNew();
 
   setHighlight = view->write()->kate_doc->hlActionMenu (i18n("&Highlight Mode"), actionCollection(), "set_highlight");
+
+  KParts::ReadOnlyPart *m_cervisia =  KParts::ComponentFactory::createPartInstanceFromLibrary<KParts::ReadOnlyPart>( "libcervisia.so",this);
 
 }
 
