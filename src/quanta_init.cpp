@@ -645,12 +645,15 @@ void QuantaInit::loadInitialProject(const QString& url)
 {
   if(url.isNull())
   {
-    // Get config
-    KConfig *config = m_quanta->config();
-    config->setGroup("General Options");
-
-    // Reload last project if setting is enabled
-    Project::ref()->loadLastProject(config->readBoolEntry("Reload Project", true));
+    if(runningQuantas() == 1)
+    {
+      // Get config
+      KConfig *config = m_quanta->config();
+      config->setGroup("General Options");
+  
+      // Reload last project if setting is enabled
+      Project::ref()->loadLastProject(config->readBoolEntry("Reload Project", true));
+    }
   }
   else
     Project::ref()->slotOpenProject(KURL( url ));
@@ -1407,6 +1410,19 @@ void QuantaInit::readAbbreviations()
       f.close();
     }
  }
+}
+
+
+int QuantaInit::runningQuantas()
+{
+  QCStringList list = kapp->dcopClient()->registeredApplications();
+  int i = 0;
+  for (QCStringList::iterator it = list.begin(); it != list.end(); ++it)
+  {
+    if (QString(*it).startsWith("quanta", false))
+      ++i;
+  }
+  return i;
 }
 
 #include "quanta_init.moc"

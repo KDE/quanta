@@ -77,7 +77,6 @@ public:
       but checks in any case if there is a left over project from a crash
   */
   void loadLastProject(bool reload);
-  void writeConfig(KConfig *);
   /** Returns the relative url with the prefix inserted. */
   KURL urlWithPrefix(const KURL& url);
   bool contains(const KURL &url);
@@ -114,11 +113,13 @@ public:
   QValueList<SubProject>* subprojects();
   QStringList tasks();
   QMap<QString, TeamMember> allMembers();
-
-  /** uploads the project file
-      @return false if there was nothing to upload or an error occured during upload
+  
+  /**
+       test if application can close
+       
+       @return true if close is possible
   */
-  bool uploadProjectFile();
+  bool Project::queryClose();
 
 public slots:
 

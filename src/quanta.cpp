@@ -3948,16 +3948,9 @@ bool QuantaApp::queryClose()
   {
     exitingFlag = true;
     canExit = ViewManager::ref()->saveAll(false);
-    if (canExit && Project::ref()->hasProject())
-    {
-       canExit = Project::ref()->uploadProjectFile();
-       if (!canExit)
-       {
-           if (KMessageBox::warningYesNo(this, i18n("Saving of project failed. Do you want to continue with exit (might cause data loss)?"), i18n("Project Saving Error")) == KMessageBox::Yes)
-             canExit = true;
-       }
-    }
-    saveOptions(); // after upload of project file
+    if (canExit)
+       canExit = Project::ref()->queryClose();
+    saveOptions();
     if (canExit)
         canExit = removeToolbars();
   }
@@ -4019,7 +4012,6 @@ void QuantaApp::saveOptions()
     m_config->writeEntry("Expand Level", qConfig.expandLevel);
     m_config->writeEntry("Show DTD Select Dialog", qConfig.showDTDSelectDialog);
 
-    Project::ref()->writeConfig(m_config); // project
     manager()->writeConfig(m_config);
     saveMainWindowSettings(m_config);
     SpellChecker::ref()->writeConfig(m_config);

@@ -92,6 +92,8 @@ private:
   TemplatesTreeView *tTab;
   // config
   KConfig *m_config;
+  /**  @return number of Quanta instances registered by dcop */
+  int runningQuantas();
 };
 
 #endif // QUANTA_H
