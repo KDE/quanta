@@ -20,7 +20,6 @@
 
 #include "kategrepdialog.h"
 #include <qlayout.h>
-#include <qpushbutton.h>
 #include <qlineedit.h>
 #include <qlabel.h>
 #include <qcombobox.h>
@@ -38,6 +37,8 @@
 #include <kurlrequester.h>
 #include <kurlcompletion.h>
 #include <kcombobox.h>
+#include <kpushbutton.h>
+#include <kstdguiitem.h>
 
 const char *template_desc[] = {
     "normal",
@@ -170,9 +171,14 @@ GrepDialog::GrepDialog(QString dirname, QWidget *parent, const char *name)
     actionbox->addStretch();
     search_button = actionbox->addButton(i18n("&Search"));
     search_button->setDefault(true);
+#if KDE_IS_VERSION( 3, 2, 90 )
+    cancel_button = actionbox->addButton(KStdGuiItem::cancel());
+    QPushButton *clear_button = actionbox->addButton(KStdGuiItem::clear());
+#else
     cancel_button = actionbox->addButton(i18n("Cancel"));
-    cancel_button->setEnabled(false);
     QPushButton *clear_button = actionbox->addButton(i18n("Clear"));
+#endif
+    cancel_button->setEnabled(false);
     QPushButton *done_button = actionbox->addButton(i18n("Done"));
     actionbox->addStretch();
     actionbox->layout();
