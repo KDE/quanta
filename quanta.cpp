@@ -1357,7 +1357,8 @@ QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomEleme
   {
 //avoid QToolBar warning in the log
     QtMsgHandler oldHandler = qInstallMsgHandler( silenceQToolBar );
-    QWidget *w = new QWidget(m_view->toolbarTab(), "ToolbarHoldingWidget");
+    ToolbarTabWidget *toolbarTab = m_view->toolbarTab();
+    QWidget *w = new QWidget(toolbarTab, "ToolbarHoldingWidget");
     QuantaToolBar *tb = new QuantaToolBar(w, element.attribute("name"), true, true);
     tb->loadState(element);
     tb->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
@@ -1383,10 +1384,16 @@ QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomEleme
       node = node.nextSibling();
     }
 
-    tb->adjustSize();
-    m_view->toolbarTab()->insertTab(tb, i18n(tabname));
     if (tb->minimumSizeHint().height() > 20)
-      m_view->toolbarTab()->setFixedHeight(tb->minimumSizeHint().height()+m_view->toolbarTab()->tabHeight());
+    {
+      toolbarTab->setFixedHeight(tb->minimumSizeHint().height() + toolbarTab->tabHeight());
+      tb->adjustSize();
+      tb->setGeometry(0,0, toolbarTab->width(), tb->height());
+    } else
+    {
+      tb->setGeometry(0,0, toolbarTab->width(), toolbarTab->height() - toolbarTab->tabHeight());
+    }
+    toolbarTab->insertTab(tb, i18n(tabname));
     qInstallMsgHandler( oldHandler );
 
     connect(tb, SIGNAL(removeAction(const QString&, const QString&)),
@@ -1955,7 +1962,8 @@ void QuantaApp::slotAddToolbar()
   p_toolbar->name = name;
   p_toolbar->user = true;
   p_toolbar->visible = true;
-  p_toolbar->menu = 0L; //TODO
+  p_toolbar->menu = new QPopupMenu;
+  m_tagsMenu->insertItem(p_toolbar->name, p_toolbar->menu);
   toolbarList.insert(name.lower(), p_toolbar);
 
   slotToggleDTDToolbar(!allToolbarsHidden());
@@ -2095,6 +2103,15 @@ void QuantaApp::slotRenameToolbar(const QString& name)
       QDomElement el = p_toolbar->guiClient->domDocument().firstChild().firstChild().toElement();
       el.setAttribute("tabname", p_toolbar->name);
       el.setAttribute("name", p_toolbar->name.lower());
+      QDomNodeList nodeList = p_toolbar->guiClient->domDocument().elementsByTagName("text");
+      nodeList.item(0).firstChild().setNodeValue(p_toolbar->name);
+    //Rename the _Separator_ tags back to Separator, so they are not treated
+    //as changes
+      nodeList = p_toolbar->guiClient->domDocument().elementsByTagName("_Separator_");
+      for (uint i = 0; i < nodeList.count(); i++)
+      {
+        nodeList.item(i).toElement().setTagName("Separator");
+      }
       KXMLGUIFactory::saveConfigFile(p_toolbar->guiClient->domDocument(),
           p_toolbar->guiClient->xmlFile(), p_toolbar->guiClient->instance());
       ToolbarTabWidget *tb = m_view->toolbarTab();
@@ -2102,7 +2119,8 @@ void QuantaApp::slotRenameToolbar(const QString& name)
       {
         if (tb->label(i).lower() == name)
         {
-          tb->setTabLabel(tb->page(i), p_toolbar->name);
+          tb->setTabLabel(tb->page(i)->parentWidget(), i18n(p_toolbar->name));
+          m_tagsMenu->changeItem(m_tagsMenu->idAt(i + 2), i18n(p_toolbar->name));
           break;
         }
       }

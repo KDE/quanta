@@ -621,6 +621,16 @@ void ActionConfigDialog::saveCurrentAction()
     }
     KXMLGUIFactory::saveConfigFile(p_toolbar->guiClient->domDocument(),
         p_toolbar->guiClient->xmlFile(), p_toolbar->guiClient->instance());
+    QWidget *toolBar = tb->page(i);
+    if (toolBar->minimumSizeHint().height() > 20)
+    {
+      toolBar->adjustSize();
+      toolBar->setGeometry(0,0, tb->width(), toolBar->height());
+    } else
+    {
+      toolBar->setGeometry(0,0, tb->width(), tb->height() - tb->tabHeight());
+    }
+
   }
 }
 
