@@ -2154,10 +2154,13 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
    
    QString s = i18nName.lower();
    QString toolbarId = s;
+   QRegExp rx("\\s|\\.");
+   toolbarId.replace(rx, "_");
    int n = 1;
    while (m_toolbarList.find(toolbarId) != 0L)
    {
      toolbarId = s + QString("%1").arg(n);
+     toolbarId.replace(rx, "_");
      n++;
    }
    
@@ -2650,7 +2653,7 @@ QString QuantaApp::createToolbarTarball()
   if (!ok)
     return QString::null;
 
-  QString toolbarName = res.lower();
+  QString toolbarName = res;
   for (uint i = 0; i < lst.count(); i++)
   {
     if (lst[i] == toolbarName)
@@ -2663,7 +2666,7 @@ QString QuantaApp::createToolbarTarball()
   KTempDir* tempDir = new KTempDir(tmpDir);
   tempDir->setAutoDelete(true);
   tempDirList.append(tempDir);
-  QString tempFileName=tempDir->name() + toolbarName.replace(QRegExp("\\s|\\."), "_");
+  QString tempFileName=tempDir->name() + toolbarName;
 
   KURL tempURL;
   tempURL.setPath(tempFileName);
