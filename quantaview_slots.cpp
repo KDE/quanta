@@ -67,6 +67,8 @@
 #include "tagdialogs/tagmaildlg.h"
 #include "tagdialogs/tagmiscdlg.h"
 
+#include "plugins/spellchecker.h"
+
 #include "qdom.h"
 
 void QuantaView::slotEditCurrentTag()
@@ -754,7 +756,8 @@ void QuantaView::slotGotoLine ()
 
 void QuantaView::slotSpellcheck ()
 {
-  write()->kate_doc->spellcheck();
+//  write()->kate_doc->spellcheck();
+  quantaApp->spellChecker->spellCheck(write()->doc());
 }
 
 void QuantaView::toggleBookmark ()

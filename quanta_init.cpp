@@ -48,6 +48,7 @@
 #include <kstdaction.h>
 #include <kparts/componentfactory.h>
 #include <kprogress.h>
+#include <kspell.h>
 
 // application specific includes
 
@@ -79,6 +80,7 @@
 
 #include "plugins/php3dbg/debugger.h"
 #include "plugins/php4dbg/debugger.h"
+#include "plugins/spellchecker.h"
 
 #include "parser/parser.h"
 #include "dialogs/filemasks.h"
@@ -108,6 +110,8 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
   setHighlight = 0;
   grepDialog  = 0L;
   exitingFlag = false;
+  qConfig.spellConfig = new KSpellConfig();
+  spellChecker = new SpellChecker();
 }
 
 QuantaApp::~QuantaApp()
@@ -124,6 +128,7 @@ QuantaApp::~QuantaApp()
  }
  
  toolbarList.clear();
+ delete spellChecker;
 }
 
 
@@ -521,6 +526,7 @@ void QuantaApp::saveOptions()
     config->writeEntry ("PHP Debugger style", debuggerStyle);
     writeDockConfig(config);
     saveMainWindowSettings(config);
+    spellChecker->writeConfig(config);
     config->sync(); 
   }
 }
@@ -621,6 +627,8 @@ void QuantaApp::readOptions()
     else enablePhp3Debug(true);
 
   applyMainWindowSettings(config);
+
+  spellChecker->readConfig(config);
 }
 
 void QuantaApp::enablePhp3Debug(bool enable)

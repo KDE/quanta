@@ -33,6 +33,7 @@
 #include <kpopupmenu.h>
 #include <kmessagebox.h>
 #include <kdirwatch.h>
+#include <kdeversion.h>
 //#include <kdebug.h>
 
 #include <ktexteditor/configinterface.h>
@@ -43,7 +44,10 @@
 #include <ktexteditor/viewcursorinterface.h>
 #include <ktexteditor/clipboardinterface.h>
 #include <ktexteditor/selectioninterface.h>
+
+#if KDE_VERSION >= 308
 #include <ktexteditor/encodinginterface.h>
+#endif
 
 #include <kparts/componentfactory.h>
 
@@ -157,7 +161,15 @@ void QuantaDoc::openDocument(const KURL& url, QString encoding)
 
     Document *w = write();
     if (encoding.isEmpty()) encoding = quantaApp->defaultEncoding();
-    dynamic_cast<KTextEditor::EncodingInterface*>(w->doc())->setEncoding(encoding);
+
+    if (KDE_VERSION >= 308)
+    {
+      dynamic_cast<KTextEditor::EncodingInterface*>(w->doc())->setEncoding(encoding);
+    } else
+    {
+      w->kate_doc->setEncoding(encoding);
+    }
+
     w->readConfig(quantaApp->config);
     if (w->doc()->openURL( url ))
     {

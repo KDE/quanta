@@ -31,6 +31,7 @@
 #include <klocale.h>
 #include <kurl.h>
 #include <kprotocolinfo.h>
+#include <kdeversion.h>
 
 //app includes
 #include "projectnewgeneral.h"
@@ -85,10 +86,21 @@ ProjectNewGeneral::~ProjectNewGeneral(){
 
 void ProjectNewGeneral::slotButtonDir()
 {
-  QString text = KFileDialog::getExistingDirectory(linePrjDir->text(), this,
+ if ( KDE_VERSION < 308)
+ {
+   QString text = KFileDialog::getExistingDirectory(linePrjDir->text(), this,
                               i18n("Select Project Directory"));
-  if(!text.isEmpty())
-    linePrjDir->setText(text);
+   if(!text.isEmpty())
+     linePrjDir->setText(text);
+ } else
+ {
+   KURL url = KFileDialog::getExistingURL(linePrjDir->text(), this,
+                              i18n("Select Project Directory"));
+   if (!url.isEmpty())
+   {
+     linePrjDir->setText(url.url());
+   }                              
+ }
 }
 
 void ProjectNewGeneral::slotLinePrjFile( const QString & )
@@ -160,18 +172,40 @@ void ProjectNewGeneral::setMargin(int i)
 
 void ProjectNewGeneral::slotButtonTmpl()
 {
-  QString text = KFileDialog::getExistingDirectory(linePrjTmpl->text(), this,
+ if ( KDE_VERSION < 308)
+ {
+   QString text = KFileDialog::getExistingDirectory(linePrjTmpl->text(), this,
                               i18n("Select Project Template Directory"));
-  if(!text.isEmpty())
-    linePrjTmpl->setText(text);
+   if(!text.isEmpty())
+     linePrjTmpl->setText(text);
+ } else
+ {
+   KURL url = KFileDialog::getExistingURL(linePrjTmpl->text(), this,
+                              i18n("Select Project Template Directory"));
+   if (!url.isEmpty())
+   {
+     linePrjTmpl->setText(url.url());
+   }
+ }
 }                                          
 
 void ProjectNewGeneral::slotButtonToolbar()
 {
-  QString text = KFileDialog::getExistingDirectory(linePrjToolbar->text(), this,
+ if ( KDE_VERSION < 308)
+ {
+   QString text = KFileDialog::getExistingDirectory(linePrjToolbar->text(), this,
                               i18n("Select Project Toolbar & Actions Directory"));
-  if(!text.isEmpty())
-    linePrjToolbar->setText(text);
+   if(!text.isEmpty())
+     linePrjToolbar->setText(text);
+ } else
+ {
+   KURL url = KFileDialog::getExistingURL(linePrjToolbar->text(), this,
+                              i18n("Select Project Toolbar & Actions Directory"));
+   if (!url.isEmpty())
+   {
+     linePrjToolbar->setText(url.url());
+   }
+ }
 }
 
 void ProjectNewGeneral::slotLinePrjToolbar(const QString &Str)

@@ -30,6 +30,12 @@
 #define TAGS_MENU_PLACE 6
 #define PLUGINS_MENU_PLACE 7
 
+class QString;
+class KURL;
+class KStandardDirs;
+class QWidget;
+class KSpellConfig;
+
 //Quanta main configuration structure
 typedef struct QConfig{
           //Tag style options
@@ -60,12 +66,10 @@ typedef struct QConfig{
           QString imageMimeTypes;
           QString textMimeTypes;
 
+          //spelling options
+          KSpellConfig *spellConfig;
         };
 
-class QString;
-class KURL;
-class KStandardDirs;
-class QWidget;
 
 /**Some common, mostly static functions.
   *@author Andras Mantia

@@ -32,6 +32,7 @@
 #include <kfiledialog.h>
 #include <kprogress.h>
 #include <kmimetype.h>
+#include <kdeversion.h>
 
 //app includes
 #include "projectnewlocal.h"
@@ -229,13 +230,20 @@ void ProjectNewLocal::slotAddFolder()
 //TODO/FIXME: This returns null if the selected directory is not on the local disk.
 //I think this is a KDE bug
   QExtFileInfo::createDir( baseURL );
-	QString dirName = KFileDialog::getExistingDirectory(
-		baseURL.url(),  this, i18n("Insert Directory in Project"));
-
-	if ( !dirName.isEmpty() )
+  KURL dirURL ;
+  if (KDE_VERSION < 308)
   {
-	  KURL dirURL ;
+    QString dirName = KFileDialog::getExistingDirectory(
+	   	baseURL.url(),  this, i18n("Insert Directory in Project"));
     QuantaCommon::setUrl(dirURL, dirName);
+  } else
+  {
+     dirURL = KFileDialog::getExistingURL(
+	   	baseURL.url(),  this, i18n("Insert Directory in Project"));
+  }
+
+	if ( !dirURL.isEmpty() )
+  {
     dirURL.adjustPath(1);
 
    	KURL sdir = dirURL;
@@ -243,7 +251,7 @@ void ProjectNewLocal::slotAddFolder()
 
     if ( sdir.path().startsWith("..") || sdir.path().startsWith("/") )
     {
-  	  CopyTo *dlg = new CopyTo( baseURL, this, i18n("%1: copy to project...").arg(dirName) );
+  	  CopyTo *dlg = new CopyTo( baseURL, this, i18n("%1: copy to project...").arg(dirURL.prettyURL()) );
 
       if ( dlg->exec() )
       {

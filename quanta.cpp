@@ -61,6 +61,7 @@
 #include <kaction.h>
 #include <kcharsets.h>
 #include <kdirwatch.h>
+#include <kspell.h>
 
 #include <kparts/componentfactory.h>
 
@@ -825,6 +826,10 @@ void QuantaApp::slotOptions()
 
   if (debuggerStyle=="PHP3") debuggerOptions->radioPhp3->setChecked(true);
   if (debuggerStyle=="None") debuggerOptions->checkDebugger->setChecked(false);
+
+//Spelling options  
+  page=kd->addVBoxPage(i18n("Spelling"), QString::null, BarIcon("spellcheck", KIcon::SizeMedium ) );
+  KSpellConfig *spellingOptions = new KSpellConfig( (QWidget *)page, 0L, qConfig.spellConfig, false );
      
   if ( kd->exec() )
   {

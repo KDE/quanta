@@ -87,6 +87,7 @@ class Document;
 
 class PHP3Debugger;
 class PHP4Debugger;
+class SpellChecker;
 
 typedef struct ToolbarEntry{
   KXMLGUIClient *guiClient;
@@ -456,6 +457,8 @@ protected: // Protected attributes
   QString scriptEndRxStr;
   /** The toolbars for this DTD are currently shown to the user. */
   QString currentToolbarDTD;
+
+  SpellChecker *spellChecker;
 };
  
 #endif // QUANTA_H

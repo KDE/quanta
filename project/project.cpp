@@ -670,10 +670,18 @@ void Project::slotAddFiles()
 
 void Project::slotAddDirectory()
 {
-	QString dir = KFileDialog::getExistingDirectory(baseURL.prettyURL(), this,
+ KURL url = KURL();
+ if ( KDE_VERSION < 308)
+ {
+	 QString dir = KFileDialog::getExistingDirectory(baseURL.prettyURL(), this,
                 i18n("Insert Directory in Project"));
-	KURL url = baseURL;
-  QuantaCommon::setUrl(url,dir);
+   url = baseURL;             
+   QuantaCommon::setUrl(url,dir);
+ } else
+ {
+   url = KFileDialog::getExistingURL(baseURL.prettyURL(), this,
+                i18n("Insert Directory in Project"));
+ }
 	slotAddDirectory(url);
 }
 
