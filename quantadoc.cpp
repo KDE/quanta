@@ -455,20 +455,11 @@ Document* QuantaDoc::newWrite(QWidget *_parent)
 //  KTextEditor::Document *doc = KTextEditor::createDocument("katepart");
 
 
-  KTrader::OfferList offers = KTrader::self()->query( "KTextEditor/Document");
-  KService::Ptr service = *offers.begin();
-  KLibFactory *factory = KLibLoader::self()->factory(service->library().latin1() );
+  KTextEditor::Document *doc = KParts::ComponentFactory::createPartInstanceFromQuery<KTextEditor::Document>( "KTextEditor/Document",
+													      QString::null,
+													      _parent, 0,
+													      this, 0 );
 
-
-/*  KLibFactory *factory = KLibLoader::self()->factory( "libkatepart" );
-  if (!factory) //For KDE 3.0
-  {
-//     KLibLoader::lastErrorMessage() ;
-     factory = KLibLoader::self()->factory( "katepart" );
-  }
-  */
-//  KTextEditor::Document *doc = (KTextEditor::Document *) factory->create (0L, "kate", "KTextEditor::Document");
-  KTextEditor::Document *doc = static_cast<KTextEditor::Document *>(factory->create( this, 0, "KTextEditor::Document" ) );
 
   
 //  KTextEditor::Document *doc=KParts::ComponentFactory::createPartInstanceFromLibrary<KTextEditor::Document>("katepart",_parent,0);
