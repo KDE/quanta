@@ -107,7 +107,18 @@ void TagAction::insertTag()
        if (otag.text().left(1) == "<") s1 = "<"+s1;
        if (!attr.isEmpty())
           s1 += " "+QuantaCommon::attrCase(attr);
-       if (otag.text().right(1) == ">") s1 += ">";
+       if (otag.text().right(1) == ">")
+       {
+         QTag *dtdTag = QuantaCommon::tagFromDTD(w->defaultDTD(), name);
+         if ( w->defaultDTD()->singleTagStyle == "xml" && dtdTag &&
+              (dtdTag->isSingle() || (!qConfig.closeOptionalTags && dtdTag->isOptional()))
+            )
+         {
+           s1.append(" /");
+         }
+
+         s1.append(">");
+       }
 
        QString s2;
        if (qConfig.closeTags)
