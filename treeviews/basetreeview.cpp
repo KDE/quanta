@@ -31,6 +31,7 @@
 #include <qptrstack.h>
 
 // KDE includes
+#include <kaction.h>
 #include <kdebug.h>
 #include <krun.h>
 #include <klocale.h>
@@ -45,6 +46,7 @@
 #include <kurl.h>
 #include <ktar.h>
 #include <ktempfile.h>
+#include <ktrader.h>
 #include <kapplication.h>
 #include <kcursor.h>
 #include <kprotocolinfo.h>
@@ -306,7 +308,7 @@ void BaseTreeBranch::updateOpenFolder()
 ////////////////////////////////////////////////////////////////////////////////////
 
 BaseTreeView::BaseTreeView(QWidget *parent, const char *name)
-: KFileTreeView(parent, name), fileInfoDlg(0), m_saveOpenFolder(false)
+: KFileTreeView(parent, name), fileInfoDlg(0), m_saveOpenFolder(false), m_openWithMenu(0L), m_openWithMenuId(-1)
 {
   m_parent = parent;
   QToolTip::remove(viewport());  // remove the tooltip from QListView
@@ -563,6 +565,48 @@ void BaseTreeView::slotOpenWith()
   }
 }
 
+void BaseTreeView::slotOpenWithApplication()
+{
+  KService::Ptr ptr = KService::serviceByDesktopPath(sender()->name());
+  if (ptr)
+  {
+    KURL::List list;
+    list << currentURL();
+    KRun::run(*ptr, list);
+  }
+}
+
+void BaseTreeView::insertOpenWithMenu(KPopupMenu *menu, int position)
+{
+  if (m_openWithMenuId != -1)
+    menu->removeItem(m_openWithMenuId);
+  for (uint i = 0; i < m_openWithActions.count(); i++)
+  {
+    KAction *action = m_openWithActions[i];
+    delete action;
+  }
+  m_openWithActions.clear();
+  KURL urlToOpen = currentURL();
+  QString mimeType = KMimeType::findByURL(urlToOpen, 0, true, true)->name();
+  KTrader::OfferList offers = KTrader::self()->query(mimeType, "Type == 'Application'");
+
+  if (offers.count() > 0)
+  {
+    m_openWithMenu = new KPopupMenu(this);
+    KTrader::OfferList::Iterator it;
+    for (it = offers.begin(); it != offers.end(); ++it)
+    {
+      KAction *action = new KAction((*it)->name(), (*it)->icon(), 0, 0, QFile::encodeName((*it)->desktopEntryPath()).data());
+      connect(action, SIGNAL(activated()), this, SLOT(slotOpenWithApplication()));
+      action->plug(m_openWithMenu);
+      m_openWithActions.append(action);
+    }
+    m_openWithMenu->insertSeparator();
+    m_openWithMenu->insertItem(i18n("&Other..."), this, SLOT(slotOpenWith()));
+    m_openWithMenuId = menu->insertItem(i18n("Open &With"), m_openWithMenu, -1, position);
+  } else
+    m_openWithMenuId = menu->insertItem(i18n("Open &With..."), this, SLOT(slotOpenWith()), 0, -1, position);
+}
 
 void BaseTreeView::slotInsertTag()
 {

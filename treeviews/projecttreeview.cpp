@@ -124,7 +124,6 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   m_fileMenu = new KPopupMenu(this);
 
   m_fileMenu->insertItem(SmallIcon("fileopen"), i18n("&Open"), this, SLOT(slotOpen()));
-  m_fileMenu->insertItem(i18n("Open &With..."), this, SLOT(slotOpenWith()));
   m_openInQuantaId = m_fileMenu->insertItem(i18n("Load Toolbar"), this, SLOT(slotLoadToolbar()));
   m_fileMenu->insertItem(i18n("Insert &Tag"), this, SLOT(slotInsertTag()));
   m_menuClose = m_fileMenu->insertItem(SmallIcon("fileclose"), i18n("Clos&e"), this, SLOT(slotClose()));
@@ -247,6 +246,7 @@ void ProjectTreeView::slotMenu(KListView *listView, QListViewItem *item, const Q
           m_fileMenu->setItemVisible(m_openInQuantaId, false);
         }
         m_fileMenu->setItemVisible(m_menuClose, isFileOpen(url));
+        insertOpenWithMenu(m_fileMenu, 1);
         m_fileMenu->popup(point);
       } else
       {

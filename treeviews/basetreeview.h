@@ -18,6 +18,9 @@
 #ifndef BASETREEVIEW_H
 #define BASETREEVIEW_H
 
+//qt includes
+#include <qvaluelist.h>
+
 //kde includes
 #include <kfiletreebranch.h>
 #include <kfiletreeview.h>
@@ -34,6 +37,7 @@ class QPoint;
 class QRegExp;
 class QCloseEvent;
 
+class KAction;
 class KFileItem;
 class KPopupMenu;
 class KPropertiesDialog;
@@ -102,21 +106,21 @@ public:
   /**
   adds the current open folders of the branch to a stringslist.
   Attention: no check for double entries is done
-  
+
   @param openFolder the list where to add the URL strings
   */
   void addOpenFolder(QStringList *openFolder);
-  
+
   /** opens the next folder in @ref folderToOpen */
   void reopenFolder();
-  
+
   /** list of folders to open */
   QStringList folderToOpen;
-  
+
   /** inform the dirwatcher to update all open folders */
   void updateOpenFolder();
 
-private slots:  
+private slots:
   // TODO drop this if support for KDE 3.2 is dropped
   void slotRefreshItems(const KFileItemList&);
 };
@@ -144,7 +148,7 @@ public:
    * @param group the config group to use
    */
   void saveLayout(KConfig *config, const QString &group);
-  
+
   /**
    * Reads the list view's layout from a KConfig group as stored with
    * saveLayout. Reimplemented to load the open folders.
@@ -158,10 +162,10 @@ public:
   * en/disable saving a list of open folders in @ref saveLayout and
   * restoring the tree status in @ref restoreLayout
   */
-  void setSaveOpenFolder(bool b = true) { m_saveOpenFolder = b; }; 
-  
+  void setSaveOpenFolder(bool b = true) { m_saveOpenFolder = b; };
+
   /** reads property @ref setSaveOpenFolder */
-  bool saveOpenFolder() { return m_saveOpenFolder; }; 
+  bool saveOpenFolder() { return m_saveOpenFolder; };
 
 public slots:
   /**
@@ -193,6 +197,9 @@ protected slots:
   shows open with dialog for the current item
   */
   void slotOpenWith();
+
+  /** Opens the current item with the selected associated application */
+  void slotOpenWithApplication();
   /**
   Called for: double click, return, Open
 
@@ -296,12 +303,21 @@ protected:
   this is for project and template tree to reduce includes there
   */
   bool isFileOpen(const KURL &url);
+
+  /** Inserts an Open With submenu into @param menu which lists
+  the possible applications that can open the current item and an
+  "Other" entry to bring up the Open With dialog. If no application
+  is associated with the type of the current item, the menu will bring up the Open With dialog immediately.
+  @param menu the menu where the Open With submenu should be inserted
+  @param position the position in this menu
+  */
+  void insertOpenWithMenu(KPopupMenu *menu, int position);
   KPropertiesDialog *propDlg;
   QString m_projectName;
   KURL m_projectBaseURL;
   FileInfoDlg* fileInfoDlg;
-  /** the parent of the treeview 
-      the passwords are cached there 
+  /** the parent of the treeview
+      the passwords are cached there
     */
   QWidget * m_parent;
 
@@ -310,7 +326,7 @@ protected:
   void doRename(KFileTreeViewItem* kvtvi, const QString & newName);
   /** reimplemented to reset renameable */
   void cancelRename(int col);
-  
+
 signals:
   void openFile(const KURL&);
   void openImage(const KURL&);
@@ -328,7 +344,10 @@ signals:
   void closeFile( const KURL& );
 
 private:
-  bool m_saveOpenFolder; 
+  bool m_saveOpenFolder;
+  KPopupMenu *m_openWithMenu;
+  int m_openWithMenuId;
+  QValueList<KAction *> m_openWithActions;
 };
 
 #endif

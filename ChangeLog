@@ -27,6 +27,8 @@ Version 3.4 (Release date: xx-xx-2005; Started 20-08-2004):
 
   - behavioral/user interface changes:
         - Toolbars->Add User Toolbar renamed to New User Toolbar
+        - extended Open With menu in the treeviews, showing the
+          list of applications that can open the current file
 
   - enhancements/new features:
         - smart tag insertion support in text editing mode as well
