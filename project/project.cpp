@@ -331,7 +331,7 @@ void Project::readLastConfig(KConfig *c)
     config = c;
 
   config->setGroup("Projects");
-  QString urlPath = config->readEntry("Last Project");
+  QString urlPath = config->readPathEntry("Last Project");
 
   KURL url;
   QuantaCommon::setUrl(url, urlPath);
@@ -346,7 +346,7 @@ void Project::readLastConfig(KConfig *c)
 void Project::writeConfig(KConfig *config)
 {
   config->setGroup  ("Projects");
-  config->writeEntry("Last Project", projectURL.url());
+  config->writePathEntry("Last Project", projectURL.url());
   config->deleteGroup("RecentProjects");
   projectRecent->saveEntries(config, "RecentProjects");
 
