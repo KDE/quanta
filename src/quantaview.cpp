@@ -777,6 +777,8 @@ void QuantaView::activated(bool resizeView)
   }
   if (resizeView)
     resize(m_documentArea->width(), m_documentArea->height() - ToolbarTabWidget::ref()->height());
+  else
+    resize(m_documentArea->width(), m_documentArea->height());
 }
 
 

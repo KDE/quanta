@@ -181,7 +181,13 @@ void QuantaInit::initQuanta()
   if (mdiMode != -1 && layout != "Default")
       m_quanta->readDockConfig(m_config); //FIXME: This causes the visible widget construction on startup, but is needed to restore the window layout...
   qConfig.windowLayout = "Custom";
-
+  //FIXME: This is a hack to workaround the starting problem when we are in Toplevel mode.
+  //Without this, the editor becomes the child of the widget holding the menus and toolbars...
+  if (mdiMode == 1)
+  {
+      m_quanta->switchToChildframeMode();
+      QTimer::singleShot(0, m_quanta, SLOT(switchToToplevelMode()));
+  }
   m_quanta->menuBar()->insertItem(i18n("Plu&gins"), m_quanta->m_pluginInterface->pluginMenu(),
                                   -1, PLUGINS_MENU_PLACE);
 
