@@ -269,9 +269,12 @@ void CVSService::slotCommit(const QStringList &files)
    m_commitDlg->fileList->clear();
    m_commitDlg->fileList->insertStringList(files);
    m_commitDlg->logEdit->clear();
-
+   m_commitDlg->messageCombo->insertItem(i18n("Current"), 0);
+   m_commitDlg->messageCombo->setCurrentItem(0);
+   
    if (m_repository && !m_appId.isEmpty() && m_commitDlg->exec())
    {
+      m_commitDlg->messageCombo->removeItem(0);
       QString message = m_commitDlg->logEdit->text();
       if (message != m_commitDlg->messageCombo->currentText())
           m_commitDlg->messageCombo->insertItem(message, 0);

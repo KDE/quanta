@@ -166,7 +166,8 @@ int QuantaBookmarks::insertBookmarks(QPopupMenu& menu, Document *doc, bool inser
             ( doc->editIf->textLine( (*it)->line ),
                           menu.fontMetrics(), 32 );
         bText.replace(re, "&&"); // kill undesired accellerators!
-  
+        bText.replace('\t', ' '); // kill tabs, as they are interpreted as shortcuts
+          
         if ( m_sorting == Position )
         {
           sortArray[i] = (*it)->line;
