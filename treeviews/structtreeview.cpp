@@ -388,8 +388,9 @@ void StructTreeView::slotGotoTag( QListViewItem *item )
   StructTreeTag *it = dynamic_cast<StructTreeTag*>(item);
   if (!m_dirty && it && it->node && it->node->tag)
   {
+    Tag *tag = new Tag(*it->node->tag);
     int line, col;
-    it->node->tag->beginPos(line, col);
+    tag->beginPos(line, col);
     if (!it->node->fileName.isEmpty())
     {
       KURL url;
@@ -397,13 +398,15 @@ void StructTreeView::slotGotoTag( QListViewItem *item )
       emit openFile(url, quantaApp->defaultEncoding());
     }
     int el, ec;
-    it->node->tag->endPos(el, ec);
-    kdDebug(24000) << "Node area: " << line << ", " << col << ", " << el << ", " << ec << endl;
-    kdDebug(24000) << "Node type: " << it->node->tag->type << endl;
-    kdDebug(24000) << "Node str: " << it->node->tag->tagStr() << endl;
-    kdDebug(24000) << "Node cleanstr: " << it->node->tag->cleanStr << endl;
+    tag->endPos(el, ec);
+/*    kdDebug(24000) << "Node area: " << line << ", " << col << ", " << el << ", " << ec << endl;
+    kdDebug(24000) << "Node type: " << tag->type << endl;
+    kdDebug(24000) << "Node str: " << tag->tagStr() << endl;
+    kdDebug(24000) << "Node cleanstr: " << tag->cleanStr << endl; */
     emit newCursorPosition( line, col);
-    it->node->tag->write()->view()->setFocus();
+    if (quantaApp->view()->writeExists())
+      quantaApp->view()->write()->view()->setFocus();
+    delete tag;
   }
 }
 
