@@ -35,6 +35,8 @@ public:
   void setIcon(QString name);
   /** used for sorting */
   virtual QString key ( int column, bool ascending ) const;
+  virtual void paintCell( QPainter *, const QColorGroup &, int, int, int);
+  
 public:
   QString fname;
 };

@@ -124,7 +124,8 @@ void ProjectTreeView::slotMenu(QListViewItem *item, const QPoint& point, int)
 	if ( f ) fileMenu->popup( point);
 	
 	ProjectTreeFolder *d = dynamic_cast<ProjectTreeFolder *>( item);
-	if ( d ) folderMenu->popup( point);
+	if ( d ) 
+	  if ( d->text(0) != "CVS") folderMenu->popup( point);
 }
 
 void ProjectTreeView::slotFileTag()
@@ -238,6 +239,8 @@ void ProjectTreeView::slotReloadTree( QStringList fileList, bool newtree, bool )
     }
     QListViewItem *item = folder->firstChild();
     bool neednew = true;
+    
+    if (folder->text(0) == "CVS") neednew = false;
 
     while( item )
     {

@@ -45,7 +45,9 @@ public:
   /**  */
   int find(QString name);
   /** need for sorting */
-  virtual QString key ( int column, bool ascending ) const;
+  virtual QString key( int column, bool ascending ) const;
+  virtual void paintCell( QPainter *, const QColorGroup &, int, int, int);
+  
 public:
   QList<ProjectTreeFile> fileList;
   /**  */

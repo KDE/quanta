@@ -27,8 +27,9 @@ ProjectTreeFolder::ProjectTreeFolder( ProjectTreeFolder *parent, const char *nam
 {
   fileList.setAutoDelete( true );
 
-  setPixmap( 0, SmallIcon("folder") );
-
+  if ( text(0) == "CVS" ) setPixmap( 0, SmallIcon("log") );
+	else                    setPixmap( 0, SmallIcon("folder") );
+  
   QString fname = name;
 
   if ( fname == "..")
@@ -48,7 +49,8 @@ ProjectTreeFolder::ProjectTreeFolder( QListView *parent, const char *name, const
 {
   fileList.setAutoDelete( true );
 
-  setPixmap( 0, SmallIcon("folder") );
+  if ( text(0) == "CVS" ) setPixmap( 0, SmallIcon("log") );
+	else                    setPixmap( 0, SmallIcon("folder") );
 
   path = dir;
 }
@@ -71,27 +73,23 @@ void ProjectTreeFolder::insertItem(ProjectTreeFile *item, QString name){
 
 void ProjectTreeFolder::setOpen( bool o )
 {
-//  ProjectTreeFile *item;
-
-  if ( o && !childCount() )
-  {
-
-  }
-
   QListViewItem::setOpen( o );
-//  if (p) {
-  	if (o)
-  		setPixmap( 0, SmallIcon("folder_open") );
-  	else
-  		setPixmap( 0, SmallIcon("folder") );
-//  }
+  
+  if (o)
+    setPixmap( 0, SmallIcon("folder_open") );
+  else
+    setPixmap( 0, SmallIcon("folder") );
+  	
+  if ( text(0) == "CVS" ) setPixmap( 0, SmallIcon("log") );
+  	
   opened = o;
 }
 
 
 void ProjectTreeFolder::setup()
 {
-    setExpandable( true );
+    if ( text(0) == "CVS") setExpandable( false );
+    else                   setExpandable( true );
     QListViewItem::setup();
 }
 
@@ -111,4 +109,12 @@ QString ProjectTreeFolder::key ( int, bool ) const
   static QString k;
   k = QString("1") + text(0);
   return k.data();
+}
+
+void ProjectTreeFolder::paintCell(QPainter *p, const QColorGroup &cg, int column, int width, int alignment)
+{
+  QColorGroup mycg(cg);
+  if ( text(0) == "CVS" )
+    mycg.setBrush(QColorGroup::Text,QColor("#808080"));
+  FilesTreeFolder::paintCell(p,mycg,column,width,alignment);
 }

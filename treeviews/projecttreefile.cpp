@@ -66,3 +66,9 @@ QString ProjectTreeFile::key ( int, bool ) const
   key = prefix + key;
   return key;
 }
+
+void ProjectTreeFile::paintCell(QPainter *p, const QColorGroup &cg, int column, int width, int alignment)
+{
+  QColorGroup mycg(cg);
+  QListViewItem::paintCell(p,mycg,column,width,alignment);
+}
