@@ -14,6 +14,7 @@
  ***************************************************************************/
 
 //qt includes
+#include <qcheckbox.h>
 #include <qfile.h>
 #include <qfileinfo.h>
 #include <qlabel.h>
@@ -91,6 +92,9 @@ bool DTDParser::parse()
   m_doctype = dlg.doctype->text();
   m_doctype.replace("<!doctype", "", false);
   m_doctype = m_doctype.left(m_doctype.findRev(">") - 1);
+  m_dtdURLLine = dlg.dtdURL->text();
+  m_defaultExtension = dlg.defaultExtension->text();
+  m_caseSensitive = dlg.caseSensitive->isChecked();
   DTD::dirName = m_dtepDir + "/" + dlg.directory->text();
   KURL u;
   u.setPath(DTD::dirName);
@@ -121,6 +125,9 @@ void DTDParser::writeDescriptionRC()
   config.writeEntry("NickName", m_nickName);
   config.writeEntry("DoctypeString", m_doctype);
   config.writeEntry("URL", m_dtdURLLine);
+  config.writeEntry("DefaultExtension", m_defaultExtension);
+  config.writeEntry("Family", "1");
+  config.writeEntry("CaseSensitive", m_caseSensitive);
   config.setGroup("Parsing rules");
   config.writeEntry("SpecialAreas","<!-- -->");
   config.writeEntry("SpecialAreaNames","comment");

@@ -2,9 +2,8 @@
                           structtreeview.cpp  -  description
                              -------------------
     begin                : Sat Apr 29 2000
-    copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky
-                           (C) 2002, 2003 Andras Mantia
-    email                : pdima@mail.univ.kiev.ua, amantia@freemail.hu
+    copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky <pdima@mail.univ.kiev.ua>
+                           (C) 2002, 2003 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************

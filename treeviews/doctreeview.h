@@ -2,9 +2,8 @@
                           doctreeview.h  -  description
                              -------------------
     begin                : Sat Mar 4 2000
-    copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky
-                           (C) 2002 Andras Mantia <amantia@freemail.hu>
-   email                : pdima@mail.univ.kiev.ua
+    copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky <pdima@mail.univ.kiev.ua>
+                           (C) 2002 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************

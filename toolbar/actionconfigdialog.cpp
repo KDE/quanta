@@ -1,15 +1,16 @@
-//
-//
-// C++ Implementation: actionconfigdialog.cpp
-//
-// Description: Dialog to configure the actions and their relation
-//              with toolbars
-//
-// Author: Andras Mantia <amantia@freemail.hu>, (C) 2003
-//
-// Copyright: See COPYING file that comes with this distribution
-//
-//
+/***************************************************************************
+                             actionconfigdialog.cpp
+                             ---------------------
+    copyright            : (C) 2003 by Andras Mantia <amantia@kde.org>
+ ***************************************************************************/
+
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; version 2 of the License.               *
+ *                                                                         *
+ ***************************************************************************/
 
 //qt includes
 #include <qbuttongroup.h>

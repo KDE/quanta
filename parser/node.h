@@ -2,9 +2,8 @@
                           node.h  -  description
                              -------------------
     begin                : Sun Apr 16 2000
-    copyright            : (C) 2000 by Dmitry Poplavsky
-                           (C) 2001-2003 Andras Mantia <amantia@freemail.hu>
-    email                : pdima@mail.univ.kiev.ua
+    copyright            : (C) 2000 by Dmitry Poplavsky <pdima@mail.univ.kiev.ua>
+                           (C) 2001-2003 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************

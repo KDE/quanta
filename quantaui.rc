@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="quanta" version="32023">
+<kpartgui name="quanta" version="32024">
   <MenuBar noMerge="1">
 
     <Menu name="file" noMerge="1"><text>&amp;File</text>
@@ -142,10 +142,13 @@
     <Action name="toolbars_send"/>
   </Menu>
 
+  <Menu name="dtds"><text>&amp;DTD</text>
+    <Action name="change_dtd"/>
+    <Action name="send_dtd"/>
+    <Action name="load_dtd"/>
+    <Action name="load_dtep" />
+  </Menu>
   <Menu name="tools"><text>T&amp;ools</text>
-    <Action name="tools_change_dtd"/>
-    <Action name="tools_load_dtd"/>
-    <Action name="tools_send_dtd"/>
     <Action name="tools_document_properties" />
     <Separator/>
     <Action name="tidy_check" />

@@ -2,9 +2,8 @@
                           filesmask.h  -  description
                              -------------------
     begin                : Fri May 19 2000
-    copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky
-                           (C) 2002 Andras Mantia <amantia@freemail.hu>
-    email                : pdima@mail.univ.kiev.ua
+    copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky <pdima@mail.univ.kiev.ua>
+                           (C) 2002 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -25,7 +24,7 @@
 class FileMasks : public FileMasksS
 {
    Q_OBJECT
-public: 
+public:
   FileMasks(QWidget *parent=0, const char *name=0);
   ~FileMasks();
 

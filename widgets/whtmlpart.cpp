@@ -2,9 +2,8 @@
                           whtmlpart.cpp  -  description
                              -------------------
     begin                : Fri Aug 18 2000
-    copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
-                           (C) 2002 Andras Mantia <amantia@freemail.hu>
-    email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com
+    copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon <pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com>
+                           (C) 2002 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -53,7 +52,7 @@ void  WHTMLPart::urlSelected ( const QString &url, int button, int state, const 
 //  KURL cURL=KURL(baseURL(),url);
   openURL( cURL ) ;
   addToHistory( cURL.url() );
-}                            
+}
 
 void WHTMLPart::forward()
 {
@@ -112,6 +111,6 @@ KParts::ReadOnlyPart *WHTMLPart::createPart( QWidget * parentWidget, const char 
                                             QStringList &, const QStringList &)
 {
    return new WHTMLPart(parentWidget, widgetName);
-}                                            
+}
 
 

@@ -2,10 +2,9 @@
                           quanta.cpp  -  description
                              -------------------
     begin                : ?? ???  9 13:29:57 EEST 2000
-    copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
-                           (C) 2001-2003 by Andras Mantia <amantia@freemail.hu>
-                           (C) 2003 by Eric Laffoon <sequitur@kde.org>
-    email                : pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com
+    copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev <pdima@users.sourceforge.net,yshurik@linuxfan.com>
+                           (C) 2001-2003 by Andras Mantia <amantia@kde.org>
+                           (C) 2000, 2003 by Eric Laffoon <sequitur@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -1788,17 +1787,21 @@ void QuantaApp::initActions()
                         m_doc, SLOT( slotAttribPopup() ),
                         ac, "tag_attributes" );
 
-    (void) new KAction( i18n( "&Change DTD Type..." ), 0,
-                        this, SLOT( slotToolsChangeDTD() ),
-                        ac, "tools_change_dtd" );
+    (void) new KAction( i18n( "&Change The DTD..." ), 0,
+                        this, SLOT( slotChangeDTD() ),
+                        ac, "change_dtd" );
 
-    (void) new KAction( i18n( "&Load DTD..." ), 0,
+    (void) new KAction( i18n( "&Load && Convert DTD..." ), 0,
                         this, SLOT( slotLoadDTD() ),
-                        ac, "tools_load_dtd" );
+                        ac, "load_dtd" );
 
-    (void) new KAction( i18n( "Send DTD in E&mail" ), 0,
+    (void) new KAction( i18n( "Load DTD &Package (DTEP)..." ), 0,
+                        this, SLOT( slotLoadDTEP() ),
+                        ac, "load_dtep" );
+
+    (void) new KAction( i18n( "Send DTD Package (DTEP)in E-&Mail" ), 0,
                         this, SLOT( slotEmailDTD() ),
-                        ac, "tools_send_dtd" );
+                        ac, "send_dtd" );
 
 #ifdef BUILD_KAFKAPART
     (void) new KAction( i18n( "Document Properties" ), 0,
@@ -1991,10 +1994,10 @@ void QuantaApp::initActions()
     new KAction(i18n("Load &Local Toolbar..."), 0, this, SLOT(slotLoadToolbar()), ac, "toolbars_load_user");
     new KAction(i18n("Save as &Local Toolbar..."), 0, this, SLOT(slotSaveLocalToolbar()), ac, "toolbars_save_local");
     new KAction(i18n("Save as &Project Toolbar..."), 0, this, SLOT(slotSaveProjectToolbar()), ac, "toolbars_save_project");
-    new KAction(i18n("&Add User Toolbar..."),  0, this, SLOT(slotAddToolbar()), ac, "toolbars_add");
-    new KAction(i18n("&Remove User Toolbar..."), 0, this, SLOT(slotRemoveToolbar()), ac, "toolbars_remove");
-    new KAction(i18n("Re&name User Toolbar..."), 0, this, SLOT(slotRenameToolbar()), ac, "toolbars_rename");
-    new KAction(i18n("Send Toolbar in E&mail..."), 0, this, SLOT(slotSendToolbar()), ac, "toolbars_send");
+    new KAction(i18n("&Add User Toolbar"),  0, this, SLOT(slotAddToolbar()), ac, "toolbars_add");
+    new KAction(i18n("&Remove User Toolbar"), 0, this, SLOT(slotRemoveToolbar()), ac, "toolbars_remove");
+    new KAction(i18n("Re&name User Toolbar"), 0, this, SLOT(slotRenameToolbar()), ac, "toolbars_rename");
+    new KAction(i18n("Send Toolbar in E-&Mail"), 0, this, SLOT(slotSendToolbar()), ac, "toolbars_send");
 
     showDTDToolbar=new KToggleAction(i18n("Show DTD Toolbar"), 0, ac, "view_dtd_toolbar");
     connect(showDTDToolbar, SIGNAL(toggled(bool)), this, SLOT(slotToggleDTDToolbar(bool)));

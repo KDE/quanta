@@ -6,6 +6,14 @@
 ** init() function in place of a constructor, and a destroy() function in
 ** place of a destructor.
 *****************************************************************************/
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************/
 
 #include <kfiledialog.h>
 #include <kdeversion.h>
@@ -39,6 +47,6 @@ void ProjectOptions::keepPasswdToggled( bool )
 {
   if (keepPasswd->isChecked())
   {
-      KMessageBox::information(this, i18n("<qt>Saving the password is not recommended. Please read the <b>What's This</b> information for this checkbox.</qt>"), i18n("Security warning"), "SavePasswordWarning"); 
+      KMessageBox::information(this, i18n("<qt>Saving the password is not recommended. Please read the <b>What's This</b> information for this checkbox.</qt>"), i18n("Security warning"), "SavePasswordWarning");
   }
 }

@@ -2,16 +2,14 @@
                           spellchecker.h  -  description
                              -------------------
     begin                : Mon Oct 21 2002
-    copyright            : (C) 2002 by Andras Mantia
-    email                : amantia@freemail.hu
+    copyright            : (C) 2002 by Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
+ *   the Free Software Foundation; version 2 of the License.               *
  *                                                                         *
  ***************************************************************************/
 
@@ -32,7 +30,7 @@ class KConfig;
 
 class SpellChecker : public QObject  {
    Q_OBJECT
-public: 
+public:
   SpellChecker(QObject *parent=0, const char *name=0);
   ~SpellChecker();
   /** Read the KSpell configuration from the Quanta configuration file. */
@@ -56,7 +54,7 @@ private:
   KSpell *m_kspell;
   int m_mispellCount;
   int m_replaceCount;
-    
+
 };
 
 #endif

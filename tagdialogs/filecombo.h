@@ -2,9 +2,8 @@
                           filecombo.h  -  description
                              -------------------
     begin                : Wed Sep 27 2000
-    copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
-                           (C) 2002 Andras Mantia
-    email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com, amantia@freemail.hu
+    copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon <pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com>
+                           (C) 2002 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************

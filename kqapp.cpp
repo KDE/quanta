@@ -5,7 +5,7 @@
     Copyright (c) 1999-2001 the KNode authors.
     See file AUTHORS for details
 
-    Rewritten for Quanta Plus: (C) 2002, 2003 Andras Mantia <amantia@freemail.hu>
+    Rewritten for Quanta Plus: (C) 2002, 2003 Andras Mantia <amantia@kde.org>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

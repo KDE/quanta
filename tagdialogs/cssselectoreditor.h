@@ -3,7 +3,7 @@
                              -------------------
     begin                : dom ago 25 2002
     copyright            : (C) 2002 by Andras Mantia, Andrea Bergia
-    email                : amantia@freemail.hu, andreabergia@yahoo.it
+    email                : amantia@kde.org, andreabergia@yahoo.it
  ***************************************************************************/
 
 /***************************************************************************

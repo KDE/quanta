@@ -2,9 +2,8 @@
                           tagdialog.cpp  -  description
                              -------------------
     begin                : Sat Apr 1 2000
-    copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky
-                           (C) 2002-2003 by Andras Mantia
-    email                : pdima@mail.univ.kiev.ua
+    copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky <pdima@mail.univ.kiev.ua>
+                           (C) 2002-2003 by Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************

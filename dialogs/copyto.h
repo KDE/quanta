@@ -2,9 +2,8 @@
                           copytodlg.h  -  description
                              -------------------
     begin                : Mon Mar 27 2000
-    copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky
+    copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky <dima@mail.univ.kiev.ua>
                            (C) 2001-2003 by Andras Mantia
-    email                : pdima@mail.univ.kiev.ua
  ***************************************************************************/
 
 /***************************************************************************

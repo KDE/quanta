@@ -2,9 +2,8 @@
                           quanta.h  -  description
                              -------------------
     begin                : ?? ???  9 13:29:57 EEST 2000
-    copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
-                           (C) 2001-2003 by Andras Mantia <amantia@freemail.hu>
-    email                : pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com
+    copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon <pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com>
+                           (C) 2001-2003 by Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -334,7 +333,7 @@ public slots:
   void slotAssignActionToScript(const KURL&a_scriptURL, const QString& a_interpreter);
 
   /** No descriptions */
-  void slotToolsChangeDTD();
+  void slotChangeDTD();
   /** No descriptions */
   void slotShowCompletion();
   /** No descriptions */

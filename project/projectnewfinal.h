@@ -2,9 +2,8 @@
                           projectnewgeneral.h  -  description
                              -------------------
     begin                : Fri Oct 27 2000
-    copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
-                           (C) 2001-2002 Andras Mantia <amantia@freemail.hu>
-    email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com
+    copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon <pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com>
+                           (C) 2001-2002 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -27,10 +26,10 @@
 
 class ProjectNewFinal : public ProjectNewFinalS  {
    Q_OBJECT
-public: 
+public:
   ProjectNewFinal(QWidget *parent=0, const char *name=0);
   ~ProjectNewFinal();
-  
+
   void setMargin(int);
 };
 

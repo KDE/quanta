@@ -4,7 +4,7 @@
     begin                : Sat Nov 27 1999
     copyright            : (C) 1999 by Yacovlev Alexander & Dmitry Poplavsky
                            (C) 2002 Andras Mantia
-    email                : pdima@mail.univ.kiev.ua, amantia@freemail.hu
+    email                : pdima@mail.univ.kiev.ua, amantia@kde.org
  ***************************************************************************/
 
 /***************************************************************************

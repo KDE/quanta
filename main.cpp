@@ -2,9 +2,8 @@
                           main.cpp  -  description
                              -------------------
     begin                : Втр Май  9 13:29:57 EEST 2000
-    copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
-                           (C) 2001-2002 Andras Mantia <amantia@freemail.hu>
-    email                : pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com
+    copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon <pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com>
+                           (C) 2001-2002 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -71,7 +70,7 @@ int main(int argc, char *argv[])
   //aboutData.otherText(&othertext);
 
    aboutData.addAuthor("Eric Laffoon",I18N_NOOP("Project Lead - public liason"), "sequitur@kde.org");
-   aboutData.addAuthor("Andras Mantia",I18N_NOOP("Program Lead - bug squisher"), "amantia@freemail.hu");
+   aboutData.addAuthor("Andras Mantia",I18N_NOOP("Program Lead - bug squisher"), "amantia@kde.org");
    aboutData.addAuthor("Dmitry Poplavsky",I18N_NOOP("Inactive - left for commercial version"), "dima@kde.org");
    aboutData.addAuthor("Alexander Yakovlev",I18N_NOOP("Inactive - left for commercial version"), "yshurik@kde.org");
 
@@ -88,7 +87,7 @@ int main(int argc, char *argv[])
     "robert@artnickel.com");
 
   aboutData.addCredit("Jason P. Hanley",
-    I18N_NOOP("Various fixes, foundational code for DTD parsing and other \nDTD related work"),
+    I18N_NOOP("Various fixes, foundational code for the old DTD parsing and other \nDTD related work"),
     "jphanley@buffalo.edu");
 
   aboutData.addCredit("George Vilches",
@@ -104,8 +103,12 @@ int main(int argc, char *argv[])
     "nicolasdchd@ifrance.com");
 
   aboutData.addCredit("Luciano Gulmini",
-    I18N_NOOP("Frame wizard"),
+    I18N_NOOP("Frame wizard, CSS wizard"),
     "e.gulmini@tiscali.it");
+
+  aboutData.addCredit("Emiliano Gulmini",
+    I18N_NOOP("Crash recovery"),
+    "emi_barbarossa@yahoo.it");
 
   aboutData.addCredit("Andrea Bergia",
     I18N_NOOP("CSS editor"),

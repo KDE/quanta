@@ -2,9 +2,8 @@
                           quantaview.h  -  description
                              -------------------
     begin                : ���� 9 13:29:57 EEST 2000
-    copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
-                           (C) 2001-2002 Andras Mantia <amantia@freemail.hu>
-    email                : pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com
+    copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon <pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com>
+                           (C) 2001-2002 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************

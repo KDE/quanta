@@ -3,8 +3,7 @@
                              -------------------
     begin                : ?
     copyright            : (C) ? Dmitry Poplavsky
-                           (C) 2002-2003 Andras Mantia <amantia@freemail.hu>
-    email                : amantia@freemail.hu
+                           (C) 2002-2003 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -40,7 +39,7 @@ class MessageOutput;
  * An action for inserting an XML tag.
  *
  * @author Dmitry Poplavsky, dima@kde.org
- *         Andras Mantia, amantia@freemail.hu
+ *         Andras Mantia, amantia@kde.org
  */
 
 class TagAction : public KAction

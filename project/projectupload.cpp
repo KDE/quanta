@@ -2,9 +2,8 @@
                           projectupload.cpp  -  description
                              -------------------
     begin                : Wed Nov 15 2000
-    copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
+    copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon <pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com>
                            (C) 2001-2003 by Andras Mantia
-    email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com
  ***************************************************************************/
 
 /***************************************************************************

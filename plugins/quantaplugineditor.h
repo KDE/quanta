@@ -2,9 +2,8 @@
                           quantaplugineditor.h  -  description
                              -------------------
     begin                : Fri Sep 20 2002
-    copyright            : (C) 2002 by Marc Britton
+    copyright            : (C) 2002 by Marc Britton <consume@optushome.com.au>
                            (C) 2003 by Andras Mantia <amantia@kde.org>
-    email                : consume@optushome.com.au
  ***************************************************************************/
 
 /***************************************************************************

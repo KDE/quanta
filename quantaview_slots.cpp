@@ -2,9 +2,8 @@
                           quantaview_slots.cpp  -  description
                              -------------------
     begin                : Thu Mar 9 2000
-    copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky
-                           (C) 2002, 2003 by Andras Mantia
-    email                : pdima@mail.univ.kiev.ua
+    copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky <pdima@mail.univ.kiev.ua>
+                           (C) 2002, 2003 by Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -65,7 +64,6 @@
 #include "tagdialogs/tagdialog.h"
 
 #include "tagdialogs/tagquicklistdlg.h"
-#include "tagdialogs/tagquicktable.h"
 #include "tagdialogs/tagmaildlg.h"
 #include "tagdialogs/tagmiscdlg.h"
 #include "tagdialogs/tableeditor.h"

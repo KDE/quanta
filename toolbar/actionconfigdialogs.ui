@@ -1,7 +1,16 @@
 <!DOCTYPE UI><UI version="3.1" stdsetdef="1">
 <class>ActionConfigDialogS</class>
-<comment>A dialog box where you can configure the actions and the toolbars holding the actions.</comment>
-<author>Andras Mantia &lt;amantia@freemail.hu&gt;</author>
+<comment>A dialog box where you can configure the actions and the toolbars holding the actions.
+
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; version 2 of the License.               *
+ *                                                                         *
+ ***************************************************************************/
+</comment>
+<author>(C) 2003 Andras Mantia &lt;amantia@kde.org&gt;</author>
 <widget class="QDialog">
     <property name="name">
         <cstring>ActionConfigDialogS</cstring>
@@ -143,7 +152,7 @@
                         <property name="resizeMode">
                             <enum>AllColumns</enum>
                         </property>
-                        <property name="tooltipColumn">
+                        <property name="tooltipColumn" stdset="0">
                             <number>2</number>
                         </property>
                     </widget>
@@ -340,17 +349,6 @@
                                         </property>
                                         <property name="text">
                                             <string>C&amp;ustom</string>
-                                        </property>
-                                    </widget>
-                                    <widget class="KKeyButton" row="0" column="2">
-                                        <property name="name">
-                                            <cstring>shortcutKeyButton</cstring>
-                                        </property>
-                                        <property name="enabled">
-                                            <bool>false</bool>
-                                        </property>
-                                        <property name="text">
-                                            <string>None</string>
                                         </property>
                                     </widget>
                                     <widget class="QRadioButton" row="0" column="0">
@@ -773,12 +771,6 @@
         <slot>raiseWidget(int)</slot>
     </connection>
     <connection>
-        <sender>customShortcut</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>shortcutKeyButton</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
         <sender>buttonCancel</sender>
         <signal>clicked()</signal>
         <receiver>ActionConfigDialogS</receiver>
@@ -917,18 +909,6 @@
         <slot>slotTextChanged(const QString&amp;)</slot>
     </connection>
     <connection>
-        <sender>shortcutKeyButton</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>ActionConfigDialogS</receiver>
-        <slot>slotToggled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>customShortcut</sender>
-        <signal>clicked()</signal>
-        <receiver>shortcutKeyButton</receiver>
-        <slot>animateClick()</slot>
-    </connection>
-    <connection>
         <sender>actionIcon</sender>
         <signal>clicked()</signal>
         <receiver>ActionConfigDialogS</receiver>
@@ -944,7 +924,6 @@
     <tabstop>actionIcon</tabstop>
     <tabstop>lineToolTip</tabstop>
     <tabstop>noShortcut</tabstop>
-    <tabstop>shortcutKeyButton</tabstop>
     <tabstop>toolbarListBox</tabstop>
     <tabstop>addToolbar</tabstop>
     <tabstop>removeToolbar</tabstop>
@@ -981,8 +960,8 @@
 <includehints>
     <includehint>klistview.h</includehint>
     <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
     <includehint>kicondialog.h</includehint>
-    <includehint>kkeybutton.h</includehint>
     <includehint>klistbox.h</includehint>
     <includehint>filecombo.h</includehint>
 </includehints>

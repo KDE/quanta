@@ -2,9 +2,8 @@
                quantaplugin.cpp  -  Base class for quanta plugins
                              -------------------
     begin                : Mon Sep 16 2002
-    copyright            : (C) 2002 by Marc Britton
+    copyright            : (C) 2002 by Marc Britton <consume@optushome.com.au>
                            (C) 2003 by Andras Mantia <amantia@kde.org>
-    email                : consume@optushome.com.au
  ***************************************************************************/
 
 /***************************************************************************

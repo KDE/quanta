@@ -3,8 +3,7 @@
                              -------------------
     begin                : ?
     copyright            : (C) ? Dmitry Poplavsky
-                           (C) 2002-2003 Andras Mantia <amantia@freemail.hu>
-    email                : amantia@freemail.hu
+                           (C) 2002-2003 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************

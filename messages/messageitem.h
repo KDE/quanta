@@ -2,9 +2,8 @@
                           messageoutput.h  -  description
                              -------------------
     begin                : Jan 12 2001
-    copyright            : (C) 2001 by Dmitry Poplavsky
-                           (C) 2002 Andras Mantia <amantia@freemail.hu>
-    email                : dima@kde.org
+    copyright            : (C) 2001 by Dmitry Poplavsky <dima@kde.org>
+                           (C) 2002 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -32,24 +31,24 @@
 
 class MessageItem : public QListBoxText {
   public:
-  
+
     MessageItem( QListBox *listbox, const QString &text=QString::null, int line=-1, const QString &fname=QString::null);
-    
+
     /** return line number for file , associated with this message */
     int line();
     /** return name of file , associated with this message */
     QString fileName() { return filename; }
-    
+
     void setLine( int line ) { lineNumber = line; lineDefined=true;  }
     void setFileName( QString fileName ) { filename = fileName; }
     void addText( QString );
   private:
-  
+
     // line number and filename , associated with this line
     int lineNumber;
     bool lineDefined;
     QString filename;
-  
+
 };
 
 #endif

@@ -2,8 +2,7 @@
                           tagwidget.cpp  -  description
                              -------------------
     begin                : Sat Apr 1 2000
-    copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky
-    email                : pdima@mail.univ.kiev.ua
+    copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky <pdima@mail.univ.kiev.ua>
  ***************************************************************************/
 
 /***************************************************************************

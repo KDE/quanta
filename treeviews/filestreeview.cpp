@@ -2,9 +2,8 @@
                           filestreeview.cpp  -  description
                              -------------------
     begin                : Thu Jun 1 2000
-    copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
-                           (C) 2001-2003  Andras Mantia
-    email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com
+    copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon <pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com>
+                           (C) 2001-2003  Andras Mantia <amantoa@kde.org>
  ***************************************************************************/
 
 /***************************************************************************

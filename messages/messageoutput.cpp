@@ -2,9 +2,8 @@
                           messageoutput.cpp  -  description
                              -------------------
     begin                : Thu Feb 24 2000
-    copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavski
-                           (C) 2003 Andras Mantia <amantia@freemail.hu>
-    email                : pdima@mail.univ.kiev.ua
+    copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavski <pdima@mail.univ.kiev.ua>
+                           (C) 2003 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************

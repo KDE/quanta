@@ -2,9 +2,8 @@
                           projectnewweb.h  -  description
                              -------------------
     begin                : Fri Oct 27 2000
-    copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
+    copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon <pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com>
                            (C) 2002 Andras Mantia
-    email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com, amantia@freemail.hu
  ***************************************************************************/
 
 /***************************************************************************

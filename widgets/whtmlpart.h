@@ -2,9 +2,8 @@
                           whtmlpart.h  -  description
                              -------------------
     begin                : Fri Aug 18 2000
-    copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
-                           (C) 2002 Andras Mantia <amantia@freemail.hu>
-    email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com
+    copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon <pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com>
+                           (C) 2002 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -28,10 +27,10 @@
 
 class WHTMLPart : public KHTMLPart  {
    Q_OBJECT
-public: 
+public:
   WHTMLPart(QWidget *parent, const char *name=0);
   ~WHTMLPart();
-  
+
   bool backEnable();
   bool forwardEnable();
 
@@ -39,15 +38,15 @@ public slots:
 
 /** back(), forward() - navigation, using history.
  */
-  void forward();    
+  void forward();
   void back();
-  
+
   void addToHistory( QString url );
-  
+
 signals:
   void updateStatus( bool back, bool forward );
 
-protected:  
+protected:
   virtual void urlSelected( const QString &url, int button, int state, const QString &_target, KParts::URLArgs args = KParts::URLArgs());
   virtual KParts::ReadOnlyPart *createPart( QWidget *parentWidget, const char *widgetName,
                                             QObject *parent, const char *name,
@@ -55,9 +54,9 @@ protected:
                                             QStringList &serviceTypes, const QStringList &params);
 
 private:
-  QStrList history;  
+  QStrList history;
   unsigned int hpos;
-    
+
 };
 
 #endif

@@ -41,6 +41,8 @@ private:
   QString m_nickName;
   QString m_doctype;
   QString m_dtdURLLine;
+  bool m_caseSensitive;
+  QString m_defaultExtension;
   QDict<Attribute> m_tags;
 };
 

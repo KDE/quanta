@@ -2,9 +2,8 @@
                           tagxml.cpp  -  description
                              -------------------
     begin                : � � 25 14:34:07 EEST 2000
-    copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
+    copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon <pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com>
                            (C) 2002-2003 by Andras Mantia
-    email                : pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com, amantia@freemail.hu
  ***************************************************************************/
 
 /***************************************************************************

@@ -2,9 +2,8 @@
                           projectfile.h  -  description
                              -------------------
     begin                : Wed Mar 15 2000
-    copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky
-                           (C) 2001-2003 Andras Mantia
-    email                : pdima@mail.univ.kiev.ua, amantia@freemail.hu
+    copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky <pdima@mail.univ.kiev.ua>
+                           (C) 2001-2003 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -29,7 +28,7 @@ class ProjectTreeFolder;
 
 class ProjectTreeFile : public FilesTreeFile  {
 friend class Project;
-public: 
+public:
   ProjectTreeFile( ProjectTreeFolder *parent,  QString name, const KURL& p_url);
   ~ProjectTreeFile();
 

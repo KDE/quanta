@@ -2,8 +2,7 @@
                           tagwidget.h  -  description
                              -------------------
     begin                : Sat Apr 1 2000
-    copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky
-    email                : pdima@mail.univ.kiev.ua
+    copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky <pdima@mail.univ.kiev.ua>
  ***************************************************************************/
 
 /***************************************************************************
@@ -36,7 +35,7 @@ class TagWidget {
 public:
   TagWidget(QObject *parent=0, const char *name=0);
   virtual ~TagWidget();
-  
+
   virtual void readAttributes( QDict<QString> * ) {};
   virtual void writeAttributes( QDict<QString> * ) {};
   /**  */
