@@ -139,8 +139,17 @@ void TableEditor::slotEditCell()
 {
   Tag *tag = (*m_tableTags)[m_row][m_col].node->tag;
   TagDialog dlg(QuantaCommon::tagFromDTD(m_dtd, "td"), tag, m_baseURL);
+  int many = 0;
   if (dlg.exec()) {
-    tag->modifyAttributes(dlg.getAttributes());
+    for (int row = 0; row < m_dataTable->numRows(); row++)
+      for (int col = 0; col < m_dataTable->numCols(); col++) {
+        many++;
+       if (m_dataTable->isSelected(row, col))
+         (*m_tableTags)[row][col].node->tag->modifyAttributes(dlg.getAttributes());
+      }
+    if (!many) {
+      (*m_tableTags)[m_row][m_col].node->tag->modifyAttributes(dlg.getAttributes());
+    }
     //TODO: add/remove columns/rows if the colspan/rowspan attribute is changed
   }
 }
@@ -539,10 +548,12 @@ QString TableEditor::readModifiedTable()
 {
   QString tableString;
   tableString = m_table->toString();
-  tableString += indent(2);
-  tableString += "<" + QuantaCommon::tagCase("caption") + ">";
-  tableString += captionText->text();
-  tableString += "</" + QuantaCommon::tagCase("caption") + ">";
+  if (!captionText->text().isEmpty()) {
+    tableString += indent(2);
+    tableString += "<" + QuantaCommon::tagCase("caption") + ">";
+    tableString += captionText->text();
+    tableString += "</" + QuantaCommon::tagCase("caption") + ">";
+  }
   for (QValueList<Tag*>::Iterator it = m_colTags.begin(); it != m_colTags.end(); ++it) {
     tableString += indent(2);
     tableString += (*it)->toString();
@@ -592,7 +603,6 @@ QString TableEditor::readModifiedTable()
   tableString += "</" + QuantaCommon::tagCase(m_tbody->name) +">";
   tableString += "\n";
   tableString += "</" + QuantaCommon::tagCase(m_table->name) + ">";
-  tableString += "\n";
 
   //kdDebug(24000) << tableString << endl;
   return tableString;
