@@ -112,6 +112,7 @@ ProjectPrivate::ProjectPrivate(Project *p)
   m_showUploadTreeviews = true;
   m_events = new EventActions();
   init();
+  m_wizTitle = i18n("<b>Insert Files in Project</b>");
 }
 
 ProjectPrivate::~ProjectPrivate()
@@ -914,7 +915,7 @@ void ProjectPrivate::slotSelectProjectType(const QString &title)
 {
   if ( png->radioLocal->isChecked() ) stack->raiseWidget( 0 );
   if ( png->radioWeb  ->isChecked() ) stack->raiseWidget( 1 );
-  if ( title == i18n("Insert files in project...") )
+  if ( title == m_wizTitle )
     emit setLocalFiles( pnl->checkInsert->isChecked() );
 }
 
@@ -1042,7 +1043,7 @@ void ProjectPrivate::slotNewProject()
   stack->addWidget( pnw, 1 );
 
   wiz->addPage( png,   i18n("<b>General Project Settings</b>"));
-  wiz->addPage( stack, i18n("<b>Insert Files in Project</b>"));
+  wiz->addPage( stack, m_wizTitle );
   wiz->addPage( pnf,   i18n("<b>More Project Settings</b>"));
 
   wiz->setNextEnabled  ( png,   false );
@@ -1064,9 +1065,9 @@ void ProjectPrivate::slotNewProject()
           this, SLOT  (slotSelectProjectType(const QString &)));
 
   connect( pnw, SIGNAL(enableMessagesWidget()),
-          this, SIGNAL  (enableMessageWidget()));
+          parent, SIGNAL(enableMessageWidget()));
   connect( pnw, SIGNAL(messages(const QString&)),
-          this, SLOT  (slotGetMessages(const QString&)));
+          parent, SLOT  (slotGetMessages(const QString&)));
   connect( pnw, SIGNAL(enableNextButton(QWidget *,bool)),
           wiz, SLOT(setNextEnabled(QWidget*,bool)));
   connect( pnw, SIGNAL(enableNextButton(QWidget *,bool)),
