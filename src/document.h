@@ -67,6 +67,7 @@ public:
   ~Document();
 
   void resizeEvent(QResizeEvent* e);
+  void keyPressEvent(QKeyEvent *e);
 
   KURL url();
 

@@ -153,6 +153,12 @@ void Document::resizeEvent(QResizeEvent *e)
   }
 }
 
+void Document::keyPressEvent(QKeyEvent *e)
+{
+  kdDebug(24000) << "Key pressed." << endl;
+  e->ignore();
+}
+
 void Document::setUntitledUrl(QString url)
 {
   untitledUrl = url;
