@@ -64,7 +64,7 @@ void SAParser::init(Node *node, Document* write)
 
 bool SAParser::slotParseOneLine()
 {
-  if ((!m_parsingEnabled && !m_synchronous) || !baseNode)
+  if ((!m_parsingEnabled || !baseNode) && !m_synchronous)
   {
 #ifdef DEBUG_PARSER
     kdDebug(24001) << "slotParseOneLine - interrupted" << endl;
@@ -949,7 +949,7 @@ void SAGroupParser::slotParseForScriptGroup()
 #ifdef DEBUG_PARSER
   //kdDebug(24001) << "slotParseForScriptGroup. Synch: " << m_synchronous << endl;
 #endif
-  if (!m_parent->parsingEnabled() || !baseNode)
+  if (!m_parent->parsingEnabled() || (!baseNode && !m_synchronous))
   {
 #ifdef DEBUG_PARSER
     kdDebug(24001) << "slotParseForScriptGroup aborted. Synch: " << m_synchronous << endl;
