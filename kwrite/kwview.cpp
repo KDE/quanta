@@ -1,4 +1,6 @@
 /*
+  $Id$
+
    Copyright (C) 1998, 1999 Jochen Wilhelmy
                             digisnap@cs.tu-berlin.de
 
@@ -40,6 +42,7 @@
 #include <qdragobject.h>
 #include <qiodevice.h>
 #include <qbuffer.h>
+#include <qtextcodec.h>
 
 #include <kapp.h>
 #include <kcursor.h>
@@ -54,12 +57,12 @@
 #include <kstdaction.h>
 #include <kparts/event.h>
 #include <kxmlgui.h>
-#include <kmessagebox.h>
 #include <dcopclient.h>
 
 #include <X11/Xlib.h> //used to have XSetTransientForHint()
 
 #include "kwdoc.h"
+#include "kwtextline.h"
 #include "kwdialog.h"
 #include "undohistory.h"
 #include "ktextprint.h"
@@ -338,11 +341,10 @@ void KWriteView::cursorRight(VConfig &c) {
 }
 
 void KWriteView::wordLeft(VConfig &c) {
-  TextLine *textLine;
   Highlight *highlight;
 
   highlight = kWriteDoc->highlight();
-  textLine = kWriteDoc->getTextLine(cursor.y);
+  TextLine::Ptr textLine = kWriteDoc->getTextLine(cursor.y);
 
   if (cursor.x > 0) {
     do {
@@ -376,12 +378,11 @@ void KWriteView::wordLeft(VConfig &c) {
 }
 
 void KWriteView::wordRight(VConfig &c) {
-  TextLine *textLine;
   Highlight *highlight;
   int len;
 
   highlight = kWriteDoc->highlight();
-  textLine = kWriteDoc->getTextLine(cursor.y);
+  TextLine::Ptr textLine = kWriteDoc->getTextLine(cursor.y);
   len = textLine->length();
 
   if (cursor.x < len) {
@@ -431,9 +432,8 @@ void KWriteView::home(VConfig &c) {
 }
 
 void KWriteView::end(VConfig &c) {
-/*  TextLine *textLine;
-
-  textLine = kWriteDoc->textLine(cursor.y);
+/* 
+  TextLine::Ptr textLine = kWriteDoc->textLine(cursor.y);
   if (c.flags & cfRemoveSpaces) { // ignore trailing spaces
     cursor.x = textLine->lastChar();
   } else {
@@ -641,7 +641,7 @@ void KWriteView::changeState(VConfig &c) {
 
     // remove trailing spaces when leaving a line
     if (c.flags & cfRemoveSpaces && cursor.y != c.cursor.y) {
-      TextLine *textLine = kWriteDoc->getTextLine(c.cursor.y);
+      TextLine::Ptr textLine = kWriteDoc->getTextLine(c.cursor.y);
       int newLen = textLine->lastChar();
       if (newLen != textLine->length()) {
         textLine->truncate(newLen);
@@ -1106,12 +1106,10 @@ void KWriteView::calcLogicalPosition(int &x, int &y) {
 // given physical coordinates, report whether the text there is selected
 bool KWriteView::isTargetSelected(int x, int y) {
 
-  TextLine   *line;
-
   y = (yPos + y) / kWriteDoc->fontHeight;
 
-  line = kWriteDoc->getTextLine(y);
-  if (! line)
+  TextLine::Ptr line = kWriteDoc->getTextLine(y);
+  if (!line)
     return false;
 
   x = kWriteDoc->textPos(line, x);
@@ -1506,11 +1504,11 @@ KWrite::KWrite(KWriteDoc *doc, QWidget *parent, const char * name, bool HandleOw
   setXMLFile( "kwriteui.rc" );
 
   // some defaults
-  configFlags = cfAutoIndent | cfSpaceIndent | cfBackspaceIndents
-    | cfTabIndents | cfKeepIndentProfile
-    | cfReplaceTabs | cfSpaceIndent | cfRemoveSpaces
-    | cfDelOnInput | cfMouseAutoCopy
-    | cfGroupUndo | cfShowTabs | cfSmartHome;
+  configFlags = KWriteView::cfAutoIndent | KWriteView::cfSpaceIndent | KWriteView::cfBackspaceIndents
+    | KWriteView::cfTabIndents | KWriteView::cfKeepIndentProfile
+    | KWriteView::cfReplaceTabs | KWriteView::cfSpaceIndent | KWriteView::cfRemoveSpaces
+    | KWriteView::cfDelOnInput | KWriteView::cfMouseAutoCopy
+    | KWriteView::cfGroupUndo | KWriteView::cfShowTabs | KWriteView::cfSmartHome;
   wrapAt = 80;
   searchFlags = 0;
   replacePrompt = 0L;
@@ -1538,12 +1536,12 @@ KWrite::KWrite(KWriteDoc *doc, QWidget *parent, const char * name, bool HandleOw
   if (!client->isRegistered())  // just in case we're embeeded
   {
     client->attach();
-    client->registerAs("kwrite");
+    client->registerAs("quanta");
   }
 }
 
 KWrite::~KWrite() {
-  // kdDebug() << "KWrite::~KWrite" << endl;
+   kdDebug() << "KWrite::~KWrite" << endl;
   QMap<KIO::Job *, NetData>::Iterator it = m_mapNetData.begin();
   while ( it != m_mapNetData.end() )
   {
@@ -1732,7 +1730,7 @@ void KWrite::keyPressEvent( QKeyEvent *ev )
                     shiftCursorLeft();
             }
             else if ( ev->state() & ControlButton )
-                shiftWordLeft();
+                wordLeft();
             else
                 cursorLeft();
             break;
@@ -1745,7 +1743,7 @@ void KWrite::keyPressEvent( QKeyEvent *ev )
                     shiftCursorRight();
             }
             else if ( ev->state() & ControlButton )
-                shiftWordRight();
+                wordRight();
             else
                 cursorRight();
             break;
@@ -1896,7 +1894,7 @@ int KWrite::config() {
   int flags;
 
   flags = configFlags;
-  if (kWriteDoc->singleSelection()) flags |= cfSingleSelection;
+  if (kWriteDoc->singleSelection()) flags |= KWriteView::cfSingleSelection;
   return flags;
 }
 
@@ -1904,12 +1902,12 @@ void KWrite::setConfig(int flags) {
   bool updateView;
 
   // cfSingleSelection is a doc-property
-  kWriteDoc->setSingleSelection(flags & cfSingleSelection);
-  flags &= ~cfSingleSelection;
+  kWriteDoc->setSingleSelection(flags & KWriteView::cfSingleSelection);
+  flags &= ~KWriteView::cfSingleSelection;
 
   if (flags != configFlags) {
     // update the view if visibility of tabs has changed
-    updateView = (flags ^ configFlags) & cfShowTabs;
+    updateView = (flags ^ configFlags) & KWriteView::cfShowTabs;
     configFlags = flags;
     emit newStatus();
     if (updateView) kWriteView->update();
@@ -2017,24 +2015,24 @@ void KWrite::applyColors()
 
 bool KWrite::isOverwriteMode() const
 {
-  return ( configFlags & cfOvr );
+  return ( configFlags & KWriteView::cfOvr );
 }
 
 void KWrite::setOverwriteMode( bool b )
 {
   if ( isOverwriteMode() && !b )
-    setConfig( configFlags ^ cfOvr );
+    setConfig( configFlags ^ KWriteView::cfOvr );
   else
-    setConfig( configFlags | cfOvr );
+    setConfig( configFlags | KWriteView::cfOvr );
 }
 
 void KWrite::toggleInsert() {
-  setConfig(configFlags ^ cfOvr);
+  setConfig(configFlags ^ KWriteView::cfOvr);
 }
 
 void KWrite::toggleVertical() {
-  setConfig(configFlags ^ cfVerticalSelect);
-  emit statusMsg(configFlags & cfVerticalSelect ? i18n("Vertical Selections On") : i18n("Vertical Selections Off"));
+  setConfig(configFlags ^ KWriteView::cfVerticalSelect);
+  emit statusMsg(configFlags & KWriteView::cfVerticalSelect ? i18n("Vertical Selections On") : i18n("Vertical Selections Off"));
 }
 
 
@@ -2047,14 +2045,12 @@ QString KWrite::text() {
 }
 
 QString KWrite::currentTextLine() {
-  TextLine *textLine;
-  textLine = kWriteDoc->getTextLine(kWriteView->cursor.y);
+  TextLine::Ptr textLine = kWriteDoc->getTextLine(kWriteView->cursor.y);
   return QString(textLine->getText(), textLine->length());
 }
 
 QString KWrite::textLine(int num) {
-  TextLine *textLine;
-  textLine = kWriteDoc->getTextLine(num);
+  TextLine::Ptr textLine = kWriteDoc->getTextLine(num);
   return QString(textLine->getText(), textLine->length());
 }
 
@@ -2090,7 +2086,24 @@ QString KWrite::markedText() {
   return kWriteDoc->markedText(configFlags);
 }
 
+#ifdef NEW_CODE
+void KWrite::loadFile(const QString &file, QTextCodec *codec, bool insert) 
+{
+  VConfig c;
 
+  if (!insert) {
+    kWriteDoc->loadFile(file, codec);
+  } else {
+    // TODO: Not yet supported.
+#if 0
+    kWriteView->getVConfig(c);
+    if (c.flags & cfDelOnInput) kWriteDoc->delMarkedText(c);
+    kWriteDoc->insertFile(c, dev);
+    kWriteDoc->updateViews();
+#endif
+  }
+}
+#else
 void KWrite::loadFile(QIODevice &dev, bool insert) {
   VConfig c;
 
@@ -2098,22 +2111,27 @@ void KWrite::loadFile(QIODevice &dev, bool insert) {
     kWriteDoc->loadFile(dev);
   } else {
     kWriteView->getVConfig(c);
-    if (c.flags & cfDelOnInput) kWriteDoc->delMarkedText(c);
+    if (c.flags & KWriteView::cfDelOnInput) kWriteDoc->delMarkedText(c);
     kWriteDoc->insertFile(c, dev);
     kWriteDoc->updateViews();
   }
 }
+#endif
 
 void KWrite::writeFile(QIODevice &dev) {
+#ifdef NEW_CODE
+  // TODO: Not yet implemented.
+#else
   kWriteDoc->writeFile(dev);
   kWriteDoc->updateViews();
+#endif
 }
 
 
 bool KWrite::loadFile(const QString &name, int flags) {
   QFileInfo info(name);
   if (!info.exists()) {
-    if (flags & lfNewFile) return true;
+    if (flags & KWriteView::lfNewFile) return true;
     KMessageBox::sorry(this, i18n("The specified File does not exist"));
     return false;
   }
@@ -2126,12 +2144,18 @@ bool KWrite::loadFile(const QString &name, int flags) {
     return false;
   }
 
+#ifdef NEW_CODE
+  // TODO: Select a proper codec.
+  loadFile(name, QTextCodec::codecForLocale(), flags & KWriteView::lfInsert);
+  return true;
+#else
   QFile f(name);
   if (f.open(IO_ReadOnly)) {
-    loadFile(f,flags & lfInsert);
+    loadFile(f,flags & KWriteView::lfInsert);
     f.close();
     return true;
   }
+#endif
   KMessageBox::sorry(this, i18n("An error occured while trying to open this document"));
   return false;
 }
@@ -2143,13 +2167,17 @@ bool KWrite::writeFile(const QString &name) {
     KMessageBox::sorry(this, i18n("You do not have write permission to this file"));
     return false;
   }
-
+#ifdef NEW_CODE
+  if (kWriteDoc->writeFile(name, QTextCodec::codecForLocale()))
+     return true; // Success
+#else
   QFile f(name);
   if (f.open(IO_WriteOnly | IO_Truncate)) {
     writeFile(f);
     f.close();
     return true;//kWriteDoc->setFileName(name);
   }
+#endif
   KMessageBox::sorry(this, i18n("An error occured while trying to write this document"));
   return false;
 }
@@ -2179,7 +2207,7 @@ void KWrite::loadURL(const KURL &url, int flags) {
     connect( job, SIGNAL( data( KIO::Job *, const QByteArray & ) ), this, SLOT( slotJobData( KIO::Job *, const QByteArray & ) ) );
   }
   else {
-    if ( flags & lfInsert ) {
+    if ( flags & KWriteView::lfInsert ) {
       if ( loadFile( url.path(), flags ) )
         emit statusMsg( i18n( "Inserted : %1" ).arg( url.fileName() ) );
       else
@@ -2187,17 +2215,15 @@ void KWrite::loadURL(const KURL &url, int flags) {
     } else {
       if (QFileInfo(url.path()).exists()) {
         if ( loadFile( url.path(), flags ) ) {
-          kWriteDoc->setURL( url, !(flags & lfNoAutoHl ) );
+          kWriteDoc->setURL( url, !(flags & KWriteView::lfNoAutoHl ) );
           emit statusMsg( i18n( "Read : %1" ).arg( url.fileName() ) );
         } else
           emit statusMsg( QString::null );
       } else {           // don't start whining, just make a new document
         kWriteDoc->clear();
-        kWriteDoc->setURL( url, !(flags & lfNoAutoHl ) );
+        kWriteDoc->setURL( url, !(flags & KWriteView::lfNoAutoHl ) );
         kWriteDoc->updateViews();
-        emit statusMsg( QString::null );
-        // !!!! replace with this when the string freeze is over: !!!
-        // emit statusMsg( i18n( "New File : %1" ).arg( url.fileName() ) );
+        emit statusMsg( i18n( "New File : %1" ).arg( url.fileName() ) );
       }
     }
   }
@@ -2239,8 +2265,8 @@ void KWrite::writeURL(const KURL &url, int ) {
     path = url.path();
   }
 
-  if ( writeFile( path ) )
-      kWriteDoc->setModified( false );
+  if ( !writeFile( path ) )
+     return;
 
   if ( !url.isLocalFile() )
   {
@@ -2280,23 +2306,30 @@ void KWrite::slotJobReadResult( KIO::Job *job )
 
     if ( job->error() )
         job->showErrorDialog();
+#ifdef NEW_CODE
+    // Something todo?
+#else
     else
         loadInternal( data, url, flags );
+#endif
 }
 
 void KWrite::loadInternal( const QByteArray &data, const KURL &url, int flags )
 {
+#ifdef NEW_CODE
+    // TODO: Not yet supported.
+#else
     QBuffer buff( data );
     buff.open( IO_ReadOnly );
     loadFile( buff, flags );
 
     QString msg;
 
-    if ( flags & lfInsert )
+    if ( flags & KWriteView::lfInsert )
         msg = i18n( "Inserted : %1" ).arg( url.fileName() );
     else
     {
-        kWriteDoc->setURL( url, !(flags & lfNoAutoHl ) );
+        kWriteDoc->setURL( url, !(flags & KWriteView::lfNoAutoHl ) );
         kWriteDoc->updateLines();
         kWriteDoc->updateViews();
 
@@ -2305,18 +2338,23 @@ void KWrite::loadInternal( const QByteArray &data, const KURL &url, int flags )
 
     emit statusMsg( msg );
 
-    if ( flags & lfNewFile )
+    if ( flags & KWriteView::lfNewFile )
         kWriteDoc->setModified( false );
+#endif
 }
 
 void KWrite::slotJobData( KIO::Job *job, const QByteArray &data )
 {
+#ifdef NEW_CODE
+    kWriteDoc->appendData(data, QTextCodec::codecForLocale());
+#else
     QMap<KIO::Job *, NetData>::Iterator it = m_mapNetData.find( job );
     assert( it != m_mapNetData.end() );
     QBuffer buff( (*it).m_data );
     buff.open(IO_WriteOnly | IO_Append );
     buff.writeBlock( data.data(), data.size() );
     buff.close();
+#endif
 }
 
 bool KWrite::canDiscard() {
@@ -2331,8 +2369,8 @@ bool KWrite::canDiscard() {
         if (isModified()) {
             query = KMessageBox::warningContinueCancel(this,
                i18n("Could not save the document.\nDiscard it and continue?"),
-	       i18n("Save"), i18n("&Discard"));
-          if (query == KMessageBox::No) return false;
+	       QString::null, i18n("&Discard"));
+          if (query == KMessageBox::Cancel) return false;
         }
         break;
       case KMessageBox::Cancel: //cancel
@@ -2356,7 +2394,6 @@ void KWrite::open() {
 
   url = KFileDialog::getOpenURL(kWriteDoc->url().url(), QString::null, this);
   if (url.isEmpty()) return;
-//  kapp->processEvents();
   loadURL(url);
 }
 
@@ -2366,14 +2403,13 @@ void KWrite::insertFile() {
 
   KURL  url = KFileDialog::getOpenURL(kWriteDoc->url().url(), QString::null, this);
   if (url.isEmpty()) return;
-//  kapp->processEvents();
-  loadURL(url,lfInsert);
+  loadURL(url,KWriteView::lfInsert);
 }
 
 KWrite::fileResult KWrite::save() {
   if (isModified()) {
     if (!kWriteDoc->url().fileName().isEmpty() && ! isReadOnly()) {
-      writeURL(kWriteDoc->url(),!(lfNoAutoHl));
+      writeURL(kWriteDoc->url(),!(KWriteView::lfNoAutoHl));
     } else return saveAs();
   } else emit statusMsg(i18n("No changes need to be saved"));
   return OK;
@@ -2401,7 +2437,6 @@ KWrite::fileResult KWrite::saveAs() {
     }
   } while (query == KMessageBox::No);
 
-//  kapp->processEvents();
   writeURL(url);
   kWriteDoc->setURL( url, false );
   return OK;
@@ -2410,8 +2445,8 @@ KWrite::fileResult KWrite::saveAs() {
 void KWrite::doCursorCommand(int cmdNum) {
   VConfig c;
   kWriteView->getVConfig(c);
-  if (cmdNum & selectFlag) c.flags |= cfMark;
-  if (cmdNum & multiSelectFlag) c.flags |= cfMark | cfKeepSelection;
+  if (cmdNum & selectFlag) c.flags |= KWriteView::cfMark;
+  if (cmdNum & multiSelectFlag) c.flags |= KWriteView::cfMark | KWriteView::cfKeepSelection;
   cmdNum &= ~(selectFlag | multiSelectFlag);
   kWriteView->doCursorCommand(c, cmdNum);
   kWriteDoc->updateViews();
@@ -2563,14 +2598,14 @@ static void kwview_addToStrList(QStringList &list, const QString &str) {
 void KWrite::find() {
   SearchDialog *searchDialog;
 
-  if (!kWriteDoc->hasMarkedText()) searchFlags &= ~sfSelected;
+  if (!kWriteDoc->hasMarkedText()) searchFlags &= ~KWriteView::sfSelected;
   searchDialog = new SearchDialog(this, searchForList, replaceWithList,
-    searchFlags & ~sfReplace);
+    searchFlags & ~KWriteView::sfReplace);
 
   kWriteView->focusOutEvent(0L);// QT bug ?
   if (searchDialog->exec() == QDialog::Accepted) {
     kwview_addToStrList(searchForList, searchDialog->getSearchFor());
-    searchFlags = searchDialog->getFlags() | (searchFlags & sfPrompt);
+    searchFlags = searchDialog->getFlags() | (searchFlags & KWriteView::sfPrompt);
     initSearch(s, searchFlags);
     searchAgain(s);
   }
@@ -2582,9 +2617,9 @@ void KWrite::replace() {
 
   if (isReadOnly()) return;
 
-  if (!kWriteDoc->hasMarkedText()) searchFlags &= ~sfSelected;
+  if (!kWriteDoc->hasMarkedText()) searchFlags &= ~KWriteView::sfSelected;
   searchDialog = new SearchDialog(this, searchForList, replaceWithList,
-    searchFlags | sfReplace);
+    searchFlags | KWriteView::sfReplace);
 
   kWriteView->focusOutEvent(0L);// QT bug ?
   if (searchDialog->exec() == QDialog::Accepted) {
@@ -2602,14 +2637,13 @@ void KWrite::replace() {
 //XSync(qt_xdisplay(),true);
 //kapp->syncX();
 //debug("xpending %d",XPending(qt_xdisplay()));
-//kapp->processEvents();
 //    kWriteView->tagAll();
 //    searchAgain();
 
 void KWrite::findAgain() {
 
-  initSearch(s, searchFlags | sfFromCursor | sfPrompt | sfAgain);
-  if (s.flags & sfReplace) replaceAgain(); else searchAgain(s);
+  initSearch(s, searchFlags | KWriteView::sfFromCursor |KWriteView::sfPrompt | KWriteView::sfAgain);
+  if (s.flags & KWriteView::sfReplace) replaceAgain(); else searchAgain(s);
 }
 
 void KWrite::gotoLine() {
@@ -2625,7 +2659,7 @@ void KWrite::gotoLine() {
     cursor.y = dlg->getLine() - 1;
     kWriteView->updateCursor(cursor);
     kWriteView->center();
-    kWriteView->updateView(ufUpdateOnScroll);
+    kWriteView->updateView(KWriteView::ufUpdateOnScroll);
     kWriteDoc->updateViews(kWriteView); //uptade all other views except this one
   }
   delete dlg;
@@ -2636,20 +2670,20 @@ void KWrite::initSearch(SConfig &s, int flags) {
   QString searchFor = searchForList.first();
 
   s.flags = flags;
-  if (s.flags & sfFromCursor) {
+  if (s.flags & KWriteView::sfFromCursor) {
     s.cursor = kWriteView->cursor;
   } else {
-    if (!(s.flags & sfBackward)) {
+    if (!(s.flags & KWriteView::sfBackward)) {
       s.cursor.x = 0;
       s.cursor.y = 0;
     } else {
       s.cursor.x = -1;
       s.cursor.y = kWriteDoc->lastLine();
     }
-    s.flags |= sfFinished;
+    s.flags |= KWriteView::sfFinished;
   }
-  if (!(s.flags & sfBackward)) {
-    if (!(s.cursor.x || s.cursor.y)) s.flags |= sfFinished;
+  if (!(s.flags & KWriteView::sfBackward)) {
+    if (!(s.cursor.x || s.cursor.y)) s.flags |= KWriteView::sfFinished;
   } else {
     s.startCursor.x -= searchFor.length();
   }
@@ -2658,15 +2692,15 @@ void KWrite::initSearch(SConfig &s, int flags) {
 
 void KWrite::continueSearch(SConfig &s) {
 
-  if (!(s.flags & sfBackward)) {
+  if (!(s.flags & KWriteView::sfBackward)) {
     s.cursor.x = 0;
     s.cursor.y = 0;
   } else {
     s.cursor.x = -1;
     s.cursor.y = kWriteDoc->lastLine();
   }
-  s.flags |= sfFinished;
-  s.flags &= ~sfAgain;
+  s.flags |= KWriteView::sfFinished;
+  s.flags &= ~KWriteView::sfAgain;
 }
 
 void KWrite::searchAgain(SConfig &s) {
@@ -2682,13 +2716,13 @@ void KWrite::searchAgain(SConfig &s) {
     query = KMessageBox::Cancel;
     if (kWriteDoc->doSearch(s,searchFor)) {
       cursor = s.cursor;
-      if (!(s.flags & sfBackward)) s.cursor.x += slen;
+      if (!(s.flags & KWriteView::sfBackward)) s.cursor.x += slen;
       kWriteView->updateCursor(s.cursor); //does deselectAll()
-      exposeFound(cursor,slen,(s.flags & sfAgain) ? 0 : ufUpdateOnScroll,false);
+      exposeFound(cursor,slen,(s.flags & KWriteView::sfAgain) ? 0 : KWriteView::ufUpdateOnScroll,false);
     } else {
-      if (!(s.flags & sfFinished)) {
+      if (!(s.flags & KWriteView::sfFinished)) {
         // ask for continue
-        if (!(s.flags & sfBackward)) {
+        if (!(s.flags & KWriteView::sfBackward)) {
           // forward search
           str = i18n("End of document reached.\n"
                 "Continue from the beginning?");
@@ -2720,10 +2754,10 @@ void KWrite::replaceAgain() {
     return;
 
   replaces = 0;
-  if (s.flags & sfPrompt) {
+  if (s.flags & KWriteView::sfPrompt) {
     doReplaceAction(-1);
   } else {
-    doReplaceAction(srAll);
+    doReplaceAction(KWriteView::srAll);
   }
 }
 
@@ -2738,20 +2772,20 @@ void KWrite::doReplaceAction(int result, bool found) {
   rlen = replaceWith.length();
 
   switch (result) {
-    case srYes: //yes
+    case KWriteView::srYes: //yes
       kWriteDoc->recordStart(kWriteView, s.cursor, configFlags,
         KWActionGroup::ugReplace, true);
       kWriteDoc->recordReplace(s.cursor, slen, replaceWith);
       replaces++;
       if (s.cursor.y == s.startCursor.y && s.cursor.x < s.startCursor.x)
         s.startCursor.x += rlen - slen;
-      if (!(s.flags & sfBackward)) s.cursor.x += rlen;
-      kWriteDoc->recordEnd(kWriteView, s.cursor, configFlags | cfPersistent);
+      if (!(s.flags & KWriteView::sfBackward)) s.cursor.x += rlen;
+      kWriteDoc->recordEnd(kWriteView, s.cursor, configFlags | KWriteView::cfPersistent);
       break;
-    case srNo: //no
-      if (!(s.flags & sfBackward)) s.cursor.x += slen;
+    case KWriteView::srNo: //no
+      if (!(s.flags & KWriteView::sfBackward)) s.cursor.x += slen;
       break;
-    case srAll: //replace all
+    case KWriteView::srAll: //replace all
       deleteReplacePrompt();
       do {
         started = false;
@@ -2766,13 +2800,13 @@ void KWrite::doReplaceAction(int result, bool found) {
           replaces++;
           if (s.cursor.y == s.startCursor.y && s.cursor.x < s.startCursor.x)
             s.startCursor.x += rlen - slen;
-          if (!(s.flags & sfBackward)) s.cursor.x += rlen;
+          if (!(s.flags & KWriteView::sfBackward)) s.cursor.x += rlen;
         }
         if (started) kWriteDoc->recordEnd(kWriteView, s.cursor,
-          configFlags | cfPersistent);
+          configFlags | KWriteView::cfPersistent);
       } while (!askReplaceEnd());
       return;
-    case srCancel: //cancel
+    case KWriteView::srCancel: //cancel
       deleteReplacePrompt();
       return;
     default:
@@ -2783,9 +2817,9 @@ void KWrite::doReplaceAction(int result, bool found) {
     if (kWriteDoc->doSearch(s,searchFor)) {
       //text found: highlight it, show replace prompt if needed and exit
       cursor = s.cursor;
-      if (!(s.flags & sfBackward)) cursor.x += slen;
+      if (!(s.flags & KWriteView::sfBackward)) cursor.x += slen;
       kWriteView->updateCursor(cursor); //does deselectAll()
-      exposeFound(s.cursor,slen,(s.flags & sfAgain) ? 0 : ufUpdateOnScroll,true);
+      exposeFound(s.cursor,slen,(s.flags & KWriteView::sfAgain) ? 0 : KWriteView::ufUpdateOnScroll,true);
       if (replacePrompt == 0L) {
         replacePrompt = new ReplacePrompt(this);
         XSetTransientForHint(qt_xdisplay(),replacePrompt->winId(),topLevelWidget()->winId());
@@ -2801,12 +2835,11 @@ void KWrite::doReplaceAction(int result, bool found) {
 }
 
 void KWrite::exposeFound(PointStruc &cursor, int slen, int flags, bool replace) {
-  TextLine *textLine;
   int x1, x2, y1, y2, xPos, yPos;
 
   kWriteDoc->markFound(cursor,slen);
 
-  textLine = kWriteDoc->getTextLine(cursor.y);
+  TextLine::Ptr textLine = kWriteDoc->getTextLine(cursor.y);
   x1 = kWriteDoc->textWidth(textLine,cursor.x)        -10;
   x2 = kWriteDoc->textWidth(textLine,cursor.x + slen) +20;
   y1 = kWriteDoc->fontHeight*cursor.y                 -10;
@@ -2840,7 +2873,7 @@ bool KWrite::askReplaceEnd() {
   int query;
 
   kWriteDoc->updateViews();
-  if (s.flags & sfFinished) {
+  if (s.flags & KWriteView::sfFinished) {
     // replace finished
     str = i18n("%1 replace(s) made").arg(replaces);
     KMessageBox::information(this, str, i18n("Replace"));
@@ -2848,7 +2881,7 @@ bool KWrite::askReplaceEnd() {
   }
 
   // ask for continue
-  if (!(s.flags & sfBackward)) {
+  if (!(s.flags & KWriteView::sfBackward)) {
     // forward search
     str = i18n("%1 replace(s) made.\n"
                "End of document reached.\n"
@@ -3007,8 +3040,8 @@ void KWrite::updateBookmarks()
 
 void KWrite::readConfig(KConfig *config) {
 
-  searchFlags = config->readNumEntry("SearchFlags", sfPrompt);
-  configFlags = config->readNumEntry("ConfigFlags", configFlags) & ~cfMark;
+  searchFlags = config->readNumEntry("SearchFlags", KWriteView::sfPrompt);
+  configFlags = config->readNumEntry("ConfigFlags", configFlags) & ~KWriteView::cfMark;
   wrapAt = config->readNumEntry("WrapAt", wrapAt);
 /*
   int flags;
@@ -3359,7 +3392,7 @@ void KWrite::corrected (QString originalword, QString newword, unsigned pos)
       kWriteDoc->recordStart(kWriteView, cursor, configFlags,
         KWActionGroup::ugSpell, true, kspell.kspellReplaceCount > 0);
       kWriteDoc->recordReplace(cursor, originalword.length(), newword);
-      kWriteDoc->recordEnd(kWriteView, cursor, configFlags | cfGroupUndo);
+      kWriteDoc->recordEnd(kWriteView, cursor, configFlags | KWriteView::cfGroupUndo);
 
       kspell.kspellReplaceCount++;
     }
@@ -3445,7 +3478,7 @@ void KWrite::slotUpdate()
     int cfg = config();
     bool readOnly = isReadOnly();
 
-    setVerticalSelection->setChecked(cfg & cfVerticalSelect);
+    setVerticalSelection->setChecked(cfg & KWriteView::cfVerticalSelect);
 
     fileSave->setEnabled(!readOnly);
     editInsert->setEnabled(!readOnly);
@@ -3484,8 +3517,7 @@ void KWrite::slotNewUndo()
     } else {
         editUndo->setEnabled(false);
     }
-    // icons disappear when text is altered, seems to be a bug in KToolbarButton
-    //editUndo->setText(t);
+    editUndo->setText(t);
 
     t = i18n("Re&do");   // it would be nicer to fetch the original string
     if (state & 2) {
@@ -3495,8 +3527,7 @@ void KWrite::slotNewUndo()
     } else {
         editRedo->setEnabled(false);
     }
-    // icons disappear when text is altered, seems to be a bug in KToolbarButton
-    //editRedo->setText(t);
+    editRedo->setText(t);
 }
 void KWrite::slotHighlightChanged()
 {

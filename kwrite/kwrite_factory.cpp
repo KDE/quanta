@@ -2,7 +2,7 @@
 #include "kwrite_factory.h"
 
 #include "kwdoc.h"
-#include "highlight/highlight.h"
+#include "highlight.h"
 #include "kwview.h"
 
 #include <klocale.h>
@@ -57,7 +57,7 @@ KInstance *KWriteFactory::instance()
 
 const KAboutData *KWriteFactory::aboutData()
 {
-    KAboutData *data = new KAboutData( "kwrite", I18N_NOOP( "KWrite" ),
+    KAboutData *data = new KAboutData( "quanta", I18N_NOOP( "KWrite" ),
                                        KWRITE_VERSION,
                                        I18N_NOOP( "Advanced Texteditor Component" ),
                                        KAboutData::License_GPL,
@@ -67,6 +67,7 @@ const KAboutData *KWriteFactory::aboutData()
     data->addAuthor( "Christian Gebauer", 0, "gebauer@bigfoot.com" );
     data->addAuthor( "Simon Hausmann", 0, "hausmann@kde.org" );
     data->addAuthor("Glen Parker",I18N_NOOP("Undo History, Kspell integration"), "glenebob@nwlink.com");
+    data->addAuthor("Scott Manson",I18N_NOOP("XML Syntax highlighting support"), "sdmanson@alltel.net");
     return data;
 }
 

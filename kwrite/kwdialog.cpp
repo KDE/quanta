@@ -1,3 +1,4 @@
+// $Id$
 // Dialogs
 
 #include <stdio.h>
@@ -17,7 +18,6 @@
 #include <qobjectlist.h>
 #include <qradiobutton.h>
 
-#include <kapp.h>
 #include <klocale.h>
 #include <kcolorbtn.h>
 #include <knuminput.h>
@@ -46,7 +46,7 @@ SearchDialog::SearchDialog( QWidget *parent, QStringList &searchFor, QStringList
   topLayout->addWidget( label );
   topLayout->addWidget( m_search );
 
-  if( flags & sfReplace )
+  if( flags & KWriteView::sfReplace )
   {
     // make it a replace dialog
     setCaption( i18n( "Replace Text" ) );
@@ -80,16 +80,16 @@ SearchDialog::SearchDialog( QWidget *parent, QStringList &searchFor, QStringList
   m_opt5 = new QCheckBox(i18n("&Selected Text" ), group );
   gbox->addWidget( m_opt5, 2, 1 );
 
-  m_opt1->setChecked( flags & sfCaseSensitive );
-  m_opt2->setChecked( flags & sfWholeWords );
-  m_opt3->setChecked( flags & sfFromCursor );
-  m_opt4->setChecked( flags & sfBackward );
-  m_opt5->setChecked( flags & sfSelected );
+  m_opt1->setChecked( flags & KWriteView::sfCaseSensitive );
+  m_opt2->setChecked( flags & KWriteView::sfWholeWords );
+  m_opt3->setChecked( flags & KWriteView::sfFromCursor );
+  m_opt4->setChecked( flags & KWriteView::sfBackward );
+  m_opt5->setChecked( flags & KWriteView::sfSelected );
 
   if( m_replace )
   {
     m_opt6 = new QCheckBox( i18n( "&Prompt On Replace" ), group );
-    m_opt6->setChecked( flags & sfPrompt );
+    m_opt6->setChecked( flags & KWriteView::sfPrompt );
     gbox->addWidget( m_opt6, 3, 1 );
   }
 
@@ -110,17 +110,17 @@ int SearchDialog::getFlags()
 {
   int flags = 0;
 
-  if( m_opt1->isChecked() ) flags |= sfCaseSensitive;
-  if( m_opt2->isChecked() ) flags |= sfWholeWords;
-  if( m_opt3->isChecked() ) flags |= sfFromCursor;
-  if( m_opt4->isChecked() ) flags |= sfBackward;
-  if( m_opt5->isChecked() ) flags |= sfSelected;
+  if( m_opt1->isChecked() ) flags |= KWriteView::sfCaseSensitive;
+  if( m_opt2->isChecked() ) flags |= KWriteView::sfWholeWords;
+  if( m_opt3->isChecked() ) flags |= KWriteView::sfFromCursor;
+  if( m_opt4->isChecked() ) flags |= KWriteView::sfBackward;
+  if( m_opt5->isChecked() ) flags |= KWriteView::sfSelected;
   if( m_replace )
   {
     if( m_opt6->isChecked() )
-      flags |= sfPrompt;
+      flags |= KWriteView::sfPrompt;
 
-    flags |= sfReplace;
+    flags |= KWriteView::sfReplace;
   }
 
   return flags;
@@ -147,11 +147,11 @@ ReplacePrompt::ReplacePrompt( QWidget *parent )
 }
 
 void ReplacePrompt::slotUser1( void ) { // All
-  done(srAll);
+  done(KWriteView::srAll);
 }
 
 void ReplacePrompt::slotUser2( void ) { // No
-  done(srNo);
+  done(KWriteView::srNo);
 }
 
 void ReplacePrompt::slotUser3( void ) { // Yes
@@ -161,8 +161,6 @@ void ReplacePrompt::slotUser3( void ) { // Yes
 void ReplacePrompt::done(int r) {
   setResult(r);
   emit clicked();
-//  qt_leave_modal(this);
-//  kapp->exit_loop();
 }
 
 void ReplacePrompt::closeEvent(QCloseEvent *) {
@@ -192,8 +190,8 @@ int GotoLineDialog::getLine() {
   return e1->value();
 }
 
-const int IndentConfigTab::flags[] = {cfAutoIndent, cfSpaceIndent,
-  cfBackspaceIndents, cfTabIndents, cfKeepIndentProfile, cfKeepExtraSpaces};
+const int IndentConfigTab::flags[] = {KWriteView::cfAutoIndent, KWriteView::cfSpaceIndent,
+  KWriteView::cfBackspaceIndents,KWriteView::cfTabIndents, KWriteView::cfKeepIndentProfile, KWriteView::cfKeepExtraSpaces};
 
 IndentConfigTab::IndentConfigTab(QWidget *parent, KWrite *kWrite)
   : QWidget(parent, 0L)
@@ -239,8 +237,8 @@ void IndentConfigTab::getData(KWrite *kWrite) {
   kWrite->setConfig(configFlags);
 }
 
-const int SelectConfigTab::flags[] = {cfPersistent, cfDelOnInput,
-  cfMouseAutoCopy, cfSingleSelection, cfVerticalSelect, cfXorSelect};
+const int SelectConfigTab::flags[] = {KWriteView::cfPersistent, KWriteView::cfDelOnInput,
+  KWriteView::cfMouseAutoCopy, KWriteView::cfSingleSelection, KWriteView::cfVerticalSelect, KWriteView::cfXorSelect};
 
 SelectConfigTab::SelectConfigTab(QWidget *parent, KWrite *kWrite)
   : QWidget(parent, 0L)
@@ -286,9 +284,9 @@ void SelectConfigTab::getData(KWrite *kWrite) {
   kWrite->setConfig(configFlags);
 }
 
-const int EditConfigTab::flags[] = {cfWordWrap, cfReplaceTabs, cfRemoveSpaces,
-  cfAutoBrackets, cfGroupUndo, cfShowTabs, cfSmartHome,
-  cfPageUDMovesCursor, cfWrapCursor};
+const int EditConfigTab::flags[] = {KWriteView::cfWordWrap, KWriteView::cfReplaceTabs, KWriteView::cfRemoveSpaces,
+  KWriteView::cfAutoBrackets, KWriteView::cfGroupUndo, KWriteView::cfShowTabs, KWriteView::cfSmartHome,
+  KWriteView::cfPageUDMovesCursor, KWriteView::cfWrapCursor};
 
 EditConfigTab::EditConfigTab(QWidget *parent, KWrite *kWrite)
   : QWidget(parent, 0L) {
@@ -309,7 +307,7 @@ EditConfigTab::EditConfigTab(QWidget *parent, KWrite *kWrite)
 
   opt[1] = new QCheckBox(i18n("Replace &tabs with spaces"), this);
   cbLayout->addWidget(opt[1], 0, AlignLeft);
-  opt[1]->setChecked( true );
+  opt[1]->setChecked(configFlags & flags[1]);
 
   opt[2] = new QCheckBox(i18n("&Remove trailing spaces"), this);
   cbLayout->addWidget(opt[2], 0, AlignLeft);
@@ -367,8 +365,15 @@ void EditConfigTab::getData(KWrite *kWrite)
 {
   int configFlags, z;
 
+// *******************************************************************
+// quanta addons
+// *******************************************************************
+// ADDED FOR NO ANY TAB IN EDITOR ;)
   opt[1]->setChecked( true );
-
+// *******************************************************************
+// end of quanta addons
+// *******************************************************************
+  
   configFlags = kWrite->config();
   for (z = 0; z < numFlags; z++) {
     configFlags &= ~flags[z];

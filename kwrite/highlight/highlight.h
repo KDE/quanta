@@ -1,4 +1,6 @@
 /*
+  $Id$
+
    Copyright (C) 1998, 1999 Jochen Wilhelmy
                             digisnap@cs.tu-berlin.de
 
@@ -25,6 +27,11 @@
 #include <qdialog.h>
 
 #include <kcolorbtn.h>
+#include <qstrvec.h>
+#include <qdict.h>
+
+
+class SyntaxDocument;
 
 class QCheckBox;
 class QComboBox;
@@ -32,6 +39,7 @@ class QLineEdit;
 
 class TextLine;
 class Attribute;
+
 
 bool isInWord(QChar); //true for '_','0'-'9','A'-'Z','a'-'z'
 
@@ -64,6 +72,9 @@ class HlCharDetect : public HlItem {
 class Hl2CharDetect : public HlItem {
   public:
     Hl2CharDetect(int attribute, int context,  QChar ch1, QChar ch2);
+#ifdef PASCAL_SUPPORT
+		Hl2CharDetect(int attribute, int context, const QChar *ch);
+#endif
     virtual const QChar *checkHgl(const QChar *);
   protected:
     QChar sChar1;
@@ -97,20 +108,39 @@ class KeywordData {
     int len;
 };
 */
-
 class HlKeyword : public HlItemWw {
   public:
     HlKeyword(int attribute, int context);
     virtual ~HlKeyword();
-    void addWord(const QString &);
-    void addList(const char **);
+    virtual void addWord(const QString &);
+		virtual void addList(const QStringList &);
+// needed for kdevelop (if they decide to use this code)
+    virtual void addList(const char **);
     virtual const QChar *checkHgl(const QChar *);
+		QStringList getList() { return words;};
+		QDict<char> getDict() { return Dict;};
+		
   protected:
-    QDict <char> *words;
-    int maxlen; // max. len of keyword;
-//    QStringList words;
+    QStringList words;
+		QDict<char> Dict;
+};
+#ifdef PASCAL_SUPPORT
+class HlCaseInsensitiveKeyword : public HlKeyword {
+  public:
+    HlCaseInsensitiveKeyword(int attribute, int context);
+    virtual ~HlCaseInsensitiveKeyword();
+    virtual const char *checkHgl(const char *);
+		virtual const QChar *checkHgl(const QChar *);
+    void addList(const QStringList &);
+    void addList(const char **);
 };
 
+class HlPHex : public HlItemWw {
+  public:
+    HlPHex(int attribute,int context);
+    virtual const QChar *checkHgl(const QChar *);
+};
+#endif
 class HlInt : public HlItemWw {
   public:
     HlInt(int attribute, int context);
@@ -197,29 +227,6 @@ class HlShellComment : public HlCharDetect {
   public:
     HlShellComment(int attribute, int context);
     virtual bool startEnable(QChar c) {return !isInWord(c);}
-};
-
-// xml 
-
-class HlXmlTag : public HlItem {
-  public:
-    HlXmlTag(int attribute, int context);
-    virtual bool startEnable(QChar c) {return c == '<';}
-    virtual const QChar *checkHgl(const QChar *);
-};
-
-class HlXmlValue : public HlItem {
-  public:
-    HlXmlValue(int attribute, int context);
-    virtual bool startEnable(QChar c) {return c == '=';}
-    virtual const QChar *checkHgl(const QChar *);
-};
-
-class HlXmlAttrib : public HlItem {
-  public:
-    HlXmlAttrib(int attribute, int context);
-    virtual bool startEnable(QChar c) {return (c != '=') && (c != '<') && (c != '/'); }
-    virtual const QChar *checkHgl(const QChar *);
 };
 
 //modula 2 hex
@@ -403,7 +410,6 @@ class Highlight {
     virtual void createItemData(ItemDataList &);
     virtual void init();
     virtual void done();
-
     const char * iName;
     QString iWildcards;
     QString iMimetypes;
@@ -432,14 +438,41 @@ class GenHighlight : public Highlight {
 
 // *******************************************************************
 // a quanta highlightings section
-// *******************************************************************    
+// *******************************************************************
     static const int nContexts = 2048;
 // *******************************************************************
 // end of a quanta highlightings section
-// *******************************************************************
+// *******************************************************************    
+    
     HlContext *contextList[nContexts];
 };
 
+// *******************************************************************
+// a quanta highlightings section
+// *******************************************************************
+class HlXmlTag : public HlItem {
+  public:
+    HlXmlTag(int attribute, int context);
+    virtual bool startEnable(QChar c) {return c == '<';}
+    virtual const QChar *checkHgl(const QChar *);
+};
+
+class HlXmlValue : public HlItem {
+  public:
+    HlXmlValue(int attribute, int context);
+    virtual bool startEnable(QChar c) {return c == '=';}
+    virtual const QChar *checkHgl(const QChar *);
+};
+
+class HlXmlAttrib : public HlItem {
+  public:
+    HlXmlAttrib(int attribute, int context);
+    virtual bool startEnable(QChar c) {return (c != '=') && (c != '<') && (c != '/'); }
+    virtual const QChar *checkHgl(const QChar *);
+};
+// *******************************************************************
+// end of a quanta highlightings section
+// *******************************************************************
 
 
 class CHighlight : public GenHighlight {
@@ -454,6 +487,7 @@ class CHighlight : public GenHighlight {
     virtual void setKeywords(HlKeyword *keyword, HlKeyword *dataType);
 };
 
+
 class CppHighlight : public CHighlight {
   public:
     CppHighlight(const char * name);
@@ -463,6 +497,19 @@ class CppHighlight : public CHighlight {
   protected:
     virtual void setKeywords(HlKeyword *keyword, HlKeyword *dataType);
 };
+#ifdef PASCAL_SUPPORT
+class PascalHighlight : public CHighlight {
+  public:
+    PascalHighlight(const char *name);
+    virtual ~PascalHighlight();
+    virtual QString getCommentStart() { return QString("//"); };
+    virtual QString getCommentEnd() { return QString(""); };
+  protected:
+    virtual void createItemData(ItemDataList &);
+    virtual void makeContextList();
+    virtual void setKeywords(HlKeyword *keyword, HlKeyword *dataType);
+};
+#endif
 
 class ObjcHighlight : public CHighlight {
   public:
@@ -507,12 +554,10 @@ class HtmlHighlight : public GenHighlight {
 // *******************************************************************
 // a quanta highlightings section
 // *******************************************************************
-
     virtual void setKeywords(HlKeyword *keyword, HlKeyword *dataType);
 // *******************************************************************
 // end of a quanta highlightings section
-// *******************************************************************
-
+// *******************************************************************    
 };
 
 // *******************************************************************
@@ -533,7 +578,6 @@ class XmlHighlight : public GenHighlight {
 // *******************************************************************
 // end of a quanta highlightings section
 // *******************************************************************
-
 
 class BashHighlight : public GenHighlight {
   public:
@@ -580,7 +624,7 @@ class PerlHighlight : public Highlight {
   public:
     PerlHighlight(const char * name);
 
-    virtual int doHighlight(int ctxNum, TextLine *);
+    virtual int doHighlight(int ctxNum, TextLine*);
     virtual QString getCommentStart() { return QString("#"); };
   protected:
     virtual void createItemData(ItemDataList &);
@@ -638,11 +682,13 @@ class HlManager : public QObject {
     const char * hlName(int n);
     void getHlDataList(HlDataList &);
     void setHlDataList(HlDataList &);
+
+    SyntaxDocument *syntax;
+
   signals:
     void changed();
   protected:
     QList<Highlight> hlList;
-
     static HlManager *s_pSelf;
 };
 
@@ -717,7 +763,8 @@ class HighlightDialog : public KDialogBase
     HlDataList *hlDataList;
     HlData *hlData;
     ItemData *itemData;
-};    
+};
+
 // *******************************************************************
 // a quanta highlightings section
 // *******************************************************************

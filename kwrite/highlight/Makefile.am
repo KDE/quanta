@@ -12,10 +12,13 @@ INCLUDES = $(all_includes)\
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 libhighlight_a_METASOURCES = AUTO
 libhighlight_a_SOURCES = \
-		highlight.cpp
+		highlight.cpp\
+		syntaxdocument.cpp
 EXTRA_DIST = \
 		highlight.cpp\
-		highlight.h
+		highlight.h\
+		syntaxdocument.cpp\
+		syntaxdocument.h
 ##############################################################
 ####                  END KDEStudio part                  ####
 #2########################################################!@#$

@@ -33,13 +33,11 @@
 #include "filestreefolder.h"
 #include "filestreeview.h"
 
-// include icons
-#include "pix/folder_top.xpm"
-
 extern QString fileMaskHtml;
 extern QString fileMaskJava;
 extern QString fileMaskText;
 extern QString fileMaskImage;
+
 
 FilesTreeView::FilesTreeView( QString dir, QStrList topList, QWidget *parent, const char *name)
 	: FileManage(parent,name)

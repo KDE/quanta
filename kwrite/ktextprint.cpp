@@ -20,12 +20,13 @@
 #include <qcombobox.h>
 #include <qlineedit.h>
 
-#include <kapp.h>
 #include <klocale.h>
 #include <kfiledialog.h>
 #include <kmessagebox.h>
+#include <kinstance.h>
 
 #include "ktextprint.h"
+#include "kwrite_factory.h"
 #include "ktextprint.moc"
 
 struct MediaDef {
@@ -1104,7 +1105,7 @@ void KTextPrintDialog::accept() {
         i18n("Print"));
     }
   }
-  writeConfig(kapp->config());
+  writeConfig(KWriteFactory::instance()->config());
   KDialogBase::accept();
 }
 

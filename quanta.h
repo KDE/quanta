@@ -313,6 +313,7 @@ class QuantaApp : public KTMainWindow
 
     /** return htmlPart or 0L if use previewPosition=="Disabled" */
     WHTMLPart *htmlPart();
+    QWidgetStack *widgetStackOfHtmlPart();
 
     /** contains the recently used filenames */
     QStrList recentFiles;

@@ -829,6 +829,24 @@ WHTMLPart * QuantaApp::htmlPart()
 }
 
 
+QWidgetStack *QuantaApp::widgetStackOfHtmlPart()
+{
+  QWidgetStack *res = 0L;
+
+  if ( previewPosition == "Bottom" )
+     res = bottomWidgetStack;
+
+  if ( previewPosition == "Right" )
+     res = rightWidgetStack;
+
+  if ( previewPosition == "FWSpace" )
+     res = topWidgetStack;
+
+  return res;
+
+}
+
+
 void QuantaApp::enableCommand(int id_)
 {
   ///////////////////////////////////////////////////////////////////

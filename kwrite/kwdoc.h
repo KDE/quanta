@@ -1,4 +1,6 @@
 /*
+  $Id$
+
    Copyright (C) 1998, 1999 Jochen Wilhelmy
                             digisnap@cs.tu-berlin.de
 
@@ -32,225 +34,10 @@
 #include "kwview.h"
 #include "highlight/highlight.h"
 #include "ktexteditor.h"
+#include "kwbuffer.h"
+#include "kwtextline.h"
 
-/**
-  The TextLine represents a line of text. A text line that contains the
-  text, an attribute for each character, an attribute for the free space
-  behind the last character and a context number for the syntax highlight.
-  The attribute stores the index to a table that contains fonts and colors
-  and also if a character is selected.
-*/
-class TextLine {
-  public:
-    /**
-      Creates an empty text line with given attribute and syntax highlight
-      context
-    */
-    TextLine(int attribute = 0, int context = 0);
-    ~TextLine();
-
-    /**
-      Returns the length
-    */
-    int length() const {return len;}
-    /**
-      Universal text manipulation method. It can be used to insert, delete
-      or replace text.
-    */
-    void replace(int pos, int delLen, const QChar *insText, int insLen,
-      uchar *insAttribs = 0L);
-
-    /**
-      Appends a string of length l to the textline
-    */
-    void append(const QChar *s, int l) {replace(len, 0, s, l);}
-    /**
-      Wraps the text from the given position to the end to the next line
-    */
-    void wrap(TextLine *nextLine, int pos);
-    /**
-      Wraps the text of given length from the beginning of the next line to
-      this line at the given position
-    */
-    void unWrap(int pos, TextLine *nextLine, int len);
-    /**
-      Truncates the textline to the new length
-    */
-    void truncate(int newLen) {if (newLen < len) len = newLen;}
-    /**
-      Returns the position of the first character which is not a white space
-    */
-    int firstChar() const;
-    /**
-      Returns the position of the last character which is not a white space
-    */
-    int lastChar() const;
-    /**
-      Removes trailing spaces
-    */
-    void removeSpaces();
-    /**
-      Gets the char at the given position
-    */
-    QChar getChar(int pos) const;
-    /**
-      Gets the text. WARNING: it is not null terminated
-    */
-    QChar *getText() const {return text;}
-    /**
-      Gets a C-like null terminated string
-    */
-    const QChar *getString();
-    /**
-      Returns the x position of the cursor at the given position, which
-      depends on the number of tab characters
-    */
-    int cursorX(int pos, int tabChars) const;
-    /**
-      Is the line starting with the given string
-    */
-    bool startingWith(QString& match);
-    /**
-      Is the line ending with the given string
-    */
-    bool endingWith(QString& match);
-
-    /**
-      Sets the attributes from start to end -1
-    */
-    void setAttribs(int attribute, int start, int end);
-    /**
-      Sets the attribute for the free space behind the last character
-    */
-    void setAttr(int attribute);
-    /**
-      Gets the attribute at the given position
-    */
-    int getAttr(int pos) const;
-    /**
-      Gets the attribute for the free space behind the last character
-    */
-    int getAttr() const;
-    /**
-      Gets the attribute, including the select state, at the given position
-    */
-    int getRawAttr(int pos) const;
-    /**
-      Gets the attribute, including the select state, for the free space
-      behind the last character
-    */
-    int getRawAttr() const;
-
-    /**
-      Sets the syntax highlight context number
-    */
-    void setContext(int context);
-    /**
-      Gets the syntax highlight context number
-    */
-    int getContext() const;
-
-    /**
-      Sets the select state from start to end -1
-    */
-    void select(bool sel, int start, int end);
-    /**
-      Sets the select state from the given position to the end, including
-      the free space behind the last character
-    */
-    void selectEol(bool sel, int pos);
-    /**
-      Toggles the select state from start to end -1
-    */
-    void toggleSelect(int start, int end);
-    /**
-      Toggles the select state from the given position to the end, including
-      the free space behind the last character
-    */
-    void toggleSelectEol(int pos);
-    /**
-      Returns the number of selected characters
-    */
-    int numSelected() const;
-    /**
-      Returns if the character at the given position is selected
-    */
-    bool isSelected(int pos) const;
-    /**
-      Returns true if the free space behind the last character is selected
-    */
-    bool isSelected() const;
-    /**
-      Finds the next selected character, starting at the given position
-    */
-    int findSelected(int pos) const;
-    /**
-      Finds the next unselected character, starting at the given position
-    */
-    int findUnselected(int pos) const;
-    /**
-      Finds the previous selected character, starting at the given position
-    */
-    int findRevSelected(int pos) const;
-    /**
-      Finds the previous unselected character, starting at the given position
-    */
-    int findRevUnselected(int pos) const;
-
-    /**
-      Marks the text from the given position and length as found
-    */
-    void markFound(int pos, int l);
-    /**
-      Removes the found marks
-    */
-    void unmarkFound();
-
-  protected:
-    /**
-      Length of the text line
-    */
-    int len;
-    /**
-      Memory Size of the text line
-    */
-    int size;
-    /**
-      The text
-    */
-    QChar *text;
-    /**
-      The attributes
-    */
-    uchar *attribs;
-    /**
-      The attribute of the free space behind the end
-    */
-    uchar attr;
-    /**
-      The syntax highlight context
-    */
-    int ctx;
-};
-
-
-
-class Attribute {
-  public:
-    Attribute();
-//    Attribute(const char *aName, const QColor &, const QColor &, const QFont &);
-//    QString name;
-    QColor col;
-    QColor selCol;
-    void setFont(const QFont &);
-    QFont font;
-    QFontMetrics fm;
-    //workaround for slow QFontMetrics::width()
-    int width(QChar c) {return (fontWidth < 0) ? fm.width(c) : fontWidth;}
-    int width(QString s) {return (fontWidth < 0) ? fm.width(s) : s.length()*fontWidth;}
-  protected:
-    int fontWidth;
-};
+class Attribute;
 
 class KWAction {
   public:
@@ -306,6 +93,7 @@ class KWActionGroup {
   @see TextLine
   @author Jochen Wilhelmy
 */
+
 class Document;
 
 class KWriteDoc : public KTextEditor::Document {
@@ -341,19 +129,22 @@ class KWriteDoc : public KTextEditor::Document {
 
 // public interface
     /**
-      gets the number of lines
-    */
-    virtual int numLines() const {return (int) contents.count();}
+     *  gets the number of lines
+     */
+    virtual int numLines() const;
+
     /**
-      gets the last line number (numLines() -1)
-    */
-    int lastLine() const {return (int) contents.count() -1;}
+     * gets the last line number (numLines() -1)
+     */
+    int lastLine() const {return numLines()-1;}
+
     /**
       gets the given line
       @return  the TextLine object at the given line
       @see     TextLine
     */
-    TextLine *getTextLine(int line) const;
+    TextLine::Ptr getTextLine(int line) const;
+
     /**
       get the length in pixels of the given line
     */
@@ -399,18 +190,24 @@ class KWriteDoc : public KTextEditor::Document {
     bool ownedView(KWriteView *);
     bool isLastView(int numViews);
 
-    int textWidth(TextLine *, int cursorX);
+    int textWidth(const TextLine::Ptr &, int cursorX);
     int textWidth(PointStruc &cursor);
     int textWidth(bool wrapCursor, PointStruc &cursor, int xPos);
-    int textPos(TextLine *, int xPos);
-//    int textPos(TextLine *, int xPos, int &newXPos);
+    int textPos(const TextLine::Ptr &, int xPos);
+//    int textPos(TextLine::Ptr &, int xPos, int &newXPos);
     int textWidth();
     int textHeight();
 
     void insert(VConfig &, const QString &);
     void insertFile(VConfig &, QIODevice &);
+#ifdef NEW_CODE
+    void loadFile(const QString &file, QTextCodec *codec);
+    bool writeFile(const QString &file, QTextCodec *codec);
+    void appendData(const QByteArray &data, QTextCodec *codec);
+#else
     void loadFile(QIODevice &);
     void writeFile(QIODevice &);
+#endif
 
     int currentColumn(PointStruc &cursor);
     bool insertChars(VConfig &, const QString &chars);
@@ -437,7 +234,7 @@ class KWriteDoc : public KTextEditor::Document {
     // just does some setup and then calls optimizeLeadingSpace()
     void doIndent(VConfig &, int change);
     // optimize leading whitespace on a single line - see kwdoc.cpp for full description
-//    bool optimizeLeadingSpace(VConfig &, TextLine *, int, bool);
+//    bool optimizeLeadingSpace(VConfig &, const TextLine::Ptr &, int, bool);
     void optimizeLeadingSpace(int line, int flags, int change);
 
     void comment(VConfig &c) {doComment(c, 1);}
@@ -448,9 +245,11 @@ class KWriteDoc : public KTextEditor::Document {
 
     virtual QString text() const;
     QString getWord(PointStruc &cursor);
-    public slots:
+
+  public slots:
     virtual void setText(const QString &);
-    public:
+
+  public:
     bool hasMarkedText() {return (selectEnd >= selectStart);}
     QString markedText(int flags);
     void delMarkedText(VConfig &/*, bool undo = true*/);
@@ -460,7 +259,7 @@ class KWriteDoc : public KTextEditor::Document {
     void tagAll();
     void updateLines(int startLine = 0, int endLine = 0xffffff, int flags = 0,
       int cursorY = -1);
-    void updateMaxLength(TextLine *);
+    void updateMaxLength(TextLine::Ptr &);
     void updateViews(KWriteView *exclude = 0L);
 
     QColor &cursorCol(int x, int y);
@@ -523,33 +322,33 @@ class KWriteDoc : public KTextEditor::Document {
 
   protected slots:
     void clipboardChanged();
+    void slotBufferChanged();
 
   private slots:
     void slotViewDestroyed();
 
 // member variables
   protected:
-    QList<TextLine> contents;
+    TextLine::List contents;
+    KWBuffer *buffer;
     QColor colors[5];
     HlManager *hlManager;
     Highlight *m_highlight;
     int m_numAttribs;
-    static const int maxAttribs = 32;
-    Attribute m_attribs[maxAttribs];
+    static const int maxAttribs;
+    Attribute *m_attribs;
 
     int eolMode;
-
+  public:
     int tabChars;
     int m_tabWidth;
-  public:
     int fontHeight;
-  protected:
     int fontAscent;
-
+  protected:
     QList<KWriteView> views;
     bool newDocGeometry;
 
-    TextLine *longestLine;
+    TextLine::Ptr longestLine;
     int maxLength;
 
     PointStruc select;

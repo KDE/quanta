@@ -1,4 +1,6 @@
 /*
+  $Id$
+
    Copyright (C) 1998, 1999 Jochen Wilhelmy
                             digisnap@cs.tu-berlin.de
 
@@ -50,124 +52,25 @@ class Highlight;
 
 class KTextPrint;
 
-//search flags
-const int sfCaseSensitive     = 1;
-const int sfWholeWords        = 2;
-const int sfFromCursor        = 4;
-const int sfBackward          = 8;
-const int sfSelected          = 16;
-const int sfPrompt            = 32;
-const int sfReplace           = 64;
-const int sfAgain             = 128;
-const int sfWrapped           = 256;
-const int sfFinished          = 512;
+/*
 //dialog results
 const int srYes               = QDialog::Accepted;
 const int srNo                = 10;
 const int srAll               = 11;
 const int srCancel            = QDialog::Rejected;
-
+*/
 // --- config flags ---
 // indent
-const int cfAutoIndent        = 0x1;
-const int cfSpaceIndent       = 0x400000;
-const int cfBackspaceIndents  = 0x2;
-const int cfTabIndents        = 0x80000;
-const int cfKeepIndentProfile = 0x8000;
-const int cfKeepExtraSpaces   = 0x10000;
 
-// select
-const int cfPersistent        = 0x80;
-const int cfDelOnInput        = 0x400;
-const int cfMouseAutoCopy     = 0x20000;
-const int cfSingleSelection   = 0x40000;
-const int cfVerticalSelect    = 0x200;
-const int cfXorSelect         = 0x800;
-
-// edit
-const int cfWordWrap          = 0x4;
-const int cfReplaceTabs       = 0x8;
-const int cfRemoveSpaces      = 0x10;
-const int cfAutoBrackets      = 0x40;
-const int cfGroupUndo         = 0x4000;
-const int cfShowTabs          = 0x200000;
-const int cfSmartHome         = 0x800000; // biggest number
-const int cfPageUDMovesCursor = 0x100000;
-const int cfWrapCursor        = 0x20;
-
-// other
-const int cfKeepSelection     = 0x100;
-const int cfOvr               = 0x1000;
-const int cfMark              = 0x2000;
-
-//update flags
-const int ufDocGeometry       = 1;
-const int ufUpdateOnScroll    = 2;
-const int ufPos               = 4;
-
-//load flags
-const int lfInsert            = 1;
-const int lfNewFile           = 2;
-const int lfNoAutoHl          = 4;
-
-//end of line settings
-const int eolUnix             = 0;
-const int eolMacintosh        = 1;
-const int eolDos              = 2;
-
-//cursor movement commands
-const int selectFlag          = 0x100000;
-const int multiSelectFlag     = 0x200000;
-const int cmLeft              = 1;
-const int cmRight             = 2;
-const int cmWordLeft          = 3;
-const int cmWordRight         = 4;
-const int cmHome              = 5;
-const int cmEnd               = 6;
-const int cmUp                = 7;
-const int cmDown              = 8;
-const int cmScrollUp          = 9;
-const int cmScrollDown        = 10;
-const int cmTopOfView         = 11;
-const int cmBottomOfView      = 12;
-const int cmPageUp            = 13;
-const int cmPageDown          = 14;
-const int cmCursorPageUp      = 15;
-const int cmCursorPageDown    = 16;
-const int cmTop               = 17;
-const int cmBottom            = 18;
-//edit commands
-const int cmReturn            = 1;
-const int cmDelete            = 2;
-const int cmBackspace         = 3;
-const int cmKillLine          = 4;
-const int cmUndo              = 5;
-const int cmRedo              = 6;
-const int cmCut               = 7;
-const int cmCopy              = 8;
-const int cmPaste             = 9;
-const int cmIndent            = 10;
-const int cmUnindent          = 11;
-const int cmCleanIndent       = 12;
-const int cmSelectAll         = 13;
-const int cmDeselectAll       = 14;
-const int cmInvertSelection   = 15;
-const int cmComment           = 16;
-const int cmUncomment         = 17;
-//find commands
-const int cmFind              = 1;
-const int cmReplace           = 2;
-const int cmFindAgain         = 3;
-const int cmGotoLine          = 4;
-//bookmark commands
-const int cmSetBookmark       = 1;
-const int cmAddBookmark       = 2;
-const int cmClearBookmarks    = 3;
-const int cmSetBookmarks      = 10;
-const int cmGotoBookmarks     = 20;
+enum Select_flags {
+  selectFlag          = 0x100000,
+  multiSelectFlag     = 0x200000
+};
 //state commands
-const int cmToggleInsert      = 1;
-const int cmToggleVertical    = 2;
+enum State_commands {
+  cmToggleInsert      = 1,
+  cmToggleVertical    = 2
+};
 
 
 void resizeBuffer(void *user, int w, int h);
@@ -242,6 +145,87 @@ class KWriteView : public QWidget {
     void bottom(VConfig &);
     void top_home(VConfig &c);
     void bottom_end(VConfig &c);
+//
+    enum Config_flags {
+      cfAutoIndent= 0x1,
+      cfBackspaceIndents= 0x2,
+      cfWordWrap= 0x4,
+      cfReplaceTabs= 0x8,
+      cfRemoveSpaces = 0x10,
+      cfWrapCursor= 0x20,
+      cfAutoBrackets= 0x40,
+      cfPersistent= 0x80,
+      cfKeepSelection= 0x100,
+      cfVerticalSelect= 0x200,
+      cfDelOnInput= 0x400,
+      cfXorSelect= 0x800,
+      cfOvr= 0x1000,
+      cfMark= 0x2000,
+      cfGroupUndo= 0x4000,
+      cfKeepIndentProfile= 0x8000,
+      cfKeepExtraSpaces= 0x10000,
+      cfMouseAutoCopy= 0x20000,
+      cfSingleSelection= 0x40000,
+      cfTabIndents= 0x80000,
+      cfPageUDMovesCursor= 0x100000,
+      cfShowTabs= 0x400000,
+      cfSpaceIndent= 0x400000,
+      cfSmartHome = 0x800000};
+
+    enum Dialog_results { 
+      srYes=QDialog::Accepted,
+      srNo=10,
+      srAll,
+      srCancel=QDialog::Rejected};
+      
+//search flags
+    enum Search_flags {
+     sfCaseSensitive=1,
+     sfWholeWords=2,
+     sfFromCursor=4,
+     sfBackward=8,
+     sfSelected=16,
+     sfPrompt=32,
+     sfReplace=64,
+     sfAgain=128,
+     sfWrapped=256,
+     sfFinished=512};
+
+//update flags
+    enum Update_flags {
+     ufDocGeometry=1,
+     ufUpdateOnScroll=2,
+     ufPos=4};
+
+//load flags
+    enum Load_flags {
+     lfInsert=1,
+     lfNewFile=2,
+     lfNoAutoHl=4};
+
+//end of line settings
+    enum Eol_settings {eolUnknown,eolUnix,eolMacintosh,eolDos};
+
+//cursor movement commands
+    enum Cursor_commands
+	   { cmLeft,cmRight,cmWordLeft,cmWordRight,
+       cmHome,cmEnd,cmUp,cmDown,
+       cmScrollUp,cmScrollDown,cmTopOfView,cmBottomOfView,
+       cmPageUp,cmPageDown,cmCursorPageUp,cmCursorPageDown,
+       cmTop,cmBottom};
+//edit commands
+    enum Edit_commands {
+		    cmReturn=1,cmDelete,cmBackspace,cmKillLine,cmUndo,
+        cmRedo,cmCut,cmCopy,cmPaste,cmIndent,cmUnindent,cmCleanIndent,
+        cmSelectAll,cmDeselectAll,cmInvertSelection,cmComment,
+        cmUncomment};
+//find commands
+    enum Find_commands { cmFind=1,cmReplace,cmFindAgain,cmGotoLine};
+
+//bookmark commands
+    enum Bookmark_commands {
+        cmSetBookmark=1,cmAddBookmark,cmClearBookmarks,
+        cmSetBookmarks=10,cmGotoBookmarks=20 };
 
   protected slots:
     void changeXPos(int);
@@ -359,6 +343,7 @@ class KWrite : public KTextEditor::View, virtual public KWriteIface {
     Q_OBJECT
     friend KWriteView;
     friend KWriteDoc;
+    friend Document;
   public:
     /**
       The document can be used by more than one KWrite objects.
@@ -591,11 +576,16 @@ class KWrite : public KTextEditor::View, virtual public KWriteIface {
   public:
 //    enum fileAction{GET, PUT}; //tells us what kind of job kwrite is waiting for
     enum fileResult { OK, CANCEL, RETRY, ERROR };
+
+#ifdef NEW_CODE
     /**
-      Loads a file from the given QIODevice. For insert = false the old
-      contents will be lost.
-    */
+     * Loads a file @p file using @p codec. 
+     * If insert = false the old contents will be deleted.
+     */
+    void loadFile(const QString &file, QTextCodec *codec, bool insert);
+#else
     void loadFile(QIODevice &, bool insert = false);
+#endif
     /**
       Writes the document into the given QIODevice
     */
@@ -687,23 +677,23 @@ class KWrite : public KTextEditor::View, virtual public KWriteIface {
     /**
       Moves the marked text into the clipboard
     */
-    void cut() {doEditCommand(cmCut);}
+    void cut() {doEditCommand(KWriteView::cmCut);}
     /**
       Copies the marked text into the clipboard
     */
-    void copy() {doEditCommand(cmCopy);}
+    void copy() {doEditCommand(KWriteView::cmCopy);}
     /**
       Inserts text from the clipboard at the actual cursor position
     */
-    void paste() {doEditCommand(cmPaste);}
+    void paste() {doEditCommand(KWriteView::cmPaste);}
     /**
       Undoes the last operation. The number of undo steps is configurable
     */
-    void undo() {doEditCommand(cmUndo);}
+    void undo() {doEditCommand(KWriteView::cmUndo);}
     /**
       Repeats an operation which has been undone before.
     */
-    void redo() {doEditCommand(cmRedo);}
+    void redo() {doEditCommand(KWriteView::cmRedo);}
     /**
       Undoes <count> operations.
       Called by slot undo().
@@ -721,72 +711,71 @@ class KWrite : public KTextEditor::View, virtual public KWriteIface {
     /**
       Moves the current line or the selection one position to the right
     */
-    void indent() {doEditCommand(cmIndent);};
+    void indent() {doEditCommand(KWriteView::cmIndent);};
     /**
       Moves the current line or the selection one position to the left
     */
-    void unIndent() {doEditCommand(cmUnindent);};
+    void unIndent() {doEditCommand(KWriteView::cmUnindent);};
     /**
       Optimizes the selected indentation, replacing tabs and spaces as needed
     */
-    void cleanIndent() {doEditCommand(cmCleanIndent);};
+    void cleanIndent() {doEditCommand(KWriteView::cmCleanIndent);};
     /**
       Selects all text
     */
-    void selectAll() {doEditCommand(cmSelectAll);}
+    void selectAll() {doEditCommand(KWriteView::cmSelectAll);}
     /**
       Deselects all text
-
     */
-    void deselectAll() {doEditCommand(cmDeselectAll);}
+    void deselectAll() {doEditCommand(KWriteView::cmDeselectAll);}
     /**
       Inverts the current selection
     */
-    void invertSelection() {doEditCommand(cmInvertSelection);}
+    void invertSelection() {doEditCommand(KWriteView::cmInvertSelection);}
     /**
       comments out current line
     */
-    void comment() {doEditCommand(cmComment);};
+    void comment() {doEditCommand(KWriteView::cmComment);};
     /**
       removes comment signs in the current line
     */
-    void uncomment() {doEditCommand(cmUncomment);};
+    void uncomment() {doEditCommand(KWriteView::cmUncomment);};
 
-    void keyReturn() {doEditCommand(cmReturn);};
-    void keyDelete() {doEditCommand(cmDelete);};
-    void backspace() {doEditCommand(cmBackspace);};
-    void killLine() {doEditCommand(cmKillLine);};
+    void keyReturn() {doEditCommand(KWriteView::cmReturn);};
+    void keyDelete() {doEditCommand(KWriteView::cmDelete);};
+    void backspace() {doEditCommand(KWriteView::cmBackspace);};
+    void killLine() {doEditCommand(KWriteView::cmKillLine);};
 
 // cursor commands...
 
-    void cursorLeft() {doCursorCommand(cmLeft);};
-    void shiftCursorLeft() {doCursorCommand(cmLeft | selectFlag);};
-    void cursorRight() {doCursorCommand(cmRight);}
-    void shiftCursorRight() {doCursorCommand(cmRight | selectFlag);}
-    void wordLeft() {doCursorCommand(cmWordLeft);};
-    void shiftWordLeft() {doCursorCommand(cmWordLeft | selectFlag);};
-    void wordRight() {doCursorCommand(cmWordRight);};
-    void shiftWordRight() {doCursorCommand(cmWordRight | selectFlag);};
-    void home() {doCursorCommand(cmHome);};
-    void shiftHome() {doCursorCommand(cmHome | selectFlag);};
-    void end() {doCursorCommand(cmEnd);};
-    void shiftEnd() {doCursorCommand(cmEnd | selectFlag);};
-    void up() {doCursorCommand(cmUp);};
-    void shiftUp() {doCursorCommand(cmUp | selectFlag);};
-    void down() {doCursorCommand(cmDown);};
-    void shiftDown() {doCursorCommand(cmDown | selectFlag);};
-    void scrollUp() {doCursorCommand(cmScrollUp);};
-    void scrollDown() {doCursorCommand(cmScrollDown);};
-    void topOfView() {doCursorCommand(cmTopOfView);};
-    void bottomOfView() {doCursorCommand(cmBottomOfView);};
-    void pageUp() {doCursorCommand(cmPageUp);};
-    void shiftPageUp() {doCursorCommand(cmPageUp | selectFlag);};
-    void pageDown() {doCursorCommand(cmPageDown);};
-    void shiftPageDown() {doCursorCommand(cmPageDown | selectFlag);};
-    void top() {doCursorCommand(cmTop);};
-    void shiftTop() {doCursorCommand(cmTop | selectFlag);};
-    void bottom() {doCursorCommand(cmBottom);};
-    void shiftBottom() {doCursorCommand(cmBottom | selectFlag);};
+    void cursorLeft() {doCursorCommand(KWriteView::cmLeft);};
+    void shiftCursorLeft() {doCursorCommand(KWriteView::cmLeft | selectFlag);};
+    void cursorRight() {doCursorCommand(KWriteView::cmRight);}
+    void shiftCursorRight() {doCursorCommand(KWriteView::cmRight | selectFlag);}
+    void wordLeft() {doCursorCommand(KWriteView::cmWordLeft);};
+    void shiftWordLeft() {doCursorCommand(KWriteView::cmWordLeft | selectFlag);};
+    void wordRight() {doCursorCommand(KWriteView::cmWordRight);};
+    void shiftWordRight() {doCursorCommand(KWriteView::cmWordRight | selectFlag);};
+    void home() {doCursorCommand(KWriteView::cmHome);};
+    void shiftHome() {doCursorCommand(KWriteView::cmHome | selectFlag);};
+    void end() {doCursorCommand(KWriteView::cmEnd);};
+    void shiftEnd() {doCursorCommand(KWriteView::cmEnd | selectFlag);};
+    void up() {doCursorCommand(KWriteView::cmUp);};
+    void shiftUp() {doCursorCommand(KWriteView::cmUp | selectFlag);};
+    void down() {doCursorCommand(KWriteView::cmDown);};
+    void shiftDown() {doCursorCommand(KWriteView::cmDown | selectFlag);};
+    void scrollUp() {doCursorCommand(KWriteView::cmScrollUp);};
+    void scrollDown() {doCursorCommand(KWriteView::cmScrollDown);};
+    void topOfView() {doCursorCommand(KWriteView::cmTopOfView);};
+    void bottomOfView() {doCursorCommand(KWriteView::cmBottomOfView);};
+    void pageUp() {doCursorCommand(KWriteView::cmPageUp);};
+    void shiftPageUp() {doCursorCommand(KWriteView::cmPageUp | selectFlag);};
+    void pageDown() {doCursorCommand(KWriteView::cmPageDown);};
+    void shiftPageDown() {doCursorCommand(KWriteView::cmPageDown | selectFlag);};
+    void top() {doCursorCommand(KWriteView::cmTop);};
+    void shiftTop() {doCursorCommand(KWriteView::cmTop | selectFlag);};
+    void bottom() {doCursorCommand(KWriteView::cmBottom);};
+    void shiftBottom() {doCursorCommand(KWriteView::cmBottom | selectFlag);};
 
 //search/replace functions
   public slots:

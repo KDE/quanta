@@ -845,8 +845,12 @@ void QuantaApp::slotViewRepaint(){
 void QuantaApp::repaintPreview( bool clear )
 {
   WHTMLPart *part = htmlPart();
-  if ( !part ) return;
-
+	QWidgetStack *s = widgetStackOfHtmlPart();
+	
+	if ( !s ) return;
+	if ( !part ) return;
+  if ( !s->id( s ->visibleWidget()) ) return;
+	  
   static QString oldtext = "";
   if ( clear )   oldtext = "";
 
@@ -866,9 +870,6 @@ void QuantaApp::repaintPreview( bool clear )
 		if ( fname == oldname && !doc->isModified() ) return;
 		else oldname = fname;
 	}
-
-  QWidgetStack *s = (QWidgetStack *)part-> parent();
-  if ( !s->id( s ->visibleWidget()) ) return;
 
   QString text = doc->write()->text();
 
@@ -913,9 +914,10 @@ void QuantaApp::slotImageOpen( QString fileToOpen )
      return;
 
   WHTMLPart *part = htmlPart();
+  QWidgetStack *s = widgetStackOfHtmlPart();
+  
+  if ( !s ) return;
   if ( !part ) return;
-
-  QWidgetStack *s = (QWidgetStack *)part-> parent();
 
   if ( !s->id( s ->visibleWidget()) ) return;
 
@@ -1125,8 +1127,8 @@ void QuantaApp::slotOptions()
     QWidgetStack *s;
     if ( htmlPart() )
     {
-    	s = (QWidgetStack *)htmlPart()->parent();
-	    s -> raiseWidget( 0 );
+      s = widgetStackOfHtmlPart();
+      s ->raiseWidget( 0 );
 	 	}
     checkCommand( ID_VIEW_PREVIEW, false );
 
@@ -1199,7 +1201,7 @@ void QuantaApp::slotActivatePreview()
 {
 	WHTMLPart *part = htmlPart();
 	if ( !part ) return;
-	QWidgetStack *s = (QWidgetStack *)part->parent();
+	QWidgetStack *s = widgetStackOfHtmlPart();
 	
 	enableCommand(ID_VIEW_BACK);
   enableCommand(ID_VIEW_FORWARD);
@@ -1214,8 +1216,11 @@ void QuantaApp::slotShowPreview()
 	static int hSplitPos = 1000;
 	
 	WHTMLPart *part = htmlPart();
+	QWidgetStack *s = widgetStackOfHtmlPart();
+	
+	if ( !s ) return;
 	if ( !part ) return;
-	QWidgetStack *s = (QWidgetStack *)part->parent();
+	
 	bool stat = viewMenu -> isItemChecked( ID_VIEW_PREVIEW );
 	if ( stat ) {
 		disableCommand(ID_VIEW_BACK);

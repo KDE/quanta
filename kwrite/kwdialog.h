@@ -1,3 +1,4 @@
+// $Id$
 // Dialogs
 
 #ifndef _KWDIALOG_H_
