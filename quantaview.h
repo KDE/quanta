@@ -211,11 +211,8 @@ class QuantaView : public QWidget
   	QTabBar      *tabBar;
   	QWidgetStack *toolbarStack;
 
-#ifdef USE_KDOCKTABGROUP
-	KDockTabGroup *writeTab;
-#else 	  	
   	QTabWidget   *writeTab;
-#endif
+
     /** collum of cursor position */
     int column;
     QString space;

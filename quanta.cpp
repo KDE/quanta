@@ -514,19 +514,6 @@ void QuantaApp::slotNewStatus()
   QIconSet floppyIcon( UserIcon("save_small"));
   QIconSet  emptyIcon( UserIcon("empty1x16" ));
 
-#ifdef USE_KDOCKTABGROUP
-  KDockTabGroup *wTab = view->writeTab;
-  int pageId = wTab->visiblePageId();
-  Document *w = static_cast<Document*>(wTab->visiblePage());
-  if (w->isModified())
-  {
-   	 wTab->setPixmap(pageId, floppyIcon.pixmap());
-  }
-  else
-  {
-     wTab->setPixmap(pageId, QPixmap(0,0));
-  }
-#else
   QTabWidget *wTab = view->writeTab;
   Document *w = static_cast<Document*>(wTab->currentPage());
 
@@ -534,18 +521,6 @@ void QuantaApp::slotNewStatus()
 	  wTab->changeTab( w,  floppyIcon, wTab->tabLabel(w));
  else 	
 	wTab->changeTab( w,  emptyIcon,  wTab->tabLabel(w));
-
-//This is a really dirty fix for the QTabWidget problem. After the changeTab call,
-//it will reset itself and you will see the first tabs, even if the actual page is on
-//a tab eg. at the end, and it won't be visible now. This is really confusing.
-/*
-	int pageId = wTab->currentPageIndex();	
-    bool block=wTab->signalsBlocked();
-    wTab->blockSignals(true);
-    wTab->setCurrentPage(pageId-1);
-    wTab->setCurrentPage(pageId);
-    wTab->blockSignals(block);*/
-#endif
 
   w->oldstat = w->isModified();
 }
@@ -1174,12 +1149,9 @@ void QuantaApp::slotShowOpenFileList()
 //This "complex" read-out is due to the reversed list.
   QString docName= fileList[openList.count() - listDlg.getEntryNum() - 1];
 
-#ifdef USE_KDOCKTABGROUP
-  view->writeTab->setVisiblePage(view->doc->docList->find(docName));
-#else
   view->writeTab->showPage(view->doc->docList->find(docName));
-#endif
 }
+
 /** No descriptions */
 void QuantaApp::slotNewProjectLoaded()
 {
