@@ -101,19 +101,19 @@ void RescanPrj::resizeEvent ( QResizeEvent *t )
 void RescanPrj::slotSelect()
 {
   listView->selectAll(true);
-  listView->slotSelectFile();
+  listView->checkboxTree();
 }
 
 void RescanPrj::slotDeselect()
 {
   listView->selectAll(false);
-  listView->slotSelectFile();
+  listView->checkboxTree();
 }
 
 void RescanPrj::slotInvert()
 {
   listView->invertAll();
-  listView->slotSelectFile();
+  listView->checkboxTree();
 }
 
 void RescanPrj::slotExpand()

@@ -75,7 +75,7 @@ void  ProjectUpload::initProjectInfo(Project *prg)
 
 	baseUrl = new KURL();
 
-	list->setMultiSelection(true);
+//	list->setMultiSelection(true);
 
   QDomElement uploadEl = p->dom.firstChild().firstChild().namedItem("upload").toElement();
 
@@ -158,7 +158,7 @@ void ProjectUpload::slotBuildTree()
      }
    }
  }
- list->slotSelectFile();
+ list->checkboxTree();
  treeText->hide();
  list->show();
  totalText->setText(i18n("Total:"));
@@ -330,7 +330,7 @@ void ProjectUpload::uploadMessage ( KIO::Job *, const QString & msg )
 void ProjectUpload::selectAll()
 {
 	list->selectAll(true);
-  list->slotSelectFile();
+  list->checkboxTree();
 }
 
 void ProjectUpload::selectModified()
@@ -341,19 +341,19 @@ void ProjectUpload::selectModified()
     it->setSelected(true);
     it->repaint();
   }
-  list->slotSelectFile();
+  list->checkboxTree();
 }
 
 void ProjectUpload::clearSelection()
 {
 	list->selectAll(false);
-  list->slotSelectFile();
+  list->checkboxTree();
 }
 
 void ProjectUpload::invertSelection()
 {
   list->invertAll();
-  list->slotSelectFile();
+  list->checkboxTree();
 }
 
 void ProjectUpload::expandAll()
@@ -418,7 +418,7 @@ void ProjectUpload::clearProjectModified()
   }
   modified.clear();
   list->clearSelection();
-  list->slotSelectFile();
+  list->checkboxTree();
 }
 
 void ProjectUpload::reject()

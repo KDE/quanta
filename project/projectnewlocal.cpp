@@ -165,6 +165,7 @@ void ProjectNewLocal::slotSetFiles(bool)
 	  }
     progressBar->setValue(0);
     progressBar->setTextEnabled(false);
+    listView->checkboxTree();
   }
 }
 
@@ -269,7 +270,7 @@ void ProjectNewLocal::slotAddFolder()
   }
 }
 
-void ProjectNewLocal::slotInsertFilesAfterCopying(const KURL& rdir,CopyTo* dlg)
+void ProjectNewLocal::slotInsertFilesAfterCopying(const KURL& rdir, CopyTo* dlg)
 {
   KURL dirURL = rdir;
 //The CopyTo dlg is deleted only here!!
@@ -288,6 +289,7 @@ void ProjectNewLocal::slotInsertFilesAfterCopying(const KURL& rdir,CopyTo* dlg)
        progressBar->setValue(i);
      }
   }
+  //listView->selectAll(false);
   progressBar->setValue(0);
   progressBar->setTextEnabled(false);
 }
@@ -295,7 +297,10 @@ void ProjectNewLocal::slotInsertFilesAfterCopying(const KURL& rdir,CopyTo* dlg)
 /** No descriptions */
 void ProjectNewLocal::slotClearList()
 {
-  KIO::del( baseURL );
+  //Really wondering why would we delete the files from baseURL???
+  //I've added this code, but I don't remember the reason. :-(
+  //Anyway, it is quite evil thing to do.
+  //KIO::del( baseURL );
   listView->clear();
   fileList.clear();
   checkInsert->setChecked(false);
