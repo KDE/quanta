@@ -99,6 +99,7 @@ Project::Project(KMainWindow *parent)
 {
   m_parent = parent;
   config = 0L;
+  init();
   initActions(parent->actionCollection());
 }
 
