@@ -32,11 +32,14 @@
 TagAttributeTree::TagAttributeTree(QWidget *parent, const char *name)
 :KListView(parent, name)
 {
+  setRootIsDecorated( true );
+  setSorting(-1);
+  setFrameStyle( Panel | Sunken );
+  setLineWidth( 2 );
+  setFocusPolicy(QWidget::ClickFocus);
+
   addColumn(i18n("Attribute name"));
   addColumn(i18n("Value"));
-  setResizeMode(QListView::AllColumns);
-  setRootIsDecorated(true);
-  setFocusPolicy(QWidget::ClickFocus);
   m_node = 0L;
   rebuildEnabled = true;
 }

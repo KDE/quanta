@@ -202,7 +202,7 @@ void QuantaApp::initQuanta()
     }
   }
 
-  applyMainWindowSettings(m_config);
+//  applyMainWindowSettings(m_config);
   initPlugins  ();
 
   m_tagsMenu = new QPopupMenu(this);
@@ -345,6 +345,8 @@ void QuantaApp::initView()
   maindock = createDockWidget( "Editor", UserIcon("textarea"  ), 0L, i18n("Editor"), 0L);
   bottdock = createDockWidget( "Output", UserIcon("output_win"), 0L, i18n("Output"), 0L);
 
+  atabdock = createDockWidget("TagAttributes", UserIcon("tag_misc"), 0L, i18n("Attribute tree view"), "");
+  atabdock->setToolTipString(i18n("Attribute tree view"));
   ftabdock = createDockWidget("Files", UserIcon("ftab"), 0L, i18n("Files tree view"), "");
   ftabdock->setToolTipString(i18n("Files tree view"));
   ptabdock = createDockWidget("Project", UserIcon("ptab"), 0L, i18n("Project tree view"), "");
@@ -355,8 +357,6 @@ void QuantaApp::initView()
   stabdock->setToolTipString(i18n("Structure view (DOM tree)"));
   dtabdock = createDockWidget("Docs", BarIcon ("contents2"), 0L, i18n("Documentation"), "");
   dtabdock->setToolTipString(i18n("Documentation"));
-  atabdock = createDockWidget("TagAttributes", UserIcon("tag_misc"), 0L, i18n("Attribute tree view"), "");
-  atabdock->setToolTipString(i18n("Attribute tree view"));
 
   m_oldTreeViewWidget = ptabdock;
   QStringList topStrList;
@@ -380,11 +380,11 @@ void QuantaApp::initView()
       topList.append(url);
 
   fTab = new FilesTreeView(topList, ftabdock);
+  aTab = new TagAttributeTree(atabdock);
   pTab = new ProjectTreeView(ptabdock );
   tTab = new TemplatesTreeView("" , ttabdock);
   dTab = new DocTreeView(dtabdock);
   sTab = new StructTreeView(m_config, stabdock ,"struct");
-  aTab = new TagAttributeTree(atabdock);
 
   rightWidgetStack = new QWidgetStack(maindock);
   bottomWidgetStack = new QWidgetStack(bottdock);
@@ -394,12 +394,12 @@ void QuantaApp::initView()
 
   maindock->setWidget(rightWidgetStack);
   bottdock->setWidget(bottomWidgetStack);
+  atabdock->setWidget(aTab);
   ftabdock->setWidget(fTab);
   ptabdock->setWidget(pTab);
   ttabdock->setWidget(tTab);
   stabdock->setWidget(sTab);
   dtabdock->setWidget(dTab);
-  atabdock->setWidget(aTab);
 
   maindock->setFocusPolicy(QWidget::StrongFocus);
 
@@ -490,14 +490,14 @@ void QuantaApp::initView()
   ftabdock ->manualDock(maindock, KDockWidget::DockLeft,   30);
   bottdock ->manualDock(maindock, KDockWidget::DockBottom, 80);
 
+  atabdock->manualDock(ftabdock, KDockWidget::DockCenter);
   ptabdock->manualDock(ftabdock, KDockWidget::DockCenter);
   ttabdock->manualDock(ftabdock, KDockWidget::DockCenter);
-//  KDockWidget *w = stabdock->manualDock(ftabdock, KDockWidget::DockCenter);
   dtabdock->manualDock(ftabdock, KDockWidget::DockCenter);
-//  atabdock->manualDock(w, KDockWidget::DockBottom, 70);
-  atabdock->manualDock(ftabdock, KDockWidget::DockCenter);
+  KDockWidget *w = stabdock->manualDock(ftabdock, KDockWidget::DockCenter);
+  atabdock->manualDock(w, KDockWidget::DockBottom, 70);
 
-  KDockManager *mng = stabdock->dockManager();
+  KDockManager *mng = ftabdock->dockManager();
   connect(mng, SIGNAL(change()), this, SLOT(slotDockChanged()));
 }
 
@@ -591,7 +591,8 @@ void QuantaApp::saveOptions()
    // m_doc->writeConfig(m_config); // kwrites
     m_project->writeConfig(m_config); // project
     manager()->writeConfig(m_config);
-    saveMainWindowSettings(m_config);
+    //saveMainWindowSettings(m_config);
+    writeDockConfig(m_config);
     m_spellChecker->writeConfig(m_config);
     m_config->sync();
   }
@@ -699,6 +700,7 @@ void QuantaApp::readOptions()
     else enablePhp3Debug(true);
 
   m_spellChecker->readConfig(m_config);
+  readDockConfig(m_config);
 }
 
 void QuantaApp::enablePhp3Debug(bool enable)
