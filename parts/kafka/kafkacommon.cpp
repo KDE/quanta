@@ -612,6 +612,10 @@ int kafkaCommon::getNodeDisplay(Node *node, bool closingNodeToo)
     else if(node->tag->type == Tag::XmlTag || (node->tag->type == Tag::XmlTagEnd &&
             closingNodeToo))
     {
+        //If we areusing a non (X)HTML DTD, make everything blockDisplay by default
+        if(node->tag->dtd()->name.contains("HTML", false) == 0)
+          return kafkaCommon::blockDisplay;
+    
         nodeName = node->tag->name.lower();
         if(closingNodeToo && nodeName.startsWith("/"))
             nodeName = nodeName.mid(1);
