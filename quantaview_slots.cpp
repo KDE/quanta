@@ -93,10 +93,10 @@ void QuantaView::slotEditCurrentTag()
   {
     Tag *tag = node->tag;
     tagName = tag->name;
-    if ( QuantaCommon::isKnownTag(tag->dtd->name,tagName) )
+    if ( QuantaCommon::isKnownTag(tag->dtd()->name,tagName) )
     {
       isUnknown = false;
-      TagDialog *dlg = new TagDialog( QuantaCommon::tagFromDTD(tag->dtd,tagName), tag, baseURL() );
+      TagDialog *dlg = new TagDialog( QuantaCommon::tagFromDTD(tag->dtd(), tagName), tag, baseURL() );
       if (dlg->exec())
       {
         w->changeTag(tag, dlg->getAttributes() );
@@ -182,7 +182,7 @@ void QuantaView::slotInsertCSS()
   if (styleNode->tag->type == Tag::XmlTagEnd && styleNode->prev)
     styleNode = styleNode->prev;
 
-  while (styleNode && styleNode->parent && styleNode->tag->name.lower() != "style" && styleNode->tag->dtd->name == "text/css")
+  while (styleNode && styleNode->parent && styleNode->tag->name.lower() != "style" && styleNode->tag->dtd()->name == "text/css")
     styleNode = styleNode->parent;
 
   Node *parentNode = node;
@@ -425,7 +425,7 @@ void QuantaView::slotTagEditTable()
     Node *node = parser->nodeAt(line, col);
     const DTDStruct *dtd = w->defaultDTD();
     if (node)
-      dtd = node->tag->dtd;
+      dtd = node->tag->dtd();
     bLine = line;
     bCol = col;
     eLine = line;

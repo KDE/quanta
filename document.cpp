@@ -1021,7 +1021,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(int line, 
       node = 0L;
   QTag *parentQTag= 0L;
   if (node)
-      parentQTag = QuantaCommon::tagFromDTD(node->tag->dtd, node->tag->name);
+      parentQTag = QuantaCommon::tagFromDTD(node->tag->dtd(), node->tag->name);
   QString textLine = editIf->textLine(line).left(col);
   QString word = findWordRev(textLine, completionDTD).upper();
   completion.userdata = word +"|";
@@ -2076,8 +2076,8 @@ QStringList Document::tagAreas(const QString& tag, bool includeCoordinates, bool
   {
     if (node->tag->type == Tag::XmlTag)
     {
-      if ( (node->tag->dtd->caseSensitive && node->tag->name == tag) ||
-           (!node->tag->dtd->caseSensitive && node->tag->name.lower() == tag.lower()) )
+      if ( (node->tag->dtd()->caseSensitive && node->tag->name == tag) ||
+           (!node->tag->dtd()->caseSensitive && node->tag->name.lower() == tag.lower()) )
       {
         node->tag->beginPos(bl, bc);
         if (node->next)
@@ -2290,7 +2290,7 @@ void Document::convertCase()
     while (node)
     {
       pBar->advance(1);
-      if (node->tag->dtd == dtd)
+      if (node->tag->dtd() == dtd)
       {
         if (tagCase !=0)
         {

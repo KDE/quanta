@@ -14,12 +14,14 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
+
 //qt include
 #include <qregexp.h>
 
 // KDE includes
 #include <kiconloader.h>
 #include <klocale.h>
+#include <kdebug.h>
 
 // app includes
 #include "structtreetag.h"
@@ -30,7 +32,6 @@
 #include "quanta.h"
 #include "quantacommon.h"
 #include "document.h"
-
 
 StructTreeTag::StructTreeTag(QListView *parent, QString a_title)
   : KListViewItem(parent, a_title)
@@ -107,23 +108,23 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, Node *a_node, const QString 
               {
                 QTag *parentQTag = 0L;
                 if (node->parent)
-                  parentQTag = QuantaCommon::tagFromDTD(node->parent->tag->dtd, node->parent->tag->name);
-                QString qTagName = node->tag->dtd->caseSensitive ? node->tag->name : node->tag->name.upper();
+                  parentQTag = QuantaCommon::tagFromDTD(node->parent->tag->dtd(), node->parent->tag->name);
+                QString qTagName = node->tag->dtd()->caseSensitive ? node->tag->name : node->tag->name.upper();
                 int line, col;
                 node->tag->beginPos(line, col);
                 if (parentQTag && !parentQTag->childTags.contains(qTagName) &&
                 !parentQTag->childTags.isEmpty())
                 {
                   node->tag->write()->setErrorMark(line);
-                  QString parentTagName = node->tag->dtd->caseSensitive ? node->parent->tag->name : node->parent->tag->name.upper();
+                  QString parentTagName = node->tag->dtd()->caseSensitive ? node->parent->tag->name : node->parent->tag->name.upper();
                   appMessages->showMessage(i18n("Line %1: %2 isn't a possible child of %3.\n").arg(line + 1).arg(qTagName).arg(parentTagName));
                 }
                 QString nextTagName;
                 if (node->next)
                 {
-                  nextTagName = node->tag->dtd->caseSensitive ? node->next->tag->name : node->next->tag->name.upper();
+                  nextTagName = node->tag->dtd()->caseSensitive ? node->next->tag->name : node->next->tag->name.upper();
                 }
-                parentQTag = QuantaCommon::tagFromDTD(node->tag->dtd, node->tag->name);
+                parentQTag = QuantaCommon::tagFromDTD(node->tag->dtd(), node->tag->name);
                 if (parentQTag && !parentQTag->isSingle() &&
                     !parentQTag->isOptional() &&
                     (!node->next || ( !node->getClosingNode()))  )
@@ -134,7 +135,7 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, Node *a_node, const QString 
                 if (!parentQTag && node->tag->name.upper() != "!DOCTYPE")
                 {
                   node->tag->write()->setErrorMark(line);
-                  appMessages->showMessage(i18n("Line %1: %2 is not part of %3.\n").arg(line + 1).arg(qTagName).arg(node->tag->dtd->nickName));
+                  appMessages->showMessage(i18n("Line %1: %2 is not part of %3.\n").arg(line + 1).arg(qTagName).arg(node->tag->dtd()->nickName));
                 }
               }
               break;
@@ -183,6 +184,7 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, Node *a_node, const QString 
 
     title.replace(newLineRx," ");
     setText(0, title);
+    node->listItems.append(this);
   }
 }
 
@@ -197,5 +199,5 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, QString a_title )
 
 StructTreeTag::~StructTreeTag(){
   if (node)
-    node->listItem = 0L;
+    node->listItems.remove(node->listItems.find(this));
 }

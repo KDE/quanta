@@ -873,9 +873,9 @@ QString KafkaDocument::generateCodeFromNode(Node *node, int bLine, int bCol, int
 		}
 
 		//only single Nodes except !doctype and ?xml nodes in XML tag style get the "/"
-		if ( node->tag->dtd->singleTagStyle == "xml" &&
+		if ( node->tag->dtd()->singleTagStyle == "xml" &&
 			(node->tag->single || (!qConfig.closeOptionalTags &&
-			QuantaCommon::isOptionalTag(node->tag->dtd->name, node->tag->name)))
+			QuantaCommon::isOptionalTag(node->tag->dtd()->name, node->tag->name)))
 			 && node->tag->name.lower() != "?xml" && node->tag->name.lower() != "!doctype")
 		{
 			text += " /";
@@ -1686,7 +1686,7 @@ void KafkaDocument::slotDomNodeModified(DOM::Node domNode)
 			if(!qTag->isChild("#text", false))
 			{
 				newDomNode = kafkaCommon::createDomNode("p",
-					getNode(domNode.parentNode())->tag->dtd, m_kafkaPart->document());
+					getNode(domNode.parentNode())->tag->dtd(), m_kafkaPart->document());
 				kafkaCommon::removeDomNode(domNode);
 				kafkaCommon::insertDomNode(newDomNode, parentDomNode, nextSiblingDomNode);
 				kafkaCommon::insertDomNode(domNode, newDomNode);

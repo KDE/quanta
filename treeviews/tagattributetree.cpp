@@ -261,7 +261,7 @@ void TagAttributeTree::setCurrentNode(Node *node)
   AttributeItem *item = 0L;
   TopLevelItem *group = 0L;
   QString attrName;
-  QTag *qTag = QuantaCommon::tagFromDTD(node->tag->dtd, node->tag->name);
+  QTag *qTag = QuantaCommon::tagFromDTD(node->tag->dtd(), node->tag->name);
   Node *n = node->parent;
   while (n)
   {
@@ -585,14 +585,14 @@ void EnhancedTagAttributeTree::showCaption()
   {
     if(curNode->tag->type == Tag::XmlTag || curNode->tag->type == Tag::XmlTagEnd ||
       curNode->tag->type == Tag::ScriptTag)
-#if KDE_IS_VERSION(3,1,90)      
+#if KDE_IS_VERSION(3,1,90)
     {
       QString s = i18n("Current Tag : <b>%1</b>").arg(curNode->tag->name);
       nodeName->setText(KStringHandler::rPixelSqueeze(s, nodeName->fontMetrics(), attrTree->width()- 50));
     }
 #else
       nodeName->setText(i18n("Current Tag : <b>%1</b>").arg(KStringHandler::rsqueeze(curNode->tag->name, 30)));
-#endif      
+#endif
     else if(curNode->tag->type == Tag::Text)
       nodeName->setText(i18n("Current Tag : <b>text</b>"));
     else if(curNode->tag->type == Tag::Comment)
@@ -726,7 +726,7 @@ void EnhancedTagAttributeTree::deleteNode()
   //Then we see if the new parent - child relationships are valid, and if not, delete the child and restart
   if(oldCurNodeParent)
   {
-    oldCurNodeParentQTag = QuantaCommon::tagFromDTD(oldCurNodeParent->tag->dtd,
+    oldCurNodeParentQTag = QuantaCommon::tagFromDTD(oldCurNodeParent->tag->dtd(),
       oldCurNodeParent->tag->name);
     if(oldCurNodeParentQTag)
     {

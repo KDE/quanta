@@ -217,7 +217,7 @@ QTag* QuantaCommon::tagFromDTD(Node *node)
   if(!node || !node->tag)
     return 0L;
 
-  return tagFromDTD(node->tag->dtd, node->tag->name);
+  return tagFromDTD(node->tag->dtd(), node->tag->name);
 }
 
 /** Returns an XML style string containing the GUI for attributes. */
@@ -500,7 +500,7 @@ void QuantaCommon::removeCommentsAndQuotes(QString &str, const DTDStruct *dtd)
 
 bool QuantaCommon::insideCommentsOrQuotes(int position, const QString &string, const DTDStruct *dtd)
 {
- //Return true if position is inside a commented or quoted string 
+ //Return true if position is inside a commented or quoted string
  QString str = string;
  int pos = 0;
  int l;
@@ -619,16 +619,16 @@ bool QuantaCommon::closesTag(Tag *tag1, Tag *tag2)
   {
     if (!tag2->nameSpace.isEmpty())
       return false; //namespace missmatch
-    QString tag1Name = tag1->dtd->caseSensitive ? tag1->name : tag1->name.upper();
-    QString tag2Name = tag2->dtd->caseSensitive ? tag2->name : tag2->name.upper();
+    QString tag1Name = tag1->dtd()->caseSensitive ? tag1->name : tag1->name.upper();
+    QString tag2Name = tag2->dtd()->caseSensitive ? tag2->name : tag2->name.upper();
     if ("/" + tag1Name != tag2Name)
       return false; //not the closing tag
   } else
   {
     if (tag2->nameSpace.isEmpty())
       return false; //namespace missmatch
-    QString tag1Name = tag1->dtd->caseSensitive ? (tag1->nameSpace + tag1->name) : (tag1->nameSpace.upper() + tag1->name.upper());
-    QString tag2Name = tag2->dtd->caseSensitive ? (tag2->nameSpace + tag2->name) : (tag2->nameSpace.upper() + tag2->name.upper());
+    QString tag1Name = tag1->dtd()->caseSensitive ? (tag1->nameSpace + tag1->name) : (tag1->nameSpace.upper() + tag1->name.upper());
+    QString tag2Name = tag2->dtd()->caseSensitive ? (tag2->nameSpace + tag2->name) : (tag2->nameSpace.upper() + tag2->name.upper());
     if ("/" + tag1Name != tag2Name)
       return false; //namespace missmatch or not the closing tag
   }

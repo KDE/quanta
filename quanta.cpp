@@ -2018,12 +2018,12 @@ void QuantaApp::slotContextMenuAboutToShow()
     Node *node = parser->nodeAt(line, col, false);
     if (node)
     {
-      if (node->tag->dtd->family == Script)
+      if (node->tag->dtd()->family == Script)
       {
         StructTreeGroup group;
-        for (uint i = 0; i < node->tag->dtd->structTreeGroups.count(); i++)
+        for (uint i = 0; i < node->tag->dtd()->structTreeGroups.count(); i++)
         {
-          group = node->tag->dtd->structTreeGroups[i];
+          group = node->tag->dtd()->structTreeGroups[i];
           if (group.hasFileName)
           {
             if (!group.hasSearchRx )
@@ -2064,9 +2064,9 @@ void QuantaApp::slotContextMenuAboutToShow()
         }
       } else
       {
-        QMap<QString, XMLStructGroup>::ConstIterator it = node->tag->dtd->xmlStructTreeGroups.find(node->tag->name.lower());
+        QMap<QString, XMLStructGroup>::ConstIterator it = node->tag->dtd()->xmlStructTreeGroups.find(node->tag->name.lower());
 
-        if (it != node->tag->dtd->xmlStructTreeGroups.end())
+        if (it != node->tag->dtd()->xmlStructTreeGroups.end())
         {
           XMLStructGroup group = it.data();
           for (uint j = 0; j <group.attributes.count(); j++ )
