@@ -2201,29 +2201,7 @@ void QuantaApp::recoverCrashed()
        item= new KFileItem(entry, autosavedVersion, false, true);
        QString backupTime = item->timeString();
        KIO::filesize_t backupSize = item->size();
-        delete item;
-/*       if (QFileInfo(autosavedVersion.path()).exists() &&
-           KMessageBox::questionYesNo(this, i18n("<qt>A backup copy of a file was found:<br><br>"
-           "Original file: <b>%1</b><br>"
-           "Original file size: <b>%2</b><br>"
-           "Original file last modified on: <b>%3</b><br><br>"
-           "Backup file size: <b>%4</b><br>"
-           "Backup created on: <b>%5</b><br><br>"
-           "Do you want to restore it and use the backup copy instead of the original one?</qt>").arg(originalVersion.prettyURL(0, KURL::StripFileProtocol ))
-           .arg(origSize).arg(origTime)
-           .arg(backupSize).arg(backupTime), i18n("Restore file")) == KMessageBox::Yes)
-       {
-          KURL backupURL = originalVersion;
-          backupURL.setPath(backupURL.path()+".backup");
-         //TODO: Replace with KIO::NetAccess::file_move, when KDE 3.1 support
-//is dropped
-          QExtFileInfo::copy(originalVersion, backupURL, -1, true, false, this);
-         //TODO: Replace with KIO::NetAccess::file_copy, when KDE 3.1 support
-	 //is dropped
-          QExtFileInfo::copy(autosavedVersion, originalVersion, -1, true, false, this);
-          QFile::remove(autosavedVersion.path());
-          slotFileOpenRecent(originalVersion);
-       } */
+       delete item;
        if (QFileInfo(autosavedVersion.path()).exists())
        {
           DirtyDlg *dlg = new DirtyDlg(autosavedVersion.path(), originalVersion.path(), false, this);
@@ -2242,6 +2220,7 @@ void QuantaApp::recoverCrashed()
           dlg->buttonIgnore->setText(i18n("Do &not restore the file from backup"));
           delete dlg->warningLabel;
           dlg->warningLabel = 0L;
+          dlg->adjustSize();
           if (!m_pluginInterface || !(m_pluginInterface->pluginAvailable("kompare")))
           {
             dlg->buttonCompare->setEnabled(false);

@@ -2868,7 +2868,7 @@ void QuantaApp::slotToolsChangeDTD()
     //dlg->useClosestMatching->setShown(false);
     delete dlg->useClosestMatching;
     dlg->useClosestMatching = 0L;
-    dlg->updateGeometry();
+    dlg->adjustSize();
     if (dlg->exec())
     {
       w->setDTDIdentifier(QuantaCommon::getDTDNameFromNickName(dlg->dtdCombo->currentText()));
