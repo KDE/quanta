@@ -572,6 +572,10 @@ Document* QuantaDoc::newWrite()
 /** show popup menu with list of attributes for current tag */
 void QuantaDoc::slotAttribPopup()
 {
+  if (!quantaApp->view()->writeExists()) {
+    return;
+  }
+
   Document *w = write();
 
   attribMenu->clear();
