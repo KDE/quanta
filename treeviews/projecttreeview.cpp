@@ -35,6 +35,7 @@
 #include <kprogress.h>
 #include <kstatusbar.h>
 
+
 // app includes
 #include "projecttreefile.h"
 #include "projecttreefolder.h"
@@ -58,7 +59,7 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   addColumn( i18n("Name") );
 
 	setFocusPolicy(QWidget::ClickFocus);
-	
+
 	projectDir =  new ProjectTreeFolder( this, i18n("No project"), KURL());
 	projectDir -> setPixmap( 0, SmallIcon("folder"));
 	projectDir -> setOpen( true );
@@ -97,10 +98,10 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
 	projectMenu -> insertItem( i18n("&Upload Project..."), this, SLOT(slotUploadProject()));
 	projectMenu -> insertItem(SmallIcon("reload"),i18n( "&Rescan Project Directory" ),  this, SLOT(slotRescan()));
 	projectMenu -> insertItem(i18n( "Project &Options" ),  this, SLOT(slotOptions()));
-  
 
 
-  connect(this, SIGNAL(executed(QListViewItem *)),
+
+  connect(this, SIGNAL(doubleClicked(QListViewItem *)),
           this, SLOT  (slotSelectFile(QListViewItem *)));
   connect(this, SIGNAL(selectionChanged(QListViewItem *)),
           this, SLOT  (slotSelectImage(QListViewItem *)));
@@ -112,7 +113,7 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
 
 	connect(this, SIGNAL(open(QListViewItem *)),
           this, SLOT(slotSelectFile(QListViewItem *)));
-//  connect(this, SIGNAL(onItem(QListViewItem *)), SLOT(slotOnItem(QListViewItem*)));        
+  connect(this, SIGNAL(onItem(QListViewItem *)), SLOT(slotOnItem(QListViewItem*)));
 }
 
 ProjectTreeView::~ProjectTreeView(){
@@ -205,7 +206,7 @@ void ProjectTreeView::slotReloadTree( const KURL::List &a_urlList, bool buildNew
   {
     slotRemoveDeleted();
     QListViewItemIterator it(this);
-    QListViewItem *item;   
+    QListViewItem *item;
     for ( ; it.current(); ++it )
     {
       item = it.current();
@@ -237,7 +238,7 @@ void ProjectTreeView::slotOpen()
    	else if ( QuantaCommon::checkMimeGroup(urlToOpen,"image" ) )
    	{
    		emit activatePreview();
-   		emit openImage( urlToOpen ); 
+   		emit openImage( urlToOpen );
    	} else
       if (KMessageBox::questionYesNo(this,i18n("This file cannot be opened in Quanta. \n \
           Do you want to open with an external program or run it?"),i18n("Unknown type")) == KMessageBox::Yes)
@@ -266,7 +267,7 @@ void ProjectTreeView::slotOpenInQuanta()
  if (currentItem())
  {
    KURL urlToOpen = currentURL();
-   if (urlToOpen.fileName().endsWith(toolbarExtension)) 
+   if (urlToOpen.fileName().endsWith(toolbarExtension))
    {
       emit loadToolbarFile(urlToOpen);
       return;
@@ -360,7 +361,7 @@ void ProjectTreeView::openFolder(ProjectTreeFolder *folder)
   {
     KURL u = urlList[i];
     name = u.path();
-    if (name.startsWith(path)) 
+    if (name.startsWith(path))
     {
       name.remove(0, path.length());
       if (!name.isEmpty())
@@ -396,7 +397,7 @@ void ProjectTreeView::openFolder(ProjectTreeFolder *folder)
           }
           progressBar->setValue(i);
         }
-      }  
+      }
     }
   }
   progressBar->setValue(0);
@@ -434,9 +435,9 @@ void ProjectTreeView::slotRemoveDeleted()
 }
 
 /** No descriptions */
-/*void ProjectTreeView::(QListViewItem* item)
+void ProjectTreeView::slotOnItem(QListViewItem* item)
 {
 }
-*/
+
 
 #include "projecttreeview.moc"
