@@ -212,7 +212,7 @@ void QuantaApp::slotFileSaveAs()
 
     if ( ( project->hasProject() ) &&
          ( KMessageBox::Yes == KMessageBox::questionYesNo(0,i18n("Add file\n %1 \n to project ?").arg(url.url())) )
-       )  
+       )
     {
       project->insertFile(url,true);
     }
@@ -522,7 +522,7 @@ void QuantaApp::slotInsertTag(const KURL& url, DirInfo dirInfo)
       urlStr = relURL.path();
   Document *w = view->write();
   bool isImage = false;
-  
+
   if (!dirInfo.preText.isEmpty() || !dirInfo.postText.isEmpty())
   {
 	   w->insertTag(dirInfo.preText+urlStr+dirInfo.postText);
@@ -570,7 +570,7 @@ void QuantaApp::slotNewStatus()
     saveAction   ->setEnabled(doc->isModified());
     saveAllAction->setEnabled(doc->isModifiedAll());
     saveprjAction->setEnabled(project->isModified());
-   
+
     bool projectExists = project->hasProject();
     closeprjAction     ->setEnabled(projectExists);
     openPrjViewAction  ->setEnabled(projectExists);
@@ -653,7 +653,7 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
   currentWrite->kate_view->setLineNumbersOn(qConfig.lineNumbers);
   viewBorder->setChecked(qConfig.iconBar);
   viewLineNumbers->setChecked(qConfig.lineNumbers);
-  
+
 #if (KDE_VERSION > 308)
   dynamic_cast<KTextEditor::DynWordWrapInterface*>(currentWrite->view())->setDynWordWrap(qConfig.dynamicWordWrap);
   viewDynamicWordWrap->setChecked(dynamic_cast<KTextEditor::DynWordWrapInterface*>(currentWrite->view())->dynWordWrap());
@@ -664,7 +664,7 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
   {
    repaintPreview(true);
   }
-  
+
   emit reloadTreeviews();
 }
 
@@ -837,7 +837,7 @@ void QuantaApp::slotOptions()
     page=kd->addVBoxPage(i18n("Spelling"), QString::null, BarIcon("spellcheck", KIcon::SizeMedium ) );
     KSpellConfig *spellOptions = new KSpellConfig( (QWidget *)page, 0L, qConfig.spellConfig, false );
 #endif
-     
+
   if ( kd->exec() )
   {
     qConfig.tagCase = styleOptionsS->tagCase->currentItem();
@@ -850,7 +850,7 @@ void QuantaApp::slotOptions()
   	qConfig.scriptMimeTypes  = fileMasks->lineScript->text();
 	  qConfig.imageMimeTypes= fileMasks->lineImage->text();
   	qConfig.textMimeTypes = fileMasks->lineText->text();
-   
+
     qConfig.defaultEncoding = fileMasks->encodingCombo->currentText();
 
     qConfig.refreshFrequency = parserOptions->refreshFrequency->value();
@@ -878,7 +878,7 @@ void QuantaApp::slotOptions()
       if (!(debuggerStyle=="PHP4")) enablePhp4Debug(true);
       debuggerStyle="PHP4";
     }
-    
+
 #if KDE_VERSION > 308
     qConfig.spellConfig->setDictionary(spellOptions->dictionary());
     qConfig.spellConfig->setNoRootAffix(spellOptions->noRootAffix());
@@ -905,7 +905,7 @@ void QuantaApp::slotOptions()
   	htmlpart->write( "" );
   	htmlpart->end();
 
-  	repaintPreview(true);     
+  	repaintPreview(true);
   }
 
   config->sync();
@@ -1618,7 +1618,7 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
    p_toolbar->name = name;
    p_toolbar->url = url;
    p_toolbar->visible = true;
-   p_toolbar->user = true; //TODO  
+   p_toolbar->user = true; //TODO
    toolbarList.insert(name.lower(), p_toolbar);
 
    slotToggleDTDToolbar(!allToolbarsHidden());
@@ -1830,7 +1830,7 @@ void QuantaApp::slotSaveToolbar(bool localToolbar, QString toolbarToSave)
   } while (query != KMessageBox::Yes);
 
   if( query != KMessageBox::Cancel )
-  {          
+  {
     KURL tarName = saveToolBar(toolbarName, url);
     if (!localToolbar) project->insertFile(tarName, true);
   }
@@ -1880,7 +1880,7 @@ void QuantaApp::slotAddToolbar()
   p_toolbar->menu = new QPopupMenu;
   m_tagsMenu->insertItem(p_toolbar->name, p_toolbar->menu);
   toolbarList.insert(name.lower(), p_toolbar);
-  
+
   slotToggleDTDToolbar(!allToolbarsHidden());
  }
 }
@@ -2029,7 +2029,7 @@ void QuantaApp::processDTD(QString documentType)
  w->setDTDIdentifier(projectDTD);
  Tag *tag = 0L;
  if (documentType.isEmpty())
- { 
+ {
    foundName = w->findDTDName(&tag); //look up the whole file for DTD definition
    bool found = false;
    if (!foundName.isEmpty())   //!DOCTYPE found in file
@@ -2109,7 +2109,7 @@ void QuantaApp::slotToolsChangeDTD()
   Document *w = view->write();
   int pos = -1;
   int defaultIndex = 0;
-  
+
   Tag *tag = 0L;
   w->findDTDName(&tag);
   QString oldDtdName = w->getDTDIdentifier();
@@ -2242,13 +2242,13 @@ void QuantaApp::loadToolbarForDTD(const QString& dtdName)
             p_toolbar->visible = false;
             if (p_toolbar->menu) delete p_toolbar->menu;
             p_toolbar->menu = 0L;
-            break;          
-          }         
+            break;
+          }
        }
      }
    }
 
-   //Load the toolbars for dtdName   
+   //Load the toolbars for dtdName
    for (uint i = 0; i < newDtd->toolbars.count(); i++)
    {
       KURL url;
@@ -2268,7 +2268,7 @@ void QuantaApp::loadToolbarForDTD(const QString& dtdName)
         }
       }
    }
-  
+
    view->toolbarTab->setCurrentPage(0);
  }
 
@@ -2342,7 +2342,7 @@ void QuantaApp::slotParsingDTDChanged(QString newDTDName)
 }
 
 /** Returns the project's base URL if it exists, the HOME dir if there is no project and no opened document (or the current opened document was not saved yet), and the base URL of the opened document, if it is saved somewhere. */
-KURL QuantaApp::projectBaseURL()
+KURL QuantaApp::projectBaseURL() const
 {
   KURL result;
   if  ( project->hasProject())
@@ -2385,7 +2385,7 @@ QString QuantaApp::defaultEncoding()
   if (project && project->hasProject())
   {
     encoding = project->defaultEncoding();
-  } 
+  }
   return encoding;
 }
 
@@ -2517,12 +2517,12 @@ void QuantaApp::slotEmailDTD()
 
   }
   tar.close();
-  
+
   tempFile->close();
   tempFileList.append(tempFile);
 
   dtdFile += tempFile->name();
-  
+
 
   TagMailDlg *mailDlg = new TagMailDlg( this, i18n("Send DTD in email"));
   QString toStr;
@@ -2553,7 +2553,7 @@ void QuantaApp::slotEmailDTD()
 
   }
   delete mailDlg;
-  
+
 }
 
 /** Returns the interface number for the currently active editor. */
@@ -2567,5 +2567,28 @@ QString QuantaApp::currentURL() const
 {
   return view->write()->url().url();
 }
+
+QString QuantaApp::projectURL() const
+{
+  return projectBaseURL().url();
+}
+
+QStringList QuantaApp::openedURLs() const
+{
+  QTabWidget *docTab =view->writeTab;
+  Document *w;
+  QStringList list;
+  for (int i = docTab->count() -1; i >=0; i--)
+  {
+    w = dynamic_cast<Document*>(docTab->page(i));
+    if ( w )
+    {
+      list.prepend( QString("%1:%2").arg(w->editIf->editInterfaceNumber()).arg(w->url().url()));
+    }
+  }
+  return list;
+}
+
+
 
 #include "quanta.moc"

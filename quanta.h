@@ -34,7 +34,7 @@
 #include <qstrlist.h>
 #include <qptrlist.h>
 
-// include files for KDE 
+// include files for KDE
 #include <kapplication.h>
 #include <kdockwidget.h>
 #include "kqapp.h"
@@ -100,7 +100,7 @@ typedef struct ToolbarEntry{
 };
 
 /**
-  * The base class for Quanta application windows. 
+  * The base class for Quanta application windows.
   */
 class QuantaApp : public KDockMainWindow, virtual public DCOPWindowManagerIf
 {
@@ -149,18 +149,22 @@ public:
   /** Reads the DTD info from the file, tries to find the correct DTD and builds the tag/attribute list from the DTD file. */
   void processDTD(QString documentType = QString::null);
   /** Returns the project's base URL if it exists, the HOME dir if there is no project and no opened document (or the current opened document was not saved yet), and the base URL of the opened document, if it is saved somewhere. */
-  KURL projectBaseURL();
+  KURL projectBaseURL() const;
 
   KURL::List userToolbarFiles();
   /** Returns the project (if there is one loaded) or global default encoding. */
   QString defaultEncoding();
   /** Returns the project (if there is one loaded) or global new file type. */
   QString newFileType();
-  
+
   /** Returns the interface number for the currently active editor. */
   int currentEditorIfNum() const;
   /** Return the URL of the currently active document */
   QString currentURL() const;
+ /** Return the URL of the currently project */
+  QString projectURL() const;
+  /** Return the list of opened URLs and their editor interface numbers*/
+  QStringList openedURLs() const;
 
 public slots:
 
@@ -256,16 +260,16 @@ public slots:
 
   /** reparse current document and initialize node. */
   void reparse();
-	
+
   void setCursorPosition( int row, int col );
   void gotoFileAndLine  ( QString filename, int line );
 
   void selectArea(int line1, int col1, int line2, int col2);
-	
+
   void setTitle(QString);
-	
+
   void autoComplete();
-	
+
   void slotShowOpenFileList();
   /** No descriptions */
   void slotNewProjectLoaded();
@@ -359,17 +363,17 @@ protected:
   void loadToolbarForDTD(const QString& dtdName);
   /** Remove the toolbar named "name". */
   void removeToolbar(const QString& name);
- 
+
 private:
 
   /** Messaage output window */
   MessageOutput *messageOutput;
-  
+
   /** plugin classes */
   QuantaPluginInterface *m_pluginInterface;
   QPopupMenu *m_pluginMenu;
   QPopupMenu *m_tagsMenu;
-    
+
   /** project class */
   Project *project;
 
@@ -480,5 +484,5 @@ protected: // Protected attributes
   /** The id of the widget visible before doing the preview */
   QValueList<int> previousWidgetList;
 };
- 
+
 #endif // QUANTA_H
