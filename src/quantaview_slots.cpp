@@ -298,14 +298,15 @@ void QuantaView::slotInsertCSS()
     parentNode->tag->endPos(eLine, eCol);
     dlg->setFooter(">" + w->text(eLine, eCol + 1, lastLine, lastCol));
 
-    QString temp(QString::null);
-    QString tempStyleContent(QString::null);
+    QString temp;
     if (parentNode->tag->hasAttribute("style"))
     {
-      tempStyleContent = parentNode->tag->attributeValue("style");
-      dlg->setInlineStyleContent(tempStyleContent);
-      //parentNode->tag->deleteAttribute("style");
-      temp = parentNode->tag->toString();
+      parentNode->tag->attributeValue("style");
+      dlg->setInlineStyleContent(parentNode->tag->attributeValue("style"));
+      Tag tempTag(*(parentNode->tag));
+      tempTag.deleteAttribute("style");
+      temp = tempTag.toString();
+      
     } else {
       dlg->setInlineStyleContent(QString::null);
       temp = parentNode->tag->toString();
@@ -314,14 +315,12 @@ void QuantaView::slotInsertCSS()
     temp = temp.left(temp.length()-1);//remove >
     temp = temp.right(temp.length()-1);//remove <
     dlg->setHeader(w->text(0, 0, bLine, bCol) + temp);
-
+     
     dlg->initialize();
     if( dlg->exec() )
     {
       w->changeTagAttribute(parentNode->tag, "style", dlg->generateProperties());
-    } else {
-      //parentNode->tag->changeTagAttribute("style", tempStyleContent);
-    }
+    } 
     delete dlg;
    } else
    KMessageBox::sorry(this, i18n("The CSS Editor cannot be invoked here.\nTry to invoke it on a tag or on a style section."));
