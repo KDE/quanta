@@ -1341,6 +1341,8 @@ void Parser::parseIncludedFiles()
         listCount = it.data().count();
         for (uint i = 0 ; i < listCount; i++)
         {
+          GroupElement *groupElement = it.data()[i];
+          groupElement->node->tag->write()->userTagList.remove(groupElement->node->tag->name.lower());
           delete it.data()[i]->node;
           delete it.data()[i];
         }
@@ -1496,6 +1498,7 @@ void Parser::parseIncludedFile(const QString& fileName, const DTDStruct *dtd)
                     Tag *tag = new Tag();
                     tag->name = s;
                     tag->setDtd(dtd);
+                    tag->setWrite(write);
                     QString s2 = content.left(areaPos + pos);
                     int newLineNum = s2.contains('\n');
                     int tmpCol = s2.length() - s2.findRev('\n') - 1;
@@ -1508,6 +1511,14 @@ void Parser::parseIncludedFile(const QString& fileName, const DTDStruct *dtd)
                     groupElement->parentNode = 0L;
                     GroupElementList *groupElementList = &(*elements)[group.name][s];
                     groupElementList->append(groupElement);
+                    
+                    if (group.appendToTags)
+                    {
+                      QTag *qTag = new QTag();
+                      qTag->setName(s.left(s.find('(')));
+                      qTag->className = "";
+                      write->userTagList.insert(s.lower(), qTag);
+                    }
                   }
                 }
               }
