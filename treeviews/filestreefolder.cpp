@@ -30,6 +30,7 @@
 #include <kiconloader.h>
 #include <kurl.h>
 #include <kdirlister.h>
+#include <kiconloader.h>
 
 // app includes
 #include "filestreefolder.h"
@@ -71,9 +72,16 @@ void FilesTreeFolder::init()
   setDragEnabled(true);
   setDropEnabled(true);
   url.adjustPath(1);   //add an ending "/" to the directory urls
+  defaultFolderIcon =
+       KGlobal::staticQString(KMimeType::mimeType( "inode/directory" )->KServiceType::icon());
+  m_iconName = defaultFolderIcon;
 }
 
-
+void FilesTreeFolder::setIcon(const QString &iconName)
+{
+  setPixmap(0, SmallIcon(iconName));
+  m_iconName = iconName;
+}
 
 void FilesTreeFolder::setOpen( bool open )
 {
@@ -85,9 +93,15 @@ void FilesTreeFolder::setOpen( bool open )
 
   QListViewItem::setOpen(open);
   if (open)
-    setPixmap( 0, SmallIcon("folder_open") );
+  {
+    if (m_iconName != defaultFolderIcon &&
+        KGlobal::iconLoader()->iconPath(m_iconName + "_open", KIcon::Small, true).isNull())
+        setPixmap( 0, SmallIcon(m_iconName));
+    else
+        setPixmap( 0, SmallIcon(m_iconName + "_open"));
+  }
   else
-    setPixmap( 0, SmallIcon("folder") );
+    setPixmap( 0, SmallIcon(m_iconName));
 }
 
 /** retun full name of the folder */

@@ -88,7 +88,6 @@ FilesTreeView::FilesTreeView(KURL::List topList, QWidget *parent, const char *na
   connect( this, SIGNAL(rightButtonPressed(QListViewItem*, const QPoint&, int)),
            this, SLOT(slotMenu(QListViewItem*, const QPoint&, int)));
 
-
   // generate top list of directories
   QString s;
   for (uint i = 0; i <  topList.count(); i++)
@@ -97,13 +96,13 @@ FilesTreeView::FilesTreeView(KURL::List topList, QWidget *parent, const char *na
     if (url.isLocalFile() && url.path() == "/")
     {
       FilesTreeFolder *dir = new FilesTreeFolder( this, i18n("Root Directory"), url);
-      dir->setPixmap( 0, SmallIcon("folder_red"));
-       dir->setOpen( false);
+      dir->setIcon( "folder_red");
+      dir->setOpen( false);
     } else
       if (url.isLocalFile() && url.path() == QDir::homeDirPath()+"/")
       {
         FilesTreeFolder *dir = new FilesTreeFolder( this, i18n("Home Directory"), url);
-        dir->setPixmap( 0, SmallIcon("folder_home"));
+        dir->setIcon( "folder_home");
         dir->setOpen( true );
       } else
       {
@@ -112,7 +111,6 @@ FilesTreeView::FilesTreeView(KURL::List topList, QWidget *parent, const char *na
           s = "/";
         s += " ["+url.prettyURL()+"]";
         FilesTreeFolder *dir = new FilesTreeFolder( this, s, url);
-        dir->setPixmap( 0, SmallIcon("folder") );
         dir->setOpen( false);
       }
   }
@@ -405,9 +403,9 @@ void FilesTreeView::slotProperties()
 {
   QListViewItem *item = currentItem();
   FilesTreeFile *f = dynamic_cast<FilesTreeFile *>( item);
+  KURL url = currentURL();
   if (f)
   {
-    KURL url = currentURL();
     KPropertiesDialog *propDlg = new KPropertiesDialog( url, this, 0L, false, false);
     addFileInfoPage(propDlg);
     if (propDlg->exec())
@@ -421,6 +419,12 @@ void FilesTreeView::slotProperties()
   } else
   {
     FileManage::slotProperties();
+    KFileItem fileItem(KFileItem::Unknown, KFileItem::Unknown, url);
+    FilesTreeFolder *folder = dynamic_cast<FilesTreeFolder *>(item);
+    if (folder)
+    {
+      folder->setIcon(fileItem.iconName());
+    }
   }
 }
 
@@ -450,6 +454,7 @@ void FilesTreeView::slotDirListNewItems(const KFileItemList& items)
   {
     KFileItem *item = *it;
     KURL url = item->url();
+    QString iconName = item->iconName();
     if (item->isDir())
     {
       FilesTreeFolder *dirItem;
@@ -459,12 +464,11 @@ void FilesTreeView::slotDirListNewItems(const KFileItemList& items)
         {
           FilesTreeFolder* parent = dynamic_cast<FilesTreeFolder*>(listItem);
           dirItem= new FilesTreeFolder(this, parent, url);
-          dirItem->setPixmap( 0, SmallIcon("folder") );
+           dirItem->setIcon(iconName);
         }
       } else
       {
-        dirItem = new FilesTreeFolder(this, url.fileName(), url);
-        dirItem->setPixmap( 0, SmallIcon("folder") );
+         dirItem->setIcon(iconName);
       }
     } else
     if (!excludeFilterRx.exactMatch(item->name()))

@@ -29,6 +29,7 @@ class QDropEvent;
 class FilesTreeView;
 
 
+
 class FilesTreeFolder:public KListViewItem{
 public:
   FilesTreeFolder( QListView * parentListView, FilesTreeFolder * parent, const KURL& p_url);
@@ -41,6 +42,7 @@ public:
 
 
   QString text( int column ) const;
+  void setIcon(const QString &iconName);
 
    /** used for sorting */
    virtual QString key ( int column, bool ascending ) const;
@@ -65,8 +67,9 @@ protected: // Protected methods
   void init();
 
   FilesTreeView* parentView;
-
-
+  bool m_pixmapSet;
+  QString m_iconName;
+  QString defaultFolderIcon;
 };
 
 
