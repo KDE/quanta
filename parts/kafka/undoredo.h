@@ -202,21 +202,45 @@ public:
   QString description() {return m_description;}
 
   /**
+   * Set the coordinates of the selection before the user input.
+   */
+  void setSelectionBefore(NodeSelectionInd* selectionBefore) {m_selectionBefore = selectionBefore;}
+    
+  /**
    * @return Return the selection before the Node modifications.
    */
   NodeSelectionInd *selectionBefore() {return m_selectionBefore;}
+  
+  /**
+   * Set the coordinates of the selection after the user input.
+   */
+  void setSelectionAfter(NodeSelectionInd* selectionAfter) {m_selectionAfter = selectionAfter;}
 
   /**
    * @return Return the selection after the Node modifications.
    */
   NodeSelectionInd *selectionAfter() {return m_selectionAfter;}
+  
+  /**
+   * We can separate the NodeModif into two categories ; the Node modifs made by the user
+   * and then the indentation.
+   * Call this function when we have finished with the first category.
+   */
+  void startOfIndentation() {m_indentationStartOffset = m_nodeModifList.count();}
+  
+  /**
+   * @return Return the offset (starting from 0) where the indentation NodeModifs begin in the list of NodeModif.
+   * Return -1 if it hasn't begin to add the indentation NodeModifs.
+   */
+  int indentationStartOffset() {return m_indentationStartOffset;}
+  
 
 private:
   QPtrList<NodeModif> m_nodeModifList;
   bool m_isModifiedBefore, m_isModifiedAfter;
   QString m_description;
   NodeSelectionInd *m_selectionBefore, *m_selectionAfter;
-
+  int m_indentationStartOffset, m_type;
 };
 
 /**

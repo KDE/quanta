@@ -819,9 +819,6 @@ public:
 	 * @param indent The number of little dots per parent relationship.
 	 */
 	static void coutTree(Node *node, int indent);
-
-
 };
-
 
 #endif

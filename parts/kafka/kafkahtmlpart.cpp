@@ -44,6 +44,7 @@
 #include <qdialog.h>
 #endif
 #include "wkafkapart.h"
+#include "undoredo.h"
 #include "nodeproperties.h"
 #include "document.h"
 #include "resource.h"
@@ -84,6 +85,8 @@ KafkaWidget::KafkaWidget(QWidget *parent, QWidget *widgetParent, KafkaDocument *
     d->m_pressOffset = 0;
     d->m_releaseOffset = 0;
     d->stuckCursorHorizontalPos = false;
+    
+    m_modifs = 0L;
 
     // With the mix of Leo Savernik's caret Mode and the current editing
     // functions, it will be kind of VERY messy
@@ -161,7 +164,7 @@ void KafkaWidget::insertText(DOM::Node node, const QString &text, int position)
             node.appendChild(textNode);
             m_currentNode = textNode;
             d->m_cursorOffset = text.length();
-            emit domNodeInserted(textNode, false);
+            emit domNodeInserted(textNode, false, m_modifs);
 #ifdef LIGHT_DEBUG
 
             kdDebug(25001) << "KafkaWidget::insertText() - added text - 1" << endl;
@@ -178,7 +181,7 @@ void KafkaWidget::insertText(DOM::Node node, const QString &text, int position)
         DOM::DOMString textSplitted = textNode.split(position);
         node.setNodeValue(textNode + text + textSplitted);
         d->m_cursorOffset += text.length();
-        emit domNodeModified(node);
+        emit domNodeModified(node, m_modifs);
 #ifdef LIGHT_DEBUG
 
         kdDebug(25001) << "KafkaWidget::insertText() - added text" << endl;
@@ -192,7 +195,7 @@ void KafkaWidget::insertText(DOM::Node node, const QString &text, int position)
         parent.insertBefore(textNode, node);
         m_currentNode = textNode;
         d->m_cursorOffset = text.length();
-        emit domNodeInserted(textNode, false);
+        emit domNodeInserted(textNode, false, m_modifs);
 #ifdef LIGHT_DEBUG
 
         kdDebug(25001) << "KafkaWidget::insertText() - added text - 2" << endl;
@@ -206,7 +209,7 @@ void KafkaWidget::insertText(DOM::Node node, const QString &text, int position)
         parent.insertBefore(textNode, node.nextSibling());
         m_currentNode = textNode;
         d->m_cursorOffset = text.length();
-        emit domNodeInserted(textNode, false);
+        emit domNodeInserted(textNode, false, m_modifs);
 #ifdef LIGHT_DEBUG
 
         kdDebug(25001) << "KafkaWidget::insertText() - added text - 3" << endl;
@@ -222,7 +225,7 @@ void KafkaWidget::insertText(DOM::Node node, const QString &text, int position)
             node.appendChild(textNode);
         m_currentNode = textNode;
         d->m_cursorOffset = text.length();
-        emit domNodeInserted(textNode, false);
+        emit domNodeInserted(textNode, false, m_modifs);
 #ifdef LIGHT_DEBUG
 
         kdDebug(25001) << "KafkaWidget::insertText() - added text - 4" << endl;
@@ -262,8 +265,8 @@ void KafkaWidget::normalize(DOM::Node _node)
             {
                 childNode.setNodeValue(childNode.nodeValue() +
                                        childNode.nextSibling().nodeValue());
-                emit domNodeModified(childNode);
-                emit domNodeIsAboutToBeRemoved(childNode.nextSibling(), true);
+                emit domNodeModified(childNode, m_modifs);
+                emit domNodeIsAboutToBeRemoved(childNode.nextSibling(), true, m_modifs);
                 _node.removeChild(childNode.nextSibling());
             }
         }
@@ -278,7 +281,7 @@ void KafkaWidget::keyReturn(bool specialPressed)
     int focus;
     //	QTag *qTag;
     bool childOfP;
-    kNodeAttrs *props;
+    //kNodeAttrs *props;
 
     if(m_currentNode.isNull())
         return;
@@ -314,8 +317,8 @@ void KafkaWidget::keyReturn(bool specialPressed)
         {
             text = m_currentNode;
             text2 = (static_cast<DOM::Text>(m_currentNode)).splitText(d->m_cursorOffset);
-            emit domNodeModified(m_currentNode);
-            emit domNodeInserted(text2, false);
+            emit domNodeModified(m_currentNode, m_modifs);
+            emit domNodeInserted(text2, false, m_modifs);
         }
 
         if(!specialPressed)
@@ -394,7 +397,7 @@ void KafkaWidget::keyReturn(bool specialPressed)
         else
             w->insertDomNode(brDomNode, m_currentNode.parentNode(),
                              text2);
-        emit domNodeInserted(brDomNode, false);
+        emit domNodeInserted(brDomNode, false, m_modifs);
         if(!text2.isNull())
             m_currentNode = text2;
         else
@@ -410,7 +413,7 @@ void KafkaWidget::keyReturn(bool specialPressed)
               w->insertDomNode(brDomNode2, m_currentNode.parentNode(),
                 DOM::Node());
     
-            emit domNodeInserted(brDomNode2, false);
+            emit domNodeInserted(brDomNode2, false, m_modifs);
             m_currentNode = brDomNode;
           }
           
@@ -424,7 +427,7 @@ void KafkaWidget::keyReturn(bool specialPressed)
         document());
       w->insertDomNode(brDomNode, m_currentNode.parentNode(),
         brDomNode.nextSibling());
-      emit domNodeInserted(brDomNode, false);
+      emit domNodeInserted(brDomNode, false, m_modifs);
       m_currentNode = brDomNode;
       d->m_cursorOffset = 0;
     }
@@ -474,6 +477,9 @@ bool KafkaWidget::eventFilter(QObject *, QEvent *event)
     if(event->type() == QEvent::KeyPress)
     {
         QKeyEvent *keyevent = static_cast<QKeyEvent *>(event);
+        
+        //Create a new NodeModifsSet where the changes will be logged.
+        m_modifs = new NodeModifsSet();
 
         switch(keyevent->key())
         {
@@ -632,6 +638,10 @@ bool KafkaWidget::eventFilter(QObject *, QEvent *event)
             d->stuckCursorHorizontalPos = false;
             break;
         }
+        
+        //Submit the modifs to the undoRedo system.
+        ViewManager::ref()->activeDocument()->docUndoRedo->addNewModifsSet(m_modifs, undoRedo::KafkaModif);
+        m_modifs = 0L;
     }
 
 #ifdef LIGHT_DEBUG
@@ -764,7 +774,7 @@ void KafkaWidget::keyDelete()
         nodeText.split(d->m_cursorOffset);
         m_currentNode.setNodeValue(nodeText + textSplitted);
         m_currentNode.parentNode().applyChanges();
-        emit domNodeModified(m_currentNode);
+        emit domNodeModified(m_currentNode, m_modifs);
         postprocessCursorPosition();
         return;
     }
@@ -827,11 +837,11 @@ void KafkaWidget::keyDelete()
         }
         //here, there is no node right and left that can have the cursor focus
         _node = m_currentNode.parentNode();
-        emit domNodeIsAboutToBeRemoved(m_currentNode, true);
+        emit domNodeIsAboutToBeRemoved(m_currentNode, true, m_modifs);
         _node.removeChild(m_currentNode);
         m_currentNode = document().createTextNode("");
         _node.appendChild(m_currentNode);
-        emit domNodeInserted(m_currentNode, false);
+        emit domNodeInserted(m_currentNode, false, m_modifs);
         setCaretPosition(m_currentNode, (long)d->m_cursorOffset);
         emit domNodeNewCursorPos(m_currentNode, d->m_cursorOffset);
     }
@@ -867,7 +877,7 @@ void KafkaWidget::keyDelete()
                 DOM::DOMString nodeText = _nodeNext.nodeValue();
                 DOM::DOMString textSplitted = nodeText.split(1);
                 _nodeNext.setNodeValue(textSplitted);
-                emit domNodeModified(_nodeNext);
+                emit domNodeModified(_nodeNext, m_modifs);
                 postprocessCursorPosition();
                 normalize(_nodeNext.parentNode());
                 break;
@@ -887,7 +897,7 @@ void KafkaWidget::keyDelete()
                     _node = _nodeParent;
                     //d->m_cursorOffset = -2;
                 }
-                emit domNodeIsAboutToBeRemoved(_nodeNext, true);
+                emit domNodeIsAboutToBeRemoved(_nodeNext, true, m_modifs);
                 _nodeParent.removeChild(_nodeNext);
                 singleNodeDeleted = true;
                 _nodeParent.applyChanges();
@@ -962,7 +972,7 @@ void KafkaWidget::keyDelete()
             //3 - Move Nodes.
             if(!startNode2.isNull() && startNode2IsNotInline)
             {
-                emit domNodeIsAboutToBeRemoved(startNode2, true);
+                emit domNodeIsAboutToBeRemoved(startNode2, true, m_modifs);
                 startNode2.parentNode().removeChild(startNode2);
             }
             else if(isParent && !nextIsBlock)
@@ -1026,7 +1036,7 @@ void KafkaWidget::keyDelete()
                         !temp.hasChildNodes())
                 {
                     tempParent = temp.parentNode();
-                    emit domNodeIsAboutToBeRemoved(temp, true);
+                    emit domNodeIsAboutToBeRemoved(temp, true, m_modifs);
                     tempParent.removeChild(temp);
                     temp = tempParent;
                     attrsTmp = w->getAttrs(temp);
@@ -1040,7 +1050,7 @@ void KafkaWidget::keyDelete()
                         !temp.hasChildNodes())
                 {
                     tempParent = temp.parentNode();
-                    emit domNodeIsAboutToBeRemoved(temp, true);
+                    emit domNodeIsAboutToBeRemoved(temp, true, m_modifs);
                     tempParent.removeChild(temp);
                     temp = tempParent;
                     attrsTmp = w->getAttrs(temp);
@@ -1068,7 +1078,7 @@ void KafkaWidget::keyDelete()
                 //d->m_cursorOffset = -2;
             }
             focus = w->getAttrs(_nodeNext)->chCurFoc();
-            emit domNodeIsAboutToBeRemoved(_nodeNext, true);
+            emit domNodeIsAboutToBeRemoved(_nodeNext, true, m_modifs);
             _nodeParent.removeChild(_nodeNext);
             singleNodeDeleted = true;
             _nodeNext = _node;
@@ -1106,7 +1116,7 @@ void KafkaWidget::keyDelete()
             {
                 childPosition = kafkaCommon::childPosition(_node);
                 _node = _nodeParent;
-                emit domNodeIsAboutToBeRemoved(_nodeNext, true);
+                emit domNodeIsAboutToBeRemoved(_nodeNext, true, m_modifs);
                 _nodeParent.removeChild(_nodeNext);
                 normalize(_nodeParent);
             }
@@ -1127,7 +1137,7 @@ void KafkaWidget::keyDelete()
 
     /**m_currentNode = _node;
     setCaretPosition(m_currentNode, (long)d->m_cursorOffset);
-    emit domNodeNewCursorPos(m_currentNode, d->m_cursorOffset);*/
+    emit domNodeNewCursorPos(m_currentNode, d->m_cursorOffset, m_modifs);*/
 #endif
 }
 
@@ -1171,7 +1181,7 @@ void KafkaWidget::keyBackspace()
         m_currentNode.setNodeValue(nodeText + textSplitted);
         m_currentNode.parentNode().applyChanges();
         d->m_cursorOffset--;
-        emit domNodeModified(m_currentNode);
+        emit domNodeModified(m_currentNode, m_modifs);
         postprocessCursorPosition();
         setCaretPosition(m_currentNode, (long)d->m_cursorOffset);
         emit domNodeNewCursorPos(m_currentNode, d->m_cursorOffset);
@@ -1235,11 +1245,11 @@ void KafkaWidget::keyBackspace()
         }
         //here, there is no node right and left that can have the cursor focus
         _node = m_currentNode.parentNode();
-        emit domNodeIsAboutToBeRemoved(m_currentNode, true);
+        emit domNodeIsAboutToBeRemoved(m_currentNode, true, m_modifs);
         _node.removeChild(m_currentNode);
         m_currentNode = document().createTextNode("");
         _node.appendChild(m_currentNode);
-        emit domNodeInserted(m_currentNode, false);
+        emit domNodeInserted(m_currentNode, false, m_modifs);
         setCaretPosition(m_currentNode, (long)d->m_cursorOffset);
         emit domNodeNewCursorPos(m_currentNode, d->m_cursorOffset);
 
@@ -1280,7 +1290,7 @@ void KafkaWidget::keyBackspace()
                 _nodePrev.setNodeValue(nodeText);
                 _nodePrev.parentNode().applyChanges();
                 postprocessCursorPosition();
-                emit domNodeModified(_nodePrev);
+                emit domNodeModified(_nodePrev, m_modifs);
                 return;
             }
             else
@@ -1291,7 +1301,7 @@ void KafkaWidget::keyBackspace()
 #endif
 
                 _nodeParent = _nodePrev.parentNode();
-                emit domNodeIsAboutToBeRemoved(_nodePrev, true);
+                emit domNodeIsAboutToBeRemoved(_nodePrev, true, m_modifs);
                 _nodeParent.removeChild(_nodePrev);
                 _nodeParent.applyChanges();
                 _nodePrev = _node;
@@ -1364,7 +1374,7 @@ void KafkaWidget::keyBackspace()
             //3 - Move Nodes.
             if(!endNode.isNull() && endNodeIsNotInline)
             {
-                emit domNodeIsAboutToBeRemoved(endNode, true);
+                emit domNodeIsAboutToBeRemoved(endNode, true, m_modifs);
                 endNode.parentNode().removeChild(endNode);
             }
             else if(isParent && !prevIsBlock)
@@ -1433,11 +1443,11 @@ void KafkaWidget::keyBackspace()
                     }
                     text = temp.nodeValue().string() + startNode2.nodeValue().string();
                     tempParent = temp.parentNode();
-                    emit domNodeIsAboutToBeRemoved(startNode2, true);
+                    emit domNodeIsAboutToBeRemoved(startNode2, true, m_modifs);
                     tempParent.removeChild(startNode2);
 
                     temp.setNodeValue(text);
-                    emit domNodeModified(temp);
+                    emit domNodeModified(temp, m_modifs);
 
                     if(boolTmp)
                         QTimer::singleShot(0, this, SLOT(slotDelayedSetCaretPosition()));
@@ -1454,7 +1464,7 @@ void KafkaWidget::keyBackspace()
                         !temp.hasChildNodes())
                 {
                     tempParent = temp.parentNode();
-                    emit domNodeIsAboutToBeRemoved(temp, true);
+                    emit domNodeIsAboutToBeRemoved(temp, true, m_modifs);
                     tempParent.removeChild(temp);
                     temp = tempParent;
                     attrsTmp = w->getAttrs(temp);
@@ -1468,7 +1478,7 @@ void KafkaWidget::keyBackspace()
                         !temp.hasChildNodes())
                 {
                     tempParent = temp.parentNode();
-                    emit domNodeIsAboutToBeRemoved(temp, true);
+                    emit domNodeIsAboutToBeRemoved(temp, true, m_modifs);
                     tempParent.removeChild(temp);
                     temp = tempParent;
                     attrsTmp = w->getAttrs(temp);
@@ -1489,7 +1499,7 @@ void KafkaWidget::keyBackspace()
 
             _nodeParent = _nodePrev.parentNode();
             focus = w->getAttrs(_nodePrev)->chCurFoc();
-            emit domNodeIsAboutToBeRemoved(_nodePrev, true);
+            emit domNodeIsAboutToBeRemoved(_nodePrev, true, m_modifs);
             _nodeParent.removeChild(_nodePrev);
             //normalize(_nodeParent);
             if(focus == kNodeAttrs::singleNodeAndItself)
@@ -1509,9 +1519,9 @@ void KafkaWidget::keyBackspace()
                       QTimer::singleShot(0, this, SLOT(slotDelayedSetCaretPosition()));
                     }
                     _nodePrev.setNodeValue(_nodePrev.nodeValue() + _node.nodeValue());
-                    emit domNodeModified(_nodePrev);
+                    emit domNodeModified(_nodePrev, m_modifs);
                     //_nodeParent = _nodePrev.parentNode();
-                    emit domNodeIsAboutToBeRemoved(_node, true);
+                    emit domNodeIsAboutToBeRemoved(_node, true, m_modifs);
                     _nodeParent.removeChild(_node);
                 }
                 //dirty workaround when after having deleted a br, there is only one br left
@@ -1819,8 +1829,7 @@ void KafkaWidget::postprocessCursorPosition()
                     m_currentNode = _nextNode;
                     d->m_cursorOffset = (static_cast<DOM::CharacterData>(_nextNode)).length();
                     setCaretPosition(m_currentNode, (long)d->m_cursorOffset);
-                    emit domNodeNewCursorPos(m_currentNode,
-                                             d->m_cursorOffset);
+                    emit domNodeNewCursorPos(m_currentNode, d->m_cursorOffset);
 #ifdef LIGHT_DEBUG
 
                     kdDebug(25001)<< "KafkaWidget::postprocessCursorPosition()" <<
@@ -2017,7 +2026,7 @@ void KafkaWidget::moveDomNodes(DOM::Node newParent, DOM::Node startNode, DOM::No
         while(!domNode.isNull())
         {
             domNodeNext = domNode.previousSibling();
-            emit domNodeIsAboutToBeMoved(domNode, newParent, refNode);
+            emit domNodeIsAboutToBeMoved(domNode, newParent, refNode, m_modifs);
             //emit domNodeIsAboutToBeRemoved(domNode, true);
             domNode = domNode.parentNode().removeChild(domNode);
             if(!refNode.isNull())
@@ -2038,9 +2047,9 @@ void KafkaWidget::moveDomNodes(DOM::Node newParent, DOM::Node startNode, DOM::No
             domNodeNext = domNode.nextSibling();
             //emit domNodeIsAboutToBeRemoved(domNode, true);
             if(!refNode.isNull())
-                emit domNodeIsAboutToBeMoved(domNode, newParent, refNode.nextSibling());
+                emit domNodeIsAboutToBeMoved(domNode, newParent, refNode.nextSibling(), m_modifs);
             else
-                emit domNodeIsAboutToBeMoved(domNode, newParent, DOM::Node());
+                emit domNodeIsAboutToBeMoved(domNode, newParent, DOM::Node(), m_modifs);
             domNode = domNode.parentNode().removeChild(domNode);
             if(!refNode.isNull())
                 newParent.insertBefore(domNode, refNode.nextSibling());

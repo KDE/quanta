@@ -25,12 +25,30 @@
  
  NodeSelectionInd::NodeSelectionInd()
 {
-
+  m_cursorOffset = -1;
+  m_cursorOffsetEndSel = -1;
+  m_cursorAtSelectionStart = true;
 }
   
 NodeSelectionInd::~NodeSelectionInd()
 {
 
+}
+
+bool NodeSelectionInd::operator==(const NodeSelectionInd & nodeSelection)
+{
+  return (m_cursorNode == nodeSelection.m_cursorNode && m_cursorNodeEndSel == nodeSelection.m_cursorNodeEndSel &&
+    m_cursorOffset == nodeSelection.m_cursorOffset && m_cursorOffsetEndSel == nodeSelection.m_cursorOffsetEndSel &&
+    m_cursorAtSelectionStart == nodeSelection.m_cursorAtSelectionStart);
+}
+
+bool NodeSelectionInd::operator=(const NodeSelectionInd & nodeSelection)
+{
+  m_cursorNode = nodeSelection.m_cursorNode;
+  m_cursorNodeEndSel = nodeSelection.m_cursorNodeEndSel;
+  m_cursorOffset = nodeSelection.m_cursorOffset;
+  m_cursorOffsetEndSel = nodeSelection.m_cursorOffsetEndSel;
+  m_cursorAtSelectionStart = nodeSelection.m_cursorAtSelectionStart;
 }
 
 void NodeSelectionInd::fillWithVPLCursorSelection()

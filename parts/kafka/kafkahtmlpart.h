@@ -39,6 +39,7 @@
 class DOMString;
 class KafkaWidgetPrivate;
 class KafkaDocument;
+class NodeModifsSet;
 
 /*
  * It is the main central widget which get the cursor focus and takes care of "simple" edition
@@ -171,41 +172,45 @@ signals:
 	/**
 	 * Category: HTML Editing Signal
 	 * Is emitted whenever a dom Node is inserted to the tree.
-	 * @param _node is the node created.
+	 * @param node is the node created.
 	 * @param insertChilds Specifies if we should insert the _node's childs
+         * @param modifs The changes made are logged into modifs.
 	 */
-	void domNodeInserted(DOM::Node _node, bool insertChilds);
+	void domNodeInserted(DOM::Node node, bool insertChilds, NodeModifsSet *modifs);
 
 	/**
 	 * Category: HTML Editing Signal
 	 * Is emitted whenever a DOM node has its properties modified.
-	 * @param _node is the node modified.
+	 * @param node is the node modified.
+         * @param modifs The changes made are logged into modifs.
 	 */
-	void domNodeModified(DOM::Node _node);
+	void domNodeModified(DOM::Node node, NodeModifsSet *modifs);
 
 	/**
 	 * Category: HTML Editing Signal
 	 * Is emitted whenever a DOM node is about to be removed from the tree.
-	 * @param _node is the node to be deleted.
+	 * @param node is the node to be deleted.
 	 * @param deleteChilds Specifies if we should delete the child nodes of _node.
+         * @param modifs The changes made are logged into modifs.
 	 */
-	void domNodeIsAboutToBeRemoved(DOM::Node _node, bool deleteChilds);
+	void domNodeIsAboutToBeRemoved(DOM::Node node, bool deleteChilds, NodeModifsSet *modifs);
 
 	/**
 	 * Is emitted whenever a DOM::Node is about to be moved in the tree.
-	 * @param domNode The DOM::Node which will be moved.
+	 * @param node The DOM::Node which will be moved.
 	 * @param newParent The new parent of domNode.
 	 * @param before domNode will be placed before before.
+         * @param modifs The changes made are logged into modifs.
 	 */
-	void domNodeIsAboutToBeMoved(DOM::Node domNode, DOM::Node newParent, DOM::Node before);
+	void domNodeIsAboutToBeMoved(DOM::Node node, DOM::Node newParent, DOM::Node before, NodeModifsSet *modifs);
 
 	/**
 	 * Category: HTML Editing Signal
 	 * Is emitted whenever the cursor position change in one DOM::Node.
-	 * @param _domNode The DOM::Node which contains the cursor.
+	 * @param node The DOM::Node which contains the cursor.
 	 * @param _offset The new cursorOffset.
 	 */
-	void domNodeNewCursorPos(DOM::Node _domNode, int offset);
+	void domNodeNewCursorPos(DOM::Node node, int offset);
 
 	/**
 	 * Category: Widget Signal
@@ -270,6 +275,13 @@ private:
 	 */
 	void makeCursorVisible(int xMargin = 50, int yMargin = 50);
 
+        /**
+         * When some changes are made, store the changes made in m_modifs.
+         * It will be created when a key is pressed, and will be submitted to
+         * the undoRedo system after the changes have been made.
+         */
+        NodeModifsSet *m_modifs;
+        
 	DOM::Node m_currentNode;
 	KafkaWidgetPrivate *d;
 	KafkaDocument *w;

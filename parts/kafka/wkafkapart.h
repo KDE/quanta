@@ -32,6 +32,7 @@ class NodeModifsSet;
 class NodeEnhancer;
 struct DTDStruct;
 class NodeSelectionInd;
+class NodeModifsSet;
 
 #include <qmap.h>
 #include <qobject.h>
@@ -406,31 +407,35 @@ signals:
 public slots:
 	/**
 	 * Called whenever a DOM::Node is inserted in the Kafka tree.
-	 * @param _domNode is the Node inserted.
+	 * @param domNode is the Node inserted.
 	 * @param insertChilds Specifies if the _domNode's child should be inserted
+         * @param modifs The changes made are logged into modifs.
 	 */
-	void slotDomNodeInserted(DOM::Node _domNode, bool insertChilds);
+	void slotDomNodeInserted(DOM::Node domNode, bool insertChilds, NodeModifsSet *modifs);
 
 	/**
 	 * Called whenever DOM::Node's attributes are modified.
-	 * @param _domNode is the Node modified.
+	 * @param domNode is the Node modified.
+         * @param modifs The changes made are logged into modifs.
 	 */
-	void slotDomNodeModified(DOM::Node _domNode);
+	void slotDomNodeModified(DOM::Node domNode, NodeModifsSet *modifs);
 
 	/**
 	 * Called whenever a DOM::Node is about to be removed from the Kafka tree.
-	 * @param _domNode is the Node to be deleted.
+	 * @param domNode is the Node to be deleted.
 	 * @param deleteChilds Specifies if we should delete the child nodes of _node
+         * @param modifs The changes made are logged into modifs.
 	 */
-	void slotDomNodeAboutToBeRemoved(DOM::Node _domNode, bool deleteChilds);
+	void slotDomNodeAboutToBeRemoved(DOM::Node domNode, bool deleteChilds, NodeModifsSet *modifs);
 
 	/**
 	 * Called whenever a DOM::Node is moved.
 	 * @param domNode The DOM::Node to move.
 	 * @param newParent The new parent DOM::Node of domNode.
 	 * @param before domNode will be inserted before before.
+         * @param modifs The changes made are logged into modifs.
 	 */
-	void slotDomNodeIsAboutToBeMoved(DOM::Node domNode, DOM::Node newParent, DOM::Node before);
+	void slotDomNodeIsAboutToBeMoved(DOM::Node domNode, DOM::Node newParent, DOM::Node before, NodeModifsSet *modifs);
 
 	/**
 	 * Called whenever a DOM::Node get the focus

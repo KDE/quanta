@@ -108,14 +108,14 @@ QString ab = i18n("Ident all");
 		file.close();
 	}
 
-	connect(m_kafkaPart, SIGNAL(domNodeInserted(DOM::Node, bool)),
-		this, SLOT(slotDomNodeInserted(DOM::Node, bool)));
-	connect(m_kafkaPart, SIGNAL(domNodeModified(DOM::Node)),
-		this, SLOT(slotDomNodeModified(DOM::Node)));
-	connect(m_kafkaPart, SIGNAL(domNodeIsAboutToBeRemoved(DOM::Node, bool)),
-		this, SLOT(slotDomNodeAboutToBeRemoved(DOM::Node, bool)));
-	connect(m_kafkaPart, SIGNAL(domNodeIsAboutToBeMoved(DOM::Node, DOM::Node, DOM::Node)),
-		this, SLOT(slotDomNodeIsAboutToBeMoved(DOM::Node, DOM::Node, DOM::Node)));
+	connect(m_kafkaPart, SIGNAL(domNodeInserted(DOM::Node, bool, NodeModifsSet*)),
+		this, SLOT(slotDomNodeInserted(DOM::Node, bool, NodeModifsSet*)));
+	connect(m_kafkaPart, SIGNAL(domNodeModified(DOM::Node, NodeModifsSet*)),
+		this, SLOT(slotDomNodeModified(DOM::Node, NodeModifsSet*)));
+	connect(m_kafkaPart, SIGNAL(domNodeIsAboutToBeRemoved(DOM::Node, bool, NodeModifsSet*)),
+		this, SLOT(slotDomNodeAboutToBeRemoved(DOM::Node, bool, NodeModifsSet*)));
+	connect(m_kafkaPart, SIGNAL(domNodeIsAboutToBeMoved(DOM::Node, DOM::Node, DOM::Node, NodeModifsSet*)),
+		this, SLOT(slotDomNodeIsAboutToBeMoved(DOM::Node, DOM::Node, DOM::Node, NodeModifsSet*)));
 
 	connect(m_kafkaPart, SIGNAL(domNodeNewCursorPos(DOM::Node, int)),
 		this, SLOT(slotdomNodeNewCursorPos(DOM::Node, int)));
@@ -1785,7 +1785,7 @@ void KafkaDocument::coutLinkTree(Node *, int)
 #endif
 }
 
-void KafkaDocument::slotDomNodeInserted(DOM::Node domNode, bool insertChilds)
+void KafkaDocument::slotDomNodeInserted(DOM::Node domNode, bool insertChilds, NodeModifsSet* modifs)
 {
 #ifdef LIGHT_DEBUG
 	if(!domNode.isNull())
@@ -1797,7 +1797,6 @@ void KafkaDocument::slotDomNodeInserted(DOM::Node domNode, bool insertChilds)
 	Node *_nodeParent = 0L, *nodeNext = 0L, *_node = 0L;
 	DOM::Node tmpDomNode, nextDomNode;
 	bool b = false;
-	NodeModifsSet *modifs;
 
 #ifdef LIGHT_DEBUG
 	QTime t;
@@ -1825,7 +1824,6 @@ void KafkaDocument::slotDomNodeInserted(DOM::Node domNode, bool insertChilds)
 		}
 	}
 
-	modifs = new NodeModifsSet();
 	_node = buildNodeFromKafkaNode(domNode, _nodeParent, nodeNext, 0, 0L, 0, modifs);
 
 	if(insertChilds && domNode.hasChildNodes())
@@ -1839,7 +1837,6 @@ void KafkaDocument::slotDomNodeInserted(DOM::Node domNode, bool insertChilds)
 			tmpDomNode = kafkaCommon::getNextDomNode(tmpDomNode, b, false, domNode);
 		}
 	}
-	m_currentDoc->docUndoRedo->addNewModifsSet(modifs, undoRedo::KafkaModif);
 
 #ifdef LIGHT_DEBUG
 	kdDebug(25001)<< "KafkaDocument::slotDomNodeInserted() in " << t.elapsed() <<
@@ -1851,7 +1848,7 @@ void KafkaDocument::slotDomNodeInserted(DOM::Node domNode, bool insertChilds)
 
 }
 
-void KafkaDocument::slotDomNodeModified(DOM::Node domNode)
+void KafkaDocument::slotDomNodeModified(DOM::Node domNode, NodeModifsSet* modifs)
 {
 #ifdef LIGHT_DEBUG
 	if(!domNode.isNull())
@@ -1861,7 +1858,6 @@ void KafkaDocument::slotDomNodeModified(DOM::Node domNode)
 		kdDebug(25001)<< "KafkaDocument::slotDomNodeModfied() - DOM::Node: NULL" << endl;
 #endif
 	Node *node = 0L;
-	NodeModifsSet *modifs;
 	NodeModif *modif;
 	kNodeAttrs *props, *newProps;
 	DOM::Node newDomNode, parentDomNode, nextSiblingDomNode;
@@ -1903,9 +1899,7 @@ void KafkaDocument::slotDomNodeModified(DOM::Node domNode)
 
 		buildNodeFromKafkaNode(node, domNode);
 
-		modifs = new NodeModifsSet();
 		modifs->addNodeModif(modif);
-		m_currentDoc->docUndoRedo->addNewModifsSet(modifs, undoRedo::KafkaModif);
 	}
 	else
 	{
@@ -1976,7 +1970,7 @@ void KafkaDocument::slotDomNodeModified(DOM::Node domNode)
 #endif
 }
 
-void KafkaDocument::slotDomNodeAboutToBeRemoved(DOM::Node _domNode, bool deleteChilds)
+void KafkaDocument::slotDomNodeAboutToBeRemoved(DOM::Node _domNode, bool deleteChilds, NodeModifsSet* modifs)
 {
 #ifdef LIGHT_DEBUG
 	if(!_domNode.isNull())
@@ -1990,7 +1984,6 @@ void KafkaDocument::slotDomNodeAboutToBeRemoved(DOM::Node _domNode, bool deleteC
 	Node *_node = 0L, *_nodeNext = 0L, *_tmpNode = 0L, *n = 0L;
 	int i, bLine, bCol, eLine, eCol, bLine2, bCol2;
 	bool hasClosingNode = false, b;
-	NodeModifsSet *modifs;
 	NodeModif *modif;
 
 #ifdef LIGHT_DEBUG
@@ -2006,7 +1999,6 @@ void KafkaDocument::slotDomNodeAboutToBeRemoved(DOM::Node _domNode, bool deleteC
 		return;
 	}
 
-	modifs = new NodeModifsSet();
 
 	//If we are deleting a PHP Node which is embedded into a tag e.g. <a <? echo boo; ?> >
 	//We must regenerate the <a> tag string.
@@ -2166,7 +2158,6 @@ void KafkaDocument::slotDomNodeAboutToBeRemoved(DOM::Node _domNode, bool deleteC
 		modifs->addNodeModif(modif);
 		_node = _nodeNext;
 	}
-	m_currentDoc->docUndoRedo->addNewModifsSet(modifs, undoRedo::KafkaModif);
 
 	//NO NORMALIZATION!! It is KafkaWidget::normalize()'s job!
 
@@ -2180,9 +2171,8 @@ void KafkaDocument::slotDomNodeAboutToBeRemoved(DOM::Node _domNode, bool deleteC
 
 }
 
-void KafkaDocument::slotDomNodeIsAboutToBeMoved(DOM::Node domNode, DOM::Node newParent, DOM::Node before)
+void KafkaDocument::slotDomNodeIsAboutToBeMoved(DOM::Node domNode, DOM::Node newParent, DOM::Node before, NodeModifsSet* modifs)
 {
-	NodeModifsSet *modifs;
 	Node *node, *parent, *nextSibling, *closingNode;
 
 	if(domNode.isNull())
@@ -2197,13 +2187,11 @@ void KafkaDocument::slotDomNodeIsAboutToBeMoved(DOM::Node domNode, DOM::Node new
 
 	closingNode = node->getClosingNode();
 
-	modifs = new NodeModifsSet();
 	kafkaCommon::moveNode(node, parent, nextSibling, modifs, false);
 
 	if(closingNode)
 		kafkaCommon::moveNode(closingNode, parent, nextSibling, modifs, false);
 
-	m_currentDoc->docUndoRedo->addNewModifsSet(modifs, undoRedo::KafkaModif);
 }
 
 void KafkaDocument::slotdomNodeNewCursorPos(DOM::Node, int)

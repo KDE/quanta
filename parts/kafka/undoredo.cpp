@@ -117,6 +117,7 @@ NodeModifsSet::NodeModifsSet()
 {
   m_selectionBefore = new NodeSelectionInd();
   m_selectionAfter = new NodeSelectionInd();
+  m_indentationStartOffset = -1;
 
   if(ViewManager::ref()->activeDocument())
     m_isModifiedBefore = ViewManager::ref()->activeDocument()->isModified();
@@ -176,7 +177,7 @@ void undoRedo::addNewModifsSet(NodeModifsSet *modifs, int modifLocation)
   NodeModifsSet *NMSet;
   QValueList<int> loc;
   int curFocus, foo, foo2;
-  uint diff, diff2;
+  int diff, diff2;
   NodeSelectionInd *nodeSelection;
   Node *node;
   bool goUp;
@@ -188,28 +189,9 @@ void undoRedo::addNewModifsSet(NodeModifsSet *modifs, int modifLocation)
     return;
   }
 
-  //If the previous NodeModifsSet contains some text insertion/deletion and if
-  //the current one is doing the same thing, compress the two NodeModifsSet : delete modifs
-  /**if(modifs->nodeModifList().count() == 1 && modifs->nodeModifList().at(0)->type() == NodeModif::NodeModified)
-  {
-    QPrtListIterator<NodeModifsSet> it(m_undoList);
-    it = documentIterator;
-    --it;
-    if((*it) && (*it)->nodeModifList().count() == 1 && (*it)->nodeModifList().at(0)->type() == NodeModif::NodeModified)
-    {
-      node = kafkaCommon::getNodeFromLocation(modifs->nodeModifList().at(0)->location());
-      diff = modifs->nodeModifList().at(0)->tag()->tagStr().length() - (*it)->nodeModifList().at(0)->tag()->tagStr().length();
-      diff2 = node->tag->tagStr().length() - modifs->nodeModifList().at(0)->tag()->tagStr().length();
-      
-
-      if(lineBreakCount == lineBreakCount2 && ((diff > 0 && diff2 > diff) || (diff < 0 && diff2 < diff)))
-        return;
-    }
-    
-  }*/
-
   //Once the changes have been made, we will generate the "clean" string for Text Nodes only, and
   //we will add the empty indentation Nodes.
+  modifs->startOfIndentation();
   node = baseNode;
   while(node)
   {
@@ -239,6 +221,33 @@ void undoRedo::addNewModifsSet(NodeModifsSet *modifs, int modifLocation)
   nodeSelection = modifs->selectionAfter();
   if(ViewManager::ref()->activeView()->hadLastFocus() == QuantaView::VPLFocus)
     nodeSelection->fillWithVPLCursorSelection();
+  
+  //If the previous NodeModifsSet contains some text insertion/deletion and if
+  //the current one is doing the same thing, compress the two NodeModifsSet : delete modifs
+  if(modifs->nodeModifList().count() >= 1 && modifs->indentationStartOffset() == 1  &&
+    modifs->nodeModifList().at(0)->type() == NodeModif::NodeModified)
+  {
+    QPtrListIterator<NodeModifsSet> it(m_undoList);
+    it = documentIterator;
+    if((*it) && (*it)->nodeModifList().count() >= 1 && (*it)->indentationStartOffset() == 1 &&
+      (*it)->nodeModifList().at(0)->type() == NodeModif::NodeModified &&
+      (*it)->isModifiedAfter())
+    {
+      node = kafkaCommon::getNodeFromLocation(modifs->nodeModifList().at(0)->location());
+      diff = modifs->nodeModifList().at(0)->tag()->tagStr().length() - (*it)->nodeModifList().at(0)->tag()->tagStr().length();
+      diff2 = node->tag->tagStr().length() - modifs->nodeModifList().at(0)->tag()->tagStr().length();
+
+      if(*((*it)->selectionAfter()) == *(modifs->selectionBefore()) &&
+        ((diff >= 0 && diff2 >= 0) || (diff <= 0 && diff2 <= 0)))
+      {
+        //Ok, we are skipping this one. Update the selection coordinates of (*it)
+        (*it)->setSelectionAfter(modifs->selectionAfter());
+        modifs->setSelectionAfter(0L);
+        delete modifs;
+        return;
+      }
+    }
+  }
 
   //Store the NodeModifsSet
   m_undoList.append(modifs);

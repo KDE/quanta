@@ -32,6 +32,13 @@ public:
   ~NodeSelectionInd();
   
   /**
+   * Compare nodeselection to the current instance.
+   */
+  bool operator==(const NodeSelectionInd & nodeSelection);
+  
+  bool operator=(const NodeSelectionInd & nodeSelection);
+  
+  /**
    * Take the current VPL cursor selection coordinates, if not speficied otherwise, translate
    * them into Node cursor coordinates and store them.
    */
@@ -100,9 +107,9 @@ public:
     {m_cursorOffsetEndSel = cursorOffsetEndSel;}
   
 private:
-        QValueList<int> m_cursorNode, m_cursorNodeEndSel;
-        int m_cursorOffset, m_cursorOffsetEndSel;
-        bool m_cursorAtSelectionStart;
+  QValueList<int> m_cursorNode, m_cursorNodeEndSel;
+  int m_cursorOffset, m_cursorOffsetEndSel;
+  bool m_cursorAtSelectionStart;
 };
 
 #endif
