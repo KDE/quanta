@@ -42,6 +42,7 @@
 #include <kcombobox.h>
 #include <kurl.h>
 #include <kdirlister.h>
+#include <kfiledialog.h>
 
 // app includes
 
@@ -60,7 +61,6 @@ FilesTreeView::FilesTreeView(KURL::List topList, QWidget *parent, const char *na
   topURLList = topList;
 
   setRootIsDecorated( true );
-  //header()->hide();
   setSorting(0);
 
   setFrameStyle( Panel | Sunken );
@@ -68,17 +68,18 @@ FilesTreeView::FilesTreeView(KURL::List topList, QWidget *parent, const char *na
   addColumn( i18n("Files Tree"), 600 );
 
   setFocusPolicy(QWidget::ClickFocus);
-  folderMenu -> insertItem( i18n("Add Folder to Top"), this ,SLOT(slotAddToTop()), 0, ID_TOP, 0);
+  folderMenu->insertItem(i18n("New Top Folder..."), this, SLOT(slotNewTopFolder()), 0, -1 , 0);
+  folderMenu->insertItem(i18n("Add Folder to Top"), this ,SLOT(slotAddToTop()), 0, ID_TOP, 1);
 
   connect(  this, SIGNAL(executed(QListViewItem *)),
             this, SLOT(slotSelectFile(QListViewItem *)));
   connect(  this, SIGNAL(returnPressed(QListViewItem *)),
             this, SLOT(slotSelectFile(QListViewItem *)));
   connect(  this, SIGNAL(open(QListViewItem *)),
-            this,  SLOT(slotSelectFile(QListViewItem *)));
+            this, SLOT(slotSelectFile(QListViewItem *)));
 
   connect(  this, SIGNAL(openInQuanta(QListViewItem *)),
-            this,  SLOT(slotSelectAnyFile(QListViewItem *)));
+            this, SLOT(slotSelectAnyFile(QListViewItem *)));
 
   connect(  this, SIGNAL(selectionChanged(QListViewItem *)),
             this, SLOT(slotSelectImage(QListViewItem *)));
@@ -277,7 +278,11 @@ void FilesTreeView::slotAddToTop()
       if (topURLList.findIndex(url) == -1)
       {
         url.setPath(url.path(-1));
-        FilesTreeFolder *dir = new FilesTreeFolder(this , url.fileName() +" ["+url.path()+"]", url); //FIXME: Why doesn't add to the TOP as the first item??
+        QString s = url.fileName();
+        if (s.isEmpty())
+            s = "/";
+        s += " ["+url.prettyURL()+"]";
+        FilesTreeFolder *dir = new FilesTreeFolder(this , s, url); //FIXME: Why doesn't add to the TOP as the first item??
          dir->setPixmap( 0, SmallIcon("folder") );
         dir->setOpen( false);
         topURLList.append(url);
@@ -288,6 +293,23 @@ void FilesTreeView::slotAddToTop()
       topURLList.remove(url);
       delete(d);
     }
+  }
+}
+
+void FilesTreeView::slotNewTopFolder()
+{
+  KURL url = KFileDialog::getExistingURL(QString::null, this, i18n("Choose a local or remote directory"));
+  if (topURLList.findIndex(url) == -1)
+  {
+    url.setPath(url.path(-1));
+    QString s = url.fileName();
+    if (s.isEmpty())
+      s = "/";
+    s += " ["+url.prettyURL()+"]";
+    FilesTreeFolder *dir = new FilesTreeFolder(this , s, url);
+    dir->setPixmap( 0, SmallIcon("folder") );
+    dir->setOpen( false);
+    topURLList.append(url);
   }
 }
 

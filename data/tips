@@ -1,6 +1,6 @@
 <tip category="IO">
 <html>
-<p>...that you can use ftp for file operations by using 
+<p>...that you can use ftp for file operations by using
 <b>ftp://user:pwd@domain/path</b> in the file dialog?
 </p>
 </html>
@@ -8,7 +8,7 @@
 
 <tip category="IO">
 <html>
-<p>...that you can use SSH/SCP for file operations by using 
+<p>...that you can use SSH/SCP for file operations by using
 <b>fish://user@domain/path</b> in the file dialog?
 </p>
 </html>
@@ -40,7 +40,7 @@ specific?
 
 <tip category="Project">
 <html>
-<p>...that you can create remote projects and manage them with the 
+<p>...that you can create remote projects and manage them with the
 <b>kio slave of your choice</b>?
 </p>
 </html>
@@ -48,7 +48,7 @@ specific?
 
 <tip category="Project">
 <html>
-<p>...that you can open and close groups of files in projects with 
+<p>...that you can open and close groups of files in projects with
 <b>Project Views</b>? You can even include project toolbars in the views.
 </p>
 </html>
@@ -71,7 +71,7 @@ in the structure tree with <b>RMB Show Groups For &gt; PHP</b>?
 
 <tip category="Application">
 <html>
-<p>...that you can turn on/off autoupdating of closing tags in 
+<p>...that you can turn on/off autoupdating of closing tags in
 <b>Settings &gt; Configure Quanta::Tag Style</b>?
 </html>
 </tip>
@@ -87,8 +87,17 @@ file or menu entry? It would look like this: '[path/]quanta --unique'.
 
 <tip category="Application">
 <html>
-<p>...that you can add a keyboard shortcut for any action you define? 
+<p>...that you can add a keyboard shortcut for any action you define?
 Just go to <b>Settings > Configure Shortcuts</b>.
+</p>
+</html>
+</tip>
+
+<tip category="Application">
+<html>
+<p>...that you can add new local and remote top level folders to the Files Tree?
+Use <b>RMB New Top Folder...</b> and select a local folder or enter the remote
+server name in form of <i>ftp://user@server</i> and select the remote folder.
 </p>
 </html>
 </tip>
