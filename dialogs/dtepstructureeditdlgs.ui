@@ -43,6 +43,12 @@
             <property name="name">
                 <cstring>nameEdit</cstring>
             </property>
+            <property name="toolTip" stdset="0">
+                <string>The name of the group</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>The user visible name of the group. It will be shown in the structure tree as a top node when there are elements belonging to this group in the document.</string>
+            </property>
         </widget>
         <widget class="QLabel" row="0" column="4">
             <property name="name">
@@ -99,6 +105,12 @@
             <property name="buddy" stdset="0">
                 <cstring>fileNameRxEdit</cstring>
             </property>
+            <property name="toolTip" stdset="0">
+                <string>Regular expression to get the filename</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>Regular expression to get the filename. The expression is used to &lt;b&gt;remove&lt;/b&gt; the unnecessary strings from the element's text.</string>
+            </property>
         </widget>
         <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="3">
             <property name="name">
@@ -107,6 +119,12 @@
             <property name="text">
                 <string>Contains a &amp;filename</string>
             </property>
+            <property name="accel">
+                <string>Alt+F</string>
+            </property>
+            <property name="toolTip" stdset="0">
+                <string>True if the element's text contains a filename</string>
+            </property>
         </widget>
         <widget class="KLineEdit" row="5" column="2" rowspan="1" colspan="4">
             <property name="name">
@@ -114,6 +132,12 @@
             </property>
             <property name="enabled">
                 <bool>false</bool>
+            </property>
+            <property name="toolTip" stdset="0">
+                <string>Regular expression to get the filename</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>Regular expression to get the filename. The expression is used to &lt;b&gt;remove&lt;/b&gt; the unnecessary strings from the element's text.</string>
             </property>
         </widget>
         <widget class="QLabel" row="3" column="0">
@@ -126,6 +150,12 @@
             <property name="buddy" stdset="0">
                 <cstring>tagEdit</cstring>
             </property>
+            <property name="toolTip" stdset="0">
+                <string>Elements ideintified by this entry will belong to this group</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>Defines which tags belong to this group. The format is &lt;i&gt;tagname(attribute1, attribute2, ...)&lt;/i&gt;. Tags with name &lt;i&gt;tagname&lt;/i&gt; will appear under this group. The item text of the corresponding node in the tree will be &lt;i&gt;attribute1_value | attribute2_value | ...&lt;/i&gt;Currently only one tag may be listed here.</string>
+            </property>
         </widget>
         <widget class="QLabel" row="2" column="0">
             <property name="name">
@@ -137,10 +167,22 @@
             <property name="buddy" stdset="0">
                 <cstring>noNameEdit</cstring>
             </property>
+            <property name="toolTip" stdset="0">
+                <string>The name that appears when no element were found</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>The user visible name of the group. It will be shown in the structure tree as a top node when there are &lt;b&gt;no&lt;/b&gt; elements belonging to this group in the document.</string>
+            </property>
         </widget>
         <widget class="KLineEdit" row="2" column="1" rowspan="1" colspan="5">
             <property name="name">
                 <cstring>noNameEdit</cstring>
+            </property>
+            <property name="toolTip" stdset="0">
+                <string>The name that appears when no element were found</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>The user visible name of the group. It will be shown in the structure tree as a top node when there are &lt;b&gt;no&lt;/b&gt; elements belonging to this group in the document.</string>
             </property>
         </widget>
         <widget class="KLineEdit" row="3" column="1" rowspan="1" colspan="5">
@@ -149,6 +191,12 @@
             </property>
             <property name="enabled">
                 <bool>true</bool>
+            </property>
+            <property name="toolTip" stdset="0">
+                <string>Elements ideintified by this entry will belong to this group</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+              <string>Defines which tags belong to this group. The format is &lt;i&gt;tagname(attribute1, attribute2, ...)&lt;/i&gt;. Tags with name &lt;i&gt;tagname&lt;/i&gt; will appear under this group. The item text of the corresponding node in the tree will be &lt;i&gt;attribute1_value | attribute2_value | ...&lt;/i&gt;Currently only one tag may be listed here.</string>
             </property>
         </widget>
         <spacer row="1" column="3">
@@ -175,6 +223,12 @@
             <property name="text">
                 <string>Use elements as tags</string>
             </property>
+            <property name="toolTip" stdset="0">
+                <string>Treat elements as new tags</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>Treat elements as new tags, so they will show up during tag autocompletion.</string>
+            </property>
         </widget>
         <widget class="QGroupBox" row="7" column="0" rowspan="1" colspan="6">
             <property name="name">
@@ -191,6 +245,17 @@
                     <property name="name">
                         <cstring>typeRxEdit</cstring>
                     </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Regular experssion to find the type of the element</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Regular experssion to find the type of the element. The pattern is searched on the result of the &lt;i&gt;DefinitionRx /i&gt; match and the first captured area will hold the element type.&lt;br&gt;
+Example (simplified):&lt;br&gt;
+&lt;b&gt;DefinitionRx=\$+([a-zA-Z]+)=new\\s[a-zA-Z]+;&lt;br&gt;
+TypeRx=new\\s([a-zA-Z]+);&lt;/b&gt;&lt;br&gt;&lt;br&gt;
+This will match strings like &lt;b&gt;$fooObj=new foo;&lt;/b&gt;. Now this string is searched and it will find &lt;b&gt;new foo;&lt;/b&gt;, where &lt;b&gt;foo&lt;/b&gt; is the first captured text (the regular expression matching &lt;b&gt;foo&lt;/b&gt; is between brackets).&lt;br&gt;
+So the type of &lt;b&gt;$fooObj&lt;/b&gt; is &lt;b&gt;foo&lt;/b&gt;.</string>
+                    </property>
                 </widget>
                 <widget class="QLabel" row="3" column="0">
                     <property name="name">
@@ -202,16 +267,42 @@
                     <property name="buddy" stdset="0">
                         <cstring>usageRxEdit</cstring>
                     </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Regular expression to find the usage of a group element</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Regular expression to find the usage of a group element in the document.&lt;br&gt;
+Example 1:&lt;br&gt;
+- classes are defined as  &lt;b&gt;class foo {...}&lt;/b&gt;&lt;br&gt;
+- classes are used as &lt;b&gt;$objFoo&lt;/b&gt;&lt;br&gt;&lt;br&gt;
+Example 2:&lt;br&gt;
+- variables are defined as &lt;b&gt;int i&lt;/b&gt;&lt;br&gt;
+- variables are used as &lt;b&gt;@i&lt;/b&gt;&lt;br&gt;&lt;br&gt;
+Example 3:&lt;br&gt;
+- variables are defined as &lt;b&gt;$i&lt;/b&gt;&lt;br&gt;
+- variables are used as &lt;b&gt;$i&lt;/b&gt;. In this case &lt;i&gt;UsageRx &lt;/i&gt;is the same as &lt;i&gt;DefinitionRx&lt;/i&gt;.</string>
+                    </property>
                 </widget>
                 <widget class="QLabel" row="4" column="0">
                     <property name="name">
                         <cstring>textLabel37</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Element type expression:</string>
+                        <string>Element t&amp;ype expression:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>typeRxEdit</cstring>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Regular experssion to find the type of the element</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Regular experssion to find the type of the element. The pattern is searched on the result of the &lt;i&gt;DefinitionRx /i&gt; match and the first captured area will hold the element type.&lt;br&gt;
+Example (simplified):&lt;br&gt;
+&lt;b&gt;DefinitionRx=\$+([a-zA-Z]+)=new\\s[a-zA-Z]+;&lt;br&gt;
+TypeRx=new\\s([a-zA-Z]+);&lt;/b&gt;&lt;br&gt;&lt;br&gt;
+This will match strings like &lt;b&gt;$fooObj=new foo;&lt;/b&gt;. Now this string is searched and it will find &lt;b&gt;new foo;&lt;/b&gt;, where &lt;b&gt;foo&lt;/b&gt; is the first captured text (the regular expression matching &lt;b&gt;foo&lt;/b&gt; is between brackets).&lt;br&gt;
+So the type of &lt;b&gt;$fooObj&lt;/b&gt; is &lt;b&gt;foo&lt;/b&gt;.</string>
                     </property>
                 </widget>
                 <widget class="QLabel" row="2" column="0">
@@ -219,15 +310,39 @@
                         <cstring>textLabel35</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Definiton expression:</string>
+                        <string>Definiton e&amp;xpression:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>definitionRxEdit</cstring>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Regular expression to find what belong to this group</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Regular expression used to find text areas in the document, which will belong to this group. The first captured area shouldbe the actual name of the group entry.&lt;br&gt;
+Example for a &lt;i&gt;class&lt;/i&gt; group:&lt;br&gt;
+&lt;b&gt;\bclass[\\s]+([0-9a-zA-Z_\x7f-\xff]*)[\\s]*&lt;/b&gt;&lt;br&gt;
+The first captured area (between "&lt;b&gt;(&lt;/b&gt;" and "&lt;b&gt;)&lt;/b&gt;") holds the class name.</string>
                     </property>
                 </widget>
                 <widget class="KLineEdit" row="3" column="1" rowspan="1" colspan="4">
                     <property name="name">
                         <cstring>usageRxEdit</cstring>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Regular expression to find the usage of a group element</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Regular expression to find the usage of a group element in the document.&lt;br&gt;
+Example 1:&lt;br&gt;
+- classes are defined as  &lt;b&gt;class foo {...}&lt;/b&gt;&lt;br&gt;
+- classes are used as &lt;b&gt;$objFoo&lt;/b&gt;&lt;br&gt;&lt;br&gt;
+Example 2:&lt;br&gt;
+- variables are defined as &lt;b&gt;int i&lt;/b&gt;&lt;br&gt;
+- variables are used as &lt;b&gt;@i&lt;/b&gt;&lt;br&gt;&lt;br&gt;
+Example 3:&lt;br&gt;
+- variables are defined as &lt;b&gt;$i&lt;/b&gt;&lt;br&gt;
+- variables are used as &lt;b&gt;$i&lt;/b&gt;. In this case &lt;i&gt;UsageRx &lt;/i&gt;is the same as &lt;i&gt;DefinitionRx&lt;/i&gt;.</string>
                     </property>
                 </widget>
                 <widget class="QLabel" row="0" column="0">
@@ -237,10 +352,22 @@
                     <property name="text">
                         <string>Parent group:</string>
                     </property>
+                    <property name="toolTip" stdset="0">
+                        <string>The name of the group that may be the parent of this</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>The name of the group that may be the parent of this. For example &lt;b&gt;classes&lt;/b&gt; might be a parent of &lt;b&gt;functions&lt;/b&gt; in case of member functions. This entry indicates this possible relationship and is used to provide functionality like member autocompletion.</string>
+                    </property>
                 </widget>
                 <widget class="KLineEdit" row="0" column="1" rowspan="1" colspan="4">
                     <property name="name">
                         <cstring>parentGroupEdit</cstring>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>The name of the group that may be the parent of this</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>The name of the group that may be the parent of this. For example &lt;b&gt;classes&lt;/b&gt; might be a parent of &lt;b&gt;functions&lt;/b&gt; in case of member functions. This entry indicates this possible relationship and is used to provide functionality like member autocompletion.</string>
                     </property>
                 </widget>
                 <widget class="QLabel" row="1" column="0">
@@ -250,6 +377,9 @@
                     <property name="text">
                         <string>Searched tags:</string>
                     </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Only tags of this type can be part of the group</string>
+                    </property>
                 </widget>
                 <widget class="QLabel" row="6" column="0" rowspan="1" colspan="2">
                     <property name="name">
@@ -257,6 +387,9 @@
                     </property>
                     <property name="text">
                         <string>Remove when autocompleting:</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Regular expression used to remove unwanted strings from the completion text</string>
                     </property>
                 </widget>
                 <widget class="QLabel" row="5" column="0">
@@ -266,15 +399,32 @@
                     <property name="text">
                         <string>Autocomplete after:</string>
                     </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Regular expression to tell when to bring up the completion box with the elements of this group</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Regular expression to tell when to bring up the completion box with the elements of this group.&lt;br&gt;
+Example:&lt;b&gt;\bnew[\\s]+$&lt;/b&gt; tells that after typing &lt;b&gt;new&amp;nbsp;&lt;/b&gt;, the completion box with the elements should be shown.</string>
+                    </property>
                 </widget>
                 <widget class="KLineEdit" row="5" column="2" rowspan="1" colspan="3">
                     <property name="name">
                         <cstring>autoCompleteRxEdit</cstring>
                     </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Regular expression to tell when to bring up the completion box with the elements of this group</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Regular expression to tell when to bring up the completion box with the elements of this group.&lt;br&gt;
+Example:&lt;b&gt;\bnew[\\s]+$&lt;/b&gt; tells that after typing &lt;b&gt;new&amp;nbsp;&lt;/b&gt;, the completion box with the elements should be shown.</string>
+                    </property>
                 </widget>
                 <widget class="KLineEdit" row="6" column="2" rowspan="1" colspan="3">
                     <property name="name">
                         <cstring>removeRxEdit</cstring>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Regular expression used to remove unwanted strings from the completion text</string>
                     </property>
                 </widget>
                 <widget class="KComboBox" row="1" column="1" rowspan="1" colspan="2">
@@ -321,6 +471,9 @@
                     <property name="name">
                         <cstring>tagTypeCombo</cstring>
                     </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Only tags of this type can be part of the group</string>
+                    </property>
                 </widget>
                 <spacer row="1" column="3" rowspan="1" colspan="2">
                     <property name="name">
@@ -346,6 +499,12 @@
                     <property name="text">
                         <string>Parse file</string>
                     </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Check if the filename that is in the elements text should be parsed</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Check if the filename that is in the elements text should be parsed. This makes sense only if the element may contain a filename and the &lt;i&gt;FileNameRx&lt;/i&gt; is specified.</string>
+                    </property>
                 </widget>
                 <widget class="QButtonGroup" row="8" column="0" rowspan="1" colspan="5">
                     <property name="name">
@@ -365,6 +524,9 @@
                             <property name="text">
                                 <string>Simple</string>
                             </property>
+                            <property name="toolTip" stdset="0">
+                                <string>This is a simple group, nothing special</string>
+                            </property>
                         </widget>
                         <widget class="QRadioButton" row="1" column="0">
                             <property name="name">
@@ -372,6 +534,9 @@
                             </property>
                             <property name="text">
                                 <string>Variable group</string>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>The group's elements are variables</string>
                             </property>
                         </widget>
                         <widget class="QRadioButton" row="0" column="1">
@@ -381,6 +546,9 @@
                             <property name="text">
                                 <string>Function group</string>
                             </property>
+                            <property name="toolTip" stdset="0">
+                                <string>The group's elements are functions</string>
+                            </property>
                         </widget>
                         <widget class="QRadioButton" row="1" column="1">
                             <property name="name">
@@ -389,13 +557,22 @@
                             <property name="text">
                                 <string>Class Group</string>
                             </property>
+                            <property name="toolTip" stdset="0">
+                                <string>The group's elements are classes</string>
+                            </property>
                         </widget>
                         <widget class="QRadioButton" row="0" column="2">
                             <property name="name">
                                 <cstring>objectGroup</cstring>
                             </property>
                             <property name="text">
-                                <string>Object group</string>
+                                <string>Ob&amp;ject group</string>
+                            </property>
+                            <property name="accel">
+                                <string>Alt+J</string>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>The group's elements are objects</string>
                             </property>
                         </widget>
                     </grid>
@@ -404,6 +581,15 @@
                     <property name="name">
                         <cstring>definitionRxEdit</cstring>
                     </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Regular expression to find what belong to this group</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Regular expression used to find text areas in the document, which will belong to this group. The first captured area shouldbe the actual name of the group entry.&lt;br&gt;
+Example for a &lt;i&gt;class&lt;/i&gt; group:&lt;br&gt;
+&lt;b&gt;\bclass[\\s]+([0-9a-zA-Z_\x7f-\xff]*)[\\s]*&lt;/b&gt;&lt;br&gt;
+The first captured area (between "&lt;b&gt;(&lt;/b&gt;" and "&lt;b&gt;)&lt;/b&gt;") holds the class name.</string>
+                    </property>
                 </widget>
                 <widget class="QCheckBox" row="2" column="4">
                     <property name="name">
@@ -411,6 +597,9 @@
                     </property>
                     <property name="text">
                         <string>Minimal search mode</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Enable to use the minimal style search for definition instead of the standard (greedy) matching</string>
                     </property>
                 </widget>
             </grid>

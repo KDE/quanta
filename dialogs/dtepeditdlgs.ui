@@ -1302,9 +1302,7 @@ Example: &lt;b&gt;Tags=style(type[text/css])&lt;/b&gt; means that both &lt;b&gt;
                                                 <string>Comma separated list of the local scope defining keywords</string>
                                             </property>
                                             <property name="whatsThis" stdset="0">
-                                                <string>Comma separated list of the local scope defining keywords.
-Other structure group elements found under a structure node that was created based on a keyword from this list are treated as local elements.
-For example if this list contains "function", it means that elements, like variables found under a "function" are local, relative to the node that holds the "function".</string>
+                                              <string>Comma separated list of the local scope defining keywords. Other structure group elements found under a structure node that was created based on a keyword from this list are treated as local elements. For example if this list contains &lt;b&gt;function&lt;/b&gt;, it means that elements, like variables found under a &lt;b&gt;function&lt;/b&gt; are local, relative to the node that holds the &lt;b&gt;function&lt;/b&gt;.</string>
                                             </property>
                                         </widget>
                                         <widget class="KLineEdit" row="3" column="1" rowspan="1" colspan="3">
@@ -1315,9 +1313,7 @@ For example if this list contains "function", it means that elements, like varia
                                                 <string>Comma separated list of the local scope defining keywords</string>
                                             </property>
                                             <property name="whatsThis" stdset="0">
-                                                <string>Comma separated list of the local scope defining keywords.
-Other structure group elements found under a structure node that was created based on a keyword from this list are treated as local elements.
-For example if this list contains "function", it means that elements, like variables found under a "function" are local, relative to the node that holds the "function".</string>
+                                              <string>Comma separated list of the local scope defining keywords. Other structure group elements found under a structure node that was created based on a keyword from this list are treated as local elements. For example if this list contains &lt;b&gt;function&lt;/b&gt;, it means that elements, like variables found under a &lt;b&gt;function&lt;/b&gt; are local, relative to the node that holds the &lt;b&gt;function&lt;/b&gt;.</string>
                                             </property>
                                         </widget>
                                         <widget class="KLineEdit" row="2" column="1" rowspan="1" colspan="3">
