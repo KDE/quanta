@@ -172,7 +172,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
         while (line <= endLine && openNum > 0)
         {
           textLine = ParserCommon::getLine(write, line, endLine, endCol);
-	  int textLineLen = textLine.length();
+	  uint textLineLen = textLine.length();
           for (uint i = sCol; i < textLineLen; i++)
           {
             if (i == 0 || (i > 0 && textLine[i-1] != '\\'))

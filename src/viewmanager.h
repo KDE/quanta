@@ -63,6 +63,10 @@ public:
 /** Returns a list with the URLs of the opened documents */
   KURL::List openedFiles(bool noUntitled=true);
 
+  /** Returns the view holding the documentation widget. If there is no such view yet,
+  it creates one. */
+  QuantaView *documentationView();
+
 public slots:
   void slotViewDeactivated(KMdiChildView *view);
   void slotViewActivated(KMdiChildView *view);
@@ -81,7 +85,7 @@ private:
  /** Private constructor for the singleton object. */
   ViewManager(QObject * parent = 0, const char * name = 0);
   QuantaView *m_lastActiveView;
-
+  QuantaView *m_documentationView;
 };
 
 #endif

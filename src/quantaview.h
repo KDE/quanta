@@ -81,6 +81,9 @@ public:
   /**Adds a Document object to the view. Also creates the VPL widget for the document. */
   void addDocument(Document *document);
 
+  /** Adds a custom widget to the view. */
+  void addCustomWidget(QWidget *widget, const QString &label);
+
   /** returns the Document object associated with this view. Returns 0L if the view holds
   a non-Document object */
   Document *document() {return m_document;};
@@ -197,6 +200,7 @@ private:
   QWidget *m_VPLArea;///< the area of the view where the VPL/preview is visible
   Document *m_document;
   QuantaPlugin *m_plugin;
+  QWidget *m_customWidget; ///<view holds a custom widget, eg. a documentation
   KafkaDocument *m_kafkaDocument;
   QSplitter *m_splitter;
   QGridLayout *m_viewLayout;

@@ -27,6 +27,7 @@
 #include "wkafkapart.h"
 #endif
 
+#include "whtmlpart.h"
 #include "document.h"
 #include "quantaview.h"
 #include "viewmanager.h"
@@ -41,6 +42,7 @@ ViewManager::ViewManager(QObject *parent, const char *name) : QObject(parent, na
    m_kafkaDocument->getKafkaWidget()->view()->setMinimumHeight(50);
 
     m_lastActiveView = 0L;
+    m_documentationView = 0L;
 }
 
 QuantaView* ViewManager::createView()
@@ -95,6 +97,8 @@ bool ViewManager::removeView(QuantaView *view, bool force)
     {
        if (force || view->mayRemove())
       {
+        if (view == m_documentationView)
+            m_documentationView = 0L;
         quantaApp->closeWindow(view);
         if (!quantaApp->activeWindow())
         {
@@ -296,5 +300,16 @@ bool ViewManager::isOneModified()
 
   return false;
 }
+
+QuantaView* ViewManager::documentationView()
+{
+    if (!m_documentationView)
+    {
+        m_documentationView = createView();
+        m_documentationView->addCustomWidget(quantaApp->documentationPart()->view(), i18n("Documentation"));
+    }
+    return m_documentationView;
+}
+
 
 #include "viewmanager.moc"

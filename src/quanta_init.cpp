@@ -391,10 +391,10 @@ void QuantaInit::initView()
 
  /*
   m_quanta->m_htmlPart = new WHTMLPart(m_quanta->rightWidgetStack,"rightHTML");
-  m_quanta->slotNewPart(m_quanta->m_htmlPart, false);
-  m_quanta->m_htmlPartDoc = new WHTMLPart(m_quanta->rightWidgetStack, "docHTML");
+  m_quanta->slotNewPart(m_quanta->m_htmlPart, false); */
+  m_quanta->m_htmlPartDoc = new WHTMLPart(m_quanta, "docHTML");
   m_quanta->slotNewPart(m_quanta->m_htmlPartDoc, false);
-
+/*
   m_quanta->rightWidgetStack->addWidget(m_quanta->m_view, 0);
   m_quanta->rightWidgetStack->addWidget(m_quanta->m_htmlPart->view(), 1);
   m_quanta->rightWidgetStack->addWidget(m_quanta->m_htmlPartDoc->view(), 2);

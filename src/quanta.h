@@ -169,6 +169,7 @@ public:
   void loadToolbarForDTD(const QString& dtdName);
 
   QStringList selectors(const QString& tag);
+  WHTMLPart *documentationPart() {return m_htmlPartDoc;}
 
     /** tabs for left panel */
   DocTreeView *dTab;

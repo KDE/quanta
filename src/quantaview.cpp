@@ -78,6 +78,7 @@ QuantaView::QuantaView(QWidget *parent, const char *name )
   : KMdiChildView(parent, name)
   , m_document(0L)
   , m_plugin(0L)
+  , m_customWidget(0L)
 #ifdef BUILD_KAFKAPART
   , m_currentFocus(SourceFocus)
   , m_quantaUpdateTimer(-1)
@@ -117,6 +118,8 @@ QuantaView::QuantaView(QWidget *parent, const char *name )
 
 QuantaView::~QuantaView()
 {
+    if (m_customWidget)
+      m_customWidget->reparent(0L, 0, QPoint(), false);
     delete m_document;
 }
 
@@ -237,6 +240,18 @@ void QuantaView::addPlugin(QuantaPlugin *plugin)
    m_viewLayout->addWidget(m_documentArea, 1, 0);
    m_documentArea->show();
    activated();
+}
+
+void QuantaView::addCustomWidget(QWidget *widget, const QString &label)
+{
+   m_customWidget = widget;
+   m_splitter->hide();
+   m_customWidget->reparent(m_documentArea, 0, QPoint(), true);
+   m_customWidget->resize(m_documentArea->size());
+   setMDICaption(label);
+   m_documentArea->reparent(this, 0, QPoint(), false);
+   m_documentArea->show();
+   m_viewLayout->addWidget(m_documentArea, 1, 0);
 }
 
 void QuantaView::slotSetSourceLayout()
@@ -601,7 +616,12 @@ void QuantaView::resize(int width, int height)
   {
       m_plugin->widget()->resize(width, height);
       return;
-  }
+  } else
+  if (m_customWidget)
+  {
+      m_customWidget->resize(width, height);
+      return;
+  } else
   if (!m_document)
       return;
   if (m_currentViewsLayout == SourceOnly)
@@ -706,7 +726,7 @@ void QuantaView::deactivated()
         quantaApp->statusBar()->changeItem("", IDS_STATUS);
         quantaApp->statusBar()->show();
       }
-  } else
+  }
 }
 
 bool QuantaView::saveModified()

@@ -1517,6 +1517,8 @@ void QuantaApp::selectArea(int line1, int col1, int line2, int col2)
 
 void QuantaApp::openDoc(const QString& url)
 {
+  QuantaView *docView = ViewManager::ref()->documentationView();
+  docView->activate();
   m_htmlPartDoc->view()->setFocus();  // activates the part
 
   QString urlStr = url;
@@ -1534,43 +1536,13 @@ void QuantaApp::openDoc(const QString& url)
 
 void QuantaApp::slotContextHelp()
 {
-//FIXME:
-/*
-  int id_w = rightWidgetStack->id( rightWidgetStack->visibleWidget());
-
-  QWidgetStack *s = widgetStackOfHtmlPart();
-  if (  id_w == 1 || id_w == 2 )
-  {
-    if ( !m_oldTreeViewWidget->isVisible() )
-        m_oldTreeViewWidget->changeHideShowState();
-    int id = 0;
-    if (!previousWidgetList.empty())
+    Document *w = ViewManager::ref()->activeDocument();
+    if (w)
     {
-      id = previousWidgetList.last();
-      previousWidgetList.pop_back();
+        QString currentWord = ViewManager::ref()->activeDocument()->kate_view->currentWord();
+        QString *url = dTab->contextHelp(currentWord);
+        openDoc(*url);
     }
-    s->raiseWidget(id);
-  }
-  else
-  {
-    QString currentWord = m_view->write()->kate_view->currentWord();
-    QString *url = dTab->contextHelp(currentWord);
-
-    if ( url )
-    {
-      previousWidgetList.push_back(s->id(s->visibleWidget()));
-/*      if (ftabdock->isVisible()) m_oldTreeViewWidget = ftabdock;
-      if (ptabdock->isVisible()) m_oldTreeViewWidget = ptabdock;
-      if (ttabdock->isVisible()) m_oldTreeViewWidget = ttabdock;
-      if (scripttabdock->isVisible()) m_oldTreeViewWidget = scripttabdock;
-      if (stabdock->isVisible()) m_oldTreeViewWidget = stabdock;
-      if (dtabdock->isVisible()) m_oldTreeViewWidget = dtabdock;
-      if (!dtabdock->isVisible()) dtabdock->changeHideShowState(); * /
-      s->raiseWidget(2);
-
-      openDoc(*url);
-    }
-  }*/
 }
 
 void QuantaApp::slotShowMessagesView()
