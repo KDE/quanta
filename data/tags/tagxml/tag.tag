@@ -54,8 +54,22 @@
         </items>
     </attr>
 
+    <label>
+        <text>Single Tag</text>
+        <location col="0" row="4" />
+    </label>
+
+    <attr name="single" type="list">
+        <tooltip>Single tag requiring a / at the end</tooltip>
+        <location col="1" row="4" />
+        <items>
+          <item>0</item>
+          <item>1</item>
+        </items>
+    </attr>
+
     <spacer orientation="v">
-        <location col="0" row="6" colspan="4" />
+        <location col="0" row="6" colspan="2" />
     </spacer>
 </tag>
 </TAGS>
