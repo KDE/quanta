@@ -18,8 +18,6 @@
 #ifndef QUANTADOC_H
 #define QUANTADOC_H
 
-#include <config.h>
-
 // include files for QT
 #include <qptrlist.h>
 #include <qdict.h>

@@ -18,8 +18,6 @@
 #ifndef TAGXML_H
 #define TAGXML_H
 
-#include <config.h>
-
 #include <qwidget.h>
 #include <qdom.h>
 #include <qptrlist.h>

@@ -23,6 +23,7 @@
 #include <kpopupmenu.h>
 #include <kiconloader.h>
 #include <kparts/componentfactory.h>
+#include <ktexteditor/document.h>
 #include <ktexteditor/editinterface.h>
 
 //qt includes
@@ -483,7 +484,7 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
   m_dataTable = tableData;
   m_rowSpin = rowSpinBox;
   m_colSpin = colSpinBox;
-  
+
   //create the thead, tbody, tfoot tags if they were not present in the parsed area
   if (!m_thead) {
     m_thead = new Tag();
@@ -496,7 +497,7 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
     m_tfoot->parse("<tfoot>", m_write);
   }
   m_createNodes = true; //enable cell/row creation
-  
+
   configureTable(tableData);
   configureTable(headerTableData);
   configureTable(footerTableData);
@@ -611,7 +612,7 @@ QString TableEditor::readModifiedTable()
   }
   tableString += indent(2);
   tableString += m_tbody->toString();
-  kdDebug(24000) << "tbody" << endl; 
+  kdDebug(24000) << "tbody" << endl;
   m_tableTags = m_tableDataTags;
   m_tableRows = m_tableDataRows;
   m_dataTable = tableData;
@@ -1119,7 +1120,7 @@ void TableEditor::configureTable( QTable * table )
   for (int r=0; r<table->numRows(); r++) {
     table->adjustRow(r);
     for (int c=0; c<table->numCols(); c++)
-      if (table->item(r, c)) 
+      if (table->item(r, c))
         table->item(r, c)->setWordWrap(true);
   }
   table->setColumnMovingEnabled(true);
@@ -1136,29 +1137,29 @@ void TableEditor::setCellText( QTable * table, int row, int col, const QString &
 void TableEditor::configureCell(int row, int col, Node * node)
 {
    TableItem* item = (TableItem*) m_dataTable->item(row, col);
-   if (!item) 
+   if (!item)
      return;
    // Header (TH) or standard cell?
    item->setHeader(node->tag->name.lower() == "th");
    // Horizontal alignment
    Qt::AlignmentFlags flags;
    QString align = node->tag->attributeValue("align");
-   if (align == "right") 
+   if (align == "right")
      flags = Qt::AlignRight;
-   else if (align == "center") 
+   else if (align == "center")
      flags = Qt::AlignHCenter;
-   else if (align == "justify") 
+   else if (align == "justify")
      flags = Qt::AlignJustify;
    else if (align.isEmpty() && item->header())
      flags = Qt::AlignHCenter;   // TH is centered by default
-   else 
+   else
      flags = Qt::AlignLeft;
    item->setAlignment(flags);
    // Vertical alignment
    QString valign = node->tag->attributeValue("valign");
-   if (valign == "top") 
+   if (valign == "top")
      flags = Qt::AlignTop;
-   else if (valign == "bottom") 
+   else if (valign == "bottom")
      flags = Qt::AlignBottom;
    else flags = Qt::AlignVCenter;
    item->setVAlignment(flags);

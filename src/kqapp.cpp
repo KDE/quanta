@@ -28,13 +28,14 @@
 #include <kglobalsettings.h>
 #include <dcopclient.h>
 
+#include "config.h"
 #include "quantacommon.h"
 #include "project.h"
 #include "quanta.h"
 #include "quanta_init.h"
 #include "kqapp.h"
 
- 
+
 QuantaApp *quantaApp = 0L; //global pointer to the main application object
 
 KSplash::KSplash()
@@ -124,7 +125,7 @@ int KQUniqueApplication::newInstance()
 #else
 	KWin::activateWindow( mainWidget()->winId() );
 #endif
-	  
+
     quantaApp = static_cast<QuantaApp*>(mainWidget());
     for (int i = 0; i < args->count(); i++)
     {

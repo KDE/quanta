@@ -18,8 +18,6 @@
 #ifndef QUANTAVIEW_H
 #define QUANTAVIEW_H
 
-#include <config.h>
-
 // include files for Qt
 #include <qwidget.h>
 #include <qptrlist.h>

@@ -19,10 +19,6 @@
 #ifndef MESSAGEITEM_H
 #define MESSAGEITEM_H
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <qlistbox.h>
 
 /**

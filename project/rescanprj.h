@@ -18,9 +18,6 @@
 #ifndef RESCANPRJ_H
 #define RESCANPRJ_H
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
 #include <qregexp.h>
 #include <kio/job.h>
 

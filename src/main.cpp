@@ -33,6 +33,7 @@
 #include <qfileinfo.h>
 
 // app includes
+#include "config.h"
 #include "quanta.h"
 
 static const char *description =

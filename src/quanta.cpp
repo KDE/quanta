@@ -165,6 +165,7 @@
 #include <kencodingfiledialog.h>
 #endif
 
+#include "config.h"
 #include "quantaplugininterface.h"
 #include "quantaplugin.h"
 #include "dtds.h"

@@ -343,7 +343,6 @@ void QuantaInit::initProject()
 
 void QuantaInit::initView()
 {
-  ////////////////////////////////////////////////////////////////////
   ViewManager *m_viewManager = ViewManager::ref(m_quanta);
   connect(m_quanta, SIGNAL(viewActivated (KMdiChildView *)), m_viewManager, SLOT(slotViewActivated(KMdiChildView*)));
 //   connect(m_quanta, SIGNAL(viewDeactivated(KMdiChildView *)), m_viewManager, SLOT(slotViewDeactivated(KMdiChildView*)));
@@ -352,9 +351,10 @@ void QuantaInit::initView()
    loadVPLConfig();
    (void) ToolbarTabWidget::ref(quantaApp);
 
-#if KDE_IS_VERSION(3,2,90)
+#if KDE_IS_VERSION(3,2,2) || defined(COMPAT_KMDI)
   m_quanta->setIDEAlModeStyle(KMultiTabBar::KDEV3ICON);
-  m_quanta->tabWidget()->setTabPosition( QTabWidget::Bottom );
+  if (m_quanta->tabWidget())
+      m_quanta->tabWidget()->setTabPosition( QTabWidget::Bottom );
 #else
   m_quanta->setIDEAlModeStyle(KMultiTabBar::KDEV3);
 #endif

@@ -18,10 +18,6 @@
 #ifndef TAGATTR_H
 #define TAGATTR_H
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 //qt includes
 #include <qstring.h>
 #include <qcheckbox.h>
@@ -54,7 +50,7 @@ class Attr
     virtual void setValue( QString )=0;
 
     QString attrName() const;
-  
+
   protected:
      QDomElement *domEl;
      QString name;

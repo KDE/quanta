@@ -24,8 +24,6 @@
 #define IDS_STATUS_CLM  4
 #define IDS_DEFAULT     "Ready."
 
-#include <config.h>
-
 // include files for Qt
 #include <qmap.h>
 #include <qdict.h>
