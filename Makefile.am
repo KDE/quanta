@@ -64,7 +64,8 @@ EXTRA_DIST = \
 		resource.h\
 		quanta_actions.cpp\
 		quanta_actions.h\
-		quantaui.rc
+		quantaui.rc\
+		newstuff.h
 ##############################################################
 ####                  END KDEStudio part                  ####
 #2########################################################!@#$

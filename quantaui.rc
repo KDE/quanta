@@ -185,7 +185,9 @@
       <Action name="conf_toolbars"/>
       <Action name="keys_bind"/>
       <Separator/>
-      <Action name="highlight_options"/>
+      <Action name="set_eol"/>
+      <Action name="set_highlight"/>
+      <Action name="highlight_options"/>                  
     </Menu>
     
   </MenuBar>

@@ -301,6 +301,7 @@ class QuantaApp : public KTMainWindow
 
     /** set highlight of document */
     void slotSetHl(int);
+    void slotSetEol(int);
 
     /** reparse current document and initialize node. */
 	  void reparse();

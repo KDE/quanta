@@ -494,7 +494,7 @@ void QuantaApp::initMenuBar()
   optionsMenu->insertItem(UserIcon("options"), i18n("&General Options..."),  ID_OPTIONS );
 
   ///////////////////////////////////////////////////////////////////
-/*
+
   menuBar()->insertItem(i18n(" &File "),    fileMenu);
   menuBar()->insertItem(i18n(" &Edit "),    editMenu);
   menuBar()->insertItem(i18n(" &Tools "),   toolMenu);
@@ -506,7 +506,7 @@ void QuantaApp::initMenuBar()
 
   menuBar()->insertSeparator();
   menuBar()->insertItem(i18n("&Help"), helpMenu(QString::null,false));
-*/
+
   
   connect(fileMenu, SIGNAL(activated(int)), SLOT(commandCallback(int)));
   connect(fileMenu, SIGNAL(highlighted(int)), SLOT(statusCallback(int)));
@@ -1462,8 +1462,27 @@ void QuantaApp::initActions()
                         doc->write(), SLOT( hlDlg() ),
                         actionCollection(), "highlight_options" );
                         
-#warning TODO: Highlighting mode
-
+    KSelectAction *setHighlight =
+      new KSelectAction(i18n("Highlight &Mode"), 0, actionCollection(), "set_highlight");
+      
+    QStringList list;
+    for (int z = 0; z < HlManager::self()->highlights(); z++)
+        list.append(i18n(HlManager::self()->hlName(z)));
+        
+    setHighlight->setItems(list);
+      
+    KSelectAction *setEndOfLine = 
+      new KSelectAction(i18n("&End Of Line"),    0, actionCollection(), "set_eol");
+    
+    list.clear();
+    list.append("&Unix");
+    list.append("&Macintosh");
+    list.append("&Windows/Dos");
+    setEndOfLine->setItems(list);
+        
+    connect(setEndOfLine, SIGNAL(activated(int)), this, SLOT(slotSetEol(int)));  
+    connect(setHighlight, SIGNAL(activated(int)), this, SLOT(slotSetHl (int)));
+    
     (void) new KAction( i18n( "Configure &Editor..." ), SmallIcon("configure"), 0, 
                         doc, SLOT( editorOptions() ),
                         actionCollection(), "editor_options" );

@@ -799,6 +799,7 @@ void QuantaApp::slotViewToolBar()
   slotStatusMsg(i18n("Toggle the toolbar..."));
   ///////////////////////////////////////////////////////////////////
   // turn Toolbar on or off
+#ifndef NEW_STUFF  
   if( viewMenu->isItemChecked(ID_VIEW_TOOLBAR))
   {
     viewMenu->setItemChecked(ID_VIEW_TOOLBAR, false);
@@ -809,7 +810,7 @@ void QuantaApp::slotViewToolBar()
     viewMenu->setItemChecked(ID_VIEW_TOOLBAR, true);
     enableToolBar(KToolBar::Show);
   }		
-
+#endif
   slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
 }
 
@@ -818,6 +819,7 @@ void QuantaApp::slotViewStatusBar()
   slotStatusMsg(i18n("Toggle the statusbar..."));
   ///////////////////////////////////////////////////////////////////
   //turn Statusbar on or off
+#ifndef NEW_STUFF    
   if( viewMenu->isItemChecked(ID_VIEW_STATUSBAR))
   {
     viewMenu->setItemChecked(ID_VIEW_STATUSBAR, false);
@@ -828,7 +830,7 @@ void QuantaApp::slotViewStatusBar()
     viewMenu->setItemChecked(ID_VIEW_STATUSBAR, true);
     enableStatusBar(KStatusBar::Show);
   }
-
+#endif
   slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
 }
 
@@ -1458,11 +1460,26 @@ void QuantaApp::contextHelp()
 
 void QuantaApp::slotSetHl( int _hl )
 {
+#ifndef NEW_STUFF 
   HlManager *hl = new HlManager();
   doc->write()->setHl( hl->nameFind( highlightMenu->text( _hl )) );
-  view->repaint();
   delete hl;
+#else
+  doc->write()->setHl(_hl);
+#endif
 }
+
+void QuantaApp::slotSetEol( int _eol )
+{
+#ifndef NEW_STUFF   
+  HlManager *hl = new HlManager();
+  doc->write()->setEol( hl->nameFind( highlightMenu->text( _eol )) );
+  delete hl;
+#else
+  doc->write()->setEol(_eol);
+#endif
+}
+
 
 void QuantaApp::slotFtpClient()
 {
