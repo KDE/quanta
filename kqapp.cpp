@@ -25,6 +25,7 @@
 #include <kiconloader.h>
 #include <kstandarddirs.h>
 #include <kglobalsettings.h>
+#include <kdeversion.h>
 
 #include "quantacommon.h"
 #include "project/project.h"
@@ -114,7 +115,12 @@ int KQUniqueApplication::newInstance()
   args = KCmdLineArgs::parsedArgs();
   if (mainWidget())
   {
-    KWin::activateWindow(mainWidget()->winId());
+#if KDE_VERSION < KDE_MAKE_VERSION( 3, 1, 90 )
+	KWin::setActiveWindow( mainWidget()->winId() );
+#else
+	KWin::activateWindow( mainWidget()->winId() );
+#endif
+	  
     quantaApp = static_cast<QuantaApp*>(mainWidget());
     for (int i = 0; i < args->count(); i++)
     {
