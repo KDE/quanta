@@ -16,7 +16,9 @@
  *                                                                         *
  ***************************************************************************/
 
+#ifdef BUILD_KAFKAPART
 #include <dom/dom_node.h>
+#endif
 #include "node.h"
 
 Node::Node( Node *parent )
@@ -29,7 +31,9 @@ Node::Node( Node *parent )
   removeAll = true;
   closesPrevious = false;
   insideSpecial = false;
+  #ifdef BUILD_KAFKAPART
   kafkaNode = 0L;
+  #endif
 }
 
 
