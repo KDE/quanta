@@ -1,0 +1,62 @@
+<tip category="IO">
+<html>
+<p>...that you can use ftp for file operations by using 
+<b>ftp://user:pwd@domain/path</b> in the file dialog?
+</html>
+</tip>
+
+<tip category="IO">
+<html>
+<p>...that you can use SSH/SCP for file operations by using 
+<b>fish://user@domain/path</b> in the file dialog?
+</html>
+</tip>
+
+<tip category="Editor">
+<html>
+<p>...that you can turn on line numbering and the icon border
+by default from <b>Sebings&gt;Configure editor::Defaults</b>?
+</html>
+</tip>
+
+<tip category="Application">
+<html>
+<p>...that you can create actions that will run scripts from
+ <b>Sebings&gt;Configure Actions</b> and place them on the toolbar?
+</html>
+</tip>
+
+<tip category="Application">
+<html>
+<p>...that you can create custom toolbars and even make them project
+specific?
+</html>
+</tip>
+
+<tip category="Project">
+<html>
+<p>...that you can create remote projects and manage them with the 
+ <b>kio slave of your choice</b>?
+</html>
+</tip>
+
+<tip category="Project">
+<html>
+<p>...that you can open and close groups of files in projects with 
+ <b>Project Views</b>? You can even include project toolbars in the views.
+</html>
+</tip>
+
+<tip category="Application">
+<html>
+<p>...that you can view a summary of PHP classes, functions and variables
+in the structure tree with <b>RMB Show Groups For&gt;PHP</b>?
+</html>
+</tip>
+
+<tip category="Application">
+<html>
+<p>...that you can use PHP to auto-complete functions with <b>Ctrl+Space</b>?
+</html>
+</tip>
+

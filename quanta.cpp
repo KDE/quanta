@@ -63,7 +63,7 @@
 #include <kdirwatch.h>
 #include <kspell.h>
 #include <kdeversion.h>
-
+#include <ktip.h>
 #include <kparts/componentfactory.h>
 
 #include <ktexteditor/editinterface.h>
@@ -415,6 +415,10 @@ void QuantaApp::slotViewStatusBar()
     statusBar()->show();
 }
 
+void QuantaApp::slotHelpTip()
+{
+   KTipDialog::showTip(this, 0, true);
+}
 
 void QuantaApp::slotStatusMsg(const QString &msg)
 {

@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="quanta" version="32001">
+<kpartgui name="quanta" version="32002">
   <MenuBar noMerge="1">
 
     <Menu name="file" noMerge="1"><text>&amp;File</text>
@@ -160,6 +160,7 @@
       <Action name="help_homepage" />
       <Action name="help_donation"/>
       <Action name="help_report_bug" />
+      <Action name="help_tip" />
       <Separator />
       <Action name="help_about_app" />
       <Action name="help_about_kde" />

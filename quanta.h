@@ -309,6 +309,9 @@ public slots:
   void slotReparse();
   void slotForceReparse();
 
+  /** Shows tip of the day */
+  void slotHelpTip();
+
 protected slots:
   void initToolBars();
   /** No descriptions */

@@ -4,6 +4,7 @@
     begin                : ?? ???  9 13:29:57 EEST 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
                            (C) 2001-2003 by Andras Mantia <amantia@freemail.hu>
+                           (C) 2003 by Eric Laffoon <sequitur@kde.org>
     email                : pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com
  ***************************************************************************/
 
@@ -50,7 +51,7 @@
 #include <kparts/componentfactory.h>
 #include <kprogress.h>
 #include <kspell.h>
-
+#include <ktip.h>
 #include <kio/netaccess.h>
 
 // application specific includes
@@ -86,7 +87,7 @@
 #include "parser/parser.h"
 #include "dialogs/filemasks.h"
 
-#define UI_VERSION 32001 //3.2.0, v.01; modify this whenever something incompatible
+#define UI_VERSION 32002 //3.2.0, v.01; modify this whenever something incompatible
                          //change is made to quantaui.rc. And of course, update
                          //the version in quantaui.rc!
 
@@ -117,6 +118,7 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta"), DCOPObject("WindowManager
   exitingFlag = false;
   qConfig.spellConfig = new KSpellConfig();
   spellChecker = new SpellChecker();
+  //KTipDialog::showTip(this); //Shows too early
 }
 
 QuantaApp::~QuantaApp()
@@ -224,7 +226,7 @@ void QuantaApp::initQuanta()
 
   slotFileNew();
   initToolBars();
-
+  KTipDialog::showTip(this);
 }
 
 
@@ -1408,6 +1410,10 @@ void QuantaApp::initActions()
                     SLOT(toggleIconBorder()), actionCollection(), "view_border");
   viewLineNumbers =  new KToggleAction(i18n("Show &Line Numbers"), Key_F11, view,
                         SLOT(toggleLineNumbers()), actionCollection(), "view_line_numbers");
+
+//help
+   KAction* actionHelpTip = new KAction(i18n("&Tip of the day"), "idea", "", this,
+      SLOT(slotHelpTip()), actionCollection(), "help_tip");
 
   #if (KDE_VERSION > 308)
 //    viewFoldingMarkes =  new KToggleAction(i18n("Show Folding &Markers"), Key_F9, view,
