@@ -347,6 +347,7 @@ void ProjectUpload::startUpload()
     totalProgress->setTotalSteps(selectedNum);
     uploadInProgress = true;
     suspendUpload = false;
+    buttonUpload->setEnabled(false);
     KURL u = *baseUrl;
     u.setPath(u.protocol() == "file" ? "/" : "");
     if (QExtFileInfo::exists(u))
