@@ -59,6 +59,8 @@ Version 3.4 (Release date: xx-xx-2005; Started 20-08-2004):
         - fix a bug in the auto tag updating: do not update non-XML tags [#95743]
         - don't crash in case of corrupted quantarc
         - avoid crashes that happen if you close Quanta quickly after it is started
+        - don't crash when pressing CTRL+[SHIFT]+SPACE while a plugin is loaded [#99064]
+
 
   - behavioral/user interface changes:
         - Toolbars->Add User Toolbar renamed to New User Toolbar

@@ -2981,14 +2981,14 @@ void QuantaApp::focusInEvent(QFocusEvent* e)
 void QuantaApp::slotShowCompletion()
 {
   Document *w = ViewManager::ref()->activeDocument();
-  if (w->codeCompletionIf)
+  if (w && w->codeCompletionIf)
     w->codeCompletionRequested();
 }
 
 void QuantaApp::slotShowCompletionHint()
 {
   Document *w = ViewManager::ref()->activeDocument();
-  if (w->codeCompletionIf)
+  if (w && w->codeCompletionIf)
     w->codeCompletionHintRequested();
 }
 
