@@ -35,10 +35,10 @@
 
 Parser::Parser()
 {
-  s = QString::null;
+  m_text = QString::null;
   pos = 0;
-  node = 0L;
-  textChanged = true;
+  m_node = 0L;
+  m_textChanged = true;
 }
 
 Parser::~Parser()
@@ -50,26 +50,25 @@ Node *Parser::parse( QString text, QString dtdName)
 {
   m_dtdName = dtdName;
 
-	if ( s )
-		if ( s == text ) {
-			textChanged = false;
-			return node;
-		}
-	textChanged = true;
-	
-	
-	s = text;	
-	
-	if (node) delete node;
-  pos = 0;
-  node = subParse(0L);
-  return node;
+  if ( m_text == text )
+  {
+		m_textChanged = false;
+	}
+  else
+  {
+  	m_textChanged = true;
+  	m_text = text;	
+	 	if (m_node) delete m_node;
+    pos = 0;
+    m_node = subParse(0L);
+  }
+  return m_node;
 }
 
 
 QString Parser::tagsListForPoint(int pos)
 {
-	return subList(node,pos);
+	return subList(m_node,pos);
 }
 
 QString Parser::subList( Node* node, int pos)
@@ -98,117 +97,128 @@ Node * Parser::subParse( Node * parent, QString tag )
   Node * prevNode = 0L;
   Node * firstNode = 0L;
 
-  while (1) {
+  while (1)
+  {
     int type = tokenType();
     lastpos = pos;
 
-    switch ( type ) {
+    switch ( type )
+    {
       case EndText:
-        return firstNode;
-        break;
+           {
+             return firstNode;
+             break;
+           }
+      case TagStart :
+           {
+             int oldpos = pos;
+             Tag *tagData = parseTag();
 
-      case TagStart : {
+             if ( !tag.isEmpty() )   // check if this tag stop area of previous
+             {
+               QTag *qTag = QuantaCommon::tagFromDTD(m_dtdName, tag);
+               if ( qTag )
+               {
+                 QString searchFor = (qTag->parentDTD->caseSensitive)?tagData->name:tagData->name.upper();
+                 if ( qTag->stoppingTags.contains( searchFor ) )
+                 {
+                   pos = oldpos;  // return to pos before tag
+                   delete (tagData);
+                   return firstNode;
+                 }
+               }
+             }
 
-        int oldpos = pos;
-        Tag *tagData = parseTag();
+             Node *tnode = new Node( parent );
+             if ( !firstNode )
+                firstNode = tnode;
 
-        if ( !tag.isEmpty() ) {  // check if this tag stop area of previous
-          QTag *qTag = QuantaCommon::tagFromDTD(m_dtdName, tag);
-          if ( qTag )
-          {
-            QString searchFor = (qTag->parentDTD->caseSensitive)?tagData->name:tagData->name.upper();
-            if ( qTag->stoppingTags.contains( searchFor ) )
-            {
-              pos = oldpos;  // return to pos before tag
-              delete (tagData);
-              return firstNode;
-            }
-          }
-        }
+             tnode->tag = tagData;
+             tnode->start = oldpos;
+             tnode->startContext = pos;
+             tnode->type = Node::tTag;
+             if ( prevNode )
+                 prevNode->next = tnode;
+             prevNode = tnode;
 
-        Node *tnode = new Node( parent );
-        if ( !firstNode )
-           firstNode = tnode;
+             if ( !tagData->single && !QuantaCommon::isSingleTag(m_dtdName, tagData->name) )  // not single tag
+             {
+               tnode->child = subParse( tnode , tagData->name.lower() );
+               tnode->endContext = pos-1;
+        	     tnode->end = pos-1;
 
-        tnode->tag = tagData;
-
-        tnode->start = oldpos;
-        tnode->startContext = pos;
-        tnode->type = Node::tTag;
-        if ( prevNode )
-          prevNode->next = tnode;
-        prevNode = tnode;
-
-        if ( !tagData->single && !QuantaCommon::isSingleTag(m_dtdName, tagData->name) ) { // not single tag
-          tnode->child = subParse( tnode , tagData->name.lower() );
-
-        	tnode->endContext = pos-1;
-        	tnode->end = pos-1;
-
-        	if ( tokenType() == TagEnd ) {
-          	int oldpos = pos;
-          	QString tagend = parseTagEnd();
-          	if ( tagend.lower() != tnode->tag->name.lower() ) {
-           	 pos = oldpos;
-           	 //delete tagData;
-           	 return firstNode;
-          	}
-        	}
-        }
-        else { // single tag
-        	tnode->endContext = pos-1;
-        }
-        tnode->end = pos-1;
-        //delete tagData;
-        }
-        break;
+        	     if ( tokenType() == TagEnd )
+               {
+          	     int oldpos = pos;
+          	     QString tagend = parseTagEnd();
+          	     if ( tagend.lower() != tnode->tag->name.lower() )
+                 {
+           	        pos = oldpos;
+           	        //delete tagData;
+           	        return firstNode;
+          	     }
+        	     }
+             }
+             else // single tag
+             {
+        	     tnode->endContext = pos-1;
+             }
+             tnode->end = pos-1;
+            //delete tagData;
+             break;
+           }
 
       case Text:
-        parseText();
-        node = new Node( parent );
-        if ( !firstNode )
-           firstNode = node;
-        node->start = lastpos;
-        node->end = pos-1;
-        node->type = Node::tText;
-        if ( prevNode )
-          prevNode->next = node;
-        prevNode = node;
-        break;
+           {
+             parseText();
+             node = new Node( parent );
+             if ( !firstNode )
+                 firstNode = node;
+             node->start = lastpos;
+             node->end = pos-1;
+             node->type = Node::tText;
+             if ( prevNode )
+                 prevNode->next = node;
+             prevNode = node;
+             break;
+           }
 
       case Comment:
-        parseComment();
-        node = new Node( parent );
-        if ( !firstNode )
-           firstNode = node;
-        node->start = lastpos;
-        node->startContext = lastpos+4;
-        node->end = pos-1;
-        node->endContext = pos-4;
-
-        node->type = Node::tComment;
-        if ( prevNode )
-          prevNode->next = node;
-        prevNode = node;
-        break;
+           {
+             parseComment();
+             node = new Node( parent );
+             if ( !firstNode )
+                 firstNode = node;
+             node->start = lastpos;
+             node->startContext = lastpos+4;
+             node->end = pos-1;
+             node->endContext = pos-4;
+             node->type = Node::tComment;
+             if ( prevNode )
+                 prevNode->next = node;
+             prevNode = node;
+             break;
+           }
 
       case PHP:
-        parsePHP();
-        node = new Node( parent );
-        if ( !firstNode )
-           firstNode = node;
-        node->start = lastpos;
-        node->end = pos-1;
-        node->startContext = lastpos+2;
-        node->endContext = pos-3;
-        node->type = Node::tPHP;
-        if ( prevNode )
-          prevNode->next = node;
-        prevNode = node;
-        break;
+           {
+             parsePHP();
+             node = new Node( parent );
+             if ( !firstNode )
+                firstNode = node;
+             node->start = lastpos;
+             node->end = pos-1;
+             node->startContext = lastpos+2;
+             node->endContext = pos-3;
+             node->type = Node::tPHP;
+             if ( prevNode )
+               prevNode->next = node;
+             prevNode = node;
+             break;
+           }
 
       case TagEnd :
-        return firstNode;
+           return firstNode;
     }
   } // while
 
@@ -218,23 +228,23 @@ int Parser::tokenType()
 {
   skipSpaces();
 
-  if ( pos >= (int) s.length() )
+  if ( pos >= (int) m_text.length() )
     return EndText;
 
   static QChar ch1('<');
-  if ( s[pos] != ch1 )
+  if ( m_text[pos] != ch1 )
     return Text;
 
   static QChar ch2('/');
-  if ( s[pos+1] == ch2 )
+  if ( m_text[pos+1] == ch2 )
     return TagEnd;
 
   static QChar ch3('?');
-  if ( s[pos+1] == ch3 )
+  if ( m_text[pos+1] == ch3 )
     return PHP;
 
   static QString str1("<!--");
-  if ( s.mid(pos,4) ==  str1 )
+  if ( m_text.mid(pos,4) ==  str1 )
     return Comment;
 
 
@@ -243,7 +253,7 @@ int Parser::tokenType()
 
 int Parser::skipSpaces()
 {
-  while ( s[pos].isSpace() ) pos++;
+  while ( m_text[pos].isSpace() ) pos++;
   return pos;
 }
 
@@ -252,12 +262,12 @@ Tag* Parser::parseTag()
   Tag *tag = new Tag();
   int tpos = pos+1;
   static QChar ch1('>');
-  while ( s[tpos] != ch1 && !s[tpos].isNull() ) tpos++;
+  while ( m_text[tpos] != ch1 && !m_text[tpos].isNull() ) tpos++;
 
-  tag->parseStr( s.mid( pos+1, tpos-pos-1 ) );
+  tag->parseStr( m_text.mid( pos+1, tpos-pos-1 ) );
 
   pos = tpos;
-  if ( !s[pos].isNull() ) pos++;
+  if ( !m_text[pos].isNull() ) pos++;
 
   return tag;
 }
@@ -266,38 +276,38 @@ QString Parser::parseTagEnd()
 {
   int tpos = pos+2;
   int start = tpos;
-  while ( s[tpos] !='>' && !s[tpos].isNull() ) tpos++;
+  while ( m_text[tpos] !='>' && !m_text[tpos].isNull() ) tpos++;
   pos = tpos;
   int len = pos-start;
 
-  if ( !s[pos].isNull() )  pos++;
+  if ( !m_text[pos].isNull() ) pos++;
 
-  return s.mid( start, len ).lower();
+  return m_text.mid( start, len ).lower();
 }
 
 void Parser::parseText()
 {
-  int len = s.length();
+  int len = m_text.length();
   static QChar ch1('<');
-  while ( s[pos] != ch1 && pos < len ) pos++;
+  while ( m_text[pos] != ch1 && pos < len ) pos++;
 }
 
 
 void Parser::parseComment()
 {
-  int len = s.length();
+  int len = m_text.length();
   static QString str1("-->");
-  while ( s.mid(pos,3) != str1 && pos < len ) pos++;
+  while ( m_text.mid(pos,3) != str1 && pos < len ) pos++;
   if ( pos < len )
     pos+=3;
 }
 
 void Parser::parsePHP()
 {
-  int len = s.length();
+  int len = m_text.length();
 
   static QString str1("?>");
-  while ( s.mid(pos,2) != str1 && pos < len ) pos++;
+  while ( m_text.mid(pos,2) != str1 && pos < len ) pos++;
   if ( pos < len )
     pos+=2;
 }
@@ -308,8 +318,8 @@ int Parser::pos2y( int pos )
 	int endLineCount = 0;
 	if ( pos<0 ) pos = 0;
 	
-	for (int i=0; i<=pos && !s[i].isNull(); i++)
-		if (s[i]=='\n')
+	for (int i=0; i<=pos && !m_text[i].isNull(); i++)
+		if (m_text[i]=='\n')
 			endLineCount++;
 	return endLineCount;
 }
@@ -318,14 +328,14 @@ int Parser::pos2x( int pos )
 {
 	int i;
 	if ( pos<0 ) pos = 0;
-	for (i=pos; s[i]!='\n' && i; i--);
+	for (i=pos; m_text[i]!='\n' && i; i--);
 	return pos-i;
 }
 
 int Parser::xy2pos( int x, int y )
 {
   int pos = 0;
-  QStringList slist = QStringList::split('\n',s,true);
+  QStringList slist = QStringList::split('\n',m_text,true);
 
   if ( y > (int) slist.count() )
   	y = slist.count();
@@ -343,4 +353,13 @@ int Parser::xy2pos( int x, int y )
 	//fflush(stdout);
 	
 	return (pos);
+}
+/** No descriptions */
+void Parser::deleteNode()
+{
+  if (m_node)
+  {
+    delete m_node;
+    m_node = 0L;
+  }
 }

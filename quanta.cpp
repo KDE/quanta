@@ -923,29 +923,33 @@ void QuantaApp::slotNewLineColumn()
 /** reparse current document and initialize node. */
 void QuantaApp::reparse()
 {
-  Document *w = view->write();
-	if ( stabdock->isVisible() )
-	{
-		Node *node = parser->parse( w->editIf->text(), w->getDTDIdentifier() );
-		//sTab->s = parser->s;
-		if ( parser->textChanged ) {
-		  config->setGroup("Parser options");
-		  int expandLevel = config->readNumEntry("Expand level",8);
-		  if ( expandLevel == 0 )
-		  	expandLevel = 40;
+  if (view->writeExists())
+  {
+    Document *w = view->write();
+	  if ( stabdock->isVisible() )
+	  {
+		  Node *node = parser->parse( w->editIf->text(), w->getDTDIdentifier() );
+      if (node)
+      {
+		    //sTab->s = parser->s;
+		    if ( parser->textChanged() )
+        {
+		      config->setGroup("Parser options");
+		      int expandLevel = config->readNumEntry("Expand level",8);
+		      if ( expandLevel == 0 ) expandLevel = 40;
 		  	
-		  sTab->slotReparse( node , expandLevel );
+  		    sTab->slotReparse( node , expandLevel );
 		  
-      unsigned int x;
-      unsigned int y;
+          uint x;
+          uint y;
+          w->viewCursorIf->cursorPosition(&y, &x);
 
-      w->viewCursorIf->cursorPosition(&y, &x);
-
-      sTab->showTagAtPos(x,y);
-
-		}
-		// delete node;
-	}
+          sTab->showTagAtPos(x,y);
+		    }
+  		  parser->deleteNode();
+      } //if (node)
+	  } // if (stabdock->isVisible())
+  } // if (view->writeExists())
 }
 
 void QuantaApp::setCursorPosition( int row, int col )

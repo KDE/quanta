@@ -43,11 +43,11 @@ public:
 	int pos2x(int pos);
 	
 	QString tagsListForPoint(int pos);
-	
-	bool textChanged;
-	QString s;
+	bool textChanged() {return m_textChanged;}
+  /** No descriptions */
+  void deleteNode();
 
-
+	QString m_text;
 private:
 
 
@@ -68,8 +68,10 @@ private:
   int pos;
   int lastpos;
   int lasttype;
-  Node* node;
+  Node* m_node;
   QString m_dtdName;
+	bool m_textChanged;
+
 };
 
 #endif

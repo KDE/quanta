@@ -172,7 +172,7 @@ void StructTreeView::createList(Node *node, StructTreeTag *parent, int openLevel
 		}
 		else
 		  if ( tnode->type == Node::tText ) {
-		    QString text = parser->s.mid( tnode->start , tnode->end - tnode->start + 1);
+		    QString text = parser->m_text.mid( tnode->start , tnode->end - tnode->start + 1);
 		    text = text.left(70);
 		    text = text.replace( QRegExp("&nbsp;")," ");
 		    int endlPos;
@@ -194,7 +194,7 @@ void StructTreeView::createList(Node *node, StructTreeTag *parent, int openLevel
   			  item->pos1 = tnode->start-1;
 			  item->pos2 = tnode->end;
 
-			  QString text = parser->s.mid( tnode->startContext , tnode->endContext - tnode->startContext + 1);
+			  QString text = parser->m_text.mid( tnode->startContext , tnode->endContext - tnode->startContext + 1);
 		    text = text.left(70);
 		    text = text.replace( QRegExp("&nbsp;")," ");
 		    int endlPos;
@@ -361,7 +361,7 @@ void StructTreeView::slotOnTag( QListViewItem * item)
 	if (!it)
 		return;
 
-	QString text = parser->s.mid( it->pos1+1, it->pos2 - it->pos1 );
+	QString text = parser->m_text.mid( it->pos1+1, it->pos2 - it->pos1 );
   text = text.left(70);
   text = text.replace( QRegExp("&nbsp;")," ");
   int endlPos;
