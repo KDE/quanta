@@ -180,7 +180,7 @@ void Tag::parse(const QString &p_tagStr, Document *p_write)
  }
  if (beginLine == endLine && col == endCol && textLine[col] != '>')
     col++;
- name = textLine.mid(begin, col - begin);
+ name = textLine.mid(begin, col - begin).stripWhiteSpace();
  if (!name.isEmpty())
     m_nameCol = begin;
 
