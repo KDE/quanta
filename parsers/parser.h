@@ -101,7 +101,7 @@ private slots:
     
 signals:
   void nodeTreeChanged();  
-  void detailedParsingDone();
+  void rebuildStructureTree();
 
 private:
   Node* m_node;       //the internal Node pointer

@@ -275,7 +275,7 @@ void QuantaApp::initQuanta()
 
   connect(m_doc, SIGNAL(hideSplash()), SLOT(slotHideSplash()));
   
-  connect(parser, SIGNAL(detailedParsingDone()), this, SLOT(slotReloadStructTreeView()));
+  connect(parser, SIGNAL(rebuildStructureTree()), this, SLOT(slotReloadStructTreeView()));
 }
 
 

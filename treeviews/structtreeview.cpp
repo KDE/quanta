@@ -241,7 +241,7 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
               currentItem = static_cast<StructTreeTag*>(currentNode->prev->listItem);
           if (currentNode->parent)
           {
-            parentItem = dynamic_cast<StructTreeTag*>(currentNode->parent->listItem);
+            parentItem = static_cast<StructTreeTag*>(currentNode->parent->listItem);
             if (!parentItem)
             {
               parentItem = top;
@@ -609,13 +609,12 @@ void StructTreeView::slotCloseSubTree()
 /** Show the element in tree according to cursor position (x,y) */
 void StructTreeView::showTagAtPos(Node *node)
 {
-  if ( followCursorFlag )
+  if (followCursorFlag)
   {
-    StructTreeTag *curTag = dynamic_cast<StructTreeTag *>(node->listItem);
-    if ( curTag )
+    if (node->listItem)
     {
-      ensureItemVisible(curTag);
-      setSelected(curTag, true);
+      ensureItemVisible(node->listItem);
+      setSelected(node->listItem, true);
     }
   } //if (followCursorFlag)
 }

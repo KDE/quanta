@@ -64,7 +64,7 @@ Parser::Parser()
   m_parsingEnabled = true;
   m_parsingNeeded = true;
   m_saParser = new SAParser();
-  connect(m_saParser, SIGNAL(detailedParsingDone()), SIGNAL(detailedParsingDone()));
+  connect(m_saParser, SIGNAL(rebuildStructureTree()), SIGNAL(rebuildStructureTree()));
 }
 
 Parser::~Parser()

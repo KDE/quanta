@@ -83,7 +83,7 @@ private slots:
   void slotParseNodeInDetail();
   
 signals:
-  void detailedParsingDone();  
+  void rebuildStructureTree();  
   
 private:
   //private methods
