@@ -7,6 +7,7 @@ Version 3.3 BE (Release date: xx-xx-2004; Started 26-01-2004):
             - show the parent tag in the tag attribute view when editing text
             - stop inserting &nbsp; everywhere [#72535]
             - fix some various crashes [#72532]
+            - don't lose the comment text from inside a comment
         - never crash when invoking the CSS editor on an empty document
         - don't crash when invoking the CSS editor after a <style> without the closing </style>
         - correctly close tags with namespaces when entering "</"
@@ -16,15 +17,16 @@ Version 3.3 BE (Release date: xx-xx-2004; Started 26-01-2004):
 	- make the New Project wizard usable on lower resolutions [#75192]
         - make removal of top folders added with "New Top Folder" possible [#76498, #76573]
         - don't change the tab name if saving under a new name failed (needs KDE 3.2.2 or later)
-        - various parsing fixes        
-        - report bugs for "quanta" module, not for "quanta_be"        
-        - use the correct quotation and case when inserting a link to a file from the treeviews [#76663]    
-    
+        - various parsing fixes
+        - report bugs for "quanta" module, not for "quanta_be"
+        - use the correct quotation and case when inserting a link to a file from the treeviews [#76663]
+        - don't break the opening tag when some new tag is pasted inside an existing one
+
     - performance:
-            
+
     - behavioral changes:
       - remove  the < and > from the entered misc. tags.
-    
+
     - new features:
       - Next / Previous Bookmark actions
       - add a toolbar for CSS
@@ -32,12 +34,12 @@ Version 3.3 BE (Release date: xx-xx-2004; Started 26-01-2004):
       - allow closing of opened files from the treeviews
       - add description field for project files
       - Select Current Tag Area action created
-    
+
     - enhancements:
-      - improve multiline script autocompletion    
+      - improve multiline script autocompletion
       - warn if there is a closing tag without opening tag in the document
       - show also the column number in the error reporting dialog
-      
+
 Version 3.2.2 (Release data: xx-xx-2004; Started 01-03-2004):
     - bugfixes:
         - make removal of top folders added with "New Top Folder" possible [#76498, #76573]
@@ -49,11 +51,11 @@ Version 3.2.2 (Release data: xx-xx-2004; Started 01-03-2004):
         - fix preview when preview prefix is used
         - don't crash when parsing an included file.[#76478]
         - give an error message when saving to remote files failed
-    
+
     - behavioral changes:
         - remove the < and > from the misc. tag
 
-      
+
 Version 3.2.1 (Release date: 09-03-2004; Started 26-01-2004):
     - bugfixes:
         - VPL:
@@ -90,7 +92,7 @@ Version 3.2.1 (Release date: 09-03-2004; Started 26-01-2004):
         - improve namespace support in the autocompletion
 
 Version 3.2.0 (Release date: 05-02-2004):
-    - well, mostly the below ones. Check also the KDE 3.2 feature plan.        
+    - well, mostly the below ones. Check also the KDE 3.2 feature plan.
 
 Version 3.2-CVS-1 (Release Date: xx-xx-200x; Started: 25-11-2002)
 NOTE: Minimum KDE 3.1 is required.
