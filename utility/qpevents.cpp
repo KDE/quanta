@@ -27,6 +27,9 @@
 #include "project.h"
 #include "qextfileinfo.h"
 #include "viewmanager.h"
+#include "resource.h"
+#include "quanta.h"
+#include "tagaction.h"
 
 QPEvents::QPEvents(QObject *parent, const char *name)
  : QObject(parent, name)
@@ -44,6 +47,7 @@ QPEvents::QPEvents(QObject *parent, const char *name)
 
    m_actionNames["email"] = i18n("Send email");
    m_actionNames["log"] = i18n("Log event");
+   m_actionNames["script"] = i18n("Script action");
 }
 
 
@@ -111,11 +115,21 @@ bool QPEvents::handleEvent(const EventAction& ev)
 
        return true;
     } else
-      KMessageBox::sorry(0L, i18n("Unsupported internal event."));
+      KMessageBox::sorry(0L, i18n("Unsupported internal event action."));
   } else
   if (ev.type == EventAction::External)
   {
-      KMessageBox::sorry(0L, i18n("External event actions are not yet supported."));
+      //KMessageBox::sorry(0L, i18n("External event actions are not yet supported."));
+      if (ev.action == "script")
+      {
+          QString name = ev.arguments[0];
+          TagAction *action = dynamic_cast<TagAction*>(quantaApp->actionCollection()->action(name));
+          if (action)
+            action->execute();
+          else
+            KMessageBox::sorry(0L, i18n("<qt>The <b>%1</b> script action was not found on your system.</qt>").arg(name), i18n("Action Execution Error"));
+      }  else
+      KMessageBox::sorry(0L, i18n("Unsupported external event action."));
   } else
       KMessageBox::sorry(0L, i18n("Unknown event type."));
   return false;

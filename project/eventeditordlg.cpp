@@ -16,8 +16,10 @@
 
 //qt includes
 #include <qlabel.h>
+#include <qregexp.h>
 
 //kde includes
+#include <kaction.h>
 #include <kcombobox.h>
 #include <klocale.h>
 
@@ -25,6 +27,9 @@
 #include "eventeditordlg.h"
 #include "qpevents.h"
 #include "project.h"
+#include "resource.h"
+#include "quanta.h"
+#include "tagaction.h"
 
 extern QString simpleMemberStr;
 extern QString taskLeaderStr;
@@ -62,6 +67,7 @@ void EventEditorDlg::setAction(const QString &name)
        if (actionCombo->text(i) == name)
        {
            actionCombo->setCurrentItem(i);
+           slotActionChanged(name);
            break;
        }
    }
@@ -71,23 +77,41 @@ QString EventEditorDlg::argument1()
 {
    if (argument1Combo->isEnabled())
    {
-      QString s = argument1Combo->currentText();
-      if (s ==  i18n(teamLeaderStr.utf8()))
-          s = "teamleader";
-      else
-      if (s.startsWith(i18n(taskLeaderStr.utf8()) +" - "))
+      QString actionType = actionCombo->currentText();
+      if (actionType == QPEvents::ref()->fullActionName("email"))
       {
-          s.remove(i18n(taskLeaderStr.utf8()) +" - ");
-          s.prepend("taskleader-");
-      } else
-      if (s.startsWith(i18n(subprojectLeaderStr.utf8()) +" - "))
-      {
-          s.remove(i18n(subprojectLeaderStr.utf8()) +" - ");
-          s.prepend("subprojectleader-");
-      }
-      return s;
-   } else
-      return QString::null;
+          QString s = argument1Combo->currentText();
+          if (s ==  i18n(teamLeaderStr.utf8()))
+              s = "teamleader";
+          else
+          if (s.startsWith(i18n(taskLeaderStr.utf8()) +" - "))
+          {
+              s.remove(i18n(taskLeaderStr.utf8()) +" - ");
+              s.prepend("taskleader-");
+          } else
+          if (s.startsWith(i18n(subprojectLeaderStr.utf8()) +" - "))
+          {
+              s.remove(i18n(subprojectLeaderStr.utf8()) +" - ");
+              s.prepend("subprojectleader-");
+          }
+          return s;
+       } else
+       if (actionType == QPEvents::ref()->fullActionName("script"))
+       {
+          QString s = argument1Combo->currentText();
+          for (QMap<QString, QString>::ConstIterator it = m_scriptActions.constBegin(); it != m_scriptActions.constEnd(); ++it)
+          {
+              if (it.data() == s)
+              {
+                  s = it.key();
+                  break;
+              }
+          }
+          return s;
+       }
+   }
+
+   return QString::null;
 }
 
 QString EventEditorDlg::argument2()
@@ -119,7 +143,8 @@ QString EventEditorDlg::argument4()
 
 void EventEditorDlg::setArguments(const QStringList& arguments)
 {
-   if (actionCombo->currentText() == QPEvents::ref()->fullActionName("email"))
+   QString actionType = actionCombo->currentText();
+   if (actionType == QPEvents::ref()->fullActionName("email"))
    {
       QString s = arguments[0];
       if (s == "teamleader")
@@ -135,6 +160,28 @@ void EventEditorDlg::setArguments(const QStringList& arguments)
          s.remove("subprojectleader-");
          s.prepend(i18n(subprojectLeaderStr.utf8()) +" - ");
       }
+      if (argument1Combo->contains(s))
+      {
+          for (int i = 0; i < argument1Combo->count(); i++)
+          {
+              if (argument1Combo->text(i) == s)
+              {
+                  argument1Combo->setCurrentItem(i);
+                  break;
+              }
+          }
+      }
+      else
+      {
+         argument1Combo->insertItem(s, 0);
+         argument1Combo->setCurrentItem(0);
+      }
+   } else
+   if (actionType == QPEvents::ref()->fullActionName("script"))
+   {
+      QString s = arguments[0];
+      if (m_scriptActions.contains(s))
+        s = m_scriptActions[s];
       if (argument1Combo->contains(s))
       {
           for (int i = 0; i < argument1Combo->count(); i++)
@@ -201,6 +248,25 @@ void EventEditorDlg::slotActionChanged(const QString &name)
    {
        argument1Label->setEnabled(true);
        argument1Label->setText(i18n("Log file:"));
+       argument1Combo->setEnabled(true);
+   } else
+   if (name == QPEvents::ref()->fullActionName("script"))
+   {
+       argument1Label->setEnabled(true);
+       argument1Label->setText(i18n("Action name:"));
+       TagAction *action = 0L;
+       QString s;
+       QRegExp r("\\&(?!\\&)");
+       for (uint i = 0; i < quantaApp->actionCollection()->count(); i++)
+       {
+          action = dynamic_cast<TagAction*>(quantaApp->actionCollection()->action(i));
+          if (action && action->type() == "script")
+          {
+             s = action->text().replace(r, "");
+             argument1Combo->insertItem(s);
+             m_scriptActions[action->name()] = s;
+          }
+       }
        argument1Combo->setEnabled(true);
    }
 }

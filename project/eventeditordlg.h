@@ -39,6 +39,7 @@ public slots:
    void slotActionChanged(const QString &name);
 
 protected:
+   QMap<QString, QString> m_scriptActions;
 
 protected slots:
 
