@@ -38,6 +38,9 @@ class MessageItem : public QListBoxText {
     int line() { return lineNumber; }
     /** return name of file , associated with this message */
     QString fileName() { return filename; }
+    
+    void setLine( int line ) { lineNumber = line; }
+    void setFileName( QString fileName ) { filename = fileName; }
   private:
   
     // line number and filename , associated with this line

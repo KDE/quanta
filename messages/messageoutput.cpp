@@ -17,6 +17,7 @@
 
 #include "messageoutput.h"
 #include "messageitem.h"
+#include "messageitemphp.h"
 
 MessageOutput::MessageOutput(QWidget *parent, const char *name )
   : QListBox(parent,name)
@@ -66,6 +67,25 @@ void MessageOutput::clickItem( QListBoxItem * l_item )
      if ( (item->fileName() != QString::null) && (item->line()!=-1) )
        emit clicked( item->fileName(), item->line() );  
    }
+}
+
+void MessageOutput::phpDebug( QString s)
+{
+   static QString data = "";
+   data += s;
+   int pos1;
+   QString res;
+   
+   debug(s);
+   
+   if ( (pos1=data.find(") end: ")) != -1 )  {
+     res = data.left(pos1+7);
+     data.remove(0, pos1+7);
+     if ( (pos1=res.find(") start: ")) != -1  )
+       res.remove(0,pos1-1 );
+     new MessageItemPHP( this, res );
+   }
+   
 }
 
 

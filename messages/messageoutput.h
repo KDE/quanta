@@ -37,6 +37,7 @@ public slots:
 	void insertItem(QString s);
 	/** insert message for each line of s */
 	void showMessage(QString s);
+	void phpDebug(QString s);
 	
 public:
   uint maxItems() { return max_items; }	

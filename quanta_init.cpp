@@ -113,7 +113,7 @@ QuantaApp::QuantaApp()
     new PhpDebugServerSocket( phpDebugPort,0,0);
     
   connect( debugger,      SIGNAL(data(QString)),
-           messageOutput, SLOT(showMessage(QString)) );
+           messageOutput, SLOT(phpDebug(QString)) );
            
   if ( !debugger->ok() ) {
     QString s;

@@ -13,12 +13,15 @@ DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 libmessages_a_METASOURCES = AUTO
 libmessages_a_SOURCES = \
 		messageoutput.cpp\
-		messageitem.cpp
+		messageitem.cpp\
+		messageitemphp.cpp
 EXTRA_DIST = \
 		messageoutput.cpp\
 		messageoutput.h\
 		messageitem.cpp\
-		messageitem.h
+		messageitem.h\
+		messageitemphp.cpp\
+		messageitemphp.h
 ##############################################################
 ####                  END KDEStudio part                  ####
 #2########################################################!@#$
