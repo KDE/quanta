@@ -30,7 +30,7 @@ class KConfig;
   */
 
 class DocItem : public KListViewItem  {
-  Q_OBJECT;
+
 public:
   DocItem(QListViewItem *parent, QString _name, QString _url);
   DocItem(QListView *parent, QString _name, QString _url);
