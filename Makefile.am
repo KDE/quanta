@@ -45,6 +45,7 @@ messages: rc.cpp
 	$(EXTRACTRC) `find $$dirs -maxdepth 1 -name "*.kmdr"` >> rc.cpp
 	$(EXTRACTRC) data/chars >> rc.cpp
 	$(XGETTEXT) rc.cpp `cat files` -o $(podir)/quanta.pot
+	rm -f files dirs
 
 KDE_ICON = quanta
 
