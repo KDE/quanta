@@ -28,7 +28,7 @@ MessageOutput::MessageOutput(QWidget *parent, const char *name )
 {
   max_items = 200;
   insertItem( i18n("Message window...") );
-
+  insertItem("");
   QPalette pal = palette();
   pal.setColor(QColorGroup::HighlightedText, pal.color(QPalette::Normal, QColorGroup::Text));
   pal.setColor(QColorGroup::Highlight,       pal.color(QPalette::Normal, QColorGroup::Mid));

@@ -86,7 +86,7 @@ void TagAction::insertTag()
 
   Document *w = m_view->write();
   dynamic_cast<KTextEditor::ViewCursorInterface *> (w->view())->cursorPosition(&line, &col);
-	space.fill( ' ', col);
+  space.fill( ' ', col);
 
   QString type = tag.attribute("type","");
 
@@ -101,7 +101,7 @@ void TagAction::insertTag()
          attr.remove( attr.length()-1, 1 );
      attr = attr.stripWhiteSpace();
      int i = 0;
-     while ( !attr[i].isSpace() && !attr[i].isNull() )	i++;
+     while ( !attr[i].isSpace() && !attr[i].isNull() )  i++;
      QString name = attr.left(i);
      attr = attr.remove(0,i).stripWhiteSpace();
 
@@ -125,7 +125,7 @@ void TagAction::insertTag()
         {
           s1.append(" /");
         }
-       
+
          s1.append(">");
        }
 
@@ -155,7 +155,7 @@ void TagAction::insertTag()
 
     KProcess *proc = new KProcess();
     proc->clearArguments();
-    proc->setWorkingDirectory(quantaApp->projectBaseURL().path());	
+    proc->setWorkingDirectory(quantaApp->projectBaseURL().path());
 
     QDomElement script = tag.namedItem("script").toElement();
     QString command = script.text();
@@ -172,7 +172,7 @@ void TagAction::insertTag()
     command.replace("%pid", QString("%1").arg(pid));
     QString buffer;
     QString inputType = script.attribute("input","none");
-		
+
     if ( inputType == "current" ) {
        buffer = w->editIf->text();
     } else
@@ -180,7 +180,7 @@ void TagAction::insertTag()
        buffer = w->selectionIf->selection();
     }
     command.replace("%input", buffer);
-			    
+
     int pos = command.find(' ');
     QString args;
     if (pos != -1)
@@ -237,7 +237,7 @@ void TagAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
 #if (KDE_VERSION >= 309)
        int line = dynamic_cast<KTextEditor::SelectionInterfaceExt*>(w->doc())->selEndLine();
        int col = dynamic_cast<KTextEditor::SelectionInterfaceExt*>(w->doc())->selEndCol();
-       w->viewCursorIf->setCursorPositionReal(line, col);     
+       w->viewCursorIf->setCursorPositionReal(line, col);
 #endif
        dynamic_cast<KTextEditor::SelectionInterface*>(w->doc())->removeSelectedText();
      }
@@ -267,7 +267,7 @@ void TagAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
     if ( firstOutput )
     {
       appMessages->clear();
-      appMessages->insertItem( i18n( "Script output:\n" ) );
+      appMessages->showMessage( i18n( "Script output:\n" ) );
     }
     appMessages->showMessage( text );
   }
@@ -293,14 +293,14 @@ void TagAction::slotGetScriptError( KProcess *, char *buffer, int buflen )
   }
   if ( scriptErrorDest == "replace" )
   {
-    if ( firstOutput )
+    if ( firstError )
        dynamic_cast<KTextEditor::EditInterface*>(w->doc())->clear();
     w->insertTag( text );
   }
 
   if ( scriptErrorDest == "new" )
   {
-    if ( firstOutput )
+    if ( firstError )
     {
         quantaApp->getDoc()->openDocument( KURL() );
         m_view = quantaApp->getView();
@@ -315,7 +315,7 @@ void TagAction::slotGetScriptError( KProcess *, char *buffer, int buflen )
     if ( firstError )
     {
       appMessages->clear();
-      appMessages->insertItem( i18n( "Script output:\n" ) );
+      appMessages->showMessage( i18n( "Script output:\n" ) );
     }
     appMessages->showMessage( text );
   }
