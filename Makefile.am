@@ -43,10 +43,10 @@ messages: rc.cpp
 	toolbars=`find -name "*.toolbar.tgz"`;\
 	for toolbar in $$toolbars; do \
 	 tar Oxfz $$toolbar  >> extrafiles; \
-	done
-	(cd data && $(PREPARETIPS) >> ../extrafiles)
-	$(EXTRACTRC) `find $$dirs -maxdepth 1 -name "*.ui"` >> rc.cpp
-	$(EXTRACTRC) `find $$dirs -maxdepth 1 -name "*.rc"` >> rc.cpp
+	done ;\
+	(cd data && $(PREPARETIPS) >> ../extrafiles) ;\
+	$(EXTRACTRC) `find $$dirs -maxdepth 1 -name "*.ui"` >> rc.cpp ;\
+	$(EXTRACTRC) `find $$dirs -maxdepth 1 -name "*.rc"` >> rc.cpp ;\
 	$(EXTRACTRC) `find $$dirs -maxdepth 1 -name "*.kmdr"` >> rc.cpp
 	$(EXTRACTRC) data/chars >> rc.cpp
 	$(EXTRACTRC) extrafiles >> rc.cpp
