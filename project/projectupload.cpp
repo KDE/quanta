@@ -62,7 +62,7 @@
 #include "resource.h"
 
 ProjectUpload::ProjectUpload(const KURL& url, bool showOnlyProfiles, const char* name)
-  :ProjectUploadS( 0L, name, true, Qt::WDestructiveClose)
+  :ProjectUploadS( 0L, name, false Qt::WDestructiveClose)
 {
     m_profilesOnly = showOnlyProfiles;
     list->hide();
