@@ -1181,14 +1181,16 @@ long KafkaDocument::translateKafkaIntoNodeCursorPosition(DOM::Node domNode, long
 
 void KafkaDocument::translateKafkaIntoQuantaCursorPosition(DOM::Node _currentDomNode, int offset, int &line, int &col)
 {
-	Node *_currentNode, *closingNode;
+	Node *_currentNode, *closingNode, *node;
 	kNodeAttrs *attrs;
 	QString decodedText, encodedChar, currentLine, currentChar;
 	QChar curChar, oldChar;
 	int currentOffset;
 	int curLine, curCol, endLine, endCol;
+	int i;
 	bool waitForSpace = false, found = false;
 	bool tagLeft = false, tagRight = false, tagMiddle = false;
+	bool specialBehavior = false;
 
 	//m_kafkaPart->getCurrentNode(_currentDomNode, offset);
 	currentOffset = offset;
@@ -1214,6 +1216,7 @@ void KafkaDocument::translateKafkaIntoQuantaCursorPosition(DOM::Node _currentDom
 	//node which can get the focus!
 	if(attrs->specialBehavior() != kNodeAttrs::none)
 	{
+		specialBehavior = true;
 		if(attrs->specialBehavior() == kNodeAttrs::emptyTextSurroundingBlockElementAtTheLeft)
 		{
 			_currentDomNode = _currentDomNode.nextSibling();
@@ -1328,25 +1331,68 @@ void KafkaDocument::translateKafkaIntoQuantaCursorPosition(DOM::Node _currentDom
 	}
 	else if(_currentNode->tag->type == Tag::XmlTag)
 	{
-		if(tagLeft)
-			_currentNode->tag->beginPos(curLine, curCol);
-		else if(tagRight)
+		//If we are in the special case
+		if(specialBehavior)
 		{
-			closingNode = _currentNode->getClosingNode();
-			if(closingNode)
-				closingNode->tag->endPos(curLine, curCol);
+			if(tagLeft)
+				_currentNode->tag->beginPos(curLine, curCol);
+			else if(tagRight)
+			{
+				closingNode = _currentNode->getClosingNode();
+				if(closingNode)
+					closingNode->tag->endPos(curLine, curCol);
+				else
+					_currentNode->tag->endPos(curLine, curCol);
+				curCol++;
+			}
 			else
+			{
 				_currentNode->tag->endPos(curLine, curCol);
-			curCol++;
+				curCol++;
+			}
 		}
 		else
 		{
-			_currentNode->tag->endPos(curLine, curCol);
-			curCol++;
+			if(_currentNode->tag->single)
+			{
+				//The tag is single, there shouldn't be any (tag, x) location, but the old way
+				//was (tag,0) for left of the tag and (tag,1) for the right of the tag)
+				
+				if(offset == 1)
+				{
+					_currentNode->tag->endPos(curLine, curCol);
+					curCol++;
+				}
+				else
+					_currentNode->tag->beginPos(curLine, curCol);
+			}
+			else
+			{
+				//The new way to define cursor position.
+				node = _currentNode->SFirstChild();
+				i = 1;
+				while(i < offset && node && node->SNext())
+				{
+					node = node->SNext();
+					i++;
+				}
+				if(!node)
+					node = _currentNode;
+				if(offset == 0)
+					node->tag->beginPos(curLine, curCol);
+				else
+				{
+					closingNode = node->getClosingNode();
+					if(closingNode)
+						closingNode->tag->endPos(curLine, curCol);
+					else
+						node->tag->endPos(curLine, curCol);
+					curCol++;
+				}
+			}
 		}
 	}
 
-	m_currentDoc->selectionIf->setSelection(curLine, curCol, curLine, curCol);
 	line = curLine;
 	col = curCol;
 #ifdef LIGHT_DEBUG
