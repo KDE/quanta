@@ -1312,7 +1312,10 @@ QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomEleme
     }
     if (tb->minimumSizeHint().height() > 20)
     {
-      view->toolbarTab->setFixedHeight(tb->minimumSizeHint().height() + view->toolbarTab->tabHeight());
+      if (view->toolbarTab->tabHeight() < 30)
+        view->toolbarTab->setFixedHeight(tb->minimumSizeHint().height() + 30);
+      else
+        view->toolbarTab->setFixedHeight(tb->minimumSizeHint().height() + view->toolbarTab->tabHeight());
       tb->adjustSize();
       tb->setGeometry(0,0, view->toolbarTab->width(), tb->height());
     } else
