@@ -194,7 +194,7 @@ bool QuantaPlugin::validatePluginInfo(const QString & /*a_name*/, const QString 
     if (valid)
     {
       KStandardDirs *dirs = QuantaCommon::pluginDirs(lookupType);
-      if(dirs->findResource(lookupType, a_fileName) == QString::null)
+      if(dirs->findResource(lookupType, a_fileName).isNull())
         valid = false;
       delete dirs;         
     }
