@@ -1102,14 +1102,18 @@ void QuantaApp::slotOptions()
   }
   lst.sort();
   uint abbrevDTDPos = 0;
+  QString defaultDTDNickName;
+  if (m_view->writeExists())
+      defaultDTDNickName = m_view->write()->defaultDTD()->nickName;
   for (uint i = 0; i < lst.count(); i++)
   {
-    if (lst[i] == m_view->write()->defaultDTD()->nickName)
+    if (lst[i] == defaultDTDNickName)
        abbrevDTDPos = i;
   }
   abbreviationOptions->dtdCombo->insertStringList(lst);
   abbreviationOptions->dtdCombo->setCurrentItem(abbrevDTDPos);
-  abbreviationOptions->slotDTDChanged(m_view->write()->defaultDTD()->nickName);
+  if (!defaultDTDNickName.isEmpty())
+    abbreviationOptions->slotDTDChanged(defaultDTDNickName);
 
   page=kd->addVBoxPage(i18n("PHP Debug"), QString::null, BarIcon("gear", KIcon::SizeMedium ) );
   DebuggerOptionsS *debuggerOptions = new DebuggerOptionsS( (QWidget *)(page) );
