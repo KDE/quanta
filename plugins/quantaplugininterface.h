@@ -68,6 +68,8 @@ public:
   /** Gets the plugin menu */
   virtual QPopupMenu *pluginMenu() {return m_pluginMenu;};
   void setPluginMenu(QPopupMenu *pluginMenu) {m_pluginMenu = pluginMenu;}
+  /** Builds the plugins menu dynamically */
+  void buildPluginMenu();
 
 private:
   /** The constructor is privat because we use singleton patter.
@@ -85,8 +87,6 @@ protected slots:
 protected:
   /** Gets the plugin names */
   virtual QStringList pluginNames() const;
-  /** Builds the plugins menu dynamically */
-  void buildPluginMenu();
   void readConfigFile(const QString& configFile);
 
   QDict<QuantaPlugin> m_plugins;

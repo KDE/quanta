@@ -1070,7 +1070,7 @@ void QuantaApp::slotConfigureToolbars(const QString& defaultToolbar)
 
   //add back the menus
  m_pluginInterface->setPluginMenu(static_cast<QPopupMenu*>(factory()->container("plugins", this)));
- m_pluginInterface->readConfig();
+ m_pluginInterface->buildPluginMenu();
   for (uint i = 0 ; i < mb->count(); i++)
   {
        if (mb->text(mb->idAt(i)) == i18n("&Settings"))

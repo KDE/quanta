@@ -126,8 +126,6 @@ void QuantaPluginInterface::readConfig()
   // read the global plugins.rc
   configFile = qConfig.globalDataDir + resourceDir + "plugins.rc";
   readConfigFile(configFile);
-  if (m_pluginMenu)
-    buildPluginMenu();
 }
 
 /** Writes the plugin settings to the rc file */
