@@ -257,7 +257,7 @@ DOM::Node kafkaCommon::getPrevDomNode(DOM::Node node, DOM::Node endNode)
     return n;
 }
 
-void kafkaCommon::applyIndentation(Node *node, int nbOfSpaces, int nbOfTabs, NodeModifsSet* modifs)
+void kafkaCommon::applyIndentation(Node *node, int nbOfSpaces, int nbOfTabs, NodeModifsSet* modifs, bool inlineNodeIndentation)
 {
 #ifdef LIGHT_DEBUG
     kdDebug(25001)<< "kafkaCommon::applyIndentation()" << endl;
@@ -280,6 +280,19 @@ void kafkaCommon::applyIndentation(Node *node, int nbOfSpaces, int nbOfTabs, Nod
     realPrev = node->prev;
     realNext = node->next;
 
+    if(inlineNodeIndentation &&
+       !node->prev && getNodeDisplay(node->parent, true) == kafkaCommon::blockDisplay) 
+    {
+        AreaStruct node_area = node->tag->area();
+        AreaStruct parent_area = node->parent->tag->area();
+        
+        if(node_area.bLine == parent_area.bLine)
+        {
+            node->tag->setIndentationDone(true);
+            return;            
+        }
+    }
+               
     //First remove all the indentation
     if(node->tag->type == Tag::Text)
         setTagString(node, removeUnnecessaryWhitespaces(node->tag->tagStr()), modifs);
@@ -735,7 +748,7 @@ QString kafkaCommon::removeUnnecessaryWhitespaces(const QString &string,
     bool hasLeftWhiteSpaces, hasRightWhiteSpaces;
 
     if(string.length() == 0)
-        return "";
+        return QString();
 
     hasLeftWhiteSpaces = (string[0].isSpace());
     hasRightWhiteSpaces = (string[newString.length() - 1].isSpace());

@@ -122,9 +122,17 @@ public:
 	 * @param node Apply nice indentation to this Node.
 	 * @param nbOfSpaces Specifies the number of spaces the minimal indentation must be.
 	 * @param nbOfTabs Specifies the number of tabs the minimal indentation must be.
-         * @param modifs The changes made are logged into modifs.
+     * @param modifs The changes made are logged into modifs.
+     * @param inlineNodeIndentation 
+     * If true: 
+     *      <body>Text</body> 
+     * else: 
+     *      <body>
+     *          Text
+     *      </body>
 	 */
-	static void applyIndentation(Node *node, int nbOfSpaces, int nbOfTabs, NodeModifsSet *modifs);
+	static void applyIndentation(Node *node, int nbOfSpaces, int nbOfTabs, NodeModifsSet *modifs, 
+                                 bool inlineNodeIndentation = false);
 
 	/**
 	 * Create/Delete the necessary Empty Nodes between n1 and n2 so that a nice indentation can be

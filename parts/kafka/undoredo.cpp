@@ -207,7 +207,8 @@ void undoRedo::addNewModifsSet(NodeModifsSet *modifs, int modifLocation, NodeSel
       kafkaCommon::fitIndentationNodes(kafkaCommon::getPrevNodeNE(node), node, modifs);
       goUp = false;
       kafkaCommon::fitIndentationNodes(node, kafkaCommon::getNextNodeNE(node, goUp), modifs);
-      kafkaCommon::applyIndentation(node, 2, 0, modifs); // TODO GET indentation spaces from settings
+/*      kafkaCommon::applyIndentation(node, 2, 0, modifs); // TODO GET indentation spaces from settings*/
+      kafkaCommon::applyIndentation(node, 2, 0, modifs, qConfig.inlineNodeIndentation);
     }
     node = node->nextSibling();
   }

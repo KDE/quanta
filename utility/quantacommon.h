@@ -79,6 +79,9 @@ public:
           int quantaRefreshDelay;
           bool kafkaRefreshOnFocus;
           int kafkaRefreshDelay;
+          
+          //kafka indentation options
+          bool inlineNodeIndentation;
 
           //environment options
           QString globalDataDir;         //not stored, initialized on app startup

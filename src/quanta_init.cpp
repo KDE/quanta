@@ -1265,6 +1265,9 @@ void QuantaInit::loadVPLConfig()
   qConfig.kafkaRefreshOnFocus = (m_config->readEntry("Kafka refresh", "focus") == "focus");
   qConfig.kafkaRefreshDelay = m_config->readNumEntry("Kafka refresh delay", 4000);
   /**reloadUpdateTimers();*/
+
+  m_config->setGroup("Kafka Indentation options");  
+  qConfig.inlineNodeIndentation = m_config->readBoolEntry("Inline Node Indentation");
 }
 
 void QuantaInit::checkRuntimeDependencies()
