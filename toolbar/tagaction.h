@@ -34,6 +34,7 @@
 class QuantaView;
 class KProcess;
 class QDomElement;
+class QFile;
 
 /**
  * An action for inserting an XML tag.
@@ -56,14 +57,20 @@ public:
     QDomElement data() { return tag; }
     void setModified(bool modified) { m_modified = modified;}
     bool isModified() {return m_modified;}
+    void setOutputFile(QFile* file);
+    void setInputFileName(const QString& fileName);
+    void execute();
+
+public slots:
+    virtual void insertTag(bool inputFromFile = false, bool outputToFile = false);
 
 
 protected slots:
-    virtual void insertTag();
-
     virtual void slotGetScriptOutput( KProcess *, char *buffer, int buflen );
     virtual void slotGetScriptError( KProcess *, char *buffer, int buflen );
     virtual void scriptDone();
+    void slotTimeout();
+    void slotProcessExited(KProcess *);
 
 private:
     KProcess *proc;
@@ -75,6 +82,8 @@ private:
 
     QDomElement tag;
     QuantaView *m_view;
+    QFile* m_file;
+    QString m_inputFileName;
 };
 
 

@@ -463,7 +463,6 @@ private:
   QDomDocument* m_actions;
 
   QPtrList<KTextEditor::Mark> markList;
-  QPtrList<KTempFile> tempFileList;
 
   int currentPageIndex;
   uint userToolbarsCount;
@@ -486,6 +485,7 @@ protected: // Protected attributes
   QMap<QString, QString> oldShortcuts;
 
 public: //TODO: check if it's worth to make a read method for them
+  QPtrList<KTempFile> tempFileList;
   QDict<ToolbarEntry> toolbarList;
   KToggleAction *viewBorder;
   KToggleAction *viewLineNumbers;

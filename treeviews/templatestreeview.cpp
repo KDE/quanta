@@ -134,6 +134,37 @@ TemplatesTreeView::~TemplatesTreeView()
 void TemplatesTreeView::slotInsertInDocument()
 {
  KURL url = currentURL();
+ QString name = url.path() + ".tmpl";
+ KConfig config(name);
+ config.setGroup("Filtering");
+ name = config.readEntry("Action", i18n("None"));
+ TagAction *filterAction = 0L;
+ KActionCollection *ac = quantaApp->actionCollection();
+ for (uint i = 0; i < ac->count(); i++)
+ {
+   TagAction *action = dynamic_cast<TagAction*>(ac->action(i));
+   if (action)
+   {
+     QDomElement el = action->data();
+     QString type = el.attribute("type", "tag");
+     if (type == "script" && action->text() == name)
+     {
+       filterAction = action;
+     }
+    }
+ }
+ if (filterAction)
+ {
+   KTempFile* tempFile = new KTempFile(tmpDir);
+   tempFile->setAutoDelete(true);
+   filterAction->setOutputFile(tempFile->file());
+   filterAction->setInputFileName(url.path());
+   filterAction->execute();
+   tempFile->close();
+   quantaApp->tempFileList.append(tempFile);
+   url.setPath(tempFile->name());
+ }
+
  if (QuantaCommon::checkMimeGroup(url, "text"))
  {
    emit insertFile(url);

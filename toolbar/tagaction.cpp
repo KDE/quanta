@@ -18,12 +18,15 @@
 
 //qt includes
 #include <qdom.h>
+#include <qfile.h>
+#include <qtimer.h>
 
 //kde includes
 #include <kprocess.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kshortcut.h>
+#include <ktempfile.h>
 #include <ktexteditor/cursorinterface.h>
 #include <ktexteditor/viewcursorinterface.h>
 #include <ktexteditor/editinterface.h>
@@ -39,6 +42,7 @@
 #include "../messages/messageoutput.h"
 #include "../quantacommon.h"
 #include "../resource.h"
+#include "../qextfileinfo.h"
 
 TagAction::TagAction( QDomElement *element, KActionCollection *parent)
   : KAction( element->attribute("text"), KShortcut(element->attribute("shortcut")), 0, 0, parent, element->attribute("name") )
@@ -56,7 +60,7 @@ TagAction::~TagAction()
 {
 }
 
-void TagAction::insertTag()
+void TagAction::insertTag(bool inputFromFile, bool outputToFile)
 {
   if ( !m_view || !m_view->writeExists())
      return;
@@ -163,31 +167,43 @@ void TagAction::insertTag()
 
     connect( proc, SIGNAL(receivedStdout(   KProcess*,char*,int)), this,
                  SLOT(  slotGetScriptOutput(KProcess*,char*,int)));
-
     connect( proc, SIGNAL(receivedStderr(   KProcess*,char*,int)), this,
                  SLOT(  slotGetScriptError(KProcess*,char*,int)));
+    connect( proc, SIGNAL(processExited(   KProcess*)), this,
+                 SLOT(  slotProcessExited(KProcess*)));
 
-    scriptOutputDest = script.attribute("output","none");
+
+
+    if (!outputToFile)
+        scriptOutputDest = script.attribute("output","none");
+    else
+        scriptOutputDest = "file";
     scriptErrorDest  = script.attribute("error","none");
     if (scriptOutputDest == "message" || scriptErrorDest == "message")
     {
       quantaApp->slotShowBottDock(true);
     }
 
+    if (inputFromFile)
+    {
+      *proc << m_inputFileName;
+    }
+
     if (proc->start(KProcess::NotifyOnExit, KProcess::All))
     {
-      QString buffer;
+      if (!inputFromFile)
+      {
+        QString buffer;
+        QString inputType = script.attribute("input","none");
 
-      QString inputType = script.attribute("input","none");
-
-      if ( inputType == "current" ) {
-        buffer = w->editIf->text();
-        proc->writeStdin( buffer.local8Bit(), buffer.length() );
-      }
-
-      if ( inputType == "selected" ) {
-        buffer = w->selectionIf->selection();
-        proc->writeStdin( buffer.local8Bit(), buffer.length() );
+        if ( inputType == "current" ) {
+          buffer = w->editIf->text();
+          proc->writeStdin( buffer.local8Bit(), buffer.length() );
+        } else
+        if ( inputType == "selected" ) {
+          buffer = w->selectionIf->selection();
+          proc->writeStdin( buffer.local8Bit(), buffer.length() );
+        }
       }
       proc->closeStdin();
     } else
@@ -216,15 +232,13 @@ void TagAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
        w->selectionIf->removeSelectedText();
      }
      w->insertTag( text );
-  }
-
+  } else
   if ( scriptOutputDest == "replace" )
   {
     if ( firstOutput )
        w->editIf->clear();
     w->insertTag( text );
-  }
-
+  } else
   if ( scriptOutputDest == "new" )
   {
     if ( firstOutput )
@@ -234,8 +248,7 @@ void TagAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
         w = m_view->write();
     }
     w->insertTag( text );
-  }
-
+  } else
   if ( scriptOutputDest == "message" )
   {
     MessageOutput *appMessages = quantaApp->getMessageOutput();
@@ -245,6 +258,10 @@ void TagAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
       appMessages->insertItem( i18n( "Script output:\n" ) );
     }
     appMessages->showMessage( text );
+  } else
+  if ( scriptOutputDest == "file" )
+  {
+    m_file->writeBlock(buffer, buflen + 1);
   }
 
   firstOutput = false;
@@ -303,8 +320,37 @@ void TagAction::scriptDone()
     proc = 0;
 }
 
+void TagAction::setOutputFile(QFile* file)
+{
+  m_file = file;
+}
 
+void TagAction::setInputFileName(const QString& fileName)
+{
+  m_inputFileName = fileName;
+}
 
+void TagAction::slotProcessExited(KProcess *)
+{
+  qApp->exit_loop();
+}
+
+void TagAction::execute()
+{
+  insertTag(true, true);
+ //To avoid lock-ups, start a timer.
+  QTimer* timer = new QTimer(this);
+  connect(timer, SIGNAL(timeout()), SLOT(slotTimeout()));
+  timer->start(10*1000, true);
+  QExtFileInfo internalFileInfo;
+  internalFileInfo.enter_loop();
+}
+
+/** Timeout occured while waiting for some network function to return. */
+void TagAction::slotTimeout()
+{
+  qApp->exit_loop();
+}
 
 
 #include "tagaction.moc"
