@@ -360,7 +360,11 @@ void QuantaApp::initView()
   m_oldTreeViewWidget = ptabdock;
   QStringList topStrList;
   m_config->setGroup("General Options");
+#if KDE_IS_VERSION(3,1,3)
+  topStrList = m_config->readPathListEntry("Top folders");
+#else
   topStrList = m_config->readListEntry("Top folders");
+#endif
   KURL::List topList;
   KURL url;
   for (uint i = 0; i < topStrList.count(); i++)
@@ -570,10 +574,11 @@ void QuantaApp::saveOptions()
     m_config->writeEntry("Window layout", qConfig.windowLayout);
     m_config->writeEntry("Follow Cursor", sTab->followCursor() );
     m_config->writeEntry("PHP Debugger Port", phpDebugPort );
-    m_config->writeEntry("Top folders", fTab->topURLList.toStringList());
 #if KDE_IS_VERSION(3,1,3)
+    m_config->writePathEntry("Top folders", fTab->topURLList.toStringList());
     m_config->writePathEntry("List of opened files", m_doc->openedFiles().toStringList());
 #else
+    m_config->writeEntry("Top folders", fTab->topURLList.toStringList());
     m_config->writeEntry("List of opened files", m_doc->openedFiles().toStringList());
 #endif
     m_config->writeEntry("Version", VERSION); // version
