@@ -138,6 +138,7 @@ void DTDParser::writeDescriptionRC()
 
 void saveElement(xmlElementPtr elem, xmlBufferPtr buf)
 {
+  Q_UNUSED(buf);
   if (elem)
   {
     QString elemName = QString((const char*)elem->name);
@@ -195,7 +196,16 @@ void saveElement(xmlElementPtr elem, xmlBufferPtr buf)
         stream << "<children>" << endl;
         for( int i = 0; i < childNum; i++ )
         {
-          stream << "  <child name=\"" << QString((const char*)list_ptr[i]) << "\" />" << endl;
+          stream << "  <child name=\"" << QString((const char*)list_ptr[i]) << "\"";
+          xmlElementPtr child_ptr = xmlGetDtdElementDesc(DTD::dtd_ptr, list_ptr[i]);
+          if (child_ptr && child_ptr->content && child_ptr->content->ocur)
+          {
+            if (child_ptr->content->ocur == XML_ELEMENT_CONTENT_PLUS)
+            {
+              stream << " usage=\"required\"";
+            }
+          }
+          stream << " />" << endl;
         }
         stream << "</children>" << endl;
       }

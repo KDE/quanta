@@ -3261,7 +3261,7 @@ bool QuantaApp::allToolbarsHidden() const
 }
 
 /** No descriptions */
-void QuantaApp::slotEmailDTD()
+void QuantaApp::slotEmailDTEP()
 {
   if (m_view->writeExists())
   {
@@ -3627,7 +3627,59 @@ void QuantaApp::slotLoadDTD()
     if (dtdParser.parse())
     {
      QString dirName = dtdParser.dirName();
-     readTagDir(dirName);
+     if (readTagDir(dirName))
+     {
+        KConfig dtdcfg(dirName+"description.rc");
+        dtdcfg.setGroup("General");
+        QString dtdName = dtdcfg.readEntry("Name");
+        dtdName = dtdcfg.readEntry("NickName", dtdName);
+        QString family = dtdcfg.readEntry("Family", "1");
+        if (family == "1" && m_view->writeExists() &&
+            KMessageBox::questionYesNo(this, i18n("<qt>Use the newly loaded <b>%1</b> DTD for the current document?</qt>").arg(dtdName), i18n("Change DTD")) == KMessageBox::Yes)
+        {
+          Document *w = m_view->write();
+          w->setDTDIdentifier(dtdcfg.readEntry("Name"));
+          loadToolbarForDTD(w->getDTDIdentifier());
+          reparse(true);
+        }
+     }
+    }
+  }
+}
+
+void QuantaApp::slotLoadDTEP()
+{
+  QString dirName = KFileDialog::getExistingDirectory(QString::null, 0, i18n("Select A DTEP Directory"));
+  if (!dirName.isEmpty())
+  {
+    dirName += "/";
+    if (!readTagDir(dirName ))
+    {
+      KMessageBox::error(this, i18n("<qt>Cannot read the DTEP from <b>%1</b>. Check that the directory contains a valid DTEP (<i>description.rc and *.tag files</i>).</qt>").arg(dirName), i18n("Error loading DTEP"));
+    } else
+    {
+      KConfig dtdcfg(dirName+"description.rc");
+      dtdcfg.setGroup("General");
+      QString dtdName = dtdcfg.readEntry("Name");
+      dtdName = dtdcfg.readEntry("NickName", dtdName);
+      QString family = dtdcfg.readEntry("Family", "1");
+      if (KMessageBox::questionYesNo(this, i18n("<qt>Autoload the <b>%1</b> DTD in the feature?</qt>").arg(dtdName)) == KMessageBox::Yes)
+      {
+        KURL src;
+        src.setPath(dirName);
+        KURL target;
+        QString destDir = KGlobal::dirs()->saveLocation("data") + "quanta/dtep/";
+        target.setPath(destDir + src.fileName());
+        KIO::copy( src, target, false); //don't care about the result
+      }
+      if (family == "1" && m_view->writeExists() &&
+          KMessageBox::questionYesNo(this, i18n("<qt>Use the newly loaded <b>%1</b> DTD for the current document?</qt>").arg(dtdName), i18n("Change DTD")) == KMessageBox::Yes)
+      {
+        Document *w = m_view->write();
+        w->setDTDIdentifier(dtdcfg.readEntry("Name"));
+        loadToolbarForDTD(w->getDTDIdentifier());
+        reparse(true);
+      }
     }
   }
 }

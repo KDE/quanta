@@ -353,11 +353,11 @@ public slots:
   void slotFindAgainB ();
   void slotReplace ();
 
-/** Show the Document Properties Dialog */
+  /** Show the Document Properties Dialog */
   void slotDocumentProperties();
   /** No descriptions */
   void slotAutosaveTimer();
-
+  /** Load a DTD and convert to a DTEP */
   void slotLoadDTD();
 
   void slotHideSplash() {emit showSplash(false);}
@@ -370,7 +370,9 @@ protected slots:
   /** Show or hide the DTD toolbar */
   void slotToggleDTDToolbar(bool show);
   /** No descriptions */
-  void slotEmailDTD();
+  void slotEmailDTEP();
+  /** Load a DTEP*/
+  void slotLoadDTEP();
   /** Shows tip of the day */
   void slotHelpTip();
   /** Show the user mailing list sign up */
@@ -391,8 +393,8 @@ protected:
   bool removeToolbars();
   /** Returns true if all toolbars are hidden, false otherwise. */
   bool allToolbarsHidden() const;
-  /** Reads the tag files and the description.rc from tagDir in order to build up the internal DTD and tag structures. */
-  void readTagDir(QString &dirName);
+  /** Reads the tag files and the description.rc from tagDir in order to build up the internal DTD and tag structures. Returns true on success, false on error.*/
+  bool readTagDir(QString &dirName);
   /** No descriptions */
   virtual void focusInEvent(QFocusEvent*);
   void saveOptions();

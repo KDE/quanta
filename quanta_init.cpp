@@ -1057,10 +1057,10 @@ uint QuantaApp::readTagFile(const QString& fileName, DTDStruct* parentDTD, QTagL
 
 /** Reads the tag files and the description.rc from tagDir in order to
     build up the internal DTD and tag structures. */
-void QuantaApp::readTagDir(QString &dirName)
+bool QuantaApp::readTagDir(QString &dirName)
 {
  if (!QFile::exists(dirName + "description.rc"))
-     return;
+     return false;
  QString tmpStr = dirName + "description.rc";
  QStringList tmpStrList;
  KConfig *dtdConfig = new KConfig(tmpStr);
@@ -1069,7 +1069,7 @@ void QuantaApp::readTagDir(QString &dirName)
  if (dtds->find(dtdName.lower()))
  {
    delete dtdConfig;
-   return;
+   return false;
  }
 
  //read the general DTD info
@@ -1504,6 +1504,7 @@ void QuantaApp::readTagDir(QString &dirName)
  dtds->insert(dtdName.lower(), dtd);//insert the taglist into the full list
 
  delete dtdConfig;
+ return true;
 }
 
 
@@ -1803,9 +1804,9 @@ void QuantaApp::initActions()
                         this, SLOT( slotLoadDTEP() ),
                         ac, "load_dtep" );
 
-    (void) new KAction( i18n( "Send DTD Package (DTEP)in E-&Mail" ), 0,
-                        this, SLOT( slotEmailDTD() ),
-                        ac, "send_dtd" );
+    (void) new KAction( i18n( "Send DTD Package (DTEP) in E-&Mail" ), 0,
+                        this, SLOT( slotEmailDTEP() ),
+                        ac, "send_dtep" );
 
 #ifdef BUILD_KAFKAPART
     (void) new KAction( i18n( "Document Properties" ), 0,
