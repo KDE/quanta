@@ -1802,6 +1802,8 @@ void Parser::clearGroups()
   for (it = m_groups.begin(); it != m_groups.end(); ++it)
   {
     list = & it.data();
+    //Clear the group element list and also remove the group tag which
+    //was created in parseForXMLGroup/parseForScriptGroup methods.
     for (elementIt = list->begin(); elementIt != list->end(); ++elementIt)
     {
       (*elementIt).node->groupElementLists.clear();
@@ -2083,9 +2085,12 @@ void Parser::parseForScriptGroup(Node *node)
     while (pos != -1)
     {
       pos = group.searchRx.search(str, pos);
-      if (pos != -1)
+      if (pos != -1) //the Node is part of this group
       {
         title = tagStr.mid(pos, group.searchRx.matchedLength());
+        //Create a new tag which point to the exact location of the matched string.
+        //For example when the group defined PHP variavles it
+        //points to "$i" in a node which originally contained "print $i + 1"
         Tag *newTag = new Tag(*node->tag);
         newTag->beginPos(bl, bc);
         tmpStr = tagStr.left(pos);
@@ -2104,6 +2109,8 @@ void Parser::parseForScriptGroup(Node *node)
         newTag->name = title;
         groupElement.tag = newTag;
         groupElement.node = node;
+        //Find out if the current node is inside a script structure or not.
+        //This is used to define local/global scope of the group elements.
         Node *tmpNode = node;
         while (tmpNode && tmpNode->tag->dtd == dtd && tmpNode->tag->type != Tag::ScriptStructureBegin)
         {
@@ -2128,10 +2135,17 @@ void Parser::parseForScriptGroup(Node *node)
           }
           tmpNode = tmpNode->parent;
         }
-
+        //get the list of elements which are present in this group and
+        //have the same title. For example get the list of all group
+        //element which are variable and the matched string was "$i"
         groupElementList = & (m_groups[group.name+"|"+title]);
+        //store the pointer to the group element list where this node was put
+        //used to clear the corresponding entry from the group element lists
+        //when the node is deleted (eg. $i was deleted, so it should be deleted
+        //from the "variables | $i" group element list as well)
         node->groupElementLists.append(groupElementList);
         groupElementList->append(groupElement);
+        //if a filename may be present in the title, extract it
         if (group.hasFileName && group.parseFile)
         {
           title.remove(group.fileNameRx);

@@ -42,6 +42,8 @@ Node::Node( Node *parent )
 
 Node::~Node()
 {
+  //Remove the references to this node from the list of group elements.
+  //They are actually stored in Parser::m_groups.
   QPtrListIterator<GroupElementList> iter(groupElementLists);
   GroupElementList *groupElementList;
   while ((groupElementList = iter.current()) != 0)

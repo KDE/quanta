@@ -86,17 +86,25 @@ public:
  DOM::Node _leafNode;
  Node* _closingNode;
  #endif
- QListViewItem *listItem;
+ QListViewItem *listItem; //points to the listview item which represents this node in the structure tree
  Tag *tag;
- Tag *groupTag;
  bool closesPrevious; //this node "closes" the tag from previous node
  bool opened;
  bool removeAll; //set to false if you don't want to remove the "next" and "child" when deleting the node.
  bool insideSpecial; //true if the node is part of a special area
  QString fileName; //the node is in this file. If empty, it's in the current document
- XMLStructGroup *group;
+
+//The below fields are set during parsing for XML groups. See the
+//description.rc and the Parser::parseForXMLGroup(Node *node)
+ Tag *groupTag; //points to a copy of the node tag. The name of the tag is set according to the container group rules.
+ XMLStructGroup *group; //points to the container group
+
+//pointer list to all of the group element lists. For example, the node is part of
+//"function | foo" and "variable | $i" group. In this case the list has two pointers.
+//if "$i" appeared more than once in the node, the second pointer points to a list
+//with more than one elements. The original group element lists are in
+// Parser::m_groups
  QPtrList<GroupElementList> groupElementLists;
- GroupElementList::Iterator groupElementIt;
 };
 
 #endif
