@@ -38,7 +38,7 @@ HTMLTranslator::HTMLTranslator(WKafkaPart *_wkafkapart)
 
 HTMLTranslator::~HTMLTranslator()
 {
-
+	delete m_stddirs;
 }
 
 bool HTMLTranslator::translateNode(Node *node, DOM::Node parentDNode, DOM::Node nextDNode)
