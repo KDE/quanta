@@ -28,6 +28,7 @@
 #include <klocale.h>
 #include <kstandarddirs.h>
 #include <kiconloader.h>
+#include <kurl.h>
 
 // application clases
 #include "doctreeview.h"
@@ -124,6 +125,7 @@ void DocTreeView::slotDoubleClicked(QListViewItem *item )
 
 void DocTreeView::addProjectDoc(const KURL& url)
 {
+  new DocItem(projectDocFolder, url.prettyURL(), url.url());
 }
 
 #include "doctreeview.moc"

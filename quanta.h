@@ -165,6 +165,14 @@ public:
     //return the old Cursor position
   void oldCursorPos(uint &line, uint &col) {line = oldCursorLine; col = oldCursorCol;}
 
+    /** tabs for left panel */
+  ProjectTreeView *pTab;
+  DocTreeView *dTab;
+  FilesTreeView *fTab;
+  TemplatesTreeView *tTab;
+  StructTreeView *sTab;
+  TagAttributeTree *aTab;
+
 signals: // Signals
   /** The tree views should be updated due to some changes on the disk. */
   void reloadTreeviews();
@@ -388,6 +396,8 @@ protected:
   void loadToolbarForDTD(const QString& dtdName);
   void setTitle(const QString&);
   void connectDockSignals(QObject *obj);
+
+
 private:
   /** Messaage output window */
   MessageOutput *messageOutput;
@@ -404,13 +414,6 @@ private:
   QWidgetStack *rightWidgetStack;
   QWidgetStack *bottomWidgetStack;
 
-  /** tabs for left panel */
-  ProjectTreeView *pTab;
-  DocTreeView *dTab;
-  FilesTreeView *fTab;
-  TemplatesTreeView *tTab;
-  StructTreeView *sTab;
-  TagAttributeTree *aTab;
 
   KDockWidget *leftdock;
   KDockWidget *maindock;

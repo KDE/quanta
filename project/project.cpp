@@ -84,6 +84,7 @@
 #include "../quanta.h"
 #include "../quantadoc.h"
 #include "../quantaview.h"
+#include "../treeviews/doctreeview.h"
 
 Project::Project( QWidget *, const char *name )
         : QWidget(0L,name)
@@ -619,6 +620,7 @@ void Project::loadProjectXML()
   progressBar->setTotalSteps(nl.count()-1);
   progressBar->setValue(0);
   progressBar->setTextEnabled(true);
+  QString path;
   for ( uint i = 0; i < nl.count(); i++ )
   {
     el = nl.item(i).toElement();
@@ -633,24 +635,33 @@ void Project::loadProjectXML()
         m_modified = true;
       }
     }
+    path = url.path();
     if ( el.nodeName() == "item" )
     {
       //remove non-existent local files
-      if (!excludeRx.exactMatch(url.path()))
+      if (!excludeRx.exactMatch(path))
       {
         if ( url.isLocalFile() )
         {
-          QFileInfo fi( baseURL.path(1)+url.path());
+          QFileInfo fi( baseURL.path(1)+path);
           if ( !fi.exists() )
           {
             el.parentNode().removeChild( el );
             i--;
           } else
           {
+            if (path.startsWith("doc/") && path.endsWith("/index.html"))
+            {
+               quantaApp->dTab->addProjectDoc(
+               QExtFileInfo::toAbsolute(url, baseURL));
+             }
             fileList.append(url);
           }
         } else
         {
+          if (path.startsWith("doc/") && path.endsWith("/index.html"))
+               quantaApp->dTab->addProjectDoc(
+               QExtFileInfo::toAbsolute(url, baseURL));
           fileList.append(url);
         }
       } else
