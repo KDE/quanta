@@ -178,6 +178,26 @@ void QuantaApp::initQuanta()
 
   createGUI( QString::null, false /* conserveMemory */ );
 
+//Compatility code (read the action shortcuts from quantaui.rc)
+//TODO: Remove after upgrade from 3.1 is not supported
+  QDomDocument doc;
+  doc.setContent(KXMLGUIFactory::readConfigFile(xmlFile(), instance()));
+  QDomNodeList nodeList = doc.elementsByTagName("ActionProperties");
+  QDomNode node = nodeList.item(0).firstChild();
+  while (!node.isNull())
+  {
+    if (node.nodeName() == "Action")
+    {
+      QDomElement el = node.toElement();
+      oldShortcuts.insert(el.attribute("name"), el.attribute("shortcut"));
+      node = node.nextSibling();
+      el.parentNode().removeChild(el);
+    } else
+    {
+      node = node.nextSibling();
+    }
+  }
+
   applyMainWindowSettings(m_config);
   initPlugins  ();
 

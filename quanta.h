@@ -30,6 +30,7 @@
 #endif
 
 // include files for Qt
+#include <qmap.h>
 #include <qvaluelist.h>
 #include <qstrlist.h>
 #include <qptrlist.h>
@@ -468,6 +469,9 @@ protected: // Protected attributes
   KDockWidget *m_oldTreeViewWidget;
   /** The ids of the widgets visible before doing the preview/documentation browsing */
   QValueList<int> previousWidgetList;
+
+  /* Store the old shortcuts from the local quantaui.rc */
+  QMap<QString, QString> oldShortcuts;
 
 public: //TODO: check if it's worth to make a read method for them
   QDict<ToolbarEntry> toolbarList;

@@ -713,7 +713,30 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
 
 void QuantaApp::slotOptionsConfigureKeys()
 {
-  KKeyDialog::configureKeys( actionCollection(), xmlFile(), true, this );
+  KKeyDialog::configure( actionCollection(), this, true);
+  QDomDocument doc;
+  doc.setContent(KXMLGUIFactory::readConfigFile(xmlFile(), instance()));
+  QDomNodeList nodeList = doc.elementsByTagName("ActionProperties");
+  QDomNode node = nodeList.item(0).firstChild();
+  while (!node.isNull())
+  {
+    if (node.nodeName() == "Action")
+    {
+      TagAction *action = dynamic_cast<TagAction*>(actionCollection()->action(node.toElement().attribute("name")));
+      if (action)
+      {
+        action->setModified(true);
+        QDomElement el = action->data();
+        el.setAttribute("shortcut", action->shortcut().toString());
+        el = node.toElement();
+        node = node.nextSibling();
+        el.parentNode().removeChild(el);
+      } else
+      {
+        node = node.nextSibling();
+      }
+    }
+  }
 }
 
 void QuantaApp::slotConfigureToolbars(const QString& defaultToolbar)
@@ -1681,7 +1704,21 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
     //if there is no such action yet, add to the available actions
     if (! actionCollection()->action(actionName))
     {
-      new TagAction(&el, actionCollection() );
+      TagAction *tagAction = new TagAction(&el, actionCollection() );
+
+    //Compatility code (read the action shortcuts from quantaui.rc)
+    //TODO: Remove after upgrade from 3.1 is not supported
+      if (oldShortcuts.contains(actionName))
+      {
+        tagAction->setModified(true);
+        tagAction->data().setAttribute("shortcut", oldShortcuts[actionName]);
+        tagAction->setShortcut(KShortcut(oldShortcuts[actionName]));
+      }
+    } else
+    {
+       TagAction *tagAction = dynamic_cast<TagAction*>(actionCollection()->action(actionName));
+       if (tagAction)
+          tagAction->setModified(true);
     }
    }
 
@@ -1818,6 +1855,7 @@ KURL QuantaApp::saveToolbarToFile(const QString& toolbarName, const KURL& destFi
              if (action)
              {
                action->data().save(actStr,1);
+               action->setModified(false);
              }
            }
            if (e.tagName()=="_Separator_")
@@ -2561,6 +2599,7 @@ void QuantaApp::slotRemoveToolbar(const QString& name)
 
     if (toolbarGUI)
     {
+     KAction *action;
     //Rename the _Separator_ tags back to Separator, so they are not treated
     //as changes
      QDomNodeList nodeList = toolbarGUI->domDocument().elementsByTagName("_Separator_");
@@ -2568,10 +2607,24 @@ void QuantaApp::slotRemoveToolbar(const QString& name)
      {
        nodeList.item(i).toElement().setTagName("Separator");
      }
+     //check if the actions on the toolbar were modified or not
+     bool actionsModified = false;
+     nodeList = toolbarGUI->domDocument().elementsByTagName("Action");
+     for (uint i = 0; i < nodeList.count(); i++)
+     {
+       action = actionCollection()->action(nodeList.item(i).toElement().attribute("name"));
+       if (dynamic_cast<TagAction*>(action) &&
+           dynamic_cast<TagAction*>(action)->isModified())
+       {
+          actionsModified = true;
+          break;
+       }
+     }
+
      //check if the toolbar's XML GUI was modified or not
      QString s1 = p_toolbar->dom->toString();
      QString s2 = toolbarGUI->domDocument().toString();
-     if ( s1 != s2 )
+     if ( s1 != s2 /*|| actionsModified */)
      {
       if (KMessageBox::questionYesNo(this, i18n("The toolbar \"%1\" was modified. Do you want to save before remove?").arg(p_toolbar->name),
               i18n("Save Toolbar")) == KMessageBox::Yes)
@@ -2585,14 +2638,17 @@ void QuantaApp::slotRemoveToolbar(const QString& name)
      guiFactory()->removeClient(toolbarGUI);
      if (p_toolbar->menu) delete p_toolbar->menu;
 //unplug the actions and remove them if they are not used in other places
-     KAction *action;
      nodeList = toolbarGUI->domDocument().elementsByTagName("Action");
      for (uint i = 0; i < nodeList.count(); i++)
      {
        action = actionCollection()->action(nodeList.item(i).toElement().attribute("name"));
        if (action && !action->isPlugged())
        {
-          delete action;
+         if (dynamic_cast<TagAction*>(action) &&
+             !dynamic_cast<TagAction*>(action)->isModified())
+         {
+           delete action;
+         }
        }
      }
      if (p_toolbar->dom) delete p_toolbar->dom;

@@ -419,6 +419,7 @@ void ActionConfigDialog::slotSelectionChanged(QListViewItem *item)
 
 void ActionConfigDialog::saveCurrentAction()
 {
+  static_cast<TagAction *>(currentAction)->setModified(true);
   QString s;
   QDomElement el = static_cast<TagAction *>(currentAction)->data();
   s = actionIcon->icon();
@@ -718,6 +719,7 @@ void ActionConfigDialog::slotNewAction()
   el.setAttribute( "icon", "ball" );
 
   currentAction = new TagAction(&el, quantaApp->actionCollection());
+  static_cast<TagAction*>(currentAction)->setModified(true);
   QListViewItem *currentItem = actionTreeView->currentItem();
   QListViewItem *item = new KListViewItem(allActionsItem);
   item->setText(2, currentAction->name());

@@ -54,11 +54,13 @@ public:
     virtual ~TagAction();
 
     QDomElement data() { return tag; }
+    void setModified(bool modified) { m_modified = modified;}
+    bool isModified() {return m_modified;}
 
 
 protected slots:
     virtual void insertTag();
-    
+
     virtual void slotGetScriptOutput( KProcess *, char *buffer, int buflen );
     virtual void slotGetScriptError( KProcess *, char *buffer, int buflen );
     virtual void scriptDone();
@@ -67,9 +69,10 @@ private:
     KProcess *proc;
     bool firstError;
     bool firstOutput;
+    bool m_modified;
     QString scriptOutputDest;
     QString scriptErrorDest;
-  
+
     QDomElement tag;
     QuantaView *m_view;
 };
