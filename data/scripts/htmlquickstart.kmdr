@@ -747,7 +747,7 @@ echo "$PADDING&lt;/script&gt;"</string>
                 <cstring>CloseButton1</cstring>
             </property>
             <property name="text">
-                <string>Ok</string>
+                <string>OK</string>
             </property>
             <property name="flat">
                 <bool>false</bool>

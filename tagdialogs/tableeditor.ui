@@ -140,7 +140,7 @@
                             <cstring>textLabel3</cstring>
                         </property>
                         <property name="text">
-                            <string>Caption</string>
+                            <string>Caption:</string>
                         </property>
                         <property name="buddy" stdset="0">
                             <cstring>lineEdit1</cstring>
@@ -242,7 +242,7 @@
                             <cstring>pushButton7</cstring>
                         </property>
                         <property name="text">
-                            <string>Table properties</string>
+                            <string>Table Properties</string>
                         </property>
                     </widget>
                     <widget class="KPushButton" row="1" column="3">
@@ -250,7 +250,7 @@
                             <cstring>pushButton7_2</cstring>
                         </property>
                         <property name="text">
-                            <string>Body properties</string>
+                            <string>Body Properties</string>
                         </property>
                     </widget>
                 </grid>
@@ -330,7 +330,7 @@
                                     <cstring>textLabel4_2</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Header rows</string>
+                                    <string>Header rows:</string>
                                 </property>
                                 <property name="buddy" stdset="0">
                                     <cstring>spinBox5_2</cstring>
@@ -398,7 +398,7 @@
                             <bool>false</bool>
                         </property>
                         <property name="text">
-                            <string>Header properties</string>
+                            <string>Header Properties</string>
                         </property>
                     </widget>
                 </grid>
@@ -461,7 +461,7 @@
                                     <cstring>textLabel4_2_2</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Footer rows</string>
+                                    <string>Footer rows:</string>
                                 </property>
                                 <property name="buddy" stdset="0">
                                     <cstring>spinBox5_2</cstring>
@@ -546,7 +546,7 @@
                             <bool>false</bool>
                         </property>
                         <property name="text">
-                            <string>Footer properties</string>
+                            <string>Footer Properties</string>
                         </property>
                     </widget>
                 </grid>

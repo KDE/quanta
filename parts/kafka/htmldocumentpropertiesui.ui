@@ -341,7 +341,7 @@
                         <cstring>ok</cstring>
                     </property>
                     <property name="text" stdset="0">
-                        <string>Ok</string>
+                        <string>&amp;OK</string>
                     </property>
                 </widget>
                 <spacer>
@@ -366,7 +366,7 @@
                         <cstring>cancel</cstring>
                     </property>
                     <property name="text" stdset="0">
-                        <string>Cancel</string>
+                        <string>&amp;Cancel</string>
                     </property>
                 </widget>
             </hbox>
