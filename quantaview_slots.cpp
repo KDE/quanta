@@ -272,7 +272,7 @@ void QuantaView::slotTagQuickStart()
 
   if ( quickDlg->exec() )
    {
-    const QString chset = QTextCodec::codecForLocale()->mimeName();
+    const QString chset = quantaApp->defaultEncoding();
     DTDStruct *dtd = write()->defaultDTD();
     QString tag = QString("<!DOCTYPE" + dtd->doctypeStr +">\n")+QuantaCommon::tagCase("<html>\n")
                   + space + QuantaCommon::tagCase("<head>\n")+ space + QuantaCommon::tagCase("  <title>");

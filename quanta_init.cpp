@@ -891,6 +891,19 @@ void QuantaApp::setAttributes(QDomNode *dom, QTag* tag)
 
  for ( QDomNode n = dom->firstChild(); !n.isNull(); n = n.nextSibling() )
  {
+    if (n.nodeName() == "children")
+   {
+     QDomElement el = n.toElement();
+     QDomElement item = el.firstChild().toElement();
+     while ( !item.isNull() )
+     {
+       QString childTag = item.tagName();
+       if (!tag->parentDTD->caseSensitive)
+           childTag = childTag.upper();
+       tag->childTags.insert(childTag, item.attribute("usage") == "required");
+       item = item.nextSibling().toElement();
+     }
+   }
    if (n.nodeName() == "stoppingtags") //read what tag can act as closing tag
    {
      QDomElement el = n.toElement();
@@ -902,7 +915,7 @@ void QuantaApp::setAttributes(QDomNode *dom, QTag* tag)
        tag->stoppingTags.append(stopTag);
        item = item.nextSibling().toElement();
      }
-   }
+   } else
    if ( n.nodeName() == "attr" ) //an attribute
    {
      attr = new Attribute;
@@ -955,6 +968,7 @@ void QuantaApp::setAttributes(QDomNode *dom, QTag* tag)
      delete attr;
    }
 #ifdef BUILD_KAFKAPART
+   else
    if ( n.nodeName() == "kafkainfos" )
    {
      QDomElement child = n.toElement().firstChild().toElement();

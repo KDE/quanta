@@ -339,7 +339,7 @@ void Document::insertFile(const KURL& url)
 }
 
 /** Inserts text at the current cursor position */
-void Document::insertText(const QString &text, bool adjustCursor)
+void Document::insertText(const QString &text, bool adjustCursor, bool reparse)
 {
   if(text.isEmpty())
     return;
@@ -413,13 +413,38 @@ void Document::insertText(const QString &text, bool adjustCursor)
           }
       }
     }
-    viewCursorIf->setCursorPositionReal(line, col);
   }
-
+  viewCursorIf->setCursorPositionReal(line, col);
   reparseEnabled = true;
-  baseNode = parser->rebuild(this);
-  if (qConfig.instantUpdate && quantaApp->structTreeVisible())
-        quantaApp->getsTab()->slotReparse(this, baseNode , qConfig.expandLevel);
+  if (reparse)
+  {
+    baseNode = parser->rebuild(this);
+    if (qConfig.instantUpdate && quantaApp->structTreeVisible())
+          quantaApp->getsTab()->slotReparse(this, baseNode , qConfig.expandLevel);
+  }
+}
+
+void Document::insertChildTags(QTag *tag, QTag *lastTag)
+{
+  if (!tag || tag == lastTag) //avoid infinite loop
+  {
+    return;
+  }
+  QMap<QString, bool>::Iterator it;
+  for (it = tag->childTags.begin(); it != tag->childTags.end(); ++it)
+  {
+    if (it.data())
+    {
+      QString tagStr =QuantaCommon::tagCase(it.key());
+      insertText("\n<" +tagStr + ">", true, false);
+      if ( ( !tag->isSingle() && !tag->isOptional() && qConfig.closeTags) ||
+           ( tag->isOptional() && qConfig.closeOptionalTags ) )
+      {
+        insertText("\n</" + tagStr + ">", false, false);
+      }
+      insertChildTags(QuantaCommon::tagFromDTD(tag->parentDTD, it.key()), tag);
+    }
+  }
 }
 
 /** Get the view of the document */
@@ -781,6 +806,16 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
         docUndoRedo.dontAddModifsSet(2);
         viewCursorIf->setCursorPositionReal( line, column );
         handled = true;
+      }
+      if (!tag->childTags.isEmpty())
+      {
+        reparseEnabled = false;
+        insertText("\n", false, false);
+        insertChildTags(tag);
+        reparseEnabled = true;
+        baseNode = parser->rebuild(this);
+        if (qConfig.instantUpdate && quantaApp->structTreeVisible())
+              quantaApp->getsTab()->slotReparse(this, baseNode , qConfig.expandLevel);
       }
     }
     else if ( string == " " )

@@ -82,7 +82,9 @@ public:
   /** No descriptions */
   void insertFile(const KURL& url);
   /** Inserts text at the current cursor position */
-  void insertText(const QString &, bool=true);
+  void insertText(const QString &text, bool adjustCursor = true, bool reparse = true);
+  /** Recursively insert the mandatory childs of tag*/
+  void insertChildTags(QTag *tag, QTag* lastTag = 0L);
 
   void readConfig (KConfig *);
   void writeConfig(KConfig *);

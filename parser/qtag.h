@@ -237,6 +237,7 @@ public:
   /** The tag has the attributes of the above common groups */
   QStringList commonGroups;
   QStringList stoppingTags;
+  QMap<QString, bool> childTags; //list of the possible child tags. If the value is true, the child is mandatory
   QString type; //function, class, xmltag, etc.
   QString returnType;  //useful is type="function"; may be int, string or whatever
 
