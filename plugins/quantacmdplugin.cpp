@@ -210,3 +210,4 @@ void QuantaCmdPlugin::cleanupProcess(KProcess *)
   unload();
   emit pluginStopped();
 }
+#include "quantacmdplugin.moc"

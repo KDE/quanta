@@ -323,3 +323,4 @@ void QExtFileInfo::slotTimeout()
   bJobOK = false;
   qApp->exit_loop();
 }
+#include "qextfileinfo.moc"

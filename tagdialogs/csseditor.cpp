@@ -148,3 +148,4 @@ QString CSSEditor::code()
 	return text;
 }
 
+#include "csseditor.moc"

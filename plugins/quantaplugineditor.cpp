@@ -245,3 +245,4 @@ QStringList QuantaPluginEditor::searchPathList()
   
   return paths;
 }
+#include "quantaplugineditor.moc"

@@ -187,3 +187,4 @@ void SpellChecker::spellCleanDone()
 }
 
 
+#include "spellchecker.moc"

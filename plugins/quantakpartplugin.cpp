@@ -171,3 +171,4 @@ bool QuantaKPartPlugin::unload()
   
   return TRUE;
 }
+#include "quantakpartplugin.moc"

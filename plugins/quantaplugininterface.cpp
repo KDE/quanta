@@ -248,3 +248,4 @@ QuantaPlugin *QuantaPluginInterface::plugin(const QString &a_name)
   return m_plugins[a_name];
 }
 
+#include "quantaplugininterface.moc"
