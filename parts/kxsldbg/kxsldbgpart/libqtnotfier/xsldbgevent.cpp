@@ -824,7 +824,7 @@ void XsldbgEvent::handleStringOptionItem(XsldbgEventData *eventData, const  void
 
 
 
-void XsldbgEventDataList::deleteItem( QCollection::Item d )
+void XsldbgEventDataList::deleteItem( QPtrCollection::Item d )
 {
     if ( del_item ) delete (XsldbgEventData *)d;
 }

@@ -15,9 +15,9 @@
 class QXsldbgTextLine {
   public:
   enum BreakPointState {
-    enabled, 
-    disabled, 
-    empty 
+    enabled,
+    disabled,
+    empty
   };
 
   QXsldbgTextLine(const QString & text);
@@ -30,8 +30,8 @@ class QXsldbgTextLine {
   void deleteBreakPoint();
   void selectBreakPoint(bool state);
   bool isSelected();
-  
-  
+
+
 
  private:
   /* The text for this line */
@@ -53,8 +53,8 @@ class QXsldbgDoc {
   bool load(QString fileName);
 
   /**
-   *  get our text structure at @p linenumber 
-   * @returns Non-null if breakpoint has been found,  
+   *  get our text structure at @p linenumber
+   * @returns Non-null if breakpoint has been found,
    *          NULL otherwise
   */
   QXsldbgTextLine* getText(uint lineNumber);
@@ -64,14 +64,14 @@ class QXsldbgDoc {
 
   /**
    * getFileName
-   * 
+   *
    * @returns the name of file for this document
    */
-  QString getFileName();  
+  QString getFileName();
 
  private:
   QString fileName;
-  QList<QXsldbgTextLine> textLines;
+  QPtrList<QXsldbgTextLine> textLines;
 };
 
 #endif

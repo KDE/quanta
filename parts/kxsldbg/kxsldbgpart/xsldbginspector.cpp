@@ -55,7 +55,7 @@ XsldbgInspector::XsldbgInspector( XsldbgDebugger *debugger, QWidget* parent,
 				  const char* name, bool modal, WFlags fl )
     : QDialog( parent, name, modal, fl )
 {
-    CHECK_PTR(debugger);
+    Q_CHECK_PTR(debugger);
     this->debugger = debugger;
     breakpointWidget = 0L;
     localWidget = 0L;
@@ -73,43 +73,43 @@ XsldbgInspector::XsldbgInspector( XsldbgDebugger *debugger, QWidget* parent,
 					     "XsldbgInspectorLayout");
 
     tabWidget = new QTabWidget( this, "tabWidget" );
-    CHECK_PTR( tabWidget );
+    Q_CHECK_PTR( tabWidget );
     breakpointWidget = new XsldbgBreakpointsImpl( debugger, tabWidget );
-    CHECK_PTR( breakpointWidget );
+    Q_CHECK_PTR( breakpointWidget );
     tabWidget->insertTab( breakpointWidget, i18n( "Breakpoints" ) );
 
     localWidget = new  XsldbgLocalVariablesImpl( debugger, tabWidget );
-    CHECK_PTR( localWidget );
+    Q_CHECK_PTR( localWidget );
     tabWidget->insertTab( localWidget,
 	  QIconSet( uic_load_pixmap_XsldbgInspector( "xsldbg_source.png" ) ),
 	  i18n( "Locals" ) );
 
     globalWidget = new  XsldbgGlobalVariablesImpl( debugger, tabWidget );
-    CHECK_PTR( globalWidget );
+    Q_CHECK_PTR( globalWidget );
     tabWidget->insertTab( globalWidget,
 	  QIconSet( uic_load_pixmap_XsldbgInspector( "xsldbg_source.png" ) ),
           i18n( "Globals" ));
 
     callStackWidget = new  XsldbgCallStackImpl( debugger, tabWidget );
-    CHECK_PTR( callStackWidget );
+    Q_CHECK_PTR( callStackWidget );
     tabWidget->insertTab( callStackWidget,
 	  QIconSet( uic_load_pixmap_XsldbgInspector( "xsldbg_source.png" ) ),
 	  i18n( "CallStack" ));
 
     templateWidget = new  XsldbgTemplatesImpl( debugger, tabWidget );
-    CHECK_PTR( templateWidget );
+    Q_CHECK_PTR( templateWidget );
     tabWidget->insertTab( templateWidget,
 	  QIconSet( uic_load_pixmap_XsldbgInspector( "xsldbg_source.png" ) ),
           i18n( "Templates" ));
 
     sourceWidget = new  XsldbgSourcesImpl( debugger, tabWidget );
-    CHECK_PTR( sourceWidget );
+    Q_CHECK_PTR( sourceWidget );
     tabWidget->insertTab( sourceWidget,
 	  QIconSet( uic_load_pixmap_XsldbgInspector( "xsldbg_source.png" ) ),
 	  i18n( "Sources" ));
 
     entityWidget = new  XsldbgEntitiesImpl( debugger, tabWidget );
-    CHECK_PTR( entityWidget );
+    Q_CHECK_PTR( entityWidget );
     tabWidget->insertTab( entityWidget,
 	  QIconSet( uic_load_pixmap_XsldbgInspector( "xsldbg_data.png" ) ),
 	  i18n( "Entities" ));

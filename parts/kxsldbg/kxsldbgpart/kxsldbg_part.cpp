@@ -88,7 +88,7 @@ KXsldbgPart::KXsldbgPart( QWidget *parentWidget, const char * /*widgetName*/,
     m_editWidget = new QXsldbgView( splitter);
     connect(m_editWidget, SIGNAL(cursorPositionChanged(int, int)),
             this, SLOT(editWidget_cursorPositionChanged(int, int)));
-    connect(m_editWidget,SIGNAL(openFile(QString, int, int)), 
+    connect(m_editWidget,SIGNAL(openFile(QString, int, int)),
 	    this,  SLOT(emitOpenFile(QString, int, int)));
     m_editWidget->setDocument(0L);
     outputview = new XsldbgOutputView(splitter);
@@ -387,7 +387,7 @@ void KXsldbgPart::configureCmd_activated()
 
   if (configWidget == 0L){
     configWidget = new XsldbgConfigImpl( debugger, 0L );
-    CHECK_PTR( configWidget );
+    Q_CHECK_PTR( configWidget );
   }
   if (configWidget != 0L)
     configWidget->refresh();
@@ -416,7 +416,7 @@ void KXsldbgPart::createInspector()
 {
     if ( inspector == 0L ) {
       debugger = new XsldbgDebugger();
-      CHECK_PTR( debugger );
+      Q_CHECK_PTR( debugger );
       if ( debugger != 0L ) {
 	       if (outputview){
 		 connect(debugger,
@@ -425,7 +425,7 @@ void KXsldbgPart::createInspector()
 		  SLOT(slotProcShowMessage(QString /* msg*/)));
 	       }
 	      inspector = new XsldbgInspector( debugger );
-	      CHECK_PTR( inspector );
+	      Q_CHECK_PTR( inspector );
 	      debugger->setInspector( inspector );
 	      if (inspector != 0L){
 		/*process line number and/or file name changed */
@@ -477,7 +477,7 @@ void KXsldbgPart::emitOpenFile(QString file, int line, int row)
     QByteArray params;
     QDataStream stream(params, IO_WriteOnly);
     stream << file << line << row;
-    emitDCOPSignal("openFile(QString,int,int)", params); 
+    emitDCOPSignal("openFile(QString,int,int)", params);
 }
 void KXsldbgPart::continueCmd_activated()
 {

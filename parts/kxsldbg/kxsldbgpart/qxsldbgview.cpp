@@ -10,7 +10,7 @@
 #include <qpixmap.h>
 #include "qxsldbgview.h"
 #include "qxsldbgdoc.h"
-#include <kstandarddirs.h> 
+#include <kstandarddirs.h>
 #include <kdebug.h>
 #define NDEBUG
 
@@ -54,25 +54,25 @@ QXsldbgView::QXsldbgView(QWidget *parent)
 
   /* make sure we can get keyboard focus */
   setFocusPolicy(QWidget::StrongFocus);
-  //  viewport()->setFocus(); // needed for QT2 
+  //  viewport()->setFocus(); // needed for QT2
   viewport()->setBackgroundMode(PaletteBrightText);
 }
 
 QXsldbgView::~QXsldbgView()
 {
   delete markPixMap;
-  delete hashPixMap;			
+  delete hashPixMap;
 }
 
 
 void QXsldbgView::show()
 {
     QScrollView::show();
-    setFocus(); 
+    setFocus();
     emit cursorPositionChanged(getLineNo(), getRowNo());
 }
 
- 
+
 void QXsldbgView::setDocument(QXsldbgDoc *doc)
 {
   this->doc = doc;
@@ -87,7 +87,7 @@ void QXsldbgView::setDocument(QXsldbgDoc *doc)
 	if (item->getText().length() > lineWidth)
 	  lineWidth = item->getText().length();
       }
-    } 
+    }
     resizeContents(fm.maxWidth() * lineWidth, doc->lineCount() * textHeight);
   }
 #if QT_VERSION >=300
@@ -100,8 +100,8 @@ void QXsldbgView::setDocument(QXsldbgDoc *doc)
 
 void QXsldbgView::getCursorPosition(int *line, int *row)
 {
-  CHECK_PTR(line);
-  CHECK_PTR(row);
+  Q_CHECK_PTR(line);
+  Q_CHECK_PTR(row);
   if ((line != 0L) && ( row != 0L)){
     *line = this->_line;
     *row = this->_row;
@@ -130,7 +130,7 @@ void QXsldbgView::setCursorPosition(int line, int row)
 	    this->_row = row;
 	    s1 = fm.size(ExpandTabs, item->getText().left(getRowNo()));
 
-	    _cursorRect.setLeft(s1.width() + blobWidth + blobSpacing); 
+	    _cursorRect.setLeft(s1.width() + blobWidth + blobSpacing);
 	    _cursorRect.setTop(getLineNo() * textHeight);
 	    _cursorRect.setRight(_cursorRect.left() + cursorWidth);
 	    _cursorRect.setBottom(_cursorRect.top() + cursorHeight);
@@ -141,11 +141,11 @@ void QXsldbgView::setCursorPosition(int line, int row)
 		    getLineNo() * textHeight < contentsY()){
 		if (getLineNo() > 11)
 		    setContentsPos(contentsX(), (getLineNo() - 11) * textHeight);
-		else 
+		else
 		    setContentsPos(contentsX(), 0);
 
 	    }
-	    repaintContents(mergedRect.x(), mergedRect.y(), 
+	    repaintContents(mergedRect.x(), mergedRect.y(),
 		    mergedRect.width(), mergedRect.height(), TRUE);
 	    hideCursor = saveHideCursor;
 
@@ -168,7 +168,7 @@ void QXsldbgView::setMarkerPosition(int line, int row)
       item->selectBreakPoint(true);
     setCursorPosition(line, row);
     repaintAll();
-  }  
+  }
 }
 
 void  QXsldbgView::repaintAll()
@@ -177,10 +177,10 @@ void  QXsldbgView::repaintAll()
 }
 
 
-void QXsldbgView::drawContents(QPainter* p, int /*clipx*/, int clipy, 
+void QXsldbgView::drawContents(QPainter* p, int /*clipx*/, int clipy,
 			       int /*clipw*/, int cliph)
 {
-  
+
   if (doc == 0L || ( p == 0L)){
     return;
   }
@@ -191,14 +191,14 @@ void QXsldbgView::drawContents(QPainter* p, int /*clipx*/, int clipy,
   QString str;
   QXsldbgTextLine *item;
 
-  for (int index = 0 ; index < doc->lineCount(); index++){    
+  for (int index = 0 ; index < doc->lineCount(); index++){
     py = index * textHeight;
     /* reduce the amount of text to draw and only draw text if
        we are inside area to be repainted */
     if ((py >= clipy - textHeight) && (py <= clipy + cliph + textHeight)){
       item = doc->getText(index);
       if (item != 0L){
-	p->drawText(blobWidth + blobSpacing, py, 
+	p->drawText(blobWidth + blobSpacing, py,
 		    contentsWidth(), textHeight, ExpandTabs, item->getText());
 	/* Draw a coloured blob to show the state of a breakpoint */
 	switch(item->getBreakpointState()){
@@ -220,12 +220,12 @@ void QXsldbgView::drawContents(QPainter* p, int /*clipx*/, int clipy,
 
 
 	case QXsldbgTextLine::empty:
-	  break;	  
+	  break;
 	}
 
 	/* Show a marker where we are up to */
 	if (item->isSelected()){
-	  p->fillRect(0, py + textHeight - fm.ascent()/2, 
+	  p->fillRect(0, py + textHeight - fm.ascent()/2,
 		      markerWidth, markerHeight,  Qt::green);
 	}
 
@@ -236,8 +236,8 @@ void QXsldbgView::drawContents(QPainter* p, int /*clipx*/, int clipy,
 
   /* Flash the cursor */
   if ((hideCursor == FALSE) && (cursorVisible == TRUE)){
-    p->fillRect(cursorRect().x(), cursorRect().y(), 
-	      cursorRect().width(), cursorRect().height(), 
+    p->fillRect(cursorRect().x(), cursorRect().y(),
+	      cursorRect().width(), cursorRect().height(),
 			black);
   }
 }
@@ -250,7 +250,7 @@ void QXsldbgView::contentsMousePressEvent( QMouseEvent *e )
   QPoint p = e->pos();
 
   int currentLine = p.y() / textHeight + 1;
-  
+
   if (doc != 0L){
       e->accept();
       QXsldbgTextLine *item;
@@ -262,21 +262,21 @@ void QXsldbgView::contentsMousePressEvent( QMouseEvent *e )
 	  emit enableBreakPoint(currentLine);
 	  item->enableBreakPoint(false);
 	  break;
-	  
+
 	case QXsldbgTextLine::disabled:
 	  emit deleteBreakPoint(currentLine);
 	  item->deleteBreakPoint();
 	  break;
-	  
-	  
+
+
 	case QXsldbgTextLine::empty:
 	  emit addBreakPoint(currentLine);
 	 item->enableBreakPoint(true);
-	  break;	  
+	  break;
 	}
 
-	repaintContents(0, currentLine * textHeight +  blobYoffset, 
-		blobWidth, blobHeight, TRUE); 
+	repaintContents(0, currentLine * textHeight +  blobYoffset,
+		blobWidth, blobHeight, TRUE);
       }
   }
 }
@@ -287,12 +287,12 @@ void  QXsldbgView::timerEvent( QTimerEvent * )
   cursorVisible = !cursorVisible;
 
   /* repaint the cursor */
-  repaintContents(cursorRect().x(), cursorRect().y(), 
+  repaintContents(cursorRect().x(), cursorRect().y(),
 		  cursorRect().width(), cursorRect().height(), TRUE);
 }
 
 
-void QXsldbgView::keyPressEvent( QKeyEvent *e ) 
+void QXsldbgView::keyPressEvent( QKeyEvent *e )
 {
   if (doc != 0L){
     QFontMetrics fm = fontMetrics();
@@ -315,7 +315,7 @@ void QXsldbgView::keyPressEvent( QKeyEvent *e )
 	if ((getLineNo() + 3) * textHeight > contentsY() + visibleHeight ()){
 	  setContentsPos(contentsX(), contentsY() + textHeight);
 	}
-	setCursorPosition(getLineNo() + 1, getRowNo());    
+	setCursorPosition(getLineNo() + 1, getRowNo());
       }
       break;
 
@@ -339,19 +339,19 @@ void QXsldbgView::keyPressEvent( QKeyEvent *e )
 	setCursorPosition(getLineNo() - 22, getRowNo());
       }else{
 	setContentsPos(contentsX(), 0);
-	setCursorPosition(0, getRowNo());	
+	setCursorPosition(0, getRowNo());
       }
-      
+
       break;
 
     case Key_PageDown:
       e->accept();
-      if (getLineNo() < doc->lineCount() + 22){      
-	if ((getLineNo() + 22 + 3) * textHeight > 
+      if (getLineNo() < doc->lineCount() + 22){
+	if ((getLineNo() + 22 + 3) * textHeight >
 	    contentsY() + visibleHeight ()){
 	  setContentsPos(contentsX(), contentsY() + textHeight * 22);
 	}
-	setCursorPosition(getLineNo() + 22, getRowNo());    
+	setCursorPosition(getLineNo() + 22, getRowNo());
       }
       break;
 

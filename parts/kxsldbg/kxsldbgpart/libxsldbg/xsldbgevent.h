@@ -48,14 +48,14 @@ public:
     { return QGList::operator==( list ); }
     uint  count(void)   const               { return QGList::count(); }
     bool  isEmpty(void) const               { return QGList::count() == 0; }
-    bool  insert( uint i, const XsldbgEventData *d){ return QGList::insertAt(i,(QCollection::Item)d); }
-    void  inSort( const XsldbgEventData *d )       { QGList::inSort((QCollection::Item)d); }
-    void  prepend( const XsldbgEventData *d )      { QGList::insertAt(0,(QCollection::Item)d); }
-    void  append( const XsldbgEventData *d )       { QGList::append((QCollection::Item)d); }
+    bool  insert( uint i, const XsldbgEventData *d){ return QGList::insertAt(i,(QPtrCollection::Item)d); }
+    void  inSort( const XsldbgEventData *d )       { QGList::inSort((QPtrCollection::Item)d); }
+    void  prepend( const XsldbgEventData *d )      { QGList::insertAt(0,(QPtrCollection::Item)d); }
+    void  append( const XsldbgEventData *d )       { QGList::append((QPtrCollection::Item)d); }
     bool  remove( uint i )              { return QGList::removeAt(i); }
-    bool  remove(void)                      { return QGList::remove((QCollection::Item)0); }
-    bool  remove( const XsldbgEventData *d )       { return QGList::remove((QCollection::Item)d); }
-    bool  removeRef( const XsldbgEventData *d )    { return QGList::removeRef((QCollection::Item)d); }
+    bool  remove(void)                      { return QGList::remove((QPtrCollection::Item)0); }
+    bool  remove( const XsldbgEventData *d )       { return QGList::remove((QPtrCollection::Item)d); }
+    bool  removeRef( const XsldbgEventData *d )    { return QGList::removeRef((QPtrCollection::Item)d); }
     void  removeNode( QLNode *n )       { QGList::removeNode(n); }
     bool  removeFirst(void)                 { return QGList::removeFirst(); }
     bool  removeLast(void)                  { return QGList::removeLast(); }
@@ -64,13 +64,13 @@ public:
     XsldbgEventData *takeNode( QLNode *n )         { return (XsldbgEventData *)QGList::takeNode(n); }
     void  clear(void)                       { QGList::clear(); }
     void  sort(void)                        { QGList::sort(); }
-    int   find( const XsldbgEventData *d )         { return QGList::find((QCollection::Item)d); }
-    int   findNext( const XsldbgEventData *d )     { return QGList::find((QCollection::Item)d,FALSE); }
-    int   findRef( const XsldbgEventData *d )      { return QGList::findRef((QCollection::Item)d); }
-    int   findNextRef( const XsldbgEventData *d ){ return QGList::findRef((QCollection::Item)d,FALSE);}
-    uint  contains( const XsldbgEventData *d ) const { return QGList::contains((QCollection::Item)d); }
+    int   find( const XsldbgEventData *d )         { return QGList::find((QPtrCollection::Item)d); }
+    int   findNext( const XsldbgEventData *d )     { return QGList::find((QPtrCollection::Item)d,FALSE); }
+    int   findRef( const XsldbgEventData *d )      { return QGList::findRef((QPtrCollection::Item)d); }
+    int   findNextRef( const XsldbgEventData *d ){ return QGList::findRef((QPtrCollection::Item)d,FALSE);}
+    uint  contains( const XsldbgEventData *d ) const { return QGList::contains((QPtrCollection::Item)d); }
     uint  containsRef( const XsldbgEventData *d ) const
-                                        { return QGList::containsRef((QCollection::Item)d); }
+                                        { return QGList::containsRef((QPtrCollection::Item)d); }
     XsldbgEventData *at( uint i )                  { return (XsldbgEventData *)QGList::at(i); }
     int   at(void) const                    { return QGList::at(); }
     XsldbgEventData *current(void)  const              { return (XsldbgEventData *)QGList::get(); }
@@ -83,7 +83,7 @@ public:
     XsldbgEventData *prev(void)                        { return (XsldbgEventData *)QGList::prev(); }
     void  toVector( QGVector *vec )const{ QGList::toVector(vec); }
 private:
-    void  deleteItem( QCollection::Item d );
+    void  deleteItem( QPtrCollection::Item d );
 };
 
 
