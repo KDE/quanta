@@ -1,0 +1,21 @@
+[General]
+Name = -//WAPFORUM//DTD WML 1.2//EN
+NickName = WML 1.2 
+DefaultExtension = wml
+Groups = Core, I18n, Script, Focus
+NumOfPages = 3
+QuotedAttributes=title,columns,align,mode,xml:lang,http-equiv,name,forua,content,scheme,href,accesskey,alt,src,localsrc,vspace,hspace,height,width,value,format,emptyok,size,maxlength,tabindex,onpick,iname,ivalue,multiple,accept-chars,enctype,method,sendreferer,href,domain,path,onenterforward,onenterbackward,ontimer,optional,type,label,onpick,newcontext,ordered,xml:space
+CaseSensitive = true
+
+[Toolbars]
+Location = wml-1-2
+Names = deck, forms, table, tasks, text, misc
+
+[Extra tags]
+
+List =!DOCTYPE, td, tr, small, big, u, i, strong, em, refresh, prev, head
+
+
+[Extra rules]
+BooleanAttributes = simple
+Single Tag Style = XML
