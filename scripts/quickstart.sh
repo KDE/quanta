@@ -8,7 +8,6 @@ else
   dcopCommand="dcop quanta-$pid"
 fi
 encoding=`$dcopCommand SettingsIf encoding`
-echo $2
 kmdr-executor $2 &
 sleep 2
 pid2=$!
