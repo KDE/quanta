@@ -982,7 +982,7 @@ void TableEditor::slotMergeCells()
   for (int i = 0; i < bRow - tRow + 1; i++)
     for (int j = 0; j < rCol - lCol + 1; j++) {
       if (i != 0 || j != 0) {
-        setCellText(m_dataTable, tRow + i, lCol + j, i18n("Merged with (%1, %2).").arg(tRow).arg(lCol));
+        setCellText(m_dataTable, tRow + i, lCol + j, i18n("Merged with (%1, %2).").arg(tRow + 1).arg(lCol + 1));
         m_dataTable->item(tRow + i, lCol + j)->setEnabled(false);
         TableNode *tableNode = &((*m_tableTags)[tRow + i][lCol + j]);
         tableNode->node = new Node(0L);
