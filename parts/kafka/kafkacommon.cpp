@@ -181,7 +181,10 @@ void kafkaCommon::applyIndentation(Node *node, int nbOfSpaces, int nbOfTabs)
 		parent = parent->parent;
 	}
 
-	parent = nextNE->parent;
+	if (nextNE)
+		parent = nextNE->parent;
+	else
+		parent = 0L;
 	while(parent)
 	{
 		if(getNodeDisplay(parent->tag->name) != kafkaCommon::inlineDisplay)
