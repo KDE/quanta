@@ -92,6 +92,7 @@ QDict <QStrList> *tagsDict;
 QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
 {
   grepDialog  = 0L;
+  exitingFlag = false;
 
   config=kapp->config();
 
@@ -511,6 +512,7 @@ void QuantaApp::openLastFiles()
 
 bool QuantaApp::queryExit()
 {
+  exitingFlag = true;
   saveOptions();
   return doc->saveAll(false);
 }

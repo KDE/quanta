@@ -272,6 +272,8 @@ class QuantaApp : public KDockMainWindow
     QuantaDoc  *doc;
     QuantaView *view;
 
+	bool exitingFlag;
+
     /** parsered tree of document  */
     Node   *node;
     Parser *parser;
