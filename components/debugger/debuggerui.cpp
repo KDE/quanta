@@ -87,16 +87,9 @@ void DebuggerUI::showMenu()
   QPopupMenu* debuggerMenu = (QPopupMenu*)(quantaApp->guiFactory())->container("debugger_menu", quantaApp);
   if(debuggerMenu)
   {
-    //hiding and showing the menubar is ugly, but unfortunately
-    //QMenuBar simply crashes if a new item is added while a submenu
-    //is opened.
     KMenuBar *mb = quantaApp->menuBar();
-    bool visible = mb->isVisible();
-    if (visible)
-      mb->hide();
-    m_debuggerMenuID = quantaApp->menuBar()->insertItem(i18n("Deb&ug"), debuggerMenu, -1, 5);
-    if (visible)
-      mb->show();
+    mb->activateItemAt(-1); //needed as insertItem might crash if a menu is activated
+    m_debuggerMenuID = mb->insertItem(i18n("Deb&ug"), debuggerMenu, -1, 5);
   }
   else
     m_debuggerMenuID  = 0;
@@ -105,7 +98,11 @@ void DebuggerUI::showMenu()
 void DebuggerUI::hideMenu()
 {
   if(m_debuggerMenuID != 0)
-    quantaApp->menuBar()->removeItem(m_debuggerMenuID);
+  {
+    KMenuBar *mb = quantaApp->menuBar();
+    mb->activateItemAt(-1); //needed as removeItem might crash if a menu is activated
+    mb->removeItem(m_debuggerMenuID);
+  }
   m_debuggerMenuID = 0;
 }
 
