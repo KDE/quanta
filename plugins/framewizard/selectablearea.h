@@ -33,12 +33,13 @@ class SelectableArea : public QTextBrowser  {
 	QString getIdLabel() const { return idLabel; }
         void setIdLabel(QString i) { idLabel = i; }
     protected :
-	    void mousePressEvent( QMouseEvent *);
-            void focusOutEvent ( QFocusEvent * ); 
-            void resizeEvent ( QResizeEvent * );
+            virtual void focusOutEvent ( QFocusEvent * );
+            virtual void resizeEvent ( QResizeEvent * );
     private :
             QString idLabel;
-    signals :	
+    private slots:
+            void slotClicked(int para, int pos);
+    signals :
 	   void selected(QString);
            void Resized(QRect);
 };

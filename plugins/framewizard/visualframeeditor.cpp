@@ -19,6 +19,8 @@
 #include <qdom.h>
 #include <qfile.h>
 #include <qstring.h>
+#include <qobjectlist.h>
+#include <kdebug.h>
 
 VisualFrameEditor::VisualFrameEditor(QWidget * parent, const char * name) : QHBox(parent,name){
   t = new tree;
@@ -63,8 +65,18 @@ void VisualFrameEditor::draw(){
 
 void VisualFrameEditor::paintEvent ( QPaintEvent * ){
   hide();
-  splitterList.clear();
-  SAList.clear();
+  QObjectList* ch = queryList("SelectableArea");
+  for (uint i = 0; i < ch->count(); i++)
+  {
+    QObject *o = ch->at(i);
+    removeChild(o);
+  }
+  ch = queryList("QSplitter");
+  for (uint i = 0; i < ch->count(); i++)
+  {
+    QObject *o = ch->at(i);
+    removeChild(o);
+  }
   draw2(t->getRoot(),this);
   show();
 }
@@ -99,11 +111,10 @@ void VisualFrameEditor::draw2(treeNode *n, QWidget* parent){
 	SelectableArea *te=new SelectableArea(parent);
         SAList.append(te);
         te->setIdLabel( n->getLabel() );
-        te->setMinimumSize(QSize(20,25));
+       // te->setMinimumSize(QSize(20,25));
         te->setSource(n->getAtts()->getSrc());
-
+	te->show();
         QObject::connect(te, SIGNAL(Resized(QRect)), n->getAtts(), SLOT(setGeometry(QRect)));
 	QObject::connect(te, SIGNAL(selected(QString)),form, SLOT(catchSelectedArea(QString)));
     }
 }
-

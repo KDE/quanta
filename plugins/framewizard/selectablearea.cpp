@@ -17,16 +17,18 @@
 
 #include "selectablearea.h"
 #include <qframe.h>
+#include <kdebug.h>
 
 SelectableArea::SelectableArea(QWidget *parent, const char *name ) : QTextBrowser(parent,name) {
     setFrameShape(QFrame::NoFrame);
+    connect(this, SIGNAL(clicked(int, int)), SLOT(slotClicked(int, int)));
+
 }
 SelectableArea::~SelectableArea(){
 }
 
-void SelectableArea::mousePressEvent( QMouseEvent * )
+void SelectableArea::slotClicked(int, int)
 {
-
     setFrameShape(QFrame::Box);
     setFrameShadow ( QFrame::Plain );
     setLineWidth(2);

@@ -9,9 +9,10 @@
 #include "fmrceditor.h"
 #include "fmfpeditor.h"
 #include <kmessagebox.h>
+#include <kdebug.h>
 
-const static QString info1="You must select an area!",
-                     info2="No structure will be created!";
+static const QString info1="You must select an area!",
+info2="No structure will be created!";
 void FrameWizard::init()
 {   
     splitted=false;
@@ -38,7 +39,7 @@ void FrameWizard::split()
 	    split = showRCeditorDlg("Enter the desidered number of rows");                  	
 	    if(split>=2)
 		vfe->split(currNodeLabel,split,"h");
-	    }
+	}
 	else if(senderName=="pbVertical"){
 	    split = showRCeditorDlg("Enter the desidered number of columns");
 	    if(split>=2)
@@ -46,14 +47,14 @@ void FrameWizard::split()
 	}
 	emit launchDraw();
     }
-     else KMessageBox::information( this, info1, "Warning" );
-     hasSelected=false;
-     splitted=true;
+    else KMessageBox::information( this, info1, "Warning" );
+    hasSelected=false;
+    splitted=true;
 }
 
 void FrameWizard::draw()
 {
-  vfe->draw();
+    vfe->draw();
 }
 
 
@@ -105,6 +106,5 @@ void FrameWizard::remove()
     else KMessageBox::information( this, info1, "Warning" );
     hasSelected=false;
 }
-
 
 
