@@ -29,9 +29,9 @@ WHTMLPart::WHTMLPart(QWidget *parent, const char *name )
 
    konqConfig.setGroup("HTML Settings");
 
-   KHTMLSettings * set = settings();
+   const KHTMLSettings * set = settings();
 
-   set->init( &konqConfig, false );
+   const_cast<KHTMLSettings*>(set)->init( &konqConfig, false );
 
 //   setCharset( konqConfig.readEntry("DefaultEncoding") );
 //   setEncoding( konqConfig.readEntry("DefaultEncoding") );
@@ -105,10 +105,10 @@ bool WHTMLPart::forwardEnable()
    return hpos < history.count()-1;
 }
 
-KParts::ReadOnlyPart *WHTMLPart::createPart( QWidget *parentWidget, const char *widgetName,
-                                            QObject *parent, const char *name,
-                                            const QString &mimetype, QString &serviceName,
-                                            QStringList &serviceTypes, const QStringList &params)
+KParts::ReadOnlyPart *WHTMLPart::createPart( QWidget *, const char *,
+                                            QObject *, const char *,
+                                            const QString &, QString &,
+                                            QStringList &, const QStringList &)
 {
 //TODO: Where should I delete this???? I have no idea...
    return new WHTMLPart(widget());

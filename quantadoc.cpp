@@ -162,13 +162,11 @@ void QuantaDoc::openDocument(const KURL& url, QString encoding)
     Document *w = write();
     if (encoding.isEmpty()) encoding = quantaApp->defaultEncoding();
 
-    if (KDE_VERSION >= 308)
-    {
+    #if KDE_VERSION >= 308
       dynamic_cast<KTextEditor::EncodingInterface*>(w->doc())->setEncoding(encoding);
-    } else
-    {
+    #else
       w->kate_doc->setEncoding(encoding);
-    }
+    #endif
 
     w->readConfig(quantaApp->config);
     if (w->doc()->openURL( url ))

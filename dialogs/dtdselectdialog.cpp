@@ -2,7 +2,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file './dtdselectdialog.ui'
 **
-** Created: Tue Oct 15 11:09:50 2002
+** Created: Wed Oct 23 15:12:45 2002
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -34,9 +34,6 @@ DTDSelectDialog::DTDSelectDialog( QWidget* parent, const char* name, bool modal,
 {
     if ( !name )
 	setName( "DTDSelectDialog" );
-
-    okButton = new QPushButton( this, "okButton" );
-    okButton->setGeometry( QRect( 190, 160, 80, 22 ) );
 
     QWidget* privateLayoutWidget = new QWidget( this, "Layout2" );
     privateLayoutWidget->setGeometry( QRect( 9, 10, 430, 137 ) );
@@ -72,10 +69,11 @@ DTDSelectDialog::DTDSelectDialog( QWidget* parent, const char* name, bool modal,
     convertDTD = new QCheckBox( privateLayoutWidget, "convertDTD" );
 
     Layout2->addWidget( convertDTD, 2, 0 );
+
+    okButton = new QPushButton( this, "okButton" );
+    okButton->setGeometry( QRect( 180, 152, 90, 30 ) );
     languageChange();
     resize( QSize(445, 190).expandedTo(minimumSizeHint()) );
-
-    // signals and slots connections
 
     // tab order
     setTabOrder( dtdCombo, currentDTD );
@@ -99,12 +97,12 @@ DTDSelectDialog::~DTDSelectDialog()
 void DTDSelectDialog::languageChange()
 {
     setCaption( tr2i18n( "DTD Selector" ) );
-    okButton->setText( tr2i18n( "&OK" ) );
     messageLabel->setText( tr2i18n( "Dialog message:\n"
 "Dialog message2:" ) );
     textLabel->setText( tr2i18n( "Current DTD:" ) );
     comboLabel->setText( tr2i18n( "Select DTD:" ) );
     convertDTD->setText( tr2i18n( "&Convert the document to the selected DTD" ) );
+    okButton->setText( tr2i18n( "&OK" ) );
 }
 
 #include "dtdselectdialog.moc"

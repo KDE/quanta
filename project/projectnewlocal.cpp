@@ -231,16 +231,14 @@ void ProjectNewLocal::slotAddFolder()
 //I think this is a KDE bug
   QExtFileInfo::createDir( baseURL );
   KURL dirURL ;
-  if (KDE_VERSION < 308)
-  {
+  #if KDE_VERSION < 308
     QString dirName = KFileDialog::getExistingDirectory(
 	   	baseURL.url(),  this, i18n("Insert Directory in Project"));
     QuantaCommon::setUrl(dirURL, dirName);
-  } else
-  {
+  #else
      dirURL = KFileDialog::getExistingURL(
 	   	baseURL.url(),  this, i18n("Insert Directory in Project"));
-  }
+  #endif
 
 	if ( !dirURL.isEmpty() )
   {
