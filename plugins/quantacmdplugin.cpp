@@ -78,8 +78,17 @@ bool QuantaCmdPlugin::load()
 
   QString args = arguments();
   if (!args.isEmpty())
-     args = KProcess::quote(args);
-
+  {
+    //FIXME: This will not work if the arguments contain spaces, but will
+    //do it for now, until the plugin system is corrected
+    QStringList argsList = QStringList::split(" ", args);
+    args = "";
+    for (uint i = 0; i < argsList.count(); i++)
+    {
+      args += KProcess::quote(argsList[i])+" ";
+    }
+  }
+  
   /* TODO
   QString text = quantaApp->getDoc()->write()->editIf->text();
   args.replace(QRegExp("document"), text);
