@@ -2324,12 +2324,11 @@ void QuantaApp::slotLoadToolbar()
 /** Load an user toolbar from the disk. */
 void QuantaApp::slotLoadGlobalToolbar()
 {
- KURL url;
-
- url = KFileDialog::getOpenURL(qConfig.globalDataDir +resourceDir + "toolbars/", "*"+toolbarExtension+"\n*", this);
- if (! url.isEmpty())
+ KURL::List urls = KFileDialog::getOpenURLs(qConfig.globalDataDir +resourceDir + "toolbars/", "*"+toolbarExtension+"\n*", this);
+ if (!urls.isEmpty())
  {
-   slotLoadToolbarFile(url);
+   for (KURL::List::ConstIterator it = urls.constBegin(); it != urls.constEnd(); ++it)
+      slotLoadToolbarFile(*it);
  }
 }
 
