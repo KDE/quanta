@@ -2225,7 +2225,7 @@ bool QuantaApp::saveToolbar(bool localToolbar, const QString& toolbarToSave, con
     if (tarName.isEmpty())
     {
       KMessageBox::error(this, i18n("An error happened while saving the \"%1\" toolbar.\n" \
-      "Check that you have write permissions for \"%2\"").arg(toolbarName).arg(url.prettyURL().remove("file:")));
+      "Check that you have write permissions for \"%2\"").arg(toolbarName).arg(tarName.prettyURL().remove("file:")));
       return false;
     }
     if (!localToolbar)
@@ -3004,7 +3004,9 @@ void QuantaApp::slotParsingDTDChanged(const QString& newDTDName)
 {
   if (m_view->writeExists())
   {
-    m_view->write()->setParsingDTD(newDTDName);
+    Document *w =  m_view->write();
+    w->setParsingDTD(newDTDName);
+    w->setChanged(true);
     reparse(false);
   }
 }

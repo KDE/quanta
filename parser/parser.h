@@ -44,10 +44,8 @@ struct DTDListNode {
   };
 
 struct GroupElement{
-    /* The node which point to the exact place inside the parentNode */
-    Node *node;
     /*The node which contains the element */
-    Node *originalNode;
+    Node *node;
     /*The parent node indicating the beginning of a structure */
     Node *parentNode;
     bool global;
@@ -101,7 +99,7 @@ public:
   void parseForXMLGroup(Node *node);
   void parseForScriptGroup(Node *node);
 
-  QMap<QString, GroupElementMapList> m_groups; //a list of groups (variables, inclusions)
+  GroupElementMapList m_groups; //a list of groups (variables, inclusions)
   QStringList includedFiles;
   QPtrList<DTDStruct> includedFilesDTD;
   IncludedGroupElementsMap includedMap;

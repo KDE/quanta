@@ -51,6 +51,7 @@ Parser::Parser()
   m_node = 0L;
   oldMaxLines = 0;
   includeWatch = 0L;
+  m_groups.clear();
 }
 
 Parser::~Parser()
@@ -664,7 +665,7 @@ Node *Parser::parse(Document *w)
       m_node = parseArea(0, 0, maxLines, w->editIf->lineLength(maxLines), &lastNode);
   kdDebug(24000) << "New parser ("<< maxLines << " lines): " << t.elapsed() << " ms\n";
 //  t.restart();
-  parseForGroups();
+  //parseForGroups();
 //  kdDebug(24000) << "Group parser " << t.elapsed() << " ms\n";
   t.restart();
   parseIncludedFiles();
@@ -1552,7 +1553,7 @@ Node *Parser::rebuild(Document *w)
  }
   kdDebug(24000) << "Rebuild: " << t.elapsed() << " ms \n";
 //  t.restart();
-  parseForGroups();
+  //parseForGroups();
 //  kdDebug(24000) << "Group parser " << t.elapsed() << " ms\n";
  /*
  treeSize = 0;
@@ -1565,18 +1566,6 @@ Node *Parser::rebuild(Document *w)
 
 void Parser::clearGroups()
 {
-  QMap<QString, GroupElementMapList>::Iterator groupIt;
-  for (groupIt = m_groups.begin(); groupIt != m_groups.end(); ++groupIt)
-  {
-    GroupElementMapList::Iterator it;
-    for (it = groupIt.data().begin(); it != groupIt.data().end(); ++it)
-    {
-      for (uint i = 0 ; i < it.data().count(); i++)
-      {
-        delete it.data()[i].node;
-      }
-    }
-  }
   m_groups.clear();
   includedFiles.clear();
   includedFilesDTD.clear();
@@ -1587,7 +1576,7 @@ void Parser::clearGroups()
 
 void Parser::parseForGroups()
 {
-
+/*
   clearGroups();
   KURL baseURL = QExtFileInfo::path(write->url());
   GroupElementList* groupElementList;
@@ -1675,7 +1664,7 @@ void Parser::parseForGroups()
     }
     //Go to the next node
     currentNode = currentNode->nextSibling();
-  }
+  } */
 }
 
 
@@ -1812,7 +1801,6 @@ void Parser::parseIncludedFile(const QString& fileName, DTDStruct *dtd)
                   GroupElement groupElement;
                   groupElement.node = node;
                   groupElement.parentNode = 0L;
-                  groupElement.originalNode = 0L;
                   GroupElementList *groupElementList = &(*elements)[group.name][s];
                   groupElementList->append(groupElement);
                 }
@@ -1916,7 +1904,6 @@ void Parser::parseForXMLGroup(Node *node)
 
 void Parser::parseForScriptGroup(Node *node)
 {
-  return;
   int bl, bc, el, ec;
   int pos;
   QString title;
@@ -1924,7 +1911,6 @@ void Parser::parseForScriptGroup(Node *node)
   StructTreeGroup group;
   GroupElement groupElement;
   GroupElementList* groupElementList;
-  GroupElementMapList* groupElementMapList;
   KURL baseURL = QExtFileInfo::path(write->url());
   QString str = node->tag->cleanStr;
   QString tagStr = node->tag->tagStr();
@@ -1935,7 +1921,6 @@ void Parser::parseForScriptGroup(Node *node)
     group = dtd->structTreeGroups[i];
     if (!group.hasSearchRx)
       continue;
-    groupElementMapList = &m_groups[group.name];
     pos = 0;
     while (pos != -1)
     {
@@ -1960,24 +1945,21 @@ void Parser::parseForScriptGroup(Node *node)
         title.remove(group.clearRx);
         newTag->name = title;
         node->groupTag = newTag;
-        Node *newNode = new Node(0L);
-        newNode->tag = newTag;
-        groupElement.node = newNode;
-        groupElement.originalNode = node;
-        node = groupElement.originalNode;
-        while (node && node->tag->dtd == dtd && node->tag->type != Tag::ScriptStructureBegin)
+        groupElement.node = node;
+        Node *tmpNode = node;
+        while (tmpNode && tmpNode->tag->dtd == dtd && tmpNode->tag->type != Tag::ScriptStructureBegin)
         {
-          node = node->parent;
+          tmpNode = tmpNode->parent;
         }
-        if (node && node->tag->type == Tag::ScriptStructureBegin)
+        if (tmpNode && tmpNode->tag->type == Tag::ScriptStructureBegin)
         {
-          groupElement.parentNode = node;
+          groupElement.parentNode = tmpNode;
         } else
         {
           groupElement.parentNode = 0L;
         }
         groupElement.global = false;
-        groupElementList = & (*groupElementMapList)[title];
+        groupElementList = & (m_groups[group.name+"|"+title]);
         groupElementList->append(groupElement);
         if (group.hasFileName && group.parseFile)
         {

@@ -790,11 +790,14 @@ QValueList<KTextEditor::CompletionEntry>* Document::getGroupCompletions(Node *no
   if (!group.removeFromAutoCompleteWordRx.pattern().isEmpty())
       word.remove(group.removeFromAutoCompleteWordRx);
   completion.userdata = word;
-  GroupElementMapList map = parser->m_groups[group.name];
+  GroupElementMapList map = parser->m_groups;
   GroupElementMapList::Iterator it;
+  QString str = group.name;
+  str.append("|");
+  str.append(word);
   for ( it = map.begin(); it != map.end(); ++it )
   {
-    if (it.key().startsWith(word) && it.key() != word )
+    if (it.key().startsWith(str) && it.key() != str )
     {
       GroupElementList elementList = it.data();
       for (uint i = 0; i < elementList.count(); i++)
@@ -1737,6 +1740,11 @@ bool Document::hasChanged()
   bool b = changed;
   changed = false;
   return b;
+}
+
+void Document::setChanged(bool newStatus)
+{
+  changed = newStatus;
 }
 
 void Document::paste()

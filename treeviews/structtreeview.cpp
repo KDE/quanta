@@ -176,7 +176,9 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
         item->setVisible(false);
       }
       currentNode->listItem = item;
-      if (currentNode->groupTag && groupIds.contains(currentNode->group->name))
+      if (currentNode->tag->dtd->family == Xml &&
+          currentNode->groupTag &&
+          groupIds.contains(currentNode->group->name))
       {
         XMLStructGroup *group = currentNode->group;
         StructTreeTag *groupItem = groups[groupIds[group->name]];
@@ -262,24 +264,28 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
     for (uint i = 0; i < groupsCount; i++)
     {
       group = m_parsingDTD->structTreeGroups[i];
-      groupElementMapList = &(parser->m_groups[group.name]);
+      groupElementMapList = &parser->m_groups;
+      QString name = group.name+"|";
       for (it = groupElementMapList->begin(); it != groupElementMapList->end(); ++it)
       {
         insertUnder = groups[i];
         insertAfter = insertUnder;
         bool first = true;
-        groupElementList = & (it.data());
-        for (uint j = 0; j < groupElementList->count(); j++)
+        if (it.key().startsWith(name))
         {
-          item = new StructTreeTag(static_cast<StructTreeTag*>(insertUnder), (*groupElementList)[j].node, (*groupElementList)[j].node->tag->name, insertAfter);
-          static_cast<StructTreeTag*>(item)->hasOpenFileMenu = group.hasFileName;
-          static_cast<StructTreeTag*>(item)->fileNameRx = group.fileNameRx;
-          if (first)
+          groupElementList = & (it.data());
+          for (uint j = 0; j < groupElementList->count(); j++)
           {
-            insertUnder = item;
-            first = false;
+            item = new StructTreeTag(static_cast<StructTreeTag*>(insertUnder), (*groupElementList)[j].node, (*groupElementList)[j].node->tag->name, insertAfter);
+            static_cast<StructTreeTag*>(item)->hasOpenFileMenu = group.hasFileName;
+            static_cast<StructTreeTag*>(item)->fileNameRx = group.fileNameRx;
+            if (first)
+            {
+              insertUnder = item;
+              first = false;
+            }
+            insertAfter = item;
           }
-          insertAfter = item;
         }
       }
       for (externalIt = parser->includedMap.begin(); externalIt != parser->includedMap.end(); ++externalIt)
@@ -301,55 +307,6 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
             insertUnder->sortChildItems(0, true);
       }
       groups[i]->sortChildItems(0, true);
-    }
-  } else
-  {
-    XMLStructGroup group;
-    QMap<QString, XMLStructGroup>::ConstIterator xmlGroupIt;
-    uint i = 0;
-    for (xmlGroupIt = m_parsingDTD->xmlStructTreeGroups.begin(); xmlGroupIt != m_parsingDTD->xmlStructTreeGroups.end(); ++xmlGroupIt)
-    {
-      group = xmlGroupIt.data();
-  /*    groupElementMapList = &(parser->m_groups[group.name]);
-      for (it = groupElementMapList->begin(); it != groupElementMapList->end(); ++it)
-      {
-        insertUnder = groups[i];
-        insertAfter = insertUnder;
-        bool first = true;
-        groupElementList = & (it.data());
-        for (uint j = 0; j < groupElementList->count(); j++)
-        {
-          item = new StructTreeTag(static_cast<StructTreeTag*>(insertUnder), (*groupElementList)[j].node, (*groupElementList)[j].node->tag->name, insertAfter);
-          static_cast<StructTreeTag*>(item)->hasOpenFileMenu = group.hasFileName;
-          static_cast<StructTreeTag*>(item)->fileNameRx = group.fileNameRx;
-          if (first)
-          {
-            insertUnder = item;
-            first = false;
-          }
-          insertAfter = item;
-        }
-      } */
-      for (externalIt = parser->includedMap.begin(); externalIt != parser->includedMap.end(); ++externalIt)
-      {
-        insertUnder = new StructTreeTag(static_cast<StructTreeTag*>(groups[i]), 0L, externalIt.key(), groups[i]);
-        insertAfter = insertUnder;
-        IncludedGroupElements elements = externalIt.data();
-        GroupElementMapList::Iterator elIt;
-        for (elIt = elements[group.name].begin(); elIt != elements[group.name].end(); ++elIt)
-        {
-          item = new StructTreeTag(static_cast<StructTreeTag*>(insertUnder), elIt.data()[0].node, elIt.key(), insertAfter);
-          static_cast<StructTreeTag*>(item)->hasOpenFileMenu = group.hasFileName;
-          static_cast<StructTreeTag*>(item)->fileNameRx = group.fileNameRx;
-          insertAfter = item;
-        }
-        if (!insertUnder->firstChild())
-            delete insertUnder;
-        else
-            insertUnder->sortChildItems(0, true);
-      }
-      groups[i]->sortChildItems(0, true);
-      i++;
     }
   }
 }
