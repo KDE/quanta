@@ -1105,7 +1105,7 @@ void QuantaApp::slotShowKafkaPart()
     kafkaPart->openDocument(m_view->write()->url());
     previousWidgetList.push_back(s->id(s->visibleWidget()));
     s->raiseWidget(4);*/
-    
+
     kafkaPart->showDomTree();
     Document *w = m_view->write();
     w->parseVariables();
@@ -1129,7 +1129,7 @@ void QuantaApp::slotShowKafkaPart()
         {
           case Tag::Unknown:
           break;
-          
+
           case Tag::XmlTag:
             if(!_node->tag->single && !_node->next->closesPrevious)
             {
@@ -1145,10 +1145,10 @@ void QuantaApp::slotShowKafkaPart()
             _node->kafkaNode = &newNode;
             kdDebug(25001)<< "node added : " << newNode.nodeName().string() << endl;
             break;
-          
+
           case Tag::XmlTagEnd:
-          break;  
-          
+          break;
+
           case Tag::Text:
             newNode = kafkaPart->createNode("TEXT");
             if (newNode.isNull())
@@ -1160,38 +1160,38 @@ void QuantaApp::slotShowKafkaPart()
             _node->kafkaNode = &newNode;
             kdDebug(25001)<< "node added : " << newNode.nodeName().string() << endl;
             break;
-          
+
           case Tag::Comment:
           //TODO:Create little icons for Comments
           break;
-          
+
           case Tag::CSS:
           //TODO:create little icons for CSS?
           break;
-          
+
           case Tag::ScriptTag:
           //TODO:create little icons
           break;
-          
+
           case Tag::ScriptStructureBegin:
           //TODO:create little icons
           break;
-          
+
           case Tag::ScriptStructureEnd:
           break;
-          
+
           case Tag::NeedsParsing:
           break;
-          
+
           case Tag::Empty:
           break;
-          
+
           case Tag::Skip:
           break;
         }
 
       }
-      
+
       //goto next node
       if(goingUp)
       {
@@ -1212,9 +1212,9 @@ void QuantaApp::slotShowKafkaPart()
         else
         {
           _node = _node->parent;
-          goingUp = true; 
+          goingUp = true;
         }
-      } 
+      }
     }
     kafkaPart->finishedLoading();
     s->raiseWidget(4);
@@ -1236,7 +1236,7 @@ void QuantaApp::slotShowKafkaPart()
 {
 
 }*/
-#endif  
+#endif
 
 void QuantaApp::slotShowProjectTree()
 {
@@ -1573,7 +1573,10 @@ QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomEleme
 
     if (tb->minimumSizeHint().height() > 20)
     {
-      toolbarTab->setFixedHeight(tb->minimumSizeHint().height() + toolbarTab->tabHeight());
+      if (toolbarTab->tabHeight() < 30)
+        toolbarTab->setFixedHeight(tb->minimumSizeHint().height() + 30);
+      else
+        toolbarTab->setFixedHeight(tb->minimumSizeHint().height() + toolbarTab->tabHeight());
       tb->adjustSize();
       tb->setGeometry(0,0, toolbarTab->width(), tb->height());
     } else

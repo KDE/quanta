@@ -15,12 +15,13 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "tag.h"
+#include <ctype.h>
+
 #include <qdict.h>
 #include <qstring.h>
 #include <qcstring.h>
-#include <ctype.h>
 
+#include "tag.h"
 #include "../document.h"
 
 Tag::Tag()

@@ -45,8 +45,16 @@ Node::~Node()
       parent->child = 0L;
   if (removeAll)
   {
-   if (child) { delete child; child = 0L;}
-   if (next)  { delete next; next = 0L;}
+    if (child)
+    {
+      delete child;
+      child = 0L;
+    }
+    if (next)
+    {
+      delete next;
+      next = 0L;
+    }
   }
   if ( tag ) { delete tag; tag = 0L;}
 }
