@@ -23,6 +23,7 @@
 #include <qwidgetstack.h>
 #include <qtabwidget.h>
 #include <qfile.h>
+#include <qinputdialog.h>
 #include <qlineedit.h>
 #include <qcheckbox.h>
 #include <qtabbar.h>
@@ -46,6 +47,7 @@
 #include <kkeydialog.h>
 #include <kstddirs.h>
 #include <klibloader.h>
+#include <klineeditdlg.h>
 #include <kdockwidget.h>
 #include <kstatusbar.h>
 #include <kprocess.h>
@@ -80,7 +82,6 @@
 #include "dialogs/parseroptions.h"
 #include "dialogs/debuggeroptionss.h"
 #include "dialogs/grepdialog.h"
-#include "dialogs/toolbarsdlg.h"
 
 #include "treeviews/filestreeview.h"
 #include "treeviews/fileslistview.h"
@@ -1424,18 +1425,17 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
       do
       {
         KMessageBox::information(this,i18n("A toolbar with the same name already exists.\n Please rename the loaded toolbar."),i18n("Name conflict"));
-        ToolBarsDlg * dlg = new ToolBarsDlg(this, i18n("Rename toolbar"));
-        dlg->nameEdit->setText(name);
-        if (dlg->exec())
+
+        KLineEditDlg dlg(i18n("Enter toolbar name:"), name, this);
+        dlg.setCaption(i18n("Rename Toolbar"));
+        if (dlg.exec())
         {
-          newName =  dlg->nameEdit->text();
+          newName =  dlg.text();
         } else
         {
           KMessageBox::information(this,i18n("The rename was canceled.\n The toolbar won't be loaded."),i18n("Name conflict"));
-          delete dlg;
           return;
         }
-        delete dlg;
       } while (name == newName);
       name = newName;
       found = true;
@@ -1632,28 +1632,28 @@ void QuantaApp::slotSaveToolbar(bool localToolbar, QString toolbarToSave)
   if (toolbarToSave.isEmpty())
   {
     QTabWidget *tb = view->toolbarTab;
-    ToolBarsDlg * dlg = new ToolBarsDlg(this, i18n("Save Toolbar"));
-    QComboBox * combo = new QComboBox(dlg);
-    dlg->nameEdit->hide();
-    combo->setGeometry(QRect(135,25,115,24));
+
+    QStringList lst;
+    int current=0;
     for (int i = 0; i < tb->count(); i++)
     {
-      combo->insertItem(tb->label(i));
-      if ( tb->tabLabel(tb->currentPage()) == tb->label(i) ) combo->setCurrentItem(i);
+      lst << tb->label(i);
+      if ( tb->tabLabel(tb->currentPage()) == tb->label(i) ) current=i;
     }
 
-    if (! dlg->exec())
-    {
-      delete dlg;
+    bool ok = FALSE;
+    QString res = QInputDialog::getItem(
+                    i18n( "Save Toolbar" ),
+                    i18n( "Please select a toolbar:" ), lst, current, FALSE, &ok, this );
+    if ( !ok )
       return;
-    }
-    toolbarName = combo->currentText().lower();
-    delete dlg;
+
+    toolbarName = res;
   } else
   {
     toolbarName = toolbarToSave;
   }
- 
+
 
   do {
     query = KMessageBox::Yes;
@@ -1701,12 +1701,12 @@ void QuantaApp::slotSaveProjectToolbar()
 /** Adds a new, empty toolbar. */
 void QuantaApp::slotAddToolbar()
 {
- ToolBarsDlg * dlg = new ToolBarsDlg(this, i18n("New Toolbar"));
- dlg->nameEdit->setText(i18n("User_%1").arg(userToolbarsCount));
- if (dlg->exec())
+ KLineEditDlg dlg(i18n("Enter toolbar name:"), i18n("User_%1").arg(userToolbarsCount), this);
+ dlg.setCaption(i18n("New Toolbar"));
+ if (dlg.exec())
  {
   userToolbarsCount++;
-  QString name = dlg->nameEdit->text();
+  QString name = dlg.text();
 
 
   KTempFile* tempFile = new KTempFile();
@@ -1725,8 +1725,6 @@ void QuantaApp::slotAddToolbar()
   toolbarDomList.insert(name.lower(), dom);
 
  }
-
- delete dlg;
 }
 
 
@@ -1736,47 +1734,48 @@ void QuantaApp::slotRemoveToolbar()
  QTabWidget *tb = view->toolbarTab;
  int i;
 
- ToolBarsDlg * dlg = new ToolBarsDlg(this, i18n("Remove Toolbar"));
- QComboBox * combo = new QComboBox(dlg);
- dlg->nameEdit->hide();
- combo->setGeometry(QRect(135,25,115,24));
- int j =0;
+ QStringList lst;
+ int current=0, j =0;
  for (i = 0; i < tb->count(); i++)
  {
   if (toolbarGUIClientList[tb->label(i).lower()])
   {
-    combo->insertItem(tb->label(i));
-    if ( tb->tabLabel(tb->currentPage()) == tb->label(i) ) combo->setCurrentItem(j);
+    lst << tb->label(i);
+    if ( tb->tabLabel(tb->currentPage()) == tb->label(i) ) current=j;
     j++;
   }
  }
 
- if (dlg->exec())
+ bool ok = FALSE;
+ QString res = QInputDialog::getItem(
+                 i18n( "Remove Toolbar" ),
+                 i18n( "Please select a toolbar:" ), lst, current, FALSE, &ok, this );
+
+ if (ok)
  {
 
-   KXMLGUIClient* toolbarGUI = toolbarGUIClientList[combo->currentText().lower()];
+   KXMLGUIClient* toolbarGUI = toolbarGUIClientList[res.lower()];
 
    if (toolbarGUI)
    {
     //check if the toolbar's XML GUI was modified or not
-    QString s1 = toolbarDomList[combo->currentText().lower()]->toString();
+    QString s1 = toolbarDomList[res.lower()]->toString();
     QString s2 = toolbarGUI->domDocument().toString();
     if ( s1 != s2 )
     {
-     if (KMessageBox::questionYesNo(this, i18n("The toolbar \"%1\" was modified. Do you want to save before remove?").arg(combo->currentText()),
+     if (KMessageBox::questionYesNo(this, i18n("The toolbar \"%1\" was modified. Do you want to save before remove?").arg(res),
              i18n("Save Toolbar")) == KMessageBox::Yes)
      {
-       slotSaveToolbar(true, combo->currentText().lower() );
+       slotSaveToolbar(true, res.lower() );
      }
     }
 
     factory()->removeClient(toolbarGUI);
-    toolbarGUIClientList.remove(combo->currentText().lower());
-    toolbarDomList.remove(combo->currentText().lower());
+    toolbarGUIClientList.remove(res.lower());
+    toolbarDomList.remove(res.lower());
    }
  }
 
- delete dlg;
 }
 
 
@@ -1784,23 +1783,24 @@ void QuantaApp::slotRemoveToolbar()
 void QuantaApp::slotSendToolbar()
 {
   QTabWidget *tb = view->toolbarTab;
-  ToolBarsDlg * dlg = new ToolBarsDlg(this, i18n("Send Toolbar"));
-  QComboBox * combo = new QComboBox(dlg);
-  dlg->nameEdit->hide();
-  combo->setGeometry(QRect(135,25,115,24));
+
+  QStringList lst;
+  int current=0;
   for (int i = 0; i < tb->count(); i++)
   {
-    combo->insertItem(tb->label(i));
-    if ( tb->tabLabel(tb->currentPage()) == tb->label(i) ) combo->setCurrentItem(i);
+    lst << tb->label(i);
+    if ( tb->tabLabel(tb->currentPage()) == tb->label(i) ) current=i;
   }
 
-  if (! dlg->exec())
-  {
-    delete dlg;
+  bool ok = FALSE;
+  QString res = QInputDialog::getItem(
+                  i18n( "Send Toolbar" ),
+                  i18n( "Please select a toolbar:" ), lst, current, FALSE, &ok, this );
+  
+  if (!ok)
     return;
-  }
-  QString toolbarName = combo->currentText().lower();
-  delete dlg;
+
+  QString toolbarName = res.lower();
 
   QStringList toolbarFile;
 
