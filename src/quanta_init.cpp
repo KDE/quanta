@@ -884,8 +884,11 @@ void QuantaInit::initActions()
     new KAction(i18n("Send Toolbar in E-&Mail..."), 0, m_quanta, SLOT(slotSendToolbar()), ac, "toolbars_send");
 
     m_quanta->showDTDToolbar=new KToggleAction(i18n("Show DTD Toolbar"), 0, ac, "view_dtd_toolbar");
-    connect(m_quanta->showDTDToolbar, SIGNAL(toggled(bool)), m_quanta, SLOT(slotToggleDTDToolbar(bool)));
 
+    connect(m_quanta->showDTDToolbar, SIGNAL(toggled(bool)), m_quanta, SLOT(slotToggleDTDToolbar(bool)));
+#if KDE_IS_VERSION(3,2,90)
+    m_quanta->showDTDToolbar->setCheckedState(i18n("Hide DTD Toolbar"));
+#endif
 
     new KAction(i18n("Complete Text"), CTRL+Key_Space,
                 m_quanta, SLOT(slotShowCompletion()), ac,"show_completion");
