@@ -391,6 +391,7 @@ void QuantaView::slotTagEditTable()
   uint line, col;
   w->viewCursorIf->cursorPositionReal(&line, &col);
   int bl, bc, el, ec;
+  int bLine, bCol, eLine, eCol;
   QStringList l;
   QStringList l2;
   for (QStringList::Iterator it = list.begin(); it != list.end(); ++it)
@@ -405,7 +406,10 @@ void QuantaView::slotTagEditTable()
     if (QuantaCommon::isBetween(line, col, bl, bc, el, ec) == 0)
     {
       tableExists = true;
-      break;
+      bLine = bl;
+      bCol = bc;
+      eLine = el;
+      eCol = ec;
     }
     l.remove(l.begin());
   }
@@ -414,7 +418,7 @@ void QuantaView::slotTagEditTable()
   if (tableExists)
   {
     editor.setBaseURL(baseURL());
-    editor.setTableArea(bl, bc, el, ec);
+    editor.setTableArea(bLine, bCol, eLine, eCol);
   }
   if (editor.exec())
   {

@@ -129,10 +129,10 @@
                             <cstring>textLabel5</cstring>
                         </property>
                         <property name="text">
-                            <string>Table data (double click on a cell to edit its properties):</string>
+                            <string>Table &amp;data</string>
                         </property>
                         <property name="buddy" stdset="0">
-                            <cstring>tableContent</cstring>
+                            <cstring>tableData</cstring>
                         </property>
                     </widget>
                     <widget class="QLabel" row="2" column="0">
@@ -140,10 +140,11 @@
                             <cstring>textLabel3</cstring>
                         </property>
                         <property name="text">
-                            <string>Caption:</string>
+                            <string>C&amp;aption:</string>
+
                         </property>
                         <property name="buddy" stdset="0">
-                            <cstring>lineEdit1</cstring>
+                            <cstring>captionText</cstring>
                         </property>
                     </widget>
                     <widget class="QLabel" row="1" column="0">
@@ -151,7 +152,7 @@
                             <cstring>textLabel2</cstring>
                         </property>
                         <property name="text">
-                            <string>Columns:</string>
+                            <string>Co&amp;lumns:</string>
                         </property>
                         <property name="buddy" stdset="0">
                             <cstring>colSpinBox</cstring>
@@ -162,7 +163,7 @@
                             <cstring>textLabel1</cstring>
                         </property>
                         <property name="text">
-                            <string>Rows:</string>
+                            <string>&amp;Rows:</string>
                         </property>
                         <property name="buddy" stdset="0">
                             <cstring>rowSpinBox</cstring>
@@ -242,7 +243,8 @@
                             <cstring>pushButton7</cstring>
                         </property>
                         <property name="text">
-                            <string>Table Properties</string>
+                            <string>&amp;Table Properties</string>
+
                         </property>
                     </widget>
                     <widget class="KPushButton" row="1" column="3">
@@ -250,7 +252,8 @@
                             <cstring>pushButton7_2</cstring>
                         </property>
                         <property name="text">
-                            <string>Body Properties</string>
+                            <string>&amp;Body Properties</string>
+
                         </property>
                     </widget>
                 </grid>
@@ -330,10 +333,11 @@
                                     <cstring>textLabel4_2</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Header rows:</string>
+                                    <string>Header &amp;rows:</string>
+
                                 </property>
                                 <property name="buddy" stdset="0">
-                                    <cstring>spinBox5_2</cstring>
+                                    <cstring>headerRowSpinBox</cstring>
                                 </property>
                             </widget>
                             <widget class="QSpinBox" row="1" column="1">
@@ -346,10 +350,10 @@
                                     <cstring>textLabel4</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Header columns:</string>
+                                    <string>Header co&amp;lumns:</string>
                                 </property>
                                 <property name="buddy" stdset="0">
-                                    <cstring>spinBox5</cstring>
+                                    <cstring>headerColSpinBox</cstring>
                                 </property>
                             </widget>
                             <widget class="QLabel" row="2" column="0" rowspan="1" colspan="3">
@@ -357,10 +361,10 @@
                                     <cstring>textLabel6</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Header data (double click on a cell to edit its properties):</string>
+                                    <string>Header &amp;data:</string>
                                 </property>
                                 <property name="buddy" stdset="0">
-                                    <cstring>table3</cstring>
+                                    <cstring>headerTableData</cstring>
                                 </property>
                             </widget>
                         </grid>
@@ -370,7 +374,7 @@
                             <cstring>headerCheckBox</cstring>
                         </property>
                         <property name="text">
-                            <string>Insert table header</string>
+                            <string>&amp;Insert table header</string>
                         </property>
                     </widget>
                     <spacer row="0" column="1">
@@ -398,7 +402,8 @@
                             <bool>false</bool>
                         </property>
                         <property name="text">
-                            <string>Header Properties</string>
+                            <string>&amp;Header Properties</string>
+
                         </property>
                     </widget>
                 </grid>
@@ -461,10 +466,11 @@
                                     <cstring>textLabel4_2_2</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Footer rows:</string>
+                                    <string>Footer &amp;rows:</string>
+
                                 </property>
                                 <property name="buddy" stdset="0">
-                                    <cstring>spinBox5_2</cstring>
+                                    <cstring>footerRowSpinBox</cstring>
                                 </property>
                             </widget>
                             <widget class="QSpinBox" row="1" column="1">
@@ -477,10 +483,10 @@
                                     <cstring>textLabel4_3</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Footer columns:</string>
+                                    <string>Footer co&amp;lumns:</string>
                                 </property>
                                 <property name="buddy" stdset="0">
-                                    <cstring>spinBox5</cstring>
+                                    <cstring>footerColSpinBox</cstring>
                                 </property>
                             </widget>
                             <widget class="QLabel" row="2" column="0" rowspan="1" colspan="3">
@@ -488,10 +494,10 @@
                                     <cstring>textLabel6_2</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Footer data (double click on a cell to edit its properties):</string>
+                                    <string>Footer &amp;data:</string>
                                 </property>
                                 <property name="buddy" stdset="0">
-                                    <cstring>table3</cstring>
+                                    <cstring>footerTableData</cstring>
                                 </property>
                             </widget>
                             <spacer row="0" column="2">
@@ -518,7 +524,7 @@
                             <cstring>footerCheckBox</cstring>
                         </property>
                         <property name="text">
-                            <string>Insert table footer</string>
+                            <string>&amp;Insert table footer</string>
                         </property>
                     </widget>
                     <spacer row="0" column="1">
@@ -546,7 +552,8 @@
                             <bool>false</bool>
                         </property>
                         <property name="text">
-                            <string>Footer Properties</string>
+                            <string>&amp;Footer properties:</string>
+
                         </property>
                     </widget>
                 </grid>
