@@ -26,7 +26,7 @@
   <kdevautoproject>
     <general>
       <mainprogram>quanta</mainprogram>
-      <useconfiguration>default</useconfiguration>
+      <useconfiguration>all</useconfiguration>
       <activetarget>quanta/treeviews/libtreeviews.la</activetarget>
     </general>
     <configure>
@@ -121,6 +121,22 @@
         <cxxflags>-DKDE_NO_COMPAT -DQT_NO_COMPAT</cxxflags>
         <f77flags/>
       </withoutkafka>
+      <final>
+        <configargs>--enable-debug=full --without-kommander --prefix=/opt/kde3 --enable-final</configargs>
+        <builddir>/home/andris/development/build/kde-head/kdewebdev-final</builddir>
+        <topsourcedir>/home/andris/development/sources/kde-head/kdewebdev</topsourcedir>
+        <cppflags/>
+        <ldflags/>
+        <ccompiler>kdevgccoptions</ccompiler>
+        <cxxcompiler>kdevgppoptions</cxxcompiler>
+        <f77compiler>kdevpgf77options</f77compiler>
+        <ccompilerbinary/>
+        <cxxcompilerbinary/>
+        <f77compilerbinary/>
+        <cflags>-DKDE_NO_COMPAT -DQT_NO_COMPAT</cflags>
+        <cxxflags>-DKDE_NO_COMPAT -DQT_NO_COMPAT</cxxflags>
+        <f77flags/>
+      </final>
     </configurations>
     <makeenvvars>
       <envvar value="1" name="WANT_AUTOCONF_2_5" />
@@ -217,10 +233,10 @@
   </kdevcvs>
   <kdevfilecreate>
     <filetypes>
-      <type icon="source_cpp" ext="cpp" name="C++ source" create="template" >
+      <type icon="source_cpp" ext="cpp" create="template" name="C++ source" >
         <descr>A new empty C++ file.</descr>
       </type>
-      <type icon="source_h" ext="h" name="C/C++ header" create="template" >
+      <type icon="source_h" ext="h" create="template" name="C/C++ header" >
         <descr>A new empty header file for C or C++.</descr>
       </type>
     </filetypes>
