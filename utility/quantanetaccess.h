@@ -69,7 +69,7 @@ public:
 
   static void checkProjectInsert(const KURL& target, QWidget* window, bool confirm = true);
 
-  static bool checkProjectRemove(const KURL& target, QWidget* window, bool confirm = true);
+  static bool checkProjectRemove(const KURL& target, QWidget* window, bool confirm = true, bool remove = true);
 
   static bool checkProjectDel(const KURL& target, QWidget* window, bool confirm = true);
 
