@@ -86,6 +86,7 @@
     </attr>
 
 <children>
+<child name="#text" />
 <child name="abbr" />
 <child name="applet" />
 <child name="acronym" />

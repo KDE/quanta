@@ -53,6 +53,8 @@
         <textlocation col="0" row="5" />
         <location col="1" row="5" colspan="2" />
     </attr>
-
+    <children>
+	    <child name="#text" />
+    </children>
 </tag>
 </TAGS>

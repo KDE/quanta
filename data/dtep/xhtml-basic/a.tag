@@ -49,6 +49,7 @@
     <attr name="tabindex" type="input" />
 
 <children>
+<child name="#text" />
 <child name="abbr" />
 <child name="acronym" />
 <child name="br" />

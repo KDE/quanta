@@ -33,6 +33,7 @@
     </attr>
 
 <children>
+<child name="#text" />
 <child name="abbr" />
 <child name="acronym" />
 <child name="address" />

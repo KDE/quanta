@@ -4,6 +4,7 @@
 <tag name="div" hasCore="1" hasI18n="1">
 
 <children>
+<child name="#text" />
 <child name="a" />
 <child name="abbr" />
 <child name="acronym" />

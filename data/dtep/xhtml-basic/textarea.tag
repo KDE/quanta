@@ -23,4 +23,7 @@
 
     <attr name="accesskey" type="input" />
 </tag>
+<children>
+	<child name="#text" />
+</children>
 </TAGS>

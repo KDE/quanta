@@ -50,6 +50,8 @@
                 <item>preserve</item>
         </items>
     </attr>
-
+    <children>
+	    <child name="#text" />
+    </children>
 </tag>
 </TAGS>

@@ -116,6 +116,7 @@
     </stoppingtags>
 
 <children>
+<child name="#text" />
 <child name="a" />
 <child name="abbr" />
 <child name="acronym" />

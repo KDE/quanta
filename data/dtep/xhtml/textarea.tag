@@ -42,6 +42,8 @@
       <textlocation col="0" row="4" colspan="1" />
       <location col="1" row="4" colspan="3" />
     </attr>
-
+    <children>
+      <child name="#text" />
+    </children>
 </tag>
 </TAGS>
