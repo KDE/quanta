@@ -3,7 +3,7 @@
                              -------------------
     begin                : Thu Mar 16 2000
     copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky <pdima@mail.univ.kiev.ua>
-                           (C) 2001-2003 by Andras Mantia <amantia@kde.org>
+                           (C) 2001-2004 by Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -18,9 +18,32 @@
 #ifndef PROJECTPRIVATE_H
 #define PROJECTPRIVATE_H
 
+//qt includes
+#include <qmap.h>
+#include <qregexp.h>
+
+//app includes
+#include "project.h"
+#include "projectlist.h"
+
+class QWidgetStack;
+
+class KAction;
+class KActionCollection;
+class KConfig;
+class KDirWatch;
+class KRecentFilesAction;
+class KSelectAction;
+class KTempFile;
+
+class CopyTo;
+class ProjectNewGeneral;
+class ProjectNewLocal;
+class ProjectNewWeb;
+class ProjectNewFinal;
 class ProjectList;
 struct EventAction;
-typedef  QMap<QString, EventAction> EventActions;
+typedef QMap<QString, EventAction> EventActions;
 
 class ProjectPrivate
             : public QObject

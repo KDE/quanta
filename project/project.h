@@ -18,7 +18,7 @@
 #ifndef PROJECT_H
 #define PROJECT_H
 
-#include <qwidget.h>
+#include <qobject.h>
 
 #include "projecturl.h"
 

@@ -1,6 +1,6 @@
  Quanta's coding style is a real mess as it was written by many persons, and
 some had changed their style on-the-fly. ;-) From now on, if you add new code
-to Quanta please try to follow the below rules:
+to Quanta please follow the below rules:
 
 1. Use spaces instead of tabs.
 2. Indent with 2 spaces.
@@ -39,15 +39,17 @@ to Quanta please try to follow the below rules:
 18. Include the moc files in the .cpp files: use
         #include "qobject_derivated_class_file.moc"
       at the end of the cpp files.
-19. Avoid the usage of .ui.h files (implementing the slots in Designer). The reasons behind this rule 
+19. Avoid the usage of .ui.h files (implementing the slots in Designer). The reasons behind this rule
     are:
-	- the automake/autoconf framework won't detect if you make a change in the .ui.h file and the 
+	- the automake/autoconf framework won't detect if you make a change in the .ui.h file and the
 	  file won't be recompiled if you modify it. Aside of being annoying can lead to unexpected
 	  runtime and linking errors.
 	- it's nicer to edit the sources in KDevelop. ;-)
     So instead of using .ui.h, create a derived class, and implement the slots/methods there. You can
-    still create and connect slots in Designer.	
-	  
-    
+    still create and connect slots in Designer.
+20. Create a new file for each (non-trivial) class.
+21. Use forward declarations.
+22. Put the inclusion for the class's header file as the first inclusion in the implemenetation file.
+
 
 Last, but not least read the howto's and faq's on http://developer.kde.org
