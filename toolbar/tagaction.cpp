@@ -176,8 +176,13 @@ void TagAction::insertTag()
     connect( proc, SIGNAL(receivedStdout(   KProcess*,char*,int)), this,
                  SLOT(  slotGetScriptOutput(KProcess*,char*,int)));
 
-		connect( proc, SIGNAL(receivedStderr(   KProcess*,char*,int)), this,
+    connect( proc, SIGNAL(receivedStderr(   KProcess*,char*,int)), this,
                  SLOT(  slotGetScriptError(KProcess*,char*,int)));
+
+    if (scriptOutputDest == "message" || scriptErrorDest == "message")
+    {
+      quantaApp->slotShowBottDock(true);
+    }
 
     proc->start(KProcess::NotifyOnExit, KProcess::All);
 

@@ -225,7 +225,7 @@ public slots:
   /** Repaint preview ( slot ) */
   void slotViewRepaint();
 
-  void slotShowBottDock();
+  void slotShowBottDock(bool force = false);
   void slotShowFTabDock();
   void slotShowPTabDock();
   void slotShowTTabDock();

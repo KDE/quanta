@@ -1168,11 +1168,23 @@ void QuantaApp::slotShowPTabDock() { ptabdock->changeHideShowState();}
 void QuantaApp::slotShowTTabDock() { ttabdock->changeHideShowState();}
 void QuantaApp::slotShowSTabDock() { stabdock->changeHideShowState();}
 void QuantaApp::slotShowDTabDock() { dtabdock->changeHideShowState();}
-void QuantaApp::slotShowBottDock()
+void QuantaApp::slotShowBottDock(bool force)
 {
   if ( bottdock->parent() == 0L )
-       bottdock->manualDock(maindock, KDockWidget::DockBottom, 80);
-  else bottdock->changeHideShowState();
+  {
+    bottdock->manualDock(maindock, KDockWidget::DockBottom, 80);
+    showMessagesAction->setChecked(true);
+  }
+  else
+  {
+    if (!force)
+        bottdock->changeHideShowState();
+    else
+    {
+      showMessagesAction->setChecked(true);
+      bottdock->show();
+    }
+  }
 }
 
 void QuantaApp::settingsMenuAboutToShow()
