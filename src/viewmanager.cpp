@@ -175,10 +175,18 @@ void ViewManager::slotCloseOtherTabs()
 {
   KMdiChildView *currentView = quantaApp->activeWindow();
   KMdiIterator<KMdiChildView*> *it = quantaApp->createIterator();
-  KMdiChildView *view;
+  //save the children first to a list, as removing invalidates our iterator
+  QValueList<KMdiChildView *> children;
   for (it->first(); !it->isDone(); it->next())
   {
-      view = it->currentItem();
+      children.append(it->currentItem());
+  }
+  delete it;
+  KMdiChildView *view;
+  QValueListIterator<KMdiChildView *> childIt;
+  for (childIt = children.begin(); childIt != children.end(); ++childIt)
+  {
+      view = *childIt;
       if (view != currentView)
       {
           if (dynamic_cast<QuantaView*>(view) && !static_cast<QuantaView*>(view)->mayRemove() )
@@ -186,7 +194,6 @@ void ViewManager::slotCloseOtherTabs()
           quantaApp->closeWindow(view);
       }
   }
-  delete it;
 }
 
 QuantaView* ViewManager::isOpened(const KURL& url)
