@@ -1165,7 +1165,7 @@ long KafkaDocument::translateKafkaIntoNodeCursorPosition(DOM::Node domNode, long
 	{
 		while(currentOffset > 0)
 		{
-			curChar = decodedText[domNodeOffset - currentOffset];
+			curChar = decodedText.at(domNodeOffset - currentOffset);
 #ifdef HEAVY_DEBUG
 			//kdDebug(24000)<< "CurChar:" << QString(curChar) << ": oldChar:" <<
 			//	QString(oldChar) << endl;
