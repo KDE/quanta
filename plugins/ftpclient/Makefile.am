@@ -7,7 +7,7 @@ libdir = ${kde_libraries}/quanta/plugins
 lib_LTLIBRARIES =libftpclient.la
 
 
-libftpclient_la_LDFLAGS = -version-info 
+libftpclient_la_LDFLAGS = -version-info 1:0
 
 INCLUDES = $(all_includes)
 CXXFLAGS = -Wall 
