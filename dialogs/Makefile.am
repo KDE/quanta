@@ -16,9 +16,9 @@ libdialogs_a_SOURCES = \
 		parseroptions.cpp\
 		previewfontoptions.cpp\
 		previewoptions.cpp\
-		styleoptionss.cpp\
 		filemaskss.ui\
-		previewoptionss.ui
+		previewoptionss.ui\
+		styleoptionss.ui
 EXTRA_DIST = \
 		filemasks.cpp\
 		filemasks.h\
@@ -30,10 +30,9 @@ EXTRA_DIST = \
 		previewfontoptions.h\
 		previewoptions.cpp\
 		previewoptions.h\
-		styleoptionss.cpp\
-		styleoptionss.h\
 		filemaskss.ui\
-		previewoptionss.ui
+		previewoptionss.ui\
+		styleoptionss.ui
 ##############################################################
 ####                  END KDEStudio part                  ####
 #2########################################################!@#$

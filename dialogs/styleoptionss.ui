@@ -1,0 +1,101 @@
+<!DOCTYPE UI><UI>
+<class>StyleOptionsS</class>
+<widget>
+    <class>QWidget</class>
+    <property stdset="1">
+        <name>name</name>
+        <cstring>StyleOptionsS</cstring>
+    </property>
+    <property stdset="1">
+        <name>geometry</name>
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>321</width>
+            <height>231</height>
+        </rect>
+    </property>
+    <property stdset="1">
+        <name>caption</name>
+        <string>Form2</string>
+    </property>
+    <grid>
+        <property stdset="1">
+            <name>margin</name>
+            <number>11</number>
+        </property>
+        <property stdset="1">
+            <name>spacing</name>
+            <number>6</number>
+        </property>
+        <widget row="0"  column="0" >
+            <class>QCheckBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>checkTagsCapital</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Use capital symbols for tags</string>
+            </property>
+        </widget>
+        <widget row="1"  column="0" >
+            <class>QCheckBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>checkAttrCapital</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Use capital symbols for attributes of tags</string>
+            </property>
+        </widget>
+        <widget row="2"  column="0" >
+            <class>QCheckBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>checkEndTag</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Insert end of tag if optional</string>
+            </property>
+        </widget>
+        <spacer row="3"  column="0" >
+            <property>
+                <name>name</name>
+                <cstring>Spacer2</cstring>
+            </property>
+            <property stdset="1">
+                <name>enabled</name>
+                <bool>true</bool>
+            </property>
+            <property stdset="1">
+                <name>caption</name>
+                <string></string>
+            </property>
+            <property stdset="1">
+                <name>orientation</name>
+                <enum>Vertical</enum>
+            </property>
+            <property stdset="1">
+                <name>sizeType</name>
+                <enum>Expanding</enum>
+            </property>
+            <property>
+                <name>sizeHint</name>
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+            <property>
+                <name>layoutMargin</name>
+            </property>
+            <property>
+                <name>layoutSpacing</name>
+            </property>
+        </spacer>
+    </grid>
+</widget>
+</UI>
