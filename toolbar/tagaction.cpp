@@ -194,11 +194,46 @@ void TagAction::insertTag(bool inputFromFile, bool outputToFile)
       command = command.mid(1);
       command.prepend(QDir::homeDirPath());
     }
+
     *proc << command.stripWhiteSpace();
     args = args.stripWhiteSpace();
     if (!args.isEmpty())
-      *proc << args;
+    {
+      pos = args.find("%script_dir");
+      QString scriptname;
+      if (pos != -1)
+      {
+        int begin = args.findRev('"', pos);
+        int end = -1;
+        if (begin == -1)
+        {
+          begin = args.findRev('\'', pos);
+          if (begin != -1)
+              end = args.find('\'', pos);
+        }  else
+        {
+          end = args.find('"', pos)'
+        }
+        if (begin == -1 || end != -1)
+        {
+          begin = args.findRev(' ', pos);
+          if (begin == -1)
+              begin = 0;
+          end = args.find(' ', pos);
+          if (end == -1)
+              end = args.length();
+        }
+        scriptname = args.mid(begin, end - begin);
+        kdDebug(24000) << "Script name is: " << scriptname << endl;
+        scriptname = scriptname.section('/', -1);
+        scriptname = locate("appdata", scriptname);
+        kdDebug(24000) << "Script found at: " << scriptname << endl;
+        args.replace(begin, end - begin, scriptname);
+        kdDebug(24000) << "Modified argument list: " << args << endl;
 
+      }
+      *proc << args;
+    }
     firstOutput = true;
     firstError  = true;
 
