@@ -1873,7 +1873,7 @@ void KafkaWidget::postprocessCursorPosition()
                 (m_currentNode.nodeName().string().lower() != "br" ||
                  (m_currentNode.nodeName().string().lower() == "br" && /**!m_currentNode.nextSibling().isNull() &&
                             m_currentNode.nextSibling().nodeType() == DOM::Node::TEXT_NODE &&
-                            m_currentNode.nextSibling().nodeValue().string() == "" &&
+                            m_currentNode.nextSibling().nodeValue().string().isEmpty() &&
                             m_currentNode.nextSibling().nextSibling().isNull() &&*/
                   !m_currentNode.previousSibling().isNull() &&
                   m_currentNode.previousSibling().nodeType() == DOM::Node::TEXT_NODE &&
