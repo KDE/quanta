@@ -397,7 +397,14 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
     currentNode = createTextNode(currentNode, el, ec, parentNode);
   } else
   if (el != endLine || ec != endCol)
+  {
+    if (currentNode && currentNode->tag->type == Tag::ScriptTag)
+    {
+      parentNode = currentNode;
+      currentNode = 0L;
+    }
     currentNode = createTextNode(currentNode, endLine, endCol, parentNode);
+  }
   if (!rootNode)
     rootNode = currentNode;
   *lastNode = currentNode;
