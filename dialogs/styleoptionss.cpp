@@ -31,17 +31,17 @@ StyleOptionsS::StyleOptionsS( QWidget* parent,  const char* name, WFlags fl )
     grid->setMargin( 11 );
 
     checkTagsCapital = new QCheckBox( this, "checkTagsCapital" );
-    checkTagsCapital->setText( tr( "Use capital symbols for tags"  ) );
+    checkTagsCapital->setText( tr( "Use upper case symbols for tags"  ) );
 
     grid->addWidget( checkTagsCapital, 0, 0 );
 
     checkAttrCapital = new QCheckBox( this, "checkAttrCapital" );
-    checkAttrCapital->setText( tr( "Use capital symbols for attributes of tags"  ) );
+    checkAttrCapital->setText( tr( "Use upper case symbols for attributes of tags"  ) );
 
     grid->addWidget( checkAttrCapital, 1, 0 );
 
     checkEndTag = new QCheckBox( this, "checkEndTag" );
-    checkEndTag->setText( tr( "Insert end of tag if optional"  ) );
+    checkEndTag->setText( tr( "Insert end of tag if applicable"  ) );
 
     grid->addWidget( checkEndTag, 2, 0 );
     QSpacerItem* spacer = new QSpacerItem( 20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding );
