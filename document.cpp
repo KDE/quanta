@@ -562,7 +562,7 @@ QString Document::getTagNameAt(int line, int col )
 
  if (node && node->tag)
  {
-   Tag *tag = new Tag;
+   Tag *tag = new Tag();
    int bl, bc;
    uint el, ec;
    node->tag->beginPos(bl, bc);

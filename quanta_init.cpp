@@ -51,6 +51,7 @@
 #include <kstdaction.h>
 #include <kparts/componentfactory.h>
 #include <kpopupmenu.h>
+#include <kprocess.h>
 #include <kprogress.h>
 #include <kspell.h>
 #include <ktip.h>
@@ -131,8 +132,8 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta"), DCOPObject("WindowManager
   // connect up signals from KXXsldbgPart
   connectDCOPSignal(0, 0, "debuggerPositionChangedQString,int)", "newDebuggerPosition(QString,int)", false );
   connectDCOPSignal(0, 0, "editorPositionChanged(QString,int,int)", "newCursorPosition(QString,int,int)", false );
-  connectDCOPSignal(0, 0, "openFile(QString,int,int)", "openFile(QString,int,int)", false); 
-  
+  connectDCOPSignal(0, 0, "openFile(QString,int,int)", "openFile(QString,int,int)", false);
+
   m_execCommandPS = 0L;
 }
 
@@ -161,8 +162,8 @@ QuantaApp::~QuantaApp()
  }
  QDir dir;
  dir.rmdir(tmpDir + "quanta");
- 
- if(m_execCommandPS) 
+
+ if(m_execCommandPS)
  {
   delete m_execCommandPS;
   m_execCommandPS = 0L;
@@ -260,21 +261,21 @@ void QuantaApp::initQuanta()
   slotFileNew();
   initToolBars();
   KTipDialog::showTip(this);
-  
+
   //get the PID of this running instance
   qConfig.quantaPID = QString::number(int(getpid()), 10);
   qConfig.backupDirPath = KGlobal::instance()->dirs()->saveLocation("data", "quanta/backups/");
-  
+
   m_config->setGroup("General Options");
 
   if(!m_config->hasKey("List of autosaved files"))
-    m_config->writeEntry("List of autosaved files", QString::null); 
-   
+    m_config->writeEntry("List of autosaved files", QString::null);
+
   if(!m_config->hasKey("List of backedup files"))
     m_config->writeEntry("List of backedup files", QString::null);
-    
+
   m_config->sync();
-  
+
  // qConfig.autosaveInterval = "1";
   autosaveTimer = new QTimer( this );
   connect(autosaveTimer, SIGNAL(timeout()), SLOT(slotAutosaveTimer()));
@@ -2224,28 +2225,28 @@ void QuantaApp::recoverCrashed(QStringList& recoveredFileNameList)
 #endif
   m_doc->blockSignals(true);
   m_view->writeTab()->blockSignals(true);
-  
+
   //We create a KProcess that executes the "ps" unix command to get the PIDs of the
   //other instances of quanta actually running
-  m_execCommandPS = new KProcess(); 
+  m_execCommandPS = new KProcess();
   *m_execCommandPS << QStringList::split(" ","ps -C quanta -o pid --no-headers");
-  
+
   connect( m_execCommandPS, SIGNAL(receivedStdout(KProcess*,char*,int)),
            this, SLOT(slotGetScriptOutput(KProcess*,char*,int)));
-  connect( m_execCommandPS, SIGNAL(receivedStderr(KProcess*,char*,int)), 
+  connect( m_execCommandPS, SIGNAL(receivedStderr(KProcess*,char*,int)),
            this, SLOT(slotGetScriptError(KProcess*,char*,int)));
-  connect( m_execCommandPS, SIGNAL(processExited(KProcess*)), 
-           this, SLOT(slotProcessExited(KProcess*))); 
-	   
-  //if KProcess fails I think a message box is needed... I will fix it	   
-  if (!m_execCommandPS->start(KProcess::NotifyOnExit,KProcess::All)) 
+  connect( m_execCommandPS, SIGNAL(processExited(KProcess*)),
+           this, SLOT(slotProcessExited(KProcess*)));
+
+  //if KProcess fails I think a message box is needed... I will fix it
+  if (!m_execCommandPS->start(KProcess::NotifyOnExit,KProcess::All))
     kdError() << "Failed to query for running Quanta instances!" << endl;
     //TODO: Replace the above error with a real messagebox after the message freeze is over
-  else 
+  else
     m_execCommandPS->wait();
-  
-  for ( QStringList::Iterator backedUpUrlsIt = backedUpUrlsList.begin(); 
-        backedUpUrlsIt != backedUpUrlsList.end(); 
+
+  for ( QStringList::Iterator backedUpUrlsIt = backedUpUrlsList.begin();
+        backedUpUrlsIt != backedUpUrlsList.end();
 	++backedUpUrlsIt )
   {
    // when quanta crashes and file autoreloading option is on
@@ -2310,48 +2311,48 @@ void QuantaApp::recoverCrashed(QStringList& recoveredFileNameList)
           //TODO: Replace with KIO::NetAccess::file_copy, when KDE 3.1 support
           //is dropped
             QExtFileInfo::copy(autosavedVersion, originalVersion, -1, true, false, this);
-            
-	    //we save a list of autosaved file names so "KQApplicationPrivate::init()" 
+
+	    //we save a list of autosaved file names so "KQApplicationPrivate::init()"
 	    //can open them
-	    recoveredFileNameList += originalVersion.path();    
+	    recoveredFileNameList += originalVersion.path();
             //slotFileOpenRecent(originalVersion);
           }
           delete dlg;
        }
      }
      //now we remove the autosaved copiy and clean the quantarc up
-     if(QFile::exists(autosavedVersion.path())) 
+     if(QFile::exists(autosavedVersion.path()))
      {
       QFile::remove(autosavedVersion.path());
       QString autosavedFilesEntryList = QString::null,
               backedupFilesEntryList = QString::null;
       m_config->setGroup("General Options");
-      
+
       autosavedFilesEntryList = m_config->readEntry("List of autosaved files");
-      
+
       QStringList entryList = QStringList::split(",",autosavedFilesEntryList);
       QStringList::Iterator entryIt;
-      
+
       for ( entryIt = entryList.begin(); entryIt != entryList.end(); ++entryIt )
-       if ((*entryIt) == autosavedVersion.path()) 
+       if ((*entryIt) == autosavedVersion.path())
          entryIt = entryList.remove(entryIt);
-      
+
       autosavedFilesEntryList = entryList.join(",");
-      
+
       m_config->writeEntry("List of autosaved files",autosavedFilesEntryList);
-      
+
       backedupFilesEntryList = m_config->readEntry("List of backedup files");
-      
+
       entryList = QStringList::split(",",backedupFilesEntryList);
-      
+
       for ( entryIt = entryList.begin(); entryIt != entryList.end(); ++entryIt )
        if ((*entryIt) == (*backedUpUrlsIt)) entryIt = entryList.remove(entryIt);
-      
+
       backedupFilesEntryList = entryList.join(",");
-      
+
       m_config->writeEntry("List of backedup files",backedupFilesEntryList);
      }
     }
   }
  }
- 
+

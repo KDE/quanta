@@ -42,7 +42,6 @@
 #include <kparts/browserextension.h>
 #include <kate/document.h>
 #include <ktempfile.h>
-#include <kprocess.h>
 
 //app includes
 #include "parser/qtag.h"
@@ -68,6 +67,7 @@ class KHTMLView;
 
 class KAction;
 class KToggleAction;
+class KProcess;
 class KSelectAction;
 #if KDE_VERSION < KDE_MAKE_VERSION(3,1,92)
 class KQRecentFilesAction;
@@ -548,10 +548,10 @@ private:
   uint oldCursorCol;
   bool m_previewVisible;
   bool m_noFramesPreview;
-  
+
   KProcess* m_execCommandPS;
   QString m_scriptOutput;
-  
+
 protected: // Protected attributes
   /** Timer to refresh the structure tree. */
   QTimer *refreshTimer;

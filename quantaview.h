@@ -132,7 +132,7 @@ public:
   /** No descriptions */
  // void resizeEvent (QResizeEvent *);
   /** Insert a new tag by bringing up the TagDialog. */
-  void insertNewTag(QString tag, QString attr = QString::null,bool insertInLine = true);
+  void insertNewTag(const QString &tag, const QString &attr = QString::null, bool insertInLine = true);
 
   /**
    * Show a TagDialog of Node tag, with attrs attr.
@@ -140,7 +140,7 @@ public:
    * @param attr The string containing the attrs of the new Node to create.
    * @return Returns a new Node created according to the contents of the TagDialog.
    */
-  Node *showTagDialogAndReturnNode(QString tag, QString attr = QString::null);
+  Node *showTagDialogAndReturnNode(const QString &tag, const QString &attr = QString::null);
   /** Returns the baseURL of the document. */
   KURL baseURL();
   /** True if a Document object exists, false otherwise. */

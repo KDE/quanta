@@ -1068,7 +1068,7 @@ void QuantaView::slotInsertChar(const QString &selected)
   }
 }
 
-Node *QuantaView::showTagDialogAndReturnNode(QString tag, QString attr)
+Node *QuantaView::showTagDialogAndReturnNode(const QString &tag, const QString &attr)
 {
 #ifdef BUILD_KAFKAPART
   Node *n = 0L;
@@ -1088,11 +1088,12 @@ Node *QuantaView::showTagDialogAndReturnNode(QString tag, QString attr)
 #else
   Q_UNUSED(tag);
   Q_UNUSED(attr);
+  return 0L;
 #endif
 }
 
 /** Insert a new tag by bringing up the TagDialog. */
-void QuantaView::insertNewTag(QString tag, QString attr,bool insertInLine)
+void QuantaView::insertNewTag(const QString &tag, const QString &attr, bool insertInLine)
 {
   if (writeExists())
   {

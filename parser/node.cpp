@@ -166,88 +166,87 @@ Node *Node::nextNotChild()
 
 QString Node::nodeName()
 {
-	if(tag)
-		return tag->name;
-	return "";
+  if(tag)
+    return tag->name;
+  return QString::null;
 }
 
 QString Node::nodeValue()
 {
-	if(tag)
-		return tag->tagStr();
-	return "";
+  if(tag)
+    return tag->tagStr();
+  return QString::null;
 }
 
 void Node::setNodeValue(QString value)
 {
-	if(!tag)
-		tag = new Tag();
-	tag->setStr(value);
+  if(!tag)
+    tag = new Tag();
+  tag->setStr(value);
 }
 
 Node* Node::lastChild()
 {
-	Node *n, *m;
-	n = child;
-	while(n)
-	{
-		m = n;
-		n = n->next;
-	}
-	return m;
+  Node *n, *m;
+  n = child;
+  while(n)
+  {
+          m = n;
+          n = n->next;
+  }
+  return m;
 }
 
- Node *Node::nextNE()
- {
-	Node *n = next;
-	while(n && n->tag->type == Tag::Empty)
-		n = n->next;
-	return n;
- }
+Node *Node::nextNE()
+{
+  Node *n = next;
+  while(n && n->tag->type == Tag::Empty)
+          n = n->next;
+  return n;
+}
 
- Node *Node::prevNE()
- {
-	Node *n = prev;
-	while(n && n->tag->type == Tag::Empty)
-		n = n->prev;
-	return n;
- }
+Node *Node::prevNE()
+{
+  Node *n = prev;
+  while(n && n->tag->type == Tag::Empty)
+          n = n->prev;
+  return n;
+}
 
 
 #ifdef BUILD_KAFKAPART
 bool Node::hasForChild(Node *node)
 {
-	Node *n;
-	bool goUp = false;
+  Node *n;
+  bool goUp = false;
 
-	if(child)
-	{
-		n = child;
-		goUp = false;
-		while(n)
-		{
-			if(n == node)
-				return true;
-			n = kafkaCommon::getNextNode(n, goUp, this);
-		}
-	}
-	return false;
-
+  if(child)
+  {
+    n = child;
+    goUp = false;
+    while(n)
+    {
+      if(n == node)
+              return true;
+      n = kafkaCommon::getNextNode(n, goUp, this);
+    }
+  }
+  return false;
 }
 #endif
 
 Node *Node::getClosingNode()
 {
-	Node* n = next;
+  Node* n = next;
 
-	if(next && tag && tag->type == Tag::XmlTag && !tag->single)
-	{
-		while(n && n->tag->type == Tag::Empty)
-			n = n->next;
-		if (n && n->tag->type == Tag::XmlTagEnd && QuantaCommon::closesTag(tag, n->tag))
-			return n;
-	}
-	return 0L;
+  if(next && tag && tag->type == Tag::XmlTag && !tag->single)
+  {
+    while (n && n->tag->type == Tag::Empty)
+      n = n->next;
+    if (n && n->tag->type == Tag::XmlTagEnd && QuantaCommon::closesTag(tag, n->tag))
+      return n;
+  }
+  return 0L;
 }
 
 int Node::size()
@@ -263,16 +262,14 @@ int Node::size()
 
 void Node::operator =(Node* node)
 {
-
-	(*this) = (*node);
-	prev = 0L;
-	next = 0L;
-	parent = 0L;
-	child = 0L;
-	listItem = 0L;
-	groupElementLists.clear();
-	group = 0L;
-	groupTag = 0L;
-	tag = new Tag(*(node->tag));
-
+  (*this) = (*node);
+  prev = 0L;
+  next = 0L;
+  parent = 0L;
+  child = 0L;
+  listItem = 0L;
+  groupElementLists.clear();
+  group = 0L;
+  groupTag = 0L;
+  tag = new Tag(*(node->tag));
 }

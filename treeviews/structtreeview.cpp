@@ -416,7 +416,7 @@ void StructTreeView::slotReparse(Document *w, Node* node, int openLevel)
 void StructTreeView::slotGotoTag( QListViewItem *item )
 {
   StructTreeTag *it = dynamic_cast<StructTreeTag*>(item);
-  if (it && it->node)
+  if (it && it->node && it->node->tag)
   {
     int line, col;
     it->node->tag->beginPos(line, col);
