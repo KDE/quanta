@@ -2063,6 +2063,15 @@ void QuantaApp::slotSyntaxCheckDone()
 /** Load an user toolbar file from the disk. */
 void QuantaApp::slotLoadToolbarFile(const KURL& url)
 {
+  QDictIterator<ToolbarEntry> it(toolbarList);
+  ToolbarEntry *p_toolbar;
+  while (it.current())
+  {
+    p_toolbar = it.current();
+    ++it;
+    if (url == p_toolbar->url)
+        return;
+  }
  QDomDocument actionDom;
  QDomDocument *toolbarDom = new QDomDocument();
 
@@ -2136,7 +2145,7 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
    } while (name == newName && found);
    name = newName;
 
-   ToolbarEntry* p_toolbar = new ToolbarEntry;
+   p_toolbar = new ToolbarEntry;
 
    QDomDocument *dom = new QDomDocument();
    dom->setContent(toolbarDom->toString());
@@ -3801,27 +3810,27 @@ QString QuantaApp::searchPathListEntry(const QString& backedUpUrl,const QString&
   KURL k(backedUpUrl);
   QStringList autosavedUrlsList = QStringList::split(",", autosavedUrls);
   QStringList::Iterator autosavedUrlsIt;
-  for ( autosavedUrlsIt = autosavedUrlsList.begin();
-        autosavedUrlsIt != autosavedUrlsList.end();
-	++autosavedUrlsIt )
+  for (autosavedUrlsIt = autosavedUrlsList.begin();
+       autosavedUrlsIt != autosavedUrlsList.end();
+       ++autosavedUrlsIt)
   {
    QString quPID = retrievePID((*autosavedUrlsIt));
 
    QStringList PIDlist = QStringList::split("\n", m_scriptOutput);
 
-   QStringList::Iterator PIDIt;
    bool isOrphan = true;
+   QStringList::Iterator PIDIt;
    for ( PIDIt = PIDlist.begin(); PIDIt != PIDlist.end(); ++PIDIt )
    {
-    if((*PIDIt) == quPID && qConfig.quantaPID != quPID)
+    if ((*PIDIt) == quPID && qConfig.quantaPID != quPID)
     {
      isOrphan = false;
      break;
     }
    }
-   if(isOrphan)
+   if (isOrphan || ((*autosavedUrlsIt).right(1) == "U"))
    {
-    if(retrieveHashedPath(Document::hashedFilePath(k.path())) == retrieveHashedPath((*autosavedUrlsIt)))
+    if(retrieveHashedPath(Document::hashFilePath(k.path())) == retrieveHashedPath((*autosavedUrlsIt)))
       return (*autosavedUrlsIt);
    }
   }
@@ -3835,7 +3844,7 @@ QString QuantaApp::retrievePID(const QString& filename)
  strPID = filename.right(filename.length() - filename.findRev("P") - 1);
 
  if (strPID.isEmpty())
-   strPID = filename.right(filename.length() - filename.findRev("N") - 1);
+  strPID = filename.right(filename.length() - filename.findRev("N") - 1);
 
  return strPID;
 }
@@ -3843,7 +3852,7 @@ QString QuantaApp::retrievePID(const QString& filename)
 QString QuantaApp::retrieveHashedPath(const QString& filename)
 {
  return filename.mid(filename.findRev(".") + 1,
-                     filename.findRev("P") - 1 - filename.findRev("."));
+                      filename.findRev("P") - 1 - filename.findRev("."));
 }
 /** Retrieves the non hashed part of the name of a backup file */
 QString QuantaApp::retrieveBaseFileName(const QString& filename)

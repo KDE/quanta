@@ -206,13 +206,13 @@ work correctly. */
   /** No descriptions */
   void setBackupEntry(bool b);
   /** No descriptions */
-  QString getBackupPathEntryValue();
+  QString backupPathEntryValue();
   /** No descriptions */
   void setBackupPathEntryValue(const QString& ev);
   /** Removes automatic backup copies */
   void removeBackup(KConfig *config);
   /** create a string using document path string */
- static QString hashedFilePath(const QString& p);
+ static QString hashFilePath(const QString& p);
 
 public slots:
 

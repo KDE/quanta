@@ -183,6 +183,8 @@ public:
   QString retrieveHashedPath(const QString& filename);
   /** Retrieves the non hashed part of the name of a backup file */
   QString retrieveBaseFileName(const QString& filename);
+  /**Executes *nix ps command */
+  void execCommandPS(const QString& cmd);
 
     /** tabs for left panel */
   ProjectTreeView *pTab;

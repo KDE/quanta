@@ -2066,14 +2066,25 @@ void Document::setBackupEntry(bool b)
 {
    m_backupEntry = b;
 }
+QString Document::backupPathEntryValue()
+{
+  return m_backupPathValue;
+}
 
+void Document::setBackupPathEntryValue(const QString& ev)
+{
+  m_backupPathValue = ev;
+}
 
 /** if the document is modified then backup it and insert an entry in quantarc */
 void Document::createBackup(KConfig* config)
 {
     if(isModified())
     {
-     m_backupPathValue = qConfig.backupDirPath + url().fileName() + "." + hashedFilePath(url().path());
+     if(isUntitled())
+      m_backupPathValue = qConfig.backupDirPath + url().fileName() + "." + hashFilePath(url().path())+"U";
+     else
+      m_backupPathValue = qConfig.backupDirPath + url().fileName() + "." + hashFilePath(url().path());
      //creates an entry string in quantarc if it does not exist yet
      config->setGroup("General Options");
 #if KDE_IS_VERSION(3,1,3)
@@ -2103,16 +2114,6 @@ void Document::createBackup(KConfig* config)
 
     }
 }
-QString Document::getBackupPathEntryValue()
-{
-  return m_backupPathValue;
-}
-
-void Document::setBackupPathEntryValue(const QString& ev)
-{
-  m_backupPathValue = ev;
-}
-
 /** if there is no more need of a backup copy then remove it */
 void Document::removeBackup(KConfig *config)
 {
@@ -2139,7 +2140,7 @@ void Document::removeBackup(KConfig *config)
     QFile::remove(m_backupPathValue);
 }
 /** creates a string by hashing a bit the path string of this document */
-QString Document::hashedFilePath(const QString& p)
+QString Document::hashFilePath(const QString& p)
 {
  switch(p.length())
  {
@@ -2153,21 +2154,20 @@ QString Document::hashedFilePath(const QString& p)
            return QString::number(c, 10) + "P" + qConfig.quantaPID;
           }
 
-  default:{
-           int sign = 1,
-	       sum = 0;
-           for (int i = 0; i < (p.length() - 1); i++)
-           {
-            sum += int(p[i]) + int(p[i + 1]) * sign;
-            sign *= -1;
-           }
-           if( sum >= 0 )
-	     return QString::number(sum, 10) + "P" + qConfig.quantaPID;
-           else
-	     return QString::number(sum*(-1), 10) + "N" + qConfig.quantaPID;
-          }
+  default: {
+             int sign = 1,
+                 sum = 0;
+             for (uint i = 0; i < (p.length() - 1); i++)
+             {
+              sum += int(p[i]) + int(p[i + 1]) * sign;
+              sign *= -1;
+             }
+             if( sum >= 0 )
+               return QString::number(sum, 10) + "P" + qConfig.quantaPID;
+             else
+               return QString::number(sum*(-1), 10) + "N" + qConfig.quantaPID;
+            }
  }
-
 }
 
 void Document::convertCase()

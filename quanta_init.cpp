@@ -2205,33 +2205,7 @@ void QuantaApp::recoverCrashed(QStringList& recoveredFileNameList)
   m_doc->blockSignals(true);
   m_view->writeTab()->blockSignals(true);
 
-  //We create a KProcess that executes the "ps" unix command to get the PIDs of the
-  //other instances of quanta actually running
-  m_execCommandPS = new KProcess();
-  *m_execCommandPS << QStringList::split(" ","ps -C quanta -o pid --no-headers");
-
-  connect( m_execCommandPS, SIGNAL(receivedStdout(KProcess*,char*,int)),
-           this, SLOT(slotGetScriptOutput(KProcess*,char*,int)));
-  connect( m_execCommandPS, SIGNAL(receivedStderr(KProcess*,char*,int)),
-           this, SLOT(slotGetScriptError(KProcess*,char*,int)));
-  connect( m_execCommandPS, SIGNAL(processExited(KProcess*)),
-           this, SLOT(slotProcessExited(KProcess*)));
-
-  //if KProcess fails I think a message box is needed... I will fix it
-  if (!m_execCommandPS->start(KProcess::NotifyOnExit,KProcess::All))
-    kdError() << "Failed to query for running Quanta instances!" << endl;
-    //TODO: Replace the above error with a real messagebox after the message freeze is over
-  else
-  {
-    //To avoid lock-ups, start a timer.
-    QTimer *timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), SLOT(slotProcessTimeout()));
-    timer->start(180*1000, true);
-    QExtFileInfo internalFileInfo;
-    m_loopStarted = true;
-    internalFileInfo.enter_loop();
-    delete timer;
-  }
+  execCommandPS("ps -C quanta -o pid --no-headers");
 
   m_config->setGroup  ("Projects");
   QString pu = m_config->readPathEntry("Last Project");
@@ -2257,20 +2231,21 @@ void QuantaApp::recoverCrashed(QStringList& recoveredFileNameList)
 
   for ( QStringList::Iterator backedUpUrlsIt = backedUpUrlsList.begin();
         backedUpUrlsIt != backedUpUrlsList.end();
-	++backedUpUrlsIt )
+      ++backedUpUrlsIt )
   {
    // when quanta crashes and file autoreloading option is on
-    // then if user restarts quanta, the backup copies will reload
+   // then if user restarts quanta, the backup copies will reload
    QString backedUpFileName = retrieveBaseFileName((*backedUpUrlsIt));
    QString autosavedPath = searchPathListEntry( backedUpFileName, autosavedUrlsList.join(",") );
-
-    if(!autosavedPath.isEmpty())
+   if(!autosavedPath.isEmpty())
     {
      KURL originalVersion;
      QuantaCommon::setUrl(originalVersion, backedUpFileName );
      KURL autosavedVersion;
      QuantaCommon::setUrl(autosavedVersion,autosavedPath);
-
+     bool isUntitledDocument = false;
+     if (autosavedVersion.path().right(1) == "U")
+      isUntitledDocument = true;
      if (!isPrj || originalVersion.isLocalFile())
      {
        KIO::UDSEntry entry;
@@ -2306,7 +2281,7 @@ void QuantaApp::recoverCrashed(QStringList& recoveredFileNameList)
           w->warningLabel = 0L;
           w->setMinimumHeight(320);
           dlg->adjustSize();
-          if (KStandardDirs::findExe("kompare").isEmpty())
+          if (KStandardDirs::findExe("kompare").isEmpty() || isUntitledDocument)
           {
             w->buttonCompare->setEnabled(false);
             w->buttonLoad->setChecked(true);
@@ -2314,18 +2289,20 @@ void QuantaApp::recoverCrashed(QStringList& recoveredFileNameList)
           if (dlg->exec())
           {
             KURL backupURL = originalVersion;
-            backupURL.setPath(backupURL.path()+".backup");
-          //TODO: Replace with KIO::NetAccess::file_move, when KDE 3.1 support
-  //is dropped
+            backupURL.setPath(backupURL.path()+"."+QString::number(getpid(),10)+".backup");
+            //TODO: Replace with KIO::NetAccess::file_move, when KDE 3.1 support
+            //is dropped
             QExtFileInfo::copy(originalVersion, backupURL, -1, true, false, this);
-          //TODO: Replace with KIO::NetAccess::file_copy, when KDE 3.1 support
-          //is dropped
+            //TODO: Replace with KIO::NetAccess::file_copy, when KDE 3.1 support
+            //is dropped
             QExtFileInfo::copy(autosavedVersion, originalVersion, -1, true, false, this);
-
-	    //we save a list of autosaved file names so "KQApplicationPrivate::init()"
-	    //can open them
-	    recoveredFileNameList += originalVersion.path();
-            //slotFileOpenRecent(originalVersion);
+            //we save a list of autosaved file names so "KQApplicationPrivate::init()"
+            //can open them. If autosavedVersion.path().right(1) == "U" then we are recovering
+            //an untitled document
+            if(isUntitledDocument)
+             slotFileOpen(autosavedVersion, defaultEncoding());  // load initial files
+            else
+             recoveredFileNameList += originalVersion.path();
           }
           delete dlg;
        }
@@ -2366,4 +2343,37 @@ void QuantaApp::recoverCrashed(QStringList& recoveredFileNameList)
     }
   }
  }
+ void QuantaApp::execCommandPS(const QString& cmd)
+ {
+
+  //We create a KProcess that executes the "ps" *nix command to get the PIDs of the
+  //other instances of quanta actually running
+  m_execCommandPS = new KProcess();
+  *m_execCommandPS << QStringList::split(" ",cmd);
+
+  connect( m_execCommandPS, SIGNAL(receivedStdout(KProcess*,char*,int)),
+           this, SLOT(slotGetScriptOutput(KProcess*,char*,int)));
+  connect( m_execCommandPS, SIGNAL(receivedStderr(KProcess*,char*,int)),
+           this, SLOT(slotGetScriptError(KProcess*,char*,int)));
+  connect( m_execCommandPS, SIGNAL(processExited(KProcess*)),
+           this, SLOT(slotProcessExited(KProcess*)));
+
+  //if KProcess fails I think a message box is needed... I will fix it
+  if (!m_execCommandPS->start(KProcess::NotifyOnExit,KProcess::All))
+    kdError() << "Failed to query for running Quanta instances!" << endl;
+    //TODO: Replace the above error with a real messagebox after the message freeze is over
+  else
+  {
+    //To avoid lock-ups, start a timer.
+    QTimer *timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), SLOT(slotProcessTimeout()));
+    timer->start(180*1000, true);
+    QExtFileInfo internalFileInfo;
+    m_loopStarted = true;
+    internalFileInfo.enter_loop();
+    delete timer;
+  }
+ }
+
+
 
