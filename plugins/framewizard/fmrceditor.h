@@ -25,6 +25,7 @@
   */
 
 class fmRCeditor : public fmRCeditorS  {
+  Q_OBJECT
   public: 
     fmRCeditor();
     ~fmRCeditor();

@@ -25,7 +25,7 @@
   */
 
 class fmFPeditor : public fmFPeditorS  {
-
+  Q_OBJECT
   public: 
 	  fmFPeditor();
 	  ~fmFPeditor();
