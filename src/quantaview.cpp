@@ -849,6 +849,8 @@ void QuantaView::deactivated()
         quantaApp->statusBar()->show();
       }
   }
+  m_sourceUpdateTimer.stop();
+  m_VPLUpdateTimer.stop();
 }
 
 bool QuantaView::saveModified()
