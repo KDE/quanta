@@ -9,6 +9,7 @@
         <location col="1" row="0" colspan="2" />
     </attr>
 <children>
+<child name="#text" />
 <child name="a" />
 <child name="abbr" />
 <child name="acronym" />

@@ -6,6 +6,9 @@
         <text>Id</text>
         <textlocation col="0" row="0" />
         <location col="1" row="0" colspan="2" />
-    </attr>
+</attr>
+<children>
+	<child name="#text" />
+</children>
 </tag>
 </TAGS>

@@ -17,6 +17,7 @@
     </attr>
 
 <children>
+<child name="#text" />	
 <child name="a" />
 <child name="abbr" />
 <child name="applet" />
@@ -77,6 +78,7 @@
     </attr>
 
 <children>
+<child name="#text" />	
 <child name="a" />
 <child name="abbr" />
 <child name="applet" />
@@ -137,6 +139,7 @@
     </attr>
 
 <children>
+<child name="#text" />
 <child name="a" />
 <child name="abbr" />
 <child name="applet" />
@@ -197,6 +200,7 @@
     </attr>
 
 <children>
+<child name="#text" />	
 <child name="a" />
 <child name="abbr" />
 <child name="applet" />
@@ -257,6 +261,7 @@
     </attr>
 
 <children>
+<child name="#text" />	
 <child name="a" />
 <child name="abbr" />
 <child name="applet" />
@@ -317,6 +322,7 @@
     </attr>
 
 <children>
+<child name="#text" />	
 <child name="a" />
 <child name="abbr" />
 <child name="applet" />

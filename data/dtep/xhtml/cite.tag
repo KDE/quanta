@@ -4,6 +4,7 @@
 <tag name="cite" hasCore="1" hasI18n="1" hasScript="1">
 
 <children>
+<child name="#text" />	
 <child name="a" />
 <child name="abbr" />
 <child name="applet" />

@@ -15,6 +15,7 @@
         <location col="1" row="1" colspan="2" />
     </attr>
 <children>
+<child name="#text" />
 <child name="a" />
 <child name="abbr" />
 <child name="acronym" />
