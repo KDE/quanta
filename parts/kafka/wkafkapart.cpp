@@ -1959,6 +1959,13 @@ void KafkaDocument::slotDomNodeModified(DOM::Node domNode, NodeModifsSet* modifs
 				getNode(nextSiblingDomNode), modifs, false);
 			props->setNode(node);
 			modifs->addNodeModif(modif);
+                        //If there is a empty Node after of before the text, remove them
+                        if(node->prev && node->prev->tag->type == Tag::Empty)
+                          kafkaCommon::extractNode(node->prev, modifs);
+                        if(node->next && node->next->tag->type == Tag::Empty)
+                          kafkaCommon::extractNode(node->next, modifs);
+                          
+                        //Log the changes
 			m_currentDoc->docUndoRedo->addNewModifsSet(modifs, undoRedo::KafkaModif);
 		}
 
