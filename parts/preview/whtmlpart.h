@@ -28,8 +28,9 @@
 class WHTMLPart : public KHTMLPart  {
    Q_OBJECT
 public:
-  WHTMLPart(QWidget *parent, const char *name=0);
-  ~WHTMLPart();
+  WHTMLPart(QWidget *parentWidget = 0, const char *widgetname = 0,
+            QObject *parent = 0, const char *name = 0, GUIProfile prof = DefaultGUI );
+  virtual ~WHTMLPart();
 
   /** Specify the URL where the preview was started and the
   content of this url as well.*/

@@ -23,8 +23,9 @@
 #include "whtmlpart.h"
 #include "whtmlpart.moc"
 
-WHTMLPart::WHTMLPart(QWidget *parent, const char *name )
-  : KHTMLPart(parent,name)
+WHTMLPart::WHTMLPart(QWidget *parentWidget, const char *widgetName,
+            QObject *parent, const char *name, GUIProfile prof)
+  : KHTMLPart(parentWidget, widgetName, parent, name, prof)
 {
    hpos = 0;
    // get settings from konq.
@@ -128,11 +129,11 @@ bool WHTMLPart::forwardEnable()
 }
 
 KParts::ReadOnlyPart *WHTMLPart::createPart( QWidget * parentWidget, const char *widgetName,
-                                            QObject */*parent*/, const char * /*name*/,
+                                            QObject *parent, const char *name,
                                             const QString &, QString &,
                                             QStringList &, const QStringList &)
 {
-   return new WHTMLPart(parentWidget, widgetName);
+  return new WHTMLPart(parentWidget, widgetName, parent, name);
 }
 
 bool WHTMLPart::eventFilter(QObject *watched, QEvent *e)
