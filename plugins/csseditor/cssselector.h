@@ -34,6 +34,8 @@ class CSSSelector : public CSSSelectorS {
      //QString sourceFileName;
      QString header,
              footer;
+             
+     QString initialPreviewText;        
             
   public: 
 	  CSSSelector(QWidget *parent=0, const char* name=0);
@@ -51,6 +53,7 @@ class CSSSelector : public CSSSelectorS {
     void setCurrentItem(QListViewItem* i) { currentItem = i; }
     void setCurrentListView(QWidget*);
     void loadExistingStyleSection(/*QMap<QString,QString> m*/QString);
+    void setForInitialPreview(const QString& s) { initialPreviewText = s;}
     
     //void setSourceFileName(const QString& n) { sourceFileName = n; }
     

@@ -197,9 +197,11 @@ void CSSSelector::openCSSEditor(QListViewItem * i){
     temp = temp->nextSibling();
   }
 
-  dlg->setInlineHeader(header);
-  dlg->setInlineSelector(s);
-  dlg->setInlineFooter(footer);
+  dlg->setForInitialPreview(initialPreviewText);
+  
+  dlg->setHeader(header);
+  dlg->setSelectors(s);
+  dlg->setFooter(footer);
   dlg->initialize();
   if(dlg->exec()){
      i->setText(1,dlg->generateProperties());
@@ -220,7 +222,7 @@ void CSSSelector::removeSelected(){
   delete currentItem;
 }
 
-void CSSSelector::loadExistingStyleSection(/*QMap<QString,QString> m*/QString s){
+void CSSSelector::loadExistingStyleSection(QString s){
 
 
   uint lf,rt;

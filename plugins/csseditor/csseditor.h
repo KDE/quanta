@@ -52,6 +52,7 @@ class myCheckListItem : public QCheckListItem
     void connect( QObject *receiver, const char *member );
     void addCheckedChild();
 
+
   protected :
     virtual void activate();
     virtual void stateChange (bool);
@@ -72,10 +73,13 @@ class CSSEditor : public CSSEditorS
     QDomDocument doc;
     QMap<QString,QString> properties;
     QString selectorName,
-            selectorProperties,
-	    inlineSelector,
-	    inlineHeader,
-	    inlineFooter;
+            initialProperties,
+	      Selectors,
+	      Header,
+	      Footer,
+            InlineStyleContent;
+    
+    QString initialPreviewText;            
             //sourceFileName;
     //QStringList displayedSelectors;
     //QString newClass,
@@ -93,6 +97,7 @@ class CSSEditor : public CSSEditorS
     CSSEditor( QString s, QWidget* parent=0, const char *name=0);
     ~CSSEditor();
     void addProperty(const QString& property, const QString& value) { properties[property] = value; }
+    void setForInitialPreview(const QString& s) { initialPreviewText = s; }
 
   public slots:
     //void setNewClass(const QString& s){ newClass = s;}
@@ -109,9 +114,10 @@ class CSSEditor : public CSSEditorS
     void initialize();
    // void setSourceFileName(const QString& n) { sourceFileName = n; }
 
-    void setInlineSelector( const QString& s) { inlineSelector = s; }
-    void setInlineHeader( const QString& s) { inlineHeader = s; }
-    void setInlineFooter( const QString& s) { inlineFooter = s;}
+    void setSelectors( const QString& s) { Selectors = s; }
+    void setHeader( const QString& s) { Header = s; }
+    void setFooter( const QString& s) { Footer = s;}
+    void setInlineStyleContent( const QString&);
 
     QString generateProperties();
 

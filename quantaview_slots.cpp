@@ -201,6 +201,7 @@ void QuantaView::slotInsertCSS()
 
     CSSSelector *dlg = new CSSSelector;
 
+    dlg->setForInitialPreview(w->editIf->text());
     //dlg->setSourceFileName(w->url().path());
 
     dlg->setHeader(header);
@@ -208,44 +209,60 @@ void QuantaView::slotInsertCSS()
 
     dlg->loadExistingStyleSection(styleTagContent);
     if( dlg->exec() ){
-
-    //Need to find the text rectangle betweeen <style ...> and </style> and replace with the new one
-
       w->activateParser(false);
       node->next->tag->beginPos(eLine,eCol);
       w->editIf->removeText(bLine, bCol+1, eLine, eCol);
       w->viewCursorIf->setCursorPositionReal((uint)bLine, (uint)bCol+1);
       w->activateParser(true);
       w->insertTag(dlg->generateStyleSection());
-
-
     }
     delete dlg;
 
   }
   else {
-    CSSEditor *dlg = new CSSEditor(this);
 
-    dlg->setInlineHeader(w->text(0, 0,bLine, bCol-1));
-    if (node)
-        node->tag->endPos(eLine, eCol);
-    dlg->setInlineSelector(w->text(bLine, bCol, eLine, eCol));
+
+    CSSEditor *dlg = new CSSEditor(this);
+    dlg->setForInitialPreview(w->editIf->text());
+
+    if(node){
+      node->tag->beginPos(bLine, bCol);
+      node->tag->endPos(eLine, eCol);
+    }
+
+    dlg->setFooter(w->text(eLine, eCol,200, 200));
+
+    QString temp(QString::null);
+
+    if( node)
+      if( node->tag->hasAttribute("style") ) {
+        dlg->setInlineStyleContent(node->tag->attributeValue("style"));
+        node->tag->deleteAttribute("style");
+        temp=node->tag->toString();
+      }
+    else{
+       dlg->setInlineStyleContent(QString::null);
+       temp=node->tag->toString();
+    }
+    //using QString::mid sometimes generates strange results; maybe this is due to a (random) blank in temp
+    temp=temp.left(temp.length()-1);//remove >
+    temp=temp.right(temp.length()-1);//remove <
+    dlg->setHeader(w->text(0, 0,bLine, bCol)+temp);
 
     dlg->initialize();
     if( dlg->exec() ){
 
       QDict<QString> attr;
       attr.setAutoDelete(true);
-      //need to read other tag attributes and add style
       attr.insert("style",new QString( dlg->generateProperties() ) );
+
       if (node)
-          w->changeTag(node->tag, &attr);
+        w->changeTag(node->tag, &attr);
       else
           w->insertText(*attr["style"]); //FIXME!!
     }
     delete dlg;
    }
-
 }
 #else
 void QuantaView::slotInsertCSS()

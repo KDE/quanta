@@ -214,78 +214,62 @@ void CSSEditor::initialize()
   fEditingLayout->addWidget(ps);
   connect(ps, SIGNAL(valueChanged(const QString&)), this, SLOT(checkProperty(const QString&)));
   
-  if( !selectorName.isEmpty() ){
- 
-    *(testFile->textStream()) << ( inlineHeader + selectorName + " { " + selectorProperties + " } "+ inlineSelector + inlineFooter);
-            
-    QStringList props=QStringList::split(";",selectorProperties);
-    QString temp(selectorName + " {\n\t ");
-    for ( QStringList::Iterator it = props.begin(); it != props.end(); ++it ) {
-      addProperty((*it).section(":",0,0).stripWhiteSpace(),(*it).section(":",1,1));
-      temp+=((*it).section(":",0,0).stripWhiteSpace() + " : " + (*it).section(":",1,1)+";\n\t");
-      
-      if( (currentProp = static_cast<myCheckListItem*>(lvVisual->findItem( (*it).section(":",0,0).stripWhiteSpace(),0 )) )) {
-        currentProp->setOn(true);
-        if( currentProp->depth() ) {
-          myCheckListItem *p = static_cast<myCheckListItem*>(currentProp->parent());
-          while(p) {
-            p->setOn(true);
-            p=static_cast<myCheckListItem*>(p->parent());
-          }
-        }
-      }
-
-      if( (currentProp = static_cast<myCheckListItem*>(lvAll->findItem( (*it).section(":",0,0).stripWhiteSpace(),0 )) )) {
-        currentProp->setOn(true);
-        if( currentProp->depth() ) {
-          myCheckListItem *p = static_cast<myCheckListItem*>(currentProp->parent());
-          while(p) {
-            p->setOn(true);
-            p=static_cast<myCheckListItem*>(p->parent());
-          }
-        }
-      }
-
-      if( (currentProp = static_cast<myCheckListItem*>(lvAural->findItem( (*it).section(":",0,0).stripWhiteSpace(),0 )) )) {
-        currentProp->setOn(true);
-        if( currentProp->depth() ) {
-          myCheckListItem *p = static_cast<myCheckListItem*>(currentProp->parent());
-          while(p) {
-            p->setOn(true);
-            p=static_cast<myCheckListItem*>(p->parent());
-          }
-        }
-      }
-
-      if( (currentProp = static_cast<myCheckListItem*>(lvInteractive->findItem( (*it).section(":",0,0).stripWhiteSpace(),0 )) )) {
-        currentProp->setOn(true);
-        if( currentProp->depth() ) {
-          myCheckListItem *p = static_cast<myCheckListItem*>(currentProp->parent());
-          while(p) {
-            p->setOn(true);
-            p=static_cast<myCheckListItem*>(p->parent());
-          }
-        }
-      }
-
-      if( (currentProp = static_cast<myCheckListItem*>(lvPaged->findItem( (*it).section(":",0,0).stripWhiteSpace(),0 )) )) {
-        currentProp->setOn(true);
-        if( currentProp->depth() ) {
-          myCheckListItem *p = static_cast<myCheckListItem*>(currentProp->parent());
-          while(p) {
-            p->setOn(true);
-            p=static_cast<myCheckListItem*>(p->parent());
-          }
-        }
-      }
-    }
-    temp.truncate(temp.length()-1);
-    temp+="}";
-    display->setText(temp);
-  }
+  QStringList props;
+  QString temp;
+  
+  
+  if( !selectorName.isEmpty() ){ //the cssselector has been called
+     props=QStringList::split(";",initialProperties);
+     temp=(selectorName + " {\n\t ");
+     *(testFile->textStream()) << ( Header + selectorName + " { " + initialProperties + " } "+ Selectors + Footer);
+  }  
+  
   else {
-     *(testFile->textStream()) << ( inlineHeader + inlineSelector + inlineFooter);
+    props=QStringList::split(";",InlineStyleContent);
+    temp=" {\n\t ";
+    *(testFile->textStream()) << initialPreviewText;
+  }
+  
+  
+  
+  for ( QStringList::Iterator it = props.begin(); it != props.end(); ++it ) {
+       temp+=((*it).section(":",0,0).stripWhiteSpace() + " : " + (*it).section(":",1,1)+";\n\t");
+     }
+  temp.truncate(temp.length()-1);
+  temp+="}";
+  display->setText(temp);
+    
+    
+  for ( QStringList::Iterator it = props.begin(); it != props.end(); ++it ) {
+      const QString propertyName((*it).section(":",0,0).stripWhiteSpace());
+      const QString propertyValue((*it).section(":",1,1));
+      addProperty(propertyName,propertyValue);
+      
+      if( (currentProp = static_cast<myCheckListItem*>(lvVisual->findItem( propertyName,0 )) )) 
+        currentProp->setOn(true);
+      else  
+      if( (currentProp = static_cast<myCheckListItem*>(lvAll->findItem( propertyName,0 )) )) 
+        currentProp->setOn(true); 
+      else  
+      if( (currentProp = static_cast<myCheckListItem*>(lvAural->findItem( propertyName,0 )) )) 
+        currentProp->setOn(true);   
+      else  
+      if( (currentProp = static_cast<myCheckListItem*>(lvInteractive->findItem( propertyName,0 )) )) 
+        currentProp->setOn(true); 
+      else  
+      if( (currentProp = static_cast<myCheckListItem*>(lvPaged->findItem( propertyName,0 )) )) 
+        currentProp->setOn(true); 
+        
+      if( currentProp->depth() ) {
+          myCheckListItem *p = static_cast<myCheckListItem*>(currentProp->parent());
+          while(p) {
+            p->setOn(true);
+            p=static_cast<myCheckListItem*>(p->parent());
+          }
+        }    
     }
+
+   // *(testFile->textStream()) << initialPreviewText;
     testFile->close();
 }
 
@@ -294,7 +278,7 @@ CSSEditor::CSSEditor(QWidget *parent, const char *name) : CSSEditorS(parent, nam
 
 CSSEditor::CSSEditor(QListViewItem *i, QWidget *parent, const char *name) : CSSEditorS(parent, name){
   selectorName = i->text(0);
-  selectorProperties = i->text(1);
+  initialProperties = i->text(1);
 }
 
 CSSEditor::CSSEditor( QString s, QWidget* parent, const char *name) : CSSEditorS(parent, name){
@@ -513,11 +497,10 @@ void CSSEditor::updatePreview()
   testFile=0;
   testFile = new KTempFile(tmpDir,".html");
   testFile->setAutoDelete(true);
-  qWarning(testFile->name());
      
-  if(!selectorName.isEmpty()){
+  if(!selectorName.isEmpty()){// we're working on <style></style> block
       toDisplay= ( selectorName +" {\n\t" );
-      *(testFile->textStream()) << inlineHeader << selectorName << " { \n ";
+      *(testFile->textStream()) << Header << selectorName << " { \n ";
       
       QMap<QString,QString>::Iterator it;
       for ( it = properties.begin(); it != properties.end(); ++it ) {
@@ -525,23 +508,27 @@ void CSSEditor::updatePreview()
         *(testFile->textStream()) << s;
         toDisplay += (s + "\n\t");
       }
-      *(testFile->textStream()) << "}" << inlineSelector<<inlineFooter;
+      *(testFile->textStream()) << "}" << Selectors<<Footer;
     }
   
     else {
       toDisplay = " {\n\t";
-      *(testFile->textStream()) << inlineHeader << " style=\"";
+      *(testFile->textStream()) << Header << " style=\"";
       QMap<QString,QString>::Iterator it;
       for ( it = properties.begin(); it != properties.end(); ++it ) {
         QString s( it.key() + " : " + it.data() + ";");
         *(testFile->textStream()) << s;
         toDisplay += (s + "\n\t");
       }
-      *(testFile->textStream()) << "\">" << inlineFooter;
+      *(testFile->textStream()) << "\"" << Footer;
     }
     display->setText(toDisplay+"}");
     testFile->close();
     activatePreview();
+}
+
+void CSSEditor::setInlineStyleContent( const QString& s) {  
+  InlineStyleContent = s; 
 }
 
   
