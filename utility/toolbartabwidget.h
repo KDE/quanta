@@ -56,6 +56,8 @@ signals:
   void removeToolbar(const QString&);
   void renameToolbar(const QString&);
   void editToolbar(const QString&);
+  void newAction();
+  void addToolbar();
 
 public:
   QString tabUnderMouse;

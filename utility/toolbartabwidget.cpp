@@ -25,6 +25,7 @@
 //kde includes
 #include <kaction.h>
 #include <kaccelmanager.h>
+#include <kdeversion.h>
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -35,8 +36,6 @@
 #include <kglobalsettings.h>
 
 //app includes
-#include "quanta.h"
-#include "resource.h"
 #include "toolbartabwidget.h"
 
 ToolbarTabWidget::ToolbarTabWidget(QWidget * parent, const char * name, WFlags f)
@@ -44,19 +43,23 @@ ToolbarTabWidget::ToolbarTabWidget(QWidget * parent, const char * name, WFlags f
 {
   m_popupMenu = new KPopupMenu(this);
   m_popupMenu->insertTitle(i18n("Toolbar Menu"), 1);
-  m_popupMenu->insertItem(i18n("New Action..."), quantaApp, SLOT(slotNewAction()));
+  m_popupMenu->insertItem(i18n("New Action..."), parent, SLOT(slotNewAction()));
   m_popupMenu->insertSeparator();
-  m_popupMenu->insertItem(i18n("New Toolbar..."), quantaApp, SLOT(slotAddToolbar()));
+  m_popupMenu->insertItem(i18n("New Toolbar..."), parent, SLOT(slotAddToolbar()));
   m_popupMenu->insertItem(i18n("Remove Toolbar"), this, SLOT(slotRemoveToolbar()));
   m_popupMenu->insertItem(i18n("Rename Toolbar..."), this, SLOT(slotRenameToolbar()));
   m_popupMenu->insertItem(SmallIconSet("configure_toolbars"), i18n("Configure Toolbars..."), this, SLOT(slotEditToolbar()));
 
   connect(this, SIGNAL(removeToolbar(const QString&)),
-          quantaApp, SLOT(slotRemoveToolbar(const QString&)));
+          parent, SLOT(slotRemoveToolbar(const QString&)));
   connect(this, SIGNAL(renameToolbar(const QString&)),
-          quantaApp, SLOT(slotRenameToolbar(const QString&)));
+          parent, SLOT(slotRenameToolbar(const QString&)));
   connect(this, SIGNAL(editToolbar(const QString&)),
-          quantaApp, SLOT(slotConfigureToolbars(const QString&)));
+          parent, SLOT(slotConfigureToolbars(const QString&)));
+  connect(this, SIGNAL(newAction()),
+          parent, SLOT(slotNewAction()));
+  connect(this, SIGNAL(addToolbar()),
+          parent, SLOT(slotAddToolbar()));
 #if KDE_VERSION > KDE_MAKE_VERSION(3,3,90)
   KAcceleratorManager::setNoAccel(this);
 #endif
@@ -201,7 +204,7 @@ void QuantaToolBar::mousePressEvent(QMouseEvent *e)
       m_toolbarTab->tabUnderMouse = m_toolbarTab->label(m_toolbarTab->currentPageIndex());
       m_popupMenu->insertTitle(i18n("Toolbar Menu") + " - "
                                + i18n(m_toolbarTab->tabUnderMouse.utf8()));
-      m_popupMenu->insertItem(i18n("New Action..."), quantaApp, SLOT(slotNewAction()));
+      m_popupMenu->insertItem(i18n("New Action..."), m_toolbarTab, SIGNAL(newAction()));
       QObjectList* childrenList = queryList("KToolBarButton");
       for (uint i = 0; i < childrenList->count(); i++)
       {
@@ -218,7 +221,7 @@ void QuantaToolBar::mousePressEvent(QMouseEvent *e)
         }
       }
       m_popupMenu->insertSeparator();
-      m_popupMenu->insertItem(i18n("New Toolbar..."), quantaApp, SLOT(slotAddToolbar()));
+      m_popupMenu->insertItem(i18n("New Toolbar..."), m_toolbarTab, SIGNAL(addToolbar()));
       m_popupMenu->insertItem(i18n("Remove Toolbar"), m_toolbarTab, SLOT(slotRemoveToolbar()));
       m_popupMenu->insertItem(i18n("Rename Toolbar..."), m_toolbarTab, SLOT(slotRenameToolbar()));
       m_popupMenu->insertItem(SmallIconSet("configure_toolbars"), i18n("Configure Toolbars..."), m_toolbarTab, SLOT(slotEditToolbar()));

@@ -33,6 +33,7 @@
 #include <qrect.h>
 #include <qspinbox.h>
 #include <qstring.h>
+#include <qtabwidget.h>
 #include <qvaluevector.h>
 
 //own includes
@@ -42,8 +43,6 @@
 #include "tag.h"
 
 #include "quantacommon.h"
-#include "quanta.h"
-#include "resource.h"
 #include "tableitem.h"
 #include "tableeditor.h"
 

@@ -99,17 +99,8 @@ namespace KTextEditor
 
 struct DirInfo;
 struct EventAction;
+struct ToolbarEntry;
 
-typedef struct ToolbarEntry{
-  KXMLGUIClient *guiClient;
-  QDomDocument *dom;
-  QPopupMenu *menu;
-  KURL url;
-  QString name;
-  bool user;
-  bool visible;
-  bool nameModified; ///< True if the name of the toolbar was modified by Quanta on loading:" (n)" was added
-};
 
 /**
   * The base class for Quanta application windows.
@@ -212,6 +203,8 @@ signals: // Signals
 
   /** Emitted when some kind of event that can have associated actions has happened. */
   void eventHappened(const QString&, const QString&, const QString& );
+  
+  void toolbarRemoved(const QString&);
 
 public slots:
   void slotFileNew();

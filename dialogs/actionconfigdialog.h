@@ -18,8 +18,25 @@
 #include <qmap.h>
 #include "actionconfigdialogs.h"
 
+class QDomDocument;
+class QPopupMenu;
+
+class KAction;
+class KMainWindow;
 class KPopupMenu;
 class KShortcut;
+class KXMLGUIClient;
+
+typedef struct ToolbarEntry{
+  KXMLGUIClient *guiClient;
+  QDomDocument *dom;
+  QPopupMenu *menu;
+  KURL url;
+  QString name;
+  bool user;
+  bool visible;
+  bool nameModified; ///< True if the name of the toolbar was modified by Quanta on loading:" (n)" was added
+};
 
 class ActionConfigDialog: public ActionConfigDialogS
 {
@@ -27,7 +44,7 @@ class ActionConfigDialog: public ActionConfigDialogS
 
 public:
 
-  ActionConfigDialog( QWidget* parent = 0, const char* name = 0, bool modal = true, WFlags fl = 0 , const QString& defaultAction = QString::null);
+  ActionConfigDialog(const QDict<ToolbarEntry> &toolbarList, KMainWindow* parent = 0, const char* name = 0, bool modal = true, WFlags fl = 0 , const QString& defaultAction = QString::null);
   ~ActionConfigDialog();
   void createScriptAction(const QString& a_name, const QString& a_script);
 
@@ -50,6 +67,13 @@ private slots:
   void slotApply();
   void slotAddContainerToolbar();
   void slotRemoveContainerToolbar();
+  void slotToolbarRemoved(const QString& toolbarName);
+  
+signals:
+  void addToolbar();
+  void removeToolbar(const QString&);      
+  void deleteUserAction(KAction *);
+  void configureToolbars(const QString&);
 
 private:
   void saveCurrentAction();
@@ -59,6 +83,9 @@ private:
   QListViewItem *allActionsItem;
   QMap<QString, QString> globalShortcuts;
   KShortcut selectedShortcut;
+  KMainWindow *m_mainWindow;
+  QDict<ToolbarEntry> m_toolbarList;
+  QListViewItem *m_toolbarItem;
 };
 
 #endif

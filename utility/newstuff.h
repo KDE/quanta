@@ -26,6 +26,9 @@ Makes possible downloading and installing a DTEP resource files from a server.
 
 @author Andras Mantia
 */
+
+class KURL;
+
 class QNewDTEPStuff: public KNewStuffSecure
 {
    Q_OBJECT
@@ -49,12 +52,14 @@ class QNewToolbarStuff: public KNewStuffSecure
    Q_OBJECT
 
 public:
-    QNewToolbarStuff(const QString &type,  QWidget *parentWidget=0)
-      :KNewStuffSecure(type, parentWidget){};
-    ~QNewToolbarStuff() {};
+  QNewToolbarStuff(const QString &type,  QWidget *parentWidget=0);
+  ~QNewToolbarStuff() {};
+  
+signals:
+  void loadToolbarFile(const KURL&);       
 
 private:
-     virtual void installResource();
+   virtual void installResource();
 };
 
 /**
@@ -67,12 +72,14 @@ class QNewTemplateStuff: public KNewStuffSecure
    Q_OBJECT
 
 public:
-    QNewTemplateStuff(const QString &type,  QWidget *parentWidget=0)
-      :KNewStuffSecure(type, parentWidget){};
-    ~QNewTemplateStuff() {};
+  QNewTemplateStuff(const QString &type,  QWidget *parentWidget=0);
+  ~QNewTemplateStuff() {};
 
+signals:
+  void openFile(const KURL&);
+  
 private:
-     virtual void installResource();
+   virtual void installResource();
 };
 
 /**

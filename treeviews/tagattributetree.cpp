@@ -22,7 +22,7 @@
 #include <qtooltip.h>
 
 //kde includes
-//#include <klistview.h>
+#include <kaction.h>
 #include <klocale.h>
 #include <kpushbutton.h>
 #include <kstringhandler.h>
@@ -31,6 +31,7 @@
 #include <ktexteditor/editinterface.h>
 #include <ktexteditor/viewcursorinterface.h>
 #include <ktexteditor/view.h>
+#include <dom/dom_node.h>
 
 //app includes
 #include "tagattributetree.h"
@@ -42,10 +43,6 @@
 #include "document.h"
 #include "quantaview.h"
 #include "tag.h"
-#include "resource.h"
-#include "quanta.h"
-#include <dom/dom_node.h>
-#include <kaction.h>
 #include "wkafkapart.h"
 #include "kafkacommon.h"
 #include "undoredo.h"

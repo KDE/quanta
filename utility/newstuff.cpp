@@ -26,7 +26,6 @@
 #include "newstuff.h"
 #include "dtds.h"
 #include "resource.h"
-#include "quanta.h"
 #include "quantacommon.h"
 #include "qextfileinfo.h"
 
@@ -54,6 +53,13 @@ void QNewDTEPStuff::installResource()
         KMessageBox::error(parentWidget(), i18n("There was an error with the downloaded DTEP tarball file. Possible causes are damaged archive or invalid directory structure in the archive."), i18n("DTEP Installation Error"));
 }
 
+QNewToolbarStuff::QNewToolbarStuff(const QString &type,  QWidget *parentWidget)
+  :KNewStuffSecure(type, parentWidget)
+{
+  connect(this, SIGNAL(loadToolbarFile(const KURL&)), parentWidget, SLOT(slotLoadToolbarFile(const KURL&)));
+}
+
+
 void QNewToolbarStuff::installResource()
 {
     KURL destURL = KURL::fromPathOrURL(KGlobal::dirs()->saveLocation("data") + resourceDir + "toolbars/" + QFileInfo(m_tarName).fileName());
@@ -66,13 +72,20 @@ void QNewToolbarStuff::installResource()
         {
            if (KMessageBox::questionYesNo(parentWidget(), i18n("Do you want to load the newly downloaded toolbar?"), i18n("Load Toolbar")) == KMessageBox::Yes)
            {
-              quantaApp->slotLoadToolbarFile(destURL);
+              emit loadToolbarFile(destURL);
            }
         }
         if (!ok)
             KMessageBox::error(parentWidget(), i18n("There was an error with the downloaded toolbar tarball file. Possible causes are damaged archive or invalid directory structure in the archive."), i18n("Toolbar Installation Error"));
      }
 }
+
+QNewTemplateStuff::QNewTemplateStuff(const QString &type,  QWidget *parentWidget)
+  :KNewStuffSecure(type, parentWidget)
+{
+  connect(this, SIGNAL(openFile(const KURL&)), parentWidget, SLOT(slotFileOpen(const KURL&)));
+}
+
 
 void QNewTemplateStuff::installResource()
 {
@@ -86,7 +99,7 @@ void QNewTemplateStuff::installResource()
         {
            if (KMessageBox::questionYesNo(parentWidget(), i18n("Do you want to open the newly downloaded template?"), i18n("Open Template")) == KMessageBox::Yes)
            {
-              quantaApp->slotFileOpen(destURL);
+              emit openFile(destURL);
            }
         }
         if (!ok)

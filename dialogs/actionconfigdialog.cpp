@@ -33,31 +33,35 @@
 #include <kkeybutton.h>
 #include <klistview.h>
 #include <klocale.h>
+#include <kmainwindow.h>
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
 #include <kpushbutton.h>
 #include <kstandarddirs.h>
 #include <kdeversion.h>
 #include <kinputdialog.h>
+#include <ktoolbar.h>
 
 //app includes
 #include "resource.h"
-#include "quanta.h"
 #include "filecombo.h"
 
 #include "actionconfigdialog.h"
 #include "tagaction.h"
 #include "toolbartabwidget.h"
 
-ActionConfigDialog::ActionConfigDialog( QWidget* parent, const char* name, bool modal, WFlags fl, const QString& defaultAction )
+ActionConfigDialog::ActionConfigDialog(const QDict<ToolbarEntry> &toolbarList, KMainWindow* parent, const char* name, bool modal, WFlags fl, const QString& defaultAction )
     :ActionConfigDialogS( parent, name, modal, fl )
 {
+  m_mainWindow = parent;
+  m_toolbarList = toolbarList;
   buttonOk->setIconSet(SmallIconSet("button_ok"));
   buttonCancel->setIconSet(SmallIconSet("button_cancel"));
   buttonApply->setIconSet(SmallIconSet("apply"));
   //buttonHelp->setIconSet(SmallIconSet("help"));
 
   currentAction = 0L;
+  m_toolbarItem = 0L;
 
   connect(actionTreeView, SIGNAL(contextMenu(KListView *,QListViewItem *,const QPoint &)),
                           SLOT(slotContextMenu(KListView *,QListViewItem *,const QPoint &)));
@@ -67,6 +71,10 @@ ActionConfigDialog::ActionConfigDialog( QWidget* parent, const char* name, bool 
                              SLOT(slotShortcutCaptured(const KShortcut &)));
   connect(scriptPath, SIGNAL(activated(const QString&)),
                       SLOT(slotTextChanged(const QString&)));
+  connect(this, SIGNAL(addToolbar()), m_mainWindow, SLOT(slotAddToolbar()));
+  connect(this, SIGNAL(removeToolbar(const QString&)), m_mainWindow, SLOT(slotRemoveToolbar(const QString&)));
+  connect(this, SIGNAL(deleteUserAction(KAction*)), m_mainWindow, SLOT(slotDeleteAction(KAction*)));
+  connect(this, SIGNAL(configureToolbars(const QString&)), m_mainWindow, SLOT(slotConfigureToolbars(const QString&)));
 //fill up the tree view with the toolbars and actions
   actionTreeView->setSorting(-1);
   allActionsItem = new KListViewItem(actionTreeView, i18n("All"));
@@ -76,6 +84,7 @@ ActionConfigDialog::ActionConfigDialog( QWidget* parent, const char* name, bool 
   QString toolbarName;
   ToolbarTabWidget *tb = ToolbarTabWidget::ref();
   QRegExp r("\\&(?!\\&)");
+  KActionCollection *ac = m_mainWindow->actionCollection();
   for (int i = 0; i < tb->count(); i++)
   {
     toolbarName = tb->label(i);
@@ -84,7 +93,7 @@ ActionConfigDialog::ActionConfigDialog( QWidget* parent, const char* name, bool 
     actionTreeView->insertItem(item);
 
     QListViewItem *oldActionItem = 0L;
-    ToolbarEntry *p_toolbar = quantaApp->toolbarList[toolbarName.lower()];
+    ToolbarEntry *p_toolbar = m_toolbarList[toolbarName.lower()];
     if (p_toolbar)
     {
       QDomNode node = p_toolbar->guiClient->domDocument().firstChild().firstChild().firstChild();
@@ -92,7 +101,7 @@ ActionConfigDialog::ActionConfigDialog( QWidget* parent, const char* name, bool 
       {
         if (node.nodeName() == "Action")
         {
-          action = quantaApp->actionCollection()->action(node.toElement().attribute("name"));
+          action = ac->action(node.toElement().attribute("name"));
           if (action)
           {
             oldActionItem = new KListViewItem(item, oldActionItem, action->text().replace(r,""), action->shortcut().toString(), action->name());
@@ -127,9 +136,10 @@ ActionConfigDialog::ActionConfigDialog( QWidget* parent, const char* name, bool 
     }
     oldItem = item;
   }
-  for (uint i = 0; i < quantaApp->actionCollection()->count(); i++)
+  uint acCount = ac->count();
+  for (uint i = 0; i < acCount; i++)
   {
-    action = quantaApp->actionCollection()->action(i);
+    action = ac->action(i);
     item = new KListViewItem(allActionsItem, action->text().replace(r, ""),  action->shortcut().toString(), action->name());
     item->setPixmap(0, SmallIcon(action->icon()) );
   }
@@ -149,7 +159,7 @@ ActionConfigDialog::~ActionConfigDialog()
 
 void ActionConfigDialog::slotAddToolbar()
 {
-  quantaApp->slotAddToolbar();
+  emit addToolbar();
   QString toolbarName;
   QListViewItem *item;
   ToolbarTabWidget *tb = ToolbarTabWidget::ref();
@@ -180,13 +190,19 @@ void ActionConfigDialog::slotRemoveToolbar()
   {
     if ( KMessageBox::warningYesNo(this, i18n("Do you really want to remove the \"%1\" toolbar?").arg(s)) == KMessageBox::Yes )
     {
-      if (quantaApp->slotRemoveToolbar(s.lower()))
-      {
-        actionTreeView->setCurrentItem(allActionsItem);
-        delete item;
-      }
+      m_toolbarItem = item;
+      connect(m_mainWindow, SIGNAL(toolbarRemoved(const QString&)), SLOT(slotToolbarRemoved(const QString&)));
+      emit removeToolbar(s.lower());
     }
   }
+}
+
+void ActionConfigDialog::slotToolbarRemoved(const QString &/*name*/)
+{
+  actionTreeView->setCurrentItem(allActionsItem);
+  delete m_toolbarItem;
+  m_toolbarItem = 0L;
+  disconnect(m_mainWindow, SIGNAL(toolbarRemoved(const QString&)), this, SLOT(slotToolbarRemoved(const QString&)));
 }
 
 void ActionConfigDialog::slotEditToolbar()
@@ -199,15 +215,16 @@ void ActionConfigDialog::slotEditToolbar()
   toolbarName = item->text(0);
   if ( toolbarName != i18n("All"))
   {
-    quantaApp->slotConfigureToolbars(toolbarName +" <quanta>");
+    emit configureToolbars(toolbarName +" <quanta>");
 
     //update the tree view
     KAction *action;
+    KActionCollection *ac = m_mainWindow->actionCollection();
     ToolbarTabWidget *tb = ToolbarTabWidget::ref();
     for (int i = 0; i < tb->count(); i++)
     {
       toolbarName = tb->label(i);
-      ToolbarEntry *p_toolbar = quantaApp->toolbarList[toolbarName.lower()];
+      ToolbarEntry *p_toolbar = m_toolbarList[toolbarName.lower()];
       if (p_toolbar)
       {
         oldItem = actionTreeView->findItem(toolbarName, 0);
@@ -219,7 +236,7 @@ void ActionConfigDialog::slotEditToolbar()
         {
           if (node.nodeName() == "Action")
           {
-            action = quantaApp->actionCollection()->action(node.toElement().attribute("name"));
+            action = ac->action(node.toElement().attribute("name"));
             if (action)
             {
               oldItem = new KListViewItem(item, oldItem, action->text().replace(QRegExp("\\&(?!\\&)"),""), action->shortcut().toString(), action->name());
@@ -255,10 +272,12 @@ void ActionConfigDialog::slotSelectionChanged(QListViewItem *item)
   if (item && item->depth() > 0)
   {
     TagAction *action = 0L;
+    KActionCollection *ac = m_mainWindow->actionCollection();
+    uint acCount = ac->count();
 //find the corresponding action
-    for (uint i = 0; i < quantaApp->actionCollection()->count(); i++)
+    for (uint i = 0; i < acCount; i++)
     {
-      KAction *a = quantaApp->actionCollection()->action(i);
+      KAction *a = ac->action(i);
       QString actionName = a->name();
       if (a && actionName == item->text(2) && a->inherits("TagAction"))
       {
@@ -310,7 +329,7 @@ void ActionConfigDialog::slotSelectionChanged(QListViewItem *item)
       for (int i = 0; i < tb->count(); i++)
       {
         QString toolbarName = tb->label(i);
-        ToolbarEntry *p_toolbar = quantaApp->toolbarList[toolbarName.lower()];
+        ToolbarEntry *p_toolbar = m_toolbarList[toolbarName.lower()];
         if (p_toolbar)
         {
           QDomNode node = p_toolbar->guiClient->domDocument().firstChild().firstChild().firstChild();
@@ -584,7 +603,7 @@ void ActionConfigDialog::saveCurrentAction()
   for (int i = 0; i < tb->count(); i++)
   {
     QString toolbarName = tb->label(i);
-    ToolbarEntry *p_toolbar = quantaApp->toolbarList[toolbarName.lower()];
+    ToolbarEntry *p_toolbar = m_toolbarList[toolbarName.lower()];
     bool isOnToolbar = false;
     if (p_toolbar)
     {
@@ -695,7 +714,7 @@ void ActionConfigDialog::slotShortcutCaptured(const KShortcut &shortcut)
 
   if (global.isEmpty())
   {
-    QPtrList<KXMLGUIClient> clients = quantaApp->guiFactory()->clients();
+    QPtrList<KXMLGUIClient> clients = m_mainWindow->guiFactory()->clients();
     for( QPtrListIterator<KXMLGUIClient> it( clients ); it.current(); ++it )
     {
         KActionCollection *ac = (*it)->actionCollection();
@@ -756,10 +775,10 @@ void ActionConfigDialog::slotNewAction()
   el.setAttribute( "name", "user_"+KApplication::randomString(10) );
   el.setAttribute( "icon", "ball" );
 
-  currentAction = new TagAction(&el, quantaApp->actionCollection());
+  currentAction = new TagAction(&el, m_mainWindow->actionCollection());
 #if KDE_IS_VERSION(3,2,90)
     //add the actions to every toolbar xmlguiclient
-    QDictIterator<ToolbarEntry> it(quantaApp->toolbarList);
+    QDictIterator<ToolbarEntry> it(m_toolbarList);
     while (it.current())
     {
       it.current()->guiClient->actionCollection()->insert(currentAction);
@@ -771,7 +790,7 @@ void ActionConfigDialog::slotNewAction()
   static_cast<TagAction*>(currentAction)->setModified(true);
   QListViewItem *currentItem = actionTreeView->currentItem();
   QListViewItem *item = new KListViewItem(allActionsItem);
-  QString actionText = QString("Action_%1").arg(quantaApp->actionCollection()->count());
+  QString actionText = QString("Action_%1").arg(m_mainWindow->actionCollection()->count());
   currentAction->setText(actionText);
   item->setText(2, currentAction->name());
   item->setText(0, actionText);
@@ -807,7 +826,7 @@ void ActionConfigDialog::slotDeleteAction()
   if ( KMessageBox::warningYesNo(this, i18n("<qt>Removing the action removes all the references to it.\nAre you sure you want to remove the <b>%1</b> action?</qt>").arg(currentAction->text())) == KMessageBox::Yes )
   {
     QString actionName = currentAction->name();
-    quantaApp->slotDeleteAction(currentAction);
+    emit deleteUserAction(currentAction);
     currentAction = 0L;
     //update the tree view
     QListViewItem *listItem;

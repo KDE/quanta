@@ -1103,7 +1103,7 @@ void QuantaApp::slotNewToolbarConfig()
 
 void QuantaApp::slotOptionsConfigureActions()
 {
-  ActionConfigDialog dlg(this, "actions_config_dlg", true);
+  ActionConfigDialog dlg(toolbarList, this, "actions_config_dlg", true);
   dlg.exec();
 }
 
@@ -2851,20 +2851,20 @@ void QuantaApp::slotRemoveAction(const QString& toolbarName, const QString& a_ac
 
 void QuantaApp::slotEditAction(const QString& actionName)
 {
-  ActionConfigDialog dlg(this, "actions_config_dlg", true, 0, actionName);
+  ActionConfigDialog dlg(toolbarList, this, "actions_config_dlg", true, 0, actionName);
   dlg.exec();
 }
 
 void QuantaApp::slotNewAction()
 {
-  ActionConfigDialog dlg(this, "actions_config_dlg");
+  ActionConfigDialog dlg(toolbarList, this, "actions_config_dlg");
   dlg.slotNewAction();
   dlg.exec();
 }
 
 void QuantaApp::slotAssignActionToScript(const KURL& a_scriptURL, const QString& a_interpreter)
 {
-  ActionConfigDialog dlg(this, "actions_config_dlg");
+  ActionConfigDialog dlg(toolbarList, this, "actions_config_dlg");
   QString name = a_scriptURL.fileName();
   name.truncate(name.length() - QFileInfo(name).extension().length() - 1);
   dlg.createScriptAction(name, a_interpreter + " " + a_scriptURL.path());
@@ -3253,6 +3253,7 @@ bool QuantaApp::slotRemoveToolbar(const QString& name)
   }
 
   slotToggleDTDToolbar(!allToolbarsHidden());
+  emit toolbarRemoved(name);
   return true;
 }
 
