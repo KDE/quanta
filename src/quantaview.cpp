@@ -736,7 +736,7 @@ KURL QuantaView::baseURL()
   return base;
 }
 
-void QuantaView::activated(bool resizeView)
+void QuantaView::activated()
 {
   if (!m_document)
   {
@@ -744,7 +744,6 @@ void QuantaView::activated(bool resizeView)
     quantaApp->slotReloadStructTreeView();
     if (m_plugin)
        quantaApp->partManager()->setActivePart(m_plugin->part(), m_plugin->widget());
-    if (resizeView)
        resize(m_documentArea->width(), m_documentArea->height());
     return;
   }
@@ -775,11 +774,9 @@ void QuantaView::activated(bool resizeView)
             break;
         }
   }
-  if (resizeView)
+  if (m_documentArea->height() + ToolbarTabWidget::ref()->height() > height())
     resize(m_documentArea->width(), m_documentArea->height() - ToolbarTabWidget::ref()->height());
-  else
-    resize(m_documentArea->width(), m_documentArea->height());
-}
+ }
 
 
 void QuantaView::deactivated()
@@ -903,6 +900,7 @@ bool QuantaView::saveDocument(const KURL& url)
 
 void QuantaView::slotSavingFailed(const QString &error)
 {
+  Q_UNUSED(error);
   m_saveResult = false;
   if (m_eventLoopStarted)
     qApp->exit_loop();
