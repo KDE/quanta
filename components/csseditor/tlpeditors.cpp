@@ -26,12 +26,15 @@
 #include <kdialog.h>
 #include <kiconloader.h>
 #include <klocale.h>
+#include <kfiledialog.h>
+#include <kimagefilepreview.h>
 
 #include "qextfileinfo.h"
 #include "quanta.h"
 #include "resource.h"
 #include "tlpeditors.h"
 #include "fontfamilychooser.h"
+#include "project.h"
 
 TLPEditor::TLPEditor(QWidget *parent, const char* name) : QHBox(parent,name){
   m_label = new QLabel(this);
@@ -78,34 +81,41 @@ void URIEditor::URI(const QString & s){
    emit valueChanged("url(\'" + QExtFileInfo::toRelative(u, quantaApp->projectBaseURL()).path() + "\')");
  }
 
-void URIEditor::openFileDialog(){
-  QFileDialog* fd = new QFileDialog( this, "file dialog", TRUE );
+
+ void URIEditor::openFileDialog(){
+  
+  KFileDialog* fd = new KFileDialog( Project::ref()->projectBaseURL().url(), "*.*", this, "file dialog", TRUE );
   switch(m_resourceType) {
-    case image :   fd->setFilter( i18n("Image")+" (*.png *.gif *.jpg *.mng)" );break;
-    case audio :  fd->setFilter( i18n("Audio")+" (*.au *.aiff *.wav)" );break;
-    case mousePointer :   fd->setFilter( i18n("Mouse Pointer")+" (*.cur)" );break;
+    case image :   {
+                             fd->setFilter( "*.png *.gif *.jpg *.mng|" + i18n("Image files (*.png *.gif *.jpg *.mng)") +"\n*.*|" + i18n("All files (*.*)") );
+                             KImageFilePreview *ip = new KImageFilePreview( fd );
+                             fd->setPreviewWidget( ip );
+                            } 
+                             break;
+    case audio :  fd->setFilter( "*.au *.aiff *.wav|" + i18n("Audio files (*.au *.aiff *.wav)")+"\n*.*|" + i18n("All files (*.*)") );break;
+    //case mousePointer :   fd->setFilter( "*.|" + i18n("Mouse Pointers (*.)")+"\n*.*|" + i18n("All files (*.*)") );break;
+    case mousePointer :   fd->setFilter( "*.*|" + i18n("All files (*.*)") );break;
+    
     default:;
   }
-
+  
   bool multi=false;
-
-  if( m_Mode == Single){
-    fd->setMode(QFileDialog::ExistingFile);
-  }
+  
+  if( m_Mode == Single) fd->setMode(1); 
   else {
-    fd->setMode(QFileDialog::ExistingFiles);
+    fd->setMode(4);
     multi=true;
   }
-
-  if( fd->exec() == QDialog::Accepted ){
+  
+  if( fd->exec() ){
     if( !multi)
       URI( fd->selectedFile() );
     else {
       QStringList selectedFiles = fd->selectedFiles();
       KURL u;
       for ( QStringList::Iterator it = selectedFiles.begin(); it != selectedFiles.end(); ++it )
-      {
-        u.setPath(*it);
+      {      
+        u.setPath(*it);   
         m_sFiles.append( "url(\'" + QExtFileInfo::toRelative(u, quantaApp->projectBaseURL()).path() + "\')");
       }
       emit valueChanged(m_sFiles.join(","));
@@ -113,6 +123,7 @@ void URIEditor::openFileDialog(){
   }
   delete fd;
 }
+ 
 
 fontEditor::fontEditor(QWidget *parent, const char* name) : TLPEditor(parent,name){
   setLabelText(" Font  :");

@@ -8,6 +8,7 @@ libcsseditor_la_METASOURCES = AUTO
 AM_CPPFLAGS = -I$(top_srcdir)/quanta/src \
         -I$(top_srcdir)/quanta/utility \
         -I$(top_srcdir)/quanta/parsers \
+        -I$(top_srcdir)/quanta/project \
         -I$(top_srcdir)/lib \
         $(KMDI_INCLUDES) $(all_includes)
 noinst_HEADERS =  styleeditor.h
