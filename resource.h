@@ -90,6 +90,7 @@
 #define ID_VIEW_IN_KFM              12110
 #define ID_VIEW_IN_NETSCAPE         12120
 #define ID_VIEW_IN_KFM2             12130
+#define ID_VIEW_FTP									12140
 
 
 ///////////////////////////////////////////////////////////////////

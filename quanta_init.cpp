@@ -89,7 +89,9 @@ QDict <QStrList> *tagsDict;
 
 QuantaApp::QuantaApp()
 {
-  grepDialog = 0;
+  ftpClient	  = 0;
+  grepDialog	= 0;
+
   config=kapp->config();
 
   parser = new Parser();
@@ -347,7 +349,7 @@ void QuantaApp::initMenuBar()
   ///////////////////////////////////////////////////////////////////
   // menuBar entry toolMenu
   toolMenu = new QPopupMenu();
-
+  toolMenu->setCheckable(true);
   toolMenu->insertItem( i18n("&Goto Line..."),         ID_EDIT_GOTO_LINE);
 
   toolMenu->insertSeparator();
@@ -364,7 +366,8 @@ void QuantaApp::initMenuBar()
 
   toolMenu->insertSeparator();
 
-  toolMenu->insertItem(UserIcon("spellcheck"),i18n("Spe&lling..."),ID_EDIT_SPELL);
+  toolMenu->insertItem(UserIcon("spellcheck"),i18n("Spe&lling..."),		ID_EDIT_SPELL);
+  toolMenu->insertItem(UserIcon("ftpclient"),	i18n("&Ftp client..."),	ID_VIEW_FTP);
 
 
   ///////////////////////////////////////////////////////////////////
@@ -376,7 +379,7 @@ void QuantaApp::initMenuBar()
 
   viewMenu->insertItem(UserIcon("tree_win"),	i18n("Show Tr&ee"),    ID_VIEW_TREE);
   viewMenu->insertItem(i18n("Show &Messages"), ID_VIEW_MES);
-  viewMenu->insertItem(UserIcon("preview"), 	i18n("&Preview"), ID_VIEW_PREVIEW);
+  viewMenu->insertItem(UserIcon("preview"), 	i18n("&Preview"), 		ID_VIEW_PREVIEW);
   viewMenu->insertSeparator();
   viewMenu->insertItem(UserIcon("back"),   		i18n("&Back"), 		ID_VIEW_BACK);
   viewMenu->insertItem(UserIcon("forward"),   i18n("&Forward"), ID_VIEW_FORWARD);

@@ -56,6 +56,7 @@ class ProjectTreeView;
 class Project;
 class ToolBars;
 class GrepDialog;
+class FtpClient;
 
 /**
   * The base class for Quanta application windows. It sets up the main
@@ -263,6 +264,9 @@ class QuantaApp : public KTMainWindow
     void slotShowPreview();
     void slotShowLeftPanel();
 
+    void slotFtpClient();
+    void slotFtpClientClose();
+
     /** Repaint preview ( slot ) */
     void slotViewRepaint();
 
@@ -383,6 +387,8 @@ class QuantaApp : public KTMainWindow
     Parser *parser;
 
     ToolBars *toolbars;
+
+    FtpClient *ftpClient;
 };
  
 #endif // QUANTA_H
