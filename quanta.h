@@ -105,7 +105,6 @@ class QuantaApp : public KMainWindow
 
   public slots:
     
-    void slotFileNewWindow();
     void addRecentFile   (const QString &file);
     void addRecentProject(const QString &file);
     
@@ -122,24 +121,11 @@ class QuantaApp : public KMainWindow
 		void slotFilePrev    ();
     void slotFileQuit    ();
     
-    void slotImageOpen( QString fileToOpen );
+    void slotImageOpen        (QString);
     void slotFileOpenRecent   (const KURL&);
     void slotProjectOpenRecent(const KURL&);
+    void slotInsertTag        (QString);
 
-
-    void slotEditCut           ();
-    void slotEditCopy          ();
-    void slotEditPaste         ();
-    void slotEditUndo          ();
-    void slotEditRedo          ();
-    void slotURedoHistory      ();
-    void slotEditSelectAll     ();
-    void slotEditDeselectAll   ();
-    void slotEditInvertSelect  ();
-    void slotEditVerticalSelect();
-    void slotEditSearch        ();
-    void slotEditSearchAgain   ();
-    void slotEditReplace       ();
     void slotEditFindInFiles   ();
     void slotEditIndent        ();
     void slotEditUnindent      ();
@@ -160,7 +146,6 @@ class QuantaApp : public KMainWindow
     void slotViewStatusBar();
     
     void slotStatusMsg    (const QString &text);
-    void slotStatusHelpMsg(const QString &text);
     
     void slotNewUndo      ();
     void slotNewStatus    ();
@@ -180,8 +165,6 @@ class QuantaApp : public KMainWindow
     void slotShowLeftPanel();
 
     void slotFtpClient();
-    
-    void slotInsertTag(QString);
 
     /** Repaint preview ( slot ) */
     void slotViewRepaint();
@@ -213,6 +196,8 @@ class QuantaApp : public KMainWindow
 	
 	  void slotSelectMessageWidget ();
 	  void slotDisableMessageWidget();
+	  
+	  void setTitle(QString);
 	  
 	protected:
 	  KParts::BrowserExtension *browserExtension() {

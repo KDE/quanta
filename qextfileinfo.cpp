@@ -8,9 +8,10 @@
     (at your option) any later version.
 */    
 
-#include "qextfileinfo.h"
-#include <iostream.h>
 #include <qdir.h>
+#include <kurl.h>
+#include <iostream.h>
+#include "qextfileinfo.h"
 
 QExtFileInfo::QExtFileInfo(const char *file):QFileInfo(file)
 {
@@ -201,4 +202,19 @@ QString QExtFileInfo::shortName(QString fileName)
     fname.remove(0,pos+1);
   
   return fname;
+}
+
+QString QExtFileInfo::path( KURL &url )
+{
+  QString furl = url.url();
+  int i = furl.findRev('/');
+  
+  if ( i != -1 ) return furl.left(i+1);
+  
+  return QString::null;
+}
+
+QString QExtFileInfo::home()
+{
+  return QDir::currentDirPath()+"/";
 }

@@ -33,11 +33,12 @@
 // forward declaration of the Quanta classes
 class QuantaApp;
 class QuantaView;
+class Document;
+
 class QPopupMenu;
 class KPopupMenu;
 
 class KConfig;
-class Document;
 class KWriteManager;
 
 /**	QuantaDoc provides a document object for a document-view model.
@@ -61,68 +62,46 @@ class QuantaDoc : public QObject
   friend class QuantaView;
 
   public:
-    /** Constructor for the fileclass of the application */
+    
     QuantaDoc( QuantaApp *app, QWidget *parent, const char *name=0);
-    /** Destructor for the fileclass of the application */
     ~QuantaDoc();
-
-    /** adds a view to the document which represents the document
-        contents. Usually this is your main view. */
-    void addView(QuantaView *view);
-    /** removes a view from the list of currently connected views */
-    void removeView(QuantaView *view);
-    /** sets the modified flag for the document after a modifying
-        action on the view connected to the document.*/
-    void setModified(bool _m=true);
-    /** returns if the document is modified or not. Use this to
-        determine if your document needs saving by the user on
-        closing.*/
-    bool isModified();
-    bool isModifiedAll();
-    /** "save modified" - asks the user for saving if the document is modified */
-    bool saveModified();	
-    bool saveAll(bool dont_ask=true);
-    /** deletes the document's contents */
-    void deleteContents();
     
-    
-    bool openDocument (const KURL&);
-    bool saveDocument (const QString &filename, const char *format=0);
+    void openDocument (const KURL&);
+    void saveDocument (const KURL&);
     void closeDocument();    
         
-    void nextDocument();
     void prevDocument();
-
-    QString getAbsFilePath();
+    void nextDocument();
     
-    void setTitle(const QString &_t);
-    QString getTitle();
-    
-    Document *write();
-		Document *newWrite(QWidget *parent);
-		
+    KURL    url();
 		QString basePath();
-		/** return bool need repaint preview or not */
-		bool needRepaintPreview();
+    
+    bool isModified();
+    bool isModifiedAll();
+    void setModified(bool flag = true);
+    
+    /// "save modified" - asks the user 
+    /// for saving if the document is modified
+    bool saveModified();	
+    bool saveAll(bool dont_ask=true);
+
+    Document *write();
 		
-		/** change file name in dict and tabbar  from old ones to current */
-		void changeFileName(QString oldname);
-		
-		/** write Config */
+		// for kwrites
+		void  readConfig( KConfig * );
 		void writeConfig( KConfig * );
 		
 		/** set RB menu for KWrite */
 		void setRBMenu( QPopupMenu * rbMenu ) { this->rbMenu = rbMenu; }
 
   private:
-    
     bool newDocument (const KURL&);
+    void changeFileTabName(QString);
+    Document *newWrite(QWidget *parent);
 	
   public slots:
     /** close documents. */
     void closeAll();
-    /** for exchange signals */
-    void slotRequestOpenedFiles();
 
     /** show popup menu with list of attributes for current tag */
     void slotInsertAttrib      ( int id );
@@ -131,15 +110,29 @@ class QuantaDoc : public QObject
     void slotAttribPopup();
     
     void editorOptions();
+    
+    void cut();
+    void copy();
+    void paste();
+    void undo();
+    void redo();
+    void undoHistory();
+    void selectAll();
+    void deselectAll();
+    void find();
+    void findAgain();
+    void replace();
+    void invertSelect();
+    void verticalSelect();
+
  	
   signals:
+    void title(QString);
   	void openedFiles(QStringList);
 
   private:
   	
   	QuantaApp *app;
-  	/** doc's attributes */
-    QString title;
     /** list with documents( kwrites ) */
     QDict<Document> *docList;
     /** manager for bookmarks */

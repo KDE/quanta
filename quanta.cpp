@@ -83,14 +83,9 @@
 // SLOT IMPLEMENTATION
 /////////////////////////////////////////////////////////////////////
 
-void QuantaApp::slotFileNewWindow()
+void QuantaApp::setTitle(QString title)
 {
-  slotStatusMsg(i18n("Opening a new application window..."));
-	
-  QuantaApp *new_window= new QuantaApp();
-  new_window->show();
-
-  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
+  setCaption( "  [  "+title+"  ]  " );
 }
 
 void QuantaApp::slotFileNew()
@@ -107,13 +102,7 @@ void QuantaApp::slotFileOpen()
 
 void QuantaApp::slotFileOpen( KURL &url )
 {
-  if( url.path().isEmpty() ) return;
-  
   doc->openDocument( url );
-  
-  setCaption(doc->getTitle());
-  
-//  addRecentFile(fileToOpen);
 }
 
 void QuantaApp::slotFileOpenRecent(const KURL &url )
@@ -127,243 +116,89 @@ void QuantaApp::slotProjectOpenRecent(const KURL&)
 #warning open project recent  
 //  project->loadProject (recentProjectsMenu->text(id_));
   leftPanel-> showPage( (QWidget *)pTab );
-
-  setCaption(doc->getTitle());
 }
 
 void QuantaApp::slotFileSave()
 {
-  slotStatusMsg(i18n("Saving file..."));
-	
   if ( doc->write()->isUntitled() )
   	slotFileSaveAs();
   else
-  	doc->saveDocument( doc->getAbsFilePath() );
-
-  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
+  	doc->saveDocument( doc->url() );
 }
 
 void QuantaApp::slotFileSaveAs()
 {
-  slotStatusMsg(i18n("Saving file with a new filename..."));
-
-  QString newName=KFileDialog::getSaveFileName(QDir::currentDirPath(),
-                                               i18n("*|All files"), this, i18n("Save as..."));
-  if(!newName.isEmpty())
-  {
-    bool addToProject = false;
-    if ( project->hasProject() ) 
-      addToProject = ( KMessageBox::Yes == KMessageBox::questionYesNo(0,"Add file\n " +newName+"\n to project ? ") );
-
-
-    QFileInfo saveAsInfo(newName);
-    doc->setTitle(saveAsInfo.fileName());
-
-    doc->saveDocument(newName);
-    addRecentFile(newName);
-
-    setCaption(doc->getTitle());
-
-    if ( addToProject ) 
-      project->insertFile(newName,true);
-  }
-
-  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
+  KURL url =
+    KFileDialog::getSaveURL(doc->basePath(),
+                            i18n("*|All files"), this, i18n("Save as..."));
+                            
+  if( url.url().isEmpty() ) return;
+  
+  doc->saveDocument( url );
+    
+  bool addToProject = false;
+  if ( project->hasProject() ) 
+    if ( KMessageBox::Yes == KMessageBox::questionYesNo(0,"Add file\n " +url.url()+"\n to project ? "))
+      project->insertFile(url.url(),true);
 }
 
 void QuantaApp::slotFileSaveAll()
 {
-  slotStatusMsg(i18n("Saving all files..."));
-	
 	doc->saveAll();
-
-  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
 }
-
 
 void QuantaApp::slotFileClose()
 {
-  slotStatusMsg(i18n("Closing file..."));
-	
   doc->closeDocument();
 
   htmlPart()->closeURL();
   htmlPart()->begin( KURL( doc->basePath() ));
- 	htmlPart()->write( "" );
+  htmlPart()->write( "" );
  	htmlPart()->end();
-
-  setCaption(doc->getTitle());
-
+  
   slotNewStatus();
-
-  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
 }
 
 void QuantaApp::slotFileCloseAll()
 {
-  slotStatusMsg(i18n("Closing all files..."));
-	
   doc->closeAll();
 
   htmlPart()->closeURL();
   htmlPart()->begin( KURL( doc->basePath() ));
  	htmlPart()->write( "" );
  	htmlPart()->end();
-
-  setCaption(doc->getTitle());
-
+  
   slotNewStatus();
-
-  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
 }
 
 void QuantaApp::slotFileNext()
 {
-   slotStatusMsg(i18n("Go to next file..."));
-
    doc->nextDocument();
-
-   slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
 }
 
 void QuantaApp::slotFilePrev()
 {
-   slotStatusMsg(i18n("Go to previous file..."));
-
    doc->prevDocument();
-
-  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
 }
-
 
 void QuantaApp::slotFilePrint()
 {
-  slotStatusMsg(i18n("Printing..."));
-
-  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
 }
 
 void QuantaApp::slotFileQuit()
 {
-  slotStatusMsg(i18n("Exiting..."));
   saveOptions();
 
-  //if ( !doc->saveAll(false) )
-  //	return;
-
-  // close the first window, the list makes the next one the first again.
-  // This ensures that queryClose() is called on each window to ask for closing
   KMainWindow* w;
   if(memberList)
   {
     for(w=memberList->first(); w!=0; w=memberList->first())
     {
-      // only close the window if the closeEvent is accepted. If the user presses Cancel on the saveModified() dialog,
-      // the window and the application stay open.
-      if(!w->close())
-				break;
+      if(!w->close()) break;
     }
   }	
 }
 
-void QuantaApp::slotEditCut()
-{
-  slotStatusMsg(i18n("Cutting selection..."));
-
-  doc->write()->cut();
-
-  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
-}
-
-void QuantaApp::slotEditCopy()
-{
-  slotStatusMsg(i18n("Copying selection to clipboard..."));
-
-  doc->write()->copy();
-
-  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
-}
-
-void QuantaApp::slotEditPaste()
-{
-  slotStatusMsg(i18n("Inserting clipboard contents..."));
-
-  doc->write()->paste();
-
-  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
-}
-
-void QuantaApp::slotEditUndo()
-{
-  slotStatusMsg(i18n("Undo..."));
-
-  doc->write()->undo();
-
-  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
-}
-
-void QuantaApp::slotEditRedo()
-{
-  slotStatusMsg(i18n("Redo..."));
-
-  doc->write()->redo();
-
-  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
-}
-
-void QuantaApp::slotURedoHistory()
-{
-  slotStatusMsg(i18n("Undo/Redo history..."));
-
-  doc->write()->undoHistory();
-
-  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
-}
-
-void QuantaApp::slotEditSelectAll()
-{
-  slotStatusMsg(i18n("Undo/Redo history..."));
-
-  doc->write()->selectAll();
-
-  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
-}
-
-void QuantaApp::slotEditDeselectAll()
-{
-  slotStatusMsg(i18n("Undo/Redo history..."));
-
-  doc->write()->deselectAll();
-
-  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
-}
-
-void QuantaApp::slotEditSearch()
-{
-  slotStatusMsg(i18n("Search..."));
-
-  doc->write()->find();
-
-  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
-}
-
-void QuantaApp::slotEditSearchAgain()
-{
-  slotStatusMsg(i18n("Search again..."));
-
-  doc->write()->findAgain();
-
-  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
-}
-
-void QuantaApp::slotEditReplace()
-{
-  slotStatusMsg(i18n("Replace..."));
-
-  doc->write()->replace();
-
-  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
-}
 
 void QuantaApp::slotEditFindInFiles()
 {
@@ -379,107 +214,46 @@ void QuantaApp::slotEditFindInFiles()
   slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
 }
 
-void QuantaApp::slotEditInvertSelect()
-{
-  slotStatusMsg(i18n("Invert Selection..."));
-
-  doc->write()->invertSelection();
-
-  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
-}
-
-void QuantaApp::slotEditVerticalSelect()
-{
-  slotStatusMsg(i18n("Vertical Selection..."));
-
-  doc->write()->toggleVertical();
-
-//  bool stat = editMenu -> isItemChecked( ID_EDIT_VERTICAL_SELECT );
-//  checkCommand( ID_EDIT_VERTICAL_SELECT, !stat );
-
-  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
-}
-
 void QuantaApp::slotEditIndent()
 {
-  slotStatusMsg(i18n("Indent..."));
-
   doc->write()->indent();
-
-  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
 }
 
 void QuantaApp::slotEditUnindent()
 {
-  slotStatusMsg(i18n("UnIndent..."));
-
   doc->write()->unIndent();
-
-  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
 }
 
 void QuantaApp::slotEditCleanIndent()
 {
-  slotStatusMsg(i18n("Clean Indentation..."));
-
   doc->write()->cleanIndent();
-
-  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
 }
 
 void QuantaApp::slotEditGotoLine()
 {
-  slotStatusMsg(i18n("Goto Line..."));
-
   doc->write()->gotoLine();
-
-  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
 }
 
 void QuantaApp::slotViewToolBar()
 {
-  slotStatusMsg(i18n("Toggle the toolbar..."));
-
 #warning view tool bar  
-  
-  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
 }
 
 void QuantaApp::slotViewStatusBar()
 {
-  slotStatusMsg(i18n("Toggle the statusbar..."));
-
 #warning view status bar  
-  
-  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
 }
 
 
 void QuantaApp::slotStatusMsg(const QString &text)
 {
-  ///////////////////////////////////////////////////////////////////
-  // change status message permanently
-  statusBar()->clear();
   statusBar()->changeItem(text, ID_STATUS_MSG);
 }
-
-
-void QuantaApp::slotStatusHelpMsg(const QString &text)
-{
-  ///////////////////////////////////////////////////////////////////
-  // change status message of whole statusbar temporary (text, msec)
-  statusBar()->message(text, 2000);
-}
-
 
 /** Repaint preview */
 void QuantaApp::slotViewRepaint()
 {
-	slotStatusMsg(i18n("Repainting..."));
-	
 	repaintPreview( true );
-	
-	slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
 }
 
 /** repaint preview */
@@ -496,29 +270,31 @@ void QuantaApp::repaintPreview( bool clear )
   if ( clear )   oldtext = "";
 
   // check use prefix for preview or not
-  QString fname;
-	bool usePrefix = false;
+  QString url;
+	bool    usePrefix = false;
 	
 	if ( project->hasProject() && !project->previewPrefix.isEmpty() )
 	{
-		static QString oldname = "";
-		if ( clear )   oldname = "";
+		static QString oldUrl = "";
+		if ( clear )   oldUrl = "";
 		
-		fname = doc->write()->url().url();
-		fname = QExtFileInfo::toRelative( fname, project->basePath );
-		if ( fname.left(2) != ".." ) usePrefix = true;
+		url = doc->write()->url().url();
+		url = QExtFileInfo::toRelative( url, project->basePath );
 		
-		if ( fname == oldname && !doc->isModified() ) return;
-		else oldname = fname;
+		if ( url.left(2) != ".." ) usePrefix = true;
+		
+		if ( url == oldUrl && !doc->isModified() ) return;
+		
+		else oldUrl = url;
 	}
 
-  QString text = doc->write()->text();
-
   // check if don't need reload
+  QString text = doc->write()->text();
   if ( !qstrcmp( text, oldtext ) && !usePrefix ) return;
 
-  if ( text.isNull() ) {
-      text = i18n( "<i>The current document is empty</i>" );
+  if ( text.isEmpty() ) 
+  {
+    text = i18n( "<center><h3>The current document is empty...</h3></center>" );
   }
 
   KHTMLView *html = part->view();
@@ -527,15 +303,17 @@ void QuantaApp::repaintPreview( bool clear )
 
   part->closeURL();
 		
-	KParts::URLArgs args(true, browserExtension()->xOffset(), browserExtension()->yOffset());
+	KParts::URLArgs 
+	  args(true, browserExtension()->xOffset(), browserExtension()->yOffset());
+ 	
  	browserExtension()->setURLArgs( args );
 
 	if ( usePrefix )
 	{
-   	if ( doc->isModified() ) doc->saveDocument( doc->getAbsFilePath() );
+   	if ( doc->isModified() ) doc->saveDocument( doc->url() );
 		
-		part->begin( project->previewPrefix+fname, xOffset, yOffset );
-		part->openURL( KURL( project->previewPrefix+fname ) );
+		part->begin( project->previewPrefix+url, xOffset, yOffset );
+		part->openURL( KURL( project->previewPrefix+url ) );
 		part->end();
 	}
 	else {
@@ -548,9 +326,8 @@ void QuantaApp::repaintPreview( bool clear )
 }
 
 /** view image in preview */
-void QuantaApp::slotImageOpen( QString fileToOpen )
+void QuantaApp::slotImageOpen(QString url)
 {
-
   if ( previewPosition == "Disabled" )
      return;
 
@@ -563,7 +340,7 @@ void QuantaApp::slotImageOpen( QString fileToOpen )
   if ( !s->id( s ->visibleWidget()) ) return;
 
 	QString text = "<html>\n<body>\n<div align=\"center\">\n<img src=\"";
-	text += fileToOpen;
+	text += url;
 	text += "\">\n</div>\n</body>\n</html>\n";
 	
 	part->closeURL();
@@ -576,24 +353,23 @@ void QuantaApp::slotImageOpen( QString fileToOpen )
 
 
 /** insert <img> tag for images or <a> for other */
-void QuantaApp::slotInsertTag( QString file )
+void QuantaApp::slotInsertTag(QString url)
 {
  	QImage img;
-  QExtFileInfo ifile( file );
-  ifile.convertToRelative( doc->basePath() );
-	QString shortName = ifile.filePath();
-	
-   if ( img.load(file) )  { // image
+  
+  QString furl = QExtFileInfo::toRelative( url, doc->basePath() );
+  
+   if ( img.load(url) )  
+   { 
      QString w,h;
-     w.setNum( img.width() );
+     w.setNum( img.width () );
 	   h.setNum( img.height() );
-	   doc->write()->insertTag("<img src=\""+shortName+"\" width=\""+w+"\" height=\""+h+"\" border=\"0\">");
+	   
+	   doc->write()->insertTag("<img src=\""+furl+"\" width=\""+w+"\" height=\""+h+"\" border=\"0\">");
    } 
-   else {
-     doc->write()->insertTag("<a href=\""+shortName+"\">","</a>");
-   }
+   else 
+     doc->write()->insertTag( "<a href=\""+furl+"\">","</a>");
 }
-
 
 ////////////////////////
 // status slots
@@ -619,21 +395,19 @@ void QuantaApp::slotNewStatus()
   QDictIterator<Document> it( *(doc->docList) );
 
   QIconSet floppyIcon( UserIcon("save_small"));
-  QIconSet emptyIcon ( UserIcon("empty1x16"));
+  QIconSet  emptyIcon( UserIcon("empty1x16" ));
 
   QTabWidget *wTab = view->writeTab;
-  while ( Document *twrite = it.current() )
+  
+  while ( Document *w = it.current() )
   {
-
-    if ( twrite->isModified() )
-    	wTab->changeTab( twrite,  floppyIcon,  wTab->tabLabel(twrite) );
+    if ( w->isModified())
+    	wTab->changeTab( w,  floppyIcon,  wTab->tabLabel(w) );
     else
-    	wTab->changeTab( twrite,  emptyIcon,   wTab->tabLabel(twrite) );
+    	wTab->changeTab( w,  emptyIcon,   wTab->tabLabel(w) );
 
     ++it;
   }
-
-  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
 }
 
 /** slot for new undo flag */
@@ -652,7 +426,6 @@ void QuantaApp::slotNewUndo()
   else
     disableCommand(ID_EDIT_REDO);
 */
-  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
 }
 
 /** slot for new mark flag */
@@ -668,17 +441,14 @@ void QuantaApp::slotNewMarkStatus()
     disableCommand(ID_EDIT_COPY);
 	}
 */	
-	slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
 }
 
 void QuantaApp::slotUpdateStatus(const QString &)
 {
-	slotNewStatus();
 	slotNewUndo();
+	slotNewStatus();
 	slotNewMarkStatus();
 	slotNewLineColumn();
-	
-	setCaption(doc->getTitle());
 }
 
 void QuantaApp::slotOptionsConfigureKeys()
@@ -924,9 +694,12 @@ void QuantaApp::setCursorPosition( int row, int col )
 void QuantaApp::gotoFileAndLine( const QString &filename, int line )
 {
   doc->openDocument( filename );
-  setCaption(doc->getTitle());
+  
   if ( view->write()->numLines() > line && line >= 0 )
+  {
     view->write()->setCursorPosition( line, 0 );
+  }
+  
   view->write()->view()->setFocus();
 }
 
@@ -1138,4 +911,3 @@ void QuantaApp::removeContainer( QWidget *container, QWidget *parent, QDomElemen
   else
     KMainWindow::removeContainer( container, parent, element, id );
 }
-

@@ -24,8 +24,9 @@
 
 // include files for KDE
 #include <klocale.h>
-#include <kmessagebox.h>
+#include <kaction.h>
 #include <kpopupmenu.h>
+#include <kmessagebox.h>
 
 // application specific includes
 #include "quanta.h"
@@ -48,235 +49,42 @@ QuantaDoc::QuantaDoc( QuantaApp *app, QWidget *parent, const char *name) : QObje
 	
   docList = new QDict<Document>(1);
 
-  rbMenu = 0L;
+#warning fix Alt->Down menu
+//  attribMenu = new KPopupMenu("Tag :");
+//  connect( attribMenu, SIGNAL(activated(int)), this, SLOT(slotInsertAttrib(int)));
 
-  attribMenu = new KPopupMenu("Tag :");
-  connect( attribMenu, SIGNAL(activated(int)), this, SLOT(slotInsertAttrib(int)));
+//  attribCoreMenu = new QPopupMenu();
+//  char *attr;
+//  for ( attr = lCore->first(); lCore->current(); attr = lCore->next() )
+//    attribCoreMenu->insertItem( attr, lCore->at() );
 
-  attribCoreMenu = new QPopupMenu();
-  char *attr;
-  for ( attr = lCore->first(); lCore->current(); attr = lCore->next() )
-    attribCoreMenu->insertItem( attr, lCore->at() );
-
-  connect( attribCoreMenu, SIGNAL(activated(int)), this, SLOT(slotInsertCoreAttrib(int)));
+//  connect( attribCoreMenu, SIGNAL(activated(int)), this, SLOT(slotInsertCoreAttrib(int)));
 
   
-  attribEventsMenu = new QPopupMenu();
-  for ( attr = lScript->first(); lScript->current(); attr = lScript->next() )
-    attribEventsMenu->insertItem( attr, lScript->at() );
+//  attribEventsMenu = new QPopupMenu();
+//  for ( attr = lScript->first(); lScript->current(); attr = lScript->next() )
+//    attribEventsMenu->insertItem( attr, lScript->at() );
 
-  connect( attribEventsMenu, SIGNAL(activated(int)), this, SLOT(slotInsertEventsAttrib(int)));
+//  connect( attribEventsMenu, SIGNAL(activated(int)), this, SLOT(slotInsertEventsAttrib(int)));
 }
 
 QuantaDoc::~QuantaDoc()
 {
 }
 
-QString QuantaDoc::getAbsFilePath()
+KURL QuantaDoc::url()
 {
-  QString fname = write()->url().url();
-
-  if ( fname.left(5) == "file:" ) fname.remove(0,5);
-
-  return fname;
-}
-
-void QuantaDoc::setTitle(const QString &_t)
-{
-  title=_t;
-}
-
-QString QuantaDoc::getTitle()
-{
-  if ( docList->count() )
-  	return QString("[")+getAbsFilePath()+"]";
-  else
-		return title;
-}
-
-/** change file name in dict and tabbar  from old ones to current */
-void QuantaDoc::changeFileName( QString oldname )
-{
-	QString newname = write()->url().url();
-
-	app->view->writeTab->changeTab( write(), QExtFileInfo::shortName( newname ));
-	
-  if ( oldname != newname )
-  {
-    docList->remove( oldname );
-    docList->insert( newname, write() );
-  }
+  KURL furl = write()->url();
   
-  QDictIterator<Document> it1(*docList);
-  QDictIterator<Document> it2(*docList);
-
- 	int i,len;
- 	while ( it1.current() && it1.current() != it2.current() )
- 	{
- 		QString name1 = it1.currentKey();
- 		
- 		len = 0;
- 		i = name1.findRev( '/' );
- 		
- 		if ( i!=-1 ) len = name1.length()-i-1;
- 		else		 		 len = name1.length();
- 		
- 		it2.toFirst();
- 		while ( it2.current() && i != -1 && it1.current() != it2.current() )
- 		{
- 			QString name2 = it2.currentKey();
- 			
- 			if ( name1 != name2 )
- 			{
- 				while ( name1.right( len ) == name2.right( len ) && i != -1 && len>=0 )
- 				{
- 					i = name1.findRev( '/', i-1 );
- 					len = name1.length()-i-1;
- 				}
- 			}
- 			
- 			++it2;
- 		}
- 		
- 		QString shortName = name1.right( len );
- 		
- 		app->view->writeTab->changeTab( it1.current() , shortName );
- 		
- 		++it1;
- 	}
+  return furl;
 }
 
-/** save all files */
-bool QuantaDoc::saveAll(bool dont_ask){
-  bool flagsave = true;
-
-  QDictIterator<Document> it( *docList ); // iterator for dict
-
-  while ( Document *w = it.current() ) 
-  {
-    ++it;
-
-    if ( w->isModified() ) {
-      app->view->writeTab->showPage(w);
-
-      QString oldname = w->url().url();
-
-      if ( dont_ask ) {
-      	w->save();
-      	if ( w->isModified() ) flagsave = false;
-      }
-      else
-      	if ( !saveModified() ) flagsave = false;
-
-      changeFileName( oldname );
-    }
-  }
-
-  return flagsave;
-}
-
-void QuantaDoc::writeConfig( KConfig *config )
+QString QuantaDoc::basePath()
 {
-  write()->writeConfig( config );
-
-  QDictIterator<Document> it( *docList ); // iterator for dict
-
-  while ( Document *twrite = it.current() ) {
-    ++it;
-
-    twrite->readConfig( config );
-  }
-}
-
-bool QuantaDoc::saveModified()
-{
-  bool completed=true;
-
-  if( isModified() )
-  {
-    QuantaApp *win=(QuantaApp *) parent();
-    int want_save = KMessageBox::warningYesNoCancel(win,
-                                             i18n("The current file has been modified.\n"
-                                                  "Do you want to save it?"),
-                                             i18n("Warning"));
-    switch(want_save)
-    {
-      case KMessageBox::Yes :
-           if ( write()->isUntitled() )
-           {
-             win->slotFileSaveAs();
-           }
-           else
-           {
-             saveDocument( write()->url().url() );
-       	   };
-
-       	   deleteContents();
-           completed=true;
-           break;
-
-      case KMessageBox::No :
-           setModified(false);
-           deleteContents();
-           completed=true;
-           break;	
-
-      case KMessageBox::Cancel :
-           completed=false;
-           break;
-
-      default:
-           completed=false;
-           break;
-    }
-  }
-
-  return completed;
-}
-
-void QuantaDoc::closeDocument()
-{
-	if ( !saveModified() ) return;
-	docList->remove( write()->url().url() );
-	if ( !app->view->removeWrite()) openDocument( KURL() );
-}
-
-void QuantaDoc::closeAll()
-{
-  do
-  {
-  	if ( !saveModified() ) return;
-		docList->remove( write()->url().url() );
-	}
-	while ( app->view->removeWrite());
+	KURL furl = url();
 	
-  // so we remove all kwrites
-	openDocument( KURL() );
+	return (write()->isUntitled()) ? QExtFileInfo::home() : QExtFileInfo::path( furl );
 }
-
-bool QuantaDoc::isModified()
-{
-	return write()->isModified();
-}
-
-bool QuantaDoc::isModifiedAll()
-{
-  bool modified = false;
-
-  QDictIterator<Document> it( *docList ); // iterator for dict
-
-  while ( Document *twrite = it.current() ) {
-    if ( twrite->isModified() ) modified = true;
-    ++it;
-  }
-
-  return modified;
-}
-
-void QuantaDoc::setModified(bool _m)
-{
-	write()->setModified(_m);
-};
 
 bool QuantaDoc::newDocument( const KURL& url )
 {
@@ -290,14 +98,7 @@ bool QuantaDoc::newDocument( const KURL& url )
     {
       // no modi and new -> we can remove
       if ( !write()->isModified() &&
-            write()->isUntitled() )
-      {
-        //QString wurl = write()->url().url();
-        
-        //docList   ->remove( wurl );
-        //app->view ->removeWrite( );
-        return true;
-      }
+            write()->isUntitled() ) return true;
     }
     // now we can create new kwrite
     Document *w = newWrite( app->view->writeTab );
@@ -312,53 +113,189 @@ bool QuantaDoc::newDocument( const KURL& url )
   {
   	Document *w = docList->find( furl );
   	app ->view->writeTab->showPage( w );
-  	return false;
+  	return false; // don't need loadURL
   }    
- 	
   return true;
 }
 
-bool QuantaDoc::openDocument(const KURL& url)
+void QuantaDoc::openDocument(const KURL& url)
 {
-  if ( !newDocument( url )) return true;
+  debug( url.url() );
+  
+  if ( !newDocument( url )) return;
 
-  QString defUrl = write()->url().url();
+  QString defUrl = this->url().url();
   
-  if ( !url.url().isEmpty()) write()->loadURL( url );
+  if ( !url.url().isEmpty()) 
+  {
+    write()->loadURL( url );
+    app->fileRecent->addURL( url );
+  }
   
-  changeFileName(defUrl);
+  changeFileTabName(defUrl);
+  
+  emit title( this->url().url() );
   
   app->repaintPreview();
   
-  return true;
+  return;
 }
 
-bool QuantaDoc::saveDocument(const QString &filename, const char *)
+void QuantaDoc::saveDocument(const KURL& url)
 {
-	QString name = filename;
-  if ( name.left(5) == "file:" ) name.remove(0,5);
+	QString defUrl = this->url().url();
 
-  QFileInfo fileInfo( name );
-  title=fileInfo.fileName();
+  if ( !url.url().isEmpty()) 
+  {
+    write()->writeURL( url );
+  }
+  
+  changeFileTabName( defUrl );
+  
+  emit title( this->url().url() );
 
-  QString oldName = write()->url().url();
-  write()->writeURL( filename );
-  write()->doc()->setURL( filename, false );
-  changeFileName( oldName );
-
-  setModified( false );
-  return true;
+  return;
 }
 
-void QuantaDoc::deleteContents()
+bool QuantaDoc::saveAll(bool dont_ask)
 {
-  /////////////////////////////////////////////////
-  // TODO: Add implementation to delete the document contents
-  /////////////////////////////////////////////////
+  bool flagsave = true;
 
+  QDictIterator<Document> it( *docList );
+
+  while ( Document *w = it.current() ) 
+  {
+    if ( w->isModified() ) 
+    {
+      app->view->writeTab->showPage(w);
+
+      QString oldUrl = w->url().url();
+
+      if ( dont_ask ) 
+      {
+      	w->save();
+      	if ( w->isModified() ) flagsave = false;
+      }
+      else
+      	if ( !saveModified() ) flagsave = false;
+
+      changeFileTabName( oldUrl );
+    }
+    ++it;
+  }
+
+  return flagsave;
 }
 
-/** returns the kwrite document */
+void QuantaDoc::closeDocument()
+{
+	if ( !saveModified() ) return;
+	docList->remove( url().url() );
+	if ( !app->view->removeWrite()) openDocument( KURL() );
+}
+
+void QuantaDoc::closeAll()
+{
+  do
+  {
+  	if ( !saveModified() ) return;
+		docList->remove( url().url() );
+	}
+	while ( app->view->removeWrite());
+	
+  // so we remove all kwrites
+	openDocument( KURL() );
+}
+
+void QuantaDoc::readConfig( KConfig *config )
+{
+  config -> sync();
+
+  QDictIterator<Document> it( *docList );
+
+  while ( Document *w = it.current() ) 
+  {
+    w -> readConfig( config );
+    ++it;
+  }
+}
+
+void QuantaDoc::writeConfig( KConfig *config )
+{
+  write()-> writeConfig( config );
+  config -> sync();
+
+  // read the config
+  // with all kwrite
+  readConfig( config );
+}
+
+bool QuantaDoc::saveModified()
+{
+  bool completed=true;
+
+  if( isModified() )
+  {
+    int want_save 
+      = KMessageBox::warningYesNoCancel(app,
+          i18n("The current file has been modified.\nDo you want to save it?"),
+          i18n("Warning"));
+    
+    switch(want_save)
+    {
+      case KMessageBox::Yes :
+           if ( write()->isUntitled() )
+           {
+             app->slotFileSaveAs();
+           }
+           else
+           {
+             saveDocument( url());
+       	   };
+
+           completed=true;
+           break;
+
+      case KMessageBox::No :
+           completed=true;
+           break;	
+
+      case KMessageBox::Cancel :
+           completed=false;
+           break;
+
+      default:
+           completed=false;
+           break;
+    }
+  }
+  return completed;
+}
+
+bool QuantaDoc::isModified()
+{
+	return write()->isModified();
+}
+
+bool QuantaDoc::isModifiedAll()
+{
+  bool modified = false;
+
+  QDictIterator<Document> it( *docList );
+
+  while ( Document *twrite = it.current() ) {
+    if ( twrite->isModified() ) modified = true;
+    ++it;
+  }
+
+  return modified;
+}
+
+void QuantaDoc::setModified(bool flag)
+{
+	write()->setModified(flag);
+}
+
 Document* QuantaDoc::write()
 {
 	return app->view->write();
@@ -370,21 +307,6 @@ void QuantaDoc::editorOptions()
   write()->editorOptions();
 }
 
-/** returns the kwrite document */
-QString QuantaDoc::basePath()
-{
-	if ( !write()->isUntitled() )
-	{
-		QString name = write()->url().url();
-		if ( name.left(5) == "file:" ) name.remove(0,5);
-		QFileInfo fileInfo( name );
-		return fileInfo.dirPath()+"/";
-	}
-		
-	return QDir::currentDirPath()+"/";
-}
-
-/** create new write class */
 Document* QuantaDoc::newWrite(QWidget *parent)
 {
   int i = 1;
@@ -396,9 +318,9 @@ Document* QuantaDoc::newWrite(QWidget *parent)
   Document  *w    = new Document (wDoc, parent );
   
  	app-> config->setGroup("General Options");
- 	w  -> readConfig( app->config );
- 	w  -> setHl     ( hl->nameFind( "HTML"));
- 	w  -> setUntitledUrl( fname );
+ 	w  -> readConfig      ( app->config );
+ 	w  -> setHl           ( hl->nameFind( "HTML"));
+ 	w  -> setUntitledUrl  ( fname );
  	
 #warning need convert to xml gui 	
  	w  -> installPopup( rbMenu );
@@ -410,31 +332,10 @@ Document* QuantaDoc::newWrite(QWidget *parent)
  	return w;
 }
 
-/** return bool need repaint preview or not */
-bool QuantaDoc::needRepaintPreview()
-{
-	return write()->isModified();
-}
-
-/** for exchange opened files for project */
-void QuantaDoc::slotRequestOpenedFiles()
-{
-	QStringList list;
-	QDictIterator<Document> it( *docList ); // iterator for dict
-
-  while ( Document *twrite = it.current() )
-  {
-  	list.append( it.currentKey() );
-  	++it;
-  }
-
-  emit openedFiles( list );
-}
-
-
 /** show popup menu with list of attributes for current tag */
 void QuantaDoc::slotAttribPopup()
 {
+  
   attribMenu->clear();
 
   write()->currentTag();
@@ -482,9 +383,8 @@ void QuantaDoc::slotAttribPopup()
 
     QPoint globalPos = write()->getGlobalCursorPos();
     attribMenu->exec( globalPos );
-
-
-  } else {
+  } 
+  else {
     QString message = i18n("Unknown tag : ");
     message += tag;
     app->slotStatusMsg( message.data() );
@@ -495,12 +395,13 @@ void QuantaDoc::slotInsertAttrib( int id )
 {
   write()->currentTag();
   QString tag = write()->getTagAttr(0);
-  if ( tagsList->find( tag.upper()) != -1 ) {
+  
+  if ( tagsList->find( tag.upper()) != -1 ) 
+  {
 
     QStrList *list = tagsDict->find( tag.data() );
 
     write()->insertAttrib( list->at(id) );
-
   }
 }
 
@@ -539,7 +440,6 @@ void QuantaDoc::prevDocument()
 
 void QuantaDoc::nextDocument()
 {
-
   QTabWidget *tab = app->view->writeTab;
 
   Document *d = (Document*)tab->currentPage();
@@ -548,7 +448,7 @@ void QuantaDoc::nextDocument()
   QDictIterator<Document> it(*docList);
 
   while ( it.current() ) {
-  	  new_d = it.current();
+  	new_d = it.current();
  		++it;
  	}
  	
@@ -564,3 +464,78 @@ void QuantaDoc::nextDocument()
  	
  	tab->showPage( new_d );
 }
+
+void QuantaDoc::changeFileTabName( QString oldUrl )
+{
+	QString newUrl = url().url();
+
+	app->view->writeTab->changeTab( write(), QExtFileInfo::shortName( newUrl ));
+	
+  if ( oldUrl != newUrl )
+  {
+    docList->remove( oldUrl );
+    docList->insert( newUrl, write() );
+  }
+  
+  QDictIterator<Document> it1(*docList);
+  QDictIterator<Document> it2(*docList);
+
+ 	int i,len;
+ 	while ( it1.current() && it1.current() != it2.current() )
+ 	{
+ 		QString name1 = it1.currentKey();
+ 		
+ 		len = 0;
+ 		i = name1.findRev( '/' );
+ 		
+ 		if ( i!=-1 ) len = name1.length()-i-1;
+ 		else		 		 len = name1.length();
+ 		
+ 		it2.toFirst();
+ 		
+ 		while ( it2.current() && i != -1 && it1.current() != it2.current() )
+ 		{
+ 			QString name2 = it2.currentKey();
+ 			
+ 			if ( name1 != name2 )
+ 			{
+ 				while ( name1.right( len ) == name2.right( len ) && i != -1 && len>=0 )
+ 				{
+ 					i = name1.findRev( '/', i-1 );
+ 					len = name1.length()-i-1;
+ 				}
+ 			}
+ 			++it2;
+ 		}
+ 		QString shortUrl = name1.right( len );
+ 		
+ 		debug( shortUrl );
+ 		
+ 		app->view->writeTab->changeTab( it1.current() , shortUrl );
+ 		
+ 		++it1;
+ 	}
+}
+
+/// SLOTS
+
+void QuantaDoc::cut()        {write()->cut();}
+void QuantaDoc::copy()       {write()->copy();}
+void QuantaDoc::paste()      {write()->paste();}
+void QuantaDoc::undo()       {write()->undo();}
+void QuantaDoc::redo()       {write()->redo();}
+void QuantaDoc::undoHistory(){write()->undoHistory();}
+void QuantaDoc::selectAll()  {write()->selectAll();}
+void QuantaDoc::deselectAll(){write()->deselectAll();}
+void QuantaDoc::find()       {write()->find();}
+void QuantaDoc::findAgain()  {write()->findAgain();}
+void QuantaDoc::replace()    {write()->replace();}
+
+void QuantaDoc::invertSelect(){write()->invertSelection();}
+                                       
+void QuantaDoc::verticalSelect()
+{
+  write()->toggleVertical();
+#warning fix toggle
+}
+

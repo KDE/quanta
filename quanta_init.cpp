@@ -61,6 +61,7 @@
 
 #include "parser/parser.h"
 
+
 QString fileMaskHtml 	= "*.*html *.*htm *.php* *.asp *.cfm *.css *.inc* *.*HTML *.*HTM *.PHP* *.ASP *.CFM *.CSS *.INC* *.xml *.XML";
 QString fileMaskPhp 	= "*.*PHP* *.*php* ";
 QString fileMaskJava  = "*.jss *.js *.JSS *.JS ";
@@ -106,7 +107,7 @@ QuantaApp::QuantaApp()
   
   initContextMenu();
   
-  doc->openDocument( KURL() );
+  doc->newDocument( KURL() );
   
   readOptions();
   
@@ -156,6 +157,7 @@ void QuantaApp::initContextMenu()
 void QuantaApp::initDocument()
 {
   doc = new QuantaDoc(this,this);
+//  connect(doc, SIGNAL(title(QString)), this,  SLOT(setTitle(QString)));
 }
 
 void QuantaApp::initProject()
@@ -172,8 +174,8 @@ void QuantaApp::initProject()
 					pTab, 		SLOT  (slotSetProjectName(QString)));
 	connect(project,	SIGNAL(closeFiles()),
 					doc,			SLOT	(closeAll()));
-	connect(project,	SIGNAL(requestOpenedFiles()),
-					doc,			SLOT	(slotRequestOpenedFiles()));
+//	connect(project,	SIGNAL(requestOpenedFiles()),
+//					doc,			SLOT	(slotRequestOpenedFiles()));
 	connect(doc,			SIGNAL(openedFiles(QStringList)),
 					project,	SLOT  (slotOpenedFiles(QStringList)));
 	connect(project,  SIGNAL(addRecentProject(const QString &)),
@@ -342,7 +344,7 @@ void QuantaApp::initView()
   connect( view, SIGNAL(newCurPos()), this, SLOT(slotNewLineColumn()));
 
   connect( sTab, SIGNAL(newCursorPosition(int,int)), SLOT(setCursorPosition(int,int)));
-  connect( sTab, SIGNAL(onTag(const QString &)), SLOT( slotStatusHelpMsg(const QString &)));
+//  connect( sTab, SIGNAL(onTag(const QString &)), SLOT( slotStatusHelpMsg(const QString &)));
   connect( sTab, SIGNAL(selectArea(int,int,int,int)), SLOT( selectArea(int,int,int,int)));
   connect( sTab, SIGNAL(needReparse()), SLOT(reparse()));
 
@@ -703,52 +705,52 @@ void QuantaApp::initActions()
     // Edit actions
     //
     (void) new KAction( i18n( "&Undo" ), UserIcon("undo"), KStdAccel::key(KStdAccel::Undo),
-                        this, SLOT( slotEditUndo() ),
+                        doc, SLOT( undo() ),
                         actionCollection(), "edit_undo" );
                         
     (void) new KAction( i18n( "&Redo" ), UserIcon("redo"), KStdAccel::key(KStdAccel::Redo),
-                        this, SLOT( slotEditRedo() ),
+                        doc, SLOT( redo() ),
                         actionCollection(), "edit_redo" );
 
     KAction *undoRedo 
       = new KAction( i18n( "Undo/Redo &History..."), 0, 
-                     this, SLOT( slotURedoHistory()),
+                     doc, SLOT( undoHistory()),
                      actionCollection(), "undo_history" );
                                      
     undoRedo->setGroup( "edit_undo_merge" );
     
     (void) new KAction( i18n( "Cu&t" ), UserIcon("cut"), KStdAccel::key(KStdAccel::Cut),
-                        this, SLOT( slotEditCut() ),
+                        doc, SLOT( cut() ),
                         actionCollection(), "edit_cut" );
                         
     (void) new KAction( i18n( "&Copy" ), UserIcon("copy"), KStdAccel::key(KStdAccel::Copy),
-                        this, SLOT( slotEditCopy() ),
+                        doc, SLOT( copy() ),
                         actionCollection(), "edit_copy" );   
                         
     (void) new KAction( i18n( "&Paste" ), UserIcon("paste"), KStdAccel::key(KStdAccel::Paste),
-                        this, SLOT( slotEditPaste() ),
+                        doc, SLOT( paste() ),
                         actionCollection(), "edit_paste" );                    
                         
-    KStdAction::selectAll( this, SLOT( slotEditSelectAll()), actionCollection());
+    KStdAction::selectAll( doc, SLOT( selectAll()), actionCollection());
 
-    (void) new KAction(  i18n( "&Unselect All"),       0, this, 
-                         SLOT( slotEditDeselectAll()),
+    (void) new KAction(  i18n( "&Unselect All"),       0, 
+                         doc, SLOT( deselectAll()),
                          actionCollection(), "unselect_all" );
                          
-    (void) new KAction(  i18n( "&Invert Selection"),   0, this, 
-                         SLOT( slotEditInvertSelect()),
+    (void) new KAction(  i18n( "&Invert Selection"),   0, 
+                         doc, SLOT( invertSelect()),
                          actionCollection(), "invert_selection" );
                          
-    (void) new KAction(  i18n( "&Vertical Selection"), 0, this, 
-                         SLOT( slotEditVerticalSelect()),
+    (void) new KAction(  i18n( "&Vertical Selection"), 0, 
+                         doc, SLOT( verticalSelect()),
                          actionCollection(), "vertical_selection" );
 
     (void) new KAction( i18n( "&Find" ), UserIcon("find"), KStdAccel::key(KStdAccel::Find),
-                        this, SLOT( slotEditSearch() ),
+                        doc, SLOT( find() ),
                         actionCollection(), "edit_find" );
                         
-    KStdAction::findNext( this, SLOT( slotEditSearchAgain()), actionCollection());
-    KStdAction::replace ( this, SLOT( slotEditReplace()),     actionCollection());
+    KStdAction::findNext( doc, SLOT( findAgain()), actionCollection());
+    KStdAction::replace ( doc, SLOT( replace()),   actionCollection());
 
     (void) new KAction( i18n( "Find In Files" ), 
                         UserIcon("find"), CTRL+ALT+Key_F,

@@ -11,6 +11,8 @@
 #ifndef _QEXTFILEINFO_H_
 #define _QEXTFILEINFO_H_
 
+#include <kurl.h>
+
 #include <qfileinfo.h>
 #include <qstringlist.h>
 
@@ -31,6 +33,8 @@ public:
   static QString cdUp(QString &dir);
   static void    createDir ( QString path );
   static QString shortName ( QString fname );
+  static QString path      ( KURL &);
+  static QString home      ();
 };
 
 #endif
