@@ -195,7 +195,7 @@
                 <string>Alt+R</string>
             </property>
             <property name="whatsThis" stdset="0">
-                <string>If this option is turned on the accented characters, like &lt;b&gt;á&lt;/b&gt;, will be automatically replaced  by their unicode style notation, for the above case with &lt;b&gt;&amp;#038;#225;&lt;/b&gt;.&lt;br&gt;
+                <string>If this option is turned on the accented characters, like &lt;b&gt;&amp;#225;&lt;/b&gt;, will be automatically replaced  by their unicode style notation, for the above case with &lt;b&gt;&amp;#038;#225;&lt;/b&gt;.&lt;br&gt;
 We suggest to leave this option off and use an unicode or locale encoding for your documents.</string>
             </property>
         </widget>
