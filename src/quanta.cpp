@@ -2928,6 +2928,9 @@ void QuantaApp::slotChangeDTD()
     }
 
     loadToolbarForDTD(w->getDTDIdentifier());
+    QuantaView *view = ViewManager::ref()->activeView();
+    if (view)
+      view->activated();
     reparse(true);
   }
 }
