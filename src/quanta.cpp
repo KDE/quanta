@@ -181,7 +181,7 @@ void QuantaApp::slotFileOpen()
  if (view()->writeExists() && !view()->write()->isUntitled())
      startDir = view()->write()->url().url();
  else
-      startDir = Project::ref()->projectBaseURL().url();
+     startDir = Project::ref()->projectBaseURL().url();
 
  KURL::List urls;
  QString encoding;
@@ -206,7 +206,6 @@ void QuantaApp::slotFileOpen()
    if (QuantaCommon::checkMimeGroup(*i, "text") ||
        QuantaCommon::denyBinaryInsert() == KMessageBox::Yes)
      slotFileOpen( *i , encoding);
-//   kapp->eventLoop()->processEvents( QEventLoop::ExcludeUserInput | QEventLoop::ExcludeSocketNotifiers);
  }
  m_doc->blockSignals(false);
  m_view->writeTab()->blockSignals(false);

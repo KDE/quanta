@@ -79,6 +79,7 @@ public slots:
   void invertSelect();
   /** Called when a file on the disk has changed. */
   void slotFileDirty(const QString& fileName);
+  void slotOpeningCompleted();  
 
 signals:
   void newStatus();

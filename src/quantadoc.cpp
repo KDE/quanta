@@ -48,6 +48,7 @@
 #include <ktexteditor/encodinginterface.h>
 #include <ktexteditor/dynwordwrapinterface.h>
 #include <ktexteditor/editorchooser.h>
+#include <ktexteditor/editinterface.h>
 
 #include <kparts/componentfactory.h>
 
@@ -187,47 +188,12 @@ void QuantaDoc::openDocument(const KURL& urlToOpen, const QString &a_encoding, b
 
     dynamic_cast<KTextEditor::EncodingInterface*>(w->doc())->setEncoding(encoding);
 
+    connect(w->doc(), SIGNAL(completed()), this, SLOT(slotOpeningCompleted()));  
     if (w->doc()->openURL( url ))
     {
-      w->setDirtyStatus(false);
-
-      changeFileTabName();
-      quantaApp->fileRecent->addURL( w->url() );
-
-      quantaApp->slotRepaintPreview();
-
- /*     w->kate_view->setIconBorder(qConfig.iconBar);
-      w->kate_view->setLineNumbersOn(qConfig.lineNumbers);
-      quantaApp->viewBorder->setChecked(qConfig.iconBar);
-      quantaApp->viewLineNumbers->setChecked(qConfig.lineNumbers);
-*/
-      dynamic_cast<KTextEditor::DynWordWrapInterface*>(w->view())->setDynWordWrap(qConfig.dynamicWordWrap);
-      quantaApp->viewDynamicWordWrap->setChecked(dynamic_cast<KTextEditor::DynWordWrapInterface*>(w->view())->dynWordWrap());
-
-      w->createTempFile();
-      w->view()->setFocus();
-
-      quantaApp->processDTD();
-      quantaApp->reparse(true);
-
-      emit title( w->url().prettyURL() );
-      emit newStatus();
       loaded = true;
     }
-  } else
-  { /*
-    Project *project = quantaApp->project();
-    KTextEditor::HighlightingInterface *highlightinginterface = dynamic_cast<KTextEditor::HighlightingInterface*>(w->doc());
-    for (unsigned int i=0; i< highlightinginterface->hlModeCount(); i++)
-    {
-      kdDebug(24000) << QString("HL mode #%1 : %2").arg(i).arg(highlightinginterface->hlModeName(i)) << endl;
-      if (project->defaultDTD().contains(highlightinginterface->hlModeName(i), false))
-      {
-        highlightinginterface->setHlMode(i);
-        break;
-      }
-    } */
-  }
+  } 
   if (!loaded && !url.isEmpty()) //the open of the document has failed*/
   {
     bool signalStatus = signalsBlocked();
@@ -237,6 +203,29 @@ void QuantaDoc::openDocument(const KURL& urlToOpen, const QString &a_encoding, b
     closeDocument();
     blockSignals(signalStatus);
   }
+}
+
+void QuantaDoc::slotOpeningCompleted()
+{
+  Document *w = write();
+  w->setDirtyStatus(false);
+  //  kdDebug(24000) << "Text: " << w->editIf->text() << endl;
+
+  changeFileTabName();
+  quantaApp->fileRecent->addURL( w->url() );
+
+  quantaApp->slotRepaintPreview();
+  dynamic_cast<KTextEditor::DynWordWrapInterface*>(w->view())->setDynWordWrap(qConfig.dynamicWordWrap);
+  quantaApp->viewDynamicWordWrap->setChecked(dynamic_cast<KTextEditor::DynWordWrapInterface*>(w->view())->dynWordWrap());
+
+  w->createTempFile();
+  w->view()->setFocus();
+
+  quantaApp->processDTD();
+  quantaApp->reparse(true);
+
+  emit title( w->url().prettyURL() );
+  emit newStatus();
 }
 
 bool QuantaDoc::saveDocument(const KURL& url)
@@ -257,14 +246,6 @@ bool QuantaDoc::saveDocument(const KURL& url)
     } else
     {
       w->closeTempFile();
-      if (dynamic_cast<KTextEditor::HighlightingInterface*>(wdoc)->hlMode()==0)
-       {
-         uint line,col;
-         w->viewCursorIf->cursorPositionReal(&line, &col);
-         wdoc->setModified(false); //workaround for fish
-         wdoc->openURL(url);
-         w->viewCursorIf->setCursorPosition(line, col);
-     }
       w->createTempFile();
       w->setDirtyStatus(false);
     }

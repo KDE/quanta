@@ -414,11 +414,9 @@ bool SAParser::slotParseOneLine()
               kdDebug(24000) << "Parsing a nested area." << endl;
 #endif              
               AreaStruct area2(s_line, specialAreaPos, s_endLine, s_endCol);
-              //bool synchState = m_synchronous;
               SAParser *p = new SAParser();
               p->init(m_baseNode, m_write);
               s_currentNode = p->parseArea(area2, foundText, "", node, s_fullParse, true);
-              //m_synchronous = synchState;
               s_line = p->lastParsedLine();
               s_col = p->lastParsedColumn();
               delete p;
@@ -428,7 +426,6 @@ bool SAParser::slotParseOneLine()
               s_col++;
               if (m_synchronous)
               {
-                //slotParseOneLine();
                 return true;
               }
               else
