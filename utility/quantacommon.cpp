@@ -12,6 +12,11 @@
  *   the Free Software Foundation; version 2 of the License.               *
  *                                                                         *
  ***************************************************************************/
+
+//system includes
+#include <sys/types.h> 
+#include <unistd.h> 
+
 //qt includes
 #include <qstringlist.h>
 #include <qdict.h>
