@@ -3069,10 +3069,13 @@ void QuantaApp::loadToolbarForDTD(const QString& dtdName)
   if (m_debugger->UI())
   {
     p_toolbar = toolbarList["debug"];
-    guiFactory()->removeClient(p_toolbar->guiClient);
-    p_toolbar->visible = false;
-    delete p_toolbar->menu;
-    p_toolbar->menu = 0L;
+    if (p_toolbar)
+    {
+        guiFactory()->removeClient(p_toolbar->guiClient);
+        p_toolbar->visible = false;
+        delete p_toolbar->menu;
+        p_toolbar->menu = 0L;
+    }
   }
   if (newDtd != oldDtd)
   {
