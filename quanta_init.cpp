@@ -534,7 +534,8 @@ void QuantaApp::saveOptions()
     config->writeEntry("Version", VERSION); // version
     config->writeEntry ("Enable Debugger", debuggerStyle!="None");
     config->writeEntry ("PHP Debugger style", debuggerStyle);
-    view->write()->writeConfig(config);
+    if (view->writeExists())
+        view->write()->writeConfig(config);
 
     config->deleteGroup("RecentFiles");
     fileRecent->saveEntries(config);

@@ -94,7 +94,7 @@ void QuantaPluginInterface::readConfig()
     {
       if(pluginType == i18n("KPart"))
         newPlugin = new QuantaKPartPlugin();
-      else if(pluginType == "Command Line")
+      else if(pluginType == i18n("Command Line"))
         newPlugin = new QuantaCmdPlugin();
     }
     if (!newPlugin)
