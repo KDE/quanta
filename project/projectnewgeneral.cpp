@@ -60,7 +60,10 @@ ProjectNewGeneral::ProjectNewGeneral(QWidget *parent, const char *name )
   comboProtocol->setCurrentItem(0);
 
   slotProtocolChanged(i18n("Local"));
-
+  
+  linePrjTmpl->setText("templates");
+  linePrjToolbar->setText("toolbars");
+   
   connect(comboProtocol, SIGNAL(activated(const QString&)), SLOT(slotProtocolChanged(const QString &)));
   connect( linePrjFile, SIGNAL(textChanged(const QString &)),
            this,        SLOT(slotLinePrjFile(const QString &)));
@@ -68,10 +71,6 @@ ProjectNewGeneral::ProjectNewGeneral(QWidget *parent, const char *name )
            this,        SLOT(slotLinePrjFile(const QString &)));
   connect( linePrjDir,  SIGNAL(textChanged(const QString &)),
            this,        SLOT(slotLinePrjFile(const QString &)));
-  connect( linePrjDir,  SIGNAL(textChanged(const QString &)),
-           this,        SLOT(slotLinePrjTmpl(const QString &)));
-  connect( linePrjDir,  SIGNAL(textChanged(const QString &)),
-           this,        SLOT(slotLinePrjToolbar(const QString &)));
   connect( buttonDir,    SIGNAL(clicked()),
            this,        SLOT(slotButtonDir()));
   connect( linePrjName, SIGNAL(textChanged(const QString &)),
@@ -87,39 +86,51 @@ ProjectNewGeneral::~ProjectNewGeneral(){
 
 void ProjectNewGeneral::slotButtonDir()
 {
-   KURL url = KFileDialog::getExistingURL(linePrjDir->text(), this,
+   slotLinePrjFile(""); // make sure baseUrl is correct
+   KURL url = KFileDialog::getExistingURL(baseUrl.url(), this,
                               i18n("Select Project Folder"));
    if (!url.isEmpty())
    {
-     linePrjDir->setText(url.prettyURL());
+     linePrjDir->setText(url.path());
    }
 }
 
 void ProjectNewGeneral::slotLinePrjFile( const QString & )
 {
-  if (   linePrjFile->text().isEmpty() ||
-        linePrjName->text().isEmpty() ||
-        linePrjDir ->text().isEmpty() ||
-        linePrjTmpl->text().isEmpty() ||
-        linePrjToolbar->text().isEmpty())
-        emit enableNextButton( this, false );
-  else
-  {
-    KURL url;
-    url.setHost(lineHost->text());
-    url.setUser(lineUser->text());
-    url.setPass(linePasswd->text());
+  
+  bool valid = !(linePrjFile->text().isEmpty() ||
+                 linePrjName->text().isEmpty() ||
+                 linePrjDir ->text().isEmpty() ||
+                 linePrjTmpl->text().isEmpty() ||
+                 linePrjToolbar->text().isEmpty());
+  KURL url;
+  QString s = lineHost->text();
+  if (! s.isEmpty())
+    url.setHost(s);
+  
+  s = lineUser->text();
+  if (! s.isEmpty())
+    url.setUser(s);
+  s = linePasswd->text();
+  if (! s.isEmpty())
+    url.setPass(s);
+  
+  s = linePort->text();
+  if (! s.isEmpty())
     url.setPort(linePort->text().toInt());
-    url.setProtocol(comboProtocol->currentText());
-    if (url.protocol() == i18n("Local")) url.setProtocol("file");
-    QuantaCommon::setUrl(url, linePrjDir->text());
-    url.adjustPath(1);
-    if (!url.path().startsWith("/")) url.setPath("/"+url.path());
-
+  
+  url.setProtocol(comboProtocol->currentText());
+  if (url.protocol() == i18n("Local")) url.setProtocol("file");
+  url.setPath(linePrjDir->text());
+  url.adjustPath(1);
+  if (!url.path().startsWith("/")) url.setPath("/"+url.path());
+  
+  if (url.isValid())
+  {
     emit setBaseURL(url);
- }
-
-  emit enableNextButton( this, true  );
+    baseUrl = url;
+  }
+  emit enableNextButton( this, valid );
 }
 
 void ProjectNewGeneral::slotChangeNames( const QString &text )
@@ -146,39 +157,26 @@ void ProjectNewGeneral::setMargin(int i)
 
 void ProjectNewGeneral::slotButtonTmpl()
 {
-   KURL url = KFileDialog::getExistingURL(linePrjTmpl->text(), this,
+   slotLinePrjFile(""); // make sure baseUrl is correct
+   KURL url = KFileDialog::getExistingURL(baseUrl.url(), this,
                               i18n("Select Project Template Folder"));
-   if (!url.isEmpty())
+   if (!url.isEmpty() && baseUrl.isParentOf(url))
    {
-     linePrjTmpl->setText(url.prettyURL());
+     linePrjTmpl->setText(KURL::relativeURL(baseUrl, url));
    }
 }
 
 void ProjectNewGeneral::slotButtonToolbar()
 {
-   KURL url = KFileDialog::getExistingURL(linePrjToolbar->text(), this,
+   slotLinePrjFile(""); // make sure baseUrl is correct
+   KURL url = KFileDialog::getExistingURL(baseUrl.url(), this,
                               i18n("Select Project Toolbar & Actions Folder"));
-   if (!url.isEmpty())
+   if (!url.isEmpty() && baseUrl.isParentOf(url))
    {
-     linePrjToolbar->setText(url.prettyURL());
+     linePrjToolbar->setText(KURL::relativeURL(baseUrl, url));
    }
 }
 
-void ProjectNewGeneral::slotLinePrjToolbar(const QString &Str)
-{
-  QString str = Str;
-  if (!str.endsWith("/"))
-      str.append("/");
-  linePrjToolbar->setText(str + "toolbars");
-}
-
-void ProjectNewGeneral::slotLinePrjTmpl(const QString &Str)
-{
-  QString str = Str;
-  if (!str.endsWith("/"))
-      str.append("/");
-  linePrjTmpl->setText(str + "templates");
-}
 
 /** No descriptions */
 void ProjectNewGeneral::slotProtocolChanged(const QString& protocol)
