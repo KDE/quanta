@@ -5,7 +5,7 @@
 #include <config.h>
 #endif
 
-#include <messageitem.h>
+#include "messageitem.h"
 #include <qcolor.h>
 
 
@@ -15,12 +15,12 @@ public:
 
   MessageItemPHP4(QListBox *listbox, const QString &text);
   ~MessageItemPHP4();
-  
+
 protected:
 //  virtual void paint( QPainter * );
 
 private:
-  
+
   QString stype;
   QString message;
 

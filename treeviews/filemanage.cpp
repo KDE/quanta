@@ -17,9 +17,9 @@
  ***************************************************************************/
 
 // QT includes
+#include <qapplication.h>
 #include <qpopupmenu.h>
 #include <qclipboard.h>
-#include <qapp.h>
 #include <qfileinfo.h>
 #include <qstringlist.h>
 
@@ -198,7 +198,7 @@ void FileManage::slotInsertDirInProject()
   }
 }
 
-void FileManage::slotInsertTag() 
+void FileManage::slotInsertTag()
 {
   if (currentItem() )
   {

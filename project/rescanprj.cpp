@@ -16,8 +16,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "rescanprj.h"
-#include "rescanprj.moc"
 // qt includes
 #include <qlistview.h>
 #include <qpushbutton.h>
@@ -190,3 +188,5 @@ void RescanPrj::slotListDone(KIO::Job *)
   progressText->setText(i18n("Progress:"));
   slotSelect();
 }
+
+#include "rescanprj.moc"

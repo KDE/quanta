@@ -25,7 +25,7 @@
 
 // include files for Qt
 #include <qwidget.h>
-#include <qlist.h>
+#include <qptrlist.h>
 
 class QuantaDoc;
 class Document;

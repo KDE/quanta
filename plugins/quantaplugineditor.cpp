@@ -26,7 +26,6 @@
 #include <qwidget.h>
 #include <qobject.h>
 #include <qdict.h>
-#include <qlistview.h>
 #include <qcheckbox.h>
 #include <qpushbutton.h>
 #include <qlineedit.h>
@@ -50,8 +49,8 @@ QuantaPluginEditor::QuantaPluginEditor(QWidget *a_parent, const char *a_name)
 
   pluginList->setSelectionMode(QListView::Single);
   pluginList->setAllColumnsShowFocus(TRUE);
-  pluginList->setColumnAlignment(2, Qt::AlignHCenter);  
-  
+  pluginList->setColumnAlignment(2, Qt::AlignHCenter);
+
   connect(this, SIGNAL(pluginsChanged()), SLOT(refreshPlugins()));
   connect(refreshButton, SIGNAL(clicked()), SLOT(refreshPlugins()));
   connect(addButton, SIGNAL(clicked()), SLOT(addPlugin()));
@@ -94,7 +93,7 @@ void QuantaPluginEditor::addPlugin()
       qWarning("Tried to create unknown plugin type %s", pluginType.latin1());
       return;
     }
- 
+
     newPlugin->setPluginName(configDlg->pluginName->text());
     newPlugin->setFileName(configDlg->pluginFileName->text());
     newPlugin->setType(configDlg->pluginType->currentText());
@@ -116,7 +115,7 @@ void QuantaPluginEditor::addSearchPath()
   QString appendDir = KFileDialog::getExistingDirectory(QString::null, 0, i18n("Select Directory"));
   if(!appendDir.isNull())
   {
-   searchPaths->setText(searchPaths->text()+appendDir+":"); 
+   searchPaths->setText(searchPaths->text()+appendDir+":");
   }
 }
 
@@ -127,7 +126,7 @@ void QuantaPluginEditor::configurePlugin()
   QListViewItem *item = pluginList->currentItem();
   if(item)
     key = item->text(0);
-    
+
   if(!key.isNull() && m_plugins.find(key))
   {
     QuantaPluginConfig *configDlg = new QuantaPluginConfig(this, "pluginConfig");
@@ -137,7 +136,7 @@ void QuantaPluginEditor::configurePlugin()
     configDlg->updateWindows(curPlugin->type()); //FIXME : hack
     configDlg->outputWindow->setCurrentText(curPlugin->outputWindow());
     configDlg->pluginName->setText(curPlugin->pluginName());
-    configDlg->pluginFileName->setText(curPlugin->fileName());        
+    configDlg->pluginFileName->setText(curPlugin->fileName());
     configDlg->location->setText(curPlugin->location());
     configDlg->arguments->setText(curPlugin->arguments());
     configDlg->iconButton->setIcon(curPlugin->icon());
@@ -150,20 +149,20 @@ void QuantaPluginEditor::configurePlugin()
       curPlugin->setLocation(configDlg->location->text());
       curPlugin->setArguments(configDlg->arguments->text());
       curPlugin->setOutputWindow(configDlg->outputWindow->currentText());
-      curPlugin->setIcon(configDlg->iconButton->icon());      
+      curPlugin->setIcon(configDlg->iconButton->icon());
     }
-    
+
     delete configDlg;
-    
+
     emit pluginsChanged();
-  }  
+  }
 }
 
 void QuantaPluginEditor::refreshPlugins()
 {
   // call validate on all plugins to refresh their status
   pluginList->clear();
-  
+
   QDictIterator<QuantaPlugin> it(m_plugins);
   for(;it.current();++it)
   {
@@ -180,7 +179,7 @@ void QuantaPluginEditor::refreshPlugins()
     else
       statusIcon = SmallIcon("pluginInvalid", KGlobal::instance());
     newItem->setPixmap(2, statusIcon);
-    
+
     newItem->setText(3, curPlugin->location());
     newItem->setText(4, curPlugin->fileName());
     newItem->setText(5, curPlugin->arguments());
@@ -202,13 +201,13 @@ void QuantaPluginEditor::removePlugin()
       delete plugin;
       emit pluginsChanged();
     }
-  }    
+  }
 }
 
 void QuantaPluginEditor::setPlugins(QDict<QuantaPlugin> a_plugins)
 {
   m_plugins = a_plugins;
-  
+
   emit pluginsChanged();
 }
 
@@ -242,7 +241,7 @@ QStringList QuantaPluginEditor::searchPathList()
 {
   QString str = searchPaths->text();
   QStringList paths = QStringList::split(":",str);
-  
+
   return paths;
 }
 

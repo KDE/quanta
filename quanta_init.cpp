@@ -409,7 +409,7 @@ void QuantaApp::initView()
   rightWidgetStack->addWidget(htmlpart->view(), 1);
   rightWidgetStack->addWidget(htmlPartDoc->view(), 2);
   #ifdef BUILD_KAFKAPART
-  rightWidgetStack->addWidget(kafkaPart->view(), 3);
+  rightWidgetStack->addWidget(kafkaPart->view(), 4);
   #endif
   rightWidgetStack->raiseWidget(0);
 
@@ -507,7 +507,7 @@ QWidgetStack *QuantaApp::widgetStackOfHtmlPart()
     s->addWidget( htmlpart->view(), 1 );
     s->addWidget( htmlPartDoc->view(), 2 );
     #ifdef BUILD_KAFKAPART
-    s->addWidget( kafkaPart->view(), 3);
+    s->addWidget( kafkaPart->view(), 4);
     #endif
   }
 

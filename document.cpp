@@ -369,7 +369,7 @@ int Document::checkOverwrite(KURL u)
     info.setFile( name );
     if( info.exists() )
       query = KMessageBox::warningYesNoCancel( this,
-        i18n( "A Document with this name already exists.\nDo you want to overwrite it?" ) );
+              i18n( "A Document with this name already exists.\nDo you want to overwrite it?" ) );
   }
   return query;
 }

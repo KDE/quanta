@@ -21,7 +21,6 @@
 /* KDE INCLUDES */
 /* QT INCLUDES */
 #include <qdict.h>
-#include <qlistview.h>
 
 /* OTHER INCLUDES */
 #include "quantaplugin.h"
@@ -35,11 +34,12 @@
 
 /* FORWARD DECLARATIONS */
 class QWidget;
+class QListView;
 
 class QuantaPluginEditor : public PluginEditor
 {
   Q_OBJECT
-public: 
+public:
   QuantaPluginEditor(QWidget *, const char *);
   ~QuantaPluginEditor();
   QDict<QuantaPlugin> plugins();

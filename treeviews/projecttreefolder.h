@@ -19,7 +19,7 @@
 #ifndef ProjectTreeFolder_H
 #define ProjectTreeFolder_H
 
-#include <qlist.h>
+#include <qptrlist.h>
 
 #include "filestreefolder.h"
 #include "projecttreefile.h"
@@ -37,16 +37,16 @@ public:
   ProjectTreeFolder( QListView *parentListView, ProjectTreeFolder *parent, const KURL& p_url);
   ProjectTreeFolder( QListView *parentListView, const QString& name, const KURL& p_url);
   ~ProjectTreeFolder();
-  
+
   virtual void setOpen( bool open);
   void setup();
-  
+
   /** insert item in file list */
   void insertItem(ProjectTreeFile *item, const KURL& url);
   /**  */
   bool contains(const KURL& url);
   virtual void paintCell( QPainter *, const QColorGroup &, int, int, int);
-  
+
 public:
   QPtrList<ProjectTreeFile> filesTreeList;
   /**  */

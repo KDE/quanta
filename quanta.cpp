@@ -1907,7 +1907,7 @@ KURL QuantaApp::saveToolbarToFile(const QString& toolbarName, const KURL& destFi
   buffer.flush();
 
   ToolbarEntry *p_toolbar = toolbarList[toolbarName.lower()];
-  if (p_toolbar->dom) delete p_toolbar->dom;
+  delete p_toolbar->dom;
   QDomDocument *dom = new QDomDocument();
   dom->setContent(toolStr.read());
   p_toolbar->dom = dom;

@@ -24,14 +24,14 @@
 
 #include <qwidget.h>
 #include <qdom.h>
-#include <qlist.h>
+#include <qptrlist.h>
 
 #include "tagattr.h"
 #include "tagwidget.h"
 #include "../parser/qtag.h"
 
 class Tagxml : public QWidget, TagWidget {
-  Q_OBJECT 
+  Q_OBJECT
   public:
     /** construtor */
     Tagxml(QDomDocument &d, DTDStruct *dtd, QWidget* parent=0, const char *name=0);

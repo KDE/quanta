@@ -9,7 +9,7 @@ AC_ARG_WITH(kafkapart,
      esac])
 
 if test "$build_wysiwyg" = "yes"; then
-  CPPFLAGS="$CPPFLAGS -DBUILD_KAFKAPART"
+  CXXFLAGS="$CXXFLAGS -DBUILD_KAFKAPART"
 fi
 
   AM_CONDITIONAL(BUILD_WYSIWYG, test "$build_wysiwyg" = "yes")

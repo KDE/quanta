@@ -21,10 +21,10 @@
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
-#endif 
+#endif
 
 // include files for QT
-#include <qlist.h>
+#include <qptrlist.h>
 #include <qdict.h>
 #include <qobject.h>
 #include <qstring.h>

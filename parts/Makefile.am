@@ -1,3 +1,3 @@
 if BUILD_WYSIWYG
-SUBDIRS = kafka
+ SUBDIRS=kafka
 endif

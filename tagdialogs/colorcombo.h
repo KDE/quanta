@@ -19,7 +19,7 @@
 //-----------------------------------------------------------------------------
 // KDE color selection combo box
 
-// layout managment added Oct 1997 by Mario Weilguni 
+// layout managment added Oct 1997 by Mario Weilguni
 // <mweilguni@sime.com>
 
 
@@ -30,7 +30,7 @@
 #include <kdialogbase.h>
 #include <qframe.h>
 #include <qpixmap.h>
-#include <kcolordlg.h>
+#include <kcolordialog.h>
 #include "kselect.h"
 
 
@@ -47,13 +47,13 @@ public:
   void setColor( const QColor &col );
   void setColorName(QString color);
   QString colorName();
-  /** 
-   * Retrieve the currently selected color. 
+  /**
+   * Retrieve the currently selected color.
    **/
   QColor color();
-  
+
   bool hasColor();
-    
+
 public slots:
   void slotActivated( int index );
   void slotHighlighted( int index );
@@ -73,13 +73,13 @@ private:
   void addColors();
   QColor customColor;
   QColor internalcolor;
-  
+
   bool hascolor;
-  
+
   QColor *standardPalette;
   QString *standardPaletteNames;
 
-    
+
 };
 
 #endif  // __COLORCOMBO_H__
