@@ -9,14 +9,22 @@
         <location col="1" row="0" />
     </attr>
 
-    <attr name="selected" type="check">
+    <attr name="selected" type="list">
         <text>Selected</text>
+        <textlocation col="0" row="1" />
         <location col="1" row="1" />
+	<items>
+ 	  <item>selected</item>
+	</items>
     </attr>
 
-    <attr name="disabled" type="check">
+    <attr name="disabled" type="list">
         <text>Disabled</text>
+        <textlocation col="0" row="2" />
         <location col="1" row="2" />
+	<items>
+ 	  <item>disabled</item>
+	</items>
     </attr>
 
     <attr name="label" type="input">

@@ -9,9 +9,13 @@
         <location col="1" row="0" />
     </attr>
 
-    <attr name="selected" type="check">
-        <text>selected</text>
+     <attr name="selected" type="list">
+        <text>Selected</text>
+        <textlocation col="0" row="1" />
         <location col="1" row="1" />
+	<items>
+ 	  <item>selected</item>
+	</items>
     </attr>
 
     <stoppingtags>
