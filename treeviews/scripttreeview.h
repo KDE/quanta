@@ -148,10 +148,11 @@ private:
    *  creates the URL of the .info file
    *
    *  @param url URL of the script file
+   *  @param htmlVersion if true returns the HTML version of the file
    *
    *  @return URL of the matching .info file (no check is done if the file exists)
    */
-  KURL infoFile(const KURL& url);
+  KURL infoFile(const KURL& url, bool htmlVersion = false);
 
   /**
    *  query options from the .info file

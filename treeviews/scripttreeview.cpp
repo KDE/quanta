@@ -146,7 +146,7 @@ void ScriptTreeView::slotSelectFile(QListViewItem *item)
   if (item) {
     if ( !currentKFileTreeViewItem()->isDir() )
     {
-      KURL urlToOpen = infoFile(currentURL());
+      KURL urlToOpen = infoFile(currentURL(), true);
       emit openFileInPreview(urlToOpen);
     }
   }
@@ -295,36 +295,41 @@ void ScriptTreeView::slotSendScriptInMail()
   }
 }
 
-KURL ScriptTreeView::infoFile(const KURL& url)
+KURL ScriptTreeView::infoFile(const KURL& url, bool htmlVersion)
 {
   KURL returnUrl = url;
   QString fileName = returnUrl.fileName();
   //fileName.truncate(fileName.length() - QFileInfo(fileName).extension().length() - 1);
   fileName.append(".info");
   returnUrl.setFileName(fileName);
-  KTempFile *tempFile = new KTempFile(tmpDir);
-  tempFile->setAutoDelete(true);
-//apply the stylesheet
-  xsltStylesheetPtr cur = NULL;
-  xmlDocPtr doc, res;
-  xmlSubstituteEntitiesDefault(1);
-  xmlLoadExtDtdDefaultValue = 1;
-  QString xslFile = qConfig.globalDataDir + resourceDir + "scripts/info.xsl";
-  cur = xsltParseStylesheetFile(xmlCharStrndup(xslFile.utf8(), xslFile.utf8().length()));
-  doc = xmlParseFile(returnUrl.path().utf8());
-  res = xsltApplyStylesheet(cur, doc, 0);
-  xsltSaveResultToFile(tempFile->fstream(), res, cur);
 
-  xsltFreeStylesheet(cur);
-  xmlFreeDoc(res);
-  xmlFreeDoc(doc);
+  if (htmlVersion)
+  {
+      KTempFile *tempFile = new KTempFile(tmpDir);
+      tempFile->setAutoDelete(true);
+    //apply the stylesheet
+      xsltStylesheetPtr cur = NULL;
+      xmlDocPtr doc, res;
+      xmlSubstituteEntitiesDefault(1);
+      xmlLoadExtDtdDefaultValue = 1;
+      QString xslFile = qConfig.globalDataDir + resourceDir + "scripts/info.xsl";
+      cur = xsltParseStylesheetFile(xmlCharStrndup(xslFile.utf8(), xslFile.utf8().length()));
+      doc = xmlParseFile(returnUrl.path().utf8());
+      res = xsltApplyStylesheet(cur, doc, 0);
+      xsltSaveResultToFile(tempFile->fstream(), res, cur);
 
-  xsltCleanupGlobals();
-  xmlCleanupParser();
-  tempFile->close();
+      xsltFreeStylesheet(cur);
+      xmlFreeDoc(res);
+      xmlFreeDoc(doc);
 
-  tempFileList.append(tempFile);
-  return KURL().fromPathOrURL(tempFile->name());
+      xsltCleanupGlobals();
+      xmlCleanupParser();
+      tempFile->close();
+
+      tempFileList.append(tempFile);
+      return KURL().fromPathOrURL(tempFile->name());
+   } else
+      return returnUrl;
 }
 
 QString ScriptTreeView::infoOptionValue(const KURL& infoURL, const QString& optionName)

@@ -2,7 +2,7 @@
 <?xml-stylesheet type=text/xsl href=info.xsl ?>
 <!DOCTYPE QuantaScriptInfo>
 <INFO>
-<options editor="kwrite" interpreter="sh" />
+<options interpreter="sh" />
 <name>externalpreview.sh</name>
 <author>Andras Mantia</author>
 <email>amantia@kde.org</email>
