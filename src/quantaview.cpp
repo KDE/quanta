@@ -880,7 +880,7 @@ bool QuantaView::saveModified()
     int want_save
       = KMessageBox::warningYesNoCancel(this,
           i18n("The file \"%1\" has been modified.\nDo you want to save it?").arg(fileName),
-          i18n("Warning"));
+          i18n("Warning"), KStdGuiItem::save(), KStdGuiItem::discard());
 
     switch (want_save)
     {

@@ -3152,8 +3152,8 @@ bool QuantaApp::slotRemoveToolbar(const QString& name)
       int result;
       if (p_toolbar->url.isEmpty())
       {
-         result = KMessageBox::questionYesNoCancel(this, i18n("<qt>Toolbar <b>%1/<b> is new and unsaved. Do you want to save it before it is removed?</qt>").arg(p_toolbar->name),
-              i18n("Save Toolbar"));
+         result = KMessageBox::warningYesNoCancel(this, i18n("<qt>Toolbar <b>%1/<b> is new and unsaved. Do you want to save it before it is removed?</qt>").arg(p_toolbar->name),
+              i18n("Save Toolbar"), KStdGuiItem::save(), KStdGuiItem::discard());
       } else
       {
          FourButtonMessageBox dlg(this, 0, true);
