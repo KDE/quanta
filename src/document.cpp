@@ -1095,8 +1095,8 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(int line, 
   if (node && node->tag->type != Tag::XmlTag)
       node = 0L;
   QTag *parentQTag= 0L;
-  if (node)
-      parentQTag = QuantaCommon::tagFromDTD(node);
+  if (node && node->parent)
+      parentQTag = QuantaCommon::tagFromDTD(node->parent);
   QString textLine = editIf->textLine(line).left(col);
   QString word = findWordRev(textLine, completionDTD).upper();
   QString classStr = "";
