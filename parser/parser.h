@@ -95,7 +95,11 @@ public:
   DTDStruct * currentDTD(int line, int col);
 
   /** Parse for groups (variables, inclusions) in the node. */
+  void parseForGroups(Node *node);
+  /** Parse for groups (variables, inclusions) in the node tree. */
   void parseForGroups();
+  /** Remove the found groups from the memeber variables */
+  void clearGroups();
   void parseIncludedFiles();
   void removeCommentsAndQuotes(QString& str, DTDStruct* dtd);
 

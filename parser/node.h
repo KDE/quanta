@@ -51,6 +51,7 @@ public:
  #endif
  QListViewItem *listItem;
  Tag *tag;
+ Tag *groupTag;
  bool closesPrevious; //this node "closes" the tag from previous node
  bool opened;
  bool removeAll; //set to false if you don't want to remove the "next" and "child" when deleting the node.

@@ -160,8 +160,12 @@ void QuantaApp::slotFileNew()
 void QuantaApp::slotFileOpen()
 {
  QString myEncoding = defaultEncoding();
-
- KateFileDialog *dialog = new KateFileDialog (QString::null,myEncoding, this, i18n ("Open File"));
+ QString startDir;
+ if (view()->writeExists() && !view()->write()->isUntitled())
+     startDir = view()->write()->url().url();
+ else
+      startDir = projectBaseURL().url();
+ KateFileDialog *dialog = new KateFileDialog (startDir, myEncoding, this, i18n ("Open File"));
  KateFileDialogData data = dialog->exec();
  delete dialog;
 

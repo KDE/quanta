@@ -71,19 +71,19 @@ public:
   /** Add an attribute */
   void addAttribute(TagAttr _attr) {attrs.append(_attr);}
   /** Get the attribute number index */
-  TagAttr getAttribute(uint index) {return attrs[index];}
+  TagAttr getAttribute(uint index) const {return attrs[index];}
   /** Remove the attribute number index */
   void deleteAttribute(uint index) {attrs.remove(attrs.at(index));}
   /** Returns the quotation status of the attribute */
-  bool isQuotedAttribute(int index) {return attrs[index].quoted;}
+  bool isQuotedAttribute(int index) const {return attrs[index].quoted;}
   /** Check if this tag has the attr attribute defined */
   bool hasAttribute( const QString &attr );
   /** Set the coordinates of tag inside the document */
   void setTagPosition(int bLine, int bCol, int eLine, int eCol);
   /** Where the tag begins in the document */
-  void beginPos(int &bLine, int &bCol) {bLine = beginLine; bCol = beginCol;}
+  void beginPos(int &bLine, int &bCol) const {bLine = beginLine; bCol = beginCol;}
   /** Where the tag ends in the document */
-  void endPos(int &eLine, int &eCol) {eLine = endLine; eCol = endCol;}
+  void endPos(int &eLine, int &eCol) const {eLine = endLine; eCol = endCol;}
   /** Where the attr at index begins in the document */
   void attributeNamePos(int index, int &line, int &col);
   /** Where the attr value at index begins in the document */
@@ -91,7 +91,7 @@ public:
   /** Set the internal string which is parsed */
   void setStr(const QString &p_tagStr);
   /** Get the tag in string format */
-  QString tagStr() {return m_tagStr;};
+  QString tagStr() const {return m_tagStr;};
   /** Get the document where the tag lies */
   Document *write() {return m_write;}
   /** Set the document where the tag lies */
@@ -104,7 +104,7 @@ public:
   int attributeIndex(QString attr);
 
   void namePos(int &line, int &col);
-  int attrCount() {return attrs.count();}
+  int attrCount() const {return attrs.count();}
 
   int size();
 
@@ -146,9 +146,6 @@ private:
   QValueList<TagAttr> attrs;  //attributes in a tag
   QString m_tagStr;   //the tag in string format (as it is in the document)
   Document *m_write;  //the document
-
-  /** Parse the attributes in the string and build the attrs vector */
-  void parseAttr( QString text, int &line, int &col);
 };
 
 

@@ -97,7 +97,7 @@ bool Parser::scriptParser(Node *startNode)
         bl = node_bl + n;
         if (n > 0)
         {
-          bc = pos - s.findRev("\n") - 1;
+          bc = pos - s.findRev('\n') - 1;
         } else
         {
           bc = node_bc + pos;
@@ -114,7 +114,7 @@ bool Parser::scriptParser(Node *startNode)
           pos2 += specialEndStr.length() - 1;
           if (n > 0)
           {
-            ec = pos2 - s.findRev("\n") - 1;
+            ec = pos2 - s.findRev('\n') - 1;
           } else
           {
             ec = node_bc + pos2;
@@ -147,11 +147,12 @@ bool Parser::scriptParser(Node *startNode)
           }
           currentNode = node;
           found = true;
-          currentNode = specialAreaParser(node); //Why??
-          //specialAreaParser(node);
+          currentNode = specialAreaParser(node);
           col = pos2 + 1;
         } else
+        {
           pos = -1;
+        }
       }
     }
   }
@@ -192,10 +193,13 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
     }
     nodeFound = false;
     goUp = false;
+    //fint the first "<" and the first special area start definition in this line
     tagStartPos = textLine.find('<', col);
     specialStartPos = specialAreaCount ? textLine.find(m_dtd->specialAreaStartRx, col): -1;
+    //if the special area start definition is before the first "<" it means
+    //that we have found a special area
     if ( specialStartPos != -1 &&
-         (specialStartPos <= tagStartPos || tagStartPos == -1) ) //a special tag beginning was found
+         (specialStartPos <= tagStartPos || tagStartPos == -1) )
     {
       tagStartLine = line;
       QString foundText = m_dtd->specialAreaStartRx.cap();
@@ -204,6 +208,8 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
       tagEndCol = lastLineLength;
       tagEndLine = endLine;
       bool endFound = false;
+      //go through the document and find the matchin special area end definition
+      //string
       while (line <= endLine)
       {
         textLine = write->editIf->textLine(line);
@@ -249,10 +255,10 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
       tag->structBeginStr = foundText;
 
       goUp = (parentNode && parentNode->tag->single);
-    }
-
-    if ( tagStartPos != -1 &&
-         (tagStartPos < specialStartPos || specialStartPos == -1) ) //do we found a tag?
+    } else
+    //if we have found an XML tag start ("<")
+    if ( tagStartPos != -1 /*&&
+         (tagStartPos < specialStartPos || specialStartPos == -1) */)
     {
       int openNum = 1;
       tagStartLine = line;
@@ -264,6 +270,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
       bool firstOpenFound = false;
       bool insideSingleQuotes = false;
       bool insideDoubleQuotes = false;
+      //fint he matching ">" in the document
       while (line <= endLine && openNum > 0)
       {
         textLine = write->editIf->textLine(line);
@@ -276,7 +283,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
         }
         for (uint i = sCol; i < textLine.length(); i++)
         {
-           if (i > 0 && textLine[i-1] != '\\')
+           if (i == 0 || (i > 0 && textLine[i-1] != '\\'))
            {
              if (textLine[i] == '\'' && !insideDoubleQuotes)
                insideSingleQuotes = !insideSingleQuotes;
@@ -309,6 +316,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
         if (openNum != 0)
             line++;
       }
+      //the matching closing tag was not found
       if (openNum != 0)
       {
         tagEndLine = firstStartLine;
@@ -650,13 +658,16 @@ Node *Parser::parse(Document *w)
   write = w;
   m_dtd = w->defaultDTD();
   maxLines = w->editIf->numLines() - 1;
+  clearGroups();
   if (maxLines >= 0)
       m_node = parseArea(0, 0, maxLines, w->editIf->lineLength(maxLines), &lastNode);
   kdDebug(24000) << "New parser ("<< maxLines << " lines): " << t.elapsed() << " ms\n";
   t.restart();
   parseForGroups();
-  parseIncludedFiles();
   kdDebug(24000) << "Group parser " << t.elapsed() << " ms\n";
+  t.restart();
+  parseIncludedFiles();
+  kdDebug(24000) << "External parser " << t.elapsed() << " ms\n";
  /*
  treeSize = 0;
  coutTree(m_node, 2);
@@ -1290,7 +1301,8 @@ Node *Parser::rebuild(Document *w)
    if (lastNode)
    {
      lastNode->tag->beginPos(eLine, eCol);
-     eCol--;
+     if (eCol > 0)
+         eCol--;
    }
 
    //delete all the nodes between the firstNode and lastNode
@@ -1531,18 +1543,133 @@ Node *Parser::rebuild(Document *w)
     }
    }
  }
- parseForGroups();
+  kdDebug(24000) << "Rebuild: " << t.elapsed() << " ms \n";
+  t.restart();
+  parseForGroups();
+  kdDebug(24000) << "Group parser " << t.elapsed() << " ms\n";
  /*
  treeSize = 0;
  coutTree(m_node, 2);
  kdDebug(24000) << "Size of tree: " << treeSize << endl;
  cout << "\n";
  */
- kdDebug(24000) << "Rebuild: " << t.elapsed() << " ms \n";
  return m_node;
 }
 
-void Parser::parseForGroups()
+void Parser::parseForGroups(Node *currentNode)
+{
+  GroupElementList* groupElementList;
+  GroupElementMapList* groupElementMapList;
+  DTDStruct *dtd;
+  QString str;
+  QString tagStr;
+  QString tmpStr;
+  QString title;
+  GroupElement groupElement;
+  StructTreeGroup group;
+  int bl, bc, el, ec;
+  int pos;
+  Node *node;
+  KURL baseURL = QExtFileInfo::path(write->url());
+
+  currentNode->tag->beginPos(bl, bc);
+  str = currentNode->tag->cleanStr;
+  tagStr = currentNode->tag->tagStr();
+  dtd = currentNode->tag->dtd;
+  for (uint i = 0; i < dtd->structTreeGroups.count(); i++)
+  {
+    group = dtd->structTreeGroups[i];
+    if (dtd->family == Script)
+    {
+      if (!group.hasSearchRx)
+        continue;
+      groupElementMapList = &m_groups[group.name];
+      pos = 0;
+      while (pos != -1)
+      {
+        pos = group.searchRx.search(str, pos);
+        if (pos != -1)
+        {
+          title = tagStr.mid(pos, group.searchRx.matchedLength());
+          Tag *newTag = new Tag(*currentNode->tag);
+          newTag->beginPos(bl, bc);
+          tmpStr = tagStr.left(pos);
+          int newLines = tmpStr.contains('\n');
+          bl += newLines;
+          int l = tmpStr.findRev('\n'); //the last EOL
+          bc = (l == -1) ? bc+pos : pos - l - 1;
+          newLines = title.contains('\n');
+          l = title.length();
+          el = bl + newLines;
+          ec = (newLines > 0) ? l - title.findRev('\n') : bc + l - 1;
+          newTag->setTagPosition(bl, bc, el, ec);
+          newTag->setStr(title);
+          pos += l;
+          title.remove(group.clearRx);
+          newTag->name = title;
+          node = new Node(0L);
+          node->tag = newTag;
+          groupElement.node = node;
+          groupElement.originalNode = currentNode;
+          node = groupElement.originalNode;
+          while (node && node->tag->dtd == dtd && node->tag->type != Tag::ScriptStructureBegin)
+          {
+            node = node->parent;
+          }
+          if (node && node->tag->type == Tag::ScriptStructureBegin)
+          {
+            groupElement.parentNode = node;
+          } else
+          {
+            groupElement.parentNode = 0L;
+          }
+          groupElement.global = false;
+          groupElementList = & (*groupElementMapList)[title];
+          groupElementList->append(groupElement);
+          if (group.hasFileName && group.parseFile)
+          {
+            title.remove(group.fileNameRx);
+            KURL url;
+            QuantaCommon::setUrl(url, title.stripWhiteSpace());
+            url = QExtFileInfo::toAbsolute(url, baseURL);
+            includedFiles += url.path();
+            includedFilesDTD.append(dtd);
+            includeWatch->addFile(url.path());
+          }
+        }
+      }
+    } else
+    {
+      if (currentNode->tag->name.lower() == group.tag)
+      {
+        groupElementMapList = &m_groups[group.name];
+        node = new Node(0L);
+        Tag *newTag = new Tag(*currentNode->tag);
+        title = "";
+        for (uint j = 0; j < group.attributes.count(); j++)
+        {
+          if (newTag->hasAttribute(group.attributes[j]))
+          {
+            title.append(newTag->attributeValue(group.attributes[j]).left(100));
+            title.append(" | ");
+          }
+        }
+        title = title.left(title.length()-3);
+        title.remove('\n');
+        newTag->name = title;
+
+        node->tag = newTag;
+        groupElement.node = node;
+        groupElement.originalNode = currentNode;
+        groupElement.parentNode = 0L; //doesn\t matter
+        groupElementList = & (*groupElementMapList)[title];
+        groupElementList->append(groupElement);
+      }
+    }
+  }
+}
+
+void Parser::clearGroups()
 {
   QMap<QString, GroupElementMapList>::Iterator groupIt;
   for (groupIt = m_groups.begin(); groupIt != m_groups.end(); ++groupIt)
@@ -1559,11 +1686,16 @@ void Parser::parseForGroups()
   m_groups.clear();
   includedFiles.clear();
   includedFilesDTD.clear();
-
-  KURL baseURL = QExtFileInfo::path(write->url());
   delete includeWatch;
   includeWatch = new KDirWatch();
   connect(includeWatch, SIGNAL(dirty(const QString&)), SLOT(slotIncludedFileChanged(const QString&)));
+}
+
+void Parser::parseForGroups()
+{
+
+  clearGroups();
+  KURL baseURL = QExtFileInfo::path(write->url());
   GroupElementList* groupElementList;
   GroupElementMapList* groupElementMapList;
   DTDStruct *dtd;
@@ -1671,6 +1803,7 @@ void Parser::parseForGroups()
           groupElement.parentNode = 0L; //doesn\t matter
           groupElementList = & (*groupElementMapList)[title];
           groupElementList->append(groupElement);
+          break;
         }
       }
     }

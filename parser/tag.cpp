@@ -62,145 +62,91 @@ Tag::~Tag()
 {
 }
 
-/** Parse the attributes in the string and build the attrs vector */
-void Tag::parseAttr( QString text, int &line, int &col)
-{
-  QString tagname;
-
-  while ( text[col].isSpace() && !text[col].isNull()) col++;
-
-  if ( text[col]=='>' || col >= (int)text.length() ) return;
-
-  int begin = col;
-  TagAttr attr;
-
-  //go through the string
-  while (col < (int) text.length() && text[col] != '>')
-  {
-   //find where the attr name begins
-   while ( text[col].isSpace() && !text[col].isNull())
-         col++;
-   begin = col;
-   //go to the first non-space char
-   while ( !text[col].isSpace() &&  text[col] != '=' && text[col] != '>'
-            && !text[col].isNull())
-     col++;
-   if (text[col].isNull()) break;
-   if (text[col] == '=') //an attribute value comes
-   {
-     attr.name = text.mid(begin, col-begin).stripWhiteSpace();
-     if (dtd && !dtd->caseSensitive)
-        attr.name = attr.name.lower();
-     attr.nameLine = line;
-     attr.nameCol = begin;
-     col++;
-     while ( text[col].isSpace() )
-        col++;
-     if (text[col] == '"' || text[col] == '\'') //the attribute value is quoted
-     {
-       QChar quotation = text[col];
-       begin = ++col;
-       while (  (text[col] != quotation ||
-                (text[col] == quotation && text[col-1] == '\\') )
-              && col < (int) text.length())
-       {
-         col++;
-       }
-       attr.value = text.mid(begin, col-begin);
-       attr.quoted = true;
-       col++;
-     }
-     else
-     {
-       begin = col;
-       while ( !text[col].isSpace() &&
-                text[col] != '>' &&
-                col < (int) text.length())
-       {
-        col++;
-       }
-       attr.value = text.mid(begin, col-begin);
-       attr.quoted = false;
-     } //else
-     attr.valueLine = line;
-     attr.valueCol = begin;
-   }
-   else           // no attribute value, the next attr comes
-   {
-     //FIXME: This values are not correct for every DTD
-     if(begin == col) return;//if begin == col, the "attribute" was >
-     attr.name = text.mid(begin, col-begin).stripWhiteSpace();
-     attr.nameLine = line;
-     attr.nameCol = begin;
-     attr.value = "true";
-     attr.quoted = false;
-     attr.valueLine = line;
-     attr.valueCol = begin;
-   }
-   attrs.append(attr);
-  }
-}
-
 void Tag::parse(const QString &p_tagStr, Document *p_write)
 {
  m_tagStr = p_tagStr;
  cleanStr = m_tagStr;
  m_write = p_write;
-
  m_nameLine = beginLine;
- m_nameCol = beginCol;
- int line = beginLine;
- int col = beginCol;
- int begin;
-
- QString textLine = m_write->editIf->textLine(line);
-
- if ( textLine[col] == '<' &&
-      (( beginLine == endLine && col < endCol) ||
-       ( beginLine != endLine)) )
-     col++;
-
- while ( (textLine[col].isSpace() || textLine[col] == '>') &&
-         !textLine[col].isNull() &&
-         ( ( beginLine == endLine && col < endCol) ||
-           ( beginLine != endLine) )
-       )
+ m_nameCol = beginCol + 1;
+ uint pos = 1;
+ while (pos < m_tagStr.length() &&
+        !m_tagStr[pos].isSpace() && m_tagStr[pos] != '>' && m_tagStr[pos] != '\n')
  {
-   col++;
+   pos++;
  }
- begin = col;
- if ( ( beginLine == endLine && col < endCol) ||
-      ( beginLine != endLine) )
-     col++;
- while ( !textLine[col].isSpace() &&
-          textLine[col] != '>' &&
-         !textLine[col].isNull() &&
-         ( ( beginLine == endLine && col < endCol) ||
-           ( beginLine != endLine) )
-       )
+ name = m_tagStr.mid(1, pos - 1);
+ QString attrStr;
+ TagAttr attr;
+ int sPos = ++pos;
+ int valueStartPos = 0;
+ while (pos < m_tagStr.length())
  {
-   col++;
- }
- if (beginLine == endLine && col == endCol && textLine[col] != '>')
-    col++;
- name = textLine.mid(begin, col - begin).stripWhiteSpace();
- if (!name.isEmpty())
-    m_nameCol = begin;
-
- while ( textLine[col] != '>')
-  {
-    if ( textLine.isNull() )
-      break;
-
-    parseAttr( textLine, line, col);
-
-    if ( col >= (int)textLine.length() && textLine[col] != '>')
+    //find the attribute name
+    while (pos < m_tagStr.length() &&
+           !m_tagStr[pos].isSpace() && m_tagStr[pos] != '=')
     {
-      textLine = m_write->editIf->textLine(++line);
-      col = 0;
+      pos++;
     }
-  }
+    attr.name = m_tagStr.mid(sPos, pos - sPos);
+    attr.nameLine = m_tagStr.left(sPos).contains('\n') + beginLine;
+    if (attr.nameLine == beginLine)
+        attr.nameCol = sPos;
+    else
+        attr.nameCol = m_tagStr.left(sPos).section('\n',-1).length();
+
+    while (pos < m_tagStr.length() && m_tagStr[pos].isSpace())
+            pos++;
+    //if the attribute is just listed and there is no value specified,
+    //treate it as a "true" boolean
+    if (m_tagStr[pos] != '=' || pos == m_tagStr.length())
+    {
+      attr.value = (dtd != 0) ? dtd->booleanTrue : QString("true");
+      attr.valueCol = attr.nameCol;
+      attr.valueLine = attr.nameLine;
+      attr.quoted = false;
+    } else
+    {
+      pos++;
+      while (pos < m_tagStr.length() && m_tagStr[pos].isSpace())
+            pos++;
+      if (m_tagStr[pos] == '\'' || m_tagStr[pos] == '"')
+      {
+        attr.quoted = true;
+        valueStartPos = pos + 1;
+        QChar quotation = m_tagStr[pos];
+        pos += 1;
+        while (pos < m_tagStr.length() &&
+               (m_tagStr[pos] != quotation ||
+               (m_tagStr[pos] == quotation && m_tagStr[pos-1] == '\\')))
+        {
+          pos++;
+        }
+        attr.value = m_tagStr.mid(valueStartPos, pos - valueStartPos);
+      } else
+      {
+        attr.quoted = false;
+        valueStartPos = pos + 1;
+        while (pos < m_tagStr.length() && !m_tagStr[pos].isSpace())
+          pos++;
+        attr.value = m_tagStr.mid(valueStartPos, pos - valueStartPos -1);
+      }
+      attr.valueLine = m_tagStr.left(valueStartPos).contains('\n') + beginLine;
+      if (attr.valueLine == beginLine)
+          attr.valueCol = valueStartPos;
+      else
+          attr.valueCol = m_tagStr.left(valueStartPos).section('\n',-1).length();
+    }
+
+    attrs.append(attr);
+    //go to the first non-space char. This is where the next attribute name starts
+    pos++;
+    while (pos < m_tagStr.length() && m_tagStr[pos].isSpace())
+          pos++;
+    sPos = pos++;
+ }
 }
+
 
 QString Tag::attribute(int index)
 {
