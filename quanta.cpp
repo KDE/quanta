@@ -689,6 +689,8 @@ void QuantaApp::slotOptionsConfigureToolbars()
    {
      nodeList.item(i).toElement().setTagName("Separator");
    }
+   KXMLGUIFactory::saveConfigFile(p_toolbar->guiClient->domDocument(),
+        p_toolbar->guiClient->xmlFile(), p_toolbar->guiClient->instance());
  }
  saveMainWindowSettings(KGlobal::config(), autoSaveGroup());
  KEditToolbar dlg(factory(), this);
@@ -699,6 +701,30 @@ void QuantaApp::slotOptionsConfigureToolbars()
 
  connect( &dlg, SIGNAL( newToolbarConfig() ), SLOT( slotNewToolbarConfig() ) );
  dlg.exec();
+
+ QPopupMenu *menu = 0L;
+ QString toolbarName;
+ ToolbarTabWidget *tb = view->toolbarTab;
+ for (int i = 0; i < tb->count(); i++)
+ {
+   toolbarName = tb->label(i);
+   p_toolbar = quantaApp->toolbarList[toolbarName.lower()];
+   if (p_toolbar)
+   {
+    delete p_toolbar->menu;
+    menu = new QPopupMenu(m_tagsMenu);
+    nodeList = p_toolbar->guiClient->domDocument().elementsByTagName("Action");
+    for (uint i = 0; i < nodeList.count(); i++)
+    {
+      KAction *action = actionCollection()->action(nodeList.item(i).toElement().attribute("name"));
+      if (action)
+          action->plug(menu);
+    }
+
+    m_tagsMenu->insertItem(toolbarName,menu);
+    p_toolbar->menu = menu;
+   }
+ }
 
  //add the menus
  menuBar()->insertItem(i18n("Plu&gins"), m_pluginMenu, -1, PLUGINS_MENU_PLACE);
@@ -1274,10 +1300,16 @@ QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomEleme
         tb->insertLineSeparator();
       node = node.nextSibling();
     }
-    tb->adjustSize();
-    view->toolbarTab->insertTab(tb, i18n(tabname));
     if (tb->minimumSizeHint().height() > 20)
-      view->toolbarTab->setFixedHeight(tb->minimumSizeHint().height()+view->toolbarTab->tabHeight());
+    {
+      view->toolbarTab->setFixedHeight(tb->minimumSizeHint().height() + view->toolbarTab->tabHeight());
+      tb->adjustSize();
+      tb->setGeometry(0,0, view->toolbarTab->width(), tb->height());
+    } else
+    {
+      tb->setGeometry(0,0, view->toolbarTab->width(), view->toolbarTab->height() - view->toolbarTab->tabHeight());
+    }
+    view->toolbarTab->insertTab(tb, i18n(tabname));
     qInstallMsgHandler( oldHandler );
     return tb;
   }
@@ -1830,7 +1862,8 @@ void QuantaApp::slotAddToolbar()
   p_toolbar->name = name;
   p_toolbar->user = true;
   p_toolbar->visible = true;
-  p_toolbar->menu = 0L; //TODO
+  p_toolbar->menu = new QPopupMenu;
+  m_tagsMenu->insertItem(p_toolbar->name, p_toolbar->menu);
   toolbarList.insert(name.lower(), p_toolbar);
   
   slotToggleDTDToolbar(!allToolbarsHidden());

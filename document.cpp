@@ -850,15 +850,15 @@ void Document::slotCompletionDone( KTextEditor::CompletionEntry completion )
   }
   if (completion.type == "attributeValue")
   {
-    viewCursorIf->setCursorPositionReal(line,col+1);
+    viewCursorIf->setCursorPositionReal(line, col);
   }
   if (completion.type == "doctypeList")
   {
-    viewCursorIf->setCursorPositionReal(line,col+1);
+    viewCursorIf->setCursorPositionReal(line, col+1);
   }
   if (completion.type == "function")
   {
-    viewCursorIf->setCursorPositionReal(line,col+1);
+    viewCursorIf->setCursorPositionReal(line, col);
     if (dtd) scriptAutoCompletion(dtd,line,col-1,"(");
   }
 }
