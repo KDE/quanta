@@ -1511,7 +1511,7 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
       QString newName;
       do
       {
-        KMessageBox::information(this,i18n("A toolbar with the same name already exists.\n Please rename the loaded toolbar."),i18n("Name conflict"));
+        KMessageBox::information(this,i18n("A toolbar called \"%1\" already exists.\n Please rename the loaded toolbar.").arg(name),i18n("Name conflict"));
 
         KLineEditDlg dlg(i18n("Enter toolbar name:"), name, this);
         dlg.setCaption(i18n("Rename Toolbar"));
@@ -1666,7 +1666,7 @@ QString QuantaApp::saveToolBar(QString& toolbarName, QString destFile)
       for (uint i = 0; i < nodeList.count(); i++)
       {
       //find the actual toolbar in the XML GUI
-       if ((nodeList.item(i).toElement().attribute("name") ) == toolbarName)
+       if ((nodeList.item(i).toElement().attribute("name") ) == toolbarName.lower())
        {
           nodeList.item(i).save(toolStr,2);
           //find the actions registered to the toolbar
@@ -1938,7 +1938,7 @@ void QuantaApp::saveModifiedToolbars()
 
      if ( (s1 != s2) && (!s1.isEmpty()) )
      {
-       if (KMessageBox::questionYesNo(this, i18n("The toolbar \"%1\" was modified. Do you want to save before remove?").arg(it.currentKey()),
+       if (KMessageBox::questionYesNo(this, i18n("The toolbar \"%1\" was modified. Do you want to save before it is removed?").arg(it.currentKey()),
              i18n("Save Toolbar")) == KMessageBox::Yes)
        {
          slotSaveToolbar(true, it.currentKey() );
@@ -2094,6 +2094,7 @@ void QuantaApp::loadToolbarForDTD(const QString& dtdName)
  DTDStruct *oldDtd = dtds->find(currentToolbarDTD);
  if (!oldDtd && !currentToolbarDTD.isEmpty()) oldDtd = dtds->find(project->defaultDTD());
 
+ QString fileName;
  DTDStruct *newDtd = dtds->find(dtdName);
  if (!newDtd) newDtd = dtds->find(project->defaultDTD());
  if (!newDtd) newDtd = dtds->find(qConfig.defaultDocType); //extreme case
@@ -2120,7 +2121,8 @@ void QuantaApp::loadToolbarForDTD(const QString& dtdName)
    //Load the toolbars for dtdName
    for (uint i = 0; i < newDtd->toolbars.count(); i++)
    {
-      QString fileName = qConfig.globalDataDir + "quanta/toolbars/"+newDtd->toolbars[i];
+      //first load the local version if it exists
+      fileName = locateLocal("data", "quanta/toolbars/"+newDtd->toolbars[i]);
       if (QFileInfo(fileName).exists())
       {
         KURL url;
@@ -2128,7 +2130,7 @@ void QuantaApp::loadToolbarForDTD(const QString& dtdName)
         if (!toolbarNames[url.prettyURL()]) slotLoadToolbarFile(url);
       } else
       {
-        fileName = locateLocal("data", "quanta/toolbars/"+newDtd->toolbars[i]);
+        fileName = qConfig.globalDataDir + "quanta/toolbars/"+newDtd->toolbars[i];
         if (QFileInfo(fileName).exists())
         {
           KURL url;

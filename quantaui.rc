@@ -59,7 +59,7 @@
     <Separator/>
   </Menu>
 
-    <Menu name="qview" noMerge="1"><text>&amp;View</text>
+    <Menu name="view"><text>&amp;View</text>
       <Menu name="treeviews"><text>&amp;Tree views</text>
           <Action name="show_ftab_tree"/>
 	  <Action name="show_ptab_tree"/>
