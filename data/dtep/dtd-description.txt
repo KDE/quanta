@@ -135,14 +135,14 @@ ClassGroupIndex = the index value of the group that defines classes.
 ObjectGroupIndex = the index value of the group that defines objects.
     ClassGroupIndex must be defined, otherwise this doesn't make sense.
     -1 if there is no such group, otherwise the group must exists.
-MemberAutoCompleteAfter = a regular expersion which defines when may a member
+MemberAutoCompleteAfter = a regular expression which defines when may a member
     variable/method appear after a class' usage. Example:
       - we have a class called "foo" with some member variables
       - the object of type "foo" is used in the document as $objFoo
       - the members can appear as $objFoo->member or $objFoo.member
       - in the above case this entry shoul look like (?:->|\.)$ (autocomplete
       if the object is followed by -> or .)
-    The regular experssion must be terminated with "$" (match end of line).
+    The regular expression must be terminated with "$" (match end of line).
 
 
 [StructGroup_1]
@@ -163,7 +163,7 @@ UsageRx = to find an usage of an element of the group.
       - variables are defined as $i
       - variables are used as $i. In this case UsageRx is the same as
         DefinitionRx
-TypeRx = regular experssion to find the type of the element. The pattern is
+TypeRx = regular expression to find the type of the element. The pattern is
       searched on the result of DefinitionRx match and the first captured areas
       will hold the element type. Example (simplified):
         DefinitionRx =\$+([a-zA-Z]+)=new\\s[a-zA-Z]+;
@@ -194,7 +194,7 @@ StructKeywords = "," separated list of structure keywords. Structures are treate
     as new nodes in the structure tree.
 StructBeginStr = a string specifying the beginning of a structure (like {)
 StructEndStr = a string specifying the beginning of a structure (like })
-StructRx = regular experssion containing the beginning or the end of the structure
+StructRx = regular expression containing the beginning or the end of the structure
     area. Eg. \\{ | \\} (structure area border can be { or })
 MayContain = pseudo DTDs can contain other pseudo DTDs
 

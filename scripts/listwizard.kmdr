@@ -421,7 +421,7 @@ Here is one example of a variablelist:
 &lt;varlistentry&gt;
 &lt;term&gt;Term text&lt;/term&gt;
 &lt;listitem&gt;&lt;para&gt;Definition text.&lt;/para&gt;&lt;/listitem&gt;
-&lt;varlistentry&gt;
+&lt;/varlistentry&gt;
 
 &lt;/variablelist&gt;</string>
                     </property>

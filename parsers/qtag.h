@@ -65,11 +65,11 @@ class XMLStructGroup {
 //the groups in structure tree are defined with the help of:
 class StructTreeGroup:public XMLStructGroup {
   public:
-    QRegExp definitionRx; //regular experssion to help us find the group element definition - for pseudo DTDs
+    QRegExp definitionRx; //regular expression to help us find the group element definition - for pseudo DTDs
     QRegExp usageRx; //regexp to find the usage of a group element in the document
     bool hasDefinitionRx;    //true if searchRx should be used
     bool isMinimalDefinitionRx; // true if the searchRx should be non-greedy
-    QRegExp typeRx;   //regular experssion to help us find the group element type from the definition string - for pseudo DTDs
+    QRegExp typeRx;   //regular expression to help us find the group element type from the definition string - for pseudo DTDs
     int tagType;     //the tag type for which this is valid
     QRegExp autoCompleteAfterRx;  //holds the char after the autocompletion box should be shown for this group elements. Null, if autocompletion shouldn't be used
     QRegExp removeFromAutoCompleteWordRx;
@@ -162,16 +162,16 @@ typedef struct DTDStruct
 /* Start/end pairs for comments. Eg. (//,\n); (<!--,-->)  */
      QMap<QString, QString> comments;
 
-/* Regular experssion to match the start of the comments (//, <!--)*/
+/* Regular expression to match the start of the comments (//, <!--)*/
      mutable QRegExp commentsStartRx;
 
 /* How does a structure starts in this DTD. Eg. "{" or "begin".*/
      QString structBeginStr;
 /* How does a structure ends in this DTD. Eg. "}" or "end".*/
      QString structEndStr;
-/* A regular experssion to match the structe begin or end. */
+/* A regular expression to match the structe begin or end. */
      mutable QRegExp structRx;
-/* Regular experssion to match the possible keywords that can appear before
+/* Regular expression to match the possible keywords that can appear before
    a structure, like "function", "for", etc. */
      mutable QRegExp structKeywordsRx;
 /* Regular expression containing the keywords that indicate that the groups

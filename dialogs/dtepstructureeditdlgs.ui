@@ -148,7 +148,7 @@
                 <cstring>tagEdit</cstring>
             </property>
             <property name="toolTip" stdset="0">
-                <string>Elements ideintified by this entry will belong to this group</string>
+                <string>Elements identified by this entry will belong to this group</string>
             </property>
             <property name="whatsThis" stdset="0">
                 <string>Defines which tags belong to this group. The format is &lt;i&gt;tagname(attribute1, attribute2, ...)&lt;/i&gt;. Tags with name &lt;i&gt;tagname&lt;/i&gt; will appear under this group. The item text of the corresponding node in the tree will be &lt;i&gt;attribute1_value | attribute2_value | ...&lt;/i&gt;Currently only one tag may be listed here.</string>
@@ -243,10 +243,10 @@
                         <cstring>typeRxEdit</cstring>
                     </property>
                     <property name="toolTip" stdset="0">
-                        <string>Regular experssion to find the type of the element</string>
+                        <string>Regular expression to find the type of the element</string>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>Regular experssion to find the type of the element. The pattern is searched on the result of the &lt;i&gt;DefinitionRx /i&gt; match and the first captured area will hold the element type.&lt;br&gt;
+                        <string>Regular expression to find the type of the element. The pattern is searched on the result of the &lt;i&gt;DefinitionRx&lt;/i&gt; match and the first captured area will hold the element type.&lt;br&gt;
 Example (simplified):&lt;br&gt;
 &lt;b&gt;DefinitionRx=\$+([a-zA-Z]+)=new\\s[a-zA-Z]+;&lt;br&gt;
 TypeRx=new\\s([a-zA-Z]+);&lt;/b&gt;&lt;br&gt;&lt;br&gt;
@@ -291,10 +291,10 @@ Example 3:&lt;br&gt;
                         <cstring>typeRxEdit</cstring>
                     </property>
                     <property name="toolTip" stdset="0">
-                        <string>Regular experssion to find the type of the element</string>
+                        <string>Regular expression to find the type of the element</string>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>Regular experssion to find the type of the element. The pattern is searched on the result of the &lt;i&gt;DefinitionRx /i&gt; match and the first captured area will hold the element type.&lt;br&gt;
+                        <string>Regular expression to find the type of the element. The pattern is searched on the result of the &lt;i&gt;DefinitionRx&lt;/i&gt; match and the first captured area will hold the element type.&lt;br&gt;
 Example (simplified):&lt;br&gt;
 &lt;b&gt;DefinitionRx=\$+([a-zA-Z]+)=new\\s[a-zA-Z]+;&lt;br&gt;
 TypeRx=new\\s([a-zA-Z]+);&lt;/b&gt;&lt;br&gt;&lt;br&gt;
