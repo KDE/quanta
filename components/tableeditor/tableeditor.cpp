@@ -777,7 +777,7 @@ void TableEditor::slotInsertRow()
     else
       m_tableTags->append(tableRowTags);
   }
-  m_rowSpin->setValue(num + 1);
+  m_rowSpin->setValue(m_dataTable->numRows());
 }
 
 
@@ -804,7 +804,7 @@ void TableEditor::slotInsertCol()
       (*it).append(tableNode);
     }
   }
-  m_colSpin->setValue(num + 1);
+  m_colSpin->setValue(m_dataTable->numCols());
 }
 
 
