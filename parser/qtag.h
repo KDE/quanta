@@ -182,6 +182,7 @@ typedef struct DTDStruct
      QChar attrAutoCompleteAfter;
      QChar varAutoCompleteAfter;
      QChar attributeSeparator;
+     QChar tagSeparator;
     };
 
 class QTag {

@@ -215,7 +215,7 @@ private:
   /** Called whenever a user inputs text in an XML type document. */
   bool xmlAutoCompletion(int , int , const QString & );
   /** Called whenever a user inputs text in a script type document. */
-  bool scriptAutoCompletion(int line, int col, const QString &completeAfter );
+  bool scriptAutoCompletion(int line, int col);
 
 
 protected: // Protected attributes
@@ -231,7 +231,6 @@ protected: // Protected attributes
   //autocompletion box delayed with the singleshot timer (workaround for
   //a bug: the box is not showing up if it is called from slotCompletionDone)
   int m_lastLine, m_lastCol;
-  QString m_lastCompletionAfter;
   QValueList<KTextEditor::CompletionEntry>* m_lastCompletionList;
 protected: // Protected methods
   /** Returns true if the number of " (excluding \") inside text is even. */

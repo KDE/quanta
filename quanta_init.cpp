@@ -1212,6 +1212,9 @@ void QuantaApp::readTagDir(QString &dirName)
  {
    dtd->attributeSeparator = (dtd->family == Xml) ? '\"' : ',';
  }
+ dtd->tagSeparator = dtdConfig->readEntry("TagSeparator").stripWhiteSpace().at(0);
+ if (dtd->tagSeparator.isNull())
+     dtd->tagSeparator = dtd->attributeSeparator;
  dtd->scriptName = (dtdConfig->readEntry("ScriptName")).lower();
  if (!dtd->scriptName.isEmpty())
  {

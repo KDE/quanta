@@ -509,7 +509,6 @@ void Document::slotCompletionDone( KTextEditor::CompletionEntry completion )
     {
       m_lastLine = line;
       m_lastCol = col - 1;
-      m_lastCompletionAfter = completionDTD->attrAutoCompleteAfter;
       QTimer::singleShot(0, this, SLOT(slotDelayedScriptAutoCompletion()));
     }
   }
@@ -517,7 +516,7 @@ void Document::slotCompletionDone( KTextEditor::CompletionEntry completion )
 
 void Document::slotDelayedScriptAutoCompletion()
 {
-  scriptAutoCompletion(m_lastLine, m_lastCol, m_lastCompletionAfter);
+  scriptAutoCompletion(m_lastLine, m_lastCol);
 }
 
 void Document::slotDelayedShowCodeCompletion()
@@ -538,7 +537,7 @@ void Document::slotFilterCompletion( KTextEditor::CompletionEntry *completion ,Q
 
   if ( completion->type == "attributeValue")
   {
-    string->append(completionDTD->attributeSeparator);
+    string->append(completionDTD->tagSeparator);
   }
   if ( completion->type == "attribute" )
   {
@@ -584,7 +583,7 @@ void Document::slotCharactersInserted(int line,int column,const QString& string)
     }
     if (completionDTD->family == Script)
     {
-      handled = scriptAutoCompletion(line, column, string);
+      handled = scriptAutoCompletion(line, column);
       //handled = true;
     }
 
@@ -603,7 +602,6 @@ void Document::slotCharactersInserted(int line,int column,const QString& string)
       }
 */
     }
-    completionInProgress = handled;
   }
  }
 }
@@ -998,19 +996,33 @@ QString Document::findDTDName(Tag **tag)
 }
 
 /** Called whenever a user inputs text in a script type document. */
-bool Document::scriptAutoCompletion(int line, int column, const QString& string)
+bool Document::scriptAutoCompletion(int line, int column)
 {
  bool handled = false;
  QString s = editIf->textLine(line).left(column + 1);
  int i = column;
  while (i > 0 && s[i].isSpace())
    i--;
- while (i > 0 && s[i] != completionDTD->attrAutoCompleteAfter &&
-        s[i] != completionDTD->tagAutoCompleteAfter)
+ while (i > 0 && (s[i].isLetterOrNumber() || s[i] == '_' ||
+       (completionDTD->minusAllowedInWord && s[i] == '-') ) )
    i--;
  QString startStr = s.mid(i + 1).stripWhiteSpace();
  s = s.left(i + 1);
- if ( s[i] == completionDTD->attrAutoCompleteAfter ) //if we need to list the arguments of a function
+ if (s[i] == completionDTD->attributeSeparator)
+ {
+  while (i > 0 && s[i] != completionDTD->attrAutoCompleteAfter)
+    i--;
+  s = s.left(i + 1);
+ } else
+ if (s[i] == completionDTD->tagSeparator)
+ {
+  while (i > 0 && s[i] != completionDTD->tagAutoCompleteAfter)
+    i--;
+  s = s.left(i + 1);
+ }
+
+ if ( s[i] == completionDTD->attrAutoCompleteAfter ||
+      s[i] == completionDTD->attributeSeparator ) //if we need to list the arguments of a function
  {
    QString textLine = s.left(i);
    QString word = findWordRev(textLine, completionDTD);
@@ -1209,7 +1221,16 @@ void Document::codeCompletionRequested()
   }
   if (completionDTD->family == Script)
   {
-    handled = scriptAutoCompletion(line, col - 1, "");
+    handled = scriptAutoCompletion(line, col - 1);
+    if (!handled)
+    {
+      QString s = text(line, 0, line, col);
+      if (s.findRev("<") == -1)
+      {
+        showCodeCompletions(getTagCompletions(line, col + 1));
+        handled = true;
+      }
+    }
   }
   if (!handled)
   {
@@ -1236,7 +1257,7 @@ void Document::codeCompletionHintRequested()
 //    int pos = textLine.findRev("(");
 //    int pos2 = textLine.findRev(")");
     //if (pos > pos2 )
-       scriptAutoCompletion(line, col - 1,"");
+       scriptAutoCompletion(line, col - 1);
   }
 }
 

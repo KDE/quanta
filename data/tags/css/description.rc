@@ -12,7 +12,8 @@ StructGroupsCount = 1
 MinusAllowedInWord = true
 TagAutoCompleteAfter = {
 AttributeAutoCompleteAfter = :
-AttributeSeparator = ;
+AttributeSeparator = ,
+TagSeparator = ;
 
 [Parsing rules]
 Tags = style(type)
