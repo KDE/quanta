@@ -359,7 +359,7 @@ void GrepDialog::slotSearch()
         command += " -maxdepth 1";
     command += " \\( -name ";
     command += files;
-    command += " \\) -print | xargs grep -n -e";
+    command += " \\) -print | xargs grep -n -e ";
     command += KProcess::quote(pattern);
     command += " /dev/null";
     
