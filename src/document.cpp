@@ -2012,7 +2012,7 @@ void Document::slotDelayedTextChanged(bool forced)
    {
     // kdDebug(24000) << "Reparsing delayed!" << endl;
      parser->setParsingNeeded(true);
-     QTimer::singleShot(250, this, SLOT(slotDelayedTextChanged()));
+     QTimer::singleShot(1000, this, SLOT(slotDelayedTextChanged()));
      reparseEnabled = false;
      return;
    }
