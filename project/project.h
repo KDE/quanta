@@ -86,7 +86,7 @@ public:
   KURL urlWithPrefix(const KURL& url);
   bool contains(const KURL &url);
   /** Read property of QString defaultDTD. */
-  virtual const QString& Project::defaultDTD() {return m_defaultDTD;}
+  virtual const QString& defaultDTD() {return m_defaultDTD;}
   virtual const QString& defaultEncoding() {return m_defaultEncoding;}
 
   /** Returns the project's base URL if it exists,
