@@ -112,6 +112,8 @@ QString ab = i18n("Ident all");
 		this, SLOT(slotDomNodeModified(DOM::Node)));
 	connect(m_kafkaPart, SIGNAL(domNodeIsAboutToBeRemoved(DOM::Node, bool)),
 		this, SLOT(slotDomNodeAboutToBeRemoved(DOM::Node, bool)));
+	connect(m_kafkaPart, SIGNAL(domNodeIsAboutToBeMoved(DOM::Node, DOM::Node, DOM::Node)),
+		this, SLOT(slotDomNodeIsAboutToBeMoved(DOM::Node, DOM::Node, DOM::Node)));
 
 	connect(m_kafkaPart, SIGNAL(domNodeNewCursorPos(DOM::Node, int)),
 		this, SLOT(slotdomNodeNewCursorPos(DOM::Node, int)));
@@ -340,50 +342,64 @@ kNodeAttrs* KafkaDocument::connectDomNodeToQuantaNode(DOM::Node domNode, Node *n
 
 	props = new kNodeAttrs();
 
-	//DEPRECATED STUFF, needed only for backward compatibility with the old code!!!
+	//We can split Nodes into several groups essentially for the deletion behavior:
+	//1- Text
+	//2- Block in which the cursor can't enter in when deleting e.g. TABLE, IMG
+	//3- Block in which the cursor can't escape from e.g. TD, BODY
+	//4- Block in which the cursor can enter in/escape from when deleting e.g. H1, DIV
+	//5- Inline
+	//6- "Invisible" Nodes e.g. HTML, HEAD
+
+	//Hmmm... I guess we can do better here...
 	if(domNode.nodeType() == DOM::Node::TEXT_NODE)
 	{
-		props->setCBDeleted(true);
-		props->setCBModified(true);
 		props->setCHCursorFocus(kNodeAttrs::textNode);
 		props->setCCEnter(true);
+		props->setCBModified(true);
+		props->setCBDeleted(true);
 	}
 	else if(name == "abbr" || name == "acronym" || name == "address" || name == "b" || name == "bdo" ||
-		name == "big" || name == "center" || name == "cite" || name == "code" || name == "dd" ||
-		name == "del" || name == "dfn" || name == "dir" || name == "dl" || name == "dt" ||
+		name == "big" || name == "cite" || name == "code" ||
+		name == "del" || name == "dfn" || name == "dir" ||
 		name == "em" || name == "fieldset" || name == "font" || name == "i" || name == "iframe" ||
 		name == "ins" || name == "kbd" || name == "label" || name == "legend" || name == "menu" ||
 		name == "noframes" || name == "pre" || name == "s" || name == "samp" ||
 		name == "small" || name == "span" || name == "strike" || name == "strong" || name == "sub" ||
 		name == "sup" || name == "tt" || name == "u" || name == "var" || name == "a" ||
-		name == "blockquote" || name == "div" || name == "dl" || name == "dt" ||
-		name == "em" || name == "form" || name == "h1" || name == "h2" || name == "h3" ||
-		name == "h4" || name == "h5" || name == "h6" || name == "ins" || name == "li" ||
-		name == "ol" || name == "p" || name == "q" ||  name == "tt" || name == "ul")
+		name == "blockquote" ||
+		name == "em" || name == "form" || name == "ins" ||
+		name == "q" ||  name == "tt" )
 	{
-		//TODO:HARDCODED HTML VALUE, remove with the new editing capabilities
-		//It was in .tag files but i told too quickly to remove them :p
-		props->setCBDeleted(true);
-		props->setCBModified(true);
-		props->setCHCursorFocus(kNodeAttrs::no);
+		props->setCHCursorFocus(kNodeAttrs::inlineNode);
 		props->setCCEnter(true);
+		props->setCBModified(true);
+		props->setCBDeleted(true);
+	}
+	else if(name == "center" || name == "li" || name == "h1" || name == "h2" || name == "h3" ||
+		name == "h4" || name == "h5" || name == "h6" || name == "div" || name == "dd" ||
+		name == "dt" || name == "p")
+	{
+		props->setCHCursorFocus(kNodeAttrs::blockNode);
+		props->setCCEnter(true);
+		props->setCBModified(true);
+		props->setCBDeleted(true);
 	}
 	else if(name == "applet" || name == "button" || name == "img" || name == "map" || name == "object" ||
 		name == "hr" || name == "input" || name == "select" || name == "table" || name == "textarea" ||
-		 name == "br")
+		 name == "br" || name == "dl" || name == "ul" || name == "ol")
 	{
-		props->setCBDeleted(true);
-		props->setCBModified(true);
 		props->setCHCursorFocus(kNodeAttrs::singleNodeAndItself);
 		props->setCCEnter(false);
+		props->setCBModified(true);
+		props->setCBDeleted(true);
 	}
 	else if(name == "basefont" || name == "location" || name == "fieldset" || name == "noscript" ||
 		name == "script")
 	{
-		props->setCBDeleted(true);
-		props->setCBModified(true);
 		props->setCHCursorFocus(kNodeAttrs::no);
 		props->setCCEnter(false);
+		props->setCBModified(true);
+		props->setCBDeleted(true);
 	}
 	else if(name == "caption" || name == "frame" || name == "frameset" || name == "isindex" ||
 		name == "optgroup" || name == "param" || name == "title" || name == "area" || name == "base" ||
@@ -391,20 +407,21 @@ kNodeAttrs* KafkaDocument::connectDomNodeToQuantaNode(DOM::Node domNode, Node *n
 		name == "link" || name == "meta" || name == "option" || name == "style" || name == "tbody" ||
 		name == "td" || name == "tfoot" || name == "th" || name == "thead" || name == "tr")
 	{
-		props->setCBDeleted(false);
-		props->setCBModified(false);
 		props->setCHCursorFocus(kNodeAttrs::no);
 		props->setCCEnter(false);
+		props->setCBModified(false);
+		props->setCBDeleted(false);
 	}
 	else
 	{
 		kdDebug(25001)<< "KafkaDocument::connectDomNodeToQuantaNode () - " <<
 			"No QTag found! Setting default parameters..." << endl;
-		props->setCBDeleted(false);
-		props->setCBModified(false);
 		props->setCHCursorFocus(kNodeAttrs::no);
 		props->setCCEnter(false);
+		props->setCBModified(false);
+		props->setCBDeleted(false);
 	}
+
 #ifdef HEAVY_DEBUG
 	kdDebug(25001)<< "KafkaDocument::connectDomNodeToQuantaNode() - tag name :" <<
 		name << " canBeDeleted:" << props->cbDel() << " canBeModified:" <<
@@ -515,7 +532,8 @@ bool KafkaDocument::buildKafkaNodeFromNode(Node *node, bool insertNode)
 			}
 			else
 			{
-				newNode = kafkaCommon::createDomNode(node, m_kafkaPart->document());
+				newNode = kafkaCommon::createDomNode(node->tag->name, m_currentDoc->defaultDTD(),
+					m_kafkaPart->document());
 			}
 		}
 
@@ -1741,13 +1759,13 @@ void KafkaDocument::slotDomNodeAboutToBeRemoved(DOM::Node _domNode, bool deleteC
 #ifdef LIGHT_DEBUG
 	if(!_domNode.isNull())
 		kdDebug(25001)<< "KafkaDocument::slotDomNodeAboutToBeRemoved() - DOM::Node: " <<
-			_domNode.nodeName().string() << " bool :" << deleteChilds << endl;
+			_domNode.nodeName().string() << "(" << _domNode.handle() << ")"<< " bool :" <<
+			deleteChilds << endl;
 	else
 		kdDebug(25001)<< "KafkaDocument::slotDomNodeAboutToBeRemoved() - DOM::Node: NULL bool :" <<
 			deleteChilds << endl;
 #endif
 	Node *_node = 0L, *_nodeNext = 0L, *_tmpNode = 0L, *n = 0L;
-	Tag *_tag;
 	int i, bLine, bCol, eLine, eCol, bLine2, bCol2;
 	bool hasClosingNode = false, b;
 	NodeModifsSet *modifs;
@@ -1815,7 +1833,7 @@ void KafkaDocument::slotDomNodeAboutToBeRemoved(DOM::Node _domNode, bool deleteC
 		modif->setType(NodeModif::NodeRemoved);
 	modif->setLocation(kafkaCommon::getLocation(_node));
 
-	if(_node->next && _node->next->closesPrevious)
+	if(_node->getClosingNode())
 		hasClosingNode = true;
 	else
 		hasClosingNode = false;
@@ -1926,39 +1944,9 @@ void KafkaDocument::slotDomNodeAboutToBeRemoved(DOM::Node _domNode, bool deleteC
 		modifs->addNodeModif(modif);
 		_node = _nodeNext;
 	}
-
-	if(_node && _node->prev && (_node->tag->type == Tag::Empty || _node->tag->type == Tag::Text) &&
-		(_node->prev->tag->type == Tag::Empty || _node->prev->tag->type == Tag::Text))
-	{
-		//merge two consecutive emtpy/text Nodes
-		_tag = new Tag(*(_node->prev->tag));
-		modif = new NodeModif();
-		modif->setType(NodeModif::NodeModified);
-		modif->setLocation(kafkaCommon::getLocation(_node->prev));
-		modif->setTag(_tag);
-		modifs->addNodeModif(modif);
-		_node->prev->tag->setStr(_node->prev->tag->tagStr() + _node->tag->tagStr());
-		//_node->prev->tag->cleanStrBuilt = false;
-		if(!(_node->tag->type == Tag::Empty && _node->prev->tag->type == Tag::Empty))
-			_node->prev->tag->type = Tag::Text;
-		modif = new NodeModif();
-		modif->setType(NodeModif::NodeRemoved);
-		modif->setLocation(kafkaCommon::getLocation(_node));
-		if(_node->parent && _node->parent->child == _node)
-			_node->parent->child = _node->next;
-		if(_node->prev)
-			_node->prev->next = _node->next;
-		if(_node->next)
-			_node->next->prev = _node->prev;
-		modif->setLocation(kafkaCommon::getLocation(_node));
-		_node->parent = 0L;
-		_node->prev = 0L;
-		_node->next = 0L;
-		_node->child = 0L;
-		modif->setNode(_node);
-		modifs->addNodeModif(modif);
-	}
 	m_currentDoc->docUndoRedo->addNewModifsSet(modifs, undoRedo::KafkaModif);
+
+	//NO NORMALIZATION!! It is KafkaWidget::normalize()'s job!
 
 #ifdef LIGHT_DEBUG
 	kdDebug(25001)<< "KafkaDocument::slotDomNodeDeleted() in " << t.elapsed() <<
@@ -1968,6 +1956,32 @@ void KafkaDocument::slotDomNodeAboutToBeRemoved(DOM::Node _domNode, bool deleteC
 	kafkaCommon::coutTree(baseNode, 2);
 #endif
 
+}
+
+void KafkaDocument::slotDomNodeIsAboutToBeMoved(DOM::Node domNode, DOM::Node newParent, DOM::Node before)
+{
+	NodeModifsSet *modifs;
+	Node *node, *parent, *nextSibling, *closingNode;
+
+	if(domNode.isNull())
+		return;
+
+	node = getNode(domNode);
+	parent = getNode(newParent);
+	nextSibling = getNode(before);
+
+	if(!node)
+		return;
+
+	closingNode = node->getClosingNode();
+
+	modifs = new NodeModifsSet();
+	kafkaCommon::moveNode(node, parent, nextSibling, modifs, false);
+
+	if(closingNode)
+		kafkaCommon::moveNode(closingNode, parent, nextSibling, modifs, false);
+
+	m_currentDoc->docUndoRedo->addNewModifsSet(modifs, undoRedo::KafkaModif);
 }
 
 void KafkaDocument::slotdomNodeNewCursorPos(DOM::Node, int)

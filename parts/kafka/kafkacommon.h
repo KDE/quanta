@@ -757,6 +757,34 @@ public:
 	 */
 	static DOM::Node hasParent(DOM::Node domNode, const QString &name);
 
+	/**
+	 * Returns the position of the child domNode.
+	 * @param domNode This is the DOM::Node we want the position.
+	 * @return Returns the position of domNode inside domNode's parent's children or -1 if not found.
+	 */
+	static int childPosition(DOM::Node domNode);
+
+	/**
+	 * Returns the position'th child of parentNode.
+	 * @param parentNode The parent Node of the node to return.
+	 * @param position We return the position'th child Node.
+	 * @param fallback If set to true, it will always return a valid Node (except if there is no child!!)
+	 */
+	static DOM::Node getChildNode(DOM::Node parentNode, int position, bool fallback = false);
+
+	/**
+	 * Specify if a DOM::Node is inline (as specified in isInline()) or text.
+	 * @return true if it is an inline Node.
+	 */
+	static bool isInline(DOM::Node domNode);
+
+	/**
+	 * Specify if parent supports the siblings DOM::Nodes starting from startNode to endNode
+	 * according to the DTD dtd.
+	 */
+	static bool parentSupports(DOM::Node parent, DOM::Node startNode, DOM::Node endNode,
+		const DTDStruct* dtd);
+
 	/** ----------------------- MISCELLANEOUS -------------------------------------*/
 
 	/**

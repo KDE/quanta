@@ -59,7 +59,7 @@ public:
 	~KafkaDocument();
 
 
-	/* ----------------------------------- LOADING/UNLOADING -------------------------------------------------*/
+	/* ----------------------------- LOADING/UNLOADING -----------------------------------------*/
 
 	/**
 	 * Builds kafka's own tree from the Quanta tree.
@@ -385,6 +385,14 @@ public slots:
 	 * @param deleteChilds Specifies if we should delete the child nodes of _node
 	 */
 	void slotDomNodeAboutToBeRemoved(DOM::Node _domNode, bool deleteChilds);
+
+	/**
+	 * Called whenever a DOM::Node is moved.
+	 * @param domNode The DOM::Node to move.
+	 * @param newParent The new parent DOM::Node of domNode.
+	 * @param before domNode will be inserted before before.
+	 */
+	void slotDomNodeIsAboutToBeMoved(DOM::Node domNode, DOM::Node newParent, DOM::Node before);
 
 	/**
 	 * Called whenever a DOM::Node get the focus

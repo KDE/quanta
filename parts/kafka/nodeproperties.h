@@ -89,29 +89,54 @@ public:
 	void setSpecialBehavior(int specialBehavior) {m_specialBehavior = specialBehavior;}
 
 	/**
-	 * DEPRECATED. Keept for backward compatibility with old kafkaWIdget code!
+	 * SOME PARTS will be brought back later (for non-HTML DTD edition)
 	 */
+
+	//DEPRECATED.
 	int getType() {return m_type;}
 	void setType(int type) {m_type = type;}
-	bool cbDel() {return m_cbDeleted;}
-	void setCBDeleted(bool cbDeleted) {m_cbDeleted = cbDeleted;}
-	bool cbMod() {return m_cbModified;}
-	void setCBModified(bool cbModified) {m_cbModified = cbModified;}
+
+	/**
+	 * Get/set the "type" of Node. (Can Have CUrsor FOCus) cf cursorType. Useful
+	 * when manipulating Nodes with the caret.
+	 */
 	int chCurFoc() {return m_chCursorFocus;}
 	void setCHCursorFocus(int chCursorFocus) {m_chCursorFocus = chCursorFocus;}
+
+	//Not real clear, comes from old deprecated code.
+	enum cursorType
+	{
+		//Can't have the cursor focus, or we don't care to know that.
+		no = 0,
+		//Inline Node
+		inlineNode,
+		//A Block Node in which the cursor can enter/leave e.g. H1, DIV
+		blockNode,
+		//A BLOCK Node in which the cursor can't enter/leave e.g. TABLE
+		singleNodeAndItself,
+		//A text Node.
+		textNode
+	};
+
+	/**
+	 * Specifies if the cursor can enter/leave this Node. (Cursor CAN ENTER)
+	 */
 	bool ccanEnter() {return m_ccEnter;}
 	void setCCEnter(bool ccEnter) {m_ccEnter = ccEnter;}
 
-	enum cursorFocus
-	{
-		no = 0,
-		left,
-		right,
-		leftAndRight,
-		singleNode,
-		singleNodeAndItself,
-		textNode
-	};
+	/**
+	 * NOT USED. It will be used with the non HTML DTD support.
+	 * Specifies if this Node can be modified e.g. resizing.
+	 */
+	bool cbMod() {return m_cbModified;}
+	void setCBModified(bool cbModified) {m_cbModified = cbModified;}
+
+	/**
+	 * NOT USED. It will be used with the non HTML DTD support.
+	 * Specifies if this Node can be deleted.
+	 */
+	bool cbDel() {return m_cbDeleted;}
+	void setCBDeleted(bool cbDeleted) {m_cbDeleted = cbDeleted;}
 
 private:
 	Node* m_node;

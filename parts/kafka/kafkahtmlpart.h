@@ -86,12 +86,30 @@ public:
 	 * when setting skipParentNodes to true.
 	 * @return Returns the next Node :)
 	 */
-	DOM::Node getNextNode(DOM::Node _node, bool &goUp, bool skipParentNodes = false, bool dontBlock = false, DOM::Node _endNode = DOM::Node());
+	DOM::Node getNextNode(DOM::Node _node, bool &goUp, bool skipParentNodes = false,
+		bool dontBlock = false, DOM::Node _endNode = DOM::Node());
 
 	/**
 	 * The same that above, but this function search the previous DOM::Node.
 	 */
-	DOM::Node getPrevNode(DOM::Node _node, bool &goUp, bool skipParentNodes = false, bool dontBlock = false, DOM::Node _endNode = DOM::Node());
+	DOM::Node getPrevNode(DOM::Node _node, bool &goUp, bool skipParentNodes = false,
+		bool dontBlock = false, DOM::Node _endNode = DOM::Node());
+
+
+	/** --------------- DOM::Node modifications -------------------------- */
+
+	/**
+	 * It will move DOM::Nodes from startNode to endNode as children of newParent. It does NOT check
+	 * if the move is valid, so it may crash. Please check before with kafkaCommon::parentSupports().
+	 * @param newParent The new parent of the DOM::Nodes.
+	 * @param startNode The first node to move.
+	 * @param endNode Starting from endNode, the last sibling to move.
+	 * @param refNode The reference DOM::Node.
+	 * @bool before If set to true, the DOM::nodes will be moved at the left of refNode,
+	 * otherwise they will be happenend at the right of refNode.
+	 */
+	void moveDomNodes(DOM::Node newParent, DOM::Node startNode, DOM::Node endNode,
+		DOM::Node refNode, bool before);
 
 public slots:
 
@@ -174,6 +192,14 @@ signals:
 	void domNodeIsAboutToBeRemoved(DOM::Node _node, bool deleteChilds);
 
 	/**
+	 * Is emitted whenever a DOM::Node is about to be moved in the tree.
+	 * @param domNode The DOM::Node which will be moved.
+	 * @param newParent The new parent of domNode.
+	 * @param before domNode will be placed before before.
+	 */
+	void domNodeIsAboutToBeMoved(DOM::Node domNode, DOM::Node newParent, DOM::Node before);
+
+	/**
 	 * Category: HTML Editing Signal
 	 * Is emitted whenever the cursor position change in one DOM::Node.
 	 * @param _domNode The DOM::Node which contains the cursor.
@@ -199,18 +225,34 @@ protected:
 
 
 private:
+#if 0
+	/**
+	 * NOT IMPLEMENTED.
+	 * Internal function used by keyBackspace(), keyDelete() to delete Nodes.
+	 * @param startNode The DOM::Node location of the point where we start deleting Nodes.
+	 * @param offset The offset location of the point where we start deleting Nodes. They can be
+	 * updated.
+	 * @param backspace Specifies if it should delete Nodes backward (backspace keystroke)
+	 * or torwards (delete backspace).
+	 */
+	void keyDeleteNodes(DOM::Node &startNode, long &offset, bool backspace);
+#endif
+
 	/**
 	 * Delete one character/DOM::Node left to the cursor.
 	 */
 	void keyBackspace();
+
 	/**
 	 * Delete one character/DOM::Node right to the cursor.
 	 */
 	void keyDelete();
+
 	/**
 	 * Break the current line.
+	 * @param ctrlPressed If ctrl is pressed, we try to insert a BR, otherwise we try to insert a P.
 	 */
-	void keyReturn();
+	void keyReturn(bool ctrlPressed);
 
 	/**
 	 * Postprocess the cursor position, i.e. when the cursor is between two

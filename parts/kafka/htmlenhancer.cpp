@@ -54,8 +54,9 @@ bool HTMLEnhancer::enhanceNode(Node *node, DOM::Node parentDNode, DOM::Node next
 	DOM::Node domNode, domNode2, attr, *ptDomNode;
 	bool tbody, goUp;
 	Node *n;
-	QString script, filename, text;
+	QString script, filename, text, oldName;
 	KURL url, baseURL;
+	int oldType;
 
 	//FIRST update the src attr with the baseURL
 	if(node->rootNode())
@@ -75,24 +76,40 @@ bool HTMLEnhancer::enhanceNode(Node *node, DOM::Node parentDNode, DOM::Node next
 
 	//THEN if it is the style element, add a DOM::Node::TEXT_NODE child gathering all the CSS
 	//by default, the parser parse it as a script, which can't be translated in DOM::Nodes.
-	if(node->rootNode() && node->tag->type == Tag::XmlTag && node->tag->name.lower() == "style")
+	if((node->tag->type == Tag::XmlTag && node->tag->name.lower() == "style") ||
+		(node->tag->type == Tag::ScriptTag && node->tag->name.lower().contains("style") != 0))
 	{
-		domNode = *node->rootNode();
-		n = node->child;
-		text = "";
-		goUp = false;
-		while(n)
+		//If the style Node doesn't exists, create it
+		if(!node->rootNode())
 		{
-			text += n->tag->tagStr();
-			n = kafkaCommon::getNextNode(n, goUp, node);
+			oldType = node->tag->type;
+			node->tag->type = Tag::XmlTag;
+			oldName = node->tag->name;
+			node->tag->name = "style";
+			m_wkafkapart->buildKafkaNodeFromNode(node);
+			node->tag->type = oldType;
+			node->tag->name = oldName;
 		}
+
+		if(node->rootNode())
+		{
+			domNode = *node->rootNode();
+			n = node->child;
+			text = "";
+			goUp = false;
+			while(n)
+			{
+				text += n->tag->tagStr();
+				n = kafkaCommon::getNextNode(n, goUp, node);
+			}
 #ifdef HEAVY_DEBUG
-		kdDebug(25001)<< "HTMLTranslator::translateNode() - CSS code : " << text << endl;
+			kdDebug(25001)<< "HTMLTranslator::translateNode() - CSS code : " << text << endl;
 #endif
-		domNode2 = kafkaCommon::createTextDomNode(text, m_wkafkapart->getKafkaWidget()->document());
-		if(!kafkaCommon::insertDomNode(domNode2, domNode))
-			return false;
-		m_wkafkapart->connectDomNodeToQuantaNode(domNode2, node);
+			domNode2 = kafkaCommon::createTextDomNode(text, m_wkafkapart->getKafkaWidget()->document());
+			if(!kafkaCommon::insertDomNode(domNode2, domNode))
+				return false;
+			m_wkafkapart->connectDomNodeToQuantaNode(domNode2, node);
+		}
 	}
 
 	//THEN replace, if asked, scripts by a little icon.

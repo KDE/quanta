@@ -305,7 +305,7 @@ void kafkaCommon::applyIndentation(Node *node, int nbOfSpaces, int nbOfTabs)
 			(prevNE && getNodeDisplay(node, true) == kafkaCommon::inlineDisplay &&
 			getNodeDisplay(prevNE, true) == kafkaCommon::blockDisplay))
 		{
-			if(node->tag->type == Tag::Text && !kafkaCommon::hasParent(node, "pre"))
+			if(node->tag->type == Tag::Text && !hasParent(node, "pre"))
 			{
 				setTagStringAndFitsNodes(node, indentation1 + node->tag->tagStr());
 			}
@@ -324,7 +324,7 @@ void kafkaCommon::applyIndentation(Node *node, int nbOfSpaces, int nbOfTabs)
 			(nextNE && getNodeDisplay(node, true) == kafkaCommon::inlineDisplay &&
 			getNodeDisplay(nextNE, true) == kafkaCommon::blockDisplay))
 		{
-			if(node->tag->type == Tag::Text && !kafkaCommon::hasParent(node, "pre"))
+			if(node->tag->type == Tag::Text && !hasParent(node, "pre"))
 			{
 				setTagStringAndFitsNodes(node, node->tag->tagStr() + indentation2);
 			}
@@ -2219,25 +2219,6 @@ void kafkaCommon::mergeInlineNode(Node *startNode, Node *endNode, Node **cursorN
 	}
  }
 
-bool kafkaCommon::isInline(const QString &nodeNam)
-{
-	QString nodeName = nodeNam.lower();
-	if(nodeName == "q" || nodeName == "u" || nodeName == "i" || nodeName == "b" ||
-		nodeName == "cite" || nodeName == "em" || nodeName == "var" || nodeName == "em" ||
-		nodeName == "tt" || nodeName == "code" || nodeName == "kbd" || nodeName == "samp" ||
-		nodeName == "big" || nodeName == "small" || nodeName == "s" || nodeName == "strike" ||
-		nodeName == "sub" || nodeName == "sup" || nodeName == "abbr" ||
-		nodeName == "acronym" || nodeName == "a" || nodeName == "bdo" ||
-		nodeName == "font" || nodeName == "#text" || nodeName == "strong" || nodeName == "dfn" ||
-		nodeName == "img" ||  nodeName == "applet" ||  nodeName == "object" ||  nodeName == "basefont" ||
-		nodeName == "br" ||  nodeName == "script" ||  nodeName == "map" || nodeName == "span" ||
-		nodeName == "iframe" || nodeName == "input" || nodeName == "select" || nodeName == "textarea" ||
-		nodeName == "label" || nodeName == "button" )
-		return true;
-	else
-		return false;
-}
-
 void kafkaCommon::getEndPosition(const QString &tagString, int bLine, int bCol, int &eLine, int &eCol)
 {
 	/**int result, oldResult;
@@ -2691,6 +2672,102 @@ DOM::Node kafkaCommon::hasParent(DOM::Node domNode, const QString &name)
 	}
 
 	return DOM::Node();
+}
+
+int kafkaCommon::childPosition(DOM::Node domNode)
+{
+	DOM::Node parentNode, child;
+	int position = 1;
+
+	if(domNode.isNull())
+		return -1;
+
+	parentNode = domNode.parentNode();
+	child = parentNode.firstChild();
+	while(!child.isNull() && child != domNode)
+	{
+		position++;
+		child = child.nextSibling();
+	}
+
+	if(child == domNode)
+		return position;
+	else
+		return -1;
+}
+
+DOM::Node kafkaCommon::getChildNode(DOM::Node parentNode, int position, bool fallback)
+{
+	DOM::Node child;
+
+	if(parentNode.isNull())
+		return DOM::Node();
+
+	child = parentNode.firstChild();
+	while(!child.isNull() && position > 1 && ((fallback && !child.nextSibling().isNull()) || !fallback ))
+	{
+		child = child.nextSibling();
+		position--;
+	}
+
+	return child;
+}
+
+bool kafkaCommon::isInline(DOM::Node domNode)
+{
+	if(domNode.isNull())
+		return false;
+
+	if(domNode.nodeType() == DOM::Node::TEXT_NODE)
+		return true;
+
+	return isInline(domNode.nodeName().string());
+}
+
+bool kafkaCommon::parentSupports(DOM::Node parent, DOM::Node startNode, DOM::Node endNode,
+	const DTDStruct* dtd)
+{
+	QTag *parentQTag;
+	DOM::Node child;
+
+	if(!dtd || parent.isNull())
+		return false;
+
+	parentQTag = QuantaCommon::tagFromDTD(dtd, parent.nodeName().string());
+
+	if(!parentQTag)
+		return false;
+
+	child = startNode;
+	while(!child.isNull())
+	{
+		if(!parentQTag->isChild(child.nodeName().string()))
+			return false;
+		if(child == endNode)
+			return true;
+		child = child.nextSibling();
+	}
+
+	return true;
+}
+
+bool kafkaCommon::isInline(const QString &nodeNam)
+{
+	QString nodeName = nodeNam.lower();
+	if(nodeName == "q" || nodeName == "u" || nodeName == "i" || nodeName == "b" ||
+		nodeName == "cite" || nodeName == "em" || nodeName == "var" || nodeName == "em" ||
+		nodeName == "tt" || nodeName == "code" || nodeName == "kbd" || nodeName == "samp" ||
+		nodeName == "big" || nodeName == "small" || nodeName == "s" || nodeName == "strike" ||
+		nodeName == "sub" || nodeName == "sup" || nodeName == "abbr" ||
+		nodeName == "acronym" || nodeName == "a" || nodeName == "bdo" ||
+		nodeName == "font" || nodeName == "#text" || nodeName == "strong" || nodeName == "dfn" ||
+		nodeName == "img" ||  nodeName == "applet" ||  nodeName == "object" ||  nodeName == "basefont" ||
+		nodeName == "br" ||  nodeName == "script" ||  nodeName == "map" || nodeName == "span" ||
+		nodeName == "iframe" || nodeName == "input" || nodeName == "select" || nodeName == "textarea" ||
+		nodeName == "label" || nodeName == "button" )
+		return true;
+	else
+		return false;
 }
 
 #ifdef HEAVY_DEBUG
