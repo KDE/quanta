@@ -457,3 +457,4 @@ StringTokenizer::~StringTokenizer()
 
 
 
+#include "grepdialog.moc"
