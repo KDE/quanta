@@ -498,6 +498,7 @@ void QuantaInit::initView()
           m_quanta, SLOT(slotShowPreviewWidget(bool)));
   connect(m_quanta->scriptTab, SIGNAL(assignActionToScript(const KURL &, const QString&)),
           m_quanta, SLOT(slotAssignActionToScript(const KURL &, const QString&)));
+  connect(m_quanta->scriptTab, SIGNAL(downloadScript()), m_quanta, SLOT(slotDownloadScript()));
 
   connect(m_quanta->m_htmlPart, SIGNAL(onURL(const QString&)),
               m_quanta, SLOT(slotStatusMsg(const QString&)));

@@ -95,6 +95,9 @@ ScriptTreeView::ScriptTreeView(QWidget *parent, const char *name )
   m_fileMenu->insertItem(UserIcon("ball"), i18n("Assign Action"), this, SLOT(slotAssignAction()));
   m_fileMenu->insertItem(SmallIcon("mail_send"), i18n("Send in Email"), this, SLOT(slotSendScriptInMail()));
 
+  m_folderMenu = new KPopupMenu(this);
+  m_downloadMenuId = m_folderMenu->insertItem(i18n("Do&wnload Script..."), this, SIGNAL(downloadScript()));
+
 
   connect(this, SIGNAL(contextMenu(KListView*, QListViewItem*, const QPoint&)),
           this, SLOT(slotMenu(KListView*, QListViewItem*, const QPoint&)));
@@ -114,9 +117,20 @@ void ScriptTreeView::slotMenu(KListView *, QListViewItem *item, const QPoint &po
   if (!item) return;
   setSelected(item, true);
 
-  if ( !currentKFileTreeViewItem()->isDir() )
+  KFileTreeViewItem *curItem = currentKFileTreeViewItem();
+  if (!curItem->isDir())
   {
     m_fileMenu->popup(point);
+  } else
+  {
+    if (curItem == curItem->branch()->root())
+    {
+       m_folderMenu ->setItemVisible(m_downloadMenuId, true);
+    } else
+    {
+      m_folderMenu ->setItemVisible(m_downloadMenuId, false);
+    }
+    m_folderMenu->popup(point);
   }
 }
 

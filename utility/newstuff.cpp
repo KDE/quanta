@@ -90,8 +90,26 @@ void QNewTemplateStuff::installResource()
            }
         }
         if (!ok)
-            KMessageBox::error(parentWidget(), i18n("There was an error with the downloaded template tarball file. Possible causes are damaged archive or invalid directory structure in the archive."), i18n("Template Installation Error"));
+            KMessageBox::error(parentWidget(), i18n("There was an error with the downloaded template file."), i18n("Template Installation Error"));
      }
 }
+
+void QNewScriptStuff::installResource()
+{
+    bool ok = true;
+    KTar tar(m_tarName, "application/x-gzip");
+    if (tar.open(IO_ReadOnly))
+    {
+        const KArchiveDirectory *directory = tar.directory();
+        QString scriptsDir =KGlobal::dirs()->saveLocation("data") + resourceDir + "scripts/";
+        directory->copyTo(scriptsDir, true);
+        tar.close();
+    } else
+        ok = false;
+
+    if (!ok)
+        KMessageBox::error(parentWidget(), i18n("There was an error with the downloaded script tarball file. Possible causes are damaged archive or invalid directory structure in the archive."), i18n("Script Installation Error"));
+}
+
 
 #include "newstuff.moc"

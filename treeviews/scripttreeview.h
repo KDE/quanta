@@ -156,6 +156,7 @@ signals:
    *  emited to make the script describtion visible
    */
   void showPreviewWidget(bool);
+  void downloadScript();
 
 private:
    /**
@@ -190,7 +191,9 @@ private:
    *  remember the menu for manipulation
    */
   KPopupMenu *m_fileMenu;
+  KPopupMenu *m_folderMenu;
 
+  int m_downloadMenuId;
 };
 
 #endif

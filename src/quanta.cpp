@@ -3584,10 +3584,18 @@ void QuantaApp::slotDownloadToolbar()
 
 void QuantaApp::slotDownloadTemplate()
 {
-    if (!m_newTemplatteStuff)
-      m_newTemplatteStuff = new QNewTemplateStuff("quanta/template", this);
-    m_newTemplatteStuff->download();
+    if (!m_newTemplateStuff)
+      m_newTemplateStuff = new QNewTemplateStuff("quanta/template", this);
+    m_newTemplateStuff->download();
 }
+
+void QuantaApp::slotDownloadScript()
+{
+    if (!m_newScriptStuff)
+      m_newScriptStuff = new QNewScriptStuff("quanta/script", this);
+    m_newScriptStuff->download();
+}
+
 
 void QuantaApp::slotDocumentProperties()
 {

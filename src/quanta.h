@@ -56,6 +56,7 @@ class QuantaView;
 class QNewDTEPStuff;
 class QNewToolbarStuff;
 class QNewTemplateStuff;
+class QNewScriptStuff;
 
 class QTabWidget;
 class QWidgetStack;
@@ -396,6 +397,8 @@ protected slots:
   void slotDownloadToolbar();
   /** Downloads a template from the main server */
   void slotDownloadTemplate();
+  /** Downloads a script from the main server */
+  void slotDownloadScript();
   /** Shows tip of the day */
   void slotHelpTip();
   /** Show the user mailing list sign up */
@@ -566,7 +569,8 @@ protected: // Protected attributes
   int m_cvsMenuId;
   QNewDTEPStuff *m_newDTEPStuff;
   QNewToolbarStuff *m_newToolbarStuff;
-  QNewTemplateStuff *m_newTemplatteStuff;
+  QNewTemplateStuff *m_newTemplateStuff;
+  QNewScriptStuff *m_newScriptStuff;
 
 public: //TODO: check if it's worth to make a read method for them
   QDict<ToolbarEntry> toolbarList;
