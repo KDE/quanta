@@ -453,7 +453,7 @@ void TagAttributeTree::editorContentChanged()
           delete m_node->leafNode();
         m_node->setLeafNode(0L);
 
-        quantaApp->view()->getKafkaInterface()->buildKafkaNodeFromNode(m_node, true);
+        quantaApp->view()->getKafkaInterface()->buildKafkaNodeFromNode(m_node);
         if(!domNode.isNull() && m_node->leafNode())
         {
            while(!domNode.firstChild().isNull())
