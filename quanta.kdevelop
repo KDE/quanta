@@ -161,7 +161,7 @@
     </groups>
     <tree>
       <hidenonprojectfiles>false</hidenonprojectfiles>
-      <hidepatterns></hidepatterns>
+      <hidepatterns/>
       <showvcsfields>true</showvcsfields>
     </tree>
   </kdevfileview>
@@ -174,8 +174,8 @@
       <toc>perl</toc>
     </ignoretocs>
     <projectdoc>
-      <userdocDir></userdocDir>
-      <apidocDir></apidocDir>
+      <userdocDir/>
+      <apidocDir/>
     </projectdoc>
     <ignoreqt_xml/>
     <ignoredoxygen/>
