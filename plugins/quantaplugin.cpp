@@ -56,6 +56,7 @@ QuantaPlugin::QuantaPlugin()
  m_readOnlyPart = true;
  m_action = 0L;
  m_icon = "";
+ m_part = 0L;
 }
 
 QuantaPlugin::~QuantaPlugin()
