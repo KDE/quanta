@@ -110,9 +110,9 @@ void QuantaPluginInterface::readConfig()
     newPlugin->setArguments(config->readEntry("Arguments"));
     newPlugin->setIcon(config->readEntry("Icon"));
     QString type = config->readEntry("OutputWindow");
-    if (type == "Editor Tab") type = i18n("Editor Tab");
+    if (type == "Editor Tab" || type == "Editor View") type = i18n("Editor Tab"); //TODO: Remove the check against Editor View after 3.2
     if (type == "Editor Frame") type = i18n("Editor Frame");
-    if (type == "Message Frame") type = i18n("Message Frame");
+    if (type == "Message Frame" || type == "Output Dock") type = i18n("Message Frame");//TODO: Remove the check against Editor View after 3.2
     if (type == "Message Window") type = i18n("Message Window");
     if (type == "Konsole") type = i18n("Konsole");
     newPlugin->setOutputWindow(type);
