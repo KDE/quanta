@@ -1,4 +1,4 @@
-data_DATA = a.tag abbr.tag acronym.tag address.tag area.tag b.tag base.tag \
+quanta_DATA = a.tag abbr.tag acronym.tag address.tag area.tag b.tag base.tag \
             bdo.tag big.tag blockquote.tag body.tag br.tag caption.tag cite.tag \
             code.tag col.tag colgroup.tag dd.tag del.tag description.rc dfn.tag \
             div.tag dl.tag dt.tag em.tag empty.tag fieldset.tag form.tag head.tag \
@@ -10,5 +10,5 @@ data_DATA = a.tag abbr.tag acronym.tag address.tag area.tag b.tag base.tag \
             table.tag tbody.tag td.tag textarea.tag tfoot.tag th.tag thead.tag \
             title.tag tr.tag tt.tag ul.tag var.tag button.tag applet.tag
 
-datadir = ${kde_datadir}/quanta/dtep/xhtml11
+quantadir = ${kde_datadir}/quanta/dtep/xhtml11
 

@@ -1,4 +1,4 @@
-data_DATA = description.rc
+quanta_DATA = description.rc
 
-datadir = ${kde_datadir}/quanta/dtep/kde-docbook-4.2
+quantadir = ${kde_datadir}/quanta/dtep/kde-docbook-4.2
 

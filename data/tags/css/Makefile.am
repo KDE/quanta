@@ -1,4 +1,6 @@
-data_DATA = description.rc background.tag border-bottom-color.tag border-bottom-style.tag \
+quantadir = ${kde_datadir}/quanta/dtep/css
+
+quanta_DATA = description.rc background.tag border-bottom-color.tag border-bottom-style.tag \
 border-bottom-width.tag border-bottom.tag border-collapse.tag border-color.tag \
 border-left-color.tag border-left-style.tag border-left-width.tag border-left.tag \
 border-right-color.tag border-right-style.tag border-right-width.tag border-right.tag \
@@ -13,6 +15,4 @@ padding-right.tag padding-top.tag padding.tag position.tag quotes.tag right.tag 
 text-align.tag text-decoration.tag text-indent.tag text-shadow.tag text-transform.tag \
 top.tag unicode-bidi.tag vertical-align.tag visibility.tag white-space.tag width.tag \
 word-spacing.tag z-index.tag
-
-datadir = ${kde_datadir}/quanta/dtep/css
 

@@ -1,4 +1,4 @@
-data_DATA = a.tag b.tag c.tag d.tag e.tag f.tag i.tag k.tag l.tag m.tag n.tag o.tag p.tag q.tag s.tag \
+quanta_DATA = a.tag b.tag c.tag d.tag e.tag f.tag i.tag k.tag l.tag m.tag n.tag o.tag p.tag q.tag s.tag \
 	    t.tag u.tag v.tag description.rc
-datadir = ${kde_datadir}/quanta/dtep/html-transitional
+quantadir = ${kde_datadir}/quanta/dtep/html-transitional
 
