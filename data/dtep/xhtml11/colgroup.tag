@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="colgroup" hasScript="1" hasCore="1" hasI18n="1" optional="1">
+<tag name="colgroup" hasScript="1" hasCore="1" hasI18n="1">
 
     <attr name="width" type="input">
         <text>width</text>
