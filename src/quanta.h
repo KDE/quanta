@@ -170,6 +170,9 @@ public:
   QStringList selectors(const QString& tag);
   QStringList idSelectors();
   WHTMLPart *documentationPart() {return m_htmlPartDoc;}
+  /** Show the toolbar which is in url. If it was not loaded yet, it loads the
+      toolbar from the file */
+  void showToolbarFile(const KURL &url);
 
     /** tabs for left panel */
   DocTreeView *dTab;
@@ -431,9 +434,6 @@ protected:
   bool saveToolbar(bool localToolbar = true, const QString& toolbarToSave = QString::null, const KURL& destURL = KURL());
   /** Saves the toolbar and the actions. Returns the name of the actions file*/
   KURL saveToolbarToFile(const QString& toolbarName,const KURL& destFile);
-  /** Show the toolbar which is in url. If it was not loaded yet, it loads the
-      toolbar from the file */
-  void showToolbarFile(const KURL &url);
   void setTitle(const QString&);
   /** Updates the structure and attribute treeview. */
   void updateTreeViews();

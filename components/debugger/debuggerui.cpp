@@ -38,7 +38,7 @@ DebuggerUI::DebuggerUI(QObject *parent, const char *name)
   m_variablesListView->setCaption(i18n("Variables"));
   m_variableListViewTVA = quantaApp->addToolWindow(m_variablesListView, KDockWidget::DockLeft, quantaApp->getMainDockWidget());
   showMenu();
-  quantaApp->slotLoadToolbarFile(KURL().fromPathOrURL(qConfig.globalDataDir +resourceDir + "toolbars/debug.toolbar.tgz"));
+  quantaApp->showToolbarFile(KURL().fromPathOrURL(qConfig.globalDataDir +resourceDir + "toolbars/debug.toolbar.tgz"));
 
   connect(m_variablesListView, SIGNAL(removeVariable(DebuggerVariable* )), parent, SLOT(slotRemoveVariable(DebuggerVariable* )));
 

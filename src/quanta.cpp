@@ -3066,6 +3066,14 @@ void QuantaApp::loadToolbarForDTD(const QString& dtdName)
   }
 
   ToolbarEntry *p_toolbar;
+  if (m_debugger->UI())
+  {
+    p_toolbar = toolbarList["debug"];
+    guiFactory()->removeClient(p_toolbar->guiClient);
+    p_toolbar->visible = false;
+    delete p_toolbar->menu;
+    p_toolbar->menu = 0L;
+  }
   if (newDtd != oldDtd)
   {
     KURL::List newToolbars;
@@ -3130,7 +3138,11 @@ void QuantaApp::loadToolbarForDTD(const QString& dtdName)
     }
     ToolbarTabWidget::ref()->setCurrentPage(0);
  }
-
+//Debug toolbar should be the last
+  if (m_debugger->UI())
+  {
+      showToolbarFile(KURL().fromPathOrURL(qConfig.globalDataDir +resourceDir + "toolbars/debug.toolbar.tgz"));
+  }
  currentToolbarDTD = newDtd->name;
  slotToggleDTDToolbar(!allToolbarsHidden());
 }
