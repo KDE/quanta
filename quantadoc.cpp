@@ -158,7 +158,7 @@ bool QuantaDoc::newDocument( const KURL& url )
   return true;
 }
 
-void QuantaDoc::openDocument(const KURL& url)
+void QuantaDoc::openDocument(const KURL& url, QString encoding)
 {
 //  Document *ww = write();
   if ( !newDocument( url )) return;
@@ -167,6 +167,8 @@ void QuantaDoc::openDocument(const KURL& url)
 //    write()->busy = true;
 
     Document *w = write();
+    if (encoding.isEmpty()) encoding = defaultEncoding;
+    w->kate_doc->setEncoding(encoding);
     if (w->doc()->openURL( url ))
     {
       QDictIterator<Document> it(*m_docList);

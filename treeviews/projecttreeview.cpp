@@ -240,7 +240,7 @@ void ProjectTreeView::slotOpen()
 	if ( QDir::match( fileMaskHtml+fileMaskJava+fileMaskText, nameToOpen) )
 	{
 		KURL url(nameToOpen);
-		emit openFile( url );
+		emit openFile( url, defaultEncoding );
 		return;
 	}
 	else if ( QDir::match( fileMaskImage, nameToOpen) )
@@ -253,7 +253,7 @@ void ProjectTreeView::slotOpen()
  if (isText(nameToOpen))
  {
 		KURL url(nameToOpen);
-		emit openFile( url );
+		emit openFile( url, defaultEncoding );
  } else
  {
    if (KMessageBox::questionYesNo(this,i18n("This file cannot be opened in Quanta. \n \
@@ -300,7 +300,7 @@ void ProjectTreeView::slotOpenInQuanta()
     return;
   }
  }
- emit openFile( url );
+ emit openFile( url, defaultEncoding );
 }
 
 void ProjectTreeView::slotRemove()

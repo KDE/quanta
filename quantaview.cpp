@@ -38,17 +38,17 @@ void QuantaView::insertTag( const char *tag)
 
   Document *w = write();
   QString startTag = QuantaCommon::tagCase(tag);
+  bool single = QuantaCommon::isSingleTag(w->getDTDIdentifier(), startTag);
+  bool optional = QuantaCommon::isOptionalTag(w->getDTDIdentifier(), startTag);
 
-//  if ( ( singleTags->find( startTag.upper() )!= -1 ) ||
-//     ( ( optionalTags->find(startTag.upper())!= -1 ) && (!useCloseTag)))
-//     (!useCloseTag))
-  if ( (!useCloseTag) || QuantaCommon::isSingleTag(w->getDTDIdentifier(), startTag) )
+  if ( (closeTags && !single && !optional) ||
+       (closeOptionalTags && optional) )
   {
-    w->insertTag( QString("<")+QuantaCommon::tagCase(startTag)+">" );
+    w->insertTag( QString("<")+QuantaCommon::tagCase(startTag)+">", QString("</")+QuantaCommon::tagCase(startTag)+">");
   }
   else
   {
-    w->insertTag( QString("<")+QuantaCommon::tagCase(startTag)+">", QString("</")+QuantaCommon::tagCase(startTag)+">");
+    w->insertTag( QString("<")+QuantaCommon::tagCase(startTag)+">" );
   }
 }
 #include "quantaview.moc"

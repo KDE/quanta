@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>350</width>
-            <height>260</height>
+            <height>280</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -23,7 +23,7 @@
     <property name="minimumSize">
         <size>
             <width>350</width>
-            <height>260</height>
+            <height>280</height>
         </size>
     </property>
     <property name="caption">
@@ -268,6 +268,66 @@
                 </property>
                 <property name="value">
                     <number>4</number>
+                </property>
+            </widget>
+        </grid>
+    </widget>
+    <widget class="QLayoutWidget">
+        <property name="name">
+            <cstring>Layout7</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>20</x>
+                <y>245</y>
+                <width>310</width>
+                <height>22</height>
+            </rect>
+        </property>
+        <grid>
+            <property name="name">
+                <cstring>unnamed</cstring>
+            </property>
+            <property name="margin">
+                <number>0</number>
+            </property>
+            <property name="spacing">
+                <number>6</number>
+            </property>
+            <widget class="QLabel" row="0" column="0">
+                <property name="name">
+                    <cstring>TextLabel1_5</cstring>
+                </property>
+                <property name="text">
+                    <string>Structure tree refresh frequency (in seconds):</string>
+                </property>
+            </widget>
+            <spacer row="0" column="1">
+                <property name="name" stdset="0">
+                    <cstring>Spacer2</cstring>
+                </property>
+                <property name="orientation">
+                    <enum>Horizontal</enum>
+                </property>
+                <property name="sizeType">
+                    <enum>Expanding</enum>
+                </property>
+                <property name="sizeHint">
+                    <size>
+                        <width>20</width>
+                        <height>20</height>
+                    </size>
+                </property>
+            </spacer>
+            <widget class="QSpinBox" row="0" column="2">
+                <property name="name">
+                    <cstring>refreshFrequency</cstring>
+                </property>
+                <property name="minValue">
+                    <number>2</number>
+                </property>
+                <property name="value">
+                    <number>5</number>
                 </property>
             </widget>
         </grid>

@@ -41,6 +41,7 @@
 #include "filestreefile.h"
 #include "newtemplatedirdlg.h"
 #include "quantapropertiespagedlg.h"
+#include "../resource.h"
 
 extern QString globalDataDir;
 const QString textMenu = i18n("Insert as Text");
@@ -217,7 +218,7 @@ void TemplatesTreeView::slotNewDocument()
 	  if ( !parent ) return;
 	  if ( dynamic_cast<FilesTreeFolder *>(item) ) return;
     QString fileName = currentFileName(); // store, because openFile changes current item
-    emit openFile(KURL());
+    emit openFile(KURL(), defaultEncoding);
 	  emit insertFile(fileName);
 	}
 }
@@ -562,7 +563,7 @@ void TemplatesTreeView::slotDragInsert(QDropEvent *e)
         denyBinaryInsert();
         return;
       }
-      emit openFile(KURL());
+      emit openFile(KURL(), defaultEncoding);
       emit insertFile(localFileName);
     }
   }

@@ -32,8 +32,10 @@
 uint tagsCase;
 uint attrsCase;
 QString attrsQuotation;
-bool useCloseTag;
+bool closeOptionalTags;
+bool closeTags;
 bool useAutoCompletion;
+uint refreshFrequency;
 QString globalDataDir;
 QString defaultDocType;
 QuantaApp *QuantaCommon::quantaApp;
@@ -43,6 +45,8 @@ QDict<DTDStruct> *dtds; //holds all the known tags with attributes for each DTD.
 
 Node *baseNode;
 Parser *parser;
+
+QString defaultEncoding;
 
 QuantaCommon::QuantaCommon(){
 }

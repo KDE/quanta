@@ -494,7 +494,7 @@ void Project::slotProjectReadFinish(KIO::Job *job)
     KURL fu(urls.current());
     
     if ( !fu.isLocalFile() ) 
-      emit openFile( fu );
+      emit openFile( fu, defaultEncoding );
   }
   olfwprj=true;
 }
@@ -544,7 +544,7 @@ void Project::loadProjectXML()
   	if ( el.nodeName() == "openfile" ) 
   	{
   		KURL u(el.attribute("url"));
-  		emit openFile( u );
+  		emit openFile( u, defaultEncoding );
   	}
   		
   	if ( el.nodeName() == "item" )

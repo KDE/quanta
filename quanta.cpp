@@ -36,6 +36,7 @@
 #include <qcombobox.h>
 #include <qdockarea.h>
 #include <qdom.h>
+#include <qspinbox.h>
 
 // include files for KDE
 #include <kiconloader.h>
@@ -146,16 +147,16 @@ void QuantaApp::slotFileOpen()
 //  if ( !url.url().isEmpty() ) slotFileOpen( url );
  for (KURL::List::Iterator i=data.urls.begin(); i != data.urls.end(); ++i)
  {
-    slotFileOpen( *i );
-    view->write()->kate_view->setEncoding(data.encoding);
+    slotFileOpen( *i , data.encoding);
+//    view->write()->doc()->setEncoding(data.encoding);
  }
 
   slotUpdateStatus(view->write());
 }
 
-void QuantaApp::slotFileOpen( const KURL &url )
+void QuantaApp::slotFileOpen( const KURL &url, const QString& encoding )
 {
-  doc->openDocument( url );
+  doc->openDocument( url, encoding );
 }
 
 void QuantaApp::slotFileOpenRecent(const KURL &url )
@@ -721,7 +722,8 @@ void QuantaApp::slotOptions()
 
   styleOptionsS->tagCase->setCurrentItem( tagsCase);
   styleOptionsS->attributeCase->setCurrentItem( attrsCase);
-  styleOptionsS->checkEndTag->setChecked( useCloseTag );
+  styleOptionsS->tagAutoClose->setChecked( closeTags );
+  styleOptionsS->optionalTagAutoClose->setChecked( closeOptionalTags );
   styleOptionsS->useAutoCompletion->setChecked( useAutoCompletion );
 
 
@@ -750,6 +752,7 @@ void QuantaApp::slotOptions()
     parserOptions->dtdName->insertItem(QuantaCommon::getDTDNickNameFromName(it.current()->name), index);
   }
 
+  parserOptions->refreshFrequency->setValue(refreshFrequency);
   page=kd->addVBoxPage(i18n("PHP Debug"), QString::null, BarIcon("gear", KIcon::SizeMedium ) );
   DebuggerOptionsS *debuggerOptions = new DebuggerOptionsS( (QWidget *)page );
 
@@ -760,13 +763,17 @@ void QuantaApp::slotOptions()
   {
     tagsCase = styleOptionsS->tagCase->currentItem();
     attrsCase = styleOptionsS->attributeCase->currentItem();
-    useCloseTag = styleOptionsS->checkEndTag->isChecked();
+    closeTags = styleOptionsS->tagAutoClose->isChecked();
+    closeOptionalTags = styleOptionsS->optionalTagAutoClose->isChecked();
     useAutoCompletion = styleOptionsS->useAutoCompletion->isChecked();
 
     fileMaskHtml = fileMasks->lineHTML->text()+" ";
   	fileMaskPhp  = fileMasks->linePHP->text()+" ";
 	  fileMaskImage= fileMasks->lineImages->text()+" ";
   	fileMaskText = fileMasks->lineText->text()+" ";
+
+    refreshFrequency = parserOptions->refreshFrequency->value();
+    refreshTimer->changeInterval(refreshFrequency*1000);
 
     parserOptions->updateConfig();
     defaultDocType = QuantaCommon::getDTDNameFromNickName(parserOptions->dtdName->currentText());
@@ -1267,8 +1274,8 @@ void QuantaApp::slotNewProjectLoaded()
   tTab = new TemplatesTreeView( project->basePath, ttabdock );
   ttabdock ->setWidget( tTab );
   tTab  ->setFocusPolicy(QWidget::NoFocus);
-  connect(   tTab, SIGNAL(openFile  (const KURL &)),
-            this, SLOT(slotFileOpen(const KURL &)));
+  connect(   tTab, SIGNAL(openFile  (const KURL &, const QString&)),
+            this, SLOT(slotFileOpen(const KURL &, const QString&)));
   connect(   tTab, SIGNAL(insertFile  (QString)),
             this, SLOT(slotInsertFile(QString)));
   connect(   tTab,SIGNAL(insertTag(QString, DirInfo)),

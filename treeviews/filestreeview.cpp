@@ -177,7 +177,7 @@ void FilesTreeView::slotSelectFile(QListViewItem *item)
 	if ( QDir::match( fileMaskHtml+fileMaskJava+fileMaskText, nameToOpen) )
 	{
 		KURL url(nameToOpen);
-		emit openFile( url );
+		emit openFile( url, defaultEncoding );
 		return;
 	}
 	else if ( QDir::match( fileMaskImage, nameToOpen) )
@@ -190,7 +190,7 @@ void FilesTreeView::slotSelectFile(QListViewItem *item)
  if (isText(nameToOpen))
  {
 		KURL url(nameToOpen);
-		emit openFile( url );
+		emit openFile( url, defaultEncoding );
  } else
  {
    if (KMessageBox::questionYesNo(this,"This file cannot be opened in Quanta. \n \
@@ -222,7 +222,7 @@ void FilesTreeView::slotSelectAnyFile(QListViewItem *item)
     return;
   }
  }
- emit openFile( url );
+ emit openFile( url, defaultEncoding );
 }
 
 void FilesTreeView::slotSelectImage(QListViewItem *item)

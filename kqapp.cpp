@@ -84,7 +84,7 @@ KQApplication::KQApplication()
      quanta->loadInitialProject(initialProject); // open initial project
 
      for(QStringList::Iterator it = initialFiles.begin();it != initialFiles.end();++it)
-       quanta->slotFileOpen(KURL(*it));  // load initial files
+       quanta->slotFileOpen(KURL(*it), defaultEncoding);  // load initial files
 
      QTimer::singleShot(10,quanta,SLOT(openLastFiles())); // load files from previous session
    }

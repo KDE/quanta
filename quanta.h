@@ -125,7 +125,7 @@ public slots:
 
   void slotFileNew ();
   void slotFileOpen();
-  void slotFileOpen( const KURL & );
+  void slotFileOpen( const KURL &, const QString& );
   void slotFileSave    ();
   void slotFileSaveAs  ();
   void slotFileSaveAsLocalTemplate ();
@@ -393,6 +393,9 @@ private:
 signals: // Signals
   /** The tree views should be updated due to some changes on the disk. */
   void reloadTreeviews();
+protected: // Protected attributes
+  /** Timer to refresh the structure tree. */
+  QTimer *refreshTimer;
 };
  
 #endif // QUANTA_H

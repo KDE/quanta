@@ -58,7 +58,7 @@ public slots:
 	
 signals:
 	void activatePreview();
-	void openFile ( const KURL& );
+	void openFile ( const KURL&, const QString& );
 	void openImage( QString fileToOpen );
 	
 protected:

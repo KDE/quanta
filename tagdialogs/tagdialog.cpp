@@ -354,19 +354,13 @@ void TagDialog::insertTag(Document *w, bool insertInLine)
     secondPartOfTag = "\n" + space + secondPartOfTag;
    }
 
-   if ( (!useCloseTag) || (dtdTag->isSingle()) )
+   if ( (!closeTags && !dtdTag->isSingle()) ||
+        (dtdTag->isSingle()) ||
+        (!closeOptionalTags && dtdTag->isOptional()) )
    {
     secondPartOfTag = "";
    }
 
-/*
-   if ( ( singleTags->find( tag.upper() )!= -1 ) ||
-//      ( ( optionalTags->find(tag.upper())!= -1 ) && (!useCloseTag)))
-         (!useCloseTag) )
-   {
-     secondPartOfTag = "";
-   }
-    */
    w->insertTag( newTag, secondPartOfTag);
 }
 

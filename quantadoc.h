@@ -50,7 +50,7 @@ class QuantaDoc : public QObject
     QuantaDoc( QuantaApp *app, QWidget *parent, const char *name=0);
     ~QuantaDoc();
     
-    void openDocument (const KURL&);
+    void openDocument (const KURL&, QString encoding = QString::null);
     void saveDocument (const KURL&);
     void closeDocument();    
         

@@ -876,8 +876,8 @@ void Document::xmlAutoCompletion(DTDStruct* dtd, int line, int column, const QSt
   {
     if ( string == ">" && tagName[0] != '/' &&
          tag &&
-         !tag->isSingle() &&
-         ( tag->isOptional() || useCloseTag ))
+         ( ( !tag->isSingle() && !tag->isOptional() && closeTags) ||
+           ( tag->isOptional() && closeOptionalTags )) )
     {
       //add closing tag if wanted
       column++;
@@ -913,18 +913,24 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(DTDStruct 
                  break;
   }
   QString textLine = editIf->textLine(line).left(col);
-  QString word = findWordRev(textLine);
+  QString word = findWordRev(textLine).upper();
   completion.userdata = word;
+  QStringList tagNameList;
   QDictIterator<QTag> it(* dtd->tagsList);
   for( ; it.current(); ++it )
   {
-    if (it.current()->name().startsWith(word))
+    if (it.current()->name().upper().startsWith(word))
     {
-      completion.text = QuantaCommon::tagCase( it.current()->name() );
-      completions->append( completion );
+      tagNameList += it.current()->name();
     }
   }
 
+  tagNameList.sort();
+  for (uint i = 0; i < tagNameList.count(); i++)
+  {
+   completion.text = QuantaCommon::tagCase( tagNameList[i]);
+   completions->append( completion );
+  }
   return completions;
 }
 
@@ -934,7 +940,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeCompletions( DTD
   QValueList<KTextEditor::CompletionEntry> *completions = new QValueList<KTextEditor::CompletionEntry>();
   KTextEditor::CompletionEntry completion;
   QTag *tag = QuantaCommon::tagFromDTD(dtd, tagName);
-
+  startsWith = startsWith.upper();
   switch (dtd->family)
   {
      case Xml:
@@ -948,7 +954,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeCompletions( DTD
               for (uint i = 0; i < list->count(); i++)
               {
                 QString item = list->at(i)->name;
-                if (item.startsWith(startsWith))
+                if (item.upper().startsWith(startsWith))
                 {
                   completion.text = item;
                   completion.comment = list->at(i)->type;
@@ -1378,7 +1384,7 @@ void Document::xmlCodeCompletion(DTDStruct *dtd, int line, int col)
     tag->beginPos(bLine, bCol);
     QString s;
     int index;
-    if (col <= (int)(bCol+tag->name.length())) //we are inside a tag name, so show the possible tags
+    if (col <= (int)(bCol+tag->name.length()+1)) //we are inside a tag name, so show the possible tags
     {
      showCodeCompletions( getTagCompletions(dtd, line, col) );
     } else

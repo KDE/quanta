@@ -32,8 +32,10 @@ extern QDict<DTDStruct> *dtds;
 extern uint tagsCase; // use capital for tags
 extern uint attrsCase; // use capital letters for attributes of tag
 extern QString attrsQuotation;
-extern bool useCloseTag; // use close tag if optional
 extern bool useAutoCompletion; //enable auto completion of tags
+extern bool closeOptionalTags;
+extern bool closeTags;
+extern uint refreshFrequency;
 extern QString defaultDocType;
 
 extern QString fileMaskHtml;
@@ -43,5 +45,6 @@ extern QString fileMaskText;
 extern QString fileMaskImage;
 extern Node *baseNode;
 extern Parser *parser;
+extern QString defaultEncoding;
 
 #endif // RESOURCE_H

@@ -165,9 +165,9 @@ void QuantaApp::initQuanta()
   connect( messageOutput, SIGNAL(clicked(QString,int)),
            this,          SLOT(gotoFileAndLine(QString,int)));
 
-  QTimer *t = new QTimer( this );
-  connect( t, SIGNAL(timeout()), SLOT(reparse()) );
-  t->start( 5000, false ); //update the structure tree every 5 seconds
+  refreshTimer = new QTimer( this );
+  connect( refreshTimer, SIGNAL(timeout()), SLOT(reparse()) );
+  refreshTimer->start( refreshFrequency*1000, false ); //update the structure tree every 5 seconds
 
 //Delay the calls as they contain dialog popups. That may crash Quanta!
   QTimer::singleShot(10,this,SLOT(slotFileNew()));;
@@ -223,8 +223,8 @@ void QuantaApp::initProject()
 {
   project = new Project(this);
   
-  connect(project,  SIGNAL(openFile    (const KURL &)),
-          this,     SLOT  (slotFileOpen(const KURL &)));
+  connect(project,  SIGNAL(openFile    (const KURL &, const QString&)),
+          this,     SLOT  (slotFileOpen(const KURL &, const QString&)));
   connect(project,  SIGNAL(reloadTree(QStringList,bool,bool)),
           pTab,     SLOT  (slotReloadTree(QStringList,bool,bool)));
   connect(project,  SIGNAL(setBasePath(QString)),
@@ -358,10 +358,10 @@ void QuantaApp::initView()
   rightWidgetStack->addWidget( htmlPartDoc->view(), 2 );
   rightWidgetStack->raiseWidget(0);
 
-  connect(   fTTab,SIGNAL(openFile  (const KURL &)),
-            this, SLOT(slotFileOpen(const KURL &)));
-  connect(   fLTab,SIGNAL(openFile  (const KURL &)),
-            this, SLOT(slotFileOpen(const KURL &)));
+  connect(   fTTab,SIGNAL(openFile  (const KURL &, const QString&)),
+            this, SLOT(slotFileOpen(const KURL &, const QString&)));
+  connect(   fLTab,SIGNAL(openFile  (const KURL &, const QString&)),
+            this, SLOT(slotFileOpen(const KURL &, const QString&)));
             
   connect(   fTTab,SIGNAL(openImage(QString)),
             this, SLOT  (slotImageOpen(QString)));
@@ -373,8 +373,8 @@ void QuantaApp::initView()
   connect(  fTTab,SIGNAL(changeMode()),
             this, SLOT(slotSwapLeftPanelMode()));
             
-  connect(   pTab, SIGNAL(openFile  (const KURL &)),
-            this, SLOT(slotFileOpen(const KURL &)));
+  connect(   pTab, SIGNAL(openFile  (const KURL &, const QString&)),
+            this, SLOT(slotFileOpen(const KURL &, const QString&)));
   connect(   pTab, SIGNAL(openImage  (QString)),
             this, SLOT(slotImageOpen(QString)));
   connect(   pTab, SIGNAL(loadToolbarFile  (const KURL&)),
@@ -382,8 +382,8 @@ void QuantaApp::initView()
 
   connect(   tTab, SIGNAL(openImage  (QString)),
             this, SLOT(slotImageOpen(QString)));
-  connect(   tTab, SIGNAL(openFile  (const KURL &)),
-            this, SLOT(slotFileOpen(const KURL &)));
+  connect(   tTab, SIGNAL(openFile  (const KURL &, const QString&)),
+            this, SLOT(slotFileOpen(const KURL &, const QString&)));
   connect(   tTab, SIGNAL(insertFile  (QString)),
             this, SLOT(slotInsertFile(QString)));
   connect(   tTab,SIGNAL(insertTag(QString, DirInfo)),
@@ -473,10 +473,14 @@ void QuantaApp::saveOptions()
   config->writeEntry("Capitals for tags",     tagsCase);
   config->writeEntry("Capitals for attr",     attrsCase);
   config->writeEntry("Attribute quotation",     attrsQuotation);
-  config->writeEntry("Close tag if optional", useCloseTag);
+  config->writeEntry("Close tag if optional", closeOptionalTags);
+  config->writeEntry("Close tags", closeTags);
   config->writeEntry("Auto completion",useAutoCompletion);
 
+  config->writeEntry("Default encoding",defaultEncoding);
   config->writeEntry("Default DTD",defaultDocType);
+
+  config->writeEntry("Refresh frequency",refreshFrequency);
 
   config->writeEntry("Left panel mode", fTab->id( fTab->visibleWidget()));
 
@@ -518,11 +522,14 @@ void QuantaApp::readOptions()
   tagsCase = config->readNumEntry("Capitals for tags",     0);
   attrsCase = config->readNumEntry("Capitals for attr",     0);
   attrsQuotation = config->readEntry("Attribute quotation", "double");
-  useCloseTag = config->readBoolEntry("Close tag if optional", true);
+  closeOptionalTags = config->readBoolEntry("Close tag if optional", true);
+  closeTags = config->readBoolEntry("Close tags", true);
   useAutoCompletion = config->readBoolEntry("Auto completion",true);
   defaultDocType = config->readEntry("Default DTD",DEFAULT_DTD);
-
+  defaultEncoding = config->readEntry("Default encoding","iso 8859-1");
   previewPosition   = config->readEntry("Preview position","Right");
+
+  refreshFrequency = config->readNumEntry("Refresh frequency",5);
 
   phpDebugPort = config->readNumEntry("PHP Debugger Port", 7869);
   

@@ -227,7 +227,7 @@ void QuantaView::slotTagQuickList(){
     else tag = QString("<ul>\n")+space;
 
     for ( i=0;i<n;i++)
-      if ( useCloseTag )
+      if ( closeTags )
         tag += QString("  <li>  </li>\n")+space;
       else
         tag += QString("  <li> \n")+space;
