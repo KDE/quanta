@@ -169,8 +169,6 @@ class QuantaView : public QWidget
   private:  	
     QuantaDoc *doc;
 
-    QTabWidget *toolbarTab;
-
     /** collum of cursor position */
     int column;
     QString space;
@@ -184,6 +182,7 @@ public: // Public attributes
   Document *oldWrite;
   /**  */
   QString dontShowSavePreview;
+  QTabWidget *toolbarTab;
 protected:
   virtual void dropEvent(QDropEvent *e);
   virtual void dragEnterEvent(QDragEnterEvent *e);

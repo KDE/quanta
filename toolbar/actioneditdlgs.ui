@@ -22,7 +22,7 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QLayoutWidget" row="5" column="0" rowspan="1" colspan="6">
+        <widget class="QLayoutWidget" row="5" column="0" rowspan="1" colspan="5">
             <property name="name">
                 <cstring>Layout5</cstring>
             </property>
@@ -118,78 +118,7 @@
                 </size>
             </property>
         </widget>
-        <spacer row="0" column="2">
-            <property name="name">
-                <cstring>Spacer10</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Horizontal</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Fixed</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
-        <widget class="QLabel" row="1" column="1" rowspan="1" colspan="3">
-            <property name="name">
-                <cstring>TextLabel2</cstring>
-            </property>
-            <property name="text">
-                <string>Tool tip:</string>
-            </property>
-        </widget>
-        <widget class="QLineEdit" row="1" column="4" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>lineToolTip</cstring>
-            </property>
-        </widget>
-        <widget class="KIconButton" row="0" column="1">
-            <property name="name">
-                <cstring>actionIcon</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>0</hsizetype>
-                    <vsizetype>0</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="minimumSize">
-                <size>
-                    <width>32</width>
-                    <height>32</height>
-                </size>
-            </property>
-            <property name="maximumSize">
-                <size>
-                    <width>32</width>
-                    <height>32</height>
-                </size>
-            </property>
-            <property name="text">
-                <string></string>
-            </property>
-        </widget>
-        <widget class="QLineEdit" row="2" column="4" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>lineStatusText</cstring>
-            </property>
-        </widget>
-        <widget class="QLabel" row="2" column="1" rowspan="1" colspan="3">
-            <property name="name">
-                <cstring>TextLabel3</cstring>
-            </property>
-            <property name="text">
-                <string>Status text:</string>
-            </property>
-        </widget>
-        <widget class="QCheckBox" row="3" column="1" rowspan="1" colspan="4">
+        <widget class="QCheckBox" row="3" column="1" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>placeOnToolbar</cstring>
             </property>
@@ -205,7 +134,7 @@
                 <string>Place this action onto:</string>
             </property>
         </widget>
-        <widget class="QComboBox" row="3" column="5">
+        <widget class="QComboBox" row="3" column="3" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>toolbarCombo</cstring>
             </property>
@@ -221,20 +150,7 @@
                 </sizepolicy>
             </property>
         </widget>
-        <widget class="QLabel" row="0" column="3">
-            <property name="name">
-                <cstring>TextLabel1_2</cstring>
-            </property>
-            <property name="text">
-                <string>Text:</string>
-            </property>
-        </widget>
-        <widget class="QLineEdit" row="0" column="4" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>lineText</cstring>
-            </property>
-        </widget>
-        <widget class="QTabWidget" row="4" column="1" rowspan="1" colspan="5">
+        <widget class="QTabWidget" row="4" column="1" rowspan="1" colspan="4">
             <property name="name">
                 <cstring>actionTab</cstring>
             </property>
@@ -624,6 +540,73 @@
                 </grid>
             </widget>
         </widget>
+        <widget class="QLabel" row="0" column="1">
+            <property name="name">
+                <cstring>TextLabel1_2</cstring>
+            </property>
+            <property name="text">
+                <string>Text:</string>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="0" column="2" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>lineText</cstring>
+            </property>
+        </widget>
+        <widget class="KIconButton" row="0" column="4">
+            <property name="name">
+                <cstring>actionIcon</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>0</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="minimumSize">
+                <size>
+                    <width>32</width>
+                    <height>32</height>
+                </size>
+            </property>
+            <property name="maximumSize">
+                <size>
+                    <width>32</width>
+                    <height>32</height>
+                </size>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+        </widget>
+        <widget class="QLabel" row="1" column="1">
+            <property name="name">
+                <cstring>TextLabel2</cstring>
+            </property>
+            <property name="text">
+                <string>Tool tip:</string>
+            </property>
+        </widget>
+        <widget class="QLabel" row="2" column="1">
+            <property name="name">
+                <cstring>TextLabel3</cstring>
+            </property>
+            <property name="text">
+                <string>Status text:</string>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="1" column="2" rowspan="1" colspan="3">
+            <property name="name">
+                <cstring>lineToolTip</cstring>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="2" column="2" rowspan="1" colspan="3">
+            <property name="name">
+                <cstring>lineStatusText</cstring>
+            </property>
+        </widget>
     </grid>
 </widget>
 <customwidgets>
@@ -700,6 +683,7 @@
     <tabstop>buttonNew</tabstop>
     <tabstop>buttonDelete</tabstop>
     <tabstop>lineText</tabstop>
+    <tabstop>actionIcon</tabstop>
     <tabstop>lineToolTip</tabstop>
     <tabstop>lineStatusText</tabstop>
     <tabstop>placeOnToolbar</tabstop>
@@ -726,7 +710,7 @@
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
-    <includehint>kiconbutton.h</includehint>
     <includehint>filecombo.h</includehint>
+    <includehint>kiconbutton.h</includehint>
 </includehints>
 </UI>

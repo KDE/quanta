@@ -9,7 +9,7 @@
 
  /***************************************************************************
     copyright            : (C) 2001 by Dmitry Poplavsky
-                           (C) 2002 by Andras Mantia <amantia@freemail.hu>
+                           (C) 2002-2003 by Andras Mantia <amantia@freemail.hu>
     email                : dima@kde.org
  ***************************************************************************/
 
@@ -128,7 +128,6 @@ void ActionEditDlg::deleteAction()
         if (nodeList.item(j).toElement().attribute("name") == actionText)
         {
           nodeList.item(j).parentNode().removeChild(nodeList.item(j));
-          guiClient->actionCollection()->remove(action);
           KXMLGUIFactory::saveConfigFile(guiClient->domDocument(), guiClient->localXMLFile());
         }
       }
@@ -136,7 +135,7 @@ void ActionEditDlg::deleteAction()
         guiClient->reloadXML();
         quantaApp->guiFactory()->addClient(guiClient);
      }
-//       quantaApp->actionCollection()->remove(action);
+       delete action;
        action = 0;
        actionsList->removeItem( actionsList->currentItem() );
    }
@@ -151,16 +150,13 @@ void ActionEditDlg::newAction()
    el.setAttribute( "icon", "ball" );
    quantaApp->actions()->firstChild().appendChild(el);
 
-   TagAction *a = new TagAction(&el);
+   TagAction *a = new TagAction(&el, quantaApp->actionCollection());
    ActionListItem *it = new ActionListItem(a);
 
    actionsList->insertItem( it );
    actionsList->setSelected( it, true );
    actionsList->setCurrentItem( it );
    actionsList->centerCurrentItem( );
-
-   quantaApp->actionCollection()->insert( a );
-
 }
 
 
@@ -309,12 +305,24 @@ void ActionEditDlg::saveAction( TagAction *a )
 
   if (placeOnToolbar->isChecked())
   {
-    QPtrList<KXMLGUIClient> guiClients = quantaApp->factory()->clients();
-    QDomNodeList nodeList;
-    QDomNode foundNode;
     QString tabName = toolbarCombo->currentText().lower();
     QPopupMenu *menu = quantaApp->toolbarMenu(tabName);
     a->plug(menu);
+    QTabWidget *tb = quantaApp->getView()->toolbarTab;
+    int current = 0;
+    for (int i = 0; i < tb->count(); i++)
+    {
+      if ( tb->label(i).lower() == tabName)
+      {
+        current=i;
+        break;
+      }
+    }
+    a->plug(tb->page(current));
+
+    QPtrList<KXMLGUIClient> guiClients = quantaApp->factory()->clients();
+    QDomNodeList nodeList;
+    QDomNode foundNode;
 
     KXMLGUIClient *guiClient = 0;
     uint i =0;
@@ -332,34 +340,15 @@ void ActionEditDlg::saveAction( TagAction *a )
      i++;
     } while ( (!guiClient) && (i < guiClients.count()) );
 
-    quantaApp->menuBar()->removeItem(quantaApp->menuBar()->idAt(TAGS_MENU_PLACE));
-    quantaApp->menuBar()->removeItem(quantaApp->menuBar()->idAt(PLUGINS_MENU_PLACE));
     // modify the client's XML
     if (guiClient)
     {
       QDomElement e = guiClient->domDocument().createElement("Action");
       e.setAttribute("name",el.attribute("name"));
       foundNode.appendChild(e);
-      kdDebug() << guiClient->domDocument().toString() << endl;
-      //if it is a user toolbar, reload them
-      guiClient->actionCollection()->insert(a);
       KXMLGUIFactory::saveConfigFile(guiClient->domDocument(), guiClient->localXMLFile());
-      //reload all the clients
-      for (i = 1; i < guiClients.count(); i++)
-      {
-        guiClient = guiClients.at(i);
-        quantaApp->guiFactory()->removeClient(guiClient);
-        guiClient ->setXMLGUIBuildDocument( QDomDocument() );
-        guiClient->reloadXML();
-        quantaApp->guiFactory()->addClient(guiClient);
-      }
     }
-
-    quantaApp->menuBar()->insertItem(i18n("Plu&gins"), quantaApp->pluginMenu(), -1, PLUGINS_MENU_PLACE);
-    quantaApp->menuBar()->insertItem(i18n("&Tags"),quantaApp->tagsMenu(),-1,TAGS_MENU_PLACE);
-    dynamic_cast<KTextEditor::PopupMenuInterface*>(quantaApp->getView()->write()->view())->installPopup((QPopupMenu *)quantaApp->factory()->container("popup_editor", quantaApp));
   }
-
 }
 
 #include "actioneditdlg.moc"

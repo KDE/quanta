@@ -676,89 +676,42 @@ void QuantaApp::slotOptionsConfigureToolbars()
 {
  int currentPageIndex = view->toolbarTab->currentPageIndex();
 
- //clear all the actions - this is also to avoid duplicate actions in the list
-
  QDomNodeList nodeList;
- KAction *action;
- QPopupMenu *menu;
- ToolbarEntry *p_toolbar;
+ ToolbarEntry *p_toolbar = 0L;
  QDictIterator<ToolbarEntry> iter(toolbarList);
  for( ; iter.current(); ++iter )
  {
    p_toolbar = iter.current();
-   int actionCount = p_toolbar->guiClient->actionCollection()->count();
-   for (int i = 0; i < actionCount; i++)
+   //Rename the _Separator_ tags back to Separator, so they will appear
+   //in the config dialog
+   nodeList = p_toolbar->guiClient->domDocument().elementsByTagName("_Separator_");
+   for (uint i = 0; i < nodeList.count(); i++)
    {
-    action = p_toolbar->guiClient->actionCollection()->action(0);
-    p_toolbar->guiClient->actionCollection()->take(action);
+     nodeList.item(i).toElement().setTagName("Separator");
    }
  }
-
+ saveMainWindowSettings(KGlobal::config(), autoSaveGroup());
  KEditToolbar dlg(factory(), this);
 
  //remove the manually added menus BEFORE the dlg shows up
  menuBar()->removeItem(menuBar()->idAt(TAGS_MENU_PLACE));
  menuBar()->removeItem(menuBar()->idAt(PLUGINS_MENU_PLACE));
 
- int result = dlg.exec();
-
- bool block = view->toolbarTab->signalsBlocked();
- view->toolbarTab->blockSignals(true);
- view->toolbarTab->setUpdatesEnabled(false);
- QString actionName;
- QString name;
- menu = 0L;
- KXMLGUIClient *guiClient = 0;
- QPtrList<KXMLGUIClient> guiClients = factory()->clients();
- for (uint i = 1; i < guiClients.count(); i++)
- {
-    guiClient = guiClients.at(i);
-    if (result == QDialog::Accepted)
-    {
-      nodeList = guiClient->domDocument().elementsByTagName("ToolBar");
-      name = nodeList.item(0).cloneNode().toElement().attribute("tabname");
-      p_toolbar = toolbarList[name.lower()];
-      if (p_toolbar && p_toolbar->menu) delete p_toolbar->menu;
-      menu = new QPopupMenu(m_tagsMenu);
-      //remove all inserted toolbars
-      guiFactory()->removeClient(guiClient);
-    }
-    //plug the actions in again
-    nodeList = guiClient->domDocument().elementsByTagName("Action");
-    for (uint j = 0; j < nodeList.count(); j++)
-    {
-      actionName = nodeList.item(j).cloneNode().toElement().attribute("name");
-      action = actionCollection()->action(actionName);
-      if (action)
-      {
-        guiClient->actionCollection()->insert(action);
-        if (menu) action->plug(menu);
-      }
-    }
-    //and add them again. Is there a better way to do this?
-    if (result == QDialog::Accepted )
-    {
-      guiFactory()->addClient(guiClient);
-      if (!name.isEmpty())
-      {
-        m_tagsMenu->insertItem(name,menu);
-        if (p_toolbar) p_toolbar->menu = menu;
-      } else
-      {
-        delete menu;
-      }
-    }
- }
+ connect( &dlg, SIGNAL( newToolbarConfig() ), SLOT( slotNewToolbarConfig() ) );
+ dlg.exec();
 
  //add the menus
  menuBar()->insertItem(i18n("Plu&gins"), m_pluginMenu, -1, PLUGINS_MENU_PLACE);
  menuBar()->insertItem(i18n("&Tags"),m_tagsMenu,-1, TAGS_MENU_PLACE);
- dynamic_cast<KTextEditor::PopupMenuInterface*>(view->write()->view())->installPopup((QPopupMenu *)factory()->container("popup_editor", quantaApp));
  view->toolbarTab->setCurrentPage(currentPageIndex);
- view->toolbarTab->setUpdatesEnabled(true);
- view->toolbarTab->blockSignals(block);
- view->toolbarTab->repaint();
 }
+
+void QuantaApp::slotNewToolbarConfig()
+{
+ applyMainWindowSettings(KGlobal::config(), autoSaveGroup());
+ view->toolbarTab->setCurrentPage(view->toolbarTab->currentPageIndex());
+}
+
 
 void QuantaApp::slotOptionsConfigureActions()
 {
@@ -1273,22 +1226,36 @@ QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomEleme
 
   QString tabname = element.attribute( "tabname", "" );
 
-  if ( element.tagName().lower() == "toolbar" && !tabname.isEmpty() ) {
+  if ( element.tagName().lower() == "toolbar" && !tabname.isEmpty() )
+  {
 //avoid QToolBar warning in the log
     QtMsgHandler oldHandler = qInstallMsgHandler( silenceQToolBar );
-/*
-    QDockArea *dockArea = new QDockArea(Qt::Horizontal, QDockArea::Normal, view->toolbarTab);
-    KToolBar *tb = new KToolBar( dockArea,0,true,true);
-*/
     KToolBar *tb = new KToolBar(view->toolbarTab, 0, true, true);
     tb->loadState(element);
     tb->enableMoving(false);
     tb->setEnableContextMenu(true);
-/*
-    tb->undock();
-    dockArea->moveDockWindow(tb);
-    view->toolbarTab->addTab(dockArea, i18n(tabname));
-*/
+
+    KAction *action;
+    QDomNode node = element.firstChild();
+    while (!node.isNull())
+    {
+      if (node.nodeName() == "Action")
+      {
+        action = actionCollection()->action(node.toElement().attribute("name") );
+        if (action)
+        {
+          action->plug(tb);
+        }
+      }
+//FIXME: This is the first part of the hack to disable automatic separator drawing
+//If I do not rename the Separator tag, then all the seaprators will appear before
+//the buttons. :-(
+      if (node.nodeName() == "Separator")
+          node.toElement().setTagName("_Separator_");
+      if (node.nodeName() == "_Separator_")
+        tb->insertLineSeparator();
+      node = node.nextSibling();
+    }
     view->toolbarTab->addTab(tb, i18n(tabname));
     qInstallMsgHandler( oldHandler );
     return tb;
@@ -1534,24 +1501,6 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
    QDomDocument *dom = new QDomDocument();
    dom->setContent(toolbarDom->toString());
    p_toolbar->dom = dom;
-
-   //setup the actions
-   nodeList = actionDom.elementsByTagName("action");
-   for (uint i = 0; i < nodeList.count(); i++)
-   {
-    QDomNode node = nodeList.item(i).cloneNode();
-    QDomElement el = node.toElement();
-//    cout << el.text() << "\n";
-    QString actionName = el.attribute("name");
-    //if there is no such action yet, add to the available actions
-    if (! actionCollection()->action(actionName))
-    {
-      m_actions->firstChild().appendChild(el);
-      TagAction *a = new TagAction(&el );
-      actionCollection()->insert(a);
-    }
-   }
-
    userToolbarsCount++;
 
    //Change the name also in the XML File -> create a temp XML file
@@ -1570,6 +1519,21 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
    //create the new toolbar GUI from the temp file
    ToolbarXMLGUI * toolbarGUI = new ToolbarXMLGUI(tempFile->name());
 
+   //setup the actions
+   nodeList = actionDom.elementsByTagName("action");
+   for (uint i = 0; i < nodeList.count(); i++)
+   {
+    QDomNode node = nodeList.item(i).cloneNode();
+    QDomElement el = node.toElement();
+    QString actionName = el.attribute("name");
+    //if there is no such action yet, add to the available actions
+    if (! actionCollection()->action(actionName))
+    {
+      m_actions->firstChild().appendChild(el);
+      new TagAction(&el, actionCollection() );
+    }
+   }
+
    //Plug in the actions & build the menu
    QPopupMenu *menu = new QPopupMenu;
    KAction *action;
@@ -1579,17 +1543,14 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
      action = actionCollection()->action(nodeList.item(i).cloneNode().toElement().attribute("name") );
      if (action)
      {
-       toolbarGUI->actionCollection()->insert(action);
        action->plug(menu);
      }
    }
-   m_tagsMenu->insertItem(name,menu);
-   p_toolbar->menu = menu;
 
    guiFactory()->addClient(toolbarGUI);
-
    view->toolbarTab->setCurrentPage(view->toolbarTab->count()-1);
-
+   m_tagsMenu->insertItem(name,menu);
+   p_toolbar->menu = menu;
    tempFileList.append(tempFile);
    p_toolbar->guiClient = toolbarGUI;
    p_toolbar->name = name;
@@ -1970,6 +1931,14 @@ void QuantaApp::saveModifiedToolbars()
 
    if (client)
    {
+    //Rename the _Separator_ tags back to Separator, so they are not treated
+    //as changes
+     QDomNodeList nodeList = client->domDocument().elementsByTagName("_Separator_");
+     for (uint i = 0; i < nodeList.count(); i++)
+     {
+       nodeList.item(i).toElement().setTagName("Separator");
+     }
+
      s2 = client->domDocument().toString();
 
      if ( (s1 != s2) && (!s1.isEmpty()) )
@@ -2253,6 +2222,14 @@ void QuantaApp::removeToolbar(const QString& name)
 
     if (toolbarGUI)
     {
+    //Rename the _Separator_ tags back to Separator, so they are not treated
+    //as changes
+     QDomNodeList nodeList = toolbarGUI->domDocument().elementsByTagName("_Separator_");
+     for (uint i = 0; i < nodeList.count(); i++)
+     {
+       nodeList.item(i).toElement().setTagName("Separator");
+     }
+
      //check if the toolbar's XML GUI was modified or not
      QString s1 = p_toolbar->dom->toString();
      QString s2 = toolbarGUI->domDocument().toString();

@@ -251,6 +251,7 @@ public slots:
   void slotOptionsConfigureKeys();
   void slotOptionsConfigureToolbars();
   void slotOptionsConfigureActions();
+  void slotNewToolbarConfig();
 
   void enablePhp3Debug(bool);
   void enablePhp4Debug(bool);

@@ -42,8 +42,8 @@
 #include "../quantacommon.h"
 #include "../resource.h"
 
-TagAction::TagAction( QDomElement *element)
-  : KAction( element->attribute("text"), 0, quantaApp->actionCollection(), element->attribute("name") ),
+TagAction::TagAction( QDomElement *element, KActionCollection *parent)
+  : KAction( element->attribute("text"), 0, 0, 0, parent, element->attribute("name") ),
     tag(*element)
 {
    m_view = quantaApp->getView();
@@ -53,8 +53,8 @@ TagAction::TagAction( QDomElement *element)
         connect( this, SIGNAL(activated()), SLOT(insertTag()) );
 }
 
-TagAction::TagAction( QDomElement *element, QuantaView *a_view)
-  : KAction( element->attribute("text"), 0, quantaApp->actionCollection(), element->attribute("name") ),
+TagAction::TagAction( QDomElement *element, QuantaView *a_view, KActionCollection *parent)
+  : KAction( element->attribute("text"), 0, 0, 0, parent, element->attribute("name") ),
     tag(*element)
 {
    m_view = a_view;

@@ -160,7 +160,7 @@ void QuantaView::initActions()
     while( !n.isNull() ) {
        QDomElement e = n.toElement(); // try to convert the node to an element.
        if( !e.isNull() ) { // the node was really an element.
-           new TagAction( &e, this );
+           new TagAction( &e, this, actionCollection );
        }
        n = n.nextSibling();
     }
