@@ -35,7 +35,7 @@ QuantaApp *quantaApp = 0L; //global pointer to the main application object
 
 KSplash::KSplash()
  : QFrame( 0L, QString("Quanta")+VERSION,
-   QWidget::WStyle_NoBorder | QWidget::WStyle_Customize)
+   QWidget::WStyle_NoBorder | QWidget::WStyle_Customize | WX11BypassWM)
 {
    QPixmap pm( UserIcon("quantalogo32") );
 

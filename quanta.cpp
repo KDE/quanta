@@ -749,7 +749,7 @@ void QuantaApp::slotNewStatus()
     if (setHighlight) setHighlight->updateMenu (w->kate_doc);
 
     QIconSet floppyIcon( UserIcon("save_small"));
-    QIconSet  emptyIcon( UserIcon("empty16x16" ));
+    QIconSet  emptyIcon( SmallIcon("document" ));
 
     QTabWidget *wTab = m_view->writeTab();
     w = static_cast<Document*>(wTab->currentPage());
