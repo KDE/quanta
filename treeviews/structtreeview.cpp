@@ -50,8 +50,8 @@ extern GroupElementMapList globalGroupMap;
 StructTreeView::StructTreeView(QWidget *parent, const char *name )
 : KListView(parent,name)
 {
-  for (int i = 0; i < 5; i++)
-    groupOpened[i] = false;
+  for (int i = 0; i < 15; i++)
+    groupOpened.append(false);
   top = 0L;
   lastTag = 0L;
   groupsCount = 0;
