@@ -650,10 +650,10 @@ void QuantaDoc::slotFileDirty(const QString& fileName)
   for( int i = 0; i < tab->count(); i++)
   {
     w = dynamic_cast<Document*>(tab->page(i));
-    if ( w->url().path()==fileName )
+    if ( w && w->url().path() == fileName )
     {
       w->setDirtyStatus(true);
-      if (w == write())
+      if (quantaApp->view->writeExists() && w == write())
       {
         w->checkDirtyStatus();
       }
