@@ -2030,8 +2030,8 @@ void Project::savePassword(const QString &entry, const QString &passwd, bool sto
   config->setGroup("Projects");
   if (store)
   {
-    //config->writeEntry(projectName + " | " + entry, KStringHandler::obscure(passwd));
-    config->writeEntry(projectName + " | " + entry, passwd);
+    config->writeEntry(projectName + " | " + entry, KStringHandler::obscure(passwd));
+    //config->writeEntry(projectName + " | " + entry, passwd);
   }
   else
   {
