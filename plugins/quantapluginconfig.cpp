@@ -83,7 +83,7 @@ void QuantaPluginConfig::selectLocation()
 void QuantaPluginConfig::nameChanged(const QString &a_text)
 {
   QString text = a_text;
-  text = "lib" + text + ".so";
+  text = "lib" + text + ".la";
   pluginFileName->setText(text.lower());
 }
 

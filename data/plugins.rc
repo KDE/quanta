@@ -1,6 +1,6 @@
 [CVS Management (Cervisia)]
 Arguments=
-FileName=kde3/libcervisiapart.so
+FileName=kde3/libcervisiapart.la
 Icon=cervisia
 Location=
 OutputWindow=Editor View
@@ -15,7 +15,7 @@ SearchPaths=
 
 [KFileReplace]
 Arguments=
-FileName=kde3/libkfilereplacepart.so
+FileName=kde3/libkfilereplacepart.la
 Icon=kfilereplace
 Input=3
 Location=
@@ -26,7 +26,7 @@ Type=KPart
 
 [XSLT debugger]
 Arguments=
-FileName=kde3/libkxsldbgpart.so
+FileName=kde3/libkxsldbgpart.la
 Icon=xsltproc.png
 Input=0
 Location=
