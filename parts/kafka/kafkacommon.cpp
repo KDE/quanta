@@ -30,6 +30,7 @@
 #include "quantacommon.h"
 
 #include "kafkacommon.h"
+#include "wkafkapart.h"
 #include "undoredo.h"
 
 Node *kafkaCommon::getNextNode(Node *node, bool &goUp, Node *endNode)
@@ -351,7 +352,7 @@ void kafkaCommon::applyIndentation(Node *node, int nbOfSpaces, int nbOfTabs)
     }
 }
 
-void kafkaCommon::fitIndentationNodes(Node *n1, Node *n2)
+void kafkaCommon::fitIndentationNodes(Node *n1, Node *n2, NodeModifsSet *modifs)
 {
 #ifdef LIGHT_DEBUG
     kdDebug(25001)<< "kafkaCommon::fitIndentationNodes()" << endl;
@@ -360,9 +361,6 @@ void kafkaCommon::fitIndentationNodes(Node *n1, Node *n2)
     Node *parent, *child, *node, *emptyNode = 0L, *emptyNode2 = 0L;
     int nbEmptyNodes = 0, n1Depth, n2Depth;
     bool lastChild = false, firstChild = false;
-    //We don't want to log the modifications made to Empty Nodes /
-    //addition of whitespaces in Text Nodes, so let's create a dummy one.
-    NodeModifsSet *modifs = new NodeModifsSet();
 
     if(!n1 || !n2 || n1 == n2 || n1->tag->type == Tag::Empty || n2->tag->type == Tag::Empty)
         return;
@@ -546,8 +544,6 @@ void kafkaCommon::fitIndentationNodes(Node *n1, Node *n2)
                 extractAndDeleteNode(emptyNode, modifs, false, false, false);
         }
     }
-
-    delete modifs;
 }
 
 void kafkaCommon::fitsNodesPosition(Node* startNode, int colMovement, int lineMovement, int colEnd, int lineEnd)
@@ -824,11 +820,22 @@ Node* kafkaCommon::insertNode(Node *node, Node* parentNode, Node* nextSibling,
 #endif
 
     NodeModif* modif;
-    Node *n;
-    bool nodeIsFirstChild = false;
+    Node *n, *closingNode;
+    bool nodeIsFirstChild = false, b;
 
     if(!node)
         return 0L;
+        
+    //Reset the listviews items pointers for node and its children
+    n = node;
+    b = false;
+    while(n)
+    {
+      /**node->mainListItem = 0L;
+      node->listItems.clear();
+      node->groupElementLists.clear();*/
+      n = getNextNode(n, b);
+    }
 
     //place the new Node.
     if(parentNode)
@@ -889,6 +896,11 @@ Node* kafkaCommon::insertNode(Node *node, Node* parentNode, Node* nextSibling,
             mergeNodes(node, node->next, modifs);
         }
     }
+    
+    //update the closesPrevious switch
+   closingNode = node->getClosingNode();
+   if(closingNode)
+     closingNode->closesPrevious = true;
 
 #ifdef HEAVY_DEBUG
     coutTree(baseNode, 2);
@@ -2951,4 +2963,47 @@ void kafkaCommon::coutTree(Node *node, int indent)
         }
         node = node->next;
     }
+}
+
+NodeSelectionInd::NodeSelectionInd()
+{
+
+}
+  
+NodeSelectionInd::~NodeSelectionInd()
+{
+
+}
+
+void NodeSelectionInd::fillWithVPLCursorSelection()
+{
+  KafkaDocument *kafkaDoc;
+  DOM::Node domNode, domNodeEndSel;
+  int domOffset, domOffsetEndSel;
+  Node *node, *nodeEndSel;
+  int offset, offsetEndSel;
+
+  kafkaDoc = KafkaDocument::ref();
+  kafkaDoc->getKafkaWidget()->getCurrentNode(domNode, offset);
+  KafkaDocument::ref()->translateKafkaIntoNodeCursorPosition(domNode, domOffset, &node, offset);
+  m_cursorNode = kafkaCommon::getLocation(node);
+  m_cursorOffset = offset;
+  
+  if(kafkaDoc->getKafkaWidget()->hasSelection())
+  {
+    kafkaDoc->getKafkaWidget()->selection(domNode, (long&)domOffset, domNodeEndSel, (long&)domOffsetEndSel);
+    KafkaDocument::ref()->translateKafkaIntoNodeCursorPosition(domNodeEndSel, domOffsetEndSel,
+      &nodeEndSel, offsetEndSel);
+    m_cursorNodeEndSel = kafkaCommon::getLocation(nodeEndSel);
+    m_cursorOffsetEndSel = offsetEndSel;
+    
+    m_cursorAtSelectionStart = !(m_cursorOffsetEndSel == m_cursorOffset && m_cursorNodeEndSel == m_cursorNode);
+    
+    if(!m_cursorAtSelectionStart)
+    {
+      KafkaDocument::ref()->translateKafkaIntoNodeCursorPosition(domNode, domOffset, &node, offset);
+      m_cursorNode = kafkaCommon::getLocation(node);
+      m_cursorOffset = offset;
+    }
+  }
 }

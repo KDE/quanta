@@ -375,6 +375,7 @@ void QuantaView::slotSetSourceLayout()
    }
    if (m_kafkaDocument->isLoaded())
        m_kafkaDocument->unloadDocument();
+      
 #endif
 //show the document if full size
    m_splitter->hide();
@@ -570,6 +571,8 @@ void QuantaView::slotVPLGetFocus(bool focus)
     if(action)
       action->setEnabled(false);
 
+   //TEMPORARY: Enable VPL undo/redo logging
+   m_document->docUndoRedo->turnOn(true);
 
     m_currentFocus = VPLFocus;
     reloadUpdateTimers();
@@ -633,6 +636,9 @@ void QuantaView::slotSourceGetFocus()
     action = quantaApp->actionCollection()->action("insert_char");
     if(action)
       action->setEnabled(true);
+      
+    //TEMPORARY: Disable VPL undo/redo logging
+    m_document->docUndoRedo->turnOn(false);
 
 #endif
 }

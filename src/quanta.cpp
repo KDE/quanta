@@ -4547,15 +4547,16 @@ void QuantaApp::slotPasteURLEncoded()
 
 void QuantaApp::slotUndo ()
 {
+  Document *w = ViewManager::ref()->activeDocument();
 #ifdef BUILD_KAFKAPART
-  if(ViewManager::ref()->activeView()->hadLastFocus() == QuantaView::VPLFocus)
+  if(ViewManager::ref()->activeView()->hadLastFocus() == QuantaView::VPLFocus && w)
   {
     KMessageBox::information(this, i18n("VPL does not support this functionality yet."),
       QString::null, "show undo unavailable");
+    //w->docUndoRedo->undo();
     return;
   }
 #endif
- Document *w = ViewManager::ref()->activeDocument();
   if (w)
   {
     bool updateClosing = qConfig.updateClosingTags;
@@ -4573,15 +4574,16 @@ void QuantaApp::slotUndo ()
 
 void QuantaApp::slotRedo ()
 {
+  Document *w = ViewManager::ref()->activeDocument();
 #ifdef BUILD_KAFKAPART
   if(ViewManager::ref()->activeView()->hadLastFocus() == QuantaView::VPLFocus)
   {
     KMessageBox::information(this, i18n("VPL does not support this functionality yet."),
       QString::null, "show redo unavailable");
+    //w->docUndoRedo->redo();
     return;
   }
 #endif
-  Document *w = ViewManager::ref()->activeDocument();
   if (w)
   {
     bool updateClosing = qConfig.updateClosingTags;

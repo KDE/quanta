@@ -31,6 +31,7 @@ class kNodeAttrs;
 class NodeModifsSet;
 class NodeEnhancer;
 struct DTDStruct;
+class NodeSelectionInd;
 
 #include <qmap.h>
 #include <qobject.h>
@@ -122,7 +123,16 @@ public:
 	 * Disconnects all the domNode from their Quanta Node.
 	 */
 	void disconnectAllDomNodes();
+        
+        
+        /* --------------------------- CURSOR AND SELECTION  HANDLING --------------------------*/
 
+        /**
+         * Set the cursor and selection coordinates.
+         * @param nodeSelection The coordinates of the selection and cursor.
+         */
+        void setCursorAndSelection(NodeSelectionInd *nodeSelection);
+         
 
 	/* --------------------------- KAFKA/QUANTA NODES CREATION -----------------------------*/
 
@@ -248,7 +258,7 @@ public:
          * @param line The quanta line cursor position.
          * @param col The quanta column cursor position.
          * @param node Returns the node where is located the node internal offset.
-         * @param Returns the node internal corresponding offset.
+         * @param offset Returns the node internal corresponding offset.
          */
         void translateQuantaIntoNodeCursorPosition(uint line, uint col, Node **node, int &offset);
 
@@ -256,9 +266,10 @@ public:
 	 * Returns the internal Node offset corresponding to the kafka cursor position.
 	 * @param domNode The kafka DOM::Node cursor position.
 	 * @param domNodeOffset The kafka offset cursor position.
-	 * @return Returns the node internal corresponding offset.
+         * @param node Returns the node where is located the node internal offset.
+         * @param offset Returns the node internal corresponding offset.
 	 */
-	long translateKafkaIntoNodeCursorPosition(DOM::Node domNode, long domNodeOffset);
+	void translateKafkaIntoNodeCursorPosition(DOM::Node domNode, long domNodeOffset, Node **node, int &offset);
 
 	/**
 	 * Returns the quanta cursor position corresponding to the kafka cursor position.

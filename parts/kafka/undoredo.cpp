@@ -69,46 +69,71 @@ NodeModif::~NodeModif()
 
 void NodeModif::setNode(Node *node)
 {
-//FIXME: Andras: I don't have the slightest idea what this is supposed to do and what the
-//below comment means, but without a real delete we are seriously leaking memory
-        m_node = 0L;
-        delete node;
-        return;
-        //TEMPORARY to avoid the Node::~Node bug which seems to come from the fact
-        //the node is deleted a while after it is removed and thus some pointer are invalid
-        //cf Node::~Node
-        m_node = node;
-        if(m_node)
-        {
-                m_node->parent = 0L;
-                m_node->next = 0L;
-                m_node->prev = 0L;
-                if(m_type == NodeRemoved)
-                        m_node->child = 0L;
-                delete m_node;
-                m_node = 0L;
-        }
+  ViewManager *viewManager = ViewManager::ref();
+  if(viewManager && viewManager->activeDocument() && !viewManager->activeDocument()->docUndoRedo->turnedOn())
+  {
+  //FIXME: Andras: I don't have the slightest idea what this is supposed to do and what the
+  //below comment means, but without a real delete we are seriously leaking memory
+          m_node = 0L;
+          delete node;
+          return;
+   }
+   else
+   {
+     m_node = node;
+     if(m_node)
+     {
+       m_node->parent = 0L;
+       m_node->next = 0L;
+       m_node->prev = 0L;
+       if(m_type == NodeRemoved)
+         m_node->child = 0L;
+     }
+   }
 }
 
 void NodeModif::setTag(Tag *tag)
 {
-        //TEMPORARY cf setNode
-        m_tag = tag;
-        if(m_tag)
-        {
-                delete m_tag;
-                m_tag = 0L;
-        }
+  ViewManager *viewManager = ViewManager::ref();
+  if(viewManager && viewManager->activeDocument() && !viewManager->activeDocument()->docUndoRedo->turnedOn())
+  {
+    //TEMPORARY cf setNode
+    m_tag = tag;
+    if(m_tag)
+    {
+      delete m_tag;
+      m_tag = 0L;
+    }
+  }
+  else
+  {
+    m_tag = tag;
+  }
 }
 
 NodeModifsSet::NodeModifsSet()
-{
+{ 
+  m_selectionBefore = new NodeSelectionInd();
+  m_selectionAfter = new NodeSelectionInd();
+  
+  //A NodeModifsSet instance is created before the changes are made =>
+  //Recording the cursor position
+  if(ViewManager::ref()->activeView()->hadLastFocus() == QuantaView::VPLFocus)
+  {
+   m_selectionBefore->fillWithVPLCursorSelection(); 
+  }
+  else
+  {
+  
+  }
 }
 
 NodeModifsSet::~NodeModifsSet()
 {
         m_nodeModifList.setAutoDelete(true);
         m_nodeModifList.clear();
+        delete m_selectionBefore;
+        delete m_selectionAfter;
 }
 
 undoRedo::undoRedo(Document *doc)
@@ -124,15 +149,7 @@ undoRedo::undoRedo(Document *doc)
         m_listLimit = 3;
         m_merging = false;
         m_mergeNext = false;
-
-        //add a first empty NodeModifs struct
-        NodeModifsSet *modifs = new NodeModifsSet();
-        //don't call addNewModifsSet(modifs); otherwise it will delete it as it is empty
-        m_undoList.append(modifs);
-
-        documentIterator.toFirst();
-        sourceIterator.toFirst();
-        kafkaIterator.toFirst();
+        m_loggingEnabled = false;
 }
 
 undoRedo::~undoRedo()
@@ -148,117 +165,68 @@ void undoRedo::addNewModifsSet(NodeModifsSet *modifs, int modifLocation)
         kdDebug(25001)<< "undoRedo::addNewModifsSet() - NodeModifsSet type: " << modifLocation << endl;
 #endif
 
-        if(ViewManager::ref()->activeView() &&
-            ViewManager::ref()->activeView()->hadLastFocus() == QuantaView::VPLFocus)
-        m_doc->setModified(true);
-        
         QValueList<NodeModif>::iterator it2;
         NodeModifsSet *NMSet;
         QValueList<int> loc;
         int curFocus;
+        NodeSelectionInd *nodeSelection;
 
-        // For the 3.2.x releases
-        /**if(m_mergeNext)
-        {
-                //we merge modifs with the previous NodeModifsSet
-                for(it2 = modifs.NodeModifList.begin(); it2 != modifs.NodeModifList.end(); it2++)
-                {
-                        (*fromLast()).NodeModifList.append(*it2);
-                }
-                modifs.NodeModifList.clear();
-                m_mergeNext = false;
+        if(ViewManager::ref()->activeView()->hadLastFocus() == QuantaView::VPLFocus)
+        m_doc->setModified(true);
+
+        //Store the cursor position after the changes.
+        nodeSelection = modifs->selectionAfter();
+        if(ViewManager::ref()->activeView()->hadLastFocus() == QuantaView::VPLFocus)
+          nodeSelection->fillWithVPLCursorSelection();
+        
+        //Store the NodeModifsSet
+        m_undoList.append(modifs);
 #ifdef HEAVY_DEBUG
-                debugOutput();
+        debugOutput();
 #endif
-                return;
+        while(m_undoList.count() > (unsigned)m_listLimit)
+        {
+                // FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
+                //FIXME: This is to prevent the list to be infinite, change when undoRedo is finished!! FIXME
+                if(!kafkaIterator.current() || kafkaIterator.atFirst())
+                {
+                        kafkaIterator = sourceIterator;
+                        --kafkaIterator;
+                }
+                else if(sourceIterator.current() || sourceIterator.atFirst())
+                {
+                        sourceIterator = kafkaIterator;
+                        --sourceIterator;
+                }
+                //END FIXME
+                NMSet = m_undoList.getFirst();
+                m_undoList.remove(NMSet);
+                delete NMSet;
         }
-
-        if(m_dontAddModifSet >= 0)
-                m_dontAddModifSet--;
-        if(m_dontAddModifSet == 0)
+        if(modifLocation == undoRedo::SourceModif)
         {
-                //we don't add the modifsset
-                m_dontAddModifSet = -1;
+                sourceIterator.toLast();
+                //The node Tree is ALWAYS in sync
+                documentIterator.toLast();
+        }
+        else if(modifLocation == undoRedo::KafkaModif)
+        {
+                kafkaIterator.toLast();
+                //The node Tree is ALWAYS in sync
+                documentIterator.toLast();
+        }
+        else if(modifLocation == undoRedo::NodeTreeModif)
+        {
+                documentIterator.toLast();
+                curFocus = ViewManager::ref()->activeView()->hadLastFocus();
+                if(curFocus == QuantaView::SourceFocus)
+                        reloadQuantaEditor();
+                else
+                        reloadKafkaEditor();
+        }
 #ifdef HEAVY_DEBUG
-                debugOutput();\
-#endif
-                return;
-        }*/
-
-
-        // For the 3.2.x releases
-        /**if((!m_merging || beginToMerge) && !noMerge)
-        {*/
-                //inserting the NodeModifsSet
-                /**if(!empty())
-                {
-                        // if we are in the middle of the stack, we delete the end of the stack
-                        if(fromLast() != end() && sourceIterator != fromLast())
-                        {
-                                it = sourceIterator;
-                                it++;
-                                while(it != end())
-                                {
-                                        for(it2 = (*it).NodeModifList.begin(); it2 != (*it).NodeModifList.end(); it2++)
-                                        {
-                                                if((*it2).type == undoRedo::NodeAdded || (*it2).type ==
-                                                        undoRedo::NodeAndChildsAdded || (*it2).type ==
-                                                        undoRedo::NodeTreeAdded)
-                                                        delete (*it2).node;
-                                                else if((*it2).type == undoRedo::NodeModified)
-                                                        delete (*it2).tag;
-                                        }
-                                        it = erase(it);
-                                }
-                        }
-                }*/
-                m_undoList.append(modifs);
-#ifdef HEAVY_DEBUG
-                debugOutput();
-#endif
-                while(m_undoList.count() > (unsigned)m_listLimit)
-                {
-                        // FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
-                        //FIXME: This is to prevent the list to be infinite, change when undoRedo is finished!! FIXME
-                        if(kafkaIterator.atFirst())
-                        {
-                                kafkaIterator = sourceIterator;
-                                --kafkaIterator;
-                        }
-                        else if(sourceIterator.atFirst())
-                        {
-                                sourceIterator = kafkaIterator;
-                                --sourceIterator;
-                        }
-                        //END FIXME
-                        NMSet = m_undoList.getFirst();
-                        m_undoList.remove(NMSet);
-                        delete NMSet;
-                }
-                if(modifLocation == undoRedo::SourceModif)
-                {
-                        sourceIterator.toLast();
-                        //The node Tree is ALWAYS in sync
-                        documentIterator.toLast();
-                }
-                else if(modifLocation == undoRedo::KafkaModif)
-                {
-                        kafkaIterator.toLast();
-                        //The node Tree is ALWAYS in sync
-                        documentIterator.toLast();
-                }
-                else if(modifLocation == undoRedo::NodeTreeModif)
-                {
-                        documentIterator.toLast();
-                        curFocus = ViewManager::ref()->activeView()->hadLastFocus();
-                        if(curFocus == QuantaView::SourceFocus)
-                                reloadQuantaEditor();
-                        else
-                                reloadKafkaEditor();
-                }
-#ifdef HEAVY_DEBUG
-                kdDebug(25001)<<"-------------------------------------------------------------------------------"<< endl;
-                debugOutput();
+        kdDebug(25001)<<"-------------------------------------------------------------------------------"<< endl;
+        debugOutput();
 #endif
         /**}*/
 
@@ -273,728 +241,298 @@ void undoRedo::addNewModifsSet(NodeModifsSet *modifs, int modifLocation)
 #endif
 }
 
-bool undoRedo::undo(bool /**kafkaUndo*/)
+void undoRedo::turnOn(bool on)
 {
-//TODO:BIG CHANGES here to do for 3.2.x, x != 0
-/**     QValueList<NodeModif>::iterator it;
+  if(!m_loggingEnabled && on)
+  {
+    //TEMPORARY : Delete all the undo/Redo stack, we only want to keep VPL NodeModifs
+    m_undoList.setAutoDelete(true);
+    m_undoList.clear();
+    m_undoList.setAutoDelete(false);
+  }
+  
+  m_loggingEnabled = on;
+}
+
+bool undoRedo::undo()
+{
         bool success = true;
-        bool updateClosing = qConfig.updateClosingTags;
 
 #ifdef LIGHT_DEBUG
-        kdDebug(25001)<< "undoRedo::undo() - bool: " << kafkaUndo << endl;
+        kdDebug(25001)<< "undoRedo::undo()"<< endl;
         QTime t;
         t.start();
 #endif
-        if(sourceIterator.atBegin())//the first one is empty
-                return false;
-        it = (*sourceIterator).NodeModifList.fromLast();
-        m_doc->activateParser(false);
-        m_doc->activateRepaintView(false);
-        qConfig.updateClosingTags = false;
-        while(1)
+        if(documentIterator.isEmpty() || !(*documentIterator))
+          return false;
+        QPtrListIterator<NodeModif> it((*documentIterator)->nodeModifList());
+        it.toLast();
+
+        while(*it)
         {
-                if(!UndoNodeModif(*it))
+                //Undo the changes
+                if(!undoNodeModif(*it))
                 {
-                        //one undo has failed, trying to recover (hope that the undo has done nothing).
+                        //one undo has failed, trying to recover considering that the undo has done nothing.
                         kdDebug(25001)<< "Undo failed, trying to recover." << endl;
-                        it++;
-                        while(it != (*sourceIterator).NodeModifList.end() && success)
+                        ++it;
+                        while((*it) && success)
                         {
-                                success = RedoNodeModif(*it);
+                                success = redoNodeModif(*it);
 #ifdef LIGHT_DEBUG
-                                kdDebug(25001) << "NodeModif type :" << (*it).type <<" redoed!" << endl;
+                                kdDebug(25001) << "NodeModif type :" << (*it)->type() <<" redoed!" << endl;
 #endif
-                                it++;
+                                ++it;
                         }
                         return false;
                 }
+
 #ifdef LIGHT_DEBUG
-                kdDebug(25001) << "NodeModif type :" << (*it).type <<" undoed!" << endl;
+                kdDebug(25001) << "NodeModif type :" << (*it)->type() <<" undoed!" << endl;
 #endif
-#ifdef HEAVY_DEBUG
-                //kafkaCommon::coutTree(baseNode, 2);
-#endif
-                if(it == (*sourceIterator).NodeModifList.begin())
-                        break;
-                it--;
+                --it;
         }
-        m_doc->viewCursorIf->setCursorPositionReal((*sourceIterator).cursorY, (*sourceIterator).cursorX);
-        sourceIterator--;
-        if(quantaApp->view()->writeExists())
-        {
-                Document* w;
-                w = quantaApp->view()->write();
-                w->setModified((*sourceIterator).isModified);
-                if(!(*sourceIterator).isModified)
-                {
-                        QIconSet  emptyIcon( UserIcon("empty16x16" ));
-                        QTabWidget *wTab = quantaApp->view()->writeTab();
-                        wTab->changeTab( w,  emptyIcon,  wTab->tabLabel(w));
-                }
-                else
-                {
-                        QIconSet floppyIcon( SmallIcon("filesave"));
-                        QTabWidget *wTab = quantaApp->view()->writeTab();
-                        wTab->changeTab( w,  floppyIcon,  wTab->tabLabel(w));
-                }
-        }
-        //We need to update the internal pointer of baseNode in the parser.
+        
+        //We need to update the internal pointer of baseNode in the parser. FIXME:why?
         parser->setRootNode(baseNode);
-        qConfig.updateClosingTags = updateClosing;
-        m_doc->activateRepaintView(true);
-        m_doc->activateParser(true);
+        
+        QPtrListIterator<NodeModifsSet> currentIt(documentIterator);
+        --documentIterator;
+
+        //TEMP: Reload the kafka editor TODO: update only the modified Nodes
+        if(ViewManager::ref()->activeView()->hadLastFocus() == QuantaView::VPLFocus)
+          reloadKafkaEditor();
+        
+        //Restore the cursor at the old coordinates
+        if(ViewManager::ref()->activeView()->hadLastFocus() == QuantaView::VPLFocus)
+          KafkaDocument::ref()->setCursorAndSelection((*currentIt)->selectionBefore());
+
+        
 #ifdef LIGHT_DEBUG
         kdDebug(25001) << "undoRedo::undo() : " << t.elapsed() << " ms" << endl;
 #endif
+
 #ifdef HEAVY_DEBUG
         //debugOutput();
 #endif
-        return !(sourceIterator == begin());*/
-        return true;
+        return !(*documentIterator);
 }
 
-bool undoRedo::redo(bool /**kafkaUndo*/)
+bool undoRedo::redo()
 {
-        /**QValueList<NodeModif>::iterator it;
-        bool success;
-        bool updateClosing = qConfig.updateClosingTags;
+        bool success = true;
 
 #ifdef LIGHT_DEBUG
         QTime t;
         t.start();
-        kdDebug(25001)<< "undoRedo::redo() - bool: " << kafkaUndo << endl;
+        kdDebug(25001)<< "undoRedo::redo()" << endl;
 #endif
-        if(sourceIterator == fromLast())
-                return false;
-        sourceIterator++;
-        m_doc->activateParser(false);
-        m_doc->activateRepaintView(false);
-        qConfig.updateClosingTags = false;
-        for(it = (*sourceIterator).NodeModifList.begin(); it != (*sourceIterator).NodeModifList.end(); it++)
+        if(documentIterator.isEmpty() || documentIterator.atLast())
+          return false;
+          
+        if(!(*documentIterator))
+          documentIterator.toFirst();
+        else
+          ++documentIterator;
+          
+        QPtrListIterator<NodeModif> it((*documentIterator)->nodeModifList());
+        it.toFirst();
+        
+        while(*it)
         {
-                success = RedoNodeModif(*it);
-                if(!success)
+                //Redo the changes
+                if(!redoNodeModif(*it))
                 {
-                        kdDebug(25001)<< "Redo failed!" << endl;
-                        m_doc->activateRepaintView(true);
-                        m_doc->activateParser(true);
+                        //one redo has failed, trying to recover considering that the redo has done nothing.
+                        kdDebug(25001)<< "Redo failed, trying to recover." << endl;
+                        --it;
+                        while((*it) && success)
+                        {
+                                success = undoNodeModif(*it);
+#ifdef LIGHT_DEBUG
+                                kdDebug(25001) << "NodeModif type :" << (*it)->type() <<" undoed!" << endl;
+#endif
+                                --it;
+                        }
+                        --documentIterator;
                         return false;
                 }
 #ifdef LIGHT_DEBUG
-                kdDebug(25001) << "NodeModif type :" << (*it).type <<" redoed!" << endl;
+                kdDebug(25001) << "NodeModif type :" << (*it)->type() <<" redoed!" << endl;
 #endif
+                ++it;
         }
-        m_doc->viewCursorIf->setCursorPositionReal((*sourceIterator).cursorY2, (*sourceIterator).cursorX2);
-        if(quantaApp->view()->writeExists())
-        {
-                Document* w;
-                w = quantaApp->view()->write();
-                w->setModified((*sourceIterator).isModified);
-                if(!(*sourceIterator).isModified)
-                {
-                        QIconSet  emptyIcon( UserIcon("empty16x16" ));
-                        QTabWidget *wTab = quantaApp->view()->writeTab();
-                        wTab->changeTab( w,  emptyIcon,  wTab->tabLabel(w));
-                }
-                else
-                {
-                        QIconSet floppyIcon( SmallIcon("filesave"));
-                        QTabWidget *wTab = quantaApp->view()->writeTab();
-                        wTab->changeTab( w,  floppyIcon,  wTab->tabLabel(w));
-                }
-        }
-        //We need to update the internal pointer of baseNode in the parser.
+        //We need to update the internal pointer of baseNode in the parser. FIXME: why?
         parser->setRootNode(baseNode);
-        qConfig.updateClosingTags = updateClosing;
-        m_doc->activateRepaintView(true);
-        m_doc->activateParser(true);
+
+        //TEMP: Reload the kafka editor TODO: update only the modified Nodes
+        if(ViewManager::ref()->activeView()->hadLastFocus() == QuantaView::VPLFocus)
+          reloadKafkaEditor();
+          
+        //Restore the cursor at the old coordinates
+        if(ViewManager::ref()->activeView()->hadLastFocus() == QuantaView::VPLFocus)
+          KafkaDocument::ref()->setCursorAndSelection((*documentIterator)->selectionAfter());
+
 #ifdef LIGHT_DEBUG
         kdDebug(25001) << "undoRedo::redo() : " << t.elapsed() << " ms" << endl;
 #endif
+
 #ifdef HEAVY_DEBUG
         //debugOutput();
 #endif
-        return !(sourceIterator == fromLast());*/
-        return true;
+        return !documentIterator.atLast();
 }
 
-bool undoRedo::UndoNodeModif(NodeModif &/**_nodeModif*/, bool /**undoTextModifs*/,
-        bool /**generateText*/)
+bool undoRedo::undoNodeModif(NodeModif *nodeModif)
 {
-        /*Node *_node = 0L, *_nodeNext = 0L, *n = 0L, *m = 0L, *newNode = 0L;
-        int bLine, bCol, eLine, eCol, bLine2, bCol2, eLine2, eCol2, bLine3, bCol3, eLine3, eCol3, i, j;
+        Node *node, *newNode;
+        QValueList<int> ref;
+        Tag *tag;
         bool b;
-        QValueList<int> loc;
-        Tag *_tag;
-        QString text, totalText;
-        KafkaDocument *kafkaInterface = quantaApp->view()->kafkaInterface();
+        
+        //Note : for NodeModif::NodeMoved && NodeModif::NodeAndChildsMoved, we go
+        //through the processing of NodeModif::NodeAdded && NodeModif::NodeRemoved
 
-        if(_nodeModif.type == undoRedo::NodeTreeAdded)
+        if(nodeModif->type() == NodeModif::NodeTreeAdded)
         {
-                // Remove all the text and set baseNode to 0L
-                if(undoTextModifs)
-                        m_doc->editIf->removeText(0, 0, m_doc->editIf->numLines() - 1,
-                                m_doc->editIf->lineLength(m_doc->editIf->numLines() - 1));
-                _nodeModif.node = baseNode;
+                //Set baseNode to 0L
+                nodeModif->setNode(baseNode);
                 baseNode = 0L;
         }
-        else if(_nodeModif.type == undoRedo::NodeAndChildsAdded ||
-                _nodeModif.type == undoRedo::NodeAdded)
+        if(nodeModif->type() == NodeModif::NodeAndChildsAdded ||
+                nodeModif->type() == NodeModif::NodeAdded ||
+                nodeModif->type() == NodeModif::NodeMoved ||
+                nodeModif->type() == NodeModif::NodeAndChildsMoved)
         {
                 // Removing the node
-                _node = kafkaCommon::getNodeFromLocation(_nodeModif.location);
-                if(!_node)
+                if(nodeModif->type() == NodeModif::NodeAndChildsAdded ||
+                  nodeModif->type() == NodeModif::NodeAdded)
+                  node = kafkaCommon::getNodeFromLocation(nodeModif->location());
+                else
+                  node = kafkaCommon::getNodeFromLocation(nodeModif->finalLocation());
+                  
+                if(!node)
                 {
-                        kdDebug(25001)<< "undoRedo::UndoNodeModif() - ERROR1" << endl;
-                        m_doc->activateParser(true);
+                        kdDebug(25001)<< "undoRedo::undoNodeModif() - NodeModif::NodeAdded/Moved - ERROR1" << endl;
                         return false;
                 }
-                _nodeModif.node = _node;
-                _node->tag-> beginPos(bLine, bCol);
-                if(_node->next && _node->next->closesPrevious)
-                        _node->next->closesPrevious = false;
-                if(_nodeModif.type == undoRedo::NodeAndChildsAdded ||
-                        (_nodeModif.type == undoRedo::NodeAdded && !_node->child))
-                {
-                        b = true;
-                        _nodeNext = kafkaCommon::getNextNode(_node, b);
-                        if(_node->prev)
-                                _node->prev->next = _node->next;
-                        if(_node->next)
-                                _node->next->prev = _node->prev;
-                        if(_node->parent && _node->parent->child == _node)
-                                _node->parent->child = _node->next;
-                        if(_node->closesPrevious && _node->next)
-                        {
-                                // If _node close the previous Node, it means that all the node next to _node
-                                // will be moved next to the last child of _node->prev TODO:(need to be updated)
-                                n = _node->prev;
-                                if(!n)
-                                {
-                                        kdDebug(25001)<< "undoRedo::UndoNodeModif() - ERROR2" << endl;
-                                        m_doc->activateParser(true);
-                                        return false;
-                                }
-                                while(n->child)
-                                {
-                                        n = n->child;
-                                        while(n->next)
-                                                n = n->next;
-                                }
-                                m = _node->next;
-                                if(_node->prev->child)
-                                {
-                                        _node->next->prev = n;
-                                        n->next = _node->next;
-                                        while(m)
-                                        {
-                                                m->parent = n->parent;
-                                                m = m->next;
-                                        }
-                                }
-                                else
-                                {
-                                        _node->prev->child = _node->next;
-                                        _node->next->prev = 0L;
-                                        while(m)
-                                        {
-                                                m->parent = _node->prev;
-                                                m = m->next;
-                                        }
-                                }
-                                _node->prev->next = 0L;
-                                i = 0;
-                                n = _node->next;
-                                while(n)
-                                {
-                                        i++;
-                                        n = n->next;
-                                }
-                                _nodeModif.childsNumber2 = i;
-                        }
-                        n = _node;
-                        while(n->child)
-                        {
-                                n = n->child;
-                                while(n->next)
-                                        n = n->next;
-                        }
-                        n->tag->endPos(eLine, eCol);
-                        _node->parent = 0L;
-                        _node->next = 0L;
-                        _node->prev = 0L;
-                }
-                else
-                {
-                        b = false;
-                        _nodeNext = kafkaCommon::getNextNode(_node, b);
-                        _node->tag->endPos(eLine, eCol);
-                        if(_node->parent && _node->parent->child == _node)
-                                _node->parent->child = _node->child;
-                        n = _node->child;//not null
-                        i = 0;
-                        while(n)
-                        {
-                                // _node is deleted, all its child go up
-                                if(i == 0)
-                                {
-                                        n->prev = _node->prev;
-                                        if(_node->prev)
-                                                _node->prev->next = n;
-                                }
-                                i++;
-                                m = n;
-                                n->parent = _node->parent;
-                                n = n->next;
-                                if(!n)
-                                {
-                                        m->next = _node->next;
-                                        if(_node->next)
-                                                _node->next->prev = m;
-                                }
-                        }
-                        _node->parent = 0L;
-                        _node->next = 0L;
-                        _node->prev = 0L;
-                        _node->child = 0L;
-                        _nodeModif.childsNumber = i;
-                }
-                if(undoTextModifs)
-                {
-                        kafkaCommon::fitsNodesPosition(_nodeNext, bCol - eCol - 1, bLine - eLine);
-                        m_doc->editIf->removeText(bLine, bCol, eLine, eCol + 1);
-                }
+                kafkaCommon::extractNode(node, 0L, true,false);
+                nodeModif->setNode(node);
         }
-        else if(_nodeModif.type == undoRedo::NodeModified)
+        if(nodeModif->type() == NodeModif::NodeModified)
         {
                 // Simply replacing the tag(node->tag) of the node by the old tag.
-                _node = kafkaCommon::getNodeFromLocation(_nodeModif.location);
-                if(!_node)
+                node = kafkaCommon::getNodeFromLocation(nodeModif->location());
+                if(!node)
                 {
-                        kdDebug(25001)<< "undoRedo::UndoNodeModif() - ERROR3" << endl;
-                        m_doc->activateParser(true);
+                        kdDebug(25001)<< "undoRedo::undoNodeModif() - NodeModif::NodeModified - ERROR3" << endl;
                         return false;
                 }
-                _tag = _nodeModif.tag;
-                _nodeModif.tag = _node->tag;
+                tag = nodeModif->tag();
+                nodeModif->setTag(node->tag);
                 b = false;
-                _nodeNext = kafkaCommon::getNextNode(_node, b);
-                _node->tag->beginPos(bLine, bCol);
-                _node->tag->endPos(eLine, eCol);
-                _node->tag = _tag;
-                if(undoTextModifs)
-                {
-                        text = _node->tag->tagStr();
-                        if(generateText)
-                        {
-                                bLine2 = bLine;
-                                bCol2 = bCol;
-                                eLine2 = bLine2;
-                                eCol2 = bCol2;
-                                if(_node->tag->type == Tag::Text)
-                                        text = kafkaInterface->getEncodedText(text, bLine2, bCol2, eLine2, eCol2);
-                                else if(_node->tag->type == Tag::XmlTag || _node->tag->type == Tag::XmlTagEnd)
-                                        text = kafkaInterface->generateCodeFromNode(_node, bLine2, bCol2, eLine2, eCol2);
-                                else
-                                        kdDebug(25001)<< "undoRedo::UndoNodeModif - ERROR can't generate text for type "
-                                                << _node->tag->type << endl;
-                                _node->tag->setStr(text);
-                                _node->tag->setTagPosition(bLine2, bCol2, eLine2, eCol2);
-                        }
-                        else
-                        {
-                                if(_node->prev)
-                                {
-                                        m = _node->prev;
-                                        while(m->child)
-                                        {
-                                                m = m->child;
-                                                while(m->next)
-                                                        m = m->next;
-                                        }
-                                        m->tag->endPos(bLine3, bCol3);
-                                }
-                                else if(_node->parent)
-                                        _node->parent->tag->endPos(bLine3, bCol3);
-                                else
-                                {
-                                        bCol3 = -1;
-                                        bLine3 = 0;
-                                }
-                                bCol3++;
-                                _node->tag->beginPos(bLine2, bCol2);
-                                _node->tag->endPos(eLine2, eCol2);
-                                if(bCol2 == -1)
-                                {
-                                        bCol3 = -1;
-                                        bLine3++;
-                                }
-                                if((eLine2 - bLine2) == 0)
-                                        _node->tag->setTagPosition(bLine3, bCol3, bLine3, bCol3 + (eCol2 - bCol2));
-                                else
-                                        _node->tag->setTagPosition(bLine3, bCol3, bLine3 + (eLine2 - bLine2), eCol2);
-                        }
-                        m_doc->editIf->removeText(bLine, bCol, eLine, eCol + 1);
-                        m_doc->editIf->insertText(bLine, bCol, _node->tag->tagStr());
-                        _node->tag->beginPos(bLine2, bCol2);
-                        _node->tag->endPos(eLine2, eCol2);
-                        kafkaCommon::fitsNodesPosition(_nodeNext, (eCol2 - bCol2) - (eCol - bCol),
-                                (eLine2 - bLine2) - (eLine - bLine));
-                }
+                node->tag = tag;
         }
-        else if(_nodeModif.type == undoRedo::NodeRemoved ||
-                _nodeModif.type == undoRedo::NodeAndChildsRemoved)
+        if(nodeModif->type() == NodeModif::NodeRemoved ||
+                nodeModif->type() == NodeModif::NodeAndChildsRemoved ||
+                nodeModif->type() == NodeModif::NodeMoved ||
+                nodeModif->type() == NodeModif::NodeAndChildsMoved)
         {
                 // Adding the node
-                newNode = _nodeModif.node;
-                _nodeModif.node = 0L;
-                _node = kafkaCommon::getNodeFromLocation(_nodeModif.location);
-                if(!_node)
+                newNode = nodeModif->node();
+                nodeModif->setNode(0L);
+                node = kafkaCommon::getNodeFromLocation(nodeModif->location());
+                if(!node)
                 {
                         // No node at this location, getting the parent Node and appending newNode after
                         // the last child of the parent.
-                        loc = _nodeModif.location;
+                        ref = nodeModif->location();
+                        QValueList<int> loc(ref);
                         loc.remove(loc.fromLast());
                         if(loc.empty())
                         {
                                 // No parent, adding it on top of the tree.
-                                newNode->parent = 0L;
-                                if(baseNode)
-                                {
-                                        _node = baseNode;
-                                        while(_node->next)
-                                                _node = _node->next;
-                                        newNode->next = 0L;
-                                        newNode->prev = _node;
-                                        _node->next = newNode;
-                                }
-                                else
-                                {
-                                        baseNode = newNode;
-                                        newNode->prev = 0L;
-                                        newNode->next = 0L;
-                                }
+                                kafkaCommon::insertNode(newNode, 0L, 0L, 0L, false);
                         }
                         else
                         {
-                                _node = kafkaCommon::getNodeFromLocation(loc);
-                                if(!_node)
+                                node = kafkaCommon::getNodeFromLocation(loc);
+                                if(!node)
                                 {
-                                        kdDebug(25001)<< "undoRedo::UndoNodeModif() - ERROR4" << endl;
-                                        m_doc->activateParser(true);
+                                        kdDebug(25001)<< "undoRedo::undoNodeModif() - NodeModif::NodeRemoved - ERROR4" << endl;
                                         return false;
                                 }
-                                newNode->parent = _node;
-                                n = _node->child;
-                                if(n)
-                                {
-                                        while(n->next)
-                                                n = n->next;
-                                        n->next = newNode;
-                                }
-                                else
-                                        _node->child = newNode;
-                                newNode->prev = n;
-                                newNode->next = 0L;
-                                //bCol++;
+                                kafkaCommon::insertNode(newNode, node, 0L, 0L, false);
                         }
-                        if(_nodeModif.childsNumber2 != 0)
-                        {
-                                // Moving nodes from the last child of newNode->prev next to the right of
-                                // newNode.
-                                n = newNode->prev;
-                                if(!n)
-                                {
-                                        kdDebug(25001)<< "undoRedo::UndoNodeModif() - ERROR5" << endl;
-                                        m_doc->activateParser(true);
-                                        return false;
-                                }
-                                while(n->child)
-                                {
-                                        n = n->child;
-                                        while(n->next)
-                                                n = n->next;
-                                }
-                                for(i = 0; i < _nodeModif.childsNumber2; i++)
-                                {
-                                        if(i == (_nodeModif.childsNumber2 - 1))
-                                        {
-                                                if(n->prev)
-                                                        n->prev->next = 0L;
-                                                n->prev = newNode;
-                                                newNode->next = n;
-                                                if(n->parent && n->parent->child == n)
-                                                        n->parent->child = 0L;
-                                        }
-                                        n->parent = newNode->parent;
-                                        n = n->prev;
-                                }
-                        }
-                        b = true;
-                        _nodeNext = kafkaCommon::getNextNode(newNode, b);
                 }
                 else
                 {
                         // A node is already here. Moving it to the right and adding newNode here.
-                        m = _node;
-                        if(_node->parent && _node->parent->child == _node)
-                                _node->parent->child = newNode;
-                        newNode->parent = _node->parent;
-                        if(_node->prev)
-                                _node->prev->next = newNode;
-                        newNode->prev = _node->prev;
-                        if(_nodeModif.type == undoRedo::NodeRemoved && _nodeModif.childsNumber != 0)
-                        {
-                                // Some Nodes at the right of newNode will be childs of newNode.
-                                for(i = 0; i < _nodeModif.childsNumber; i++)
-                                {
-                                        if(i == 0)
-                                        {
-                                                newNode->child = m;
-                                                m->prev = 0L;
-                                        }
-                                        m->parent = newNode;
-                                        if(i == (_nodeModif.childsNumber - 1))
-                                        {
-                                                if(m->next)
-                                                        m->next->prev = newNode;
-                                                newNode->next = m->next;
-                                                m->next = 0L;
-                                                break;
-                                        }
-                                        if(m->next)
-                                                m = m->next;
-                                        else//ERROR
-                                        {
-                                                kdDebug(25001)<< "undoRedo::UndoNodeModif() - ERROR6" << endl;
-                                                m_doc->activateParser(true);
-                                                return false;
-                                        }
-                                }
-                        }
-                        else
-                        {
-                                newNode->next = _node;
-                                _node->prev = newNode;
-                        }
-                        _nodeNext = _node;
-                }
-                if(newNode->next && QuantaCommon::closesTag(newNode->tag,  newNode->next->tag))
-                        newNode->next->closesPrevious = true;
-                n = newNode;
-                while(n)
-                {
-                        //remove any reference to a now deleted QListViewItem
-                        n->listItem = 0L;
-                        n = kafkaCommon::getNextNode(n, b, newNode);
-                }
-                if(undoTextModifs)
-                {
-                        if(newNode->prev)
-                        {
-                                m = newNode->prev;
-                                while(m->child)
-                                {
-                                        m = m->child;
-                                        while(m->next)
-                                                m = m->next;
-                                }
-                                m->tag->endPos(bLine, bCol);
-                        }
-                        else if(newNode->parent)
-                                newNode->parent->tag->endPos(bLine, bCol);
-                        else
-                        {
-                                bCol = -1;
-                                bLine = 0;
-                        }
-                        bCol++;
-                        eCol = bCol;
-                        eLine = bLine;
-                        n = newNode;
-                        b = false;
-                        newNode->tag->beginPos(bLine2, bCol2);
-                        if(bCol2 == -1)
-                        {
-                                bCol = -1;
-                                bLine++;
-                        }
-                        while(n)
-                        {
-                                text = n->tag->tagStr();
-                                if(generateText)
-                                {
-                                        //determine the depth of the node
-                                        m = n;
-                                        i = 0;
-                                        while(m->parent)
-                                        {
-                                                i++;
-                                                m = m->parent;
-                                        }
-                                        bLine2 = eLine;
-                                        bCol2 = eCol;
-                                        if(n->tag->type == Tag::Text)
-                                        {
-                                                text = "\n";
-                                                bLine3 = bLine2;
-                                                bCol3 = bCol2;
-                                                bLine3++;
-                                                bCol3 = -1;
-                                                j = i;
-                                                while(j != 0)
-                                                {
-                                                        text += "  ";
-                                                        bCol3++;
-                                                        j--;
-                                                }
-                                                text += kafkaInterface->getEncodedText(text, bLine3, bCol3 + 1, eLine, eCol);
-                                        }
-                                        else if(n->tag->type == Tag::XmlTag || n->tag->type == Tag::XmlTagEnd)
-                                        {
-                                                //set the empty tag if present
-                                                m = n->previousSibling();
-                                                if(m && m->tag->type == Tag::Empty)
-                                                {
-                                                        m->tag->setTagPosition(bLine2, bCol2 - 1, bLine2 + 1, 2*i - 1);
-                                                        text = "\n";
-                                                        j = i;
-                                                        while(j != 0)
-                                                        {
-                                                                text += "  ";
-                                                                j--;
-                                                        }
-                                                        m->tag->setStr(text);
-                                                        bLine2++;
-                                                        eLine++;
-                                                        bCol2 = 2*i;
-                                                        eCol = 2*i;
-                                                }
-                                                else if(m && m->tag->type == Tag::Text)
-                                                {
-                                                        m->tag->beginPos(bLine3, bCol3);
-                                                        m->tag->endPos(eLine3, eCol3);
-                                                        text = m->tag->tagStr();
-                                                        text += "\n";
-                                                        eLine3++;
-                                                        eCol3 = -1;
-                                                        j = i;
-                                                        while(j != 0)
-                                                        {
-                                                                text += "  ";
-                                                                j--;
-                                                                eCol3 += 2;
-                                                        }
-                                                        m->tag->setStr(text);
-                                                        m->tag->setTagPosition(bLine3, bCol3, eLine3, eCol3);
-                                                        bLine2++;
-                                                        eLine++;
-                                                        bCol2 = 2*i;
-                                                        eCol = 2*i;
-                                                }
-                                                text = kafkaInterface->generateCodeFromNode(n, bLine2, bCol2, eLine, eCol);
-                                        }
-                                        n->tag->setStr(text);
-                                        n->tag->setTagPosition(bLine2, bCol2, eLine, eCol);
-                                }
-                                else
-                                {
-                                        n->tag->beginPos(bLine2, bCol2);
-                                        n->tag->endPos(eLine2, eCol2);
-                                        if((eLine2 - bLine2) == 0)
-                                        {
-                                                n->tag->setTagPosition(eLine, eCol, eLine, eCol + (eCol2 - bCol2));
-                                                eCol += (eCol2 - bCol2);
-                                        }
-                                        else
-                                        {
-                                                n->tag->setTagPosition(eLine, eCol, eLine + (eLine2 - bLine2), eCol2);
-                                                eCol = eCol2;
-                                        }
-                                        eLine += (eLine2 - bLine2);
-                                }
-                                totalText += text;
-                                if(_nodeModif.type == undoRedo::NodeRemoved)
-                                        break;
-                                n = kafkaCommon::getNextNode(n, b, newNode);
-                                if(n)
-                                {
-                                        n->tag->beginPos(bLine3, bCol3);
-                                        if(bCol3 == -1)
-                                        {
-                                                eLine++;
-                                                eCol = -1;
-                                        }
-                                        else
-                                                eCol++;
-                                }
-                        }
-                        m_doc->editIf->insertText(bLine, bCol, totalText);
-                        kafkaCommon::fitsNodesPosition(_nodeNext, eCol - bCol + 1, eLine - bLine);
+                        kafkaCommon::insertNode(newNode, node->parent, node, 0L, false);
                 }
         }
-        else if(_nodeModif.type == undoRedo::NodeTreeRemoved)
+        if(nodeModif->type() == NodeModif::NodeTreeRemoved)
         {
-                // Appending the tree in the editor and putting its adress in baseNode.
-                baseNode = _nodeModif.node;
-                _nodeModif.node = 0L;
-                n = baseNode;
-                b = false;
-                while(n)
-                {
-                        //remove any reference to a now deleted QListViewItem
-                        n->listItem = 0L;
-                        totalText += n->tag->tagStr();
-                        n = kafkaCommon::getNextNode(n, b);
-                }
-                if(undoTextModifs)
-                        m_doc->editIf->insertText(0, 0, totalText);
+                //Adding the tree.
+                baseNode = nodeModif->node();
+                nodeModif->setNode(0L);
         }
-        else if(_nodeModif.type == undoRedo::NodeMoved ||
-                _nodeModif.type == undoRedo::NodeAndChildsMoved)
-        {
-                // NOT IMPLEMENTED and i don't think i will need to.
-        }
-*/
+
         return true;
 }
 
-bool undoRedo::RedoNodeModif(NodeModif &/**_nodeModif*/, bool /**undoTextModifs*/,
-        bool /**generateText*/)
+bool undoRedo::redoNodeModif(NodeModif *nodeModif)
 {
-/**     bool success;
-        if(_nodeModif.type == undoRedo::NodeTreeAdded)
-                _nodeModif.type = undoRedo::NodeTreeRemoved;
-        else if(_nodeModif.type == undoRedo::NodeAndChildsAdded)
-                _nodeModif.type = undoRedo::NodeAndChildsRemoved;
-        else if(_nodeModif.type == undoRedo::NodeAdded)
-                _nodeModif.type = undoRedo::NodeRemoved;
-        else if(_nodeModif.type == undoRedo::NodeRemoved)
-                _nodeModif.type = undoRedo::NodeAdded;
-        else if(_nodeModif.type == undoRedo::NodeAndChildsRemoved)
-                _nodeModif.type = undoRedo::NodeAndChildsAdded;
-        else if(_nodeModif.type == undoRedo::NodeTreeRemoved)
-                _nodeModif.type = undoRedo::NodeTreeAdded;
+        bool success;
+        QValueList<int> tmp;
+        
+        //To do the opposite action of undoNodeModif(), we simply have
+        //to change the type of nodeModif
+        
+        if(nodeModif->type() == NodeModif::NodeTreeAdded)
+                nodeModif->setType(NodeModif::NodeTreeRemoved);
+        else if(nodeModif->type() == NodeModif::NodeAndChildsAdded)
+                nodeModif->setType(NodeModif::NodeAndChildsRemoved);
+        else if(nodeModif->type() == NodeModif::NodeAdded)
+                nodeModif->setType(NodeModif::NodeRemoved);
+        else if(nodeModif->type() == NodeModif::NodeRemoved)
+                nodeModif->setType(NodeModif::NodeAdded);
+        else if(nodeModif->type() == NodeModif::NodeAndChildsRemoved)
+                nodeModif->setType(NodeModif::NodeAndChildsAdded);
+        else if(nodeModif->type() == NodeModif::NodeTreeRemoved)
+                nodeModif->setType(NodeModif::NodeTreeAdded);
+        else if(nodeModif->type() == NodeModif::NodeMoved || nodeModif->type() == NodeModif::NodeAndChildsMoved)
+        {
+                tmp = nodeModif->location();
+                nodeModif->setLocation(nodeModif->finalLocation());
+                nodeModif->setFinalLocation(tmp);
+        }
 
-        success = UndoNodeModif(_nodeModif, undoTextModifs, generateText);
+        success = undoNodeModif(nodeModif);
 
-        if(_nodeModif.type == undoRedo::NodeTreeRemoved)
-                _nodeModif.type = undoRedo::NodeTreeAdded;
-        else if(_nodeModif.type == undoRedo::NodeAndChildsRemoved)
-                _nodeModif.type = undoRedo::NodeAndChildsAdded;
-        else if(_nodeModif.type == undoRedo::NodeRemoved)
-                _nodeModif.type = undoRedo::NodeAdded;
-        else if(_nodeModif.type == undoRedo::NodeAdded)
-                _nodeModif.type = undoRedo::NodeRemoved;
-        else if(_nodeModif.type == undoRedo::NodeAndChildsAdded)
-                _nodeModif.type = undoRedo::NodeAndChildsRemoved;
-        else if(_nodeModif.type == undoRedo::NodeTreeAdded)
-                _nodeModif.type = undoRedo::NodeTreeRemoved;
-        return success;*/
-        return true;
+        if(nodeModif->type() == NodeModif::NodeTreeRemoved)
+                nodeModif->setType(NodeModif::NodeTreeAdded);
+        else if(nodeModif->type() == NodeModif::NodeAndChildsRemoved)
+                nodeModif->setType(NodeModif::NodeAndChildsAdded);
+        else if(nodeModif->type() == NodeModif::NodeRemoved)
+                nodeModif->setType(NodeModif::NodeAdded);
+        else if(nodeModif->type() == NodeModif::NodeAdded)
+                nodeModif->setType(NodeModif::NodeRemoved);
+        else if(nodeModif->type() == NodeModif::NodeAndChildsAdded)
+                nodeModif->setType(NodeModif::NodeAndChildsRemoved);
+        else if(nodeModif->type() == NodeModif::NodeTreeAdded)
+                nodeModif->setType(NodeModif::NodeTreeRemoved);
+        else if(nodeModif->type() == NodeModif::NodeMoved || nodeModif->type() == NodeModif::NodeAndChildsMoved)
+        {
+                tmp = nodeModif->location();
+                nodeModif->setLocation(nodeModif->finalLocation());
+                nodeModif->setFinalLocation(tmp);
+        }
+        
+        return success;
 }
 
-bool undoRedo::UndoNodeModifInKafka(NodeModif &/**_nodeModif*/)
+bool undoRedo::undoNodeModifInKafka(NodeModif */**_nodeModif*/)
 {
         /**Node *_node, *n;
         Tag *_tag;
@@ -1046,7 +584,7 @@ bool undoRedo::UndoNodeModifInKafka(NodeModif &/**_nodeModif*/)
                 _node = kafkaCommon::getNodeFromLocation(_nodeModif.location);
                 if(!_node)
                 {
-                        kdDebug(25001)<< "undoRedo::UndoNodeModifInKafka() - ERROR1" << endl;
+                        kdDebug(25001)<< "undoRedo::undoNodeModifInKafka() - ERROR1" << endl;
                         return false;
                 }
                 if(_node->_rootNode.isNull())
@@ -1104,7 +642,7 @@ bool undoRedo::UndoNodeModifInKafka(NodeModif &/**_nodeModif*/)
                         n = _node->prev;
                         if(!n)
                         {
-                                kdDebug(25001)<< "undoRedo::UndoNodeModifInKafka() - ERROR2" << endl;
+                                kdDebug(25001)<< "undoRedo::undoNodeModifInKafka() - ERROR2" << endl;
                                 return false;
                         }
                         domNode2 = n->_leafNode;
@@ -1165,7 +703,7 @@ bool undoRedo::UndoNodeModifInKafka(NodeModif &/**_nodeModif*/)
                 _node = kafkaCommon::getNodeFromLocation(_nodeModif.location);
                 if(!_node)
                 {
-                        kdDebug(25001)<< "undoRedo::UndoNodeModifInKafka() - ERROR4" << endl;
+                        kdDebug(25001)<< "undoRedo::undoNodeModifInKafka() - ERROR4" << endl;
                         return false;
                 }
                 if(_node->_rootNode.isNull())
@@ -1184,7 +722,7 @@ bool undoRedo::UndoNodeModifInKafka(NodeModif &/**_nodeModif*/)
                 _node = kafkaCommon::getNodeFromLocation(_nodeModif.location);
                 if(!_node)
                 {
-                        kdDebug(25001)<< "undoRedo::UndoNodeModifInKafka() - ERROR1" << endl;
+                        kdDebug(25001)<< "undoRedo::undoNodeModifInKafka() - ERROR1" << endl;
                         return false;
                 }
                 if(_node->tag->type == Tag::XmlTag || _node->tag->type == Tag::Text)
@@ -1310,9 +848,9 @@ void undoRedo::reloadQuantaEditor(bool force, bool syncQuantaCursor, bool encode
                           //clean string but does not touch the position!!! FIXME FIXME FIXME
                           node->tag->setStr(kafkaInterface->generateCodeFromNode(node, 0, 0, eLine, eCol, encodeText));
                           //node->tag->setTagPosition(bLine, bCol, eLine, eCol);
-                          kafkaCommon::fitIndentationNodes(kafkaCommon::getPrevNodeNE(node), node);
+                          kafkaCommon::fitIndentationNodes(kafkaCommon::getPrevNodeNE(node), node, 0L);
                           goUp = false;
-                          kafkaCommon::fitIndentationNodes(node, kafkaCommon::getNextNodeNE(node, goUp));
+                          kafkaCommon::fitIndentationNodes(node, kafkaCommon::getNextNodeNE(node, goUp), 0L);
                           kafkaCommon::applyIndentation(node, 2, 0);
                         }
                         else if(node->tag->type == Tag::ScriptTag)
@@ -1429,7 +967,7 @@ void undoRedo::codeFormatting()
   reloadQuantaEditor(true, false, false);
 }
 
-bool undoRedo::RedoNodeModifInKafka(NodeModif &/**_nodeModif*/)
+bool undoRedo::redoNodeModifInKafka(NodeModif */**_nodeModif*/)
 {
         /**bool success;
         if(_nodeModif.type == undoRedo::NodeTreeAdded)
@@ -1445,7 +983,7 @@ bool undoRedo::RedoNodeModifInKafka(NodeModif &/**_nodeModif*/)
         else if(_nodeModif.type == undoRedo::NodeTreeRemoved)
                 _nodeModif.type = undoRedo::NodeTreeAdded;
 
-        success = UndoNodeModifInKafka(_nodeModif);
+        success = undoNodeModifInKafka(_nodeModif);
 
         if(_nodeModif.type == undoRedo::NodeTreeRemoved)
                 _nodeModif.type = undoRedo::NodeTreeAdded;
@@ -1496,7 +1034,7 @@ bool undoRedo::syncKafkaView()
                         it2 = (*it).NodeModifList.fromLast();
                         while(it2 != (*it).NodeModifList.end())
                         {
-                                if(!UndoNodeModif((*it2), false))
+                                if(!undoNodeModif((*it2), false))
                                 {
                                         kdDebug(25001)<< "undoRedo::syncKafkaView() - ERROR 1" << endl;
                                         return false;
@@ -1519,12 +1057,12 @@ bool undoRedo::syncKafkaView()
                                 if((*it2).type == undoRedo::NodeTreeAdded || (*it2).type == undoRedo::NodeAndChildsAdded ||
                                         (*it2).type == undoRedo::NodeAdded || (*it2).type == undoRedo::NodeModified)
                                 {
-                                        if(!RedoNodeModif((*it2), false))
+                                        if(!redoNodeModif((*it2), false))
                                         {
                                                 kdDebug(25001)<< "undoRedo::syncKafkaView() - ERROR 2" << endl;
                                                 return false;
                                         }
-                                        if(!RedoNodeModifInKafka(*it2))
+                                        if(!redoNodeModifInKafka(*it2))
                                         {
                                                 kdDebug(25001)<< "undoRedo::syncKafkaView() - ERROR 3" << endl;
                                                 return false;
@@ -1532,12 +1070,12 @@ bool undoRedo::syncKafkaView()
                                 }
                                 else
                                 {
-                                        if(!RedoNodeModifInKafka(*it2))
+                                        if(!redoNodeModifInKafka(*it2))
                                         {
                                                 kdDebug(25001)<< "undoRedo::syncKafkaView() - ERROR 4" << endl;
                                                 return false;
                                         }
-                                        if(!RedoNodeModif((*it2), false))
+                                        if(!redoNodeModif((*it2), false))
                                         {
                                                 kdDebug(25001)<< "undoRedo::syncKafkaView() - ERROR 5" << endl;
                                                 return false;
@@ -1560,7 +1098,7 @@ bool undoRedo::syncKafkaView()
                         it++;
                         for(it2 = (*it).NodeModifList.begin(); it2 != (*it).NodeModifList.end(); it2++)
                         {
-                                if(!RedoNodeModif((*it2), false))
+                                if(!redoNodeModif((*it2), false))
                                 {
                                         kdDebug(25001)<< "undoRedo::syncKafkaView() - ERROR 6" << endl;
                                         return false;
@@ -1579,12 +1117,12 @@ bool undoRedo::syncKafkaView()
                                 if((*it2).type == undoRedo::NodeTreeAdded || (*it2).type == undoRedo::NodeAndChildsAdded ||
                                         (*it2).type == undoRedo::NodeAdded || (*it2).type == undoRedo::NodeModified)
                                 {
-                                        if(!UndoNodeModifInKafka(*it2))
+                                        if(!undoNodeModifInKafka(*it2))
                                         {
                                                 kdDebug(25001)<< "undoRedo::syncKafkaView() - ERROR 8" << endl;
                                                 return false;
                                         }
-                                        if(!UndoNodeModif((*it2), false))
+                                        if(!undoNodeModif((*it2), false))
                                         {
                                                 kdDebug(25001)<< "undoRedo::syncKafkaView() - ERROR 7" << endl;
                                                 return false;
@@ -1592,12 +1130,12 @@ bool undoRedo::syncKafkaView()
                                 }
                                 else
                                 {
-                                        if(!UndoNodeModif((*it2), false))
+                                        if(!undoNodeModif((*it2), false))
                                         {
                                                 kdDebug(25001)<< "undoRedo::syncKafkaView() - ERROR 10" << endl;
                                                 return false;
                                         }
-                                        if(!UndoNodeModifInKafka(*it2))
+                                        if(!undoNodeModifInKafka(*it2))
                                         {
                                                 kdDebug(25001)<< "undoRedo::syncKafkaView() - ERROR 9" << endl;
                                                 return false;
@@ -1650,7 +1188,7 @@ bool undoRedo::syncQuantaView()
                         it2 = (*it).NodeModifList.fromLast();
                         while(it2 != (*it).NodeModifList.end())
                         {
-                                if(!UndoNodeModif((*it2), false))
+                                if(!undoNodeModif((*it2), false))
                                 {
                                         kdDebug(25001)<< "undoRedo::syncQuantaView() - ERROR 1" << endl;
                                         return false;
@@ -1670,7 +1208,7 @@ bool undoRedo::syncQuantaView()
                         sourceIterator++;
                         for (it2 = (*sourceIterator).NodeModifList.begin(); it2 != (*sourceIterator).NodeModifList.end(); it2++)
                         {
-                                if(!RedoNodeModif((*it2), true, true))
+                                if(!redoNodeModif((*it2), true, true))
                                 {
                                         kdDebug(25001)<< "undoRedo::syncQuantaView() - ERROR 2" << endl;
                                         return false;
@@ -1692,7 +1230,7 @@ bool undoRedo::syncQuantaView()
                         it++;
                         for(it2 = (*it).NodeModifList.begin(); it2 != (*it).NodeModifList.end(); it2++)
                         {
-                                if(!RedoNodeModif((*it2), false))
+                                if(!redoNodeModif((*it2), false))
                                 {
                                         kdDebug(25001)<< "undoRedo::syncQuantaView() - ERROR 3" << endl;
                                         return false;
@@ -1708,7 +1246,7 @@ bool undoRedo::syncQuantaView()
                         it2 = (*sourceIterator).NodeModifList.fromLast();
                         while(it2 != (*sourceIterator).NodeModifList.end())
                         {
-                                if(!UndoNodeModif((*it2), true, true))
+                                if(!undoNodeModif((*it2), true, true))
                                 {
                                         kdDebug(25001)<< "undoRedo::syncQuantaView() - ERROR 4" << endl;
                                         return false;
@@ -1822,12 +1360,19 @@ void undoRedo::debugOutput()
                         {
                                 for(it3 = (*it2)->location().begin(); it3 != (*it2)->location().end(); ++it3)
                                         kdDebug(24000)<< (*it3) << endl;
+                                if((*it2)->type() != NodeModif::NodeMoved ||
+                                  (*it2)->type() != NodeModif::NodeAndChildsMoved)
+                                {
+                                  kdDebug(24000)<< "==== Location2: " << endl;
+                                  for(it3 = (*it2)->finalLocation().begin(); it3 != (*it2)->finalLocation().end(); ++it3)
+                                     kdDebug(24000)<< (*it3) << endl;
+                                }
                         }
                         if((((*it2)->type() == NodeModif::NodeRemoved && !afterEditorIt) ||
                                 ((*it2)->type() == NodeModif::NodeAdded && afterEditorIt)) && (*it2)->node())
                                 kdDebug(24000)<< "==== Node: " << (*it2)->node()->tag->name <<
                                         " - contents: " << (*it2)->node()->tag->tagStr() << endl;
-                        if((*it2)->type() == NodeModif::NodeModified)
+                        if((*it2)->type() == NodeModif::NodeModified && (*it2)->tag())
                                 kdDebug(24000)<< "==== Tag: " << (*it2)->tag()->name <<
                                         " - contents: " << (*it2)->tag()->tagStr() << endl;
                         if(((*it2)->type() == NodeModif::NodeRemoved && !afterEditorIt) ||

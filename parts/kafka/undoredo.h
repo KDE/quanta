@@ -24,6 +24,7 @@
 #include "node.h"
 
 class Document;
+class NodeSelectionInd;
 
 /**
  * The basic unit of the undo/redo system : a Node modification.
@@ -43,7 +44,7 @@ public:
 	void setType(int type){m_type = type;}
 
 	/**
-	 * Returns the current type of the NodeModif.
+	 * @return Returns the current type of the NodeModif.
 	 */
 	int type() {return m_type;}
 
@@ -54,9 +55,9 @@ public:
 	void setLocation(QValueList<int> location) {m_location = location;}
 
 	/**
-	 * Returns the location of the Node which have been modified.
+	 * @return Returns the location of the Node which have been modified.
 	 */
-	QValueList<int> location() {return m_location;}
+	QValueList<int>& location() {return m_location;}
 
 	/**
 	 * For Node move : Final location of the Node moved.
@@ -65,9 +66,9 @@ public:
 	void setFinalLocation(QValueList<int> location) {m_finalLocation = location;}
 
 	/**
-	 * Returns the final location of the Node which was moved.
+	 * @return Returns the final location of the Node which was moved.
 	 */
-	QValueList<int> finalLocation() {return m_finalLocation;}
+	QValueList<int>& finalLocation() {return m_finalLocation;}
 
 	/**
 	 * For Node deletion: Store the deleted Node.
@@ -76,7 +77,7 @@ public:
 	void setNode(Node *node);
 
 	/**
-	 * Returns the deleted Node.
+	 * @return Returns the deleted Node.
 	 */
 	Node *node() {return m_node;}
 
@@ -87,11 +88,12 @@ public:
 	void setTag(Tag *tag);
 
 	/**
-	 * Returns the original Tag.
+	 * @return Returns the original Tag.
 	 */
 	Tag *tag() {return m_tag;}
 
 	/**
+         * TODO:REMOVE
 	 * For non-XmlEnd Node deletion without its children.
 	 * @param childrenNumber The number of children which are moved up
 	 * at the location where was the deleted Node.
@@ -99,18 +101,21 @@ public:
 	void setChildrenMovedUp(int childrenNumber) {m_childrenMovedUp = childrenNumber;}
 
 	/**
-	 * Returns the number of childs which were moved up.
+         * TODO:REMOVE
+	 * @return Returns the number of childs which were moved up.
 	 */
 	int childrenMovedUp() {return m_childrenMovedUp;}
 
 	/**
+         * TODO:REMOVE
 	 * For XmlEnd Node deletion : number of  moved down
 	 * @param number The number of right neighbours which are moved down.
 	 */
 	void setNeighboursMovedDown(int number) {m_neighboursMovedDown = number;}
 
 	/**
-	 * Returns the number of right neighbours which were moved down.
+         * TODO:REMOVE
+	 * @return Returns the number of right neighbours which were moved down.
 	 */
 	int neighboursMovedDown() {return m_neighboursMovedDown;}
 
@@ -118,7 +123,6 @@ public:
 	enum NodeModification {
 		//A complete Node Tree is added. Implemented.
 		NodeTreeAdded = 0,
-		//WARNING : not tested yet.
 		//A Node and its childs are added. Implemented.
 		NodeAndChildsAdded,
 		//A Node is added. Implemented.
@@ -126,18 +130,15 @@ public:
 		//WARNING : do not use this if the node type or the node name change.
 		//A Node is modified. Implemented.
 		NodeModified,
-		//a Node is removed. Implemented.
+		//A Node is removed. Implemented.
 		NodeRemoved,
-		//WARNING : not tested yet.
 		//A Node and its childs are removed. Implemented.
 		NodeAndChildsRemoved,
 		//The complete Node tree is removed. Implemented.
 		NodeTreeRemoved,
-		// WARNING : node movement is only node-based, e.g. you can't use it for Drag'n'Drop
-		//use NodeRemoved and NodeAdded instead
-		//WARNING : NodeMoved not implemented, because it has no use for the moment.
+		//Moving a Node from one location to another. Implemented.
 		NodeMoved,
-		//WARNING : NodeAndChildsMoved not implemented for the same reason.
+		//Moving a Node and its children from one location to another.
 		NodeAndChildsMoved
 	};
 
@@ -151,7 +152,8 @@ public:
 };
 
 /**
- * A NodeModifsSet contains all the Node modifications made by one user input.
+ * A NodeModifsSet contains all the Node modifications made by one user input, and the 
+ * cursor and selection location before and after the user input.
  */
 class NodeModifsSet
 {
@@ -167,15 +169,15 @@ public:
 	/**
 	 * Returns the list of NodeModifs.
 	 */
-	QPtrList<NodeModif> nodeModifList() {return m_nodeModifList;}
-
+	QPtrList<NodeModif> & nodeModifList() {return m_nodeModifList;}
+        
 	/**
 	 * Set the Modified flag AFTER the user input.
 	 */
 	void setIsModified(bool isModified) {m_isModified = isModified;}
 
 	/**
-	 * Returns the Modified flag.
+	 * @return Returns the Modified flag.
 	 */
 	bool isModified(){return m_isModified;}
 
@@ -185,21 +187,25 @@ public:
 	void setDescription(const QString &description) {m_description = description;}
 
 	/**
-	 * Returns the description of the user input.
+	 * @return Returns the description of the user input.
 	 */
 	QString description() {return m_description;}
-
+        
+        /**
+         * @return Return the selection before the Node modifications.
+         */
+        NodeSelectionInd *selectionBefore() {return m_selectionBefore;}
+        
+        /**
+         * @return Return the selection after the Node modifications.
+         */
+        NodeSelectionInd *selectionAfter() {return m_selectionAfter;}
+         
 private:
 	QPtrList<NodeModif> m_nodeModifList;
 	bool m_isModified;
 	QString m_description;
-
-	/**TODO:see later for a common cursor position. */
-	uint cursorX;
-	uint cursorY;
-	/** The position of the cursor after the user input */
-	uint cursorX2;
-	uint cursorY2;
+        NodeSelectionInd *m_selectionBefore, *m_selectionAfter;
 
 };
 
@@ -236,8 +242,24 @@ public:
 	 * cf undoRedo::modificationLocation.
 	 */
 	void addNewModifsSet(NodeModifsSet *modifs, int modifLocation);
+        
+        /**
+         * TEMPORARY function.
+         * First we will only enable undoRedo in VPL : this class will only log changes
+         * made in VPL.
+         * This function specify if we should log the changes submitted to addNewModifsSet or not.
+         * @param True => enable, false => disable
+         */
+        void turnOn(bool on);
+        
+        /**
+         * TEMPORARY function.
+         * @return Returns true if the changes are logged.
+         */
+        bool turnedOn() {return m_loggingEnabled;}
 
 	/**
+         * TODO:REMOVE
 	 * Ignores the ModifSet that will come in the number'th position. Useful when
 	 * KTextEditor::EditInterface::insertText() is called before parser::rebuild() and
 	 * thus parser::rebuild will be called two times.
@@ -246,6 +268,7 @@ public:
 	 void dontAddModifsSet(int number) {m_dontAddModifSet = number;}
 
 	/**
+         * TODO:REMOVE
 	 * Merges the next ModifsSet with the previous one. Useful when autocompletion
 	 * makes parser::rebuild() to be called again.
 	 */
@@ -256,14 +279,14 @@ public:
 	 * @param kafkaUndo Specifies if the undo operation is done in the kafka view.
 	 * @return Returns true if a previous undo operation is available.
 	 */
-	bool undo(bool kafkaUndo);
+	bool undo();
 
 	/**
 	 * Makes the redo operation.
 	 * @param kafkaUndo Specifies if the undo operation is done in the kafka view.
 	 * @return Returns true if a next redo operation is available.
 	 */
-	bool redo(bool kafkaUndo);
+	bool redo();
 
 	/**
 	 * Synchronize the kafka view with the quanta view by applying the NodeModifs
@@ -335,18 +358,16 @@ private:
 	/**
 	 * This is one of the main functions which apply the changes needed to undo a nodeModif
 	 * in the text and in the Node tree.
-	 * @param _nodeModif The nodeModif to undo.
-	 * @param undoTextModifs Specifies if the undo operation should undo the text modifications.
-	 * @param generateText Specifies if the text of the Tags should be generated.
+	 * @param nodeModif The nodeModif to undo.
 	 * @return Returns true if the undo has correctly worked.
 	 */
-	bool UndoNodeModif(NodeModif &_nodeModif, bool undoTextModifs = true, bool generateText = false);
+	bool undoNodeModif(NodeModif *nodeModif);
 
 	/**
-	 * Convenient function which call UndoNodeModif,
+	 * Convenient function which call undoNodeModif,
 	 * while changing the type of the NodeModifs to make them redo.
 	 */
-	bool RedoNodeModif(NodeModif &_nodeModif, bool undoTextModifs = true, bool generateText = false);
+	bool redoNodeModif(NodeModif *nodeModif);
 
 	/**
 	 * This is one of the main functions which apply the changes needed to undo a nodeModif
@@ -354,13 +375,13 @@ private:
 	 * @param _nodeModif The nodeModif to undo.
 	 * @return Returns true if the undo has correctly worked.
 	 */
-	bool UndoNodeModifInKafka(NodeModif &_nodeModif);
+	bool undoNodeModifInKafka(NodeModif *nodeModif);
 
 	/**
-	 * Convenient function which call UndoNodeModifInKafka,
+	 * Convenient function which call undoNodeModifInKafka,
 	 * while changing the type of the NodeModifs to make them redo.
 	 */
-	bool RedoNodeModifInKafka(NodeModif &_nodeModif);
+	bool redoNodeModifInKafka(NodeModif *nodeModif);
 
 	/**
 	 * Prints in stdout a debugging flow.
@@ -389,6 +410,7 @@ private:
 	Document *m_doc;
 	bool m_mergeNext;
 	int m_dontAddModifSet;
+        bool m_loggingEnabled;
 };
 
 #endif

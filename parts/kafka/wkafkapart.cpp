@@ -448,6 +448,38 @@ void KafkaDocument::disconnectAllDomNodes()
 	domNodeProps.clear();
 }
 
+void KafkaDocument::setCursorAndSelection(NodeSelectionInd *nodeSelection)
+{
+  bool cursorAtSelectionStart;
+  DOM::Node startDomNode, endDomNode, foo;
+  Node *startNode, *endNode;
+  int startOffset, endOffset;
+   
+  cursorAtSelectionStart = nodeSelection->cursorAtSelectionStart();
+  startNode = kafkaCommon::getNodeFromLocation(nodeSelection->cursorNode());
+  endNode = kafkaCommon::getNodeFromLocation(nodeSelection->cursorNodeEndSel());
+  
+  if(startNode)
+    startDomNode = *(startNode->rootNode());
+  if(endNode)
+    endDomNode = *(endNode->rootNode());
+  translateNodeIntoKafkaCursorPosition(startNode, nodeSelection->cursorOffset(), foo, (long&)startOffset);
+  translateNodeIntoKafkaCursorPosition(endNode, nodeSelection->cursorOffsetEndSel(), foo, (long&)endOffset);
+  
+  
+  if(cursorAtSelectionStart && !startDomNode.isNull())
+  {
+    m_kafkaPart->setCurrentNode(startDomNode, startOffset);
+  }
+  else if(!cursorAtSelectionStart && !endDomNode.isNull())
+  {
+    m_kafkaPart->setCurrentNode(endDomNode, endOffset);
+  }
+  
+  if(!startDomNode.isNull() && !endDomNode.isNull())
+    m_kafkaPart->setSelection(DOM::Range(startDomNode, (long)startOffset, endDomNode, (long)endOffset));
+}
+
 bool KafkaDocument::buildKafkaNodeFromNode(Node *node, bool insertNode)
 {
 #ifdef LIGHT_DEBUG
@@ -1192,51 +1224,53 @@ void KafkaDocument::translateQuantaIntoNodeCursorPosition(uint line, uint col, N
 #endif
 }
 
-long KafkaDocument::translateKafkaIntoNodeCursorPosition(DOM::Node domNode, long domNodeOffset)
+void KafkaDocument::translateKafkaIntoNodeCursorPosition(DOM::Node domNode, long domNodeOffset, Node **node, int &offset)
 {
-	Node *node;
 	QString decodedText, encodedChar, encodedText, currentChar;
 	QChar curChar, oldChar;
 	long currentOffset;
 	bool waitForSpace = false, found = false;
 	int curNodeOffset, bLine, bCol, eLine, eCol;
 
+        offset = 0;
+        (*node) = 0L;
+        
 	if(domNode.isNull())
 	{
 #ifdef HEAVY_DEBUG
 		kdDebug(25001)<< "KafkaDocument::translateKafkaIntoNodeCursorPosition()" <<
 			" - DOM::Node not found!" << endl;
 #endif
-		return 0;
+		return ;
 	}
 
 	//get the corresponding Node*
-	node = getNode(domNode);
-	if(!node)
+	(*node) = getNode(domNode);
+	if(!(*node))
 	{
 #ifdef HEAVY_DEBUG
 		kdDebug(25001)<< "KafkaDocument::translateKafkaIntoNodeCursorPosition()" <<
 			" - Node not found!" << endl;
 #endif
-		return 0;
+		return ;
 	}
 
 	//If this node is selected (-1 means selected) then return "node selected" ;-)
 	if(domNodeOffset == -1)
 	{
-		return -1;
+		return ;
 	}
 
-	if(!node->tag->cleanStrBuilt)
+	if(!(*node)->tag->cleanStrBuilt)
 	{
 		//We NEED to have the up-to-date string in node.
-		node->tag->setStr(generateCodeFromNode(node, bLine, bCol, eLine, eCol));
+		(*node)->tag->setStr(generateCodeFromNode((*node), bLine, bCol, eLine, eCol));
 		//FIXME we shouldn't set it but if we don't the text will be re-encoded!
-		node->tag->cleanStrBuilt = true;
+		(*node)->tag->cleanStrBuilt = true;
 	}
 
 	decodedText = domNode.nodeValue().string();
-	encodedText = node->tag->tagStr();
+	encodedText = (*node)->tag->tagStr();
 	currentOffset = domNodeOffset;
 	curNodeOffset = 0;
 
@@ -1245,7 +1279,7 @@ long KafkaDocument::translateKafkaIntoNodeCursorPosition(DOM::Node domNode, long
 		decodedText << ": encoded text:" << encodedText << ":" << endl;
 #endif
 
-	if(node->tag->type == Tag::Text)
+	if((*node)->tag->type == Tag::Text)
 	{
 		while(currentOffset > 0)
 		{
@@ -1297,7 +1331,7 @@ long KafkaDocument::translateKafkaIntoNodeCursorPosition(DOM::Node domNode, long
 	kdDebug(25001)<<"KafkaDocument::translateKafkaIntoNodeCursorPosition() - " <<
 		curNodeOffset << endl;
 #endif
-	return curNodeOffset;
+	offset = curNodeOffset;
 }
 
 void KafkaDocument::translateKafkaIntoQuantaCursorPosition(DOM::Node _currentDomNode, int offset, int &line, int &col)

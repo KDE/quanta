@@ -656,12 +656,12 @@ void TagAction::insertOutputInTheNodeTree(QString str1, QString str2, Node *node
                 
                 if(view->hadLastFocus() == QuantaView::VPLFocus)
                 {
-                  nodeOffset = wkafka->translateKafkaIntoNodeCursorPosition(domNode, domNodeOffset);
+                  wkafka->translateKafkaIntoNodeCursorPosition(domNode, domNodeOffset, &dummy, nodeOffset);
                   kafkaPart->selection(domStartContainer, startOffset, domEndContainer, endOffset);
-                  startContainer = wkafka->getNode(domStartContainer);
-                  endContainer = wkafka->getNode(domEndContainer);
-                  startOffset = wkafka->translateKafkaIntoNodeCursorPosition(domStartContainer, startOffset);
-                  endOffset = wkafka->translateKafkaIntoNodeCursorPosition(domEndContainer, endOffset);
+                  wkafka->translateKafkaIntoNodeCursorPosition(domStartContainer, startOffset,
+                    &startContainer, (int&)startOffset);
+                  wkafka->translateKafkaIntoNodeCursorPosition(domEndContainer, endOffset,
+                    &endContainer, (int&)endOffset);
                   hasSelection = kafkaPart->hasSelection();
                 }
                 else
