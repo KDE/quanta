@@ -115,7 +115,6 @@ bool ViewManager::removeView(QuantaView *view, bool force)
 {
     if (view)
     {
-       ToolbarTabWidget::ref()->reparent(0L, 0, QPoint(), false);
        if (force || view->mayRemove())
       {
         if (view == m_documentationView)
@@ -124,6 +123,7 @@ bool ViewManager::removeView(QuantaView *view, bool force)
             m_lastActiveView = 0L;
         if (view == m_lastActiveEditorView)
             m_lastActiveEditorView = 0L;
+        ToolbarTabWidget::ref()->reparent(0L, 0, QPoint(), false);
         quantaApp->closeWindow(view);
         if (!quantaApp->activeWindow())
         {
@@ -259,11 +259,11 @@ bool ViewManager::saveAll(bool dont_ask)
                   w->createTempFile();
                   if (w->isModified())
                       flagsave = false;
+              } else
+              {
+                  if (!view->saveModified())
+                    flagsave = false;
               }
-          } else
-          {
-              if (!view->saveModified())
-                  flagsave = false;
           }
           if (w && w->url().isLocalFile())
               fileWatcher->addFile(w->url().path());

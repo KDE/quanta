@@ -442,7 +442,6 @@ void QuantaView::slotSourceGetFocus()
 #ifdef LIGHT_DEBUG
   kdDebug(25001)<< "slotSourceGetFocus(true)" << endl;
 #endif
-  kdDebug(24000)<< "slotSourceGetFocus(true)" << endl;
   KAction *action;
 
   //We reload the quanta view from the Node Tree.
