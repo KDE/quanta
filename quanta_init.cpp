@@ -69,6 +69,8 @@
 #include "widgets/whtmlpart.h"
 #include "messages/messageoutput.h"
 
+#include "toolbar/tagaction.h"
+
 #include "treeviews/fileslistview.h"
 #include "treeviews/filestreeview.h"
 #include "treeviews/projecttreeview.h"
@@ -743,7 +745,7 @@ bool QuantaApp::queryClose()
   {
     exitingFlag = true;
     saveOptions();
-    saveModifiedToolbars();
+    removeToolbars();
     canExit = doc->saveAll(false);
     if (canExit)
     {
@@ -1336,7 +1338,7 @@ void QuantaApp::initTagDict()
 void QuantaApp::initActions()
 {
 
-  editTagAction = new KAction( i18n( "&Edit Current Tag..." ), CTRL+Key_E,
+    editTagAction = new KAction( i18n( "&Edit Current Tag..." ), CTRL+Key_E,
                         view, SLOT( slotEditCurrentTag() ),
                         actionCollection(), "edit_current_tag" );
 
@@ -1656,6 +1658,57 @@ void QuantaApp::initActions()
 
     KStdAction::back   ( this, SLOT( slotBack() ),    actionCollection(), "w_back" );
     KStdAction::forward( this, SLOT( slotForward() ), actionCollection(), "w_forward" );
+
+    m_actions = new QDomDocument();
+//load the global actions
+    QFile f(qConfig.globalDataDir + "quanta/actions.rc");
+    if ( f.open( IO_ReadOnly ))
+    {
+      if (m_actions->setContent(&f))
+      {
+        QDomElement docElem = m_actions->documentElement();
+
+        QDomNode n = docElem.firstChild();
+        while( !n.isNull() ) {
+          QDomElement e = n.toElement(); // try to convert the node to an element.
+          if( !e.isNull() ) { // the node was really an element.
+              new TagAction( &e, actionCollection());
+          }
+          n = n.nextSibling();
+        }
+      }
+      f.close();
+    }
+//read the user defined actions
+    QString s = locateLocal("appdata","actions.rc");
+    if (!s.isEmpty())
+    {
+      f.setName(s);
+      if ( f.open( IO_ReadOnly ))
+      {
+        if (m_actions->setContent(&f))
+        {
+          QDomElement docElem = m_actions->documentElement();
+
+          QDomNode n = docElem.firstChild();
+          while( !n.isNull() ) {
+            QDomElement e = n.toElement(); // try to convert the node to an element.
+            if( !e.isNull())
+            { // the node was really an element.
+                delete actionCollection()->action(e.attribute("name"));
+                new TagAction( &e, actionCollection());
+            }
+            n = n.nextSibling();
+          }
+        }
+        f.close();
+      }
+    } else
+    {
+      s = "<!DOCTYPE actionsconfig>\n<actions>\n</actions>\n";
+      m_actions->setContent(s);
+    }
+
 }
 
 /** Initialize the plugin architecture. */

@@ -116,7 +116,6 @@
 
 #include "messages/messageoutput.h"
 
-#include "toolbar/actioneditdlg.h"
 #include "toolbar/actionconfigdialog.h"
 #include "toolbar/toolbarxmlgui.h"
 #include "toolbar/tagaction.h"
@@ -371,7 +370,7 @@ void QuantaApp::slotFilePrint()
 void QuantaApp::slotFileQuit()
 {
   saveOptions();
-  saveModifiedToolbars();
+  removeToolbars();
 
   if(memberList)
   {
@@ -782,20 +781,8 @@ void QuantaApp::slotNewToolbarConfig()
 
 void QuantaApp::slotOptionsConfigureActions()
 {
- int currentPageIndex = view->toolbarTab->currentPageIndex();
-
-// ActionEditDlg dlg( this, "actions_edit_dlg", true); //actionCollection(), QString::null, true, this );
-
- ActionConfigDialog dlg( this, "actions_config_dlg", true);
- if ( dlg.exec() )
- {
-    QFile f( KGlobal::instance()->dirs()->saveLocation("data")+"quanta/actions.rc" );
-    f.open( IO_ReadWrite | IO_Truncate );
-    QTextStream qts(&f);
-    m_actions->save(qts,0);
-    f.close();
-    view->toolbarTab->setCurrentPage(currentPageIndex);
- }
+  ActionConfigDialog dlg( this, "actions_config_dlg", true);
+  dlg.exec();
 }
 
 
@@ -1635,7 +1622,6 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
     //if there is no such action yet, add to the available actions
     if (! actionCollection()->action(actionName))
     {
-      m_actions->firstChild().appendChild(el);
       new TagAction(&el, actionCollection() );
     }
    }
@@ -1748,7 +1734,6 @@ KURL QuantaApp::saveToolBar(const QString& toolbarName, const KURL& destFile)
   QTextStream actStr(&buffer2);
 
   QDomNodeList nodeList, nodeList2;
-  QStringList actionNameList;
 
   toolStr << QString("<!DOCTYPE kpartgui SYSTEM \"kpartgui.dtd\">\n<kpartgui name=\"quanta\" version=\"2\">\n");
   actStr << QString("<!DOCTYPE actionsconfig>\n<actions>\n");
@@ -1761,31 +1746,30 @@ KURL QuantaApp::saveToolBar(const QString& toolbarName, const KURL& destFile)
       for (uint i = 0; i < nodeList.count(); i++)
       {
       //find the actual toolbar in the XML GUI
-       if ((nodeList.item(i).cloneNode().toElement().attribute("name") ) == toolbarName.lower())
-       {
-          nodeList.item(i).save(toolStr,2);
+        if ((nodeList.item(i).cloneNode().toElement().attribute("name") ) == toolbarName.lower())
+        {
+
           //find the actions registered to the toolbar
           QDomNode n = nodeList.item(i).firstChild();
           while (! n.isNull())
           {
-           QDomElement e = n.cloneNode().toElement();
+           QDomElement e = n.toElement();
            if (e.tagName()=="Action")
            {
-            actionNameList += e.attribute("name");
+             TagAction *action = dynamic_cast<TagAction*>(actionCollection()->action(e.attribute("name")));
+             if (action)
+             {
+               action->data().save(actStr,1);
+             }
+           }
+           if (e.tagName()=="_Separator_")
+           {
+             e.setTagName("Separator");
            }
            n = n.nextSibling();
           }
-
-          nodeList2 = actions()->elementsByTagName("action");
-          for (uint k =0; k < nodeList2.count(); k++)
-          {
-            if (actionNameList.contains(nodeList2.item(k).cloneNode().toElement().attribute("name")) > 0)
-            {
-                nodeList2.item(k).save(actStr,1);
-            }
-          }
-
-       }
+          nodeList.item(i).save(toolStr,2);
+        }
       }
   }
   toolStr << QString("\n</kpartgui>");
@@ -2024,41 +2008,42 @@ void QuantaApp::slotSendToolbar()
 }
 
 /** Ask for save all the modified user toolbars. */
-void QuantaApp::saveModifiedToolbars()
+void QuantaApp::removeToolbars()
 {
- QDictIterator<ToolbarEntry> it(toolbarList);
- QString s1, s2;
- ToolbarEntry *p_toolbar;
- for( ; it.current(); ++it )
- {
-   p_toolbar = it.current();
-   s1 = p_toolbar->dom->toString();
-   KXMLGUIClient* client = p_toolbar->guiClient;
+  QDictIterator<ToolbarEntry> it(toolbarList);
+  ToolbarEntry *p_toolbar;
+  while (it.current())
+  {
+    p_toolbar = it.current();
+    ++it;
+    removeToolbar(p_toolbar->name.lower());
+  }
 
-   if (client)
-   {
-    //Rename the _Separator_ tags back to Separator, so they are not treated
-    //as changes
-     QDomNodeList nodeList = client->domDocument().elementsByTagName("_Separator_");
-     for (uint i = 0; i < nodeList.count(); i++)
-     {
-       nodeList.item(i).toElement().setTagName("Separator");
-     }
+  QString s = "<!DOCTYPE actionsconfig>\n<actions>\n</actions>\n";
+  m_actions->setContent(s);
+  TagAction *action;
+  for (uint i = 0; i < actionCollection()->count(); i++)
+  {
+    action = dynamic_cast<TagAction *>(actionCollection()->action(i));
+    if (action)
+    {
+      QDomElement el = action->data();
+      m_actions->firstChild().appendChild(el);
+    }
+  }
 
-     s2 = client->domDocument().toString();
+  QFile f(KGlobal::instance()->dirs()->saveLocation("data")+"quanta/actions.rc" );
+  if (f.open( IO_ReadWrite | IO_Truncate ))
+  {
+    if (!m_actions->firstChild().firstChild().isNull())
+    {
+      QTextStream qts(&f);
+      m_actions->save(qts,0);
+      f.close();
+    } else
+    f.remove();
+  }
 
-     if ( (s1 != s2) && (!s1.isEmpty()) )
-     {
-       if (KMessageBox::questionYesNo(this, i18n("The toolbar \"%1\" was modified. Do you want to save before it is removed?").arg(it.current()->name),
-             i18n("Save Toolbar")) == KMessageBox::Yes)
-       {
-         bool local = true;
-         if (project->hasProject() && p_toolbar->url.url().startsWith(project->baseURL.url())) local = false;
-         slotSaveToolbar(local, it.currentKey());
-       }
-     }
-   }
- }
 }
 
 
@@ -2071,7 +2056,7 @@ void QuantaApp::processDTD(QString documentType)
  w->setDTDIdentifier(projectDTD);
  Tag *tag = 0L;
  if (documentType.isEmpty())
- { 
+ {
    foundName = w->findDTDName(&tag); //look up the whole file for DTD definition
    bool found = false;
    if (!foundName.isEmpty())   //!DOCTYPE found in file
@@ -2339,9 +2324,7 @@ void QuantaApp::removeToolbar(const QString& name)
 
      //check if the toolbar's XML GUI was modified or not
      QString s1 = p_toolbar->dom->toString();
-     kdDebug(24000) << s1 << endl;
      QString s2 = toolbarGUI->domDocument().toString();
-     kdDebug(24000) << s2 << endl;
      if ( s1 != s2 )
      {
       if (KMessageBox::questionYesNo(this, i18n("The toolbar \"%1\" was modified. Do you want to save before remove?").arg(name),
@@ -2354,9 +2337,20 @@ void QuantaApp::removeToolbar(const QString& name)
      }
 
      guiFactory()->removeClient(toolbarGUI);
+     if (p_toolbar->menu) delete p_toolbar->menu;
+//unplug the actions and remove them if they are not used in other places
+     KAction *action;
+     nodeList = toolbarGUI->domDocument().elementsByTagName("Action");
+     for (uint i = 0; i < nodeList.count(); i++)
+     {
+       action = actionCollection()->action(nodeList.item(i).toElement().attribute("name"));
+       if (action && !action->isPlugged())
+       {
+          delete action;
+       }
+     }
      if (p_toolbar->dom) delete p_toolbar->dom;
      if (p_toolbar->guiClient) delete p_toolbar->guiClient;
-     if (p_toolbar->menu) delete p_toolbar->menu;
      toolbarList.remove(name);
     }
   }

@@ -124,7 +124,6 @@ public:
   QuantaDoc  *getDoc()   { return doc; };
   QuantaView *getView()  { return view;};
   Project *getProject()  { return project; };
-  QDomDocument *actions() { return m_actions; }
   QPopupMenu *tagsMenu() { return m_tagsMenu;}
   QPopupMenu *pluginMenu() { return m_pluginMenu;}
   QPopupMenu *toolbarMenu(const QString& name);
@@ -338,7 +337,7 @@ protected:
       return static_cast<KParts::BrowserExtension *>(((KParts::ReadOnlyPart *)htmlPart())->child( 0L, "KParts::BrowserExtension" ));
   }
   /** Ask for save all the modified user toolbars. */
-  void saveModifiedToolbars();
+  void removeToolbars();
   /** Reads the tag files and the description.rc from tagDir in order to build up the internal DTD and tag structures. */
   void readTagDir(QString &dirName);
   /** No descriptions */

@@ -143,42 +143,20 @@ void QuantaView::initActions()
     (void) new KAction( i18n( "Quick Start..." ), "quick_start", 0,
                         this, SLOT( slotTagQuickStart() ),
                         actionCollection, "tag_quick_start" );
-                        
+
     (void) new KAction( i18n( "Quick Table..." ), "quick_table", 0,
                         this, SLOT( slotTagQuickTable() ),
                         actionCollection, "tag_quick_table" );
-                        
+
     (void) new KAction( i18n( "Quick List..." ), "quick_list", 0,
                         this, SLOT( slotTagQuickList() ),
                         actionCollection, "tag_quick_list" );
-                
-    quantaApp->m_actions = new QDomDocument();
-    QFile f( locate("appdata","actions.rc") );
-    if ( !f.open( IO_ReadOnly ) )
-      return;
-    if ( !quantaApp->actions()->setContent( &f ) ) {
-      f.close();
-      return;
-    }
-    f.close();
 
-    QDomElement docElem = quantaApp->actions()->documentElement();
-
-    QDomNode n = docElem.firstChild();
-    while( !n.isNull() ) {
-       QDomElement e = n.toElement(); // try to convert the node to an element.
-       if( !e.isNull() ) { // the node was really an element.
-           new TagAction( &e, this, actionCollection);
-       }
-       n = n.nextSibling();
-    }
-                            
-    
     (void) new KAction( i18n( "Color..." ), "color", CTRL+Key_NumberSign,
                         this, SLOT( slotTagColor() ),
                         actionCollection, "tag_color" );
-                        
-                        
+
+
     (void) new KAction( i18n( "Email..." ), "tag_mail", 0,
                         this, SLOT( slotTagMail() ),
                         actionCollection, "tag_mail" );
@@ -190,11 +168,11 @@ void QuantaView::initActions()
     (void) new KAction( i18n( "Paste &HTML Quoted" ), "editpaste", 0,
                         this, SLOT( slotPasteHTMLQuoted() ),
                         actionCollection, "edit_paste_html_quoted" );
-                        
+
     (void) new KAction( i18n( "Paste &URL Encoded" ), "editpaste", 0,
                         this, SLOT( slotPasteURLEncoded() ),
                         actionCollection, "edit_paste_url_encoded" );
-                        
+
     (void) new KAction( i18n( "Insert CSS..." ),"mini-modules", 0,
                         this, SLOT( slotInsertCSS() ),
                         actionCollection, "insert_css" );
@@ -217,8 +195,6 @@ void QuantaView::initActions()
     }
     char_action->setItems(char_list);
     char_action->setComboWidth(150);
-
-//    qDebug("ctrl+enter: " + QString::number(CTRL+Key_Enter) );
 }
 
 /** No descriptions */

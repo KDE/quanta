@@ -49,23 +49,9 @@ TagAction::TagAction( QDomElement *element, KActionCollection *parent)
         connect( this, SIGNAL(activated()), SLOT(insertTag()) );
 }
 
-TagAction::TagAction( QDomElement *element, QuantaView *a_view, KActionCollection *parent)
-  : KAction( element->attribute("text"), element->attribute("shortcut"), 0, 0, parent, element->attribute("name") ),
-    tag(*element)
-{
-   m_view = a_view;
-   setIcon( tag.attribute("icon","") );
-
-   if ( m_view )
-        connect( this, SIGNAL(activated()), SLOT(insertTag()) );
-}
-
-
 TagAction::~TagAction()
 {
 }
-
-
 
 void TagAction::insertTag()
 {

@@ -1,9 +1,9 @@
 //
 //
-// C++ Implementation: cpp
+// C++ Implementation: actionconfigdialog.cpp
 //
-// Description:
-//
+// Description: Dialog to configure the actions and their relation
+//              with toolbars
 //
 // Author: Andras Mantia <amantia@freemail.hu>, (C) 2003
 //
@@ -563,7 +563,6 @@ void ActionConfigDialog::saveCurrentAction()
     KXMLGUIFactory::saveConfigFile(p_toolbar->guiClient->domDocument(),
         p_toolbar->guiClient->xmlFile(), p_toolbar->guiClient->instance());
   }
-
 }
 
 void ActionConfigDialog::slotShortcutCaptured(const KShortcut &shortcut)
@@ -637,10 +636,9 @@ void ActionConfigDialog::accept()
 
 void ActionConfigDialog::slotNewAction()
 {
-  QDomElement el = quantaApp->actions()->createElement("action");
+  QDomElement el;
   el.setAttribute( "name", "user_"+KApplication::randomString(10) );
   el.setAttribute( "icon", "ball" );
-  quantaApp->actions()->firstChild().appendChild(el);
 
   new TagAction(&el, quantaApp->actionCollection());
   QListViewItem *currentItem = actionTreeView->currentItem();
@@ -669,7 +667,6 @@ void ActionConfigDialog::slotDeleteAction()
 //remove all references to this action
     QDomElement el = static_cast<TagAction*>(currentAction)->data();
     QString text = el.attribute("text");
-    quantaApp->actions()->firstChild().removeChild( el );
     QString actionName = currentAction->name();
 
     QPtrList<KXMLGUIClient> guiClients = quantaApp->factory()->clients();
