@@ -390,7 +390,7 @@ void Project::slotRemove(const KURL& urlToRemove)
   QString urlPath = QExtFileInfo::toRelative(urlToRemove, d->baseURL).path();
   QString nice = urlPath;
   nice = KStringHandler::lsqueeze(nice, 60);
-  if (KMessageBox::warningYesNo(d->m_mainWindow, i18n("<qt>Do you really want to remove <br><b>%1</b><br> from the server(s) as well?</qt>").arg(nice), i18n("Remove From Server"), KStdGuiItem::yes(), KStdGuiItem::no(), "RemoveFromServer") == KMessageBox::Yes )
+  if (KMessageBox::warningYesNo(d->m_mainWindow, i18n("<qt>Do you want to remove <br><b>%1</b><br> from the server(s) as well?</qt>").arg(nice), i18n("Remove From Server"), KStdGuiItem::yes(), KStdGuiItem::no(), "RemoveFromServer") == KMessageBox::Yes )
   {
     QDomNode profilesNode = d->dom.firstChild().firstChild().namedItem("uploadprofiles");
     QDomNodeList profileList = profilesNode.toElement().elementsByTagName("profile");

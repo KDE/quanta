@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>PreviewOptionsS</class>
 <comment>/***************************************************************************
  *                                                                         *
@@ -17,8 +17,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>503</width>
-            <height>484</height>
+            <width>498</width>
+            <height>512</height>
         </rect>
     </property>
     <property name="minimumSize">
@@ -27,208 +27,244 @@
             <height>220</height>
         </size>
     </property>
+    <property name="caption">
+        <string>PreviewOptionsS</string>
+    </property>
     <grid>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QLayoutWidget" row="0" column="0">
+        <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="2">
             <property name="name">
-                <cstring>layout4</cstring>
+                <cstring>resetLayout</cstring>
+            </property>
+            <property name="text">
+                <string>Reset window layout to the default on the next startup</string>
+            </property>
+        </widget>
+        <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>showHidden</cstring>
+            </property>
+            <property name="text">
+                <string>Show hidden files in files tree</string>
+            </property>
+        </widget>
+        <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>saveLocalTrees</cstring>
+            </property>
+            <property name="text">
+                <string>Save tree status for local trees</string>
+            </property>
+        </widget>
+        <widget class="QButtonGroup" row="1" column="0">
+            <property name="name">
+                <cstring>buttonGroup3</cstring>
+            </property>
+            <property name="title">
+                <string>Close Buttons on Tabs</string>
             </property>
             <grid>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <spacer row="5" column="0">
+                <widget class="QRadioButton" row="1" column="0">
                     <property name="name">
-                        <cstring>Spacer1</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Vertical</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>20</width>
-                            <height>190</height>
-                        </size>
-                    </property>
-                </spacer>
-                <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>resetLayout</cstring>
+                        <cstring>radioShowCloseButtons</cstring>
                     </property>
                     <property name="text">
-                        <string>Reset window layout to the default on the next startup</string>
+                        <string>&amp;Always show</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
                     </property>
                 </widget>
-                <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
+                <widget class="QRadioButton" row="0" column="0">
                     <property name="name">
-                        <cstring>showHidden</cstring>
+                        <cstring>radioNoCloseButtons</cstring>
                     </property>
                     <property name="text">
-                        <string>Show hidden files in files tree</string>
+                        <string>&amp;Do not show</string>
                     </property>
                 </widget>
-                <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="2">
+                <widget class="QRadioButton" row="2" column="0">
                     <property name="name">
-                        <cstring>saveLocalTrees</cstring>
+                        <cstring>radioDelayedCloseButtons</cstring>
                     </property>
                     <property name="text">
-                        <string>Save tree status for local trees</string>
+                        <string>Show dela&amp;yed</string>
                     </property>
                 </widget>
-                <widget class="QButtonGroup" row="1" column="0">
+            </grid>
+        </widget>
+        <widget class="QButtonGroup" row="0" column="1">
+            <property name="name">
+                <cstring>buttonGroup3_2</cstring>
+            </property>
+            <property name="title">
+                <string>Documentation</string>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QRadioButton" row="0" column="0">
                     <property name="name">
-                        <cstring>buttonGroup3</cstring>
+                        <cstring>radioNewDocTab</cstring>
                     </property>
-                    <property name="title">
-                        <string>Close Buttons on Tabs</string>
+                    <property name="text">
+                        <string>New tab</string>
                     </property>
-                    <grid>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <widget class="QRadioButton" row="1" column="0">
-                            <property name="name">
-                                <cstring>radioShowCloseButtons</cstring>
-                            </property>
-                            <property name="text">
-                                <string>&amp;Always show</string>
-                            </property>
-                            <property name="checked">
-                                <bool>true</bool>
-                            </property>
-                        </widget>
-                        <widget class="QRadioButton" row="0" column="0">
-                            <property name="name">
-                                <cstring>radioNoCloseButtons</cstring>
-                            </property>
-                            <property name="text">
-                                <string>&amp;Do not show</string>
-                            </property>
-                        </widget>
-                        <widget class="QRadioButton" row="2" column="0">
-                            <property name="name">
-                                <cstring>radioDelayedCloseButtons</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Show de&amp;layed</string>
-                            </property>
-                        </widget>
-                    </grid>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
                 </widget>
-                <widget class="QButtonGroup" row="0" column="1">
+                <widget class="QRadioButton" row="1" column="0">
                     <property name="name">
-                        <cstring>buttonGroup3_2</cstring>
+                        <cstring>radioSeparateDocView</cstring>
                     </property>
-                    <property name="title">
-                        <string>Documentation</string>
+                    <property name="text">
+                        <string>Separate toolview</string>
                     </property>
-                    <grid>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <widget class="QRadioButton" row="0" column="0">
-                            <property name="name">
-                                <cstring>radioNewDocTab</cstring>
-                            </property>
-                            <property name="text">
-                                <string>New tab</string>
-                            </property>
-                            <property name="checked">
-                                <bool>true</bool>
-                            </property>
-                        </widget>
-                        <widget class="QRadioButton" row="1" column="0">
-                            <property name="name">
-                                <cstring>radioSeparateDocView</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Separate toolview</string>
-                            </property>
-                        </widget>
-                    </grid>
                 </widget>
-                <widget class="QButtonGroup" row="1" column="1">
+            </grid>
+        </widget>
+        <widget class="QButtonGroup" row="1" column="1">
+            <property name="name">
+                <cstring>buttonGroup4</cstring>
+            </property>
+            <property name="title">
+                <string>Toolview Tabs</string>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QRadioButton" row="0" column="0">
                     <property name="name">
-                        <cstring>buttonGroup4</cstring>
+                        <cstring>radioIconText</cstring>
                     </property>
-                    <property name="title">
-                        <string>Toolview Tabs</string>
+                    <property name="text">
+                        <string>Icon and text</string>
                     </property>
-                    <grid>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <widget class="QRadioButton" row="0" column="0">
-                            <property name="name">
-                                <cstring>radioIconText</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Icon and text</string>
-                            </property>
-                            <property name="checked">
-                                <bool>true</bool>
-                            </property>
-                        </widget>
-                        <widget class="QRadioButton" row="2" column="0">
-                            <property name="name">
-                                <cstring>radioText</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Text</string>
-                            </property>
-                        </widget>
-                        <widget class="QRadioButton" row="1" column="0">
-                            <property name="name">
-                                <cstring>radioIcon</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Icon</string>
-                            </property>
-                        </widget>
-                    </grid>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
                 </widget>
-                <widget class="QButtonGroup" row="0" column="0">
+                <widget class="QRadioButton" row="2" column="0">
                     <property name="name">
-                        <cstring>ButtonGroup1</cstring>
+                        <cstring>radioText</cstring>
                     </property>
-                    <property name="title">
-                        <string>Preview</string>
+                    <property name="text">
+                        <string>Text</string>
                     </property>
-                    <grid>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <property name="margin">
-                            <number>11</number>
-                        </property>
-                        <property name="spacing">
-                            <number>6</number>
-                        </property>
-                        <widget class="QRadioButton" row="1" column="0">
-                            <property name="name">
-                                <cstring>radioToolview</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Separate toolview</string>
-                            </property>
-                        </widget>
-                        <widget class="QRadioButton" row="0" column="0">
-                            <property name="name">
-                                <cstring>radioEditor</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Editor area</string>
-                            </property>
-                            <property name="checked">
-                                <bool>true</bool>
-                            </property>
-                        </widget>
-                    </grid>
+                </widget>
+                <widget class="QRadioButton" row="1" column="0">
+                    <property name="name">
+                        <cstring>radioIcon</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Icon</string>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+        <widget class="QButtonGroup" row="0" column="0">
+            <property name="name">
+                <cstring>ButtonGroup1</cstring>
+            </property>
+            <property name="title">
+                <string>Preview</string>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>11</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <widget class="QRadioButton" row="1" column="0">
+                    <property name="name">
+                        <cstring>radioToolview</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Separate toolview</string>
+                    </property>
+                </widget>
+                <widget class="QRadioButton" row="0" column="0">
+                    <property name="name">
+                        <cstring>radioEditor</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Editor area</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+        <spacer row="6" column="0">
+            <property name="name">
+                <cstring>Spacer1</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>30</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QButtonGroup" row="5" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>buttonGroup1</cstring>
+            </property>
+            <property name="title">
+                <string>&amp;Warning Messages</string>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QCheckBox" row="0" column="0">
+                    <property name="name">
+                        <cstring>warnBinaryOpening</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Warn about opening binar&amp;y/unknown files</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+Y</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="1" column="0">
+                    <property name="name">
+                        <cstring>warnEventActions</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Warn when executing &amp;actions associated with events</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+A</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="2" column="0">
+                    <property name="name">
+                        <cstring>warnAll</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Show all warning messages</string>
+                    </property>
                 </widget>
             </grid>
         </widget>
@@ -236,9 +272,17 @@
 </widget>
 <tabstops>
     <tabstop>radioEditor</tabstop>
+    <tabstop>radioNewDocTab</tabstop>
+    <tabstop>radioShowCloseButtons</tabstop>
+    <tabstop>radioIconText</tabstop>
+    <tabstop>resetLayout</tabstop>
+    <tabstop>showHidden</tabstop>
+    <tabstop>saveLocalTrees</tabstop>
+    <tabstop>warnBinaryOpening</tabstop>
+    <tabstop>warnEventActions</tabstop>
+    <tabstop>warnAll</tabstop>
     <tabstop>radioToolview</tabstop>
     <tabstop>radioNoCloseButtons</tabstop>
-    <tabstop>radioShowCloseButtons</tabstop>
     <tabstop>radioDelayedCloseButtons</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>

@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>FileMasksS</class>
 <comment>/***************************************************************************
  *                                                                         *
@@ -17,8 +17,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>547</width>
-            <height>523</height>
+            <width>571</width>
+            <height>571</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -34,6 +34,9 @@
             <width>0</width>
             <height>0</height>
         </size>
+    </property>
+    <property name="caption">
+        <string>FileMasksS</string>
     </property>
     <grid>
         <property name="name">
@@ -98,7 +101,7 @@
                         <cstring>TextLabel4_2</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Texts:</string>
+                        <string>Te&amp;xts:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>lineText</cstring>
@@ -189,14 +192,6 @@
                 </widget>
             </grid>
         </widget>
-        <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>showDTDSelectDialog</cstring>
-            </property>
-            <property name="text">
-                <string>Show the DTD selection dialog when loading files with &amp;unknown DTD</string>
-            </property>
-        </widget>
         <widget class="QLabel" row="1" column="0">
             <property name="name">
                 <cstring>TextLabel1_2</cstring>
@@ -222,31 +217,70 @@
                 <cstring>defaultDTDCombo</cstring>
             </property>
         </widget>
-        <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="2">
+        <spacer row="6" column="0">
             <property name="name">
-                <cstring>showSplash</cstring>
+                <cstring>spacer3</cstring>
             </property>
-            <property name="text">
-                <string>S&amp;how splashscreen on startup</string>
+            <property name="orientation">
+                <enum>Vertical</enum>
             </property>
-        </widget>
-        <widget class="QCheckBox" row="5" column="0" rowspan="1" colspan="2">
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>50</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QButtonGroup" row="5" column="0" rowspan="1" colspan="2">
             <property name="name">
-                <cstring>reloadProject</cstring>
+                <cstring>buttonGroup7</cstring>
             </property>
-            <property name="text">
-                <string>&amp;Load last-opened project on startup</string>
+            <property name="title">
+                <string>Startup options</string>
             </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QCheckBox" row="3" column="0">
+                    <property name="name">
+                        <cstring>reloadFiles</cstring>
+                    </property>
+                    <property name="text">
+                        <string>L&amp;oad last-opened files</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+O</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="1" column="0">
+                    <property name="name">
+                        <cstring>showSplash</cstring>
+                    </property>
+                    <property name="text">
+                        <string>S&amp;how splashscreen</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+H</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="2" column="0">
+                    <property name="name">
+                        <cstring>reloadProject</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Load last-opened project</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+L</string>
+                    </property>
+                </widget>
+            </grid>
         </widget>
-        <widget class="QCheckBox" row="6" column="0" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>reloadFiles</cstring>
-            </property>
-            <property name="text">
-                <string>L&amp;oad last-opened files on startup</string>
-            </property>
-        </widget>
-        <widget class="QLayoutWidget" row="7" column="0">
+        <widget class="QLayoutWidget" row="4" column="0">
             <property name="name">
                 <cstring>layout2</cstring>
             </property>
@@ -286,52 +320,17 @@
                 </widget>
             </hbox>
         </widget>
-        <widget class="QButtonGroup" row="8" column="0" rowspan="1" colspan="2">
+        <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
             <property name="name">
-                <cstring>buttonGroup1</cstring>
+                <cstring>showDTDSelectDialog</cstring>
             </property>
-            <property name="title">
-                <string>&amp;Warning Messages</string>
+            <property name="text">
+                <string>Show the DTD selection dialog when loading files with &amp;unknown DTD</string>
             </property>
-            <grid>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="QCheckBox" row="0" column="0">
-                    <property name="name">
-                        <cstring>warnBinaryOpening</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Warn about opening &amp;binary/unknown files</string>
-                    </property>
-                </widget>
-                <widget class="QCheckBox" row="1" column="0">
-                    <property name="name">
-                        <cstring>warnEventActions</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Warn when executing &amp;actions associated with events</string>
-                    </property>
-                </widget>
-            </grid>
+            <property name="accel">
+                <string>Alt+U</string>
+            </property>
         </widget>
-        <spacer row="9" column="1">
-            <property name="name">
-                <cstring>spacer3</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
     </grid>
 </widget>
 <tabstops>
@@ -343,12 +342,10 @@
     <tabstop>encodingCombo</tabstop>
     <tabstop>defaultDTDCombo</tabstop>
     <tabstop>showDTDSelectDialog</tabstop>
+    <tabstop>sbAutoSave</tabstop>
     <tabstop>showSplash</tabstop>
     <tabstop>reloadProject</tabstop>
     <tabstop>reloadFiles</tabstop>
-    <tabstop>sbAutoSave</tabstop>
-    <tabstop>warnBinaryOpening</tabstop>
-    <tabstop>warnEventActions</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>
