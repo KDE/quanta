@@ -157,7 +157,7 @@ void QuantaView::initActions()
     }
                             
     
-    (void) new KAction( i18n( "Color..." ), "color", CTRL+Key_NumberSign,
+    (void) new KAction( i18n( "Color..." ), "color", CTRL+SHIFT+Key_C,
                         this, SLOT( slotTagColor() ),
                         actionCollection, "tag_color" );
                         
