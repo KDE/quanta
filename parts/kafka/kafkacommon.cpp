@@ -332,7 +332,7 @@ Node* kafkaCommon::getCorrectEndNode(Node* endNode, int& end_offset)
     while(end_node && (end_node->tag->type != Tag::Text || end_offset == 0))
     {
         end_node = end_node->previousSibling();
-        if(end_node->tag->type == Tag::Text)
+        if(end_node && end_node->tag->type == Tag::Text)
         {
             end_offset = end_node->tag->tagStr().length();
             break;
