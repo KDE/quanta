@@ -69,7 +69,7 @@
 QString fileMaskHtml   = "*.*html *.*htm *.php* *.asp *.cfm *.css *.inc* *.*HTML *.*HTM *.PHP* *.ASP *.CFM *.CSS *.INC* *.xml *.XML";
 QString fileMaskPhp   = "*.*PHP* *.*php* ";
 QString fileMaskJava  = "*.jss *.js *.JSS *.JS ";
-QString fileMaskText  = "*.txt *.TXT ";
+QString fileMaskText  = "*.txt; *.TXT";
 QString fileMaskImage = "*.gif *.jpg *.png *.jpeg *.bmp *.xpm *.GIF *.JPG *.PNG *.JPEG *.BMP ";
 
 QStrList *tagsList; // list of known tags

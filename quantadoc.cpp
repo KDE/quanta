@@ -329,8 +329,11 @@ void QuantaDoc::closeAll()
 {
   do
   {
-  	if ( !saveModified() ) return;
-		docList->remove( url().url() );
+    if (app->view->write() !=0)
+    {
+  	  if ( !saveModified() ) return;
+		  docList->remove( url().url() );
+    }
 	}
 	while ( app->view->removeWrite());
 	
@@ -409,7 +412,13 @@ bool QuantaDoc::saveModified()
 
 bool QuantaDoc::isModified()
 {
-  return write()->isModified();
+  if (write() != 0)
+  {
+    return write()->isModified();
+  } else
+  {
+    return false;
+  }
 }
 
 bool QuantaDoc::isModifiedAll()
@@ -445,17 +454,25 @@ Document* QuantaDoc::newWrite(QWidget *_parent)
   
 //  KTextEditor::Document *doc = KTextEditor::createDocument("katepart");
 
-//  KTrader::OfferList offers = KTrader::self()->query( "KTextEditor/Document");
-//  KService::Ptr service = *offers.begin();
-//  KLibFactory *factory = KLibLoader::self()->factory(service->library().latin1() );
 
-  KLibFactory *factory = KLibLoader::self()->factory( "katepart" );
+  KTrader::OfferList offers = KTrader::self()->query( "KTextEditor/Document");
+  KService::Ptr service = *offers.begin();
+  KLibFactory *factory = KLibLoader::self()->factory(service->library().latin1() );
 
-//  KTextEditor::Document *doc =//(KTextEditor::Document *) factory->create (0L, "kate", "KTextEditor::Document");
-//  static_cast<KTextEditor::Document *>(factory->create( this, 0, "KTextEditor::Document" ) );
+
+/*  KLibFactory *factory = KLibLoader::self()->factory( "libkatepart" );
+  if (!factory) //For KDE 3.0
+  {
+//     KLibLoader::lastErrorMessage() ;
+     factory = KLibLoader::self()->factory( "katepart" );
+  }
+  */
+//  KTextEditor::Document *doc = (KTextEditor::Document *) factory->create (0L, "kate", "KTextEditor::Document");
+  KTextEditor::Document *doc = static_cast<KTextEditor::Document *>(factory->create( this, 0, "KTextEditor::Document" ) );
 
   
-KTextEditor::Document *doc=KParts::ComponentFactory::createPartInstanceFromLibrary<KTextEditor::Document>("katepart",_parent,0);
+//  KTextEditor::Document *doc=KParts::ComponentFactory::createPartInstanceFromLibrary<KTextEditor::Document>("katepart",_parent,0);
+
   Document  *w    = new Document (basePath(), doc, _parent);
   KTextEditor::View * v = w->view();
 
