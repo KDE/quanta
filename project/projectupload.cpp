@@ -3,7 +3,7 @@
                              -------------------
     begin                : Wed Nov 15 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
-                           (C) 2001, 2002 by Andras Mantia
+                           (C) 2001-2003 by Andras Mantia
     email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com
  ***************************************************************************/
 
@@ -197,17 +197,21 @@ void ProjectUpload::startUpload()
 	stopUpload = false;
 	QDomElement uploadEl = p->dom.firstChild().firstChild().namedItem("upload").toElement();
 
+  QString path = linePath->text();
+  if (!path.startsWith("/"))
+    path.prepend("/");
 	uploadEl.setAttribute("remote_host", lineHost->text() );
-	uploadEl.setAttribute("remote_path", linePath->text() );
+	uploadEl.setAttribute("remote_path", path );
 	uploadEl.setAttribute("remote_port", port->text() );
 	uploadEl.setAttribute("user", lineUser->text() );
 	uploadEl.setAttribute("remote_protocol", comboProtocol->currentText() );
+  p->setModified(true);
 
-	baseUrl->setProtocol( comboProtocol->currentText() );
-	baseUrl->setPort( port->text().toInt() );
-	baseUrl->setHost( lineHost->text() );
-	baseUrl->setPath( linePath->text() );
-  baseUrl->setPass( linePasswd->text() );
+	baseUrl->setProtocol(comboProtocol->currentText());
+	baseUrl->setPort(port->text().toInt());
+	baseUrl->setHost(lineHost->text());
+	baseUrl->setPath(path);
+  baseUrl->setPass(linePasswd->text());
 	if (keepPasswd->isChecked())
 	{
 	   p->keepPasswd = true;

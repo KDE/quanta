@@ -3,7 +3,7 @@
                              -------------------
     begin                : Thu Mar 16 2000
     copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky
-    							         (C) 2001, 2002 by Andras Mantia
+    							         (C) 2001-2003 by Andras Mantia
     email                : pdima@mail.univ.kiev.ua, amantia@freemail.hu
  ***************************************************************************/
 
@@ -1499,6 +1499,12 @@ void Project::slotSaveAsProjectView(bool askForName)
 void Project::slotSaveProjectView()
 {
   slotSaveAsProjectView(currentProjectView.isEmpty());
+}
+
+void Project::setModified(bool b)
+{
+  modified = b;
+  emit newStatus();
 }
 
 
