@@ -897,6 +897,7 @@ void Document::slotCharactersInserted(int line,int column,const QString& string)
     {
       scriptAutoCompletion(dtd, line, column, string);
     }
+    completionInProgress = true;
   }
  }
 }
@@ -1007,7 +1008,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeCompletions( DTD
                 QString item = list->at(i)->name;
                 if (item.upper().startsWith(startsWith))
                 {
-                  completion.text = item;
+                  completion.text = QuantaCommon::attrCase(item);
                   completion.comment = list->at(i)->type;
                   completions->append( completion );
                 }
@@ -1109,7 +1110,7 @@ DTDStruct* Document::currentDTD(bool fallback)
 }
 
 /** Find the DTD name for a part of the document. Search all the document if startLine=endLine=-1. */
-QString Document::findDTDName(int startLine, int endLine)
+QString Document::findDTDName(int startLine, int endLine, bool searchPseudoDTD)
 {
 
  //Do some magic to find the document type
@@ -1123,38 +1124,40 @@ QString Document::findDTDName(int startLine, int endLine)
 
  bool found = false;
  QString foundText = "";
-
-//Look if we are inside of a script style definition, like <? ?> <* *> for php
- QString scriptRxStr;
  Tag *tag;
- QDictIterator<DTDStruct> it(*dtds);
- for( ; it.current(); ++it )
+
+ if (searchPseudoDTD)
  {
-   DTDStruct *dtd = it.current();
-   if (dtd->family == Script)
+  //Look if we are inside of a script style definition, like <? ?> <* *> for php
+   QString scriptRxStr;
+   QDictIterator<DTDStruct> it(*dtds);
+   for( ; it.current(); ++it )
    {
-     scriptRxStr = dtd->scriptRegExpStr;
-     if (!dtd->scriptName.isEmpty())
+     DTDStruct *dtd = it.current();
+     if (dtd->family == Script)
      {
-       if (!scriptRxStr.isEmpty()) scriptRxStr = "("+scriptRxStr+")|";
-       scriptRxStr.append("(<script[^>]+(language=\"");
-       scriptRxStr.append(dtd->scriptName);
-       scriptRxStr.append("\").+/script>)");
-     }
-     if (!scriptRxStr.isEmpty())
-     {
-       tag = findScriptTag(line, col, QRegExp(scriptRxStr,false));
-       if (tag)
+       scriptRxStr = dtd->scriptRegExpStr;
+       if (!dtd->scriptName.isEmpty())
        {
-        foundText = dtd->name;
-        found = true;
-        delete tag;
-        break;
+         if (!scriptRxStr.isEmpty()) scriptRxStr = "("+scriptRxStr+")|";
+         scriptRxStr.append("(<script[^>]+(language=\"");
+         scriptRxStr.append(dtd->scriptName);
+         scriptRxStr.append("\").+/script>)");
+       }
+       if (!scriptRxStr.isEmpty())
+       {
+         tag = findScriptTag(line, col, QRegExp(scriptRxStr,false));
+         if (tag)
+         {
+          foundText = dtd->name;
+          found = true;
+          delete tag;
+          break;
+         }
        }
      }
    }
- }
-
+ } // if (searchPseudoDTD)
  if (!found)
  {
    int direction = (startLine > endLine)?-1:1; //search direction

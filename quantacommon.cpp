@@ -80,6 +80,7 @@ QString QuantaCommon::attrCase( const QString attr)
   switch (attrsCase)
   {
     case 1: sAttr = attr.lower();
+            break;
     case 2: sAttr = attr.upper();
   }
   return sAttr;
@@ -230,32 +231,37 @@ QStringList* QuantaCommon::tagAttributeValues(QString dtdName, QString tag, QStr
 {
   QStringList *values = 0L;
   
-  AttributeList* attrs = tagAttributes(dtdName, tag); 
-  Attribute *attr;
-  if (attrs)
+  DTDStruct* dtd = dtds->find(dtdName);
+  if (dtd)
   {
-    for ( attr = attrs->first(); attr; attr = attrs->next() )
+    QString searchForAttr = (dtd->caseSensitive) ? attribute : attribute.upper();
+    AttributeList* attrs = tagAttributes(dtdName, tag);
+    Attribute *attr;
+    if (attrs)
     {
-      if (attr->name == attribute)
+      for ( attr = attrs->first(); attr; attr = attrs->next() )
       {
-        if (attr->type == "url") {
-          Project *project = quantaApp->getProject();
-          if (project->hasProject()) {
-            values = new QStringList(project->fileNameList(true));
-            values->append("mailto:" + project->email);
+        QString attrName = (dtd->caseSensitive) ? attr->name : attr->name.upper();
+        if (attrName == searchForAttr)
+        {
+          if (attr->type == "url") {
+            Project *project = quantaApp->getProject();
+            if (project->hasProject()) {
+              values = new QStringList(project->fileNameList(true));
+              values->append("mailto:" + project->email);
+            } else {
+              QDir dir = QDir(quantaApp->getDoc()->write()->url().directory());
+              values = new QStringList(dir.entryList());
+            }
+            break;
           } else {
-            QDir dir = QDir(quantaApp->getDoc()->write()->url().directory());
-            values = new QStringList(dir.entryList());            
+            values = &attr->values;
+            break;
           }
-          break;
-        } else {
-          values = &attr->values;
-          break;
         }
       }
     }
-  }
-  
+  }   
   return values;
 }
 

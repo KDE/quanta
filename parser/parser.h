@@ -23,6 +23,7 @@
 
 #include "node.h"
 #include "tag.h"
+#include "qtag.h"
 
 
 /**
@@ -49,6 +50,7 @@ private:
 
   Node* m_node;       //the internal Node pointer
   QString m_dtdName;  //the DTD name of write
+  DTDStruct *m_dtd; //the dtd used for main parsing
   Document *write;    //pointer to the parsed document
 
   /** Recursive parsing algorithm. Actually this does the parsing and tree building. */

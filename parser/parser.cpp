@@ -31,7 +31,6 @@
 #include "parser.h"
 #include "node.h"
 #include "tag.h"
-#include "qtag.h"
 #include "../resource.h"
 #include "../quantacommon.h"
 #include "../document.h"
@@ -51,6 +50,8 @@ Node *Parser::parse(Document *w)
 {
   write = w;
   m_dtdName = w->getDTDIdentifier();
+  m_dtd = dtds->find(m_dtdName);
+  if (!m_dtd) m_dtd = dtds->find(defaultDocType);
   m_text = w->editIf->text();
 //  if (m_node) delete m_node;
   int line = 0;
@@ -85,10 +86,10 @@ Node * Parser::subParse( Node * parent, int &line, int &col )
   Node * prevNode = 0L;
   Node * firstNode = 0L;
   int maxLines = write->editIf->numLines();
-  DTDStruct *dtd = write->currentDTD();
+//  DTDStruct *dtd = write->currentDTD();
   while (line < maxLines)
   {
-    Tag *tag = write->tagAt(dtd, line, col,true);
+    Tag *tag = write->tagAt(m_dtd, line, col,true);
     if (tag)
     {
       switch ( tag->type )
@@ -101,10 +102,10 @@ Node * Parser::subParse( Node * parent, int &line, int &col )
                }
                if ( parent )   // check if this tag stop area of previous
                {
-                 QTag *qTag = QuantaCommon::tagFromDTD(m_dtdName, parent->tag->name);
+                 QTag *qTag = QuantaCommon::tagFromDTD(m_dtd, parent->tag->name);
                  if ( qTag )
                  {
-                   QString searchFor = (qTag->parentDTD->caseSensitive)?tag->name:tag->name.upper();
+                   QString searchFor = (m_dtd->caseSensitive)?tag->name:tag->name.upper();
                    if ( qTag->stoppingTags.contains( searchFor ) )
                    {
                      parent->tag->closingMissing = true; //parent is single...
@@ -139,10 +140,9 @@ Node * Parser::subParse( Node * parent, int &line, int &col )
              {
                if (parent)
                {
-                 DTDStruct *dtd = dtds->find(m_dtdName);
-                 if (!dtd) dtd = dtds->find(defaultDocType);
-                 QString startName = (dtd->caseSensitive) ? parent->tag->name: parent->tag->name.upper();
-                 QString endName = (dtd->caseSensitive) ? tag->name: tag->name.upper();
+//                 DTDStruct *dtd = dtds->find(m_dtdName);
+                 QString startName = (m_dtd->caseSensitive) ? parent->tag->name: parent->tag->name.upper();
+                 QString endName = (m_dtd->caseSensitive) ? tag->name: tag->name.upper();
                  if ("/"+startName == endName)
                  {
                    Node *tnode = new Node( parent->parent );

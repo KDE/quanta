@@ -791,9 +791,12 @@ void QuantaApp::slotOptions()
   QDictIterator<DTDStruct> it(*dtds);
   for( ; it.current(); ++it )
   {
-    int index = -1;
-    if (it.current()->name == defaultDocType) index = 0;
-    parserOptions->dtdName->insertItem(QuantaCommon::getDTDNickNameFromName(it.current()->name), index);
+    if (it.current()->family == Xml)
+    {
+      int index = -1;
+      if (it.current()->name == defaultDocType) index = 0;
+      parserOptions->dtdName->insertItem(QuantaCommon::getDTDNickNameFromName(it.current()->name), index);
+    }
   }
 
   parserOptions->refreshFrequency->setValue(refreshFrequency);
@@ -1946,7 +1949,7 @@ void QuantaApp::processDTD(QString documentType)
 
  if (documentType.isEmpty())
  {
-   foundName = w->findDTDName(-1,-1); //look up the whole file for DTD definition
+   foundName = w->findDTDName(-1,-1, false); //look up the whole file for DTD definition
    bool found = false;
    if (!foundName.isEmpty())   //!DOCTYPE found in file
    {
@@ -1954,12 +1957,15 @@ void QuantaApp::processDTD(QString documentType)
     QDictIterator<DTDStruct> it(*dtds);
     for( ; it.current(); ++it )
     {
-     dlg->dtdCombo->insertItem(it.current()->nickName);
-     if (it.current()->name == foundName)
-     {
-       w->setDTDIdentifier(foundName);
-       found =true;
-     }
+      if (it.current()->family == Xml)
+      {
+        dlg->dtdCombo->insertItem(it.current()->nickName);
+        if (it.current()->name == foundName)
+        {
+          w->setDTDIdentifier(foundName);
+          found =true;
+        }
+      }
     }
 
 //    dlg->dtdCombo->insertItem(i18n("Create new DTD info."));
@@ -2008,10 +2014,13 @@ void QuantaApp::slotToolsChangeDTD()
   int defaultIndex = 0;
   for( ; it.current(); ++it )
   {
-    dlg->dtdCombo->insertItem(it.current()->nickName);
-    if (it.current()->name == w->getDTDIdentifier()) pos = i;
-    if (it.current()->name == defaultDocType) defaultIndex = i;
-    i++;
+    if (it.current()->family == Xml)
+    {
+      dlg->dtdCombo->insertItem(it.current()->nickName);
+      if (it.current()->name == w->getDTDIdentifier()) pos = i;
+      if (it.current()->name == defaultDocType) defaultIndex = i;
+      i++;
+    }
   }
   if (pos == -1) pos = defaultIndex;
   dlg->dtdCombo->setCurrentItem(pos);
