@@ -70,9 +70,11 @@
 
 QuantaView::QuantaView(QWidget *parent, const char *name )
   : QWidget( parent, name)
+#ifdef BUILD_KAFKAPART
   , currentFocus(quantaFocus)
   , quantaUpdateTimer(-1)
   , kafkaUpdateTimer(-1)
+#endif
 {
   doc = quantaApp->doc();
   initActions();
