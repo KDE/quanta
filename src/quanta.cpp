@@ -898,10 +898,18 @@ void QuantaApp::slotOptionsConfigureKeys()
 {
   Document *w = ViewManager::ref()->activeDocument();
   KKeyDialog dlg( false, this );
+  QPtrList<KXMLGUIClient> toolbarGuiClients;
+  QDictIterator<ToolbarEntry> iter(toolbarList);
+  for( ; iter.current(); ++iter )
+  {
+    toolbarGuiClients.append(iter.current()->guiClient);
+  }
   QPtrList<KXMLGUIClient> clients = guiFactory()->clients();
   for( QPtrListIterator<KXMLGUIClient> it( clients );
-       it.current(); ++it ) {
-    dlg.insert( (*it)->actionCollection() );
+       it.current(); ++it )
+  {
+     if (toolbarGuiClients.contains(*it) <= 0) //no need to insert the collections of the toolbars as they are present in the main actionCollection
+        dlg.insert((*it)->actionCollection());
   }
   if ( dlg.configure() == KKeyDialog::Accepted )
   {
