@@ -75,10 +75,15 @@ public:
     
 public slots:
     void slotApplySourceIndentation();
+    void slotCopyDivElement();
+    void slotCutDivElement();
 
 protected:
     virtual void initActionMenus(QWidget* widget);
 
+private:
+    bool isInDivArea() const;
+   
 private:
     KActionSeparator* m_separator;
 };

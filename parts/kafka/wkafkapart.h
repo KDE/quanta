@@ -446,10 +446,14 @@ public slots:
     void slotCopy();
     void slotPaste();
 
+    void slotCut(Node* startNode, int startOffset, Node* endNode, int endOffset, 
+                 Node** cursorNode, int cursorOffset, QString const& plainText);
+    void slotCopy(Node* startNode, int startOffset, Node* endNode, int endOffset, QString const& plainText);
+
 public:
 	//use a QPtrList aferwards
 	NodeEnhancer *mainEnhancer;
-
+    
 private:
 	/**
 	 * Create a KafkaWidget.

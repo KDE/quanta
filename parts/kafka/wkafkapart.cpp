@@ -2237,12 +2237,19 @@ void KafkaDocument::slotCut()
     m_kafkaPart->getCurrentNode(cursorDomNode, cursorOffset);
     Node* cursorNode = getNode(cursorDomNode);
     
+    slotCut(startNode, startOffset, endNode, endOffset, &cursorNode, cursorOffset, text);
+}
+
+void KafkaDocument::slotCut(Node* startNode, int startOffset, Node* endNode, int endOffset, 
+                            Node** cursorNode, int cursorOffset, QString const& text)
+{
     if(!startNode || !endNode)
         return;
     
     NodeModifsSet *modifs = new NodeModifsSet();
+    
     Node* subtree_root = kafkaCommon::DTDExtractNodeSubtree(startNode, startOffset, endNode, endOffset, 
-            &cursorNode, cursorOffset, modifs);
+            cursorNode, cursorOffset, modifs);
     
     m_currentDoc->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);
     
@@ -2258,7 +2265,7 @@ void KafkaDocument::slotCut()
 #ifdef LIGHT_DEBUG
         kafkaCommon::coutTree(subtree_root, 3);
 #endif
-    }
+    }   
 }
 
 void KafkaDocument::slotCopy()
@@ -2273,6 +2280,11 @@ void KafkaDocument::slotCopy()
     Node* startNode = kafkaCommon::getNodeFromLocation(selection_ind.cursorNode());
     Node* endNode = kafkaCommon::getNodeFromLocation(selection_ind.cursorNodeEndSel());
 
+    slotCopy(startNode, startOffset, endNode, endOffset, text);
+}
+
+void KafkaDocument::slotCopy(Node* startNode, int startOffset, Node* endNode, int endOffset, QString const& text)
+{
     if(!startNode || !endNode)
         return;
     
@@ -2291,7 +2303,7 @@ void KafkaDocument::slotCopy()
 #ifdef LIGHT_DEBUG
         kafkaCommon::coutTree(subtree_root, 3);
 #endif
-    }
+    }    
 }
 
 void KafkaDocument::slotPaste()

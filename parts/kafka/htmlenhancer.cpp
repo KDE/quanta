@@ -262,7 +262,18 @@ bool HTMLEnhancer::enhanceNode(Node *node, DOM::Node parentDNode, DOM::Node next
 		}
 	}
 
-	return true;
+    //THEN add a blue dotted border to DIV tags
+    if(node->rootNode())
+    {
+        text = node->rootNode()->nodeName().string().lower();
+        if(text == "div")
+        {
+            kafkaCommon::editDomNodeAttribute(*node->rootNode(), node, "style", "border: 1px dotted green",
+                                               m_wkafkapart->getKafkaWidget()->document());
+        }
+    }
+    
+    return true;
 }
 
 void HTMLEnhancer::postEnhanceNode(DOM::Node domNode)
