@@ -72,7 +72,7 @@
                                                         <cstring>textLabel1</cstring>
                                                     </property>
                                                     <property name="text">
-                                                        <string>Available System Font Families     </string>
+                                                        <string>Available system font families:</string>
                                                     </property>
                                                 </widget>
                                                 <widget class="QListBox">
@@ -95,7 +95,7 @@
                                                         <cstring>textLabel3</cstring>
                                                     </property>
                                                     <property name="text">
-                                                        <string>Generic Family</string>
+                                                        <string>Generic family:</string>
                                                     </property>
                                                 </widget>
                                                 <widget class="QListBox">
@@ -326,7 +326,7 @@
                                                 <cstring>textLabel2</cstring>
                                             </property>
                                             <property name="text">
-                                                <string>Selected Font Families</string>
+                                                <string>Selected font families:</string>
                                             </property>
                                         </widget>
                                         <widget class="QListBox">
