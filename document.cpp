@@ -1755,4 +1755,36 @@ void Document::paste()
   baseNode = parser->rebuild(this);
 }
 
+/** returns all the areas that are between tag and it's closing pair */
+QStringList Document::tagAreas(const QString& tag)
+{
+  Node *node = baseNode;
+  int bl, bc, el, ec;
+  QStringList result;
+
+  while (node)
+  {
+    if (node->tag->type == Tag::XmlTag)
+    {
+      if ( (node->tag->dtd->caseSensitive && node->tag->name == tag) ||
+           (!node->tag->dtd->caseSensitive && node->tag->name.lower() == tag.lower()) )
+      {
+        node->tag->beginPos(bl, bc);
+        if (node->next)
+            node->next->tag->endPos(el, ec);
+        else
+        {
+          el = editIf->numLines()-1;
+          ec = editIf->lineLength(el);
+        }
+        result += text(bl, bc, el, ec);
+      }
+    }
+    node = node->nextSibling();
+  }
+
+  return result;
+}
+
+
 #include "document.moc"

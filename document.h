@@ -60,8 +60,6 @@ public:
 
   void resizeEvent(QResizeEvent* e);
 
-public:
-
   KURL url();
 
   bool isUntitled();
@@ -150,8 +148,11 @@ work correctly. */
   void paste();
 
   /** disable/enable the parser*/
- void activateParser(bool activation) {reparseEnabled = activation;}
- bool parserActivated() {return reparseEnabled;}
+  void activateParser(bool activation) {reparseEnabled = activation;}
+  bool parserActivated() {return reparseEnabled;}
+
+  /** returns all the areas that are between tag and it's closing pair */
+  QStringList tagAreas(const QString &tag);
 
   bool busy;
   KURL baseURL;

@@ -3340,6 +3340,14 @@ bool QuantaApp::structTreeVisible() const
   return stabdock->isVisible();
 }
 
+QStringList QuantaApp::tagAreas(const QString &tag) const
+{
+  if (view()->writeExists())
+    return view()->write()->tagAreas(tag);
+  else
+    return QStringList();
+}
+
 #include "quanta.moc"
 
 

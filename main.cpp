@@ -99,6 +99,18 @@ int main(int argc, char *argv[])
     I18N_NOOP("Addition and maintainence of DTDs"),
     "ted@pibil.org");
 
+  aboutData.addCredit("Nicolas Deschildre",
+    I18N_NOOP("Visual Page Layout part, new undo/redo system"),
+    "nicolasdchd@ifrance.com");
+
+  aboutData.addCredit("Luciano Gulmini",
+    I18N_NOOP("Frame wizard"),
+    "e.gulmini@tiscali.it");
+
+  aboutData.addCredit("Andrea Bergia",
+    I18N_NOOP("CSS editor"),
+    "andreabergia@yahoo.it");
+
   aboutData.addCredit("Matthew Colton",
     I18N_NOOP("Cool splash screen for many version releases of Quanta"),
     "mat.colton@web-xs.de");
