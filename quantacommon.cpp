@@ -520,6 +520,7 @@ KPasteAction::KPasteAction( const QString& text,
 
 KPasteAction::~KPasteAction()
 {
+  delete m_popup;
 }
 
 int KPasteAction::plug( QWidget *widget, int index )
@@ -564,15 +565,12 @@ void KPasteAction::menuAboutToShow()
     m_popup->clear();
     QStringList list;
     DCOPClient *client = kapp->dcopClient();
-    if (!client->isAttached()) {
-      (client->attach());
-    }
     if (client->isAttached()){
         if (client->isApplicationRegistered("klipper")) {
           QByteArray data;
           QCString replyType;
           QByteArray replyData;
-          if (client->call("klipper", "klipper", "getClipboardHistoryMenu()", data, replyType, replyData, false, 100)) {
+          if (client->call("klipper", "klipper", "getClipboardHistoryMenu()", data, replyType, replyData, false)) {
             QDataStream replyStream(replyData, IO_ReadOnly);
             replyStream >> list;
           }
@@ -596,9 +594,6 @@ void KPasteAction::menuAboutToShow()
 void KPasteAction::menuItemActivated( int id)
 {
     DCOPClient *client = kapp->dcopClient();
-    if (!client->isAttached()) {
-      (client->attach());
-    }
     if (client->isAttached()){
          if (client->isApplicationRegistered("klipper")) {
            QByteArray data;
@@ -607,7 +602,7 @@ void KPasteAction::menuItemActivated( int id)
            QCString replyType;
            QByteArray replyData;
            if (client->send("klipper", "klipper", "setClipboardContents(QString)", data)) {
-             kdDebug(129) << "Clipboard: " << qApp->clipboard()->text(QClipboard::Clipboard) << endl;
+             kdDebug(24000) << "Clipboard: " << qApp->clipboard()->text(QClipboard::Clipboard) << endl;
            }
          }
       }

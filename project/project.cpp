@@ -1195,7 +1195,7 @@ void Project::slotOptions()
   optionsPage.lineUser->setText(uploadEl.attribute("user",""));
   optionsPage.linePath->setText(uploadEl.attribute("remote_path",""));
   optionsPage.port->setText( uploadEl.attribute("remote_port","") );
-  
+
   /*
    * keepPasswd->setChecked() would popup the confirm dialog before the
    * project options dialog shows if the user has setted storePasswdInFile
@@ -1655,10 +1655,6 @@ void Project::slotSaveAsProjectView(bool askForName)
     {
       Document *w = dynamic_cast<Document *>(tab->page(i));
       if (!w) {
-        /* This is a tab which contains a KPart. We can't get an URL out of w, because
-        * the dynamic_cast<> will return NULL. Skip the other code in this iteration.
-        * Patch provided by Mathieu Kooiman - Thanks!
-        */
         continue;
       }
       KURL url = w->url();
