@@ -16,6 +16,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <iostream.h>
+
  //own includes
 #include "projectupload.h"
 #include "project.h"
@@ -84,17 +86,20 @@ ProjectUpload::ProjectUpload(QString file, Project* prg, QWidget *parent, const 
     					//QListViewItem *it = new QListViewItem( list, url, date, size );
     					QListViewItem *it = list->addItem( url, size, date );
 
-    					int uploadTime = el.attribute("upload_time","1").toInt();
-    					int modifiedTime = stime.secsTo( fi.lastModified() );
+              if ( it != 0 )
+              {
+                int uploadTime = el.attribute("upload_time","1").toInt();
+                int modifiedTime = stime.secsTo( fi.lastModified() );
 
-    					if ( uploadTime < modifiedTime )
-    					{
-    						modified.append( url );
-    						it->setSelected(true);
-    	    		}
-    		    }
-  	    	}
-  		} //for
+                if ( uploadTime < modifiedTime )
+                {
+                  modified.append( url );
+                  it->setSelected(true);
+                }
+              }
+            }
+          }
+      } //for
     } else  //it is not a directory
     {
    		kdDebug() << file << " is a file" << endl;
@@ -109,7 +114,9 @@ ProjectUpload::ProjectUpload(QString file, Project* prg, QWidget *parent, const 
   		date.sprintf( "%4i.%2i.%2i", d.year(), d.month(), d.day() );
   		date.replace( QRegExp(" "), "0" );
 
-  		QListViewItem *it = new QListViewItem( list, file, size, date );
+  		//QListViewItem *it = new QListViewItem( list, file, size, date );
+  		//QListViewItem *it = list->addItem( url, size, date );
+  		QListViewItem *it = list->addItem( file, size, date );
 
   		modified.append( file );
   		it->setSelected(true);
@@ -149,18 +156,20 @@ ProjectUpload::ProjectUpload( Project* prg, QWidget* parent,  const char* name, 
 	      	date.sprintf( "%4i.%2i.%2i", d.year(), d.month(), d.day() );
 	      	date.replace( QRegExp(" "), "0" );
 
-					QListViewItem *it = list->addItem( url, size, date );
+				QListViewItem *it = list->addItem( url, size, date );
+        if ( it != 0 )
+        {
+  				int uploadTime = el.attribute("upload_time","1").toInt();
+  				int modifiedTime = stime.secsTo( fi.lastModified() );
 
-					int uploadTime = el.attribute("upload_time","1").toInt();
-					int modifiedTime = stime.secsTo( fi.lastModified() );
-
-	      	if ( uploadTime < modifiedTime )
-	      	{
-						modified.append( url );
-						it->setSelected(true);
-						// Find this node and highlight it.
-						//UploadTreeFile *it = list->getNode
+  	     	if ( uploadTime < modifiedTime )
+  	     	{
+  					modified.append( url );
+  					it->setSelected(true);
+  					// Find this node and highlight it.
+  					//UploadTreeFile *it = list->getNode
           }
+        }
 	    }
 	} //for
  list->slotSelectFile();
@@ -294,6 +303,7 @@ void ProjectUpload::startUpload()
 
 void ProjectUpload::upload()
 {
+  cout << "filename: " << *(toUpload.begin()) << endl;
 	if ( stopUpload ) return;
 	QString pass = linePasswd->text();
 	QString user = lineUser->text();
@@ -331,6 +341,7 @@ void ProjectUpload::upload()
 				pos = dirStr.find("/",1);
 				while ( pos != -1)
 				{
+cout << "Trying to make: " << dirStr.left(pos) << endl;
 					KIO::NetAccess::mkdir(dirStr.left(pos));
 					pos = dirStr.find("/",pos+1);
 				}
@@ -393,12 +404,12 @@ void ProjectUpload::selectAll()
 
 void ProjectUpload::selectModified()
 {
-	for ( QStringList::Iterator file = modified.begin(); file != modified.end(); ++file )
-	{
-		QListViewItem *it = list->findItem( *file );
-		it->setSelected(true);
-		it->repaint();
-	}
+  for ( QStringList::Iterator file = modified.begin(); file != modified.end(); ++file )
+  {
+    QListViewItem *it = list->findItem( *file );
+    it->setSelected(true);
+    it->repaint();
+  }
   list->slotSelectFile();
 }
 
@@ -406,6 +417,22 @@ void ProjectUpload::clearSelection()
 {
 	list->selectAll(false);
   list->slotSelectFile();
+}
+
+void ProjectUpload::invertSelection()
+{
+  list->invertAll();
+  list->slotSelectFile();
+}
+
+void ProjectUpload::expandAll()
+{
+  list->expandAll();
+}
+
+void ProjectUpload::collapseAll()
+{
+  list->collapseAll();
 }
 
 void ProjectUpload::resizeEvent ( QResizeEvent *t )

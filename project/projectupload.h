@@ -31,40 +31,43 @@
 class ProjectUpload : public ProjectUploadS  {
 Q_OBJECT
 public:
-        ProjectUpload(QString file, Project* p, QWidget *parent = 0, const char * name = 0); 
-	ProjectUpload( Project* , QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0 );
-	~ProjectUpload();
+  ProjectUpload(QString file, Project* p, QWidget *parent = 0, const char * name = 0);
+  ProjectUpload( Project* , QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0 );
+  ~ProjectUpload();
 
 protected slots:
-	void startUpload();
-	void upload();
-	void uploadFinished( KIO::Job *job );
-	void uploadProgress ( KIO::Job *job, unsigned long percent );
-	void uploadMessage ( KIO::Job *, const QString & msg );
-		
-  	void clearSelection();
-  	void selectAll();
-  	void selectModified();
-	
-	virtual void resizeEvent( QResizeEvent * );
-	virtual void reject();
-  	
+  void startUpload();
+  void upload();
+  void uploadFinished( KIO::Job *job );
+  void uploadProgress ( KIO::Job *job, unsigned long percent );
+  void uploadMessage ( KIO::Job *, const QString & msg );
+
+  void clearSelection();
+  void selectAll();
+  void selectModified();
+  void invertSelection();
+  void expandAll();
+  void collapseAll();
+
+  virtual void resizeEvent( QResizeEvent * );
+  virtual void reject();
+
 private:	
-	int selectedItemCount( QListViewItem *, int = 0 );
-	void buildSelectedItemList( QListViewItem *, QString );
+  int selectedItemCount( QListViewItem *, int = 0 );
+  void buildSelectedItemList( QListViewItem *, QString );
 
-	QStringList files;    // list of all files
-	QStringList modified; // modified files
-	QStringList toUpload; // list of files , still didn't uploaded
-	QString currentFile;  // file in progress of upload
-	QStringList madeDirs;
-	Project *p;
-	KURL *baseUrl;
-	bool stopUpload;
-	bool uploadInProgress;
-	bool suspendUpload;
+  QStringList files;    // list of all files
+  QStringList modified; // modified files
+  QStringList toUpload; // list of files , still didn't uploaded
+  QString currentFile;  // file in progress of upload
+  QStringList madeDirs;
+  Project *p;
+  KURL *baseUrl;
+  bool stopUpload;
+  bool uploadInProgress;
+  bool suspendUpload;
 
-	void initProjectInfo(Project *p);
+  void initProjectInfo(Project *p);
 
 private slots: // Private slots
   /** No descriptions */

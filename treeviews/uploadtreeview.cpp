@@ -56,8 +56,8 @@ int UploadTreeView::checkboxTree( QListViewItem *it = 0 )
 	else itIter = it->firstChild();
   // bitFlag structure: (0/1)all children exist (0/1)no children exist.
   // We don't need some children as a bit flag, because that's implied if the bits are "00".
-  int bitFlags = 1 << 1 | 1 << 0;
 
+  int bitFlags = 3;
 	for( ; itIter != 0; itIter = itIter->nextSibling() )
 	{
     if ( dynamic_cast<UploadTreeFolder *>(itIter) )
@@ -66,12 +66,12 @@ int UploadTreeView::checkboxTree( QListViewItem *it = 0 )
       bitFlags &= hadCheckFlags;
       UploadTreeFolder *itF = dynamic_cast<UploadTreeFolder *>(itIter);
 
-      if (bitFlags >> 1 == 1) {
+      if (hadCheckFlags == 2) {
         // All children exist.
         itF->setWhichPixmap( "check" );
         itF->setSelected( true );
       }
-      else if (bitFlags % 2 == 1) {
+      else if (hadCheckFlags == 1) {
         // No children exist.
         itF->setWhichPixmap( "check_clear" );
         itF->setSelected( false );
@@ -220,15 +220,69 @@ UploadTreeFile* UploadTreeView::addItem( QString item, QString date, QString siz
 		item.remove(0,i+1);
 	}
   UploadTreeFile *file = 0;
-	if (it == 0)
-	{
-		file = new UploadTreeFile(this, item, date, size);
-	}
-	else
-	{
-		file = new UploadTreeFile(it, item, date, size);
-	}
+  if ( !item.isEmpty() ) {
+    if (it == 0)
+    {
+    file = new UploadTreeFile(this, item, date, size);
+    }
+    else
+    {
+      file = new UploadTreeFile(it, item, date, size);
+    }
+  }
 	return file;
 }
+
+void UploadTreeView::expandAll( QListViewItem *it )
+{
+  QListViewItem *itIter = it;
+  if (it == 0) itIter = firstChild();
+  else itIter = it->firstChild();
+
+  for( ; itIter != 0; itIter = itIter->nextSibling() )
+  {
+    if ( dynamic_cast<UploadTreeFolder *>(itIter) )
+    {
+      itIter->setOpen( true );
+      expandAll( itIter );
+    }
+  }
+}
+
+void UploadTreeView::collapseAll( QListViewItem *it )
+{
+  QListViewItem *itIter = it;
+  if (it == 0) itIter = firstChild();
+  else itIter = it->firstChild();
+
+  for( ; itIter != 0; itIter = itIter->nextSibling() )
+  {
+    if ( dynamic_cast<UploadTreeFolder *>(itIter) )
+    {
+      itIter->setOpen( false );
+      expandAll( itIter );
+    }
+  }
+}
+
+void UploadTreeView::invertAll( QListViewItem *it )
+{
+  QListViewItem *itIter = it;
+  if (it == 0) itIter = firstChild();
+  else itIter = it->firstChild();
+
+  for( ; itIter != 0; itIter = itIter->nextSibling() )
+  {
+    if ( dynamic_cast<UploadTreeFile *>(itIter) )
+    {
+      itIter->setSelected( !itIter->isSelected() );
+    }
+    else
+    {
+      invertAll( itIter );
+    }
+  }
+}
+
 
 #include "uploadtreeview.moc"

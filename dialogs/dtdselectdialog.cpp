@@ -2,7 +2,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file './dtdselectdialog.ui'
 **
-** Created: Thu Aug 29 13:55:21 2002
+** Created: Tue Sep 17 13:34:29 2002
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
