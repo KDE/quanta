@@ -210,9 +210,12 @@ void QuantaDoc::openDocument(const KURL& urlToOpen, const QString &a_encoding, b
   }
   if (!loaded && !url.isEmpty()) //the open of the document has failed*/
   {
+    bool signalStatus = signalsBlocked();
+    blockSignals(false);
     emit hideSplash();
     KMessageBox::error(quantaApp, i18n("<qt>Cannot open document <b>%1</b>.</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)));
-    closeDocument();
+    closeDocument();    
+    blockSignals(signalStatus);
   }
 }
 
