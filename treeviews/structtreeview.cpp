@@ -37,8 +37,8 @@
 #include "resource.h"
 #include "qextfileinfo.h"
 #include "quanta.h"
-#include "quantacommon.h"
 #include "quantaview.h"
+#include "quantacommon.h"
 #include "dtds.h"
 
 #include "structtreetag.h"
@@ -345,6 +345,8 @@ void StructTreeView::slotReparse(Document *w, Node* node, int openLevel)
   if (typingInProgress)
     return;
   deleteList();
+  if (!node)
+    return;
   groupsCount = m_parsingDTD->structTreeGroups.count();
   write = w;
   write->clearErrorMarks();
