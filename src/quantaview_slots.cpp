@@ -149,7 +149,7 @@ void QuantaView::slotSelectTagArea()
   if (!writeExists())
       return;
   uint line,col;
-  write()->viewCursorIf->cursorPositionReal(&line, &col); 
+  write()->viewCursorIf->cursorPositionReal(&line, &col);
   Node *node = parser->nodeAt(line, col);
   slotSelectTagArea(node);
 }
@@ -183,7 +183,7 @@ void QuantaView::slotFrameWizard()
       {
        dlg.setSaved(true);
       }
-  dlg.setFramesetFileCurrentPath(Project::ref()->projectBaseURL().path());
+  dlg.setMarkupLanguage(w->currentDTD(true)->name);
   dlg.loadExistingFramesetStructure(l2);
 
   if ( dlg.exec() )
@@ -214,7 +214,7 @@ void QuantaView::slotInsertCSS()
   w->viewCursorIf->cursorPositionReal(&line, &col);
   if (line == 0 && col == 0)
     col++;
-  parser->rebuild(w);  
+  parser->rebuild(w);
   Node *node = parser->nodeAt(line, col, false);
   unsigned int lastLine = w->editIf->numLines() - 1;
   unsigned int lastCol = w->editIf->lineLength(lastLine);
@@ -223,7 +223,7 @@ void QuantaView::slotInsertCSS()
   if (styleNode->tag->type == Tag::XmlTagEnd && styleNode->prev)
     styleNode = styleNode->prev;
 
-  while (styleNode && styleNode->parent && styleNode->tag->name.lower() != "style" && styleNode->tag->dtd->name == "text/css") 
+  while (styleNode && styleNode->parent && styleNode->tag->name.lower() != "style" && styleNode->tag->dtd->name == "text/css")
     styleNode = styleNode->parent;
 
   Node *parentNode = node;
@@ -234,13 +234,13 @@ void QuantaView::slotInsertCSS()
            parentNode->tag->type != Tag::XmlTag)
       parentNode = parentNode->parent;
   QString fullDocument = w->editIf->text().stripWhiteSpace();
-  
+
   if (styleNode->tag->name.lower() == "comment block" && styleNode->parent) {
     if (styleNode->parent->tag->name.lower() == "style") {
       styleNode = styleNode->parent;
     }
   }
-  
+
   if (styleNode && styleNode->tag->name.lower() == "style" && styleNode->next)  //inside <style> invoke the selector editor
   {
     styleNode->tag->endPos(bLine, bCol);
