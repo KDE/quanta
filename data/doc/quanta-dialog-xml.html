@@ -1,0 +1,227 @@
+<html>
+<head>
+<title>Quanta Tag Dialog Definition XML</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<h1 align="center">Quanta Tag Dialog Definition XML</h1>
+<h5 align="center">Richard Moore, <a href="mailto:rich@kde.org">rich@kde.org</a></h5>
+<h2>Introduction</h2>
+  This document describes the XML files used to define tags in the Quanta HTML
+editor. I believe the files are encoded as UTF 8. The files define both the attributes
+supported by a tag (I don't think this is used currently), and the layout and 
+contents of the properties dialog Quanta shows for the tag. 
+<p>
+<font color="#FF0000">Note: The encoding needs checking and should be specified
+in the XML files (rich)</font>
+<h2>Supported Elements and Attributes</h2>
+<p> The table below lists the elements currently supported in Quanta's tag definition
+  files. </p>
+  <p>
+
+<table width="90%" border="0" bgcolor="#99CCFF" align="center">
+  <tr>
+    <th bgcolor="#9999FF">Element</th>
+    <th bgcolor="#9999FF">Description</th>
+  </tr>
+  <tr> 
+    <td>TAGS</td>
+    <td>Top level container tag</td>
+  </tr>
+  <tr>
+    <td>tag</td>
+    <td>Defines the tag being described</td>
+  </tr>
+  <tr>
+    <td>attr</td>
+    <td>Define an attribute for the tag</td>
+  </tr>
+  <tr>
+    <td>location</td>
+    <td>Specifies the location of a field in the dialog</td>
+  </tr>
+  <tr>
+    <td>tooltip</td>
+    <td>Specifies the tooltip for a field in the dialog</td>
+  </tr>
+  <tr>
+    <td>whatsthis</td>
+    <td>Specifies the 'Whats This' help for a field in the dialog</td>
+  </tr>
+  <tr>
+    <td>label</td>
+    <td>Create a label</td>
+  </tr>
+  <tr>
+    <td>text</td>
+    <td>Define the text for a label or check box</td>
+  </tr>
+  <tr>
+    <td>items</td>
+    <td>Container element for defining lists</td>
+  </tr>
+  <tr>
+    <td>item</td>
+    <td>Defines an item in a list</td>
+  </tr>
+  <tr>
+    <td>spacer</td>
+    <td>Add a spacer to the dialog layout grid</td>
+  </tr>
+</table>
+<p></p>
+<h3>TAGS</h3>
+<p>This is the root tag of the XML document. It has no attributes and should contain 
+  the definition of a single tag.</p>
+<p><font color="red" size="-1">Note: Can I change this tag to be 
+  lower case for consistency with the others? [Rich]</font></p>
+<h3>tag</h3>
+<p>Specifies the tag being defined.</p>
+<table width="90%" border="0" bgcolor="#99CCFF" align="center">
+  <tr> 
+    <th bgcolor="#9999FF">Attribute</th>
+    <th bgcolor="#9999FF">Description</th>
+  </tr>
+  <tr> 
+    <td>name</td>
+    <td>Specifies the name of the tag being defined. [required]</td>
+  </tr>
+</table>
+<h3>attr</h3>
+<p align="left">Specifies an attribute. This element occurs once of each defined 
+  attribute and defines the name and type, it also contains additional tags that 
+  specify how this attribute should be displayed etc.</p>
+<table width="90%" border="0" bgcolor="#99CCFF" align="center">
+  <tr> 
+    <th bgcolor="#9999FF" width="15%">Attribute</th>
+    <th bgcolor="#9999FF" width="15%">Value</th>
+    <th bgcolor="#9999FF" width="68%">Description</th>
+  </tr>
+  <tr> 
+    <td width="15%">name</td>
+    <td width="15%">&nbsp;</td>
+    <td width="68%">Specifies the name of the attribute being defined. [required]</td>
+  </tr>
+  <tr> 
+    <td width="15%">type</td>
+    <td width="15%">&nbsp;</td>
+    <td width="68%">Specifies the type of the attribute being defined. The value
+      should be one of the following strings. [optional]</td>
+  </tr>
+  <tr> 
+    <td width="15%">&nbsp;</td>
+    <td width="15%">input</td>
+    <td width="68%">Says the field supports free text entries (text field). [default]</td>
+  </tr>
+  <tr> 
+    <td width="15%">&nbsp;</td>
+    <td width="15%">check</td>
+    <td width="68%">Says the value is boolean (check box). </td>
+  </tr>
+  <tr> 
+    <td width="15%">&nbsp;</td>
+    <td width="15%">color</td>
+    <td width="68%">Says the value is a colour.</td>
+  </tr>
+  <tr> 
+    <td width="15%">&nbsp;</td>
+    <td width="15%">url</td>
+    <td width="68%">Says the value is a url (Allows the user to specify a local file to refer to).</td>
+  </tr>
+  <tr> 
+    <td width="15%">&nbsp;</td>
+    <td width="15%">list</td>
+    <td width="68%">Says the value is an item from a specified list.</td>
+  </tr>
+</table>
+<h3>location</h3>
+<p>Specifies the position and size of a field in the dialog. This tag should occur 
+  once for each field in the dialog (ie. one for each attr and label tag). All 
+  the attributes must have integer values, and row/column indices start from 0.</p>
+<table width="90%" border="0" bgcolor="#99CCFF" align="center">
+  <tr>
+    <th bgcolor="#9999FF">Attribute</th>
+    <th bgcolor="#9999FF">Description</th>
+  </tr>
+  <tr> 
+    <td>row</td>
+    <td>Specifies the row in the dialog layout of a field or label. [required]</td>
+  </tr>
+  <tr> 
+    <td>col</td>
+    <td>Specifies the column in the dialog layout of a field or label. [required]</td>
+  </tr>
+  <tr>
+    <td>rowspan</td>
+    <td>Specifies the number of rows a field should span. [optional]</td>
+  </tr>
+  <tr> 
+    <td>colspan</td>
+    <td>Specifies the number of columns a field should span. [optional]</td>
+  </tr>
+</table>
+<h3>label</h3>
+  <p>Place a label in the dialog. The text is specified by a nested text tag.</p>
+<h3>text</h3>
+<p>Contains the text associated with a label. The label could be standalone, or 
+  it could be part of a widget such as a check box.</p>
+<h3>spacer</h3>
+<p>Defines a spacer in the layout of a tag dialog. The spacer orientation may
+  be horizontal or vertical.</p>
+<table width="90%" border="0" bgcolor="#99CCFF" align="center">
+  <tr> 
+    <th bgcolor="#9999FF" width="15%">Attribute</th>
+    <th bgcolor="#9999FF" width="15%">Value</th>
+    <th bgcolor="#9999FF" width="68%">Description</th>
+  </tr>
+  <tr> 
+    <td width="15%">orientation</td>
+    <td width="15%">&nbsp;</td>
+    <td width="68%">Specifies the orientation of the spacer within the layout. 
+      [optional]</td>
+  </tr>
+  <tr> 
+    <td width="15%">&nbsp;</td>
+    <td width="15%">h</td>
+    <td width="68%">Horizontal [default]</td>
+  </tr>
+  <tr>
+    <td width="15%">&nbsp;</td>
+    <td width="15%">v</td>
+    <td width="68%">Vertical</td>
+  </tr>
+</table>
+<h3>items</h3>
+<p>A container tag that groups together the items in a list, it contains a bunch
+  of item tags.</p>
+<h3>item</h3>
+<p>Contains the text for an item in a list.</p>
+
+<h3>tooltip</h3>
+<p>A tag containing the tool tip text for a field in the dialog.
+<font color="#FF0000">Note: Currently only plain text is supported (you can't use
+any markup).</font>
+</p>
+
+<h3>whatsthis</h3>
+<p>A tag containing the Whats This text for a field in the dialog.
+<font color="#FF0000">Note: Currently only plain text is supported (you can't use
+any markup).</font>
+</p>
+
+<h2>Issues with the current format</h2>
+<h3></h3>
+<p>For me, the current tag definition system has a number of problems:
+<ul>
+  <li>Provides an inflexible UI</li>
+  <li>Makes the definition of the types associated with an attribute part of
+  the specification of the GUI rather than of the data model.
+  </li>
+  <li>i18n support</li>
+  <li>Support for multiple DTDs</li>
+</ul>
+</p>
+</body>
+</html>

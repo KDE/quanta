@@ -1,0 +1,1957 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2000-09-21 17:06+0300\n"
+"PO-Revision-Date: 2000-11-23 00:01GMT\n"
+"Last-Translator: Remy LABENE <remy.labene@fnac.net>\n"
+"Language-Team: Rémy LABENE <remy.labene@fnac.net>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ISO 8859-15\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 0.5.5\n"
+
+#: document.cpp:457
+msgid "Configure KWrite"
+msgstr "Configurer KWrite"
+
+#: document.cpp:463
+msgid "Colors"
+msgstr "Couleurs"
+
+#: document.cpp:470
+msgid "Indent"
+msgstr "Indenter"
+
+#: document.cpp:475 quantaview_init.cpp:127 quantaview_init.cpp:517
+msgid "Select"
+msgstr "Sélection"
+
+#: document.cpp:485
+msgid "Spelling"
+msgstr "Orthographe"
+
+#: document.cpp:485
+msgid "Spell checker behavior"
+msgstr "Vérifier Orthographe"
+
+#: document.cpp:534
+msgid "Error starting KSpell. Please make sure you have ISpell properly configured."
+msgstr "Erreur correcteur orthographique.Vérifiez sa configuration"
+
+#: quanta.cpp:269
+msgid "Opens a new application window"
+msgstr "Ouvrir une nouvelle fenêtre"
+
+#: quanta.cpp:273
+msgid "Creates a new document"
+msgstr "Créer un nouveau document"
+
+#: quanta.cpp:277
+msgid "Opens an existing document"
+msgstr "Ouvrir un document existant"
+
+#: quanta.cpp:281
+msgid "Opens a recently used file"
+msgstr "Ouvrir un document récent"
+
+#: quanta.cpp:285
+msgid "Saves the actual document"
+msgstr "Sauver le document actuel"
+
+#: quanta.cpp:289
+msgid "Saves the actual document as..."
+msgstr "Sauver le document actuel sous..."
+
+#: quanta.cpp:293
+msgid "Closes the actual document"
+msgstr "Fermer le document actuel"
+
+#: quanta.cpp:297
+msgid "Prints out the actual document"
+msgstr "Imprimer le document actuel"
+
+#: quanta.cpp:301
+msgid "Quits the application"
+msgstr "Quitter l'application"
+
+#: quanta.cpp:305
+msgid "Cuts the selected section and puts it to the clipboard"
+msgstr "Couper la sélection et mettre dans le presse papier"
+
+#: quanta.cpp:309
+msgid "Copies the selected section to the clipboard"
+msgstr "Copier la sélection et mettre dans le presse papier"
+
+#: quanta.cpp:313
+msgid "Pastes the clipboard contents to actual position"
+msgstr "Coller le contenu du presse papier à la position"
+
+#: quanta.cpp:317
+msgid "Enables/disables the toolbar"
+msgstr "Activer/Désactiver la barre d'outils"
+
+#: quanta.cpp:321
+msgid "Enables/disables the statusbar"
+msgstr "Activer/Désactiver la barre d'état"
+
+#: quanta.cpp:335
+msgid "Opening a new application window..."
+msgstr "Ouvrir une nouvelle application"
+
+#: quanta.cpp:345
+msgid "Creating new document..."
+msgstr "Créer un nouveau document"
+
+#: quanta.cpp:359 quanta.cpp:368 quanta.cpp:382 quanta_init.cpp:841
+msgid "Opening file..."
+msgstr "Ouvrir fichier"
+
+#: quanta.cpp:362 quanta.cpp:420
+msgid "*|All files"
+msgstr "Tout les fichiers"
+
+#: quanta.cpp:362
+msgid "Open File..."
+msgstr "Ouvrir Fichier"
+
+#: quanta.cpp:392
+msgid "Opening project..."
+msgstr "Ouvrir Projet"
+
+#: quanta.cpp:405
+msgid "Saving file..."
+msgstr "Enregistrer fichier"
+
+#: quanta.cpp:417
+msgid "Saving file with a new filename..."
+msgstr "Enregistrer sous..."
+
+#: quanta.cpp:437
+msgid "Saving all files..."
+msgstr "Enregistrer tous les fichiers"
+
+#: quanta.cpp:447
+msgid "Closing file..."
+msgstr "Fermer fichier"
+
+#: quanta.cpp:464
+msgid "Closing all files..."
+msgstr "Fermer tous les fichiers"
+
+#: quanta.cpp:482
+msgid "Printing..."
+msgstr "Imprimer"
+
+#: quanta.cpp:496
+msgid "Exiting..."
+msgstr "Quitter"
+
+#: quanta.cpp:519
+msgid "Cutting selection..."
+msgstr "Couper la sélection"
+
+#: quanta.cpp:528
+msgid "Copying selection to clipboard..."
+msgstr "Copier la sélection dans le presse papier"
+
+#: quanta.cpp:537
+msgid "Inserting clipboard contents..."
+msgstr "Insérer le contenu du presse papier"
+
+#: quanta.cpp:546
+msgid "Undo..."
+msgstr "Défaire"
+
+#: quanta.cpp:555
+msgid "Redo..."
+msgstr "Refaire"
+
+#: quanta.cpp:564 quanta.cpp:573 quanta.cpp:582
+msgid "Undo/Redo history..."
+msgstr "Défaire/Refaire historique"
+
+#: quanta.cpp:591
+msgid "Search..."
+msgstr "Chercher"
+
+#: quanta.cpp:600
+msgid "Search again..."
+msgstr "Chercher nouveau"
+
+#: quanta.cpp:609
+msgid "Replace..."
+msgstr "Remplacer"
+
+#: quanta.cpp:618
+msgid "Invert Selection..."
+msgstr "Inverser la sélection"
+
+#: quanta.cpp:627
+msgid "Indent..."
+msgstr "Indenter..."
+
+#: quanta.cpp:636
+msgid "UnIndent..."
+msgstr "Désindenter"
+
+#: quanta.cpp:645
+msgid "Clean Indentation..."
+msgstr "Nettoyer Indentation"
+
+#: quanta.cpp:654
+msgid "Goto Line..."
+msgstr "Aller à la Ligne"
+
+#: quanta.cpp:663
+msgid "Toggle the toolbar..."
+msgstr "Afficher la barre d'outils"
+
+#: quanta.cpp:682
+msgid "Toggle the statusbar..."
+msgstr "Afficher la barre d'état"
+
+#: quanta.cpp:719
+msgid "Repainting..."
+msgstr "Rafraichir"
+
+#: quanta.cpp:875
+msgid "Configure Quanta"
+msgstr "Configurer Quanta"
+
+#: quanta.cpp:880
+msgid "Tag Style"
+msgstr "Style Etiquette"
+
+#: quanta.cpp:889
+msgid "Files Masks"
+msgstr "Masques Fichiers"
+
+#: quanta.cpp:898 quanta_init.cpp:511
+msgid "Preview"
+msgstr "Prévisualisation"
+
+#: quanta.cpp:906
+msgid "Parser"
+msgstr "Parenthèses"
+
+#: quanta.cpp:1034
+#, c-format
+msgid "Line: %d Col: %d"
+msgstr "Ligne:%d Col:%d"
+
+#: quanta_init.cpp:298
+msgid "&New"
+msgstr "&Nouveau"
+
+#: quanta_init.cpp:300
+msgid "Open &recent"
+msgstr "Ouvrir &récent"
+
+#: quanta_init.cpp:303
+msgid "Close All"
+msgstr "Fermer tout"
+
+#: quanta_init.cpp:310
+msgid "Save &As..."
+msgstr "Enregistrer sous"
+
+#: quanta_init.cpp:311
+msgid "Save All..."
+msgstr "Enregistrer Tout"
+
+#: kwrite/kwview.cpp:1585 quanta_init.cpp:324
+msgid "Undo/Redo &History..."
+msgstr "Défaire/Refaire &Historique"
+
+#: quanta_init.cpp:328 quanta_init.cpp:554
+msgid "Cu&t"
+msgstr "Couper"
+
+#: quanta_init.cpp:331
+msgid "Select &All"
+msgstr "Sélectionner tout"
+
+#: kwrite/kwview.cpp:1591 quanta_init.cpp:332
+msgid "&Deselect All"
+msgstr "Désélectionner Tout"
+
+#: kwrite/kwview.cpp:1593 quanta_init.cpp:333
+msgid "Invert &Selection"
+msgstr "Inverser &Sélection"
+
+#: quanta_init.cpp:337
+msgid "&Search"
+msgstr "Chercher"
+
+#: quanta_init.cpp:338
+msgid "Search &again"
+msgstr "Chercher nouveau"
+
+#: quanta_init.cpp:339
+msgid "R&eplace"
+msgstr "R&emplacer"
+
+#: quanta_init.cpp:345
+msgid "&Goto line"
+msgstr "Aller Ligne"
+
+#: kwrite/kwview.cpp:1615 quanta_init.cpp:349
+msgid "&Indent"
+msgstr "&Indenter"
+
+#: kwrite/kwview.cpp:1617 quanta_init.cpp:350
+msgid "&Unindent"
+msgstr "Désindenter"
+
+#: kwrite/kwview.cpp:1619 quanta_init.cpp:351
+msgid "&Clean Indentation"
+msgstr "Nettoyer Indentation"
+
+#: quanta_init.cpp:355 quanta_init.cpp:561
+msgid "Context help"
+msgstr "Aide Contextuelle"
+
+#: quanta_init.cpp:356 quanta_init.cpp:562
+msgid "Tag attributes"
+msgstr "Attributs Etiquettes"
+
+#: quanta_init.cpp:357 quanta_init.cpp:563
+msgid "&Edit current tag"
+msgstr "&Editer Etiquette en cour"
+
+#: quanta_init.cpp:361
+msgid "Spe&ll checker"
+msgstr "Vérificateur orthographique"
+
+#: quanta_init.cpp:368
+msgid "&Toolbar"
+msgstr "Barre d'ou&tils"
+
+#: quanta_init.cpp:369
+msgid "&Statusbar"
+msgstr "Barre d'état"
+
+#: quanta_init.cpp:371
+msgid "&Tree"
+msgstr "Arbre"
+
+#: quanta_init.cpp:372
+msgid "&Messages window"
+msgstr "Fenêtre &Messages"
+
+#: quanta_init.cpp:373
+msgid "&Preview"
+msgstr "&Prévisualisation"
+
+#: quanta_init.cpp:375
+msgid "&Back"
+msgstr "Précédent"
+
+#: quanta_init.cpp:376
+msgid "&Forward"
+msgstr "Suivant"
+
+#: quanta_init.cpp:377
+msgid "&Refresh preview"
+msgstr "&Rafraichir prévisualisation"
+
+#: quanta_init.cpp:379
+msgid "Open document in Netscape"
+msgstr "Ouvrir document dans Netscape"
+
+#: quanta_init.cpp:380
+msgid "Open document in KFM"
+msgstr "Ouvrir document dans KFM"
+
+#: quanta_init.cpp:391
+msgid "&Create new"
+msgstr "&Créer nouveau"
+
+#: quanta_init.cpp:392
+msgid "&Open project"
+msgstr "&Ouvrir projet"
+
+#: quanta_init.cpp:393
+msgid "Open &recent project"
+msgstr "Ouvrir projet &récent"
+
+#: quanta_init.cpp:396
+msgid "&Insert file(s)"
+msgstr "&Insérer fichier"
+
+#: quanta_init.cpp:397
+msgid "Insert &directory"
+msgstr "Insérer &dossier"
+
+#: quanta_init.cpp:411
+msgid "&Set bookmark"
+msgstr "&Sélectionner signet"
+
+#: quanta_init.cpp:412
+msgid "&Add bookmark"
+msgstr "&Ajouter signet"
+
+#: quanta_init.cpp:413
+msgid "&Clear bookmarks"
+msgstr "Nettoyer signet"
+
+#: quanta_init.cpp:420
+msgid "&Highliting..."
+msgstr "Surbrillance..."
+
+#: quanta_init.cpp:421
+msgid "&Editor options..."
+msgstr "Options &Editeur..."
+
+#: quanta_init.cpp:422
+msgid "Configure &key bindings..."
+msgstr "Raccourcis clavier"
+
+#: quanta_init.cpp:424
+msgid "&General options..."
+msgstr "Options &Générales"
+
+#: quanta_init.cpp:444
+msgid " &File "
+msgstr "&Fichiers"
+
+#: quanta_init.cpp:445
+msgid " &Edit "
+msgstr "&Editer"
+
+#: quanta_init.cpp:446
+msgid " &Tool "
+msgstr "Ou&til"
+
+#: quanta_init.cpp:447
+msgid " &View "
+msgstr "&Vue"
+
+#: quanta_init.cpp:448
+msgid " &Project "
+msgstr "&Projet"
+
+#: quanta_init.cpp:450
+msgid " &Options "
+msgstr "&Options"
+
+#: quanta_init.cpp:484
+msgid "New File"
+msgstr "Nouveau Fichier"
+
+#: quanta_init.cpp:485
+msgid "Open File"
+msgstr "Ouvrir Fichier"
+
+#: quanta_init.cpp:486
+msgid "Open Project"
+msgstr "Ouvrir Projet"
+
+#: quanta_init.cpp:487
+msgid "Save File"
+msgstr "Enregistrer Fichier"
+
+#: quanta_init.cpp:488
+msgid "Save All Files"
+msgstr "Enregistrer tout les Fichiers"
+
+#: quanta_init.cpp:501
+msgid "Spell Checker"
+msgstr "Correcteur orthographique"
+
+#: quanta_init.cpp:505
+msgid "Search"
+msgstr "Chercher"
+
+#: quanta_init.cpp:506
+msgid "Search again"
+msgstr "Chercher nouveau"
+
+#: quanta_init.cpp:510
+msgid "View tree"
+msgstr "Vue Arbre"
+
+#: quanta_init.cpp:518
+msgid "Forward"
+msgstr "Suivant"
+
+#: quanta_init.cpp:519
+msgid "Refresh Preview"
+msgstr "Rafarichir Prévisualisation"
+
+#: quanta_init.cpp:523
+msgid "Close File"
+msgstr "Fermer Fichier"
+
+#: quanta_init.cpp:542
+msgid "Line: 00000 Col: 000"
+msgstr "Ligne: 00000 Col:000"
+
+#: quantadoc.cpp:215
+msgid ""
+"The current file has been modified.\n"
+"Do you want to save it?"
+msgstr ""
+"Le fichier actuel a été modifié.\n"
+"Voulez vous l'enregistrer ?"
+
+#: quantadoc.cpp:544 quantaview_slots.cpp:67
+msgid "Unknown tag : "
+msgstr "Etiquette inconnu"
+
+#: quantaview_init.cpp:62 quantaview_init.cpp:431
+msgid "Quick Start"
+msgstr "Démarrage rapide"
+
+#: kwrite/highlight/highlight.cpp:3080 quantaview_init.cpp:64
+#: quantaview_init.cpp:452
+msgid "Bold"
+msgstr "Gras"
+
+#: quantaview_init.cpp:66 quantaview_init.cpp:454
+msgid "Underline"
+msgstr "Souligné"
+
+#: quantaview_init.cpp:68 quantaview_init.cpp:458
+msgid "New line"
+msgstr "Nouvelle Ligne"
+
+#: quantaview_init.cpp:69 quantaview_init.cpp:459
+msgid "Paragraph"
+msgstr "Paragraphe"
+
+#: quantaview_init.cpp:70 quantaview_init.cpp:460
+msgid "Non breaking space"
+msgstr "Forcer Espace"
+
+#: quantaview_init.cpp:72 quantaview_init.cpp:436
+msgid "Insert anchor"
+msgstr "Insérer lien"
+
+#: quantaview_init.cpp:73 quantaview_init.cpp:435
+msgid "Insert image"
+msgstr "Insérer Image"
+
+#: quantaview_init.cpp:74 quantaview_init.cpp:464
+msgid "Horizontal rule"
+msgstr "Régle horizontale"
+
+#: quantaview_init.cpp:75 quantaview_init.cpp:465
+msgid "Comment"
+msgstr "Commentaire"
+
+#: quantaview_init.cpp:77 quantaview_init.cpp:469
+msgid "Align left"
+msgstr "Aligner à gauche"
+
+#: quantaview_init.cpp:78 quantaview_init.cpp:470
+msgid "Align center"
+msgstr "Centrer"
+
+#: quantaview_init.cpp:79 quantaview_init.cpp:471
+msgid "Align right"
+msgstr "Aligner à droite"
+
+#: quantaview_init.cpp:80 quantaview_init.cpp:472
+msgid "Align justify"
+msgstr "Justifier"
+
+#: quantaview_init.cpp:85 quantaview_init.cpp:481
+msgid "Font size +1"
+msgstr "Taille police +1"
+
+#: quantaview_init.cpp:86 quantaview_init.cpp:482
+msgid "Font size -1"
+msgstr "Taille police -1"
+
+#: quantaview_init.cpp:88 quantaview_init.cpp:486
+msgid "Pre formated"
+msgstr "Preformaté"
+
+#: quantaview_init.cpp:89 quantaview_init.cpp:487
+msgid "Subscript"
+msgstr "Subscript"
+
+#: quantaview_init.cpp:90 quantaview_init.cpp:488
+msgid "Superscript"
+msgstr "Superscript"
+
+#: quantaview_init.cpp:92 quantaview_init.cpp:492
+msgid "Head 1"
+msgstr "En tête 1"
+
+#: quantaview_init.cpp:93 quantaview_init.cpp:493
+msgid "Head 2"
+msgstr "En tête 2"
+
+#: quantaview_init.cpp:94 quantaview_init.cpp:494
+msgid "Head 3"
+msgstr "En tête 3"
+
+#: quantaview_init.cpp:95 quantaview_init.cpp:495
+msgid "Head 4"
+msgstr "En tête 4"
+
+#: quantaview_init.cpp:96 quantaview_init.cpp:496
+msgid "Head 5"
+msgstr "En tête 5"
+
+#: quantaview_init.cpp:99 quantaview_init.cpp:432
+msgid "Quick table"
+msgstr "Tableau rapide"
+
+#: quantaview_init.cpp:101 quantaview_init.cpp:500
+msgid "Table"
+msgstr "Tableau"
+
+#: quantaview_init.cpp:102 quantaview_init.cpp:107 quantaview_init.cpp:501
+#: quantaview_init.cpp:508
+msgid "Table row"
+msgstr "Ligne tableau"
+
+#: quantaview_init.cpp:103 quantaview_init.cpp:106 quantaview_init.cpp:502
+#: quantaview_init.cpp:507
+msgid "Table head"
+msgstr "En-tête tableau"
+
+#: quantaview_init.cpp:104 quantaview_init.cpp:108 quantaview_init.cpp:503
+#: quantaview_init.cpp:509
+msgid "Table data"
+msgstr "Donnée tableau"
+
+#: quantaview_init.cpp:109 quantaview_init.cpp:510
+msgid "Caption"
+msgstr "En-tête"
+
+#: quantaview_init.cpp:112 quantaview_init.cpp:433
+msgid "Quick list"
+msgstr "Liste rapide"
+
+#: quantaview_init.cpp:114 quantaview_init.cpp:526
+msgid "Unordered list"
+msgstr "Liste désordonnée"
+
+#: quantaview_init.cpp:115 quantaview_init.cpp:527
+msgid "Ordered list"
+msgstr "Liste ordonnée"
+
+#: quantaview_init.cpp:116 quantaview_init.cpp:528
+msgid "List item"
+msgstr "Liste avec item"
+
+#: quantaview_init.cpp:118 quantaview_init.cpp:532
+msgid "Definition list"
+msgstr "Liste définie"
+
+#: quantaview_init.cpp:119 quantaview_init.cpp:533
+msgid "Definition term"
+msgstr "Terme définition"
+
+#: quantaview_init.cpp:120 quantaview_init.cpp:534
+msgid "Definition"
+msgstr "Définition"
+
+#: quantaview_init.cpp:123 quantaview_init.cpp:514
+msgid "Form"
+msgstr "Forme"
+
+#: quantaview_init.cpp:125 quantaview_init.cpp:515
+msgid "Radio button"
+msgstr "Bouton radio"
+
+#: quantaview_init.cpp:126 quantaview_init.cpp:516
+msgid "Check box"
+msgstr "Boite de vérification"
+
+#: quantaview_init.cpp:128 quantaview_init.cpp:518
+msgid "Text"
+msgstr "Texte"
+
+#: quantaview_init.cpp:129 quantaview_init.cpp:519
+msgid "Password"
+msgstr "Mots de passe"
+
+#: quantaview_init.cpp:130 quantaview_init.cpp:520
+msgid "Text area"
+msgstr "Aire de texte"
+
+#: quantaview_init.cpp:131 quantaview_init.cpp:521
+msgid "Submit"
+msgstr "Submit"
+
+#: quantaview_init.cpp:132 quantaview_init.cpp:522
+msgid "Reset"
+msgstr "Réinitialiser"
+
+#: quantaview_init.cpp:135 quantaview_init.cpp:440
+msgid "Standard"
+msgstr "Standard"
+
+#: quantaview_init.cpp:137 quantaview_init.cpp:442
+msgid "Tables"
+msgstr "Tableaux"
+
+#: quantaview_init.cpp:138 quantaview_init.cpp:444
+msgid "Lists"
+msgstr "Listes"
+
+#: quantaview_init.cpp:139 quantaview_init.cpp:443
+msgid "Forms"
+msgstr "Formes"
+
+#: kwrite/ktextprint.cpp:972 quantaview_init.cpp:447
+#: tagdialogs/tagfontdlgdata.cpp:30
+msgid "Color"
+msgstr "Couleur"
+
+#: quantaview_init.cpp:448
+msgid "Date"
+msgstr "Date"
+
+#: quantaview_init.cpp:449 tagdialogs/tagmaildlgdata.cpp:30
+msgid "E-Mail"
+msgstr "E-Mail"
+
+#: quantaview_init.cpp:477
+msgid "Base font"
+msgstr "Polices de base"
+
+#: quantaview_init.cpp:538
+msgid "Menu"
+msgstr "Menu"
+
+#: quantaview_slots.cpp:188
+msgid "Enter E-Mail adress..."
+msgstr "Entrez adresse E-Mail"
+
+#: quantaview_slots.cpp:198
+msgid "Generate HTML text..."
+msgstr "Générer texte HTML..."
+
+#: quantaview_slots.cpp:226
+msgid "Generate list..."
+msgstr "Générer liste..."
+
+#: quantaview_slots.cpp:256
+msgid "Generate table..."
+msgstr "Générer tableaux..."
+
+#: dialogs/filesmaskdata.cpp:18
+msgid "HTML files:"
+msgstr "Fichiers HTML"
+
+#: dialogs/filesmaskdata.cpp:33
+msgid "PHP files:"
+msgstr "Fichiers PHP"
+
+#: dialogs/filesmaskdata.cpp:38
+msgid "Images:"
+msgstr "Images:"
+
+#: dialogs/filesmaskdata.cpp:43
+msgid "Text fles:"
+msgstr "Fichiers.Texte:"
+
+#: dialogs/previewoptionsdata.cpp:22
+msgid "Bottom"
+msgstr "Bouton"
+
+#: dialogs/previewoptionsdata.cpp:27
+msgid "Right"
+msgstr "Droite"
+
+#: dialogs/previewoptionsdata.cpp:32
+msgid "Full workspace"
+msgstr "Espace plein"
+
+#: dialogs/previewoptionsdata.cpp:37 tagdialogs/tagforminputdata.cpp:123
+msgid "Disabled"
+msgstr "Annuler"
+
+#: dialogs/styleoptionsdata.cpp:20
+msgid "Use capital symbols for tags"
+msgstr "Utiliser des capitales pour les commentaires"
+
+#: dialogs/styleoptionsdata.cpp:25
+msgid "Use capital symbols for attributes of tags"
+msgstr "Utiliser des capitales pour les attributs des commentaires"
+
+#: dialogs/styleoptionsdata.cpp:40
+msgid "Insert end of tag if optional"
+msgstr "Insérer la fin d'un commentaire si optionnel"
+
+#: dialogs/parseroptions.cpp:43 dialogs/parseroptions.cpp:70
+#: dialogs/parseroptions.cpp:77 dialogs/parseroptions.cpp:94
+#: treeviews/structtreeview.cpp:261 treeviews/structtreeview.cpp:272
+msgid "Find tag and open tree"
+msgstr "Trouver un commentaire dans l'arbre"
+
+#: dialogs/parseroptions.cpp:44 dialogs/parseroptions.cpp:71
+#: dialogs/parseroptions.cpp:78 dialogs/parseroptions.cpp:93
+msgid "Find tag"
+msgstr "Trouver commentaire"
+
+#: dialogs/parseroptions.cpp:45 dialogs/parseroptions.cpp:84
+msgid "Popup menu"
+msgstr "Menu déroulant"
+
+#: dialogs/parseroptions.cpp:46 dialogs/parseroptions.cpp:73
+#: dialogs/parseroptions.cpp:80 dialogs/parseroptions.cpp:104
+#: dialogs/parseroptions.cpp:108 treeviews/structtreeview.cpp:77
+#: treeviews/structtreeview.cpp:278
+msgid "Select tag area"
+msgstr "Sélectionner zone commentaire"
+
+#: dialogs/parseroptions.cpp:57
+msgid "Clicks on list items:"
+msgstr "Cliquer sur liste d'items"
+
+#: dialogs/parseroptions.cpp:72 dialogs/parseroptions.cpp:79
+#: treeviews/structtreeview.cpp:281
+msgid "Go to end of tag"
+msgstr "Aller à la fin du commentaire"
+
+#: dialogs/parseroptions.cpp:74 dialogs/parseroptions.cpp:105
+#: treeviews/structtreeview.cpp:269 treeviews/structtreeview.cpp:294
+msgid "nothing"
+msgstr "rien"
+
+#: dialogs/parseroptions.cpp:113
+msgid "Left button"
+msgstr "Bouton gauche"
+
+#: dialogs/parseroptions.cpp:118
+msgid "Middle button"
+msgstr "Bouton milieu"
+
+#: dialogs/parseroptions.cpp:123
+msgid "Right button"
+msgstr "Bouton droit"
+
+#: dialogs/parseroptions.cpp:128
+msgid "Double click"
+msgstr "Double click"
+
+#: dialogs/parseroptions.cpp:137
+msgid "( set 0 to expand whole tree )"
+msgstr "(Sélectionner 0 pour développer l'arbre entier)"
+
+#: dialogs/parseroptions.cpp:148
+msgid "Expand tree when reparse to level :"
+msgstr "Expand tree when reparse to level :"
+
+#: kwrite/ktextprint.cpp:564
+msgid "Error executing printer program!"
+msgstr "Erreur d'éxecution du programme d'impression"
+
+#: kwrite/ktextprint.cpp:581
+msgid "Error writing file!"
+msgstr "Erreur d'écriture du fichier"
+
+#: kwrite/ktextprint.cpp:586
+msgid "Error opening file!"
+msgstr "Erreur d'ouverture du fichier"
+
+#: kwrite/ktextprint.cpp:745
+msgid "Printer Setup"
+msgstr "Configuration impression"
+
+#: kwrite/ktextprint.cpp:886
+msgid "Print Destination"
+msgstr "Destination impression"
+
+#: kwrite/ktextprint.cpp:897
+#, c-format
+msgid "Print To &Printer (%p)"
+msgstr "Imprimer vers (%p)"
+
+#: kwrite/ktextprint.cpp:903
+msgid "choose"
+msgstr "choisir"
+
+#: kwrite/ktextprint.cpp:914
+msgid "Printer Command"
+msgstr "Commande impression"
+
+#: kwrite/ktextprint.cpp:916
+#, c-format
+msgid "Copies (%c)"
+msgstr "Copies (%c)"
+
+#: kwrite/ktextprint.cpp:938
+msgid "Print To &File"
+msgstr "Imprimer dans &Fichier"
+
+#: kwrite/ktextprint.cpp:941
+msgid "browse"
+msgstr "Parcourir"
+
+#: kwrite/ktextprint.cpp:973
+msgid "GrayScale"
+msgstr "Niveaux de gris"
+
+#: kwrite/ktextprint.cpp:974
+msgid "Black/White"
+msgstr "Noir et Blanc"
+
+#: kwrite/ktextprint.cpp:1013
+msgid "Media:"
+msgstr "Média:"
+
+#: kwrite/ktextprint.cpp:1038
+msgid "Colums:"
+msgstr "Colonnes"
+
+#: kwrite/ktextprint.cpp:1041
+msgid "Rows:"
+msgstr "Lignes"
+
+#: kwrite/ktextprint.cpp:1044
+msgid "Text Lines:"
+msgstr "Lignes texte"
+
+#: kwrite/ktextprint.cpp:1051 tagdialogs/corewidgetdlgdata.cpp:35
+#: tagdialogs/tagquickstartdata.cpp:24
+msgid "Title"
+msgstr "Titre"
+
+#: kwrite/ktextprint.cpp:1053
+msgid "Page Numbers"
+msgstr "Nombres de page"
+
+#: kwrite/ktextprint.cpp:1057
+msgid "Line Counter:"
+msgstr "Compteur de ligne"
+
+#: kwrite/kwdialog.cpp:33
+msgid "Find Text"
+msgstr "Trouver texte"
+
+#: kwrite/kwdialog.cpp:45
+msgid "&Text To Find:"
+msgstr "&Texte à chercher"
+
+#: kwrite/kwdialog.cpp:52 kwrite/kwdialog.cpp:137
+msgid "Replace Text"
+msgstr "Remplacer Texte"
+
+#: kwrite/kwdialog.cpp:56
+msgid "&Replace With:"
+msgstr "&Remplacer avec"
+
+#: kwrite/kwdialog.cpp:68
+msgid "C&ase Sensitive"
+msgstr "Respecter la case"
+
+#: kwrite/kwdialog.cpp:71
+msgid "&Whole Words Only"
+msgstr "Mots entiers uniquement"
+
+#: kwrite/kwdialog.cpp:74
+msgid "&From Cursor"
+msgstr "Depuis curseur"
+
+#: kwrite/kwdialog.cpp:77
+msgid "Find &Backwards"
+msgstr "Rechercher en arrière"
+
+#: kwrite/kwdialog.cpp:80
+msgid "&Selected Text"
+msgstr "Texte &Sélectionné"
+
+#: kwrite/kwdialog.cpp:91
+msgid "&Prompt On Replace"
+msgstr "&Prompt On Replace"
+
+#: kwrite/kwdialog.cpp:139
+msgid "&All"
+msgstr "Tout"
+
+#: kwrite/kwdialog.cpp:139
+msgid "&No"
+msgstr "&Non"
+
+#: kwrite/kwdialog.cpp:139
+msgid "&Yes"
+msgstr "&Oui"
+
+#: kwrite/kwdialog.cpp:145
+msgid "Replace this occurence?"
+msgstr "Remplacer cette occurence?"
+
+#: kwrite/kwdialog.cpp:173
+msgid "Goto Line"
+msgstr "Aller à la ligne"
+
+#: kwrite/kwdialog.cpp:183
+msgid "&Goto Line:"
+msgstr "Aller à la ligne"
+
+#: kwrite/kwdialog.cpp:204
+msgid "&Auto Indent"
+msgstr "Indententation &Automatique"
+
+#: kwrite/kwdialog.cpp:208
+msgid "Indent With &Spaces"
+msgstr "Indenter avec des e&spaces"
+
+#: kwrite/kwdialog.cpp:212
+msgid "&Backspace Key Indents"
+msgstr "Indenter avec la touche 'Effacement'"
+
+#: kwrite/kwdialog.cpp:216
+msgid "&Tab Key Indents"
+msgstr "Indenter avec la touche 'Tabulation'"
+
+#: kwrite/kwdialog.cpp:220
+msgid "Keep Indent &Profile"
+msgstr "Conserver le profil d'indentation"
+
+#: kwrite/kwdialog.cpp:224
+msgid "&Keep Extra Spaces"
+msgstr "Conserver les espaces"
+
+#: kwrite/kwdialog.cpp:251
+msgid "&Persistent Selections"
+msgstr "Sélections persistentes"
+
+#: kwrite/kwdialog.cpp:255
+msgid "&Overwrite Selections"
+msgstr "Ecraser les sélections"
+
+#: kwrite/kwdialog.cpp:259
+msgid "Mouse &Autocopy"
+msgstr "Copie &Automatique à la souris"
+
+#: kwrite/kwdialog.cpp:263
+msgid "&X11-like Single Selection"
+msgstr "Sélection simple à la &X11"
+
+#: kwrite/kwdialog.cpp:267
+msgid "&Vertical Selections"
+msgstr "Sélection &Verticale"
+
+#: kwrite/kwdialog.cpp:271
+msgid "&Toggle Old"
+msgstr "&Toggle Old"
+
+#: kwrite/kwdialog.cpp:306
+msgid "&Word wrap"
+msgstr "Retour à la ligne automatique"
+
+#: kwrite/kwdialog.cpp:310
+msgid "Replace &tabs with spaces"
+msgstr "Remplacer les &tabulations par des espaces"
+
+#: kwrite/kwdialog.cpp:314
+msgid "&Remove trailing spaces"
+msgstr "Supprimer les espaces de fin de ligne"
+
+#: kwrite/kwdialog.cpp:318
+msgid "&Auto brackets"
+msgstr "&Accolades automatiques"
+
+#: kwrite/kwdialog.cpp:322
+msgid "Group &undos"
+msgstr "Annulations groupées"
+
+#: kwrite/kwdialog.cpp:326
+msgid "&Show tabs"
+msgstr "Afficher les tabulations"
+
+#: kwrite/kwdialog.cpp:330
+msgid "Smart &home"
+msgstr "Touche 'Début' intelligente"
+
+#: kwrite/kwdialog.cpp:334
+msgid "&Page up/down moves cursor"
+msgstr "Page précédent/suivante déplace le curseur"
+
+#: kwrite/kwdialog.cpp:338
+msgid "Wrap &cursor"
+msgstr "Retour à la ligne du curseur"
+
+#: kwrite/kwdialog.cpp:350
+msgid "Wrap Words At:"
+msgstr "Couper à la colonne"
+
+#: kwrite/kwdialog.cpp:354
+msgid "Tab Width:"
+msgstr "Taille des tabulations"
+
+#: kwrite/kwdialog.cpp:358
+msgid "Undo steps:"
+msgstr "Etapes annulables"
+
+#: kwrite/kwdialog.cpp:575
+msgid "Background:"
+msgstr "Fond:"
+
+#: kwrite/kwdialog.cpp:581
+msgid "Text Background:"
+msgstr "Fond du texte:"
+
+#: kwrite/highlight/highlight.cpp:3075 kwrite/kwdialog.cpp:587
+msgid "Selected:"
+msgstr "Sélectionné:"
+
+#: kwrite/kwdialog.cpp:593
+msgid "Found:"
+msgstr "Trouvé"
+
+#: kwrite/kwdialog.cpp:599
+msgid "Selected + Found:"
+msgstr "Sélectionné et trouvé"
+
+#: kwrite/kwdoc.cpp:485
+msgid "Unselect all"
+msgstr "Désélectionner tout"
+
+#: kwrite/kwview.cpp:1598
+msgid "&Insert File..."
+msgstr "&Insérer Fichier..."
+
+#: kwrite/kwview.cpp:1603
+msgid "&Add Marker"
+msgstr "&Ajouter Marqueur"
+
+#: kwrite/kwview.cpp:1606
+msgid "&Set Marker..."
+msgstr "&Sélectionner Marqueur"
+
+#: kwrite/kwview.cpp:1608
+msgid "&Clear Markers"
+msgstr "Nettoyer Marqueurs"
+
+#: kwrite/kwview.cpp:1621
+msgid "C&omment"
+msgstr "C&ommenter"
+
+#: kwrite/kwview.cpp:1623
+msgid "Unco&mment"
+msgstr "Décommenter"
+
+#: kwrite/kwview.cpp:1626
+msgid "Configure Highlighti&ng..."
+msgstr "Configurer la coloration sy&ntaxique"
+
+#: kwrite/kwview.cpp:1628
+msgid "&Vertical Selection"
+msgstr "Sélection &Verticale"
+
+#: kwrite/kwview.cpp:1631
+msgid "&Highlight Mode"
+msgstr "Mode coloration syntaxique"
+
+#: kwrite/kwview.cpp:1638
+msgid "&End Of Line"
+msgstr "Fin de ligne"
+
+#: kwrite/kwview.cpp:2037
+msgid "Vertical Selections On"
+msgstr "Activer Sélection verticale"
+
+#: kwrite/kwview.cpp:2037
+msgid "Vertical Selections Off"
+msgstr "Déactiver Sélection verticale"
+
+#: kwrite/kwview.cpp:2117
+msgid "The specified File does not exist"
+msgstr "Le Fichier spécifié n'existe pas"
+
+#: kwrite/kwview.cpp:2121
+msgid "You have specified a directory"
+msgstr "Vous avez spécifié un dossier"
+
+#: kwrite/kwview.cpp:2125
+msgid "You do not have read permission to this file"
+msgstr "Vous n'avez pas la permission de lire ce fichier"
+
+#: kwrite/kwview.cpp:2135
+msgid "An error occured while trying to open this document"
+msgstr "Une erreur s'est produite en essayant d'ouvrir ce document"
+
+#: kwrite/kwview.cpp:2143
+msgid "You do not have write permission to this file"
+msgstr "Vous n'avez pas la permission d'écrire dans ce fichier"
+
+#: kwrite/kwview.cpp:2153
+msgid "An error occured while trying to write this document"
+msgstr "Une erreur s'est produite en essayant d'écrire ce document"
+
+#: kwrite/kwview.cpp:2162
+#, c-format
+msgid ""
+"Malformed URL\n"
+"%1"
+msgstr ""
+"Malformed URL\n"
+"%1"
+
+#: kwrite/kwview.cpp:2169
+msgid "Loading..."
+msgstr "Chargement..."
+
+#: kwrite/kwview.cpp:2184 kwrite/kwview.cpp:2296
+#, c-format
+msgid "Inserted : %1"
+msgstr "Insertion : %1"
+
+#: kwrite/kwview.cpp:2191 kwrite/kwview.cpp:2303
+#, c-format
+msgid "Read : %1"
+msgstr "Lire : %1"
+
+#: kwrite/kwview.cpp:2210
+msgid "Saving..."
+msgstr "Enregisterement..."
+
+#: kwrite/kwview.cpp:2252 kwrite/kwview.cpp:2268
+#, c-format
+msgid "Wrote %1"
+msgstr "Ecrire %1"
+
+#: kwrite/kwview.cpp:2327
+msgid ""
+"The current Document has been modified.\n"
+"Would you like to save it?"
+msgstr ""
+"Votre document a été modifié.\n"
+"Voulez vous l'enregistrer ?"
+
+#: kwrite/kwview.cpp:2333
+msgid ""
+"Could not save the document.\n"
+"Discard it and continue?"
+msgstr ""
+"Impossible d'enregistrer votre document.\n"
+"Annuler cela et continuer ?"
+
+#: kwrite/kwview.cpp:2334
+msgid "&Discard"
+msgstr "Annuler"
+
+#: kwrite/kwview.cpp:2378
+msgid "No changes need to be saved"
+msgstr "Aucun changement n'a besoin d'être enregistrer"
+
+#: kwrite/kwview.cpp:2399
+msgid ""
+"A Document with this Name already exists.\n"
+"Do you want to overwrite it?"
+msgstr ""
+"Un document avec ce nom existe déja.\n"
+"Voulez vous l'écraser ?"
+
+#: kwrite/kwview.cpp:2495
+msgid "Undo/Redo History"
+msgstr "Historique Défaire/Refaire"
+
+#: kwrite/kwview.cpp:2693
+msgid ""
+"End of document reached.\n"
+"Continue from the beginning?"
+msgstr ""
+"Vous avez atteind la fin du document.\n"
+"Continuer depuis le début ?"
+
+#: kwrite/kwview.cpp:2696 kwrite/kwview.cpp:2702 kwrite/kwview.cpp:2709
+msgid "Find"
+msgstr "Chercher"
+
+#: kwrite/kwview.cpp:2699
+msgid ""
+"Beginning of document reached.\n"
+"Continue from the end?"
+msgstr ""
+"Vous avez atteint le début du document.\n"
+"Continuer depuis la fin ?"
+
+#: kwrite/kwview.cpp:2708
+msgid "Search string not found!"
+msgstr "Le texte n'a pas été trouvé !"
+
+#: kwrite/kwview.cpp:2845
+msgid "%1 replace(s) made"
+msgstr "%1 replacement(s) terminé(s)"
+
+#: kwrite/kwview.cpp:2853
+msgid ""
+"%1 replace(s) made.\n"
+"End of document reached.\n"
+"Continue from the beginning?"
+msgstr ""
+"%1 replacement(s) terminé(s).\n"
+"Vous avez atteind la fin du document.\n"
+"Continuer depuis le début ?"
+
+#: kwrite/kwview.cpp:2860
+msgid ""
+"%1 replace(s) made.\n"
+"Beginning of document reached.\n"
+"Continue from the end?"
+msgstr ""
+"%1 replacement(s) terminé(s).\n"
+"Vous avez atteind le début du document.\n"
+"Continuer depuis la fin ?"
+
+#: kwrite/kwview.cpp:2901
+msgid "&%1 - Line %2"
+msgstr "&%1 - Ligne %2"
+
+#: kwrite/kwview.cpp:2904
+#, c-format
+msgid "&%1"
+msgstr "&%1"
+
+#: kwrite/kwview.cpp:2907
+#, c-format
+msgid "1&0 - Line %1"
+msgstr "1&0 - Ligne %1"
+
+#: kwrite/kwview.cpp:2910
+msgid "&10"
+msgstr "&10"
+
+#: kwrite/kwview.cpp:2994
+#, c-format
+msgid "Line: %1"
+msgstr "Ligne: %1"
+
+#: kwrite/kwview.cpp:3417
+msgid ""
+"ISpell could not be started.\n"
+"Please make sure you have ISpell properly configured and in your PATH."
+msgstr ""
+"Le correcteur n'a pas pu démarrer.\n"
+"Assurez vous, s'il vous plait, que le chemin(PATH) a été configuré correctement."
+
+#: kwrite/kwview.cpp:3430
+msgid "ISpell seems to have crashed."
+msgstr "Le correcteur orthographique semble avoir planté."
+
+#: kwrite/kwview.cpp:3479
+msgid "Und&o"
+msgstr "Défaire"
+
+#: kwrite/kwview.cpp:3490
+msgid "Re&do"
+msgstr "Refaire"
+
+#: kwrite/undohistory.cpp:60
+msgid "Undo List"
+msgstr "Défaire Liste"
+
+#: kwrite/undohistory.cpp:66
+msgid "Redo List"
+msgstr "Refaire Liste"
+
+#: kwrite/highlight/highlight.cpp:3067
+msgid "Normal:"
+msgstr "Normal:"
+
+#: kwrite/highlight/highlight.cpp:3134
+msgid "Family:"
+msgstr "Famille:"
+
+#: kwrite/highlight/highlight.cpp:3146 tagdialogs/tagformtextdata.cpp:46
+msgid "Size:"
+msgstr "Taille:"
+
+#: kwrite/highlight/highlight.cpp:3234
+msgid "Highlight Settings"
+msgstr "Options Surbrillance"
+
+#: kwrite/highlight/highlight.cpp:3243
+msgid "Default Item Styles"
+msgstr "Styles Item par défaut"
+
+#: kwrite/highlight/highlight.cpp:3244 kwrite/highlight/highlight.cpp:3290
+msgid "Item:"
+msgstr "Item:"
+
+#: kwrite/highlight/highlight.cpp:3253
+msgid "Default Font"
+msgstr "Police par défaut"
+
+#: kwrite/highlight/highlight.cpp:3265
+msgid "&Highlight Modes"
+msgstr "Modes Surbrillance"
+
+#: kwrite/highlight/highlight.cpp:3268
+msgid "Config Select"
+msgstr "Configuration Selection"
+
+#: kwrite/highlight/highlight.cpp:3270
+msgid "Item Style"
+msgstr "Style Item "
+
+#: kwrite/highlight/highlight.cpp:3272
+msgid "Highlight Auto Select"
+msgstr "Sélection Surbrillance automatique"
+
+#: kwrite/highlight/highlight.cpp:3274
+msgid "Item Font"
+msgstr "Police Item"
+
+#: kwrite/highlight/highlight.cpp:3280
+msgid "Highlight:"
+msgstr "Surbrillance:"
+
+#: kwrite/highlight/highlight.cpp:3294
+msgid "File Extensions:"
+msgstr "Extensions Fichier"
+
+#: kwrite/highlight/highlight.cpp:3296
+msgid "Mime Types:"
+msgstr "Types Mime"
+
+#: project/copytodata.cpp:23 project/projectnewgeneraldata.cpp:36
+#: project/projectnewgeneraldata.cpp:96 project/projectnewgeneraldata.cpp:105
+#: project/projectnewgeneraldata.cpp:114 project/projectnewgetfilesdata.cpp:80
+#: tagdialogs/tagadlgdata.cpp:29 tagdialogs/tagbodydata.cpp:46
+#: tagdialogs/tagforminputdata.cpp:84 tagdialogs/tagimgdlgdata.cpp:31
+#: tagdialogs/tagimgdlgdata.cpp:54 tagdialogs/tagquickstartdata.cpp:58
+#: user_toolbar/toolbarconfigdata.cpp:66 user_toolbar/toolbarconfigdata.cpp:71
+#: user_toolbar/toolbarconfigdata.cpp:123
+msgid "..."
+msgstr "..."
+
+#: project/copytodata.cpp:28 tagdialogs/tagmaildlgdata.cpp:35
+#: tagdialogs/tagquicklistdlgdata.cpp:32 tagdialogs/tagquickstartdata.cpp:123
+#: tagdialogs/tagquicktabledata.cpp:41 user_toolbar/toolbarconfigdata.cpp:128
+#: user_toolbar/toolbarscriptconfiguredata.cpp:79
+msgid "Ok"
+msgstr "Ok"
+
+#: project/project.cpp:70
+msgid ""
+"*.webprj|Project files\n"
+"*|All files"
+msgstr ""
+"*.webprj|Project fichiers\n"
+"*|Tous"
+
+#: project/project.cpp:70
+msgid "Open Project..."
+msgstr "Ouvrir Projet..."
+
+#: project/project.cpp:209
+msgid "No project"
+msgstr "Pas de projet"
+
+#: project/project.cpp:222
+msgid "*"
+msgstr "*"
+
+#: project/project.cpp:222
+msgid "Insert files in project..."
+msgstr "Insérer fichiers dans projet..."
+
+#: project/project.cpp:288
+msgid "Insert directory in project..."
+msgstr "Insérer dossier dans projet..."
+
+#: project/projectnewgeneraldata.cpp:18
+msgid "Project Name :"
+msgstr "Nom Projet :"
+
+#: project/projectnewgeneraldata.cpp:27
+msgid "Project Directory :"
+msgstr "Dossier Projet :"
+
+#: project/projectnewgeneraldata.cpp:41
+msgid "Project File :"
+msgstr "Fichier Projet :"
+
+#: project/projectnewgeneraldata.cpp:50
+msgid "Base URL:"
+msgstr "Base URL:"
+
+#: project/projectnewgeneraldata.cpp:59
+msgid "Author :"
+msgstr "Auteur :"
+
+#: project/projectnewgeneraldata.cpp:68
+msgid "E-Mail :"
+msgstr "E-Mail :"
+
+#: project/projectnewgeneraldata.cpp:77
+msgid "Images Directory:"
+msgstr "Dossier Images :"
+
+#: project/projectnewgeneraldata.cpp:82
+msgid "cgi-bin Directory:"
+msgstr "Dossier cgi-bin :"
+
+#: project/projectnewgeneraldata.cpp:87
+msgid "Project Scripts Dir:"
+msgstr "Dossier.Scripts.Projet :"
+
+#: project/projectnewgetfilesdata.cpp:18
+msgid "Insert local files"
+msgstr "Insérer fichier local"
+
+#: project/projectnewgetfilesdata.cpp:27
+msgid "Insert files from directory to project"
+msgstr "Insérer fichier depuis le dossier du projet"
+
+#: project/projectnewgetfilesdata.cpp:33
+msgid "Insert only web files and images."
+msgstr "Insérer seulement les fichiers web et les images"
+
+#: project/projectnewgetfilesdata.cpp:39
+msgid "Files Mask:"
+msgstr "Masque Fichiers :"
+
+#: project/projectnewgetfilesdata.cpp:48
+msgid "Insert remote files ( wget options )"
+msgstr "Insérer les fichiers distants( wget options )"
+
+#: project/projectnewgetfilesdata.cpp:57
+msgid "Site URL:"
+msgstr "Site URL:"
+
+#: project/projectnewgetfilesdata.cpp:66
+msgid "wget options"
+msgstr "wget options"
+
+#: project/projectnewgetfilesdata.cpp:75
+msgid "Edit your wget recource file ( ~/.wgetrc)"
+msgstr "Editer vos fichiers ressource wget ( ~/.wgetrc)"
+
+#: tagdialogs/corewidgetdlgdata.cpp:20
+msgid "Id"
+msgstr "Id"
+
+#: tagdialogs/corewidgetdlgdata.cpp:25
+msgid "Class"
+msgstr "Classe"
+
+#: tagdialogs/corewidgetdlgdata.cpp:30 tagdialogs/tagquicklistdlgdata.cpp:37
+msgid "Style"
+msgstr "Style"
+
+#: tagdialogs/corewidgetdlgdata.cpp:61
+msgid "Internationalization Attributes"
+msgstr "Attributs Internationnaux"
+
+#: tagdialogs/corewidgetdlgdata.cpp:66
+msgid "Lang"
+msgstr "Langue"
+
+#: tagdialogs/corewidgetdlgdata.cpp:71
+msgid "Dir"
+msgstr "Dossier"
+
+#: tagdialogs/eventswidgetdlgdata.cpp:20
+msgid "OnClick"
+msgstr "OnClick"
+
+#: tagdialogs/eventswidgetdlgdata.cpp:29
+msgid "OnDblClick"
+msgstr "OnDblClick"
+
+#: tagdialogs/eventswidgetdlgdata.cpp:34
+msgid "OnMouseDown"
+msgstr "OnMouseDown"
+
+#: tagdialogs/eventswidgetdlgdata.cpp:47
+msgid "OnMouseUp"
+msgstr "OnMouseUp"
+
+#: tagdialogs/eventswidgetdlgdata.cpp:56
+msgid "OnMouseOver"
+msgstr "OnMouseOver"
+
+#: tagdialogs/eventswidgetdlgdata.cpp:65
+msgid "OnMouseMove"
+msgstr "OnMouseMove"
+
+#: tagdialogs/eventswidgetdlgdata.cpp:74
+msgid "OnMouseOut"
+msgstr "OnMouseOut"
+
+#: tagdialogs/eventswidgetdlgdata.cpp:83
+msgid "OnKeyPress"
+msgstr "OnKeyPress"
+
+#: tagdialogs/eventswidgetdlgdata.cpp:92
+msgid "OnKeyDown"
+msgstr "OnKeyDown"
+
+#: tagdialogs/eventswidgetdlgdata.cpp:101
+msgid "OnKeyUp"
+msgstr "OnKeyUp"
+
+#: tagdialogs/tagadlgdata.cpp:20
+msgid "HREF"
+msgstr "HREF"
+
+#: tagdialogs/tagadlgdata.cpp:34
+msgid "Target"
+msgstr "Cible"
+
+#: tagdialogs/tagadlgdata.cpp:43 tagdialogs/tagformtextareadlgdata.cpp:20
+#: user_toolbar/toolbarconfigdata.cpp:52
+msgid "Name"
+msgstr "Nom"
+
+#: tagdialogs/tagadlgdata.cpp:52
+msgid "Description"
+msgstr "Description"
+
+#: tagdialogs/tagbodydata.cpp:21 tagdialogs/tagquickstartdata.cpp:29
+msgid "BG Image"
+msgstr "Image de fond"
+
+#: tagdialogs/tagbodydata.cpp:26 tagdialogs/tagquickstartdata.cpp:34
+#: tagdialogs/tagtabledlgdata.cpp:65 tagdialogs/tagtableheaddata.cpp:76
+#: tagdialogs/tagtablerowdata.cpp:38
+msgid "BG Color"
+msgstr "Couleur de fond"
+
+#: tagdialogs/tagbodydata.cpp:31 tagdialogs/tagquickstartdata.cpp:39
+msgid "Text Color"
+msgstr "Couleur Texte"
+
+#: tagdialogs/tagbodydata.cpp:36 tagdialogs/tagquickstartdata.cpp:44
+msgid "Active Link Color"
+msgstr "Couleur Lien Actif"
+
+#: tagdialogs/tagbodydata.cpp:45 tagdialogs/tagquickstartdata.cpp:57
+msgid "Select background image"
+msgstr "Sélectionner Image de fond"
+
+#: tagdialogs/tagbodydata.cpp:55 tagdialogs/tagbodydata.cpp:64
+#: tagdialogs/tagbodydata.cpp:73 tagdialogs/tagbodydata.cpp:82
+#: tagdialogs/tagbodydata.cpp:96 tagdialogs/tagfontdlgdata.cpp:39
+#: tagdialogs/tagquickstartdata.cpp:68 tagdialogs/tagquickstartdata.cpp:78
+#: tagdialogs/tagquickstartdata.cpp:88 tagdialogs/tagquickstartdata.cpp:98
+#: tagdialogs/tagquickstartdata.cpp:113 tagdialogs/tagtabledlgdata.cpp:74
+#: tagdialogs/tagtableheaddata.cpp:85 tagdialogs/tagtablerowdata.cpp:47
+msgid "Button"
+msgstr "Bouton"
+
+#: tagdialogs/tagbodydata.cpp:87 tagdialogs/tagquickstartdata.cpp:103
+msgid "Visited Link Color"
+msgstr "Visiter Couleur du Lien"
+
+#: tagdialogs/tagbodydata.cpp:101 tagdialogs/tagquickstartdata.cpp:118
+msgid "Link Color"
+msgstr "Couleur Lien"
+
+#: tagdialogs/tagbodydata.cpp:111
+msgid "On Load :"
+msgstr "Charger :"
+
+#: tagdialogs/tagbodydata.cpp:120
+msgid "On Unload :"
+msgstr "Décharger :"
+
+#: tagdialogs/tagdialog.cpp:89
+msgid "Tag properties: "
+msgstr "Propriétés Etiquette :"
+
+#: tagdialogs/tagdialog.cpp:95
+msgid "Main"
+msgstr "Principal"
+
+#: tagdialogs/tagdialog.cpp:96
+msgid "Core & i18n"
+msgstr "Core & i18n"
+
+#: tagdialogs/tagdialog.cpp:97
+msgid "Events"
+msgstr "Evénements"
+
+#: tagdialogs/tagfontdlgdata.cpp:21 tagdialogs/tagforminputdata.cpp:57
+msgid "Size"
+msgstr "Taille"
+
+#: tagdialogs/tagformbuttondata.cpp:20 tagdialogs/tagforminputdata.cpp:39
+#: tagdialogs/tagformtextdata.cpp:28
+msgid "Name:"
+msgstr "Nom:"
+
+#: tagdialogs/tagformbuttondata.cpp:29 tagdialogs/tagformtextdata.cpp:37
+msgid "Value:"
+msgstr "Valeur :"
+
+#: tagdialogs/tagformbuttondata.cpp:38 tagdialogs/tagforminputdata.cpp:113
+msgid "Checked"
+msgstr "Vérifié"
+
+#: tagdialogs/tagformdata.cpp:20
+msgid "Action:"
+msgstr "Action:"
+
+#: tagdialogs/tagformdata.cpp:29
+msgid "Method:"
+msgstr "Methode:"
+
+#: tagdialogs/tagformdata.cpp:40
+msgid "Enctype:"
+msgstr "Enctype:"
+
+#: tagdialogs/tagformdata.cpp:52
+msgid "Target:"
+msgstr "Cible:"
+
+#: tagdialogs/tagforminputdata.cpp:20
+msgid "Type:"
+msgstr "Type:"
+
+#: tagdialogs/tagforminputdata.cpp:48
+msgid "Value"
+msgstr "Valeur"
+
+#: tagdialogs/tagforminputdata.cpp:66
+msgid "Max Len :"
+msgstr "Longueur Max :"
+
+#: tagdialogs/tagforminputdata.cpp:75
+msgid "Image src"
+msgstr "Image src"
+
+#: tagdialogs/tagforminputdata.cpp:89
+msgid "Alt  text :"
+msgstr "Alt  text :"
+
+#: tagdialogs/tagforminputdata.cpp:98
+msgid "Align:"
+msgstr "Aligner:"
+
+#: tagdialogs/tagforminputdata.cpp:118
+msgid "Read only"
+msgstr "Lecture seulement"
+
+#: tagdialogs/tagforminputdata.cpp:128
+msgid "On Focus:"
+msgstr "On Focus:"
+
+#: tagdialogs/tagforminputdata.cpp:137
+msgid "  On Blur:"
+msgstr "  On Blur:"
+
+#: tagdialogs/tagforminputdata.cpp:146
+msgid "On Select:"
+msgstr "On Select:"
+
+#: tagdialogs/tagforminputdata.cpp:155
+msgid " On Change"
+msgstr " On Change"
+
+#: tagdialogs/tagformtextareadlgdata.cpp:25
+#: tagdialogs/tagquicklistdlgdata.cpp:22
+msgid "Rows"
+msgstr "Lignes"
+
+#: tagdialogs/tagformtextareadlgdata.cpp:30
+msgid "Cols"
+msgstr "Colonnes"
+
+#: tagdialogs/tagformtextdata.cpp:51
+msgid "MaxLength:"
+msgstr "MaxLength:"
+
+#: tagdialogs/tagimgdlgdata.cpp:22
+msgid "Image Source"
+msgstr "Source Image"
+
+#: tagdialogs/tagimgdlgdata.cpp:36 tagdialogs/tagtabledlgdata.cpp:50
+#: tagdialogs/tagtableheaddata.cpp:22
+msgid "Width"
+msgstr "Epaisseur"
+
+#: tagdialogs/tagimgdlgdata.cpp:45 tagdialogs/tagtableheaddata.cpp:57
+msgid "Height"
+msgstr "Hauteur"
+
+#: tagdialogs/tagimgdlgdata.cpp:59
+msgid "HSpace"
+msgstr "Espace Hor."
+
+#: tagdialogs/tagimgdlgdata.cpp:68
+msgid "VSpace"
+msgstr "Espace Vert."
+
+#: tagdialogs/tagimgdlgdata.cpp:77
+msgid "Alternate Text"
+msgstr "Texte alterné"
+
+#: tagdialogs/tagimgdlgdata.cpp:86 tagdialogs/tagtabledlgdata.cpp:60
+msgid "Border"
+msgstr "Bord"
+
+#: tagdialogs/tagimgdlgdata.cpp:96 tagdialogs/tagtabledlgdata.cpp:41
+#: tagdialogs/tagtableheaddata.cpp:43 tagdialogs/tagtablerowdata.cpp:20
+msgid "Align"
+msgstr "Aligner"
+
+#: tagdialogs/tagquicklistdlgdata.cpp:51
+msgid "Ordered"
+msgstr "Ordonné"
+
+#: tagdialogs/tagquicklistdlgdata.cpp:57
+msgid "Unordered"
+msgstr "Désordonné"
+
+#: tagdialogs/tagquicktabledata.cpp:31
+msgid "Num of Rows"
+msgstr "Numéro de Lignes"
+
+#: tagdialogs/tagquicktabledata.cpp:36
+msgid "Num of Collums"
+msgstr "Numéro de Colonnes"
+
+#: tagdialogs/tagtabledlgdata.cpp:20
+msgid "Cell Padding"
+msgstr "Remplissage Cellule"
+
+#: tagdialogs/tagtabledlgdata.cpp:55
+msgid "Cell Spacing"
+msgstr "Espacement Cellule"
+
+#: tagdialogs/tagtableheaddata.cpp:52
+msgid "Col Span"
+msgstr "Col Span"
+
+#: tagdialogs/tagtableheaddata.cpp:62 tagdialogs/tagtablerowdata.cpp:29
+msgid "VAlign"
+msgstr "VAlign"
+
+#: tagdialogs/tagtableheaddata.cpp:71
+msgid "Row Span"
+msgstr "Row Span"
+
+#: treeviews/filemanage.cpp:43 treeviews/projecttreeview.cpp:63
+#: treeviews/projecttreeview.cpp:72
+msgid "&Open"
+msgstr "&Ouvrir"
+
+#: treeviews/filemanage.cpp:44 treeviews/projecttreeview.cpp:64
+msgid "Open with..."
+msgstr "Ouvrir avec..."
+
+#: treeviews/filemanage.cpp:45 treeviews/projecttreeview.cpp:65
+msgid "Open in Quanta"
+msgstr "Ouvrir dans Quanta"
+
+#: treeviews/filemanage.cpp:47 treeviews/filemanage.cpp:59
+msgid "Insert in project"
+msgstr "Insérer dans projet"
+
+#: treeviews/fileslistview.cpp:56 treeviews/fileslistview.cpp:58
+msgid "Tree mode"
+msgstr "mode Arbre"
+
+#: treeviews/filestreeview.cpp:66 treeviews/filestreeview.cpp:68
+msgid "List mode"
+msgstr "Mode Liste"
+
+#: treeviews/projecttreeview.cpp:67 treeviews/projecttreeview.cpp:74
+msgid "Remove from disc"
+msgstr "Retirer du disque"
+
+#: treeviews/projecttreeview.cpp:68 treeviews/projecttreeview.cpp:75
+msgid "Remove from project"
+msgstr "Retirer du projet"
+
+#: treeviews/structtreeview.cpp:78
+msgid "End of tag"
+msgstr "Fin d'étiquette"
+
+#: treeviews/structtreeview.cpp:83
+msgid "&reparse"
+msgstr "&reparse"
+
+#: treeviews/structtreeview.cpp:84
+msgid "follow cursor"
+msgstr "Suivre curseur"
+
+#: user_toolbar/toolbarconfigdata.cpp:23
+msgid "New"
+msgstr "Nouveau"
+
+#: user_toolbar/toolbarconfigdata.cpp:28
+msgid "Up"
+msgstr "Haut"
+
+#: user_toolbar/toolbarconfigdata.cpp:33
+msgid "Down"
+msgstr "Bas"
+
+#: user_toolbar/toolbarconfigdata.cpp:38
+msgid "Del"
+msgstr "Supprimer"
+
+#: user_toolbar/toolbarconfigdata.cpp:47
+msgid "Separator"
+msgstr "Séparateur"
+
+#: user_toolbar/toolbarconfigdata.cpp:57
+msgid "Icon"
+msgstr "Icone"
+
+#: user_toolbar/toolbarconfigdata.cpp:85
+msgid "Insert text (tag)"
+msgstr "Insérer texte (tag)"
+
+#: user_toolbar/toolbarconfigdata.cpp:91
+msgid "Execute external script"
+msgstr "Exécuter un script externe"
+
+#: user_toolbar/toolbarconfigdata.cpp:96
+msgid "<tag> :"
+msgstr "<tag> :"
+
+#: user_toolbar/toolbarconfigdata.cpp:105
+msgid "</tag> :"
+msgstr "</tag> :"
+
+#: user_toolbar/toolbarconfigdata.cpp:114
+msgid "Script:"
+msgstr "Script:"
+
+#: user_toolbar/toolbarscriptconfiguredata.cpp:19
+msgid "INPUT (stdin) :"
+msgstr "INPUT (stdin) :"
+
+#: user_toolbar/toolbarscriptconfiguredata.cpp:28
+#: user_toolbar/toolbarscriptconfiguredata.cpp:53
+msgid "None"
+msgstr "Non"
+
+#: user_toolbar/toolbarscriptconfiguredata.cpp:34
+msgid "Selected text"
+msgstr "Texte sélectionné"
+
+#: user_toolbar/toolbarscriptconfiguredata.cpp:39
+msgid "Current document"
+msgstr "Document en cour"
+
+#: user_toolbar/toolbarscriptconfiguredata.cpp:44
+msgid "OUTPUT (stdout) :"
+msgstr "OUTPUT (stdout) :"
+
+#: user_toolbar/toolbarscriptconfiguredata.cpp:59
+msgid "Insert in cursor position"
+msgstr "Insérer à la position du curseur"
+
+#: user_toolbar/toolbarscriptconfiguredata.cpp:64
+msgid "Replace current document"
+msgstr "Replacer document en cour"
+
+#: user_toolbar/toolbarscriptconfiguredata.cpp:69
+msgid "Create new document"
+msgstr "Créer nouveau document"
+
+#: user_toolbar/toolbarscriptconfiguredata.cpp:74
+msgid "In Message window"
+msgstr "Dans fenêtre message"
+
