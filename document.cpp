@@ -132,7 +132,7 @@ bool Document::isUntitled()
 
 KURL Document::url()
 {
-  return ( isUntitled() ) ? KURL(untitledUrl) : m_doc->url();
+  return ( isUntitled() ) ? KURL("file:/"+untitledUrl) : m_doc->url();
 }
 
 // kwrite addons

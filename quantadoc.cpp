@@ -284,7 +284,8 @@ void QuantaDoc::closeDocument()
   {
     Document *w = write();
     w->closeTempFile();
-    if (!w->url().path().isEmpty()) fileWatcher->removeFile(w->url().path());
+    if (!w->url().path().isEmpty())
+       fileWatcher->removeFile(w->url().path());
     if ( !quantaApp->view->removeWrite()) openDocument( KURL() );
   }
 }
@@ -424,8 +425,9 @@ Document* QuantaDoc::newWrite()
   DTDStruct *dtd = dtds->find(quantaApp->project->defaultDTD());
 //  if (!dtd) dtd = dtds->find(qConfig.newFileType);   //fallback, but not really needed
   int i = 1;
-  QString fname;
-  while ( isOpened(fname.sprintf("Untitled%i."+dtd->defaultExtension,i))) i++;
+  while ( isOpened("file:/"+i18n("Untitled%1.").arg(i)+dtd->defaultExtension)) i++;
+
+  QString fname = i18n("Untitled%1.").arg(i)+dtd->defaultExtension;
 
 #if KDE_VERSION > 308
   KTextEditor::Document *doc = KTextEditor::createDocument ("libkatepart", this, "Kate::Document");
