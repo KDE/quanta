@@ -264,9 +264,16 @@ void DebuggerManager::haveBreakpoint (QString file, int line)
 // Map a server filepath to a local one using project settings
 QString DebuggerManager::mapServerPathToLocal(QString serverpath)
 {
+#if KDE_IS_VERSION(3,2,0)   
    // Translate filename from server to local
    if(serverpath.startsWith(Project::ref()->debugServerBasedir, false))
       serverpath.remove(0, Project::ref()->debugServerBasedir.length());
+#else
+   QString lPath = serverpath.lower();
+   QString lBaseDir = Project::ref()->debugServerBasedir.lower();
+   if(lPath.startsWith(lBaseDir))
+      serverpath.remove(0, Project::ref()->debugServerBasedir.length());
+#endif
 
    return Project::ref()->debugLocalBasedir + serverpath;
 }
@@ -274,10 +281,15 @@ QString DebuggerManager::mapServerPathToLocal(QString serverpath)
 // Map a local filepath to a server one using project settings
 QString DebuggerManager::mapLocalPathToServer(QString localpath)
 {
-   // Translate filename from local to server
-   if(localpath.startsWith(Project::ref()->debugLocalBasedir, false))
+#if KDE_IS_VERSION(3,2,0)   
+    if(localpath.startsWith(Project::ref()->debugLocalBasedir, false))
+       localpath.remove(0, Project::ref()->debugLocalBasedir.length());
+#else
+   QString lPath = localpath.lower();
+   QString lBaseDir = Project::ref()->debugLocalBasedir.lower();
+   if(lPath.startsWith(lBaseDir))
       localpath.remove(0, Project::ref()->debugLocalBasedir.length());
-
+#endif
    return Project::ref()->debugServerBasedir + localpath;
 }
 

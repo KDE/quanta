@@ -17,4 +17,4 @@ AM_CPPFLAGS =  -I$(top_srcdir)/quanta/components/debuggerquanta \
 	-I$(top_srcdir)/quanta/parsers \
 	-I$(top_srcdir)/quanta/messages \
 	-I$(top_srcdir)/lib \
-	$(all_includes)
+	$(KMDI_INCLUDES) $(all_includes)
