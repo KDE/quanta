@@ -25,6 +25,7 @@
 #include <qclipboard.h>
 #include <qpoint.h>
 #include <qregexp.h>
+#include <qlineedit.h>
 
 
 // KDE includes
@@ -242,6 +243,10 @@ void FilesTreeView::itemRenamed(const KURL& oldURL, const KURL& newURL )
   }
 }
 
+void FilesTreeView::itemDescChanged(KFileTreeViewItem* , const QString& )
+{
+}
+
 /** RMB pressed, bring up the menu */
 void FilesTreeView::slotMenu(KListView* listView, QListViewItem *item, const QPoint &point)
 {
@@ -388,15 +393,16 @@ void FilesTreeView::slotNewTopFolder()
 }
 
 /** Properties dialog addon*/
-void FilesTreeView::addFileInfoPage(KPropertiesDialog* propDlg)
+const FileInfoDlg* FilesTreeView::addFileInfoPage(KPropertiesDialog* propDlg)
 {
-//If the item is a file, add the Quanta file info page
+  //If the item is a file, add the Quanta file info page
+  FileInfoDlg *quantaFileProperties = 0L;
   if ( !currentKFileTreeViewItem()->isDir() )
   {
 
-    QFrame *quantaFilePage = propDlg->dialog()->addPage(i18n("Quanta File Info"));
+    QFrame *quantaFilePage = propDlg->addPage(i18n("Quanta File Info"));
     QVBoxLayout *topLayout = new QVBoxLayout( quantaFilePage);
-    FileInfoDlg *quantaFileProperties = new FileInfoDlg( quantaFilePage, i18n("Quanta") );
+    quantaFileProperties = new FileInfoDlg( quantaFilePage, i18n("Quanta") );
 
     int fsize,fimgsize=0;
     int ct=0,imgct=0,position=0;
@@ -455,8 +461,7 @@ void FilesTreeView::addFileInfoPage(KPropertiesDialog* propDlg)
          quantaFileProperties->imageSize->setText(i18n("Size of the included images: %1 bytes").arg(fimgsize));
          quantaFileProperties->totalSize->setText(i18n("Total size with images: %1 bytes").arg(fsize+fimgsize));
         }
-        else
-        if (mimetype.contains("image"))
+        else if (mimetype.contains("image"))
         {              // assume it's an image file
           QImage imagefile=QImage(nameForInfo);
           quantaFileProperties->lineNum->setText(i18n("Image size: %1 x %2").arg(imagefile.width()).arg(imagefile.height()));
@@ -466,9 +471,18 @@ void FilesTreeView::addFileInfoPage(KPropertiesDialog* propDlg)
           quantaFileProperties->includedLabel->hide();
           quantaFileProperties->imageList->hide();
         }
+        if (isProjectView()) {
+          quantaFileProperties->fileDescLbl->setText(i18n("Description:"));
+          quantaFileProperties->fileDesc->setText(currentKFileTreeViewItem()->text(1));
+        }
+        else {
+          quantaFileProperties->fileDescLbl->hide();
+          quantaFileProperties->fileDesc->hide();
+        }
         topLayout->addWidget(quantaFileProperties);
     } //if localfile
   }
+  return quantaFileProperties;
 }
 
 void FilesTreeView::slotOpen()
@@ -573,6 +587,7 @@ void FilesTreeView::slotOpenInQuanta()
     emit openInQuanta(item);
   }
 }
+
 void FilesTreeView::slotPopulateFinished(KFileTreeViewItem *item)
 {
   progressBar->setTotalSteps(1);
@@ -615,16 +630,23 @@ void FilesTreeView::slotProperties()
   if (url.isEmpty()) return;
     
   KPropertiesDialog *propDlg = new KPropertiesDialog( url, this, 0L, false, false); //autodeletes itself
+  const FileInfoDlg* fileInfoDlg = 0L;
   if (!currentKFileTreeViewItem()->isDir())
   {
-    addFileInfoPage(propDlg);
+    fileInfoDlg = addFileInfoPage(propDlg);
   }
   if (propDlg->exec())
   {
     KURL newURL = propDlg->kurl();
     if (url != newURL)
     {
-     itemRenamed(url, newURL);
+      itemRenamed(url, newURL);
+    }
+    if (fileInfoDlg)
+    {
+      QString newDesc = fileInfoDlg->fileDesc->text();
+      if (currentKFileTreeViewItem()->text(1) != newDesc)
+        itemDescChanged(currentKFileTreeViewItem(), newDesc);
     }
   }
 }

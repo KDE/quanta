@@ -75,6 +75,22 @@
                 <string>Included images:</string>
             </property>
         </widget>
+        <widget class="QLabel" row="6" column="0">
+            <property name="name">
+                <cstring>fileDescLbl</cstring>
+            </property>
+            <property name="text">
+                <string>Description:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>fileDesc</cstring>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="7" column="0">
+            <property name="name">
+                <cstring>fileDesc</cstring>
+            </property>
+        </widget>
     </grid>
 </widget>
 <layoutdefaults spacing="6" margin="11"/>

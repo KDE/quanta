@@ -20,6 +20,7 @@
 
 //own includes
 #include "filestreeview.h"
+#include "project_url.h"
 
 class KIO::Job;
 
@@ -75,13 +76,14 @@ public slots: // Public slots
   void slotRemove();
 
   void slotMenu(KListView *listView, QListViewItem *item, const QPoint &point);
-  void slotReloadTree(const KURL::List &a_urlList, bool buildNewtree);
+  void slotReloadTree(const ProjectUrlList &a_fileList, bool buildNewtree);
   /** Sets new project informations */
   void slotNewProjectLoaded(const QString &, const KURL &, const KURL &);
   /** triggers repaint of treeview */
   void slotDocumentClosed();
   /** reloads the tree again with current settings */
   void slotReload();
+  virtual void slotPopulateFinished(KFileTreeViewItem* );
 
 signals: // Signals
   void removeFromProject( const KURL& );
@@ -92,6 +94,7 @@ signals: // Signals
   void uploadSingleURL( const KURL& );
   void loadToolbarFile( const KURL& );
   void uploadProject();
+  void changeFileDescription(const KURL& url, const QString& desc);
 
 private:
   /** The constructor is privat because we use singleton patter.
@@ -107,8 +110,13 @@ private:
   KURL::List m_urlList;
   QPopupMenu *m_projectMenu;
   QString m_projectName;
+  ProjectUrlList m_projectFiles;
 
   int m_openInQuantaId;
+
+protected:
+  virtual void itemDescChanged(KFileTreeViewItem* item, const QString& newDesc);
+  virtual bool isProjectView() const { return true; }
 
 private slots: // Private slots
   /** No descriptions */

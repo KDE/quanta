@@ -125,31 +125,37 @@ for local files it verifies if it exists or not, and adds only the exisiting
 files.*/
 KURL::List Project::fileNameList(bool check)
 {
-  KURL::List list;
+  KURL::List result;
+  ProjectUrlList list;
 
   //cout << dom.toString() << "\n";
   QDomNodeList nl = dom.elementsByTagName("item");
   uint nlCount = nl.count();
-  for ( unsigned int i=0; i < nlCount; i++ )
+  for ( uint i=0; i < nlCount; i++ )
   {
     QDomElement el = nl.item(i).cloneNode().toElement();
-    KURL url = baseURL;
-    QuantaCommon::setUrl(url,el.attribute("url"));
+    ProjectURL url = baseURL;
+    QuantaCommon::setUrl(url, el.attribute("url"));
     if (!excludeRx.exactMatch(url.path()))
     {
+      url.fileDesc = el.attribute("desc");
       if (url.isLocalFile() && check)
       {
         QFileInfo fi(baseURL.path(1)+url.path());
-        if (fi.exists()) list.append(url);
+        if (fi.exists()) {
+          list.append(url);
+          result.append(url);
+        }
       } else
       {
   //      entry.toolTip = el.attribute("tooltip", url.prettyURL());
         list.append(url);
+        result.append(url);
       }
     }
   }
   m_projectFiles = list;
-  return list;
+  return result;
 }
 
 void Project::insertFile(const KURL& nameURL, bool repaint )
@@ -692,6 +698,7 @@ void Project::loadProjectXML()
       //remove non-existent local files
       if (!excludeRx.exactMatch(path))
       {
+        ProjectURL file(url, el.attribute("desc"));
         if ( url.isLocalFile() )
         {
           QFileInfo fi( baseURL.path(1)+path);
@@ -706,14 +713,14 @@ void Project::loadProjectXML()
                quantaApp->dTab->addProjectDoc(
                QExtFileInfo::toAbsolute(url, baseURL));
              }
-            m_projectFiles.append(url);
+            m_projectFiles.append(file);
           }
         } else
         {
           if (path.startsWith("doc/") && path.endsWith("/index.html"))
                quantaApp->dTab->addProjectDoc(
                QExtFileInfo::toAbsolute(url, baseURL));
-          m_projectFiles.append(url);
+          m_projectFiles.append(file);
         }
       } else
       {
@@ -888,12 +895,12 @@ void Project::slotRenamed(const KURL& oldURL, const KURL& newURL)
       break;
     }
   }
-  KURL::List::Iterator it;
+  ProjectUrlList::Iterator it;
   it = m_projectFiles.find(newURL);
   if (it != m_projectFiles.end())
       m_projectFiles.erase(it);
 
-  int nlCount = nl.count();
+  uint nlCount = nl.count();
   quantaApp->slotStatusMsg(i18n("Renaming files..."));
   progressBar->setTotalSteps(nlCount - m_projectFiles.count() - 2);
   progressBar->setValue(0);
@@ -916,7 +923,7 @@ void Project::slotRenamed(const KURL& oldURL, const KURL& newURL)
     }
     progressBar->advance(1);
   }
-  for (KURL::List::Iterator it = m_projectFiles.begin(); it != m_projectFiles.end(); ++it)
+  for (ProjectUrlList::Iterator it = m_projectFiles.begin(); it != m_projectFiles.end(); ++it)
   {
     tmpString = (*it).path();
     if (tmpString == oldStr ||
@@ -948,7 +955,7 @@ void Project::slotRemove(const KURL& urlToRemove)
   KURL url = QExtFileInfo::toRelative(urlToRemove, baseURL);
   QString tmpString;
   QString urlStr = QuantaCommon::qUrl(url);
-  KURL::List::Iterator it;
+  ProjectUrlList::Iterator it;
   for ( uint i = 0; i < nl.count(); i++ )
   {
     el = nl.item(i).toElement();
@@ -1195,7 +1202,8 @@ void Project::slotAcceptCreateProject()
      el.firstChild().setNodeValue(QuantaCommon::qUrl(url));
 
      emit newProjectLoaded(projectName, baseURL, templateURL);
-     emit reloadTree( fileNameList(), true );
+     fileNameList();
+     emit reloadTree( m_projectFiles, true );
      emit showTree();
 
      m_modified = true;
@@ -1531,7 +1539,8 @@ void Project::slotRescanPrjDir()
   if ( dlg->exec() )
   {
     insertFiles( dlg->files() );
-    emit reloadTree( fileNameList(true), true );
+    fileNameList(true);
+    emit reloadTree( m_projectFiles, true );
   }
   delete dlg;
 }
@@ -1754,6 +1763,24 @@ bool Project::contains(const KURL& url)
   if (m_projectFiles.isEmpty())
      fileNameList(false);
   return (m_projectFiles.contains(QExtFileInfo::toRelative(url, baseURL)) > 0);
+}
+
+void Project::slotFileDescChanged(const KURL& url, const QString& desc)
+{
+  ProjectUrlList::Iterator it = m_projectFiles.find(QExtFileInfo::toRelative(url, baseURL));
+  if (it != m_projectFiles.end()) {
+    QDomNodeList nl = dom.elementsByTagName("item");
+    QString qurl = QuantaCommon::qUrl(*it);
+    const uint nlCount = nl.count();
+    for (uint i = 0; i < nlCount; ++i) {
+      QDomElement el = nl.item(i).toElement();
+      if (el.attribute("url") == qurl) {
+        el.setAttribute("desc", desc);
+        (*it).fileDesc = desc;
+        setModified(true);
+      }
+    }
+  }
 }
 
 /** Returns the project's base URL if it exists, the HOME dir if there is no project and no opened document (or the current opened document was not saved yet), and the base URL of the opened document, if it is saved somewhere. */

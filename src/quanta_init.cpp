@@ -324,8 +324,8 @@ void QuantaApp::initProject()
           this,     SLOT  (slotFileOpen(const KURL &, const QString&)));
   connect(m_project,  SIGNAL(closeFile   (const KURL &)),
           this,     SLOT  (slotFileClose(const KURL &)));
-  connect(m_project,  SIGNAL(reloadTree(const KURL::List & ,bool)),
-          pTab,     SLOT  (slotReloadTree(const KURL::List &,bool)));
+  connect(m_project,  SIGNAL(reloadTree(const ProjectUrlList & ,bool)),
+          pTab,     SLOT  (slotReloadTree(const ProjectUrlList &,bool)));
   connect(m_project,  SIGNAL(closeFiles()),
           m_doc,      SLOT  (closeAll()));
   connect(m_project,  SIGNAL(showTree()),
@@ -379,6 +379,8 @@ void QuantaApp::initProject()
           pTab, SLOT(slotNewProjectLoaded(const QString &, const KURL &, const KURL &)));
   connect(m_project,  SIGNAL(newProjectLoaded(const QString &, const KURL &, const KURL &)),
           fTab, SLOT(slotNewProjectLoaded(const QString &, const KURL &, const KURL &)));
+  connect(pTab,    SIGNAL(changeFileDescription(const KURL&, const QString&)),
+          m_project, SLOT(slotFileDescChanged(const KURL&, const QString&)));
 
   connect(m_project, SIGNAL(hideSplash()), SLOT(slotHideSplash()));
 

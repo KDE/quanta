@@ -28,6 +28,8 @@
 #include <kio/job.h>
 #include <kurl.h>
 
+#include "project_url.h"
+
 /**project
   *@author Yacovlev Alexander & Dmitry Poplavsky & Andras Mantia
   */
@@ -133,6 +135,7 @@ public slots:
   void slotSaveProjectView();
   /** Deletes a project view */
   void slotDeleteProjectView();
+  void slotFileDescChanged(const KURL& url, const QString& desc);
 
 signals:
 
@@ -141,7 +144,7 @@ signals:
   void closeFiles();
 
   void showTree();
-  void reloadTree(const KURL::List &, bool);
+  void reloadTree(const ProjectUrlList &, bool);
 
   void setLocalFiles( bool );
 
@@ -216,7 +219,7 @@ protected: // Protected attributes
   /** Default DTD for this project. */
   QString m_defaultDTD;
   QString m_defaultEncoding;
-  KURL::List m_projectFiles; //stores the last result of fileNameList call
+  ProjectUrlList m_projectFiles; //stores the last result of fileNameList call
 
   void openCurrentView();
   /** pre-sets some variables */

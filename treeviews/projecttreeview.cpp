@@ -74,7 +74,7 @@ ProjectTreeBranch::ProjectTreeBranch(KFileTreeView *parent, const KURL& url,
 }
 
 KFileTreeViewItem* ProjectTreeBranch::createTreeViewItem(KFileTreeViewItem *parent,
-                                                        KFileItem *fileItem )
+                                                         KFileItem *fileItem )
 {
   FilesTreeViewItem  *tvi = 0;
   if( parent && fileItem )
@@ -109,7 +109,7 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   setFrameStyle( Panel | Sunken );
   setLineWidth( 2 );
   addColumn(i18n("Project Files"), -1);
-  addColumn("");
+  addColumn(i18n("Description"), -1);
   setFullWidth(true);
   setDragEnabled(true);
 
@@ -220,6 +220,8 @@ void ProjectTreeView::slotReload()
   } else
     m_projectDir =  new ProjectTreeBranch( this, m_baseURL, i18n("No Project"), UserIcon("ptab"));
 
+  connect(m_projectDir, SIGNAL(populateFinished(KFileTreeViewItem*)),
+          this,           SLOT(slotPopulateFinished(KFileTreeViewItem*)));
   addBranch(m_projectDir);
   m_projectDir->urlList = m_urlList;  // set list for filter
   if (m_projectName)
@@ -244,17 +246,19 @@ void ProjectTreeView::slotNewProjectLoaded(const QString &name, const KURL &base
     m_projectDir->root()->setText( 0, i18n("No Project"));
 }
 
-void ProjectTreeView::slotReloadTree( const KURL::List &urlList, bool buildNewTree)
+void ProjectTreeView::slotReloadTree( const ProjectUrlList &fileList, bool buildNewTree)
 {
   m_urlList.clear();
+  m_projectFiles.clear();
   KURL url;
 
   // m_urlList must be absolute, otherwise filter doesn't work
-  for (KURL::List::ConstIterator it = urlList.begin(); it != urlList.end(); ++it )
+  for (ProjectUrlList::ConstIterator it = fileList.begin(); it != fileList.end(); ++it )
   {
     url = QExtFileInfo::toAbsolute(*it, m_baseURL);
     url.adjustPath(-1);
     m_urlList.append(url);
+    m_projectFiles.append(ProjectURL(url, (*it).fileDesc));
   }
 
   if (buildNewTree)
@@ -421,5 +425,26 @@ void ProjectTreeView::slotDocumentClosed()
     iter.current()->repaint();
   }
 }
+
+void ProjectTreeView::slotPopulateFinished(KFileTreeViewItem* item)
+{
+  FilesTreeView::slotPopulateFinished(item);
+  // populate descriptions
+  for (ProjectUrlList::ConstIterator it = m_projectFiles.begin();
+       it != m_projectFiles.end(); ++it) {
+    KFileTreeViewItem* file_item = m_projectDir->findTVIByURL(*it);
+    if (file_item)
+      file_item->setText(1, (*it).fileDesc);
+  }
+}
+
+void ProjectTreeView::itemDescChanged(KFileTreeViewItem* item, const QString& newDesc)
+{
+  if (item) {
+    item->setText(1, newDesc);
+    emit changeFileDescription(item->url(), newDesc);
+  }
+}
+
 
 #include "projecttreeview.moc"

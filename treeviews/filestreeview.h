@@ -36,6 +36,7 @@ class KFileItem;
 class KPopupMenu;
 class KPropertiesDialog;
 class KURL;
+class FileInfoDlg;
 
 struct DirInfo;
 
@@ -111,7 +112,9 @@ protected slots:
 protected:
   virtual KFileTreeBranch* newBranch(const KURL& url);
   virtual void itemRenamed(const KURL& , const KURL& );
-  void addFileInfoPage(KPropertiesDialog *propDlg);
+  virtual void itemDescChanged(KFileTreeViewItem* item, const QString& newDesc);
+  virtual bool isProjectView() const { return false; }
+  const FileInfoDlg* addFileInfoPage(KPropertiesDialog *propDlg);
   /** expands an archiv, if possible */
   bool expandArchiv (KFileTreeViewItem *item);
   bool acceptDrag(QDropEvent* e ) const;
