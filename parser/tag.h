@@ -97,6 +97,8 @@ public:
   /** Return the index of attr. */
   int attributeIndex(QString attr);
   
+  void namePos(int &line, int &col);
+  
   enum TokenType {Unknown = 0, XmlTag,  XmlTagEnd, Text, Comment, CSS, ScriptTag, ScriptStructureBegin, ScriptStructureEnd, NeedsParsing = 500, Empty, Skip = 1000 }; // types of token
 
   //TODO: write setting/retrieving methods for the below attributes, and add
@@ -115,6 +117,8 @@ private:
   int beginCol;
   int endLine;   //where the tag ends in the doc
   int endCol;
+  int m_nameLine;//where the tag name begins
+  int m_nameCol;
   
   TagAttr attrs[MAX_ATTR_NUM];  //attributes in a tag
   QString m_tagStr;   //the tag in string format (as it is in the document)

@@ -1482,21 +1482,19 @@ void Document::slotTextChanged()
           if (node->tag->name == oldNodeName)
           {
             reparseEnabled = false;
-            int bl, bc, el, ec;
-            node->tag->beginPos(bl, bc);
-            node->tag->endPos(el, ec);
+            int bl, bc;
+            node->tag->namePos(bl, bc);
+            editIf->removeText(bl, bc, bl, bc + node->tag->name.length());
+            viewCursorIf->setCursorPositionReal(bl, bc);
             if (updateClosing)
             {
-              editIf->removeText(bl, bc, el, ec);
-              viewCursorIf->setCursorPositionReal(bl, bc);
-              insertText("</"+newNodeName, false);
+              insertText("/"+newNodeName, false);
             }
             else
-            {  
-              newNodeName[0] = '<';
-              editIf->removeText(bl, bc, bl, bc + oldNodeName.length());
-              viewCursorIf->setCursorPositionReal(bl, bc);
-              insertText(newNodeName, false);
+            {
+              insertText(newNodeName.mid(1), false);
+              if (bl == (int) line)
+                  column += (newNodeName.length() - oldNodeName.length() - 1);
             }
             baseNode = parser->rebuild(this);
             viewCursorIf->setCursorPositionReal(line, column);

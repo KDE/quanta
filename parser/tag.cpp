@@ -33,6 +33,8 @@ Tag::Tag()
   attrCount = 0;
   structBeginStr = "";
   cleanStr = "";
+  m_nameLine = -1;
+  m_nameCol = -1;
 }
 
 Tag::Tag( const Tag &t)
@@ -50,6 +52,8 @@ Tag::Tag( const Tag &t)
   m_write = t.m_write;
   type = t.type;
   structBeginStr = t.structBeginStr;
+  m_nameLine = t.m_nameLine;
+  m_nameCol = t.m_nameCol;
 
   for (int i=0; i<t.attrCount; i++)
   {
@@ -147,16 +151,18 @@ void Tag::parse(const QString &p_tagStr, Document *p_write)
  m_write = p_write;
 
  attrCount = 0;
+ m_nameLine = beginLine;
+ m_nameCol = beginCol;
  int line = beginLine;
- int col = beginCol;
+ int col = beginCol + 1;
  int begin;
 
  QString textLine = m_write->editIf->textLine(line);
 
- while (  textLine[col] != '<' && !textLine[col].isNull())
+ while (  textLine[col].isSpace() && !textLine[col].isNull())
    col++;
 
- begin = ++col;
+ begin = col++;
  while ( !textLine[col].isSpace() &&
           textLine[col] != '>' &&
          !textLine[col].isNull())
@@ -164,6 +170,8 @@ void Tag::parse(const QString &p_tagStr, Document *p_write)
    col++;
  }
  name = textLine.mid(begin, col-begin);
+ if (!name.isEmpty())
+    m_nameCol = begin;
 
  while ( textLine[col] != '>' && attrCount < 50)
   {
@@ -282,4 +290,10 @@ int Tag::valueIndexAtPos(int line, int col)
    i++;
  } while (i < attrCount && index == -1);
  return index;
+}
+
+void Tag::namePos(int &line, int &col)
+{
+  line = m_nameLine;
+  col = m_nameCol;
 }
