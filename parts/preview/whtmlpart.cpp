@@ -159,7 +159,7 @@ KParts::ReadOnlyPart *WHTMLPart::createPart( QWidget * parentWidget, const char 
 
 bool WHTMLPart::eventFilter(QObject *watched, QEvent *e)
 {
-  if (watched == view() && e->type() == QEvent::FocusOut)
+  if (watched == view() && e->type() == QEvent::FocusOut && !m_contextMenu->hasFocus())
     emit previewHasFocus(false);
   else
   if (watched == view() && e->type() == QEvent::FocusIn)
