@@ -1,0 +1,270 @@
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<class>UploadProfileDlgS</class>
+<comment>/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************/
+</comment>
+<author>(C) 2004 Andras Mantia &lt;amantia@kde.org&gt;</author>
+<widget class="QDialog">
+    <property name="name">
+        <cstring>UploadProfileDlgS</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>563</width>
+            <height>199</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Upload Profile</string>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="KPushButton" row="4" column="5" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>okButton</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>1</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="minimumSize">
+                <size>
+                    <width>90</width>
+                    <height>0</height>
+                </size>
+            </property>
+            <property name="text">
+                <string>&amp;OK</string>
+            </property>
+            <property name="accel">
+                <string>Alt+O</string>
+            </property>
+            <property name="autoDefault">
+                <bool>true</bool>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="3" column="1" rowspan="1" colspan="7">
+            <property name="name">
+                <cstring>linePath</cstring>
+            </property>
+        </widget>
+        <widget class="KPushButton" row="4" column="7">
+            <property name="name">
+                <cstring>cancelButton</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>1</hsizetype>
+                    <vsizetype>1</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="minimumSize">
+                <size>
+                    <width>90</width>
+                    <height>0</height>
+                </size>
+            </property>
+            <property name="text">
+                <string>&amp;Cancel</string>
+            </property>
+            <property name="accel">
+                <string>Alt+C</string>
+            </property>
+        </widget>
+        <spacer row="4" column="0" rowspan="1" colspan="5">
+            <property name="name">
+                <cstring>spacer3</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>370</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QLineEdit" row="2" column="1" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>lineUser</cstring>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="1" column="1" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>lineHost</cstring>
+            </property>
+        </widget>
+        <widget class="KPasswordEdit" row="2" column="4" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>linePasswd</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="1" column="0">
+            <property name="name">
+                <cstring>TextLabel4</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Host:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>lineHost</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="2" column="0">
+            <property name="name">
+                <cstring>TextLabel2</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;User:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>lineUser</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="3" column="0">
+            <property name="name">
+                <cstring>TextLabel2_2</cstring>
+            </property>
+            <property name="text">
+                <string>Pa&amp;th:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>linePath</cstring>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="1" column="7">
+            <property name="name">
+                <cstring>port</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="1" column="6">
+            <property name="name">
+                <cstring>TextLabel1_2</cstring>
+            </property>
+            <property name="text">
+                <string>Po&amp;rt:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>port</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="0" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>textLabel1</cstring>
+            </property>
+            <property name="text">
+                <string>Profile &amp;name:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>lineProfileName</cstring>
+            </property>
+        </widget>
+        <widget class="KLineEdit" row="0" column="2" rowspan="1" colspan="6">
+            <property name="name">
+                <cstring>lineProfileName</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="2" column="3">
+            <property name="name">
+                <cstring>TextLabel3</cstring>
+            </property>
+            <property name="text">
+                <string>Pass&amp;word:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>linePasswd</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="1" column="3">
+            <property name="name">
+                <cstring>TextLabel1</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Protocol:</string>
+            </property>
+            <property name="alignment">
+                <set>AlignVCenter|AlignRight</set>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>comboProtocol</cstring>
+            </property>
+            <property name="hAlign" stdset="0">
+            </property>
+        </widget>
+        <widget class="QComboBox" row="1" column="4" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>comboProtocol</cstring>
+            </property>
+        </widget>
+        <widget class="QCheckBox" row="2" column="6" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>keepPasswd</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Store password on disc</string>
+            </property>
+            <property name="accel">
+                <string>Alt+S</string>
+            </property>
+            <property name="checked">
+                <bool>false</bool>
+            </property>
+            <property name="toolTip" stdset="0">
+                <string>Keep the password in a file. DANGEROUS! Read the What's This text.</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>&lt;qt&gt;If you check this box, the password will be saved in the local Quanta configuration file, so every time you start Quanta and load this project, the password will be loaded and you don't have to enter it. Altough the local configuration file is readable only by you and the password
+is obscured, saving the password in any file is a security risk. Use this option at your own risk.&lt;br&gt;
+&lt;i&gt;Note:&lt;/i&gt; due to the security concerns, the password is not present in the project file, and moving the project files to another computer or uploading the project to a server will not move/upload the password to the new place.&lt;/qt&gt;</string>
+            </property>
+        </widget>
+    </grid>
+</widget>
+<connections>
+    <connection>
+        <sender>okButton</sender>
+        <signal>clicked()</signal>
+        <receiver>UploadProfileDlgS</receiver>
+        <slot>accept()</slot>
+    </connection>
+    <connection>
+        <sender>cancelButton</sender>
+        <signal>clicked()</signal>
+        <receiver>UploadProfileDlgS</receiver>
+        <slot>reject()</slot>
+    </connection>
+</connections>
+<tabstops>
+    <tabstop>lineProfileName</tabstop>
+    <tabstop>lineHost</tabstop>
+    <tabstop>comboProtocol</tabstop>
+    <tabstop>port</tabstop>
+    <tabstop>lineUser</tabstop>
+    <tabstop>linePasswd</tabstop>
+    <tabstop>keepPasswd</tabstop>
+    <tabstop>linePath</tabstop>
+    <tabstop>okButton</tabstop>
+    <tabstop>cancelButton</tabstop>
+</tabstops>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>
