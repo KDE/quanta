@@ -117,6 +117,7 @@ void Abbreviation::slotEditTemplate()
   if (!item)
       return;
   CodeTemplateDlgS dlg(this);
+  dlg.setCaption(i18n("Edit Code Template"));
   dlg.templateEdit->setText(item->text(0));
   dlg.descriptionEdit->setText(item->text(1));
   dlg.exec();
@@ -163,9 +164,19 @@ void Abbreviation::saveTemplates()
   if (m_dtd->abbreviations.count() > 0)
   {
     s = QFileInfo(m_dtd->fileName).dirPath();
-    if (s.startsWith(qConfig.globalDataDir))
+    QStringList resourceDirs = KGlobal::dirs()->resourceDirs("data");
+    bool dirFound = false;
+    for (uint i = 0; i < resourceDirs.count(); i++)
     {
-      s = s.right(s.length() - qConfig.globalDataDir.length());
+      if (s.startsWith(resourceDirs[i]))
+      {
+        dirFound = true;
+        s = s.right(s.length() - resourceDirs[i].length());
+        break;
+      }
+    }
+    if (dirFound)
+    {
       s = KGlobal::dirs()->saveLocation("data", s);
     }
     s.append("/abbreviations");

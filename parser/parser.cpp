@@ -989,7 +989,7 @@ Node* Parser::specialAreaParser(Node *startNode)
         goUp = true;
       }
       node = new Node(rootNode);
-      if (!rootNode->child)
+      if (rootNode && !rootNode->child)
       {
         rootNode->child = node;
       } else

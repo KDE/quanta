@@ -171,7 +171,7 @@ void QuantaApp::slotFileOpen()
  for (KURL::List::Iterator i=data.urls.begin(); i != data.urls.end(); ++i)
  {
    slotFileOpen( *i , data.encoding);
-   kapp->eventLoop()->processEvents( QEventLoop::ExcludeUserInput | QEventLoop::ExcludeSocketNotifiers);
+//   kapp->eventLoop()->processEvents( QEventLoop::ExcludeUserInput | QEventLoop::ExcludeSocketNotifiers);
  }
  m_doc->blockSignals(false);
  m_view->writeTab()->blockSignals(false);
@@ -3301,7 +3301,9 @@ void QuantaApp::slotExpandAbbreviation()
     }
     if (!textToInsert.isEmpty())
     {
+      w->activateParser(false);
       w->editIf->removeText(line, col - text.length() + 1, line, col);
+      w->activateParser(true);
       col -= (text.length() - 1);
       int pos = textToInsert.find('|');
       if (pos != -1)
@@ -3320,8 +3322,6 @@ void QuantaApp::slotExpandAbbreviation()
       w->insertText(textToInsert, false);
       w->viewCursorIf->setCursorPositionReal(line, col);
     }
-
-
   }
 }
 
