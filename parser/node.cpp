@@ -64,27 +64,19 @@ Node::~Node()
       parent->child = 0L;
   if (removeAll)
   {
-    if (child)
-    {
-      delete child;
-      child = 0L;
-    }
-    if (next)
-    {
-      delete next;
-      next = 0L;
-    }
+    delete child;
+    child = 0L;
+    delete next;
+    next = 0L;
   }
-  
-  delete tag; 
+
+  delete tag;
   tag = 0L;
-  delete groupTag; 
+  delete groupTag;
   groupTag = 0L;
 #ifdef BUILD_KAFKAPART
-  if(m_rootNode)
-    delete m_rootNode;
-  if(m_leafNode)
-    delete m_leafNode;
+  delete m_rootNode;
+  delete m_leafNode;
 #endif
 }
 
@@ -419,7 +411,7 @@ void Node::detachNode()
        // it = groupElementList->erase(it);
         (*it).node = 0L;
         (*it).tag = 0L;
-        (*it).deleted = true;        
+        (*it).deleted = true;
       } else
         ++it;
     }
@@ -429,6 +421,6 @@ void Node::detachNode()
     static_cast<StructTreeTag*>(listItem)->node = 0L;
     static_cast<StructTreeTag*>(listItem)->groupTag = 0L;
   }
-  
+
   groupElementLists.clear();
 }

@@ -154,6 +154,7 @@ private:
   /** Maybe we should move to a separate, special area parsing class */
   Node* specialAreaParsingDone(int &lastLine, int &lastCol);
 
+  bool m_parseIncludedFiles;
 };
 
 
