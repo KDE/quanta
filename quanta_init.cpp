@@ -68,7 +68,6 @@
 #include "widgets/whtmlpart.h"
 #include "messages/messageoutput.h"
 
-#include "treeviews/fileslistview.h"
 #include "treeviews/filestreeview.h"
 #include "treeviews/projecttreeview.h"
 #include "treeviews/doctreeview.h"
@@ -272,13 +271,9 @@ void QuantaApp::initProject()
   connect(project,  SIGNAL(templateURLChanged(const KURL &)),
           tTab,     SLOT  (slotSetTemplateURL(const KURL &)));
 
-  connect(fLTab,    SIGNAL(insertDirInProject(const KURL&)),
-          project,  SLOT  (slotAddDirectory(const KURL&)));
   connect(fTTab,    SIGNAL(insertDirInProject(const KURL&)),
           project,  SLOT  (slotAddDirectory(const KURL&)));
 
-  connect(fLTab,    SIGNAL(insertFileInProject(const KURL&)),
-          project,  SLOT  (slotInsertFile(const KURL&)));
   connect(fTTab,    SIGNAL(insertFileInProject(const KURL&)),
           project,  SLOT  (slotInsertFile(const KURL&)));
 
@@ -353,10 +348,8 @@ void QuantaApp::initView()
 
   fTab = new QWidgetStack( ftabdock );
   fTTab = new FilesTreeView(topList, fTab );
-  fLTab = new FilesListView( QDir::homeDirPath()+"/" , 0L, fTab );
 
   fTab -> addWidget( fTTab, 0 );
-  fTab -> addWidget( fLTab, 1 );
   fTab -> raiseWidget( 0 );
 
   pTab  = new ProjectTreeView( ptabdock );
@@ -385,7 +378,6 @@ void QuantaApp::initView()
 
   fTab  ->setFocusPolicy(QWidget::NoFocus);
   fTTab ->setFocusPolicy(QWidget::ClickFocus);
-  fLTab ->setFocusPolicy(QWidget::ClickFocus);
   pTab  ->setFocusPolicy(QWidget::NoFocus);
   tTab  ->setFocusPolicy(QWidget::NoFocus);
   sTab  ->setFocusPolicy(QWidget::NoFocus);
@@ -412,18 +404,9 @@ void QuantaApp::initView()
 
   connect(   fTTab,SIGNAL(openFile  (const KURL &, const QString&)),
             this, SLOT(slotFileOpen(const KURL &, const QString&)));
-  connect(   fLTab,SIGNAL(openFile  (const KURL &, const QString&)),
-            this, SLOT(slotFileOpen(const KURL &, const QString&)));
 
   connect(   fTTab,SIGNAL(openImage(const KURL&)),
             this, SLOT  (slotImageOpen(const KURL&)));
-  connect(   fLTab,SIGNAL(openImage(const KURL&)),
-            this, SLOT  (slotImageOpen(const KURL&)));
-
-  connect(  fLTab,SIGNAL(changeMode()),
-            this, SLOT(slotSwapLeftPanelMode()));
-  connect(  fTTab,SIGNAL(changeMode()),
-            this, SLOT(slotSwapLeftPanelMode()));
 
   connect(   pTab, SIGNAL(openFile  (const KURL &, const QString&)),
             this, SLOT(slotFileOpen(const KURL &, const QString&)));
@@ -443,13 +426,9 @@ void QuantaApp::initView()
 
   connect(   fTTab,SIGNAL(insertTag(const KURL &, DirInfo)),
             this, SLOT(slotInsertTag(const KURL &, DirInfo)));
-  connect(   fLTab,SIGNAL(insertTag(const KURL &, DirInfo)),
-            this, SLOT(slotInsertTag(const KURL &, DirInfo)));
   connect(   pTab,SIGNAL(insertTag(const KURL &, DirInfo)),
             this, SLOT(slotInsertTag(const KURL &, DirInfo)));
 
-  connect(   fLTab,SIGNAL(activatePreview()),
-            this, SLOT(slotActivatePreview()));
   connect(   fTTab,SIGNAL(activatePreview()),
             this, SLOT(slotActivatePreview()));
   connect(   pTab, SIGNAL(activatePreview()),
@@ -615,10 +594,6 @@ void QuantaApp::readOptions()
   sTab->setFollowCursor( config->readBoolEntry("Follow Cursor", true));
 
   qConfig.previewPosition   = config->readEntry("Preview position","Right");
-  int mode = config->readNumEntry("Left panel mode", 0);
-/* List Mode disabled!!
-  if ( mode == 0 || mode == 1 ) fTab->raiseWidget(mode);
-*/
   fTab->raiseWidget(0);
 
   fileRecent ->loadEntries(config);

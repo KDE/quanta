@@ -40,7 +40,6 @@
 #include "kqapp.h"
 #include "widgets/whtmlpart.h"
 #include <kparts/browserextension.h>
-#include <ktoolbar.h>
 #include <kate/document.h>
 #include <ktempfile.h>
 
@@ -75,7 +74,6 @@ class KRecentFilesAction;
 class Node;
 class Parser;
 class DocTreeView;
-class FilesListView;
 class FilesTreeView;
 class StructTreeView;
 class ProjectTreeView;
@@ -215,7 +213,6 @@ public slots:
   void slotUpdateStatus (QWidget*);
 
   void slotDockChanged();
-  void slotSwapLeftPanelMode();
 
   void slotActivatePreview();
 
@@ -390,7 +387,6 @@ private:
   ProjectTreeView  	*pTab;
   DocTreeView 	*dTab;
   FilesTreeView	*fTTab;
-  FilesListView		*fLTab;
   StructTreeView *sTab;
   TemplatesTreeView	 *tTab;
 

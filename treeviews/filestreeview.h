@@ -59,7 +59,6 @@ public slots:
 	void slotSelectAnyFile(QListViewItem *);
 	void slotSelectImage  (QListViewItem *);
 	void slotAddToTop     ();
-	void slotNewMode();
   /** No descriptions */
   virtual void slotInsertTag();
 	virtual void slotReload();

@@ -81,5 +81,19 @@ int ToolbarTabWidget::tabHeight() const
   return tabBar()->height();
 }
 
+QWidget* ToolbarTabWidget::page(int index)
+{
+  QWidget *w = QTabWidget::page(index);
+
+  for (QWidget *tb = toolbarList.first(); tb; tb = toolbarList.next())
+  {
+    if (tb->parentWidget() == w)
+    {
+      w = tb;
+      break;
+    }
+  }
+  return w;
+}
 
 #include "toolbartabwidget.moc"

@@ -121,7 +121,7 @@ void ActionEditDlg::deleteAction()
      for (uint i = 1; i < guiClients.count(); i++)
      {
       guiClient = guiClients.at(i);
-      quantaApp->factory()->removeClient(guiClient);
+      guiClient->domDocument().setContent(KXMLGUIFactory::readConfigFile( guiClient->xmlFile(), guiClient->instance() ));
       nodeList = guiClient->domDocument().elementsByTagName("Action");
       for (uint j = 0; j < nodeList.count(); j++)
       {
@@ -129,13 +129,12 @@ void ActionEditDlg::deleteAction()
         if (nodeList.item(j).toElement().attribute("name") == actionText)
         {
           nodeList.item(j).parentNode().removeChild(nodeList.item(j));
-          KXMLGUIFactory::saveConfigFile(guiClient->domDocument(), guiClient->localXMLFile());
+          KXMLGUIFactory::saveConfigFile(guiClient->domDocument(), guiClient->xmlFile());
+          break;
         }
       }
-        guiClient ->setXMLGUIBuildDocument( QDomDocument() );
-        guiClient->reloadXML();
-        quantaApp->guiFactory()->addClient(guiClient);
      }
+       action->unplugAll();
        delete action;
        action = 0;
        actionsList->removeItem( actionsList->currentItem() );
@@ -344,22 +343,9 @@ void ActionEditDlg::saveAction( TagAction *a )
       QDomElement e = guiClient->domDocument().createElement("Action");
       e.setAttribute("name",el.attribute("name"));
       foundNode.appendChild(e);
-      KXMLGUIFactory::saveConfigFile(guiClient->domDocument(), guiClient->localXMLFile());
+      KXMLGUIFactory::saveConfigFile(guiClient->domDocument(),
+                                     guiClient->xmlFile(), guiClient->instance());
     }
-    int currentPage = quantaApp->getView()->toolbarTab->currentPageIndex();
-  //reload the GUI clients
-    guiClients = quantaApp->factory()->clients();
-    guiClient = 0;
-    for (uint i = 1; i < guiClients.count(); i++)
-    {
-        guiClient = guiClients.at(i);
-        quantaApp->factory()->removeClient(guiClient);
-        guiClient ->setXMLGUIBuildDocument( QDomDocument() );
-        guiClient->reloadXML();
-        quantaApp->guiFactory()->addClient(guiClient);
-    }
-    quantaApp->getView()->toolbarTab->setCurrentPage(currentPage);
-    
   }
 }
 

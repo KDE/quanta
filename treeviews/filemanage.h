@@ -18,7 +18,7 @@
 #ifndef FILEMANAGE_H
 #define FILEMANAGE_H
 
-#include <klistview.h>
+#include <qlistview.h>
 
 #include <kfileitem.h>
 #include <kio/job.h>
@@ -40,7 +40,7 @@ typedef struct DirInfo{
       bool    usePrePostText;
     };
 
-class FileManage : public KListView {
+class FileManage : public QListView {
 Q_OBJECT
 public:
   FileManage();
@@ -99,7 +99,6 @@ signals:
 	void insertTag(const KURL &, DirInfo);
 	
 	void jobFinished();
-	void changeMode();
 
   /** No descriptions */
   void reloadTreeviews();
