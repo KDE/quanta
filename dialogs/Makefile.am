@@ -11,3 +11,4 @@ AM_CPPFLAGS = -I$(top_srcdir)/lib \
 	$(KMDI_INCLUDES) $(all_includes)
 
 SUBDIRS = settings tagdialogs
+

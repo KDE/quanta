@@ -33,12 +33,15 @@ public:
 
 public slots:
   void filterChars(const QString&);
-  void select(QListBoxItem*);
+  void insertChar();
+  void insertCode();
+  void cancel();
   
 private slots:
   
 private:
   void readChars();
+  QString m_selection;
   QStringList m_charList;
 };
 
