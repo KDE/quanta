@@ -243,21 +243,26 @@ void Tagxml::readAttributes( QDict<QString> *d )
      else
      {
       if ( dynamic_cast<Attr_check *>(attr) ) // checkbox
-      {
-        if (m_dtd->booleanAttributes == "simple")
+      {      
+        if (value == "checked")
         {
-          if (value == "checked")
+          if (m_dtd->booleanAttributes == "simple")
           {
             d->replace(name, new QString("") );
           } else
           {
-            d->remove(name);
+            d->replace(name, new QString(m_dtd->booleanTrue)); //it seems that browsers don't like <input disabled="false">, so if a checkbox is false, don't put in the tag at all
           }
-        } else
+        }  
+        else  
+        {
+          d->remove(name);
+        }
+/*        } else
         {
           value = (value == "checked")?m_dtd->booleanTrue:m_dtd->booleanFalse;
           d->replace(name, new QString(value));
-        }
+        } */
       } else
       if (dynamic_cast<Attr_file *>(attr))
       {

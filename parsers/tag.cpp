@@ -496,7 +496,7 @@ QString Tag::toString()
   {
     attr = *it;
     attrString = " ";
-    if (attr.value.isEmpty())
+    if (attr.value.isEmpty() || attr.name == "/")
     {
       attrString.append(attr.name);
     } else

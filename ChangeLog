@@ -26,6 +26,8 @@ Version 3.3 BE (Release date: xx-xx-2004; Started 26-01-2004):
         - fix saving of files with fish:// [#74716]
         - correctly close tags with namespaces when entering "</"
         - make autocompletion work correctly with namespaced tags
+        - don't insert boolean attributes with false as value in the tags
+        - fix XML style tag editing (don't make tags look like <foo /="true">)
         - various parsing fixes        
         - report bugs for "quanta" module, not for "quanta_be"        
     - performance:
