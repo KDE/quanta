@@ -1106,18 +1106,25 @@ void QuantaApp::readTagDir(QString &dirName)
  dtd->booleanAttributes = dtdConfig->readEntry("BooleanAttributes","extended");
  dtd->booleanTrue = dtdConfig->readEntry("BooleanTrue","true");
  dtd->booleanFalse = dtdConfig->readEntry("BooleanFalse","false");
+ dtd->singleTagStyle = dtdConfig->readEntry("Single Tag Style", "html").lower();
+ 
  QStringList structKeywords = dtdConfig->readListEntry("StructKeywords",';');
- dtd->structKeywordsRx = "\\b(";
- for (uint i = 0; i < structKeywords.count(); i++)
+ if (structKeywords.count() !=0 )
  {
-   dtd->structKeywordsRx += structKeywords[i].stripWhiteSpace()+"|";
+    dtd->structKeywordsRx = "\\b(";
+    for (uint i = 0; i < structKeywords.count(); i++)
+    {
+      dtd->structKeywordsRx += structKeywords[i].stripWhiteSpace()+"|";
+    }
+    dtd->structKeywordsRx.truncate(dtd->structKeywordsRx.length()-1);
+    dtd->structKeywordsRx += ")\\b";
+ } else
+ {
+   dtd->structKeywordsRx = " ";
  }
- dtd->structKeywordsRx.truncate(dtd->structKeywordsRx.length()-1);
- dtd->structKeywordsRx += ")\\b";
  dtd->structRx = dtdConfig->readEntry("StructRx","\\{|\\}").stripWhiteSpace();
  dtd->structBeginStr = dtdConfig->readEntry("StructBeginStr","{").stripWhiteSpace();
  dtd->structEndStr = dtdConfig->readEntry("StructEndStr","}").stripWhiteSpace();
- dtd->singleTagStyle = dtdConfig->readEntry("Single Tag Style", "html").lower();
  dtd->structGroups = dtdConfig->readListEntry("StructGroups",';');
  for (uint i = 0; i < dtd->structGroups.count(); i++)
  {

@@ -378,29 +378,6 @@ Tag *Document::findXMLTag(int line, int col, bool forwardOnly, bool useSimpleRx)
       if (tag->name == "!--") tag->type = Tag::Comment;
       if (scriptBeginRx.search(tag->name) == 0) tag->type = Tag::ScriptTag;
       if (foundText.right(2) == "/>") tag->single = true;
-
-      if (tag->type == Tag::XmlTag &&
-          !QuantaCommon::isKnownTag(m_parsingDTD, tag->name) )
-      {
-        QTag *newTag = userTagList.find(tag->name);
-        bool insertNew = !newTag;     
-        if (insertNew)
-        {
-          newTag = new QTag();
-          newTag->setName(tag->name);
-          newTag->parentDTD = dtds->find(m_parsingDTD);
-        }
-        for (int i = 0; i < tag->attrCount; i++)
-        {
-           Attribute *attr = new Attribute;
-           attr->name = tag->attribute(i);
-           attr->values.append(tag->attributeValue(i));
-           newTag->addAttribute(attr);
-           delete attr;
-        }
-        if (insertNew)
-            userTagList.insert(tag->name, newTag);
-      } 
   }
 
   return tag;
