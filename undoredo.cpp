@@ -500,7 +500,7 @@ void undoRedo::debugOutput()
 				continue;
 			}
 			QValueList<int>::iterator it3;
-			kdDebug(24000)<< "==== Location: " << endl;;
+			kdDebug(24000)<< "==== Location: " << endl;
 			for(it3 = (*it2).location.begin(); it3 != (*it2).location.end(); ++it3)
 			{
 				kdDebug(24000)<< (*it3) << endl;

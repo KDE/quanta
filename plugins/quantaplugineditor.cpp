@@ -200,7 +200,7 @@ void QuantaPluginEditor::removePlugin()
   QListViewItem *currentItem = pluginList->currentItem();
   if(currentItem)
   {
-    QuantaPlugin *plugin = m_plugins.find(currentItem->text(0));;
+    QuantaPlugin *plugin = m_plugins.find(currentItem->text(0));
     if(plugin)
     {
        m_plugins.remove(plugin->pluginName());

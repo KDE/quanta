@@ -2341,7 +2341,7 @@ void QuantaApp::slotSendToolbar()
   QStringList toolbarFile;
 
   QString prefix="quanta";
-  KTempFile* tempFile = new KTempFile(tmpDir, toolbarExtension);;
+  KTempFile* tempFile = new KTempFile(tmpDir, toolbarExtension);
   tempFile->setAutoDelete(true);
   KURL tempURL;
   tempURL.setPath(tempFile->name());
@@ -2407,7 +2407,7 @@ void QuantaApp::slotRenameToolbar()
 
 void QuantaApp::slotRenameToolbar(const QString& name)
 {
-  ToolbarEntry *p_toolbar = quantaApp->toolbarList[name];;
+  ToolbarEntry *p_toolbar = quantaApp->toolbarList[name];
   if (p_toolbar)
   {
     KLineEditDlg dlg(i18n("Enter the new name:"), p_toolbar->name, this);

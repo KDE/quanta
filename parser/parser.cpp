@@ -168,7 +168,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
   QString textLine;
   textLine.fill(space, startCol);
   int line = startLine;
-  int col = 0;;
+  int col = 0;
   int tagStartCol, tagStartLine = 0;
   int tagEndLine, tagEndCol;
   int tagStartPos, specialStartPos;
