@@ -98,14 +98,14 @@ public slots:
    */
   void slotSendInMail();
   virtual void slotSelectFile(QListViewItem *item);
-  virtual void slotOpen();
-  virtual void slotPaste();
-  virtual void slotDelete();
+  void slotOpen();
+  void slotPaste();
+  void slotDelete();
   /** Properties dialog for template view */
   virtual void slotProperties();
   /** Property application for template view */
   virtual void slotPropertiesApplied();
-  virtual void slotInsertTag();
+  void slotInsertTag();
 
   /** Sets the project template directory */
   void slotNewProjectLoaded(const QString &, const KURL &, const KURL &);

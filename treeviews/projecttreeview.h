@@ -20,10 +20,11 @@
 
 //own includes
 #include "basetreeview.h"
-#include "projecturl.h"
+//#include "projecturl.h"
 
 class KIO::Job;
 class FileInfoDlg;
+class ProjectList;
 
 class ProjectTreeViewItem : public BaseTreeViewItem {
 
@@ -45,7 +46,7 @@ public:
                                                 KFileItem *fileItem );
 
   /** only files in list will be shown */
-  ProjectUrlList urlList;
+  ProjectList *urlList;
 };
 
 
@@ -75,19 +76,21 @@ public:
 public slots: // Public slots
   void slotOpen();
   void slotLoadToolbar();
-  void slotReloadTree(const ProjectUrlList &a_fileList, bool buildNewtree);
+  void slotReloadTree(ProjectList *a_fileList, bool buildNewtree, const QStringList &folderToOpen);
   /** Sets new project information */
   void slotNewProjectLoaded(const QString &, const KURL &, const KURL &);
-  virtual void slotPopulateFinished(KFileTreeViewItem* );
+  void slotPopulateFinished(KFileTreeViewItem* );
   /** makes the url visible in the tree */
   void slotViewActivated(const KURL&);
+  /** fills the list with the url's of the open folder  */
+  void slotGetTreeStatus(QStringList *folderToOpen)
+  {
+    m_projectDir->addOpenFolder(folderToOpen);
+  }
+
+
 
 protected slots:
-  /**
-  reloads the current branch
-  */
-  void slotReload();
-  void slotRemove();
   void slotMenu(KListView *listView, QListViewItem *item, const QPoint &point);
   void slotRenameItem(QListViewItem* kvtvi, const QString & newText, int col);
 
@@ -105,10 +108,6 @@ signals: // Signals
   void changeUploadStatus(const KURL& url, int status);
   void changeDocumentFolderStatus(const KURL& url, bool status);
   void reloadProject();
-  /**
-   *  emited to make the script describtion visible
-   */
-  void showPreviewWidget(bool);
 
 private:
   /** The constructor is privat because we use singleton patter.
@@ -116,7 +115,6 @@ private:
    *  construction and reference
    */
   ProjectTreeView(QWidget *parent, const char *name);
-  void setUploadStatus(const KURL &url, int status);
 
   ProjectTreeBranch *m_projectDir;
   KPopupMenu *m_fileMenu;
@@ -126,7 +124,7 @@ private:
   ProjectTreeViewItem *m_documentRootItem;
   KURL::List m_documentFolderList;
   KPopupMenu *m_uploadStatusMenu;
-  ProjectUrlList m_projectFiles;
+  ProjectList *m_projectFiles;
   int m_menuClose;                ///< remembers the menu entry
 
   int m_openInQuantaId;  ///< remembers the menu entry
@@ -147,7 +145,7 @@ protected:
   @param item the treeview item
   @param newDesc the new description of item
   */
-  virtual void itemDescChanged(KFileTreeViewItem* item, const QString& newDesc);
+  void itemDescChanged(KFileTreeViewItem* item, const QString& newDesc);
   /**
   adds the Quanta fileinfopage to the properties dialog
   overwritten to enable the file description
@@ -166,7 +164,6 @@ private slots: // Private slots
   void slotCreateFolder();
   void slotRemoveFromProject(int askForRemove = 1);
   void slotUploadSingleURL();
-//  void slotRenameFinished(KIO::Job *job);
   void slotAlwaysUpload();
   void slotNeverUpload();
   void slotConfirmUpload();

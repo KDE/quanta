@@ -28,6 +28,7 @@
 #include <qfont.h>
 #include <qpainter.h>
 #include <qtooltip.h>
+#include <qptrstack.h>
 
 // KDE includes
 #include <kdebug.h>
@@ -56,6 +57,7 @@
 #include "quanta.h"
 #include "qextfileinfo.h"
 #include "viewmanager.h"
+#include "quantanetaccess.h"
 
 #include <X11/Xlib.h>
 
@@ -147,7 +149,7 @@ void BaseTreeViewItem::paintCell(QPainter *p, const QColorGroup &cg,
 
 void BaseTreeViewItem::refreshIcon()
 {
-  setPixmap(0, fileItem()->pixmap(KIcon::SizeSmall));
+  fileItem()->refreshMimeType();
 }
 
 
@@ -160,7 +162,13 @@ BaseTreeBranch::BaseTreeBranch(KFileTreeView *parent, const KURL& url,
 {
   bool localFile = url.isLocalFile();
   setAutoUpdate(localFile);
-  setChildRecurse(localFile);
+  setChildRecurse(false);
+  
+  // TODO drop this if support for KDE 3.2 is dropped
+#if KDE_VERSION < KDE_MAKE_VERSION(3,2,90)
+  connect(this, SIGNAL(refreshItems(const KFileItemList&)),
+          this, SLOT   (slotRefreshItems(const KFileItemList&)));
+#endif
 }
 
 bool BaseTreeBranch::matchesFilter(const KFileItem *item) const
@@ -190,12 +198,84 @@ KFileTreeViewItem* BaseTreeBranch::createTreeViewItem(KFileTreeViewItem *parent,
   return tvi;
 }
 
+// TODO drop this if support for KDE 3.2 is dropped
+void BaseTreeBranch::slotRefreshItems(const KFileItemList& list)
+{
+#if KDE_VERSION < KDE_MAKE_VERSION(3,2,90)
+  KFileItemListIterator it( list );
+  KFileItem *currItem;
+  KFileTreeViewItem *item = 0;
+
+  while ( (currItem = it.current()) != 0 )
+  {
+      item = findTVIByURL(currItem->url());
+      if (item) {
+          item->setPixmap(0, item->fileItem()->pixmap( KIcon::SizeSmall ));
+          item->setText( 0, item->fileItem()->text());
+      }
+      ++it;
+  }
+#else
+  Q_UNUSED(list);  
+#endif
+}
 
 
+void BaseTreeBranch::addOpenFolder(QStringList* openFolder)
+{
+  if (! openFolder)  // just in case
+    return;
+  KFileTreeViewItem *newItem;
+  KFileTreeViewItem *item = root();
+  while (item) {
+    if (item->isDir() && item->isOpen()) {
+      openFolder->append( item->url().url() );
+      // dive into the tree first
+      newItem = dynamic_cast<KFileTreeViewItem *>(item->firstChild());
+      if (newItem) {
+        // found child go ahead
+        item = newItem;
+        continue;
+      };
+    };
+    // go up if no sibling available
+    if (! item->nextSibling())
+      item = dynamic_cast<KFileTreeViewItem *>(item->parent());
+    if (item == root())
+      break;
+    if (item)
+      item = dynamic_cast<KFileTreeViewItem *>(item->nextSibling());
+  };
+}
 
-//BaseTreeView implementation
+
+void BaseTreeBranch::reopenFolder()
+{
+  if (folderToOpen.isEmpty())
+    return;
+  KFileTreeViewItem *item;   
+  for (QStringList::Iterator it = folderToOpen.begin(); it != folderToOpen.end(); ++it) {
+    KURL url( (*it) );
+    item = findTVIByURL(url);
+    if (item) {
+      // erase the url in the list
+      (*it) = "";
+      // open the folder 
+      item->setExpandable(true);
+      item->setOpen(true);
+    }
+  }
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////
+//
+//               BaseTreeView implementation
+//
+////////////////////////////////////////////////////////////////////////////////////
+
 BaseTreeView::BaseTreeView(QWidget *parent, const char *name)
-: KFileTreeView(parent, name), fileInfoDlg(0)
+: KFileTreeView(parent, name), fileInfoDlg(0), m_saveOpenFolder(false)
 {
   QToolTip::remove(viewport());  // remove the tooltip from QListView
   m_tooltip = new BaseTreeViewToolTip(viewport(), this);
@@ -252,8 +332,6 @@ void BaseTreeView::itemRenamed(const KURL& oldURL, const KURL& newURL)
 /** Called for: double click, return, Open */
 void BaseTreeView::slotSelectFile(QListViewItem *item)
 {
-  Q_UNUSED(item);
-
   KFileTreeViewItem* kftvi = currentKFileTreeViewItem();
   if (!kftvi || kftvi->isDir()) return;
 
@@ -263,6 +341,7 @@ void BaseTreeView::slotSelectFile(QListViewItem *item)
     if ( QuantaCommon::checkMimeGroup(urlToOpen,"text") )
     {
       emit openFile(urlToOpen);
+      item->repaint();
     }
     else if ( QuantaCommon::checkMimeGroup(urlToOpen, "image") ) //it may be an image
       {
@@ -276,6 +355,7 @@ void BaseTreeView::slotSelectFile(QListViewItem *item)
           if (QuantaCommon::denyBinaryInsert() == KMessageBox::Yes)
           {
             emit openFile(urlToOpen);
+            item->repaint();
           }
         }
    }
@@ -423,6 +503,7 @@ void BaseTreeView::slotOpen()
   if (item)
   {
     emit open(item);
+    item->repaint();
   }
 }
 
@@ -473,11 +554,7 @@ void BaseTreeView::slotPaste()
     KURL url = currentURL();
     if ( ! currentKFileTreeViewItem()->isDir() )
       url.setFileName("");   // don't paste on files but in dirs
-    KIO::Job *job = KIO::copy( list, url);
-    connect( job, SIGNAL( result( KIO::Job *) ), this , SLOT( slotJobFinished( KIO::Job *) ) );
-    progressBar->setTotalSteps(100);
-    connect( job, SIGNAL( percent( KIO::Job *, unsigned long)),
-             this, SLOT( slotPercent( KIO::Job *, unsigned long)));
+    QuantaNetAccess::dircopy(list, url, this, true);
   }
 }
 
@@ -491,29 +568,11 @@ void BaseTreeView::slotPercent(KIO::Job *job, unsigned long value)
 
 void BaseTreeView::slotDelete()
 {
-  if (currentItem())
-  {
-    KURL url = currentURL();
-    QString msg;
-    if (m_projectBaseURL.isParentOf(url))
-    {
-      msg = i18n("<qt><b>%1</b> might be part of your project; do you really want to delete it?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol));
-    } else
-    {
-      if ( currentKFileTreeViewItem()->isDir() )
-        msg = i18n("<qt>Do you really want to delete folder <b>%1</b> ?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol));
-      else
-        msg = i18n("<qt>Do you really want to delete file <b>%1</b> ?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol));
-    }
-    if ( KMessageBox::warningYesNo(this, msg) == KMessageBox::Yes )
-    {
-      KIO::Job *job = KIO::del(url);
-      connect( job, SIGNAL( result( KIO::Job *) ), this , SLOT( slotJobFinished( KIO::Job *) ) );
-      progressBar->setTotalSteps(100);
-      connect( job, SIGNAL( percent( KIO::Job *, unsigned long)),
-               this, SLOT( slotPercent( KIO::Job *, unsigned long)));
-    }
-  }
+  if (!currentKFileTreeViewItem()) return;
+  KURL url = currentURL();
+  if (currentKFileTreeViewItem()->isDir())
+    url.adjustPath(+1);
+  QuantaNetAccess::del(url, this, true);
 }
 
 
@@ -531,8 +590,12 @@ void BaseTreeView::slotPopulateFinished(KFileTreeViewItem *item)
   if (item->childCount() == 0) {
     item->setOpen(false);
     item->setExpandable(false);
-//  } else {
-//    if ( !item->isOpen() ) item->setOpen(true);
+  } else {
+    QString url = item->url().url();
+    BaseTreeBranch *btb = dynamic_cast<BaseTreeBranch *>(item->branch());
+    if (btb && ! btb->folderToOpen.empty()) {
+      btb->reopenFolder();
+    }
   }
 }
 
@@ -581,32 +644,68 @@ void BaseTreeView::slotPropertiesApplied()
   {
     itemRenamed(url, propDlg->kurl());
   }
-  if (fileInfoDlg)
+  KFileTreeViewItem *kftvi = currentKFileTreeViewItem();
+  if (fileInfoDlg && kftvi)
   {
     // has description changed?
     QString newDesc = fileInfoDlg->fileDesc->text();
-    if (currentKFileTreeViewItem()->text(1) != newDesc)
-      itemDescChanged(currentKFileTreeViewItem(), newDesc);
-  } /*else
-  {*/
-    // refresh icon in case it has changed
-    BaseTreeViewItem * btvi = dynamic_cast<BaseTreeViewItem *> (currentKFileTreeViewItem());
-    if (btvi)
-    {
-      btvi->refreshIcon();
+    if (kftvi->text(1) != newDesc)
+      itemDescChanged(kftvi, newDesc);
+  }
+  BaseTreeViewItem * btvi = dynamic_cast<BaseTreeViewItem *> (kftvi);
+  if (btvi)
+  {
+    btvi->refreshIcon();
+  }
+/*  not working as expected
+  if (kftvi && kftvi->url().isLocalFile()) {
+    slotReloadAllTrees();  // refresh the icons for local url's, they might have changed
+  }*/
+}
+
+
+void BaseTreeView::slotReloadAllTrees()
+{
+  QPtrStack<BaseTreeBranch> stack;
+  BaseTreeBranch *btb;
+  KFileTreeBranchIterator it( branches() );
+  for ( ; it.current(); ++it)
+  {
+    btb = dynamic_cast<BaseTreeBranch *>( (*it) );
+    if (btb && btb->rootUrl().isLocalFile()) {
+      stack.push(btb);
     }
-//   }
+  }
+  while (! stack.isEmpty())
+  {
+    reload(stack.pop());
+  }
 }
 
 
 void BaseTreeView::slotReload()
 {
   KFileTreeViewItem *curItem = currentKFileTreeViewItem();
-  if (!curItem) return;
+  if (curItem)
+    reload(dynamic_cast<BaseTreeBranch *>(curItem->branch()));
+}
 
-  KURL url = curItem->branch()->rootUrl();
-  removeBranch(curItem->branch());
-  newBranch(url);
+
+void BaseTreeView::reload(BaseTreeBranch *btb)
+{
+  if (! btb)
+    return;
+  // remember the old status
+  QStringList folderToOpen;
+  btb->addOpenFolder(&folderToOpen);
+  KURL url = btb->rootUrl();
+  // remove and open again
+  removeBranch(btb);
+  btb = dynamic_cast<BaseTreeBranch *>(newBranch(url));
+  if (btb) {
+    btb->folderToOpen = folderToOpen;
+    btb->reopenFolder();
+  }
 }
 
 
@@ -680,15 +779,24 @@ void BaseTreeView::slotDropped (QWidget *, QDropEvent * /*e*/, KURL::List& fileL
       popup.insertSeparator();
       popup.insertItem(SmallIconSet("cancel"), i18n("C&ancel"), 5);
 
-      result = popup.exec( /*mapToGlobal(e->pos())*/ QCursor::pos() );
+      result = popup.exec( QCursor::pos() );
     }
   }
+  bool tooltip = showToolTips();
   KIO::Job *job;
   switch ( result ) {
-    case 1  : job = KIO::copy(fileList, dest);
-              break;
-    case 2  : job = KIO::move(fileList, dest);
-              break;
+    case 1  : setShowToolTips(false);
+              setDragEnabled(false);
+              QuantaNetAccess::dircopy(fileList, dest, this, true);
+              setDragEnabled(true);
+              setShowToolTips(tooltip);
+              return;
+    case 2  : setShowToolTips(false);
+              setDragEnabled(false);
+              QuantaNetAccess::move(fileList, dest, this, true);
+              setDragEnabled(true);
+              setShowToolTips(tooltip);
+              return;
     case 3  : job = KIO::link(fileList, dest);
               break;
     default : return ;
@@ -733,21 +841,34 @@ bool BaseTreeView::isFileOpen(const KURL &url)
 
 bool BaseTreeView::isPathInClipboard()
 {
-  KURL url(QApplication::clipboard()->text());
-  if (!url.isValid())
-    return false;
-  else
-    return QExtFileInfo::exists(url);
+  QClipboard *cb = QApplication::clipboard();
+  KURL::List list( QStringList::split( QChar('\n'), cb->text() ) );
+  for ( KURL::List::Iterator it = list.begin(); it != list.end(); ++it )
+  {
+    if ( !(*it).isValid() )
+      return false;
+  }
+  return true;
 }
 
 
-void BaseTreeView::slotDocumentClosed()
+void BaseTreeView::slotDocumentClosed(const KURL& url)
 {
-  QListViewItemIterator iter(this);
+  KFileTreeViewItem * item;
+  KFileTreeBranchIterator it( branches() );
+  for ( ; it.current(); ++it)
+  {
+    item = (*it)->findTVIByURL(url);
+    if (item)
+    {
+      item->repaint();
+    }
+  }
+/*  QListViewItemIterator iter(this);
   for ( ; iter.current(); ++iter )
   {
     iter.current()->repaint();
-  }
+  }*/
 }
 
 
@@ -790,56 +911,103 @@ void BaseTreeView::doRename(KFileTreeViewItem* kftvi, const QString & newName)
   if (! kftvi)
     return;
 
-  // remember this for slotRenameFinished()
-  m_kftvi = kftvi;
-  m_oldURL = kftvi->url();
-  m_newURL = m_oldURL;
+  KURL oldURL = kftvi->url();
+  KURL newURL = oldURL;
 
   if (kftvi->isDir())
   {
-    m_newURL.setPath(QFileInfo(m_oldURL.path(-1)).dirPath() + '/' + newName + '/');
-    m_oldURL.adjustPath(1);
+    newURL.setPath(QFileInfo(oldURL.path(-1)).dirPath() + '/' + newName + '/');
+    oldURL.adjustPath(1);
   } else
   {
-    m_newURL.setFileName(newName);
+    newURL.setFileName(newName);
   }
-  if ( m_oldURL != m_newURL )
+  if ( oldURL != newURL )
   {
     bool proceed = true;
-    if (QExtFileInfo::exists(m_newURL))
+    if (QExtFileInfo::exists(newURL))
     {
-      proceed = KMessageBox::warningYesNo(this, i18n("<qt>The file <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>").arg(m_newURL.prettyURL(0, KURL::StripFileProtocol)),i18n("Overwrite")) == KMessageBox::Yes;
+      proceed = KMessageBox::warningYesNo(this, i18n("<qt>The file <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>").arg(newURL.prettyURL(0, KURL::StripFileProtocol)),i18n("Overwrite")) == KMessageBox::Yes;
     }
     if (proceed)
     {
     //start the rename job
-      KURL oldURL = m_oldURL;
       oldURL.adjustPath(-1);
-      KURL newURL = m_newURL;
       newURL.adjustPath(-1);
-      KIO::SimpleJob *job = KIO::rename(oldURL, newURL, true);
-      connect(job, SIGNAL( result( KIO::Job *) ), SLOT(slotRenameFinished( KIO::Job *)));
+      if (! QuantaNetAccess::file_move(oldURL, newURL, -1, true, false, this, true))
+      {
+        kftvi->setText(0, kftvi->fileItem()->text());  // reset the text
+      }
     }
   }
 }
 
 
-void BaseTreeView::slotRenameFinished(KIO::Job *job)
+void BaseTreeView::saveLayout(KConfig *config, const QString &group)
 {
-  if (job->error()) {
-    job->showErrorDialog(this);
-    m_kftvi->setText(0, m_kftvi->fileItem()->text());  // reset the text
-  } else {
-    emit renamed(m_oldURL, m_newURL);
+  KListView::saveLayout(config, group);
+  if (! m_saveOpenFolder || ! qConfig.saveTrees)
+    return;
+  
+  KConfigGroupSaver saver(config, group);
+  BaseTreeBranch *btb;
+  int i = 0;
+  KFileTreeBranchIterator it( branches() );
+  for ( ; it.current(); ++it)
+  {
+    btb = dynamic_cast<BaseTreeBranch *>( (*it) );
+    if (btb && btb->rootUrl().isLocalFile()) {
+      ++i;
+      QStringList folderList;
+      // remember the root url so that I find the branch on restore
+      folderList.append(btb->rootUrl().url());
+      btb->addOpenFolder(&folderList);
+      config->writeEntry("OpenFolderList" + QString::number(i), folderList);
+    }
+  }
+  config->writeEntry("NumOpenFolderList", i);
+}
+
+
+void BaseTreeView::restoreLayout(KConfig *config, const QString &group)
+{
+  KListView::restoreLayout(config, group);
+  if (! m_saveOpenFolder || ! qConfig.saveTrees)
+    return;
+  
+  KConfigGroupSaver saver(config, group);
+  BaseTreeBranch *btb;
+  KFileTreeBranchIterator it( branches() );
+  int maxBranch = config->readNumEntry("NumOpenFolderList", 0);
+  for (int i = 1; i <= maxBranch; ++i)
+  {
+    QStringList folderList = config->readPathListEntry("OpenFolderList" + QString::number(i));
+    if (folderList.count() > 1) {
+      KURL rootURL = (*folderList.begin());
+      folderList.remove(folderList.begin());  // remove the root URL
+      KFileTreeBranchIterator it( branches() );
+      for ( ; it.current(); ++it)
+      {
+        if ((*it)->rootUrl() == rootURL) {
+          btb = dynamic_cast<BaseTreeBranch *>( (*it) );
+          if (btb) {
+            btb->folderToOpen = folderList;
+            btb->reopenFolder();
+            break;
+          }
+        }
+      }
+    }
   }
 }
+
 
 void BaseTreeView::slotCreateSiteTemplate()
 {
    QString startDir;
    if (Project::ref()->hasProject())
    {
-     startDir = Project::ref()->templateURL.url();
+     startDir = Project::ref()->templateURL().url();
    } else
    {
      startDir = locateLocal("data", resourceDir + "templates/");
@@ -853,7 +1021,7 @@ void BaseTreeView::slotCreateSiteTemplate()
        return;
      if (targetURL.url().startsWith(KURL::fromPathOrURL(locateLocal("data", resourceDir + "templates/")).url()))
        valid = true;
-    if (Project::ref()->hasProject() && targetURL.url().startsWith(Project::ref()->templateURL.url()))
+    if (Project::ref()->hasProject() && targetURL.url().startsWith(Project::ref()->templateURL().url()))
       valid = true;
     if (!valid)
       KMessageBox::error(this, i18n("Templates should be saved to the local or project template folder."));
@@ -896,7 +1064,7 @@ void BaseTreeView::slotCreateSiteTemplate()
       tar.close();
    } else
       error = true;
-   if (!QExtFileInfo::copy(KURL::fromPathOrURL(tempFile->name()), targetURL, -1, true, false, this))
+   if (!QuantaNetAccess::copy(KURL::fromPathOrURL(tempFile->name()), targetURL, this, false))
      error = true;
 
    if (error)

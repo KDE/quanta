@@ -39,10 +39,6 @@ public:
 
 protected slots:
   /**
-  emit a signal @ref openInQuanta
-  */
-  virtual void slotOpenInQuanta();
-  /**
   opens dialog to choose a url for a new branch
   */
   void slotNewTopFolder();
@@ -52,7 +48,7 @@ protected slots:
   creates a new branch from the current url
   */
   void slotAddToTop();
-
+  
 protected:
   virtual KFileTreeBranch* newBranch(const KURL& url);
 
@@ -65,13 +61,6 @@ protected:
   int m_insertFolderInProject;
   // config
   KConfig *m_config;
-
-signals:
-  void openInQuanta(QListViewItem *name);
-  /**
-   *  emited to make the script describtion visible
-   */
-  void showPreviewWidget(bool);
 
 private:
   int m_menuTop;

@@ -2134,7 +2134,7 @@ QStringList* Document::tagAttributeValues(const QString& dtdName, const QString&
             Project *project = Project::ref();
             if (project->hasProject())
             {
-              values = new QStringList(project->fileNameList(true).toStringList());
+              values = new QStringList(project->fileNameList());
               for (uint i = 0; i < values->count(); i++)
               {
                 u = (*values)[i];
@@ -2142,7 +2142,7 @@ QStringList* Document::tagAttributeValues(const QString& dtdName, const QString&
                 u = QExtFileInfo::toRelative(u, base);
                 (*values)[i] = u.path();
               }
-              values->append("mailto:" + project->email);
+              values->append("mailto:" + project->email());
             } else
             {
               QDir dir = QDir(url().directory());

@@ -114,7 +114,7 @@ QuantaView::~QuantaView()
    if (m_document)
    {
         m_document->view()->reparent(0L, 0, QPoint(), false);
-       emit documentClosed();
+       emit documentClosed(m_document->url());
    }
    delete m_document;
    m_document = 0L;
@@ -841,7 +841,7 @@ void QuantaView::deactivated()
 {
   if (m_plugin)
   {
-      KToggleAction* showStatusbarAction = (KToggleAction *) quantaApp->actionCollection()->action("view_statusbar");
+      KToggleAction* showStatusbarAction = (KToggleAction *) quantaApp->actionCollection()->action("settings_statusbar");
       if (showStatusbarAction->isChecked())
       {
         showStatusbarAction->setChecked(true);

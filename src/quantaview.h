@@ -197,7 +197,7 @@ signals:
   void cursorPositionChanged();
   void title(const QString &);
   /** emitted if this view contained an editor and it is closed */
-  void documentClosed();
+  void documentClosed(const KURL&);
 
 private:
 #ifdef BUILD_KAFKAPART

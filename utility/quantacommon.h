@@ -96,6 +96,7 @@ public:
           QString backupDirPath;
           QString quantaPID;
           bool showHiddenFiles;  ///< show hidden files in files treeview?
+          bool saveTrees;         ///< save tree status for local trees?
           QMap<QString, Abbreviation> abbreviations; ///< the abbreviation groups
           bool replaceAccented; ///< replace or not the accented characters
 

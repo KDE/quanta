@@ -99,6 +99,23 @@ public:
   */
   QRegExp excludeFilterRx;
 
+  /**
+  adds the current open folders of the branch to a stringslist.
+  Attention: no check for double entries is done
+  
+  @param openFolder the list where to add the URL strings
+  */
+  void addOpenFolder(QStringList *openFolder);
+  
+  /** opens the next folder in @ref folderToOpen */
+  void reopenFolder();
+  
+  /** list of folders to open */
+  QStringList folderToOpen;
+  
+private slots:  
+  // TODO drop this if support for KDE 3.2 is dropped
+  void slotRefreshItems(const KFileItemList&);
 };
 
 
@@ -116,6 +133,33 @@ public:
   BaseTreeView(QWidget *parent = 0L, const char *name = 0L);
   virtual ~BaseTreeView();
 
+  /**
+   * Saves the list view's layout (column widtsh, column order, sort column)
+   * to a KConfig group. Reimplemented to save the open folders.
+   *
+   * @param config the KConfig object to write to
+   * @param group the config group to use
+   */
+  void saveLayout(KConfig *config, const QString &group);
+  
+  /**
+   * Reads the list view's layout from a KConfig group as stored with
+   * saveLayout. Reimplemented to load the open folders.
+   *
+   * @param config the KConfig object to read from
+   * @param group the config group to use
+   */
+  void restoreLayout(KConfig *config, const QString &group);
+
+   /**
+  * en/disable saving a list of open folders in @ref saveLayout and
+  * restoring the tree status in @ref restoreLayout
+  */
+  void setSaveOpenFolder(bool b = true) { m_saveOpenFolder = b; }; 
+  
+  /** reads property @ref setSaveOpenFolder */
+  bool saveOpenFolder() { return m_saveOpenFolder; }; 
+
 public slots:
   /**
   sets new project information
@@ -124,16 +168,16 @@ public slots:
   /**
   repaints all treeview items
   */
-  void slotDocumentClosed();
+  void slotDocumentClosed(const KURL& url);
 
 protected slots:
 
-  virtual void slotCopy();
-  virtual void slotPaste();
-  virtual void slotDelete();
+  void slotCopy();
+  void slotPaste();
+  void slotDelete();
   virtual void slotJobFinished( KIO::Job *job);
-  virtual void slotInsertInProject();
-  virtual void slotInsertDirInProject();
+  void slotInsertInProject();
+  void slotInsertDirInProject();
   virtual void slotReturnPressed(QListViewItem *item);
   virtual void slotDropped (QWidget *, QDropEvent *, KURL::List&, KURL&);
   /**
@@ -141,11 +185,11 @@ protected slots:
    */
   virtual void slotPercent(KIO::Job *job, unsigned long value);
 
-  virtual void slotPopulateFinished(KFileTreeViewItem *item);
+  void slotPopulateFinished(KFileTreeViewItem *item);
   /**
   shows open with dialog for the current item
   */
-  virtual void slotOpenWith();
+  void slotOpenWith();
   /**
   Called for: double click, return, Open
 
@@ -156,15 +200,23 @@ protected slots:
   /**
   emits the signal @ref insertTag
   */
-  virtual void slotInsertTag();
+  void slotInsertTag();
   /**
   reloads the current branch
   */
-  virtual void slotReload();
+  void slotReload();
+  /**
+  reloads all branches
+  */
+  virtual void slotReloadAllTrees();
+  /**
+  reloads one branche
+  */
+  virtual void reload(BaseTreeBranch *btb);
   /**
   opens the properties dialog
   */
-  virtual void slotProperties();
+  void slotProperties();
   /**
   applies changed properties
   */
@@ -172,22 +224,21 @@ protected slots:
   /**
   emits the signal @ref open
   */
-  virtual void slotOpen();
+  void slotOpen();
   /**
   emits the signal @ref closeFile
   */
-  virtual void slotClose();
+  void slotClose();
 
   /**
   starts the inline rename of the current item
   */
-  virtual void slotStartRename();
+  void slotStartRename();
 
   /**
   connect signal itemRenamed to this slot to handle inline rename
    */
   virtual void slotRenameItem(QListViewItem* kvtvi, const QString & newText, int col);
-  void slotRenameFinished(KIO::Job *job);
   /**
   create a site template tarball from the selected directory
   */
@@ -219,9 +270,9 @@ protected:
     Q_UNUSED(newDesc);
   };
   /**
-  @return true if the clipboard contains a valid path
+  @return true if the clipboard contains one or more valid path
   */
-  virtual bool isPathInClipboard();
+  bool isPathInClipboard();
 
   /**
   adds the Quanta fileinfopage to the properties dialog
@@ -249,13 +300,10 @@ protected:
 
   BaseTreeViewToolTip * m_tooltip;
   // some stuff for renaming
-  KFileTreeViewItem* m_kftvi;
-  KURL m_oldURL;
-  KURL m_newURL;
   void doRename(KFileTreeViewItem* kvtvi, const QString & newName);
   /** reimplemented to reset renameable */
   void cancelRename(int col);
-
+  
 signals:
   void openFile(const KURL&);
   void openImage(const KURL&);
@@ -272,6 +320,8 @@ signals:
   */
   void closeFile( const KURL& );
 
+private:
+  bool m_saveOpenFolder; 
 };
 
 #endif

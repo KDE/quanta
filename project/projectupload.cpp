@@ -87,7 +87,7 @@ ProjectUpload::ProjectUpload(const KURL& url, bool showOnlyProfiles, const char*
 
 ProjectUpload::~ProjectUpload()
 {
-  m_project->setModified(true);
+  m_project->slotSaveProject();
   delete baseUrl;
 }
 
@@ -96,15 +96,15 @@ void  ProjectUpload::initProjectInfo()
   baseUrl = new KURL();
 
 //  list->setMultiSelection(true);
-
-  m_profilesNode = m_project->dom.firstChild().firstChild().namedItem("uploadprofiles");
+  QDomDocument *dom = m_project->dom();
+  m_profilesNode = dom->firstChild().firstChild().namedItem("uploadprofiles");
   if (m_profilesNode.isNull()) //compat code, remove when upgrade from 3.2 is not supported
   {
-     m_currentProfileElement = m_project->dom.firstChild().firstChild().namedItem("upload").toElement();
+     m_currentProfileElement = dom->firstChild().firstChild().namedItem("upload").toElement();
      m_defaultProfile = m_currentProfileElement.attribute("user","") + "@" + m_currentProfileElement.attribute("remote_host","");
-     QDomElement e = m_project->dom.createElement("uploadprofiles");
+     QDomElement e = dom->createElement("uploadprofiles");
      e.setAttribute("defaultProfile", m_defaultProfile);
-     QDomElement el = m_project->dom.createElement("profile");
+     QDomElement el = dom->createElement("profile");
      el.setAttribute("remote_host", m_currentProfileElement.attribute("remote_host",""));
      el.setAttribute("user", m_currentProfileElement.attribute("user",""));
      el.setAttribute("remote_path", m_currentProfileElement.attribute("remote_path",""));
@@ -114,7 +114,7 @@ void  ProjectUpload::initProjectInfo()
      e.appendChild(el);
 //     m_project->dom.firstChild().firstChild().removeChild(m_currentProfileElement);
      m_currentProfileElement = el;
-     m_project->dom.firstChild().firstChild().appendChild(e);
+     dom->firstChild().firstChild().appendChild(e);
      m_profilesNode = e;
      comboProfile->insertItem(m_defaultProfile);
      m_project->setModified(true);
@@ -154,7 +154,7 @@ void ProjectUpload::slotBuildTree()
  bool isDirectory = strUrl.endsWith("/");
  QString s;
  QDomElement el;
- QDomNodeList nl = m_project->dom.elementsByTagName("item");
+ QDomNodeList nl = m_project->dom()->elementsByTagName("item");
  totalProgress->setTotalSteps(nl.count() - 1 );
  totalProgress->setValue(0);
  totalText->setText(i18n("Scanning project files..."));
@@ -302,7 +302,7 @@ void ProjectUpload::startUpload()
           }
      }
     //update upload time
-    QDomNodeList nl = m_project->dom.elementsByTagName("item");
+    QDomNodeList nl = m_project->dom()->elementsByTagName("item");
     QDomElement el;
     for ( uint i = 0; i < nl.count(); i++ )
     {
@@ -342,7 +342,7 @@ void ProjectUpload::startUpload()
     uploadInProgress = true;
     suspendUpload = false;
     KURL u = *baseUrl;
-    u.setPath("");
+    u.setPath(u.protocol() == "file" ? "/" : "");
     if (QExtFileInfo::exists(u))
     {
       upload();
@@ -522,7 +522,7 @@ void ProjectUpload::slotUploadNext()
     toUpload.remove( it );
 
     //update upload time
-    QDomNodeList nl = m_project->dom.elementsByTagName("item");
+    QDomNodeList nl = m_project->dom()->elementsByTagName("item");
     QDomElement el;
     for ( uint i = 0; i < nl.count(); i++ )
     {
@@ -540,8 +540,8 @@ void ProjectUpload::slotUploadNext()
 
 void ProjectUpload::clearProjectModified()
 {
-  QDomNodeList nl = m_project->dom.elementsByTagName("item");
-  for (uint i=0; i<nl.count(); i++)
+  QDomNodeList nl = m_project->dom()->elementsByTagName("item");
+  for ( unsigned int i=0; i<nl.count(); i++ )
   {
     QDomElement el = nl.item(i).toElement();
     m_uploadTimeList[el.attribute("url")] = el.attribute("modified_time").toInt();
@@ -555,7 +555,7 @@ void ProjectUpload::slotNewProfile()
 {
   UploadProfileDlgS *profileDlg = new UploadProfileDlgS(this);
   QDomElement el = m_currentProfileElement;
-  m_currentProfileElement = m_project->dom.createElement("profile");
+  m_currentProfileElement = m_project->dom()->createElement("profile");
   fillProfileDlg(profileDlg);
   if (profileDlg->exec())
   {

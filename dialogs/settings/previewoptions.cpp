@@ -114,3 +114,14 @@ bool PreviewOptions::hiddenFiles()
 {
   return showHidden->isChecked();
 }
+
+
+void PreviewOptions::setSaveTrees(bool show)
+{
+  saveLocalTrees->setChecked(show);
+}
+
+bool PreviewOptions::saveTrees()
+{
+  return saveLocalTrees->isChecked();
+}

@@ -37,11 +37,11 @@ public:
   ~DocTreeView();
 
   QString *contextHelp( QString keyword );
-  void addProjectDoc(const KURL& url);
 
 public slots:
   void slotNewProjectLoaded(const QString &, const KURL &, const KURL &);
   void slotReloadProjectDocs();
+  void slotAddProjectDoc(const KURL& url);
 
 signals:
   void openURL(const QString& );

@@ -62,6 +62,7 @@ extern int xmlLoadExtDtdDefaultValue;
 ScriptTreeView::ScriptTreeView(QWidget *parent, const char *name )
   : BaseTreeView(parent,name)
 {
+  setSaveOpenFolder(true);
   addColumn(i18n("Scripts"), -1);
   addColumn("");
 
@@ -71,23 +72,12 @@ ScriptTreeView::ScriptTreeView(QWidget *parent, const char *name )
   BaseTreeBranch *m_globalDir;
   m_globalDir = new BaseTreeBranch(this, url, i18n("Global scripts"), SmallIcon("run"), true);
   addBranch(m_globalDir);
-
-  QDir dir(url.path(), "", QDir::All & !QDir::Hidden);
-  if ( dir.count() != 2 ) {
-    m_globalDir->root()->setExpandable(true);     //   . and .. are always there
-    m_globalDir->setOpen( true );
-  }
+  
   url.setPath(locateLocal("data", resourceDir + "scripts/"));
 
   BaseTreeBranch *m_localDir;
   m_localDir = new BaseTreeBranch(this, url, i18n("Local scripts"), SmallIcon("run"), true);
   addBranch(m_localDir);
-
-  dir.setPath(url.path());
-  if ( dir.count() != 2 ) {
-    m_localDir->root()->setExpandable(true);     //   . and .. are always there
-    m_localDir->setOpen( true );
-  }
 
   // here you define which files should not be visible for the users
   const QString excludeString = ".*\\.info$|.*\\.css$|.*\\.xsl$";

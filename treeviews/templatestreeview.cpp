@@ -28,10 +28,8 @@
 
 // KDE includes
 #include <kapplication.h>
-#include <krun.h>
 #include <klocale.h>
 #include <kiconloader.h>
-#include <kopenwith.h>
 #include <kstandarddirs.h>
 #include <kmimetype.h>
 #include <kmessagebox.h>
@@ -58,6 +56,7 @@
 #include "qextfileinfo.h"
 #include "quanta.h"
 #include "tagmaildlg.h"
+#include "quantanetaccess.h"
 
 #define EXCLUDE ".*\\.tmpl$"
 #define TMPL ".tmpl"
@@ -152,7 +151,7 @@ TemplatesTreeView::TemplatesTreeView(QWidget *parent, const char *name )
   m_deleteMenuId = m_folderMenu->insertItem(SmallIcon("editdelete"), i18n("&Delete"), this, SLOT(slotDelete()));
   m_folderMenu->insertSeparator();
   m_folderMenu->insertItem(SmallIcon("info"), i18n("&Properties..."), this, SLOT(slotProperties()));
-  m_reloadMenuId = m_folderMenu->insertItem(i18n("&Reload"), this, SLOT(slotReload()));
+  m_reloadMenuId = m_folderMenu->insertItem(SmallIcon("reload"), i18n("&Reload"), this, SLOT(slotReload()));
 
   addColumn(i18n("Templates"), -1);
   addColumn(i18n("Group"), -1);
@@ -172,6 +171,7 @@ TemplatesTreeView::TemplatesTreeView(QWidget *parent, const char *name )
   setAcceptDrops(true);
   setSelectionMode(QListView::Single);
   setDragEnabled(true);
+  setSaveOpenFolder(true);
   restoreLayout( kapp->config(), className() );
 }
 
@@ -442,7 +442,7 @@ void TemplatesTreeView::contentsDropEvent(QDropEvent *e)
         }
         if (proceed)
         {
-          if (!KIO::NetAccess::upload(tempFile->name(),  url, this))
+          if (!QuantaNetAccess::upload(tempFile->name(), url, this, false))
           {
             KMessageBox::error(this,i18n("<qt>Could not write to file <b>%1</b>.<br>Check if you have rights to write there or that your connection is working.</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)));
           }

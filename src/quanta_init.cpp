@@ -204,24 +204,6 @@ void QuantaInit::initQuanta()
       QTimer::singleShot(0, m_quanta, SLOT(switchToToplevelMode()));
   }
 
-  //restore shown/hidden state of the toolbars
-  m_config->setGroup  ("General Options");
-  KToggleAction *showToolbarAction = (KToggleAction *) m_quanta->actionCollection()->action( "view_toolbar" );
-  if (!m_config->readBoolEntry("Show Toolbar",true))
-  {
-    m_quanta->toolBar("mainToolBar")->hide();
-    m_quanta->toolBar("mainEditToolBar")->hide();
-    m_quanta->toolBar("mainNaviToolBar")->hide();
-    m_quanta->toolBar("mainPluginsToolBar")->hide();
-    showToolbarAction->setChecked(false);
-  } else
-  {
-    m_quanta->toolBar("mainToolBar")->show();
-    m_quanta->toolBar("mainEditToolBar")->show();
-    m_quanta->toolBar("mainNaviToolBar")->show();
-    m_quanta->toolBar("mainPluginsToolBar")->show();
-    showToolbarAction->setChecked(true);
-  }
   // Always hide debugger toolbar at this point
   m_quanta->toolBar("debugger_toolbar")->hide();
 
@@ -356,12 +338,20 @@ void QuantaInit::initProject()
 {
   Project *m_project = Project::ref(m_quanta);
 
+  connect(m_project, SIGNAL(getTreeStatus(QStringList *)),
+          pTab, SLOT(slotGetTreeStatus(QStringList *)));
+  connect(m_project, SIGNAL(loadToolbarFile(const KURL &)),
+          m_quanta, SLOT(slotLoadToolbarFile(const KURL &)));
+  connect(m_project, SIGNAL(getUserToolbarFiles(KURL::List *)),
+          m_quanta, SLOT(slotGetUserToolbarFiles(KURL::List *)));
+  connect(m_project, SIGNAL(openFiles(const KURL::List &, const QString&)),
+          m_quanta, SLOT(slotFileOpen(const KURL::List &, const QString&)));
   connect(m_project, SIGNAL(openFile(const KURL &, const QString&)),
           m_quanta, SLOT(slotFileOpen(const KURL &, const QString&)));
   connect(m_project, SIGNAL(closeFile(const KURL &)),
           m_quanta, SLOT(slotFileClose(const KURL &)));
-  connect(m_project, SIGNAL(reloadTree(const ProjectUrlList & ,bool)),
-          pTab, SLOT(slotReloadTree(const ProjectUrlList &,bool)));
+  connect(m_project, SIGNAL(reloadTree(ProjectList *, bool, const QStringList &)),
+          pTab, SLOT(slotReloadTree(ProjectList *, bool, const QStringList &)));
   connect(m_project, SIGNAL(closeFiles()), ViewManager::ref(), SLOT(closeAll()));
 
   connect(m_quanta->fTab, SIGNAL(insertDirInProject(const KURL&)),
@@ -393,11 +383,10 @@ void QuantaInit::initProject()
   connect(pTab, SIGNAL(rescanProjectDir()), m_project, SLOT(slotRescanPrjDir()));
   connect(pTab, SIGNAL(showProjectOptions()), m_project, SLOT(slotOptions()));
   connect(pTab, SIGNAL(uploadProject()), m_project, SLOT(slotUpload()));
-  connect(pTab, SIGNAL(reloadProject()), m_project, SLOT(slotReloadProject()));
 
   connect(m_quanta->dTab, SIGNAL(reloadProjectDocs()), m_project, SLOT(slotReloadProjectDocs()));
   connect(m_project, SIGNAL(reloadProjectDocs()), m_quanta->dTab, SLOT(slotReloadProjectDocs()));
-
+  connect(m_project, SIGNAL(addProjectDoc(const KURL&)), m_quanta->dTab, SLOT(slotAddProjectDoc(const KURL&)));
 
   connect(m_project, SIGNAL(enableMessageWidget()),
           m_quanta, SLOT(slotShowMessagesView()));
@@ -405,8 +394,6 @@ void QuantaInit::initProject()
   connect(m_project, SIGNAL(messages(const QString&)),
           m_quanta->m_messageOutput, SLOT(showMessage(const QString&)));
 
-  connect(m_project, SIGNAL(saveAllFiles()),
-          m_quanta, SLOT(slotFileSaveAll()));
   connect(m_project, SIGNAL(newStatus()),
           m_quanta, SLOT(slotNewStatus()));
 
@@ -482,6 +469,8 @@ void QuantaInit::initView()
   m_quanta->m_htmlPartDoc->view()->setCaption(i18n("Documentation"));
   m_quanta->slotNewPart(m_quanta->m_htmlPartDoc, false);
 
+  connect(m_quanta, SIGNAL(reloadAllTrees()),
+          m_quanta->fTab, SLOT(slotReloadAllTrees()));
   connect(m_quanta->fTab, SIGNAL(openFile(const KURL &)),
           m_quanta, SLOT(slotFileOpen(const KURL &)));
   connect(m_quanta->fTab, SIGNAL(openImage(const KURL&)),
@@ -496,14 +485,14 @@ void QuantaInit::initView()
   connect(m_viewManager, SIGNAL(viewActivated(const KURL&)),
           pTab, SLOT(slotViewActivated(const KURL&)));
 
-  connect(m_viewManager, SIGNAL(documentClosed()),
-          pTab, SLOT(slotDocumentClosed()));
-  connect(m_viewManager, SIGNAL(documentClosed()),
-          tTab, SLOT(slotDocumentClosed()));
-  connect(m_viewManager, SIGNAL(documentClosed()),
-          m_quanta->scriptTab, SLOT(slotDocumentClosed()));
-  connect(m_viewManager, SIGNAL(documentClosed()),
-          m_quanta->fTab, SLOT(slotDocumentClosed()));
+  connect(m_viewManager, SIGNAL(documentClosed(const KURL&)),
+          pTab, SLOT(slotDocumentClosed(const KURL&)));
+  connect(m_viewManager, SIGNAL(documentClosed(const KURL&)),
+          tTab, SLOT(slotDocumentClosed(const KURL&)));
+  connect(m_viewManager, SIGNAL(documentClosed(const KURL&)),
+          m_quanta->scriptTab, SLOT(slotDocumentClosed(const KURL&)));
+  connect(m_viewManager, SIGNAL(documentClosed(const KURL&)),
+          m_quanta->fTab, SLOT(slotDocumentClosed(const KURL&)));
 
   connect(m_quanta->fTab, SIGNAL(closeFile   (const KURL &)),
           m_quanta, SLOT  (slotFileClose(const KURL &)));
@@ -543,11 +532,6 @@ void QuantaInit::initView()
   connect(pTab, SIGNAL(insertTag(const KURL &, DirInfo)),
           m_quanta, SLOT(slotInsertTag(const KURL &, DirInfo)));
 
-  connect(m_quanta->fTab, SIGNAL(showPreviewWidget(bool)),
-          m_quanta, SLOT(slotShowPreviewWidget(bool)));
-  connect(pTab, SIGNAL(showPreviewWidget(bool)),
-          m_quanta, SLOT(slotShowPreviewWidget(bool)));
-
   connect(m_quanta->m_htmlPart, SIGNAL(onURL(const QString&)),
               m_quanta, SLOT(slotStatusMsg(const QString&)));
   connect(m_quanta->m_htmlPartDoc, SIGNAL(onURL(const QString&)),
@@ -562,8 +546,6 @@ void QuantaInit::initView()
           m_quanta, SLOT  (slotFileOpen(const KURL &)));
   connect(sTab, SIGNAL(openImage  (const KURL&)),
           m_quanta, SLOT(slotImageOpen(const KURL&)));
-  connect(sTab, SIGNAL(showPreviewWidget(bool)),
-          m_quanta, SLOT(slotShowPreviewWidget(bool)));
   connect(parser, SIGNAL(nodeTreeChanged()), sTab, SLOT(slotNodeTreeChanged()));
 
   connect(m_quanta->dTab, SIGNAL(openURL(const QString&)), m_quanta, SLOT(openDoc(const QString&)));
@@ -609,20 +591,13 @@ void QuantaInit::readOptions()
   m_quanta->resize( m_config->readSizeEntry("Geometry", &s));
   qConfig.autosaveInterval = m_config->readNumEntry("Autosave interval", 1);
 
-  if (!m_config->readBoolEntry("Show Statusbar", true))
-  {
-     m_quanta->showStatusbarAction->setChecked(false);
-  } else
-  {
-     m_quanta->showStatusbarAction->setChecked(true);
-  }
-  m_quanta->slotViewStatusBar();
   qConfig.enableDTDToolbar = m_config->readBoolEntry("Show DTD Toolbar",true);
   m_quanta->showDTDToolbar->setChecked(qConfig.enableDTDToolbar);
   qConfig.showCloseButtons = m_config->readEntry("Close Buttons", "ShowDelayed");
 //  m_quanta->initTabWidget(true);
   m_quanta->fileRecent ->loadEntries(m_config);
   qConfig.showHiddenFiles = m_config->readBoolEntry("Show Hidden Files", true);
+  qConfig.saveTrees = m_config->readBoolEntry("Save Local Trees", true);
 
   m_config->setGroup("Parser options");
   qConfig.showEmptyNodes = m_config->readBoolEntry("Show Empty Nodes", false);
@@ -877,28 +852,11 @@ void QuantaInit::initActions()
     kafkaSelectAction->setItems(list2);
     connect(kafkaSelectAction, SIGNAL(activated(int)), m_quanta, SLOT(slotShowKafkaPartl(int)));*/
 #endif
-
-     m_quanta->showPreviewAction =
-      new KToolBarPopupAction( i18n( "&Preview" ), "preview", Key_F6,
-                         m_quanta, SLOT( slotToggleShowPreview() ),
-                         ac, "show_preview" );
-
-     m_quanta->showPreviewAction->popupMenu()->insertItem(i18n("Preview Without Frames"), 0);
-     connect(m_quanta->showPreviewAction->popupMenu(), SIGNAL(activated(int)),
-             m_quanta, SLOT(slotShowNoFramesPreview()));
-
+     
     (void) new KAction( i18n( "&Reload Preview" ), "reload",
                         KStdAccel::shortcut(KStdAccel::Reload).keyCodeQt(),
                         m_quanta, SLOT(slotRepaintPreview()),
                         ac, "reload" );
-
-    (void) new KAction( i18n( "View with &Konqueror" ), "konqueror", CTRL+Key_F6,
-                        m_quanta, SLOT( slotViewInKFM() ),
-                        ac, "view_with_konqueror" );
-
-    (void) new KAction( i18n( "View with L&ynx" ), "terminal", SHIFT+Key_F6,
-                        m_quanta, SLOT( slotViewInLynx() ),
-                        ac, "view_with_lynx" );
 
     (void) new KAction( i18n( "&Previous File" ), "1leftarrow", KStdAccel::back(),
                         m_quanta, SLOT( slotBack() ),
@@ -910,9 +868,6 @@ void QuantaInit::initActions()
 
     // Options actions
     //
-    KStdAction::showToolbar(m_quanta, SLOT( slotViewToolBar() ), ac, "view_toolbar");
-    m_quanta->showStatusbarAction = KStdAction::showStatusbar( m_quanta, SLOT( slotViewStatusBar() ), ac, "view_statusbar" );
-
 
     (void) new KAction( i18n( "Configure &Actions..." ), UserIcon("ball"),0,
                         m_quanta, SLOT( slotOptionsConfigureActions() ),
@@ -1014,6 +969,40 @@ void QuantaInit::initActions()
     {
       m_quanta->m_actions->setContent(s);
     }
+
+    // create the preview action 
+    m_quanta->showPreviewAction =
+      new KToolBarPopupAction( i18n( "&Preview" ), "preview", Key_F6,
+                         m_quanta, SLOT( slotToggleShowPreview() ),
+                         ac, "show_preview" );
+
+    KAction *act = new KAction( i18n( "Preview Without Frames" ), "", 0,
+                                  m_quanta, SLOT(slotShowNoFramesPreview()),
+                                  ac, "show_preview_no_frames" );
+    act->plug(m_quanta->showPreviewAction->popupMenu());
+    
+    act = new KAction( i18n( "View with &Konqueror" ), "konqueror", CTRL+Key_F6,
+                        m_quanta, SLOT( slotViewInKFM() ),
+                        ac, "view_with_konqueror" );
+    act->plug(m_quanta->showPreviewAction->popupMenu());
+    
+    act = ac->action("view_with_mozilla");
+    if (act)
+      act->plug(m_quanta->showPreviewAction->popupMenu());
+    
+    act = ac->action("view_with_netscape");
+    if (act)
+      act->plug(m_quanta->showPreviewAction->popupMenu());
+    
+    act = ac->action("view_with_opera");
+    if (act)
+      act->plug(m_quanta->showPreviewAction->popupMenu());  
+
+    act = new KAction( i18n( "View with L&ynx" ), "terminal", SHIFT+Key_F6,
+                        m_quanta, SLOT( slotViewInLynx() ),
+                        ac, "view_with_lynx" );
+    act->plug(m_quanta->showPreviewAction->popupMenu());
+     
 
     (void) new KAction( i18n( "Table Editor..." ), "quick_table", 0,
                         m_quanta, SLOT( slotTagEditTable() ),

@@ -16,42 +16,20 @@
  ***************************************************************************/
 
 
-// QT includes
-#include <qlayout.h>
-#include <qfileinfo.h>
-#include <qlabel.h>
-#include <qimage.h>
-#include <qregexp.h>
-#include <qclipboard.h>
-#include <qpoint.h>
-#include <qregexp.h>
-#include <qlineedit.h>
-#include <qfont.h>
-#include <qpainter.h>
-
-
 // KDE includes
 #include <kdebug.h>
-#include <krun.h>
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kopenwith.h>
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
-#include <kpropertiesdialog.h>
 #include <kfiledialog.h>
 #include <kprogress.h>
-#include <kurldrag.h>
 #include <kurl.h>
 
 // app includes
-
 #include "filestreeview.h"
-#include "fileinfodlg.h"
 #include "resource.h"
-#include "quanta.h"
-#include "quantacommon.h"
-#include "qextfileinfo.h"
 #include "project.h"
 #ifdef ENABLE_CVSSERVICE
 #include "cvsservice.h"
@@ -66,11 +44,13 @@ FilesTreeView::FilesTreeView(KConfig *config, QWidget *parent, const char *name)
 {
   setAcceptDrops(true);
   setDragEnabled(true);
-
+  setSaveOpenFolder(true);
+  
   m_config = config;
   m_config->setGroup("General Options");
   // I must read this here because quanta_init has not done it yet
   qConfig.showHiddenFiles = m_config->readBoolEntry("Show Hidden Files", true);
+  qConfig.saveTrees = m_config->readBoolEntry("Save Local Trees", true);
   QStringList topStrList;
   topStrList = m_config->readPathListEntry("Top folders");
   KURL url;
@@ -121,7 +101,7 @@ FilesTreeView::FilesTreeView(KConfig *config, QWidget *parent, const char *name)
   m_folderMenu->insertItem(i18n("Re&name"), this, SLOT(slotStartRename()));
   m_folderMenu->insertSeparator();
   m_folderMenu->insertItem(SmallIcon("info"), i18n("&Properties..."), this, SLOT(slotProperties()));
-  m_reloadMenuId = m_folderMenu->insertItem(i18n("&Reload"), this, SLOT(slotReload()));
+  m_reloadMenuId = m_folderMenu->insertItem(SmallIcon("reload"), i18n("&Reload"), this, SLOT(slotReload()));
 
   m_emptyMenu = new KPopupMenu();
 
@@ -131,8 +111,6 @@ FilesTreeView::FilesTreeView(KConfig *config, QWidget *parent, const char *name)
   addColumn("");
 
   connect(this, SIGNAL(open(QListViewItem *)),
-          this, SLOT(slotSelectFile(QListViewItem *)));
-  connect(this, SIGNAL(openInQuanta(QListViewItem *)),
           this, SLOT(slotSelectFile(QListViewItem *)));
   connect(this, SIGNAL(contextMenu(KListView*, QListViewItem*, const QPoint&)),
           this, SLOT(slotMenu(KListView*, QListViewItem*, const QPoint&)));
@@ -156,7 +134,7 @@ KFileTreeBranch* FilesTreeView::newBranch(const KURL& url)
   KFileItem fileItem(KFileItem::Unknown, KFileItem::Unknown, url);
   if (url.isLocalFile() && url.path() == "/")
   {
-    newBrnch = new BaseTreeBranch(this, url, i18n("Root Folder"), SmallIcon(fileItem.iconName()), true);
+    newBrnch = new BaseTreeBranch(this, url, i18n("Root Folder"), SmallIcon("folder_red"), true);
   } else
   {
     if (url.isLocalFile() && url.equals(KURL(QDir::homeDirPath()), true))
@@ -210,13 +188,13 @@ void FilesTreeView::slotMenu(KListView* listView, QListViewItem *item, const QPo
       m_folderMenu ->setItemVisible( m_menuDel, true );
       m_folderMenu ->setItemVisible( m_menuTop, true );
       m_folderMenu->setItemVisible(m_menuPasteFolder, isPathInClipboard());
+      KURL url = curItem->url();
       if ( curItem == curItem->branch()->root() )
       {
         m_folderMenu ->setItemVisible( m_menuDel, false);
         m_folderMenu ->changeItem( m_menuTop, i18n("Remove From &Top"));
 
         m_config->setGroup("General Options");
-        KURL url = curItem->url();
         if ((url == KURL("file:/") || url == KURL("file:" + QDir::homeDirPath()+"/")) &&
             m_config->readBoolEntry("Home-Root Folder On", true) )
           m_folderMenu ->setItemVisible(m_menuTop, false);
@@ -224,8 +202,10 @@ void FilesTreeView::slotMenu(KListView* listView, QListViewItem *item, const QPo
       }
       else
       {
-        m_folderMenu ->changeItem( m_menuTop, i18n("&Add Folder to Top"));
-        m_folderMenu ->setItemVisible(m_reloadMenuId, false);
+        m_folderMenu->changeItem( m_menuTop, i18n("&Add Folder to Top"));
+        url.adjustPath(+1);
+        m_folderMenu->setItemVisible(m_menuTop, (topURLList.findIndex(url) == -1));
+        m_folderMenu->setItemVisible(m_reloadMenuId, false);
       }
       m_folderMenu->popup( point);
    }
@@ -252,6 +232,8 @@ void FilesTreeView::slotAddToTop()
       {
         topURLList.append(url);
         newBranch(url);
+      } else {
+        KMessageBox::information(this, i18n("<qt><b>%1</b> is already a toplevel entry.</qt>").arg(url.url()));    
       }
     } else
     { // remove
@@ -270,16 +252,8 @@ void FilesTreeView::slotNewTopFolder()
   {
     newBranch(url);
     topURLList.append(url);
-  }
-}
-
-void FilesTreeView::slotOpenInQuanta()
-{
-  QListViewItem *item = currentItem();
-  if (item)
-  {
-    kdDebug(24000) << "Open In Quanta: " << endl;
-    emit openInQuanta(item);
+  } else {
+    KMessageBox::information(this, i18n("<qt><b>%1</b> is already a toplevel entry.</qt>").arg(url.url()));    
   }
 }
 

@@ -82,7 +82,7 @@ void DebuggerManager::slotNewProjectLoaded(const QString &projectname, const KUR
     for(iterDbg = offers.begin(); iterDbg != offers.end(); ++iterDbg)
     {
       KService::Ptr service = *iterDbg;
-      if(Project::ref()->debuggerClient == service->name())
+      if(Project::ref()->debuggerClient() == service->name())
       {
         int errCode = 0;
         m_client = KParts::ComponentFactory::createInstanceFromService<DebuggerClient::DebuggerClient>(service, this, 0, QStringList(), &errCode);
@@ -103,18 +103,18 @@ void DebuggerManager::slotNewProjectLoaded(const QString &projectname, const KUR
   if(m_client)
   {
     QDomNode nodeThisDbg;
-    QDomNode projectNode = Project::ref()->dom.firstChild().firstChild();
+    QDomNode projectNode = Project::ref()->dom()->firstChild().firstChild();
     QDomNode nodeDbg  = projectNode.namedItem("debuggers");
     if(nodeDbg.isNull())
     {
-      nodeDbg = Project::ref()->dom.createElement("debuggers");
+      nodeDbg = Project::ref()->dom()->createElement("debuggers");
       projectNode.appendChild(nodeDbg);
     }
 
     nodeThisDbg = nodeDbg.namedItem(m_client->getName());
     if(nodeThisDbg.isNull())
     {
-      nodeThisDbg = Project::ref()->dom.createElement(m_client->getName());
+      nodeThisDbg = Project::ref()->dom()->createElement(m_client->getName());
       nodeDbg.appendChild(nodeThisDbg);
     }
 

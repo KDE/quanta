@@ -135,7 +135,7 @@ void DocTreeView::slotDoubleClicked(QListViewItem *item )
   }
 }
 
-void DocTreeView::addProjectDoc(const KURL& url)
+void DocTreeView::slotAddProjectDoc(const KURL& url)
 {
   QString path = url.path();
   int pos = path.find("/doc/");

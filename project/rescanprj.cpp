@@ -35,8 +35,10 @@
 #include "uploadtreefolder.h"
 #include "uploadtreeview.h"
 #include "resource.h"
+#include "projectlist.h"
 
-RescanPrj::RescanPrj(ProjectUrlList p_prjFileList, const KURL& p_baseURL, QRegExp &p_excludeRx, QWidget *parent, const char *name, bool modal )
+RescanPrj::RescanPrj(const ProjectList &p_prjFileList, const KURL& p_baseURL, const QRegExp &p_excludeRx,
+                       QWidget *parent, const char *name, bool modal )
   : RescanPrjDir(parent,name,modal)
 {
   setCaption(name);
@@ -98,12 +100,12 @@ void RescanPrj::addEntries(KIO::Job *job,const KIO::UDSEntryList &list)
     if ( ! name.isEmpty() && name != dot && name != dotdot && !excludeRx.exactMatch(name))
     {
       itemURL = item.url();
-      if (item.isDir()) itemURL.adjustPath(1);
-//    itemURL = QExtFileInfo::toRelative(itemURL, baseURL);
-      itemURL.setPath(itemURL.path().replace(baseURL.path(),""));
-      if (prjFileList.findIndex(itemURL) == -1 )
+      if (item.isDir())
+        itemURL.adjustPath(+1);      
+      ProjectURL *proUrl = prjFileList.find(itemURL);
+      if (! proUrl)
       {
-        urlEntry.url = itemURL;
+        urlEntry.url = prjFileList.toRelative(itemURL);
         urlEntry.fileItem = new KFileItem(item);
         urlList.append(urlEntry);
       }
@@ -166,7 +168,8 @@ KURL::List RescanPrj::files()
       u = dynamic_cast<UploadTreeFile*>(item)->url();
      }
 
-     if (!u.isEmpty()) r.append(u);
+     if (!u.isEmpty())
+       r.append( QExtFileInfo::toAbsolute(u, baseURL) );
    }
   }
   return r;

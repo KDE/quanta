@@ -140,7 +140,6 @@ public:
   maps to the same function in Project*/
   KURL projectBaseURL() const;
 
-  KURL::List userToolbarFiles();
   /** Returns the project (if there is one loaded) or global default encoding. */
   QString defaultEncoding();
   /** Returns the interface number for the currently active editor. */
@@ -193,8 +192,6 @@ public:
   /** Returns the baseURL of the document. */
   KURL baseURL();
 
-  ScriptTreeView *scriptToolView() {return scriptTab;}
-  FilesTreeView *filesToolView() {return fTab;}
   bool enableIdleTimer(bool enable);
 
   /** Called when a document was closed. Resets some variables. */
@@ -206,12 +203,15 @@ public:
 signals: // Signals
   /** signal used to hide the splash screen */
   void showSplash(bool);
+  // trees need reload because hidden files option changed
+  void reloadAllTrees();
 
 public slots:
   void slotFileNew();
   void slotFileOpen();
   void slotFileOpen(const KURL &);
   void slotFileOpen( const KURL &, const QString& );
+  void slotFileOpen( const KURL::List &urls, const QString& encoding );
   void slotFileSave();
   bool slotFileSaveAs();
   void slotFileSaveAsLocalTemplate();
@@ -240,9 +240,6 @@ public slots:
 
   void slotBack();
   void slotForward();
-
-  void slotViewToolBar();
-  void slotViewStatusBar();
 
   void statusBarTimeout();
   /** Shows the message in the status bar.
@@ -369,6 +366,8 @@ public slots:
   virtual void switchToChildframeMode();
   virtual void switchToIDEAlMode();
   virtual void switchToTabPageMode();
+  /** appends all visible user toolbar urls to the list */
+  void slotGetUserToolbarFiles(KURL::List *list);
 
 protected slots:
   void slotDockWidgetHasUndocked(KDockWidget *widget);
@@ -508,7 +507,7 @@ private:
   // ACTIONS
   KRecentFilesAction *projectToolbarFiles;
 
-  KToggleAction *showStatusbarAction, *showKafkaAction, *showDTDToolbar;
+  KToggleAction *showKafkaAction, *showDTDToolbar;
   KToolBarPopupAction *showPreviewAction;
 
   KAction *saveAction, *saveAllAction;

@@ -100,7 +100,7 @@ class CSSEditor : public CSSEditorS
     void setHeader( const QString& s) { m_Header = s; }
     void setFooter( const QString& s) { m_Footer = s;}
     void setInlineStyleContent( const QString& s){ m_InlineStyleContent = s; }
-    void setForInitialPreview(const QString& s) { } 
+    void setForInitialPreview(const QString& s) { Q_UNUSED(s); } 
     QString generateProperties();
     // void setSourceFileName(const QString& n) { sourceFileName = n; }
     void hidePreviewer();

@@ -43,6 +43,7 @@
 #include <qfontmetrics.h>
 #include <qclipboard.h>
 #include <qptrlist.h>
+#include <qbuffer.h>
 
 // include files for KDE
 #include <kapplication.h>
@@ -178,7 +179,7 @@
 #include "viewmanager.h"
 #include "debuggerui.h"
 #include "newstuff.h"
-
+#include "quantanetaccess.h"
 
 #define BOOKMARK_MENU_POSITION 3
 const QString resourceDir = QString(QUANTA_PACKAGE) + "/";
@@ -188,6 +189,8 @@ static void silenceQToolBar(QtMsgType, const char *){}
 
 QuantaApp::QuantaApp(int mdiMode) : DCOPObject("WindowManagerIf"), KMdiMainFrm( 0, "Quanta", (KMdi::MdiMode) mdiMode)
 {
+  setStandardToolBarMenuEnabled( true );
+  createStandardStatusBarAction();
   m_quantaInit = new QuantaInit(this);
   dcopSettings = new DCOPSettings;
   dcopQuanta = new DCOPQuanta;
@@ -245,6 +248,7 @@ QuantaApp::QuantaApp(int mdiMode) : DCOPObject("WindowManagerIf"), KMdiMainFrm( 
   m_previewVisible =  false;
   m_cvsMenuId = -1;
 }
+
 
 QuantaApp::~QuantaApp()
 {
@@ -318,23 +322,23 @@ void QuantaApp::slotFileOpen()
  else
      startDir = Project::ref()->projectBaseURL().url();
 
- KURL::List urls;
- QString encoding;
  KEncodingFileDialog::Result data;
  data = KEncodingFileDialog::getOpenURLsAndEncoding(myEncoding, startDir,
         "all/allfiles text/plain", this, i18n("Open File"));
- urls = data.URLs;
- encoding = data.encoding;
+ slotFileOpen(data.URLs, data.encoding);
+}
 
+void QuantaApp::slotFileOpen( const KURL::List &urls, const QString& encoding )
+{
  m_doc->blockSignals(true);
- for (KURL::List::Iterator i=urls.begin(); i != urls.end(); ++i)
+ for (KURL::List::ConstIterator i=urls.begin(); i != urls.end(); ++i)
  {
    if (QuantaCommon::checkMimeGroup(*i, "text") ||
        QuantaCommon::denyBinaryInsert() == KMessageBox::Yes)
      slotFileOpen( *i , encoding);
  }
  m_doc->blockSignals(false);
- w = ViewManager::ref()->activeDocument();
+ Document *w = ViewManager::ref()->activeDocument();
  if (w)
    setCaption(w->url().prettyURL() );
  //slotUpdateStatus(w);//FIXME:
@@ -499,7 +503,7 @@ void QuantaApp::saveAsTemplate(bool projectTemplate,bool selectionOnly)
 
     if (projectTemplate)
     {
-      url = KFileDialog::getSaveURL(Project::ref()->templateURL.url(), QString::null, this);
+      url = KFileDialog::getSaveURL(Project::ref()->templateURL().url(), QString::null, this);
     } else
     {
       url = KFileDialog::getSaveURL(locateLocal("data", resourceDir + "templates/"), QString::null, this);
@@ -508,7 +512,7 @@ void QuantaApp::saveAsTemplate(bool projectTemplate,bool selectionOnly)
     if (url.isEmpty()) return;
 
     if (Project::ref()->hasProject())
-        projectTemplateURL = Project::ref()->templateURL;
+        projectTemplateURL = Project::ref()->templateURL();
     if ( ((projectTemplate) && (projectTemplateURL.isParentOf(url)) ) ||
           ((! projectTemplate) && (KURL(localTemplateDir).isParentOf(url))) )
     {
@@ -642,35 +646,6 @@ void QuantaApp::slotEditFindInFiles()
     fileReplacePlugin->run();
 }
 
-
-void QuantaApp::slotViewToolBar()
-{
-  QToolBar *mbar = toolBar("mainToolBar");
-  QToolBar *ebar = toolBar("mainEditToolBar");
-  QToolBar *nbar = toolBar("mainNaviToolBar");
-  QToolBar *pbar = toolBar("mainPluginsToolBar");
-
-  if(mbar->isVisible()) {
-    mbar->hide();
-    ebar->hide();
-    nbar->hide();
-    pbar->hide();
-  }
-  else {
-    nbar->show();
-    ebar->show();
-    mbar->show();
-    pbar->show();
-  }
-}
-
-void QuantaApp::slotViewStatusBar()
-{
-  if (showStatusbarAction->isChecked())
-    statusBar()->show();
-  else
-    statusBar()->hide();
-}
 
 void QuantaApp::slotHelpTip()
 {
@@ -1171,6 +1146,7 @@ void QuantaApp::slotOptions()
   uiOptions->setCloseButtons(qConfig.showCloseButtons);
   uiOptions->setToolviewTabs(qConfig.toolviewTabs);
   uiOptions->setHiddenFiles(qConfig.showHiddenFiles);
+  uiOptions->setSaveTrees(qConfig.saveTrees);
 
 #ifdef BUILD_KAFKAPART
   //kafka options
@@ -1202,6 +1178,7 @@ void QuantaApp::slotOptions()
   page=kd->addVBoxPage(i18n("Spelling"), QString::null, BarIcon("spellcheck", KIcon::SizeMedium ) );
   KSpellConfig *spellOptions = new KSpellConfig( (QWidget *)page, 0L, qConfig.spellConfig, false );
 
+  bool reloadTrees = false;
   kd->adjustSize();
   if ( kd->exec() )
   {
@@ -1244,7 +1221,9 @@ void QuantaApp::slotOptions()
     {
         initTabWidget();
      }
+    reloadTrees = (qConfig.showHiddenFiles != uiOptions->hiddenFiles());
     qConfig.showHiddenFiles = uiOptions->hiddenFiles();
+    qConfig.saveTrees = uiOptions->saveTrees();
 
     qConfig.showEmptyNodes = parserOptions->showEmptyNodes->isChecked();
     qConfig.showClosingTags = parserOptions->showClosingTags->isChecked();
@@ -1312,6 +1291,8 @@ void QuantaApp::slotOptions()
   saveOptions();
 
   delete kd;
+  if (reloadTrees) emit reloadAllTrees();
+
 }
 
 void QuantaApp::slotShowPreviewWidget(bool show)
@@ -2487,14 +2468,14 @@ bool QuantaApp::saveToolbar(bool localToolbar, const QString& toolbarToSave, con
         url = KFileDialog::getSaveURL(localToolbarsDir, "*"+toolbarExtension, this);
       } else
       {
-        url = KFileDialog::getSaveURL(Project::ref()->toolbarURL.url(), "*"+toolbarExtension, this);
+        url = KFileDialog::getSaveURL(Project::ref()->toolbarURL().url(), "*"+toolbarExtension, this);
       }
 
       if (url.isEmpty())
           return false;
 
       if (Project::ref()->hasProject())
-          projectToolbarsURL = Project::ref()->toolbarURL;
+          projectToolbarsURL = Project::ref()->toolbarURL();
       if ( ((!localToolbar) && (projectToolbarsURL.isParentOf(url)) ) ||
             ((localToolbar) && (KURL(localToolbarsDir).isParentOf(url))) )
       {
@@ -3405,7 +3386,7 @@ void QuantaApp::slotBuildPrjToolbarsMenu()
   if (Project::ref()->hasProject())
   {
     buildInProgress = true;
-    toolbarList = QExtFileInfo::allFiles(Project::ref()->toolbarURL, "*"+toolbarExtension);
+    toolbarList = QExtFileInfo::allFiles(Project::ref()->toolbarURL(), "*"+toolbarExtension);
     buildInProgress = false;
     projectToolbarFiles->setMaxItems(toolbarList.count());
     for (uint i = 0; i < toolbarList.count(); i++)
@@ -3429,9 +3410,8 @@ QString QuantaApp::defaultEncoding()
   return encoding;
 }
 
-KURL::List QuantaApp::userToolbarFiles()
+void QuantaApp::slotGetUserToolbarFiles(KURL::List *list)
 {
-  KURL::List list;
   ToolbarEntry *p_toolbar;
   QDictIterator<ToolbarEntry> iter(toolbarList);
   for( ; iter.current(); ++iter )
@@ -3439,11 +3419,9 @@ KURL::List QuantaApp::userToolbarFiles()
     p_toolbar = iter.current();
     if (p_toolbar->user && p_toolbar->visible)
     {
-      list += p_toolbar->url;
+      list->append(p_toolbar->url);
     }
   }
-
-  return list;
 }
 
 ToolbarEntry *QuantaApp::toolbarByURL(const KURL& url)
@@ -3749,7 +3727,7 @@ void QuantaApp::slotDeleteFile(QuantaView *view)
     view = ViewManager::ref()->activeView();
   Document *w = view->document();
   KURL url = w->url();
-  if (KMessageBox::questionYesNo(this,
+/*  if (KMessageBox::questionYesNo(this,
                    i18n("<qt>Do you really want to delete the file <b>%1</b> ?</qt>")
                    .arg(url.prettyURL(0, KURL::StripFileProtocol)),
                    i18n("Delete File")) == KMessageBox::Yes)
@@ -3758,7 +3736,9 @@ void QuantaApp::slotDeleteFile(QuantaView *view)
     {
       if (Project::ref()->hasProject())
         Project::ref()->slotRemove(url);
-    }
+    }*/
+  if ( QuantaNetAccess::del(url, this, true) )
+  {
     w->setModified(false); //don't ask for save
     slotFileClose();
   }
@@ -3962,7 +3942,6 @@ bool QuantaApp::queryClose()
       }
       delete it;
 
-      Project::ref()->slotSaveProject();
       ViewManager::ref()->closeAll(false);
       disconnect(this, SIGNAL(lastChildViewClosed()), ViewManager::ref(), SLOT(slotLastViewClosed()));
     }
@@ -4016,6 +3995,7 @@ void QuantaApp::saveOptions()
     m_config->deleteGroup("RecentFiles");
     fileRecent->saveEntries(m_config);
     m_config->writeEntry("Show Hidden Files", qConfig.showHiddenFiles);
+    m_config->writeEntry("Save Local Trees", qConfig.saveTrees);
 
     m_config->setGroup("Parser options");
     m_config->writeEntry("Instant Update", qConfig.instantUpdate);

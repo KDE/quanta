@@ -107,7 +107,6 @@ signals:
   void parsingDTDChanged(const QString&);
   void openFile(const KURL&);
   void openImage(const KURL&);
-  void showPreviewWidget(bool);
 
 private:
 

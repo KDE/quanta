@@ -34,12 +34,14 @@ public:
   QString docPosition();
   uint toolviewTabs();
   bool hiddenFiles();
+  bool saveTrees();
   void setPosition(const QString&);
   void setWindowLayout(const QString&);
   void setCloseButtons(const QString&);
   void setToolviewTabs(uint);
   void setDocPosition(const QString&);
   void setHiddenFiles(bool show);
+  void setSaveTrees(bool show);
 
 private:
   uint m_toolviewTabs;

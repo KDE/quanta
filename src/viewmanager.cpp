@@ -82,7 +82,7 @@ QuantaView* ViewManager::createView()
     connect(view, SIGNAL(hidePreview()), quantaApp, SLOT(slotChangePreviewStatus()));
     disconnect(view, SIGNAL(childWindowCloseRequest( KMdiChildView *)), 0, 0 );
     connect(view, SIGNAL(childWindowCloseRequest( KMdiChildView*)), this, SLOT(slotCloseRequest(KMdiChildView*)));
-    connect(view, SIGNAL(documentClosed()), this, SLOT(slotDocumentClosed()));
+    connect(view, SIGNAL(documentClosed(const KURL&)), this, SLOT(slotDocumentClosed(const KURL&)));
 
     return view;
 }
@@ -518,9 +518,9 @@ void ViewManager::slotCloseRequest(KMdiChildView *widget)
 }
 
 
-void ViewManager::slotDocumentClosed()
+void ViewManager::slotDocumentClosed(const KURL& url)
 {
-  emit documentClosed();
+  emit documentClosed(url);
 }
 
 #include "viewmanager.moc"

@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="quanta" version="32057">
+<kpartgui name="quanta" version="32058">
   <MenuBar noMerge="1">
 
     <Menu name="file" noMerge="1"><text>&amp;File</text>
@@ -46,9 +46,6 @@
   </Menu>
 
     <Menu name="view"><text>&amp;View</text>
-      <Action name="view_toolbar"/>
-      <Action name="view_dtd_toolbar"/>
-      <Action name="view_statusbar"/>
       <Merge />
       <Separator/>
       <Action name="show_quanta_editor"/>
@@ -138,6 +135,10 @@
 
 
     <Menu name="settings" noMerge="1"><text>&amp;Settings</text>
+      <Merge name="StandardToolBarMenuHandler" />
+      <Action name="view_dtd_toolbar"/>
+      <Action name="options_show_statusbar"/>
+      <Separator />
       <Action name="general_options"/>
       <Action name="preview_options"/>
       <Action name="configure_actions"/>
@@ -207,7 +208,6 @@
     <Separator/>
     <Action name="w_back"/>
     <Action name="w_forward"/>
-    <Separator/>
   </ToolBar>
 
   <Menu name="popup_editor">
@@ -245,7 +245,7 @@
   </Menu>
 
   <ToolBar name="debugger_toolbar" noMerge="1">
-    <text>Debugger</text>
+    <text>Debugger Toolbar</text>
     <Action name="debug_run" />
     <Action name="debug_leap" />
     <Action name="debug_stepover" />
@@ -258,6 +258,14 @@
     <Separator />
     <Action name="debug_breakpoints_toggle" />
   </ToolBar>
+
+  <ToolBar name="project_toolbar" noMerge="1">
+    <text>Project Toolbar</text>
+    <Action name="project_view_open" />
+    <Action name="project_view_save" />
+    <Action name="project_view_save_as" />
+  </ToolBar>
+
 
   <ActionProperties>
     <Action accel="Ctrl+Return" name="tag_br" />
