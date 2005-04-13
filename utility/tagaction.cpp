@@ -137,8 +137,8 @@ bool TagAction::slotActionActivated(KAction::ActivationReason reason, Qt::Button
         selection.fillWithVPLCursorSelection();
 
         Node* start_node = 0, *end_node = 0, *current_node = 0; 
-        int start_offset = 0, end_offset = 0, current_offset = 0;
-        
+        int start_offset = 0, end_offset = 0, current_offset = 0;        
+        QString scope;
         if(kafka_widget->hasSelection())
         {
             // get selection
@@ -159,7 +159,7 @@ bool TagAction::slotActionActivated(KAction::ActivationReason reason, Qt::Button
             start_offset = end_offset = current_offset;
             
             QTag* tag_description = QuantaCommon::tagFromDTD(KafkaDocument::ref()->getCurrentDoc()->defaultDTD(), XMLTagName());
-            QString scope = tag_description->scope();
+            scope = tag_description->scope();
 //             Q_ASSERT(!scope.isNull());
             if(scope.isNull())
                 scope = "word"; // FIXME temporary
@@ -172,15 +172,20 @@ bool TagAction::slotActionActivated(KAction::ActivationReason reason, Qt::Button
                     kafkaCommon::getStartOfWord(start_node, start_offset);
                     kafkaCommon::getEndOfWord(end_node, end_offset);
                 }
-                else if(reason != KAction::EmulatedActivation) // is between words: save the state and return
-                {
-                    if(!toggled())
-                        quantaApp->insertTagActionPoolItem(name());
-                    else
-                        quantaApp->removeTagActionPoolItem(name());
-                    
-                    return true;
-                }
+            }
+            else if(scope.lower() == "paragraph")
+            {
+                kafkaCommon::getStartOfParagraph(start_node, start_offset);
+                kafkaCommon::getEndOfParagraph(end_node, end_offset);
+            }
+            else if(reason != KAction::EmulatedActivation) // is between words: save the state and return
+            {
+                if(!toggled())
+                    quantaApp->insertTagActionPoolItem(name());
+                else
+                    quantaApp->removeTagActionPoolItem(name());
+                
+                return true;
             }
         }        
         Q_ASSERT(start_node && end_node);
@@ -189,9 +194,10 @@ bool TagAction::slotActionActivated(KAction::ActivationReason reason, Qt::Button
         kdDebug(23100) << "start node offset: " << start_offset << endl;    
         kdDebug(23100) << "start node string length: " << start_node->tag->tagStr().length() << endl;    */
         
-        start_node = kafkaCommon::getCorrectStartNode(start_node, start_offset);
-        end_node = kafkaCommon::getCorrectEndNode(end_node, end_offset);
-        
+        if(scope != "paragraph") {
+            start_node = kafkaCommon::getCorrectStartNode(start_node, start_offset);
+            end_node = kafkaCommon::getCorrectEndNode(end_node, end_offset);
+        }
         NodeSelection cursor_holder;
         cursor_holder.setCursorNode(current_node);
         cursor_holder.setCursorOffset(current_offset);
@@ -203,7 +209,33 @@ bool TagAction::slotActionActivated(KAction::ActivationReason reason, Qt::Button
         }
         else if(inside_tag == 1)
         {
-            deapplyTagInSelection(start_node, start_offset, end_node, end_offset, cursor_holder, modifs);
+            QString attribute_name(tag.attribute("attribute_name", QString()));
+            QString attribute_value(tag.attribute("attribute_value", QString()));
+    
+            // special case
+            if(!attribute_name.isEmpty() && !attribute_value.isEmpty())
+            {
+                Node* tag_parent = kafkaCommon::hasParent(start_node, end_node, tag_name);
+                
+                Node* aux1 = start_node->previousSibling();
+                while(aux1->tag->type == Tag::Empty)
+                    aux1 = aux1->previousSibling();
+                Node* aux2 = end_node->nextSibling();
+                while(aux2->tag->type == Tag::Empty)
+                    aux2 = aux2->nextSibling();
+                
+                if(aux1 == tag_parent && aux2 == tag_parent->getClosingNode())
+                {
+                    if(tag_parent->tag->attributeValue(attribute_name, true) == attribute_value)
+                        kafkaCommon::editNodeAttribute(tag_parent, attribute_name, QString(), modifs);
+                    else
+                        kafkaCommon::editNodeAttribute(tag_parent, attribute_name, attribute_value, modifs);
+                }
+                else
+                    applyTagInSelection(start_node, start_offset, end_node, end_offset, cursor_holder, modifs); 
+            }
+            else
+                deapplyTagInSelection(start_node, start_offset, end_node, end_offset, cursor_holder, modifs);
         }
         else
         {
@@ -1190,33 +1222,44 @@ void TagAction::deapplyTagInSelection(Node* start_node, int start_offset, Node* 
     Node* tag_parent = kafkaCommon::hasParent(start_node, end_node, tag_name);
     Q_ASSERT(tag_parent);
     
-    Node* common_parent_start_child = kafkaCommon::getCommonParentChild(start_node, tag_parent);
-    Node* common_parent_end_child = kafkaCommon::getCommonParentChild(end_node, tag_parent);
+    QString attribute_name(tag.attribute("attribute_name", QString()));
+    QString attribute_value(tag.attribute("attribute_value", QString()));
     
-    Node* parent_of_tag_parent = tag_parent->parent;
-    if(common_parent_end_child == common_parent_start_child)
-        common_parent_end_child = 0;
-    if(!common_parent_start_child)
-        common_parent_start_child = kafkaCommon::getCommonParentChild(start_node, commonParent);
-    kafkaCommon::moveNode(common_parent_start_child, parent_of_tag_parent, tag_parent, selection, modifs, true, true);
+    if(!attribute_name.isEmpty() && !attribute_value.isEmpty())
+    {
+        kafkaCommon::editNodeAttribute(tag_parent, attribute_name, QString(), modifs);
+    }
     
-    if(common_parent_end_child)
-        kafkaCommon::moveNode(common_parent_end_child, parent_of_tag_parent, tag_parent, selection, modifs, true, true);
+    else
+    {
+        Node* common_parent_start_child = kafkaCommon::getCommonParentChild(start_node, tag_parent);
+        Node* common_parent_end_child = kafkaCommon::getCommonParentChild(end_node, tag_parent);
+    
+        Node* parent_of_tag_parent = tag_parent->parent;
+        if(common_parent_end_child == common_parent_start_child)
+            common_parent_end_child = 0;
+        if(!common_parent_start_child)
+            common_parent_start_child = kafkaCommon::getCommonParentChild(start_node, commonParent);
+        kafkaCommon::moveNode(common_parent_start_child, parent_of_tag_parent, tag_parent, selection, modifs, true, true);
+    
+        if(common_parent_end_child)
+            kafkaCommon::moveNode(common_parent_end_child, parent_of_tag_parent, tag_parent, selection, modifs, true, true);
     
     // Remove tag_parent node subtree if empty
-    if(!tag_parent->hasChildNodes())
-        kafkaCommon::extractAndDeleteNode(tag_parent, modifs);
+        if(!tag_parent->hasChildNodes())
+            kafkaCommon::extractAndDeleteNode(tag_parent, modifs);
     
     // FIXME Set the cursor right: the selection can be inverted
-    if(KafkaDocument::ref()->getKafkaWidget()->hasSelection())
-    {
-        Node* cursor_node = end_node;
-        int cursor_offset = end_node->tag->tagStr().length();
-        selection.setCursorNode(cursor_node);
-        selection.setCursorOffset(cursor_offset);
-    }                
+        if(KafkaDocument::ref()->getKafkaWidget()->hasSelection())
+        {
+            Node* cursor_node = end_node;
+            int cursor_offset = end_node->tag->tagStr().length();
+            selection.setCursorNode(cursor_node);
+            selection.setCursorOffset(cursor_offset);
+        }                
     //Now update the VPL cursor position
 //     KafkaDocument::ref()->getKafkaWidget()->setCurrentNode(cursor_node, cursor_offset);
+    }
 }
 
 // void TagAction::deapplyTagInMixedSelection(Node* start_node, int start_offset, Node* end_node, int end_offset, NodeModifsSet* modifs) const

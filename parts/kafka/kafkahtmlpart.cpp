@@ -1832,7 +1832,16 @@ void KafkaWidget::updateToggableTagActions(/*const DOM::Node &domNode, long offs
             if(tag_name.isEmpty())
                 break;
             
-            int inside_tag = kafkaCommon::isInsideTag(start_node, end_node, tag_name);
+            QDomElement data(tag_action->data());
+            QString attribute_name(data.attribute("attribute_name", QString()));
+            QString attribute_value(data.attribute("attribute_value", QString()));
+            
+            int inside_tag;
+            if(!attribute_name.isEmpty() && !attribute_value.isEmpty())
+                inside_tag = kafkaCommon::isInsideTag(start_node, end_node, tag_name, attribute_name, attribute_value);
+            else
+                inside_tag = kafkaCommon::isInsideTag(start_node, end_node, tag_name);
+            
             tag_action->setChecked(inside_tag == 1);
         }
     }

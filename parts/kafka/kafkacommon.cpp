@@ -4016,6 +4016,26 @@ int kafkaCommon::isInsideTag(Node* start_node, Node* end_node, QString const& ta
     return -1; // neither the nodes have tag_name as parent
 }
 
+int kafkaCommon::isInsideTag(Node* start_node, Node* end_node, QString const& tag_name, 
+                             QString const& attribute_name, QString const& attribute_value)
+{
+    assert(start_node && end_node);
+    
+    Node* tag_start = hasParent(start_node, end_node, tag_name);
+    if(tag_start && tag_start->tag->hasAttribute(attribute_name) && tag_start->tag->attributeValue(attribute_name, true) == attribute_value)
+        return 1; // both start_node and end_node are surrounded by tag_name
+    
+    tag_start = hasParent(start_node, tag_name);
+    if(tag_start && tag_start->tag->hasAttribute(attribute_name) && tag_start->tag->attributeValue(attribute_name, true) == attribute_value)
+        return 0; // only start_node has tag_name as parent
+    
+    tag_start = hasParent(end_node, tag_name);
+    if(tag_start && tag_start->tag->hasAttribute(attribute_name) && tag_start->tag->attributeValue(attribute_name, true) == attribute_value)
+        return 0; // only end_node has tag_name as parent
+    
+    return -1; // neither the nodes have tag_name as parent
+}
+
 bool kafkaCommon::isBetweenWords(Node* node, int offset)
 {
     assert(node->tag->type == Tag::Text || node->tag->type == Tag::Empty);
@@ -4098,6 +4118,53 @@ void kafkaCommon::getEndOfWord(Node*& node, int& offset)
             offset = 0;
             getEndOfWord(node, offset);
         }
+    }
+}
+
+void kafkaCommon::getStartOfParagraph(Node*& node, int& offset)
+{
+    assert(node);
+    
+    Node* previous = node->previousSibling();
+    while(previous && (isInline(previous->tag->name) || previous->tag->name.lower() == "br" || previous->tag->type == Tag::Text))
+        previous = previous->previousSibling();
+    
+    offset = 0;
+    if(previous)
+    {
+        node = previous->nextSibling();
+        return;   
+    }
+    assert(node->tag->type == Tag::Text);
+}
+
+void kafkaCommon::getEndOfParagraph(Node*& node, int& offset)
+{
+    assert(node);
+    
+    Node* begin_paragraph = node;
+    getStartOfParagraph(begin_paragraph, offset);
+
+    Node* next = begin_paragraph->nextSibling();
+    while(nodeDepth(next) > nodeDepth(begin_paragraph))
+        next = next->nextSibling();
+    while(next && (isInline(next->tag->name) || next->tag->name.lower() == "br" || next->tag->type == Tag::Text))
+    {
+        next = next->nextSibling();
+        while(nodeDepth(next) > nodeDepth(node))
+            next = next->nextSibling();
+    }
+    if(next)
+    {
+        node = next;
+        if(nodeDepth(next) < nodeDepth(begin_paragraph))
+            node = node->previousSibling();
+
+        if(node->tag->type == Tag::Text)
+            offset = node->tag->tagStr().length() - 1;
+        else
+            offset = 0;
+        return;   
     }
 }
 

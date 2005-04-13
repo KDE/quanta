@@ -27,6 +27,15 @@ NodeSelectionInd::NodeSelectionInd()
     : m_cursorOffset(-1), m_cursorOffsetEndSel(-1), m_cursorAtSelectionStart(true)
 {
 }
+
+NodeSelectionInd::NodeSelectionInd(Node* start_node, int start_offset, Node* end_node, int end_offset)
+    : m_cursorOffset(end_offset), m_cursorOffsetEndSel(end_offset), m_cursorAtSelectionStart(false)
+{
+    setCursorNode(kafkaCommon::getLocation(start_node));
+    setCursorOffset(start_offset);
+    setCursorNodeEndSel(kafkaCommon::getLocation(end_node));
+    setCursorOffsetEndSel(end_offset);
+}
   
 NodeSelectionInd::~NodeSelectionInd()
 {

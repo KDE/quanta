@@ -1034,6 +1034,9 @@ public:
      */
     static int isInsideTag(Node* start_node, Node* end_node, QString const& tag_name);
     
+    static int isInsideTag(Node* start_node, Node* end_node, QString const& tag_name, 
+                           QString const& attribute_name, QString const& attribute_value);
+    
     /**
      * Return whether the offset is placed between two words in a text node.
      * @pre node is a Node of type text.
@@ -1058,6 +1061,16 @@ public:
      * Same as above, but will get the end of the word
      */
     static void getEndOfWord(Node*& node, int& offset);
+
+    /**
+     * Set node and offset to the beggining of the paragraph.
+     * The distinction between inline/block nodes is used here.
+     * @param node 
+     * @param offset 
+     */
+    static void getStartOfParagraph(Node*& node, int& offset);
+    
+    static void getEndOfParagraph(Node*& node, int& offset);
     
 private:
     /**
