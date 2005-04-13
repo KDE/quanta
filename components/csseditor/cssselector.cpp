@@ -305,8 +305,8 @@ void CSSSelector::removeAll(){
 }
 
 void CSSSelector::removeSelected(){
-  m_currentStylesheetStructure.remove(m_currentItem->text(0));
   if( m_currentItem ) {
+    m_currentStylesheetStructure.remove(m_currentItem->text(0));
     delete m_currentItem;
    // m_currentItem = 0L;
   }
