@@ -2309,13 +2309,13 @@ QStringList* Document::tagAttributeValues(const QString& dtdName, const QString&
   {
     QString searchForAttr = (dtd->caseSensitive) ? attribute : attribute.upper();
     AttributeList* attrs = QuantaCommon::tagAttributes(dtdName, tag);
-    Attribute *attr;
-    KURL u;
-    KURL base = QExtFileInfo::toRelative(url(), Project::ref()->projectBaseURL());
-    base.setPath("/"+base.directory(false, false));
-    QString s;
     if (attrs)
     {
+      Attribute *attr;
+      KURL u;
+      KURL base = url();
+      base.setPath(base.directory(false,false));
+      QString s;
       for ( attr = attrs->first(); attr; attr = attrs->next() )
       {
         QString attrName = (dtd->caseSensitive) ? attr->name : attr->name.upper();
@@ -2328,11 +2328,11 @@ QStringList* Document::tagAttributeValues(const QString& dtdName, const QString&
               values = new QStringList(project->fileNameList());
               for (uint i = 0; i < values->count(); i++)
               {
-                u = (*values)[i];
-                u.setPath("/"+u.path());
+                u = (*values)[i];                 
                 u = QExtFileInfo::toRelative(u, base);
                 (*values)[i] = u.path();
               }
+              values->remove(values->at(0));
               values->append("mailto:" + project->email());
             } else
             {
