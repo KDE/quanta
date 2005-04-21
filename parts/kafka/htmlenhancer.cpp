@@ -169,34 +169,39 @@ bool HTMLEnhancer::enhanceNode(Node *node, DOM::Node parentDNode, DOM::Node next
 #ifdef LIGHT_DEBUG
 		kdDebug(25001)<< "HTMLTranslator::translateNode() - Comment" << endl;
 #endif
-		filename = m_stddirs->findResource("data", "kafkapart/pics/comment.png" );
-		if(!filename.isEmpty())
-		{
-			//FIXME DTD!
-			domNode = kafkaCommon::createDomNode("IMG", m_wkafkapart->defaultDTD(),
-				m_wkafkapart->getKafkaWidget()->document());
-			kafkaCommon::editDomNodeAttribute(domNode, "IMG", m_wkafkapart->defaultDTD(), "src",
-				filename, m_wkafkapart->getKafkaWidget()->document());
-
-			//Add a tooltip indicating the content of the script
-			n = node->child;
-			text = "";
-			goUp = false;
-			while(n && n != node)
-			{
-				text += n->tag->tagStr();
- 				n = kafkaCommon::getNextNode(n, goUp, node);
-			}
-			//if(text == "")
-			//	text = i18n("Empty")
-			kafkaCommon::editDomNodeAttribute(domNode, "img", m_wkafkapart->defaultDTD(),
-				"title", text, m_wkafkapart->getKafkaWidget()->document());
-
-			if(!kafkaCommon::insertDomNode(domNode, parentDNode, nextDNode))
-				return false;
-			m_wkafkapart->connectDomNodeToQuantaNode(domNode, node);
-		}
-	}
+        QTag* qTag = QuantaCommon::tagFromDTD(m_wkafkapart->getCurrentDoc()->defaultDTD(),
+                                              parentDNode.nodeName().string());
+        if(qTag->isChild("IMG", false))
+        {
+            filename = m_stddirs->findResource("data", "kafkapart/pics/comment.png" );
+            if(!filename.isEmpty())
+            {
+                //FIXME DTD!
+                domNode = kafkaCommon::createDomNode("IMG", m_wkafkapart->defaultDTD(),
+                    m_wkafkapart->getKafkaWidget()->document());
+                kafkaCommon::editDomNodeAttribute(domNode, "IMG", m_wkafkapart->defaultDTD(), "src",
+                    filename, m_wkafkapart->getKafkaWidget()->document());
+    
+                //Add a tooltip indicating the content of the script
+                n = node->child;
+                text = "";
+                goUp = false;
+                while(n && n != node)
+                {
+                    text += n->tag->tagStr();
+                    n = kafkaCommon::getNextNode(n, goUp, node);
+                }
+                //if(text == "")
+                //	text = i18n("Empty")
+                kafkaCommon::editDomNodeAttribute(domNode, "img", m_wkafkapart->defaultDTD(),
+                    "title", text, m_wkafkapart->getKafkaWidget()->document());
+    
+                if(!kafkaCommon::insertDomNode(domNode, parentDNode, nextDNode))
+                    return false;
+                m_wkafkapart->connectDomNodeToQuantaNode(domNode, node);
+            }
+        }
+    }
 
 	//THEN add a TBODY tag if necessary
 	if(node->rootNode() && node->rootNode()->nodeName().string().lower() == "table")
