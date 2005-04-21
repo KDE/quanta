@@ -7,6 +7,7 @@ Version 3.4.1 (Release date: xx-xx-2004; Started 04-03-2004):
           tag editing dialog
         - fix matching of excluded files from a project
         - don't crash when Selected is pressed and nothing is selected (in the CSS editor) [#101919]
+	- show the correct relative paths in URL autocompletion
 
  - improvements:
 	- nicer processing of CVS output
