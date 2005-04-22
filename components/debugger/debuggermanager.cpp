@@ -278,7 +278,7 @@ void DebuggerManager::slotRemoveVariable(DebuggerVariable* var)
 
 void DebuggerManager::slotRemoveBreakpoint(DebuggerBreakpoint* bp)
 {
-  if(!m_client)
+  if(!m_client || !bp)
     return;
   m_breakpointList->remove(bp);
   m_client->removeBreakpoint(bp);
