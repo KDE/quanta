@@ -192,6 +192,20 @@ pointer must be deleted by the caller!! */
   *  @return true if the user answered yes, false otherwise.
   */
   static bool checkOverwrite(const KURL& url);
+
+  /** Reads the annotation file and returns the annotations/
+  * @param url the url for which the annotations should be read
+  * @param annotations the map (line, text) with the annotations
+  * @return the path to the annotation file. In case of remote files, this is a temporary local file.
+  */
+  static QString readAnnotations(const KURL &url, QMap<uint, QString>& annotations );
+
+  /** Writes the annotation file and returns the annotations/
+  * @param url the url for which the annotations should be read
+  * @param annotationFile the path to the actual annotations file
+  * @param annotations the map (line, text) with the annotations
+  */
+  static void writeAnnotations(const KURL &url, QString &annotationFile, QMap<uint, QString>& annotations );
 };
 
 #endif

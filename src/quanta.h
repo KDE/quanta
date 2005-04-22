@@ -84,6 +84,7 @@ class FilesTreeView;
 class ScriptTreeView;
 class EnhancedTagAttributeTree;
 class Project;
+class AnnotationOutput;
 class MessageOutput;
 class QDomDocument;
 class Document;
@@ -124,7 +125,7 @@ public:
 //TODO: check if we really need these "get" methods (and get rid o get)
   MessageOutput *messageOutput() const {return m_messageOutput;}
   MessageOutput *problemOutput() const {return m_problemOutput;}
-  MessageOutput *annotationOutput() const {return m_annotationOutput;}
+  MessageOutput *annotationOutput() const;
 
   DebuggerManager *debugger() const {return m_debugger;}
   KParts::PartManager *partManager() {return m_partManager;}
@@ -504,6 +505,7 @@ protected slots:
   void slotTabMoved(int from, int to);
   void slotTabAboutToMove(int from, int to);
   void slotAnnotate();
+  void slotNewProjectLoaded(const QString &projectName, const KURL &baseURL, const KURL &templateURL);
 
 protected:
   /** Create a DTEP tarball which can be uploaded or sent in email. Returns
@@ -547,7 +549,7 @@ private:
   /** Message output window */
   MessageOutput *m_messageOutput;
   MessageOutput *m_problemOutput;
-  MessageOutput *m_annotationOutput;
+  AnnotationOutput *m_annotationOutput;
   KMdiToolViewAccessor* m_messageOutputView;
   KMdiToolViewAccessor* m_problemsOutputView;
   KMdiToolViewAccessor* m_annotationOutputView;

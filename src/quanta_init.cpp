@@ -78,6 +78,7 @@
 
 #include "wkafkapart.h"
 #include "whtmlpart.h"
+#include "annotationoutput.h"
 #include "messageoutput.h"
 
 #include "tagaction.h"
@@ -259,7 +260,11 @@ void QuantaInit::initQuanta()
           m_quanta, SLOT(gotoFileAndLine(const QString&, int, int)));
   connect(m_quanta->m_problemOutput, SIGNAL(clicked(const QString&, int, int)),
           m_quanta, SLOT(gotoFileAndLine(const QString&, int, int)));
-  connect(m_quanta->m_annotationOutput, SIGNAL(clicked(const QString&, int, int)),
+  connect(m_quanta->m_annotationOutput->currentFileAnnotations(), SIGNAL(clicked(const QString&, int, int)),
+          m_quanta, SLOT(gotoFileAndLine(const QString&, int, int)));
+  connect(m_quanta->m_annotationOutput->allAnnotations(), SIGNAL(clicked(const QString&, int, int)),
+          m_quanta, SLOT(gotoFileAndLine(const QString&, int, int)));
+  connect(m_quanta->m_annotationOutput->annotatedFilesAnnotations(), SIGNAL(clicked(const QString&, int, int)),
           m_quanta, SLOT(gotoFileAndLine(const QString&, int, int)));
 
   m_quanta->refreshTimer = new QTimer(m_quanta);
@@ -417,7 +422,7 @@ void QuantaInit::initProject()
   connect(m_project, SIGNAL(newProjectLoaded(const QString &, const KURL &, const KURL &)),
           m_quanta->fTab, SLOT(slotNewProjectLoaded(const QString &, const KURL &, const KURL &)));
   connect(m_project, SIGNAL(newProjectLoaded(const QString &, const KURL &, const KURL &)),
-          m_quanta->dTab, SLOT(slotNewProjectLoaded(const QString &, const KURL &, const KURL &)));
+          m_quanta->m_annotationOutput, SLOT(refreshAnnotations()));
 
   connect(pTab, SIGNAL(changeFileDescription(const KURL&, const QString&)),
           m_project, SLOT(slotFileDescChanged(const KURL&, const QString&)));
@@ -467,7 +472,7 @@ void QuantaInit::initView()
 
   m_quanta->m_problemOutput = new MessageOutput(m_quanta, "Problems");
   m_quanta->m_problemOutput->setFocusPolicy(QWidget::NoFocus);
-  m_quanta->m_annotationOutput = new MessageOutput(m_quanta, "Annotations");
+  m_quanta->m_annotationOutput = new AnnotationOutput(m_quanta, "Annotations");
   m_quanta->m_annotationOutput->setFocusPolicy(QWidget::NoFocus);
 
   m_quanta->createPreviewPart();

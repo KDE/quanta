@@ -169,6 +169,7 @@
 #include "parser.h"
 #include "dtdparser.h"
 
+#include "annotationoutput.h"
 #include "messageoutput.h"
 
 #include "dtepeditdlg.h"
@@ -5201,11 +5202,12 @@ void QuantaApp::slotAnnotate()
   if (!w) return;
   uint line, column;
   w->viewCursorIf->cursorPositionReal(&line, &column);  
-  KDialogBase editDlg(this, "annotate", true, i18n("Annotate Document"), KDialogBase::Ok | KDialogBase::Cancel);
-  KTextEdit editor(&editDlg);
+  KDialogBase editDlg(this, "annotate", true, i18n("Annotate Document"), KDialogBase::Ok | KDialogBase::Cancel /*| KDialogBase::User1*/);
+  KTextEdit editor(&editDlg);  
   editor.setTextFormat(PlainText);
   editor.setText(w->annotationText(line));
   editDlg.setMainWidget(&editor);
+  //editDlg.setButtonText(KDialogBase::User1, i18n("Clear"));
   if (editDlg.exec())
   {
     w->setAnnotationText(line, editor.text());
@@ -5213,5 +5215,30 @@ void QuantaApp::slotAnnotate()
   }
 }
 
+MessageOutput* QuantaApp::annotationOutput() const
+{
+  return m_annotationOutput->currentFileAnnotations();
+}
+
+void QuantaApp::slotNewProjectLoaded(const QString &, const KURL &, const KURL &)
+{
+  MessageOutput *allOutput = m_annotationOutput->allAnnotations();
+  MessageOutput *annotatedOutput = m_annotationOutput->annotatedFilesAnnotations();
+  QStringList files = Project::ref()->fileNameList();
+  for (QStringList::ConstIterator it = files.constBegin(); it != files.constEnd(); ++it)
+  {
+    KURL u = KURL::fromPathOrURL(*it);
+    QMap<uint, QString> annotations;
+    QString file = QuantaCommon::readAnnotations(u, annotations);
+    if (!u.isLocalFile())
+      KIO::NetAccess::removeTempFile(file);
+    for (QMap<uint, QString>::ConstIterator it2 = annotations.constBegin(); it2 != annotations.constEnd(); ++it2)
+    {
+      allOutput->insertItem(i18n("File: %1, Line: %2 : %3").arg(*it).arg(it2.key()).arg(it2.data()));
+    }
+    if (!annotations.isEmpty())
+      annotatedOutput->insertItem(*it);
+  }
+}
 
 #include "quanta.moc"

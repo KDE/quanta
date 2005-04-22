@@ -35,7 +35,7 @@ class MessageItem : public QListBoxText {
     /** return column number for file , associated with this message */
     int column();
     /** return name of file , associated with this message */
-    QString fileName() { return filename; }
+    QString fileName();
 
     void setLine(int line) { lineNumber = line; lineDefined=true; }
     void setFileName(const QString &fileName ) { filename = fileName; }

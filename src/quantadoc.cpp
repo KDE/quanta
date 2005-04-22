@@ -239,12 +239,12 @@ void QuantaDoc::slotOpeningCompleted(const KURL &url)
   quantaApp->slotRepaintPreview();
   quantaApp->reparse(true);
   quantaApp->debugger()->fileOpened(url.prettyURL(0, KURL::StripFileProtocol));
+  w->readAnnotations();
   quantaApp->slotNewStatus();
   emit eventHappened("after_open", url.url(), QString::null);
   
   bool flag = TagActionManager::canIndentDTD(w->defaultDTD()->name);
   quantaApp->actionCollection()->action("apply_source_indentation")->setEnabled(flag);
-  w->readAnnotations();
 }
 
 /** show popup menu with list of attributes for current tag */

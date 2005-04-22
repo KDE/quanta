@@ -215,6 +215,8 @@ Document::Document(KTextEditor::Document *doc,
 
 Document::~Document()
 {
+  if (!url().isLocalFile())
+    KIO::NetAccess::removeTempFile(m_annotationFile);
   parser->clearGroups();
 //  kdDebug(24000) << "Document::~ Document: " << this << endl;
  m_doc->closeURL(false); //TODO: Workaround for a Kate bug. Remove when KDE < 3.2.0 support is dropped.
@@ -2948,100 +2950,41 @@ void Document::setAnnotationText(uint line, const QString& text)
       markIf->setMark(line, KTextEditor::MarkInterface::markType08);
     QString s = text;
     s.remove('\n');
-    quantaApp->annotationOutput()->showMessage(QString("Line %1: %2").arg(line + 1).arg(s));
+    quantaApp->annotationOutput()->showMessage(i18n("Line %1, Column: 1 : %2").arg(line + 1).arg(s));
   }
 }
 
 void Document::readAnnotations()
 {
- quantaApp->annotationOutput()->clear(); 
- KURL u = url();
- u.setFileName( u.fileName(false) + ".annotation");
- if (QExtFileInfo::exists(u))
- {
-   if (u.isLocalFile())
-    m_annotationURL = u;
-   else
-   {
-    QString target;
-    KIO::NetAccess::download(u, target, 0L);
-    m_annotationURL = KURL::fromPathOrURL(target);
-   }
-   QFile f(m_annotationURL.path());
-   if (f.open(IO_ReadOnly))
-   {
-     QDomDocument document;
-     document.setContent(&f);
-     QDomNodeList annotationNodes = document.elementsByTagName("annotation");
-     bool ok;
-     for (uint i = 0; i < annotationNodes.count(); i++)
-     {
-       QDomElement el = annotationNodes.item(i).toElement(); 
-       setAnnotationText(el.attribute("line").toInt(&ok, 10), el.text());
-     }
-     f.close();
-   }
- } else
- {
-   m_annotations.clear();
-   m_annotationURL = KURL();
+  quantaApp->annotationOutput()->clear();
+  if (markIf)
+  {
+    QPtrList<KTextEditor::Mark> m = markIf->marks();
+    for (uint i=0; i < m.count(); i++)
+      markIf->removeMark( m.at(i)->line, KTextEditor::MarkInterface::markType08 );
  }
+
+  if (!m_annotationFile.isEmpty() && !url().isLocalFile())
+    KIO::NetAccess::removeTempFile(m_annotationFile);
+  m_annotationFile = QuantaCommon::readAnnotations(url(), m_annotations);
+  quantaApp->annotationOutput()->clear(); 
+  for (QMap<uint, QString>::ConstIterator it = m_annotations.constBegin(); it != m_annotations.constEnd(); ++it)
+  {
+    setAnnotationText(it.key(), it.data());
+  }
 }
 
 void Document::writeAnnotations()
 {
-  KTempFile* tempFile = 0L;
-  KURL u = url();
-  u.setFileName( u.fileName(false) + ".annotation");  
-  if (m_annotationURL.isEmpty())
-  {
-    if (u.isLocalFile())
-      m_annotationURL = u;
-    else
-    {
-      tempFile = new KTempFile(tmpDir);
-      tempFile->setAutoDelete(true);
-      tempFile->textStream()->setEncoding(QTextStream::UnicodeUTF8);
-      tempFile->close();
-      m_annotationURL = KURL::fromPathOrURL(tempFile->name());
-    }  
-  }
+  QuantaCommon::writeAnnotations(url(), m_annotationFile, m_annotations);
+
   quantaApp->annotationOutput()->clear();
- /* if (markIf)
+  for (QMap<uint, QString>::ConstIterator it = m_annotations.constBegin(); it != m_annotations.constEnd(); ++it)
   {
-    QPtrList<KTextEditor::Mark> marks = markIf->marks();
-    for (uint i = 0; i < marks.count(); i++)
-    {
-      if (marks.at(i)->type == KTextEditor::MarkInterface::markType08)
-        markIf->removeMark(marks.at(i)->line, KTextEditor::MarkInterface::markType08);
-    }
-  }*/
-  QFile f(m_annotationURL.path());
-  if (f.open(IO_WriteOnly))
-  {
-    QTextStream stream(&f);
-    stream.setEncoding(QTextStream::UnicodeUTF8);
-    stream << "<!DOCTYPE ANNOTATIONS>" << endl
-            << "<ANNOTATIONS>" << endl;
-    for (QMap<uint, QString>::ConstIterator it = m_annotations.constBegin(); it != m_annotations.constEnd(); ++it)
-    {
-      stream << "  <annotation line=\"" << it.key() << "\">" << it.data() << "</annotation>" << endl;
-      QString s = it.data();
-      s.remove('\n');
-      quantaApp->annotationOutput()->showMessage(QString("Line %1: %2").arg(it.key() + 1).arg(s));
-    }
-    stream << "</ANNOTATIONS>" << endl;
-    f.close();
+    QString s = it.data();
+    s.remove('\n');
+    quantaApp->annotationOutput()->showMessage(i18n("Line %1, Column: 1 : %2").arg(it.key() + 1).arg(s));
   }
-  if (m_annotations.isEmpty())
-  {
-    if (!u.isLocalFile())
-      KIO::NetAccess::del(u, 0L);
-    f.remove();
-  } else
-    if (!u.isLocalFile())
-      KIO::NetAccess::upload(m_annotationURL.path(), u, 0L);
-  delete tempFile;
 }
 
 #include "document.moc"

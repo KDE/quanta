@@ -262,7 +262,7 @@ private slots:
 private:
 
   QMap<uint, QString> m_annotations;
-  KURL m_annotationURL;
+  QString m_annotationFile;
   QString untitledUrl;
   int m_replaceLine;
   int m_replaceCol;

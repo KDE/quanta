@@ -17,7 +17,7 @@
 
 #include "messageitem.h"
 #include <qregexp.h>
-
+#include <klocale.h>
 
 MessageItem::MessageItem( QListBox * listbox, const QString &text, int line, const QString &fname )
   :QListBoxText(listbox,text),lineNumber(line),filename(fname)
@@ -57,6 +57,27 @@ int MessageItem::column()
     return 0;
   s = exp.cap(1);
   return s.toInt();
+}
+
+QString MessageItem::fileName()
+{
+  if (filename.isEmpty())
+  {
+    QString fname;
+    QString s = text();
+    int pos = s.find(i18n("File: "));
+    if (pos != -1)
+    {
+      int pos2 = s.find(i18n(", "), pos);
+      if (pos2 != -1)
+        fname = s.mid(pos, pos2-pos);
+      else
+        fname = s.mid(pos);  
+      fname.remove(i18n("File: "));
+    }
+    return fname;
+  } else
+  return filename;
 }
 
 void MessageItem::addText(const QString &t)

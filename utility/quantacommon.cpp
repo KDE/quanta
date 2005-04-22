@@ -21,6 +21,9 @@
 #include <qstringlist.h>
 #include <qdict.h>
 #include <qdir.h>
+#include <qdom.h>
+#include <qfile.h>
+#include <qtextstream.h>
 #include <qwidget.h>
 
 //kde includes
@@ -31,6 +34,7 @@
 #include <kmimetype.h>
 #include <kstandarddirs.h>
 #include <kmessagebox.h>
+#include <kio/netaccess.h>
 #include <klocale.h>
 #include <kprotocolinfo.h>
 #include <kprogress.h>
@@ -682,3 +686,79 @@ bool QuantaCommon::checkOverwrite(const KURL& url)
 
   return result;
 }
+
+QString QuantaCommon::readAnnotations(const KURL &url, QMap<uint, QString>& annotations )
+{
+ KURL u = url;
+ QString annotationFile;
+ annotations.clear();
+ u.setFileName(u.fileName(false) + ".annotation");
+ if (QExtFileInfo::exists(u))
+ {
+   if (u.isLocalFile())
+    annotationFile = u.path();
+   else
+   {
+    KIO::NetAccess::download(u, annotationFile, 0L);
+   }
+   QFile f(annotationFile);
+   if (f.open(IO_ReadOnly))
+   {
+     QDomDocument document;
+     document.setContent(&f);
+     QDomNodeList annotationNodes = document.elementsByTagName("annotation");
+     bool ok;
+     for (uint i = 0; i < annotationNodes.count(); i++)
+     {
+       QDomElement el = annotationNodes.item(i).toElement(); 
+       annotations.insert(el.attribute("line").toInt(&ok, 10), el.text());
+     }
+     f.close();
+   }
+ }
+ return annotationFile;
+}
+
+void QuantaCommon::writeAnnotations(const KURL &url, QString &annotationFile, QMap<uint, QString>& annotations )
+{
+  KTempFile* tempFile = 0L;
+  KURL u = url;
+  u.setFileName(u.fileName(false) + ".annotation");  
+  if (annotationFile.isEmpty())
+  {
+    if (u.isLocalFile())
+      annotationFile = u.path();
+    else
+    {
+      tempFile = new KTempFile(tmpDir);
+      tempFile->setAutoDelete(true);
+      tempFile->textStream()->setEncoding(QTextStream::UnicodeUTF8);
+      tempFile->close();
+      annotationFile = tempFile->name();
+    }  
+  }
+  QFile f(annotationFile);
+  if (f.open(IO_WriteOnly))
+  {
+    QTextStream stream(&f);
+    stream.setEncoding(QTextStream::UnicodeUTF8);
+    stream << "<!DOCTYPE ANNOTATIONS>" << endl
+            << "<ANNOTATIONS>" << endl;
+    for (QMap<uint, QString>::ConstIterator it = annotations.constBegin(); it != annotations.constEnd(); ++it)
+    {
+      stream << "  <annotation line=\"" << it.key() << "\">" << it.data() << "</annotation>" << endl;
+    }
+    stream << "</ANNOTATIONS>" << endl;
+    f.close();
+  }
+  if (annotations.isEmpty())
+  {
+    if (!u.isLocalFile())
+      KIO::NetAccess::del(u, 0L);
+    f.remove();
+  } else
+    if (!u.isLocalFile())
+      KIO::NetAccess::upload(annotationFile, u, 0L);
+  delete tempFile;
+}
+

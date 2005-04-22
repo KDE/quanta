@@ -1017,6 +1017,7 @@ void QuantaView::activated()
   m_viewLayout->addWidget(ToolbarTabWidget::ref(), 0 , 0);
   quantaApp->partManager()->setActivePart(m_document->doc(), m_document->view());
   m_document->checkDirtyStatus();
+  m_document->readAnnotations();
   StructTreeView::ref()->useOpenLevelSetting = true;
   quantaApp->slotLoadToolbarForDTD(m_document->getDTDIdentifier());
 
