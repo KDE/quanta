@@ -74,6 +74,7 @@ class KProcess;
 class KSelectAction;
 class KRecentFilesAction;
 class KToolBarPoupAction;
+class KTextEdit;
 
 class TagAction;
 class Node;
@@ -123,6 +124,7 @@ public:
 //TODO: check if we really need these "get" methods (and get rid o get)
   MessageOutput *messageOutput() const {return m_messageOutput;}
   MessageOutput *problemOutput() const {return m_problemOutput;}
+  MessageOutput *annotationOutput() const {return m_annotationOutput;}
 
   DebuggerManager *debugger() const {return m_debugger;}
   KParts::PartManager *partManager() {return m_partManager;}
@@ -288,6 +290,7 @@ public slots:
 
   void slotShowMessagesView();
   void slotShowProblemsView();
+  void slotShowAnnotationView();
 
   void slotContextMenuAboutToShow();
 
@@ -500,6 +503,7 @@ protected slots:
   void slotTabDragged(QWidget *widget);
   void slotTabMoved(int from, int to);
   void slotTabAboutToMove(int from, int to);
+  void slotAnnotate();
 
 protected:
   /** Create a DTEP tarball which can be uploaded or sent in email. Returns
@@ -543,8 +547,10 @@ private:
   /** Message output window */
   MessageOutput *m_messageOutput;
   MessageOutput *m_problemOutput;
+  MessageOutput *m_annotationOutput;
   KMdiToolViewAccessor* m_messageOutputView;
   KMdiToolViewAccessor* m_problemsOutputView;
+  KMdiToolViewAccessor* m_annotationOutputView;
   KMdiToolViewAccessor* m_previewToolView;
   KMdiToolViewAccessor* m_documentationToolView;
   Document *m_previewedDocument;

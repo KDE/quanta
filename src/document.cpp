@@ -174,6 +174,8 @@ Document::Document(KTextEditor::Document *doc,
     iface->setPixmap(KTextEditor::MarkInterface::markType02, SmallIcon("debug_breakpoint"));
     iface->setDescription(KTextEditor::MarkInterface::markType02, i18n("Breakpoint"));
     iface->setPixmap(KTextEditor::MarkInterface::markType05, SmallIcon("debug_currentline"));
+    iface->setDescription(KTextEditor::MarkInterface::markType08, i18n("Annotation"));
+    iface->setPixmap(KTextEditor::MarkInterface::markType08, SmallIcon("stamp"));
   }
 
   // This is allows user to set breakpoints and bookmarks by clicking or rightclicking on the icon border.
@@ -2921,6 +2923,125 @@ QStringList Document::groupsForDTEPs()
     return m_DTEPList;
   else
     return m_groupsForDTEPs;
+}
+
+QString Document::annotationText(uint line)
+{
+  QMap<uint, QString>::Iterator it = m_annotations.find(line);
+  if (it != m_annotations.end())
+    return it.data();
+  else
+   return QString::null;
+}
+
+void Document::setAnnotationText(uint line, const QString& text)
+{
+  if (text.isEmpty())
+  {
+    m_annotations.remove(line);
+    if (markIf)
+      markIf->removeMark(line, KTextEditor::MarkInterface::markType08);
+  } else
+  {
+    m_annotations.insert(line, text);
+    if (markIf)
+      markIf->setMark(line, KTextEditor::MarkInterface::markType08);
+    QString s = text;
+    s.remove('\n');
+    quantaApp->annotationOutput()->showMessage(QString("Line %1: %2").arg(line + 1).arg(s));
+  }
+}
+
+void Document::readAnnotations()
+{
+ quantaApp->annotationOutput()->clear(); 
+ KURL u = url();
+ u.setFileName( u.fileName(false) + ".annotation");
+ if (QExtFileInfo::exists(u))
+ {
+   if (u.isLocalFile())
+    m_annotationURL = u;
+   else
+   {
+    QString target;
+    KIO::NetAccess::download(u, target, 0L);
+    m_annotationURL = KURL::fromPathOrURL(target);
+   }
+   QFile f(m_annotationURL.path());
+   if (f.open(IO_ReadOnly))
+   {
+     QDomDocument document;
+     document.setContent(&f);
+     QDomNodeList annotationNodes = document.elementsByTagName("annotation");
+     bool ok;
+     for (uint i = 0; i < annotationNodes.count(); i++)
+     {
+       QDomElement el = annotationNodes.item(i).toElement(); 
+       setAnnotationText(el.attribute("line").toInt(&ok, 10), el.text());
+     }
+     f.close();
+   }
+ } else
+ {
+   m_annotations.clear();
+   m_annotationURL = KURL();
+ }
+}
+
+void Document::writeAnnotations()
+{
+  KTempFile* tempFile = 0L;
+  KURL u = url();
+  u.setFileName( u.fileName(false) + ".annotation");  
+  if (m_annotationURL.isEmpty())
+  {
+    if (u.isLocalFile())
+      m_annotationURL = u;
+    else
+    {
+      tempFile = new KTempFile(tmpDir);
+      tempFile->setAutoDelete(true);
+      tempFile->textStream()->setEncoding(QTextStream::UnicodeUTF8);
+      tempFile->close();
+      m_annotationURL = KURL::fromPathOrURL(tempFile->name());
+    }  
+  }
+  quantaApp->annotationOutput()->clear();
+ /* if (markIf)
+  {
+    QPtrList<KTextEditor::Mark> marks = markIf->marks();
+    for (uint i = 0; i < marks.count(); i++)
+    {
+      if (marks.at(i)->type == KTextEditor::MarkInterface::markType08)
+        markIf->removeMark(marks.at(i)->line, KTextEditor::MarkInterface::markType08);
+    }
+  }*/
+  QFile f(m_annotationURL.path());
+  if (f.open(IO_WriteOnly))
+  {
+    QTextStream stream(&f);
+    stream.setEncoding(QTextStream::UnicodeUTF8);
+    stream << "<!DOCTYPE ANNOTATIONS>" << endl
+            << "<ANNOTATIONS>" << endl;
+    for (QMap<uint, QString>::ConstIterator it = m_annotations.constBegin(); it != m_annotations.constEnd(); ++it)
+    {
+      stream << "  <annotation line=\"" << it.key() << "\">" << it.data() << "</annotation>" << endl;
+      QString s = it.data();
+      s.remove('\n');
+      quantaApp->annotationOutput()->showMessage(QString("Line %1: %2").arg(it.key() + 1).arg(s));
+    }
+    stream << "</ANNOTATIONS>" << endl;
+    f.close();
+  }
+  if (m_annotations.isEmpty())
+  {
+    if (!u.isLocalFile())
+      KIO::NetAccess::del(u, 0L);
+    f.remove();
+  } else
+    if (!u.isLocalFile())
+      KIO::NetAccess::upload(m_annotationURL.path(), u, 0L);
+  delete tempFile;
 }
 
 #include "document.moc"

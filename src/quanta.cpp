@@ -76,6 +76,7 @@
 #include <kprogress.h>
 #include <ktempdir.h>
 #include <ktempfile.h>
+#include <ktextedit.h>
 #include <kdebug.h>
 #include <ktar.h>
 #include <kedittoolbar.h>
@@ -1728,6 +1729,11 @@ void QuantaApp::slotShowMessagesView()
 void QuantaApp::slotShowProblemsView()
 {
   makeDockVisible(dynamic_cast<KDockWidget*>(m_problemsOutputView->wrapperWidget()));
+}
+
+void QuantaApp::slotShowAnnotationView()
+{
+  makeDockVisible(dynamic_cast<KDockWidget*>(m_annotationOutputView->wrapperWidget()));
 }
 
 QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomElement &element, int &id )
@@ -5012,6 +5018,7 @@ void QuantaApp::resetDockLayout()
     addToolWindow(aTab, KDockWidget::DockRight, mainDockWidget);
     addToolWindow(m_messageOutput, KDockWidget::DockBottom, mainDockWidget);
     addToolWindow(m_problemOutput, KDockWidget::DockBottom, mainDockWidget);
+    addToolWindow(m_annotationOutput, KDockWidget::DockBottom, mainDockWidget);
     if (m_previewToolView)
       m_previewToolView =  addToolWindow(m_htmlPart->view(), KDockWidget::DockBottom, mainDockWidget);
     if (m_documentationToolView)
@@ -5187,5 +5194,24 @@ QString QuantaApp::currentURL() const
 {
   return ViewManager::ref()->currentURL();
 }
+
+void QuantaApp::slotAnnotate()
+{
+  Document *w = ViewManager::ref()->activeDocument();
+  if (!w) return;
+  uint line, column;
+  w->viewCursorIf->cursorPositionReal(&line, &column);  
+  KDialogBase editDlg(this, "annotate", true, i18n("Annotate Document"), KDialogBase::Ok | KDialogBase::Cancel);
+  KTextEdit editor(&editDlg);
+  editor.setTextFormat(PlainText);
+  editor.setText(w->annotationText(line));
+  editDlg.setMainWidget(&editor);
+  if (editDlg.exec())
+  {
+    w->setAnnotationText(line, editor.text());
+    w->writeAnnotations();
+  }
+}
+
 
 #include "quanta.moc"

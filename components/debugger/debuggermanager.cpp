@@ -657,12 +657,15 @@ void DebuggerManager::slotBreakpointUnmarked(Document* qdoc, int line)
 
   DebuggerBreakpoint* br = m_breakpointList->retrieve(filePath, line);
 
-  if(m_client && m_client->isActive())
+  if (br)
   {
-    m_client->removeBreakpoint(br);
+    if(m_client && m_client->isActive())
+    {
+      m_client->removeBreakpoint(br);
+    }
+  
+    m_breakpointList->remove(br);
   }
-
-  m_breakpointList->remove(br);
 }
 
 #include "debuggermanager.moc"

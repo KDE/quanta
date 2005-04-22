@@ -186,6 +186,7 @@ void QuantaInit::initQuanta()
   addToolTreeView(m_quanta->scriptTab, i18n("Scripts"), BarIcon("run"), KDockWidget::DockLeft);
   m_quanta->m_messageOutputView = addToolTreeView(m_quanta->m_messageOutput, i18n("Messages"), SmallIcon("openterm"), KDockWidget::DockBottom);
   m_quanta->m_problemsOutputView = addToolTreeView(m_quanta->m_problemOutput, i18n("Problems"), SmallIcon("info"), KDockWidget::DockBottom);
+  m_quanta->m_annotationOutputView = addToolTreeView(m_quanta->m_annotationOutput, i18n("Annotations"), SmallIcon("stamp"), KDockWidget::DockBottom);
 
   // Restore the dock layout
   m_config->setGroup  ("General Options");
@@ -257,6 +258,8 @@ void QuantaInit::initQuanta()
   connect(m_quanta->m_messageOutput, SIGNAL(clicked(const QString&, int, int)),
           m_quanta, SLOT(gotoFileAndLine(const QString&, int, int)));
   connect(m_quanta->m_problemOutput, SIGNAL(clicked(const QString&, int, int)),
+          m_quanta, SLOT(gotoFileAndLine(const QString&, int, int)));
+  connect(m_quanta->m_annotationOutput, SIGNAL(clicked(const QString&, int, int)),
           m_quanta, SLOT(gotoFileAndLine(const QString&, int, int)));
 
   m_quanta->refreshTimer = new QTimer(m_quanta);
@@ -464,6 +467,8 @@ void QuantaInit::initView()
 
   m_quanta->m_problemOutput = new MessageOutput(m_quanta, "Problems");
   m_quanta->m_problemOutput->setFocusPolicy(QWidget::NoFocus);
+  m_quanta->m_annotationOutput = new MessageOutput(m_quanta, "Annotations");
+  m_quanta->m_annotationOutput->setFocusPolicy(QWidget::NoFocus);
 
   m_quanta->createPreviewPart();
   m_quanta->createDocPart();
@@ -667,6 +672,7 @@ void QuantaInit::loadInitialProject(const QString& url)
 void QuantaInit::initActions()
 {
     KActionCollection *ac = m_quanta->actionCollection();
+    new KAction(i18n("Annotate..."), 0, m_quanta, SLOT(slotAnnotate()),ac, "annotate"); 
     m_quanta->editTagAction = new KAction( i18n( "&Edit Current Tag..." ), CTRL+Key_E,
                         m_quanta, SLOT( slotEditCurrentTag() ),
                         ac, "edit_current_tag" );

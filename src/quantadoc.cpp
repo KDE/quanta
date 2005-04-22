@@ -244,6 +244,7 @@ void QuantaDoc::slotOpeningCompleted(const KURL &url)
   
   bool flag = TagActionManager::canIndentDTD(w->defaultDTD()->name);
   quantaApp->actionCollection()->action("apply_source_indentation")->setEnabled(flag);
+  w->readAnnotations();
 }
 
 /** show popup menu with list of attributes for current tag */

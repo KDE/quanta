@@ -21,7 +21,10 @@
 //qt includes
 #include <qdatetime.h>
 #include <qdict.h>
+#include <qmap.h>
 #include <qwidget.h>
+
+#include <kurl.h>
 
 //own includes
 #include "qtag.h"
@@ -212,7 +215,12 @@ work correctly. */
   /** Removes automatic backup copies */
   void removeBackup(KConfig *config);
   /** create a string using document path string */
- static QString hashFilePath(const QString& p);
+  static QString hashFilePath(const QString& p);
+  QString annotationText(uint line);
+  void setAnnotationText(uint line, const QString& text);
+  QMap<uint, QString> annotations() {return m_annotations;}
+  void readAnnotations();
+  void writeAnnotations();
 
 public slots:
 
@@ -253,6 +261,8 @@ private slots:
   void slotMarksChanged();
 private:
 
+  QMap<uint, QString> m_annotations;
+  KURL m_annotationURL;
   QString untitledUrl;
   int m_replaceLine;
   int m_replaceCol;
