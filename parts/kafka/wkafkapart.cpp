@@ -720,29 +720,36 @@ bool KafkaDocument::buildKafkaNodeFromNode(Node *node, bool insertNode)
 			node->setLeafNode(ptDomNode);
 			mainEnhancer->enhanceNode(node, parentNode, nextNode);
 
-			if(nextNode.isNull())
-			{
-				if(!kafkaCommon::insertDomNode(newNode, parentNode))
-				{
-					disconnectDomNodeFromQuantaNode(newNode);
-					if(node->rootNode())
-						delete node->rootNode();
-					node->setRootNode(0L);
-					return false;
-				}
-			}
-			else
-			{
-				if(!kafkaCommon::insertDomNode(newNode, parentNode, nextNode))
-				{
-					disconnectDomNodeFromQuantaNode(newNode);
-					if(node->rootNode())
-						delete node->rootNode();
-					node->setRootNode(0L);
-					return false;
-				}
-			}
-		}
+            QTag* qTag = QuantaCommon::tagFromDTD(getCurrentDoc()->defaultDTD(),
+                    parentNode.nodeName().string());
+
+            if(qTag->isChild(node, false))
+            {
+                
+                if(nextNode.isNull())
+                {
+                    if(!kafkaCommon::insertDomNode(newNode, parentNode))
+                    {
+                        disconnectDomNodeFromQuantaNode(newNode);
+                        if(node->rootNode())
+                            delete node->rootNode();
+                        node->setRootNode(0L);
+                        return false;
+                    }
+                }
+                else
+                {
+                    if(!kafkaCommon::insertDomNode(newNode, parentNode, nextNode))
+                    {
+                        disconnectDomNodeFromQuantaNode(newNode);
+                        if(node->rootNode())
+                            delete node->rootNode();
+                        node->setRootNode(0L);
+                        return false;
+                    }
+                }
+            }
+        }
 		else
 		{
 			ptDomNode = new DOM::Node(newNode);
