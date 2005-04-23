@@ -349,7 +349,7 @@ kNodeAttrs* KafkaDocument::connectDomNodeToQuantaNode(DOM::Node domNode, Node *n
 	else
 		name = domNode.nodeName().string().lower();
  
-    kdDebug(23100) << "KafkaDocument::connectDomNodeToQuantaNode() - domNode name: |" << name << "|" << endl;
+//     kdDebug(25001) << "KafkaDocument::connectDomNodeToQuantaNode() - domNode name: |" << name << "|" << endl;
 
 	props = new kNodeAttrs();
 
