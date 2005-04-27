@@ -327,10 +327,11 @@ void QuantaInit::initStatusBar()
 
   progressBar = new KProgress(m_quanta->statusBar());
   progressBar->setTextEnabled(false);
+  progressBar->setMaximumHeight(progressBar->fontMetrics().height());
   progressBar->show();
   m_quanta->statusBar()->insertItem(i18n(IDS_DEFAULT),IDS_STATUS, 1);
   m_quanta->statusBar()->addWidget(progressBar);
-  m_quanta->statusBar()->insertFixedItem(" XXX ",     IDS_INS_OVR  );
+  m_quanta->statusBar()->insertItem("",               IDS_INS_OVR  );
   m_quanta->statusBar()->insertFixedItem(" * ",       IDS_MODIFIED );
   m_quanta->statusBar()->insertFixedItem(i18n("Line: 00000 Col: 000"), IDS_STATUS_CLM, true);
 
