@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="div" hasScript="1" hasCore="1" hasI18n="1" scope="paragraph>
+<tag name="div" hasScript="1" hasCore="1" hasI18n="1" scope="paragraph">
 <children>
 <child name="#text" />
 <child name="a" />
