@@ -5211,13 +5211,7 @@ void QuantaApp::slotAnnotate()
   if (editDlg.exec())
   {
     w->setAnnotationText(line, editor.text());
-    w->writeAnnotations();
   }
-}
-
-MessageOutput* QuantaApp::annotationOutput() const
-{
-  return m_annotationOutput->currentFileAnnotations();
 }
 
 void QuantaApp::slotNewProjectLoaded(const QString &, const KURL &, const KURL &)

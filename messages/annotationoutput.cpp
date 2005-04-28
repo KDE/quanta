@@ -42,6 +42,7 @@ void AnnotationOutput::refreshAnnotations()
 {
   m_allAnnotations->clear();
   m_annotatedFilesAnnotations->clear();
+/*
   QStringList files = Project::ref()->fileNameList();
   for (QStringList::ConstIterator it = files.constBegin(); it != files.constEnd(); ++it)
   {
@@ -57,6 +58,7 @@ void AnnotationOutput::refreshAnnotations()
     if (!annotations.isEmpty())
       m_annotatedFilesAnnotations->insertItem(i18n("File: %1, Line: 1, Column: 1").arg(*it));
   }
+*/
 }
 
 void AnnotationOutput::tabChanged(QWidget *w)
@@ -65,5 +67,23 @@ void AnnotationOutput::tabChanged(QWidget *w)
     refreshAnnotations();
 }
 
+void AnnotationOutput::insertAnnotation(uint scope, uint line, const QString& text)
+{
+  QString s = i18n("Line %1, Column: 1 : %2").arg(line + 1).arg(text);
+  s.remove('\n');
+  if (scope == CurrentFile)
+    m_currentFileAnnotations->showMessage(s);
+  else if (scope == AllFiles)
+    m_allAnnotations->showMessage(s);
+  else if (scope == AnnotatedFiles)
+    m_annotatedFilesAnnotations->showMessage(s);
+}
+
+void AnnotationOutput::clearAnnotations()
+{
+  m_currentFileAnnotations->clear();
+  m_allAnnotations->clear();
+  m_annotatedFilesAnnotations->clear();
+}
 
 #include "annotationoutput.moc"

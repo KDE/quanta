@@ -219,8 +219,8 @@ work correctly. */
   QString annotationText(uint line);
   void setAnnotationText(uint line, const QString& text);
   QMap<uint, QString> annotations() {return m_annotations;}
-  void readAnnotations();
-  void writeAnnotations();
+  void addAnnotation(uint line, const QString &text);
+  void clearAnnotations();
 
 public slots:
 
@@ -249,6 +249,7 @@ signals:
 
   void breakpointMarked(Document*, int);
   void breakpointUnmarked(Document*, int);
+  void showAnnotation(uint, uint, const QString&);
 
 
 private slots:

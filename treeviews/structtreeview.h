@@ -104,6 +104,7 @@ signals:
   void openImage(const KURL&);
   void showProblemMessage(const QString&);
   void clearProblemOutput();
+  void clearAnnotationOutput();
 
 private:
 

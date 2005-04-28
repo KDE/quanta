@@ -152,6 +152,19 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, Node *a_node, const QString 
               title = tag->tagStr();
               title = title.left(70).stripWhiteSpace();
               title.replace( nbspRx," ");
+              if (node->child && node->next)  
+              {
+                Tag *commentTag = node->child->tag;
+                QString text = commentTag->tagStr();
+                int pos = text.find("@annotation: ");
+                if (pos != -1)
+                {
+                  text = text.mid(pos + 13);
+                  int l, c;
+                  node->next->tag->beginPos(l, c);
+                  commentTag->write()->addAnnotation(l, text);   
+                }
+              }
               break;
             }
          case Tag::ScriptTag:

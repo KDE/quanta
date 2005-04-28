@@ -50,6 +50,7 @@
 #include "qextfileinfo.h"
 #include "qpevents.h"
 #include "ksavealldialog.h"
+#include "annotationoutput.h"
 
 #ifdef ENABLE_CVSSERVICE
 #include "cvsservice.h"
@@ -120,6 +121,7 @@ void ViewManager::createNewDocument()
   KTextEditor::Document *doc = KTextEditor::createDocument ("libkatepart", view, "KTextEditor::Document");
 #endif
   Document *w = new Document(doc, 0L);
+  connect(w, SIGNAL(showAnnotation(uint, uint, const QString&)), quantaApp->annotationOutput(), SLOT(insertAnnotation(uint, uint, const QString&)));
   QString encoding = quantaApp->defaultEncoding();
   KTextEditor::EncodingInterface* encodingIf = dynamic_cast<KTextEditor::EncodingInterface*>(doc);
   if (encodingIf)

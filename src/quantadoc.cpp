@@ -239,7 +239,6 @@ void QuantaDoc::slotOpeningCompleted(const KURL &url)
   quantaApp->slotRepaintPreview();
   quantaApp->reparse(true);
   quantaApp->debugger()->fileOpened(url.prettyURL(0, KURL::StripFileProtocol));
-  w->readAnnotations();
   quantaApp->slotNewStatus();
   emit eventHappened("after_open", url.url(), QString::null);
   

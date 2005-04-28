@@ -20,6 +20,13 @@
 
 class MessageOutput;
 
+enum AnnotationScope
+{
+  CurrentFile = 0,
+  AllFiles,
+  AnnotatedFiles
+};
+
 class AnnotationOutput : public KTabWidget
 {
 Q_OBJECT
@@ -32,6 +39,8 @@ public:
     MessageOutput *annotatedFilesAnnotations() const {return m_annotatedFilesAnnotations;}
 
 public slots:
+    void clearAnnotations();
+    void insertAnnotation(uint line, uint line, const QString& text);
     void refreshAnnotations();
     void tabChanged(QWidget *w);
 

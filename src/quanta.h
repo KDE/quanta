@@ -125,7 +125,7 @@ public:
 //TODO: check if we really need these "get" methods (and get rid o get)
   MessageOutput *messageOutput() const {return m_messageOutput;}
   MessageOutput *problemOutput() const {return m_problemOutput;}
-  MessageOutput *annotationOutput() const;
+  AnnotationOutput *annotationOutput() const {return m_annotationOutput;}
 
   DebuggerManager *debugger() const {return m_debugger;}
   KParts::PartManager *partManager() {return m_partManager;}

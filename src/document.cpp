@@ -2948,43 +2948,56 @@ void Document::setAnnotationText(uint line, const QString& text)
     m_annotations.insert(line, text);
     if (markIf)
       markIf->setMark(line, KTextEditor::MarkInterface::markType08);
-    QString s = text;
-    s.remove('\n');
-    quantaApp->annotationOutput()->showMessage(i18n("Line %1, Column: 1 : %2").arg(line + 1).arg(s));
+    uint line, column;
+    viewCursorIf->cursorPositionReal(&line, &column);
+    viewCursorIf->setCursorPositionReal(line, 0);
+    const DTDStruct *dtd = currentDTD(true);
+    QString commentBegin = "";
+    QString commentEnd = "";
+    for (QMap<QString, QString>::ConstIterator it = dtd->comments.constBegin(); it != dtd->comments.constEnd(); ++it)
+    {
+      commentBegin = it.key();
+      commentEnd = it.data();
+      if (commentEnd != "\n")
+        break;
+    }
+    if (commentBegin.isEmpty())
+    {
+      if (dtd->family == Xml)
+      {
+        commentBegin = "<!--";
+        commentEnd = "-->";
+      } else
+      {
+        commentBegin = "/*";
+        commentEnd = "*/";
+      }
+    }
+    QString s = "@annotation: " + text;
+    s.prepend(commentBegin + " ");
+    s.append(" " + commentEnd + "\n");
+    insertText(s, true, true); 
+    emit showAnnotation(0, line, text);
   }
 }
 
-void Document::readAnnotations()
+void Document::addAnnotation(uint line, const QString& text)
 {
-  quantaApp->annotationOutput()->clear();
+  m_annotations.insert(line, text);
+  if (markIf)
+    markIf->setMark(line, KTextEditor::MarkInterface::markType08);  
+  emit showAnnotation(0, line, text);
+}
+
+void Document::clearAnnotations()
+{
   if (markIf)
   {
     QPtrList<KTextEditor::Mark> m = markIf->marks();
     for (uint i=0; i < m.count(); i++)
       markIf->removeMark( m.at(i)->line, KTextEditor::MarkInterface::markType08 );
  }
-
-  if (!m_annotationFile.isEmpty() && !url().isLocalFile())
-    KIO::NetAccess::removeTempFile(m_annotationFile);
-  m_annotationFile = QuantaCommon::readAnnotations(url(), m_annotations);
-  quantaApp->annotationOutput()->clear(); 
-  for (QMap<uint, QString>::ConstIterator it = m_annotations.constBegin(); it != m_annotations.constEnd(); ++it)
-  {
-    setAnnotationText(it.key(), it.data());
-  }
-}
-
-void Document::writeAnnotations()
-{
-  QuantaCommon::writeAnnotations(url(), m_annotationFile, m_annotations);
-
-  quantaApp->annotationOutput()->clear();
-  for (QMap<uint, QString>::ConstIterator it = m_annotations.constBegin(); it != m_annotations.constEnd(); ++it)
-  {
-    QString s = it.data();
-    s.remove('\n');
-    quantaApp->annotationOutput()->showMessage(i18n("Line %1, Column: 1 : %2").arg(it.key() + 1).arg(s));
-  }
+ m_annotations.clear();
 }
 
 #include "document.moc"
