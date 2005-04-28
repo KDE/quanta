@@ -125,9 +125,12 @@ bool HTMLEnhancer::enhanceNode(Node *node, DOM::Node parentDNode, DOM::Node next
 			m_wkafkapart->connectDomNodeToQuantaNode(domNode2, node);
 		}
 	}
+ 
+    QTag* qTag = QuantaCommon::tagFromDTD(m_wkafkapart->getCurrentDoc()->defaultDTD(),
+                                       parentDNode.nodeName().string());
 
 	//THEN replace, if asked, scripts by a little icon.
-	if(node->tag->type == Tag::ScriptTag && m_showIconForScripts)
+    if(node->tag->type == Tag::ScriptTag && m_showIconForScripts && qTag->isChild("IMG", false))
 	{
 		script = node->tag->name.left(node->tag->name.find("block", 0, false) - 1).lower();
 #ifdef LIGHT_DEBUG
@@ -164,7 +167,7 @@ bool HTMLEnhancer::enhanceNode(Node *node, DOM::Node parentDNode, DOM::Node next
 	}
 	
 	//THEN if it is a comment, add a little icon ;o)
-	if(node->tag->type == Tag::Comment && m_showIconForScripts)
+    if(node->tag->type == Tag::Comment && m_showIconForScripts && qTag->isChild("IMG", false))
 	{
 #ifdef LIGHT_DEBUG
 		kdDebug(25001)<< "HTMLTranslator::translateNode() - Comment" << endl;

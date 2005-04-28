@@ -3328,19 +3328,10 @@ bool kafkaCommon::insertDomNode(DOM::Node node, DOM::Node parent, DOM::Node next
     try
     {
         parent.insertBefore(node, nextSibling);
-#ifdef HEAVY_DEBUG
-
     }
-    catch(DOM::DOMException e)
+    catch(DOM::DOMException const& e)
     {
         kdDebug(25001)<< "kafkaCommon::insertDomNode() - ERROR code :" << e.code << endl;
-#else
-
-    }
-    catch(DOM::DOMException)
-    {
-#endif
-        return false;
     }
     return true;
 }
