@@ -562,7 +562,7 @@ void QuantaInit::readOptions()
   qConfig.updateClosingTags = m_config->readBoolEntry("Update Closing Tags", true);
   qConfig.replaceAccented = m_config->readBoolEntry("Replace Accented Chars", false);
 
-  qConfig.defaultEncoding = m_config->readEntry("Default encoding", QTextCodec::codecForLocale()->name());
+  qConfig.defaultEncoding = m_config->readEntry("Default encoding", "UTF8");
 
   StructTreeView::ref()->setFollowCursor( m_config->readBoolEntry("Follow Cursor", true));
 
