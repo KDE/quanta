@@ -526,7 +526,6 @@ void QuantaInit::initView()
   connect(sTab, SIGNAL(clearProblemOutput()),
           m_quanta->m_problemOutput, SLOT(clear()));
   connect(parser, SIGNAL(nodeTreeChanged()), sTab, SLOT(slotNodeTreeChanged()));
-  connect(sTab, SIGNAL(clearAnnotationOutput()), m_quanta->m_annotationOutput, SLOT(clearAnnotations()));
 
   connect(m_quanta->dTab, SIGNAL(openURL(const QString&)), m_quanta, SLOT(openDoc(const QString&)));
 

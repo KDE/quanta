@@ -361,7 +361,6 @@ void StructTreeView::slotReparse(Document *w, Node* node, int openLevel, bool gr
   timer->restart();
   if (typingInProgress)
     return;
-  emit clearAnnotationOutput();
   deleteList(groupOnly);
   if (!node)
     return;

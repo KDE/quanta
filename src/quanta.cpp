@@ -3954,7 +3954,7 @@ void QuantaApp::slotConvertCase()
 void QuantaApp::slotReloadStructTreeView(bool groupOnly)
 {
   Document *w = ViewManager::ref()->activeDocument();
-   if (StructTreeView::ref()->isVisible() && w)
+  if (StructTreeView::ref()->isVisible() && w)
   {
     StructTreeView::ref()->setParsingDTDs(w->groupsForDTEPs());
     int expandLevel = qConfig.expandLevel;
@@ -3963,6 +3963,31 @@ void QuantaApp::slotReloadStructTreeView(bool groupOnly)
     StructTreeView::ref()->slotReparse(w, baseNode, expandLevel, groupOnly);
   } else
     StructTreeView::ref()->slotReparse(0L, 0L, 0); //delete the tree
+  if (m_annotationOutput->isVisible() && !groupOnly)
+  {
+    m_annotationOutput->clearAnnotations();
+    Node *node = baseNode;
+    while (node)
+    {
+      if (node->tag->type == Tag::Comment)
+      {
+        if (node->child && node->next)  
+        {
+          Tag *commentTag = node->child->tag;
+          QString text = commentTag->tagStr();
+          int pos = text.find("@annotation: ");
+          if (pos != -1)
+          {
+            text = text.mid(pos + 13);
+            int l, c;
+            node->next->tag->beginPos(l, c);
+            commentTag->write()->addAnnotation(l, text);   
+          }
+        }
+      }
+      node = node->nextSibling();
+   }
+  }  
 }
 
 QString QuantaApp::saveCurrentFile()
