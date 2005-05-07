@@ -3,7 +3,7 @@
                              -------------------
     begin                : Jan 12 2001
     copyright            : (C) 2001 by Dmitry Poplavsky <dima@kde.org>
-                           (C) 2002, 2004 Andras Mantia <amantia@kde.org>
+                           (C) 2002-2005 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -28,7 +28,7 @@
 class MessageItem : public QListBoxText {
   public:
 
-    MessageItem( QListBox *listbox, const QString &text=QString::null, int line=-1, const QString &fname=QString::null);
+    MessageItem( QListBox *listbox, const QString &text = QString::null, int line = -1, int column = -1, const QString &fname = QString::null);
 
     /** return line number for file , associated with this message */
     int line();
@@ -37,15 +37,16 @@ class MessageItem : public QListBoxText {
     /** return name of file , associated with this message */
     QString fileName();
 
-    void setLine(int line) { lineNumber = line; lineDefined=true; }
+    void setLine(int line) { lineNumber = line; }
+    void setColumn(int line) { columnNumber = line; }
     void setFileName(const QString &fileName ) { filename = fileName; }
     void addText(const QString &text);
   private:
 
     // line number and filename , associated with this line
-    int lineNumber;
-    bool lineDefined;
-    QString filename;
+    int lineNumber; ///< the line of the item. -1 if not defined
+    int columnNumber; ///< the column of the item. -1 if not defined    
+    QString filename; ///< the filename (URL) of the item. Empty if not defined
 
 };
 

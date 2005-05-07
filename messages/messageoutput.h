@@ -3,7 +3,7 @@
                              -------------------
     begin                : Thu Feb 24 2000
     copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavski <pdima@mail.univ.kiev.ua>
-                           (C) 2002-2004 Andras Mantia <amantia@kde.org>
+                           (C) 2002-2005 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -23,6 +23,8 @@
 class KProcess;
 class KPopupMenu;
 
+class MessageItem;
+
 /**class for displaing of
 weblint output
   *@author Yacovlev Alexander & Dmitry Poplavski
@@ -37,12 +39,29 @@ public:
   QString content();
 
 public slots:
-  /**  */
-  void insertItem(const QString& s );
-  // Insert message for each line of string (EOL-separated).
-  void showMessage(const QString& s, bool append = false);
-  // Append string to the last item
-  void addToLastItem(const QString& s );
+  /**  Inserts an item with the content s to the end of the list*/
+  MessageItem *insertItem(const QString& s);
+  
+  /** Insert message for each line of string (EOL-separated).
+    @param line The line this message refers to. -1 if it's not specified (the first number is taken from the message string)
+    @param column The column this message refers to. -1 if it's not specified (the second number is taken from the message string)
+    @param fileName The URL of the file this message refers to. If empty, the string following the "File: " string in the message is used.
+    @param message The message itself
+    @param append Append the message to the previous one or start a new line.  Default is false, start a new line.
+  */
+  void showMessage(int line, int column, const QString &fileName, const QString& message, bool append = false);
+  /** Insert message for each line of string (EOL-separated).
+    @param message The message itself
+    @param append Append the message to the previous one or start a new line. Default is false, start a new line.
+  */
+  void showMessage(const QString& message, bool append = false);
+  /** Append message string to the last item
+    @param line The line this message refers to. -1 if it's not specified (the first number is taken from the message string)
+    @param column The column this message refers to. -1 if it's not specified (the second number is taken from the message string)
+    @param fileName The URL of the file this message refers to. If empty, the string following the "File: " string in the message is used.
+    @param message The message itself
+  */
+  void addToLastItem(const QString& message);
   // Copy message content to clipboard
   void copyContent();
   // Save message content to clipboard

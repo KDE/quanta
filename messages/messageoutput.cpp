@@ -3,7 +3,7 @@
                              -------------------
     begin                : Thu Feb 24 2000
     copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavski <pdima@mail.univ.kiev.ua>
-                           (C) 2003-2004 Andras Mantia <amantia@kde.org>
+                           (C) 2003-2005 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -59,16 +59,17 @@ MessageOutput::~MessageOutput()
 {
 }
 
-void MessageOutput::insertItem(const QString& s)
+MessageItem *MessageOutput::insertItem(const QString& s)
 {
   checkMaxItems();
-  new MessageItem(this, s);
+  MessageItem *it = new MessageItem(this, s);
   setBottomItem(count()>0?count()-1:0);
+  return it;
 }
 
 void MessageOutput::addToLastItem(const QString& s)
 {
-  int ind = count()-1;
+  int ind = count() - 1;
   if ( ind != -1 ) {
     MessageItem *it = dynamic_cast<MessageItem*>( item(ind) );
     if ( it )
@@ -78,21 +79,40 @@ void MessageOutput::addToLastItem(const QString& s)
   }
 }
 
-
-void MessageOutput::showMessage(const QString& s, bool append)
+void MessageOutput::showMessage(int line, int col, const QString &fileName, const QString& s, bool append)
 {
+  MessageItem *it = 0L;
   QString message = s;
   int endPos;
   if ( !count() || (!append && !text(count()-1).stripWhiteSpace().isEmpty()) )
-    insertItem("");
+    it = insertItem("");
   while ( ( endPos = message.find('\n') ) != -1 ) {
+    if (it)
+    {
+      it->setLine(line);
+      it->setColumn(col);
+      it->setFileName(fileName);
+    }
     addToLastItem( message.left(endPos) );
-    insertItem("");
+    it = insertItem("");
     message.remove(0,endPos+1);
   }
   if (!message.isEmpty())
-      addToLastItem( message);
+  {
+    if (it)
+    {
+      it->setLine(line);
+      it->setColumn(col);
+      it->setFileName(fileName);
+    }
+    addToLastItem( message);
+  }
   setBottomItem(count()>0?count()-1:0);
+}
+
+void MessageOutput::showMessage(const QString& s, bool append)
+{
+  showMessage(-1, -1, "", s, append);
 }
 
 

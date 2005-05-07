@@ -5217,7 +5217,6 @@ void QuantaApp::slotAnnotate()
 void QuantaApp::slotNewProjectLoaded(const QString &, const KURL &, const KURL &)
 {
   MessageOutput *allOutput = m_annotationOutput->allAnnotations();
-  MessageOutput *annotatedOutput = m_annotationOutput->annotatedFilesAnnotations();
   QStringList files = Project::ref()->fileNameList();
   for (QStringList::ConstIterator it = files.constBegin(); it != files.constEnd(); ++it)
   {
@@ -5230,8 +5229,6 @@ void QuantaApp::slotNewProjectLoaded(const QString &, const KURL &, const KURL &
     {
       allOutput->insertItem(i18n("File: %1, Line: %2 : %3").arg(*it).arg(it2.key()).arg(it2.data()));
     }
-    if (!annotations.isEmpty())
-      annotatedOutput->insertItem(*it);
   }
 }
 

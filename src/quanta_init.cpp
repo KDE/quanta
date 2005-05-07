@@ -264,8 +264,6 @@ void QuantaInit::initQuanta()
           m_quanta, SLOT(gotoFileAndLine(const QString&, int, int)));
   connect(m_quanta->m_annotationOutput->allAnnotations(), SIGNAL(clicked(const QString&, int, int)),
           m_quanta, SLOT(gotoFileAndLine(const QString&, int, int)));
-  connect(m_quanta->m_annotationOutput->annotatedFilesAnnotations(), SIGNAL(clicked(const QString&, int, int)),
-          m_quanta, SLOT(gotoFileAndLine(const QString&, int, int)));
 
   m_quanta->refreshTimer = new QTimer(m_quanta);
   connect(m_quanta->refreshTimer, SIGNAL(timeout()), m_quanta, SLOT(slotReparse()));

@@ -24,7 +24,6 @@ enum AnnotationScope
 {
   CurrentFile = 0,
   AllFiles,
-  AnnotatedFiles
 };
 
 class AnnotationOutput : public KTabWidget
@@ -36,7 +35,6 @@ public:
     ~AnnotationOutput();
     MessageOutput *currentFileAnnotations() const {return m_currentFileAnnotations;}
     MessageOutput *allAnnotations() const {return m_allAnnotations;}
-    MessageOutput *annotatedFilesAnnotations() const {return m_annotatedFilesAnnotations;}
 
 public slots:
     void clearAnnotations();
@@ -47,7 +45,6 @@ public slots:
 private:
     MessageOutput *m_currentFileAnnotations;
     MessageOutput *m_allAnnotations;
-    MessageOutput *m_annotatedFilesAnnotations;
 };
 
 #endif
