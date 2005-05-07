@@ -160,7 +160,6 @@ upload.*/
    */
   void loadProjectFromTemp(const KURL &url, const QString &tempFile, const QString &sessionTempFile);
 
-  void slotDeleteCopytoDlg(CopyTo *dlg);
 
   void getStatusFromTree();
 
@@ -229,6 +228,8 @@ public slots:
 
   /** for the new project wizard */
   void slotSelectProjectType(const QString &title);
+
+  void slotDeleteCopytoDlg(CopyTo *dlg);
 
 signals:
   void setLocalFiles(bool);
