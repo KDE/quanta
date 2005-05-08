@@ -4679,7 +4679,7 @@ void QuantaApp::slotViewInKFM()
   }
   if ( !w->isUntitled() )
   {
-    KProcess *show = new KProcess();
+    KProcess *show = new KProcess(this);
     KURL url = Project::ref()->urlWithPrefix(w->url());
 #if KDE_IS_VERSION(3,2,90)
     *show << "kfmclient" << "newTab" << url.url();
@@ -4717,7 +4717,7 @@ void QuantaApp::slotViewInLynx()
   }
   if ( !w->isUntitled() )
   {
-    KProcess *show = new KProcess();
+    KProcess *show = new KProcess(this);
     KURL url = Project::ref()->urlWithPrefix(w->url());
     *show << "konsole"
           << "--nohist"
