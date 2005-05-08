@@ -178,7 +178,7 @@
 #include "tagaction.h"
 #include "toolbartabwidget.h"
 #include "dcopquanta.h"
-
+#include "tagmiscdlg.h"
 
 #include "quantaplugininterface.h"
 #include "quantaplugin.h"
@@ -471,7 +471,7 @@ bool QuantaApp::slotFileSaveAs(QuantaView *viewToSave)
       {
         saveAsUrl.setPath(saveAsUrl.directory(false, false) + oldURL.fileName());
       }
-        
+
 
     KEncodingFileDialog::Result data;
     data = KEncodingFileDialog::getSaveURLAndEncoding(myEncoding, saveAsUrl.url(),
@@ -845,8 +845,8 @@ void QuantaApp::slotInsertTag(const KURL& url, DirInfo dirInfo)
       QString mimetype = KMimeType::findByURL(url)->name();
       if (mimetype.contains("image"))
       {
-        QString imgFileName;  
-        KIO::NetAccess::download(url, imgFileName, this); 
+        QString imgFileName;
+        KIO::NetAccess::download(url, imgFileName, this);
         QImage img(imgFileName);
         if (!img.isNull())
         {
@@ -1626,7 +1626,7 @@ void QuantaApp::gotoFileAndLine(const QString& filename, int line, int column)
     if (view)
     {
       view->activate();
-      view->activated();      
+      view->activated();
     } else
     {
       m_doc->openDocument( KURL::fromPathOrURL( filename ) );
@@ -2167,7 +2167,7 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
    dom->setContent(toolbarDom->toString());
    p_toolbar->dom = dom;
    p_toolbar->nameModified = nameModified;
-   
+
    QString s = i18nName.lower();
    QString toolbarId = s;
    QRegExp rx("\\s|\\.");
@@ -2179,7 +2179,7 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
      toolbarId.replace(rx, "_");
      n++;
    }
-   
+
 
    userToolbarsCount++;
 
@@ -2700,7 +2700,7 @@ void QuantaApp::slotSendToolbar()
   QString tempFileName = createToolbarTarball();
   if (tempFileName.isNull())
     return;
-  
+
   QStringList toolbarFile;
   toolbarFile += tempFileName;
 
@@ -3059,7 +3059,7 @@ void QuantaApp::slotEditDTD()
       return;
 
     QString dtdName = DTDs::ref()->getDTDNameFromNickName(res);
-    
+
     KDialogBase editDlg(this, "edit_dtep", true, i18n("Configure DTEP"), KDialogBase::Ok | KDialogBase::Cancel);
     DTEPEditDlg dtepDlg(DTDs::ref()->find(dtdName)->fileName, &editDlg);
     editDlg.setMainWidget(&dtepDlg);
@@ -3555,7 +3555,7 @@ void QuantaApp::slotEmailDTEP()
     if (tempFileName.isNull())
       return;
     QStringList dtdFile;
-    dtdFile += tempFileName;   
+    dtdFile += tempFileName;
 
     TagMailDlg *mailDlg = new TagMailDlg( this, i18n("Send DTEP in Email"));
     QString toStr;
@@ -3971,7 +3971,7 @@ void QuantaApp::slotReloadStructTreeView(bool groupOnly)
     {
       if (node->tag->type == Tag::Comment)
       {
-        if (node->child && node->next)  
+        if (node->child && node->next)
         {
           Tag *commentTag = node->child->tag;
           QString text = commentTag->tagStr();
@@ -3981,13 +3981,13 @@ void QuantaApp::slotReloadStructTreeView(bool groupOnly)
             text = text.mid(pos + 13);
             int l, c;
             node->next->tag->beginPos(l, c);
-            commentTag->write()->addAnnotation(l, text);   
+            commentTag->write()->addAnnotation(l, text);
           }
         }
       }
       node = node->nextSibling();
    }
-  }  
+  }
 }
 
 QString QuantaApp::saveCurrentFile()
@@ -4036,7 +4036,7 @@ void QuantaApp::slotNewPart(KParts::Part *newPart, bool setActiv)
 
 bool QuantaApp::queryClose()
 {
-  if (m_quantaInit) 
+  if (m_quantaInit)
     return false; //not loaded completely
   bool canExit = true;
   if (quantaStarted)
@@ -4182,7 +4182,7 @@ void QuantaApp::slotEditCurrentTag()
 
       delete dlg;
     }
-  } 
+  }
   if (isUnknown)
   {
     const DTDStruct *dtd = w->defaultDTD();
@@ -4195,8 +4195,8 @@ void QuantaApp::slotEditCurrentTag()
         int ePos = currentLine.find('>', col);
         if (ePos != -1)
         {
-          AreaStruct area(line, sPos, line, ePos);          
-          Tag *tag = new Tag(area, w, dtd, true);  
+          AreaStruct area(line, sPos, line, ePos);
+          Tag *tag = new Tag(area, w, dtd, true);
           if ( QuantaCommon::isKnownTag(dtd->name, tag->name) )
           {
             isUnknown = false;
@@ -4482,22 +4482,18 @@ void QuantaApp::slotTagMisc()
  static QString element = "";
  static bool addClosingTag = true;
 
- KDialogBase miscDlg(this, 0L, true, i18n("Misc. Tag"), KDialogBase::Ok | KDialogBase::Cancel);
- TagMisc *miscWidget = new TagMisc(&miscDlg);
- miscDlg.setMainWidget(miscWidget);
- miscWidget->addClosingTag->setChecked(addClosingTag);
- miscWidget->elementName->setText(element);
+ TagMiscDlg * miscDlg = new TagMiscDlg( this, 0L, addClosingTag, element );
 
-  if ( miscDlg.exec() )
+  if ( miscDlg->exec() )
   {
     QString tag;
-    element = miscWidget->elementName->text();
+    element = miscDlg->elementTagName();
     element.remove('<');
     element.remove('>');
     if ( !element.isEmpty())
     {
       tag += "<" + QuantaCommon::attrCase(element)+">";
-        if ( (addClosingTag = miscWidget->addClosingTag->isChecked()) == true)
+        if ( (addClosingTag = miscDlg->addClosingTag()) == true)
         {
           w->insertTag(tag,QuantaCommon::tagCase( "</"+QuantaCommon::attrCase(element)+">"));
         } else
@@ -4506,7 +4502,9 @@ void QuantaApp::slotTagMisc()
         }
     }
   }
+  delete miscDlg;
 }
+
 
 /** do quick list */
 void QuantaApp::slotTagQuickList()
@@ -5066,7 +5064,7 @@ KDockWidget::DockPosition QuantaApp::prevDockPosition(QWidget* widget, KDockWidg
   QMap<KDockWidget::DockPosition,QString> maps;
   QMap<QString,QString> map;
   QString dock = widget->name();
-  
+
   // Which groups to search through
   maps[KDockWidget::DockTop] = "dock_setting_default::KMdiDock::topDock";
   maps[KDockWidget::DockLeft] = "dock_setting_default::KMdiDock::leftDock";
@@ -5074,11 +5072,11 @@ KDockWidget::DockPosition QuantaApp::prevDockPosition(QWidget* widget, KDockWidg
   maps[KDockWidget::DockRight] = "dock_setting_default::KMdiDock::rightDock";
 
   // Loop the groups
-  for(QMap<KDockWidget::DockPosition,QString>::Iterator itmaps = maps.begin(); itmaps != maps.end(); ++itmaps ) 
+  for(QMap<KDockWidget::DockPosition,QString>::Iterator itmaps = maps.begin(); itmaps != maps.end(); ++itmaps )
   {
-    // Loop the items in the  group    
+    // Loop the items in the  group
     map = quantaApp->config()->entryMap(itmaps.data());
-    for(QMap<QString,QString>::Iterator it = map.begin(); it != map.end(); ++it ) 
+    for(QMap<QString,QString>::Iterator it = map.begin(); it != map.end(); ++it )
     {
       // If we found it, return the key of the group
       if(it.data() == dock)
@@ -5172,7 +5170,7 @@ void QuantaApp::createDocPart()
 
 void QuantaApp::insertTagActionPoolItem(QString const& action_item)
 {
-    for(QStringList::Iterator it = m_tagActionPool.begin(); it != m_tagActionPool.end(); ++it) 
+    for(QStringList::Iterator it = m_tagActionPool.begin(); it != m_tagActionPool.end(); ++it)
         if(action_item == *it)
             return;
 
@@ -5181,7 +5179,7 @@ void QuantaApp::insertTagActionPoolItem(QString const& action_item)
 
 void QuantaApp::removeTagActionPoolItem(QString const& action_item)
 {
-    for(QStringList::Iterator it = m_tagActionPool.begin(); it != m_tagActionPool.end(); ++it) 
+    for(QStringList::Iterator it = m_tagActionPool.begin(); it != m_tagActionPool.end(); ++it)
     {
         if(action_item == *it)
         {
@@ -5206,14 +5204,14 @@ void QuantaApp::slotTabMoved(int from, int to)
   KMdiChildView *view = m_pDocumentViews->at(from);
   m_pDocumentViews->remove(from);
   m_pDocumentViews->insert(to, view);
-  connect(this, SIGNAL(viewActivated (KMdiChildView *)), ViewManager::ref(), SLOT(slotViewActivated(KMdiChildView*)));  
+  connect(this, SIGNAL(viewActivated (KMdiChildView *)), ViewManager::ref(), SLOT(slotViewActivated(KMdiChildView*)));
 }
 
 void QuantaApp::slotTabAboutToMove(int from, int to)
 {
   Q_UNUSED(from);
   Q_UNUSED(to);
-  disconnect(this, SIGNAL(viewActivated (KMdiChildView *)), ViewManager::ref(), SLOT(slotViewActivated(KMdiChildView*)));  
+  disconnect(this, SIGNAL(viewActivated (KMdiChildView *)), ViewManager::ref(), SLOT(slotViewActivated(KMdiChildView*)));
 }
 
 QString QuantaApp::currentURL() const
@@ -5226,9 +5224,9 @@ void QuantaApp::slotAnnotate()
   Document *w = ViewManager::ref()->activeDocument();
   if (!w) return;
   uint line, column;
-  w->viewCursorIf->cursorPositionReal(&line, &column);  
+  w->viewCursorIf->cursorPositionReal(&line, &column);
   KDialogBase editDlg(this, "annotate", true, i18n("Annotate Document"), KDialogBase::Ok | KDialogBase::Cancel /*| KDialogBase::User1*/);
-  KTextEdit editor(&editDlg);  
+  KTextEdit editor(&editDlg);
   editor.setTextFormat(PlainText);
   editor.setText(w->annotationText(line));
   editDlg.setMainWidget(&editor);
