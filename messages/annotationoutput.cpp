@@ -113,12 +113,14 @@ void AnnotationOutput::readAnnotations()
   }
 }
 
-void AnnotationOutput::writeAnnotations(const QString &fileName, const QMap<uint, QString> &annotations)
+void AnnotationOutput::writeAnnotations(const QString &fileName, const QMap<uint, QString> &a_annotations)
 {
   m_allAnnotations->clear();  
   m_annotatedFileItems.clear();
   m_fileNames.clear();
   m_lines.clear();
+  bool modified = false;
+  QMap<uint, QString> annotations = a_annotations;
   QDomDocument *dom = Project::ref()->dom();
   QDomElement annotationElement = dom->firstChild().firstChild().namedItem("annotations").toElement();
   if (annotationElement.isNull())
@@ -134,7 +136,15 @@ void AnnotationOutput::writeAnnotations(const QString &fileName, const QMap<uint
     QDomNode n2 = n.nextSibling();
     if (fileName == fName)    
     {
-      n.parentNode().removeChild(n);
+      QString text = el.attribute("text");
+      bool ok;
+      int line = el.attribute("line").toInt(&ok, 10);
+      if (!annotations.contains(line) || (annotations[line] != text))
+      {
+        n.parentNode().removeChild(n);
+        modified = true;
+      } else
+        annotations.remove(line);
     }
     n = n2;
   }
@@ -145,8 +155,10 @@ void AnnotationOutput::writeAnnotations(const QString &fileName, const QMap<uint
     el.setAttribute("line", it.key());
     el.setAttribute("text", it.data());
     annotationElement.appendChild(el);
+    modified = true;
   }
-  Project::ref()->setModified(true); //TODO: set the modified flag only when needed
+  if (modified)
+    Project::ref()->setModified(true);
   if (m_allAnnotations->isVisible())
     readAnnotations();
 }
