@@ -421,7 +421,7 @@ void QuantaInit::initProject()
   connect(m_project, SIGNAL(newProjectLoaded(const QString &, const KURL &, const KURL &)),
           m_quanta->fTab, SLOT(slotNewProjectLoaded(const QString &, const KURL &, const KURL &)));
   connect(m_project, SIGNAL(newProjectLoaded(const QString &, const KURL &, const KURL &)),
-          m_quanta->m_annotationOutput, SLOT(refreshAnnotations()));
+          m_quanta->annotationOutput(), SLOT(readAnnotations()));
 
   connect(pTab, SIGNAL(changeFileDescription(const KURL&, const QString&)),
           m_project, SLOT(slotFileDescChanged(const KURL&, const QString&)));

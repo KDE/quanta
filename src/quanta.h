@@ -192,7 +192,7 @@ public:
   void startIdleTimer();
 
   /** Called when a document was closed. Resets some variables. */
-  void slotFileClosed();
+  void slotFileClosed(Document *w);
   void setTabToolTip(QWidget *w, const QString& toolTipStr);
 
   void createPreviewPart();

@@ -112,7 +112,7 @@ QuantaView::~QuantaView()
 {
    // quantaApp is undefined if the destructor of QuantaApp is active
    if (quantaApp)
-     quantaApp->slotFileClosed();
+     quantaApp->slotFileClosed(m_document);
    if (m_document)
    {
      m_document->view()->reparent(0L, 0, QPoint(), false);

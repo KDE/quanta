@@ -121,7 +121,7 @@ void ViewManager::createNewDocument()
   KTextEditor::Document *doc = KTextEditor::createDocument ("libkatepart", view, "KTextEditor::Document");
 #endif
   Document *w = new Document(doc, 0L);
-  connect(w, SIGNAL(showAnnotation(uint, uint, const QString&)), quantaApp->annotationOutput(), SLOT(insertAnnotation(uint, uint, const QString&)));
+  connect(w, SIGNAL(showAnnotation(uint, const QString&, const QString&)), quantaApp->annotationOutput(), SLOT(insertAnnotation(uint, const QString&, const QString&)));
   QString encoding = quantaApp->defaultEncoding();
   KTextEditor::EncodingInterface* encodingIf = dynamic_cast<KTextEditor::EncodingInterface*>(doc);
   if (encodingIf)

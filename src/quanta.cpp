@@ -1523,6 +1523,8 @@ void QuantaApp::slotNewLineColumn()
 void QuantaApp::updateTreeViews()
 {
   QuantaView *view = ViewManager::ref()->activeView();
+  if (!view)
+    return;
   Document *w = view->document();
   if (w)
   {
@@ -5004,8 +5006,17 @@ void QuantaApp::initTabWidget(bool closeButtonsOnly)
 #endif
 }
 
-void QuantaApp::slotFileClosed()
+void QuantaApp::slotFileClosed(Document *w)
 {
+  if (w)
+  {
+    KURL url = w->url();
+    if (Project::ref()->hasProject() && Project::ref()->contains(url))
+    {
+      KURL u = QExtFileInfo::toRelative(url, Project::ref()->projectBaseURL());
+      m_annotationOutput->writeAnnotations(QuantaCommon::qUrl(u), w->annotations());
+    }
+  }
 }
 
 void QuantaApp::slotCVSCommandExecuted(const QString& command, const QStringList& files)
@@ -5250,20 +5261,7 @@ void QuantaApp::slotAnnotate()
 
 void QuantaApp::slotNewProjectLoaded(const QString &, const KURL &, const KURL &)
 {
-  MessageOutput *allOutput = m_annotationOutput->allAnnotations();
-  QStringList files = Project::ref()->fileNameList();
-  for (QStringList::ConstIterator it = files.constBegin(); it != files.constEnd(); ++it)
-  {
-    KURL u = KURL::fromPathOrURL(*it);
-    QMap<uint, QString> annotations;
-    QString file = QuantaCommon::readAnnotations(u, annotations);
-    if (!u.isLocalFile())
-      KIO::NetAccess::removeTempFile(file);
-    for (QMap<uint, QString>::ConstIterator it2 = annotations.constBegin(); it2 != annotations.constEnd(); ++it2)
-    {
-      allOutput->insertItem(i18n("File: %1, Line: %2 : %3").arg(*it).arg(it2.key()).arg(it2.data()));
-    }
-  }
+  m_annotationOutput->readAnnotations();
 }
 
 #include "quanta.moc"

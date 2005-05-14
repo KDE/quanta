@@ -670,7 +670,7 @@ void ProjectPrivate::loadProjectXML()
   } else
     UploadProfiles::ref()->clear();
 
-  if (!m_createSessionDom)
+  if (m_createSessionDom)
   {
     QDomNode node;
     node = projectNode.namedItem("treestatus").cloneNode(true);

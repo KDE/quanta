@@ -33,6 +33,7 @@
   *@author Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon & Andras Mantia
   */
 
+class QDomDocument;
 class QEvent;
 class QFocusEvent;
 class KConfig;
@@ -249,8 +250,7 @@ signals:
 
   void breakpointMarked(Document*, int);
   void breakpointUnmarked(Document*, int);
-  void showAnnotation(uint, uint, const QString&);
-
+  void showAnnotation(uint, const QString&, const QString&);
 
 private slots:
   void slotReplaceChar();
@@ -263,7 +263,6 @@ private slots:
 private:
 
   QMap<uint, QString> m_annotations;
-  QString m_annotationFile;
   QString untitledUrl;
   int m_replaceLine;
   int m_replaceCol;

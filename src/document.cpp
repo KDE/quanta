@@ -215,12 +215,10 @@ Document::Document(KTextEditor::Document *doc,
 
 Document::~Document()
 {
-  if (!url().isLocalFile())
-    KIO::NetAccess::removeTempFile(m_annotationFile);
   parser->clearGroups();
-//  kdDebug(24000) << "Document::~ Document: " << this << endl;
- m_doc->closeURL(false); //TODO: Workaround for a Kate bug. Remove when KDE < 3.2.0 support is dropped.
- delete m_doc;
+  //  kdDebug(24000) << "Document::~ Document: " << this << endl;
+  m_doc->closeURL(false); //TODO: Workaround for a Kate bug. Remove when KDE < 3.2.0 support is dropped.
+  delete m_doc;
 }
 
 void Document::setUntitledUrl(const QString &url)
@@ -2977,7 +2975,7 @@ void Document::setAnnotationText(uint line, const QString& text)
     s.prepend(commentBegin + " ");
     s.append(" " + commentEnd + "\n");
     insertText(s, true, true); 
-    emit showAnnotation(0, line, text);
+    emit showAnnotation(line, "", text);
   }
 }
 
@@ -2986,7 +2984,7 @@ void Document::addAnnotation(uint line, const QString& text)
   m_annotations.insert(line, text);
   if (markIf)
     markIf->setMark(line, KTextEditor::MarkInterface::markType08);  
-  emit showAnnotation(0, line, text);
+  emit showAnnotation(line, "", text);
 }
 
 void Document::clearAnnotations()

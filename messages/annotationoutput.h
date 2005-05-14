@@ -12,12 +12,14 @@
 #ifndef ANNOTATIONOUTPUT_H
 #define ANNOTATIONOUTPUT_H
 
+
 #include <ktabwidget.h>
 
 /**
 @author Andras Mantia
 */
 
+class QDomDocument;
 class MessageOutput;
 
 enum AnnotationScope
@@ -35,11 +37,12 @@ public:
     ~AnnotationOutput();
     MessageOutput *currentFileAnnotations() const {return m_currentFileAnnotations;}
     MessageOutput *allAnnotations() const {return m_allAnnotations;}
+    void writeAnnotations(const QString &fileName, const QMap<uint, QString> &annotations); 
 
 public slots:
+    void readAnnotations(); 
     void clearAnnotations();
-    void insertAnnotation(uint line, uint line, const QString& text);
-    void refreshAnnotations();
+    void insertAnnotation(uint line, const QString& fileName, const QString& text);
     void tabChanged(QWidget *w);
 
 private:
