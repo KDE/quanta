@@ -20,6 +20,11 @@
 */
 
 class QDomDocument;
+class QListViewItem;
+
+class KListView;
+class KListViewItem;
+
 class MessageOutput;
 
 enum AnnotationScope
@@ -36,18 +41,27 @@ public:
 
     ~AnnotationOutput();
     MessageOutput *currentFileAnnotations() const {return m_currentFileAnnotations;}
-    MessageOutput *allAnnotations() const {return m_allAnnotations;}
+    KListView *allAnnotations() const {return m_allAnnotations;}
     void writeAnnotations(const QString &fileName, const QMap<uint, QString> &annotations); 
 
 public slots:
     void readAnnotations(); 
     void clearAnnotations();
     void insertAnnotation(uint line, const QString& fileName, const QString& text);
+
+private slots:
     void tabChanged(QWidget *w);
+    void itemExecuted(QListViewItem *item);
+
+signals:
+    void clicked(const QString& fname, int line, int col);
 
 private:
     MessageOutput *m_currentFileAnnotations;
-    MessageOutput *m_allAnnotations;
+    KListView *m_allAnnotations;
+    QDict<KListViewItem> m_annotatedFileItems;
+    QMap<QListViewItem*, QString> m_fileNames;
+    QMap<QListViewItem*, uint> m_lines;
 };
 
 #endif
