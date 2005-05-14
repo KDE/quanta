@@ -252,6 +252,7 @@ QuantaApp::QuantaApp(int mdiMode) : DCOPObject("WindowManagerIf"), KMdiMainFrm( 
   m_newScriptStuff = 0L;
   m_newDocStuff = 0L;
   m_debugger = 0L;
+  m_parserEnabled = true;
   emit eventHappened("quanta_start", QDateTime::currentDateTime().toString(Qt::ISODate), QString::null);
 }
 
@@ -350,6 +351,7 @@ void QuantaApp::slotFileOpen()
 void QuantaApp::slotFileOpen(const KURL::List &urls, const QString& encoding)
 {
   m_doc->blockSignals(true);
+  m_parserEnabled = false;
   for (KURL::List::ConstIterator i = urls.begin(); i != urls.end(); ++i)
   {
     if (QuantaCommon::checkMimeGroup(*i, "text") ||
@@ -357,6 +359,8 @@ void QuantaApp::slotFileOpen(const KURL::List &urls, const QString& encoding)
       slotFileOpen(*i, encoding);
   }
   m_doc->blockSignals(false);
+  m_parserEnabled = true;
+  reparse(true);
   Document *w = ViewManager::ref()->activeDocument();
   if (w)
     setCaption(w->url().prettyURL());
@@ -1572,7 +1576,7 @@ void QuantaApp::slotForceReparse()
 /** reparse current document and initialize node. */
 void QuantaApp::reparse(bool force)
 {
-  if (!parser)
+  if (!parser || !m_parserEnabled)
     return;
   //temp
 //  if (!parser->activated()) return;
@@ -4611,7 +4615,7 @@ void QuantaApp::slotTagEditTable()
 //            w->editIfExt->editEnd();
 //#endif
     w->viewCursorIf->setCursorPositionReal(line, col);
-    quantaApp->reparse(true);
+    reparse(true);
   }
 }
 

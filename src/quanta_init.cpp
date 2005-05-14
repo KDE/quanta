@@ -635,6 +635,7 @@ void QuantaInit::openLastFiles()
 
   QStringList urls = m_config->readPathListEntry("List of opened files");
   m_quanta->m_doc->blockSignals(true);
+  m_quanta->setParserEnabled(false);
   for ( QStringList::Iterator it = urls.begin(); it != urls.end(); ++it )
   {
     KURL fu;
@@ -645,6 +646,8 @@ void QuantaInit::openLastFiles()
   }
   m_config->sync();
   m_quanta->m_doc->blockSignals(false);
+  m_quanta->setParserEnabled(true);
+  m_quanta->reparse(true);
   Document *w = ViewManager::ref()->activeDocument();
   if (w) //w==0 might happen on quick close on startup
   {

@@ -173,6 +173,8 @@ public:
       toolbar from the file */
   void showToolbarFile(const KURL &url);
 
+  void setParserEnabled(bool enabled) {m_parserEnabled = enabled;}
+
     /** tabs for left panel */
   DocTreeView *dTab;
   EnhancedTagAttributeTree *aTab;
@@ -602,6 +604,7 @@ private:
   uint oldCursorCol;
   bool m_previewVisible;
   bool m_noFramesPreview;
+  bool m_parserEnabled; ///< enables/disables reparsing. If false, even a forced reparse is ignored (used when opening multiple files)
 
   QString m_scriptOutput;
 
