@@ -164,7 +164,7 @@
 </children>
 </tag>
 
-<tag name="div" hasScript="1" hasCore="1" hasI18n="1" scope="paragraph>
+<tag name="div" hasScript="1" hasCore="1" hasI18n="1" scope="paragraph">
 
     <attr name="align" type="list">
         <text>Alignment</text>
