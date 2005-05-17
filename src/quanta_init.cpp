@@ -442,13 +442,17 @@ void QuantaInit::initView()
   connect(m_quanta, SIGNAL(viewActivated (KMdiChildView *)), m_viewManager, SLOT(slotViewActivated(KMdiChildView*)));
   connect(m_quanta, SIGNAL(lastChildViewClosed()), m_viewManager, SLOT(slotLastViewClosed()));
 //   connect(m_quanta, SIGNAL(viewDeactivated(KMdiChildView *)), m_viewManager, SLOT(slotViewDeactivated(KMdiChildView*)));
-   KafkaDocument *m_kafkaDocument = KafkaDocument::ref(0, 0, "KafkaPart");
-   m_kafkaDocument->getKafkaWidget()->view()->setMinimumHeight(50);
-   m_kafkaDocument->readConfig(quantaApp->config());
-   loadVPLConfig();
-  (void) ToolbarTabWidget::ref(quantaApp);
+  KafkaDocument *m_kafkaDocument = KafkaDocument::ref(0, 0, "KafkaPart");
+  m_kafkaDocument->getKafkaWidget()->view()->setMinimumHeight(50);
+  m_kafkaDocument->readConfig(quantaApp->config());
+  loadVPLConfig();
+  ToolbarTabWidget *toolBarTab = ToolbarTabWidget::ref(quantaApp);
+  connect(toolBarTab, SIGNAL(iconTextModeChanged()), quantaApp, SLOT(slotRefreshActiveWindow()));
+   
   //set the toolview and close button style before the GUI is created
-  m_config->setGroup  ("General Options");
+  m_config->setGroup("General Options");
+  int iconTextMode = m_config->readNumEntry("IconTextMode", KToolBar::IconOnly);
+  toolBarTab->setIconText(KToolBar::IconText(iconTextMode));
   qConfig.toolviewTabs = m_config->readNumEntry("MDI style", KMdi::IconOnly);
   m_quanta->initTabWidget();
 

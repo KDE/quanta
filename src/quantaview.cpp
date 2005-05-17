@@ -214,7 +214,7 @@ void QuantaView::addDocument(Document *document)
 
 void QuantaView::addPlugin(QuantaPlugin *plugin)
 {
-   ToolbarTabWidget *m_toolbarTab = ToolbarTabWidget::ref(this);
+   ToolbarTabWidget *m_toolbarTab = ToolbarTabWidget::ref();
    m_toolbarTab->reparent(0, 0, QPoint(), false);
    m_plugin = plugin;
    m_splitter->hide();
@@ -991,12 +991,12 @@ void QuantaView::refreshWindow()
        resize(width(), height());
   } else
   {
-    /*
+    
     kdDebug(24000) << "m_documentArea->height(): " << m_documentArea->height() << endl;
     kdDebug(24000) << "ToolbarTabWidget::ref()->height(): " << ToolbarTabWidget::ref()->height() << " hidden: " << ToolbarTabWidget::ref()->isHidden() << " visible: " << ToolbarTabWidget::ref()->isVisible() << endl;
     kdDebug(24000) <<"sum: " << m_documentArea->height() + ToolbarTabWidget::ref()->height() << endl;
     kdDebug(24000) << "height(): " << height() << endl;
-    */
+    
     if (m_documentArea->height() + ToolbarTabWidget::ref()->height() - 1 > height() && !ToolbarTabWidget::ref()->isHidden()) //don't use isVisible alone instead of isHidden!
         resize(m_documentArea->width(), m_documentArea->height() - ToolbarTabWidget::ref()->height());
       else if (ToolbarTabWidget::ref()->isHidden())

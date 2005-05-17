@@ -231,6 +231,69 @@ QuantaToolBar::QuantaToolBar(QWidget *parent, const char *name, bool honor_style
   m_popupMenu = new KPopupMenu(this);
   m_toolbarTab = dynamic_cast<ToolbarTabWidget*>(parent->parentWidget());
   currentActionName = "";
+  m_iconTextMenu = new KPopupMenu(this);
+  m_iconTextMenu->setCheckable(true);
+  m_iconTextMenu->insertItem(i18n("Icons Only"), 0);
+  m_iconTextMenu->insertItem(i18n("Text Only"), 1);
+  m_iconTextMenu->insertItem(i18n("Text Alongside Icons"), 2);
+  m_iconTextMenu->insertItem(i18n("Text Under Icons"), 3);
+  connect(m_iconTextMenu, SIGNAL(activated(int)), SLOT(slotIconTextChanged(int)));
+  connect(m_iconTextMenu, SIGNAL(aboutToShow()), SLOT(slotIconTextMenuAboutToShow()));
+  setIconText(ToolbarTabWidget::ref()->iconText(), false);
+}
+
+void QuantaToolBar::slotIconTextMenuAboutToShow()
+{
+  m_iconTextMenu->setItemChecked(0, false);
+  m_iconTextMenu->setItemChecked(1, false);
+  m_iconTextMenu->setItemChecked(2, false);
+  m_iconTextMenu->setItemChecked(3, false);
+  switch (ToolbarTabWidget::ref()->iconText()) 
+  {
+    case IconOnly: m_iconTextMenu->setItemChecked(0, true);
+                   break;
+    case TextOnly: m_iconTextMenu->setItemChecked(1, true);
+                   break;
+    case IconTextRight: m_iconTextMenu->setItemChecked(2, true);
+                   break;
+    case IconTextBottom: m_iconTextMenu->setItemChecked(3, true);
+                   break;
+  }  
+}
+
+void QuantaToolBar::slotIconTextChanged(int id)
+{
+  ToolbarTabWidget *toolbarTab = ToolbarTabWidget::ref();
+  int width = toolbarTab->width();
+  int bigHeight = iconSize() + QFontMetrics(KGlobalSettings::toolBarFont()).height() + 10;
+  int normalHeight = iconSize() + 10;
+  for (int i = 0; i < toolbarTab->count(); i++)
+  {
+    QuantaToolBar *tb = static_cast<QuantaToolBar*>(toolbarTab->page(i));
+    switch (id)
+    {
+      case 0: tb->setIconText(IconOnly); 
+              tb->setGeometry(0,0, width, normalHeight);
+              break;
+      case 1: tb->setIconText(TextOnly); 
+              tb->setGeometry(0,0, width, normalHeight);
+              break;
+      case 2: tb->setIconText(IconTextRight); 
+              tb->setGeometry(0,0, width, normalHeight);
+              break;
+      case 3: tb->setIconText(IconTextBottom); 
+              tb->setGeometry(0,0, width, bigHeight);
+              break;
+    }    
+  }
+  toolbarTab->setIconText(iconText()); 
+  if (id == 3)
+  {
+    toolbarTab->setFixedHeight(toolbarTab->tabHeight() + height() + 3);
+  } else
+  {
+    toolbarTab->setFixedHeight(toolbarTab->tabHeight() + height() + 3);
+  }
 }
 
 void QuantaToolBar::mousePressEvent(QMouseEvent *e)
@@ -265,6 +328,8 @@ void QuantaToolBar::mousePressEvent(QMouseEvent *e)
       m_popupMenu->insertItem(i18n("New Toolbar..."), m_toolbarTab, SIGNAL(addToolbar()));
       m_popupMenu->insertItem(i18n("Remove Toolbar"), m_toolbarTab, SLOT(slotRemoveToolbar()));
       m_popupMenu->insertItem(i18n("Rename Toolbar..."), m_toolbarTab, SLOT(slotRenameToolbar()));
+      m_popupMenu->insertSeparator();
+      m_popupMenu->insertItem( i18n("Text Position"), m_iconTextMenu);
       m_popupMenu->insertItem(SmallIconSet("configure_toolbars"), i18n("Configure Toolbars..."), m_toolbarTab, SLOT(slotEditToolbar()));
     }
     m_popupMenu->popup(p);

@@ -44,6 +44,8 @@ public:
   int tabHeight() const;
   QString id(QWidget *w) const;
   QString id(int index) const;
+  KToolBar::IconText iconText() const {return m_iconText;}
+  void setIconText(KToolBar::IconText mode) {m_iconText = mode; emit iconTextModeChanged();}
 
 public slots:
   virtual void removePage(QWidget * w );
@@ -60,6 +62,7 @@ signals:
   void editToolbar(const QString&);
   void newAction();
   void addToolbar();
+  void iconTextModeChanged();
 
 public:
   QString tabUnderMouse;
@@ -74,6 +77,7 @@ protected:
 
 private:
   ToolbarTabWidget(QWidget * parent = 0, const char * name = 0, WFlags f = 0);
+  KToolBar::IconText m_iconText;
 
 };
 
@@ -88,6 +92,8 @@ public:
 private slots:
   void slotEditAction();
   void slotRemoveAction();
+  void slotIconTextChanged(int id);
+  void slotIconTextMenuAboutToShow();
 
 signals:
   void removeAction(const QString&, const QString&);
@@ -97,6 +103,7 @@ protected:
   virtual void mousePressEvent ( QMouseEvent * e );
 
   KPopupMenu *m_popupMenu;
+  KPopupMenu *m_iconTextMenu;
   ToolbarTabWidget *m_toolbarTab;
   QString currentActionName;
 };

@@ -287,6 +287,8 @@ QuantaApp::~QuantaApp()
  idleTimer = 0L;
  delete m_actions;
  m_actions = 0L;
+ cursorLine = 0;
+ cursorCol = 0;
  tempFileList.clear();
  for (uint i = 0; i < tempDirList.count(); i++)
  {
@@ -1782,7 +1784,7 @@ QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomEleme
     }
 #endif
   //kdDebug(24000) << "tb->iconSize() " << tb->iconSize() << endl;
-   if (tb->iconText() == KToolBar::IconTextBottom)
+   if (toolbarTab->iconText() == KToolBar::IconTextBottom)
    {
       tb->setGeometry(0,0, toolbarTab->width(), tb->iconSize() + QFontMetrics(KGlobalSettings::toolBarFont()).height() + 10);
       toolbarTab->setFixedHeight(toolbarTab->tabHeight() + tb->height() + 3);
@@ -3384,6 +3386,15 @@ void QuantaApp::slotToggleDTDToolbar(bool show)
     ViewManager::ref()->activeView()->refreshWindow();
 }
 
+void QuantaApp::slotRefreshActiveWindow()
+{
+//FIXME: Find a good way to redraw the editor view when the toolbar height
+//changes
+//  if (ViewManager::ref()->activeView())
+    //ViewManager::ref()->activeView()->activated();  
+}
+
+
 void QuantaApp::slotShowGroupsForDTEP(const QString& dtepName, bool show)
 {
   Document *w = ViewManager::ref()->activeDocument();
@@ -4121,6 +4132,7 @@ void QuantaApp::saveOptions()
     m_config->writeEntry("Close Buttons", qConfig.showCloseButtons);
     m_config->writeEntry("MDI mode", mdiMode());
     m_config->writeEntry("MDI style", qConfig.toolviewTabs);
+    m_config->writeEntry("IconTextMode", ToolbarTabWidget::ref()->iconText());
 
     m_config->deleteGroup("RecentFiles");
     fileRecent->saveEntries(m_config);

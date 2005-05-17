@@ -401,6 +401,8 @@ public slots:
 
   /** Called when the preview or documentation part is deleted. */
   void slotHTMLPartDeleted(QObject *object);
+
+  void slotRefreshActiveWindow();
   
   bool slotEnableIdleTimer(bool enable);
 
