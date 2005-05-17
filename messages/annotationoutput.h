@@ -30,7 +30,7 @@ class MessageOutput;
 enum AnnotationScope
 {
   CurrentFile = 0,
-  AllFiles,
+  AllFiles
 };
 
 class AnnotationOutput : public KTabWidget
