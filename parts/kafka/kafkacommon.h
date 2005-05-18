@@ -414,6 +414,9 @@ public:
     static Node* DTDInsertNodeSubtree(Node *node, NodeSelectionInd& selection, 
                                       Node **cursorNode, int& cursorOffset, NodeModifsSet *modifs);
 	
+    static Node* DTDInsertNodeSubtree(Node* newNode, Node* parentNode, Node* nextSibling, 
+                                      NodeSelection& cursorHolder, NodeModifsSet *modifs);
+    
     /**
 	 * Create a Node of name nodeName, of type nodeType, (see tag.h) connected to the document doc,
 	 * and nextSibling as Node's next sibling.
@@ -505,7 +508,14 @@ public:
 	 * It behaves essentially like the above function except that it can handle a node Subtree.
 	 * INNEFICIENT for bi
 	 */
-	static Node *duplicateNodeSubtree(Node *node);
+    static Node *duplicateNodeSubtree(Node *node, bool childAndClosingTagOnly = false);
+ 
+    /**
+     * Returns the closing tag of node or its last child or itself.
+     * @param node 
+     * @return 
+     */
+    static Node* getLastChild(Node* node);
 
 	/**
 	 * Extract a Node from the Node Tree. WARNING this will log that the Node was removed.
@@ -534,6 +544,7 @@ public:
     
     /**
      * Extract a node subtree in the tree. WARNING This function will log that the nodes were added.
+     * This funtion not only extract the start node but also will extract inline parents.
      * @param startNode The node from which we start the removal.
      * @param startOffset The offset of startNode from which we start the removal.
      * @param endNode The node from which we end the removal.
@@ -565,14 +576,14 @@ public:
      * Get a node subtree from the tree. It is similar to extractNodeSubtree() 
      * but it doesn't extract anything. 
      * It's useful to get a copy of the Node subtree from a selection, for example.
+     * This funtion not only extract the start node but also will extract inline parents.
      * @param startNode The starting Node.
      * @param startOffset If firstNode is a text, specify at which offset the new start Node will be splitted.
      * @param endNode The ending Node.
      * @param endOffset If endNode is a text, specify at which offset the new end Node will be splitted.
      * @return Returns a pointer to the Node subtree.
      */
-    static Node* getNodeSubtree(Node *startNode, int startOffset, Node *endNode, int endOffset/*, 
-            NodeModifsSet *modifs*/);
+    static Node* getNodeSubtree(Node *startNode, int startOffset, Node *endNode, int endOffset);
 	
     /**
 	 * An enumeration of all the possible return states of DTDExtractNode

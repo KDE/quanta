@@ -24,8 +24,8 @@
 #include <klistview.h>
 
 /**view class of document structure
-  *@author Andras Mantia & Yacovlev Alexander & Dmitry Poplavsky
-  */
+ *@author Andras Mantia & Paulo Moura Guedes & Yacovlev Alexander & Dmitry Poplavsky
+ */
 
 class KPopupMenu;
 class KConfig;
@@ -92,6 +92,7 @@ public slots: // Public slots
   void slotExpanded(QListViewItem *);
   void slotOpenFile();
   void slotNodeTreeChanged();
+  void slotRemoveTags();
 
 signals:
   void newCursorPosition( int col, int row );
@@ -107,7 +108,7 @@ signals:
 
 private:
 
-  /** The constructor is privat because we use singleton patter.
+  /** The constructor is private because we use singleton pattern.
    *  If you need the class use StructTreeView::ref() for
    *  construction and reference
    */
@@ -115,7 +116,15 @@ private:
   /** builds the structure tree */
   void buildTree(Node *baseNode, int openLevel, bool groupOnly);
   /** Do the recursive opening or closing of the trees */
-  void setOpenSubTree( QListViewItem *it, bool open);
+  void setOpenSubTree(QListViewItem *it, bool open);
+
+  /** Make ctrl have the same behavior has shift */
+  void setContiguousSelectedItems();
+  
+  void copySelectedItems(QListViewItem* parent, QListViewItem* after);
+  void moveSelectedItems(QListViewItem* parent, QListViewItem* after);
+  
+private:
 
   int followCursorId;
   bool followCursorFlag;
@@ -136,16 +145,28 @@ private:
 
   bool topOpened;
   QValueList<bool> groupOpened;
+  
+  mutable QListViewItem* m_marker;       //track that has the drag/drop marker under it
+  QListViewItem* m_draggedItem;
+//   mutable QWidget* m_thisWidget; // non const this hack for acceptDrag
 
 protected: // Protected methods
   /** Do a reparse before showing. */
   virtual void showEvent(QShowEvent*);
   /** Clear the problem output when hiding. */
   virtual void hideEvent(QHideEvent*);
+  
+  // drag functions  
+  virtual bool acceptDrag(QDropEvent* e) const;
+  virtual void startDrag();
+  virtual void contentsMousePressEvent(QMouseEvent* e);
 
 protected slots: // Protected slots
   /** The treeview DTD  has changed to id. */
   void slotDTDChanged(int id);
+    
+  void slotMouseClickedVPL(int button, QListViewItem*, const QPoint&, int);
+  virtual void slotDropped(QDropEvent* e, QListViewItem* parent, QListViewItem* after);
 
 protected: // Protected attributes
   Document *write;

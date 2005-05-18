@@ -20,6 +20,8 @@
 #include <qheader.h>
 #include <qregexp.h>
 #include <qdatetime.h>
+#include <qdragobject.h>
+#include <qcursor.h> 
 
 // KDE headers
 #include <kapplication.h>
@@ -41,6 +43,11 @@
 #include "quantacommon.h"
 #include "dtds.h"
 #include "viewmanager.h"
+#include "kafkacommon.h"
+#include "cursors.h"
+#include "undoredo.h"
+#include "quantaview.h"
+#include "wkafkapart.h"
 
 #include "structtreetag.h"
 #include "structtreeview.h"
@@ -48,7 +55,7 @@
 extern GroupElementMapList globalGroupMap;
 
 StructTreeView::StructTreeView(QWidget *parent, const char *name )
-: KListView(parent,name)
+    : KListView(parent,name), m_marker(0), m_draggedItem(0)/*, m_thisWidget(0)*/
 {
   for (int i = 0; i < 15; i++)
     groupOpened.append(false);
@@ -64,6 +71,10 @@ StructTreeView::StructTreeView(QWidget *parent, const char *name )
   setRootIsDecorated( true );
   header()->hide();
   setSorting(-1,false);
+  setAcceptDrops(true);
+  setDropVisualizer(true);
+  setDragEnabled(true);
+  setSelectionModeExt(FileManager);
 
   setFrameStyle( Panel | Sunken );
   setLineWidth( 2 );
@@ -82,6 +93,9 @@ StructTreeView::StructTreeView(QWidget *parent, const char *name )
   }
 
   connect(dtdMenu, SIGNAL(activated(int)), this, SLOT(slotDTDChanged(int)));
+    
+  connect(this, SIGNAL(dropped(QDropEvent*, QListViewItem*, QListViewItem*)),
+          SLOT(slotDropped(QDropEvent*, QListViewItem*, QListViewItem*)));
   
   emptyAreaMenu = new KPopupMenu(this);
   emptyAreaMenu->insertItem(i18n("Show Groups For"), dtdMenu);
@@ -97,6 +111,8 @@ StructTreeView::StructTreeView(QWidget *parent, const char *name )
   popupMenu -> insertSeparator();
   popupMenu -> insertItem( i18n("Open Subtrees"), this ,SLOT(slotOpenSubTree()));
   popupMenu -> insertItem( i18n("Close Subtrees"),this ,SLOT(slotCloseSubTree()));
+  popupMenu -> insertSeparator();
+  popupMenu -> insertItem( i18n("Remove"),this ,SLOT(slotRemoveTags()));
   popupMenu -> insertSeparator();
   popupMenu -> insertItem( SmallIcon("reload"),  i18n("&Reparse"),     this ,SLOT(slotReparseMenuItem()));
   followCursorId = popupMenu -> insertItem( i18n("Follow Cursor"), this ,SLOT(changeFollowCursor()));
@@ -456,7 +472,7 @@ void StructTreeView::slotGotoTag( QListViewItem *item )
 }
 
 
-void StructTreeView::slotMouseClicked(int button, QListViewItem *item, const QPoint& point, int)
+void StructTreeView::slotMouseClicked(int button, QListViewItem *item, const QPoint& point, int dummy)
 {
   if (item)
   {
@@ -483,6 +499,16 @@ void StructTreeView::slotMouseClicked(int button, QListViewItem *item, const QPo
       if (handleLBM == i18n("Find Tag && Open Tree"))
            setOpen(item, !isOpen(item));
       setSelected(item, true);
+      
+      bool const ctrlPressed = KApplication::keyboardMouseState() & Qt::ControlButton;
+      
+      if(ctrlPressed)
+          setContiguousSelectedItems();
+      
+      if(ViewManager::ref()->activeView()->hadLastFocus() == QuantaView::VPLFocus)
+          slotMouseClickedVPL(button, item, point, dummy);
+      else
+          slotGotoTag(item);
       slotGotoTag(item);
     }
 
@@ -691,6 +717,235 @@ void StructTreeView::hideEvent(QHideEvent* /*ev*/)
   emit clearProblemOutput();
 }
 
+enum {
+    DRAG_COPY = 0,
+    DRAG_MOVE = 1,
+    DRAG_CANCEL = 2
+};
+
+void StructTreeView::setContiguousSelectedItems()
+{
+    kdDebug(25001) << "setContiguousSelectedItems" << endl;
+    
+    QPtrList<QListViewItem> selected_items = selectedItems(false);    
+    
+    QListViewItem* first = selected_items.getFirst();
+    QListViewItem* last = selected_items.getLast();
+
+    QListViewItemIterator it(first);
+    while(it.current() && it.current() != last) 
+    {
+        QListViewItem* item = it.current();
+        if(!item->isSelected())
+            item->setSelected(true);
+            
+        ++it;
+    }
+}
+
+bool StructTreeView::acceptDrag(QDropEvent* e) const
+{
+    static int i = 0;
+    kdDebug(25001) << "acceptDrag: " << ++i << endl;
+    
+    QPoint p = contentsToViewport(e->pos());
+    QListViewItem* current_item = itemAt(p);
+    
+//     assert(m_thisWidget);
+    
+    static bool last_accept = false;
+    
+    if(current_item == m_marker)
+    {
+        e->accept(last_accept);
+/*        if(last_accept)
+        m_thisWidget->setCursor(Qt::ForbiddenCursor);
+        else
+        m_thisWidget->setCursor(Qt::ForbiddenCursor);*/
+        kdDebug(25001) << "Princípio: " << last_accept << endl;
+
+        return last_accept;
+    }
+    else
+        m_marker = current_item;
+            
+    if(current_item == m_draggedItem ||
+       !(e->provides("text/x-struct_tree_tag_item") || e->source() == this) || !m_marker)
+    {
+        e->accept(false);
+        last_accept = false;
+/*        if(last_accept)
+        m_thisWidget->setCursor(Qt::ForbiddenCursor);
+        else
+        m_thisWidget->setCursor(Qt::ForbiddenCursor);*/
+        kdDebug(25001) << "PROIBIDO! #1" << endl;
+        return false;
+    }
+    
+    Node* dragged_node = (dynamic_cast<StructTreeTag*> (m_draggedItem))->node;
+    Node* after_node = (dynamic_cast<StructTreeTag*> (m_marker))->node;
+    if(!after_node)
+    {
+        e->accept(false);
+        last_accept = false;
+/*        if(last_accept)
+        m_thisWidget->setCursor(Qt::ForbiddenCursor);
+        else
+        m_thisWidget->setCursor(Qt::ForbiddenCursor);*/
+        kdDebug(25001) << "PROIBIDO! #2" << endl;
+        return false;
+    }    
+    QTag* nodeQTag = QuantaCommon::tagFromDTD(after_node->parent);
+    bool is_child = (nodeQTag && nodeQTag->isChild(dragged_node));
+    
+    if(!is_child)
+        kdDebug(25001) << "PROIBIDO! #3" << endl;
+    else
+        kdDebug(25001) << "ACEITE!" << endl;
+    
+    e->accept(is_child);
+    last_accept = is_child;
+//     if(last_accept)
+//         m_thisWidget->setCursor(Qt::ForbiddenCursor);
+//     else
+//         m_thisWidget->setCursor(Qt::ForbiddenCursor);
+
+    return is_child;
+}
+
+void StructTreeView::slotDropped(QDropEvent* e, QListViewItem* parent, QListViewItem* after)
+{
+    if(!e) 
+        return;
+    if (e->source() != this) 
+        return; // Only internal drags are supported atm
+
+    if(!QTextDrag::canDecode(e))
+        return;
+    
+    KPopupMenu *menu = new KPopupMenu( this );
+    menu->insertItem( i18n("&Move Here"), DRAG_MOVE, 0 );
+    menu->insertItem( SmallIcon("editcopy"), i18n("&Copy Here"), DRAG_COPY, 1 );
+    menu->insertSeparator();
+    menu->insertItem( SmallIcon("cancel"), i18n("C&ancel"), DRAG_CANCEL, 3 );
+    int id = menu->exec(QCursor::pos(), 0);
+    
+    switch(id) {
+        case DRAG_COPY:
+            copySelectedItems(parent, after);
+            break;
+        case DRAG_MOVE:
+            moveSelectedItems(parent, after);
+            break;
+            case DRAG_CANCEL: // cancelled by menuitem
+                break;
+                case -1: // cancelled by Esc
+                    break;
+        default:
+            break;
+    }
+    
+    m_draggedItem = 0;
+}
+
+void StructTreeView::startDrag()
+{
+    // This a dummy drag object. Decode is made by the objects selected on the tree.
+    QTextDrag* drag = new QTextDrag(this);
+//     m_thisWidget = drag->source();
+    drag->setSubtype("x-struct_tree_tag_item");
+    drag->setPixmap(SmallIcon("node"));
+    drag->dragMove();
+  
+}
+
+void StructTreeView::contentsMousePressEvent(QMouseEvent* e)
+{
+    if(e->button() == LeftButton)
+    {
+        QPoint p = contentsToViewport(e->pos());
+        m_draggedItem = itemAt(p);
+        m_marker = m_draggedItem;
+    }
+    KListView::contentsMousePressEvent(e);
+}
+
+void StructTreeView::copySelectedItems(QListViewItem* parent, QListViewItem* after)
+{
+    StructTreeTag* parent_item = dynamic_cast<StructTreeTag*> (parent);
+    StructTreeTag* after_item = dynamic_cast<StructTreeTag*> (after);
+    if(!parent_item/* || !after_item*/) // can happen if the element is inserted as the first child
+        return;
+    
+    QPtrList<QListViewItem> selected_items = selectedItems(false);        
+    QListViewItem* first_item = selected_items.getFirst();
+    QListViewItem* last_item = selected_items.getLast();
+    
+    Node* start_node = (dynamic_cast<StructTreeTag*> (first_item))->node;
+    Node* end_node = (dynamic_cast<StructTreeTag*> (last_item))->node;
+    assert(start_node && end_node);
+    
+    Node* start_node_subtree = 0;
+    if(start_node == end_node)
+        start_node_subtree = kafkaCommon::duplicateNodeSubtree(start_node, true);
+    else
+        start_node_subtree = kafkaCommon::getNodeSubtree(start_node, 0, end_node, end_node->tag->tagStr().length());
+
+    Node* parent_node = parent_item->node;
+    if(!parent_node)
+        return;
+    Node* next_node = 0;
+    if(after_item)
+        next_node = after_item->node->SNext();
+    else
+        next_node = parent_node->firstChild();
+    
+    NodeSelection cursor_holder;
+    NodeModifsSet *modifs = new NodeModifsSet();
+    
+    kafkaCommon::DTDInsertNodeSubtree(start_node_subtree, parent_node, next_node, cursor_holder, modifs);
+    
+    write->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif, 0, false);    
+}
+
+void StructTreeView::moveSelectedItems(QListViewItem* parent, QListViewItem* after)
+{
+    StructTreeTag* parent_item = dynamic_cast<StructTreeTag*> (parent);
+    StructTreeTag* after_item = dynamic_cast<StructTreeTag*> (after);
+    if(!parent_item || !after_item)
+        return;
+    
+    QPtrList<QListViewItem> selected_items = selectedItems(false);        
+    QListViewItem* first_item = selected_items.getFirst();
+    QListViewItem* last_item = selected_items.getLast();
+    
+    Node* start_node = (dynamic_cast<StructTreeTag*> (first_item))->node;
+    Node* end_node = (dynamic_cast<StructTreeTag*> (last_item))->node;
+    assert(start_node && end_node);
+    
+    Node* cursor_node = 0;
+    int cursor_offset = 0;
+    NodeModifsSet *modifs = new NodeModifsSet();
+    
+    Node* start_node_subtree = 0;
+    if(start_node == end_node)
+        start_node_subtree = kafkaCommon::extractNodeSubtreeAux(start_node, end_node, modifs);    
+    else
+        start_node_subtree = kafkaCommon::DTDExtractNodeSubtree(start_node, 0, end_node, end_node->tag->tagStr().length(), 
+            &cursor_node, cursor_offset, modifs);
+
+    Node* parent_node = parent_item->node;
+    if(!parent_node)
+        return;
+    Node* next_node = after_item->node->SNext();
+    
+    NodeSelection cursor_holder(cursor_node, cursor_offset);
+    
+    kafkaCommon::DTDInsertNodeSubtree(start_node_subtree, parent_node, next_node, cursor_holder, modifs);
+    
+    write->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif, &cursor_holder, false);    
+}
+
 /** The treeview DTD  has changed to id. */
 void StructTreeView::slotDTDChanged(int id)
 {
@@ -758,3 +1013,54 @@ void StructTreeView::showMessage(const QString& message)
 {
   emit showProblemMessage(message);
 }
+
+void StructTreeView::slotMouseClickedVPL(int /*button*/, QListViewItem* item, const QPoint&, int)
+{
+    ViewManager::ref()->activeView()->setFocus();
+
+    QPtrList<QListViewItem> selected_items = selectedItems(true);    
+    if(selected_items.count() == 1)
+    {
+        StructTreeTag* tag_item = dynamic_cast<StructTreeTag*> (item);
+        if(!tag_item)
+            return;
+        Node* node = tag_item->node;
+        if(!node)
+            return;
+        if(node->tag->type == Tag::Text || node->tag->type == Tag::Empty)
+        {
+            KafkaDocument::ref()->setCursor(node, 0);
+        }
+    }
+    else
+    {
+        Node* start_node = (dynamic_cast<StructTreeTag*> (selected_items.getFirst()))->node;
+        Node* end_node = (dynamic_cast<StructTreeTag*> (selected_items.getLast()))->node;
+        
+        NodeSelectionInd selection(start_node, 0, end_node, 1/*end_node->tag->tagStr().length()*/);
+        KafkaDocument::ref()->setCursorAndSelection(&selection);
+    }
+}
+
+void StructTreeView::slotRemoveTags()
+{
+    QPtrList<QListViewItem> selected_items = selectedItems(true);    
+
+    Node* start_node = (dynamic_cast<StructTreeTag*> (selected_items.getFirst()))->node;
+    Node* end_node = start_node;
+    if(selected_items.count() > 1)
+        end_node = (dynamic_cast<StructTreeTag*> (selected_items.getLast()))->node;
+    
+    kafkaCommon::coutTree(start_node, 3);
+
+    Node* cursor_node = 0;
+    int cursor_offset = 0;
+    
+    NodeModifsSet *modifs = new NodeModifsSet();
+    kafkaCommon::DTDExtractNodeSubtree(start_node, 0, end_node, end_node->tag->tagStr().length(), &cursor_node, cursor_offset, modifs);
+
+    NodeSelection* selection = new NodeSelection(cursor_node, cursor_offset);
+    
+    write->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif, selection, false);
+}
+

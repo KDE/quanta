@@ -133,7 +133,8 @@ public:
          * @param nodeSelection The coordinates of the selection and cursor.
          */
         void setCursorAndSelection(NodeSelectionInd *nodeSelection);
-        
+         
+        void setCursor(Node* node, int cursorOffset);
 
 	/* --------------------------- KAFKA/QUANTA NODES CREATION -----------------------------*/
 

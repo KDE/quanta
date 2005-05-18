@@ -1485,6 +1485,16 @@ Node* kafkaCommon::DTDInsertNodeSubtree(Node *newNode, NodeSelectionInd& selecti
     //return newNode;
 }
 
+Node* kafkaCommon::DTDInsertNodeSubtree(Node* newNode, Node* parentNode, Node* nextSibling, 
+                                        NodeSelection& /*cursorHolder*/, NodeModifsSet *modifs)
+{
+    QTag* nodeQTag = QuantaCommon::tagFromDTD(parentNode);
+    if(!nodeQTag || !nodeQTag->isChild(newNode))
+        return 0;
+    else
+        return insertNodeSubtree(newNode, parentNode, nextSibling, modifs);
+}
+
 bool kafkaCommon::DTDinsertNode(Node *newNode, Node *startNode, int startOffset, Node *endNode,
                                 int endOffset, Document *doc, Node **cursorNode, int &cursorOffset, NodeModifsSet *modifs)
 {
@@ -2126,12 +2136,30 @@ typedef struct boo
 }
 NodeLink;
 
-Node *kafkaCommon::duplicateNodeSubtree(Node *node)
+Node* kafkaCommon::getLastChild(Node* node)
+{
+    assert(node);
+    
+    Node* end_node = node->getClosingNode();
+    if(!end_node && node->hasChildNodes())
+        end_node = node->lastChildNE();
+    else if(!end_node)
+        end_node = node;
+    
+    assert(end_node);
+    
+    return end_node;
+}
+
+Node *kafkaCommon::duplicateNodeSubtree(Node *node, bool childAndClosingTagOnly)
 {
     QPtrList<NodeLink> nodeLinkList;
     bool goUp = false;
     Node *currentNode, *currentNewNode, *newRootNode = 0, *newNext, *newParent, *newPrev;
     NodeLink *link;
+    Node* endNode = 0;
+    if(childAndClosingTagOnly)
+        endNode = getLastChild(node);
 
     if(!node)
         return 0L;
@@ -2167,7 +2195,10 @@ Node *kafkaCommon::duplicateNodeSubtree(Node *node)
         else
             insertNode(currentNewNode, newParent, newNext, 0L, false);
 
-        currentNode = getNextNode(currentNode, goUp, node);
+        if(childAndClosingTagOnly)
+            currentNode = getNextNode(currentNode, goUp, endNode);
+        else
+            currentNode = getNextNode(currentNode, goUp, node);
     }
 
     return newRootNode;
@@ -2482,7 +2513,7 @@ Node* kafkaCommon::getNodeSubtree(Node *startNode, int startOffset, Node *endNod
     Node* newStartNode = 0;
     Node* newEndNode = 0;
 
-    Node* newCommonParent = duplicateNodeSubtree(commonParent);
+    Node* newCommonParent = duplicateNodeSubtree(commonParent, true);
 
     QValueList<int> const startNodeLocation = getLocation(startNode);
     QValueList<int> const commonParentLocation = getLocation(commonParent);

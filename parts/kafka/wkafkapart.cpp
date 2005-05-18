@@ -490,6 +490,18 @@ void KafkaDocument::setCursorAndSelection(NodeSelectionInd *nodeSelection)
     m_kafkaPart->setSelection(DOM::Range(startDomNode, (long)startOffset, endDomNode, (long)endOffset));
 }
 
+void KafkaDocument::setCursor(Node* cursorNode, int cursorOffset)
+{
+    DOM::Node domNode;
+    long longDomNodeOffset;
+    translateNodeIntoKafkaCursorPosition(cursorNode, cursorOffset, domNode, longDomNodeOffset);
+    if (!domNode.isNull() && domNode.nodeType() != DOM::Node::TEXT_NODE &&
+         !domNode.firstChild().isNull() && domNode.firstChild().nodeType() == DOM::Node::TEXT_NODE)
+        domNode = domNode.firstChild();
+    if (!domNode.isNull())
+        m_kafkaPart->setCurrentNode(domNode, (int)longDomNodeOffset);       
+}
+
 bool KafkaDocument::buildKafkaNodeFromNode(Node *node, bool insertNode)
 {
 #ifdef LIGHT_DEBUG
