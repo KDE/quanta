@@ -60,6 +60,7 @@ class NodeSelectionInd
 {
 public:
   NodeSelectionInd();
+  NodeSelectionInd(Node* cursor_node, int cursor_offset);
   NodeSelectionInd(Node* start_node, int start_offset, Node* end_node, int end_offset);
   ~NodeSelectionInd();
   
