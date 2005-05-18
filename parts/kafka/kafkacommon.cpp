@@ -1386,12 +1386,11 @@ Node* kafkaCommon::DTDInsertNodeSubtree(Node *newNode, NodeSelectionInd& selecti
         }
     }
 
-    if(isInline(newNode->tag->name) &&
-       (newNode->tag->type == Tag::Text || newNode->tag->type == Tag::Empty))
+    if(newNode->tag->type == Tag::Text || newNode->tag->type == Tag::Empty)
     {
         *cursorNode = newNode;
         cursorOffset = newNode->tag->tagStr().length();
-        return insertNode(newNode, newNode->parent, endNode, modifs);
+        return insertNodeSubtree(newNode, startNode->parent, endNode, modifs);
     }
 
     //Then we "split" the lastValidStartParent - startNode subtree into two : the first part is untouched
@@ -2287,7 +2286,7 @@ Node* kafkaCommon::extractNode(Node *node, NodeModifsSet *modifs, bool extractCh
 
     if(modifs)
     {
-        modif->setNode(node);
+        modif->setNode(0/*node*/); // this deletes the node!!???
         modifs->addNodeModif(modif);
     }
 
@@ -2335,8 +2334,8 @@ Node* kafkaCommon::DTDExtractNodeSubtree(Node *startNode, int startOffset, Node 
     
     splitStartAndEndNodeSubtree(startNode, startOffset, endNode, endOffset, commonParent, 
                                 commonParentStartChildLocation, commonParentEndChildLocation,
-                                cursorHolder, false, modifs);
-    
+                                cursorHolder, 0, modifs);
+        
     *cursorNode = cursorHolder.cursorNode();
     cursorOffset = cursorHolder.cursorOffset();
     Node* commonParentStartChild = getNodeFromLocation(commonParentStartChildLocation);
@@ -2357,8 +2356,6 @@ Node* kafkaCommon::DTDExtractNodeSubtree(Node *startNode, int startOffset, Node 
     }
 
     // now let us extract the subtree
-    commonParentStartChild = getNodeFromLocation(commonParentStartChildLocation);
-    commonParentEndChild = getNodeFromLocation(commonParentEndChildLocation);
 
     if(!commonParentEndChild)
         commonParentEndChild = endNode;
@@ -2450,9 +2447,9 @@ Node* kafkaCommon::extractNodeSubtreeAux(Node* commonParentStartChild, Node* com
         if(node_extracted)
         {
             node_extracted->prev = prev_node;
-            if(significant_next_node != commonParentEndChild_next || next_node->closesPrevious)
+            if(significant_next_node != commonParentEndChild_next || (next_node && next_node->closesPrevious))
                 node_extracted->next = next_node;
-            if(next_node->closesPrevious)
+            if(next_node && next_node->closesPrevious)
             {
                 next_node->prev = node_extracted;
                 node_extracted->_closingNode = next_node;
@@ -3026,7 +3023,8 @@ void kafkaCommon::splitStartAndEndNodeSubtree(Node*& startNode, int startOffset,
     splitStartNodeSubtree(startNode, commonParent, commonParentStartChildLocation, modifs);
 
     commonParentEndChildLocation = kafkaCommon::getLocation(commonParentEndChild);
-    splitEndNodeSubtree(endNode, commonParent, commonParentStartChildLocation, commonParentEndChildLocation, true, modifs);
+    splitEndNodeSubtree(endNode, commonParent, commonParentStartChildLocation, commonParentEndChildLocation, subTree, modifs);
+
     
     cursorHolder.setCursorNode(cursorNode);
     cursorHolder.setCursorOffset(cursorOffset);
