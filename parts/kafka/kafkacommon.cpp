@@ -39,7 +39,7 @@
 Node *kafkaCommon::getNextNode(Node *node, bool &goUp, Node *endNode)
 {
     //goto next node, my favorite part :)
-    if(!node)
+    if(!node || node == endNode)
         return 0L;
     if(goUp)
     {
