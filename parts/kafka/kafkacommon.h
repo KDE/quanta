@@ -554,7 +554,7 @@ public:
      * @return Returns a pointer to the node inserted.
      */
     static Node* DTDExtractNodeSubtree(Node *startNode, int startOffset, Node *endNode, int endOffset, 
-                                       Node **cursorNode, int &cursorOffset, NodeModifsSet *modifs);
+                                       Node **cursorNode, int &cursorOffset, NodeModifsSet *modifs, bool extractInlineParentNodes = true);
     
     /**
      * Similar to the above function but it operates on the given node tree. See DTDGetNodeSubtree.
@@ -562,7 +562,7 @@ public:
      * @return Returns a pointer to the node inserted.
      */
     static Node* DTDExtractNodeSubtree(Node *startNode, int startOffset, Node *endNode, int endOffset, 
-                                       Node* nodeSubtree, NodeModifsSet* modifs);
+                                       Node* nodeSubtree, NodeModifsSet* modifs, bool extractInlineParentNodes = true);
     
     static Node* extractNodeSubtreeAux(Node* commonParentStartChild, Node* commonParentEndChild, NodeModifsSet* modifs);
     
@@ -570,7 +570,7 @@ public:
      * It behaves essentially like the above function. Provided for convenience.
      */
     static Node* DTDRemoveSelection(NodeSelectionInd& selection, 
-                                    Node **cursorNode, int& cursorOffset, NodeModifsSet *modifs);
+                                    Node **cursorNode, int& cursorOffset, NodeModifsSet *modifs, bool extractInlineParentNodes = true);
 
     /**
      * Get a node subtree from the tree. It is similar to extractNodeSubtree() 
@@ -583,7 +583,7 @@ public:
      * @param endOffset If endNode is a text, specify at which offset the new end Node will be splitted.
      * @return Returns a pointer to the Node subtree.
      */
-    static Node* getNodeSubtree(Node *startNode, int startOffset, Node *endNode, int endOffset);
+    static Node* getNodeSubtree(Node *startNode, int startOffset, Node *endNode, int endOffset, bool extractInlineParentNodes = true);
 	
     /**
 	 * An enumeration of all the possible return states of DTDExtractNode
@@ -708,7 +708,7 @@ public:
                                             QValueList<int>& commonParentStartChildLocation, 
                                             QValueList<int>& commonParentEndChildLocation, 
                                             NodeSelection& cursorHolder, 
-                                            Node* subTree, NodeModifsSet* modifs);
+                                            Node* subTree, NodeModifsSet* modifs, bool extractInlineParentNodes = true);
 
 	/**
 	 * If n and n2 are both Text or Empty Nodes, merge them into one.
