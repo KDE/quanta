@@ -15,6 +15,9 @@
  *                                                                         *
  ***************************************************************************/
 
+// system headers
+#include <assert.h>
+
 // QT headers
 #include <qpixmap.h>
 #include <qheader.h>
