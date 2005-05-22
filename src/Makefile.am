@@ -5,7 +5,7 @@ endif
 
 if include_cvsservice
 CVSSERVICE_INCLUDE = -I$(top_srcdir)/quanta/components/cvsservice
-LIB_CVSSERVICE = $(top_builddir)/quanta/components/cvsservice/libcvsservice.la -lcvsservice
+LIB_CVSSERVICE = $(top_builddir)/quanta/components/cvsservice/libcvsservice.la $(top_builddir)/lib/compatibility/cvsservice/libcvsservice_compat.la
 endif
 
 bin_PROGRAMS = quanta
@@ -29,9 +29,8 @@ quanta_LDADD = $(top_builddir)/quanta/project/libproject.la \
 	$(top_builddir)/quanta/parts/preview/libpreview.la \
 	$(top_builddir)/quanta/utility/libutility.la \
 	$(top_builddir)/lib/libquantamodule.la \
-	-lkatepartinterfaces $(LIB_KNEWSTUFF) $(LIB_KAFKA) $(LIB_CVSSERVICE)  \
-	$(LIB_KMDI) $(LIBXML_LIBS) $(LIBXSLT_LIBS) $(LIB_KABC) $(LIB_KSPELL) $(LIB_KHTML)
-#       $(top_builddir)/lib/compatibility/libcompat.la
+	-lkatepartinterfaces $(LIB_KNEWSTUFF) $(LIB_KAFKA) $(LIB_CVSSERVICE)\
+	$(LIB_KMDI) $(LIBXML_LIBS) $(LIBXSLT_LIBS) $(LIB_KABC) $(LIB_KSPELL) $(LIB_KHTML) 
 
 AM_CPPFLAGS = -I$(top_srcdir)/quanta/dialogs \
 	-I$(top_srcdir)/quanta/plugins \
