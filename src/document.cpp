@@ -1427,7 +1427,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getCharacterCompletions(cons
     if (tag->type == "entity")
     {
       QString tagName = tag->name(true);
-      if (tagName.upper().startsWith(startsWith))
+      if (tagName.upper().startsWith(startsWith) || startsWith.isEmpty())
       {
         completion.text = tagName;
         completion.userdata = tagName;
@@ -2330,7 +2330,7 @@ QStringList* Document::tagAttributeValues(const QString& dtdName, const QString&
               values = new QStringList(project->fileNameList());
               for (uint i = 0; i < values->count(); i++)
               {
-                u = (*values)[i];                 
+                u = (*values)[i];
                 u = QExtFileInfo::toRelative(u, base);
                 (*values)[i] = u.path();
               }
@@ -2974,7 +2974,7 @@ void Document::setAnnotationText(uint line, const QString& text)
     QString s = "@annotation: " + text;
     s.prepend(commentBegin + " ");
     s.append(" " + commentEnd + "\n");
-    insertText(s, true, true); 
+    insertText(s, true, true);
     emit showAnnotation(line, "", text);
   }
 }
@@ -2983,7 +2983,7 @@ void Document::addAnnotation(uint line, const QString& text)
 {
   m_annotations.insert(line, text);
   if (markIf)
-    markIf->setMark(line, KTextEditor::MarkInterface::markType08);  
+    markIf->setMark(line, KTextEditor::MarkInterface::markType08);
   emit showAnnotation(line, "", text);
 }
 
