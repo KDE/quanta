@@ -738,6 +738,15 @@ void Document::slotFilterCompletion( KTextEditor::CompletionEntry *completion ,Q
   if (completion->type == "charCompletion")
   {
     *string = completion->userdata;
+    uint line, col;
+    viewCursorIf->cursorPositionReal(&line, &col);
+    QString s2 = editIf->textLine(line).left(col);
+    int pos = s2.findRev('&');
+    if (pos != -1)
+    {
+      s2 = s2.mid(pos + 1);
+      string->remove(s2);
+    }
     string->append(";");
   } else
   if ( completion->type == "attributeValue")
@@ -984,13 +993,15 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
   if (!handled)
   {
     QString s = editIf->textLine(line).left(column + 1);
-    if (s.endsWith("&"))
+    int pos = s.findRev('&');
+    if (pos != -1)
     {
-        //complete character codes
-        showCodeCompletions( getCharacterCompletions("") );
-        handled = true;
+      //complete character codes
+      s = s.mid(pos + 1);
+      showCodeCompletions(getCharacterCompletions(s));
+      handled = true;
     }
-  }
+  } 
  return handled;
 }
 
@@ -1427,7 +1438,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getCharacterCompletions(cons
     if (tag->type == "entity")
     {
       QString tagName = tag->name(true);
-      if (tagName.upper().startsWith(startsWith) || startsWith.isEmpty())
+      if (tagName.upper().startsWith(startsWith.upper()) || startsWith.isEmpty())
       {
         completion.text = tagName;
         completion.userdata = tagName;
@@ -1456,7 +1467,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getCharacterCompletions(cons
     completion.text = s + " : " + completion.text.left(begin -2) + " - " + completion.text.mid(begin + length + 1);
     if (s.startsWith(startsWith))
     {
-      completion.userdata = startsWith + "|" + s.mid(startsWith.length());
+      completion.userdata = s.mid(startsWith.length());
       completions->append( completion );
     }
   }
