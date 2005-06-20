@@ -97,7 +97,6 @@ void BaseTreeViewToolTip::maybeTip( const QPoint &pos )
       text = kftvi->fileItem()->getToolTipText();
       if ( !desc.isEmpty() )
         text.prepend("&nbsp;<i>" + desc + "</i><br>");
-      text.prepend("&nbsp;<b>" + kftvi->url().fileName() + "</b><br>");  //  add the filename on top
     } else
     {  // show something for the branchroot
       text = item->text(0);
