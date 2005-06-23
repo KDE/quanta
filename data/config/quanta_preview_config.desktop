@@ -6,6 +6,7 @@ Icon=konqueror
 DocPath=konqueror/index.html
 Name=Configure KHTML Browser Part
 Name[ca]=Configura la part del Fullejador KHTML
+Name[cs]=Nastavení KHTML Part
 Name[da]=Indstil KHTML browser-part
 Name[de]=Einrichten der  KHTML-Browserkomponente
 Name[el]=Ρύθμιση του KHTML περιηγητή

@@ -6,6 +6,7 @@ Name[hi]=गब्ड
 Name[ta]=குபெட்
 Comment=Quanta debugger plugin to interact with the Gubed PHP debugger, see http://gubed.sf.net
 Comment[ca]=Connector de depuració pel Quanta que interactua amb el depurador Gubed PHP, consulteu http://gubed.sf.net
+Comment[cs]=Ladicí modul Quanty s Gubed PHP debuggerem, viz http://gubed.sf.net
 Comment[da]=Quanta fejlretter-plugin til at virke sammen med Gubed PHP fejlretter, se http://gubed.sf.net
 Comment[de]=Debug-Komponente von Quanta für die Unterstützung des Gubed PHP-Debuggers. Näheres siehe http://gubed.sf.net
 Comment[el]=Αποσφαλματωτής Quanta σε συνεργασία με το αποσφαλματωτή Gubed PHP, δείτε http://gubed.sf.net
