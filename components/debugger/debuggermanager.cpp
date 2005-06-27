@@ -463,7 +463,7 @@ void DebuggerManager::fileOpened(const QString& file)
   }
 
   //lets keep the eye on toggling bp's through the editor margin
-  ::Document* qdoc = ViewManager::ref()->isOpened(file)->document();
+  ::Document* qdoc = ViewManager::ref()->isOpened(KURL::fromPathOrURL(file))->document();
   if(qdoc)
   {
     connectBreakpointSignals(qdoc);
