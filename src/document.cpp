@@ -146,11 +146,11 @@ Document::Document(KTextEditor::Document *doc,
   a = m_view->actionCollection()->action("view_border");
   if (a)
     a->setShortcut(Qt::SHIFT + Qt::Key_F9);
-  
+
   a = m_view->actionCollection()->action("view_folding_markers");
   if (a)
     a->setShortcut(Qt::SHIFT + Qt::Key_F11);
-  
+
   KActionMenu *bookmarkAction = dynamic_cast<KActionMenu*>(m_view->actionCollection()->action( "bookmarks" ));
   if (bookmarkAction)
   {
@@ -158,7 +158,7 @@ Document::Document(KTextEditor::Document *doc,
     //kdDebug(24000) << "Bookmarks found!" << endl;
     //bookmarkAction->insert(quantaApp->actionCollection()->action( "file_quit" ));
   }
- 
+
   editIf = dynamic_cast<KTextEditor::EditInterface *>(m_doc);
   editIfExt = dynamic_cast<KTextEditor::EditInterfaceExt *>(m_doc);
   selectionIf = dynamic_cast<KTextEditor::SelectionInterface *>(m_doc);
@@ -213,9 +213,9 @@ Document::Document(KTextEditor::Document *doc,
 Document::~Document()
 {
   parser->clearGroups();
-//  kdDebug(24000) << "Document::~ Document: " << this << endl;
- m_doc->closeURL(false); //TODO: Workaround for a Kate bug. Remove when KDE < 3.2.0 support is dropped.
- delete m_doc;
+  //  kdDebug(24000) << "Document::~ Document: " << this << endl;
+  m_doc->closeURL(false); //TODO: Workaround for a Kate bug. Remove when KDE < 3.2.0 support is dropped.
+  delete m_doc;
 }
 
 void Document::setUntitledUrl(const QString &url)
@@ -371,10 +371,10 @@ void Document::selectText(int x1, int y1, int x2, int y2 )
 
 void Document::replaceSelected(const QString &s)
 {
-  if (selectionIf) 
+  if (selectionIf)
   {
     unsigned int line, col;
-    
+
     viewCursorIf->cursorPositionReal(&line, &col);
     reparseEnabled = false;
     selectionIf->removeSelectedText();
@@ -735,6 +735,15 @@ void Document::slotFilterCompletion( KTextEditor::CompletionEntry *completion ,Q
   if (completion->type == "charCompletion")
   {
     *string = completion->userdata;
+    uint line, col;
+    viewCursorIf->cursorPositionReal(&line, &col);
+    QString s2 = editIf->textLine(line).left(col);
+    int pos = s2.findRev('&');
+    if (pos != -1)
+    {
+      s2 = s2.mid(pos + 1);
+      string->remove(s2);
+    }
     string->append(";");
   } else
   if ( completion->type == "attributeValue")
@@ -981,13 +990,15 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
   if (!handled)
   {
     QString s = editIf->textLine(line).left(column + 1);
-    if (s.endsWith("&"))
+    int pos = s.findRev('&');
+    if (pos != -1)
     {
-        //complete character codes
-        showCodeCompletions( getCharacterCompletions("") );
-        handled = true;
+      //complete character codes
+      s = s.mid(pos + 1);
+      showCodeCompletions(getCharacterCompletions(s));
+      handled = true;
     }
-  }
+  } 
  return handled;
 }
 
@@ -1384,12 +1395,12 @@ QValueList<KTextEditor::CompletionEntry>* Document::getCharacterCompletions(cons
 {
   QValueList<KTextEditor::CompletionEntry> *completions = 0L;
   QMap<QString, KTextEditor::CompletionEntry> completionMap;
-      
+
   //first search for entities defined in the document
   const DTDStruct *dtdDTD = DTDs::ref()->find("dtd");
   if (dtdDTD)
   {
-    StructTreeGroup group;    
+    StructTreeGroup group;
     for (uint j = 0; j < dtdDTD->structTreeGroups.count(); j++)
     {
       group = dtdDTD->structTreeGroups[j];
@@ -1410,10 +1421,10 @@ QValueList<KTextEditor::CompletionEntry>* Document::getCharacterCompletions(cons
       }
     }
   }
-  
+
   if (!completions)
     completions = new QValueList<KTextEditor::CompletionEntry>();
-  
+
   KTextEditor::CompletionEntry completion;
   completion.type = "charCompletion";
   //add the entities from the tag files
@@ -1424,7 +1435,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getCharacterCompletions(cons
     if (tag->type == "entity")
     {
       QString tagName = tag->name(true);
-      if (tagName.upper().startsWith(startsWith))
+      if (tagName.upper().startsWith(startsWith.upper()) || startsWith.isEmpty())
       {
         completion.text = tagName;
         completion.userdata = tagName;
@@ -1433,7 +1444,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getCharacterCompletions(cons
       }
     }
   }
-  
+
   QValueList<KTextEditor::CompletionEntry> *completions2 = new QValueList<KTextEditor::CompletionEntry>();
   for (QMap<QString, KTextEditor::CompletionEntry>::ConstIterator it = completionMap.constBegin(); it != completionMap.constEnd(); ++it)
   {
@@ -1453,11 +1464,11 @@ QValueList<KTextEditor::CompletionEntry>* Document::getCharacterCompletions(cons
     completion.text = s + " : " + completion.text.left(begin -2) + " - " + completion.text.mid(begin + length + 1);
     if (s.startsWith(startsWith))
     {
-      completion.userdata = startsWith + "|" + s.mid(startsWith.length());
+      completion.userdata = s.mid(startsWith.length());
       completions->append( completion );
     }
   }
-    
+
   return completions;
 }
 
@@ -1614,7 +1625,7 @@ bool Document::scriptAutoCompletion(int line, int column, const QString& inserte
  if (s[i] == completionDTD->tagSeparator)
  {
   while (i > 0 && s[i] != completionDTD->tagAutoCompleteAfter)
-    i--;  
+    i--;
   s = s.left(i + 1);
  }
 
@@ -1688,9 +1699,9 @@ bool Document::scriptAutoCompletion(int line, int column, const QString& inserte
      }
    }
  }
- if ( !handled && !argHintVisible && 
-      (completionRequested || 
-       (s[i] == completionDTD->tagAutoCompleteAfter && (insertedString == " " || insertedString[0] == completionDTD->tagAutoCompleteAfter)) || 
+ if ( !handled && !argHintVisible &&
+      (completionRequested ||
+       (s[i] == completionDTD->tagAutoCompleteAfter && (insertedString == " " || insertedString[0] == completionDTD->tagAutoCompleteAfter)) ||
        completionDTD->tagAutoCompleteAfter == '\1' || (!completionDTD->memberAutoCompleteAfter.pattern().isEmpty() && completionDTD->memberAutoCompleteAfter.searchRev(s) != -1))
        )
  {
@@ -1849,7 +1860,7 @@ void Document::codeCompletionRequested()
   completionRequested = true;
   completionInProgress = false;
   argHintVisible = false;
-  hintRequested = false; 
+  hintRequested = false;
   handleCodeCompletion();
   completionRequested = false;
 }
@@ -1911,7 +1922,7 @@ void Document::codeCompletionHintRequested()
 //    int pos = textLine.findRev("(");
 //    int pos2 = textLine.findRev(")");
     //if (pos > pos2 )
-    hintRequested = true; 
+    hintRequested = true;
     scriptAutoCompletion(line, col - 1, "");
   }
   completionRequested = false;
@@ -2331,7 +2342,7 @@ QStringList* Document::tagAttributeValues(const QString& dtdName, const QString&
                 u = QExtFileInfo::toRelative(u, base);
                 (*values)[i] = u.path();
               }
-	      values->remove(values->at(0));
+              values->remove(values->at(0));
               values->append("mailto:" + project->email());
             } else
             {

@@ -616,7 +616,7 @@ void Project::slotOptions()
     el.setAttribute("usePersistentBookmarks", d->m_persistentBookmarks);
     el.setAttribute("encoding", d->m_defaultEncoding);
 
-    el =projectNode.namedItem("author").toElement();
+    el = projectNode.namedItem("author").toElement();
     if (!el.isNull())
        el.parentNode().removeChild(el);
     el =d->dom.createElement("author");

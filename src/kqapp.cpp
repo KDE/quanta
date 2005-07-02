@@ -142,10 +142,13 @@ int KQUniqueApplication::newInstance()
   {
     KWin::activateWindow( mainWidget()->winId() );
     quantaApp = static_cast<QuantaApp*>(mainWidget());
+    quantaApp->setParserEnabled(false);
     for (int i = 0; i < args->count(); i++)
     {
       quantaApp->slotFileOpen(args->url(i), quantaApp->defaultEncoding());  // load initial files
     }
+    quantaApp->setParserEnabled(true);
+    quantaApp->reparse(true);
   }
   else
   {
@@ -217,6 +220,7 @@ void KQApplicationPrivate::init()
     quantaApp->m_quantaInit->loadInitialProject(initialProject);
     //recoverCrashed manages the autosaved copies
     quantaApp->m_quantaInit->recoverCrashed(initialFiles);
+    quantaApp->setParserEnabled(false); //will be enabled in quantaApp->m_quantaInit->openLastFiles();
 
     for(QStringList::Iterator it = initialFiles.begin();it != initialFiles.end();++it)
     {

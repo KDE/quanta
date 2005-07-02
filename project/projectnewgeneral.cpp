@@ -60,10 +60,10 @@ ProjectNewGeneral::ProjectNewGeneral(QWidget *parent, const char *name )
   comboProtocol->setCurrentItem(0);
 
   slotProtocolChanged(i18n("Local"));
-  
+
   linePrjTmpl->setText("templates");
   linePrjToolbar->setText("toolbars");
-   
+
   connect(comboProtocol, SIGNAL(activated(const QString&)), SLOT(slotProtocolChanged(const QString &)));
   connect( linePrjFile, SIGNAL(textChanged(const QString &)),
            this,        SLOT(slotLinePrjFile(const QString &)));
@@ -97,7 +97,7 @@ void ProjectNewGeneral::slotButtonDir()
 
 void ProjectNewGeneral::slotLinePrjFile( const QString & )
 {
-  
+
   bool valid = !(linePrjFile->text().isEmpty() ||
                  linePrjName->text().isEmpty() ||
                  linePrjDir ->text().isEmpty() ||
@@ -107,24 +107,24 @@ void ProjectNewGeneral::slotLinePrjFile( const QString & )
   QString s = lineHost->text();
   if (! s.isEmpty())
     url.setHost(s);
-  
+
   s = lineUser->text();
   if (! s.isEmpty())
     url.setUser(s);
   s = linePasswd->text();
   if (! s.isEmpty())
     url.setPass(s);
-  
+
   s = linePort->text();
   if (! s.isEmpty())
     url.setPort(linePort->text().toInt());
-  
+
   url.setProtocol(comboProtocol->currentText());
   if (url.protocol() == i18n("Local")) url.setProtocol("file");
   url.setPath(linePrjDir->text());
   url.adjustPath(1);
   if (!url.path().startsWith("/")) url.setPath("/"+url.path());
-  
+
   if (url.isValid())
   {
     emit setBaseURL(url);
@@ -192,6 +192,8 @@ void ProjectNewGeneral::slotProtocolChanged(const QString& protocol)
  linePort->setEnabled(status);
  radioWeb->setEnabled(!status);
  slotChangeNames(linePrjName->text());
+ if ( !status )
+     lineHost->clear();
 }
 
 #include "projectnewgeneral.moc"

@@ -231,6 +231,7 @@ QuantaToolBar::QuantaToolBar(QWidget *parent, const char *name, bool honor_style
   m_popupMenu = new KPopupMenu(this);
   m_toolbarTab = dynamic_cast<ToolbarTabWidget*>(parent->parentWidget());
   currentActionName = "";
+  setIconText(ToolbarTabWidget::ref()->iconText(), false);
 }
 
 void QuantaToolBar::mousePressEvent(QMouseEvent *e)

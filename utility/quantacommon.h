@@ -192,6 +192,7 @@ pointer must be deleted by the caller!! */
   *  @return true if the user answered yes, false otherwise.
   */
   static bool checkOverwrite(const KURL& url);
+
 };
 
 #endif

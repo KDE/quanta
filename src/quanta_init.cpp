@@ -440,9 +440,11 @@ void QuantaInit::initView()
    m_kafkaDocument->getKafkaWidget()->view()->setMinimumHeight(50);
    m_kafkaDocument->readConfig(quantaApp->config());
    loadVPLConfig();
-  (void) ToolbarTabWidget::ref(quantaApp);
+  ToolbarTabWidget *toolBarTab = ToolbarTabWidget::ref(quantaApp);
   //set the toolview and close button style before the GUI is created
-  m_config->setGroup  ("General Options");
+  m_config->setGroup("General Options");
+  int iconTextMode = KToolBar::iconTextSetting();
+  toolBarTab->setIconText(KToolBar::IconText(iconTextMode));
   qConfig.toolviewTabs = m_config->readNumEntry("MDI style", KMdi::IconOnly);
   m_quanta->initTabWidget();
 
@@ -549,7 +551,7 @@ void QuantaInit::readOptions()
   qConfig.updateClosingTags = m_config->readBoolEntry("Update Closing Tags", true);
   qConfig.replaceAccented = m_config->readBoolEntry("Replace Accented Chars", false);
 
-  qConfig.defaultEncoding = m_config->readEntry("Default encoding", QTextCodec::codecForLocale()->name());
+  qConfig.defaultEncoding = m_config->readEntry("Default encoding", "UTF8");
 
   StructTreeView::ref()->setFollowCursor( m_config->readBoolEntry("Follow Cursor", true));
 
@@ -625,6 +627,7 @@ void QuantaInit::openLastFiles()
 
   QStringList urls = m_config->readPathListEntry("List of opened files");
   m_quanta->m_doc->blockSignals(true);
+  m_quanta->setParserEnabled(false);
   for ( QStringList::Iterator it = urls.begin(); it != urls.end(); ++it )
   {
     KURL fu;
@@ -635,6 +638,8 @@ void QuantaInit::openLastFiles()
   }
   m_config->sync();
   m_quanta->m_doc->blockSignals(false);
+  m_quanta->setParserEnabled(true);
+  m_quanta->reparse(true);
   Document *w = ViewManager::ref()->activeDocument();
   if (w) //w==0 might happen on quick close on startup
   {

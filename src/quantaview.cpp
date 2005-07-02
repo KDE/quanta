@@ -1,9 +1,9 @@
 /***************************************************************************
                           quantaview.cpp  -  description
                              -------------------
-    begin                : ���� 9 13:29:57 EEST 2000
+    begin                : ï¿½ï¿½ï¿½ï¿½ 9 13:29:57 EEST 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon <pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com>
-                           (C) 2001-2004 Andras Mantia <amantia@kde.org>
+                           (C) 2001-2005 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -216,7 +216,7 @@ void QuantaView::addDocument(Document *document)
 
 void QuantaView::addPlugin(QuantaPlugin *plugin)
 {
-   ToolbarTabWidget *m_toolbarTab = ToolbarTabWidget::ref(this);
+   ToolbarTabWidget *m_toolbarTab = ToolbarTabWidget::ref();
    m_toolbarTab->reparent(0, 0, QPoint(), false);
    m_plugin = plugin;
    m_splitter->hide();
@@ -761,6 +761,7 @@ void QuantaView::insertNewTag(const QString &tag, const QString &attr, bool inse
   }
 }
 
+
 /** Returns the baseURL of the document. */
 KURL QuantaView::baseURL()
 {
@@ -784,7 +785,7 @@ void QuantaView::refreshWindow()
        resize(width(), height());
   } else
   {
-    /*
+/*    
     kdDebug(24000) << "m_documentArea->height(): " << m_documentArea->height() << endl;
     kdDebug(24000) << "ToolbarTabWidget::ref()->height(): " << ToolbarTabWidget::ref()->height() << " hidden: " << ToolbarTabWidget::ref()->isHidden() << " visible: " << ToolbarTabWidget::ref()->isVisible() << endl;
     kdDebug(24000) <<"sum: " << m_documentArea->height() + ToolbarTabWidget::ref()->height() << endl;

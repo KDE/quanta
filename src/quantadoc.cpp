@@ -1,7 +1,7 @@
 /***************************************************************************
                           quantadoc.cpp  -  description
                              -------------------
-    begin                : ���� 9 13:29:57 EEST 2000
+    begin                : ï¿½ï¿½ï¿½ï¿½ 9 13:29:57 EEST 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon <pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com>
                            (C) 2001-2003 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
@@ -238,7 +238,8 @@ void QuantaDoc::slotOpeningCompleted(const KURL &url)
   quantaApp->fileRecent->addURL(url);
   quantaApp->slotRepaintPreview();
   quantaApp->reparse(true);
-  quantaApp->debugger()->fileOpened(url.prettyURL(0, KURL::StripFileProtocol));
+  if (url.isLocalFile())
+    quantaApp->debugger()->fileOpened(url.prettyURL(0, KURL::StripFileProtocol));
   quantaApp->slotNewStatus();
   emit eventHappened("after_open", url.url(), QString::null);
   
