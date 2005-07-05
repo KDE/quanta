@@ -4738,6 +4738,27 @@ void QuantaApp::slotPasteHTMLQuoted()
       text.replace( "<", "&lt;" );
       text.replace( "\"", "&quot;" );
       text.replace( ">", "&gt;" );
+      QString encoding = defaultEncoding();
+      KTextEditor::EncodingInterface* encodingIf = dynamic_cast<KTextEditor::EncodingInterface*>(w->doc());
+      if (encodingIf)
+          encoding = encodingIf->encoding();
+      if (encoding != "UTF-8" && encoding != "UTF-16" && encoding != "ISO-10646-UCS-2")
+      {
+        for ( QStringList::Iterator it = charList.begin(); it != charList.end(); ++it )
+        {
+          QString s = *it;
+          int begin = s.find("(&#") + 3;
+          if (begin == 1)
+              continue;
+          int length = s.find(";)") - begin + 1;
+          s = s.mid(begin, length - 1);
+          bool ok;
+          int code = s.toInt(&ok);
+          if (!ok || code < 191)
+            continue;
+          text.replace(QChar(code), QString("&#%1;").arg(s));
+        }
+      }
       unsigned int line, col;
       w->viewCursorIf->cursorPositionReal(&line, &col);
       w->editIf->insertText(line, col, text );
