@@ -162,11 +162,25 @@ void ProjectUpload::slotBuildTree()
  totalProgress->setValue(0);
  totalText->setText(i18n("Scanning project files..."));
 
- QDict<KFileItem> projectDirFiles = QExtFileInfo::allFilesDetailed(m_project->projectBaseURL(), "*");
-  QTime t;
-  t.start();
-
  KURL u = m_project->projectBaseURL();
+ if (!startUrl.isEmpty()) 
+ {
+   u = QExtFileInfo::toAbsolute(startUrl, u);
+ }
+ QDict<KFileItem> projectDirFiles;
+
+ if (startUrl.isEmpty() || strUrl.endsWith("/")) //upload a folder 
+ {
+   projectDirFiles = QExtFileInfo::allFilesDetailed(u, "*");
+ } else
+ {
+   projectDirFiles.insert(u.url(), new KFileItem(KFileItem::Unknown, KFileItem::Unknown, u, true));
+ }
+
+ QTime t;
+ t.start();
+
+ u = m_project->projectBaseURL();
  KURL absUrl = u;
  for (uint i = 0; i < nl.count(); i++)
  {

@@ -27,6 +27,7 @@ Version 3.5 (Release date: xx-xx-2004; Started 04-03-2004):
         - possibility to change the icon/text layout of the user toolbars from
           inside Quanta added
         - external preview possibility with Firefox added [#106557]
+        - make single file/folder upload really quick [#105612]
 
 Version 3.4 (Release date: xx-03-2005; Started 20-08-2004):
   - bugfixes:
