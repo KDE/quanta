@@ -81,7 +81,7 @@ class DebuggerManager : public QObject
     /** Execution control slots **/
     void slotDebugRequest();
     void slotDebugRun();
-    void slotDebugLeap();
+    void slotDebugTrace();
     void slotDebugSkip();
     void slotDebugStepOver();
     void slotDebugStepInto();

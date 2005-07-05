@@ -45,7 +45,7 @@ namespace DebuggerClientCapabilities
 
     // Execution related
     Run = 5000,
-    RunDisplay,
+    Trace,
     Pause,
     Kill,
     StepInto,
@@ -72,7 +72,7 @@ class DebuggerClient : public QObject
     // Execution control
     virtual void request();
     virtual void run();
-    virtual void leap();
+    virtual void trace();
     virtual void skip();
     virtual void stepOver();
     virtual void stepInto();

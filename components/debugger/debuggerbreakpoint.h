@@ -64,6 +64,8 @@ class DebuggerBreakpoint
     virtual DebuggerBreakpoint::Types type() const;
     virtual const QString& value() const;
 
+    bool operator == (DebuggerBreakpoint);
+
   protected:
     QString m_filePath;
     QString m_class;

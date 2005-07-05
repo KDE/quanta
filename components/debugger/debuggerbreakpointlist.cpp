@@ -54,7 +54,10 @@ void DebuggerBreakpointList::remove(DebuggerBreakpoint* bp)
   for(it = m_breakpointList->begin(); it != end; ++it)
   {
     if((bp->filePath() == (*it)->filePath()) &&
-        (bp->line()     == (*it)->line()) &&
+        (bp->line()     == (*it)->line() || bp->type() != DebuggerBreakpoint::LineBreakpoint) &&
+        (bp->type()     == (*it)->type()) &&
+        (bp->inClass()     == (*it)->inClass()) &&
+        (bp->inFunction()     == (*it)->inFunction()) &&
         (bp->condition() == (*it)->condition()))
     {
       tmp = (*it);
@@ -62,7 +65,8 @@ void DebuggerBreakpointList::remove(DebuggerBreakpoint* bp)
       quantaApp->debugger()->UI()->deleteBreakpoint(*bp);
 
       // Remove editor markpoint if there is one...
-      quantaApp->debugger()->setMark(bp->filePath(), bp->line(), false, KTextEditor::MarkInterface::markType02);
+      if(bp->type() == DebuggerBreakpoint::LineBreakpoint)
+        quantaApp->debugger()->setMark(bp->filePath(), bp->line(), false, KTextEditor::MarkInterface::markType02);
 
       it = m_breakpointList->remove(it);
       delete tmp;
@@ -101,8 +105,8 @@ DebuggerBreakpoint* DebuggerBreakpointList::retrieve(const QString& filePath, in
 
   for(it = m_breakpointList->begin(); it != end; ++it)
   {
-    if(((*it)->filePath() == filePath) &&
-        ((*it)->line()    == line))
+    if((filePath   == (*it)->filePath()) &&
+        line       == (*it)->line())
     {
       return (*it);
     }
@@ -136,9 +140,12 @@ bool DebuggerBreakpointList::exists(DebuggerBreakpoint* bp)
 
   for(it = m_breakpointList->begin(); it != end; ++it)
   {
-    if((bp->filePath() == (*it)->filePath()) &&
-        (bp->line()     == (*it)->line()) &&
-        (bp->condition()     == (*it)->condition()))
+    if((bp->filePath()  == (*it)->filePath()) &&
+        (bp->line()     == (*it)->line() || bp->type() != DebuggerBreakpoint::LineBreakpoint) &&
+        (bp->type()     == (*it)->type()) &&
+        (bp->inClass()  == (*it)->inClass()) &&
+        (bp->inFunction() == (*it)->inFunction()) &&
+        (bp->condition() == (*it)->condition()))
     {
       return true;
     }

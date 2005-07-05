@@ -24,6 +24,10 @@
 #include <qcombobox.h>
 #include <kdeversion.h>
 #include <errno.h>
+#include <qstring.h>
+#include <qmap.h>
+
+#include <stdarg.h>
 
 #include "debuggerclient.h"
 #include "quantadebuggergubed.h"
@@ -39,7 +43,7 @@
 K_EXPORT_COMPONENT_FACTORY( quantadebuggergubed,
                             KGenericFactory<QuantaDebuggerGubed>("quantadebuggergubed"))
 
-const char QuantaDebuggerGubed::protocolversion[] = "0.0.11";
+const char QuantaDebuggerGubed::protocolversion[] = "0.0.12";
 
 QuantaDebuggerGubed::QuantaDebuggerGubed (QObject *parent, const char* name, const QStringList&)
     : DebuggerClient (parent, name)
@@ -62,7 +66,7 @@ QuantaDebuggerGubed::~QuantaDebuggerGubed ()
 
   if(m_socket)
   {
-    sendCommand("die", "");
+    sendCommand("die", 0);
     m_socket->flush();
     m_socket->close();
   }
@@ -134,7 +138,7 @@ void QuantaDebuggerGubed::endSession()
   // Close the socket
   if(m_socket)
   {
-    sendCommand("die", "");
+    sendCommand("die", 0);
     m_socket->flush();
     m_socket->close();
     KExtendedSocket * oldsocket = m_socket;
@@ -162,29 +166,29 @@ void QuantaDebuggerGubed::setExecutionState(State newstate)
 {
   if(newstate == Pause)
   {
-    sendCommand("pause", "");
-    sendCommand("sendactiveline", "");
+    sendCommand("pause", 0);
+    sendCommand("sendactiveline", 0);
   }
-  else if(newstate == RunNoDisplay)
+  else if(newstate == Run)
   {
     if(m_executionState == Pause)
-      sendCommand("next", "");
+      sendCommand("next", 0);
 
-    sendCommand("runnodisplay", "");
+    sendCommand("run", 0);
   }
-  else if(newstate == RunDisplay)
+  else if(newstate == Trace)
   {
     if(m_executionState == Pause)
-      sendCommand("next", "");
+      sendCommand("next", 0);
 
-    sendCommand("rundisplay", "");
+    sendCommand("trace", 0);
   }
 
   m_executionState = newstate;
 
   if(debuggerInterface()) {
-    debuggerInterface()->enableAction("debug_run", m_executionState != RunDisplay);
-    debuggerInterface()->enableAction("debug_leap", m_executionState != RunNoDisplay);
+    debuggerInterface()->enableAction("debug_trace", m_executionState != Trace);
+    debuggerInterface()->enableAction("debug_run", m_executionState != Run);
     debuggerInterface()->enableAction("debug_pause", m_executionState != Pause);
   }
 
@@ -204,7 +208,7 @@ const uint QuantaDebuggerGubed::supports(DebuggerClientCapabilities::Capabilitie
     case DebuggerClientCapabilities::Kill:
     case DebuggerClientCapabilities::Pause:
     case DebuggerClientCapabilities::Run:
-    case DebuggerClientCapabilities::RunDisplay:
+    case DebuggerClientCapabilities::Trace:
     case DebuggerClientCapabilities::Skip:
     case DebuggerClientCapabilities::StepOut:
     case DebuggerClientCapabilities::StepInto:
@@ -276,7 +280,7 @@ void QuantaDebuggerGubed::slotConnected()
 {
   kdDebug(24002) << k_funcinfo << endl;
 
-  sendCommand("wait" ,"");
+  sendCommand("wait", 0);
   debuggerInterface()->enableAction("debug_connect", false);
   debuggerInterface()->enableAction("debug_disconnect", true);
   debuggerInterface()->enableAction("debug_request", false);
@@ -367,69 +371,62 @@ void QuantaDebuggerGubed::slotReadyRead()
   }
 }
 
-
 // Process a gubed command
-void QuantaDebuggerGubed::processCommand(const QString& data)
+void QuantaDebuggerGubed::processCommand(const QString& datas)
 {
-  kdDebug(24002) << k_funcinfo << ", " << m_command << " : " << data << endl;
+  kdDebug(24002) << k_funcinfo << ", " << m_command << " : " << datas.left(50) << endl;
+  StringMap args = parseArgs(datas);
 
   // See what command we got and act accordingly..
   if(m_command == "commandme")
   {
-    //sendCommand("sendactiveline", "");
-    debuggerInterface()->setActiveLine(mapServerPathToLocal(data.left(data.find(':'))), data.mid(data.find(':') + 1).toLong());
+    //sendCommand("sendactiveline", 0);
+    debuggerInterface()->setActiveLine(mapServerPathToLocal(args["filename"]), args["line"].toLong());
     sendWatches();
-    if(m_executionState == RunDisplay)
-      sendCommand("wait", "");
+    if(m_executionState == Trace)
+      sendCommand("wait", 0);
 
     if(m_executionState != Pause)
-      sendCommand("next", "");
+      sendCommand("next", 0);
   }
   // Send run mode to script
   else if(m_command == "getrunmode")
   {
     debuggingState(true);
-    sendCommand("setdisplaydelay", QString::number(m_displaydelay));
+    sendCommand("setdisplaydelay", "newdelay", QString::number(m_displaydelay).ascii(), 0);
     if(m_executionState == Pause)
-      sendCommand("pause", "");
-    else if(m_executionState == RunNoDisplay)
-      sendCommand("runnodisplay", "");
-    else if(m_executionState == RunDisplay)
-      sendCommand("rundisplay", "");
+      sendCommand("pause", 0);
+    else if(m_executionState == Run)
+      sendCommand("run", 0);
+    else if(m_executionState == Trace)
+      sendCommand("trace", 0);
 
-    sendCommand("seterrormask", QString::number(m_errormask));
+    sendCommand("seterrormask", "errormask", QString::number(m_errormask).ascii(), 0);
   }
   // Just some status info, display on status line
   else if(m_command == "status")
   {
-    debuggerInterface()->showStatus(data, false);
+    long argcnt = args["args"].toLong();
+    QString msg = i18n(args["message"]);  // How will we get these messages throught to the translators?
+    for(int cnt = 1; cnt <= argcnt; cnt++)
+      msg.replace("%" + QString("%1").arg(cnt) + "%", args[QString("arg%1").arg(cnt)]);
+
+    debuggerInterface()->showStatus(msg, false);
   }
   // New current line
   else if(m_command == "setactiveline")
   {
-    debuggerInterface()->setActiveLine(mapServerPathToLocal(data.left(data.find(':'))), data.mid(data.find(':') + 1).toLong());
+    debuggerInterface()->setActiveLine(mapServerPathToLocal(args["filename"]), args["line"].toLong());
   }
   // Script requests breakpointlist
   else if(m_command == "sendbreakpoints")
   {
     sendBreakpoints();
   }
-  // Debugger tells its about to parse a file
-  else if(m_command == "unparsed")
-  {
-    debuggerInterface()->showStatus(i18n("About to parse %1").arg(data), false);
-    return;
-  }
-  // Parsing ok
-  else if(m_command == "parseok")
-  {
-    debuggerInterface()->showStatus(i18n("%1 parsed ok").arg(data), false);
-    return;
-  }
   // Parsing failed
   else if(m_command == "parsefailed")
   {
-    debuggerInterface()->showStatus(i18n("Syntax or parse error in %1)").arg(data), true);
+    debuggerInterface()->showStatus(i18n("Syntax or parse error in %1)").arg(args["filenme"]), true);
     return;
   }
   // A debugging session is running
@@ -445,32 +442,25 @@ void QuantaDebuggerGubed::processCommand(const QString& data)
   // We stumbled upon an error
   else if(m_command == "error")
   {
-    QString filename, line, error;
-    filename = data.left(data.find(':'));
-    line = data.mid(data.find(':') + 1);
-    error = line.mid(line.find(':') + 1);
-    line = line.left(line.find(':'));
-
     // Put the line number first so double clicking will jump to the corrrect line
-    debuggerInterface()->showStatus(i18n("Error occurred: Line %1, Code %2, (%3)").arg(line).arg(error).arg(filename), true);
+    debuggerInterface()->showStatus(i18n("Error occurred: Line %1, Code %2 (%3) in  %4").arg(args["line"]).arg(args["errnum"]).arg(args["errmsg"]).arg(args["filename"]), true);
 
     // Filter to get error code only and match it with out mask
-    error = error.left(error.find(':'));
-    if(m_errormask & error.toUInt())
+    long error = args["errnum"].toLong();
+    if(m_errormask & error)
       setExecutionState(Pause);
-    else if(m_executionState == RunDisplay)
-      setExecutionState(RunDisplay);
-    else if(m_executionState == RunNoDisplay)
-      setExecutionState(RunNoDisplay);
+    else if(m_executionState == Trace)
+      setExecutionState(Trace);
+    else if(m_executionState == Run)
+      setExecutionState(Run);
     else
       setExecutionState(Pause);
-
   }
   // We came across  a hard coded breakpoint
   else if(m_command == "forcebreak")
   {
     setExecutionState(Pause);
-    debuggerInterface()->showStatus(i18n("Breakpoint reached: %1").arg(data), true);
+    debuggerInterface()->showStatus(i18n("Breakpoint reached"), true);
   }
   // A conditional breakpoint was fulfilled
   else if(m_command == "conditionalbreak")
@@ -479,23 +469,18 @@ void QuantaDebuggerGubed::processCommand(const QString& data)
     debuggerInterface()->showStatus(i18n("Conditional breakpoint fulfilled"), true);
   }
   // There is a breakpoint set in this file/line
-  else if(m_command == "breakpoint")
+  else if(m_command == "removebreakpoint")
   {
-    debuggerInterface()->haveBreakpoint(mapServerPathToLocal(data.left(data.find(':'))), data.mid(data.find(':') + 1).toLong());
-  }
-  // There is a breakpoint set in this file/line
-  else if(m_command == "clearbreakpoint")
-  {
-    debuggerInterface()->havenoBreakpoint(mapServerPathToLocal(data.left(data.find(':'))), data.mid(data.find(':') + 1).toLong());
+    debuggerInterface()->havenoBreakpoint(mapServerPathToLocal(args["filename"]), args["line"].toLong());
   }
   // We're about to debug a file..
   else if(m_command == "initialize")
   {
-    debuggerInterface()->showStatus(i18n("Established connection to %1").arg(data), false);
-    sendCommand("sendprotocolversion", "");
+    debuggerInterface()->showStatus(i18n("Established connection to %1").arg(args["filename"]), false);
+    sendCommand("sendprotocolversion", 0);
 
-    debuggerInterface()->setActiveLine(mapServerPathToLocal(data.left(data.find(':'))), 0);
-    sendCommand("havesource", "");
+    debuggerInterface()->setActiveLine(mapServerPathToLocal(args["filename"]), 0);
+    sendCommand("havesource", 0);
     debuggingState(true);
   }
   else if(m_command == "sendingwatches")
@@ -505,17 +490,17 @@ void QuantaDebuggerGubed::processCommand(const QString& data)
   // Show the contents of a watched variable
   else if(m_command == "watch")
   {
-    showWatch(data);
+    showWatch(args["variable"]);
   }
   // Show the contents of a variable
   else if(m_command == "variable")
   {
-    showWatch(data);
+    showWatch(args["variable"]);
   }
   // Show the contents of a variable
   else if(m_command == "showcondition")
   {
-    showCondition(data);
+    showCondition(args); 
   }
   else if(m_command == "sentwatches")
   {
@@ -530,10 +515,10 @@ void QuantaDebuggerGubed::processCommand(const QString& data)
   // Check protocol version
   else if(m_command == "protocolversion")
   {
-    if(data != protocolversion)
+    if(args["version"] != protocolversion)
     {
       debuggerInterface()->showStatus(i18n("The script being debugged does not communicate with the correct protocol version"), true);
-      sendCommand("die", "");
+      sendCommand("die", 0);
     }
     return;
   }
@@ -544,7 +529,7 @@ void QuantaDebuggerGubed::processCommand(const QString& data)
   {}
   else
     // Unimplemented command - log to debug output
-    kdDebug(24002) << "QuantaDebuggerGubed::slotReadyRead Unknown: " << m_command << ":" << data << endl;
+    kdDebug(24002) << "QuantaDebuggerGubed::slotReadyRead Unknown: " << m_command << ":" << datas << endl;
 }
 
 // Turn on/off actions related to a debugging session
@@ -564,10 +549,10 @@ void QuantaDebuggerGubed::sendBreakpoints()
 void QuantaDebuggerGubed::sendWatches()
 {
   for(QValueList<QString>::iterator it = m_watchlist.begin(); it != m_watchlist.end(); ++it)
-    sendCommand("getwatch", (*it));
-  sendCommand("sentwatches", "");
+    sendCommand("getwatch", "variable", (*it).ascii(), 0);
+  sendCommand("sentwatches", "key", 0, 0);
 }
-
+/*
 // Send a command to gubed
 bool QuantaDebuggerGubed::sendCommand(const QString& a_command, const QString& a_data)
 {
@@ -585,6 +570,44 @@ bool QuantaDebuggerGubed::sendCommand(const QString& a_command, const QString& a
   m_socket->writeBlock(command, command.length());
   m_socket->writeBlock(data, data.length());
 
+  return true;
+}*/
+
+// Send a command to gubed
+bool QuantaDebuggerGubed::sendCommand(const QString& command, StringMap args)
+{
+
+  kdDebug(24002) << k_lineinfo << ", command " << command << " with data: " << phpSerialize(args) << endl;
+  if(!m_socket || m_socket->socketStatus() != KExtendedSocket::connected)
+    return false;
+
+  QString buffer = phpSerialize(args);
+
+  buffer = QString(command + ":%1;" + buffer).arg(buffer.length());
+  m_socket->writeBlock(buffer, buffer.length());
+  return true;
+}
+
+// Send a command to gubed
+bool QuantaDebuggerGubed::sendCommand(const QString& command, char * firstarg, ...)
+{
+  StringMap ca;
+  char *next;
+
+  va_list l_Arg;
+  va_start(l_Arg, firstarg);
+
+  next = firstarg;
+  while(next)
+  {
+    ca[(QString)next] = (QString)va_arg(l_Arg, char*) ; 
+//     kdDebug(24002) << k_lineinfo << " Added arg/valuepair " << next << ", " << ca[next].left(30) << endl;
+
+    next = va_arg(l_Arg, char*);
+  }
+
+  va_end(l_Arg);
+  sendCommand(command, ca);
   return true;
 }
 
@@ -615,48 +638,48 @@ void QuantaDebuggerGubed::request()
 
 
 // Run boy, run (and show whats happening)
-void QuantaDebuggerGubed::run()
+void QuantaDebuggerGubed::trace()
 {
-  setExecutionState(RunDisplay);
+  setExecutionState(Trace);
 }
 
 // Go as fast as possible and dont update current line or watches
-void QuantaDebuggerGubed::leap()
+void QuantaDebuggerGubed::run()
 {
-  setExecutionState(RunNoDisplay);
+  setExecutionState(Run);
 }
 
 // Step into function
 void QuantaDebuggerGubed::stepInto()
 {
   setExecutionState(Pause);
-  sendCommand("next", "");
+  sendCommand("next", 0);
 }
 
 // Step over function
 void QuantaDebuggerGubed::stepOver()
 {
   setExecutionState(Pause);
-  sendCommand("stepover", "");
+  sendCommand("stepover", 0);
 }
 
 // Step out of function
 void QuantaDebuggerGubed::stepOut()
 {
   setExecutionState(Pause);
-  sendCommand("stepout", "");
+  sendCommand("stepout", 0);
 }
 
 // Skip next function
 void QuantaDebuggerGubed::skip()
 {
-  sendCommand("skip", "");
+  sendCommand("skip", 0);
 }
 
 // Kill the running script
 void QuantaDebuggerGubed::kill()
 {
-  sendCommand("die", "");
+  sendCommand("die", 0);
 }
 
 // Pause execution
@@ -669,38 +692,58 @@ void QuantaDebuggerGubed::pause()
 // Add a breakpoint
 void QuantaDebuggerGubed::addBreakpoint (DebuggerBreakpoint* breakpoint)
 {
+  QString type;
   if(breakpoint->type() == DebuggerBreakpoint::LineBreakpoint)
-    sendCommand("breakpoint", mapLocalPathToServer(breakpoint->filePath()) + ":" + QString::number(breakpoint->line()));
+    type = "line";
+  else if(breakpoint->type() == DebuggerBreakpoint::ConditionalTrue)
+    type = "true";
   else
-  {
-    sendCommand("conditionalbreakpoint",
-        bpToGubed(breakpoint)
-      );
-  }
+    type = "change";
+
+  sendCommand("breakpoint", 
+              "type", type.ascii(),
+              "filename", mapLocalPathToServer(breakpoint->filePath()).ascii(),
+              "class", breakpoint->inClass().ascii(),
+              "function", breakpoint->inFunction().ascii(),
+              "expression", breakpoint->condition().ascii(),
+              "line", QString::number(breakpoint->line()).ascii(),
+              0);
 }
 
-QString QuantaDebuggerGubed::bpToGubed(DebuggerBreakpoint* breakpoint)
-{
-  return QString("^" + mapLocalPathToServer(breakpoint->filePath()) +
-      "^" + breakpoint->inClass() +
-      "^" + breakpoint->inFunction() +
-      "^" + (breakpoint->type() == DebuggerBreakpoint::ConditionalTrue ? "true" : "change") +
-      "^" + breakpoint->condition());
-}
+// QString QuantaDebuggerGubed::bpToGubed(DebuggerBreakpoint* breakpoint)
+// {
+//   return QString("^" + mapLocalPathToServer(breakpoint->filePath()) +
+//       "^" + breakpoint->inClass() +
+//       "^" + breakpoint->inFunction() +
+//       "^" + (breakpoint->type() == DebuggerBreakpoint::ConditionalTrue ? "true" : "change") +
+//       "^" + breakpoint->condition());
+// }
 
 // Clear a breakpoint
 void QuantaDebuggerGubed::removeBreakpoint(DebuggerBreakpoint* breakpoint)
 {
-  if(breakpoint->condition().isEmpty())
-    sendCommand("clearpoint", mapLocalPathToServer(breakpoint->filePath()) + ":" + QString::number(breakpoint->line()));
+  QString type;
+  if(breakpoint->type() == DebuggerBreakpoint::LineBreakpoint)
+    type = "line";
+  else if(breakpoint->type() == DebuggerBreakpoint::ConditionalTrue)
+    type = "true";
   else
-    sendCommand("clearconditionalbreakpoint", bpToGubed(breakpoint));
+    type = "change";
+
+  sendCommand("removebreakpoint", 
+              "type", type.ascii(),
+              "filename", mapLocalPathToServer(breakpoint->filePath()).ascii(),
+              "class", breakpoint->inClass().ascii(),
+              "function", breakpoint->inFunction().ascii(),
+              "expression", breakpoint->condition().ascii(),
+              "line", QString::number(breakpoint->line()).ascii(),
+              0);
 }
 
 // A file was opened...
 void QuantaDebuggerGubed::fileOpened(const QString&)
 {
-  sendCommand("reinitialize", "");
+  sendCommand("reinitialize", 0);
 }
 
 // Watch a variable
@@ -708,7 +751,7 @@ void QuantaDebuggerGubed::addWatch(const QString &variable)
 {
   if(m_watchlist.find(variable) == m_watchlist.end())
     m_watchlist.append(variable);
-  sendCommand("getwatch", variable);
+  sendCommand("getwatch", "variable", variable.ascii(), 0);
 }
 // Remove watch
 void QuantaDebuggerGubed::removeWatch(DebuggerVariable *variable)
@@ -719,40 +762,17 @@ void QuantaDebuggerGubed::removeWatch(DebuggerVariable *variable)
 }
 
 // Show conditional breakpoint state
-void QuantaDebuggerGubed::showCondition(const QString &expression)
+void QuantaDebuggerGubed::showCondition(const StringMap &args)
 {
-  // First we have filepath
-  QString filepath = expression.mid(1);
-  filepath = filepath.left(filepath.find('^'));
-  QString value = expression.mid(filepath.length() + 2);
-  filepath = mapServerPathToLocal(filepath);
-  
-  // Then class
-  QString inClass = value.left(value.find('^'));
-  value = value.mid(inClass.length() + 1);
-  
-  // Then function 
-  QString inFunction = value.left(value.find('^'));
-  value = value.mid(inFunction.length() + 1);
 
-  // Then type 
-  QString type = value.left(value.find('^'));
-  value = value.mid(type.length() + 1);
-  
-  // Then condition ans value
-  QString condition = value.left(value.find('^'));
-  value = value.mid(condition.length() + 1);
-  
   DebuggerBreakpoint *bp = debuggerInterface()->newDebuggerBreakpoint();
-  bp->setType(type == "true" ? DebuggerBreakpoint::ConditionalTrue : DebuggerBreakpoint::ConditionalChange);
-  bp->setCondition(condition);
-  bp->setFilePath(filepath);
-  bp->setClass(inClass);
-  bp->setFunction(inFunction);
-  bp->setValue(value);
-      
-  kdDebug(24002) << k_funcinfo << type << ", " << condition << ", " << filepath << ", " << inClass << ", " << inFunction << ", " << value << endl;
-  
+  bp->setType(args["type"] == "true" ? DebuggerBreakpoint::ConditionalTrue : DebuggerBreakpoint::ConditionalChange);
+  bp->setCondition(args["expression"]);
+  bp->setFilePath(mapServerPathToLocal(args["filename"]));
+  bp->setClass(args["class"]);
+  bp->setFunction(args["function"]);
+  bp->setValue(args["value"]);
+
   bp->setState(DebuggerBreakpoint::Undefined);
 
   debuggerInterface()->showBreakpoint(*bp);
@@ -946,7 +966,94 @@ QString QuantaDebuggerGubed::mapLocalPathToServer(const QString& localpath)
 
 void QuantaDebuggerGubed::variableSetValue(const DebuggerVariable &variable)
 {
-  sendCommand("setvariable", variable.name() + "=" + variable.value());
+  sendCommand("setvariable", 
+              "variable", variable.name().ascii(),
+              "value", variable.value().ascii(),
+              0);
 }
 
+QString QuantaDebuggerGubed::phpSerialize(StringMap args)
+{
+  StringMap::Iterator it;
+  // a:2:{s:4:"name";s:7:"Jessica";s:3:"age";s:2:"26";s:4:"test";i:1;}
+  QString ret = QString("a:%1:{").arg(args.size());
+  for( it = args.begin(); it != args.end(); ++it )
+  {
+    bool isNumber;
+
+    it.data().toInt(&isNumber);
+    if(isNumber && !it.data().isEmpty())
+      ret += QString("s:%1:\"%2\";i:%3;")
+                    .arg(it.key().length())
+                    .arg(it.key())
+                    .arg(it.data());
+    else
+      ret += QString("s:%1:\"%2\";s:%3:\"%4\";")
+                    .arg(it.key().length())
+                    .arg(it.key())
+                    .arg(it.data().length())
+                    .arg(it.data());
+
+  }
+
+  ret += "}";
+  return ret;
+}
+
+
+StringMap QuantaDebuggerGubed::parseArgs(const QString &args)
+{
+  StringMap ca;
+  long cnt, length;
+
+  // a:2:{s:4:"name";s:7:"Jessica";s:3:"age";s:2:"26";s:4:"test";i:1;}
+
+  // No args
+  if(args.isEmpty() || args == "a:0:{}")
+    return ca;
+
+  // Make sure we have a good string
+  if(!args.startsWith("a:"))
+  {
+    kdDebug(24002) << k_funcinfo << "An error occurred in the communication link, data received was:" << args << endl;
+    return ca;
+  }
+
+  cnt = args.mid(2, args.find("{") - 3).toLong();
+  QString data = args.mid(args.find("{") + 1);
+
+  QString tmp, func;
+  while(cnt > 0)
+  {
+    tmp = data.left(data.find("\""));
+    length = tmp.mid(2, tmp.length() - 3).toLong();
+
+    func = data.mid(tmp.length() + 1, length);
+    data = data.mid( tmp.length() + length + 3);
+
+    if(data.left(1) == "i")
+    {
+      // Integer data
+      tmp = data.mid(data.find(":") + 1);
+      tmp = tmp.left(tmp.find(";"));
+      ca[func] = tmp;
+      data = data.mid(tmp.length() + 3);
+//       kdDebug(24002) << k_funcinfo << "**i " << func << ": " << ca[func] << endl;
+    }
+    else
+    {
+      // String data
+      tmp = data.left(data.find("\""));
+      length = tmp.mid(2, tmp.length() - 3).toLong();
+
+      ca[func] = data.mid(tmp.length() + 1, length);
+      data = data.mid( tmp.length() + length + 3);
+//       kdDebug(24002) << k_funcinfo << "**s " << func << ": " << ca[func] << endl; 
+   }
+ 
+    cnt--;
+  }
+
+  return ca;
+}
 #include "quantadebuggergubed.moc"

@@ -73,15 +73,15 @@ void DebuggerClient::stepOut()
 
 }
 
-// Unimplemented defaults - run
+// Unimplemented defaults - trace
+void DebuggerClient::trace()
+{
+  unSupportedAction(i18n("Trace"));
+}
+// Unimplemented defaults - Run
 void DebuggerClient::run()
 {
   unSupportedAction(i18n("Run"));
-}
-// Unimplemented defaults - leap
-void DebuggerClient::leap()
-{
-  unSupportedAction(i18n("Leap"));
 }
 // Unimplemented defaults - skip
 void DebuggerClient::skip()

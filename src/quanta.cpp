@@ -1628,24 +1628,38 @@ void QuantaApp::setCursorPosition( int row, int col )
 
 void QuantaApp::gotoFileAndLine(const QString& filename, int line, int column)
 {
-  if (!filename.isEmpty())
+  // First, check if we're already showing this file
+  Document *w = ViewManager::ref()->activeDocument();
+  KURL currentfilename, newfilename;
+  if(w)
+  {
+    currentfilename = w->url();
+    newfilename.setPath(filename);
+  }
+
+  // If a filename is specified and that file is not already active, openn it
+  if (!filename.isEmpty() && !currentfilename.equals(filename))
   {
     QuantaView* view = ViewManager::ref()->isOpened(KURL::fromPathOrURL(filename));
+    // If it's already opened, just activate it
     if (view)
     {
       view->activate();
       view->activated();
     } else
     {
+      // Otherwise open it
       m_doc->openDocument( KURL::fromPathOrURL( filename ) );
     }
   }
-  Document *w = ViewManager::ref()->activeDocument();
+  // We have to do this again, in case activedocument changed since last check (ie a file was opened)
+  w = ViewManager::ref()->activeDocument();
   if (w)
   {
     int numLines = w->editIf->numLines();
     if ( numLines > line && line >= 0 )
     {
+      // Jump to the correct line/col
       w->viewCursorIf->setCursorPositionReal(line, column);
     }
     w->view()->setFocus();

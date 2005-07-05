@@ -124,3 +124,17 @@ int DebuggerBreakpoint::state() const
 {
   return m_state;
 }
+
+bool DebuggerBreakpoint::operator == (DebuggerBreakpoint bp)
+{
+  if(bp.filePath() == m_filePath
+  && (bp.line() == m_line || m_type != DebuggerBreakpoint::LineBreakpoint)
+  && bp.type() == m_type
+  && bp.inClass() == m_class
+  && bp.inFunction() == m_function
+  && bp.condition() == m_conditionExpr
+  )
+    return true;
+  return false;
+  
+}

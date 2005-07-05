@@ -22,12 +22,28 @@
 #include <klistview.h>
 #include <kpopupmenu.h>
 #include <qptrlist.h>
+#include "debuggerbreakpoint.h"
 
-class DebuggerBreakpoint;
+// class DebuggerBreakpoint;
+class DebuggerBreakpointView;
+
+class DebuggerBreakpointViewItem : public KListViewItem
+{
+  private:
+    DebuggerBreakpoint m_breakpoint;
+
+  public:
+    DebuggerBreakpointViewItem();
+    DebuggerBreakpointViewItem(DebuggerBreakpointView* view);
+
+    DebuggerBreakpoint breakpoint() const { return m_breakpoint; }
+    void setBreakpoint(const DebuggerBreakpoint &bp) { m_breakpoint = bp; }
+
+};
 
 class DebuggerBreakpointView : public KListView
 {
-    Q_OBJECT
+  Q_OBJECT
 
   public:
     DebuggerBreakpointView(QWidget *parent = 0, const char *name = 0);
@@ -36,13 +52,14 @@ class DebuggerBreakpointView : public KListView
     void showBreakpoint(const DebuggerBreakpoint& bp);
     void deleteBreakpoint(const DebuggerBreakpoint& bp);
 
-    DebuggerBreakpoint* selected();
+    DebuggerBreakpoint selected();
 
     void clear();
 
   public slots:
     void slotRemoveSelected();
     void slotBreakpointContextMenu(KListView *list, QListViewItem * item, const QPoint& point);
+    void slotBreakpointDoubleClick(QListViewItem *item, const QPoint &point, int column);
 
   signals:
     void removeBreakpoint(DebuggerBreakpoint*);

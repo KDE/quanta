@@ -163,11 +163,11 @@ void DebuggerManager::initActions()
   newaction = new KAction(i18n("Send HTTP R&equest"), SmallIcon("debug_currentline"), 0, this, SLOT(slotDebugRequest()), ac, "debug_request");
   newaction->setToolTip(i18n("Initiate HTTP Request to the server with debugging activated"));
   
-  newaction = new KAction(i18n("&Run"), SmallIcon("debug_run"), 0, this, SLOT(slotDebugRun()), ac, "debug_run");
-  newaction->setToolTip(i18n("Executes the script showing every line of execution to the user (slow). If a script is currently not being debugged, the next script started will start in run mode"));
+  newaction = new KAction(i18n("&Trace"), SmallIcon("debug_run"), 0, this, SLOT(slotDebugTrace()), ac, "debug_trace");
+  newaction->setToolTip(i18n("Traces through the script. If a script is currently not being debugged, it will start in trace mode when started"));
   
-  newaction = new KAction(i18n("&Leap"), SmallIcon("debug_leap"), 0, this, SLOT(slotDebugLeap()), ac, "debug_leap");
-  newaction->setToolTip(i18n("Executes the script without showing every line of execution to the user (fast). If a script is currently not being debugged, the next script started will start in leap mode"));
+  newaction = new KAction(i18n("&Run"), SmallIcon("debug_leap"), 0, this, SLOT(slotDebugRun()), ac, "debug_run");
+  newaction->setToolTip(i18n("Runs the script. If a script is currently not being debugged, it will start in run mode when started"));
   
   newaction = new KAction(i18n("&Step"), SmallIcon("debug_stepover"), 0, this, SLOT(slotDebugStepOver()), ac, "debug_stepover");
   newaction->setToolTip(i18n("Executes the next line of execution, but does not step into functions or includes"));
@@ -182,7 +182,7 @@ void DebuggerManager::initActions()
   newaction->setToolTip(i18n("Executes the rest of the commands in the current function/file and pauses when it is done (when it reaches a higher level in the backtrace)"));
   
   newaction = new KAction(i18n("&Pause"), SmallIcon("debug_pause"), 0, this, SLOT(slotDebugPause()), ac, "debug_pause");
-  newaction->setToolTip(i18n("Pauses the scripts if it is running or leaping. If a script is currently not being debugged, it will start in paused mode when started"));
+  newaction->setToolTip(i18n("Pauses the scripts if it is running or tracing. If a script is currently not being debugged, it will start in paused mode when started"));
   newaction = new KAction(i18n("Kill"), SmallIcon("debug_kill"), 0, this, SLOT(slotDebugKill()), ac, "debug_kill");
   newaction->setToolTip(i18n("Kills the currently running script"));
   
@@ -244,7 +244,7 @@ void DebuggerManager::enableAction(const QString& action, bool enable)
     // Enable/Disable all session related actions + connect/disconnect
     enableAction("debug_request", enable);
     enableAction("debug_run", enable);
-    enableAction("debug_leap", enable);
+    enableAction("debug_trace", enable);
     enableAction("debug_pause", enable);
     enableAction("debug_kill", enable);
     enableAction("debug_stepover", enable);
@@ -381,20 +381,20 @@ void DebuggerManager::slotDebugRequest()
   m_client->request();
 }
 
+void DebuggerManager::slotDebugTrace()
+{
+  if(!m_client)
+    return;
+
+  m_client->trace();
+}
+
 void DebuggerManager::slotDebugRun()
 {
   if(!m_client)
     return;
 
   m_client->run();
-}
-
-void DebuggerManager::slotDebugLeap()
-{
-  if(!m_client)
-    return;
-
-  m_client->leap();
 
 }
 void DebuggerManager::slotDebugSkip()

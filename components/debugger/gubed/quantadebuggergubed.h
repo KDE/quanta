@@ -27,6 +27,7 @@
 #include "debuggerclient.h"
 
 typedef QValueList<QString> WatchList;
+typedef QMap<QString, QString> StringMap;
 
 class QuantaDebuggerGubed : public DebuggerClient
 {
@@ -40,8 +41,8 @@ class QuantaDebuggerGubed : public DebuggerClient
     enum State
     {
       Pause = 0,
-      RunDisplay,
-      RunNoDisplay
+      Trace,
+      Run
     };
     // Error codes
     enum Errors
@@ -61,8 +62,8 @@ class QuantaDebuggerGubed : public DebuggerClient
 
     // Execution control
     void request();
+    void trace();
     void run();
-    void leap();
     void skip();
     void stepInto();
     void stepOver();
@@ -88,7 +89,7 @@ class QuantaDebuggerGubed : public DebuggerClient
     // Breakpoints
     void addBreakpoint(DebuggerBreakpoint* breakpoint);
     void removeBreakpoint(DebuggerBreakpoint* breakpoint);
-    void showCondition(const QString &expression);
+    void showCondition(const StringMap &args);
 
     // Variables
     void addWatch(const QString &variable);
@@ -114,7 +115,10 @@ class QuantaDebuggerGubed : public DebuggerClient
 
     WatchList m_watchlist;
 
-    bool sendCommand(const QString&, const QString&);
+//     bool sendCommand(const QString&, const QString&);
+    bool sendCommand(const QString& command, StringMap args);
+    bool sendCommand(const QString& command, char * firstarg, ...);
+
     void processCommand(const QString&);
     void sendWatches();
     void sendBreakpoints();
@@ -124,6 +128,9 @@ class QuantaDebuggerGubed : public DebuggerClient
     QString mapLocalPathToServer(const QString& localpath);
     void showWatch(const QString& data);
     QString bpToGubed(DebuggerBreakpoint* breakpoint);
+
+    QString phpSerialize(StringMap args);
+    StringMap parseArgs(const QString &args);
 
   public slots:
     // Socket slots

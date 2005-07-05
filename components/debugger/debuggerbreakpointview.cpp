@@ -28,6 +28,8 @@
 #include "debuggerbreakpoint.h"
 #include "debuggerclient.h"
 #include "debuggermanager.h"
+#include "resource.h"
+#include "quanta.h"
 
 namespace DebuggerBreakpointViewColumns
 {
@@ -43,6 +45,12 @@ namespace DebuggerBreakpointViewColumns
     Value
   };
 }
+
+DebuggerBreakpointViewItem::DebuggerBreakpointViewItem(DebuggerBreakpointView* view)
+   : KListViewItem(view)
+{
+}
+
 
 DebuggerBreakpointView::DebuggerBreakpointView(QWidget *parent, const char *name)
     : KListView(parent, name)
@@ -62,6 +70,9 @@ DebuggerBreakpointView::DebuggerBreakpointView(QWidget *parent, const char *name
   m_breakpointPopup->insertItem(SmallIcon("editdelete"), i18n("&Remove"), this, SLOT(slotRemoveSelected()));
 
   connect(this, SIGNAL( contextMenu( KListView *, QListViewItem *, const QPoint & ) ), this, SLOT(slotBreakpointContextMenu(KListView *, QListViewItem *, const QPoint &)));
+
+  // Jump to bp
+  connect(this, SIGNAL( doubleClicked( QListViewItem *, const QPoint &, int) ), this, SLOT(slotBreakpointDoubleClick( QListViewItem *, const QPoint &, int)));
 }
 
 
@@ -87,7 +98,7 @@ void DebuggerBreakpointView::showBreakpoint(const DebuggerBreakpoint &bp)
   if(bp.type() == DebuggerBreakpoint::LineBreakpoint)
   {
     item->setText(DebuggerBreakpointViewColumns::Value, "");
-    item->setText(DebuggerBreakpointViewColumns::Line, QString::number(bp.line()));
+    item->setText(DebuggerBreakpointViewColumns::Line, QString::number(bp.line() + 1));
   }
   else
   {
@@ -98,31 +109,31 @@ void DebuggerBreakpointView::showBreakpoint(const DebuggerBreakpoint &bp)
   item->setText(DebuggerBreakpointViewColumns::Expression, bp.condition());
   item->setText(DebuggerBreakpointViewColumns::Class, bp.inClass());
   item->setText(DebuggerBreakpointViewColumns::Function, bp.inFunction());
-  
-
 }
 
 QListViewItem* DebuggerBreakpointView::findBreakpoint(const DebuggerBreakpoint& bp, bool addIfNotExist)
 {
   // Find the old item if its there
-  QListViewItem * item = firstChild() ;
+  DebuggerBreakpointViewItem* item = dynamic_cast<DebuggerBreakpointViewItem*>(firstChild());
   while(item)
   {
-    if(item->text(DebuggerBreakpointViewColumns::File) == bp.filePath()
+    if(item->breakpoint() == bp)
+    /*item->text(DebuggerBreakpointViewColumns::File) == bp.filePath()
     && item->text(DebuggerBreakpointViewColumns::Expression) == bp.condition()
     && item->text(DebuggerBreakpointViewColumns::Class) == bp.inClass()
     && item->text(DebuggerBreakpointViewColumns::Function) == bp.inFunction()
-    && item->text(DebuggerBreakpointViewColumns::Line) == (bp.type() == DebuggerBreakpoint::LineBreakpoint ? QString::number(bp.line()) : QString(""))
-    )
+    && item->text(DebuggerBreakpointViewColumns::Line) == (bp.type() == DebuggerBreakpoint::LineBreakpoint ? QString::number(bp.line() + 1) : QString(""))
+    )*/
       break;
 
-    item = item->nextSibling();
+    item =  dynamic_cast<DebuggerBreakpointViewItem*>(item->nextSibling());
   }
 
   // Insert a new item
   if(!item && addIfNotExist)
   {
-    item = new QListViewItem(this);
+    item = new DebuggerBreakpointViewItem(this);
+    item->setBreakpoint(bp);
     insertItem(item);
   }
 
@@ -130,28 +141,33 @@ QListViewItem* DebuggerBreakpointView::findBreakpoint(const DebuggerBreakpoint& 
 }
 
 
-DebuggerBreakpoint* DebuggerBreakpointView::selected()
+DebuggerBreakpoint DebuggerBreakpointView::selected()
 {
-  if(!selectedItem())
-    return NULL;
+/*  if(!selectedItem())
+    return NULL;*/
+  DebuggerBreakpointViewItem* bpitem = dynamic_cast<DebuggerBreakpointViewItem*>(selectedItem());
 
-  DebuggerBreakpoint* bp = new DebuggerBreakpoint(
+  return bpitem->breakpoint();/*new DebuggerBreakpoint(
     selectedItem()->text(DebuggerBreakpointViewColumns::File),
-    selectedItem()->text(DebuggerBreakpointViewColumns::Line).toInt());
-    bp->setCondition(selectedItem()->text(DebuggerBreakpointViewColumns::Expression));
-  return bp;
+    selectedItem()->text(DebuggerBreakpointViewColumns::Line).toInt() - 1);*/
+
+    //bp->setCondition(selectedItem()->text(DebuggerBreakpointViewColumns::Expression));
+  //return bp;
 }
 
 void DebuggerBreakpointView::slotRemoveSelected()
 {
-  DebuggerBreakpoint* bp = selected();
-
-  if(!bp)
+  if(!selectedItem())
     return;
 
-  delete selectedItem();
-  emit removeBreakpoint(bp);
-  delete bp;
+  DebuggerBreakpoint bp = selected();
+
+//   if(!bp)
+//     return;
+
+  //delete selectedItem();
+  emit removeBreakpoint(&bp);
+//  delete bp;
 }
 
 void DebuggerBreakpointView::keyPressEvent(QKeyEvent *e)
@@ -168,6 +184,20 @@ void DebuggerBreakpointView::keyPressEvent(QKeyEvent *e)
 void DebuggerBreakpointView::clear()
 {
   KListView::clear();
+}
+
+void DebuggerBreakpointView::slotBreakpointDoubleClick(QListViewItem *item, const QPoint &, int )
+{
+  if(!item)
+    return;
+
+  DebuggerBreakpointViewItem* bpitem = dynamic_cast<DebuggerBreakpointViewItem*>(item);
+  
+  if(!bpitem->breakpoint().filePath().isEmpty())
+  {
+    quantaApp->gotoFileAndLine(bpitem->breakpoint().filePath(), bpitem->breakpoint().line(), 0);
+  }
+
 }
 
 void DebuggerBreakpointView::slotBreakpointContextMenu(KListView *, QListViewItem *, const QPoint& point)
