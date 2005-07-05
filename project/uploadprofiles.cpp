@@ -98,10 +98,6 @@ KURL UploadProfiles::url(const QDomElement &e)
 {
   QString protocol = e.attribute("remote_protocol","ftp") + "://";
   QString s = protocol;
-  QString user = e.attribute("user","");
-  if (! user.isEmpty()) {
-    s += user + "@";
-  }
   QString host = e.attribute("remote_host","");
   s += host;
   QString port = e.attribute("remote_port","");
@@ -110,6 +106,10 @@ KURL UploadProfiles::url(const QDomElement &e)
   }
   s += e.attribute("remote_path","");
   KURL url = KURL::fromPathOrURL(s);
+  QString user = e.attribute("user","");
+  if (!user.isEmpty()) {
+    url.setUser(user);
+  }
   // check if we know the password
   if ( !user.isEmpty() && Project::ref()->keepPasswd )
   {
