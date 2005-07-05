@@ -128,10 +128,14 @@ _ (&#095;) Underscore
 ÿ (&#255;) Small y, diaeresis
 Ă (&#258;) Capital A, romanian accent
 ă (&#259;) Small a, romanian accent
-Ş (&#350;) Capital S, accent below
-ş (&#351;) Small s, accent below
-Ţ (&#354;) Capital T, accent below
-ţ (&#355;) Small t, accent below
+Ş (&#350;) Capital S, cedilla accent
+ş (&#351;) Small s, cedilla accent
+Ţ (&#354;) Capital T, cedilla accent
+ţ (&#355;) Small t, cedilla accent
+Ş (&#536;) Capital S, comma accent below
+ş (&#537;) Small s, comma accent below
+Ţ (&#538;) Capital T, comma accent below
+ţ (&#539;) Small t, comma accent below
 ‐ (&#8208;) Hyphen
 – (&#8211;) En dash
 — (&#8212;) Em dash
