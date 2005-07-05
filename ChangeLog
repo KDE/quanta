@@ -5,7 +5,8 @@ Version 3.4.2 (Release date: 20-07-2005; Started 01-06-2005):
        - entity autocompletion fixes
        - don't show the name twice in the tooltip of treeview items
        - show an upload treeview for profiles that have @ in the username
-
+       - allow CVS actions to be put on toolbars [#106023]
+       
 Version 3.4.1 (Release date: 31-05-2005; Started 04-03-2004):
  - bugfixes:
         - read/write the correct entry from description.rc in the editor

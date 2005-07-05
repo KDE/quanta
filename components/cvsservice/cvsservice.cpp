@@ -47,47 +47,22 @@
 CVSService::CVSService(KActionCollection *ac)
 {
   m_menu = new KPopupMenu();
-#if KDE_VERSION < KDE_MAKE_VERSION(3,2,90)
-  KAction *action = new KAction(i18n("&Commit..."), 0, this, SLOT(slotCommit()), ac);
-#else
-  KAction *action = new KAction(i18n("&Commit..."), "vcs_commit", 0, this, SLOT(slotCommit()), ac);
-#endif
+  KAction *action = new KAction(i18n("&Commit..."), "vcs_commit", 0, this, SLOT(slotCommit()), ac, "vcs_commit");
   action->plug(m_menu);
-#if KDE_VERSION < KDE_MAKE_VERSION(3,2,90)
-  action = new KAction(i18n("&Update"), 0, this, SLOT(slotUpdate()), ac);
-#else
-  action = new KAction(i18n("&Update"), "vcs_update", 0, this, SLOT(slotUpdate()), ac);
-#endif
+  action = new KAction(i18n("&Update"), "vcs_update", 0, this, SLOT(slotUpdate()), ac, "vcs_update");
   action->plug(m_menu);
   KPopupMenu *updateToMenu = new KPopupMenu(m_menu);
-#if KDE_VERSION < KDE_MAKE_VERSION(3,2,90)
-  m_menu->insertItem(i18n("Update &To"), updateToMenu);
-  action = new KAction(i18n("&Tag/Date..."), 0, this, SLOT(slotUpdateToTag()), ac);
-#else
   m_menu->insertItem(SmallIconSet("vcs_update"), i18n("Update &To"), updateToMenu);
-  action = new KAction(i18n("&Tag/Date..."), "vcs_update", 0, this, SLOT(slotUpdateToTag()), ac);
-#endif
+  action = new KAction(i18n("&Tag/Date..."), "vcs_update", 0, this, SLOT(slotUpdateToTag()), ac, "vcs_update_tag_date");
   action->plug(updateToMenu);
-#if KDE_VERSION < KDE_MAKE_VERSION(3,2,90)
-  action = new KAction(i18n("&HEAD"), 0, this, SLOT(slotUpdateToHead()), ac);
-#else
-  action = new KAction(i18n("&HEAD"), "vcs_update", 0, this, SLOT(slotUpdateToHead()), ac);
-#endif
+  action = new KAction(i18n("&HEAD"), "vcs_update", 0, this, SLOT(slotUpdateToHead()), ac, "vcs_update_head");
   action->plug(updateToMenu);
-  action = new KAction(i18n("Re&vert"), "reload", 0, this, SLOT(slotRevert()), ac);
+  action = new KAction(i18n("Re&vert"), "reload", 0, this, SLOT(slotRevert()), ac, "vcs_revert");
   action->plug(m_menu);
   m_menu->insertSeparator();
-#if KDE_VERSION < KDE_MAKE_VERSION(3,2,90)
-  action = new KAction(i18n("&Add to Repository..."), 0, this, SLOT(slotAdd()), ac);
-#else
-  action = new KAction(i18n("&Add to Repository..."), "vcs_add", 0, this, SLOT(slotAdd()), ac);
-#endif
+  action = new KAction(i18n("&Add to Repository..."), "vcs_add", 0, this, SLOT(slotAdd()), ac, "vcs_add");
   action->plug(m_menu);
-#if KDE_VERSION < KDE_MAKE_VERSION(3,2,90)
-  action = new KAction(i18n("&Remove from Repository..."), 0, this, SLOT(slotRemove()), ac);
-#else
-  action = new KAction(i18n("&Remove from Repository..."), "vcs_remove", 0, this, SLOT(slotRemove()), ac);
-#endif
+  action = new KAction(i18n("&Remove from Repository..."), "vcs_remove", 0, this, SLOT(slotRemove()), ac, "vcs_remove");
   action->plug(m_menu);
   action = new KAction(i18n("&Ignore in CVS Operations"), 0, this, SLOT(slotAddToCVSIgnore()), ac);
   action->plug(m_menu);
