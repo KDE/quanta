@@ -638,15 +638,18 @@ void QuantaInit::openLastFiles()
   m_config->setGroup("General Options");
 
   QStringList urls = m_config->readPathListEntry("List of opened files");
+  QStringList encodings = m_config->readPathListEntry("Encoding of opened files");
   m_quanta->m_doc->blockSignals(true);
   m_quanta->setParserEnabled(false);
+  uint i = 0;
   for ( QStringList::Iterator it = urls.begin(); it != urls.end(); ++it )
   {
     KURL fu;
     QuantaCommon::setUrl(fu, *it);
 
     if (!ViewManager::ref()->isOpened(fu) && (!isPrj || fu.isLocalFile()))
-      m_quanta->slotFileOpen(fu);
+      m_quanta->slotFileOpen(fu, encodings[i]);
+    i++;
   }
   m_config->sync();
   m_quanta->m_doc->blockSignals(false);

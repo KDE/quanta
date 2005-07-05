@@ -4067,6 +4067,22 @@ bool QuantaApp::queryClose()
   {
     m_config->setGroup("General Options");
     m_config->writePathEntry("List of opened files", ViewManager::ref()->openedFiles().toStringList());
+    QStringList encodings;
+    QValueList<Document*> documents = ViewManager::ref()->openedDocuments();
+    for (QValueList<Document*>::ConstIterator it = documents.constBegin(); it != documents.constEnd(); ++it)
+    {
+      if (!(*it)->isUntitled())
+      {
+        QString encoding = defaultEncoding();
+        KTextEditor::EncodingInterface* encodingIf = dynamic_cast<KTextEditor::EncodingInterface*>((*it)->doc());
+        if (encodingIf)
+            encoding = encodingIf->encoding();
+        if (encoding.isEmpty())
+            encoding = "utf8";  //final fallback
+        encodings += encoding;
+      }
+    }
+    m_config->writePathEntry("Encoding of opened files", encodings);
     parser->setParsingEnabled(false);
     canExit = ViewManager::ref()->closeAll(false);
     if (canExit)
