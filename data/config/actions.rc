@@ -12,6 +12,9 @@
 <action shortcut="SHIFT+F12" icon="mozilla" type="script" tooltip="" name="view_with_mozilla" text="View with Mo&amp;zilla">
 <script output="message" error="message" input="none" >sh %scriptdir/externalpreview.sh %pid mozilla new-tab</script>
 </action>
+<action shortcut="CTRL+SHIFT+F12" icon="firefox" type="script" tooltip="" name="view_with_firefox" text="View with &amp;Firefox">
+<script output="message" error="message" input="none" >sh %scriptdir/externalpreview.sh %pid firefox new-tab</script>
+</action>
 <action shortcut="SHIFT+F6" icon="netscape" type="script" tooltip="" name="view_with_netscape" text="View with &amp;Netscape">
 <script output="message" error="message" input="none" >sh %scriptdir/externalpreview.sh %pid netscape new-tab</script>
 </action>

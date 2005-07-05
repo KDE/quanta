@@ -992,6 +992,11 @@ void QuantaInit::initActions()
                         ac, "view_with_konqueror" );
     act->plug(m_quanta->showPreviewAction->popupMenu());
 
+
+    act = ac->action("view_with_firefox");
+    if (act)
+      act->plug(m_quanta->showPreviewAction->popupMenu());
+
     act = ac->action("view_with_mozilla");
     if (act)
       act->plug(m_quanta->showPreviewAction->popupMenu());
