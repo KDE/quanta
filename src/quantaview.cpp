@@ -140,7 +140,7 @@ bool QuantaView::mayRemove()
         parser->setSAParserEnabled(false);
         delete baseNode;
         baseNode = 0L;
-        if (m_kafkaDocument && m_kafkaDocument->getKafkaWidget())
+        if (m_kafkaDocument && m_kafkaDocument->getKafkaWidget() && m_kafkaDocument->getKafkaWidget()->view())
           m_kafkaDocument->getKafkaWidget()->view()->reparent(0, 0, QPoint(), false);
     }
     if (m_document)
