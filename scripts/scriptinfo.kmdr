@@ -52,7 +52,7 @@
                         </property>
                         <property name="font">
                             <font>
-                                <family>helvetica [Adobe]</family>
+                                <family>Sans Serif</family>
                                 <bold>1</bold>
                                 <italic>1</italic>
                             </font>
@@ -419,7 +419,7 @@ $options&lt;name&gt;@Name&lt;/name&gt;
                             <cstring>TextEdit3</cstring>
                         </property>
                         <property name="text">
-                            <string>&lt;html&gt;&lt;head&gt;&lt;meta name="qrichtext" content="1" /&gt;&lt;/head&gt;&lt;body style="font-size:11pt;font-family:helvetica"&gt;
+                            <string>&lt;html&gt;&lt;head&gt;&lt;meta name="qrichtext" content="1" /&gt;&lt;/head&gt;&lt;body style="font-size:11pt;font-family:sans-serif"&gt;
 &lt;p style="margin-top:16px"&gt;&lt;span style="font-weight:600"&gt;Quanta Plus Submitter Info Files&lt;/span&gt;&lt;/p&gt;
 &lt;p&gt;The purpose of these files is to provide developers with proper credit, expose licensing information and give users thumbnail information about scripts and templates at a glance. We ask that you try to do several things here.&lt;/p&gt;
 &lt;ul type="disc"&gt;&lt;li&gt;Fill in all the fields. They are all there for a reason.&lt;/li&gt;

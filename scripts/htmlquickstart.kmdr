@@ -67,8 +67,8 @@ fi
             </property>
             <property name="font">
                 <font>
-                    <family>Helvetica</family>
-                    <pointsize>14</pointsize>
+                    <family>Sans Serif</family>
+                    <pointsize>12</pointsize>
                     <bold>1</bold>
                 </font>
             </property>
