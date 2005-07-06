@@ -17,7 +17,7 @@ td.end {background-image: url(lines2.png);
 td.shadow1 {background-image: url(shadow1.png);
       background-repeat: x-repeat;}
 
-table.vnice { font-family: verdana,geneva,arial,helvetica,sans-serif;
+table.vnice { font-family: sans-serif;
           font-size: x-small;}
 
 a:link    {background-color: transparent;
@@ -39,21 +39,21 @@ tr.menurow {background-color: #505050;
 
 td.deco      {color: #ffffff;
              background-color: #505050;
-             font-family: verdana,geneva,arial,helvetica,sans-serif;
+             font-family: sans-serif;
              font-size: small;}
 
 td.menuactive      {color: #ffcc00;
              background-color: #777777;
-             font-family: verdana,geneva,arial,helvetica,sans-serif;
+             font-family: sans-serif;
              font-size: small;}
  
 td.menu      {color: #ffffff;
              background-color: #505050;
-             font-family: verdana,geneva,arial,helvetica,sans-serif;
+             font-family: sans-serif;
              font-size: small;}
 
 a.menu 	    {color: #eeeeee;
-            font-family: verdana,geneva,arial,helvetica,sans-serif;
+            font-family: sans-serif;
             font-size: small;}
 
 a.menu:hover {color: #ffffff;
