@@ -127,13 +127,13 @@ if (typeof ol_capcolor == 'undefined') { var ol_capcolor = "#FFFFFF";}
 if (typeof ol_closecolor == 'undefined') { var ol_closecolor = "#9999FF";}
 
 // Font face for the main text
-if (typeof ol_textfont == 'undefined') { var ol_textfont = "Verdana,Arial,Helvetica";}
+if (typeof ol_textfont == 'undefined') { var ol_textfont = "sans-serif";}
 
 // Font face for the caption
-if (typeof ol_captionfont == 'undefined') { var ol_captionfont = "Verdana,Arial,Helvetica";}
+if (typeof ol_captionfont == 'undefined') { var ol_captionfont = "sans-serif";}
 
 // Font face for the close text
-if (typeof ol_closefont == 'undefined') { var ol_closefont = "Verdana,Arial,Helvetica";}
+if (typeof ol_closefont == 'undefined') { var ol_closefont = "sans-serif";}
 
 // Font size for the main text
 // When using CSS this will be very small.
