@@ -1,5 +1,5 @@
 <!DOCTYPE UI><UI version="3.0" stdsetdef="1">
-<class>meinproc</class>
+<class>Form3</class>
 <comment>Quanta+: meinproc is a Kommander front-end for meinproc.</comment>
 <author>Chris Hornbaker</author>
 <widget class="Dialog">
@@ -11,7 +11,7 @@
             <x>0</x>
             <y>0</y>
             <width>471</width>
-            <height>169</height>
+            <height>179</height>
         </rect>
     </property>
     <property name="caption">
@@ -76,7 +76,7 @@
                                 <cstring>CheckBox4</cstring>
                             </property>
                             <property name="text">
-                                <string>Current working folder in Quanta</string>
+                                <string>Current working folder &amp;in Quanta</string>
                             </property>
                             <property name="autoRepeat">
                                 <bool>false</bool>
@@ -179,12 +179,15 @@
                         <cstring>PrevKonq</cstring>
                     </property>
                     <property name="text">
-                        <string>View in Konqueror?</string>
+                        <string>&amp;View in Konqueror?</string>
+                    </property>
+                    <property name="populationText">
+                        <string></string>
                     </property>
                     <property name="associations" stdset="0">
                         <stringlist>
-                            <string>@null</string>
-                            <string>@widgetText
+                            <string>"false"</string>
+                            <string>"true"
 </string>
                         </stringlist>
                     </property>
@@ -226,7 +229,7 @@ fi
 cd $DIR
 rm -f *.html
 meinproc index.docbook
-if [ @PrevKonq ]
+if [ "@PrevKonq"=="true" ]
 then
  konqueror index.html
 fi</string>
