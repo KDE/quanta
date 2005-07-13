@@ -1,5 +1,5 @@
 <!DOCTYPE UI><UI version="3.0" stdsetdef="1">
-<class>checkxml</class>
+<class>Form3</class>
 <comment>Quanta+ KDE XML Validator is a Kommander front-end for checkXML.</comment>
 <author>Chris Hornbaker</author>
 <widget class="Dialog">
@@ -16,6 +16,13 @@
     </property>
     <property name="caption">
         <string>Quanta+ KDE XML Validator</string>
+    </property>
+    <property name="associations" stdset="0">
+        <stringlist>
+            <string></string>
+            <string></string>
+            <string></string>
+        </stringlist>
     </property>
     <grid>
         <property name="name">
@@ -105,7 +112,8 @@ if [ !$CUR ]
   DIR=`echo '@FileSelector4'`
 fi
 cd $DIR
-checkXML index.docbook</string>
+#meinproc --check --stdout index.docbook
+checkXML index.docbook 2&gt;&amp;1</string>
                                 </stringlist>
                             </property>
                         </widget>
@@ -115,6 +123,11 @@ checkXML index.docbook</string>
                             </property>
                             <property name="text">
                                 <string>&amp;Close</string>
+                            </property>
+                            <property name="associations" stdset="0">
+                                <stringlist>
+                                    <string></string>
+                                </stringlist>
                             </property>
                         </widget>
                     </hbox>
@@ -160,7 +173,7 @@ checkXML index.docbook</string>
                                         <cstring>CheckBox4</cstring>
                                     </property>
                                     <property name="text">
-                                        <string>Current working folder</string>
+                                        <string>C&amp;urrent working folder</string>
                                     </property>
                                     <property name="autoRepeat">
                                         <bool>false</bool>

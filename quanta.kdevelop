@@ -18,13 +18,13 @@
     <projectdirectory>.</projectdirectory>
     <absoluteprojectpath>false</absoluteprojectpath>
     <secondaryLanguages/>
-    <versioncontrol/>
+    <versioncontrol></versioncontrol>
   </general>
   <kdevautoproject>
     <general>
       <mainprogram>quanta</mainprogram>
       <useconfiguration>default</useconfiguration>
-      <activetarget>project/libproject.la</activetarget>
+      <activetarget>src/quanta</activetarget>
     </general>
     <configure>
       <configargs>--prefix=/opt/kde3 --enable-debug\s</configargs>
@@ -35,9 +35,11 @@
       <dontact>false</dontact>
       <makebin/>
       <envvars>
+        <envvar value="no" name="UNSERMAKE" />
         <envvar value="1" name="WANT_AUTOCONF_2_5" />
         <envvar value="1" name="WANT_AUTOMAKE_1_6" />
       </envvars>
+      <prio>0</prio>
     </make>
     <compiler>
       <cflags/>
@@ -166,7 +168,7 @@
     </groups>
     <tree>
       <hidenonprojectfiles>false</hidenonprojectfiles>
-      <hidepatterns></hidepatterns>
+      <hidepatterns/>
       <showvcsfields>true</showvcsfields>
     </tree>
   </kdevfileview>
@@ -189,16 +191,16 @@
   </kdevdoctreeview>
   <kdevdebugger>
     <general>
-      <dbgshell/>
-      <programargs/>
+      <dbgshell></dbgshell>
+      <programargs></programargs>
       <gdbpath>/usr/bin/</gdbpath>
       <breakonloadinglibs>true</breakonloadinglibs>
       <separatetty>false</separatetty>
       <floatingtoolbar>false</floatingtoolbar>
       <runappinappdirectory>true</runappinappdirectory>
-      <configGdbScript/>
-      <runShellScript/>
-      <runGdbScript/>
+      <configGdbScript></configGdbScript>
+      <runShellScript></runShellScript>
+      <runGdbScript></runGdbScript>
     </general>
     <display>
       <staticmembers>false</staticmembers>
@@ -241,10 +243,10 @@
   </kdevcvs>
   <kdevfilecreate>
     <filetypes>
-      <type icon="" ext="h" create="template" name="C++ header" >
+      <type icon="" ext="h" name="C++ header" create="template" >
         <descr>Quanta speicfic header</descr>
       </type>
-      <type icon="source_cpp" ext="cpp" create="template" name="C++ source" >
+      <type icon="source_cpp" ext="cpp" name="C++ source" create="template" >
         <descr>A new empty C++ file.</descr>
       </type>
     </filetypes>
@@ -268,7 +270,7 @@
       <pcs>KDElibs</pcs>
     </references>
     <creategettersetter>
-      <prefixGet/>
+      <prefixGet></prefixGet>
       <prefixSet>set</prefixSet>
       <prefixVariable>m_,_</prefixVariable>
       <parameterName>theValue</parameterName>

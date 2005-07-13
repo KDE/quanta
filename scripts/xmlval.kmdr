@@ -1,5 +1,5 @@
 <!DOCTYPE UI><UI version="3.0" stdsetdef="1">
-<class>XMLval</class>
+<class>Form3</class>
 <comment>Quanta+ XML Validator is a Kommander front-end for xmllint.</comment>
 <author>Chris Hornbaker</author>
 <widget class="Dialog">
@@ -11,7 +11,7 @@
             <x>0</x>
             <y>0</y>
             <width>439</width>
-            <height>250</height>
+            <height>254</height>
         </rect>
     </property>
     <property name="caption">
@@ -89,7 +89,7 @@ CMDLINE="$VALSTR $FILE"</string>
                                 <cstring>CheckBox4</cstring>
                             </property>
                             <property name="text">
-                                <string>Current file</string>
+                                <string>C&amp;urrent file</string>
                             </property>
                             <property name="autoRepeat">
                                 <bool>false</bool>
@@ -315,7 +315,7 @@ esac</string>
                                 <cstring>CheckBox3</cstring>
                             </property>
                             <property name="text">
-                                <string>Well-formed checking only</string>
+                                <string>Well-formed checking &amp;only</string>
                             </property>
                             <property name="associations" stdset="0">
                                 <stringlist>
@@ -425,7 +425,8 @@ fi
                 <stringlist>
                     <string># Set up the CMDLINE var and run xmllint
 @ValScript
-xmllint --noout $CMDLINE</string>
+xmllint $CMDLINE 2&gt;&amp;1
+</string>
                 </stringlist>
             </property>
         </widget>
