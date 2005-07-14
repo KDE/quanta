@@ -15,7 +15,8 @@
  ***************************************************************************/
 
 #include <kdebug.h>
-#include <kextsock.h>
+#include <kserversocket.h>
+#include <kstreamsocket.h>
 #include <klocale.h>
 #include <kgenericfactory.h>
 #include <qlineedit.h>
@@ -55,7 +56,6 @@ QuantaDebuggerGubed::QuantaDebuggerGubed (QObject *parent, const char* name, con
   m_defaultExecutionState = Pause;
   setExecutionState(m_defaultExecutionState);
 
-
   m_datalen = -1;
 }
 
@@ -71,7 +71,7 @@ QuantaDebuggerGubed::~QuantaDebuggerGubed ()
     m_socket->close();
   }
   if(m_server)
-    delete m_server;
+    m_server->deleteLater();
 }
 
 // Try to make a connection to the gubed server
@@ -83,15 +83,14 @@ void QuantaDebuggerGubed::startSession()
   {
     if(!m_socket)
     {
-      m_socket = new KExtendedSocket(m_serverHost, m_serverPort.toUInt(), KExtendedSocket::inetSocket |  KExtendedSocket::inputBufferedSocket);
-      m_socket->enableRead(true);
-      m_socket->setBufferSize(-1);
-      connect(m_socket, SIGNAL(connectionFailed(int)), this, SLOT(slotError(int)));
-      connect(m_socket, SIGNAL(connectionSuccess()), this, SLOT(slotConnected()));
-      connect(m_socket, SIGNAL(closed(int)), this, SLOT(slotConnectionClosed(int)));
+      m_socket = new KNetwork::KStreamSocket(m_serverHost, m_serverPort);
+
+      connect(m_socket, SIGNAL(gotError(int)), this, SLOT(slotError(int)));
+      connect(m_socket, SIGNAL(connected(const KResolverEntry &)), this, SLOT(slotConnected(const KResolverEntry &)));
+      connect(m_socket, SIGNAL(closed()), this, SLOT(slotConnectionClosed()));
       connect(m_socket, SIGNAL(readyRead()), this, SLOT(slotReadyRead()));
 
-      m_socket->startAsyncConnect();
+      m_socket->connect();
       debuggerInterface()->enableAction("debug_connect", true);
       debuggerInterface()->enableAction("debug_disconnect", false);
       debuggerInterface()->enableAction("debug_request", false);
@@ -102,27 +101,24 @@ void QuantaDebuggerGubed::startSession()
   {
     if(!m_server)
     {
-      m_server = new KExtendedSocket(QString::null, m_listenPort.toUInt(), KExtendedSocket::inetSocket | KExtendedSocket::passiveSocket);
+      m_server = new KNetwork::KServerSocket(m_listenPort);
 
-      m_server->setAddressReusable(true);
+      m_server->setAddressReuseable(true);
       connect(m_server, SIGNAL(readyAccept()), this, SLOT(slotReadyAccept()));
 
-      int err = m_server->listen();
-      kdDebug(24002) << k_funcinfo << ", listen:" << m_listenPort.toUInt() << " " << err << " " << m_server->systemError() << " " << KExtendedSocket::strError(err, m_server->systemError()) << endl;
-      if(err)
-      {
-        debuggerInterface()->showStatus(KExtendedSocket::strError(err, m_server->systemError()), false);
-        delete  m_server;
-        m_server = NULL;
-        debuggerInterface()->enableAction("debug_connect", true);
-        debuggerInterface()->enableAction("debug_disconnect", false);
-        debuggerInterface()->enableAction("debug_request", false);
-      }
-      else
+      if(m_server->listen())
       {
         debuggerInterface()->enableAction("debug_connect", false);
         debuggerInterface()->enableAction("debug_disconnect", true);
         debuggerInterface()->enableAction("debug_request", true);
+      }
+      else
+      {
+        m_server->deleteLater();
+        m_server = NULL;
+        debuggerInterface()->enableAction("debug_connect", true);
+        debuggerInterface()->enableAction("debug_disconnect", false);
+        debuggerInterface()->enableAction("debug_request", false);
       }
     }
   }
@@ -141,19 +137,19 @@ void QuantaDebuggerGubed::endSession()
     sendCommand("die", 0);
     m_socket->flush();
     m_socket->close();
-    KExtendedSocket * oldsocket = m_socket;
-    m_socket = NULL;
-    delete oldsocket;
+
+    m_socket->deleteLater();
   }
+
   // Close the server
   if(m_server)
   {
-    delete m_server;
+    m_server->deleteLater();
     m_server = NULL;
   }
 
   // Fake a connection closed signal
-  slotConnectionClosed(0);
+  slotConnectionClosed();
   debuggerInterface()->enableAction("debug_request", false);
   debuggerInterface()->enableAction("debug_run", false);
   debuggerInterface()->enableAction("debug_leap", false);
@@ -223,22 +219,30 @@ const uint QuantaDebuggerGubed::supports(DebuggerClientCapabilities::Capabilitie
 }
 
 // Socket errors
-void QuantaDebuggerGubed::slotError(int error)
+void QuantaDebuggerGubed::slotError(int)
 {
   kdDebug(24002) << k_funcinfo << ", m_server: " << m_server << ", m_socket" << m_socket << endl;
   if(m_socket)
-    endSession();
+  {
+    if(m_socket->error() == KNetwork::KSocketBase::RemotelyDisconnected)
+    {
+      slotConnectionClosed();
+      return;
+    }
 
-  if(m_server)
-  {
-    kdDebug(24002) << k_funcinfo << ", " << KExtendedSocket::strError(error, m_server->systemError()) << endl;
-    debuggerInterface()->showStatus(KExtendedSocket::strError(error,m_server->systemError()), false);
+    if(m_socket->error())
+    {
+      kdDebug(24002) << k_funcinfo << ", " << m_socket->errorString() << endl;
+      debuggerInterface()->showStatus(m_socket->errorString(), false);
+    }
   }
-  else if(m_socket)
+
+  if(m_server && m_server->error())
   {
-    kdDebug(24002) << k_funcinfo << ", " << KExtendedSocket::strError(error, m_socket->systemError()) << endl;
-    debuggerInterface()->showStatus(KExtendedSocket::strError(error,m_socket->systemError()), false);
+    kdDebug(24002) << k_funcinfo << ", " << m_server->errorString() << endl;
+    debuggerInterface()->showStatus(m_server->errorString(), false);
   }
+
 }
 
 // slotReadyAccept
@@ -248,27 +252,26 @@ void QuantaDebuggerGubed::slotReadyAccept()
   kdDebug(24002) << k_funcinfo << ", m_server: " << m_server << ", m_socket" << m_socket << endl;
   if(!m_socket)
   {
-    int error;
+
+    // Perhaps this shouldnt be disconnected - instead check if connections are available at disconnect?
     disconnect(m_server, SIGNAL(readyAccept()), this, SLOT(slotReadyAccept()));
 
-    m_socket = new KExtendedSocket();
-    error = m_server->accept(m_socket);
-    if(error == 0)
+    m_socket = (KNetwork::KStreamSocket *)m_server->accept(); // KSocketServer returns a KStreamSocket (!)
+    if(m_socket)
     {
       kdDebug(24002) << k_funcinfo << ", ready" << endl;
       m_socket->enableRead(true);
-      m_socket->setSocketFlags(KExtendedSocket::inetSocket |  KExtendedSocket::inputBufferedSocket);
-      m_socket->setBufferSize(-1);
-      connect(m_socket, SIGNAL(connectionFailed(int)), this, SLOT(slotError(int)));
-      connect(m_socket, SIGNAL(connectionSuccess()), this, SLOT(slotConnected()));
-      connect(m_socket, SIGNAL(closed(int)), this, SLOT(slotConnectionClosed(int)));
+
+      connect(m_socket, SIGNAL(gotError(int)), this, SLOT(slotError(int)));
+      connect(m_socket, SIGNAL(connected(const KResolverEntry &)), this, SLOT(slotConnected(const KResolverEntry &)));
+      connect(m_socket, SIGNAL(closed()), this, SLOT(slotConnectionClosed()));
       connect(m_socket, SIGNAL(readyRead()), this, SLOT(slotReadyRead()));
-      slotConnected();
+      connected();
     }
     else
     {
-      kdDebug(24002) << k_funcinfo << ", " << KExtendedSocket::strError(error, m_server->systemError()) << endl;
-      delete m_socket;
+      kdDebug(24002) << k_funcinfo << ", " << m_server->errorString() << endl;
+      m_socket->deleteLater();
       m_socket = NULL;
     }
   }
@@ -276,7 +279,12 @@ void QuantaDebuggerGubed::slotReadyAccept()
 }
 
 // Connection established
-void QuantaDebuggerGubed::slotConnected()
+void QuantaDebuggerGubed::slotConnected(const KNetwork::KResolverEntry &)
+{
+  connected();
+}
+
+void QuantaDebuggerGubed::connected()
 {
   kdDebug(24002) << k_funcinfo << endl;
 
@@ -285,13 +293,13 @@ void QuantaDebuggerGubed::slotConnected()
   debuggerInterface()->enableAction("debug_disconnect", true);
   debuggerInterface()->enableAction("debug_request", false);
 
-  m_active = true;
+  m_active = true;  
 }
 
 // Connectio closed
-void QuantaDebuggerGubed::slotConnectionClosed(int state)
+void QuantaDebuggerGubed::slotConnectionClosed() 
 {
-  kdDebug(24002) << k_funcinfo << ", state: " << state << ", m_server: " << m_server << ", m_socket" << m_socket << endl;
+  kdDebug(24002) << k_funcinfo << ", m_server: " << m_server << ", m_socket" << m_socket << endl;
 
   // Check if we have more data to read
   slotReadyRead();
@@ -299,7 +307,7 @@ void QuantaDebuggerGubed::slotConnectionClosed(int state)
 
   if(m_socket)
   {
-    delete m_socket;
+    m_socket->deleteLater();
     m_socket = NULL;
   }
 
@@ -552,33 +560,13 @@ void QuantaDebuggerGubed::sendWatches()
     sendCommand("getwatch", "variable", (*it).ascii(), 0);
   sendCommand("sentwatches", "key", 0, 0);
 }
-/*
-// Send a command to gubed
-bool QuantaDebuggerGubed::sendCommand(const QString& a_command, const QString& a_data)
-{
-  kdDebug(24002) << k_lineinfo << ", command: " << a_command << ", data " << a_data << endl;
-  if(!m_socket || m_socket->socketStatus() != KExtendedSocket::connected)
-    return false;
-
-  // Needs line terminatino
-  QString command = a_command;
-  QString data = a_data;
-  command += "\n";
-  data += "\n";
-
-  // Write data to socket
-  m_socket->writeBlock(command, command.length());
-  m_socket->writeBlock(data, data.length());
-
-  return true;
-}*/
 
 // Send a command to gubed
 bool QuantaDebuggerGubed::sendCommand(const QString& command, StringMap args)
 {
 
   kdDebug(24002) << k_lineinfo << ", command " << command << " with data: " << phpSerialize(args) << endl;
-  if(!m_socket || m_socket->socketStatus() != KExtendedSocket::connected)
+  if(!m_socket || m_socket->state() != KNetwork::KClientSocketBase::Connected)
     return false;
 
   QString buffer = phpSerialize(args);

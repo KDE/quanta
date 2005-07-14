@@ -1,5 +1,5 @@
 /***************************************************************************
-                          phpdebuggubed.cpp
+                          phpdebugdbgp.cpp
                              -------------------
     begin                : 2004-03-12
     copyright            : (C) 2004 Linus McCabe <linus@mccabe.nu>
@@ -24,24 +24,27 @@
 #include <qdom.h>
 
 #include "debuggerclient.h"
+#include "dbgpnetwork.h"
 
 typedef QValueList<QString> WatchList;
 typedef QMap<QString, QString> StringMap;
 
-class QuantaDebuggerGubed : public DebuggerClient
+class QuantaDebuggerDBGp : public DebuggerClient
 {
     Q_OBJECT
 
   public:
-    QuantaDebuggerGubed(QObject *parent, const char* name, const QStringList&);
-    ~QuantaDebuggerGubed();
+    QuantaDebuggerDBGp(QObject *parent, const char* name, const QStringList&);
+    ~QuantaDebuggerDBGp();
 
     // Execution states
     enum State
     {
-      Pause = 0,
-      Trace,
-      Run
+      Starting = 0,
+      Stopping,
+      Stopped,
+      Running,
+      Break
     };
     // Error codes
     enum Errors
@@ -61,7 +64,6 @@ class QuantaDebuggerGubed : public DebuggerClient
 
     // Execution control
     void request();
-    void trace();
     void run();
     void skip();
     void stepInto();
@@ -96,10 +98,9 @@ class QuantaDebuggerGubed : public DebuggerClient
     void variableSetValue(const DebuggerVariable &variable);
 
   private:
-    KNetwork::KStreamSocket *m_socket;
-    KNetwork::KServerSocket *m_server;
-    QString m_command, m_buffer;
-    long    m_datalen;
+//     QByteArray m_buffer;
+//     long    m_datalen, m_bufferlen;
+    DBGpNetwork m_network;
 
     QString m_serverBasedir;
     QString m_localBasedir;
@@ -118,7 +119,6 @@ class QuantaDebuggerGubed : public DebuggerClient
     bool sendCommand(const QString& command, StringMap args);
     bool sendCommand(const QString& command, char * firstarg, ...);
 
-    void processCommand(const QString&);
     void sendWatches();
     void sendBreakpoints();
     void debuggingState(bool enable);
@@ -127,20 +127,16 @@ class QuantaDebuggerGubed : public DebuggerClient
     QString mapServerPathToLocal(const QString& serverpath);
     QString mapLocalPathToServer(const QString& localpath);
     void showWatch(const QString& data);
-    QString bpToGubed(DebuggerBreakpoint* breakpoint);
+    QString bpToDBGp(DebuggerBreakpoint* breakpoint);
 
     QString phpSerialize(StringMap args);
     StringMap parseArgs(const QString &args);
 
   public slots:
-    // Socket slots
-    void slotConnected(const KNetwork::KResolverEntry &);
-    void slotConnectionClosed();
-    void slotError(int error);
-    void slotReadyRead();
-    void slotReadyAccept();
-
-  signals:
+    void slotNetworkActive(bool active);
+    void slotNetworkConnected(bool connected);
+    void slotNetworkError(const QString &errormsg, bool log);
+    void processCommand(const QString&);
 
 };
 

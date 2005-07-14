@@ -2017,9 +2017,9 @@ void QuantaApp::slotContextMenuAboutToShow()
       popupWord = word;
 
       // The word we display in the popup will be cut off not to make an obeast pop up menu
-      if(word.length() > 15)
+      if(word.length() > 23)
       {
-        word.remove(0, 12);
+        word.mid(20);
         word += "...";
       }
 
@@ -2027,7 +2027,7 @@ void QuantaApp::slotContextMenuAboutToShow()
       action = actionCollection()->action("debug_addwatch");
       if(action)
       {
-        action->setText(i18n("Add Watch: %1").arg(word));
+        action->setText(i18n("Add Watch: '%1'").arg(word));
         action->setEnabled(!word.isEmpty());
 
         if(!action->isPlugged(popup))
@@ -2049,7 +2049,7 @@ void QuantaApp::slotContextMenuAboutToShow()
       action = actionCollection()->action("debug_conditional_break");
       if(action)
       {
-        action->setText(i18n("Break When %1...").arg(word));
+        action->setText(i18n("Break When '%1'...").arg(word));
         action->setEnabled(!word.isEmpty());
 
         if(!action->isPlugged(popup))

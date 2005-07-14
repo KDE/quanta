@@ -65,6 +65,7 @@ DebuggerBreakpointView::DebuggerBreakpointView(QWidget *parent, const char *name
 
   setResizeMode(QListView::AllColumns);
   setAllColumnsShowFocus(true);
+  setSorting(-1); // No sorting
 
   m_breakpointPopup = new KPopupMenu(this);
   m_breakpointPopup->insertItem(SmallIcon("editdelete"), i18n("&Remove"), this, SLOT(slotRemoveSelected()));

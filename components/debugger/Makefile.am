@@ -1,4 +1,4 @@
-SUBDIRS = interfaces gubed
+SUBDIRS = interfaces gubed dbgp
 METASOURCES = AUTO
 
 

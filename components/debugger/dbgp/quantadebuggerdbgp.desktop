@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Service
+Encoding=UTF-8
+Name=DBGp
+Name[xx]=xxDBGpxx
+Comment=DBGp debugger plugin, see http://xdebug.org
+Icon=kdbg
+ServiceTypes=Quanta/Debugger
+X-KDE-Library=quantadebuggerdbgp
