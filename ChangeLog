@@ -15,7 +15,7 @@ Version 3.5 (Release date: xx-xx-2004; Started 04-03-2004):
         - show an upload treeview for profiles that have @ in the username
         - allow CVS actions to be put on toolbars [#106023]
         - open the files with the right encoding when restoring the last opened files on startup [#104512]
-        - add missing Romanian characters to the Insert Special Character dialog and to the automatic conversion list [#107549]
+        - add missing Romanian characters to the Insert Special Character dialog [#107549]
         - fix the Kommander XML scripts.
 
  - improvements:
@@ -28,6 +28,8 @@ Version 3.5 (Release date: xx-xx-2004; Started 04-03-2004):
         - possibility to change the icon/text layout of the user toolbars from
           inside Quanta added
         - external preview possibility with Firefox added [#106557]
+	- make autoreplacing of accented chars smarter. The characters are replaced only if they cannot 
+	  be encoded in the encoding of the document
         - make single file/folder upload really quick [#105612]
         - Paste as HTML Encoded encodes more chars to their corresponding entities [#100547, #100103]
         - Debugger

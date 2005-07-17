@@ -18,7 +18,7 @@
     <projectdirectory>.</projectdirectory>
     <absoluteprojectpath>false</absoluteprojectpath>
     <secondaryLanguages/>
-    <versioncontrol></versioncontrol>
+    <versioncontrol/>
   </general>
   <kdevautoproject>
     <general>
@@ -31,9 +31,9 @@
     </configure>
     <make>
       <abortonerror>true</abortonerror>
-      <numberofjobs>1</numberofjobs>
+      <numberofjobs>2</numberofjobs>
       <dontact>false</dontact>
-      <makebin/>
+      <makebin></makebin>
       <envvars>
         <envvar value="no" name="UNSERMAKE" />
         <envvar value="1" name="WANT_AUTOCONF_2_5" />
@@ -168,7 +168,7 @@
     </groups>
     <tree>
       <hidenonprojectfiles>false</hidenonprojectfiles>
-      <hidepatterns/>
+      <hidepatterns></hidepatterns>
       <showvcsfields>true</showvcsfields>
     </tree>
   </kdevfileview>
@@ -267,6 +267,7 @@
     </codecompletion>
     <references>
       <pcs>Qt</pcs>
+      <pcs>KDevelop API</pcs>
       <pcs>KDElibs</pcs>
     </references>
     <creategettersetter>
