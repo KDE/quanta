@@ -16,6 +16,8 @@ Version 3.5 (Release date: xx-xx-2004; Started 04-03-2004):
         - allow CVS actions to be put on toolbars [#106023]
         - open the files with the right encoding when restoring the last opened files on startup [#104512]
         - add missing Romanian characters to the Insert Special Character dialog [#107549]
+        - treat "<" as the end of a tag name. Fixes autoreplacement of opening/closing
+          tags in cases when a PHP area starts directly after a tag name. [#106911]
         - fix the Kommander XML scripts.
 
  - improvements:
