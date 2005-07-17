@@ -205,7 +205,7 @@ void Tag::parse(const QString &p_tagStr, Document *p_write)
  m_nameCol = m_area.bCol + 1;
  uint pos = 1;
  while (pos < strLength &&
-        !m_tagStr[pos].isSpace() && m_tagStr[pos] != '>' && m_tagStr[pos] != '\n')
+        !m_tagStr[pos].isSpace() && m_tagStr[pos] != '>' && m_tagStr[pos] != '<' && m_tagStr[pos] != '\n')
  {
    pos++;
  }

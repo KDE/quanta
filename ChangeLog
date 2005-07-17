@@ -8,7 +8,9 @@ Version 3.4.2 (Release date: 20-07-2005; Started 01-06-2005):
         - allow CVS actions to be put on toolbars [#106023]
 	- open the files with the right encoding when restoring the last opened files on startup [#104512]
 	- fix the Kommander XML scripts
-
+	- treat "<" as the end of a tag name. Fixes autoreplacement of opening/closing
+          tags in cases when a PHP area starts directly after a tag name. [#106911]
+	  
  - improvements:
 	- make single file/folder upload really quick [#105612]
 	- Paste as HTML Encoded encodes more chars to their corresponding entities [#100547, #100103]

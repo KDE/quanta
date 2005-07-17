@@ -226,7 +226,7 @@ bool SAParser::slotParseOneLine()
                 tag->name = foundText;
                 tag->setStr(foundText);
                 tag->setWrite(m_write);
-                tag->setTagPosition(s_line, groupKeywordPos, s_line, s_col);
+                tag->setTagPosition(s_line, groupKeywordPos, s_line, s_col - 1);
                 tag->setDtd(s_dtd);
                 tag->type = Tag::ScriptStructureEnd;
                 tag->single = true;
