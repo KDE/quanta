@@ -32,8 +32,9 @@
 
 class QEvent;
 class QFocusEvent;
-class KConfig;
+class QTextCodec;
 class QStringList;
+class KConfig;
 class KTempFile;
 class KURL;
 class Tag;
@@ -51,6 +52,7 @@ namespace KTextEditor
   class Document;
   class EditInterface;
   class EditInterfaceExt;
+  class EncodingInterface;
   class MarkInterface;
   class SelectionInterface;
   class SelectionInterfaceExt;
@@ -189,6 +191,7 @@ work correctly. */
   KTextEditor::SelectionInterface *selectionIf;
   KTextEditor::SelectionInterfaceExt *selectionIfExt;
   KTextEditor::EditInterface *editIf;
+  KTextEditor::EncodingInterface *encodingIf;
   KTextEditor::EditInterfaceExt *editIfExt;
   KTextEditor::CodeCompletionInterface *codeCompletionIf;
   KTextEditor::ConfigInterface* configIf;
@@ -262,6 +265,8 @@ private:
   /* path of the backup copy file of the document */
   QString m_backupPathValue;
   QString dtdName;
+  QString m_encoding;
+  QTextCodec *m_codec;
 /*The DTD valid in the place where the completion was invoked.*/
   const DTDStruct *completionDTD;
 

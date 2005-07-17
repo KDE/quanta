@@ -90,11 +90,6 @@
 #define STEP 1
 
 extern GroupElementMapList globalGroupMap;
-uint replaceCharList[] = {192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202,
-         203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 216, 217, 218,
-         219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233,
-         234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 248, 249,
-         250, 251, 252, 253, 254, 255, 258, 259, 336, 337, 350, 351, 354, 355, 368, 369, 0};
 
 Document::Document(KTextEditor::Document *doc,
                    QWidget *parent, const char *name, WFlags f )
@@ -161,6 +156,14 @@ Document::Document(KTextEditor::Document *doc,
 
   editIf = dynamic_cast<KTextEditor::EditInterface *>(m_doc);
   editIfExt = dynamic_cast<KTextEditor::EditInterfaceExt *>(m_doc);
+  encodingIf = dynamic_cast<KTextEditor::EncodingInterface*>(m_doc);
+  m_encoding = quantaApp->defaultEncoding();
+  if (encodingIf)
+        m_encoding = encodingIf->encoding();
+  if (m_encoding.isEmpty())
+      m_encoding = "utf8";  //final fallback
+  m_codec = QTextCodec::codecForName(m_encoding);
+
   selectionIf = dynamic_cast<KTextEditor::SelectionInterface *>(m_doc);
   selectionIfExt = dynamic_cast<KTextEditor::SelectionInterfaceExt *>(m_doc);
   configIf = dynamic_cast<KTextEditor::ConfigInterface*>(m_doc);
@@ -577,7 +580,6 @@ void Document::createTempFile()
   tempFile->setAutoDelete(true);
   m_tempFileName = QFileInfo(*(tempFile->file())).filePath();
   QString encoding = quantaApp->defaultEncoding();
-  KTextEditor::EncodingInterface* encodingIf = dynamic_cast<KTextEditor::EncodingInterface*>(m_doc);
   if (encodingIf)
         encoding = encodingIf->encoding();
   if (encoding.isEmpty())
@@ -790,24 +792,43 @@ void Document::slotReplaceChar()
 */
 void Document::slotCharactersInserted(int line, int column, const QString& string)
 {
- uint c = string[0].unicode();
- if (qConfig.replaceAccented && c > 191)
- {
-    uint ch = replaceCharList[0];
-    int i = 0;
-    while (ch != 0)
+  if (qConfig.replaceAccented && encodingIf)
+  {
+    QString encoding = encodingIf->encoding();
+    if (encoding != m_encoding)
     {
-        if (c == ch)
-        {
-           m_replaceLine = line;
-           m_replaceCol = column;
-           m_replaceStr = QString("&#%1;").arg(c);
-           QTimer::singleShot(0, this, SLOT(slotReplaceChar()));
-           return;
-        }
-        ch = replaceCharList[++i];
+      m_encoding = encoding;
+      m_codec = QTextCodec::codecForName(encoding);
     }
- }
+    if (!m_codec->canEncode(string[0]))
+    {
+      m_replaceLine = line;
+      m_replaceCol = column;
+      m_replaceStr = QString("&#%1;").arg(string[0].unicode());
+      QTimer::singleShot(0, this, SLOT(slotReplaceChar()));
+      return;    
+    }
+  }
+
+  
+//  uint c = string[0].unicode();
+//  if (qConfig.replaceAccented && c > 191)
+//  {
+//     uint ch = replaceCharList[0];
+//     int i = 0;
+//     while (ch != 0)
+//     {
+//         if (c == ch)
+//         {
+//            m_replaceLine = line;
+//            m_replaceCol = column;
+//            m_replaceStr = QString("&#%1;").arg(c);
+//            QTimer::singleShot(0, this, SLOT(slotReplaceChar()));
+//            return;
+//         }
+//         ch = replaceCharList[++i];
+//     }
+//  }
  if ( (string == ">") ||
       (string == "<") )
  {
@@ -2067,12 +2088,11 @@ void Document::checkDirtyStatus()
       if (f.open(IO_ReadOnly) && tmpFile.open(IO_ReadOnly))
       {
         QString encoding = quantaApp->defaultEncoding();
-        KTextEditor::EncodingInterface* encodingIf = dynamic_cast<KTextEditor::EncodingInterface*>(m_doc);
         if (encodingIf)
-        encoding = encodingIf->encoding();
+          encoding = encodingIf->encoding();
         if (encoding.isEmpty())
-        encoding = "utf8";  //final fallback
-
+          encoding = "utf8";  //final fallback
+  
         QString content;
         QTextStream stream(&f);
         stream.setCodec(QTextCodec::codecForName(encoding));
@@ -2478,7 +2498,6 @@ void Document::createBackup(KConfig* config)
      QStringList backedupFilesEntryList = config->readPathListEntry("List of backedup files");
      QStringList autosavedFilesEntryList = config->readPathListEntry("List of autosaved files");
      QString encoding = quantaApp->defaultEncoding();
-     KTextEditor::EncodingInterface* encodingIf = dynamic_cast<KTextEditor::EncodingInterface*>(m_doc);
      if (encodingIf)
          encoding = encodingIf->encoding();
      if (encoding.isEmpty())
@@ -2656,9 +2675,12 @@ void Document::convertCase()
 
 void Document::open(const KURL &url, const QString &encoding)
 {
-    KTextEditor::EncodingInterface* encodingIf = dynamic_cast<KTextEditor::EncodingInterface*>(m_doc);
     if (encodingIf)
+    {
        encodingIf->setEncoding(encoding);
+       m_encoding = encoding;
+       m_codec = QTextCodec::codecForName(m_encoding);
+    }
     connect(m_doc, SIGNAL(completed()), this, SLOT(slotOpeningCompleted()));
     connect(m_doc, SIGNAL(canceled(const QString&)), this, SLOT(slotOpeningFailed(const QString&)));
     if (!m_doc->openURL(url))
