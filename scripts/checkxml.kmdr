@@ -248,6 +248,9 @@ checkXML index.docbook 2&gt;&amp;1</string>
                                     <string>@widgetText</string>
                                 </stringlist>
                             </property>
+                            <property name="selectionType">
+                                <enum>Directory</enum>
+                            </property>
                         </widget>
                     </grid>
                 </widget>

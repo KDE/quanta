@@ -47,152 +47,162 @@
                     <string></string>
                 </stringlist>
             </property>
-            <grid>
+            <widget class="QLayoutWidget">
                 <property name="name">
-                    <cstring>unnamed</cstring>
+                    <cstring>Layout10</cstring>
                 </property>
-                <property name="margin">
-                    <number>11</number>
+                <property name="geometry">
+                    <rect>
+                        <x>11</x>
+                        <y>11</y>
+                        <width>427</width>
+                        <height>25</height>
+                    </rect>
                 </property>
-                <property name="spacing">
-                    <number>6</number>
-                </property>
-                <widget class="QLayoutWidget" row="0" column="0">
+                <hbox>
                     <property name="name">
-                        <cstring>Layout10</cstring>
+                        <cstring>unnamed</cstring>
                     </property>
-                    <hbox>
+                    <property name="margin">
+                        <number>0</number>
+                    </property>
+                    <property name="spacing">
+                        <number>6</number>
+                    </property>
+                    <widget class="CheckBox">
                         <property name="name">
-                            <cstring>unnamed</cstring>
+                            <cstring>CheckBox4</cstring>
                         </property>
-                        <property name="margin">
-                            <number>0</number>
+                        <property name="text">
+                            <string>Current working folder &amp;in Quanta</string>
                         </property>
-                        <property name="spacing">
-                            <number>6</number>
+                        <property name="autoRepeat">
+                            <bool>false</bool>
                         </property>
-                        <widget class="CheckBox">
-                            <property name="name">
-                                <cstring>CheckBox4</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Current working folder &amp;in Quanta</string>
-                            </property>
-                            <property name="autoRepeat">
-                                <bool>false</bool>
-                            </property>
-                            <property name="checked">
-                                <bool>true</bool>
-                            </property>
-                            <property name="associations" stdset="0">
-                                <stringlist>
-                                    <string></string>
-                                    <string></string>
-                                    <string></string>
-                                </stringlist>
-                            </property>
-                            <property name="toolTip" stdset="0">
+                        <property name="checked">
+                            <bool>true</bool>
+                        </property>
+                        <property name="associations" stdset="0">
+                            <stringlist>
                                 <string></string>
-                            </property>
-                        </widget>
-                        <spacer>
-                            <property name="name">
-                                <cstring>Spacer9</cstring>
-                            </property>
-                            <property name="orientation">
-                                <enum>Horizontal</enum>
-                            </property>
-                            <property name="sizeType">
-                                <enum>Expanding</enum>
-                            </property>
-                            <property name="sizeHint">
-                                <size>
-                                    <width>30</width>
-                                    <height>0</height>
-                                </size>
-                            </property>
-                        </spacer>
-                    </hbox>
-                </widget>
-                <widget class="QLayoutWidget" row="1" column="0">
-                    <property name="name">
-                        <cstring>Layout4</cstring>
-                    </property>
-                    <hbox>
+                                <string></string>
+                                <string></string>
+                            </stringlist>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string></string>
+                        </property>
+                    </widget>
+                    <spacer>
                         <property name="name">
-                            <cstring>unnamed</cstring>
+                            <cstring>Spacer9</cstring>
                         </property>
-                        <property name="margin">
-                            <number>0</number>
+                        <property name="orientation">
+                            <enum>Horizontal</enum>
                         </property>
-                        <property name="spacing">
-                            <number>6</number>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
                         </property>
-                        <widget class="QLabel">
-                            <property name="name">
-                                <cstring>TextLabel3</cstring>
-                            </property>
-                            <property name="enabled">
-                                <bool>false</bool>
-                            </property>
-                            <property name="text">
-                                <string>Other folder:</string>
-                            </property>
-                        </widget>
-                        <spacer>
-                            <property name="name">
-                                <cstring>Spacer5</cstring>
-                            </property>
-                            <property name="orientation">
-                                <enum>Horizontal</enum>
-                            </property>
-                            <property name="sizeType">
-                                <enum>Expanding</enum>
-                            </property>
-                            <property name="sizeHint">
-                                <size>
-                                    <width>30</width>
-                                    <height>0</height>
-                                </size>
-                            </property>
-                        </spacer>
-                        <widget class="FileSelector">
-                            <property name="name">
-                                <cstring>OtherDir</cstring>
-                            </property>
-                            <property name="enabled">
-                                <bool>false</bool>
-                            </property>
-                            <property name="associations" stdset="0">
-                                <stringlist>
-                                    <string>@widgetText</string>
-                                </stringlist>
-                            </property>
-                            <property name="selectionType">
-                                <enum>Directory</enum>
-                            </property>
-                        </widget>
-                    </hbox>
-                </widget>
-                <widget class="RadioButton" row="2" column="0">
+                        <property name="sizeHint">
+                            <size>
+                                <width>30</width>
+                                <height>0</height>
+                            </size>
+                        </property>
+                    </spacer>
+                </hbox>
+            </widget>
+            <widget class="QLayoutWidget">
+                <property name="name">
+                    <cstring>Layout4</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>10</x>
+                        <y>40</y>
+                        <width>427</width>
+                        <height>29</height>
+                    </rect>
+                </property>
+                <hbox>
                     <property name="name">
-                        <cstring>PrevKonq</cstring>
+                        <cstring>unnamed</cstring>
                     </property>
-                    <property name="text">
-                        <string>&amp;View in Konqueror?</string>
+                    <property name="margin">
+                        <number>0</number>
                     </property>
-                    <property name="populationText">
+                    <property name="spacing">
+                        <number>6</number>
+                    </property>
+                    <widget class="QLabel">
+                        <property name="name">
+                            <cstring>TextLabel3</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                        <property name="text">
+                            <string>Other folder:</string>
+                        </property>
+                    </widget>
+                    <spacer>
+                        <property name="name">
+                            <cstring>Spacer5</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Horizontal</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>30</width>
+                                <height>0</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="FileSelector">
+                        <property name="name">
+                            <cstring>OtherDir</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                        <property name="associations" stdset="0">
+                            <stringlist>
+                                <string>@widgetText</string>
+                            </stringlist>
+                        </property>
+                        <property name="selectionType">
+                            <enum>Directory</enum>
+                        </property>
+                    </widget>
+                </hbox>
+            </widget>
+            <widget class="CheckBox">
+                <property name="name">
+                    <cstring>PrevKonq</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>11</x>
+                        <y>77</y>
+                        <width>427</width>
+                        <height>23</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>&amp;View in Konqueror?</string>
+                </property>
+                <property name="associations" stdset="0">
+                    <stringlist>
+                        <string>"false"</string>
                         <string></string>
-                    </property>
-                    <property name="associations" stdset="0">
-                        <stringlist>
-                            <string>"false"</string>
-                            <string>"true"
-</string>
-                        </stringlist>
-                    </property>
-                </widget>
-            </grid>
+                        <string>"true"</string>
+                    </stringlist>
+                </property>
+            </widget>
         </widget>
         <widget class="ExecButton" row="1" column="1">
             <property name="name">
@@ -269,5 +279,11 @@ fi</string>
         <slot>setDisabled(bool)</slot>
     </connection>
 </connections>
+<tabstops>
+    <tabstop>CheckBox4</tabstop>
+    <tabstop>PrevKonq</tabstop>
+    <tabstop>ExecButton2</tabstop>
+    <tabstop>CloseButton1</tabstop>
+</tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>
