@@ -49,8 +49,9 @@ QuantaDebuggerDBGp::QuantaDebuggerDBGp (QObject *parent, const char*, const QStr
 {
   // Create a socket object and set up its signals
   m_errormask = 1794;
+  m_supportsasync = false;
   m_defaultExecutionState = Starting;
-  setExecutionState(m_defaultExecutionState);
+//  setExecutionState(m_defaultExecutionState);
 
   connect(&m_network, SIGNAL(command(const QString&)), this, SLOT(processCommand(const QString&)));
   connect(&m_network, SIGNAL(active(bool)), this, SLOT(slotNetworkActive(bool)));
@@ -81,6 +82,10 @@ void QuantaDebuggerDBGp::slotNetworkConnected(bool connected)
   debuggerInterface()->enableAction("debug_run", connected);
   debuggerInterface()->enableAction("debug_leap", connected);
   debuggerInterface()->enableAction("debug_pause", connected);
+  debuggerInterface()->enableAction("debug_kill", connected);
+
+  debuggerInterface()->setActiveLine("", 0);
+
 }
 
 void QuantaDebuggerDBGp::slotNetworkError(const QString &errormsg, bool log)
@@ -95,7 +100,7 @@ void QuantaDebuggerDBGp::startSession()
   kdDebug(24002) << k_funcinfo << endl;
 
   m_network.sessionStart(m_useproxy, m_serverHost, m_useproxy ? m_serverPort : m_listenPort);
-  setExecutionState(m_defaultExecutionState);
+  setExecutionState("starting");
 }
 
 
@@ -115,37 +120,39 @@ void QuantaDebuggerDBGp::endSession()
 }
 
 // Change executionstate of the script
-void QuantaDebuggerDBGp::setExecutionState(State)
+void QuantaDebuggerDBGp::setExecutionState(const QString &state)
 {
-  /*if(newstate == Pause)
+  if(state == "starting")
   {
-    sendCommand("pause", 0);
-    sendCommand("sendactiveline", 0);
+    m_executionState = Starting;
   }
-  else if(newstate == Run)
+  else if(state == "stopping")
   {
-    if(m_executionState == Pause)
-      sendCommand("next", 0);
-
-    sendCommand("run", 0);
+    m_executionState = Stopping;
   }
-  else if(newstate == Trace)
+  else if(state == "stopped")
   {
-    if(m_executionState == Pause)
-      sendCommand("next", 0);
-
-    sendCommand("trace", 0);
+    m_executionState = Stopped;
   }
-
-  m_executionState = newstate;
+  else if(state == "running")
+  {
+    m_executionState = Running;
+  }
+  else if(state == "break")
+  {
+    m_executionState = Break;
+  }
 
   if(debuggerInterface()) {
-    debuggerInterface()->enableAction("debug_trace", m_executionState != Trace);
-    debuggerInterface()->enableAction("debug_run", m_executionState != Run);
-    debuggerInterface()->enableAction("debug_pause", m_executionState != Pause);
+    debuggerInterface()->enableAction("debug_run", m_executionState == Break || m_executionState == Starting);
+    debuggerInterface()->enableAction("debug_pause", m_executionState == Running && m_supportsasync);
+    debuggerInterface()->enableAction("debug_kill", m_executionState == Break || (m_executionState == Running && m_supportsasync) || m_executionState == Starting );
+    debuggerInterface()->enableAction("debug_stepinto", m_executionState == Break || m_executionState == Starting );
+    debuggerInterface()->enableAction("debug_stepout", m_executionState == Break || m_executionState == Starting);
+    debuggerInterface()->enableAction("debug_stepover", m_executionState == Break || m_executionState == Starting);
   }
 
-  kdDebug(24002) << k_funcinfo << ", " << m_executionState << endl;*/
+//   kdDebug(24002) << k_funcinfo << ", " << m_executionState << endl;
 
 }
 
@@ -180,16 +187,101 @@ void QuantaDebuggerDBGp::processCommand(const QString& datas)
 {
   kdDebug(24002) << k_lineinfo << datas.left(50) << " (" << datas.length() << " bytes)" << endl;
 
-/*  StringMap args = parseArgs(datas);
+  QDomDocument data;
+  data.setContent(datas);
+  kdDebug(24002) << datas << endl;
 
-  // See what command we got and act accordingly..
-  if(m_command == "commandme")
+  // Did we get a normal response?
+  if(data.elementsByTagName("response").count() > 0)
   {
+    QDomNode response = data.elementsByTagName("response").item(0);
+    QString command = attribute(response, "command");
 
+    if(command == "status")
+      setExecutionState(attribute(response, "status"));
+    else if(command == "stack_get")
+    {
+      showStack(response);
+    }
+    else if(command == "run" 
+         || command == "step_over" 
+         || command == "step_into" 
+         || command == "step_out")
+    {
+      // If this is the acknoledge of a step command, request the call stack 
+      m_network.sendCommand("stack_get");
+      setExecutionState(attribute(response, "status"));
+    }
+    else if(command == "feature_get")
+    {
+      checkSupport(response);
+    }
+    else
+    {
+      kdDebug(24002) << " * Unknown command: " << command << endl;
+    }
+  }
+  else if(data.elementsByTagName("init").count() > 0)
+  {
+    QDomNode init = data.elementsByTagName("init").item(0);
+    initiateSession(init);
+    return;
   }
   else
-    // Unimplemented command - log to debug output
-    kdDebug(24002) << "QuantaDebuggerDBGp::slotReadyRead Unknown: " << m_command << ":" << datas << endl;*/
+  {
+    debuggerInterface()->showStatus(i18n("Unrecognized package: '%1%2'").arg(datas.left(50)).arg(datas.length() > 50 ? "..." : ""), true);
+
+    kdDebug(24002) << datas << endl;
+  }
+
+}
+
+void QuantaDebuggerDBGp::initiateSession(const QDomNode& initpacket)
+{
+  if(attribute(initpacket, "protocol_version") != protocolversion)
+  {
+    debuggerInterface()->showStatus(
+      i18n("The debugger for %1 uses an unsupported protocol version (%1)")
+            .arg(attribute(initpacket, "language"))
+            .arg(attribute(initpacket, "protocol_version"))
+          , true);
+
+    endSession();
+    return;
+  }
+
+  debuggerInterface()->setActiveLine(mapServerPathToLocal(attribute(initpacket, "fileuri")), 0);
+  setExecutionState("starting");
+//   m_network.sendCommand("feature_get", "-n encoding");
+  m_network.sendCommand("feature_get", "-n supports_async");
+}
+
+void QuantaDebuggerDBGp::showStack(const QDomNode&node)
+{
+
+//  node.elementsByTagName("stack");
+  for(QDomNode child = node.firstChild(); !child.isNull(); child = child.nextSibling())
+  {
+    if(attribute(child, "level") == "0")
+    { 
+       kdDebug(24002) << " * Stck 0: " << attribute(child, "filename") << ", " << attribute(child, "lineno") << endl;
+      debuggerInterface()->setActiveLine(mapServerPathToLocal(attribute(child, "filename")), attribute(child, "lineno").toLong() -  1);
+    }
+  }
+}
+
+void QuantaDebuggerDBGp::checkSupport( const QDomNode & node )
+{
+  QString feature = attribute(node, "feature_name");
+  QString data = node.nodeValue();
+  if(feature == "supports_async")
+    m_supportsasync = data.toLong();
+
+}
+
+QString QuantaDebuggerDBGp::attribute(const QDomNode&node, const QString &attribute)
+{
+  return node.attributes().namedItem(attribute).nodeValue();
 }
 
 // Turn on/off actions related to a debugging session
@@ -208,67 +300,9 @@ void QuantaDebuggerDBGp::sendBreakpoints()
 }
 void QuantaDebuggerDBGp::sendWatches()
 {
-  for(QValueList<QString>::iterator it = m_watchlist.begin(); it != m_watchlist.end(); ++it)
-    sendCommand("getwatch", "variable", (*it).ascii(), 0);
-  sendCommand("sentwatches", "key", 0, 0);
-}
-/*
-// Send a command to dbgp
-bool QuantaDebuggerDBGp::sendCommand(const QString& a_command, const QString& a_data)
-{
-  kdDebug(24002) << k_lineinfo << ", command: " << a_command << ", data " << a_data << endl;
-  if(!m_socket || m_socket->socketStatus() != KExtendedSocket::connected)
-    return false;
-
-  // Needs line terminatino
-  QString command = a_command;
-  QString data = a_data;
-  command += "\n";
-  data += "\n";
-
-  // Write data to socket
-  m_socket->writeBlock(command, command.length());
-  m_socket->writeBlock(data, data.length());
-
-  return true;
-}*/
-
-// Send a command to dbgp
-bool QuantaDebuggerDBGp::sendCommand(const QString& command, StringMap args)
-{
-
-  kdDebug(24002) << k_lineinfo << ", command " << command << " with data: " << phpSerialize(args) << endl;
-  if(!m_network.isConnected())
-    return false;
-
-  QString buffer = phpSerialize(args);
-
-  buffer = QString(command + ":%1;" + buffer).arg(buffer.length());
-//   m_socket->writeBlock(buffer, buffer.length());
-  return true;
-}
-
-// Send a command to dbgp
-bool QuantaDebuggerDBGp::sendCommand(const QString& command, char * firstarg, ...)
-{
-  StringMap ca;
-  char *next;
-
-  va_list l_Arg;
-  va_start(l_Arg, firstarg);
-
-  next = firstarg;
-  while(next)
-  {
-    ca[(QString)next] = (QString)va_arg(l_Arg, char*) ; 
-//     kdDebug(24002) << k_lineinfo << " Added arg/valuepair " << next << ", " << ca[next].left(30) << endl;
-
-    next = va_arg(l_Arg, char*);
-  }
-
-  va_end(l_Arg);
-  sendCommand(command, ca);
-  return true;
+//   for(QValueList<QString>::iterator it = m_watchlist.begin(); it != m_watchlist.end(); ++it)
+//     sendCommand("getwatch", "variable", (*it).ascii(), 0);
+//   sendCommand("sentwatches", "key", 0, 0);
 }
 
 // Return name of debugger
@@ -300,46 +334,44 @@ void QuantaDebuggerDBGp::request()
 // Go as fast as possible and dont update current line or watches
 void QuantaDebuggerDBGp::run()
 {
-  //setExecutionState(Run);
+  m_network.sendCommand("run");
+//   m_network.sendCommand("status");
 }
 
 // Step into function
 void QuantaDebuggerDBGp::stepInto()
 {
-//   setExecutionState(Pause);
-//   sendCommand("next", 0);
+  m_network.sendCommand("step_into");
 }
 
 // Step over function
 void QuantaDebuggerDBGp::stepOver()
 {
-//   setExecutionState(Pause);
-//   sendCommand("stepover", 0);
+  // If we're in starting mode, we must step into, otherwise xdebug starts to run
+  if(m_executionState == Starting)
+    m_network.sendCommand("step_into");
+  else
+    m_network.sendCommand("step_over");
 }
 
 // Step out of function
 void QuantaDebuggerDBGp::stepOut()
 {
-//   setExecutionState(Pause);
-//   sendCommand("stepout", 0);
+  m_network.sendCommand("step_out");
 }
 
-// Skip next function
-void QuantaDebuggerDBGp::skip()
-{
-//   sendCommand("skip", 0);
-}
 
 // Kill the running script
 void QuantaDebuggerDBGp::kill()
 {
-//   sendCommand("die", 0);
+  m_network.sendCommand("stop");
 }
 
 // Pause execution
 void QuantaDebuggerDBGp::pause()
 {
-//   setExecutionState(Pause);
+  m_network.sendCommand("break");
+//   m_network.sendCommand("status");
 }
 
 
@@ -610,96 +642,12 @@ QString QuantaDebuggerDBGp::mapLocalPathToServer(const QString& localpath)
   return debuggerInterface()->Mapper()->mapLocalPathToServer(localpath);
 }
 
-void QuantaDebuggerDBGp::variableSetValue(const DebuggerVariable &variable)
+void QuantaDebuggerDBGp::variableSetValue(const DebuggerVariable &)
 {
-  sendCommand("setvariable", 
-              "variable", variable.name().ascii(),
-              "value", variable.value().ascii(),
-              0);
+//   sendCommand("setvariable", 
+//               "variable", variable.name().ascii(),
+//               "value", variable.value().ascii(),
+//               0);
 }
 
-QString QuantaDebuggerDBGp::phpSerialize(StringMap args)
-{
-  StringMap::Iterator it;
-  // a:2:{s:4:"name";s:7:"Jessica";s:3:"age";s:2:"26";s:4:"test";i:1;}
-  QString ret = QString("a:%1:{").arg(args.size());
-  for( it = args.begin(); it != args.end(); ++it )
-  {
-    bool isNumber;
-
-    it.data().toInt(&isNumber);
-    if(isNumber && !it.data().isEmpty())
-      ret += QString("s:%1:\"%2\";i:%3;")
-                    .arg(it.key().length())
-                    .arg(it.key())
-                    .arg(it.data());
-    else
-      ret += QString("s:%1:\"%2\";s:%3:\"%4\";")
-                    .arg(it.key().length())
-                    .arg(it.key())
-                    .arg(it.data().length())
-                    .arg(it.data());
-
-  }
-
-  ret += "}";
-  return ret;
-}
-
-
-StringMap QuantaDebuggerDBGp::parseArgs(const QString &args)
-{
-  StringMap ca;
-  long cnt, length;
-
-  // a:2:{s:4:"name";s:7:"Jessica";s:3:"age";s:2:"26";s:4:"test";i:1;}
-
-  // No args
-  if(args.isEmpty() || args == "a:0:{}")
-    return ca;
-
-  // Make sure we have a good string
-  if(!args.startsWith("a:"))
-  {
-    kdDebug(24002) << k_funcinfo << "An error occurred in the communication link, data received was:" << args << endl;
-    return ca;
-  }
-
-  cnt = args.mid(2, args.find("{") - 3).toLong();
-  QString data = args.mid(args.find("{") + 1);
-
-  QString tmp, func;
-  while(cnt > 0)
-  {
-    tmp = data.left(data.find("\""));
-    length = tmp.mid(2, tmp.length() - 3).toLong();
-
-    func = data.mid(tmp.length() + 1, length);
-    data = data.mid( tmp.length() + length + 3);
-
-    if(data.left(1) == "i")
-    {
-      // Integer data
-      tmp = data.mid(data.find(":") + 1);
-      tmp = tmp.left(tmp.find(";"));
-      ca[func] = tmp;
-      data = data.mid(tmp.length() + 3);
-//       kdDebug(24002) << k_funcinfo << "**i " << func << ": " << ca[func] << endl;
-    }
-    else
-    {
-      // String data
-      tmp = data.left(data.find("\""));
-      length = tmp.mid(2, tmp.length() - 3).toLong();
-
-      ca[func] = data.mid(tmp.length() + 1, length);
-      data = data.mid( tmp.length() + length + 3);
-//       kdDebug(24002) << k_funcinfo << "**s " << func << ": " << ca[func] << endl; 
-   }
- 
-    cnt--;
-  }
-
-  return ca;
-}
 #include "quantadebuggerdbgp.moc"

@@ -38,6 +38,7 @@ class DBGpNetwork : public QObject
     QByteArrayFifo m_fifo;
     bool m_useproxy;
     long m_datalen;
+    long  m_transaction_id;
 
     void connected();
 
@@ -56,6 +57,9 @@ class DBGpNetwork : public QObject
 
     bool isConnected();
     bool isActive();
+
+    bool sendCommand(const QString & command);
+    bool sendCommand(const QString & command, const QString & arguments);
 
   public slots:
     // Socket slots

@@ -65,13 +65,12 @@ class QuantaDebuggerDBGp : public DebuggerClient
     // Execution control
     void request();
     void run();
-    void skip();
     void stepInto();
     void stepOver();
     void stepOut();
     void pause();
     void kill();
-    void setExecutionState(State newstate);
+    void setExecutionState(const QString &state);
 
     // Connection
     void startSession();
@@ -79,6 +78,9 @@ class QuantaDebuggerDBGp : public DebuggerClient
 
     // Return name of debugger
     QString getName();
+
+    // Initiation
+    void checkSupport(const QDomNode&node);
 
     // New file opened in quanta
     void fileOpened(const QString& file);
@@ -97,6 +99,9 @@ class QuantaDebuggerDBGp : public DebuggerClient
     void removeWatch(DebuggerVariable *var);
     void variableSetValue(const DebuggerVariable &variable);
 
+    // Call stack
+    void showStack(const QDomNode&node);
+
   private:
 //     QByteArray m_buffer;
 //     long    m_datalen, m_bufferlen;
@@ -112,12 +117,9 @@ class QuantaDebuggerDBGp : public DebuggerClient
     State   m_executionState, m_defaultExecutionState;
     long    m_errormask;
     long    m_displaydelay;
+    bool    m_supportsasync;
 
     WatchList m_watchlist;
-
-//     bool sendCommand(const QString&, const QString&);
-    bool sendCommand(const QString& command, StringMap args);
-    bool sendCommand(const QString& command, char * firstarg, ...);
 
     void sendWatches();
     void sendBreakpoints();
@@ -129,8 +131,8 @@ class QuantaDebuggerDBGp : public DebuggerClient
     void showWatch(const QString& data);
     QString bpToDBGp(DebuggerBreakpoint* breakpoint);
 
-    QString phpSerialize(StringMap args);
-    StringMap parseArgs(const QString &args);
+    QString attribute(const QDomNode&node, const QString &attribute);
+    void QuantaDebuggerDBGp::initiateSession(const QDomNode& initpacket);
 
   public slots:
     void slotNetworkActive(bool active);

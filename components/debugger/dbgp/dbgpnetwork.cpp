@@ -30,6 +30,7 @@ DBGpNetwork::DBGpNetwork()
   m_socket = NULL;
   m_server = NULL;
   m_datalen = -1;
+  m_transaction_id = 0;
 }
 
 DBGpNetwork::~DBGpNetwork()
@@ -115,6 +116,7 @@ void DBGpNetwork::slotError(int)
     if(m_socket->error() == KNetwork::KSocketBase::RemotelyDisconnected)
     {
       slotConnectionClosed();
+//       emit networkError(i18n("Disconnected from remote host"), true);
       return;
     }
 
@@ -261,6 +263,26 @@ void DBGpNetwork::slotReadyRead()
         break;
     }
   }
+}
+
+bool DBGpNetwork::sendCommand(const QString & command)
+{
+  return sendCommand(command, "");
+}
+
+bool DBGpNetwork::sendCommand(const QString & command, const QString & arguments)
+{
+  if(!isConnected())
+    return false;
+
+  m_transaction_id++;
+  QString commandline = command + QString(" -i %1").arg(m_transaction_id) + (arguments != "" ? " " : "") + arguments;
+
+  kdDebug(24002) << k_funcinfo << ", sending: " << commandline << endl;
+
+  m_socket->writeBlock(commandline.latin1(), commandline.length() + 1); // Send string + NULL termination
+
+  return true;
 }
 
 // #include "dbgpnetwork.moc"
