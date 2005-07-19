@@ -132,7 +132,7 @@ class QuantaDebuggerDBGp : public DebuggerClient
     QString bpToDBGp(DebuggerBreakpoint* breakpoint);
 
     QString attribute(const QDomNode&node, const QString &attribute);
-    void QuantaDebuggerDBGp::initiateSession(const QDomNode& initpacket);
+    void initiateSession(const QDomNode& initpacket);
 
   public slots:
     void slotNetworkActive(bool active);
