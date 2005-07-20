@@ -286,3 +286,5 @@ bool DBGpNetwork::sendCommand(const QString & command, const QString & arguments
 }
 
 // #include "dbgpnetwork.moc"
+
+#include "dbgpnetwork.moc"
