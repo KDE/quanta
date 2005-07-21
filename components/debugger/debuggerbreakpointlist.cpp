@@ -42,73 +42,48 @@ void DebuggerBreakpointList::add(DebuggerBreakpoint* bp)
 {
   quantaApp->debugger()->UI()->showBreakpoint(*bp);
   m_breakpointList->push_front(bp);
+  if(bp->type() == DebuggerBreakpoint::LineBreakpoint)
+    quantaApp->debugger()->setMark(bp->filePath(), bp->line(), true, KTextEditor::MarkInterface::markType02);
 }
 
 void DebuggerBreakpointList::remove(DebuggerBreakpoint* bp)
 {
-  BreakpointList_t::iterator it;
-  BreakpointList_t::iterator end = m_breakpointList->end();
+  BreakpointList_t::iterator it = find(*bp);
+  if(it == m_breakpointList->end())
+    return;
 
-  DebuggerBreakpoint* tmp;
+//   DebuggerBreakpoint bp1(bp);
 
-  for(it = m_breakpointList->begin(); it != end; ++it)
+  if(*bp == (*bp))
   {
-    if((bp->filePath() == (*it)->filePath()) &&
-        (bp->line()     == (*it)->line() || bp->type() != DebuggerBreakpoint::LineBreakpoint) &&
-        (bp->type()     == (*it)->type()) &&
-        (bp->inClass()     == (*it)->inClass()) &&
-        (bp->inFunction()     == (*it)->inFunction()) &&
-        (bp->condition() == (*it)->condition()))
-    {
-      tmp = (*it);
-      // Remove it from the bp-list
-      quantaApp->debugger()->UI()->deleteBreakpoint(*bp);
+    DebuggerBreakpoint* tmp;
 
-      // Remove editor markpoint if there is one...
-      if(bp->type() == DebuggerBreakpoint::LineBreakpoint)
-        quantaApp->debugger()->setMark(bp->filePath(), bp->line(), false, KTextEditor::MarkInterface::markType02);
+    tmp = (*it);
+    // Remove it from the bp-list
+    quantaApp->debugger()->UI()->deleteBreakpoint(*bp);
 
-      it = m_breakpointList->remove(it);
-      delete tmp;
-      break;
-    }
+    // Remove editor markpoint if there is one...
+    if(bp->type() == DebuggerBreakpoint::LineBreakpoint)
+      quantaApp->debugger()->setMark(bp->filePath(), bp->line(), false, KTextEditor::MarkInterface::markType02);
+
+    it = m_breakpointList->remove(it);
+    delete tmp;
   }
 }
 
-/*int DebuggerBreakpointList::remove(QString filePath, int line)
-{
-  int count = 0;
-  BreakpointList_t::iterator it;
-  BreakpointList_t::iterator end = m_breakpointList->end();
 
-  DebuggerBreakpoint* tmp;
-
-  for(it = m_breakpointList->begin(); it != end; ++it)
-  {
-    if((filePath == (*it)->filePath()) &&
-       (line     == (*it)->line()))
-    {
-      tmp = (*it);
-      it = m_breakpointList->remove(it);
-      delete tmp;
-      count++;
-    }
-  }
-
-  return count;
-}*/
 
 DebuggerBreakpoint* DebuggerBreakpointList::retrieve(const QString& filePath, int line)
 {
   BreakpointList_t::iterator it;
-  BreakpointList_t::iterator end = m_breakpointList->end();
 
-  for(it = m_breakpointList->begin(); it != end; ++it)
+  for(it = m_breakpointList->begin(); it != m_breakpointList->end(); ++it)
   {
     if((filePath   == (*it)->filePath()) &&
         line       == (*it)->line())
     {
-      return (*it);
+      DebuggerBreakpoint* bp = new DebuggerBreakpoint(*it);
+      return bp;
     }
   }
   return 0;
@@ -135,39 +110,28 @@ void DebuggerBreakpointList::clear()
 
 bool DebuggerBreakpointList::exists(DebuggerBreakpoint* bp)
 {
-  BreakpointList_t::iterator it;
-  BreakpointList_t::iterator end = m_breakpointList->end();
+  BreakpointList_t::iterator it = find(*bp);
+  if(it == m_breakpointList->end())
+    return false;
 
-  for(it = m_breakpointList->begin(); it != end; ++it)
-  {
-    if((bp->filePath()  == (*it)->filePath()) &&
-        (bp->line()     == (*it)->line() || bp->type() != DebuggerBreakpoint::LineBreakpoint) &&
-        (bp->type()     == (*it)->type()) &&
-        (bp->inClass()  == (*it)->inClass()) &&
-        (bp->inFunction() == (*it)->inFunction()) &&
-        (bp->condition() == (*it)->condition()))
-    {
-      return true;
-    }
-  }
+  if(*bp == (*it))
+    return true;
+
   return false;
 }
 
-/*bool DebuggerBreakpointList::exists(QString filePath, int line)
+
+BreakpointList_t::iterator DebuggerBreakpointList::find(const DebuggerBreakpoint &bp)
 {
   BreakpointList_t::iterator it;
-  BreakpointList_t::iterator end = m_breakpointList->end();
 
-  for(it = m_breakpointList->begin(); it != end; ++it)
+  for(it = m_breakpointList->begin(); it != m_breakpointList->end(); ++it)
   {
-    if((filePath == (*it)->filePath()) &&
-       (line     == (*it)->line()))
-    {
-      return true;
-    }
+    if(bp == (*it))
+      return it;
   }
-  return false;
-}*/
+  return m_breakpointList->end();
+}
 
 void DebuggerBreakpointList::rewind()
 {
@@ -192,5 +156,30 @@ DebuggerBreakpoint* DebuggerBreakpointList::next()
   else
   {
     return NULL;
+  }
+}
+
+DebuggerBreakpoint * DebuggerBreakpointList::findDebuggerBreakpoint( const QString & key )
+{
+  BreakpointList_t::iterator it;
+  for(it = m_breakpointList->begin(); it != m_breakpointList->end(); ++it)
+  {
+    if((*it)->key() == key)
+    {
+      DebuggerBreakpoint *bp = new DebuggerBreakpoint((*it));
+      return bp;
+    }
+  }
+  return NULL;
+}
+
+void DebuggerBreakpointList::updateBreakpointKey( const DebuggerBreakpoint & bp, const QString & newkey )
+{
+  //DebuggerBreakpoint *bpp = new DebuggerBreakpoint(bp);
+  BreakpointList_t::iterator it;
+  it = find(bp);
+  if(it != m_breakpointList->end())
+  {
+    (*it)->setKey(newkey);
   }
 }

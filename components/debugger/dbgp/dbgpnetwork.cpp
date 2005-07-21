@@ -265,12 +265,12 @@ void DBGpNetwork::slotReadyRead()
   }
 }
 
-bool DBGpNetwork::sendCommand(const QString & command)
+long DBGpNetwork::sendCommand(const QString & command)
 {
   return sendCommand(command, "");
 }
 
-bool DBGpNetwork::sendCommand(const QString & command, const QString & arguments)
+long DBGpNetwork::sendCommand(const QString & command, const QString & arguments)
 {
   if(!isConnected())
     return false;
@@ -282,7 +282,14 @@ bool DBGpNetwork::sendCommand(const QString & command, const QString & arguments
 
   m_socket->writeBlock(commandline.latin1(), commandline.length() + 1); // Send string + NULL termination
 
-  return true;
+  return m_transaction_id;
+}
+
+long DBGpNetwork::sendCommand( const QString & command, const QString & arguments, const QString & data )
+{
+  QByteArrayFifo buffer;
+  buffer.append(data.ascii(), data.length());
+  return sendCommand(command, arguments + " -- " + buffer.base64Encoded());
 }
 
 // #include "dbgpnetwork.moc"

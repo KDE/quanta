@@ -136,6 +136,11 @@ DebuggerBreakpoint *QuantaDebuggerInterface::newDebuggerBreakpoint()
   return m_manager->newDebuggerBreakpoint();
 }
 
+DebuggerBreakpoint *QuantaDebuggerInterface::findDebuggerBreakpoint(const QString& key)
+{
+  return m_manager->findDebuggerBreakpoint(key);
+}
+
 /*
 void QuantaDebuggerInterface::preWatchUpdate()
 {
@@ -151,6 +156,11 @@ void QuantaDebuggerInterface::postWatchUpdate()
 PathMapper* QuantaDebuggerInterface::Mapper()
 {
   return m_manager->Mapper();
+}
+
+void QuantaDebuggerInterface::updateBreakpointKey( const DebuggerBreakpoint & bp, const QString & newkey )
+{
+  m_manager->updateBreakpointKey(bp, newkey);
 }
 
 #include "quantadebuggerinterface.moc"

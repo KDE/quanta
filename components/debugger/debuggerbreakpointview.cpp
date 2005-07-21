@@ -65,7 +65,6 @@ DebuggerBreakpointView::DebuggerBreakpointView(QWidget *parent, const char *name
 
   setResizeMode(QListView::AllColumns);
   setAllColumnsShowFocus(true);
-  setSorting(-1); // No sorting
 
   m_breakpointPopup = new KPopupMenu(this);
   m_breakpointPopup->insertItem(SmallIcon("editdelete"), i18n("&Remove"), this, SLOT(slotRemoveSelected()));
@@ -119,12 +118,6 @@ QListViewItem* DebuggerBreakpointView::findBreakpoint(const DebuggerBreakpoint& 
   while(item)
   {
     if(item->breakpoint() == bp)
-    /*item->text(DebuggerBreakpointViewColumns::File) == bp.filePath()
-    && item->text(DebuggerBreakpointViewColumns::Expression) == bp.condition()
-    && item->text(DebuggerBreakpointViewColumns::Class) == bp.inClass()
-    && item->text(DebuggerBreakpointViewColumns::Function) == bp.inFunction()
-    && item->text(DebuggerBreakpointViewColumns::Line) == (bp.type() == DebuggerBreakpoint::LineBreakpoint ? QString::number(bp.line() + 1) : QString(""))
-    )*/
       break;
 
     item =  dynamic_cast<DebuggerBreakpointViewItem*>(item->nextSibling());
@@ -144,16 +137,9 @@ QListViewItem* DebuggerBreakpointView::findBreakpoint(const DebuggerBreakpoint& 
 
 DebuggerBreakpoint DebuggerBreakpointView::selected()
 {
-/*  if(!selectedItem())
-    return NULL;*/
   DebuggerBreakpointViewItem* bpitem = dynamic_cast<DebuggerBreakpointViewItem*>(selectedItem());
 
-  return bpitem->breakpoint();/*new DebuggerBreakpoint(
-    selectedItem()->text(DebuggerBreakpointViewColumns::File),
-    selectedItem()->text(DebuggerBreakpointViewColumns::Line).toInt() - 1);*/
-
-    //bp->setCondition(selectedItem()->text(DebuggerBreakpointViewColumns::Expression));
-  //return bp;
+  return bpitem->breakpoint();
 }
 
 void DebuggerBreakpointView::slotRemoveSelected()
@@ -163,12 +149,7 @@ void DebuggerBreakpointView::slotRemoveSelected()
 
   DebuggerBreakpoint bp = selected();
 
-//   if(!bp)
-//     return;
-
-  //delete selectedItem();
   emit removeBreakpoint(&bp);
-//  delete bp;
 }
 
 void DebuggerBreakpointView::keyPressEvent(QKeyEvent *e)

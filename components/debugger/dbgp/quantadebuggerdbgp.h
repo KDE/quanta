@@ -103,8 +103,6 @@ class QuantaDebuggerDBGp : public DebuggerClient
     void showStack(const QDomNode&node);
 
   private:
-//     QByteArray m_buffer;
-//     long    m_datalen, m_bufferlen;
     DBGpNetwork m_network;
 
     QString m_serverBasedir;
@@ -119,10 +117,10 @@ class QuantaDebuggerDBGp : public DebuggerClient
     long    m_displaydelay;
     bool    m_supportsasync;
 
+    // Internal watchlist
     WatchList m_watchlist;
 
     void sendWatches();
-    void sendBreakpoints();
     void debuggingState(bool enable);
     void connected();
 
@@ -130,6 +128,7 @@ class QuantaDebuggerDBGp : public DebuggerClient
     QString mapLocalPathToServer(const QString& localpath);
     void showWatch(const QString& data);
     QString bpToDBGp(DebuggerBreakpoint* breakpoint);
+    void setBreakpointKey(const QDomNode& response);
 
     QString attribute(const QDomNode&node, const QString &attribute);
     void initiateSession(const QDomNode& initpacket);

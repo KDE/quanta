@@ -53,6 +53,7 @@ VariablesListView::VariablesListView(QWidget *parent, const char *name)
   addColumn(i18n("Type"));
   addColumn(i18n("Size"));
   setRootIsDecorated(true);
+  setSorting(-1); // No sorting
 
   m_variablePopup = new KPopupMenu(this);
   m_variablePopup->insertItem(SmallIcon("editdelete"), i18n("&Remove"), this, SLOT(slotRemoveSelected()));

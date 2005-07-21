@@ -19,6 +19,7 @@
 
 #include "qbytearrayfifo.h"
 #include <qcstring.h>
+#include <kmdcodec.h>
 
 QByteArrayFifo::QByteArrayFifo( )
 {
@@ -66,5 +67,10 @@ long QByteArrayFifo::find( char character )
     return -1;
 
   return m_array.find(character);
+}
+
+QString QByteArrayFifo::base64Encoded()
+{
+  return KCodecs::base64Encode(m_array);
 }
 

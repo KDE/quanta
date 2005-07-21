@@ -60,6 +60,8 @@ class QuantaDebuggerInterface : public DebuggerInterface
     void parsePHPVariables(const QString &);
     void showBreakpoint(const DebuggerBreakpoint &bp);
     DebuggerBreakpoint * newDebuggerBreakpoint();
+    DebuggerBreakpoint * findDebuggerBreakpoint(const QString& key);
+    void updateBreakpointKey(const DebuggerBreakpoint &bp, const QString& newkey);
 
     // Path mapping
     PathMapper* Mapper();

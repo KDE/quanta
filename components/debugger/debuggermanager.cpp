@@ -605,15 +605,18 @@ void DebuggerManager::toggleBreakpoint ()
     uint line, col;
     w->viewCursorIf->cursorPositionReal(&line, &col);
 
-    DebuggerBreakpoint* br = new DebuggerBreakpoint(w->url().prettyURL(0, KURL::StripFileProtocol), line);
+    DebuggerBreakpoint* br = m_breakpointList->retrieve(w->url().prettyURL(0, KURL::StripFileProtocol), line);
 
-    if(!m_breakpointList->exists(br))
+    if(!br)
     {
+      DebuggerBreakpoint* br = new DebuggerBreakpoint(w->url().prettyURL(0, KURL::StripFileProtocol), line);
       m_breakpointList->add(br);
-      setMark(w->url().prettyURL(0, KURL::StripFileProtocol), br->line(), true, KTextEditor::MarkInterface::markType02);
+//       setMark(w->url().prettyURL(0, KURL::StripFileProtocol), br->line(), true, KTextEditor::MarkInterface::markType02); // FIXME Is this really needed?
       if(m_client && m_client->isActive())
       {
+        DebuggerBreakpoint tmpbp = *br;
         m_client->addBreakpoint(br);
+        
       }
       else
         // Trigger pathmapper to make sure we have a valid translation...
@@ -622,7 +625,7 @@ void DebuggerManager::toggleBreakpoint ()
     else
     {
       m_breakpointList->remove(br);
-      setMark(w->url().prettyURL(0, KURL::StripFileProtocol), br->line(), false, KTextEditor::MarkInterface::markType02);
+//       setMark(w->url().prettyURL(0, KURL::StripFileProtocol), br->line(), false, KTextEditor::MarkInterface::markType02); // FIXME Is this really needed?
 
       if(m_client && m_client->isActive())
       {
@@ -666,6 +669,23 @@ void DebuggerManager::slotBreakpointUnmarked(Document* qdoc, int line)
   
     m_breakpointList->remove(br);
   }
+}
+
+void DebuggerManager::updateBreakpointKey( const DebuggerBreakpoint & bp, const QString & newkey )
+{
+  m_breakpointList->updateBreakpointKey(bp, newkey);
+ 
+  // Update UI
+  m_debuggerui->deleteBreakpoint(bp);
+  DebuggerBreakpoint bpnew(bp);
+  bpnew.setKey(newkey);
+  m_debuggerui->showBreakpoint(bpnew);
+ 
+}
+
+DebuggerBreakpoint * DebuggerManager::findDebuggerBreakpoint( const QString & key )
+{
+  return m_breakpointList->findDebuggerBreakpoint(key);
 }
 
 #include "debuggermanager.moc"

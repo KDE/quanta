@@ -58,8 +58,9 @@ class DBGpNetwork : public QObject
     bool isConnected();
     bool isActive();
 
-    bool sendCommand(const QString & command);
-    bool sendCommand(const QString & command, const QString & arguments);
+    long sendCommand(const QString & command);
+    long sendCommand(const QString & command, const QString & arguments);
+    long sendCommand(const QString & command, const QString & arguments, const QString & data);
 
   public slots:
     // Socket slots

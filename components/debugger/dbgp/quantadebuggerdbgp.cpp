@@ -71,6 +71,10 @@ QuantaDebuggerDBGp::~QuantaDebuggerDBGp ()
 
 void QuantaDebuggerDBGp::slotNetworkActive(bool active)
 {
+  // debuggerInterface() might not be available, for example from project dialog
+  if(!debuggerInterface())
+    return;
+
   debuggerInterface()->enableAction("debug_request", active);
   debuggerInterface()->enableAction("debug_connect", !active);
   debuggerInterface()->enableAction("debug_disconnect", active);
@@ -79,10 +83,20 @@ void QuantaDebuggerDBGp::slotNetworkActive(bool active)
 
 void QuantaDebuggerDBGp::slotNetworkConnected(bool connected)
 {
+  // debuggerInterface() might not be available, for example from project dialog
+  if(!debuggerInterface())
+    return;
+
+  m_active = connected;
+
   debuggerInterface()->enableAction("debug_run", connected);
   debuggerInterface()->enableAction("debug_leap", connected);
   debuggerInterface()->enableAction("debug_pause", connected);
   debuggerInterface()->enableAction("debug_kill", connected);
+
+  debuggerInterface()->enableAction("debug_stepinto", connected);
+  debuggerInterface()->enableAction("debug_stepover", connected);
+  debuggerInterface()->enableAction("debug_stepout", connected);
 
   debuggerInterface()->setActiveLine("", 0);
 
@@ -197,12 +211,15 @@ void QuantaDebuggerDBGp::processCommand(const QString& datas)
     QDomNode response = data.elementsByTagName("response").item(0);
     QString command = attribute(response, "command");
 
+    // Status command
     if(command == "status")
       setExecutionState(attribute(response, "status"));
+
+    // Callback stack
     else if(command == "stack_get")
-    {
       showStack(response);
-    }
+
+    // Reply from a user execution action
     else if(command == "run" 
          || command == "step_over" 
          || command == "step_into" 
@@ -212,10 +229,16 @@ void QuantaDebuggerDBGp::processCommand(const QString& datas)
       m_network.sendCommand("stack_get");
       setExecutionState(attribute(response, "status"));
     }
+
+    // Feature get replu
     else if(command == "feature_get")
-    {
       checkSupport(response);
-    }
+
+    // Reply after adding a breakpoint
+    else if(command == "breakpoint_set")
+      setBreakpointKey(response);
+
+    // Unknown command...
     else
     {
       kdDebug(24002) << " * Unknown command: " << command << endl;
@@ -254,6 +277,7 @@ void QuantaDebuggerDBGp::initiateSession(const QDomNode& initpacket)
   setExecutionState("starting");
 //   m_network.sendCommand("feature_get", "-n encoding");
   m_network.sendCommand("feature_get", "-n supports_async");
+  m_network.sendCommand("feature_get", "-n breakpoint_set");
 }
 
 void QuantaDebuggerDBGp::showStack(const QDomNode&node)
@@ -277,6 +301,10 @@ void QuantaDebuggerDBGp::checkSupport( const QDomNode & node )
   if(feature == "supports_async")
     m_supportsasync = data.toLong();
 
+  // if the debugger supports breakpoints, we have to send all current ones
+  else if(feature == "breakpoint_set"/* && data.toLong()*/)
+    debuggerInterface()->refreshBreakpoints();
+
 }
 
 QString QuantaDebuggerDBGp::attribute(const QDomNode&node, const QString &attribute)
@@ -294,10 +322,7 @@ void QuantaDebuggerDBGp::debuggingState(bool enable)
   debuggerInterface()->enableAction("debug_skip", enable);
 }
 
-void QuantaDebuggerDBGp::sendBreakpoints()
-{
-  debuggerInterface()->refreshBreakpoints();
-}
+
 void QuantaDebuggerDBGp::sendWatches()
 {
 //   for(QValueList<QString>::iterator it = m_watchlist.begin(); it != m_watchlist.end(); ++it)
@@ -376,46 +401,45 @@ void QuantaDebuggerDBGp::pause()
 
 
 // Add a breakpoint
-void QuantaDebuggerDBGp::addBreakpoint (DebuggerBreakpoint* )
+void QuantaDebuggerDBGp::addBreakpoint (DebuggerBreakpoint* breakpoint)
 {
-//   QString type;
-//   if(breakpoint->type() == DebuggerBreakpoint::LineBreakpoint)
-//     type = "line";
-//   else if(breakpoint->type() == DebuggerBreakpoint::ConditionalTrue)
-//     type = "true";
-//   else
-//     type = "change";
-// 
-//   sendCommand("breakpoint", 
-//               "type", type.ascii(),
-//               "filename", mapLocalPathToServer(breakpoint->filePath()).ascii(),
-//               "class", breakpoint->inClass().ascii(),
-//               "function", breakpoint->inFunction().ascii(),
-//               "expression", breakpoint->condition().ascii(),
-//               "line", QString::number(breakpoint->line()).ascii(),
-//               0);
+  QString type;
+  if(breakpoint->type() == DebuggerBreakpoint::LineBreakpoint)
+    type = "line";
+  else if(breakpoint->type() == DebuggerBreakpoint::ConditionalTrue)
+    type = "conditional";
+  else
+    type = "watch";
+
+  long id = m_network.sendCommand(
+                        "breakpoint_set", 
+                        "-t " + type +
+                        " -f " + mapLocalPathToServer(breakpoint->filePath()) +
+                        " -n " + QString::number(breakpoint->line() + 1)
+                        , breakpoint->condition());
+
+  breakpoint->setKey(QString("id %1").arg(id));
+}
+
+void QuantaDebuggerDBGp::setBreakpointKey( const QDomNode & response )
+{
+  long id;
+
+  id = attribute(response, "transaction_id").toLong();
+  if(id > 0)
+  {
+    QString oldkey = QString("id %1").arg(id);
+    DebuggerBreakpoint *bp = debuggerInterface()->findDebuggerBreakpoint(oldkey);
+    if(bp)
+      debuggerInterface()->updateBreakpointKey(*bp, attribute(response, "id"));
+  }
 }
 
 
 // Clear a breakpoint
-void QuantaDebuggerDBGp::removeBreakpoint(DebuggerBreakpoint* )
+void QuantaDebuggerDBGp::removeBreakpoint(DebuggerBreakpoint* bp)
 {
-//   QString type;
-//   if(breakpoint->type() == DebuggerBreakpoint::LineBreakpoint)
-//     type = "line";
-//   else if(breakpoint->type() == DebuggerBreakpoint::ConditionalTrue)
-//     type = "true";
-//   else
-//     type = "change";
-// 
-//   sendCommand("removebreakpoint", 
-//               "type", type.ascii(),
-//               "filename", mapLocalPathToServer(breakpoint->filePath()).ascii(),
-//               "class", breakpoint->inClass().ascii(),
-//               "function", breakpoint->inFunction().ascii(),
-//               "expression", breakpoint->condition().ascii(),
-//               "line", QString::number(breakpoint->line()).ascii(),
-//               0);
+  m_network.sendCommand("breakpoint_remove", "-d " + bp->key());
 }
 
 // A file was opened...
@@ -648,6 +672,10 @@ void QuantaDebuggerDBGp::variableSetValue(const DebuggerVariable &)
 //               "variable", variable.name().ascii(),
 //               "value", variable.value().ascii(),
 //               0);
+  return;
+
 }
+
+
 
 #include "quantadebuggerdbgp.moc"

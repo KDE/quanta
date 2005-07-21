@@ -23,9 +23,15 @@
 #include <qvaluelist.h>
 
 class DebuggerBreakpoint;
+    typedef QValueList<DebuggerBreakpoint*> BreakpointList_t;
 
 class DebuggerBreakpointList
 {
+
+  private:
+    BreakpointList_t* m_breakpointList;
+    BreakpointList_t::iterator m_current;
+    BreakpointList_t::iterator find(const DebuggerBreakpoint &bp);
 
   public:
     DebuggerBreakpointList();
@@ -40,13 +46,12 @@ class DebuggerBreakpointList
 
     DebuggerBreakpoint* retrieve(const QString& filePath, int line);
 
+    DebuggerBreakpoint * findDebuggerBreakpoint(const QString& key);
+    void updateBreakpointKey(const DebuggerBreakpoint &bp, const QString& newkey);
+
     void rewind();
     DebuggerBreakpoint* next();
 
-  private:
-    typedef QValueList<DebuggerBreakpoint*> BreakpointList_t;
-    BreakpointList_t* m_breakpointList;
-    BreakpointList_t::iterator m_current;
 };
 
 #endif

@@ -62,6 +62,8 @@ class DebuggerInterface : public QObject
     virtual void showBreakpoint(const DebuggerBreakpoint &bp) = 0;
     virtual void refreshBreakpoints() = 0;
     virtual DebuggerBreakpoint * newDebuggerBreakpoint() = 0;
+    virtual DebuggerBreakpoint * findDebuggerBreakpoint(const QString& key) = 0;
+    virtual void updateBreakpointKey(const DebuggerBreakpoint &bp, const QString& newkey) = 0;
 
     // Path mapping
     virtual PathMapper* Mapper() = 0;

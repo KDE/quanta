@@ -39,6 +39,8 @@ class DebuggerBreakpoint
     };
     
     DebuggerBreakpoint();
+    DebuggerBreakpoint(const DebuggerBreakpoint& bp);
+    DebuggerBreakpoint(const DebuggerBreakpoint* bp);
     DebuggerBreakpoint(const QString& filePath, int line); // Line BP
     DebuggerBreakpoint(const DebuggerBreakpoint::Types type,                   // Any kind
                        const QString& conditionExpr, const QString& filePath = "", 
@@ -54,6 +56,7 @@ class DebuggerBreakpoint
     virtual void setState(int state);
     virtual void setType(Types type);
     virtual void setValue(const QString& value);
+    virtual void setKey(const QString& value);
 
     virtual const QString& filePath() const;
     virtual const QString& inClass() const;
@@ -63,8 +66,9 @@ class DebuggerBreakpoint
     virtual int state() const;
     virtual DebuggerBreakpoint::Types type() const;
     virtual const QString& value() const;
+    virtual const QString& key() const;
 
-    bool operator == (DebuggerBreakpoint);
+    bool operator == (DebuggerBreakpoint) const;
 
   protected:
     QString m_filePath;
@@ -75,6 +79,7 @@ class DebuggerBreakpoint
     int     m_state;
     Types   m_type;
     QString m_value;
+    QString m_key;
 };
 
 #endif

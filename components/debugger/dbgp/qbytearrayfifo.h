@@ -30,6 +30,7 @@ class QByteArrayFifo
     QByteArrayFifo();
     bool append(const char * chars, int size);
     QString retrieve();
+    QString base64Encoded();
     long find(char character);
     unsigned long length() { return m_size; }
 

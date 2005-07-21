@@ -22,6 +22,31 @@ DebuggerBreakpoint::DebuggerBreakpoint()
     : m_line(1)//, m_state(0)
 {}
 
+DebuggerBreakpoint::DebuggerBreakpoint( const DebuggerBreakpoint & bp )
+{
+  m_conditionExpr = bp.condition();
+  m_filePath = bp.filePath();
+  m_class = bp.inClass();
+  m_function = bp.inFunction();
+  m_line     = bp.line();
+  m_state    = bp.state();
+  m_key      = bp.key();
+  m_type     = bp.type();
+}
+
+DebuggerBreakpoint::DebuggerBreakpoint( const DebuggerBreakpoint * bp )
+{
+  m_conditionExpr = bp->condition();
+  m_filePath = bp->filePath();
+  m_class = bp->inClass();
+  m_function = bp->inFunction();
+  m_line     = bp->line();
+  m_state    = bp->state();
+  m_key      = bp->key();
+  m_type     = bp->type();
+}
+
+
 DebuggerBreakpoint::DebuggerBreakpoint(const QString& filePath, int line)
 {
   m_filePath = filePath;
@@ -86,6 +111,16 @@ void DebuggerBreakpoint::setType(DebuggerBreakpoint::Types type )
   m_type = type;
 }
 
+void DebuggerBreakpoint::setKey(const QString& value)
+{
+  m_key = value;
+}
+
+const QString& DebuggerBreakpoint::key() const
+{
+  return m_key;
+}
+
 const QString& DebuggerBreakpoint::filePath() const
 {
   return m_filePath;
@@ -125,8 +160,13 @@ int DebuggerBreakpoint::state() const
   return m_state;
 }
 
-bool DebuggerBreakpoint::operator == (DebuggerBreakpoint bp)
+bool DebuggerBreakpoint::operator == (DebuggerBreakpoint bp) const
 {
+  // If they key matches
+  if(m_key != "" && bp.key() == m_key)
+    return true;
+
+  // Or everything else...
   if(bp.filePath() == m_filePath
   && (bp.line() == m_line || m_type != DebuggerBreakpoint::LineBreakpoint)
   && bp.type() == m_type
@@ -138,3 +178,4 @@ bool DebuggerBreakpoint::operator == (DebuggerBreakpoint bp)
   return false;
   
 }
+
