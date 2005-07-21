@@ -515,71 +515,6 @@
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="QLabel" row="1" column="1">
-                                <property name="name">
-                                    <cstring>lblDelayFast</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>4</hsizetype>
-                                        <vsizetype>5</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
-                                </property>
-                                <property name="font">
-                                    <font>
-                                        <pointsize>9</pointsize>
-                                    </font>
-                                </property>
-                                <property name="text">
-                                    <string>Fast</string>
-                                </property>
-                            </widget>
-                            <widget class="QSlider" row="1" column="2">
-                                <property name="name">
-                                    <cstring>sliderDisplayDelay</cstring>
-                                </property>
-                                <property name="minimumSize">
-                                    <size>
-                                        <width>0</width>
-                                        <height>27</height>
-                                    </size>
-                                </property>
-                                <property name="maxValue">
-                                    <number>200</number>
-                                </property>
-                                <property name="orientation">
-                                    <enum>Horizontal</enum>
-                                </property>
-                                <property name="tickmarks">
-                                    <enum>Below</enum>
-                                </property>
-                            </widget>
-                            <widget class="QLabel" row="1" column="3">
-                                <property name="name">
-                                    <cstring>lblDelaySlow</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>4</hsizetype>
-                                        <vsizetype>5</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
-                                </property>
-                                <property name="font">
-                                    <font>
-                                        <pointsize>9</pointsize>
-                                    </font>
-                                </property>
-                                <property name="text">
-                                    <string>Slow</string>
-                                </property>
-                                <property name="alignment">
-                                    <set>AlignVCenter|AlignRight</set>
-                                </property>
-                            </widget>
                             <widget class="QComboBox" row="0" column="1" rowspan="1" colspan="3">
                                 <item>
                                     <property name="text">
@@ -597,14 +532,6 @@
                                         <pixmap>image1</pixmap>
                                     </property>
                                 </item>
-                                <item>
-                                    <property name="text">
-                                        <string>Leap</string>
-                                    </property>
-                                    <property name="pixmap">
-                                        <pixmap>image2</pixmap>
-                                    </property>
-                                </item>
                                 <property name="name">
                                     <cstring>comboDefaultExecutionState</cstring>
                                 </property>
@@ -615,17 +542,6 @@
                                 </property>
                                 <property name="text">
                                     <string>Default mode:</string>
-                                </property>
-                                <property name="alignment">
-                                    <set>AlignVCenter</set>
-                                </property>
-                            </widget>
-                            <widget class="QLabel" row="1" column="0">
-                                <property name="name">
-                                    <cstring>lblDisplayDelay</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Run speed:</string>
                                 </property>
                                 <property name="alignment">
                                     <set>AlignVCenter</set>
@@ -706,9 +622,6 @@
         <data format="PNG" length="696">89504e470d0a1a0a0000000d49484452000000100000001008060000001ff3ff610000027f49444154388d7d93df4b53611cc69ff73de7ccb375dcdad46d2e3269036d21c4420a0b898484e82a08a2a02238a41741dd77e14dff4074d521efbae8a61b2f6a892062604e53117165e28f864dd73adb999e3cdb79cfe9c25a9c4dfa5e3e3ccfe7fdfee02538a412830b226075c3b662804d006b9567a5d4b4d2a7d77a494d5002c81370c20075797dc7fd157804139f77445846a14898fe9a67ead38f4aff661d2031b81006a1e3a16053c7ddcb3e5c3cc5c1ebe1000046c5c6a7af3a86c776b1b2bef3c3cdb2373ebcb83a5e052406e725103a9388473a1e5d13d1e8e60f9b0c1566e1655245727a3b2f19cb5d13c3b7bfff71da43a16073c7bd4b024667b56aa0b7cb0b009858fca75deff1622367357d59d58764597e481203332238317be74ad8d7798ca2ffacbf6a4eceaa00e0d0dea554ac6feb50deaabbc15f635d3c806e9728f9fc6e865cc172b49c2b9875633c1bf34033fca00db6a495a33d3c805840a2c8692638426a00953a40a9dc0000a0820842f9180f80941987cd3c0717ef04bc598ac02354f0b80642c8c1f6096cca03d66a51b791ce37d7bd06007a45a80b7304d8370db82c3d4379564a31a350a404a0f45086a3dc0283c83358fbea5e80a5e7e8b4d2a713a60f53238b36afe630c75b54c45b5487d6eed3408d2c04333712e437b608009c93937e2634a5cec79ba3019febbf1dfc2c9631b594cb448cd19b216e2d55ddda0579245a165adf9f89f94e76b649203517b16d1be9cd5dccafa8997065f241982c4f2a8aa2395cbdf75fb5eac289218fe7c8adf6904b3ada7870b242c9c07ab6bc67e8ea48c89c7a1ee2d6161545d1809adf0800b22cbbbe99a7231a17ed21948f11d894587a26c0d273417e630b405e5194f25fff6f6493fb9b9d8e82910000000049454e44ae426082</data>
     </image>
     <image name="image1">
-        <data format="PNG" length="258">89504e470d0a1a0a0000000d4948445200000016000000160806000000c4b46c3b000000c949444154388ded93db0d83300c45af5137ea06190226610a260943d8137426f707a33c0c49a4f6a7ea91f261149f5c2207f873409dfb74d43301c006e8d66856557701408cb1ea9d3c0933b71266ccf35cc95df1284484655932f9b09888ce05a0ba965bf12b045cddf995a824139becc99cd5656211c9928b48fd67a5d4634df631b38610e848af2202ab5df19d7ced9ff736c56c6b3a82aa7a5bf74aadd79acf65b5e13d9416da432a7e8c9e60f35b9c5a7d1b16b7e6d7f8c893f6e84a1c63c4beefdfcaf0ebbc010507b65c1e0ebcf80000000049454e44ae426082</data>
-    </image>
-    <image name="image2">
         <data format="PNG" length="229">89504e470d0a1a0a0000000d4948445200000016000000160806000000c4b46c3b000000ac49444154388ded94c10dc33008453f5637ea061ec24cd2293289976083ce440f6d2262b012da5b95277188133f7f4560e0e2039dfc4eb39e621f164097894455c30280debbdb539c0180881c25dcd15a73f2509c8588c0cc3b795a4c445b0170bf65e596158f821969f19af4e8b02bf1f7e2b3890bf09eb8f145660223b63eb6a267ad00e209b47d6cfb39143f824be42e825aab5b4f27b6f2993483db2c223a4aa3db6b0633ff14e80f79015c6574466adcb13f0000000049454e44ae426082</data>
     </image>
 </images>
@@ -749,7 +662,6 @@
     <tabstop>checkBreakOnUserWarning</tabstop>
     <tabstop>checkBreakOnUserError</tabstop>
     <tabstop>comboDefaultExecutionState</tabstop>
-    <tabstop>sliderDisplayDelay</tabstop>
     <tabstop>buttonOk</tabstop>
     <tabstop>buttonCancel</tabstop>
 </tabstops>

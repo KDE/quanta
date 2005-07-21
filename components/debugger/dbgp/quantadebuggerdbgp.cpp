@@ -51,7 +51,7 @@ QuantaDebuggerDBGp::QuantaDebuggerDBGp (QObject *parent, const char*, const QStr
   m_errormask = 1794;
   m_supportsasync = false;
   m_defaultExecutionState = Starting;
-//  setExecutionState(m_defaultExecutionState);
+  setExecutionState(m_defaultExecutionState);
 
   connect(&m_network, SIGNAL(command(const QString&)), this, SLOT(processCommand(const QString&)));
   connect(&m_network, SIGNAL(active(bool)), this, SLOT(slotNetworkActive(bool)));
@@ -79,6 +79,8 @@ void QuantaDebuggerDBGp::slotNetworkActive(bool active)
   debuggerInterface()->enableAction("debug_connect", !active);
   debuggerInterface()->enableAction("debug_disconnect", active);
 
+  setExecutionState(m_defaultExecutionState);
+
 }
 
 void QuantaDebuggerDBGp::slotNetworkConnected(bool connected)
@@ -99,6 +101,8 @@ void QuantaDebuggerDBGp::slotNetworkConnected(bool connected)
   debuggerInterface()->enableAction("debug_stepout", connected);
 
   debuggerInterface()->setActiveLine("", 0);
+  if(!connected)
+    setExecutionState(m_defaultExecutionState);
 
 }
 
@@ -114,7 +118,7 @@ void QuantaDebuggerDBGp::startSession()
   kdDebug(24002) << k_funcinfo << endl;
 
   m_network.sessionStart(m_useproxy, m_serverHost, m_useproxy ? m_serverPort : m_listenPort);
-  setExecutionState("starting");
+//   setExecutionState(Starting);
 }
 
 
@@ -133,41 +137,50 @@ void QuantaDebuggerDBGp::endSession()
 
 }
 
+
+// Change executionstate of the script
+void QuantaDebuggerDBGp::setExecutionState( const State & state, bool forcesend )
+{
+  if(m_executionState != state || forcesend)
+  {
+    if(state == Running)
+      m_network.sendCommand("run");
+    else if (state == Break)
+      m_network.sendCommand("break");
+  }
+  m_executionState = state;
+
+  if(debuggerInterface()) {
+    // The run action will be active if we're started, stopped or paused
+    debuggerInterface()->enableAction("debug_run", m_executionState == Break || m_executionState == Starting || m_executionState == Stopped);
+
+    // The pause action will be enabled if we're running and either supports async or we're not connected (ie will start running)
+    debuggerInterface()->enableAction("debug_pause", m_executionState == Running && (m_supportsasync || !isActive())) ;
+
+    // Kill is active if we're paused, just started of the debugger supports async, as long as we have an active session
+    debuggerInterface()->enableAction("debug_kill", isActive()  && (m_executionState == Break || (m_executionState == Running && m_supportsasync) || m_executionState == Starting ));
+
+    // These are only activated when we have an active seesion and are paused
+    debuggerInterface()->enableAction("debug_stepinto", isActive() && (m_executionState == Break || m_executionState == Starting ));
+    debuggerInterface()->enableAction("debug_stepout", isActive() && (m_executionState == Break || m_executionState == Starting));
+    debuggerInterface()->enableAction("debug_stepover", isActive() && (m_executionState == Break || m_executionState == Starting));
+  }
+
+}
+
 // Change executionstate of the script
 void QuantaDebuggerDBGp::setExecutionState(const QString &state)
 {
   if(state == "starting")
-  {
-    m_executionState = Starting;
-  }
+    setExecutionState(Starting);
   else if(state == "stopping")
-  {
-    m_executionState = Stopping;
-  }
+    setExecutionState(Stopping);
   else if(state == "stopped")
-  {
-    m_executionState = Stopped;
-  }
+    setExecutionState(Stopped);
   else if(state == "running")
-  {
-    m_executionState = Running;
-  }
+    setExecutionState(Running);
   else if(state == "break")
-  {
-    m_executionState = Break;
-  }
-
-  if(debuggerInterface()) {
-    debuggerInterface()->enableAction("debug_run", m_executionState == Break || m_executionState == Starting);
-    debuggerInterface()->enableAction("debug_pause", m_executionState == Running && m_supportsasync);
-    debuggerInterface()->enableAction("debug_kill", m_executionState == Break || (m_executionState == Running && m_supportsasync) || m_executionState == Starting );
-    debuggerInterface()->enableAction("debug_stepinto", m_executionState == Break || m_executionState == Starting );
-    debuggerInterface()->enableAction("debug_stepout", m_executionState == Break || m_executionState == Starting);
-    debuggerInterface()->enableAction("debug_stepover", m_executionState == Break || m_executionState == Starting);
-  }
-
-//   kdDebug(24002) << k_funcinfo << ", " << m_executionState << endl;
-
+    setExecutionState(Break);
 }
 
 // Return capabilities of dbgp
@@ -176,7 +189,7 @@ const uint QuantaDebuggerDBGp::supports(DebuggerClientCapabilities::Capabilities
   switch(cap)
   {
     case DebuggerClientCapabilities::LineBreakpoints:
-    case DebuggerClientCapabilities::ConditionalBreakpoints:
+//     case DebuggerClientCapabilities::ConditionalBreakpoints:
     case DebuggerClientCapabilities::StartSession:
     case DebuggerClientCapabilities::EndSession:
     case DebuggerClientCapabilities::Kill:
@@ -274,10 +287,11 @@ void QuantaDebuggerDBGp::initiateSession(const QDomNode& initpacket)
   }
 
   debuggerInterface()->setActiveLine(mapServerPathToLocal(attribute(initpacket, "fileuri")), 0);
-  setExecutionState("starting");
+//   setExecutionState(Starting);
 //   m_network.sendCommand("feature_get", "-n encoding");
   m_network.sendCommand("feature_get", "-n supports_async");
   m_network.sendCommand("feature_get", "-n breakpoint_set");
+  m_network.sendCommand("feature_get", "-n quanta_initialized");
 }
 
 void QuantaDebuggerDBGp::showStack(const QDomNode&node)
@@ -304,6 +318,10 @@ void QuantaDebuggerDBGp::checkSupport( const QDomNode & node )
   // if the debugger supports breakpoints, we have to send all current ones
   else if(feature == "breakpoint_set"/* && data.toLong()*/)
     debuggerInterface()->refreshBreakpoints();
+
+  // Our own feature, probably not available but then we know we're done initiating
+  else if(feature == "quanta_initialized")
+    setExecutionState(m_executionState, true);
 
 }
 
@@ -359,7 +377,8 @@ void QuantaDebuggerDBGp::request()
 // Go as fast as possible and dont update current line or watches
 void QuantaDebuggerDBGp::run()
 {
-  m_network.sendCommand("run");
+  setExecutionState(Running);
+//   m_network.sendCommand("run");
 //   m_network.sendCommand("status");
 }
 
@@ -395,7 +414,8 @@ void QuantaDebuggerDBGp::kill()
 // Pause execution
 void QuantaDebuggerDBGp::pause()
 {
-  m_network.sendCommand("break");
+  setExecutionState(Break);
+//   m_network.sendCommand("break");
 //   m_network.sendCommand("status");
 }
 
@@ -518,13 +538,15 @@ void QuantaDebuggerDBGp::readConfig(QDomNode node)
   if(valuenode.firstChild().nodeValue().isEmpty())
     m_defaultExecutionState = Starting;
   else
-    m_defaultExecutionState = (State)valuenode.firstChild().nodeValue().toUInt();
+  {
+    if(valuenode.firstChild().nodeValue().toUInt() == 0)
+      m_defaultExecutionState = Break;
+    else
+      m_defaultExecutionState = Running;
+  }
 
   valuenode = node.namedItem("useproxy");
   m_useproxy = valuenode.firstChild().nodeValue() == "1";
-
-  valuenode = node.namedItem("displaydelay");
-  m_displaydelay = valuenode.firstChild().nodeValue().toLong();
 
   valuenode = node.namedItem("errormask");
   m_errormask = valuenode.firstChild().nodeValue().toLong();
@@ -545,9 +567,11 @@ void QuantaDebuggerDBGp::showConfig(QDomNode node)
   set.lineServerBasedir->setText(m_serverBasedir);
   set.lineServerListenPort->setText(m_listenPort);
   set.checkUseProxy->setChecked(m_useproxy);
-  set.sliderDisplayDelay->setValue(m_displaydelay);
   set.lineStartSession->setText(m_startsession);
-  set.comboDefaultExecutionState->setCurrentItem((int)m_defaultExecutionState);
+  if(m_defaultExecutionState == Break)
+    set.comboDefaultExecutionState->setCurrentItem(0);  
+  else
+    set.comboDefaultExecutionState->setCurrentItem(1);
 
   set.checkBreakOnNotice->setChecked(QuantaDebuggerDBGp::Notice & m_errormask);
   set.checkBreakOnWarning->setChecked(QuantaDebuggerDBGp::Warning & m_errormask);
@@ -624,17 +648,11 @@ void QuantaDebuggerDBGp::showConfig(QDomNode node)
       el.parentNode().removeChild(el);
     el = node.ownerDocument().createElement("defaultexecutionstate");
     node.appendChild( el );
-    m_defaultExecutionState = (State)set.comboDefaultExecutionState->currentItem();
+    if(set.comboDefaultExecutionState->currentItem() == 0)
+      m_defaultExecutionState = Break;
+    else
+      m_defaultExecutionState = Running;
     el.appendChild(node.ownerDocument().createTextNode(QString::number(m_defaultExecutionState)));
-
-
-    el = node.namedItem("displaydelay").toElement();
-    if (!el.isNull())
-      el.parentNode().removeChild(el);
-    el = node.ownerDocument().createElement("displaydelay");
-    node.appendChild( el );
-    m_displaydelay = set.sliderDisplayDelay->value();
-    el.appendChild( node.ownerDocument().createTextNode(QString::number(m_displaydelay)));
 
     el = node.namedItem("errormask").toElement();
     if (!el.isNull())
@@ -673,7 +691,6 @@ void QuantaDebuggerDBGp::variableSetValue(const DebuggerVariable &)
 //               "value", variable.value().ascii(),
 //               0);
   return;
-
 }
 
 

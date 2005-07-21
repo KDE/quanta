@@ -71,6 +71,7 @@ class QuantaDebuggerDBGp : public DebuggerClient
     void pause();
     void kill();
     void setExecutionState(const QString &state);
+    void setExecutionState(const State &state, bool forcesend = false);
 
     // Connection
     void startSession();
