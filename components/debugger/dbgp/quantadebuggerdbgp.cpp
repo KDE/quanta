@@ -661,6 +661,7 @@ void QuantaDebuggerDBGp::showConfig(QDomNode node)
     {
       m_defaultExecutionState = Running;
       el.appendChild(node.ownerDocument().createTextNode("run"));
+
     }
 
     el = node.namedItem("errormask").toElement();

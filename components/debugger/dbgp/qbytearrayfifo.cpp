@@ -31,11 +31,11 @@ QString QByteArrayFifo::retrieve( )
 {
   // See if there's a null teminator somewhere
   QString str(m_array);
-  int size = str.length() + 1;
+  size_t size = str.length() + 1;
 
   // Decrease size and move bytes to the beginning of the array
   m_size -= size;
-  for(int cnt = 0; cnt < m_size; cnt++)
+  for(size_t cnt = 0; cnt < m_size; cnt++)
     m_array[cnt] = m_array[cnt + size];
 
   // Resize array, needed for find() to work
@@ -44,14 +44,14 @@ QString QByteArrayFifo::retrieve( )
   return str;
 }
 
-bool QByteArrayFifo::append(const char * chars, int size )
+bool QByteArrayFifo::append(const char * chars, size_t size )
 {
   // Resize the array, fail if not possible
   if(!m_array.resize(m_size + size ))
     return false;
 
   // Copy the elements
-  for(int cnt = 0; cnt < size; cnt++)
+  for(size_t cnt = 0; cnt < size; cnt++)
     m_array[cnt + m_size] = chars[cnt];
 
   // Increase size var

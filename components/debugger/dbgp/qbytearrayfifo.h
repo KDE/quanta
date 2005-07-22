@@ -28,15 +28,15 @@ class QByteArrayFifo
 
   public:
     QByteArrayFifo();
-    bool append(const char * chars, int size);
+    bool append(const char * chars, size_t size);
     QString retrieve();
     QString base64Encoded();
     long find(char character);
-    unsigned long length() { return m_size; }
+    size_t length() { return m_size; }
 
   private:
     QByteArray m_array;
-    long m_size;
+    size_t m_size;
 
 };
 
