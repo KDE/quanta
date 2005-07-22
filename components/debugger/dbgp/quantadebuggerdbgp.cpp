@@ -233,7 +233,7 @@ void QuantaDebuggerDBGp::processCommand(const QString& datas)
       showStack(response);
 
     // Reply from a user execution action
-    else if(command == "run" 
+    else if(command == "break" 
          || command == "step_over" 
          || command == "step_into" 
          || command == "step_out")
@@ -241,7 +241,12 @@ void QuantaDebuggerDBGp::processCommand(const QString& datas)
       // If this is the acknoledge of a step command, request the call stack 
       m_network.sendCommand("stack_get");
       setExecutionState(attribute(response, "status"));
+      sendWatches();
     }
+
+    // Run
+    else if(command == "run" )
+      setExecutionState(attribute(response, "status"));
 
     // Feature get replu
     else if(command == "feature_get")
@@ -291,6 +296,7 @@ void QuantaDebuggerDBGp::initiateSession(const QDomNode& initpacket)
 //   m_network.sendCommand("feature_get", "-n encoding");
   m_network.sendCommand("feature_get", "-n supports_async");
   m_network.sendCommand("feature_get", "-n breakpoint_set");
+  m_network.sendCommand("typemap_get");
   m_network.sendCommand("feature_get", "-n quanta_initialized");
 }
 
@@ -343,9 +349,8 @@ void QuantaDebuggerDBGp::debuggingState(bool enable)
 
 void QuantaDebuggerDBGp::sendWatches()
 {
-//   for(QValueList<QString>::iterator it = m_watchlist.begin(); it != m_watchlist.end(); ++it)
-//     sendCommand("getwatch", "variable", (*it).ascii(), 0);
-//   sendCommand("sentwatches", "key", 0, 0);
+  for(QValueList<QString>::iterator it = m_watchlist.begin(); it != m_watchlist.end(); ++it)
+    m_network.sendCommand("property_get", "-n " + (*it));
 }
 
 // Return name of debugger
@@ -469,18 +474,17 @@ void QuantaDebuggerDBGp::fileOpened(const QString&)
 }
 
 // Watch a variable
-void QuantaDebuggerDBGp::addWatch(const QString &)
+void QuantaDebuggerDBGp::addWatch(const QString & variable)
 {
-//   if(m_watchlist.find(variable) == m_watchlist.end())
-//     m_watchlist.append(variable);
-//   sendCommand("getwatch", "variable", variable.ascii(), 0);
+  if(m_watchlist.find(variable) == m_watchlist.end())
+    m_watchlist.append(variable);
+  m_network.sendCommand("property_get", "-n " + variable);
 }
 // Remove watch
-void QuantaDebuggerDBGp::removeWatch(DebuggerVariable *)
+void QuantaDebuggerDBGp::removeWatch(DebuggerVariable *variable)
 {
-//   if(m_watchlist.find(variable->name()) != m_watchlist.end())
-//     m_watchlist.remove(m_watchlist.find(variable->name()));
-//   //sendCommand("unwatchvariable", var->name());
+  if(m_watchlist.find(variable->name()) != m_watchlist.end())
+    m_watchlist.remove(m_watchlist.find(variable->name()));
 }
 
 // Show conditional breakpoint state
@@ -539,7 +543,7 @@ void QuantaDebuggerDBGp::readConfig(QDomNode node)
     m_defaultExecutionState = Starting;
   else
   {
-    if(valuenode.firstChild().nodeValue().toUInt() == 0)
+    if(valuenode.firstChild().nodeValue() == "break")
       m_defaultExecutionState = Break;
     else
       m_defaultExecutionState = Running;
@@ -649,10 +653,15 @@ void QuantaDebuggerDBGp::showConfig(QDomNode node)
     el = node.ownerDocument().createElement("defaultexecutionstate");
     node.appendChild( el );
     if(set.comboDefaultExecutionState->currentItem() == 0)
+    {
       m_defaultExecutionState = Break;
+      el.appendChild(node.ownerDocument().createTextNode("break"));
+    }
     else
+    {
       m_defaultExecutionState = Running;
-    el.appendChild(node.ownerDocument().createTextNode(QString::number(m_defaultExecutionState)));
+      el.appendChild(node.ownerDocument().createTextNode("run"));
+    }
 
     el = node.namedItem("errormask").toElement();
     if (!el.isNull())

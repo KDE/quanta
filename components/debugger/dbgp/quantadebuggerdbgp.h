@@ -118,6 +118,9 @@ class QuantaDebuggerDBGp : public DebuggerClient
     long    m_displaydelay;
     bool    m_supportsasync;
 
+    // Variable type mapping
+    StringMap m_variabletypes;
+
     // Internal watchlist
     WatchList m_watchlist;
 
