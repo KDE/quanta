@@ -70,7 +70,7 @@ void QNewToolbarStuff::installResource()
           ok = false;
         else
         {
-           if (KMessageBox::questionYesNo(parentWidget(), i18n("Do you want to load the newly downloaded toolbar?"), i18n("Load Toolbar")) == KMessageBox::Yes)
+           if (KMessageBox::questionYesNo(parentWidget(), i18n("Do you want to load the newly downloaded toolbar?"), i18n("Load Toolbar"), i18n("Load"), KStdGuiItem::cancel()) == KMessageBox::Yes)
            {
               emit loadToolbarFile(destURL);
            }
@@ -97,7 +97,7 @@ void QNewTemplateStuff::installResource()
           ok = false;
         else
         {
-           if (KMessageBox::questionYesNo(parentWidget(), i18n("Do you want to open the newly downloaded template?"), i18n("Open Template")) == KMessageBox::Yes)
+           if (KMessageBox::questionYesNo(parentWidget(), i18n("Do you want to open the newly downloaded template?"), i18n("Open Template"), KStdGuiItem::open(), KStdGuiItem::cancel()) == KMessageBox::Yes)
            {
               emit openFile(destURL);
            }

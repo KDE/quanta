@@ -891,8 +891,8 @@ void ProjectPrivate::slotSaveAsProjectView(bool askForName)
     if (node.toElement().attribute("name") == currentProjectView)
     {
       if (!askForName ||
-          KMessageBox::warningYesNo(m_mainWindow, i18n("<qt>A project view named <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>")
-                                            .arg(currentProjectView)) == KMessageBox::Yes)
+          KMessageBox::warningContinueCancel(m_mainWindow, i18n("<qt>A project view named <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>")
+                                            .arg(currentProjectView), QString::null, i18n("Overwrite")) == KMessageBox::Continue)
       {
         node.parentNode().removeChild(node);
         break;
@@ -1189,7 +1189,7 @@ void ProjectPrivate::slotProceedWithCloseProject(bool success)
   emit eventHappened("before_project_close", baseURL.url(), QString::null);
   if (!uploadProjectFile())
   {
-    if (KMessageBox::warningYesNo(m_mainWindow, i18n("Saving of project failed. Do you want to continue with closing (might cause data loss)?"), i18n("Project Saving Error")) == KMessageBox::No)
+    if (KMessageBox::warningContinueCancel(m_mainWindow, i18n("Saving of project failed. Do you want to continue with closing (might cause data loss)?"), i18n("Project Saving Error"), KStdGuiItem::close()) == KMessageBox::Cancel)
       return;
   }
   emit eventHappened("after_project_close", baseURL.url(), QString::null);
@@ -1330,7 +1330,7 @@ void ProjectPrivate::loadProject(const KURL &url)
   if ( projectAlreadyOpen(url.url()) )
   {
     parent->hideSplash();
-    if (KMessageBox::warningYesNo(m_mainWindow, i18n("<qt>The project<br><b>%1</b><br> seems to be used by another Quanta instance.<br>You may end up with data loss if you open the same project in two instances, modify and save them in both.<br><br>Do you want to proceed with open?</qt>").arg(url.prettyURL())) == KMessageBox::No)
+    if (KMessageBox::warningContinueCancel(m_mainWindow, i18n("<qt>The project<br><b>%1</b><br> seems to be used by another Quanta instance.<br>You may end up with data loss if you open the same project in two instances, modify and save them in both.<br><br>Do you want to proceed with open?</qt>").arg(url.prettyURL()), QString::null, KStdGuiItem::open()) == KMessageBox::Cancel)
       return;
   }
   QString projectTmpFile;

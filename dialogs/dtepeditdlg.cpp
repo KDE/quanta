@@ -201,7 +201,7 @@ void DTEPEditDlg::saveResult()
   {
     if (f.exists())
     {
-      if (KMessageBox::questionYesNo(this, i18n("<qt>The file <b>%1</b> is not writable.<br>Do you want to save the configuration to a different file?</qt>").arg(f.filePath()),i18n("Save As")) == KMessageBox::Yes)
+      if (KMessageBox::questionYesNo(this, i18n("<qt>The file <b>%1</b> is not writable.<br>Do you want to save the configuration to a different file?</qt>").arg(f.filePath()),i18n("Save As"),i18n("Save to Different File"), i18n("Do Not Save")) == KMessageBox::Yes)
       {
         targetFile = KFileDialog::getSaveFileName(locateLocal("data", resourceDir + "dtep/description.rc"), i18n("*.rc|DTEP Description"), this, i18n("Save Description As"));
       } else

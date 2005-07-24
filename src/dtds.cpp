@@ -862,7 +862,7 @@ void DTDs::slotLoadDTD()
       QString nickName = dtdcfg.readEntry("NickName", dtdName);
       DTDStruct * dtd = m_dict->find(dtdName) ;
       if (dtd &&
-          KMessageBox::warningYesNo(0L, i18n("<qt>Do you want to replace the existing <b>%1</b> DTD?</qt>").arg(nickName)) == KMessageBox::No)
+          KMessageBox::warningYesNo(0L, i18n("<qt>Do you want to replace the existing <b>%1</b> DTD?</qt>").arg(nickName), QString::null, i18n("Replace"), i18n("Do Not Replace")) == KMessageBox::No)
       {
         return;
       }
@@ -872,7 +872,7 @@ void DTDs::slotLoadDTD()
           QString family = dtdcfg.readEntry("Family", "1");
           Document *w = ViewManager::ref()->activeDocument();
           if (family == "1" && w &&
-              KMessageBox::questionYesNo(0L, i18n("<qt>Use the newly loaded <b>%1</b> DTD for the current document?</qt>").arg(nickName), i18n("Change DTD")) == KMessageBox::Yes)
+              KMessageBox::questionYesNo(0L, i18n("<qt>Use the newly loaded <b>%1</b> DTD for the current document?</qt>").arg(nickName), i18n("Change DTD"), i18n("Use"), i18n("Do Not Use")) == KMessageBox::Yes)
           {
             w->setDTDIdentifier(dtdName);
             emit loadToolbarForDTD(w->getDTDIdentifier());
@@ -894,7 +894,7 @@ void DTDs::slotLoadDTEP(const QString &_dirName, bool askForAutoload)
   QString nickName = dtdcfg.readEntry("NickName", dtdName);
   DTDStruct * dtd = m_dict->find(dtdName) ;
   if ( dtd &&
-      KMessageBox::warningYesNo(0L, i18n("<qt>Do you want to replace the existing <b>%1</b> DTD?</qt>").arg(nickName)) == KMessageBox::No)
+      KMessageBox::warningYesNo(0L, i18n("<qt>Do you want to replace the existing <b>%1</b> DTD?</qt>").arg(nickName), QString::null, i18n("Replace"), i18n("Do Not Replace")) == KMessageBox::No)
   {
     return;
   }
@@ -905,7 +905,7 @@ void DTDs::slotLoadDTEP(const QString &_dirName, bool askForAutoload)
   } else
   {
     QString family = dtdcfg.readEntry("Family", "1");
-    if (askForAutoload && KMessageBox::questionYesNo(0L, i18n("<qt>Autoload the <b>%1</b> DTD in the feature?</qt>").arg(nickName)) == KMessageBox::Yes)
+    if (askForAutoload && KMessageBox::questionYesNo(0L, i18n("<qt>Autoload the <b>%1</b> DTD in the feature?</qt>").arg(nickName), QString::null, i18n("Load"), i18n("Do Not Load")) == KMessageBox::Yes)
     {
       KURL src;
       src.setPath(dirName);
@@ -916,7 +916,7 @@ void DTDs::slotLoadDTEP(const QString &_dirName, bool askForAutoload)
     }
     Document *w = ViewManager::ref()->activeDocument();
     if (family == "1" && w &&
-        KMessageBox::questionYesNo(0L, i18n("<qt>Use the newly loaded <b>%1</b> DTD for the current document?</qt>").arg(nickName), i18n("Change DTD")) == KMessageBox::Yes)
+        KMessageBox::questionYesNo(0L, i18n("<qt>Use the newly loaded <b>%1</b> DTD for the current document?</qt>").arg(nickName), i18n("Change DTD"), i18n("Use"), i18n("Do Not Use")) == KMessageBox::Yes)
     {
       w->setDTDIdentifier(dtdName);
       emit loadToolbarForDTD(w->getDTDIdentifier());

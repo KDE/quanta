@@ -330,7 +330,7 @@ void CVSService::slotAdd()
 void CVSService::slotAdd(const QStringList &files)
 {
   startService(); 
-  if (m_repository && !m_appId.isEmpty() && (KMessageBox::questionYesNoList(0, i18n("Add the following files to repository?"), files, i18n("CVS Add")) == KMessageBox::Yes))
+  if (m_repository && !m_appId.isEmpty() && (KMessageBox::questionYesNoList(0, i18n("Add the following files to repository?"), files, i18n("CVS Add"), KStdGuiItem::add(), i18n("Do Not Add")) == KMessageBox::Yes))
   {
     emit clearMessages();
     emit showMessage(i18n("Adding file to the repository...") + "\n", false);

@@ -388,7 +388,7 @@ void QuantaApp::slotFileOpenRecent(const KURL &url)
   if (!QExtFileInfo::exists(url))
   {
     if (KMessageBox::questionYesNo(this,
-        i18n("The file %1 does not exist.\n Do you want to remove it from the list?").arg(url.prettyURL(0, KURL::StripFileProtocol)))
+        i18n("The file %1 does not exist.\n Do you want to remove it from the list?").arg(url.prettyURL(0, KURL::StripFileProtocol)), QString::null, KStdGuiItem::del(), i18n("Keep"))
         == KMessageBox::Yes)
     {
       fileRecent->removeURL(url);
@@ -492,7 +492,7 @@ bool QuantaApp::slotFileSaveAs(QuantaView *viewToSave)
     {
       oldURL = saveUrl;
       if (Project::ref()->hasProject() && !Project::ref()->contains(saveUrl) &&
-          KMessageBox::Yes == KMessageBox::questionYesNo(0,i18n("<qt>Do you want to add the<br><b>%1</b><br>file to project?</qt>").arg(saveUrl.prettyURL(0, KURL::StripFileProtocol)))
+          KMessageBox::Yes == KMessageBox::questionYesNo(0,i18n("<qt>Do you want to add the<br><b>%1</b><br>file to project?</qt>").arg(saveUrl.prettyURL(0, KURL::StripFileProtocol)), QString::null, KStdGuiItem::add(), i18n("Do Not Add"))
         )
       {
         if (saveUrl.isLocalFile())
@@ -3834,7 +3834,7 @@ void QuantaApp::slotUploadFile(QuantaView *view)
   if (!view)
     view = ViewManager::ref()->activeView();
   bool quick = true;
-  if (KMessageBox::questionYesNo(this, i18n("Do you want to review the upload?"), i18n("Enable Quick Upload"), i18n("Review"), KStdGuiItem::no(), "EnableQuickUpload") == KMessageBox::Yes)
+  if (KMessageBox::questionYesNo(this, i18n("Do you want to review the upload?"), i18n("Enable Quick Upload"), i18n("Review"), i18n("Do Not Review"), "EnableQuickUpload") == KMessageBox::Yes)
     quick = false;
   Project::ref()->slotUploadURL(view->document()->url(), quick);
 }
@@ -4039,7 +4039,7 @@ QString QuantaApp::saveCurrentFile()
                                     i18n("The file must be saved before external preview.\n"
                                          "Do you want to save and preview?"),
                                     i18n("Save Before Preview"),
-                                    KStdGuiItem::yes(),KStdGuiItem::no(), "AskForSaveBeforePreview")
+                                    KStdGuiItem::save(),KStdGuiItem::dontSave(), "AskForSaveBeforePreview")
          == KMessageBox::Yes)
     {
       if (w->isUntitled())
@@ -4716,7 +4716,7 @@ void QuantaApp::slotViewInKFM()
                                     i18n("The file must be saved before external preview.\n"
                                          "Do you want to save and preview?"),
                                     i18n("Save Before Preview"),
-                                    KStdGuiItem::yes(),KStdGuiItem::no(), "AskForSaveBeforePreview")
+                                    KStdGuiItem::save(),KStdGuiItem::dontSave(), "AskForSaveBeforePreview")
          == KMessageBox::Yes)
     {
       if (w->isUntitled())
@@ -4754,7 +4754,7 @@ void QuantaApp::slotViewInLynx()
     if ( KMessageBox::questionYesNo(this,
                                     i18n("The file must be saved before external preview.\n"
                                          "Do you want to save and preview?"),
-                                    i18n("Save Before Preview"),KStdGuiItem::yes(),KStdGuiItem::no(), "AskForSaveBeforePreview")
+                                    i18n("Save Before Preview"),KStdGuiItem::save(),KStdGuiItem::dontSave(), "AskForSaveBeforePreview")
          == KMessageBox::Yes)
     {
       if (w->isUntitled())

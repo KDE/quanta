@@ -158,9 +158,9 @@ void MessageOutput::saveContent()
     return;
 
   QFileInfo fileinfo(url.path());
-  if (fileinfo.exists() && KMessageBox::warningYesNo(0,
+  if (fileinfo.exists() && KMessageBox::warningContinueCancel(0,
       i18n("<qt>File<br><b>%1</b><br>already exists. Overwrite it?</qt>")
-      .arg(url.path())) == KMessageBox::No)
+      .arg(url.path()), QString::null, i18n("Overwrite")) == KMessageBox::Cancel)
     return;
 
   QFile file(url.path());

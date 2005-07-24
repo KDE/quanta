@@ -65,7 +65,7 @@ void QuantaPluginConfig::accept()
 
     if(!isValid)
     {
-      int answer = KMessageBox::questionYesNo(this, i18n("The plugin information you entered appears to be invalid. Are you sure you want to apply these settings?"), i18n("Invalid Plugin"));
+      int answer = KMessageBox::questionYesNo(this, i18n("The plugin information you entered appears to be invalid. Are you sure you want to apply these settings?"), i18n("Invalid Plugin"), KStdGuiItem::apply(), i18n("Do Not Apply"));
 
       if(answer == KMessageBox::No)
         return;

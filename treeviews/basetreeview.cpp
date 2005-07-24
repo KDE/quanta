@@ -1025,7 +1025,7 @@ void BaseTreeView::doRename(KFileTreeViewItem* kftvi, const QString & newName)
     bool proceed = true;
     if (QExtFileInfo::exists(newURL))
     {
-      proceed = KMessageBox::warningYesNo(this, i18n("<qt>The file <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>").arg(newURL.prettyURL(0, KURL::StripFileProtocol)),i18n("Overwrite")) == KMessageBox::Yes;
+      proceed = KMessageBox::warningContinueCancel(this, i18n("<qt>The file <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>").arg(newURL.prettyURL(0, KURL::StripFileProtocol)),i18n("Overwrite"), i18n("Overwrite")) == KMessageBox::Continue;
     }
     if (proceed)
     {

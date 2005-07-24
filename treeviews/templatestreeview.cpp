@@ -467,7 +467,7 @@ void TemplatesTreeView::contentsDropEvent(QDropEvent *e)
         bool proceed = true;
         if (QExtFileInfo::exists(url))
         {
-          proceed = KMessageBox::warningYesNo(this, i18n("<qt>The file <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)),i18n("Overwrite")) == KMessageBox::Yes;
+          proceed = KMessageBox::warningContinueCancel(this, i18n("<qt>The file <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)),i18n("Overwrite"), i18n("Overwrite")) == KMessageBox::Continue;
         }
         if (proceed)
         {
@@ -1064,7 +1064,7 @@ void TemplatesTreeView::slotExtractSiteTemplate()
           KIO::NetAccess::removeTempFile(tempFile);
           if (!m_projectBaseURL.isEmpty() && !QExtFileInfo::toRelative(targetURL, m_projectBaseURL).url().startsWith("."))
           {
-             if (KMessageBox::questionYesNo(this, i18n("You have extracted the site template to a folder which is not under your main project folder.\nDo you want to copy the folder into the main project folder?")) == KMessageBox::Yes)
+             if (KMessageBox::questionYesNo(this, i18n("You have extracted the site template to a folder which is not under your main project folder.\nDo you want to copy the folder into the main project folder?"), QString::null, i18n("Copy Folder"), i18n("Do Not Copy")) == KMessageBox::Yes)
              {
                  emit insertDirInProject(targetURL);
              }

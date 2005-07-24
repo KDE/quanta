@@ -257,7 +257,7 @@ void QuantaPluginInterface::slotPluginsValidate()
      {
          invalidNames += "<br>" + invalidPlugins[i]->name();
      }
-     int answer = KMessageBox::questionYesNo(m_parent, i18n("<qt>The following plugins seems to be invalid:<b>%1</b>.<br><br>Do you want to edit the plugins?</qt>").arg(invalidNames), i18n("Invalid Plugins"));
+     int answer = KMessageBox::questionYesNo(m_parent, i18n("<qt>The following plugins seems to be invalid:<b>%1</b>.<br><br>Do you want to edit the plugins?</qt>").arg(invalidNames), i18n("Invalid Plugins"), i18n("Edit Plugins"), i18n("Do Not Edit"));
       if(answer == KMessageBox::Yes)
       {
         slotPluginsEdit();

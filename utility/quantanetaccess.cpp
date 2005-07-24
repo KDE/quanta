@@ -180,7 +180,7 @@ void QuantaNetAccess::checkProjectInsert(const KURL& target, QWidget* window, bo
     {
       QString nice = QExtFileInfo::toRelative(saveUrl, baseURL).path();
       nice = KStringHandler::lsqueeze(nice, 60);
-      if ( KMessageBox::Yes != KMessageBox::questionYesNo(window, i18n("<qt>Do you want to add <br><b>%1</b><br> to the project?</qt>").arg(nice), i18n("Add to Project"), KStdGuiItem::yes(), KStdGuiItem::no(), "AddToProject") )
+      if ( KMessageBox::Yes != KMessageBox::questionYesNo(window, i18n("<qt>Do you want to add <br><b>%1</b><br> to the project?</qt>").arg(nice), i18n("Add to Project"), KStdGuiItem::add(), i18n("Do Not Add"), "AddToProject") )
       {
         return;
       }

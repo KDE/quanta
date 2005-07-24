@@ -190,7 +190,7 @@ void Project::loadLastProject(bool reload)
     {
       KURL tempURL = KURL().fromPathOrURL(tempPath);
       if (KIO::NetAccess::exists(tempURL, false, d->m_mainWindow) &&
-          KMessageBox::questionYesNo(d->m_mainWindow, i18n("<qt>Found a backup for project <b>%1</b>.<br> Do you want to open it?</qt>").arg(url.prettyURL()), i18n("Open Project Backup") )
+          KMessageBox::questionYesNo(d->m_mainWindow, i18n("<qt>Found a backup for project <b>%1</b>.<br> Do you want to open it?</qt>").arg(url.prettyURL()), i18n("Open Project Backup"), KStdGuiItem::open(), i18n("Do Not Open") )
           == KMessageBox::Yes)
       {
         d->m_tmpProjectFile = tempPath;
@@ -235,7 +235,7 @@ void Project::slotOpenProject(const KURL &url)
     {
       emit hideSplash();
       if (KMessageBox::questionYesNo(d->m_mainWindow,
-           i18n("<qt>The file <b>%1</b> does not exist.<br> Do you want to remove it from the list?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)) )
+           i18n("<qt>The file <b>%1</b> does not exist.<br> Do you want to remove it from the list?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)), QString::null, KStdGuiItem::del(), i18n("Keep") )
            == KMessageBox::Yes)
       {
         d->m_projectRecent->removeURL(url);
@@ -401,7 +401,7 @@ void Project::slotRemove(const KURL& urlToRemove)
   QString urlPath = QExtFileInfo::toRelative(urlToRemove, d->baseURL).path();
   QString nice = urlPath;
   nice = KStringHandler::lsqueeze(nice, 60);
-  if (KMessageBox::warningYesNo(d->m_mainWindow, i18n("<qt>Do you want to remove <br><b>%1</b><br> from the server(s) as well?</qt>").arg(nice), i18n("Remove From Server"), KStdGuiItem::yes(), KStdGuiItem::no(), "RemoveFromServer") == KMessageBox::Yes )
+  if (KMessageBox::warningContinueCancel(d->m_mainWindow, i18n("<qt>Do you want to remove <br><b>%1</b><br> from the server(s) as well?</qt>").arg(nice), i18n("Remove From Server"), KStdGuiItem::del(), "RemoveFromServer") == KMessageBox::Continue )
   {
     QDomNode profilesNode = d->m_sessionDom.firstChild().firstChild().namedItem("uploadprofiles");  
     QDomNodeList profileList = profilesNode.toElement().elementsByTagName("profile");
@@ -1166,7 +1166,7 @@ bool Project::queryClose()
     canExit = d->uploadProjectFile();
     if (! canExit)
     {
-      if (KMessageBox::warningYesNo(d->m_mainWindow, i18n("Saving of project failed. Do you want to continue with exit (might cause data loss)?"), i18n("Project Saving Error")) == KMessageBox::Yes)
+      if (KMessageBox::warningContinueCancel(d->m_mainWindow, i18n("Saving of project failed. Do you want to continue with exit (might cause data loss)?"), i18n("Project Saving Error"),KStdGuiItem::quit()) == KMessageBox::Continue)
           canExit = true;
     }
     if (canExit)

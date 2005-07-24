@@ -85,11 +85,11 @@ void QPEvents::slotEventHappened(const QString& name, const QString& argument1, 
       EventAction ev = *it;
       if (ev.type == EventAction::Internal)
       {
-        if (KMessageBox::warningYesNo(0L, i18n("<qt>An internal action (<i>%1</i>) associated with an event (<i>%2</i>) will be executed.  Do you want to allow the execution of this action?</qt>").arg(ev.action).arg(name), i18n("Event Triggered"), KStdGuiItem::yes(), KStdGuiItem::no(), "Warn about internal actions") == KMessageBox::No)
+        if (KMessageBox::warningContinueCancel(0L, i18n("<qt>An internal action (<i>%1</i>) associated with an event (<i>%2</i>) will be executed.  Do you want to allow the execution of this action?</qt>").arg(ev.action).arg(name), i18n("Event Triggered"), i18n("Execute"), "Warn about internal actions") == KMessageBox::Cancel)
           return;
       } else
       {
-        if (KMessageBox::warningYesNo(0L, i18n("<qt>An external action (<i>%1</i>) associated with an event (<i>%2</i>) will be executed.  Do you want to allow the execution of this action?</qt>").arg(ev.action).arg(name), i18n("Event Triggered"), KStdGuiItem::yes(), KStdGuiItem::no(), "Warn about external actions") == KMessageBox::No)
+        if (KMessageBox::warningContinueCancel(0L, i18n("<qt>An external action (<i>%1</i>) associated with an event (<i>%2</i>) will be executed.  Do you want to allow the execution of this action?</qt>").arg(ev.action).arg(name), i18n("Event Triggered"), i18n("Execute"), "Warn about external actions") == KMessageBox::Cancel)
           return;
       }
       KURL url = KURL::fromPathOrURL(argument1);

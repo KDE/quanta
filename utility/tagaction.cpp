@@ -995,7 +995,7 @@ void TagAction::execute(bool blocking)
 /** Timeout occurred while waiting for some network function to return. */
 void TagAction::slotTimeout()
 {
-  if ((m_killCount == 0) && (KMessageBox::questionYesNo(m_parentMainWindow, i18n("<qt>The filtering action <b>%1</b> seems to be locked.<br>Do you want to terminate it?</qt>").arg(actionText()), i18n("Action Not Responding")) == KMessageBox::Yes))
+  if ((m_killCount == 0) && (KMessageBox::questionYesNo(m_parentMainWindow, i18n("<qt>The filtering action <b>%1</b> seems to be locked.<br>Do you want to terminate it?</qt>").arg(actionText()), i18n("Action Not Responding"), i18n("Terminate"), i18n("Keep Running")) == KMessageBox::Yes))
   {
     if (::kill(-proc->pid(), SIGTERM))
     {

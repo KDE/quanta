@@ -266,7 +266,7 @@ void ActionConfigDialog::slotSelectionChanged(QListViewItem *item)
   if (currentAction && currentAction->inherits("TagAction"))
   {
     if ( buttonApply->isEnabled() &&
-         KMessageBox::questionYesNo(this, i18n("Do you want to save the changes made to this action?")) == KMessageBox::Yes )
+         KMessageBox::questionYesNo(this, i18n("Do you want to save the changes made to this action?"), QString::null, KStdGuiItem::save(), KStdGuiItem::discard()) == KMessageBox::Yes )
     {
       saveCurrentAction();
     }
@@ -769,7 +769,7 @@ void ActionConfigDialog::accept()
 
 void ActionConfigDialog::reject()
 {
-  if (buttonApply->isEnabled() && KMessageBox::questionYesNo(this, i18n("Do you want to save the changes made to this action?")) == KMessageBox::Yes  )
+  if (buttonApply->isEnabled() && KMessageBox::questionYesNo(this, i18n("Do you want to save the changes made to this action?"), QString::null, KStdGuiItem::save(), KStdGuiItem::discard()) == KMessageBox::Yes  )
       saveCurrentAction();
   ActionConfigDialogS::reject();
 }

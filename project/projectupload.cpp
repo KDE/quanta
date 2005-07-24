@@ -626,8 +626,8 @@ void ProjectUpload::slotRemoveProfile()
    } else
    {
       QString profileName = comboProfile->currentText();
-      if (KMessageBox::warningYesNo(this, i18n("<qt>Do you really want to remove the <b>%1</b> upload profile?</qt>").arg(profileName),
-                                   i18n("Profile Removal")) == KMessageBox::Yes)
+      if (KMessageBox::warningContinueCancel(this, i18n("<qt>Do you really want to remove the <b>%1</b> upload profile?</qt>").arg(profileName),
+                                   i18n("Profile Removal"), KStdGuiItem::del()) == KMessageBox::Continue)
        {
           m_profilesNode.removeChild(m_currentProfileElement);
           int idx = comboProfile->currentItem();
@@ -738,8 +738,8 @@ void ProjectUpload::reject()
   if (uploadInProgress && !m_profilesOnly)
   {
     suspendUpload = true;
-    if (KMessageBox::questionYesNo(this,i18n("Do you really want to cancel the upload?"),
-                                   i18n("Cancel Upload")) == KMessageBox::No)
+    if (KMessageBox::questionYesNo(this,i18n("Do you really want to abort the upload?"),
+                                   i18n("Abort Upload"), i18n("Abort"), KStdGuiItem::cancel()) == KMessageBox::No)
     {
       suspendUpload = false;
       emit uploadNext();
