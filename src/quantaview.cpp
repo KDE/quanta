@@ -105,7 +105,7 @@ QuantaView::QuantaView(QWidget *parent, const char *name, const QString &caption
 
   m_documentArea->show();
 
-  setAcceptDrops(TRUE); // [MB02] Accept drops on the view
+  setAcceptDrops(true); // [MB02] Accept drops on the view
 }
 
 QuantaView::~QuantaView()

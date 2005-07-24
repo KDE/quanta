@@ -108,7 +108,7 @@ void URIEditor::selectedURIs(const QStringList& s){
  
 void URIEditor::openFileDialog(){
   
-  KFileDialog fd( Project::ref()->projectBaseURL().url(), "*.*", this, "file dialog", TRUE );
+  KFileDialog fd( Project::ref()->projectBaseURL().url(), "*.*", this, "file dialog", true );
   switch(m_resourceType) {
     case image :   {
                              fd.setFilter( "*.png *.gif *.jpg *.mng|" + i18n("Image Files") +" (*.png *.gif *.jpg *.mng)\n*.*|" + i18n("All Files")+(" (*.*)") );

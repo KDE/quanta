@@ -254,7 +254,7 @@ void Document::insertTag(const QString &s1, const QString &s2)
     reparseEnabled = true;
   }
   insertText(s1 + selection);
-  insertText(s2, FALSE); // don't adjust cursor, thereby leaving it in the middle of tag
+  insertText(s2, false); // don't adjust cursor, thereby leaving it in the middle of tag
 }
 
 

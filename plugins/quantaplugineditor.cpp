@@ -44,12 +44,12 @@
 QuantaPluginEditor::QuantaPluginEditor(QWidget *a_parent, const char *a_name)
   : KDialogBase(a_parent, a_name, true, i18n("Edit Plugins"), KDialogBase::Ok | KDialogBase::Cancel)
 {
- // m_plugins.setAutoDelete(TRUE);
+ // m_plugins.setAutoDelete(true);
 
   m_pluginEditorWidget = new PluginEditor(this);
   setMainWidget(m_pluginEditorWidget);
   m_pluginEditorWidget->pluginList->setSelectionMode(QListView::Single);
-  m_pluginEditorWidget->pluginList->setAllColumnsShowFocus(TRUE);
+  m_pluginEditorWidget->pluginList->setAllColumnsShowFocus(true);
   m_pluginEditorWidget->pluginList->setColumnAlignment(2, Qt::AlignHCenter);
 
   connect(this, SIGNAL(pluginsChanged()), SLOT(refreshPlugins()));

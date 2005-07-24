@@ -484,21 +484,21 @@ FileInfoDlg* BaseTreeView::addFileInfoPage(KPropertiesDialog* propDlg)
         while (qfile.readLine(imgname,200)!=-1)     //open & parse file
         {
           ct++;
-          position=imgname.find("<img",0,FALSE);              //check for images
+          position=imgname.find("<img",0,false);              //check for images
           if (position!=-1)
           {
             imgname.remove(0,position+4);
-            position=imgname.find("src=",0,FALSE);              //extract images names
+            position=imgname.find("src=",0,false);              //extract images names
             imgname.remove(0,position+4);
             if (imgname.startsWith("\"")) imgname.remove(0,1);
             if (imgname.startsWith("'")) imgname.remove(0,1);
-            position=imgname.find(" ",0,FALSE);
+            position=imgname.find(" ",0,false);
             if (position!=-1) imgname=imgname.left(position);
-            position=imgname.find(">",0,FALSE);
+            position=imgname.find(">",0,false);
             if (position!=-1) imgname=imgname.left(position);
-            position=imgname.find("\"",0,FALSE);
+            position=imgname.find("\"",0,false);
             if (position!=-1) imgname=imgname.left(position);
-            position=imgname.find("'",0,FALSE);
+            position=imgname.find("'",0,false);
             if (position!=-1) imgname=imgname.left(position);
             if (!quantaFileProperties->imageList->findItem(imgname,Qt::ExactMatch))     //check if image was already counted
             {

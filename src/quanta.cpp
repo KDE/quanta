@@ -2495,10 +2495,10 @@ bool QuantaApp::saveToolbar(bool localToolbar, const QString& toolbarToSave, con
       if ( tb->tabLabel(tb->currentPage()) == tb->label(i) ) current=i;
     }
 
-    bool ok = FALSE;
+    bool ok = false;
     QString res = KInputDialog::getItem(
                     i18n( "Save Toolbar" ),
-                    i18n( "Please select a toolbar:" ), lst, current, FALSE, &ok, this );
+                    i18n( "Please select a toolbar:" ), lst, current, false, &ok, this );
     if ( !ok )
       return false;
 
@@ -2649,10 +2649,10 @@ bool QuantaApp::slotRemoveToolbar()
    j++;
  }
 
- bool ok = FALSE;
+ bool ok = false;
  QString res = KInputDialog::getItem(
                  i18n( "Remove Toolbar" ),
-                 i18n( "Please select a toolbar:" ), lst, current, FALSE, &ok, this );
+                 i18n( "Please select a toolbar:" ), lst, current, false, &ok, this );
 
  if (ok)
  {
@@ -2685,10 +2685,10 @@ QString QuantaApp::createToolbarTarball()
     if ( tb->tabLabel(tb->currentPage()) == tb->label(i) ) current=i;
   }
 
-  bool ok = FALSE;
+  bool ok = false;
   QString res = KInputDialog::getItem(
       i18n( "Send Toolbar" ),
-  i18n( "Please select a toolbar:" ), lst, current, FALSE, &ok, this );
+  i18n( "Please select a toolbar:" ), lst, current, false, &ok, this );
 
   if (!ok)
     return QString::null;
@@ -2787,10 +2787,10 @@ void QuantaApp::slotRenameToolbar()
     if ( tb->tabLabel(tb->currentPage()) == tb->label(i) ) current=i;
   }
 
-  bool ok = FALSE;
+  bool ok = false;
   QString res = KInputDialog::getItem(
                   i18n( "Rename Toolbar" ),
-                  i18n( "Please select a toolbar:" ), lst, current, FALSE, &ok, this );
+                  i18n( "Please select a toolbar:" ), lst, current, false, &ok, this );
   if (ok)
   {
     QString id = res;
@@ -3070,10 +3070,10 @@ void QuantaApp::slotEditDTD()
   {
     QStringList lst(DTDs::ref()->nickNameList());
     QString nickName = DTDs::ref()->getDTDNickNameFromName(w->getDTDIdentifier());
-    bool ok = FALSE;
+    bool ok = false;
     QString res = KInputDialog::getItem(
         i18n( "Send DTD" ),
-    i18n( "Please select a DTD:" ), lst, lst.findIndex(nickName), FALSE, &ok, this );
+    i18n( "Please select a DTD:" ), lst, lst.findIndex(nickName), false, &ok, this );
 
     QString s = i18n("Create a new DTEP description");
     s = i18n("Load DTEP description from disk");
@@ -3535,10 +3535,10 @@ QString QuantaApp::createDTEPTarball()
   {
     QStringList lst(DTDs::ref()->nickNameList());
     QString nickName = DTDs::ref()->getDTDNickNameFromName(w->getDTDIdentifier());
-    bool ok = FALSE;
+    bool ok = false;
     QString res = KInputDialog::getItem(
         i18n( "Send DTD" ),
-    i18n( "Please select a DTD:" ), lst, lst.findIndex(nickName), FALSE, &ok, this );
+    i18n( "Please select a DTD:" ), lst, lst.findIndex(nickName), false, &ok, this );
 
     if (!ok)
       return QString::null;

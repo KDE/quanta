@@ -45,7 +45,7 @@ QuantaPluginInterface::QuantaPluginInterface(QWidget *parent)
                         this, SLOT( slotPluginsEdit() ),
                         ((KMainWindow*)parent)->actionCollection(), "configure_plugins" );
   m_pluginMenu = 0L;
-  // m_plugins.setAutoDelete(TRUE);
+  // m_plugins.setAutoDelete(true);
 }
 
 QuantaPluginInterface::~QuantaPluginInterface()
@@ -171,7 +171,7 @@ void QuantaPluginInterface::writeConfig()
 }
 
 
-/** Returns TRUE if the plugin is available */
+/** Returns true if the plugin is available */
 bool QuantaPluginInterface::pluginAvailable(const QString &a_name)
 {
   if (a_name.isEmpty())
@@ -208,7 +208,7 @@ QuantaPlugin *QuantaPluginInterface::plugin(const QString &a_name)
 void QuantaPluginInterface::buildPluginMenu()
 {
   m_pluginMenu->clear();
-//  m_pluginMenu->setCheckable(TRUE);
+//  m_pluginMenu->setCheckable(true);
 
   QDictIterator<QuantaPlugin> it(m_plugins);
   for(;it.current() != 0;++it)
@@ -218,7 +218,7 @@ void QuantaPluginInterface::buildPluginMenu()
        {
 //         int id = m_pluginMenu->insertItem(curPlugin->pluginName());
 //         if(curPlugin->isRunning())
-//           m_pluginMenu->setItemChecked(id, TRUE);
+//           m_pluginMenu->setItemChecked(id, true);
            curPlugin->plugAction(m_pluginMenu);
        }
   }
