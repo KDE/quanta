@@ -276,7 +276,7 @@ long DBGpNetwork::sendCommand(const QString & command, const QString & arguments
     return false;
 
   m_transaction_id++;
-  QString commandline = command + QString(" -i %1").arg(m_transaction_id) + (arguments != "" ? " " : "") + arguments;
+  QString commandline = command + QString(" -i %1").arg(m_transaction_id) + (!arguments.isEmpty() ? " " : "") + arguments;
 
   kdDebug(24002) << k_funcinfo << ", sending: " << commandline << endl;
 

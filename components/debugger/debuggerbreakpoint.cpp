@@ -163,7 +163,7 @@ int DebuggerBreakpoint::state() const
 bool DebuggerBreakpoint::operator == (DebuggerBreakpoint bp) const
 {
   // If they key matches
-  if(m_key != "" && bp.key() == m_key)
+  if(!m_key.isEmpty() && bp.key() == m_key)
     return true;
 
   // Or everything else...
