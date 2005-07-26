@@ -141,7 +141,7 @@ class QuantaDebuggerGubed : public DebuggerClient
     void slotReadyAccept();
 
   signals:
-
+    void updateStatus(DebuggerUI::DebuggerStatus);
 };
 
 #endif

@@ -33,7 +33,6 @@ class Document;
 class DebuggerManager : public QObject
 {
     Q_OBJECT
-
   private:
     // client
     DebuggerClient *m_client;
@@ -80,7 +79,8 @@ class DebuggerManager : public QObject
     bool hasClient() { return m_client != 0; };
 
   public slots:
-    /** Execution control slots **/
+
+    // Execution control slots
     void slotDebugRequest();
     void slotDebugRun();
     void slotDebugTrace();

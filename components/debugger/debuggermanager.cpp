@@ -65,6 +65,8 @@ void DebuggerManager::slotNewProjectLoaded(const QString &projectname, const KUR
 {
   if(m_client)
   {
+    disconnect(m_client, SIGNAL(updateStatus(DebuggerUI::DebuggerStatus)), m_debuggerui, SLOT(slotStatus(DebuggerUI::DebuggerStatus)));
+
     delete m_client;
     m_client = NULL;
   }
@@ -130,13 +132,13 @@ void DebuggerManager::slotNewProjectLoaded(const QString &projectname, const KUR
     m_client->readConfig(nodeThisDbg);
     
     m_debuggerui = new DebuggerUI(this, "debuggerui");
+    connect(m_client, SIGNAL(updateStatus(DebuggerUI::DebuggerStatus)), m_debuggerui, SLOT(slotStatus(DebuggerUI::DebuggerStatus)));
   }
 
   initClientActions();
 
   // Disable all debugactions that need a session (ie not breakpoints, etc)
   slotDebugStartSession();
-
 }
 
 void DebuggerManager::initActions()
@@ -227,8 +229,15 @@ DebuggerManager::~DebuggerManager()
 {
   delete m_breakpointList;
   m_breakpointList = 0L;
-  delete m_client;
-  m_client = 0L;
+
+  if(m_client)
+  {
+    disconnect(m_client, SIGNAL(updateStatus(DebuggerUI::DebuggerStatus)), m_debuggerui, SLOT(slotStatus(DebuggerUI::DebuggerStatus)));
+
+    delete m_client;
+    m_client = 0L;
+  }
+
   delete m_debuggerui;
   m_debuggerui = 0L;
   delete m_interface;
@@ -670,7 +679,7 @@ void DebuggerManager::slotBreakpointUnmarked(Document* qdoc, int line)
     m_breakpointList->remove(br);
   }
 }
-
+  
 void DebuggerManager::updateBreakpointKey( const DebuggerBreakpoint & bp, const QString & newkey )
 {
   m_breakpointList->updateBreakpointKey(bp, newkey);
@@ -687,5 +696,6 @@ DebuggerBreakpoint * DebuggerManager::findDebuggerBreakpoint( const QString & ke
 {
   return m_breakpointList->findDebuggerBreakpoint(key);
 }
+
 
 #include "debuggermanager.moc"

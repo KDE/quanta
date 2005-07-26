@@ -23,6 +23,8 @@
 #include <kurl.h>
 #include <qdom.h>
 
+#include "debuggerui.h"
+
 class DebuggerInterface;
 class DebuggerBreakpoint;
 class DebuggerVariable;
@@ -97,6 +99,8 @@ class DebuggerClient : public QObject
     bool isActive();
     DebuggerInterface *debuggerInterface();
 
+  signals:
+    void updateStatus(DebuggerUI::DebuggerStatus);
 
 };
 

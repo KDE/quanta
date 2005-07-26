@@ -17,6 +17,15 @@
 
 #include "debuggerui.h"
 
+#include <kiconloader.h>
+#include <kdockwidget.h>
+#include <klocale.h>
+#include <kdebug.h>
+#include <qstring.h>
+#include <khtmlview.h>
+#include <kmditoolviewaccessor.h>
+#include <kstatusbar.h>
+
 #include "variableslistview.h"
 #include "debuggerbreakpointview.h"
 #include "debuggervariable.h"
@@ -25,14 +34,6 @@
 #include "quanta.h"
 #include "resource.h"
 #include "whtmlpart.h"
-
-#include <kiconloader.h>
-#include <kdockwidget.h>
-#include <klocale.h>
-#include <kdebug.h>
-#include <qstring.h>
-#include <khtmlview.h>
-#include <kmditoolviewaccessor.h>
 
 DebuggerUI::DebuggerUI(QObject *parent, const char *name)
     : QObject(parent, name), m_variablesListView(0)
@@ -93,6 +94,10 @@ void DebuggerUI::showMenu()
   }
   else
     m_debuggerMenuID  = 0;
+
+  // Status indicator
+  quantaApp->statusBar()->insertFixedItem(i18n("Debugger Inactive"), IDS_STATUS_DEBUGGER);
+
 }
 
 void DebuggerUI::hideMenu()
@@ -104,6 +109,10 @@ void DebuggerUI::hideMenu()
     mb->removeItem(m_debuggerMenuID);
   }
   m_debuggerMenuID = 0;
+
+  // Status indicator
+  quantaApp->statusBar()->removeItem(IDS_STATUS_DEBUGGER);
+
 }
 
 void DebuggerUI::setVariables(const QPtrList<DebuggerVariable>& vars)
@@ -134,6 +143,47 @@ void DebuggerUI::deleteBreakpoint(const DebuggerBreakpoint &bp)
 void DebuggerUI::sendRequest(const KURL &url)
 {
   m_preview->openURL(url);
+}
+
+void DebuggerUI::slotStatus( DebuggerStatus status )
+{
+  switch(status)
+  {
+    case NoSession:
+      quantaApp->statusBar()->changeItem(i18n("No session"), IDS_STATUS_DEBUGGER);
+      break;
+
+    case AwaitingConnection:
+      quantaApp->statusBar()->changeItem(i18n("Waiting"), IDS_STATUS_DEBUGGER);
+      break;
+
+    case Connected:
+      quantaApp->statusBar()->changeItem(i18n("Connected"), IDS_STATUS_DEBUGGER);
+      break;
+
+    case Paused:
+      quantaApp->statusBar()->changeItem(i18n("Paused"), IDS_STATUS_DEBUGGER);
+      break;
+
+    case Running:
+      quantaApp->statusBar()->changeItem(i18n("Running"), IDS_STATUS_DEBUGGER);
+      break;
+
+    case Tracing:
+      quantaApp->statusBar()->changeItem(i18n("Tracing"), IDS_STATUS_DEBUGGER);
+      break;
+
+    case HaltedOnError:
+      quantaApp->statusBar()->changeItem(i18n("On error"), IDS_STATUS_DEBUGGER);
+      break;
+
+    case HaltedOnBreakpoint:
+      quantaApp->statusBar()->changeItem(i18n("On breakpoint"), IDS_STATUS_DEBUGGER);
+      break;
+
+    default:
+      quantaApp->statusBar()->changeItem("", IDS_STATUS_DEBUGGER);
+  }
 }
 
 /*void DebuggerUI::preWatchUpdate()

@@ -52,7 +52,8 @@ QuantaDebuggerDBGp::QuantaDebuggerDBGp (QObject *parent, const char*, const QStr
   m_supportsasync = false;
   m_defaultExecutionState = Starting;
   setExecutionState(m_defaultExecutionState);
-
+  emit updateStatus(DebuggerUI::NoSession);
+  
   connect(&m_network, SIGNAL(command(const QString&)), this, SLOT(processCommand(const QString&)));
   connect(&m_network, SIGNAL(active(bool)), this, SLOT(slotNetworkActive(bool)));
   connect(&m_network, SIGNAL(connected(bool)), this, SLOT(slotNetworkConnected(bool)));
@@ -80,6 +81,11 @@ void QuantaDebuggerDBGp::slotNetworkActive(bool active)
   debuggerInterface()->enableAction("debug_disconnect", active);
 
   setExecutionState(m_defaultExecutionState);
+  
+  if(active)
+    emit updateStatus(DebuggerUI::AwaitingConnection);
+  else
+    emit updateStatus(DebuggerUI::NoSession);
 
 }
 
@@ -101,8 +107,13 @@ void QuantaDebuggerDBGp::slotNetworkConnected(bool connected)
   debuggerInterface()->enableAction("debug_stepout", connected);
 
   debuggerInterface()->setActiveLine("", 0);
-  if(!connected)
+  if(connected)
+    emit updateStatus(DebuggerUI::Connected);
+  else
+  {
     setExecutionState(m_defaultExecutionState);
+    emit updateStatus(DebuggerUI::AwaitingConnection);
+  }
 
 }
 
@@ -129,7 +140,7 @@ void QuantaDebuggerDBGp::endSession()
 
   // Close the socket
   m_network.sessionEnd();
-
+  
 //   debuggerInterface()->enableAction("debug_request", false);
 //   debuggerInterface()->enableAction("debug_run", false);
 //   debuggerInterface()->enableAction("debug_leap", false);
@@ -171,16 +182,34 @@ void QuantaDebuggerDBGp::setExecutionState( const State & state, bool forcesend 
 // Change executionstate of the script
 void QuantaDebuggerDBGp::setExecutionState(const QString &state)
 {
+  kdDebug(24002) << k_funcinfo << state << endl;
+  
   if(state == "starting")
+  {
     setExecutionState(Starting);
+    emit updateStatus(DebuggerUI::Paused);
+  }
   else if(state == "stopping")
+  {
     setExecutionState(Stopping);
+    emit updateStatus(DebuggerUI::Paused);
+  }
   else if(state == "stopped")
+  {
     setExecutionState(Stopped);
+    emit updateStatus(DebuggerUI::Paused);
+  }
   else if(state == "running")
+  {
     setExecutionState(Running);
+    emit updateStatus(DebuggerUI::Running);
+  }
   else if(state == "break")
+  {
     setExecutionState(Break);
+    emit updateStatus(DebuggerUI::Paused);
+  }
+
 }
 
 // Return capabilities of dbgp
@@ -326,8 +355,9 @@ void QuantaDebuggerDBGp::checkSupport( const QDomNode & node )
     debuggerInterface()->refreshBreakpoints();
 
   // Our own feature, probably not available but then we know we're done initiating
-  else if(feature == "quanta_initialized")
-    setExecutionState(m_executionState, true);
+  else if(feature == "quanta_initialized" )
+    if(m_executionState != Break)
+      setExecutionState(m_executionState, true);
 
 }
 
@@ -396,7 +426,6 @@ void QuantaDebuggerDBGp::stepInto()
 // Step over function
 void QuantaDebuggerDBGp::stepOver()
 {
-  // If we're in starting mode, we must step into, otherwise xdebug starts to run
   if(m_executionState == Starting)
     m_network.sendCommand("step_into");
   else
@@ -419,7 +448,10 @@ void QuantaDebuggerDBGp::kill()
 // Pause execution
 void QuantaDebuggerDBGp::pause()
 {
-  setExecutionState(Break);
+  if(isActive())
+    setExecutionState(Break);
+  else
+    setExecutionState(Starting);
 //   m_network.sendCommand("break");
 //   m_network.sendCommand("status");
 }
@@ -544,7 +576,7 @@ void QuantaDebuggerDBGp::readConfig(QDomNode node)
   else
   {
     if(valuenode.firstChild().nodeValue() == "break")
-      m_defaultExecutionState = Break;
+      m_defaultExecutionState = Starting;
     else
       m_defaultExecutionState = Running;
   }
@@ -572,7 +604,7 @@ void QuantaDebuggerDBGp::showConfig(QDomNode node)
   set.lineServerListenPort->setText(m_listenPort);
   set.checkUseProxy->setChecked(m_useproxy);
   set.lineStartSession->setText(m_startsession);
-  if(m_defaultExecutionState == Break)
+  if(m_defaultExecutionState == Starting)
     set.comboDefaultExecutionState->setCurrentItem(0);  
   else
     set.comboDefaultExecutionState->setCurrentItem(1);
@@ -654,7 +686,7 @@ void QuantaDebuggerDBGp::showConfig(QDomNode node)
     node.appendChild( el );
     if(set.comboDefaultExecutionState->currentItem() == 0)
     {
-      m_defaultExecutionState = Break;
+      m_defaultExecutionState = Starting;
       el.appendChild(node.ownerDocument().createTextNode("break"));
     }
     else

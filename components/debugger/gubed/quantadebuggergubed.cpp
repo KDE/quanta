@@ -39,6 +39,7 @@
 #include "variableslistview.h"
 #include "pathmapper.h"
 
+#include "debuggerui.h"
 
 
 K_EXPORT_COMPONENT_FACTORY( quantadebuggergubed,
@@ -56,6 +57,7 @@ QuantaDebuggerGubed::QuantaDebuggerGubed (QObject *parent, const char* name, con
   m_defaultExecutionState = Pause;
   setExecutionState(m_defaultExecutionState);
 
+  emit updateStatus(DebuggerUI::NoSession);
   m_datalen = -1;
 }
 
@@ -72,6 +74,8 @@ QuantaDebuggerGubed::~QuantaDebuggerGubed ()
   }
   if(m_server)
     m_server->deleteLater();
+
+  emit updateStatus(DebuggerUI::NoSession);
 }
 
 // Try to make a connection to the gubed server
@@ -79,6 +83,10 @@ void QuantaDebuggerGubed::startSession()
 {
 
   kdDebug(24002) << k_funcinfo << ", m_server: " << m_server << ", m_socket" << m_socket << endl;
+  
+  // Set default execution state
+  setExecutionState(m_defaultExecutionState);
+
   if(m_useproxy)
   {
     if(!m_socket)
@@ -95,6 +103,8 @@ void QuantaDebuggerGubed::startSession()
       debuggerInterface()->enableAction("debug_disconnect", false);
       debuggerInterface()->enableAction("debug_request", false);
       kdDebug(24002) << k_funcinfo << ", proxy:" << m_serverHost << ", " << m_serverPort.toUInt() << endl;
+
+      emit updateStatus(DebuggerUI::AwaitingConnection);
     }
   }
   else
@@ -108,12 +118,14 @@ void QuantaDebuggerGubed::startSession()
 
       if(m_server->listen())
       {
+        emit updateStatus(DebuggerUI::AwaitingConnection);
         debuggerInterface()->enableAction("debug_connect", false);
         debuggerInterface()->enableAction("debug_disconnect", true);
         debuggerInterface()->enableAction("debug_request", true);
       }
       else
       {
+        emit updateStatus(DebuggerUI::NoSession);
         m_server->deleteLater();
         m_server = NULL;
         debuggerInterface()->enableAction("debug_connect", true);
@@ -122,7 +134,7 @@ void QuantaDebuggerGubed::startSession()
       }
     }
   }
-  setExecutionState(m_defaultExecutionState);
+  
 }
 
 
@@ -155,6 +167,7 @@ void QuantaDebuggerGubed::endSession()
   debuggerInterface()->enableAction("debug_leap", false);
   debuggerInterface()->enableAction("debug_pause", false);
 
+  emit updateStatus(DebuggerUI::NoSession);
 }
 
 // Change executionstate of the script
@@ -164,6 +177,8 @@ void QuantaDebuggerGubed::setExecutionState(State newstate)
   {
     sendCommand("pause", 0);
     sendCommand("sendactiveline", 0);
+    if(isActive())
+      emit updateStatus(DebuggerUI::Paused);
   }
   else if(newstate == Run)
   {
@@ -171,6 +186,8 @@ void QuantaDebuggerGubed::setExecutionState(State newstate)
       sendCommand("next", 0);
 
     sendCommand("run", 0);
+    if(isActive())
+      emit updateStatus(DebuggerUI::Running);
   }
   else if(newstate == Trace)
   {
@@ -178,6 +195,8 @@ void QuantaDebuggerGubed::setExecutionState(State newstate)
       sendCommand("next", 0);
 
     sendCommand("trace", 0);
+    if(isActive())
+      emit updateStatus(DebuggerUI::Tracing);
   }
 
   m_executionState = newstate;
@@ -267,6 +286,8 @@ void QuantaDebuggerGubed::slotReadyAccept()
       connect(m_socket, SIGNAL(closed()), this, SLOT(slotConnectionClosed()));
       connect(m_socket, SIGNAL(readyRead()), this, SLOT(slotReadyRead()));
       connected();
+
+      emit updateStatus(DebuggerUI::Connected);
     }
     else
     {
@@ -281,6 +302,7 @@ void QuantaDebuggerGubed::slotReadyAccept()
 // Connection established
 void QuantaDebuggerGubed::slotConnected(const KNetwork::KResolverEntry &)
 {
+  emit updateStatus(DebuggerUI::Connected);
   connected();
 }
 
@@ -326,6 +348,7 @@ void QuantaDebuggerGubed::slotConnectionClosed()
 
   debuggerInterface()->setActiveLine("", 0);
 
+  emit updateStatus(DebuggerUI::AwaitingConnection);
   m_active = false;
 }
 
@@ -463,17 +486,21 @@ void QuantaDebuggerGubed::processCommand(const QString& datas)
       setExecutionState(Run);
     else
       setExecutionState(Pause);
+
+    emit updateStatus(DebuggerUI::HaltedOnError);
   }
   // We came across  a hard coded breakpoint
   else if(m_command == "forcebreak")
   {
     setExecutionState(Pause);
+    emit updateStatus(DebuggerUI::HaltedOnBreakpoint);
     debuggerInterface()->showStatus(i18n("Breakpoint reached"), true);
   }
   // A conditional breakpoint was fulfilled
   else if(m_command == "conditionalbreak")
   {
     setExecutionState(Pause);
+    emit updateStatus(DebuggerUI::HaltedOnBreakpoint);
     debuggerInterface()->showStatus(i18n("Conditional breakpoint fulfilled"), true);
   }
   // There is a breakpoint set in this file/line

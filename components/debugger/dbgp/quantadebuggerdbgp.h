@@ -143,6 +143,8 @@ class QuantaDebuggerDBGp : public DebuggerClient
     void slotNetworkError(const QString &errormsg, bool log);
     void processCommand(const QString&);
 
+  signals:
+    void updateStatus(DebuggerUI::DebuggerStatus);
 };
 
 #endif

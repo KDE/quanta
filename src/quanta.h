@@ -25,6 +25,9 @@
 #define IDS_INS_OVR     2
 #define IDS_MODIFIED    3
 #define IDS_STATUS_CLM  4
+// Number 5 is used by he debugger, but not added until debugger is activated
+#define IDS_STATUS_DEBUGGER  5  
+
 #define IDS_DEFAULT     "Ready."
 
 // include files for Qt

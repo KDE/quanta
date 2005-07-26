@@ -35,6 +35,18 @@ class DebuggerUI : public QObject
     Q_OBJECT
 
   public:
+    enum DebuggerStatus
+    {
+      NoSession = 0,
+      AwaitingConnection,
+      Connected,
+      Paused,
+      Running,
+      Tracing,
+      HaltedOnError,
+      HaltedOnBreakpoint
+    };
+
     DebuggerUI(QObject *parent = 0, const char *name = 0);
     ~DebuggerUI();
 
@@ -61,6 +73,11 @@ class DebuggerUI : public QObject
     int m_debuggerMenuID;
 
     WHTMLPart *m_preview;
+
+  public slots:
+    // Status indication 
+    void slotStatus(DebuggerUI::DebuggerStatus status);
+
 };
 
 #endif
