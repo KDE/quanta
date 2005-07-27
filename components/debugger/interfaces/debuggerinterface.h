@@ -54,9 +54,10 @@ class DebuggerInterface : public QObject
     //virtual void preWatchUpdate() = 0;
     //virtual void postWatchUpdate() = 0;
 
-    //virtual DebuggerVariable* newDebuggerVariable(const QString& name, const QString& value, int type) = 0;
-    //virtual void addVariable(DebuggerVariable*) = 0;
-    virtual void parsePHPVariables(const QString &) = 0;
+    virtual DebuggerVariable* newDebuggerVariable(const QString& name, const QString& value, int type) = 0;
+    virtual DebuggerVariable* newDebuggerVariable(const QString& name, const ValueList_t& values, int type) = 0;
+    virtual void showVariable(DebuggerVariable*) = 0;
+//     virtual void parsePHPVariables(const QString &) = 0;
 
     // Breakpoints
     virtual void showBreakpoint(const DebuggerBreakpoint &bp) = 0;

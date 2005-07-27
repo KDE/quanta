@@ -43,6 +43,8 @@ DebuggerVariable::DebuggerVariable(const QString& name, const QString& value, in
   m_name  = name;
   m_value = value;
   m_type  = type;
+  if(type == DebuggerVariableTypes::String)
+    m_size = value.length();
 }
 
 DebuggerVariable::DebuggerVariable(const QString& name, const QString& value, int type, int size)

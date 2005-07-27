@@ -126,12 +126,18 @@ class QuantaDebuggerGubed : public DebuggerClient
 
     QString mapServerPathToLocal(const QString& serverpath);
     QString mapLocalPathToServer(const QString& localpath);
-    void showWatch(const QString& data);
     QString bpToGubed(DebuggerBreakpoint* breakpoint);
 
+    // Communication helpers
     QString phpSerialize(StringMap args);
     StringMap parseArgs(const QString &args);
 
+    // Variables
+    DebuggerVariable* parsePHPVariables(const QString &varstring);
+    DebuggerVariable* parsePHPVariables(QString &str);
+    void showWatch(const QString& data);
+
+    
   public slots:
     // Socket slots
     void slotConnected(const KNetwork::KResolverEntry &);

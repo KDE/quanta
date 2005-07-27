@@ -38,7 +38,6 @@ class VariablesListView : public KListView
 
     void setVariables(const QPtrList<DebuggerVariable>& vars);
     void addVariable(DebuggerVariable* variable);
-    void parsePHPVariables(const QString &varstring);
     DebuggerVariable* selected();
 
     void clear();
@@ -55,7 +54,6 @@ class VariablesListView : public KListView
   private:
     void keyPressEvent(QKeyEvent *e);
     void addChild(KListViewItem* parent, DebuggerVariable* var);
-    DebuggerVariable* parsePHPVariables(QString &str);
 
     QPtrList<DebuggerVariable> m_variablesList;
     KPopupMenu *m_variablePopup;

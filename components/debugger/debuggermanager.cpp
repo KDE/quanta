@@ -648,10 +648,10 @@ void DebuggerManager::clearBreakpoints ()
   m_breakpointList->clear();
 }
 
-DebuggerBreakpoint *DebuggerManager::newDebuggerBreakpoint()
-{
-  return new DebuggerBreakpoint();
-}
+// DebuggerBreakpoint *DebuggerManager::newDebuggerBreakpoint()
+// {
+//   return new DebuggerBreakpoint();
+// }
 
 void DebuggerManager::slotBreakpointMarked(Document* qdoc, int line)
 {
