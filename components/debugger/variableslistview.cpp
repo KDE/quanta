@@ -116,6 +116,11 @@ void VariablesListView::keyPressEvent(QKeyEvent *e)
 
 void VariablesListView::addVariable(DebuggerVariable* variable)
 {
+  if(!variable)
+  {
+    kdDebug(24002) << k_funcinfo << " Tried to show NULL variable!" << endl;
+    return;
+  }
 
   // Remove the old varible if its there
   DebuggerVariable* v;
@@ -198,173 +203,7 @@ void VariablesListView::addChild(KListViewItem* parent, DebuggerVariable* var)
   }
 }
 
-void VariablesListView::parsePHPVariables(const QString &varstring)
-{
-  QString str = varstring;
-  DebuggerVariable* var = parsePHPVariables(str);
-  if(var)
-    addVariable(var);
 
-}
-DebuggerVariable* VariablesListView::parsePHPVariables(QString &str)
-{
-
-  QString key, data;
-  QString tempstring;
-  int length;
-  DebuggerVariable* debuggervar = NULL;
-
-  // get type of key
-  QString type = str.left(1);
-  str.remove(0, 2);
-
-  // Strings
-  if(type == "s")
-  {
-    // Get length of key
-    tempstring = str.left(str.find(':'));
-    str.remove(0, str.find(':') + 1);
-    length = tempstring.toUInt();
-
-    key = str.left(length + 1);
-    key.remove(0, 1);        // remove starting quote
-    str.remove(0, length + 3);
-  }
-  else if(type == "i")
-  {
-    key = str.left(str.find(';'));
-    str.remove(0, str.find(';') + 1);
-
-  }
-
-  // Get type of data
-  type = str.left(1);
-  str.remove(0, 2);
-
-  if(type == "i")
-  {
-    /* Example:
-      s:4:"$row";i:6;
-    */
-    data = str.left(str.find(';'));
-    str.remove(0, str.find(';') + 1);
-    debuggervar = new DebuggerVariable(key, data, DebuggerVariableTypes::Integer);
-
-  }
-  else if(type == "b")
-  {
-    /* Example:
-      s:8:"$boolvar";b:1;
-    */
-    data = str.left(str.find(';'));
-    data = (data == "0" ? i18n("False"): i18n("True"));
-    str.remove(0, str.find(';') + 1);
-    debuggervar = new DebuggerVariable(key, data, DebuggerVariableTypes::Boolean);
-  }
-  else if(type == "N")
-  {
-    /* Example:
-      s:6:"return";N;
-    */
-    debuggervar = new DebuggerVariable(key, i18n("<Undefined>"), DebuggerVariableTypes::Undefined);
-  }
-  else if(type == "s")
-  {
-    /* Example:
-      s:7:"$strvar";s:16:"This is a string";
-    */
-
-    // Get length of string
-    tempstring = str.left(str.find(':'));
-    str.remove(0, str.find(':') + 1);
-    length = tempstring.toUInt();
-
-    data = str.left(length + 1);
-    data.remove(0, 1);        // remove starting quote
-    str.remove(0, length + 3);
-    debuggervar = new DebuggerVariable(key, data, DebuggerVariableTypes::String, length);
-  }
-  else if(type == "a")
-  {
-    /* Example:
-      s:6:"$array";a:5:{s:11:"Ingredients";a:3:{i:0;s:8:"potatoes";i:1;s:4:"salt";i:2;s:6:"pepper";}s:6:"Guests";a:4:{i:0;s:5:"Fiona";i:1;s:4:"Tori";i:2;s:4:"Neil";i:3;s:4:"Nick";}s:4:"Dogs";a:4:{i:0;s:5:"Kitty";i:1;s:5:"Tessy";i:2;s:5:"Fanny";i:3;s:5:"Cosmo";}s:7:"Numbers";a:6:{i:0;i:1;i:1;i:2;i:2;i:3;i:3;i:9;i:4;i:8;i:5;i:7;}s:6:"Letter";s:1:"L";}
-    */
-
-    // Get length of array
-    tempstring = str.left(str.find(':'));
-    str.remove(0, str.find(':') + 2);
-    length = tempstring.toUInt();
-
-    QPtrList<DebuggerVariable> vars ;
-    while(length > 0)
-    {
-     //kdDebug(24002) << "VariablesListView::parsePHPVariables: length " << length << ", \"" << str << "\"" << endl;
-   
-      length --;
-      DebuggerVariable* var = parsePHPVariables(str);
-      if(var)
-        vars.append(var);
-
-    }
-    str.remove(0, 1);
-    debuggervar = new DebuggerVariable(key, vars, DebuggerVariableTypes::Array);
-  }
-  else if(type == "O")
-  {
-    /* Example:
-      
-    */
-
-    // Get length of array
-    tempstring = str.left(str.find(':'));
-    str.remove(0, str.find(':') + 2);
-    tempstring = str.mid(str.find(':') + 1);
-    tempstring = tempstring.left(tempstring.find(':'));
-    length = tempstring.toUInt();
-
-    str.remove(0, str.find('{') + 1);
-    
-    QPtrList<DebuggerVariable> vars ;
-    while(length > 0)
-    {
-     //kdDebug(24002) << "VariablesListView::parsePHPVariables: length " << length << ", \"" << str << "\"" << endl;
-   
-      length --;
-      DebuggerVariable* var = parsePHPVariables(str);
-      if(var)
-        vars.append(var);
-
-    }
-    str.remove(0, 1);
-    debuggervar = new DebuggerVariable(key, vars, DebuggerVariableTypes::Object);
-  }
-  else if(type == "d")
-  {
-    /* Example:
-      s:9:"$floatvar";d:12.5600000000000004973799150320701301097869873046875;"
-    */
-    data = str.left(str.find(';'));
-    str.remove(0, str.find(';') + 1);
-    debuggervar = new DebuggerVariable(key, data, DebuggerVariableTypes::Float);
-
-  }
-  else if(type == "-")
-  {
-    debuggervar = new DebuggerVariable(key,  i18n("<Undefined>"), DebuggerVariableTypes::Undefined);
-  }
-  else if(type == "!")
-  {
-    debuggervar = new DebuggerVariable(key,  i18n("<Error>"), DebuggerVariableTypes::Error);
-  }
-  else
-  {
-    kdDebug(24002) << "VariablesListView::parsePHPVariables: Unknown variable type " << type << ", " << str << endl;
-    debuggervar = new DebuggerVariable(key, i18n("<Unimplemented type>"), DebuggerVariableTypes::Error);
-  }
-
-  return debuggervar;
-
-}
 
 // This function should be called before watches are update (if they're updated in a batch)
 // so that postWatchUpdate can remove obsolete variables from the list

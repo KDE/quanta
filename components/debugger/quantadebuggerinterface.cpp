@@ -106,19 +106,19 @@ const QString QuantaDebuggerInterface::activeFileParts(const QString & str)
   return newstr;
 }
 
-/*DebuggerVariable* QuantaDebuggerInterface::newDebuggerVariable(const QString& name, const QString& value, int type)
-{
-  return new DebuggerVariable(name, value, type);
-}*/
-
-/*void QuantaDebuggerInterface::addVariable(DebuggerVariable* var)
+void QuantaDebuggerInterface::showVariable(DebuggerVariable* var)
 {
   m_manager->UI()->addVariable(var);
-}*/
+}
 
-void QuantaDebuggerInterface::parsePHPVariables(const QString &varstring)
+DebuggerVariable *QuantaDebuggerInterface::newDebuggerVariable(const QString& name, const QString& value, int type)
 {
-  m_manager->UI()->parsePHPVariables(varstring);
+  return new DebuggerVariable(name, value, type);
+}
+
+DebuggerVariable *QuantaDebuggerInterface::newDebuggerVariable(const QString& name, const ValueList_t& values, int type)
+{
+  return new DebuggerVariable(name, values, type);
 }
 
 void QuantaDebuggerInterface::showBreakpoint(const DebuggerBreakpoint &bp)
@@ -133,7 +133,7 @@ void QuantaDebuggerInterface::refreshBreakpoints()
 
 DebuggerBreakpoint *QuantaDebuggerInterface::newDebuggerBreakpoint()
 {
-  return m_manager->newDebuggerBreakpoint();
+  return new DebuggerBreakpoint();
 }
 
 DebuggerBreakpoint *QuantaDebuggerInterface::findDebuggerBreakpoint(const QString& key)

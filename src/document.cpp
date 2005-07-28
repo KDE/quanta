@@ -179,10 +179,11 @@ Document::Document(KTextEditor::Document *doc,
     iface->setPixmap(KTextEditor::MarkInterface::markType05, SmallIcon("debug_currentline"));
     iface->setDescription(KTextEditor::MarkInterface::markType08, i18n("Annotation"));
     iface->setPixmap(KTextEditor::MarkInterface::markType08, SmallIcon("stamp"));
-  }
 
-  // This is allows user to set breakpoints and bookmarks by clicking or rightclicking on the icon border.
-  iface->setMarksUserChangable(KTextEditor::MarkInterface::markType01 + KTextEditor::MarkInterface::markType02);
+    // This is allows user to set breakpoints and bookmarks by clicking or rightclicking on the icon border.
+    iface->setMarksUserChangable(KTextEditor::MarkInterface::markType01 + KTextEditor::MarkInterface::markType02);
+
+  }
 
   tempFile = 0;
   m_tempFileName = QString::null;
@@ -213,7 +214,9 @@ Document::Document(KTextEditor::Document *doc,
 
   connect(fileWatcher, SIGNAL(dirty(const QString&)), SLOT(slotFileDirty(const QString&)));
 
-  connect(m_doc, SIGNAL(marksChanged()), this, SLOT(slotMarksChanged()));
+//   connect(m_doc, SIGNAL(marksChanged()), this, SLOT(slotMarksChanged()));
+  connect(m_doc, SIGNAL(markChanged(KTextEditor::Mark, KTextEditor::MarkInterfaceExtension::MarkChangeAction)), this, SLOT(slotMarkChanged(KTextEditor::Mark, KTextEditor::MarkInterfaceExtension::MarkChangeAction)));
+  
 }
 
 Document::~Document()
@@ -2866,73 +2869,14 @@ void Document::slotFileDirty(const QString& fileName)
   }
 }
 
-void Document::slotMarksChanged()
+void Document::slotMarkChanged(KTextEditor::Mark mark, KTextEditor::MarkInterfaceExtension::MarkChangeAction action)
 {
-  QPtrList<KTextEditor::Mark> marks = markIf->marks();
-
-  QValueList<KTextEditor::Mark>::iterator it;
-  KTextEditor::Mark* mark;
-
-  //delete all modified/removed marks
-  bool found = false;
-  for (it = m_breakpointMarks.begin(); it != m_breakpointMarks.end(); ++it)
+  if(mark.type & KTextEditor::MarkInterface::markType02)
   {
-    //see if this mark was removed
-    for (mark = marks.first(); mark; mark = marks.next())
-    {
-      //skip if is not a breakpoint mark
-      if(!((*it).type & KTextEditor::MarkInterface::markType02))
-      {
-        continue;
-      }
-
-      if (mark->line == (*it).line)
-      {
-        found = true;
-        break;
-      }
-    }
-
-    //mark doesn't exists anymore, inform everyone
-    if (!found)
-    {
-      emit breakpointUnmarked(this, (*it).line);
-    }
-
-    found = false;
-  }
-
-  //inform everyone about new/modified breakpoints
-  found = false;
-  for (mark = marks.first(); mark; mark = marks.next())
-  {
-    //skip if is not a breakpoint mark
-    if(!(mark->type & KTextEditor::MarkInterface::markType02))
-    {
-      continue;
-    }
-
-    for (it = m_breakpointMarks.begin(); it != m_breakpointMarks.end(); ++it)
-    {
-      if ((*it).line == mark->line)
-      {
-        found = true;
-        break;
-      }
-    }
-
-    if (!found)
-    {
-      emit breakpointMarked(this, mark->line);
-    }
-    found = false;
-  }
-
-  //load the new marks
-  m_breakpointMarks.clear();
-  for (mark = marks.first(); mark; mark = marks.next())
-  {
-    m_breakpointMarks.append(*mark);
+    if(action == KTextEditor::MarkInterfaceExtension::MarkRemoved)
+      emit breakpointUnmarked(this, mark.line);
+    else
+      emit breakpointMarked(this, mark.line);
   }
 }
 

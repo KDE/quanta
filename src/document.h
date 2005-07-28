@@ -25,6 +25,7 @@
 #include <qwidget.h>
 
 #include <kurl.h>
+#include <ktexteditor/markinterfaceextension.h>
 
 //own includes
 #include "qtag.h"
@@ -262,7 +263,7 @@ private slots:
   /** Called when a file on the disk has changed. */
   void slotFileDirty(const QString& fileName);
 
-  void slotMarksChanged();
+  void slotMarkChanged(KTextEditor::Mark mark, KTextEditor::MarkInterfaceExtension::MarkChangeAction action);
 private:
   /**
    * Finds the beginning of a tag in the document, starting from a position.
@@ -313,8 +314,6 @@ private:
   //a bug: the box is not showing up if it is called from slotCompletionDone)
   int m_lastLine, m_lastCol;
   QValueList<KTextEditor::CompletionEntry>* m_lastCompletionList;
-
-  QValueList<KTextEditor::Mark> m_breakpointMarks;
 
   /** Get list of possibile variable name completions */
   QValueList<KTextEditor::CompletionEntry>* getGroupCompletions(Node *node, const StructTreeGroup& groupName, int line, int col);

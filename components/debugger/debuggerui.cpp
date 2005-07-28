@@ -126,11 +126,6 @@ void DebuggerUI::addVariable(DebuggerVariable* var)
   m_variablesListView->addVariable(var);
 }
 
-void DebuggerUI::parsePHPVariables(const QString &varstring)
-{
-  m_variablesListView->parsePHPVariables(varstring);
-}
-
 void DebuggerUI::showBreakpoint(const DebuggerBreakpoint &bp)
 {
   m_debuggerBreakpointView->showBreakpoint(bp);

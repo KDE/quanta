@@ -648,14 +648,15 @@ void DebuggerManager::clearBreakpoints ()
   m_breakpointList->clear();
 }
 
-DebuggerBreakpoint *DebuggerManager::newDebuggerBreakpoint()
-{
-  return new DebuggerBreakpoint();
-}
+// DebuggerBreakpoint *DebuggerManager::newDebuggerBreakpoint()
+// {
+//   return new DebuggerBreakpoint();
+// }
 
 void DebuggerManager::slotBreakpointMarked(Document* qdoc, int line)
 {
   DebuggerBreakpoint* br = new DebuggerBreakpoint(qdoc->url().prettyURL(0, KURL::StripFileProtocol), line);
+
   m_breakpointList->add(br);
   if(m_client && m_client->isActive())
   {

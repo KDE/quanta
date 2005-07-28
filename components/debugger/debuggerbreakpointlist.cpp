@@ -40,7 +40,9 @@ DebuggerBreakpointList::~DebuggerBreakpointList()
 
 void DebuggerBreakpointList::add(DebuggerBreakpoint* bp)
 {
-  quantaApp->debugger()->UI()->showBreakpoint(*bp);
+  if(quantaApp->debugger()->UI())
+    quantaApp->debugger()->UI()->showBreakpoint(*bp);
+  
   m_breakpointList->push_front(bp);
   if(bp->type() == DebuggerBreakpoint::LineBreakpoint)
     quantaApp->debugger()->setMark(bp->filePath(), bp->line(), true, KTextEditor::MarkInterface::markType02);
@@ -60,7 +62,8 @@ void DebuggerBreakpointList::remove(DebuggerBreakpoint* bp)
 
     tmp = (*it);
     // Remove it from the bp-list
-    quantaApp->debugger()->UI()->deleteBreakpoint(*bp);
+    if(quantaApp->debugger()->UI())
+      quantaApp->debugger()->UI()->deleteBreakpoint(*bp);
 
     // Remove editor markpoint if there is one...
     if(bp->type() == DebuggerBreakpoint::LineBreakpoint)

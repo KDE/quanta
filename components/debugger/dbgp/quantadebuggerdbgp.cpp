@@ -16,6 +16,7 @@
 
 #include <kdebug.h>
 #include <klocale.h>
+#include <kmdcodec.h>
 #include <kgenericfactory.h>
 #include <qlineedit.h>
 #include <qslider.h>
@@ -169,7 +170,7 @@ void QuantaDebuggerDBGp::setExecutionState( const State & state, bool forcesend 
     debuggerInterface()->enableAction("debug_pause", m_executionState == Running && (m_supportsasync || !isActive())) ;
 
     // Kill is active if we're paused, just started of the debugger supports async, as long as we have an active session
-    debuggerInterface()->enableAction("debug_kill", isActive()  && (m_executionState == Break || (m_executionState == Running && m_supportsasync) || m_executionState == Starting ));
+    debuggerInterface()->enableAction("debug_kill", isActive()  && (m_executionState == Break || (m_executionState == Running && m_supportsasync) || m_executionState == Starting  || m_executionState == Stopping ));
 
     // These are only activated when we have an active seesion and are paused
     debuggerInterface()->enableAction("debug_stepinto", isActive() && (m_executionState == Break || m_executionState == Starting ));
@@ -275,7 +276,10 @@ void QuantaDebuggerDBGp::processCommand(const QString& datas)
 
     // Run
     else if(command == "run" )
+    {
       setExecutionState(attribute(response, "status"));
+      m_network.sendCommand("stack_get");
+    }
 
     // Feature get replu
     else if(command == "feature_get")
@@ -284,6 +288,12 @@ void QuantaDebuggerDBGp::processCommand(const QString& datas)
     // Reply after adding a breakpoint
     else if(command == "breakpoint_set")
       setBreakpointKey(response);
+    
+    else if(command == "typemap_get")
+      typemapSetup(response);
+    
+    else if(command == "property_get")
+      showWatch(response);
 
     // Unknown command...
     else
@@ -389,10 +399,6 @@ QString QuantaDebuggerDBGp::getName()
   return "DBGp";      // no i18n on the name
 }
 
-void QuantaDebuggerDBGp::showWatch(const QString& data)
-{
-  debuggerInterface()->parsePHPVariables(data);
-}
 
 // Send HTTP Request
 void QuantaDebuggerDBGp::request()
@@ -732,9 +738,123 @@ void QuantaDebuggerDBGp::variableSetValue(const DebuggerVariable &)
 //               "variable", variable.name().ascii(),
 //               "value", variable.value().ascii(),
 //               0);
-  return;
+ 
+
+ return;
+}
+
+void QuantaDebuggerDBGp::typemapSetup( const QDomNode & typemapnode )
+{
+  /*
+    <map name="bool" type="bool" xsi:type="xsd:boolean"></map>
+    <map name="int" type="int" xsi:type="xsd:decimal"></map>
+    <map name="float" type="float" xsi:type="xsd:double"></map>
+    <map name="string" type="string" xsi:type="xsd:string"></map>
+    <map name="null" type="null"></map>
+    <map name="array" type="hash"></map>
+    <map name="object" type="object"></map>
+    <map name="resource" type="resource"></map>
+  */
+
+  // First defaults in case they are not sent (which seems to be the case with hash and xdebug)
+  m_variabletypes["bool"] = "bool"; 
+  m_variabletypes["int"] = "int"; 
+  m_variabletypes["float"] = "float"; 
+  m_variabletypes["string"] = "string"; 
+  m_variabletypes["null"] = "null"; 
+  m_variabletypes["array"] = "hash"; 
+  m_variabletypes["hash"] = "hash"; 
+  m_variabletypes["object"] = "object"; 
+  m_variabletypes["resource"] = "resource"; 
+
+  QDomNode child = typemapnode.firstChild();
+  while(!child.isNull())
+  {
+    if(child.nodeName() == "map")
+    {
+      m_variabletypes[attribute(child, "name")] = attribute(child, "type"); 
+    }
+    child = child.nextSibling();
+  }
 }
 
 
+void QuantaDebuggerDBGp::showWatch( const QDomNode & variablenode)
+{
+  debuggerInterface()->showVariable(buildVariable(variablenode.firstChild()));
+}
+
+DebuggerVariable* QuantaDebuggerDBGp::buildVariable( const QDomNode & variablenode)
+{
+  /*
+    Sample:
+    <property name="$arrayVar" fullname="$arrayVar" address="-1073754976" type="hash" children="1" numchildren="4">
+      <property name="birthyear" fullname="$arrayVar['birthyear']" address="135522364" type="int">
+        <![CDATA[1949]]>
+      </property>
+      <property name="songs" fullname="$arrayVar['songs']" address="135522236" type="hash" children="1" numchildren="3">
+        <property name="0" fullname="$arrayVar['songs'][0]" address="135522332" type="string" encoding="base64">
+          <![CDATA[SW5ub2NlbnQgV2hlbiBZb3UgRHJlYW0=]]>
+        </property>
+        <property name="1" fullname="$arrayVar['songs'][1]" address="135522300" type="string" encoding="base64">
+          <![CDATA[Q2hyaXN0bWFzIENhcmQgRnJvbSBBIEhvb2tlcg==]]>
+        </property>
+      </property>
+    </property>
+  */
+  QString name = attribute(variablenode, "name");
+  QString type = m_variabletypes[attribute(variablenode, "type")];
+
+  if(type == "int")
+  {
+    QString value = variablenode.firstChild().nodeValue();
+    return debuggerInterface()->newDebuggerVariable( name, value, DebuggerVariableTypes::Integer);
+  }
+  else if (type == "string")
+  {
+    QCString value = QCString(variablenode.firstChild().nodeValue());
+    value = KCodecs::base64Decode(value);
+    return debuggerInterface()->newDebuggerVariable( name, value, DebuggerVariableTypes::String);
+  }
+  else if (type == "bool")
+  {
+    QString value = variablenode.firstChild().nodeValue();
+    return debuggerInterface()->newDebuggerVariable( name, value, DebuggerVariableTypes::Boolean);
+  }
+  else if (type == "resource")
+  {
+    QString value = variablenode.firstChild().nodeValue();
+    return debuggerInterface()->newDebuggerVariable( name, value, DebuggerVariableTypes::Resource);
+  }
+  else if (type == "float")
+  {
+    QString value = variablenode.firstChild().nodeValue();
+    return debuggerInterface()->newDebuggerVariable( name, value, DebuggerVariableTypes::Float);
+  }  
+  else if (type == "null")
+  {
+    QString value = variablenode.firstChild().nodeValue();
+    return debuggerInterface()->newDebuggerVariable( name, "", DebuggerVariableTypes::Undefined);
+  }
+  else if (type == "hash" || type == "array" || type == "object")
+  {
+    QDomNode child = variablenode.firstChild();
+    QPtrList<DebuggerVariable> vars ;
+    while(!child.isNull())
+    {
+      DebuggerVariable* var = buildVariable( child);
+      if(var)
+        vars.append(var);
+
+      child = child.nextSibling();
+    }
+    if(type == "object")
+      return debuggerInterface()->newDebuggerVariable(name, vars, DebuggerVariableTypes::Object);
+    else
+      return debuggerInterface()->newDebuggerVariable(name, vars, DebuggerVariableTypes::Array);
+  }
+
+  return debuggerInterface()->newDebuggerVariable(name, "", DebuggerVariableTypes::Error);;
+}
 
 #include "quantadebuggerdbgp.moc"

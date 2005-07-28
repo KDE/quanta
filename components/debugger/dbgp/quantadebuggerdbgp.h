@@ -130,12 +130,15 @@ class QuantaDebuggerDBGp : public DebuggerClient
 
     QString mapServerPathToLocal(const QString& serverpath);
     QString mapLocalPathToServer(const QString& localpath);
-    void showWatch(const QString& data);
     QString bpToDBGp(DebuggerBreakpoint* breakpoint);
     void setBreakpointKey(const QDomNode& response);
 
     QString attribute(const QDomNode&node, const QString &attribute);
     void initiateSession(const QDomNode& initpacket);
+
+    void typemapSetup(const QDomNode& typemapnode);
+    void showWatch(const QDomNode& typemapnode);
+    DebuggerVariable* buildVariable(const QDomNode& typemapnode);
 
   public slots:
     void slotNetworkActive(bool active);
