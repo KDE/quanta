@@ -153,7 +153,7 @@ void URIEditor::openFileDialog(){
 fontEditor::fontEditor(QWidget *parent, const char* name) : TLPEditor(parent,name), m_initialValue(QString::null){
   QString whatsthis =i18n("With this line edit you can insert the name of the font you want to use");  
   setWhatsThis(whatsthis);
-  setLabelText(i18n(" Font  family:"));
+  setLabelText(i18n("Font family:"));
   setButtonIcon("fonts");
   setToolTip(i18n("Open font family chooser"));
   connect(m_pb, SIGNAL(clicked()), this, SLOT(openFontChooser()));
