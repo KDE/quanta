@@ -107,7 +107,7 @@ void ProjectPrivate::initActions(KActionCollection *ac)
                         ac, "project_view_open" );
   connect(openPrjViewAction, SIGNAL(activated(const QString &)),
           this, SLOT(slotOpenProjectView(const QString &)));
-  openPrjViewAction->setToolTip(i18n("Open Project View"));
+  openPrjViewAction->setToolTip(i18n("Open project view"));
 
   savePrjViewAction = new KAction( i18n( "&Save Project View" ), "filesave", 0,
                         this, SLOT( slotSaveProjectView() ),
@@ -119,7 +119,7 @@ void ProjectPrivate::initActions(KActionCollection *ac)
                         ac, "project_view_delete" );
   connect(deletePrjViewAction, SIGNAL(activated(const QString &)),
           this, SLOT(slotDeleteProjectView(const QString &)));
-  deletePrjViewAction->setToolTip(i18n("Close Project View"));
+  deletePrjViewAction->setToolTip(i18n("Close project view"));
 
 
 
