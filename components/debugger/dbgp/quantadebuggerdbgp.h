@@ -101,7 +101,7 @@ class QuantaDebuggerDBGp : public DebuggerClient
     void variableSetValue(const DebuggerVariable &variable);
 
     // Call stack
-    void showStack(const QDomNode&node);
+    void stackShow(const QDomNode&node);
 
   private:
     DBGpNetwork m_network;
@@ -112,7 +112,13 @@ class QuantaDebuggerDBGp : public DebuggerClient
     QString m_serverHost;
     QString m_startsession;
     QString m_listenPort;
+    QString m_profilerFilename;
+    QString m_appid;
+    QString m_initialscript;
+    
     bool    m_useproxy;
+    bool    m_profilerAutoOpen;
+    bool    m_profilerMapFilename;
     State   m_executionState, m_defaultExecutionState;
     long    m_errormask;
     long    m_displaydelay;
@@ -140,12 +146,16 @@ class QuantaDebuggerDBGp : public DebuggerClient
     void showWatch(const QDomNode& typemapnode);
     DebuggerVariable* buildVariable(const QDomNode& typemapnode);
 
+    // Profiler
+    void profilerOpen(bool forceopen);
+    void profilerOpen();
+    
   public slots:
     void slotNetworkActive(bool active);
     void slotNetworkConnected(bool connected);
     void slotNetworkError(const QString &errormsg, bool log);
     void processCommand(const QString&);
-
+    
   signals:
     void updateStatus(DebuggerUI::DebuggerStatus);
 };

@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>458</width>
-            <height>393</height>
+            <width>569</width>
+            <height>417</height>
         </rect>
     </property>
     <property name="caption">
@@ -87,6 +87,9 @@
             <property name="name">
                 <cstring>tabWidget2</cstring>
             </property>
+            <property name="enabled">
+                <bool>true</bool>
+            </property>
             <property name="sizePolicy">
                 <sizepolicy>
                     <hsizetype>5</hsizetype>
@@ -113,6 +116,94 @@
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
+                    <widget class="QGroupBox" row="1" column="0">
+                        <property name="name">
+                            <cstring>groupBox2</cstring>
+                        </property>
+                        <property name="title">
+                            <string>Connection Settings</string>
+                        </property>
+                        <grid>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QLabel" row="0" column="0">
+                                <property name="name">
+                                    <cstring>lblDebuggerServerListenPort</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>5</hsizetype>
+                                        <vsizetype>5</vsizetype>
+                                        <horstretch>1</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                                <property name="text">
+                                    <string>Listen port:</string>
+                                </property>
+                            </widget>
+                            <widget class="QLineEdit" row="0" column="1">
+                                <property name="name">
+                                    <cstring>lineServerListenPort</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>7</hsizetype>
+                                        <vsizetype>0</vsizetype>
+                                        <horstretch>4</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                            </widget>
+                            <widget class="QLabel" row="1" column="0">
+                                <property name="name">
+                                    <cstring>lblRequest</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>5</hsizetype>
+                                        <vsizetype>5</vsizetype>
+                                        <horstretch>1</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                                <property name="text">
+                                    <string>Request URL:</string>
+                                </property>
+                            </widget>
+                            <widget class="QLineEdit" row="1" column="1">
+                                <property name="name">
+                                    <cstring>lineStartSession</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>7</hsizetype>
+                                        <vsizetype>0</vsizetype>
+                                        <horstretch>4</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                                <property name="toolTip" stdset="0">
+                                    <string>See 'Whats this" for available variables</string>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>%afn - Filename of the current script
+%afd - Absolute directory of the current script
+%afp - Absolute path (directory + filename) of the current script
+
+%rfpd - Directory of the current script relative to project root
+%rfpp - Path of the current script relative to project root
+
+%rfdd - Directory of the current script relative to document root
+%rfdp - Path of the current script relative to document root
+
+%apd - Project root
+%add - Document root of current script</string>
+                                </property>
+                            </widget>
+                        </grid>
+                    </widget>
                     <spacer row="3" column="0">
                         <property name="name">
                             <cstring>spacer4</cstring>
@@ -141,7 +232,20 @@
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="QLabel" row="1" column="0">
+                            <widget class="QLineEdit" row="2" column="1">
+                                <property name="name">
+                                    <cstring>lineServerBasedir</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>7</hsizetype>
+                                        <vsizetype>0</vsizetype>
+                                        <horstretch>4</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                            </widget>
+                            <widget class="QLabel" row="2" column="0">
                                 <property name="name">
                                     <cstring>lblDebuggerServerBasedir</cstring>
                                 </property>
@@ -149,7 +253,7 @@
                                     <sizepolicy>
                                         <hsizetype>5</hsizetype>
                                         <vsizetype>5</vsizetype>
-                                        <horstretch>0</horstretch>
+                                        <horstretch>1</horstretch>
                                         <verstretch>0</verstretch>
                                     </sizepolicy>
                                 </property>
@@ -157,7 +261,42 @@
                                     <string>Server basedir:</string>
                                 </property>
                             </widget>
-                            <widget class="QLabel" row="0" column="0">
+                            <widget class="QLineEdit" row="1" column="1">
+                                <property name="name">
+                                    <cstring>lineLocalBasedir</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>7</hsizetype>
+                                        <vsizetype>0</vsizetype>
+                                        <horstretch>4</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                                <property name="text">
+                                    <string></string>
+                                </property>
+                            </widget>
+                            <widget class="QCheckBox" row="0" column="1">
+                                <property name="name">
+                                    <cstring>checkLocalProject</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>1</hsizetype>
+                                        <vsizetype>0</vsizetype>
+                                        <horstretch>4</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                                <property name="text">
+                                    <string></string>
+                                </property>
+                                <property name="accel">
+                                    <string></string>
+                                </property>
+                            </widget>
+                            <widget class="QLabel" row="1" column="0">
                                 <property name="name">
                                     <cstring>lblDebuggerLocalBasedir</cstring>
                                 </property>
@@ -165,7 +304,7 @@
                                     <sizepolicy>
                                         <hsizetype>5</hsizetype>
                                         <vsizetype>5</vsizetype>
-                                        <horstretch>0</horstretch>
+                                        <horstretch>1</horstretch>
                                         <verstretch>0</verstretch>
                                     </sizepolicy>
                                 </property>
@@ -173,149 +312,30 @@
                                     <string>Local basedir:</string>
                                 </property>
                             </widget>
-                            <widget class="QLineEdit" row="1" column="1">
-                                <property name="name">
-                                    <cstring>lineServerBasedir</cstring>
-                                </property>
-                            </widget>
-                            <widget class="QLineEdit" row="0" column="1">
-                                <property name="name">
-                                    <cstring>lineLocalBasedir</cstring>
-                                </property>
-                                <property name="text">
-                                    <string></string>
-                                </property>
-                            </widget>
-                        </grid>
-                    </widget>
-                    <widget class="QGroupBox" row="1" column="0">
-                        <property name="name">
-                            <cstring>groupBox2</cstring>
-                        </property>
-                        <property name="title">
-                            <string>Connection Settings</string>
-                        </property>
-                        <grid>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <widget class="QLineEdit" row="3" column="1">
-                                <property name="name">
-                                    <cstring>lineServerListenPort</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>5</hsizetype>
-                                        <vsizetype>0</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
-                                </property>
-                            </widget>
-                            <widget class="QLineEdit" row="2" column="1">
-                                <property name="name">
-                                    <cstring>lineServerPort</cstring>
-                                </property>
-                                <property name="enabled">
-                                    <bool>false</bool>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>5</hsizetype>
-                                        <vsizetype>0</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
-                                </property>
-                            </widget>
-                            <widget class="QLineEdit" row="1" column="1">
-                                <property name="name">
-                                    <cstring>lineServerHost</cstring>
-                                </property>
-                                <property name="enabled">
-                                    <bool>false</bool>
-                                </property>
-                            </widget>
-                            <widget class="QCheckBox" row="0" column="1">
-                                <property name="name">
-                                    <cstring>checkUseProxy</cstring>
-                                </property>
-                                <property name="text">
-                                    <string></string>
-                                </property>
-                            </widget>
                             <widget class="QLabel" row="0" column="0">
                                 <property name="name">
-                                    <cstring>lblDebuggerUseProxe</cstring>
+                                    <cstring>lblLocalProject</cstring>
                                 </property>
                                 <property name="sizePolicy">
                                     <sizepolicy>
                                         <hsizetype>5</hsizetype>
                                         <vsizetype>5</vsizetype>
-                                        <horstretch>0</horstretch>
+                                        <horstretch>1</horstretch>
                                         <verstretch>0</verstretch>
                                     </sizepolicy>
                                 </property>
                                 <property name="text">
-                                    <string>Use proxy</string>
-                                </property>
-                            </widget>
-                            <widget class="QLabel" row="1" column="0">
-                                <property name="name">
-                                    <cstring>lblDebuggerServerHost</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>5</hsizetype>
-                                        <vsizetype>5</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
-                                </property>
-                                <property name="text">
-                                    <string>Proxy host:</string>
-                                </property>
-                            </widget>
-                            <widget class="QLabel" row="2" column="0">
-                                <property name="name">
-                                    <cstring>lblDebuggerServerPort</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>5</hsizetype>
-                                        <vsizetype>5</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
-                                </property>
-                                <property name="text">
-                                    <string>Proxy port:</string>
-                                </property>
-                            </widget>
-                            <widget class="QLabel" row="3" column="0">
-                                <property name="name">
-                                    <cstring>lblDebuggerServerListenPort</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>5</hsizetype>
-                                        <vsizetype>5</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
-                                </property>
-                                <property name="text">
-                                    <string>Listen port:</string>
+                                    <string>Local project::</string>
                                 </property>
                             </widget>
                         </grid>
                     </widget>
                     <widget class="QGroupBox" row="2" column="0">
                         <property name="name">
-                            <cstring>groupBox3</cstring>
+                            <cstring>groupBox3_2</cstring>
                         </property>
                         <property name="title">
-                            <string>Mode</string>
+                            <string>Profiling</string>
                         </property>
                         <grid>
                             <property name="name">
@@ -323,46 +343,115 @@
                             </property>
                             <widget class="QLineEdit" row="0" column="1">
                                 <property name="name">
-                                    <cstring>lineStartSession</cstring>
+                                    <cstring>lineProfilerFilename</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>7</hsizetype>
+                                        <vsizetype>0</vsizetype>
+                                        <horstretch>4</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
                                 </property>
                                 <property name="toolTip" stdset="0">
                                     <string>See 'Whats this" for available variables</string>
                                 </property>
                                 <property name="whatsThis" stdset="0">
-                                    <string>%afn - Filename of the current script
-%afd - Absolute directory of the current script
-%afp - Absolute path (directory + filename) of the current script
-
-%rfpd - Directory of the current script relative to project root
-%rfpp - Path of the current script relative to project root
-
-%rfdd - Directory of the current script relative to document root
-%rfdp - Path of the current script relative to document root
-
-%apd - Project root
-%add - Document root of current script</string>
+                                    <string>Path to the profiler output
+%a - Appid as returned from the debugger
+%c - CRC32 of the initial filepath</string>
                                 </property>
                             </widget>
-                            <widget class="QRadioButton" row="1" column="0">
+                            <widget class="QLabel" row="0" column="0">
                                 <property name="name">
-                                    <cstring>optAddInclude</cstring>
+                                    <cstring>lblRequest_2</cstring>
                                 </property>
-                                <property name="enabled">
-                                    <bool>false</bool>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>5</hsizetype>
+                                        <vsizetype>5</vsizetype>
+                                        <horstretch>1</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
                                 </property>
                                 <property name="text">
-                                    <string>&amp;Add include</string>
+                                    <string>Profiler output:</string>
                                 </property>
                             </widget>
-                            <widget class="QRadioButton" row="0" column="0">
+                            <widget class="QLabel" row="1" column="0">
                                 <property name="name">
-                                    <cstring>optStartSession</cstring>
+                                    <cstring>lblLocalProject_2</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>5</hsizetype>
+                                        <vsizetype>5</vsizetype>
+                                        <horstretch>1</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
                                 </property>
                                 <property name="text">
-                                    <string>Start session:</string>
+                                    <string>Map profiler output:</string>
                                 </property>
-                                <property name="checked">
-                                    <bool>true</bool>
+                            </widget>
+                            <widget class="QCheckBox" row="1" column="1">
+                                <property name="name">
+                                    <cstring>checkProfilerMapFilename</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>1</hsizetype>
+                                        <vsizetype>0</vsizetype>
+                                        <horstretch>4</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                                <property name="text">
+                                    <string></string>
+                                </property>
+                                <property name="accel">
+                                    <string></string>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>If this checkbox is checked, the profiler output filename will be mapped using the basedirs just like the remote script files.</string>
+                                </property>
+                            </widget>
+                            <widget class="QLabel" row="2" column="0">
+                                <property name="name">
+                                    <cstring>lblLocalProject_2_2</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>5</hsizetype>
+                                        <vsizetype>5</vsizetype>
+                                        <horstretch>1</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                                <property name="text">
+                                    <string>Open automatically:</string>
+                                </property>
+                            </widget>
+                            <widget class="QCheckBox" row="2" column="1">
+                                <property name="name">
+                                    <cstring>checkProfilerAutoOpen</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>1</hsizetype>
+                                        <vsizetype>0</vsizetype>
+                                        <horstretch>4</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                                <property name="text">
+                                    <string></string>
+                                </property>
+                                <property name="accel">
+                                    <string></string>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>If this checkbox is checked, the profiler output will be opened automatically once the session ends.</string>
                                 </property>
                             </widget>
                         </grid>
@@ -484,23 +573,6 @@
                             </widget>
                         </grid>
                     </widget>
-                    <spacer row="2" column="0">
-                        <property name="name">
-                            <cstring>spacer4_3</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>21</width>
-                                <height>50</height>
-                            </size>
-                        </property>
-                    </spacer>
                     <widget class="QGroupBox" row="1" column="0">
                         <property name="name">
                             <cstring>groupBox5</cstring>
@@ -546,6 +618,23 @@
                             </widget>
                         </grid>
                     </widget>
+                    <spacer row="2" column="0">
+                        <property name="name">
+                            <cstring>spacer4_3</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>21</width>
+                                <height>40</height>
+                            </size>
+                        </property>
+                    </spacer>
                 </grid>
             </widget>
             <widget class="QWidget">
@@ -553,7 +642,7 @@
                     <cstring>TabPage</cstring>
                 </property>
                 <attribute name="title">
-                    <string>A&amp;bout</string>
+                    <string>&amp;About</string>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -635,24 +724,12 @@
         <receiver>DBGpSettingsS</receiver>
         <slot>reject()</slot>
     </connection>
-    <connection>
-        <sender>checkUseProxy</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>DBGpSettingsS</receiver>
-        <slot>slotUseProxyToggle(bool)</slot>
-    </connection>
 </connections>
 <tabstops>
     <tabstop>tabWidget2</tabstop>
     <tabstop>lineLocalBasedir</tabstop>
     <tabstop>lineServerBasedir</tabstop>
-    <tabstop>checkUseProxy</tabstop>
-    <tabstop>lineServerHost</tabstop>
-    <tabstop>lineServerPort</tabstop>
     <tabstop>lineServerListenPort</tabstop>
-    <tabstop>optStartSession</tabstop>
-    <tabstop>lineStartSession</tabstop>
-    <tabstop>optAddInclude</tabstop>
     <tabstop>checkBreakOnNotice</tabstop>
     <tabstop>checkBreakOnWarning</tabstop>
     <tabstop>checkBreakOnUserNotice</tabstop>
@@ -663,7 +740,9 @@
     <tabstop>buttonCancel</tabstop>
 </tabstops>
 <slots>
-    <slot specifier="pure virtual">slotUseProxyToggle( bool )</slot>
+    <slot>slotLocalProjectToggled(bool)</slot>
+    <slot>checkLocalProject_toggled(bool)</slot>
+    <slot>slotLocalProjectToggle(bool)</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>

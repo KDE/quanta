@@ -207,6 +207,9 @@ void DebuggerManager::initActions()
   newaction = new KAction(i18n("Set Value of Variable"), SmallIcon("edit"), 0, this, SLOT(slotVariableSet()), ac, "debug_variable_setdialog");
   newaction->setToolTip(i18n("Changes the value of a variable"));
 
+  newaction = new KAction(i18n("Open profiler output"), SmallIcon("launch"), 0, this, SLOT(slotProfilerOpen()), ac, "debug_profiler_open");
+  newaction->setToolTip(i18n("Opens the profiler output file"));
+
   enableAction("*", false);
 
 }
@@ -266,6 +269,8 @@ void DebuggerManager::enableAction(const QString& action, bool enable)
 
     enableAction("debug_breakpoints_toggle", enable);
     enableAction("debug_breakpoints_clear", enable);
+    
+    enableAction("debug_profiler_open", enable);
 
   }
   else
@@ -455,6 +460,13 @@ void DebuggerManager::slotDebugStepOut()
 
 }
 
+void DebuggerManager::slotProfilerOpen( )
+{
+  if(!m_client)
+    return;
+
+  m_client->profilerOpen();
+}
 
 // A new file was opened, tell the debugger so it can tell us about breakpoints etc
 void DebuggerManager::fileOpened(const QString& file)
@@ -697,6 +709,8 @@ DebuggerBreakpoint * DebuggerManager::findDebuggerBreakpoint( const QString & ke
 {
   return m_breakpointList->findDebuggerBreakpoint(key);
 }
+
+
 
 
 #include "debuggermanager.moc"

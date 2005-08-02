@@ -71,6 +71,10 @@ QString PathMapper::mapLocalPathToServer(const QString &localpath)
       if(m_locallist[cnt] == localpath)
         return localpath;
 
+      // If both are slashes, count it as a local project
+      if(m_locallist[cnt] == "/" && m_serverlist[cnt] == "/")
+        return localpath;
+
       // Check if it translates into something 
       newpath = translate(localpath, m_locallist[cnt], m_serverlist[cnt]);
       if(newpath != localpath)

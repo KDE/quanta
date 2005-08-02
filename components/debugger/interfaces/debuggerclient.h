@@ -53,7 +53,10 @@ namespace DebuggerClientCapabilities
     StepInto,
     StepOver,
     StepOut,
-    Skip
+    Skip,
+
+    // Profiler related
+    ProfilerOpen = 6000
   };
 }
 
@@ -85,6 +88,9 @@ class DebuggerClient : public QObject
     // Settings
     virtual void readConfig(QDomNode node);
     virtual void showConfig(QDomNode node);
+
+    // Profiler
+    virtual void profilerOpen();
 
     // Misc
     virtual void fileOpened(const QString& file);

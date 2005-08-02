@@ -106,6 +106,9 @@ class DebuggerManager : public QObject
     void slotDebugStartSession();
     void slotDebugEndSession();
 
+    // Profiler
+    void slotProfilerOpen();
+
     // Initiation
     void slotNewProjectLoaded(const QString &, const KURL &, const KURL &);
 

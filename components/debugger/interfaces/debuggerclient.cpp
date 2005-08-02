@@ -1,5 +1,5 @@
 /***************************************************************************
-                          debuggerclient.cpp
+                              debuggerclient.cpp
                              -------------------
     begin                : 2004-03-12
     copyright            : (C) 2004 Linus McCabe <linus@mccabe.nu>
@@ -98,6 +98,12 @@ void DebuggerClient::kill()
 {
   unSupportedAction(i18n("Kill"));
 
+}
+
+// Unimplemented defaults
+void DebuggerClient::profilerOpen( )
+{
+  unSupportedAction(i18n("Open Profiler output"));
 }
 
 // Unimplemented defaults

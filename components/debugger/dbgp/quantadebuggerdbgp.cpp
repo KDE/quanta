@@ -14,18 +14,22 @@
  *                                                                          *
  ***************************************************************************/
 
+#include <errno.h>
 #include <kdebug.h>
+#include <kdeversion.h>
+#include <kgenericfactory.h>
 #include <klocale.h>
 #include <kmdcodec.h>
-#include <kgenericfactory.h>
-#include <qlineedit.h>
-#include <qslider.h>
+#include <kmessagebox.h>
+#include <krun.h>
 #include <qcheckbox.h>
 #include <qcombobox.h>
-#include <kdeversion.h>
-#include <errno.h>
-#include <qstring.h>
+#include <qfile.h>
+#include <qlineedit.h>
 #include <qmap.h>
+#include <qregexp.h>
+#include <qslider.h>
+#include <qstring.h>
 
 #include <stdarg.h>
 
@@ -114,6 +118,8 @@ void QuantaDebuggerDBGp::slotNetworkConnected(bool connected)
   {
     setExecutionState(m_defaultExecutionState);
     emit updateStatus(DebuggerUI::AwaitingConnection);
+
+    profilerOpen(false);
   }
 
 }
@@ -225,12 +231,13 @@ const uint QuantaDebuggerDBGp::supports(DebuggerClientCapabilities::Capabilities
     case DebuggerClientCapabilities::Kill:
     case DebuggerClientCapabilities::Pause:
     case DebuggerClientCapabilities::Run:
-    case DebuggerClientCapabilities::Skip:
+    //case DebuggerClientCapabilities::Skip:
     case DebuggerClientCapabilities::StepOut:
     case DebuggerClientCapabilities::StepInto:
     case DebuggerClientCapabilities::StepOver:
     case DebuggerClientCapabilities::Watches:
     case DebuggerClientCapabilities::VariableSetValue:
+    case DebuggerClientCapabilities::ProfilerOpen:
       return true;
 
     default:
@@ -260,7 +267,7 @@ void QuantaDebuggerDBGp::processCommand(const QString& datas)
 
     // Callback stack
     else if(command == "stack_get")
-      showStack(response);
+      stackShow(response);
 
     // Reply from a user execution action
     else if(command == "break" 
@@ -271,6 +278,7 @@ void QuantaDebuggerDBGp::processCommand(const QString& datas)
       // If this is the acknoledge of a step command, request the call stack 
       m_network.sendCommand("stack_get");
       setExecutionState(attribute(response, "status"));
+      m_network.sendCommand("feature_get", "-n profiler_filename");
       sendWatches();
     }
 
@@ -331,25 +339,61 @@ void QuantaDebuggerDBGp::initiateSession(const QDomNode& initpacket)
   }
 
   debuggerInterface()->setActiveLine(mapServerPathToLocal(attribute(initpacket, "fileuri")), 0);
+  
+  // Store some vars
+  m_initialscript = attribute(initpacket, "fileuri");
+  m_appid = attribute(initpacket, "appid");
+
 //   setExecutionState(Starting);
 //   m_network.sendCommand("feature_get", "-n encoding");
   m_network.sendCommand("feature_get", "-n supports_async");
+//   m_network.sendCommand("feature_get", "-n breakpoint_types");
+//   m_network.sendCommand("feature_get", "-n profiler_filename");
   m_network.sendCommand("feature_get", "-n breakpoint_set");
+  m_network.sendCommand("feature_get", "-n supports_postmortem");
   m_network.sendCommand("typemap_get");
   m_network.sendCommand("feature_get", "-n quanta_initialized");
 }
 
-void QuantaDebuggerDBGp::showStack(const QDomNode&node)
+void QuantaDebuggerDBGp::stackShow(const QDomNode&node)
 {
+  bool foundlowlevel = false;
+  BacktraceType type;
+  QString typestr;
+  
+  // Clear backtrace
+  debuggerInterface()->backtraceClear();
 
-//  node.elementsByTagName("stack");
+  // Add new one
   for(QDomNode child = node.firstChild(); !child.isNull(); child = child.nextSibling())
   {
-    if(attribute(child, "level") == "0")
+//     kdDebug(24002) << " * Stck " << attribute(child, "level") << ": " << attribute(child, "type") << " = " << attribute(child, "filename") << ", " << attribute(child, "lineno") << endl;
+
+    // Type is supposed to be a property, but isnt with xdebug
+    typestr = attribute(child, "type");
+    if(typestr.isEmpty())
+    {
+      if(typestr.find(QRegExp(".*%28.+%29%20%20eval")) >= 0)
+        type = Eval;
+      else
+        type = File;
+        
+    } else
+      type = (typestr == "file" ? File : Eval);
+        
+    // If this is the lowest level and the type 
+    if(type == File && !foundlowlevel)
     { 
-       kdDebug(24002) << " * Stck 0: " << attribute(child, "filename") << ", " << attribute(child, "lineno") << endl;
+      foundlowlevel = true;
       debuggerInterface()->setActiveLine(mapServerPathToLocal(attribute(child, "filename")), attribute(child, "lineno").toLong() -  1);
     }
+    
+    debuggerInterface()->backtraceShow(
+        attribute(child, "level").toLong(), 
+        type, 
+        attribute(child, "filename"), 
+        attribute(child, "line").toLong(), 
+        attribute(child, "where"));
   }
 }
 
@@ -366,8 +410,11 @@ void QuantaDebuggerDBGp::checkSupport( const QDomNode & node )
 
   // Our own feature, probably not available but then we know we're done initiating
   else if(feature == "quanta_initialized" )
+  {
+    m_network.sendCommand("stack_get");
     if(m_executionState != Break)
       setExecutionState(m_executionState, true);
+  }
 
 }
 
@@ -593,6 +640,20 @@ void QuantaDebuggerDBGp::readConfig(QDomNode node)
   valuenode = node.namedItem("errormask");
   m_errormask = valuenode.firstChild().nodeValue().toLong();
   kdDebug(24002) << k_funcinfo << ", m_errormask = " << m_errormask << endl;
+  
+  // Profiler
+  valuenode = node.namedItem("profilerfilename");
+  m_profilerFilename = valuenode.firstChild().nodeValue();
+  if(m_profilerFilename.isEmpty())
+    m_profilerFilename = "/tmp/cachegrind.out.%a";
+
+  valuenode = node.namedItem("profiler_autoopen");
+  m_profilerAutoOpen = valuenode.firstChild().nodeValue().toLong();
+
+  valuenode = node.namedItem("profiler_mapfilename");
+  m_profilerMapFilename = valuenode.firstChild().nodeValue().toLong();
+
+
 }
 
 
@@ -603,12 +664,11 @@ void QuantaDebuggerDBGp::showConfig(QDomNode node)
 
   readConfig(node);
 
-  set.lineServerHost->setText(m_serverHost);
-  set.lineServerPort->setText(m_serverPort);
+  if(m_localBasedir == "/" && m_serverBasedir == "/")
+    set.checkLocalProject->setChecked(true);
   set.lineLocalBasedir->setText(m_localBasedir);
   set.lineServerBasedir->setText(m_serverBasedir);
   set.lineServerListenPort->setText(m_listenPort);
-  set.checkUseProxy->setChecked(m_useproxy);
   set.lineStartSession->setText(m_startsession);
   if(m_defaultExecutionState == Starting)
     set.comboDefaultExecutionState->setCurrentItem(0);  
@@ -621,53 +681,49 @@ void QuantaDebuggerDBGp::showConfig(QDomNode node)
   set.checkBreakOnUserWarning->setChecked(QuantaDebuggerDBGp::User_Warning & m_errormask);
   set.checkBreakOnUserError->setChecked(QuantaDebuggerDBGp::User_Error & m_errormask);
 
+  set.lineProfilerFilename->setText(m_profilerFilename);
+  if(m_profilerAutoOpen)
+    set.checkProfilerAutoOpen->setChecked(true);
+  if(m_profilerMapFilename)
+    set.checkProfilerMapFilename->setChecked(true);
+  
   if(set.exec() == QDialog::Accepted )
   {
     QDomElement el;
 
-    el = node.namedItem("serverhost").toElement();
+    el = node.namedItem("localproject").toElement();
     if (!el.isNull())
       el.parentNode().removeChild(el);
-    el = node.ownerDocument().createElement("serverhost");
+    el = node.ownerDocument().createElement("localproject");
     node.appendChild( el );
-    m_serverHost = set.lineServerHost->text();
-    el.appendChild(node.ownerDocument().createTextNode(m_serverHost));
-
-    el = node.namedItem("serverport").toElement();
-    if (!el.isNull())
-      el.parentNode().removeChild(el);
-    el = node.ownerDocument().createElement("serverport");
-    node.appendChild( el );
-    m_serverPort = set.lineServerPort->text();
-    el.appendChild( node.ownerDocument().createTextNode(m_serverPort) );
+    if(set.checkLocalProject->isChecked())
+    {  
+      m_localBasedir = "/";
+      m_serverBasedir = "/";
+    }
+    else
+    {
+      m_localBasedir = set.lineLocalBasedir->text();
+      m_serverBasedir = set.lineServerBasedir->text();
+    }
 
     el = node.namedItem("localbasedir").toElement();
     if (!el.isNull())
       el.parentNode().removeChild(el);
     el = node.ownerDocument().createElement("localbasedir");
     node.appendChild( el );
-    m_localBasedir = set.lineLocalBasedir->text();
+    el.appendChild( node.ownerDocument().createTextNode(m_localBasedir) );
     if(debuggerInterface())
       debuggerInterface()->Mapper()->setLocalBasedir(m_localBasedir);
-    el.appendChild( node.ownerDocument().createTextNode(m_localBasedir) );
 
     el = node.namedItem("serverbasedir").toElement();
     if (!el.isNull())
       el.parentNode().removeChild(el);
     el = node.ownerDocument().createElement("serverbasedir");
     node.appendChild( el );
-    m_serverBasedir = set.lineServerBasedir->text();
     if(debuggerInterface())
       debuggerInterface()->Mapper()->setServerBasedir(m_serverBasedir);
     el.appendChild( node.ownerDocument().createTextNode(m_serverBasedir) );
-
-    el = node.namedItem("useproxy").toElement();
-    if (!el.isNull())
-      el.parentNode().removeChild(el);
-    el = node.ownerDocument().createElement("useproxy");
-    node.appendChild( el );
-    m_useproxy = set.checkUseProxy->isChecked();
-    el.appendChild( node.ownerDocument().createTextNode(m_useproxy ? "1" : "0") );
 
     el = node.namedItem("listenport").toElement();
     if (!el.isNull())
@@ -715,6 +771,30 @@ void QuantaDebuggerDBGp::showConfig(QDomNode node)
     kdDebug(24002) << k_funcinfo << ", m_errormask = " << m_errormask << endl;
     el.appendChild( node.ownerDocument().createTextNode(QString::number(m_errormask)));
 
+    // Profiler
+    el = node.namedItem("profilerfilename").toElement();
+    if (!el.isNull())
+      el.parentNode().removeChild(el);
+    el = node.ownerDocument().createElement("profilerfilename");
+    node.appendChild( el );
+    m_profilerFilename = set.lineProfilerFilename->text();
+    el.appendChild(node.ownerDocument().createTextNode(m_profilerFilename));
+
+    el = node.namedItem("profilerfilename_map").toElement();
+    if (!el.isNull())
+      el.parentNode().removeChild(el);
+    el = node.ownerDocument().createElement("profilerfilename_map");
+    node.appendChild( el );
+    m_profilerMapFilename = (set.checkProfilerMapFilename->isChecked() ? true : false);
+    el.appendChild(node.ownerDocument().createTextNode(m_profilerMapFilename ? "1" : "0"));
+
+    el = node.namedItem("profiler_autoopen").toElement();
+    if (!el.isNull())
+      el.parentNode().removeChild(el);
+    el = node.ownerDocument().createElement("profiler_autoopen");
+    node.appendChild( el );
+    m_profilerAutoOpen = (set.checkProfilerAutoOpen->isChecked() ? true : false);
+    el.appendChild(node.ownerDocument().createTextNode(m_profilerAutoOpen ? "1" : "0"));
   }
 }
 
@@ -741,6 +821,42 @@ void QuantaDebuggerDBGp::variableSetValue(const DebuggerVariable &)
  
 
  return;
+}
+
+void QuantaDebuggerDBGp::profilerOpen()
+{
+  profilerOpen(true);
+}
+
+void QuantaDebuggerDBGp::profilerOpen(bool forceopen)
+{
+  QString profileroutput = m_profilerFilename;
+  profileroutput.replace("%a", m_appid);
+  profileroutput.replace("%c", m_initialscript);
+
+  if(m_profilerMapFilename)
+    profileroutput = mapServerPathToLocal( profileroutput);
+ 
+  bool exists = QFile::exists(profileroutput);
+  if(m_profilerAutoOpen || forceopen)
+  {
+    if(exists)
+    {
+      KRun *run = new KRun(profileroutput);
+      run->setAutoDelete(true);
+    }
+    else
+    {
+      if(forceopen)
+        KMessageBox::sorry(NULL, i18n("Unable to open profiler output (%1)").arg(profileroutput), i18n("Profiler file error"));
+      else
+        debuggerInterface()->showStatus(i18n("Unable to open profiler output (%1)").arg(profileroutput), false);
+    }
+  }
+  else
+  {
+    debuggerInterface()->enableAction("debug_profiler_open", exists);
+  }
 }
 
 void QuantaDebuggerDBGp::typemapSetup( const QDomNode & typemapnode )

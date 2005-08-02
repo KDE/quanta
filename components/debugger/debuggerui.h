@@ -22,9 +22,11 @@
 #include <qobject.h>
 #include <qptrlist.h>
 #include <kmditoolviewaccessor.h>
+#include "backtracelistview.h"
 
 class VariablesListView;
 class DebuggerBreakpointView;
+class BacktraceListview;
 class DebuggerBreakpoint;
 class DebuggerVariable;
 class WHTMLPart;
@@ -64,12 +66,20 @@ class DebuggerUI : public QObject
     void showMenu();
     void hideMenu();
 
+    void backtraceClear();
+    void backtraceShow(long level, BacktraceType type, const QString &filename, long line, const QString& func);
+    
   private:
     VariablesListView* m_variablesListView;
     KMdiToolViewAccessor* m_variableListViewTVA;
     KMdiToolViewAccessor* m_previewTVA;
+    
     DebuggerBreakpointView* m_debuggerBreakpointView;
     KMdiToolViewAccessor* m_debuggerBreakpointViewTVA;
+    
+    BacktraceListview* m_backtraceListview;
+    KMdiToolViewAccessor* m_backtraceListviewTVA;
+
     int m_debuggerMenuID;
 
     WHTMLPart *m_preview;

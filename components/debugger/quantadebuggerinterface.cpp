@@ -163,4 +163,14 @@ void QuantaDebuggerInterface::updateBreakpointKey( const DebuggerBreakpoint & bp
   m_manager->updateBreakpointKey(bp, newkey);
 }
 
+void QuantaDebuggerInterface::backtraceClear( )
+{
+  m_manager->UI()->backtraceClear();
+}
+
+void QuantaDebuggerInterface::backtraceShow( long level, BacktraceType type, const QString & filename, long line, const QString & func )
+{
+  m_manager->UI()->backtraceShow(level, type, filename, line, func);
+}
+
 #include "quantadebuggerinterface.moc"

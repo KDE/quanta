@@ -24,6 +24,7 @@
 
 #include "debuggervariable.h"
 #include "debuggerbreakpoint.h"
+#include "backtracelistview.h"
 
 class PathMapper;
 
@@ -57,8 +58,12 @@ class DebuggerInterface : public QObject
     virtual DebuggerVariable* newDebuggerVariable(const QString& name, const QString& value, int type) = 0;
     virtual DebuggerVariable* newDebuggerVariable(const QString& name, const ValueList_t& values, int type) = 0;
     virtual void showVariable(DebuggerVariable*) = 0;
-//     virtual void parsePHPVariables(const QString &) = 0;
 
+    // Backtrace
+    virtual void backtraceClear() = 0;
+    virtual void backtraceShow(long level, BacktraceType type, const QString &filename, long line, const QString& func) = 0;
+
+    
     // Breakpoints
     virtual void showBreakpoint(const DebuggerBreakpoint &bp) = 0;
     virtual void refreshBreakpoints() = 0;

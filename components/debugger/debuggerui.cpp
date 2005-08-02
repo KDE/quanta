@@ -28,6 +28,7 @@
 
 #include "variableslistview.h"
 #include "debuggerbreakpointview.h"
+#include "backtracelistview.h"
 #include "debuggervariable.h"
 
 #include "quantacommon.h"
@@ -50,6 +51,12 @@ DebuggerUI::DebuggerUI(QObject *parent, const char *name)
   m_debuggerBreakpointView->setIcon(SmallIcon("debug_breakpoint"));
   m_debuggerBreakpointView->setCaption(i18n("Breakpoints"));
   m_debuggerBreakpointViewTVA = quantaApp->addToolWindow(m_debuggerBreakpointView, quantaApp->prevDockPosition(m_debuggerBreakpointView, KDockWidget::DockBottom), quantaApp->getMainDockWidget());
+
+  // Backtrace
+  m_backtraceListview = new BacktraceListview(quantaApp->getMainDockWidget(), "debuggerBacktrace");
+  m_backtraceListview->setIcon(SmallIcon("player_playlist"));
+  m_backtraceListview->setCaption(i18n("Backtrace"));
+  m_backtraceListviewTVA = quantaApp->addToolWindow(m_backtraceListview, quantaApp->prevDockPosition(m_backtraceListview, KDockWidget::DockBottom), quantaApp->getMainDockWidget());
 
   // Debug HTML preview
   m_preview = new WHTMLPart(quantaApp, "debug_output");
@@ -78,8 +85,14 @@ DebuggerUI::~DebuggerUI()
 
   // Remove breakpointlist
   quantaApp->deleteToolWindow(m_debuggerBreakpointViewTVA);
-  quantaApp->deleteToolWindow(m_previewTVA);
   m_debuggerBreakpointViewTVA = 0L;
+
+  // Remove backtrace
+  quantaApp->deleteToolWindow(m_backtraceListviewTVA);
+  m_backtraceListviewTVA = 0L;
+
+  // Remove output
+  quantaApp->deleteToolWindow(m_previewTVA);
   m_previewTVA = 0L;
 }
 
@@ -179,6 +192,18 @@ void DebuggerUI::slotStatus( DebuggerStatus status )
     default:
       quantaApp->statusBar()->changeItem("", IDS_STATUS_DEBUGGER);
   }
+}
+
+void DebuggerUI::backtraceClear( )
+{
+  if(m_backtraceListview)
+    m_backtraceListview->clear();
+}
+
+void DebuggerUI::backtraceShow( long level, BacktraceType type, const QString & filename, long line, const QString & func )
+{
+  if(m_backtraceListview)
+    m_backtraceListview->backtraceShow(level, type, filename, line, func);
 }
 
 /*void DebuggerUI::preWatchUpdate()

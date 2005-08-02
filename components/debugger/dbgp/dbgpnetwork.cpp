@@ -115,7 +115,7 @@ void DBGpNetwork::slotError(int)
   {
     if(m_socket->error() == KNetwork::KSocketBase::RemotelyDisconnected)
     {
-      slotConnectionClosed();
+//       slotConnectionClosed();
 //       emit networkError(i18n("Disconnected from remote host"), true);
       return;
     }

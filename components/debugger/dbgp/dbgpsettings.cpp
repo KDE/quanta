@@ -16,6 +16,7 @@
 
 
 #include "qlineedit.h"
+#include "qcheckbox.h"
 #include "dbgpsettings.h"
 #include <ktextbrowser.h>
 
@@ -23,18 +24,20 @@ DBGpSettings::DBGpSettings(const QString &protocolversion)
     : DBGpSettingsS(0, "DBGpSettings", false, 0)
 {
   textAbout->setText(textAbout->text().replace("%PROTOCOLVERSION%", protocolversion));
+  connect(checkLocalProject, SIGNAL(toggled(bool)), this, SLOT(slotLocalProjectToggle(bool)));
 }
 
 DBGpSettings::~DBGpSettings()
 {
 }
 
-void DBGpSettings::slotUseProxyToggle( bool useproxy)
+void DBGpSettings::slotLocalProjectToggle( bool localproject)
 {
-  lineServerHost->setEnabled(useproxy);
-  lineServerPort->setEnabled(useproxy);
-  //lineServerListenPort->setEnabled(!useproxy);
+  lineServerBasedir->setEnabled(!localproject);
+  lineLocalBasedir->setEnabled(!localproject);
 }
+
+
 
 
 #include "dbgpsettings.moc"

@@ -63,6 +63,10 @@ class QuantaDebuggerInterface : public DebuggerInterface
     DebuggerBreakpoint * findDebuggerBreakpoint(const QString& key);
     void updateBreakpointKey(const DebuggerBreakpoint &bp, const QString& newkey);
 
+    // Backtrace
+    void backtraceClear();
+    void backtraceShow(long level, BacktraceType type, const QString &filename, long line, const QString& func);
+
     // Path mapping
     PathMapper* Mapper();
 };

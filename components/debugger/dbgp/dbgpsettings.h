@@ -1,8 +1,8 @@
 /***************************************************************************
                                dbgpsettings.h
                              -------------------
-    begin                : 2004-04-05
-    copyright            : (C) 2004 Linus McCabe <linus@mccabe.nu>
+    begin                : 2005-08-01
+    copyright            : (C) 2005 Linus McCabe <linus@mccabe.nu>
  ***************************************************************************/
 
 /****************************************************************************
@@ -23,13 +23,12 @@ class DBGpSettings : public DBGpSettingsS
 {
     Q_OBJECT
 
-  public slots:
-    virtual void slotUseProxyToggle( bool useproxy);
-
   public:
     DBGpSettings(const QString &protocolversion);
     ~DBGpSettings();
 
+  public slots:
+    virtual void slotLocalProjectToggle(bool localproject);
 };
 
 #endif
