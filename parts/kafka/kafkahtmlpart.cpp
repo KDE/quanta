@@ -85,7 +85,7 @@ public:
 
 KafkaWidget::KafkaWidget(QWidget *parent, QWidget *widgetParent, KafkaDocument *part,
                          const char *name)
-        : KHTMLPart(new KHTMLView(this, widgetParent, name), parent, name),
+        : KHTMLPart(widgetParent, name, parent, name),
         w(part)
 {
     m_contextPopupMenu = new QPopupMenu();
