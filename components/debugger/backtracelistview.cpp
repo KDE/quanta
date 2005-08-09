@@ -52,15 +52,15 @@ BacktraceListviewItem::BacktraceListviewItem(BacktraceListview* view)
 BacktraceListview::BacktraceListview(QWidget *parent, const char *name)
   : KListView(parent, name)
 {
-  // If you change here, change the BacktraceListviewColumns enums above
-  addColumn("#");
-  addColumn(i18n("Type"));
-  addColumn(i18n("File"));
-  addColumn(i18n("Line"));
-  addColumn(i18n("Function"));
+  int charwidth = this->fontMetrics().width("0");
+  // If you change the order here, change the BacktraceListviewColumns enums above
+  addColumn("#", charwidth * 3);
+  addColumn(i18n("Type"), charwidth * 10);
+  addColumn(i18n("File"), charwidth * 60);
+  addColumn(i18n("Line"), charwidth * 6);
+  addColumn(i18n("Function"), charwidth * 30);
 
   setSorting(BacktraceListviewColumns::Level);  // Sort on the level column
-  setResizeMode(QListView::AllColumns);
   setAllColumnsShowFocus(true);
 
   // Jump to bt
@@ -73,15 +73,20 @@ BacktraceListview::~BacktraceListview()
 
 void BacktraceListview::backtraceShow(int level, BacktraceType type, const QString& filename, long line, const QString& func)
 {
-  BacktraceListviewItem item(this);
-  item.setLevel(level);
-  item.setType(type);
-  item.setFilename(filename);
-  item.setLine(line);
-  item.setFunc(func);
+  BacktraceListviewItem* item = new BacktraceListviewItem(this);
+  item->setLevel(level);
+  item->setType(type);
+  item->setFilename(filename);
+  item->setLine(line);
+  item->setFunc(func);
   
-  item.setText(BacktraceListviewColumns::File, filename);
-  item.setText(BacktraceListviewColumns::Level, "level");
+  item->setText(BacktraceListviewColumns::File, filename);
+  item->setText(BacktraceListviewColumns::Function, func);
+  item->setText(BacktraceListviewColumns::Level, QString::number(level));
+  item->setText(BacktraceListviewColumns::Line, QString::number(line + 1));
+  item->setText(BacktraceListviewColumns::Type, type == File ? i18n("File") : i18n("Eval"));
+  
+  insertItem(item);
 }
 
 void BacktraceListview::keyPressEvent(QKeyEvent *e)

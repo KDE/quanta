@@ -367,20 +367,17 @@ void QuantaDebuggerDBGp::stackShow(const QDomNode&node)
   // Add new one
   for(QDomNode child = node.firstChild(); !child.isNull(); child = child.nextSibling())
   {
-//     kdDebug(24002) << " * Stck " << attribute(child, "level") << ": " << attribute(child, "type") << " = " << attribute(child, "filename") << ", " << attribute(child, "lineno") << endl;
+    // Type isnt currently correct with xdebug
+//     type = (attribute(child, "type") == "file" ? File : Eval);
+    typestr = attribute(child, "filename");
+    if(typestr.find(QRegExp(".*%28[0-9]+%29%20%3A%20eval")) >= 0)
+      type = Eval;
+    else
+      type = File;
 
-    // Type is supposed to be a property, but isnt with xdebug
-    typestr = attribute(child, "type");
-    if(typestr.isEmpty())
-    {
-      if(typestr.find(QRegExp(".*%28.+%29%20%20eval")) >= 0)
-        type = Eval;
-      else
-        type = File;
-        
-    } else
-      type = (typestr == "file" ? File : Eval);
-        
+//     kdDebug(24002) << " * Stck " << attribute(child, "level") << ": " << attribute(child, "type") << " (" << type << ") = " << attribute(child, "filename") << ", " << attribute(child, "lineno") << endl;
+
+    
     // If this is the lowest level and the type 
     if(type == File && !foundlowlevel)
     { 
@@ -392,7 +389,7 @@ void QuantaDebuggerDBGp::stackShow(const QDomNode&node)
         attribute(child, "level").toLong(), 
         type, 
         attribute(child, "filename"), 
-        attribute(child, "line").toLong(), 
+        attribute(child, "lineno").toLong() - 1, // Quanta lines are 0-based, DBGp is 1 based
         attribute(child, "where"));
   }
 }
@@ -872,16 +869,16 @@ void QuantaDebuggerDBGp::typemapSetup( const QDomNode & typemapnode )
     <map name="resource" type="resource"></map>
   */
 
-  // First defaults in case they are not sent (which seems to be the case with hash and xdebug)
-  m_variabletypes["bool"] = "bool"; 
-  m_variabletypes["int"] = "int"; 
-  m_variabletypes["float"] = "float"; 
-  m_variabletypes["string"] = "string"; 
-  m_variabletypes["null"] = "null"; 
-  m_variabletypes["array"] = "hash"; 
-  m_variabletypes["hash"] = "hash"; 
-  m_variabletypes["object"] = "object"; 
-  m_variabletypes["resource"] = "resource"; 
+//   // First defaults in case they are not sent (which seems to be the case with hash and xdebug)
+//   m_variabletypes["bool"] = "bool"; 
+//   m_variabletypes["int"] = "int"; 
+//   m_variabletypes["float"] = "float"; 
+//   m_variabletypes["string"] = "string"; 
+//   m_variabletypes["null"] = "null"; 
+//   m_variabletypes["array"] = "hash"; 
+//   m_variabletypes["hash"] = "hash"; 
+//   m_variabletypes["object"] = "object"; 
+//   m_variabletypes["resource"] = "resource"; 
 
   QDomNode child = typemapnode.firstChild();
   while(!child.isNull())
