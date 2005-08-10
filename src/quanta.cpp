@@ -5326,9 +5326,5 @@ void QuantaApp::slotAnnotate()
   }
 }
 
-void QuantaApp::slotNewProjectLoaded(const QString &, const KURL &, const KURL &)
-{
-  m_annotationOutput->readAnnotations();
-}
 
 #include "quanta.moc"

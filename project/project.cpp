@@ -93,6 +93,17 @@ QStringList Project::fileNameList()
   return list;
 }
 
+KURL::List Project::files()
+{
+  KURL::List list;
+  ProjectList::Iterator  it( d->m_projectFiles );
+  for ( ; it.current(); ++it) {
+    if (!it.current()->fileName(false).isEmpty())
+      list.append((*it.current()));
+  }
+  return list;
+}
+
 void Project::insertFile(const KURL& nameURL, bool repaint )
 {
   if (d->excludeRx.exactMatch(nameURL.path()))
@@ -229,6 +240,7 @@ void Project::loadLastProject(bool reload)
 
 void Project::slotOpenProject(const KURL &url)
 {
+    kdDebug(24000) << "Open recent project: " << url <<endl;
   if ( !url.isEmpty() )
   {
     if ( !QExtFileInfo::exists(url) )

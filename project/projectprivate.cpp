@@ -1302,6 +1302,7 @@ void ProjectPrivate::loadProjectFromTemp(const KURL &url, const QString &tempFil
     loadProjectXML();
     openCurrentView();
 #if KDE_IS_VERSION(3,4,89)
+    kdDebug(24000) << "Add recent project: " << url << " : projectName= " << projectName << endl;
     m_projectRecent->addURL(url, projectName);
 #else
     m_projectRecent->addURL( url );

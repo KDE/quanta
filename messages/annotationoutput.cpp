@@ -12,9 +12,12 @@
 
 #include <qdict.h>
 #include <qdom.h>
+#include <qfile.h>
 #include <qheader.h>
 #include <qmap.h>
+#include <qregexp.h>
 #include <qstringlist.h>
+#include <qtimer.h>
 
 #include <kdebug.h>
 #include <kio/netaccess.h>
@@ -25,8 +28,10 @@
 #include "annotationoutput.h"
 #include "messageoutput.h"
 #include "project.h"
+#include "projectlist.h"
 #include "qextfileinfo.h"
 #include "quantacommon.h"
+#include "viewmanager.h"
 
 AnnotationOutput::AnnotationOutput(QWidget *parent, const char *name)
  : KTabWidget(parent, name)
@@ -40,9 +45,12 @@ AnnotationOutput::AnnotationOutput(QWidget *parent, const char *name)
   m_allAnnotations->header()->hide();
   m_allAnnotations->setSorting(1);
   m_allAnnotations->setLineWidth(2);
- connect(m_allAnnotations, SIGNAL(executed(QListViewItem*)), SLOT(itemExecuted(QListViewItem *)));
+  connect(m_allAnnotations, SIGNAL(executed(QListViewItem*)), SLOT(itemExecuted(QListViewItem *)));
  addTab(m_allAnnotations, i18n("All Files"));
- connect(this, SIGNAL(currentChanged(QWidget*)), SLOT(tabChanged(QWidget*)));
+  connect(this, SIGNAL(currentChanged(QWidget*)), SLOT(tabChanged(QWidget*)));
+
+  m_updateTimer = new QTimer(this);
+  connect(m_updateTimer, SIGNAL(timeout()), this, SLOT(slotUpdateNextFile()));
 }
 
 AnnotationOutput::~AnnotationOutput()
@@ -150,7 +158,7 @@ void AnnotationOutput::writeAnnotations(const QString &fileName, const QMap<uint
   }
   for (QMap<uint, QString>::ConstIterator it = annotations.constBegin(); it != annotations.constEnd(); ++it)
   {
-    QDomElement el = dom->createElement("item");
+    QDomElement el = dom->createElement("annotation");
     el.setAttribute("url", fileName);
     el.setAttribute("line", it.key());
     el.setAttribute("text", it.data());
@@ -170,6 +178,63 @@ void AnnotationOutput::itemExecuted(QListViewItem *item)
     emit clicked(m_fileNames[item], m_lines[item], 0);
   } else
     emit clicked(m_fileNames[item], 0, 0);
+}
+
+void AnnotationOutput::updateAnnotations()
+{
+  m_updateTimer->stop();
+  m_allAnnotations->clear();
+  m_currentFileAnnotations->clear();
+  readAnnotations();
+  if (Project::ref()->hasProject() && Project::ref()->projectBaseURL().isLocalFile())
+  {
+    m_files = Project::ref()->files();
+    m_fileIndex = 0;
+    m_updateTimer->start(0, true);
+  }
+}
+
+void AnnotationOutput::updateAnnotationForFile(const KURL& url)
+{
+  static const QRegExp rx("-->|\\*/");
+  if (!ViewManager::ref()->isOpened(url) && QuantaCommon::checkMimeGroup(url, "text" ))
+  {    
+ //   kdDebug(24000) << "Testing " << url << endl;
+    QFile f(url.path());
+    if (f.open(IO_ReadOnly))
+    {
+      QMap<uint, QString> annotations;
+      uint i = 0;
+      QString line;
+      while (!f.atEnd())
+      {
+        f.readLine(line, 2000);
+        int pos = line.find("@annotation:");
+        if (pos != -1)
+        {
+          int pos2 = line.find(rx);
+          annotations.insert(i, line.mid(pos + 12, pos2 - pos - 12).stripWhiteSpace());
+        }
+        ++i;
+      }
+      f.close();
+      if (!annotations.isEmpty())
+      {
+        KURL u = QExtFileInfo::toRelative(url, Project::ref()->projectBaseURL());
+        writeAnnotations(QuantaCommon::qUrl(u), annotations);
+      }
+    }
+  }
+}
+
+void AnnotationOutput::slotUpdateNextFile()
+{
+  updateAnnotationForFile(m_files[m_fileIndex]);
+  if (m_fileIndex < m_files.count())
+  {
+    m_fileIndex++;
+    m_updateTimer->start(0, true);
+  }
 }
 
 #include "annotationoutput.moc"

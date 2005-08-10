@@ -71,6 +71,7 @@ public:
   bool hasProject();
 
   QStringList fileNameList();
+  KURL::List files();
 
   void insertFile( const KURL& nameURL, bool repaint );
   void readConfig(KConfig *);

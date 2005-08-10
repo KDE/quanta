@@ -512,7 +512,6 @@ protected slots:
   void slotTabMoved(int from, int to);
   void slotTabAboutToMove(int from, int to);
   void slotAnnotate();
-  void slotNewProjectLoaded(const QString &projectName, const KURL &baseURL, const KURL &templateURL);
 
 protected:
   /** Create a DTEP tarball which can be uploaded or sent in email. Returns
