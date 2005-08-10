@@ -5,6 +5,7 @@ Name=DBGp
 Comment=DBGp debugger plugin, see http://xdebug.org
 Comment[es]=Extensión para el depurador DBGp, vea http://xdebug.org
 Comment[et]=DBGp siluri plugin, vaata http://xdebug.org
+Comment[fr]=Module de débogage DBGp, consultez http://xdebug.org
 Icon=kdbg
 ServiceTypes=Quanta/Debugger
 X-KDE-Library=quantadebuggerdbgp
