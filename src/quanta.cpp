@@ -253,6 +253,8 @@ QuantaApp::QuantaApp(int mdiMode) : DCOPObject("WindowManagerIf"), KMdiMainFrm( 
   m_newDocStuff = 0L;
   m_debugger = 0L;
   m_parserEnabled = true;
+  cursorLine = 0;
+  cursorCol = 0;
   emit eventHappened("quanta_start", QDateTime::currentDateTime().toString(Qt::ISODate), QString::null);
 }
 
