@@ -30,7 +30,6 @@ Comment[sv]=Quanta-insticksprogram för felsökning som fungerar med PHP-felsök
 Comment[ta]=குவாண்டா வழுநீக்கி உள்ளீடு குபெட்PHP வழுநீக்கியோடு தொடர்புக் கொண்டிருக்கிறது, பார்க்கவும் http://gubed.sf.net
 Comment[tg]=Модули ғалатёби Quanta барои алоқаи аз Gubed, ғалатёби PHP, нишон кунед http://gubed.sf.net
 Comment[tr]=Gubed PHP hata ayıklayıcısıyla iletişim kurmayı sağlayan Quanta hata ayıklama eklentisi, http://gubed.sf.net adresini ziyaret edin
-Comment[uk]=Втулок зневадження Quanta для зв'язку зі зневаджувачем PHP -- Gubed, див. http://gubed.sf.net
 Comment[xx]=xxQuanta debugger plugin to interact with the Gubed PHP debugger, see http://gubed.sf.netxx
 Comment[zh_CN]=与 Gubed PHP 调试器交互 Quanta 调试器插件，见 http://gubed.sf.net
 Icon=kdbg
