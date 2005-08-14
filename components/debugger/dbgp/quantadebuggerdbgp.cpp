@@ -845,7 +845,7 @@ void QuantaDebuggerDBGp::profilerOpen(bool forceopen)
     else
     {
       if(forceopen)
-        KMessageBox::sorry(NULL, i18n("Unable to open profiler output (%1)").arg(profileroutput), i18n("Profiler file error"));
+        KMessageBox::sorry(NULL, i18n("Unable to open profiler output (%1)").arg(profileroutput), i18n("Profiler File Error"));
       else
         debuggerInterface()->showStatus(i18n("Unable to open profiler output (%1)").arg(profileroutput), false);
     }

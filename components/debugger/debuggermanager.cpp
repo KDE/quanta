@@ -207,7 +207,7 @@ void DebuggerManager::initActions()
   newaction = new KAction(i18n("Set Value of Variable"), SmallIcon("edit"), 0, this, SLOT(slotVariableSet()), ac, "debug_variable_setdialog");
   newaction->setToolTip(i18n("Changes the value of a variable"));
 
-  newaction = new KAction(i18n("Open profiler output"), SmallIcon("launch"), 0, this, SLOT(slotProfilerOpen()), ac, "debug_profiler_open");
+  newaction = new KAction(i18n("Open Profiler Output"), SmallIcon("launch"), 0, this, SLOT(slotProfilerOpen()), ac, "debug_profiler_open");
   newaction->setToolTip(i18n("Opens the profiler output file"));
 
   enableAction("*", false);

@@ -325,7 +325,7 @@
                                     </sizepolicy>
                                 </property>
                                 <property name="text">
-                                    <string>Local project::</string>
+                                    <string>Local project:</string>
                                 </property>
                             </widget>
                         </grid>

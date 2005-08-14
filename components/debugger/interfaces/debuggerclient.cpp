@@ -103,7 +103,7 @@ void DebuggerClient::kill()
 // Unimplemented defaults
 void DebuggerClient::profilerOpen( )
 {
-  unSupportedAction(i18n("Open Profiler output"));
+  unSupportedAction(i18n("Open Profiler Output"));
 }
 
 // Unimplemented defaults
