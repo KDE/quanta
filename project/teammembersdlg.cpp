@@ -62,7 +62,7 @@ void TeamMembersDlg::slotAddMember()
            KMessageBox::error(this, i18n("The member name cannot be empty."));
            addDlg.show();
         } else
-        if (!checkDuplicates(role, task, subProject))
+        if (!checkDuplicates(name, role, task, subProject))
         {
           addDlg.show();
         } else
@@ -124,7 +124,7 @@ void TeamMembersDlg::slotEditMember()
            KMessageBox::error(this, i18n("The member name cannot be empty."));
            editDlg.show();
         } else
-        if (!checkDuplicates(role, task, subProject))
+        if (!checkDuplicates(name, role, task, subProject))
         {
           editDlg.show();
         } else
@@ -151,7 +151,7 @@ void TeamMembersDlg::slotDeleteMember()
    }
 }
 
-bool TeamMembersDlg::checkDuplicates(const QString &role, const QString &task, const QString &subProject)
+bool TeamMembersDlg::checkDuplicates(const QString &name, const QString &role, const QString &task, const QString &subProject)
 {
     if (role == i18n(simpleMemberStr.utf8()))
       return true;
@@ -160,7 +160,7 @@ bool TeamMembersDlg::checkDuplicates(const QString &role, const QString &task, c
     while ( it.current() )
     {
         s = it.current()->text(2);
-        if  (s == role &&
+        if  (s == role && it.current()->text(0) != name &&
              (role == i18n(teamLeaderStr.utf8()) ||
               (role == i18n(taskLeaderStr.utf8()) && it.current()->text(3) == task) ||
               (role == i18n(subprojectLeaderStr.utf8()) && it.current()->text(4) == subProject)
