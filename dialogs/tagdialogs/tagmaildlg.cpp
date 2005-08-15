@@ -95,6 +95,7 @@ void TagMailDlg::slotSelectAddress()
  if ( result.count() > 0 )
  {
    ListDlg listDlg(result);
+   listDlg.setCaption(i18n("Select Address"));
    if (!listDlg.exec()) return;
    emailString = listDlg.getEntry();
    lineEmail->setText(emailString);

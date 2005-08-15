@@ -1,5 +1,6 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>MemberEditDlgS</class>
+<author>(C) 2005 Andras Mantia &lt;amantia@kde.org&gt;</author>
 <widget class="QWidget">
     <property name="name">
         <cstring>MemberEditDlgS</cstring>
@@ -11,6 +12,9 @@
             <width>530</width>
             <height>187</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>MemberEditDlgS</string>
     </property>
     <grid>
         <property name="name">
@@ -40,7 +44,7 @@
                         <cstring>textLabel6</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Subproject:</string>
+                        <string>Subpro&amp;ject:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>subprojectCombo</cstring>
@@ -51,7 +55,7 @@
                         <cstring>textLabel5</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Task:</string>
+                        <string>Tas&amp;k:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>taskEdit</cstring>
@@ -81,17 +85,17 @@
                 </widget>
             </grid>
         </widget>
-        <widget class="KLineEdit" row="1" column="1" rowspan="1" colspan="2">
+        <widget class="KLineEdit" row="1" column="1" rowspan="1" colspan="3">
             <property name="name">
                 <cstring>emailEdit</cstring>
             </property>
         </widget>
-        <widget class="KComboBox" row="2" column="1" rowspan="1" colspan="2">
+        <widget class="KComboBox" row="2" column="1" rowspan="1" colspan="3">
             <property name="name">
                 <cstring>roleCombo</cstring>
             </property>
         </widget>
-        <widget class="KLineEdit" row="3" column="1" rowspan="1" colspan="2">
+        <widget class="KLineEdit" row="3" column="1" rowspan="1" colspan="3">
             <property name="name">
                 <cstring>taskEdit</cstring>
             </property>
@@ -109,7 +113,7 @@
                 </sizepolicy>
             </property>
         </widget>
-        <widget class="KPushButton" row="4" column="2">
+        <widget class="KPushButton" row="4" column="2" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>editSubprojectsButton</cstring>
             </property>
@@ -123,6 +127,14 @@
             </property>
             <property name="editable">
                 <bool>true</bool>
+            </property>
+        </widget>
+        <widget class="KPushButton" row="0" column="3">
+            <property name="name">
+                <cstring>selectButton</cstring>
+            </property>
+            <property name="text">
+                <string>...</string>
             </property>
         </widget>
     </grid>
@@ -146,9 +158,16 @@
         <receiver>MemberEditDlgS</receiver>
         <slot>slotMemberSelected()</slot>
     </connection>
+    <connection>
+        <sender>selectButton</sender>
+        <signal>clicked()</signal>
+        <receiver>MemberEditDlgS</receiver>
+        <slot>slotSelectFromAddrBook()</slot>
+    </connection>
 </connections>
 <tabstops>
     <tabstop>nameCombo</tabstop>
+    <tabstop>selectButton</tabstop>
     <tabstop>emailEdit</tabstop>
     <tabstop>roleCombo</tabstop>
     <tabstop>taskEdit</tabstop>
@@ -159,6 +178,7 @@
     <slot>slotRoleSelected(const QString&amp; roleName)</slot>
     <slot>slotEditSubprojects()</slot>
     <slot>slotMemberSelected()</slot>
+    <slot>slotSelectFromAddrBook()</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

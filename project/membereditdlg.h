@@ -34,6 +34,7 @@ public slots:
     void slotRoleSelected(const QString& roleName);
     void slotEditSubprojects();
     void slotMemberSelected();
+    void slotSelectFromAddrBook();
 };
 
 #endif

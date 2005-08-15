@@ -22,9 +22,12 @@
 #include <kinputdialog.h>
 #include <klineedit.h>
 #include <klocale.h>
+#include <kmessagebox.h>
 #include <kpushbutton.h>
+#include <kabc/stdaddressbook.h>
 
 //app includes
+#include "listdlg.h"
 #include "membereditdlg.h"
 #include "subprojecteditdlgs.h"
 #include "project.h"
@@ -56,6 +59,7 @@ MemberEditDlg::MemberEditDlg(QWidget *parent, const char *name)
   roleCombo->insertItem(i18n(subprojectLeaderStr.utf8()));
   roleCombo->insertItem(i18n(taskLeaderStr.utf8()));
   roleCombo->insertItem(i18n(simpleMemberStr.utf8()));
+  roleCombo->setCurrentItem(3);
 }
 
 
@@ -140,6 +144,37 @@ void MemberEditDlg::selectMember(const QString &name)
      nameCombo->insertItem(name, 1);
      nameCombo->setCurrentItem(1);
   }
+}
+
+void MemberEditDlg::slotSelectFromAddrBook()
+{
+  QMap<QString, QString> uidMap;
+  QString name;
+  QStringList result;
+  KABC::AddressBook *addressBook = KABC::StdAddressBook::self();
+  KABC::AddressBook::ConstIterator it;
+  KABC::AddressBook::ConstIterator end = addressBook->end();
+  for( it = addressBook->begin(); it != end; ++it )
+  {
+    result.append((*it).assembledName());
+    uidMap.insert((*it).assembledName(), (*it).uid());
+  }
+ result.sort();
+
+ if ( result.count() > 0 )
+ {
+   ListDlg listDlg(result);
+   listDlg.setCaption(i18n("Select Member"));
+   if (!listDlg.exec()) return;
+   name = listDlg.getEntry();
+   KABC::Addressee entry = addressBook->findByUid(uidMap[name]);
+   nameCombo->insertItem(name, 1);
+   nameCombo->setCurrentItem(1);
+   emailEdit->setText(entry.emails()[0]);
+ } else
+ {
+   KMessageBox::error(this,i18n("No entries found in the addressbook."));
+ }
 }
 
 #include "membereditdlg.moc"
