@@ -171,6 +171,7 @@ void MemberEditDlg::slotSelectFromAddrBook()
    nameCombo->insertItem(name, 1);
    nameCombo->setCurrentItem(1);
    emailEdit->setText(entry.emails()[0]);
+   nicknameEdit->setText(entry.nickName());
  } else
  {
    KMessageBox::error(this,i18n("No entries found in the addressbook."));

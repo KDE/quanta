@@ -566,23 +566,23 @@ void Project::slotOptions()
   if (!teamLeader().name.isEmpty())
   {
     TeamMember member = teamLeader();
-    item = new QListViewItem(membersPage.membersListView, member.name, member.email, i18n("Team Leader"), member.task);
+    item = new QListViewItem(membersPage.membersListView, member.name, member.nickName, member.email, i18n("Team Leader"), member.task);
     membersPage.membersListView->insertItem(item);
   }
   for (QMap<QString, TeamMember>::ConstIterator it = d->m_subprojectLeaders.constBegin(); it != d->m_subprojectLeaders.constEnd(); ++it)
   {
     TeamMember member = it.data();
-    item = new QListViewItem(membersPage.membersListView, member.name, member.email, i18n("Subproject Leader"), member.task, it.key());
+    item = new QListViewItem(membersPage.membersListView, member.name, member.nickName, member.email, i18n("Subproject Leader"), member.task, it.key());
   }
   for (QMap<QString, TeamMember>::ConstIterator it = d->m_taskLeaders.constBegin(); it != d->m_taskLeaders.constEnd(); ++it)
   {
     TeamMember member = it.data();
-    item = new QListViewItem(membersPage.membersListView, member.name, member.email, i18n("Task Leader"), it.key());
+    item = new QListViewItem(membersPage.membersListView, member.name, member.nickName, member.email, i18n("Task Leader"), it.key());
   }
   for (QValueList<TeamMember>::ConstIterator it = d->m_simpleMembers.constBegin(); it != d->m_simpleMembers.constEnd(); ++it)
   {
     TeamMember member = *it;
-    item = new QListViewItem(membersPage.membersListView, member.name, member.email, i18n("Simple Member"), member.task);
+    item = new QListViewItem(membersPage.membersListView, member.name, member.nickName, member.email, i18n("Simple Member"), member.task);
   }
   membersPage.mailingListEdit->setText(d->m_mailingList);
   membersPage.setYourself(d->m_yourself);

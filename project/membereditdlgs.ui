@@ -9,8 +9,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>530</width>
-            <height>187</height>
+            <width>553</width>
+            <height>236</height>
         </rect>
     </property>
     <property name="caption">
@@ -20,107 +20,6 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QLayoutWidget" row="0" column="0" rowspan="5" colspan="1">
-            <property name="name">
-                <cstring>layout1</cstring>
-            </property>
-            <grid>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="QLabel" row="0" column="0">
-                    <property name="name">
-                        <cstring>textLabel2</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Name:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>nameCombo</cstring>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="4" column="0">
-                    <property name="name">
-                        <cstring>textLabel6</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Subpro&amp;ject:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>subprojectCombo</cstring>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="3" column="0">
-                    <property name="name">
-                        <cstring>textLabel5</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Tas&amp;k:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>taskEdit</cstring>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="2" column="0">
-                    <property name="name">
-                        <cstring>textLabel4</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Role:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>roleCombo</cstring>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="1" column="0">
-                    <property name="name">
-                        <cstring>textLabel3</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Email:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>emailEdit</cstring>
-                    </property>
-                </widget>
-            </grid>
-        </widget>
-        <widget class="KLineEdit" row="1" column="1" rowspan="1" colspan="3">
-            <property name="name">
-                <cstring>emailEdit</cstring>
-            </property>
-        </widget>
-        <widget class="KComboBox" row="2" column="1" rowspan="1" colspan="3">
-            <property name="name">
-                <cstring>roleCombo</cstring>
-            </property>
-        </widget>
-        <widget class="KLineEdit" row="3" column="1" rowspan="1" colspan="3">
-            <property name="name">
-                <cstring>taskEdit</cstring>
-            </property>
-        </widget>
-        <widget class="KComboBox" row="4" column="1">
-            <property name="name">
-                <cstring>subprojectCombo</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>3</hsizetype>
-                    <vsizetype>0</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-        </widget>
-        <widget class="KPushButton" row="4" column="2" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>editSubprojectsButton</cstring>
-            </property>
-            <property name="text">
-                <string>E&amp;dit Subprojects</string>
-            </property>
-        </widget>
         <widget class="KComboBox" row="0" column="1" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>nameCombo</cstring>
@@ -135,6 +34,110 @@
             </property>
             <property name="text">
                 <string>...</string>
+            </property>
+        </widget>
+        <widget class="QLabel" row="0" column="0">
+            <property name="name">
+                <cstring>textLabel2</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Name:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>nameCombo</cstring>
+            </property>
+        </widget>
+        <widget class="KPushButton" row="5" column="2" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>editSubprojectsButton</cstring>
+            </property>
+            <property name="text">
+                <string>E&amp;dit Subprojects</string>
+            </property>
+        </widget>
+        <widget class="KComboBox" row="3" column="1" rowspan="1" colspan="3">
+            <property name="name">
+                <cstring>roleCombo</cstring>
+            </property>
+        </widget>
+        <widget class="KLineEdit" row="4" column="1" rowspan="1" colspan="3">
+            <property name="name">
+                <cstring>taskEdit</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="4" column="0">
+            <property name="name">
+                <cstring>textLabel5</cstring>
+            </property>
+            <property name="text">
+                <string>Tas&amp;k:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>taskEdit</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="5" column="0">
+            <property name="name">
+                <cstring>textLabel6</cstring>
+            </property>
+            <property name="text">
+                <string>Subpro&amp;ject:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>subprojectCombo</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="3" column="0">
+            <property name="name">
+                <cstring>textLabel4</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Role:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>roleCombo</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="2" column="0">
+            <property name="name">
+                <cstring>textLabel3</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Email:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>emailEdit</cstring>
+            </property>
+        </widget>
+        <widget class="KComboBox" row="5" column="1">
+            <property name="name">
+                <cstring>subprojectCombo</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>3</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+        </widget>
+        <widget class="QLabel" row="1" column="0">
+            <property name="name">
+                <cstring>textLabel3_2</cstring>
+            </property>
+            <property name="text">
+                <string>Nickname:</string>
+            </property>
+        </widget>
+        <widget class="KLineEdit" row="2" column="1" rowspan="1" colspan="3">
+            <property name="name">
+                <cstring>emailEdit</cstring>
+            </property>
+        </widget>
+        <widget class="KLineEdit" row="1" column="1" rowspan="1" colspan="3">
+            <property name="name">
+                <cstring>nicknameEdit</cstring>
             </property>
         </widget>
     </grid>
@@ -168,6 +171,7 @@
 <tabstops>
     <tabstop>nameCombo</tabstop>
     <tabstop>selectButton</tabstop>
+    <tabstop>nicknameEdit</tabstop>
     <tabstop>emailEdit</tabstop>
     <tabstop>roleCombo</tabstop>
     <tabstop>taskEdit</tabstop>
@@ -181,4 +185,15 @@
     <slot>slotSelectFromAddrBook()</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>kcombobox.h</includehint>
+    <includehint>klineedit.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kcombobox.h</includehint>
+    <includehint>klineedit.h</includehint>
+    <includehint>kcombobox.h</includehint>
+    <includehint>klineedit.h</includehint>
+    <includehint>klineedit.h</includehint>
+</includehints>
 </UI>
