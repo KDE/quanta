@@ -648,6 +648,8 @@ void ProjectPrivate::loadProjectXML()
 
   no = teamNode.namedItem("mailinglist");
   m_mailingList = no.toElement().attribute("address");
+  teamNode = m_sessionDom.firstChild().namedItem("teamdata");
+  m_yourself = teamNode.toElement().attribute("yourself");
 
   if (m_projectFiles.readFromXML(dom, baseURL, templateURL, excludeRx))
    m_modified = true;

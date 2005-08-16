@@ -39,6 +39,7 @@ class KMainWindow;
 struct TeamMember {
   QString name;
   QString email;
+  QString nickName;
   QString task;
 };
 

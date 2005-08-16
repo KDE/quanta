@@ -14,6 +14,7 @@
  *                                                                         *
  ***************************************************************************/
 //qt includes
+#include <qlabel.h>
 
 //kde includes
 #include <kcombobox.h>
@@ -36,6 +37,7 @@ extern QString subprojectLeaderStr;
 TeamMembersDlg::TeamMembersDlg(QWidget *parent, const char *name)
  : TeamMembersDlgS(parent, name)
 {
+  m_yourself = "";
 }
 
 
@@ -177,6 +179,29 @@ bool TeamMembersDlg::checkDuplicates(const QString &name, const QString &role, c
         ++it;
     }
     return true;
+}
+
+void TeamMembersDlg::slotSetToYourself()
+{
+  QListViewItem *item =membersListView->currentItem();
+  if (!item) return; 
+  yourselfLabel->setText(item->text(0) + " <" + item->text(1) + ">");
+  m_yourself = item->text(0);
+}
+
+void TeamMembersDlg::setYourself(const QString &name)
+{
+  m_yourself = name;
+  QListViewItemIterator it(membersListView);
+  while ( it.current() )
+  {
+    if (it.current()->text(0) == name)
+    {
+      yourselfLabel->setText(name + " <" + it.current()->text(1) + ">");     
+      break;
+    }
+    ++it;
+  }
 }
 
 #include "teammembersdlg.moc"

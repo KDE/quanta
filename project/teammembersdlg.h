@@ -29,11 +29,14 @@ public:
     TeamMembersDlg(QWidget *parent = 0, const char *name = 0);
 
     ~TeamMembersDlg();
+    void setYourself(const QString &name);
+    QString yourself() {return m_yourself;}
 
 public slots:
     void slotAddMember();
     void slotEditMember();
     void slotDeleteMember();
+    void slotSetToYourself();
 
 private:
    /** Check if the selected role conflicts with an already existing role or not, for
@@ -42,6 +45,8 @@ private:
    teamleader is set to Simple Member and the new member is set to teamleader
    and the method returns true, otherwise it returns false. */
     bool checkDuplicates(const QString &name, const QString &role, const QString &task, const QString &subProject);
+    
+  QString m_yourself;  
 };
 
 #endif

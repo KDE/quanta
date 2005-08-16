@@ -104,6 +104,7 @@ upload.*/
   QMap<QString, TeamMember> m_taskLeaders;
   QValueList<TeamMember> m_simpleMembers;
   QValueList<SubProject> m_subprojects;
+  QString m_yourself;
   QString m_mailingList;
   bool m_showUploadTreeviews;
   bool m_eventsEnabled;

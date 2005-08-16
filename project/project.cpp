@@ -585,6 +585,7 @@ void Project::slotOptions()
     item = new QListViewItem(membersPage.membersListView, member.name, member.email, i18n("Simple Member"), member.task);
   }
   membersPage.mailingListEdit->setText(d->m_mailingList);
+  membersPage.setYourself(d->m_yourself);
 
 //add the event configuration page
   page = optionsDlg.addPage(i18n("Event Configuration"));
@@ -809,6 +810,13 @@ void Project::slotOptions()
     el.setAttribute("address", membersPage.mailingListEdit->text());
     teamNode.appendChild(el);
     projectNode.appendChild(teamNode);
+    teamNode = d->m_sessionDom.firstChild().namedItem("teamdata");
+    if (!teamNode.isNull())
+      d->m_sessionDom.firstChild().removeChild(teamNode);
+    d->m_yourself = membersPage.yourself();
+    el = d->m_sessionDom.createElement("teamdata");
+    el.setAttribute("yourself", d->m_yourself);
+    d->m_sessionDom.firstChild().appendChild(el);
 
     eventsPage.saveEvents(d->dom);
     d->m_eventsEnabled = eventsPage.enableEventsBox->isChecked();
