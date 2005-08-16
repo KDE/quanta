@@ -209,11 +209,19 @@ void AnnotationOutput::updateAnnotationForFile(const KURL& url)
       while (!f.atEnd())
       {
         f.readLine(line, 2000);
-        int pos = line.find("@annotation:");
+        int pos = line.find("@annotation");
         if (pos != -1)
         {
+          pos += 11;
+          if (line[pos] == '(')
+          {
+            pos = line.find("):");
+            if (pos != -1) 
+              pos += 2;  
+          } else
+            pos++;
           int pos2 = line.find(rx);
-          annotations.insert(i, line.mid(pos + 12, pos2 - pos - 12).stripWhiteSpace());
+          annotations.insert(i, line.mid(pos, pos2 - pos).stripWhiteSpace());
         }
         ++i;
       }

@@ -4013,10 +4013,18 @@ void QuantaApp::slotReloadStructTreeView(bool groupOnly)
         }
         Tag *commentTag = n->tag;
         QString text = commentTag->tagStr();
-        int pos = text.find("@annotation:");
+        int pos = text.find("@annotation");
         if (pos != -1)
         {
-          text = text.mid(pos + 12).stripWhiteSpace();
+          pos += 11;
+          if (text[pos] == '(')
+          {
+            pos = text.find("):");
+            if (pos != -1) 
+              pos += 2;  
+          } else
+            pos++;
+          text = text.mid(pos).stripWhiteSpace();
           int l, c;
           if (n->next)
             n->next->tag->beginPos(l, c);
