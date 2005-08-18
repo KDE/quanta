@@ -264,7 +264,7 @@ void QuantaDebuggerDBGp::processCommand(const QString& datas)
     // Status command
     if(command == "status")
       setExecutionState(attribute(response, "status"));
-
+      
     // Callback stack
     else if(command == "stack_get")
       stackShow(response);
@@ -278,6 +278,7 @@ void QuantaDebuggerDBGp::processCommand(const QString& datas)
       // If this is the acknoledge of a step command, request the call stack 
       m_network.sendCommand("stack_get");
       setExecutionState(attribute(response, "status"));
+      handleError(response);
       m_network.sendCommand("feature_get", "-n profiler_filename");
       sendWatches();
     }
@@ -286,6 +287,7 @@ void QuantaDebuggerDBGp::processCommand(const QString& datas)
     else if(command == "run" )
     {
       setExecutionState(attribute(response, "status"));
+      handleError(response);
       m_network.sendCommand("stack_get");
     }
 
@@ -392,6 +394,7 @@ void QuantaDebuggerDBGp::stackShow(const QDomNode&node)
         attribute(child, "lineno").toLong() - 1, // Quanta lines are 0-based, DBGp is 1 based
         attribute(child, "where"));
   }
+  
 }
 
 void QuantaDebuggerDBGp::checkSupport( const QDomNode & node )
@@ -618,7 +621,7 @@ void QuantaDebuggerDBGp::readConfig(QDomNode node)
   valuenode = node.namedItem("startsession");
   m_startsession = valuenode.firstChild().nodeValue();
   if(m_startsession.isEmpty())
-    m_startsession = "http://localhost/DBGp/StartSession.php?gbdScript=/%rfpp";
+    m_startsession = "http://localhost/%rfpp?XDEBUG_SESSION_START=1&XDEBUG_PROFILE";
 
   valuenode = node.namedItem("defaultexecutionstate");
   if(valuenode.firstChild().nodeValue().isEmpty())
@@ -969,5 +972,43 @@ DebuggerVariable* QuantaDebuggerDBGp::buildVariable( const QDomNode & variableno
 
   return debuggerInterface()->newDebuggerVariable(name, "", DebuggerVariableTypes::Error);;
 }
+
+void QuantaDebuggerDBGp::handleError(const QDomNode & statusnode )
+{
+  
+  if(attribute(statusnode, "reason") == "error" || attribute(statusnode, "reason") == "aborted")
+  {
+    QDomNode errornode = statusnode.firstChild();
+    while(!errornode.isNull())
+    {
+      if(errornode.nodeName() == "error")
+      {
+        if(attribute(statusnode, "reason") == "error")
+        {
+          // Managable error
+          long error = attribute(errornode, "code").toLong();
+          if(!(error & m_errormask))
+          {
+            setExecutionState(Running);
+          }
+          else
+          {
+            emit updateStatus(DebuggerUI::HaltedOnError);
+            debuggerInterface()->showStatus(errornode.firstChild().nodeValue(), true);
+          }
+          break; 
+        }
+        else
+        {
+          // Fatal error
+          emit updateStatus(DebuggerUI::HaltedOnError);
+          debuggerInterface()->showStatus(errornode.firstChild().nodeValue(), true);
+        }
+      }
+      errornode = errornode.nextSibling();
+    }
+  }
+  
+} 
 
 #include "quantadebuggerdbgp.moc"

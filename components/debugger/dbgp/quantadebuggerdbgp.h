@@ -123,7 +123,7 @@ class QuantaDebuggerDBGp : public DebuggerClient
     long    m_errormask;
     long    m_displaydelay;
     bool    m_supportsasync;
-
+    
     // Variable type mapping
     StringMap m_variabletypes;
 
@@ -134,6 +134,8 @@ class QuantaDebuggerDBGp : public DebuggerClient
     void debuggingState(bool enable);
     void connected();
 
+    void handleError(const QDomNode & statusnode );
+        
     QString mapServerPathToLocal(const QString& serverpath);
     QString mapLocalPathToServer(const QString& localpath);
     QString bpToDBGp(DebuggerBreakpoint* breakpoint);
