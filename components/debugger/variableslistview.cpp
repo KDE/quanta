@@ -21,12 +21,15 @@
 #include <kiconloader.h>
 #include <kdeversion.h>
 #include <kinputdialog.h>
+// #include <kpassivepopup.h>
+// #include <kdatetbl.h>
 
 // Quanta includes
 #include "variableslistview.h"
 #include "debuggervariable.h"
 #include "resource.h"
 #include "quanta.h"
+#include "messageoutput.h"
 #include "debuggerclient.h"
 #include "debuggermanager.h"
 
@@ -54,12 +57,16 @@ VariablesListView::VariablesListView(QWidget *parent, const char *name)
   addColumn(i18n("Size"));
   setRootIsDecorated(true);
   setSorting(-1); // No sorting
-
+//   setTooltipColumn(0);
+//   setShowToolTips(true);
+  
   m_variablePopup = new KPopupMenu(this);
-  m_variablePopup->insertItem(SmallIcon("editdelete"), i18n("&Remove"), this, SLOT(slotRemoveSelected()));
+  m_variablePopup->insertItem(SmallIcon("editdelete"), i18n("&Remove"), this, SLOT(slotRemoveSelected()), 0, removeWatch);
 
   if(quantaApp->debugger()->client()->supports(DebuggerClientCapabilities::VariableSetValue))
-    m_variablePopup->insertItem(SmallIcon("edit"), i18n("&Set Value"), this, SLOT(slotVariableSetValue()));
+    m_variablePopup->insertItem(SmallIcon("edit"), i18n("&Set Value"), this, SLOT(slotVariableSetValue()), 0, setValue);
+
+  m_variablePopup->insertItem(SmallIcon("viewmag"), i18n("&Dump in messages log"), this, SLOT(slotVariableDump()), 0, dumpValue);
 
   connect(this, SIGNAL( contextMenu( KListView *, QListViewItem *, const QPoint & ) ), this, SLOT(slotVariableContextMenu(KListView *, QListViewItem *, const QPoint &)));
 }
@@ -235,6 +242,9 @@ void VariablesListView::slotVariableContextMenu(KListView *, QListViewItem *, co
   if(!selectedItem())
     return;
 
+  DebuggerVariable v(selected());
+  m_variablePopup->setItemEnabled(dumpValue, v.type() == DebuggerVariableTypes::String);
+  
   m_variablePopup->exec(point);
 }
 
@@ -262,13 +272,27 @@ void VariablesListView::slotVariableSetValue()
     default:
       newvalue = "";
   }
-  newvalue = KInputDialog::getText(i18n("Set Variable"), i18n("New value:"), newvalue, 0, this);
+  newvalue = KInputDialog::getMultiLineText(i18n("Set Variable"), i18n("New value:"), newvalue, 0, this);
   if(newvalue.isNull())
     return;
 
   v.setValue(newvalue);
   quantaApp->debugger()->client()->variableSetValue(v);
 
+}
+
+void VariablesListView::slotVariableDump( )
+{
+  if(!selected())
+    return;
+
+  DebuggerVariable v(selected());
+  
+  quantaApp->messageOutput()->showMessage(i18n("Contents of variable %1:\n>>>\n").arg(v.name()));
+  quantaApp->messageOutput()->showMessage(v.value());
+  quantaApp->messageOutput()->showMessage("\n<<<\n");
+  
+  
 }
 
 #include "variableslistview.moc"

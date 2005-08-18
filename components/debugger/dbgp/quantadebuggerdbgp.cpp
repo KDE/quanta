@@ -236,7 +236,7 @@ const uint QuantaDebuggerDBGp::supports(DebuggerClientCapabilities::Capabilities
     case DebuggerClientCapabilities::StepInto:
     case DebuggerClientCapabilities::StepOver:
     case DebuggerClientCapabilities::Watches:
-    case DebuggerClientCapabilities::VariableSetValue:
+//     case DebuggerClientCapabilities::VariableSetValue:
     case DebuggerClientCapabilities::ProfilerOpen:
       return true;
 

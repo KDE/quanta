@@ -27,8 +27,15 @@ class DebuggerVariable;
 
 class VariablesListView : public KListView
 {
-    Q_OBJECT
+  Q_OBJECT
 
+  enum menuitems 
+  {
+    setValue = 1,
+    dumpValue,
+    removeWatch 
+  };
+      
   public:
     VariablesListView(QWidget *parent = 0, const char *name = 0);
     ~VariablesListView();
@@ -45,6 +52,7 @@ class VariablesListView : public KListView
   public slots:
     void slotRemoveSelected();
     void slotVariableSetValue();
+    void slotVariableDump();
     void slotVariableContextMenu(KListView *list, QListViewItem * item, const QPoint& point);
 
   signals:
