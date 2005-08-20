@@ -424,7 +424,7 @@ void ProjectTreeView::slotRemoveFromProject(int askForRemove)
     QString nice = QExtFileInfo::toRelative(url, m_projectBaseURL).path();
     nice = KStringHandler::lsqueeze(nice, 60);
     if ( !askForRemove ||
-         KMessageBox::warningContinueCancel(this,i18n("<qt>Do you really want to remove <br><b>%1</b><br> from the project?</qt>").arg(nice), i18n("Remove From Project"), KStdGuiItem::del(), "RemoveFromProject") == KMessageBox::Continue )
+         KMessageBox::warningContinueCancel(this,i18n("<qt>Do you really want to remove <br><b>%1</b><br> from the project?</qt>").arg(nice), i18n("Remove From Project"), KStdGuiItem::remove(), "RemoveFromProject") == KMessageBox::Continue )
     {
       if ( currentKFileTreeViewItem()->isDir() ) url.adjustPath(+1);
       emit removeFromProject(url);

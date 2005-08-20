@@ -66,9 +66,9 @@ and here you can find the latest news regarding the development,
 announcements, merchandise and you can make some donation to support
 Quanta.
  An alternative way to use the latest and greatest version is to get it
-from CVS. More info about getting the sources from KDE CVS can be found
-at: http://developer.kde.org/source/. The module name for Quanta is
-"kdewebdev".
+from the Subversion repository. More info about getting the sources from 
+KDE SVN can be found at: http://developer.kde.org/source/. The module name 
+for Quanta is "kdewebdev".
 
 5. Installation
 ---------------

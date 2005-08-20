@@ -406,14 +406,13 @@ void Project::slotRemove(const KURL& urlToRemove)
 
   if (d->m_modified)
     setModified();  // there happens more than setting the flag !
-  emit closeFile(urlToRemove);
   emit reloadTree( &(d->m_projectFiles), false, QStringList() );
   emit newStatus();
   
   QString urlPath = QExtFileInfo::toRelative(urlToRemove, d->baseURL).path();
   QString nice = urlPath;
   nice = KStringHandler::lsqueeze(nice, 60);
-  if (KMessageBox::warningContinueCancel(d->m_mainWindow, i18n("<qt>Do you want to remove <br><b>%1</b><br> from the server(s) as well?</qt>").arg(nice), i18n("Remove From Server"), KStdGuiItem::del(), "RemoveFromServer") == KMessageBox::Continue )
+  if (KMessageBox::warningContinueCancel(d->m_mainWindow, i18n("<qt>Do you want to remove <br><b>%1</b><br> from the server(s) as well?</qt>").arg(nice), i18n("Remove From Server"), KStdGuiItem::remove(), "RemoveFromServer") == KMessageBox::Continue )
   {
     QDomNode profilesNode = d->m_sessionDom.firstChild().firstChild().namedItem("uploadprofiles");  
     QDomNodeList profileList = profilesNode.toElement().elementsByTagName("profile");

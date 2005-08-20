@@ -19,6 +19,8 @@ Version 3.5 (Release date: xx-xx-2004; Started 04-03-2004):
         - treat "<" as the end of a tag name. Fixes autoreplacement of opening/closing
           tags in cases when a PHP area starts directly after a tag name. [#106911]
         - fix the Kommander XML scripts.
+        - fix crash when deleting a file which is part of a project from the tab
+          context menu [#111134]
 
  - improvements:
         - nicer processing of CVS output
