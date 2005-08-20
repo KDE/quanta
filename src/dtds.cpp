@@ -26,8 +26,11 @@
 
 // include files for KDE
 #include <kapplication.h>
+#include <kcombobox.h>
 #include <kconfig.h>
+#include <kdialogbase.h>
 #include <kurl.h>
+#include <kurlrequester.h>
 #include <kglobal.h>
 #include <kmessagebox.h>
 #include <klocale.h>
@@ -41,6 +44,7 @@
 #include "dtdparser.h"
 #include "document.h"
 #include "viewmanager.h"
+#include "loadentitydlgs.h"
 
 #include "dtds.h"
 
@@ -62,23 +66,47 @@ DTDs::DTDs(QObject *parent)
   m_dict->setAutoDelete(true);
   m_doc = new QDomDocument();
 
+  QString localKDEdir = KGlobal::instance()->dirs()->localkdedir();
   QStringList tagsResourceDirs = KGlobal::instance()->dirs()->findDirs("appdata", "dtep");
   QStringList tagsDirs;
-  for ( QStringList::Iterator it = tagsResourceDirs.begin(); it != tagsResourceDirs.end(); ++it )
+  QStringList::ConstIterator end = tagsResourceDirs.constEnd();
+  for ( QStringList::ConstIterator it = tagsResourceDirs.constBegin(); it != end; ++it )
   {
-    QDir dir(*it);
-    dir.setFilter(QDir::Dirs);
-    QStringList subDirs = dir.entryList();
-    for ( QStringList::Iterator subit = subDirs.begin(); subit != subDirs.end(); ++subit )
+    if ((*it).startsWith(localKDEdir))
     {
-//      kdDebug(24000) << "dtds::dtds add:" << *it + *subit+"/" << endl;
-      if ((*subit != ".") && (*subit != ".."))
-         tagsDirs += *it + *subit+"/";
+      QDir dir(*it);
+      dir.setFilter(QDir::Dirs);
+      QStringList subDirs = dir.entryList();
+      QStringList::ConstIterator subitEnd = subDirs.constEnd();
+      for ( QStringList::ConstIterator subit = subDirs.constBegin(); subit != subitEnd; ++subit )
+      {
+//         kdDebug(24000) << "dtds::dtds add:" << *it + *subit+"/" << endl;
+        if ((*subit != ".") && (*subit != ".."))
+          tagsDirs += *it + *subit + "/";
+      }
+    }
+  }
+  for ( QStringList::ConstIterator it = tagsResourceDirs.constBegin(); it != end; ++it )
+  {
+    if (!(*it).startsWith(localKDEdir))
+    {
+      QDir dir(*it);
+      dir.setFilter(QDir::Dirs);
+      QStringList subDirs = dir.entryList();
+      QStringList::ConstIterator subitEnd = subDirs.constEnd();
+      for ( QStringList::ConstIterator subit = subDirs.constBegin(); subit != subitEnd; ++subit )
+      {
+//         kdDebug(24000) << "dtds::dtds add2:" << *it + *subit+"/" << endl;
+        if ((*subit != ".") && (*subit != ".."))
+          tagsDirs += *it + *subit + "/";
+      }
     }
   }
 //  kdDebug(24000) << tagsDirs.count() << " folders found." << endl;
-  for ( QStringList::Iterator it = tagsDirs.begin(); it != tagsDirs.end(); ++it )
+  QStringList::ConstIterator tagsDirsEnd = tagsDirs.constEnd();
+  for ( QStringList::ConstIterator it = tagsDirs.constBegin(); it != tagsDirsEnd; ++it )
   {
+//     kdDebug(24000) << "read:" << *it  << endl;
     readTagDir(*it, false);  // read all tags, but only short form
   }
 //  kdDebug(24000) << "dtds::dtds constructed" << endl;
@@ -676,10 +704,10 @@ uint DTDs::readTagFile(const QString& fileName, DTDStruct* parentDTD, QTagList *
     {
       if (parentDTD->caseSensitive)
       {
-        tagList->insert(tag->name(), tag);  //append the tag to the list for this DTD
+        tagList->replace(tag->name(), tag);  //append the tag to the list for this DTD
       } else
       {
-        tagList->insert(tag->name().upper(), tag);
+        tagList->replace(tag->name().upper(), tag);
       }
     }
  }
@@ -701,14 +729,17 @@ void DTDs::setAttributes(QDomNode *dom, QTag* tag, bool &common)
  tmpStr = el.attribute("common");
  if ((tmpStr != "1" && tmpStr != "yes")) //in case of common tags, we are not interested in these options
  {
-    QDictIterator<AttributeList> it(*(tag->parentDTD->commonAttrs));
-    for( ; it.current(); ++it )
+    if (tag->parentDTD->commonAttrs)
     {
-      QString lookForAttr = "has" + QString(it.currentKey()).stripWhiteSpace();
-      tmpStr = el.attribute(lookForAttr);
-      if (tmpStr == "1" || tmpStr == "yes")
+      QDictIterator<AttributeList> it(*(tag->parentDTD->commonAttrs));
+      for( ; it.current(); ++it )
       {
-        tag->commonGroups += QString(it.currentKey()).stripWhiteSpace();
+        QString lookForAttr = "has" + QString(it.currentKey()).stripWhiteSpace();
+        tmpStr = el.attribute(lookForAttr);
+        if (tmpStr == "1" || tmpStr == "yes")
+        {
+          tag->commonGroups += QString(it.currentKey()).stripWhiteSpace();
+        }
       }
     }
 
@@ -849,7 +880,7 @@ void DTDs::setAttributes(QDomNode *dom, QTag* tag, bool &common)
 
 void DTDs::slotLoadDTD()
 {
-  KURL url = KFileDialog::getOpenURL("", "*.dtd", 0L);
+  KURL url = KFileDialog::getOpenURL("", i18n("*.dtd|DTD definitions"), 0L);
   if (!url.isEmpty())
   {
     DTDParser dtdParser(url, KGlobal::dirs()->saveLocation("data") + resourceDir + "dtep");
@@ -921,6 +952,31 @@ void DTDs::slotLoadDTEP(const QString &_dirName, bool askForAutoload)
       w->setDTDIdentifier(dtdName);
       emit loadToolbarForDTD(w->getDTDIdentifier());
       emit forceReparse();
+    }
+  }
+}
+
+void DTDs::slotLoadEntities()
+{
+  KDialogBase dlg(0L, "loadentities", true, i18n("Load DTD Entities Into DTEP"), KDialogBase::Ok | KDialogBase::Cancel);
+  LoadEntityDlgS entitiesWidget(&dlg);
+  QStringList lst(DTDs::ref()->nickNameList(true));
+  entitiesWidget.targetDTEPCombo->insertStringList(lst);
+  Document *w = ViewManager::ref()->activeDocument();
+  if (w)
+  {
+    QString nickName = DTDs::ref()->getDTDNickNameFromName(w->getDTDIdentifier());
+    entitiesWidget.targetDTEPCombo->setCurrentItem(lst.findIndex(nickName));
+  }
+  dlg.setMainWidget(&entitiesWidget);
+  if (dlg.exec())
+  {
+    DTDStruct * dtd = m_dict->find(getDTDNameFromNickName(entitiesWidget.targetDTEPCombo->currentText()));
+    DTDParser dtdParser(KURL::fromPathOrURL(entitiesWidget.sourceDTDRequester->url()), KGlobal::dirs()->saveLocation("data") + resourceDir + "dtep");
+    QString dtdDir = QFileInfo(dtd->fileName).dirPath();
+    if (dtdParser.parse(dtdDir, true))
+    {
+      readTagFile(dtdDir + "/entities.tag", dtd, dtd->tagsList);
     }
   }
 }

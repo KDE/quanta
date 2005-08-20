@@ -29,7 +29,13 @@ public:
   DTDParser(const KURL& dtdURL, const QString &dtepDir);
   ~DTDParser();
   QString dirName();
-  bool parse();
+  /**
+   * Parse the DTD file.
+   * @param targetDir the directory of the destination DTEP. If empty, a dialog is shown to configure the destination.
+   * @param entitiesOnly if true, only the entities are extracted from the DTD into the entities.tag file 
+   * @return true on success, false if some error happened
+   */
+  bool parse(const QString &targetDir = QString::null, bool entitiesOnly = false);
 
 protected:
   void writeDescriptionRC();

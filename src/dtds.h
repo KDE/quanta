@@ -147,6 +147,11 @@ public slots:
   */
   void slotLoadDTEP(const QString& dirName, bool askForAutoLoad);
 
+  /**
+   * Loads (replaces) the entities for a DTEP.
+   */
+  void slotLoadEntities();
+
 signals:
   /** used to hide the splash screen */
   void hideSplash();

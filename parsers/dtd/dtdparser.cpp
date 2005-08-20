@@ -69,8 +69,9 @@ DTDParser::~DTDParser()
 {
 }
 
-bool DTDParser::parse()
+bool DTDParser::parse(const QString &targetDir, bool entitiesOnly)
 {
+  bool fineTune = false;
   QString fileName = QString::null;
   if (!KIO::NetAccess::download(m_dtdURL, fileName, 0))
   {
@@ -103,28 +104,33 @@ bool DTDParser::parse()
     KMessageBox::error(0, i18n("<qt>Error while parsing the DTD.<br>The error message is:<br><i>%1</i></qt>").arg(errorStr));
     return false;
   }
-  KDialogBase dlg(0L, 0L, true, i18n("DTD - > DTEP Conversion"), KDialogBase::Ok | KDialogBase::Cancel);
-  DTEPCreationDlg w(&dlg);
-  dlg.setMainWidget(&w);
-  QString name = QString((const char*)DTD::dtd_ptr->name);
-  if (name == "none")
-    name = QFileInfo(m_dtdURL.fileName()).baseName();
-  w.dtdName->setText(name);
-  w.nickName->setText(name);
-  w.directory->setText(QFileInfo(m_dtdURL.fileName()).baseName());
-  w.doctype->setText(QString((const char*)DTD::dtd_ptr->ExternalID));
-  w.dtdURL->setText(QString((const char*)DTD::dtd_ptr->SystemID));
-  if (!dlg.exec())
-      return false;
-  m_name = w.dtdName->text();
-  m_nickName = w.nickName->text();
-  m_doctype = w.doctype->text();
-  m_doctype.replace(QRegExp("<!doctype", false), "");
-  m_doctype = m_doctype.left(m_doctype.findRev(">"));
-  m_dtdURLLine = w.dtdURL->text();
-  m_defaultExtension = w.defaultExtension->text();
-  m_caseSensitive = w.caseSensitive->isChecked();
-  DTD::dirName = m_dtepDir + "/" + w.directory->text();
+  if (targetDir.isEmpty())
+  {
+    KDialogBase dlg(0L, 0L, true, i18n("DTD - > DTEP Conversion"), KDialogBase::Ok | KDialogBase::Cancel);
+    DTEPCreationDlg w(&dlg);
+    dlg.setMainWidget(&w);
+    QString name = QString((const char*)DTD::dtd_ptr->name);
+    if (name == "none")
+      name = QFileInfo(m_dtdURL.fileName()).baseName();
+    w.dtdName->setText(name);
+    w.nickName->setText(name);
+    w.directory->setText(QFileInfo(m_dtdURL.fileName()).baseName());
+    w.doctype->setText(QString((const char*)DTD::dtd_ptr->ExternalID));
+    w.dtdURL->setText(QString((const char*)DTD::dtd_ptr->SystemID));
+    if (!dlg.exec())
+        return false;
+    m_name = w.dtdName->text();
+    m_nickName = w.nickName->text();
+    m_doctype = w.doctype->text();
+    m_doctype.replace(QRegExp("<!doctype", false), "");
+    m_doctype = m_doctype.left(m_doctype.findRev(">"));
+    m_dtdURLLine = w.dtdURL->text();
+    m_defaultExtension = w.defaultExtension->text();
+    m_caseSensitive = w.caseSensitive->isChecked();
+    DTD::dirName = m_dtepDir + "/" + w.directory->text();
+    fineTune = w.fineTune->isChecked();
+  } else
+    DTD::dirName = targetDir;
   KURL u;
   u.setPath(DTD::dirName);
   if (!QExtFileInfo::createDir(u)) {
@@ -132,14 +138,6 @@ bool DTDParser::parse()
     return false;
   }
   DTD::dirName.append("/");
-  if (DTD::dtd_ptr->elements)
-  {
-    xmlHashScan((xmlElementTablePtr)DTD::dtd_ptr->elements, (xmlHashScanner)saveElement, 0);
-  } else
-  {
-     KMessageBox::error(0, i18n("No elements were found in the DTD."));
-     return false;
-  }
   if (DTD::dtd_ptr->entities)
   {
     QFile file( DTD::dirName + "entities.tag" );
@@ -153,20 +151,38 @@ bool DTDParser::parse()
       xmlHashScan((xmlEntitiesTablePtr)DTD::dtd_ptr->entities, (xmlHashScanner)saveEntity, 0);
       DTD::entityStream << "</TAGS>" << endl;
       file.close();
-    }
-  }  
-  xmlFreeDtd(DTD::dtd_ptr);
-  writeDescriptionRC();
-  if (w.fineTune->isChecked())
-  {
-    KDialogBase editDlg(0L, "edit_dtep", true, i18n("Configure DTEP"), KDialogBase::Ok | KDialogBase::Cancel);
-    DTEPEditDlg dtepDlg(DTD::dirName + "description.rc", &editDlg);
-    editDlg.setMainWidget(&dtepDlg);
-    if (editDlg.exec())
+    } else
     {
-      dtepDlg.saveResult();
+      KMessageBox::error(0L, i18n("<qt>Cannot create the <br><b>%1</b> file.<br>Check that you have write permission in the parent folder.</qt>")
+                             .arg(file.name()));
+      return false;
     }
-    
+  }
+  if (!entitiesOnly)
+  {
+    if (DTD::dtd_ptr->elements)
+    {
+      xmlHashScan((xmlElementTablePtr)DTD::dtd_ptr->elements, (xmlHashScanner)saveElement, 0);
+    } else
+    {
+      KMessageBox::error(0, i18n("No elements were found in the DTD."));
+      return false;
+    }
+  }
+  xmlFreeDtd(DTD::dtd_ptr);
+  if (!entitiesOnly)
+  {
+    writeDescriptionRC();
+    if (fineTune)
+    {
+      KDialogBase editDlg(0L, "edit_dtep", true, i18n("Configure DTEP"), KDialogBase::Ok | KDialogBase::Cancel);
+      DTEPEditDlg dtepDlg(DTD::dirName + "description.rc", &editDlg);
+      editDlg.setMainWidget(&dtepDlg);
+      if (editDlg.exec())
+      {
+        dtepDlg.saveResult();
+      }
+    }    
   }
   return true;
 }
