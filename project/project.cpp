@@ -386,7 +386,6 @@ void Project::slotRemove(const KURL& urlToRemove)
 
   if (d->m_modified)
     setModified();  // there happens more than setting the flag !
-  emit closeFile(urlToRemove);
   emit reloadTree( &(d->m_projectFiles), false, QStringList() );
   emit newStatus();
   
