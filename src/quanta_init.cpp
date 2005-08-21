@@ -1253,7 +1253,8 @@ void QuantaInit::recoverCrashed(QStringList& recoveredFileNameList)
 
 QString QuantaInit::searchPathListEntry(const QString& backedUpUrl,const QString& autosavedUrls)
 {
-  KURL k(backedUpUrl);
+  KURL k;
+  QuantaCommon::setUrl(k, backedUpUrl);
   QStringList autosavedUrlsList = QStringList::split(",", autosavedUrls);
   QStringList::Iterator autosavedUrlsIt;
   for (autosavedUrlsIt = autosavedUrlsList.begin();
