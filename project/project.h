@@ -108,6 +108,7 @@ public:
   KURL templateURL();
   KURL toolbarURL();
   EventActions* events();
+  QString yourself();
   TeamMember teamLeader();
   TeamMember subprojectLeader(const QString &name);
   TeamMember taskLeader(const QString &name);

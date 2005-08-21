@@ -214,8 +214,8 @@ void TeamMembersDlg::slotSetToYourself()
 {
   QListViewItem *item =membersListView->currentItem();
   if (!item) return; 
-  yourselfLabel->setText(item->text(0) + " <" + item->text(1) + ">");
-  m_yourself = item->text(0);
+  yourselfLabel->setText(item->text(NAME_COL) + " <" + item->text(EMAIL_COL) + ">");
+  m_yourself = item->text(NICKNAME_COL);
 }
 
 void TeamMembersDlg::setYourself(const QString &name)
@@ -224,9 +224,9 @@ void TeamMembersDlg::setYourself(const QString &name)
   QListViewItemIterator it(membersListView);
   while ( it.current() )
   {
-    if (it.current()->text(0) == name)
+    if (it.current()->text(NICKNAME_COL) == name)
     {
-      yourselfLabel->setText(name + " <" + it.current()->text(1) + ">");     
+      yourselfLabel->setText(it.current()->text(NAME_COL)+ " <" + it.current()->text(EMAIL_COL) + ">");
       break;
     }
     ++it;

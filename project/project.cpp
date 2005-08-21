@@ -1110,6 +1110,11 @@ EventActions* Project::events()
     return 0L;
 }
 
+QString Project::yourself()
+{
+  return d->m_yourself;
+}
+
 TeamMember Project::teamLeader()
 {
   return d->m_teamLeader;
