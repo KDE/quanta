@@ -68,6 +68,7 @@ void TeamMembersDlg::slotAddMember()
         QString task = memberDlg.taskEdit->text();
         QString subProject = memberDlg.subprojectCombo->currentText();
         QString nickName = memberDlg.nicknameEdit->text();
+        QString email = memberDlg.emailEdit->text();
         if (name.isEmpty())
         {
            KMessageBox::error(this, i18n("The member name cannot be empty."));
@@ -78,12 +79,12 @@ void TeamMembersDlg::slotAddMember()
            KMessageBox::error(this, i18n("The nickname cannot be empty as it is used as an unique identifier."));
            addDlg.show();
         } else
-        if (!checkDuplicates(0L, name, nickName, role, task, subProject))
+        if (!checkDuplicates(0L, name, nickName, email, role, task, subProject))
         {
           addDlg.show();
         } else
         {
-          QListViewItem *item = new QListViewItem(membersListView, name, nickName, memberDlg.emailEdit->text(), role, task);
+          QListViewItem *item = new QListViewItem(membersListView, name, nickName, email, role, task);
           if (memberDlg.subprojectCombo->isEnabled())
             item->setText(SUBPROJECT_COL, subProject);
           result = false;
@@ -134,6 +135,7 @@ void TeamMembersDlg::slotEditMember()
      {
         QString name = memberDlg.nameCombo->currentText();
         QString nickName = memberDlg.nicknameEdit->text();
+        QString email = memberDlg.emailEdit->text();
         QString role = memberDlg.roleCombo->currentText();
         QString task = memberDlg.taskEdit->text();
         QString subProject = memberDlg.subprojectCombo->currentText();
@@ -147,14 +149,14 @@ void TeamMembersDlg::slotEditMember()
            KMessageBox::error(this, i18n("The nickname cannot be empty as it is used as an unique identifier."));
            editDlg.show();
         } else
-       if (!checkDuplicates(item, name, nickName, role, task, subProject))
+       if (!checkDuplicates(item, name, nickName, email, role, task, subProject))
         {
           editDlg.show();
         } else
         {
           item->setText(NAME_COL, name);
           item->setText(NICKNAME_COL, nickName);
-          item->setText(EMAIL_COL, memberDlg.emailEdit->text());
+          item->setText(EMAIL_COL, email);
           item->setText(ROLE_COL, role);
           item->setText(TASK_COL, task);
           if (memberDlg.subprojectCombo->isEnabled())
@@ -175,7 +177,7 @@ void TeamMembersDlg::slotDeleteMember()
    }
 }
 
-bool TeamMembersDlg::checkDuplicates(QListViewItem *item, const QString &name, const QString &nickName, const QString &role, const QString &task, const QString &subProject)
+bool TeamMembersDlg::checkDuplicates(QListViewItem *item, const QString &name, const QString &nickName, const QString &email, const QString &role, const QString &task, const QString &subProject)
 {
     QString s;
     QString nick;
@@ -198,9 +200,9 @@ bool TeamMembersDlg::checkDuplicates(QListViewItem *item, const QString &name, c
             else
               return false;
         } else
-        if (nick == nickName && it.current() != item)
+        if (nick == nickName && it.current() != item && (it.current()->text(EMAIL_COL) != email || it.current()->text(NAME_COL) != name))
         {
-          KMessageBox::error(this, i18n("<qt>The <b>%1</b> nickname is already assigned to <b>%2</b>.</qt>").arg(nickName).arg(it.current()->text(NAME_COL)));
+          KMessageBox::error(this, i18n("<qt>The <b>%1</b> nickname is already assigned to <b>%2 &lt;%3&gt;</b>.</qt>").arg(nickName).arg(it.current()->text(NAME_COL)).arg(it.current()->text(EMAIL_COL)));
           return false;
         } 
         ++it;

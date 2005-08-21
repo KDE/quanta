@@ -44,7 +44,7 @@ private:
    of  duplicate entries, it shows a dialog and if the user answer yes, the old
    teamleader is set to Simple Member and the new member is set to teamleader
    and the method returns true, otherwise it returns false. */
-    bool checkDuplicates(QListViewItem *item, const QString &name, const QString &nickName, const QString &role, const QString &task, const QString &subProject);
+    bool checkDuplicates(QListViewItem *item, const QString &name, const QString &nickName, const QString &email, const QString &role, const QString &task, const QString &subProject);
     
   QString m_yourself;  
 };
