@@ -718,10 +718,10 @@ void BaseTreeView::slotInsertDirInProject()
 /** Bring up the properites dialog, and extend it for files */
 void BaseTreeView::slotProperties()
 {
-  KURL url = currentURL();
-  if (url.isEmpty()) return;
-  KFileItem fileItem(KFileItem::Unknown, KFileItem::Unknown, url);
-  propDlg = new KPropertiesDialog(&fileItem, this, 0L, false, false); //autodeletes itself
+  if (! currentKFileTreeViewItem()) 
+    return;
+  
+  propDlg = new KPropertiesDialog(currentKFileTreeViewItem()->fileItem(), this, 0L, false, false); //autodeletes itself
   fileInfoDlg = 0L;
   if (!currentKFileTreeViewItem()->isDir())
   {
