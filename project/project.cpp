@@ -740,7 +740,7 @@ void Project::slotOptions()
     while (it.current())
     {
         item = it.current();
-        QString role = item->text(2);
+        QString role = item->text(3);
         if (role == i18n(teamLeaderStr.utf8()))
         {
            QDomElement leaderEl = d->dom.createElement("leader");
@@ -748,13 +748,16 @@ void Project::slotOptions()
            el = d->dom.createElement("name");
            leaderEl.appendChild(el);
            el.appendChild(d->dom.createTextNode(item->text(0)));
-           el = d->dom.createElement("email");
+           el = d->dom.createElement("nickName");
            leaderEl.appendChild(el);
            el.appendChild(d->dom.createTextNode(item->text(1)));
+           el = d->dom.createElement("email");
+           leaderEl.appendChild(el);
+           el.appendChild(d->dom.createTextNode(item->text(2)));
         } else
         if (role == i18n(subprojectLeaderStr.utf8()))
         {
-           QString prjName = item->text(4);
+           QString prjName = item->text(5);
            savedSubprojects.append(prjName);
            QDomElement subEl = d->dom.createElement("subproject");
            for (uint i = 0; i < d->m_subprojects.count(); i++)
@@ -769,28 +772,33 @@ void Project::slotOptions()
            subLeadersNode.appendChild(subEl);
            el = d->dom.createElement("subprojectleader");
            el.setAttribute("name", item->text(0));
-           el.setAttribute("email", item->text(1));
+           el.setAttribute("nickName", item->text(1));
+           el.setAttribute("email", item->text(2));
            subEl.appendChild(el);
         } else
         if (role == i18n(taskLeaderStr.utf8()))
         {
            el = d->dom.createElement("projecttask");
            el.setAttribute("tasklead", item->text(0));
-           el.setAttribute("email", item->text(1));
-           el.setAttribute("task", item->text(3));
+           el.setAttribute("nickName", item->text(1));
+           el.setAttribute("email", item->text(2));
+           el.setAttribute("task", item->text(4));
            taskLeadersNode.appendChild(el);
         } else
         if (role == i18n(simpleMemberStr.utf8()))
         {
            QDomElement memberEl = d->dom.createElement("member");
-           memberEl.setAttribute("task", item->text(3));
+           memberEl.setAttribute("task", item->text(4));
            teamNode.appendChild(memberEl);
            el = d->dom.createElement("name");
            memberEl.appendChild(el);
            el.appendChild(d->dom.createTextNode(item->text(0)));
-           el = d->dom.createElement("email");
+           el = d->dom.createElement("nickName");
            memberEl.appendChild(el);
            el.appendChild(d->dom.createTextNode(item->text(1)));
+           el = d->dom.createElement("email");
+           memberEl.appendChild(el);
+           el.appendChild(d->dom.createTextNode(item->text(2)));
         }
         ++it;
     }

@@ -601,6 +601,7 @@ void ProjectPrivate::loadProjectXML()
   if (!no.isNull())
   {
      m_teamLeader.name = no.namedItem("name").toElement().text();
+     m_teamLeader.nickName = no.namedItem("nickName").toElement().text();
      m_teamLeader.email = no.namedItem("email").toElement().text();
   }
 
@@ -614,6 +615,7 @@ void ProjectPrivate::loadProjectXML()
      QDomElement el2 = el.namedItem("subprojectleader").toElement();
      TeamMember member;
      member.name = el2.attribute("name");
+     member.nickName = el2.attribute("nickName");
      member.email = el2.attribute("email");
      SubProject subproject;
      subproject.name = el.attribute("name");
@@ -630,6 +632,7 @@ void ProjectPrivate::loadProjectXML()
      el = nl.item(i).toElement();
      TeamMember member;
      member.name = el.attribute("tasklead");
+     member.nickName = el.attribute("nickName");
      member.email = el.attribute("email");
      m_taskLeaders[el.attribute("task")] = member;
   }
@@ -641,6 +644,7 @@ void ProjectPrivate::loadProjectXML()
      el = nl.item(i).toElement();
      TeamMember member;
      member.name = el.namedItem("name").toElement().text();
+     member.nickName = el.namedItem("nickName").toElement().text();
      member.email = el.namedItem("email").toElement().text();
      member.task = el.attribute("task");
      m_simpleMembers.append(member);
