@@ -78,7 +78,7 @@ void TeamMembersDlg::slotAddMember()
            KMessageBox::error(this, i18n("The nickname cannot be empty as it is used as an unique identifier."));
            addDlg.show();
         } else
-        if (!checkDuplicates(name, nickName, role, task, subProject))
+        if (!checkDuplicates(0L, name, nickName, role, task, subProject))
         {
           addDlg.show();
         } else
@@ -147,7 +147,7 @@ void TeamMembersDlg::slotEditMember()
            KMessageBox::error(this, i18n("The nickname cannot be empty as it is used as an unique identifier."));
            editDlg.show();
         } else
-       if (!checkDuplicates(name, nickName, role, task, subProject))
+       if (!checkDuplicates(item, name, nickName, role, task, subProject))
         {
           editDlg.show();
         } else
@@ -175,10 +175,8 @@ void TeamMembersDlg::slotDeleteMember()
    }
 }
 
-bool TeamMembersDlg::checkDuplicates(const QString &name, const QString &nickName, const QString &role, const QString &task, const QString &subProject)
+bool TeamMembersDlg::checkDuplicates(QListViewItem *item, const QString &name, const QString &nickName, const QString &role, const QString &task, const QString &subProject)
 {
-    if (role == i18n(simpleMemberStr.utf8()))
-      return true;
     QString s;
     QString nick;
     QListViewItemIterator it(membersListView);
@@ -186,7 +184,7 @@ bool TeamMembersDlg::checkDuplicates(const QString &name, const QString &nickNam
     {
         s = it.current()->text(ROLE_COL);
         nick = it.current()->text(NICKNAME_COL);
-        if  (s == role && it.current()->text(NAME_COL) != name &&
+        if  (item != it.current() && s == role  &&
              (role == i18n(teamLeaderStr.utf8()) ||
               (role == i18n(taskLeaderStr.utf8()) && it.current()->text(TASK_COL) == task) ||
               (role == i18n(subprojectLeaderStr.utf8()) && it.current()->text(SUBPROJECT_COL) == subProject)
@@ -200,7 +198,7 @@ bool TeamMembersDlg::checkDuplicates(const QString &name, const QString &nickNam
             else
               return false;
         } else
-        if (nick == nickName && it.current()->text(NAME_COL) != name)
+        if (nick == nickName && it.current() != item)
         {
           KMessageBox::error(this, i18n("<qt>The <b>%1</b> nickname is already assigned to <b>%2</b>.</qt>").arg(nickName).arg(it.current()->text(NAME_COL)));
           return false;
