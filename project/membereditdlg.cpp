@@ -99,6 +99,8 @@ void MemberEditDlg::slotEditSubprojects()
          break;
       }
    }
+   if (subprojects->count() == 0)
+    subprojectDlg.createNew->setChecked(true);
    if (editDlg.exec())
    {
       QString oldName = subProject.name;
