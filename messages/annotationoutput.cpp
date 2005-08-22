@@ -249,7 +249,7 @@ void AnnotationOutput::slotUpdateNextFile()
   if (m_fileIndex < m_files.count())
   {
     m_fileIndex++;
-    m_updateTimer->start(0, true);
+    m_updateTimer->start(200, true);
   }
 }
 
