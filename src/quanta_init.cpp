@@ -795,7 +795,7 @@ void QuantaInit::initActions()
     (void) new KAction( i18n( "&Load && Convert DTD..." ), 0,
                         DTDs::ref(), SLOT( slotLoadDTD() ),
                         ac, "load_dtd" );
-    (void) new KAction( i18n( "Load && DTD E&ntities..." ), 0,
+    (void) new KAction( i18n( "Load DTD E&ntities..." ), 0,
                         DTDs::ref(), SLOT( slotLoadEntities() ),
                         ac, "load_entities" );
 

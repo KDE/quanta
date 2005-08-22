@@ -3074,7 +3074,7 @@ void QuantaApp::slotEditDTD()
     QString nickName = DTDs::ref()->getDTDNickNameFromName(w->getDTDIdentifier());
     bool ok = false;
     QString res = KInputDialog::getItem(
-        i18n( "Send DTD" ),
+        i18n( "Edit DTD" ),
     i18n( "Please select a DTD:" ), lst, lst.findIndex(nickName), false, &ok, this );
 
     QString s = i18n("Create a new DTEP description");

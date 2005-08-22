@@ -936,7 +936,7 @@ void DTDs::slotLoadDTEP(const QString &_dirName, bool askForAutoload)
   } else
   {
     QString family = dtdcfg.readEntry("Family", "1");
-    if (askForAutoload && KMessageBox::questionYesNo(0L, i18n("<qt>Autoload the <b>%1</b> DTD in the feature?</qt>").arg(nickName), QString::null, i18n("Load"), i18n("Do Not Load")) == KMessageBox::Yes)
+    if (askForAutoload && KMessageBox::questionYesNo(0L, i18n("<qt>Autoload the <b>%1</b> DTD in the future?</qt>").arg(nickName), QString::null, i18n("Load"), i18n("Do Not Load")) == KMessageBox::Yes)
     {
       KURL src;
       src.setPath(dirName);
