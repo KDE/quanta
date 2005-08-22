@@ -110,7 +110,8 @@ bool QuantaDoc::newDocument( const KURL& url, bool switchToExisting )
     //highlighting
     ViewManager::ref()->removeActiveView(false);
     w = ViewManager::ref()->activeDocument();
-    /*
+   
+   /*
     KTextEditor::HighlightingInterface* highlightIf = dynamic_cast<KTextEditor::HighlightingInterface*>(w->doc());
     if (highlightIf)
     {

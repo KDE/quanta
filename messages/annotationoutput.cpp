@@ -81,6 +81,14 @@ void AnnotationOutput::readAnnotations()
   if (!Project::ref()->hasProject())
     return;
   KURL baseURL = Project::ref()->projectBaseURL();
+  QStringList openedItems;
+  QListViewItem *item = m_allAnnotations->firstChild();
+  while (item)
+  {
+    if (item->isOpen())
+        openedItems += item->text(0);
+    item = item->nextSibling();
+  }
   m_allAnnotations->clear();  
   m_annotatedFileItems.clear();
   m_fileNames.clear();
@@ -116,6 +124,8 @@ void AnnotationOutput::readAnnotations()
       m_fileNames[fileIt] = u.url();
     }
     KListViewItem *it = new KListViewItem(fileIt, fileIt, text, lineText);
+    if (openedItems.contains(fileName))
+     fileIt->setOpen(true);
     m_fileNames[it] = u.url();
     m_lines[it] = line;
   }
@@ -123,7 +133,6 @@ void AnnotationOutput::readAnnotations()
 
 void AnnotationOutput::writeAnnotations(const QString &fileName, const QMap<uint, QString> &a_annotations)
 {
-  m_allAnnotations->clear();  
   m_annotatedFileItems.clear();
   m_fileNames.clear();
   m_lines.clear();
@@ -183,7 +192,6 @@ void AnnotationOutput::itemExecuted(QListViewItem *item)
 void AnnotationOutput::updateAnnotations()
 {
   m_updateTimer->stop();
-  m_allAnnotations->clear();
   m_currentFileAnnotations->clear();
   readAnnotations();
   if (Project::ref()->hasProject() && Project::ref()->projectBaseURL().isLocalFile())

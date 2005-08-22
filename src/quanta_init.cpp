@@ -57,6 +57,7 @@
 #include <kio/netaccess.h>
 #include <ktabwidget.h>
 #include <kmultitabbar.h>
+#include <ktexteditor/view.h>
 
 #include "wkafkapart.h"
 #include "kafkacommon.h"
@@ -309,6 +310,7 @@ void QuantaInit::initQuanta()
   QExtFileInfo::copy(KURL().fromPathOrURL(qConfig.globalDataDir + resourceDir + "scripts/info.css"), KURL().fromPathOrURL(infoCss));
 
   checkRuntimeDependencies();
+  ViewManager::ref()->activeDocument()->view()->setFocus();
 }
 
 void QuantaInit::initToolBars()
