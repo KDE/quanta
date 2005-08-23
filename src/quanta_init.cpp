@@ -621,8 +621,10 @@ void QuantaInit::openLastFiles()
   // Reload previously opened files only if setting allows
   m_config->setGroup("General Options");
   if (!m_config->readBoolEntry("Reload Files", true))
+  {
+    m_quanta->setParserEnabled(true);
     return;
-
+  }
   // we need to check config
   // because project now can be
   // in load stage ( remote prj )
