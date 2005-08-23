@@ -137,7 +137,7 @@ void AnnotationOutput::readAnnotations()
   QDomElement annotationElement = Project::ref()->dom()->firstChild().firstChild().namedItem("annotations").toElement();
   if (annotationElement.isNull())
     return;
-  QString yourself = Project::ref()->yourself();  
+  QString yourself = Project::ref()->yourself().lower();  
   QDomNodeList nodes = annotationElement.childNodes();
   int count = nodes.count();
   for (int i = 0; i < count; i++)
@@ -246,7 +246,7 @@ void AnnotationOutput::writeAnnotations(const QString &fileName, const QMap<uint
     el.setAttribute("url", fileName);
     el.setAttribute("line", it.key());
     el.setAttribute("text", it.data().first);
-    el.setAttribute("receiver", it.data().second);
+    el.setAttribute("receiver", it.data().second.lower());
     annotationElement.appendChild(el);
     modified = true;
   }

@@ -200,7 +200,7 @@ bool TeamMembersDlg::checkDuplicates(QListViewItem *item, const QString &name, c
             else
               return false;
         } else
-        if (nick == nickName && it.current() != item && (it.current()->text(EMAIL_COL) != email || it.current()->text(NAME_COL) != name))
+        if (nick.lower() == nickName.lower() && it.current() != item && (it.current()->text(EMAIL_COL) != email || it.current()->text(NAME_COL) != name))
         {
           KMessageBox::error(this, i18n("<qt>The <b>%1</b> nickname is already assigned to <b>%2 &lt;%3&gt;</b>.</qt>").arg(nickName).arg(it.current()->text(NAME_COL)).arg(it.current()->text(EMAIL_COL)));
           return false;
@@ -224,7 +224,7 @@ void TeamMembersDlg::setYourself(const QString &name)
   QListViewItemIterator it(membersListView);
   while ( it.current() )
   {
-    if (it.current()->text(NICKNAME_COL) == name)
+    if (it.current()->text(NICKNAME_COL).lower() == name.lower())
     {
       yourselfLabel->setText(it.current()->text(NAME_COL)+ " <" + it.current()->text(EMAIL_COL) + ">");
       break;
