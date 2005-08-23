@@ -681,6 +681,7 @@ void StructTreeView::showTagAtPos(Node *node)
   {
     if (node && node->mainListItem)
     {
+      clearSelection();
       ensureItemVisible(node->mainListItem);
       setSelected(node->mainListItem, true);
     }
@@ -765,7 +766,7 @@ bool StructTreeView::acceptDrag(QDropEvent* e) const
         m_thisWidget->setCursor(Qt::ForbiddenCursor);
         else
         m_thisWidget->setCursor(Qt::ForbiddenCursor);*/
-        kdDebug(25001) << "Princípio: " << last_accept << endl;
+        kdDebug(25001) << "Princï¿½io: " << last_accept << endl;
 
         return last_accept;
     }
