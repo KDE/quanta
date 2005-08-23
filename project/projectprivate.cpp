@@ -545,6 +545,7 @@ void ProjectPrivate::loadProjectXML()
       if (f.open(IO_ReadOnly))
       {
         QTextStream stream(&f);
+        stream.setEncoding(QTextStream::UnicodeUTF8);
         QString line;
         while (!stream.atEnd())
         {

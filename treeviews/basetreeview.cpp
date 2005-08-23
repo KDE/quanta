@@ -481,8 +481,11 @@ FileInfoDlg* BaseTreeView::addFileInfoPage(KPropertiesDialog* propDlg)
        {
         qfile.open(IO_ReadOnly);
         QString imgname,imgpath;
-        while (qfile.readLine(imgname,200)!=-1)     //open & parse file
+        QTextStream stream(&qfile);
+        stream.setEncoding(QTextStream::UnicodeUTF8);
+        while (!stream.atEnd())     //open & parse file
         {
+          imgname = stream.readLine();
           ct++;
           position=imgname.find("<img",0,false);              //check for images
           if (position!=-1)

@@ -51,8 +51,7 @@ MessageOutput::MessageOutput(QWidget *parent, const char *name )
   m_popupMenu->insertSeparator();
   m_popupMenu->insertItem( SmallIconSet("editclear"), i18n("Clear"), this, SLOT(clear()) ) ;
 
-  connect( this, SIGNAL(selected(QListBoxItem*)), SLOT(clickItem(QListBoxItem*)) );
-
+  connect( this, SIGNAL(clicked(QListBoxItem*)), SLOT(clickItem(QListBoxItem*)) );
 }
 
 MessageOutput::~MessageOutput()

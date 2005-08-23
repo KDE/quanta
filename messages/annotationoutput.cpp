@@ -17,6 +17,7 @@
 #include <qmap.h>
 #include <qregexp.h>
 #include <qstringlist.h>
+#include <qtextstream.h>
 #include <qtimer.h>
 
 #include <kdebug.h>
@@ -213,10 +214,12 @@ void AnnotationOutput::updateAnnotationForFile(const KURL& url)
     {
       QMap<uint, QString> annotations;
       uint i = 0;
+      QTextStream stream(&f);
+      stream.setEncoding(QTextStream::UnicodeUTF8);
       QString line;
-      while (!f.atEnd())
+      while (!stream.atEnd())
       {
-        f.readLine(line, 2000);
+        line = stream.readLine();
         int pos = line.find("@annotation");
         if (pos != -1)
         {
