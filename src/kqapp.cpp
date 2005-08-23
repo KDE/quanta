@@ -203,6 +203,7 @@ void KQApplicationPrivate::init()
   if (quantaApp->quantaStarted)
   {
     quantaApp->slotEnableIdleTimer(false);
+    quantaApp->setParserEnabled(false); //will be enabled in quantaApp->m_quantaInit->openLastFiles();
     quantaApp->m_quantaInit->initQuanta();
     quantaApp->show();
 
@@ -220,7 +221,6 @@ void KQApplicationPrivate::init()
     quantaApp->m_quantaInit->loadInitialProject(initialProject);
     //recoverCrashed manages the autosaved copies
     quantaApp->m_quantaInit->recoverCrashed(initialFiles);
-    quantaApp->setParserEnabled(false); //will be enabled in quantaApp->m_quantaInit->openLastFiles();
 
     for(QStringList::Iterator it = initialFiles.begin();it != initialFiles.end();++it)
     {

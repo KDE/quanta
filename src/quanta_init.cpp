@@ -266,14 +266,6 @@ void QuantaInit::initQuanta()
   connect(m_quanta->m_annotationOutput, SIGNAL(clicked(const QString&, int, int)),
           m_quanta, SLOT(gotoFileAndLine(const QString&, int, int)));
 
-  m_quanta->refreshTimer = new QTimer(m_quanta);
-  connect(m_quanta->refreshTimer, SIGNAL(timeout()), m_quanta, SLOT(slotReparse()));
-  m_quanta->refreshTimer->start( qConfig.refreshFrequency*1000, false ); //update the structure tree every 5 seconds
-  if (qConfig.instantUpdate || qConfig.refreshFrequency == 0)
-  {
-    m_quanta->refreshTimer->stop();
-  }
-
   m_quanta->slotFileNew();
   m_quanta->slotNewStatus();
   initToolBars();
@@ -311,6 +303,15 @@ void QuantaInit::initQuanta()
 
   checkRuntimeDependencies();
   ViewManager::ref()->activeDocument()->view()->setFocus();
+  
+  m_quanta->refreshTimer = new QTimer(m_quanta);
+  connect(m_quanta->refreshTimer, SIGNAL(timeout()), m_quanta, SLOT(slotReparse()));
+  m_quanta->refreshTimer->start( qConfig.refreshFrequency*1000, false ); //update the structure tree every 5 seconds
+  if (qConfig.instantUpdate || qConfig.refreshFrequency == 0)
+  {
+    m_quanta->refreshTimer->stop();
+  }
+
 }
 
 void QuantaInit::initToolBars()
