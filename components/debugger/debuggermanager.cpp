@@ -487,7 +487,7 @@ void DebuggerManager::fileOpened(const QString& file)
   QuantaView *view = ViewManager::ref()->isOpened(KURL::fromPathOrURL(file));
   if (view)
   {
-    ::Document* qdoc = w->document();
+    ::Document* qdoc = view->document();
     if(qdoc)
     {
       connectBreakpointSignals(qdoc);
