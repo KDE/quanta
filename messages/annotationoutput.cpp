@@ -24,6 +24,7 @@
 #include <kio/netaccess.h>
 #include <klistview.h>
 #include <klocale.h>
+#include <kmessagebox.h>
 #include <kurl.h>
 
 #include "annotationoutput.h"
@@ -65,6 +66,8 @@ AnnotationOutput::AnnotationOutput(QWidget *parent, const char *name)
 
   m_updateTimer = new QTimer(this);
   connect(m_updateTimer, SIGNAL(timeout()), this, SLOT(slotUpdateNextFile()));
+
+  m_yourAnnotationFound = false;
 }
 
 AnnotationOutput::~AnnotationOutput()
@@ -96,6 +99,7 @@ void AnnotationOutput::readAnnotations()
   {
     m_allAnnotations->clear();
     m_yourAnnotations->clear();
+    m_yourAnnotationFound = false;
     return;
   }
   bool allAnnotationsVisible = m_allAnnotations->isVisible();
@@ -128,6 +132,7 @@ void AnnotationOutput::readAnnotations()
   m_yourFileItems.clear();
   m_yourFileNames.clear();
   m_yourLines.clear();
+  m_yourAnnotationFound = false;
 
   QDomElement annotationElement = Project::ref()->dom()->firstChild().firstChild().namedItem("annotations").toElement();
   if (annotationElement.isNull())
@@ -171,20 +176,24 @@ void AnnotationOutput::readAnnotations()
         m_fileNames[it] = u.url();
         m_lines[it] = line;
       } else
-      if (yourAnnotationsVisible && receiver == yourself)
+      if (!yourself.isEmpty() && receiver == yourself)
       {
-        KListViewItem *fileIt = m_yourFileItems[fileName];
-        if (!fileIt)
+        m_yourAnnotationFound = true;
+        if (yourAnnotationsVisible)
         {
-          fileIt = new KListViewItem(m_yourAnnotations, fileName);
-          m_yourFileItems.insert(fileName, fileIt);
-          m_yourFileNames[fileIt] = u.url();
+          KListViewItem *fileIt = m_yourFileItems[fileName];
+          if (!fileIt)
+          {
+            fileIt = new KListViewItem(m_yourAnnotations, fileName);
+            m_yourFileItems.insert(fileName, fileIt);
+            m_yourFileNames[fileIt] = u.url();
+          }
+          KListViewItem *it = new KListViewItem(fileIt, fileIt, text, lineText);
+          if (yourOpenedItems.contains(fileName))
+            fileIt->setOpen(true);
+          m_yourFileNames[it] = u.url();
+          m_yourLines[it] = line;
         }
-        KListViewItem *it = new KListViewItem(fileIt, fileIt, text, lineText);
-        if (yourOpenedItems.contains(fileName))
-          fileIt->setOpen(true);
-        m_yourFileNames[it] = u.url();
-        m_yourLines[it] = line;
       }
     } else
     {
@@ -332,7 +341,11 @@ void AnnotationOutput::slotUpdateNextFile()
   if (m_fileIndex < m_files.count())
   {
     m_fileIndex++;
-    m_updateTimer->start(5, true);
+    m_updateTimer->start(2, true);
+  } else
+  if (m_yourAnnotationFound)
+  {
+    KMessageBox::information(this, i18n("<qt>There are annotations addressed for you.<br> To view them select the <i>For You</i> tab in the <i>Annotations</i> toolview.</qt>"), i18n("New Annotations"), "Show Your Annotations");
   }
 }
 

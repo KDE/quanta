@@ -75,6 +75,7 @@ private:
     QDict<KListViewItem> m_annotatedFileItems;
     QMap<QListViewItem*, QString> m_fileNames;
     QMap<QListViewItem*, uint> m_lines;
+    bool m_yourAnnotationFound;
 
     KListView *m_yourAnnotations;
     QDict<KListViewItem> m_yourFileItems;
