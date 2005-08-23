@@ -2885,9 +2885,9 @@ QStringList Document::groupsForDTEPs()
 
 QString Document::annotationText(uint line)
 {
-  QMap<uint, QString>::Iterator it = m_annotations.find(line);
+  QMap<uint, QPair<QString, QString> >::Iterator it = m_annotations.find(line);
   if (it != m_annotations.end())
-    return it.data();
+    return it.data().first;
   else
    return QString::null;
 }
@@ -2901,7 +2901,7 @@ void Document::setAnnotationText(uint line, const QString& text)
       markIf->removeMark(line, KTextEditor::MarkInterface::markType08);
   } else
   {
-    m_annotations.insert(line, text);
+    m_annotations.insert(line, qMakePair(text, QString("")));
     if (markIf)
       markIf->setMark(line, KTextEditor::MarkInterface::markType08);
     uint line, column;
@@ -2933,16 +2933,16 @@ void Document::setAnnotationText(uint line, const QString& text)
     s.prepend(commentBegin + " ");
     s.append(" " + commentEnd + "\n");
     insertText(s, true, true);
-    emit showAnnotation(line, "", text);
+    emit showAnnotation(line, "", qMakePair(text, QString("")));
   }
 }
 
-void Document::addAnnotation(uint line, const QString& text)
+void Document::addAnnotation(uint line, const QPair<QString, QString>& annotation)
 {
-  m_annotations.insert(line, text);
+  m_annotations.insert(line, annotation);
   if (markIf)
     markIf->setMark(line, KTextEditor::MarkInterface::markType08);
-  emit showAnnotation(line, "", text);
+  emit showAnnotation(line, "", annotation);
 }
 
 void Document::clearAnnotations()

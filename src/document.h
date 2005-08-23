@@ -223,8 +223,8 @@ work correctly. */
   static QString hashFilePath(const QString& p);
   QString annotationText(uint line);
   void setAnnotationText(uint line, const QString& text);
-  QMap<uint, QString> annotations() {return m_annotations;}
-  void addAnnotation(uint line, const QString &text);
+  QMap<uint, QPair<QString, QString> > annotations() {return m_annotations;}
+  void addAnnotation(uint line, const QPair<QString, QString>& annotation);
   void clearAnnotations();
 
 public slots:
@@ -254,7 +254,7 @@ signals:
 
   void breakpointMarked(Document*, int);
   void breakpointUnmarked(Document*, int);
-  void showAnnotation(uint, const QString&, const QString&);
+  void showAnnotation(uint, const QString&, const QPair<QString, QString>&);
 
 private slots:
   void slotReplaceChar();
@@ -275,7 +275,7 @@ private:
   
   
 
-  QMap<uint, QString> m_annotations;
+  QMap<uint, QPair<QString, QString> > m_annotations;
   QString untitledUrl;
   int m_replaceLine;
   int m_replaceCol;

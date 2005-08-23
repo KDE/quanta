@@ -4017,11 +4017,16 @@ void QuantaApp::slotReloadStructTreeView(bool groupOnly)
         if (pos != -1)
         {
           pos += 11;
+          QString receiver;
           if (text[pos] == '(')
           {
-            pos = text.find("):");
-            if (pos != -1) 
-              pos += 2;  
+            int p = pos;
+            pos = text.find(')');
+            if (pos != -1)
+            {
+              receiver = text.mid(p + 1, pos - p - 1);
+              pos += 2;
+            }
           } else
             pos++;
           text = text.mid(pos).stripWhiteSpace();
@@ -4030,7 +4035,7 @@ void QuantaApp::slotReloadStructTreeView(bool groupOnly)
             n->next->tag->beginPos(l, c);
           else
             n->tag->endPos(l, c);
-          commentTag->write()->addAnnotation(l, text);
+          commentTag->write()->addAnnotation(l, qMakePair(text, receiver));
         }
       }
       node = node->nextSibling();

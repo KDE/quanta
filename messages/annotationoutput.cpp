@@ -39,6 +39,17 @@ AnnotationOutput::AnnotationOutput(QWidget *parent, const char *name)
 {
   m_currentFileAnnotations = new MessageOutput(this);
   addTab(m_currentFileAnnotations, i18n("Current File"));
+
+  m_yourAnnotations = new KListView(this);
+  m_yourAnnotations->addColumn("1", -1);
+  m_yourAnnotations->addColumn("2", 0);
+  m_yourAnnotations->setRootIsDecorated(true);
+  m_yourAnnotations->header()->hide();
+  m_yourAnnotations->setSorting(1);
+  m_yourAnnotations->setLineWidth(2);
+  addTab(m_yourAnnotations, i18n("For You"));
+  connect(m_yourAnnotations, SIGNAL(executed(QListViewItem*)), SLOT(yourAnnotationsItemExecuted(QListViewItem *)));
+
   m_allAnnotations = new KListView(this);
   m_allAnnotations->addColumn("1", -1);
   m_allAnnotations->addColumn("2", 0);
@@ -46,8 +57,10 @@ AnnotationOutput::AnnotationOutput(QWidget *parent, const char *name)
   m_allAnnotations->header()->hide();
   m_allAnnotations->setSorting(1);
   m_allAnnotations->setLineWidth(2);
-  connect(m_allAnnotations, SIGNAL(executed(QListViewItem*)), SLOT(itemExecuted(QListViewItem *)));
- addTab(m_allAnnotations, i18n("All Files"));
+  connect(m_allAnnotations, SIGNAL(executed(QListViewItem*)), SLOT(allAnnotationsItemExecuted(QListViewItem *)));
+  addTab(m_allAnnotations, i18n("All Files"));
+
+
   connect(this, SIGNAL(currentChanged(QWidget*)), SLOT(tabChanged(QWidget*)));
 
   m_updateTimer = new QTimer(this);
@@ -60,14 +73,14 @@ AnnotationOutput::~AnnotationOutput()
 
 void AnnotationOutput::tabChanged(QWidget *w)
 {
- if (w == m_allAnnotations)
+ if (w == m_allAnnotations || w == m_yourAnnotations)
   readAnnotations();
 }
 
-void AnnotationOutput::insertAnnotation(uint line, const QString& fileName, const QString& text)
+void AnnotationOutput::insertAnnotation(uint line, const QString& fileName, const QPair<QString, QString>& annotation)
 {
   line++;
-  QString s = i18n("Line %1: %2").arg(line).arg(text);
+  QString s = i18n("Line %1: %2").arg(line).arg(annotation.first);
   s.replace('\n', ' ');
   m_currentFileAnnotations->showMessage(line, 1, fileName, s);
 }
@@ -80,7 +93,14 @@ void AnnotationOutput::clearAnnotations()
 void AnnotationOutput::readAnnotations()
 {
   if (!Project::ref()->hasProject())
+  {
+    m_allAnnotations->clear();
+    m_yourAnnotations->clear();
     return;
+  }
+  bool allAnnotationsVisible = m_allAnnotations->isVisible();
+  bool yourAnnotationsVisible = m_yourAnnotations->isVisible();
+
   KURL baseURL = Project::ref()->projectBaseURL();
   QStringList openedItems;
   QListViewItem *item = m_allAnnotations->firstChild();
@@ -90,13 +110,29 @@ void AnnotationOutput::readAnnotations()
         openedItems += item->text(0);
     item = item->nextSibling();
   }
-  m_allAnnotations->clear();  
+  m_allAnnotations->clear();
   m_annotatedFileItems.clear();
   m_fileNames.clear();
   m_lines.clear();
+
+  QStringList yourOpenedItems;
+  item = m_yourAnnotations->firstChild();
+  while (item)
+  {
+    if (item->isOpen())
+        yourOpenedItems += item->text(0);
+    item = item->nextSibling();
+  }
+
+  m_yourAnnotations->clear();
+  m_yourFileItems.clear();
+  m_yourFileNames.clear();
+  m_yourLines.clear();
+
   QDomElement annotationElement = Project::ref()->dom()->firstChild().firstChild().namedItem("annotations").toElement();
   if (annotationElement.isNull())
     return;
+  QString yourself = Project::ref()->yourself();  
   QDomNodeList nodes = annotationElement.childNodes();
   int count = nodes.count();
   for (int i = 0; i < count; i++)
@@ -106,39 +142,68 @@ void AnnotationOutput::readAnnotations()
     KURL u = baseURL;
     QuantaCommon::setUrl(u, fileName);
     u = QExtFileInfo::toAbsolute(u, baseURL);
-    bool ok;
-    int line = el.attribute("line").toInt(&ok, 10);
-    QString text = el.attribute("text");     
-    text.replace('\n',' ');
-    QString lineText = QString("%1").arg(line);
-    if (lineText.length() < 20)
+    if (Project::ref()->contains(u))
     {
-      QString s;
-      s.fill('0', 20 - lineText.length());  
-      lineText.prepend(s);
-    }
-    KListViewItem *fileIt = m_annotatedFileItems[fileName];
-    if (!fileIt)
+      bool ok;
+      int line = el.attribute("line").toInt(&ok, 10);
+      QString text = el.attribute("text");
+      QString receiver = el.attribute("receiver");
+      text.replace('\n',' ');
+      QString lineText = QString("%1").arg(line);
+      if (lineText.length() < 20)
+      {
+        QString s;
+        s.fill('0', 20 - lineText.length());
+        lineText.prepend(s);
+      }
+      if (allAnnotationsVisible)
+      {
+        KListViewItem *fileIt = m_annotatedFileItems[fileName];
+        if (!fileIt)
+        {
+          fileIt = new KListViewItem(m_allAnnotations, fileName);
+          m_annotatedFileItems.insert(fileName, fileIt);
+          m_fileNames[fileIt] = u.url();
+        }
+        KListViewItem *it = new KListViewItem(fileIt, fileIt, text, lineText);
+        if (openedItems.contains(fileName))
+          fileIt->setOpen(true);
+        m_fileNames[it] = u.url();
+        m_lines[it] = line;
+      } else
+      if (yourAnnotationsVisible && receiver == yourself)
+      {
+        KListViewItem *fileIt = m_yourFileItems[fileName];
+        if (!fileIt)
+        {
+          fileIt = new KListViewItem(m_yourAnnotations, fileName);
+          m_yourFileItems.insert(fileName, fileIt);
+          m_yourFileNames[fileIt] = u.url();
+        }
+        KListViewItem *it = new KListViewItem(fileIt, fileIt, text, lineText);
+        if (yourOpenedItems.contains(fileName))
+          fileIt->setOpen(true);
+        m_yourFileNames[it] = u.url();
+        m_yourLines[it] = line;
+      }
+    } else
     {
-      fileIt = new KListViewItem(m_allAnnotations, fileName);
-      m_annotatedFileItems.insert(fileName, fileIt);
-      m_fileNames[fileIt] = u.url();
+      annotationElement.removeChild(el);
     }
-    KListViewItem *it = new KListViewItem(fileIt, fileIt, text, lineText);
-    if (openedItems.contains(fileName))
-     fileIt->setOpen(true);
-    m_fileNames[it] = u.url();
-    m_lines[it] = line;
   }
 }
 
-void AnnotationOutput::writeAnnotations(const QString &fileName, const QMap<uint, QString> &a_annotations)
+void AnnotationOutput::writeAnnotations(const QString &fileName, const QMap<uint, QPair<QString, QString> > &a_annotations)
 {
   m_annotatedFileItems.clear();
   m_fileNames.clear();
   m_lines.clear();
+  m_yourFileItems.clear();
+  m_yourFileNames.clear();
+  m_yourLines.clear();
+
   bool modified = false;
-  QMap<uint, QString> annotations = a_annotations;
+  QMap<uint, QPair<QString, QString> > annotations = a_annotations;
   QDomDocument *dom = Project::ref()->dom();
   QDomElement annotationElement = dom->firstChild().firstChild().namedItem("annotations").toElement();
   if (annotationElement.isNull())
@@ -157,7 +222,7 @@ void AnnotationOutput::writeAnnotations(const QString &fileName, const QMap<uint
       QString text = el.attribute("text");
       bool ok;
       int line = el.attribute("line").toInt(&ok, 10);
-      if (!annotations.contains(line) || (annotations[line] != text))
+      if (!annotations.contains(line) || (annotations[line].first != text))
       {
         n.parentNode().removeChild(n);
         modified = true;
@@ -166,22 +231,23 @@ void AnnotationOutput::writeAnnotations(const QString &fileName, const QMap<uint
     }
     n = n2;
   }
-  for (QMap<uint, QString>::ConstIterator it = annotations.constBegin(); it != annotations.constEnd(); ++it)
+  for (QMap<uint, QPair<QString, QString> >::ConstIterator it = annotations.constBegin(); it != annotations.constEnd(); ++it)
   {
     QDomElement el = dom->createElement("annotation");
     el.setAttribute("url", fileName);
     el.setAttribute("line", it.key());
-    el.setAttribute("text", it.data());
+    el.setAttribute("text", it.data().first);
+    el.setAttribute("receiver", it.data().second);
     annotationElement.appendChild(el);
     modified = true;
   }
   if (modified)
     Project::ref()->setModified(true);
-  if (m_allAnnotations->isVisible())
+  if (m_allAnnotations->isVisible() || m_yourAnnotations->isVisible())
     readAnnotations();
 }
 
-void AnnotationOutput::itemExecuted(QListViewItem *item)
+void AnnotationOutput::allAnnotationsItemExecuted(QListViewItem *item)
 {
   if (dynamic_cast<KListView*> (item->parent()) != m_allAnnotations)
   {
@@ -190,10 +256,19 @@ void AnnotationOutput::itemExecuted(QListViewItem *item)
     emit clicked(m_fileNames[item], 0, 0);
 }
 
+void AnnotationOutput::yourAnnotationsItemExecuted(QListViewItem *item)
+{
+  if (dynamic_cast<KListView*> (item->parent()) != m_yourAnnotations)
+  {
+    emit clicked(m_yourFileNames[item], m_yourLines[item], 0);
+  } else
+    emit clicked(m_yourFileNames[item], 0, 0);
+}
+
 void AnnotationOutput::updateAnnotations()
 {
   m_updateTimer->stop();
-  m_currentFileAnnotations->clear();
+  m_currentFileAnnotations->clear();  
   readAnnotations();
   if (Project::ref()->hasProject() && Project::ref()->projectBaseURL().isLocalFile())
   {
@@ -212,7 +287,7 @@ void AnnotationOutput::updateAnnotationForFile(const KURL& url)
     QFile f(url.path());
     if (f.open(IO_ReadOnly))
     {
-      QMap<uint, QString> annotations;
+      QMap<uint, QPair<QString, QString> > annotations;
       uint i = 0;
       QTextStream stream(&f);
       stream.setEncoding(QTextStream::UnicodeUTF8);
@@ -223,16 +298,21 @@ void AnnotationOutput::updateAnnotationForFile(const KURL& url)
         int pos = line.find("@annotation");
         if (pos != -1)
         {
+          QString receiver;
           pos += 11;
           if (line[pos] == '(')
           {
-            pos = line.find("):");
-            if (pos != -1) 
-              pos += 2;  
+            int p = pos;
+            pos = line.find(')');
+            if (pos != -1)
+            {
+              receiver = line.mid(p + 1, pos - p - 1);
+              pos += 2;
+            }
           } else
             pos++;
           int pos2 = line.find(rx);
-          annotations.insert(i, line.mid(pos, pos2 - pos).stripWhiteSpace());
+          annotations.insert(i, qMakePair(line.mid(pos, pos2 - pos).stripWhiteSpace(), receiver));
         }
         ++i;
       }
@@ -252,7 +332,7 @@ void AnnotationOutput::slotUpdateNextFile()
   if (m_fileIndex < m_files.count())
   {
     m_fileIndex++;
-    m_updateTimer->start(200, true);
+    m_updateTimer->start(5, true);
   }
 }
 

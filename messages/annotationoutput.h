@@ -43,7 +43,7 @@ public:
     ~AnnotationOutput();
     MessageOutput *currentFileAnnotations() const {return m_currentFileAnnotations;}
     KListView *allAnnotations() const {return m_allAnnotations;}
-    void writeAnnotations(const QString &fileName, const QMap<uint, QString> &annotations); 
+    void writeAnnotations(const QString &fileName, const QMap<uint, QPair<QString, QString> > &annotations);
 
 public slots:
     /**
@@ -52,11 +52,12 @@ public slots:
     void updateAnnotations();
     void readAnnotations(); 
     void clearAnnotations();
-    void insertAnnotation(uint line, const QString& fileName, const QString& text);
+    void insertAnnotation(uint line, const QString& fileName, const QPair<QString, QString>& annotation);
 
 private slots:
     void tabChanged(QWidget *w);
-    void itemExecuted(QListViewItem *item);
+    void allAnnotationsItemExecuted(QListViewItem *item);
+    void yourAnnotationsItemExecuted(QListViewItem *item);
     void slotUpdateNextFile();
 
 signals:
@@ -74,6 +75,12 @@ private:
     QDict<KListViewItem> m_annotatedFileItems;
     QMap<QListViewItem*, QString> m_fileNames;
     QMap<QListViewItem*, uint> m_lines;
+
+    KListView *m_yourAnnotations;
+    QDict<KListViewItem> m_yourFileItems;
+    QMap<QListViewItem*, QString> m_yourFileNames;
+    QMap<QListViewItem*, uint> m_yourLines;
+
     QTimer *m_updateTimer;
     KURL::List m_files;
     uint m_fileIndex;
