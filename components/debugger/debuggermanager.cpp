@@ -484,10 +484,14 @@ void DebuggerManager::fileOpened(const QString& file)
   }
 
   //lets keep the eye on toggling bp's through the editor margin
-  ::Document* qdoc = ViewManager::ref()->isOpened(KURL::fromPathOrURL(file))->document();
-  if(qdoc)
+  QuantaView *view = ViewManager::ref()->isOpened(KURL::fromPathOrURL(file));
+  if (view)
   {
-    connectBreakpointSignals(qdoc);
+    ::Document* qdoc = w->document();
+    if(qdoc)
+    {
+      connectBreakpointSignals(qdoc);
+    }
   }
 
   // Also, if we have a debug-session, let the debugger know...
