@@ -71,12 +71,14 @@ DebuggerVariable::DebuggerVariable(DebuggerVariable* v)
     : m_item(NULL)
 {
   m_name = v->name();
-  m_valueList = v->values();
   m_size = m_valueList.count();
   m_value = v->value();
   m_type = v->type();
   m_isReference = v->isReference();
 
+  // We cant just assign m_valuelist to v->values(), it would make a shallow copy...
+  for(DebuggerVariable * v2 = v->values().first(); v2; v2 = v->values().next())
+    m_valueList.append(new DebuggerVariable(v2));
 }
 
 
@@ -216,4 +218,21 @@ DebuggerVariable::~DebuggerVariable()
   if(m_item)
     delete m_item;
 
+}
+
+DebuggerVariable* DebuggerVariable::findItem( QListViewItem * item, bool traverse )
+{
+  if(item == m_item)
+    return this;
+  
+  if(!traverse)
+    return NULL;
+  
+  for(DebuggerVariable * v = m_valueList.first(); v; v = m_valueList.next())
+  {
+    DebuggerVariable * v2 = v->findItem(item, true);
+    if(v2)
+      return v2;
+  }
+  return NULL;
 }

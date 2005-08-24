@@ -45,7 +45,7 @@ class VariablesListView : public KListView
 
     void setVariables(const QPtrList<DebuggerVariable>& vars);
     void addVariable(DebuggerVariable* variable);
-    DebuggerVariable* selected();
+    DebuggerVariable* selected(bool traverse = false);
 
     void clear();
 

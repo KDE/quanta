@@ -75,19 +75,19 @@ VariablesListView::VariablesListView(QWidget *parent, const char *name)
 VariablesListView::~VariablesListView()
 {}
 
-DebuggerVariable* VariablesListView::selected()
+DebuggerVariable* VariablesListView::selected(bool traverse)
 {
   if(!selectedItem())
     return NULL;
 
-  DebuggerVariable* v;
+  DebuggerVariable* v, *found;
   for( v = m_variablesList.first(); v; v = m_variablesList.next())
   {
-    if(v->item() == selectedItem())
-    {
-      return v;
-    }
+    found = v->findItem(selectedItem(), traverse);
+    if(found)
+      return found;
   }
+  
   return NULL;
 }
 
@@ -242,10 +242,14 @@ void VariablesListView::slotVariableContextMenu(KListView *, QListViewItem *, co
   if(!selectedItem())
     return;
 
-  DebuggerVariable v(selected());
-  m_variablePopup->setItemEnabled(dumpValue, v.type() == DebuggerVariableTypes::String);
-  
-  m_variablePopup->exec(point);
+  m_variablePopup->setItemEnabled(removeWatch, selected());
+  if(quantaApp->debugger()->client()->supports(DebuggerClientCapabilities::VariableSetValue))
+    m_variablePopup->setItemEnabled(setValue, selected());
+
+  DebuggerVariable *v = selected(true);
+  m_variablePopup->setItemEnabled(dumpValue, v && v->type() == DebuggerVariableTypes::String);
+
+  m_variablePopup->popup(point);
 }
 
 void VariablesListView::slotVariableSetValue()
@@ -283,14 +287,13 @@ void VariablesListView::slotVariableSetValue()
 
 void VariablesListView::slotVariableDump( )
 {
-  if(!selected())
+  DebuggerVariable *v = selected(true);
+  if(!v)
     return;
 
-  DebuggerVariable v(selected());
-  
-  quantaApp->messageOutput()->showMessage(i18n("Contents of variable %1:\n>>>\n").arg(v.name()));
-  quantaApp->messageOutput()->showMessage(v.value());
-  quantaApp->messageOutput()->showMessage("\n<<<\n");
+  quantaApp->messageOutput()->showMessage(i18n("Contents of variable %1:\n>>>\n").arg(v->name()));
+  quantaApp->messageOutput()->showMessage(v->value());
+  quantaApp->messageOutput()->showMessage("<<<\n");
   
   
 }

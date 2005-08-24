@@ -54,6 +54,8 @@ class DebuggerVariable
     DebuggerVariable(const QString& name, const ValueList_t& values, int type);
     virtual ~DebuggerVariable();
 
+    DebuggerVariable* findItem(QListViewItem *item, bool traverse = false);
+    
     virtual void setName(const QString& name);
     virtual QString name() const;
 
