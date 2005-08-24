@@ -108,7 +108,17 @@ public:
   KURL templateURL();
   KURL toolbarURL();
   EventActions* events();
+  /**
+   * Get the nickname of the current user (you)
+   * @return the nickname
+   */
   QString yourself();
+  /**
+   * Get the roles of the current user in the form "role:task".
+   * Examples: "team leader", "project leader:subprojectname", "task leader:taskname". 
+   * @return the roles (in lowercase)
+   */
+  QStringList yourRoles();
   TeamMember teamLeader();
   TeamMember subprojectLeader(const QString &name);
   TeamMember taskLeader(const QString &name);

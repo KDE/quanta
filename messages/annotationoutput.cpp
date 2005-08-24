@@ -137,7 +137,8 @@ void AnnotationOutput::readAnnotations()
   QDomElement annotationElement = Project::ref()->dom()->firstChild().firstChild().namedItem("annotations").toElement();
   if (annotationElement.isNull())
     return;
-  QString yourself = Project::ref()->yourself().lower();  
+  QString yourself = Project::ref()->yourself().lower();
+  QStringList roles = Project::ref()->yourRoles();
   QDomNodeList nodes = annotationElement.childNodes();
   int count = nodes.count();
   for (int i = 0; i < count; i++)
@@ -176,7 +177,7 @@ void AnnotationOutput::readAnnotations()
         m_fileNames[it] = u.url();
         m_lines[it] = line;
       } else
-      if (!yourself.isEmpty() && receiver == yourself)
+      if (!yourself.isEmpty() && (receiver == yourself || roles.contains(receiver)))
       {
         m_yourAnnotationFound = true;
         if (yourAnnotationsVisible)

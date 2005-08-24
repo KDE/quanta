@@ -1115,6 +1115,30 @@ QString Project::yourself()
   return d->m_yourself;
 }
 
+QStringList Project::yourRoles()
+{
+  QStringList roles;
+  if (d->m_yourself.isEmpty())
+    return roles;
+  QString yourNick = d->m_yourself.lower();
+  if (d->m_teamLeader.nickName.lower() == yourNick)
+    roles += "team leader";
+  QValueList<SubProject>::ConstIterator end =  d->m_subprojects.constEnd();
+  for (QValueList<SubProject>::ConstIterator it = d->m_subprojects.constBegin(); it != end; ++it)
+  {
+    if (subprojectLeader((*it).name).nickName.lower() == yourNick)
+      roles += "subproject leader:" + (*it).name.lower();
+  }
+
+   for (QMap<QString, TeamMember>::ConstIterator it = d->m_taskLeaders.constBegin(); it != d->m_taskLeaders.constEnd(); ++it)
+   {
+      if (it.data().nickName.lower() == yourNick)
+        roles += "task leader:" + it.key().lower();
+   }
+
+  return roles;
+}
+
 TeamMember Project::teamLeader()
 {
   return d->m_teamLeader;
