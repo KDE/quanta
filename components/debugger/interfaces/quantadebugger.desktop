@@ -2,7 +2,6 @@
 Type=ServiceType
 X-KDE-ServiceType=Quanta/Debugger
 Comment=A Quanta Debugger plugin
-Comment[br]=Ul lugent dizraener Quanta
 Comment[ca]=Connector de depuració pel Quanta
 Comment[cs]=Ladicí modul Quanty
 Comment[da]=Et Quanta fejlretter-plugin
