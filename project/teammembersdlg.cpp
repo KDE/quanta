@@ -244,7 +244,7 @@ void TeamMembersDlg::setYourself(const QString &name)
   m_yourself = name;
   if (name.isEmpty())
   {
-    yourselfLabel->setText("Please select your identity from the member list.");
+    yourselfLabel->setText(i18n("Please select your identity from the member list."));
     return;
   }
   QListViewItemIterator it(membersListView);
