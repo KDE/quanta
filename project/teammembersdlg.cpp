@@ -169,12 +169,33 @@ void TeamMembersDlg::slotEditMember()
 
 void TeamMembersDlg::slotDeleteMember()
 {
-   QListViewItem *item =membersListView->currentItem();
-   if (!item) return;
-   if (KMessageBox::warningContinueCancel(this, i18n("<qt>Are you sure that you want to remove <b>%1</b> from the project team?</qt>").arg(item->text(NAME_COL)), i18n("Delete Member"), KStdGuiItem::del()) == KMessageBox::Continue)
-   {
+  QListViewItem *item =membersListView->currentItem();
+  if (!item) return;
+
+  bool deleteYourself = (item->text(NICKNAME_COL) == m_yourself);
+  QListViewItemIterator it(membersListView);
+  while ( it.current() )
+  {
+    if (item != it.current() && it.current()->text(NICKNAME_COL) == m_yourself)
+    {
+      deleteYourself = false;
+      break;
+    }
+    ++it;
+  }
+
+  if (deleteYourself)
+  {
+    if (KMessageBox::warningContinueCancel(this, i18n("<qt>Are you sure that you want to remove yourself (<b>%1</b>) from the project team?<br>If you do so, you should select another member as yourself.</qt>").arg(item->text(NAME_COL)), i18n("Delete Member"), KStdGuiItem::del()) == KMessageBox::Continue)
+    {
       delete item;
-   }
+      setYourself("");
+    }
+  } else
+  if (KMessageBox::warningContinueCancel(this, i18n("<qt>Are you sure that you want to remove <b>%1</b> from the project team?</qt>").arg(item->text(NAME_COL)), i18n("Delete Member"), KStdGuiItem::del()) == KMessageBox::Continue)
+  {
+    delete item;
+  }
 }
 
 bool TeamMembersDlg::checkDuplicates(QListViewItem *item, const QString &name, const QString &nickName, const QString &email, const QString &role, const QString &task, const QString &subProject)
@@ -221,6 +242,11 @@ void TeamMembersDlg::slotSetToYourself()
 void TeamMembersDlg::setYourself(const QString &name)
 {
   m_yourself = name;
+  if (name.isEmpty())
+  {
+    yourselfLabel->setText("Please select your identity from the member list.");
+    return;
+  }
   QListViewItemIterator it(membersListView);
   while ( it.current() )
   {
