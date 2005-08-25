@@ -99,6 +99,7 @@ class QuantaDebuggerDBGp : public DebuggerClient
     void addWatch(const QString &variable);
     void removeWatch(DebuggerVariable *var);
     void variableSetValue(const DebuggerVariable &variable);
+    void propertySetResponse( const QDomNode & setnode);
 
     // Call stack
     void stackShow(const QDomNode&node);

@@ -33,7 +33,8 @@ class VariablesListView : public KListView
   {
     setValue = 1,
     dumpValue,
-    removeWatch 
+    copyValue,
+    removeWatch,
   };
       
   public:
@@ -53,6 +54,7 @@ class VariablesListView : public KListView
     void slotRemoveSelected();
     void slotVariableSetValue();
     void slotVariableDump();
+    void slotVariableCopyToClipboard();
     void slotVariableContextMenu(KListView *list, QListViewItem * item, const QPoint& point);
 
   signals:

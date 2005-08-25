@@ -236,7 +236,7 @@ const uint QuantaDebuggerDBGp::supports(DebuggerClientCapabilities::Capabilities
     case DebuggerClientCapabilities::StepInto:
     case DebuggerClientCapabilities::StepOver:
     case DebuggerClientCapabilities::Watches:
-//     case DebuggerClientCapabilities::VariableSetValue:
+    case DebuggerClientCapabilities::VariableSetValue:
     case DebuggerClientCapabilities::ProfilerOpen:
       return true;
 
@@ -304,6 +304,9 @@ void QuantaDebuggerDBGp::processCommand(const QString& datas)
     
     else if(command == "property_get")
       showWatch(response);
+    
+    else if(command == "property_set")
+      propertySetResponse(response);
 
     // Unknown command...
     else
@@ -812,13 +815,16 @@ QString QuantaDebuggerDBGp::mapLocalPathToServer(const QString& localpath)
   return debuggerInterface()->Mapper()->mapLocalPathToServer(localpath);
 }
 
-void QuantaDebuggerDBGp::variableSetValue(const DebuggerVariable &)
+void QuantaDebuggerDBGp::variableSetValue(const DebuggerVariable &variable)
 {
-//   sendCommand("setvariable", 
-//               "variable", variable.name().ascii(),
-//               "value", variable.value().ascii(),
-//               0);
- 
+  m_network.sendCommand("property_set", "-n " + variable.name(), variable.value());
+
+  for(QValueList<QString>::iterator it = m_watchlist.begin(); it != m_watchlist.end(); ++it)
+    if((*it) == variable.name())
+    {
+      m_network.sendCommand("property_get", "-n " + variable.name(), variable.value());
+      return;
+    }
 
  return;
 }
@@ -899,6 +905,15 @@ void QuantaDebuggerDBGp::showWatch( const QDomNode & variablenode)
 {
   debuggerInterface()->showVariable(buildVariable(variablenode.firstChild()));
 }
+
+void QuantaDebuggerDBGp::propertySetResponse( const QDomNode & setnode)
+{
+  if(attribute(setnode, "success") == "0")
+  {
+    debuggerInterface()->showStatus(i18n("Unable to set value of variable!"), true);
+  }
+}
+
 
 DebuggerVariable* QuantaDebuggerDBGp::buildVariable( const QDomNode & variablenode)
 {

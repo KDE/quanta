@@ -22,7 +22,7 @@
 #include <kdeversion.h>
 #include <kinputdialog.h>
 // #include <kpassivepopup.h>
-// #include <kdatetbl.h>
+#include <qclipboard.h>
 
 // Quanta includes
 #include "variableslistview.h"
@@ -67,6 +67,8 @@ VariablesListView::VariablesListView(QWidget *parent, const char *name)
     m_variablePopup->insertItem(SmallIcon("edit"), i18n("&Set Value"), this, SLOT(slotVariableSetValue()), 0, setValue);
 
   m_variablePopup->insertItem(SmallIcon("viewmag"), i18n("&Dump in messages log"), this, SLOT(slotVariableDump()), 0, dumpValue);
+  
+  m_variablePopup->insertItem(SmallIcon("editcopy"), i18n("&Copy to clipboard"), this, SLOT(slotVariableCopyToClipboard()), 0, copyValue);
 
   connect(this, SIGNAL( contextMenu( KListView *, QListViewItem *, const QPoint & ) ), this, SLOT(slotVariableContextMenu(KListView *, QListViewItem *, const QPoint &)));
 }
@@ -247,7 +249,8 @@ void VariablesListView::slotVariableContextMenu(KListView *, QListViewItem *, co
     m_variablePopup->setItemEnabled(setValue, selected());
 
   DebuggerVariable *v = selected(true);
-  m_variablePopup->setItemEnabled(dumpValue, v && v->type() == DebuggerVariableTypes::String);
+  m_variablePopup->setItemEnabled(dumpValue, v && v->isScalar());
+  m_variablePopup->setItemEnabled(copyValue, v && v->isScalar());
 
   m_variablePopup->popup(point);
 }
@@ -294,8 +297,14 @@ void VariablesListView::slotVariableDump( )
   quantaApp->messageOutput()->showMessage(i18n("Contents of variable %1:\n>>>\n").arg(v->name()));
   quantaApp->messageOutput()->showMessage(v->value());
   quantaApp->messageOutput()->showMessage("<<<\n");
-  
-  
+}
+
+void VariablesListView::slotVariableCopyToClipboard( )
+{
+  DebuggerVariable *v = selected(true);
+  if(!v)
+    return;
+  QApplication::clipboard()->setText(v->value());
 }
 
 #include "variableslistview.moc"
