@@ -83,6 +83,14 @@
                             <property name="name">
                                 <cstring>ExecButton2</cstring>
                             </property>
+                            <property name="sizePolicy">
+                                <sizepolicy>
+                                    <hsizetype>1</hsizetype>
+                                    <vsizetype>0</vsizetype>
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                </sizepolicy>
+                            </property>
                             <property name="focusPolicy">
                                 <enum>TabFocus</enum>
                             </property>
@@ -269,5 +277,10 @@ checkXML index.docbook 2&gt;&amp;1</string>
         <slot>setDisabled(bool)</slot>
     </connection>
 </connections>
+<tabstops>
+    <tabstop>CheckBox4</tabstop>
+    <tabstop>ExecButton2</tabstop>
+    <tabstop>CloseButton1</tabstop>
+</tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>
