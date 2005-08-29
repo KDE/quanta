@@ -47,7 +47,7 @@ class DebuggerVariable
 {
   public:
     DebuggerVariable();
-    DebuggerVariable(DebuggerVariable* var);
+    DebuggerVariable(DebuggerVariable* var, bool copyitem = false);
     DebuggerVariable(const QString& name);
     DebuggerVariable(const QString& name, const QString& value, int type);
     DebuggerVariable(const QString& name, const QString& value, int type, int size);
@@ -83,6 +83,11 @@ class DebuggerVariable
     virtual void setItem(KListViewItem* item) { m_item = item;};
     virtual KListViewItem*  item() const{  return m_item;};
 
+    virtual void copy(DebuggerVariable* v, bool copychldren = true);
+    virtual void append(DebuggerVariable* v);
+    virtual void deleteChild(DebuggerVariable *child);
+    
+    
   private:
     ValueList_t m_valueList;
 

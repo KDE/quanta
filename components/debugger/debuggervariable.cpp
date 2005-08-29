@@ -67,18 +67,24 @@ DebuggerVariable::DebuggerVariable(const QString& name, const ValueList_t& value
   m_size = values.count();
 }
 
-DebuggerVariable::DebuggerVariable(DebuggerVariable* v)
-    : m_item(NULL)
+DebuggerVariable::DebuggerVariable(DebuggerVariable* v, bool copyitem )
 {
   m_name = v->name();
-  m_size = m_valueList.count();
+  m_size = v->size();
   m_value = v->value();
   m_type = v->type();
   m_isReference = v->isReference();
+  if(copyitem)
+  {
+    m_item = v->item();
+    v->setItem(NULL);
+  }
+  else
+    m_item = NULL;
 
   // We cant just assign m_valuelist to v->values(), it would make a shallow copy...
   for(DebuggerVariable * v2 = v->values().first(); v2; v2 = v->values().next())
-    m_valueList.append(new DebuggerVariable(v2));
+    m_valueList.append(new DebuggerVariable(v2, copyitem));
 }
 
 
@@ -220,6 +226,21 @@ DebuggerVariable::~DebuggerVariable()
 
 }
 
+
+void DebuggerVariable::deleteChild( DebuggerVariable * child )
+{
+  
+  for(DebuggerVariable *v = m_valueList.first(); v; v = m_valueList.next())
+  {
+    if(v->name() == child->name())
+    {
+      m_valueList.remove(v);
+      delete v;
+      return;
+    }
+  }
+}
+
 DebuggerVariable* DebuggerVariable::findItem( QListViewItem * item, bool traverse )
 {
   if(item == m_item)
@@ -236,3 +257,27 @@ DebuggerVariable* DebuggerVariable::findItem( QListViewItem * item, bool travers
   }
   return NULL;
 }
+
+void DebuggerVariable::copy( DebuggerVariable * v, bool copychildren )
+{
+  m_name = v->name();
+  m_size = (v->isScalar() || copychildren ? v->size() : m_valueList.count());
+  m_value = v->value();
+  m_type = v->type();
+  m_isReference = v->isReference();
+
+  // We cant just assign m_valuelist to v->values(), it would make a shallow copy...
+//   
+  if(copychildren)
+  {
+    m_valueList.clear();
+    for(DebuggerVariable * v2 = v->values().first(); v2; v2 = v->values().next())
+      m_valueList.append(new DebuggerVariable(v2, true));
+  }
+}
+
+void DebuggerVariable::append( DebuggerVariable * v )
+{
+  m_valueList.append(v);
+}
+

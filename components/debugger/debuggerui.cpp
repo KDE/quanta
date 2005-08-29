@@ -59,12 +59,13 @@ DebuggerUI::DebuggerUI(QObject *parent, const char *name)
   m_backtraceListviewTVA = quantaApp->addToolWindow(m_backtraceListview, quantaApp->prevDockPosition(m_backtraceListview, KDockWidget::DockBottom), quantaApp->getMainDockWidget());
 
   // Debug HTML preview
-  m_preview = new WHTMLPart(quantaApp, "debug_output");
+  m_preview = new WHTMLPart(quantaApp, "debug_output", true);
   //m_preview->view()->resize(0, 0);
   m_preview->view()->setIcon(UserIcon("debug_run"));
   m_preview->view()->setCaption(i18n("Debug Output"));
   m_previewTVA = quantaApp->addToolWindow(m_preview->view(), quantaApp->prevDockPosition(m_preview->view(), KDockWidget::DockBottom), quantaApp->getMainDockWidget());
-
+  connect(m_preview, SIGNAL(openFile(const KURL&, const QString&, bool)), quantaApp, SLOT(slotFileOpen(const KURL&, const QString&, bool)));
+  
   // Show debugger toolbar
   quantaApp->toolBar("debugger_toolbar")->show();
 
@@ -126,12 +127,6 @@ void DebuggerUI::hideMenu()
   // Status indicator
   quantaApp->statusBar()->removeItem(IDS_STATUS_DEBUGGER);
 
-}
-
-void DebuggerUI::setVariables(const QPtrList<DebuggerVariable>& vars)
-{
-  m_variablesListView->clear();
-  m_variablesListView->setVariables(vars);
 }
 
 void DebuggerUI::addVariable(DebuggerVariable* var)

@@ -41,10 +41,6 @@ class VariablesListView : public KListView
     VariablesListView(QWidget *parent = 0, const char *name = 0);
     ~VariablesListView();
 
-    //void preWatchUpdate();
-    //void postWatchUpdate();
-
-    void setVariables(const QPtrList<DebuggerVariable>& vars);
     void addVariable(DebuggerVariable* variable);
     DebuggerVariable* selected(bool traverse = false);
 
@@ -63,7 +59,7 @@ class VariablesListView : public KListView
 
   private:
     void keyPressEvent(QKeyEvent *e);
-    void addChild(KListViewItem* parent, DebuggerVariable* var);
+    void replaceVariable(DebuggerVariable* oldvar, DebuggerVariable* newvar);
 
     QPtrList<DebuggerVariable> m_variablesList;
     KPopupMenu *m_variablePopup;

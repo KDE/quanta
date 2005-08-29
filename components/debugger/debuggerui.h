@@ -56,7 +56,6 @@ class DebuggerUI : public QObject
     void preWatchUpdate();
     void postWatchUpdate();
 
-    void setVariables(const QPtrList<DebuggerVariable>&);
     void addVariable(DebuggerVariable* var);
     void showBreakpoint(const DebuggerBreakpoint& bp);
     void deleteBreakpoint(const DebuggerBreakpoint& bp);

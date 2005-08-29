@@ -124,42 +124,31 @@ void VariablesListView::keyPressEvent(QKeyEvent *e)
 }
 
 void VariablesListView::addVariable(DebuggerVariable* variable)
-{
+{ 
   if(!variable)
   {
     kdDebug(24002) << k_funcinfo << " Tried to show NULL variable!" << endl;
     return;
   }
 
-  // Remove the old varible if its there
-  DebuggerVariable* v;
-  for( v = m_variablesList.first(); v; v = m_variablesList.next())
+  // Find the old variable in the tree if it is there 
+  for(DebuggerVariable* v = m_variablesList.first(); v; v = m_variablesList.next())
   {
     if(v->name() == variable->name())
     {
-      m_variablesList.remove(v);
-      delete v;
-
-      break;
+      replaceVariable(v, variable);
+      return;
     }
   }
 
   // Insert the new variable
-  m_variablesList.append(variable);
+  DebuggerVariable *newvar = new DebuggerVariable(variable);
+  m_variablesList.append(newvar);
 
   KListViewItem * item = new KListViewItem(this);
-  item->setText(VariablesListViewColumns::Name, variable->name());
-  item->setText(VariablesListViewColumns::Type, variable->typeName());
-  item->setText(VariablesListViewColumns::Size, variable->sizeName());
-  variable->setItem(item);
-  if(variable->isScalar())
-    item->setText(VariablesListViewColumns::Value, variable->value());
-  else
-    addChild(item, variable);
-
   insertItem(item);
-
-  //setVariables(newlist);
+  newvar->setItem(item);
+  replaceVariable(newvar, variable);
 }
 
 void VariablesListView::clear()
@@ -168,76 +157,60 @@ void VariablesListView::clear()
   m_variablesList.clear();
 }
 
-void VariablesListView::setVariables(const QPtrList<DebuggerVariable>& vars)
-{
-  clear();
-  m_variablesList = vars;
-
-  DebuggerVariable* v;
-  KListViewItem* item;
-  for( v = m_variablesList.first(); v; v = m_variablesList.next())
+void VariablesListView::replaceVariable(DebuggerVariable* oldvar, DebuggerVariable* newvar)
+{ 
+  KListViewItem * item;
+  
+  // Remove children that doesen't exist anymore
+  QPtrList<DebuggerVariable> oldlist = oldvar->values();
+  for(DebuggerVariable* oldchild = oldlist.last(); oldchild; oldchild = oldlist.prev())
   {
-    item = new KListViewItem(this);
-    item->setText(VariablesListViewColumns::Name, v->name());
-    item->setText(VariablesListViewColumns::Type, v->typeName());
-    item->setText(VariablesListViewColumns::Size, v->sizeName());
-    v->setItem(item);
-    if(v->isScalar())
-      item->setText(VariablesListViewColumns::Value, v->value());
-    else
-      addChild(item, v);
-
-    insertItem(item);
-  }
-}
-
-void VariablesListView::addChild(KListViewItem* parent, DebuggerVariable* var)
-{
-  //QListViewItem* item;
-  KListViewItem* item;
-  DebuggerVariable* child;
-  QPtrList<DebuggerVariable> list = var->values();
-  for(child = list.first(); child; child = list.next())
-  {
-    item = new KListViewItem(parent);
-    child->setItem(item);
-    item->setText(VariablesListViewColumns::Name, child->name());
-    item->setText(VariablesListViewColumns::Type, child->typeName());
-    item->setText(VariablesListViewColumns::Size, child->sizeName());
-
-    if(child->isScalar())
-      item->setText(VariablesListViewColumns::Value, child->value());
-    else
-      addChild(item, child);
-  }
-}
-
-
-
-// This function should be called before watches are update (if they're updated in a batch)
-// so that postWatchUpdate can remove obsolete variables from the list
-/*void VariablesListView::preWatchUpdate()
-{
-  DebuggerVariable* v;
-  for( v = m_variablesList.first(); v; v = m_variablesList.next())
-    v->touch();
-}*/
-
-// This function removes obsolete variables from the tree
-/*void VariablesListView::postWatchUpdate()
-{
-  DebuggerVariable* v;
-  for( v = m_variablesList.last(); v; v = m_variablesList.prev())
-    if(v->touched())
+    bool found = false;
+    QPtrList<DebuggerVariable> newlist = newvar->values();
+    for(DebuggerVariable* newchild = newlist.last(); newchild; newchild = newlist.prev())
     {
-      if(v->item())
+      if(newchild->name() == oldchild->name())
       {
-        delete v->item();
-        v->setItem(NULL);
+        found = true;
+        break;
       }
-      m_variablesList.remove();
     }
-}*/
+    if(!found)
+      oldvar->deleteChild(oldchild);
+  }
+
+  // Update and add children
+  QPtrList<DebuggerVariable> newlist = newvar->values();
+  for(DebuggerVariable* newchild = newlist.last(); newchild; newchild = newlist.prev())
+  {
+    bool found = false;
+    QPtrList<DebuggerVariable> oldlist = oldvar->values();
+    for(DebuggerVariable* oldchild = oldlist.last(); oldchild; oldchild = oldlist.prev())  
+    {
+      if(newchild->name() == oldchild->name())
+      {
+        found = true;
+        replaceVariable( oldchild, newchild);
+        break;
+      }
+    }
+    if(!found)
+    {
+      DebuggerVariable* child = new DebuggerVariable();
+      item = new KListViewItem(oldvar->item());
+      child->setItem(item);
+      replaceVariable( child, newchild);
+      oldvar->append(child);
+    }
+  }
+  item = oldvar->item();
+  oldvar->copy(newvar, false);
+  item->setText(VariablesListViewColumns::Name, oldvar->name());
+  item->setText(VariablesListViewColumns::Type, oldvar->typeName());
+  item->setText(VariablesListViewColumns::Size, oldvar->sizeName());
+  item->setText(VariablesListViewColumns::Value, (newvar->isScalar() ? oldvar->value() : ""));
+  
+}
 
 void VariablesListView::slotVariableContextMenu(KListView *, QListViewItem *, const QPoint& point)
 {
