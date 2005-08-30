@@ -21,7 +21,6 @@
 #include <kiconloader.h>
 #include <kdeversion.h>
 #include <kinputdialog.h>
-// #include <kpassivepopup.h>
 #include <qclipboard.h>
 
 // Quanta includes
@@ -57,8 +56,6 @@ VariablesListView::VariablesListView(QWidget *parent, const char *name)
   addColumn(i18n("Size"));
   setRootIsDecorated(true);
   setSorting(-1); // No sorting
-//   setTooltipColumn(0);
-//   setShowToolTips(true);
   
   m_variablePopup = new KPopupMenu(this);
   m_variablePopup->insertItem(SmallIcon("editdelete"), i18n("&Remove"), this, SLOT(slotRemoveSelected()), 0, removeWatch);

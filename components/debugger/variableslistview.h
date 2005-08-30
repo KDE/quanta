@@ -44,6 +44,9 @@ class VariablesListView : public KListView
     void addVariable(DebuggerVariable* variable);
     DebuggerVariable* selected(bool traverse = false);
 
+    DebuggerVariable* first() { return m_variablesList.first(); }
+    DebuggerVariable* next()  { return m_variablesList.next(); }
+    
     void clear();
 
   public slots:

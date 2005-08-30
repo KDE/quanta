@@ -47,4 +47,6 @@ void ProjectOptions::buttonToolbar_clicked()
 void ProjectOptions::comboDebuggerClient_activated( int idx)
 {
     buttonDebuggerOptions->setEnabled(idx > 0);
+    checkDebuggerPersistentBreakpoints->setEnabled(idx > 0);
+    checkDebuggerPersistentWatches->setEnabled(idx > 0);
 }

@@ -43,6 +43,7 @@
 #include "debuggerui.h"
 #include "debuggervariable.h"
 #include "pathmapper.h"
+#include "variableslistview.h"
 #include "conditionalbreakpointdialog.h"
 
 // dialogs
@@ -65,13 +66,17 @@ void DebuggerManager::slotNewProjectLoaded(const QString &projectname, const KUR
 {
   if(m_client)
   {
+    
     disconnect(m_client, SIGNAL(updateStatus(DebuggerUI::DebuggerStatus)), m_debuggerui, SLOT(slotStatus(DebuggerUI::DebuggerStatus)));
 
     delete m_client;
     m_client = NULL;
   }
   enableAction("*", false);
-
+  
+  // Remove all breakpoints
+  m_breakpointList->clear();
+  
   if(m_debuggerui)
   {
     delete m_debuggerui;
@@ -120,7 +125,7 @@ void DebuggerManager::slotNewProjectLoaded(const QString &projectname, const KUR
 
     // Load this project's mapped paths
     m_pathmapper->readConfig();
-
+    
     // Load this projects debugger's settings
     nodeThisDbg = nodeDbg.namedItem(m_client->getName());
     if(nodeThisDbg.isNull())
@@ -130,9 +135,62 @@ void DebuggerManager::slotNewProjectLoaded(const QString &projectname, const KUR
     }
 
     m_client->readConfig(nodeThisDbg);
-    
+
+    // recreate UI
     m_debuggerui = new DebuggerUI(this, "debuggerui");
     connect(m_client, SIGNAL(updateStatus(DebuggerUI::DebuggerStatus)), m_debuggerui, SLOT(slotStatus(DebuggerUI::DebuggerStatus)));
+    
+    // Load saved breakpoints
+    if(Project::ref()->debuggerPersistentBreakpoints())
+    {
+      QDomNode nodeBreakpoints = nodeDbg.namedItem("breakpoints");
+      if(!nodeBreakpoints.isNull())
+      {
+        QDomNode child = nodeBreakpoints.firstChild();
+        while(!child.isNull())
+        {
+          DebuggerBreakpoint* bp = new DebuggerBreakpoint();
+          bp->setFilePath( child.attributes().namedItem("filepath").nodeValue());
+          bp->setClass( child.attributes().namedItem("class").nodeValue());
+          bp->setFunction( child.attributes().namedItem("function").nodeValue());
+          bp->setCondition( child.attributes().namedItem("condition").nodeValue());
+          bp->setLine( child.attributes().namedItem("line").nodeValue().toLong());
+          if(child.attributes().namedItem("type").nodeValue() == "true")
+            bp->setType(DebuggerBreakpoint::ConditionalTrue);
+          else if(child.attributes().namedItem("type").nodeValue() == "change")
+            bp->setType(DebuggerBreakpoint::ConditionalChange);
+          else
+            bp->setType(DebuggerBreakpoint::LineBreakpoint);
+          
+          // Update client and ui
+          m_client->addBreakpoint(bp);
+          m_breakpointList->add(bp);
+          
+          // loop
+          child = child.nextSibling();
+        }
+      }
+    }
+
+    // Load saved Watches
+    if(Project::ref()->debuggerPersistentWatches())
+    {
+      QDomNode nodeWatches = nodeDbg.namedItem("watches");
+      if(!nodeWatches.isNull())
+      {
+        QDomNode child = nodeWatches.firstChild();
+        while(!child.isNull())
+        {
+          QString watch = child.attributes().namedItem("name").nodeValue();
+          DebuggerVariable *var = new DebuggerVariable(watch, "", DebuggerVariableTypes::Undefined);
+          m_debuggerui->addVariable(var);
+          m_client->addWatch(watch);
+
+          child = child.nextSibling();
+        }
+      }
+    }
+
   }
 
   initClientActions();
@@ -235,6 +293,7 @@ DebuggerManager::~DebuggerManager()
 
   if(m_client)
   {
+        
     disconnect(m_client, SIGNAL(updateStatus(DebuggerUI::DebuggerStatus)), m_debuggerui, SLOT(slotStatus(DebuggerUI::DebuggerStatus)));
 
     delete m_client;
@@ -360,15 +419,6 @@ void DebuggerManager::slotConditionalBreakpoint()
       m_breakpointList->add(bp);
     }
   }
-    
-  /*QString condition = KInputDialog::getText(i18n("Add Conditional Breakpoint"), i18n("Specify expression to break at (when true):"), quantaApp->popupWord);
-  quantaApp->popupWord = "";
-  if(!condition.isEmpty())
-  {
-    DebuggerBreakpoint * bp = new DebuggerBreakpoint("", 0, condition);
-    m_client->addBreakpoint(bp);
-    m_breakpointList->add(bp);
-  }*/
 }
 
 void DebuggerManager::slotDebugStartSession()
@@ -502,9 +552,6 @@ void DebuggerManager::fileOpened(const QString& file)
 // Check with editors if breakpoints changed and send all breakpoint (again) to client
 void DebuggerManager::refreshBreakpoints()
 {
-  // Update bp-list from editors
-  // ...TODO (Is this still needed?)
-
   // Resend bps
   m_breakpointList->rewind();
   DebuggerBreakpoint* bp;
@@ -664,11 +711,6 @@ void DebuggerManager::clearBreakpoints ()
   m_breakpointList->clear();
 }
 
-// DebuggerBreakpoint *DebuggerManager::newDebuggerBreakpoint()
-// {
-//   return new DebuggerBreakpoint();
-// }
-
 void DebuggerManager::slotBreakpointMarked(Document* qdoc, int line)
 {
   DebuggerBreakpoint* br = new DebuggerBreakpoint(qdoc->url().prettyURL(0, KURL::StripFileProtocol), line);
@@ -712,6 +754,89 @@ void DebuggerManager::updateBreakpointKey( const DebuggerBreakpoint & bp, const 
 DebuggerBreakpoint * DebuggerManager::findDebuggerBreakpoint( const QString & key )
 {
   return m_breakpointList->findDebuggerBreakpoint(key);
+}
+
+void DebuggerManager::saveProperties( )
+{
+  
+  if (m_client)
+  {
+    QDomDocument *dom = Project::ref()->sessionDom();
+    QDomNode projectNode = dom->firstChild().firstChild();
+    QDomNode nodeDbg  = projectNode.namedItem("debuggers");
+    if(nodeDbg.isNull())
+    {
+      nodeDbg = dom->createElement("debuggers");
+      projectNode.appendChild(nodeDbg);
+    }
+
+    // Save breakpoints
+    if(Project::ref()->debuggerPersistentBreakpoints())
+    {
+      // (Re)create breakpoints section
+      QDomNode nodeBreakpoints = nodeDbg.namedItem("breakpoints");
+      if(!nodeBreakpoints.isNull())
+        nodeBreakpoints.parentNode().removeChild(nodeBreakpoints);
+      
+      if(m_breakpointList->count() > 0)
+      {
+        nodeBreakpoints = dom->createElement("breakpoints");
+        nodeDbg.appendChild(nodeBreakpoints);
+      
+  
+        // Loop breakpoints and save 'em
+        m_breakpointList->rewind();
+        DebuggerBreakpoint* bp;
+        while((bp = m_breakpointList->next()))
+        {
+          QDomElement child = dom->createElement("breakpoint");
+          child.setAttribute("filepath", bp->filePath());
+          child.setAttribute("class", bp->inClass());
+          child.setAttribute("function", bp->inFunction());
+          child.setAttribute("condition", bp->condition());
+          child.setAttribute("line", QString::number(bp->line()));
+          if(bp->type() == DebuggerBreakpoint::ConditionalTrue)
+            child.setAttribute("type", "true");
+          else if(bp->type() == DebuggerBreakpoint::ConditionalChange)
+            child.setAttribute("type", "change");
+          else
+            child.setAttribute("type", "line");
+          
+          nodeBreakpoints.appendChild(child);
+        }
+      }
+    }
+
+    // Save Watches
+    if(Project::ref()->debuggerPersistentWatches())
+    {
+      // (Re)create watches section
+      QDomNode nodeWatches = nodeDbg.namedItem("watches");
+      if(!nodeWatches.isNull())
+        nodeWatches.parentNode().removeChild(nodeWatches);
+      
+      if(m_debuggerui->watches()->first())
+      {
+        nodeWatches = dom->createElement("watches");
+        nodeDbg.appendChild(nodeWatches);
+        
+        // Loop watches and save 'em
+        for( DebuggerVariable *v = m_debuggerui->watches()->first(); v; v = m_debuggerui->watches()->next())
+        {
+          QDomElement child = dom->createElement("watch");
+          child.setAttribute("name", v->name());
+          
+          nodeWatches.appendChild(child);
+        }
+      }
+    }
+  }
+}
+
+void DebuggerManager::slotHandleEvent( const QString & event, const QString &, const QString & )
+{
+  if(event == "before_project_close")
+    saveProperties();
 }
 
 

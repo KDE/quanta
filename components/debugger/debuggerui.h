@@ -53,15 +53,13 @@ class DebuggerUI : public QObject
     ~DebuggerUI();
 
     // Watches
-    void preWatchUpdate();
-    void postWatchUpdate();
-
     void addVariable(DebuggerVariable* var);
     void showBreakpoint(const DebuggerBreakpoint& bp);
     void deleteBreakpoint(const DebuggerBreakpoint& bp);
     void parsePHPVariables(const QString &);
     void sendRequest(const KURL &url);
-
+    VariablesListView* watches() { return m_variablesListView; };
+    
     void showMenu();
     void hideMenu();
 

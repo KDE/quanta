@@ -201,14 +201,5 @@ void DebuggerUI::backtraceShow( long level, BacktraceType type, const QString & 
     m_backtraceListview->backtraceShow(level, type, filename, line, func);
 }
 
-/*void DebuggerUI::preWatchUpdate()
-{
-  m_variablesListView->preWatchUpdate();
-}
-
-void DebuggerUI::postWatchUpdate()
-{
-  m_variablesListView->postWatchUpdate();
-}*/
 
 #include "debuggerui.moc"

@@ -172,6 +172,8 @@ void QuantaInit::initQuanta()
   m_quanta->m_debugger = new DebuggerManager(m_quanta);
   connect(Project::ref(), SIGNAL(newProjectLoaded(const QString &, const KURL &, const KURL &)),
           m_quanta->m_debugger, SLOT(slotNewProjectLoaded(const QString &, const KURL &, const KURL &)));
+  connect(Project::ref(), SIGNAL(eventHappened(const QString &, const QString &, const QString &)),
+          m_quanta->m_debugger, SLOT(slotHandleEvent(const QString &, const QString &, const QString &)));
   connect(m_quanta->m_debugger, SIGNAL(hideSplash()), m_quanta, SLOT(slotHideSplash()));
 
   m_quanta->m_pluginInterface->readConfig(); //call here, so the plugin actions are created before the GUI

@@ -44,7 +44,8 @@ class DebuggerManager : public QObject
     // Internal help functions
     void initActions();
     void initClientActions();
-
+    void saveProperties();
+    
     void connectBreakpointSignals(Document*);
     void disconnectBreakpointSignals(Document*);
 
@@ -112,6 +113,9 @@ class DebuggerManager : public QObject
     // Initiation
     void slotNewProjectLoaded(const QString &, const KURL &, const KURL &);
 
+    // Event handling
+    void slotHandleEvent(const QString &, const QString &, const QString &);
+        
   private slots:
     void slotBreakpointMarked(Document*, int);
     void slotBreakpointUnmarked(Document*, int);

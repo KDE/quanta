@@ -487,6 +487,8 @@ void Project::slotOptions()
       optionsPage.buttonDebuggerOptions->setEnabled(true);
     }
   }
+  optionsPage.checkDebuggerPersistentBreakpoints->setChecked(d->m_debuggerPersistentBreakpoints);
+  optionsPage.checkDebuggerPersistentWatches->setChecked(d->m_debuggerPersistentWatches);
 
   QString excludeStr;
   for (uint i = 0; i < d->excludeList.count(); i++)
@@ -602,6 +604,8 @@ void Project::slotOptions()
 
     // Debugger
     d->debuggerClient = optionsPage.comboDebuggerClient->currentText();
+    d->m_debuggerPersistentBreakpoints = optionsPage.checkDebuggerPersistentBreakpoints->isChecked();
+    d->m_debuggerPersistentWatches = optionsPage.checkDebuggerPersistentWatches->isChecked();
 
     d->m_defaultDTD = DTDs::ref()->getDTDNameFromNickName(optionsPage.dtdCombo->currentText()).lower();
     d->m_defaultEncoding  = optionsPage.encodingCombo->currentText();
@@ -658,6 +662,8 @@ void Project::slotOptions()
     el =d->dom.createElement("debuggerclient");
     projectNode.appendChild( el );
     el.appendChild(d->dom.createTextNode( d->debuggerClient ) );
+    el.setAttribute("persistentBreakpoints", d->m_debuggerPersistentBreakpoints);
+    el.setAttribute("persistentWatches", d->m_debuggerPersistentWatches);
 
     d->m_excludeCvsignore = optionsPage.checkCvsignore->isChecked();
     excludeStr = optionsPage.lineExclude->text();
@@ -1094,6 +1100,15 @@ QString Project::debuggerClient()
   return d->debuggerClient;
 }
 
+bool Project::debuggerPersistentBreakpoints( )
+{
+  return d->m_debuggerPersistentBreakpoints;
+}
+
+bool Project::debuggerPersistentWatches( )
+{
+  return d->m_debuggerPersistentWatches;
+}
 
 void Project::setModified(bool b)
 {
@@ -1304,5 +1319,6 @@ void Project::saveBookmarks(const KURL &url, KTextEditor::MarkInterface *markIf)
     }
   }
 }
+
 
 #include "project.moc"

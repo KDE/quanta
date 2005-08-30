@@ -221,6 +221,8 @@ void ProjectPrivate::init()
   usePreviewPrefix = false;  
   previewPrefix = KURL();
   m_persistentBookmarks = false;
+  m_debuggerPersistentBreakpoints = false;
+  m_debuggerPersistentWatches = false;
   m_excludeCvsignore = false;
   currentProjectView = QString::null;
   m_projectFiles.clear();
@@ -439,6 +441,8 @@ void ProjectPrivate::loadProjectXML()
   // Debugger
   no = projectNode.namedItem("debuggerclient");
   debuggerClient = no.firstChild().nodeValue();
+  m_debuggerPersistentBreakpoints = (no.toElement().attribute("persistentBreakpoints") == "1");
+  m_debuggerPersistentWatches = (no.toElement().attribute("persistentWatches") == "1");
 
   no = projectNode.namedItem("templates");
   tmpString = no.firstChild().nodeValue();

@@ -186,3 +186,8 @@ void DebuggerBreakpointList::updateBreakpointKey( const DebuggerBreakpoint & bp,
     (*it)->setKey(newkey);
   }
 }
+
+size_t DebuggerBreakpointList::count( )
+{
+  return m_breakpointList->count();
+}

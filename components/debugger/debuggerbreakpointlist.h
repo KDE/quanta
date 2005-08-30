@@ -49,6 +49,7 @@ class DebuggerBreakpointList
     DebuggerBreakpoint * findDebuggerBreakpoint(const QString& key);
     void updateBreakpointKey(const DebuggerBreakpoint &bp, const QString& newkey);
 
+    size_t count();
     void rewind();
     DebuggerBreakpoint* next();
 

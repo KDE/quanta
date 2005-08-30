@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>ProjectOptions</class>
 <comment>/***************************************************************************
  *                                                                         *
@@ -17,8 +17,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>645</width>
-            <height>516</height>
+            <width>644</width>
+            <height>438</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -353,6 +353,9 @@
             <property name="text">
                 <string>Exclude &amp;files listed in .cvsignore</string>
             </property>
+            <property name="accel">
+                <string>Alt+F</string>
+            </property>
             <property name="whatsThis" stdset="0">
                 <string>The files listed in &lt;i&gt;.cvsignore&lt;/i&gt; files will not appear in the project tree, nor will be shown when you rescan the project folder or upload the project. Files matching the &lt;i&gt;.cvsignore&lt;/i&gt; entries that were already present in the project will be removed from it, but they will not be removed from the disc.&lt;br&gt;
 &lt;b&gt;NOTE:&lt;/b&gt; This feature works only for local projects.</string>
@@ -377,20 +380,15 @@
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QPushButton" row="0" column="2">
+                <widget class="QLabel" row="0" column="0">
                     <property name="name">
-                        <cstring>buttonDebuggerOptions</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>4</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
+                        <cstring>TextLabel2_2_2</cstring>
                     </property>
                     <property name="text">
-                        <string>Optio&amp;ns</string>
+                        <string>Debu&amp;gger:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>comboDebuggerClient</cstring>
                     </property>
                 </widget>
                 <widget class="QComboBox" row="0" column="1">
@@ -409,15 +407,45 @@
                         <bool>true</bool>
                     </property>
                 </widget>
-                <widget class="QLabel" row="0" column="0">
+                <widget class="QPushButton" row="0" column="2">
                     <property name="name">
-                        <cstring>TextLabel2_2_2</cstring>
+                        <cstring>buttonDebuggerOptions</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>4</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
                     </property>
                     <property name="text">
-                        <string>Debugge&amp;r:</string>
+                        <string>Optio&amp;ns</string>
                     </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>comboDebuggerClient</cstring>
+                    <property name="accel">
+                        <string>Alt+N</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>checkDebuggerPersistentBreakpoints</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Remember &amp;breakpoints across sessions</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+B</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>checkDebuggerPersistentWatches</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Remember watches across sessions</string>
+                    </property>
+                    <property name="accel">
+                        <string></string>
                     </property>
                 </widget>
             </grid>
@@ -427,7 +455,7 @@
                 <cstring>checkPersistentBookmarks</cstring>
             </property>
             <property name="text">
-                <string>Use persistent &amp;bookmarks</string>
+                <string>Use persistent boo&amp;kmarks</string>
             </property>
         </widget>
         <widget class="QCheckBox" row="7" column="0" rowspan="1" colspan="2">

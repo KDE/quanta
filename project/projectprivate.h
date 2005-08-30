@@ -99,6 +99,9 @@ upload.*/
   QDomDocument dom;
   QDomDocument m_sessionDom;
   QString debuggerClient;
+  bool m_debuggerPersistentBreakpoints;
+  bool m_debuggerPersistentWatches;
+
   TeamMember m_teamLeader;
   QMap<QString, TeamMember> m_subprojectLeaders;
   QMap<QString, TeamMember> m_taskLeaders;

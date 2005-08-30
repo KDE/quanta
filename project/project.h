@@ -103,6 +103,8 @@ public:
   QDomDocument *dom();
   QDomDocument *sessionDom();
   QString debuggerClient();
+  bool debuggerPersistentBreakpoints();
+  bool debuggerPersistentWatches();
   bool keepPasswd;
   QString email();
   KURL templateURL();
