@@ -39,6 +39,7 @@ namespace VariablesListViewColumns
   enum Columns
   {
     Name = 0,
+    Status,
     Value,
     Type,
     Size
@@ -51,6 +52,7 @@ VariablesListView::VariablesListView(QWidget *parent, const char *name)
 {
   // If you change here, change the VariablesListViewColumns enums above
   addColumn(i18n("Name"));
+  addColumn(i18n(""));
   addColumn(i18n("Value"));
   addColumn(i18n("Type"));
   addColumn(i18n("Size"));
@@ -200,8 +202,16 @@ void VariablesListView::replaceVariable(DebuggerVariable* oldvar, DebuggerVariab
       oldvar->append(child);
     }
   }
+  
   item = oldvar->item();
+  
+  if(oldvar->value() != newvar->value())
+    item->setPixmap(VariablesListViewColumns::Status, SmallIcon("ok"));
+  else
+    item->setPixmap(VariablesListViewColumns::Status, KPixmap());
+  
   oldvar->copy(newvar, false);
+  
   item->setText(VariablesListViewColumns::Name, oldvar->name());
   item->setText(VariablesListViewColumns::Type, oldvar->typeName());
   item->setText(VariablesListViewColumns::Size, oldvar->sizeName());
