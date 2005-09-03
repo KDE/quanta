@@ -52,7 +52,7 @@ VariablesListView::VariablesListView(QWidget *parent, const char *name)
 {
   // If you change here, change the VariablesListViewColumns enums above
   addColumn(i18n("Name"));
-  addColumn(i18n(""));
+  addColumn(QString::null);
   addColumn(i18n("Value"));
   addColumn(i18n("Type"));
   addColumn(i18n("Size"));
@@ -65,9 +65,9 @@ VariablesListView::VariablesListView(QWidget *parent, const char *name)
   if(quantaApp->debugger()->client()->supports(DebuggerClientCapabilities::VariableSetValue))
     m_variablePopup->insertItem(SmallIcon("edit"), i18n("&Set Value"), this, SLOT(slotVariableSetValue()), 0, setValue);
 
-  m_variablePopup->insertItem(SmallIcon("viewmag"), i18n("&Dump in messages log"), this, SLOT(slotVariableDump()), 0, dumpValue);
+  m_variablePopup->insertItem(SmallIcon("viewmag"), i18n("&Dump in Messages Log"), this, SLOT(slotVariableDump()), 0, dumpValue);
   
-  m_variablePopup->insertItem(SmallIcon("editcopy"), i18n("&Copy to clipboard"), this, SLOT(slotVariableCopyToClipboard()), 0, copyValue);
+  m_variablePopup->insertItem(SmallIcon("editcopy"), i18n("&Copy to Clipboard"), this, SLOT(slotVariableCopyToClipboard()), 0, copyValue);
 
   connect(this, SIGNAL( contextMenu( KListView *, QListViewItem *, const QPoint & ) ), this, SLOT(slotVariableContextMenu(KListView *, QListViewItem *, const QPoint &)));
 }
