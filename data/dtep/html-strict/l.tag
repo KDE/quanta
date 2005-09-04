@@ -119,7 +119,7 @@
         <textlocation col="0" row="0" />
         <location col="1" row="0" colspan="2" />
         <items>
-            <item>disk</item>
+            <item>disc</item>
             <item>square</item>
             <item>circle</item>
             <item>1</item>

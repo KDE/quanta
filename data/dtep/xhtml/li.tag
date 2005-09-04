@@ -8,7 +8,7 @@
         <textlocation col="0" row="0" />
         <location col="1" row="0" />
         <items>
-            <item>disk</item>
+            <item>disc</item>
             <item>square</item>
             <item>circle</item>
             <item>1</item>
@@ -30,7 +30,7 @@
     </stoppingtags>
 
 <children>
-<child name="#text" />	
+<child name="#text" />
 <child name="a" />
 <child name="abbr" />
 <child name="acronym" />
