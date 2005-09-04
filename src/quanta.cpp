@@ -2730,7 +2730,7 @@ void QuantaApp::slotSendToolbar()
 
   TagMailDlg *mailDlg = new TagMailDlg( this, i18n("Send toolbar in email"));
   QString toStr;
-  QString message = i18n("Hi,\n This is a Quanta Plus [http://quanta.sourceforge.net] toolbar.\n\nHave fun.\n");
+  QString message = i18n("Hi,\n This is a Quanta Plus [http://quanta.kdewebdev.org] toolbar.\n\nHave fun.\n");
   QString titleStr;
   QString subjectStr;
 
@@ -3592,7 +3592,7 @@ void QuantaApp::slotEmailDTEP()
 
     TagMailDlg *mailDlg = new TagMailDlg( this, i18n("Send DTEP in Email"));
     QString toStr;
-    QString message = i18n("Hi,\n This is a Quanta Plus [http://quanta.sourceforge.net] DTEP definition tarball.\n\nHave fun.\n");
+    QString message = i18n("Hi,\n This is a Quanta Plus [http://quanta.kdewebdev.org] DTEP definition tarball.\n\nHave fun.\n");
     QString titleStr;
     QString subjectStr;
 

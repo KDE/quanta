@@ -30,7 +30,7 @@
     </configure>
     <make>
       <abortonerror>true</abortonerror>
-      <numberofjobs>1</numberofjobs>
+      <numberofjobs>8</numberofjobs>
       <dontact>false</dontact>
       <makebin/>
       <envvars>
@@ -67,11 +67,11 @@
         <cflags>-DKDE_NO_COMPAT -DQT_NO_COMPAT</cflags>
         <cxxflags>-DKDE_NO_COMPAT -DQT_NO_COMPAT -DDEBUG_PARSER</cxxflags>
         <f77flags/>
-        <topsourcedir>/home/andris/development/sources/kde-head/kdewebdev</topsourcedir>
+        <topsourcedir>/home/andris/development/kdewebdev</topsourcedir>
         <cppflags/>
         <ldflags/>
         <envvars>
-          <envvar value="kommander klinkstatus kfilereplace kxsldbg kimagemapeditor" name="DO_NOT_COMPILE" />
+          <envvar value="kommander klinkstatus kfilereplace kxsldbg kimagemapeditor" name="DO_NOT_COMPILE2" />
         </envvars>
       </default>
       <withkommander>
@@ -264,10 +264,7 @@
       <automaticHeaderCompletion>true</automaticHeaderCompletion>
       <headerCompletionDelay>250</headerCompletionDelay>
     </codecompletion>
-    <references>
-      <pcs>Qt</pcs>
-      <pcs>KDElibs</pcs>
-    </references>
+    <references/>
     <creategettersetter>
       <prefixGet/>
       <prefixSet>set</prefixSet>

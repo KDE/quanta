@@ -736,16 +736,21 @@ void Document::slotDelayedShowCodeCompletion()
 */
 void Document::slotFilterCompletion( KTextEditor::CompletionEntry *completion ,QString *string )
 {
+  kdDebug(24000) << *string << endl;
+  kdDebug(24000) << completion->userdata << endl;
   int pos = completion->userdata.find("|");
   QString s = completion->userdata.left(pos);
   completion->userdata.remove(0,pos+1);
   string->remove(0, s.length());
+  kdDebug(24000) << *string << endl;
+  kdDebug(24000) << completion->userdata << endl;
   if (completion->type == "charCompletion")
   {
     *string = completion->userdata;
     uint line, col;
     viewCursorIf->cursorPositionReal(&line, &col);
     QString s2 = editIf->textLine(line).left(col);
+    kdDebug(24000) << s2 << endl;
     int pos = s2.findRev('&');
     if (pos != -1)
     {
@@ -753,6 +758,7 @@ void Document::slotFilterCompletion( KTextEditor::CompletionEntry *completion ,Q
       string->remove(s2);
     }
     string->append(";");
+    kdDebug(24000) << *string << endl;
   } else
   if ( completion->type == "attributeValue")
   {

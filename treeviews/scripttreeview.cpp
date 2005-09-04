@@ -270,7 +270,7 @@ void ScriptTreeView::slotSendScriptInMail()
 
     TagMailDlg *mailDlg = new TagMailDlg( this, i18n("Send script in email"));
     QString toStr;
-    QString message = i18n("Hi,\n This is a Quanta Plus [http://quanta.sourceforge.net] script tarball.\n\nHave fun.\n");
+    QString message = i18n("Hi,\n This is a Quanta Plus [http://quanta.kdewebdev.org] script tarball.\n\nHave fun.\n");
     QString titleStr;
     QString subjectStr;
 

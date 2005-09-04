@@ -49,6 +49,7 @@ AnnotationOutput::AnnotationOutput(QWidget *parent, const char *name)
   m_yourAnnotations->setSorting(1);
   m_yourAnnotations->setLineWidth(2);
   addTab(m_yourAnnotations, i18n("For You"));
+  QString s = i18n("For You: %1").arg(1); //just in case I change my mind
   connect(m_yourAnnotations, SIGNAL(executed(QListViewItem*)), SLOT(yourAnnotationsItemExecuted(QListViewItem *)));
 
   m_allAnnotations = new KListView(this);
