@@ -42,11 +42,9 @@ TagMailDlg::TagMailDlg(QWidget *parent, const char *name)
 
   connect( buttonOk,     SIGNAL(clicked()), SLOT(accept()) );
   connect( buttonCancel, SIGNAL(clicked()), SLOT(reject()) );
-  connect( buttonHelp,SIGNAL(clicked()),this,SLOT(slotShowHelp()));
   connect( buttonAddressSelect, SIGNAL(clicked()), SLOT(slotSelectAddress()) );
   buttonOk->setIconSet(SmallIconSet("button_ok"));
   buttonCancel->setIconSet(SmallIconSet("button_cancel"));
-  buttonHelp->setIconSet(SmallIconSet("help"));
   lineEmail->setFocus();
 }
 
@@ -107,9 +105,4 @@ void TagMailDlg::slotSelectAddress()
   }
 }
 
-void TagMailDlg::slotShowHelp()
-{
-//FIXME: "tag-mail" should be replaced with the real help section tag
-   kapp->invokeHelp("tag-mail","quanta");
-}
 #include "tagmaildlg.moc"

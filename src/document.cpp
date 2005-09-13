@@ -39,6 +39,7 @@
 #include <kactionclasses.h>
 #include <kdialogbase.h>
 #include <kiconloader.h>
+#include <kmdcodec.h>
 #include <kmessagebox.h>
 #include <ktempfile.h>
 #include <kdirwatch.h>
@@ -98,6 +99,7 @@ Document::Document(KTextEditor::Document *doc,
   m_dirty   = false;
   busy    = false;
   changed = false;
+  m_md5sum = "";
   m_doc = doc;
   m_view = 0L; //needed, because createView() calls processEvents() and the "this" may be deleted before m_view gets a value => crash on delete m_view;
   m_view = m_doc->createView(parent, 0L);
@@ -230,7 +232,7 @@ Document::~Document()
 void Document::setUntitledUrl(const QString &url)
 {
   untitledUrl = url;
-  m_doc->openURL(KURL());
+  openURL(KURL());
 }
 
 bool Document::isUntitled()
@@ -418,8 +420,9 @@ void Document::insertFile(const KURL& url)
 }
 
 /** Inserts text at the current cursor position */
-void Document::insertText(const QString &text, bool adjustCursor, bool reparse)
+void Document::insertText(const QString &a_text, bool adjustCursor, bool reparse)
 {
+  QString text = a_text;
   if(text.isEmpty())
     return;
 
@@ -427,6 +430,22 @@ void Document::insertText(const QString &text, bool adjustCursor, bool reparse)
   unsigned int line, col;
 
   viewCursorIf->cursorPositionReal(&line, &col);
+  Node *n = parser->nodeAt(line, col, true);
+  if (n && n->tag->dtd()->family != Xml)
+  {
+    int bLine, bCol;
+    n->tag->beginPos(bLine, bCol);
+    QString s = this->text(bLine, bCol, line, col);
+    bool insideQuotes = false;
+    for (uint i = 0 ; i < s.length() - 1; i++)
+    {
+      if (s[i] == '"' && (i == 0 || s[i-1] != '\\'))
+        insideQuotes = !insideQuotes;
+    }
+    if (insideQuotes)
+      text.replace("\"", "\\\"");
+  }
+
   editIf->insertText(line, col, text);
 
   // calculate new cursor position
@@ -907,7 +926,7 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
       showCodeCompletions( getTagCompletions(line, column + 1) );
       handled = true;
     } else
-    if (string == ">" && !tagName.isEmpty() && tagName[0] != '!' &&
+    if (string == ">" && !tagName.isEmpty() && tagName[0] != '!' && tagName[0] != '?' &&
         tagName[0] != '/' && !tagName.endsWith("/") && !s.endsWith("/>") &&
         qConfig.closeTags &&
         currentDTD(true)->family == Xml) //close unknown tags
@@ -2077,24 +2096,17 @@ void Document::checkDirtyStatus()
       //check if the file is changed, also by file content. Might help to reduce
       //unwanted warning on NFS
       QFile f(fileName);
-      QFile tmpFile(m_tempFileName);
-      if (f.open(IO_ReadOnly) && tmpFile.open(IO_ReadOnly))
+      if (f.open(IO_ReadOnly))
       {
-        QString encoding = quantaApp->defaultEncoding();
-        if (encodingIf)
-          encoding = encodingIf->encoding();
-        if (encoding.isEmpty())
-          encoding = "utf8";  //final fallback
-  
-        QString content;
-        QTextStream stream(&f);
-        stream.setCodec(QTextCodec::codecForName(encoding));
-        content = stream.read();
-        QString tmpContent;
-        QTextStream tmpStream(&tmpFile);
-        tmpStream.setCodec(QTextCodec::codecForName(encoding));
-        tmpContent = tmpStream.read();
-        if (content == tmpContent)
+        QString md5sum;
+        const char* c = "";
+        KMD5 context(c);
+        context.reset();
+        context.update(f);
+        md5sum = context.hexDigest();
+        kdDebug(24000) << "MD5 sum of current doc: " << m_md5sum << endl;
+        kdDebug(24000) << "MD5 sum of doc on disc : " << md5sum << endl;
+        if (md5sum == m_md5sum)
         {
           m_dirty = false;
         }
@@ -2114,7 +2126,7 @@ void Document::checkDirtyStatus()
       if (dlg->exec())
       {
           m_doc->setModified(false);
-          m_doc->openURL(url());
+          openURL(url());
       }
       m_modifTime = QFileInfo(fileName).lastModified();
       delete dlg;
@@ -2676,7 +2688,7 @@ void Document::open(const KURL &url, const QString &encoding)
     }
     connect(m_doc, SIGNAL(completed()), this, SLOT(slotOpeningCompleted()));
     connect(m_doc, SIGNAL(canceled(const QString&)), this, SLOT(slotOpeningFailed(const QString&)));
-    if (!m_doc->openURL(url))
+    if (!openURL(url))
       slotOpeningFailed(QString::null);
     if (!url.isLocalFile())
     {
@@ -2709,6 +2721,7 @@ void Document::slotOpeningCompleted()
 
 void Document::slotOpeningFailed(const QString &errorMessage)
 {
+  m_md5sum = "";
   Q_UNUSED(errorMessage); //TODO: append the error message to our own error message
   if (!url().isLocalFile())
     qApp->exit_loop();
@@ -2960,6 +2973,25 @@ void Document::clearAnnotations()
       markIf->removeMark( m.at(i)->line, KTextEditor::MarkInterface::markType08 );
  }
  m_annotations.clear();
+}
+
+bool Document::openURL(const KURL& url)
+{
+  m_md5sum = "";
+  if (url.isLocalFile())
+  {
+    QFile f(url.path());
+    if (f.open(IO_ReadOnly))
+    {
+      const char* c = "";
+      KMD5 context(c);
+      context.reset();
+      context.update(f);
+      m_md5sum = context.hexDigest();
+      f.close();
+    }
+  }
+  return m_doc->openURL(url);
 }
 
 #include "document.moc"

@@ -30,8 +30,6 @@ public:
 private slots: // Private slots
   /** Select a mail address, using the KABC */
   void slotSelectAddress();
-  /** No descriptions */
-  void slotShowHelp();
 };
 
 #endif

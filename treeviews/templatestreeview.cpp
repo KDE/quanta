@@ -989,9 +989,9 @@ void TemplatesTreeView::slotSendInMail()
     QString subjectStr;
 
     mailDlg->TitleLabel->setText(i18n("Content:"));
-    mailDlg->titleEdit->setFixedHeight(60);
+/*    mailDlg->titleEdit->setFixedHeight(60);
     mailDlg->titleEdit->setVScrollBarMode(QTextEdit::Auto);
-    mailDlg->titleEdit->setHScrollBarMode(QTextEdit::Auto);
+    mailDlg->titleEdit->setHScrollBarMode(QTextEdit::Auto);*/
     if ( mailDlg->exec() )
     {
       if ( !mailDlg->lineEmail->text().isEmpty())

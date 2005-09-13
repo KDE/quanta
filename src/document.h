@@ -179,6 +179,11 @@ work correctly. */
   QString currentWord();
   /** Opens the url. The url must be valid and the file pointed to it must exists. */
   void open(const KURL &url, const QString &encoding);
+  /**
+   * Opens a file in the editor part.
+   * @param url 
+   */
+  bool openURL(const KURL& url);
   /** Reads the DTD info from the file, tries to find the correct DTD and builds the tag/attribute list from the DTD file. */
   void processDTD(const QString& documentType = QString::null);
 
@@ -305,6 +310,7 @@ private:
   bool repaintEnabled;
   /** True if the document is dirty (has been modified outside). */
   bool m_dirty;
+  QString m_md5sum;
   Project *m_project;
   /** Parse the document according to this DTD. */
   QStringList m_groupsForDTEPs; ///< The list of the DTEPs for which the groups should appear in the structure tree
