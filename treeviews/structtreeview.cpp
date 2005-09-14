@@ -74,10 +74,10 @@ StructTreeView::StructTreeView(QWidget *parent, const char *name )
   setRootIsDecorated( true );
   header()->hide();
   setSorting(-1,false);
-  setAcceptDrops(true);
+  setAcceptDrops(false); // disabled d&d is broken
   setDropVisualizer(true);
-  setDragEnabled(true);
-  setSelectionModeExt(FileManager);
+  setDragEnabled(false); // disabled d&d is broken
+//   setSelectionModeExt(FileManager);  disabled d&d is broken
 
   setFrameStyle( Panel | Sunken );
   setLineWidth( 2 );
