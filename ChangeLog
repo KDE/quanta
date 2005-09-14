@@ -26,6 +26,7 @@ Version 3.5 (Release date: xx-xx-2004; Started 04-03-2004):
         - create empty description files for scripts that don't have one
         - fix loading order of the project view files
         - save the content entered in a new file in the VPL editor [#111278]
+        - do not allow invocation of the CSS editor in an empty non-CSS document [#109815]
 
  - improvements:
         - md5sum based file changed detection

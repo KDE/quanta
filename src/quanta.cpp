@@ -4455,8 +4455,8 @@ void QuantaApp::slotInsertCSS()
     }
     delete dlg;
 
-  } else if (!node || fullDocument.isEmpty() ||
-      w->currentDTD(true)->name == "text/css") //empty document or pure CSS file, invoke the selector editor
+  } else
+  if (!node || w->currentDTD(true)->name == "text/css") 
   {
         kdDebug(24000) << "[CSS editor] This is a pure CSS document";
 
@@ -4513,7 +4513,7 @@ void QuantaApp::slotInsertCSS()
     }
     delete dlg;
    } else
-   KMessageBox::sorry(this, i18n("The CSS Editor cannot be invoked here.\nTry to invoke it on a tag or on a style section."));
+     KMessageBox::sorry(this, i18n("The CSS Editor cannot be invoked here.\nTry to invoke it on a tag or on a style section."));
 }
 
 /** for <a href=mailto> tag  */
