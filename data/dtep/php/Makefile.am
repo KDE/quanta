@@ -138,6 +138,7 @@ xsl.tag \
 xslt.tag \
 yaz.tag \
 zip.tag \
-zlib.tag
+zlib.tag \
+includes.tag
 
 dtepphpdir = ${quanta_datadir}/dtep/php
