@@ -403,15 +403,39 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
       if (countRows)
       {
         maxCol = (nCol > maxCol) ? nCol : maxCol;
-        for (int i = 0; i < maxCol - nCol; i++)
+        for (int col = 0; col < maxCol - nCol; col++)
         {
-          tableNode.node = new Node(0L);
-          newNum++;
-          tableNode.node->tag = new Tag();
-          tableNode.node->tag->setDtd(m_dtd);
-          tableNode.node->tag->parse("<td>", m_write);
-          tableNode.merged = false;
-          tableRowTags.append(tableNode);
+          while (mergeMatrix[nRow - 1][col].node != 0L) {
+            if (m_colSpin->value() < col)
+                m_colSpin->setValue(col);
+            TableNode tableN = mergeMatrix[nRow - 1][col];
+            Node *n = tableN.node;
+            setCellText(m_dataTable, nRow - 1, col, i18n("Merged with (%1, %2).").arg(tableN.mergedRow + 1).arg(tableN.mergedCol + 1));
+            m_dataTable->item(nRow-1, col)->setEnabled(false);
+            tableNode.node = new Node(0L);
+            tableNode.node->tag = new Tag(*(n->tag));
+      configureCell(nRow-1,  col, tableNode.node);
+            newNum++;
+            tableNode.merged = true;
+            tableNode.mergedRow = tableN.mergedRow;
+            tableNode.mergedCol = tableN.mergedCol;
+            tableRowTags.append(tableNode);
+            col++;
+            nCol++;
+            if ((uint)nCol >= mergeMatrix[0].size())  // Check if there are enough cols
+              for (uint i=0; i<mergeMatrix.size(); i++)
+                mergeMatrix[i].resize(2 * mergeMatrix[i].size());
+  
+          } /*else
+          {
+            tableNode.node = new Node(0L);
+            newNum++;
+            tableNode.node->tag = new Tag();
+            tableNode.node->tag->setDtd(m_dtd);
+            tableNode.node->tag->parse("<td>", m_write);
+            tableNode.merged = false;
+            tableRowTags.append(tableNode);
+          }*/
         }
         if (!tableRowTags.isEmpty())
           m_tableTags->append(tableRowTags);
@@ -880,6 +904,16 @@ void TableEditor::slotRemoveRow()
   m_tableRows->erase(it);
   QValueList<QValueList<TableNode> >::Iterator it2 = m_tableTags->at(m_row);
   for (QValueList<TableNode>::Iterator it3 = (*it2).begin(); it3 != (*it2).end(); ++it3) {
+    if ((*it3).merged)
+    {
+      TableNode *mainTableNode = &((*m_tableTags)[(*it3).mergedRow][(*it3).mergedCol]);
+      int rowspan =  mainTableNode->node->tag->attributeValue("rowspan", true).toInt();
+      rowspan--;
+      if (rowspan > 1)
+        mainTableNode->node->tag->editAttribute("rowspan", QString("%1").arg(rowspan));
+      else
+        mainTableNode->node->tag->deleteAttribute("rowspan");
+    }
     delete (*it3).node;
     newNum--;
   }
@@ -900,6 +934,7 @@ void TableEditor::slotRemoveCol()
           (*it2).merged = false;
           setCellText(m_dataTable, i, j, tagContent((*it2).node));
           m_dataTable->item(i, j)->setEnabled(true);
+          (*it2).node->tag->deleteAttribute("colspan");
         }
         j++;
       }
@@ -909,6 +944,16 @@ void TableEditor::slotRemoveCol()
     m_col = m_dataTable->numCols() - 1;
   for (QValueList<QValueList<TableNode> >::Iterator it = m_tableTags->begin(); it != m_tableTags->end(); ++it) {
     QValueList<TableNode>::Iterator it2 = (*it).at(m_col);
+    if ((*it2).merged)
+    {
+      TableNode *mainTableNode = &((*m_tableTags)[(*it2).mergedRow][(*it2).mergedCol]);
+      int colspan =  mainTableNode->node->tag->attributeValue("colspan", true).toInt();
+      colspan--;
+      if (colspan > 1)
+        mainTableNode->node->tag->editAttribute("colspan", QString("%1").arg(colspan));
+      else
+        mainTableNode->node->tag->deleteAttribute("colspan");
+    }
     delete (*it2).node;
     newNum--;
     (*it).erase(it2);
@@ -981,14 +1026,17 @@ void TableEditor::slotMergeCells()
   lCol = selection.leftCol();
   rCol = selection.rightCol();
   TableNode *mainTableNode = &((*m_tableTags)[tRow][lCol]);
-  mainTableNode->node->tag->editAttribute("colspan", QString("%1").arg(rCol - lCol + 1));
-  mainTableNode->node->tag->editAttribute("rowSpan", QString("%1").arg(bRow - tRow + 1));
+  if (rCol - lCol > 0)
+    mainTableNode->node->tag->editAttribute("colspan", QString("%1").arg(rCol - lCol + 1));
+  if (bRow - tRow > 0)
+    mainTableNode->node->tag->editAttribute("rowSpan", QString("%1").arg(bRow - tRow + 1));
   for (int i = 0; i < bRow - tRow + 1; i++)
     for (int j = 0; j < rCol - lCol + 1; j++) {
       if (i != 0 || j != 0) {
         setCellText(m_dataTable, tRow + i, lCol + j, i18n("Merged with (%1, %2).").arg(tRow + 1).arg(lCol + 1));
         m_dataTable->item(tRow + i, lCol + j)->setEnabled(false);
         TableNode *tableNode = &((*m_tableTags)[tRow + i][lCol + j]);
+        delete tableNode->node;
         tableNode->node = new Node(0L);
         newNum++;
         tableNode->node->tag = new Tag(*(mainTableNode->node->tag));
