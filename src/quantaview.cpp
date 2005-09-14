@@ -1074,6 +1074,8 @@ bool QuantaView::saveModified(bool ask)
 
   if (m_document->isModified() )
   {
+    if (m_currentFocus == VPLFocus)
+      reloadSourceView();
     int want_save;
     if (ask)
       want_save = KMessageBox::warningYesNoCancel(this,
