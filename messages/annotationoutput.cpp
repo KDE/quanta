@@ -49,7 +49,7 @@ AnnotationOutput::AnnotationOutput(QWidget *parent, const char *name)
   m_yourAnnotations->setSorting(1);
   m_yourAnnotations->setLineWidth(2);
   addTab(m_yourAnnotations, i18n("For You"));
-  QString s = i18n("For You: %1").arg(1); //just in case I change my mind
+  
   connect(m_yourAnnotations, SIGNAL(executed(QListViewItem*)), SLOT(yourAnnotationsItemExecuted(QListViewItem *)));
 
   m_allAnnotations = new KListView(this);
@@ -68,7 +68,7 @@ AnnotationOutput::AnnotationOutput(QWidget *parent, const char *name)
   m_updateTimer = new QTimer(this);
   connect(m_updateTimer, SIGNAL(timeout()), this, SLOT(slotUpdateNextFile()));
 
-  m_yourAnnotationFound = false;
+  m_yourAnnotationsNum = 0;
 }
 
 AnnotationOutput::~AnnotationOutput()
@@ -100,11 +100,10 @@ void AnnotationOutput::readAnnotations()
   {
     m_allAnnotations->clear();
     m_yourAnnotations->clear();
-    m_yourAnnotationFound = false;
+    m_yourAnnotationsNum = 0;
+    setTabLabel(m_yourAnnotations, i18n("For You"));
     return;
   }
-  bool allAnnotationsVisible = m_allAnnotations->isVisible();
-  bool yourAnnotationsVisible = m_yourAnnotations->isVisible();
 
   KURL baseURL = Project::ref()->projectBaseURL();
   QStringList openedItems;
@@ -133,7 +132,7 @@ void AnnotationOutput::readAnnotations()
   m_yourFileItems.clear();
   m_yourFileNames.clear();
   m_yourLines.clear();
-  m_yourAnnotationFound = false;
+  m_yourAnnotationsNum = 0;
 
   QDomElement annotationElement = Project::ref()->dom()->firstChild().firstChild().namedItem("annotations").toElement();
   if (annotationElement.isNull())
@@ -163,44 +162,46 @@ void AnnotationOutput::readAnnotations()
         s.fill('0', 20 - lineText.length());
         lineText.prepend(s);
       }
-      if (allAnnotationsVisible)
+      KListViewItem *fileIt = m_annotatedFileItems[fileName];
+      if (!fileIt)
       {
-        KListViewItem *fileIt = m_annotatedFileItems[fileName];
-        if (!fileIt)
-        {
-          fileIt = new KListViewItem(m_allAnnotations, fileName);
-          m_annotatedFileItems.insert(fileName, fileIt);
-          m_fileNames[fileIt] = u.url();
-        }
-        KListViewItem *it = new KListViewItem(fileIt, fileIt, text, lineText);
-        if (openedItems.contains(fileName))
-          fileIt->setOpen(true);
-        m_fileNames[it] = u.url();
-        m_lines[it] = line;
-      } else
+        fileIt = new KListViewItem(m_allAnnotations, fileName);
+        m_annotatedFileItems.insert(fileName, fileIt);
+        m_fileNames[fileIt] = u.url();
+      }
+      KListViewItem *it = new KListViewItem(fileIt, fileIt, text, lineText);
+      if (openedItems.contains(fileName))
+        fileIt->setOpen(true);
+      m_fileNames[it] = u.url();
+      m_lines[it] = line;
+   
       if (!yourself.isEmpty() && (receiver == yourself || roles.contains(receiver)))
       {
-        m_yourAnnotationFound = true;
-        if (yourAnnotationsVisible)
+        m_yourAnnotationsNum++;
+        KListViewItem *fileIt = m_yourFileItems[fileName];
+        if (!fileIt)
         {
-          KListViewItem *fileIt = m_yourFileItems[fileName];
-          if (!fileIt)
-          {
-            fileIt = new KListViewItem(m_yourAnnotations, fileName);
-            m_yourFileItems.insert(fileName, fileIt);
-            m_yourFileNames[fileIt] = u.url();
-          }
-          KListViewItem *it = new KListViewItem(fileIt, fileIt, text, lineText);
-          if (yourOpenedItems.contains(fileName))
-            fileIt->setOpen(true);
-          m_yourFileNames[it] = u.url();
-          m_yourLines[it] = line;
+          fileIt = new KListViewItem(m_yourAnnotations, fileName);
+          m_yourFileItems.insert(fileName, fileIt);
+          m_yourFileNames[fileIt] = u.url();
         }
+        KListViewItem *it = new KListViewItem(fileIt, fileIt, text, lineText);
+        if (yourOpenedItems.contains(fileName))
+          fileIt->setOpen(true);
+        m_yourFileNames[it] = u.url();
+        m_yourLines[it] = line;
       }
     } else
     {
       annotationElement.removeChild(el);
     }
+  }
+  if (m_yourAnnotationsNum > 0)
+  {
+    setTabLabel(m_yourAnnotations, i18n("For You: %1").arg(m_yourAnnotationsNum));
+  } else
+  {
+    setTabLabel(m_yourAnnotations, i18n("For You"));
   }
 }
 
@@ -345,7 +346,7 @@ void AnnotationOutput::slotUpdateNextFile()
     m_fileIndex++;
     m_updateTimer->start(2, true);
   } else
-  if (m_yourAnnotationFound)
+  if (m_yourAnnotationsNum > 0)
   {
     KMessageBox::information(this, i18n("<qt>There are annotations addressed for you.<br> To view them select the <i>For You</i> tab in the <i>Annotations</i> toolview.</qt>"), i18n("New Annotations"), "Show Your Annotations");
   }
