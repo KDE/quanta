@@ -823,21 +823,36 @@ void Document::slotReplaceChar()
 */
 void Document::slotCharactersInserted(int line, int column, const QString& string)
 {
-  if (qConfig.replaceAccented && encodingIf)
+  if (qConfig.replaceNotInEncoding)
   {
-    QString encoding = encodingIf->encoding();
-    if (encoding != m_encoding)
+    if (encodingIf)
     {
-      m_encoding = encoding;
-      m_codec = QTextCodec::codecForName(encoding);
+      QString encoding = encodingIf->encoding();
+      if (encoding != m_encoding)
+      {
+        m_encoding = encoding;
+        m_codec = QTextCodec::codecForName(encoding);
+      }
+      if (!m_codec->canEncode(string[0]))
+      {
+        m_replaceLine = line;
+        m_replaceCol = column;
+        m_replaceStr = QString("&#%1;").arg(string[0].unicode());
+        QTimer::singleShot(0, this, SLOT(slotReplaceChar()));
+        return;
+      }
     }
-    if (!m_codec->canEncode(string[0]))
+    if (qConfig.replaceAccented)
     {
-      m_replaceLine = line;
-      m_replaceCol = column;
-      m_replaceStr = QString("&#%1;").arg(string[0].unicode());
-      QTimer::singleShot(0, this, SLOT(slotReplaceChar()));
-      return;    
+      uint c = string[0].unicode();
+      if (c > 191)
+      {
+        m_replaceLine = line;
+        m_replaceCol = column;
+        m_replaceStr = QString("&#%1;").arg(c);
+        QTimer::singleShot(0, this, SLOT(slotReplaceChar()));
+        return;
+      }
     }
   }
 

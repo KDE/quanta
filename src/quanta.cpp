@@ -4153,6 +4153,7 @@ void QuantaApp::saveOptions()
     m_config->writeEntry("Auto completion", qConfig.useAutoCompletion);
     m_config->writeEntry("Update Closing Tags", qConfig.updateClosingTags);
     m_config->writeEntry("Replace Accented Chars", qConfig.replaceAccented);
+    m_config->writeEntry("Replace Chars Not In Current Encoding", qConfig.replaceNotInEncoding);
 
     m_config->writeEntry("Default encoding", qConfig.defaultEncoding);
     m_config->writeEntry("Default DTD", qConfig.defaultDocType);
