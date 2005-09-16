@@ -404,7 +404,7 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
       {
         maxCol = (nCol > maxCol) ? nCol : maxCol;
         maxCol = (maxCol == 0) ? 1 : maxCol;
-        for (int col = 0; col < maxCol - nCol; col++)
+        for (int col = nCol; col < maxCol; col++)
         {
           if (mergeMatrix[nRow - 1][col].node != 0L) {
             if (m_colSpin->value() < col)
@@ -415,19 +415,17 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
             m_dataTable->item(nRow-1, col)->setEnabled(false);
             tableNode.node = new Node(0L);
             tableNode.node->tag = new Tag(*(n->tag));
-      configureCell(nRow-1,  col, tableNode.node);
+            configureCell(nRow-1,  col, tableNode.node);
             newNum++;
             tableNode.merged = true;
             tableNode.mergedRow = tableN.mergedRow;
             tableNode.mergedCol = tableN.mergedCol;
             tableRowTags.append(tableNode);
-           // col++;
-            nCol++;
             if ((uint)nCol >= mergeMatrix[0].size())  // Check if there are enough cols
               for (uint i=0; i<mergeMatrix.size(); i++)
                 mergeMatrix[i].resize(2 * mergeMatrix[i].size());
   
-          } 
+          } else
           {
             tableNode.node = new Node(0L);
             newNum++;
@@ -502,7 +500,7 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
               m_dataTable->item(nRow-1, lastCol + i)->setEnabled(false);
               tableNode.node = new Node(0L);
               tableNode.node->tag = new Tag(*(n->tag));
-	      configureCell(nRow-1,  col, tableNode.node);
+              configureCell(nRow-1,  col, tableNode.node);
               newNum++;
               tableNode.merged = true;
               tableNode.mergedRow = nRow - 1;
@@ -899,6 +897,21 @@ void TableEditor::slotRemoveRow()
 {
   if (m_row == -1)
     m_row = m_dataTable->numRows() - 1;
+  int i = 0;
+  int j = 0;
+  for (QValueList<QValueList<TableNode> >::Iterator it = m_tableTags->begin(); it != m_tableTags->end(); ++it) {
+      j = 0;
+      for (QValueList<TableNode>::Iterator it2 = (*it).begin(); it2 != (*it).end(); ++it2) {
+        if ((*it2).merged && (*it2).mergedRow == m_row) {
+          (*it2).merged = false;
+          setCellText(m_dataTable, i, j, tagContent((*it2).node));
+          m_dataTable->item(i, j)->setEnabled(true);
+          (*it2).node->tag->deleteAttribute("colspan");
+        }
+        j++;
+      }
+      i++;
+  }
   QValueList<QValueList<TableNode> >::Iterator it2 = m_tableTags->at(m_row);
   for (QValueList<TableNode>::Iterator it3 = (*it2).begin(); it3 != (*it2).end(); ++it3) {
     if ((*it3).merged)
