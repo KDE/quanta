@@ -287,22 +287,24 @@ void Document::changeTagNamespace(Tag *tag, const QString& nameSpace)
   if (!tag->nameSpace.isEmpty())
   {
     tag->beginPos(bl, bc);
+    if (tag->type == Tag::XmlTagEnd)
+      bc++;
     tag->namePos(nl, nc);
     reparseEnabled = false;
-    editIf->removeText(bl, bc+1, nl, nc);
+    editIf->removeText(bl, bc + 1, nl, nc);
     reparseEnabled = true;
   } else
   {
     tag->beginPos(bl, bc);
+    if (tag->type == Tag::XmlTagEnd)
+      bc++;
   }
-  if (nameSpace.isEmpty())
+  if (!nameSpace.isEmpty())
   {
-    slotDelayedTextChanged();
-  } else
-  {
-    viewCursorIf->setCursorPositionReal((uint)bl, (uint)(bc+1));
-    insertText(nameSpace+":");
+    viewCursorIf->setCursorPositionReal((uint)bl, (uint)(bc + 1));
+    insertText(nameSpace + ":", true, false);
   }
+  slotDelayedTextChanged(true);
   quantaApp->slotNewLineColumn();
 }
 

@@ -380,8 +380,6 @@ void TagAttributeTree::editorContentChanged()
     if (dynamic_cast<AttributeNameSpaceItem*>(item))
     {
       QString nameSpace = item->editorText();
-      if (!nameSpace.isEmpty() && m_node->tag->type == Tag::XmlTagEnd)
-        nameSpace.prepend('/');
       m_node->tag->write()->changeTagNamespace(m_node->tag, nameSpace);
     } else
     {
