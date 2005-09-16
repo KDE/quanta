@@ -260,7 +260,7 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
   QValueList<TableNode> tableRowTags;
   QValueVector< QValueVector<TableNode> > mergeMatrix;
   mergeMatrix.resize(pInitialTableSize);
-  for (uint i=0; i<pInitialTableSize; i++)
+  for (uint i = 0; i < pInitialTableSize; i++)
     mergeMatrix[i].resize(pInitialTableSize);
   TableNode tableNode;
   Node *n = node;
@@ -386,7 +386,7 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
       nRow++;
       if ((uint)nRow >= mergeMatrix.size()) {  // Check if there are enough rows in mergeMatriz
         mergeMatrix.resize(2 * mergeMatrix.size());
-        for (uint i=mergeMatrix.size() / 2; i<mergeMatrix.size(); i++)
+        for (uint i = mergeMatrix.size() / 2; i < mergeMatrix.size(); i++)
           mergeMatrix[i].resize(mergeMatrix[0].size());
       }
 
@@ -403,9 +403,10 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
       if (countRows)
       {
         maxCol = (nCol > maxCol) ? nCol : maxCol;
+        maxCol = (maxCol == 0) ? 1 : maxCol;
         for (int col = 0; col < maxCol - nCol; col++)
         {
-          while (mergeMatrix[nRow - 1][col].node != 0L) {
+          if (mergeMatrix[nRow - 1][col].node != 0L) {
             if (m_colSpin->value() < col)
                 m_colSpin->setValue(col);
             TableNode tableN = mergeMatrix[nRow - 1][col];
@@ -420,13 +421,13 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
             tableNode.mergedRow = tableN.mergedRow;
             tableNode.mergedCol = tableN.mergedCol;
             tableRowTags.append(tableNode);
-            col++;
+           // col++;
             nCol++;
             if ((uint)nCol >= mergeMatrix[0].size())  // Check if there are enough cols
               for (uint i=0; i<mergeMatrix.size(); i++)
                 mergeMatrix[i].resize(2 * mergeMatrix[i].size());
   
-          } /*else
+          } 
           {
             tableNode.node = new Node(0L);
             newNum++;
@@ -435,7 +436,7 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
             tableNode.node->tag->parse("<td>", m_write);
             tableNode.merged = false;
             tableRowTags.append(tableNode);
-          }*/
+          }
         }
         if (!tableRowTags.isEmpty())
           m_tableTags->append(tableRowTags);
@@ -456,7 +457,7 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
           m_dataTable->item(nRow-1, col)->setEnabled(false);
           tableNode.node = new Node(0L);
           tableNode.node->tag = new Tag(*(n->tag));
-	  configureCell(nRow-1,  col, tableNode.node);
+          configureCell(nRow-1,  col, tableNode.node);
           newNum++;
           tableNode.merged = true;
           tableNode.mergedRow = tableN.mergedRow;
@@ -465,7 +466,7 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
           col++;
           nCol++;
           if ((uint)nCol >= mergeMatrix[0].size())  // Check if there are enough cols
-            for (uint i=0; i<mergeMatrix.size(); i++)
+            for (uint i = 0; i < mergeMatrix.size(); i++)
               mergeMatrix[i].resize(2 * mergeMatrix[i].size());
 
         }
@@ -478,7 +479,7 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
           setCellText(m_dataTable, nRow - 1, nCol - 1, tagContent(n));
           tableNode.node = new Node(0L);
           tableNode.node->tag = new Tag(*(n->tag));
-	  configureCell(nRow-1,  col, tableNode.node);
+	        configureCell(nRow-1,  col, tableNode.node);
           newNum++;
           tableNode.merged = false;
           tableRowTags.append(tableNode);
@@ -521,12 +522,12 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
             lastCol--;
             // Check if there are enough columns in mergeMatriz
             if ((uint)(lastCol + colValue) >= mergeMatrix[0].size())
-              for (uint i=0; i<mergeMatrix.size(); i++)
+              for (uint i = 0; i < mergeMatrix.size(); i++)
                 mergeMatrix[i].resize(2 * mergeMatrix[i].size());
             // Check if there are enough rows in mergeMatriz
             if ((uint)(nRow + rowValue) >= mergeMatrix.size()) {
               mergeMatrix.resize(2 * mergeMatrix.size());
-              for (uint i=mergeMatrix.size() / 2; i<mergeMatrix.size(); i++)
+              for (uint i = mergeMatrix.size() / 2; i < mergeMatrix.size(); i++)
                 mergeMatrix[i].resize(mergeMatrix[0].size());
             }
 
@@ -898,27 +899,31 @@ void TableEditor::slotRemoveRow()
 {
   if (m_row == -1)
     m_row = m_dataTable->numRows() - 1;
-  QValueList<TableNode>::Iterator it = m_tableRows->at(m_row);
-  delete (*it).node;
-  newNum--;
-  m_tableRows->erase(it);
   QValueList<QValueList<TableNode> >::Iterator it2 = m_tableTags->at(m_row);
   for (QValueList<TableNode>::Iterator it3 = (*it2).begin(); it3 != (*it2).end(); ++it3) {
     if ((*it3).merged)
     {
       TableNode *mainTableNode = &((*m_tableTags)[(*it3).mergedRow][(*it3).mergedCol]);
-      int rowspan =  mainTableNode->node->tag->attributeValue("rowspan", true).toInt();
-      rowspan--;
-      if (rowspan > 1)
-        mainTableNode->node->tag->editAttribute("rowspan", QString("%1").arg(rowspan));
-      else
-        mainTableNode->node->tag->deleteAttribute("rowspan");
+      if (mainTableNode->node)
+      {
+        int rowspan =  mainTableNode->node->tag->attributeValue("rowspan", true).toInt();
+        rowspan--;
+        if (rowspan > 1)
+          mainTableNode->node->tag->editAttribute("rowspan", QString("%1").arg(rowspan));
+        else
+          mainTableNode->node->tag->deleteAttribute("rowspan");
+      }
     }
     delete (*it3).node;
+    (*it3).node = 0L;
     newNum--;
   }
   m_tableTags->erase(it2);
   m_dataTable->removeRow(m_row);
+  QValueList<TableNode>::Iterator it = m_tableRows->at(m_row);
+  delete (*it).node;
+  newNum--;
+  m_tableRows->erase(it);
   m_rowSpin->setValue(m_dataTable->numRows());
 }
 
@@ -1029,7 +1034,7 @@ void TableEditor::slotMergeCells()
   if (rCol - lCol > 0)
     mainTableNode->node->tag->editAttribute("colspan", QString("%1").arg(rCol - lCol + 1));
   if (bRow - tRow > 0)
-    mainTableNode->node->tag->editAttribute("rowSpan", QString("%1").arg(bRow - tRow + 1));
+    mainTableNode->node->tag->editAttribute("rowspan", QString("%1").arg(bRow - tRow + 1));
   for (int i = 0; i < bRow - tRow + 1; i++)
     for (int j = 0; j < rCol - lCol + 1; j++) {
       if (i != 0 || j != 0) {

@@ -558,7 +558,7 @@ void Tag::deleteAttribute(const QString& attrName)
   for (uint i = 0 ; i < attrs.count(); i++)
   {
     if ( attrName == attrs[i].name ||
-      (!m_dtd->caseSensitive && attrs[i].name == attrName.lower()))
+      (!m_dtd->caseSensitive && attrs[i].name.lower() == attrName.lower()))
     {
       attrs.remove(attrs.at(i));
     }
