@@ -226,7 +226,7 @@ void KafkaWidget::insertText(DOM::Node node, const QString &text, int position)
         DOM::Node parent = node.parentNode();
 //FIXME: Andras: safety checks, as parent and node.nextSibling can be null. Maybe it just hides the error...        
         if (!parent.isNull())
-          if (node.nextSibling())
+          if (!node.nextSibling().isNull())
             parent.insertBefore(textNode, node.nextSibling());
           else
             parent.insertBefore(textNode, node);
