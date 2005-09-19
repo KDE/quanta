@@ -201,6 +201,8 @@ bool TagAction::slotActionActivated(KAction::ActivationReason reason, Qt::Button
         if(scope != "paragraph") {
             start_node = kafkaCommon::getCorrectStartNode(start_node, start_offset);
             end_node = kafkaCommon::getCorrectEndNode(end_node, end_offset);
+            if (!start_node || !end_node)
+              return true; //FIXME: AndraS: don't crash
         }
         NodeSelection cursor_holder;
         cursor_holder.setCursorNode(current_node);
