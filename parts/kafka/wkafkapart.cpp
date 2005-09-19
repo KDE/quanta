@@ -882,7 +882,9 @@ QString KafkaDocument::getDecodedChar(const QString &encodedChar)
 QString KafkaDocument::getDecodedText(const QString &a_encodedText, bool translateWhiteSpacesAndLineBreaks,
 		bool removeLeftWhitespaces, bool removeRightWhitespaces)
 {
-        QString encodedText = a_encodedText;
+  QString encodedText = a_encodedText;
+  if (encodedText.isEmpty())
+    encodedText = " ";
 	QString decodedChar;
 	int i, j;
 #ifdef LIGHT_DEBUG

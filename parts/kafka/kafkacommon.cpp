@@ -819,8 +819,7 @@ int kafkaCommon::getNodeDisplay(Node *node, bool closingNodeToo)
             return kafkaCommon::noneDisplay;
         }
     }
-    else
-        return kafkaCommon::errorDisplay;
+    return kafkaCommon::errorDisplay;
 }
 
 QString kafkaCommon::removeUnnecessaryWhitespaces(const QString &string,
@@ -4074,9 +4073,11 @@ int kafkaCommon::isInsideTag(Node* start_node, Node* end_node, QString const& ta
 
 bool kafkaCommon::isBetweenWords(Node* node, int offset)
 {
-    assert(node->tag->type == Tag::Text || node->tag->type == Tag::Empty);
-    assert(offset >= 0);
-    assert(node);
+    Q_ASSERT(node->tag->type == Tag::Text || node->tag->type == Tag::Empty);
+    Q_ASSERT(offset >= 0);
+    Q_ASSERT(node);
+    if (!node)
+      return false;  //FIXME: Andras: don't crash
 
     QString tag_str = node->tag->tagStr();
     

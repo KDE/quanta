@@ -153,39 +153,42 @@ bool TagAction::slotActionActivated(KAction::ActivationReason reason, Qt::Button
         {
             current_node = kafkaCommon::getNodeFromLocation(selection.cursorNode());
             Q_ASSERT(current_node);
-            current_offset = selection.cursorOffset();
-            
-            start_node = end_node = current_node;
-            start_offset = end_offset = current_offset;
-            
-            QTag* tag_description = QuantaCommon::tagFromDTD(KafkaDocument::ref()->getCurrentDoc()->defaultDTD(), XMLTagName());
-            scope = tag_description->scope();
-//             Q_ASSERT(!scope.isNull());
-            if(scope.isNull())
-                scope = "word"; // FIXME temporary
-            
-            if(scope.lower() == "word")
+            if (current_node)
             {
-                // Apply/deapply the tag in the word
-                if(kafkaCommon::isBetweenWords(current_node, current_offset))
-                {
-                    kafkaCommon::getStartOfWord(start_node, start_offset);
-                    kafkaCommon::getEndOfWord(end_node, end_offset);
-                }
-            }
-            else if(scope.lower() == "paragraph")
-            {
-                kafkaCommon::getStartOfParagraph(start_node, start_offset);
-                kafkaCommon::getEndOfParagraph(end_node, end_offset);
-            }
-            else if(reason != KAction::EmulatedActivation) // is between words: save the state and return
-            {
-                if(!toggled())
-                    quantaApp->insertTagActionPoolItem(name());
-                else
-                    quantaApp->removeTagActionPoolItem(name());
-                
-                return true;
+              current_offset = selection.cursorOffset();
+              
+              start_node = end_node = current_node;
+              start_offset = end_offset = current_offset;
+  
+              QTag* tag_description = QuantaCommon::tagFromDTD(KafkaDocument::ref()->getCurrentDoc()->defaultDTD(), XMLTagName());
+              scope = tag_description->scope();
+  //             Q_ASSERT(!scope.isNull());
+              if(scope.isNull())
+                  scope = "word"; // FIXME temporary
+              
+              if(scope.lower() == "word")
+              {
+                  // Apply/deapply the tag in the word
+                  if(kafkaCommon::isBetweenWords(current_node, current_offset))
+                  {
+                      kafkaCommon::getStartOfWord(start_node, start_offset);
+                      kafkaCommon::getEndOfWord(end_node, end_offset);
+                  }
+              }
+              else if(scope.lower() == "paragraph")
+              {
+                  kafkaCommon::getStartOfParagraph(start_node, start_offset);
+                  kafkaCommon::getEndOfParagraph(end_node, end_offset);
+              }
+              else if(reason != KAction::EmulatedActivation) // is between words: save the state and return
+              {
+                  if(!toggled())
+                      quantaApp->insertTagActionPoolItem(name());
+                  else
+                      quantaApp->removeTagActionPoolItem(name());
+                  
+                  return true;
+              }
             }
         }        
         Q_ASSERT(start_node && end_node);
@@ -193,7 +196,8 @@ bool TagAction::slotActionActivated(KAction::ActivationReason reason, Qt::Button
 /*        kdDebug(23100) << "start node string: " << start_node->tag->tagStr() << endl;    
         kdDebug(23100) << "start node offset: " << start_offset << endl;    
         kdDebug(23100) << "start node string length: " << start_node->tag->tagStr().length() << endl;    */
-        
+        if (!start_node || !end_node)
+          return true; //FIXME: AndraS: don't crash
         if(scope != "paragraph") {
             start_node = kafkaCommon::getCorrectStartNode(start_node, start_offset);
             end_node = kafkaCommon::getCorrectEndNode(end_node, end_offset);
