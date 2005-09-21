@@ -115,8 +115,10 @@ StructTreeView::StructTreeView(QWidget *parent, const char *name )
   popupMenu -> insertItem( i18n("Open Subtrees"), this ,SLOT(slotOpenSubTree()));
   popupMenu -> insertItem( i18n("Close Subtrees"),this ,SLOT(slotCloseSubTree()));
   popupMenu -> insertSeparator();
+#if 0
   popupMenu -> insertItem( i18n("Remove"),this ,SLOT(slotRemoveTags()));
   popupMenu -> insertSeparator();
+#endif
   popupMenu -> insertItem( SmallIcon("reload"),  i18n("&Reparse"),     this ,SLOT(slotReparseMenuItem()));
   followCursorId = popupMenu -> insertItem( i18n("Follow Cursor"), this ,SLOT(changeFollowCursor()));
 
