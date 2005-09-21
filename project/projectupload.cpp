@@ -49,6 +49,7 @@
 #include <kpassdlg.h>
 #include <kpushbutton.h>
 #include <ktempfile.h>
+#include <kuser.h>
 
 //standard includes
 #include <time.h>
@@ -689,6 +690,12 @@ void ProjectUpload::fillProfileDlg(UploadProfileDlgS *profileDlg)
 
 void ProjectUpload::readProfileDlg(UploadProfileDlgS *profileDlg)
 {
+  QString path = profileDlg->linePath->text();
+  if (path.startsWith("~/"))
+  {
+    KUser user;
+    path = user.homeDir() + path.mid(1);
+  }
   m_currentProfileElement.setAttribute("name", profileDlg->lineProfileName->text());
   m_currentProfileElement.setAttribute("remote_host", profileDlg->lineHost->text());
   m_currentProfileElement.setAttribute("user", profileDlg->lineUser->text());

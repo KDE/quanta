@@ -248,7 +248,7 @@ void ProjectPrivate::openCurrentView()
     if (el.attribute("name") == currentProjectView)
     {
       QDomNodeList itemNodes = el.childNodes();
-      for (int j = 0; j < itemNodes.count(); j++)
+      for (uint j = 0; j < itemNodes.count(); j++)
       {
         QDomElement el2 = itemNodes.item(j).cloneNode().toElement();
         KURL url = baseURL;
