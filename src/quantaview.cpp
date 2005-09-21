@@ -1,7 +1,7 @@
 /***************************************************************************
                           quantaview.cpp  -  description
                              -------------------
-    begin                : ï¿½ï¿½ï¿½ï¿½ 9 13:29:57 EEST 2000
+    begin                : Ã¯Â¿Â½Ã¯Â¿Â½Ã¯Â¿Â½Ã¯Â¿Â½ 9 13:29:57 EEST 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon <pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com>
                            (C) 2001-2005 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
@@ -868,6 +868,8 @@ bool QuantaView::saveModified(bool ask)
 
   if (m_document->isModified() )
   {
+    if (m_currentFocus == VPLFocus)
+      reloadSourceView();
     int want_save;
     if (ask)
       want_save = KMessageBox::warningYesNoCancel(this,

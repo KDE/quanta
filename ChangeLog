@@ -4,6 +4,17 @@ Version 3.4.3 (Release date: xx-xx-2005; Started 01-08-2005):
  - bugfixes:
         - fix crash when deleting a file which is part of a project from the tab
           context menu [#111134]
+        - do not autoclose tag starting with <?, like <?xml
+        - create empty description files for scripts that don't have one
+        - save the content entered in a new file in the VPL editor [#111278]
+        - do not allow invocation of the CSS editor in an empty non-CSS document [#109815]
+        - fix many cell-merging related errors in the table editor [#112243]
+        - fix namespace editing in the attribute editor tree
+        - fix lots of table editor bugs
+        - restore automatic conversion of accented chars behavior to pre-3.4.2
+        - save the content entered in a new file in the VPL editor [#111278]
+        - fix loading order of the project view files
+
 
 Version 3.4.2 (Release date: 20-07-2005; Started 01-06-2005):
  - bugfixes:
@@ -11,16 +22,16 @@ Version 3.4.2 (Release date: 20-07-2005; Started 01-06-2005):
         - don't show the name twice in the tooltip of treeview items
         - show an upload treeview for profiles that have @ in the username
         - allow CVS actions to be put on toolbars [#106023]
-	- open the files with the right encoding when restoring the last opened files on startup [#104512]
-	- fix the Kommander XML scripts
-	- treat "<" as the end of a tag name. Fixes autoreplacement of opening/closing
-          tags in cases when a PHP area starts directly after a tag name. [#106911]
-	  
+        - open the files with the right encoding when restoring the last opened files on startup [#104512]
+        - fix the Kommander XML scripts
+        - treat "<" as the end of a tag name. Fixes autoreplacement of opening/closing
+                tags in cases when a PHP area starts directly after a tag name. [#106911]
+
  - improvements:
-	- make single file/folder upload really quick [#105612]
-	- Paste as HTML Encoded encodes more chars to their corresponding entities [#100547, #100103]
-	- improve the automatic conversion of characters. Only those are converted that cannot be
-	  encoded in the encoding of the document
+        - make single file/folder upload really quick [#105612]
+        - Paste as HTML Encoded encodes more chars to their corresponding entities [#100547, #100103]
+        - improve the automatic conversion of characters. Only those are converted that cannot be
+	 encoded in the encoding of the document
 	         
 Version 3.4.1 (Release date: 31-05-2005; Started 04-03-2004):
  - bugfixes:
@@ -29,15 +40,15 @@ Version 3.4.1 (Release date: 31-05-2005; Started 04-03-2004):
           tag editing dialog
         - fix matching of excluded files from a project
         - don't crash when Selected is pressed and nothing is selected (in the CSS editor) [#101919]
-	- show the correct relative paths in URL autocompletion
-	- fix crash when unsetting breakpoints
+        - show the correct relative paths in URL autocompletion
+        - fix crash when unsetting breakpoints
 
  - improvements:
-	- nicer processing of CVS output
-	- read the image sizes for remote images as well
-	- insert an img tag for remote images as well when using D&D
-	- better context sensitiv documentation (needs updated documentation and DTEP
-	  packages)
+        - nicer processing of CVS output
+        - read the image sizes for remote images as well
+        - insert an img tag for remote images as well when using D&D
+        - better context sensitiv documentation (needs updated documentation and DTEP
+	 packages)
 
 Version 3.4 (Release date: 16-03-2005; Started 20-08-2004):
   - bugfixes:

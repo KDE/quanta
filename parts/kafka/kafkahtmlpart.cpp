@@ -205,7 +205,11 @@ void KafkaWidget::insertText(DOM::Node node, const QString &text, int position)
     {
         DOM::Text textNode = document().createTextNode(text);
         DOM::Node parent = node.parentNode();
-        parent.insertBefore(textNode, node);
+//FIXME: Andras: safety checks, as parent  can be null. Maybe it just hides the error...
+        if (!parent.isNull())
+          parent.insertBefore(textNode, node);
+        else
+          node.appendChild(textNode);
         m_currentNode = textNode;
         d->m_cursorOffset = text.length();
         emit domNodeInserted(textNode, false, m_modifs);
@@ -219,7 +223,14 @@ void KafkaWidget::insertText(DOM::Node node, const QString &text, int position)
     {
         DOM::Text textNode = document().createTextNode(text);
         DOM::Node parent = node.parentNode();
-        parent.insertBefore(textNode, node.nextSibling());
+//FIXME: Andras: safety checks, as parent and node.nextSibling can be null. Maybe it just hides the error...        
+        if (!parent.isNull())
+          if (!node.nextSibling().isNull())
+            parent.insertBefore(textNode, node.nextSibling());
+          else
+            parent.insertBefore(textNode, node);
+        else
+          node.appendChild(textNode);
         m_currentNode = textNode;
         d->m_cursorOffset = text.length();
         emit domNodeInserted(textNode, false, m_modifs);
@@ -267,13 +278,14 @@ void KafkaWidget::normalize(DOM::Node _node)
     kdDebug(25001)<< "KafkaWidget::normalize()" << endl;
 #endif
 
+//FIXME: Andras: getAttrs() can sometimes return NULL and causes a crash. No idea why and what it means though.
     DOM::Node childNode = _node.firstChild();
     while(!childNode.isNull())
     {
-        if(w->getAttrs(childNode)->chCurFoc() == kNodeAttrs::textNode)
+        if(w->getAttrs(childNode) && w->getAttrs(childNode)->chCurFoc() == kNodeAttrs::textNode)
         {
             while(!childNode.nextSibling().isNull() &&
-                    w->getAttrs(childNode.nextSibling())->chCurFoc() ==
+                    w->getAttrs(childNode.nextSibling()) && w->getAttrs(childNode.nextSibling())->chCurFoc() ==
                     kNodeAttrs::textNode )
             {
                 childNode.setNodeValue(childNode.nodeValue() +
@@ -556,7 +568,7 @@ bool KafkaWidget::eventFilter(QObject *, QEvent *event)
         case Key_Escape:
             break;
         case Key_Tab:
-            if(!m_currentNode.isNull() &&
+            if(!m_currentNode.isNull() && w->getAttrs(m_currentNode) &&
                     w->getAttrs(m_currentNode)->chCurFoc() != kNodeAttrs::no)
             {
                 // @todo check tab settings in Quanta
@@ -833,7 +845,7 @@ void KafkaWidget::keyDelete()
             if(_node == 0)
                 break;
             attrs = w->getAttrs(_node);
-            if(attrs->chCurFoc() == kNodeAttrs::textNode)
+            if(attrs && attrs->chCurFoc() == kNodeAttrs::textNode)
             {
                 m_currentNode = _node;
                 d->m_cursorOffset =
@@ -843,7 +855,7 @@ void KafkaWidget::keyDelete()
                 emit domNodeNewCursorPos(m_currentNode, d->m_cursorOffset);
                 return;
             }
-            if(attrs->chCurFoc() != kNodeAttrs::no &&
+            if(attrs && attrs->chCurFoc() != kNodeAttrs::no &&
                     attrs->chCurFoc() != kNodeAttrs::textNode)
             {
                 m_currentNode = _node;
@@ -861,7 +873,7 @@ void KafkaWidget::keyDelete()
             if(_node == 0)
                 break;
             attrs = w->getAttrs(_node);
-            if(attrs->chCurFoc() != kNodeAttrs::no)
+            if(attrs && attrs->chCurFoc() != kNodeAttrs::no)
             {
                 m_currentNode = _node;
                 d->m_cursorOffset = 0;
@@ -897,7 +909,7 @@ void KafkaWidget::keyDelete()
         attrs = w->getAttrs(_nodeNext);
 
         //If this Node can't be deleted, we stop here.
-        if(!attrs->cbDel())
+        if(!attrs || !attrs->cbDel())
             return;
 
         //If we are in a TEXT node, we remove a letter
@@ -1141,7 +1153,7 @@ void KafkaWidget::keyDelete()
             attrs = w->getAttrs(_nodeNext);
 
             //If this Node can't be deleted, we stop here.
-            if(!attrs->cbDel())
+            if(!attrs || !attrs->cbDel())
                 break;
 
             //Let's delete useless Nodes
@@ -1164,7 +1176,7 @@ void KafkaWidget::keyDelete()
 
         //And finally, if the cursor is at a bad place (e.g. inside a Inline with childs), move it
         attrs = w->getAttrs(_node);
-        while(attrs->chCurFoc() == kNodeAttrs::inlineNode && _node.hasChildNodes())
+        while(attrs && attrs->chCurFoc() == kNodeAttrs::inlineNode && _node.hasChildNodes())
         {
             _node = kafkaCommon::getChildNode(_node, childPosition, true);
             childPosition = 1;
@@ -1252,7 +1264,7 @@ void KafkaWidget::keyBackspace()
             if(_node == 0)
                 break;
             attrs = w->getAttrs(_node);
-            if(attrs->chCurFoc() == kNodeAttrs::textNode)
+            if(attrs && attrs->chCurFoc() == kNodeAttrs::textNode)
             {
                 m_currentNode = _node;
                 d->m_cursorOffset = (static_cast<DOM::CharacterData>(_node)).length();
@@ -1261,7 +1273,7 @@ void KafkaWidget::keyBackspace()
                 emit domNodeNewCursorPos(m_currentNode, d->m_cursorOffset);
                 return;
             }
-            if(attrs->chCurFoc() != kNodeAttrs::no && attrs->chCurFoc() !=
+            if(attrs && attrs->chCurFoc() != kNodeAttrs::no && attrs->chCurFoc() !=
                     kNodeAttrs::textNode)
             {
                 m_currentNode = _node;
@@ -1280,7 +1292,7 @@ void KafkaWidget::keyBackspace()
             if(_node == 0)
                 break;
             attrs = w->getAttrs(_node);
-            if(attrs->chCurFoc() != kNodeAttrs::no)
+            if(attrs && attrs->chCurFoc() != kNodeAttrs::no)
             {
                 m_currentNode = _node;
                 d->m_cursorOffset = 0;
@@ -1843,7 +1855,7 @@ void KafkaWidget::postprocessCursorPosition()
              if(_nextNode.isNull())
                  break;
              attrs2 = w->getAttrs(_nextNode);
-             if(attrs2->chCurFoc() == kNodeAttrs::textNode &&
+             if(attrs2 && attrs2->chCurFoc() == kNodeAttrs::textNode &&
                      (static_cast<DOM::CharacterData>(_nextNode)).length() != 0)
              {
                  m_currentNode = _nextNode;
@@ -1873,7 +1885,7 @@ void KafkaWidget::postprocessCursorPosition()
                 (m_currentNode.nodeName().string().lower() != "br" ||
                  (m_currentNode.nodeName().string().lower() == "br" && /**!m_currentNode.nextSibling().isNull() &&
                             m_currentNode.nextSibling().nodeType() == DOM::Node::TEXT_NODE &&
-                            m_currentNode.nextSibling().nodeValue().string() == "" &&
+                            m_currentNode.nextSibling().nodeValue().string().isEmpty() &&
                             m_currentNode.nextSibling().nextSibling().isNull() &&*/
                   !m_currentNode.previousSibling().isNull() &&
                   m_currentNode.previousSibling().nodeType() == DOM::Node::TEXT_NODE &&
@@ -1886,7 +1898,7 @@ void KafkaWidget::postprocessCursorPosition()
                 if(_nextNode == 0)
                     break;
                 attrs2 = w->getAttrs(_nextNode);
-                if(attrs2->chCurFoc() == kNodeAttrs::textNode &&
+                if(attrs2 && attrs2->chCurFoc() == kNodeAttrs::textNode &&
                         (static_cast<DOM::CharacterData>(_nextNode)).length()
                         != 0)
                 {
@@ -1902,7 +1914,7 @@ void KafkaWidget::postprocessCursorPosition()
 
                     break;
                 }
-                else if(attrs2->chCurFoc() == kNodeAttrs::singleNodeAndItself)
+                else if(attrs2 && attrs2->chCurFoc() == kNodeAttrs::singleNodeAndItself)
                 {
                     m_currentNode = _nextNode;
                     d->m_cursorOffset = 1;
@@ -1929,9 +1941,9 @@ void KafkaWidget::postprocessCursorPosition()
                 if(_nextNode == 0)
                     break;
                 attrs2 = w->getAttrs(_nextNode);
-                if(attrs2->chCurFoc() == kNodeAttrs::singleNodeAndItself)
+                if(attrs2 && attrs2->chCurFoc() == kNodeAttrs::singleNodeAndItself)
                     break;
-                else if(attrs2->chCurFoc() == kNodeAttrs::textNode &&
+                else if(attrs2 && attrs2->chCurFoc() == kNodeAttrs::textNode &&
                         (static_cast<DOM::CharacterData>(_nextNode)).length() != 0)
                 {
                     m_currentNode = _nextNode;

@@ -51,7 +51,10 @@ Node::~Node()
   //It has no use, except to know when it crash why it has crashed.
   //If it has crashed here, the Node doesn't exist anymore.
   // If it has crashed the next line, it is a GroupElements bug.
-  tag->setCleanStrBuilt(false);
+  //FIXME: Andras: or it is a VPL undo/redo bug...
+  Q_ASSERT(tag);
+  if (tag)
+    tag->setCleanStrBuilt(false);
 
   detachNode();
   if (prev && prev->next == this)

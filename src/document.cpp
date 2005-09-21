@@ -251,7 +251,7 @@ void Document::insertTag(const QString &s1, const QString &s2)
     reparseEnabled = true;
   }
   insertText(s1 + selection);
-  insertText(s2, FALSE); // don't adjust cursor, thereby leaving it in the middle of tag
+  insertText(s2, false); // don't adjust cursor, thereby leaving it in the middle of tag
 }
 
 
@@ -279,22 +279,24 @@ void Document::changeTagNamespace(Tag *tag, const QString& nameSpace)
   if (!tag->nameSpace.isEmpty())
   {
     tag->beginPos(bl, bc);
+    if (tag->type == Tag::XmlTagEnd)
+      bc++;
     tag->namePos(nl, nc);
     reparseEnabled = false;
-    editIf->removeText(bl, bc+1, nl, nc);
+    editIf->removeText(bl, bc + 1, nl, nc);
     reparseEnabled = true;
   } else
   {
     tag->beginPos(bl, bc);
+    if (tag->type == Tag::XmlTagEnd)
+      bc++;
   }
-  if (nameSpace.isEmpty())
+  if (!nameSpace.isEmpty())
   {
-    slotDelayedTextChanged();
-  } else
-  {
-    viewCursorIf->setCursorPositionReal((uint)bl, (uint)(bc+1));
-    insertText(nameSpace+":");
+    viewCursorIf->setCursorPositionReal((uint)bl, (uint)(bc + 1));
+    insertText(nameSpace + ":", true, false);
   }
+  slotDelayedTextChanged(true);
   quantaApp->slotNewLineColumn();
 }
 
@@ -792,43 +794,39 @@ void Document::slotReplaceChar()
 */
 void Document::slotCharactersInserted(int line, int column, const QString& string)
 {
-  if (qConfig.replaceAccented && encodingIf)
+  if (qConfig.replaceNotInEncoding)
   {
-    QString encoding = encodingIf->encoding();
-    if (encoding != m_encoding)
+    if (encodingIf)
     {
-      m_encoding = encoding;
-      m_codec = QTextCodec::codecForName(encoding);
+      QString encoding = encodingIf->encoding();
+      if (encoding != m_encoding)
+      {
+        m_encoding = encoding;
+        m_codec = QTextCodec::codecForName(encoding);
+      }
+      if (!m_codec->canEncode(string[0]))
+      {
+        m_replaceLine = line;
+        m_replaceCol = column;
+        m_replaceStr = QString("&#%1;").arg(string[0].unicode());
+        QTimer::singleShot(0, this, SLOT(slotReplaceChar()));
+        return;
+      }
     }
-    if (!m_codec->canEncode(string[0]))
+    if (qConfig.replaceAccented)
     {
-      m_replaceLine = line;
-      m_replaceCol = column;
-      m_replaceStr = QString("&#%1;").arg(string[0].unicode());
-      QTimer::singleShot(0, this, SLOT(slotReplaceChar()));
-      return;    
+      uint c = string[0].unicode();
+      if (c > 191)
+      {
+        m_replaceLine = line;
+        m_replaceCol = column;
+        m_replaceStr = QString("&#%1;").arg(c);
+        QTimer::singleShot(0, this, SLOT(slotReplaceChar()));
+        return;
+      }
     }
   }
 
-  
-//  uint c = string[0].unicode();
-//  if (qConfig.replaceAccented && c > 191)
-//  {
-//     uint ch = replaceCharList[0];
-//     int i = 0;
-//     while (ch != 0)
-//     {
-//         if (c == ch)
-//         {
-//            m_replaceLine = line;
-//            m_replaceCol = column;
-//            m_replaceStr = QString("&#%1;").arg(c);
-//            QTimer::singleShot(0, this, SLOT(slotReplaceChar()));
-//            return;
-//         }
-//         ch = replaceCharList[++i];
-//     }
-//  }
  if ( (string == ">") ||
       (string == "<") )
  {
@@ -914,7 +912,7 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
       showCodeCompletions( getTagCompletions(line, column + 1) );
       handled = true;
     } else
-    if (string == ">" && !tagName.isEmpty() && tagName[0] != '!' &&
+    if (string == ">" && !tagName.isEmpty() && tagName[0] != '!' && tagName[0] != '?' &&
         tagName[0] != '/' && !tagName.endsWith("/") && !s.endsWith("/>") &&
         qConfig.closeTags &&
         currentDTD(true)->family == Xml) //close unknown tags

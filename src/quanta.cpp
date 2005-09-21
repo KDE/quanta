@@ -251,6 +251,8 @@ QuantaApp::QuantaApp(int mdiMode) : DCOPObject("WindowManagerIf"), KMdiMainFrm( 
   m_newDocStuff = 0L;
   m_debugger = 0L;
   m_parserEnabled = true;
+  cursorLine = 0;
+  cursorCol = 0;
   emit eventHappened("quanta_start", QDateTime::currentDateTime().toString(Qt::ISODate), QString::null);
 }
 
@@ -285,6 +287,8 @@ QuantaApp::~QuantaApp()
  idleTimer = 0L;
  delete m_actions;
  m_actions = 0L;
+ cursorLine = 0;
+ cursorCol = 0;
  tempFileList.clear();
  for (uint i = 0; i < tempDirList.count(); i++)
  {
@@ -1624,24 +1628,38 @@ void QuantaApp::setCursorPosition( int row, int col )
 
 void QuantaApp::gotoFileAndLine(const QString& filename, int line, int column)
 {
-  if (!filename.isEmpty())
+  // First, check if we're already showing this file
+  Document *w = ViewManager::ref()->activeDocument();
+  KURL currentfilename, newfilename;
+  if(w)
+  {
+    currentfilename = w->url();
+    newfilename.setPath(filename);
+  }
+
+  // If a filename is specified and that file is not already active, openn it
+  if (!filename.isEmpty() && !currentfilename.equals(filename))
   {
     QuantaView* view = ViewManager::ref()->isOpened(KURL::fromPathOrURL(filename));
+    // If it's already opened, just activate it
     if (view)
     {
       view->activate();
       view->activated();
     } else
     {
+      // Otherwise open it
       m_doc->openDocument( KURL::fromPathOrURL( filename ) );
     }
   }
-  Document *w = ViewManager::ref()->activeDocument();
+  // We have to do this again, in case activedocument changed since last check (ie a file was opened)
+  w = ViewManager::ref()->activeDocument();
   if (w)
   {
     int numLines = w->editIf->numLines();
     if ( numLines > line && line >= 0 )
     {
+      // Jump to the correct line/col
       w->viewCursorIf->setCursorPositionReal(line, column);
     }
     w->view()->setFocus();
@@ -1994,9 +2012,9 @@ void QuantaApp::slotContextMenuAboutToShow()
       popupWord = word;
 
       // The word we display in the popup will be cut off not to make an obeast pop up menu
-      if(word.length() > 15)
+      if(word.length() > 23)
       {
-        word.remove(0, 12);
+        word.mid(20);
         word += "...";
       }
 
@@ -2470,7 +2488,7 @@ bool QuantaApp::saveToolbar(bool localToolbar, const QString& toolbarToSave, con
       if ( tb->tabLabel(tb->currentPage()) == tb->label(i) ) current=i;
     }
 
-    bool ok = FALSE;
+    bool ok = false;
     QString res = KInputDialog::getItem(
                     i18n( "Save Toolbar" ),
                     i18n( "Please select a toolbar:" ), lst, current, FALSE, &ok, this );
@@ -2624,7 +2642,7 @@ bool QuantaApp::slotRemoveToolbar()
    j++;
  }
 
- bool ok = FALSE;
+ bool ok = false;
  QString res = KInputDialog::getItem(
                  i18n( "Remove Toolbar" ),
                  i18n( "Please select a toolbar:" ), lst, current, FALSE, &ok, this );
@@ -2660,7 +2678,7 @@ QString QuantaApp::createToolbarTarball()
     if ( tb->tabLabel(tb->currentPage()) == tb->label(i) ) current=i;
   }
 
-  bool ok = FALSE;
+  bool ok = false;
   QString res = KInputDialog::getItem(
       i18n( "Send Toolbar" ),
   i18n( "Please select a toolbar:" ), lst, current, FALSE, &ok, this );
@@ -2762,7 +2780,7 @@ void QuantaApp::slotRenameToolbar()
     if ( tb->tabLabel(tb->currentPage()) == tb->label(i) ) current=i;
   }
 
-  bool ok = FALSE;
+  bool ok = false;
   QString res = KInputDialog::getItem(
                   i18n( "Rename Toolbar" ),
                   i18n( "Please select a toolbar:" ), lst, current, FALSE, &ok, this );
@@ -3045,7 +3063,7 @@ void QuantaApp::slotEditDTD()
   {
     QStringList lst(DTDs::ref()->nickNameList());
     QString nickName = DTDs::ref()->getDTDNickNameFromName(w->getDTDIdentifier());
-    bool ok = FALSE;
+    bool ok = false;
     QString res = KInputDialog::getItem(
         i18n( "Send DTD" ),
     i18n( "Please select a DTD:" ), lst, lst.findIndex(nickName), FALSE, &ok, this );
@@ -3501,7 +3519,7 @@ QString QuantaApp::createDTEPTarball()
   {
     QStringList lst(DTDs::ref()->nickNameList());
     QString nickName = DTDs::ref()->getDTDNickNameFromName(w->getDTDIdentifier());
-    bool ok = FALSE;
+    bool ok = false;
     QString res = KInputDialog::getItem(
         i18n( "Send DTD" ),
     i18n( "Please select a DTD:" ), lst, lst.findIndex(nickName), FALSE, &ok, this );
@@ -4072,6 +4090,7 @@ void QuantaApp::saveOptions()
     m_config->writeEntry("Auto completion", qConfig.useAutoCompletion);
     m_config->writeEntry("Update Closing Tags", qConfig.updateClosingTags);
     m_config->writeEntry("Replace Accented Chars", qConfig.replaceAccented);
+    m_config->writeEntry("Replace Chars Not In Current Encoding", qConfig.replaceNotInEncoding);
 
     m_config->writeEntry("Default encoding", qConfig.defaultEncoding);
     m_config->writeEntry("Default DTD", qConfig.defaultDocType);
@@ -4373,8 +4392,8 @@ void QuantaApp::slotInsertCSS()
     }
     delete dlg;
 
-  } else if (!node || fullDocument.isEmpty() ||
-      w->currentDTD(true)->name == "text/css") //empty document or pure CSS file, invoke the selector editor
+  } else
+  if (!node || w->currentDTD(true)->name == "text/css") 
   {
         kdDebug(24000) << "[CSS editor] This is a pure CSS document";
 
@@ -4431,7 +4450,7 @@ void QuantaApp::slotInsertCSS()
     }
     delete dlg;
    } else
-   KMessageBox::sorry(this, i18n("The CSS Editor cannot be invoked here.\nTry to invoke it on a tag or on a style section."));
+     KMessageBox::sorry(this, i18n("The CSS Editor cannot be invoked here.\nTry to invoke it on a tag or on a style section."));
 }
 
 /** for <a href=mailto> tag  */

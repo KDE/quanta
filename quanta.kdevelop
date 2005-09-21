@@ -30,11 +30,13 @@
       <abortonerror>true</abortonerror>
       <numberofjobs>1</numberofjobs>
       <dontact>false</dontact>
-      <makebin/>
+      <makebin></makebin>
       <envvars>
+        <envvar value="no" name="UNSERMAKE" />
         <envvar value="1" name="WANT_AUTOCONF_2_5" />
         <envvar value="1" name="WANT_AUTOMAKE_1_6" />
       </envvars>
+      <prio>0</prio>
     </make>
     <compiler>
       <cflags/>
@@ -53,19 +55,19 @@
     <configurations>
       <default>
         <configargs>--enable-debug=full --prefix=/opt/kde3 --enable-editors</configargs>
-        <builddir>/home/andris/development/build/kde-head/kdewebdev-3.4</builddir>
+        <builddir>/home/andris/development/build/kde-3.5/kdewebdev-3.4</builddir>
         <ccompiler>kdevgccoptions</ccompiler>
         <cxxcompiler>kdevgppoptions</cxxcompiler>
         <f77compiler>kdevpgf77options</f77compiler>
-        <ccompilerbinary/>
-        <cxxcompilerbinary/>
-        <f77compilerbinary/>
+        <ccompilerbinary></ccompilerbinary>
+        <cxxcompilerbinary></cxxcompilerbinary>
+        <f77compilerbinary></f77compilerbinary>
         <cflags>-DKDE_NO_COMPAT -DQT_NO_COMPAT</cflags>
         <cxxflags>-DKDE_NO_COMPAT -DQT_NO_COMPAT -DDEBUG_PARSER</cxxflags>
-        <f77flags/>
+        <f77flags></f77flags>
         <topsourcedir>/home/andris/development/sources/kde-branch/kdewebdev</topsourcedir>
-        <cppflags/>
-        <ldflags/>
+        <cppflags></cppflags>
+        <ldflags></ldflags>
         <envvars>
           <envvar value="kommander klinkstatus kfilereplace kxsldbg kimagemapeditor" name="DO_NOT_COMPILE" />
         </envvars>
@@ -163,7 +165,7 @@
     </groups>
     <tree>
       <hidenonprojectfiles>false</hidenonprojectfiles>
-      <hidepatterns></hidepatterns>
+      <hidepatterns/>
       <showvcsfields>true</showvcsfields>
     </tree>
   </kdevfileview>
@@ -186,16 +188,16 @@
   </kdevdoctreeview>
   <kdevdebugger>
     <general>
-      <dbgshell/>
-      <programargs/>
+      <dbgshell></dbgshell>
+      <programargs></programargs>
       <gdbpath>/usr/bin/</gdbpath>
       <breakonloadinglibs>true</breakonloadinglibs>
       <separatetty>false</separatetty>
       <floatingtoolbar>false</floatingtoolbar>
       <runappinappdirectory>true</runappinappdirectory>
-      <configGdbScript/>
-      <runShellScript/>
-      <runGdbScript/>
+      <configGdbScript></configGdbScript>
+      <runShellScript></runShellScript>
+      <runGdbScript></runGdbScript>
     </general>
     <display>
       <staticmembers>false</staticmembers>
@@ -238,10 +240,10 @@
   </kdevcvs>
   <kdevfilecreate>
     <filetypes>
-      <type icon="" ext="h" name="C++ header" create="template" >
+      <type icon="" ext="h" create="template" name="C++ header" >
         <descr>Quanta speicfic header</descr>
       </type>
-      <type icon="source_cpp" ext="cpp" name="C++ source" create="template" >
+      <type icon="source_cpp" ext="cpp" create="template" name="C++ source" >
         <descr>A new empty C++ file.</descr>
       </type>
     </filetypes>
@@ -265,13 +267,18 @@
       <pcs>KDElibs</pcs>
     </references>
     <creategettersetter>
-      <prefixGet/>
+      <prefixGet></prefixGet>
       <prefixSet>set</prefixSet>
       <prefixVariable>m_,_</prefixVariable>
       <parameterName>theValue</parameterName>
       <inlineGet>true</inlineGet>
       <inlineSet>true</inlineSet>
     </creategettersetter>
+    <qt>
+      <used>false</used>
+      <version>3</version>
+      <root>/usr/lib/qt3</root>
+    </qt>
   </kdevcppsupport>
   <kdevcvsservice>
     <recursivewhenupdate>true</recursivewhenupdate>

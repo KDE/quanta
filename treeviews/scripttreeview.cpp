@@ -315,6 +315,29 @@ KURL ScriptTreeView::infoFile(const KURL& url, bool htmlVersion)
   //fileName.truncate(fileName.length() - QFileInfo(fileName).extension().length() - 1);
   fileName.append(".info");
   returnUrl.setFileName(fileName);
+  if (!QFileInfo(returnUrl.path()).exists())
+  {
+    QFile f(returnUrl.path());
+    if (f.open(IO_WriteOnly))
+    {
+      QTextStream str(&f);
+      str.setEncoding(QTextStream::UnicodeUTF8);
+      str << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << endl;
+      str << "<?xml-stylesheet type=\"text/xsl\" href=\"info.xsl\" ?>" << endl;
+      str << "<!DOCTYPE QuantaScriptInfo>" << endl;
+      str << "<INFO>" << endl;
+      str << "  <options editor=\"\" interpreter=\"\" />" << endl;
+      str << "  <name>" << url.fileName() << "</name>" << endl;
+      str << "  <author></author>" << endl;
+      str << "  <email></email>" << endl;
+      str << "  <website></website>" << endl;
+      str << "  <version></version>" << endl;
+      str << "  <license></license>" << endl;
+      str << "  <about></about>" << endl;
+      str << "</INFO>" << endl;
+      f.close();
+    }
+  }
 
   if (htmlVersion)
   {

@@ -38,7 +38,7 @@
 Node *kafkaCommon::getNextNode(Node *node, bool &goUp, Node *endNode)
 {
     //goto next node, my favorite part :)
-    if(!node)
+    if(!node || node == endNode)
         return 0L;
     if(goUp)
     {
@@ -717,8 +717,7 @@ int kafkaCommon::getNodeDisplay(Node *node, bool closingNodeToo)
             return kafkaCommon::noneDisplay;
         }
     }
-    else
-        return kafkaCommon::errorDisplay;
+    return kafkaCommon::errorDisplay;
 }
 
 QString kafkaCommon::removeUnnecessaryWhitespaces(const QString &string,
@@ -1151,7 +1150,6 @@ Node* kafkaCommon::DTDInsertNodeSubtree(Node *newNode, NodeSelectionInd& selecti
     }
 
     // look for commonParent
-
     QValueList<int> commonParentStartChildLocation;
     QValueList<int> commonParentEndChildLocation;
 
@@ -1440,7 +1438,8 @@ bool kafkaCommon::DTDinsertNode(Node *newNode, Node *startNode, int startOffset,
             //we'll catch this later.
             if(endNode == commonParentEndChild)
                 commonParentEndChild = commonParentEndChild->previousSibling();
-            endNode = endNode->previousSibling();
+            if (endNode->previousSibling())
+              endNode = endNode->previousSibling();
         }
     }
 
@@ -2082,7 +2081,7 @@ Node* kafkaCommon::extractNode(Node *node, NodeModifsSet *modifs, bool extractCh
 
     if(modifs)
     {
-        modif->setNode(node);
+        modif->setNode(0/*node*/); // this deletes the node!!???
         modifs->addNodeModif(modif);
     }
 
@@ -2321,9 +2320,9 @@ Node* kafkaCommon::extractNodeSubtreeAux(Node* commonParentStartChild, Node* com
         if(node_extracted)
         {
             node_extracted->prev = prev_node;
-            if(significant_next_node != commonParentEndChild_next || next_node->closesPrevious)
+            if(significant_next_node != commonParentEndChild_next || (next_node && next_node->closesPrevious))
                 node_extracted->next = next_node;
-            if(next_node->closesPrevious)
+            if(next_node && next_node->closesPrevious)
             {
                 next_node->prev = node_extracted;
                 node_extracted->_closingNode = next_node;

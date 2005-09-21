@@ -245,7 +245,7 @@ bool QuantaPlugin::validatePlugin(QuantaPlugin *a_plugin)
                          a_plugin->location(), a_plugin->fileName(),
                          a_plugin->outputWindow());
   }
-  return FALSE;
+  return false;
 }
 
 /** Returns true if the information of a plugin is valid, otherwise false */
@@ -285,7 +285,7 @@ bool QuantaPlugin::isLoaded()
 bool QuantaPlugin::unload(bool remove)
 {
   if(!isLoaded())
-    return FALSE;
+    return false;
 
   disconnect( m_part, SIGNAL(setStatusBarText(const QString &)),
            quantaApp, SLOT(slotStatusMsg( const QString & )));

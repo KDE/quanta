@@ -111,7 +111,7 @@ QString DocFolder::text( int i) const
 
 void DocFolder::setup()
 {
-    setExpandable( TRUE );
+    setExpandable( true );
     QListViewItem::setup();
 }
 /**  */

@@ -248,7 +248,7 @@ void ProjectPrivate::openCurrentView()
     if (el.attribute("name") == currentProjectView)
     {
       QDomNodeList itemNodes = el.childNodes();
-      for (int j = itemNodes.count()-1; j >= 0 ; j--)
+      for (int j = 0; j < itemNodes.count(); j++)
       {
         QDomElement el2 = itemNodes.item(j).cloneNode().toElement();
         KURL url = baseURL;
@@ -524,6 +524,7 @@ void ProjectPrivate::loadProjectXML()
       if (f.open(IO_ReadOnly))
       {
         QTextStream stream(&f);
+        stream.setEncoding(QTextStream::UnicodeUTF8);
         QString line;
         while (!stream.atEnd())
         {

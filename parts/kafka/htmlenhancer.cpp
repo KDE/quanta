@@ -125,9 +125,9 @@ bool HTMLEnhancer::enhanceNode(Node *node, DOM::Node parentDNode, DOM::Node next
 			m_wkafkapart->connectDomNodeToQuantaNode(domNode2, node);
 		}
 	}
- 
+    
     QTag* qTag = QuantaCommon::tagFromDTD(m_wkafkapart->getCurrentDoc()->defaultDTD(),
-                                       parentDNode.nodeName().string());
+                                          parentDNode.nodeName().string());
 
 	//THEN replace, if asked, scripts by a little icon.
     if(node->tag->type == Tag::ScriptTag && m_showIconForScripts && qTag->isChild("IMG", false))
