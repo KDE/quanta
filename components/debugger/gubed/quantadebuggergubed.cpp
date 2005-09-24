@@ -71,10 +71,15 @@ QuantaDebuggerGubed::~QuantaDebuggerGubed ()
     sendCommand("die", 0);
     m_socket->flush();
     m_socket->close();
+    delete m_socket;
+    m_socket = NULL;
   }
   if(m_server)
-    m_server->deleteLater();
-
+  {
+    m_server->close();
+    delete m_server;
+    m_server = NULL;
+  }
   emit updateStatus(DebuggerUI::NoSession);
 }
 
@@ -126,7 +131,7 @@ void QuantaDebuggerGubed::startSession()
       else
       {
         emit updateStatus(DebuggerUI::NoSession);
-        m_server->deleteLater();
+        delete m_server;
         m_server = NULL;
         debuggerInterface()->enableAction("debug_connect", true);
         debuggerInterface()->enableAction("debug_disconnect", false);
@@ -151,12 +156,14 @@ void QuantaDebuggerGubed::endSession()
     m_socket->close();
 
     m_socket->deleteLater();
+    m_socket = NULL;
   }
 
   // Close the server
   if(m_server)
   {
-    m_server->deleteLater();
+    m_server->close();
+    delete m_server;
     m_server = NULL;
   }
 
@@ -292,8 +299,6 @@ void QuantaDebuggerGubed::slotReadyAccept()
     else
     {
       kdDebug(24002) << k_funcinfo << ", " << m_server->errorString() << endl;
-      m_socket->deleteLater();
-      m_socket = NULL;
     }
   }
 

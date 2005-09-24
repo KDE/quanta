@@ -70,11 +70,11 @@ void DBGpNetwork::sessionStart(bool useproxy, const QString& server, const QStri
       if(m_server->listen())
       {
         emit active(true);
-      emit networkError(i18n("Lisening on port %1").arg(service), true);
+        emit networkError(i18n("Lisening on port %1").arg(service), true);
       }
       else
       {
-        m_server->deleteLater();
+        delete m_server;
         m_server = NULL;
         emit active(false);
         emit networkError(i18n("Unable to listen on port %1").arg(service), true);
@@ -91,13 +91,14 @@ void DBGpNetwork::sessionEnd()
   {
     m_socket->flush();
     m_socket->close();
-    m_socket->deleteLater();
+    delete m_socket;
   }
 
   // Close the server
   if(m_server)
   {
-    m_server->deleteLater();
+    m_server->close();
+    delete m_server;
     m_server = NULL;
   }
 
@@ -159,8 +160,6 @@ void DBGpNetwork::slotReadyAccept()
     else
     {
       kdDebug(24002) << k_funcinfo << ", " << m_server->errorString() << endl;
-      m_socket->deleteLater();
-      m_socket = NULL;
     }
   }
 
@@ -204,7 +203,7 @@ void DBGpNetwork::slotConnectionClosed()
 
   if(m_socket)
   {
-    m_socket->deleteLater();
+    delete m_socket;
     m_socket = NULL;
   }
 
