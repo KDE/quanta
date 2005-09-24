@@ -70,7 +70,7 @@ void DBGpNetwork::sessionStart(bool useproxy, const QString& server, const QStri
       if(m_server->listen())
       {
         emit active(true);
-        emit networkError(i18n("Lisening on port %1").arg(service), true);
+        emit networkError(i18n("Listening on port %1").arg(service), true);
       }
       else
       {
