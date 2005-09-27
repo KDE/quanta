@@ -5,6 +5,7 @@ Name=DBGp
 Name[xx]=xxDBGpxx
 Comment=DBGp debugger plugin, see http://xdebug.org
 Comment[cs]=DBGp debugger plugin, viz http://xdebug.org
+Comment[da]=DBGp fejlretter-plugin, se http://xdebug.org
 Comment[de]=DBGp Debugger Plugin, siehe http://xdebug.org
 Comment[el]=Πρόσθετο αποσφαλματωτή DBGp, δείτε το http://xdebug.org
 Comment[es]=Extensión para el depurador DBGp, vea http://xdebug.org
