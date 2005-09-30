@@ -1,6 +1,6 @@
 This files contains the changes since Quanta 2.0 until the current 3.4.x series.
 
-Version 3.4.3 (Release date: xx-xx-2005; Started 01-08-2005):
+Version 3.4.3 (Release date: 05-10-2005; Started 01-08-2005):
  - bugfixes:
         - fix crash when deleting a file which is part of a project from the tab
           context menu [#111134]
