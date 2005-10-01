@@ -25,8 +25,6 @@
 
 #include <qwidget.h>
 
-#include <cassert>
-
 #include "tagactionset.h"
 #include "tagactionmanager.h"
 #include "kafkacommon.h"
@@ -51,7 +49,7 @@ TagActionSetAbstract::~TagActionSetAbstract()
 
 Node* TagActionSetAbstract::parentTag(Node* node, QString const& tagName)
 {
-    assert(node);
+    Q_ASSERT(node);
 
     Node* aux = node;
     while(aux && aux->nodeName().lower() != tagName)
@@ -133,9 +131,9 @@ bool TagActionSet::fillWithTagActions(QWidget* widget, DOM::Node const& node)
     KActionCollection* ac(TagActionManager::self()->actionCollection());
 
     KAction* copyDivAction = ac->action("copy_div_element");
-    assert(copyDivAction);    
+    Q_ASSERT(copyDivAction);
     KAction* cutDivAction = ac->action("cut_div_element");
-    assert(cutDivAction);
+    Q_ASSERT(cutDivAction);
     
     if(/*!KafkaDocument::ref()->getKafkaWidget()->hasSelection() && */isInDivArea())
     {        
@@ -154,7 +152,7 @@ bool TagActionSet::fillWithTagActions(QWidget* widget, DOM::Node const& node)
     }
         
 //     KAction* applySourceIndentationAction = ac->action("apply_source_indentation");
-//     assert(applySourceIndentationAction);
+//     Q_ASSERT(applySourceIndentationAction);
 // 
 //     applySourceIndentationAction->unplug(widget); // to keep things in order
 //     applySourceIndentationAction->plug(widget);
@@ -171,15 +169,15 @@ void TagActionSet::unplugAllActions(QWidget* widget) const
     m_separator->unplugAll();
     
     KAction* applySourceIndentationAction = ac->action("apply_source_indentation");
-    assert(applySourceIndentationAction);    
+    Q_ASSERT(applySourceIndentationAction);
     applySourceIndentationAction->unplug(widget);
 
     KAction* copyDivAction = ac->action("copy_div_element");
-    assert(copyDivAction);    
+    Q_ASSERT(copyDivAction);
     copyDivAction->unplug(widget);
 
     KAction* cutDivAction = ac->action("cut_div_element");
-    assert(cutDivAction);    
+    Q_ASSERT(cutDivAction);
     cutDivAction->unplug(widget);
 }
 
@@ -221,17 +219,17 @@ void TagActionSet::slotApplySourceIndentation()
 
 bool TagActionSet::isInDivArea() const
 {
-    assert(m_currentNode);
+    Q_ASSERT(m_currentNode);
     
     return parentTag(m_currentNode, "div");
 }
 
 void TagActionSet::slotCopyDivElement()
 {
-    assert(m_currentNode);
+    Q_ASSERT(m_currentNode);
     
     Node* divNode = parentTag(m_currentNode, "div");
-    assert(divNode);
+    Q_ASSERT(divNode);
     
     Node* divClosingNode = divNode->getClosingNode();
     if(!divClosingNode)
@@ -245,10 +243,10 @@ void TagActionSet::slotCopyDivElement()
 
 void TagActionSet::slotCutDivElement()
 {
-    assert(m_currentNode);
+    Q_ASSERT(m_currentNode);
     
     Node* divNode = parentTag(m_currentNode, "div");
-    assert(divNode);
+    Q_ASSERT(divNode);
     
     Node* divClosingNode = divNode->getClosingNode();
     if(!divClosingNode)
@@ -281,7 +279,7 @@ bool TableTagActionSet::isInTagContext() const
 
 void TableTagActionSet::initActionMenus(QWidget* widget)
 {
-    assert(!m_tableActionMenu_0);
+    Q_ASSERT(!m_tableActionMenu_0);
 
     m_tableActionMenu_0 = new KActionMenu(i18n("Table..."), widget);
     m_insertActionMenu_1 = new KActionMenu(i18n("Insert..."), m_tableActionMenu_0);
@@ -393,7 +391,7 @@ bool TableTagActionSet::fillWithTagActions(QWidget* widget, DOM::Node const& nod
 
     // Insert Table
     KAction* insertTableAction = ac->action("insert_table");
-    assert(insertTableAction);
+    Q_ASSERT(insertTableAction);
 
     m_insertActionMenu_1->remove(insertTableAction);
     if(canInsertTable())
@@ -405,7 +403,7 @@ bool TableTagActionSet::fillWithTagActions(QWidget* widget, DOM::Node const& nod
     }
     // Insert Row Above
     KAction* insertRowAboveAction = ac->action("insert_row_above");
-    assert(insertRowAboveAction);
+    Q_ASSERT(insertRowAboveAction);
 
     m_insertActionMenu_1->remove(insertRowAboveAction);
     if(canInsertRowAbove())
@@ -417,7 +415,7 @@ bool TableTagActionSet::fillWithTagActions(QWidget* widget, DOM::Node const& nod
     }
     // Insert Row Below
     KAction* insertRowBelowAction = ac->action("insert_row_below");
-    assert(insertRowBelowAction);
+    Q_ASSERT(insertRowBelowAction);
 
     m_insertActionMenu_1->remove(insertRowBelowAction);
     if(canInsertRowBelow())
@@ -429,7 +427,7 @@ bool TableTagActionSet::fillWithTagActions(QWidget* widget, DOM::Node const& nod
     }
     // Insert Column Left
     KAction* insertColumnLeftAction = ac->action("insert_column_left");
-    assert(insertColumnLeftAction);
+    Q_ASSERT(insertColumnLeftAction);
 
     m_insertActionMenu_1->remove(insertColumnLeftAction);
     if(canInsertColumnLeft())
@@ -441,7 +439,7 @@ bool TableTagActionSet::fillWithTagActions(QWidget* widget, DOM::Node const& nod
     }
     // Insert Column Right
     KAction* insertColumnRightAction = ac->action("insert_column_right");
-    assert(insertColumnRightAction);
+    Q_ASSERT(insertColumnRightAction);
 
     m_insertActionMenu_1->remove(insertColumnRightAction);
     if(canInsertColumnRight())
@@ -458,7 +456,7 @@ bool TableTagActionSet::fillWithTagActions(QWidget* widget, DOM::Node const& nod
 
     // Remove Table
     KAction* removeTableAction = ac->action("remove_table");
-    assert(removeTableAction);
+    Q_ASSERT(removeTableAction);
 
     m_removeActionMenu_1->remove(removeTableAction);
     if(canRemoveTable())
@@ -470,7 +468,7 @@ bool TableTagActionSet::fillWithTagActions(QWidget* widget, DOM::Node const& nod
     }
     // Remove Row(s)
     KAction* removeRowsAction = ac->action("remove_rows");
-    assert(removeRowsAction);
+    Q_ASSERT(removeRowsAction);
 
     m_removeActionMenu_1->remove(removeRowsAction);
     if(canRemoveRows())
@@ -482,7 +480,7 @@ bool TableTagActionSet::fillWithTagActions(QWidget* widget, DOM::Node const& nod
     }
     // Remove Column(s)
     KAction* removeColumnsAction = ac->action("remove_columns");
-    assert(removeColumnsAction);
+    Q_ASSERT(removeColumnsAction);
 
     m_removeActionMenu_1->remove(removeColumnsAction);
     if(canRemoveColumns())
@@ -494,7 +492,7 @@ bool TableTagActionSet::fillWithTagActions(QWidget* widget, DOM::Node const& nod
     }
 /*    // Remove Cell(s)
     KAction* removeCellsAction = ac->action("remove_cells");
-    assert(removeCellsAction);
+    Q_ASSERT(removeCellsAction);
 
     m_removeActionMenu_1->remove(removeCellsAction);
     if(canRemoveCells())
@@ -506,7 +504,7 @@ bool TableTagActionSet::fillWithTagActions(QWidget* widget, DOM::Node const& nod
     }*/
     // Remove Cell(s) Content
     KAction* removeCellsContentAction = ac->action("remove_cells_content");
-    assert(removeCellsContentAction);
+    Q_ASSERT(removeCellsContentAction);
 
     m_removeActionMenu_1->remove(removeCellsContentAction);
     if(canRemoveCellsContent())
@@ -541,7 +539,7 @@ bool TableTagActionSet::fillWithTagActions(QWidget* widget, DOM::Node const& nod
     }
     // Merge selected cells
     KAction* mergeSelectedCellsAction = ac->action("merge_selected_cells");
-    assert(mergeSelectedCellsAction);
+    Q_ASSERT(mergeSelectedCellsAction);
 
     m_tableActionMenu_0->remove(mergeSelectedCellsAction);
     if(canMergeSelectedCells())
@@ -571,7 +569,7 @@ bool TableTagActionSet::canInsertTable() const
 
 void TableTagActionSet::slotInsertTable()
 {
-    assert(m_currentNode);
+    Q_ASSERT(m_currentNode);
 
 }
 
@@ -582,7 +580,7 @@ bool TableTagActionSet::canInsertRowAbove() const
 
 void TableTagActionSet::slotInsertRowAbove()
 {
-    assert(m_currentNode);
+    Q_ASSERT(m_currentNode);
 
     Node* nearRow = parentTag(m_currentNode, "tr");
 
@@ -609,7 +607,7 @@ bool TableTagActionSet::canInsertRowBelow() const
 
 void TableTagActionSet::slotInsertRowBelow()
 {
-    assert(m_currentNode);
+    Q_ASSERT(m_currentNode);
 
     Node* nearRow = 0;
     Node* aux = parentTag(m_currentNode, "thead");
@@ -642,15 +640,15 @@ bool TableTagActionSet::canInsertColumnLeft() const
 
 void TableTagActionSet::slotInsertColumnLeft()
 {
-    assert(m_currentNode);
+    Q_ASSERT(m_currentNode);
 
     QuantaView* view = ViewManager::ref()->activeView();
     NodeModifsSet *modifs = new NodeModifsSet();
 
     Node* nodeToInsertInBody = buildEmptyTBodyCellSubtree();
     Node* nodeToInsertInHead = buildEmptyTHeadCellSubtree();
-    assert(nodeToInsertInBody);
-    assert(nodeToInsertInHead);
+    Q_ASSERT(nodeToInsertInBody);
+    Q_ASSERT(nodeToInsertInHead);
 
     int const _currentColumnIndex = currentColumnIndex();
 
@@ -659,7 +657,7 @@ void TableTagActionSet::slotInsertColumnLeft()
     while(trChild)
     {
         Node* thChild = firstChildTag(trChild, "th");
-        for(int i = 0; i != _currentColumnIndex; ++i)
+        for(int i = 0; (i != _currentColumnIndex && thChild); ++i)
             thChild = thChild->SNext();
 
         kafkaCommon::insertNodeSubtree(nodeToInsertInHead, trChild, thChild, modifs);
@@ -674,7 +672,7 @@ void TableTagActionSet::slotInsertColumnLeft()
     while(trChild)
     {
         Node* tdChild = firstChildTag(trChild, "td");
-        for(int i = 0; i != _currentColumnIndex; ++i)
+        for(int i = 0; (i != _currentColumnIndex && tdChild); ++i)
             tdChild = tdChild->SNext();
 
         kafkaCommon::insertNodeSubtree(nodeToInsertInBody, trChild, tdChild, modifs);
@@ -696,15 +694,15 @@ bool TableTagActionSet::canInsertColumnRight() const
 
 void TableTagActionSet::slotInsertColumnRight()
 {
-    assert(m_currentNode);
+    Q_ASSERT(m_currentNode);
 
     QuantaView* view = ViewManager::ref()->activeView();
     NodeModifsSet *modifs = new NodeModifsSet();
 
     Node* nodeToInsertInBody = buildEmptyTBodyCellSubtree();
     Node* nodeToInsertInHead = buildEmptyTHeadCellSubtree();
-    assert(nodeToInsertInBody);
-    assert(nodeToInsertInHead);
+    Q_ASSERT(nodeToInsertInBody);
+    Q_ASSERT(nodeToInsertInHead);
 
     int const _currentColumnIndex = currentColumnIndex();
 
@@ -713,7 +711,7 @@ void TableTagActionSet::slotInsertColumnRight()
     while(trChild)
     {
         Node* thChild = firstChildTag(trChild, "th");
-        for(int i = 0; i != _currentColumnIndex + 1; ++i)
+        for(int i = 0; (i != _currentColumnIndex + 1 && thChild); ++i)
             thChild = thChild->SNext();
 
         kafkaCommon::insertNodeSubtree(nodeToInsertInHead, trChild, thChild, modifs);
@@ -728,7 +726,7 @@ void TableTagActionSet::slotInsertColumnRight()
     while(trChild)
     {
         Node* tdChild = firstChildTag(trChild, "td");
-        for(int i = 0; i != _currentColumnIndex + 1; ++i)
+        for(int i = 0; (i != _currentColumnIndex + 1 && tdChild); ++i)
             tdChild = tdChild->SNext();
 
         kafkaCommon::insertNodeSubtree(nodeToInsertInBody, trChild, tdChild, modifs);
@@ -752,7 +750,7 @@ bool TableTagActionSet::canRemoveTable() const
 
 void TableTagActionSet::slotRemoveTable()
 {
-    assert(m_currentNode);
+    Q_ASSERT(m_currentNode);
 
     QuantaView* view = ViewManager::ref()->activeView();
     NodeModifsSet *modifs = new NodeModifsSet();
@@ -773,7 +771,7 @@ bool TableTagActionSet::canRemoveRows() const
 
 void TableTagActionSet::slotRemoveRows()
 {
-    assert(m_currentNode);
+    Q_ASSERT(m_currentNode);
 
     QuantaView* view = ViewManager::ref()->activeView();
     NodeModifsSet *modifs = new NodeModifsSet();
@@ -821,7 +819,7 @@ bool TableTagActionSet::canRemoveColumns() const
 
 void TableTagActionSet::slotRemoveColumns()
 {
-    assert(m_currentNode);
+    Q_ASSERT(m_currentNode);
 
     QuantaView* view = ViewManager::ref()->activeView();
     NodeModifsSet *modifs = new NodeModifsSet();
@@ -871,7 +869,7 @@ bool TableTagActionSet::canRemoveCellsContent() const
 
 void TableTagActionSet::slotRemoveCellsContent()
 {
-    assert(m_currentNode);
+    Q_ASSERT(m_currentNode);
 
     QuantaView* view = ViewManager::ref()->activeView();
     NodeModifsSet *modifs = new NodeModifsSet();
@@ -922,7 +920,7 @@ bool TableTagActionSet::canMergeSelectedCells() const
 
 void TableTagActionSet::slotMergeSelectedCells()
 {
-    assert(m_currentNode);
+    Q_ASSERT(m_currentNode);
 
     QuantaView* view = ViewManager::ref()->activeView();
     NodeModifsSet *modifs = new NodeModifsSet();
@@ -930,7 +928,7 @@ void TableTagActionSet::slotMergeSelectedCells()
     NodeSelectionInd selection;
     selection.fillWithVPLCursorSelection();
     
-    assert(selection.hasSelection());
+    Q_ASSERT(selection.hasSelection());
     
     Node* startSelection = kafkaCommon::getNodeFromLocation(selection.cursorNode());
     Node* endSelection = kafkaCommon::getNodeFromLocation(selection.cursorNodeEndSel());
@@ -974,8 +972,8 @@ void TableTagActionSet::slotMergeSelectedCells()
 
 Node* TableTagActionSet::tableStart() const
 {
-    assert(isInTagContext());
-    assert(m_currentNode);
+    Q_ASSERT(isInTagContext());
+    Q_ASSERT(m_currentNode);
 
     return parentTag(m_currentNode, "table");
 }
@@ -1120,16 +1118,16 @@ Node* TableTagActionSet::buildEmptyTHeadCellSubtree() const
 
 void TableTagActionSet::removeColumn(int _currentColumnIndex, NodeModifsSet* modifs)
 {
-    assert(m_currentNode);
-    assert(_currentColumnIndex >= 0);
-    assert(modifs);
+    Q_ASSERT(m_currentNode);
+    Q_ASSERT(_currentColumnIndex >= 0);
+    Q_ASSERT(modifs);
 
     // thead
     Node* trChild = firstChildTag(firstChildTag(tableStart(), "thead"), "tr");
     while(trChild)
     {
         Node* thChild = firstChildTag(trChild, "th");
-        for(int i = 0; i != _currentColumnIndex; ++i)
+        for(int i = 0; (i != _currentColumnIndex && thChild); ++i)
             thChild = thChild->SNext();
 
         kafkaCommon::extractAndDeleteNode(thChild, modifs, true, true);
@@ -1142,7 +1140,7 @@ void TableTagActionSet::removeColumn(int _currentColumnIndex, NodeModifsSet* mod
     while(trChild)
     {
         Node* tdChild = firstChildTag(trChild, "td");
-        for(int i = 0; i != _currentColumnIndex; ++i)
+        for(int i = 0; (i != _currentColumnIndex && tdChild); ++i)
             tdChild = tdChild->SNext();
 
         kafkaCommon::extractAndDeleteNode(tdChild, modifs, true, true);
@@ -1153,6 +1151,8 @@ void TableTagActionSet::removeColumn(int _currentColumnIndex, NodeModifsSet* mod
 
 void TableTagActionSet::clearCellContents(Node* tdNode, NodeModifsSet* modifs)
 {
+    if (!tdNode)
+      return;
     Node* tdChild = tdNode->child;
     
     if(!tdChild)
