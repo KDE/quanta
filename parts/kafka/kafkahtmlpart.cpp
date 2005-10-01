@@ -223,12 +223,15 @@ void KafkaWidget::insertText(DOM::Node node, const QString &text, int position)
     {
         DOM::Text textNode = document().createTextNode(text);
         DOM::Node parent = node.parentNode();
-//FIXME: Andras: safety checks, as parent and node.nextSibling can be null. Maybe it just hides the error...        
-        if (!parent.isNull())
+//FIXME: Andras: safety checks, as parent and node.nextSibling can be null. Maybe it just hides the error...
+//Also it seems that position can be 3 and node is "body". See bug 112733.
+        if (node.nodeName().string().lower() != "body" && !parent.isNull())
+        {
           if (!node.nextSibling().isNull())
             parent.insertBefore(textNode, node.nextSibling());
           else
             parent.insertBefore(textNode, node);
+        }
         else
           node.appendChild(textNode);
         m_currentNode = textNode;
