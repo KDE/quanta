@@ -453,8 +453,4 @@
     <slot access="protected" specifier="pure virtual">linkChanged( const QString&amp; )</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
-<includehints>
-    <includehint>dualeditabletree.h</includehint>
-    <includehint>dualeditabletree.h</includehint>
-</includehints>
 </UI>
