@@ -334,7 +334,7 @@ void QuantaDebuggerDBGp::initiateSession(const QDomNode& initpacket)
   if(attribute(initpacket, "protocol_version") != protocolversion)
   {
     debuggerInterface()->showStatus(
-      i18n("The debugger for %1 uses an unsupported protocol version (%1)")
+      i18n("The debugger for %1 uses an unsupported protocol version (%2)")
             .arg(attribute(initpacket, "language"))
             .arg(attribute(initpacket, "protocol_version"))
           , true);
