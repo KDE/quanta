@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>UploadProfileDlgS</class>
 <comment>/***************************************************************************
  *                                                                         *
@@ -18,8 +18,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>575</width>
-            <height>206</height>
+            <width>617</width>
+            <height>214</height>
         </rect>
     </property>
     <property name="caption">
@@ -29,7 +29,7 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QLineEdit" row="3" column="1" rowspan="1" colspan="7">
+        <widget class="QLineEdit" row="3" column="1" rowspan="1" colspan="9">
             <property name="name">
                 <cstring>linePath</cstring>
             </property>
@@ -39,12 +39,7 @@
                 <cstring>lineUser</cstring>
             </property>
         </widget>
-        <widget class="QLineEdit" row="1" column="1" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>lineHost</cstring>
-            </property>
-        </widget>
-        <widget class="KPasswordEdit" row="2" column="4" rowspan="1" colspan="2">
+        <widget class="KPasswordEdit" row="2" column="4">
             <property name="name">
                 <cstring>linePasswd</cstring>
             </property>
@@ -82,22 +77,6 @@
                 <cstring>linePath</cstring>
             </property>
         </widget>
-        <widget class="QLineEdit" row="1" column="7">
-            <property name="name">
-                <cstring>port</cstring>
-            </property>
-        </widget>
-        <widget class="QLabel" row="1" column="6">
-            <property name="name">
-                <cstring>TextLabel1_2</cstring>
-            </property>
-            <property name="text">
-                <string>Po&amp;rt:</string>
-            </property>
-            <property name="buddy" stdset="0">
-                <cstring>port</cstring>
-            </property>
-        </widget>
         <widget class="QLabel" row="0" column="0" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>textLabel1</cstring>
@@ -109,7 +88,7 @@
                 <cstring>lineProfileName</cstring>
             </property>
         </widget>
-        <widget class="KLineEdit" row="0" column="2" rowspan="1" colspan="6">
+        <widget class="KLineEdit" row="0" column="2" rowspan="1" colspan="8">
             <property name="name">
                 <cstring>lineProfileName</cstring>
             </property>
@@ -125,92 +104,7 @@
                 <cstring>linePasswd</cstring>
             </property>
         </widget>
-        <widget class="QLabel" row="1" column="3">
-            <property name="name">
-                <cstring>TextLabel1</cstring>
-            </property>
-            <property name="text">
-                <string>&amp;Protocol:</string>
-            </property>
-            <property name="alignment">
-                <set>AlignVCenter|AlignRight</set>
-            </property>
-            <property name="buddy" stdset="0">
-                <cstring>comboProtocol</cstring>
-            </property>
-            <property name="hAlign" stdset="0">
-            </property>
-        </widget>
-        <widget class="QComboBox" row="1" column="4" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>comboProtocol</cstring>
-            </property>
-        </widget>
-        <widget class="KPushButton" row="5" column="7">
-            <property name="name">
-                <cstring>cancelButton</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>1</hsizetype>
-                    <vsizetype>1</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="minimumSize">
-                <size>
-                    <width>90</width>
-                    <height>0</height>
-                </size>
-            </property>
-            <property name="text">
-                <string>&amp;Cancel</string>
-            </property>
-        </widget>
-        <widget class="KPushButton" row="5" column="5" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>okButton</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>1</hsizetype>
-                    <vsizetype>0</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="minimumSize">
-                <size>
-                    <width>90</width>
-                    <height>0</height>
-                </size>
-            </property>
-            <property name="text">
-                <string>&amp;OK</string>
-            </property>
-            <property name="autoDefault">
-                <bool>true</bool>
-            </property>
-        </widget>
-        <spacer row="5" column="0" rowspan="1" colspan="5">
-            <property name="name">
-                <cstring>spacer3</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Horizontal</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>370</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
-        <widget class="QCheckBox" row="2" column="6" rowspan="1" colspan="2">
+        <widget class="QCheckBox" row="2" column="5" rowspan="1" colspan="5">
             <property name="name">
                 <cstring>keepPasswd</cstring>
             </property>
@@ -235,6 +129,134 @@ is obscured, saving the password in any file is a security risk. Use this option
             </property>
             <property name="text">
                 <string>Use as &amp;default profile</string>
+            </property>
+        </widget>
+        <widget class="KPushButton" row="5" column="8" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>cancelButton</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>4</hsizetype>
+                    <vsizetype>1</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="minimumSize">
+                <size>
+                    <width>90</width>
+                    <height>0</height>
+                </size>
+            </property>
+            <property name="text">
+                <string>&amp;Cancel</string>
+            </property>
+            <property name="accel">
+                <string>Alt+C</string>
+            </property>
+        </widget>
+        <widget class="KPushButton" row="5" column="7">
+            <property name="name">
+                <cstring>okButton</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>4</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="minimumSize">
+                <size>
+                    <width>90</width>
+                    <height>0</height>
+                </size>
+            </property>
+            <property name="text">
+                <string>&amp;OK</string>
+            </property>
+            <property name="accel">
+                <string>Alt+O</string>
+            </property>
+            <property name="autoDefault">
+                <bool>true</bool>
+            </property>
+        </widget>
+        <spacer row="5" column="0" rowspan="1" colspan="7">
+            <property name="name">
+                <cstring>spacer3</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>430</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QLineEdit" row="1" column="9">
+            <property name="name">
+                <cstring>port</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>4</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+        </widget>
+        <widget class="QLabel" row="1" column="8">
+            <property name="name">
+                <cstring>TextLabel1_2</cstring>
+            </property>
+            <property name="text">
+                <string>Po&amp;rt:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>port</cstring>
+            </property>
+        </widget>
+        <widget class="QComboBox" row="1" column="6" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>comboProtocol</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="1" column="5">
+            <property name="name">
+                <cstring>TextLabel1</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Protocol:</string>
+            </property>
+            <property name="alignment">
+                <set>AlignVCenter|AlignRight</set>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>comboProtocol</cstring>
+            </property>
+            <property name="hAlign" stdset="0">
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="1" column="1" rowspan="1" colspan="4">
+            <property name="name">
+                <cstring>lineHost</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>3</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
             </property>
         </widget>
     </grid>
