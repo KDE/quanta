@@ -443,7 +443,7 @@ void Document::insertText(const QString &a_text, bool adjustCursor, bool reparse
     n->tag->beginPos(bLine, bCol);
     QString s = this->text(bLine, bCol, line, col);
     bool insideQuotes = false;
-    for (uint i = 0 ; i < s.length() - 1; i++)
+    for (int i = 0 ; i < (int)s.length() - 1; i++)
     {
       if (s[i] == '"' && (i == 0 || s[i-1] != '\\'))
         insideQuotes = !insideQuotes;
