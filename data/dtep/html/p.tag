@@ -35,7 +35,7 @@
  <child name="strike" />
  <child name="big" />
  <child name="small" />
-  <child name="em" />
+ <child name="em" />
  <child name="strong" />
  <child name="dfn" />
  <child name="code" />
@@ -45,7 +45,7 @@
  <child name="cite" />
  <child name="abbr" />
  <child name="acronym" />
-  <child name="a" />
+ <child name="a" />
  <child name="img" />
  <child name="applet" />
  <child name="object" />
@@ -60,7 +60,7 @@
  <child name="span" />
  <child name="bdo" />
  <child name="iframe" />
-  <child name="input" />
+ <child name="input" />
  <child name="select" />
  <child name="textarea" />
  <child name="label" />
