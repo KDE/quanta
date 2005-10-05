@@ -169,6 +169,8 @@ Document::Document(KTextEditor::Document *doc,
   selectionIf = dynamic_cast<KTextEditor::SelectionInterface *>(m_doc);
   selectionIfExt = dynamic_cast<KTextEditor::SelectionInterfaceExt *>(m_doc);
   configIf = dynamic_cast<KTextEditor::ConfigInterface*>(m_doc);
+  if (configIf)
+      configIf->readConfig();
   viewCursorIf = dynamic_cast<KTextEditor::ViewCursorInterface *>(m_view);
   codeCompletionIf = dynamic_cast<KTextEditor::CodeCompletionInterface *>(m_view);
   markIf = dynamic_cast<KTextEditor::MarkInterface *>(m_doc);
@@ -223,6 +225,8 @@ Document::Document(KTextEditor::Document *doc,
 
 Document::~Document()
 {
+  if (configIf)
+      configIf->writeConfig();
   parser->clearGroups();
   //  kdDebug(24000) << "Document::~ Document: " << this << endl;
   m_doc->closeURL(false); //TODO: Workaround for a Kate bug. Remove when KDE < 3.2.0 support is dropped.
