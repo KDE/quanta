@@ -68,7 +68,8 @@ void NodeSelectionInd::fillWithVPLCursorSelection()
   KafkaDocument *kafkaDoc;
   DOM::Node domNode, domNodeEndSel;
   int domOffset, domOffsetEndSel;
-  Node *node, *nodeEndSel;
+  Node *node = 0L;
+  Node *nodeEndSel = 0L;
   int offset, offsetEndSel;
 
   kafkaDoc = KafkaDocument::ref();

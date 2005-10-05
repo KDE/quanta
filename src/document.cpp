@@ -2110,24 +2110,40 @@ void Document::checkDirtyStatus()
     }
     if (m_dirty)
     {
-      //check if the file is changed, also by file content. Might help to reduce
-      //unwanted warning on NFS
-      QFile f(fileName);
-      if (f.open(IO_ReadOnly))
+      if (m_md5sum.isEmpty())
       {
-        QString md5sum;
-        const char* c = "";
-        KMD5 context(c);
-        context.reset();
-        context.update(f);
-        md5sum = context.hexDigest();
-        kdDebug(24000) << "MD5 sum of current doc: " << m_md5sum << endl;
-        kdDebug(24000) << "MD5 sum of doc on disc : " << md5sum << endl;
-        if (md5sum == m_md5sum)
+        QFile f(fileName);
+        if (f.open(IO_ReadOnly))
         {
-          m_dirty = false;
+          const char* c = "";
+          KMD5 context(c);
+          context.reset();
+          context.update(f);
+          m_md5sum = context.hexDigest();
+          f.close();
         }
-        f.close();
+        m_dirty = false;
+      } else
+      {
+        //check if the file is changed, also by file content. Might help to reduce
+        //unwanted warning on NFS
+        QFile f(fileName);
+        if (f.open(IO_ReadOnly))
+        {
+          QString md5sum;
+          const char* c = "";
+          KMD5 context(c);
+          context.reset();
+          context.update(f);
+          md5sum = context.hexDigest();
+          kdDebug(24000) << "MD5 sum of current doc: " << m_md5sum << endl;
+          kdDebug(24000) << "MD5 sum of doc on disc : " << md5sum << endl;
+          if (md5sum == m_md5sum)
+          {
+            m_dirty = false;
+          }
+          f.close();
+        }
       }
     }
     if (m_dirty)
