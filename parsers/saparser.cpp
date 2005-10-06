@@ -782,7 +782,7 @@ Node *SAParser::parsingDone()
     Node *n;
     if (s_parentNode)
     {
-      n = s_parentNode->child;
+      n = s_parentNode;//->child;
     } else
     {
       n = s_currentNode;

@@ -43,17 +43,17 @@ int stylesheetParser::whiteSpaces(int d){
 void stylesheetParser::parse(){
   if(!m_stopProcessing){
     if(!m_styleSheet.isEmpty()){
-        if(m_styleSheet.startsWith("/*")) 
+       if(m_styleSheet.startsWith("/*"))
           parseComment();
-        else if(m_styleSheet.startsWith("@page")) 
-                  parseAtRules1();
-                else if(m_styleSheet.startsWith("@media")) 
-                          parseAtRules1();
-                        else if(m_styleSheet.startsWith("@import")) 
-                                  parseAtRules2();
-                                else if(m_styleSheet.startsWith("@charset")) 
-                                          parseAtRules2();
-                                        else parseSelector();
+          else if(m_styleSheet.startsWith("@page"))
+              parseAtRules1();
+              else if(m_styleSheet.startsWith("@media"))
+                        parseAtRules1();
+                      else if(m_styleSheet.startsWith("@import"))
+                                parseAtRules2();
+                              else if(m_styleSheet.startsWith("@charset"))
+                                        parseAtRules2();
+                                      else parseSelector();
     }    
     else return;
   }  
@@ -88,15 +88,46 @@ void stylesheetParser::parseComment(){
 }
 
 unsigned int stylesheetParser::numberOfParenthesisInAParenthesisBlock(parenthesisKind p, const QString& b){
-  switch(p){
-    case opened: return b.contains("{");
-    case closed: return b.contains("}");
-    default:return 0;
+  QChar searchFor = '{';
+  if (p == closed)
+    searchFor = '}';
+  int num = 0;
+  int len = b.length();
+  bool ignore = false;
+  for (int i = 0; i < len; i++)
+  {
+    if (b[i] == '/' && (i + 1 < len) && b[i + 1] == '*')
+      ignore = true;
+    if (b[i] == '*' && (i + 1 < len) && b[i + 1] == '/')
+      ignore = false;
+    if (!ignore && b[i] == searchFor)
+      num++;
   }
+  return num;
+}
+
+int findParanthesis(const QString& string, const QChar &ch, int startPos = 0)
+{
+  int pos = -1;
+  int len = string.length();
+  bool ignore = false;
+  for (int i = startPos; i < len; i++)
+  {
+    if (string[i] == '/' && (i + 1 < len) && string[i + 1] == '*')
+      ignore = true;
+    if (string[i] == '*' && (i + 1 < len) && string[i + 1] == '/')
+      ignore = false;
+    if (!ignore && string[i] == ch)
+    {
+      pos = i;
+      break;
+    }
+  }
+  return pos;
 }
 
 void stylesheetParser::parseSelector(){
-  int closingParenthesisPos = m_styleSheet.find("}");
+  int closingParenthesisPos = findParanthesis(m_styleSheet, '}');
    if(closingParenthesisPos==-1) {
     m_stopProcessing = true;
     emit errorOccurred(i18n("The selector") + " :\n" +m_styleSheet.mid(0,20) + "...\n "+ msg1);      
@@ -120,11 +151,11 @@ void stylesheetParser::parseSelector(){
    int closingParentheses = 1,
         openingParentheses = 0;
   while(true){ 
-    openingParentheses = m_styleSheet.left(closingParenthesisPos+1).contains("{");
+    openingParentheses = numberOfParenthesisInAParenthesisBlock(closed,m_styleSheet.left(closingParenthesisPos+1)); //m_styleSheet.left(closingParenthesisPos+1).contains("{");
         
     if(openingParentheses==closingParentheses){
-      QString selectorName=m_styleSheet.left(m_styleSheet.find("{")).stripWhiteSpace(),
-                   selectorValue=m_styleSheet.mid(m_styleSheet.find("{")+1, closingParenthesisPos - m_styleSheet.find("{") -1);    
+      QString selectorName=m_styleSheet.left(findParanthesis(m_styleSheet, '{')/*m_styleSheet.find("{")*/).stripWhiteSpace(),
+                   selectorValue=m_styleSheet.mid(findParanthesis(m_styleSheet, '{')/*m_styleSheet.find("{")*/+1, closingParenthesisPos - m_styleSheet.find("{") -1);    
         
       selectorName.remove("\n").remove("\t");
       selectorValue.remove("\n").remove("\t");
@@ -133,7 +164,7 @@ void stylesheetParser::parseSelector(){
       break;
     } 
     else {
-      closingParenthesisPos = m_styleSheet.find("}",closingParenthesisPos+1);
+      closingParenthesisPos = findParanthesis(m_styleSheet, '{',closingParenthesisPos+1)/*m_styleSheet.find("}",closingParenthesisPos+1)*/;
       closingParentheses++;
     } 
   }

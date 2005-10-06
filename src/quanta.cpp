@@ -4458,7 +4458,7 @@ void QuantaApp::slotInsertCSS()
   } else
   if (!node || w->currentDTD(true)->name == "text/css") 
   {
-        kdDebug(24000) << "[CSS editor] This is a pure CSS document";
+        kdDebug(24000) << "[CSS editor] This is a pure CSS document" << endl;
 
     CSSSelector *dlg = new CSSSelector;
 
