@@ -19,7 +19,7 @@
 #define QUANTA_H
 
 #define QUANTA_PACKAGE "quanta"
-#define QUANTA_VERSION "3.4.91"
+#define QUANTA_VERSION "3.4.92"
 
 #define IDS_STATUS      1
 #define IDS_INS_OVR     2
