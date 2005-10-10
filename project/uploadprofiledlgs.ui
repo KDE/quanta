@@ -131,9 +131,6 @@
             <property name="text">
                 <string>&amp;Cancel</string>
             </property>
-            <property name="accel">
-                <string>Alt+C</string>
-            </property>
         </widget>
         <widget class="KPushButton" row="5" column="7" rowspan="1" colspan="2">
             <property name="name">
@@ -155,9 +152,6 @@
             </property>
             <property name="text">
                 <string>&amp;OK</string>
-            </property>
-            <property name="accel">
-                <string>Alt+O</string>
             </property>
             <property name="autoDefault">
                 <bool>true</bool>
@@ -236,9 +230,6 @@
             </property>
             <property name="text">
                 <string>&amp;Store password on disc</string>
-            </property>
-            <property name="accel">
-                <string>Alt+S</string>
             </property>
             <property name="checked">
                 <bool>false</bool>
