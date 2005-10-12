@@ -216,6 +216,8 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
           sCol = 0;
           if (openNum != 0)
               line++;
+          if (firstOpenFound)
+            break;
         }
         //the matching closing tag was not found
         if (openNum != 0)
@@ -434,6 +436,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
         line++;
         col = 0;
         textLine = ParserCommon::getLine(write, line, endLine, endCol);
+        //kdDebug(24000) << "Line " << line << endl;
       }
 
     }
