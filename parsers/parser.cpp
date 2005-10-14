@@ -197,11 +197,14 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
                 if (textLine[i] == '<')
                 {
                   openNum++;
-                  if (!firstOpenFound)
+                  if (!firstOpenFound &&
+                      (i < textLineLen -1 && (textLine[i + 1] == '/' || textLine[i + 1].isLetter()) || i == textLineLen -1)
+                     )
                   {
                     firstStartCol = i;
                     firstStartLine = line;
                     firstOpenFound = true;
+                    break;
                   }
                 } else
                 if (textLine[i] == '>') openNum--;
