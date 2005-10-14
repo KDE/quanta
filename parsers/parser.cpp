@@ -179,7 +179,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
         bool insideSingleQuotes = false;
         bool insideDoubleQuotes = false;
         //find the matching ">" in the document
-        while (line <= endLine && openNum > 0)
+        while (line <= endLine && openNum > 0 && !firstOpenFound)
         {
           textLine = ParserCommon::getLine(write, line, endLine, endCol);
           uint textLineLen = textLine.length();
@@ -198,7 +198,8 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
                 {
                   openNum++;
                   if (!firstOpenFound &&
-                      (i < textLineLen -1 && (textLine[i + 1] == '/' || textLine[i + 1].isLetter()) || i == textLineLen -1)
+                      (i < textLineLen -1 && (textLine[i + 1] == '/' || textLine[i + 1].isLetter()) ||
+                       i == textLineLen -1)
                      )
                   {
                     firstStartCol = i;
@@ -219,8 +220,6 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
           sCol = 0;
           if (openNum != 0)
               line++;
-          if (firstOpenFound)
-            break;
         }
         //the matching closing tag was not found
         if (openNum != 0)
