@@ -34,7 +34,7 @@ class VariablesListView : public KListView
     setValue = 1,
     dumpValue,
     copyValue,
-    removeWatch,
+    removeWatch
   };
       
   public:
