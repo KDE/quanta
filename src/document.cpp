@@ -848,19 +848,20 @@ void Document::slotCharactersInserted(int line, int column, const QString& strin
         return;
       }
     }
-    if (qConfig.replaceAccented)
+  }
+  if (qConfig.replaceAccented)
+  {
+    uint c = string[0].unicode();
+    if (c > 191)
     {
-      uint c = string[0].unicode();
-      if (c > 191)
-      {
-        m_replaceLine = line;
-        m_replaceCol = column;
-        m_replaceStr = QString("&#%1;").arg(c);
-        QTimer::singleShot(0, this, SLOT(slotReplaceChar()));
-        return;
-      }
+      m_replaceLine = line;
+      m_replaceCol = column;
+      m_replaceStr = QString("&#%1;").arg(c);
+      QTimer::singleShot(0, this, SLOT(slotReplaceChar()));
+      return;
     }
   }
+  
 
  if ( (string == ">") ||
       (string == "<") )
