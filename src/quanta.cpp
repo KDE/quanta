@@ -359,7 +359,7 @@ void QuantaApp::slotFileOpen(const KURL::List &urls, const QString& encoding)
   for (KURL::List::ConstIterator i = urls.begin(); i != urls.end(); ++i)
   {
     if (QuantaCommon::checkMimeGroup(*i, "text") ||
-        QuantaCommon::denyBinaryInsert() == KMessageBox::Yes)
+        QuantaCommon::denyBinaryInsert(this) == KMessageBox::Yes)
       slotFileOpen(*i, encoding);
   }
   m_doc->blockSignals(false);
@@ -387,7 +387,7 @@ void QuantaApp::slotFileOpen(const KURL &url, const QString& encoding, bool read
 
 void QuantaApp::slotFileOpenRecent(const KURL &url)
 {
-  if (!QExtFileInfo::exists(url))
+  if (!QExtFileInfo::exists(url, this))
   {
     if (KMessageBox::questionYesNo(this,
         i18n("The file %1 does not exist.\n Do you want to remove it from the list?").arg(url.prettyURL(0, KURL::StripFileProtocol)), QString::null, KStdGuiItem::del(), i18n("Keep"))
@@ -397,7 +397,7 @@ void QuantaApp::slotFileOpenRecent(const KURL &url)
     }
   } else
   if (QuantaCommon::checkMimeGroup(url, "text") ||
-      QuantaCommon::denyBinaryInsert() == KMessageBox::Yes)
+      QuantaCommon::denyBinaryInsert(this) == KMessageBox::Yes)
   {
     slotFileOpen(url);
   }
@@ -490,7 +490,7 @@ bool QuantaApp::slotFileSaveAs(QuantaView *viewToSave)
     if (encodingIf)
        encodingIf->setEncoding(encoding);
 
-    if (QuantaCommon::checkOverwrite(saveUrl) && view->saveDocument(saveUrl))
+    if (QuantaCommon::checkOverwrite(saveUrl, this) && view->saveDocument(saveUrl))
     {
       oldURL = saveUrl;
       if (Project::ref()->hasProject() && !Project::ref()->contains(saveUrl) &&
@@ -551,7 +551,7 @@ void QuantaApp::saveAsTemplate(bool projectTemplate, bool selectionOnly)
     if ( ((projectTemplate) && (projectTemplateURL.isParentOf(url)) ) ||
           ((! projectTemplate) && (KURL(localTemplateDir).isParentOf(url))) )
     {
-      if (!QuantaCommon::checkOverwrite(url))
+      if (!QuantaCommon::checkOverwrite(url, this))
         query = KMessageBox::No;
     } else
     {
@@ -2076,7 +2076,7 @@ void QuantaApp::slotContextMenuAboutToShow()
 
 void QuantaApp::slotOpenFileUnderCursor()
 {
-  if (QExtFileInfo::exists(urlUnderCursor))
+  if (QExtFileInfo::exists(urlUnderCursor, this))
   {
     if (QuantaCommon::checkMimeGroup(urlUnderCursor, "text" ))
     {
@@ -2538,7 +2538,7 @@ bool QuantaApp::saveToolbar(bool localToolbar, const QString& toolbarToSave, con
       if ( ((!localToolbar) && (projectToolbarsURL.isParentOf(url)) ) ||
             ((localToolbar) && (KURL(localToolbarsDir).isParentOf(url))) )
       {
-        if (!QuantaCommon::checkOverwrite(url))
+        if (!QuantaCommon::checkOverwrite(url, this))
           query = KMessageBox::No;
       } else
       {
@@ -3179,7 +3179,7 @@ void QuantaApp::slotLoadToolbarForDTD(const QString& dtdName)
       //first load the local version if it exists
       fileName = locateLocal("data", resourceDir + "toolbars/"+newDtd->toolbars[i]);
       QuantaCommon::setUrl(url, fileName);
-      if (QExtFileInfo::exists(url))
+      if (QExtFileInfo::exists(url, this))
       {
         //showToolbarFile(url);
         newToolbars += url;
@@ -3187,7 +3187,7 @@ void QuantaApp::slotLoadToolbarForDTD(const QString& dtdName)
       {
         fileName = qConfig.globalDataDir + resourceDir + "toolbars/"+newDtd->toolbars[i];
         QuantaCommon::setUrl(url, fileName);
-        if (QExtFileInfo::exists(url))
+        if (QExtFileInfo::exists(url, this))
         {
           newToolbars += url;//  showToolbarFile(url);
         }
@@ -3442,7 +3442,7 @@ void QuantaApp::slotBuildPrjToolbarsMenu()
   if (Project::ref()->hasProject())
   {
     buildInProgress = true;
-    toolbarList = QExtFileInfo::allFiles(Project::ref()->toolbarURL(), "*"+toolbarExtension);
+    toolbarList = QExtFileInfo::allFiles(Project::ref()->toolbarURL(), "*"+toolbarExtension, this);
     buildInProgress = false;
     projectToolbarFiles->setMaxItems(toolbarList.count());
     for (uint i = 0; i < toolbarList.count(); i++)
@@ -3561,7 +3561,7 @@ QString QuantaApp::createDTEPTarball()
     dirURL.setPath(DTDs::ref()->find(dtdName)->fileName);
     dirURL.setPath(dirURL.directory(false));
 
-    KURL::List files = QExtFileInfo::allFilesRelative(dirURL, "*");
+    KURL::List files = QExtFileInfo::allFilesRelative(dirURL, "*", this);
     for ( KURL::List::Iterator it_f = files.begin(); it_f != files.end(); ++it_f )
     {
       QString name = (*it_f).fileName();

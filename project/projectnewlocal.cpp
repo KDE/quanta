@@ -112,7 +112,7 @@ KURL::List ProjectNewLocal::projectFiles()
 {
   KURL::List list;
 
-  if (!QExtFileInfo::exists(baseURL) ||
+  if (!QExtFileInfo::exists(baseURL, this) ||
       !baseURL.path().endsWith("/")  ||
       !checkInsert->isChecked() ) return list;
 
@@ -142,7 +142,7 @@ KURL::List ProjectNewLocal::projectFiles()
     fmask = mask->text();
   }
 
-  list = QExtFileInfo::allFilesRelative( baseURL, fmask);
+  list = QExtFileInfo::allFilesRelative(baseURL, fmask, this);
 
   return list;
 }
@@ -180,7 +180,7 @@ void ProjectNewLocal::resizeEvent ( QResizeEvent *t )
 /** No descriptions */
 void ProjectNewLocal::slotAddFiles()
 {
-  QExtFileInfo::createDir( baseURL );
+  QExtFileInfo::createDir(baseURL, this);
   KURL::List list = KFileDialog::getOpenURLs(
     baseURL.url(),  i18n("*"), this, i18n("Insert Files in Project"));
 
@@ -238,7 +238,7 @@ void ProjectNewLocal::slotAddFolder()
 {
 //TODO/FIXME: This returns null if the selected directory is not on the local disk.
 //I think this is a KDE bug
-  QExtFileInfo::createDir( baseURL );
+  QExtFileInfo::createDir(baseURL, this);
   KURL dirURL ;
   dirURL = KFileDialog::getExistingURL(
            baseURL.url(),  this, i18n("Insert Folder in Project"));
@@ -293,7 +293,7 @@ void ProjectNewLocal::slotInsertFilesAfterCopying(const KURL::List& a_urlList)
   {
     dirURL = *it;
    // dirURL.adjustPath(1);
-    KURL::List files = QExtFileInfo::allFilesRelative(dirURL, "*");
+    KURL::List files = QExtFileInfo::allFilesRelative(dirURL, "*", this);
     progressBar->setTotalSteps(files.count() - 1);
     progressBar->setTextEnabled(true);
     for (uint i = 0; i < files.count(); i++)

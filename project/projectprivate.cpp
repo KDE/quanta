@@ -363,7 +363,7 @@ void ProjectPrivate::insertFiles(const KURL& pathURL, const QString& mask )
   KURL::List list;
 
   list.append(pathURL);
-  list += QExtFileInfo::allFiles( pathURL, mask );
+  list += QExtFileInfo::allFiles(pathURL, mask, m_mainWindow);
   insertFiles(list);
 }
 
@@ -726,7 +726,7 @@ void ProjectPrivate::slotAcceptCreateProject()
   if (baseURL.protocol() == i18n("Local")) baseURL.setProtocol("file");
   baseURL.adjustPath(1);
   if (!baseURL.path().startsWith("/")) baseURL.setPath("/"+ baseURL.path());
-  if (!QExtFileInfo::createDir( baseURL ))
+  if (!QExtFileInfo::createDir(baseURL, m_mainWindow))
   {
     QuantaCommon::dirCreationError(m_mainWindow, baseURL);
     baseURL = oldBaseURL;
@@ -811,7 +811,7 @@ void ProjectPrivate::slotAcceptCreateProject()
       QuantaCommon::setUrl(templateURL, png->linePrjTmpl->text());
       templateURL.adjustPath(1);
       templateURL = QExtFileInfo::toAbsolute(templateURL, baseURL);
-      if (!QExtFileInfo::createDir(templateURL))
+      if (!QExtFileInfo::createDir(templateURL, m_mainWindow))
       {
         QuantaCommon::dirCreationError(m_mainWindow, templateURL);
       }
@@ -826,7 +826,7 @@ void ProjectPrivate::slotAcceptCreateProject()
     QuantaCommon::setUrl(toolbarURL,png->linePrjToolbar->text());
     toolbarURL.adjustPath(1);
     toolbarURL = QExtFileInfo::toAbsolute(toolbarURL, baseURL);
-    if (!QExtFileInfo::createDir(toolbarURL))
+    if (!QExtFileInfo::createDir(toolbarURL, m_mainWindow))
     {
       QuantaCommon::dirCreationError(m_mainWindow, toolbarURL);
     }
@@ -994,7 +994,7 @@ bool ProjectPrivate::createEmptyDom()
     tempFile->textStream()->setEncoding(QTextStream::UnicodeUTF8);
     *(tempFile->textStream()) << str;
     tempFile->close();
-    result = QExtFileInfo::createDir(baseURL);
+    result = QExtFileInfo::createDir(baseURL, m_mainWindow);
     if (result)
       result = KIO::NetAccess::upload(tempFile->name(), projectURL, m_mainWindow);
     if (result)

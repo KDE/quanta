@@ -178,7 +178,7 @@ pointer must be deleted by the caller!! */
   static bool closesTag(Tag *tag1, Tag *tag2);
   static bool closesTag(QString namespaceName, QString tagName, bool caseSensitive,
     QString namespaceName2, QString tagName2, bool caseSensitive2);
-  static int denyBinaryInsert();
+  static int denyBinaryInsert(QWidget *window);
   static void removeCommentsAndQuotes(QString& str, const DTDStruct* dtd);
   static bool insideCommentsOrQuotes(int position, const QString &string, const DTDStruct *dtd);
   /** Calls a Quanta DCOP method.
@@ -192,7 +192,7 @@ pointer must be deleted by the caller!! */
   *  @param url the url to check
   *  @return true if the user answered yes, false otherwise.
   */
-  static bool checkOverwrite(const KURL& url);
+  static bool checkOverwrite(const KURL& url, QWidget *window);
 
 };
 

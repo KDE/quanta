@@ -243,7 +243,7 @@ void Project::slotOpenProject(const KURL &url)
     kdDebug(24000) << "Open recent project: " << url <<endl;
   if ( !url.isEmpty() )
   {
-    if ( !QExtFileInfo::exists(url) )
+    if ( !QExtFileInfo::exists(url, d->m_mainWindow) )
     {
       emit hideSplash();
       if (KMessageBox::questionYesNo(d->m_mainWindow,
@@ -613,7 +613,7 @@ void Project::slotOptions()
     QuantaCommon::setUrl(d->templateURL, optionsPage.linePrjTmpl->text());
     d->templateURL.adjustPath(1);
     d->templateURL = QExtFileInfo::toAbsolute(d->templateURL, d->baseURL);
-    if (!QExtFileInfo::createDir(d->templateURL))
+    if (!QExtFileInfo::createDir(d->templateURL, d->m_mainWindow))
     {
       QuantaCommon::dirCreationError(d->m_mainWindow, d->templateURL);
     }
@@ -621,7 +621,7 @@ void Project::slotOptions()
     QuantaCommon::setUrl(d->toolbarURL, optionsPage.linePrjToolbar->text());
     d->toolbarURL.adjustPath(1);
     d->toolbarURL = QExtFileInfo::toAbsolute(d->toolbarURL, d->baseURL);
-    if (!QExtFileInfo::createDir(d->toolbarURL))
+    if (!QExtFileInfo::createDir(d->toolbarURL, d->m_mainWindow))
     {
       QuantaCommon::dirCreationError(d->m_mainWindow, d->toolbarURL);
     }

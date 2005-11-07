@@ -596,7 +596,7 @@ bool DebuggerManager::setActiveLine (const QString& file, int line )
     return true;
 
   // Find new position in editor
-  if(ViewManager::ref()->isOpened(filename) || QExtFileInfo::exists(filename))
+  if(ViewManager::ref()->isOpened(filename) || QExtFileInfo::exists(filename, 0L))
     quantaApp->gotoFileAndLine(filename, line, 0);
   else
   {

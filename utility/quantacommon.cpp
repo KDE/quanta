@@ -665,21 +665,21 @@ bool QuantaCommon::closesTag(QString namespaceName, QString tagName, bool caseSe
         return true;
 }
 
-int QuantaCommon::denyBinaryInsert()
+int QuantaCommon::denyBinaryInsert(QWidget *window)
 {
-  int result = KMessageBox::questionYesNo(0L, i18n("The file type is not recognized. \
+  int result = KMessageBox::questionYesNo(window, i18n("The file type is not recognized. \
   Opening binary files may confuse Quanta.\n Are you sure you want to open this file?"),
   i18n("Unknown Type"), KStdGuiItem::open(), i18n("Do Not Open"), "Open Everything");
  return result;
 }
 
-bool QuantaCommon::checkOverwrite(const KURL& url)
+bool QuantaCommon::checkOverwrite(const KURL& url, QWidget *window)
 {
   bool result = true;
 
-  if (QExtFileInfo::exists(url))
+  if (QExtFileInfo::exists(url, window))
   {
-    if (KMessageBox::warningContinueCancel(0L,
+    if (KMessageBox::warningContinueCancel(window,
             i18n( "<qt>The file <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>" ).arg(url.prettyURL(0, KURL::StripFileProtocol)), QString::null, i18n("Overwrite")) == KMessageBox::Cancel)
             result = false;
   }

@@ -995,7 +995,7 @@ void StructTreeView::slotOpenFile()
     QuantaCommon::setUrl(url, text.stripWhiteSpace());
     KURL baseUrl = QExtFileInfo::path(write->url());
     url = QExtFileInfo::toAbsolute(url, baseUrl);
-    if (QExtFileInfo::exists(url))
+    if (QExtFileInfo::exists(url, this))
     {
       if (QuantaCommon::checkMimeGroup(url, "text" ))
       {

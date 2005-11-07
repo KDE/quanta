@@ -408,9 +408,9 @@ void Document::insertFile(const KURL& url)
     fileName = url.path();
   } else
   {
-    if (!KIO::NetAccess::download(url, fileName, 0))
+    if (!KIO::NetAccess::download(url, fileName, this))
     {
-      KMessageBox::error(0, i18n("<qt>Cannot download <b>%1</b>.</qt>").arg( url.prettyURL(0, KURL::StripFileProtocol)));
+      KMessageBox::error(this, i18n("<qt>Cannot download <b>%1</b>.</qt>").arg( url.prettyURL(0, KURL::StripFileProtocol)));
       return;
     }
   }

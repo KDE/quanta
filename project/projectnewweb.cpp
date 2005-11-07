@@ -100,7 +100,7 @@ void ProjectNewWeb::slotStart()
   {
     emit enableMessagesWidget();
 
-    if (QExtFileInfo::createDir( baseURL))
+    if (QExtFileInfo::createDir(baseURL, this))
     {
       if (baseURL.protocol() == "file")
       {

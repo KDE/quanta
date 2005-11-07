@@ -407,7 +407,7 @@ void BaseTreeView::slotSelectFile(QListViewItem *item)
         }
         else //it is an unknown type, maybe binary
         {
-          if (QuantaCommon::denyBinaryInsert() == KMessageBox::Yes)
+          if (QuantaCommon::denyBinaryInsert(this) == KMessageBox::Yes)
           {
             emit openFile(urlToOpen);
             item->repaint();
@@ -1026,7 +1026,7 @@ void BaseTreeView::doRename(KFileTreeViewItem* kftvi, const QString & newName)
   if ( oldURL != newURL )
   {
     bool proceed = true;
-    if (QExtFileInfo::exists(newURL))
+    if (QExtFileInfo::exists(newURL, this))
     {
       proceed = KMessageBox::warningContinueCancel(this, i18n("<qt>The file <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>").arg(newURL.prettyURL(0, KURL::StripFileProtocol)),i18n("Overwrite"), i18n("Overwrite")) == KMessageBox::Continue;
     }
@@ -1149,7 +1149,7 @@ void BaseTreeView::slotCreateSiteTemplate()
    bool error = false;
    if (tar.open(IO_WriteOnly))
    {
-      KURL::List fileList = QExtFileInfo::allFiles(url, "*");
+      KURL::List fileList = QExtFileInfo::allFiles(url, "*", this);
       for (KURL::List::Iterator it = fileList.begin(); it != fileList.end(); ++it)
       {
          if (!(*it).path().endsWith("/"))
@@ -1204,7 +1204,7 @@ void BaseTreeView::slotCreateFile()
       url.setPath(url.path() + "/" + fileName);
     else
       url.setPath(url.directory() + "/" + fileName);
-    if (QExtFileInfo::exists(url))
+    if (QExtFileInfo::exists(url, this))
     {
       KMessageBox::error(this, i18n("<qt>Cannot create file, because a file named <b>%1</b> already exists.</qt>").arg(fileName), i18n("Error Creating File"));
       return;

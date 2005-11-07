@@ -243,7 +243,7 @@ void TemplatesTreeView::slotInsertInDocument()
    emit insertFile(url);
  } else
  {
-   if (QuantaCommon::denyBinaryInsert() == KMessageBox::Yes)
+   if (QuantaCommon::denyBinaryInsert(this) == KMessageBox::Yes)
    {
      emit insertFile(url);
    }
@@ -311,7 +311,7 @@ void TemplatesTreeView::slotMenu(KListView*, QListViewItem *item, const QPoint &
 void TemplatesTreeView::slotNewDocument()
 {
  KURL url = filterTemplate();
- if (QuantaCommon::checkMimeGroup(url, "text") || QuantaCommon::denyBinaryInsert() == KMessageBox::Yes)
+ if (QuantaCommon::checkMimeGroup(url, "text") || QuantaCommon::denyBinaryInsert(this) == KMessageBox::Yes)
  {
    QListViewItem *item = currentItem();
    if (item )
@@ -465,7 +465,7 @@ void TemplatesTreeView::contentsDropEvent(QDropEvent *e)
         *(tempFile->textStream()) << content;
         tempFile->close();
         bool proceed = true;
-        if (QExtFileInfo::exists(url))
+        if (QExtFileInfo::exists(url, this))
         {
           proceed = KMessageBox::warningContinueCancel(this, i18n("<qt>The file <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)),i18n("Overwrite"), i18n("Overwrite")) == KMessageBox::Continue;
         }
@@ -783,7 +783,7 @@ void TemplatesTreeView::slotDragInsert(QDropEvent *e)
    {
      if(m_dirInfo.mimeType == "text/all") // default to inserting in document
      {
-      if(!mimeType.contains("text", false) && QuantaCommon::denyBinaryInsert() != KMessageBox::Yes)
+      if(!mimeType.contains("text", false) && QuantaCommon::denyBinaryInsert(this) != KMessageBox::Yes)
       {
         return;
       }
@@ -798,7 +798,7 @@ void TemplatesTreeView::slotDragInsert(QDropEvent *e)
      else
      if(m_dirInfo.mimeType == "template/all")
      {
-       if(!mimeType.contains("text", false) && QuantaCommon::denyBinaryInsert() != KMessageBox::Yes)
+       if(!mimeType.contains("text", false) && QuantaCommon::denyBinaryInsert(this) != KMessageBox::Yes)
        {
          return;
        }
@@ -953,7 +953,7 @@ QString TemplatesTreeView::createTemplateTarball()
   if ( ! currentKFileTreeViewItem()->isDir() )
     files.append(url);
   else {
-    files = QExtFileInfo::allFiles(dirURL, "*") ;
+    files = QExtFileInfo::allFiles(dirURL, "*", this) ;
     dirURL = dirURL.upURL();
   }
 

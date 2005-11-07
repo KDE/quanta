@@ -133,8 +133,8 @@ bool DTDParser::parse(const QString &targetDir, bool entitiesOnly)
     DTD::dirName = targetDir;
   KURL u;
   u.setPath(DTD::dirName);
-  if (!QExtFileInfo::createDir(u)) {
-    QuantaCommon::dirCreationError(0, u);
+  if (!QExtFileInfo::createDir(u, 0L)) {
+    QuantaCommon::dirCreationError(0L, u);
     return false;
   }
   DTD::dirName.append("/");

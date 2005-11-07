@@ -173,7 +173,7 @@ void QuantaDoc::openDocument(const KURL& urlToOpen, const QString &a_encoding,
   }
   if (!url.isEmpty())
   {
-    if (QExtFileInfo::exists(url))
+    if (QExtFileInfo::exists(url, quantaApp))
     {
        if (encoding.isEmpty())
           encoding = quantaApp->defaultEncoding();

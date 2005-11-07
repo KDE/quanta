@@ -172,7 +172,7 @@ void ProjectUpload::slotBuildTree()
 
  if (startUrl.isEmpty() || strUrl.endsWith("/")) //upload a folder 
  {
-   projectDirFiles = QExtFileInfo::allFilesDetailed(u, "*");
+   projectDirFiles = QExtFileInfo::allFilesDetailed(u, "*", this);
  } else
  {
    projectDirFiles.insert(u.url(), new KFileItem(KFileItem::Unknown, KFileItem::Unknown, u, true));
@@ -369,7 +369,7 @@ void ProjectUpload::startUpload()
     buttonUpload->setEnabled(false);
     KURL u = *baseUrl;
     u.setPath(u.protocol() == "file" ? "/" : "");
-    if (QExtFileInfo::exists(u))
+    if (QExtFileInfo::exists(u, this))
     {
       upload();
       return;
@@ -432,7 +432,7 @@ void ProjectUpload::upload()
       if ( !madeDirs.contains(dir) )
       {
         madeDirs.append( dir );
-        if (!QExtFileInfo::createDir(dir))
+        if (!QExtFileInfo::createDir(dir, this))
         {
           QuantaCommon::dirCreationError(this, KURL( dir.prettyURL(0, KURL::StripFileProtocol) ));
           buttonUpload->setEnabled(true);
