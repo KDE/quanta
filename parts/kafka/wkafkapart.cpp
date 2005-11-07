@@ -801,10 +801,13 @@ void KafkaDocument::buildNodeFromKafkaNode(Node *node, DOM::Node domNode)
 	if(!node) return;
 
 	node->tag->setCleanStrBuilt(false);
-        node->tag->setIndentationDone(false);
+  node->tag->setIndentationDone(false);
 	if(domNode.nodeType() == DOM::Node::TEXT_NODE)
 	{
-		node->tag->setStr(domNode.nodeValue().string());
+    QString text = domNode.nodeValue().string();
+    text.replace("<", "&lt;");
+    text.replace(">", "&gt;");
+		node->tag->setStr(text);
 	}
 	else
 	{
@@ -1312,6 +1315,7 @@ void KafkaDocument::translateKafkaIntoNodeCursorPosition(DOM::Node domNode, long
     kdDebug(25001)<< "KafkaDocument::translateKafkaIntoNodeCursorPosition()" <<
       " - Node tag not found!" << endl;
 #endif
+    (*node) = 0L;
     return ;
   }
 
