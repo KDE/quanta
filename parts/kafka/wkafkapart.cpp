@@ -1306,6 +1306,14 @@ void KafkaDocument::translateKafkaIntoNodeCursorPosition(DOM::Node domNode, long
 #endif
 		return ;
 	}
+  if(!(*node)->tag)
+  {
+#ifdef HEAVY_DEBUG
+    kdDebug(25001)<< "KafkaDocument::translateKafkaIntoNodeCursorPosition()" <<
+      " - Node tag not found!" << endl;
+#endif
+    return ;
+  }
 
 	//If this node is selected (-1 means selected) then return "node selected" ;-)
 	if(domNodeOffset == -1)
@@ -1949,7 +1957,8 @@ void KafkaDocument::slotDomNodeModified(DOM::Node domNode, NodeModifsSet* modifs
 		modif->setLocation(kafkaCommon::getLocation(node));
 
 		buildNodeFromKafkaNode(node, domNode);
-
+    if (!modifs)
+      modifs = new NodeModifsSet();
 		modifs->addNodeModif(modif);
 	}
 	else
