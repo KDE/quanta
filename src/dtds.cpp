@@ -475,6 +475,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
       dtd->tagAutoCompleteAfter = '\1';
   else
       dtd->tagAutoCompleteAfter = tmpStr.at(0);
+  dtd->requestSpaceBeforeTagAutoCompletion = dtdConfig->readBoolEntry("RequestSpaceBeforeTagAutoCompletion", false);
   dtd->attrAutoCompleteAfter = dtdConfig->readEntry("AttributeAutoCompleteAfter","(").stripWhiteSpace().at(0);
   dtd->attributeSeparator = dtdConfig->readEntry("AttributeSeparator").stripWhiteSpace().at(0);
   if (dtd->attributeSeparator.isNull())

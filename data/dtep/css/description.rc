@@ -16,6 +16,7 @@ Names = css
 StructGroupsCount = 1
 MinusAllowedInWord = true
 TagAutoCompleteAfter = {
+RequestSpaceBeforeTagAutoCompletion = true
 AttributeAutoCompleteAfter = :
 AttributeSeparator = ,
 TagSeparator = ;

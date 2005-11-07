@@ -126,6 +126,9 @@ ScriptRegExp = OBSOLETE, don't use.
 AttributeAutoCompletionAfter = CHAR. Similar to the TagAutoCompletionAfter, but
     for tag attributes. It's "(" by default and ":" for CSS. Not used for real
     DTDs.
+RequestSpaceBeforeTagAutoCompletion = boolean. If "true", the list of tags
+    does not appear if the user types the TagAutoCompletionAfter char, only
+    if it is followed by at least one space. The default is "false".
 VariableGroupIndex = the index value of the group that defines variables.
     -1 if there is no such group, otherwise the group must exists.
 FunctionGroupIndex = the index value of the group that defines functions.

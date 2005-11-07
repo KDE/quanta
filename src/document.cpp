@@ -1756,7 +1756,7 @@ bool Document::scriptAutoCompletion(int line, int column, const QString& inserte
  }
  if ( !handled && !argHintVisible &&
       (completionRequested ||
-       (s[i] == completionDTD->tagAutoCompleteAfter && (insertedString == " " || insertedString[0] == completionDTD->tagAutoCompleteAfter)) ||
+       (s[i] == completionDTD->tagAutoCompleteAfter && (insertedString == " " || (insertedString[0] == completionDTD->tagAutoCompleteAfter && !completionDTD->requestSpaceBeforeTagAutoCompletion))) ||
        completionDTD->tagAutoCompleteAfter == '\1' || (!completionDTD->memberAutoCompleteAfter.pattern().isEmpty() && completionDTD->memberAutoCompleteAfter.searchRev(s) != -1))
        )
  {

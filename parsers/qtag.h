@@ -190,6 +190,7 @@ defined in the structure after the keyword have local scope */
      bool minusAllowedInWord;
 
      mutable QChar tagAutoCompleteAfter;
+     bool requestSpaceBeforeTagAutoCompletion;
      QChar attrAutoCompleteAfter;
      QChar attributeSeparator;
      QChar tagSeparator;
