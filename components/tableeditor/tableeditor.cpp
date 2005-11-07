@@ -907,17 +907,19 @@ void TableEditor::slotRemoveRow()
           setCellText(m_dataTable, i, j, tagContent((*it2).node));
           m_dataTable->item(i, j)->setEnabled(true);
           (*it2).node->tag->deleteAttribute("colspan");
+          (*it2).node->tag->deleteAttribute("rowspan");
         }
         j++;
       }
       i++;
   }
+  QValueList<TableNode*> updatedMainNodes;
   QValueList<QValueList<TableNode> >::Iterator it2 = m_tableTags->at(m_row);
   for (QValueList<TableNode>::Iterator it3 = (*it2).begin(); it3 != (*it2).end(); ++it3) {
     if ((*it3).merged)
     {
       TableNode *mainTableNode = &((*m_tableTags)[(*it3).mergedRow][(*it3).mergedCol]);
-      if (mainTableNode->node)
+      if (mainTableNode->node && !updatedMainNodes.contains(mainTableNode))
       {
         int rowspan =  mainTableNode->node->tag->attributeValue("rowspan", true).toInt();
         rowspan--;
@@ -925,6 +927,7 @@ void TableEditor::slotRemoveRow()
           mainTableNode->node->tag->editAttribute("rowspan", QString("%1").arg(rowspan));
         else
           mainTableNode->node->tag->deleteAttribute("rowspan");
+        updatedMainNodes.append(mainTableNode);
       }
     }
     delete (*it3).node;
@@ -953,6 +956,7 @@ void TableEditor::slotRemoveCol()
           setCellText(m_dataTable, i, j, tagContent((*it2).node));
           m_dataTable->item(i, j)->setEnabled(true);
           (*it2).node->tag->deleteAttribute("colspan");
+          (*it2).node->tag->deleteAttribute("rowspan");
         }
         j++;
       }
@@ -960,17 +964,22 @@ void TableEditor::slotRemoveCol()
   }
   if (m_col == -1)
     m_col = m_dataTable->numCols() - 1;
+  QValueList<TableNode*> updatedMainNodes;
   for (QValueList<QValueList<TableNode> >::Iterator it = m_tableTags->begin(); it != m_tableTags->end(); ++it) {
     QValueList<TableNode>::Iterator it2 = (*it).at(m_col);
     if ((*it2).merged)
     {
       TableNode *mainTableNode = &((*m_tableTags)[(*it2).mergedRow][(*it2).mergedCol]);
-      int colspan =  mainTableNode->node->tag->attributeValue("colspan", true).toInt();
-      colspan--;
-      if (colspan > 1)
-        mainTableNode->node->tag->editAttribute("colspan", QString("%1").arg(colspan));
-      else
-        mainTableNode->node->tag->deleteAttribute("colspan");
+      if (mainTableNode->node && !updatedMainNodes.contains(mainTableNode))
+      {
+        int colspan = mainTableNode->node->tag->attributeValue("colspan", true).toInt();
+        colspan--;
+        if (colspan > 1)
+          mainTableNode->node->tag->editAttribute("colspan", QString("%1").arg(colspan));
+        else
+          mainTableNode->node->tag->deleteAttribute("colspan");
+        updatedMainNodes.append(mainTableNode);
+      }
     }
     delete (*it2).node;
     newNum--;
