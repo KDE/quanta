@@ -628,6 +628,7 @@ void QuantaInit::openLastFiles()
   if (!m_config->readBoolEntry("Reload Files", true))
   {
     m_quanta->setParserEnabled(true);
+    m_quanta->reparse(true);
     return;
   }
   // we need to check config
