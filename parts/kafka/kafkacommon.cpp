@@ -1312,7 +1312,7 @@ Node* kafkaCommon::insertNodeSubtree(Node *node, Node* parentNode, Node* nextSib
 }
 
 Node* kafkaCommon::DTDInsertNodeSubtree(Node *newNode, NodeSelectionInd& selection,
-                                        Node **cursorNode, int& cursorOffset, NodeModifsSet *modifs)
+                                        Node **cursorNode, long& cursorOffset, NodeModifsSet *modifs)
 {
     Q_ASSERT(!selection.hasSelection());
 
@@ -1495,7 +1495,7 @@ Node* kafkaCommon::DTDInsertNodeSubtree(Node* newNode, Node* parentNode, Node* n
 }
 
 bool kafkaCommon::DTDinsertNode(Node *newNode, Node *startNode, int startOffset, Node *endNode,
-                                int endOffset, Document *doc, Node **cursorNode, int &cursorOffset, NodeModifsSet *modifs)
+                                int endOffset, Document *doc, Node **cursorNode, long &cursorOffset, NodeModifsSet *modifs)
 {
 #ifdef LIGHT_DEBUG
     kdDebug(25001)<< "kafkaCommon::DTDinsertNode()" << endl;
@@ -1773,7 +1773,7 @@ bool kafkaCommon::DTDinsertNode(Node *newNode, Node *startNode, int startOffset,
 }
 
 bool kafkaCommon::DTDinsertRemoveNode(Node *newNode, Node *startNode, int startOffset,
-                                      Node *endNode, int endOffset, Document *doc, Node **cursorNode, int &cursorOffset,
+                                      Node *endNode, int endOffset, Document *doc, Node **cursorNode, long &cursorOffset,
                                       NodeModifsSet *modifs)
 {
     int result;
@@ -1862,7 +1862,7 @@ Node *kafkaCommon::createAndInsertNode(const QString &nodeName, const QString &t
 
 bool kafkaCommon::DTDcreateAndInsertNode(const QString &nodeName, const QString &tagString,
         int nodeType, Document *doc, Node *startNode, int startOffset, Node *endNode, int endOffset,
-        Node **cursorNode, int &cursorOffset, NodeModifsSet *modifs)
+        Node **cursorNode, long &cursorOffset, NodeModifsSet *modifs)
 {
 #ifdef LIGHT_DEBUG
     kdDebug(25001)<< "kafkaCommon::DTDcreateAndInsertNode()2 - nodeName : " << nodeName <<
@@ -2344,7 +2344,7 @@ Node* kafkaCommon::extractNode(Node *node, NodeModifsSet *modifs, bool extractCh
 }
 
 Node* kafkaCommon::DTDExtractNodeSubtree(Node *startNode, int startOffset, Node *endNode, int endOffset,
-                                         Node **cursorNode, int &cursorOffset, NodeModifsSet *modifs, bool extractInlineParentNodes)
+                                         Node **cursorNode, long &cursorOffset, NodeModifsSet *modifs, bool extractInlineParentNodes)
 {
 #ifdef LIGHT_DEBUG
     kdDebug(25001) << "kafkaCommon::extractNodeSubtree()" << endl;
@@ -2435,7 +2435,7 @@ Node* kafkaCommon::DTDExtractNodeSubtree(Node *startNode, int startOffset, Node 
                                 selection, nodeSubtree, modifs);
     
     Node* cursorNode = selection.cursorNode();
-    int cursorOffset = selection.cursorOffset();    
+    long cursorOffset = selection.cursorOffset();
     Node* commonParentStartChild = getNodeFromLocation(commonParentStartChildLocation, nodeSubtree);
     Node* commonParentEndChild = getNodeFromLocation(commonParentEndChildLocation, nodeSubtree);
 
@@ -2550,7 +2550,7 @@ Node* kafkaCommon::getNodeSubtree(Node *startNode, int startOffset, Node *endNod
 }
 
 Node* kafkaCommon::DTDRemoveSelection(NodeSelectionInd& selection,
-                                      Node **cursorNode, int& cursorOffset, NodeModifsSet *modifs, bool extractInlineParentNodes)
+                                      Node **cursorNode, long& cursorOffset, NodeModifsSet *modifs, bool extractInlineParentNodes)
 {
     Q_ASSERT(selection.hasSelection());
 
@@ -2630,7 +2630,7 @@ void kafkaCommon::extractAndDeleteNode(Node *node, NodeModifsSet *modifs, bool d
 }
 
 int kafkaCommon::DTDExtractNode(const QString &nodeName, Document *doc, Node *startNode,
-                                int startOffset, Node *endNode, int endOffset, Node **cursorNode, int &cursorOffset,
+                                int startOffset, Node *endNode, int endOffset, Node **cursorNode, long &cursorOffset,
                                 NodeModifsSet *modifs)
 {
     QTag *nodeNameQTag, *parentQTag;
@@ -3196,7 +3196,7 @@ bool kafkaCommon::mergeNodes(Node *n, Node *n2, NodeSelection& cursorHolder, Nod
 }
 
 void kafkaCommon::mergeInlineNode(Node *startNode, Node *endNode, Node **cursorNode,
-                                  int &cursorOffset, NodeModifsSet *modifs)
+                                  long &cursorOffset, NodeModifsSet *modifs)
 {
     Node *startNodeLastInlineParent, *parent, *node, *next;
     bool goUp, success, isCursorNode, isEndNode;

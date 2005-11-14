@@ -62,7 +62,7 @@ public:
      * @param currentNode The Node which has the cursor focus.
      * @param offset The offset of the cursor in _currentNode.
      */
-    void getCurrentNode(DOM::Node &currentNode, int &offset);
+    void getCurrentNode(DOM::Node &currentNode, long &offset);
 
     /**
      * Set the focus.
