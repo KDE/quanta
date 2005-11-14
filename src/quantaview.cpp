@@ -784,9 +784,9 @@ void QuantaView::insertOutputInTheNodeTree(const QString &str1, const QString &s
   QTag *nodeQTag, *qTag, *nodeParentQTag;
   Node *nodeCursor, *startContainer, *endContainer, *nodeParent, *dummy;
   QPtrList<QTag> qTagList;
-  int nodeOffset, domNodeOffset, startCol, startLine, endCol, endLine;
+  int startCol, startLine, endCol, endLine;
   bool specialTagInsertion = false;
-  long startOffset, endOffset, longDomNodeOffset;
+  long nodeOffset, startOffset, endOffset, domNodeOffset;
   QValueList<int> loc;
   uint line, col;
   bool smartTagInsertion, hasSelection, nodeTreeModified;
@@ -860,9 +860,9 @@ void QuantaView::insertOutputInTheNodeTree(const QString &str1, const QString &s
       m_kafkaDocument->translateKafkaIntoNodeCursorPosition(domNode, domNodeOffset, &dummy, nodeOffset);
       kafkaPart->selection(domStartContainer, startOffset, domEndContainer, endOffset);
       m_kafkaDocument->translateKafkaIntoNodeCursorPosition(domStartContainer, startOffset,
-              &startContainer, (int&)startOffset);
+              &startContainer, startOffset);
       m_kafkaDocument->translateKafkaIntoNodeCursorPosition(domEndContainer, endOffset,
-              &endContainer, (int&)endOffset);
+              &endContainer,endOffset);
       hasSelection = kafkaPart->hasSelection();
     }
       else
@@ -874,9 +874,9 @@ void QuantaView::insertOutputInTheNodeTree(const QString &str1, const QString &s
         endCol = m_document->selectionIfExt->selEndCol();
         endLine = m_document->selectionIfExt->selEndLine();
         m_kafkaDocument->translateQuantaIntoNodeCursorPosition((unsigned)startLine, (unsigned)startCol,
-                &startContainer, (int&)startOffset);
+                &startContainer, startOffset);
         m_kafkaDocument->translateQuantaIntoNodeCursorPosition((unsigned)endLine, (unsigned)endCol,
-                &endContainer, (int&)endOffset);
+                &endContainer, endOffset);
         hasSelection = m_document->selectionIf->hasSelection();
         if (startContainer == endContainer && startContainer->tag->type == Tag::Empty)
         {
@@ -942,13 +942,13 @@ void QuantaView::insertOutputInTheNodeTree(const QString &str1, const QString &s
                 //view->reloadVPLView();
                 //Now update the VPL cursor position
         m_kafkaDocument->translateNodeIntoKafkaCursorPosition(nodeCursor, nodeOffset, domNode,
-                longDomNodeOffset);
+                domNodeOffset);
         if (!domNode.isNull() && domNode.nodeType() != DOM::Node::TEXT_NODE &&
             !domNode.firstChild().isNull() && domNode.firstChild().nodeType() ==
             DOM::Node::TEXT_NODE)
             domNode = domNode.firstChild();
         if (!domNode.isNull())
-            kafkaPart->setCurrentNode(domNode, (int)longDomNodeOffset);
+            kafkaPart->setCurrentNode(domNode, domNodeOffset);
       }
       else
       {

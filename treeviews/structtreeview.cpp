@@ -927,7 +927,7 @@ void StructTreeView::moveSelectedItems(QListViewItem* parent, QListViewItem* aft
     assert(start_node && end_node);
     
     Node* cursor_node = 0;
-    int cursor_offset = 0;
+    long cursor_offset = 0;
     NodeModifsSet *modifs = new NodeModifsSet();
     
     Node* start_node_subtree = 0;
@@ -1057,7 +1057,7 @@ void StructTreeView::slotRemoveTags()
     kafkaCommon::coutTree(start_node, 3);
 
     Node* cursor_node = 0;
-    int cursor_offset = 0;
+    long cursor_offset = 0;
     
     NodeModifsSet *modifs = new NodeModifsSet();
     kafkaCommon::DTDExtractNodeSubtree(start_node, 0, end_node, end_node->tag->tagStr().length(), &cursor_node, cursor_offset, modifs);

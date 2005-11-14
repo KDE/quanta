@@ -356,7 +356,7 @@ public:
 	 * @return Returns false if it wasn't possible to insert the tag because e.g. of an invalid parent.
 	 */
 	static bool DTDinsertNode(Node *newNode, Node *startNode, int startOffset, Node *endNode,
-		int endOffset, Document *doc, Node **cursorNode, int &cursorOffset, NodeModifsSet *modifs);
+		int endOffset, Document *doc, Node **cursorNode, long &cursorOffset, NodeModifsSet *modifs);
 
 	/**
 	 * It behaves essentially like the above function except that it will try first to remove newNode
@@ -366,7 +366,7 @@ public:
      * @return Returns true if a modification was done (Node inserted/removed)
 	 */
 	static bool DTDinsertRemoveNode(Node *newNode, Node *startNode, int startOffset, Node *endNode,
-		int endOffset, Document *doc, Node **cursorNode, int &cursorOffset, NodeModifsSet *modifs);
+		int endOffset, Document *doc, Node **cursorNode, long &cursorOffset, NodeModifsSet *modifs);
 
 	/**
 	 * Insert a node subtree in the tree. WARNING This function will log that the nodes were added.
@@ -412,7 +412,7 @@ public:
      * @param modifs The changes made are logged into modifs.
      */
     static Node* DTDInsertNodeSubtree(Node *node, NodeSelectionInd& selection, 
-                                      Node **cursorNode, int& cursorOffset, NodeModifsSet *modifs);
+                                      Node **cursorNode, long& cursorOffset, NodeModifsSet *modifs);
 	
     static Node* DTDInsertNodeSubtree(Node* newNode, Node* parentNode, Node* nextSibling, 
                                       NodeSelection& cursorHolder, NodeModifsSet *modifs);
@@ -474,7 +474,7 @@ public:
 	 */
 	static bool DTDcreateAndInsertNode(const QString &nodeName, const QString &tagString, int nodeType,
 		Document *doc, Node *startNode, int startOffset, Node *endNode, int endOffset,
-		Node **cursorNode, int &cursorOffset, NodeModifsSet *modifs);
+		Node **cursorNode, long &cursorOffset, NodeModifsSet *modifs);
 
 	/**
 	 * For internal use. From startNode to endNode, it add where possible/necessary a new Node in order
@@ -554,7 +554,7 @@ public:
      * @return Returns a pointer to the node inserted.
      */
     static Node* DTDExtractNodeSubtree(Node *startNode, int startOffset, Node *endNode, int endOffset, 
-                                       Node **cursorNode, int &cursorOffset, NodeModifsSet *modifs, bool extractInlineParentNodes = true);
+                                       Node **cursorNode, long &cursorOffset, NodeModifsSet *modifs, bool extractInlineParentNodes = true);
     
     /**
      * Similar to the above function but it operates on the given node tree. See DTDGetNodeSubtree.
@@ -570,7 +570,7 @@ public:
      * It behaves essentially like the above function. Provided for convenience.
      */
     static Node* DTDRemoveSelection(NodeSelectionInd& selection, 
-                                    Node **cursorNode, int& cursorOffset, NodeModifsSet *modifs, bool extractInlineParentNodes = true);
+                                    Node **cursorNode, long& cursorOffset, NodeModifsSet *modifs, bool extractInlineParentNodes = true);
 
     /**
      * Get a node subtree from the tree. It is similar to extractNodeSubtree() 
@@ -622,7 +622,7 @@ public:
 	 * @return Returns a kafkaCommon::extractNodeStatus.
 	 */
 	static int DTDExtractNode(const QString &nodeName, Document *doc, Node *startNode,
-		int startOffset, Node *endNode, int endOffset, Node **cursorNode, int &cursorOffset,
+		int startOffset, Node *endNode, int endOffset, Node **cursorNode, long &cursorOffset,
 		NodeModifsSet *modifs);
 
 	/**
@@ -733,7 +733,7 @@ public:
 	 * </TEMPORARY>
 	 */
 	static void mergeInlineNode(Node *startNode, Node *endNode, Node **cursorNode,
-		int &cursorOffset, NodeModifsSet *modifs);
+		long &cursorOffset, NodeModifsSet *modifs);
 
 
 	/** ----------------------- NODE MODIFICATIONS -------------------------------------*/

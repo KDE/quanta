@@ -463,18 +463,18 @@ void KafkaDocument::setCursorAndSelection(NodeSelectionInd *nodeSelection)
   bool cursorAtSelectionStart;
   DOM::Node startDomNode, endDomNode, foo;
   Node *startNode, *endNode;
-  int startOffset, endOffset;
-   
+  long startOffset, endOffset;
+
   cursorAtSelectionStart = nodeSelection->cursorAtSelectionStart();
   startNode = kafkaCommon::getNodeFromLocation(nodeSelection->cursorNode());
   endNode = kafkaCommon::getNodeFromLocation(nodeSelection->cursorNodeEndSel());
-  
+
   if(startNode && startNode->rootNode())
     startDomNode = *(startNode->rootNode());
   if(endNode && endNode->rootNode())
     endDomNode = *(endNode->rootNode());
-  translateNodeIntoKafkaCursorPosition(startNode, nodeSelection->cursorOffset(), foo, (long&)startOffset);
-  translateNodeIntoKafkaCursorPosition(endNode, nodeSelection->cursorOffsetEndSel(), foo, (long&)endOffset);
+  translateNodeIntoKafkaCursorPosition(startNode, nodeSelection->cursorOffset(), foo, startOffset);
+  translateNodeIntoKafkaCursorPosition(endNode, nodeSelection->cursorOffsetEndSel(), foo, endOffset);
   
   
   if(cursorAtSelectionStart && !startDomNode.isNull())
@@ -1126,7 +1126,7 @@ QString KafkaDocument::generateCodeFromNode(Node *node, int bLine, int bCol, int
 	return text;
 }
 
-void KafkaDocument::translateQuantaIntoKafkaCursorPosition(uint curLine, uint curCol, DOM::Node &domNode, int &offset)
+void KafkaDocument::translateQuantaIntoKafkaCursorPosition(uint curLine, uint curCol, DOM::Node &domNode, long &offset)
 {
 	Node *node;
 	int bCol, bLine, eCol, eLine, col, line;
@@ -1233,7 +1233,7 @@ void KafkaDocument::translateQuantaIntoKafkaCursorPosition(uint curLine, uint cu
 #endif
 }
 
-void KafkaDocument::translateQuantaIntoNodeCursorPosition(uint line, uint col, Node **node, int &offset)
+void KafkaDocument::translateQuantaIntoNodeCursorPosition(uint line, uint col, Node **node, long &offset)
 {
   int curCol, curLine, beginCol, beginLine;
   QString currentLine;
@@ -1274,7 +1274,7 @@ void KafkaDocument::translateQuantaIntoNodeCursorPosition(uint line, uint col, N
 #endif
 }
 
-void KafkaDocument::translateKafkaIntoNodeCursorPosition(DOM::Node domNode, long domNodeOffset, Node **node, int &offset)
+void KafkaDocument::translateKafkaIntoNodeCursorPosition(DOM::Node domNode, long domNodeOffset, Node **node, long &offset)
 {
 	QString decodedText, encodedChar, encodedText, currentChar;
 	QChar curChar, oldChar;
@@ -2274,7 +2274,7 @@ void KafkaDocument::slotCut()
     Node* endNode = kafkaCommon::getNodeFromLocation(selection_ind.cursorNodeEndSel());
     
     DOM::Node cursorDomNode;
-    int cursorOffset;
+    long cursorOffset;
     
     m_kafkaPart->getCurrentNode(cursorDomNode, cursorOffset);
     Node* cursorNode = getNode(cursorDomNode);
@@ -2283,7 +2283,7 @@ void KafkaDocument::slotCut()
 }
 
 void KafkaDocument::slotCut(Node* startNode, int startOffset, Node* endNode, int endOffset, 
-                            Node** cursorNode, int cursorOffset, QString const& text)
+                            Node** cursorNode, long cursorOffset, QString const& text)
 {
     if(!startNode || !endNode)
         return;
@@ -2367,7 +2367,7 @@ void KafkaDocument::slotPaste()
         selection_ind.fillWithVPLCursorSelection();
     
         Node* cursorNode = kafkaCommon::getNodeFromLocation(selection_ind.cursorNode());
-        int cursorOffset = selection_ind.cursorOffset();
+        long cursorOffset = selection_ind.cursorOffset();
         
         NodeModifsSet *modifs = new NodeModifsSet();
         

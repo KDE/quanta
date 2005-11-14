@@ -1037,7 +1037,7 @@ void TagAction::applyTagInSelection(Node* start_node, int start_offset, Node* en
     node->tag->single = QuantaCommon::isSingleTag(w->defaultDTD()->name,
             node->tag->name);
 
-    int cursor_offset = selection.cursorOffset();
+    long cursor_offset = selection.cursorOffset();
     
     Node* nodeCursor = start_node;        
     Node* nodeParent = start_node;
@@ -1136,7 +1136,7 @@ void TagAction::applyTagInMixedSelection(Node* start_node, int start_offset, Nod
     if(!commonParent) return;
 
     Node* cursor_node = selection.cursorNode();
-    int cursor_offset = selection.cursorOffset();
+    long cursor_offset = selection.cursorOffset();
     kafkaCommon::splitStartAndEndNodeSubtree(start_node, start_offset, end_node, end_offset, commonParent, 
                                              commonParentStartChildLocation, commonParentEndChildLocation,
                                              selection, false, modifs);
