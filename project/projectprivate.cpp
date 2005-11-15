@@ -1484,8 +1484,14 @@ void ProjectPrivate::slotDebuggerOptions()
     KService::Ptr service = *iterDbg;
     if(m_debuggerClientEdit == service->name())
     {
+      DebuggerClient *dbg = dbg;
       int errCode = 0;
-      DebuggerClient::DebuggerClient* dbg = KParts::ComponentFactory::createInstanceFromService<DebuggerClient::DebuggerClient>(service, this, 0, QStringList(), &errCode);
+//Workaround for dynamic_cast not working correctly on SUSE 10, gcc 4.0.2
+//The correct way should be a simple:
+// DebuggerClient *dbg = KParts::ComponentFactory::createInstanceFromService<DebuggerClient>(service, this, 0, QStringList(), &errCode);
+      QObject* obj = KParts::ComponentFactory::createInstanceFromService<QObject>(service, this, 0, QStringList(), &errCode);
+      if (obj && obj->inherits("DebuggerClient"))
+        dbg = static_cast<DebuggerClient *>(obj);
       if (dbg)
       {
         QDomNode projectNode = m_sessionDom.firstChild().firstChild();
