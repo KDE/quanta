@@ -156,3 +156,5 @@ void DebuggerClient::variableSetValue(const DebuggerVariable &)
 {
   KMessageBox::error(NULL, i18n("%1 does not support setting the value of variables.").arg(this->getName()), i18n("Unsupported Debugger Function"));
 }
+
+#include "debuggerclient.moc"

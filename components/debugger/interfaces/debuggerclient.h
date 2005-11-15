@@ -62,6 +62,8 @@ namespace DebuggerClientCapabilities
 
 class DebuggerClient : public QObject
 {
+  Q_OBJECT
+
   private:
   protected:
     DebuggerClient(QObject *parent, const char* name);
