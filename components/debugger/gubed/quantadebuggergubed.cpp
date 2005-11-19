@@ -43,7 +43,7 @@
 
 
 K_EXPORT_COMPONENT_FACTORY( quantadebuggergubed,
-                            KGenericFactory<QuantaDebuggerGubed>("quantadebuggergubed"))
+                            KGenericFactory<QuantaDebuggerGubed>("quantadebuggergubed"));
 
 const char QuantaDebuggerGubed::protocolversion[] = "0.0.12";
 

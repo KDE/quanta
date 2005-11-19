@@ -534,7 +534,8 @@ void EnhancedTagAttributeTree::deleteSubTree()
     return;
   Node *oldCurNode;
   NodeModifsSet *modifs;
-  int curLine, curCol, offset;
+  int curLine, curCol;
+  long offset;
   DOM::Node domNode;
   QValueList<int> loc;
 
@@ -586,7 +587,8 @@ void EnhancedTagAttributeTree::deleteNode()
 
   Node *oldCurNode, *oldCurNodeParent, *child;
   QTag *oldCurNodeParentQTag;
-  int curLine, curCol, offset;
+  int curLine, curCol;
+  long offset;
   DOM::Node domNode;
   QValueList<int> loc;
   NodeModifsSet *modifs;

@@ -2075,7 +2075,7 @@ void KafkaWidget::khtmlDrawContentsEvent(khtml::DrawContentsEvent *event)
     KHTMLPart::khtmlDrawContentsEvent(event);
 }
 
-void KafkaWidget::getCurrentNode(DOM::Node &_currentNode, int &offset)
+void KafkaWidget::getCurrentNode(DOM::Node &_currentNode, long &offset)
 {
     _currentNode = m_currentNode;
     offset = d->m_cursorOffset;
@@ -2225,7 +2225,7 @@ void KafkaWidget::removeSelection()
     NodeSelectionInd selection;
     selection.fillWithVPLCursorSelection();
     Node* cursorNode = kafkaCommon::getNodeFromLocation(selection.cursorNode());
-    int cursorOffset = 0;
+    long cursorOffset = 0;
     long domNodeCursorOffset = 0;
         
     kafkaCommon::DTDRemoveSelection(selection, &cursorNode, cursorOffset, m_modifs);

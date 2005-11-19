@@ -96,7 +96,12 @@ void DebuggerManager::slotNewProjectLoaded(const QString &projectname, const KUR
       if(Project::ref()->debuggerClient() == service->name())
       {
         int errCode = 0;
-        m_client = KParts::ComponentFactory::createInstanceFromService<DebuggerClient::DebuggerClient>(service, this, 0, QStringList(), &errCode);
+//Workaround for dynamic_cast not working correctly on SUSE 10, gcc 4.0.2
+//The correct way should be a simple:
+// m_client = KParts::ComponentFactory::createInstanceFromService<DebuggerClient>(service, this, 0, QStringList(), &errCode);
+        QObject* obj = KParts::ComponentFactory::createInstanceFromService<QObject>(service, this, 0, QStringList(), &errCode);
+        if (obj && obj->inherits("DebuggerClient"))
+          m_client = static_cast<DebuggerClient *>(obj);
 
         //kdDebug(24002) << service->name() << " (" << m_client << ")" << endl;
 

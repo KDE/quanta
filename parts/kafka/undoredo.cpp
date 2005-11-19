@@ -1359,7 +1359,7 @@ void undoRedo::syncKafkaCursorAndSelection(NodeSelection *selection)
   QuantaView *view = ViewManager::ref()->activeView();
   KafkaWidget *kafkaPart = KafkaDocument::ref()->getKafkaWidget();
   DOM::Node node;
-  int offset;
+  long offset;
   uint curLine, curCol/**, curLine2, curCol2*/;
   /**DOM::Range range(kafkaPart) = kafkaPart->selection();*/
 
@@ -1375,7 +1375,7 @@ void undoRedo::syncKafkaCursorAndSelection(NodeSelection *selection)
   if(selection)
   {
     KafkaDocument::ref()->translateNodeIntoKafkaCursorPosition(selection->cursorNode(),
-      selection->cursorOffset(), node, (long&)offset);
+      selection->cursorOffset(), node, offset);
     kafkaPart->setCurrentNode(node, offset);
   }
   else
@@ -1397,8 +1397,7 @@ void undoRedo::syncQuantaCursorAndSelection()
   int curCol, curLine, curCol2, curLine2;
   uint oldCurCol, oldCurLine;
   DOM::Node domNode, domNodeEnd;
-  int offset;
-  long offsetBegin, offsetEnd;
+  long offset, offsetBegin, offsetEnd;
   DOM::Range range(kafkaPart);
 
   //Translate and set the cursor.

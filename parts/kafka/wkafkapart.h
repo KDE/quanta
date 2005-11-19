@@ -253,7 +253,7 @@ public:
 	 * @param domNode Returns the DOM::Node in which the cursor is located.
 	 * @param offset Returns the offset of the cursor.
 	 */
-	void translateQuantaIntoKafkaCursorPosition(uint line, uint col, DOM::Node &domNode, int &offset);
+	void translateQuantaIntoKafkaCursorPosition(uint line, uint col, DOM::Node &domNode, long &offset);
         
         /**
          * Returns the internal Node offset corresponding to the Quanta cursor position.
@@ -262,7 +262,7 @@ public:
          * @param node Returns the node where is located the node internal offset.
          * @param offset Returns the node internal corresponding offset.
          */
-    void translateQuantaIntoNodeCursorPosition(uint line, uint col, Node **node, int &offset);
+    void translateQuantaIntoNodeCursorPosition(uint line, uint col, Node **node, long &offset);
 
 	/**
 	 * Returns the internal Node offset corresponding to the kafka cursor position.
@@ -271,7 +271,7 @@ public:
          * @param node Returns the node where is located the node internal offset.
          * @param offset Returns the node internal corresponding offset.
 	 */
-	void translateKafkaIntoNodeCursorPosition(DOM::Node domNode, long domNodeOffset, Node **node, int &offset);
+	void translateKafkaIntoNodeCursorPosition(DOM::Node domNode, long domNodeOffset, Node **node, long &offset);
 
 	/**
 	 * Returns the quanta cursor position corresponding to the kafka cursor position.
@@ -448,7 +448,7 @@ public slots:
     void slotPaste();
 
     void slotCut(Node* startNode, int startOffset, Node* endNode, int endOffset, 
-                 Node** cursorNode, int cursorOffset, QString const& plainText);
+                 Node** cursorNode, long cursorOffset, QString const& plainText);
     void slotCopy(Node* startNode, int startOffset, Node* endNode, int endOffset, QString const& plainText);
 
 public:
