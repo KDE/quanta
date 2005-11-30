@@ -1,6 +1,10 @@
 This files contains the changes since Quanta 2.0 until the current 3.4.x series.
 
-Version 3.5 (Release date: xx-xx-2004; Started 04-03-2004):
+Version 3.5.1 (Release date: 29-11-2005; Started 04-03-2004):
+ - bugfixes:
+        - better handling of quotation marks when editing tags inside a script area
+
+Version 3.5 (Release date: 29-11-2005; Started 04-03-2004):
  - bugfixes:
         - read/write the correct entry from description.rc in the editor
         - fill only the attributes with source="selection" with the selection in the

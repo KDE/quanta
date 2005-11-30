@@ -449,7 +449,10 @@ void Document::insertText(const QString &a_text, bool adjustCursor, bool reparse
         insideQuotes = !insideQuotes;
     }
     if (insideQuotes)
+    {
+      text.replace("\\\"", "\"");
       text.replace("\"", "\\\"");
+    }
   }
 
   editIf->insertText(line, col, text);
