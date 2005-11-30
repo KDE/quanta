@@ -2199,6 +2199,29 @@ void Document::save()
 //  kdDebug(24000) << "Document " << url() << " saved." << endl;
 }
 
+bool Document::saveAs(const KURL& url)
+{
+  bool result = m_doc->saveAs(url);
+  if (result)
+  {
+    m_md5sum = "";
+    if (url.isLocalFile())
+    {
+      QFile f(url.path());
+      if (f.open(IO_ReadOnly))
+      {
+        const char* c = "";
+        KMD5 context(c);
+        context.reset();
+        context.update(f);
+        m_md5sum = context.hexDigest();
+        f.close();
+      }
+    }
+  }
+  return result;
+}
+
 void Document::enableGroupsForDTEP(const QString& dtepName, bool enable)
 {
   if (m_groupsForDTEPs.isEmpty())

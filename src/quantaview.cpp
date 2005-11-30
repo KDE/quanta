@@ -1133,7 +1133,7 @@ bool QuantaView::saveDocument(const KURL& url)
   }
   if (url.isLocalFile())
   {
-    if (!m_document->doc()->saveAs(url))
+    if (!m_document->saveAs(url))
     {
       fileWatcher->addFile(oldURL.path());
 //      kdDebug(24000) << "addFile[saveDocument]: " << oldURL.path() << endl;
@@ -1151,7 +1151,7 @@ bool QuantaView::saveDocument(const KURL& url)
     m_eventLoopStarted = false;
     connect(doc, SIGNAL(canceled(const QString &)), this, SLOT(slotSavingFailed(const QString &)));
     connect(doc, SIGNAL(completed()), this, SLOT(slotSavingCompleted()));
-    m_saveResult = doc->saveAs(url);
+    m_saveResult = m_document->saveAs(url);
     if (m_saveResult)
     {
       //start an event loop and wait until the saving finished

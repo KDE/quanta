@@ -147,6 +147,8 @@ work correctly. */
   void checkDirtyStatus();
   /** Save the document and reset the dirty status. */
   void save();
+  /** Save the document under a new name and calculate the new md5sum. */
+  bool saveAs(const KURL& url);
   /** Enable or disable the visibility of groups for a DTEP.*/
   void enableGroupsForDTEP(const QString& dtepName, bool enable = true);
   /** Clears the selected DTEP list */
