@@ -765,7 +765,7 @@ bool StructTreeView::acceptDrag(QDropEvent* e) const
         m_thisWidget->setCursor(Qt::ForbiddenCursor);
         else
         m_thisWidget->setCursor(Qt::ForbiddenCursor);*/
-        kdDebug(25001) << "Princípio: " << last_accept << endl;
+        kdDebug(25001) << "PrincÃ­pio: " << last_accept << endl;
 
         return last_accept;
     }

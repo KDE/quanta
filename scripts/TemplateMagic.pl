@@ -333,11 +333,11 @@ E
                 <height>20</height>
             </rect>
         </property>
-        <property name="associations" stdset="0">
-            <stringlist>
-                <string>\@widgetText</string>
-            </stringlist>
-        </property>
+        <property name="associations" stdset="0">
+            <stringlist>
+                <string>\@widgetText</string>
+            </stringlist>
+        </property>
     </widget>
 E
 ;
@@ -357,11 +357,11 @@ E
                 <height>30</height>
             </rect>
         </property>
-        <property name="associations" stdset="0">
-            <stringlist>
-                <string>\@widgetText</string>
-            </stringlist>
-        </property>
+        <property name="associations" stdset="0">
+            <stringlist>
+                <string>\@widgetText</string>
+            </stringlist>
+        </property>
         <property name="vScrollBarMode">
             <enum>AlwaysOff</enum>
         </property>
