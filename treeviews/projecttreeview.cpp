@@ -405,7 +405,7 @@ void ProjectTreeView::slotCreateFile()
     KTempFile *tempFile = new KTempFile(tmpDir);
     tempFile->setAutoDelete(true);
     tempFile->close();
-    if (QExtFileInfo::copy(KURL::fromPathOrURL(tempFile->name()), url));
+    if (QExtFileInfo::copy(KURL::fromPathOrURL(tempFile->name()), url))
     {
       emit insertToProject(url);
       emit openFile(url);
