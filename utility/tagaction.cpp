@@ -1145,7 +1145,7 @@ void TagAction::applyTagInMixedSelection(Node* start_node, int start_offset, Nod
     long cursor_offset = selection.cursorOffset();
     kafkaCommon::splitStartAndEndNodeSubtree(start_node, start_offset, end_node, end_offset, commonParent, 
                                              commonParentStartChildLocation, commonParentEndChildLocation,
-                                             selection, false, modifs);
+                                             selection, 0, modifs);
 
     Q_ASSERT(start_node != end_node);
     
@@ -1221,7 +1221,7 @@ void TagAction::deapplyTagInSelection(Node* start_node, int start_offset, Node* 
     int cursor_offset = selection.cursorOffset();*/
     kafkaCommon::splitStartAndEndNodeSubtree(start_node, start_offset, end_node, end_offset, commonParent, 
                                              commonParentStartChildLocation, commonParentEndChildLocation,
-                                             selection, /*cursor_node, cursor_offset, */false, modifs); 
+                                             selection, /*cursor_node, cursor_offset, */0, modifs); 
     
 //     kafkaCommon::coutTree(baseNode, 3);
     
