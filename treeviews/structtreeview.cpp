@@ -776,7 +776,7 @@ bool StructTreeView::acceptDrag(QDropEvent* e) const
         m_marker = current_item;
             
     if(current_item == m_draggedItem ||
-       !(e->provides("text/x-struct_tree_tag_item") || e->source() == this) || !m_marker)
+       !(e->provides("text/x-struct_tree_tag_item") || e->source() == (QWidget *)this) || !m_marker)
     {
         e->accept(false);
         last_accept = false;
