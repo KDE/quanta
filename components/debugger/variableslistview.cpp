@@ -215,7 +215,7 @@ void VariablesListView::replaceVariable(DebuggerVariable* oldvar, DebuggerVariab
   item->setText(VariablesListViewColumns::Name, oldvar->name());
   item->setText(VariablesListViewColumns::Type, oldvar->typeName());
   item->setText(VariablesListViewColumns::Size, oldvar->sizeName());
-  item->setText(VariablesListViewColumns::Value, (newvar->isScalar() ? oldvar->value() : ""));
+  item->setText(VariablesListViewColumns::Value, (newvar->isScalar() ? oldvar->value() : QString()));
   
 }
 
