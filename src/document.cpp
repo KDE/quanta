@@ -448,7 +448,19 @@ void Document::insertText(const QString &a_text, bool adjustCursor, bool reparse
       if (s[i] == '"' && (i == 0 || s[i-1] != '\\'))
         insideQuotes = !insideQuotes;
     }
-    if (insideQuotes)
+    int eLine, eCol;
+    n->tag->endPos(eLine, eCol);
+    s = this->text(line + 1, col, eLine, eCol);
+    bool closeQuotationFound = false;
+    for (int i = 0 ; i < (int)s.length() - 1; i++)
+    {
+      if (s[i] == '"' && (i == 0 || s[i-1] != '\\'))
+      {
+        closeQuotationFound = true;
+        break;
+      }
+    }
+    if (insideQuotes && closeQuotationFound)
     {
       text.replace("\\\"", "\"");
       text.replace("\"", "\\\"");
