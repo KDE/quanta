@@ -1081,7 +1081,12 @@ QString KafkaDocument::generateCodeFromNode(Node *node, int bLine, int bCol, int
                     text = ">";
 		}
 		else
-			text = "<" + QuantaCommon::tagCase(node->tag->name) + ">";
+    {
+      if (node->tag->tagStr() == "-->")
+        text = "-->";
+      else
+			 text = "<" + QuantaCommon::tagCase(node->tag->name) + ">";
+    }
 		bCol += text.length();
 		eCol = bCol - 1;
 		eLine = bLine;
