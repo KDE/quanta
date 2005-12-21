@@ -535,12 +535,12 @@ Node *Parser::parse(Document *w, bool force)
     m_node = ParserCommon::createTextNode(w, 0L, maxLines, w->editIf->lineLength(maxLines), 0L);
   }
   m_parsingNeeded = false;
-/*
- treeSize = 0;
- kdDebug(24000) << "Basenode : " << m_node << endl;
- coutTree(m_node, 2);
- kdDebug(24000) << "Size of tree: " << treeSize << endl;
-*/
+
+//  treeSize = 0;
+//  kdDebug(24000) << "Basenode : " << m_node << endl;
+//  ParserCommon::coutTree(m_node, 2);
+//  kdDebug(24000) << "Size of tree: " << treeSize << endl;
+
 //FIXME: What is the use of two pointer to the same Node???
  baseNode = m_node;
  m_saParser->init(m_node, w);
@@ -556,41 +556,7 @@ Node *Parser::parse(Document *w, bool force)
  return m_node;
 }
 
-/** Print the doc structure tree to the standard output.
-    Only for debugging purposes. */
 
-void Parser::coutTree(Node *node, int indent)
-{
-    QString output;
-    int bLine, bCol, eLine, eCol;
-    if (!node)
-        kdDebug(24000)<< "undoRedo::coutTree() - bad node!" << endl;
-    while (node)
-    {
-            output = "";
-            output.fill('.', indent);
-            node->tag->beginPos(bLine, bCol);
-            node->tag->endPos(eLine, eCol);
-            if (node->tag->type != Tag::Text)
-                    output += node->tag->name.replace('\n'," ");
-            else
-                    output+= node->tag->tagStr().replace('\n'," ");
-            kdDebug(24000) << output <<" (" << node->tag->type << ") at pos " <<
-                    bLine << ":" << bCol << " - " << eLine << ":" << eCol << " This: "<< node << " Parent: " << node->parent << " Prev: " << node->prev << " Next: " << node->next << " Child: " << node->child << endl;
- /*           for(j = 0; j < node->tag->attrCount(); j++)
-            {
-                    kdDebug(24000)<< " attr" << j << " " <<
-                            node->tag->getAttribute(j).nameLine << ":" <<
-                            node->tag->getAttribute(j).nameCol << " - " <<
-                            node->tag->getAttribute(j).valueLine << ":" <<
-                            node->tag->getAttribute(j).valueCol << endl;
-            }
-*/
-            if (node->child)
-                    coutTree(node->child, indent + 4);
-            node = node->next;
-    }
-}
 
 
 /** No descriptions */
@@ -976,9 +942,9 @@ void Parser::deleteNodes(Node *firstNode, Node *lastNode, NodeModifsSet *modifs)
     node = nextNode;
 
  //   kdDebug(24000)<< "Node removed!" << endl;
-//    coutTree(m_node, 2);
+//    ParserCommon::coutTree(m_node, 2);
   }
-//  coutTree(m_node, 2);
+//  ParserCommon::coutTree(m_node, 2);
 }
 
 Node *Parser::rebuild(Document *w)
@@ -1001,7 +967,7 @@ Node *Parser::rebuild(Document *w)
 
  //**kdDebug(24000)<< "************* Begin User Modification *****************" << endl;
   //debug!
-  //coutTree(m_node, 2);//*/
+  //ParserCommon::coutTree(m_node, 2);//*/
  if (w != write || !m_node) //the document has changed or the top node does not exists => parse completely
  {
   logReparse(modifs, w);
@@ -1217,16 +1183,15 @@ Node *Parser::rebuild(Document *w)
    }
  }
 /*   kdDebug(24000)<< "END"<< endl;
-   coutTree(baseNode,  2);
+   ParserCommon::coutTree(baseNode,  2);
    kdDebug(24000)<< "************* End User Modification *****************" << endl;*/
    w->docUndoRedo->addNewModifsSet(modifs, undoRedo::SourceModif);
  }
   kdDebug(24000) << "Rebuild: " << t.elapsed() << " ms \n";
-/*
- treeSize = 0;
- coutTree(m_node, 2);
- kdDebug(24000) << "Size of tree: " << treeSize << endl;
-// cout << "\n"; */
+
+/* treeSize = 0;
+ ParserCommon::coutTree(m_node, 2);
+ kdDebug(24000) << "Size of tree: " << treeSize << endl;*/
 
  m_saParser->init(m_node, w);
  if (saParserEnabled)

@@ -83,9 +83,6 @@ public:
    * Crash errors of Parser::nodeAt is a good sign of a missing setRootNode
    */
   void setRootNode(Node* node) {m_node = node;} //TODO: check if m_saParser should be updated or not!
-  /** Print the doc structure tree to the standard output.
-      Only for debugging purposes. */
-  void coutTree(Node *node, int indent);
   void synchParseInDetail();
 
   IncludedGroupElementsMap includedMap;

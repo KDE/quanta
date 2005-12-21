@@ -49,6 +49,10 @@ namespace ParserCommon{
   */
   Node* createScriptTagNode(Document *write, const AreaStruct &area, const QString &areaName,
                             const DTDStruct *dtd, Node *parentNode, Node *currentNode);
+
+/** Print the doc structure tree to the standard output.
+    Only for debugging purposes. */
+  void coutTree(Node *node, int indent);
 }
  
 #endif

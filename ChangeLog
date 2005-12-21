@@ -1,42 +1,19 @@
-This files contains the changes since Quanta 2.0 until the current 3.4.x series.
+This files contains the changes since Quanta 2.0 until the current 3.5.x series.
 
 Version 3.5.1 (Release date: 29-11-2005; Started 04-03-2004):
  - bugfixes:
         - better handling of quotation marks when editing tags inside a script area
+        - don't show the file changed dialog after using save as and save again
+        - crash fixes in VPL [#118686]
 
 Version 3.5 (Release date: 29-11-2005; Started 04-03-2004):
  - bugfixes:
-        - read/write the correct entry from description.rc in the editor
-        - fill only the attributes with source="selection" with the selection in the
-          tag editing dialog
-        - fix matching of excluded files from a project
         - don't crash when Smart Tag Insertion is enabled and some tags are inserted to an
           emty document
-        - don't crash when Selected is pressed and nothing is selected (in the CSS editor) [#101919]
-        - show the correct relative paths in URL autocompletion
-        - fix crash when unsetting breakpoints
-        - entity autocompletion fixes
-        - show an upload treeview for profiles that have @ in the username
-        - allow CVS actions to be put on toolbars [#106023]
-        - open the files with the right encoding when restoring the last opened files on startup [#104512]
         - add missing Romanian characters to the Insert Special Character dialog [#107549]
-        - treat "<" as the end of a tag name. Fixes autoreplacement of opening/closing
-          tags in cases when a PHP area starts directly after a tag name. [#106911]
-        - fix the Kommander XML scripts.
-        - fix crash when deleting a file which is part of a project from the tab
-          context menu [#111134]
         - fix layout of mailto dialogs
-        - do not autoclose tag starting with <?, like <?xml
-        - create empty description files for scripts that don't have one
-        - fix loading order of the project view files
-        - save the content entered in a new file in the VPL editor [#111278]
-        - do not allow invocation of the CSS editor in an empty non-CSS document [#109815]
-        - fix many cell-merging related errors in the table editor [#112243]
-        - fix namespace editing in the attribute editor tree
-        - replace a leading ~ in an upload profile with the users home folder and avoid a hang
         - fix lots of VPL related crashes [#112733, #112853, #108501, #115046]
         - give to the host field more space in the upload profile dialog [#112778]
-        - show DT tags in VPL [#109723]
         - remember find options between sessions [#97102]
         - don't hide the password dialogs behind the main window [#114584]
         - replace < and > typed in VPL with &lt; and &gt; in source [#115528]
@@ -44,19 +21,12 @@ Version 3.5 (Release date: 29-11-2005; Started 04-03-2004):
 
  - improvements:
         - md5sum based file changed detection
-        - nicer processing of CVS output
-        - read the image sizes for remote images as well
-        - insert an img tag for remote images as well when using D&D
-        - better context sensitiv documentation (needs updated documentation and DTEP
-          packages)
         - faster loading of multiple documents at once
         - possibility to change the icon/text layout of the user toolbars from
           inside Quanta added
         - external preview possibility with Firefox added [#106557]
         - make autoreplacing of accented chars smarter. The characters are replaced only if they cannot
       	  be encoded in the encoding of the document
-        - make single file/folder upload really quick [#105612]
-        - Paste as HTML Encoded encodes more chars to their corresponding entities [#100547, #100103]
         - escape the quotation marks of the inserted attributes inside a script
           area if needed
         - less annoying CSS autocompletion [#109603]
@@ -70,8 +40,58 @@ Version 3.5 (Release date: 29-11-2005; Started 04-03-2004):
  - new features:
         - loading/updating of the entities in a DTEP from a DTD
 
+Version 3.4.3 (Release date: 05-10-2005; Started 01-08-2005):
+ - bugfixes:
+        - fix crash when deleting a file which is part of a project from the tab
+          context menu [#111134]
+        - do not autoclose tag starting with <?, like <?xml
+        - create empty description files for scripts that don't have one
+        - do not allow invocation of the CSS editor in an empty non-CSS document [#109815]
+        - fix many cell-merging related errors in the table editor [#112243]
+        - fix namespace editing in the attribute editor tree
+        - fix lots of table editor bugs
+        - restore automatic conversion of accented chars behavior to pre-3.4.2
+        - save the content entered in a new file in the VPL editor [#111278]
+        - fix loading order of the project view files
+        - replace a leading ~ in an upload profile with the users home folder and avoid a hang
+  - fix lots of VPL related crashes
+  - show DT tags in VPL [#109723]
+  
+Version 3.4.2 (Release date: 20-07-2005; Started 01-06-2005):
+ - bugfixes:
+        - entity autocompletion fixes
+        - don't show the name twice in the tooltip of treeview items
+        - show an upload treeview for profiles that have @ in the username
+        - allow CVS actions to be put on toolbars [#106023]
+        - open the files with the right encoding when restoring the last opened files on startup [#104512]
+        - fix the Kommander XML scripts
+        - treat "<" as the end of a tag name. Fixes autoreplacement of opening/closing
+                tags in cases when a PHP area starts directly after a tag name. [#106911]
 
-Version 3.4 (Release date: xx-03-2005; Started 20-08-2004):
+ - improvements:
+        - make single file/folder upload really quick [#105612]
+        - Paste as HTML Encoded encodes more chars to their corresponding entities [#100547, #100103]
+        - improve the automatic conversion of characters. Only those are converted that cannot be
+   encoded in the encoding of the document
+           
+Version 3.4.1 (Release date: 31-05-2005; Started 04-03-2004):
+ - bugfixes:
+        - read/write the correct entry from description.rc in the editor
+        - fill only the attributes with source="selection" with the selection in the
+          tag editing dialog
+        - fix matching of excluded files from a project
+        - don't crash when Selected is pressed and nothing is selected (in the CSS editor) [#101919]
+        - show the correct relative paths in URL autocompletion
+        - fix crash when unsetting breakpoints
+
+ - improvements:
+        - nicer processing of CVS output
+        - read the image sizes for remote images as well
+        - insert an img tag for remote images as well when using D&D
+        - better context sensitiv documentation (needs updated documentation and DTEP
+   packages)
+
+Version 3.4 (Release date: 16-03-2005; Started 20-08-2004):
   - bugfixes:
         - Debugger
           - Added full support for Gubeds conditional breakpoints
@@ -89,7 +109,7 @@ Version 3.4 (Release date: xx-03-2005; Started 20-08-2004):
             a skeleton for VPL
           - fix "Cannot insert the tag: invalid location" problem [#99340]
           - restore the correct mouse cursor when the VPL area is left [#98177]
-	    - Other bug fixes.
+      - Other bug fixes.
         - show (again) the full filename in a tooltip
         - don't crash if the preview widget is closed with a JavaScript command
           from the code itself [#87533]
@@ -190,7 +210,7 @@ Version 3.4 (Release date: xx-03-2005; Started 20-08-2004):
         - any action can be assigned to an event, not just the user defined
           script actions
         - more than one action can be assigned to events
-      	- possibility to disable the event actions added (without the need to
+        - possibility to disable the event actions added (without the need to
           remove them one by one)
         - support loading of more than one toolbar at a time
         - don't ask for toolbar saving if the toolbar names were modified by
@@ -237,8 +257,7 @@ Version 3.4 (Release date: xx-03-2005; Started 20-08-2004):
         - PHP class autocompletion improved (autocomplete for $this; class methods; for classes from
           included files)
         - make CSS autocompletion less intrussive      
-      
-
+ 
 Version 3.3.0 (Release date: 18-08-2004; Started 07-05-2004):
 NOTE: Unfortunately I failed to update the changelog regulary, thus some new features and
 bugfixes might not be listed here.

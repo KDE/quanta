@@ -15,10 +15,11 @@
  ***************************************************************************/
 
 //qt includes
-#include "qstring.h"
+#include <qstring.h>
 
 //kde includes
-#include "klocale.h"
+#include <kdebug.h>
+#include <klocale.h>
 #include <ktexteditor/editinterface.h>
 
 //own includes
@@ -200,6 +201,39 @@ Node* createScriptTagNode(Document *write, const AreaStruct &area, const QString
     currentNode->next = node;
   }
   return node;
+}
+
+void coutTree(Node *node, int indent)
+{
+    QString output;
+    int bLine, bCol, eLine, eCol;
+    if (!node)
+        kdDebug(24000)<< "undoRedo::coutTree() - bad node!" << endl;
+    while (node)
+    {
+            output = "";
+            output.fill('.', indent);
+            node->tag->beginPos(bLine, bCol);
+            node->tag->endPos(eLine, eCol);
+            if (node->tag->type != Tag::Text)
+                    output += node->tag->name.replace('\n'," ");
+            else
+                    output+= node->tag->tagStr().replace('\n'," ");
+            kdDebug(24000) << output <<" (" << node->tag->type << ") at pos " <<
+                    bLine << ":" << bCol << " - " << eLine << ":" << eCol << " This: "<< node << " Parent: " << node->parent << " Prev: " << node->prev << " Next: " << node->next << " Child: " << node->child << endl;
+ /*           for(j = 0; j < node->tag->attrCount(); j++)
+            {
+                    kdDebug(24000)<< " attr" << j << " " <<
+                            node->tag->getAttribute(j).nameLine << ":" <<
+                            node->tag->getAttribute(j).nameCol << " - " <<
+                            node->tag->getAttribute(j).valueLine << ":" <<
+                            node->tag->getAttribute(j).valueCol << endl;
+            }
+*/
+            if (node->child)
+                    coutTree(node->child, indent + 4);
+            node = node->next;
+    }
 }
 
 }

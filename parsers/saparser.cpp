@@ -900,7 +900,11 @@ void SAParser::slotParseNodeInDetail()
         if (m_currentNode->next->closesPrevious)
         {
           m_currentNode->next->removeAll = false;
+          Node *secondNext = m_currentNode->next->next;
+          if (secondNext)
+            secondNext->prev = m_currentNode;
           delete m_currentNode->next;
+          m_currentNode->next = secondNext;
           m_useNext = true;
         }
       } else

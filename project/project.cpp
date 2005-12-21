@@ -240,7 +240,7 @@ void Project::loadLastProject(bool reload)
 
 void Project::slotOpenProject(const KURL &url)
 {
-    kdDebug(24000) << "Open recent project: " << url <<endl;
+  kdDebug(24000) << "Open recent project: " << url <<endl;
   if ( !url.isEmpty() )
   {
     if ( !QExtFileInfo::exists(url, d->m_mainWindow) )

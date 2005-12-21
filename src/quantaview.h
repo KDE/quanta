@@ -19,6 +19,7 @@
 #define QUANTAVIEW_H
 
 // include files for Qt
+#include <qguardedptr.h>
 #include <qwidget.h>
 #include <qptrlist.h>
 #include <qvaluelist.h>
@@ -214,7 +215,7 @@ private:
   Document *m_document;
   QuantaPlugin *m_plugin;
   QWidget *m_customWidget; ///<view holds a custom widget, eg. a documentation
-  KafkaDocument *m_kafkaDocument;
+  QGuardedPtr<KafkaDocument> m_kafkaDocument;
   QSplitter *m_splitter;
   QGridLayout *m_viewLayout;
   int m_currentViewsLayout; ///< holds the current layout, which can be SourceOnly, VPLOnly or SourceAndVPL
