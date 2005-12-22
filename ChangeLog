@@ -6,6 +6,7 @@ Version 3.5.1 (Release date: 29-11-2005; Started 04-03-2004):
         - don't show the file changed dialog after using save as and save again
         - crash fixes in VPL [#118686]
         - don't loose the comment closing character when formatting the XML code [#118453]
+        - insert valid img tag for XHTML documents [#118805]
 
 Version 3.5 (Release date: 29-11-2005; Started 04-03-2004):
  - bugfixes:
