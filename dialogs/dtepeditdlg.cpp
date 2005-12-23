@@ -58,11 +58,12 @@ DTEPEditDlg::~DTEPEditDlg()
 
 void DTEPEditDlg::slotFamilyChanged(int family)
 {
-  m_family = family;
-  if (m_family == 0)
+  if (family == 0 && m_family != 0)
     tabWidget->insertTab(m_pagesWidget, i18n("&Pages"), 1);
   else
+  if (family == 1)
    tabWidget->removePage(m_pagesWidget);
+  m_family = family;
 }
 
 void DTEPEditDlg::init()
