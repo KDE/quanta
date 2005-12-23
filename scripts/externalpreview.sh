@@ -15,7 +15,7 @@ browser=$2
 newTab=$3
 if test $currentURL
 then
-  if ! $browser -remote "openURL($currentURL, $newTab)"
+  if ! $browser -remote "openURL($currentURL,$newTab)"
   then
     $browser $currentURL
   fi
