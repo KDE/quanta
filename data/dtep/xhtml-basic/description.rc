@@ -1,6 +1,6 @@
 [General]
 Name = -//W3C//DTD XHTML Basic 1.0//EN
-NickName = XHTML Basic 1.0
+NickName = XHTML 1.0 Basic
 URL = http://www.w3.org/TR/xhtml-basic/xhtml-basic10.dtd
 DoctypeString = html PUBLIC "-//W3C//DTD XHTML Basic 1.0//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic10.dtd"
 DefaultExtension = html

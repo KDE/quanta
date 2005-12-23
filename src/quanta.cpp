@@ -3001,6 +3001,43 @@ void QuantaApp::slotAssignActionToScript(const KURL& a_scriptURL, const QString&
   dlg.exec();
 }
 
+void QuantaApp::setDtep(const QString& dtepName, bool convert)
+{
+  Document *w = ViewManager::ref()->activeDocument();
+  if (w)
+  {
+    QString dtep = DTDs::ref()->getDTDNameFromNickName(dtepName);
+    if (!DTDs::ref()->find(dtep))
+      return;
+    w->setDTDIdentifier(dtep);
+    const DTDStruct *dtd = DTDs::ref()->find(w->getDTDIdentifier());
+    if (convert && dtd->family == Xml)
+    {
+      Tag *tag = 0L;
+      w->findDTDName(&tag);
+      if (tag)
+      {
+        int bLine, bCol, eLine, eCol;
+        tag->beginPos(bLine,bCol);
+        tag->endPos(eLine,eCol);
+        w->editIf->removeText(bLine, bCol, eLine, eCol+1);
+        w->viewCursorIf->setCursorPositionReal((uint)bLine, (uint)bCol);
+        w->insertText("<!DOCTYPE" + dtd->doctypeStr +">");
+        delete tag;
+      } else
+      {
+        w->viewCursorIf->setCursorPositionReal(0,0);
+        w->insertText("<!DOCTYPE" + dtd->doctypeStr + ">\n");
+      }
+    }
+    slotLoadToolbarForDTD(w->getDTDIdentifier());
+    QuantaView *view = ViewManager::ref()->activeView();
+    if (view)
+      view->activated();
+    reparse(true);
+  }
+}
+
 void QuantaApp::slotChangeDTD()
 {
   Document *w = ViewManager::ref()->activeDocument();
@@ -3013,8 +3050,6 @@ void QuantaApp::slotChangeDTD()
     int pos = -1;
     int defaultIndex = 0;
 
-    Tag *tag = 0L;
-    w->findDTDName(&tag);
     QString oldDtdName = w->getDTDIdentifier();
     QString defaultDocType = Project::ref()->defaultDTD();
     QStringList lst = DTDs::ref()->nickNameList(true);
@@ -3039,32 +3074,8 @@ void QuantaApp::slotChangeDTD()
     dtdWidget->adjustSize();
     if (dlg.exec())
     {
-      w->setDTDIdentifier(DTDs::ref()->getDTDNameFromNickName(dtdWidget->dtdCombo->currentText()));
-      const DTDStruct *dtd = DTDs::ref()->find(w->getDTDIdentifier());
-      if (dtdWidget->convertDTD->isChecked() && dtd->family == Xml)
-      {
-        if (tag)
-        {
-          int bLine, bCol, eLine, eCol;
-          tag->beginPos(bLine,bCol);
-          tag->endPos(eLine,eCol);
-          w->editIf->removeText(bLine, bCol, eLine, eCol+1);
-          w->viewCursorIf->setCursorPositionReal((uint)bLine, (uint)bCol);
-          w->insertText("<!DOCTYPE" + dtd->doctypeStr +">");
-          delete tag;
-        } else
-        {
-          w->viewCursorIf->setCursorPositionReal(0,0);
-          w->insertText("<!DOCTYPE" + dtd->doctypeStr + ">\n");
-        }
-      }
+      setDtep(dtdWidget->dtdCombo->currentText(), dtdWidget->convertDTD->isChecked());
     }
-
-    slotLoadToolbarForDTD(w->getDTDIdentifier());
-    QuantaView *view = ViewManager::ref()->activeView();
-    if (view)
-      view->activated();
-    reparse(true);
   }
 }
 

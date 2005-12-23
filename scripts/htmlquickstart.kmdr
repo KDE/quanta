@@ -160,7 +160,20 @@ echo '@CBPHPHeader'
 echo '@CBPHPFooter'
 echo '&lt;/body&gt;'
 echo '&lt;/html&gt;'
-</string>
+
+quanta=`dcop quanta-@parentPid`
+if [ -z "$quanta" ]; then
+    quanta=`dcop quanta`
+    if [ ! -z "$quanta" ]; then
+       quantadcop=quanta
+    fi
+else
+    quantadcop=quanta-@parentPid
+fi
+
+if [ ! -z "$quantadcop" ]; then
+  dcop $quantadcop WindowManagerIf setDtep "@DTEPselect.text" false
+fi</string>
                 </stringlist>
             </property>
             <grid>

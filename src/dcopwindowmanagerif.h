@@ -34,6 +34,7 @@ class DCOPWindowManagerIf : virtual public DCOPObject
   virtual void newDebuggerPosition(const QString &file, int lineNumber) = 0;
   virtual void openFile(const QString &file, int lineNumber, int columnNumber) = 0;
   virtual QString saveCurrentFile() = 0;
+  virtual void setDtep(const QString& dtepName, bool convert) = 0;
   virtual QString documentFolderForURL(const QString &url) = 0;
   virtual QString urlWithPreviewPrefix(const QString &url) = 0;
   virtual void addFileToProject(const QString &url) = 0;

@@ -151,6 +151,12 @@ public:
   /** Return the list of opened URLs and their editor interface numbers*/
   QStringList openedURLs() const;
   QString saveCurrentFile();
+  /**
+   * Sets the DTEP for the current document.
+   * @param dtepName the name (nickname or full name) of the DTEP
+   * @param convert  if true, converts the !DOCTYPE line to the new DTEP
+   */
+  void setDtep(const QString& dtepName, bool convert);
   QStringList tagAreas(const QString& name, bool includeCoordinates, bool skipFoundContent) const;
   QString documentFolderForURL(const QString &url);
   QString urlWithPreviewPrefix(const QString &url);
