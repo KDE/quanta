@@ -253,7 +253,6 @@ public slots:
   void slotFileSaveAll();
   void slotFileReload(QuantaView *view = 0L);
   void slotFileReloadAll();
-  void slotFileClose();
   /** Close the document specified in the parameter if it's opened */
   void slotFileClose(const KURL &url);
   void slotFileCloseAll();

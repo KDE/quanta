@@ -726,7 +726,6 @@ void QuantaInit::initActions()
     //
     KStdAction::openNew( m_quanta, SLOT( slotFileNew()  ), ac);
     KStdAction::open   ( m_quanta, SLOT( slotFileOpen() ), ac, "file_open");
-    KStdAction::close  ( m_quanta, SLOT( slotFileClose()), ac);
     (void) new KAction(i18n("Close Other Tabs"), 0, ViewManager::ref(), SLOT(slotCloseOtherTabs()), ac, "close_other_tabs");
 
     m_quanta->fileRecent =  KStdAction::openRecent(m_quanta, SLOT(slotFileOpenRecent(const KURL&)),

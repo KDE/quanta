@@ -638,11 +638,6 @@ void QuantaApp::slotFileReloadAll()
 //TODO: Implement it!
 }
 
-void QuantaApp::slotFileClose()
-{
-  ViewManager::ref()->removeActiveView();
-}
-
 void QuantaApp::slotFileClose(const KURL &url)
 {
   QuantaView *view = ViewManager::ref()->isOpened(url);
