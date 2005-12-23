@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>473</width>
-            <height>550</height>
+            <height>577</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -237,7 +237,7 @@ echo '&lt;/html&gt;'
                                 <cstring>CBPHPFooter</cstring>
                             </property>
                             <property name="text">
-                                <string>PHP footer include:</string>
+                                <string>&amp;PHP footer include:</string>
                             </property>
                             <property name="associations" stdset="0">
                                 <stringlist>
@@ -269,7 +269,7 @@ echo '&lt;/html&gt;'
                         <cstring>CBDTD</cstring>
                     </property>
                     <property name="text">
-                        <string>Show DTD</string>
+                        <string>Show &amp;DTD</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>
@@ -314,6 +314,16 @@ echo "$DTD"</string>
                             <string>XHTML 1.0 Frameset</string>
                         </property>
                     </item>
+                    <item>
+                        <property name="text">
+                            <string>XHTML 1.0 Basic</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>XHTML 1.1</string>
+                        </property>
+                    </item>
                     <property name="name">
                         <cstring>DTEPselect</cstring>
                     </property>
@@ -340,6 +350,12 @@ xhtml1strict='&lt;?xml version="1.0" encoding="@ComboMetachar"?&gt;
 xhtml1frameset='&lt;?xml version="1.0" encoding="@ComboMetachar"?&gt;
 &lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd"&gt;'
 
+xhtml1basic='&lt;?xml version="1.0" encoding="@ComboMetachar"?&gt;
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.0//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic10.dtd"&gt;'
+
+xhtml11='&lt;?xml version="1.0" encoding="@ComboMetachar"?&gt;
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"&gt;'
+
 ################################
 # Set the DTD based on user selection
 
@@ -362,6 +378,12 @@ case "@widgetText" in
 "XHTML 1.0 Frameset" )
 	DTD="$xhtml1frameset"
 ;;
+"XHTML 1.0 Basic" )
+	DTD="$xhtml1basic"
+;;
+"XHTML 1.1" )
+	DTD="$xhtml11"
+;;
 * )
 	echo "No Match"
 ;;
@@ -375,7 +397,7 @@ esac
                         <cstring>CBHead</cstring>
                     </property>
                     <property name="text">
-                        <string>Head area</string>
+                        <string>Head &amp;area</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>
@@ -403,7 +425,7 @@ echo '&lt;/head&gt;'</string>
                         <cstring>CBCVS</cstring>
                     </property>
                     <property name="text">
-                        <string>CVS tag in comment</string>
+                        <string>CVS tag &amp;in comment</string>
                     </property>
                     <property name="associations" stdset="0">
                         <stringlist>
@@ -443,7 +465,7 @@ echo '&lt;/head&gt;'</string>
                                 <cstring>CBMetaAuthor</cstring>
                             </property>
                             <property name="text">
-                                <string>Meta author:</string>
+                                <string>&amp;Meta author:</string>
                             </property>
                             <property name="associations" stdset="0">
                                 <stringlist>
@@ -473,7 +495,7 @@ echo '&lt;/head&gt;'</string>
                                 <cstring>CBStyleArea</cstring>
                             </property>
                             <property name="text">
-                                <string>Style area</string>
+                                <string>St&amp;yle area</string>
                             </property>
                             <property name="associations" stdset="0">
                                 <stringlist>
@@ -694,7 +716,7 @@ echo "$PADDING&lt;/style&gt;"</string>
                                 <cstring>CBBasedir</cstring>
                             </property>
                             <property name="text">
-                                <string>Base directory:</string>
+                                <string>&amp;Base directory:</string>
                             </property>
                             <property name="associations" stdset="0">
                                 <stringlist>
@@ -709,7 +731,7 @@ echo "$PADDING&lt;/style&gt;"</string>
                                 <cstring>CBMetaQuanta</cstring>
                             </property>
                             <property name="text">
-                                <string>Meta Quanta</string>
+                                <string>Meta &amp;Quanta</string>
                             </property>
                             <property name="checked">
                                 <bool>true</bool>
@@ -727,7 +749,7 @@ echo "$PADDING&lt;/style&gt;"</string>
                                 <cstring>CBMetaKeywords</cstring>
                             </property>
                             <property name="text">
-                                <string>Meta keywords:</string>
+                                <string>Meta &amp;keywords:</string>
                             </property>
                             <property name="associations" stdset="0">
                                 <stringlist>
@@ -744,7 +766,7 @@ echo "\"$TAGEND"</string>
                                 <cstring>CBStyle</cstring>
                             </property>
                             <property name="text">
-                                <string>Linked style sheet:</string>
+                                <string>Li&amp;nked style sheet:</string>
                             </property>
                             <property name="associations" stdset="0">
                                 <stringlist>
@@ -793,7 +815,7 @@ echo "\"$TAGEND"</string>
                                 <cstring>CBJavascript</cstring>
                             </property>
                             <property name="text">
-                                <string>JavaScript area</string>
+                                <string>&amp;JavaScript area</string>
                             </property>
                             <property name="associations" stdset="0">
                                 <stringlist>
