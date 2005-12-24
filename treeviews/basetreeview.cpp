@@ -1212,7 +1212,7 @@ void BaseTreeView::slotCreateFile()
     KTempFile *tempFile = new KTempFile(tmpDir);
     tempFile->setAutoDelete(true);
     tempFile->close();
-    if (QuantaNetAccess::copy(KURL::fromPathOrURL(tempFile->name()), url, this));
+    if (QuantaNetAccess::copy(KURL::fromPathOrURL(tempFile->name()), url, this))
     {
       emit openFile(url);
     }

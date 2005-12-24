@@ -541,7 +541,7 @@ void htmlDocumentProperties::accept()
 		finalURL = url.url();
 		if (url.protocol() == view->document()->url().protocol())
 			finalURL.remove(0, url.protocol().length() + 1);
-		if(linkNode->tag->attributeValue("rel").lower() != "stylesheet");
+		if(linkNode->tag->attributeValue("rel").lower() != "stylesheet")
 			linkNode->tag->editAttribute("rel", "stylesheet");
 		linkNode->tag->editAttribute("href", finalURL);
 		linkNode->tag->setCleanStrBuilt(false);
