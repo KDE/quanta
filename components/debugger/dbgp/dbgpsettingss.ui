@@ -185,7 +185,7 @@
                                     </sizepolicy>
                                 </property>
                                 <property name="toolTip" stdset="0">
-                                    <string>See 'Whats this" for available variables</string>
+                                    <string>See "What's This?" for available variables</string>
                                 </property>
                                 <property name="whatsThis" stdset="0">
                                     <string>%afn - Filename of the current script
@@ -354,7 +354,7 @@
                                     </sizepolicy>
                                 </property>
                                 <property name="toolTip" stdset="0">
-                                    <string>See 'Whats this" for available variables</string>
+                                    <string>See "What's This?" for available variables</string>
                                 </property>
                                 <property name="whatsThis" stdset="0">
                                     <string>Path to the profiler output

@@ -235,7 +235,7 @@
                 <bool>false</bool>
             </property>
             <property name="toolTip" stdset="0">
-                <string>Keep the password in a file. DANGEROUS! Read the What's This text.</string>
+                <string>Keep the password in a file. DANGEROUS! Read the "What's This?" text.</string>
             </property>
             <property name="whatsThis" stdset="0">
                 <string>&lt;qt&gt;If you check this box, the password will be saved in the local Quanta configuration file, so every time you start Quanta and load this project, the password will be loaded and you don't have to enter it. Altough the local configuration file is readable only by you and the password
