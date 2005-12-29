@@ -76,7 +76,7 @@ void TeamMembersDlg::slotAddMember()
         } else
         if (nickName.isEmpty())
         {
-           KMessageBox::error(this, i18n("The nickname cannot be empty as it is used as an unique identifier."));
+           KMessageBox::error(this, i18n("The nickname cannot be empty as it is used as a unique identifier."));
            addDlg.show();
         } else
         if (!checkDuplicates(0L, name, nickName, email, role, task, subProject))
@@ -146,7 +146,7 @@ void TeamMembersDlg::slotEditMember()
         } else
          if (nickName.isEmpty())
         {
-           KMessageBox::error(this, i18n("The nickname cannot be empty as it is used as an unique identifier."));
+           KMessageBox::error(this, i18n("The nickname cannot be empty as it is used as a unique identifier."));
            editDlg.show();
         } else
        if (!checkDuplicates(item, name, nickName, email, role, task, subProject))

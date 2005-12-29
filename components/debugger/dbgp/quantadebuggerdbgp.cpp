@@ -910,7 +910,7 @@ void QuantaDebuggerDBGp::propertySetResponse( const QDomNode & setnode)
 {
   if(attribute(setnode, "success") == "0")
   {
-    debuggerInterface()->showStatus(i18n("Unable to set value of variable!"), true);
+    debuggerInterface()->showStatus(i18n("Unable to set value of variable."), true);
   }
 }
 
