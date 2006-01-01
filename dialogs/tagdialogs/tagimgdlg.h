@@ -3,7 +3,7 @@
                              -------------------
     begin                : Sat Nov 27 1999
     copyright            : (C) 1999 by Yacovlev Alexander & Dmitry Poplavsky
-                           (C) 2002 Andras Mantia
+                           (C) 2002, 2006 Andras Mantia
     email                : pdima@mail.univ.kiev.ua, amantia@kde.org
  ***************************************************************************/
 
@@ -28,6 +28,7 @@
 //Generated area. DO NOT EDIT!!!(end)
 
 #include "tagwidget.h"
+#include "qtag.h"
 
 class PictureView;
 class QSpinBox;
@@ -40,7 +41,7 @@ class QImage;
 class TagImgDlg : public QWidget, TagWidget {
    Q_OBJECT
 public: 
-  TagImgDlg(QWidget *parent=0, const char *name=0);
+  TagImgDlg(const DTDStruct *dtd, QWidget *parent=0, const char *name=0);
   ~TagImgDlg();
 
 public:
@@ -73,6 +74,7 @@ private:
   QImage *img;
   QString imgFileName;
   bool isTmpFile;
+  const DTDStruct *m_dtd;
 
 public slots: // Public slots
   /** Choose new image */

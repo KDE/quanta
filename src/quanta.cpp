@@ -863,8 +863,6 @@ void QuantaApp::slotInsertTag(const KURL& url, DirInfo dirInfo)
           imgTag += QuantaCommon::quoteAttributeValue(width);
           imgTag += QuantaCommon::attrCase(" height=");
           imgTag += QuantaCommon::quoteAttributeValue(height);
-          imgTag += QuantaCommon::attrCase(" border=");
-          imgTag += QuantaCommon::quoteAttributeValue(QString("%1").arg(0));
           if (w->currentDTD(true)->singleTagStyle == "xml")
             imgTag += " />";
           else

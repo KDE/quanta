@@ -148,7 +148,7 @@ void TagDialog::parseTag()
     QDomDocument doc;
     if (dtdTag->name().lower() == "img") //NOTE: HTML specific code!
     {
-       mainDlg = new TagImgDlg( this);
+       mainDlg = new TagImgDlg(dtdTag->parentDTD, this);
       ((TagImgDlg *)mainDlg)->writeAttributes( dict );
     }
     //read the tag file it is available

@@ -3,7 +3,7 @@
                              -------------------
     begin                : Sat Nov 27 1999
     copyright            : (C) 1999 by Yacovlev Alexander & Dmitry Poplavsky
-                           (C) 2002 Andras Mantia
+                           (C) 2002, 2006 Andras Mantia
     email                : pdima@mail.univ.kiev.ua, amantia@kde.org
  ***************************************************************************/
 
@@ -22,7 +22,6 @@
 //kde includes
 #include <kapplication.h>
 #include <klocale.h>
-#include <kiconloader.h>
 #include <kio/netaccess.h>
 #include <kfiledialog.h>
 #include <kurl.h>
@@ -35,19 +34,16 @@
 #include "tagimgdlg.h"
 #include "tagimgdlg.moc"
 
-static const char *align[] = { "", "left", "right", "top", "bottom", "middle",0};
 
-TagImgDlg::TagImgDlg(QWidget *parent, const char *name)
+TagImgDlg::TagImgDlg(const DTDStruct *dtd, QWidget *parent, const char *name)
   : QWidget(parent,name), TagWidget(parent,name)
 {
+  m_dtd = dtd;
   img = 0L;
   isTmpFile = false;
   setCaption(name);
   initDialog();
 
-  buttonImgSource->setPixmap( SmallIcon("fileopen") );
-  buttonRecalcImgSize->setPixmap( SmallIcon("reload") );
-  comboAlign           ->insertStrList(align);
 
   connect( buttonImgSource, SIGNAL(clicked()), this, SLOT(slotFileSelect()) );
   connect( buttonRecalcImgSize, SIGNAL(clicked()), this, SLOT(slotRecalcImgSize()) );
@@ -82,7 +78,7 @@ void TagImgDlg::slotImageSet(const KURL& imageURL)
   widgetImg->slotSetImage(imgFileName);
   
   img = new QImage(imgFileName);
-  if (!img->isNull())
+  if (!img->isNull() && lineWidth && lineHeight)
   {
     QString s;
     s.setNum(img->width());
@@ -95,7 +91,7 @@ void TagImgDlg::slotImageSet(const KURL& imageURL)
 /** recalculate image size */
 void TagImgDlg::slotRecalcImgSize()
 {
-  if (img) {
+  if (img && lineWidth && lineHeight) {
     QString s;
     s.setNum( img->width() );
     lineWidth->setText( s );
@@ -130,12 +126,18 @@ void TagImgDlg::readAttributes( QDict<QString> *d )
 
   updateDict("src",   lineImgSource );
   updateDict("alt",   lineAltText );
-  updateDict("width", lineWidth );
-  updateDict("height",lineHeight );
-  updateDict("hspace",lineHSpace );
-  updateDict("vspace",lineVSpace );
-  updateDict("align", comboAlign );
-  updateDict("border",spinBorder );
+  if (lineWidth)
+    updateDict("width", lineWidth );
+  if (lineHeight)
+    updateDict("height",lineHeight );
+  if (lineHSpace)
+    updateDict("hspace",lineHSpace );
+  if (lineVSpace)
+    updateDict("vspace",lineVSpace );
+  if (comboAlign)
+    updateDict("align", comboAlign );
+  if (spinBorder)
+    updateDict("border",spinBorder );
 }
 
 void TagImgDlg::writeAttributes( QDict<QString> *d )
@@ -151,11 +153,18 @@ void TagImgDlg::writeAttributes( QDict<QString> *d )
     url = QExtFileInfo::toAbsolute(url, baseURL);
     slotImageSet( url );
   }
-  if (( t=d->find("alt") ))     setValue(*t, lineAltText);
-  if (( t=d->find("width") ))   setValue(*t, lineWidth);
-  if (( t=d->find("height") ))  setValue(*t, lineHeight);
-  if (( t=d->find("hspace") ))  setValue(*t, lineHSpace);
-  if (( t=d->find("vspace") ))  setValue(*t, lineVSpace);
-  if (( t=d->find("align") ))   setValue(*t, comboAlign);
-  if (( t=d->find("border") ))  setValue(*t, spinBorder);
+  if ( (t=d->find("alt")) )
+    setValue(*t, lineAltText);
+  if ( (t=d->find("width")) && lineWidth )
+    setValue(*t, lineWidth);
+  if ( (t=d->find("height")) && lineHeight )
+    setValue(*t, lineHeight);
+  if ( (t=d->find("hspace")) && lineHSpace)
+    setValue(*t, lineHSpace);
+  if ( (t=d->find("vspace")) && lineVSpace )
+    setValue(*t, lineVSpace);
+  if ( (t=d->find("align")) && comboAlign )
+    setValue(*t, comboAlign);
+  if ( (t=d->find("border")) && spinBorder )
+    setValue(*t, spinBorder);
 }
