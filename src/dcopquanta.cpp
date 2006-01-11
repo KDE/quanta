@@ -31,6 +31,7 @@ DCOPQuanta::DCOPQuanta() : DCOPObject("QuantaIf")
 
 QStringList DCOPQuanta::selectors(const QString& tag)
 {
+  const QRegExp rx("\\.|\\#|\\:");
   QStringList selectorList;
   GroupElementMapList::Iterator it;
   for ( it = globalGroupMap.begin(); it != globalGroupMap.end(); ++it )
@@ -39,8 +40,11 @@ QStringList DCOPQuanta::selectors(const QString& tag)
     if (key.startsWith("Selectors|"))
     {
       QString selectorName = key.mid(10);
+      int index = selectorName.find(':');
+      if (index != -1)
+        selectorName = selectorName.mid(0, index);
       QString tmpStr;
-      int index = selectorName.find(QRegExp("\\.|\\#|\\:"));
+      index = selectorName.find(rx);
       if (index != -1)
       {
         tmpStr = selectorName.left(index).lower();
@@ -50,7 +54,9 @@ QStringList DCOPQuanta::selectors(const QString& tag)
       }
       if (tmpStr.isEmpty() || tag.lower() == tmpStr || tmpStr == "*")
       {
-        selectorList << selectorName.mid(index + 1).replace('.',' ');
+        tmpStr = selectorName.mid(index + 1).replace('.',' ');
+        if (!tmpStr.isEmpty() && !selectorList.contains(tmpStr))
+          selectorList << tmpStr;
       }
      }
   }
