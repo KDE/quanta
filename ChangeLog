@@ -11,6 +11,7 @@ Version 3.5.1 (Release date: xx-01-2006; Started 30-29-2005):
         - set the DTEP of the document to the one selected in the Quick Start dialog [#118814]
         - don't have two Close actions [#118448]
         - don't show CSS pseudo-classes in autocompletion for the class attribute [#119373]
+        - avoid deadlock when loading the DTEPs
 
  - improvements:
         - add XHTML 1.1 and XHTML 1.0 Basic to the quickstart dialog [#118813]

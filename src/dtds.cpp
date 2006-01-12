@@ -253,9 +253,10 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
   //quantaApp->slotEnableIdleTimer(idleTimerStatus);
   emit enableIdleTimer(true);
   QString tmpStr;
-  for ( KURL::List::Iterator it_f = files.begin(); it_f != files.end(); ++it_f )
+  KURL::List::ConstIterator end_f = files.constEnd();
+  for ( KURL::List::ConstIterator it_f = files.constBegin(); it_f != end_f; ++it_f )
   {
-    tmpStr = (*it_f).fileName();
+    tmpStr = (*it_f).path(-1);
     if (!tmpStr.isEmpty())
     {
       tmpStr.prepend(dirName);
