@@ -1098,8 +1098,8 @@ QValueList<KTextEditor::CompletionEntry>* Document::getGroupCompletions(Node *no
       {
         if (elementList[i]->parentNode == 0L || elementList[i]->global)
         {
-          completion.text = it.key().section('|', -1);
-          completions->append( completion );
+          completion.text = it.key().section('|', -1).stripWhiteSpace();
+          completions->append(completion);
           break;
         } else
         {
@@ -1110,8 +1110,8 @@ QValueList<KTextEditor::CompletionEntry>* Document::getGroupCompletions(Node *no
           }
           if (n == elementList[i]->parentNode)
           {
-            completion.text = it.key().section('|', -1);
-            completions->append( completion );
+            completion.text = it.key().section('|', -1).stripWhiteSpace();
+            completions->append(completion);
             break;
           }
         }
@@ -1128,8 +1128,8 @@ QValueList<KTextEditor::CompletionEntry>* Document::getGroupCompletions(Node *no
     {
       if (list[i].startsWith(word) && list[i] != word)
       {
-        completion.text = list[i];
-        completions->append( completion );
+        completion.text = list[i].stripWhiteSpace();
+        completions->append(completion);
       }
     }
   }
@@ -1300,7 +1300,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(int line, 
       completion.text = QuantaCommon::tagCase(tagNameList[i]);
     else
       completion.text = tagNameList[i];
-    completion.text = completion.text.left(completion.text.length() - 10);
+    completion.text = completion.text.left(completion.text.length() - 10).stripWhiteSpace();
     completion.comment = comments[tagNameList[i]];
     completions->append( completion );
   }
