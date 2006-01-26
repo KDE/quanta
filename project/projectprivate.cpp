@@ -1431,7 +1431,7 @@ void ProjectPrivate::slotAddFiles()
         CopyTo *dlg = new CopyTo( baseURL);
         connect(dlg, SIGNAL(deleteDialog(CopyTo*)),
                     SLOT  (slotDeleteCopytoDlg(CopyTo*)));
-        connect(dlg, SIGNAL(addFilesToProject(const KURL::List&)),
+        connect(dlg, SIGNAL(addFilesToProject(const KURL::List&)), parent,
                     SLOT  (slotInsertFilesAfterCopying(const KURL::List&)));
         list = dlg->copy( list, destination );
         return;
@@ -1441,17 +1441,17 @@ void ProjectPrivate::slotAddFiles()
       }
     }
 
-  insertFiles( list );
-  //Take care also of the selected dirs
-  KURL dirURL;
-  for (uint i = 0; i < list.count(); i++)
-  {
-    dirURL = list[i];
-    if (dirURL.path().endsWith("/"))
+    insertFiles( list );
+    //Take care also of the selected dirs
+    KURL dirURL;
+    for (uint i = 0; i < list.count(); i++)
     {
-      insertFiles( dirURL, "*" );
+      dirURL = list[i];
+      if (dirURL.path().endsWith("/"))
+      {
+        insertFiles( dirURL, "*" );
+      }
     }
-  }
 
     parent->reloadTree( &(m_projectFiles), false, QStringList());
   }
@@ -1467,10 +1467,10 @@ void ProjectPrivate::slotDeleteCopytoDlg(CopyTo *dlg)
 
 void ProjectPrivate::slotAddDirectory()
 {
-KURL url = KURL();
-url = KFileDialog::getExistingURL(baseURL.prettyURL(), m_mainWindow,
-                i18n("Insert Folder in Project"));
-parent->slotAddDirectory(url);
+  KURL url = KURL();
+  url = KFileDialog::getExistingURL(baseURL.prettyURL(), m_mainWindow,
+                  i18n("Insert Folder in Project"));
+  parent->slotAddDirectory(url);
 }
 
 

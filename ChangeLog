@@ -3,6 +3,7 @@ This files contains the changes since Quanta 2.0 until the current 3.5.x series.
 Version 3.5.2 (Release date: xx-02-2006; Started 23-01-2005):
  - bugfixes:
         - allow opening of read-only remote files, like from http:// [#120632]
+        - fix insertion of files to the project [#120629]
 
 Version 3.5.1 (Release date: 23-01-2006; Started 30-11-2005):
  - bugfixes:
