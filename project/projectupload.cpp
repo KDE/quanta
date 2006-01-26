@@ -369,7 +369,7 @@ void ProjectUpload::startUpload()
     buttonUpload->setEnabled(false);
     KURL u = *baseUrl;
     u.setPath(u.protocol() == "file" ? "/" : "");
-    if (QExtFileInfo::exists(u, this))
+    if (QExtFileInfo::exists(u, false, this))
     {
       upload();
       return;

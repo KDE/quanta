@@ -465,7 +465,7 @@ void TemplatesTreeView::contentsDropEvent(QDropEvent *e)
         *(tempFile->textStream()) << content;
         tempFile->close();
         bool proceed = true;
-        if (QExtFileInfo::exists(url, this))
+        if (QExtFileInfo::exists(url, false, this))
         {
           proceed = KMessageBox::warningContinueCancel(this, i18n("<qt>The file <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)),i18n("Overwrite"), i18n("Overwrite")) == KMessageBox::Continue;
         }

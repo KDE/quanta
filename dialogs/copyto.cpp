@@ -46,7 +46,7 @@ KURL CopyTo::copy(const KURL& urlToCopy, const KURL& destination)
   targetDirURL.adjustPath(1);
 
   bool doCopy = true;
-  if (!QExtFileInfo::exists(targetDirURL, 0L))
+  if (!QExtFileInfo::exists(targetDirURL, false, 0L))
   {
     doCopy = QExtFileInfo::createDir(targetDirURL, 0L);
   }
@@ -91,7 +91,7 @@ KURL::List CopyTo::copy(const KURL::List& sourceList, const KURL& destination )
     targetDirURL = destination;
   }
   bool doCopy = true;
-  if (!QExtFileInfo::exists(targetDirURL, 0L))
+  if (!QExtFileInfo::exists(targetDirURL, false, 0L))
   {
     doCopy = QExtFileInfo::createDir(targetDirURL, 0L);
   }

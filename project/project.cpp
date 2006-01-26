@@ -243,7 +243,7 @@ void Project::slotOpenProject(const KURL &url)
   kdDebug(24000) << "Open recent project: " << url <<endl;
   if ( !url.isEmpty() )
   {
-    if ( !QExtFileInfo::exists(url, d->m_mainWindow) )
+    if ( !QExtFileInfo::exists(url, true, d->m_mainWindow) )
     {
       emit hideSplash();
       if (KMessageBox::questionYesNo(d->m_mainWindow,

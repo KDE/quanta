@@ -110,21 +110,21 @@ QString PathMapper::mapServerPathToLocal(const QString &serverpath)
   newpath = translate(serverpath, m_serverBasedir, m_localBasedir);
   
   // Check if this dir is matched by the basedirs
-  if(QExtFileInfo::exists(newpath, 0L))
+  if(QExtFileInfo::exists(newpath, true, 0L))
     return newpath;
 
   // Check if any previous mappings fit...
   for (unsigned int cnt = 0; cnt < m_serverlist.count(); cnt++ )
   {
     newpath = translate(serverpath, m_serverlist[cnt], m_locallist[cnt]);
-    if(QExtFileInfo::exists(newpath, 0L))
+    if(QExtFileInfo::exists(newpath, true, 0L))
       return newpath;
   }
   
   // If the basedirs didnt match, check if the file exists,
   // otherwise scan through the mapping history or show the
   // mapping dialog
-  if(!QExtFileInfo::exists(serverpath, 0L))
+  if(!QExtFileInfo::exists(serverpath, true, 0L))
   {
     PathMapperDialog pmdlg(serverpath, PathMapperDialog::ServerToLocal);
     for (unsigned int cnt = 0; cnt < m_serverlist.count(); cnt++ )

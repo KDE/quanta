@@ -112,7 +112,7 @@ KURL::List ProjectNewLocal::projectFiles()
 {
   KURL::List list;
 
-  if (!QExtFileInfo::exists(baseURL, this) ||
+  if (!QExtFileInfo::exists(baseURL, false, this) ||
       !baseURL.path().endsWith("/")  ||
       !checkInsert->isChecked() ) return list;
 

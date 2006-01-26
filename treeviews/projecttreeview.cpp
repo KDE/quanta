@@ -397,7 +397,7 @@ void ProjectTreeView::slotCreateFile()
       url.setPath(url.path() + "/" + fileName);
     else
       url.setPath(url.directory() + "/" + fileName);
-    if (QExtFileInfo::exists(url, this))
+    if (QExtFileInfo::exists(url, false, this))
     {
       KMessageBox::error(this, i18n("<qt>Cannot create file, because a file named <b>%1</b> already exists.</qt>").arg(fileName), i18n("Error Creating File"));
       return;

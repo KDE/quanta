@@ -387,7 +387,7 @@ void QuantaApp::slotFileOpen(const KURL &url, const QString& encoding, bool read
 
 void QuantaApp::slotFileOpenRecent(const KURL &url)
 {
-  if (!QExtFileInfo::exists(url, this))
+  if (!QExtFileInfo::exists(url, true, this))
   {
     if (KMessageBox::questionYesNo(this,
         i18n("The file %1 does not exist.\n Do you want to remove it from the list?").arg(url.prettyURL(0, KURL::StripFileProtocol)), QString::null, KStdGuiItem::del(), i18n("Keep"))
@@ -2072,7 +2072,7 @@ void QuantaApp::slotContextMenuAboutToShow()
 
 void QuantaApp::slotOpenFileUnderCursor()
 {
-  if (QExtFileInfo::exists(urlUnderCursor, this))
+  if (QExtFileInfo::exists(urlUnderCursor, true, this))
   {
     if (QuantaCommon::checkMimeGroup(urlUnderCursor, "text" ))
     {
@@ -3186,7 +3186,7 @@ void QuantaApp::slotLoadToolbarForDTD(const QString& dtdName)
       //first load the local version if it exists
       fileName = locateLocal("data", resourceDir + "toolbars/"+newDtd->toolbars[i]);
       QuantaCommon::setUrl(url, fileName);
-      if (QExtFileInfo::exists(url, this))
+      if (QExtFileInfo::exists(url, true, this))
       {
         //showToolbarFile(url);
         newToolbars += url;
@@ -3194,7 +3194,7 @@ void QuantaApp::slotLoadToolbarForDTD(const QString& dtdName)
       {
         fileName = qConfig.globalDataDir + resourceDir + "toolbars/"+newDtd->toolbars[i];
         QuantaCommon::setUrl(url, fileName);
-        if (QExtFileInfo::exists(url, this))
+        if (QExtFileInfo::exists(url, true, this))
         {
           newToolbars += url;//  showToolbarFile(url);
         }

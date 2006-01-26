@@ -78,7 +78,7 @@ void PathMapperDialog::slotPathsChanged()
   // Indicate wether local file exists
   if(m_direction == ServerToLocal)
   {
-    if(QExtFileInfo::exists(translated, this))
+    if(QExtFileInfo::exists(translated, true, this))
       ledTranslationExists->setColor(Qt::green);
     else
       ledTranslationExists->setColor(Qt::red);

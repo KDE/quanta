@@ -1026,7 +1026,7 @@ void BaseTreeView::doRename(KFileTreeViewItem* kftvi, const QString & newName)
   if ( oldURL != newURL )
   {
     bool proceed = true;
-    if (QExtFileInfo::exists(newURL, this))
+    if (QExtFileInfo::exists(newURL, false, this))
     {
       proceed = KMessageBox::warningContinueCancel(this, i18n("<qt>The file <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>").arg(newURL.prettyURL(0, KURL::StripFileProtocol)),i18n("Overwrite"), i18n("Overwrite")) == KMessageBox::Continue;
     }
@@ -1204,7 +1204,7 @@ void BaseTreeView::slotCreateFile()
       url.setPath(url.path() + "/" + fileName);
     else
       url.setPath(url.directory() + "/" + fileName);
-    if (QExtFileInfo::exists(url, this))
+    if (QExtFileInfo::exists(url, false, this))
     {
       KMessageBox::error(this, i18n("<qt>Cannot create file, because a file named <b>%1</b> already exists.</qt>").arg(fileName), i18n("Error Creating File"));
       return;

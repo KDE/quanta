@@ -677,7 +677,7 @@ bool QuantaCommon::checkOverwrite(const KURL& url, QWidget *window)
 {
   bool result = true;
 
-  if (QExtFileInfo::exists(url, window))
+  if (QExtFileInfo::exists(url, false, window))
   {
     if (KMessageBox::warningContinueCancel(window,
             i18n( "<qt>The file <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>" ).arg(url.prettyURL(0, KURL::StripFileProtocol)), QString::null, i18n("Overwrite")) == KMessageBox::Cancel)
