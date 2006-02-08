@@ -700,17 +700,23 @@ void ActionConfigDialog::slotShortcutCaptured(const KShortcut &shortcut)
     shortcutText2 = shortcutText.mid(pos + 1);
     shortcutText = shortcutText.left(pos);
   }
+  QString s = shortcutText;
+  s.replace('+', "\\+");
+  QRegExp shortcutRx("\\(" + s + "\\)|" + s + "$|" + s + ";");
+  s = shortcutText2;
+  s.replace('+', "\\+");
+  QRegExp shortcutRx2("\\(" + s + "\\)|" + s + "$|" + s + ";");
   QString global;
 //check for conflicting global shortcuts
   QMap<QString, QString>::Iterator it;
   for ( it = globalShortcuts.begin(); it != globalShortcuts.end(); ++it )
   {
-    if (it.data().contains(shortcutText))
+    if (it.data().contains(shortcutRx))
     {
       global = it.key();
       break;
     }
-    if (!shortcutText2.isEmpty() && it.data().contains(shortcutText2))
+    if (!shortcutText2.isEmpty() && it.data().contains(shortcutRx2))
     {
       shortcutText = shortcutText2;
       global = it.key();
@@ -727,12 +733,12 @@ void ActionConfigDialog::slotShortcutCaptured(const KShortcut &shortcut)
         for (uint i = 0; i < ac->count(); i++)
         {
           KAction *action = ac->action(i);
-          if (action != currentAction && action->shortcut().toString().contains(shortcutText))
+          if (action != currentAction && action->shortcut().toString().contains(shortcutRx))
           {
             global = action->text();
             break;
           }
-          if (!shortcutText2.isEmpty() && action != currentAction &&  action->shortcut().toString().contains(shortcutText))
+          if (!shortcutText2.isEmpty() && action != currentAction &&  action->shortcut().toString().contains(shortcutRx))
           {
             shortcutText = shortcutText2;
             global = action->text();
