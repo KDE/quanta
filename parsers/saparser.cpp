@@ -669,6 +669,8 @@ Node* SAParser::parseArea(const AreaStruct &specialArea,
   }
   m_write->addDTEP(s_dtd->name);
   s_searchForSpecialAreas = (s_dtd->specialAreas.count() > 0);
+  if (s_parentNode && s_parentNode->tag->type == Tag::Comment)
+    s_searchForSpecialAreas = false;
   s_col = s_startCol + areaStartString.length();
   s_line = s_startLine;
   s_textLine = m_write->text(s_startLine, 0, s_startLine, m_write->editIf->lineLength(s_startLine));
