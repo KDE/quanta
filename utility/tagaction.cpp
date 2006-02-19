@@ -77,6 +77,7 @@ TagAction::TagAction( QDomElement *element, KMainWindow *parentMainWindow, bool 
                     KShortcut(element->attribute("shortcut")), 0, 0, parentMainWindow->actionCollection(), element->attribute("name")),
   m_toggle(toggle)
 {
+  setToolTip(element->attribute("tooltip"));
   m_parentMainWindow = parentMainWindow;
   m_modified = false;
   m_useInputFile = false;
