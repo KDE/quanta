@@ -658,7 +658,7 @@ void ActionConfigDialog::saveCurrentAction()
         if (listItem)
         {
           QListViewItem *after = listItem->firstChild();
-          while ( after && after->nextSibling() && after->nextSibling()->depth()!=0 )
+          while ( after && (!after->nextSibling() || (after->nextSibling() && after->nextSibling()->depth()!=0 ) ))
           {
             if (after->text(2) == currentAction->name())
             {
