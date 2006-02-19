@@ -4,6 +4,7 @@ Encoding=UTF-8
 Name=DBGp
 Name[x-test]=xxDBGpxx
 Comment=DBGp debugger plugin, see http://xdebug.org
+Comment[fr]=Module de débogage DBGp, consultez http://xdebug.org
 Comment[x-test]=xxDBGp debugger plugin, see http://xdebug.orgxx
 Icon=kdbg
 ServiceTypes=Quanta/Debugger
