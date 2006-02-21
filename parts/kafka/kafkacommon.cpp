@@ -1660,6 +1660,8 @@ bool kafkaCommon::DTDinsertNode(Node *newNode, Node *startNode, int startOffset,
     //Then we "split" the lastValidStartParent - startNode subtree into two : the first part is untouched
     // and the second will be surrounded by the new Node. Same thing for endNode.
     node = startNode;
+    if (!startNode) //Andras: it can happen.
+      return false;
     parentNode = startNode->parent;
     while(lastValidStartParent && parentNode && parentNode != lastValidStartParent)
     {
