@@ -205,7 +205,7 @@ void ProjectNewLocal::slotAddFiles()
         connect(dlg, SIGNAL(addFilesToProject(const KURL::List&)),
                      SLOT  (slotInsertFilesAfterCopying(const KURL::List&)));
         connect(dlg, SIGNAL(deleteDialog(CopyTo *)),
-                     SLOT  (slotDeleteCopyToDlg(CopyTo *)));
+                     SLOT  (slotDeleteCopyToDialog(CopyTo *)));
         list = dlg->copy( list, destination );
         return;
       } else
@@ -266,7 +266,7 @@ void ProjectNewLocal::slotAddFolder()
         connect(dlg, SIGNAL(addFilesToProject(const KURL::List&)),
                      SLOT  (slotInsertFilesAfterCopying(const KURL::List&)));
         connect(dlg, SIGNAL(deleteDialog(CopyTo *)),
-                     SLOT  (slotDeleteCopyToDlg(CopyTo *)));
+                     SLOT  (slotDeleteCopyToDialog(CopyTo *)));
         dirURL = dlg->copy(dirURL, destination);
         return;
       } else
@@ -296,13 +296,16 @@ void ProjectNewLocal::slotInsertFilesAfterCopying(const KURL::List& a_urlList)
     KURL::List files = QExtFileInfo::allFilesRelative(dirURL, "*", this);
     progressBar->setTotalSteps(files.count() - 1);
     progressBar->setTextEnabled(true);
+    KURL u;
     for (uint i = 0; i < files.count(); i++)
     {
-      if ( !fileList.contains(files[i]))
+      u = files[i];
+      if ( !fileList.contains(u) && u.path() != "." && u.path() != ".." )
       {
-        fileList.append(files[i]);
-        QListViewItem *it = listView->addItem(files[i], KFileItem(KFileItem::Unknown, KFileItem::Unknown, KURL()));
-        if (it)  it->setSelected(true);
+        fileList.append(u);
+        QListViewItem *it = listView->addItem(u, KFileItem(KFileItem::Unknown, KFileItem::Unknown, KURL()));
+        if (it)
+          it->setSelected(true);
         progressBar->setValue(i);
       }
     }

@@ -66,7 +66,9 @@ KURL CopyTo::copy(const KURL& urlToCopy, const KURL& destination)
     connect( job, SIGNAL(result( KIO::Job *)),
                   SLOT  (slotResult( KIO::Job *)));
 
-    m_destList.append(destURL);
+    QString path = destURL.path();
+    if (path != "." && path != "..")
+      m_destList.append(destURL);
   }
 
   return destURL;
@@ -99,6 +101,7 @@ KURL::List CopyTo::copy(const KURL::List& sourceList, const KURL& destination )
   KIO::UDSEntry entry;
   if (doCopy)
   {
+    QString path;
     for (uint i = 0; i < sourceList.count(); i++)
     {
       KURL srcURL = sourceList[i];
@@ -108,7 +111,9 @@ KURL::List CopyTo::copy(const KURL::List& sourceList, const KURL& destination )
       u.setPath(targetDirURL.path(1) + srcURL.fileName());
       if (item.isDir())
          u.adjustPath(1);
-      m_destList.append(u);
+      path = u.path();
+      if (path != "." && path != "..")
+        m_destList.append(u);
     }
 
     KIO::CopyJob *job = KIO::copy(sourceList, targetDirURL, true);

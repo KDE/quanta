@@ -461,10 +461,10 @@ private:
 	 */
 	KafkaDocument(QWidget *parent, QWidget *widgetParent, const char *name);
 
-    QMap<QString, QString> decodedChars;
+  QMap<QString, QString> decodedChars;
 	QMap<QString, QString> encodedChars;
 	QPtrDict<kNodeAttrs> domNodeProps;
-	KafkaWidget *m_kafkaPart;
+	QGuardedPtr<KafkaWidget> m_kafkaPart;
 	Document *m_currentDoc;
 	bool _docLoaded;
 

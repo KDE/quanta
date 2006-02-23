@@ -15,6 +15,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#define HEAVY_DEBUG 1
+
 #include <dom/dom_node.h>
 #include <dom/dom_exception.h>
 #include <dom/dom_string.h>
