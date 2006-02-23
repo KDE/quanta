@@ -1810,6 +1810,9 @@ DOM::Node KafkaWidget::getPrevNode(DOM::Node _node, bool &goingTowardsRootNode, 
 
 void KafkaWidget::updateToggableTagActions(/*const DOM::Node &domNode, long offset*/) const
 {
+//Andras: Disable toggle behavior. It is just too broken.
+return;
+
     quantaApp->removeAllTagActionPoolItems();
     
     NodeSelectionInd selection;

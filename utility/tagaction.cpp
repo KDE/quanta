@@ -75,7 +75,8 @@ int MyProcess::commSetupDoneC()
 TagAction::TagAction( QDomElement *element, KMainWindow *parentMainWindow, bool toggle)
     : KToggleAction(element->attribute("text").isEmpty() ? QString("") : i18n(element->attribute("text").utf8()), 
                     KShortcut(element->attribute("shortcut")), 0, 0, parentMainWindow->actionCollection(), element->attribute("name")),
-  m_toggle(toggle)
+ //disable toggle now m_toggle(toggle)
+  m_toggle(false)
 {
   setToolTip(element->attribute("tooltip"));
   m_parentMainWindow = parentMainWindow;
@@ -953,8 +954,12 @@ void TagAction::slotActivated()
 {
 //     if(m_toggle)
     KToggleAction::slotActivated();
+//Andras: Disable toggle behavior. It is just too broken.
+    setChecked(false);
+/*
     if(!m_toggle)
         setChecked(!isChecked());
+*/
 }
 
 void TagAction::slotProcessExited(KProcess *process)

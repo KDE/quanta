@@ -949,7 +949,8 @@ void QuantaInit::initActions()
         while( !n.isNull() ) {
           QDomElement e = n.toElement(); // try to convert the node to an element.
           if( !e.isNull() ) { // the node was really an element.
-              new TagAction(&e, m_quanta);
+              bool toggable = (e.attribute("toggable", "") == "true");
+              new TagAction(&e, m_quanta, toggable);
           }
           n = n.nextSibling();
         }
@@ -975,7 +976,8 @@ void QuantaInit::initActions()
             if( !e.isNull())
             { // the node was really an element.
                 delete ac->action(e.attribute("name"));
-                new TagAction(&e, m_quanta);
+                bool toggable = (e.attribute("toggable", "") == "true");
+                new TagAction(&e, m_quanta, toggable);
             }
             n = n.nextSibling();
           }
