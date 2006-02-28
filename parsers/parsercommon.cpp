@@ -220,7 +220,7 @@ void coutTree(Node *node, int indent)
             else
                     output+= node->tag->tagStr().replace('\n'," ");
             kdDebug(24000) << output <<" (" << node->tag->type << ") at pos " <<
-                    bLine << ":" << bCol << " - " << eLine << ":" << eCol << " This: "<< node << " Parent: " << node->parent << " Prev: " << node->prev << " Next: " << node->next << " Child: " << node->child << endl;
+                    bLine << ":" << bCol << " - " << eLine << ":" << eCol << " This: "<< node << " Parent: " << node->parent << " Prev: " << node->prev << " Next: " << node->next << " Child: " << node->child << " Tag:" << node->tag << endl;
  /*           for(j = 0; j < node->tag->attrCount(); j++)
             {
                     kdDebug(24000)<< " attr" << j << " " <<

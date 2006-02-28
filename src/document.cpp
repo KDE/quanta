@@ -194,6 +194,7 @@ Document::Document(KTextEditor::Document *doc,
   dtdName = Project::ref()->defaultDTD();
   reparseEnabled = true;
   repaintEnabled = true;
+  delayedTextChangedEnabled = true;
   docUndoRedo = new undoRedo(this);
 
   //each document remember wheter it has a entry in quantarc
@@ -2264,11 +2265,13 @@ bool Document::evenQuotes(const QString &text)
 void Document::slotTextChanged()
 {
   changed = true;
-  if (reparseEnabled)
+  parser->setSAParserEnabled(false); //disable special area parsing if the text was changed.
+  if (reparseEnabled && delayedTextChangedEnabled)
   {
     kdDebug(24000) << "Delayed text changed called." << endl;
     //delay the handling, otherwise we may get wrong values for (line,column)
     QTimer::singleShot(0, this, SLOT(slotDelayedTextChanged()));
+    delayedTextChangedEnabled = false;  
   }
 }
 
@@ -2276,13 +2279,14 @@ void Document::slotDelayedTextChanged(bool forced)
 {
    if (!forced && typingInProgress)
    {
-    // kdDebug(24000) << "Reparsing delayed!" << endl;
+     kdDebug(24000) << "Reparsing delayed!" << endl;
      parser->setParsingNeeded(true);
      QTimer::singleShot(1000, this, SLOT(slotDelayedTextChanged()));
      reparseEnabled = false;
+     delayedTextChangedEnabled = false;	
      return;
    }
-
+	
     uint line, column;
     QString oldNodeName = "";
     Node *node;
@@ -2311,7 +2315,7 @@ void Document::slotDelayedTextChanged(bool forced)
         }
       }
     }
-
+    parser->setSAParserEnabled(true); //enable special area parsing, it was disabled in slotTextChanged()
     baseNode = parser->rebuild(this);
     if (qConfig.updateClosingTags && currentNode)
     {
@@ -2408,6 +2412,7 @@ void Document::slotDelayedTextChanged(bool forced)
       StructTreeView::ref()->slotReparse(this, baseNode , qConfig.expandLevel);
     }
     reparseEnabled = true;
+   delayedTextChangedEnabled = true;	
 }
 
 /** Returns list of values for attribute */

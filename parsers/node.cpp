@@ -52,7 +52,7 @@ Node::~Node()
   //If it has crashed here, the Node doesn't exist anymore.
   // If it has crashed the next line, it is a GroupElements bug.
   //FIXME: Andras: or it is a VPL undo/redo bug...
-/*  Q_ASSERT(tag); */ //disable as on some distros it causes a real assert=crash
+  Q_ASSERT(tag);  //disable as on some distros it causes a real assert=crash
   if (tag)
     tag->setCleanStrBuilt(false);
 

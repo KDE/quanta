@@ -43,8 +43,11 @@
 #include "quantacommon.h"
 #include "document.h"
 #include "qextfileinfo.h"
+
+
 #include "kafkacommon.h"
 #include "undoredo.h"
+
 #include "dtds.h"
 #include "structtreetag.h"
 
@@ -515,10 +518,12 @@ Node *Parser::parse(Document *w, bool force)
  // clearGroups();
   if (baseNode)
   {
-    delete baseNode;
-    baseNode = 0L;
-    m_node = 0L;
+     //kdDebug(24000) << "baseNode before delete = " << baseNode << endl;
+     //ParserCommon::coutTree(m_node, 2);
+     delete baseNode;
+     baseNode = 0L;
   }
+  m_node = 0L;
 
   Node *lastNode;
   write = w;
@@ -657,6 +662,7 @@ Node *Parser::nodeAt(int line, int col, bool findDeepest, bool exact)
 }
 void Parser::logReparse(NodeModifsSet *modifs, Document *w)
 {
+
   NodeModif *modif;
   if (baseNode)
   {
@@ -796,6 +802,7 @@ void Parser::deleteNodes(Node *firstNode, Node *lastNode, NodeModifsSet *modifs)
   Node *node = firstNode;
   bool closesPrevious = false;
   NodeModif *modif;
+
   //delete all the nodes between the firstNode and lastNode
   while (node && node != lastNode )
   {
@@ -829,8 +836,11 @@ void Parser::deleteNodes(Node *firstNode, Node *lastNode, NodeModifsSet *modifs)
     node->parent = 0L;
     node->next = 0L;
     node->prev = 0L;
+    
+    //delete node;
     node->detachNode();
     modif->setNode(node);
+
     node = 0L;
     i = 0;
     j = 0;
@@ -936,9 +946,11 @@ void Parser::deleteNodes(Node *firstNode, Node *lastNode, NodeModifsSet *modifs)
 
       }
     }
+
     modif->setChildrenMovedUp(i);
     modif->setNeighboursMovedDown(j);
     modifs->addNodeModif(modif);
+
     node = nextNode;
 
  //   kdDebug(24000)<< "Node removed!" << endl;
@@ -960,7 +972,6 @@ Node *Parser::rebuild(Document *w)
 
  NodeModifsSet *modifs = new NodeModifsSet();
  NodeModif *modif;
-
 
 // kdDebug(24000)<< "Node *Parser::rebuild()" << endl;
  modifs->setIsModifiedAfter(w->isModified());
@@ -989,9 +1000,10 @@ Node *Parser::rebuild(Document *w)
         (area.eLine < area.bLine || (area.eLine == area.bLine && area.eCol <= area.bCol)) //something strange has happened, like moving text with D&D inside the editor
       )
    {
-     logReparse(modifs, w);
-     m_saParser->setParsingEnabled(saParserEnabled);
-     return parse(w);
+      logReparse(modifs, w);
+       m_saParser->setParsingEnabled(saParserEnabled);
+       Node *n = parse(w, true);
+       return n;
    }
 
    kdDebug(24000) << QString("Invalid area: %1,%2,%3,%4").arg(area.bLine).arg(area.bCol).arg(area.eLine).arg(area.eCol) << "\n";
@@ -1071,6 +1083,7 @@ Node *Parser::rebuild(Document *w)
         modif = new NodeModif();
         modif->setType(NodeModif::NodeRemoved);
         modif->setLocation(kafkaCommon::getLocation(lastNode));
+
         if(lastInserted->prev)
           lastInserted->prev->next = 0L;
         if(lastInserted->parent && lastInserted->parent->child == lastInserted)
@@ -1079,6 +1092,8 @@ Node *Parser::rebuild(Document *w)
         lastInserted->next = 0L;
         lastInserted->parent = 0L;
         lastInserted->child = 0L;
+//        delete lastInserted;
+
         lastInserted->detachNode();
         modif->setNode(lastInserted);
         modifs->addNodeModif(modif);
@@ -1185,6 +1200,7 @@ Node *Parser::rebuild(Document *w)
 /*   kdDebug(24000)<< "END"<< endl;
    ParserCommon::coutTree(baseNode,  2);
    kdDebug(24000)<< "************* End User Modification *****************" << endl;*/
+
    w->docUndoRedo->addNewModifsSet(modifs, undoRedo::SourceModif);
  }
   kdDebug(24000) << "Rebuild: " << t.elapsed() << " ms \n";

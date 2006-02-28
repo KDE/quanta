@@ -734,6 +734,7 @@ Node *SAParser::parsingDone()
         Node *n = m_lastParsedNode;
         if (m_useNext)
         {
+//           kdDebug(24000) << "m_lastParsedNode: " << m_lastParsedNode << endl;
           n->next = s_next;
           if (s_next)
             s_next->prev = n;
@@ -827,6 +828,7 @@ Node *SAParser::parsingDone()
   {
       if (m_useNext && s_currentNode)
       {
+//           kdDebug(24000) << "s_currentNode: " << s_currentNode << endl;
         Node *n = s_currentNode;
         n->next = s_next;
         if (s_next)

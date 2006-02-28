@@ -310,6 +310,7 @@ private:
   bool hintRequested;
   bool reparseEnabled;
   bool repaintEnabled;
+  bool delayedTextChangedEnabled;
   /** True if the document is dirty (has been modified outside). */
   bool m_dirty;
   QString m_md5sum;
