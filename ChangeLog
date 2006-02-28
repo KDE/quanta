@@ -7,6 +7,11 @@ Version 3.5.2 (Release date: xx-02-2006; Started 23-01-2005):
         - fix detection of existing shortcuts
         - ignore special areas inside comments
         - set the user action tooltips correctly
+        - fix random crashing when editing PHP files [#121280, #122475, #122252, #120983]
+
+  - improvements:
+        - less reparsing of the document while typing is in progress
+
 
 Version 3.5.1 (Release date: 23-01-2006; Started 30-11-2005):
  - bugfixes:
