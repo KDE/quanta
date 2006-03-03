@@ -225,6 +225,8 @@ void ScriptTreeView::slotAssignAction()
     QString execApp = infoOptionValue(infoURL, "interpreter");
     if (execApp.isEmpty())
         execApp = "sh";
+    url.setPath(url.path().replace(locateLocal("data", resourceDir + "scripts/"), "%scriptdir/"));
+    url.setPath(url.path().replace(qConfig.globalDataDir + resourceDir + "scripts/", "%scriptdir/"));
     emit assignActionToScript(url, execApp);
   }
 }
