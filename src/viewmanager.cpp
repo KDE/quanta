@@ -153,6 +153,17 @@ void ViewManager::createNewDocument()
 bool ViewManager::removeView(QuantaView *view, bool force, bool createNew)
 {
     if (!view) return false;
+    int noOfViews = 0;
+    QValueList<Document*> list;
+    KMdiIterator<KMdiChildView*> *it = quantaApp->createIterator();
+    for (it->first(); !it->isDone(); it->next())
+    {
+      noOfViews++;
+      if (noOfViews > 1)
+        break;
+    }
+    if (noOfViews == 1 && view->document()->isUntitled() && !view->document()->isModified())
+      return true;
     bool mayRemove = view->mayRemove();
     if (mayRemove)
     {
