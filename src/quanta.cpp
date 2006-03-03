@@ -1106,6 +1106,14 @@ void QuantaApp::slotNewToolbarConfig()
   ToolbarTabWidget::ref()->setCurrentPage(currentPageIndex);
 }
 
+void QuantaApp::slotShowMenuBar()
+{
+  if (menuBar()->isVisible())
+    menuBar()->hide();
+  else
+    menuBar()->show();
+}
+
 void QuantaApp::slotOptionsConfigureActions()
 {
   ActionConfigDialog dlg(m_toolbarList, this, "actions_config_dlg", true);

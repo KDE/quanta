@@ -888,6 +888,7 @@ void QuantaInit::initActions()
                         m_quanta, SLOT( slotOptionsConfigureActions() ),
                         ac, "configure_actions" );
 
+    KStdAction::showMenubar(m_quanta, SLOT(slotShowMenuBar()), ac, "options_show_menubar");
     KStdAction::keyBindings(m_quanta, SLOT( slotOptionsConfigureKeys() ), ac, "configure_shortcuts");
     KStdAction::configureToolbars( m_quanta, SLOT( slotOptionsConfigureToolbars() ), ac, "options_configure_toolbars");
     KStdAction::preferences(m_quanta, SLOT( slotOptions() ), ac, "general_options");

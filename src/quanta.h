@@ -306,8 +306,9 @@ public slots:
   void slotContextMenuAboutToShow();
 
   /** options slots */
+  void slotShowMenuBar();
   void slotPreviewOptions();
-  void slotOptions();
+  void slotOptions(); 
   void slotOptionsConfigureKeys();
   void slotOptionsConfigureToolbars();
   void slotNewToolbarConfig();
