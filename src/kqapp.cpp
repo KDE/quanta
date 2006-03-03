@@ -91,14 +91,9 @@ KQApplication::KQApplication()
      config->setGroup("General Options");
     if (config->readBoolEntry("Show Splash", true) && args->isSet("logo"))
      {
-#if KDE_VERSION < KDE_MAKE_VERSION(3,2,3)
-      splash = new KSplash();
-      connect(quantaApp, SIGNAL(showSplash(bool)), splash, SLOT(setShown(bool)));
-#else
       sp = new KSplashScreen(UserIcon(SPLASH_PICTURE));
       sp->show();
       connect(quantaApp, SIGNAL(showSplash(bool)), sp, SLOT(setShown(bool)));
-#endif
       QTimer::singleShot(10*1000, this, SLOT(slotSplashTimeout()));
      }
      setMainWidget(quantaApp);
@@ -167,14 +162,9 @@ int KQUniqueApplication::newInstance()
     config->setGroup("General Options");
     if (config->readBoolEntry("Show Splash", true) && args->isSet("logo"))
     {
-#if KDE_VERSION < KDE_MAKE_VERSION(3,2,3)
-      splash = new KSplash();
-      connect(quantaApp, SIGNAL(showSplash(bool)), splash, SLOT(setShown(bool)));
-#else
       sp = new KSplashScreen(UserIcon(SPLASH_PICTURE));
       sp->show();
       connect(quantaApp, SIGNAL(showSplash(bool)), sp, SLOT(setShown(bool)));
-#endif
       QTimer::singleShot(10*1000, this, SLOT(slotSplashTimeout()));
     }
     setMainWidget(quantaApp);

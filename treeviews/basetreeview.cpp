@@ -171,11 +171,6 @@ BaseTreeBranch::BaseTreeBranch(KFileTreeView *parent, const KURL& url,
   setAutoUpdate(localFile);
   setChildRecurse(false);
 
-  // TODO drop this if support for KDE 3.2 is dropped
-#if KDE_VERSION < KDE_MAKE_VERSION(3,2,90)
-  connect(this, SIGNAL(refreshItems(const KFileItemList&)),
-          this, SLOT   (slotRefreshItems(const KFileItemList&)));
-#endif
 }
 
 bool BaseTreeBranch::matchesFilter(const KFileItem *item) const
@@ -203,28 +198,6 @@ KFileTreeViewItem* BaseTreeBranch::createTreeViewItem(KFileTreeViewItem *parent,
   else
     kdDebug(24000) << "createTreeViewItem: Have no parent" << endl;
   return tvi;
-}
-
-// TODO drop this if support for KDE 3.2 is dropped
-void BaseTreeBranch::slotRefreshItems(const KFileItemList& list)
-{
-#if KDE_VERSION < KDE_MAKE_VERSION(3,2,90)
-  KFileItemListIterator it( list );
-  KFileItem *currItem;
-  KFileTreeViewItem *item = 0;
-
-  while ( (currItem = it.current()) != 0 )
-  {
-      item = findTVIByURL(currItem->url());
-      if (item) {
-          item->setPixmap(0, item->fileItem()->pixmap( KIcon::SizeSmall ));
-          item->setText( 0, item->fileItem()->text());
-      }
-      ++it;
-  }
-#else
-  Q_UNUSED(list);
-#endif
 }
 
 

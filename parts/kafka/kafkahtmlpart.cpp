@@ -1148,7 +1148,6 @@ void KafkaWidget::keyDelete()
         _nodeNext = getNextNode(_nodeNext, _goingTowardsRootNode);
     }
 
-#if KDE_VERSION >= KDE_MAKE_VERSION(3,2,1)
     //If the node which is defining the cursor position has been deleted (thus changed)
     if(false && singleNodeDeleted)
     {
@@ -1195,7 +1194,6 @@ void KafkaWidget::keyDelete()
     /**m_currentNode = _node;
     setCaretPosition(m_currentNode, (long)d->m_cursorOffset);
     emit domNodeNewCursorPos(m_currentNode, d->m_cursorOffset, m_modifs);*/
-#endif
 }
 
 void KafkaWidget::keyBackspace()

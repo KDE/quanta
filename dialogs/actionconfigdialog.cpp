@@ -788,15 +788,14 @@ void ActionConfigDialog::slotNewAction()
   el.setAttribute( "icon", "ball" );
 
   currentAction = new TagAction(&el, m_mainWindow);
-#if KDE_IS_VERSION(3,2,90)
-    //add the actions to every toolbar xmlguiclient
-    QDictIterator<ToolbarEntry> it(m_toolbarList);
-    while (it.current())
-    {
-      it.current()->guiClient->actionCollection()->insert(currentAction);
-      ++it;
-    }
-#endif
+
+  //add the actions to every toolbar xmlguiclient
+  QDictIterator<ToolbarEntry> it(m_toolbarList);
+  while (it.current())
+  {
+    it.current()->guiClient->actionCollection()->insert(currentAction);
+    ++it;
+  }
 
   selectedShortcut = KShortcut();
   static_cast<TagAction*>(currentAction)->setModified(true);

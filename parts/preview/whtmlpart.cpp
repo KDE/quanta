@@ -178,11 +178,7 @@ void WHTMLPart::slotViewSource()
   QString tempFileName = QFileInfo(*(tmpFile->file())).filePath();
   tmpFile->setAutoDelete(true);
   tmpFile->textStream()->setCodec(QTextCodec::codecForName("utf8"));
-#if KDE_IS_VERSION(3,3,92)  
   *(tmpFile->textStream()) << documentSource();
-#else
-  *(tmpFile->textStream()) << document().toString().string();
-#endif  
   tmpFile->close();
   tempFileList.append(tmpFile);
   emit showPreview(false);

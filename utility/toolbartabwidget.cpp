@@ -60,9 +60,7 @@ ToolbarTabWidget::ToolbarTabWidget(QWidget * parent, const char * name, WFlags f
           parent, SLOT(slotNewAction()));
   connect(this, SIGNAL(addToolbar()),
           parent, SLOT(slotAddToolbar()));
-#if KDE_VERSION > KDE_MAKE_VERSION(3,3,90)
   KAcceleratorManager::setNoAccel(this);
-#endif
 }
 
 void ToolbarTabWidget::insertTab(QWidget *child, const QString &label, const QString &id)

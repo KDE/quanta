@@ -11,6 +11,7 @@ Version 3.5.2 (Release date: xx-02-2006; Started 23-01-2005):
 
   - improvements:
         - less reparsing of the document while typing is in progress
+        - open dropped files [#102605]
 
 
 Version 3.5.1 (Release date: 23-01-2006; Started 30-11-2005):

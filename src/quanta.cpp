@@ -91,6 +91,7 @@
 #include <kparts/part.h>
 #include <kstringhandler.h>
 #include <kstdguiitem.h>
+#include <kurldrag.h>
 
 #include <ktexteditor/editinterface.h>
 #include <ktexteditor/encodinginterface.h>
@@ -256,6 +257,8 @@ QuantaApp::QuantaApp(int mdiMode) : DCOPObject("WindowManagerIf"), KMdiMainFrm( 
   cursorLine = 0;
   cursorCol = 0;
   emit eventHappened("quanta_start", QDateTime::currentDateTime().toString(Qt::ISODate), QString::null);
+  setAcceptDrops(true);
+  tabWidget()->installEventFilter(this);
 }
 
 
@@ -1011,22 +1014,7 @@ void QuantaApp::slotConfigureToolbars(const QString& defaultToolbar)
  currentPageIndex = ToolbarTabWidget::ref()->currentPageIndex();
  QDomNodeList nodeList;
  ToolbarEntry *p_toolbar = 0L;
-#if KDE_VERSION < KDE_MAKE_VERSION(3,2,90)
- QDictIterator<ToolbarEntry> iter(m_toolbarList);
- for( ; iter.current(); ++iter )
- {
-   p_toolbar = iter.current();
-   //Rename the _Separator_ tags back to Separator, so they will appear
-   //in the config dialog
-   nodeList = p_toolbar->guiClient->domDocument().elementsByTagName("_Separator_");
-   for (uint i = 0; i < nodeList.count(); i++)
-   {
-     nodeList.item(i).toElement().setTagName("Separator");
-   }
-   KXMLGUIFactory::saveConfigFile(p_toolbar->guiClient->domDocument(),
-        p_toolbar->guiClient->xmlFile(), p_toolbar->guiClient->instance());
- }
-#endif
+
   saveMainWindowSettings(KGlobal::config(), autoSaveGroup());
   KEditToolbar *dlg;
   if (defaultToolbar)
@@ -1772,29 +1760,7 @@ QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomEleme
     QuantaToolBar *tb = new QuantaToolBar(w, element.attribute("name"), true, true);
     tb->loadState(element);
     tb->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
-#if KDE_VERSION < KDE_MAKE_VERSION(3,2,90)
-    KAction *action;
-    QDomNode node = element.firstChild();
-    while (!node.isNull())
-    {
-      if (node.nodeName() == "Action")
-      {
-        action = actionCollection()->action(node.toElement().attribute("name") );
-        if (action)
-        {
-          action->plug(tb);
-        }
-      }
-//FIXME: This is the first part of the hack to disable automatic separator drawing
-//If I do not rename the Separator tag, then all the seaprators will appear before
-//the buttons. :-(
-      if (node.nodeName() == "Separator")
-          node.toElement().setTagName("_Separator_");
-      if (node.nodeName() == "_Separator_")
-        tb->insertLineSeparator();
-      node = node.nextSibling();
-    }
-#endif
+
   //kdDebug(24000) << "tb->iconSize() " << tb->iconSize() << endl;
    if (toolbarTab->iconText() == KToolBar::IconTextBottom)
    {
@@ -2236,7 +2202,6 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
         TagAction *tagAction = new TagAction(&el, this, toggable);
         m_tagActions.append(tagAction);
 
-#if KDE_IS_VERSION(3,2,90)
      //add the actions to every toolbar xmlguiclient
       QDictIterator<ToolbarEntry> it(m_toolbarList);
       while (it.current())
@@ -2244,7 +2209,6 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
         it.current()->guiClient->actionCollection()->insert(tagAction);
         ++it;
       }
-#endif
 
     //Compatility code (read the action shortcuts from quantaui.rc)
     //TODO: Remove after upgrade from 3.1 is not supported
@@ -2263,11 +2227,9 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
     }
    }
 
-#if KDE_IS_VERSION(3,2,90)
    //add all actions to the xmlguiclient of this toolbar
    for (uint i = 0 ; i < actionCollection()->count(); i++)
       toolbarGUI->actionCollection()->insert(actionCollection()->action(i));
-#endif
 
    guiFactory()->addClient(toolbarGUI);
 
@@ -2601,11 +2563,9 @@ void QuantaApp::slotAddToolbar()
 
   ToolbarXMLGUI * toolbarGUI = new ToolbarXMLGUI(tempFile->name());
 
-#if KDE_IS_VERSION(3,2,90)
 //add all actions to the xmlguiclient of this toolbar
   for (uint i = 0 ; i < actionCollection()->count(); i++)
      toolbarGUI->actionCollection()->insert(actionCollection()->action(i));
-#endif
 
   guiFactory()->addClient(toolbarGUI);
   ToolbarTabWidget::ref()->setCurrentPage(ToolbarTabWidget::ref()->count()-1);
@@ -2909,9 +2869,7 @@ void QuantaApp::slotDeleteAction(KAction *action)
         break;
       }
     }
-#if KDE_IS_VERSION(3,2,90)
     guiClient->actionCollection()->take(action);
-#endif
   }
   action->unplugAll();
   delete action;
@@ -3369,7 +3327,6 @@ bool QuantaApp::slotRemoveToolbar(const QString& a_name)
          if (dynamic_cast<TagAction*>(action) &&
              !dynamic_cast<TagAction*>(action)->isModified())
          {
-#if KDE_IS_VERSION(3,2,90)
              //take out the action from every toolbar's xmlguiclient
              //this avoid a crash when removing a toolbar
             QDictIterator<ToolbarEntry> it(m_toolbarList);
@@ -3378,7 +3335,6 @@ bool QuantaApp::slotRemoveToolbar(const QString& a_name)
               it.current()->guiClient->actionCollection()->take(action);
               ++it;
             }
-#endif
             delete action;
          }
        }
@@ -4759,11 +4715,7 @@ void QuantaApp::slotViewInKFM()
   {
     KProcess *show = new KProcess(this);
     KURL url = Project::ref()->urlWithPrefix(w->url());
-#if KDE_IS_VERSION(3,2,90)
     *show << "kfmclient" << "newTab" << url.url();
-#else
-    *show << "kfmclient" << "openURL" << url.url();
-#endif
     show->start( KProcess::DontCare );
   }
 }
@@ -5061,11 +5013,8 @@ void QuantaApp::slotShowVPLOnly()
 
 void QuantaApp::initTabWidget(bool closeButtonsOnly)
 {
-#if KDE_IS_VERSION(3,2,90) || defined(COMPAT_KMDI)
     KTabWidget *tab = tabWidget();
-#if KDE_VERSION > KDE_MAKE_VERSION(3,3,90)
     KAcceleratorManager::setNoAccel(tab);
-#endif
     if (tab)
     {
         if (qConfig.showCloseButtons == "ShowAlways")
@@ -5091,7 +5040,6 @@ void QuantaApp::initTabWidget(bool closeButtonsOnly)
     }
     if (!closeButtonsOnly)
       setToolviewStyle(qConfig.toolviewTabs);
-#endif
 }
 
 void QuantaApp::slotFileClosed(Document *w)
@@ -5347,5 +5295,23 @@ void QuantaApp::slotAnnotate()
   }
 }
 
+void QuantaApp::dropEvent(QDropEvent* event)
+{
+  if (KURLDrag::canDecode(event))
+  {
+    KURL::List fileList;
+    KURLDrag::decode(event, fileList);
+
+    if(fileList.empty())
+      return;
+
+    slotFileOpen(fileList, defaultEncoding());
+  }
+}
+
+void QuantaApp::dragEnterEvent( QDragEnterEvent *e)
+{
+  e->accept();
+}
 
 #include "quanta.moc"

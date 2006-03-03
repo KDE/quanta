@@ -1170,13 +1170,6 @@ bool QuantaView::saveDocument(const KURL& url)
       }
       return false;
     }
-#if KDE_VERSION < KDE_MAKE_VERSION(3,2,90) // TODO: remove if support for 3.2 is dropped
-    // notify the treeviews
-    KDirNotify_stub allDirNotify("*", "KDirNotify*");
-    KURL dirUrl( url );
-    dirUrl.setPath( dirUrl.directory() );
-    allDirNotify.FilesAdded( dirUrl );
-#endif
   }
   // everything went fine
   if (oldURL != m_document->url())

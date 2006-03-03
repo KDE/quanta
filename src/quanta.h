@@ -426,7 +426,7 @@ public slots:
 
   // Get saved position of dock
   KDockWidget::DockPosition prevDockPosition(QWidget* dock, KDockWidget::DockPosition def);
-  
+ 
 protected slots:
   void slotDockWidgetHasUndocked(KDockWidget *widget);
   void slotPreviewBeingClosed();
@@ -549,6 +549,9 @@ protected:
   /** Makes the tabwidget look and behave like we want. If closeButtonsOnly is true,
   only the close button behavior is changed. */
   void initTabWidget(bool closeButtonsOnly = false);
+
+  void dropEvent(QDropEvent *ev);
+  void dragEnterEvent ( QDragEnterEvent * );
 
   void resetDockLayout();
 
