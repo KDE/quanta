@@ -416,6 +416,12 @@ void ProjectPrivate::loadProjectXML()
     sessionNode.toElement().setAttribute("previewPrefix", previewPrefix.url());
     sessionNode.toElement().setAttribute("usePersistentBookmarks", m_persistentBookmarks ? "1" : "0");
   }
+  no = sessionNode.namedItem("itemcursorpositions");
+  if (no.isNull())
+  {
+    el = m_sessionDom.createElement("itemcursorpositions");
+    sessionNode.appendChild(el);
+  } 
   m_eventsEnabled = projectNode.toElement().attribute("enableEvents", "true") == "true";
   m_defaultEncoding = projectNode.toElement().attribute("encoding");
   if (m_defaultEncoding.isEmpty())

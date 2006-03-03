@@ -242,6 +242,7 @@ void QuantaDoc::slotOpeningCompleted(const KURL &url)
   if (url.isLocalFile())
     quantaApp->debugger()->fileOpened(url.prettyURL(0, KURL::StripFileProtocol));
   quantaApp->slotNewStatus();
+  Project::ref()->loadCursorPosition(w->url(), dynamic_cast<KTextEditor::ViewCursorInterface*>(w->view()));
   emit eventHappened("after_open", url.url(), QString::null);
   
   bool flag = TagActionManager::canIndentDTD(w->defaultDTD()->name);

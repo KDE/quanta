@@ -157,6 +157,8 @@ bool QuantaView::mayRemove()
         fileWatcher->removeFile(url.path());
 //        kdDebug(24000) << "removeFile[mayRemove]: " << url.path() << endl;
       }
+      Project::ref()->saveCursorPosition(url, dynamic_cast<KTextEditor::ViewCursorInterface*>(m_document->view()));
+    
       quantaApp->menuBar()->activateItemAt(-1);
       quantaApp->guiFactory()->removeClient(m_document->view());
       emit eventHappened("after_close", url.url(), QString::null);

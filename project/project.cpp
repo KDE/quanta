@@ -42,6 +42,9 @@
 #include <kurlrequester.h>
 #include <kurlrequesterdlg.h>
 
+#include <ktexteditor/markinterface.h>
+#include <ktexteditor/viewcursorinterface.h>
+
 // application headers
 #include "copyto.h"
 #include "document.h"
@@ -1320,5 +1323,68 @@ void Project::saveBookmarks(const KURL &url, KTextEditor::MarkInterface *markIf)
   }
 }
 
+void Project::loadCursorPosition(const KURL &url, KTextEditor::ViewCursorInterface *viewCursorIf)
+{
+  if (!viewCursorIf || !hasProject() || !contains(url))
+    return;
+  QDomNodeList nl = d->m_sessionDom.elementsByTagName("item");
+  QDomElement el;
+  KURL u = QExtFileInfo::toRelative(url, d->baseURL);
+  for ( uint i = 0; i < nl.count(); i++ )
+  {
+    el = nl.item(i).toElement();
+    if ( el.attribute("url") == QuantaCommon::qUrl(u) )
+    {
+      QString s = el.attribute("line");      
+      uint line, col;
+      bool ok;
+      line = s.toUInt(&ok, 10);
+      if (ok)
+      {
+        s = el.attribute("column");
+        col = s.toUInt(&ok, 10);
+        if (ok)
+         viewCursorIf->setCursorPositionReal(line, col);
+      }
+    }
+    KURL u2 = d->baseURL;
+    QuantaCommon::setUrl(u2, el.attribute("url"));
+    if (!contains(u2))
+    {
+      el.parentNode().removeChild(el);
+    }
+  }
+}
 
+void Project::saveCursorPosition(const KURL &url, KTextEditor::ViewCursorInterface *viewCursorIf)
+{
+  if (!viewCursorIf || !hasProject() || !contains(url))
+    return;
+  QDomNodeList nl = d->m_sessionDom.elementsByTagName("item");
+  QDomElement el;
+  KURL u = QExtFileInfo::toRelative(url, d->baseURL);
+  uint line, col;
+  viewCursorIf->cursorPosition(&line, &col);
+  bool found = false;
+  for ( uint i = 0; i < nl.count(); i++ )
+  {
+    el = nl.item(i).toElement();
+    if ( el.attribute("url") == QuantaCommon::qUrl(u) )
+    {
+      el.setAttribute("line", line);
+      el.setAttribute("column", col);
+      found = true;
+      break;
+    }
+  }
+  if (!found)
+  {
+    el = d->m_sessionDom.createElement("item");
+    el.setAttribute("column", col);
+    el.setAttribute("line", line);
+    el.setAttribute("url", QuantaCommon::qUrl(u));
+    QDomNode no = d->m_sessionDom.firstChild().firstChild().namedItem("itemcursorpositions");
+    no.appendChild(el);   
+  }
+}
 #include "project.moc"

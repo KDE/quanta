@@ -19,13 +19,16 @@
 #define PROJECT_H
 
 #include <qobject.h>
-#include <ktexteditor/markinterface.h>
 
 #include "projecturl.h"
 
 class QDom;
 class ProjectPrivate;
 class ProjectList;
+namespace KTextEditor{
+  class MarkInterface;
+  class ViewCursorInterface;
+};
 struct EventAction;
 typedef  QMap<QString, QValueList<EventAction> > EventActions;
 
@@ -145,6 +148,8 @@ public:
   void saveBookmarks(const KURL &url, KTextEditor::MarkInterface *markIf);
   /** Loads the bookmarks for the url from the project file and sets them in the view*/
   void loadBookmarks(const KURL &url, KTextEditor::MarkInterface *markIf);
+  void saveCursorPosition(const KURL &url, KTextEditor::ViewCursorInterface *viewCursorIf);
+  void loadCursorPosition(const KURL &url, KTextEditor::ViewCursorInterface *viewCursorIf);
 
 public slots:
 
