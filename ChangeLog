@@ -16,6 +16,8 @@ Version 3.5.2 (Release date: xx-02-2006; Started 23-01-2005):
           opened one [#111599]
         - remember cursor position for project documents [#101966]
         - add the standard show/hide menubar action [#113064]
+        - add possibility to limit the number of recent files/projects. No
+          GUI, use "Recent Files Limit" in the [General Options] section [#113309]
 
 
 Version 3.5.1 (Release date: 23-01-2006; Started 30-11-2005):

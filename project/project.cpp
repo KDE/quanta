@@ -160,11 +160,13 @@ void Project::insertFile(const KURL& nameURL, bool repaint )
 }
 
 
-void Project::readConfig (KConfig *config)
+void Project::readConfig(KConfig *config)
 {
   d->config = config;
-
-  config->setGroup  ("Projects");
+  config->setGroup("General Options");
+  int maxRecentItems = config->readNumEntry("Recent Files Limit", 32);
+  d->m_projectRecent->setMaxItems(maxRecentItems);
+  config->setGroup ("Projects");
   d->m_projectRecent->loadEntries(config, "RecentProjects");
 }
 

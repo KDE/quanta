@@ -592,6 +592,8 @@ void QuantaInit::readOptions()
   m_quanta->fileRecent ->loadEntries(m_config);
   qConfig.showHiddenFiles = m_config->readBoolEntry("Show Hidden Files", true);
   qConfig.saveTrees = m_config->readBoolEntry("Save Local Trees", true);
+  int maxRecentItems = m_config->readNumEntry("Recent Files Limit", 32);
+  m_quanta->fileRecent->setMaxItems(maxRecentItems);
 
   m_config->setGroup("Parser options");
   qConfig.showEmptyNodes = m_config->readBoolEntry("Show Empty Nodes", false);
@@ -730,7 +732,6 @@ void QuantaInit::initActions()
 
     m_quanta->fileRecent =  KStdAction::openRecent(m_quanta, SLOT(slotFileOpenRecent(const KURL&)),
                                          ac, "file_open_recent");
-    m_quanta->fileRecent->setMaxItems(32);
     m_quanta->fileRecent->setToolTip(i18n("Open / Open Recent"));
     connect(m_quanta->fileRecent, SIGNAL(activated()), m_quanta, SLOT(slotFileOpen()));
 

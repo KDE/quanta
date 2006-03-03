@@ -94,7 +94,6 @@ void ProjectPrivate::initActions(KActionCollection *ac)
                             ac, "project_open_recent");
   m_projectRecent->setText(i18n("Open Recent Project"));
   m_projectRecent->setIcon("project_open");
-  m_projectRecent->setMaxItems(32);
   m_projectRecent->setToolTip(i18n("Open/Open recent project"));
   connect(m_projectRecent, SIGNAL(activated()), this, SLOT(slotOpenProject()));
 
