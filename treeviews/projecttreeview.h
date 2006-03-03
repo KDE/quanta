@@ -103,7 +103,7 @@ signals: // Signals
   /** No descriptions */
   void showProjectOptions();
   void insertToProject(const KURL&);
-  void uploadSingleURL(const KURL&, bool);
+  void uploadSingleURL(const KURL&, const QString&, bool, bool);
   void loadToolbarFile(const KURL&);
   void uploadProject();
   void changeFileDescription(const KURL& url, const QString& desc);

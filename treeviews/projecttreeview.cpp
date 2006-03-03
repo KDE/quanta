@@ -439,7 +439,7 @@ void ProjectTreeView::slotUploadSingleURL()
   {
     KURL url = currentURL();
     if ( currentKFileTreeViewItem()->isDir() ) url.adjustPath(+1);
-    emit uploadSingleURL(url, false);
+    emit uploadSingleURL(url, "", false, false);
   }
 }
 
@@ -449,7 +449,7 @@ void ProjectTreeView::slotQuickUploadURL()
   {
     KURL url = currentURL();
     if ( currentKFileTreeViewItem()->isDir() ) url.adjustPath(+1);
-    emit uploadSingleURL(url, true);
+    emit uploadSingleURL(url, "", true, false);
   }
 }
 

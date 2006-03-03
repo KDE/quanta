@@ -62,14 +62,14 @@
 #include "qextfileinfo.h"
 #include "resource.h"
 
-ProjectUpload::ProjectUpload(const KURL& url, bool showOnlyProfiles, bool quickUpload, const char* name)
+ProjectUpload::ProjectUpload(const KURL& url, const QString& profileName, bool showOnlyProfiles, bool quickUpload, bool markOnly, const char* name)
   :ProjectUploadS( 0L, name, false, Qt::WDestructiveClose)
 {
     m_quickUpload = quickUpload;
     m_profilesOnly = showOnlyProfiles;
     list->hide();
     m_project = Project::ref();
-    initProjectInfo();
+    initProjectInfo(profileName);
     startUrl = url;
     if (m_profilesOnly)
     {
@@ -81,6 +81,8 @@ ProjectUpload::ProjectUpload(const KURL& url, bool showOnlyProfiles, bool quickU
       setCaption(i18n("Upload Profiles"));
     } else
     {
+      if (markOnly)
+        markAsUploaded->setChecked(true);
       QTimer::singleShot(10, this, SLOT(slotBuildTree()));
       currentItem = 0L;
     }
@@ -93,7 +95,7 @@ ProjectUpload::~ProjectUpload()
   delete baseUrl;
 }
 
-void  ProjectUpload::initProjectInfo()
+void  ProjectUpload::initProjectInfo(const QString& defaultProfile)
 {
   baseUrl = new KURL();
 
@@ -122,7 +124,10 @@ void  ProjectUpload::initProjectInfo()
      m_project->setModified(true);
   } else
   {
-      m_defaultProfile = m_profilesNode.toElement().attribute("defaultProfile");
+      if (defaultProfile.isEmpty())
+        m_defaultProfile = m_profilesNode.toElement().attribute("defaultProfile");
+      else
+        m_defaultProfile = defaultProfile;
       QDomNodeList profileList = m_profilesNode.toElement().elementsByTagName("profile");
       QDomElement e;
       QString s;

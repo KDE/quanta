@@ -24,7 +24,7 @@
 
 void UploadProfilesPage::buttonEditProfiles_clicked()
 {
-   ProjectUpload* dlg = new ProjectUpload(KURL(), true);
+   ProjectUpload* dlg = new ProjectUpload(KURL(), "", true);
    dlg->exec();
    profileLabel->setText(dlg->defaultProfile());
    delete dlg;

@@ -45,7 +45,7 @@ public:
   If quickUpload is true, the upload starts immediately without checking
   for modifications or confirmation from the user. The url will be
   uploaded to the default profile */
-  ProjectUpload(const KURL& url, bool showOnlyProfiles = false, bool quickUpload = false, const char * name = 0);
+  ProjectUpload(const KURL& url, const QString& profileName = QString::null, bool showOnlyProfiles = false, bool quickUpload = false, bool markOnly = false, const char * name = 0);
   ~ProjectUpload();
   QString defaultProfile();
 
@@ -89,7 +89,7 @@ private:
   void setProfileTooltip();
   void loadRemoteUploadInfo();
   void saveRemoteUploadInfo();
-  void initProjectInfo();
+  void initProjectInfo(const QString& defaultProfile);
   void initBaseUrl(); /// Reads the current profile setting and initialize the baseUrl from it
 
   KURL::List modified; // modified files

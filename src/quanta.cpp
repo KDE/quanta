@@ -3809,7 +3809,7 @@ void QuantaApp::slotUploadFile(QuantaView *view)
   bool quick = true;
   if (KMessageBox::questionYesNo(this, i18n("Do you want to review the upload?"), i18n("Enable Quick Upload"), i18n("Review"), i18n("Do Not Review"), "EnableQuickUpload") == KMessageBox::Yes)
     quick = false;
-  Project::ref()->slotUploadURL(view->document()->url(), quick);
+  Project::ref()->slotUploadURL(view->document()->url(), "", quick, false);
 }
 
 
@@ -3872,6 +3872,14 @@ void QuantaApp::addFolderToProject(const QString &url)
   if (Project::ref()->hasProject())
   {
     Project::ref()->slotAddDirectory(KURL::fromPathOrURL(url), true);
+  }
+}
+
+void QuantaApp::uploadURL(const QString &url, const QString& profile, bool markOnly)
+{
+  if (Project::ref()->hasProject())
+  {
+    Project::ref()->slotUploadURL(url, profile, true, markOnly);
   }
 }
 

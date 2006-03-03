@@ -39,6 +39,7 @@ class DCOPWindowManagerIf : virtual public DCOPObject
   virtual QString urlWithPreviewPrefix(const QString &url) = 0;
   virtual void addFileToProject(const QString &url) = 0;
   virtual void addFolderToProject(const QString &url) = 0;
+  virtual void uploadURL(const QString &url, const QString& profile, bool markOnly) = 0;
 };
 
 #endif

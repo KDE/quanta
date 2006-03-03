@@ -156,7 +156,7 @@ public slots:
   void slotOpenProject(const KURL&);
   void slotOptions();
   void slotUpload();
-  void slotUploadURL(const KURL &urlToUpload, bool quickUpload);
+  void slotUploadURL(const KURL &urlToUpload, const QString &profileName, bool quickUpload, bool markOnly);
 
   void slotAddDirectory(const KURL& dirURL, bool showDlg = true);
   void slotInsertFile(const KURL& url);

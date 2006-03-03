@@ -162,7 +162,7 @@ public:
   QString urlWithPreviewPrefix(const QString &url);
   void addFileToProject(const QString &url);
   void addFolderToProject(const QString &url);
-  /** Capture DCOP signals from KXsldbgPart or similar plugin */
+  void uploadURL(const QString &url, const QString& profile, bool markOnly);  /** Capture DCOP signals from KXsldbgPart or similar plugin */
   void newCursorPosition(const QString &file, int lineNumber, int columnNumber);
   void newDebuggerPosition(const QString &file, int lineNumber);
   void openFile(const QString &file, int lineNumber, int columnNumber);
