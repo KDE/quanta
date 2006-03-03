@@ -11,6 +11,8 @@ Version 3.5.2 (Release date: xx-02-2006; Started 23-01-2005):
         - fix a crash when using the attribute tree
         - fix insertion of relative URLs from the attribute tree
         - fix resolving of relative URLs when there are symlinks around
+        - fix addition of local directories to the project (creates weird project
+          error like #122419)
 
   - improvements:
         - less reparsing of the document while typing is in progress
