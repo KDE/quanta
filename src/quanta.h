@@ -217,6 +217,8 @@ public:
   void insertTagActionPoolItem(QString const& action_item);
   void removeTagActionPoolItem(QString const& action_item);
   void removeAllTagActionPoolItems() {m_tagActionPool.clear();}
+  /** Updates the structure and attribute treeview. */
+  void updateTreeViews();
   
   QPtrList<TagAction> const& tagActions() const {return m_tagActions;}
 
@@ -545,8 +547,6 @@ protected:
   /** Saves the toolbar and the actions. Returns the name of the actions file*/
   KURL saveToolbarToFile(const QString& toolbarName,const KURL& destFile);
   void setTitle(const QString&);
-  /** Updates the structure and attribute treeview. */
-  void updateTreeViews();
   /** Makes the tabwidget look and behave like we want. If closeButtonsOnly is true,
   only the close button behavior is changed. */
   void initTabWidget(bool closeButtonsOnly = false);

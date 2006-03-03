@@ -348,7 +348,7 @@ QString AttributeUrlItem::editorText(int)
   url = QExtFileInfo::toRelative(url, baseURL);
   QString s = url.url();
   if (url.protocol() == (static_cast<TagAttributeTree *>(m_listView))->node()->tag->write()->url().protocol())
-    s.remove(0, url.protocol().length() + 1);
+    s.remove(0, url.protocol().length() + 3);
   return s;
 }
 

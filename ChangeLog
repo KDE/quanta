@@ -8,6 +8,9 @@ Version 3.5.2 (Release date: xx-02-2006; Started 23-01-2005):
         - ignore special areas inside comments
         - set the user action tooltips correctly
         - fix random crashing when editing PHP files [#121280, #122475, #122252, #120983]
+        - fix a crash when using the attribute tree
+        - fix insertion of relative URLs from the attribute tree
+        - fix resolving of relative URLs when there are symlinks around
 
   - improvements:
         - less reparsing of the document while typing is in progress

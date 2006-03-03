@@ -550,6 +550,7 @@ void Document::insertText(const QString &a_text, bool adjustCursor, bool reparse
       typingInProgress = false;
       StructTreeView::ref()->slotReparse(this, baseNode , qConfig.expandLevel);
     }
+    quantaApp->updateTreeViews();
   }
 }
 
