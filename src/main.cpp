@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
   KAboutData
     aboutData( QUANTA_PACKAGE, I18N_NOOP("Quanta"),
     QUANTA_VERSION, description, KAboutData::License_GPL_V2,
-    I18N_NOOP("(C) 2000-2006 - The Quanta+ developers"),
+    I18N_NOOP("(C) 2000-2005 - The Quanta+ developers"),
     othertext,
     "http://kdewebdev.org"
     );
