@@ -781,7 +781,7 @@ void ProjectPrivate::slotAcceptCreateProject()
 
       for ( KURL::List::Iterator it = list.begin(); it != list.end(); ++it )
       {
-        url = QExtFileInfo::toRelative(*it, baseURL );
+        url = *it;//QExtFileInfo::toRelative(*it, baseURL );
         el = dom.createElement("item");
         el.setAttribute("url",QuantaCommon::qUrl(url));
         dom.firstChild().firstChild().appendChild( el );
@@ -839,10 +839,10 @@ void ProjectPrivate::slotAcceptCreateProject()
     url = QExtFileInfo::toRelative(toolbarURL, baseURL);
     el.firstChild().setNodeValue(QuantaCommon::qUrl(url));
 
+ /*  saveProject();
     parent->newProjectLoaded(projectName, baseURL, templateURL);
     m_projectFiles.readFromXML(dom, baseURL, templateURL, excludeRx);
-    parent->reloadTree( &(m_projectFiles), true, QStringList() );
-    saveProject();
+    parent->reloadTree( &(m_projectFiles), true, QStringList() );*/
 #if KDE_IS_VERSION(3,4,89)
     m_projectRecent->addURL(projectURL, projectName);
 #else
@@ -851,6 +851,10 @@ void ProjectPrivate::slotAcceptCreateProject()
     m_projectRecent->setCurrentItem(0);
     // remember the project in config
     writeConfig();
+
+    KURL u = projectURL;
+    slotCloseProject();
+    loadProject(u);
   }
 }
 if (errorOccured)
