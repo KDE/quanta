@@ -45,7 +45,7 @@ public slots:
 
   void slotStart();
 
-  QStringList files();
+  KURL::List files();
 
   void slotGetWgetExited(KProcess *);
   void slotGetWgetOutput(KProcess *proc, char *buffer, int buflen);
@@ -66,8 +66,6 @@ private:
   bool start;
 
   KProcess *proc;
-
-  QStringList filesList;
 
 private slots: // Private slots
   /** No descriptions */

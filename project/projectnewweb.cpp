@@ -59,7 +59,6 @@ ProjectNewWeb::ProjectNewWeb(QWidget *parent, const char *name )
            this,         SLOT  (setProtocol(const QString&)));
 
   start = false;
-  filesList.clear();
   KLed1->setState(KLed::Off);
   KLed2->setState(KLed::Off);
 }
@@ -207,17 +206,35 @@ void ProjectNewWeb::slotGetWgetOutput(KProcess *, char *buffer, int buflen)
 
     output = output.remove(0,pos+1);
 
-    filesList.append( basePath + fileName );
-
     KURL u = baseURL;
     QuantaCommon::setUrl(u, fileName);
     listView->addItem(u, KFileItem(KFileItem::Unknown, KFileItem::Unknown, KURL()));
+    filesList.append(u);
   }
 }
 
-QStringList ProjectNewWeb::files()
+KURL::List ProjectNewWeb::files()
 {
-  return filesList;
+   //return fileList;
+  KURL::List r;
+
+  KURL u;
+  QListViewItem *item;
+  QListViewItemIterator it(listView);
+  for ( ; it.current(); ++it )
+  {
+    item = it.current();
+    if (dynamic_cast<UploadTreeFolder*>(item))
+    {
+    u = dynamic_cast<UploadTreeFolder*>(item)->url();
+    } else
+    {
+    u = dynamic_cast<UploadTreeFile*>(item)->url();
+    }
+
+    if (!u.isEmpty()) r.append(u);
+  }
+  return r;
 }
 
 void ProjectNewWeb::resizeEvent ( QResizeEvent *t )

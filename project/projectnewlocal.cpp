@@ -264,7 +264,7 @@ void ProjectNewLocal::slotAddFolder()
       {
         CopyTo *dlg = new CopyTo( baseURL);
         connect(dlg, SIGNAL(addFilesToProject(const KURL::List&)),
-                     SLOT  (slotInsertFilesAfterCopying(const KURL::List&)));
+                     SLOT  (slotInsertFolderAfterCopying(const KURL::List&)));
         connect(dlg, SIGNAL(deleteDialog(CopyTo *)),
                      SLOT  (slotDeleteCopyToDialog(CopyTo *)));
         dirURL = dlg->copy(dirURL, destination);
@@ -285,7 +285,7 @@ void ProjectNewLocal::slotDeleteCopyToDialog(CopyTo* dlg)
   delete dlg;
 }
 
-void ProjectNewLocal::slotInsertFilesAfterCopying(const KURL::List& a_urlList)
+void ProjectNewLocal::slotInsertFolderAfterCopying(const KURL::List& a_urlList)
 {
   KURL::List::ConstIterator it;
   KURL dirURL;
@@ -303,9 +303,13 @@ void ProjectNewLocal::slotInsertFilesAfterCopying(const KURL::List& a_urlList)
       if ( !fileList.contains(u) && u.path() != "." && u.path() != ".." )
       {
         fileList.append(u);
-        QListViewItem *it = listView->addItem(u, KFileItem(KFileItem::Unknown, KFileItem::Unknown, KURL()));
+        listView->addItem(u, KFileItem(KFileItem::Unknown, KFileItem::Unknown, KURL()));
+        QListViewItem *it = listView->itemByUrl(u);
         if (it)
+        {
           it->setSelected(true);
+          listView->slotSelectFile(it);
+        }
         progressBar->setValue(i);
       }
     }
@@ -314,6 +318,32 @@ void ProjectNewLocal::slotInsertFilesAfterCopying(const KURL::List& a_urlList)
     progressBar->setValue(0);
     progressBar->setTextEnabled(false);
   }
+}
+
+void ProjectNewLocal::slotInsertFilesAfterCopying(const KURL::List& a_urlList)
+{
+  KURL::List::ConstIterator it;
+  KURL u;
+  progressBar->setTotalSteps(a_urlList.count() - 1);
+  progressBar->setTextEnabled(true);
+  for (it = a_urlList.begin(); it != a_urlList.end(); ++it)
+  {
+    u = QExtFileInfo::toRelative(*it, baseURL);
+    if ( !fileList.contains(u))
+    {
+      fileList.append(u);
+      QListViewItem *it = listView->addItem(u, KFileItem(KFileItem::Unknown, KFileItem::Unknown, KURL()));
+      if (it)
+      {
+         it->setSelected(true);
+         listView->slotSelectFile(it);
+      }
+      progressBar->advance(1);
+    }
+  }
+  progressBar->setTotalSteps(1);
+  progressBar->setValue(0);
+  progressBar->setTextEnabled(false);
 }
 
 /** No descriptions */

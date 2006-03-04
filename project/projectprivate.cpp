@@ -839,10 +839,6 @@ void ProjectPrivate::slotAcceptCreateProject()
     url = QExtFileInfo::toRelative(toolbarURL, baseURL);
     el.firstChild().setNodeValue(QuantaCommon::qUrl(url));
 
- /*  saveProject();
-    parent->newProjectLoaded(projectName, baseURL, templateURL);
-    m_projectFiles.readFromXML(dom, baseURL, templateURL, excludeRx);
-    parent->reloadTree( &(m_projectFiles), true, QStringList() );*/
 #if KDE_IS_VERSION(3,4,89)
     m_projectRecent->addURL(projectURL, projectName);
 #else
@@ -852,6 +848,7 @@ void ProjectPrivate::slotAcceptCreateProject()
     // remember the project in config
     writeConfig();
 
+//workaround to load the newly created project items in the treeview
     KURL u = projectURL;
     slotCloseProject();
     loadProject(u);

@@ -43,6 +43,7 @@ public slots:
   void slotAddFolder();
   void slotAddFiles();
   void slotClearList();
+  void slotInsertFolderAfterCopying(const KURL::List&);
   void slotInsertFilesAfterCopying(const KURL::List&);
   void slotDeleteCopyToDialog(CopyTo*);
 
