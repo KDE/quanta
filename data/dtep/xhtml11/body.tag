@@ -18,7 +18,7 @@
 <child name="address" />
 <child name="blockquote" />
 <child name="del" />
-<child name="di" />
+<child name="div" />
 <child name="dl" />
 <child name="fieldset" />
 <child name="form" />
