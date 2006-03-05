@@ -28,6 +28,7 @@
 #include <kfiledialog.h>
 #include <kiconloader.h>
 #include <klocale.h>
+#include <kmessagebox.h>
 #include <kurl.h>
 #include <kprotocolinfo.h>
 #include <kdeversion.h>
@@ -163,7 +164,11 @@ void ProjectNewGeneral::slotButtonTmpl()
    if (!url.isEmpty() && baseUrl.isParentOf(url))
    {
      linePrjTmpl->setText(KURL::relativeURL(baseUrl, url));
-   }
+   } else
+   {
+//TODO: Use better text in Quanta4, or when message freeze is lifted up
+      KMessageBox::sorry(this,i18n("You must save the templates in the following folder: \n\n%1").arg(baseUrl.prettyURL(0, KURL::StripFileProtocol)));   
+    }
 }
 
 void ProjectNewGeneral::slotButtonToolbar()
@@ -174,6 +179,11 @@ void ProjectNewGeneral::slotButtonToolbar()
    if (!url.isEmpty() && baseUrl.isParentOf(url))
    {
      linePrjToolbar->setText(KURL::relativeURL(baseUrl, url));
+   }
+   {
+//TODO: Use better text in Quanta4, or when message freeze is lifted up
+      KMessageBox::sorry(0,i18n("<qt>You must save the toolbars to the following folder: <br><br><b>%1</b></qt>")
+                                  .arg(baseUrl.prettyURL(0, KURL::StripFileProtocol)));
    }
 }
 
