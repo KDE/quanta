@@ -712,6 +712,14 @@ void ProjectPrivate::slotAcceptCreateProject()
 
   KURL oldBaseURL = baseURL;
   baseURL = KURL::fromPathOrURL(basePath);
+  if (baseURL.isLocalFile())
+  {
+    QString path = QDir(baseURL.path()).canonicalPath();
+    if (baseURL.path().endsWith("/"))
+      path.append("/");
+    if (!path.isEmpty())
+      baseURL.setPath(path);
+  }  
   /*
     it is important to set the fields only if there is some input
     otherwise you set them to an empty string and the treeview will
