@@ -17,6 +17,7 @@
 
 // qt includes
 #include <qdir.h>
+#include <qevent.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qlineedit.h>
@@ -36,6 +37,7 @@
 //app includes
 #include "projectnewgeneral.h"
 #include "quantacommon.h"
+#include "qextfileinfo.h"
 
 ProjectNewGeneral::ProjectNewGeneral(QWidget *parent, const char *name )
   : ProjectNewGeneralS(parent,name)
@@ -80,6 +82,9 @@ ProjectNewGeneral::ProjectNewGeneral(QWidget *parent, const char *name )
   connect( buttonTmpl,  SIGNAL(clicked()), SLOT(slotButtonTmpl()));
   connect( linePrjToolbar, SIGNAL(textChanged(const QString &)), SLOT(slotLinePrjFile(const QString &)));
   connect( buttonToolbar,  SIGNAL(clicked()), SLOT(slotButtonToolbar()));
+
+  linePrjTmpl->installEventFilter(this);
+  linePrjToolbar->installEventFilter(this);
 }
 
 ProjectNewGeneral::~ProjectNewGeneral(){
@@ -130,6 +135,12 @@ void ProjectNewGeneral::slotLinePrjFile( const QString & )
   {
     emit setBaseURL(url);
     baseUrl = url;
+    if (baseUrl.isLocalFile())
+    {
+      s = QExtFileInfo::canonicalPath(baseUrl.path());
+      if (!s.isEmpty())
+        baseUrl.setPath(s);
+    }
   }
   emit enableNextButton( this, valid );
 }
@@ -188,7 +199,6 @@ void ProjectNewGeneral::slotButtonToolbar()
 }
 
 
-/** No descriptions */
 void ProjectNewGeneral::slotProtocolChanged(const QString& protocol)
 {
  bool status = true;
@@ -204,6 +214,43 @@ void ProjectNewGeneral::slotProtocolChanged(const QString& protocol)
  slotChangeNames(linePrjName->text());
  if ( !status )
      lineHost->clear();
+}
+
+bool ProjectNewGeneral::eventFilter ( QObject * watched, QEvent * e )
+{
+  if (e->type() == QEvent::FocusOut)
+  {
+    if (watched == linePrjTmpl)
+    {
+      KURL url = baseUrl;
+      QuantaCommon::setUrl(url, linePrjTmpl->text());
+      url = QExtFileInfo::toAbsolute(url, baseUrl);
+      if (!baseUrl.isParentOf(url))
+      {
+//TODO: Use better text in Quanta4, or when message freeze is lifted up
+        KMessageBox::sorry(this,i18n("You must save the templates in the following folder: \n\n%1").arg(baseUrl.prettyURL(0, KURL::StripFileProtocol)));
+        linePrjTmpl->setFocus();
+        emit enableNextButton(this, false);
+      } else
+        emit enableNextButton(this, true);
+    } else
+    if (watched == linePrjToolbar)
+    {
+      KURL url = baseUrl;
+      QuantaCommon::setUrl(url, linePrjToolbar->text());
+      url = QExtFileInfo::toAbsolute(url, baseUrl);
+      if (!baseUrl.isParentOf(url))
+      {
+//TODO: Use better text in Quanta4, or when message freeze is lifted up
+        KMessageBox::sorry(0,i18n("<qt>You must save the toolbars to the following folder: <br><br><b>%1</b></qt>")
+                                    .arg(baseUrl.prettyURL(0, KURL::StripFileProtocol)));
+        linePrjToolbar->setFocus();
+        emit enableNextButton(this, false);
+      } else
+        emit enableNextButton(this, true);
+    }
+  }
+  return false;  
 }
 
 #include "projectnewgeneral.moc"

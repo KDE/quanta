@@ -35,6 +35,9 @@ public:
   QString type();
   void setMargin(int);
 
+protected:
+  bool eventFilter ( QObject * watched, QEvent * e );
+
 public slots:
   void slotButtonDir();
   void slotLinePrjFile(const QString &);
