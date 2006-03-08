@@ -82,3 +82,32 @@ QStringList DCOPQuanta::idSelectors()
   }
   return selectorList;
 }
+
+QStringList DCOPQuanta::groupElements(const QString& group)
+{
+  QStringList elementList;
+  GroupElementMapList::Iterator it;
+  for ( it = globalGroupMap.begin(); it != globalGroupMap.end(); ++it )
+  {
+    QString key = it.key();
+    if (key.startsWith(group + "|"))
+    {
+      QString name = key.mid(10);
+      int index = name.find(':');
+      if (index != -1)
+        name = name.mid(0, index);
+      QString tmpStr;
+      index = name.find("|");
+      if (index != -1)
+      {
+        tmpStr = name.left(index).lower();
+      } else
+      {
+        tmpStr = name;
+      }
+    
+      elementList << tmpStr;
+     }
+  }
+  return elementList;
+}

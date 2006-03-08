@@ -28,6 +28,7 @@ public:
 
   virtual QStringList selectors(const QString& tag);
   virtual QStringList idSelectors();
+  virtual QStringList groupElements(const QString &group);
 };
 
 #endif

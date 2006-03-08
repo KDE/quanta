@@ -30,6 +30,16 @@ Version 3.5.2 (Release date: xx-02-2006; Started 23-01-2005):
               uploads the url to the place described by profile. If
               markOnly is true, it only marks as uploaded. If profile is
               empty, the default profile is used.
+            - QuantaIf::groupElements(groupName):
+              to get a list of the elements of a structure group. Useful to have
+              autocompletion for attribute values, where the values are dynamic
+              based on other tags in the document and are gathered via a dcop call.
+              Example:
+              <attr name="id" type="list" source="dcop"
+                interface="QuantaIf" method="groupElements(QString)"
+                arguments="GroupName">
+            </attr>
+
 
 
 Version 3.5.1 (Release date: 23-01-2006; Started 30-11-2005):
