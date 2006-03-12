@@ -15,6 +15,7 @@ Version 3.5.2 (Release date: xx-02-2006; Started 23-01-2005):
           error like #122419)
         - fix for dtep data of xhtml1.1 [#122272]
         - fix some bugs in the new project wizard
+        - always reload a file if the user wants it [related to #121329]
 
   - improvements:
         - less reparsing of the document while typing is in progress

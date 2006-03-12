@@ -626,14 +626,14 @@ void QuantaApp::slotFileReload(QuantaView *view)
   if (!view)
      view = ViewManager::ref()->activeView();
   Document *w = view->document();
-  if (!w || !view->saveModified())
+  if (!w || w->isUntitled() || !view->saveModified())
       return;
-  if (!w->isUntitled() && w->isModified())
-  {
-    w->setModified(false);
-    w->openURL(w->url());
-    reparse(true);
-  }
+  w->setModified(false);
+  unsigned int line, col;
+  w->viewCursorIf->cursorPosition(&line, &col);
+  if (w->openURL(w->url()))
+    w->viewCursorIf->setCursorPosition(line, col);
+  reparse(true);
 }
 
 void QuantaApp::slotFileReloadAll()
