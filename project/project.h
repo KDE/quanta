@@ -28,7 +28,7 @@ class ProjectList;
 namespace KTextEditor{
   class MarkInterface;
   class ViewCursorInterface;
-};
+}
 struct EventAction;
 typedef  QMap<QString, QValueList<EventAction> > EventActions;
 
