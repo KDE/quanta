@@ -162,6 +162,7 @@ bool ViewManager::removeView(QuantaView *view, bool force, bool createNew)
       if (noOfViews > 1)
         break;
     }
+    delete it;
     if (noOfViews == 1 && view->document()->isUntitled() && !view->document()->isModified() && createNew)
       return true;
     bool mayRemove = view->mayRemove();
