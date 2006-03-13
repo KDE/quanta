@@ -2093,7 +2093,9 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
      KArchiveFile* file = (KArchiveFile *) tar.directory()->entry(base+".toolbar");
      if (file)
      {
-      toolbarDom->setContent(file->device());
+      QIODevice *device = file->device();
+      toolbarDom->setContent(device);
+      delete device;
      }
      file = (KArchiveFile *) tar.directory()->entry(base+".actions");
      if (file)

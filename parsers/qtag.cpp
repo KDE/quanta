@@ -63,7 +63,8 @@ void QTag::addAttribute(Attribute* attr)
     a = new Attribute;
   a->name = attr->name;
   a->type = attr->type;
-  for ( QStringList::Iterator it = attr->values.begin(); it != attr->values.end(); ++it )
+  QStringList::ConstIterator end = attr->values.constEnd();
+  for ( QStringList::ConstIterator it = attr->values.constBegin(); it != end; ++it )
   {
      a->values.append(*it);
   }
