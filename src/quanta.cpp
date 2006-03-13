@@ -191,6 +191,8 @@
 #include "newstuff.h"
 #include "quantanetaccess.h"
 
+extern int NN;
+
 const QString resourceDir = QString(QUANTA_PACKAGE) + "/";
 
 // from kfiledialog.cpp - avoid qt warning in STDERR (~/.xsessionerrors)
@@ -286,6 +288,9 @@ QuantaApp::~QuantaApp()
  quantaApp = 0L;
  delete m_doc;
  m_doc = 0L;
+  kdDebug(24000) << "Node objects before delete :" << NN << " baseNode= " << baseNode << endl;
+ delete baseNode;
+ baseNode = 0;
  delete parser;
  parser = 0L;
  delete idleTimer;
@@ -327,6 +332,8 @@ QuantaApp::~QuantaApp()
  delete dcopSettings;
  delete dcopQuanta;
 // delete m_partManager;
+
+  kdDebug(24000) << "Undeleted node objects :" << NN << endl;
 }
 
 void QuantaApp::setTitle(const QString& title)

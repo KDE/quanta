@@ -67,6 +67,8 @@
 extern GroupElementMapList globalGroupMap;
 static const QChar space(' ');
 
+extern int NN;
+
 Parser::Parser()
 {
   m_node = 0L;
@@ -460,7 +462,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
         ec = 0;
     AreaStruct area(el, ec, endLine, endCol);
 #ifdef DEBUG_PARSER
-    kdDebug(24000) << "Calling cleanGroups from Parser::parseArea" << endl;
+//     kdDebug(24000) << "Calling cleanGroups from Parser::parseArea" << endl;
 #endif
     cleanGroups();
     m_saParser->setParsingEnabled(true);
@@ -518,10 +520,12 @@ Node *Parser::parse(Document *w, bool force)
  // clearGroups();
   if (baseNode)
   {
+     kdDebug(24000) << "NN before delete = " << NN << endl;
      //kdDebug(24000) << "baseNode before delete = " << baseNode << endl;
      //ParserCommon::coutTree(m_node, 2);
      delete baseNode;
      baseNode = 0L;
+     kdDebug(24000) << "NN after delete = " << NN << endl;
   }
   m_node = 0L;
 
@@ -548,6 +552,7 @@ Node *Parser::parse(Document *w, bool force)
 
 //FIXME: What is the use of two pointer to the same Node???
  baseNode = m_node;
+     kdDebug(24000) << "NN after parse = " << NN << "baseNode : " << baseNode << endl;
  m_saParser->init(m_node, w);
 
  //We need to reload Kafka to refresh the DOM::Node->Node links.
@@ -1203,7 +1208,7 @@ Node *Parser::rebuild(Document *w)
 
    w->docUndoRedo->addNewModifsSet(modifs, undoRedo::SourceModif);
  }
-  kdDebug(24000) << "Rebuild: " << t.elapsed() << " ms \n";
+  kdDebug(24000) << "Rebuild: " << t.elapsed() << " ms; baseNode=" << baseNode << "\n";
 
 /* treeSize = 0;
  ParserCommon::coutTree(m_node, 2);
@@ -1220,7 +1225,7 @@ Node *Parser::rebuild(Document *w)
 void Parser::clearGroups()
 {
 #ifdef DEBUG_PARSER
-  kdDebug(24000) << "clearGroups " << endl;
+//   kdDebug(24000) << "clearGroups " << endl;
 #endif
   GroupElementMapList::Iterator it;
   GroupElementList::Iterator elementIt;
@@ -1255,7 +1260,7 @@ void Parser::clearGroups()
     }
   }
 #ifdef DEBUG_PARSER
-      kdDebug(24000) << count << " GroupElement deleted (clearGroups)." << endl;
+//       kdDebug(24000) << count << " GroupElement deleted (clearGroups)." << endl;
 #endif
   globalGroupMap.clear();
   clearIncludedGroupElements();
@@ -1271,7 +1276,7 @@ void Parser::clearGroups()
 void Parser::cleanGroups()
 {
 #ifdef DEBUG_PARSER
-  kdDebug(24000) << "cleanGroups " << endl;
+//   kdDebug(24000) << "cleanGroups " << endl;
 #endif
   GroupElementMapList::Iterator it;
   GroupElementList::Iterator elementIt;
@@ -1306,7 +1311,7 @@ void Parser::cleanGroups()
     }
   }
 #ifdef DEBUG_PARSER
-      kdDebug(24000) << count << "GroupElement deleted (cleanGroups)." << endl;
+//       kdDebug(24000) << count << " GroupElement deleted (cleanGroups)." << endl;
 #endif
   if (m_parseIncludedFiles)
   {

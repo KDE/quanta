@@ -89,7 +89,7 @@ void SAGroupParser::slotParseForScriptGroup()
       if (m_lastGroupParsed)
       {
 #ifdef DEBUG_PARSER
-        kdDebug(24000) << "Calling cleanGroups from SAGroupParser::slotParseForScriptGroup" << endl;
+//         kdDebug(24000) << "Calling cleanGroups from SAGroupParser::slotParseForScriptGroup" << endl;
         kdDebug(24001) << m_count << " GroupElement created." << endl;
 #endif
         emit cleanGroups();

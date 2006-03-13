@@ -73,6 +73,7 @@
 
 #include "tagdialog.h"
 
+extern int NN;
 QuantaView::QuantaView(QWidget *parent, const char *name, const QString &caption )
   : KMdiChildView(parent, name)
   , m_document(0L)
@@ -138,8 +139,10 @@ bool QuantaView::mayRemove()
     if (static_cast<QuantaView *>(quantaApp->activeWindow()) == this)
     {
         parser->setSAParserEnabled(false);
+        kdDebug(24000) << "Node objects before delete :" << NN << " baseNode= " << baseNode << endl;
         delete baseNode;
         baseNode = 0L;
+        kdDebug(24000) << "Node objects after delete :" << NN << " baseNode= " << baseNode << endl;
         if (m_kafkaDocument && m_kafkaDocument->getKafkaWidget() && m_kafkaDocument->getKafkaWidget()->view())
           m_kafkaDocument->getKafkaWidget()->view()->reparent(0, 0, QPoint(), false);
     }

@@ -27,6 +27,8 @@
 #include "structtreetag.h"
 #include "kafkacommon.h"
 
+int NN = 0; //for debugging purposes: count the Node objects
+
 GroupElementMapList globalGroupMap;
 
 Node::Node(Node *parent)
@@ -43,6 +45,7 @@ Node::Node(Node *parent)
   m_rootNode = 0L;
   m_leafNode = 0L;
   m_groupElements.clear();
+  NN++;
 }
 
 
@@ -73,6 +76,7 @@ Node::~Node()
   tag = 0L;
   delete m_rootNode;
   delete m_leafNode;
+  NN--;
 }
 
 void Node::save(QDomElement& element) const

@@ -734,10 +734,12 @@ Node *SAParser::parsingDone()
         Node *n = m_lastParsedNode;
         if (m_useNext)
         {
-//           kdDebug(24000) << "m_lastParsedNode: " << m_lastParsedNode << endl;
+//           kdDebug(24000) << "m_lastParsedNode: " << m_lastParsedNode << " " << m_lastParsedNode->tag->tagStr() << endl;
           n->next = s_next;
           if (s_next)
+          {
             s_next->prev = n;
+          }
           n->prev = s_parentNode;
         }
         m_currentNode = n->nextSibling();
@@ -757,7 +759,7 @@ Node *SAParser::parsingDone()
 #endif
           emit rebuildStructureTree(false);
 #ifdef DEBUG_PARSER
-          kdDebug(24000) << "Calling cleanGroups from SAParser::parsingDone" << endl;
+//           kdDebug(24000) << "Calling cleanGroups from SAParser::parsingDone" << endl;
 #endif
           emit cleanGroups();
         }

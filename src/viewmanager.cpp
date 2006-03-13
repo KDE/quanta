@@ -218,7 +218,7 @@ void ViewManager::slotViewActivated(KMdiChildView *view)
    qView->activated();
 
 #ifdef DEBUG_PARSER
-  kdDebug(24000) << "Calling clearGroups from ViewManager::slotViewActivated" << endl;
+//   kdDebug(24000) << "Calling clearGroups from ViewManager::slotViewActivated" << endl;
 #endif
   parser->clearGroups();
   parser->setSAParserEnabled(true);
