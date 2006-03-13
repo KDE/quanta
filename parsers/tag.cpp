@@ -106,6 +106,7 @@ Tag::Tag( const Tag &t)
 
 Tag::~Tag()
 {
+  attrs.clear();
 }
 
 void Tag::init()

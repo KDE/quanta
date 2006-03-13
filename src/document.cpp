@@ -2334,6 +2334,7 @@ void Document::slotDelayedTextChanged(bool forced)
           previousNode->tag->beginPos(bl2, bc2);
           delete currentNode;
           currentNode = previousNode;
+          previousNode = 0L;
         } else
         {
           delete previousNode;
@@ -2401,9 +2402,10 @@ void Document::slotDelayedTextChanged(bool forced)
             else
               node = node->previousSibling();
           }
-          delete currentNode;
         }
       }
+      delete currentNode;
+      delete previousNode;
     }
 
     quantaApp->slotNewLineColumn();

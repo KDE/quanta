@@ -69,6 +69,7 @@ DocTreeView::DocTreeView(QWidget *parent, const char *name )
 
 
 DocTreeView::~DocTreeView(){
+  contextHelpDict->setAutoDelete(true);
   delete contextHelpDict;
 }
 
