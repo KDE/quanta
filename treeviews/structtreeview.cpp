@@ -150,11 +150,11 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel, bool groupOnly)
 #ifdef DEBUG_PARSER
   kdDebug(24000) << "Starting to rebuild the structure tree. Grouponly = " << groupOnly << endl;
 #endif
-  emit clearProblemOutput();
   if (!groupOnly)
   {
       top = new StructTreeTag( this, i18n("Document Structure") );
       top->setOpen(topOpened);
+      emit clearProblemOutput();
   }
   Node *currentNode = baseNode;
   StructTreeTag *currentItem = top; //after this
