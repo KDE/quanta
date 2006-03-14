@@ -1343,21 +1343,21 @@ void ProjectPrivate::loadProjectFromTemp(const KURL &url, const QString &tempFil
 }
 
 /** load project from file: url */
-void ProjectPrivate::loadProject(const KURL &url)
+bool ProjectPrivate::loadProject(const KURL &url)
 {
   if (projectURL == url)
-    return;
+    return true;
   if (!url.isValid())
   {
     parent->hideSplash();
     KMessageBox::sorry(m_mainWindow, i18n("<qt>Malformed URL: <b>%1</b></qt>").arg(url.prettyURL()));
-    return;
+    return false;
   }
   if ( projectAlreadyOpen(url.url()) )
   {
     parent->hideSplash();
     if (KMessageBox::warningContinueCancel(m_mainWindow, i18n("<qt>The project<br><b>%1</b><br> seems to be used by another Quanta instance.<br>You may end up with data loss if you open the same project in two instances, modify and save them in both.<br><br>Do you want to proceed with open?</qt>").arg(url.prettyURL()), QString::null, KStdGuiItem::open()) == KMessageBox::Cancel)
-      return;
+      return false;
   }
   QString projectTmpFile;
   QString sessionTmpFile;  
@@ -1416,7 +1416,9 @@ void ProjectPrivate::loadProject(const KURL &url)
   {
     parent->hideSplash();
     KMessageBox::error(m_mainWindow, i18n("<qt>Cannot access the project file <b>%1</b>.</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)));
+    return false;
   }
+  return true;
 }
 
 

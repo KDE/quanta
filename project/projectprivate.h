@@ -155,7 +155,7 @@ upload.*/
   /** load project file
       @param url the url of the project file
    */
-  void loadProject(const KURL &url);
+  bool loadProject(const KURL &url);
 
   /** load project from temp file
       @param url the url of the project file

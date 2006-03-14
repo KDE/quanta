@@ -233,7 +233,10 @@ void Project::loadLastProject(bool reload)
 
   if ( reload && (!urlPath.isEmpty() && url.isValid()))
   {
-    d->loadProject( url );
+    if (!d->loadProject(url))
+    {
+      d->config->deleteEntry("Last Project");
+    }
   }
   d->config->sync();
 }
