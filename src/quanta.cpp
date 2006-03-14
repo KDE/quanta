@@ -338,7 +338,12 @@ QuantaApp::~QuantaApp()
 
 void QuantaApp::setTitle(const QString& title)
 {
-  setCaption("  [  "+title+"  ]  ");
+  QString s = title;
+  if (Project::ref()->hasProject())
+  {
+    s = Project::ref()->projectName() + " : " + s;
+  }
+  setCaption(s);
 }
 
 void QuantaApp::slotFileNew()
@@ -377,7 +382,7 @@ void QuantaApp::slotFileOpen(const KURL::List &urls, const QString& encoding)
   reparse(true);
   Document *w = ViewManager::ref()->activeDocument();
   if (w)
-    setCaption(w->url().prettyURL());
+    setTitle(w->url().prettyURL(0, KURL::StripFileProtocol));
 }
 
 void QuantaApp::slotFileOpen(const KURL &url)
@@ -906,7 +911,7 @@ void QuantaApp::slotNewStatus()
   Document *w = ViewManager::ref()->activeDocument();
   if (w)
   {
-    setTitle( w->url().prettyURL() );
+    setTitle( w->url().prettyURL(0, KURL::StripFileProtocol) );
 
     if (w->doc()->isReadWrite())
     {

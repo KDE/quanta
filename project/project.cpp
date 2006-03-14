@@ -1060,6 +1060,10 @@ bool Project::hasProject()
   return !d->projectName.isNull();
 }
 
+QString Project::projectName()
+{
+  return d->projectName;
+}
 
 const QString& Project::defaultDTD()
 {

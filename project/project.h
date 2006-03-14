@@ -73,6 +73,7 @@ public:
   ~Project();
 
   bool hasProject();
+  QString projectName();
 
   QStringList fileNameList();
   KURL::List files();

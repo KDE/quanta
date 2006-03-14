@@ -670,7 +670,7 @@ void QuantaInit::openLastFiles()
   Document *w = ViewManager::ref()->activeDocument();
   if (w) //w==0 might happen on quick close on startup
   {
-    m_quanta->setCaption(w->url().prettyURL() );
+    m_quanta->setTitle(w->url().prettyURL(0, KURL::StripFileProtocol) );
 //    m_quanta->slotUpdateStatus(w);//FIXME:
   }
 }

@@ -182,6 +182,7 @@ void QuantaDoc::openDocument(const KURL& urlToOpen, const QString &a_encoding,
        w->disconnect(SIGNAL(openingCompleted(const KURL&)));
        connect(w, SIGNAL(openingCompleted(const KURL&)), this, SLOT(slotOpeningCompleted(const KURL&)));
        w->open(url, encoding);
+       quantaApp->setTitle(url.prettyURL(0, KURL::StripFileProtocol));
     }
     else
     {
@@ -242,6 +243,7 @@ void QuantaDoc::slotOpeningCompleted(const KURL &url)
   if (url.isLocalFile())
     quantaApp->debugger()->fileOpened(url.prettyURL(0, KURL::StripFileProtocol));
   quantaApp->slotNewStatus();
+  quantaApp->setTitle(url.prettyURL(0, KURL::StripFileProtocol));
   Project::ref()->loadCursorPosition(w->url(), dynamic_cast<KTextEditor::ViewCursorInterface*>(w->view()));
   emit eventHappened("after_open", url.url(), QString::null);
   

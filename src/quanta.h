@@ -19,7 +19,7 @@
 #define QUANTA_H
 
 #define QUANTA_PACKAGE "quanta"
-#define QUANTA_VERSION "post-3.5.1"
+#define QUANTA_VERSION "3.5.2"
 
 #define IDS_STATUS      1
 #define IDS_INS_OVR     2
@@ -219,6 +219,7 @@ public:
   void removeAllTagActionPoolItems() {m_tagActionPool.clear();}
   /** Updates the structure and attribute treeview. */
   void updateTreeViews();
+  void setTitle(const QString&);
   
   QPtrList<TagAction> const& tagActions() const {return m_tagActions;}
 
@@ -546,7 +547,6 @@ protected:
   bool saveToolbar(bool localToolbar = true, const QString& toolbarToSave = QString::null, const KURL& destURL = KURL());
   /** Saves the toolbar and the actions. Returns the name of the actions file*/
   KURL saveToolbarToFile(const QString& toolbarName,const KURL& destFile);
-  void setTitle(const QString&);
   /** Makes the tabwidget look and behave like we want. If closeButtonsOnly is true,
   only the close button behavior is changed. */
   void initTabWidget(bool closeButtonsOnly = false);
