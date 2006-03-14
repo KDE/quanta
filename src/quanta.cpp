@@ -4086,7 +4086,16 @@ bool QuantaApp::queryClose()
   if (quantaStarted)
   {
     m_config->setGroup("General Options");
-    m_config->writePathEntry("List of opened files", ViewManager::ref()->openedFiles().toStringList());
+    QStringList urlStrList;
+    KURL::List urlList = ViewManager::ref()->openedFiles();
+    KURL u;
+    for (KURL::List::Iterator it = urlList.begin(); it != urlList.end(); ++it)
+    {
+      KURL u = *it;
+      u.setPass("");
+      urlStrList += u.url();
+    }
+    m_config->writePathEntry("List of opened files", urlStrList);
     QStringList encodings;
     QValueList<Document*> documents = ViewManager::ref()->openedDocuments();
     for (QValueList<Document*>::ConstIterator it = documents.constBegin(); it != documents.constEnd(); ++it)

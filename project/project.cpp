@@ -1238,7 +1238,9 @@ bool Project::queryClose()
   {
     emit eventHappened("before_project_close", d->baseURL.url(), QString::null);
     d->config->setGroup("Projects");
-    d->config->writePathEntry("Last Project", d->projectURL.url());
+    KURL url = d->projectURL.url();
+    url.setPass("");
+    d->config->writePathEntry("Last Project", url.url());
     canExit = d->uploadProjectFile();
     if (! canExit)
     {

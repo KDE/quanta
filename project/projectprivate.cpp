@@ -1546,7 +1546,9 @@ void ProjectPrivate::writeConfig()
   config->reparseConfiguration();
   config->setGroup("Projects");
   // remember the last project in config
-  config->writePathEntry("Last Project", projectURL.url());
+  KURL url = projectURL.url();
+  url.setPass("");
+  config->writePathEntry("Last Project", url.url());
   // add project to list
   if (!projectURL.isEmpty())
   {
