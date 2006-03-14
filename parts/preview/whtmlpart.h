@@ -34,9 +34,8 @@ public:
             QObject *parent = 0, const char *name = 0, GUIProfile prof = DefaultGUI );
   virtual ~WHTMLPart();
 
-  /** Specify the URL where the preview was started and the
-  content of this url as well.*/
-  void setPreviewedURL(const KURL &url, const QString &text);
+  /** Specify the URL where the preview was started */
+  void setPreviewedURL(const KURL &url);
   bool backEnable();
   bool forwardEnable();
   virtual bool openURL(const KURL &url);
@@ -69,7 +68,6 @@ protected:
 private:
   KURL m_previewedURL;
   KPopupMenu *m_contextMenu;
-  QString m_previewedText;
   QStrList history;
   unsigned int hpos;
   bool m_enableViewSource;

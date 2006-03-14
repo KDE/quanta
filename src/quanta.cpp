@@ -731,6 +731,7 @@ void QuantaApp::slotRepaintPreview()
       m_noFramesPreview = false;
     else
     {
+      m_htmlPart->closeURL();
       QStringList noframearea =  w->tagAreas("noframes", false, true);
       //find the frameset area
       int bl, bc, el, ec;
@@ -750,7 +751,7 @@ void QuantaApp::slotRepaintPreview()
       else
       {
         url = Project::ref()->urlWithPrefix(w->url());
-        m_htmlPart->setPreviewedURL(url, noFramesText);
+        m_htmlPart->setPreviewedURL(url);
         m_htmlPart->begin(url, xOffset, yOffset);
       }
       m_htmlPart->write(noFramesText);
@@ -775,7 +776,7 @@ void QuantaApp::slotRepaintPreview()
     {
       m_previewedDocument = w;
       url = Project::ref()->urlWithPrefix(w->url());
-      m_htmlPart->setPreviewedURL(url, text);
+      m_htmlPart->setPreviewedURL(url);
       KURL previewURL = w->url();
       previewURL.setFileName("preview-" + previewURL.fileName());
       //save the content to disk, so preview with prefix works
@@ -791,7 +792,9 @@ void QuantaApp::slotRepaintPreview()
       tmpFile->textStream()->setCodec(QTextCodec::codecForName(encoding));
       *(tmpFile->textStream()) << w->editIf->text();
       tmpFile->close();
-      QExtFileInfo::copy(KURL::fromPathOrURL(tempFileName), previewURL, -1, true);
+      if (!QExtFileInfo::copy(KURL::fromPathOrURL(tempFileName), previewURL, -1, true)) {
+        m_htmlPart->setPreviewedURL(KURL());    //  copy failed, force the preview of the original
+      };
       delete tmpFile;
       m_htmlPart->openURL(url);
       m_htmlPart->addToHistory(url.url());

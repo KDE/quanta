@@ -68,9 +68,8 @@ WHTMLPart::~WHTMLPart()
 {
 }
 
-void WHTMLPart::setPreviewedURL(const KURL &url, const QString& text)
+void WHTMLPart::setPreviewedURL(const KURL &url)
 {
-  m_previewedText = text;
   m_previewedURL = url;
 }
 
