@@ -442,6 +442,7 @@ void ProjectUpload::upload()
           QuantaCommon::dirCreationError(this, KURL( dir.prettyURL(0, KURL::StripFileProtocol) ));
           buttonUpload->setEnabled(true);
           uploadInProgress = false;
+          saveRemoteUploadInfo();
           return;
         }
       }
@@ -483,6 +484,7 @@ void ProjectUpload::uploadFinished( KIO::Job *job )
       job->showErrorDialog( this  );
       uploadInProgress = false;
       buttonUpload->setEnabled(true);
+      saveRemoteUploadInfo();
       return;
    }
    KIO::FileCopyJob *fJob = dynamic_cast<KIO::FileCopyJob *>(job);
@@ -555,8 +557,11 @@ void ProjectUpload::slotUploadNext()
    // QListViewItem *it = list->findItem( currentURL.path() );
     QListViewItem *it = currentItem;
     if (it)
-    {
+    {      
      it->setSelected(false);
+     UploadTreeFile *itf = dynamic_cast<UploadTreeFile*>(it);
+     if (itf)
+      itf->setWhichPixmap( "check_clear" );
      it->repaint();
     }
     toUpload.remove( it );
