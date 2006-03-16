@@ -332,6 +332,7 @@ void ProjectTreeView::slotReloadTree( ProjectList *fileList, bool buildNewTree, 
     if (btb && folderToOpen.count() > 0) {
       btb->folderToOpen = folderToOpen;
       btb->reopenFolder();
+      btb->updateOpenFolder();  
     }
   } else
   {
