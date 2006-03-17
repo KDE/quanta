@@ -332,7 +332,7 @@ void ProjectTreeView::slotReloadTree( ProjectList *fileList, bool buildNewTree, 
     if (btb && folderToOpen.count() > 0) {
       btb->folderToOpen = folderToOpen;
       btb->reopenFolder();
-      btb->updateOpenFolder();  
+      btb->updateOpenFolder();
     }
   } else
   {
@@ -457,6 +457,8 @@ void ProjectTreeView::slotQuickUploadURL()
 void ProjectTreeView::slotRescan()
 {
   emit rescanProjectDir();
+  if (!m_projectBaseURL.isLocalFile())
+    slotReload();
 }
 
 /** Bring up the project options dialog */

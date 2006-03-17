@@ -18,6 +18,7 @@ Version 3.5.2 (Release date: xx-02-2006; Started 23-01-2005):
         - always reload a file if the user wants it [related to #121329]
         - fix previewing of noframes area
         - fix previewing of read-only files
+        - reload project tree for remote projects after rescanning the project folder
 
   - improvements:
         - less reparsing of the document while typing is in progress
