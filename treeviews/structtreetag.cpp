@@ -116,7 +116,7 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, Node *a_node, const QString 
                 {
                   node->tag->write()->setErrorMark(line);
                   QString parentTagName = node->tag->dtd()->caseSensitive ? node->parent->tag->name : node->parent->tag->name.upper();
-                  parentTree->showMessage(i18n("Line %1: %2 is not a possible child of %3.\n").arg(line + 1).arg(qTagName).arg(parentTagName));
+                  parentTree->showMessage(i18n("Line %1: %2 is not a possible child of %3.\n", line + 1, qTagName, parentTagName));
                 }
                 QString nextTagName;
                 if (node->next)
@@ -129,12 +129,12 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, Node *a_node, const QString 
                     (!node->next || ( !node->getClosingNode()))  )
                 {
                   node->tag->write()->setErrorMark(line);
-                  parentTree->showMessage(i18n("Line %1, column %2: Closing tag for %3 is missing.").arg(line + 1).arg(col + 1).arg(qTagName));
+                  parentTree->showMessage(i18n("Line %1, column %2: Closing tag for %3 is missing.", line + 1, col + 1, qTagName));
                 } else
                 if (!parentQTag && node->tag->name.upper() != "!DOCTYPE")
                 {
                   node->tag->write()->setErrorMark(line);
-                  parentTree->showMessage(i18n("Line %1, column %2: %3 is not part of %4.").arg(line + 1).arg(col + 1).arg(qTagName).arg(node->tag->dtd()->nickName));
+                  parentTree->showMessage(i18n("Line %1, column %2: %3 is not part of %4.", line + 1, col + 1, qTagName, node->tag->dtd()->nickName));
                 }
               }
               break;
@@ -182,7 +182,7 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, Node *a_node, const QString 
                 if (!node->prev || qTagName != "/" + qPrevTagName)
                 {
                   node->tag->write()->setErrorMark(line);
-                  parentTree->showMessage(i18n("Line %1, column %2: Opening tag for %3 is missing.").arg(line + 1).arg(col + 1).arg(qTagName));
+                  parentTree->showMessage(i18n("Line %1, column %2: Opening tag for %3 is missing.", line + 1, col + 1, qTagName));
                 }
               }
               title = tag->tagStr().left(70).stripWhiteSpace();

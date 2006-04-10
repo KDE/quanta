@@ -517,7 +517,7 @@ void EnhancedTagAttributeTree::showCaption()
     if(curNode->tag->type == Tag::XmlTag || curNode->tag->type == Tag::XmlTagEnd ||
       curNode->tag->type == Tag::ScriptTag)
     {
-      QString s = i18n("Current tag: <b>%1</b>").arg(curNode->tag->name);
+      QString s = i18n("Current tag: <b>%1</b>", curNode->tag->name);
       nodeName->setText(KStringHandler::rPixelSqueeze(s, nodeName->fontMetrics(), attrTree->width()- 50));
     }
     else if(curNode->tag->type == Tag::Text)

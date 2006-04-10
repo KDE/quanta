@@ -380,9 +380,9 @@ QString QuantaCommon::qUrl(const KURL &url)
 /** No descriptions */
 void QuantaCommon::dirCreationError(QWidget *widget, const KURL& url)
 {
-  KMessageBox::error(widget, i18n("<qt>Cannot create folder<br><b>%1</b>.<br>Check that you have write permission in the parent folder or that the connection to<br><b>%2</b><br> is valid.</qt>")
-                             .arg(url.prettyURL(0, KURL::StripFileProtocol))
-                             .arg(url.protocol()+"://"+url.user()+"@"+url.host()));}
+  KMessageBox::error(widget, i18n("<qt>Cannot create folder<br><b>%1</b>.<br>Check that you have write permission in the parent folder or that the connection to<br><b>%2</b><br> is valid.</qt>",
+                              url.prettyURL(0, KURL::StripFileProtocol),
+                              url.protocol()+"://"+url.user()+"@"+url.host()));}
 
 /**
 Adds the backslash before the special chars (like ?, *, . ) so the returned
@@ -680,7 +680,7 @@ bool QuantaCommon::checkOverwrite(const KURL& url)
   if (QExtFileInfo::exists(url))
   {
     if (KMessageBox::warningContinueCancel(0L,
-            i18n( "<qt>The file <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>" ).arg(url.prettyURL(0, KURL::StripFileProtocol)), QString::null, i18n("Overwrite")) == KMessageBox::Cancel)
+            i18n( "<qt>The file <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>" , url.prettyURL(0, KURL::StripFileProtocol)), QString::null, i18n("Overwrite")) == KMessageBox::Cancel)
             result = false;
   }
 

@@ -258,7 +258,7 @@ void FilesTreeView::slotAddToTop()
         topURLAliases.insert(url.url(), aliasName);
         newBranch(url);
       } else {
-        KMessageBox::information(this, i18n("<qt><b>%1</b> is already a toplevel entry.</qt>").arg(url.url()));
+        KMessageBox::information(this, i18n("<qt><b>%1</b> is already a toplevel entry.</qt>", url.url()));
       }
     } else
     { // remove
@@ -284,7 +284,7 @@ void FilesTreeView::slotNewTopFolder()
     newBranch(url);
     topURLList.append(url);
   } else {
-    KMessageBox::information(this, i18n("<qt><b>%1</b> is already a toplevel entry.</qt>").arg(url.url()));
+    KMessageBox::information(this, i18n("<qt><b>%1</b> is already a toplevel entry.</qt>", url.url()));
   }
 }
 
@@ -321,7 +321,7 @@ void FilesTreeView::slotChangeAlias()
           newBranch(url);
         }
       } else {
-        KMessageBox::information(this, i18n("<qt><b>%1</b> is already a toplevel entry.</qt>").arg(url.url()));
+        KMessageBox::information(this, i18n("<qt><b>%1</b> is already a toplevel entry.</qt>", url.url()));
       }
     }
   }

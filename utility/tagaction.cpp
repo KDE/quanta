@@ -453,7 +453,7 @@ bool TagAction::slotActionActivated(KAction::ActivationReason reason, Qt::Button
                 if (proc->start(KProcess::NotifyOnExit, KProcess::All))
                 {
                     emit clearMessages();
-                    emit showMessage(i18n("The \"%1\" script started.\n").arg(actionText()), false);
+                    emit showMessage(i18n("The \"%1\" script started.\n", actionText()), false);
                     if (!m_useInputFile)
                     {
                         if ( inputType == "current" || inputType == "selected" )
@@ -464,7 +464,7 @@ bool TagAction::slotActionActivated(KAction::ActivationReason reason, Qt::Button
                     proc->closeStdin();
                 } else
                 {
-                    KMessageBox::error(m_parentMainWindow, i18n("<qt>There was an error running <b>%1</b>.<br>Check that you have the <i>%2</i> executable installed and it is accessible.</qt>").arg(command + " " + args).arg(command), i18n("Script Not Found"));
+                    KMessageBox::error(m_parentMainWindow, i18n("<qt>There was an error running <b>%1</b>.<br>Check that you have the <i>%2</i> executable installed and it is accessible.</qt>", command + " " + args, command), i18n("Script Not Found"));
                     ViewManager::ref()->activeView()->setFocus();
                     if (loopStarted)
                     {
@@ -707,7 +707,7 @@ bool TagAction::slotActionActivated()
     if (proc->start(KProcess::NotifyOnExit, KProcess::All))
     {
       emit clearMessages();
-      emit showMessage(i18n("The \"%1\" script started.\n").arg(actionText()), false);
+      emit showMessage(i18n("The \"%1\" script started.\n", actionText()), false);
       if (!m_useInputFile)
       {
         if ( inputType == "current" || inputType == "selected" )
@@ -718,7 +718,7 @@ bool TagAction::slotActionActivated()
       proc->closeStdin();
     } else
     {
-      KMessageBox::error(m_parentMainWindow, i18n("<qt>There was an error running <b>%1</b>.<br>Check that you have the <i>%2</i> executable installed and it is accessible.</qt>").arg(command + " " + args).arg(command), i18n("Script Not Found"));
+      KMessageBox::error(m_parentMainWindow, i18n("<qt>There was an error running <b>%1</b>.<br>Check that you have the <i>%2</i> executable installed and it is accessible.</qt>", command + " " + args, command), i18n("Script Not Found"));
       ViewManager::ref()->activeView()->setFocus();
       if (loopStarted)
       {
@@ -779,7 +779,7 @@ void TagAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
     if ( firstOutput )
     {
       emit showMessagesView();
-      emit showMessage(i18n("The \"%1\" script output:\n").arg(actionText()), false);
+      emit showMessage(i18n("The \"%1\" script output:\n", actionText()), false);
     }
     emit showMessage(text, true);
   } else
@@ -839,7 +839,7 @@ void TagAction::slotGetScriptError( KProcess *, char *buffer, int buflen )
     if ( firstError )
     {
       emit showMessagesView();
-      emit showMessage(i18n("The \"%1\" script output:\n").arg(actionText()), false);
+      emit showMessage(i18n("The \"%1\" script output:\n", actionText()), false);
     }
     emit showMessage(text, true);
   }
@@ -957,7 +957,7 @@ void TagAction::slotProcessExited(KProcess *process)
     qApp->exit_loop();
     loopStarted = false;
   }
-  emit showMessage(i18n("The \"%1\" script has exited.").arg(actionText()), false);
+  emit showMessage(i18n("The \"%1\" script has exited.", actionText()), false);
   delete process;
 }
 
@@ -995,7 +995,7 @@ void TagAction::execute(bool blocking)
 /** Timeout occurred while waiting for some network function to return. */
 void TagAction::slotTimeout()
 {
-  if ((m_killCount == 0) && (KMessageBox::questionYesNo(m_parentMainWindow, i18n("<qt>The filtering action <b>%1</b> seems to be locked.<br>Do you want to terminate it?</qt>").arg(actionText()), i18n("Action Not Responding"), i18n("Terminate"), i18n("Keep Running")) == KMessageBox::Yes))
+  if ((m_killCount == 0) && (KMessageBox::questionYesNo(m_parentMainWindow, i18n("<qt>The filtering action <b>%1</b> seems to be locked.<br>Do you want to terminate it?</qt>", actionText()), i18n("Action Not Responding"), i18n("Terminate"), i18n("Keep Running")) == KMessageBox::Yes))
   {
     if (::kill(-proc->pid(), SIGTERM))
     {

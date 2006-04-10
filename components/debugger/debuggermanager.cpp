@@ -98,7 +98,7 @@ void DebuggerManager::slotNewProjectLoaded(const QString &projectname, const KUR
         if(!m_client)
         {
           emit hideSplash();
-          KMessageBox::error(NULL, i18n("<qt>Unable to load the debugger plugin, error code %1 was returned: <b>%2</b>.</qt>").arg(errCode).arg(KLibLoader::self()->lastErrorMessage()), i18n("Debugger Error"));
+          KMessageBox::error(NULL, i18n("<qt>Unable to load the debugger plugin, error code %1 was returned: <b>%2</b>.</qt>", errCode, KLibLoader::self()->lastErrorMessage()), i18n("Debugger Error"));
         }
         break;
       }
@@ -537,7 +537,7 @@ bool DebuggerManager::setActiveLine (const QString& file, int line )
     quantaApp->gotoFileAndLine(filename, line, 0);
   else
   {
-    showStatus(i18n("Unable to open file %1, check your basedirs and mappings.").arg(filename), true);
+    showStatus(i18n("Unable to open file %1, check your basedirs and mappings.", filename), true);
   }
 
   // Add new active line mark

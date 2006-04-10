@@ -102,7 +102,7 @@ void Project::insertFile(const KURL& nameURL, bool repaint )
   if ( !d->baseURL.isParentOf(url) )
   {
     KURLRequesterDlg *urlRequesterDlg = new KURLRequesterDlg( d->baseURL.prettyURL(), d->m_mainWindow, "");
-    urlRequesterDlg->setCaption(i18n("%1: Copy to Project").arg(nameURL.prettyURL(0, KURL::StripFileProtocol)));
+    urlRequesterDlg->setCaption(i18n("%1: Copy to Project", nameURL.prettyURL(0, KURL::StripFileProtocol)));
     urlRequesterDlg->urlRequester()->setMode( KFile::Directory | KFile::ExistingOnly);
     urlRequesterDlg->exec();
     KURL destination = urlRequesterDlg->selectedURL();
@@ -190,7 +190,7 @@ void Project::loadLastProject(bool reload)
     {
       KURL tempURL = KURL().fromPathOrURL(tempPath);
       if (KIO::NetAccess::exists(tempURL, false, d->m_mainWindow) &&
-          KMessageBox::questionYesNo(d->m_mainWindow, i18n("<qt>Found a backup for project <b>%1</b>.<br> Do you want to open it?</qt>").arg(url.prettyURL()), i18n("Open Project Backup"), KStdGuiItem::open(), i18n("Do Not Open") )
+          KMessageBox::questionYesNo(d->m_mainWindow, i18n("<qt>Found a backup for project <b>%1</b>.<br> Do you want to open it?</qt>", url.prettyURL()), i18n("Open Project Backup"), KStdGuiItem::open(), i18n("Do Not Open") )
           == KMessageBox::Yes)
       {
         d->m_tmpProjectFile = tempPath;
@@ -235,7 +235,7 @@ void Project::slotOpenProject(const KURL &url)
     {
       emit hideSplash();
       if (KMessageBox::questionYesNo(d->m_mainWindow,
-           i18n("<qt>The file <b>%1</b> does not exist.<br> Do you want to remove it from the list?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)), QString::null, KStdGuiItem::del(), i18n("Keep") )
+           i18n("<qt>The file <b>%1</b> does not exist.<br> Do you want to remove it from the list?</qt>", url.prettyURL(0, KURL::StripFileProtocol)), QString::null, KStdGuiItem::del(), i18n("Keep") )
            == KMessageBox::Yes)
       {
         d->m_projectRecent->removeURL(url);
@@ -270,7 +270,7 @@ void Project::slotAddDirectory(const KURL& p_dirURL, bool showDlg)
       if (showDlg)
       {
         KURLRequesterDlg *urlRequesterDlg = new KURLRequesterDlg( d->baseURL.prettyURL(), d->m_mainWindow, "");
-        urlRequesterDlg->setCaption(i18n("%1: Copy to Project").arg(dirURL.prettyURL(0, KURL::StripFileProtocol)));
+        urlRequesterDlg->setCaption(i18n("%1: Copy to Project", dirURL.prettyURL(0, KURL::StripFileProtocol)));
         urlRequesterDlg->urlRequester()->setMode( KFile::Directory | KFile::ExistingOnly);
         urlRequesterDlg->exec();
         destination = urlRequesterDlg->selectedURL();
@@ -401,7 +401,7 @@ void Project::slotRemove(const KURL& urlToRemove)
   QString urlPath = QExtFileInfo::toRelative(urlToRemove, d->baseURL).path();
   QString nice = urlPath;
   nice = KStringHandler::lsqueeze(nice, 60);
-  if (KMessageBox::warningContinueCancel(d->m_mainWindow, i18n("<qt>Do you want to remove <br><b>%1</b><br> from the server(s) as well?</qt>").arg(nice), i18n("Remove From Server"), KStdGuiItem::del(), "RemoveFromServer") == KMessageBox::Continue )
+  if (KMessageBox::warningContinueCancel(d->m_mainWindow, i18n("<qt>Do you want to remove <br><b>%1</b><br> from the server(s) as well?</qt>", nice), i18n("Remove From Server"), KStdGuiItem::del(), "RemoveFromServer") == KMessageBox::Continue )
   {
     QDomNode profilesNode = d->m_sessionDom.firstChild().firstChild().namedItem("uploadprofiles");  
     QDomNodeList profileList = profilesNode.toElement().elementsByTagName("profile");

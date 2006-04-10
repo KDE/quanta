@@ -319,8 +319,8 @@ void QuantaToolBar::mousePressEvent(QMouseEvent *e)
         {
           currentActionName = w->textLabel();
           QString actionName = currentActionName;
-          m_popupMenu->insertItem(i18n("Remove Action - %1").arg(actionName.replace('&',"&&")), this, SLOT(slotRemoveAction()));
-          m_popupMenu->insertItem(i18n("Edit Action - %1").arg(actionName), this, SLOT(slotEditAction()));
+          m_popupMenu->insertItem(i18n("Remove Action - %1", actionName.replace('&',"&&")), this, SLOT(slotRemoveAction()));
+          m_popupMenu->insertItem(i18n("Edit Action - %1", actionName), this, SLOT(slotEditAction()));
           break;
         }
       }
@@ -343,7 +343,7 @@ void QuantaToolBar::slotEditAction()
 
 void QuantaToolBar::slotRemoveAction()
 {
-    if ( KMessageBox::warningContinueCancel(this, i18n("<qt>Are you sure you want to remove the <b>%1</b> action?</qt>").arg(currentActionName),QString::null,KStdGuiItem::del()) == KMessageBox::Continue )
+    if ( KMessageBox::warningContinueCancel(this, i18n("<qt>Are you sure you want to remove the <b>%1</b> action?</qt>", currentActionName),QString::null,KStdGuiItem::del()) == KMessageBox::Continue )
   {
     emit removeAction(m_toolbarTab->tabUnderMouse, currentActionName);
   }

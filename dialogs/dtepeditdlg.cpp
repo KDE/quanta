@@ -201,7 +201,7 @@ void DTEPEditDlg::saveResult()
   {
     if (f.exists())
     {
-      if (KMessageBox::questionYesNo(this, i18n("<qt>The file <b>%1</b> is not writable.<br>Do you want to save the configuration to a different file?</qt>").arg(f.filePath()),i18n("Save As"),i18n("Save to Different File"), i18n("Do Not Save")) == KMessageBox::Yes)
+      if (KMessageBox::questionYesNo(this, i18n("<qt>The file <b>%1</b> is not writable.<br>Do you want to save the configuration to a different file?</qt>", f.filePath()),i18n("Save As"),i18n("Save to Different File"), i18n("Do Not Save")) == KMessageBox::Yes)
       {
         targetFile = KFileDialog::getSaveFileName(locateLocal("data", resourceDir + "dtep/description.rc"), i18n("*.rc|DTEP Description"), this, i18n("Save Description As"));
       } else
@@ -534,7 +534,7 @@ void DTEPEditDlg::slotDeleteStructGroup()
   int currentItem = structuresList->currentItem();
   if (currentItem != -1)
   {
-      if (KMessageBox::warningContinueCancel(this, i18n("<qt>Do you really want to delete the <b>%1</b> group?</qt>").arg(structuresList->currentText()), i18n("Delete Group"),KStdGuiItem::del()) == KMessageBox::Continue)
+      if (KMessageBox::warningContinueCancel(this, i18n("<qt>Do you really want to delete the <b>%1</b> group?</qt>", structuresList->currentText()), i18n("Delete Group"),KStdGuiItem::del()) == KMessageBox::Continue)
     {
       m_structGroups.remove(m_structGroups.at(currentItem));
       structuresList->removeItem(currentItem);

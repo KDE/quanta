@@ -309,7 +309,7 @@ void QuantaDebuggerDBGp::processCommand(const QString& datas)
   }
   else
   {
-    debuggerInterface()->showStatus(i18n("Unrecognized package: '%1%2'").arg(datas.left(50)).arg(datas.length() > 50 ? "..." : ""), true);
+    debuggerInterface()->showStatus(i18n("Unrecognized package: '%1%2'", datas.left(50), datas.length() > 50 ? "..." : ""), true);
 
     kdDebug(24002) << datas << endl;
   }
@@ -321,9 +321,9 @@ void QuantaDebuggerDBGp::initiateSession(const QDomNode& initpacket)
   if(attribute(initpacket, "protocol_version") != protocolversion)
   {
     debuggerInterface()->showStatus(
-      i18n("The debugger for %1 uses an unsupported protocol version (%1)")
-            .arg(attribute(initpacket, "language"))
-            .arg(attribute(initpacket, "protocol_version"))
+      i18n("The debugger for %1 uses an unsupported protocol version (%2)",
+             attribute(initpacket, "language"),
+             attribute(initpacket, "protocol_version"))
           , true);
 
     endSession();

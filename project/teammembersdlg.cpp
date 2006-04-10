@@ -145,7 +145,7 @@ void TeamMembersDlg::slotDeleteMember()
 {
    QListViewItem *item =membersListView->currentItem();
    if (!item) return;
-   if (KMessageBox::warningContinueCancel(this, i18n("<qt>Are you sure that you want to remove <b>%1</b> from the project team?</qt>").arg(item->text(0)), i18n("Delete Member"),KStdGuiItem::del()) == KMessageBox::Continue)
+   if (KMessageBox::warningContinueCancel(this, i18n("<qt>Are you sure that you want to remove <b>%1</b> from the project team?</qt>", item->text(0)), i18n("Delete Member"),KStdGuiItem::del()) == KMessageBox::Continue)
    {
       delete item;
    }
@@ -166,7 +166,7 @@ bool TeamMembersDlg::checkDuplicates(const QString &role, const QString &task, c
               (role == i18n(subprojectLeaderStr.utf8()) && it.current()->text(4) == subProject)
              ) )
         {
-            if (KMessageBox::warningYesNo(this, i18n("<qt>The <b>%1</b> role is already assigned to <b>%2</b>. Do you want to reassign it to the current member?</qt>").arg(role).arg(it.current()->text(0)), QString::null, i18n("Reassign"), i18n("Do Not Reassign")) == KMessageBox::Yes)
+            if (KMessageBox::warningYesNo(this, i18n("<qt>The <b>%1</b> role is already assigned to <b>%2</b>. Do you want to reassign it to the current member?</qt>", role, it.current()->text(0)), QString::null, i18n("Reassign"), i18n("Do Not Reassign")) == KMessageBox::Yes)
             {
               it.current()->setText(2, i18n(simpleMemberStr.utf8()));
               return true;

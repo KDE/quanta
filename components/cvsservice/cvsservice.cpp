@@ -176,11 +176,11 @@ void CVSService::slotUpdateToTag(const QStringList &files)
     if (m_updateToDlg->tagRadioButton->isChecked())
     {
       extraOpts = "-r " + m_updateToDlg->tagCombo->currentText();
-      commandStr = i18n("Updating to revision %1 ...").arg(m_updateToDlg->tagCombo->currentText());
+      commandStr = i18n("Updating to revision %1 ...", m_updateToDlg->tagCombo->currentText());
     } else
     {
       extraOpts = "-D " + m_updateToDlg->dateLineEdit->text();
-      commandStr = i18n("Updating to the version from %1 ...").arg(+ m_updateToDlg->dateLineEdit->text());
+      commandStr = i18n("Updating to the version from %1 ...", + m_updateToDlg->dateLineEdit->text());
     }
     emit clearMessages();
     emit showMessage(commandStr + "\n", false);
@@ -430,7 +430,7 @@ void CVSService::slotAddToCVSIgnore()
           line = str.readLine().stripWhiteSpace();
           if (line == fInfo.fileName())
           {
-            emit showMessage(i18n("\"%1\" is already in the CVS ignore list.").arg(fInfo.fileName()) + "\n", false);
+            emit showMessage(i18n("\"%1\" is already in the CVS ignore list.", fInfo.fileName()) + "\n", false);
             found = true;
             break;
           }
@@ -438,7 +438,7 @@ void CVSService::slotAddToCVSIgnore()
         if (!found)
         {
           str << fInfo.fileName() << endl;
-          emit showMessage(i18n("\"%1\" added to the CVS ignore list.").arg(fInfo.fileName()) + "\n", false);
+          emit showMessage(i18n("\"%1\" added to the CVS ignore list.", fInfo.fileName()) + "\n", false);
         }
         f.close();
       }
@@ -477,7 +477,7 @@ void CVSService::slotRemoveFromCVSIgnore()
         }       
         if (!found)
         {
-          emit showMessage(i18n("\"%1\" is not in the CVS ignore list.").arg(fInfo.fileName()) + "\n", false);
+          emit showMessage(i18n("\"%1\" is not in the CVS ignore list.", fInfo.fileName()) + "\n", false);
         }
         f.close();
       }
@@ -486,7 +486,7 @@ void CVSService::slotRemoveFromCVSIgnore()
         QTextStream str(&f);
         str.setEncoding(QTextStream::UnicodeUTF8);
         str << content;
-        emit showMessage(i18n("\"%1\" removed from the CVS ignore list.").arg(fInfo.fileName()) + "\n", false);
+        emit showMessage(i18n("\"%1\" removed from the CVS ignore list.", fInfo.fileName()) + "\n", false);
         f.close();
       }
       
@@ -501,7 +501,7 @@ void CVSService::slotJobExited(bool normalExit, int exitStatus)
 {
     if (!normalExit)
     {
-        KMessageBox::sorry(0, i18n("<qt>The CVS command <b>%1</b> has failed. The error code was <i>%2</i>.</qt>").arg(m_cvsCommand).arg(exitStatus), i18n("Command Failed"));
+        KMessageBox::sorry(0, i18n("<qt>The CVS command <b>%1</b> has failed. The error code was <i>%2</i>.</qt>", m_cvsCommand, exitStatus), i18n("Command Failed"));
     }
     if (exitStatus == 0)
     {
@@ -529,7 +529,7 @@ void CVSService::slotReceivedStderr(QString output)
 void CVSService::notInRepository()
 {
   emit clearMessages();
-  emit showMessage(i18n("Error: \"%1\" is not part of the\n\"%2\" repository.").arg(m_defaultFile).arg(m_repositoryPath) + "\n", false);
+  emit showMessage(i18n("Error: \"%1\" is not part of the\n\"%2\" repository.", m_defaultFile, m_repositoryPath) + "\n", false);
 }
 
 void CVSService::startService()

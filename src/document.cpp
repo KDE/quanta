@@ -399,7 +399,7 @@ void Document::insertFile(const KURL& url)
   {
     if (!KIO::NetAccess::download(url, fileName, 0))
     {
-      KMessageBox::error(0, i18n("<qt>Cannot download <b>%1</b>.</qt>").arg( url.prettyURL(0, KURL::StripFileProtocol)));
+      KMessageBox::error(0, i18n("<qt>Cannot download <b>%1</b>.</qt>", url.prettyURL(0, KURL::StripFileProtocol)));
       return;
     }
   }
@@ -411,7 +411,7 @@ void Document::insertFile(const KURL& url)
     insertText(stream.read());
     file.close();
   } else
-    KMessageBox::error(this, i18n("<qt>Cannot open <b>%1</b> for reading.</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)));
+    KMessageBox::error(this, i18n("<qt>Cannot open <b>%1</b> for reading.</qt>", url.prettyURL(0, KURL::StripFileProtocol)));
 }
 
 /** Inserts text at the current cursor position */
@@ -2845,7 +2845,7 @@ void Document::processDTD(const QString& documentType)
 
   if (!isUntitled())
   {
-    quantaApp->messageOutput()->showMessage(i18n("\"%1\" is used for \"%2\".\n").arg(DTDs::ref()->getDTDNickNameFromName(dtdName)).arg(url().prettyURL(0, KURL::StripFileProtocol)));
+    quantaApp->messageOutput()->showMessage(i18n("\"%1\" is used for \"%2\".\n", DTDs::ref()->getDTDNickNameFromName(dtdName), url().prettyURL(0, KURL::StripFileProtocol)));
   }
   quantaApp->slotLoadToolbarForDTD(dtdName);
   StructTreeView::ref()->useOpenLevelSetting = true;

@@ -1147,10 +1147,10 @@ void QuantaInit::recoverCrashed(QStringList& recoveredFileNameList)
            "Original file last modified on: <b>%3</b><br><br>"
            "Backup file size: <b>%4</b><br>"
            "Backup created on: <b>%5</b><br><br>"
-           "</qt>")
-           .arg(originalVersion.prettyURL(0, KURL::StripFileProtocol ))
-           .arg(KIO::convertSize(origSize)).arg(origTime)
-           .arg(KIO::convertSize(backupSize)).arg(backupTime));
+           "</qt>",
+            originalVersion.prettyURL(0, KURL::StripFileProtocol ),
+            KIO::convertSize(origSize), origTime,
+            KIO::convertSize(backupSize), backupTime));
           w->buttonLoad->setText(i18n("&Restore the file from backup"));
           w->buttonIgnore->setText(i18n("Do &not restore the file from backup"));
           delete w->warningLabel;
@@ -1411,20 +1411,20 @@ void QuantaInit::checkRuntimeDependencies()
   dependencies.append(dependency);
   
   QString errorStr;
-  QString stdErrorMsg = i18n("<br><b>-    %1</b> [<i>%2</i>] - %3 will not be available;");
+  KLocalizedString stdErrorMsg = ki18n("<br><b>-    %1</b> [<i>%2</i>] - %3 will not be available;");
   for (QValueList<Dependency>::ConstIterator it = dependencies.constBegin(); it != dependencies.constEnd(); ++it)
   {
     dependency = *it;
     if (dependency.type == Dependency::Executable)
     {
       if (KStandardDirs::findExe(dependency.execName).isNull())
-        errorStr += QString(stdErrorMsg).arg(dependency.name).arg(dependency.url).arg(dependency.description);
+        errorStr += stdErrorMsg.subs(dependency.name).subs(dependency.url).subs(dependency.description).toString();
     
     } else
     if (dependency.type == Dependency::Plugin)
     {
       if (!QuantaPlugin::validatePlugin(m_quanta->m_pluginInterface->plugin(dependency.execName)))
-        errorStr += QString(stdErrorMsg).arg(dependency.name).arg(dependency.url).arg(dependency.description);
+        errorStr += stdErrorMsg.subs(dependency.name).subs(dependency.url).subs(dependency.description).toString();
     }
   }
   
@@ -1436,7 +1436,7 @@ void QuantaInit::checkRuntimeDependencies()
                                             &appId);
   if (appId.isEmpty())
   {
-     errorStr += QString(stdErrorMsg).arg("Cervisia (cvsservice)").arg("http://www.kde.org/apps/cervisia").arg(i18n("integrated CVS management"));
+     errorStr += stdErrorMsg.subs(i18n("Cervisia (cvsservice)")).subs("http://www.kde.org/apps/cervisia").subs(i18n("integrated CVS management")).toString();
   } else
   {
      CVSService::ref(m_quanta->actionCollection())->setAppId(appId);

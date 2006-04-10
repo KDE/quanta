@@ -891,8 +891,8 @@ void ProjectPrivate::slotSaveAsProjectView(bool askForName)
     if (node.toElement().attribute("name") == currentProjectView)
     {
       if (!askForName ||
-          KMessageBox::warningContinueCancel(m_mainWindow, i18n("<qt>A project view named <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>")
-                                            .arg(currentProjectView), QString::null, i18n("Overwrite")) == KMessageBox::Continue)
+          KMessageBox::warningContinueCancel(m_mainWindow, i18n("<qt>A project view named <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>",
+                                             currentProjectView), QString::null, i18n("Overwrite")) == KMessageBox::Continue)
       {
         node.parentNode().removeChild(node);
         break;
@@ -1031,7 +1031,7 @@ bool ProjectPrivate::createEmptyDom()
   if (!result)
   {
     parent->hideSplash();
-    KMessageBox::sorry(m_mainWindow, i18n("<qt>Cannot open file <b>%1</b> for writing.</qt>").arg(projectURL.prettyURL(0, KURL::StripFileProtocol)));
+    KMessageBox::sorry(m_mainWindow, i18n("<qt>Cannot open file <b>%1</b> for writing.</qt>", projectURL.prettyURL(0, KURL::StripFileProtocol)));
     delete tempFile;
     tempFile = 0L;
     delete sessionTempFile;
@@ -1258,11 +1258,11 @@ bool ProjectPrivate::saveProject()
       f.close();
     }
     m_modified = false;
-    parent->statusMsg(i18n( "Wrote project file %1" ).arg(m_tmpProjectFile));
+    parent->statusMsg(i18n( "Wrote project file %1" , m_tmpProjectFile));
   } else
   {
     parent->hideSplash();
-    KMessageBox::error(m_mainWindow, i18n("<qt>Cannot open the file <b>%1</b> for writing.</qt>").arg(m_tmpProjectFile));
+    KMessageBox::error(m_mainWindow, i18n("<qt>Cannot open the file <b>%1</b> for writing.</qt>", m_tmpProjectFile));
     result = false;
   }
   return result;
@@ -1312,7 +1312,7 @@ void ProjectPrivate::loadProjectFromTemp(const KURL &url, const QString &tempFil
   } else
   {
     parent->hideSplash();
-    KMessageBox::error(m_mainWindow, i18n("<qt>Cannot open the file <b>%1</b> for reading.</qt>").arg(tempFile));
+    KMessageBox::error(m_mainWindow, i18n("<qt>Cannot open the file <b>%1</b> for reading.</qt>", tempFile));
   }
 }
 
@@ -1324,13 +1324,13 @@ void ProjectPrivate::loadProject(const KURL &url)
   if (!url.isValid())
   {
     parent->hideSplash();
-    KMessageBox::sorry(m_mainWindow, i18n("<qt>Malformed URL: <b>%1</b></qt>").arg(url.prettyURL()));
+    KMessageBox::sorry(m_mainWindow, i18n("<qt>Malformed URL: <b>%1</b></qt>", url.prettyURL()));
     return;
   }
   if ( projectAlreadyOpen(url.url()) )
   {
     parent->hideSplash();
-    if (KMessageBox::warningContinueCancel(m_mainWindow, i18n("<qt>The project<br><b>%1</b><br> seems to be used by another Quanta instance.<br>You may end up with data loss if you open the same project in two instances, modify and save them in both.<br><br>Do you want to proceed with open?</qt>").arg(url.prettyURL()), QString::null, KStdGuiItem::open()) == KMessageBox::Cancel)
+    if (KMessageBox::warningContinueCancel(m_mainWindow, i18n("<qt>The project<br><b>%1</b><br> seems to be used by another Quanta instance.<br>You may end up with data loss if you open the same project in two instances, modify and save them in both.<br><br>Do you want to proceed with open?</qt>", url.prettyURL()), QString::null, KStdGuiItem::open()) == KMessageBox::Cancel)
       return;
   }
   QString projectTmpFile;
@@ -1389,7 +1389,7 @@ void ProjectPrivate::loadProject(const KURL &url)
   } else
   {
     parent->hideSplash();
-    KMessageBox::error(m_mainWindow, i18n("<qt>Cannot access the project file <b>%1</b>.</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)));
+    KMessageBox::error(m_mainWindow, i18n("<qt>Cannot access the project file <b>%1</b>.</qt>", url.prettyURL(0, KURL::StripFileProtocol)));
   }
 }
 
@@ -1497,7 +1497,7 @@ void ProjectPrivate::slotDebuggerOptions()
       else
       {
         parent->hideSplash();
-        KMessageBox::error(NULL, i18n("<qt>Unable to load the debugger plugin, error code %1 was returned: <b>%2</b>.</qt>").arg(errCode).arg(KLibLoader::self()->lastErrorMessage()), i18n("Debugger Error"));
+        KMessageBox::error(NULL, i18n("<qt>Unable to load the debugger plugin, error code %1 was returned: <b>%2</b>.</qt>", errCode, KLibLoader::self()->lastErrorMessage()), i18n("Debugger Error"));
       }
     }
   }
@@ -1602,7 +1602,7 @@ bool ProjectPrivate::uploadProjectFile()
   {
     removeFromConfig(projectURL.url());    // remove the project from the list of open projects
     if (quantaApp)
-      parent->statusMsg(i18n( "Uploaded project file %1" ).arg( projectURL.prettyURL()));
+      parent->statusMsg(i18n( "Uploaded project file %1", projectURL.prettyURL()));
     // delete all temp files we used
     // first the one from creating a new project
     delete tempFile;

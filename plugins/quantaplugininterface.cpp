@@ -90,7 +90,7 @@ void QuantaPluginInterface::readConfigFile(const QString& configFile)
       if (pluginType == "Command Line")
       {
         emit hideSplash();
-        KMessageBox::information(m_parent, i18n("<qt><b>%1</b> is a command line plugin. We have removed support for command-line plugins. However, the functionality has not been lost as script actions can still be used to run command-line tools. </qt>").arg(*it), i18n("Unsupported Plugin Type"), "CommandLinePluginWarning");
+        KMessageBox::information(m_parent, i18n("<qt><b>%1</b> is a command line plugin. We have removed support for command-line plugins. However, the functionality has not been lost as script actions can still be used to run command-line tools. </qt>", *it), i18n("Unsupported Plugin Type"), "CommandLinePluginWarning");
         continue;
       }
 
@@ -257,7 +257,7 @@ void QuantaPluginInterface::slotPluginsValidate()
      {
          invalidNames += "<br>" + invalidPlugins[i]->name();
      }
-     int answer = KMessageBox::questionYesNo(m_parent, i18n("<qt>The following plugins seems to be invalid:<b>%1</b>.<br><br>Do you want to edit the plugins?</qt>").arg(invalidNames), i18n("Invalid Plugins"), i18n("Edit Plugins"), i18n("Do Not Edit"));
+     int answer = KMessageBox::questionYesNo(m_parent, i18n("<qt>The following plugins seems to be invalid:<b>%1</b>.<br><br>Do you want to edit the plugins?</qt>", invalidNames), i18n("Invalid Plugins"), i18n("Edit Plugins"), i18n("Do Not Edit"));
       if(answer == KMessageBox::Yes)
       {
         slotPluginsEdit();

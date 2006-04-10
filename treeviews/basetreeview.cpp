@@ -516,15 +516,15 @@ FileInfoDlg* BaseTreeView::addFileInfoPage(KPropertiesDialog* propDlg)
          }
          qfile.close();
 
-         quantaFileProperties->lineNum->setText(i18n("Number of lines: %1").arg(ct));
-         quantaFileProperties->imageNum->setText(i18n("Number of images included: %1").arg(imgct));
-         quantaFileProperties->imageSize->setText(i18n("Size of the included images: %1 bytes").arg(fimgsize));
-         quantaFileProperties->totalSize->setText(i18n("Total size with images: %1 bytes").arg(fsize+fimgsize));
+         quantaFileProperties->lineNum->setText(i18n("Number of lines: %1", ct));
+         quantaFileProperties->imageNum->setText(i18n("Number of images included: %1", imgct));
+         quantaFileProperties->imageSize->setText(i18n("Size of the included images: %1 bytes", fimgsize));
+         quantaFileProperties->totalSize->setText(i18n("Total size with images: %1 bytes", fsize+fimgsize));
         }
         else if (mimetype.contains("image"))
         {              // assume it's an image file
           QImage imagefile=QImage(nameForInfo);
-          quantaFileProperties->lineNum->setText(i18n("Image size: %1 x %2").arg(imagefile.width()).arg(imagefile.height()));
+          quantaFileProperties->lineNum->setText(i18n("Image size: %1 x %2", imagefile.width(), imagefile.height()));
           quantaFileProperties->imageNum->hide();
           quantaFileProperties->imageSize->hide();
           quantaFileProperties->totalSize->hide();
@@ -1025,7 +1025,7 @@ void BaseTreeView::doRename(KFileTreeViewItem* kftvi, const QString & newName)
     bool proceed = true;
     if (QExtFileInfo::exists(newURL))
     {
-      proceed = KMessageBox::warningContinueCancel(this, i18n("<qt>The file <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>").arg(newURL.prettyURL(0, KURL::StripFileProtocol)),i18n("Overwrite"), i18n("Overwrite")) == KMessageBox::Continue;
+      proceed = KMessageBox::warningContinueCancel(this, i18n("<qt>The file <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>", newURL.prettyURL(0, KURL::StripFileProtocol)),i18n("Overwrite"), i18n("Overwrite")) == KMessageBox::Continue;
     }
     if (proceed)
     {
@@ -1171,7 +1171,7 @@ void BaseTreeView::slotCreateSiteTemplate()
      error = true;
 
    if (error)
-     KMessageBox::error(this, i18n("<qt>There was an error while creating the site template tarball.<br>Check that you can read the files from <i>%1</i>, you have write access to <i>%2</i> and that you have enough free space in your temporary folder.</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)).arg(targetURL.prettyURL(0, KURL::StripFileProtocol)), i18n("Template Creation Error"));
+     KMessageBox::error(this, i18n("<qt>There was an error while creating the site template tarball.<br>Check that you can read the files from <i>%1</i>, you have write access to <i>%2</i> and that you have enough free space in your temporary folder.</qt>", url.prettyURL(0, KURL::StripFileProtocol), targetURL.prettyURL(0, KURL::StripFileProtocol)), i18n("Template Creation Error"));
    delete tempFile;
 }
 
@@ -1203,7 +1203,7 @@ void BaseTreeView::slotCreateFile()
       url.setPath(url.directory() + "/" + fileName);
     if (QExtFileInfo::exists(url))
     {
-      KMessageBox::error(this, i18n("<qt>Cannot create file, because a file named <b>%1</b> already exists.</qt>").arg(fileName), i18n("Error Creating File"));
+      KMessageBox::error(this, i18n("<qt>Cannot create file, because a file named <b>%1</b> already exists.</qt>", fileName), i18n("Error Creating File"));
       return;
     }
     KTempFile *tempFile = new KTempFile(tmpDir);

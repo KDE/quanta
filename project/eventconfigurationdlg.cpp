@@ -141,7 +141,7 @@ void EventConfigurationDlg::slotDeleteEvent()
 {
    QListViewItem *item = eventsListView->currentItem();
    if (!item) return;
-   if (KMessageBox::warningContinueCancel(this, i18n("<qt>Are you sure that you want to remove the configuration of the <b>%1</b> event?</qt>").arg(item->text(0)), i18n("Delete Event Configuration"),KStdGuiItem::del()) == KMessageBox::Continue)
+   if (KMessageBox::warningContinueCancel(this, i18n("<qt>Are you sure that you want to remove the configuration of the <b>%1</b> event?</qt>", item->text(0)), i18n("Delete Event Configuration"),KStdGuiItem::del()) == KMessageBox::Continue)
    {
       delete item;
    }

@@ -270,7 +270,7 @@ void QuantaDoc::slotAttribPopup()
 
     if ( QuantaCommon::isKnownTag(w->getDTDIdentifier(),tagName) )
     {
-      QString caption = i18n("Attributes of <%1>").arg(tagName);
+      QString caption = i18n("Attributes of <%1>", tagName);
       attribMenu->insertTitle( caption );
 
       AttributeList *list = QuantaCommon::tagAttributes(w->getDTDIdentifier(),tagName );
@@ -315,7 +315,7 @@ void QuantaDoc::slotAttribPopup()
       }
     }
     else {
-      QString message = i18n("Unknown tag: %1").arg(tagName);
+      QString message = i18n("Unknown tag: %1", tagName);
       quantaApp->slotStatusMsg( message );
     }
   }

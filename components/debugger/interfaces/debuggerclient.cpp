@@ -43,7 +43,7 @@ bool DebuggerClient::isActive()
 
 void DebuggerClient::unSupportedAction(const QString &action)
 {
-  KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.").arg(this->getName()).arg(action), i18n("Unsupported Debugger Function"));
+  KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.", this->getName(), action), i18n("Unsupported Debugger Function"));
 
 }
 
@@ -123,7 +123,7 @@ void DebuggerClient::removeBreakpoint(DebuggerBreakpoint*)
 // Unimplemented defaults
 void DebuggerClient::showConfig(QDomNode)
 {
-   KMessageBox::error(NULL, i18n("%1 does not have any specific settings.").arg(this->getName()), i18n("Settings"));
+   KMessageBox::error(NULL, i18n("%1 does not have any specific settings.", this->getName()), i18n("Settings"));
 }
 
 // Unimplemented defaults
@@ -135,18 +135,18 @@ void DebuggerClient::readConfig(QDomNode)
 //  Unimplemented defaults: add watch
 void DebuggerClient::addWatch(const QString &)
 {
-  KMessageBox::error(NULL, i18n("%1 does not support watches.").arg(this->getName()), i18n("Unsupported Debugger Function"));
+  KMessageBox::error(NULL, i18n("%1 does not support watches.", this->getName()), i18n("Unsupported Debugger Function"));
 }
 
 //  Unimplemented defaults: Remove watch
 void DebuggerClient::removeWatch(DebuggerVariable *)
 {
   // Giving an error seems pointless, since you shouldnt be able to add a watch in the first place...
-  KMessageBox::error(NULL, i18n("%1 does not support watches.").arg(this->getName()), i18n("Unsupported Debugger Function"));
+  KMessageBox::error(NULL, i18n("%1 does not support watches.", this->getName()), i18n("Unsupported Debugger Function"));
 }
 
 // Unimplemented defaults: set value of varialbe
 void DebuggerClient::variableSetValue(const DebuggerVariable &)
 {
-  KMessageBox::error(NULL, i18n("%1 does not support setting the value of variables.").arg(this->getName()), i18n("Unsupported Debugger Function"));
+  KMessageBox::error(NULL, i18n("%1 does not support setting the value of variables.", this->getName()), i18n("Unsupported Debugger Function"));
 }

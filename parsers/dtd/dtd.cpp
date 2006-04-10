@@ -124,7 +124,7 @@ bool DTD::parseDTD(const KURL &url)
  QString fileName = QString::null;
  if (!KIO::NetAccess::download(url, fileName))
  {
-   KMessageBox::error(0, i18n("<qt>Cannot download the DTD from <b>%1</b>.</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)));
+   KMessageBox::error(0, i18n("<qt>Cannot download the DTD from <b>%1</b>.</qt>", url.prettyURL(0, KURL::StripFileProtocol)));
    return false;
  }
   QFile file(fileName);

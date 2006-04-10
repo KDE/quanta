@@ -58,7 +58,7 @@ void AnnotationOutput::tabChanged(QWidget *w)
 void AnnotationOutput::insertAnnotation(uint line, const QString& fileName, const QString& text)
 {
   line++;
-  QString s = i18n("Line %1: %2").arg(line).arg(text);
+  QString s = i18n("Line %1: %2", line, text);
   s.replace('\n', ' ');
   m_currentFileAnnotations->showMessage(line, 1, fileName, s);
 }

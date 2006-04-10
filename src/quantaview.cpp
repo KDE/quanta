@@ -390,7 +390,7 @@ void QuantaView::slotSetSourceAndVPLLayout()
 
    if (m_document->defaultDTD()->name.contains("HTML", false) == 0)
    {
-      KMessageBox::information(this, i18n("The VPL Mode does not support the current DTD, at the moment: %1").arg(m_document->defaultDTD()->nickName));
+      KMessageBox::information(this, i18n("The VPL Mode does not support the current DTD, at the moment: %1", m_document->defaultDTD()->nickName));
       KToggleAction *ta2 = (KToggleAction *) quantaApp->actionCollection()->action( "show_quanta_editor" );
       if (ta2)
           ta2->setChecked(true);
@@ -439,7 +439,7 @@ void QuantaView::slotSetVPLOnlyLayout()
 
    if (m_document->defaultDTD()->name.contains("HTML", false) == 0)
    {
-      KMessageBox::information(this, i18n("The VPL Mode does not support the current DTD, at the moment: %1").arg(m_document->defaultDTD()->nickName));
+      KMessageBox::information(this, i18n("The VPL Mode does not support the current DTD, at the moment: %1", m_document->defaultDTD()->nickName));
       KToggleAction *ta2 = (KToggleAction *) quantaApp->actionCollection()->action( "show_quanta_editor" );
       if (ta2)
           ta2->setChecked(true);
@@ -1077,7 +1077,7 @@ bool QuantaView::saveModified(bool ask)
     int want_save;
     if (ask)
       want_save = KMessageBox::warningYesNoCancel(this,
-          i18n("The file \"%1\" has been modified.\nDo you want to save it?").arg(fileName),
+          i18n("The file \"%1\" has been modified.\nDo you want to save it?", fileName),
           i18n("Warning"), KStdGuiItem::save(), KStdGuiItem::discard());
     else
       want_save = KMessageBox::Yes;

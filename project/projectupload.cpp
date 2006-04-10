@@ -374,8 +374,8 @@ void ProjectUpload::startUpload()
       return;
     } else
     {
-      if (KMessageBox::warningContinueCancel(this, i18n("<qt><b>%1</b> seems to be unaccessible.<br>Do you want to proceed with upload?</qt>")
-          .arg(u.prettyURL(0, KURL::StripFileProtocol)),QString::null,KStdGuiItem::cont()) == KMessageBox::Continue)
+      if (KMessageBox::warningContinueCancel(this, i18n("<qt><b>%1</b> seems to be unaccessible.<br>Do you want to proceed with upload?</qt>",
+           u.prettyURL(0, KURL::StripFileProtocol)),QString::null,KStdGuiItem::cont()) == KMessageBox::Continue)
       {
         upload();
         return;
@@ -453,7 +453,7 @@ void ProjectUpload::upload()
         connect( job, SIGNAL( infoMessage( KIO::Job *,const QString& ) ),
                     this, SLOT( uploadMessage( KIO::Job *,const QString& ) ) );
 
-        labelCurFile->setText(i18n("Current: %1").arg(currentURL.fileName()));
+        labelCurFile->setText(i18n("Current: %1", currentURL.fileName()));
         currentProgress->setProgress( 0 );
         return;
       } else  //it is a dir, so just go to the next item
@@ -626,7 +626,7 @@ void ProjectUpload::slotRemoveProfile()
    } else
    {
       QString profileName = comboProfile->currentText();
-      if (KMessageBox::warningContinueCancel(this, i18n("<qt>Do you really want to remove the <b>%1</b> upload profile?</qt>").arg(profileName),
+      if (KMessageBox::warningContinueCancel(this, i18n("<qt>Do you really want to remove the <b>%1</b> upload profile?</qt>", profileName),
                                    i18n("Profile Removal"), KStdGuiItem::del()) == KMessageBox::Continue)
        {
           m_profilesNode.removeChild(m_currentProfileElement);
@@ -639,7 +639,7 @@ void ProjectUpload::slotRemoveProfile()
           slotNewProfileSelected(currentProfile);
           if (profileName == defaultProfile())
           {
-              KMessageBox::information(this, i18n("<qt>You have removed your default profile.<br>The new default profile will be <b>%1</b>.</qt>").arg(currentProfile), i18n("Profile Removal"));
+              KMessageBox::information(this, i18n("<qt>You have removed your default profile.<br>The new default profile will be <b>%1</b>.</qt>", currentProfile), i18n("Profile Removal"));
               m_profilesNode.toElement().setAttribute("defaultProfile", currentProfile);
           }
           comboProfile->removeItem(idx);

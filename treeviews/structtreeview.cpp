@@ -1003,7 +1003,7 @@ void StructTreeView::slotOpenFile()
         emit openImage(url);
       }
     } else
-      KMessageBox::error(this, i18n("<qt>The file <b>%1</b> does not exist or is not a recognized mime type.</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)));
+      KMessageBox::error(this, i18n("<qt>The file <b>%1</b> does not exist or is not a recognized mime type.</qt>", url.prettyURL(0, KURL::StripFileProtocol)));
   }
 }
 

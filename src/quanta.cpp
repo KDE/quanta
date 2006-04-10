@@ -388,7 +388,7 @@ void QuantaApp::slotFileOpenRecent(const KURL &url)
   if (!QExtFileInfo::exists(url))
   {
     if (KMessageBox::questionYesNo(this,
-        i18n("The file %1 does not exist.\n Do you want to remove it from the list?").arg(url.prettyURL(0, KURL::StripFileProtocol)), QString::null, KStdGuiItem::del(), i18n("Keep"))
+        i18n("The file %1 does not exist.\n Do you want to remove it from the list?", url.prettyURL(0, KURL::StripFileProtocol)), QString::null, KStdGuiItem::del(), i18n("Keep"))
         == KMessageBox::Yes)
     {
       fileRecent->removeURL(url);
@@ -492,7 +492,7 @@ bool QuantaApp::slotFileSaveAs(QuantaView *viewToSave)
     {
       oldURL = saveUrl;
       if (Project::ref()->hasProject() && !Project::ref()->contains(saveUrl) &&
-          KMessageBox::Yes == KMessageBox::questionYesNo(0,i18n("<qt>Do you want to add the<br><b>%1</b><br>file to project?</qt>").arg(saveUrl.prettyURL(0, KURL::StripFileProtocol)), QString::null, KStdGuiItem::add(), i18n("Do Not Add"))
+          KMessageBox::Yes == KMessageBox::questionYesNo(0,i18n("<qt>Do you want to add the<br><b>%1</b><br>file to project?</qt>", saveUrl.prettyURL(0, KURL::StripFileProtocol)), QString::null, KStdGuiItem::add(), i18n("Do Not Add"))
         )
       {
         if (saveUrl.isLocalFile())
@@ -555,7 +555,7 @@ void QuantaApp::saveAsTemplate(bool projectTemplate, bool selectionOnly)
     {
       if (projectTemplate)
           localTemplateDir = projectTemplateURL.path(1);
-      KMessageBox::sorry(this,i18n("You must save the templates in the following folder: \n\n%1").arg(localTemplateDir));
+      KMessageBox::sorry(this,i18n("You must save the templates in the following folder: \n\n%1", localTemplateDir));
       query = KMessageBox::No;
     }
   } while (query != KMessageBox::Yes);
@@ -574,7 +574,7 @@ void QuantaApp::saveAsTemplate(bool projectTemplate, bool selectionOnly)
     tempFile->file()->flush();
     tempFile->close();
     if (!QExtFileInfo::copy(KURL::fromPathOrURL(tempFile->name()), url, -1, true, false,  this))
-      KMessageBox::error(this, i18n("<qt>There was an error while creating the template file.<br>Check that you have write access to <i>%1</i>.</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)), i18n("Template Creation Error"));
+      KMessageBox::error(this, i18n("<qt>There was an error while creating the template file.<br>Check that you have write access to <i>%1</i>.</qt>", url.prettyURL(0, KURL::StripFileProtocol)), i18n("Template Creation Error"));
     delete tempFile;
   } else
   {
@@ -1490,7 +1490,7 @@ void QuantaApp::newCursorPosition(const QString &file, int lineNumber, int colum
   startIdleTimer();
  // updateTreeViews();
   QString linenumber;
-  linenumber = i18n("Line: %1 Col: %2").arg(lineNumber).arg(columnNumber);
+  linenumber = i18n("Line: %1 Col: %2", lineNumber, columnNumber);
   statusBar()->changeItem(linenumber, IDS_STATUS_CLM);
   statusBar()->changeItem(i18n(" R/O "),IDS_INS_OVR);
   statusBar()->changeItem("",IDS_MODIFIED);
@@ -1518,7 +1518,7 @@ void QuantaApp::slotNewLineColumn()
   Document *w = ViewManager::ref()->activeDocument();
   if (w)
     w->viewCursorIf->cursorPositionReal(&cursorLine, &cursorCol);
-  linenumber = i18n("Line: %1 Col: %2").arg(cursorLine+1).arg(cursorCol+1);
+  linenumber = i18n("Line: %1 Col: %2", cursorLine+1, cursorCol+1);
   statusBar()->changeItem(linenumber, IDS_STATUS_CLM);
 }
 
@@ -1968,7 +1968,7 @@ void QuantaApp::slotContextMenuAboutToShow()
         QuantaCommon::setUrl(urlUnderCursor, name.stripWhiteSpace());
         KURL baseUrl = QExtFileInfo::path(w->url());
         urlUnderCursor = QExtFileInfo::toAbsolute(urlUnderCursor, baseUrl);
-        action->setText(i18n("Open File: %1").arg(KStringHandler::lsqueeze(urlUnderCursor.prettyURL(0, KURL::StripFileProtocol), 80)));
+        action->setText(i18n("Open File: %1", KStringHandler::lsqueeze(urlUnderCursor.prettyURL(0, KURL::StripFileProtocol), 80)));
         action->setEnabled(true);
       } else
       {
@@ -2027,7 +2027,7 @@ void QuantaApp::slotContextMenuAboutToShow()
       action = actionCollection()->action("debug_addwatch");
       if(action)
       {
-        action->setText(i18n("Add Watch: '%1'").arg(word));
+        action->setText(i18n("Add Watch: '%1'", word));
         action->setEnabled(!word.isEmpty());
 
         if(!action->isPlugged(popup))
@@ -2038,7 +2038,7 @@ void QuantaApp::slotContextMenuAboutToShow()
       action = actionCollection()->action("debug_variable_set");
       if(action)
       {
-        action->setText(i18n("Set Value of '%1'").arg(word));
+        action->setText(i18n("Set Value of '%1'", word));
         action->setEnabled(!word.isEmpty());
 
         if(!action->isPlugged(popup))
@@ -2049,7 +2049,7 @@ void QuantaApp::slotContextMenuAboutToShow()
       action = actionCollection()->action("debug_conditional_break");
       if(action)
       {
-        action->setText(i18n("Break When '%1'...").arg(word));
+        action->setText(i18n("Break When '%1'...", word));
         action->setEnabled(!word.isEmpty());
 
         if(!action->isPlugged(popup))
@@ -2087,7 +2087,7 @@ void QuantaApp::slotOpenFileUnderCursor()
     }
   } else
   {
-    KMessageBox::error(this, i18n("<qt>The file <b>%1</b> does not exist or is not a recognized mime type.</qt>").arg(urlUnderCursor.prettyURL(0, KURL::StripFileProtocol)));
+    KMessageBox::error(this, i18n("<qt>The file <b>%1</b> does not exist or is not a recognized mime type.</qt>", urlUnderCursor.prettyURL(0, KURL::StripFileProtocol)));
 
   }
 }
@@ -2463,7 +2463,7 @@ KURL QuantaApp::saveToolbarToFile(const QString& toolbarName, const KURL& destFi
   if (!QExtFileInfo::copy(KURL::fromPathOrURL(tempFile->name()), tarFile, -1, true, false, this))
   {
     KMessageBox::error(this, i18n("<qt>An error happened while saving the <b>%1</b> toolbar.<br>"
-        "Check that you have write permissions for<br><b>%2</b></qt>").arg(p_toolbar->name).arg(tarFile.prettyURL(0, KURL::StripFileProtocol)), i18n("Toolbar Saving Error"));
+        "Check that you have write permissions for<br><b>%2</b></qt>", p_toolbar->name, tarFile.prettyURL(0, KURL::StripFileProtocol)), i18n("Toolbar Saving Error"));
     tarFile = KURL();
     delete p_toolbar->dom;
     p_toolbar->dom = oldDom;
@@ -2542,8 +2542,8 @@ bool QuantaApp::saveToolbar(bool localToolbar, const QString& toolbarToSave, con
       {
         if (!localToolbar)
             localToolbarsDir = projectToolbarsURL.prettyURL();
-        KMessageBox::sorry(0,i18n("<qt>You must save the toolbars to the following folder: <br><br><b>%1</b></qt>")
-                                  .arg(localToolbarsDir));
+        KMessageBox::sorry(0,i18n("<qt>You must save the toolbars to the following folder: <br><br><b>%1</b></qt>",
+                                   localToolbarsDir));
         query = KMessageBox::No;
       }
     } while (query != KMessageBox::Yes);
@@ -2580,7 +2580,7 @@ void QuantaApp::slotSaveProjectToolbar()
 void QuantaApp::slotAddToolbar()
 {
  bool ok;
- QString name = KInputDialog::getText(i18n("New Toolbar"), i18n("Enter toolbar name:"), i18n("User_%1").arg(userToolbarsCount), &ok, this);
+ QString name = KInputDialog::getText(i18n("New Toolbar"), i18n("Enter toolbar name:"), i18n("User_%1", userToolbarsCount), &ok, this);
  if (ok)
  {
   userToolbarsCount++;
@@ -3295,12 +3295,12 @@ bool QuantaApp::slotRemoveToolbar(const QString& a_name)
       int result;
       if (p_toolbar->url.isEmpty())
       {
-        result = KMessageBox::warningYesNoCancel(this, i18n("<qt>Toolbar <b>%1</b> is new and unsaved. Do you want to save it before it is removed?</qt>").arg(p_toolbar->name),
+        result = KMessageBox::warningYesNoCancel(this, i18n("<qt>Toolbar <b>%1</b> is new and unsaved. Do you want to save it before it is removed?</qt>", p_toolbar->name),
              i18n("Save Toolbar"), KStdGuiItem::save(), KStdGuiItem::discard());
       } else
       {
          FourButtonMessageBox dlg(this, 0, true);
-         dlg.textLabel->setText(i18n("<qt>The toolbar <b>%1</b> was modified. Do you want to save it before it is removed?</qt>").arg(p_toolbar->name));
+         dlg.textLabel->setText(i18n("<qt>The toolbar <b>%1</b> was modified. Do you want to save it before it is removed?</qt>", p_toolbar->name));
          dlg.setCaption(i18n("Save Toolbar"));
          dlg.pixmapLabel->setPixmap(BarIcon("messagebox_info", KIcon::SizeMedium));
          dlg.exec();
@@ -4274,7 +4274,7 @@ void QuantaApp::slotEditCurrentTag()
   slotEnableIdleTimer(true);
   if (isUnknown)
   {
-    QString message = i18n("Unknown tag: %1").arg(tagName);
+    QString message = i18n("Unknown tag: %1", tagName);
     slotStatusMsg( message );
   }
 }

@@ -85,11 +85,11 @@ void QPEvents::slotEventHappened(const QString& name, const QString& argument1, 
       EventAction ev = *it;
       if (ev.type == EventAction::Internal)
       {
-        if (KMessageBox::warningContinueCancel(0L, i18n("<qt>An internal action (<i>%1</i>) associated with an event (<i>%2</i>) will be executed.  Do you want to allow the execution of this action?</qt>").arg(ev.action).arg(name), i18n("Event Triggered"), i18n("Execute"), "Warn about internal actions") == KMessageBox::Cancel)
+        if (KMessageBox::warningContinueCancel(0L, i18n("<qt>An internal action (<i>%1</i>) associated with an event (<i>%2</i>) will be executed.  Do you want to allow the execution of this action?</qt>", ev.action, name), i18n("Event Triggered"), i18n("Execute"), "Warn about internal actions") == KMessageBox::Cancel)
           return;
       } else
       {
-        if (KMessageBox::warningContinueCancel(0L, i18n("<qt>An external action (<i>%1</i>) associated with an event (<i>%2</i>) will be executed.  Do you want to allow the execution of this action?</qt>").arg(ev.action).arg(name), i18n("Event Triggered"), i18n("Execute"), "Warn about external actions") == KMessageBox::Cancel)
+        if (KMessageBox::warningContinueCancel(0L, i18n("<qt>An external action (<i>%1</i>) associated with an event (<i>%2</i>) will be executed.  Do you want to allow the execution of this action?</qt>", ev.action, name), i18n("Event Triggered"), i18n("Execute"), "Warn about external actions") == KMessageBox::Cancel)
           return;
       }
       KURL url = KURL::fromPathOrURL(argument1);
@@ -221,7 +221,7 @@ void QPEvents::slotEventHappened(const QString& name, const QString& argument1, 
     }
   }
   if (!m_eventNames.contains(name))
-    KMessageBox::sorry(0L, i18n("<qt>Unsupported event <b>%1</b>.</qt>").arg(name), i18n("Event Handling Error"));
+    KMessageBox::sorry(0L, i18n("<qt>Unsupported event <b>%1</b>.</qt>", name), i18n("Event Handling Error"));
 }
 
 bool QPEvents::handleEvent(const EventAction& ev)
@@ -307,14 +307,14 @@ bool QPEvents::handleEvent(const EventAction& ev)
           }
           if (!result)
           {
-            KMessageBox::sorry(0L, i18n("<qt>Logging failed. Check that you have write access to <i>%1</i>.").arg(url.prettyURL(KURL::StripFileProtocol)));
+            KMessageBox::sorry(0L, i18n("<qt>Logging failed. Check that you have write access to <i>%1</i>.", url.prettyURL(KURL::StripFileProtocol)));
             return false;
           }
        } else
        {
        }
     } else
-      KMessageBox::sorry(0L, i18n("<qt>Unsupported internal event action : <b>%1</b>.</qt>").arg(ev.action));
+      KMessageBox::sorry(0L, i18n("<qt>Unsupported internal event action : <b>%1</b>.</qt>", ev.action));
   } else
   if (ev.type == EventAction::External)
   {
@@ -337,7 +337,7 @@ bool QPEvents::handleEvent(const EventAction& ev)
           {
             action->activate();
           } else
-            KMessageBox::sorry(0L, i18n("<qt>The <b>%1</b> script action was not found on your system.</qt>").arg(name), i18n("Action Execution Error"));
+            KMessageBox::sorry(0L, i18n("<qt>The <b>%1</b> script action was not found on your system.</qt>", name), i18n("Action Execution Error"));
       }  else
       KMessageBox::sorry(0L, i18n("Unsupported external event action."));
   } else

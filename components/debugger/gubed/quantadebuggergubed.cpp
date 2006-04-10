@@ -457,7 +457,7 @@ void QuantaDebuggerGubed::processCommand(const QString& datas)
   // Parsing failed
   else if(m_command == "parsefailed")
   {
-    debuggerInterface()->showStatus(i18n("Syntax or parse error in %1)").arg(args["filenme"]), true);
+    debuggerInterface()->showStatus(i18n("Syntax or parse error in %1)", args["filenme"]), true);
     return;
   }
   // A debugging session is running
@@ -474,7 +474,7 @@ void QuantaDebuggerGubed::processCommand(const QString& datas)
   else if(m_command == "error")
   {
     // Put the line number first so double clicking will jump to the corrrect line
-    debuggerInterface()->showStatus(i18n("Error occurred: Line %1, Code %2 (%3) in  %4").arg(args["line"]).arg(args["errnum"]).arg(args["errmsg"]).arg(args["filename"]), true);
+    debuggerInterface()->showStatus(i18n("Error occurred: Line %1, Code %2 (%3) in  %4", args["line"], args["errnum"], args["errmsg"], args["filename"]), true);
 
     // Filter to get error code only and match it with out mask
     long error = args["errnum"].toLong();
@@ -511,7 +511,7 @@ void QuantaDebuggerGubed::processCommand(const QString& datas)
   // We're about to debug a file..
   else if(m_command == "initialize")
   {
-    debuggerInterface()->showStatus(i18n("Established connection to %1").arg(args["filename"]), false);
+    debuggerInterface()->showStatus(i18n("Established connection to %1", args["filename"]), false);
     sendCommand("sendprotocolversion", 0);
 
     debuggerInterface()->setActiveLine(mapServerPathToLocal(args["filename"]), 0);

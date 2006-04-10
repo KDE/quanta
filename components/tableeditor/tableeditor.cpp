@@ -204,7 +204,7 @@ void TableEditor::slotEditRow()
 
 void TableEditor::slotEditCol()
 {
-  KMessageBox::information(this, i18n("Edit col: %1").arg(m_col + 1));
+  KMessageBox::information(this, i18n("Edit col: %1", m_col + 1));
   TagDialog dlg(QuantaCommon::tagFromDTD(m_dtd,"col"));
   dlg.exec();
 }
@@ -428,7 +428,7 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
               m_colSpin->setValue(col);
           TableNode tableN = mergeMatrix[nRow - 1][col];
           Node *n = tableN.node;
-          setCellText(m_dataTable, nRow - 1, col, i18n("Merged with (%1, %2).").arg(tableN.mergedRow + 1).arg(tableN.mergedCol + 1));
+          setCellText(m_dataTable, nRow - 1, col, i18n("Merged with (%1, %2).", tableN.mergedRow + 1, tableN.mergedCol + 1));
           m_dataTable->item(nRow-1, col)->setEnabled(false);
           tableNode.node = new Node(0L);
           tableNode.node->tag = new Tag(*(n->tag));
@@ -473,7 +473,7 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
               m_colSpin->setValue(nCol);
             for (int i = 0; i < colValue - 1; i++)
             {
-              setCellText(m_dataTable, nRow - 1, lastCol + i, i18n("Merged with (%1, %2).").arg(nRow).arg(lastCol));
+              setCellText(m_dataTable, nRow - 1, lastCol + i, i18n("Merged with (%1, %2).", nRow, lastCol));
               m_dataTable->item(nRow-1, lastCol + i)->setEnabled(false);
               tableNode.node = new Node(0L);
               tableNode.node->tag = new Tag(*(n->tag));
@@ -986,7 +986,7 @@ void TableEditor::slotMergeCells()
   for (int i = 0; i < bRow - tRow + 1; i++)
     for (int j = 0; j < rCol - lCol + 1; j++) {
       if (i != 0 || j != 0) {
-        setCellText(m_dataTable, tRow + i, lCol + j, i18n("Merged with (%1, %2).").arg(tRow + 1).arg(lCol + 1));
+        setCellText(m_dataTable, tRow + i, lCol + j, i18n("Merged with (%1, %2).", tRow + 1, lCol + 1));
         m_dataTable->item(tRow + i, lCol + j)->setEnabled(false);
         TableNode *tableNode = &((*m_tableTags)[tRow + i][lCol + j]);
         tableNode->node = new Node(0L);

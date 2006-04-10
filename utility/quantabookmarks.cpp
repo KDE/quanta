@@ -219,15 +219,15 @@ int QuantaBookmarks::insertBookmarks(QPopupMenu& menu, Document *doc, bool inser
       idx = ++old_menu_count;
       if ( next )
       {
-        m_goNext->setText( i18n("&Next: %1 - \"%2\"").arg( next->line + 1 )
-            .arg( KStringHandler::rsqueeze( doc->editIf->textLine( next->line ), 24 ) ) );
+        m_goNext->setText( i18n("&Next: %1 - \"%2\"", next->line + 1 ,
+              KStringHandler::rsqueeze( doc->editIf->textLine( next->line ), 24 ) ) );
         m_goNext->plug( &menu, idx );
         idx++;
       }
       if ( prev )
       {
-        m_goPrevious->setText( i18n("&Previous: %1 - \"%2\"").arg(prev->line + 1 )
-            .arg( KStringHandler::rsqueeze( doc->editIf->textLine( prev->line ), 24 ) ) );
+        m_goPrevious->setText( i18n("&Previous: %1 - \"%2\"", prev->line + 1 ,
+              KStringHandler::rsqueeze( doc->editIf->textLine( prev->line ), 24 ) ) );
         m_goPrevious->plug( &menu, idx );
         idx++;
       }

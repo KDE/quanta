@@ -97,7 +97,7 @@ void AbbreviationDlg::slotNewGroup()
    {
       if (qConfig.abbreviations.contains(groupName))
       {
-          KMessageBox::error(this, i18n("<qt>There is already an abbreviation group called <b>%1</b>. Choose an unique name for the new group.</qt>").arg(groupName), i18n("Group already exists"));
+          KMessageBox::error(this, i18n("<qt>There is already an abbreviation group called <b>%1</b>. Choose an unique name for the new group.</qt>", groupName), i18n("Group already exists"));
           QTimer::singleShot(0, this, SLOT(slotNewGroup()));
       } else
       {
@@ -187,7 +187,7 @@ void AbbreviationDlg::slotRemoveTemplate()
 {
   QListViewItem *item = templatesList->currentItem();
   if (item &&
-      KMessageBox::warningContinueCancel(this, i18n("<qt>Do you really want to remove the <b>%1</b> template?</qt>").arg(item->text(1)),QString::null,KStdGuiItem::del()) == KMessageBox::Continue)
+      KMessageBox::warningContinueCancel(this, i18n("<qt>Do you really want to remove the <b>%1</b> template?</qt>", item->text(1)),QString::null,KStdGuiItem::del()) == KMessageBox::Continue)
   {
     m_currentAbbrev->abbreviations.remove(item->text(0)+" "+item->text(1));
     delete item;
@@ -270,7 +270,7 @@ void AbbreviationDlg::saveTemplates()
     f.close();
   } else
   {
-    KMessageBox::error(this, i18n("<qt>Cannot open the file <b>%1</b> for writing.\nModified abbreviations will be lost when you quit Quanta.</qt>").arg(s));
+    KMessageBox::error(this, i18n("<qt>Cannot open the file <b>%1</b> for writing.\nModified abbreviations will be lost when you quit Quanta.</qt>", s));
   }
 }
 
