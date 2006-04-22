@@ -45,7 +45,7 @@ void DBGpNetwork::sessionStart(bool useproxy, const QString& server, const QStri
 
   if(m_useproxy)
   {
-    if(!m_socket)
+    if(m_socket)
     {
 //       m_socket->setBufferSize(-1);
       connect(m_socket, SIGNAL(gotError(int)), this, SLOT(slotError(int)));
@@ -131,7 +131,7 @@ void DBGpNetwork::slotError(int)
   if(m_server && m_server->error())
   {
     kdDebug(24002) << k_funcinfo << ", " << m_server->errorString() << endl;
-    emit networkError(m_socket->errorString(), true);
+    emit networkError(m_server->errorString(), true);
   }
 }
 

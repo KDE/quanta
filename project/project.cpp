@@ -911,7 +911,7 @@ bool Project::contains(const KURL& url)
 {
   if (d->m_projectFiles.isEmpty())
     d->m_projectFiles.readFromXML(d->dom, d->baseURL, d->templateURL, d->excludeRx);
-  return (d->m_projectFiles.contains(url) > 0);
+  return d->m_projectFiles.contains(url);
 }
 
 void Project::slotFileDescChanged(const KURL& url, const QString& desc)
