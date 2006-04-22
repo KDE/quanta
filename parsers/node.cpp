@@ -333,7 +333,7 @@ Node *Node::SPrev()
 
     while(node && node->tag->type != Tag::XmlTag && node->tag->type != Tag::Text)
     {
-        if(node->tag->type == Tag::ScriptTag)
+        if (parent && node->tag->type == Tag::ScriptTag)
         {
             //Check if it is an embedded ScriptTag. If it is, continue.
             node->tag->beginPos(line, col);
@@ -359,7 +359,7 @@ Node *Node::SNext()
 
     while(node && node->tag->type != Tag::XmlTag && node->tag->type != Tag::Text)
     {
-        if(node->tag->type == Tag::ScriptTag)
+        if (parent && node->tag->type == Tag::ScriptTag)
         {
             //Check if it is an embedded ScriptTag. If it is, continue.
             node->tag->beginPos(line, col);
