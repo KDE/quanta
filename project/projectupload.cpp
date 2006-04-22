@@ -404,70 +404,71 @@ void ProjectUpload::upload()
   UploadTreeFile *fileItem;
   UploadTreeFolder *folderItem;
 
-  uint toUploadCount = toUpload.count();
-  currentItem = 0L;
-  for (uint i = 0; i < toUploadCount; i++)
+  if (toUpload.isEmpty())
   {
-      currentItem = toUpload.at(i);
-      if (dynamic_cast<UploadTreeFile*>(currentItem))
-      {
-        fileItem = dynamic_cast<UploadTreeFile*>(currentItem);
-        folderItem = 0L;
-        currentURL = fileItem->url();
-      } else
-      {
-        fileItem = 0L;
-        folderItem = dynamic_cast<UploadTreeFolder*>(currentItem);
-        currentURL = folderItem->url();
-      }
+    saveRemoteUploadInfo();
+    accept();
+    return;
+  }
+  currentItem = toUpload.at(0);
+  if (dynamic_cast<UploadTreeFile*>(currentItem))
+  {
+    fileItem = static_cast<UploadTreeFile*>(currentItem);
+    folderItem = 0L;
+    currentURL = fileItem->url();
+  } else
+  {
+    fileItem = 0L;
+    folderItem = static_cast<UploadTreeFolder*>(currentItem);
+    currentURL = folderItem->url();
+  }
 
 
-      KURL from = QExtFileInfo::toAbsolute(currentURL, m_project->projectBaseURL());
-      to = *baseUrl;
-      to.addPath( currentURL.path() );
-      if (to.fileName(false).isEmpty())
-      {
-        dir = to;
-      }
-      else
-      {
-        dir = to.upURL() ;
-      }
+  KURL from = QExtFileInfo::toAbsolute(currentURL, m_project->projectBaseURL());
+  to = *baseUrl;
+  to.addPath( currentURL.path() );
+  if (to.fileName(false).isEmpty())
+  {
+    dir = to;
+  }
+  else
+  {
+    dir = to.upURL() ;
+  }
 
-      if ( !madeDirs.contains(dir) )
-      {
-        madeDirs.append( dir );
-        if (!QExtFileInfo::createDir(dir, this))
-        {
-          QuantaCommon::dirCreationError(this, KURL( dir.prettyURL(0, KURL::StripFileProtocol) ));
-          buttonUpload->setEnabled(true);
-          uploadInProgress = false;
-          saveRemoteUploadInfo();
-          return;
-        }
-      }
+  if ( !madeDirs.contains(dir) )
+  {
+    madeDirs.append( dir );
+    if (!QExtFileInfo::createDir(dir, this))
+    {
+      QuantaCommon::dirCreationError(this, KURL( dir.prettyURL(0, KURL::StripFileProtocol) ));
+      buttonUpload->setEnabled(true);
+      uploadInProgress = false;
+      saveRemoteUploadInfo();
+      return;
+    }
+  }
 
-     // qDebug("%s -> %s", from.url().data(), to.url().data() );
-      if (!from.fileName(false).isEmpty() && fileItem)
-      {
-        emit eventHappened("before_upload", from.url(), to.url());
-        KIO::FileCopyJob *job = KIO::file_copy( from, to, fileItem->permissions(), true, false, false );
+  // qDebug("%s -> %s", from.url().data(), to.url().data() );
+  if (!from.fileName(false).isEmpty() && fileItem)
+  {
+    emit eventHappened("before_upload", from.url(), to.url());
+    KIO::FileCopyJob *job = KIO::file_copy( from, to, fileItem->permissions(), true, false, false );
 
-        connect( job, SIGNAL( result( KIO::Job * ) ),this,
-                          SLOT( uploadFinished( KIO::Job * ) ) );
-        connect( job, SIGNAL( percent( KIO::Job *,unsigned long ) ),
-                    this, SLOT( uploadProgress( KIO::Job *,unsigned long ) ) );
-        connect( job, SIGNAL( infoMessage( KIO::Job *,const QString& ) ),
-                    this, SLOT( uploadMessage( KIO::Job *,const QString& ) ) );
+    connect( job, SIGNAL( result( KIO::Job * ) ),this,
+                      SLOT( uploadFinished( KIO::Job * ) ) );
+    connect( job, SIGNAL( percent( KIO::Job *,unsigned long ) ),
+                this, SLOT( uploadProgress( KIO::Job *,unsigned long ) ) );
+    connect( job, SIGNAL( infoMessage( KIO::Job *,const QString& ) ),
+                this, SLOT( uploadMessage( KIO::Job *,const QString& ) ) );
 
-        labelCurFile->setText(i18n("Current: %1").arg(currentURL.fileName()));
-        currentProgress->setProgress( 0 );
-        return;
-      } else  //it is a dir, so just go to the next item
-      {
-        emit uploadNext();
-        return;
-      }
+    labelCurFile->setText(i18n("Current: %1").arg(currentURL.fileName()));
+    currentProgress->setProgress( 0 );
+    return;
+  } else  //it is a dir, so just go to the next item
+  {
+    emit uploadNext();
+    return;
   }
   saveRemoteUploadInfo();
   buttonUpload->setEnabled(true);
