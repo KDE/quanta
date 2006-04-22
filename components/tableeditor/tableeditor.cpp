@@ -489,7 +489,7 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
         {
           bool ok;
           colValue = colspanValue.toInt(&ok, 10);
-          if (ok & colValue > 1)
+          if (ok && colValue > 1)
           {
             nCol += (colValue - 1);
             if (m_colSpin->value() < nCol)
@@ -515,7 +515,7 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
         {
           bool ok;
           int rowValue = rowspanValue.toInt(&ok, 10);
-          if (ok & rowValue > 1)
+          if (ok && rowValue > 1)
           {
             lastCol--;
             // Check if there are enough columns in mergeMatriz
