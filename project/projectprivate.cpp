@@ -1500,7 +1500,7 @@ void ProjectPrivate::slotDebuggerOptions()
     KService::Ptr service = *iterDbg;
     if(m_debuggerClientEdit == service->name())
     {
-      DebuggerClient *dbg = dbg;
+      DebuggerClient *dbg = 0L;
       int errCode = 0;
 //Workaround for dynamic_cast not working correctly on SUSE 10, gcc 4.0.2
 //The correct way should be a simple:
