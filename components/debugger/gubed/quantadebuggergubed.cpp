@@ -375,7 +375,7 @@ void QuantaDebuggerGubed::slotReadyRead()
       m_socket->readBlock(buffer, bytes);
       buffer[bytes] = 0;
       m_buffer += buffer;
-      delete buffer;
+      delete[] buffer;
     }
 
     while(1)

@@ -236,7 +236,7 @@ void DBGpNetwork::slotReadyRead()
       // Put it in the fifo buffer
       m_fifo.append(buffer, bytes);
 
-      delete buffer;
+      delete[] buffer;
     }
 
     while(1)
