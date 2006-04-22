@@ -417,7 +417,7 @@ void htmlDocumentProperties::accept()
 				view->document(), titleNode, 0L, 0L, modifs);
 		}
 		else
-			node->tag->setStr(KafkaDocument::ref()->getEncodedText(title->text()));
+      titleNode->child->tag->setStr(KafkaDocument::ref()->getEncodedText(title->text()));
 	}
 
 	//set the METAs if necessary

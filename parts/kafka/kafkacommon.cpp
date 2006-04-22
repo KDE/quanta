@@ -176,7 +176,7 @@ Node* kafkaCommon::DTDGetCommonParent(Node* startNode, Node* endNode,
         commonParentEndChild = oldCommonParent;
     }
     //startNode or endNode can't be the commonParent.
-    else if(itStart == startNodeLocation.end() || itEnd == endNodeLocation.end())
+    else if(commonParent && (itStart == startNodeLocation.end() || itEnd == endNodeLocation.end()))
         commonParent = commonParent->parent;
 
     commonParentStartChildLocation = getLocation(commonParentStartChild);
@@ -232,7 +232,7 @@ Node* kafkaCommon::DTDGetNonInlineCommonParent(Node* startNode, Node* endNode,
         commonParentEndChild = oldCommonParent;
     }
     //startNode or endNode can't be the commonParent.
-    else if(itStart == startNodeLocation.end() || itEnd == endNodeLocation.end())
+    else if(commonParent && (itStart == startNodeLocation.end() || itEnd == endNodeLocation.end()))
         commonParent = commonParent->parent;
 
     commonParentStartChildLocation = getLocation(commonParentStartChild);
@@ -1569,7 +1569,7 @@ bool kafkaCommon::DTDinsertNode(Node *newNode, Node *startNode, int startOffset,
         commonParentEndChild = oldCommonParent;
     }
     //startNode or endNode can't be the commonParent.
-    else if(itStart == startNodeLocation.end() || itEnd == endNodeLocation.end())
+    else if(commonParent && (itStart == startNodeLocation.end() || itEnd == endNodeLocation.end()))
         commonParent = commonParent->parent;
 
     //Now look if at least one of the parent Nodes between startNode and commonParent
@@ -1983,13 +1983,16 @@ bool kafkaCommon::addNodeRecursively(Node *newNode, Node *leafNode,
                         startSelection = startSelection->next;
                     while(endSelection && endSelection->tag->type == Tag::Empty)
                         endSelection = endSelection->prev;
-                    /**copyNewNode = duplicateNode(newNode);
-                    insertNode(copyNewNode, startSelection->parentNode(), startSelection,
-                    	endSelection->next, modifs);*/
-                    copyNewNode = duplicateNodeSubtree(newNode);
-                    insertNodeSubtree(copyNewNode, startSelection->parentNode(), startSelection,
-                                      endSelection->next, modifs);
-                    nodeInserted = true;
+                    if (startSelection && endSelection)
+                    {
+                      /**copyNewNode = duplicateNode(newNode);
+                      insertNode(copyNewNode, startSelection->parentNode(), startSelection,
+                        endSelection->next, modifs);*/
+                      copyNewNode = duplicateNodeSubtree(newNode);
+                      insertNodeSubtree(copyNewNode, startSelection->parentNode(), startSelection,
+                                        endSelection->next, modifs);
+                      nodeInserted = true;
+                    }
                 }
             }
 
@@ -2061,13 +2064,16 @@ bool kafkaCommon::addNodeRecursively(Node *newNode, Node *leafNode,
                     startSelection = startSelection->next;
                 while(endSelection && endSelection->tag->type == Tag::Empty)
                     endSelection = endSelection->prev;
-                /**copyNewNode = duplicateNode(newNode);
-                insertNode(copyNewNode, startSelection->parentNode(), startSelection,
-                	endSelection->next, modifs);*/
-                copyNewNode = duplicateNodeSubtree(newNode);
-                insertNodeSubtree(copyNewNode, startSelection->parentNode(), startSelection,
-                                  endSelection->next, modifs);
-                nodeInserted = true;
+                if (startSelection && endSelection)
+                {
+                  /**copyNewNode = duplicateNode(newNode);
+                  insertNode(copyNewNode, startSelection->parentNode(), startSelection,
+                    endSelection->next, modifs);*/
+                  copyNewNode = duplicateNodeSubtree(newNode);
+                  insertNodeSubtree(copyNewNode, startSelection->parentNode(), startSelection,
+                                    endSelection->next, modifs);
+                  nodeInserted = true;
+                }
             }
         }
 

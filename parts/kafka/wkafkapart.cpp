@@ -1472,7 +1472,7 @@ void KafkaDocument::translateKafkaIntoQuantaCursorPosition(DOM::Node _currentDom
 	}
 
 	_currentNode = attrs->getNode();
-	if(!_currentNode && attrs->specialBehavior() == kNodeAttrs::none)
+  if(!_currentNode /* && attrs->specialBehavior() == kNodeAttrs::none -- Andras: what happens if _currentNode is null, but this part of the if is not true?*/)
 	{
 		kdDebug(25001)<< "KafkaDocument::getQuantaCursorPosition() - Node not found!" << endl;
 		line = 0;
@@ -2155,7 +2155,7 @@ void KafkaDocument::slotDomNodeAboutToBeRemoved(DOM::Node _domNode, bool deleteC
 	}
 	else if(_node->child)// && !deleteChilds
 	{
-		if(!_node->parent->child)
+    if(_node->parent && !_node->parent->child)
 			_node->parent->child = _node->child;
 		if(_node->prev)
 			_node->prev->next = _node->child;
