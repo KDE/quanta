@@ -2833,11 +2833,16 @@ void QuantaApp::slotRenameToolbar(const QString& name)
 /** Ask for save all the modified user toolbars. */
 bool QuantaApp::removeToolbars()
 {
+  QStringList names;
   QDictIterator<ToolbarEntry> it(m_toolbarList);
-  while (it.current())
+  for (;it.current();++it)
   {
-    if (!slotRemoveToolbar(it.current()->id))
-        return false;
+    names += it.currentKey();
+  }
+  for (QStringList::ConstIterator iter = names.constBegin(); iter != names.constEnd(); ++iter)
+  {
+    if (!slotRemoveToolbar(*iter))
+      return false;
   }
 
   QString s = "<!DOCTYPE actionsconfig>\n<actions>\n</actions>\n";
