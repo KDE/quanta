@@ -3657,8 +3657,11 @@ Node* kafkaCommon::hasParent(Node *node, const QString &name)
 
 Node* kafkaCommon::hasParent(Node* startNode, Node* endNode, const QString &name)
 {   
-    assert(startNode && endNode);
-    
+    Q_ASSERT(startNode && endNode);
+     //Andras: don't crash
+    if (!startNode || !endNode)
+      return -1;
+   
     QValueList<int> commonParentStartChildLocation;
     QValueList<int> commonParentEndChildLocation;
 
@@ -4042,7 +4045,10 @@ void kafkaCommon::coutTree(Node *node, int indent)
 
 int kafkaCommon::isInsideTag(Node* start_node, Node* end_node, QString const& tag_name)
 {
-    assert(start_node && end_node);
+    Q_ASSERT(start_node && end_node);
+    //Andras: don't crash
+    if (!start_node || !end_node)
+      return -1;
     
     Node* tag_start = hasParent(start_node, end_node, tag_name);
     if(tag_start)
@@ -4062,7 +4068,10 @@ int kafkaCommon::isInsideTag(Node* start_node, Node* end_node, QString const& ta
 int kafkaCommon::isInsideTag(Node* start_node, Node* end_node, QString const& tag_name, 
                              QString const& attribute_name, QString const& attribute_value)
 {
-    assert(start_node && end_node);
+    Q_ASSERT(start_node && end_node);
+    //Andras: don't crash
+    if (!start_node || !end_node)
+      return -1;
     
     Node* tag_start = hasParent(start_node, end_node, tag_name);
     if(tag_start && tag_start->tag->hasAttribute(attribute_name) && tag_start->tag->attributeValue(attribute_name, true) == attribute_value)
@@ -4097,9 +4106,12 @@ bool kafkaCommon::isBetweenWords(Node* node, int offset)
 
 void kafkaCommon::getStartOfWord(Node*& node, int& offset)
 {
-    assert(node);
-//     assert(isBetweenWords(node, offset)); recursive
-    assert(offset >= 0);
+  Q_ASSERT(node);
+//     Q_ASSERT(isBetweenWords(node, offset)); recursive
+  Q_ASSERT(offset >= 0);
+  //Andras: don't crash
+  if (!node || offset < 0)
+    return;
     
     kdDebug(23100) << "getStartOfWord node length: " << node->tag->tagStr().length() << endl;
     kdDebug(23100) << "getStartOfWord offset BEGIN: " << offset << endl;
@@ -4173,7 +4185,13 @@ void kafkaCommon::getEndOfWord(Node*& node, int& offset)
 
 void kafkaCommon::getStartOfParagraph(Node*& node, int& offset)
 {
-    assert(node);
+    Q_ASSERT(node);
+    //Andras: don't crash
+    if (!node)
+    {
+      offset = 0;
+      return;  
+    }
     
     Node* previous = node->previousSibling();
     while(previous && (isInline(previous->tag->name) || previous->tag->name.lower() == "br" || previous->tag->type == Tag::Text))
@@ -4185,12 +4203,17 @@ void kafkaCommon::getStartOfParagraph(Node*& node, int& offset)
         node = previous->nextSibling();
         return;   
     }
-    assert(node->tag->type == Tag::Text);
+    Q_ASSERT(node->tag->type == Tag::Text);
 }
 
 void kafkaCommon::getEndOfParagraph(Node*& node, int& offset)
 {
-    assert(node);
+    Q_ASSERT(node);
+    if (!node)
+    {
+      offset = 0;
+      return;
+    }
     
     Node* begin_paragraph = node;
     getStartOfParagraph(begin_paragraph, offset);

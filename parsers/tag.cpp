@@ -14,7 +14,6 @@
  ***************************************************************************/
 
 #include <ctype.h>
-#include <assert.h>
 
 #include <qdict.h>
 #include <qstring.h>
@@ -69,7 +68,6 @@ Tag::Tag(const AreaStruct &area, Document *write, const DTDStruct *dtd, bool doP
   init();
   QString s = write->text(area);
   m_area = area;
-//  assert(dtd);
   m_dtd = dtd;
   if (doParse)
   {
@@ -651,7 +649,6 @@ void Tag::setAttributeSpecial(int index, bool special)
 
 void Tag::setDtd(const DTDStruct *dtd)
 {
- // assert(dtd);
   m_dtd = dtd;
 }
 
