@@ -3660,7 +3660,7 @@ Node* kafkaCommon::hasParent(Node* startNode, Node* endNode, const QString &name
     Q_ASSERT(startNode && endNode);
      //Andras: don't crash
     if (!startNode || !endNode)
-      return -1;
+      return 0;
    
     QValueList<int> commonParentStartChildLocation;
     QValueList<int> commonParentEndChildLocation;
