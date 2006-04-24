@@ -337,9 +337,9 @@ void KafkaWidget::keyReturn(bool specialPressed)
         //Then split if necessary the text
         if((static_cast<DOM::CharacterData>(m_currentNode)).length() == 0)
             text = m_currentNode;
-        else if(d->m_cursorOffset == 0)
+        else if(d->m_cursorOffset <= 0)
             text2 = m_currentNode;
-        else if((unsigned)d->m_cursorOffset ==
+        else if((unsigned)d->m_cursorOffset >=
                 (static_cast<DOM::CharacterData>(m_currentNode)).length())
             text = m_currentNode;
         else

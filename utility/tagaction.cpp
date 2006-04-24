@@ -916,6 +916,7 @@ QString TagAction::openXMLTagString() const
     if ( attr.right(1) == ">" )
         attr.remove( attr.length()-1, 1 );
     attr = attr.stripWhiteSpace();
+    attr.remove(0, name.length());
     
     QString s1 = QuantaCommon::tagCase(name);
     if (otag.text().left(1) == "<") s1 = "<"+s1;

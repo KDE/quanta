@@ -4138,10 +4138,15 @@ void kafkaCommon::getStartOfWord(Node*& node, int& offset)
 
 void kafkaCommon::getEndOfWord(Node*& node, int& offset)
 {
-    assert(node);
+    Q_ASSERT(node);
 //     assert(isBetweenWords(node, offset)); recursive
-    assert(isBetweenWords(node, offset));
-    assert(offset >= 0);
+    Q_ASSERT(isBetweenWords(node, offset));
+    Q_ASSERT(offset >= 0);
+
+    //Andras: if the following asserts are hit, don't do anything = don't crash
+    if (!node || !isBetweenWords(node, offset) || offset < 0)
+      return; 
+    
     
     QString tag_str = node->tag->tagStr();
     while((uint)offset != tag_str.length() && !tag_str[offset].isSpace() && !tag_str[offset].isPunct())
