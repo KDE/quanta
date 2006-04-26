@@ -1,17 +1,17 @@
 <?xml version = '1.0'?>
 <kdevelop>
   <general>
+  <projectmanagement>KDevCustomProject</projectmanagement>
+  <projectdirectory>/data/home/andris/development/sources/kde-trunk/kdewebdev</projectdirectory>
+  <absoluteprojectpath>true</absoluteprojectpath>
     <author>Andras Mantia</author>
     <email>amantia@kde.org</email>
     <version>$VERSION$</version>
-    <projectmanagement>KDevKDEAutoProject</projectmanagement>
     <primarylanguage>C++</primarylanguage>
     <keywords>
       <keyword>Qt</keyword>
       <keyword>KDE</keyword>
     </keywords>
-    <projectdirectory>.</projectdirectory>
-    <absoluteprojectpath>false</absoluteprojectpath>
     <description></description>
     <ignoreparts/>
     <versioncontrol/>
@@ -72,6 +72,9 @@
   </kdevdoctreeview>
   <kdevdebugger>
     <general>
+  <projectmanagement>KDevCustomProject</projectmanagement>
+  <projectdirectory>/data/home/andris/development/sources/kde-trunk/kdewebdev</projectdirectory>
+  <absoluteprojectpath>true</absoluteprojectpath>
       <dbgshell></dbgshell>
       <programargs></programargs>
       <gdbpath></gdbpath>
@@ -131,6 +134,9 @@
       </envvars>
     </run>
     <general>
+  <projectmanagement>KDevCustomProject</projectmanagement>
+  <projectdirectory>/data/home/andris/development/sources/kde-trunk/kdewebdev</projectdirectory>
+  <absoluteprojectpath>true</absoluteprojectpath>
       <useconfiguration>default</useconfiguration>
       <activetarget>quantacore/libkdevquantacore.la</activetarget>
     </general>
@@ -138,7 +144,6 @@
       <default>
         <envvars/>
         <configargs></configargs>
-        <builddir>/data2/kde4/build/kdewebdev</builddir>
         <topsourcedir></topsourcedir>
         <cppflags>-DDEBUG_PARSER</cppflags>
         <ldflags></ldflags>
