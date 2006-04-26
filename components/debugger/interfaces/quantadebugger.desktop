@@ -1,6 +1,0 @@
-[Desktop Entry]
-Type=ServiceType
-X-KDE-ServiceType=Quanta/Debugger
-Comment=A Quanta Debugger plugin
-Comment[fr]=Un module de débogage pour Quanta
-Comment[x-test]=xxA Quanta Debugger pluginxx
