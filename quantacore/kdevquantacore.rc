@@ -1,0 +1,79 @@
+<!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
+<kpartgui version="2" name="quanta" >
+    <MenuBar>
+      <Menu name="file" >
+        <Action name="file_new" group="new_merge"/>
+      </Menu>
+      <Menu name="edit" >
+            <text>&amp;Edit</text>
+            <DefineGroup name="edit_paste_merge" />
+            <Menu name="paste_special" >
+                <text>Paste Special</text>
+                <Action name="edit_paste_html_quoted" />
+                <Action name="edit_paste_url_encoded" />
+            </Menu>
+            <Separator/>
+            <Action name="apply_source_indentation" />
+            <Action name="show_completion" />
+            <Action name="show_completion_hint" />
+        </Menu>
+        <Menu name="view" >
+            <text>&amp;View</text>
+            <Merge/>
+            <Separator/>
+            <Action name="show_quanta_editor" />
+            <Action name="show_kafka_view" />
+            <Action name="show_kafka_and_quanta" />
+        </Menu>
+        <Menu name="dtds" >
+            <text>&amp;DTD</text>
+            <Action name="change_dtd" />
+            <Action name="edit_dtd" />
+            <Action name="load_dtd" />
+            <Separator/>
+            <Action name="load_dtep" />
+            <Action name="send_dtep" />
+            <Action name="upload_dtep" />
+            <Action name="download_dtep" />
+        </Menu>
+        <Menu name="tags" >
+            <text>&amp;Tags</text>
+            <Action name="select_tag_area" />
+            <Action name="smart_tag_insertion" />
+            <Separator/>
+        </Menu>
+        <Merge/>
+        <Menu name="tools" >
+            <text>T&amp;ools</text>
+            <Merge/>
+            <Separator/>
+            <Action name="tools_change_case" />
+            <Separator/>
+            <Action name="tidy_check" />
+            <Action name="kompare_script" />
+        </Menu>
+        <Menu name="settings" >
+            <text>&amp;Settings</text>
+            <Merge name="StandardToolBarMenuHandler" />
+            <Merge/>
+            <Separator/>
+        </Menu>
+        <Menu name="help" >
+            <text>&amp;Help</text>
+            <Action name="help_homepage" />
+            <Action name="help_userlist" />
+            <Action name="help_donation" />
+            <Separator/>
+        </Menu>
+    </MenuBar>
+    <ToolBar name="mainToolBar">
+      <Action name="file_new" group="new_merge"/>
+    </ToolBar>
+    <ToolBar noMerge="1" name="mainNaviToolBar" >
+        <text>Navigation Toolbar</text>
+        <Action name="show_quanta_editor" />
+        <Action name="show_kafka_view" />
+        <Action name="show_kafka_and_quanta" />
+    </ToolBar>
+    <ActionProperties/>
+</kpartgui>

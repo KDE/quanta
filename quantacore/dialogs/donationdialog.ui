@@ -1,0 +1,155 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>DonationDialog</class>
+<comment>/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; version 2 of the License.               *
+ *                                                                         *
+ ***************************************************************************/
+</comment>
+<author>(C) 2002, 2003 Andras Mantia &lt;amantia@kde.org&gt;, (C) 2002, 2003, 2004 Eric Laffoon &lt;sequitur@kde.org&gt;</author>
+<widget class="QDialog">
+    <property name="name">
+        <cstring>DonationDialog</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>497</width>
+            <height>407</height>
+        </rect>
+    </property>
+    <property name="sizePolicy">
+        <sizepolicy>
+            <hsizetype>5</hsizetype>
+            <vsizetype>1</vsizetype>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+        </sizepolicy>
+    </property>
+    <property name="caption">
+        <string>Support Quanta with Financial Donation</string>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="KPushButton" row="2" column="1">
+            <property name="name">
+                <cstring>closeButton</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Close</string>
+            </property>
+        </widget>
+        <widget class="KTextBrowser" row="0" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>KTextBrowser5</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>7</hsizetype>
+                    <vsizetype>3</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="frameShadow">
+                <enum>Raised</enum>
+            </property>
+            <property name="textFormat">
+                <enum>RichText</enum>
+            </property>
+            <property name="text">
+                <string>&lt;div align="center"&gt;&lt;h2&gt;Your Contribution Can Make a Difference&lt;/h2&gt;&lt;/div&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;Quanta Plus would not be what it is today without sponsored developers. Andras Mantia has been full time since mid 2002 and Michal Rudolf came on part time in spring of 2004. Over the life of the project development has been largely sponsored by the efforts of the Project Manager, Eric Laffoon. In addition to his minimum 10-20 hour a week time commitment, his company, &lt;a href="http://kittyhooch.com" target="_blank"&gt;Kitty Hooch&lt;/a&gt; LLP has an ongoing financial commitment to keep Quanta in continuous development. Our sponsored developers are also a catalyst to our volunteer developers.
+&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Kitty Hooch is a small company with no employees, 2 active partners and several contract workers. After test marketing in the fall of 2001 they began wholesale and retail to national and international markets in early 2002. Kitty Hooch controls all aspects of their product production and marketing. Quanta sponsorship is no small expense for a small start up company. In 2003 cash flow and a bout with typhoid fever left Eric in debt and unable to keep up payments to Andras without help from the community. Thankfully a number of people stepped up. We now have several large sponsors along with a number of generous contributors. This has enabled us to bring Michal on part time. Now we are looking to be able to move him to full time. The challenge for this project to assume a leading role as a "killer desktop application" is great.
+&lt;div align="center"&gt;&lt;h3&gt;Balancing open source ideals and fiscal
+reality&lt;/h3&gt;&lt;/div&gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;We believe that the open source model
+is the future of software, but it is no guarantee of success. How many open source projects that we had high hopes for are unmaintained today? In early 2002 many people thought that Quanta Plus was dead. One person, Eric Laffoon, was not about to let the dream die. Quanta is more than surviving now, but developing a best-in-class tool is no easy task. We believe the key is consistent momentum. Nothing ensures this better than programmers who can work without financial or time distractions. Why do you think OSS projects die?&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;As Quanta grows the project management demands are increasing and ironically impacting the revenue stream it requires to continue. The impact of our sponsored developers has been huge! We are looking to make Quanta grow even faster. Eric needs to be able to free even more time to bring several new and exciting ideas through coding to release. We have other expenses too, with conferences and keeping our systems up to date so we don't lose time fighting old hardware. &lt;i&gt;We want to make Quanta the best web tool anywhere!&lt;/i&gt;. This will require a nucleus of active core developers. We hope professional developers and companies using Quanta will help us to reach our goals with sponsorship donations that will relieve financial stresses.
+&lt;div align="center"&gt;&lt;h3&gt;Could Quanta die without your support?&lt;/h3&gt;&lt;/div&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;We'd like to think not! But from February 2001 to June 2002 there was very little activity and many months with no work done at all. This came about because of cash flow problems which led to the original developers leaving to do a commercial project. The fact remains that our most productive volunteer developers, as much as we think they're wonderful, go long periods where they just can't make time to code on the project. We estimate our active users number well over a million, yet we have only a few dozen people a year supporting the project. In fact 3-4 people account for over half of our current support. Clearly the actions of a few people make a huge difference, and yours can make a difference too.
+&lt;br&gt;&lt;div align="center"&gt;&lt;h3&gt;Will you help make a difference?&lt;/h3&gt;&lt;/div&gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;If you wish to donate through PayPal
+(online money transfer or credit card), visit our &lt;a href="http://quanta.sourceforge.net/main1.php?actfile=donate"&gt;donation page&lt;/a&gt;.
+&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;If you are outside the PayPal area or wish to discuss corporate sponsorship contact the project manager:&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; Eric Laffoon, &lt;a href="mailto:sequitur@kde.org?subject=Quanta%20sponsorship%20inquiry"&gt;sequitur@kde.org&lt;/a&gt;</string>
+            </property>
+        </widget>
+        <spacer row="2" column="0">
+            <property name="name">
+                <cstring>spacer1</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>365</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="KTextBrowser" row="1" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>KTextBrowser2</cstring>
+            </property>
+            <property name="enabled">
+                <bool>true</bool>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>7</hsizetype>
+                    <vsizetype>3</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="minimumSize">
+                <size>
+                    <width>0</width>
+                    <height>30</height>
+                </size>
+            </property>
+            <property name="maximumSize">
+                <size>
+                    <width>32767</width>
+                    <height>40</height>
+                </size>
+            </property>
+            <property name="backgroundOrigin">
+                <enum>WindowOrigin</enum>
+            </property>
+            <property name="focusPolicy">
+                <enum>WheelFocus</enum>
+            </property>
+            <property name="frameShape">
+                <enum>StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Raised</enum>
+            </property>
+            <property name="text">
+                <string>&lt;a href="http://kdewebdev.org/donate.php"&gt;Donate&lt;/a&gt; through  PayPal now.</string>
+            </property>
+        </widget>
+    </grid>
+</widget>
+<tabstops>
+    <tabstop>KTextBrowser5</tabstop>
+    <tabstop>KTextBrowser2</tabstop>
+    <tabstop>closeButton</tabstop>
+</tabstops>
+<slots>
+    <slot>init()</slot>
+</slots>
+<layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>ktextbrowser.h</includehint>
+    <includehint>ktextbrowser.h</includehint>
+</includehints>
+</UI>

@@ -1,0 +1,485 @@
+/***************************************************************************
+    begin                : Thu Jun 16 2005
+    copyright            : (C) 2005 by Andras Mantia <amantia@kde.org>
+ ***************************************************************************/
+
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; version 2 of the License.               *
+ *                                                                         *
+ ***************************************************************************/
+#include "quantacorepart.h"
+#include "autocompletionconfig.h"
+#include "environmentconfig.h"
+#include "extfileinfo.h"
+#include "donationdialog.h"
+#include "dtds.h"
+#include "dtdselectdialog.h"
+#include "parsermanager.h"
+#include "quantacommon.h"
+#include "settings.h"
+#include "tag.h"
+#include "tagattr.h"
+#include "tagdialogsif.h"
+#include "helper.h"
+#include "tagpair.h"
+
+#include <qcheckbox.h>
+#include <qlabel.h>
+#include <qtimer.h>
+#include <qmenu.h>
+#include <qwidget.h>
+
+#include <kaction.h>
+#include <kapplication.h>
+#include <kcombobox.h>
+#include <kdebug.h>
+#include <kdialogbase.h>
+#include <kgenericfactory.h>
+#include <kiconloader.h>
+#include <klocale.h>
+#include <kmainwindow.h>
+#include <kpushbutton.h>
+#include <kparts/part.h>
+#include <kio/netaccess.h>
+#include <kurl.h>
+#include <kstdaction.h>
+#include <ktempfile.h>
+#include <kstandarddirs.h>
+#include <ktoolinvocation.h>
+
+#include <configwidgetproxy.h>
+#include <kdevmainwindow.h>
+#include <kdevdocumentcontroller.h>
+#include <kdevdocument.h>
+#include <kdevplugininfo.h>
+#include <kdevcore.h>
+
+#include <ktexteditor/document.h>
+
+static const KDevPluginInfo data("kdevquantacore");
+typedef KGenericFactory<QuantaCorePart> QuantaCoreFactory;
+K_EXPORT_COMPONENT_FACTORY(libkdevquantacore, QuantaCoreFactory(data));
+
+
+#define AUTOCOMPLETE_OPTIONS 1
+#define ENVIRONMENT_OPTIONS 2
+
+QuantaCorePart::QuantaCorePart(QObject *parent, const char *name, const QStringList& )
+ : QuantaCoreIf(&data, parent), m_activeQuantaDoc(0)
+{
+  kDebug(24000) << "Creating Quanta Support Part" << endl;
+  setInstance(QuantaCoreFactory::instance());
+  setXMLFile("kdevquantacore.rc");
+
+  DTDs::ref(this)->find("dtd"); //load on startup;
+  initActions();
+
+  m_configProxy = new ConfigWidgetProxy(core());
+  m_configProxy->createGlobalConfigPage(i18n("Autocompletion"), AUTOCOMPLETE_OPTIONS, info()->icon());
+  m_configProxy->createGlobalConfigPage(i18n("Environment"), ENVIRONMENT_OPTIONS, info()->icon());
+
+  connect(m_configProxy, SIGNAL(insertConfigWidget(const KDialogBase*, QWidget*, unsigned int )),
+      this, SLOT(slotInsertConfigWidget(const KDialogBase*, QWidget*, unsigned int)));
+
+  connect(documentController(), SIGNAL(documentLoaded(KDevDocument*)), this, SLOT(slotFileLoaded(KDevDocument*)));
+
+  connect(documentController(), SIGNAL(activePartChanged(KParts::Part *)), this, SLOT(slotActivePartChanged(KParts::Part *)));
+
+  connect(documentController(), SIGNAL(documentClosed(KDevDocument*)), this, SLOT(slotClosedFile(KDevDocument*)));
+
+  connect(documentController(), SIGNAL(documentUrlChanged(KDevDocument*, const KUrl, const KUrl)), this, SLOT(slotPartURLChanged(KDevDocument*, const KUrl, const KUrl)));
+
+  connect(core(), SIGNAL(contextMenu(QMenu *, const Context *)), this, SLOT(contextMenu(QMenu *, const Context *)));
+
+  QTimer::singleShot(0, this, SLOT(init()));
+}
+
+
+QuantaCorePart::~QuantaCorePart()
+{
+}
+
+void QuantaCorePart::init()
+{
+  Settings::self()->readConfig();
+  Settings::self()->setLoadedDTEPNickNames(DTDs::ref()->nickNameList(true));
+  ParserManager *pm = ParserManager::self(this); //create the parser manager
+  connect(pm, SIGNAL(startParsing(const EditorSource *)), SLOT(slotStartParsing(const EditorSource *)));
+  connect(pm, SIGNAL(finishedParsing(const EditorSource *, const ParseResult *)), SLOT(slotFinishedParsing(const EditorSource *, const ParseResult *)));
+  connect(pm, SIGNAL(groupsParsed(const EditorSource *, const ParseResult *)), SLOT(slotGroupsParsed(const EditorSource *, const ParseResult *)));
+}
+
+void QuantaCorePart::initActions()
+{
+  KActionCollection *ac = actionCollection();
+  KAction *newAct = new KAction(i18n("&Quanta Homepage"), ac, "help_homepage");
+  connect(newAct, SIGNAL(triggered(bool)), SLOT(slotHelpHomepage()));
+
+  newAct = new KAction(i18n("&User Mailing List"), ac, "help_userlist" );
+  connect(newAct, SIGNAL(triggered(bool)), SLOT(slotHelpUserList()));
+
+  newAct = new KAction(i18n("Make &Donation"), ac, "help_donation" );
+  connect(newAct, SIGNAL(triggered(bool)), SLOT(slotMakeDonation()));
+
+  newAct = new KAction(i18n("Complete Text"), ac, "show_completion");
+  newAct->setShortcut(KShortcut(Qt::CTRL + Qt::Key_Space));
+  connect(newAct, SIGNAL(triggered(bool)), SLOT(slotShowCompletion()));
+
+  newAct = new KAction(i18n("Show Completion Hints"), ac, "show_completion_hint");
+  newAct->setShortcut(KShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_Space));
+  connect(newAct, SIGNAL(triggered(bool)), SLOT(slotShowCompletionHint()));
+
+  m_insertTagAction = new KAction(i18n("Insert &Tag"), ac, "insert_tag");
+  connect(m_insertTagAction, SIGNAL(triggered(bool)), SLOT(slotInsertTag()));
+
+  KStdAction::openNew(this, SLOT(slotOpenNew()), ac, "file_new");
+
+  newAct = new KAction(i18n("&Change the DTEP..." ), ac, "change_dtd" );
+  connect(newAct, SIGNAL(triggered(bool)), SLOT(slotChangeDTEP()));
+}
+
+
+void QuantaCorePart::insertTag(const TagPair & tagPair, bool inLine, bool showDialog)
+{
+  if (!m_activeQuantaDoc)
+    return;
+
+  QString s = tagPair.opening();
+  if (s.startsWith("<"))
+      s.remove(0, 1);
+  if (s.endsWith(">"))
+      s.truncate(s.length()-1);
+  s = s.trimmed();
+  int i = 0;
+  while (!s[i].isSpace() && !s[i].isNull())
+    i++;
+  QString name = s.left(i);
+  QString attributes = s.remove(0, i).trimmed();
+  if (showDialog && m_activeQuantaDoc->mainDTEP()->isKnownTag(name))
+  {
+    TagDialogsIf *tagDialog = extension<TagDialogsIf>("KDevelop/TagDialogs");
+    if (tagDialog)
+    {
+      QString selection = m_activeQuantaDoc->selection();
+      TagPair newTagPair = tagDialog->createNewTag(QTag::tagFromDTD(m_activeQuantaDoc->mainDTEP(), name), selection, attributes, KUrl()); //FIXME baseURL instead of KUrl!
+      if (!inLine)
+      {
+        newTagPair.closing().prepend("\n");
+      }
+      m_activeQuantaDoc->insertTag(newTagPair);
+      return;
+    }
+  }
+
+  QString s1 = Tag::convertCase(name);
+  if (tagPair.opening().startsWith("<"))
+    s1.prepend("<");
+  if (!attributes.isEmpty())
+    s1 += " " + TagAttr::convertCase(attributes);
+  if (tagPair.opening().endsWith(">"))
+  {
+    QTag *dtdTag = QTag::tagFromDTD(m_activeQuantaDoc->mainDTEP(), name);
+    if (m_activeQuantaDoc->mainDTEP()->singleTagStyle == "xml" && dtdTag &&
+        (dtdTag->isSingle() || (!Settings::self()->closeOptionalTags() && dtdTag->isOptional()))
+      )
+    {
+      s1.append(" /");
+    }
+    s1.append(">");
+  }
+  QString s2;
+  if (!tagPair.closing().isEmpty())
+  {
+    s2 = Tag::convertCase(tagPair.closing());
+    if (!inLine)
+    {
+      s2.prepend("\n");
+    }
+  }
+  m_activeQuantaDoc->insertTag(TagPair(s1, s2));
+}
+
+
+void QuantaCorePart::slotInsertConfigWidget(const KDialogBase *dlg, QWidget *page, unsigned int pageNo)
+{
+// create configuraton dialogs here
+    switch (pageNo)
+    {
+        case AUTOCOMPLETE_OPTIONS:
+        {
+            AutocompletionConfig *w = new AutocompletionConfig(page, "autocompletion config");
+            connect(dlg, SIGNAL(okClicked()), w, SLOT(accept()));
+            break;
+        }
+        case ENVIRONMENT_OPTIONS:
+        {
+            EnvironmentConfig *w = new EnvironmentConfig(page, "environment config");
+            connect(dlg, SIGNAL(okClicked()), w, SLOT(accept()));
+            break;
+        }
+    }
+}
+
+
+void QuantaCorePart::slotMakeDonation()
+{
+ DonationDialog dlg(mainWindow()->main());
+ dlg.closeButton->setIcon(QIcon("fileclose"));
+ connect(dlg.closeButton, SIGNAL(clicked()), &dlg, SLOT(accept()));
+ dlg.exec();
+}
+
+void QuantaCorePart::slotHelpHomepage()
+{
+  KToolInvocation::invokeBrowser("http://kdewebdev.org");
+}
+
+void QuantaCorePart::slotHelpUserList()
+{
+  KToolInvocation::invokeBrowser("http://mail.kde.org/mailman/listinfo/quanta");
+}
+
+void QuantaCorePart::slotFileLoaded(KDevDocument* document)
+{
+//   kDebug(24000) << "slotFileLoaded: " << url << endl;
+  KTextEditor::Document *doc = document->textDocument();
+  if (doc)
+  {
+    m_activeQuantaDoc = new QuantaDoc(doc, this);
+    m_documents.insert(document->url().url(), m_activeQuantaDoc);
+  }
+}
+
+
+void QuantaCorePart::slotStartParsing(const EditorSource *source)
+{
+if (source == m_activeQuantaDoc)
+   emit startParsing(); // signal in QuantaCoreIf
+}
+
+
+void QuantaCorePart::slotFinishedParsing(const EditorSource *source, const ParseResult *parseResult)
+{
+  if (source == m_activeQuantaDoc)
+    emit finishedParsing(parseResult); // signal in QuantaCoreIf
+}
+
+
+void QuantaCorePart::slotGroupsParsed(const EditorSource *source, const ParseResult *parseResult)
+{
+  kDebug(24000) << "Group parsing done" << endl;
+  if (source == m_activeQuantaDoc)
+    emit groupsParsed(parseResult); // signal in QuantaCoreIf
+}
+
+void QuantaCorePart::slotActivePartChanged(KParts::Part * newPart)
+{
+  m_activeQuantaDoc = 0;
+  KParts::ReadOnlyPart * part = dynamic_cast<KParts::ReadOnlyPart *>(newPart);
+  if (! part)
+  {
+    emit finishedParsing(0); // clear the trees
+    return;
+  }
+  QuantaDoc * doc = m_documents.value(part->url().url());
+  if (doc && doc->isDocument(part))
+  {
+    m_activeQuantaDoc = doc;
+    emit finishedParsing(doc->parseResult()); // signal in QuantaCoreIf
+    emit groupsParsed(doc->parseResult()); // signal in QuantaCoreIf
+  } else
+  {
+    emit finishedParsing(0); // clear the trees
+  }
+}
+
+void QuantaCorePart::slotClosedFile(KDevDocument* document)
+{
+//   kDebug(24000) << "-----------slotClosedFile " << url.url() << endl;
+  QuantaDoc * doc = m_documents.value(document->url().url());
+  if (doc)
+  {
+    delete doc;
+    m_documents.remove(document->url().url());
+    if (doc == m_activeQuantaDoc)
+      emit finishedParsing(0); // notify that current doc was closed
+  }
+}
+
+
+void QuantaCorePart::slotPartURLChanged(KDevDocument* document, const KUrl &oldUrl, const KUrl &newUrl)
+{
+  QuantaDoc * doc = m_documents.value(oldUrl.url());
+  if (doc)
+  {
+    m_documents.remove(oldUrl.url());
+    m_documents.insert(newUrl.url(), doc);
+  }
+}
+
+
+void QuantaCorePart::slotInsertTag(const KUrl& url, Helper::DirInfo * dirInfo)
+{
+  if (m_activeQuantaDoc)
+  {
+    KUrl baseURL = m_activeQuantaDoc->parseResult()->baseURL;
+//FIXME     if  (w->isUntitled() )
+//     {
+//       baseURL = Project::ref()->projectBaseURL();
+//     } else
+    KUrl relURL = KUrl::relativeURL(baseURL, url);
+    QString urlStr = relURL.url();
+    if (relURL.protocol() == baseURL.protocol())
+        urlStr = relURL.path();
+
+    if (dirInfo && (!dirInfo->preText.isEmpty() || !dirInfo->postText.isEmpty()))
+    {
+      m_activeQuantaDoc->insertText(dirInfo->preText + urlStr + dirInfo->postText);
+    } else
+    {
+      bool isImage = false;
+      if (KMimeType::findByURL(url)->name().startsWith("image/"))
+      {
+        QString imgFileName;
+        KIO::NetAccess::download(url, imgFileName, mainWindow()->main());
+        QImage img(imgFileName);
+        if (!img.isNull())
+        {
+          QString width,height;
+          width.setNum(img.width());
+          height.setNum(img.height());
+          QString imgTag = Tag::convertCase("<img ");
+          imgTag += TagAttr::convertCase("src=");
+          imgTag += TagAttr::quoteAttributeValue(urlStr);
+          imgTag += TagAttr::convertCase(" width=");
+          imgTag += TagAttr::quoteAttributeValue(width);
+          imgTag += TagAttr::convertCase(" height=");
+          imgTag += TagAttr::quoteAttributeValue(height);
+          imgTag += TagAttr::convertCase(" border=");
+          imgTag += TagAttr::quoteAttributeValue(QString("%1").arg(0));
+          imgTag += ">";
+          m_activeQuantaDoc->insertText(imgTag);
+          isImage = true;
+        }
+        KIO::NetAccess::removeTempFile(imgFileName);
+      }
+      if (!isImage)
+      {
+        m_activeQuantaDoc->insertTag(TagPair::createLinkTag(urlStr));
+      }
+    }
+  }
+}
+
+
+void QuantaCorePart::slotInsertTag()
+{
+  KUrl::List::ConstIterator it;
+  for (it = m_fileContextList.constBegin(); it != m_fileContextList.constEnd(); ++it)
+  {
+    slotInsertTag(*it, 0);
+  }
+  m_fileContextList.clear();
+}
+
+void QuantaCorePart::contextMenu(QMenu *popup, const Context *context)
+{
+  if (m_activeQuantaDoc && context->hasType(Context::FileContext))
+  {
+    m_fileContextList = static_cast<const FileContext*>(context)->urls();
+    popup->addSeparator();
+    popup->addAction(m_insertTagAction);
+  }
+}
+
+
+void QuantaCorePart::slotOpenNew()
+{
+  KTempFile * file = new KTempFile(locateLocal("tmp", ""), i18n(".unsaved"));
+//   file->setAutoDelete(true);
+  file->close();
+  KUrl url = KUrl::fromPathOrURL(file->name());
+  KDevDocument *doc = documentController()->editDocument(url);
+  if (doc)
+  {
+    KParts::ReadOnlyPart *part = dynamic_cast<KParts::ReadOnlyPart *>(doc->part());
+    if (part)
+      part->closeURL();
+  }
+  file->unlink();
+}
+
+void QuantaCorePart::slotChangeDTEP()
+{
+  if (m_activeQuantaDoc)
+  {
+    KDialogBase dlg(mainWindow()->main(), 0L, true, i18n("DTEP Selector"), KDialogBase::Ok | KDialogBase::Cancel);
+    DTDSelectDialog *dtdWidget = new DTDSelectDialog(&dlg);
+    dtdWidget->setMinimumHeight(130);
+    dlg.setMainWidget(dtdWidget);
+    int pos = -1;
+    int defaultIndex = 0;
+
+    QString oldDtdName = m_activeQuantaDoc->mainDTEP()->name;
+//FIXME    QString defaultDocType = Project::ref()->defaultDTD();
+    QString defaultDocType = Settings::self()->defaultDTEP();
+    QStringList lst = DTDs::ref()->nickNameList(true);
+
+    QString oldDtdNickName = DTDs::ref()->getDTDNickNameFromName(oldDtdName);
+    QString defaultDtdNickName = DTDs::ref()->getDTDNickNameFromName(defaultDocType);
+    for(int i = 0; i < lst.count(); ++i)
+    {
+      dtdWidget->dtdCombo->addItem(lst[i]);
+      if (lst[i] == oldDtdNickName)
+        pos = i;
+      if (lst[i] == defaultDtdNickName)
+        defaultIndex = i;
+    }
+
+    if (pos == -1)
+      pos = defaultIndex;
+    dtdWidget->dtdCombo->setCurrentIndex(pos);
+    dtdWidget->messageLabel->setText(i18n("Change the current DTD."));
+    dtdWidget->currentDTD->setText(m_activeQuantaDoc->mainDTEP()->nickName);
+    //dlg->useClosestMatching->setShown(false);
+    delete dtdWidget->useClosestMatching;
+    dtdWidget->useClosestMatching = 0L;
+    dtdWidget->adjustSize();
+    if (dlg.exec())
+    {
+      const DTDStruct *dtd = DTDs::ref()->find(DTDs::ref()->getDTDNameFromNickName(dtdWidget->dtdCombo->currentText()));
+      m_activeQuantaDoc->setMainDTEP(dtd);
+      if (dtdWidget->convertDTD->isChecked() && dtd->family == DTDStruct::Xml)
+      {
+/*        if (tag)
+        {
+          int bLine, bCol, eLine, eCol;
+          tag->beginPos(bLine,bCol);
+          tag->endPos(eLine,eCol);
+          w->editIf->removeText(bLine, bCol, eLine, eCol+1);
+          w->viewCursorIf->setCursorPositionReal((uint)bLine, (uint)bCol);
+          w->insertText("<!DOCTYPE" + dtd->doctypeStr +">");
+          delete tag;
+        } else*/
+        {
+          m_activeQuantaDoc->setCursorPosition(0,0);
+          m_activeQuantaDoc->insertText("<!DOCTYPE" + dtd->doctypeStr + ">\n");
+        }
+      }
+    }
+
+    //FIXME slotLoadToolbarForDTD(w->getDTDIdentifier());
+    m_activeQuantaDoc->parse();
+  }
+}
+
+
+QString QuantaCorePart::getDTEPNickName(const QString &name) const
+{
+  return DTDs::ref()->getDTDNickNameFromName(name.toLower());
+}
+
+#include "quantacorepart.moc"

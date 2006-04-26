@@ -1,0 +1,112 @@
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<class>DTDSelectDialog</class>
+<comment>/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; version 2 of the License.               *
+ *                                                                         *
+ ***************************************************************************/
+</comment>
+<author>(C) 2002, 2003 Andras Mantia &lt;amantia@kde.org&gt;</author>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>DTDSelectDialog</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>440</width>
+            <height>161</height>
+        </rect>
+    </property>
+    <property name="minimumSize">
+        <size>
+            <width>440</width>
+            <height>160</height>
+        </size>
+    </property>
+    <property name="caption">
+        <string>DTD Selector</string>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QLabel" row="0" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>messageLabel</cstring>
+            </property>
+            <property name="text">
+                <string>Dialog message:
+Dialog message2:</string>
+            </property>
+            <property name="scaledContents">
+                <bool>true</bool>
+            </property>
+            <property name="alignment">
+                <set>WordBreak|AlignVCenter</set>
+            </property>
+        </widget>
+        <widget class="QComboBox" row="1" column="1">
+            <property name="name">
+                <cstring>dtdCombo</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="2" column="0">
+            <property name="name">
+                <cstring>textLabel</cstring>
+            </property>
+            <property name="text">
+                <string>Current DTD:</string>
+            </property>
+        </widget>
+        <widget class="QLabel" row="1" column="0">
+            <property name="name">
+                <cstring>comboLabel</cstring>
+            </property>
+            <property name="text">
+                <string>Select DTD:</string>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="2" column="1">
+            <property name="name">
+                <cstring>currentDTD</cstring>
+            </property>
+            <property name="readOnly">
+                <bool>true</bool>
+            </property>
+        </widget>
+        <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>convertDTD</cstring>
+            </property>
+            <property name="text">
+                <string>Conver&amp;t the document to the selected DTD</string>
+            </property>
+        </widget>
+        <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>useClosestMatching</cstring>
+            </property>
+            <property name="text">
+                <string>Do not show this dialog, use the closest matching DTD</string>
+            </property>
+        </widget>
+    </grid>
+</widget>
+<tabstops>
+    <tabstop>dtdCombo</tabstop>
+    <tabstop>currentDTD</tabstop>
+    <tabstop>convertDTD</tabstop>
+    <tabstop>useClosestMatching</tabstop>
+</tabstops>
+<includes>
+    <include location="local" impldecl="in implementation">dtdselectdialog.ui.h</include>
+</includes>
+<slots>
+    <slot>init()</slot>
+</slots>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

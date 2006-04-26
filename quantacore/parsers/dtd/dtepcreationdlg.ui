@@ -1,0 +1,152 @@
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<class>DTEPCreationDlg</class>
+<comment>/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; version 2 of the License.               *
+ *                                                                         *
+ ***************************************************************************/
+</comment>
+<author>(C) 2003 Andras Mantia &lt;amantia@kde.org&gt;</author>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>DTEPCreationDlg</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>500</width>
+            <height>285</height>
+        </rect>
+    </property>
+    <property name="minimumSize">
+        <size>
+            <width>500</width>
+            <height>200</height>
+        </size>
+    </property>
+    <property name="caption">
+        <string>DTD - &gt; DTEP Conversion</string>
+    </property>
+    <property name="sizeGripEnabled" stdset="0">
+        <bool>true</bool>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QLineEdit" row="2" column="1">
+            <property name="name">
+                <cstring>nickName</cstring>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="4" column="1">
+            <property name="name">
+                <cstring>dtdURL</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="1" column="0">
+            <property name="name">
+                <cstring>textLabel1</cstring>
+            </property>
+            <property name="text">
+                <string>Name: </string>
+            </property>
+        </widget>
+        <widget class="QLabel" row="2" column="0">
+            <property name="name">
+                <cstring>textLabel2</cstring>
+            </property>
+            <property name="text">
+                <string>Nickname:</string>
+            </property>
+        </widget>
+        <widget class="QLabel" row="3" column="0">
+            <property name="name">
+                <cstring>textLabel3</cstring>
+            </property>
+            <property name="text">
+                <string>!DOCTYPE definition line:</string>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="0" column="1">
+            <property name="name">
+                <cstring>directory</cstring>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="3" column="1">
+            <property name="name">
+                <cstring>doctype</cstring>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="1" column="1">
+            <property name="name">
+                <cstring>dtdName</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="4" column="0">
+            <property name="name">
+                <cstring>textLabel5</cstring>
+            </property>
+            <property name="text">
+                <string>DTD URL:</string>
+            </property>
+        </widget>
+        <widget class="QLabel" row="0" column="0">
+            <property name="name">
+                <cstring>textLabel4</cstring>
+            </property>
+            <property name="text">
+                <string>Target directory name:</string>
+            </property>
+        </widget>
+        <widget class="QLabel" row="5" column="0">
+            <property name="name">
+                <cstring>textLabel1_2</cstring>
+            </property>
+            <property name="text">
+                <string>Default extension:</string>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="5" column="1">
+            <property name="name">
+                <cstring>defaultExtension</cstring>
+            </property>
+        </widget>
+        <widget class="QCheckBox" row="6" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>caseSensitive</cstring>
+            </property>
+            <property name="text">
+                <string>Case-sensitive tags and attributes</string>
+            </property>
+            <property name="checked">
+                <bool>true</bool>
+            </property>
+        </widget>
+        <widget class="QCheckBox" row="7" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>fineTune</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Fine-tune the DTEP after conversion</string>
+            </property>
+            <property name="checked">
+                <bool>true</bool>
+            </property>
+        </widget>
+    </grid>
+</widget>
+<tabstops>
+    <tabstop>directory</tabstop>
+    <tabstop>dtdName</tabstop>
+    <tabstop>nickName</tabstop>
+    <tabstop>doctype</tabstop>
+    <tabstop>dtdURL</tabstop>
+    <tabstop>defaultExtension</tabstop>
+    <tabstop>caseSensitive</tabstop>
+</tabstops>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

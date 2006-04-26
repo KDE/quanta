@@ -1,0 +1,645 @@
+<ui version="4.0" >
+ <author>(C) 2005 Andras Mantia &lt;amantia@kde.org></author>
+ <comment>
+ ***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; version 2 of the License.               *
+ *                                                                         *
+ ***************************************************************************
+</comment>
+ <exportmacro></exportmacro>
+ <class>DTEPStructureEditDlgS</class>
+ <widget class="QWidget" name="DTEPStructureEditDlgS" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>628</width>
+    <height>666</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Structure Group Editor</string>
+  </property>
+  <layout class="QGridLayout" >
+   <property name="margin" >
+    <number>11</number>
+   </property>
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <item row="0" column="0" >
+    <widget class="QLabel" name="textLabel30" >
+     <property name="text" >
+      <string>&amp;Name:</string>
+     </property>
+     <property name="buddy" >
+      <cstring>nameEdit</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" colspan="3" >
+    <widget class="KLineEdit" name="nameEdit" >
+     <property name="toolTip" >
+      <string>The name of the group</string>
+     </property>
+     <property name="whatsThis" >
+      <string>The user visible name of the group. It will be shown in the structure tree as a top node when there are elements belonging to this group in the document.</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="4" >
+    <widget class="QLabel" name="textLabel32" >
+     <property name="text" >
+      <string>&amp;Icon:</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="buddy" >
+      <cstring>iconButton</cstring>
+     </property>
+    </widget>
+   </item>
+   <item rowspan="2" row="0" column="5" >
+    <widget class="KIconButton" name="iconButton" >
+     <property name="sizePolicy" >
+      <sizepolicy>
+       <hsizetype>0</hsizetype>
+       <vsizetype>0</vsizetype>
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize" >
+      <size>
+       <width>50</width>
+       <height>50</height>
+      </size>
+     </property>
+     <property name="maximumSize" >
+      <size>
+       <width>50</width>
+       <height>50</height>
+      </size>
+     </property>
+     <property name="text" >
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0" colspan="2" >
+    <widget class="QLabel" name="textLabel34" >
+     <property name="enabled" >
+      <bool>false</bool>
+     </property>
+     <property name="toolTip" >
+      <string>Regular expression to get the filename</string>
+     </property>
+     <property name="whatsThis" >
+      <string>Regular expression to get the filename. The expression is used to &lt;b>remove&lt;/b> the unnecessary strings from the element's text.</string>
+     </property>
+     <property name="text" >
+      <string>Filen&amp;ame definition:</string>
+     </property>
+     <property name="buddy" >
+      <cstring>fileNameRxEdit</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="3" >
+    <widget class="QCheckBox" name="hasFilename" >
+     <property name="toolTip" >
+      <string>True if the element's text contains a filename</string>
+     </property>
+     <property name="text" >
+      <string>Contains a &amp;filename</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="2" colspan="4" >
+    <widget class="KLineEdit" name="fileNameRxEdit" >
+     <property name="enabled" >
+      <bool>false</bool>
+     </property>
+     <property name="toolTip" >
+      <string>Regular expression to get the filename</string>
+     </property>
+     <property name="whatsThis" >
+      <string>Regular expression to get the filename. The expression is used to &lt;b>remove&lt;/b> the unnecessary strings from the element's text.</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" >
+    <widget class="QLabel" name="textLabel33" >
+     <property name="toolTip" >
+      <string>Elements identified by this entry will belong to this group</string>
+     </property>
+     <property name="whatsThis" >
+      <string>Defines which tags belong to this group. The format is &lt;i>tagname(attribute1, attribute2, ...)&lt;/i>. Tags with name &lt;i>tagname&lt;/i> will appear under this group. The item text of the corresponding node in the tree will be &lt;i>attribute1_value | attribute2_value | ...&lt;/i>Currently only one tag may be listed here.</string>
+     </property>
+     <property name="text" >
+      <string>&amp;Tag:</string>
+     </property>
+     <property name="buddy" >
+      <cstring>tagEdit</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" >
+    <widget class="QLabel" name="textLabel31" >
+     <property name="toolTip" >
+      <string>The name that appears when no element were found</string>
+     </property>
+     <property name="whatsThis" >
+      <string>The user visible name of the group. It will be shown in the structure tree as a top node when there are &lt;b>no&lt;/b> elements belonging to this group in the document.</string>
+     </property>
+     <property name="text" >
+      <string>"No" na&amp;me:</string>
+     </property>
+     <property name="buddy" >
+      <cstring>noNameEdit</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" colspan="5" >
+    <widget class="KLineEdit" name="noNameEdit" >
+     <property name="toolTip" >
+      <string>The name that appears when no element were found</string>
+     </property>
+     <property name="whatsThis" >
+      <string>The user visible name of the group. It will be shown in the structure tree as a top node when there are &lt;b>no&lt;/b> elements belonging to this group in the document.</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1" colspan="5" >
+    <widget class="KLineEdit" name="tagEdit" >
+     <property name="enabled" >
+      <bool>true</bool>
+     </property>
+     <property name="toolTip" >
+      <string>Elements ideintified by this entry will belong to this group</string>
+     </property>
+     <property name="whatsThis" >
+      <string>Defines which tags belong to this group. The format is &lt;i>tagname(attribute1, attribute2, ...)&lt;/i>. Tags with name &lt;i>tagname&lt;/i> will appear under this group. The item text of the corresponding node in the tree will be &lt;i>attribute1_value | attribute2_value | ...&lt;/i>Currently only one tag may be listed here.</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="3" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>20</width>
+       <height>16</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="6" column="0" colspan="2" >
+    <widget class="QCheckBox" name="appendToTags" >
+     <property name="toolTip" >
+      <string>Treat elements as new tags</string>
+     </property>
+     <property name="whatsThis" >
+      <string>Treat elements as new tags, so they will show up during tag autocompletion.</string>
+     </property>
+     <property name="text" >
+      <string>Use elements as tags</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0" colspan="6" >
+    <widget class="Q3GroupBox" name="pseudoGroupBox" >
+     <property name="title" >
+      <string>&amp;Pseudo DTEP Specific Settings</string>
+     </property>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <layout class="QGridLayout" >
+      <property name="margin" >
+       <number>11</number>
+      </property>
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <item row="4" column="1" colspan="4" >
+       <widget class="KLineEdit" name="typeRxEdit" >
+        <property name="toolTip" >
+         <string>Regular expression to find the type of the element</string>
+        </property>
+        <property name="whatsThis" >
+         <string>Regular expression to find the type of the element. The pattern is searched on the result of the &lt;i>DefinitionRx&lt;/i> match and the first captured area will hold the element type.&lt;br>
+Example (simplified):&lt;br>
+&lt;b>DefinitionRx=\$+([a-zA-Z]+)=new\\s[a-zA-Z]+;&lt;br>
+TypeRx=new\\s([a-zA-Z]+);&lt;/b>&lt;br>&lt;br>
+This will match strings like &lt;b>$fooObj=new foo;&lt;/b>. Now this string is searched and it will find &lt;b>new foo;&lt;/b>, where &lt;b>foo&lt;/b> is the first captured text (the regular expression matching &lt;b>foo&lt;/b> is between brackets).&lt;br>
+So the type of &lt;b>$fooObj&lt;/b> is &lt;b>foo&lt;/b>.</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" >
+       <widget class="QLabel" name="textLabel36" >
+        <property name="toolTip" >
+         <string>Regular expression to find the usage of a group element</string>
+        </property>
+        <property name="whatsThis" >
+         <string>Regular expression to find the usage of a group element in the document.&lt;br>
+Example 1:&lt;br>
+- classes are defined as  &lt;b>class foo {...}&lt;/b>&lt;br>
+- classes are used as &lt;b>$objFoo&lt;/b>&lt;br>&lt;br>
+Example 2:&lt;br>
+- variables are defined as &lt;b>int i&lt;/b>&lt;br>
+- variables are used as &lt;b>@i&lt;/b>&lt;br>&lt;br>
+Example 3:&lt;br>
+- variables are defined as &lt;b>$i&lt;/b>&lt;br>
+- variables are used as &lt;b>$i&lt;/b>. In this case &lt;i>UsageRx &lt;/i>is the same as &lt;i>DefinitionRx&lt;/i>.</string>
+        </property>
+        <property name="text" >
+         <string>&amp;Usage expression:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>usageRxEdit</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0" >
+       <widget class="QLabel" name="textLabel37" >
+        <property name="toolTip" >
+         <string>Regular expression to find the type of the element</string>
+        </property>
+        <property name="whatsThis" >
+         <string>Regular expression to find the type of the element. The pattern is searched on the result of the &lt;i>DefinitionRx&lt;/i> match and the first captured area will hold the element type.&lt;br>
+Example (simplified):&lt;br>
+&lt;b>DefinitionRx=\$+([a-zA-Z]+)=new\\s[a-zA-Z]+;&lt;br>
+TypeRx=new\\s([a-zA-Z]+);&lt;/b>&lt;br>&lt;br>
+This will match strings like &lt;b>$fooObj=new foo;&lt;/b>. Now this string is searched and it will find &lt;b>new foo;&lt;/b>, where &lt;b>foo&lt;/b> is the first captured text (the regular expression matching &lt;b>foo&lt;/b> is between brackets).&lt;br>
+So the type of &lt;b>$fooObj&lt;/b> is &lt;b>foo&lt;/b>.</string>
+        </property>
+        <property name="text" >
+         <string>Element t&amp;ype expression:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>typeRxEdit</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" >
+       <widget class="QLabel" name="textLabel35" >
+        <property name="toolTip" >
+         <string>Regular expression to find what belong to this group</string>
+        </property>
+        <property name="whatsThis" >
+         <string>Regular expression used to find text areas in the document, which will belong to this group. The first captured area shouldbe the actual name of the group entry.&lt;br>
+Example for a &lt;i>class&lt;/i> group:&lt;br>
+&lt;b>\bclass[\\s]+([0-9a-zA-Z_\x7f-\xff]*)[\\s]*&lt;/b>&lt;br>
+The first captured area (between "&lt;b>(&lt;/b>" and "&lt;b>)&lt;/b>") holds the class name.</string>
+        </property>
+        <property name="text" >
+         <string>Definition e&amp;xpression:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>definitionRxEdit</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1" colspan="4" >
+       <widget class="KLineEdit" name="usageRxEdit" >
+        <property name="toolTip" >
+         <string>Regular expression to find the usage of a group element</string>
+        </property>
+        <property name="whatsThis" >
+         <string>Regular expression to find the usage of a group element in the document.&lt;br>
+Example 1:&lt;br>
+- classes are defined as  &lt;b>class foo {...}&lt;/b>&lt;br>
+- classes are used as &lt;b>$objFoo&lt;/b>&lt;br>&lt;br>
+Example 2:&lt;br>
+- variables are defined as &lt;b>int i&lt;/b>&lt;br>
+- variables are used as &lt;b>@i&lt;/b>&lt;br>&lt;br>
+Example 3:&lt;br>
+- variables are defined as &lt;b>$i&lt;/b>&lt;br>
+- variables are used as &lt;b>$i&lt;/b>. In this case &lt;i>UsageRx &lt;/i>is the same as &lt;i>DefinitionRx&lt;/i>.</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0" >
+       <widget class="QLabel" name="textLabel41" >
+        <property name="toolTip" >
+         <string>The name of the group that may be the parent of this</string>
+        </property>
+        <property name="whatsThis" >
+         <string>The name of the group that may be the parent of this. For example &lt;b>classes&lt;/b> might be a parent of &lt;b>functions&lt;/b> in case of member functions. This entry indicates this possible relationship and is used to provide functionality like member autocompletion.</string>
+        </property>
+        <property name="text" >
+         <string>Parent group:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" colspan="4" >
+       <widget class="KLineEdit" name="parentGroupEdit" >
+        <property name="toolTip" >
+         <string>The name of the group that may be the parent of this</string>
+        </property>
+        <property name="whatsThis" >
+         <string>The name of the group that may be the parent of this. For example &lt;b>classes&lt;/b> might be a parent of &lt;b>functions&lt;/b> in case of member functions. This entry indicates this possible relationship and is used to provide functionality like member autocompletion.</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" >
+       <widget class="QLabel" name="textLabel42" >
+        <property name="toolTip" >
+         <string>Only tags of this type can be part of the group</string>
+        </property>
+        <property name="text" >
+         <string>Searched tags:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="0" colspan="2" >
+       <widget class="QLabel" name="textLabel44" >
+        <property name="toolTip" >
+         <string>Regular expression used to remove unwanted strings from the completion text</string>
+        </property>
+        <property name="text" >
+         <string>Remove when autocompleting:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0" >
+       <widget class="QLabel" name="textLabel43" >
+        <property name="toolTip" >
+         <string>Regular expression to tell when to bring up the completion box with the elements of this group</string>
+        </property>
+        <property name="whatsThis" >
+         <string>Regular expression to tell when to bring up the completion box with the elements of this group.&lt;br>
+Example:&lt;b>\bnew[\\s]+$&lt;/b> tells that after typing &lt;b>new&amp;nbsp;&lt;/b>, the completion box with the elements should be shown.</string>
+        </property>
+        <property name="text" >
+         <string>Autocomplete after:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="2" colspan="3" >
+       <widget class="KLineEdit" name="autoCompleteRxEdit" >
+        <property name="toolTip" >
+         <string>Regular expression to tell when to bring up the completion box with the elements of this group</string>
+        </property>
+        <property name="whatsThis" >
+         <string>Regular expression to tell when to bring up the completion box with the elements of this group.&lt;br>
+Example:&lt;b>\bnew[\\s]+$&lt;/b> tells that after typing &lt;b>new&amp;nbsp;&lt;/b>, the completion box with the elements should be shown.</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="2" colspan="3" >
+       <widget class="KLineEdit" name="removeRxEdit" >
+        <property name="toolTip" >
+         <string>Regular expression used to remove unwanted strings from the completion text</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" colspan="2" >
+       <widget class="KComboBox" name="tagTypeCombo" >
+        <property name="toolTip" >
+         <string>Only tags of this type can be part of the group</string>
+        </property>
+        <item>
+         <property name="text" >
+          <string>Text</string>
+         </property>
+        </item>
+        <item>
+         <property name="text" >
+          <string>XmlTag</string>
+         </property>
+        </item>
+        <item>
+         <property name="text" >
+          <string>XmlTagEnd</string>
+         </property>
+        </item>
+        <item>
+         <property name="text" >
+          <string>Comment</string>
+         </property>
+        </item>
+        <item>
+         <property name="text" >
+          <string>CSS</string>
+         </property>
+        </item>
+        <item>
+         <property name="text" >
+          <string>ScriptTag</string>
+         </property>
+        </item>
+        <item>
+         <property name="text" >
+          <string>ScriptStructureBegin</string>
+         </property>
+        </item>
+        <item>
+         <property name="text" >
+          <string>ScriptStructureEnd</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="1" column="3" colspan="2" >
+       <spacer>
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType" >
+         <enum>QSizePolicy::Expanding</enum>
+        </property>
+        <property name="sizeHint" >
+         <size>
+          <width>340</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="7" column="0" >
+       <widget class="QCheckBox" name="parseFile" >
+        <property name="toolTip" >
+         <string>Check if the filename that is in the elements text should be parsed</string>
+        </property>
+        <property name="whatsThis" >
+         <string>Check if the filename that is in the elements text should be parsed. This makes sense only if the element may contain a filename and the &lt;i>FileNameRx&lt;/i> is specified.</string>
+        </property>
+        <property name="text" >
+         <string>Parse file</string>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="0" colspan="5" >
+       <widget class="Q3ButtonGroup" name="buttonGroup1" >
+        <property name="title" >
+         <string>Type</string>
+        </property>
+        <property name="orientation" >
+         <enum>Qt::Vertical</enum>
+        </property>
+        <layout class="QGridLayout" >
+         <property name="margin" >
+          <number>11</number>
+         </property>
+         <property name="spacing" >
+          <number>6</number>
+         </property>
+         <item row="0" column="0" >
+          <widget class="QRadioButton" name="simpleGroup" >
+           <property name="toolTip" >
+            <string>This is a simple group, nothing special</string>
+           </property>
+           <property name="text" >
+            <string>Simple</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" >
+          <widget class="QRadioButton" name="variableGroup" >
+           <property name="toolTip" >
+            <string>The group's elements are variables</string>
+           </property>
+           <property name="text" >
+            <string>Variable group</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" >
+          <widget class="QRadioButton" name="functionGroup" >
+           <property name="toolTip" >
+            <string>The group's elements are functions</string>
+           </property>
+           <property name="text" >
+            <string>Function group</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" >
+          <widget class="QRadioButton" name="classGroup" >
+           <property name="toolTip" >
+            <string>The group's elements are classes</string>
+           </property>
+           <property name="text" >
+            <string>Class group</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2" >
+          <widget class="QRadioButton" name="objectGroup" >
+           <property name="toolTip" >
+            <string>The group's elements are objects</string>
+           </property>
+           <property name="text" >
+            <string>Ob&amp;ject group</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="2" column="1" colspan="3" >
+       <widget class="KLineEdit" name="definitionRxEdit" >
+        <property name="toolTip" >
+         <string>Regular expression to find what belong to this group</string>
+        </property>
+        <property name="whatsThis" >
+         <string>Regular expression used to find text areas in the document, which will belong to this group. The first captured area shouldbe the actual name of the group entry.&lt;br>
+Example for a &lt;i>class&lt;/i> group:&lt;br>
+&lt;b>\bclass[\\s]+([0-9a-zA-Z_\x7f-\xff]*)[\\s]*&lt;/b>&lt;br>
+The first captured area (between "&lt;b>(&lt;/b>" and "&lt;b>)&lt;/b>") holds the class name.</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="4" >
+       <widget class="QCheckBox" name="definitionRxMinimal" >
+        <property name="toolTip" >
+         <string>Enable to use the minimal style search for definition instead of the standard (greedy) matching</string>
+        </property>
+        <property name="text" >
+         <string>Minimal search mode</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>KLineEdit</class>
+   <extends></extends>
+   <header>klineedit.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>KComboBox</class>
+   <extends></extends>
+   <header>kcombobox.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>KIconButton</class>
+   <extends></extends>
+   <header>kicondialog.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>Q3GroupBox</class>
+   <extends></extends>
+   <header>Qt3Support/Q3GroupBox</header>
+   <container>1</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>Q3ButtonGroup</class>
+   <extends></extends>
+   <header>Qt3Support/Q3ButtonGroup</header>
+   <container>1</container>
+   <pixmap></pixmap>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>nameEdit</tabstop>
+  <tabstop>iconButton</tabstop>
+  <tabstop>noNameEdit</tabstop>
+  <tabstop>tagEdit</tabstop>
+  <tabstop>hasFilename</tabstop>
+  <tabstop>fileNameRxEdit</tabstop>
+  <tabstop>appendToTags</tabstop>
+  <tabstop>parentGroupEdit</tabstop>
+  <tabstop>tagTypeCombo</tabstop>
+  <tabstop>definitionRxEdit</tabstop>
+  <tabstop>definitionRxMinimal</tabstop>
+  <tabstop>usageRxEdit</tabstop>
+  <tabstop>typeRxEdit</tabstop>
+  <tabstop>autoCompleteRxEdit</tabstop>
+  <tabstop>removeRxEdit</tabstop>
+  <tabstop>parseFile</tabstop>
+  <tabstop>simpleGroup</tabstop>
+  <tabstop>functionGroup</tabstop>
+  <tabstop>objectGroup</tabstop>
+  <tabstop>variableGroup</tabstop>
+  <tabstop>classGroup</tabstop>
+ </tabstops>
+ <includes/>
+ <resources/>
+ <connections/>
+</ui>

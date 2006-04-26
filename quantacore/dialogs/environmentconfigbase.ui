@@ -1,0 +1,146 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>EnvironmentConfigBase</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>EnvironmentConfigBase</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>600</width>
+            <height>480</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>EnvironmentConfigBase</string>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <spacer row="4" column="1">
+            <property name="name">
+                <cstring>spacer3</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>240</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QLabel" row="0" column="0">
+            <property name="name">
+                <cstring>textLabel1_2</cstring>
+            </property>
+            <property name="text">
+                <string>Tag case:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>tagCase</cstring>
+            </property>
+        </widget>
+        <widget class="KComboBox" row="0" column="1">
+            <item>
+                <property name="text">
+                    <string>Default Case</string>
+                </property>
+            </item>
+            <item>
+                <property name="text">
+                    <string>Lower Case</string>
+                </property>
+            </item>
+            <item>
+                <property name="text">
+                    <string>Upper Case</string>
+                </property>
+            </item>
+            <property name="name">
+                <cstring>tagCase</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="3" column="0">
+            <property name="name">
+                <cstring>textLabel1</cstring>
+            </property>
+            <property name="text">
+                <string>Default &amp;DTD:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>defaultDTEP</cstring>
+            </property>
+        </widget>
+        <widget class="KComboBox" row="1" column="1">
+            <item>
+                <property name="text">
+                    <string>Default Case</string>
+                </property>
+            </item>
+            <item>
+                <property name="text">
+                    <string>Lower Case</string>
+                </property>
+            </item>
+            <item>
+                <property name="text">
+                    <string>Upper Case</string>
+                </property>
+            </item>
+            <property name="name">
+                <cstring>attributeCase</cstring>
+            </property>
+        </widget>
+        <widget class="KComboBox" row="2" column="1">
+            <item>
+                <property name="text">
+                    <string>Double Quotes</string>
+                </property>
+            </item>
+            <item>
+                <property name="text">
+                    <string>Single Quotes</string>
+                </property>
+            </item>
+            <property name="name">
+                <cstring>attributeQuotation</cstring>
+            </property>
+        </widget>
+        <widget class="KComboBox" row="3" column="1">
+            <property name="name">
+                <cstring>defaultDTEP</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="2" column="0">
+            <property name="name">
+                <cstring>textLabel3</cstring>
+            </property>
+            <property name="text">
+                <string>Attribute quotation:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>attributeQuotation</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="1" column="0">
+            <property name="name">
+                <cstring>textLabel2</cstring>
+            </property>
+            <property name="text">
+                <string>Attribute case:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>attributeCase</cstring>
+            </property>
+        </widget>
+    </grid>
+</widget>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

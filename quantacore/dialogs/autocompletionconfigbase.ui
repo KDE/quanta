@@ -1,0 +1,101 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>AutocompletionConfigBase</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>AutocompletionConfigBase</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>600</width>
+            <height>480</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Autocompletion</string>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <spacer row="5" column="1">
+            <property name="name">
+                <cstring>spacer2</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>230</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QCheckBox" row="0" column="0">
+            <property name="name">
+                <cstring>enableAutocompletion</cstring>
+            </property>
+            <property name="text">
+                <string>Ena&amp;ble auto-completion</string>
+            </property>
+            <property name="accel">
+                <string>Alt+B</string>
+            </property>
+        </widget>
+        <widget class="QCheckBox" row="4" column="0">
+            <property name="name">
+                <cstring>replaceAccented</cstring>
+            </property>
+            <property name="text">
+                <string>Automatic replacement of accented characters</string>
+            </property>
+            <property name="accel">
+                <string></string>
+            </property>
+        </widget>
+        <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>updateClosingTags</cstring>
+            </property>
+            <property name="text">
+                <string>Update opening/closing tag automaticall&amp;y</string>
+            </property>
+            <property name="accel">
+                <string>Alt+Y</string>
+            </property>
+        </widget>
+        <widget class="QCheckBox" row="1" column="0">
+            <property name="name">
+                <cstring>closeTags</cstring>
+            </property>
+            <property name="text">
+                <string>Auto-close non single and non optional tags</string>
+            </property>
+            <property name="accel">
+                <string></string>
+            </property>
+        </widget>
+        <widget class="QCheckBox" row="2" column="0">
+            <property name="name">
+                <cstring>closeOptionalTags</cstring>
+            </property>
+            <property name="text">
+                <string>Auto-close optional tags</string>
+            </property>
+            <property name="accel">
+                <string></string>
+            </property>
+        </widget>
+    </grid>
+</widget>
+<tabstops>
+    <tabstop>enableAutocompletion</tabstop>
+    <tabstop>updateClosingTags</tabstop>
+</tabstops>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

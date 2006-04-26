@@ -1,0 +1,18 @@
+# KDE Config File
+[General]
+Name=Quanta Project Template
+Category=Quanta
+Comment=This generates a Quanta project
+FileTemplates=html
+Archive=quanta.tar.gz
+Icon=quanta.png
+
+[FILE1]
+Type=install
+EscapeXML=true
+Source=%{src}/quanta.kdevelop
+Dest=%{dest}/%{APPNAMELC}.kdevelop
+
+[MSG]
+Type=message
+Comment=A simple Quanta project was created in %{dest}

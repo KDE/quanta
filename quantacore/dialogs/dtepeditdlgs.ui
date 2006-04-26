@@ -1,0 +1,1967 @@
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<class>DTEPEditDlgS</class>
+<comment>/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; version 2 of the License.               *
+ *                                                                         *
+ ***************************************************************************/
+</comment>
+<author>(C) 2005 Andras Mantia &lt;amantia@kde.org&gt;</author>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>DTEPEditDlgS</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>655</width>
+            <height>598</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Configure DTEP</string>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QTabWidget" row="0" column="0">
+            <property name="name">
+                <cstring>tabWidget</cstring>
+            </property>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>tab</cstring>
+                </property>
+                <attribute name="title">
+                    <string>&amp;General</string>
+                </attribute>
+                <grid>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QLabel" row="0" column="0">
+                        <property name="name">
+                            <cstring>textLabel1</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>1</hsizetype>
+                                <vsizetype>5</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="text">
+                            <string>Name:</string>
+                        </property>
+                        <property name="buddy" stdset="0">
+                            <cstring>kLineEdit1</cstring>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>DTD definition string</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>The real name of the DTEP. In case of XML DTEPs this should be the DTD definition string, like -&lt;i&gt;//W3C//DTD&amp;nbsp;HTML&amp;nbsp;4.01&amp;nbsp;Transitional//EN&lt;/i&gt;.</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="1" column="0">
+                        <property name="name">
+                            <cstring>textLabel2</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>1</hsizetype>
+                                <vsizetype>5</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="text">
+                            <string>Short name:</string>
+                        </property>
+                        <property name="buddy" stdset="0">
+                            <cstring>kLineEdit2</cstring>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>Beautified, user visible name</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>The user visible, beautified name. If not defined, the real name is used.</string>
+                        </property>
+                    </widget>
+                    <spacer row="3" column="3" rowspan="1" colspan="3">
+                        <property name="name">
+                            <cstring>spacer2</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Horizontal</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>40</width>
+                                <height>20</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="KLineEdit" row="0" column="1" rowspan="1" colspan="5">
+                        <property name="name">
+                            <cstring>nameEdit</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>7</hsizetype>
+                                <vsizetype>0</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>DTD definition string</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>The real name of the DTEP. In case of XML DTEPs this should be the DTD definition string, like -&lt;i&gt;//W3C//DTD&amp;nbsp;HTML&amp;nbsp;4.01&amp;nbsp;Transitional//EN&lt;/i&gt;.</string>
+                        </property>
+                    </widget>
+                    <widget class="KLineEdit" row="1" column="1" rowspan="1" colspan="5">
+                        <property name="name">
+                            <cstring>nickNameEdit</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>7</hsizetype>
+                                <vsizetype>0</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>Beautified, user visible name</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>The user visible, beautified name. If not defined, the real name is used.</string>
+                        </property>
+                    </widget>
+                    <spacer row="9" column="2">
+                        <property name="name">
+                            <cstring>spacer3</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>50</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="QGroupBox" row="8" column="0" rowspan="1" colspan="6">
+                        <property name="name">
+                            <cstring>groupBox1</cstring>
+                        </property>
+                        <property name="title">
+                            <string>Type Specific Settings</string>
+                        </property>
+                        <grid>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QWidgetStack" row="0" column="0">
+                                <property name="name">
+                                    <cstring>generalWidgetStack</cstring>
+                                </property>
+                                <widget class="QWidget">
+                                    <property name="name">
+                                        <cstring>WStackPage</cstring>
+                                    </property>
+                                    <attribute name="id">
+                                        <number>0</number>
+                                    </attribute>
+                                    <grid>
+                                        <property name="name">
+                                            <cstring>unnamed</cstring>
+                                        </property>
+                                        <widget class="QLabel" row="0" column="0">
+                                            <property name="name">
+                                                <cstring>textLabel3</cstring>
+                                            </property>
+                                            <property name="text">
+                                                <string>URL:</string>
+                                            </property>
+                                            <property name="buddy" stdset="0">
+                                                <cstring>urlEdit</cstring>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>URL pointing to the DTD definiton file</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>URL pointing to the DTD definiton file, like &lt;i&gt;http://www.w3.org/TR/html4/loose.dtd&lt;/i&gt;.</string>
+                                            </property>
+                                        </widget>
+                                        <widget class="QLabel" row="1" column="0" rowspan="2" colspan="1">
+                                            <property name="name">
+                                                <cstring>textLabel4</cstring>
+                                            </property>
+                                            <property name="text">
+                                                <string>DOCT&amp;YPE string:</string>
+                                            </property>
+                                            <property name="buddy" stdset="0">
+                                                <cstring>doctypeEdit</cstring>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>The string that should appear in the !DOCTYPE tag</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>The string that should appear in the !DOCTYPE tag, like&lt;br&gt;
+&lt;i&gt;HTML&amp;nbsp;PUBLIC&amp;nbsp;"-//W3C//DTD&amp;nbsp;HTML&amp;nbsp;4.01&amp;nbsp;Transitional//EN"&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;br&gt;"http://www.w3.org/TR/html4/loose.dtd"&lt;/i&gt;</string>
+                                            </property>
+                                        </widget>
+                                        <widget class="KLineEdit" row="0" column="1" rowspan="2" colspan="1">
+                                            <property name="name">
+                                                <cstring>urlEdit</cstring>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>URL pointing to the DTD definiton file</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>URL pointing to the DTD definiton file, like &lt;i&gt;http://www.w3.org/TR/html4/loose.dtd&lt;/i&gt;.</string>
+                                            </property>
+                                        </widget>
+                                        <widget class="KLineEdit" row="2" column="1">
+                                            <property name="name">
+                                                <cstring>doctypeEdit</cstring>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>The string that should appear in the !DOCTYPE tag</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>The string that should appear in the !DOCTYPE tag, like&lt;br&gt;
+&lt;i&gt;HTML&amp;nbsp;PUBLIC&amp;nbsp;"-//W3C//DTD&amp;nbsp;HTML&amp;nbsp;4.01&amp;nbsp;Transitional//EN"&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;br&gt;"http://www.w3.org/TR/html4/loose.dtd"&lt;/i&gt;</string>
+                                            </property>
+                                        </widget>
+                                    </grid>
+                                </widget>
+                                <widget class="QWidget">
+                                    <property name="name">
+                                        <cstring>WStackPage</cstring>
+                                    </property>
+                                    <attribute name="id">
+                                        <number>1</number>
+                                    </attribute>
+                                    <widget class="QCheckBox">
+                                        <property name="name">
+                                            <cstring>topLevel</cstring>
+                                        </property>
+                                        <property name="geometry">
+                                            <rect>
+                                                <x>10</x>
+                                                <y>10</y>
+                                                <width>107</width>
+                                                <height>27</height>
+                                            </rect>
+                                        </property>
+                                        <property name="text">
+                                            <string>Top level</string>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>Check if the DTEP can act as a top level DTEP.</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>Check if the DTEP can act as a top level DTEP. This means that the document can be of this type. Some pseudo DTEPs cannot act as a top level DTEP, like &lt;i&gt;PHP&lt;/i&gt; as they are always included as part of another DTEP, while some others can be included and act as standalone as well, like the case of &lt;i&gt;CSS&lt;/i&gt;.</string>
+                                        </property>
+                                    </widget>
+                                </widget>
+                            </widget>
+                        </grid>
+                    </widget>
+                    <widget class="QLabel" row="5" column="0">
+                        <property name="name">
+                            <cstring>textLabel9</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Toolbar folder:</string>
+                        </property>
+                        <property name="buddy" stdset="0">
+                            <cstring>toolbarFolderEdit</cstring>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>The name of the folder where the toolbars are stored</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>The name of the folder where the toolbars are stored. This is a relative name to &lt;br&gt;&lt;i&gt;$KDEDIR(&amp;nbsp;or&amp;nbsp;$KDEHOME)/share/apps/quanta/toolbars&lt;/i&gt; .</string>
+                        </property>
+                    </widget>
+                    <widget class="KLineEdit" row="5" column="1" rowspan="1" colspan="5">
+                        <property name="name">
+                            <cstring>toolbarFolderEdit</cstring>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>The name of the folder where the toolbars are stored</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>The name of the folder where the toolbars are stored. This is a relative name to &lt;br&gt;&lt;i&gt;$KDEDIR(&amp;nbsp;or&amp;nbsp;$KDEHOME)/share/apps/quanta/toolbars&lt;/i&gt; .</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="6" column="0">
+                        <property name="name">
+                            <cstring>textLabel10</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Autoloaded toolbars:</string>
+                        </property>
+                        <property name="buddy" stdset="0">
+                            <cstring>toolbarsEdit</cstring>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>Comma separated list of toolbars</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>Comma separated list of toolbars from the toolbar folder that will be loaded when a document with this DTEP is loaded.</string>
+                        </property>
+                    </widget>
+                    <widget class="KLineEdit" row="6" column="1" rowspan="1" colspan="5">
+                        <property name="name">
+                            <cstring>toolbarsEdit</cstring>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>Comma separated list of toolbars</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>Comma separated list of toolbars from the toolbar folder that will be loaded when a document with this DTEP is loaded.</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="7" column="0" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>caseSensitive</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>7</hsizetype>
+                                <vsizetype>0</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="text">
+                            <string>Case sensitive</string>
+                        </property>
+                        <property name="checked">
+                            <bool>true</bool>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>Check if the DTEP has case sensitive tags</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>Indicates whether the DTEP has case sensitive tags. In case of XML this should be checked, but for example HTML variants are not case sensitive.</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="3" column="0">
+                        <property name="name">
+                            <cstring>textLabel7</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>1</hsizetype>
+                                <vsizetype>5</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="text">
+                            <string>Type:</string>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>The family to where this DTEP belongs.</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>The family to where this DTEP belong. There are two families:&lt;br&gt;&lt;p&gt;&lt;b&gt;XML style&lt;/b&gt;:DTEP describing an XML like language&lt;/p&gt;
+&lt;p&gt;&lt;b&gt;Pseudo type&lt;/b&gt;:DTEP describing some other language, where the notion of a tag is not the same as in XML. Examples are &lt;i&gt;PHP, JavaScript, CSS&lt;/i&gt;.&lt;/p&gt;</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="2" column="0">
+                        <property name="name">
+                            <cstring>textLabel8</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Inherits:</string>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>The DTEP name from where this DTEP inherits the tags.</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>The real name of the DTEP (like -&lt;i&gt;//W3C//DTD&amp;nbsp;HTML&amp;nbsp;4.01&amp;nbsp;Transitional//EN&lt;/i&gt;) from where the current DTEP inherits the tags.</string>
+                        </property>
+                    </widget>
+                    <widget class="KComboBox" row="3" column="1" rowspan="1" colspan="2">
+                        <item>
+                            <property name="text">
+                                <string>XML Style</string>
+                            </property>
+                        </item>
+                        <item>
+                            <property name="text">
+                                <string>Pseudo Type</string>
+                            </property>
+                        </item>
+                        <property name="name">
+                            <cstring>typeCombo</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>5</hsizetype>
+                                <vsizetype>0</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>The family to where this DTEP belongs.</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>The family to where this DTEP belong. There are two families:&lt;br&gt;&lt;p&gt;&lt;b&gt;XML style&lt;/b&gt;:DTEP describing an XML like language&lt;/p&gt;
+&lt;p&gt;&lt;b&gt;Pseudo type&lt;/b&gt;:DTEP describing some other language, where the notion of a tag is not the same as in XML. Examples are &lt;i&gt;PHP, JavaScript, CSS&lt;/i&gt;.&lt;/p&gt;</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="4" column="0">
+                        <property name="name">
+                            <cstring>textLabel1_2</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Mimet&amp;ypes:</string>
+                        </property>
+                        <property name="buddy" stdset="0">
+                            <cstring>mimeTypeEdit</cstring>
+                        </property>
+                    </widget>
+                    <widget class="KComboBox" row="2" column="1" rowspan="1" colspan="5">
+                        <property name="name">
+                            <cstring>inheritsCombo</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>7</hsizetype>
+                                <vsizetype>0</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="editable">
+                            <bool>true</bool>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>The DTEP name from where this DTEP inherits the tags.</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>The real name of the DTEP (like -&lt;i&gt;//W3C//DTD&amp;nbsp;HTML&amp;nbsp;4.01&amp;nbsp;Transitional//EN&lt;/i&gt;) from where the current DTEP inherits the tags.</string>
+                        </property>
+                    </widget>
+                    <widget class="KLineEdit" row="4" column="1" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>mimeTypeEdit</cstring>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>Comma separated list of mimetypes</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>Comma separated list of mimetypes. Files of these types are treated as belonging to this DTEP, unless the !DOCTYPE entry says something else.</string>
+                        </property>
+                    </widget>
+                    <widget class="KLineEdit" row="4" column="5">
+                        <property name="name">
+                            <cstring>extensionEdit</cstring>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>The default extension of files belonging to this DTEP</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="4" column="4">
+                        <property name="name">
+                            <cstring>textLabel2_2</cstring>
+                        </property>
+                        <property name="text">
+                            <string>E&amp;xtension:</string>
+                        </property>
+                        <property name="buddy" stdset="0">
+                            <cstring>extensionEdit</cstring>
+                        </property>
+                    </widget>
+                    <spacer row="4" column="3">
+                        <property name="name">
+                            <cstring>spacer6</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Horizontal</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>40</width>
+                                <height>20</height>
+                            </size>
+                        </property>
+                    </spacer>
+                </grid>
+            </widget>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>tab</cstring>
+                </property>
+                <attribute name="title">
+                    <string>&amp;Pages</string>
+                </attribute>
+                <grid>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <spacer row="15" column="2">
+                        <property name="name">
+                            <cstring>spacer4</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>50</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="3">
+                        <property name="name">
+                            <cstring>enablePage1</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Enable the first extra page</string>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>Every tab edit dialog will have one more extra page aside of the main page</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>Every tab edit dialog will have one more extra page aside of the main page. You can configure what will be on this page in the below fields.</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="1" column="0">
+                        <property name="name">
+                            <cstring>textLabel11</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                        <property name="text">
+                            <string>Title:</string>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>The title of the page</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>The title of the page, like &lt;b&gt;Core &amp;&amp; i18n&lt;/b&gt;. As you see, the ampersand must be doubled.</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="2" column="0">
+                        <property name="name">
+                            <cstring>textLabel12</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                        <property name="text">
+                            <string>Groups:</string>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>Comma separated list of the common attribute groups</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>Comma separated list of the common attribute groups. The attributes from the listed groups will appear on this page.&lt;br&gt;The common attributes are specified in each DTEP's &lt;i&gt;common.tag&lt;/i&gt; file, where the &lt;i&gt;common="yes"&lt;/i&gt; attribute must be set.&lt;br&gt;The following example defined the common I18n attribute group:&lt;br&gt;&lt;p&gt;&lt;b&gt;
+&amp;lt;tag name="I18n" common="yes"&gt;&lt;br&gt;
+&amp;nbsp;&amp;nbsp;&amp;lt;attr name="lang" type="input" /&gt;&lt;br&gt;
+&amp;nbsp;&amp;nbsp;&amp;lt;attr name="dir" type="input" /&gt;&lt;br&gt;
+&amp;lt;/tag&gt;
+&lt;/b&gt;&lt;/p&gt;</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="3">
+                        <property name="name">
+                            <cstring>enablePage2</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                        <property name="text">
+                            <string>Enable the second extra page</string>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>See the tooltip and what's this information for the first checkbox</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="6" column="0" rowspan="1" colspan="3">
+                        <property name="name">
+                            <cstring>enablePage3</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                        <property name="text">
+                            <string>Enable the third extra page</string>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>See the tooltip and what's this information for the first checkbox</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="9" column="0" rowspan="1" colspan="3">
+                        <property name="name">
+                            <cstring>enablePage4</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                        <property name="text">
+                            <string>Enable the fourth extra page</string>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>See the tooltip and what's this information for the first checkbox</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="12" column="0" rowspan="1" colspan="3">
+                        <property name="name">
+                            <cstring>enablePage5</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                        <property name="text">
+                            <string>Enable the fifth extra page</string>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>See the tooltip and what's this information for the first checkbox</string>
+                        </property>
+                    </widget>
+                    <widget class="KLineEdit" row="1" column="2">
+                        <property name="name">
+                            <cstring>pageTitleEdit1</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>The title of the page</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>The title of the page, like &lt;b&gt;Core &amp;&amp; i18n&lt;/b&gt;. As you see, the ampersand must be doubled.</string>
+                        </property>
+                    </widget>
+                    <widget class="KLineEdit" row="2" column="2">
+                        <property name="name">
+                            <cstring>groupsEdit1</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>Comma separated list of the common attribute groups</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>Comma separated list of the common attribute groups. The attributes from the listed groups will appear on this page.&lt;br&gt;The common attributes are specified in each DTEP's &lt;i&gt;common.tag&lt;/i&gt; file, where the &lt;i&gt;common="yes"&lt;/i&gt; attribute must be set.&lt;br&gt;The following example defined the common I18n attribute group:&lt;br&gt;&lt;p&gt;&lt;b&gt;
+&amp;lt;tag name="I18n" common="yes"&gt;&lt;br&gt;
+&amp;nbsp;&amp;nbsp;&amp;lt;attr name="lang" type="input" /&gt;&lt;br&gt;
+&amp;nbsp;&amp;nbsp;&amp;lt;attr name="dir" type="input" /&gt;&lt;br&gt;
+&amp;lt;/tag&gt;
+&lt;/b&gt;&lt;/p&gt;</string>
+                        </property>
+                    </widget>
+                    <widget class="KLineEdit" row="10" column="2">
+                        <property name="name">
+                            <cstring>pageTitleEdit4</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>See the tooltip and what's this information for the first page fields</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="8" column="0">
+                        <property name="name">
+                            <cstring>textLabel12_3</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                        <property name="text">
+                            <string>Groups:</string>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>See the tooltip and what's this information for the first page fields</string>
+                        </property>
+                    </widget>
+                    <widget class="KLineEdit" row="4" column="2">
+                        <property name="name">
+                            <cstring>pageTitleEdit2</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>See the tooltip and what's this information for the first page fields</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="10" column="0" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>textLabel11_3_2</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                        <property name="text">
+                            <string>Title:</string>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>See the tooltip and what's this information for the first page fields</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="4" column="0">
+                        <property name="name">
+                            <cstring>textLabel11_2</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                        <property name="text">
+                            <string>Title:</string>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>See the tooltip and what's this information for the first page fields</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="5" column="0">
+                        <property name="name">
+                            <cstring>textLabel12_2</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                        <property name="text">
+                            <string>Groups:</string>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>See the tooltip and what's this information for the first page fields</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="7" column="0">
+                        <property name="name">
+                            <cstring>textLabel11_3</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                        <property name="text">
+                            <string>Title:</string>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>See the tooltip and what's this information for the first page fields</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="11" column="0" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>textLabel12_3_2</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                        <property name="text">
+                            <string>Groups:</string>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>See the tooltip and what's this information for the first page fields</string>
+                        </property>
+                    </widget>
+                    <widget class="KLineEdit" row="5" column="2">
+                        <property name="name">
+                            <cstring>groupsEdit2</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>See the tooltip and what's this information for the first page fields</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="13" column="0">
+                        <property name="name">
+                            <cstring>textLabel11_5</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                        <property name="text">
+                            <string>Title:</string>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>See the tooltip and what's this information for the first page fields</string>
+                        </property>
+                    </widget>
+                    <widget class="KLineEdit" row="11" column="2">
+                        <property name="name">
+                            <cstring>groupsEdit4</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>See the tooltip and what's this information for the first page fields</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="14" column="0">
+                        <property name="name">
+                            <cstring>textLabel12_5</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                        <property name="text">
+                            <string>Groups:</string>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>See the tooltip and what's this information for the first page fields</string>
+                        </property>
+                    </widget>
+                    <widget class="KLineEdit" row="7" column="1" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>pageTitleEdit3</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>See the tooltip and what's this information for the first page fields</string>
+                        </property>
+                    </widget>
+                    <widget class="KLineEdit" row="8" column="1" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>groupsEdit3</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>See the tooltip and what's this information for the first page fields</string>
+                        </property>
+                    </widget>
+                    <widget class="KLineEdit" row="14" column="2">
+                        <property name="name">
+                            <cstring>groupsEdit5</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>See the tooltip and what's this information for the first page fields</string>
+                        </property>
+                    </widget>
+                    <widget class="KLineEdit" row="13" column="2">
+                        <property name="name">
+                            <cstring>pageTitleEdit5</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>See the tooltip and what's this information for the first page fields</string>
+                        </property>
+                    </widget>
+                </grid>
+            </widget>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>TabPage</cstring>
+                </property>
+                <attribute name="title">
+                    <string>Parsing &amp;Rules</string>
+                </attribute>
+                <grid>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="5">
+                        <property name="name">
+                            <cstring>enableMinusInWords</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Enable minus in words</string>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>Treat the minus sign as part of a word</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>If enabled &lt;b&gt;this-is-a-word&lt;/b&gt; is treated like a word. Otherwise it is treated like 4 words.</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="2" column="0">
+                        <property name="name">
+                            <cstring>textLabel13</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Comments:</string>
+                        </property>
+                        <property name="buddy" stdset="0">
+                            <cstring>kLineEdit10</cstring>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>Comma separated list of area borders for comments</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>Comma separated list of area borders for comments. &lt;i&gt;EOL&lt;/i&gt; means end of line, used for single line comments.&lt;br&gt;
+Example: &lt;b&gt;//&amp;nbsp;EOL,&amp;nbsp;/*&amp;nbsp;*/&lt;/b&gt;</string>
+                        </property>
+                    </widget>
+                    <widget class="QGroupBox" row="0" column="0" rowspan="1" colspan="5">
+                        <property name="name">
+                            <cstring>groupBox7</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>1</hsizetype>
+                                <vsizetype>5</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="title">
+                            <string>Type Specific Rules</string>
+                        </property>
+                        <grid>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QWidgetStack" row="0" column="0">
+                                <property name="name">
+                                    <cstring>rulesWidgetStack</cstring>
+                                </property>
+                                <widget class="QWidget">
+                                    <property name="name">
+                                        <cstring>WStackPage</cstring>
+                                    </property>
+                                    <attribute name="id">
+                                        <number>0</number>
+                                    </attribute>
+                                    <grid>
+                                        <property name="name">
+                                            <cstring>unnamed</cstring>
+                                        </property>
+                                        <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="7">
+                                            <property name="name">
+                                                <cstring>xmlStyleTags</cstring>
+                                            </property>
+                                            <property name="text">
+                                                <string>XML style single tags</string>
+                                            </property>
+                                            <property name="checked">
+                                                <bool>true</bool>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Check to use XML style single tags</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>Check to use XML style single tags (&lt;b&gt;&amp;lt;single_tag /&amp;gt;&lt;/b&gt;), otherwise HTML style single tags (&lt;b&gt;&amp;lt;single_tag&amp;gt;&lt;/b&gt;) are used.</string>
+                                            </property>
+                                        </widget>
+                                        <widget class="QCheckBox" row="5" column="0" rowspan="1" colspan="7">
+                                            <property name="name">
+                                                <cstring>useCommonRules</cstring>
+                                            </property>
+                                            <property name="text">
+                                                <string>Use common rules</string>
+                                            </property>
+                                            <property name="checked">
+                                                <bool>true</bool>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Append common parsing rules</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>Check it to append common parsing rules. These are:
+&lt;p&gt;&lt;b&gt;
+&amp;nbsp;&amp;nbsp;SpecialAreas=&amp;lt;?xml ?&amp;gt;, &amp;lt;!-- --&amp;gt;, &amp;lt;! &amp;gt;
+&amp;nbsp;&amp;nbsp;SpecialAreaNames = XML PI, comment, DTD
+&amp;nbsp;&amp;nbsp;Comments = &amp;lt;!-- --&amp;gt;
+&lt;/b&gt;&lt;/p&gt;</string>
+                                            </property>
+                                        </widget>
+                                        <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
+                                            <property name="name">
+                                                <cstring>extendedBooleans</cstring>
+                                            </property>
+                                            <property name="text">
+                                                <string>Extended booleans</string>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Check if the booleans are stored in extended form</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>Check if you want extended booleans in the language.&lt;br&gt;
+Examples:&lt;br&gt;
+&lt;i&gt;Simple boolean&lt;/i&gt;: &lt;b&gt;&amp;lt;tag&amp;nbsp;booleanAttr&amp;gt;&lt;/b&gt;&lt;br&gt;
+&lt;i&gt;Extended boolean&lt;/i&gt;: &lt;b&gt;&amp;lt;tag&amp;nbsp;booleanAttr="1"&amp;gt;&lt;/b&gt; or &lt;b&gt;&amp;lt;tag&amp;nbsp;booleanAttr="true"&amp;gt;&lt;/b&gt;.
+&lt;br&gt;
+See the &lt;b&gt;True&lt;/b&gt; and &lt;b&gt;False&lt;/b&gt; boxes to define the values for true and false.</string>
+                                            </property>
+                                        </widget>
+                                        <widget class="KLineEdit" row="3" column="6">
+                                            <property name="name">
+                                                <cstring>falseEdit</cstring>
+                                            </property>
+                                            <property name="enabled">
+                                                <bool>false</bool>
+                                            </property>
+                                            <property name="sizePolicy">
+                                                <sizepolicy>
+                                                    <hsizetype>2</hsizetype>
+                                                    <vsizetype>0</vsizetype>
+                                                    <horstretch>0</horstretch>
+                                                    <verstretch>0</verstretch>
+                                                </sizepolicy>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>The value of "true" in case of extended booleans</string>
+                                            </property>
+                                        </widget>
+                                        <widget class="KLineEdit" row="3" column="4">
+                                            <property name="name">
+                                                <cstring>trueEdit</cstring>
+                                            </property>
+                                            <property name="enabled">
+                                                <bool>false</bool>
+                                            </property>
+                                            <property name="sizePolicy">
+                                                <sizepolicy>
+                                                    <hsizetype>2</hsizetype>
+                                                    <vsizetype>0</vsizetype>
+                                                    <horstretch>0</horstretch>
+                                                    <verstretch>0</verstretch>
+                                                </sizepolicy>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>The value of "true" in case of extended booleans</string>
+                                            </property>
+                                        </widget>
+                                        <widget class="QLabel" row="3" column="5">
+                                            <property name="name">
+                                                <cstring>textLabel39</cstring>
+                                            </property>
+                                            <property name="enabled">
+                                                <bool>false</bool>
+                                            </property>
+                                            <property name="text">
+                                                <string>False:</string>
+                                            </property>
+                                            <property name="alignment">
+                                                <set>AlignVCenter|AlignRight</set>
+                                            </property>
+                                        </widget>
+                                        <widget class="QLabel" row="3" column="3">
+                                            <property name="name">
+                                                <cstring>textLabel38</cstring>
+                                            </property>
+                                            <property name="enabled">
+                                                <bool>false</bool>
+                                            </property>
+                                            <property name="text">
+                                                <string>True:</string>
+                                            </property>
+                                            <property name="alignment">
+                                                <set>AlignVCenter|AlignRight</set>
+                                            </property>
+                                        </widget>
+                                        <spacer row="3" column="2">
+                                            <property name="name">
+                                                <cstring>spacer12</cstring>
+                                            </property>
+                                            <property name="orientation">
+                                                <enum>Horizontal</enum>
+                                            </property>
+                                            <property name="sizeType">
+                                                <enum>Expanding</enum>
+                                            </property>
+                                            <property name="sizeHint">
+                                                <size>
+                                                    <width>40</width>
+                                                    <height>20</height>
+                                                </size>
+                                            </property>
+                                        </spacer>
+                                        <widget class="KLineEdit" row="0" column="1" rowspan="1" colspan="6">
+                                            <property name="name">
+                                                <cstring>specialAreasEdit</cstring>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Comma separated list of the beginning and closing string for special areas</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>The beginning and closing string of special areas, separated by a comma.&lt;br&gt;
+ Special areas are not parsed according to this DTD's rules, but according to their own rules.&lt;br&gt;
+    A special area can be a pseudo DTD, a comment or something like that, for example &lt;i&gt;&amp;lt;!--&amp;nbsp;--&amp;gt;&lt;/i&gt;.</string>
+                                            </property>
+                                        </widget>
+                                        <widget class="QLabel" row="0" column="0">
+                                            <property name="name">
+                                                <cstring>textLabel27</cstring>
+                                            </property>
+                                            <property name="text">
+                                                <string>Special areas:</string>
+                                            </property>
+                                            <property name="buddy" stdset="0">
+                                                <cstring>kLineEdit11</cstring>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Comma separated list of the beginning and closing string for special areas</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>The beginning and closing string of special areas, separated by a comma.&lt;br&gt;
+ Special areas are not parsed according to this DTD's rules, but according to their own rules.&lt;br&gt;
+    A special area can be a pseudo DTD, a comment or something like that, for example &lt;i&gt;&amp;lt;!--&amp;nbsp;--&amp;gt;&lt;/i&gt;.</string>
+                                            </property>
+                                        </widget>
+                                        <widget class="KLineEdit" row="1" column="1" rowspan="1" colspan="6">
+                                            <property name="name">
+                                                <cstring>specialAreaNamesEdit</cstring>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Comma-separated list of the names for the above-defined special areas</string>
+                                            </property>
+                                        </widget>
+                                        <widget class="QLabel" row="1" column="0">
+                                            <property name="name">
+                                                <cstring>textLabel28</cstring>
+                                            </property>
+                                            <property name="text">
+                                                <string>Special area names:</string>
+                                            </property>
+                                            <property name="buddy" stdset="0">
+                                                <cstring>kLineEdit12</cstring>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Comma-separated list of the names for the above-defined special areas</string>
+                                            </property>
+                                        </widget>
+                                        <widget class="QLabel" row="2" column="0">
+                                            <property name="name">
+                                                <cstring>textLabel40</cstring>
+                                            </property>
+                                            <property name="text">
+                                                <string>Special tags:</string>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Specifies a tag that defines the start of a special area</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>Specifies a tag which defines the start of a special area in the form of &lt;i&gt;tagname(attributename)&lt;/i&gt;.&lt;br&gt;
+Example:&lt;b&gt;script(language)&lt;/b&gt; means that any &lt;b&gt;&amp;lt;script&amp;gt;&lt;/b&gt; tag having a &lt;b&gt;language&lt;/b&gt; attribute indicates a special area.</string>
+                                            </property>
+                                        </widget>
+                                        <widget class="KLineEdit" row="2" column="1" rowspan="1" colspan="6">
+                                            <property name="name">
+                                                <cstring>specialTagsEdit</cstring>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Specifies a tag that defines the start of a special area</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>Specifies a tag which defines the start of a special area in the form of &lt;i&gt;tagname(attributename)&lt;/i&gt;.&lt;br&gt;
+Example:&lt;b&gt;script(language)&lt;/b&gt; means that any &lt;b&gt;&amp;lt;script&amp;gt;&lt;/b&gt; tag having a &lt;b&gt;language&lt;/b&gt; attribute indicates a special area.</string>
+                                            </property>
+                                        </widget>
+                                    </grid>
+                                </widget>
+                                <widget class="QWidget">
+                                    <property name="name">
+                                        <cstring>WStackPage</cstring>
+                                    </property>
+                                    <attribute name="id">
+                                        <number>1</number>
+                                    </attribute>
+                                    <grid>
+                                        <property name="name">
+                                            <cstring>unnamed</cstring>
+                                        </property>
+                                        <widget class="QLabel" row="1" column="0">
+                                            <property name="name">
+                                                <cstring>textLabel21</cstring>
+                                            </property>
+                                            <property name="text">
+                                                <string>Definition tags:</string>
+                                            </property>
+                                            <property name="buddy" stdset="0">
+                                                <cstring>kLineEdit14</cstring>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Tags and attributes defining this DTEP</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>Comma separated list of tags that define this DTEP. The format used is &lt;i&gt;tagname(attribute[defaultvalue])&lt;/i&gt;. If the parent (a real) DTEP has a tag with &lt;i&gt;tagname&lt;/i&gt; and
+the &lt;i&gt;attribute value&lt;/i&gt; of this tag is equal with the name of this DTEP, the tag area
+is parsed according to the rules of this DTEP.&lt;br&gt;
+If &lt;i&gt;[defaultvalue]&lt;/i&gt; is present, it means that if the attribute is not present in the tag it is taken as present with &lt;i&gt;value = defaultvalue&lt;/i&gt;.&lt;br&gt;
+Example: &lt;b&gt;Tags=style(type[text/css])&lt;/b&gt; means that both &lt;b&gt;&amp;lt;style&amp;gt;&lt;/b&gt; and &lt;b&gt;&amp;lt;style&amp;nbsp;type="text/css"&amp;gt;&lt;/b&gt; are treated the same way and the DTEP defined by this tag is named &lt;b&gt;text/css&lt;/b&gt;.</string>
+                                            </property>
+                                        </widget>
+                                        <widget class="QLabel" row="0" column="0">
+                                            <property name="name">
+                                                <cstring>textLabel20</cstring>
+                                            </property>
+                                            <property name="text">
+                                                <string>Area borders:</string>
+                                            </property>
+                                            <property name="buddy" stdset="0">
+                                                <cstring>kLineEdit13</cstring>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Comma separated list of the area borders</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>Comma separated list of the area borders encapsulating this pseudo DTEP. In the case of PHP it is:&lt;br&gt;
+&lt;b&gt;&amp;lt;?&amp;nbsp;?&amp;gt;,&amp;nbsp;&amp;lt;*&amp;nbsp;*&amp;gt;,&amp;nbsp;&amp;lt;%&amp;nbsp;%&amp;gt;&lt;/b&gt;</string>
+                                            </property>
+                                        </widget>
+                                        <widget class="QLabel" row="2" column="0">
+                                            <property name="name">
+                                                <cstring>textLabel22</cstring>
+                                            </property>
+                                            <property name="text">
+                                                <string>Structure keywords:</string>
+                                            </property>
+                                            <property name="buddy" stdset="0">
+                                                <cstring>kLineEdit15</cstring>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Comma separated list of structure keywords</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>Comma separated list of structure keywords. The keywords used here are used to create new node (nodes for structures) in the structure tree, like for a function, class or if block.</string>
+                                            </property>
+                                        </widget>
+                                        <widget class="QLabel" row="5" column="0">
+                                            <property name="name">
+                                                <cstring>textLabel26</cstring>
+                                            </property>
+                                            <property name="text">
+                                                <string>Structure delimiting:</string>
+                                            </property>
+                                            <property name="buddy" stdset="0">
+                                                <cstring>kLineEdit19</cstring>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Regular expression that finds the beginning or end of a structure</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>Regular expression that finds the beginning or end of a structure. This is usually the combination of &lt;b&gt;Structure beginning&lt;/b&gt; and &lt;b&gt;Structure end&lt;/b&gt;, like &lt;b&gt;\\{&amp;nbsp;|&amp;nbsp;\\}&lt;/b&gt;</string>
+                                            </property>
+                                        </widget>
+                                        <widget class="QLabel" row="4" column="0">
+                                            <property name="name">
+                                                <cstring>textLabel24</cstring>
+                                            </property>
+                                            <property name="text">
+                                                <string>Structure beginning:</string>
+                                            </property>
+                                            <property name="buddy" stdset="0">
+                                                <cstring>kLineEdit17</cstring>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>A string specifying the beginning of a structure</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>A string specifying the beginning of a structure, like &lt;b&gt;{&lt;/b&gt; in many cases.</string>
+                                            </property>
+                                        </widget>
+                                        <widget class="QLabel" row="3" column="0">
+                                            <property name="name">
+                                                <cstring>textLabel23</cstring>
+                                            </property>
+                                            <property name="text">
+                                                <string>Local scope keywords:</string>
+                                            </property>
+                                            <property name="buddy" stdset="0">
+                                                <cstring>kLineEdit16</cstring>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Comma separated list of the local scope defining keywords</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                              <string>Comma separated list of the local scope defining keywords. Other structure group elements found under a structure node that was created based on a keyword from this list are treated as local elements. For example if this list contains &lt;b&gt;function&lt;/b&gt;, it means that elements, like variables found under a &lt;b&gt;function&lt;/b&gt; are local, relative to the node that holds the &lt;b&gt;function&lt;/b&gt;.</string>
+                                            </property>
+                                        </widget>
+                                        <widget class="KLineEdit" row="3" column="1" rowspan="1" colspan="3">
+                                            <property name="name">
+                                                <cstring>localStructKeywordsEdit</cstring>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Comma separated list of the local scope defining keywords</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                              <string>Comma separated list of the local scope defining keywords. Other structure group elements found under a structure node that was created based on a keyword from this list are treated as local elements. For example if this list contains &lt;b&gt;function&lt;/b&gt;, it means that elements, like variables found under a &lt;b&gt;function&lt;/b&gt; are local, relative to the node that holds the &lt;b&gt;function&lt;/b&gt;.</string>
+                                            </property>
+                                        </widget>
+                                        <widget class="KLineEdit" row="2" column="1" rowspan="1" colspan="3">
+                                            <property name="name">
+                                                <cstring>structKeywordsEdit</cstring>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Comma separated list of structure keywords</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>Comma separated list of structure keywords. The keywords used here are used to create new node (nodes for structures) in the structure tree, like for a function, class or if block.</string>
+                                            </property>
+                                        </widget>
+                                        <widget class="KLineEdit" row="1" column="1" rowspan="1" colspan="3">
+                                            <property name="name">
+                                                <cstring>definitionTagsEdit</cstring>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Tags and attributes defining this DTEP</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>Comma separated list of tags that define this DTEP. The format used is &lt;i&gt;tagname(attribute[defaultvalue])&lt;/i&gt;. If the parent (a real) DTEP has a tag with &lt;i&gt;tagname&lt;/i&gt; and
+the &lt;i&gt;attribute value&lt;/i&gt; of this tag is equal with the name of this DTEP, the tag area
+is parsed according to the rules of this DTEP.&lt;br&gt;
+If &lt;i&gt;[defaultvalue]&lt;/i&gt; is present, it means that if the attribute is not present in the tag it is taken as present with &lt;i&gt;value = defaultvalue&lt;/i&gt;.&lt;br&gt;
+Example: &lt;b&gt;Tags=style(type[text/css])&lt;/b&gt; means that both &lt;b&gt;&amp;lt;style&amp;gt;&lt;/b&gt; and &lt;b&gt;&amp;lt;style&amp;nbsp;type="text/css"&amp;gt;&lt;/b&gt; are treated the same way and the DTEP defined by this tag is named &lt;b&gt;text/css&lt;/b&gt;.</string>
+                                            </property>
+                                        </widget>
+                                        <widget class="KLineEdit" row="0" column="1" rowspan="1" colspan="3">
+                                            <property name="name">
+                                                <cstring>areaBordersEdit</cstring>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Comma separated list of the area borders</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>Comma separated list of the area borders encapsulating this pseudo DTEP. In the case of PHP it is:&lt;br&gt;
+&lt;b&gt;&amp;lt;?&amp;nbsp;?&amp;gt;,&amp;nbsp;&amp;lt;*&amp;nbsp;*&amp;gt;,&amp;nbsp;&amp;lt;%&amp;nbsp;%&amp;gt;&lt;/b&gt;</string>
+                                            </property>
+                                        </widget>
+                                        <widget class="KLineEdit" row="4" column="3">
+                                            <property name="name">
+                                                <cstring>structEndEdit</cstring>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>A string specifying the end of a structure</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>A string specifying the end of a structure, like &lt;b&gt;}&lt;/b&gt; in many cases.</string>
+                                            </property>
+                                        </widget>
+                                        <widget class="QLabel" row="4" column="2">
+                                            <property name="name">
+                                                <cstring>textLabel25</cstring>
+                                            </property>
+                                            <property name="text">
+                                                <string>Structure end:</string>
+                                            </property>
+                                            <property name="buddy" stdset="0">
+                                                <cstring>kLineEdit18</cstring>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>A string specifying the end of a structure</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>A string specifying the end of a structure, like &lt;b&gt;}&lt;/b&gt; in many cases.</string>
+                                            </property>
+                                        </widget>
+                                        <widget class="KLineEdit" row="4" column="1">
+                                            <property name="name">
+                                                <cstring>structBeginEdit</cstring>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>A string specifying the beginning of a structure</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>A string specifying the beginning of a structure, like &lt;b&gt;{&lt;/b&gt; in many cases.</string>
+                                            </property>
+                                        </widget>
+                                        <widget class="QLabel" row="7" column="0" rowspan="1" colspan="2">
+                                            <property name="name">
+                                                <cstring>textLabel19</cstring>
+                                            </property>
+                                            <property name="sizePolicy">
+                                                <sizepolicy>
+                                                    <hsizetype>1</hsizetype>
+                                                    <vsizetype>5</vsizetype>
+                                                    <horstretch>0</horstretch>
+                                                    <verstretch>0</verstretch>
+                                                </sizepolicy>
+                                            </property>
+                                            <property name="text">
+                                                <string>Complete class members after:</string>
+                                            </property>
+                                            <property name="buddy" stdset="0">
+                                                <cstring>kLineEdit21</cstring>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Regular expression to find out when to invoke member autocompletion</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>Regular expression to find out when to invoke member autocompletion. &lt;br&gt;
+Example:&lt;br&gt;
+- we have a class called &lt;b&gt;foo&lt;/b&gt; with some member variables&lt;br&gt;
+- the object of type &lt;b&gt;foo&lt;/b&gt; is used in the document as $&lt;b&gt;objFoo&lt;/b&gt;&lt;br&gt;
+- the members can appear as &lt;b&gt;$objFoo-&gt;member&lt;/b&gt; or &lt;b&gt;$objFoo.member&lt;/b&gt;
+- in the above case this entry should look like &lt;b&gt;(?:-&amp;gt;|\.)$&lt;/b&gt; (autocomplete if the object is followed by &lt;b&gt;-&amp;gt;&lt;/b&gt; or &lt;b&gt;.&lt;/b&gt;)&lt;br&gt;
+    The regular expression must be terminated with &lt;b&gt;$&lt;/b&gt; (match end of line).</string>
+                                            </property>
+                                        </widget>
+                                        <widget class="QLabel" row="6" column="0" rowspan="1" colspan="2">
+                                            <property name="name">
+                                                <cstring>textLabel18</cstring>
+                                            </property>
+                                            <property name="sizePolicy">
+                                                <sizepolicy>
+                                                    <hsizetype>1</hsizetype>
+                                                    <vsizetype>5</vsizetype>
+                                                    <horstretch>0</horstretch>
+                                                    <verstretch>0</verstretch>
+                                                </sizepolicy>
+                                            </property>
+                                            <property name="text">
+                                                <string>Complete attributes after:</string>
+                                            </property>
+                                            <property name="buddy" stdset="0">
+                                                <cstring>kLineEdit20</cstring>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Autocomplete attributes after this character. See the information for the same entry valid for tags.</string>
+                                            </property>
+                                        </widget>
+                                        <widget class="KLineEdit" row="6" column="2" rowspan="1" colspan="2">
+                                            <property name="name">
+                                                <cstring>attributesAfterEdit</cstring>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Autocomplete attributes after this character. See the information for the same entry valid for tags.</string>
+                                            </property>
+                                        </widget>
+                                        <widget class="KLineEdit" row="7" column="2" rowspan="1" colspan="2">
+                                            <property name="name">
+                                                <cstring>membersAfterEdit</cstring>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Regular expression to find out when to invoke member autocompletion</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>Regular expression to find out when to invoke member autocompletion. &lt;br&gt;
+Example:&lt;br&gt;
+- we have a class called &lt;b&gt;foo&lt;/b&gt; with some member variables&lt;br&gt;
+- the object of type &lt;b&gt;foo&lt;/b&gt; is used in the document as $&lt;b&gt;objFoo&lt;/b&gt;&lt;br&gt;
+- the members can appear as &lt;b&gt;$objFoo-&gt;member&lt;/b&gt; or &lt;b&gt;$objFoo.member&lt;/b&gt;
+- in the above case this entry shoul look like &lt;b&gt;(?:-&amp;gt;|\.)$&lt;/b&gt; (autocomplete if the object is followed by &lt;b&gt;-&amp;gt;&lt;/b&gt; or &lt;b&gt;.&lt;/b&gt;)&lt;br&gt;
+    The regular expression must be terminated with &lt;b&gt;$&lt;/b&gt; (match end of line).</string>
+                                            </property>
+                                        </widget>
+                                        <widget class="KLineEdit" row="5" column="1" rowspan="1" colspan="3">
+                                            <property name="name">
+                                                <cstring>structRxEdit</cstring>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Regular expression that finds the beginning or end of a structure</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>Regular expression that finds the beginning or end of a structure. This is usually the combination of &lt;b&gt;Structure beginning&lt;/b&gt; and &lt;b&gt;Structure end&lt;/b&gt;, like &lt;b&gt;\\{&amp;nbsp;|&amp;nbsp;\\}&lt;/b&gt;</string>
+                                            </property>
+                                        </widget>
+                                    </grid>
+                                </widget>
+                            </widget>
+                        </grid>
+                    </widget>
+                    <widget class="QLabel" row="3" column="0">
+                        <property name="name">
+                            <cstring>textLabel15</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Attribute separator:</string>
+                        </property>
+                        <property name="buddy" stdset="0">
+                            <cstring>kLineEdit22</cstring>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>The character specifying the end of an attribute</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>The character specifying the end of an attribute. By default it is &lt;b&gt;"&lt;/b&gt; for XML DTEPs and &lt;b&gt;,&lt;/b&gt; for pseudo DTEPs.</string>
+                        </property>
+                    </widget>
+                    <widget class="KLineEdit" row="2" column="1" rowspan="1" colspan="4">
+                        <property name="name">
+                            <cstring>commentsEdit</cstring>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>Comma separated list of area borders for comments</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>Comma separated list of area borders for comments. &lt;i&gt;EOL&lt;/i&gt; means end of line, used for single line comments.&lt;br&gt;
+Example: &lt;b&gt;//&amp;nbsp;EOL,&amp;nbsp;/*&amp;nbsp;*/&lt;/b&gt;</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="5" column="0">
+                        <property name="name">
+                            <cstring>textLabel17</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Included DTEPs:</string>
+                        </property>
+                        <property name="buddy" stdset="0">
+                            <cstring>kLineEdit25</cstring>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>Comma-separated list of DTEPs that can be present inside this DTEP</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>Comma-separated list of DTEPs that can be present inside this DTEP. The list consist usually of pseudo DTEPs.</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="4" column="0" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>textLabel16</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Autocomplete tags after:</string>
+                        </property>
+                        <property name="buddy" stdset="0">
+                            <cstring>kLineEdit24</cstring>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>The character after which the list of tags should be shown</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>The autocompletion box is brought up automatically once this character is entered or space is pressed after this character.&lt;br&gt; For real DTEPs it's usually &lt;b&gt;&amp;lt;&lt;/b&gt;, but for example for the CSS pseudo DTEP it is &lt;b&gt;{&lt;/b&gt;. The text &lt;b&gt;none&lt;/b&gt; instead of a character specifies that the tag completion box should not be brought up automatically, only if the user requests it.</string>
+                        </property>
+                    </widget>
+                    <widget class="KLineEdit" row="4" column="2" rowspan="1" colspan="3">
+                        <property name="name">
+                            <cstring>tagAfterEdit</cstring>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>The character after which the list of tags should be shown</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>The autocompletion box is brought up automatically once this character is entered or space is pressed after this character&lt;br&gt;. For real DTEPs it's usually &lt;b&gt;&amp;lt;&lt;/b&gt;, but for example for the CSS pseudo DTEP it is &lt;b&gt;{&lt;/b&gt;. The text &lt;b&gt;none&lt;/b&gt; instead of a character specifies that the tag completion box should not be brought up automatically, only if the user requests it.</string>
+                        </property>
+                    </widget>
+                    <widget class="KLineEdit" row="3" column="4">
+                        <property name="name">
+                            <cstring>tagSeparatorEdit</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>1</hsizetype>
+                                <vsizetype>0</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>The character specifying the end of a tag. See the information for the attribute separator for details.</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="3" column="3">
+                        <property name="name">
+                            <cstring>textLabel14</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Tag separator:</string>
+                        </property>
+                        <property name="buddy" stdset="0">
+                            <cstring>kLineEdit23</cstring>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>The character specifying the end of a tag. See the information for the attribute separator for details.</string>
+                        </property>
+                    </widget>
+                    <widget class="KLineEdit" row="3" column="1" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>attributeSeparatorEdit</cstring>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>The character specifying the end of an attribute</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>The character specifying the end of an attribute. By default it is &lt;b&gt;"&lt;/b&gt; for XML DTEPs and &lt;b&gt;,&lt;/b&gt; for pseudo DTEPs.</string>
+                        </property>
+                    </widget>
+                    <widget class="KLineEdit" row="5" column="2" rowspan="1" colspan="3">
+                        <property name="name">
+                            <cstring>mayContainEdit</cstring>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>Comma-separated list of DTEPs that can be present inside this DTEP</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>Comma-separated list of DTEPs that can be present inside this DTEP. The list consist usually of pseudo DTEPs.</string>
+                        </property>
+                    </widget>
+                </grid>
+            </widget>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>TabPage</cstring>
+                </property>
+                <attribute name="title">
+                    <string>Structures</string>
+                </attribute>
+                <grid>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QLabel" row="0" column="0">
+                        <property name="name">
+                            <cstring>textLabel29</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Available groups:</string>
+                        </property>
+                        <property name="buddy" stdset="0">
+                            <cstring>listBox1</cstring>
+                        </property>
+                    </widget>
+                    <spacer row="3" column="1">
+                        <property name="name">
+                            <cstring>spacer5</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>270</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="KPushButton" row="2" column="0">
+                        <property name="name">
+                            <cstring>addStructButton</cstring>
+                        </property>
+                        <property name="text">
+                            <string>&amp;Add...</string>
+                        </property>
+                    </widget>
+                    <widget class="KPushButton" row="2" column="1">
+                        <property name="name">
+                            <cstring>editStructButton</cstring>
+                        </property>
+                        <property name="text">
+                            <string>&amp;Edit...</string>
+                        </property>
+                    </widget>
+                    <widget class="KPushButton" row="2" column="2">
+                        <property name="name">
+                            <cstring>deleteStructButton</cstring>
+                        </property>
+                        <property name="text">
+                            <string>&amp;Delete</string>
+                        </property>
+                    </widget>
+                    <widget class="QListBox" row="1" column="0" rowspan="1" colspan="3">
+                        <property name="name">
+                            <cstring>structuresList</cstring>
+                        </property>
+                    </widget>
+                </grid>
+            </widget>
+        </widget>
+    </grid>
+</widget>
+<connections>
+    <connection>
+        <sender>enablePage1</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>textLabel11</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>enablePage1</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>pageTitleEdit1</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>enablePage1</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>groupsEdit1</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>enablePage1</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>textLabel12</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>enablePage1</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>enablePage2</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>enablePage2</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>pageTitleEdit2</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>enablePage2</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>groupsEdit2</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>enablePage2</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>textLabel11_2</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>enablePage2</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>textLabel12_2</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>enablePage2</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>enablePage3</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>enablePage3</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>pageTitleEdit3</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>enablePage3</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>groupsEdit3</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>enablePage3</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>textLabel11_3</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>enablePage3</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>textLabel12_3</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>enablePage3</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>enablePage4</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>enablePage4</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>pageTitleEdit4</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>enablePage4</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>groupsEdit4</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>enablePage4</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>textLabel11_3_2</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>enablePage4</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>textLabel12_3_2</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>enablePage4</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>enablePage5</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>enablePage5</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>pageTitleEdit5</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>enablePage5</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>groupsEdit5</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>enablePage5</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>textLabel11_5</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>enablePage5</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>textLabel12_5</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>typeCombo</sender>
+        <signal>activated(int)</signal>
+        <receiver>rulesWidgetStack</receiver>
+        <slot>raiseWidget(int)</slot>
+    </connection>
+    <connection>
+        <sender>addStructButton</sender>
+        <signal>clicked()</signal>
+        <receiver>DTEPEditDlgS</receiver>
+        <slot>slotAddStructGroup()</slot>
+    </connection>
+    <connection>
+        <sender>deleteStructButton</sender>
+        <signal>clicked()</signal>
+        <receiver>DTEPEditDlgS</receiver>
+        <slot>slotDeleteStructGroup()</slot>
+    </connection>
+    <connection>
+        <sender>editStructButton</sender>
+        <signal>clicked()</signal>
+        <receiver>DTEPEditDlgS</receiver>
+        <slot>slotEditStructGroup()</slot>
+    </connection>
+    <connection>
+        <sender>typeCombo</sender>
+        <signal>activated(int)</signal>
+        <receiver>generalWidgetStack</receiver>
+        <slot>raiseWidget(int)</slot>
+    </connection>
+    <connection>
+        <sender>typeCombo</sender>
+        <signal>activated(int)</signal>
+        <receiver>DTEPEditDlgS</receiver>
+        <slot>slotFamilyChanged(int)</slot>
+    </connection>
+    <connection>
+        <sender>extendedBooleans</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>textLabel38</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>extendedBooleans</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>trueEdit</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>extendedBooleans</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>textLabel39</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>extendedBooleans</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>falseEdit</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>structuresList</sender>
+        <signal>doubleClicked(QListBoxItem*)</signal>
+        <receiver>editStructButton</receiver>
+        <slot>animateClick()</slot>
+    </connection>
+</connections>
+<tabstops>
+    <tabstop>tabWidget</tabstop>
+    <tabstop>nameEdit</tabstop>
+    <tabstop>nickNameEdit</tabstop>
+    <tabstop>inheritsCombo</tabstop>
+    <tabstop>typeCombo</tabstop>
+    <tabstop>mimeTypeEdit</tabstop>
+    <tabstop>extensionEdit</tabstop>
+    <tabstop>toolbarFolderEdit</tabstop>
+    <tabstop>toolbarsEdit</tabstop>
+    <tabstop>caseSensitive</tabstop>
+    <tabstop>topLevel</tabstop>
+    <tabstop>urlEdit</tabstop>
+    <tabstop>doctypeEdit</tabstop>
+    <tabstop>enablePage1</tabstop>
+    <tabstop>pageTitleEdit1</tabstop>
+    <tabstop>groupsEdit1</tabstop>
+    <tabstop>enablePage2</tabstop>
+    <tabstop>pageTitleEdit2</tabstop>
+    <tabstop>groupsEdit2</tabstop>
+    <tabstop>enablePage3</tabstop>
+    <tabstop>pageTitleEdit3</tabstop>
+    <tabstop>groupsEdit3</tabstop>
+    <tabstop>enablePage4</tabstop>
+    <tabstop>pageTitleEdit4</tabstop>
+    <tabstop>groupsEdit4</tabstop>
+    <tabstop>enablePage5</tabstop>
+    <tabstop>pageTitleEdit5</tabstop>
+    <tabstop>groupsEdit5</tabstop>
+    <tabstop>areaBordersEdit</tabstop>
+    <tabstop>definitionTagsEdit</tabstop>
+    <tabstop>structKeywordsEdit</tabstop>
+    <tabstop>localStructKeywordsEdit</tabstop>
+    <tabstop>structBeginEdit</tabstop>
+    <tabstop>structEndEdit</tabstop>
+    <tabstop>structRxEdit</tabstop>
+    <tabstop>attributesAfterEdit</tabstop>
+    <tabstop>membersAfterEdit</tabstop>
+    <tabstop>specialAreasEdit</tabstop>
+    <tabstop>specialAreaNamesEdit</tabstop>
+    <tabstop>specialTagsEdit</tabstop>
+    <tabstop>extendedBooleans</tabstop>
+    <tabstop>trueEdit</tabstop>
+    <tabstop>falseEdit</tabstop>
+    <tabstop>xmlStyleTags</tabstop>
+    <tabstop>useCommonRules</tabstop>
+    <tabstop>enableMinusInWords</tabstop>
+    <tabstop>commentsEdit</tabstop>
+    <tabstop>attributeSeparatorEdit</tabstop>
+    <tabstop>tagSeparatorEdit</tabstop>
+    <tabstop>tagAfterEdit</tabstop>
+    <tabstop>mayContainEdit</tabstop>
+    <tabstop>structuresList</tabstop>
+    <tabstop>addStructButton</tabstop>
+    <tabstop>editStructButton</tabstop>
+    <tabstop>deleteStructButton</tabstop>
+</tabstops>
+<slots>
+    <slot access="protected">slotEditStructGroup()</slot>
+    <slot>slotAddStructGroup()</slot>
+    <slot>slotDeleteStructGroup()</slot>
+    <slot>slotFamilyChanged(int)</slot>
+</slots>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

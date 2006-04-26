@@ -1,0 +1,2 @@
+AC_CHECK_PROGS(TAR, gnutar gtar tar, [AM_MISSING_PROG(tar)])
+AC_CHECK_PROGS(GZIP, gzip, [AM_MISSING_PROG(gzip)])

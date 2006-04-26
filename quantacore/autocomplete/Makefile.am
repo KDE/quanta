@@ -1,0 +1,12 @@
+noinst_HEADERS = completionbase.h xmltagcompletion.h xmlattributecompletion.h \
+	xmlattributevaluecompletion.h dtdcompletion.h xmlentitycompletion.h specialareagroupcompletion.h \
+	specialareatagcompletion.h specialareaattributecompletion.h
+libautocomplete_la_LDFLAGS = $(all_libraries)
+noinst_LTLIBRARIES = libautocomplete.la
+libautocomplete_la_SOURCES = completionbase.cpp xmltagcompletion.cpp \
+	xmlattributecompletion.cpp xmlattributevaluecompletion.cpp dtdcompletion.cpp \
+	xmlentitycompletion.cpp specialareagroupcompletion.cpp specialareatagcompletion.cpp \
+	specialareaattributecompletion.cpp
+INCLUDES = -I$(top_srcdir)/lib -I$(top_srcdir)/quantacore \
+	-I$(top_srcdir)/quantacore/parsers -I$(kde_includes)/kdevelop/util -I$(kde_includes)/kdevelop/interfaces \
+	-I$(top_builddir)/lib $(all_includes)

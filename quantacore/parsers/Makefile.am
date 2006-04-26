@@ -1,0 +1,14 @@
+SUBDIRS = dtd
+METASOURCES = AUTO
+
+noinst_LTLIBRARIES = libparser.la
+libparser_la_SOURCES = parser.cpp saparser.cpp parsercommon.cpp \
+	sagroupparser.cpp parsermanager.cpp comparator.cpp
+
+AM_CPPFLAGS = -I$(top_srcdir)/quantacore \
+	-I$(top_srcdir)/lib \
+	$(all_includes)
+
+
+noinst_HEADERS = saparser.h parsercommon.h sagroupparser.h parsermanager.h \
+	comparator.h state.h
