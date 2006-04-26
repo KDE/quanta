@@ -1,6 +1,10 @@
 kde4_header()
 
-include_directories(${CMAKE_BINARY_DIR}/lib ${KDE4_INCLUDE_DIR}/kdevelop/interfaces ${KDE4_INCLUDES} )
+include_directories(
+  ${CMAKE_BINARY_DIR}/quanta/lib
+  ${KDE4_INCLUDE_DIR}/kdevelop/interfaces
+  ${KDE4_INCLUDES}
+)
 
 
 ########### next target ###############

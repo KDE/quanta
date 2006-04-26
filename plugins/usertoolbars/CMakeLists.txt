@@ -3,11 +3,11 @@ kde4_header()
 add_subdirectory( pics )
 
 include_directories(
-${CMAKE_SOURCE_DIR}/lib
-${CMAKE_BINARY_DIR}/plugins/usertoolbars
-${KDE4_INCLUDE_DIR}/kdevelop/interfaces
-${KDE4_INCLUDE_DIR}/kdevelop/util
-${KDE_INCLUDES}
+  ${CMAKE_SOURCE_DIR}/quanta/lib
+  ${CMAKE_BINARY_DIR}/quanta/plugins/usertoolbars
+  ${KDE4_INCLUDE_DIR}/kdevelop/interfaces
+  ${KDE4_INCLUDE_DIR}/kdevelop/util
+  ${KDE4_INCLUDES}
 )
 
 

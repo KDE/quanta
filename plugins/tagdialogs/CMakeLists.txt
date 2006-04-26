@@ -1,11 +1,12 @@
 kde4_header()
 
 include_directories(
-${CMAKE_SOURCE_DIR}/lib
-${CMAKE_BINARY_DIR}/lib
-${CMAKE_BINARY_DIR}/plugins/tagdialogs
-${KDE4_INCLUDE_DIR}/kdevelop/interfaces
-${KDE4_INCLUDES}  )
+  ${CMAKE_SOURCE_DIR}/quanta/lib
+  ${CMAKE_BINARY_DIR}/quanta/lib
+  ${CMAKE_BINARY_DIR}/quanta/plugins/tagdialogs
+  ${KDE4_INCLUDE_DIR}/kdevelop/interfaces
+  ${KDE4_INCLUDES}
+)
 
 
 ########### next target ###############

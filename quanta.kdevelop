@@ -104,7 +104,7 @@
       <abortonerror>true</abortonerror>
       <numberofjobs>1</numberofjobs>
       <dontact>false</dontact>
-      <makebin/>
+      <makebin></makebin>
       <prio>0</prio>
       <installprefix>sudo</installprefix>
       <runmultiplejobs>false</runmultiplejobs>
@@ -112,7 +112,7 @@
     <run>
       <directoryradio>build</directoryradio>
       <customdirectory>/</customdirectory>
-      <mainprogram>src/quanta</mainprogram>
+      <mainprogram>quanta/src/quanta</mainprogram>
       <programargs></programargs>
       <terminal>false</terminal>
       <autocompile>true</autocompile>
@@ -137,20 +137,20 @@
     <configurations>
       <default>
         <envvars/>
-        <configargs>--enable-debug=full --prefix=/data/kde-35</configargs>
-        <builddir>/data2/kde4/build/kdevquanta</builddir>
-        <topsourcedir/>
+        <configargs></configargs>
+        <builddir>/data2/kde4/build/kdewebdev</builddir>
+        <topsourcedir></topsourcedir>
         <cppflags>-DDEBUG_PARSER</cppflags>
-        <ldflags/>
+        <ldflags></ldflags>
         <ccompiler>kdevgccoptions</ccompiler>
         <cxxcompiler>kdevgppoptions</cxxcompiler>
         <f77compiler>kdevpgf77options</f77compiler>
-        <ccompilerbinary/>
-        <cxxcompilerbinary/>
-        <f77compilerbinary/>
-        <cflags/>
-        <cxxflags/>
-        <f77flags/>
+        <ccompilerbinary></ccompilerbinary>
+        <cxxcompilerbinary></cxxcompilerbinary>
+        <f77compilerbinary></f77compilerbinary>
+        <cflags></cflags>
+        <cxxflags></cxxflags>
+        <f77flags></f77flags>
       </default>
     </configurations>
   </kdevautoproject>

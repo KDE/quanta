@@ -1,0 +1,39 @@
+kde4_header()
+
+add_subdirectory( html )
+add_subdirectory( html-frameset )
+add_subdirectory( html-strict )
+add_subdirectory( tagxml )
+add_subdirectory( php )
+add_subdirectory( xhtml )
+add_subdirectory( xhtml-basic )
+add_subdirectory( xhtml-frameset )
+add_subdirectory( xhtml-strict )
+add_subdirectory( xhtml11 )
+add_subdirectory( xslt )
+add_subdirectory( wml-1-2 )
+add_subdirectory( css )
+add_subdirectory( docbook-4.2 )
+add_subdirectory( schema )
+add_subdirectory( cfml )
+add_subdirectory( cffunct )
+add_subdirectory( kde-docbook-4.1.2 )
+add_subdirectory( kde-docbook-4.2 )
+add_subdirectory( relaxng )
+add_subdirectory( empty )
+add_subdirectory( dtd )
+
+
+########### install files ###############
+
+
+kde4_footer()
+
+
+
+#original Makefile.am contents follow:
+
+#SUBDIRS = html html-frameset html-strict tagxml php xhtml xhtml-basic xhtml-frameset xhtml-strict xhtml11 xslt wml-1-2 css docbook-4.2 schema cfml cffunct kde-docbook-4.1.2 kde-docbook-4.2 relaxng empty dtd
+#install-data-local:
+##	rm -f `find ${quanta_datadir}/tags -type f -name "*"`
+##	rmdir `find ${quanta_datadir}/tags -type d -name "*"`

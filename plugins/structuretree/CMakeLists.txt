@@ -1,9 +1,9 @@
 kde4_header()
 
 include_directories(
- ${CMAKE_SOURCE_DIR}/lib
- ${CMAKE_BINARY_DIR}/lib
- ${CMAKE_BINARY_DIR}/plugins/structuretree
+ ${CMAKE_SOURCE_DIR}/quanta/lib
+ ${CMAKE_BINARY_DIR}/quanta/lib
+ ${CMAKE_BINARY_DIR}/quanta/plugins/structuretree
  ${KDE4_INCLUDE_DIR}/kdevelop/interfaces
  ${KDE4_INCLUDE_DIR}/kdevelop/util
  ${KDE4_INCLUDES}
