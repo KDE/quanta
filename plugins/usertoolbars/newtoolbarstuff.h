@@ -15,7 +15,7 @@
 
 //qt includes
 #include <qobject.h>
-
+#include <QMap>
 //kde includes
 #include <knewstuff/knewstuffsecure.h>
 
