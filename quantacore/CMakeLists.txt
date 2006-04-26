@@ -8,19 +8,19 @@ add_subdirectory( autocomplete )
 
 include_directories( ${LIBXML2_INCLUDE_DIR} )
 
-include_directories(
-  ${CMAKE_SOURCE_DIR}/quanta/lib
-  ${CMAKE_SOURCE_DIR}/quanta/quantacore
-  ${CMAKE_SOURCE_DIR}/quanta/quantacore/parsers
-  ${CMAKE_SOURCE_DIR}/quanta/quantacore/parsers/dtd
-  ${CMAKE_SOURCE_DIR}/quanta/quantacore/dialogs
-  ${CMAKE_SOURCE_DIR}/quanta/quantacore/autocomplete
-  ${CMAKE_BINARY_DIR}/quanta/lib
-  ${CMAKE_BINARY_DIR}/quanta/quantacore
-  ${KDE4_INCLUDE_DIR}/kdevelop/interfaces
-  ${KDE4_INCLUDE_DIR}/kdevelop/util
-  ${KDE4_INCLUDES}
-)
+include_directories( 
+   ${CMAKE_CURRENT_SOURCE_DIR} 
+   ${CMAKE_CURRENT_BINARY_DIR}
+   ${CMAKE_SOURCE_DIR}/quanta/lib
+   ${CMAKE_SOURCE_DIR}/quanta/quantacore/parsers
+   ${CMAKE_SOURCE_DIR}/quanta/quantacore/parsers/dtd
+   ${CMAKE_SOURCE_DIR}/quanta/quantacore/dialogs
+   ${CMAKE_SOURCE_DIR}/quanta/quantacore/autocomplete
+   ${CMAKE_BINARY_DIR}/quanta/lib
+   ${KDE4_INCLUDE_DIR}/kdevelop/interfaces
+   ${KDE4_INCLUDE_DIR}/kdevelop/util
+   ${KDE4_INCLUDES}
+   )
 
 
 ########### next target ###############

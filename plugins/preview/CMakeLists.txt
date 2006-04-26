@@ -1,12 +1,13 @@
 kde4_header()
 
 include_directories(
-  ${CMAKE_BINARY_DIR}/quanta/plugins/preview
-  ${KDE4_INCLUDE_DIR}/kdevelop/interfaces
-  ${KDE4_INCLUDE_DIR}/kdevelop/widgets
-  ${KDE4_INCLUDE_DIR}/kdevelop/util
-  ${KDE4_INCLUDES}
-)
+   ${CMAKE_CURRENT_SOURCE_DIR} 
+   ${CMAKE_CURRENT_BINARY_DIR}
+   ${KDE4_INCLUDE_DIR}/kdevelop/interfaces
+   ${KDE4_INCLUDE_DIR}/kdevelop/widgets
+   ${KDE4_INCLUDE_DIR}/kdevelop/util
+   ${KDE4_INCLUDES}  
+   )
 
 
 ########### next target ###############

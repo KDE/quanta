@@ -3,12 +3,13 @@ kde4_header()
 add_subdirectory( pics )
 
 include_directories(
-  ${CMAKE_SOURCE_DIR}/quanta/lib
-  ${CMAKE_BINARY_DIR}/quanta/plugins/usertoolbars
-  ${KDE4_INCLUDE_DIR}/kdevelop/interfaces
-  ${KDE4_INCLUDE_DIR}/kdevelop/util
-  ${KDE4_INCLUDES}
-)
+   ${CMAKE_CURRENT_SOURCE_DIR} 
+   ${CMAKE_CURRENT_BINARY_DIR}
+   ${CMAKE_SOURCE_DIR}/quanta/lib
+   ${KDE4_INCLUDE_DIR}/kdevelop/interfaces
+   ${KDE4_INCLUDE_DIR}/kdevelop/util
+   ${KDE4_INCLUDES}
+   )
 
 
 ########### next target ###############
@@ -27,11 +28,16 @@ set(kdevusertoolbars_PART_SRCS
 
 kde4_automoc(${kdevusertoolbars_PART_SRCS})
 
-kde4_add_ui_files(kdevusertoolbars_PART_SRCS
-  actionconfigdialogbase.ui
+kde4_add_ui_files(
+   kdevusertoolbars_PART_SRCS
+   actionconfigdialogbase.ui
 )
 
-kde4_add_ui3_files(kdevusertoolbars_PART_SRCS usertoolbarsglobalconfigbase.ui maildialogbase.ui)
+kde4_add_ui3_files(
+   kdevusertoolbars_PART_SRCS 
+   usertoolbarsglobalconfigbase.ui 
+   maildialogbase.ui
+   )
 
 kde4_add_plugin(kdevusertoolbars WITH_PREFIX ${kdevusertoolbars_PART_SRCS})
 

@@ -1,6 +1,14 @@
 kde4_header()
 
-include_directories( ${CMAKE_SOURCE_DIR}/lib ${CMAKE_SOURCE_DIR}/quantacore ${CMAKE_SOURCE_DIR}/quantacore/parsers ${KDE4_INCLUDE_DIR} ${QT_INCLUDES}  )
+include_directories(
+   ${CMAKE_CURRENT_SOURCE_DIR} 
+   ${CMAKE_CURRENT_BINARY_DIR}
+   ${CMAKE_SOURCE_DIR}/quanta/lib 
+   ${CMAKE_SOURCE_DIR}/quanta/quantacore 
+   ${CMAKE_SOURCE_DIR}/quanta/quantacore/parsers 
+   ${KDE4_INCLUDE_DIR} 
+   ${QT_INCLUDES}  
+   )
 
 
 ########### next target ###############

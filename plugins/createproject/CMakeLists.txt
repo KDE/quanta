@@ -3,13 +3,14 @@ kde4_header()
 add_subdirectory( pics )
 
 include_directories(
-  ${CMAKE_SOURCE_DIR}/quanta/lib
-  ${CMAKE_SOURCE_DIR}/quanta/plugins/createproject
-  ${CMAKE_BINARY_DIR}/quanta/lib
-  ${CMAKE_BINARY_DIR}/quanta/plugins/createproject
-  ${KDE4_INCLUDE_DIR}/kdevelop/interfaces
-  ${KDE4_INCLUDES}
-)
+   ${CMAKE_CURRENT_SOURCE_DIR} 
+   ${CMAKE_CURRENT_BINARY_DIR}
+   ${CMAKE_SOURCE_DIR}/quanta/lib
+   ${CMAKE_BINARY_DIR}/quanta/lib
+   ${KDE4_INCLUDE_DIR}/kdevelop/interfaces
+   ${KDE4_INCLUDES}  
+   ${QT_INCLUDES}
+   )
 
 
 ########### next target ###############
