@@ -47,9 +47,12 @@ to Quanta please follow the below rules:
 	- it's nicer to edit the sources in KDevelop. ;-)
     So instead of using .ui.h, create a derived class, and implement the slots/methods there. You can
     still create and connect slots in Designer.
-20. Create a new file for each (non-trivial) class.
+20. Create a new file for each class.
 21. Use forward declarations.
 22. Put the inclusion for the class's header file as the first inclusion in the implemenetation file.
-
+Follow it by the application header files, than Qt headers and finally KDE headers.
+23. Document your methods using Doxygen comments.
+24. Try to reduce inter-header dependencies. 
+25. Avoid using of STL and assert. Use Qt classes and methods and Q_ASSERT.
 
 Last, but not least read the howto's and faq's on http://developer.kde.org
