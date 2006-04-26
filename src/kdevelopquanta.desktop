@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Icon=
+Name=KDevelop Project Interface
+Type=ServiceType
+X-KDE-Derived=KDevelop/Plugin
+X-KDE-ServiceType=KDevelop/Quanta
+
+[PropertyDef::X-KDevelop-Version]
+Type=int
