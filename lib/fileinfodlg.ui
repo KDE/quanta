@@ -1,0 +1,99 @@
+<ui version="4.0" >
+ <author></author>
+ <comment>***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; version 2 of the License.               *
+ *                                                                         *
+ ***************************************************************************
+</comment>
+ <exportmacro></exportmacro>
+ <class>FileInfoDlg</class>
+ <widget class="QWidget" name="FileInfoDlg" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>349</width>
+    <height>266</height>
+   </rect>
+  </property>
+  <layout class="QGridLayout" >
+   <property name="margin" >
+    <number>11</number>
+   </property>
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <item row="0" column="0" >
+    <widget class="QLabel" name="lineNum" >
+     <property name="text" >
+      <string>Number of lines:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" >
+    <widget class="QLabel" name="imageNum" >
+     <property name="text" >
+      <string>Number of images included:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" >
+    <widget class="QLabel" name="imageSize" >
+     <property name="text" >
+      <string>Size of the included images:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" >
+    <widget class="QLabel" name="totalSize" >
+     <property name="text" >
+      <string>Total file size:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0" >
+    <widget class="Q3ListBox" name="imageList" >
+     <property name="selectionMode" >
+      <enum>Q3ListBox::NoSelection</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" >
+    <widget class="QLabel" name="includedLabel" >
+     <property name="text" >
+      <string>Included images:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0" >
+    <widget class="QLabel" name="fileDescLbl" >
+     <property name="text" >
+      <string>Description:</string>
+     </property>
+     <property name="buddy" >
+      <cstring>fileDesc</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0" >
+    <widget class="QLineEdit" name="fileDesc" />
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>Q3ListBox</class>
+   <extends></extends>
+   <header>q3listbox.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

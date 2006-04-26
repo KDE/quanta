@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+                          http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
+  
+  
+  <group name="ProjectTreeView">
+    
+    <entry key="ProjectTreeTooltips" type="Bool">
+      <default>true</default> 
+      <label>Show tooltips for the items.</label>
+      <whatsthis>If this option is true the tree will display tooltips with additional information about the files and folders of the filesystem.</whatsthis>
+    </entry>
+    
+    <entry key="ProjectTreeSave" type="Bool">
+      <default>true</default> 
+      <label>Remember the status of the tree.</label>
+      <whatsthis>If this option is true the tree will save the status and try to open all folders again and resize the columns.</whatsthis>
+    </entry>
+  
+  </group>  
+  
+  <group name="TemplatesTreeView">
+    
+    <entry key="TemplatesTreeTooltips" type="Bool">
+      <default>true</default> 
+      <label>Show tooltips for the items.</label>
+      <whatsthis>If this option is true the tree will display tooltips with additional information about the files and folders of the filesystem.</whatsthis>
+    </entry>
+    
+    <entry key="TemplatesTreeSave" type="Bool">
+      <default>true</default> 
+      <label>Remember the status of the tree.</label>
+      <whatsthis>If this option is true the tree will save the status and try to open all folders again and resize the columns.</whatsthis>
+    </entry>
+  
+  </group>  
+  
+  <group name="FilesTreeView">
+
+    <entry key="FilesTreeRootHome" type="Bool">
+      <default>true</default> 
+      <label>Always show the Root and Home items.</label>
+      <whatsthis>If this option is true the tree will show two entries for Root and the Home folder which can not be removed.</whatsthis>
+    </entry>
+    
+    <entry key="FilesTreeTooltips" type="Bool">
+      <default>true</default> 
+      <label>Show tooltips for the items.</label>
+      <whatsthis>If this option is true the tree will display tooltips with additional information about the files and folders of the filesystem.</whatsthis>
+    </entry>
+
+    <entry key="FilesTreeShowHidden" type="Bool">
+      <default>false</default> 
+      <label>Show hidden files and folder in the tree.</label>
+      <whatsthis>If this option is true the tree will display entries for hidden files and folders of the filesystem.</whatsthis>
+    </entry>
+    
+    <entry key="FilesTreeSave" type="Bool">
+      <default>true</default> 
+      <label>Remember the status of the tree.</label>
+      <whatsthis>If this option is true the tree will save the status and try to open all folders again and resize the columns.</whatsthis>
+    </entry>
+  
+  </group>
+  
+  
+  <group name="StructureTree">
+
+    <entry key="ShowWhitespace" type="Bool">
+      <default>false</default> 
+      <label>Show whitespace areas and empty groups in the trees</label>
+      <whatsthis>If this option is true the tree will display entries for areas with whitespaces in between tags. All defined groups of the document will also be shown even if no element was found in the document.</whatsthis>
+    </entry>
+    
+    <entry key="ShowClosingTag" type="Bool">
+      <default>false</default> 
+      <label>Show closing tags in the tree</label>
+      <whatsthis>If this option is true the tree will display entries for closing tags.</whatsthis>
+    </entry>
+  
+    <entry key="FollowCursor" type="Bool">
+      <default>true</default> 
+      <label>Adjust the Strucure Tree to the cursor position</label>
+      <whatsthis>If this option is true the tree will scroll to the item that belongs to the current cursor position in the document.</whatsthis>
+    </entry>
+  
+  </group>
+
+  <group name="Autocompletion">
+    <entry key="EnableAutocompletion" type="Bool">
+      <default>true</default> 
+      <label>Enable auto-completion</label>
+      <whatsthis>If true, the completion hints are shown automatically as the user types. If false, the completion hints can still be invoked manually.</whatsthis>
+    </entry>
+ 
+    <entry key="CloseTags" type="Bool">
+      <default>true</default> 
+      <label>Auto-close non single and non optional tags</label>
+      <whatsthis>If true, when the closing char for a non single and non optional tag is entered, the corresponding closing tag is automatically inserted.</whatsthis>
+    </entry>
+ 
+    <entry key="CloseOptionalTags" type="Bool">
+      <default>true</default> 
+      <label>Auto-close optional tags</label>
+      <whatsthis>If true, when the closing char for a tag is entered, and the closing tag for this tag is optional, the corresponding closing tag is automatically inserted.</whatsthis>
+    </entry>
+ 
+   <entry key="UpdateClosingTags" type="Bool">
+      <default>false</default> 
+      <label>Update opening/closing tags automatically</label>
+      <whatsthis>When this option is true the closing pair of a tag is automatically updated when the opening tag is changed and vice-versa.</whatsthis>
+    </entry>
+ 
+   <entry key="ReplaceAccented" type="Bool">
+      <default>true</default> 
+      <label>Automatic replacement of accented characters</label>
+      <whatsthis>If activated, the accented characters will be automatically replaced on typing with their corresponding XML enitities.</whatsthis>
+    </entry>
+  </group>
+ 
+ <group name="Environment">
+    <entry key="DefaultDTEP" type="String">
+      <default>-//W3C//DTD HTML 4.01 Transitional//EN</default> 
+      <label>Default DTD</label>
+      <whatsthis>The DTD used for files without invalid or unknown !DOCTYPE line as well for the newly created files. If there is a different project default DTD specified, that one is used instead of this setting.</whatsthis>
+    </entry>
+
+    <entry key="DefaultEncoding" type="String">
+      <default>UTF8</default> 
+      <label>Default encoding</label>
+      <whatsthis>The encoding used for files on opening, saving or creation, unless the user overrides it in the project settings or the file dialogs.</whatsthis>
+    </entry>
+
+    <entry key="TagCase" type="Int">
+      <default>0</default> 
+      <label>Tag case</label>
+      <whatsthis>The case used for tag names. 0 is default, 1 is lowercase, 2 is uppercase.</whatsthis>
+    </entry>
+
+    <entry key="AttributeCase" type="Int">
+      <default>0</default> 
+      <label>Attribute case</label>
+      <whatsthis>The case used for tag attribute names. 0 is default, 1 is lowercase, 2 is uppercase.</whatsthis>
+    </entry>
+ 
+   <entry key="AttributeQuotationChar" type="String">
+      <default>"</default> 
+      <label>Attribute quotation</label>
+      <whatsthis>The quotation character for attribute values. Can be double (") or single (') quotes.</whatsthis>
+    </entry>
+  </group>
+ 
+ <group name="Core">
+    <entry key="LoadedDTEPNickNames" type="StringList">
+      <label>List with loaded DTEPs</label>
+    </entry>
+ </group>
+</kcfg>
