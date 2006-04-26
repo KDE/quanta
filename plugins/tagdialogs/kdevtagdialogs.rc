@@ -1,0 +1,10 @@
+<!DOCTYPE kpartgui>
+<kpartplugin name="tagdialogs" library="libkdevtagdialogs" version="1">
+<MenuBar>
+  <Menu name="tags" >
+    <text>&amp;Tags</text>
+    <Action name="edit_current_tag" />
+    <Separator/>
+  </Menu>
+</MenuBar>
+</kpartplugin>

@@ -1,0 +1,9 @@
+<!DOCTYPE kpartgui>
+<kpartplugin name="quantaproject" library="libquantaprojectplugin" version="1">
+<MenuBar>
+ <Menu name="project"><Text>&amp;Project</Text>
+   <Action name="insert_files"/>
+  <Action name="insert_folder"/>
+ </Menu>
+</MenuBar>
+</kpartplugin>

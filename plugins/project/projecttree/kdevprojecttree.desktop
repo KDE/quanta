@@ -1,0 +1,21 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+Exec=blubb
+Name=KDevProjectTree
+GenericName=ProjectTree Plugin
+Comment=ProjectTree Description
+Icon=folder_green
+ServiceTypes=KDevelop/Plugin
+
+X-KDevelop-Plugin-Version=1
+X-KDevelop-Plugin-Homepage=
+X-KDevelop-Plugin-BugsEmailAddress=jens@kdewebdev.org
+X-KDevelop-Plugin-Copyright=(C) by Jens Herden
+
+X-KDevelop-Args=
+
+X-KDevelop-Scope=Project
+X-KDE-Library=libkdevprojecttree
+X-KDevelop-Version=3
+X-KDevelop-Properties=Quanta,Quanta-ProjectTree

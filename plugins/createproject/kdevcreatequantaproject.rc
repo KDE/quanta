@@ -1,0 +1,8 @@
+<!DOCTYPE kpartgui>
+<kpartplugin name="createquantaproject" library="libcreatequantaprojectplugin" version="1">
+<MenuBar>
+ <Menu name="project"><Text>&amp;Project</Text>
+  <Action name="new_project" group="project_new"/>
+ </Menu>
+</MenuBar>
+</kpartplugin>

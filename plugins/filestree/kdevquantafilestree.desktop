@@ -1,0 +1,44 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+Exec=blubb
+Name=KDevQuantaFilesTree
+Name[sv]=KDevelop QuantaFilesTree
+Name[ta]=கெடெவ்QuantaFilesTree
+Name[xx]=xxKDevQuantaFilesTreexx
+GenericName=Quanta Files Tree Plugin
+GenericName[br]=Lugent Quanta Files Tree
+GenericName[da]=Quanta Files Tree plugin
+GenericName[de]=Miniprogramm Quanta Files Tree
+GenericName[es]=Plugin Quanta Files Tree
+GenericName[et]=Quanta Files Tree plugin
+GenericName[fr]=Module de Quanta Files Tree
+GenericName[ga]=Breiseán Quanta Files Tree
+GenericName[hu]=Quanta Files Tree-bővítőmodul
+GenericName[it]=Plugin Quanta Files Tree
+GenericName[nl]=Quanta Files Tree-plugin
+GenericName[pl]=Wtyczka Quanta Files Tree
+GenericName[pt]='Plugin' Quanta Files Tree
+GenericName[pt_BR]=Plugin do Quanta Files Tree
+GenericName[ru]=Модуль Quanta Files Tree
+GenericName[sl]=Vstavek Quanta Files Tree
+GenericName[sr]=Quanta Files Tree прикључак
+GenericName[sr@Latn]=Quanta Files Tree priključak
+GenericName[sv]=Quanta Files Tree insticksprogram
+GenericName[uk]=Втулок Quanta Files Tree
+GenericName[xx]=xxQuanta Files Tree Pluginxx
+Comment=The Files Tree provides an interface to work with your filesystem
+Icon=system
+ServiceTypes=KDevelop/Plugin
+
+X-KDevelop-Plugin-Version=1
+X-KDevelop-Plugin-Homepage=
+X-KDevelop-Plugin-BugsEmailAddress=jens@kdewebdev.org
+X-KDevelop-Plugin-Copyright=(C) by Jens Herden
+
+X-KDevelop-Args=
+
+X-KDevelop-Scope=Global
+X-KDE-Library=libkdevquantafilestree
+X-KDevelop-Version=3
+X-KDevelop-Properties=Quanta,Quanta-FilesTree

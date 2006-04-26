@@ -1,0 +1,821 @@
+<ui version="4.0" >
+ <author>Andras Mantia &lt;amantia@kde.org></author>
+ <comment>A dialog box where you can configure the actions and the toolbars holding the actions.
+
+ ***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; version 2 of the License.               *
+ *                                                                         *
+ ***************************************************************************
+</comment>
+ <exportmacro></exportmacro>
+ <class>ActionConfigDialogBase</class>
+ <widget class="QDialog" name="ActionConfigDialogBase" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>751</width>
+    <height>674</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Configure Actions</string>
+  </property>
+  <layout class="QGridLayout" >
+   <property name="margin" >
+    <number>11</number>
+   </property>
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <item row="0" column="0" >
+    <widget class="QSplitter" name="splitter2" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <widget class="QWidget" name="layout17" >
+      <layout class="QGridLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item row="2" column="3" >
+        <widget class="KPushButton" name="deleteAction" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
+         <property name="text" >
+          <string>&amp;Delete Action</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1" >
+        <widget class="QPushButton" name="addAction" >
+         <property name="text" >
+          <string>&amp;New Action</string>
+         </property>
+         <property name="autoDefault" >
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2" >
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>16</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="1" column="4" >
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Fixed</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>16</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="0" column="0" colspan="4" >
+        <widget class="QLabel" name="textLabel1" >
+         <property name="sizePolicy" >
+          <sizepolicy>
+           <hsizetype>5</hsizetype>
+           <vsizetype>0</vsizetype>
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text" >
+          <string>Toolbar &amp; Action Tree</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1" colspan="3" >
+        <widget class="K3ListView" name="actionTreeView" >
+         <property name="hScrollBarMode" >
+          <enum>Q3ScrollView::Auto</enum>
+         </property>
+         <property name="rootIsDecorated" >
+          <bool>true</bool>
+         </property>
+         <property name="resizeMode" >
+          <enum>Q3ListView::AllColumns</enum>
+         </property>
+         <property name="tooltipColumn" >
+          <number>2</number>
+         </property>
+         <column>
+          <property name="text" >
+           <string>Name</string>
+          </property>
+         </column>
+         <column>
+          <property name="text" >
+           <string>Shortcut</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="layout9" >
+      <layout class="QGridLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item row="1" column="3" >
+        <widget class="KPushButton" name="buttonApply" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
+         <property name="text" >
+          <string>&amp;Apply</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="4" >
+        <widget class="QPushButton" name="buttonCancel" >
+         <property name="text" >
+          <string>&amp;Cancel</string>
+         </property>
+         <property name="autoDefault" >
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0" >
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Fixed</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>16</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="1" column="2" >
+        <widget class="KPushButton" name="buttonOk" >
+         <property name="minimumSize" >
+          <size>
+           <width>90</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="text" >
+          <string>&amp;OK</string>
+         </property>
+         <property name="autoDefault" >
+          <bool>true</bool>
+         </property>
+         <property name="default" >
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" colspan="4" >
+        <widget class="Q3ButtonGroup" name="actionProperties" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
+         <property name="title" >
+          <string>Action Properties</string>
+         </property>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <layout class="QGridLayout" >
+          <property name="margin" >
+           <number>11</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item row="6" column="3" colspan="2" >
+           <widget class="QPushButton" name="addToolbar" >
+            <property name="text" >
+             <string>&amp;Add...</string>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="3" colspan="2" >
+           <widget class="QPushButton" name="removeToolbar" >
+            <property name="text" >
+             <string>&amp;Remove</string>
+            </property>
+           </widget>
+          </item>
+          <item rowspan="2" row="6" column="0" >
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType" >
+             <enum>QSizePolicy::Fixed</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>16</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="2" column="0" colspan="2" >
+           <widget class="QLabel" name="TextLabel2" >
+            <property name="text" >
+             <string>Tool &amp;tip:</string>
+            </property>
+            <property name="buddy" >
+             <cstring>lineToolTip</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2" colspan="3" >
+           <widget class="QLineEdit" name="lineToolTip" />
+          </item>
+          <item row="1" column="0" colspan="2" >
+           <widget class="QLabel" name="TextLabel1_2" >
+            <property name="text" >
+             <string>Te&amp;xt:</string>
+            </property>
+            <property name="buddy" >
+             <cstring>lineText</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="4" >
+           <widget class="KIconButton" name="actionIcon" >
+            <property name="sizePolicy" >
+             <sizepolicy>
+              <hsizetype>0</hsizetype>
+              <vsizetype>0</vsizetype>
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize" >
+             <size>
+              <width>32</width>
+              <height>32</height>
+             </size>
+            </property>
+            <property name="maximumSize" >
+             <size>
+              <width>32</width>
+              <height>32</height>
+             </size>
+            </property>
+            <property name="text" >
+             <string/>
+            </property>
+            <property name="iconSize" >
+             <number>22</number>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2" colspan="2" >
+           <widget class="QLineEdit" name="lineText" />
+          </item>
+          <item row="4" column="0" colspan="5" >
+           <widget class="Q3ButtonGroup" name="buttonGroup4_2" >
+            <property name="title" >
+             <string>Shortcut</string>
+            </property>
+            <property name="orientation" >
+             <enum>Qt::Vertical</enum>
+            </property>
+            <layout class="QGridLayout" >
+             <property name="margin" >
+              <number>11</number>
+             </property>
+             <property name="spacing" >
+              <number>6</number>
+             </property>
+             <item row="0" column="1" >
+              <widget class="QRadioButton" name="customShortcut" >
+               <property name="text" >
+                <string>C&amp;ustom</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="2" >
+              <widget class="KKeyButton" name="shortcutKeyButton" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
+               <property name="text" >
+                <string>None</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0" >
+              <widget class="QRadioButton" name="noShortcut" >
+               <property name="text" >
+                <string>&amp;None</string>
+               </property>
+               <property name="checked" >
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item rowspan="2" row="6" column="1" colspan="2" >
+           <widget class="KListBox" name="toolbarListBox" />
+          </item>
+          <item row="5" column="0" colspan="3" >
+           <widget class="QLabel" name="textLabel2" >
+            <property name="text" >
+             <string>Container toolbars:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2" colspan="3" >
+           <widget class="QComboBox" name="typeCombo" >
+            <property name="sizePolicy" >
+             <sizepolicy>
+              <hsizetype>7</hsizetype>
+              <vsizetype>0</vsizetype>
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <item>
+             <property name="text" >
+              <string>Tag</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>Script</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>Text</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="0" column="0" colspan="2" >
+           <widget class="QLabel" name="textLabel3" >
+            <property name="text" >
+             <string>T&amp;ype:</string>
+            </property>
+            <property name="buddy" >
+             <cstring>typeCombo</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="0" colspan="5" >
+           <widget class="Q3ButtonGroup" name="buttonGroup13" >
+            <property name="title" >
+             <string>Detailed Settings</string>
+            </property>
+            <property name="orientation" >
+             <enum>Qt::Vertical</enum>
+            </property>
+            <layout class="QGridLayout" >
+             <property name="margin" >
+              <number>11</number>
+             </property>
+             <property name="spacing" >
+              <number>6</number>
+             </property>
+             <item row="0" column="0" >
+              <widget class="Q3WidgetStack" name="widgetStack1" >
+               <widget class="QWidget" name="page" >
+                <property name="geometry" >
+                 <rect>
+                  <x>0</x>
+                  <y>0</y>
+                  <width>303</width>
+                  <height>115</height>
+                 </rect>
+                </property>
+                <layout class="QGridLayout" >
+                 <property name="margin" >
+                  <number>0</number>
+                 </property>
+                 <property name="spacing" >
+                  <number>6</number>
+                 </property>
+                 <item row="0" column="0" >
+                  <widget class="QLabel" name="TextLabel5_2_2_2" >
+                   <property name="text" >
+                    <string>&lt;tag> :</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1" >
+                  <widget class="QLineEdit" name="lineTag" />
+                 </item>
+                 <item row="1" column="1" >
+                  <widget class="QLineEdit" name="lineClosingTag" />
+                 </item>
+                 <item row="1" column="0" >
+                  <widget class="QCheckBox" name="useClosingTag" >
+                   <property name="text" >
+                    <string>&lt;/tag> :</string>
+                   </property>
+                   <property name="checked" >
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="0" colspan="2" >
+                  <widget class="QCheckBox" name="useActionDialog" >
+                   <property name="text" >
+                    <string>Run "Edit tag" dialog if available</string>
+                   </property>
+                   <property name="checked" >
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+               <widget class="QWidget" name="page" >
+                <property name="geometry" >
+                 <rect>
+                  <x>0</x>
+                  <y>0</y>
+                  <width>100</width>
+                  <height>30</height>
+                 </rect>
+                </property>
+                <layout class="QGridLayout" >
+                 <property name="margin" >
+                  <number>0</number>
+                 </property>
+                 <property name="spacing" >
+                  <number>6</number>
+                 </property>
+                 <item row="0" column="0" colspan="2" >
+                  <widget class="FileCombo" name="scriptPath" >
+                   <property name="sizePolicy" >
+                    <sizepolicy>
+                     <hsizetype>7</hsizetype>
+                     <vsizetype>0</vsizetype>
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize" >
+                    <size>
+                     <width>64</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="0" >
+                  <widget class="QLabel" name="textLabel1_2" >
+                   <property name="sizePolicy" >
+                    <sizepolicy>
+                     <hsizetype>1</hsizetype>
+                     <vsizetype>5</vsizetype>
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="text" >
+                    <string>&amp;Input:</string>
+                   </property>
+                   <property name="buddy" >
+                    <cstring>inputBox</cstring>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="1" >
+                  <widget class="QComboBox" name="inputBox" >
+                   <property name="sizePolicy" >
+                    <sizepolicy>
+                     <hsizetype>3</hsizetype>
+                     <vsizetype>0</vsizetype>
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <item>
+                    <property name="text" >
+                     <string>None</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text" >
+                     <string>Current Document</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text" >
+                     <string>Selected Text</string>
+                    </property>
+                   </item>
+                  </widget>
+                 </item>
+                 <item row="2" column="0" >
+                  <widget class="QLabel" name="textLabel2_2" >
+                   <property name="sizePolicy" >
+                    <sizepolicy>
+                     <hsizetype>1</hsizetype>
+                     <vsizetype>5</vsizetype>
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="text" >
+                    <string>&amp;Output:</string>
+                   </property>
+                   <property name="buddy" >
+                    <cstring>outputBox</cstring>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="1" >
+                  <widget class="QComboBox" name="outputBox" >
+                   <property name="sizePolicy" >
+                    <sizepolicy>
+                     <hsizetype>3</hsizetype>
+                     <vsizetype>0</vsizetype>
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="currentIndex" >
+                    <number>5</number>
+                   </property>
+                   <item>
+                    <property name="text" >
+                     <string>None</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text" >
+                     <string>Insert in Cursor Position</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text" >
+                     <string>Replace Selection</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text" >
+                     <string>Replace Current Document</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text" >
+                     <string>Create New Document</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text" >
+                     <string>Message Window</string>
+                    </property>
+                   </item>
+                  </widget>
+                 </item>
+                 <item row="3" column="1" >
+                  <widget class="QComboBox" name="errorBox" >
+                   <property name="sizePolicy" >
+                    <sizepolicy>
+                     <hsizetype>3</hsizetype>
+                     <vsizetype>0</vsizetype>
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="currentIndex" >
+                    <number>5</number>
+                   </property>
+                   <item>
+                    <property name="text" >
+                     <string>None</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text" >
+                     <string>Insert in cursor position</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text" >
+                     <string>Replace selection</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text" >
+                     <string>Replace current document</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text" >
+                     <string>Create a new document</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text" >
+                     <string>Message window</string>
+                    </property>
+                   </item>
+                  </widget>
+                 </item>
+                 <item row="3" column="0" >
+                  <widget class="QLabel" name="textLabel3_2" >
+                   <property name="sizePolicy" >
+                    <sizepolicy>
+                     <hsizetype>1</hsizetype>
+                     <vsizetype>5</vsizetype>
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="text" >
+                    <string>&amp;Error:</string>
+                   </property>
+                   <property name="buddy" >
+                    <cstring>errorBox</cstring>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+               <widget class="QWidget" name="page" >
+                <property name="geometry" >
+                 <rect>
+                  <x>0</x>
+                  <y>0</y>
+                  <width>100</width>
+                  <height>30</height>
+                 </rect>
+                </property>
+                <layout class="QGridLayout" >
+                 <property name="margin" >
+                  <number>0</number>
+                 </property>
+                 <property name="spacing" >
+                  <number>6</number>
+                 </property>
+                 <item row="0" column="0" >
+                  <widget class="Q3MultiLineEdit" name="textEdit" />
+                 </item>
+                </layout>
+               </widget>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="1" column="1" >
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>55</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <pixmapfunction></pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>Q3ButtonGroup</class>
+   <extends></extends>
+   <header>Qt3Support/Q3ButtonGroup</header>
+   <container>1</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>Q3MultiLineEdit</class>
+   <extends>QWidget</extends>
+   <header>q3multilineedit.h</header>
+   <container>1</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>KKeyButton</class>
+   <extends></extends>
+   <header>kkeybutton.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>Q3WidgetStack</class>
+   <extends></extends>
+   <header>q3widgetstack.h</header>
+   <container>1</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>FileCombo</class>
+   <extends></extends>
+   <header>filecombo.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>K3ListView</class>
+   <extends></extends>
+   <header>k3listview.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>KListBox</class>
+   <extends></extends>
+   <header>klistbox.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>KPushButton</class>
+   <extends></extends>
+   <header>kpushbutton.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>KIconButton</class>
+   <extends></extends>
+   <header>kicondialog.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>actionTreeView</tabstop>
+  <tabstop>addAction</tabstop>
+  <tabstop>deleteAction</tabstop>
+  <tabstop>typeCombo</tabstop>
+  <tabstop>lineText</tabstop>
+  <tabstop>actionIcon</tabstop>
+  <tabstop>lineToolTip</tabstop>
+  <tabstop>noShortcut</tabstop>
+  <tabstop>shortcutKeyButton</tabstop>
+  <tabstop>toolbarListBox</tabstop>
+  <tabstop>addToolbar</tabstop>
+  <tabstop>removeToolbar</tabstop>
+  <tabstop>lineTag</tabstop>
+  <tabstop>useClosingTag</tabstop>
+  <tabstop>lineClosingTag</tabstop>
+  <tabstop>useActionDialog</tabstop>
+  <tabstop>inputBox</tabstop>
+  <tabstop>outputBox</tabstop>
+  <tabstop>errorBox</tabstop>
+  <tabstop>textEdit</tabstop>
+  <tabstop>buttonOk</tabstop>
+  <tabstop>buttonApply</tabstop>
+  <tabstop>buttonCancel</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

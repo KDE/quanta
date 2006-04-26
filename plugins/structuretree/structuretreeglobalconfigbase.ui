@@ -1,0 +1,72 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>StructureTreeGlobalConfigBase</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>StructureTreeGlobalConfigBase</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>600</width>
+            <height>480</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>StructureTree</string>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>kcfg_ShowWhitespace</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>1</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="text">
+                <string>Show whitespace areas and empt&amp;y groups.</string>
+            </property>
+            <property name="accel">
+                <string>Alt+Y</string>
+            </property>
+        </widget>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>kcfg_ShowClosingTag</cstring>
+            </property>
+            <property name="text">
+                <string>Show closi&amp;ng tags</string>
+            </property>
+            <property name="accel">
+                <string>Alt+N</string>
+            </property>
+        </widget>
+        <spacer>
+            <property name="name">
+                <cstring>spacer1</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>150</height>
+                </size>
+            </property>
+        </spacer>
+    </vbox>
+</widget>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

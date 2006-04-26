@@ -1,0 +1,23 @@
+kde4_header()
+
+add_subdirectory( createproject )
+add_subdirectory( project )
+add_subdirectory( structuretree )
+add_subdirectory( tagdialogs )
+add_subdirectory( filestree )
+add_subdirectory( templatestree )
+add_subdirectory( preview )
+add_subdirectory( usertoolbars )
+
+
+########### install files ###############
+
+
+kde4_footer()
+
+
+
+#original Makefile.am contents follow:
+
+#SUBDIRS = project usertoolbars structuretree tagdialogs filestree templatestree \
+#	preview createproject

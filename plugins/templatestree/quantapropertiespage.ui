@@ -1,0 +1,247 @@
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<class>QuantaPropertiesPage</class>
+<comment>/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; version 2 of the License.               *
+ *                                                                         *
+ ***************************************************************************/
+</comment>
+<author>(C) 2002 Andras Mantia &lt;amantia@kde.org&gt;</author>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>QuantaPropertiesPage</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>343</width>
+            <height>443</height>
+        </rect>
+    </property>
+    <property name="sizePolicy">
+        <sizepolicy>
+            <hsizetype>5</hsizetype>
+            <vsizetype>5</vsizetype>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+        </sizepolicy>
+    </property>
+    <property name="minimumSize">
+        <size>
+            <width>300</width>
+            <height>400</height>
+        </size>
+    </property>
+    <property name="caption">
+        <string>Quanta Properties</string>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QWidgetStack" row="0" column="0">
+            <property name="name">
+                <cstring>typeStack</cstring>
+            </property>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>WStackPage</cstring>
+                </property>
+                <attribute name="id">
+                    <number>0</number>
+                </attribute>
+                <grid>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="4">
+                        <property name="name">
+                            <cstring>parentAttr</cstring>
+                        </property>
+                        <property name="text">
+                            <string>&amp;Inherit type from parent (nothing)</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="0" column="0">
+                        <property name="name">
+                            <cstring>TextLabel1</cstring>
+                        </property>
+                        <property name="text">
+                            <string>&amp;Type:</string>
+                        </property>
+                        <property name="buddy" stdset="0">
+                            <cstring>typesCombo</cstring>
+                        </property>
+                    </widget>
+                    <spacer row="0" column="3">
+                        <property name="name">
+                            <cstring>Spacer2</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Horizontal</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>92</width>
+                                <height>20</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="KComboBox" row="0" column="2">
+                        <property name="name">
+                            <cstring>typesCombo</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QButtonGroup" row="2" column="0" rowspan="1" colspan="4">
+                        <property name="name">
+                            <cstring>prePostGroup</cstring>
+                        </property>
+                        <property name="title">
+                            <string></string>
+                        </property>
+                        <grid>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QCheckBox" row="0" column="0">
+                                <property name="name">
+                                    <cstring>usePrePostText</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Use &amp;pre/post text</string>
+                                </property>
+                            </widget>
+                            <widget class="QLabel" row="1" column="0">
+                                <property name="name">
+                                    <cstring>TextLabel1_2</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Pre-text:</string>
+                                </property>
+                            </widget>
+                            <widget class="QTextEdit" row="2" column="0">
+                                <property name="name">
+                                    <cstring>preTextEdit</cstring>
+                                </property>
+                                <property name="enabled">
+                                    <bool>false</bool>
+                                </property>
+                            </widget>
+                            <widget class="QLabel" row="3" column="0">
+                                <property name="name">
+                                    <cstring>TextLabel2</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Post-text:</string>
+                                </property>
+                            </widget>
+                            <widget class="QTextEdit" row="4" column="0">
+                                <property name="name">
+                                    <cstring>postTextEdit</cstring>
+                                </property>
+                                <property name="enabled">
+                                    <bool>false</bool>
+                                </property>
+                            </widget>
+                        </grid>
+                    </widget>
+                    <spacer row="0" column="1">
+                        <property name="name">
+                            <cstring>Spacer1</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Horizontal</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>93</width>
+                                <height>20</height>
+                            </size>
+                        </property>
+                    </spacer>
+                </grid>
+            </widget>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>WStackPage</cstring>
+                </property>
+                <attribute name="id">
+                    <number>1</number>
+                </attribute>
+                <grid>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QLabel" row="0" column="0">
+                        <property name="name">
+                            <cstring>filteringLabel</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Filtering &amp;action:</string>
+                        </property>
+                        <property name="buddy" stdset="0">
+                            <cstring>actionCombo</cstring>
+                        </property>
+                    </widget>
+                    <widget class="KComboBox" row="0" column="1">
+                        <property name="name">
+                            <cstring>actionCombo</cstring>
+                        </property>
+                    </widget>
+                    <spacer row="1" column="1">
+                        <property name="name">
+                            <cstring>spacer3</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>40</height>
+                            </size>
+                        </property>
+                    </spacer>
+                </grid>
+            </widget>
+        </widget>
+    </grid>
+</widget>
+<connections>
+    <connection>
+        <sender>parentAttr</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>typesCombo</receiver>
+        <slot>setDisabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>usePrePostText</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>preTextEdit</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>usePrePostText</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>postTextEdit</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+</connections>
+<tabstops>
+    <tabstop>typesCombo</tabstop>
+    <tabstop>parentAttr</tabstop>
+</tabstops>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

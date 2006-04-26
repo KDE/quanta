@@ -1,0 +1,21 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+Exec=blubb
+Name=KDevCreateQuantaProject
+GenericName=CreateQuantaProject Plugin
+Comment=CreateQuantaProject Description
+Icon=kdevelop
+ServiceTypes=KDevelop/Plugin
+
+X-KDevelop-Plugin-Version=1
+X-KDevelop-Plugin-Homepage=
+X-KDevelop-Plugin-BugsEmailAddress=amantia@kde.org
+X-KDevelop-Plugin-Copyright=(C) by Andras Mantia
+
+X-KDevelop-Args=
+
+X-KDevelop-Scope=Global
+X-KDE-Library=libkdevcreatequantaproject
+X-KDevelop-Version=3
+X-KDevelop-Properties=Quanta,Quanta-CreateProject

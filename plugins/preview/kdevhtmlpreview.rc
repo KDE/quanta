@@ -1,0 +1,11 @@
+<!DOCTYPE kpartgui>
+<kpartplugin name="htmlpreview" library="libhtmlpreviewplugin" version="1">
+<MenuBar>
+ <Menu name="tools"><Text>&amp;Tools</Text>
+   <Action name="plugin_preview"/>
+ </Menu>
+</MenuBar>
+<ToolBar name="extraToolBar">
+  <Action name="plugin_preview"/>
+</ToolBar>
+</kpartplugin>

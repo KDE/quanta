@@ -1,0 +1,67 @@
+<!--
+This files provides information about the internal data structure of a Quanta project.
+
+Since KDevelop uses a QDom structure to store project information we define here our
+document type description for the Quanta specific part.
+
+A KDevelop project file is something like:
+
+<!ELEMENT kdevelop (general, project, ... )>
+
+<!ELEMENT general (author, email, projectdirectory, absoluteprojectpath ... )>
+
+<!ELEMENT author (#PCDATA)>
+
+<!ELEMENT email (#PCDATA)>
+
+<!ELEMENT projectdirectory (#PCDATA)>  can be "." or a url
+
+<!ELEMENT absoluteprojectpath (#PCDATA)>  can be true or false
+
+... and a lot more what is not documented here.
+
+
+Our Quanta specific part is:
+-->
+
+<!ELEMENT project (items, templates, toolbars, preview)>
+<!ATTLIST project
+          name CDATA #REQUIRED
+          <!-- default encoding -->
+          encoding  CDATA #REQUIRED 
+          <!-- default Document Type Editing Package -->
+          defaultDTEP  CDATA #REQUIRED 
+          >
+
+<!-- list of items in the project -->
+<!ELEMENT items (item)*>
+
+<!--one file or folder in the project -->
+<!ELEMENT item (#PCDATA)>
+<!ATTLIST item
+          <!-- a relative path, it is relative to projectdirectory -->
+          url CDATA #REQUIRED
+          <!-- was the folder open in the ProjectTree? used to restore the tree status -->
+          isOpen (true|false) "false"
+          <!-- text to display in the ProjectTree --> 
+          description CDATA #IMPLIED
+          >
+
+<!--location of the project templates -->
+<!ELEMENT templates (#PCDATA)>
+<!ATTLIST templates
+          url CDATA #REQUIRED
+          >
+
+<!-- location of the project toolbars -->
+<!ELEMENT toolbars (#PCDATA)>
+<!ATTLIST toolbars
+          url CDATA #REQUIRED
+          >
+
+<!-- settings for the preview plugin -->
+<!ELEMENT preview (#PCDATA)>
+<!ATTLIST preview
+          previewPrefixURL CDATA #IMPLIED
+          usePreviewPrefix (true|false) "false"
+          >
