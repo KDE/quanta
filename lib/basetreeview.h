@@ -190,7 +190,7 @@ protected slots:
    * @param url
    * @return an icon name
    */
-  QString iconForURL(const KUrl & url);
+  QString iconNameForURL(const KUrl & url);
 
   void slotCopy();
   void slotPaste();

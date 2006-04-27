@@ -42,7 +42,7 @@ void SimpleTreeViewItem::init(const KUrl& url, const QString& treePath)
   if (url.path().endsWith("/"))
     setPixmap(0, SmallIcon("folder"));
   else
-    setPixmap(0, SmallIcon(KMimeType::iconForURL(url)));  
+    setPixmap(0, SmallIcon(KMimeType::iconNameForURL(url)));
 }
 
 QString SimpleTreeViewItem::key(int column, bool ascending) const

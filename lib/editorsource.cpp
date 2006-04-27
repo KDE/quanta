@@ -41,12 +41,8 @@ QString EditorSource::text(int bLine, int bCol, int eLine, int eCol) const
 {
   if (bLine > eLine)
   {
-    int tmp = bLine;
-    bLine = eLine;
-    eLine = tmp;
-    tmp = bCol;
-    bCol = eCol;
-    eCol = tmp;
+    qSwap(bLine, eLine);
+    qSwap(bCol, eCol);
   }
   if (bCol < 0)
   {
@@ -88,8 +84,10 @@ void EditorSource::insertText(const QString &text, bool adjustCursor)
 
   uint line, col;
 
-  cursorPositionReal(line, col);
-  m_document->insertText(KTextEditor::Cursor(line, col), text);
+  KTextEditor::Cursor c = m_view->cursorPosition();
+  line = c.line();
+  col = c.column();
+  m_document->insertText(c, text);
 
   // calculate new cursor position
   // counts the words and whitespace of the text so we can place the

@@ -41,8 +41,8 @@ TagImgDlg::TagImgDlg(QWidget *parent)
 //  setWindowTitle(name);
   initDialog();
 
-  buttonImgSource->setPixmap( SmallIcon("fileopen") );
-  buttonRecalcImgSize->setPixmap( SmallIcon("reload") );
+  buttonImgSource->setIcon( SmallIcon("fileopen") );
+  buttonRecalcImgSize->setIcon( SmallIcon("reload") );
   QStringList align;
   align << "" << "left" << "right" << "top" << "bottom" << "middle";
   comboAlign->addItems(align);

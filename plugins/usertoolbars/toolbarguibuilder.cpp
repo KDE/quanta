@@ -42,7 +42,8 @@ QWidget *ToolbarGUIBuilder::createContainer(QWidget *parent, int index, const QD
     QtMsgHandler oldHandler = qInstallMsgHandler(silenceQToolBar);
 
     //create the toolbar on the tabwidget
-    QWidget *w = new QWidget(toolbarTab, QString("ToolbarHoldingWidget" + element.attribute("name")).toUtf8());
+    QWidget *w = new QWidget(toolbarTab);
+    w->setObjectName(QString("ToolbarHoldingWidget" + element.attribute("name")).toUtf8());
     UserToolBar *tb = new UserToolBar(w, element.attribute("name").toUtf8(), true, true);
     tb->loadState(element);
     tb->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
@@ -64,7 +65,7 @@ QWidget *ToolbarGUIBuilder::createContainer(QWidget *parent, int index, const QD
    kDebug(24000) << "toolbarTab->tabHeight() " << toolbarTab->tabHeight() << endl;
 */
     toolbarTab->insertTab(tb, i18n(tabname.toUtf8()), idStr);
-    toolbarTab->showPage(w);
+    toolbarTab->setCurrentWidget(w);
     if (toolbarTab->parentWidget()->parentWidget())
       toolbarTab->parentWidget()->parentWidget()->show();
     qInstallMsgHandler(oldHandler);
@@ -89,7 +90,7 @@ QWidget *ToolbarGUIBuilder::createContainer(QWidget *parent, int index, const QD
   //and make the child of it.
   if (element.attribute("name") == "userToolbar")
   {
-    toolbarTab->parentWidget()->reparent(container, QPoint(0,0));
+    toolbarTab->parentWidget()->setParent(container);
     if (toolbarTab->count() == 0 || m_separateToolbars)
       container->hide();
   }
@@ -107,7 +108,7 @@ void ToolbarGUIBuilder::removeContainer(QWidget *container, QWidget *parent, QDo
   //toolbars are configured and the GUI is rebuilt.
   ToolbarTabWidget *toolbarTab = ToolbarTabWidget::ref();
   if (container == toolbarTab->parentWidget()->parent())
-    toolbarTab->parentWidget()->reparent(0, QPoint(0,0));
+    toolbarTab->parentWidget()->setParent(0);
 
   QString tabname = element.attribute( "i18ntabname", "" );
   QString idStr = element.attribute( "id", "" );

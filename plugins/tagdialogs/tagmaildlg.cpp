@@ -43,9 +43,9 @@ TagMailDlg::TagMailDlg(QWidget *parent, const char *name)
   connect( buttonCancel, SIGNAL(clicked()), SLOT(reject()) );
   connect( buttonHelp,SIGNAL(clicked()),this,SLOT(slotShowHelp()));
   connect( buttonAddressSelect, SIGNAL(clicked()), SLOT(slotSelectAddress()) );
-  buttonOk->setIconSet(SmallIconSet("button_ok"));
-  buttonCancel->setIconSet(SmallIconSet("button_cancel"));
-  buttonHelp->setIconSet(SmallIconSet("help"));
+  buttonOk->setIcon(SmallIconSet("button_ok"));
+  buttonCancel->setIcon(SmallIconSet("button_cancel"));
+  buttonHelp->setIcon(SmallIconSet("help"));
   lineEmail->setFocus();
 }
 
@@ -67,7 +67,7 @@ void TagMailDlg::slotSelectAddress()
           (*it).familyName() + " " +
     (*it).suffix();
     n = n.simplified();
-    for( unsigned int i = 0; i < emails.count(); ++i ) {
+    for( int i = 0; i < emails.count(); ++i ) {
       if (!emails[i].isEmpty()) {
   if (n.isEmpty() || (emails[i].indexOf( "<" ) != -1))
     addr = "";

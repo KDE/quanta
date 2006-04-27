@@ -54,9 +54,11 @@ QuantaFilesTreePart::QuantaFilesTreePart(QObject *parent, const char *name, cons
     : KDevPlugin(&data, parent)
 {
     setInstance(QuantaFilesTreeFactory::instance());
+    setObjectName(name);
     setXMLFile("kdevquantafilestree.rc");
 
-    m_widget = new QWidget(0, "FilesTreeWidget");
+    m_widget = new QWidget();
+    m_widget->setObjectName("FilesTreeWidget");
     m_widget->setWindowTitle("Files Tree");
     m_widget->setWindowIcon(SmallIcon(info()->icon()));
 
@@ -147,7 +149,7 @@ void QuantaFilesTreePart::insertConfigWidget(const KDialogBase *dlg, QWidget *pa
     }
 }
 
-void QuantaFilesTreePart::contextMenu(QMenu *popup, const Context *context)
+void QuantaFilesTreePart::contextMenu(QMenu */*popup*/, const Context */*context*/)
 {
 // put actions into the context menu here
 /*    if (context->hasType(Context::EditorContext))

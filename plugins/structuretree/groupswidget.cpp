@@ -163,11 +163,11 @@ void GroupsWidget::slotContextMenu(K3ListView * view, Q3ListViewItem * item, con
     m_popupMenu->addAction(i18n("Select Tag Area"), this, SLOT(slotSelectTag()));
     m_popupMenu->addSeparator();
     m_cutAction = KStdAction::cut(this, SLOT(slotCut()), 0);
-    m_cutAction->plug(m_popupMenu);
+    m_popupMenu->addAction(m_cutAction);
     m_copyAction = KStdAction::copy(this, SLOT(slotCopy()), 0);
-    m_copyAction->plug(m_popupMenu);
+    m_popupMenu->addAction(m_copyAction);
     m_pasteAction = KStdAction::paste(this, SLOT(slotPaste()), 0);
-    m_pasteAction->plug(m_popupMenu);
+    m_popupMenu->addAction(m_pasteAction);
     m_popupMenu->addSeparator();
     openFileMenuId = m_popupMenu->insertItem(i18n("Open File"), this, SLOT(slotOpenFile())); //FIXME
   }

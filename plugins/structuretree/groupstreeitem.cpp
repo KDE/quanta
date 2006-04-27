@@ -80,7 +80,7 @@ void GroupsTreeItem::addElements()
   for (GroupElementMap::ConstIterator it = m_groupElements->constBegin(); it != end; ++it)
   {
     // get the Tag of the first entry in the list, the first is always there
-    Tag *tag = it.data().front()->tag;
+    Tag *tag = it.value().front()->tag;
     if (item)
       item = new GroupsTreeItem(this, m_groupElements, tag, item);
     else
@@ -137,7 +137,7 @@ KUrl GroupsTreeItem::getURL() const
   if (m_tag && m_groupElements)
   {
     QString path = m_tag->name();
-    const GroupElementList *list = &(m_groupElements->constBegin().data());
+    const GroupElementList *list = &(m_groupElements->constBegin().value());
     XMLStructGroup * group = list->front()->group;
     if (group && group->hasFileName)
     {

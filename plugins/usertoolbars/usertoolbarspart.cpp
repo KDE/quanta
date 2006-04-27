@@ -84,6 +84,7 @@ UserToolbarsPart::UserToolbarsPart(QObject *parent, const char *name, const QStr
     : KDevPlugin(&data, parent)
 {
     kDebug(24000) << "Creating UserToolbars Part" << endl;
+    setObjectName(name);
     setInstance(UserToolbarsFactory::instance());
     setXMLFile("kdevusertoolbars.rc");
 

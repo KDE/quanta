@@ -118,7 +118,7 @@ ActionConfigDialog::ActionConfigDialog(const QHash<QString, ToolbarEntry*> &tool
         }
         node = node.nextSibling();
       }
-      if (tb->label(tb->currentPageIndex()).replace(r, "") == toolbarName)
+      if (tb->label(tb->currentIndex()).replace(r, "") == toolbarName)
       {
          item->setOpen(true);
          if (item->firstChild())
@@ -657,8 +657,8 @@ void ActionConfigDialog::saveCurrentAction()
       //it's not on the toolbar, but it should be
       if (!isOnToolbar && placeOnToolbar)
       {
-        currentAction->plug(tb->page(i));
-        currentAction->plug(p_toolbar->menu);
+        tb->page(i)->addAction(currentAction);
+        p_toolbar->menu->addAction(currentAction);
         item = p_toolbar->guiClient->domDocument().createElement("Action");
         item.setAttribute("name",el.attribute("name"));
         p_toolbar->guiClient->domDocument().firstChild().firstChild().appendChild(item);

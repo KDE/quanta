@@ -67,8 +67,9 @@
 #define STANDARD_PAL_SIZE 17
 
 ColorCombo::ColorCombo( QWidget *parent, const char *name )
-  : QComboBox( parent, name )
+  : QComboBox( parent )
 {
+  setObjectName(name);
   customColor.setRgb( 255, 255, 255 );
   internalcolor.setRgb( 255, 255, 255 );
 
@@ -178,7 +179,7 @@ void ColorCombo::slotActivated( int index )
             i18n("Custom...") );
       painter.end();
 
-      changeItem( pixmap, 1 );
+      setItemIcon( 1, QIcon(pixmap) );
       pixmap.detach();
     }
 
@@ -232,7 +233,7 @@ void ColorCombo::addColors()
   painter.drawText( 2, painter.fontMetrics().height(), i18n("Custom...") );
   painter.end();
 
-  insertItem( pixmap );
+  insertItem( -1, QIcon(pixmap), "" );
   pixmap.detach();
 
   bool findColor = false;
@@ -244,7 +245,7 @@ void ColorCombo::addColors()
     painter.fillRect( rect, brush );
     painter.end();
 
-    insertItem( pixmap );
+    insertItem( -1, QIcon(pixmap), "" );
     pixmap.detach();
 
     if ( standardPalette[i] == internalcolor ) {

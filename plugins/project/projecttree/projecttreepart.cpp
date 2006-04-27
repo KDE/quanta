@@ -51,6 +51,7 @@ K_EXPORT_COMPONENT_FACTORY( libkdevprojecttree, ProjectTreeFactory( data ) );
 ProjectTreePart::ProjectTreePart(QObject *parent, const char *name, const QStringList &/*args*/)
     : KDevPlugin(&data, parent)
 {
+  setObjectName(name);
   setInstance(ProjectTreeFactory::instance());
   setXMLFile("kdevprojecttree.rc");
 
@@ -134,13 +135,13 @@ void ProjectTreePart::insertConfigWidget(const KDialogBase *dlg, QWidget *page, 
   }
 }
 
-void ProjectTreePart::contextMenu(QMenu *popup, const Context *context)
+void ProjectTreePart::contextMenu(QMenu */*popup*/, const Context *context)
 {
   // put actions into the context menu here
   if (context->hasType(Context::EditorContext))
   {
     // editor context menu
-    const EditorContext *econtext = static_cast<const EditorContext*>(context);
+//     const EditorContext *econtext = static_cast<const EditorContext*>(context);
 
     // use context and plug actions here
 //     action->plug(popup);
@@ -154,28 +155,28 @@ void ProjectTreePart::contextMenu(QMenu *popup, const Context *context)
   else if (context->hasType(Context::FileContext))
   {
     // file context menu
-    const FileContext *fcontext = static_cast<const FileContext*>(context);
+//     const FileContext *fcontext = static_cast<const FileContext*>(context);
 
     //use context and plug actions here
   }
   else if (context->hasType(Context::ProjectItemContext))
   {
     // project tree context menu
-    const ProjectItemContext *pcontext = static_cast<const ProjectItemContext*>(context);
+//     const ProjectItemContext *pcontext = static_cast<const ProjectItemContext*>(context);
 
     // use context and plug actions here
   }
   else if (context->hasType(Context::CodeItemContext))
   {
     // class tree context menu
-    const CodeItemContext *mcontext = static_cast<const CodeItemContext*>(context);
+//     const CodeItemContext *mcontext = static_cast<const CodeItemContext*>(context);
 
     // use context and plug actions here
   }
   else if (context->hasType(Context::DocumentationContext))
   {
     // documentation viewer context menu
-    const DocumentationContext *dcontext = static_cast<const DocumentationContext*>(context);
+//     const DocumentationContext *dcontext = static_cast<const DocumentationContext*>(context);
 
     // use context and plug actions here
   }

@@ -74,16 +74,14 @@ Attr_list::Attr_list( QDomElement const& el, QWidget *w, QTag *dtdTag )
 
 void Attr_list::setValue(const QString &value)
 {
-
-  for ( int i=0; i<combo->count(); i++ )
-    if ( value == combo->text(i) ) {
-      combo->setCurrentIndex(i);
-      return;
-    }
-
-  combo->addItem(value);
-  combo->setCurrentIndex( combo->count() - 1 );
-
+  int i = combo->findText(value);
+  if (i != -1)
+    combo->setCurrentIndex(i);
+  else
+  {
+    combo->addItem(value);
+    combo->setCurrentIndex( combo->count() - 1 );
+  }
 }
 
 

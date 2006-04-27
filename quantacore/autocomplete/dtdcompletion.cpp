@@ -40,7 +40,7 @@ QList<KTextEditor::CompletionItem>* DTDCompletion::completionEntries()
   QString tagStr = m_currentNode->tag->tagStr();
   if (tagStr.startsWith("<!"))
     tagStr = tagStr.mid(2);
-  if (tagStr.startsWith("doctype", false) && tagStr.mid(7, m_position.y() - begin.y() -7).trimmed().isEmpty()) //list all the known document types
+  if (tagStr.startsWith("doctype", Qt::CaseInsensitive) && tagStr.mid(7, m_position.y() - begin.y() -7).trimmed().isEmpty()) //list all the known document types
   {
     QStringList nickNames = DTDs::ref()->nickNameList(true);
     QStringList::Iterator end(nickNames.end());

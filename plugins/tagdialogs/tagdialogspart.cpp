@@ -45,6 +45,7 @@ K_EXPORT_COMPONENT_FACTORY( libkdevtagdialogs, TagDialogsFactory( data ) );
 TagDialogsPart::TagDialogsPart(QObject *parent, const char *name, const QStringList &/*args*/)
     : TagDialogsIf(&data, parent)
 {
+    setObjectName(name);
     setInstance(TagDialogsFactory::instance());
     setXMLFile("kdevtagdialogs.rc");
     kDebug(24000) << "TagDialogs plugin loaded" << endl;
@@ -53,14 +54,14 @@ TagDialogsPart::TagDialogsPart(QObject *parent, const char *name, const QStringL
 
     connect(core(), SIGNAL(contextMenu(QMenu *, const Context *)),
         this, SLOT(slotContextMenu(QMenu *, const Context *)));
-    
+
 /*    m_configProxy = new ConfigWidgetProxy(core());
     m_configProxy->createGlobalConfigPage(i18n("Document Structure"), GLOBALDOC_OPTIONS, info()->icon());
     m_configProxy->createProjectConfigPage(i18n("Document Structure"), PROJECTDOC_OPTIONS, info()->icon());
     connect(m_configProxy, SIGNAL(insertConfigWidget(const KDialogBase*, QWidget*, unsigned int )),
         this, SLOT(insertConfigWidget(const KDialogBase*, QWidget*, unsigned int)));*/
-  
-       
+
+
     QTimer::singleShot(0, this, SLOT(init()));
 }
 
@@ -85,8 +86,8 @@ void TagDialogsPart::slotContextMenu(QMenu *popup, const Context *context)
         // editor context menu
 //         const EditorContext *econtext = static_cast<const EditorContext*>(context);
         if (m_editCurrentTagAction)
-           m_editCurrentTagAction->plug(popup);
-        
+           popup->addAction(m_editCurrentTagAction);
+
         // or create menu items on the fly
         // int id = -1;
         // id = popup->insertItem(i18n("Do Something Here"),
@@ -100,12 +101,12 @@ void TagDialogsPart::setupActions()
 {
 // create XMLGUI actions here
   KActionCollection *ac = actionCollection();
-  m_editCurrentTagAction = new KAction(i18n("&Edit Current Tag..."), 0, this, SLOT(slotEditCurrentTag()), ac, "edit_current_tag");
-  
+  m_editCurrentTagAction = new KAction(i18n("&Edit Current Tag..."), ac, "edit_current_tag");
+  connect(m_editCurrentTagAction, SIGNAL(triggered(bool)), SLOT(slotEditCurrentTag()));
 }
 
 
-TagPair TagDialogsPart::createNewTag(QTag *dtdTag, const QString& selection, const QString &attrs, const KUrl &baseURL) 
+TagPair TagDialogsPart::createNewTag(QTag *dtdTag, const QString& selection, const QString &attrs, const KUrl &baseURL)
 {
   TagDialog dlg(dtdTag, selection, attrs, baseURL);
   if (dlg.exec())

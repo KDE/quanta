@@ -78,7 +78,7 @@ KFileTreeBranch* FilesTreeView::newBranch(const KUrl& url)
     if (s.isEmpty())
       s = i18n("Root Folder");
 
-    newBrnch = new BaseTreeBranch(this, url, s, SmallIcon(iconForURL(url)), Settings::self()->filesTreeShowHidden());
+    newBrnch = new BaseTreeBranch(this, url, s, SmallIcon(iconNameForURL(url)), Settings::self()->filesTreeShowHidden());
   } else
   {
     if (url.isLocalFile() && url.equals(KUrl::fromPathOrURL(QDir::homePath()), true))
@@ -86,14 +86,14 @@ KFileTreeBranch* FilesTreeView::newBranch(const KUrl& url)
       if (s.isEmpty())
         s = i18n("Home Folder");
 
-      newBrnch = new BaseTreeBranch(this, url, s, SmallIcon(iconForURL(url)), Settings::self()->filesTreeShowHidden());
+      newBrnch = new BaseTreeBranch(this, url, s, SmallIcon(iconNameForURL(url)), Settings::self()->filesTreeShowHidden());
       newBrnch->root()->setText(1, url.path());
     } else
     {
       if (s.isEmpty())
         s = url.fileName().isEmpty() ? url.url() : url.fileName();
 
-      newBrnch = new BaseTreeBranch(this, url, s, SmallIcon(iconForURL(url)), Settings::self()->filesTreeShowHidden());
+      newBrnch = new BaseTreeBranch(this, url, s, SmallIcon(iconNameForURL(url)), Settings::self()->filesTreeShowHidden());
       if (url.isLocalFile())
         newBrnch->root()->setText(1, url.path());
       else
@@ -261,7 +261,8 @@ void FilesTreeView::slotChangeAlias()
   QString aliasName = KInputDialog::getText(i18n("Change Alias"), i18n("Alternative folder name:"), s, &ok, this);
   if (ok)
   {
-    topURLAliases.replace(url.url(), aliasName);
+    topURLAliases.remove(url.url());
+    topURLAliases.insert(url.url(), aliasName);
     curItem->setText(0, aliasName);
   }
 }
@@ -307,12 +308,12 @@ void FilesTreeView::restoreBranches()
     KUrl url;
     url.setPath("/");
     if (!topURLAliases.contains(url.url()))
-      topURLAliases.insert(url.url(), "", true);
+      topURLAliases.insert(url.url(), "");
 
     url = KUrl();
-    url.setPath(QDir::homePath()+"/");
+    url.setPath(QDir::homePath() + "/");
     if (!topURLAliases.contains(url.url()))
-      topURLAliases.insert(url.url(), "", true);
+      topURLAliases.insert(url.url(), "");
   }
   // generate top list of directories
   BranchMap::ConstIterator it;

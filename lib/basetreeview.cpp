@@ -1013,14 +1013,14 @@ void BaseTreeView::slotMenu(K3ListView* listView, Q3ListViewItem *item, const QP
 }
 
 
-QString BaseTreeView::iconForURL(const KUrl & url)
+QString BaseTreeView::iconNameForURL(const KUrl & url)
 {
   if (url.isLocalFile())
-    return KMimeType::iconForURL(url);
+    return KMimeType::iconNameForURL(url);
 
   KUrl protURL(url);
   protURL.setPath("/");
-  return KMimeType::iconForURL(protURL);
+  return KMimeType::iconNameForURL(protURL);
 }
 
 

@@ -18,9 +18,10 @@
 
 class KMenu;
 class ToolbarTabWidget;
+class QAction;
 
 /**
- The class that holds an user toolbar. 
+ The class that holds an user toolbar.
 
 @author Andras Mantia <amantia@kde.org>
 */
@@ -45,7 +46,7 @@ public:
 private slots:
   void slotEditAction();
   void slotRemoveAction();
-  void slotIconTextChanged(int id);
+  void slotIconTextChanged(QAction *action);
   void slotIconTextMenuAboutToShow();
 
 signals:
@@ -59,6 +60,12 @@ protected:
   KMenu *m_iconTextMenu;
   QString currentActionName;
   bool m_separateToolbar;
+
+private:
+  QAction *m_iconOnlyAction;
+  QAction *m_textOnlyAction;
+  QAction *m_textBesideAction;
+  QAction *m_textUnderAction;
 };
 
 #endif //USERTOOLBAR_H

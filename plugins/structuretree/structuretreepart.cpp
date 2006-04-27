@@ -55,10 +55,12 @@ K_EXPORT_COMPONENT_FACTORY( libkdevstructuretree, StructureTreeFactory( data ) )
 StructureTreePart::StructureTreePart(QObject *parent, const char *name, const QStringList &/*args*/)
     : KDevPlugin(&data, parent)
 {
+    setObjectName(name);
     setInstance(StructureTreeFactory::instance());
     setXMLFile("kdevstructuretree.rc");
 
-    m_widget = new QToolBox(0, "StructureTreeWidget");
+    m_widget = new QToolBox();
+    m_widget->setObjectName("StructureTreeWidget");
     m_widget->setWindowTitle(i18n("Structure Tree"));
     m_widget->setWindowIcon(SmallIcon(info()->icon()));
 
@@ -110,7 +112,8 @@ StructureTreePart::~StructureTreePart()
 void StructureTreePart::init()
 {
 // delayed initialization stuff goes here
-  QWidget *w = new QWidget(m_widget, "structuretreecontainer");
+  QWidget *w = new QWidget(m_widget);
+  w->setObjectName("structuretreecontainer");
 
   m_documentTree = new StructureTreeWidget(this, w);
 
@@ -142,7 +145,7 @@ void StructureTreePart::init()
   m_widget->addItem(m_groupsTree, i18n("Groups"));
   m_widget->addItem(w, i18n("Document"));
 
-  m_widget->setCurrentItem(w);
+  m_widget->setCurrentIndex(m_widget->indexOf(w));
 }
 
 void StructureTreePart::setupActions()
@@ -172,7 +175,7 @@ void StructureTreePart::insertConfigWidget(const KDialogBase *dlg, QWidget *page
     }
 }
 
-void StructureTreePart::contextMenu(QMenu *popup, const Context *context)
+void StructureTreePart::contextMenu(QMenu */*popup*/, const Context */*context*/)
 {
 // put actions into the context menu here
 //     if (context->hasType(Context::EditorContext))

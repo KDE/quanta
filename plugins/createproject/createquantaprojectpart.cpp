@@ -73,13 +73,14 @@ K_EXPORT_COMPONENT_FACTORY( libkdevcreatequantaproject, CreateQuantaProjectFacto
 CreateQuantaProjectPart::CreateQuantaProjectPart(QObject *parent, const char *name, const QStringList &/*args*/)
     : KDevPlugin(&data, parent)
 {
-    kDebug(24000) << "Quanta create project plugin loaded" << endl;
-    setInstance(CreateQuantaProjectFactory::instance());
-    setXMLFile("kdevcreatequantaproject.rc");
+  kDebug(24000) << "Quanta create project plugin loaded" << endl;
+  setObjectName(name);
+  setInstance(CreateQuantaProjectFactory::instance());
+  setXMLFile("kdevcreatequantaproject.rc");
 
-    setupActions();
+  setupActions();
 
-    QTimer::singleShot(0, this, SLOT(init()));
+  QTimer::singleShot(0, this, SLOT(init()));
 }
 
 CreateQuantaProjectPart::~CreateQuantaProjectPart()

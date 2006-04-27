@@ -51,19 +51,10 @@ void TagWidget::updateDict(const QString &attr, QComboBox *combo )
 
 void TagWidget::setValue(const QString &val, QComboBox *combo)
 {
-  bool found = false;
-  int num = combo->count();
-
-  for ( int i = 0; i < num; i++)
-  {
-    if (val == combo->text(i))
-    {
-      combo->setCurrentIndex(i);
-      found = true;
-    }
-  }
-
-  if (!found)
+  int num = combo->findText(val);
+  if (num != -1)
+    combo->setCurrentIndex(num);
+  else
     combo->setEditText(val);
 }
 

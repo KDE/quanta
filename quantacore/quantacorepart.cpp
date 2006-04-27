@@ -71,6 +71,7 @@ QuantaCorePart::QuantaCorePart(QObject *parent, const char *name, const QStringL
  : QuantaCoreIf(&data, parent), m_activeQuantaDoc(0)
 {
   kDebug(24000) << "Creating Quanta Support Part" << endl;
+  setObjectName(name);
   setInstance(QuantaCoreFactory::instance());
   setXMLFile("kdevquantacore.rc");
 

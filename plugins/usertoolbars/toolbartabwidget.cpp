@@ -30,8 +30,10 @@
 
 
 ToolbarTabWidget::ToolbarTabWidget(QWidget * parent, const char * name, Qt::WFlags f)
-:QTabWidget(parent, name, f)
+:QTabWidget(parent)
 {
+  setObjectName(name);
+  setWindowFlags(f);
   //the context menu
   m_popupMenu = new KMenu(this);
 //FIXME:  m_popupMenu->insertTitle(i18n("Toolbar Menu"), 1);
@@ -63,11 +65,11 @@ void ToolbarTabWidget::insertTab(QWidget *child, const QString &label, const QSt
 
 QWidget* ToolbarTabWidget::page(int index)
 {
-  QWidget *w = QTabWidget::page(index);
+  QWidget *w = QTabWidget::widget(index);
 
   for (QMap<QString, QWidget*>::Iterator it = m_toolbarList.begin(); it != m_toolbarList.end(); ++it)
   {
-    if (it.data()->parentWidget() == w)
+    if (it.value()->parentWidget() == w)
     {
       w = *it;
       break;
@@ -81,7 +83,7 @@ QString ToolbarTabWidget::id(QWidget *widget) const
   QString idStr;
   for (QMap<QString, QWidget*>::ConstIterator it = m_toolbarList.constBegin(); it != m_toolbarList.constEnd(); ++it)
   {
-    if (it.data()->parentWidget() == widget)
+    if (it.value()->parentWidget() == widget)
     {
       idStr = it.key();
       break;
@@ -92,13 +94,13 @@ QString ToolbarTabWidget::id(QWidget *widget) const
 
 QString ToolbarTabWidget::id(int index) const
 {
-  QWidget *w = QTabWidget::page(index);
+  QWidget *w = QTabWidget::widget(index);
   QString idStr;
   for (QMap<QString, QWidget*>::ConstIterator it = m_toolbarList.constBegin(); it != m_toolbarList.constEnd(); ++it)
   {
     //the toolbar widget itself is included in a QWidget and only that one is
     //added to the tabwidget
-    if (it.data()->parentWidget() == w)
+    if (it.value()->parentWidget() == w)
     {
       idStr = it.key();
       break;
@@ -109,7 +111,7 @@ QString ToolbarTabWidget::id(int index) const
 
 QWidget* ToolbarTabWidget::page(const QString& id)
 {
-  QWidget *w = m_toolbarList.find(id).data();
+  QWidget *w = m_toolbarList.find(id).value();
   return w;
 }
 
@@ -120,10 +122,10 @@ void ToolbarTabWidget::removePage(QWidget *widget)
   QWidget *parent = widget->parentWidget();
   if (widget->inherits("KToolBar") && parent)
   {
-    QTabWidget::removePage(parent);
+    removeTab(indexOf(parent));
     for (QMap<QString, QWidget*>::ConstIterator it = m_toolbarList.constBegin(); it != m_toolbarList.constEnd(); ++it)
     {
-      if (it.data() == widget)
+      if (it.value() == widget)
       {
         QString id = it.key();
         m_toolbarList.remove(id);
@@ -173,12 +175,12 @@ void ToolbarTabWidget::mousePressEvent (QMouseEvent *e)
         break;
       }
     }
-    tabUnderMouseLabel = (id != -1) ? tabBar()->tabText(id) : label(currentPageIndex());
+    tabUnderMouseLabel = (id != -1) ? tabBar()->tabText(id) : tabText(currentIndex());
     if (!pageW)
-      pageW = currentPage();
+      pageW = currentWidget();
     for (QMap<QString, QWidget*>::Iterator it = m_toolbarList.begin(); it != m_toolbarList.end(); ++it)
     {
-      if (it.data()->parentWidget() == pageW)
+      if (it.value()->parentWidget() == pageW)
       {
         tabUnderMouse = it.key();
         break;
@@ -198,21 +200,21 @@ void ToolbarTabWidget::resizeEvent(QResizeEvent *e)
   QWidget *tb;
   for (QMap<QString, QWidget*>::Iterator it = m_toolbarList.begin(); it != m_toolbarList.end(); ++it)
   {
-    tb = it.data();
+    tb = it.value();
     tb->setFixedSize(QSize(width(), tb->height()));
 //    kDebug(24000) << it.data() << " resize" << endl;
   }
   //force update of the widget and the toolbars contained inside
-  int i = currentPageIndex();
+  int i = currentIndex();
   if (i > 0)
   {
-    setCurrentPage(i -1);
+    setCurrentIndex(i - 1);
   } else
   if (i+1 < count())
   {
-    setCurrentPage(i + 1);
+    setCurrentIndex(i + 1);
   }
-  setCurrentPage(i);
+  setCurrentIndex(i);
 }
 
 int ToolbarTabWidget::tabHeight() const

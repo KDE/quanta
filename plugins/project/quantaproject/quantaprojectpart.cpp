@@ -59,6 +59,7 @@ QuantaProjectPart::QuantaProjectPart( QObject *parent, const char *name, const Q
     : QuantaProjectIf( &data, parent)
 {
   kDebug( 24000 ) << "QuantaProjectPart loaded" << endl;
+  setObjectName(name);
   setInstance( QuantaProjectFactory::instance() );
   setXMLFile( "kdevquantaproject.rc" );
 

@@ -23,8 +23,12 @@ AskForSaveDlg::AskForSaveDlg(const QString &caption, const QString &question, QW
  : KDialogBase(KDialogBase::Plain, caption, KDialogBase::User2 | KDialogBase::User1 | KDialogBase::User3 | KDialogBase::Cancel, KDialogBase::User3, parent, name, true, false, KStdGuiItem::discard(), KStdGuiItem::saveAs(), KStdGuiItem::save())
 {
 
-  QGridLayout *layout = new QGridLayout(plainPage(), 1, 1, 11, 6, "AksForSaveDlgLayout");
-  QLabel *pixmapLabel = new QLabel(plainPage(), "pixmapLabel");
+  QGridLayout *layout = new QGridLayout(plainPage());
+  layout->setObjectName("AksForSaveDlgLayout");
+  layout->setMargin(11); //TODO can we remove this, it comes from the style
+  layout->setSpacing(6); //TODO can we remove this, it comes from the style
+  QLabel *pixmapLabel = new QLabel(plainPage());
+  pixmapLabel->setObjectName("pixmapLabel");
   pixmapLabel->setMaximumSize(QSize(32, 32));
   pixmapLabel->setPixmap(BarIcon("messagebox_warning", K3Icon::SizeMedium));
   layout->addWidget(pixmapLabel, 0, 0);
@@ -55,7 +59,7 @@ void AskForSaveDlg::slotUser2()
 void AskForSaveDlg::slotUser3()
 {
   m_status = 1; //save
-  accept(); 
+  accept();
 }
 
 

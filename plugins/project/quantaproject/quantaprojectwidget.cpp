@@ -29,8 +29,9 @@
 #include "quantaprojectpart.h"
 
 QuantaProjectWidget::QuantaProjectWidget(QuantaProjectPart *part)
-    : QWidget(0, "quantaproject widget"), m_part(part)
+    : QWidget(), m_part(part)
 {
+  setObjectName("quantaproject widget");
 }
 
 QuantaProjectWidget::~QuantaProjectWidget()
