@@ -29,7 +29,6 @@
 #include <qfile.h>
 
 //kde includes
-#include <kdebug.h>
 
 
 class QDomNode;
@@ -72,11 +71,9 @@ public:
    */
   const DTDStruct * find (const QString &dtdName)
   {
-    kDebug(24000) << "dtds::find " << dtdName << endl;
     DTDStruct *dtd = m_dict->value(dtdName.toLower()) ;
     if (dtd && ! dtd->loaded )
       readTagDir2(dtd);
-    kDebug(24000) << "dtds::find " << dtd << endl;
 
     return dtd;
   }
