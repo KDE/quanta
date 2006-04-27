@@ -250,7 +250,7 @@ void UserToolbarsPart::insertConfigWidget(const KDialogBase *dlg, QWidget *page,
     {
         case GLOBALDOC_OPTIONS:
         {
-            UserToolbarsGlobalConfig *w = new UserToolbarsGlobalConfig(this, page, "global config");
+            UserToolbarsGlobalConfig *w = new UserToolbarsGlobalConfig(this, page);
             connect(dlg, SIGNAL(okClicked()), w, SLOT(accept()));
             break;
         }
@@ -426,7 +426,7 @@ void UserToolbarsPart::slotLoadToolbarFile(const KUrl& url)
     QRegExp rx("\\s|\\.");
     toolbarId.replace(rx, "_");
     int n = 1;
-    while (m_toolbarList.find(toolbarId) != 0L)
+    while (m_toolbarList.value(toolbarId) != 0L)
     {
       toolbarId = s + QString("%1").arg(n);
       toolbarId.replace(rx, "_");
@@ -534,7 +534,7 @@ void UserToolbarsPart::slotLoadGlobalToolbar()
 bool UserToolbarsPart::slotRemoveToolbar(const QString& id)
 {
   QString name = id;  // increase reference counter for this string
-  ToolbarEntry *p_toolbar = m_toolbarList[name];
+  ToolbarEntry *p_toolbar = m_toolbarList.value(name);
   QRegExp i18ntabnameRx("\\si18ntabname=\"[^\"]*\"");
   QRegExp idRx("\\sid=\"[^\"]*\"");
   KActionCollection *ac = mainWindow()->main()->actionCollection();
@@ -844,7 +844,7 @@ KUrl UserToolbarsPart::saveToolbarToFile(const QString& toolbarName, const KUrl&
   actStr << QString("\n</actions>");
   //buffer.flush();
 
-  ToolbarEntry *p_toolbar = m_toolbarList[toolbarName];
+  ToolbarEntry *p_toolbar = m_toolbarList.value(toolbarName);
   QDomDocument *oldDom = p_toolbar->dom;
   QDomDocument *dom = new QDomDocument();
   QString s = toolStr;
@@ -893,7 +893,7 @@ void UserToolbarsPart::slotAddToolbar()
 
   QString toolbarId = name;
   int n = 1;
-  while (m_toolbarList.find(toolbarId) != 0L)
+  while (m_toolbarList.value(toolbarId) != 0L)
   {
     toolbarId = name + QString("%1").arg(n);
     n++;
@@ -947,7 +947,7 @@ void UserToolbarsPart::slotRenameToolbar()
 
 void UserToolbarsPart::slotRenameToolbar(const QString& id)
 {
-  ToolbarEntry *p_toolbar = m_toolbarList[id];
+  ToolbarEntry *p_toolbar = m_toolbarList.value(id);
   if (p_toolbar)
   {
     KMainWindow *mw = mainWindow()->main();
@@ -1144,7 +1144,7 @@ void UserToolbarsPart::slotNewToolbarConfig()
 
 void UserToolbarsPart::slotToolbarLoaded(const QString &id)
 {
-  ToolbarEntry *p_toolbar = m_toolbarList[id];
+  ToolbarEntry *p_toolbar = m_toolbarList.value(id);
   if (!p_toolbar || !m_createActionsMenu)
     return;
   //Plug in the actions & build the menu
@@ -1186,7 +1186,7 @@ void UserToolbarsPart::slotToolbarLoaded(const QString &id)
 
 void UserToolbarsPart::slotToolbarRemoved(const QString &id)
 {
-  ToolbarEntry *p_toolbar = m_toolbarList[id];
+  ToolbarEntry *p_toolbar = m_toolbarList.value(id);
   if (p_toolbar || !m_createActionsMenu)
   {
     delete p_toolbar->menu;
@@ -1246,7 +1246,7 @@ void UserToolbarsPart::slotRemoveAction(const QString& id, const QString& a_acti
 
   if (action)
   {
-    ToolbarEntry *p_toolbar = m_toolbarList[id];
+    ToolbarEntry *p_toolbar = m_toolbarList.value(id);
     if (p_toolbar)
     {
       QDomNode node = p_toolbar->guiClient->domDocument().firstChild().firstChild().firstChild();

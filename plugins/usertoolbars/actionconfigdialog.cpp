@@ -101,7 +101,7 @@ ActionConfigDialog::ActionConfigDialog(const QHash<QString, ToolbarEntry*> &tool
 
     toolbarId = tb->id(i);
     Q3ListViewItem *oldActionItem = 0L;
-    ToolbarEntry *p_toolbar = m_toolbarList[toolbarId];
+    ToolbarEntry *p_toolbar = m_toolbarList.value(toolbarId);
     if (p_toolbar)
     {
       QDomNode node = p_toolbar->guiClient->domDocument().firstChild().firstChild().firstChild();
@@ -237,7 +237,7 @@ void ActionConfigDialog::slotEditToolbar()
     {
       toolbarName = tb->label(i);
       toolbarId = tb->id(i);
-      ToolbarEntry *p_toolbar = m_toolbarList[toolbarId];
+      ToolbarEntry *p_toolbar = m_toolbarList.value(toolbarId);
       if (p_toolbar)
       {
         oldItem = actionTreeView->findItem(toolbarName, 0);
@@ -343,7 +343,7 @@ void ActionConfigDialog::slotSelectionChanged(Q3ListViewItem *item)
       {
         QString toolbarName = tb->label(i);
         QString toolbarId = tb->id(i);
-        ToolbarEntry *p_toolbar = m_toolbarList[toolbarId];
+        ToolbarEntry *p_toolbar = m_toolbarList.value(toolbarId);
         if (p_toolbar)
         {
           QDomNode node = p_toolbar->guiClient->domDocument().firstChild().firstChild().firstChild();
@@ -618,7 +618,7 @@ void ActionConfigDialog::saveCurrentAction()
   {
     QString toolbarName = tb->label(i);
     QString toolbarId = tb->id(i);
-    ToolbarEntry *p_toolbar = m_toolbarList[toolbarId];
+    ToolbarEntry *p_toolbar = m_toolbarList.value(toolbarId);
     bool isOnToolbar = false;
     if (p_toolbar)
     {
