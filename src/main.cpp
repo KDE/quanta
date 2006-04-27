@@ -86,25 +86,19 @@ int main(int argc, char *argv[])
   if (splash)
     splash->show();
 
+  //Load QuantaCore *before* loading other plugins, otherwise the signal
+  //connection between them an QuantaCore will not work.
+  KDevPlugin *p = PluginController::getInstance()->loadPlugin("KDevelop/Quanta", "");
+  if (!p)
+  {
+    delete splash;
+    splash = 0;
+    KMessageBox::error( 0L, i18n("The Quanta Core Plugin could not be loaded.\nYour installation seems to be broken!"));
+  }
+    
   PluginController::getInstance()->loadInitialPlugins();
 
   Core::getInstance()->doEmitCoreInitialized();
-
-  // is quanta core is available?
-  KDevPlugin * p = PluginController::getInstance()->extension("KDevelop/Quanta");
-  if (!p)
-  {
-    // try to load it, maybe it was not in the profile
-    p = PluginController::getInstance()->loadPlugin("KDevelop/Quanta", "");
-    p = PluginController::getInstance()->loadPlugin("KDevelop/Quanta", "");
-
-    if (!p)
-    {
-      delete splash;
-      splash = 0;
-      KMessageBox::error( 0L, i18n("The Quanta Core Plugin could not be loaded.\nYour installation seems to be broken!"));
-    }
-  }
 
   if (splash)
     splash->showMessage( i18n( "Starting GUI" ) );

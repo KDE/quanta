@@ -64,7 +64,7 @@ private slots:
 
   void slotPreview();
   void slotActivePartChanged(KParts::Part *part);
-  void slotTextChanged();
+  void slotTextChanged(KTextEditor::Document *document);
   void slotIdleTimerExpired();
 
 private:

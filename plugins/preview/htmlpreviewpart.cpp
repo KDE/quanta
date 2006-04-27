@@ -287,14 +287,15 @@ void HTMLPreviewPart::slotActivePartChanged(KParts::Part *part)
   if (newEditor)
   { // connect to the editor
     disconnect(part, 0, this, 0 ); // to make sure that it is not connected twice
-    /*if(configData->getRealtimeParsing())*/{
-      connect(part, SIGNAL(textChanged()), this, SLOT(slotTextChanged()));
+    /*if(configData->getRealtimeParsing())*/
+    {
+      connect(part, SIGNAL(textChanged(KTextEditor::Document *)), this, SLOT(slotTextChanged(KTextEditor::Document *)));
     }
   }
 }
 
 
-void HTMLPreviewPart::slotTextChanged()
+void HTMLPreviewPart::slotTextChanged(KTextEditor::Document *document)
 {
   m_idleTimer->setSingleShot(true);
   m_idleTimer->start(500);
