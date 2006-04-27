@@ -153,8 +153,8 @@ void TemplatesTreePart::contextMenu(QMenu *popup, const Context *context)
 {
   if (context->hasType(Context::FileContext))
   {
-kDebug(24000) << m_fileContextList.front().fileName(false) << m_fileContextList.front().fileName(false).isEmpty() << endl;
     m_fileContextList = static_cast<const FileContext*>(context)->urls();
+    kDebug(24000) << m_fileContextList.front().fileName(false) << m_fileContextList.front().fileName(false).isEmpty() << endl;
     if ((m_fileContextList.count() == 1) && m_fileContextList.front().fileName(false).isEmpty())
     {
       popup->addSeparator();
