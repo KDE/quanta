@@ -164,8 +164,8 @@ TemplatesTreeView::TemplatesTreeView(TemplatesTreePart *plugin)
   localURL.setPath(locateLocal("data", Helper::resourceDir() + "templates/"));
   newBranch(localURL);
 
-  connect(this, SIGNAL(contextMenu(KListView*, Q3ListViewItem*, const QPoint&)),
-          this, SLOT(slotMenu(KListView*, Q3ListViewItem*, const QPoint&)));
+  connect(this, SIGNAL(contextMenu(K3ListView*, Q3ListViewItem*, const QPoint&)),
+          this, SLOT(slotMenu(K3ListView*, Q3ListViewItem*, const QPoint&)));
 
   connect(this, SIGNAL(open(Q3ListViewItem *)),
           this,  SLOT(slotSelectFile(Q3ListViewItem *)));

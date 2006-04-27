@@ -22,8 +22,6 @@
 #include <qmap.h>
 
 class QDomElement;
-class QListViewItem;
-
 
 class AreaStruct;
 class GroupStorage;

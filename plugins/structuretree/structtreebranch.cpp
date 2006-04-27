@@ -16,7 +16,7 @@
 
 
 
-StructTreeBranch::StructTreeBranch(QListView *parent, const QString &title, Node *firstChild, StructTreeBranch *after)
+StructTreeBranch::StructTreeBranch(Q3ListView *parent, const QString &title, Node *firstChild, StructTreeBranch *after)
 : StructTreeItem(parent, title, after)
 {
   Node *node = new Node(0);

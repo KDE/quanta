@@ -312,7 +312,7 @@ Node *Node::getOpeningNode()
 // int Node::size()
 // {
 //     int l = tag->size();
-//     l += 5*sizeof(Node*) + sizeof(QListViewItem*) + 2*sizeof(Tag*) + 2*sizeof(DOM::Node);
+//     l += 5*sizeof(Node*) + sizeof(Q3ListViewItem*) + 2*sizeof(Tag*) + 2*sizeof(DOM::Node);
 //     return l;
 // }
 

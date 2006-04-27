@@ -36,7 +36,6 @@ class QCloseEvent;
 
 class KAction;
 class KFileItem;
-class KPopupMenu;
 class KPropertiesDialog;
 class KUrl;
 class FileInfoDlg;

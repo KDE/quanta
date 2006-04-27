@@ -51,8 +51,8 @@ TagDialogsPart::TagDialogsPart(QObject *parent, const char *name, const QStringL
 
     setupActions();
 
-    connect(core(), SIGNAL(contextMenu(QPopupMenu *, const Context *)),
-        this, SLOT(slotContextMenu(QPopupMenu *, const Context *)));
+    connect(core(), SIGNAL(contextMenu(QMenu *, const Context *)),
+        this, SLOT(slotContextMenu(QMenu *, const Context *)));
     
 /*    m_configProxy = new ConfigWidgetProxy(core());
     m_configProxy->createGlobalConfigPage(i18n("Document Structure"), GLOBALDOC_OPTIONS, info()->icon());

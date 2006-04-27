@@ -28,7 +28,6 @@
 
 #include <kurl.h>
 
-class QPopupMenu;
 class KAction;
 class KDialogBase;
 

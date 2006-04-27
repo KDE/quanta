@@ -35,7 +35,6 @@ class KStandardDirs;
 class QWidget;
 class Tag;
 
-class KPopupMenu;
 
 /** Describes one abbreviation group */
 class Abbreviation{

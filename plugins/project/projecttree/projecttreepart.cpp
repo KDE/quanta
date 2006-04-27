@@ -83,8 +83,8 @@ ProjectTreePart::ProjectTreePart(QObject *parent, const char *name, const QStrin
   connect(m_configProxy, SIGNAL(insertConfigWidget(const KDialogBase*, QWidget*, unsigned int )),
           this, SLOT(insertConfigWidget(const KDialogBase*, QWidget*, unsigned int)));
 
-  connect(core(), SIGNAL(contextMenu(QPopupMenu *, const Context *)),
-          this, SLOT(contextMenu(QPopupMenu *, const Context *)));
+  connect(core(), SIGNAL(contextMenu(QMenu *, const Context *)),
+          this, SLOT(contextMenu(QMenu *, const Context *)));
   connect(core(), SIGNAL(projectOpened()), this, SLOT(projectOpened()));
   connect(core(), SIGNAL(projectClosed()), this, SLOT(projectClosed()));
 
@@ -134,7 +134,7 @@ void ProjectTreePart::insertConfigWidget(const KDialogBase *dlg, QWidget *page, 
   }
 }
 
-void ProjectTreePart::contextMenu(QPopupMenu *popup, const Context *context)
+void ProjectTreePart::contextMenu(QMenu *popup, const Context *context)
 {
   // put actions into the context menu here
   if (context->hasType(Context::EditorContext))

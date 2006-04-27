@@ -25,9 +25,7 @@
 #include "basetreeview.h"
 
 //foward declarations
-class QListViewItem;
 class QPoint;
-class KPopupMenu;
 class KUrl;
 class QuantaFilesTreePart;
 
@@ -70,7 +68,7 @@ protected:
 
   virtual KFileTreeBranch* newBranch(const KUrl& url);
 
-  KPopupMenu *m_emptyMenu;
+  KMenu *m_emptyMenu;
   // config
   KConfig *m_config;
 

@@ -25,7 +25,7 @@
 
 #include <qpointer.h>
 
-class QPopupMenu;
+class QMenu;
 class KAction;
 class KDialogBase;
 class Context;
@@ -53,7 +53,7 @@ private slots:
   void init();
 
   void insertConfigWidget(const KDialogBase *dlg, QWidget *page, unsigned int pageNo);
-  void contextMenu(QPopupMenu *popup, const Context *context);
+  void contextMenu(QMenu *popup, const Context *context);
   void projectOpened();
   void projectClosed();
 

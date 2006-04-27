@@ -25,7 +25,7 @@
 class StructTreeBranch : public StructTreeItem
 {
 public:
-  StructTreeBranch(QListView *parent, const QString &title, Node *firstChild, StructTreeBranch *after = 0);
+  StructTreeBranch(Q3ListView *parent, const QString &title, Node *firstChild, StructTreeBranch *after = 0);
 
   ~StructTreeBranch();
 

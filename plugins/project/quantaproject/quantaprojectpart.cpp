@@ -92,8 +92,8 @@ QuantaProjectPart::QuantaProjectPart( QObject *parent, const char *name, const Q
   connect( m_configProxy, SIGNAL( insertConfigWidget( const KDialogBase*, QWidget*, unsigned int ) ),
            this, SLOT( insertConfigWidget( const KDialogBase*, QWidget*, unsigned int ) ) );
 
-  connect( core(), SIGNAL( contextMenu( QPopupMenu *, const Context * ) ),
-           this, SLOT( contextMenu( QPopupMenu *, const Context * ) ) );
+  connect( core(), SIGNAL( contextMenu( QMenu *, const Context * ) ),
+           this, SLOT( contextMenu( QMenu *, const Context * ) ) );
 
   QTimer::singleShot( 0, this, SLOT( init() ) );
 }

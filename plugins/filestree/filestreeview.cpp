@@ -49,10 +49,10 @@ FilesTreeView::FilesTreeView(QuantaFilesTreePart *part, QWidget *parent)
   addColumn(i18n("Files Tree"), -1);
   addColumn("");
 
-  connect(this, SIGNAL(open(QListViewItem *)),
-          this, SLOT(slotSelectFile(QListViewItem *)));
-  connect(this, SIGNAL(contextMenu(KListView*, QListViewItem*, const QPoint&)),
-          this, SLOT(slotMenu(KListView*, QListViewItem*, const QPoint&)));
+  connect(this, SIGNAL(open(Q3ListViewItem *)),
+          this, SLOT(slotSelectFile(Q3ListViewItem *)));
+  connect(this, SIGNAL(contextMenu(K3ListView*, Q3ListViewItem*, const QPoint&)),
+          this, SLOT(slotMenu(K3ListView*, Q3ListViewItem*, const QPoint&)));
 
   restoreBranches();
   restoreLayout(m_config, metaObject()->className());

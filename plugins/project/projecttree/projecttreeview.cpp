@@ -126,7 +126,7 @@ ProjectTreeView::ProjectTreeView(KDevPlugin * plugin, QWidget *parent)
   : BaseTreeView(plugin, parent), m_projectDir(0), m_plugin(plugin), m_quantaProject(dynamic_cast<QuantaProjectIf *>(m_plugin->project()))
 {
   setShowToolTips(Settings::self()->projectTreeTooltips());
-  //setSelectionModeExt(KListView::Extended);
+  //setSelectionModeExt(K3ListView::Extended);
   setRootIsDecorated(false);
   addColumn(i18n("Project Files"), -1);
   addColumn(i18n("Description"), -1);
@@ -136,11 +136,11 @@ ProjectTreeView::ProjectTreeView(KDevPlugin * plugin, QWidget *parent)
   setRenameable(0, false);
   setRenameable(1, true);
 
-  connect(this, SIGNAL(contextMenu(KListView*, QListViewItem*, const QPoint&)),
-          this, SLOT(slotMenu(KListView*, QListViewItem*, const QPoint&)));
+  connect(this, SIGNAL(contextMenu(K3ListView*, Q3ListViewItem*, const QPoint&)),
+          this, SLOT(slotMenu(KListView*, Q3ListViewItem*, const QPoint&)));
 
-  connect(this, SIGNAL(open(QListViewItem *)),
-          this, SLOT(slotSelectFile(QListViewItem *)));
+  connect(this, SIGNAL(open(Q3ListViewItem *)),
+          this, SLOT(slotSelectFile(Q3ListViewItem *)));
 
   restoreLayout(KGlobal::config(), metaObject()->className());
   // the restored size of the first column might be too large for the current content
