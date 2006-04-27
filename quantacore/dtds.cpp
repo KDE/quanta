@@ -156,8 +156,6 @@ bool DTDs::readTagDir(const QString &dirName, bool loadAll)
                    << " canceled, DTD " << dtdName << " found in memory" << endl;
     return false;
   }
-  kDebug(24000) << "Loading DTD: " << dtdName << " from " << dirName << endl;
-
   //read the general DTD info
   DTDStruct *dtd = new DTDStruct;
   dtd->fileName  = tmpStr;

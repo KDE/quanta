@@ -98,7 +98,7 @@ TemplatesTreePart::TemplatesTreePart(QObject *parent, const char *name, const QS
     connect(core(), SIGNAL(projectOpened()), this, SLOT(projectOpened()));
     connect(core(), SIGNAL(projectClosed()), this, SLOT(projectClosed()));
 
-    connect(documentController(), SIGNAL(closedFile(const KUrl &)), m_widget, SLOT(slotDocumentClosed(const KUrl &)));
+    connect(documentController(), SIGNAL(documentClosed(KDevDocument*)), m_widget, SLOT(slotDocumentClosed(KDevDocument*)));
 
     QTimer::singleShot(0, this, SLOT(init()));
 }

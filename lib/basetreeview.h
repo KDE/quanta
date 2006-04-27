@@ -40,6 +40,7 @@ class KPropertiesDialog;
 class KUrl;
 class FileInfoDlg;
 class BaseTreeViewToolTip;
+class KDevDocument;
 class KDevPlugin;
 class BaseTreeView;
 
@@ -180,7 +181,7 @@ public slots:
   /**
   repaints all treeview items
   */
-  void slotDocumentClosed(const KUrl& url);
+  void slotDocumentClosed(KDevDocument* document);
 
 protected slots:
 

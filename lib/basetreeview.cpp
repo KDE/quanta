@@ -803,11 +803,12 @@ bool BaseTreeView::isPathInClipboard()
 }
 
 
-void BaseTreeView::slotDocumentClosed(const KUrl& url)
+void BaseTreeView::slotDocumentClosed(KDevDocument* document)
 {
-  if (! isVisible())
+  if (!isVisible())
     return;
 
+  KUrl url = document->url();
   KFileTreeViewItem * item;
   KFileTreeBranchIterator it( branches() );
   for ( ; it.current(); ++it)

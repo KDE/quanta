@@ -81,7 +81,7 @@ KFileTreeBranch* FilesTreeView::newBranch(const KUrl& url)
     newBrnch = new BaseTreeBranch(this, url, s, SmallIcon(iconForURL(url)), Settings::self()->filesTreeShowHidden());
   } else
   {
-    if (url.isLocalFile() && url.equals(KUrl(QDir::homePath()), true))
+    if (url.isLocalFile() && url.equals(KUrl::fromPathOrURL(QDir::homePath()), true))
     {
       if (s.isEmpty())
         s = i18n("Home Folder");

@@ -108,7 +108,7 @@ void QuantaFilesTreePart::init()
 {
 // delayed initialization stuff goes here
   m_tree = new FilesTreeView(this, m_widget);
-  connect(documentController(), SIGNAL(closedFile(const KUrl &)), m_tree, SLOT(slotDocumentClosed(const KUrl &)));
+  connect(documentController(), SIGNAL(documentClosed(KDevDocument*)), m_tree, SLOT(slotDocumentClosed(KDevDocument*)));
 
   K3ListViewSearchLineWidget * sl = new K3ListViewSearchLineWidget(m_tree, m_widget);
 
