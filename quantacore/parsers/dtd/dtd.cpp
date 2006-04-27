@@ -54,7 +54,7 @@ void DTD::printContents()
 {
   for ( QStringList::Iterator tagIt = m_tags.begin(); tagIt != m_tags.end(); ++tagIt ) {
     QString tag = *tagIt;
-    kdDebug(24000) << tag << endl;
+    kDebug(24000) << tag << endl;
     AttributeList *attributes = getTagAttributes(tag);
     for ( uint i = 0; i < attributes->count(); i++)
     {
@@ -64,7 +64,7 @@ void DTD::printContents()
       {
         s += attribute->values[j] + ", ";
       }
-      kdDebug(24000) << s << endl;
+      kDebug(24000) << s << endl;
     }
   }
 }
@@ -86,7 +86,7 @@ void DTD::writeTagFiles()
     QFile file( dirName + tag.toLower() + ".tag" );
     if ( file.open( IO_WriteOnly ) ) {
       QTextStream stream( &file );
-      stream.setEncoding(QTextStream::UnicodeUTF8);
+      stream.setCodec(QTextCodec::codecForName("UTF-8"));
       stream << "<!DOCTYPE TAGS>" << endl
              << "<TAGS>" << endl
              << "<tag name=\"" << tag << "\">" << endl << endl;
@@ -99,7 +99,7 @@ void DTD::writeTagFiles()
 
       file.close();
     } else {
-      kdDebug(24000) << "Unable to write tag file: " << file.name() << endl;
+      kDebug(24000) << "Unable to write tag file: " << file.name() << endl;
     }
   }
 
@@ -122,7 +122,7 @@ bool DTD::parseDTD(const KUrl &url)
   if (file.open(IO_ReadOnly))
   {
     QTextStream fileStream(&file);
-    fileStream.setEncoding(QTextStream::UnicodeUTF8);
+    fileStream.setCodec(QTextCodec::codecForName("UTF-8"));
     QString entireDTD = fileStream.read();
     file.close();
     removeComments(entireDTD);
@@ -174,7 +174,7 @@ bool DTD::parseDTD(const KUrl &url)
         parseDTD(entityURL);
       } else
       {
-        kdDebug(24000) << QString("Unknown tag: [%1]").arg(line) << endl;
+        kDebug(24000) << QString("Unknown tag: [%1]").arg(line) << endl;
       }
 
       if (it != lines.end()) ++it;
@@ -362,7 +362,7 @@ void DTD::parseDTDReplace(QString *value) {
     if (replaceValue != 0L) {
       value->replace(begin, end-begin+1, *replaceValue);
     } else {
-      kdDebug(24000) << "Can not find entity: " << replaceText << endl;
+      kDebug(24000) << "Can not find entity: " << replaceText << endl;
       return;
     }
 

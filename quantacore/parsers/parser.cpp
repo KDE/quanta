@@ -1243,7 +1243,7 @@ FIXME
             //find the corresponding structure closing string
             while (openNum !=0 && pos != -1)
             {
-              pos = dtd->structRx.search(foundStr, pos);
+              pos = dtd->structRx.indexIn(foundStr, pos);
               if (pos != -1)
               {
                 if (dtd->structRx.cap() == dtd->structBeginStr)
@@ -1296,7 +1296,7 @@ FIXME
               int pos = structStartPosition;
               while (pos != -1)
               {
-                pos = group.definitionRx.search(foundStr, pos);
+                pos = group.definitionRx.indexIn(foundStr, pos);
                 if (pos != -1)
                 {
                   int l;

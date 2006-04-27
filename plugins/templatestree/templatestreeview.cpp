@@ -475,7 +475,7 @@ void TemplatesTreeView::contentsDropEvent(QDropEvent *e)
         //now save the file
         KTempFile* tempFile = new KTempFile(Helper::tmpFilePrefix());
         tempFile->setAutoDelete(true);
-        tempFile->textStream()->setEncoding(QTextStream::UnicodeUTF8);
+        tempFile->textStream()->setCodec(QTextCodec::codecForName("UTF-8"));
         *(tempFile->textStream()) << content;
         tempFile->close();
         bool proceed = true;
@@ -649,7 +649,7 @@ void TemplatesTreeView::slotProperties()
   if ( name == NONE )
      name = i18n(NONE);
   uint pos = 0;
-  uint j = 1;
+//   uint j = 1;
   m_quantaProperties->actionCombo->addItem(i18n(NONE));
   QString tmpStr;
 /*  KActionCollection *ac = m_mainWindow->actionCollection();

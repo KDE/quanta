@@ -633,8 +633,8 @@ void ActionConfigDialog::saveCurrentAction()
           //remove it also from the toolbar
           if (!placeOnToolbar)
           {
-            currentAction->unplug(tb->page(i));
-            currentAction->unplug(p_toolbar->menu);
+            tb->page(i)->removeAction(currentAction);
+            p_toolbar->menu->removeAction(currentAction);
             node.parentNode().removeChild(node);
             Q3ListViewItemIterator iter(actionTreeView);
             while (iter.current())
@@ -731,7 +731,7 @@ void ActionConfigDialog::slotShortcutCaptured(const KShortcut &shortcut)
   {
     QList<KXMLGUIClient*> clients = m_plugin->mainWindow()->main()->guiFactory()->clients();
     KXMLGUIClient *current = 0L;
-    QListIterator<KXMLGUIClient*> it( clients ); 
+    QListIterator<KXMLGUIClient*> it( clients );
     while (it.hasNext())
     {
         it.next();

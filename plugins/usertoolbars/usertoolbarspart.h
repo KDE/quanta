@@ -32,7 +32,7 @@ class KTempFile;
 class Context;
 class ConfigWidgetProxy;
 
-class UserAction; 
+class UserAction;
 class NewToolbarStuff;
 
 struct ToolbarEntry;
@@ -75,7 +75,7 @@ public slots:
 
 private slots:
     void init();
-    
+
     void insertConfigWidget(const KDialogBase *dlg, QWidget *page, unsigned int pageNo);
     void contextMenu(QMenu *popup, const Context *context);
     void projectOpened();
@@ -90,7 +90,7 @@ private slots:
      */
     void slotLoadToolbar();
     /**
-     * Load a global toolbar from the disk. 
+     * Load a global toolbar from the disk.
      */
     void slotLoadGlobalToolbar();
     /**
@@ -98,21 +98,21 @@ private slots:
      */
     void slotSaveLocalToolbar() {saveToolbar(true);}
     /**
-     * Saves a project toolbar. 
+     * Saves a project toolbar.
      */
     void slotSaveProjectToolbar() {saveToolbar(false);}
 
     /** Remove a user toolbar.
-     * 
+     *
      * @param id the unique id of the toolbar to be removed
      * @return true if the toolbar was successfully removed, false otherwise
      */
     bool slotRemoveToolbar(const QString& name);
-    /** Asks for selecting a user toolbar and removes it. 
-     * 
+    /** Asks for selecting a user toolbar and removes it.
+     *
      * @return true if the toolbar was successfully removed, false otherwise
      */
-    bool slotRemoveToolbar();    
+    bool slotRemoveToolbar();
     /**
      * Adds a new, empty toolbar.
      */
@@ -188,10 +188,10 @@ private slots:
     /**
      * Show a message in the outputview plugin.
      * @param message the message string
-     * @param append if true, the message is appened to the last one, if false, the message is put in a new line 
+     * @param append if true, the message is appened to the last one, if false, the message is put in a new line
      */
     void slotShowMessage(const QString &message, bool append);
-    
+
 signals:
     /**
      * Emmitted when a toolbar is removed by the user.
@@ -209,9 +209,9 @@ private:
      * @return true if successfull, false if saving failed or was cancelled
      */
     bool saveToolbar(bool localToolbar = true, const QString& toolbarToSave = QString(), const KUrl& destURL = KUrl());
-    /** 
+    /**
      * Saves the toolbar and the actions.
-     * 
+     *
      * @param toolbarName the unique id of the toolbar
      * @param destFile the destination URL
      * @return  the URL of the actions file belonging to this toolbar
@@ -227,11 +227,16 @@ private:
      * @return true if removing was successfull, false if it was cancelled
      */
     bool removeToolbars();
-
+    /**
+     * Opens a dialog for the user to choose a toolbar
+     * @param caption the caption of the dialog
+     * @return the id of the toolbar or QString::Null() if canceled
+     */
+    QString selectToolbarDialog(const QString &caption);
 
     KAction *action;
     KRecentFilesAction *m_projectToolbarFiles;
-    
+
     ConfigWidgetProxy *m_configProxy;
     uint m_userToolbarsCount; ///< the number of loaded user toolbars
     QString m_tmpDir; ///< the directory where the temporary files are created

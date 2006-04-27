@@ -38,6 +38,7 @@
 #include <qtextedit.h>
 #include <qtextstream.h>
 #include <qtimer.h>
+#include <QMap>
 
 //kde includes
 #include <kaction.h>
@@ -105,7 +106,7 @@ UserToolbarsPart::UserToolbarsPart(QObject *parent, const char *name, const QStr
     m_actionsMenuId = -1;
     m_outputPlugin = 0L;
     QStringList tmpDirs = KGlobal::dirs()->resourceDirs("tmp");
-    kdDebug(24000) << "tmpDirs: " << tmpDirs << endl;
+    kDebug(24000) << "tmpDirs: " << tmpDirs << endl;
     QDir dir;
     m_tmpDir = tmpDirs[0];
     for (int i = 0; i < tmpDirs.count(); i++)
@@ -178,8 +179,13 @@ void UserToolbarsPart::init()
   slotAdjustActions();
   ToolbarGUIBuilder::ref(mainWindow()->main())->setSeparateToolbars(m_separateToolbars);
   QMenu *actionsMenu = static_cast<QMenu*>(factory()->container("actions", this));
+
+  if (actionsMenu)
+    actionsMenu->setVisible(false);
+
+/* I keep this for reference for the moment. Jens
   KMenuBar *menuBar = mainWindow()->main()->menuBar();
-  for (uint i = 0; i < menuBar->count(); i++)
+  for (int i = 0; i < menuBar->count(); i++)
   {
     QMenuItem *it = menuBar->findItem(menuBar->idAt(i));
     if (it->menu() == actionsMenu)
@@ -188,7 +194,7 @@ void UserToolbarsPart::init()
       mainWindow()->main()->menuBar()->setItemVisible(m_actionsMenuId, false);
       break;
     }
-  }
+  }*/
 }
 
 void UserToolbarsPart::slotAdjustActions()
@@ -209,22 +215,31 @@ void UserToolbarsPart::slotAdjustActions()
 void UserToolbarsPart::setupActions()
 {
   KActionCollection *ac = actionCollection();
-  m_projectToolbarFiles = new KRecentFilesAction(i18n("Load &Project Toolbar"),0,
-                                                  this, SLOT(slotLoadToolbarFile(const KUrl&)),
-                                                  ac, "toolbars_load_project");
+  m_projectToolbarFiles = new KRecentFilesAction(i18n("Load &Project Toolbar"), ac, "toolbars_load_project");
+  connect(m_projectToolbarFiles, SIGNAL(urlSelected(const KUrl &)), SLOT(slotLoadToolbarFile(const KUrl&)));
 
-  new KAction(i18n("Load &Global Toolbar..."), 0, this, SLOT(slotLoadGlobalToolbar()), ac, "toolbars_load_global");
-  new KAction(i18n("Load &Local Toolbar..."), 0, this, SLOT(slotLoadToolbar()), ac, "toolbars_load_user");
-  new KAction(i18n("Save as &Local Toolbar..."), 0, this, SLOT(slotSaveLocalToolbar()), ac, "toolbars_save_local");
-  new KAction(i18n("Save as &Project Toolbar..."), 0, this, SLOT(slotSaveProjectToolbar()), ac, "toolbars_save_project");
-  new KAction(i18n("&New User Toolbar..."),  0, this, SLOT(slotAddToolbar()), ac, "toolbars_add");
-  new KAction(i18n("&Remove User Toolbar..."), 0, this, SLOT(slotRemoveToolbar()), ac, "toolbars_remove");
-  new KAction(i18n("Re&name User Toolbar..."), 0, this, SLOT(slotRenameToolbar()), ac, "toolbars_rename");
-  new KAction(i18n("Send Toolbar in E&mail..."), "mail_send", 0, this, SLOT(slotSendToolbar()), ac, "toolbars_send");
-  new KAction(i18n("&Upload Toolbar..." ), "network", 0, this, SLOT(slotUploadToolbar()), ac, "toolbars_upload" );
-  new KAction(i18n("&Download Toolbar..." ), "network", 0, this, SLOT(slotDownloadToolbar()), ac, "toolbars_download" );
-  new KAction(i18n( "Configure &Actions..." ), UserIcon("ball"),0,
-              this, SLOT( slotConfigureActions() ), ac, "configure_actions" );
+  KAction *action = new KAction(i18n("Load &Global Toolbar..."), ac, "toolbars_load_global");
+  connect(action, SIGNAL(triggered(bool)), SLOT(slotLoadGlobalToolbar()));
+  action = new KAction(i18n("Load &Local Toolbar..."), ac, "toolbars_load_user");
+  connect(action, SIGNAL(triggered(bool)), SLOT(slotLoadToolbar()));
+  action = new KAction(i18n("Save as &Local Toolbar..."), ac, "toolbars_save_local");
+  connect(action, SIGNAL(triggered(bool)), SLOT(slotSaveLocalToolbar()));
+  action = new KAction(i18n("Save as &Project Toolbar..."), ac, "toolbars_save_project");
+  connect(action, SIGNAL(triggered(bool)), SLOT(slotSaveProjectToolbar()));
+  action = new KAction(i18n("&New User Toolbar..."), ac, "toolbars_add");
+  connect(action, SIGNAL(triggered(bool)), SLOT(slotAddToolbar()));
+  action = new KAction(i18n("&Remove User Toolbar..."), ac, "toolbars_remove");
+  connect(action, SIGNAL(triggered(bool)), SLOT(slotRemoveToolbar()));
+  action = new KAction(i18n("Re&name User Toolbar..."), ac, "toolbars_rename");
+  connect(action, SIGNAL(triggered(bool)), SLOT(slotRenameToolbar()));
+  action = new KAction(KIcon("mail_send"), i18n("Send Toolbar in E&mail..."), ac, "toolbars_send");
+  connect(action, SIGNAL(triggered(bool)), SLOT(slotSendToolbar()));
+  action = new KAction(KIcon("network"), i18n("&Upload Toolbar..." ), ac, "toolbars_upload" );
+  connect(action, SIGNAL(triggered(bool)), SLOT(slotUploadToolbar()));
+  action = new KAction(KIcon("network"), i18n("&Download Toolbar..." ), ac, "toolbars_download" );
+  connect(action, SIGNAL(triggered(bool)), SLOT(slotDownloadToolbar()));
+  action = new KAction(KIcon("ball"), i18n( "Configure &Actions..." ), ac, "configure_actions" );
+  connect(action, SIGNAL(triggered(bool)), SLOT(slotConfigureActions()));
 }
 
 void UserToolbarsPart::insertConfigWidget(const KDialogBase *dlg, QWidget *page, unsigned int pageNo)
@@ -321,7 +336,7 @@ void UserToolbarsPart::slotLoadToolbarFile(const KUrl& url)
   QDomDocument *toolbarDom = new QDomDocument();
 
   QTextStream str;
-  str.setEncoding(QTextStream::UnicodeUTF8);
+  str.setCodec(QTextCodec::codecForName("UTF-8"));
   QString fileName = url.path();
 
   if (url.fileName().endsWith(Helper::toolbarExtension()))
@@ -432,7 +447,7 @@ void UserToolbarsPart::slotLoadToolbarFile(const KUrl& url)
     el.setAttribute("id", toolbarId);
     nodeList = toolbarDom->elementsByTagName("text");
     el.firstChild().setNodeValue(name);
-    tempFile->textStream()->setEncoding(QTextStream::UnicodeUTF8);
+    tempFile->textStream()->setCodec(QTextCodec::codecForName("UTF-8"));
     * (tempFile->textStream()) << toolbarDom->toString();
     tempFile->close();
 
@@ -473,8 +488,8 @@ void UserToolbarsPart::slotLoadToolbarFile(const KUrl& url)
 
     //add all actions to the xmlguiclient of this toolbar, otherwise it will not be
     //possible to add other actions to this toolbar in the Configure Toolbar dialog
-    for (int i = 0 ; i < ac->count(); i++)
-        toolbarGUI->actionCollection()->insert(ac->action(i));
+    for (int i = 0 ; i < ac->actions().count(); i++)
+        toolbarGUI->actionCollection()->insert(ac->actions().value(i));
 
     m_tempFileList.append(tempFile);
     p_toolbar->guiClient = toolbarGUI;
@@ -553,7 +568,7 @@ bool UserToolbarsPart::slotRemoveToolbar(const QString& id)
       if (p_toolbar->nameModified)
       {
         QRegExp tabnameRx("\\stabname=\"[^\"]*\"");
-        tabnameRx.search(s2);
+        tabnameRx.indexIn(s2);
         QString name1 = tabnameRx.cap();
         name1.indexOf(" tab");
         QString name2 = name1;
@@ -657,42 +672,33 @@ bool UserToolbarsPart::slotRemoveToolbar(const QString& id)
 }
 
 
+QString UserToolbarsPart::selectToolbarDialog(const QString &caption)
+{
+  ToolbarTabWidget *tb = ToolbarTabWidget::ref();
+
+  QMap<QString, QString> tabData;
+  for (int i = 0; i < tb->count(); ++i)
+  {
+    tabData.insert(tb->tabText(i), tb->id(i));
+  }
+  int current = tabData.keys().indexOf(tb->tabText(tb->currentIndex()));
+  bool ok = FALSE;
+  QString res = KInputDialog::getItem(caption, i18n( "Please select a toolbar:" ),
+                      tabData.keys(), current, FALSE, &ok, mainWindow()->main() );
+  if (ok)
+    return tabData.value(res);
+  else
+    return QString::Null();
+}
+
+
 bool UserToolbarsPart::slotRemoveToolbar()
 {
- ToolbarTabWidget *tb = ToolbarTabWidget::ref();
- int i;
+  QString toolbar = selectToolbarDialog(i18n("Remove Toolbar"));
+  if (toolbar.isNull())
+    return false;
 
- QStringList lst;
- QStringList idLst;
- int current=0, j =0;
- for (i = 0; i < tb->count(); i++)
- {
-   lst << tb->label(i);
-   idLst << tb->id(i);
-   if ( tb->tabLabel(tb->currentPage()) == tb->label(i) ) current=j;
-   j++;
- }
-
- bool ok = FALSE;
- QString res = KInputDialog::getItem(
-                 i18n( "Remove Toolbar" ),
-                 i18n( "Please select a toolbar:" ), lst, current, FALSE, &ok, mainWindow()->main() );
-
- if (ok)
- {
-   QString id = res;
-   for (int i = 0; i < lst.count(); i++)
-   {
-     if (lst[i] == res)
-     {
-       id = idLst[i];
-       break;
-     }
-   }
-   return slotRemoveToolbar(id);
- } else
-   return false;
-
+  return slotRemoveToolbar(toolbar);
 }
 
 bool UserToolbarsPart::saveToolbar(bool localToolbar, const QString& toolbarToSave, const KUrl& destURL)
@@ -701,38 +707,14 @@ bool UserToolbarsPart::saveToolbar(bool localToolbar, const QString& toolbarToSa
   KUrl url;
   KUrl projectToolbarsURL;
   QString toolbarName;
-  QString localToolbarsDir = locateLocal("data",resourceDir + "toolbars/");
+  QString localToolbarsDir = locateLocal("data", resourceDir + "toolbars/");
   KDevProject *prj = project();
 
   if (toolbarToSave.isEmpty())
   {
-    ToolbarTabWidget *tb = ToolbarTabWidget::ref();
-
-    QStringList lst;
-    QStringList idLst;
-    int current=0;
-    for (int i = 0; i < tb->count(); i++)
-    {
-      lst << tb->label(i);
-      idLst << tb->id(i);
-      if ( tb->tabLabel(tb->currentPage()) == tb->label(i) ) current=i;
-    }
-
-    bool ok = FALSE;
-    QString res = KInputDialog::getItem(
-                    i18n( "Save Toolbar" ),
-                    i18n( "Please select a toolbar:" ), lst, current, FALSE, &ok, mainWindow()->main() );
-    if ( !ok )
+    toolbarName = selectToolbarDialog(i18n("Save Toolbar"));
+    if (toolbarName.isNull())
       return false;
-
-    for (int i = 0; i < lst.count(); i++)
-    {
-      if (lst[i] == res)
-      {
-        toolbarName = idLst[i];
-        break;
-      }
-    }
   } else
   {
     toolbarName = toolbarToSave;
@@ -802,12 +784,12 @@ KUrl UserToolbarsPart::saveToolbarToFile(const QString& toolbarName, const KUrl&
   buffer.open(IO_ReadWrite);
   QString toolStr;
   QTextStream toolStream(&toolStr, IO_ReadWrite);
-  toolStream.setEncoding(QTextStream::UnicodeUTF8);
+  toolStream.setCodec(QTextCodec::codecForName("UTF-8"));
 
   QBuffer buffer2;
   buffer2.open(IO_WriteOnly);
   QTextStream actStr(&buffer2);
-  actStr.setEncoding(QTextStream::UnicodeUTF8);
+  actStr.setCodec(QTextCodec::codecForName("UTF-8"));
 
   QDomNodeList nodeList, nodeList2;
 
@@ -872,7 +854,7 @@ KUrl UserToolbarsPart::saveToolbarToFile(const QString& toolbarName, const KUrl&
   p_toolbar->dom = dom;
 
   QTextStream bufferStr(&buffer);
-  bufferStr.setEncoding(QTextStream::UnicodeUTF8);
+  bufferStr.setCodec(QTextCodec::codecForName("UTF-8"));
   bufferStr << toolStr;
   buffer.close();
   buffer2.close();
@@ -919,7 +901,7 @@ void UserToolbarsPart::slotAddToolbar()
 
   KTempFile* tempFile = new KTempFile(m_tmpDir);
   tempFile->setAutoDelete(true);
-  tempFile->textStream()->setEncoding(QTextStream::UnicodeUTF8);
+  tempFile->textStream()->setCodec(QTextCodec::codecForName("UTF-8"));
   * (tempFile->textStream()) << QString("<!DOCTYPE kpartgui SYSTEM \"kpartgui.dtd\">\n<kpartgui name=\"quanta\" version=\"2\">\n<ToolBar name=\"%1\" tabname=\"%2\" i18ntabname=\"%3\" id=\"%4\">\n<text>%5</text>\n</ToolBar>\n</kpartgui>\n")
       .arg(name.toLower()).arg(name).arg(name).arg(toolbarId).arg(name);
   tempFile->close();
@@ -928,8 +910,8 @@ void UserToolbarsPart::slotAddToolbar()
   KActionCollection *ac = mainWindow()->main()->actionCollection();
 
 //add all actions to the xmlguiclient of this toolbar
-  for (int i = 0 ; i < ac->count(); i++)
-     toolbarGUI->actionCollection()->insert(ac->action(i));
+  for (int i = 0 ; i < ac->actions().count(); i++)  // FIXME can we add the whole collection at once?
+     toolbarGUI->actionCollection()->insert(ac->actions().value(i));
 
   m_tempFileList.append(tempFile);
   ToolbarEntry *p_toolbar = new ToolbarEntry;
@@ -949,7 +931,7 @@ void UserToolbarsPart::slotAddToolbar()
 //   if (!m_separateToolbars)
     toolbarGUI->setClientBuilder(ToolbarGUIBuilder::ref(mainWindow()->main()));
   mainWindow()->main()->guiFactory()->addClient(toolbarGUI);
-  ToolbarTabWidget::ref()->setCurrentPage(ToolbarTabWidget::ref()->count()-1);
+  ToolbarTabWidget::ref()->setCurrentIndex(ToolbarTabWidget::ref()->count()-1);
 
   slotAdjustActions();
  }
@@ -957,35 +939,9 @@ void UserToolbarsPart::slotAddToolbar()
 
 void UserToolbarsPart::slotRenameToolbar()
 {
-  ToolbarTabWidget *tb = ToolbarTabWidget::ref();
-
-  QStringList lst;
-  QStringList idLst;
-  int current = 0;
-  for (int i = 0; i < tb->count(); i++)
-  {
-    lst << tb->label(i);
-    idLst << tb->id(i);
-    if ( tb->tabLabel(tb->currentPage()) == tb->label(i) ) current=i;
-  }
-
-  bool ok = FALSE;
-  QString res = KInputDialog::getItem(
-                  i18n( "Rename Toolbar" ),
-                  i18n( "Please select a toolbar:" ), lst, current, FALSE, &ok, mainWindow()->main() );
-  if (ok)
-  {
-    QString id = res;
-    for (int i = 0; i < lst.count(); i++)
-    {
-      if (lst[i] == res)
-      {
-        id = idLst[i];
-        break;
-      }
-    }
-    slotRenameToolbar(id);
-  }
+  QString toolbar = selectToolbarDialog(i18n("Rename Toolbar"));
+  if (!toolbar.isNull())
+    slotRenameToolbar(toolbar);
 }
 
 void UserToolbarsPart::slotRenameToolbar(const QString& id)
@@ -1029,7 +985,7 @@ void UserToolbarsPart::slotRenameToolbar(const QString& id)
         {
           if (tb->id(i) == id)
           {
-            tb->setTabLabel(tb->page(id)->parentWidget(), i18n(p_toolbar->name.toUtf8()));
+            tb->setTabText(tb->indexOf(tb->page(id)->parentWidget()), i18n(p_toolbar->name.toUtf8()));
             actionsMenu->changeItem(actionsMenu->idAt(i), i18n(p_toolbar->name.toUtf8()));
 /*            if (m_separateToolbars)
             {
@@ -1052,44 +1008,18 @@ kDebug(24000) << "p_toolbar->guiClient after rename:" <<  p_toolbar->guiClient->
 
 QString UserToolbarsPart::createToolbarTarball()
 {
-  ToolbarTabWidget *tb = ToolbarTabWidget::ref();
-
-  QStringList lst;
-  QStringList idLst;
-  int current = 0;
-  for (int i = 0; i < tb->count(); i++)
-  {
-    lst << tb->label(i);
-    idLst << tb->id(i);
-    if ( tb->tabLabel(tb->currentPage()) == tb->label(i) ) current=i;
-  }
-
-  bool ok = FALSE;
-  QString res = KInputDialog::getItem(
-      i18n( "Send Toolbar" ),
-  i18n( "Please select a toolbar:" ), lst, current, FALSE, &ok, mainWindow()->main() );
-
-  if (!ok)
-    return QString::null;
-
-  QString toolbarName = res;
-  for (int i = 0; i < lst.count(); i++)
-  {
-    if (lst[i] == toolbarName)
-    {
-      toolbarName = idLst[i];
-      break;
-    }
-  }
+  QString toolbar = selectToolbarDialog(i18n("Save Toolbar"));
+  if (toolbar.isNull())
+    return QString::Null();
   QString prefix="quanta";
   KTempDir* tempDir = new KTempDir(m_tmpDir);
   tempDir->setAutoDelete(true);
   m_tempDirList.append(tempDir);
-  QString tempFileName=tempDir->name() + toolbarName;
+  QString tempFileName = tempDir->name() + toolbar;
 
   KUrl tempURL;
   tempURL.setPath(tempFileName);
-  saveToolbarToFile(toolbarName, tempURL);
+  saveToolbarToFile(toolbar, tempURL);
 
   return tempFileName + ".toolbar.tgz";
 }
@@ -1148,9 +1078,9 @@ bool UserToolbarsPart::removeToolbars()
   QDomDocument actions;
   actions.setContent(s);
   UserAction *action;
-  for (int i = 0; i < ac->count(); i++)
+  for (int i = 0; i < ac->actions().count(); i++)
   {
-    action = dynamic_cast<UserAction *>(ac->action(i));
+    action = dynamic_cast<UserAction *>(ac->actions().value(i));
     if (action)
     {
       QDomElement el = action->data();
@@ -1165,7 +1095,7 @@ bool UserToolbarsPart::removeToolbars()
     if (!actions.firstChild().firstChild().isNull())
     {
       QTextStream qts(&f);
-      qts.setEncoding(QTextStream::UnicodeUTF8);
+      qts.setCodec(QTextCodec::codecForName("UTF-8"));
       actions.save(qts,0);
       f.close();
     } else
@@ -1196,19 +1126,19 @@ void UserToolbarsPart::slotConfigureToolbars(const QString &defaultToolbar)
 {
  ToolbarTabWidget *tb = ToolbarTabWidget::ref();
  KMainWindow *mw = mainWindow()->main();
- m_currentTabPage = tb->currentPageIndex();
+ m_currentTabPage = tb->currentIndex();
  QDomNodeList nodeList;
  mw->saveMainWindowSettings(KGlobal::config(), mw->autoSaveGroup());
  KEditToolbar dlg(defaultToolbar, mw->factory(), mw);
  connect(&dlg, SIGNAL(newToolbarConfig()), SLOT(slotNewToolbarConfig()));
  dlg.exec();
- tb->setCurrentPage(m_currentTabPage);
+ tb->setCurrentIndex(m_currentTabPage);
 }
 
 void UserToolbarsPart::slotNewToolbarConfig()
 {
   mainWindow()->main()->applyMainWindowSettings(KGlobal::config(), mainWindow()->main()->autoSaveGroup());
-  ToolbarTabWidget::ref()->setCurrentPage(m_currentTabPage);
+  ToolbarTabWidget::ref()->setCurrentIndex(m_currentTabPage);
 }
 
 void UserToolbarsPart::slotToolbarLoaded(const QString &id)
@@ -1227,14 +1157,15 @@ void UserToolbarsPart::slotToolbarLoaded(const QString &id)
     action = ac->action(nodeList.item(i).cloneNode().toElement().attribute("name") );
     if (action)
     {
-      action->plug(menu);
+      menu->addAction(action);
     }
   }
 
   QMenu *actionsMenu = static_cast<QMenu*>(factory()->container("actions", this));
 
   actionsMenu->addMenu(menu);
-  if (m_actionsMenuId == -1)
+  actionsMenu->setVisible(true);
+/*  if (m_actionsMenuId == -1)
   {
     KMenuBar *menuBar = mainWindow()->main()->menuBar();
     for (uint i = 0; i < menuBar->count(); i++)
@@ -1248,7 +1179,7 @@ void UserToolbarsPart::slotToolbarLoaded(const QString &id)
     }
   }
   if (m_actionsMenuId != -1)
-     mainWindow()->main()->menuBar()->setItemVisible(m_actionsMenuId, true);
+     mainWindow()->main()->menuBar()->setItemVisible(m_actionsMenuId, true);*/
   p_toolbar->menu = menu;
 }
 
@@ -1261,10 +1192,9 @@ void UserToolbarsPart::slotToolbarRemoved(const QString &id)
     p_toolbar->menu = 0L;
   }
   QMenu *actionsMenu = static_cast<QMenu*>(factory()->container("actions", this));
-  if (actionsMenu->count() == 0 && m_actionsMenuId != -1)
+  if (actionsMenu->actions().count() == 0)
   {
-    mainWindow()->main()->menuBar()->setItemVisible(m_actionsMenuId, false);
-    m_actionsMenuId = -1;
+    actionsMenu->setVisible(false);
   }
 }
 
@@ -1287,26 +1217,27 @@ void UserToolbarsPart::slotRemoveAction(const QString& id, const QString& a_acti
   QString actionName = a_actionName;
   actionName.replace('&',"&&");
   KActionCollection *ac = mainWindow()->main()->actionCollection();
-  uint actionCount = ac->count();
+  int actionCount = ac->actions().count();
   QString str;
-  for (uint i = 0; i < actionCount; i++)
+  for (int i = 0; i < actionCount; i++)
   {
-    str = ac->action(i)->text();
+    str = ac->actions().value(i)->text();
     if (str == actionName || str.remove('&') == actionName)
     {
-      action = ac->action(i);
+      action = ac->actions().value(i);
       break;
     }
   }
+  // FIXME I think this loop can get merged with the previous one?
   if (!action) //workaround for actionnames ending with "...". It's stripped from the end
               //of the text when plugged into a toolbar.
   {
     actionName += "...";
-    for (uint i = 0; i < actionCount; i++)
+    for (int i = 0; i < actionCount; i++)
     {
-      if (ac->action(i)->text() == actionName)
+      if (ac->actions().value(i)->text() == actionName)
       {
-        action = ac->action(i);
+        action = ac->actions().value(i);
         break;
       }
     }
@@ -1321,10 +1252,10 @@ void UserToolbarsPart::slotRemoveAction(const QString& id, const QString& a_acti
       while (!node.isNull())
       {
         if (node.nodeName() == "Action" &&
-            node.toElement().attribute("name") == action->name())
+            node.toElement().attribute("name") == action->objectName())
         {
-          action->unplug(ToolbarTabWidget::ref()->page(id));
-          action->unplug(p_toolbar->menu);
+          ToolbarTabWidget::ref()->page(id)->removeAction(action);
+          p_toolbar->menu->removeAction(action);
           node.parentNode().removeChild(node);
         }
         node = node.nextSibling();
@@ -1346,7 +1277,7 @@ void UserToolbarsPart::slotDeleteAction(KAction *action)
 //remove all references to this action
   QDomElement el = static_cast<UserAction*>(action)->data();
   QString text = el.attribute("text");
-  QString actionName = action->name();
+  QString actionName = action->objectName();
 
   QList<KXMLGUIClient*> guiClients = mainWindow()->main()->factory()->clients();
   KXMLGUIClient *guiClient = 0;
@@ -1368,7 +1299,6 @@ void UserToolbarsPart::slotDeleteAction(KAction *action)
     }
     guiClient->actionCollection()->take(action);
   }
-  action->unplugAll();
   delete action;
   action = 0L;
 }
@@ -1387,6 +1317,7 @@ void UserToolbarsPart::slotShowOutputView()
 
 void UserToolbarsPart::slotShowMessage(const QString &message, bool append)
 {
+  Q_UNUSED(append)
   if (m_outputPlugin)
   {
     m_outputPlugin->insertStderrLine(message);
