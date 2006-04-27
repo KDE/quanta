@@ -26,6 +26,7 @@
 
 //foward declarations
 class QPoint;
+class KMenu;
 class KUrl;
 class QuantaFilesTreePart;
 
