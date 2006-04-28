@@ -22,6 +22,7 @@
 #include "quantaprojectif.h"
 #include "quantanetaccess.h"
 #include "settings.h"
+#include "hacks.h"
 
 // QT includes
 #include <qpainter.h>
@@ -182,7 +183,6 @@ KFileTreeBranch* ProjectTreeView::newBranch(const KUrl& url)
 void ProjectTreeView::fileMenu(const QPoint &point)
 {
   KMenu popup(this);
-//FIXME Use QAction:   popup.insertTitle( i18n("Project Tree") );
 
   if (isFileOpen(currentKFileTreeViewItem()->url()))
     popup.addAction(SmallIcon("fileclose"), i18n("Clos&e"), this, SLOT(slotClose()));
@@ -217,7 +217,7 @@ void ProjectTreeView::folderMenu(const QPoint &point)
   createNewMenu.addAction(SmallIcon("document"), i18n("&File..."), this, SLOT(slotCreateFile()));
 
   KMenu popup(this);
-//FIXME Use QAction:   popup.insertTitle( i18n("Project Tree") );
+  Hack::KMenuAddTitle(&popup, i18n("Project Tree"));
 
   popup.addMenu(&createNewMenu);
   popup.addSeparator();
@@ -248,7 +248,7 @@ void ProjectTreeView::emptyMenu(const QPoint &point)
   createNewMenu.addAction(SmallIcon("document"), i18n("&File..."), this, SLOT(slotCreateFile()));
 
   KMenu popup(this);
-//FIXME Use QAction:  popup.insertTitle( i18n("Project Tree") );
+  Hack::KMenuAddTitle(&popup, i18n("Project Tree"));
 
   popup.addMenu(&createNewMenu);
   popup.addSeparator();

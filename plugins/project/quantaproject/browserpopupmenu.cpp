@@ -12,8 +12,8 @@
  ***************************************************************************/
 #include "browserpopupmenu.h"
 #include "extfileinfo.h"
+#include "hacks.h"
 
-#
 #include <kiconloader.h>
 
 BrowserPopupMenu::BrowserPopupMenu(const KUrl& base,  bool relativePathInTitle, const QStringList &topList, QWidget *parent)
@@ -35,7 +35,7 @@ BrowserPopupMenu::~BrowserPopupMenu()
 
 void BrowserPopupMenu::buildMenu()
 {
-//FIXME Rewrite with QAction:  insertTitle(m_relativePathInTitle ? m_base.fileName() : m_base.path(-1));
+  Hack::KMenuAddTitle(this, m_relativePathInTitle ? m_base.fileName() : m_base.path(-1));
   QStringList::ConstIterator topEnd = m_topList.constEnd();
   int i = 1;
   for (QStringList::ConstIterator it = m_topList.constBegin(); it != topEnd; ++it)

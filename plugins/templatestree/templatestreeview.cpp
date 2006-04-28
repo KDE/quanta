@@ -27,6 +27,7 @@
 #include "helper.h"
 #include "settings.h"
 #include "quantaprojectif.h"
+#include "hacks.h"
 
 
 #include <kdevcore.h>
@@ -236,7 +237,7 @@ void TemplatesTreeView::slotInsertInDocument()
 void TemplatesTreeView::emptyMenu(const QPoint &point)
 {
   KMenu popup(this);
-//FIXME:  popup.insertTitle( i18n("Templates Tree") );
+
   popup.addAction(SmallIcon("network"), i18n("&Download Template..."), this, SIGNAL(downloadTemplate()));
   popup.exec(point);
 }
@@ -245,7 +246,7 @@ void TemplatesTreeView::emptyMenu(const QPoint &point)
 void TemplatesTreeView::folderMenu(const QPoint &point)
 {
   KMenu popup(this);
-//FIXME:  popup.insertTitle( i18n("Templates Tree") );
+  Hack::KMenuAddTitle(&popup, i18n("Templates Tree"));
 
   popup.addAction(SmallIcon("folder_new"), i18n("&New Folder..."), this, SLOT(slotNewDir()));
   popup.addAction(SmallIcon("mail_send"), i18n("Send in E&mail..."), this, SLOT(slotSendInMail()));
@@ -286,7 +287,7 @@ void TemplatesTreeView::folderMenu(const QPoint &point)
 void TemplatesTreeView::fileMenu(const QPoint &point)
 {
   KMenu popup(this);
-//FIXME:  popup.insertTitle( i18n("Templates Tree") );
+  Hack::KMenuAddTitle(&popup, i18n("Templates Tree"));
 
   m_dirInfo = readDirInfo();
   if (m_part->quantaCore()->activeEditorSource())

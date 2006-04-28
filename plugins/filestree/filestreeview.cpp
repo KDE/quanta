@@ -17,6 +17,7 @@
 #include "filestreeview.h"
 #include "quantafilestreepart.h"
 #include "settings.h"
+#include "hacks.h"
 
 #include <kdevcore.h>
 
@@ -108,7 +109,7 @@ KFileTreeBranch* FilesTreeView::newBranch(const KUrl& url)
 void FilesTreeView::emptyMenu(const QPoint &point)
 {
   KMenu popup(this);
-//FIXME  popup.insertTitle( i18n("Files Tree") );
+  Hack::KMenuAddTitle(&popup, i18n("Files Tree"));
   popup.addAction(i18n("New Top &Folder..."), this, SLOT(slotNewTopFolder()));
   popup.exec(point);
 }
@@ -117,7 +118,7 @@ void FilesTreeView::emptyMenu(const QPoint &point)
 void FilesTreeView::folderMenu(const QPoint &point)
 {
   KMenu popup(this);
-//FIXME  popup.insertTitle( i18n("Files Tree") );
+  Hack::KMenuAddTitle(&popup, i18n("Files Tree"));
 
   popup.addAction(SmallIcon("folder_new"), i18n("New Top &Folder..."), this, SLOT(slotNewTopFolder()));
 
@@ -175,7 +176,7 @@ void FilesTreeView::folderMenu(const QPoint &point)
 void FilesTreeView::fileMenu(const QPoint &point)
 {
   KMenu popup(this);
-//FIXME  popup.insertTitle( i18n("Files Tree") );
+  Hack::KMenuAddTitle(&popup, i18n("Files Tree"));
 
   if (isFileOpen(currentURL()))
     popup.addAction(SmallIcon("fileclose"), i18n("Clos&e"), this, SLOT(slotClose()));
