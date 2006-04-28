@@ -45,6 +45,10 @@ DTEPEditDlg::DTEPEditDlg(const QString& descriptionFile, QWidget *parent)
  : QWidget(parent)
 {
   setupUi(this);
+  connect(addStructButton, SIGNAL(clicked()), SLOT(slotAddStructGroup()));
+  connect(deleteStructButton, SIGNAL(clicked()), SLOT(slotDeleteStructGroup()));
+  connect(editStructButton, SIGNAL(clicked()), SLOT(slotEditStructGroup()));
+  connect(typeCombo, SIGNAL(activated(int)), SLOT(slotFamilyChanged(int)));
   nameEdit->setFocus();
   m_descriptionFile = descriptionFile;
 

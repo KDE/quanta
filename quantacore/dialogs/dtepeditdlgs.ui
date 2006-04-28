@@ -1576,9 +1576,23 @@ Example: &lt;b>//&amp;nbsp;EOL,&amp;nbsp;/*&amp;nbsp;*/&lt;/b></string>
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>KComboBox</class>
+   <class>Q3GroupBox</class>
    <extends></extends>
-   <header>kcombobox.h</header>
+   <header>Qt3Support/Q3GroupBox</header>
+   <container>1</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>Q3ListBox</class>
+   <extends></extends>
+   <header>q3listbox.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>KLineEdit</class>
+   <extends></extends>
+   <header>klineedit.h</header>
    <container>0</container>
    <pixmap></pixmap>
   </customwidget>
@@ -1590,9 +1604,9 @@ Example: &lt;b>//&amp;nbsp;EOL,&amp;nbsp;/*&amp;nbsp;*/&lt;/b></string>
    <pixmap></pixmap>
   </customwidget>
   <customwidget>
-   <class>KLineEdit</class>
+   <class>KComboBox</class>
    <extends></extends>
-   <header>klineedit.h</header>
+   <header>kcombobox.h</header>
    <container>0</container>
    <pixmap></pixmap>
   </customwidget>
@@ -1600,20 +1614,6 @@ Example: &lt;b>//&amp;nbsp;EOL,&amp;nbsp;/*&amp;nbsp;*/&lt;/b></string>
    <class>KPushButton</class>
    <extends></extends>
    <header>kpushbutton.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>Q3GroupBox</class>
-   <extends></extends>
-   <header>Qt3Support/Q3GroupBox</header>
-   <container>1</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>Q3ListBox</class>
-   <extends></extends>
-   <header>q3listbox.h</header>
    <container>0</container>
    <pixmap></pixmap>
   </customwidget>
@@ -1676,5 +1676,502 @@ Example: &lt;b>//&amp;nbsp;EOL,&amp;nbsp;/*&amp;nbsp;*/&lt;/b></string>
   <tabstop>deleteStructButton</tabstop>
  </tabstops>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>enablePage1</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>textLabel11</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>enablePage1</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>pageTitleEdit1</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>enablePage1</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>groupsEdit1</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>enablePage1</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>textLabel12</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>enablePage1</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>enablePage2</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>enablePage2</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>pageTitleEdit2</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>enablePage2</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>groupsEdit2</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>enablePage2</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>textLabel11_2</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>enablePage2</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>textLabel12_2</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>enablePage2</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>enablePage3</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>enablePage3</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>pageTitleEdit3</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>enablePage3</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>groupsEdit3</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>enablePage3</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>textLabel11_3</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>enablePage3</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>textLabel12_3</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>enablePage3</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>enablePage4</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>enablePage4</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>pageTitleEdit4</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>enablePage4</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>groupsEdit4</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>enablePage4</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>textLabel11_3_2</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>enablePage4</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>textLabel12_3_2</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>enablePage4</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>enablePage5</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>enablePage5</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>pageTitleEdit5</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>enablePage5</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>groupsEdit5</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>enablePage5</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>textLabel11_5</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>enablePage5</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>textLabel11_5</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>typeCombo</sender>
+   <signal>activated(int)</signal>
+   <receiver>rulesWidgetStack</receiver>
+   <slot>raiseWidget(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>205</x>
+     <y>144</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>typeCombo</sender>
+   <signal>activated(int)</signal>
+   <receiver>generalWidgetStack</receiver>
+   <slot>raiseWidget(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>205</x>
+     <y>144</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>327</x>
+     <y>369</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>extendedBooleans</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>textLabel38</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>extendedBooleans</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>trueEdit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>extendedBooleans</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>textLabel39</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>extendedBooleans</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>falseEdit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>structuresList</sender>
+   <signal>doubleClicked(Q3ListBoxItem*)</signal>
+   <receiver>editStructButton</receiver>
+   <slot>animateClick()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>62</x>
+     <y>51</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
