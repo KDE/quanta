@@ -121,14 +121,14 @@ void ProjectTreePart::insertConfigWidget(const KDialogBase *dlg, QWidget *page, 
   {
     case GLOBALDOC_OPTIONS:
       {
-        ProjectTreeGlobalConfig *w = new ProjectTreeGlobalConfig(this, page, "global config");
+        ProjectTreeGlobalConfig *w = new ProjectTreeGlobalConfig(this, page);
         connect(dlg, SIGNAL(okClicked()), w, SLOT(accept()));
         connect(w, SIGNAL(accepted()), m_widget->tree(), SLOT(slotSettingsChanged()));
         break;
       }
     case PROJECTDOC_OPTIONS:
     {
-      ProjectTreeProjectConfig *w = new ProjectTreeProjectConfig(this, page, "project config");
+      ProjectTreeProjectConfig *w = new ProjectTreeProjectConfig(this, page);
       connect(dlg, SIGNAL(okClicked()), w, SLOT(accept()));
       break;
     }

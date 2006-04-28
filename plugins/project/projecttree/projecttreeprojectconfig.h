@@ -21,15 +21,15 @@
 #ifndef PROJECTTREE_PROJECT_CONFIG_H
 #define PROJECTTREE_PROJECT_CONFIG_H
 
-#include "projecttreeprojectconfigbase.h"
+#include "ui_projecttreeprojectconfigbase.h"
 
 class ProjectTreePart;
 
-class ProjectTreeProjectConfig: public ProjectTreeProjectConfigBase
+class ProjectTreeProjectConfig: public QWidget, public Ui::ProjectTreeProjectConfigBase
 {
     Q_OBJECT
 public:
-    ProjectTreeProjectConfig(ProjectTreePart *part, QWidget *parent = 0, const char *name = 0);
+    ProjectTreeProjectConfig(ProjectTreePart *part, QWidget *parent = 0);
 
 public slots:
     void accept();

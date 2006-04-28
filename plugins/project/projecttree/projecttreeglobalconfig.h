@@ -21,16 +21,16 @@
 #ifndef PROJECTTREE_GLOBAL_CONFIG_H
 #define PROJECTTREE_GLOBAL_CONFIG_H
 
-#include "projecttreeglobalconfigbase.h"
+#include "ui_projecttreeglobalconfigbase.h"
 
 class ProjectTreePart;
 class KConfigDialogManager;
 
-class ProjectTreeGlobalConfig: public ProjectTreeGlobalConfigBase
+class ProjectTreeGlobalConfig: public QWidget, public Ui::ProjectTreeGlobalConfigBase
 {
   Q_OBJECT
 public:
-  ProjectTreeGlobalConfig(ProjectTreePart *part, QWidget *parent = 0, const char *name = 0);
+  ProjectTreeGlobalConfig(ProjectTreePart *part, QWidget *parent = 0);
 
   ~ProjectTreeGlobalConfig();
 

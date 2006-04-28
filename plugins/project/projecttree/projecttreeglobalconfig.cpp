@@ -25,9 +25,10 @@
 
 #include <kconfigdialogmanager.h>
 
-ProjectTreeGlobalConfig::ProjectTreeGlobalConfig(ProjectTreePart *part, QWidget *parent, const char *name)
-    : ProjectTreeGlobalConfigBase(parent, name), m_part(part)
+ProjectTreeGlobalConfig::ProjectTreeGlobalConfig(ProjectTreePart *part, QWidget *parent)
+    : QWidget(parent), m_part(part)
 {
+  setupUi(this);
   manager = new KConfigDialogManager(this, Settings::self());
   manager->updateWidgets();
 }

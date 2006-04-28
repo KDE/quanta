@@ -22,9 +22,10 @@
 
 #include "projecttreepart.h"
 
-ProjectTreeProjectConfig::ProjectTreeProjectConfig(ProjectTreePart *part, QWidget *parent, const char *name)
-    : ProjectTreeProjectConfigBase(parent, name), m_part(part)
+ProjectTreeProjectConfig::ProjectTreeProjectConfig(ProjectTreePart *part, QWidget *parent)
+    : QWidget(parent), m_part(part)
 {
+  setupUi(this);
 }
 
 void ProjectTreeProjectConfig::accept()
