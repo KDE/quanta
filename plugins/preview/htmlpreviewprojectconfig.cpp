@@ -22,9 +22,10 @@
 
 #include "htmlpreviewpart.h"
 
-HTMLPreviewProjectConfig::HTMLPreviewProjectConfig(HTMLPreviewPart *part, QWidget *parent, const char *name)
-    : HTMLPreviewProjectConfigBase(parent, name), m_part(part)
+HTMLPreviewProjectConfig::HTMLPreviewProjectConfig(HTMLPreviewPart *part, QWidget *parent)
+    : QWidget(parent), m_part(part)
 {
+  setupUi(this);
 }
 
 void HTMLPreviewProjectConfig::accept()

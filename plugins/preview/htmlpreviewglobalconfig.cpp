@@ -22,9 +22,10 @@
 
 #include "htmlpreviewpart.h"
 
-HTMLPreviewGlobalConfig::HTMLPreviewGlobalConfig(HTMLPreviewPart *part, QWidget *parent, const char *name)
-    : HTMLPreviewGlobalConfigBase(parent, name), m_part(part)
+HTMLPreviewGlobalConfig::HTMLPreviewGlobalConfig(HTMLPreviewPart *part, QWidget *parent)
+    : QWidget(parent), m_part(part)
 {
+  setupUi(this);
 }
 
 void HTMLPreviewGlobalConfig::accept()

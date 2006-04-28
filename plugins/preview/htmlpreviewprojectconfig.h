@@ -21,15 +21,15 @@
 #ifndef HTMLPREVIEW_PROJECT_CONFIG_H
 #define HTMLPREVIEW_PROJECT_CONFIG_H
 
-#include "htmlpreviewprojectconfigbase.h"
+#include "ui_htmlpreviewprojectconfigbase.h"
 
 class HTMLPreviewPart;
 
-class HTMLPreviewProjectConfig: public HTMLPreviewProjectConfigBase
+class HTMLPreviewProjectConfig: public QWidget, public Ui::HTMLPreviewProjectConfigBase
 {
     Q_OBJECT
 public:
-    HTMLPreviewProjectConfig(HTMLPreviewPart *part, QWidget *parent = 0, const char *name = 0);
+    HTMLPreviewProjectConfig(HTMLPreviewPart *part, QWidget *parent = 0);
 
 public slots:
     void accept();

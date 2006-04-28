@@ -129,13 +129,13 @@ void HTMLPreviewPart::insertConfigWidget(const KDialogBase *dlg, QWidget *page, 
   {
     case GLOBALDOC_OPTIONS:
     {
-      HTMLPreviewGlobalConfig *w = new HTMLPreviewGlobalConfig(this, page, "global config");
+      HTMLPreviewGlobalConfig *w = new HTMLPreviewGlobalConfig(this, page);
       connect(dlg, SIGNAL(okClicked()), w, SLOT(accept()));
       break;
     }
     case PROJECTDOC_OPTIONS:
     {
-      HTMLPreviewProjectConfig *w = new HTMLPreviewProjectConfig(this, page, "project config");
+      HTMLPreviewProjectConfig *w = new HTMLPreviewProjectConfig(this, page);
       connect(dlg, SIGNAL(okClicked()), w, SLOT(accept()));
       break;
     }

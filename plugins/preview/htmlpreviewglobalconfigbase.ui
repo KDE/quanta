@@ -1,20 +1,23 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
-<class>HTMLPreviewGlobalConfigBase</class>
-<widget class="QWidget">
-    <property name="name">
-        <cstring>HTMLPreviewGlobalConfigBase</cstring>
-    </property>
-    <property name="geometry">
-        <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>600</width>
-            <height>480</height>
-        </rect>
-    </property>
-    <property name="caption">
-        <string>HTMLPreview</string>
-    </property>
-</widget>
-<layoutdefaults spacing="6" margin="11"/>
-</UI>
+<ui version="4.0" >
+ <author></author>
+ <comment></comment>
+ <exportmacro></exportmacro>
+ <class>HTMLPreviewGlobalConfigBase</class>
+ <widget class="QWidget" name="HTMLPreviewGlobalConfigBase" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>600</width>
+    <height>480</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>HTMLPreview</string>
+  </property>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <resources/>
+ <connections/>
+</ui>

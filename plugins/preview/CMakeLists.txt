@@ -20,7 +20,9 @@ set(kdevhtmlpreview_PART_SRCS
 
 kde4_automoc(${kdevhtmlpreview_PART_SRCS})
 
-kde4_add_ui3_files(kdevhtmlpreview_PART_SRCS htmlpreviewglobalconfigbase.ui htmlpreviewprojectconfigbase.ui )
+kde4_add_ui_files(kdevhtmlpreview_PART_SRCS
+  htmlpreviewglobalconfigbase.ui
+  htmlpreviewprojectconfigbase.ui )
 
 kde4_add_plugin(kdevhtmlpreview WITH_PREFIX ${kdevhtmlpreview_PART_SRCS})
 
