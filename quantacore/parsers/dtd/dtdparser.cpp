@@ -104,7 +104,7 @@ bool DTDParser::parse()
     KMessageBox::error(0, i18n("<qt>Error while parsing the DTD.<br>The error message is:<br><i>%1</i></qt>").arg(errorStr));
     return false;
   }
-  KDialogBase dlg(0L, 0L, true, i18n("DTD - > DTEP Conversion"), KDialogBase::Ok | KDialogBase::Cancel);
+  KDialogBase dlg(KDialogBase::Plain, i18n("DTD - > DTEP Conversion"), KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok);
   QWidget *w = new QWidget(&dlg);
   Ui::DTEPCreationDlg form;
   form.setupUi(w);
@@ -162,7 +162,7 @@ bool DTDParser::parse()
   writeDescriptionRC();
   if (form.fineTune->isChecked())
   {
-    KDialogBase editDlg(0L, "edit_dtep", true, i18n("Configure DTEP"), KDialogBase::Ok | KDialogBase::Cancel);
+    KDialogBase editDlg(KDialogBase::Plain, i18n("Configure DTEP"), KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok);
     DTEPEditDlg dtepDlg(DTD::dirName + "description.rc", &editDlg);
     editDlg.setMainWidget(&dtepDlg);
     if (editDlg.exec())

@@ -446,7 +446,7 @@ void DTEPEditDlg::slotEditStructGroup()
   int currentItem = structuresList->currentItem();
   if (currentItem != -1)
   {
-    KDialogBase editDlg(this, "edit_group", true, i18n("Edit Structure Group"), KDialogBase::Ok | KDialogBase::Cancel);
+    KDialogBase editDlg(KDialogBase::Plain, i18n("Edit Structure Group"), KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, this);
     Ui_DTEPStructureEditDlgS structDlg;
     structDlg.setupUi(&editDlg);
 
@@ -496,7 +496,7 @@ void DTEPEditDlg::slotEditStructGroup()
 
 void DTEPEditDlg::slotAddStructGroup()
 {
-  KDialogBase editDlg(this, "edit_group", true, i18n("Add Structure Group"), KDialogBase::Ok | KDialogBase::Cancel);
+  KDialogBase editDlg(KDialogBase::Plain, i18n("Add Structure Group"), KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, this);
   Ui_DTEPStructureEditDlgS structDlg;
   structDlg.setupUi(&editDlg);
   if (editDlg.exec())

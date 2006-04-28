@@ -227,7 +227,7 @@ void QuantaCorePart::slotInsertConfigWidget(const KDialogBase *dlg, QWidget *pag
 
 void QuantaCorePart::slotMakeDonation()
 {
-  KDialogBase dlg(mainWindow()->main(), 0L, true, i18n("Support Quanta with Financial Donation"), KDialogBase::Close);
+  KDialogBase dlg(KDialogBase::Plain, i18n("Support Quanta with Financial Donation"), KDialogBase::Close, KDialogBase::Close, mainWindow()->main());
   QWidget *w = new QWidget(&dlg);
   Ui::DonationDialog form;
   form.setupUi(w);
@@ -419,7 +419,7 @@ void QuantaCorePart::slotChangeDTEP()
 {
   if (m_activeQuantaDoc)
   {
-    KDialogBase dlg(mainWindow()->main(), 0L, true, i18n("DTEP Selector"), KDialogBase::Ok | KDialogBase::Cancel);
+    KDialogBase dlg(KDialogBase::Plain, i18n("DTEP Selector"), KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, mainWindow()->main());
     QWidget *w = new QWidget(&dlg);
     Ui::DTDSelectDialog form;
     form.setupUi(w);
