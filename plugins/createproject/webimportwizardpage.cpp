@@ -39,9 +39,10 @@
 #include <kmessagebox.h>
 
 
-WebImportWizardPage::WebImportWizardPage(KInstance *instance, QWidget *parent, const char *name )
-  : WebImportWizardPageBase(parent,name)
+WebImportWizardPage::WebImportWizardPage(KInstance *instance, QWidget *parent)
+  : QWidget(parent)
 {
+  setupUi(this);
   button->setEnabled(false);
   siteUrl->setFocus();
 

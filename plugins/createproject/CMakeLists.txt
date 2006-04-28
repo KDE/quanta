@@ -26,7 +26,7 @@ set(kdevcreatequantaproject_PART_SRCS
 
 kde4_automoc(${kdevcreatequantaproject_PART_SRCS})
 
-kde4_add_ui3_files(kdevcreatequantaproject_PART_SRCS 
+kde4_add_ui_files(kdevcreatequantaproject_PART_SRCS
    firstwizardpagebase.ui 
    localimportwizardpagebase.ui 
    secondwizardpagebase.ui 

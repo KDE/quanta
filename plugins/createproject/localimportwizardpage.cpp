@@ -47,8 +47,13 @@
 
 
 LocalImportWizardPage::LocalImportWizardPage(KInstance *instance, QWidget *parent)
-  : LocalImportWizardPageBase(parent)
+  : QWidget(parent)
 {
+  setupUi(this);
+  connect(insertExisting, SIGNAL(clicked()), SLOT(slotInsertFiles()));
+  connect(addFiles, SIGNAL(clicked()), SLOT(slotAddFiles()));
+  connect(addFolder, SIGNAL(clicked()), SLOT(slotAddFolder()));
+  connect(clearList, SIGNAL(clicked()), SLOT(slotClearList()));
   imagelabel->setPixmap(UserIcon("thirdwizardpage", instance));
 
   filterMask->setText("*");
@@ -129,7 +134,7 @@ void LocalImportWizardPage::slotInsertFiles()
 
 void LocalImportWizardPage::resizeEvent ( QResizeEvent *t )
 {
-  LocalImportWizardPageBase::resizeEvent(t);
+  QWidget::resizeEvent(t);
   listView->setColumnWidth(0,listView->width()-listView->columnWidth(1)-20);
 }
 

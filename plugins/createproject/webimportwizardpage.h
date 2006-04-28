@@ -19,7 +19,7 @@
 #define WEBIMPORTWIZARDPAGE_H
 
 //app includes
-#include "webimportwizardpagebase.h"
+#include "ui_webimportwizardpagebase.h"
 
 //qt includes
 #include <qwidget.h>
@@ -32,10 +32,10 @@ class KInstance;
 class KProcess;
 class KUrl;
 
-class WebImportWizardPage : public WebImportWizardPageBase  {
+class WebImportWizardPage : public QWidget, public Ui::WebImportWizardPageBase  {
    Q_OBJECT
 public:
-  WebImportWizardPage(KInstance *instance, QWidget *parent=0, const char *name=0);
+  WebImportWizardPage(KInstance *instance, QWidget *parent=0);
   ~WebImportWizardPage();
 
 public slots:

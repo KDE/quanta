@@ -18,12 +18,12 @@
 #ifndef SECONDWIZARDPAGE_H
 #define SECONDWIZARDPAGE_H
 
-#include "secondwizardpagebase.h"
+#include "ui_secondwizardpagebase.h"
 
 class QStackedWidget;
 
 class KInstance;
-class SecondWizardPage : public SecondWizardPageBase  {
+class SecondWizardPage : public QWidget, Ui::SecondWizardPageBase  {
    Q_OBJECT
 public:
   SecondWizardPage(QStackedWidget *importStack, KInstance *instance, QWidget *parent=0);

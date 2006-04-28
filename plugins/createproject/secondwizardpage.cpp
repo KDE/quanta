@@ -35,8 +35,10 @@
 
 
 SecondWizardPage::SecondWizardPage(QStackedWidget *importStack, KInstance *instance, QWidget *parent)
-  : SecondWizardPageBase(parent)
+  : QWidget(parent)
 {
+  setupUi(this);
+  connect(radioLocal, SIGNAL(toggled(bool)), SLOT(slotLocalInsertToggled(bool)));
   imagelabel->setPixmap(UserIcon("secondwizardpage", instance));
   m_importStack = importStack;
  

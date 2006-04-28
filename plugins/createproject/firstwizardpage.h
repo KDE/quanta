@@ -18,17 +18,18 @@
 #ifndef FIRSTWIZARDPAGE_H
 #define FIRSTWIZARDPAGE_H
 
-#include "firstwizardpagebase.h"
+#include "ui_firstwizardpagebase.h"
 
 #include <kurl.h>
 
 class QuantaCoreIf;
 class KInstance;
 
-class FirstWizardPage : public FirstWizardPageBase  {
+class FirstWizardPage : public QWidget, public Ui::FirstWizardPageBase
+{
    Q_OBJECT
 public:
-  FirstWizardPage(QuantaCoreIf *qCore, KInstance *instance, QWidget *parent=0, const char *name=0);
+  FirstWizardPage(QuantaCoreIf *qCore, KInstance *instance, QWidget *parent=0);
   ~FirstWizardPage();
 
   void setMargin(int);

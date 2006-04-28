@@ -40,9 +40,17 @@
 #include <kdeversion.h>
 
 
-FirstWizardPage::FirstWizardPage(QuantaCoreIf *qCore, KInstance *instance, QWidget *parent, const char *name )
-  : FirstWizardPageBase(parent,name)
+FirstWizardPage::FirstWizardPage(QuantaCoreIf *qCore, KInstance *instance, QWidget *parent)
+  : QWidget(parent)
 {
+  setupUi(this);
+  connect(comboProtocol, SIGNAL(activated(const QString&)), SLOT(slotProtocolChanged(const QString&)));
+  connect(buttonDir, SIGNAL(clicked()), SLOT(slotSelectDirectory()));
+  connect(linePrjFile, SIGNAL(textChanged(const QString&)), SLOT(slotSetProjectBase()));
+  connect(linePrjDir, SIGNAL(textChanged(const QString&)), SLOT(slotSetProjectBase()));
+  connect(linePrjName, SIGNAL(textChanged(const QString&)), SLOT(slotSetProjectBase()));
+  connect(linePrjName, SIGNAL(textChanged(const QString&)), SLOT(slotChangeNames(const QString &)));
+  
   imagelabel->setPixmap(UserIcon("firstwizardpage", instance));
   linePrjName->setFocus();
 

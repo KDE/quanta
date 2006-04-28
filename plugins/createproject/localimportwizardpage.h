@@ -18,7 +18,7 @@
 #ifndef LOCALIMPORTWIZARDPAGE_H
 #define LOCALIMPORTWIZARDPAGE_H
 
-#include "localimportwizardpagebase.h"
+#include "ui_localimportwizardpagebase.h"
 
 #include <qpair.h>
 #include <qlist.h>
@@ -27,7 +27,8 @@
 
 class KInstance;
 
-class LocalImportWizardPage : public LocalImportWizardPageBase  {
+class LocalImportWizardPage : public QWidget, public Ui::LocalImportWizardPageBase
+{
    Q_OBJECT
 public:
   LocalImportWizardPage(KInstance *instance, QWidget *parent=0);
