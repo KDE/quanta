@@ -10,6 +10,7 @@ add_subdirectory(src)
 add_subdirectory(quantacore)
 add_subdirectory(plugins)
 add_subdirectory(data)
+add_subdirectory(scripts)
 
 kde4_footer()
 
