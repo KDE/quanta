@@ -469,7 +469,7 @@ void ExtFileInfo::slotNewEntries(KIO::Job *job, const KIO::UDSEntryList& udsList
     //kDebug(24000) << "Now listing: " << (*it)->url() << endl;
     connect( ljob, SIGNAL(entries(KIO::Job *,const KIO::UDSEntryList &)),
              this,SLOT  (slotNewEntries(KIO::Job *,const KIO::UDSEntryList &)));
-    connect( ljob, SIGNAL(result(Job *)),
+    connect( ljob, SIGNAL(result(KJob *)),
              this,SLOT  (slotListResult(KJob *)));
   }
   foreach(KFileItem *item, linkItems)
