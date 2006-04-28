@@ -19,9 +19,11 @@
 #include <qcheckbox.h>
 
 TagMiscDlg::TagMiscDlg( QWidget* parent, bool _addClosingTag, const QString &element )
-  :KDialogBase(KDialogBase::Plain, i18n("Misc. Tag"), KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, parent)
+  :KDialog(parent, i18n("Misc. Tag"), KDialog::Ok | KDialog::Cancel)
 {
-  setupUi(this);
+  QWidget *w = new QWidget(this);
+  setupUi(w);
+  setMainWidget(w);
   connect( elementName, SIGNAL( textChanged ( const QString & ) ), this, SLOT( slotMiscTagChanged(const QString & ) ) );
   addClosingTagCheckBox->setChecked(_addClosingTag);
   elementName->setText(element);

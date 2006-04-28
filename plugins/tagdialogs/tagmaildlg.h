@@ -18,13 +18,13 @@
 
 #include "ui_tagmail.h"
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 
 /**
   *@author Andras Mantia
   */
 
-class TagMailDlg : public KDialogBase, public Ui::TagMail  {
+class TagMailDlg : public KDialog, public Ui::TagMail  {
 Q_OBJECT
 public:
   TagMailDlg(QWidget *parent=0);
@@ -32,8 +32,6 @@ public:
 private slots: // Private slots
   /** Select a mail address, using the KABC */
   void slotSelectAddress();
-  /** No descriptions */
-  void slotShowHelp();
 };
 
 #endif

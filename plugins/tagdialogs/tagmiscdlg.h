@@ -18,12 +18,12 @@
 
 #include "ui_tagmisc.h"
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 
 
 class TagMisc;
 
-class TagMiscDlg : public KDialogBase, public Ui::TagMisc
+class TagMiscDlg : public KDialog, public Ui::TagMisc
 {
     Q_OBJECT
 

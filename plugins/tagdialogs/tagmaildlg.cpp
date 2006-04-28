@@ -20,7 +20,6 @@
 
 //kde includes
 #include <ktoolinvocation.h>
-#include <kdialog.h>
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -34,19 +33,14 @@
 
 
 TagMailDlg::TagMailDlg(QWidget *parent)
-  :KDialogBase(KDialogBase::Plain, i18n("TagMail"), KDialogBase::Help | KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, parent)
+  :KDialog(parent, i18n("TagMail"), KDialog::Help | KDialog::Ok | KDialog::Cancel)
 {
-  setupUi(this);
+  QWidget *w = new QWidget(this);
+  setupUi(w);
   setModal(true);
-
-/*  connect( buttonOk,     SIGNAL(clicked()), SLOT(accept()) );
-  connect( buttonCancel, SIGNAL(clicked()), SLOT(reject()) );
-  connect( buttonHelp,SIGNAL(clicked()),this,SLOT(slotShowHelp()));*/
   connect( buttonAddressSelect, SIGNAL(clicked()), SLOT(slotSelectAddress()) );
- /* buttonOk->setIcon(SmallIconSet("button_ok"));
-  buttonCancel->setIcon(SmallIconSet("button_cancel"));
-  buttonHelp->setIcon(SmallIconSet("help"));*/
   lineEmail->setFocus();
+  setMainWidget(w);
 }
 
 TagMailDlg::~TagMailDlg(){
@@ -105,9 +99,4 @@ void TagMailDlg::slotSelectAddress()
   }
 }
 
-void TagMailDlg::slotShowHelp()
-{
-//FIXME: "tag-mail" should be replaced with the real help section tag
-  KToolInvocation::invokeHelp("tag-mail","quanta");
-}
 #include "tagmaildlg.moc"
