@@ -12,6 +12,7 @@
   <ignoreparts>
    <part>KDevdistpart</part>
    <part>KDevDebugger</part>
+   <part>KDevCodeView</part>
   </ignoreparts>
  </general>
  <kdevscriptproject>

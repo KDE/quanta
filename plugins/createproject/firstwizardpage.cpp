@@ -110,20 +110,24 @@ void FirstWizardPage::slotSetProjectBase()
                  linePrjDir ->text().isEmpty() );
   KUrl url;
   QString s = lineHost->text();
-  if (! s.isEmpty())
+  if (!s.isEmpty())
     url.setHost(s);
 
   s = lineUser->text();
-  if (! s.isEmpty())
+  if (!s.isEmpty())
     url.setUser(s);
 
   s = linePort->text();
-  if (! s.isEmpty())
+  if (!s.isEmpty())
     url.setPort(linePort->text().toInt());
-
-  url.setProtocol(comboProtocol->currentText());
-  if (url.protocol() == i18n("Local"))
+  
+  if (comboProtocol->currentText() == i18n("Local"))
+  {
     url.setProtocol("file");
+  } else
+  {
+    url.setProtocol(comboProtocol->currentText());
+  }
   url.setPath(linePrjDir->text());
   url.adjustPath(1);
   if (!url.path().startsWith("/"))
