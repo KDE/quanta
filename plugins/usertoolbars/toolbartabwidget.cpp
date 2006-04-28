@@ -111,7 +111,7 @@ QString ToolbarTabWidget::id(int index) const
 
 QWidget* ToolbarTabWidget::page(const QString& id)
 {
-  QWidget *w = m_toolbarList.find(id).value();
+  QWidget *w = m_toolbarList.value(id);
   return w;
 }
 

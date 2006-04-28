@@ -48,7 +48,7 @@ QString Helper::tmpFilePrefix()
 
 QString Helper::dataDir()
 {
-  static const QString & dataDir = KGlobal::staticQString(KGlobal::dirs()->findResourceDir("data", "quanta/pics/quantalogo.png"));  // FIXME kuanta is hardcoded!!
+  static const QString & dataDir = KGlobal::staticQString(KGlobal::dirs()->findResourceDir("data", "quanta/pics/quantalogo.png"));  // FIXME quanta is hardcoded!!
   return dataDir;
 }
 
