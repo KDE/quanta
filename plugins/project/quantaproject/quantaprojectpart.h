@@ -32,6 +32,7 @@
 class BrowserPopupMenu;
 class QuantaProjectWidget;
 
+class QAction;
 class QMenu;
 class KAction;
 class KDialogBase;
@@ -98,7 +99,7 @@ private slots:
     
     void slotInsertFiles();
     void slotInsertFolder();
-    void slotTargetFolderSelected(int id, const KUrl& url);
+    void slotTargetFolderSelected(QAction *action, const KUrl& url);
 
 private:
     void setupActions();

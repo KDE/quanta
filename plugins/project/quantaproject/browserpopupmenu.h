@@ -17,6 +17,8 @@
 
 #include <kmenu.h>
 #include <kurl.h>
+
+class QAction;
 /**
 A popup menu acting like a quick browser of a directory.
 
@@ -31,17 +33,16 @@ public:
   void buildMenu();
 
 private slots:
-  void slotActivated(int id);
+  void slotItemTriggered(QAction *action);
   void slotAboutToShow();
 
 signals:
-  void itemActivated(int, const KUrl&);
+  void triggered(QAction *action, const KUrl& base);
 
 private:
   KUrl m_base;
-  QMap<int, BrowserPopupMenu*> m_subMenus;
   bool m_menuBuilt;
-  QMap<int, int> m_topIds;
+  QList<QAction*> m_actions;
   QStringList m_topList;
   bool m_relativePathInTitle;
 };

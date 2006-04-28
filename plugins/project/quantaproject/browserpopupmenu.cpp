@@ -14,6 +14,8 @@
 #include "extfileinfo.h"
 #include "hacks.h"
 
+#include <qaction.h>
+
 #include <kiconloader.h>
 
 BrowserPopupMenu::BrowserPopupMenu(const KUrl& base,  bool relativePathInTitle, const QStringList &topList, QWidget *parent)
@@ -25,7 +27,7 @@ BrowserPopupMenu::BrowserPopupMenu(const KUrl& base,  bool relativePathInTitle, 
   m_relativePathInTitle = relativePathInTitle;
   m_menuBuilt = false;
   connect(this, SIGNAL(aboutToShow()), SLOT(slotAboutToShow()));
-  connect(this, SIGNAL(activated(int)), SLOT(slotActivated(int)));
+  connect(this, SIGNAL(triggered(QAction*)), SLOT(slotItemTriggered(QAction*)));
  }
 
 
@@ -37,10 +39,9 @@ void BrowserPopupMenu::buildMenu()
 {
   Hack::KMenuAddTitle(this, m_relativePathInTitle ? m_base.fileName() : m_base.path(-1));
   QStringList::ConstIterator topEnd = m_topList.constEnd();
-  int i = 1;
   for (QStringList::ConstIterator it = m_topList.constBegin(); it != topEnd; ++it)
   {
-    m_topIds[insertItem(*it)] = i++;
+    m_actions.append(addAction(*it));
   }
   addSeparator();
   QStringList entries = ExtFileInfo::listDirRelative(m_base, "*");
@@ -52,19 +53,20 @@ void BrowserPopupMenu::buildMenu()
       KUrl u = m_base;
       u.addPath(*it);
       BrowserPopupMenu *menu = new BrowserPopupMenu(u, m_relativePathInTitle, m_topList, this);
-      connect(menu, SIGNAL(itemActivated(int, const KUrl&)), SIGNAL(itemActivated(int, const KUrl&)));
-      int id = insertItem(SmallIconSet("folder"), (*it).left((*it).length()-1), menu);
-      m_subMenus[id] = menu;
+      connect(menu, SIGNAL(triggered(QAction*, const KUrl&)), SIGNAL(triggered(QAction*, const KUrl&)));
+      QAction *a = addMenu(menu);
+      a->setIcon(SmallIconSet("folder"));
+      a->setText((*it).left((*it).length()-1));
     }
   }
   m_menuBuilt = true;
 }
 
-void BrowserPopupMenu::slotActivated(int id)
+void BrowserPopupMenu::slotItemTriggered(QAction *action)
 {
-  if (m_topIds.contains(id))
+  if (m_actions.contains(action))
   {
-    emit itemActivated(m_topIds[id], m_base);
+    emit triggered(action, m_base);
   }
 }
 

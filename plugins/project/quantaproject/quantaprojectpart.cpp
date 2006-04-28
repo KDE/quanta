@@ -185,7 +185,7 @@ void QuantaProjectPart::contextMenu( QMenu *popup, const Context *context )
       m_browserMenu = new BrowserPopupMenu(m_projectBase, true, menus, 0L);
       m_browserMenu->setTitle(i18n("Insert in Project"));
       popup->addMenu(m_browserMenu);
-      connect(m_browserMenu, SIGNAL(itemActivated(int, const KUrl&)), SLOT(slotTargetFolderSelected(int, const KUrl&)));
+      connect(m_browserMenu, SIGNAL(triggered(QAction*, const KUrl&)), SLOT(slotTargetFolderSelected(QAction*, const KUrl&)));
     }
 
     //use context and plug actions here
@@ -411,13 +411,13 @@ bool QuantaProjectPart::isProjectFile(const KUrl &url)
 }
 
 
-void QuantaProjectPart::slotTargetFolderSelected(int id, const KUrl& url)
+void QuantaProjectPart::slotTargetFolderSelected(QAction *action, const KUrl& url)
 {
-  Q_UNUSED(id)
+  Q_UNUSED(action);
   KUrl u = url;
   u.adjustPath(1);
   QuantaNetAccess::dircopy(m_fileContextURLs, u, this, false);
-  delete m_browserMenu; //delete at the end, otherwise url gets destroyed
+  m_browserMenu->deleteLater(); 
   m_browserMenu = 0L;
 }
 
