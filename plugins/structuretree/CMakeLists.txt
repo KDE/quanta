@@ -24,7 +24,9 @@ set(kdevstructuretree_PART_SRCS
 
 kde4_automoc(${kdevstructuretree_PART_SRCS})
 
-kde4_add_ui3_files(kdevstructuretree_PART_SRCS structuretreeglobalconfigbase.ui structuretreeprojectconfigbase.ui )
+kde4_add_ui_files(kdevstructuretree_PART_SRCS
+  structuretreeglobalconfigbase.ui
+  structuretreeprojectconfigbase.ui )
 
 kde4_add_plugin(kdevstructuretree WITH_PREFIX ${kdevstructuretree_PART_SRCS})
 

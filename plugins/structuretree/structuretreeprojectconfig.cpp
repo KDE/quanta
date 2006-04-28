@@ -22,9 +22,10 @@
 
 #include "structuretreepart.h"
 
-StructureTreeProjectConfig::StructureTreeProjectConfig(StructureTreePart *part, QWidget *parent, const char *name)
-    : StructureTreeProjectConfigBase(parent, name), m_part(part)
+StructureTreeProjectConfig::StructureTreeProjectConfig(StructureTreePart *part, QWidget *parent)
+    : QWidget(parent), m_part(part)
 {
+  setupUi(this);
 }
 
 void StructureTreeProjectConfig::accept()

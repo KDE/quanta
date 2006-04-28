@@ -26,9 +26,10 @@
 
 #include <qcheckbox.h>
 
-StructureTreeGlobalConfig::StructureTreeGlobalConfig(StructureTreePart *part, QWidget *parent, const char *name)
-    : StructureTreeGlobalConfigBase(parent, name), m_part(part)
+StructureTreeGlobalConfig::StructureTreeGlobalConfig(StructureTreePart *part, QWidget *parent)
+    : QWidget(parent), m_part(part)
 {
+  setupUi(this);
   manager = new KConfigDialogManager(this, Settings::self());
   manager->updateWidgets();
 }

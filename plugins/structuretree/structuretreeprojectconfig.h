@@ -21,15 +21,15 @@
 #ifndef STRUCTURETREE_PROJECT_CONFIG_H
 #define STRUCTURETREE_PROJECT_CONFIG_H
 
-#include "structuretreeprojectconfigbase.h"
+#include "ui_structuretreeprojectconfigbase.h"
 
 class StructureTreePart;
 
-class StructureTreeProjectConfig: public StructureTreeProjectConfigBase
+class StructureTreeProjectConfig: public QWidget, public Ui::StructureTreeProjectConfigBase
 {
     Q_OBJECT
 public:
-    StructureTreeProjectConfig(StructureTreePart *part, QWidget *parent = 0, const char *name = 0);
+    StructureTreeProjectConfig(StructureTreePart *part, QWidget *parent = 0);
 
 public slots:
     void accept();

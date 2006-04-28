@@ -160,7 +160,7 @@ void StructureTreePart::insertConfigWidget(const KDialogBase *dlg, QWidget *page
     {
         case GLOBALDOC_OPTIONS:
         {
-            StructureTreeGlobalConfig *w = new StructureTreeGlobalConfig(this, page, "global config");
+            StructureTreeGlobalConfig *w = new StructureTreeGlobalConfig(this, page);
             connect(dlg, SIGNAL(okClicked()), w, SLOT(accept()));
             connect(w, SIGNAL(accepted()), m_documentTree, SLOT(slotNewSettings()));
             connect(w, SIGNAL(accepted()), m_groupsTree, SLOT(slotNewSettings()));
@@ -168,7 +168,7 @@ void StructureTreePart::insertConfigWidget(const KDialogBase *dlg, QWidget *page
         }
         case PROJECTDOC_OPTIONS:
         {
-/*            StructureTreeProjectConfig *w = new StructureTreeProjectConfig(this, page, "project config");
+/*            StructureTreeProjectConfig *w = new StructureTreeProjectConfig(this, page);
             connect(dlg, SIGNAL(okClicked()), w, SLOT(accept()));*/
             break;
         }

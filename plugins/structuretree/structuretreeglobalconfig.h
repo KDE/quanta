@@ -21,17 +21,17 @@
 #ifndef STRUCTURETREE_GLOBAL_CONFIG_H
 #define STRUCTURETREE_GLOBAL_CONFIG_H
 
-#include "structuretreeglobalconfigbase.h"
+#include "ui_structuretreeglobalconfigbase.h"
 
 
 class StructureTreePart;
 class KConfigDialogManager;
 
-class StructureTreeGlobalConfig : public StructureTreeGlobalConfigBase
+class StructureTreeGlobalConfig : public QWidget, public Ui::StructureTreeGlobalConfigBase
 {
   Q_OBJECT
 public:
-  StructureTreeGlobalConfig(StructureTreePart *part, QWidget *parent = 0, const char *name = 0);
+  StructureTreeGlobalConfig(StructureTreePart *part, QWidget *parent = 0);
 
   ~StructureTreeGlobalConfig();
 
