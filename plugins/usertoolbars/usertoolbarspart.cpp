@@ -1040,7 +1040,7 @@ void UserToolbarsPart::slotSendToolbar()
   QString titleStr;
   QString subjectStr;
 
-  mailDlg->TitleLabel->setText(i18n("Content:"));
+  mailDlg->titleLabel->setText(i18n("Content:"));
   mailDlg->titleEdit->setFixedHeight(60);
   if ( mailDlg->exec() ) {
     if ( !mailDlg->lineEmail->text().isEmpty())

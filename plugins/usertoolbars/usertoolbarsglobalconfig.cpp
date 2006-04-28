@@ -18,9 +18,10 @@
 //qt includes
 #include <qcheckbox.h>
 
-UserToolbarsGlobalConfig::UserToolbarsGlobalConfig(UserToolbarsPart *part, QWidget *parent, const char *name)
-    : UserToolbarsGlobalConfigBase(parent, name), m_part(part)
+UserToolbarsGlobalConfig::UserToolbarsGlobalConfig(UserToolbarsPart *part, QWidget *parent)
+    : QWidget(parent), m_part(part)
 {
+  setupUi(this);
   separateToolbars->setChecked(m_part->separateToolbars());
   createActionsMenu->setChecked(m_part->createActionsMenu());
 }

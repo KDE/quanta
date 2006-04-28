@@ -1,6 +1,6 @@
 /***************************************************************************
     begin                : Sat Nov 24 2001
-    copyright            : (C) 2001, 2005 by Andras Mantia <amantia@kde.org>
+    copyright            : (C) 2001, 2005, 2006 by Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -14,13 +14,15 @@
 #ifndef MAILDIALOG_H
 #define MAILDIALOG_H
 
-#include "maildialogbase.h"
+#include "ui_maildialogbase.h"
+
+#include <kdialog.h>
 
 /**
   *@author Andras Mantia
   */
 
-class MailDialog : public MailDialogBase  {
+class MailDialog : public KDialog, public Ui::MailDialogBase  {
 Q_OBJECT
 public:
   MailDialog(QWidget *parent=0, const QString &caption = QString::null);
@@ -28,8 +30,6 @@ public:
 private slots: // Private slots
   /** Select a mail address, using the KABC */
   void slotSelectAddress();
-  /** No descriptions */
-  void slotShowHelp();
 };
 
 #endif

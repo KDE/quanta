@@ -2,7 +2,7 @@
                           tagmaildlg.cpp  -  description
                              -------------------
     begin                : Sat Nov 24 2001
-    copyright            : (C) 2001-2002 by Andras Mantia <amantia@kde.org>
+    copyright            : (C) 2001-2006 by Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -17,7 +17,6 @@
 #include "maildialog.h"
 
 //kde includes
-#include <kdialog.h>
 #include <kiconloader.h>
 #include <kinputdialog.h>
 #include <klocale.h>
@@ -33,18 +32,14 @@
 
 
 MailDialog::MailDialog(QWidget *parent, const QString& caption)
-  :MailDialogBase(parent)
+  :KDialog(parent, caption, KDialog::Ok | KDialog::Cancel | KDialog::Help)
 {
-  setWindowTitle(caption);
+  QWidget *w = new QWidget(this);
+  setupUi(w);
+  setMainWidget(w);
   setModal(true);
 
-  connect( buttonOk,     SIGNAL(clicked()), SLOT(accept()) );
-  connect( buttonCancel, SIGNAL(clicked()), SLOT(reject()) );
-  connect( buttonHelp,SIGNAL(clicked()),this,SLOT(slotShowHelp()));
   connect( buttonAddressSelect, SIGNAL(clicked()), SLOT(slotSelectAddress()) );
-  buttonOk->setIconSet(SmallIconSet("button_ok"));
-  buttonCancel->setIconSet(SmallIconSet("button_cancel"));
-  buttonHelp->setIconSet(SmallIconSet("help"));
   lineEmail->setFocus();
 }
 
@@ -104,11 +99,5 @@ void MailDialog::slotSelectAddress()
 //e-mail address
    KMessageBox::error(this, i18n("No addresses found."));
   }
-}
-
-void MailDialog::slotShowHelp()
-{
-//FIXME: "tag-mail" should be replaced with the real help section tag
-  KToolInvocation::invokeHelp("tag-mail","quanta");
 }
 #include "maildialog.moc"

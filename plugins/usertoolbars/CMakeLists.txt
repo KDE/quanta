@@ -31,13 +31,9 @@ kde4_automoc(${kdevusertoolbars_PART_SRCS})
 kde4_add_ui_files(
    kdevusertoolbars_PART_SRCS
    actionconfigdialogbase.ui
-)
-
-kde4_add_ui3_files(
-   kdevusertoolbars_PART_SRCS 
-   usertoolbarsglobalconfigbase.ui 
    maildialogbase.ui
-   )
+   usertoolbarsglobalconfigbase.ui
+ )
 
 kde4_add_plugin(kdevusertoolbars WITH_PREFIX ${kdevusertoolbars_PART_SRCS})
 

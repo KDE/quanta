@@ -15,15 +15,15 @@
 #ifndef USERTOOLBARS_GLOBAL_CONFIG_H
 #define USERTOOLBARS_GLOBAL_CONFIG_H
 
-#include "usertoolbarsglobalconfigbase.h"
+#include "ui_usertoolbarsglobalconfigbase.h"
 
 class UserToolbarsPart;
 
-class UserToolbarsGlobalConfig: public UserToolbarsGlobalConfigBase
+class UserToolbarsGlobalConfig: public QWidget, public Ui::UserToolbarsGlobalConfigBase
 {
     Q_OBJECT
 public:
-    UserToolbarsGlobalConfig(UserToolbarsPart *part, QWidget *parent = 0, const char *name = 0);
+    UserToolbarsGlobalConfig(UserToolbarsPart *part, QWidget *parent = 0);
 
 public slots:
     void accept();
