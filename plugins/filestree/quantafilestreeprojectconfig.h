@@ -21,15 +21,15 @@
 #ifndef QUANTAFILESTREE_PROJECT_CONFIG_H
 #define QUANTAFILESTREE_PROJECT_CONFIG_H
 
-#include "quantafilestreeprojectconfigbase.h"
+#include "ui_quantafilestreeprojectconfigbase.h"
 
 class QuantaFilesTreePart;
 
-class QuantaFilesTreeProjectConfig: public QuantaFilesTreeProjectConfigBase
+class QuantaFilesTreeProjectConfig: public QWidget, public Ui::QuantaFilesTreeProjectConfigBase
 {
     Q_OBJECT
 public:
-    QuantaFilesTreeProjectConfig(QuantaFilesTreePart *part, QWidget *parent = 0, const char *name = 0);
+    QuantaFilesTreeProjectConfig(QuantaFilesTreePart *part, QWidget *parent = 0);
 
 public slots:
     void accept();

@@ -135,14 +135,14 @@ void QuantaFilesTreePart::insertConfigWidget(const KDialogBase *dlg, QWidget *pa
     {
         case GLOBALDOC_OPTIONS:
         {
-            QuantaFilesTreeGlobalConfig *w = new QuantaFilesTreeGlobalConfig(this, page, "global config");
+            QuantaFilesTreeGlobalConfig *w = new QuantaFilesTreeGlobalConfig(this, page);
             connect(dlg, SIGNAL(okClicked()), w, SLOT(accept()));
             connect(w, SIGNAL(accepted()), m_tree, SLOT(slotSettingsChanged()));
             break;
         }
 /*        case PROJECTDOC_OPTIONS:
         {
-            QuantaFilesTreeProjectConfig *w = new QuantaFilesTreeProjectConfig(this, page, "project config");
+            QuantaFilesTreeProjectConfig *w = new QuantaFilesTreeProjectConfig(this, page);
             connect(dlg, SIGNAL(okClicked()), w, SLOT(accept()));
             break;
         }*/

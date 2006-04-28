@@ -21,7 +21,9 @@ set(kdevquantafilestree_PART_SRCS
 
 kde4_automoc(${kdevquantafilestree_PART_SRCS})
 
-kde4_add_ui3_files(kdevquantafilestree_PART_SRCS quantafilestreeglobalconfigbase.ui quantafilestreeprojectconfigbase.ui )
+kde4_add_ui_files(kdevquantafilestree_PART_SRCS
+  quantafilestreeglobalconfigbase.ui
+  quantafilestreeprojectconfigbase.ui )
 
 kde4_add_plugin(kdevquantafilestree WITH_PREFIX ${kdevquantafilestree_PART_SRCS})
 

@@ -1,103 +1,104 @@
-<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
-<class>QuantaFilesTreeGlobalConfigBase</class>
-<widget class="QWidget">
-    <property name="name">
-        <cstring>QuantaFilesTreeGlobalConfigBase</cstring>
-    </property>
-    <property name="geometry">
-        <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>600</width>
-            <height>480</height>
-        </rect>
-    </property>
-    <property name="caption">
-        <string>QuantaFilesTree</string>
-    </property>
-    <vbox>
-        <property name="name">
-            <cstring>unnamed</cstring>
-        </property>
-        <widget class="QCheckBox">
-            <property name="name">
-                <cstring>kcfg_FilesTreeTooltips</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>1</hsizetype>
-                    <vsizetype>0</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="text">
-                <string>Show tooltips</string>
-            </property>
-            <property name="whatsThis" stdset="0">
-                <string>If this is set the tooltips with additional informations will show.</string>
-            </property>
-        </widget>
-        <widget class="QCheckBox">
-            <property name="name">
-                <cstring>kcfg_FilesTreeShowHidden</cstring>
-            </property>
-            <property name="text">
-                <string>Show hidden files/folders</string>
-            </property>
-            <property name="accel">
-                <string></string>
-            </property>
-            <property name="whatsThis" stdset="0">
-                <string>If this is set the hidden files and folder in the filesystem will be visible.</string>
-            </property>
-        </widget>
-        <widget class="QCheckBox">
-            <property name="name">
-                <cstring>kcfg_FilesTreeSave</cstring>
-            </property>
-            <property name="text">
-                <string>Remem&amp;ber the tree status</string>
-            </property>
-            <property name="accel">
-                <string>Alt+B</string>
-            </property>
-            <property name="whatsThis" stdset="0">
-                <string>If this is checked the tree status will be remembered. That means the open folder will get reopened again and the size of the columns will be restored.</string>
-            </property>
-        </widget>
-        <widget class="QCheckBox">
-            <property name="name">
-                <cstring>kcfg_FilesTreeRootHome</cstring>
-            </property>
-            <property name="text">
-                <string>Alwa&amp;ys show Home and Root items</string>
-            </property>
-            <property name="accel">
-                <string>Alt+Y</string>
-            </property>
-            <property name="whatsThis" stdset="0">
-                <string>If this is checked the tree status will be remembered. That means the open folder will get reopened again and the size of the columns will be restored.</string>
-            </property>
-        </widget>
-        <spacer>
-            <property name="name">
-                <cstring>spacer1</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>190</height>
-                </size>
-            </property>
-        </spacer>
-    </vbox>
-</widget>
-<layoutdefaults spacing="6" margin="11"/>
-</UI>
+<ui version="4.0" >
+ <author></author>
+ <comment></comment>
+ <exportmacro></exportmacro>
+ <class>QuantaFilesTreeGlobalConfigBase</class>
+ <widget class="QWidget" name="QuantaFilesTreeGlobalConfigBase" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>600</width>
+    <height>480</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>QuantaFilesTree</string>
+  </property>
+  <layout class="QVBoxLayout" >
+   <property name="margin" >
+    <number>11</number>
+   </property>
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <item>
+    <widget class="QCheckBox" name="kcfg_FilesTreeTooltips" >
+     <property name="sizePolicy" >
+      <sizepolicy>
+       <hsizetype>1</hsizetype>
+       <vsizetype>0</vsizetype>
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="whatsThis" >
+      <string>If this is set the tooltips with additional informations will show.</string>
+     </property>
+     <property name="text" >
+      <string>Show tooltips</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="kcfg_FilesTreeShowHidden" >
+     <property name="whatsThis" >
+      <string>If this is set the hidden files and folder in the filesystem will be visible.</string>
+     </property>
+     <property name="text" >
+      <string>Show hidden files/folders</string>
+     </property>
+     <property name="shortcut" >
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="kcfg_FilesTreeSave" >
+     <property name="whatsThis" >
+      <string>If this is checked the tree status will be remembered. That means the open folder will get reopened again and the size of the columns will be restored.</string>
+     </property>
+     <property name="text" >
+      <string>Remem&amp;ber the tree status</string>
+     </property>
+     <property name="shortcut" >
+      <string>Alt+B</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="kcfg_FilesTreeRootHome" >
+     <property name="whatsThis" >
+      <string>If this is checked the tree status will be remembered. That means the open folder will get reopened again and the size of the columns will be restored.</string>
+     </property>
+     <property name="text" >
+      <string>Alwa&amp;ys show Home and Root items</string>
+     </property>
+     <property name="shortcut" >
+      <string>Alt+Y</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Expanding</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>20</width>
+       <height>190</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <resources/>
+ <connections/>
+</ui>

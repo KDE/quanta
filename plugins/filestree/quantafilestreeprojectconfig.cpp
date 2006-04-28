@@ -22,9 +22,10 @@
 
 #include "quantafilestreepart.h"
 
-QuantaFilesTreeProjectConfig::QuantaFilesTreeProjectConfig(QuantaFilesTreePart *part, QWidget *parent, const char *name)
-    : QuantaFilesTreeProjectConfigBase(parent, name), m_part(part)
+QuantaFilesTreeProjectConfig::QuantaFilesTreeProjectConfig(QuantaFilesTreePart *part, QWidget *parent)
+    : QWidget(parent), m_part(part)
 {
+  setupUi(this);
 }
 
 void QuantaFilesTreeProjectConfig::accept()

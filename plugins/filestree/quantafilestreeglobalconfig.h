@@ -21,16 +21,16 @@
 #ifndef QUANTAFILESTREE_GLOBAL_CONFIG_H
 #define QUANTAFILESTREE_GLOBAL_CONFIG_H
 
-#include "quantafilestreeglobalconfigbase.h"
+#include "ui_quantafilestreeglobalconfigbase.h"
 
 class QuantaFilesTreePart;
 class KConfigDialogManager;
 
-class QuantaFilesTreeGlobalConfig: public QuantaFilesTreeGlobalConfigBase
+class QuantaFilesTreeGlobalConfig: public QWidget, public Ui::QuantaFilesTreeGlobalConfigBase
 {
     Q_OBJECT
 public:
-    QuantaFilesTreeGlobalConfig(QuantaFilesTreePart *part, QWidget *parent = 0, const char *name = 0);
+    QuantaFilesTreeGlobalConfig(QuantaFilesTreePart *part, QWidget *parent = 0);
 
     ~QuantaFilesTreeGlobalConfig();
 

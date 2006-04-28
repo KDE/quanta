@@ -26,9 +26,10 @@
 #include <kconfigdialogmanager.h>
 
 
-QuantaFilesTreeGlobalConfig::QuantaFilesTreeGlobalConfig(QuantaFilesTreePart *part, QWidget *parent, const char *name)
-    : QuantaFilesTreeGlobalConfigBase(parent, name), m_part(part)
+QuantaFilesTreeGlobalConfig::QuantaFilesTreeGlobalConfig(QuantaFilesTreePart *part, QWidget *parent)
+    : QWidget(parent), m_part(part)
 {
+  setupUi(this);
   manager = new KConfigDialogManager(this, Settings::self());
   manager->updateWidgets();
 }
