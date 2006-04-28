@@ -20,7 +20,7 @@
 #include "newtemplatedirdlg.h"
 #include "extfileinfo.h"
 #include "quantanetaccess.h"
-#include "quantapropertiespage.h"
+#include "ui_quantapropertiespage.h"
 #include "quantacoreif.h"
 // #include "tagaction.h"
 // #include "tagmaildlg.h"
@@ -574,9 +574,11 @@ void TemplatesTreeView::slotProperties()
 
 //Always add the Quanta directory page
   QFrame *quantaDirPage = propDlg->addPage(i18n("Quanta Template"));
-  QVBoxLayout *topLayout = new QVBoxLayout( quantaDirPage);
-  m_quantaProperties = new QuantaPropertiesPage( quantaDirPage );
-  m_quantaProperties->setWindowTitle(i18n("Quanta"));
+  QVBoxLayout *topLayout = new QVBoxLayout(quantaDirPage);
+  QWidget *w = new QWidget(quantaDirPage);
+  m_quantaProperties = new Ui::QuantaPropertiesPage;
+  m_quantaProperties->setupUi(w);
+  w->setWindowTitle(i18n("Quanta"));
 
   m_quantaProperties->typesCombo->addItem(typeToi18n["text/all"]);
   m_quantaProperties->typesCombo->addItem(typeToi18n["file/all"]);
@@ -619,7 +621,7 @@ void TemplatesTreeView::slotProperties()
     startDir = url.path() + "/dummy_file";
     m_quantaProperties->typeStack->raiseWidget(0);
   }
-  m_quantaProperties->setEnabled(writable);
+  w->setEnabled(writable);
   QFileInfo dotFileInfo(QFileInfo(startDir).path() + "/.dirinfo");
   m_parentDirInfo = readDirInfo(dotFileInfo.path());
   if (!dotFileInfo.exists() || m_dirInfo.mimeType == m_parentDirInfo.mimeType)
@@ -640,7 +642,7 @@ void TemplatesTreeView::slotProperties()
     m_quantaProperties->usePrePostText->setChecked(true);
    }
 
-   topLayout->addWidget( m_quantaProperties );
+   topLayout->addWidget(w);
    connect( propDlg, SIGNAL( applied() ), this , SLOT( slotPropertiesApplied()) );
 
   QString name = url.path() + TMPL;

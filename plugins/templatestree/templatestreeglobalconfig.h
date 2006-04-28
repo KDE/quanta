@@ -21,16 +21,16 @@
 #ifndef TEMPLATESTREE_GLOBAL_CONFIG_H
 #define TEMPLATESTREE_GLOBAL_CONFIG_H
 
-#include "templatestreeglobalconfigbase.h"
+#include "ui_templatestreeglobalconfigbase.h"
 
 class TemplatesTreePart;
 class KConfigDialogManager;
 
-class TemplatesTreeGlobalConfig: public TemplatesTreeGlobalConfigBase
+class TemplatesTreeGlobalConfig: public QWidget, public Ui::TemplatesTreeGlobalConfigBase
 {
     Q_OBJECT
 public:
-    TemplatesTreeGlobalConfig(TemplatesTreePart *part, QWidget *parent = 0, const char *name = 0);
+    TemplatesTreeGlobalConfig(TemplatesTreePart *part, QWidget *parent = 0);
 
     ~TemplatesTreeGlobalConfig();
 

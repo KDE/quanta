@@ -22,9 +22,10 @@
 
 #include "templatestreepart.h"
 
-TemplatesTreeProjectConfig::TemplatesTreeProjectConfig(TemplatesTreePart *part, QWidget *parent, const char *name)
-    : TemplatesTreeProjectConfigBase(parent, name), m_part(part)
+TemplatesTreeProjectConfig::TemplatesTreeProjectConfig(TemplatesTreePart *part, QWidget *parent)
+    : QWidget(parent), m_part(part)
 {
+  setupUi(this);
 }
 
 void TemplatesTreeProjectConfig::accept()

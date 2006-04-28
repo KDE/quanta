@@ -136,14 +136,14 @@ void TemplatesTreePart::insertConfigWidget(const KDialogBase *dlg, QWidget *page
     {
         case GLOBALDOC_OPTIONS:
         {
-            TemplatesTreeGlobalConfig *w = new TemplatesTreeGlobalConfig(this, page, "global config");
+            TemplatesTreeGlobalConfig *w = new TemplatesTreeGlobalConfig(this, page);
             connect(dlg, SIGNAL(okClicked()), w, SLOT(accept()));
             connect(w, SIGNAL(accepted()), m_widget, SLOT(slotSettingsChanged()));
             break;
         }
         case PROJECTDOC_OPTIONS:
         {
-            TemplatesTreeProjectConfig *w = new TemplatesTreeProjectConfig(this, page, "project config");
+            TemplatesTreeProjectConfig *w = new TemplatesTreeProjectConfig(this, page);
             connect(dlg, SIGNAL(okClicked()), w, SLOT(accept()));
             break;
         }

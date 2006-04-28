@@ -26,7 +26,10 @@
 class Q3DragObject;
 class KMainWindow;
 
-class QuantaPropertiesPage;
+namespace Ui
+{
+  class QuantaPropertiesPage;
+}
 class TemplatesTreePart;
 
 class TemplatesTreeBranch : public BaseTreeBranch {
@@ -120,7 +123,7 @@ private:
   void updateTypeDescription(KFileTreeViewItem *item, const QString &typeString);
 
   BaseTreeBranch *m_projectDir;
-  QuantaPropertiesPage *m_quantaProperties;
+  Ui::QuantaPropertiesPage *m_quantaProperties;
   QString m_projectName;
   KUrl localURL;
   KUrl globalURL;

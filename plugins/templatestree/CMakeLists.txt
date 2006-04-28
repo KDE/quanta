@@ -22,7 +22,7 @@ set(kdevtemplatestree_PART_SRCS
 
 kde4_automoc(${kdevtemplatestree_PART_SRCS})
 
-kde4_add_ui3_files(kdevtemplatestree_PART_SRCS 
+kde4_add_ui_files(kdevtemplatestree_PART_SRCS
    templatestreeglobalconfigbase.ui 
    templatestreeprojectconfigbase.ui 
    templatedirform.ui 

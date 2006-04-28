@@ -2,7 +2,7 @@
                           newtemplatedirdlg.h  -  description
                              -------------------
     begin                : Fri Jun 21 2002
-    copyright            : (C) 2002 by Andras Mantia <amantia@kde.org>
+    copyright            : (C) 2002, 2006 by Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -16,17 +16,19 @@
 #ifndef NEWTEMPLATEDIRDLG_H
 #define NEWTEMPLATEDIRDLG_H
 
-#include <qwidget.h>
-#include <templatedirform.h>
+#include "ui_templatedirform.h"
+
+#include <kdialog.h>
 
 /**
   *@author Andras Mantia
   */
 
-class NewTemplateDirDlg : public TemplateDirForm  {
+class NewTemplateDirDlg : public KDialog, public Ui::TemplateDirForm
+{
    Q_OBJECT
 public:
-  NewTemplateDirDlg(QWidget *parent=0, const char *name=0);
+  NewTemplateDirDlg(QWidget *parent=0);
   ~NewTemplateDirDlg();
 };
 

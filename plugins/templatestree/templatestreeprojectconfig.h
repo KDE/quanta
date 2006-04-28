@@ -21,15 +21,15 @@
 #ifndef TEMPLATESTREE_PROJECT_CONFIG_H
 #define TEMPLATESTREE_PROJECT_CONFIG_H
 
-#include "templatestreeprojectconfigbase.h"
+#include "ui_templatestreeprojectconfigbase.h"
 
 class TemplatesTreePart;
 
-class TemplatesTreeProjectConfig: public TemplatesTreeProjectConfigBase
+class TemplatesTreeProjectConfig: public QWidget, public Ui::TemplatesTreeProjectConfigBase
 {
     Q_OBJECT
 public:
-    TemplatesTreeProjectConfig(TemplatesTreePart *part, QWidget *parent = 0, const char *name = 0);
+    TemplatesTreeProjectConfig(TemplatesTreePart *part, QWidget *parent = 0);
 
 public slots:
     void accept();

@@ -26,9 +26,10 @@
 
 #include <kconfigdialogmanager.h>
 
-TemplatesTreeGlobalConfig::TemplatesTreeGlobalConfig(TemplatesTreePart *part, QWidget *parent, const char *name)
-    : TemplatesTreeGlobalConfigBase(parent, name), m_part(part)
+TemplatesTreeGlobalConfig::TemplatesTreeGlobalConfig(TemplatesTreePart *part, QWidget *parent)
+    : QWidget(parent), m_part(part)
 {
+  setupUi(this);
   manager = new KConfigDialogManager(this, Settings::self());
   manager->updateWidgets();
 }

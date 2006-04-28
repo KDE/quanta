@@ -1,6 +1,6 @@
 /***************************************************************************
     begin                : Fri Jun 21 2002
-    copyright            : (C) 2002 by Andras Mantia <amantia@kde.org>
+    copyright            : (C) 2002, 2006 by Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -11,15 +11,14 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <qpushbutton.h>
 #include "newtemplatedirdlg.h"
 #include "newtemplatedirdlg.moc"
 
-NewTemplateDirDlg::NewTemplateDirDlg(QWidget *parent, const char *name ) : TemplateDirForm(parent,name)
+NewTemplateDirDlg::NewTemplateDirDlg(QWidget *parent) : KDialog(parent, "", KDialog::Ok | KDialog::Cancel)
 {
-  setWindowTitle(name);
-  connect( buttonOk, SIGNAL(clicked()), SLOT(accept()) );
-  connect( buttonCancel, SIGNAL(clicked()), SLOT(reject()) );
+  QWidget *w = new QWidget(this);
+  setupUi(w);
+  setMainWidget(w);
 }
 
 NewTemplateDirDlg::~NewTemplateDirDlg()
