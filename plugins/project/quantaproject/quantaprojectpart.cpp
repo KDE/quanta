@@ -138,7 +138,7 @@ void QuantaProjectPart::insertConfigWidget( const KDialogBase *dlg, QWidget *pag
   {
     case PROJECTDOC_OPTIONS:
       {
-        QuantaProjectProjectConfig * w = new QuantaProjectProjectConfig( this, page, "project config" );
+        QuantaProjectProjectConfig * w = new QuantaProjectProjectConfig( this, page);
         connect( dlg, SIGNAL( okClicked() ), w, SLOT( accept() ) );
         break;
       }

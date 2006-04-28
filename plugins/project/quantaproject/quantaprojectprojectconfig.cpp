@@ -22,9 +22,10 @@
 
 #include "quantaprojectpart.h"
 
-QuantaProjectProjectConfig::QuantaProjectProjectConfig(QuantaProjectPart *part, QWidget *parent, const char *name)
-    : QuantaProjectProjectConfigBase(parent, name), m_part(part)
+QuantaProjectProjectConfig::QuantaProjectProjectConfig(QuantaProjectPart *part, QWidget *parent)
+    : QWidget(parent), m_part(part)
 {
+  setupUi(this);
 }
 
 void QuantaProjectProjectConfig::accept()

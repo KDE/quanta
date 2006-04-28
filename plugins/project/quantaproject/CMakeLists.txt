@@ -20,7 +20,8 @@ set(kdevquantaproject_PART_SRCS
 
 kde4_automoc(${kdevquantaproject_PART_SRCS})
 
-kde4_add_ui3_files(kdevquantaproject_PART_SRCS quantaprojectprojectconfigbase.ui )
+kde4_add_ui_files(kdevquantaproject_PART_SRCS
+  quantaprojectprojectconfigbase.ui )
 
 kde4_add_plugin(kdevquantaproject WITH_PREFIX ${kdevquantaproject_PART_SRCS})
 

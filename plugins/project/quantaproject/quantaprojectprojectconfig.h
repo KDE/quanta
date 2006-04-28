@@ -21,15 +21,15 @@
 #ifndef QUANTAPROJECT_PROJECT_CONFIG_H
 #define QUANTAPROJECT_PROJECT_CONFIG_H
 
-#include "quantaprojectprojectconfigbase.h"
+#include "ui_quantaprojectprojectconfigbase.h"
 
 class QuantaProjectPart;
 
-class QuantaProjectProjectConfig: public QuantaProjectProjectConfigBase
+class QuantaProjectProjectConfig: public QWidget, public Ui::QuantaProjectProjectConfigBase
 {
     Q_OBJECT
 public:
-    QuantaProjectProjectConfig(QuantaProjectPart *part, QWidget *parent = 0, const char *name = 0);
+    QuantaProjectProjectConfig(QuantaProjectPart *part, QWidget *parent = 0);
 
 public slots:
     void accept();
