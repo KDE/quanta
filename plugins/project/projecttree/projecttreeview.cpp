@@ -138,7 +138,7 @@ ProjectTreeView::ProjectTreeView(KDevPlugin * plugin, QWidget *parent)
   setRenameable(1, true);
 
   connect(this, SIGNAL(contextMenu(K3ListView*, Q3ListViewItem*, const QPoint&)),
-          this, SLOT(slotMenu(KListView*, Q3ListViewItem*, const QPoint&)));
+          this, SLOT(slotMenu(K3ListView*, Q3ListViewItem*, const QPoint&)));
 
   connect(this, SIGNAL(open(Q3ListViewItem *)),
           this, SLOT(slotSelectFile(Q3ListViewItem *)));
