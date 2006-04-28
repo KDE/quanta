@@ -30,7 +30,9 @@ set(kdevtagdialogs_PART_SRCS
 
 kde4_automoc(${kdevtagdialogs_PART_SRCS})
 
-kde4_add_ui3_files(kdevtagdialogs_PART_SRCS tagmail.ui tagmisc.ui )
+kde4_add_ui_files(kdevtagdialogs_PART_SRCS
+  tagmail.ui
+  tagmisc.ui )
 
 kde4_add_plugin(kdevtagdialogs WITH_PREFIX ${kdevtagdialogs_PART_SRCS})
 

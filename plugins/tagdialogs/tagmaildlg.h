@@ -16,16 +16,18 @@
 #ifndef TAGMAILDLG_H
 #define TAGMAILDLG_H
 
-#include "tagmail.h"
+#include "ui_tagmail.h"
+
+#include <kdialogbase.h>
 
 /**
   *@author Andras Mantia
   */
 
-class TagMailDlg : public TagMail  {
+class TagMailDlg : public KDialogBase, public Ui::TagMail  {
 Q_OBJECT
 public:
-  TagMailDlg(QWidget *parent=0, const char *name=0);
+  TagMailDlg(QWidget *parent=0);
   ~TagMailDlg();
 private slots: // Private slots
   /** Select a mail address, using the KABC */

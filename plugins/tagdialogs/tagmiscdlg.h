@@ -16,17 +16,19 @@
 #ifndef TAGMISCDLG_H
 #define TAGMISCDLG_H
 
+#include "ui_tagmisc.h"
+
 #include <kdialogbase.h>
 
 
 class TagMisc;
 
-class TagMiscDlg : public KDialogBase
+class TagMiscDlg : public KDialogBase, public Ui::TagMisc
 {
     Q_OBJECT
 
 public:
-    TagMiscDlg( QWidget* parent = 0, const char* name = 0, bool addClosingTag=true, const QString &element=QString::null );
+    TagMiscDlg( QWidget* parent = 0, bool addClosingTag=true, const QString &element=QString::null );
     ~TagMiscDlg();
 
     QString elementTagName() const;
@@ -35,8 +37,6 @@ public:
 protected slots:
     void slotMiscTagChanged( const QString & );
 
-private:
-    TagMisc *miscWidget;
 };
 
 #endif // TAGMISCDLG_H

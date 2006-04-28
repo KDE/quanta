@@ -14,20 +14,18 @@
  ***************************************************************************/
 
 #include "tagmiscdlg.h"
-#include "tagmisc.h"
 #include <klocale.h>
 #include <qlineedit.h>
 #include <qcheckbox.h>
 
-TagMiscDlg::TagMiscDlg( QWidget* parent, const char* name, bool addClosingTag, const QString &element )
-    :KDialogBase( parent, name, true, i18n("Misc. Tag"), KDialogBase::Ok | KDialogBase::Cancel )
+TagMiscDlg::TagMiscDlg( QWidget* parent, bool _addClosingTag, const QString &element )
+  :KDialogBase(KDialogBase::Plain, i18n("Misc. Tag"), KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, parent)
 {
-    miscWidget = new TagMisc(this);
-    connect( miscWidget->elementName, SIGNAL( textChanged ( const QString & ) ), this, SLOT( slotMiscTagChanged(const QString & ) ) );
-     setMainWidget(miscWidget);
-     miscWidget->addClosingTag->setChecked(addClosingTag);
-     miscWidget->elementName->setText(element);
-     slotMiscTagChanged( element );
+  setupUi(this);
+  connect( elementName, SIGNAL( textChanged ( const QString & ) ), this, SLOT( slotMiscTagChanged(const QString & ) ) );
+  addClosingTagCheckBox->setChecked(_addClosingTag);
+  elementName->setText(element);
+  slotMiscTagChanged( element );
 }
 
 TagMiscDlg::~TagMiscDlg()
@@ -43,12 +41,12 @@ void TagMiscDlg::slotMiscTagChanged( const QString &_tag )
 
 QString TagMiscDlg::elementTagName() const
 {
-    return miscWidget->elementName->text();
+    return elementName->text();
 }
 
 bool TagMiscDlg::addClosingTag() const
 {
-    return miscWidget->addClosingTag->isChecked();
+    return addClosingTagCheckBox->isChecked();
 }
 
 #include "tagmiscdlg.moc"

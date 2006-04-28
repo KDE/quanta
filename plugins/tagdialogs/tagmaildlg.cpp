@@ -33,19 +33,19 @@
 #include <qregexp.h>
 
 
-TagMailDlg::TagMailDlg(QWidget *parent, const char *name)
-  :TagMail(parent, name)
+TagMailDlg::TagMailDlg(QWidget *parent)
+  :KDialogBase(KDialogBase::Plain, i18n("TagMail"), KDialogBase::Help | KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, parent)
 {
-  setWindowTitle(name);
+  setupUi(this);
   setModal(true);
 
-  connect( buttonOk,     SIGNAL(clicked()), SLOT(accept()) );
+/*  connect( buttonOk,     SIGNAL(clicked()), SLOT(accept()) );
   connect( buttonCancel, SIGNAL(clicked()), SLOT(reject()) );
-  connect( buttonHelp,SIGNAL(clicked()),this,SLOT(slotShowHelp()));
+  connect( buttonHelp,SIGNAL(clicked()),this,SLOT(slotShowHelp()));*/
   connect( buttonAddressSelect, SIGNAL(clicked()), SLOT(slotSelectAddress()) );
-  buttonOk->setIcon(SmallIconSet("button_ok"));
+ /* buttonOk->setIcon(SmallIconSet("button_ok"));
   buttonCancel->setIcon(SmallIconSet("button_cancel"));
-  buttonHelp->setIcon(SmallIconSet("help"));
+  buttonHelp->setIcon(SmallIconSet("help"));*/
   lineEmail->setFocus();
 }
 
