@@ -50,26 +50,26 @@ public:
     ~QuantaProjectPart();
 
     virtual void closeProject();
-    virtual QString projectDirectory() const KDE_DEPRECATED; 
+    virtual KDE_DEPRECATED QString projectDirectory() const;
     /**
      * Get the URL pointing to the base project directory
      * @return the URL pointing to the base project directory
     */
     virtual KUrl projectBase() const {return m_projectBase;}
     virtual void openProject(const QString &dirName, const QString &projectName);
-    virtual QString projectName() const {return m_projectName;} 
+    virtual QString projectName() const {return m_projectName;}
     virtual QStringList allFiles () const;
     virtual void addFiles (const QStringList &fileList);
-    
+
     virtual void addFile (const QString &fileName) {addFiles(QStringList(fileName));}
-    
+
     virtual void removeFiles (const QStringList &fileList);
     virtual void removeFile (const QString &fileName);
     virtual KDE_DEPRECATED bool isProjectFile(const QString &path) {return isProjectFile(KUrl::fromPathOrURL(path));}
-    
+
     virtual bool isProjectFile(const KUrl &url);
     /**
-    * Returns the element pointing to the node of the project dom tree holding all the project information. 
+    * Returns the element pointing to the node of the project dom tree holding all the project information.
     * @return the project dom element ("/kdevelop/project" in our case)
     */
     virtual QDomElement domProjectElement() {return m_projectDomElement;}
@@ -82,21 +82,21 @@ public:
     virtual QString activeDirectory () const {return QString();}
     virtual QString buildDirectory () const {return QString();}
     virtual QStringList distFiles () const {return QStringList();}
-    
+
     /**
       * @param url url of a project file or folder
-      * @return the QDomElement associated to a project url 
+      * @return the QDomElement associated to a project url
       */
     virtual QDomElement domElementForPath(const QString &relPath) {return m_files.contains(relPath) ? m_files[relPath] : QDomElement();}
 
     virtual QString relativeProjectFile(const QString &absPath);
-    
+
 private slots:
     void init();
-    
+
     void insertConfigWidget(const KDialogBase *dlg, QWidget *page, unsigned int pageNo);
     void contextMenu(QMenu *popup, const Context *context);
-    
+
     void slotInsertFiles();
     void slotInsertFolder();
     void slotTargetFolderSelected(QAction *action, const KUrl& url);
@@ -104,7 +104,7 @@ private slots:
 private:
     void setupActions();
     QStringList removeItems(const QStringList &item);
-    
+
     QPointer<QuantaProjectWidget> m_widget;
     ConfigWidgetProxy *m_configProxy;
 
