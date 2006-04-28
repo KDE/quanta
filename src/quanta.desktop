@@ -1,14 +1,13 @@
 [Desktop Entry]
 Categories=Qt;KDE;Development;
 Comment=
-Comment[en_US]=
 Encoding=UTF-8
 Exec=quanta %u
 GenericName=IDE for Web Development
-GenericName[en_US]=IDE for Web Development
 Icon=quanta
 MimeType=application/x-kdevelop;application/x-php;text/css;text/docbook;text/html;text/xml
 Name=Quanta Plus
+Name[x-test]=xxQuanta Plusxx
 Path=
 StartupNotify=true
 Terminal=false
