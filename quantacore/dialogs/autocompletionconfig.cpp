@@ -15,9 +15,10 @@
 
 #include <qcheckbox.h>
 
-AutocompletionConfig::AutocompletionConfig(QWidget *parent, const char *name)
- : AutocompletionConfigBase(parent, name)
+AutocompletionConfig::AutocompletionConfig(QWidget *parent)
+ : QWidget(parent)
 {
+  setupUi(this);
   closeTags->setChecked(Settings::self()->closeTags());
   closeOptionalTags->setChecked(Settings::self()->closeOptionalTags());
   updateClosingTags->setChecked(Settings::self()->updateClosingTags());

@@ -20,9 +20,10 @@
 
 #include <kcombobox.h>
 
-EnvironmentConfig::EnvironmentConfig(QWidget *parent, const char *name)
- : EnvironmentConfigBase(parent, name)
+EnvironmentConfig::EnvironmentConfig(QWidget *parent)
+ : QWidget(parent)
 {
+  setupUi(this);
   QStringList lst = DTDs::ref()->nickNameList(true);
   uint pos = 0;
   for (int i = 0; i < lst.count(); i++)

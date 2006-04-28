@@ -41,9 +41,10 @@
 
 
 
-DTEPEditDlg::DTEPEditDlg(const QString& descriptionFile, QWidget *parent, const char *name)
- : DTEPEditDlgS(parent, name)
+DTEPEditDlg::DTEPEditDlg(const QString& descriptionFile, QWidget *parent)
+ : QWidget(parent)
 {
+  setupUi(this);
   nameEdit->setFocus();
   m_descriptionFile = descriptionFile;
 

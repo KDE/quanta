@@ -20,7 +20,7 @@
 #include <qlist.h>
 
 //own includes
-#include "dtepeditdlgs.h"
+#include "ui_dtepeditdlgs.h"
 
 /**
 @author Andras Mantia
@@ -53,11 +53,11 @@ struct StructGroup {
   bool objectGroup;
 };
 
-class DTEPEditDlg : public DTEPEditDlgS
+class DTEPEditDlg : public QWidget, public Ui::DTEPEditDlgS
 {
   Q_OBJECT
   public:
-    DTEPEditDlg(const QString& descriptionFile, QWidget *parent = 0, const char *name = 0);
+    DTEPEditDlg(const QString& descriptionFile, QWidget *parent = 0);
     ~DTEPEditDlg();
     void saveResult();
     void slotFamilyChanged(int family);

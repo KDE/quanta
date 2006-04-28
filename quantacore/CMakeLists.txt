@@ -55,15 +55,12 @@ set(kdevquantacore_PART_SRCS
 )
 
 kde4_add_ui_files(kdevquantacore_PART_SRCS
-dialogs/dtepstructureeditdlgs.ui
-)   
-
-kde4_add_ui3_files(kdevquantacore_PART_SRCS
 dialogs/autocompletionconfigbase.ui
-dialogs/environmentconfigbase.ui
+dialogs/dtepeditdlgs.ui
+dialogs/dtepstructureeditdlgs.ui
 dialogs/dtdselectdialog.ui
 dialogs/donationdialog.ui
-dialogs/dtepeditdlgs.ui
+dialogs/environmentconfigbase.ui
 
 parsers/dtd/dtepcreationdlg.ui
 )   

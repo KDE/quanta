@@ -13,18 +13,18 @@
 #ifndef AUTOCOMPLETIONCONFIG_H
 #define AUTOCOMPLETIONCONFIG_H
 
-#include "autocompletionconfigbase.h"
+#include "ui_autocompletionconfigbase.h"
 
 /**
 Configuration dialog for autocompletion settings.
 
 @author Andras Mantia
 */
-class AutocompletionConfig : public AutocompletionConfigBase
+class AutocompletionConfig : public QWidget, public Ui::AutocompletionConfigBase
 {
 Q_OBJECT
 public:
-    AutocompletionConfig(QWidget *parent = 0, const char *name = 0);
+    AutocompletionConfig(QWidget *parent = 0);
 
     ~AutocompletionConfig();
 

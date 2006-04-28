@@ -44,7 +44,7 @@
 #include "dtepeditdlg.h"
 #include "dtdparser.h"
 #include "qtag.h"
-#include "dtepcreationdlg.h"
+#include "ui_dtepcreationdlg.h"
 #include "quantacommon.h"
 #include "extfileinfo.h"
 
@@ -105,27 +105,29 @@ bool DTDParser::parse()
     return false;
   }
   KDialogBase dlg(0L, 0L, true, i18n("DTD - > DTEP Conversion"), KDialogBase::Ok | KDialogBase::Cancel);
-  DTEPCreationDlg w(&dlg);
-  dlg.setMainWidget(&w);
+  QWidget *w = new QWidget(&dlg);
+  Ui::DTEPCreationDlg form;
+  form.setupUi(w);
+  dlg.setMainWidget(w);
   QString name = QString((const char*)DTD::dtd_ptr->name);
   if (name == "none")
     name = QFileInfo(m_dtdURL.fileName()).baseName();
-  w.dtdName->setText(name);
-  w.nickName->setText(name);
-  w.directory->setText(QFileInfo(m_dtdURL.fileName()).baseName());
-  w.doctype->setText(QString((const char*)DTD::dtd_ptr->ExternalID));
-  w.dtdURL->setText(QString((const char*)DTD::dtd_ptr->SystemID));
+  form.dtdName->setText(name);
+  form.nickName->setText(name);
+  form.directory->setText(QFileInfo(m_dtdURL.fileName()).baseName());
+  form.doctype->setText(QString((const char*)DTD::dtd_ptr->ExternalID));
+  form.dtdURL->setText(QString((const char*)DTD::dtd_ptr->SystemID));
   if (!dlg.exec())
       return false;
-  m_name = w.dtdName->text();
-  m_nickName = w.nickName->text();
-  m_doctype = w.doctype->text();
+  m_name = form.dtdName->text();
+  m_nickName = form.nickName->text();
+  m_doctype = form.doctype->text();
   m_doctype.replace(QRegExp("<!doctype", Qt::CaseInsensitive), "");
   m_doctype = m_doctype.left(m_doctype.lastIndexOf(">"));
-  m_dtdURLLine = w.dtdURL->text();
-  m_defaultExtension = w.defaultExtension->text();
-  m_caseSensitive = w.caseSensitive->isChecked();
-  DTD::dirName = m_dtepDir + "/" + w.directory->text();
+  m_dtdURLLine = form.dtdURL->text();
+  m_defaultExtension = form.defaultExtension->text();
+  m_caseSensitive = form.caseSensitive->isChecked();
+  DTD::dirName = m_dtepDir + "/" + form.directory->text();
   KUrl u;
   u.setPath(DTD::dirName);
   if (!ExtFileInfo::createDir(u)) {
@@ -158,7 +160,7 @@ bool DTDParser::parse()
   }
   xmlFreeDtd(DTD::dtd_ptr);
   writeDescriptionRC();
-  if (w.fineTune->isChecked())
+  if (form.fineTune->isChecked())
   {
     KDialogBase editDlg(0L, "edit_dtep", true, i18n("Configure DTEP"), KDialogBase::Ok | KDialogBase::Cancel);
     DTEPEditDlg dtepDlg(DTD::dirName + "description.rc", &editDlg);

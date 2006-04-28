@@ -14,9 +14,9 @@
 #include "autocompletionconfig.h"
 #include "environmentconfig.h"
 #include "extfileinfo.h"
-#include "donationdialog.h"
+#include "ui_donationdialog.h"
 #include "dtds.h"
-#include "dtdselectdialog.h"
+#include "ui_dtdselectdialog.h"
 #include "parsermanager.h"
 #include "quantacommon.h"
 #include "settings.h"
@@ -211,13 +211,13 @@ void QuantaCorePart::slotInsertConfigWidget(const KDialogBase *dlg, QWidget *pag
     {
         case AUTOCOMPLETE_OPTIONS:
         {
-            AutocompletionConfig *w = new AutocompletionConfig(page, "autocompletion config");
+            AutocompletionConfig *w = new AutocompletionConfig(page);
             connect(dlg, SIGNAL(okClicked()), w, SLOT(accept()));
             break;
         }
         case ENVIRONMENT_OPTIONS:
         {
-            EnvironmentConfig *w = new EnvironmentConfig(page, "environment config");
+            EnvironmentConfig *w = new EnvironmentConfig(page);
             connect(dlg, SIGNAL(okClicked()), w, SLOT(accept()));
             break;
         }
@@ -227,10 +227,12 @@ void QuantaCorePart::slotInsertConfigWidget(const KDialogBase *dlg, QWidget *pag
 
 void QuantaCorePart::slotMakeDonation()
 {
- DonationDialog dlg(mainWindow()->main());
- dlg.closeButton->setIcon(QIcon("fileclose"));
- connect(dlg.closeButton, SIGNAL(clicked()), &dlg, SLOT(accept()));
- dlg.exec();
+  KDialogBase dlg(mainWindow()->main(), 0L, true, i18n("Support Quanta with Financial Donation"), KDialogBase::Close);
+  QWidget *w = new QWidget(&dlg);
+  Ui::DonationDialog form;
+  form.setupUi(w);
+  dlg.setMainWidget(w);
+  dlg.exec();
 }
 
 void QuantaCorePart::slotHelpHomepage()
@@ -418,9 +420,11 @@ void QuantaCorePart::slotChangeDTEP()
   if (m_activeQuantaDoc)
   {
     KDialogBase dlg(mainWindow()->main(), 0L, true, i18n("DTEP Selector"), KDialogBase::Ok | KDialogBase::Cancel);
-    DTDSelectDialog *dtdWidget = new DTDSelectDialog(&dlg);
-    dtdWidget->setMinimumHeight(130);
-    dlg.setMainWidget(dtdWidget);
+    QWidget *w = new QWidget(&dlg);
+    Ui::DTDSelectDialog form;
+    form.setupUi(w);
+    w->setMinimumHeight(130);
+    dlg.setMainWidget(w);
     int pos = -1;
     int defaultIndex = 0;
 
@@ -433,7 +437,7 @@ void QuantaCorePart::slotChangeDTEP()
     QString defaultDtdNickName = DTDs::ref()->getDTDNickNameFromName(defaultDocType);
     for(int i = 0; i < lst.count(); ++i)
     {
-      dtdWidget->dtdCombo->addItem(lst[i]);
+      form.dtdCombo->addItem(lst[i]);
       if (lst[i] == oldDtdNickName)
         pos = i;
       if (lst[i] == defaultDtdNickName)
@@ -442,18 +446,18 @@ void QuantaCorePart::slotChangeDTEP()
 
     if (pos == -1)
       pos = defaultIndex;
-    dtdWidget->dtdCombo->setCurrentIndex(pos);
-    dtdWidget->messageLabel->setText(i18n("Change the current DTD."));
-    dtdWidget->currentDTD->setText(m_activeQuantaDoc->mainDTEP()->nickName);
+    form.dtdCombo->setCurrentIndex(pos);
+    form.messageLabel->setText(i18n("Change the current DTD."));
+    form.currentDTD->setText(m_activeQuantaDoc->mainDTEP()->nickName);
     //dlg->useClosestMatching->setShown(false);
-    delete dtdWidget->useClosestMatching;
-    dtdWidget->useClosestMatching = 0L;
-    dtdWidget->adjustSize();
+    delete form.useClosestMatching;
+    form.useClosestMatching = 0L;
+    w->adjustSize();
     if (dlg.exec())
     {
-      const DTDStruct *dtd = DTDs::ref()->find(DTDs::ref()->getDTDNameFromNickName(dtdWidget->dtdCombo->currentText()));
+      const DTDStruct *dtd = DTDs::ref()->find(DTDs::ref()->getDTDNameFromNickName(form.dtdCombo->currentText()));
       m_activeQuantaDoc->setMainDTEP(dtd);
-      if (dtdWidget->convertDTD->isChecked() && dtd->family == DTDStruct::Xml)
+      if (form.convertDTD->isChecked() && dtd->family == DTDStruct::Xml)
       {
 /*        if (tag)
         {

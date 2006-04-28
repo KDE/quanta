@@ -13,18 +13,18 @@
 #ifndef ENVIRONMENTCONFIG_H
 #define ENVIRONMENTCONFIG_H
 
-#include "environmentconfigbase.h"
+#include "ui_environmentconfigbase.h"
 
 /**
 Configuration dialog for environmental settings.
 
 @author Andras Mantia
 */
-class EnvironmentConfig : public EnvironmentConfigBase
+class EnvironmentConfig : public QWidget, public Ui::EnvironmentConfigBase
 {
 Q_OBJECT
 public:
-    EnvironmentConfig(QWidget *parent = 0, const char *name = 0);
+    EnvironmentConfig(QWidget *parent = 0);
 
     ~EnvironmentConfig();
 public slots:
