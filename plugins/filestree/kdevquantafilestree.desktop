@@ -9,7 +9,7 @@ Icon=system
 ServiceTypes=KDevelop/Plugin
 
 X-KDevelop-Plugin-Version=1
-X-KDevelop-Plugin-Homepage=
+X-KDevelop-Plugin-Homepage=http://kdewebdev.org/
 X-KDevelop-Plugin-BugsEmailAddress=jens@kdewebdev.org
 X-KDevelop-Plugin-Copyright=(C) by Jens Herden
 
