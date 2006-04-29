@@ -226,7 +226,7 @@ void FilesTreeView::slotAddToTop()
   {
     newBranch(url);
   } else {
-    KMessageBox::information(this, i18n("<qt><b>%1</b> is already a toplevel entry.</qt>").arg(url.url()));
+    KMessageBox::information(this, i18n("<qt><b>%1</b> is already a toplevel entry.</qt>", url.url()));
   }
 }
 
@@ -241,7 +241,7 @@ void FilesTreeView::slotNewTopFolder()
   {
     newBranch(url);
   } else {
-    KMessageBox::information(this, i18n("<qt><b>%1</b> is already a toplevel entry.</qt>").arg(url.url()));
+    KMessageBox::information(this, i18n("<qt><b>%1</b> is already a toplevel entry.</qt>", url.url()));
   }
 }
 

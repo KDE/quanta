@@ -262,7 +262,7 @@ void TemplatesTreePart::slotCreateSiteTemplate()
     error = true;
 
   if (error)
-    KMessageBox::error(mainWindow()->main(), i18n("<qt>There was an error while creating the site template tarball.<br>Check that you can read the files from <i>%1</i>, you have write access to <i>%2</i> and that you have enough free space in your temporary folder.</qt>").arg(url.pathOrURL()).arg(targetURL.pathOrURL()), i18n("Template Creation Error"));
+    KMessageBox::error(mainWindow()->main(), i18n("<qt>There was an error while creating the site template tarball.<br>Check that you can read the files from <i>%1</i>, you have write access to <i>%2</i> and that you have enough free space in your temporary folder.</qt>", url.pathOrURL(), targetURL.pathOrURL()), i18n("Template Creation Error"));
   delete tempFile;
 }
 

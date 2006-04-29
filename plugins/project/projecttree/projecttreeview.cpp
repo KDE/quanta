@@ -357,7 +357,7 @@ void ProjectTreeView::slotCreateFile()
       url.setPath(url.directory() + "/" + fileName);
     if (ExtFileInfo::exists(url))
     {
-      KMessageBox::error(this, i18n("<qt>Cannot create file, because a file named <b>%1</b> already exists.</qt>").arg(fileName), i18n("Error Creating File"));
+      KMessageBox::error(this, i18n("<qt>Cannot create file, because a file named <b>%1</b> already exists.</qt>", fileName), i18n("Error Creating File"));
       return;
     }
     KTempFile *tempFile = new KTempFile(Helper::tmpFilePrefix());

@@ -287,7 +287,7 @@ bool UserAction::slotActionActivated()
       proc->closeStdin();
     } else
     {
-      KMessageBox::error(m_plugin->mainWindow()->main(), i18n("<qt>There was an error running <b>%1</b>.<br>Check that you have the <i>%2</i> executable installed and it is accessible.</qt>").arg(command + " " + args).arg(command), i18n("Script Not Found"));
+      KMessageBox::error(m_plugin->mainWindow()->main(), i18n("<qt>There was an error running <b>%1</b>.<br>Check that you have the <i>%2</i> executable installed and it is accessible.</qt>", command + " " + args, command), i18n("Script Not Found"));
 //FIXME       ViewManager::ref()->activeView()->setFocus();
       if (m_loopStarted)
       {
@@ -377,7 +377,7 @@ void UserAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
     if (m_firstOutput)
     {
       emit showOutputView();
-      emit showMessage(i18n("The \"%1\" script output:\n").arg(actionText()), false);
+      emit showMessage(i18n("The \"%1\" script output:\n", actionText()), false);
       m_firstOutput = false;
     }
     emit showMessage(text, true);
@@ -393,7 +393,7 @@ void UserAction::slotGetScriptError( KProcess *, char *buffer, int buflen )
 /** Timeout occurred while waiting for some network function to return. */
 void UserAction::slotTimeout()
 {
-  if ((m_killCount == 0) && (KMessageBox::questionYesNo(m_plugin->mainWindow()->main(), i18n("<qt>The filtering action <b>%1</b> seems to be locked.<br>Do you want to terminate it?</qt>").arg(actionText()), i18n("Action Not Responding")) == KMessageBox::Yes))
+  if ((m_killCount == 0) && (KMessageBox::questionYesNo(m_plugin->mainWindow()->main(), i18n("<qt>The filtering action <b>%1</b> seems to be locked.<br>Do you want to terminate it?</qt>", actionText()), i18n("Action Not Responding")) == KMessageBox::Yes))
   {
     if (::kill(-proc->pid(), SIGTERM))
     {

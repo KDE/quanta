@@ -75,7 +75,7 @@ bool DTDParser::parse()
   QString fileName = QString::null;
   if (!KIO::NetAccess::download(m_dtdURL, fileName, 0))
   {
-    KMessageBox::error(0, i18n("<qt>Cannot download the DTD from <b>%1</b>.</qt>").arg( m_dtdURL.pathOrURL()));
+    KMessageBox::error(0, i18n("<qt>Cannot download the DTD from <b>%1</b>.</qt>", m_dtdURL.pathOrURL()));
     return false;
   }
   DTD::dtd_ptr = xmlParseDTD(NULL, xmlCharStrndup(fileName.toUtf8(), fileName.toUtf8().length()));
@@ -101,7 +101,7 @@ bool DTDParser::parse()
       xmlResetError(errorPtr);
     }
 #endif
-    KMessageBox::error(0, i18n("<qt>Error while parsing the DTD.<br>The error message is:<br><i>%1</i></qt>").arg(errorStr));
+    KMessageBox::error(0, i18n("<qt>Error while parsing the DTD.<br>The error message is:<br><i>%1</i></qt>", errorStr));
     return false;
   }
   KDialogBase dlg(KDialogBase::Plain, i18n("DTD - > DTEP Conversion"), KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok);

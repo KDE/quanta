@@ -400,7 +400,7 @@ void TemplatesTreeView::slotNewDir()
     createDirDlg->parentAttr->setText(i18n("&Inherit parent attribute (nothing)"));
    } else
    {
-     createDirDlg->parentAttr->setText(i18n("&Inherit parent attribute (%1)").arg(typeToi18n[m_dirInfo.mimeType]));
+     createDirDlg->parentAttr->setText(i18n("&Inherit parent attribute (%1)", typeToi18n[m_dirInfo.mimeType]));
    }
    if (createDirDlg->exec())
    {
@@ -418,7 +418,7 @@ void TemplatesTreeView::slotNewDir()
    if (!dir.mkdir(startDir+"/"+createDirDlg->dirName->text()))
    {
       KMessageBox::error(this,i18n("Error while creating the new folder.\n \
-                   Maybe you do not have permission to write in the %1 folder.").arg(startDir));
+                   Maybe you do not have permission to write in the %1 folder.", startDir));
       return;
    }
    if (! createDirDlg->parentAttr->isChecked())
@@ -482,13 +482,13 @@ void TemplatesTreeView::contentsDropEvent(QDropEvent *e)
         bool proceed = true;
         if (ExtFileInfo::exists(url))
         {
-          proceed = KMessageBox::warningYesNo(this, i18n("<qt>The file <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>").arg(url.pathOrURL()),i18n("Overwrite")) == KMessageBox::Yes;
+          proceed = KMessageBox::warningYesNo(this, i18n("<qt>The file <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>", url.pathOrURL()),i18n("Overwrite")) == KMessageBox::Yes;
         }
         if (proceed)
         {
           if (!QuantaNetAccess::upload(tempFile->name(), url, m_plugin, false))
           {
-            KMessageBox::error(this,i18n("<qt>Could not write to file <b>%1</b>.<br>Check if you have rights to write there or that your connection is working.</qt>").arg(url.pathOrURL()));
+            KMessageBox::error(this,i18n("<qt>Could not write to file <b>%1</b>.<br>Check if you have rights to write there or that your connection is working.</qt>", url.pathOrURL()));
           }
         }
         delete tempFile;
@@ -633,7 +633,7 @@ void TemplatesTreeView::slotProperties()
     m_quantaProperties->parentAttr->setText(i18n("&Inherit parent attribute (nothing)"));
    } else
    {
-    m_quantaProperties->parentAttr->setText(i18n("&Inherit parent attribute (%1)").arg(typeToi18n[m_parentDirInfo.mimeType]));
+    m_quantaProperties->parentAttr->setText(i18n("&Inherit parent attribute (%1)", typeToi18n[m_parentDirInfo.mimeType]));
    }
    m_quantaProperties->preTextEdit->setText(m_dirInfo.preText);
    m_quantaProperties->postTextEdit->setText(m_dirInfo.postText);
@@ -896,9 +896,9 @@ void TemplatesTreeView::slotDelete()
     KUrl url = currentURL();
     QString msg;
     if ( currentKFileTreeViewItem()->isDir() )
-      msg = i18n("Do you really want to delete folder \n%1 ?\n").arg(url.path());
+      msg = i18n("Do you really want to delete folder \n%1 ?\n", url.path());
     else
-      msg = i18n("Do you really want to delete file \n%1 ?\n").arg(url.path());
+      msg = i18n("Do you really want to delete file \n%1 ?\n", url.path());
 
     if ( KMessageBox::warningContinueCancel(this, msg, QString::null, KStdGuiItem::del()) == KMessageBox::Continue )
     {
@@ -1097,7 +1097,7 @@ void TemplatesTreeView::slotExtractSiteTemplate()
       } else
          error = true;
       if (error)
-        KMessageBox::error(this, i18n("<qt>Some error happened while extracting the <i>%1</i> site template file.<br>Check that you have write permission for <i>%2</i> and that there is enough free space in your temporary folder.</qt>").arg(url.pathOrURL()).arg(targetURL.pathOrURL()));
+        KMessageBox::error(this, i18n("<qt>Some error happened while extracting the <i>%1</i> site template file.<br>Check that you have write permission for <i>%2</i> and that there is enough free space in your temporary folder.</qt>", url.pathOrURL(), targetURL.pathOrURL()));
    }
 }
 

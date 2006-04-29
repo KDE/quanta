@@ -658,7 +658,7 @@ uint DTDs::readTagFile(const QString& fileName, DTDStruct* parentDTD, QTagList *
  if (!m_doc->setContent( &f, &errorMsg, &errorLine, &errorCol ))
  {
 //   emit hideSplash();
-   KMessageBox::error(0L, i18n("<qt>The DTD tag file %1 is not valid.<br> The error message is: <i>%2 in line %3, column %4.</i></qt>").arg(fileName).arg(errorMsg).arg(errorLine).arg(errorCol),
+   KMessageBox::error(0L, i18n("<qt>The DTD tag file %1 is not valid.<br> The error message is: <i>%2 in line %3, column %4.</i></qt>", fileName, errorMsg, errorLine, errorCol),
    i18n("Invalid Tag File"));
    kWarning() << fileName << ": " << errorMsg << ": " << errorLine << "," << errorCol << endl;
  }
@@ -883,7 +883,7 @@ void DTDs::slotLoadDTD()
       QString nickName = dtdcfg.readEntry("NickName", dtdName);
       DTDStruct * dtd = m_dict->value(dtdName) ;
       if (dtd &&
-          KMessageBox::warningYesNo(0L, i18n("<qt>Do you want to replace the existing <b>%1</b> DTD?</qt>").arg(nickName)) == KMessageBox::No)
+          KMessageBox::warningYesNo(0L, i18n("<qt>Do you want to replace the existing <b>%1</b> DTD?</qt>", nickName)) == KMessageBox::No)
       {
         return;
       }
@@ -915,18 +915,18 @@ void DTDs::slotLoadDTEP(const QString &_dirName, bool askForAutoload)
   QString nickName = dtdcfg.readEntry("NickName", dtdName);
   DTDStruct * dtd = m_dict->value(dtdName) ;
   if ( dtd &&
-      KMessageBox::warningYesNo(0L, i18n("<qt>Do you want to replace the existing <b>%1</b> DTD?</qt>").arg(nickName)) == KMessageBox::No)
+      KMessageBox::warningYesNo(0L, i18n("<qt>Do you want to replace the existing <b>%1</b> DTD?</qt>", nickName)) == KMessageBox::No)
   {
     return;
   }
   removeDTD(dtd);
   if (!readTagDir(dirName))
   {
-    KMessageBox::error(0L, i18n("<qt>Cannot read the DTEP from <b>%1</b>. Check that the folder contains a valid DTEP (<i>description.rc and *.tag files</i>).</qt>").arg(dirName), i18n("Error Loading DTEP"));
+    KMessageBox::error(0L, i18n("<qt>Cannot read the DTEP from <b>%1</b>. Check that the folder contains a valid DTEP (<i>description.rc and *.tag files</i>).</qt>", dirName), i18n("Error Loading DTEP"));
   } else
   {
     QString family = dtdcfg.readEntry("Family", "1");
-    if (askForAutoload && KMessageBox::questionYesNo(0L, i18n("<qt>Autoload the <b>%1</b> DTD in the feature?</qt>").arg(nickName)) == KMessageBox::Yes)
+    if (askForAutoload && KMessageBox::questionYesNo(0L, i18n("<qt>Autoload the <b>%1</b> DTD in the feature?</qt>", nickName)) == KMessageBox::Yes)
     {
       KUrl src;
       src.setPath(dirName);

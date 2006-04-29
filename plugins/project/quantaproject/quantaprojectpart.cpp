@@ -366,7 +366,7 @@ void QuantaProjectPart::slotInsertFolder()
     if (!m_projectBase.isParentOf(url))
     {
       KUrlRequesterDlg urlRequesterDlg(m_projectBase.pathOrURL(), mainWindow()->main());
-      urlRequesterDlg.setWindowTitle(i18n("%1: Copy to Project").arg(url.pathOrURL()));
+      urlRequesterDlg.setWindowTitle(i18n("%1: Copy to Project", url.pathOrURL()));
       urlRequesterDlg.urlRequester()->setMode(KFile::Directory | KFile::ExistingOnly);
       urlRequesterDlg.exec();
       KUrl destination = urlRequesterDlg.selectedURL();

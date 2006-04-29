@@ -341,9 +341,9 @@ QString QuantaCommon::qUrl(const KUrl &url)
 /** No descriptions */
 void QuantaCommon::dirCreationError(QWidget *widget, const KUrl& url)
 {
-  KMessageBox::error(widget, i18n("<qt>Cannot create folder<br><b>%1</b>.<br>Check that you have write permission in the parent folder or that the connection to<br><b>%2</b><br> is valid.</qt>")
-      .arg(url.pathOrURL())
-      .arg(url.protocol()+"://"+url.user()+"@"+url.host()));}
+  KMessageBox::error(widget, i18n("<qt>Cannot create folder<br><b>%1</b>.<br>Check that you have write permission in the parent folder or that the connection to<br><b>%2</b><br> is valid.</qt>",
+      url.pathOrURL(),
+      url.protocol()+"://"+url.user()+"@"+url.host()));}
 
 /**
 Adds the backslash before the special chars (like ?, *, . ) so the returned

@@ -199,7 +199,7 @@ void ActionConfigDialog::slotRemoveToolbar()
   }
   if (s != i18n("All"))
   {
-      if ( KMessageBox::warningContinueCancel(this, i18n("Do you really want to remove the \"%1\" toolbar?").arg(s),QString::null,KStdGuiItem::del()) == KMessageBox::Continue )
+      if ( KMessageBox::warningContinueCancel(this, i18n("Do you really want to remove the \"%1\" toolbar?", s),QString::null,KStdGuiItem::del()) == KMessageBox::Continue )
     {
       m_toolbarItem = item;
       connect(m_plugin, SIGNAL(toolbarRemoved(const QString&)), SLOT(slotToolbarRemoved(const QString&)));
@@ -766,8 +766,8 @@ void ActionConfigDialog::slotShortcutCaptured(const KShortcut &shortcut)
     global.replace('&',"");
     QString s =  i18n("The '%1' key combination has already been allocated "
                 "to the \"%2\" action.\n"
-                "Please choose a unique key combination.").
-                arg(shortcutText).arg(global);
+                "Please choose a unique key combination.",
+                shortcutText, global);
     KMessageBox::sorry( this, s, i18n("Conflicting Shortcuts"));
   }
 }
@@ -839,7 +839,7 @@ void ActionConfigDialog::slotNewAction()
 
 void ActionConfigDialog::slotDeleteAction()
 {
-    if ( KMessageBox::warningContinueCancel(this, i18n("<qt>Removing the action removes all the references to it.\nAre you sure you want to remove the <b>%1</b> action?</qt>").arg(currentAction->text()),QString::null,KStdGuiItem::del()) == KMessageBox::Continue )
+    if ( KMessageBox::warningContinueCancel(this, i18n("<qt>Removing the action removes all the references to it.\nAre you sure you want to remove the <b>%1</b> action?</qt>", currentAction->text()),QString::null,KStdGuiItem::del()) == KMessageBox::Continue )
   {
     QString actionName = currentAction->name();
     emit deleteUserAction(currentAction);

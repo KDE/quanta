@@ -583,11 +583,11 @@ bool UserToolbarsPart::slotRemoveToolbar(const QString& id)
         int result;
         if (p_toolbar->url.isEmpty())
         {
-          result = KMessageBox::warningYesNoCancel(mainWindow()->main(), i18n("<qt>Toolbar <b>%1</b> is new and unsaved. Do you want to save it before it is removed?</qt>").arg(p_toolbar->name),
+          result = KMessageBox::warningYesNoCancel(mainWindow()->main(), i18n("<qt>Toolbar <b>%1</b> is new and unsaved. Do you want to save it before it is removed?</qt>", p_toolbar->name),
               i18n("Save Toolbar"), KStdGuiItem::save(), KStdGuiItem::discard());
         } else
         {
-          AskForSaveDlg dlg(i18n("Save Toolbar"), i18n("<qt>The toolbar <b>%1</b> was modified. Do you want to save it before it is removed?</qt>").arg(p_toolbar->name), mainWindow()->main());
+          AskForSaveDlg dlg(i18n("Save Toolbar"), i18n("<qt>The toolbar <b>%1</b> was modified. Do you want to save it before it is removed?</qt>", p_toolbar->name), mainWindow()->main());
 
           dlg.exec();
           result = dlg.status();
@@ -749,8 +749,8 @@ bool UserToolbarsPart::saveToolbar(bool localToolbar, const QString& toolbarToSa
       {
         if (!localToolbar)
             localToolbarsDir = projectToolbarsURL.prettyURL();
-        KMessageBox::sorry(mainWindow()->main(),i18n("<qt>You must save the toolbars to the following folder: <br><br><b>%1</b></qt>")
-                                  .arg(localToolbarsDir));
+        KMessageBox::sorry(mainWindow()->main(),i18n("<qt>You must save the toolbars to the following folder: <br><br><b>%1</b></qt>",
+                                  localToolbarsDir));
         query = KMessageBox::No;
       }
     } while (query != KMessageBox::Yes);
@@ -874,7 +874,7 @@ KUrl UserToolbarsPart::saveToolbarToFile(const QString& toolbarName, const KUrl&
   if (!ExtFileInfo::copy(KUrl::fromPathOrURL(tempFile->name()), tarFile, -1, true, false, mainWindow()->main()))
   {
     KMessageBox::error(mainWindow()->main(), i18n("<qt>An error happened while saving the <b>%1</b> toolbar.<br>"
-        "Check that you have write permissions for<br><b>%2</b></qt>").arg(p_toolbar->name).arg(tarFile.pathOrURL()), i18n("Toolbar Saving Error"));
+        "Check that you have write permissions for<br><b>%2</b></qt>", p_toolbar->name, tarFile.pathOrURL()), i18n("Toolbar Saving Error"));
     tarFile = KUrl();
     delete p_toolbar->dom;
     p_toolbar->dom = oldDom;
@@ -886,7 +886,7 @@ KUrl UserToolbarsPart::saveToolbarToFile(const QString& toolbarName, const KUrl&
 void UserToolbarsPart::slotAddToolbar()
 {
  bool ok;
- QString name = KInputDialog::getText(i18n("New Toolbar"), i18n("Enter toolbar name:"), i18n("User_%1").arg(m_userToolbarsCount), &ok, mainWindow()->main());
+ QString name = KInputDialog::getText(i18n("New Toolbar"), i18n("Enter toolbar name:"), i18n("User_%1", m_userToolbarsCount), &ok, mainWindow()->main());
  if (ok)
  {
   m_userToolbarsCount++;

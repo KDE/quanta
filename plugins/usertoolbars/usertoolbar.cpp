@@ -146,8 +146,8 @@ void UserToolBar::mousePressEvent(QMouseEvent *e)
           {
             currentActionName = w->text();
             QString actionName = currentActionName;
-            m_popupMenu->addAction(i18n("Remove Action - %1").arg(actionName.replace('&',"&&")), this, SLOT(slotRemoveAction()));
-            m_popupMenu->addAction(i18n("Edit Action - %1").arg(actionName), this, SLOT(slotEditAction()));
+            m_popupMenu->addAction(i18n("Remove Action - %1", actionName.replace('&',"&&")), this, SLOT(slotRemoveAction()));
+            m_popupMenu->addAction(i18n("Edit Action - %1", actionName), this, SLOT(slotEditAction()));
             break;
           }
         }
@@ -172,7 +172,7 @@ void UserToolBar::slotEditAction()
 
 void UserToolBar::slotRemoveAction()
 {
-  if ( KMessageBox::warningContinueCancel(this, i18n("<qt>Are you sure you want to remove the <b>%1</b> action?</qt>").arg(currentActionName),QString::null,KStdGuiItem::del()) == KMessageBox::Continue )
+  if ( KMessageBox::warningContinueCancel(this, i18n("<qt>Are you sure you want to remove the <b>%1</b> action?</qt>", currentActionName),QString::null,KStdGuiItem::del()) == KMessageBox::Continue )
   {
     emit removeAction(ToolbarTabWidget::ref()->tabUnderMouse, currentActionName);
   }
