@@ -1009,7 +1009,7 @@ void TemplatesTreeView::slotSendInMail()
 
     TagMailDlg *mailDlg = new TagMailDlg( this, i18n("Send template in email"));
     QString toStr;
-    QString message = i18n("Hi,\n This is a Quanta Plus [http://quanta.sourceforge.net] template tarball.\n\nHave fun.\n");
+    QString message = i18n("Hi,\n This is a Quanta Plus [http://quanta.kdewebdev.org/] template tarball.\n\nHave fun.\n");
     QString titleStr;
     QString subjectStr;
 

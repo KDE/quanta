@@ -258,7 +258,7 @@ BaseTreeView::BaseTreeView(KDevPlugin *plugin, QWidget * parent)
   : KFileTreeView(parent), fileInfoDlg(0), m_parent(parent), m_plugin(plugin), m_saveOpenFolder(false), m_partController(plugin ? plugin->documentController() : 0)
 {
 //   setTreeStepSize(15);
-  setRootIsDecorated(false);
+  setRootIsDecorated(true);
   setSorting(0);
   setFullWidth(true);
   setShowSortIndicator(true);

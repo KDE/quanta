@@ -128,7 +128,7 @@ ProjectTreeView::ProjectTreeView(KDevPlugin * plugin, QWidget *parent)
 {
   setShowToolTips(Settings::self()->projectTreeTooltips());
   //setSelectionModeExt(K3ListView::Extended);
-  setRootIsDecorated(false);
+  setRootIsDecorated(true);
   addColumn(i18n("Project Files"), -1);
   addColumn(i18n("Description"), -1);
   setDragEnabled(true);
