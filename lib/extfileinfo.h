@@ -12,6 +12,8 @@
 #ifndef _EXTFILEINFO_H_
 #define _EXTFILEINFO_H_
 
+#include "quantaexport.h"
+
 #include <kio/global.h>
 #include <kio/job.h>
 #include <kurl.h>
@@ -22,7 +24,7 @@
 #include <qhash.h>
 #include <qregexp.h>
 
-class ExtFileInfo : public QObject
+class LIBQUANTA_EXPORT ExtFileInfo : public QObject
 {
  Q_OBJECT
 public:

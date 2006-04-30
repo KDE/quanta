@@ -21,12 +21,13 @@
 #ifndef KDEVCREATEQUANTAPROJECT_H
 #define KDEVCREATEQUANTAPROJECT_H
 
-#include <kdevplugin.h>
-
 #include <qpair.h>
 #include <qlist.h>
 
 #include <kurl.h>
+
+//kdevelop includes
+#include <interfaces/kdevplugin.h>
 
 class KAction;
 class KDialogBase;

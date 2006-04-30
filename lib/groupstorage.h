@@ -14,6 +14,7 @@
 #define GROUPSTORAGE_H
 
 #include "qtag.h"
+#include "quantaexport.h"
 
 #include <qhash.h>
 #include <qmap.h>
@@ -30,7 +31,7 @@ Holds and takes care of the group elements found in a document.
 typedef QList<GroupElement*> GroupElementList;
 typedef QMap<QString, GroupElementList> GroupElementMap; ///<holds a list of occurences of elements with the same id (name). For example $i can appear in more than once place in the document, so QMap["$i"] will give a list with this appearances
 
-class GroupStorage{
+class LIBQUANTA_EXPORT GroupStorage{
 public:
   GroupStorage();
   ~GroupStorage();

@@ -15,6 +15,7 @@
 
 #include "tag.h"
 #include "tagattr.h"
+#include "quantaexport.h"
 
 #include <qstring.h>
 #include <qpair.h>
@@ -24,7 +25,7 @@ pair of opening and closing parts of a tag
 
 @author Jens Herden
 */
-class TagPair : QPair<QString, QString> {
+class LIBQUANTA_EXPORT TagPair : QPair<QString, QString> {
 public:
   TagPair();
 

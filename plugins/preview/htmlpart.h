@@ -21,10 +21,11 @@
 #ifndef HTMLPART_H
 #define HTMLPART_H
 
-#include <kdevhtmlpart.h>
-
 #include <qwidget.h>
 #include <qstring.h>
+
+//kdevelop includes
+#include <widgets/kdevhtmlpart.h>
 
 class KDevProject;
 class HTMLPreviewPart;

@@ -19,7 +19,8 @@
 #include "settings.h"
 #include "hacks.h"
 
-#include <kdevcore.h>
+//kdevelop includes
+#include <interfaces/kdevcore.h>
 
 // KDE includes
 #include <kdebug.h>

@@ -21,11 +21,12 @@
 #ifndef KDEVTEMPLATESTREE_H
 #define KDEVTEMPLATESTREE_H
 
-#include <kdevplugin.h>
-
 #include <qpointer.h>
 
 #include <kurl.h>
+
+//kdevelop includes
+#include <interfaces/kdevplugin.h>
 
 class QMenu;
 class KAction;

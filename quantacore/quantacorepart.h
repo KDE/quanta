@@ -19,8 +19,6 @@
 
 #include <qhash.h>
 
-#include <kdevplugin.h>
-
 class Parser;
 class ParseResult;
 

@@ -44,10 +44,11 @@
 #include <kstringhandler.h>
 #include <kparts/part.h>
 
-#include <kdevplugin.h>
-#include <kdevproject.h>
-#include <kdevplugininfo.h>
-#include <kdevcore.h>
+//kdevelop includes
+#include <interfaces/kdevplugin.h>
+#include <interfaces/kdevproject.h>
+#include <interfaces/kdevplugininfo.h>
+#include <interfaces/kdevcore.h>
 
 
 const QString & ProjectTreeView::m_attrDesc = KGlobal::staticQString("description");

@@ -14,6 +14,7 @@
 #define EDITORSOURCE_H
 
 #include "areastruct.h"
+#include "quantaexport.h"
 
 #include <kurl.h>
 #include <ktexteditor/document.h>
@@ -26,7 +27,7 @@ This class can be used to access the editor functionality in an abstracted way.
 
 @author Andras Mantia
 */
-class EditorSource : public QObject
+class LIBQUANTA_EXPORT EditorSource : public QObject
 {
 Q_OBJECT
 public:

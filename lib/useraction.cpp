@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : ?
     copyright            : (C) ? Dmitry Poplavsky
-                           (C) 2002-2005 Andras Mantia <amantia@kde.org>
+                           (C) 2002-2006 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -41,9 +41,10 @@
 #include <kstandarddirs.h>
 #include <ktempfile.h>
 
-#include <kdevmainwindow.h>
-#include <kdevplugin.h>
-#include <kdevproject.h>
+//kdevelop includes
+#include <interfaces/kdevmainwindow.h>
+#include <interfaces/kdevplugin.h>
+#include <interfaces/kdevproject.h>
 
 
 

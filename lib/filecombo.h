@@ -18,6 +18,8 @@
 #ifndef FILECOMBO_H
 #define FILECOMBO_H
 
+#include "quantaexport.h"
+
 #include <qwidget.h>
 #include <kurl.h>
 
@@ -29,7 +31,7 @@ class QComboBox;
 class QPushButton;
 class KUrl;
 
-class FileCombo : public QWidget  {
+class LIBQUANTA_EXPORT FileCombo : public QWidget  {
    Q_OBJECT
 public:
   FileCombo(const KUrl& a_baseURL, QWidget *parent=0);

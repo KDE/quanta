@@ -33,12 +33,13 @@
 #include <kdialogbase.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
-#include <kdevplugininfo.h>
-#include <kdevgenericfactory.h>
 
-#include <kdevcore.h>
-#include <kdevmainwindow.h>
-#include <configwidgetproxy.h>
+//kdevelop includes
+#include <interfaces/kdevplugininfo.h>
+#include <interfaces/kdevgenericfactory.h>
+#include <interfaces/kdevcore.h>
+#include <interfaces/kdevmainwindow.h>
+#include <util/configwidgetproxy.h>
 
 
 typedef KDevGenericFactory<ProjectTreePart> ProjectTreeFactory;

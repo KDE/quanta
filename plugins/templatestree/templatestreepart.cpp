@@ -41,12 +41,14 @@
 #include <kmainwindow.h>
 #include <kstandarddirs.h>
 
-#include <kdevplugininfo.h>
-#include <kdevgenericfactory.h>
-#include <kdevcore.h>
-#include <kdevmainwindow.h>
-#include <configwidgetproxy.h>
-#include <kdevmainwindow.h>
+//kdevelop includes
+#include <interfaces/kdevplugininfo.h>
+#include <interfaces/kdevgenericfactory.h>
+#include <interfaces/kdevdocumentcontroller.h>
+#include <interfaces/kdevcore.h>
+#include <interfaces/kdevmainwindow.h>
+#include <interfaces/kdevmainwindow.h>
+#include <util/configwidgetproxy.h>
 
 
 typedef KDevGenericFactory<TemplatesTreePart> TemplatesTreeFactory;

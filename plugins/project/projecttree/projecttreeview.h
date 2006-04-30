@@ -21,13 +21,17 @@
 #include "basetreeview.h"
 #include "filterableitemif.h"
 
-#include <kdevproject.h>
-
+//qt includes
+#include <qdom.h>
 
 class FileInfoDlg;
 class ProjectList;
 class KDevPlugin;
-class QuantaProjectIf ;
+class KDevProject;
+class QuantaProjectIf;
+namespace KParts{
+  class Part;
+}
 
 
 class ProjectTreeViewItem : public BaseTreeViewItem, public FilterableItemIf

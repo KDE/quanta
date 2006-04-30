@@ -16,8 +16,6 @@
 #ifndef QTAG_H
 #define QTAG_H
 
-//#include "dtdstruct.h"
-
 
 /**Quanta style tag (XML tag or code tag), as they are defined in the DTD. Contains
   all the possible attributes and the possible values for the attributes. Do not
@@ -28,6 +26,7 @@
   */
 
 //app includes
+#include "quantaexport.h"
 
 //qt includes
 #include <qhash.h>
@@ -94,7 +93,7 @@ class StructTreeGroup : public XMLStructGroup {
 #define MAX_STRUCTGROUPSCOUNT 10
 
 
-class QTag {
+class LIBQUANTA_EXPORT QTag {
 public:
   QTag();
   QTag(  QTag&);

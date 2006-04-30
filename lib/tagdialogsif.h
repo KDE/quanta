@@ -1,6 +1,6 @@
 /***************************************************************************
     begin                : Mon Jul 4 2005
-    copyright            : (C) 2005 by Andras Mantia <amantia@kde.org>
+    copyright            : (C) 2005-2006 by Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -14,9 +14,13 @@
 #define TAGDIALOGSIF_H
 
 #include "tagpair.h"
+#include "quantaexport.h"
 
-#include <kdevplugin.h>
 #include <kurl.h>
+
+//kdevelop includes
+#include <interfaces/kdevplugin.h>
+
 
 // class EditorSource;
 class QTag;
@@ -35,7 +39,7 @@ TagDialogsIf * plugin = extension<TagDialogsIf>("KDevelop/TagDialogs");
 */
 
 
-class TagDialogsIf : public KDevPlugin
+class LIBQUANTA_EXPORT TagDialogsIf : public KDevPlugin
 {
   Q_OBJECT
 

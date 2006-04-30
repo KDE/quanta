@@ -14,8 +14,10 @@
 #define QUANTACOREIF_H
 
 #include "helper.h"
+#include "quantaexport.h"
 
-#include <kdevplugin.h>
+//kdevelop includes
+#include <interfaces/kdevplugin.h>
 
 class QPoint;
 
@@ -51,7 +53,7 @@ Settings * s = Settings::self();
 @author Jens Herden
 */
 
-class QuantaCoreIf : public KDevPlugin
+class LIBQUANTA_EXPORT QuantaCoreIf : public KDevPlugin
 {
   Q_OBJECT
 

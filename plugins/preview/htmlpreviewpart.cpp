@@ -32,20 +32,20 @@
 #include <kdialogbase.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
-#include <kdevplugininfo.h>
-#include <kdevgenericfactory.h>
-#include <kdevhtmlpart.h>
 #include <khtmlview.h>
 #include <kparts/partmanager.h>
 #include <kparts/part.h>
 #include <kparts/browserextension.h>
 #include <ktexteditor/document.h>
 
-#include <kdevcore.h>
-#include <kdevmainwindow.h>
-#include <configwidgetproxy.h>
-#include <kdevdocumentcontroller.h>
-#include "kdevdocument.h"
+//kdevelop includes
+#include <interfaces/kdevcore.h>
+#include <interfaces/kdevmainwindow.h>
+#include <interfaces/kdevplugininfo.h>
+#include <interfaces/kdevgenericfactory.h>
+#include <interfaces/kdevdocumentcontroller.h>
+#include <interfaces/kdevdocument.h>
+#include <util/configwidgetproxy.h>
 
 
 typedef KDevGenericFactory<HTMLPreviewPart> HTMLPreviewFactory;

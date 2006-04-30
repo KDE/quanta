@@ -23,12 +23,11 @@
 
 #include "htmlpart.h"
 
-#include <kdevplugin.h>
-
 #include <qpointer.h>
 #include <qtimer.h>
 
-// #include <kparts/part.h>
+//kdevelop includes
+#include <interfaces/kdevplugin.h>
 
 class QMenu;
 class KAction;

@@ -23,6 +23,7 @@
 #include "areastruct.h"
 #include "qtag.h"
 #include "tagattr.h"
+#include "quantaexport.h"
 
 class QDomElement;
 
@@ -38,7 +39,7 @@ class QDomElement;
 
 
 
-class Tag {
+class LIBQUANTA_EXPORT Tag {
 public:
   Tag();
   Tag(const Tag&);

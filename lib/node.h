@@ -18,6 +18,8 @@
 #ifndef NODE_H
 #define NODE_H
 
+#include "quantaexport.h"
+
 #include <qstring.h>
 #include <qmap.h>
 
@@ -41,7 +43,7 @@ class XMLStructGroup;
  * The tree is built with the parser (see parser.h)
  */
 
-class Node {
+class LIBQUANTA_EXPORT Node {
 
 public:
   Node( Node *parent );

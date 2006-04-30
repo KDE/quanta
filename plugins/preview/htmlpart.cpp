@@ -27,8 +27,9 @@
 #include <kstandarddirs.h>
 #include <khtmlview.h>
 
-#include <kdevcore.h>
-#include "kdevdocumentcontroller.h"
+//kdevelop includes
+#include <interfaces/kdevcore.h>
+#include <interfaces/kdevdocumentcontroller.h>
 
 
 HTMLPart::HTMLPart(HTMLPreviewPart *part)

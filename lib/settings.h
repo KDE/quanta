@@ -14,7 +14,7 @@
 #define SETTINGS_H
 
 #include "settingsbase.h"
-
+#include "quantaexport.h"
 
 
 /** @short This class is a wrapper around the class settingsbase which gets generated from the config compiler.
@@ -24,7 +24,7 @@
 
     @author Jens Herden <jens@kdewebdev.org>
 */
-class Settings : public SettingsBase
+class LIBQUANTA_EXPORT Settings : public SettingsBase
 {
 public:
   /**

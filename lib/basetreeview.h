@@ -16,6 +16,8 @@
 #ifndef BASETREEVIEW_H
 #define BASETREEVIEW_H
 
+#include "quantaexport.h"
+
 //qt includes
 #include <qlist.h>
 #include <qregexp.h>
@@ -24,8 +26,6 @@
 #include <kfiletreebranch.h>
 #include <kfiletreeview.h>
 #include <kfiletreeviewitem.h>
-
-#include <kdevdocumentcontroller.h>
 
 //forward declarations
 class Q3ListViewItem;
@@ -41,6 +41,7 @@ class KUrl;
 class FileInfoDlg;
 class BaseTreeViewToolTip;
 class KDevDocument;
+class KDevDocumentController;
 class KDevPlugin;
 class BaseTreeView;
 
@@ -50,7 +51,7 @@ class BaseTreeView;
  *
  * @author Jens Herden <jens@kdewebdev.org>
  */
-class BaseTreeViewItem : public KFileTreeViewItem {
+class LIBQUANTA_EXPORT BaseTreeViewItem : public KFileTreeViewItem {
 
 public:
   BaseTreeViewItem( KFileTreeViewItem *parent, KFileItem* item, KFileTreeBranch *brnch );
@@ -84,7 +85,7 @@ private:
  *
  * @author Jens Herden <jens@kdewebdev.org>
  */
-class BaseTreeBranch : public KFileTreeBranch {
+class LIBQUANTA_EXPORT BaseTreeBranch : public KFileTreeBranch {
    Q_OBJECT
 
 public:
@@ -138,7 +139,7 @@ private:
  * @ref TemplatesTreeView use this class.
  *
  */
-class BaseTreeView : public KFileTreeView {
+class LIBQUANTA_EXPORT BaseTreeView : public KFileTreeView {
    Q_OBJECT
 
 public:
@@ -173,7 +174,7 @@ public:
   bool saveOpenFolder() const { return m_saveOpenFolder; };
 
   /** check if a file is currently open */
-  inline bool isFileOpen(const KUrl & url) const {return m_partController->documentForUrl(url);};
+  bool isFileOpen(const KUrl & url) const;
 
 
 public slots:

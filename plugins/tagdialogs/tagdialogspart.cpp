@@ -30,10 +30,11 @@
 #include <kdebug.h>
 #include <klocale.h>
 
-#include <kdevplugininfo.h>
-#include <kdevgenericfactory.h>
-#include <kdevcore.h>
-#include <kdevmainwindow.h>
+//kdevelop includes
+#include <interfaces/kdevplugininfo.h>
+#include <interfaces/kdevgenericfactory.h>
+#include <interfaces/kdevcore.h>
+#include <interfaces/kdevmainwindow.h>
 
 typedef KDevGenericFactory<TagDialogsPart> TagDialogsFactory;
 KDevPluginInfo data("kdevtagdialogs");

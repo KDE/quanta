@@ -29,11 +29,11 @@
 #include "quantaprojectif.h"
 #include "hacks.h"
 
-
-#include <kdevcore.h>
-#include <kdevplugin.h>
-#include <kdevproject.h>
-#include <kdevplugininfo.h>
+//kdevelop includes
+#include <interfaces/kdevcore.h>
+#include <interfaces/kdevplugin.h>
+#include <interfaces/kdevproject.h>
+#include <interfaces/kdevplugininfo.h>
 
 #include <unistd.h>
 #include <grp.h>

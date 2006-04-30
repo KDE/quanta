@@ -13,7 +13,10 @@
 #ifndef QUANTAPROJECTIF_H
 #define QUANTAPROJECTIF_H
 
-#include <kdevproject.h>
+#include "quantaexport.h"
+
+//kdevelop includes
+#include <interfaces/kdevproject.h>
 
 class QDomElement;
 class KUrl;
@@ -22,7 +25,7 @@ Extension of the KDevProject interface for our needs, especially to work with re
 
 	@author Andras Mantia <amantia@kde.org>
 */
-class QuantaProjectIf : public KDevProject
+class LIBQUANTA_EXPORT QuantaProjectIf : public KDevProject
 {
 public:
   QuantaProjectIf(const KDevPluginInfo * info, QObject *parent);

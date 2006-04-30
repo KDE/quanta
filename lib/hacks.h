@@ -12,6 +12,8 @@
 #ifndef HACKS_H
 #define HACKS_H
 
+#include "quantaexport.h"
+
 class KMenu;
 class QString;
 
@@ -28,7 +30,7 @@ namespace Hack {
    * This method should be removed when proper headers/titles are supported in
    * QMenu/KMenu.
    */
-  void KMenuAddTitle(KMenu *menu, const QString & title);
+  LIBQUANTA_EXPORT void KMenuAddTitle(KMenu *menu, const QString & title);
 };
 
 

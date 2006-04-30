@@ -33,7 +33,8 @@
 //kde includes
 #include <kurl.h>
 
-#include <kdevplugin.h>
+//kdevelop includes
+#include <interfaces/kdevplugin.h>
 
 XmlTagCompletion *CompletionBase::m_xmlTagCompletion = new XmlTagCompletion();
 XmlAttributeCompletion *CompletionBase::m_xmlAttributeCompletion = new XmlAttributeCompletion();

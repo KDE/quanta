@@ -17,10 +17,11 @@
 
 #include <kurl.h>
 
-#include <kdevplugin.h>
-
 #include <qhash.h>
 #include <qlist.h>
+
+//kdevelop includes
+#include <interfaces/kdevplugin.h>
 
 class QMenu;
 class KAction;

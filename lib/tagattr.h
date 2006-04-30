@@ -15,12 +15,14 @@
 #ifndef TAGATTR_H
 #define TAGATTR_H
 
+#include "quantaexport.h"
+
 #include <qstring.h>
 
 class QDomElement;
 
 
-class TagAttr {
+class LIBQUANTA_EXPORT TagAttr {
   
 public:
   TagAttr() 

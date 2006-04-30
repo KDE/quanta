@@ -24,8 +24,6 @@
 #include <klibloader.h>
 #include <kparts/part.h>
 
-#include <kdevcore.h>
-
 #include "quantaprojectpart.h"
 
 QuantaProjectWidget::QuantaProjectWidget(QuantaProjectPart *part)

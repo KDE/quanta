@@ -32,9 +32,11 @@
 #include <kmainwindow.h>
 #include <kparts/part.h>
 
-#include <kdevcore.h>
-#include <kdevplugin.h>
-#include <kdevmainwindow.h>
+//kdevelop includes
+#include <interfaces/kdevcore.h>
+#include <interfaces/kdevdocumentcontroller.h>
+#include <interfaces/kdevplugin.h>
+#include <interfaces/kdevmainwindow.h>
 
 
 ProjectTreeWidget::ProjectTreeWidget(ProjectTreePart *part)

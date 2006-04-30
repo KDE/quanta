@@ -17,8 +17,7 @@ include_directories(
    ${CMAKE_SOURCE_DIR}/quanta/quantacore/dialogs
    ${CMAKE_SOURCE_DIR}/quanta/quantacore/autocomplete
    ${CMAKE_BINARY_DIR}/quanta/lib
-   ${KDE4_INCLUDE_DIR}/kdevelop/interfaces
-   ${KDE4_INCLUDE_DIR}/kdevelop/util
+   ${KDE4_INCLUDE_DIR}/kdevelop
    ${KDE4_INCLUDES}
    )
 

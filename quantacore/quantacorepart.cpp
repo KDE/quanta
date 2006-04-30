@@ -50,12 +50,13 @@
 #include <kstandarddirs.h>
 #include <ktoolinvocation.h>
 
-#include <configwidgetproxy.h>
-#include <kdevmainwindow.h>
-#include <kdevdocumentcontroller.h>
-#include <kdevdocument.h>
-#include <kdevplugininfo.h>
-#include <kdevcore.h>
+//kdevelop includes
+#include <util/configwidgetproxy.h>
+#include <interfaces/kdevmainwindow.h>
+#include <interfaces/kdevdocumentcontroller.h>
+#include <interfaces/kdevdocument.h>
+#include <interfaces/kdevplugininfo.h>
+#include <interfaces/kdevcore.h>
 
 #include <ktexteditor/document.h>
 

@@ -27,8 +27,9 @@
 #include <kmainwindow.h>
 #include <kstringhandler.h>
 
-#include <kdevmainwindow.h>
-#include <kdevplugin.h>
+//kdevelop includes
+#include <interfaces/kdevmainwindow.h>
+#include <interfaces/kdevplugin.h>
 
 
 bool QuantaNetAccess::upload(const QString& src, const KUrl& target, KDevPlugin* plugin, bool confirm)

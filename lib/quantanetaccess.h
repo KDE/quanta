@@ -14,6 +14,7 @@
 #ifndef QUANTANETACCESS_H
 #define QUANTANETACCESS_H
 
+#include "quantaexport.h"
 
 /** @short helperclass to track changes in the project
 
@@ -28,7 +29,7 @@
 
 class KDevPlugin;
 
-class QuantaNetAccess
+class LIBQUANTA_EXPORT QuantaNetAccess
 {
 public:
 

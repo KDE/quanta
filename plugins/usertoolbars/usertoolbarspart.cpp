@@ -58,15 +58,16 @@
 #include <ktoolinvocation.h>
 #include <kxmlguifactory.h>
 
-#include <configwidgetproxy.h>
-#include <kdevappfrontend.h>
-#include <kdevcore.h>
-#include <kdevgenericfactory.h>
-#include <kdevmainwindow.h>
-#include <kdevdocumentcontroller.h>
-#include <kdevplugincontroller.h>
-#include <kdevplugininfo.h>
-#include <kdevproject.h>
+//kdevelop includes
+#include <interfaces/kdevappfrontend.h>
+#include <interfaces/kdevcore.h>
+#include <interfaces/kdevgenericfactory.h>
+#include <interfaces/kdevmainwindow.h>
+#include <interfaces/kdevdocumentcontroller.h>
+#include <interfaces/kdevplugincontroller.h>
+#include <interfaces/kdevplugininfo.h>
+#include <interfaces/kdevproject.h>
+#include <util/configwidgetproxy.h>
 
 typedef KDevGenericFactory<UserToolbarsPart> UserToolbarsFactory;
 KDevPluginInfo data("kdevusertoolbars");

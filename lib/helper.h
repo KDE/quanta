@@ -13,8 +13,9 @@
 #ifndef HELPER_H
 #define HELPER_H
 
-#include <qstring.h>
+#include "quantaexport.h"
 
+#include <qstring.h>
 
 /**
 @short some static helper functions
@@ -23,7 +24,7 @@ This class has some static helper functions that do not fit somewhere else.
 
 @author Jens Herden
 */
-class Helper
+class LIBQUANTA_EXPORT Helper
 {
 public:
   Helper();

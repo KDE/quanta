@@ -54,13 +54,13 @@
 #include <ktempfile.h>
 
 //kdevelop includes
-#include <kdevplugininfo.h>
-#include <kdevgenericfactory.h>
-#include <kdevcore.h>
-#include <kdevmainwindow.h>
-#include <kdevplugincontroller.h>
-#include <kdevproject.h>
-#include <domutil.h>
+#include <interfaces/kdevplugininfo.h>
+#include <interfaces/kdevgenericfactory.h>
+#include <interfaces/kdevcore.h>
+#include <interfaces/kdevmainwindow.h>
+#include <interfaces/kdevplugincontroller.h>
+#include <interfaces/kdevproject.h>
+#include <interfaces/domutil.h>
 
 
 typedef KDevGenericFactory<CreateQuantaProjectPart> CreateQuantaProjectFactory;

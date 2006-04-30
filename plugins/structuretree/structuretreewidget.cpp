@@ -40,8 +40,9 @@
 #include <kaction.h>
 // #include <kdebug.h>
 
-#include <kdevcore.h>
-#include <kdevplugin.h>
+//kdevelop includes
+#include <interfaces/kdevcore.h>
+#include <interfaces/kdevplugin.h>
 
 
 StructureTreeWidget::StructureTreeWidget(KDevPlugin *plugin, QWidget *parent)

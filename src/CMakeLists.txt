@@ -3,9 +3,10 @@ kde4_header()
 include_directories(
   ${CMAKE_SOURCE_DIR}/quanta/lib
   ${CMAKE_BINARY_DIR}
+  ${KDE4_INCLUDE_DIR}/kdevelop
+  ${KDE4_INCLUDE_DIR}/kdevelop/interfaces
   ${KDE4_INCLUDE_DIR}/kdevelop/shell
   ${KDE4_INCLUDE_DIR}/kdevelop/shell/profileengine
-  ${KDE4_INCLUDE_DIR}/kdevelop/interfaces
   ${KDE4_INCLUDES}
 )
 

@@ -43,9 +43,10 @@
 #include <kiconloader.h>
 #include <kaction.h>
 
-#include <kdevcore.h>
-#include <kdevplugin.h>
-#include <kdevdocumentcontroller.h>
+//kdevelop includes
+#include <interfaces/kdevcore.h>
+#include <interfaces/kdevplugin.h>
+#include <interfaces/kdevdocumentcontroller.h>
 
 
 GroupsWidget::GroupsWidget(KDevPlugin *plugin, QWidget *parent)

@@ -21,9 +21,10 @@
 #ifndef KDEVQUANTAFILESTREE_H
 #define KDEVQUANTAFILESTREE_H
 
-#include <kdevplugin.h>
-
 #include <qpointer.h>
+
+//kdevelop includes
+#include <interfaces/kdevplugin.h>
 
 class QMenu;
 class KAction;

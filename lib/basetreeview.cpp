@@ -20,9 +20,10 @@
 #include "quantanetaccess.h"
 #include "helper.h"
 
-#include <kdevplugin.h>
-#include <kdevdocument.h>
-#include <kdevdocumentcontroller.h>
+//kdevelop includes
+#include <interfaces/kdevplugin.h>
+#include <interfaces/kdevdocument.h>
+#include <interfaces/kdevdocumentcontroller.h>
 
 // QT includes
 #include <QDropEvent>
@@ -1023,6 +1024,10 @@ QString BaseTreeView::iconNameForURL(const KUrl & url)
   return KMimeType::iconNameForURL(protURL);
 }
 
+bool BaseTreeView::isFileOpen(const KUrl & url) const
+{
+    return m_partController->documentForUrl(url);
+}
 
 #include "basetreeview.moc"
 

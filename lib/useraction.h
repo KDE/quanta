@@ -16,10 +16,12 @@
 #ifndef USERACTION_H
 #define USERACTION_H
 
+#include "extfileinfo.h"
+#include "quantaexport.h"
+
 #include <qdom.h>
 #include <kaction.h>
 
-#include "extfileinfo.h"
 
 class KDevPlugin;
 class KProcess;
@@ -35,7 +37,7 @@ class QTimer;
  *         Paulo Moura Guedes, moura@kdewebdev.org
  */
 
-class UserAction : public KToggleAction
+class LIBQUANTA_EXPORT UserAction : public KToggleAction
 {
     Q_OBJECT
 

@@ -12,17 +12,17 @@
 #include <qfileinfo.h>
 
 //kdevelop includes
-#include "splashscreen.h"
-#include "toplevel.h"
-#include "plugincontroller.h"
-#include "documentcontroller.h"
-#include "core.h"
-#include "projectmanager.h"
-#include "simplemainwindow.h"
+#include <shell/api.h>
+#include <shell/splashscreen.h>
+#include <shell/toplevel.h>
+#include <shell/plugincontroller.h>
+#include <shell/documentcontroller.h>
+#include <shell/core.h>
+#include <shell/projectmanager.h>
+#include <shell/simplemainwindow.h>
+#include <interfaces/kdevplugin.h>
 
 #include "kdevquantaextension.h"
-#include "kdevplugin.h"
-#include "api.h"
 
 #include "config.h"
 

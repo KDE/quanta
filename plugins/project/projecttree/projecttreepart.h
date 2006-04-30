@@ -21,9 +21,9 @@
 #ifndef KDEVPROJECTTREE_H
 #define KDEVPROJECTTREE_H
 
-#include <kdevplugin.h>
-
 #include <qpointer.h>
+
+#include <interfaces/kdevplugin.h>
 
 class QMenu;
 class KAction;
