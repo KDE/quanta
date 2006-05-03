@@ -85,7 +85,7 @@ public:
   /** Returns the path to the url.
       @deprecated don't store a relative path in KUrl, use url.path()!
    */
-  static KDE_DEPRECATED KUrl path(const KUrl &url) {KUrl newURL(url); newURL.setPath(url.directory(false, false)); return newURL;}
+  static KDE_DEPRECATED KUrl path(const KUrl &url) {KUrl newURL(url); newURL.setPath(url.directory(KUrl::ObeyTrailingSlash)); return newURL;}
 
   /** A slightly better working alternative of KIO::NetAccess::exists().
       Checks for the existance of the url and if it is writeable. */

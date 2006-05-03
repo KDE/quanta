@@ -223,7 +223,7 @@ void QuantaProjectPart::openProject( const QString &dirName, const QString &proj
 {
   QuantaProjectIf::openProject(dirName, projectName);
   m_projectBase = KUrl::fromPathOrURL( dirName );
-  m_projectBase.adjustPath(1);
+  m_projectBase.adjustPath(KUrl::AddTrailingSlash);
   m_projectName = projectName;
   m_projectDom = projectDom();
   m_projectDomElement = DomUtil::elementByPath(*m_projectDom, "/project");
@@ -244,7 +244,7 @@ void QuantaProjectPart::openProject( const QString &dirName, const QString &proj
 
 QString QuantaProjectPart::projectDirectory() const
 {
-  return m_projectBase.isLocalFile() ? m_projectBase.path(-1) : "";  //FIXME
+  return m_projectBase.isLocalFile() ? m_projectBase.path(KUrl::RemoveTrailingSlash) : "";  //FIXME
 }
 
 
@@ -332,14 +332,14 @@ void QuantaProjectPart::slotInsertFiles()
       KUrl destination = urlRequesterDlg.selectedURL();
       if (!destination.isEmpty())
       {
-        destination.adjustPath(1);
+        destination.adjustPath(KUrl::AddTrailingSlash);
         QuantaNetAccess::dircopy(urls, destination, this, false);
       }
     } else
     {
       QStringList filenames;
       KUrl url = KUrl::relativeURL(m_projectBase, urls.first());
-      QStringList sections = url.path(1).split('/', QString::SkipEmptyParts);
+      QStringList sections = url.path(KUrl::AddTrailingSlash).split('/', QString::SkipEmptyParts);
       QString section;
       for (int i = 0 ; i < sections.count() - 1; i++)
       {
@@ -373,7 +373,7 @@ void QuantaProjectPart::slotInsertFolder()
       KUrl destination = urlRequesterDlg.selectedURL();
       if (!destination.isEmpty())
       {
-        destination.adjustPath(1);
+        destination.adjustPath(KUrl::AddTrailingSlash);
         QuantaNetAccess::dircopy(url, destination, this, false);
       }
     } else
@@ -381,7 +381,7 @@ void QuantaProjectPart::slotInsertFolder()
       KUrl::List urls = ExtFileInfo::allFilesRelative(url, "*");
       QStringList filenames;
       KUrl u = KUrl::relativeURL(m_projectBase, url);
-      QStringList sections = u.path(1).split('/', QString::SkipEmptyParts);
+      QStringList sections = u.path(KUrl::AddTrailingSlash).split('/', QString::SkipEmptyParts);
       QString section;
       for (int i = 0 ; i < sections.count(); i++)
       {
@@ -403,7 +403,7 @@ bool QuantaProjectPart::isProjectFile(const KUrl &url)
 {
   if (! m_projectBase.isParentOf(url))
     return false;
-  if (url.path(1) == m_projectBase.path())
+  if (url.path(KUrl::AddTrailingSlash) == m_projectBase.path())
     return true;
 
   QString u = url.path().remove(0, m_projectBase.path().length());
@@ -416,7 +416,7 @@ void QuantaProjectPart::slotTargetFolderSelected(QAction *action, const KUrl& ur
 {
   Q_UNUSED(action);
   KUrl u = url;
-  u.adjustPath(1);
+  u.adjustPath(KUrl::AddTrailingSlash);
   QuantaNetAccess::dircopy(m_fileContextURLs, u, this, false);
   m_browserMenu->deleteLater(); 
   m_browserMenu = 0L;

@@ -44,7 +44,7 @@ KUrl ExtFileInfo::toRelative(const KUrl& urlToConvert, const KUrl& baseURL)
   if (urlToConvert.protocol() == baseURL.protocol())
   {
     QString path = urlToConvert.path();
-    QString basePath = baseURL.path(1);
+    QString basePath = baseURL.path(KUrl::AddTrailingSlash);
     if (path.startsWith("/"))
     {
       path.remove(0, 1);
@@ -79,7 +79,7 @@ KUrl ExtFileInfo::toRelative(const KUrl& urlToConvert, const KUrl& baseURL)
   }
 
   if (urlToConvert.path().endsWith("/") && !resultURL.path().isEmpty())
-    resultURL.adjustPath(1);
+    resultURL.adjustPath(KUrl::AddTrailingSlash);
   return resultURL;
 }
 
@@ -92,7 +92,7 @@ KUrl ExtFileInfo::toAbsolute(const KUrl& urlToConvert, const KUrl& baseURL)
   {
     int pos;
     QString cutname = urlToConvert.path();
-    QString cutdir = baseURL.path(1);
+    QString cutdir = baseURL.path(KUrl::AddTrailingSlash);
     while ( (pos = cutname.indexOf("../")) >=0 )
     {
        cutname.remove( 0, pos+3 );
@@ -102,7 +102,7 @@ KUrl ExtFileInfo::toAbsolute(const KUrl& urlToConvert, const KUrl& baseURL)
     resultURL.setPath(QDir::cleanPath(cutdir+cutname));
   }
 
-  if (urlToConvert.path().endsWith("/")) resultURL.adjustPath(1);
+  if (urlToConvert.path().endsWith("/")) resultURL.adjustPath(KUrl::AddTrailingSlash);
   return resultURL;
 }
 
@@ -344,7 +344,7 @@ bool ExtFileInfo::internalExists(const KUrl& url)
 {
   bJobOK = true;
   KUrl url2 = url;
-  url2.adjustPath(-1);
+  url2.adjustPath(KUrl::RemoveTrailingSlash);
  // kDebug(24000)<<"ExtFileInfo::internalExists"<<endl;
   KIO::StatJob * job = KIO::stat(url2, false);
   job->setDetails(0);
@@ -421,7 +421,7 @@ void ExtFileInfo::slotResult(KJob *job)
 void ExtFileInfo::slotNewEntries(KIO::Job *job, const KIO::UDSEntryList& udsList)
 {
   KUrl url = static_cast<KIO::ListJob *>(job)->url();
-  url.adjustPath(-1);
+  url.adjustPath(KUrl::RemoveTrailingSlash);
   // avoid creating these QStrings again and again
   static const QString& dot = KGlobal::staticQString(".");
   static const QString& dotdot = KGlobal::staticQString("..");
@@ -441,7 +441,7 @@ void ExtFileInfo::slotNewEntries(KIO::Job *job, const KIO::UDSEntryList& udsList
       {
         KUrl u = item->url();
         u.setPath(item->linkDest());
-        u.adjustPath(+1);
+        u.adjustPath(KUrl::AddTrailingSlash);
         if (!dirListItems.contains(u) && u.url() != m_listStartURL)
         {
           linkItems.append(new KFileItem(*item));
@@ -453,7 +453,7 @@ void ExtFileInfo::slotNewEntries(KIO::Job *job, const KIO::UDSEntryList& udsList
       }
       itemURL = item->url();
       if (item->isDir())
-         itemURL.adjustPath(1);
+        itemURL.adjustPath(KUrl::AddTrailingSlash);
       foreach (QRegExp *filter, lstFilters)
       {
         if (filter->exactMatch(item->text()))
@@ -481,7 +481,7 @@ void ExtFileInfo::slotNewEntries(KIO::Job *job, const KIO::UDSEntryList& udsList
 void ExtFileInfo::slotNewDetailedEntries(KIO::Job *job, const KIO::UDSEntryList& udsList)
 {
   KUrl url = static_cast<KIO::ListJob *>(job)->url();
-  url.adjustPath(-1);
+  url.adjustPath(KUrl::AddTrailingSlash);
   // avoid creating these QStrings again and again
   static const QString& dot = KGlobal::staticQString(".");
   static const QString& dotdot = KGlobal::staticQString("..");

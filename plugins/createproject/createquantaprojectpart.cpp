@@ -197,7 +197,7 @@ void CreateQuantaProjectPart::slotCreateNewProject()
       KUrl::List templates = ExtFileInfo::listDir(templateSource, "*");
       KUrl templateDest = baseURL;
       templateDest.addPath(secondPage->templates());
-      templateDest.adjustPath(1);
+      templateDest.adjustPath(KUrl::AddTrailingSlash);
       QuantaNetAccess::dircopy(templates, templateDest, this, false);
     }
     if (secondPage->insertLocalTemplates())
@@ -207,7 +207,7 @@ void CreateQuantaProjectPart::slotCreateNewProject()
       KUrl::List templates = ExtFileInfo::listDir(templateSource, "*");
       KUrl templateDest = baseURL;
       templateDest.addPath(secondPage->templates());
-      templateDest.adjustPath(1);
+      templateDest.adjustPath(KUrl::AddTrailingSlash);
       QuantaNetAccess::dircopy(templates, templateDest, this, false);
     }
     if (secondPage->insertMode() == SecondWizardPage::Local)

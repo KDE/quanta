@@ -22,7 +22,7 @@ BrowserPopupMenu::BrowserPopupMenu(const KUrl& base,  bool relativePathInTitle, 
  : KMenu(parent)
 {
   m_base = base;
-  m_base.adjustPath(1);
+  m_base.adjustPath(KUrl::AddTrailingSlash);
   m_topList = topList;
   m_relativePathInTitle = relativePathInTitle;
   m_menuBuilt = false;
@@ -37,7 +37,7 @@ BrowserPopupMenu::~BrowserPopupMenu()
 
 void BrowserPopupMenu::buildMenu()
 {
-  Hack::KMenuAddTitle(this, m_relativePathInTitle ? m_base.fileName() : m_base.path(-1));
+  Hack::KMenuAddTitle(this, m_relativePathInTitle ? m_base.fileName() : m_base.path(KUrl::RemoveTrailingSlash));
   QStringList::ConstIterator topEnd = m_topList.constEnd();
   for (QStringList::ConstIterator it = m_topList.constBegin(); it != topEnd; ++it)
   {

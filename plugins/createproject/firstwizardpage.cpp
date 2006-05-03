@@ -137,7 +137,7 @@ void FirstWizardPage::slotSetProjectBase()
     url.setProtocol(comboProtocol->currentText());
   }
   url.setPath(linePrjDir->text());
-  url.adjustPath(1);
+  url.adjustPath(KUrl::AddTrailingSlash);
   if (!url.path().startsWith("/"))
     url.setPath("/" + url.path());
 

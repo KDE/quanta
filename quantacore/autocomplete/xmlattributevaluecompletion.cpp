@@ -148,7 +148,7 @@ QStringList XmlAttributeValueCompletion::tagAttributeValues(const DTDStruct* dtd
       Attribute *attr;
       KUrl u;
       KUrl base = m_source->url();
-      base.setPath(base.directory(false,false));
+      base.setPath(base.directory(KUrl::ObeyTrailingSlash));
       QListIterator<Attribute*> it(*attrs);
       QString s;
       while (it.hasNext())

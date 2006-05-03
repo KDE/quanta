@@ -295,9 +295,9 @@ void BaseTreeView::itemRenamed(const KUrl& oldURL, const KUrl& newURL)
   if (curItem->isDir())
   {
     KUrl n = newURL;
-    n.adjustPath(1);
+    n.adjustPath(KUrl::AddTrailingSlash);
     KUrl o = oldURL;
-    o.adjustPath(1);
+    o.adjustPath(KUrl::AddTrailingSlash);
     emit renamed(o, n);
   }
   else
@@ -380,7 +380,7 @@ FileInfoDlg* BaseTreeView::addFileInfoPage(KPropertiesDialog* propDlg)
     if (u.isLocalFile())   //get the file info only for local file. TODO: for non-local ones
     {
        QString nameForInfo = u.path();
-       QString path = u.directory(0,0);       //extract path for images
+       QString path = u.directory(KUrl::ObeyTrailingSlash);       //extract path for images
        QString sourcename = u.fileName(0);
 
        QFile qfile(nameForInfo);
@@ -544,7 +544,7 @@ void BaseTreeView::slotDelete()
   if (!currentKFileTreeViewItem()) return;
   KUrl url = currentURL();
   if (currentKFileTreeViewItem()->isDir())
-    url.adjustPath(+1);
+    url.adjustPath(KUrl::AddTrailingSlash);
   QuantaNetAccess::del(url, m_plugin, m_parent, true);
 }
 
@@ -696,7 +696,7 @@ void BaseTreeView::slotDropped (QWidget *, QDropEvent * /*e*/, KUrl::List& fileL
   if(fileList.empty())
     return;
 
-  dest.adjustPath(1);
+  dest.adjustPath(KUrl::AddTrailingSlash);
   // Check what the destination can do
   if (!KProtocolInfo::supportsWriting(dest))
     return;
@@ -867,8 +867,8 @@ void BaseTreeView::doRename(KFileTreeViewItem* kftvi, const QString & newName)
 
   if (kftvi->isDir())
   {
-    newURL.setPath(QFileInfo(oldURL.path(-1)).absoluteFilePath() + '/' + newName + '/');
-    oldURL.adjustPath(1);
+    newURL.setPath(QFileInfo(oldURL.path(KUrl::RemoveTrailingSlash)).absoluteFilePath() + '/' + newName + '/');
+    oldURL.adjustPath(KUrl::AddTrailingSlash);
   } else
   {
     newURL.setFileName(newName);
@@ -883,8 +883,8 @@ void BaseTreeView::doRename(KFileTreeViewItem* kftvi, const QString & newName)
     if (proceed)
     {
     //start the rename job
-      oldURL.adjustPath(-1);
-      newURL.adjustPath(-1);
+      oldURL.adjustPath(KUrl::RemoveTrailingSlash);
+      newURL.adjustPath(KUrl::RemoveTrailingSlash);
       if (!QuantaNetAccess::file_move(oldURL, newURL, -1, true, false, m_plugin, true))
       {
         kftvi->setText(0, kftvi->fileItem()->text());  // reset the text

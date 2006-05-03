@@ -129,7 +129,7 @@ bool QuantaNetAccess::dircopy( const KUrl::List & srcList, const KUrl & target, 
     for ( KUrl::List::ConstIterator it = srcList.begin(); it != end; ++it )
     {
       url = target;
-      url.adjustPath(+1);
+      url.adjustPath(KUrl::AddTrailingSlash);
       url.setFileName((*it).fileName());
       checkProjectInsert(*it, url, plugin, confirm);
     }
@@ -197,7 +197,7 @@ bool QuantaNetAccess::move( const KUrl::List& srcList, const KUrl& target, KDevP
       for ( KUrl::List::ConstIterator it = srcList.begin(); it != end; ++it )
       {
         url = target;
-        url.adjustPath(+1);
+        url.adjustPath(KUrl::AddTrailingSlash);
         url.setFileName((*it).fileName());
         checkProjectInsert(*it, url, plugin, confirm);
         //FIXME project->urlMoved(*it, url); //emits the "after_file_move" event
@@ -306,11 +306,11 @@ void QuantaNetAccess::checkProjectInsert(const KUrl& source, const KUrl& target,
     {
       if (target == source) //mkdir case
       {
-        project->addFile(target.path(+1).mid(baseURL.path(+1).length()));
+        project->addFile(target.path(KUrl::AddTrailingSlash).mid(baseURL.path(KUrl::AddTrailingSlash).length()));
       } else
       {
-        QString prefix = saveUrl.path(+1);
-        prefix.remove(0, baseURL.path(+1).length());
+        QString prefix = saveUrl.path(KUrl::AddTrailingSlash);
+        prefix.remove(0, baseURL.path(KUrl::AddTrailingSlash).length());
         QStringList targetList(prefix);
         KUrl url;
         KUrl::List urls = ExtFileInfo::allFilesRelative(source, "*");

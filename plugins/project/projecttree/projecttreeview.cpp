@@ -229,7 +229,7 @@ void ProjectTreeView::folderMenu(const QPoint &point)
 
   // ask other plugins for menu entries
   KUrl menuURL(currentKFileTreeViewItem()->url());
-  menuURL.adjustPath(+1);
+  menuURL.adjustPath(KUrl::AddTrailingSlash);
   KUrl::List urlList(menuURL);
   FileContext context(urlList);
   m_plugin->core()->fillContextMenu(&popup, &context);
@@ -440,7 +440,7 @@ QDomElement ProjectTreeView::getDomElement(KFileTreeViewItem* item)
 
   KUrl url = item->url();
   if (item->isDir())
-    url.adjustPath(1);
+    url.adjustPath(KUrl::AddTrailingSlash);
 
   QString path = m_quantaProject->relativeProjectFile(url.path());
   return m_quantaProject->domElementForPath(path);

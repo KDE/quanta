@@ -83,7 +83,7 @@ KFileTreeBranch* FilesTreeView::newBranch(const KUrl& url)
     newBrnch = new BaseTreeBranch(this, url, s, SmallIcon(iconNameForURL(url)), Settings::self()->filesTreeShowHidden());
   } else
   {
-    if (url.isLocalFile() && url.equals(KUrl::fromPathOrURL(QDir::homePath()), true))
+    if (url.isLocalFile() && url.equals(KUrl::fromPathOrURL(QDir::homePath()), KUrl::CompareWithoutTrailingSlash))
     {
       if (s.isEmpty())
         s = i18n("Home Folder");
@@ -127,7 +127,7 @@ void FilesTreeView::folderMenu(const QPoint &point)
   bool rootItem = (currentKFileTreeViewItem() == currentKFileTreeViewItem()->branch()->root());
   if (!rootItem)
   {
-    url.adjustPath(+1);
+    url.adjustPath(KUrl::AddTrailingSlash);
     if (!topURLAliases.contains(url.url()))
       popup.addAction(i18n("&Add Folder to Top"), this, SLOT(slotAddToTop()));
   }
@@ -165,7 +165,7 @@ void FilesTreeView::folderMenu(const QPoint &point)
 
   // ask other plugins for menu entries
   KUrl menuURL(currentKFileTreeViewItem()->url());
-  menuURL.adjustPath(+1);
+  menuURL.adjustPath(KUrl::AddTrailingSlash);
   KUrl::List urlList(menuURL);
   FileContext context(urlList);
   m_part->core()->fillContextMenu(&popup, &context);
@@ -208,7 +208,7 @@ void FilesTreeView::slotRemoveFromTop()
     return;
 
   KUrl url(currentURL());
-  url.adjustPath(+1);
+  url.adjustPath(KUrl::AddTrailingSlash);
   topURLAliases.remove(url.url());
   removeBranch(curItem->branch());
 }
@@ -222,7 +222,7 @@ void FilesTreeView::slotAddToTop()
     return;
 
   KUrl url(currentURL());
-  url.adjustPath(+1);
+  url.adjustPath(KUrl::AddTrailingSlash);
   if (!topURLAliases.contains(url.url()))
   {
     newBranch(url);
@@ -237,7 +237,7 @@ void FilesTreeView::slotNewTopFolder()
   KUrl url = KFileDialog::getExistingURL(QString::null, this, i18n("Choose Local or Remote Folder"));
   if (url.isEmpty())
     return;
-  url.adjustPath(+1);
+  url.adjustPath(KUrl::AddTrailingSlash);
   if (!topURLAliases.contains(url.url()))
   {
     newBranch(url);
@@ -255,7 +255,7 @@ void FilesTreeView::slotChangeAlias()
     return;
 
   KUrl url(currentURL().url());
-  url.adjustPath(+1);
+  url.adjustPath(KUrl::AddTrailingSlash);
   QString s = topURLAliases[url.url()];
   if (s.isEmpty())
     s = curItem->text(0);

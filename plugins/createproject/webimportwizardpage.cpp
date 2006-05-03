@@ -88,7 +88,7 @@ void WebImportWizardPage::setProtocol(const QString& protocol)
 void WebImportWizardPage::setBaseURL(const KUrl& a_baseURL)
 {
   baseURL = a_baseURL;
-  baseURL.adjustPath(1);
+  baseURL.adjustPath(KUrl::AddTrailingSlash);
 }
 
 void WebImportWizardPage::slotStart()
@@ -101,7 +101,7 @@ void WebImportWizardPage::slotStart()
     {
       if (baseURL.protocol() == "file")
       {
-        ::chdir(baseURL.path(1).toLocal8Bit());
+          ::chdir(baseURL.path(KUrl::AddTrailingSlash).toLocal8Bit());
 
         proc = new KProcess();
         proc ->clearArguments();
@@ -173,7 +173,7 @@ void WebImportWizardPage::slotGetWgetOutput(KProcess *, char *buffer, int buflen
   emit messages(output);
 
   int pos;
-  QString basePath = baseURL.path(1);
+  QString basePath = baseURL.path(KUrl::AddTrailingSlash);
   while ( (pos = output.indexOf("saved")) != -1 )
   {
     progress->advance(1);

@@ -242,7 +242,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
   //read all the tag files
   KUrl dirURL = KUrl::fromPathOrURL(dtd->fileName);
   dirURL.setFileName("");
-  QString dirName = dirURL.path(1);
+  QString dirName = dirURL.path(KUrl::AddTrailingSlash);
   if (QFile::exists(dirName + "common.tag"))
     readTagFile(dirName + "common.tag", dtd, 0L);
   //bool idleTimerStatus = quantaApp->slotEnableIdleTimer(false);

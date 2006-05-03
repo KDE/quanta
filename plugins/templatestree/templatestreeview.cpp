@@ -275,7 +275,7 @@ void TemplatesTreeView::folderMenu(const QPoint &point)
 
   // ask other plugins for menu entries
   KUrl menuURL(currentKFileTreeViewItem()->url());
-  menuURL.adjustPath(+1);
+  menuURL.adjustPath(KUrl::AddTrailingSlash);
   KUrl::List urlList(menuURL);
   FileContext context(urlList);
   m_plugin->core()->fillContextMenu(&popup, &context);
@@ -466,7 +466,7 @@ void TemplatesTreeView::contentsDropEvent(QDropEvent *e)
         dest = currentURL();
       else
         dest = currentURL().directory(false);
-      dest.adjustPath(+1);
+      dest.adjustPath(KUrl::AddTrailingSlash);
       QString content;
       Q3TextDrag::decode(e, content);
       KUrl url =KUrlRequesterDlg::getURL( dest.path() + "template.txt",

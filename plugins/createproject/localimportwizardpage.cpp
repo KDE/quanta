@@ -66,7 +66,7 @@ LocalImportWizardPage::~LocalImportWizardPage(){
 void LocalImportWizardPage::setBaseURL(const KUrl& a_baseURL)
 {
   baseURL = a_baseURL;
-  baseURL.adjustPath(1);
+  baseURL.adjustPath(KUrl::AddTrailingSlash);
   slotClearList();
 }
 
@@ -80,8 +80,8 @@ QList<QPair<KUrl, KUrl> > LocalImportWizardPage::files()
   {
     SimpleTreeViewItem *item = static_cast<SimpleTreeViewItem*>(it.current());
     destURL = baseURL;
-    destURL.setPath(destURL.directory(false, true) + item->treePath());
-    destURL.adjustPath(-1);
+    destURL.setPath(destURL.directory() + item->treePath());
+    destURL.adjustPath(KUrl::RemoveTrailingSlash);
     list.append(qMakePair(item->url(), destURL));
     ++it;
   }
@@ -129,7 +129,7 @@ KUrl::List LocalImportWizardPage::projectFiles()
 void LocalImportWizardPage::slotInsertFiles()
 {
   KUrl::List list = projectFiles();
-  insertURLs(list.first().directory(false, true), list);
+  insertURLs(list.first().directory(), list);
 }
 
 void LocalImportWizardPage::resizeEvent ( QResizeEvent *t )
@@ -145,7 +145,7 @@ void LocalImportWizardPage::slotAddFiles()
 
   if (!list.isEmpty())
   {
-    insertURLs(list.first().directory(false, true), list);
+    insertURLs(list.first().directory(), list);
   }
 }
 
@@ -157,9 +157,9 @@ void LocalImportWizardPage::slotAddFolder()
   if ( !dirURL.isEmpty() )
   {
   //  listView->setBase(dirURL.directory(false, true));
-    dirURL.adjustPath(1);
+    dirURL.adjustPath(KUrl::AddTrailingSlash);
     KUrl::List list = ExtFileInfo::allFiles(dirURL, "*");
-    insertURLs(dirURL.directory(false, true), list);
+    insertURLs(dirURL.directory(), list);
   }
 }
 
