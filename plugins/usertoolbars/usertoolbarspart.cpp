@@ -42,6 +42,9 @@
 
 //kde includes
 #include <kaction.h>
+#include <kstdaction.h>
+#include <krecentfilesaction.h>
+#include <kactioncollection.h>
 #include <kconfig.h>
 #include <kedittoolbar.h>
 #include <kfiledialog.h>

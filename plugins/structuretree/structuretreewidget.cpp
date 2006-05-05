@@ -38,6 +38,7 @@
 #include <klocale.h>
 #include <kmenu.h>
 #include <kaction.h>
+#include <kstdaction.h>
 // #include <kdebug.h>
 
 //kdevelop includes

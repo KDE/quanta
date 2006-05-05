@@ -44,6 +44,7 @@
 #include <kinputdialog.h>
 #include <ktoolbar.h>
 #include <kxmlguifactory.h>
+#include <kactioncollection.h>
 
 #include <kdevmainwindow.h>
 #include <kdevplugin.h>

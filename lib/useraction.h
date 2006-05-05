@@ -21,6 +21,7 @@
 
 #include <qdom.h>
 #include <kaction.h>
+#include <ktoggleaction.h>
 
 
 class KDevPlugin;

@@ -42,6 +42,7 @@
 #include <kdebug.h>
 #include <kiconloader.h>
 #include <kaction.h>
+#include <kstdaction.h>
 
 //kdevelop includes
 #include <interfaces/kdevcore.h>
