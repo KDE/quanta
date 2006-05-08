@@ -44,7 +44,7 @@ class StructureTreePart: public KDevPlugin
 {
   Q_OBJECT
 public:
-  StructureTreePart(QObject *parent, const char *name, const QStringList &args);
+  StructureTreePart(QObject *parent, const QStringList &args);
   ~StructureTreePart();
 
 private slots:

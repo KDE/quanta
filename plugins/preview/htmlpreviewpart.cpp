@@ -55,10 +55,9 @@ K_EXPORT_COMPONENT_FACTORY( libkdevhtmlpreview, HTMLPreviewFactory( data ) );
 #define GLOBALDOC_OPTIONS 1
 #define PROJECTDOC_OPTIONS 2
 
-HTMLPreviewPart::HTMLPreviewPart(QObject *parent, const char *name, const QStringList &/*args*/)
+HTMLPreviewPart::HTMLPreviewPart(QObject *parent, const QStringList &/*args*/)
   : KDevPlugin(&data, parent), m_activeEditor(0), m_partmanager(0)
 {
-  setObjectName(name);
   setInstance(HTMLPreviewFactory::instance());
   setXMLFile("kdevhtmlpreview.rc");
 

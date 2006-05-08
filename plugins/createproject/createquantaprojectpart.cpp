@@ -70,11 +70,10 @@ K_EXPORT_COMPONENT_FACTORY( libkdevcreatequantaproject, CreateQuantaProjectFacto
 #define GLOBALDOC_OPTIONS 1
 #define PROJECTDOC_OPTIONS 2
 
-CreateQuantaProjectPart::CreateQuantaProjectPart(QObject *parent, const char *name, const QStringList &/*args*/)
+CreateQuantaProjectPart::CreateQuantaProjectPart(QObject *parent, const QStringList &/*args*/)
     : KDevPlugin(&data, parent)
 {
   kDebug(24000) << "Quanta create project plugin loaded" << endl;
-  setObjectName(name);
   setInstance(CreateQuantaProjectFactory::instance());
   setXMLFile("kdevcreatequantaproject.rc");
 

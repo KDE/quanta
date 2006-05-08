@@ -52,11 +52,10 @@ K_EXPORT_COMPONENT_FACTORY( libkdevquantafilestree, QuantaFilesTreeFactory( data
 #define GLOBALDOC_OPTIONS 1
 #define PROJECTDOC_OPTIONS 2
 
-QuantaFilesTreePart::QuantaFilesTreePart(QObject *parent, const char *name, const QStringList &/*args*/)
+QuantaFilesTreePart::QuantaFilesTreePart(QObject *parent, const QStringList &/*args*/)
     : KDevPlugin(&data, parent)
 {
     setInstance(QuantaFilesTreeFactory::instance());
-    setObjectName(name);
     setXMLFile("kdevquantafilestree.rc");
 
     m_widget = new QWidget();

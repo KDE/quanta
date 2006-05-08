@@ -39,7 +39,7 @@ class ProjectTreePart: public KDevPlugin
 {
   Q_OBJECT
 public:
-  ProjectTreePart(QObject *parent, const char *name, const QStringList &args);
+  ProjectTreePart(QObject *parent, const QStringList &args);
   ~ProjectTreePart();
   
   void savePartialProjectSession(QDomElement *el);

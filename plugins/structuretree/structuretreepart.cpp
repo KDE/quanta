@@ -53,10 +53,9 @@ K_EXPORT_COMPONENT_FACTORY( libkdevstructuretree, StructureTreeFactory( data ) )
 #define GLOBALDOC_OPTIONS 1
 #define PROJECTDOC_OPTIONS 2
 
-StructureTreePart::StructureTreePart(QObject *parent, const char *name, const QStringList &/*args*/)
+StructureTreePart::StructureTreePart(QObject *parent, const QStringList &/*args*/)
     : KDevPlugin(&data, parent)
 {
-    setObjectName(name);
     setInstance(StructureTreeFactory::instance());
     setXMLFile("kdevstructuretree.rc");
 

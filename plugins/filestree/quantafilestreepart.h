@@ -42,7 +42,7 @@ class QuantaFilesTreePart: public KDevPlugin
 {
     Q_OBJECT
 public:
-    QuantaFilesTreePart(QObject *parent, const char *name, const QStringList &args);
+    QuantaFilesTreePart(QObject *parent, const QStringList &args);
     ~QuantaFilesTreePart();
   
 private slots:

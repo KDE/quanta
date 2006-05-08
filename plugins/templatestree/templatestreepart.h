@@ -43,7 +43,7 @@ class TemplatesTreePart: public KDevPlugin
 {
   Q_OBJECT
 public:
-  TemplatesTreePart(QObject *parent, const char *name, const QStringList &args);
+  TemplatesTreePart(QObject *parent, const QStringList &args);
   ~TemplatesTreePart();
 
   QuantaCoreIf * quantaCore() {return m_qcore;};

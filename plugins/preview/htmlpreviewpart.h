@@ -50,7 +50,7 @@ class HTMLPreviewPart : public KDevPlugin
 {
   Q_OBJECT
 public:
-  HTMLPreviewPart(QObject *parent, const char *name, const QStringList &args);
+  HTMLPreviewPart(QObject *parent, const QStringList &args);
   ~HTMLPreviewPart();
 
 private slots:

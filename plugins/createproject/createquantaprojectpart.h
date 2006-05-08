@@ -39,7 +39,7 @@ class CreateQuantaProjectPart: public KDevPlugin
 {
     Q_OBJECT
 public:
-    CreateQuantaProjectPart(QObject *parent, const char *name, const QStringList &args);
+    CreateQuantaProjectPart(QObject *parent, const QStringList &args);
     ~CreateQuantaProjectPart();
   
 private slots:

@@ -56,11 +56,10 @@ K_EXPORT_COMPONENT_FACTORY( libkdevquantaproject, QuantaProjectFactory( data ) )
 #define GLOBALDOC_OPTIONS 1
 #define PROJECTDOC_OPTIONS 2
 
-QuantaProjectPart::QuantaProjectPart( QObject *parent, const char *name, const QStringList & /*args*/ )
+QuantaProjectPart::QuantaProjectPart( QObject *parent, const QStringList & /*args*/ )
     : QuantaProjectIf( &data, parent)
 {
   kDebug( 24000 ) << "QuantaProjectPart loaded" << endl;
-  setObjectName(name);
   setInstance( QuantaProjectFactory::instance() );
   setXMLFile( "kdevquantaproject.rc" );
 

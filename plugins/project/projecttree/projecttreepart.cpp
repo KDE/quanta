@@ -49,10 +49,9 @@ K_EXPORT_COMPONENT_FACTORY( libkdevprojecttree, ProjectTreeFactory( data ) );
 #define GLOBALDOC_OPTIONS 1
 #define PROJECTDOC_OPTIONS 2
 
-ProjectTreePart::ProjectTreePart(QObject *parent, const char *name, const QStringList &/*args*/)
+ProjectTreePart::ProjectTreePart(QObject *parent, const QStringList &/*args*/)
     : KDevPlugin(&data, parent)
 {
-  setObjectName(name);
   setInstance(ProjectTreeFactory::instance());
   setXMLFile("kdevprojecttree.rc");
 

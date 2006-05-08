@@ -36,7 +36,7 @@ class TagDialogsPart: public TagDialogsIf
 {
   Q_OBJECT
 public:
-  TagDialogsPart(QObject *parent, const char *name, const QStringList &args);
+  TagDialogsPart(QObject *parent, const QStringList &args);
   ~TagDialogsPart();
 
   TagPair createNewTag(QTag *dtdTag, const QString& selection, const QString& attrs = QString::null, const KUrl& baseURL = KUrl());

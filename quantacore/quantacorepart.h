@@ -37,7 +37,7 @@ class QuantaCorePart : public QuantaCoreIf
 {
 Q_OBJECT
 public:
-  QuantaCorePart(QObject *parent, const char *name, const QStringList &);
+  QuantaCorePart(QObject *parent, const QStringList &);
 
   ~QuantaCorePart();
   /**

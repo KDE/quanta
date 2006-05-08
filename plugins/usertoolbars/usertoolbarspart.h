@@ -45,7 +45,7 @@ class UserToolbarsPart: public KDevPlugin
 {
     Q_OBJECT
 public:
-    UserToolbarsPart(QObject *parent, const char *name, const QStringList &args);
+    UserToolbarsPart(QObject *parent, const QStringList &args);
     ~UserToolbarsPart();
     /**
      * Enables/disables the creation of the Actions menu

@@ -58,10 +58,9 @@ K_EXPORT_COMPONENT_FACTORY( libkdevtemplatestree, TemplatesTreeFactory( data ) )
 #define GLOBALDOC_OPTIONS 1
 #define PROJECTDOC_OPTIONS 2
 
-TemplatesTreePart::TemplatesTreePart(QObject *parent, const char *name, const QStringList &/*args*/)
+TemplatesTreePart::TemplatesTreePart(QObject *parent, const QStringList &/*args*/)
     : KDevPlugin(&data, parent)
 {
-    setObjectName(name);
     setInstance(TemplatesTreeFactory::instance());
     setXMLFile("kdevtemplatestree.rc");
 

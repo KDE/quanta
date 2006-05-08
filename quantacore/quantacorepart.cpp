@@ -68,11 +68,10 @@ K_EXPORT_COMPONENT_FACTORY(libkdevquantacore, QuantaCoreFactory(data));
 #define AUTOCOMPLETE_OPTIONS 1
 #define ENVIRONMENT_OPTIONS 2
 
-QuantaCorePart::QuantaCorePart(QObject *parent, const char *name, const QStringList& )
+QuantaCorePart::QuantaCorePart(QObject *parent, const QStringList& )
  : QuantaCoreIf(&data, parent), m_activeQuantaDoc(0)
 {
   kDebug(24000) << "Creating Quanta Support Part" << endl;
-  setObjectName(name);
   setInstance(QuantaCoreFactory::instance());
   setXMLFile("kdevquantacore.rc");
 

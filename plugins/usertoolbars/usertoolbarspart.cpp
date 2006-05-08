@@ -84,11 +84,10 @@ K_EXPORT_COMPONENT_FACTORY( libkdevusertoolbars, UserToolbarsFactory( data ) );
 const QString resourceDir = "quanta/";
 
 
-UserToolbarsPart::UserToolbarsPart(QObject *parent, const char *name, const QStringList &/*args*/)
+UserToolbarsPart::UserToolbarsPart(QObject *parent, const QStringList &/*args*/)
     : KDevPlugin(&data, parent)
 {
     kDebug(24000) << "Creating UserToolbars Part" << endl;
-    setObjectName(name);
     setInstance(UserToolbarsFactory::instance());
     setXMLFile("kdevusertoolbars.rc");
 

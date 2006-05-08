@@ -46,7 +46,7 @@ class QuantaProjectPart: public QuantaProjectIf
 {
     Q_OBJECT
 public:
-    QuantaProjectPart(QObject *parent, const char *name, const QStringList &args);
+    QuantaProjectPart(QObject *parent, const QStringList &args);
     ~QuantaProjectPart();
 
     virtual void closeProject();

@@ -43,10 +43,9 @@ K_EXPORT_COMPONENT_FACTORY( libkdevtagdialogs, TagDialogsFactory( data ) );
 #define GLOBALDOC_OPTIONS 1
 #define PROJECTDOC_OPTIONS 2
 
-TagDialogsPart::TagDialogsPart(QObject *parent, const char *name, const QStringList &/*args*/)
+TagDialogsPart::TagDialogsPart(QObject *parent, const QStringList &/*args*/)
     : TagDialogsIf(&data, parent)
 {
-    setObjectName(name);
     setInstance(TagDialogsFactory::instance());
     setXMLFile("kdevtagdialogs.rc");
     kDebug(24000) << "TagDialogs plugin loaded" << endl;
