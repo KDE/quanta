@@ -16,9 +16,9 @@
  ***************************************************************************/
 
 // QT includes
-#include <qlayout.h>
-#include <qcombobox.h>
-#include <qpushbutton.h>
+#include <QLayout>
+#include <QComboBox>
+#include <QPushButton>
 
 // KDE includes
 #include <klocale.h>

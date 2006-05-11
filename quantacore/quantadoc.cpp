@@ -31,11 +31,11 @@
 #include "settings.h"
 
 //qt includes
-#include <qdir.h>
-#include <qtextcodec.h>
-#include <qtimer.h>
+#include <QDir>
+#include <QTextCodec>
+#include <QTimer>
 #include <qpoint.h>
-#include <qlist.h>
+#include <QList>
 
 
 

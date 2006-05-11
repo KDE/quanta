@@ -24,8 +24,8 @@
 #include <k3listview.h>
 // #include <kdebug.h>
 
-#include <qlist.h>
-//#include <qstring.h>
+#include <QList>
+//#include <QString>
 
 //class KDevProject;
 class KMenu;

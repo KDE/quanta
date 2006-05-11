@@ -14,15 +14,15 @@
  ***************************************************************************/
 
 //qt includes
-#include <qeventloop.h>
-#include <qstring.h>
+#include <QEventLoop>
+#include <QString>
 #include <qpoint.h>
-#include <qregexp.h>
-#include <qstringlist.h>
-#include <qdatetime.h>
-#include <qfile.h>
-#include <qtextcodec.h>
-#include <qlist.h>
+#include <QRegExp>
+#include <QStringList>
+#include <QDateTime>
+#include <QFile>
+#include <QTextCodec>
+#include <QList>
 #include <qstack.h>
 
 //standard library includes

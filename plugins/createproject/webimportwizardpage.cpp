@@ -21,13 +21,13 @@
 #include "simpletreeviewitem.h"
 
 // qt includes
-#include <qlabel.h>
-#include <qlineedit.h>
-#include <qpushbutton.h>
-#include <qstringlist.h>
-#include <qlistview.h>
-#include <qfileinfo.h>
-#include <qcombobox.h>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QStringList>
+#include <QListView>
+#include <QFileInfo>
+#include <QComboBox>
 
 // kde includes
 #include <klocale.h>

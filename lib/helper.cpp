@@ -17,8 +17,8 @@
 #include <kglobal.h>
 #include <kstandarddirs.h>
 
-#include <qdir.h>
-#include <qstring.h>
+#include <QDir>
+#include <QString>
 
 
 Helper::Helper()

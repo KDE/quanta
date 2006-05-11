@@ -18,7 +18,7 @@
 
 //qt includes
 #include <qspinbox.h>
-#include <qimage.h>
+#include <QImage>
 //kde includes
 #include <kapplication.h>
 #include <klocale.h>

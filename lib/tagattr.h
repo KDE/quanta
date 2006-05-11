@@ -17,7 +17,7 @@
 
 #include "quantaexport.h"
 
-#include <qstring.h>
+#include <QString>
 
 class QDomElement;
 

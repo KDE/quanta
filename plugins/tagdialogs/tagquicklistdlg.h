@@ -20,7 +20,7 @@
 
 #include <qwidget.h>
 
-#include <qdialog.h>
+#include <QDialog>
 class QLabel;
 class QSpinBox;
 class QPushButton;

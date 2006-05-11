@@ -15,11 +15,11 @@
  ***************************************************************************/
 
 // QT files
-#include <qcombobox.h>
+#include <QComboBox>
 #include <klineedit.h>
-#include <qstring.h>
+#include <QString>
 #include <qspinbox.h>
-#include <qcheckbox.h>
+#include <QCheckBox>
 
 // KDE files
 #include <kcolorbutton.h>

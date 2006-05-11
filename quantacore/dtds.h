@@ -24,9 +24,9 @@
 #include "dtdstruct.h"
 
 //qt includes
-#include <qhash.h>
-#include <qobject.h>
-#include <qfile.h>
+#include <QHash>
+#include <QObject>
+#include <QFile>
 
 //kde includes
 

@@ -11,7 +11,7 @@
 #include <kurl.h>
 #include <knumvalidator.h>
 
-#include <qlayout.h>
+#include <QLayout>
 #include <qspinbox.h>
 
 #include "pictureview.h"

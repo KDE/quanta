@@ -18,7 +18,7 @@
 #define SAGROUPPARSER_H
 
 //qt includes
-#include <qobject.h>
+#include <QObject>
 
 //forward definitions
 class QTimer;

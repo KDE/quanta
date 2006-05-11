@@ -23,8 +23,8 @@
 #include "settings.h"
 
 //qt include
-#include <qregexp.h>
-#include <qpixmap.h>
+#include <QRegExp>
+#include <QPixmap>
 #include <qpoint.h>
 
 // KDE includes

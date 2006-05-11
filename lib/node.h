@@ -20,7 +20,7 @@
 
 #include "quantaexport.h"
 
-#include <qstring.h>
+#include <QString>
 #include <qmap.h>
 
 class QDomElement;

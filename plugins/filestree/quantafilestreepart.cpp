@@ -20,10 +20,10 @@
 
 #include "quantafilestreepart.h"
 
-#include <qtimer.h>
-#include <qmenu.h>
-#include <qwhatsthis.h>
-#include <qlayout.h>
+#include <QTimer>
+#include <QMenu>
+#include <QWhatsThis>
+#include <QLayout>
 #include <qtoolbox.h>
 
 #include <klocale.h>

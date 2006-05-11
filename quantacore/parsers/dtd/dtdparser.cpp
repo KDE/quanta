@@ -14,14 +14,14 @@
  ***************************************************************************/
 
 //qt includes
-#include <qcheckbox.h>
-#include <qfile.h>
-#include <qfileinfo.h>
-#include <qlabel.h>
-#include <qlineedit.h>
-#include <qregexp.h>
-#include <qstring.h>
-#include <qtextstream.h>
+#include <QCheckBox>
+#include <QFile>
+#include <QFileInfo>
+#include <QLabel>
+#include <QLineEdit>
+#include <QRegExp>
+#include <QString>
+#include <QTextStream>
 
 //kde includes
 #include <kconfig.h>

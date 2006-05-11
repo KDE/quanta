@@ -18,8 +18,8 @@
 #define PARSERCOMMON_H
 
 //qt includes
-#include <qlist.h>
-#include <qstringlist.h>
+#include <QList>
+#include <QStringList>
 
 //own includes
 #include "tag.h"

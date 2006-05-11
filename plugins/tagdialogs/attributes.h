@@ -19,9 +19,9 @@
 #define ATTRIBUTES_H
 
 //qt includes
-#include <qstring.h>
-#include <qcheckbox.h>
-#include <qcombobox.h>
+#include <QString>
+#include <QCheckBox>
+#include <QComboBox>
 #include <qdom.h>
 
 //kde includes

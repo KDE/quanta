@@ -23,7 +23,7 @@
 #include "projecttreepart.h"
 #include "searchlinewidget.h"
 
-#include <qlayout.h>
+#include <QLayout>
 
 #include <kurl.h>
 #include <klibloader.h>

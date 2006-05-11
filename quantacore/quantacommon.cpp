@@ -18,11 +18,11 @@
 #include <unistd.h>
 
 //qt includes
-#include <qstringlist.h>
-#include <qdir.h>
+#include <QStringList>
+#include <QDir>
 #include <qdom.h>
-#include <qfile.h>
-#include <qtextstream.h>
+#include <QFile>
+#include <QTextStream>
 #include <qwidget.h>
 
 //kde includes
@@ -45,9 +45,9 @@
 #include <kmenu.h>
 #include <ktoolbar.h>
 #include <kstringhandler.h>
-#include <qwhatsthis.h>
-#include <qtimer.h>
-#include <qclipboard.h>
+#include <QWhatsThis>
+#include <QTimer>
+#include <QClipboard>
 #include <qdatastream.h>
 
 #include "extfileinfo.h"

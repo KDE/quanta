@@ -20,7 +20,7 @@
 
 #include <qwidget.h>
 #include <q3tabdialog.h>
-#include <qhash.h>
+#include <QHash>
 
 #include <kurl.h>
 

@@ -25,10 +25,10 @@
 #include <kabc/stdaddressbook.h>
 
 //qt includes
-#include <qlineedit.h>
+#include <QLineEdit>
 #include <kpushbutton.h>
-#include <qstringlist.h>
-#include <qregexp.h>
+#include <QStringList>
+#include <QRegExp>
 
 
 MailDialog::MailDialog(QWidget *parent, const QString& caption)

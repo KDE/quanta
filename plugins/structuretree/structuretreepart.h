@@ -21,7 +21,7 @@
 #ifndef KDEVSTRUCTURETREE_H
 #define KDEVSTRUCTURETREE_H
 
-#include <qpointer.h>
+#include <QPointer>
 
 //kdevelop includes
 #include <interfaces/kdevplugin.h>

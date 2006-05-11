@@ -17,7 +17,7 @@
 #include "quantadoc.h"
 #include "helper.h"
 
-#include <qhash.h>
+#include <QHash>
 
 class Parser;
 class ParseResult;

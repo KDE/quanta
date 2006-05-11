@@ -12,12 +12,12 @@
 
 
 //qt includes
-#include <qdir.h>
-#include <qapplication.h>
-#include <qlist.h>
-#include <qstringlist.h>
-#include <qregexp.h>
-#include <qtimer.h>
+#include <QDir>
+#include <QApplication>
+#include <QList>
+#include <QStringList>
+#include <QRegExp>
+#include <QTimer>
 
 //kde includes
 #include <kurl.h>

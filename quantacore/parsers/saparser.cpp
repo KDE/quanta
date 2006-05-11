@@ -15,7 +15,7 @@
   ***************************************************************************/
 
 //qt includes
-#include <qtimer.h>
+#include <QTimer>
 
 //kde includes
 #include <kdebug.h>

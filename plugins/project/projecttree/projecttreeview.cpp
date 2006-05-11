@@ -25,11 +25,11 @@
 #include "hacks.h"
 
 // QT includes
-#include <qpainter.h>
-#include <qlabel.h>
-#include <qlineedit.h>
-#include <qhash.h>
-#include <qtimer.h>
+#include <QPainter>
+#include <QLabel>
+#include <QLineEdit>
+#include <QHash>
+#include <QTimer>
 
 // KDE includes
 #include <klocale.h>

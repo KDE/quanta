@@ -16,9 +16,9 @@
 #ifndef TAG_H
 #define TAG_H
 
-#include <qstring.h>
-#include <qhash.h>
-#include <qlist.h>
+#include <QString>
+#include <QHash>
+#include <QList>
 
 #include "areastruct.h"
 #include "qtag.h"

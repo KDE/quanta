@@ -13,16 +13,16 @@
  ***************************************************************************/
 
 //qt includes
-#include <qbuttongroup.h>
-#include <qcheckbox.h>
+#include <QButtonGroup>
+#include <QCheckBox>
 #include <qdom.h>
-#include <qfileinfo.h>
-#include <qlineedit.h>
+#include <QFileInfo>
+#include <QLineEdit>
 #include <q3listbox.h>
-#include <qtextedit.h>
-#include <qradiobutton.h>
-#include <qtabwidget.h>
-#include <qregexp.h>
+#include <QTextEdit>
+#include <QRadioButton>
+#include <QTabWidget>
+#include <QRegExp>
 
 //kde includes
 #include <kapplication.h>

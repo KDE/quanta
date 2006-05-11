@@ -16,9 +16,9 @@
 #include "qtag.h"
 #include "quantaexport.h"
 
-#include <qhash.h>
+#include <QHash>
 #include <qmap.h>
-#include <qlist.h>
+#include <QList>
 
 class GroupElement;
 class Node;

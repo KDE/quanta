@@ -16,7 +16,7 @@
 #include "extfileinfo.h"
 
 //qt includes
-#include <qfileinfo.h>
+#include <QFileInfo>
 
 //kde includes
 #include <kio/netaccess.h>

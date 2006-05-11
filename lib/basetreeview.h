@@ -19,8 +19,8 @@
 #include "quantaexport.h"
 
 //qt includes
-#include <qlist.h>
-#include <qregexp.h>
+#include <QList>
+#include <QRegExp>
 
 //kde includes
 #include <kfiletreebranch.h>

@@ -16,9 +16,9 @@
 
 #include "qtag.h"
 
-#include <qlist.h>
-#include <qstringlist.h>
-#include <qregexp.h>
+#include <QList>
+#include <QStringList>
+#include <QRegExp>
 
 
 

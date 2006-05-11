@@ -14,7 +14,7 @@
 #define COMPLETIONBASE_H
 
 #include <qpoint.h>
-#include <qstringlist.h>
+#include <QStringList>
 
 class EditorSource;
 class Node;

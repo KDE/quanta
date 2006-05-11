@@ -31,10 +31,10 @@
 
 
 // include qt headers
-#include <qdir.h>
-#include <qfileinfo.h>
-#include <qevent.h>
-#include <qtextstream.h>
+#include <QDir>
+#include <QFileInfo>
+#include <QEvent>
+#include <QTextStream>
 
 // include kde headers
 #include <klocale.h>

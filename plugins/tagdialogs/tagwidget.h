@@ -18,7 +18,7 @@
 #define TAGWIDGET_H
 
 #include <qwidget.h>
-#include <qhash.h>
+#include <QHash>
 
 class QComboBox;
 class QLineEdit;

@@ -16,7 +16,7 @@
 #define DTDPARSER_H
 
 //qt includes
-#include <qhash.h>
+#include <QHash>
 
 #include <kurl.h>
 

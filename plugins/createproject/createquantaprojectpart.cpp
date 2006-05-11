@@ -31,13 +31,13 @@
 
 //qt includes
 #include <qdom.h>
-#include <qfile.h>
-#include <qlineedit.h>
-#include <qmenu.h>
+#include <QFile>
+#include <QLineEdit>
+#include <QMenu>
 #include <qstackedwidget.h>
-#include <qtextstream.h>
-#include <qtimer.h>
-#include <qwhatsthis.h>
+#include <QTextStream>
+#include <QTimer>
+#include <QWhatsThis>
 #include <q3wizard.h>
 
 //kde includes

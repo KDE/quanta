@@ -16,7 +16,7 @@
 #include "tag.h"
 #include "tagattr.h"
 
-#include <qstringlist.h>
+#include <QStringList>
 
 #include <kcombobox.h>
 

@@ -31,7 +31,7 @@
 #include "editorsource.h"
 
 #include <q3header.h>
-// #include <qvaluelist.h>
+// #include <Q3ValueList>
 #include <q3listview.h>
 
 #include <kurl.h>

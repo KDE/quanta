@@ -19,7 +19,7 @@
 
 //qt includes
 #include <qmap.h>
-#include <qdir.h>
+#include <QDir>
 
 // quanta includes
 #include "basetreeview.h"

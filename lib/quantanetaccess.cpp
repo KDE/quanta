@@ -15,9 +15,9 @@
 #include "quantanetaccess.h"
 #include "quantaprojectif.h"
 
-#include <qstring.h>
+#include <QString>
 #include <qwidget.h>
-#include <qdir.h>
+#include <QDir>
 
 #include <kio/netaccess.h>
 #include <kurl.h>

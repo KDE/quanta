@@ -22,7 +22,7 @@
 #define HTMLPART_H
 
 #include <qwidget.h>
-#include <qstring.h>
+#include <QString>
 
 //kdevelop includes
 #include <widgets/kdevhtmlpart.h>

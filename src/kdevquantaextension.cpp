@@ -19,9 +19,9 @@
  ***************************************************************************/
 #include "kdevquantaextension.h"
 
-#include <qcheckbox.h>
-#include <qbuttongroup.h>
-#include <qradiobutton.h>
+#include <QCheckBox>
+#include <QButtonGroup>
+#include <QRadioButton>
 
 #include <klocale.h>
 #include <kconfig.h>

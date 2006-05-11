@@ -33,16 +33,16 @@
 #include <stdlib.h>
 
 #include <qdrawutil.h>
-#include <qevent.h>
-#include <qfile.h>
-#include <qimage.h>
-#include <qlabel.h>
-#include <qlayout.h>
+#include <QEvent>
+#include <QFile>
+#include <QImage>
+#include <QLabel>
+#include <QLayout>
 #include <klineedit.h>
-#include <qvalidator.h>
-#include <qpainter.h>
-#include <qpushbutton.h>
-#include <qtimer.h>
+#include <QValidator>
+#include <QPainter>
+#include <QPushButton>
+#include <QTimer>
 
 #include <kcolordialog.h>
 #include <kconfig.h>

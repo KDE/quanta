@@ -24,13 +24,13 @@
 
 
 // qt includes
-#include <qlabel.h>
-#include <qfileinfo.h>
-#include <qlineedit.h>
-#include <qcheckbox.h>
-#include <qradiobutton.h>
-#include <qpushbutton.h>
-#include <qregexp.h>
+#include <QLabel>
+#include <QFileInfo>
+#include <QLineEdit>
+#include <QCheckBox>
+#include <QRadioButton>
+#include <QPushButton>
+#include <QRegExp>
 
 // kde includes
 #include <kdebug.h>

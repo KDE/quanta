@@ -26,11 +26,11 @@
 #include "quantacoreif.h"
 #include "searchlinewidget.h"
 
-#include <qtimer.h>
-#include <qmenu.h>
-#include <qwhatsthis.h>
+#include <QTimer>
+#include <QMenu>
+#include <QWhatsThis>
 #include <qtoolbox.h>
-#include <qlayout.h>
+#include <QLayout>
 
 #include <klocale.h>
 #include <kaction.h>

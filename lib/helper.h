@@ -15,7 +15,7 @@
 
 #include "quantaexport.h"
 
-#include <qstring.h>
+#include <QString>
 
 /**
 @short some static helper functions

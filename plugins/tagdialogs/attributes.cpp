@@ -24,7 +24,7 @@
 
 //qt includes
 #include <qdom.h>
-#include <qtextstream.h>
+#include <QTextStream>
 
 //app includes
 #include "attributes.h"

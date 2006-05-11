@@ -15,7 +15,7 @@
 #ifndef TOOLBARTABWIDGET_H
 #define TOOLBARTABWIDGET_H
 
-#include <qtabwidget.h>
+#include <QTabWidget>
 #include <qmap.h>
 
 #include <ktoolbar.h>

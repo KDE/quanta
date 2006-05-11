@@ -9,7 +9,7 @@
 #include <dcopclient.h>
 #include <kparts/componentfactory.h>
 
-#include <qfileinfo.h>
+#include <QFileInfo>
 
 //kdevelop includes
 #include <shell/api.h>

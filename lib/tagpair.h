@@ -17,8 +17,8 @@
 #include "tagattr.h"
 #include "quantaexport.h"
 
-#include <qstring.h>
-#include <qpair.h>
+#include <QString>
+#include <QPair>
 
 /**
 pair of opening and closing parts of a tag

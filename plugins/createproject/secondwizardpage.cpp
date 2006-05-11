@@ -20,13 +20,13 @@
 #include "dtdstruct.h"
 
 // qt includes
-#include <qcheckbox.h>
-#include <qcombobox.h>
-#include <qlabel.h>
-#include <qlayout.h>
-#include <qlineedit.h>
-#include <qradiobutton.h>
-#include <qstringlist.h>
+#include <QCheckBox>
+#include <QComboBox>
+#include <QLabel>
+#include <QLayout>
+#include <QLineEdit>
+#include <QRadioButton>
+#include <QStringList>
 #include <qstackedwidget.h>
 
 // kde includes

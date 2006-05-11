@@ -26,10 +26,10 @@
 #include "helper.h"
 #include "tagpair.h"
 
-#include <qcheckbox.h>
-#include <qlabel.h>
-#include <qtimer.h>
-#include <qmenu.h>
+#include <QCheckBox>
+#include <QLabel>
+#include <QTimer>
+#include <QMenu>
 #include <qwidget.h>
 
 #include <kaction.h>

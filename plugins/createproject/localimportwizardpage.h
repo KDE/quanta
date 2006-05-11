@@ -20,8 +20,8 @@
 
 #include "ui_localimportwizardpagebase.h"
 
-#include <qpair.h>
-#include <qlist.h>
+#include <QPair>
+#include <QList>
 
 #include <kurl.h>
 

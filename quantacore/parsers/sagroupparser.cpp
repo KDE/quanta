@@ -28,8 +28,8 @@
 #include "editorsource.h"
 
 //qt includes
-#include <qtimer.h>
-#include <qlist.h>
+#include <QTimer>
+#include <QList>
 
 //kde includes
 #include <kdebug.h>

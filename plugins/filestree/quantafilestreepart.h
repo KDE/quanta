@@ -21,7 +21,7 @@
 #ifndef KDEVQUANTAFILESTREE_H
 #define KDEVQUANTAFILESTREE_H
 
-#include <qpointer.h>
+#include <QPointer>
 
 //kdevelop includes
 #include <interfaces/kdevplugin.h>

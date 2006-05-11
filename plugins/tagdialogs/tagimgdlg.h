@@ -21,10 +21,10 @@
 
 //Generated area. DO NOT EDIT!!!(begin)
 #include <qwidget.h>
-#include <qlabel.h>
+#include <QLabel>
 #include <klineedit.h>
-#include <qpushbutton.h>
-#include <qcombobox.h>
+#include <QPushButton>
+#include <QComboBox>
 //Generated area. DO NOT EDIT!!!(end)
 
 #include "tagwidget.h"

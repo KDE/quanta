@@ -24,10 +24,10 @@
 
 
 //qt includes
-#include <qfile.h>
+#include <QFile>
 #include <extfileinfo.h>
 #include <qdom.h>
-#include <qcursor.h>
+#include <QCursor>
 
 // include files for KDE
 #include <kapplication.h>

@@ -27,17 +27,17 @@
 #include "usertoolbarsglobalconfig.h"
 
 //qt includes
-#include <qbuffer.h>
-#include <qdir.h>
-#include <qlabel.h>
-#include <qlineedit.h>
-#include <qmenu.h>
+#include <QBuffer>
+#include <QDir>
+#include <QLabel>
+#include <QLineEdit>
+#include <QMenu>
 #include <QMenuItem>
-#include <qmessagebox.h>
-#include <qregexp.h>
-#include <qtextedit.h>
-#include <qtextstream.h>
-#include <qtimer.h>
+#include <QMessageBox>
+#include <QRegExp>
+#include <QTextEdit>
+#include <QTextStream>
+#include <QTimer>
 #include <QMap>
 
 //kde includes

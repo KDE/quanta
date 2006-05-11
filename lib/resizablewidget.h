@@ -21,7 +21,7 @@
 
 #include "quantaexport.h"
 
-#include <qpushbutton.h>
+#include <QPushButton>
 #include <qpoint.h>
 
 class KComboView;

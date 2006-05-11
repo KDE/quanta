@@ -13,8 +13,8 @@
 #include "askforsavedlg.h"
 
 //qt includes
-#include <qlabel.h>
-#include <qlayout.h>
+#include <QLabel>
+#include <QLayout>
 
 //kde includes
 #include <kiconloader.h>

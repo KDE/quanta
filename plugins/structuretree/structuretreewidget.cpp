@@ -29,8 +29,8 @@
 
 #include <q3header.h>
 #include <qpoint.h>
-#include <qclipboard.h>
-#include <qapplication.h>
+#include <QClipboard>
+#include <QApplication>
 
 #include <kurl.h>
 // #include <klibloader.h>

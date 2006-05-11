@@ -29,11 +29,11 @@
 #include "quantaexport.h"
 
 //qt includes
-#include <qhash.h>
+#include <QHash>
 #include <qmap.h>
-#include <qlist.h>
-#include <qstringlist.h>
-#include <qregexp.h>
+#include <QList>
+#include <QStringList>
+#include <QRegExp>
 
 
 //class QTag;

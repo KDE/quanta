@@ -20,7 +20,7 @@
 #include "quantaprojectif.h"
 #include "tag.h"
 
-#include <qdir.h>
+#include <QDir>
 
 #include <kurl.h>
 #include <ktexteditor/codecompletioninterface.h>

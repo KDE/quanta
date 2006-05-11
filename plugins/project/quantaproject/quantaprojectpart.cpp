@@ -25,10 +25,10 @@
 #include "quantaprojectwidget.h"
 #include "quantaprojectprojectconfig.h"
 
-#include <qtimer.h>
-#include <qmenu.h>
-#include <qstringlist.h>
-#include <qwhatsthis.h>
+#include <QTimer>
+#include <QMenu>
+#include <QStringList>
+#include <QWhatsThis>
 
 #include <klocale.h>
 #include <kaction.h>

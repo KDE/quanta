@@ -23,11 +23,11 @@
 #include <kdebug.h>
 #include <klocale.h>
 
-#include <qcheckbox.h>
-#include <qlayout.h>
-#include <qlabel.h>
-#include <qtooltip.h>
-#include <qwhatsthis.h>
+#include <QCheckBox>
+#include <QLayout>
+#include <QLabel>
+#include <QToolTip>
+#include <QWhatsThis>
 
 //FIXME #include "styleeditor.h"
 

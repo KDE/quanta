@@ -16,7 +16,7 @@
 #include "parseresult.h"
 #include "editorsource.h"
 
-#include <qobject.h>
+#include <QObject>
 
 struct AreaStruct;
 struct DTDStruct;

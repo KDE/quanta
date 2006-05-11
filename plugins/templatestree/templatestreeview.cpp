@@ -41,20 +41,20 @@
 #include <sys/types.h>
 
 // QT includes
-#include <qbuttongroup.h>
-#include <qcheckbox.h>
-#include <qclipboard.h>
-#include <qdir.h>
-#include <qpixmap.h>
+#include <QButtonGroup>
+#include <QCheckBox>
+#include <QClipboard>
+#include <QDir>
+#include <QPixmap>
 #include <q3header.h>
 #include <qpoint.h>
-#include <qlayout.h>
-#include <qtextedit.h>
-#include <qregexp.h>
-#include <qlabel.h>
+#include <QLayout>
+#include <QTextEdit>
+#include <QRegExp>
+#include <QLabel>
 #include <qmap.h>
 #include <qstackedwidget.h>
-#include <qtextstream.h>
+#include <QTextStream>
 #include <Q3TextDrag>
 
 // KDE includes

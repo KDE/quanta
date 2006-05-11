@@ -13,7 +13,7 @@
 #include "autocompletionconfig.h"
 #include "settings.h"
 
-#include <qcheckbox.h>
+#include <QCheckBox>
 
 AutocompletionConfig::AutocompletionConfig(QWidget *parent)
  : QWidget(parent)

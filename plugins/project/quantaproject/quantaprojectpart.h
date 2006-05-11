@@ -25,7 +25,7 @@
 
 #include <qmap.h>
 #include <qdom.h>
-#include <qpointer.h>
+#include <QPointer>
 
 #include <kurl.h>
 

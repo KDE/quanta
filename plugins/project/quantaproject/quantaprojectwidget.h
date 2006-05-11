@@ -22,7 +22,7 @@
 #define QUANTAPROJECT_WIDGET_H
 
 #include <qwidget.h>
-#include <qstring.h>
+#include <QString>
 
 class KDevProject;
 class QuantaProjectPart;

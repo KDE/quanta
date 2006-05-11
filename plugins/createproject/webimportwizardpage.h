@@ -23,7 +23,7 @@
 
 //qt includes
 #include <qwidget.h>
-#include <qstringlist.h>
+#include <QStringList>
 
 //kde includes
 #include <kurl.h>

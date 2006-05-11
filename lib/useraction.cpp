@@ -22,10 +22,10 @@
 #include "tagpair.h"
 
 //qt includes
-#include <qbytearray.h>
-#include <qdir.h>
-#include <qfile.h>
-#include <qtimer.h>
+#include <QByteArray>
+#include <QDir>
+#include <QFile>
+#include <QTimer>
 
 //kde includes
 #include <kactioncollection.h>

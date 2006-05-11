@@ -19,10 +19,10 @@
 #include <kurl.h>
 #include <kfileitem.h>
 
-#include <qobject.h>
-#include <qlist.h>
-#include <qhash.h>
-#include <qregexp.h>
+#include <QObject>
+#include <QList>
+#include <QHash>
+#include <QRegExp>
 
 class LIBQUANTA_EXPORT ExtFileInfo : public QObject
 {

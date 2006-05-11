@@ -17,7 +17,7 @@
 #define DTEPEDITDLG_H
 
 //qt includes
-#include <qlist.h>
+#include <QList>
 
 //own includes
 #include "ui_dtepeditdlgs.h"

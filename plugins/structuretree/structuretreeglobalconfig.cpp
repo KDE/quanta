@@ -24,7 +24,7 @@
 
 #include <kconfigdialogmanager.h>
 
-#include <qcheckbox.h>
+#include <QCheckBox>
 
 StructureTreeGlobalConfig::StructureTreeGlobalConfig(StructureTreePart *part, QWidget *parent)
     : QWidget(parent), m_part(part)

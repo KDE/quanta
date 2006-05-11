@@ -14,7 +14,7 @@
 #ifndef COMPARATOR_H
 #define COMPARATOR_H
 
-#include <qstring.h>
+#include <QString>
 
 
 class Comparator

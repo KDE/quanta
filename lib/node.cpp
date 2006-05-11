@@ -22,7 +22,7 @@
 #include "qtag.h"
 
 //qt includes
-#include <qlistview.h>
+#include <QListView>
 #include <qdom.h>
 
 //KDE includes

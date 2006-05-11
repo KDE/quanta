@@ -21,12 +21,12 @@
 #include "quantacoreif.h"
 
 // qt includes
-#include <qdir.h>
-#include <qlabel.h>
-#include <qlayout.h>
-#include <qlineedit.h>
-#include <qpushbutton.h>
-#include <qcombobox.h>
+#include <QDir>
+#include <QLabel>
+#include <QLayout>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QComboBox>
 
 // kde includes
 #include <kcharsets.h>

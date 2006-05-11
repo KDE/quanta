@@ -16,10 +16,10 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-#include <qobject.h>
-#include <qstringlist.h>
+#include <QObject>
+#include <QStringList>
 #include <qmap.h>
-#include <qpointer.h>
+#include <QPointer>
 
 #include "node.h"
 #include "tag.h"

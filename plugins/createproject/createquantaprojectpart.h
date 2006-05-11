@@ -21,8 +21,8 @@
 #ifndef KDEVCREATEQUANTAPROJECT_H
 #define KDEVCREATEQUANTAPROJECT_H
 
-#include <qpair.h>
-#include <qlist.h>
+#include <QPair>
+#include <QList>
 
 #include <kurl.h>
 

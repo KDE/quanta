@@ -23,8 +23,8 @@
 
 #include "htmlpart.h"
 
-#include <qpointer.h>
-#include <qtimer.h>
+#include <QPointer>
+#include <QTimer>
 
 //kdevelop includes
 #include <interfaces/kdevplugin.h>

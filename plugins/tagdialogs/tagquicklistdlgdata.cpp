@@ -9,12 +9,12 @@
 **********************************************************************/
 #include <kapplication.h>
 #include <klocale.h>
-#include <qbuttongroup.h>
+#include <QButtonGroup>
 #include "tagquicklistdlg.h"
 #include <qspinbox.h>
-#include <qlabel.h>
+#include <QLabel>
 #include <kpushbutton.h>
-#include <qradiobutton.h>
+#include <QRadioButton>
 #include <kstdguiitem.h>
 
 void  TagQuickListDlg::initDialog()

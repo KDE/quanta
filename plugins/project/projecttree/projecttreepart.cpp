@@ -24,9 +24,9 @@
 #include "projecttreeprojectconfig.h"
 #include "projecttreeview.h"
 
-#include <qtimer.h>
-#include <qmenu.h>
-#include <qwhatsthis.h>
+#include <QTimer>
+#include <QMenu>
+#include <QWhatsThis>
 
 #include <klocale.h>
 #include <kaction.h>

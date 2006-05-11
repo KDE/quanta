@@ -18,12 +18,12 @@
 */
 #include "resizablewidget.h"
 
-#include <qevent.h>
-#include <qlayout.h>
-#include <qpixmap.h>
-#include <qapplication.h>
-#include <qwhatsthis.h>
-
+#include <QEvent>
+#include <QLayout>
+#include <QPixmap>
+#include <QApplication>
+#include <QWhatsThis>
+#include <QMouseEvent>
 #include <klocale.h>
 
 static const char * resize_xpm[] = {

@@ -18,7 +18,7 @@
 #include "pictureview.h"
 #include "pictureview.moc"
 #include "qpainter.h"
-#include <qimage.h>
+#include <QImage>
 
 PictureView::PictureView(QWidget *parent, char *file, const char *name ) : QFrame(parent,name)
 {

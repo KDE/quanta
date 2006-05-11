@@ -17,7 +17,7 @@
 
 //qt includes
 #include <QMouseEvent>
-#include <qtoolbutton.h>
+#include <QToolButton>
 
 //kde includes
 #include <kglobalsettings.h>

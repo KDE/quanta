@@ -20,9 +20,9 @@
 #include <klocale.h>
 
 //qt includes
-#include <qpushbutton.h>
-#include <qstring.h>
-#include <qstringlist.h>
+#include <QPushButton>
+#include <QString>
+#include <QStringList>
 
 ListDlg::ListDlg(QStringList &entryList,QWidget* parent, const char *name )
   : KDialogBase(parent), listbox(new KListBox(this))

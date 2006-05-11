@@ -21,7 +21,7 @@
 #ifndef KDEVTEMPLATESTREE_H
 #define KDEVTEMPLATESTREE_H
 
-#include <qpointer.h>
+#include <QPointer>
 
 #include <kurl.h>
 

@@ -29,19 +29,19 @@
 #include <QDropEvent>
 #include <QHelpEvent>
 
-#include <qeventloop.h>
-#include <qlayout.h>
-#include <qfileinfo.h>
-#include <qlabel.h>
-#include <qimage.h>
-#include <qregexp.h>
-#include <qclipboard.h>
+#include <QEventLoop>
+#include <QLayout>
+#include <QFileInfo>
+#include <QLabel>
+#include <QImage>
+#include <QRegExp>
+#include <QClipboard>
 #include <qpoint.h>
-#include <qregexp.h>
-#include <qlineedit.h>
+#include <QRegExp>
+#include <QLineEdit>
 #include <qfont.h>
-#include <qpainter.h>
-#include <qtooltip.h>
+#include <QPainter>
+#include <QToolTip>
 #include <qstack.h>
 #include <qx11info_x11.h>
 

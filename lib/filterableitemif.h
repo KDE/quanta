@@ -13,7 +13,7 @@
 #ifndef FILTERABLEITEMIF_H
 #define FILTERABLEITEMIF_H
 
-#include <qstring.h>
+#include <QString>
 
 /**
 @short a small interface to filter items

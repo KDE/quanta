@@ -17,8 +17,8 @@
 
 #include <kurl.h>
 
-#include <qhash.h>
-#include <qlist.h>
+#include <QHash>
+#include <QList>
 
 //kdevelop includes
 #include <interfaces/kdevplugin.h>

@@ -14,7 +14,7 @@
 #include "simpletreeviewitem.h"
 
 #include <q3header.h>
-#include <qstringlist.h>
+#include <QStringList>
 
 #include <kdebug.h>
 #include <kiconloader.h>

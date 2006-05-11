@@ -15,8 +15,8 @@
 
 #include "tagmiscdlg.h"
 #include <klocale.h>
-#include <qlineedit.h>
-#include <qcheckbox.h>
+#include <QLineEdit>
+#include <QCheckBox>
 
 TagMiscDlg::TagMiscDlg( QWidget* parent, bool _addClosingTag, const QString &element )
   :KDialog(parent, i18n("Misc. Tag"), KDialog::Ok | KDialog::Cancel)

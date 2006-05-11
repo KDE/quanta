@@ -15,7 +15,7 @@
 
 #include "parser.h"
 
-#include <qobject.h>
+#include <QObject>
 
 class Node;
 class EditorSource;

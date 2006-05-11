@@ -23,8 +23,8 @@
 #include "tagpair.h"
 #include "quantacoreif.h"
 
-#include <qmenu.h>
-#include <qtimer.h>
+#include <QMenu>
+#include <QTimer>
 
 #include <kaction.h>
 #include <kdebug.h>

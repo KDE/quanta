@@ -17,7 +17,7 @@
 #include "usertoolbar.h"
 
 //qt includes
-#include <qtextstream.h>
+#include <QTextStream>
 
 //kde includes
 #include <kdebug.h>

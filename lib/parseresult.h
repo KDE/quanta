@@ -16,7 +16,7 @@
 
 #include "dtdstruct.h"
 
-#include <qlist.h>
+#include <QList>
 
 #include <kurl.h>
 

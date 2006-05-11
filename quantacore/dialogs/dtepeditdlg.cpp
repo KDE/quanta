@@ -19,12 +19,12 @@
 #include "helper.h"
 
 
-#include <qcheckbox.h>
-#include <qfile.h>
-#include <qfileinfo.h>
-#include <qgroupbox.h>
-#include <qradiobutton.h>
-#include <qtabwidget.h>
+#include <QCheckBox>
+#include <QFile>
+#include <QFileInfo>
+#include <QGroupBox>
+#include <QRadioButton>
+#include <QTabWidget>
 #include <qstackedwidget.h>
 
 

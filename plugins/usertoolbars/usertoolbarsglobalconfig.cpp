@@ -16,7 +16,7 @@
 #include "usertoolbarspart.h"
 
 //qt includes
-#include <qcheckbox.h>
+#include <QCheckBox>
 
 UserToolbarsGlobalConfig::UserToolbarsGlobalConfig(UserToolbarsPart *part, QWidget *parent)
     : QWidget(parent), m_part(part)

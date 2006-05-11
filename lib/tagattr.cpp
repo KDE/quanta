@@ -16,7 +16,7 @@
 #include "settings.h"
 
 
-#include <qstring.h>
+#include <QString>
 #include <qdom.h>
 
 //#include <kdebug.h>

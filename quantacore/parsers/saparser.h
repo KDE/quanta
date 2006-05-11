@@ -18,8 +18,8 @@
 #define SAPARSER_H
 
 //qt includes
-#include <qobject.h>
-#include <qregexp.h>
+#include <QObject>
+#include <QRegExp>
 #include <qstack.h>
 
 //own includes

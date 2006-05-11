@@ -26,10 +26,10 @@
 #ifndef COLORCOMBO_H
 #define COLORCOMBO_H
 
-#include <qcombobox.h>
+#include <QComboBox>
 #include <kdialogbase.h>
 #include <qframe.h>
-#include <qpixmap.h>
+#include <QPixmap>
 #include <kcolordialog.h>
 
 
