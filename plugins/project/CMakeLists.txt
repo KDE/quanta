@@ -3,12 +3,6 @@ kde4_header()
 add_subdirectory( quantaproject )
 add_subdirectory( projecttree )
 
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES}  )
-
-
-########### install files ###############
-
-
 kde4_footer()
 
 

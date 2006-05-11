@@ -3,7 +3,6 @@ kde4_header()
 set(QUANTA_DATA_INSTALL_DIR ${DATA_INSTALL_DIR}/quanta CACHE STRING "The Quanta data dir")
 project(quanta)
 
-set(CMAKE_COLOR_MAKEFILE TRUE)
 
 add_subdirectory(lib)
 add_subdirectory(src)
