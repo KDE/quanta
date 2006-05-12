@@ -1,4 +1,3 @@
-kde4_header()
 
 #add_subdirectory( jpg )
 #add_subdirectory( png )
@@ -8,7 +7,6 @@ kde4_header()
 
 install_files(${QUANTA_DATA_INSTALL_DIR}/templates/images  FILES  .dirinfo )
 
-kde4_footer()
 
 
 
