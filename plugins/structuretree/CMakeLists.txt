@@ -1,4 +1,3 @@
-kde4_header()
 
 include_directories(
    ${CMAKE_SOURCE_DIR}/quanta/lib
@@ -39,7 +38,6 @@ install_files( ${DATA_INSTALL_DIR}/kdevstructuretree FILES  )
 install_files( ${SERVICES_INSTALL_DIR} FILES  kdevstructuretree.desktop )
 install_files( ${DATA_INSTALL_DIR}/kdevstructuretree FILES  kdevstructuretree.rc )
 
-kde4_footer()
 
 
 
