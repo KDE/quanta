@@ -1,2 +1,0 @@
-SUBDIRS = jpg others png 
-
