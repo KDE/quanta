@@ -1,11 +1,9 @@
-kde4_header()
 
 
 ########### install files ###############
 
 install_files(${QUANTA_DATA_INSTALL_DIR}/toolbars/xml  FILES  fonts.toolbar.tgz )
 
-kde4_footer()
 
 
 
