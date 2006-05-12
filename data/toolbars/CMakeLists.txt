@@ -1,4 +1,3 @@
-kde4_header()
 
 
 add_subdirectory( html )
@@ -16,7 +15,6 @@ add_subdirectory( css )
 
 install_files(${QUANTA_DATA_INSTALL_DIR}/toolbars FILES  debug.toolbar.tgz )
 
-kde4_footer()
 
 
 
