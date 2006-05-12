@@ -1,4 +1,3 @@
-kde4_header()
 
 include_directories(
    ${CMAKE_SOURCE_DIR}/quanta/lib
@@ -47,7 +46,6 @@ install_files( ${SERVICES_INSTALL_DIR} FILES  kdevtagdialogs.desktop )
 install_files( ${DATA_INSTALL_DIR}/kdevtagdialogs FILES  kdevtagdialogs.rc )
 #install_files( ${SERVICETYPES_INSTALL_DIR} FILES  kdeveloptagdialogs.desktop )
 
-kde4_footer()
 
 
 
