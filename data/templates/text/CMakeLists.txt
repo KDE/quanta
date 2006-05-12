@@ -1,4 +1,3 @@
-kde4_header()
 
 #add_subdirectory( scripts )
 #add_subdirectory( others )
@@ -8,7 +7,6 @@ kde4_header()
 
 install_files(${QUANTA_DATA_INSTALL_DIR}/templates/text  FILES  .dirinfo )
 
-kde4_footer()
 
 
 
