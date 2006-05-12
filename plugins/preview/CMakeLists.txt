@@ -1,4 +1,3 @@
-kde4_header()
 
 include_directories(
    ${KDE4_INCLUDE_DIR}/kdevelop
@@ -34,7 +33,6 @@ install_files( ${DATA_INSTALL_DIR}/kdevhtmlpreview FILES  )
 install_files( ${SERVICES_INSTALL_DIR} FILES  kdevhtmlpreview.desktop )
 install_files( ${DATA_INSTALL_DIR}/kdevhtmlpreview FILES  kdevhtmlpreview.rc )
 
-kde4_footer()
 
 
 
