@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -7,7 +6,6 @@ kde4_header()
 
 install_files(${QUANTA_DATA_INSTALL_DIR}/dtep/tagxml  FILES  childstop.tag spacer.tag attr.tag location.tag tag.tag nonparams.tag vpl.tag description.rc  )
 
-kde4_footer()
 
 
 
