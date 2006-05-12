@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( pics )
 
@@ -44,7 +43,6 @@ install_files( ${DATA_INSTALL_DIR}/kdevcreatequantaproject FILES  )
 install_files( ${SERVICES_INSTALL_DIR} FILES  kdevcreatequantaproject.desktop )
 install_files( ${DATA_INSTALL_DIR}/kdevcreatequantaproject FILES  kdevcreatequantaproject.rc quanta-project.template )
 
-kde4_footer()
 
 
 
