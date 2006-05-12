@@ -1,9 +1,7 @@
-kde4_header()
 
 add_subdirectory( quantaproject )
 add_subdirectory( projecttree )
 
-kde4_footer()
 
 
 
