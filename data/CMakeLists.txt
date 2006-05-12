@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( config )
 add_subdirectory( pics )
@@ -12,7 +11,6 @@ add_subdirectory( templates )
 
 install_files(${DATA_INSTALL_DIR}/quanta  FILES  tips )
 
-kde4_footer()
 
 
 
