@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( createproject )
 add_subdirectory( project )
@@ -13,7 +12,6 @@ add_subdirectory( usertoolbars )
 ########### install files ###############
 
 
-kde4_footer()
 
 
 
