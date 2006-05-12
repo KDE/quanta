@@ -1,4 +1,3 @@
-kde4_header()
 
 #add_subdirectory( php )
 #add_subdirectory( perl )
@@ -8,7 +7,6 @@ kde4_header()
 
 install_files(${QUANTA_DATA_INSTALL_DIR}/templates/scripts  FILES  .dirinfo )
 
-kde4_footer()
 
 
 
