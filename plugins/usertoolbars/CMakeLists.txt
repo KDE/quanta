@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( pics )
 
@@ -50,7 +49,6 @@ install_files( ${SERVICES_INSTALL_DIR} FILES  kdevusertoolbars.desktop )
 install_files( ${DATA_INSTALL_DIR}/kdevusertoolbars FILES  kdevusertoolbars.rc )
 install_files( ${DATA_INSTALL_DIR}/kdevusertoolbars FILES  global )
 
-kde4_footer()
 
 
 
