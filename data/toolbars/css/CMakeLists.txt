@@ -1,11 +1,9 @@
-kde4_header()
 
 
 ########### install files ###############
 
 install_files(${QUANTA_DATA_INSTALL_DIR}/toolbars/css  FILES  css.toolbar.tgz )
 
-kde4_footer()
 
 
 
