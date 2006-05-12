@@ -1,11 +1,9 @@
-kde4_header()
 
 
 ########### install files ###############
 
 install_files(${DATA_INSTALL_DIR}/kdevcreatequantaproject/pics  FILES  firstwizardpage.png secondwizardpage.png thirdwizardpage.png )
 
-kde4_footer()
 
 
 
