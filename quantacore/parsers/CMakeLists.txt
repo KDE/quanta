@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( dtd )
 
@@ -14,7 +13,6 @@ include_directories(
 ########### install files ###############
 
 
-kde4_footer()
 
 
 
