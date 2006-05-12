@@ -1,4 +1,3 @@
-kde4_header()
 
 include_directories(
    ${CMAKE_SOURCE_DIR}/quanta/lib 
@@ -13,7 +12,6 @@ include_directories(
 ########### install files ###############
 
 
-kde4_footer()
 
 
 
