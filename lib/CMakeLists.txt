@@ -1,4 +1,3 @@
-kde4_header()
 
 include_directories(
    ${CMAKE_BINARY_DIR}/lib
@@ -51,7 +50,6 @@ install_targets(${LIB_INSTALL_DIR} kdevquanta )
 
 install_files( ${KCFG_INSTALL_DIR} FILES  quanta.kcfg )
 
-kde4_footer()
 
 
 
