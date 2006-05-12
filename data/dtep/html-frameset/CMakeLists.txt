@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -7,7 +6,6 @@ kde4_header()
 
 install_files(${QUANTA_DATA_INSTALL_DIR}/dtep/html-frameset  FILES  basefont.tag  description.rc  font.tag  frame.tag  frameset.tag  isindex.tag common.tag )
 
-kde4_footer()
 
 
 
