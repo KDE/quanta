@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( html )
 add_subdirectory( html-frameset )
@@ -27,7 +26,6 @@ add_subdirectory( dtd )
 ########### install files ###############
 
 
-kde4_footer()
 
 
 
