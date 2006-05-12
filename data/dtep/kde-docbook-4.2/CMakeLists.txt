@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -7,7 +6,6 @@ kde4_header()
 
 install_files(${QUANTA_DATA_INSTALL_DIR}/dtep/kde-docbook-4.2  FILES  common.tag description.rc )
 
-kde4_footer()
 
 
 
