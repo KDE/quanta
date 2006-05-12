@@ -1,4 +1,3 @@
-kde4_header()
 
 include_directories(
   ${CMAKE_SOURCE_DIR}/quanta/lib
@@ -33,7 +32,6 @@ install_files( ${MIME_INSTALL_DIR}/application FILES  x-quanta.desktop )
 install_files( ${DATA_INSTALL_DIR}/quanta FILES  quantarc quantaui.rc )
 install_files( ${SERVICETYPES_INSTALL_DIR} FILES  kdevelopquanta.desktop )
 
-kde4_footer()
 
 
 
