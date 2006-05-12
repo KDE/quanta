@@ -1,4 +1,3 @@
-kde4_header()
 find_package(LibXml2 REQUIRED)
 
 add_subdirectory( dialogs )
@@ -79,7 +78,6 @@ install_targets(${LIB_INSTALL_DIR}/kde4 kdevquantacore )
 install_files( ${SERVICES_INSTALL_DIR} FILES  kdevquantacore.desktop )
 install_files( ${DATA_INSTALL_DIR}/kdevquantacore FILES  kdevquantacore.rc )
 
-kde4_footer()
 
 
 
