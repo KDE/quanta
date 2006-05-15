@@ -55,7 +55,7 @@ SearchLineWidget::~SearchLineWidget()
 {}
 
 
-KTreeWidgetSearchLine * SearchLineWidget::createSearchLine(QTreeWidget * treeWidget)
+KTreeWidgetSearchLine * SearchLineWidget::createSearchLine(QTreeWidget * treeWidget) const
 {
   return new SearchLine(this, treeWidget);
 }

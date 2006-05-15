@@ -32,7 +32,7 @@ public:
   ~SearchLineWidget();
 
 protected:
-  virtual KTreeWidgetSearchLine * createSearchLine(QTreeWidget * treeWidget);
+  virtual KTreeWidgetSearchLine * createSearchLine(QTreeWidget * treeWidget) const;
 
 };
 
