@@ -57,7 +57,7 @@ SearchLineWidget::~SearchLineWidget()
 
 KTreeWidgetSearchLine * SearchLineWidget::createSearchLine(QTreeWidget * treeWidget) const
 {
-  return new SearchLine(this, treeWidget);
+  return new SearchLine(const_cast<SearchLineWidget*>(this), treeWidget);
 }
 
 #include "searchlinewidget.moc"
