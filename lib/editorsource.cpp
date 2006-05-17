@@ -183,7 +183,7 @@ void EditorSource::setCursorPosition(int line, int col)
 {
   m_view->setCursorPosition(KTextEditor::Cursor(line, col));
   m_view->setFocus();
-};
+}
 
 
 void EditorSource::getPreviousPosition(int &line, int &column) const
