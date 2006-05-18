@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
   {
     delete splash;
     splash = 0;
-    KMessageBox::error( 0L, i18n("The Quanta Core Plugin could not be loaded.\nYour installation seems to be broken!"));
+    KMessageBox::error( 0L, i18n("The Quanta Core Plugin could not be loaded.\nYour installation seems to be broken."));
   }
     
   PluginController::getInstance()->loadInitialPlugins();
