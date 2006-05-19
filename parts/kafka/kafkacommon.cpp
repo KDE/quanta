@@ -3689,14 +3689,25 @@ bool kafkaCommon::insertDomNode(DOM::Node node, DOM::Node parent, DOM::Node next
             return false;
         parent = rootNode;
     }
+    //Andras: avoid exceptions    
+    if (!nextSibling.isNull() && nextSibling.parentNode() != parent)
+    {
+      kdDebug(25001)<< "kafkaCommon::insertDomNode() - invalid nextSibling!" << endl;
+      return false;
+    }
+    if (node.ownerDocument() != parent.ownerDocument())
+    {
+      kdDebug(25001)<< "kafkaCommon::insertDomNode() - ownerDocument is different!" << endl;
+      return false;
+    }
 
     try
     {
         parent.insertBefore(node, nextSibling);
     }
-    catch(DOM::DOMException const& e)
+    catch(DOM::DOMException e)
     {
-        kdDebug(25001)<< "kafkaCommon::insertDomNode() - ERROR code :" << e.code << endl;
+      kdDebug(25001)<< "kafkaCommon::insertDomNode() - ERROR code :" << e.code << endl;
     }
     return true;
 }
