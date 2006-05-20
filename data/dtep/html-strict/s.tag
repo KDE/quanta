@@ -16,19 +16,6 @@
         </items>
     </attr>
 
-    <attr name="language" type="list">
-        <text>Language</text>
-        <textlocation col="0" row="1" />
-        <location col="1" row="1" colspan="2" />
-        <items>
-    <item>PHP</item>
-                <item>JavaScript</item>
-                <item>JavaScript1.2</item>
-                <item>JavaScript1.3</item>
-                <item>VBScript</item>
-        </items>
-    </attr>
-
     <attr name="src" type="url">
         <text>Source</text>
         <textlocation col="0" row="2" />

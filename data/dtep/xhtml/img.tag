@@ -27,23 +27,7 @@
         <location col="1" row="4" colspan="3" />
     </attr>
 
-    <attr name="align" type="list">
-      <text>Align</text>
-      <textlocation col="0" row="7" />
-      <items>
-        <item>baseline</item>
-        <item>center</item>
-        <item>left</item>
-        <item>middle</item>
-        <item>right</item>
-        <item>textbottom</item>
-        <item>textmiddle</item>
-        <item>texttop</item>
-      </items>
-      <location col="1" row="7" />
-    </attr>
-
-    <attr name="hspace" type="input">
+   <attr name="hspace" type="input">
         <text>Hspace</text>
         <textlocation col="0" row="8" />
         <location col="1" row="8" />
@@ -53,12 +37,6 @@
         <text>Vspace</text>
         <textlocation col="0" row="9" />
         <location col="1" row="9" />
-    </attr>
-
-    <attr name="border" type="input">
-        <text>Border</text>
-        <textlocation col="0" row="10" />
-        <location col="1" row="10" />
     </attr>
 
 </tag>

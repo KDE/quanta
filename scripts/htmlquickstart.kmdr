@@ -834,7 +834,13 @@ echo "\"$TAGEND"</string>
                                 <stringlist>
                                     <string>@null</string>
                                     <string></string>
-                                    <string>echo "$PADDING&lt;script language=\"javascript\" type=\"text/javascript\"&gt;"
+                                    <string>if echo $DTD | grep -q strict
+then
+	echo "$PADDING&lt;script type=\"text/javascript\"&gt;"
+else
+	echo "$PADDING&lt;script language=\"javascript\" type=\"text/javascript\"&gt;"
+fi
+
 
 if [ $XHTML = true ]; then
 	echo "$PADDING/* &lt;![CDATA[ */"

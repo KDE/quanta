@@ -74,23 +74,6 @@
     <textlocation col="0" row="6" />
     <location col="1" row="6" colspan="2" />
   </attr>
-  <attr name="align" type="list">
-    <text>Align</text>
-    <textlocation col="0" row="7" />
-    <items>
-      <item>left</item>
-      <item>right</item>
-      <item>top</item>
-      <item>middle</item>
-      <item>bottom</item>
-    </items>
-    <location col="1" row="7" colspan="2" />
-  </attr>
-  <attr name="border" type="input">
-    <text>Border</text>
-    <textlocation col="0" row="8" />
-    <location col="1" row="8" colspan="2" />
-  </attr>
   <attr name="hspace" type="input">
     <text>HSpace</text>
     <textlocation col="0" row="9" />
