@@ -35,6 +35,7 @@ replace.png \
 reset.png \
 select.png \
 submit.png \
+button.png \
 table_data.png \
 table_head.png \
 tag_access.png \
