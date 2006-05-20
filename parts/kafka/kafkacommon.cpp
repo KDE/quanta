@@ -852,7 +852,7 @@ QString kafkaCommon::removeUnnecessaryWhitespaces(const QString &string,
         return QString();
 
     hasLeftWhiteSpaces = (string[0].isSpace());
-    hasRightWhiteSpaces = (string[newString.length() - 1].isSpace());
+    hasRightWhiteSpaces = (string[string.length() - 1].isSpace());
 
     newString = string.stripWhiteSpace();
     if(hasLeftWhiteSpaces && !removeAllSpacesAtTheLeft)

@@ -7,6 +7,7 @@ Version 3.5.3 (Release date: 23-05-2006; Started 18-03-2005):
       - silently ignore files from a project view that do not exist anymore [#126588 ]
       - show a correct error message if a file does not exist [#126588 ]
       - make the img and script tags standard compliant [#125596]
+      - don't loose important spaces when applying source indentation [#125213]
 	
 Version 3.5.2 (Release date: 17-03-2006; Started 23-01-2005):
  - bugfixes:
