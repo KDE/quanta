@@ -373,9 +373,16 @@ void QuantaApp::slotFileOpen(const KURL::List &urls, const QString& encoding)
   m_parserEnabled = false;
   for (KURL::List::ConstIterator i = urls.begin(); i != urls.end(); ++i)
   {
-    if (QuantaCommon::checkMimeGroup(*i, "text") ||
-        QuantaCommon::denyBinaryInsert(this) == KMessageBox::Yes)
-      slotFileOpen(*i, encoding);
+    if (!QExtFileInfo::exists(*i, true, this))
+    {
+      KMessageBox::error(this, i18n("<qt>The file <b>%1</b> does not exist or is not a recognized mime type.</qt>").arg((*i).prettyURL(0, KURL::StripFileProtocol)));
+      
+    } else
+    {
+      if (QuantaCommon::checkMimeGroup(*i, "text") ||
+          QuantaCommon::denyBinaryInsert(this) == KMessageBox::Yes)
+        slotFileOpen(*i, encoding);
+    }
   }
   m_doc->blockSignals(false);
   m_parserEnabled = true;

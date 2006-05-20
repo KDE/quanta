@@ -258,7 +258,7 @@ void ProjectPrivate::openCurrentView()
         if (el2.nodeName() == "viewitem")
         {
           urlsInView.append(url);
-          if (! ViewManager::ref()->isOpened(url))
+          if (!ViewManager::ref()->isOpened(url) && QExtFileInfo::exists(url, true, m_mainWindow))
             urlsToOpen.append(url);
         } else {
           if (el2.nodeName() == "viewtoolbar")
