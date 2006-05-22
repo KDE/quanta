@@ -2216,7 +2216,8 @@ Node* kafkaCommon::extractNode(Node *node, NodeModifsSet *modifs, bool extractCh
 {
     NodeModif *modif = 0, *modifChild;
     Node *lastChild, *curNode;
-    Node *parent, *prev, *next, *child, *n;
+    Node *parent, *next, *child, *n;
+    //Node *prev;
     bool isSingle;
     int type;
     QString namespaceName, nodeName, caseSensitive;
@@ -2231,7 +2232,7 @@ Node* kafkaCommon::extractNode(Node *node, NodeModifsSet *modifs, bool extractCh
 
     parent = node->parent;
     next = node->next;
-    prev = node->prev;
+    //prev = node->prev; //Should this be used at all?
     child = node->child;
     lastChild = node->lastChild();
     isSingle = node->tag->single;
