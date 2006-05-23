@@ -38,7 +38,7 @@
 #include <kurl.h>
 #include <kprotocolinfo.h>
 #include <kdeversion.h>
-
+#include <kprotocolmanager.h>
 
 FirstWizardPage::FirstWizardPage(QuantaCoreIf *qCore, KInstance *instance, QWidget *parent)
   : QWidget(parent)
@@ -82,9 +82,9 @@ FirstWizardPage::FirstWizardPage(QuantaCoreIf *qCore, KInstance *instance, QWidg
     KUrl p;
     p.setProtocol(protocols[i]);
     QString protocol = protocols[i];
-    if ( KProtocolInfo::supportsWriting(p) &&
-         KProtocolInfo::supportsMakeDir(p) &&
-         KProtocolInfo::supportsDeleting(p) &&
+    if ( KProtocolManager::supportsWriting(p) &&
+         KProtocolManager::supportsMakeDir(p) &&
+         KProtocolManager::supportsDeleting(p) &&
          (protocol != "file" && protocol != "fonts" && protocol != "floppy" && protocol != "newcd" ))
     {
       comboProtocol->addItem(protocol);

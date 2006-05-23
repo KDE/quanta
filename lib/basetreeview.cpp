@@ -53,6 +53,7 @@
 #include <kinputdialog.h>
 #include <klocale.h>
 #include <kiconloader.h>
+#include <kprotocolmanager.h>
 // #include <kopenwith.h>
 #include <kmessagebox.h>
 #include <kpropertiesdialog.h>
@@ -62,7 +63,6 @@
 #include <kurl.h>
 #include <ktar.h>
 #include <ktempfile.h>
-#include <ktrader.h>
 #include <kapplication.h>
 #include <kcursor.h>
 #include <kprotocolinfo.h>
@@ -698,15 +698,15 @@ void BaseTreeView::slotDropped (QWidget *, QDropEvent * /*e*/, KUrl::List& fileL
 
   dest.adjustPath(KUrl::AddTrailingSlash);
   // Check what the destination can do
-  if (!KProtocolInfo::supportsWriting(dest))
+  if (!KProtocolManager::supportsWriting(dest))
     return;
-  bool sLinking = KProtocolInfo::supportsLinking(dest);
+  bool sLinking = KProtocolManager::supportsLinking(dest);
 
   // Check what the source can do
   KUrl url = fileList.first(); // we'll assume it's the same for all URLs (hack)
-  bool sReading = KProtocolInfo::supportsReading(url);
-  bool sDeleting = KProtocolInfo::supportsDeleting(url);
-  bool sMoving = KProtocolInfo::supportsMoving(url);
+  bool sReading = KProtocolManager::supportsReading(url);
+  bool sDeleting = KProtocolManager::supportsDeleting(url);
+  bool sMoving = KProtocolManager::supportsMoving(url);
 
   // Check the state of the modifiers key at the time of the drop
   Window root;
