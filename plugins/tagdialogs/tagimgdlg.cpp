@@ -110,14 +110,14 @@ void TagImgDlg::slotFileSelect()
  if ( !url.isEmpty() )
   {
     slotImageSet( url );
-    url = KUrl::relativeURL(baseURL, url);
+    url = KUrl::relativeUrl(baseURL, url);
     lineImgSource->setText( url.path() );
   }
 }
 
 void TagImgDlg::slotLineFileSelect()
 {
-  slotImageSet(KUrl::fromPathOrURL(lineImgSource->text()));
+  slotImageSet(KUrl::fromPathOrUrl(lineImgSource->text()));
 }
 
 void TagImgDlg::readAttributes( QHash<QString, QString*> *d )

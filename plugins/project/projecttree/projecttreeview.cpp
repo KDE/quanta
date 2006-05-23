@@ -164,7 +164,7 @@ KFileTreeBranch* ProjectTreeView::newBranch(const KUrl& url)
       m_projectNameStr += " [" + url.protocol() + "://" + url.user() + "@" + url.host() + "]";
     }
     m_projectDir = new ProjectTreeBranch(m_quantaProject, this, url, m_projectNameStr, SmallIcon(m_plugin->info()->icon()), true);
-    m_projectDir->root()->setText(1, url.pathOrURL());
+    m_projectDir->root()->setText(1, url.pathOrUrl());
     setDragEnabled(true);
   } else
   {
@@ -267,7 +267,7 @@ void ProjectTreeView::slotProjectOpened()
   if (m_quantaProject)
     m_projectBaseURL = m_quantaProject->projectBase();
   else
-    m_projectBaseURL = KUrl::fromPathOrURL(m_plugin->project()->projectDirectory());
+    m_projectBaseURL = KUrl::fromPathOrUrl(m_plugin->project()->projectDirectory());
 
   if (m_projectDir)  // just in case we have already one
   {
@@ -364,7 +364,7 @@ void ProjectTreeView::slotCreateFile()
     KTempFile *tempFile = new KTempFile(Helper::tmpFilePrefix());
     tempFile->setAutoDelete(true);
     tempFile->close();
-    if (ExtFileInfo::copy(KUrl::fromPathOrURL(tempFile->name()), url));
+    if (ExtFileInfo::copy(KUrl::fromPathOrUrl(tempFile->name()), url));
     {
 // FIXME      emit insertToProject(url);
 //       emit openFile(url);

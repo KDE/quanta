@@ -33,7 +33,7 @@ public:
 
   /** Returns the relative url of urlToConvert to baseURL.
 
-      @deprecated  use KUrl::relativeURL(baseURL, urlToConvert) instead
+      @deprecated  use KUrl::relativeUrl(baseURL, urlToConvert) instead
    */
   static KDE_DEPRECATED KUrl toRelative(const KUrl& urlToConvert, const KUrl& baseURL);
 

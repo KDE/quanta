@@ -98,7 +98,7 @@ void FileCombo::slotFileSelect()
   if ( !url.isEmpty() )
   {
     if (!m_absolutePath)
-      url = KUrl::relativeURL(baseURL, url);
+      url = KUrl::relativeUrl(baseURL, url);
     combo->setEditText( url.path() );
   }
 }

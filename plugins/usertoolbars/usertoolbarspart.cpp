@@ -158,7 +158,7 @@ UserToolbarsPart::~UserToolbarsPart()
   m_tempFileList.clear();
   for (int i = 0; i < m_tempDirList.count(); i++)
   {
-      KIO::NetAccess::del(KUrl().fromPathOrURL(m_tempDirList.at(i)->name()), 0L);
+      KIO::NetAccess::del(KUrl().fromPathOrUrl(m_tempDirList.at(i)->name()), 0L);
   }
   qDeleteAll(m_tempDirList.begin(), m_tempDirList.end());
   m_tempDirList.clear();
@@ -742,7 +742,7 @@ bool UserToolbarsPart::saveToolbar(bool localToolbar, const QString& toolbarToSa
           return false;
 
       if (prj)
-          projectToolbarsURL = KUrl::fromPathOrURL(prj->projectDirectory() + "/toolbars");
+          projectToolbarsURL = KUrl::fromPathOrUrl(prj->projectDirectory() + "/toolbars");
       if ( ((!localToolbar) && (projectToolbarsURL.isParentOf(url)) ) ||
             ((localToolbar) && (KUrl(localToolbarsDir).isParentOf(url))) )
       {
@@ -751,7 +751,7 @@ bool UserToolbarsPart::saveToolbar(bool localToolbar, const QString& toolbarToSa
       } else
       {
         if (!localToolbar)
-            localToolbarsDir = projectToolbarsURL.prettyURL();
+            localToolbarsDir = projectToolbarsURL.prettyUrl();
         KMessageBox::sorry(mainWindow()->main(),i18n("<qt>You must save the toolbars to the following folder: <br><br><b>%1</b></qt>",
                                   localToolbarsDir));
         query = KMessageBox::No;
@@ -874,10 +874,10 @@ KUrl UserToolbarsPart::saveToolbarToFile(const QString& toolbarName, const KUrl&
   if (!tar.writeFile(QFileInfo(tarFile.path()).baseName() + ".actions", "user", "group", buffer2.buffer().data(), buffer2.buffer().size()))
       return KUrl();
   tar.close();
-  if (!ExtFileInfo::copy(KUrl::fromPathOrURL(tempFile->name()), tarFile, -1, true, false, mainWindow()->main()))
+  if (!ExtFileInfo::copy(KUrl::fromPathOrUrl(tempFile->name()), tarFile, -1, true, false, mainWindow()->main()))
   {
     KMessageBox::error(mainWindow()->main(), i18n("<qt>An error happened while saving the <b>%1</b> toolbar.<br>"
-        "Check that you have write permissions for<br><b>%2</b></qt>", p_toolbar->name, tarFile.pathOrURL()), i18n("Toolbar Saving Error"));
+        "Check that you have write permissions for<br><b>%2</b></qt>", p_toolbar->name, tarFile.pathOrUrl()), i18n("Toolbar Saving Error"));
     tarFile = KUrl();
     delete p_toolbar->dom;
     p_toolbar->dom = oldDom;

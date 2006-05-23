@@ -414,7 +414,7 @@ FileInfoDlg* BaseTreeView::addFileInfoPage(KPropertiesDialog* propDlg)
             if (position!=-1) imgname=imgname.left(position);
             if (!quantaFileProperties->imageList->findItem(imgname,Qt::ExactMatch))     //check if image was already counted
             {
-              KUrl v(KUrl::fromPathOrURL( path ), imgname);
+              KUrl v(KUrl::fromPathOrUrl( path ), imgname);
               imgpath=v.path();
               QFile qimage(imgpath);
               if (qimage.exists() && v.isLocalFile())
@@ -512,7 +512,7 @@ void BaseTreeView::slotCopy()
    if (currentItem())
    {
      QClipboard *cb = QApplication::clipboard();
-     cb->setText( currentURL().prettyURL() );
+     cb->setText( currentURL().prettyUrl() );
    }
 }
 
@@ -878,7 +878,7 @@ void BaseTreeView::doRename(KFileTreeViewItem* kftvi, const QString & newName)
     bool proceed = true;
     if (ExtFileInfo::exists(newURL))
     {
-      proceed = (KMessageBox::warningYesNo(this, i18n("<qt>The file <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>", newURL.pathOrURL()), i18n("Overwrite")) == KMessageBox::Yes);
+      proceed = (KMessageBox::warningYesNo(this, i18n("<qt>The file <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>", newURL.pathOrUrl()), i18n("Overwrite")) == KMessageBox::Yes);
     }
     if (proceed)
     {
@@ -990,7 +990,7 @@ void BaseTreeView::slotCreateFile()
     KTempFile *tempFile = new KTempFile(Helper::tmpFilePrefix());
     tempFile->setAutoDelete(true);
     tempFile->close();
-    if (QuantaNetAccess::copy(KUrl::fromPathOrURL(tempFile->name()), url, m_plugin));
+    if (QuantaNetAccess::copy(KUrl::fromPathOrUrl(tempFile->name()), url, m_plugin));
     {
       m_partController->editDocument(url);
     }

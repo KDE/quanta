@@ -182,7 +182,7 @@ bool QuantaNetAccess::move( const KUrl::List& srcList, const KUrl& target, KDevP
     {
       if ( baseURL.isParentOf(*it) )
       {
-        url = KUrl::relativeURL(baseURL, *it);
+        url = KUrl::relativeUrl(baseURL, *it);
         project->removeFile(url.path());
       }
     }
@@ -253,7 +253,7 @@ bool QuantaNetAccess::mkdir( const KUrl & path, KDevPlugin* plugin, int permissi
   QStringList stack;
   do {
     stack.push_front(url.fileName());
-    url = url.upURL();
+    url = url.upUrl();
   } while (!ExtFileInfo::exists(url)); // we know that the root exists, so this will terminate
 
   // move down the path and create all folders
@@ -295,7 +295,7 @@ void QuantaNetAccess::checkProjectInsert(const KUrl& source, const KUrl& target,
   {
     if (confirm && !project->isProjectFile(saveUrl))
     {
-      QString nice = KUrl::relativeURL(baseURL, saveUrl);
+      QString nice = KUrl::relativeUrl(baseURL, saveUrl);
       nice = KStringHandler::lsqueeze(nice, 60);
       if ( KMessageBox::Yes != KMessageBox::questionYesNo(window, i18n("<qt>Do you want to add <br><b>%1</b><br> to the project?</qt>", nice), i18n("Add to Project"), KStdGuiItem::yes(), KStdGuiItem::no(), "AddToProject") )
       {
@@ -324,7 +324,7 @@ void QuantaNetAccess::checkProjectInsert(const KUrl& source, const KUrl& target,
     }
     else
     {
-      saveUrl = KUrl::relativeURL(baseURL, saveUrl);
+      saveUrl = KUrl::relativeUrl(baseURL, saveUrl);
       project->addFile(saveUrl.path());
     }
   }
@@ -349,7 +349,7 @@ bool QuantaNetAccess::checkProjectRemove(const KUrl& src, KDevPlugin* plugin, bo
   {
     if (confirm)
     {
-      QString nice = KUrl::relativeURL(baseURL, url);
+      QString nice = KUrl::relativeUrl(baseURL, url);
       nice = KStringHandler::lsqueeze(nice, 60);
       if ( KMessageBox::Continue != KMessageBox::warningContinueCancel(window, i18n("<qt>Do you really want to remove <br><b>%1</b><br> from the project?</qt>", nice), i18n("Remove From Project"), KStdGuiItem::del(), "RemoveFromProject") )
       {
@@ -358,7 +358,7 @@ bool QuantaNetAccess::checkProjectRemove(const KUrl& src, KDevPlugin* plugin, bo
     }
     if (remove)
     {
-      url = KUrl::relativeURL(baseURL, url);
+      url = KUrl::relativeUrl(baseURL, url);
       project->removeFile(url.path());
     }
   }
@@ -380,21 +380,21 @@ bool QuantaNetAccess::checkProjectDel(const KUrl& src, KDevPlugin* plugin, QWidg
     {
       if (confirm)
       {
-        QString nice = url.pathOrURL();
+        QString nice = url.pathOrUrl();
         nice = KStringHandler::csqueeze(nice, 60);
         if ( KMessageBox::Continue != KMessageBox::warningContinueCancel(window, i18n("<qt>Do you really want to delete <br><b>%1</b><br> and remove it from the project?</qt>", nice), i18n("Delete & Remove From Project"), KStdGuiItem::del(), "DeleteAndRemoveFromProject") )
         {
           return false;
         }
       }
-      url = KUrl::relativeURL(project->projectBase(), url);
+      url = KUrl::relativeUrl(project->projectBase(), url);
       project->removeFile(url.path());
       return true;
     }
   }
   // confirm normal delete if wanted
   if (confirm) {
-    QString nice = url.pathOrURL();
+    QString nice = url.pathOrUrl();
     nice = KStringHandler::csqueeze(nice, 60);
     return (KMessageBox::Continue == KMessageBox::warningContinueCancel(window, i18n("<qt>Do you really want to delete <br><b>%1</b>?</qt>", nice), i18n("Delete File or Folder"), KStdGuiItem::del(), "DeleteFileOrFolder") );
   }

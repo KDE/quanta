@@ -120,7 +120,7 @@ KUrl::List ExtFileInfo::allFilesRelative( const KUrl& path, const QString& mask)
   KUrl::List::Iterator it;
   for ( it = r.begin(); it != r.end(); ++it )
   {
-    *it = KUrl::relativeURL(path, *it);
+    *it = KUrl::relativeUrl(path, *it);
   }
 
   return r;
@@ -147,7 +147,7 @@ QStringList ExtFileInfo::listDirRelative( const KUrl& path, const QString& mask)
   KUrl::List::ConstIterator end = urls.constEnd();
   for ( ; it != end; ++it )
   {
-    result += KUrl::relativeURL(path, *it);
+    result += KUrl::relativeUrl(path, *it);
   }
 
   return result;
@@ -168,7 +168,7 @@ bool ExtFileInfo::createDir(const KUrl& path)
   QStringList stack;
   do {
     stack.push_front(url.fileName());
-    url = url.upURL();
+    url = url.upUrl();
   } while (!exists(url)); // we know that the root exists, so this will terminate
 
   // move down the path and create all folders
@@ -215,7 +215,7 @@ bool ExtFileInfo::checkOverwrite(const KUrl& url)
   if (ExtFileInfo::exists(url))
   {
     if (KMessageBox::warningYesNo(0L,
-        i18n( "<qt>The file <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>", url.pathOrURL() )) == KMessageBox::No)
+        i18n( "<qt>The file <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>", url.pathOrUrl() )) == KMessageBox::No)
             result = false;
   }
 

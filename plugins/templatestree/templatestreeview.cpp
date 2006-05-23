@@ -211,7 +211,7 @@ KFileTreeBranch* TemplatesTreeView::newBranch(const KUrl& url)
   if (url.isLocalFile())
     newBrnch->root()->setText(1, url.path());
   else
-    newBrnch->root()->setText(1, url.prettyURL());
+    newBrnch->root()->setText(1, url.prettyUrl());
   addBranch(newBrnch);
   if (url.isLocalFile())
   {
@@ -482,13 +482,13 @@ void TemplatesTreeView::contentsDropEvent(QDropEvent *e)
         bool proceed = true;
         if (ExtFileInfo::exists(url))
         {
-          proceed = KMessageBox::warningYesNo(this, i18n("<qt>The file <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>", url.pathOrURL()),i18n("Overwrite")) == KMessageBox::Yes;
+          proceed = KMessageBox::warningYesNo(this, i18n("<qt>The file <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>", url.pathOrUrl()),i18n("Overwrite")) == KMessageBox::Yes;
         }
         if (proceed)
         {
           if (!QuantaNetAccess::upload(tempFile->name(), url, m_plugin, false))
           {
-            KMessageBox::error(this,i18n("<qt>Could not write to file <b>%1</b>.<br>Check if you have rights to write there or that your connection is working.</qt>", url.pathOrURL()));
+            KMessageBox::error(this,i18n("<qt>Could not write to file <b>%1</b>.<br>Check if you have rights to write there or that your connection is working.</qt>", url.pathOrUrl()));
           }
         }
         delete tempFile;
@@ -801,13 +801,13 @@ void TemplatesTreeView::slotDragInsert(QDropEvent *e)
         {
           return;
         }
-        emit insertFile(KUrl::fromPathOrURL( localFileName ));
+        emit insertFile(KUrl::fromPathOrUrl( localFileName ));
       }
 
       if(m_dirInfo.mimeType == "file/all")
       {
        // whatever this is, insert it with a tag (image or link or prefix/postfix)
-        emit insertTag(KUrl::fromPathOrURL( localFileName ), &m_dirInfo);
+        emit insertTag(KUrl::fromPathOrUrl( localFileName ), &m_dirInfo);
       }
       else
       if(m_dirInfo.mimeType == "template/all")
@@ -817,7 +817,7 @@ void TemplatesTreeView::slotDragInsert(QDropEvent *e)
           return;
         }
   //        emit openFile(KUrl());  FIXME
-        emit insertFile(KUrl::fromPathOrURL( localFileName ));
+        emit insertFile(KUrl::fromPathOrUrl( localFileName ));
       }
     }
   } else
@@ -837,7 +837,7 @@ void TemplatesTreeView::slotProjectOpened()
   if (qProject)
     m_projectBaseURL = qProject->projectBase();
   else
-    m_projectBaseURL = KUrl::fromPathOrURL(m_plugin->project()->projectDirectory());
+    m_projectBaseURL = KUrl::fromPathOrUrl(m_plugin->project()->projectDirectory());
 
   if (m_projectDir)
     removeBranch(m_projectDir);
@@ -979,13 +979,13 @@ QString TemplatesTreeView::createTemplateTarball()
     files.append(url);
   else {
     files = ExtFileInfo::allFiles(dirURL, "*") ;
-    dirURL = dirURL.upURL();
+    dirURL = dirURL.upUrl();
   }
 
   for ( KUrl::List::Iterator it_f = files.begin(); it_f != files.end(); ++it_f )
   {
     if (!(*it_f).fileName(false).isEmpty()) {
-      url = KUrl::relativeURL(dirURL, *it_f) ;
+      url = KUrl::relativeUrl(dirURL, *it_f) ;
 
       QFile file((*it_f).path());
       file.open(IO_ReadOnly);
@@ -1077,17 +1077,17 @@ void TemplatesTreeView::slotExtractSiteTemplate()
                 QStringList entries = directory->entries();
                 KUrl::List fileList;
                 for (QStringList::Iterator it = entries.begin(); it != entries.end(); ++it)
-                  fileList.append(KUrl::fromPathOrURL(tempDirName + "/" + *it));
+                  fileList.append(KUrl::fromPathOrUrl(tempDirName + "/" + *it));
                 if (!KIO::NetAccess::dircopy(fileList, targetURL, this))
                     error = true;
-                KIO::NetAccess::del(KUrl().fromPathOrURL(tempDirName), this);
+                KIO::NetAccess::del(KUrl().fromPathOrUrl(tempDirName), this);
                 delete tempDir;
             }
             tar.close();
           } else
              error = true;
           KIO::NetAccess::removeTempFile(tempFile);
-          if (!m_projectBaseURL.isEmpty() && !KUrl::relativeURL(m_projectBaseURL, targetURL).startsWith("."))
+          if (!m_projectBaseURL.isEmpty() && !KUrl::relativeUrl(m_projectBaseURL, targetURL).startsWith("."))
           {
              if (KMessageBox::questionYesNo(this, i18n("You have extracted the site template to a folder which is not under your main project folder.\nDo you want to copy the folder into the main project folder?")) == KMessageBox::Yes)
              {
@@ -1097,7 +1097,7 @@ void TemplatesTreeView::slotExtractSiteTemplate()
       } else
          error = true;
       if (error)
-        KMessageBox::error(this, i18n("<qt>Some error happened while extracting the <i>%1</i> site template file.<br>Check that you have write permission for <i>%2</i> and that there is enough free space in your temporary folder.</qt>", url.pathOrURL(), targetURL.pathOrURL()));
+        KMessageBox::error(this, i18n("<qt>Some error happened while extracting the <i>%1</i> site template file.<br>Check that you have write permission for <i>%2</i> and that there is enough free space in your temporary folder.</qt>", url.pathOrUrl(), targetURL.pathOrUrl()));
    }
 }
 

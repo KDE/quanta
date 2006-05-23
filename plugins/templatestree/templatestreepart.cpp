@@ -244,7 +244,7 @@ void TemplatesTreePart::slotCreateSiteTemplate()
 
 /*    if (Project::ref()->hasProject() && targetURL.url().startsWith(Project::ref()->templateURL().url()))
       valid = true;*/
-  if (!KUrl::fromPathOrURL(startDir).isParentOf(targetURL))
+  if (!KUrl::fromPathOrUrl(startDir).isParentOf(targetURL))
     KMessageBox::information(mainWindow()->main(), i18n("This Template will not be visible in your Templates Tree, because you do not save it to the local or project template folder."));
 
 
@@ -259,11 +259,11 @@ void TemplatesTreePart::slotCreateSiteTemplate()
     tar.close();
   } else
     error = true;
-  if (!QuantaNetAccess::copy(KUrl::fromPathOrURL(tempFile->name()), targetURL, this, false))
+  if (!QuantaNetAccess::copy(KUrl::fromPathOrUrl(tempFile->name()), targetURL, this, false))
     error = true;
 
   if (error)
-    KMessageBox::error(mainWindow()->main(), i18n("<qt>There was an error while creating the site template tarball.<br>Check that you can read the files from <i>%1</i>, you have write access to <i>%2</i> and that you have enough free space in your temporary folder.</qt>", url.pathOrURL(), targetURL.pathOrURL()), i18n("Template Creation Error"));
+    KMessageBox::error(mainWindow()->main(), i18n("<qt>There was an error while creating the site template tarball.<br>Check that you can read the files from <i>%1</i>, you have write access to <i>%2</i> and that you have enough free space in your temporary folder.</qt>", url.pathOrUrl(), targetURL.pathOrUrl()), i18n("Template Creation Error"));
   delete tempFile;
 }
 

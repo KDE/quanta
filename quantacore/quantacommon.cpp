@@ -342,7 +342,7 @@ QString QuantaCommon::qUrl(const KUrl &url)
 void QuantaCommon::dirCreationError(QWidget *widget, const KUrl& url)
 {
   KMessageBox::error(widget, i18n("<qt>Cannot create folder<br><b>%1</b>.<br>Check that you have write permission in the parent folder or that the connection to<br><b>%2</b><br> is valid.</qt>",
-      url.pathOrURL(),
+      url.pathOrUrl(),
       url.protocol()+"://"+url.user()+"@"+url.host()));}
 
 /**

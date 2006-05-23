@@ -64,7 +64,7 @@ SimpleTreeViewItem *SimpleFileTree::createItem(const QString& startPath, const K
     {
       KUrl u = url;
       for (int i = 0; i < sectionCount; i++)
-        u = u.upURL();
+        u = u.upUrl();
       if (parent)
       {
         parent->setOpen(true);

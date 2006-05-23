@@ -170,7 +170,7 @@ QStringList XmlAttributeValueCompletion::tagAttributeValues(const DTDStruct* dtd
                 u = projectBase;
                 u.addPath(*it);
                 //convert the paths now to be relative to the current document
-                u = KUrl::relativeURL(base, u);
+                u = KUrl::relativeUrl(base, u);
                 (*it) = u.path();
               }
 //              values->append("mailto:" + project->email());

@@ -240,7 +240,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
   int numOfTags = 0;
   QTagList *tagList = new QTagList;
   //read all the tag files
-  KUrl dirURL = KUrl::fromPathOrURL(dtd->fileName);
+  KUrl dirURL = KUrl::fromPathOrUrl(dtd->fileName);
   dirURL.setFileName("");
   QString dirName = dirURL.path(KUrl::AddTrailingSlash);
   if (QFile::exists(dirName + "common.tag"))

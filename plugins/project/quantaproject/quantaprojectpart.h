@@ -65,7 +65,7 @@ public:
 
     virtual void removeFiles (const QStringList &fileList);
     virtual void removeFile (const QString &fileName);
-    virtual KDE_DEPRECATED bool isProjectFile(const QString &path) {return isProjectFile(KUrl::fromPathOrURL(path));}
+    virtual KDE_DEPRECATED bool isProjectFile(const QString &path) {return isProjectFile(KUrl::fromPathOrUrl(path));}
 
     virtual bool isProjectFile(const KUrl &url);
     /**

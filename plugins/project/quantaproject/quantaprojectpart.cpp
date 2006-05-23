@@ -221,7 +221,7 @@ void QuantaProjectPart::closeProject()
 void QuantaProjectPart::openProject( const QString &dirName, const QString &projectName )
 {
   QuantaProjectIf::openProject(dirName, projectName);
-  m_projectBase = KUrl::fromPathOrURL( dirName );
+  m_projectBase = KUrl::fromPathOrUrl( dirName );
   m_projectBase.adjustPath(KUrl::AddTrailingSlash);
   m_projectName = projectName;
   m_projectDom = projectDom();
@@ -318,13 +318,13 @@ QStringList QuantaProjectPart::removeItems(const QStringList &items)
 
 void QuantaProjectPart::slotInsertFiles()
 {
-  KUrl::List urls = KFileDialog::getOpenURLs(m_projectBase.pathOrURL(), i18n("*"), mainWindow()->main(), i18n("Insert Files in Project"));
+  KUrl::List urls = KFileDialog::getOpenURLs(m_projectBase.pathOrUrl(), i18n("*"), mainWindow()->main(), i18n("Insert Files in Project"));
 
   if (!urls.isEmpty())
   {
     if (!m_projectBase.isParentOf(urls.first()))
     {
-      KUrlRequesterDlg urlRequesterDlg(m_projectBase.pathOrURL(), mainWindow()->main());
+      KUrlRequesterDlg urlRequesterDlg(m_projectBase.pathOrUrl(), mainWindow()->main());
       urlRequesterDlg.setWindowTitle(i18n("Copy Files to Project"));
       urlRequesterDlg.urlRequester()->setMode(KFile::Directory | KFile::ExistingOnly);
       urlRequesterDlg.exec();
@@ -337,7 +337,7 @@ void QuantaProjectPart::slotInsertFiles()
     } else
     {
       QStringList filenames;
-      KUrl url = KUrl::relativeURL(m_projectBase, urls.first());
+      KUrl url = KUrl::relativeUrl(m_projectBase, urls.first());
       QStringList sections = url.path(KUrl::AddTrailingSlash).split('/', QString::SkipEmptyParts);
       QString section;
       for (int i = 0 ; i < sections.count() - 1; i++)
@@ -348,7 +348,7 @@ void QuantaProjectPart::slotInsertFiles()
       KUrl::List::ConstIterator end = urls.constEnd();
       for (KUrl::List::ConstIterator it = urls.begin(); it != end; ++it)
       {
-        url = KUrl::relativeURL(m_projectBase, *it);
+        url = KUrl::relativeUrl(m_projectBase, *it);
         filenames += url.path();
       }
       addFiles(filenames);
@@ -360,13 +360,13 @@ void QuantaProjectPart::slotInsertFiles()
 void QuantaProjectPart::slotInsertFolder()
 {
   KUrl url = KUrl();
-  url = KFileDialog::getExistingURL(m_projectBase.pathOrURL(), mainWindow()->main(), i18n("Insert Folder in Project"));
+  url = KFileDialog::getExistingURL(m_projectBase.pathOrUrl(), mainWindow()->main(), i18n("Insert Folder in Project"));
   if (!url.isEmpty())
   {
     if (!m_projectBase.isParentOf(url))
     {
-      KUrlRequesterDlg urlRequesterDlg(m_projectBase.pathOrURL(), mainWindow()->main());
-      urlRequesterDlg.setWindowTitle(i18n("%1: Copy to Project", url.pathOrURL()));
+      KUrlRequesterDlg urlRequesterDlg(m_projectBase.pathOrUrl(), mainWindow()->main());
+      urlRequesterDlg.setWindowTitle(i18n("%1: Copy to Project", url.pathOrUrl()));
       urlRequesterDlg.urlRequester()->setMode(KFile::Directory | KFile::ExistingOnly);
       urlRequesterDlg.exec();
       KUrl destination = urlRequesterDlg.selectedURL();
@@ -379,7 +379,7 @@ void QuantaProjectPart::slotInsertFolder()
     {
       KUrl::List urls = ExtFileInfo::allFilesRelative(url, "*");
       QStringList filenames;
-      KUrl u = KUrl::relativeURL(m_projectBase, url);
+      KUrl u = KUrl::relativeUrl(m_projectBase, url);
       QStringList sections = u.path(KUrl::AddTrailingSlash).split('/', QString::SkipEmptyParts);
       QString section;
       for (int i = 0 ; i < sections.count(); i++)

@@ -376,7 +376,7 @@ void GroupsWidget::slotOpenFile()
   if (url.isEmpty())
     return;
 
-  if (KUrl::isRelativeURL(url.path()))
+  if (KUrl::isRelativeUrl(url.path()))
   {
     url = KUrl(m_parseResult->baseURL, url.path());
   }

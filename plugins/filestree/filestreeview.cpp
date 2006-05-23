@@ -83,7 +83,7 @@ KFileTreeBranch* FilesTreeView::newBranch(const KUrl& url)
     newBrnch = new BaseTreeBranch(this, url, s, SmallIcon(iconNameForURL(url)), Settings::self()->filesTreeShowHidden());
   } else
   {
-    if (url.isLocalFile() && url.equals(KUrl::fromPathOrURL(QDir::homePath()), KUrl::CompareWithoutTrailingSlash))
+    if (url.isLocalFile() && url.equals(KUrl::fromPathOrUrl(QDir::homePath()), KUrl::CompareWithoutTrailingSlash))
     {
       if (s.isEmpty())
         s = i18n("Home Folder");
@@ -99,7 +99,7 @@ KFileTreeBranch* FilesTreeView::newBranch(const KUrl& url)
       if (url.isLocalFile())
         newBrnch->root()->setText(1, url.path());
       else
-        newBrnch->root()->setText(1, url.prettyURL());
+        newBrnch->root()->setText(1, url.prettyUrl());
     }
   }
   addBranch(newBrnch);
@@ -303,7 +303,7 @@ void FilesTreeView::restoreBranches()
     if (i < topStrAliasList.count())
       topURLAliases.insert(topStrList[i], topStrAliasList[i]);
     else
-      topURLAliases.insert(topStrList[i], KUrl::fromPathOrURL(topStrList[i]).fileName());
+      topURLAliases.insert(topStrList[i], KUrl::fromPathOrUrl(topStrList[i]).fileName());
   }
   if (Settings::self()->filesTreeRootHome())
   {
@@ -321,7 +321,7 @@ void FilesTreeView::restoreBranches()
   BranchMap::ConstIterator it;
   for ( it = topURLAliases.constBegin(); it != topURLAliases.constEnd(); ++it )
   {
-    newBranch(KUrl::fromPathOrURL(it.key()));
+    newBranch(KUrl::fromPathOrUrl(it.key()));
   }
 }
 

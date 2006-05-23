@@ -333,7 +333,7 @@ void QuantaCorePart::slotInsertTag(const KUrl& url, Helper::DirInfo * dirInfo)
 //     {
 //       baseURL = Project::ref()->projectBaseURL();
 //     } else
-    KUrl relURL = KUrl::relativeURL(baseURL, url);
+    KUrl relURL = KUrl::relativeUrl(baseURL, url);
     QString urlStr = relURL.url();
     if (relURL.protocol() == baseURL.protocol())
         urlStr = relURL.path();
@@ -404,7 +404,7 @@ void QuantaCorePart::slotOpenNew()
   KTempFile * file = new KTempFile(locateLocal("tmp", ""), i18n(".unsaved"));
 //   file->setAutoDelete(true);
   file->close();
-  KUrl url = KUrl::fromPathOrURL(file->name());
+  KUrl url = KUrl::fromPathOrUrl(file->name());
   KDevDocument *doc = documentController()->editDocument(url);
   if (doc)
   {

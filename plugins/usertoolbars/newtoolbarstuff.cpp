@@ -34,11 +34,11 @@ NewToolbarStuff::NewToolbarStuff(const QString &type,  QWidget *parentWidget)
 
 void NewToolbarStuff::installResource()
 {
-    KUrl destURL = KUrl::fromPathOrURL(KGlobal::dirs()->saveLocation("data") + "kdevusertoolbars/toolbars/" + QFileInfo(m_tarName).fileName());
+    KUrl destURL = KUrl::fromPathOrUrl(KGlobal::dirs()->saveLocation("data") + "kdevusertoolbars/toolbars/" + QFileInfo(m_tarName).fileName());
     bool ok = true;
     if (ExtFileInfo::checkOverwrite(destURL))
     {
-        if (!ExtFileInfo::copy(KUrl::fromPathOrURL(m_tarName), destURL, -1, true, false, parentWidget()))
+        if (!ExtFileInfo::copy(KUrl::fromPathOrUrl(m_tarName), destURL, -1, true, false, parentWidget()))
           ok = false;
         else
         {
