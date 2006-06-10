@@ -177,8 +177,7 @@ void ProjectNewGeneral::slotButtonTmpl()
      linePrjTmpl->setText(KURL::relativeURL(baseUrl, url));
    } else
    {
-//TODO: Use better text in Quanta4, or when message freeze is lifted up
-      KMessageBox::sorry(this,i18n("You must save the templates in the following folder: \n\n%1").arg(baseUrl.prettyURL(0, KURL::StripFileProtocol)));   
+     KMessageBox::sorry(this, i18n("<qt>The project templates must be stored under the main project folder: <br><br><b>%1</b></qt>").arg(baseUrl.prettyURL(0, KURL::StripFileProtocol)));
     }
 }
 
@@ -192,8 +191,7 @@ void ProjectNewGeneral::slotButtonToolbar()
      linePrjToolbar->setText(KURL::relativeURL(baseUrl, url));
    }
    {
-//TODO: Use better text in Quanta4, or when message freeze is lifted up
-      KMessageBox::sorry(0,i18n("<qt>You must save the toolbars to the following folder: <br><br><b>%1</b></qt>")
+      KMessageBox::sorry(0, i18n("<qt>The project toolbars must be stored under the main project folder: <br><br><b>%1</b></qt>")
                                   .arg(baseUrl.prettyURL(0, KURL::StripFileProtocol)));
    }
 }
@@ -227,8 +225,7 @@ bool ProjectNewGeneral::eventFilter ( QObject * watched, QEvent * e )
       url = QExtFileInfo::toAbsolute(url, baseUrl);
       if (!baseUrl.isParentOf(url))
       {
-//TODO: Use better text in Quanta4, or when message freeze is lifted up
-        KMessageBox::sorry(this,i18n("You must save the templates in the following folder: \n\n%1").arg(baseUrl.prettyURL(0, KURL::StripFileProtocol)));
+        KMessageBox::sorry(this,i18n("<qt>The project templates must be stored under the main project folder: <br><br><b>%1</b></qt>").arg(baseUrl.prettyURL(0, KURL::StripFileProtocol)));
         linePrjTmpl->setFocus();
         emit enableNextButton(this, false);
       } else
@@ -241,8 +238,7 @@ bool ProjectNewGeneral::eventFilter ( QObject * watched, QEvent * e )
       url = QExtFileInfo::toAbsolute(url, baseUrl);
       if (!baseUrl.isParentOf(url))
       {
-//TODO: Use better text in Quanta4, or when message freeze is lifted up
-        KMessageBox::sorry(0,i18n("<qt>You must save the toolbars to the following folder: <br><br><b>%1</b></qt>")
+        KMessageBox::sorry(0,i18n("<qt>The project toolbars must be stored under the main project folder: <br><br><b>%1</b></qt>")
                                     .arg(baseUrl.prettyURL(0, KURL::StripFileProtocol)));
         linePrjToolbar->setFocus();
         emit enableNextButton(this, false);
