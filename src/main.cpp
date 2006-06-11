@@ -49,6 +49,7 @@ working with tagging and scripting languages.\
 versions of Quanta. \
 \n\nWe hope you enjoy Quanta Plus.\n\n");
 
+static const char *developers = I18N_NOOP("The Quanta+ developers");
 
 static KCmdLineOptions options[] =
 {
@@ -62,10 +63,13 @@ static KCmdLineOptions options[] =
 
 int main(int argc, char *argv[])
 {
+  char *copyright = new char[200]; //this should be enough
+  strcpy(copyright, "(C) 2000-2006 - ");
+  strcat(copyright, developers);
   KAboutData
     aboutData( QUANTA_PACKAGE, I18N_NOOP("Quanta"),
     QUANTA_VERSION, description, KAboutData::License_GPL_V2,    
-    i18n("%1 - The Quanta+ developers").arg("(C) 2000-2006").utf8(),
+    copyright,
     othertext,
     "http://kdewebdev.org"
     );
