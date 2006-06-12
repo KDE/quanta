@@ -277,7 +277,7 @@ bool UserAction::slotActionActivated()
     if (proc->start(KProcess::NotifyOnExit, KProcess::All))
     {
 /*FIXME      emit clearMessages();
-      emit showMessage(i18n("The \"%1\" script started.\n").arg(actionText()), false);*/
+      emit showMessage(i18n("The \"%1\" script started.\n",actionText()), false);*/
       if (!m_useInputFile)
       {
         if ( inputType == "current" || inputType == "selected" )

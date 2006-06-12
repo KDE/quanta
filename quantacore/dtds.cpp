@@ -893,7 +893,7 @@ void DTDs::slotLoadDTD()
 /*FIXME          QString family = dtdcfg.readEntry("Family", "1");
           Document *w = ViewManager::ref()->activeDocument();
           if (family == "1" && w &&
-              KMessageBox::questionYesNo(0L, i18n("<qt>Use the newly loaded <b>%1</b> DTD for the current document?</qt>").arg(nickName), i18n("Change DTD")) == KMessageBox::Yes)
+              KMessageBox::questionYesNo(0L, i18n("<qt>Use the newly loaded <b>%1</b> DTD for the current document?</qt>",nickName), i18n("Change DTD")) == KMessageBox::Yes)
           {
             w->setDTDIdentifier(dtdName);
             emit loadToolbarForDTD(w->getDTDIdentifier());
