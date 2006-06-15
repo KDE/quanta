@@ -31,7 +31,7 @@
 
 class QMenu;
 class KAction;
-class KDialogBase;
+class KDialog;
 class Context;
 class ConfigWidgetProxy;
 
@@ -56,7 +56,7 @@ public:
 private slots:
   void init();
 
-  void insertConfigWidget(const KDialogBase *dlg, QWidget *page, unsigned int pageNo);
+  void insertConfigWidget(const KDialog *dlg, QWidget *page, unsigned int pageNo);
   void contextMenu(QMenu *popup, const Context *context);
   void projectOpened();
   void projectClosed();

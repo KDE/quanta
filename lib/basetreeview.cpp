@@ -369,7 +369,8 @@ FileInfoDlg* BaseTreeView::addFileInfoPage(KPropertiesDialog* propDlg)
   if ( !currentKFileTreeViewItem()->isDir() )
   {
 
-    QFrame *quantaFilePage = propDlg->addPage(i18n("Quanta File Info"));
+      QFrame *quantaFilePage = new QFrame();
+      propDlg->addPage(quantaFilePage, i18n("Quanta File Info"));
     QVBoxLayout *topLayout = new QVBoxLayout( quantaFilePage);
     FileInfoDlg *quantaFileProperties = new FileInfoDlg(quantaFilePage);
     quantaFileProperties->setWindowTitle(i18n("Quanta") );

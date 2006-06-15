@@ -27,7 +27,6 @@
 
 //kde includes
 #include <kapplication.h>
-#include <dcopref.h>
 #include <kurl.h>
 #include <kdirwatch.h>
 #include <kmimetype.h>
@@ -40,7 +39,6 @@
 #include <ktempfile.h>
 
 //remove the below ones when KQPasteAction is removed
-#include <dcopclient.h>
 #include <kdebug.h>
 #include <kmenu.h>
 #include <ktoolbar.h>
@@ -523,6 +521,7 @@ bool QuantaCommon::insideCommentsOrQuotes(int position, const QString &string, c
   return false;
 }
 
+#if 0
 DCOPReply QuantaCommon::callDCOPMethod(const QString& interface, const QString& method, const QString& arguments)
 {
   QStringList argumentList = arguments.split(",", QString::KeepEmptyParts);
@@ -560,6 +559,7 @@ DCOPReply QuantaCommon::callDCOPMethod(const QString& interface, const QString& 
 
   return reply;
 }
+#endif
 
 void QuantaCommon::normalizeStructure(QString f,QStringList& l)
 {

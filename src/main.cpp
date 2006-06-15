@@ -6,7 +6,6 @@
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
 #include <kdebug.h>
-#include <dcopclient.h>
 #include <kparts/componentfactory.h>
 
 #include <QFileInfo>
@@ -139,8 +138,8 @@ int main(int argc, char *argv[])
       DocumentController::getInstance()->editDocument( KUrl(args->url(a)) );
     }
   }
-
-  kapp->dcopClient()->registerAs("quanta");
+#warning "kde4: port it"
+  //kapp->dcopClient()->registerAs("quanta");
 
   return app.exec();
 }

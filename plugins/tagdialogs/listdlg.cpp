@@ -25,11 +25,11 @@
 #include <QStringList>
 
 ListDlg::ListDlg(QStringList &entryList,QWidget* parent, const char *name )
-  : KDialogBase(parent), listbox(new KListBox(this))
+  : KDialog(parent), listbox(new KListBox(this))
 {
    Q_CHECK_PTR(listbox);
    setMainWidget(listbox);
-   showButtonApply(false);
+   showButton(Apply, false);
    enableButtonSeparator(true);
    setWindowTitle(i18n("Opened Files"));
 

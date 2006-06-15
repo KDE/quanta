@@ -25,7 +25,7 @@
 
 #include <klocale.h>
 #include <kconfig.h>
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include <kiconloader.h>
 #include <kurlrequester.h>
 #include <kapplication.h>
@@ -48,7 +48,7 @@ void KDevQuantaExtension::init()
     s_instance = new KDevQuantaExtension();
 }
 
-void KDevQuantaExtension::createGlobalSettingsPage(KDialogBase */*dlg*/)
+void KDevQuantaExtension::createGlobalSettingsPage(KDialog */*dlg*/)
 {
 //     KConfig* config = kapp->config();
 //     QVBox *vbox = dlg->addVBoxPage(i18n("General"), i18n("General"), BarIcon("kdevelop", KIcon::SizeMedium) );
@@ -72,7 +72,7 @@ void KDevQuantaExtension::createGlobalSettingsPage(KDialogBase */*dlg*/)
 //     gsw->terminalEdit->setText( config->readEntry( "TerminalApplication", QString::fromLatin1("konsole") ) );
 }
 
-void KDevQuantaExtension::acceptGlobalSettingsPage(KDialogBase */*dlg*/)
+void KDevQuantaExtension::acceptGlobalSettingsPage(KDialog */*dlg*/)
 {
 //     KConfig* config = kapp->config();
 //

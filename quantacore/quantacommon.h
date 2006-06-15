@@ -29,7 +29,6 @@
 #define DEFAULT_DTD QString("-//W3C//DTD HTML 4.01 Transitional//EN")
 
 class QString;
-class DCOPReply;
 class KUrl;
 class KStandardDirs;
 class QWidget;
@@ -212,6 +211,8 @@ pointer must be deleted by the caller!! */
   
   static void removeCommentsAndQuotes(QString& str, const DTDStruct* dtd);
   static bool insideCommentsOrQuotes(int position, const QString &string, const DTDStruct *dtd);
+#warning "kde4: port it"
+#if 0
   /** Calls a Quanta DCOP method.
   * @param interface the DCOP interface the method belongs to
   * @param method the DCOP method name (with the argument types)
@@ -219,7 +220,7 @@ pointer must be deleted by the caller!! */
   * @return the return value of the DCOP caller
   */
   static DCOPReply callDCOPMethod(const QString& interface, const QString& method, const QString& arguments);
-
+#endif
   /** Find the word until the first word boundary backwards.
    * 
    * @param textToSearch The text to look up into

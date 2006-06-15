@@ -33,7 +33,7 @@
 #include <klocale.h>
 #include <kaction.h>
 #include <kdebug.h>
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include <kfiledialog.h>
 #include <kmainwindow.h>
 #include <kmessagebox.h>
@@ -90,8 +90,8 @@ QuantaProjectPart::QuantaProjectPart( QObject *parent, const QStringList & /*arg
 
   m_configProxy = new ConfigWidgetProxy( core() );
   m_configProxy->createProjectConfigPage( i18n( "Quanta" ), PROJECTDOC_OPTIONS, info() ->icon() );
-  connect( m_configProxy, SIGNAL( insertConfigWidget( const KDialogBase*, QWidget*, unsigned int ) ),
-           this, SLOT( insertConfigWidget( const KDialogBase*, QWidget*, unsigned int ) ) );
+  connect( m_configProxy, SIGNAL( insertConfigWidget( const KDialog*, QWidget*, unsigned int ) ),
+           this, SLOT( insertConfigWidget( const KDialog*, QWidget*, unsigned int ) ) );
 
   connect( core(), SIGNAL( contextMenu( QMenu *, const Context * ) ),
            this, SLOT( contextMenu( QMenu *, const Context * ) ) );
@@ -131,7 +131,7 @@ void QuantaProjectPart::setupActions()
   action->setWhatsThis( i18n( "Insert Folder - Insert a new folder into the project." ) );
 }
 
-void QuantaProjectPart::insertConfigWidget( const KDialogBase *dlg, QWidget *page, unsigned int pageNo )
+void QuantaProjectPart::insertConfigWidget( const KDialog *dlg, QWidget *page, unsigned int pageNo )
 {
   // create configuraton dialogs here
   switch ( pageNo )
@@ -417,7 +417,7 @@ void QuantaProjectPart::slotTargetFolderSelected(QAction *action, const KUrl& ur
   KUrl u = url;
   u.adjustPath(KUrl::AddTrailingSlash);
   QuantaNetAccess::dircopy(m_fileContextURLs, u, this, false);
-  m_browserMenu->deleteLater(); 
+  m_browserMenu->deleteLater();
   m_browserMenu = 0L;
 }
 

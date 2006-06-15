@@ -28,7 +28,7 @@
 
 #include <klocale.h>
 #include <kaction.h>
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
 #include <k3listviewsearchline.h>
@@ -85,8 +85,8 @@ QuantaFilesTreePart::QuantaFilesTreePart(QObject *parent, const QStringList &/*a
     m_configProxy = new ConfigWidgetProxy(core());
     m_configProxy->createGlobalConfigPage(i18n("Files Tree"), GLOBALDOC_OPTIONS, info()->icon());
 //     m_configProxy->createProjectConfigPage(i18n("Files Tree"), PROJECTDOC_OPTIONS, info()->icon());
-    connect(m_configProxy, SIGNAL(insertConfigWidget(const KDialogBase*, QWidget*, unsigned int )),
-        this, SLOT(insertConfigWidget(const KDialogBase*, QWidget*, unsigned int)));
+    connect(m_configProxy, SIGNAL(insertConfigWidget(const KDialog*, QWidget*, unsigned int )),
+        this, SLOT(insertConfigWidget(const KDialog*, QWidget*, unsigned int)));
 
     connect(core(), SIGNAL(contextMenu(QMenu *, const Context *)),
         this, SLOT(contextMenu(QMenu *, const Context *)));
@@ -129,7 +129,7 @@ void QuantaFilesTreePart::setupActions()
     action->setWhatsThis(i18n("<b>Do something</b><p>Describe here what does this action do."));*/
 }
 
-void QuantaFilesTreePart::insertConfigWidget(const KDialogBase *dlg, QWidget *page, unsigned int pageNo)
+void QuantaFilesTreePart::insertConfigWidget(const KDialog *dlg, QWidget *page, unsigned int pageNo)
 {
 // create configuraton dialogs here
     switch (pageNo)

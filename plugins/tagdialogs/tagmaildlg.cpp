@@ -33,8 +33,11 @@
 
 
 TagMailDlg::TagMailDlg(QWidget *parent)
-  :KDialog(parent, i18n("TagMail"), KDialog::Help | KDialog::Ok | KDialog::Cancel)
+  :KDialog(parent)
 {
+    setCaption( i18n("TagMail") );
+    setButtons( KDialog::Help | KDialog::Ok | KDialog::Cancel );
+    setDefaultButton( KDialog::Ok );
   QWidget *w = new QWidget(this);
   setupUi(w);
   setModal(true);

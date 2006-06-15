@@ -34,7 +34,7 @@
 
 #include <klocale.h>
 #include <kaction.h>
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
 #include <k3listviewsearchline.h>
@@ -86,8 +86,8 @@ StructureTreePart::StructureTreePart(QObject *parent, const QStringList &/*args*
     m_configProxy = new ConfigWidgetProxy(core());
     m_configProxy->createGlobalConfigPage(i18n("Document Structure"), GLOBALDOC_OPTIONS, info()->icon());
     m_configProxy->createProjectConfigPage(i18n("Document Structure"), PROJECTDOC_OPTIONS, info()->icon());
-    connect(m_configProxy, SIGNAL(insertConfigWidget(const KDialogBase*, QWidget*, unsigned int )),
-        this, SLOT(insertConfigWidget(const KDialogBase*, QWidget*, unsigned int)));
+    connect(m_configProxy, SIGNAL(insertConfigWidget(const KDialog*, QWidget*, unsigned int )),
+        this, SLOT(insertConfigWidget(const KDialog*, QWidget*, unsigned int)));
 
     connect(core(), SIGNAL(contextMenu(QMenu *, const Context *)),
         this, SLOT(contextMenu(QMenu *, const Context *)));
@@ -153,7 +153,7 @@ void StructureTreePart::setupActions()
 // create XMLGUI actions here
 }
 
-void StructureTreePart::insertConfigWidget(const KDialogBase *dlg, QWidget *page, unsigned int pageNo)
+void StructureTreePart::insertConfigWidget(const KDialog *dlg, QWidget *page, unsigned int pageNo)
 {
 // create configuraton dialogs here
     switch (pageNo)

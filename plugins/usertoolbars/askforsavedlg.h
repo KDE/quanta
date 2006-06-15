@@ -20,7 +20,7 @@ Ask a save question with 4 buttons: Save, Save As, No, Cancel.
 
 @author Andras Mantia
 */
-class AskForSaveDlg : public KDialogBase
+class AskForSaveDlg : public KDialog
 {
 Q_OBJECT
 public:

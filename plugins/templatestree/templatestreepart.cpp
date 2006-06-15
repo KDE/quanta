@@ -33,7 +33,7 @@
 
 #include <klocale.h>
 #include <kaction.h>
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
 #include <kfiledialog.h>
@@ -92,8 +92,8 @@ TemplatesTreePart::TemplatesTreePart(QObject *parent, const QStringList &/*args*
     m_configProxy = new ConfigWidgetProxy(core());
     m_configProxy->createGlobalConfigPage(i18n("TemplatesTree"), GLOBALDOC_OPTIONS, info()->icon());
     m_configProxy->createProjectConfigPage(i18n("TemplatesTree"), PROJECTDOC_OPTIONS, info()->icon());
-    connect(m_configProxy, SIGNAL(insertConfigWidget(const KDialogBase*, QWidget*, unsigned int )),
-        this, SLOT(insertConfigWidget(const KDialogBase*, QWidget*, unsigned int)));
+    connect(m_configProxy, SIGNAL(insertConfigWidget(const KDialog*, QWidget*, unsigned int )),
+        this, SLOT(insertConfigWidget(const KDialog*, QWidget*, unsigned int)));
 
     connect(core(), SIGNAL(contextMenu(QMenu *, const Context *)),
         this, SLOT(contextMenu(QMenu *, const Context *)));
@@ -130,7 +130,7 @@ void TemplatesTreePart::setupActions()
   connect(m_createTemplateAction, SIGNAL(triggered(bool)), SLOT(slotCreateSiteTemplate()));
 }
 
-void TemplatesTreePart::insertConfigWidget(const KDialogBase *dlg, QWidget *page, unsigned int pageNo)
+void TemplatesTreePart::insertConfigWidget(const KDialog *dlg, QWidget *page, unsigned int pageNo)
 {
 // create configuraton dialogs here
     switch (pageNo)

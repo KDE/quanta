@@ -20,8 +20,14 @@
 #include <kiconloader.h>
 
 AskForSaveDlg::AskForSaveDlg(const QString &caption, const QString &question, QWidget *parent, const char *name)
- : KDialogBase(KDialogBase::Plain, caption, KDialogBase::User2 | KDialogBase::User1 | KDialogBase::User3 | KDialogBase::Cancel, KDialogBase::User3, parent, name, true, false, KStdGuiItem::discard(), KStdGuiItem::saveAs(), KStdGuiItem::save())
+ : KDialog(parent)
 {
+    setCaption( caption );
+    setButtons( KDialog::User2 | KDialog::User1 | KDialog::User3 | KDialog::Cancel );
+    setDefaultButton( KDialog::User3 );
+    setButtonGuiItem( KDialog::User1,KStdGuiItem::discard() );
+    setButtonGuiItem( KDialog::User2,KStdGuiItem::saveAs());
+    setButtonGuiItem( KDialog::User3,KStdGuiItem::save());
 
   QGridLayout *layout = new QGridLayout(plainPage());
   layout->setObjectName("AksForSaveDlgLayout");

@@ -24,7 +24,7 @@ class ParseResult;
 
 class KUrl;
 class ConfigWidgetProxy;
-class KDialogBase;
+class KDialog;
 class FileContext;
 class QMenu;
 class Context;
@@ -99,7 +99,7 @@ private slots:
   void slotHelpUserList();
   void slotOpenNew();
   
-  void slotInsertConfigWidget(const KDialogBase *dlg, QWidget *page, unsigned int pageNo);
+  void slotInsertConfigWidget(const KDialog *dlg, QWidget *page, unsigned int pageNo);
   
   /**
    * emits @see finishedParsing when the new part is known

@@ -27,7 +27,7 @@
 #define COLORCOMBO_H
 
 #include <QComboBox>
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include <qframe.h>
 #include <QPixmap>
 #include <kcolordialog.h>

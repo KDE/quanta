@@ -16,7 +16,7 @@
 #ifndef LISTDLG_H
 #define LISTDLG_H
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 
 class QPushButton;
 class QString;
@@ -30,7 +30,7 @@ selected item with the getEntry() method.
   *@author Andras Mantia
   */
 
-class ListDlg : public KDialogBase  {
+class ListDlg : public KDialog  {
 Q_OBJECT
 public:
   ListDlg(QStringList &entryList,QWidget* parent=0, const char *name =0);

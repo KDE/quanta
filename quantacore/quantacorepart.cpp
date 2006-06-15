@@ -36,7 +36,7 @@
 #include <kapplication.h>
 #include <kcombobox.h>
 #include <kdebug.h>
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include <kgenericfactory.h>
 #include <kiconloader.h>
 #include <klocale.h>
@@ -82,8 +82,8 @@ QuantaCorePart::QuantaCorePart(QObject *parent, const QStringList& )
   m_configProxy->createGlobalConfigPage(i18n("Autocompletion"), AUTOCOMPLETE_OPTIONS, info()->icon());
   m_configProxy->createGlobalConfigPage(i18n("Environment"), ENVIRONMENT_OPTIONS, info()->icon());
 
-  connect(m_configProxy, SIGNAL(insertConfigWidget(const KDialogBase*, QWidget*, unsigned int )),
-      this, SLOT(slotInsertConfigWidget(const KDialogBase*, QWidget*, unsigned int)));
+  connect(m_configProxy, SIGNAL(insertConfigWidget(const KDialog*, QWidget*, unsigned int )),
+      this, SLOT(slotInsertConfigWidget(const KDialog*, QWidget*, unsigned int)));
 
   connect(documentController(), SIGNAL(documentLoaded(KDevDocument*)), this, SLOT(slotFileLoaded(KDevDocument*)));
 
@@ -204,7 +204,7 @@ void QuantaCorePart::insertTag(const TagPair & tagPair, bool inLine, bool showDi
 }
 
 
-void QuantaCorePart::slotInsertConfigWidget(const KDialogBase *dlg, QWidget *page, unsigned int pageNo)
+void QuantaCorePart::slotInsertConfigWidget(const KDialog *dlg, QWidget *page, unsigned int pageNo)
 {
 // create configuraton dialogs here
     switch (pageNo)
@@ -227,7 +227,10 @@ void QuantaCorePart::slotInsertConfigWidget(const KDialogBase *dlg, QWidget *pag
 
 void QuantaCorePart::slotMakeDonation()
 {
-  KDialogBase dlg(KDialogBase::Plain, i18n("Support Quanta with Financial Donation"), KDialogBase::Close, KDialogBase::Close, mainWindow()->main());
+  KDialog dlg(mainWindow()->main() );
+  dlg.setCaption( i18n("Support Quanta with Financial Donation") );
+  dlg.setButtons( KDialog::Close );
+  dlg.setDefaultButton( KDialog::Close );
   QWidget *w = new QWidget(&dlg);
   Ui::DonationDialog form;
   form.setupUi(w);
@@ -419,7 +422,10 @@ void QuantaCorePart::slotChangeDTEP()
 {
   if (m_activeQuantaDoc)
   {
-    KDialogBase dlg(KDialogBase::Plain, i18n("DTEP Selector"), KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, mainWindow()->main());
+      KDialog dlg(mainWindow()->main() );
+      dlg.setCaption( i18n("DTEP Selector") );
+      dlg.setButtons( KDialog::Ok | KDialog::Cancel );
+      dlg.setDefaultButton( KDialog::Ok );
     QWidget *w = new QWidget(&dlg);
     Ui::DTDSelectDialog form;
     form.setupUi(w);

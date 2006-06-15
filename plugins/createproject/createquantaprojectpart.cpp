@@ -45,7 +45,7 @@
 #include <klocale.h>
 #include <kaction.h>
 #include <kdebug.h>
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include <kiconloader.h>
 #include <kglobal.h>
 #include <kmainwindow.h>

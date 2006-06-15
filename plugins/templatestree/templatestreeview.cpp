@@ -573,7 +573,8 @@ void TemplatesTreeView::slotProperties()
   KPropertiesDialog *propDlg = new KPropertiesDialog( url, this, 0L, false, false); //autodeletes itself
 
 //Always add the Quanta directory page
-  QFrame *quantaDirPage = propDlg->addPage(i18n("Quanta Template"));
+  QFrame *quantaDirPage = new QFrame();
+  propDlg->addPage(quantaDirPage, i18n("Quanta Template"));
   QVBoxLayout *topLayout = new QVBoxLayout(quantaDirPage);
   QWidget *w = new QWidget(quantaDirPage);
   m_quantaProperties = new Ui::QuantaPropertiesPage;

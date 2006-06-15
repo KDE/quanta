@@ -14,8 +14,11 @@
 #include "newtemplatedirdlg.h"
 #include "newtemplatedirdlg.moc"
 
-NewTemplateDirDlg::NewTemplateDirDlg(QWidget *parent) : KDialog(parent, "", KDialog::Ok | KDialog::Cancel)
+NewTemplateDirDlg::NewTemplateDirDlg(QWidget *parent)
+    : KDialog(parent)
 {
+    setButtons( KDialog::Ok | KDialog::Cancel );
+    setDefaultButton( KDialog::Ok );
   QWidget *w = new QWidget(this);
   setupUi(w);
   setMainWidget(w);
