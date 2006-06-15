@@ -18,7 +18,7 @@
 
 //kde includes
 #include <kiconloader.h>
-
+#include <QPixmap>
 AskForSaveDlg::AskForSaveDlg(const QString &caption, const QString &question, QWidget *parent, const char *name)
  : KDialog(parent)
 {
@@ -28,17 +28,18 @@ AskForSaveDlg::AskForSaveDlg(const QString &caption, const QString &question, QW
     setButtonGuiItem( KDialog::User1,KStdGuiItem::discard() );
     setButtonGuiItem( KDialog::User2,KStdGuiItem::saveAs());
     setButtonGuiItem( KDialog::User3,KStdGuiItem::save());
-
-  QGridLayout *layout = new QGridLayout(plainPage());
+    QWidget *widget = new QWidget( this );
+    setMainWidget( widget );
+  QGridLayout *layout = new QGridLayout(widget);
   layout->setObjectName("AksForSaveDlgLayout");
   layout->setMargin(11); //TODO can we remove this, it comes from the style
   layout->setSpacing(6); //TODO can we remove this, it comes from the style
-  QLabel *pixmapLabel = new QLabel(plainPage());
+  QLabel *pixmapLabel = new QLabel(widget);
   pixmapLabel->setObjectName("pixmapLabel");
   pixmapLabel->setMaximumSize(QSize(32, 32));
   pixmapLabel->setPixmap(BarIcon("messagebox_warning", K3Icon::SizeMedium));
   layout->addWidget(pixmapLabel, 0, 0);
-  QLabel *label = new QLabel(plainPage());
+  QLabel *label = new QLabel(widget);
   label->setText(question);
   layout->addWidget(label, 0, 1 );
   resize( QSize(425, 150).expandedTo(minimumSizeHint()) );

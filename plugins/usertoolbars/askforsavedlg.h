@@ -13,7 +13,7 @@
 #ifndef ASKFORSAVEDLG_H
 #define ASKFORSAVEDLG_H
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 
 /**
 Ask a save question with 4 buttons: Save, Save As, No, Cancel.

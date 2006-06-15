@@ -27,7 +27,7 @@ class QMenu;
 class KAction;
 class KRecentFilesAction;
 class KDevAppFrontend;
-class KDialogBase;
+class KDialog;
 class KTempDir;
 class KTempFile;
 class Context;
@@ -77,7 +77,7 @@ public slots:
 private slots:
     void init();
 
-    void insertConfigWidget(const KDialogBase *dlg, QWidget *page, unsigned int pageNo);
+    void insertConfigWidget(const KDialog *dlg, QWidget *page, unsigned int pageNo);
     void contextMenu(QMenu *popup, const Context *context);
     void projectOpened();
     void projectClosed();

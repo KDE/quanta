@@ -96,8 +96,8 @@ UserToolbarsPart::UserToolbarsPart(QObject *parent, const QStringList &/*args*/)
     m_configProxy = new ConfigWidgetProxy(core());
     m_configProxy->createGlobalConfigPage(i18n("UserToolbars"), GLOBALDOC_OPTIONS, info()->icon());
     m_configProxy->createProjectConfigPage(i18n("UserToolbars"), PROJECTDOC_OPTIONS, info()->icon());
-    connect(m_configProxy, SIGNAL(insertConfigWidget(const KDialogBase*, QWidget*, unsigned int )),
-        this, SLOT(insertConfigWidget(const KDialogBase*, QWidget*, unsigned int)));
+    connect(m_configProxy, SIGNAL(insertConfigWidget(const KDialog*, QWidget*, unsigned int )),
+        this, SLOT(insertConfigWidget(const KDialog*, QWidget*, unsigned int)));
 
     connect(core(), SIGNAL(contextMenu(QMenu *, const Context *)),
         this, SLOT(contextMenu(QMenu *, const Context *)));
@@ -246,7 +246,7 @@ void UserToolbarsPart::setupActions()
   connect(action, SIGNAL(triggered(bool)), SLOT(slotConfigureActions()));
 }
 
-void UserToolbarsPart::insertConfigWidget(const KDialogBase *dlg, QWidget *page, unsigned int pageNo)
+void UserToolbarsPart::insertConfigWidget(const KDialog *dlg, QWidget *page, unsigned int pageNo)
 {
 // create configuraton dialogs here
     switch (pageNo)

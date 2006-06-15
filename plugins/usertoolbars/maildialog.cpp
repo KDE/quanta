@@ -32,8 +32,11 @@
 
 
 MailDialog::MailDialog(QWidget *parent, const QString& caption)
-  :KDialog(parent, caption, KDialog::Ok | KDialog::Cancel | KDialog::Help)
+  :KDialog(parent)
 {
+    setCaption( caption );
+    setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Help);
+    setDefaultButton( KDialog::Ok );
   QWidget *w = new QWidget(this);
   setupUi(w);
   setMainWidget(w);
