@@ -40,7 +40,7 @@ TagMiscDlg::~TagMiscDlg()
 
 void TagMiscDlg::slotMiscTagChanged( const QString &_tag )
 {
-    enableButtonOK( !_tag.isEmpty() );
+    enableButtonOk( !_tag.isEmpty() );
 }
 
 
