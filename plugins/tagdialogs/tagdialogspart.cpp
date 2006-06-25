@@ -58,8 +58,8 @@ TagDialogsPart::TagDialogsPart(QObject *parent, const QStringList &/*args*/)
 /*    m_configProxy = new ConfigWidgetProxy(core());
     m_configProxy->createGlobalConfigPage(i18n("Document Structure"), GLOBALDOC_OPTIONS, info()->icon());
     m_configProxy->createProjectConfigPage(i18n("Document Structure"), PROJECTDOC_OPTIONS, info()->icon());
-    connect(m_configProxy, SIGNAL(insertConfigWidget(const KDialogBase*, QWidget*, unsigned int )),
-        this, SLOT(insertConfigWidget(const KDialogBase*, QWidget*, unsigned int)));*/
+    connect(m_configProxy, SIGNAL(insertConfigWidget(const KDialog*, QWidget*, unsigned int )),
+        this, SLOT(insertConfigWidget(const KDialog*, QWidget*, unsigned int)));*/
 
 
     QTimer::singleShot(0, this, SLOT(init()));

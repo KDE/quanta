@@ -30,7 +30,7 @@
 #include <interfaces/kdevplugin.h>
 
 class KAction;
-class KDialogBase;
+class KDialog;
 
 /**
 Please read the README.dox file for more info about this part
