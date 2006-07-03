@@ -30,7 +30,7 @@ ListDlg::ListDlg(QStringList &entryList,QWidget* parent, const char *name )
    Q_CHECK_PTR(listbox);
    setMainWidget(listbox);
    showButton(Apply, false);
-   enableButtonSeparator(true);
+   showButtonSeparator(true);
    setWindowTitle(i18n("Opened Files"));
 
    listbox->clear();
