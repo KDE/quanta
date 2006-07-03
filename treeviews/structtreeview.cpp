@@ -991,9 +991,9 @@ void StructTreeView::slotOpenFile()
   {
     QString text = item->groupTag->name;
     text.remove(item->fileNameRx);
-    KURL url;
-    QuantaCommon::setUrl(url, text.stripWhiteSpace());
     KURL baseUrl = QExtFileInfo::path(write->url());
+    KURL url = baseUrl;
+    QuantaCommon::setUrl(url, text.stripWhiteSpace());
     url = QExtFileInfo::toAbsolute(url, baseUrl);
     if (QExtFileInfo::exists(url, true, this))
     {

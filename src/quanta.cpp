@@ -1958,9 +1958,9 @@ void QuantaApp::slotContextMenuAboutToShow()
     {
       if (!name.isEmpty())
       {
-        urlUnderCursor = KURL();
-        QuantaCommon::setUrl(urlUnderCursor, name.stripWhiteSpace());
         KURL baseUrl = QExtFileInfo::path(w->url());
+        urlUnderCursor = baseUrl;
+        QuantaCommon::setUrl(urlUnderCursor, name.stripWhiteSpace());
         urlUnderCursor = QExtFileInfo::toAbsolute(urlUnderCursor, baseUrl);
         action->setText(i18n("Open File: %1").arg(KStringHandler::lsqueeze(urlUnderCursor.prettyURL(0, KURL::StripFileProtocol), 80)));
         action->setEnabled(true);
