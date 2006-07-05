@@ -43,12 +43,12 @@ kde4_add_library(kdevquanta SHARED ${kdevquanta_LIB_SRCS})
 target_link_libraries(kdevquanta kdevinterfaces ktexteditor ${KDE4_KIO_LIBS})
 
 set_target_properties(kdevquanta PROPERTIES VERSION 1.0.0 SOVERSION 1 )
-install_targets(${LIB_INSTALL_DIR} kdevquanta )
+install(TARGETS kdevquanta  DESTINATION ${LIB_INSTALL_DIR})
 
 
 ########### install files ###############
 
-install_files( ${KCFG_INSTALL_DIR} FILES  quanta.kcfg )
+install( FILES  quanta.kcfg  DESTINATION ${KCFG_INSTALL_DIR})
 
 
 

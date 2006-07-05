@@ -4,7 +4,7 @@
 
 ########### install files ###############
 
-install_files(${QUANTA_DATA_INSTALL_DIR}/dtep/tagxml  FILES  childstop.tag spacer.tag attr.tag location.tag tag.tag nonparams.tag vpl.tag description.rc  )
+install( FILES  childstop.tag spacer.tag attr.tag location.tag tag.tag nonparams.tag vpl.tag description.rc   DESTINATION ${QUANTA_DATA_INSTALL_DIR}/dtep/tagxml)
 
 
 

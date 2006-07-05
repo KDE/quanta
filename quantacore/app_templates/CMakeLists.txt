@@ -6,7 +6,7 @@ kdevelop_add_app_templates(${apptemplate_DIRS})
 
 ########### install files ###############
 
-install_files(${DATA_INSTALL_DIR}/kdevelop/profiles/IDE/quanta/ FILES quanta.appwizard )
+install( FILES quanta.appwizard  DESTINATION ${DATA_INSTALL_DIR}/kdevelop/profiles/IDE/quanta/)
 
 
 

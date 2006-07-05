@@ -2,7 +2,7 @@
 
 ########### install files ###############
 
-install_files(${QUANTA_DATA_INSTALL_DIR}/toolbars/cfml  FILES  fonts.toolbar.tgz forms.toolbar.tgz lists.toolbar.tgz standard.toolbar.tgz tables.toolbar.tgz cfml.toolbar.tgz )
+install( FILES  fonts.toolbar.tgz forms.toolbar.tgz lists.toolbar.tgz standard.toolbar.tgz tables.toolbar.tgz cfml.toolbar.tgz  DESTINATION ${QUANTA_DATA_INSTALL_DIR}/toolbars/cfml)
 
 
 

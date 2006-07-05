@@ -2,7 +2,7 @@
 
 ########### install files ###############
 
-install_files(${QUANTA_DATA_INSTALL_DIR}/toolbars/css  FILES  css.toolbar.tgz )
+install( FILES  css.toolbar.tgz  DESTINATION ${QUANTA_DATA_INSTALL_DIR}/toolbars/css)
 
 
 

@@ -5,7 +5,7 @@
 
 ########### install files ###############
 
-install_files(${QUANTA_DATA_INSTALL_DIR}/templates/scripts  FILES  .dirinfo )
+install( FILES  .dirinfo  DESTINATION ${QUANTA_DATA_INSTALL_DIR}/templates/scripts)
 
 
 

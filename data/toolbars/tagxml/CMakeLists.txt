@@ -1,7 +1,7 @@
 
 ########### install files ###############
 
-install_files(${QUANTA_DATA_INSTALL_DIR}/toolbars/tagxml  FILES  tagxml.toolbar.tgz )
+install( FILES  tagxml.toolbar.tgz  DESTINATION ${QUANTA_DATA_INSTALL_DIR}/toolbars/tagxml)
 
 
 

@@ -4,7 +4,7 @@
 
 ########### install files ###############
 
-install_files(${QUANTA_DATA_INSTALL_DIR}/toolbars/html  FILES  forms.toolbar.tgz lists.toolbar.tgz other.toolbar.tgz standard.toolbar.tgz tables.toolbar.tgz style.toolbar.tgz )
+install( FILES  forms.toolbar.tgz lists.toolbar.tgz other.toolbar.tgz standard.toolbar.tgz tables.toolbar.tgz style.toolbar.tgz  DESTINATION ${QUANTA_DATA_INSTALL_DIR}/toolbars/html)
 
 
 

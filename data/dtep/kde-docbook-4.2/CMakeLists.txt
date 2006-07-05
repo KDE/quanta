@@ -4,7 +4,7 @@
 
 ########### install files ###############
 
-install_files(${QUANTA_DATA_INSTALL_DIR}/dtep/kde-docbook-4.2  FILES  common.tag description.rc )
+install( FILES  common.tag description.rc  DESTINATION ${QUANTA_DATA_INSTALL_DIR}/dtep/kde-docbook-4.2)
 
 
 

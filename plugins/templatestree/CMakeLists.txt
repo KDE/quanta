@@ -29,14 +29,14 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kdevtemplatestree )
 
 target_link_libraries(kdevtemplatestree  kdevquanta kdevinterfaces kdevutil kde3support ${KDE4_KDECORE_LIBS} )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kdevtemplatestree )
+install(TARGETS kdevtemplatestree  DESTINATION ${LIB_INSTALL_DIR}/kde4)
 
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kdevtemplatestree FILES  )
-install_files( ${SERVICES_INSTALL_DIR} FILES  kdevtemplatestree.desktop )
-install_files( ${DATA_INSTALL_DIR}/kdevtemplatestree FILES  kdevtemplatestree.rc )
+install( FILES   DESTINATION ${DATA_INSTALL_DIR}/kdevtemplatestree)
+install( FILES  kdevtemplatestree.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
+install( FILES  kdevtemplatestree.rc  DESTINATION ${DATA_INSTALL_DIR}/kdevtemplatestree)
 
 
 

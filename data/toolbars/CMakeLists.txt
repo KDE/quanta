@@ -13,7 +13,7 @@ add_subdirectory( css )
 
 ########### install files ###############
 
-install_files(${QUANTA_DATA_INSTALL_DIR}/toolbars FILES  debug.toolbar.tgz )
+install( FILES  debug.toolbar.tgz  DESTINATION ${QUANTA_DATA_INSTALL_DIR}/toolbars)
 
 
 

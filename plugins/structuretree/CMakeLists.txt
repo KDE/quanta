@@ -29,14 +29,14 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kdevstructuretree )
 
 target_link_libraries(kdevstructuretree kdevquanta kdevinterfaces kdevutil ${KDE4_KDECORE_LIBS} )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kdevstructuretree )
+install(TARGETS kdevstructuretree  DESTINATION ${LIB_INSTALL_DIR}/kde4)
 
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kdevstructuretree FILES  )
-install_files( ${SERVICES_INSTALL_DIR} FILES  kdevstructuretree.desktop )
-install_files( ${DATA_INSTALL_DIR}/kdevstructuretree FILES  kdevstructuretree.rc )
+install( FILES   DESTINATION ${DATA_INSTALL_DIR}/kdevstructuretree)
+install( FILES  kdevstructuretree.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
+install( FILES  kdevstructuretree.rc  DESTINATION ${DATA_INSTALL_DIR}/kdevstructuretree)
 
 
 

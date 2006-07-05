@@ -24,14 +24,14 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kdevhtmlpreview )
 
 target_link_libraries(kdevhtmlpreview kdevinterfaces kdevwidgets kdevutil ktexteditor ${KDE4_KHTML_LIBS} )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kdevhtmlpreview )
+install(TARGETS kdevhtmlpreview  DESTINATION ${LIB_INSTALL_DIR}/kde4)
 
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kdevhtmlpreview FILES  )
-install_files( ${SERVICES_INSTALL_DIR} FILES  kdevhtmlpreview.desktop )
-install_files( ${DATA_INSTALL_DIR}/kdevhtmlpreview FILES  kdevhtmlpreview.rc )
+install( FILES   DESTINATION ${DATA_INSTALL_DIR}/kdevhtmlpreview)
+install( FILES  kdevhtmlpreview.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
+install( FILES  kdevhtmlpreview.rc  DESTINATION ${DATA_INSTALL_DIR}/kdevhtmlpreview)
 
 
 

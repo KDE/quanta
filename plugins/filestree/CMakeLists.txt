@@ -26,14 +26,14 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kdevquantafilestree )
 
 target_link_libraries(kdevquantafilestree  kdevquanta kdevinterfaces kdevutil ${KDE4_KDECORE_LIBS} )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kdevquantafilestree )
+install(TARGETS kdevquantafilestree  DESTINATION ${LIB_INSTALL_DIR}/kde4)
 
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kdevquantafilestree FILES  )
-install_files( ${SERVICES_INSTALL_DIR} FILES  kdevquantafilestree.desktop )
-install_files( ${DATA_INSTALL_DIR}/kdevquantafilestree FILES  kdevquantafilestree.rc )
+install( FILES   DESTINATION ${DATA_INSTALL_DIR}/kdevquantafilestree)
+install( FILES  kdevquantafilestree.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
+install( FILES  kdevquantafilestree.rc  DESTINATION ${DATA_INSTALL_DIR}/kdevquantafilestree)
 
 
 

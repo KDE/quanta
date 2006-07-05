@@ -20,17 +20,17 @@ kde4_add_executable(quanta ${quanta_SRCS})
 
 target_link_libraries(quanta  ${KDE4_KDECORE_LIBS} kdevquanta kdevshell )
 
-install_targets(/bin quanta )
+install(TARGETS quanta  DESTINATION ${BIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${XDG_APPS_DIR} FILES  quanta.desktop )
-install_files( ${DATA_INSTALL_DIR}/kdevelop/profiles/IDE/quanta FILES  profile.config )
-install_files( ${SERVICES_INSTALL_DIR} FILES  )
-install_files( ${MIME_INSTALL_DIR}/application FILES  x-quanta.desktop )
-install_files( ${DATA_INSTALL_DIR}/quanta FILES  quantarc quantaui.rc )
-install_files( ${SERVICETYPES_INSTALL_DIR} FILES  kdevelopquanta.desktop )
+install( FILES  quanta.desktop  DESTINATION ${XDG_APPS_DIR})
+install( FILES  profile.config  DESTINATION ${DATA_INSTALL_DIR}/kdevelop/profiles/IDE/quanta)
+install( FILES   DESTINATION ${SERVICES_INSTALL_DIR})
+install( FILES  x-quanta.desktop  DESTINATION ${MIME_INSTALL_DIR}/application)
+install( FILES  quantarc quantaui.rc  DESTINATION ${DATA_INSTALL_DIR}/quanta)
+install( FILES  kdevelopquanta.desktop  DESTINATION ${SERVICETYPES_INSTALL_DIR})
 
 
 

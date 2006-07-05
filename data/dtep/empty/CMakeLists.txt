@@ -4,7 +4,7 @@
 
 ########### install files ###############
 
-install_files(${QUANTA_DATA_INSTALL_DIR}/dtep/empty  FILES  description.rc  )
+install( FILES  description.rc   DESTINATION ${QUANTA_DATA_INSTALL_DIR}/dtep/empty)
 
 
 

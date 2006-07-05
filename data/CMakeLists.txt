@@ -9,7 +9,7 @@ add_subdirectory( templates )
 
 ########### install files ###############
 
-install_files(${DATA_INSTALL_DIR}/quanta  FILES  tips )
+install( FILES  tips  DESTINATION ${DATA_INSTALL_DIR}/quanta)
 
 
 

@@ -38,16 +38,16 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kdevusertoolbars )
 target_link_libraries(kdevusertoolbars kdevquanta kdevinterfaces kdevutil
 kabc knewstuff  ${KDE4_KDECORE_LIBS} )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kdevusertoolbars )
+install(TARGETS kdevusertoolbars  DESTINATION ${LIB_INSTALL_DIR}/kde4)
 
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kdevusertoolbars FILES  )
-install_files( ${DATA_INSTALL_DIR}/quanta FILES  global )
-install_files( ${SERVICES_INSTALL_DIR} FILES  kdevusertoolbars.desktop )
-install_files( ${DATA_INSTALL_DIR}/kdevusertoolbars FILES  kdevusertoolbars.rc )
-install_files( ${DATA_INSTALL_DIR}/kdevusertoolbars FILES  global )
+install( FILES   DESTINATION ${DATA_INSTALL_DIR}/kdevusertoolbars)
+install( FILES  global  DESTINATION ${DATA_INSTALL_DIR}/quanta)
+install( FILES  kdevusertoolbars.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
+install( FILES  kdevusertoolbars.rc  DESTINATION ${DATA_INSTALL_DIR}/kdevusertoolbars)
+install( FILES  global  DESTINATION ${DATA_INSTALL_DIR}/kdevusertoolbars)
 
 
 

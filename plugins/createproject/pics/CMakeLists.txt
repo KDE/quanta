@@ -2,7 +2,7 @@
 
 ########### install files ###############
 
-install_files(${DATA_INSTALL_DIR}/kdevcreatequantaproject/pics  FILES  firstwizardpage.png secondwizardpage.png thirdwizardpage.png )
+install( FILES  firstwizardpage.png secondwizardpage.png thirdwizardpage.png  DESTINATION ${DATA_INSTALL_DIR}/kdevcreatequantaproject/pics)
 
 
 
