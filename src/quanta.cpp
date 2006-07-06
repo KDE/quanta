@@ -2455,7 +2455,7 @@ KURL QuantaApp::saveToolbarToFile(const QString& toolbarName, const KURL& destFi
   if (!QExtFileInfo::copy(KURL::fromPathOrURL(tempFile->name()), tarFile, -1, true, false, this))
   {
     KMessageBox::error(this, i18n("<qt>An error happened while saving the <b>%1</b> toolbar.<br>"
-        "Check that you have write permissions for<br><b>%2</b></qt>").arg(p_toolbar->name).arg(tarFile.prettyURL(0, KURL::StripFileProtocol)), i18n("Toolbar Saving Error"));
+        "Check that you have write permissions for<br><b>%2</b>.<br><br>This might happen if you tried save to save a global toolbar as a simple user. Use <i>Save As</i> or <i>Toolbars->Save Toolbars->Save as Local Toolbar</i> in this case. </qt>").arg(p_toolbar->name).arg(tarFile.prettyURL(0, KURL::StripFileProtocol)), i18n("Toolbar Saving Error"));
     tarFile = KURL();
     delete p_toolbar->dom;
     p_toolbar->dom = oldDom;
@@ -2506,7 +2506,19 @@ bool QuantaApp::saveToolbar(bool localToolbar, const QString& toolbarToSave, con
   {
     toolbarName = toolbarToSave;
   }
-
+  ToolbarEntry *p_toolbar = m_toolbarList[toolbarName];
+  QString toolbarFileName = p_toolbar->url.fileName();
+  QString toolbarRelPath = p_toolbar->url.url();
+  if (toolbarRelPath.startsWith("file://" + qConfig.globalDataDir))
+  {
+    toolbarRelPath.remove("file://" + qConfig.globalDataDir + resourceDir + "toolbars/");
+    toolbarRelPath.remove(toolbarFileName);
+  }
+  else
+  {
+    toolbarRelPath = "";
+  }
+  toolbarFileName.remove(".toolbar.tgz");
   if (destURL.isEmpty())
   {
     do {
@@ -2514,10 +2526,10 @@ bool QuantaApp::saveToolbar(bool localToolbar, const QString& toolbarToSave, con
 
       if (localToolbar)
       {
-        url = KFileDialog::getSaveURL(localToolbarsDir, "*"+toolbarExtension, this);
+        url = KFileDialog::getSaveURL(localToolbarsDir + toolbarRelPath + toolbarFileName, "*"+toolbarExtension, this);
       } else
       {
-        url = KFileDialog::getSaveURL(Project::ref()->toolbarURL().url(), "*"+toolbarExtension, this);
+        url = KFileDialog::getSaveURL(Project::ref()->toolbarURL().url() + toolbarFileName, "*"+toolbarExtension, this);
       }
 
       if (url.isEmpty())

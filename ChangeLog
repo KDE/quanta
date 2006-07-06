@@ -6,6 +6,9 @@ Version 3.5.4 (Release date: xx-xx-2006; Started 24-06-2005):
       - make possible to remove a shortcut assigned to an action
       - don't become confused if exitting is cancelled during the toolbar
         saving process
+      - default to a better place when saving a global toolbar to the local
+        toolbar directory and improve the error message if a toolbar cannot be
+        saved [#130236]
 
 Version 3.5.3 (Release date: 23-05-2006; Started 18-03-2005):
  - bugfixes:
