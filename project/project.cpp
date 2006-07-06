@@ -1262,8 +1262,6 @@ bool Project::queryClose()
       d->dom.clear();
       d->m_sessionDom.clear();
       d->m_events->clear();
-      d->config->setGroup("Projects");
-      d->config->writePathEntry("Last Project", QString::null);
       d->init();
       newProjectLoaded(d->projectName, d->baseURL, d->templateURL);
       reloadTree( &(d->m_projectFiles), true, QStringList());
