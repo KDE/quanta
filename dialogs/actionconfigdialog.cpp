@@ -482,9 +482,13 @@ void ActionConfigDialog::saveCurrentAction()
   if (customShortcut->isChecked())
   {
     s = selectedShortcut.toString();
+    currentAction->setShortcut(selectedShortcut);
+  } else
+  {
+    currentAction->setShortcut(KShortcut());
   }
   el.setAttribute("shortcut", s);
-  currentAction->setShortcut(selectedShortcut);
+
 
 //update the tree view
   QListViewItem *listItem;
