@@ -4142,7 +4142,8 @@ bool QuantaApp::queryClose()
     saveOptions();
    // kdDebug(24000) << "Quanta will exit" << endl;
     emit eventHappened("quanta_exit", QDateTime::currentDateTime().toString(Qt::ISODate), QString::null);
-  }
+  } else
+    slotFileNew();
   return canExit;
 }
 

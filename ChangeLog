@@ -1,9 +1,11 @@
 This files contains the changes since Quanta 2.0 until the current 3.5.x series.
 
-Version 3.5.3 (Release date: xx-xx-2006; Started 24-06-2005):
+Version 3.5.4 (Release date: xx-xx-2006; Started 24-06-2005):
  - bugfixes:
       - make Open File in context menu work for remote projects as well
       - make possible to remove a shortcut assigned to an action
+      - don't become confused if exitting is cancelled during the toolbar
+        saving process
 
 Version 3.5.3 (Release date: 23-05-2006; Started 18-03-2005):
  - bugfixes:
