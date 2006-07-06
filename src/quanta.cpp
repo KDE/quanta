@@ -2507,7 +2507,7 @@ bool QuantaApp::saveToolbar(bool localToolbar, const QString& toolbarToSave, con
     toolbarName = toolbarToSave;
   }
   ToolbarEntry *p_toolbar = m_toolbarList[toolbarName];
-  QString toolbarFileName = p_toolbar->url.fileName();
+  QString toolbarFileName = p_toolbar->url.fileName(false);
   QString toolbarRelPath = p_toolbar->url.url();
   if (toolbarRelPath.startsWith("file://" + qConfig.globalDataDir))
   {
