@@ -219,7 +219,7 @@ bool UserAction::slotActionActivated()
           scriptname.replace("%scriptdir","scripts");
  //         kDebug(24000) << "Script name is: |" << scriptname << "|" << endl;
 //FIXME: the scrips should be loaded from the language-plugin dir
-          scriptname = " " + locate("data", "kdevusertoolbars/"+scriptname);
+          scriptname = " " + KStandardDirs::locate("data", "kdevusertoolbars/"+scriptname);
    //       kDebug(24000) << "Script found at: " << scriptname << endl;
           args.replace(begin, end - begin, scriptname);
           //kDebug(24000) << "Modified argument list: " << args << endl;
