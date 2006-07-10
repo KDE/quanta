@@ -238,7 +238,7 @@ void TemplatesTreePart::slotCreateSiteTemplate()
    } else*/
 
   QString startDir = locateLocal("data", Helper::resourceDir() + "templates/");
-  KUrl targetURL = KFileDialog::getSaveURL(startDir, "*.tgz", mainWindow()->main(), i18n("Create Site Template File"));
+  KUrl targetURL = KFileDialog::getSaveUrl(startDir, "*.tgz", mainWindow()->main(), i18n("Create Site Template File"));
   if (targetURL.isEmpty())
     return;
 

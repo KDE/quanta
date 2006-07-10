@@ -140,7 +140,7 @@ void LocalImportWizardPage::resizeEvent ( QResizeEvent *t )
 
 void LocalImportWizardPage::slotAddFiles()
 {
-  KUrl::List list = KFileDialog::getOpenURLs(
+  KUrl::List list = KFileDialog::getOpenUrls(
     baseURL.url(),  i18n("*"), this, i18n("Insert Files in Project"));
 
   if (!list.isEmpty())
@@ -152,7 +152,7 @@ void LocalImportWizardPage::slotAddFiles()
 void LocalImportWizardPage::slotAddFolder()
 {
   KUrl dirURL ;
-  dirURL = KFileDialog::getExistingURL(
+  dirURL = KFileDialog::getExistingUrl(
            baseURL.url(),  this, i18n("Insert Folder in Project"));
   if ( !dirURL.isEmpty() )
   {

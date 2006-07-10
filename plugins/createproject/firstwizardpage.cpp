@@ -102,7 +102,7 @@ FirstWizardPage::~FirstWizardPage(){
 void FirstWizardPage::slotSelectDirectory()
 {
    slotSetProjectBase(); // make sure baseUrl is correct
-   KUrl url = KFileDialog::getExistingURL(m_baseUrl.url(), this,
+   KUrl url = KFileDialog::getExistingUrl(m_baseUrl.url(), this,
                               i18n("Select Project Folder"));
    if (!url.isEmpty())
    {

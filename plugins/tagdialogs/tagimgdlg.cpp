@@ -106,7 +106,7 @@ void TagImgDlg::slotRecalcImgSize()
 void TagImgDlg::slotFileSelect()
 {
 //TODO: Implemented only for local files, but maybe it is enough
- KUrl url = KFileDialog::getOpenURL( baseURL.url(), "*.gif *.jpg *.png *.jpeg *.bmp *.GIF *.JPG *.PNG *.JPEG *.BMP"+i18n("|Image Files\n*|All Files"));
+ KUrl url = KFileDialog::getOpenUrl( baseURL.url(), "*.gif *.jpg *.png *.jpeg *.bmp *.GIF *.JPG *.PNG *.JPEG *.BMP"+i18n("|Image Files\n*|All Files"));
  if ( !url.isEmpty() )
   {
     slotImageSet( url );

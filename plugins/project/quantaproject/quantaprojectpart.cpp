@@ -318,7 +318,7 @@ QStringList QuantaProjectPart::removeItems(const QStringList &items)
 
 void QuantaProjectPart::slotInsertFiles()
 {
-  KUrl::List urls = KFileDialog::getOpenURLs(m_projectBase.pathOrUrl(), i18n("*"), mainWindow()->main(), i18n("Insert Files in Project"));
+  KUrl::List urls = KFileDialog::getOpenUrls(m_projectBase.pathOrUrl(), i18n("*"), mainWindow()->main(), i18n("Insert Files in Project"));
 
   if (!urls.isEmpty())
   {
@@ -360,7 +360,8 @@ void QuantaProjectPart::slotInsertFiles()
 void QuantaProjectPart::slotInsertFolder()
 {
   KUrl url = KUrl();
-  url = KFileDialog::getExistingURL(m_projectBase.pathOrUrl(), mainWindow()->main(), i18n("Insert Folder in Project"));
+  url = KFileDialog::getExistingUrl(m_projectBase.pathOrUrl(), mainWindow()->main(), i18n("Insert Folder in Project"));
+r
   if (!url.isEmpty())
   {
     if (!m_projectBase.isParentOf(url))
