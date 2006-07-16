@@ -36,7 +36,7 @@ kde4_add_plugin(kdevusertoolbars WITH_PREFIX ${kdevusertoolbars_PART_SRCS})
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kdevusertoolbars )
 
 target_link_libraries(kdevusertoolbars kdevquanta kdevinterfaces kdevutil
-kabc knewstuff  ${KDE4_KDECORE_LIBS} )
+ knewstuff  ${KDE4_KDECORE_LIBS} )
 
 install(TARGETS kdevusertoolbars  DESTINATION ${LIB_INSTALL_DIR}/kde4)
 

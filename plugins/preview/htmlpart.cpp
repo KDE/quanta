@@ -45,13 +45,13 @@ HTMLPart::~HTMLPart()
 
 void HTMLPart::slotDuplicate( )
 {
-  m_part->documentController()->showDocumentation(url(), true);
+  KDevApi::self()->documentController()->showDocumentation(url(), true);
 }
 
 
 void HTMLPart::slotOpenInNewWindow( const KUrl & url )
 {
-  m_part->documentController()->showDocumentation(url, true);
+  KDevApi::self()->documentController()->showDocumentation(url, true);
 }
 
 #include "htmlpart.moc"

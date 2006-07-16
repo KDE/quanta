@@ -18,6 +18,7 @@
 
 //qt includes
 #include <QTextStream>
+#include <QDomElement>
 
 //kde includes
 #include <kdebug.h>

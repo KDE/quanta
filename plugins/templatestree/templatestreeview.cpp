@@ -33,7 +33,6 @@
 #include <interfaces/kdevcore.h>
 #include <interfaces/kdevplugin.h>
 #include <interfaces/kdevproject.h>
-#include <interfaces/kdevplugininfo.h>
 
 #include <unistd.h>
 #include <grp.h>
@@ -162,7 +161,7 @@ TemplatesTreeView::TemplatesTreeView(TemplatesTreePart *plugin)
   globalURL.setPath(Helper::dataDir() + Helper::resourceDir() + "templates/");
   newBranch(globalURL);
 
-  localURL.setPath(locateLocal("data", Helper::resourceDir() + "templates/"));
+  localURL.setPath(KStandardDirs::locateLocal("data", Helper::resourceDir() + "templates/"));
   newBranch(localURL);
 
   connect(this, SIGNAL(contextMenu(K3ListView*, Q3ListViewItem*, const QPoint&)),
@@ -196,11 +195,15 @@ KFileTreeBranch* TemplatesTreeView::newBranch(const KUrl& url)
   BaseTreeBranch *newBrnch;
   if (url == globalURL)
   {
-    newBrnch = new TemplatesTreeBranch(this, url, i18n("Global"), SmallIcon(m_part->info()->icon()));
+    //FIXME: how to get the icon?
+  //  newBrnch = new TemplatesTreeBranch(this, url, i18n("Global"), SmallIcon(m_part->info()->icon()));
+    newBrnch = new TemplatesTreeBranch(this, url, i18n("Global"), SmallIcon(""));
   } else
   {
+    //FIXME: how to get the icon?
     if (url == localURL)
-      newBrnch = new TemplatesTreeBranch(this, url, i18n("Local"), SmallIcon(m_part->info()->icon()));
+//      newBrnch = new TemplatesTreeBranch(this, url, i18n("Local"), SmallIcon(m_part->info()->icon()));
+      newBrnch = new TemplatesTreeBranch(this, url, i18n("Local"), SmallIcon(""));
     else
     {
       newBrnch = new TemplatesTreeBranch(this, url, i18n("Project"), SmallIcon("folder_green"));
@@ -278,7 +281,7 @@ void TemplatesTreeView::folderMenu(const QPoint &point)
   menuURL.adjustPath(KUrl::AddTrailingSlash);
   KUrl::List urlList(menuURL);
   FileContext context(urlList);
-  m_plugin->core()->fillContextMenu(&popup, &context);
+  KDevApi::self()->core()->fillContextMenu(&popup, &context);
 
   popup.exec(point);
 }
@@ -326,7 +329,7 @@ void TemplatesTreeView::fileMenu(const QPoint &point)
   // ask other plugins for menu entries
   KUrl::List urlList(currentKFileTreeViewItem()->url());
   FileContext context(urlList);
-  m_plugin->core()->fillContextMenu(&popup, &context);
+  KDevApi::self()->core()->fillContextMenu(&popup, &context);
 
   popup.exec(point);
 }
@@ -833,12 +836,12 @@ void TemplatesTreeView::slotDragInsert(QDropEvent *e)
 
 void TemplatesTreeView::slotProjectOpened()
 {
-  m_projectName = m_plugin->project()->projectName();
-  QuantaProjectIf * qProject = dynamic_cast<QuantaProjectIf *>(m_plugin->project());
+  m_projectName = KDevApi::self()->project()->projectName();
+  QuantaProjectIf * qProject = dynamic_cast<QuantaProjectIf *>(KDevApi::self()->project());
   if (qProject)
-    m_projectBaseURL = qProject->projectBase();
+    m_projectBaseURL = qProject->projectDirectory();
   else
-    m_projectBaseURL = KUrl::fromPathOrUrl(m_plugin->project()->projectDirectory());
+    m_projectBaseURL = KUrl::fromPathOrUrl(KDevApi::self()->project()->projectDirectory());
 
   if (m_projectDir)
     removeBranch(m_projectDir);

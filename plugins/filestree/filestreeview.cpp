@@ -168,7 +168,7 @@ void FilesTreeView::folderMenu(const QPoint &point)
   menuURL.adjustPath(KUrl::AddTrailingSlash);
   KUrl::List urlList(menuURL);
   FileContext context(urlList);
-  m_part->core()->fillContextMenu(&popup, &context);
+  KDevApi::self()->core()->fillContextMenu(&popup, &context);
 
   popup.exec(point);
 }
@@ -194,7 +194,7 @@ void FilesTreeView::fileMenu(const QPoint &point)
   // ask other plugins for menu entries
   KUrl::List urlList(currentKFileTreeViewItem()->url());
   FileContext context(urlList);
-  m_part->core()->fillContextMenu(&popup, &context);
+  KDevApi::self()->core()->fillContextMenu(&popup, &context);
 
   popup.exec(point);
 }
@@ -234,7 +234,7 @@ void FilesTreeView::slotAddToTop()
 
 void FilesTreeView::slotNewTopFolder()
 {
-  KUrl url = KFileDialog::getExistingURL(QString::null, this, i18n("Choose Local or Remote Folder"));
+  KUrl url = KFileDialog::getExistingUrl(KUrl(), this, i18n("Choose Local or Remote Folder"));
   if (url.isEmpty())
     return;
   url.adjustPath(KUrl::AddTrailingSlash);

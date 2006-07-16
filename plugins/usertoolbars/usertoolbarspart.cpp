@@ -48,6 +48,7 @@
 #include <kconfig.h>
 #include <kedittoolbar.h>
 #include <kfiledialog.h>
+#include <kgenericfactory.h>
 #include <kiconloader.h>
 #include <kinputdialog.h>
 #include <kio/netaccess.h>
@@ -64,17 +65,13 @@
 //kdevelop includes
 #include <interfaces/kdevappfrontend.h>
 #include <interfaces/kdevcore.h>
-#include <interfaces/kdevgenericfactory.h>
 #include <interfaces/kdevmainwindow.h>
 #include <interfaces/kdevdocumentcontroller.h>
 #include <interfaces/kdevplugincontroller.h>
-#include <interfaces/kdevplugininfo.h>
 #include <interfaces/kdevproject.h>
-#include <util/configwidgetproxy.h>
 
-typedef KDevGenericFactory<UserToolbarsPart> UserToolbarsFactory;
-KDevPluginInfo data("kdevusertoolbars");
-K_EXPORT_COMPONENT_FACTORY( libkdevusertoolbars, UserToolbarsFactory( data ) );
+typedef KGenericFactory<UserToolbarsPart> UserToolbarsFactory;
+K_EXPORT_COMPONENT_FACTORY( libkdevusertoolbars, UserToolbarsFactory("kdevusertoolbars") );
 
 
 #define GLOBALDOC_OPTIONS 1
@@ -85,24 +82,24 @@ const QString resourceDir = "quanta/";
 
 
 UserToolbarsPart::UserToolbarsPart(QObject *parent, const QStringList &/*args*/)
-    : KDevPlugin(&data, parent)
+  : KDevPlugin(UserToolbarsFactory::instance(), parent)
 {
     kDebug(24000) << "Creating UserToolbars Part" << endl;
-    setInstance(UserToolbarsFactory::instance());
     setXMLFile("kdevusertoolbars.rc");
 
     setupActions();
-
+//FIXME: New KCM modules need to be created for each config page
+    /*
     m_configProxy = new ConfigWidgetProxy(core());
     m_configProxy->createGlobalConfigPage(i18n("UserToolbars"), GLOBALDOC_OPTIONS, info()->icon());
     m_configProxy->createProjectConfigPage(i18n("UserToolbars"), PROJECTDOC_OPTIONS, info()->icon());
     connect(m_configProxy, SIGNAL(insertConfigWidget(const KDialog*, QWidget*, unsigned int )),
         this, SLOT(insertConfigWidget(const KDialog*, QWidget*, unsigned int)));
-
-    connect(core(), SIGNAL(contextMenu(QMenu *, const Context *)),
+    */
+    connect(KDevApi::self()->core(), SIGNAL(contextMenu(QMenu *, const Context *)),
         this, SLOT(contextMenu(QMenu *, const Context *)));
-    connect(core(), SIGNAL(projectOpened()), this, SLOT(projectOpened()));
-    connect(core(), SIGNAL(projectClosed()), this, SLOT(projectClosed()));
+    connect(KDevApi::self()->core(), SIGNAL(projectOpened()), this, SLOT(projectOpened()));
+    connect(KDevApi::self()->core(), SIGNAL(projectClosed()), this, SLOT(projectClosed()));
 
 //setup some member variables
     m_newToolbarStuff = 0L;
@@ -147,7 +144,7 @@ UserToolbarsPart::UserToolbarsPart(QObject *parent, const QStringList &/*args*/)
 
 //let the ToolbarGUIBuilder handle the creation of the GUI for this plugin, so
 //creation of the main user toolbar is detected as well
-    setClientBuilder(ToolbarGUIBuilder::ref(mainWindow()->main()));
+    setClientBuilder(ToolbarGUIBuilder::ref(KDevApi::self()->mainWindow()->main()));
     QTimer::singleShot(0, this, SLOT(init()));
 }
 
@@ -168,7 +165,7 @@ UserToolbarsPart::~UserToolbarsPart()
   m_tmpDir.remove("/usertoolbars");
   dir.rmdir(m_tmpDir);
 
-  delete m_configProxy;
+ // delete m_configProxy;
   delete m_newToolbarStuff;
   m_newToolbarStuff = 0L;
   m_toolbarList.clear();
@@ -181,7 +178,7 @@ void UserToolbarsPart::init()
   m_separateToolbars = config->readEntry("Separate toolbars", false);
   m_createActionsMenu = config->readEntry("Create Actions menu", true);
   slotAdjustActions();
-  ToolbarGUIBuilder::ref(mainWindow()->main())->setSeparateToolbars(m_separateToolbars);
+  ToolbarGUIBuilder::ref(KDevApi::self()->mainWindow()->main())->setSeparateToolbars(m_separateToolbars);
   QMenu *actionsMenu = static_cast<QMenu*>(factory()->container("actions", this));
 
   if (actionsMenu)
@@ -204,7 +201,7 @@ void UserToolbarsPart::init()
 void UserToolbarsPart::slotAdjustActions()
 {
   bool toolbarsLoaded = (ToolbarTabWidget::ref()->count() > 0);
-  bool projectLoaded = (project() != 0L);
+  bool projectLoaded = (KDevApi::self()->project() != 0L);
   KActionCollection *ac = actionCollection();
   ac->action("toolbars_save_local")->setEnabled(toolbarsLoaded);
   ac->action("toolbars_save_project")->setEnabled(toolbarsLoaded && projectLoaded);
@@ -302,7 +299,7 @@ void UserToolbarsPart::setSeparateToolbars(bool separate)
 {
   if (m_separateToolbars != separate)
   {
-    KMainWindow *mw = mainWindow()->main();
+    KMainWindow *mw = KDevApi::self()->mainWindow()->main();
     ToolbarGUIBuilder::ref(mw)->setSeparateToolbars(separate);
     m_separateToolbars = separate;
     QHashIterator<QString, ToolbarEntry*> it(m_toolbarList);
@@ -366,7 +363,7 @@ void UserToolbarsPart::slotLoadToolbarFile(const KUrl& url)
     }
     if ( (toolbarDom->toString().isEmpty()) ) //|| (actionContent.isEmpty()))
     {
-      KMessageBox::error(mainWindow()->main(), i18n("Cannot load the toolbars from the archive.\nCheck that the filenames inside the archives begin with the archive name."));
+      KMessageBox::error(KDevApi::self()->mainWindow()->main(), i18n("Cannot load the toolbars from the archive.\nCheck that the filenames inside the archives begin with the archive name."));
       delete toolbarDom;
       return;
     }
@@ -375,7 +372,7 @@ void UserToolbarsPart::slotLoadToolbarFile(const KUrl& url)
     QString name = nodeList.item(0).cloneNode().toElement().attribute("tabname");
 
     //search for another toolbar with the same name
-    QList<KXMLGUIClient*> xml_clients = mainWindow()->main()->guiFactory()->clients();
+    QList<KXMLGUIClient*> xml_clients = KDevApi::self()->mainWindow()->main()->guiFactory()->clients();
     QString newName = name;
     QString i18nName = i18n(name.toUtf8());
     QString origName = name;
@@ -459,7 +456,7 @@ void UserToolbarsPart::slotLoadToolbarFile(const KUrl& url)
     ToolbarXMLGUI * toolbarGUI = new ToolbarXMLGUI(tempFile->name());
 
     //setup the actions
-    KActionCollection *ac = mainWindow()->main()->actionCollection();
+    KActionCollection *ac = KDevApi::self()->mainWindow()->main()->actionCollection();
     nodeList = actionDom.elementsByTagName("action");
     for (int i = 0; i < nodeList.count(); i++)
     {
@@ -505,8 +502,8 @@ void UserToolbarsPart::slotLoadToolbarFile(const KUrl& url)
     m_toolbarList.insert(toolbarId, p_toolbar);
 
 //     if (!m_separateToolbars)
-      toolbarGUI->setClientBuilder(ToolbarGUIBuilder::ref(mainWindow()->main()));
-    mainWindow()->main()->guiFactory()->addClient(toolbarGUI);
+    toolbarGUI->setClientBuilder(ToolbarGUIBuilder::ref(KDevApi::self()->mainWindow()->main()));
+    KDevApi::self()->mainWindow()->main()->guiFactory()->addClient(toolbarGUI);
 
     delete toolbarDom;
  }
@@ -515,7 +512,7 @@ void UserToolbarsPart::slotLoadToolbarFile(const KUrl& url)
 
 void UserToolbarsPart::slotLoadToolbar()
 {
-  KUrl::List urls = KFileDialog::getOpenUrls(locateLocal("data", resourceDir + "toolbars/"), "*" + Helper::toolbarExtension(), mainWindow()->main());
+  KUrl::List urls = KFileDialog::getOpenUrls(KStandardDirs::locateLocal("data", resourceDir + "toolbars/"), "*" + Helper::toolbarExtension(), KDevApi::self()->mainWindow()->main());
   if (!urls.isEmpty())
   {
     for (KUrl::List::ConstIterator it = urls.constBegin(); it != urls.constEnd(); ++it)
@@ -526,7 +523,7 @@ void UserToolbarsPart::slotLoadToolbar()
 void UserToolbarsPart::slotLoadGlobalToolbar()
 {
  QString globalDataDir = KGlobal::dirs()->findResourceDir("data",resourceDir + "global");
- KUrl::List urls = KFileDialog::getOpenUrls(globalDataDir + resourceDir + "toolbars/", "*" + Helper::toolbarExtension() + "\n*", mainWindow()->main());
+ KUrl::List urls = KFileDialog::getOpenUrls(globalDataDir + resourceDir + "toolbars/", "*" + Helper::toolbarExtension() + "\n*", KDevApi::self()->mainWindow()->main());
  if (!urls.isEmpty())
  {
    for (KUrl::List::ConstIterator it = urls.constBegin(); it != urls.constEnd(); ++it)
@@ -540,7 +537,7 @@ bool UserToolbarsPart::slotRemoveToolbar(const QString& id)
   ToolbarEntry *p_toolbar = m_toolbarList.value(name);
   QRegExp i18ntabnameRx("\\si18ntabname=\"[^\"]*\"");
   QRegExp idRx("\\sid=\"[^\"]*\"");
-  KActionCollection *ac = mainWindow()->main()->actionCollection();
+  KActionCollection *ac = KDevApi::self()->mainWindow()->main()->actionCollection();
   if (p_toolbar)
   {
     KXMLGUIClient* toolbarGUI = p_toolbar->guiClient;
@@ -586,11 +583,11 @@ bool UserToolbarsPart::slotRemoveToolbar(const QString& id)
         int result;
         if (p_toolbar->url.isEmpty())
         {
-          result = KMessageBox::warningYesNoCancel(mainWindow()->main(), i18n("<qt>Toolbar <b>%1</b> is new and unsaved. Do you want to save it before it is removed?</qt>", p_toolbar->name),
+          result = KMessageBox::warningYesNoCancel(KDevApi::self()->mainWindow()->main(), i18n("<qt>Toolbar <b>%1</b> is new and unsaved. Do you want to save it before it is removed?</qt>", p_toolbar->name),
               i18n("Save Toolbar"), KStdGuiItem::save(), KStdGuiItem::discard());
         } else
         {
-          AskForSaveDlg dlg(i18n("Save Toolbar"), i18n("<qt>The toolbar <b>%1</b> was modified. Do you want to save it before it is removed?</qt>", p_toolbar->name), mainWindow()->main());
+          AskForSaveDlg dlg(i18n("Save Toolbar"), i18n("<qt>The toolbar <b>%1</b> was modified. Do you want to save it before it is removed?</qt>", p_toolbar->name), KDevApi::self()->mainWindow()->main());
 
           dlg.exec();
           result = dlg.status();
@@ -607,7 +604,7 @@ bool UserToolbarsPart::slotRemoveToolbar(const QString& id)
           }
         }
 
-      KDevProject *prj = project();
+        KDevProject *prj = KDevApi::self()->project();
       switch (result)
       {
         case KMessageBox::Yes:
@@ -638,7 +635,7 @@ bool UserToolbarsPart::slotRemoveToolbar(const QString& id)
       }
 
      }
-     mainWindow()->main()->guiFactory()->removeClient(toolbarGUI);
+     KDevApi::self()->mainWindow()->main()->guiFactory()->removeClient(toolbarGUI);
 //unplug the actions and remove them if they are not used in other places
      if (useToolbarGUI)
        nodeList = toolbarGUI->domDocument().elementsByTagName("Action");
@@ -688,7 +685,7 @@ QString UserToolbarsPart::selectToolbarDialog(const QString &caption)
   int current = tabData.keys().indexOf(tb->tabText(tb->currentIndex()));
   bool ok = FALSE;
   QString res = KInputDialog::getItem(caption, i18n( "Please select a toolbar:" ),
-                      tabData.keys(), current, FALSE, &ok, mainWindow()->main() );
+                      tabData.keys(), current, FALSE, &ok, KDevApi::self()->mainWindow()->main() );
   if (ok)
     return tabData.value(res);
   else
@@ -711,8 +708,8 @@ bool UserToolbarsPart::saveToolbar(bool localToolbar, const QString& toolbarToSa
   KUrl url;
   KUrl projectToolbarsURL;
   QString toolbarName;
-  QString localToolbarsDir = locateLocal("data", resourceDir + "toolbars/");
-  KDevProject *prj = project();
+  QString localToolbarsDir = KStandardDirs::locateLocal("data", resourceDir + "toolbars/");
+  KDevProject *prj = KDevApi::self()->project();
 
   if (toolbarToSave.isEmpty())
   {
@@ -731,11 +728,11 @@ bool UserToolbarsPart::saveToolbar(bool localToolbar, const QString& toolbarToSa
 
       if (localToolbar)
       {
-        url = KFileDialog::getSaveUrl(localToolbarsDir, "*" + Helper::toolbarExtension(), mainWindow()->main());
+        url = KFileDialog::getSaveUrl(localToolbarsDir, "*" + Helper::toolbarExtension(), KDevApi::self()->mainWindow()->main());
       } else
       {
 //FIXME no toolbarURL() in KDevProject. Check all hardcoded "toolbars" dir below!
-        url = KFileDialog::getSaveUrl(prj->projectDirectory() + "/toolbars", "*" + Helper::toolbarExtension(), mainWindow()->main());
+        url = KFileDialog::getSaveUrl(prj->projectDirectory() + "/toolbars", "*" + Helper::toolbarExtension(), KDevApi::self()->mainWindow()->main());
       }
 
       if (url.isEmpty())
@@ -752,7 +749,7 @@ bool UserToolbarsPart::saveToolbar(bool localToolbar, const QString& toolbarToSa
       {
         if (!localToolbar)
             localToolbarsDir = projectToolbarsURL.prettyUrl();
-        KMessageBox::sorry(mainWindow()->main(),i18n("<qt>You must save the toolbars to the following folder: <br><br><b>%1</b></qt>",
+        KMessageBox::sorry(KDevApi::self()->mainWindow()->main(),i18n("<qt>You must save the toolbars to the following folder: <br><br><b>%1</b></qt>",
                                   localToolbarsDir));
         query = KMessageBox::No;
       }
@@ -801,7 +798,7 @@ KUrl UserToolbarsPart::saveToolbarToFile(const QString& toolbarName, const KUrl&
   actStr << QString("<!DOCTYPE actionsconfig>\n<actions>\n");
 
 //look up the clients
-  KActionCollection *ac = mainWindow()->main()->actionCollection();
+  KActionCollection *ac = KDevApi::self()->mainWindow()->main()->actionCollection();
   QList<KXMLGUIClient*> xml_clients = factory()->clients();
   for (int index = 0; index < xml_clients.count(); index++)
   {
@@ -874,9 +871,9 @@ KUrl UserToolbarsPart::saveToolbarToFile(const QString& toolbarName, const KUrl&
   if (!tar.writeFile(QFileInfo(tarFile.path()).baseName() + ".actions", "user", "group", buffer2.buffer().data(), buffer2.buffer().size()))
       return KUrl();
   tar.close();
-  if (!ExtFileInfo::copy(KUrl::fromPathOrUrl(tempFile->name()), tarFile, -1, true, false, mainWindow()->main()))
+  if (!ExtFileInfo::copy(KUrl::fromPathOrUrl(tempFile->name()), tarFile, -1, true, false, KDevApi::self()->mainWindow()->main()))
   {
-    KMessageBox::error(mainWindow()->main(), i18n("<qt>An error happened while saving the <b>%1</b> toolbar.<br>"
+    KMessageBox::error(KDevApi::self()->mainWindow()->main(), i18n("<qt>An error happened while saving the <b>%1</b> toolbar.<br>"
         "Check that you have write permissions for<br><b>%2</b></qt>", p_toolbar->name, tarFile.pathOrUrl()), i18n("Toolbar Saving Error"));
     tarFile = KUrl();
     delete p_toolbar->dom;
@@ -889,7 +886,7 @@ KUrl UserToolbarsPart::saveToolbarToFile(const QString& toolbarName, const KUrl&
 void UserToolbarsPart::slotAddToolbar()
 {
  bool ok;
- QString name = KInputDialog::getText(i18n("New Toolbar"), i18n("Enter toolbar name:"), i18n("User_%1", m_userToolbarsCount), &ok, mainWindow()->main());
+ QString name = KInputDialog::getText(i18n("New Toolbar"), i18n("Enter toolbar name:"), i18n("User_%1", m_userToolbarsCount), &ok, KDevApi::self()->mainWindow()->main());
  if (ok)
  {
   m_userToolbarsCount++;
@@ -911,7 +908,7 @@ void UserToolbarsPart::slotAddToolbar()
   tempFile->close();
 
   ToolbarXMLGUI * toolbarGUI = new ToolbarXMLGUI(tempFile->name());
-  KActionCollection *ac = mainWindow()->main()->actionCollection();
+  KActionCollection *ac = KDevApi::self()->mainWindow()->main()->actionCollection();
 
 //add all actions to the xmlguiclient of this toolbar
   for (int i = 0 ; i < ac->actions().count(); i++)  // FIXME can we add the whole collection at once?
@@ -933,8 +930,8 @@ void UserToolbarsPart::slotAddToolbar()
   m_toolbarList.insert(toolbarId, p_toolbar);
 
 //   if (!m_separateToolbars)
-    toolbarGUI->setClientBuilder(ToolbarGUIBuilder::ref(mainWindow()->main()));
-  mainWindow()->main()->guiFactory()->addClient(toolbarGUI);
+    toolbarGUI->setClientBuilder(ToolbarGUIBuilder::ref(KDevApi::self()->mainWindow()->main()));
+  KDevApi::self()->mainWindow()->main()->guiFactory()->addClient(toolbarGUI);
   ToolbarTabWidget::ref()->setCurrentIndex(ToolbarTabWidget::ref()->count()-1);
 
   slotAdjustActions();
@@ -953,7 +950,7 @@ void UserToolbarsPart::slotRenameToolbar(const QString& id)
   ToolbarEntry *p_toolbar = m_toolbarList.value(id);
   if (p_toolbar)
   {
-    KMainWindow *mw = mainWindow()->main();
+    KMainWindow *mw = KDevApi::self()->mainWindow()->main();
     bool ok;
     QString newName = KInputDialog::getText(i18n("Rename Toolbar"), i18n("Enter the new name:"), p_toolbar->name, &ok, mw);
     if (ok && newName != p_toolbar->name)
@@ -980,7 +977,7 @@ void UserToolbarsPart::slotRenameToolbar(const QString& id)
       QMenu *actionsMenu = static_cast<QMenu*>(factory()->container("actions", this));
 /*      if (m_separateToolbars)
       {
-        KToolBar *toolbar = dynamic_cast<KToolBar*>(mainWindow()->main()->factory()->container(id,  p_toolbar->guiClient));
+        KToolBar *toolbar = dynamic_cast<KToolBar*>(KDevApi::self()->mainWindow()->main()->factory()->container(id,  p_toolbar->guiClient));
         if (toolbar)
           toolbar->setTitle(i18n(p_toolbar->name.toUtf8()));
       }// else*/
@@ -1037,7 +1034,7 @@ void UserToolbarsPart::slotSendToolbar()
   QStringList toolbarFile;
   toolbarFile += tempFileName;
 
-  MailDialog *mailDlg = new MailDialog( mainWindow()->main(), i18n("Send toolbar in email"));
+  MailDialog *mailDlg = new MailDialog( KDevApi::self()->mainWindow()->main(), i18n("Send toolbar in email"));
   QString toStr;
   QString message = i18n("Hi,\n This is a KDevelop/Quanta Plus [http://www.kdevelop.org, http://quanta.kdewebdev.org] toolbar.\n\nHave fun.\n");
   QString titleStr;
@@ -1054,7 +1051,7 @@ void UserToolbarsPart::slotSendToolbar()
         message = mailDlg->titleEdit->text();
     } else
     {
-      KMessageBox::error(mainWindow()->main(),i18n("No destination address was specified.\n Sending is aborted."),i18n("Error Sending Email"));
+      KMessageBox::error(KDevApi::self()->mainWindow()->main(),i18n("No destination address was specified.\n Sending is aborted."),i18n("Error Sending Email"));
       delete mailDlg;
       return;
     }
@@ -1077,7 +1074,7 @@ bool UserToolbarsPart::removeToolbars()
         return false;
   }
 
-  KActionCollection *ac = mainWindow()->main()->actionCollection();
+  KActionCollection *ac = KDevApi::self()->mainWindow()->main()->actionCollection();
   QString s = "<!DOCTYPE actionsconfig>\n<actions>\n</actions>\n";
   QDomDocument actions;
   actions.setContent(s);
@@ -1112,7 +1109,7 @@ bool UserToolbarsPart::removeToolbars()
 void UserToolbarsPart::slotDownloadToolbar()
 {
   if (!m_newToolbarStuff)
-    m_newToolbarStuff = new NewToolbarStuff("kdevelop/toolbar", mainWindow()->main());
+    m_newToolbarStuff = new NewToolbarStuff("kdevelop/toolbar", KDevApi::self()->mainWindow()->main());
   m_newToolbarStuff->downloadResource();
 }
 
@@ -1122,14 +1119,14 @@ void UserToolbarsPart::slotUploadToolbar()
   if (tempFileName.isNull())
     return;
   if (!m_newToolbarStuff)
-    m_newToolbarStuff = new NewToolbarStuff("kdevelop/toolbar", mainWindow()->main());
+    m_newToolbarStuff = new NewToolbarStuff("kdevelop/toolbar", KDevApi::self()->mainWindow()->main());
   m_newToolbarStuff->uploadResource(tempFileName);
 }
 
 void UserToolbarsPart::slotConfigureToolbars(const QString &defaultToolbar)
 {
  ToolbarTabWidget *tb = ToolbarTabWidget::ref();
- KMainWindow *mw = mainWindow()->main();
+ KMainWindow *mw = KDevApi::self()->mainWindow()->main();
  m_currentTabPage = tb->currentIndex();
  QDomNodeList nodeList;
  mw->saveMainWindowSettings(KGlobal::config(), mw->autoSaveGroup());
@@ -1141,7 +1138,7 @@ void UserToolbarsPart::slotConfigureToolbars(const QString &defaultToolbar)
 
 void UserToolbarsPart::slotNewToolbarConfig()
 {
-  mainWindow()->main()->applyMainWindowSettings(KGlobal::config(), mainWindow()->main()->autoSaveGroup());
+  KDevApi::self()->mainWindow()->main()->applyMainWindowSettings(KGlobal::config(), KDevApi::self()->mainWindow()->main()->autoSaveGroup());
   ToolbarTabWidget::ref()->setCurrentIndex(m_currentTabPage);
 }
 
@@ -1171,7 +1168,7 @@ void UserToolbarsPart::slotToolbarLoaded(const QString &id)
   actionsMenu->setVisible(true);
 /*  if (m_actionsMenuId == -1)
   {
-    KMenuBar *menuBar = mainWindow()->main()->menuBar();
+    KMenuBar *menuBar = KDevApi::self()->mainWindow()->main()->menuBar();
     for (uint i = 0; i < menuBar->count(); i++)
     {
       QMenuItem *it = menuBar->findItem(menuBar->idAt(i));
@@ -1183,7 +1180,7 @@ void UserToolbarsPart::slotToolbarLoaded(const QString &id)
     }
   }
   if (m_actionsMenuId != -1)
-     mainWindow()->main()->menuBar()->setItemVisible(m_actionsMenuId, true);*/
+     KDevApi::self()->mainWindow()->main()->menuBar()->setItemVisible(m_actionsMenuId, true);*/
   p_toolbar->menu = menu;
 }
 
@@ -1220,7 +1217,7 @@ void UserToolbarsPart::slotRemoveAction(const QString& id, const QString& a_acti
   KAction *action = 0L;
   QString actionName = a_actionName;
   actionName.replace('&',"&&");
-  KActionCollection *ac = mainWindow()->main()->actionCollection();
+  KActionCollection *ac = KDevApi::self()->mainWindow()->main()->actionCollection();
   int actionCount = ac->actions().count();
   QString str;
   for (int i = 0; i < actionCount; i++)
@@ -1283,7 +1280,7 @@ void UserToolbarsPart::slotDeleteAction(KAction *action)
   QString text = el.attribute("text");
   QString actionName = action->objectName();
 
-  QList<KXMLGUIClient*> guiClients = mainWindow()->main()->factory()->clients();
+  QList<KXMLGUIClient*> guiClients = KDevApi::self()->mainWindow()->main()->factory()->clients();
   KXMLGUIClient *guiClient = 0;
   QDomNodeList nodeList;
   for (int i = 0; i < guiClients.count(); i++)

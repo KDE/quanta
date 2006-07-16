@@ -30,6 +30,7 @@
 #include <klocale.h>
 #include <kaction.h>
 #include <kdialog.h>
+#include <kgenericfactory.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
 #include <khtmlview.h>
@@ -41,24 +42,19 @@
 //kdevelop includes
 #include <interfaces/kdevcore.h>
 #include <interfaces/kdevmainwindow.h>
-#include <interfaces/kdevplugininfo.h>
-#include <interfaces/kdevgenericfactory.h>
 #include <interfaces/kdevdocumentcontroller.h>
 #include <interfaces/kdevdocument.h>
-#include <util/configwidgetproxy.h>
 
 
-typedef KDevGenericFactory<HTMLPreviewPart> HTMLPreviewFactory;
-KDevPluginInfo data("kdevhtmlpreview");
-K_EXPORT_COMPONENT_FACTORY( libkdevhtmlpreview, HTMLPreviewFactory( data ) );
+typedef KGenericFactory<HTMLPreviewPart> HTMLPreviewFactory;
+K_EXPORT_COMPONENT_FACTORY( libkdevhtmlpreview, HTMLPreviewFactory("kdevhtmlpreview") );
 
 #define GLOBALDOC_OPTIONS 1
 #define PROJECTDOC_OPTIONS 2
 
 HTMLPreviewPart::HTMLPreviewPart(QObject *parent, const QStringList &/*args*/)
-  : KDevPlugin(&data, parent), m_activeEditor(0), m_partmanager(0)
+  : KDevPlugin(HTMLPreviewFactory::instance(), parent), m_activeEditor(0), m_partmanager(0)
 {
-  setInstance(HTMLPreviewFactory::instance());
   setXMLFile("kdevhtmlpreview.rc");
 
 /*  m_widget = new HTMLPreviewWidget(this);
@@ -70,19 +66,20 @@ HTMLPreviewPart::HTMLPreviewPart(QObject *parent, const QStringList &/*args*/)
 
 
   setupActions();
-
+//FIXME: New KCM modules need to be created for each config page
+  /*
   m_configProxy = new ConfigWidgetProxy(core());
   m_configProxy->createGlobalConfigPage(i18n("Preview"), GLOBALDOC_OPTIONS, info()->icon());
   m_configProxy->createProjectConfigPage(i18n("Preview"), PROJECTDOC_OPTIONS, info()->icon());
   connect(m_configProxy, SIGNAL(insertConfigWidget(const KDialog*, QWidget*, unsigned int )),
           this, SLOT(insertConfigWidget(const KDialog*, QWidget*, unsigned int)));
-
-  connect(core(), SIGNAL(contextMenu(QMenu *, const Context *)),
+*/
+  connect(KDevApi::self()->core(), SIGNAL(contextMenu(QMenu *, const Context *)),
           this, SLOT(contextMenu(QMenu *, const Context *)));
-  connect(core(), SIGNAL(projectOpened()), this, SLOT(projectOpened()));
-  connect(core(), SIGNAL(projectClosed()), this, SLOT(projectClosed()));
+  connect(KDevApi::self()->core(), SIGNAL(projectOpened()), this, SLOT(projectOpened()));
+  connect(KDevApi::self()->core(), SIGNAL(projectClosed()), this, SLOT(projectClosed()));
 
-  connect(documentController(), SIGNAL(activePartChanged(KParts::Part *)), this, SLOT(slotActivePartChanged(KParts::Part *)));
+  connect(KDevApi::self()->documentController(), SIGNAL(activePartChanged(KParts::Part *)), this, SLOT(slotActivePartChanged(KParts::Part *)));
 
   QTimer::singleShot(0, this, SLOT(init()));
 }
@@ -92,13 +89,13 @@ HTMLPreviewPart::~HTMLPreviewPart()
 // if you embed a widget, you need to tell the mainwindow when you remove it
   if (m_browserPart)
   {
-    mainWindow()->removeView(m_browserPart->view());
+    KDevApi::self()->mainWindow()->removeView(m_browserPart->view());
   }
 //   if (m_browserPart)
 //     m_partmanager->removePart(m_browserPart);
 
   delete m_browserPart;
-  delete m_configProxy;
+//  delete m_configProxy;
   delete m_idleTimer;
 }
 
@@ -108,13 +105,14 @@ void HTMLPreviewPart::init()
   m_idleTimer = new QTimer(this);
   connect(m_idleTimer, SIGNAL(timeout()), SLOT(slotIdleTimerExpired()));
 
-  m_partmanager = static_cast<KParts::PartManager *>(documentController()); // FIXME find a better solution
+//FIXME  m_partmanager = static_cast<KParts::PartManager *>(KDevApi::self()->documentController()); // FIXME find a better solution
 }
 
 void HTMLPreviewPart::setupActions()
 {
   // create XMLGUI actions here
-  action = new KAction(KIcon(info()->icon()), i18n("&Preview"), actionCollection(), "plugin_preview" );
+//FIXME  action = new KAction(KIcon(info()->icon()), i18n("&Preview"), actionCollection(), "plugin_preview" );
+  action = new KAction(KIcon(), i18n("&Preview"), actionCollection(), "plugin_preview" );
   connect(action, SIGNAL(triggered(bool)), SLOT(slotPreview()));
   action->setToolTip(i18n("Preview the document in the browser"));
   action->setWhatsThis(i18n("<b>Preview</b><p>The preview shows the current document in an HTML browser."));
@@ -206,7 +204,7 @@ void HTMLPreviewPart::slotPreview()
   if (! m_browserPart)
   {
     m_browserPart = new HTMLPart(this);
-    m_browserPart->widget()->setWindowIcon(SmallIcon(info()->icon()));
+//FIXME    m_browserPart->widget()->setWindowIcon(SmallIcon(info()->icon()));
     m_browserPart->setOnlyLocalReferences(true);
     m_browserPart->setStatusMessagesEnabled(true);
     m_browserPart->setMetaRefreshEnabled(false);
@@ -215,7 +213,7 @@ void HTMLPreviewPart::slotPreview()
 
   // if you want to embed your widget as an outputview, simply uncomment
   // the following line.
-    mainWindow()->embedOutputView( m_browserPart->view(), i18n("Preview"), i18n("Preview in a browser") );
+    KDevApi::self()->mainWindow()->embedOutputView( m_browserPart->view(), i18n("Preview"), i18n("Preview in a browser") );
 
   // if you want to embed your widget as a selectview (at the left), simply uncomment
   // the following line.
@@ -229,7 +227,8 @@ void HTMLPreviewPart::slotPreview()
     m_partmanager->addPart(m_browserPart, false);
   }
   loadContent(m_activeEditor);
-  documentController()->documentForPart(m_browserPart)->activate();
+  //FIXME: how to adapt to KDevelop4?
+  //KDevApi::self()->documentController()->documentForPart(m_browserPart)->activate();
 }
 
 

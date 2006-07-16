@@ -29,39 +29,35 @@
 #include <klocale.h>
 #include <kaction.h>
 #include <kdialog.h>
+#include <kgenericfactory.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
 #include <k3listviewsearchline.h>
 
 //kdevelop includes
-#include <interfaces/kdevplugininfo.h>
-#include <interfaces/kdevgenericfactory.h>
 #include <interfaces/kdevdocumentcontroller.h>
 #include <interfaces/kdevcore.h>
 #include <interfaces/kdevmainwindow.h>
-#include <util/configwidgetproxy.h>
 
 #include "filestreeview.h"
 #include "quantafilestreeglobalconfig.h"
 #include "quantafilestreeprojectconfig.h"
 
-typedef KDevGenericFactory<QuantaFilesTreePart> QuantaFilesTreeFactory;
-KDevPluginInfo data("kdevquantafilestree");
-K_EXPORT_COMPONENT_FACTORY( libkdevquantafilestree, QuantaFilesTreeFactory( data ) );
+typedef KGenericFactory<QuantaFilesTreePart> QuantaFilesTreeFactory;
+K_EXPORT_COMPONENT_FACTORY( libkdevquantafilestree, QuantaFilesTreeFactory("kdevquantafilestree") );
 
 #define GLOBALDOC_OPTIONS 1
 #define PROJECTDOC_OPTIONS 2
 
 QuantaFilesTreePart::QuantaFilesTreePart(QObject *parent, const QStringList &/*args*/)
-    : KDevPlugin(&data, parent)
+  : KDevPlugin(QuantaFilesTreeFactory::instance(), parent)
 {
-    setInstance(QuantaFilesTreeFactory::instance());
     setXMLFile("kdevquantafilestree.rc");
 
     m_widget = new QWidget();
     m_widget->setObjectName("FilesTreeWidget");
     m_widget->setWindowTitle("Files Tree");
-    m_widget->setWindowIcon(SmallIcon(info()->icon()));
+//    m_widget->setWindowIcon(SmallIcon(info()->icon()));
 
     m_widget->setWhatsThis(i18n("Here you can manage your filesystem, either local or remote."));
 
@@ -74,24 +70,25 @@ QuantaFilesTreePart::QuantaFilesTreePart(QObject *parent, const QStringList &/*a
 
     // if you want to embed your widget as a selectview (at the left), simply uncomment
     // the following line.
-    mainWindow()->embedSelectView( m_widget, "Files Tree", "File management" );
+    KDevApi::self()->mainWindow()->embedSelectView( m_widget, "Files Tree", "File management" );
 
     // if you want to embed your widget as a selectview (at the right), simply uncomment
     // the following line.
     // mainWindow()->embedSelectViewRight( m_widget, "name that should appear", "enter a tooltip" );
 
     setupActions();
-
+//FIXME: New KCM modules need to be created for each config page
+    /*
     m_configProxy = new ConfigWidgetProxy(core());
     m_configProxy->createGlobalConfigPage(i18n("Files Tree"), GLOBALDOC_OPTIONS, info()->icon());
 //     m_configProxy->createProjectConfigPage(i18n("Files Tree"), PROJECTDOC_OPTIONS, info()->icon());
     connect(m_configProxy, SIGNAL(insertConfigWidget(const KDialog*, QWidget*, unsigned int )),
         this, SLOT(insertConfigWidget(const KDialog*, QWidget*, unsigned int)));
-
-    connect(core(), SIGNAL(contextMenu(QMenu *, const Context *)),
+    */
+    connect(KDevApi::self()->core(), SIGNAL(contextMenu(QMenu *, const Context *)),
         this, SLOT(contextMenu(QMenu *, const Context *)));
-    connect(core(), SIGNAL(projectOpened()), this, SLOT(projectOpened()));
-    connect(core(), SIGNAL(projectClosed()), this, SLOT(projectClosed()));
+    connect(KDevApi::self()->core(), SIGNAL(projectOpened()), this, SLOT(projectOpened()));
+    connect(KDevApi::self()->core(), SIGNAL(projectClosed()), this, SLOT(projectClosed()));
 
     QTimer::singleShot(0, this, SLOT(init()));
 }
@@ -101,17 +98,17 @@ QuantaFilesTreePart::~QuantaFilesTreePart()
 // if you embed a widget, you need to tell the mainwindow when you remove it
     if ( m_widget )
     {
-        mainWindow()->removeView( m_widget );
+      KDevApi::self()->mainWindow()->removeView( m_widget );
     }
     delete m_widget;
-    delete m_configProxy;
+    //delete m_configProxy;
 }
 
 void QuantaFilesTreePart::init()
 {
 // delayed initialization stuff goes here
   m_tree = new FilesTreeView(this, m_widget);
-  connect(documentController(), SIGNAL(documentClosed(KDevDocument*)), m_tree, SLOT(slotDocumentClosed(KDevDocument*)));
+  connect(KDevApi::self()->documentController(), SIGNAL(documentClosed(KDevDocument*)), m_tree, SLOT(slotDocumentClosed(KDevDocument*)));
 
   K3ListViewSearchLineWidget * sl = new K3ListViewSearchLineWidget(m_tree, m_widget);
 

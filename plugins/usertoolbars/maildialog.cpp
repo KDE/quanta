@@ -22,7 +22,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <ktoolinvocation.h>
-#include <kabc/stdaddressbook.h>
+//#include <kabc/stdaddressbook.h>
 
 //qt includes
 #include <QLineEdit>
@@ -51,6 +51,8 @@ MailDialog::~MailDialog(){
 /** Select a mail address, using the KabApi */
 void MailDialog::slotSelectAddress()
 {
+  //FIXME: What is instead of KABC??
+#if 0
 //Based on KMail
   QString addr, email, emailString;
   QStringList result;
@@ -102,5 +104,6 @@ void MailDialog::slotSelectAddress()
 //e-mail address
    KMessageBox::error(this, i18n("No addresses found."));
   }
+#endif
 }
 #include "maildialog.moc"

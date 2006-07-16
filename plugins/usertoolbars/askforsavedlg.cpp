@@ -15,10 +15,12 @@
 //qt includes
 #include <QLabel>
 #include <QLayout>
+#include <QPixmap>
 
 //kde includes
 #include <kiconloader.h>
-#include <QPixmap>
+#include <kstdguiitem.h>
+
 AskForSaveDlg::AskForSaveDlg(const QString &caption, const QString &question, QWidget *parent, const char *name)
  : KDialog(parent)
 {
