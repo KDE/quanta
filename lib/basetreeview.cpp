@@ -256,7 +256,7 @@ void BaseTreeBranch::updateOpenFolder()
 ////////////////////////////////////////////////////////////////////////////////////
 
 BaseTreeView::BaseTreeView(KDevPlugin *plugin, QWidget * parent)
-  : KFileTreeView(parent), fileInfoDlg(0), m_parent(parent), m_plugin(plugin), m_saveOpenFolder(false), m_partController(plugin ? plugin->documentController() : 0)
+  : KFileTreeView(parent), fileInfoDlg(0), m_parent(parent), m_plugin(plugin), m_saveOpenFolder(false), m_partController(KDevApi::self()->documentController())
 {
 //   setTreeStepSize(15);
   setRootIsDecorated(true);

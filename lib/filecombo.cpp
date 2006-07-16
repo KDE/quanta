@@ -93,7 +93,7 @@ void FileCombo::slotFileSelect()
   KFileDialog *dlg = new KFileDialog(baseURL.url(), i18n("*|All Files"), this);
   dlg->setMode(KFile::File | KFile::Directory | KFile::ExistingOnly);
   dlg->exec();
-  KUrl url = dlg->selectedURL();
+  KUrl url = dlg->selectedUrl();
   delete dlg;
   if ( !url.isEmpty() )
   {

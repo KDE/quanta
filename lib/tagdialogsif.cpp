@@ -13,7 +13,7 @@
 
 #include "tagdialogsif.h"
 
-TagDialogsIf::TagDialogsIf(const KDevPluginInfo * info, QObject *parent) 
+TagDialogsIf::TagDialogsIf(KInstance * info, QObject *parent)
   : KDevPlugin(info, parent)
 {
 }

@@ -44,7 +44,7 @@ class LIBQUANTA_EXPORT TagDialogsIf : public KDevPlugin
   Q_OBJECT
 
 public:
-  TagDialogsIf(const KDevPluginInfo * info, QObject *parent);
+  TagDialogsIf(KInstance * info, QObject *parent);
   ~TagDialogsIf();
 
    virtual TagPair createNewTag(QTag *dtdTag, const QString& selection, const QString& attrs = QString::null, const KUrl& baseURL = KUrl()) = 0;
