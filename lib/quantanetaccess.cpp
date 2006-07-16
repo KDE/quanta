@@ -184,7 +184,8 @@ bool QuantaNetAccess::move( const KUrl::List& srcList, const KUrl& target, KDevP
       if ( baseURL.isParentOf(*it) )
       {
         url = KUrl::relativeUrl(baseURL, *it);
-        project->fileManager()->removeFile(url);
+        //FIXME!!! Not ported to KDevelop4        
+        //project->fileManager()->removeFile(url);
       }
     }
   }
@@ -307,7 +308,8 @@ void QuantaNetAccess::checkProjectInsert(const KUrl& source, const KUrl& target,
     {
       if (target == source) //mkdir case
       {
-        project->fileManager()->addFile(KUrl::fromPathOrUrl(target.path(KUrl::AddTrailingSlash).mid(baseURL.path(KUrl::AddTrailingSlash).length())));
+        //FIXME!!! Not ported to KDevelop4
+        //project->fileManager()->addFile(target.path(KUrl::AddTrailingSlash).mid(baseURL.path(KUrl::AddTrailingSlash).length()));
       } else
       {
         QString prefix = saveUrl.path(KUrl::AddTrailingSlash);
@@ -320,13 +322,15 @@ void QuantaNetAccess::checkProjectInsert(const KUrl& source, const KUrl& target,
         {
             targetList += prefix + (*it).path();
         }
-        project->fileManager()->addFiles(targetList);
+ //FIXME!!! Not ported to KDevelop4
+               //project->fileManager()->addFiles(targetList);
       }
     }
     else
     {
       saveUrl = KUrl::relativeUrl(baseURL, saveUrl);
-      project->fileManager()->addFile(saveUrl.path());
+//FIXME!!! Not ported to KDevelop4
+            //project->fileManager()->addFile(saveUrl.path());
     }
   }
 }
@@ -360,7 +364,8 @@ bool QuantaNetAccess::checkProjectRemove(const KUrl& src, KDevPlugin* plugin, bo
     if (remove)
     {
       url = KUrl::relativeUrl(baseURL, url);
-      project->fileManager()->removeFile(url.path());
+      //FIXME!!! Not ported to KDevelop4
+      //project->fileManager()->removeFile(url.path());
     }
   }
   return true;
@@ -389,7 +394,8 @@ bool QuantaNetAccess::checkProjectDel(const KUrl& src, KDevPlugin* plugin, QWidg
         }
       }
       url = KUrl::relativeUrl(project->projectBase(), url);
-      project->fileManager()->removeFile(url.path());
+      //FIXME!!! Not ported to KDevelop4
+      //project->fileManager()->removeFile(url.path());
       return true;
     }
   }
