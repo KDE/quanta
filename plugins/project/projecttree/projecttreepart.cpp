@@ -30,34 +30,30 @@
 
 #include <klocale.h>
 #include <kaction.h>
+#include <kgenericfactory.h>
 #include <kdialog.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
 
 //kdevelop includes
-#include <interfaces/kdevplugininfo.h>
-#include <interfaces/kdevgenericfactory.h>
 #include <interfaces/kdevcore.h>
 #include <interfaces/kdevmainwindow.h>
-#include <util/configwidgetproxy.h>
 
 
-typedef KDevGenericFactory<ProjectTreePart> ProjectTreeFactory;
-KDevPluginInfo data("kdevprojecttree");
-K_EXPORT_COMPONENT_FACTORY( libkdevprojecttree, ProjectTreeFactory( data ) );
+typedef KGenericFactory<ProjectTreePart> ProjectTreeFactory;
+K_EXPORT_COMPONENT_FACTORY( libkdevprojecttree, ProjectTreeFactory("kdevprojecttree") );
 
 #define GLOBALDOC_OPTIONS 1
 #define PROJECTDOC_OPTIONS 2
 
 ProjectTreePart::ProjectTreePart(QObject *parent, const QStringList &/*args*/)
-    : KDevPlugin(&data, parent)
+  : KDevPlugin(ProjectTreeFactory::instance(), parent)
 {
-  setInstance(ProjectTreeFactory::instance());
   setXMLFile("kdevprojecttree.rc");
 
   m_widget = new ProjectTreeWidget(this);
   m_widget->setWindowTitle(i18n("Project Tree"));
-  m_widget->setWindowIcon(SmallIcon(info()->icon()));
+//  m_widget->setWindowIcon(SmallIcon(info()->icon()));
 
   m_widget->setWhatsThis(i18n("This treeview manages the files and folers of your project."));
 
@@ -70,24 +66,26 @@ ProjectTreePart::ProjectTreePart(QObject *parent, const QStringList &/*args*/)
 
   // if you want to embed your widget as a selectview (at the left), simply uncomment
   // the following line.
-  mainWindow()->embedSelectView( m_widget, i18n("Project Tree"), "Project Managment" );
+  KDevApi::self()->mainWindow()->embedSelectView( m_widget, i18n("Project Tree"), "Project Managment" );
 
   // if you want to embed your widget as a selectview (at the right), simply uncomment
   // the following line.
   // mainWindow()->embedSelectViewRight( m_widget, "name that should appear", "enter a tooltip" );
 
   setupActions();
-
+  
+//FIXME: New KCM modules need to be created for each config page
+  /*     
   m_configProxy = new ConfigWidgetProxy(core());
   m_configProxy->createGlobalConfigPage(i18n("Project Tree"), GLOBALDOC_OPTIONS, info()->icon());
   m_configProxy->createProjectConfigPage(i18n("Project Tree"), PROJECTDOC_OPTIONS, info()->icon());
   connect(m_configProxy, SIGNAL(insertConfigWidget(const KDialog*, QWidget*, unsigned int )),
           this, SLOT(insertConfigWidget(const KDialog*, QWidget*, unsigned int)));
-
-  connect(core(), SIGNAL(contextMenu(QMenu *, const Context *)),
+  */
+  connect(KDevApi::self()->core(), SIGNAL(contextMenu(QMenu *, const Context *)),
           this, SLOT(contextMenu(QMenu *, const Context *)));
-  connect(core(), SIGNAL(projectOpened()), this, SLOT(projectOpened()));
-  connect(core(), SIGNAL(projectClosed()), this, SLOT(projectClosed()));
+  connect(KDevApi::self()->core(), SIGNAL(projectOpened()), this, SLOT(projectOpened()));
+  connect(KDevApi::self()->core(), SIGNAL(projectClosed()), this, SLOT(projectClosed()));
 
 
   QTimer::singleShot(0, this, SLOT(init()));
@@ -98,10 +96,10 @@ ProjectTreePart::~ProjectTreePart()
   // if you embed a widget, you need to tell the mainwindow when you remove it
   if ( m_widget )
   {
-    mainWindow()->removeView( m_widget );
+    KDevApi::self()->mainWindow()->removeView( m_widget );
   }
   delete m_widget;
-  delete m_configProxy;
+//  delete m_configProxy;
 }
 
 void ProjectTreePart::init()

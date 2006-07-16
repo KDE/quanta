@@ -32,12 +32,6 @@ public:
   ~QuantaProjectIf();
 
   /**
-   * Get the URL pointing to the base project directory
-   * @return the URL pointing to the base project directory
-   */
-  virtual KUrl projectBase() const = 0;
-
-  /**
    * Checks if an url is part of the project or not.
    * @param url the url (absolute path)
    * @return true if url is part of the project, false otherwise

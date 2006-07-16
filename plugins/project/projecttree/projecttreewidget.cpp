@@ -40,7 +40,7 @@
 
 
 ProjectTreeWidget::ProjectTreeWidget(ProjectTreePart *part)
-    : QWidget(part->mainWindow()->main(), "projecttree widget"), m_part(part)
+  : QWidget(KDevApi::self()->mainWindow()->main()), m_part(part)
 {
   m_tree = new ProjectTreeView(part, this);
 
@@ -51,10 +51,10 @@ ProjectTreeWidget::ProjectTreeWidget(ProjectTreePart *part)
   
   l->addWidget(m_tree); 
   
-  connect(part->core(), SIGNAL(projectOpened()), m_tree, SLOT(slotProjectOpened()));
+  connect(KDevApi::self()->core(), SIGNAL(projectOpened()), m_tree, SLOT(slotProjectOpened()));
   connect(part, SIGNAL(saveProject()), m_tree, SLOT(slotProjectClosed()));
   
-  connect(part->documentController(), SIGNAL(activePartChanged(KParts::Part *)), m_tree, SLOT(slotActivePartChanged(KParts::Part *)));
+  connect(KDevApi::self()->documentController(), SIGNAL(activePartChanged(KParts::Part *)), m_tree, SLOT(slotActivePartChanged(KParts::Part *)));
 
 }
 

@@ -61,7 +61,7 @@ QuantaProjectPart::QuantaProjectPart( QObject *parent, const QStringList & /*arg
 
   m_widget = new QuantaProjectWidget( this );
   m_widget->setWindowTitle( "widget caption" );
-  m_widget->setWindowIcon( KIcon( info()->icon() ) );
+//FIXME  m_widget->setWindowIcon( KIcon( info()->icon() ) );
 
   m_browserMenu = 0L;
 
@@ -105,7 +105,7 @@ QuantaProjectPart::~QuantaProjectPart()
   //         mainWindow()->removeView( m_widget );
   //     }
   delete m_widget;
-  delete m_configProxy;
+//  delete m_configProxy;
 }
 
 void QuantaProjectPart::init()
@@ -215,13 +215,13 @@ void QuantaProjectPart::closeProject()
   // do something when the project is closed
 }
 
-void QuantaProjectPart::openProject( const QString &dirName, const QString &projectName )
+void QuantaProjectPart::openProject( const KUrl &dirName, const QString &projectName )
 {
-  QuantaProjectIf::openProject(dirName, projectName);
-  m_projectBase = KUrl::fromPathOrUrl( dirName );
+//  QuantaProjectIf::openProject(dirName, projectName);
+  m_projectBase = dirName;
   m_projectBase.adjustPath(KUrl::AddTrailingSlash);
   m_projectName = projectName;
-  m_projectDom = projectDom();
+  m_projectDom = KDevApi::self()->projectDom();
   m_projectDomElement = DomUtil::elementByPath(*m_projectDom, "/project");
   if (m_projectDomElement.isNull())
     m_projectDomElement = DomUtil::createElementByPath(*m_projectDom, "/project");
@@ -237,16 +237,22 @@ void QuantaProjectPart::openProject( const QString &dirName, const QString &proj
   kDebug( 24000 ) << "Project base: " << m_projectBase << " name: " << projectName << endl;
 }
 
-
+/*
 QString QuantaProjectPart::projectDirectory() const
 {
   return m_projectBase.isLocalFile() ? m_projectBase.path(KUrl::RemoveTrailingSlash) : "";  //FIXME
 }
-
+*/
 
 QStringList QuantaProjectPart::allFiles() const
 {
   return m_files.keys();
+}
+
+QList<KDevProjectFileItem*> QuantaProjectPart::allFiles()
+{
+
+  //FIXME implement it!
 }
 
 void QuantaProjectPart::addFiles( const QStringList &fileList )
@@ -265,18 +271,18 @@ void QuantaProjectPart::addFiles( const QStringList &fileList )
       m_files.insert(*it, el);
     }
   }
-  emit addedFilesToProject(fileList);
+//FIXME  emit addedFilesToProject(fileList);
 }
 
 
 void QuantaProjectPart::removeFiles( const QStringList &fileList )
 {
-  emit removedFilesFromProject(removeItems(fileList));
+//FIXME  emit removedFilesFromProject(removeItems(fileList));
 }
 
 void QuantaProjectPart::removeFile( const QString &fileName )
 {
-  emit removedFilesFromProject(removeItems(QStringList(fileName)));
+//FIXME  emit removedFilesFromProject(removeItems(QStringList(fileName)));
 }
 
 
@@ -315,13 +321,13 @@ QStringList QuantaProjectPart::removeItems(const QStringList &items)
 
 void QuantaProjectPart::slotInsertFiles()
 {
-  KUrl::List urls = KFileDialog::getOpenUrls(m_projectBase.pathOrUrl(), i18n("*"), mainWindow()->main(), i18n("Insert Files in Project"));
+  KUrl::List urls = KFileDialog::getOpenUrls(m_projectBase, i18n("*"), KDevApi::self()->mainWindow()->main(), i18n("Insert Files in Project"));
 
   if (!urls.isEmpty())
   {
     if (!m_projectBase.isParentOf(urls.first()))
     {
-      KUrlRequesterDlg urlRequesterDlg(m_projectBase.pathOrUrl(), mainWindow()->main());
+      KUrlRequesterDlg urlRequesterDlg(m_projectBase.pathOrUrl(), KDevApi::self()->mainWindow()->main());
       urlRequesterDlg.setWindowTitle(i18n("Copy Files to Project"));
       urlRequesterDlg.urlRequester()->setMode(KFile::Directory | KFile::ExistingOnly);
       urlRequesterDlg.exec();
@@ -357,13 +363,13 @@ void QuantaProjectPart::slotInsertFiles()
 void QuantaProjectPart::slotInsertFolder()
 {
   KUrl url = KUrl();
-  url = KFileDialog::getExistingUrl(m_projectBase.pathOrUrl(), mainWindow()->main(), i18n("Insert Folder in Project"));
-r
+  url = KFileDialog::getExistingUrl(m_projectBase, KDevApi::self()->mainWindow()->main(), i18n("Insert Folder in Project"));
+
   if (!url.isEmpty())
   {
     if (!m_projectBase.isParentOf(url))
     {
-      KUrlRequesterDlg urlRequesterDlg(m_projectBase.pathOrUrl(), mainWindow()->main());
+      KUrlRequesterDlg urlRequesterDlg(m_projectBase.pathOrUrl(), KDevApi::self()->mainWindow()->main());
       urlRequesterDlg.setWindowTitle(i18n("%1: Copy to Project", url.pathOrUrl()));
       urlRequesterDlg.urlRequester()->setMode(KFile::Directory | KFile::ExistingOnly);
       urlRequesterDlg.exec();

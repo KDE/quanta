@@ -50,15 +50,16 @@ public:
     ~QuantaProjectPart();
 
     virtual void closeProject();
-    virtual KDE_DEPRECATED QString projectDirectory() const;
+//    virtual KDE_DEPRECATED QString projectDirectory() const;
     /**
      * Get the URL pointing to the base project directory
      * @return the URL pointing to the base project directory
     */
-    virtual KUrl projectBase() const {return m_projectBase;}
-    virtual void openProject(const QString &dirName, const QString &projectName);
+    virtual KUrl projectDirectory() const {return m_projectBase;}
+    virtual void openProject(const KUrl &dirName, const QString &projectName);
     virtual QString projectName() const {return m_projectName;}
     virtual QStringList allFiles () const;
+    virtual QList<KDevProjectFileItem*> allFiles();
     virtual void addFiles (const QStringList &fileList);
 
     virtual void addFile (const QString &fileName) {addFiles(QStringList(fileName));}

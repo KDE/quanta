@@ -47,7 +47,6 @@
 //kdevelop includes
 #include <interfaces/kdevplugin.h>
 #include <interfaces/kdevproject.h>
-#include <interfaces/kdevplugininfo.h>
 #include <interfaces/kdevcore.h>
 
 
@@ -84,7 +83,7 @@ bool ProjectTreeViewItem::filter(const QString &s) const
 bool ProjectTreeViewItem::shouldBeVisible() const
 {
   KDevProject * p = static_cast<ProjectTreeBranch *>(branch())->project();
-  return p->isProjectFile(url().path());
+  return p->inProject(url());
 }
 
 
@@ -125,7 +124,7 @@ KFileTreeViewItem* ProjectTreeBranch::createTreeViewItem(KFileTreeViewItem *pare
 /////////////////////////////////////////////
 
 ProjectTreeView::ProjectTreeView(KDevPlugin * plugin, QWidget *parent)
-  : BaseTreeView(plugin, parent), m_projectDir(0), m_plugin(plugin), m_quantaProject(dynamic_cast<QuantaProjectIf *>(m_plugin->project()))
+  : BaseTreeView(plugin, parent), m_projectDir(0), m_plugin(plugin), m_quantaProject(dynamic_cast<QuantaProjectIf *>(KDevApi::self()->project()))
 {
   setShowToolTips(Settings::self()->projectTreeTooltips());
   //setSelectionModeExt(K3ListView::Extended);
@@ -199,7 +198,7 @@ void ProjectTreeView::fileMenu(const QPoint &point)
   // ask other plugins for menu entries
   KUrl::List urlList(currentKFileTreeViewItem()->url());
   FileContext context(urlList);
-  m_plugin->core()->fillContextMenu(&popup, &context);
+  KDevApi::self()->core()->fillContextMenu(&popup, &context);
 
   popup.exec(point);
 }
@@ -232,7 +231,7 @@ void ProjectTreeView::folderMenu(const QPoint &point)
   menuURL.adjustPath(KUrl::AddTrailingSlash);
   KUrl::List urlList(menuURL);
   FileContext context(urlList);
-  m_plugin->core()->fillContextMenu(&popup, &context);
+  KDevApi::self()->core()->fillContextMenu(&popup, &context);
 
   popup.exec(point);
 }
@@ -263,11 +262,11 @@ void ProjectTreeView::emptyMenu(const QPoint &point)
 
 void ProjectTreeView::slotProjectOpened()
 {
-  m_projectName = m_plugin->project()->projectName();
+  m_projectName = KDevApi::self()->project()->projectName();
   if (m_quantaProject)
-    m_projectBaseURL = m_quantaProject->projectBase();
+    m_projectBaseURL = m_quantaProject->projectDirectory();
   else
-    m_projectBaseURL = KUrl::fromPathOrUrl(m_plugin->project()->projectDirectory());
+    m_projectBaseURL = KUrl::fromPathOrUrl(KDevApi::self()->project()->projectDirectory());
 
   if (m_projectDir)  // just in case we have already one
   {
@@ -442,7 +441,7 @@ QDomElement ProjectTreeView::getDomElement(KFileTreeViewItem* item)
   if (item->isDir())
     url.adjustPath(KUrl::AddTrailingSlash);
 
-  QString path = m_quantaProject->relativeProjectFile(url.path());
+  QString path = m_quantaProject->relativeUrl(url);
   return m_quantaProject->domElementForPath(path);
 }
 
