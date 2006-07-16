@@ -159,6 +159,8 @@ QStringList XmlAttributeValueCompletion::tagAttributeValues(const DTDStruct* dtd
         {
           if (attr->type == "url") {
             QuantaProjectIf *project =dynamic_cast<QuantaProjectIf*>( KDevApi::self()->project());
+            //FIXME: Port to the new KDevelop API!
+            /*            
             if (project)
             {
               KUrl projectBase = project->projectBase();
@@ -174,7 +176,7 @@ QStringList XmlAttributeValueCompletion::tagAttributeValues(const DTDStruct* dtd
                 (*it) = u.path();
               }
 //              values->append("mailto:" + project->email());
-            } else
+          } else */
             {
               QDir dir = QDir(m_source->url().directory());
               values = dir.entryList();

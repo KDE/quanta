@@ -35,6 +35,7 @@
 #include <kdebug.h>
 #include <kdialog.h>
 #include <kfiledialog.h>
+#include <kgenericfactory.h>
 #include <kmainwindow.h>
 #include <kmessagebox.h>
 #include <kurlrequester.h>
@@ -42,25 +43,20 @@
 
 //kdevelop includes
 #include <interfaces/domutil.h>
-#include <interfaces/kdevplugininfo.h>
-#include <interfaces/kdevgenericfactory.h>
 #include <interfaces/kdevcore.h>
 #include <interfaces/kdevmainwindow.h>
-#include <util/configwidgetproxy.h>
 
 
-typedef KDevGenericFactory<QuantaProjectPart> QuantaProjectFactory;
-KDevPluginInfo data( "kdevquantaproject" );
-K_EXPORT_COMPONENT_FACTORY( libkdevquantaproject, QuantaProjectFactory( data ) );
+typedef KGenericFactory<QuantaProjectPart> QuantaProjectFactory;
+K_EXPORT_COMPONENT_FACTORY( libkdevquantaproject, QuantaProjectFactory("kdevquantaproject") );
 
 #define GLOBALDOC_OPTIONS 1
 #define PROJECTDOC_OPTIONS 2
 
 QuantaProjectPart::QuantaProjectPart( QObject *parent, const QStringList & /*args*/ )
-    : QuantaProjectIf( &data, parent)
+  : QuantaProjectIf(QuantaProjectFactory::instance(), parent)
 {
   kDebug( 24000 ) << "QuantaProjectPart loaded" << endl;
-  setInstance( QuantaProjectFactory::instance() );
   setXMLFile( "kdevquantaproject.rc" );
 
   m_widget = new QuantaProjectWidget( this );
@@ -88,12 +84,13 @@ QuantaProjectPart::QuantaProjectPart( QObject *parent, const QStringList & /*arg
 
   setupActions();
 
-  m_configProxy = new ConfigWidgetProxy( core() );
+//FIXME: New KCM modules need to be created for each config page  m_configProxy = new ConfigWidgetProxy( core() );
+  /*
   m_configProxy->createProjectConfigPage( i18n( "Quanta" ), PROJECTDOC_OPTIONS, info() ->icon() );
   connect( m_configProxy, SIGNAL( insertConfigWidget( const KDialog*, QWidget*, unsigned int ) ),
            this, SLOT( insertConfigWidget( const KDialog*, QWidget*, unsigned int ) ) );
-
-  connect( core(), SIGNAL( contextMenu( QMenu *, const Context * ) ),
+  */
+  connect( KDevApi::self()->core(), SIGNAL( contextMenu( QMenu *, const Context * ) ),
            this, SLOT( contextMenu( QMenu *, const Context * ) ) );
 
   QTimer::singleShot( 0, this, SLOT( init() ) );

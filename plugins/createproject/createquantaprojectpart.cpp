@@ -47,6 +47,7 @@
 #include <kdebug.h>
 #include <kdialog.h>
 #include <kiconloader.h>
+#include <kgenericfactory.h>
 #include <kglobal.h>
 #include <kmainwindow.h>
 #include <kmessagebox.h>
@@ -54,8 +55,6 @@
 #include <ktempfile.h>
 
 //kdevelop includes
-#include <interfaces/kdevplugininfo.h>
-#include <interfaces/kdevgenericfactory.h>
 #include <interfaces/kdevcore.h>
 #include <interfaces/kdevmainwindow.h>
 #include <interfaces/kdevplugincontroller.h>
@@ -63,18 +62,16 @@
 #include <interfaces/domutil.h>
 
 
-typedef KDevGenericFactory<CreateQuantaProjectPart> CreateQuantaProjectFactory;
-KDevPluginInfo data("kdevcreatequantaproject");
-K_EXPORT_COMPONENT_FACTORY( libkdevcreatequantaproject, CreateQuantaProjectFactory( data ) );
+typedef KGenericFactory<CreateQuantaProjectPart> CreateQuantaProjectFactory;
+K_EXPORT_COMPONENT_FACTORY( libkdevcreatequantaproject, CreateQuantaProjectFactory("kdevcreatequantaproject") );
 
 #define GLOBALDOC_OPTIONS 1
 #define PROJECTDOC_OPTIONS 2
 
 CreateQuantaProjectPart::CreateQuantaProjectPart(QObject *parent, const QStringList &/*args*/)
-    : KDevPlugin(&data, parent)
+  : KDevPlugin(CreateQuantaProjectFactory::instance(), parent)
 {
   kDebug(24000) << "Quanta create project plugin loaded" << endl;
-  setInstance(CreateQuantaProjectFactory::instance());
   setXMLFile("kdevcreatequantaproject.rc");
 
   setupActions();
@@ -105,10 +102,10 @@ void CreateQuantaProjectPart::slotCreateNewProject()
   QuantaCoreIf *qCore = extension<QuantaCoreIf>("KDevelop/Quanta");
   if (!qCore)
   {
-    KMessageBox::error(mainWindow()->main(), i18n("<qt>The <b>create new Quanta project</b> plugin requires the <b>Quanta core</b> plugin to be loaded."), i18n("Quanta core not loaded"));
+    KMessageBox::error(KDevApi::self()->mainWindow()->main(), i18n("<qt>The <b>create new Quanta project</b> plugin requires the <b>Quanta core</b> plugin to be loaded."), i18n("Quanta core not loaded"));
     return;
   }
-  Q3Wizard *wizard = new Q3Wizard(mainWindow()->main(), "new", true);
+  Q3Wizard *wizard = new Q3Wizard(KDevApi::self()->mainWindow()->main(), "new", true);
   wizard->setWindowTitle(i18n("New Project Wizard"));
   wizard->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
   QStackedWidget *stack = new QStackedWidget(wizard);
@@ -185,8 +182,8 @@ void CreateQuantaProjectPart::slotCreateNewProject()
     tempFile.close();
     KUrl dest = baseURL;
     dest.addPath("/" + firstPage->fileName());
-    KIO::NetAccess::upload(tempFile.name(), dest, mainWindow()->main());
-    core()->openProject(dest.path()); //FIXME: use the URL when it is supported by the framework
+    KIO::NetAccess::upload(tempFile.name(), dest, KDevApi::self()->mainWindow()->main());
+    KDevApi::self()->core()->openProject(dest.path()); //FIXME: use the URL when it is supported by the framework
     QFile::remove(tempFile.name());
     if (secondPage->insertGlobalTemplates())
     {
@@ -202,7 +199,7 @@ void CreateQuantaProjectPart::slotCreateNewProject()
     if (secondPage->insertLocalTemplates())
     {
       //FIXME do not hardcode the quanta name
-      KUrl templateSource = KUrl::fromPathOrUrl(::locateLocal("data", "quanta/templates/"));
+      KUrl templateSource = KUrl::fromPathOrUrl(KStandardDirs::locateLocal("data", "quanta/templates/"));
       KUrl::List templates = ExtFileInfo::listDir(templateSource, "*");
       KUrl templateDest = baseURL;
       templateDest.addPath(secondPage->templates());
