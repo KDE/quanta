@@ -58,7 +58,7 @@ class LIBQUANTA_EXPORT QuantaCoreIf : public KDevPlugin
   Q_OBJECT
 
 public:
-  QuantaCoreIf(const KDevPluginInfo * info, QObject *parent);
+  QuantaCoreIf(KInstance * info, QObject *parent);
 
   ~QuantaCoreIf();
 

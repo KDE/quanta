@@ -13,7 +13,7 @@
 
 #include "quantacoreif.h"
 
-QuantaCoreIf::QuantaCoreIf(const KDevPluginInfo * info, QObject *parent) 
+QuantaCoreIf::QuantaCoreIf(KInstance * info, QObject *parent)
   : KDevPlugin(info, parent)
 {
 }
