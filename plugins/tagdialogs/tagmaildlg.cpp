@@ -23,7 +23,7 @@
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <kabc/stdaddressbook.h>
+//#include <kabc/stdaddressbook.h>
 
 //qt includes
 #include <QLineEdit>
@@ -51,6 +51,8 @@ TagMailDlg::~TagMailDlg(){
 /** Select a mail address, using the KabApi */
 void TagMailDlg::slotSelectAddress()
 {
+  //FIXME: Port to KDE4. There doesn't seem to be a KABC in kdelibs4!
+#if 0  
 //Based on KMail
   QString addr, email, emailString;
   QStringList result;
@@ -100,6 +102,7 @@ void TagMailDlg::slotSelectAddress()
 //e-mail address
    KMessageBox::error(this,i18n("No addresses found."));
   }
+#endif
 }
 
 #include "tagmaildlg.moc"

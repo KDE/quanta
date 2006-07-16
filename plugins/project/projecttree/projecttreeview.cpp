@@ -162,12 +162,16 @@ KFileTreeBranch* ProjectTreeView::newBranch(const KUrl& url)
     {
       m_projectNameStr += " [" + url.protocol() + "://" + url.user() + "@" + url.host() + "]";
     }
-    m_projectDir = new ProjectTreeBranch(m_quantaProject, this, url, m_projectNameStr, SmallIcon(m_plugin->info()->icon()), true);
+//    m_projectDir = new ProjectTreeBranch(m_quantaProject, this, url, m_projectNameStr, SmallIcon(m_plugin->info()->icon()), true);
+    //FIXME: how to get the icon?
+    m_projectDir = new ProjectTreeBranch(m_quantaProject, this, url, m_projectNameStr, SmallIcon(""), true);
     m_projectDir->root()->setText(1, url.pathOrUrl());
     setDragEnabled(true);
   } else
   {
-    m_projectDir = new ProjectTreeBranch(m_quantaProject, this, url, i18n("No Project"), SmallIcon(m_plugin->info()->icon()), true);
+    //FIXME: how to get the icon?
+    //m_projectDir = new ProjectTreeBranch(m_quantaProject, this, url, i18n("No Project"), SmallIcon(m_plugin->info()->icon()), true);
+    m_projectDir = new ProjectTreeBranch(m_quantaProject, this, url, i18n("No Project"), SmallIcon(""), true);
     m_projectDir->root()->setText(1, "");
     setDragEnabled(false);
   }

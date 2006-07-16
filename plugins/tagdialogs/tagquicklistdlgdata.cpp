@@ -15,6 +15,7 @@
 #include <QLabel>
 #include <kpushbutton.h>
 #include <QRadioButton>
+#include <kguiitem.h>
 #include <kstdguiitem.h>
 
 void  TagQuickListDlg::initDialog()

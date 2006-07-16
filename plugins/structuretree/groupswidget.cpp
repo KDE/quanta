@@ -51,7 +51,7 @@
 
 
 GroupsWidget::GroupsWidget(KDevPlugin *plugin, QWidget *parent)
-  : K3ListView(parent), m_popupMenu(0), m_dtdMenu(0), m_dirty(false), m_parseResult(0), m_plugin(plugin), m_partController(plugin ? plugin->documentController() : 0)
+  : K3ListView(parent), m_popupMenu(0), m_dtdMenu(0), m_dirty(false), m_parseResult(0), m_plugin(plugin), m_partController(KDevApi::self()->documentController())
 {
   setTreeStepSize(15);
   setRootIsDecorated(false);

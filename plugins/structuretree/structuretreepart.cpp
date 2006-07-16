@@ -35,34 +35,30 @@
 #include <klocale.h>
 #include <kaction.h>
 #include <kdialog.h>
+#include <kgenericfactory.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
 #include <k3listviewsearchline.h>
 
 //kdevelop includes
-#include <interfaces/kdevplugininfo.h>
-#include <interfaces/kdevgenericfactory.h>
 #include <interfaces/kdevcore.h>
 #include <interfaces/kdevmainwindow.h>
-#include <util/configwidgetproxy.h>
 
-typedef KDevGenericFactory<StructureTreePart> StructureTreeFactory;
-KDevPluginInfo data("kdevstructuretree");
-K_EXPORT_COMPONENT_FACTORY( libkdevstructuretree, StructureTreeFactory( data ) );
+typedef KGenericFactory<StructureTreePart> StructureTreeFactory;
+K_EXPORT_COMPONENT_FACTORY( libkdevstructuretree, StructureTreeFactory("kdevstructuretree") );
 
 #define GLOBALDOC_OPTIONS 1
 #define PROJECTDOC_OPTIONS 2
 
 StructureTreePart::StructureTreePart(QObject *parent, const QStringList &/*args*/)
-    : KDevPlugin(&data, parent)
+  : KDevPlugin(StructureTreeFactory::instance(), parent)
 {
-    setInstance(StructureTreeFactory::instance());
     setXMLFile("kdevstructuretree.rc");
 
     m_widget = new QToolBox();
     m_widget->setObjectName("StructureTreeWidget");
     m_widget->setWindowTitle(i18n("Structure Tree"));
-    m_widget->setWindowIcon(SmallIcon(info()->icon()));
+//    m_widget->setWindowIcon(SmallIcon(info()->icon()));
 
     m_widget->setWhatsThis(i18n("Displays the structure of current document. Manipulation of the document is also possible."));
 
@@ -75,24 +71,25 @@ StructureTreePart::StructureTreePart(QObject *parent, const QStringList &/*args*
 
     // if you want to embed your widget as a selectview (at the left), simply uncomment
     // the following line.
-    mainWindow()->embedSelectView( m_widget, i18n("Document Structure"), i18n("Structure of the current document") );
+    KDevApi::self()->mainWindow()->embedSelectView( m_widget, i18n("Document Structure"), i18n("Structure of the current document") );
 
     // if you want to embed your widget as a selectview (at the right), simply uncomment
     // the following line.
     // mainWindow()->embedSelectViewRight( m_widget, "name that should appear", "enter a tooltip" );
 
     setupActions();
-
+//FIXME: New KCM modules need to be created for each config page
+    /*
     m_configProxy = new ConfigWidgetProxy(core());
     m_configProxy->createGlobalConfigPage(i18n("Document Structure"), GLOBALDOC_OPTIONS, info()->icon());
     m_configProxy->createProjectConfigPage(i18n("Document Structure"), PROJECTDOC_OPTIONS, info()->icon());
     connect(m_configProxy, SIGNAL(insertConfigWidget(const KDialog*, QWidget*, unsigned int )),
         this, SLOT(insertConfigWidget(const KDialog*, QWidget*, unsigned int)));
-
-    connect(core(), SIGNAL(contextMenu(QMenu *, const Context *)),
+    */
+    connect(KDevApi::self()->core(), SIGNAL(contextMenu(QMenu *, const Context *)),
         this, SLOT(contextMenu(QMenu *, const Context *)));
-    connect(core(), SIGNAL(projectOpened()), this, SLOT(projectOpened()));
-    connect(core(), SIGNAL(projectClosed()), this, SLOT(projectClosed()));
+    connect(KDevApi::self()->core(), SIGNAL(projectOpened()), this, SLOT(projectOpened()));
+    connect(KDevApi::self()->core(), SIGNAL(projectClosed()), this, SLOT(projectClosed()));
 
 
     QTimer::singleShot(0, this, SLOT(init()));
@@ -103,10 +100,10 @@ StructureTreePart::~StructureTreePart()
 // if you embed a widget, you need to tell the mainwindow when you remove it
   if ( m_widget )
   {
-      mainWindow()->removeView( m_widget );
+    KDevApi::self()->mainWindow()->removeView( m_widget );
   }
   delete m_widget;
-  delete m_configProxy;
+//  delete m_configProxy;
 }
 
 void StructureTreePart::init()

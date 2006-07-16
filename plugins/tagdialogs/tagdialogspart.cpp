@@ -28,31 +28,28 @@
 
 #include <kaction.h>
 #include <kdebug.h>
+#include <kgenericfactory.h>
 #include <klocale.h>
 
 //kdevelop includes
-#include <interfaces/kdevplugininfo.h>
-#include <interfaces/kdevgenericfactory.h>
 #include <interfaces/kdevcore.h>
 #include <interfaces/kdevmainwindow.h>
 
-typedef KDevGenericFactory<TagDialogsPart> TagDialogsFactory;
-KDevPluginInfo data("kdevtagdialogs");
-K_EXPORT_COMPONENT_FACTORY( libkdevtagdialogs, TagDialogsFactory( data ) );
+typedef KGenericFactory<TagDialogsPart> TagDialogsFactory;
+K_EXPORT_COMPONENT_FACTORY( libkdevtagdialogs, TagDialogsFactory("kdevtagdialogs") );
 
 #define GLOBALDOC_OPTIONS 1
 #define PROJECTDOC_OPTIONS 2
 
 TagDialogsPart::TagDialogsPart(QObject *parent, const QStringList &/*args*/)
-    : TagDialogsIf(&data, parent)
+  : TagDialogsIf(TagDialogsFactory::instance(), parent)
 {
-    setInstance(TagDialogsFactory::instance());
     setXMLFile("kdevtagdialogs.rc");
     kDebug(24000) << "TagDialogs plugin loaded" << endl;
 
     setupActions();
 
-    connect(core(), SIGNAL(contextMenu(QMenu *, const Context *)),
+    connect(KDevApi::self()->core(), SIGNAL(contextMenu(QMenu *, const Context *)),
         this, SLOT(slotContextMenu(QMenu *, const Context *)));
 
 /*    m_configProxy = new ConfigWidgetProxy(core());
