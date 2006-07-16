@@ -29,14 +29,11 @@
 #include <kiconloader.h>
 #include <kurlrequester.h>
 #include <kapplication.h>
-#include <kfontcombo.h>
 
 #include <kdevplugin.h>
 // #include <kdevmakefrontend.h>
 #include <kdevplugincontroller.h>
 
-#include "api.h"
-#include "settingswidget.h"
 
 KDevQuantaExtension::KDevQuantaExtension()
  : ShellExtension()

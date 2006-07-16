@@ -11,7 +11,6 @@
 #include <QFileInfo>
 
 //kdevelop includes
-#include <shell/api.h>
 #include <shell/splashscreen.h>
 #include <shell/toplevel.h>
 #include <shell/plugincontroller.h>
@@ -66,7 +65,7 @@ int main(int argc, char *argv[])
   KDevQuantaExtension::init();
 
   SplashScreen *splash = 0;
-  QString splashFile = locate("appdata", "pics/quantalogo.png");
+  QString splashFile = KStandardDirs::locate("appdata", "pics/quantalogo.png");
   if (!splashFile.isEmpty())
   {
     QPixmap pm;

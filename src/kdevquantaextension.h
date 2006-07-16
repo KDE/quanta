@@ -23,6 +23,7 @@
 #include <shellextension.h>
 
 class SettingsWidget;
+class KDialog;
 
 class KDevQuantaExtension : public ShellExtension {
 public:
