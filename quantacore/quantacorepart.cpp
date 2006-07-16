@@ -51,25 +51,21 @@
 #include <ktoolinvocation.h>
 
 //kdevelop includes
-#include <util/configwidgetproxy.h>
 #include <interfaces/kdevmainwindow.h>
 #include <interfaces/kdevdocumentcontroller.h>
 #include <interfaces/kdevdocument.h>
-#include <interfaces/kdevplugininfo.h>
 #include <interfaces/kdevcore.h>
 
 #include <ktexteditor/document.h>
 
-static const KDevPluginInfo data("kdevquantacore");
 typedef KGenericFactory<QuantaCorePart> QuantaCoreFactory;
-K_EXPORT_COMPONENT_FACTORY(libkdevquantacore, QuantaCoreFactory(data));
-
+K_EXPORT_COMPONENT_FACTORY(libkdevquantacore, QuantaCoreFactory("kdevquantacore"));
 
 #define AUTOCOMPLETE_OPTIONS 1
 #define ENVIRONMENT_OPTIONS 2
 
 QuantaCorePart::QuantaCorePart(QObject *parent, const QStringList& )
- : QuantaCoreIf(&data, parent), m_activeQuantaDoc(0)
+  : QuantaCoreIf(QuantaCoreFactory::instance(), parent), m_activeQuantaDoc(0)
 {
   kDebug(24000) << "Creating Quanta Support Part" << endl;
   setInstance(QuantaCoreFactory::instance());
@@ -77,23 +73,24 @@ QuantaCorePart::QuantaCorePart(QObject *parent, const QStringList& )
 
   DTDs::ref(this)->find("dtd"); //load on startup;
   initActions();
-
+  //FIXME: New KCM modules need to be created for each config page
+  /*
   m_configProxy = new ConfigWidgetProxy(core());
   m_configProxy->createGlobalConfigPage(i18n("Autocompletion"), AUTOCOMPLETE_OPTIONS, info()->icon());
   m_configProxy->createGlobalConfigPage(i18n("Environment"), ENVIRONMENT_OPTIONS, info()->icon());
 
   connect(m_configProxy, SIGNAL(insertConfigWidget(const KDialog*, QWidget*, unsigned int )),
       this, SLOT(slotInsertConfigWidget(const KDialog*, QWidget*, unsigned int)));
+  */
+  connect(KDevApi::self()->documentController(), SIGNAL(documentLoaded(KDevDocument*)), this, SLOT(slotFileLoaded(KDevDocument*)));
 
-  connect(documentController(), SIGNAL(documentLoaded(KDevDocument*)), this, SLOT(slotFileLoaded(KDevDocument*)));
+  connect(KDevApi::self()->documentController(), SIGNAL(activePartChanged(KParts::Part *)), this, SLOT(slotActivePartChanged(KParts::Part *)));
 
-  connect(documentController(), SIGNAL(activePartChanged(KParts::Part *)), this, SLOT(slotActivePartChanged(KParts::Part *)));
+  connect(KDevApi::self()->documentController(), SIGNAL(documentClosed(KDevDocument*)), this, SLOT(slotClosedFile(KDevDocument*)));
 
-  connect(documentController(), SIGNAL(documentClosed(KDevDocument*)), this, SLOT(slotClosedFile(KDevDocument*)));
+  connect(KDevApi::self()->documentController(), SIGNAL(documentUrlChanged(KDevDocument*, const KUrl, const KUrl)), this, SLOT(slotPartURLChanged(KDevDocument*, const KUrl, const KUrl)));
 
-  connect(documentController(), SIGNAL(documentUrlChanged(KDevDocument*, const KUrl, const KUrl)), this, SLOT(slotPartURLChanged(KDevDocument*, const KUrl, const KUrl)));
-
-  connect(core(), SIGNAL(contextMenu(QMenu *, const Context *)), this, SLOT(contextMenu(QMenu *, const Context *)));
+  connect(KDevApi::self()->core(), SIGNAL(contextMenu(QMenu *, const Context *)), this, SLOT(contextMenu(QMenu *, const Context *)));
 
   QTimer::singleShot(0, this, SLOT(init()));
 }
@@ -206,7 +203,9 @@ void QuantaCorePart::insertTag(const TagPair & tagPair, bool inLine, bool showDi
 
 void QuantaCorePart::slotInsertConfigWidget(const KDialog *dlg, QWidget *page, unsigned int pageNo)
 {
+    //FIXME: New KCM modules need to be created for each config page
 // create configuraton dialogs here
+  /*
     switch (pageNo)
     {
         case AUTOCOMPLETE_OPTIONS:
@@ -221,13 +220,13 @@ void QuantaCorePart::slotInsertConfigWidget(const KDialog *dlg, QWidget *page, u
             connect(dlg, SIGNAL(okClicked()), w, SLOT(accept()));
             break;
         }
-    }
+}*/
 }
 
 
 void QuantaCorePart::slotMakeDonation()
 {
-  KDialog dlg(mainWindow()->main() );
+  KDialog dlg(KDevApi::self()->mainWindow()->main() );
   dlg.setCaption( i18n("Support Quanta with Financial Donation") );
   dlg.setButtons( KDialog::Close );
   dlg.setDefaultButton( KDialog::Close );
@@ -350,7 +349,7 @@ void QuantaCorePart::slotInsertTag(const KUrl& url, Helper::DirInfo * dirInfo)
       if (KMimeType::findByURL(url)->name().startsWith("image/"))
       {
         QString imgFileName;
-        KIO::NetAccess::download(url, imgFileName, mainWindow()->main());
+        KIO::NetAccess::download(url, imgFileName, KDevApi::self()->mainWindow()->main());
         QImage img(imgFileName);
         if (!img.isNull())
         {
@@ -404,11 +403,11 @@ void QuantaCorePart::contextMenu(QMenu *popup, const Context *context)
 
 void QuantaCorePart::slotOpenNew()
 {
-  KTempFile * file = new KTempFile(locateLocal("tmp", ""), i18n(".unsaved"));
+  KTempFile * file = new KTempFile(KStandardDirs::locateLocal("tmp", ""), i18n(".unsaved"));
 //   file->setAutoDelete(true);
   file->close();
   KUrl url = KUrl::fromPathOrUrl(file->name());
-  KDevDocument *doc = documentController()->editDocument(url);
+  KDevDocument *doc = KDevApi::self()->documentController()->editDocument(url);
   if (doc)
   {
     KParts::ReadOnlyPart *part = dynamic_cast<KParts::ReadOnlyPart *>(doc->part());
@@ -422,10 +421,10 @@ void QuantaCorePart::slotChangeDTEP()
 {
   if (m_activeQuantaDoc)
   {
-      KDialog dlg(mainWindow()->main() );
-      dlg.setCaption( i18n("DTEP Selector") );
-      dlg.setButtons( KDialog::Ok | KDialog::Cancel );
-      dlg.setDefaultButton( KDialog::Ok );
+    KDialog dlg(KDevApi::self()->mainWindow()->main() );
+    dlg.setCaption( i18n("DTEP Selector") );
+    dlg.setButtons( KDialog::Ok | KDialog::Cancel );
+    dlg.setDefaultButton( KDialog::Ok );
     QWidget *w = new QWidget(&dlg);
     Ui::DTDSelectDialog form;
     form.setupUi(w);

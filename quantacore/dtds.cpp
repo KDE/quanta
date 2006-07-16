@@ -870,7 +870,7 @@ void DTDs::setAttributes(QDomNode *dom, QTag* tag, bool &common)
 
 void DTDs::slotLoadDTD()
 {
-  KUrl url = KFileDialog::getOpenURL("", "*.dtd", 0L);
+  KUrl url = KFileDialog::getOpenUrl(KUrl(), "*.dtd", 0L);
   if (!url.isEmpty())
   {
     DTDParser dtdParser(url, KGlobal::dirs()->saveLocation("data") + Helper::resourceDir() + "dtep");

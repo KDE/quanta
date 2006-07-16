@@ -158,7 +158,7 @@ QStringList XmlAttributeValueCompletion::tagAttributeValues(const DTDStruct* dtd
         if (attrName == searchForAttr)
         {
           if (attr->type == "url") {
-            QuantaProjectIf *project =dynamic_cast<QuantaProjectIf*>( m_plugin->project());
+            QuantaProjectIf *project =dynamic_cast<QuantaProjectIf*>( KDevApi::self()->project());
             if (project)
             {
               KUrl projectBase = project->projectBase();
