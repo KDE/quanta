@@ -12,7 +12,7 @@
  ***************************************************************************/
 #include "quantaprojectif.h"
 
-QuantaProjectIf::QuantaProjectIf(const KDevPluginInfo * info, QObject *parent) 
+QuantaProjectIf::QuantaProjectIf(KInstance * info, QObject *parent)
   : KDevProject(info, parent)
 {
 }

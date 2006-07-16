@@ -22,6 +22,7 @@
 //kde includes
 #include <kurl.h>
 #include <kio/job.h>
+#include <kio/jobuidelegate.h>
 #include <kio/netaccess.h>
 #include <kio/scheduler.h>
 #include <klocale.h>
@@ -377,7 +378,7 @@ bool ExtFileInfo::internalCopy(const KUrl& src, const KUrl& target, int permissi
   {
 //    kDebug(24000) << "Copying " << src << " to " << target << endl;
    // KIO::Job *job = KIO::copy( src, target, false );
-    job->setWindow (window);
+    job->ui()->setWindow(window);
     connect( job, SIGNAL( result (KJob *) ),
             this, SLOT( slotResult (KJob *) ) );
     enter_loop();
