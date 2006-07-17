@@ -28,7 +28,7 @@ EnvironmentConfig::EnvironmentConfig(QWidget *parent)
   uint pos = 0;
   for (int i = 0; i < lst.count(); i++)
   {
-    defaultDTEP->insertItem(lst[i]);
+    defaultDTEP->addItem(lst[i]);
     if (lst[i] == DTDs::ref()->getDTDNickNameFromName(Settings::self()->defaultDTEP().toLower()))
        pos = i;
   }
