@@ -36,15 +36,13 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kdevtagdialogs )
 
 target_link_libraries(kdevtagdialogs  kdevquanta kdevinterfaces ${KDE4_KDECORE_LIBS} )
 
-install(TARGETS kdevtagdialogs  DESTINATION ${LIB_INSTALL_DIR}/kde4)
+install(TARGETS kdevtagdialogs  DESTINATION ${PLUGIN_INSTALL_DIR}/kde4)
 
 
 ########### install files ###############
 
-install( FILES   DESTINATION ${DATA_INSTALL_DIR}/kdevtagdialogs)
 install( FILES  kdevtagdialogs.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
 install( FILES  kdevtagdialogs.rc  DESTINATION ${DATA_INSTALL_DIR}/kdevtagdialogs)
-install( FILES  kdeveloptagdialogs.desktop  DESTINATION ${SERVICETYPES_INSTALL_DIR})
 
 
 
