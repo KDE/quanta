@@ -372,9 +372,9 @@ void ActionConfigDialog::slotSelectionChanged(Q3ListViewItem *item)
       useClosingTag->setChecked(false);
       useActionDialog->setChecked(false);
       scriptPath->setText("");
-      inputBox->setCurrentItem(0);
-      outputBox->setCurrentItem(5);
-      errorBox->setCurrentItem(5);
+      inputBox->setCurrentIndex(0);
+      outputBox->setCurrentIndex(5);
+      errorBox->setCurrentIndex(5);
       textEdit->clear();
 //set the detailed settings according to the type of the action
       QString type = el.attribute("type", "tag");
@@ -397,64 +397,64 @@ void ActionConfigDialog::slotSelectionChanged(Q3ListViewItem *item)
         s = elScript.attribute("input","none");
         if (s == "current")
         {
-          inputBox->setCurrentItem(1);
+          inputBox->setCurrentIndex(1);
         } else
         if (s == "selected")
         {
-          inputBox->setCurrentItem(2);
+          inputBox->setCurrentIndex(2);
         } else
         {
-          inputBox->setCurrentItem(0);
+          inputBox->setCurrentIndex(0);
         }
 
         s = elScript.attribute("output","none");
         if (s == "cursor")
         {
-          outputBox->setCurrentItem(1);
+          outputBox->setCurrentIndex(1);
         } else
         if (s == "selection")
         {
-          outputBox->setCurrentItem(2);
+          outputBox->setCurrentIndex(2);
         } else
         if (s == "replace")
         {
-          outputBox->setCurrentItem(3);
+          outputBox->setCurrentIndex(3);
         } else
         if (s == "new")
         {
-          outputBox->setCurrentItem(4);
+          outputBox->setCurrentIndex(4);
         } else
         if (s == "message")
         {
-          outputBox->setCurrentItem(5);
+          outputBox->setCurrentIndex(5);
         } else
         {
-          outputBox->setCurrentItem(0);
+          outputBox->setCurrentIndex(0);
         }
 
         s = elScript.attribute("error","none");
         if (s == "cursor")
         {
-          errorBox->setCurrentItem(1);
+          errorBox->setCurrentIndex(1);
         } else
         if (s == "selection")
         {
-          errorBox->setCurrentItem(2);
+          errorBox->setCurrentIndex(2);
         } else
         if (s == "replace")
         {
-          errorBox->setCurrentItem(3);
+          errorBox->setCurrentIndex(3);
         } else
         if (s == "new")
         {
-          errorBox->setCurrentItem(4);
+          errorBox->setCurrentIndex(4);
         } else
         if (s == "message")
         {
-          errorBox->setCurrentItem(5);
+          errorBox->setCurrentIndex(5);
         } else
         {
-          errorBox->setCurrentItem(0);
+          errorBox->setCurrentIndex(0);
         }
         typeCombo->setCurrentIndex(1);
       }
