@@ -28,11 +28,11 @@ void  TagImgDlg::initDialog(){
   lineImgSource= new KLineEdit(this);
   grid->addMultiCellWidget(lineImgSource, 0, 0, 1, 3);
 
-  buttonImgSource= new QPushButton(this,"NoName");
+  buttonImgSource= new QPushButton(this);
   buttonImgSource->setText(i18n("..."));
   grid->addMultiCellWidget(buttonImgSource, 0, 0, 4, 4);
 
-  QLabel_4= new QLabel(this,"NoName");
+  QLabel_4= new QLabel(this);
   QLabel_4->setText(i18n("Width:"));
   grid->addMultiCellWidget(QLabel_4, 1, 1, 0, 0);
 
@@ -40,7 +40,7 @@ void  TagImgDlg::initDialog(){
   lineWidth->setValidator( new KFloatValidator( lineWidth ) );
   grid->addMultiCellWidget(lineWidth, 1, 1, 1, 1);
 
-  QLabel_5= new QLabel(this,"NoName");
+  QLabel_5= new QLabel(this);
   QLabel_5->setText(i18n("Height:"));
   grid->addMultiCellWidget(QLabel_5, 1, 1, 2, 2);
 
@@ -48,7 +48,7 @@ void  TagImgDlg::initDialog(){
   lineHeight->setValidator( new KFloatValidator( lineHeight ) );
   grid->addMultiCellWidget(lineHeight, 1, 1, 3, 3);
 
-  buttonRecalcImgSize= new QPushButton(this,"NoName");
+  buttonRecalcImgSize= new QPushButton(this);
   buttonRecalcImgSize->setText(i18n("..."));
   grid->addMultiCellWidget(buttonRecalcImgSize, 1, 1, 4, 4);
 
@@ -59,33 +59,33 @@ void  TagImgDlg::initDialog(){
   lineHSpace= new KLineEdit(this);
   grid->addMultiCellWidget(lineHSpace, 2, 2, 1, 1);
 
-  QLabel_7= new QLabel(this,"NoName");
+  QLabel_7= new QLabel(this);
   QLabel_7->setText(i18n("VSpace:"));
   grid->addMultiCellWidget(QLabel_7, 2, 2, 2, 2);
 
   lineVSpace= new KLineEdit(this);
   grid->addMultiCellWidget(lineVSpace, 2, 2, 3, 3);
 
-  QLabel_8= new QLabel(this,"NoName");
+  QLabel_8= new QLabel(this);
   QLabel_8->setText(i18n("Alternate text:"));
   grid->addMultiCellWidget(QLabel_8, 3, 3, 0, 0);
 
   lineAltText= new KLineEdit(this);
   grid->addMultiCellWidget(lineAltText, 3, 3, 1, 4);
 
-  QLabel_9= new QLabel(this,"NoName");
+  QLabel_9= new QLabel(this);
   QLabel_9->setText(i18n("Border:"));
   grid->addMultiCellWidget(QLabel_9, 4, 4, 0, 0);
 
-  spinBorder= new QSpinBox(this,"NoName");
+  spinBorder= new QSpinBox(this);
   spinBorder->setRange(0,20);
   grid->addMultiCellWidget(spinBorder, 4, 4, 1, 1);
 
-  QLabel_10= new QLabel(this,"NoName");
+  QLabel_10= new QLabel(this);
   QLabel_10->setText(i18n("Align:"));
   grid->addMultiCellWidget(QLabel_10, 4, 4, 2, 2);
 
-  comboAlign= new QComboBox(this,"NoName");
+  comboAlign= new QComboBox(this);
   grid->addMultiCellWidget(comboAlign, 4, 4, 3, 4);
 
   widgetImg= new PictureView(this);
