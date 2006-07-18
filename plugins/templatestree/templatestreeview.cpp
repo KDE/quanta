@@ -468,7 +468,7 @@ void TemplatesTreeView::contentsDropEvent(QDropEvent *e)
       if ( currentKFileTreeViewItem()->isDir() )
         dest = currentURL();
       else
-        dest = currentURL().directory(false);
+        dest = currentURL().directory(KUrl::AppendTrailingSlash);
       dest.adjustPath(KUrl::AddTrailingSlash);
       QString content;
       Q3TextDrag::decode(e, content);
@@ -965,7 +965,7 @@ QString TemplatesTreeView::createTemplateTarball()
   KUrl url = currentURL();
   KUrl dirURL (url);
   if (!currentKFileTreeViewItem()->isDir())
-    dirURL.setPath(dirURL.directory(false));
+    dirURL.setPath(dirURL.directory(KUrl::AppendTrailingSlash));
 
   KTempDir* tempDir = new KTempDir(Helper::tmpFilePrefix());
   tempDir->setAutoDelete(true);
