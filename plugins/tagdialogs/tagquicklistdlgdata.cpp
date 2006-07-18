@@ -22,7 +22,8 @@ void  TagQuickListDlg::initDialog()
 {
   resize(230,150);
 
-  QLabel_1= new QLabel(this,"NoName");
+  QLabel_1 = new QLabel( this );
+  QLabel_1->setObjectName( "NoName" );
   QLabel_1->setGeometry(10,10,100,30);
   QLabel_1->setMinimumSize(0,0);
   QLabel_1->setText(i18n("Rows:"));
@@ -36,7 +37,8 @@ void  TagQuickListDlg::initDialog()
   buttonOk->setGeometry(10,110,100,30);
   buttonOk->setMinimumSize(0,0);
 
-  QLabel_2= new QLabel(this,"NoName");
+  QLabel_2 = new QLabel( this );
+  QLabel_2->setObjectName( "NoName" );
   QLabel_2->setGeometry(10,40,100,30);
   QLabel_2->setMinimumSize(0,0);
   QLabel_2->setText(i18n("Style:"));
