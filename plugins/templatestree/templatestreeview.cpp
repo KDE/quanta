@@ -805,13 +805,13 @@ void TemplatesTreeView::slotDragInsert(QDropEvent *e)
         {
           return;
         }
-        emit insertFile(KUrl::fromPathOrUrl( localFileName ));
+        emit insertFile(KUrl( localFileName ));
       }
 
       if(m_dirInfo.mimeType == "file/all")
       {
        // whatever this is, insert it with a tag (image or link or prefix/postfix)
-        emit insertTag(KUrl::fromPathOrUrl( localFileName ), &m_dirInfo);
+        emit insertTag(KUrl( localFileName ), &m_dirInfo);
       }
       else
       if(m_dirInfo.mimeType == "template/all")
@@ -821,7 +821,7 @@ void TemplatesTreeView::slotDragInsert(QDropEvent *e)
           return;
         }
   //        emit openFile(KUrl());  FIXME
-        emit insertFile(KUrl::fromPathOrUrl( localFileName ));
+        emit insertFile(KUrl( localFileName ));
       }
     }
   } else
@@ -841,7 +841,7 @@ void TemplatesTreeView::slotProjectOpened()
   if (qProject)
     m_projectBaseURL = qProject->projectDirectory();
   else
-    m_projectBaseURL = KUrl::fromPathOrUrl(KDevApi::self()->project()->projectDirectory());
+    m_projectBaseURL = KUrl(KDevApi::self()->project()->projectDirectory());
 
   if (m_projectDir)
     removeBranch(m_projectDir);
@@ -1081,10 +1081,10 @@ void TemplatesTreeView::slotExtractSiteTemplate()
                 QStringList entries = directory->entries();
                 KUrl::List fileList;
                 for (QStringList::Iterator it = entries.begin(); it != entries.end(); ++it)
-                  fileList.append(KUrl::fromPathOrUrl(tempDirName + "/" + *it));
+                  fileList.append(KUrl(tempDirName + "/" + *it));
                 if (!KIO::NetAccess::dircopy(fileList, targetURL, this))
                     error = true;
-                KIO::NetAccess::del(KUrl().fromPathOrUrl(tempDirName), this);
+                KIO::NetAccess::del(KUrl(tempDirName), this);
                 delete tempDir;
             }
             tar.close();

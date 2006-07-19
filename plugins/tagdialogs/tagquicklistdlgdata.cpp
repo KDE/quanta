@@ -23,12 +23,11 @@ void  TagQuickListDlg::initDialog()
   resize(230,150);
 
   QLabel_1 = new QLabel( this );
-  QLabel_1->setObjectName( "NoName" );
   QLabel_1->setGeometry(10,10,100,30);
   QLabel_1->setMinimumSize(0,0);
   QLabel_1->setText(i18n("Rows:"));
 
-  spinBoxRows= new QSpinBox(this,"NoName");
+  spinBoxRows= new QSpinBox(this);
   spinBoxRows->setGeometry(120,10,100,25);
   spinBoxRows->setMinimumSize(0,0);
   spinBoxRows->setRange(1,99);
@@ -38,12 +37,11 @@ void  TagQuickListDlg::initDialog()
   buttonOk->setMinimumSize(0,0);
 
   QLabel_2 = new QLabel( this );
-  QLabel_2->setObjectName( "NoName" );
   QLabel_2->setGeometry(10,40,100,30);
   QLabel_2->setMinimumSize(0,0);
   QLabel_2->setText(i18n("Style:"));
 
-  buttonCancel= new QPushButton(this,"NoName");
+  buttonCancel= new QPushButton(this);
   buttonCancel->setGeometry(120,110,100,30);
   buttonCancel->setMinimumSize(0,0);
   buttonCancel->setText(KStdGuiItem::cancel().text());
