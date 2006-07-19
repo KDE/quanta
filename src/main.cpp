@@ -16,7 +16,7 @@
 #include <shell/plugincontroller.h>
 #include <shell/documentcontroller.h>
 #include <shell/core.h>
-#include <shell/projectmanager.h>
+#include <shell/projectcontroller.h>
 #include <shell/simplemainwindow.h>
 #include <interfaces/kdevplugin.h>
 
@@ -106,8 +106,9 @@ int main(int argc, char *argv[])
     splash = 0;
     KMessageBox::error( 0L, i18n("The Quanta Core Plugin could not be loaded.\nYour installation seems to be broken."));
   }
-    
-  PluginController::getInstance()->loadInitialPlugins();
+
+//FIXME: this is disabled now in KDevelop. What to use instead?    
+//  PluginController::getInstance()->loadInitialPlugins();
 
   Core::getInstance()->doEmitCoreInitialized();
 
@@ -130,7 +131,7 @@ int main(int argc, char *argv[])
 
   bool openProject = false;
   if( args->count() == 0 ){
-    ProjectManager::getInstance()->loadDefaultProject();
+    ProjectController::getInstance()->init();
     openProject = true;
   } else
     if( args->count() > 0 )
@@ -139,7 +140,7 @@ int main(int argc, char *argv[])
       QString ext = QFileInfo( url.fileName() ).suffix();
       if( ext == "kdevelop" || ext == "quanta" )
       {
-        ProjectManager::getInstance()->loadProject( url );
+        ProjectController::getInstance()->openProject( url );
         openProject = true;
       }
   }
