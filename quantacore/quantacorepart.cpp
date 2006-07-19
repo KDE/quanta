@@ -84,7 +84,7 @@ QuantaCorePart::QuantaCorePart(QObject *parent, const QStringList& )
   */
   connect(KDevApi::self()->documentController(), SIGNAL(documentLoaded(KDevDocument*)), this, SLOT(slotFileLoaded(KDevDocument*)));
 
-  connect(KDevApi::self()->documentController(), SIGNAL(activePartChanged(KParts::Part *)), this, SLOT(slotActivePartChanged(KParts::Part *)));
+  connect(KDevApi::self()->documentController(), SIGNAL(documentActivated(KDevDocument *)), this, SLOT(slotDocumentActivated(KDevDocument *)));
 
   connect(KDevApi::self()->documentController(), SIGNAL(documentClosed(KDevDocument*)), this, SLOT(slotClosedFile(KDevDocument*)));
 
@@ -280,10 +280,10 @@ void QuantaCorePart::slotGroupsParsed(const EditorSource *source, const ParseRes
     emit groupsParsed(parseResult); // signal in QuantaCoreIf
 }
 
-void QuantaCorePart::slotActivePartChanged(KParts::Part * newPart)
+void QuantaCorePart::slotDocumentActivated(KDevDocument *document)
 {
   m_activeQuantaDoc = 0;
-  KParts::ReadOnlyPart * part = dynamic_cast<KParts::ReadOnlyPart *>(newPart);
+  KParts::ReadOnlyPart * part = dynamic_cast<KParts::ReadOnlyPart *>(document->part());
   if (! part)
   {
     emit finishedParsing(0); // clear the trees

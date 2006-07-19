@@ -60,6 +60,7 @@ void SAParser::init(ParseResult *base, EditorSource *source, const DTDStruct *dt
   m_base = base;
   m_source = source;
   m_dtd = dtd;
+  m_childToDelete = 0L;
 }
 
 

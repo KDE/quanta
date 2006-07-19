@@ -105,7 +105,7 @@ private slots:
    * emits @see finishedParsing when the new part is known
    * @param newPart 
    */
-  void slotActivePartChanged(KParts::Part * newPart);
+  void slotDocumentActivated(KDevDocument *document);
   
   /**
    * removes the pointer to this @see QuantaDoc from @see m_documents
