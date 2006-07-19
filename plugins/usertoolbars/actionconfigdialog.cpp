@@ -63,7 +63,7 @@ ActionConfigDialog::ActionConfigDialog(const QHash<QString, ToolbarEntry*> &tool
   setupUi(this);
   m_plugin = parent;
   m_toolbarList = toolbarList;
-  buttonOk->setIconSet(SmallIcon("button_ok"));
+  buttonOk->setIcon(SmallIcon("button_ok"));
   buttonCancel->setIcon(SmallIcon("button_cancel"));
   buttonApply->setIcon(SmallIcon("apply"));
   //buttonHelp->setIconSet(SmallIconSet("help"));
@@ -96,7 +96,7 @@ ActionConfigDialog::ActionConfigDialog(const QHash<QString, ToolbarEntry*> &tool
   KActionCollection *ac = KDevApi::self()->mainWindow()->main()->actionCollection();
   for (int i = 0; i < tb->count(); i++)
   {
-    toolbarName = tb->label(i);
+    toolbarName = tb->tabText(i);
     toolbarName.replace(r, "");
     item = new K3ListViewItem(actionTreeView, oldItem, i18n(toolbarName.toUtf8()));
     actionTreeView->insertItem(item);
@@ -114,13 +114,13 @@ ActionConfigDialog::ActionConfigDialog(const QHash<QString, ToolbarEntry*> &tool
           action = ac->action(node.toElement().attribute("name"));
           if (action)
           {
-            oldActionItem = new K3ListViewItem(item, oldActionItem, action->text().replace(r,""), action->shortcut().toString(), action->name());
+            oldActionItem = new K3ListViewItem(item, oldActionItem, action->text().replace(r,""), action->shortcut().toString(), action->objectName());
             oldActionItem->setPixmap(0, action->icon().pixmap(QSize(16,16)));
           }
         }
         node = node.nextSibling();
       }
-      if (tb->label(tb->currentIndex()).replace(r, "") == toolbarName)
+      if (tb->tabText(tb->currentIndex()).replace(r, "") == toolbarName)
       {
          item->setOpen(true);
          if (item->firstChild())
@@ -149,10 +149,10 @@ ActionConfigDialog::ActionConfigDialog(const QHash<QString, ToolbarEntry*> &tool
   uint acCount = ac->actions().count();
   for (uint i = 0; i < acCount; i++)
   {
-    action = ac->action(i);
+    action = ac->actions().value(i);
     if (dynamic_cast<UserAction*>(action))
     {
-      item = new K3ListViewItem(allActionsItem, action->text().replace(r, ""),  action->shortcut().toString(), action->name());
+      item = new K3ListViewItem(allActionsItem, action->text().replace(r, ""),  action->shortcut().toString(), action->objectName());
       item->setPixmap(0, action->icon().pixmap(QSize(16,16)));
     }
   }
@@ -178,7 +178,7 @@ void ActionConfigDialog::slotAddToolbar()
   ToolbarTabWidget *tb = ToolbarTabWidget::ref();
   for (int i = 0; i < tb->count(); i++)
   {
-    toolbarName = tb->label(i);
+    toolbarName = tb->tabText(i);
     if (!actionTreeView->findItem(toolbarName, 0))
     {
       item = actionTreeView->lastItem();
@@ -237,7 +237,7 @@ void ActionConfigDialog::slotEditToolbar()
     ToolbarTabWidget *tb = ToolbarTabWidget::ref();
     for (int i = 0; i < tb->count(); i++)
     {
-      toolbarName = tb->label(i);
+      toolbarName = tb->tabText(i);
       toolbarId = tb->id(i);
       ToolbarEntry *p_toolbar = m_toolbarList.value(toolbarId);
       if (p_toolbar)
@@ -254,7 +254,7 @@ void ActionConfigDialog::slotEditToolbar()
             action = ac->action(node.toElement().attribute("name"));
             if (action)
             {
-              oldItem = new K3ListViewItem(item, oldItem, action->text().replace(QRegExp("\\&(?!\\&)"),""), action->shortcut().toString(), action->name());
+              oldItem = new K3ListViewItem(item, oldItem, action->text().replace(QRegExp("\\&(?!\\&)"),""), action->shortcut().toString(), action->objectName());
               oldItem->setPixmap(0,action->icon().pixmap(QSize(16,16)));
             }
           }
@@ -293,7 +293,7 @@ void ActionConfigDialog::slotSelectionChanged(Q3ListViewItem *item)
     for (uint i = 0; i < acCount; i++)
     {
       KAction *a = ac->actions().value(i);
-      QString actionName = a->name();
+      QString actionName = a->objectName();
       if (a && actionName == item->text(2) && a->inherits("UserAction"))
       {
         action = static_cast<UserAction*>(a);
@@ -343,7 +343,7 @@ void ActionConfigDialog::slotSelectionChanged(Q3ListViewItem *item)
       ToolbarTabWidget *tb = ToolbarTabWidget::ref();
       for (int i = 0; i < tb->count(); i++)
       {
-        QString toolbarName = tb->label(i);
+        QString toolbarName = tb->tabText(i);
         QString toolbarId = tb->id(i);
         ToolbarEntry *p_toolbar = m_toolbarList.value(toolbarId);
         if (p_toolbar)
@@ -503,7 +503,7 @@ void ActionConfigDialog::saveCurrentAction()
   while (it.current())
   {
     listItem = it.current();
-    if (listItem->depth() > 0 && listItem->text(2) == currentAction->name())
+    if (listItem->depth() > 0 && listItem->text(2) == currentAction->objectName())
     {
       listItem->setPixmap(0, SmallIcon(actionIcon->icon()));
       listItem->setText(0, lineText->text());
@@ -548,7 +548,7 @@ void ActionConfigDialog::saveCurrentAction()
                     break;
                   }
         }
-        switch (outputBox->currentItem())
+        switch (outputBox->currentIndex())
         {
           case 1:{ item.setAttribute("output", "cursor");
                    break;
@@ -618,7 +618,7 @@ void ActionConfigDialog::saveCurrentAction()
   ToolbarTabWidget *tb = ToolbarTabWidget::ref();
   for (int i = 0; i < tb->count(); i++)
   {
-    QString toolbarName = tb->label(i);
+    QString toolbarName = tb->tabText(i);
     QString toolbarId = tb->id(i);
     ToolbarEntry *p_toolbar = m_toolbarList.value(toolbarId);
     bool isOnToolbar = false;
@@ -671,7 +671,7 @@ void ActionConfigDialog::saveCurrentAction()
           Q3ListViewItem *after = listItem->firstChild();
           while ( after && after->nextSibling() && after->nextSibling()->depth()!=0 )
           {
-            if (after->text(2) == currentAction->name())
+            if (after->text(2) == currentAction->objectName())
             {
                 placeOnToolbar = false;
                 break;
@@ -680,7 +680,7 @@ void ActionConfigDialog::saveCurrentAction()
           }
           if (placeOnToolbar)
           {
-              listItem = new K3ListViewItem(listItem, after, lineText->text(), currentAction->shortcut().toString(), currentAction->name());
+              listItem = new K3ListViewItem(listItem, after, lineText->text(), currentAction->shortcut().toString(), currentAction->objectName());
               listItem->setPixmap(0, SmallIcon(actionIcon->icon()));
           }
         }
@@ -810,7 +810,7 @@ void ActionConfigDialog::slotNewAction()
   Q3ListViewItem *item = new K3ListViewItem(allActionsItem);
   QString actionText = QString("Action_%1").arg(KDevApi::self()->mainWindow()->main()->actionCollection()->actions().count());
   currentAction->setText(actionText);
-  item->setText(2, currentAction->name());
+  item->setText(2, currentAction->objectName());
   item->setText(0, actionText);
   item->setPixmap(0, SmallIcon("ball"));
   allActionsItem->sortChildItems(0, true);
@@ -825,7 +825,7 @@ void ActionConfigDialog::slotNewAction()
 
     item = new K3ListViewItem(parentItem, currentItem);
     item->setText(0, actionText);
-    item->setText(2, currentAction->name());
+    item->setText(2, currentAction->objectName());
     item->setPixmap(0, SmallIcon("ball"));
     actionTreeView->setCurrentItem(item);
     if (parentItem != allActionsItem)
@@ -843,7 +843,7 @@ void ActionConfigDialog::slotDeleteAction()
 {
     if ( KMessageBox::warningContinueCancel(this, i18n("<qt>Removing the action removes all the references to it.\nAre you sure you want to remove the <b>%1</b> action?</qt>", currentAction->text()),QString::null,KStdGuiItem::del()) == KMessageBox::Continue )
   {
-    QString actionName = currentAction->name();
+    QString actionName = currentAction->objectName();
     emit deleteUserAction(currentAction);
     currentAction = 0L;
     //update the tree view
@@ -879,8 +879,8 @@ void ActionConfigDialog::slotAddContainerToolbar()
   QStringList lst;
   for (i = 0; i < tb->count(); i++)
   {
-    if (!toolbarListBox->findItem(tb->label(i), Q3ListBox::ExactMatch))
-        lst << tb->label(i);
+    if (!toolbarListBox->findItem(tb->tabText(i), Q3ListBox::ExactMatch))
+      lst << tb->tabText(i);
   }
 
   if (lst.count() > 0)
