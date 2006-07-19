@@ -445,7 +445,7 @@ QDomElement ProjectTreeView::getDomElement(KFileTreeViewItem* item)
   if (item->isDir())
     url.adjustPath(KUrl::AddTrailingSlash);
 
-  QString path = m_quantaProject->relativeUrl(url);
+  QString path = m_quantaProject->relativeUrl(url).path();
   return m_quantaProject->domElementForPath(path);
 }
 

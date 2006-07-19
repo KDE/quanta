@@ -30,7 +30,7 @@ used by TagImgDlg
 class PictureView : public QFrame  {
    Q_OBJECT
 public:
-  PictureView(QWidget *parent=0, char *file=0, const char *name=0);
+  PictureView(QWidget *parent=0, char *file=0);
   /** try scale  image */
   void scale();
 public slots: // Public slots

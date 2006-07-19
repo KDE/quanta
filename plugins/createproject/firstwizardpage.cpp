@@ -57,7 +57,7 @@ FirstWizardPage::FirstWizardPage(QuantaCoreIf *qCore, KInstance *instance, QWidg
   QStringList lst = Settings::self()->loadedDTEPNickNames();
   dtdCombo->addItems(lst);
   QString defaultDTDName = qCore->getDTEPNickName(Settings::self()->defaultDTEP());
-  int pos = lst.findIndex(defaultDTDName);
+  int pos = lst.indexOf(defaultDTDName);
   if (pos >= 0)
     dtdCombo->setCurrentIndex(pos);
 

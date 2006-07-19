@@ -21,7 +21,7 @@
 #include <kiconloader.h>
 #include <kstdguiitem.h>
 
-AskForSaveDlg::AskForSaveDlg(const QString &caption, const QString &question, QWidget *parent, const char *name)
+AskForSaveDlg::AskForSaveDlg(const QString &caption, const QString &question, QWidget *parent)
  : KDialog(parent)
 {
     setCaption( caption );

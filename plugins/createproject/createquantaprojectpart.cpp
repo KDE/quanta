@@ -189,7 +189,7 @@ void CreateQuantaProjectPart::slotCreateNewProject()
     {
       //FIXME do not hardcode the quanta name
       QString globalDataDir = KGlobal::dirs()->findResourceDir("data", "quanta/global");
-      KUrl templateSource = KUrl::fromPathOrUrl(globalDataDir + "quanta/templates/");
+      KUrl templateSource = KUrl(globalDataDir + "quanta/templates/");
       KUrl::List templates = ExtFileInfo::listDir(templateSource, "*");
       KUrl templateDest = baseURL;
       templateDest.addPath(secondPage->templates());
@@ -199,7 +199,7 @@ void CreateQuantaProjectPart::slotCreateNewProject()
     if (secondPage->insertLocalTemplates())
     {
       //FIXME do not hardcode the quanta name
-      KUrl templateSource = KUrl::fromPathOrUrl(KStandardDirs::locateLocal("data", "quanta/templates/"));
+      KUrl templateSource = KUrl(KStandardDirs::locateLocal("data", "quanta/templates/"));
       KUrl::List templates = ExtFileInfo::listDir(templateSource, "*");
       KUrl templateDest = baseURL;
       templateDest.addPath(secondPage->templates());

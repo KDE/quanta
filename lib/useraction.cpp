@@ -135,7 +135,7 @@ bool UserAction::slotActionActivated()
 
     KDevProject *proj = KDevApi::self()->project();
     if (proj)
-      proc->setWorkingDirectory(proj->projectDirectory());
+      proc->setWorkingDirectory(proj->projectDirectory().path());
 
     QDomElement script = tag.namedItem("script").toElement();
     QString command = script.text();
@@ -230,7 +230,7 @@ bool UserAction::slotActionActivated()
       {
           QString s;
           if (proj)
-            s = proj->projectDirectory();
+            s = proj->projectDirectory().path();
           args.replace("%projectbase", s);
       }
       QStringList argsList1 = args.split(' ');

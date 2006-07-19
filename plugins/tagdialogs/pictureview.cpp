@@ -20,7 +20,7 @@
 #include "qpainter.h"
 #include <QImage>
 
-PictureView::PictureView(QWidget *parent, char *file, const char *name ) : QFrame(parent,name)
+PictureView::PictureView(QWidget *parent, char *file) : QFrame(parent)
 {
     if ( file ) {
       pix = new QImage(file);
@@ -87,11 +87,11 @@ void PictureView::scale(){
 
   if (  width_ot < 1 || height_ot < 1) {
     if ( width_ot < height_ot) {
-      *pix = pix->smoothScale( (int)(width_ot*picwidth), (int)(width_ot*picheight));
+      *pix = pix->scaled( (int)(width_ot*picwidth), (int)(width_ot*picheight), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
       y_of = ( size().height()-(int)(width_ot*picheight) )/2;
     }
     else {
-      *pix = pix->smoothScale( (int)(height_ot*picwidth), (int)(height_ot*picheight));
+      *pix = pix->scaled( (int)(height_ot*picwidth), (int)(height_ot*picheight), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
       x_of = ( size().width()-(int)(height_ot*picwidth) )/2;
     }
 

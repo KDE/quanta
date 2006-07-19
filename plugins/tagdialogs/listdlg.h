@@ -33,7 +33,7 @@ selected item with the getEntry() method.
 class ListDlg : public KDialog  {
 Q_OBJECT
 public:
-  ListDlg(QStringList &entryList,QWidget* parent=0, const char *name =0);
+  ListDlg(QStringList &entryList,QWidget* parent=0);
   ~ListDlg();
   QString getEntry();
   int getEntryNum();

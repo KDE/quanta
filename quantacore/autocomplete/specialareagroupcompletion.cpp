@@ -56,7 +56,7 @@ QList<KTextEditor::CompletionItem>* SpecialAreaGroupCompletion::completionEntrie
     QString memberName = it.key();
     if (memberName.startsWith(m_startsWith))
     {
-      GroupElementList elementList = it.data();
+      GroupElementList elementList = it.value();
       GroupElementList::ConstIterator listEnd(elementList.constEnd());
       for (GroupElementList::ConstIterator elementIt = elementList.constBegin(); elementIt != listEnd; ++elementIt)
       {

@@ -30,7 +30,7 @@ public:
     * @param widget parent widget
     * @param name object name
     */
-    AskForSaveDlg(const QString &caption, const QString &question, QWidget *parent = 0, const char *name = 0);
+    AskForSaveDlg(const QString &caption, const QString &question, QWidget *parent = 0);
     ~AskForSaveDlg();
     /**
     * @return The status of the dialog (which button was pressed)

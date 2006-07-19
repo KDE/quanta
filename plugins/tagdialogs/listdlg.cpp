@@ -24,7 +24,7 @@
 #include <QString>
 #include <QStringList>
 
-ListDlg::ListDlg(QStringList &entryList,QWidget* parent, const char *name )
+ListDlg::ListDlg(QStringList &entryList,QWidget* parent)
   : KDialog(parent), listbox(new KListBox(this))
 {
    Q_CHECK_PTR(listbox);

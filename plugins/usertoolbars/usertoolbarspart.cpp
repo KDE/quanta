@@ -155,7 +155,7 @@ UserToolbarsPart::~UserToolbarsPart()
   m_tempFileList.clear();
   for (int i = 0; i < m_tempDirList.count(); i++)
   {
-      KIO::NetAccess::del(KUrl().fromPathOrUrl(m_tempDirList.at(i)->name()), 0L);
+      KIO::NetAccess::del(KUrl(m_tempDirList.at(i)->name()), 0L);
   }
   qDeleteAll(m_tempDirList.begin(), m_tempDirList.end());
   m_tempDirList.clear();
@@ -610,7 +610,7 @@ bool UserToolbarsPart::slotRemoveToolbar(const QString& id)
         case KMessageBox::Yes:
              {
                bool local = true;
-               if (prj && p_toolbar->url.url().startsWith(prj->projectDirectory()))
+               if (prj && p_toolbar->url.url().startsWith(prj->projectDirectory().path()))
                   local = false;
                 if (!saveToolbar(local, p_toolbar->id))
                     return false;
@@ -619,7 +619,7 @@ bool UserToolbarsPart::slotRemoveToolbar(const QString& id)
         case KMessageBox::Continue:
              {
                 bool local = true;
-               if (prj && p_toolbar->url.url().startsWith(prj->projectDirectory()))
+                if (prj && p_toolbar->url.url().startsWith(prj->projectDirectory().path()))
                   local = false;
                 if (!saveToolbar(local, p_toolbar->id, p_toolbar->url))
                     return false;
@@ -732,14 +732,14 @@ bool UserToolbarsPart::saveToolbar(bool localToolbar, const QString& toolbarToSa
       } else
       {
 //FIXME no toolbarURL() in KDevProject. Check all hardcoded "toolbars" dir below!
-        url = KFileDialog::getSaveUrl(prj->projectDirectory() + "/toolbars", "*" + Helper::toolbarExtension(), KDevApi::self()->mainWindow()->main());
+        url = KFileDialog::getSaveUrl(prj->projectDirectory().path() + "/toolbars", "*" + Helper::toolbarExtension(), KDevApi::self()->mainWindow()->main());
       }
 
       if (url.isEmpty())
           return false;
 
       if (prj)
-          projectToolbarsURL = KUrl(prj->projectDirectory() + "/toolbars");
+        projectToolbarsURL = KUrl(prj->projectDirectory().path() + "/toolbars");
       if ( ((!localToolbar) && (projectToolbarsURL.isParentOf(url)) ) ||
             ((localToolbar) && (KUrl(localToolbarsDir).isParentOf(url))) )
       {
