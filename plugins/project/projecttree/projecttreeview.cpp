@@ -270,7 +270,7 @@ void ProjectTreeView::slotProjectOpened()
   if (m_quantaProject)
     m_projectBaseURL = m_quantaProject->projectDirectory();
   else
-    m_projectBaseURL = KUrl::fromPathOrUrl(KDevApi::self()->project()->projectDirectory());
+    m_projectBaseURL = KUrl(KDevApi::self()->project()->projectDirectory());
 
   if (m_projectDir)  // just in case we have already one
   {
@@ -367,7 +367,7 @@ void ProjectTreeView::slotCreateFile()
     KTempFile *tempFile = new KTempFile(Helper::tmpFilePrefix());
     tempFile->setAutoDelete(true);
     tempFile->close();
-    if (ExtFileInfo::copy(KUrl::fromPathOrUrl(tempFile->name()), url));
+    if (ExtFileInfo::copy(KUrl(tempFile->name()), url));
     {
 // FIXME      emit insertToProject(url);
 //       emit openFile(url);

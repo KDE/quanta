@@ -79,7 +79,8 @@ void SAGroupParser::slotParseForScriptGroup()
 #ifdef DEBUG_PARSER
       //kDebug(24001) << "Calling slotParseForScriptGroup from slotParseForScriptGroup." << endl;
 #endif
-      m_parseForGroupTimer->start(0, true);
+      m_parseForGroupTimer->setSingleShot(true);
+      m_parseForGroupTimer->start(0);
     }
   } else
   {

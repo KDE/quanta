@@ -23,15 +23,15 @@
 #include <QRadioButton>
 #include <QGroupBox>
 
-TagQuickListDlg::TagQuickListDlg(QWidget *parent, const char *name)
-    : QDialog(parent,name,true)
+TagQuickListDlg::TagQuickListDlg(QWidget *parent)
+    : QDialog(parent, true)
 {
   setWindowTitle(name);
 
   initDialog();
 
-  groupBox->insert(radioOrdered);
-  groupBox->insert(radioUnordered);
+  groupBox->addButton(radioOrdered);
+  groupBox->addButton(radioUnordered);
 
   connect( buttonOk, SIGNAL(clicked()), SLOT(accept()) );
   connect( buttonCancel, SIGNAL(clicked()), SLOT(reject()) );

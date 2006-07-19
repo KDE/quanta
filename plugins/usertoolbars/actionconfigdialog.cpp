@@ -56,15 +56,15 @@
 #include "useraction.h"
 #include "toolbartabwidget.h"
 
-ActionConfigDialog::ActionConfigDialog(const QHash<QString, ToolbarEntry*> &toolbarList, KDevPlugin* parent, const char* name, bool modal, Qt::WFlags fl, const QString& defaultAction )
-    :QDialog( KDevApi::self()->mainWindow()->main(), name, modal, fl )
+ActionConfigDialog::ActionConfigDialog(const QHash<QString, ToolbarEntry*> &toolbarList, KDevPlugin* parent, bool modal, Qt::WFlags fl, const QString& defaultAction )
+    :QDialog( KDevApi::self()->mainWindow()->main(), modal, fl )
 {
   setupUi(this);
   m_plugin = parent;
   m_toolbarList = toolbarList;
-  buttonOk->setIconSet(SmallIconSet("button_ok"));
-  buttonCancel->setIconSet(SmallIconSet("button_cancel"));
-  buttonApply->setIconSet(SmallIconSet("apply"));
+  buttonOk->setIconSet(SmallIcon("button_ok"));
+  buttonCancel->setIcon(SmallIcon("button_cancel"));
+  buttonApply->setIcon(SmallIcon("apply"));
   //buttonHelp->setIconSet(SmallIconSet("help"));
 
   currentAction = 0L;
@@ -145,7 +145,7 @@ ActionConfigDialog::ActionConfigDialog(const QHash<QString, ToolbarEntry*> &tool
     }
     oldItem = item;
   }
-  uint acCount = ac->count();
+  uint acCount = ac->actions().count();
   for (uint i = 0; i < acCount; i++)
   {
     action = ac->action(i);
@@ -287,11 +287,11 @@ void ActionConfigDialog::slotSelectionChanged(Q3ListViewItem *item)
   {
     UserAction *action = 0L;
     KActionCollection *ac = KDevApi::self()->mainWindow()->main()->actionCollection();
-    uint acCount = ac->count();
+    uint acCount = ac->actions().count();
 //find the corresponding action
     for (uint i = 0; i < acCount; i++)
     {
-      KAction *a = ac->action(i);
+      KAction *a = ac->actions().value(i);
       QString actionName = a->name();
       if (a && actionName == item->text(2) && a->inherits("UserAction"))
       {
@@ -529,13 +529,13 @@ void ActionConfigDialog::saveCurrentAction()
       el.removeChild(item);
 //add the new detailed settings
   QDomDocument document = QDomDocument();
-  int type = typeCombo->currentItem();
+  int type = typeCombo->currentIndex();
   switch (type)
   {
     case 1:{
         el.setAttribute("type","script");
         item = document.createElement("script");
-        switch (inputBox->currentItem())
+        switch (inputBox->currentIndex())
         {
           case 1:{ item.setAttribute("input", "current");
                    break;
@@ -568,7 +568,7 @@ void ActionConfigDialog::saveCurrentAction()
                     break;
                   }
         }
-        switch (errorBox->currentItem())
+        switch (errorBox->currentIndex())
         {
           case 1:{ item.setAttribute("error", "cursor");
                    break;
@@ -715,12 +715,12 @@ void ActionConfigDialog::slotShortcutCaptured(const KShortcut &shortcut)
   QMap<QString, QString>::Iterator it;
   for ( it = globalShortcuts.begin(); it != globalShortcuts.end(); ++it )
   {
-    if (it.data().contains(shortcutText))
+    if (it.value().contains(shortcutText))
     {
       global = it.key();
       break;
     }
-    if (!shortcutText2.isEmpty() && it.data().contains(shortcutText2))
+    if (!shortcutText2.isEmpty() && it.value().contains(shortcutText2))
     {
       shortcutText = shortcutText2;
       global = it.key();
@@ -737,9 +737,9 @@ void ActionConfigDialog::slotShortcutCaptured(const KShortcut &shortcut)
     {
         it.next();
         KActionCollection *ac = current->actionCollection();
-        for (int i = 0; i < ac->count(); i++)
+        for (int i = 0; i < ac->actions().count(); i++)
         {
-          KAction *action = ac->action(i);
+          KAction *action = ac->actions().value(i);
           if (action != currentAction && action->shortcut().toString().contains(shortcutText))
           {
             global = action->text();
@@ -807,7 +807,7 @@ void ActionConfigDialog::slotNewAction()
   static_cast<UserAction*>(currentAction)->setModified(true);
   Q3ListViewItem *currentItem = actionTreeView->currentItem();
   Q3ListViewItem *item = new K3ListViewItem(allActionsItem);
-  QString actionText = QString("Action_%1").arg(KDevApi::self()->mainWindow()->main()->actionCollection()->count());
+  QString actionText = QString("Action_%1").arg(KDevApi::self()->mainWindow()->main()->actionCollection()->actions().count());
   currentAction->setText(actionText);
   item->setText(2, currentAction->name());
   item->setText(0, actionText);

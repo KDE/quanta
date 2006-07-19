@@ -188,7 +188,8 @@ bool SAParser::slotParseOneLine()
 #ifdef DEBUG_PARSER
                   kDebug(24001) << "Calling slotParseOneLine from parseArea (opening group struct)." << endl;
 #endif
-                  m_parseOneLineTimer->start(0, true);
+                  m_parseOneLineTimer->setSingleShot(true);
+                  m_parseOneLineTimer->start(0);
                 }
                 return true;
               } else  //it's a closing group structure element (like "}")
@@ -204,7 +205,8 @@ bool SAParser::slotParseOneLine()
 #ifdef DEBUG_PARSER
                     kDebug(24001) << "Calling slotParseOneLine from parseArea (closing group struct)." << endl;
 #endif
-                    m_parseOneLineTimer->start(0, true);
+                    m_parseOneLineTimer->setSingleShot(true);
+                    m_parseOneLineTimer->start(0);
                   }
                   return true;
                 }
@@ -261,7 +263,8 @@ bool SAParser::slotParseOneLine()
 #ifdef DEBUG_PARSER
                   kDebug(24001) << "Calling slotParseOneLine from parseArea (group structure)." << endl;
 #endif
-                  m_parseOneLineTimer->start(0, true);
+                  m_parseOneLineTimer->setSingleShot(true);
+                  m_parseOneLineTimer->start(0);
                 }
                 return true;
               }
@@ -319,8 +322,9 @@ bool SAParser::slotParseOneLine()
 #ifdef DEBUG_PARSER
                 kDebug(24001) << "Calling slotParseOneLine from slotParseOneLine (nested area)." << endl;
 #endif
-                m_parseOneLineTimer->start(0, true);
-                return true;
+                  m_parseOneLineTimer->setSingleShot(true);
+                  m_parseOneLineTimer->start(0);
+                  return true;
               }
             }
           }
@@ -631,7 +635,8 @@ bool SAParser::slotParseOneLine()
 #ifdef DEBUG_PARSER
       kDebug(24001) << "Calling slotParseOneLine from slotParseOneLine." << endl;
 #endif
-      m_parseOneLineTimer->start(0, true);
+      m_parseOneLineTimer->setSingleShot(true);
+      m_parseOneLineTimer->start(0);
     }
   } else
   {
@@ -681,7 +686,7 @@ Node* SAParser::parseArea(const AreaStruct &specialArea,
   if (!forcedAreaEndString.isEmpty())
   {
     s_forcedAreaRx.setPattern(forcedAreaEndString);
-    s_forcedAreaRx.setCaseSensitive(m_dtd->caseSensitive);
+    s_forcedAreaRx.setCaseSensitivity(m_dtd->caseSensitive);
     s_searchForForcedAreaEnd = true;
     s_searchForAreaEnd = false;
     if (s_parentNode)
@@ -735,7 +740,8 @@ Node* SAParser::parseArea(const AreaStruct &specialArea,
 #ifdef DEBUG_PARSER
       kDebug(24001) << "Calling slotParseOneLine from parseArea." << endl;
 #endif
-      m_parseOneLineTimer->start(0, true);
+      m_parseOneLineTimer->setSingleShot(true);
+      m_parseOneLineTimer->start(0);
       return 0L;
     }
   }
@@ -767,7 +773,8 @@ Node *SAParser::parsingDone()
           kDebug(24001) << "Calling slotParseNodeInDetail from parsingDone (use return values)" << endl;
 #endif
           emit finishedParsing(m_source, m_base);
-          m_parseInDetailTimer->start(0, true);
+          m_parseOneLineTimer->setSingleShot(true);
+          m_parseOneLineTimer->start(0);
           return m_lastParsedNode;
         }
         else
@@ -854,7 +861,8 @@ Node *SAParser::parsingDone()
 #ifdef DEBUG_PARSER
         kDebug(24001) << "Calling slotParseNodeInDetail from parsingDone." << endl;
 #endif
-        m_parseInDetailTimer->start(0, true);
+        m_parseOneLineTimer->setSingleShot(true);
+        m_parseOneLineTimer->start(0);
         emit finishedParsing(m_source, m_base);
       }
       else
@@ -972,7 +980,7 @@ void SAParser::setParsingEnabled(bool enabled)
 
 void SAParser::slotGroupParsingDone(SAGroupParser *groupParser)
 {
-  m_groupParsers.remove(groupParser);
+  m_groupParsers.removeAll(groupParser);
   delete groupParser;
 }
 

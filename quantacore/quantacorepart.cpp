@@ -406,7 +406,7 @@ void QuantaCorePart::slotOpenNew()
   KTempFile * file = new KTempFile(KStandardDirs::locateLocal("tmp", ""), i18n(".unsaved"));
 //   file->setAutoDelete(true);
   file->close();
-  KUrl url = KUrl::fromPathOrUrl(file->name());
+  KUrl url = KUrl(file->name());
   KDevDocument *doc = KDevApi::self()->documentController()->editDocument(url);
   if (doc)
   {

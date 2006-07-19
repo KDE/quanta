@@ -68,6 +68,7 @@
 #include <kprotocolinfo.h>
 #include <kmenu.h>
 #include <kparts/part.h>
+#include <kio/jobuidelegate.h>
 
 #include <X11/Xlib.h>
 
@@ -666,8 +667,10 @@ void BaseTreeView::reload(BaseTreeBranch *btb)
 void BaseTreeView::slotJobFinished(KJob *job)
 {
   if ( job->error() )
-    static_cast<KIO::Job*>(job)->showErrorDialog(this);
-
+  {
+    static_cast<KIO::Job*>(job)->ui()->setWindow(this);
+    static_cast<KIO::Job*>(job)->ui()->showErrorMessage();
+  }
 /*  progressBar->setTotalSteps(1);  FIXME
   progressBar->setProgress(-1);
   progressBar->setTextEnabled(false);*/
@@ -991,7 +994,7 @@ void BaseTreeView::slotCreateFile()
     KTempFile *tempFile = new KTempFile(Helper::tmpFilePrefix());
     tempFile->setAutoDelete(true);
     tempFile->close();
-    if (QuantaNetAccess::copy(KUrl::fromPathOrUrl(tempFile->name()), url, m_plugin));
+    if (QuantaNetAccess::copy(KUrl(tempFile->name()), url, m_plugin));
     {
       m_partController->editDocument(url);
     }

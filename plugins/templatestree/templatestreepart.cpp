@@ -241,7 +241,7 @@ void TemplatesTreePart::slotCreateSiteTemplate()
 
 /*    if (Project::ref()->hasProject() && targetURL.url().startsWith(Project::ref()->templateURL().url()))
       valid = true;*/
-  if (!KUrl::fromPathOrUrl(startDir).isParentOf(targetURL))
+  if (!KUrl(startDir).isParentOf(targetURL))
     KMessageBox::information(KDevApi::self()->mainWindow()->main(), i18n("This Template will not be visible in your Templates Tree, because you do not save it to the local or project template folder."));
 
 
@@ -256,7 +256,7 @@ void TemplatesTreePart::slotCreateSiteTemplate()
     tar.close();
   } else
     error = true;
-  if (!QuantaNetAccess::copy(KUrl::fromPathOrUrl(tempFile->name()), targetURL, this, false))
+  if (!QuantaNetAccess::copy(KUrl(tempFile->name()), targetURL, this, false))
     error = true;
 
   if (error)

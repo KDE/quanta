@@ -739,7 +739,7 @@ bool UserToolbarsPart::saveToolbar(bool localToolbar, const QString& toolbarToSa
           return false;
 
       if (prj)
-          projectToolbarsURL = KUrl::fromPathOrUrl(prj->projectDirectory() + "/toolbars");
+          projectToolbarsURL = KUrl(prj->projectDirectory() + "/toolbars");
       if ( ((!localToolbar) && (projectToolbarsURL.isParentOf(url)) ) ||
             ((localToolbar) && (KUrl(localToolbarsDir).isParentOf(url))) )
       {
@@ -871,7 +871,7 @@ KUrl UserToolbarsPart::saveToolbarToFile(const QString& toolbarName, const KUrl&
   if (!tar.writeFile(QFileInfo(tarFile.path()).baseName() + ".actions", "user", "group", buffer2.buffer().data(), buffer2.buffer().size()))
       return KUrl();
   tar.close();
-  if (!ExtFileInfo::copy(KUrl::fromPathOrUrl(tempFile->name()), tarFile, -1, true, false, KDevApi::self()->mainWindow()->main()))
+  if (!ExtFileInfo::copy(KUrl(tempFile->name()), tarFile, -1, true, false, KDevApi::self()->mainWindow()->main()))
   {
     KMessageBox::error(KDevApi::self()->mainWindow()->main(), i18n("<qt>An error happened while saving the <b>%1</b> toolbar.<br>"
         "Check that you have write permissions for<br><b>%2</b></qt>", p_toolbar->name, tarFile.pathOrUrl()), i18n("Toolbar Saving Error"));
@@ -1047,8 +1047,8 @@ void UserToolbarsPart::slotSendToolbar()
     {
       toStr = mailDlg->lineEmail->text();
       subjectStr = (mailDlg->lineSubject->text().isEmpty())?i18n("KDevelop/Quanta Plus toolbar"):mailDlg->lineSubject->text();
-      if ( !mailDlg->titleEdit->text().isEmpty())
-        message = mailDlg->titleEdit->text();
+      if ( !mailDlg->titleEdit->toPlainText().isEmpty())
+        message = mailDlg->titleEdit->toPlainText();
     } else
     {
       KMessageBox::error(KDevApi::self()->mainWindow()->main(),i18n("No destination address was specified.\n Sending is aborted."),i18n("Error Sending Email"));

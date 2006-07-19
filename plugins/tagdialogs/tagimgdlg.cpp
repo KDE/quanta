@@ -117,7 +117,7 @@ void TagImgDlg::slotFileSelect()
 
 void TagImgDlg::slotLineFileSelect()
 {
-  slotImageSet(KUrl::fromPathOrUrl(lineImgSource->text()));
+  slotImageSet(KUrl(lineImgSource->text()));
 }
 
 void TagImgDlg::readAttributes( QHash<QString, QString*> *d )
