@@ -1201,7 +1201,7 @@ void UserToolbarsPart::slotToolbarRemoved(const QString &id)
 
 void UserToolbarsPart::slotEditAction(const QString& actionName)
 {
-  ActionConfigDialog dlg(m_toolbarList, this, "actions_config_dlg", true, 0, actionName);
+  ActionConfigDialog dlg(m_toolbarList, this,  true, 0, actionName);
   dlg.exec();
 }
 
@@ -1269,7 +1269,7 @@ void UserToolbarsPart::slotRemoveAction(const QString& id, const QString& a_acti
 
 void UserToolbarsPart::slotConfigureActions()
 {
-  ActionConfigDialog dlg(m_toolbarList, this, "actions_config_dlg", true);
+  ActionConfigDialog dlg(m_toolbarList, this, true);
   dlg.exec();
 }
 

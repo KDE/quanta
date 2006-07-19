@@ -57,8 +57,9 @@
 #include "toolbartabwidget.h"
 
 ActionConfigDialog::ActionConfigDialog(const QHash<QString, ToolbarEntry*> &toolbarList, KDevPlugin* parent, bool modal, Qt::WFlags fl, const QString& defaultAction )
-    :QDialog( KDevApi::self()->mainWindow()->main(), modal, fl )
+    :QDialog( KDevApi::self()->mainWindow()->main(), fl )
 {
+  setModal(modal);
   setupUi(this);
   m_plugin = parent;
   m_toolbarList = toolbarList;

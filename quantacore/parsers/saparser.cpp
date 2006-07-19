@@ -686,7 +686,7 @@ Node* SAParser::parseArea(const AreaStruct &specialArea,
   if (!forcedAreaEndString.isEmpty())
   {
     s_forcedAreaRx.setPattern(forcedAreaEndString);
-    s_forcedAreaRx.setCaseSensitivity(m_dtd->caseSensitive);
+    s_forcedAreaRx.setCaseSensitivity(m_dtd->caseSensitive ? Qt::CaseSensitive : Qt::CaseInsensitive);
     s_searchForForcedAreaEnd = true;
     s_searchForAreaEnd = false;
     if (s_parentNode)

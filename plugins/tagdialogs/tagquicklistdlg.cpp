@@ -24,9 +24,9 @@
 #include <QGroupBox>
 
 TagQuickListDlg::TagQuickListDlg(QWidget *parent)
-    : QDialog(parent, true)
+    : QDialog(parent)
 {
-  setWindowTitle(name);
+  setModal(true);
 
   initDialog();
 
