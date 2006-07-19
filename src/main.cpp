@@ -64,7 +64,23 @@ int main(int argc, char *argv[])
 
   KDevQuantaExtension::init();
 
+  //initialize the api object
+  KDevApi::self() ->setMainWindow( TopLevel::getInstance() );
+  KDevApi::self() ->setPluginController( PluginController::getInstance() );
+  KDevApi::self() ->setCore( Core::getInstance() );
+  KDevApi::self() ->setDocumentController( DocumentController::getInstance() );
+
   SplashScreen *splash = 0;
+
+  QObject::connect( PluginController::getInstance(),
+                    SIGNAL( loadingPlugin( const QString & ) ),
+                    splash, SLOT( showMessage( const QString & ) ) );
+
+  QObject::connect( DocumentController::getInstance(),
+                    SIGNAL( openingDocument( const QString & ) ),
+                    splash, SLOT( showMessage( const QString & ) ) );
+
+
   QString splashFile = KStandardDirs::locate("appdata", "pics/quantalogo.png");
   if (!splashFile.isEmpty())
   {
@@ -79,8 +95,6 @@ int main(int argc, char *argv[])
     splash->showMessage( i18n("Loading Settings") );
   TopLevel::getInstance()->loadSettings();
 
-  QObject::connect(PluginController::getInstance(), SIGNAL(loadingPlugin(const QString &)),
-                   splash, SLOT(message(const QString &)));
   if (splash)
     splash->show();
 
