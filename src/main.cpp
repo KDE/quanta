@@ -107,8 +107,8 @@ int main(int argc, char *argv[])
     KMessageBox::error( 0L, i18n("The Quanta Core Plugin could not be loaded.\nYour installation seems to be broken."));
   }
 
-//FIXME: this is disabled now in KDevelop. What to use instead?    
-//  PluginController::getInstance()->loadInitialPlugins();
+  PluginController::getInstance() ->loadPlugins( ProfileEngine::Core );
+  PluginController::getInstance() ->loadPlugins( ProfileEngine::Global );
 
   Core::getInstance()->doEmitCoreInitialized();
 
