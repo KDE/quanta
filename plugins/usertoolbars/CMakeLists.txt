@@ -43,7 +43,6 @@ install(TARGETS kdevusertoolbars  DESTINATION ${LIB_INSTALL_DIR}/kde4)
 
 ########### install files ###############
 
-install( FILES   DESTINATION ${DATA_INSTALL_DIR}/kdevusertoolbars)
 install( FILES  global  DESTINATION ${DATA_INSTALL_DIR}/quanta)
 install( FILES  kdevusertoolbars.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
 install( FILES  kdevusertoolbars.rc  DESTINATION ${DATA_INSTALL_DIR}/kdevusertoolbars)

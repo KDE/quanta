@@ -34,7 +34,6 @@ install(TARGETS kdevstructuretree  DESTINATION ${LIB_INSTALL_DIR}/kde4)
 
 ########### install files ###############
 
-install( FILES   DESTINATION ${DATA_INSTALL_DIR}/kdevstructuretree)
 install( FILES  kdevstructuretree.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
 install( FILES  kdevstructuretree.rc  DESTINATION ${DATA_INSTALL_DIR}/kdevstructuretree)
 

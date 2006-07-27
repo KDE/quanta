@@ -29,7 +29,6 @@ install(TARGETS kdevhtmlpreview  DESTINATION ${LIB_INSTALL_DIR}/kde4)
 
 ########### install files ###############
 
-install( FILES   DESTINATION ${DATA_INSTALL_DIR}/kdevhtmlpreview)
 install( FILES  kdevhtmlpreview.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
 install( FILES  kdevhtmlpreview.rc  DESTINATION ${DATA_INSTALL_DIR}/kdevhtmlpreview)
 

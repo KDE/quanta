@@ -31,7 +31,6 @@ install(TARGETS kdevquantafilestree  DESTINATION ${LIB_INSTALL_DIR}/kde4)
 
 ########### install files ###############
 
-install( FILES   DESTINATION ${DATA_INSTALL_DIR}/kdevquantafilestree)
 install( FILES  kdevquantafilestree.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
 install( FILES  kdevquantafilestree.rc  DESTINATION ${DATA_INSTALL_DIR}/kdevquantafilestree)
 
