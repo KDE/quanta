@@ -514,7 +514,6 @@ void StructTreeView::slotMouseClicked(int button, QListViewItem *item, const QPo
           slotMouseClickedVPL(button, item, point, dummy);
       else
           slotGotoTag(item);
-      slotGotoTag(item);
     }
 
     if (button == Qt::MidButton)
