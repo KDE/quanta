@@ -21,6 +21,7 @@
 
 //kdevelop includes
 #include <interfaces/kdevcore.h>
+#include <interfaces/kdevconfig.h>
 
 // KDE includes
 #include <kdebug.h>
@@ -46,7 +47,7 @@ FilesTreeView::FilesTreeView(QuantaFilesTreePart *part, QWidget *parent)
   setShowToolTips(Settings::self()->filesTreeTooltips());
   setSaveOpenFolder(Settings::self()->filesTreeSave());
 
-  m_config = KGlobal::config();
+  m_config = KDevConfig::standard();
 
   addColumn(i18n("Files Tree"), -1);
   addColumn("");
