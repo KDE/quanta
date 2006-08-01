@@ -34,7 +34,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kdevcreatequantaproject )
 
 target_link_libraries(kdevcreatequantaproject kdevquanta kdevinterfaces ${KDE4_KDECORE_LIBS})
 
-install(TARGETS kdevcreatequantaproject  DESTINATION ${LIB_INSTALL_DIR}/kde4)
+install(TARGETS kdevcreatequantaproject  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### install files ###############

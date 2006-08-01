@@ -70,7 +70,7 @@ target_link_libraries(kdevquantacore kdevquanta
 kdevinterfaces kdevutil ktexteditor
 ${LIBXML2_LIBRARIES} ${KDE4_KDECORE_LIBS})
 
-install(TARGETS kdevquantacore  DESTINATION ${LIB_INSTALL_DIR}/kde4)
+install(TARGETS kdevquantacore  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### install files ###############

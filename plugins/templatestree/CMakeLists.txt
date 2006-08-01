@@ -27,9 +27,9 @@ kde4_add_plugin(kdevtemplatestree WITH_PREFIX ${kdevtemplatestree_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kdevtemplatestree )
 
-target_link_libraries(kdevtemplatestree  kdevquanta kdevinterfaces kdevutil kde3support ${KDE4_KDECORE_LIBS} )
+target_link_libraries(kdevtemplatestree  kdevquanta kdevinterfaces kdevutil ${KDE4_KDE3SUPPORT_LIBS} )
 
-install(TARGETS kdevtemplatestree  DESTINATION ${LIB_INSTALL_DIR}/kde4)
+install(TARGETS kdevtemplatestree  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### install files ###############
