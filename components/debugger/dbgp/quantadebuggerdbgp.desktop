@@ -32,6 +32,7 @@ Comment[sv]=DBGp-insticksprogram för felsökning, se http://xdebug.org
 Comment[uk]=Втулок зневаджувача DBGp, див. http://xdebug.org
 Comment[zh_CN]=DBGp 调试器插件，参看 http://xdebug.org
 Comment[zh_HK]=DBGp 除錯器外掛程式，請參閱 http://xdebug.org
+Comment[zh_TW]=DBGp 除錯器外掛程式，請參閱 http://xdebug.org
 Icon=kdbg
 ServiceTypes=Quanta/Debugger
 X-KDE-Library=quantadebuggerdbgp

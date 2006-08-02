@@ -36,6 +36,7 @@ Comment[tr]=Gubed PHP hata ayıklayıcısıyla iletişim kurmayı sağlayan Quan
 Comment[uk]=Втулок зневадження Quanta для зв'язку зі зневаджувачем PHP -- Gubed, див. http://gubed.sf.net
 Comment[zh_CN]=与 Gubed PHP 调试器交互 Quanta 调试器插件，见 http://gubed.sf.net
 Comment[zh_HK]=Quanta 對於 Gubed PHP 除錯器的通訊外掛程式, 請參閱 http://gubed.sf.net
+Comment[zh_TW]=Quanta 對於 Gubed PHP 除錯器的通訊外掛程式, 請參閱 http://gubed.sf.net
 Icon=kdbg
 ServiceTypes=Quanta/Debugger
 X-KDE-Library=quantadebuggergubed
