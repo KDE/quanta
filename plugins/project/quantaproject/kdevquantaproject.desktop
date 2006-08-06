@@ -3,8 +3,11 @@ Encoding=UTF-8
 Type=Service
 Exec=blubb
 Name=KDevQuantaProject
+Name[x-test]=xxKDevQuantaProjectxx
 GenericName=Quantaproject Plugin
+GenericName[x-test]=xxQuantaproject Pluginxx
 Comment=QuantaProject Description
+Comment[x-test]=xxQuantaProject Descriptionxx
 Icon=quanta
 ServiceTypes=KDevelop/Project
 I

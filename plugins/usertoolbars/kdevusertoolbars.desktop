@@ -3,8 +3,11 @@ Encoding=UTF-8
 Type=Service
 Exec=blubb
 Name=KDevUserToolbars
+Name[x-test]=xxKDevUserToolbarsxx
 GenericName=UserToolbars Plugin
+GenericName[x-test]=xxUserToolbars Pluginxx
 Comment=UserToolbars Description
+Comment[x-test]=xxUserToolbars Descriptionxx
 Icon=kdevelop
 ServiceTypes=KDevelop/Plugin,KDevelop/UserToolbars
 

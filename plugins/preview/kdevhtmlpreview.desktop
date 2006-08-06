@@ -3,8 +3,11 @@ Encoding=UTF-8
 Type=Service
 Exec=blubb
 Name=KDevHTMLPreview
+Name[x-test]=xxKDevHTMLPreviewxx
 GenericName=HTMLPreview Plugin
+GenericName[x-test]=xxHTMLPreview Pluginxx
 Comment=HTMLPreview Description
+Comment[x-test]=xxHTMLPreview Descriptionxx
 Icon=konqueror
 ServiceTypes=KDevelop/Plugin
 

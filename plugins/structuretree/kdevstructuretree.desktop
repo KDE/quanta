@@ -3,8 +3,11 @@ Encoding=UTF-8
 Type=Service
 Exec=blubb
 Name=KDevStructureTree
+Name[x-test]=xxKDevStructureTreexx
 GenericName=Structure Tree Plugin
+GenericName[x-test]=xxStructure Tree Pluginxx
 Comment=The Structure Tree is a view on the stucture of the document.
+Comment[x-test]=xxThe Structure Tree is a view on the stucture of the document.xx
 Icon=view_tree
 ServiceTypes=KDevelop/Plugin
 

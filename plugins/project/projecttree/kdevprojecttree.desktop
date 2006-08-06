@@ -3,8 +3,11 @@ Encoding=UTF-8
 Type=Service
 Exec=blubb
 Name=KDevProjectTree
+Name[x-test]=xxKDevProjectTreexx
 GenericName=ProjectTree Plugin
+GenericName[x-test]=xxProjectTree Pluginxx
 Comment=ProjectTree Description
+Comment[x-test]=xxProjectTree Descriptionxx
 Icon=folder_green
 ServiceTypes=KDevelop/Plugin
 

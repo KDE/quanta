@@ -3,8 +3,11 @@ Encoding=UTF-8
 Type=Service
 Exec=blubb
 Name=KDevQuantaFilesTree
+Name[x-test]=xxKDevQuantaFilesTreexx
 GenericName=Quanta Files Tree Plugin
+GenericName[x-test]=xxQuanta Files Tree Pluginxx
 Comment=The Files Tree provides an interface to work with your filesystem
+Comment[x-test]=xxThe Files Tree provides an interface to work with your filesystemxx
 Icon=system
 ServiceTypes=KDevelop/Plugin
 
