@@ -5,7 +5,7 @@ add_subdirectory(22x22)
 ########### install files ###############
 
 
-kde4_install_icons( ${ICON_INSTALL_DIR}  hicolor )
+kde4_install_icons( ${ICON_INSTALL_DIR}   )
 
 
 
