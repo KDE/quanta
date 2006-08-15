@@ -41,10 +41,12 @@
 #include <ktexteditor/document.h>
 
 //kdevelop includes
-#include <interfaces/kdevcore.h>
-#include <interfaces/kdevmainwindow.h>
-#include <interfaces/kdevdocumentcontroller.h>
-#include <interfaces/kdevdocument.h>
+#include <kdevcore.h>
+#include <kdevcontext.h>
+#include <kdevmainwindow.h>
+#include <kdevdocumentcontroller.h>
+#include <kdevdocument.h>
+#include <kdevprojectcontroller.h>
 
 
 typedef KGenericFactory<HTMLPreviewPart> HTMLPreviewFactory;
@@ -75,12 +77,12 @@ HTMLPreviewPart::HTMLPreviewPart(QObject *parent, const QStringList &/*args*/)
   connect(m_configProxy, SIGNAL(insertConfigWidget(const KDialog*, QWidget*, unsigned int )),
           this, SLOT(insertConfigWidget(const KDialog*, QWidget*, unsigned int)));
 */
-  connect(KDevApi::self()->core(), SIGNAL(contextMenu(QMenu *, const Context *)),
+  connect(KDevCore::mainWindow(), SIGNAL(contextMenu(QMenu *, const Context *)),
           this, SLOT(contextMenu(QMenu *, const Context *)));
-  connect(KDevApi::self()->core(), SIGNAL(projectOpened()), this, SLOT(projectOpened()));
-  connect(KDevApi::self()->core(), SIGNAL(projectClosed()), this, SLOT(projectClosed()));
+  connect(KDevCore::projectController(), SIGNAL(projectOpened()), this, SLOT(projectOpened()));
+  connect(KDevCore::projectController(), SIGNAL(projectClosed()), this, SLOT(projectClosed()));
 
-  connect(KDevApi::self()->documentController(), SIGNAL(activePartChanged(KParts::Part *)), this, SLOT(slotActivePartChanged(KParts::Part *)));
+  connect(KDevCore::documentController(), SIGNAL(activePartChanged(KParts::Part *)), this, SLOT(slotActivePartChanged(KParts::Part *)));
 
   QTimer::singleShot(0, this, SLOT(init()));
 }
@@ -90,7 +92,7 @@ HTMLPreviewPart::~HTMLPreviewPart()
 // if you embed a widget, you need to tell the mainwindow when you remove it
   if (m_browserPart)
   {
-    KDevApi::self()->mainWindow()->removeView(m_browserPart->view());
+    KDevCore::mainWindow()->removeView(m_browserPart->view());
   }
 //   if (m_browserPart)
 //     m_partmanager->removePart(m_browserPart);
@@ -178,13 +180,13 @@ void HTMLPreviewPart::contextMenu(QMenu */*popup*/, const Context *context)
 
     // use context and plug actions here
   }
-  else if (context->hasType(Context::DocumentationContext))
+/*  else if (context->hasType(Context::DocumentationContext))
   {
     // documentation viewer context menu
 //     const DocumentationContext *dcontext = static_cast<const DocumentationContext*>(context);
 
     // use context and plug actions here
-  }
+}*/
 }
 
 void HTMLPreviewPart::projectOpened()
@@ -214,7 +216,7 @@ void HTMLPreviewPart::slotPreview()
 
   // if you want to embed your widget as an outputview, simply uncomment
   // the following line.
-    KDevApi::self()->mainWindow()->embedOutputView( m_browserPart->view(), i18n("Preview"), i18n("Preview in a browser") );
+    KDevCore::mainWindow()->embedOutputView( m_browserPart->view(), i18n("Preview"), i18n("Preview in a browser") );
 
   // if you want to embed your widget as a selectview (at the left), simply uncomment
   // the following line.

@@ -20,8 +20,10 @@
 #include "hacks.h"
 
 //kdevelop includes
-#include <interfaces/kdevcore.h>
-#include <interfaces/kdevconfig.h>
+#include <kdevcore.h>
+#include <kdevconfig.h>
+#include <kdevcontext.h>
+#include <kdevmainwindow.h>
 
 // KDE includes
 #include <kdebug.h>
@@ -169,7 +171,7 @@ void FilesTreeView::folderMenu(const QPoint &point)
   menuURL.adjustPath(KUrl::AddTrailingSlash);
   KUrl::List urlList(menuURL);
   FileContext context(urlList);
-  KDevApi::self()->core()->fillContextMenu(&popup, &context);
+  KDevCore::mainWindow()->fillContextMenu(&popup, &context);
 
   popup.exec(point);
 }
@@ -195,7 +197,7 @@ void FilesTreeView::fileMenu(const QPoint &point)
   // ask other plugins for menu entries
   KUrl::List urlList(currentKFileTreeViewItem()->url());
   FileContext context(urlList);
-  KDevApi::self()->core()->fillContextMenu(&popup, &context);
+  KDevCore::mainWindow()->fillContextMenu(&popup, &context);
 
   popup.exec(point);
 }

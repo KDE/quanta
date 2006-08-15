@@ -28,8 +28,8 @@
 #include <khtmlview.h>
 
 //kdevelop includes
-#include <interfaces/kdevcore.h>
-#include <interfaces/kdevdocumentcontroller.h>
+#include <kdevcore.h>
+#include <kdevdocumentcontroller.h>
 
 
 HTMLPart::HTMLPart(HTMLPreviewPart *part)
@@ -45,13 +45,13 @@ HTMLPart::~HTMLPart()
 
 void HTMLPart::slotDuplicate( )
 {
-  KDevApi::self()->documentController()->showDocumentation(url(), true);
+  KDevCore::documentController()->showDocumentation(url(), true);
 }
 
 
 void HTMLPart::slotOpenInNewWindow( const KUrl & url )
 {
-  KDevApi::self()->documentController()->showDocumentation(url, true);
+  KDevCore::documentController()->showDocumentation(url, true);
 }
 
 #include "htmlpart.moc"

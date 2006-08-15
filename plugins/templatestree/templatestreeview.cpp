@@ -30,9 +30,11 @@
 #include "hacks.h"
 
 //kdevelop includes
-#include <interfaces/kdevcore.h>
-#include <interfaces/kdevplugin.h>
-#include <interfaces/kdevproject.h>
+#include <kdevcore.h>
+#include <kdevplugin.h>
+#include <kdevproject.h>
+#include <kdevcontext.h>
+#include <kdevmainwindow.h>
 
 #include <unistd.h>
 #include <grp.h>
@@ -281,7 +283,7 @@ void TemplatesTreeView::folderMenu(const QPoint &point)
   menuURL.adjustPath(KUrl::AddTrailingSlash);
   KUrl::List urlList(menuURL);
   FileContext context(urlList);
-  KDevApi::self()->core()->fillContextMenu(&popup, &context);
+  KDevCore::mainWindow()->fillContextMenu(&popup, &context);
 
   popup.exec(point);
 }
@@ -329,7 +331,7 @@ void TemplatesTreeView::fileMenu(const QPoint &point)
   // ask other plugins for menu entries
   KUrl::List urlList(currentKFileTreeViewItem()->url());
   FileContext context(urlList);
-  KDevApi::self()->core()->fillContextMenu(&popup, &context);
+  KDevCore::mainWindow()->fillContextMenu(&popup, &context);
 
   popup.exec(point);
 }
@@ -836,12 +838,12 @@ void TemplatesTreeView::slotDragInsert(QDropEvent *e)
 
 void TemplatesTreeView::slotProjectOpened()
 {
-  m_projectName = KDevApi::self()->project()->projectName();
-  QuantaProjectIf * qProject = dynamic_cast<QuantaProjectIf *>(KDevApi::self()->project());
+  m_projectName = KDevCore::activeProject()->projectName();
+  QuantaProjectIf * qProject = dynamic_cast<QuantaProjectIf *>(KDevCore::activeProject());
   if (qProject)
     m_projectBaseURL = qProject->projectDirectory();
   else
-    m_projectBaseURL = KUrl(KDevApi::self()->project()->projectDirectory());
+    m_projectBaseURL = KUrl(KDevCore::activeProject()->projectDirectory());
 
   if (m_projectDir)
     removeBranch(m_projectDir);

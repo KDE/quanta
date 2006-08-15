@@ -32,8 +32,9 @@
 #include <klocale.h>
 
 //kdevelop includes
-#include <interfaces/kdevcore.h>
-#include <interfaces/kdevmainwindow.h>
+#include <kdevcore.h>
+#include <kdevcontext.h>
+#include <kdevmainwindow.h>
 
 typedef KGenericFactory<TagDialogsPart> TagDialogsFactory;
 K_EXPORT_COMPONENT_FACTORY( libkdevtagdialogs, TagDialogsFactory("kdevtagdialogs") );
@@ -49,7 +50,7 @@ TagDialogsPart::TagDialogsPart(QObject *parent, const QStringList &/*args*/)
 
     setupActions();
 
-    connect(KDevApi::self()->core(), SIGNAL(contextMenu(QMenu *, const Context *)),
+    connect(KDevCore::mainWindow(), SIGNAL(contextMenu(QMenu *, const Context *)),
         this, SLOT(slotContextMenu(QMenu *, const Context *)));
 
 /*    m_configProxy = new ConfigWidgetProxy(core());

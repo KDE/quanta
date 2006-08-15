@@ -21,9 +21,9 @@
 #include "helper.h"
 
 //kdevelop includes
-#include <interfaces/kdevplugin.h>
-#include <interfaces/kdevdocument.h>
-#include <interfaces/kdevdocumentcontroller.h>
+#include <kdevplugin.h>
+#include <kdevdocument.h>
+#include <kdevdocumentcontroller.h>
 
 // QT includes
 #include <QDropEvent>
@@ -258,7 +258,7 @@ void BaseTreeBranch::updateOpenFolder()
 ////////////////////////////////////////////////////////////////////////////////////
 
 BaseTreeView::BaseTreeView(KDevPlugin *plugin, QWidget * parent)
-  : KFileTreeView(parent), fileInfoDlg(0), m_parent(parent), m_plugin(plugin), m_saveOpenFolder(false), m_partController(KDevApi::self()->documentController())
+  : KFileTreeView(parent), fileInfoDlg(0), m_parent(parent), m_plugin(plugin), m_saveOpenFolder(false), m_partController(KDevCore::documentController())
 {
 //   setTreeStepSize(15);
   setRootIsDecorated(true);

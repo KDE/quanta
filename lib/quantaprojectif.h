@@ -16,7 +16,7 @@
 #include "quantaexport.h"
 
 //kdevelop includes
-#include <interfaces/kdevproject.h>
+#include <kdevproject.h>
 
 class QDomElement;
 class KUrl;

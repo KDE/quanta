@@ -45,13 +45,13 @@
 #include <kstdaction.h>
 
 //kdevelop includes
-#include <interfaces/kdevcore.h>
-#include <interfaces/kdevplugin.h>
-#include <interfaces/kdevdocumentcontroller.h>
+#include <kdevcore.h>
+#include <kdevplugin.h>
+#include <kdevdocumentcontroller.h>
 
 
 GroupsWidget::GroupsWidget(KDevPlugin *plugin, QWidget *parent)
-  : K3ListView(parent), m_popupMenu(0), m_dtdMenu(0), m_dirty(false), m_parseResult(0), m_plugin(plugin), m_partController(KDevApi::self()->documentController())
+  : K3ListView(parent), m_popupMenu(0), m_dtdMenu(0), m_dirty(false), m_parseResult(0), m_plugin(plugin), m_partController(KDevCore::documentController())
 {
   setTreeStepSize(15);
   setRootIsDecorated(false);

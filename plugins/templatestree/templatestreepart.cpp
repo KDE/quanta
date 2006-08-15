@@ -43,10 +43,11 @@
 #include <kstandarddirs.h>
 
 //kdevelop includes
-#include <interfaces/kdevdocumentcontroller.h>
-#include <interfaces/kdevcore.h>
-#include <interfaces/kdevmainwindow.h>
-#include <interfaces/kdevmainwindow.h>
+#include <kdevdocumentcontroller.h>
+#include <kdevcore.h>
+#include <kdevcontext.h>
+#include <kdevmainwindow.h>
+#include <kdevprojectcontroller.h>
 
 
 typedef KGenericFactory<TemplatesTreePart> TemplatesTreeFactory;
@@ -66,7 +67,7 @@ TemplatesTreePart::TemplatesTreePart(QObject *parent, const QStringList &/*args*
 
     m_widget->setWhatsThis(i18n("Working with templates"));
 
-    connect(KDevApi::self()->core(), SIGNAL(projectOpened()), m_widget, SLOT(slotProjectOpened()));
+    connect(KDevCore::mainWindow(), SIGNAL(projectOpened()), m_widget, SLOT(slotProjectOpened()));
 
     // now you decide what should happen to the widget. Take a look at kdevcore.h
     // or at other plugins how to embed it.
@@ -77,7 +78,7 @@ TemplatesTreePart::TemplatesTreePart(QObject *parent, const QStringList &/*args*
 
     // if you want to embed your widget as a selectview (at the left), simply uncomment
     // the following line.
-    KDevApi::self()->mainWindow()->embedSelectView( m_widget, i18n("Templates"), "Template management" );
+    KDevCore::mainWindow()->embedSelectView( m_widget, i18n("Templates"), "Template management" );
 
     // if you want to embed your widget as a selectview (at the right), simply uncomment
     // the following line.
@@ -92,12 +93,12 @@ TemplatesTreePart::TemplatesTreePart(QObject *parent, const QStringList &/*args*
     connect(m_configProxy, SIGNAL(insertConfigWidget(const KDialog*, QWidget*, unsigned int )),
         this, SLOT(insertConfigWidget(const KDialog*, QWidget*, unsigned int)));
     */
-    connect(KDevApi::self()->core(), SIGNAL(contextMenu(QMenu *, const Context *)),
+    connect(KDevCore::mainWindow(), SIGNAL(contextMenu(QMenu *, const Context *)),
         this, SLOT(contextMenu(QMenu *, const Context *)));
-    connect(KDevApi::self()->core(), SIGNAL(projectOpened()), this, SLOT(projectOpened()));
-    connect(KDevApi::self()->core(), SIGNAL(projectClosed()), this, SLOT(projectClosed()));
+    connect(KDevCore::projectController(), SIGNAL(projectOpened()), this, SLOT(projectOpened()));
+    connect(KDevCore::projectController(), SIGNAL(projectClosed()), this, SLOT(projectClosed()));
 
-    connect(KDevApi::self()->documentController(), SIGNAL(documentClosed(KDevDocument*)), m_widget, SLOT(slotDocumentClosed(KDevDocument*)));
+    connect(KDevCore::documentController(), SIGNAL(documentClosed(KDevDocument*)), m_widget, SLOT(slotDocumentClosed(KDevDocument*)));
 
     QTimer::singleShot(0, this, SLOT(init()));
 }
@@ -107,7 +108,7 @@ TemplatesTreePart::~TemplatesTreePart()
 //   if you embed a widget, you need to tell the mainwindow when you remove it
   if ( m_widget )
   {
-    KDevApi::self()->mainWindow()->removeView( m_widget );
+    KDevCore::mainWindow()->removeView( m_widget );
   }
   delete m_widget;
  // delete m_configProxy;
@@ -224,7 +225,7 @@ void TemplatesTreePart::slotCreateSiteTemplate()
    //temporary directory
   if (url.protocol() != "file")
   {
-    KMessageBox::sorry(KDevApi::self()->mainWindow()->main(), i18n("Currently you can create site templates only from local folders."), i18n("Unsupported Feature"));
+    KMessageBox::sorry(KDevCore::mainWindow(), i18n("Currently you can create site templates only from local folders."), i18n("Unsupported Feature"));
     return;
   }
 
@@ -235,14 +236,14 @@ void TemplatesTreePart::slotCreateSiteTemplate()
    } else*/
 
   QString startDir = KStandardDirs::locateLocal("data", Helper::resourceDir() + "templates/");
-  KUrl targetURL = KFileDialog::getSaveUrl(startDir, "*.tgz", KDevApi::self()->mainWindow()->main(), i18n("Create Site Template File"));
+  KUrl targetURL = KFileDialog::getSaveUrl(startDir, "*.tgz", KDevCore::mainWindow(), i18n("Create Site Template File"));
   if (targetURL.isEmpty())
     return;
 
 /*    if (Project::ref()->hasProject() && targetURL.url().startsWith(Project::ref()->templateURL().url()))
       valid = true;*/
   if (!KUrl(startDir).isParentOf(targetURL))
-    KMessageBox::information(KDevApi::self()->mainWindow()->main(), i18n("This Template will not be visible in your Templates Tree, because you do not save it to the local or project template folder."));
+    KMessageBox::information(KDevCore::mainWindow(), i18n("This Template will not be visible in your Templates Tree, because you do not save it to the local or project template folder."));
 
 
   KTempFile *tempFile = new KTempFile(Helper::tmpFilePrefix());
@@ -260,7 +261,7 @@ void TemplatesTreePart::slotCreateSiteTemplate()
     error = true;
 
   if (error)
-    KMessageBox::error(KDevApi::self()->mainWindow()->main(), i18n("<qt>There was an error while creating the site template tarball.<br>Check that you can read the files from <i>%1</i>, you have write access to <i>%2</i> and that you have enough free space in your temporary folder.</qt>", url.pathOrUrl(), targetURL.pathOrUrl()), i18n("Template Creation Error"));
+    KMessageBox::error(KDevCore::mainWindow(), i18n("<qt>There was an error while creating the site template tarball.<br>Check that you can read the files from <i>%1</i>, you have write access to <i>%2</i> and that you have enough free space in your temporary folder.</qt>", url.pathOrUrl(), targetURL.pathOrUrl()), i18n("Template Creation Error"));
   delete tempFile;
 }
 

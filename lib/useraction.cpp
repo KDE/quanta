@@ -42,15 +42,16 @@
 #include <ktempfile.h>
 
 //kdevelop includes
-#include <interfaces/kdevmainwindow.h>
-#include <interfaces/kdevplugin.h>
-#include <interfaces/kdevproject.h>
+#include <kdevmainwindow.h>
+#include <kdevplugin.h>
+#include <kdevproject.h>
+#include <kdevcore.h>
 
 
 
 UserAction::UserAction( QDomElement *element, KDevPlugin *plugin, bool toggle)
     : KToggleAction(element->attribute("text").isEmpty() ? QString("") : i18n(element->attribute("text").toUtf8()),
-                    KDevApi::self() ->mainWindow()->main()->actionCollection(), element->attribute("name")),
+                    KDevCore::mainWindow()->actionCollection(), element->attribute("name")),
   m_toggle(toggle)
 {
   setShortcut(KShortcut(element->attribute("shortcut")));
@@ -89,7 +90,7 @@ bool UserAction::slotActionActivated()
   QuantaCoreIf *quantaCore = m_plugin->extension<QuantaCoreIf>("KDevelop/Quanta");
   if (!quantaCore)
   {
-    KMessageBox::information(KDevApi::self()->mainWindow()->main(), i18n("You cannot run a tag user action if the QuantaCore plugin is not loaded."), i18n("Missing QuantaCore"), "ShowQuantaCoreMissingWarning");
+    KMessageBox::information(KDevCore::mainWindow(), i18n("You cannot run a tag user action if the QuantaCore plugin is not loaded."), i18n("Missing QuantaCore"), "ShowQuantaCoreMissingWarning");
     return false;
   }
   EditorSource * source = quantaCore->activeEditorSource();
@@ -133,7 +134,7 @@ bool UserAction::slotActionActivated()
   {
     proc = new MyProcess();
 
-    KDevProject *proj = KDevApi::self()->project();
+    KDevProject *proj = KDevCore::activeProject();
     if (proj)
       proc->setWorkingDirectory(proj->projectDirectory().path());
 
@@ -288,7 +289,7 @@ bool UserAction::slotActionActivated()
       proc->closeStdin();
     } else
     {
-      KMessageBox::error(KDevApi::self()->mainWindow()->main(), i18n("<qt>There was an error running <b>%1</b>.<br>Check that you have the <i>%2</i> executable installed and it is accessible.</qt>", command + " " + args, command), i18n("Script Not Found"));
+      KMessageBox::error(KDevCore::mainWindow(), i18n("<qt>There was an error running <b>%1</b>.<br>Check that you have the <i>%2</i> executable installed and it is accessible.</qt>", command + " " + args, command), i18n("Script Not Found"));
 //FIXME       ViewManager::ref()->activeView()->setFocus();
       if (m_loopStarted)
       {
@@ -394,7 +395,7 @@ void UserAction::slotGetScriptError( KProcess *, char *buffer, int buflen )
 /** Timeout occurred while waiting for some network function to return. */
 void UserAction::slotTimeout()
 {
-  if ((m_killCount == 0) && (KMessageBox::questionYesNo(KDevApi::self()->mainWindow()->main(), i18n("<qt>The filtering action <b>%1</b> seems to be locked.<br>Do you want to terminate it?</qt>", actionText()), i18n("Action Not Responding")) == KMessageBox::Yes))
+  if ((m_killCount == 0) && (KMessageBox::questionYesNo(KDevCore::mainWindow(), i18n("<qt>The filtering action <b>%1</b> seems to be locked.<br>Do you want to terminate it?</qt>", actionText()), i18n("Action Not Responding")) == KMessageBox::Yes))
   {
     if (::kill(-proc->pid(), SIGTERM))
     {

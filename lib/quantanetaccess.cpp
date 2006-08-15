@@ -28,14 +28,14 @@
 #include <kstringhandler.h>
 
 //kdevelop includes
-#include <interfaces/kdevfilemanager.h>
-#include <interfaces/kdevmainwindow.h>
-#include <interfaces/kdevplugin.h>
+#include <kdevfilemanager.h>
+#include <kdevmainwindow.h>
+#include <kdevplugin.h>
 
 
 bool QuantaNetAccess::upload(const QString& src, const KUrl& target, KDevPlugin* plugin, bool confirm)
 {
-  QWidget *window = KDevApi::self()->mainWindow()->main();
+  QWidget *window = KDevCore::mainWindow();
   bool ok = KIO::NetAccess::upload(src, target, window);
   if (ok)
   {
@@ -52,7 +52,7 @@ bool QuantaNetAccess::upload(const QString& src, const KUrl& target, KDevPlugin*
 bool QuantaNetAccess::file_copy( const KUrl& src, const KUrl& target, int permissions,
                                  bool overwrite, bool resume, KDevPlugin* plugin, bool confirm)
 {
-  QWidget *window = KDevApi::self()->mainWindow()->main();
+  QWidget *window = KDevCore::mainWindow();
   bool ok;
   if (src == target)
     ok = true;
@@ -77,8 +77,8 @@ bool QuantaNetAccess::file_move( const KUrl& src, const KUrl& target, int permis
   QuantaProjectIf *project = 0L;
   if (plugin)
   {
-    window = KDevApi::self()->mainWindow()->main();
-    project = dynamic_cast<QuantaProjectIf*>(KDevApi::self()->project());
+    window = KDevCore::mainWindow();
+    project = dynamic_cast<QuantaProjectIf*>(KDevCore::activeProject());
   }
   // don't ask if move is inside of the project
   bool oldConfirm = confirm;
@@ -113,7 +113,7 @@ bool QuantaNetAccess::dircopy( const KUrl::List & srcList, const KUrl & target, 
   QWidget *window = 0L;
   if (plugin)
   {
-    window = KDevApi::self()->mainWindow()->main();
+    window = KDevCore::mainWindow();
   }
   if (!ExtFileInfo::exists(target))
   {
@@ -149,8 +149,8 @@ bool QuantaNetAccess::move( const KUrl::List& srcList, const KUrl& target, KDevP
   QuantaProjectIf *project = 0L;
   if (plugin)
   {
-    window = KDevApi::self()->mainWindow()->main();
-    project = dynamic_cast<QuantaProjectIf*>(KDevApi::self()->project());
+    window = KDevCore::mainWindow();
+    project = dynamic_cast<QuantaProjectIf*>(KDevCore::activeProject());
   }
   KUrl targetURL = adjustURL(target);
   if (project)
@@ -233,7 +233,7 @@ bool QuantaNetAccess::mkdir( const KUrl & path, KDevPlugin* plugin, int permissi
   QWidget *window = 0L;
   if (plugin)
   {
-    window = KDevApi::self()->mainWindow()->main();
+    window = KDevCore::mainWindow();
   }
   KUrl url = path;
   if (ExtFileInfo::exists(url))
@@ -284,8 +284,8 @@ void QuantaNetAccess::checkProjectInsert(const KUrl& source, const KUrl& target,
   QuantaProjectIf *project = 0L;
   if (plugin)
   {
-    window = KDevApi::self()->mainWindow()->main();
-    project = dynamic_cast<QuantaProjectIf*>(KDevApi::self()->project());
+    window = KDevCore::mainWindow();
+    project = dynamic_cast<QuantaProjectIf*>(KDevCore::activeProject());
   }
   if ( !project )
     return;
@@ -342,8 +342,8 @@ bool QuantaNetAccess::checkProjectRemove(const KUrl& src, KDevPlugin* plugin, bo
   QuantaProjectIf *project = 0L;
   if (plugin)
   {
-    window = KDevApi::self()->mainWindow()->main();
-    project = dynamic_cast<QuantaProjectIf*>(KDevApi::self()->project());
+    window = KDevCore::mainWindow();
+    project = dynamic_cast<QuantaProjectIf*>(KDevCore::activeProject());
   }
   if (!project)
     return true;
@@ -377,7 +377,7 @@ bool QuantaNetAccess::checkProjectDel(const KUrl& src, KDevPlugin* plugin, QWidg
   QuantaProjectIf *project = 0L;
   if (plugin)
   {
-    project = dynamic_cast<QuantaProjectIf*>(KDevApi::self()->project());
+    project = dynamic_cast<QuantaProjectIf*>(KDevCore::activeProject());
   }
   KUrl url = adjustURL(src);
   if ( project )

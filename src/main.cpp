@@ -16,13 +16,11 @@
 #include <kdevpartcontroller.h>
 #include <kdevprojectcontroller.h>
 #include <kdevlanguagecontroller.h>
+#include <kdevmainwindow.h>
+#include <kdevplugincontroller.h>
+#include <kdevdocumentcontroller.h>
 #include <shell/splashscreen.h>
-#include <shell/toplevel.h>
-#include <shell/plugincontroller.h>
-#include <shell/documentcontroller.h>
-#include <shell/projectcontroller.h>
-#include <shell/simplemainwindow.h>
-#include <interfaces/kdevplugin.h>
+#include <kdevplugin.h>
 
 #include "kdevquantaextension.h"
 

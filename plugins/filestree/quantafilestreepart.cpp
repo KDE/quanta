@@ -35,9 +35,10 @@
 #include <k3listviewsearchline.h>
 
 //kdevelop includes
-#include <interfaces/kdevdocumentcontroller.h>
-#include <interfaces/kdevcore.h>
-#include <interfaces/kdevmainwindow.h>
+#include <kdevdocumentcontroller.h>
+#include <kdevcore.h>
+#include <kdevmainwindow.h>
+#include <kdevprojectcontroller.h>
 
 #include "filestreeview.h"
 #include "quantafilestreeglobalconfig.h"
@@ -70,7 +71,7 @@ QuantaFilesTreePart::QuantaFilesTreePart(QObject *parent, const QStringList &/*a
 
     // if you want to embed your widget as a selectview (at the left), simply uncomment
     // the following line.
-    KDevApi::self()->mainWindow()->embedSelectView( m_widget, "Files Tree", "File management" );
+    KDevCore::mainWindow()->embedSelectView( m_widget, "Files Tree", "File management" );
 
     // if you want to embed your widget as a selectview (at the right), simply uncomment
     // the following line.
@@ -85,10 +86,10 @@ QuantaFilesTreePart::QuantaFilesTreePart(QObject *parent, const QStringList &/*a
     connect(m_configProxy, SIGNAL(insertConfigWidget(const KDialog*, QWidget*, unsigned int )),
         this, SLOT(insertConfigWidget(const KDialog*, QWidget*, unsigned int)));
     */
-    connect(KDevApi::self()->core(), SIGNAL(contextMenu(QMenu *, const Context *)),
+    connect(KDevCore::mainWindow(), SIGNAL(contextMenu(QMenu *, const Context *)),
         this, SLOT(contextMenu(QMenu *, const Context *)));
-    connect(KDevApi::self()->core(), SIGNAL(projectOpened()), this, SLOT(projectOpened()));
-    connect(KDevApi::self()->core(), SIGNAL(projectClosed()), this, SLOT(projectClosed()));
+    connect(KDevCore::projectController(), SIGNAL(projectOpened()), this, SLOT(projectOpened()));
+    connect(KDevCore::projectController(), SIGNAL(projectClosed()), this, SLOT(projectClosed()));
 
     QTimer::singleShot(0, this, SLOT(init()));
 }
@@ -98,7 +99,7 @@ QuantaFilesTreePart::~QuantaFilesTreePart()
 // if you embed a widget, you need to tell the mainwindow when you remove it
     if ( m_widget )
     {
-      KDevApi::self()->mainWindow()->removeView( m_widget );
+      KDevCore::mainWindow()->removeView( m_widget );
     }
     delete m_widget;
     //delete m_configProxy;
@@ -108,7 +109,7 @@ void QuantaFilesTreePart::init()
 {
 // delayed initialization stuff goes here
   m_tree = new FilesTreeView(this, m_widget);
-  connect(KDevApi::self()->documentController(), SIGNAL(documentClosed(KDevDocument*)), m_tree, SLOT(slotDocumentClosed(KDevDocument*)));
+  connect(KDevCore::documentController(), SIGNAL(documentClosed(KDevDocument*)), m_tree, SLOT(slotDocumentClosed(KDevDocument*)));
 
   K3ListViewSearchLineWidget * sl = new K3ListViewSearchLineWidget(m_tree, m_widget);
 
