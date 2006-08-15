@@ -45,9 +45,11 @@
 #include <kparts/part.h>
 
 //kdevelop includes
-#include <interfaces/kdevplugin.h>
-#include <interfaces/kdevproject.h>
-#include <interfaces/kdevcore.h>
+#include <kdevplugin.h>
+#include <kdevproject.h>
+#include <kdevcore.h>
+#include <kdevcontext.h>
+#include <kdevmainwindow.h>
 
 
 const QString & ProjectTreeView::m_attrDesc = KGlobal::staticQString("description");
@@ -124,7 +126,7 @@ KFileTreeViewItem* ProjectTreeBranch::createTreeViewItem(KFileTreeViewItem *pare
 /////////////////////////////////////////////
 
 ProjectTreeView::ProjectTreeView(KDevPlugin * plugin, QWidget *parent)
-  : BaseTreeView(plugin, parent), m_projectDir(0), m_plugin(plugin), m_quantaProject(dynamic_cast<QuantaProjectIf *>(KDevApi::self()->project()))
+  : BaseTreeView(plugin, parent), m_projectDir(0), m_plugin(plugin), m_quantaProject(dynamic_cast<QuantaProjectIf *>(KDevCore::activeProject()))
 {
   setShowToolTips(Settings::self()->projectTreeTooltips());
   //setSelectionModeExt(K3ListView::Extended);
@@ -202,7 +204,7 @@ void ProjectTreeView::fileMenu(const QPoint &point)
   // ask other plugins for menu entries
   KUrl::List urlList(currentKFileTreeViewItem()->url());
   FileContext context(urlList);
-  KDevApi::self()->core()->fillContextMenu(&popup, &context);
+  KDevCore::mainWindow()->fillContextMenu(&popup, &context);
 
   popup.exec(point);
 }
@@ -235,7 +237,7 @@ void ProjectTreeView::folderMenu(const QPoint &point)
   menuURL.adjustPath(KUrl::AddTrailingSlash);
   KUrl::List urlList(menuURL);
   FileContext context(urlList);
-  KDevApi::self()->core()->fillContextMenu(&popup, &context);
+  KDevCore::mainWindow()->fillContextMenu(&popup, &context);
 
   popup.exec(point);
 }
@@ -266,11 +268,11 @@ void ProjectTreeView::emptyMenu(const QPoint &point)
 
 void ProjectTreeView::slotProjectOpened()
 {
-  m_projectName = KDevApi::self()->project()->projectName();
+  m_projectName = KDevCore::activeProject()->projectName();
   if (m_quantaProject)
     m_projectBaseURL = m_quantaProject->projectDirectory();
   else
-    m_projectBaseURL = KUrl(KDevApi::self()->project()->projectDirectory());
+    m_projectBaseURL = KUrl(KDevCore::activeProject()->projectDirectory());
 
   if (m_projectDir)  // just in case we have already one
   {

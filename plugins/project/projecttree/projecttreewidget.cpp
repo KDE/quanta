@@ -33,14 +33,15 @@
 #include <kparts/part.h>
 
 //kdevelop includes
-#include <interfaces/kdevcore.h>
-#include <interfaces/kdevdocumentcontroller.h>
-#include <interfaces/kdevplugin.h>
-#include <interfaces/kdevmainwindow.h>
+#include <kdevcore.h>
+#include <kdevdocumentcontroller.h>
+#include <kdevprojectcontroller.h>
+#include <kdevplugin.h>
+#include <kdevmainwindow.h>
 
 
 ProjectTreeWidget::ProjectTreeWidget(ProjectTreePart *part)
-  : QWidget(KDevApi::self()->mainWindow()->main()), m_part(part)
+  : QWidget(KDevCore::mainWindow()), m_part(part)
 {
   m_tree = new ProjectTreeView(part, this);
 
@@ -51,10 +52,10 @@ ProjectTreeWidget::ProjectTreeWidget(ProjectTreePart *part)
   
   l->addWidget(m_tree); 
   
-  connect(KDevApi::self()->core(), SIGNAL(projectOpened()), m_tree, SLOT(slotProjectOpened()));
+  connect(KDevCore::projectController(), SIGNAL(projectOpened()), m_tree, SLOT(slotProjectOpened()));
   connect(part, SIGNAL(saveProject()), m_tree, SLOT(slotProjectClosed()));
   
-  connect(KDevApi::self()->documentController(), SIGNAL(activePartChanged(KParts::Part *)), m_tree, SLOT(slotActivePartChanged(KParts::Part *)));
+  connect(KDevCore::documentController(), SIGNAL(activePartChanged(KParts::Part *)), m_tree, SLOT(slotActivePartChanged(KParts::Part *)));
 
 }
 

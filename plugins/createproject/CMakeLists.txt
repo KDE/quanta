@@ -32,7 +32,7 @@ kde4_add_plugin(kdevcreatequantaproject WITH_PREFIX ${kdevcreatequantaproject_PA
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kdevcreatequantaproject )
 
-target_link_libraries(kdevcreatequantaproject kdevquanta kdevinterfaces ${KDE4_KDECORE_LIBS})
+target_link_libraries(kdevcreatequantaproject kdevquanta kdevplatform ${KDE4_KDECORE_LIBS})
 
 install(TARGETS kdevcreatequantaproject  DESTINATION ${PLUGIN_INSTALL_DIR})
 

@@ -46,6 +46,7 @@
 #include <kaction.h>
 #include <kdebug.h>
 #include <kdialog.h>
+#include <kicon.h>
 #include <kiconloader.h>
 #include <kgenericfactory.h>
 #include <kglobal.h>
@@ -55,11 +56,12 @@
 #include <ktempfile.h>
 
 //kdevelop includes
-#include <interfaces/kdevcore.h>
-#include <interfaces/kdevmainwindow.h>
-#include <interfaces/kdevplugincontroller.h>
-#include <interfaces/kdevproject.h>
-#include <interfaces/domutil.h>
+#include <kdevcore.h>
+#include <kdevmainwindow.h>
+#include <kdevplugincontroller.h>
+#include <kdevprojectcontroller.h>
+#include <kdevproject.h>
+#include <domutil.h>
 
 
 typedef KGenericFactory<CreateQuantaProjectPart> CreateQuantaProjectFactory;
@@ -102,10 +104,10 @@ void CreateQuantaProjectPart::slotCreateNewProject()
   QuantaCoreIf *qCore = extension<QuantaCoreIf>("KDevelop/Quanta");
   if (!qCore)
   {
-    KMessageBox::error(KDevApi::self()->mainWindow()->main(), i18n("<qt>The <b>create new Quanta project</b> plugin requires the <b>Quanta core</b> plugin to be loaded."), i18n("Quanta core not loaded"));
+    KMessageBox::error(KDevCore::mainWindow(), i18n("<qt>The <b>create new Quanta project</b> plugin requires the <b>Quanta core</b> plugin to be loaded."), i18n("Quanta core not loaded"));
     return;
   }
-  Q3Wizard *wizard = new Q3Wizard(KDevApi::self()->mainWindow()->main(), "new", true);
+  Q3Wizard *wizard = new Q3Wizard(KDevCore::mainWindow(), "new", true);
   wizard->setWindowTitle(i18n("New Project Wizard"));
   wizard->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
   QStackedWidget *stack = new QStackedWidget(wizard);
@@ -182,8 +184,8 @@ void CreateQuantaProjectPart::slotCreateNewProject()
     tempFile.close();
     KUrl dest = baseURL;
     dest.addPath("/" + firstPage->fileName());
-    KIO::NetAccess::upload(tempFile.name(), dest, KDevApi::self()->mainWindow()->main());
-    KDevApi::self()->core()->openProject(dest.path()); //FIXME: use the URL when it is supported by the framework
+    KIO::NetAccess::upload(tempFile.name(), dest, KDevCore::mainWindow());
+    KDevCore::projectController()->openProject(dest.path()); //FIXME: use the URL when it is supported by the framework
     QFile::remove(tempFile.name());
     if (secondPage->insertGlobalTemplates())
     {

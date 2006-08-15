@@ -23,9 +23,10 @@
 
 #include <QPointer>
 
-#include <interfaces/kdevplugin.h>
+#include <kdevplugin.h>
 
 class QMenu;
+class QDomElement;
 class KAction;
 class KDialog;
 class Context;

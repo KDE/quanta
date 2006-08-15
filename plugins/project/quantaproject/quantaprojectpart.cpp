@@ -42,9 +42,10 @@
 #include <kurlrequesterdlg.h>
 
 //kdevelop includes
-#include <interfaces/domutil.h>
-#include <interfaces/kdevcore.h>
-#include <interfaces/kdevmainwindow.h>
+#include <domutil.h>
+#include <kdevcore.h>
+#include <kdevcontext.h>
+#include <kdevmainwindow.h>
 
 
 typedef KGenericFactory<QuantaProjectPart> QuantaProjectFactory;
@@ -90,7 +91,7 @@ QuantaProjectPart::QuantaProjectPart( QObject *parent, const QStringList & /*arg
   connect( m_configProxy, SIGNAL( insertConfigWidget( const KDialog*, QWidget*, unsigned int ) ),
            this, SLOT( insertConfigWidget( const KDialog*, QWidget*, unsigned int ) ) );
   */
-  connect( KDevApi::self()->core(), SIGNAL( contextMenu( QMenu *, const Context * ) ),
+  connect( KDevCore::mainWindow(), SIGNAL( contextMenu( QMenu *, const Context * ) ),
            this, SLOT( contextMenu( QMenu *, const Context * ) ) );
 
   QTimer::singleShot( 0, this, SLOT( init() ) );
@@ -201,13 +202,13 @@ void QuantaProjectPart::contextMenu( QMenu *popup, const Context *context )
 
     // use context and plug actions here
   }
-  else if ( context->hasType( Context::DocumentationContext ) )
+/*  else if ( context->hasType( Context::DocumentationContext ) )
   {
     // documentation viewer context menu
 //     const DocumentationContext * dcontext = static_cast<const DocumentationContext*>( context );
 
     // use context and plug actions here
-  }
+}*/
 }
 
 void QuantaProjectPart::closeProject()
@@ -221,7 +222,9 @@ void QuantaProjectPart::openProject( const KUrl &dirName, const QString &project
   m_projectBase = dirName;
   m_projectBase.adjustPath(KUrl::AddTrailingSlash);
   m_projectName = projectName;
-  m_projectDom = KDevApi::self()->projectDom();
+  //FIXME: there is no projectDom anymore!!
+#warning There is no projectDom!! Change it!  
+//  m_projectDom = KDevApi::self()->projectDom();
   m_projectDomElement = DomUtil::elementByPath(*m_projectDom, "/project");
   if (m_projectDomElement.isNull())
     m_projectDomElement = DomUtil::createElementByPath(*m_projectDom, "/project");
@@ -321,13 +324,13 @@ QStringList QuantaProjectPart::removeItems(const QStringList &items)
 
 void QuantaProjectPart::slotInsertFiles()
 {
-  KUrl::List urls = KFileDialog::getOpenUrls(m_projectBase, i18n("*"), KDevApi::self()->mainWindow()->main(), i18n("Insert Files in Project"));
+  KUrl::List urls = KFileDialog::getOpenUrls(m_projectBase, i18n("*"), KDevCore::mainWindow(), i18n("Insert Files in Project"));
 
   if (!urls.isEmpty())
   {
     if (!m_projectBase.isParentOf(urls.first()))
     {
-      KUrlRequesterDlg urlRequesterDlg(m_projectBase.pathOrUrl(), KDevApi::self()->mainWindow()->main());
+      KUrlRequesterDlg urlRequesterDlg(m_projectBase.pathOrUrl(), KDevCore::mainWindow());
       urlRequesterDlg.setWindowTitle(i18n("Copy Files to Project"));
       urlRequesterDlg.urlRequester()->setMode(KFile::Directory | KFile::ExistingOnly);
       urlRequesterDlg.exec();
@@ -363,13 +366,13 @@ void QuantaProjectPart::slotInsertFiles()
 void QuantaProjectPart::slotInsertFolder()
 {
   KUrl url = KUrl();
-  url = KFileDialog::getExistingUrl(m_projectBase, KDevApi::self()->mainWindow()->main(), i18n("Insert Folder in Project"));
+  url = KFileDialog::getExistingUrl(m_projectBase, KDevCore::mainWindow(), i18n("Insert Folder in Project"));
 
   if (!url.isEmpty())
   {
     if (!m_projectBase.isParentOf(url))
     {
-      KUrlRequesterDlg urlRequesterDlg(m_projectBase.pathOrUrl(), KDevApi::self()->mainWindow()->main());
+      KUrlRequesterDlg urlRequesterDlg(m_projectBase.pathOrUrl(), KDevCore::mainWindow());
       urlRequesterDlg.setWindowTitle(i18n("%1: Copy to Project", url.pathOrUrl()));
       urlRequesterDlg.urlRequester()->setMode(KFile::Directory | KFile::ExistingOnly);
       urlRequesterDlg.exec();

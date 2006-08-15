@@ -22,7 +22,7 @@ kde4_add_plugin(kdevquantaproject WITH_PREFIX ${kdevquantaproject_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kdevquantaproject )
 
-target_link_libraries(kdevquantaproject  kdevquanta kdevinterfaces kdevutil ${KDE4_KDECORE_LIBS} )
+target_link_libraries(kdevquantaproject  kdevquanta kdevplatform kdevutil ${KDE4_KDECORE_LIBS} )
 
 install(TARGETS kdevquantaproject  DESTINATION ${PLUGIN_INSTALL_DIR})
 
