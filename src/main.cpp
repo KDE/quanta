@@ -11,11 +11,15 @@
 #include <QFileInfo>
 
 //kdevelop includes
+#include <kdevcore.h>
+#include <kdevenvironment.h>
+#include <kdevpartcontroller.h>
+#include <kdevprojectcontroller.h>
+#include <kdevlanguagecontroller.h>
 #include <shell/splashscreen.h>
 #include <shell/toplevel.h>
 #include <shell/plugincontroller.h>
 #include <shell/documentcontroller.h>
-#include <shell/core.h>
 #include <shell/projectcontroller.h>
 #include <shell/simplemainwindow.h>
 #include <interfaces/kdevplugin.h>
@@ -65,10 +69,13 @@ int main(int argc, char *argv[])
   KDevQuantaExtension::init();
 
   //initialize the api object
-  KDevApi::self() ->setMainWindow( TopLevel::getInstance() );
-  KDevApi::self() ->setPluginController( PluginController::getInstance() );
-  KDevApi::self() ->setCore( Core::getInstance() );
-  KDevApi::self() ->setDocumentController( DocumentController::getInstance() );
+  KDevCore::setMainWindow( new KDevMainWindow );
+  KDevCore::setPluginController( new KDevPluginController );
+  KDevCore::setPartController( new KDevPartController );
+  KDevCore::setDocumentController( new KDevDocumentController );
+  KDevCore::setLanguageController( new KDevLanguageController );
+  KDevCore::setProjectController( new KDevProjectController );
+  KDevCore::setEnvironment( new KDevEnvironment );
 
   SplashScreen *splash = 0;
 
@@ -80,11 +87,11 @@ int main(int argc, char *argv[])
     splash = new SplashScreen( pm );
   }
   
-  QObject::connect( PluginController::getInstance(),
+  QObject::connect( KDevCore::pluginController(),
                     SIGNAL( loadingPlugin( const QString & ) ),
                     splash, SLOT( showMessage( const QString & ) ) );
 
-  QObject::connect( DocumentController::getInstance(),
+  QObject::connect( KDevCore::documentController(),
                     SIGNAL( openingDocument( const QString & ) ),
                     splash, SLOT( showMessage( const QString & ) ) );
 
@@ -92,14 +99,14 @@ int main(int argc, char *argv[])
 
   if (splash)
     splash->showMessage( i18n("Loading Settings") );
-  TopLevel::getInstance()->loadSettings();
-
+  //TopLevel::getInstance()->loadSettings();
+  KDevCore::initialize();
   if (splash)
     splash->show();
 
   //Load QuantaCore *before* loading other plugins, otherwise the signal
   //connection between them an QuantaCore will not work.
-  KDevPlugin *p = PluginController::getInstance()->loadPlugin("KDevelop/Quanta", "");
+  KDevPlugin *p = KDevCore::pluginController()->loadPlugin("KDevelop/Quanta", "");
   if (!p)
   {
     delete splash;
@@ -107,10 +114,10 @@ int main(int argc, char *argv[])
     KMessageBox::error( 0L, i18n("The Quanta Core Plugin could not be loaded.\nYour installation seems to be broken."));
   }
 
-  PluginController::getInstance() ->loadPlugins( ProfileEngine::Core );
-  PluginController::getInstance() ->loadPlugins( ProfileEngine::Global );
+  KDevCore::pluginController()->loadPlugins( ProfileEngine::Core );
+  KDevCore::pluginController()->loadPlugins( ProfileEngine::Global );
 
-  Core::getInstance()->doEmitCoreInitialized();
+//  Core::getInstance()->doEmitCoreInitialized();
 
   if (splash)
     splash->showMessage( i18n( "Starting GUI" ) );
@@ -119,7 +126,7 @@ int main(int argc, char *argv[])
   if (mw)
     mw->enableShow();
   //END workaround*/
-  TopLevel::getInstance()->main()->show();
+//  TopLevel::getInstance()->show();
 
   if (splash)
     delete splash;
@@ -131,7 +138,7 @@ int main(int argc, char *argv[])
 
   bool openProject = false;
   if( args->count() == 0 ){
-    ProjectController::getInstance()->init();
+//    KDevCore::projectController()->init(); do we still need it?
     openProject = true;
   } else
     if( args->count() > 0 )
@@ -140,7 +147,7 @@ int main(int argc, char *argv[])
       QString ext = QFileInfo( url.fileName() ).suffix();
       if( ext == "kdevelop" || ext == "quanta" )
       {
-        ProjectController::getInstance()->openProject( url );
+        KDevCore::projectController()->openProject( url );
         openProject = true;
       }
   }
@@ -148,7 +155,7 @@ int main(int argc, char *argv[])
   if( !openProject ){
     for( int a = 0; a < args->count(); ++a )
     {
-      DocumentController::getInstance()->editDocument( KUrl(args->url(a)) );
+      KDevCore::documentController()->editDocument( KUrl(args->url(a)) );
     }
   }
 #warning "kde4: port it"

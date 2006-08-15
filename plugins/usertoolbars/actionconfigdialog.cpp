@@ -46,6 +46,7 @@
 #include <kxmlguifactory.h>
 #include <kactioncollection.h>
 
+#include <kdevcore.h>
 #include <kdevmainwindow.h>
 #include <kdevplugin.h>
 
@@ -57,7 +58,7 @@
 #include "toolbartabwidget.h"
 
 ActionConfigDialog::ActionConfigDialog(const QHash<QString, ToolbarEntry*> &toolbarList, KDevPlugin* parent, bool modal, Qt::WFlags fl, const QString& defaultAction )
-    :QDialog( KDevApi::self()->mainWindow()->main(), fl )
+  :QDialog( KDevCore::mainWindow(), fl )
 {
   setModal(modal);
   setupUi(this);
@@ -93,7 +94,7 @@ ActionConfigDialog::ActionConfigDialog(const QHash<QString, ToolbarEntry*> &tool
   QString toolbarId;
   ToolbarTabWidget *tb = ToolbarTabWidget::ref();
   QRegExp r("\\&(?!\\&)");
-  KActionCollection *ac = KDevApi::self()->mainWindow()->main()->actionCollection();
+  KActionCollection *ac = KDevCore::mainWindow()->actionCollection();
   for (int i = 0; i < tb->count(); i++)
   {
     toolbarName = tb->tabText(i);
@@ -233,7 +234,7 @@ void ActionConfigDialog::slotEditToolbar()
 
     //update the tree view
     KAction *action;
-    KActionCollection *ac = KDevApi::self()->mainWindow()->main()->actionCollection();
+    KActionCollection *ac = KDevCore::mainWindow()->actionCollection();
     ToolbarTabWidget *tb = ToolbarTabWidget::ref();
     for (int i = 0; i < tb->count(); i++)
     {
@@ -287,7 +288,7 @@ void ActionConfigDialog::slotSelectionChanged(Q3ListViewItem *item)
   if (item && item->depth() > 0)
   {
     UserAction *action = 0L;
-    KActionCollection *ac = KDevApi::self()->mainWindow()->main()->actionCollection();
+    KActionCollection *ac = KDevCore::mainWindow()->actionCollection();
     uint acCount = ac->actions().count();
 //find the corresponding action
     for (uint i = 0; i < acCount; i++)
@@ -731,7 +732,7 @@ void ActionConfigDialog::slotShortcutCaptured(const KShortcut &shortcut)
 
   if (global.isEmpty())
   {
-    QList<KXMLGUIClient*> clients = KDevApi::self()->mainWindow()->main()->guiFactory()->clients();
+    QList<KXMLGUIClient*> clients = KDevCore::mainWindow()->guiFactory()->clients();
     KXMLGUIClient *current = 0L;
     QListIterator<KXMLGUIClient*> it( clients );
     while (it.hasNext())
@@ -808,7 +809,7 @@ void ActionConfigDialog::slotNewAction()
   static_cast<UserAction*>(currentAction)->setModified(true);
   Q3ListViewItem *currentItem = actionTreeView->currentItem();
   Q3ListViewItem *item = new K3ListViewItem(allActionsItem);
-  QString actionText = QString("Action_%1").arg(KDevApi::self()->mainWindow()->main()->actionCollection()->actions().count());
+  QString actionText = QString("Action_%1").arg(KDevCore::mainWindow()->actionCollection()->actions().count());
   currentAction->setText(actionText);
   item->setText(2, currentAction->objectName());
   item->setText(0, actionText);

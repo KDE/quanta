@@ -50,6 +50,7 @@
 #include <kconfigbase.h>
 #include <kdebug.h>
 #include <krun.h>
+#include <kicon.h>
 #include <kinputdialog.h>
 #include <klocale.h>
 #include <kiconloader.h>

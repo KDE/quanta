@@ -49,6 +49,7 @@
 #include <kedittoolbar.h>
 #include <kfiledialog.h>
 #include <kgenericfactory.h>
+#include <kicon.h>
 #include <kiconloader.h>
 #include <kinputdialog.h>
 #include <kio/netaccess.h>

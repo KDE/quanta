@@ -31,6 +31,7 @@
 #include <kaction.h>
 #include <kdialog.h>
 #include <kgenericfactory.h>
+#include <kicon.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
 #include <khtmlview.h>
