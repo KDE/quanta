@@ -12,6 +12,7 @@
 
 //kdevelop includes
 #include <kdevcore.h>
+#include <kdevbackgroundparser.h>
 #include <kdevenvironment.h>
 #include <kdevpartcontroller.h>
 #include <kdevprojectcontroller.h>
@@ -29,6 +30,7 @@
 static KCmdLineOptions options[] =
 {
   { "profile <profile>", I18N_NOOP("Profile to load"), 0 },
+  { "project <project>", I18N_NOOP("Project to load"), 0 },
   { "+file(s)", I18N_NOOP("Files to load"), 0 },
   { 0,0,0 }
 };
@@ -74,6 +76,7 @@ int main(int argc, char *argv[])
   KDevCore::setLanguageController( new KDevLanguageController );
   KDevCore::setProjectController( new KDevProjectController );
   KDevCore::setEnvironment( new KDevEnvironment );
+  KDevCore::setBackgroundParser( new KDevBackgroundParser );
 
   SplashScreen *splash = 0;
 
