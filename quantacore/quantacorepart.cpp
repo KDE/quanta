@@ -51,10 +51,11 @@
 #include <ktoolinvocation.h>
 
 //kdevelop includes
-#include <interfaces/kdevmainwindow.h>
-#include <interfaces/kdevdocumentcontroller.h>
-#include <interfaces/kdevdocument.h>
-#include <interfaces/kdevcore.h>
+#include <kdevmainwindow.h>
+#include <kdevdocumentcontroller.h>
+#include <kdevdocument.h>
+#include <kdevcore.h>
+#include <kdevcontext.h>
 
 #include <ktexteditor/document.h>
 
@@ -82,15 +83,15 @@ QuantaCorePart::QuantaCorePart(QObject *parent, const QStringList& )
   connect(m_configProxy, SIGNAL(insertConfigWidget(const KDialog*, QWidget*, unsigned int )),
       this, SLOT(slotInsertConfigWidget(const KDialog*, QWidget*, unsigned int)));
   */
-  connect(KDevApi::self()->documentController(), SIGNAL(documentLoaded(KDevDocument*)), this, SLOT(slotFileLoaded(KDevDocument*)));
+  connect(KDevCore::documentController(), SIGNAL(documentLoaded(KDevDocument*)), this, SLOT(slotFileLoaded(KDevDocument*)));
 
-  connect(KDevApi::self()->documentController(), SIGNAL(documentActivated(KDevDocument *)), this, SLOT(slotDocumentActivated(KDevDocument *)));
+  connect(KDevCore::documentController(), SIGNAL(documentActivated(KDevDocument *)), this, SLOT(slotDocumentActivated(KDevDocument *)));
 
-  connect(KDevApi::self()->documentController(), SIGNAL(documentClosed(KDevDocument*)), this, SLOT(slotClosedFile(KDevDocument*)));
+  connect(KDevCore::documentController(), SIGNAL(documentClosed(KDevDocument*)), this, SLOT(slotClosedFile(KDevDocument*)));
 
-  connect(KDevApi::self()->documentController(), SIGNAL(documentUrlChanged(KDevDocument*, const KUrl, const KUrl)), this, SLOT(slotPartURLChanged(KDevDocument*, const KUrl, const KUrl)));
+  connect(KDevCore::documentController(), SIGNAL(documentUrlChanged(KDevDocument*, const KUrl, const KUrl)), this, SLOT(slotPartURLChanged(KDevDocument*, const KUrl, const KUrl)));
 
-  connect(KDevApi::self()->core(), SIGNAL(contextMenu(QMenu *, const Context *)), this, SLOT(contextMenu(QMenu *, const Context *)));
+  connect(KDevCore::mainWindow(), SIGNAL(contextMenu(QMenu *, const Context *)), this, SLOT(contextMenu(QMenu *, const Context *)));
 
   QTimer::singleShot(0, this, SLOT(init()));
 }
@@ -226,7 +227,7 @@ void QuantaCorePart::slotInsertConfigWidget(const KDialog *dlg, QWidget *page, u
 
 void QuantaCorePart::slotMakeDonation()
 {
-  KDialog dlg(KDevApi::self()->mainWindow()->main() );
+  KDialog dlg(KDevCore::mainWindow());
   dlg.setCaption( i18n("Support Quanta with Financial Donation") );
   dlg.setButtons( KDialog::Close );
   dlg.setDefaultButton( KDialog::Close );
@@ -349,7 +350,7 @@ void QuantaCorePart::slotInsertTag(const KUrl& url, Helper::DirInfo * dirInfo)
       if (KMimeType::findByURL(url)->name().startsWith("image/"))
       {
         QString imgFileName;
-        KIO::NetAccess::download(url, imgFileName, KDevApi::self()->mainWindow()->main());
+        KIO::NetAccess::download(url, imgFileName, KDevCore::mainWindow());
         QImage img(imgFileName);
         if (!img.isNull())
         {
@@ -407,7 +408,7 @@ void QuantaCorePart::slotOpenNew()
 //   file->setAutoDelete(true);
   file->close();
   KUrl url = KUrl(file->name());
-  KDevDocument *doc = KDevApi::self()->documentController()->editDocument(url);
+  KDevDocument *doc = KDevCore::documentController()->editDocument(url);
   if (doc)
   {
     KParts::ReadOnlyPart *part = dynamic_cast<KParts::ReadOnlyPart *>(doc->part());
@@ -421,7 +422,7 @@ void QuantaCorePart::slotChangeDTEP()
 {
   if (m_activeQuantaDoc)
   {
-    KDialog dlg(KDevApi::self()->mainWindow()->main() );
+    KDialog dlg(KDevCore::mainWindow() );
     dlg.setCaption( i18n("DTEP Selector") );
     dlg.setButtons( KDialog::Ok | KDialog::Cancel );
     dlg.setDefaultButton( KDialog::Ok );

@@ -67,7 +67,7 @@ kde4_add_plugin(kdevquantacore WITH_PREFIX ${kdevquantacore_PART_SRCS})
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kdevquantacore )
 
 target_link_libraries(kdevquantacore kdevquanta
-kdevinterfaces kdevutil ktexteditor
+kdevplatform kdevutil ktexteditor
 ${LIBXML2_LIBRARIES} ${KDE4_KDECORE_LIBS})
 
 install(TARGETS kdevquantacore  DESTINATION ${PLUGIN_INSTALL_DIR})

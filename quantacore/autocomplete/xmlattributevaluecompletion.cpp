@@ -158,7 +158,7 @@ QStringList XmlAttributeValueCompletion::tagAttributeValues(const DTDStruct* dtd
         if (attrName == searchForAttr)
         {
           if (attr->type == "url") {
-            QuantaProjectIf *project =dynamic_cast<QuantaProjectIf*>( KDevApi::self()->project());
+            QuantaProjectIf *project =dynamic_cast<QuantaProjectIf*>( KDevCore::activeProject());
             //FIXME: Port to the new KDevelop API!
             /*            
             if (project)
