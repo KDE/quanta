@@ -1,0 +1,158 @@
+<?xml version = '1.0'?>
+<kdevelop>
+  <general>
+    <author>Andras Mantia</author>
+    <email>amantia@kde.org</email>
+    <version>$VERSION$</version>
+    <projectmanagement>KDevCustomProject</projectmanagement>
+    <primarylanguage>C++</primarylanguage>
+    <ignoreparts>
+      <part>kdevkonsoleview</part>
+    </ignoreparts>
+    <projectdirectory>/data/development/sources/kde-trunk/kdewebdev/</projectdirectory>
+    <absoluteprojectpath>true</absoluteprojectpath>
+    <secondaryLanguages>
+      <language>C</language>
+    </secondaryLanguages>
+    <description></description>
+    <defaultencoding></defaultencoding>
+  </general>
+  <kdevcustomproject>
+    <filelistdirectory>/home/andris/development/sources/kde-trunk/kdewebdev/quanta</filelistdirectory>
+    <run>
+      <mainprogram>src/quanta</mainprogram>
+      <directoryradio>build</directoryradio>
+      <customdirectory>/</customdirectory>
+      <programargs></programargs>
+      <terminal>false</terminal>
+      <autocompile>true</autocompile>
+      <envvars>
+        <envvar value="/opt/kde4" name="KDEDIR" />
+        <envvar value=" " name="KDEDIRS" />
+        <envvar value="/home/andris/.kde4" name="KDEHOME" />
+        <envvar value="/tmp/andris-kde4" name="KDETMP" />
+        <envvar value="/var/tmp/andris-kde4" name="KDEVARTMP" />
+        <envvar value="/opt/kde4/lib:/data2/kde4/qt4/lib:$LD_LIBRARY_PATH" name="LD_LIBRARY_PATH" />
+        <envvar value="/opt/kde4/bin:/data2/kde4/qt4/bin:$PATH" name="PATH" />
+        <envvar value="/data2/kde4/qt4" name="QTDIR" />
+        <envvar value="/opt/kde4/lib/kde4/plugins" name="QT_PLUGIN_PATH" />
+        <envvar value=" " name="XDG_CONFIG_DIRS" />
+        <envvar value=" " name="XDG_DATA_DIRS" />
+      </envvars>
+    </run>
+    <build>
+      <buildtool>make</buildtool>
+      <builddir>/home/andris/development/build/kde-trunk/kdewebdev/quanta</builddir>
+    </build>
+    <make>
+      <abortonerror>false</abortonerror>
+      <numberofjobs>1</numberofjobs>
+      <dontact>false</dontact>
+      <makebin></makebin>
+      <selectedenvironment>default</selectedenvironment>
+      <environments>
+        <default/>
+      </environments>
+      <prio>0</prio>
+      <defaulttarget></defaulttarget>
+      <makeoptions></makeoptions>
+    </make>
+  </kdevcustomproject>
+  <kdevfilecreate>
+    <filetypes>
+      <type icon="source_f" ext="for" create="template" name="Preprocessed Fortran" >
+        <descr>A new empty preprocessed Fortran file.</descr>
+      </type>
+    </filetypes>
+    <useglobaltypes>
+      <type ext="ui" />
+      <type ext="cpp" />
+      <type ext="h" />
+    </useglobaltypes>
+  </kdevfilecreate>
+  <kdevdoctreeview>
+    <projectdoc>
+      <userdocDir>html/</userdocDir>
+      <apidocDir>html/</apidocDir>
+    </projectdoc>
+    <ignoreqt_xml/>
+    <ignoredoxygen/>
+    <ignorekdocs/>
+    <ignoretocs/>
+    <ignoredevhelp/>
+  </kdevdoctreeview>
+  <cppsupportpart>
+    <filetemplates>
+      <interfacesuffix>.h</interfacesuffix>
+      <implementationsuffix>.cpp</implementationsuffix>
+    </filetemplates>
+  </cppsupportpart>
+  <kdevcppsupport>
+    <codecompletion>
+      <includeGlobalFunctions>true</includeGlobalFunctions>
+      <includeTypes>true</includeTypes>
+      <includeEnums>true</includeEnums>
+      <includeTypedefs>false</includeTypedefs>
+      <automaticCodeCompletion>false</automaticCodeCompletion>
+      <automaticArgumentsHint>true</automaticArgumentsHint>
+      <automaticHeaderCompletion>true</automaticHeaderCompletion>
+      <codeCompletionDelay>250</codeCompletionDelay>
+      <argumentsHintDelay>400</argumentsHintDelay>
+      <headerCompletionDelay>250</headerCompletionDelay>
+    </codecompletion>
+    <references>
+      <pcs>Qt4</pcs>
+      <pcs>KDElibs4</pcs>
+    </references>
+    <qt>
+      <used>false</used>
+      <version>3</version>
+      <root>/usr/lib/qt3</root>
+    </qt>
+    <creategettersetter>
+      <prefixGet></prefixGet>
+      <prefixSet>set</prefixSet>
+      <prefixVariable>m_,_</prefixVariable>
+      <parameterName>theValue</parameterName>
+      <inlineGet>true</inlineGet>
+      <inlineSet>true</inlineSet>
+    </creategettersetter>
+    <splitheadersource>
+      <enabled>false</enabled>
+      <synchronize>true</synchronize>
+      <orientation>Vertical</orientation>
+    </splitheadersource>
+  </kdevcppsupport>
+  <kdevfileview>
+    <groups>
+      <group pattern="CMakeLists.txt;*.cmake;" name="CMake" />
+      <group pattern="*.h;*.hxx" name="Header" />
+      <group pattern="*.cpp;*.c;*.C;*.cxx" name="Sources" />
+      <group pattern="*.ui" name="Qt Designer files" />
+      <hidenonprojectfiles>true</hidenonprojectfiles>
+      <hidenonlocation>false</hidenonlocation>
+    </groups>
+    <tree>
+      <hidepatterns>*.o,*.lo,CVS,*~,cmake*</hidepatterns>
+      <hidenonprojectfiles>true</hidenonprojectfiles>
+    </tree>
+  </kdevfileview>
+  <kdevdebugger>
+    <general>
+      <programargs></programargs>
+      <gdbpath></gdbpath>
+      <dbgshell></dbgshell>
+      <configGdbScript></configGdbScript>
+      <runShellScript></runShellScript>
+      <runGdbScript></runGdbScript>
+      <breakonloadinglibs>true</breakonloadinglibs>
+      <separatetty>false</separatetty>
+      <floatingtoolbar>false</floatingtoolbar>
+    </general>
+    <display>
+      <staticmembers>false</staticmembers>
+      <demanglenames>true</demanglenames>
+      <outputradix>10</outputradix>
+    </display>
+  </kdevdebugger>
+</kdevelop>
