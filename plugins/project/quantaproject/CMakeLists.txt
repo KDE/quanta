@@ -7,7 +7,8 @@ include_directories(
 
 ########### next target ###############
 
-set(kdevquantaproject_PART_SRCS 
+set(kdevquantaproject_PART_SRCS
+   quantafilemanager.cpp
    quantaprojectpart.cpp 
    quantaprojectwidget.cpp 
    quantaprojectprojectconfig.cpp 

@@ -1,21 +1,11 @@
-/***************************************************************************
-*   Copyright (C) 2005 by Andras Mantia   *
-*   amantia@kde.org   *
+/**************************************************************************
+*   Copyright (C) 2005 by Andras Mantia                                   *
+*   amantia@kde.org                                                       *
 *                                                                         *
 *   This program is free software; you can redistribute it and/or modify  *
 *   it under the terms of the GNU General Public License as published by  *
 *   the Free Software Foundation; either version 2 of the License, or     *
 *   (at your option) any later version.                                   *
-*                                                                         *
-*   This program is distributed in the hope that it will be useful,       *
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
-*   GNU General Public License for more details.                          *
-*                                                                         *
-*   You should have received a copy of the GNU General Public License     *
-*   along with this program; if not, write to the                         *
-*   Free Software Foundation, Inc.,                                       *
-*   51 Franklin Steet, Fifth Floor, Boston, MA 02110-1301, USA.           *
 ***************************************************************************/
 
 #include "quantaprojectpart.h"
@@ -24,6 +14,7 @@
 #include "quantanetaccess.h"
 #include "quantaprojectwidget.h"
 #include "quantaprojectprojectconfig.h"
+#include "quantafilemanager.h"
 
 #include <QTimer>
 #include <QMenu>
@@ -46,7 +37,7 @@
 #include <kdevcore.h>
 #include <kdevcontext.h>
 #include <kdevmainwindow.h>
-
+#include <kdevprojectmodel.h>
 
 typedef KGenericFactory<QuantaProjectPart> QuantaProjectFactory;
 K_EXPORT_COMPONENT_FACTORY( libkdevquantaproject, QuantaProjectFactory("kdevquantaproject") );
@@ -63,6 +54,7 @@ QuantaProjectPart::QuantaProjectPart( QObject *parent, const QStringList & /*arg
   m_widget = new QuantaProjectWidget( this );
   m_widget->setWindowTitle( "widget caption" );
 //FIXME  m_widget->setWindowIcon( KIcon( info()->icon() ) );
+  m_projectModel = new KDevProjectModel(this);
 
   m_browserMenu = 0L;
 
@@ -94,6 +86,9 @@ QuantaProjectPart::QuantaProjectPart( QObject *parent, const QStringList & /*arg
   connect( KDevCore::mainWindow(), SIGNAL( contextMenu( QMenu *, const Context * ) ),
            this, SLOT( contextMenu( QMenu *, const Context * ) ) );
 
+  QuantaFileManager *qFileManager = new QuantaFileManager(this);
+  setFileManager(qFileManager);
+
   QTimer::singleShot( 0, this, SLOT( init() ) );
 }
 
@@ -112,6 +107,7 @@ QuantaProjectPart::~QuantaProjectPart()
 void QuantaProjectPart::init()
 {
   // delayed initialization stuff goes here
+  
 }
 
 void QuantaProjectPart::setupActions()
@@ -221,9 +217,14 @@ void QuantaProjectPart::openProject( const KUrl &dirName, const QString &project
   m_projectBase = dirName;
   m_projectBase.adjustPath(KUrl::AddTrailingSlash);
   m_projectName = projectName;
+
+  KDevFileManager *manager = fileManager();
+  KDevProjectFolderItem *baseItem = static_cast<KDevProjectFolderItem *>(manager->import(m_projectModel, m_projectBase));
+  manager->parse(baseItem);
+  
   //FIXME: there is no projectDom anymore!!
 #warning There is no projectDom!! Change it!  
-//  m_projectDom = KDevApi::self()->projectDom();
+/*  m_projectDom = KDevApi::self()->projectDom();
   m_projectDomElement = DomUtil::elementByPath(*m_projectDom, "/project");
   if (m_projectDomElement.isNull())
     m_projectDomElement = DomUtil::createElementByPath(*m_projectDom, "/project");
@@ -235,7 +236,14 @@ void QuantaProjectPart::openProject( const KUrl &dirName, const QString &project
   {
     el = items.item(i).toElement();
     m_files.insert(el.attribute("url"), el);
+}*/
+  QList<KDevProjectFileItem*> fileList = recurseFiles(baseItem);
+  QListIterator<KDevProjectFileItem*> it(fileList);
+  while (it.hasNext())
+  {
+    m_files.insert(it.next()->url(), QDomElement());
   }
+  kDebug(24000) << "Files in the project: " << m_files.keys() << endl;
   kDebug( 24000 ) << "Project base: " << m_projectBase << " name: " << projectName << endl;
 }
 
@@ -436,6 +444,39 @@ QString QuantaProjectPart::relativeProjectFile(const QString &absPath)
 
   return result;
 }
+
+QList<KDevProjectFileItem*> QuantaProjectPart::recurseFiles(KDevProjectItem *item)
+{
+  QList<KDevProjectFileItem*> files;
+
+  if (KDevProjectFolderItem *folder = item->folder())
+  {
+    QList<KDevProjectFolderItem*> folder_list = folder->folderList();
+    for (QList<KDevProjectFolderItem*>::Iterator it = folder_list.begin(); it != folder_list.end(); ++it)
+      files += recurseFiles((*it));
+
+    QList<KDevProjectTargetItem*> target_list = folder->targetList();
+    for (QList<KDevProjectTargetItem*>::Iterator it = target_list.begin(); it != target_list.end(); ++it)
+      files += recurseFiles((*it));
+
+    QList<KDevProjectFileItem*> file_list = folder->fileList();
+    for (QList<KDevProjectFileItem*>::Iterator it = file_list.begin(); it != file_list.end(); ++it)
+      files += recurseFiles((*it));
+  }
+  else if (KDevProjectTargetItem *target = item->target())
+  {
+    QList<KDevProjectFileItem*> file_list = target->fileList();
+    for (QList<KDevProjectFileItem*>::Iterator it = file_list.begin(); it != file_list.end(); ++it)
+      files += recurseFiles((*it));
+  }
+  else if (KDevProjectFileItem *file = item->file())
+  {
+    files.append(file);
+  }
+  return files;
+}
+
+
 
 #include "quantaprojectpart.moc"
 
