@@ -55,7 +55,7 @@ K_EXPORT_COMPONENT_FACTORY( libkdevquantaproject, QuantaProjectFactory("kdevquan
 #define PROJECTDOC_OPTIONS 2
 
 QuantaProjectPart::QuantaProjectPart( QObject *parent, const QStringList & /*args*/ )
-  : QuantaProjectIf(QuantaProjectFactory::instance(), parent)
+  : KDevProject(QuantaProjectFactory::instance(), parent)
 {
   kDebug( 24000 ) << "QuantaProjectPart loaded" << endl;
   setXMLFile( "kdevquantaproject.rc" );
@@ -218,7 +218,6 @@ void QuantaProjectPart::closeProject()
 
 void QuantaProjectPart::openProject( const KUrl &dirName, const QString &projectName )
 {
-//  QuantaProjectIf::openProject(dirName, projectName);
   m_projectBase = dirName;
   m_projectBase.adjustPath(KUrl::AddTrailingSlash);
   m_projectName = projectName;

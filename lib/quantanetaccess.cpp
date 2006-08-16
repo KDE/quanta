@@ -13,7 +13,6 @@
 
 #include "extfileinfo.h"
 #include "quantanetaccess.h"
-#include "quantaprojectif.h"
 
 #include <QString>
 #include <qwidget.h>
@@ -31,6 +30,7 @@
 #include <kdevfilemanager.h>
 #include <kdevmainwindow.h>
 #include <kdevplugin.h>
+#include <kdevproject.h>
 
 
 bool QuantaNetAccess::upload(const QString& src, const KUrl& target, KDevPlugin* plugin, bool confirm)
@@ -74,11 +74,11 @@ bool QuantaNetAccess::file_move( const KUrl& src, const KUrl& target, int permis
                                  bool overwrite, bool resume, KDevPlugin* plugin, bool confirm)
 {
   QWidget *window = 0L;
-  QuantaProjectIf *project = 0L;
+  KDevProject *project = 0L;
   if (plugin)
   {
     window = KDevCore::mainWindow();
-    project = dynamic_cast<QuantaProjectIf*>(KDevCore::activeProject());
+    project = KDevCore::activeProject();
   }
   // don't ask if move is inside of the project
   bool oldConfirm = confirm;
@@ -146,11 +146,11 @@ bool QuantaNetAccess::dircopy( const KUrl::List & srcList, const KUrl & target, 
 bool QuantaNetAccess::move( const KUrl::List& srcList, const KUrl& target, KDevPlugin* plugin, bool confirm )
 {
   QWidget *window = 0L;
-  QuantaProjectIf *project = 0L;
+  KDevProject *project = 0L;
   if (plugin)
   {
     window = KDevCore::mainWindow();
-    project = dynamic_cast<QuantaProjectIf*>(KDevCore::activeProject());
+    project = KDevCore::activeProject();
   }
   KUrl targetURL = adjustURL(target);
   if (project)
@@ -281,11 +281,11 @@ bool QuantaNetAccess::mkdir( const KUrl & path, KDevPlugin* plugin, int permissi
 void QuantaNetAccess::checkProjectInsert(const KUrl& source, const KUrl& target, KDevPlugin* plugin, bool confirm)
 {
   QWidget *window = 0L;
-  QuantaProjectIf *project = 0L;
+  KDevProject *project = 0L;
   if (plugin)
   {
     window = KDevCore::mainWindow();
-    project = dynamic_cast<QuantaProjectIf*>(KDevCore::activeProject());
+    project = KDevCore::activeProject();
   }
   if ( !project )
     return;
@@ -293,9 +293,9 @@ void QuantaNetAccess::checkProjectInsert(const KUrl& source, const KUrl& target,
   KUrl saveUrl = adjustURL(target);
   KUrl baseURL = project->projectDirectory();
   KFileItem fileItem(KFileItem::Unknown, KFileItem::Unknown, source);
-  if ( baseURL.isParentOf(saveUrl) && (fileItem.isDir() || !project->isProjectFile(saveUrl)) ) //directories should always be checked as might contain files that were not yet added to the project
+  if ( baseURL.isParentOf(saveUrl) && (fileItem.isDir() || !project->inProject(saveUrl)) ) //directories should always be checked as might contain files that were not yet added to the project
   {
-    if (confirm && !project->isProjectFile(saveUrl))
+    if (confirm && !project->inProject(saveUrl))
     {
       QString nice = KUrl::relativeUrl(baseURL, saveUrl);
       nice = KStringHandler::lsqueeze(nice, 60);
@@ -339,18 +339,18 @@ void QuantaNetAccess::checkProjectInsert(const KUrl& source, const KUrl& target,
 bool QuantaNetAccess::checkProjectRemove(const KUrl& src, KDevPlugin* plugin, bool confirm, bool remove)
 {
   QWidget *window = 0L;
-  QuantaProjectIf *project = 0L;
+  KDevProject *project = 0L;
   if (plugin)
   {
     window = KDevCore::mainWindow();
-    project = dynamic_cast<QuantaProjectIf*>(KDevCore::activeProject());
+    project = KDevCore::activeProject();
   }
   if (!project)
     return true;
 
   KUrl url = adjustURL(src);
   KUrl baseURL = project->projectDirectory();
-  if ( baseURL.isParentOf(url) && project->isProjectFile(url) )
+  if ( baseURL.isParentOf(url) && project->inProject(url) )
   {
     if (confirm)
     {
@@ -374,15 +374,15 @@ bool QuantaNetAccess::checkProjectRemove(const KUrl& src, KDevPlugin* plugin, bo
 
 bool QuantaNetAccess::checkProjectDel(const KUrl& src, KDevPlugin* plugin, QWidget* window, bool confirm)
 {
-  QuantaProjectIf *project = 0L;
+  KDevProject *project = 0L;
   if (plugin)
   {
-    project = dynamic_cast<QuantaProjectIf*>(KDevCore::activeProject());
+    project = KDevCore::activeProject();
   }
   KUrl url = adjustURL(src);
   if ( project )
   {
-    if ( project->projectDirectory().isParentOf(url) && project->isProjectFile(url) )
+    if ( project->projectDirectory().isParentOf(url) && project->inProject(url) )
     {
       if (confirm)
       {

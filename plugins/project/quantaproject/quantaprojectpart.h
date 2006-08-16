@@ -21,7 +21,7 @@
 #ifndef KDEVQUANTAPROJECT_H
 #define KDEVQUANTAPROJECT_H
 
-#include "quantaprojectif.h"
+#include <kdevproject.h>
 
 #include <qmap.h>
 #include <qdom.h>
@@ -42,7 +42,7 @@ class ConfigWidgetProxy;
 /**
 Please read the README.dox file for more info about this part
 */
-class QuantaProjectPart: public QuantaProjectIf
+class QuantaProjectPart: public KDevProject
 {
     Q_OBJECT
 public:

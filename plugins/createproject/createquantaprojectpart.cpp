@@ -27,7 +27,6 @@
 #include "webimportwizardpage.h"
 #include "quantacoreif.h"
 #include "quantanetaccess.h"
-#include "quantaprojectif.h"
 
 //qt includes
 #include <qdom.h>

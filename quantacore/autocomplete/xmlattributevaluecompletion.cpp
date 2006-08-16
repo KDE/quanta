@@ -17,7 +17,6 @@
 #include "groupstorage.h"
 #include "node.h"
 #include "parseresult.h"
-#include "quantaprojectif.h"
 #include "tag.h"
 
 #include <QDir>
@@ -158,9 +157,9 @@ QStringList XmlAttributeValueCompletion::tagAttributeValues(const DTDStruct* dtd
         if (attrName == searchForAttr)
         {
           if (attr->type == "url") {
-            QuantaProjectIf *project =dynamic_cast<QuantaProjectIf*>( KDevCore::activeProject());
             //FIXME: Port to the new KDevelop API!
             /*            
+            QuantaProjectIf *project =dynamic_cast<QuantaProjectIf*>( KDevCore::activeProject());
             if (project)
             {
               KUrl projectBase = project->projectBase();

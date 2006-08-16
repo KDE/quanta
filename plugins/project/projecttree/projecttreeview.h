@@ -28,7 +28,6 @@ class FileInfoDlg;
 class ProjectList;
 class KDevPlugin;
 class KDevProject;
-class QuantaProjectIf;
 namespace KParts{
   class Part;
 }
@@ -165,7 +164,7 @@ private:
   ProjectTreeBranch *m_projectDir;
   ProjectList *m_projectFiles;
   KDevPlugin * m_plugin;
-  QuantaProjectIf * m_quantaProject;
+  KDevProject * m_quantaProject;
   static const QString & m_attrDesc;
   static const QString & m_attrOpen;
 };

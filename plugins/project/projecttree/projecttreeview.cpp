@@ -19,7 +19,6 @@
 #include "extfileinfo.h"
 #include "fileinfodlg.h"
 #include "helper.h"
-#include "quantaprojectif.h"
 #include "quantanetaccess.h"
 #include "settings.h"
 #include "hacks.h"
@@ -126,7 +125,7 @@ KFileTreeViewItem* ProjectTreeBranch::createTreeViewItem(KFileTreeViewItem *pare
 /////////////////////////////////////////////
 
 ProjectTreeView::ProjectTreeView(KDevPlugin * plugin, QWidget *parent)
-  : BaseTreeView(plugin, parent), m_projectDir(0), m_plugin(plugin), m_quantaProject(dynamic_cast<QuantaProjectIf *>(KDevCore::activeProject()))
+  : BaseTreeView(plugin, parent), m_projectDir(0), m_plugin(plugin), m_quantaProject(KDevCore::activeProject())
 {
   setShowToolTips(Settings::self()->projectTreeTooltips());
   //setSelectionModeExt(K3ListView::Extended);
@@ -448,7 +447,9 @@ QDomElement ProjectTreeView::getDomElement(KFileTreeViewItem* item)
     url.adjustPath(KUrl::AddTrailingSlash);
 
   QString path = m_quantaProject->relativeUrl(url).path();
-  return m_quantaProject->domElementForPath(path);
+  //FIXME This do not exists anymore
+  //return m_quantaProject->domElementForPath(path);
+  return QDomElement();
 }
 
 

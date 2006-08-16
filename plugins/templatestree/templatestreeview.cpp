@@ -26,7 +26,6 @@
 // #include "tagmaildlg.h"
 #include "helper.h"
 #include "settings.h"
-#include "quantaprojectif.h"
 #include "hacks.h"
 
 //kdevelop includes
@@ -839,11 +838,7 @@ void TemplatesTreeView::slotDragInsert(QDropEvent *e)
 void TemplatesTreeView::slotProjectOpened()
 {
   m_projectName = KDevCore::activeProject()->projectName();
-  QuantaProjectIf * qProject = dynamic_cast<QuantaProjectIf *>(KDevCore::activeProject());
-  if (qProject)
-    m_projectBaseURL = qProject->projectDirectory();
-  else
-    m_projectBaseURL = KUrl(KDevCore::activeProject()->projectDirectory());
+  m_projectBaseURL = KDevCore::activeProject()->projectDirectory();
 
   if (m_projectDir)
     removeBranch(m_projectDir);
