@@ -12,6 +12,8 @@
 #include "quantafilemanager.h"
 
 //kde includes
+#include <kdebug.h>
+
 #include <kdevconfig.h>
 #include <kdevproject.h>
 #include <kdevprojectmodel.h>
@@ -39,6 +41,7 @@ QList<KDevProjectFolderItem *> QuantaFileManager::parse(KDevProjectFolderItem *b
 {
   KConfig *projectConfig = KDevConfig::localProject();
   QStringList fileList = projectConfig->groupList();
+  
   QStringList::Iterator it = fileList.begin();
   while (it != fileList.end())
   {
@@ -56,7 +59,7 @@ QList<KDevProjectFolderItem *> QuantaFileManager::parse(KDevProjectFolderItem *b
   folderList.insert(base->url().path(KUrl::AddTrailingSlash), base);
   for (it = fileList.begin(); it != fileList.end(); ++it)
   {
-    relFileName = (*it).mid(6);
+    relFileName = (*it).mid(7);
     url = prj->absoluteUrl(*it);
     QStringList dirPartList = relFileName.split('/', QString::SkipEmptyParts);
     QString directory = base->url().path(KUrl::AddTrailingSlash);
@@ -72,13 +75,15 @@ QList<KDevProjectFolderItem *> QuantaFileManager::parse(KDevProjectFolderItem *b
         {
           KDevProjectFolderItem *parent = folderList[parentDir];
           KDevProjectFolderItem *item = new KDevProjectFolderItem(directory, parent);
+          parent->add(item);
           folderList.insert(directory +"/", item);
         }
         directory.append('/');
       } else //it means it2 points to the name of the file
       {
          KDevProjectFolderItem *parent = folderList[parentDir];
-         new KDevProjectFileItem(directory, parent);
+         KDevProjectFileItem *item = new KDevProjectFileItem(directory, parent);
+         parent->add(item);
       }
     }
   }

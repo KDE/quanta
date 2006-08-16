@@ -213,11 +213,13 @@ void QuantaProjectPart::closeProject()
 }
 
 void QuantaProjectPart::openProject( const KUrl &dirName, const QString &projectName )
-{
+{ 
   m_projectBase = dirName;
   m_projectBase.adjustPath(KUrl::AddTrailingSlash);
   m_projectName = projectName;
 
+  kDebug(24000) << "dirName: " << dirName << " projectName: " << projectName << " baseUrl:" << m_projectBase << endl;
+  
   KDevFileManager *manager = fileManager();
   KDevProjectFolderItem *baseItem = static_cast<KDevProjectFolderItem *>(manager->import(m_projectModel, m_projectBase));
   manager->parse(baseItem);
@@ -244,7 +246,7 @@ void QuantaProjectPart::openProject( const KUrl &dirName, const QString &project
     m_files.insert(it.next()->url(), QDomElement());
   }
   kDebug(24000) << "Files in the project: " << m_files.keys() << endl;
-  kDebug( 24000 ) << "Project base: " << m_projectBase << " name: " << projectName << endl;
+  kDebug(24000) << "Project base: " << m_projectBase << " name: " << projectName << " baseItem: "<< baseItem->url() << endl;
 }
 
 /*
@@ -453,10 +455,6 @@ QList<KDevProjectFileItem*> QuantaProjectPart::recurseFiles(KDevProjectItem *ite
   {
     QList<KDevProjectFolderItem*> folder_list = folder->folderList();
     for (QList<KDevProjectFolderItem*>::Iterator it = folder_list.begin(); it != folder_list.end(); ++it)
-      files += recurseFiles((*it));
-
-    QList<KDevProjectTargetItem*> target_list = folder->targetList();
-    for (QList<KDevProjectTargetItem*>::Iterator it = target_list.begin(); it != target_list.end(); ++it)
       files += recurseFiles((*it));
 
     QList<KDevProjectFileItem*> file_list = folder->fileList();
