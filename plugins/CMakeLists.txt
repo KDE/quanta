@@ -8,14 +8,3 @@ add_subdirectory( templatestree )
 add_subdirectory( preview )
 add_subdirectory( usertoolbars )
 
-
-########### install files ###############
-
-
-
-
-
-#original Makefile.am contents follow:
-
-#SUBDIRS = project usertoolbars structuretree tagdialogs filestree templatestree \
-#	preview createproject

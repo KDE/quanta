@@ -11,13 +11,3 @@ add_subdirectory( templates )
 
 install( FILES  tips  DESTINATION ${DATA_INSTALL_DIR}/quanta)
 
-
-
-
-#original Makefile.am contents follow:
-
-#SUBDIRS = pics icons
-#
-#quantadir = ${quanta_datadir}
-#
-#quanta_DATA = tips
