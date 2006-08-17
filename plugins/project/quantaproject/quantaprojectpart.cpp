@@ -12,7 +12,7 @@
 #include "browserpopupmenu.h"
 #include "extfileinfo.h"
 #include "quantanetaccess.h"
-#include "quantaprojectwidget.h"
+#include "quantaprojectmanager.h"
 #include "quantaprojectprojectconfig.h"
 #include "quantafilemanager.h"
 
@@ -51,29 +51,18 @@ QuantaProjectPart::QuantaProjectPart( QObject *parent, const QStringList & /*arg
   kDebug( 24000 ) << "QuantaProjectPart loaded" << endl;
   setXMLFile( "kdevquantaproject.rc" );
 
-  m_widget = new QuantaProjectWidget( this );
-  m_widget->setWindowTitle( "widget caption" );
+  m_widget = new QuantaProjectManager( this, 0 );
+  m_widget->setWindowTitle( "Project Manager" );
 //FIXME  m_widget->setWindowIcon( KIcon( info()->icon() ) );
+  
+//FIXME  m_widget->setWhatsThis(i18n( "WHAT DOES THIS PART DO?" ) );
+  
+  KDevCore::mainWindow()->embedSelectViewRight(m_widget, i18n("Project Manager"), i18n("Project Manager"));
+
+
   m_projectModel = new KDevProjectModel(this);
 
   m_browserMenu = 0L;
-
-//FIXME  m_widget->setWhatsThis(i18n( "WHAT DOES THIS PART DO?" ) );
-
-  // now you decide what should happen to the widget. Take a look at kdevcore.h
-  // or at other plugins how to embed it.
-
-  // if you want to embed your widget as an outputview, simply uncomment
-  // the following line.
-  // mainWindow()->embedOutputView( m_widget, "name that should appear", "enter a tooltip" );
-
-  // if you want to embed your widget as a selectview (at the left), simply uncomment
-  // the following line.
-  // mainWindow()->embedSelectView( m_widget, "name that should appear", "enter a tooltip" );
-
-  // if you want to embed your widget as a selectview (at the right), simply uncomment
-  // the following line.
-  // mainWindow()->embedSelectViewRight( m_widget, "name that should appear", "enter a tooltip" );
 
   setupActions();
 

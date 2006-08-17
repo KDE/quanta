@@ -20,7 +20,7 @@
 #include <kurl.h>
 
 class BrowserPopupMenu;
-class QuantaProjectWidget;
+class QuantaProjectManager;
 
 class QAction;
 class QMenu;
@@ -101,7 +101,7 @@ private:
     QStringList removeItems(const QStringList &item);
     QList<KDevProjectFileItem*> recurseFiles(KDevProjectItem *item);
 
-    QPointer<QuantaProjectWidget> m_widget;
+    QPointer<QuantaProjectManager> m_widget;
     ConfigWidgetProxy *m_configProxy;
 
     KUrl m_projectBase;

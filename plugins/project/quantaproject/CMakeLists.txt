@@ -2,6 +2,7 @@
 include_directories(
    ${CMAKE_SOURCE_DIR}/quanta/lib
    ${KDE4_INCLUDE_DIR}/kdevelop
+   ${KDE4_INCLUDE_DIR}/kdevelop/util
    )
 
 
@@ -10,7 +11,7 @@ include_directories(
 set(kdevquantaproject_PART_SRCS
    quantafilemanager.cpp
    quantaprojectpart.cpp 
-   quantaprojectwidget.cpp 
+   quantaprojectmanager.cpp 
    quantaprojectprojectconfig.cpp 
    browserpopupmenu.cpp )
 
