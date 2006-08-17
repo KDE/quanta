@@ -14,8 +14,8 @@
     <secondaryLanguages>
       <language>C</language>
     </secondaryLanguages>
-    <description></description>
-    <defaultencoding></defaultencoding>
+    <description/>
+    <defaultencoding/>
   </general>
   <kdevcustomproject>
     <filelistdirectory>/home/andris/development/sources/kde-trunk/kdewebdev/quanta</filelistdirectory>
@@ -23,7 +23,7 @@
       <mainprogram>src/quanta</mainprogram>
       <directoryradio>build</directoryradio>
       <customdirectory>/</customdirectory>
-      <programargs></programargs>
+      <programargs/>
       <terminal>false</terminal>
       <autocompile>true</autocompile>
       <envvars>
@@ -48,19 +48,19 @@
       <abortonerror>false</abortonerror>
       <numberofjobs>1</numberofjobs>
       <dontact>false</dontact>
-      <makebin></makebin>
+      <makebin/>
       <selectedenvironment>default</selectedenvironment>
       <environments>
         <default/>
       </environments>
       <prio>0</prio>
-      <defaulttarget></defaulttarget>
-      <makeoptions></makeoptions>
+      <defaulttarget/>
+      <makeoptions/>
     </make>
   </kdevcustomproject>
   <kdevfilecreate>
     <filetypes>
-      <type icon="source_f" ext="for" create="template" name="Preprocessed Fortran" >
+      <type icon="source_f" ext="for" name="Preprocessed Fortran" create="template" >
         <descr>A new empty preprocessed Fortran file.</descr>
       </type>
     </filetypes>
@@ -110,7 +110,7 @@
       <root>/usr/lib/qt3</root>
     </qt>
     <creategettersetter>
-      <prefixGet></prefixGet>
+      <prefixGet/>
       <prefixSet>set</prefixSet>
       <prefixVariable>m_,_</prefixVariable>
       <parameterName>theValue</parameterName>
@@ -139,12 +139,12 @@
   </kdevfileview>
   <kdevdebugger>
     <general>
-      <programargs></programargs>
-      <gdbpath></gdbpath>
-      <dbgshell></dbgshell>
-      <configGdbScript></configGdbScript>
-      <runShellScript></runShellScript>
-      <runGdbScript></runGdbScript>
+      <programargs/>
+      <gdbpath/>
+      <dbgshell/>
+      <configGdbScript/>
+      <runShellScript/>
+      <runGdbScript/>
       <breakonloadinglibs>true</breakonloadinglibs>
       <separatetty>false</separatetty>
       <floatingtoolbar>false</floatingtoolbar>

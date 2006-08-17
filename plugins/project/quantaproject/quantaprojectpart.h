@@ -58,9 +58,11 @@ public:
 
     virtual void removeFiles (const QStringList &fileList);
     virtual void removeFile (const QString &fileName);
+/*Remove if inProject works!!!
     virtual KDE_DEPRECATED bool isProjectFile(const QString &path) {return isProjectFile(KUrl(path));}
 
-    virtual bool isProjectFile(const KUrl &url);
+        virtual bool isProjectFile(const KUrl &url);
+*/    
     /**
     * Returns the element pointing to the node of the project dom tree holding all the project information.
     * @return the project dom element ("/kdevelop/project" in our case)

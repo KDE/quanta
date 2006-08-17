@@ -29,8 +29,7 @@ QuantaFileManager::QuantaFileManager(QObject *parent) : KDevFileManager(parent),
 QuantaFileManager::~QuantaFileManager()
 {
 }
-
-
+   
 KDevProjectItem *QuantaFileManager::import(KDevProjectModel *model, const KUrl &base)
 {
   if (m_baseItem)

@@ -165,7 +165,7 @@ void QuantaProjectPart::contextMenu( QMenu *popup, const Context *context )
     KUrl::List::ConstIterator end = m_fileContextURLs.constEnd();
     for (KUrl::List::ConstIterator it = m_fileContextURLs.constBegin(); it != end; ++it)
     {
-      if (!isProjectFile(*it))
+      if (!inProject(*it))
       {
         isInProject = false; //at least one of the files is outside of the project
         break;
@@ -243,9 +243,12 @@ void QuantaProjectPart::openProject( const KUrl &dirName, const QString &project
   QListIterator<KDevProjectFileItem*> it(fileList);
   while (it.hasNext())
   {
-    m_files.insert(it.next()->url(), QDomElement());
+    KUrl url = it.next()->url();
+    m_files.insert(url, QDomElement());
+/*    if (inProject(url))
+      kDebug(24000) << url << " is in project." << endl;*/
   }
-  kDebug(24000) << "Files in the project: " << m_files.keys() << endl;
+//   kDebug(24000) << "Files in the project: " << m_files.keys() << endl;
   kDebug(24000) << "Project base: " << m_projectBase << " name: " << projectName << " baseItem: "<< baseItem->url() << endl;
 }
 
@@ -256,8 +259,7 @@ QStringList QuantaProjectPart::allFiles() const
 
 QList<KDevProjectFileItem*> QuantaProjectPart::allFiles()
 {
-
-  //FIXME implement it!
+  return recurseFiles(fileManager()->top());
 }
 
 void QuantaProjectPart::addFiles( const QStringList &fileList )
@@ -406,7 +408,7 @@ void QuantaProjectPart::slotInsertFolder()
   }
 }
 
-
+/*Remove if inProject works!!!
 bool QuantaProjectPart::isProjectFile(const KUrl &url)
 {
   if (! m_projectBase.isParentOf(url))
@@ -418,7 +420,7 @@ bool QuantaProjectPart::isProjectFile(const KUrl &url)
   kDebug(24000) << "Is part of the project: url=" <<  url << " relativepath= " << u << " result=" << (m_files.contains(u) || m_files.contains(u.append('/'))) << endl;
   return (m_files.contains(u) || (u.right(1) != "/" && m_files.contains(u.append('/'))));
 }
-
+*/
 
 void QuantaProjectPart::slotTargetFolderSelected(QAction *action, const KUrl& url)
 {

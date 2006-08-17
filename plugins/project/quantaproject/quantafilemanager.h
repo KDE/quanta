@@ -15,9 +15,8 @@
 
 class QuantaFileManager: public KDevFileManager
 {
-
   Q_OBJECT
-
+      
 public:
   QuantaFileManager(QObject *parent);
   ~QuantaFileManager();
