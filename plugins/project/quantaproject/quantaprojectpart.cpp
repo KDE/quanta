@@ -249,13 +249,6 @@ void QuantaProjectPart::openProject( const KUrl &dirName, const QString &project
   kDebug(24000) << "Project base: " << m_projectBase << " name: " << projectName << " baseItem: "<< baseItem->url() << endl;
 }
 
-/*
-QString QuantaProjectPart::projectDirectory() const
-{
-  return m_projectBase.isLocalFile() ? m_projectBase.path(KUrl::RemoveTrailingSlash) : "";  //FIXME
-}
-*/
-
 QStringList QuantaProjectPart::allFiles() const
 {
   return m_files.keys();

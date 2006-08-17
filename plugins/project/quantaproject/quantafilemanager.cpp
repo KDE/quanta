@@ -10,6 +10,9 @@
 
 //own includes
 #include "quantafilemanager.h"
+// QT includes
+
+#include <QStack>
 
 //kde includes
 #include <kdebug.h>
@@ -39,55 +42,49 @@ KDevProjectItem *QuantaFileManager::import(KDevProjectModel *model, const KUrl &
 
 QList<KDevProjectFolderItem *> QuantaFileManager::parse(KDevProjectFolderItem *base)
 {
+  const QString prefix = "Item - ";
   KConfig *projectConfig = KDevConfig::localProject();
-  QStringList fileList = projectConfig->groupList();
-  
-  QStringList::Iterator it = fileList.begin();
-  while (it != fileList.end())
-  {
-    if (!(*it).startsWith("Item - "))
-    {
-      it = fileList.erase(it);
-    } else
-      ++it;
-  }
-
-  KUrl url;
+  QStringList groupList = projectConfig->groupList();
+  QMap<KUrl, KDevProjectFolderItem*> folderList;
+  KUrl baseUrl = base->url();
+  folderList.insert(baseUrl, base);
   KDevProject *prj = project();
+  QStack<KUrl> urlStack;
   QString relFileName;
-  QMap<QString, KDevProjectFolderItem*> folderList;
-  folderList.insert(base->url().path(KUrl::AddTrailingSlash), base);
-  for (it = fileList.begin(); it != fileList.end(); ++it)
+  KUrl url, fileUrl;
+  KDevProjectFolderItem *parent;
+  foreach (QString group, groupList)
   {
-    relFileName = (*it).mid(7);
-    url = prj->absoluteUrl(*it);
-    QStringList dirPartList = relFileName.split('/', QString::SkipEmptyParts);
-    QString directory = base->url().path(KUrl::AddTrailingSlash);
-    QStringList::Iterator lastIt = dirPartList.end();
-    --lastIt;
-    for (QStringList::Iterator it2 = dirPartList.begin(); it2 != dirPartList.end(); ++it2)
-    {
-      QString parentDir = directory;
-      directory.append(*it2);
-      if (it2 != lastIt) //it means we are adding the directories for the file
-      {
-        if (!folderList.contains(directory))
-        {
-          KDevProjectFolderItem *parent = folderList[parentDir];
-          KDevProjectFolderItem *item = new KDevProjectFolderItem(directory, parent);
-          parent->add(item);
-          folderList.insert(directory +"/", item);
-        }
-        directory.append('/');
-      } else //it means it2 points to the name of the file
-      {
-         KDevProjectFolderItem *parent = folderList[parentDir];
-         KDevProjectFileItem *item = new KDevProjectFileItem(directory, parent);
-         parent->add(item);
-      }
-    }
-  }
+    if (! group.startsWith(prefix))
+      continue;
 
+    relFileName = group.mid(prefix.length());
+    fileUrl = prj->absoluteUrl(relFileName);
+    parent = m_baseItem;
+    url = fileUrl.upUrl();
+    // search for not yet created folders
+    while (url != baseUrl)
+    {
+      if (folderList.contains(url))
+      {
+        parent = folderList[url];
+        break;
+      }
+      urlStack.push(url);
+      url = url.upUrl();
+    }
+    // add new folders
+    while (! urlStack.isEmpty())
+    {
+      KDevProjectFolderItem *item = new KDevProjectFolderItem(urlStack.top(), parent);
+      parent->add(item);
+      folderList.insert(urlStack.pop(), item);
+      parent = item;
+    }
+    // add the file
+    KDevProjectFileItem *item = new KDevProjectFileItem(fileUrl, parent);
+    parent->add(item);
+  }
   return QList<KDevProjectFolderItem *>();
 }
 
