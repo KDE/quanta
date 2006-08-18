@@ -26,7 +26,6 @@
 // #include "tagmaildlg.h"
 #include "helper.h"
 #include "settings.h"
-#include "hacks.h"
 
 //kdevelop includes
 #include <kdevcore.h>
@@ -250,7 +249,7 @@ void TemplatesTreeView::emptyMenu(const QPoint &point)
 void TemplatesTreeView::folderMenu(const QPoint &point)
 {
   KMenu popup(this);
-  Hack::KMenuAddTitle(&popup, i18n("Templates Tree"));
+  popup.addTitle(i18n("Templates Tree"));
 
   popup.addAction(SmallIcon("folder_new"), i18n("&New Folder..."), this, SLOT(slotNewDir()));
   popup.addAction(SmallIcon("mail_send"), i18n("Send in E&mail..."), this, SLOT(slotSendInMail()));
@@ -291,7 +290,7 @@ void TemplatesTreeView::folderMenu(const QPoint &point)
 void TemplatesTreeView::fileMenu(const QPoint &point)
 {
   KMenu popup(this);
-  Hack::KMenuAddTitle(&popup, i18n("Templates Tree"));
+  popup.addTitle(i18n("Templates Tree"));
 
   m_dirInfo = readDirInfo();
   if (m_part->quantaCore()->activeEditorSource())

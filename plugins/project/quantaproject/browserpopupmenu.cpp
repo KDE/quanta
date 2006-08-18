@@ -12,7 +12,6 @@
  ***************************************************************************/
 #include "browserpopupmenu.h"
 #include "extfileinfo.h"
-#include "hacks.h"
 
 #include <qaction.h>
 
@@ -37,7 +36,7 @@ BrowserPopupMenu::~BrowserPopupMenu()
 
 void BrowserPopupMenu::buildMenu()
 {
-  Hack::KMenuAddTitle(this, m_relativePathInTitle ? m_base.fileName() : m_base.path(KUrl::RemoveTrailingSlash));
+  addTitle(m_relativePathInTitle ? m_base.fileName() : m_base.path(KUrl::RemoveTrailingSlash));
   QStringList::ConstIterator topEnd = m_topList.constEnd();
   for (QStringList::ConstIterator it = m_topList.constBegin(); it != topEnd; ++it)
   {

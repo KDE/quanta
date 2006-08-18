@@ -21,7 +21,6 @@
 #include "helper.h"
 #include "quantanetaccess.h"
 #include "settings.h"
-#include "hacks.h"
 
 // QT includes
 #include <QPainter>
@@ -222,7 +221,7 @@ void ProjectTreeView::folderMenu(const QPoint &point)
   createNewMenu.addAction(SmallIcon("document"), i18n("&File..."), this, SLOT(slotCreateFile()));
 
   KMenu popup(this);
-  Hack::KMenuAddTitle(&popup, i18n("Project Tree"));
+  popup.addTitle(i18n("Project Tree"));
 
   popup.addMenu(&createNewMenu);
   popup.addSeparator();
@@ -253,7 +252,7 @@ void ProjectTreeView::emptyMenu(const QPoint &point)
   createNewMenu.addAction(SmallIcon("document"), i18n("&File..."), this, SLOT(slotCreateFile()));
 
   KMenu popup(this);
-  Hack::KMenuAddTitle(&popup, i18n("Project Tree"));
+  popup.addTitle(i18n("Project Tree"));
 
   popup.addMenu(&createNewMenu);
   popup.addSeparator();

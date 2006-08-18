@@ -24,6 +24,7 @@
 #include <kdevplugin.h>
 
 class QMenu;
+class KMenu;
 class KAction;
 class KRecentFilesAction;
 class KDevAppFrontend;
@@ -78,7 +79,7 @@ private slots:
     void init();
 
     void insertConfigWidget(const KDialog *dlg, QWidget *page, unsigned int pageNo);
-    void contextMenu(QMenu *popup, const Context *context);
+    void contextMenu(KMenu *popup, const Context *context);
     void projectOpened();
     void projectClosed();
     /**

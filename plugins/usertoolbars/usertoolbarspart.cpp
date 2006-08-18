@@ -41,6 +41,7 @@
 #include <QMap>
 
 //kde includes
+#include <kmenu.h>
 #include <kaction.h>
 #include <kstdaction.h>
 #include <krecentfilesaction.h>
@@ -98,8 +99,8 @@ UserToolbarsPart::UserToolbarsPart(QObject *parent, const QStringList &/*args*/)
     connect(m_configProxy, SIGNAL(insertConfigWidget(const KDialog*, QWidget*, unsigned int )),
         this, SLOT(insertConfigWidget(const KDialog*, QWidget*, unsigned int)));
     */
-    connect(KDevCore::mainWindow(), SIGNAL(contextMenu(QMenu *, const Context *)),
-        this, SLOT(contextMenu(QMenu *, const Context *)));
+    connect(KDevCore::mainWindow(), SIGNAL(contextMenu(KMenu *, const Context *)),
+        this, SLOT(contextMenu(KMenu *, const Context *)));
     connect(KDevCore::projectController(), SIGNAL(projectOpened()), this, SLOT(projectOpened()));
     connect(KDevCore::projectController(), SIGNAL(projectClosed()), this, SLOT(projectClosed()));
 
@@ -181,7 +182,7 @@ void UserToolbarsPart::init()
   m_createActionsMenu = config->readEntry("Create Actions menu", true);
   slotAdjustActions();
   ToolbarGUIBuilder::ref(KDevCore::mainWindow())->setSeparateToolbars(m_separateToolbars);
-  QMenu *actionsMenu = static_cast<QMenu*>(factory()->container("actions", this));
+  KMenu *actionsMenu = static_cast<KMenu*>(factory()->container("actions", this));
 
   if (actionsMenu)
     actionsMenu->setVisible(false);
@@ -259,7 +260,7 @@ void UserToolbarsPart::insertConfigWidget(const KDialog *dlg, QWidget *page, uns
     }
 }
 
-void UserToolbarsPart::contextMenu(QMenu *popup, const Context *context)
+void UserToolbarsPart::contextMenu(KMenu *popup, const Context *context)
 {
   Q_UNUSED(popup);
   Q_UNUSED(context);

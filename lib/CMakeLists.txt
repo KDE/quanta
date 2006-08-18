@@ -29,7 +29,6 @@ set(kdevquanta_LIB_SRCS
    extfileinfo.cpp 
    quantaprojectif.cpp 
    searchlinewidget.cpp
-   hacks.cpp
    )
 
 kde4_automoc(${kdevquanta_LIB_SRCS})
