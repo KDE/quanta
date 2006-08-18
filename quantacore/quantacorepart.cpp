@@ -29,7 +29,6 @@
 #include <QCheckBox>
 #include <QLabel>
 #include <QTimer>
-#include <QMenu>
 #include <qwidget.h>
 
 #include <kaction.h>
@@ -45,6 +44,7 @@
 #include <kparts/part.h>
 #include <kio/netaccess.h>
 #include <kurl.h>
+#include <kmenu.h>
 #include <kstdaction.h>
 #include <ktempfile.h>
 #include <kstandarddirs.h>
@@ -91,7 +91,7 @@ QuantaCorePart::QuantaCorePart(QObject *parent, const QStringList& )
 
   connect(KDevCore::documentController(), SIGNAL(documentUrlChanged(KDevDocument*, const KUrl, const KUrl)), this, SLOT(slotPartURLChanged(KDevDocument*, const KUrl, const KUrl)));
 
-  connect(KDevCore::mainWindow(), SIGNAL(contextMenu(QMenu *, const Context *)), this, SLOT(contextMenu(QMenu *, const Context *)));
+  connect(KDevCore::mainWindow(), SIGNAL(contextMenu(KMenu *, const Context *)), this, SLOT(contextMenu(KMenu *, const Context *)));
 
   QTimer::singleShot(0, this, SLOT(init()));
 }
@@ -391,7 +391,7 @@ void QuantaCorePart::slotInsertTag()
   m_fileContextList.clear();
 }
 
-void QuantaCorePart::contextMenu(QMenu *popup, const Context *context)
+void QuantaCorePart::contextMenu(KMenu *popup, const Context *context)
 {
   if (m_activeQuantaDoc && context->hasType(Context::FileContext))
   {

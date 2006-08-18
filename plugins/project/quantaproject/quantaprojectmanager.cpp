@@ -25,6 +25,7 @@
 #include <QtGui/QHeaderView>
 
 #include <kdevcore.h>
+#include <kdevmainwindow.h>
 #include <kdevcontext.h>
 #include <kmenu.h>
 #include <kdebug.h>
@@ -149,7 +150,7 @@ void QuantaProjectManager::popupContextMenu(const QPoint &pos)
         }
 
       ProjectItemContext context(item);
-      //KDevApi::self()->core()->fillContextMenu(&menu, &context); FIXME
+      KDevCore::mainWindow()->fillContextMenu(&menu, &context);
 
       menu.exec(mapToGlobal(pos));
     }

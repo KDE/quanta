@@ -23,7 +23,7 @@ class BrowserPopupMenu;
 class QuantaProjectManager;
 
 class QAction;
-class QMenu;
+class KMenu;
 class KAction;
 class KDialog;
 class Context;
@@ -90,7 +90,7 @@ private slots:
     void init();
 
     void insertConfigWidget(const KDialog *dlg, QWidget *page, unsigned int pageNo);
-    void contextMenu(QMenu *popup, const Context *context);
+    void contextMenu(KMenu *popup, const Context *context);
 
     void slotInsertFiles();
     void slotInsertFolder();
@@ -113,6 +113,8 @@ private:
     BrowserPopupMenu *m_browserMenu;
     QDomElement m_projectDomElement;
     KDevProjectModel *m_projectModel;
+    KDevProjectFolderItem *m_workspace;
+
 };
 
 #endif

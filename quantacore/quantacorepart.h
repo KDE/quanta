@@ -26,7 +26,7 @@ class KUrl;
 class ConfigWidgetProxy;
 class KDialog;
 class FileContext;
-class QMenu;
+class KMenu;
 class Context;
 class KDevDocument;
 
@@ -76,7 +76,7 @@ private slots:
 
   void init();
   
-  void contextMenu(QMenu *popup, const Context *context);
+  void contextMenu(KMenu *popup, const Context *context);
   
   /**
     * Called when a file was loaded into the application.

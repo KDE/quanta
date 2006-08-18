@@ -17,7 +17,6 @@
 #include "quantafilemanager.h"
 
 #include <QTimer>
-#include <QMenu>
 #include <QStringList>
 #include <QWhatsThis>
 
@@ -31,6 +30,7 @@
 #include <kmessagebox.h>
 #include <kurlrequester.h>
 #include <kurlrequesterdlg.h>
+#include <kmenu.h>
 
 //kdevelop includes
 #include <domutil.h>
@@ -38,6 +38,7 @@
 #include <kdevcontext.h>
 #include <kdevmainwindow.h>
 #include <kdevprojectmodel.h>
+#include <kdevdocumentcontroller.h>
 
 typedef KGenericFactory<QuantaProjectPart> QuantaProjectFactory;
 K_EXPORT_COMPONENT_FACTORY( libkdevquantaproject, QuantaProjectFactory("kdevquantaproject") );
@@ -50,19 +51,22 @@ QuantaProjectPart::QuantaProjectPart( QObject *parent, const QStringList & /*arg
 {
   kDebug( 24000 ) << "QuantaProjectPart loaded" << endl;
   setXMLFile( "kdevquantaproject.rc" );
+  
+  m_workspace = 0;
+  m_projectModel = new KDevProjectModel(this);
+  
+  m_browserMenu = 0L;
 
-  m_widget = new QuantaProjectManager( this, 0 );
+  QuantaProjectManager *manager = new QuantaProjectManager( this, 0 );
+  manager->setModel(m_projectModel);
+  m_widget = manager;
   m_widget->setWindowTitle( "Project Manager" );
+  
 //FIXME  m_widget->setWindowIcon( KIcon( info()->icon() ) );
   
 //FIXME  m_widget->setWhatsThis(i18n( "WHAT DOES THIS PART DO?" ) );
   
   KDevCore::mainWindow()->embedSelectViewRight(m_widget, i18n("Project Manager"), i18n("Project Manager"));
-
-
-  m_projectModel = new KDevProjectModel(this);
-
-  m_browserMenu = 0L;
 
   setupActions();
 
@@ -72,8 +76,10 @@ QuantaProjectPart::QuantaProjectPart( QObject *parent, const QStringList & /*arg
   connect( m_configProxy, SIGNAL( insertConfigWidget( const KDialog*, QWidget*, unsigned int ) ),
            this, SLOT( insertConfigWidget( const KDialog*, QWidget*, unsigned int ) ) );
   */
-  connect( KDevCore::mainWindow(), SIGNAL( contextMenu( QMenu *, const Context * ) ),
-           this, SLOT( contextMenu( QMenu *, const Context * ) ) );
+  connect( manager, SIGNAL( activateURL( const KUrl & ) ),
+           KDevCore::documentController(), SLOT( editDocument( const KUrl & ) ) );
+  connect( KDevCore::mainWindow(), SIGNAL( contextMenu( KMenu *, const Context * ) ),
+           this, SLOT( contextMenu( KMenu *, const Context * ) ) );
 
   QuantaFileManager *qFileManager = new QuantaFileManager(this);
   setFileManager(qFileManager);
@@ -84,12 +90,12 @@ QuantaProjectPart::QuantaProjectPart( QObject *parent, const QStringList & /*arg
 QuantaProjectPart::~QuantaProjectPart()
 {
   kDebug( 24000 ) << "QuantaProjectPart unloaded" << endl;
-  // if you embed a widget, you need to tell the mainwindow when you remove it
-  //     if ( m_widget )
-  //     {
-  //         mainWindow()->removeView( m_widget );
-  //     }
-  delete m_widget;
+  if ( m_widget )
+  {
+    KDevCore::mainWindow()->removeView( m_widget );
+    delete m_widget;
+    m_widget = 0;
+  }
 //  delete m_configProxy;
 }
 
@@ -128,7 +134,7 @@ void QuantaProjectPart::insertConfigWidget( const KDialog *dlg, QWidget *page, u
   }
 }
 
-void QuantaProjectPart::contextMenu( QMenu *popup, const Context *context )
+void QuantaProjectPart::contextMenu( KMenu *popup, const Context *context )
 {
   // put actions into the context menu here
   if ( context->hasType( Context::EditorContext ) )
@@ -203,6 +209,9 @@ void QuantaProjectPart::closeProject()
 
 void QuantaProjectPart::openProject( const KUrl &dirName, const QString &projectName )
 { 
+  if (m_workspace)
+    m_projectModel->removeItem(m_workspace);
+  
   m_projectBase = dirName;
   m_projectBase.adjustPath(KUrl::AddTrailingSlash);
   m_projectName = projectName;
@@ -212,7 +221,7 @@ void QuantaProjectPart::openProject( const KUrl &dirName, const QString &project
   KDevFileManager *manager = fileManager();
   KDevProjectFolderItem *baseItem = static_cast<KDevProjectFolderItem *>(manager->import(m_projectModel, m_projectBase));
   manager->parse(baseItem);
-  
+
   //FIXME: there is no projectDom anymore!!
 #warning There is no projectDom!! Change it!  
 /*  m_projectDom = KDevApi::self()->projectDom();
