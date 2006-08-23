@@ -44,6 +44,12 @@ public:
   ~ProjectTreePart();
   
   void savePartialProjectSession(QDomElement *el);
+  
+  // the methods to embed the view 
+  virtual QWidget *pluginView() const;
+    
+  virtual Qt::DockWidgetArea dockWidgetAreaHint() const 
+    {return Qt::RightDockWidgetArea;}
 
 signals:
   /** emitted if the project is about to be closed
@@ -61,7 +67,7 @@ private slots:
 private:
   void setupActions();
 
-  QPointer<ProjectTreeWidget> m_widget;
+  ProjectTreeWidget *m_widget;
   ConfigWidgetProxy *m_configProxy;
 };
 

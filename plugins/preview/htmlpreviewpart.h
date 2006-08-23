@@ -52,7 +52,13 @@ class HTMLPreviewPart : public KDevPlugin
 public:
   HTMLPreviewPart(QObject *parent, const QStringList &args);
   ~HTMLPreviewPart();
-
+  // the methods to embed the view 
+  virtual QWidget *pluginView() const;
+    
+  // FIXME 
+  virtual Qt::DockWidgetArea dockWidgetAreaHint() const 
+    {return Qt::BottomDockWidgetArea;}
+  
 private slots:
   void init();
 
@@ -72,7 +78,7 @@ private:
 
   KAction *action;
 
-  QPointer<HTMLPart> m_browserPart;
+  HTMLPart *m_browserPart;
   ConfigWidgetProxy * m_configProxy;
   KTextEditor::Document * m_activeEditor;
   

@@ -40,7 +40,13 @@ class QuantaProjectPart: public KDevProject
 public:
     QuantaProjectPart(QObject *parent, const QStringList &args);
     ~QuantaProjectPart();
-
+    
+    // the methods to embed the view 
+    virtual QWidget *pluginView() const;
+    
+    virtual Qt::DockWidgetArea dockWidgetAreaHint() const 
+    	{return Qt::RightDockWidgetArea;}
+    
     virtual void closeProject();
 //    virtual KDE_DEPRECATED QString projectDirectory() const;
     /**
@@ -101,7 +107,7 @@ private:
     QStringList removeItems(const QStringList &item);
     QList<KDevProjectFileItem*> recurseFiles(KDevProjectItem *item);
 
-    QPointer<QuantaProjectManager> m_widget;
+    QuantaProjectManager *m_widget;
     ConfigWidgetProxy *m_configProxy;
 
     KUrl m_projectBase;

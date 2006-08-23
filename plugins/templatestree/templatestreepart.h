@@ -47,7 +47,12 @@ public:
   ~TemplatesTreePart();
 
   QuantaCoreIf * quantaCore() {return m_qcore;};
-  
+// the methods to embed the view 
+  virtual QWidget *pluginView() const;
+    
+  virtual Qt::DockWidgetArea dockWidgetAreaHint() const 
+    {return Qt::RightDockWidgetArea;}
+    
 private slots:
   
   void init();
@@ -66,9 +71,11 @@ private:
   KAction *m_createTemplateAction;
   KUrl::List m_fileContextList;
   
-  QPointer<TemplatesTreeView> m_widget;
+  TemplatesTreeView *m_widget;
   ConfigWidgetProxy *m_configProxy;
   QuantaCoreIf * m_qcore;
 };
 
 #endif
+
+// kate: space-indent on; indent-width 2; mixedindent off;

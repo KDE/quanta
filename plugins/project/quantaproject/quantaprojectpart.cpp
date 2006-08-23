@@ -60,14 +60,13 @@ QuantaProjectPart::QuantaProjectPart( QObject *parent, const QStringList & /*arg
   QuantaProjectManager *manager = new QuantaProjectManager( this, 0 );
   manager->setModel(m_projectModel);
   m_widget = manager;
-  m_widget->setWindowTitle( "Project Manager" );
+  m_widget->setWindowTitle(i18n("Project Manager"));
+  m_widget->setObjectName("quantaprojectpartwidget");
   
 //FIXME  m_widget->setWindowIcon( KIcon( info()->icon() ) );
   
 //FIXME  m_widget->setWhatsThis(i18n( "WHAT DOES THIS PART DO?" ) );
   
-  KDevCore::mainWindow()->embedSelectViewRight(m_widget, i18n("Project Manager"), i18n("Project Manager"));
-
   setupActions();
 
 //FIXME: New KCM modules need to be created for each config page  m_configProxy = new ConfigWidgetProxy( core() );
@@ -90,14 +89,14 @@ QuantaProjectPart::QuantaProjectPart( QObject *parent, const QStringList & /*arg
 QuantaProjectPart::~QuantaProjectPart()
 {
   kDebug( 24000 ) << "QuantaProjectPart unloaded" << endl;
-  if ( m_widget )
-  {
-    KDevCore::mainWindow()->removeView( m_widget );
-    delete m_widget;
-    m_widget = 0;
-  }
-//  delete m_configProxy;
 }
+
+
+QWidget *QuantaProjectPart::pluginView() const
+{
+  return m_widget;
+}
+
 
 void QuantaProjectPart::init()
 {

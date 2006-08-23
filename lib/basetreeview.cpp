@@ -21,6 +21,7 @@
 #include "helper.h"
 
 //kdevelop includes
+#include <kdevcore.h>
 #include <kdevplugin.h>
 #include <kdevdocument.h>
 #include <kdevdocumentcontroller.h>

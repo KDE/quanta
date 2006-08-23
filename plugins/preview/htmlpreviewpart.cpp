@@ -60,15 +60,16 @@ HTMLPreviewPart::HTMLPreviewPart(QObject *parent, const QStringList &/*args*/)
 {
   setXMLFile("kdevhtmlpreview.rc");
 
-/*  m_widget = new HTMLPreviewWidget(this);
-  m_widget->setWindowTitle("widget caption");
-  m_widget->setWindowIcon(SmallIcon(info()->icon()));
-
-  m_widget->setWhatsThis(i18n("WHAT DOES THIS PART DO?"));
-*/
-
+  m_browserPart = new HTMLPart(this);
+  m_browserPart->view()->setWindowTitle(i18n("HTML Preview"));
+  m_browserPart->view()->setObjectName("HtmlPreviewPartWidget");
+//FIXME    m_browserPart->widget()->setWindowIcon(SmallIcon(info()->icon()));
+  m_browserPart->setOnlyLocalReferences(true);
+  m_browserPart->setStatusMessagesEnabled(true);
+  m_browserPart->setMetaRefreshEnabled(false);
 
   setupActions();
+  
 //FIXME: New KCM modules need to be created for each config page
   /*
   m_configProxy = new ConfigWidgetProxy(core());
@@ -89,16 +90,6 @@ HTMLPreviewPart::HTMLPreviewPart(QObject *parent, const QStringList &/*args*/)
 
 HTMLPreviewPart::~HTMLPreviewPart()
 {
-// if you embed a widget, you need to tell the mainwindow when you remove it
-  if (m_browserPart)
-  {
-    KDevCore::mainWindow()->removeView(m_browserPart->view());
-  }
-//   if (m_browserPart)
-//     m_partmanager->removePart(m_browserPart);
-
-  delete m_browserPart;
-//  delete m_configProxy;
   delete m_idleTimer;
 }
 
@@ -110,6 +101,13 @@ void HTMLPreviewPart::init()
 
 //FIXME  m_partmanager = static_cast<KParts::PartManager *>(KDevApi::self()->documentController()); // FIXME find a better solution
 }
+  
+
+QWidget *HTMLPreviewPart::pluginView() const
+{
+  return m_browserPart->view();
+}
+
 
 void HTMLPreviewPart::setupActions()
 {
@@ -204,31 +202,6 @@ void HTMLPreviewPart::slotPreview()
   if (! m_activeEditor)
     return;
 
-  if (! m_browserPart)
-  {
-    m_browserPart = new HTMLPart(this);
-//FIXME    m_browserPart->widget()->setWindowIcon(SmallIcon(info()->icon()));
-    m_browserPart->setOnlyLocalReferences(true);
-    m_browserPart->setStatusMessagesEnabled(true);
-    m_browserPart->setMetaRefreshEnabled(false);
-
-    //     mainWindow()->embedPartView(m_browserPart->view(), i18n("Preview"));
-
-  // if you want to embed your widget as an outputview, simply uncomment
-  // the following line.
-    KDevCore::mainWindow()->embedOutputView( m_browserPart->view(), i18n("Preview"), i18n("Preview in a browser") );
-
-  // if you want to embed your widget as a selectview (at the left), simply uncomment
-  // the following line.
-  // mainWindow()->embedSelectView( m_widget, "name that should appear", "enter a tooltip" );
-
-  // if you want to embed your widget as a selectview (at the right), simply uncomment
-  // the following line.
-  // mainWindow()->embedSelectViewRight( m_widget, "name that should appear", "enter a tooltip" );
-
-
-    m_partmanager->addPart(m_browserPart, false);
-  }
   loadContent(m_activeEditor);
   //FIXME: how to adapt to KDevelop4?
   //KDevApi::self()->documentController()->documentForPart(m_browserPart)->activate();
@@ -299,6 +272,7 @@ void HTMLPreviewPart::slotActivePartChanged(KParts::Part *part)
 
 void HTMLPreviewPart::slotTextChanged(KTextEditor::Document *document)
 {
+  Q_UNUSED(document)
   m_idleTimer->setSingleShot(true);
   m_idleTimer->start(500);
 }

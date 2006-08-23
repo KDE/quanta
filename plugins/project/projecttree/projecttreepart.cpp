@@ -55,24 +55,10 @@ ProjectTreePart::ProjectTreePart(QObject *parent, const QStringList &/*args*/)
 
   m_widget = new ProjectTreeWidget(this);
   m_widget->setWindowTitle(i18n("Project Tree"));
+  m_widget->setObjectName("ProjecttreePartWidget");
 //  m_widget->setWindowIcon(SmallIcon(info()->icon()));
 
   m_widget->setWhatsThis(i18n("This treeview manages the files and folers of your project."));
-
-  // now you decide what should happen to the widget. Take a look at kdevcore.h
-  // or at other plugins how to embed it.
-
-  // if you want to embed your widget as an outputview, simply uncomment
-  // the following line.
-//   mainWindow()->embedOutputView( m_widget, "name that should appear", "enter a tooltip" );
-
-  // if you want to embed your widget as a selectview (at the left), simply uncomment
-  // the following line.
-  KDevCore::mainWindow()->embedSelectView( m_widget, i18n("Project Tree"), "Project Managment" );
-
-  // if you want to embed your widget as a selectview (at the right), simply uncomment
-  // the following line.
-  // mainWindow()->embedSelectViewRight( m_widget, "name that should appear", "enter a tooltip" );
 
   setupActions();
   
@@ -95,14 +81,14 @@ ProjectTreePart::ProjectTreePart(QObject *parent, const QStringList &/*args*/)
 
 ProjectTreePart::~ProjectTreePart()
 {
-  // if you embed a widget, you need to tell the mainwindow when you remove it
-  if ( m_widget )
-  {
-    KDevCore::mainWindow()->removeView( m_widget );
-  }
-  delete m_widget;
-//  delete m_configProxy;
 }
+  
+
+QWidget *ProjectTreePart::pluginView() const
+{
+  return m_widget;
+}
+
 
 void ProjectTreePart::init()
 {

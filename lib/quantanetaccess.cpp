@@ -31,6 +31,7 @@
 #include <kdevmainwindow.h>
 #include <kdevplugin.h>
 #include <kdevproject.h>
+#include <kdevcore.h>
 
 
 bool QuantaNetAccess::upload(const QString& src, const KUrl& target, KDevPlugin* plugin, bool confirm)

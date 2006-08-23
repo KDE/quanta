@@ -46,7 +46,13 @@ class StructureTreePart: public KDevPlugin
 public:
   StructureTreePart(QObject *parent, const QStringList &args);
   ~StructureTreePart();
-
+  
+  // the methods to embed the view 
+  virtual QWidget *pluginView() const;
+    
+  virtual Qt::DockWidgetArea dockWidgetAreaHint() const 
+    {return Qt::LeftDockWidgetArea;}
+  
 private slots:
   void init();
   
@@ -59,7 +65,7 @@ private:
   void setupActions();
   
   QuantaCoreIf * m_qcore;
-  QPointer<QToolBox> m_widget;
+  QToolBox *m_widget;
   ConfigWidgetProxy * m_configProxy;
   StructureTreeWidget * m_documentTree;
   GroupsWidget * m_groupsTree;

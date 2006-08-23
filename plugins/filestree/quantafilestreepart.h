@@ -44,7 +44,12 @@ class QuantaFilesTreePart: public KDevPlugin
 public:
     QuantaFilesTreePart(QObject *parent, const QStringList &args);
     ~QuantaFilesTreePart();
-  
+    // the methods to embed the view 
+    virtual QWidget *pluginView() const;
+    
+    virtual Qt::DockWidgetArea dockWidgetAreaHint() const 
+    	{return Qt::LeftDockWidgetArea;}
+    
 private slots:
     void init();
     
@@ -60,7 +65,7 @@ private:
     
     KAction *action;
     
-    QPointer<QWidget> m_widget;
+    QWidget *m_widget;
     ConfigWidgetProxy *m_configProxy;
     FilesTreeView * m_tree;
 };

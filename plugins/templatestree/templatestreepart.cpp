@@ -62,27 +62,13 @@ TemplatesTreePart::TemplatesTreePart(QObject *parent, const QStringList &/*args*
     setXMLFile("kdevtemplatestree.rc");
 
     m_widget = new TemplatesTreeView(this);
-    m_widget->setWindowTitle("Templates Tree");
+    m_widget->setWindowTitle(i18n("Templates Tree"));
+    m_widget->setObjectName("TemplatesTreeWidget");
 //    m_widget->setWindowIcon(SmallIcon(info()->icon()));
 
     m_widget->setWhatsThis(i18n("Working with templates"));
 
     connect(KDevCore::mainWindow(), SIGNAL(projectOpened()), m_widget, SLOT(slotProjectOpened()));
-
-    // now you decide what should happen to the widget. Take a look at kdevcore.h
-    // or at other plugins how to embed it.
-
-    // if you want to embed your widget as an outputview, simply uncomment
-    // the following line.
-    // mainWindow()->embedOutputView( m_widget, "name that should appear", "enter a tooltip" );
-
-    // if you want to embed your widget as a selectview (at the left), simply uncomment
-    // the following line.
-    KDevCore::mainWindow()->embedSelectView( m_widget, i18n("Templates"), "Template management" );
-
-    // if you want to embed your widget as a selectview (at the right), simply uncomment
-    // the following line.
-    // mainWindow()->embedSelectViewRight( m_widget, "name that should appear", "enter a tooltip" );
 
     setupActions();
 //FIXME: New KCM modules need to be created for each config page
@@ -105,14 +91,14 @@ TemplatesTreePart::TemplatesTreePart(QObject *parent, const QStringList &/*args*
 
 TemplatesTreePart::~TemplatesTreePart()
 {
-//   if you embed a widget, you need to tell the mainwindow when you remove it
-  if ( m_widget )
-  {
-    KDevCore::mainWindow()->removeView( m_widget );
-  }
-  delete m_widget;
- // delete m_configProxy;
 }
+  
+
+QWidget *TemplatesTreePart::pluginView() const
+{
+  return m_widget;
+}
+
 
 void TemplatesTreePart::init()
 {
@@ -265,6 +251,6 @@ void TemplatesTreePart::slotCreateSiteTemplate()
   delete tempFile;
 }
 
-
-
 #include "templatestreepart.moc"
+
+// kate: space-indent on; indent-width 2; mixedindent off;
