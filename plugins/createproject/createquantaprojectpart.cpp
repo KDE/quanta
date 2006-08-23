@@ -64,7 +64,7 @@
 
 
 typedef KGenericFactory<CreateQuantaProjectPart> CreateQuantaProjectFactory;
-K_EXPORT_COMPONENT_FACTORY( libkdevcreatequantaproject, CreateQuantaProjectFactory("kdevcreatequantaproject") );
+K_EXPORT_COMPONENT_FACTORY( libkdevcreatequantaproject, CreateQuantaProjectFactory("kdevcreatequantaproject") )
 
 #define GLOBALDOC_OPTIONS 1
 #define PROJECTDOC_OPTIONS 2

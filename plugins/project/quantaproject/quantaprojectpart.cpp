@@ -41,7 +41,7 @@
 #include <kdevdocumentcontroller.h>
 
 typedef KGenericFactory<QuantaProjectPart> QuantaProjectFactory;
-K_EXPORT_COMPONENT_FACTORY( libkdevquantaproject, QuantaProjectFactory("kdevquantaproject") );
+K_EXPORT_COMPONENT_FACTORY( libkdevquantaproject, QuantaProjectFactory("kdevquantaproject") )
 
 #define GLOBALDOC_OPTIONS 1
 #define PROJECTDOC_OPTIONS 2

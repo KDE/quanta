@@ -37,7 +37,7 @@
 #include <kdevmainwindow.h>
 
 typedef KGenericFactory<TagDialogsPart> TagDialogsFactory;
-K_EXPORT_COMPONENT_FACTORY( libkdevtagdialogs, TagDialogsFactory("kdevtagdialogs") );
+K_EXPORT_COMPONENT_FACTORY( libkdevtagdialogs, TagDialogsFactory("kdevtagdialogs") )
 
 #define GLOBALDOC_OPTIONS 1
 #define PROJECTDOC_OPTIONS 2

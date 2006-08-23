@@ -60,7 +60,7 @@
 #include <ktexteditor/document.h>
 
 typedef KGenericFactory<QuantaCorePart> QuantaCoreFactory;
-K_EXPORT_COMPONENT_FACTORY(libkdevquantacore, QuantaCoreFactory("kdevquantacore"));
+K_EXPORT_COMPONENT_FACTORY(libkdevquantacore, QuantaCoreFactory("kdevquantacore"))
 
 #define AUTOCOMPLETE_OPTIONS 1
 #define ENVIRONMENT_OPTIONS 2

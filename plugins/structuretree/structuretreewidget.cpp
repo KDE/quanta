@@ -123,14 +123,14 @@ void StructureTreeWidget::slotBlockGUI()
 {
  // kDebug(24000) << "slotBlockGUI" << endl;
   setEnabled(false);
-};
+}
 
 
 void StructureTreeWidget::slotUnblockGUI()
 {
 //  kDebug(24000) << "slotUnblockGUI" << endl;
   setEnabled(true);
-};
+}
 
 
 void StructureTreeWidget::slotNewSettings()
@@ -144,7 +144,7 @@ void StructureTreeWidget::slotNewSettings()
     static_cast<StructTreeItem *>(item)->settingsChanged();
     item = item->nextSibling();
   }
-};
+}
 
 
 void StructureTreeWidget::slotContextMenu(K3ListView * view, Q3ListViewItem * item, const QPoint & point)

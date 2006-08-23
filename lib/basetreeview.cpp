@@ -48,6 +48,7 @@
 
 // KDE includes
 #include <kaction.h>
+#include <kicon.h>
 #include <kconfigbase.h>
 #include <kdebug.h>
 #include <krun.h>

@@ -113,7 +113,7 @@ void GroupsWidget::slotBlockGUI()
 {
  // kDebug(24000) << "slotBlockGUI" << endl;
   setEnabled(false);
-};
+}
 
 
 void GroupsWidget::slotUnblockGUI()
@@ -121,7 +121,7 @@ void GroupsWidget::slotUnblockGUI()
 //  kDebug(24000) << "slotUnblockGUI" << endl;
   setEnabled(true);
   m_dirty = false;
-};
+}
 
 
 void GroupsWidget::slotNewSettings()
@@ -135,7 +135,7 @@ void GroupsWidget::slotNewSettings()
     static_cast<GroupsTreeItem *>(item)->settingsChanged();
     item = item->nextSibling();
   }
-};
+}
 
 
 void GroupsWidget::slotContextMenu(K3ListView * view, Q3ListViewItem * item, const QPoint & point)

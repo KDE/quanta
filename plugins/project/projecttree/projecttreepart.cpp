@@ -43,7 +43,7 @@
 
 
 typedef KGenericFactory<ProjectTreePart> ProjectTreeFactory;
-K_EXPORT_COMPONENT_FACTORY( libkdevprojecttree, ProjectTreeFactory("kdevprojecttree") );
+K_EXPORT_COMPONENT_FACTORY( libkdevprojecttree, ProjectTreeFactory("kdevprojecttree") )
 
 #define GLOBALDOC_OPTIONS 1
 #define PROJECTDOC_OPTIONS 2

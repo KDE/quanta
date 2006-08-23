@@ -45,7 +45,7 @@
 #include "quantafilestreeprojectconfig.h"
 
 typedef KGenericFactory<QuantaFilesTreePart> QuantaFilesTreeFactory;
-K_EXPORT_COMPONENT_FACTORY( libkdevquantafilestree, QuantaFilesTreeFactory("kdevquantafilestree") );
+K_EXPORT_COMPONENT_FACTORY( libkdevquantafilestree, QuantaFilesTreeFactory("kdevquantafilestree") )
 
 #define GLOBALDOC_OPTIONS 1
 #define PROJECTDOC_OPTIONS 2

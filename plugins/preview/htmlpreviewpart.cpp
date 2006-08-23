@@ -50,7 +50,7 @@
 
 
 typedef KGenericFactory<HTMLPreviewPart> HTMLPreviewFactory;
-K_EXPORT_COMPONENT_FACTORY( libkdevhtmlpreview, HTMLPreviewFactory("kdevhtmlpreview") );
+K_EXPORT_COMPONENT_FACTORY( libkdevhtmlpreview, HTMLPreviewFactory("kdevhtmlpreview") )
 
 #define GLOBALDOC_OPTIONS 1
 #define PROJECTDOC_OPTIONS 2

@@ -46,7 +46,7 @@
 #include <kdevprojectcontroller.h>
 
 typedef KGenericFactory<StructureTreePart> StructureTreeFactory;
-K_EXPORT_COMPONENT_FACTORY( libkdevstructuretree, StructureTreeFactory("kdevstructuretree") );
+K_EXPORT_COMPONENT_FACTORY( libkdevstructuretree, StructureTreeFactory("kdevstructuretree") )
 
 #define GLOBALDOC_OPTIONS 1
 #define PROJECTDOC_OPTIONS 2

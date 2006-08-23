@@ -74,7 +74,7 @@
 #include <kdevprojectcontroller.h>
 
 typedef KGenericFactory<UserToolbarsPart> UserToolbarsFactory;
-K_EXPORT_COMPONENT_FACTORY( libkdevusertoolbars, UserToolbarsFactory("kdevusertoolbars") );
+K_EXPORT_COMPONENT_FACTORY( libkdevusertoolbars, UserToolbarsFactory("kdevusertoolbars") )
 
 
 #define GLOBALDOC_OPTIONS 1
