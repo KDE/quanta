@@ -100,6 +100,14 @@ class StateActions
      * \return always \e true
      */
     static bool pushCurrChar(const ParserStatus &parser, const QString &argument);
+    /**
+     * push the current state on the stack
+     * 
+     * @param parser the used ParserStatus
+     * @param argument unused
+     * \return always \e true
+     */
+    static bool pushState(const ParserStatus &parser, const QString &argument);
 };
 
 

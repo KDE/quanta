@@ -22,6 +22,8 @@
 
 class QXmlInputSource;
 class QXmlLocator;
+class StateMachine;
+struct State;
 
 /**
  * \short 
@@ -34,21 +36,18 @@ class ParserStatus : public QXmlReader
   friend class Comparator;
   
   public:
-    ParserStatus(QXmlInputSource *source, QXmlLocator *locator /*, QVector<statemachine>*/);
+    ParserStatus(QXmlInputSource *source, QXmlLocator *locator);
     ~ParserStatus();
     
-    void startParsing();
+    void startParsing(State *startState);
     
-  protected:
+  private:
     QChar m_currChar;
     mutable QString m_buffer;
     mutable QStack<QChar> m_sourceStack;
-    mutable int m_currState;
+    mutable QStack<QChar> m_stateStack;
+    mutable State *m_currState;
     // int entity;
-    // QVector<...> *states;
-    
-    
-  private:
     QXmlInputSource *m_source;
     QXmlLocator *m_locator;
 };

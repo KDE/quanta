@@ -25,68 +25,73 @@ class QDomNode;
 
 #define DEBUG_STATEMACHINE
 
-/**
- * This class reads the possible parser states from an XML file and
- * build the ParserState classes from it.
- */
-class StateMachine{
+template <class T>
+class Function {
 
-  template <class T>
-  class Function {
-
-  public:
-    Function(T function, const QString &argument):
+public:
+  Function(T function, const QString &argument):
     m_function(function), m_argument(argument)
     {}
-    Function() {};
+  Function() {};
 
-    ~Function() {};
-    bool call(const ParserStatus &status)
-    {
-      return m_function(status, m_argument);
-    }
+  ~Function() {};
+  bool call(const ParserStatus &status)
+  {
+    return m_function(status, m_argument);
+  }
 
 #ifdef DEBUG_STATEMACHINE
-    void setName(const QString &name) {m_name = name;}
-    QString name() {return m_name;}
-    QString argument() {return m_argument;}
+  void setName(const QString &name) {m_name = name;}
+  QString name() {return m_name;}
+  QString argument() {return m_argument;}
 #endif
 
   private:
     T m_function;
     QString m_argument;
 #ifdef DEBUG_STATEMACHINE
-    QString m_name; //for debugging
+  QString m_name; //for debugging
 #endif
-  };
+};
   
-  /**
-   * Describes a condition in a state. Conditions are tested when a character is
-   * read from an input source, and they can execute an action and they trigger
-   * a state switch (might go back to the same state). The @ref compareFunction
-   * is called and if it returns true the @ref actionFunctions are executed and
-   * the state machine will switch to the @ref nextState.
-   */
-  struct Condition {
-    Function<Comparator::CompareFunctPtr> compareFunction; ///<condition verification function
-    QList< Function<StateActions::ActionFunctPtr> > actionFunctions; ///<possible list of actions with their arguments
-    int nextState; ///<if the condition function returns true, switch to this state
-  };
+typedef Function<StateActions::ActionFunctPtr> ActionFunction;
 
-  /**
-   * Describes a state, which has a list of conditions and a name.
-   *
+typedef Function<Comparator::CompareFunctPtr> CompareFunction;
+      
+struct State;
+/**
+ * Describes a condition in a state. Conditions are tested when a character is
+ * read from an input source, and they can execute an action and they trigger
+ * a state switch (might go back to the same state). The @ref compareFunction
+ * is called and if it returns true the @ref actionFunctions are executed and
+ * the state machine will switch to the @ref nextState.
    */
-  struct State {
-    QList<Condition> conditions;
-    QString name;
-  };
+struct Condition {
+  CompareFunction compareFunction; ///<condition verification function
+  QList< ActionFunction > actionFunctions; ///<possible list of actions with their arguments
+  State * nextState; ///<if the condition function returns true, switch to this state
+};
+
+/**
+  * Describes a state, which has a list of conditions and a name.
+  *
+  */
+struct State {
+  QList<Condition> conditions;
+  QString name;
+};
+
+/**
+ * This class reads the possible parser states from an XML file and
+ * build the ParserState classes from it.
+ */
+class StateMachine{
 
   /**
    * A list of possible states in the state machine. The states are referred by
    * their index in the list.
    */
-  typedef QList<State> ParsingStates;
+  typedef QList<State *> ParsingStates;
 
 public:
    
@@ -102,7 +107,10 @@ public:
    */
   bool build(const QString &fileName);
 
-  
+  /**
+   * @return the start State 
+   */
+  const State * startState() const {return m_parsingStates.count() ? m_parsingStates[0] : 0;}
   
 private:
   /**
@@ -113,7 +121,7 @@ private:
   void readConditions(QDomNode *stateNode, QList<Condition> &conditions);
   
   ParsingStates m_parsingStates; ///< list with possible parsing states
-  QHash<QString, int> m_stateNameMapping; ///<mapping between state name and state index in the above list
+  QHash<QString, State *> m_stateNameMapping; ///<mapping between state name and state index in the above list
 
 };
 

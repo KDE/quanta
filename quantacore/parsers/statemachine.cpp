@@ -28,6 +28,8 @@ StateMachine::StateMachine()
 
 StateMachine::~StateMachine()
 {
+  qDeleteAll(m_parsingStates);
+  m_parsingStates.clear();
 }
 
 bool StateMachine::build(const QString &fileName)
@@ -58,28 +60,28 @@ bool StateMachine::build(const QString &fileName)
   {
     QDomNode n = stateNodes.item(i);
     QDomElement e = n.toElement();
-    State state;
-    state.name = e.attribute("name");
+    State * state = new State();
+    state->name = e.attribute("name", QString("state:%1").arg(i));
     m_parsingStates.append(state);
-    m_stateNameMapping.insert(state.name, i);
+    m_stateNameMapping.insert(state->name, state);
   }
   
   for (uint i = 0; i < numOfStates; i++)
   {
     QDomNode n = stateNodes.item(i);
     QDomElement e = n.toElement();
-    readConditions(&n, m_parsingStates[i].conditions);
+    readConditions(&n, m_parsingStates[i]->conditions);
   }
 
 #ifdef DEBUG_STATEMACHINE  
   uint i = 0;
-  foreach(State state, m_parsingStates)
+  foreach(State *state, m_parsingStates)
   {
-    kDebug(24000) << "State: name = " << state.name << ", index: " << i << endl;
-    foreach (Condition condition, state.conditions)
+    kDebug(24000) << "State: name = " << state->name << ", index: " << i << endl;
+    foreach (Condition condition, state->conditions)
     {
       kDebug(24000) << "   Condition: " << " comparatorFunct = " << condition.compareFunction.name() << ", argument = \"" << condition.compareFunction.argument() << "\" nextState = (" << condition.nextState << " , " << m_stateNameMapping.key(condition.nextState) << ")" << endl;
-      foreach(Function<StateActions::ActionFunctPtr> action, condition.actionFunctions)
+      foreach(ActionFunction action, condition.actionFunctions)
       {
         kDebug(24000) << "      Action: name = " << action.name() << ", argument = " << action.argument() << endl;
       }
@@ -101,7 +103,7 @@ void StateMachine::readConditions(QDomNode *stateNode, QList<Condition> &conditi
     {
       Condition condition;
       QDomElement el = n.toElement();
-      Function<Comparator::CompareFunctPtr> compareFunction(Comparator::factory(el.attribute("name")), el.attribute("argument"));
+      CompareFunction compareFunction(Comparator::factory(el.attribute("name")), el.attribute("argument"));
 #ifdef DEBUG_STATEMACHINE
       compareFunction.setName(el.attribute("name"));
 #endif      
@@ -109,7 +111,7 @@ void StateMachine::readConditions(QDomNode *stateNode, QList<Condition> &conditi
       if (m_stateNameMapping.contains(el.attribute("nextState")))
         condition.nextState = m_stateNameMapping.value(el.attribute("nextState"));
       else
-        condition.nextState = -1;
+        condition.nextState = 0;
       QDomElement item = el.firstChild().toElement();
       QString tagName;
       while (!item.isNull())
@@ -117,7 +119,7 @@ void StateMachine::readConditions(QDomNode *stateNode, QList<Condition> &conditi
         tagName = item.tagName();
         if (tagName == "action")
         {
-          Function<StateActions::ActionFunctPtr> action(StateActions::factory(item.attribute("name")), item.attribute("argument"));
+          ActionFunction action(StateActions::factory(item.attribute("name")), item.attribute("argument"));
 #ifdef DEBUG_STATEMACHINE
           action.setName(item.attribute("name"));
 #endif          

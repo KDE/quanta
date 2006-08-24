@@ -90,4 +90,13 @@ bool StateActions::pushCurrChar(const ParserStatus &parser, const QString &argum
   return true;
 }
 
+
+bool StateActions::pushState(const ParserStatus &parser, const QString &argument)
+{
+  Q_UNUSED(argument);
+  parser.m_sourceStack.push(parser.m_currChar);
+  return true;
+}
+
+
 //kate: indent-mode cstyle; space-indent on; indent-width 2; replace-tabs on; mixedindent off; encoding utf-8
