@@ -13,8 +13,7 @@ set(kdevquantaproject_PART_SRCS
    quantaprojectpart.cpp 
    quantaprojectmanager.cpp 
    quantaprojectprojectconfig.cpp 
-   browserpopupmenu.cpp 
-   quantaxmlinputsource.cpp)
+   browserpopupmenu.cpp )
 
 kde4_automoc(${kdevquantaproject_PART_SRCS})
 

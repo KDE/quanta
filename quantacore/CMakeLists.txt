@@ -36,6 +36,8 @@ set(kdevquantacore_PART_SRCS
    parsers/sagroupparser.cpp
    parsers/saparser.cpp
 
+   parsers/quantaxmlinputsource.cpp	
+
    parsers/dtd/dtdparser.cpp
 
    autocomplete/completionbase.cpp
