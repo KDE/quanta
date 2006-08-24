@@ -23,24 +23,7 @@
 
 class QDomNode;
 
-class ActionFunct {
-
-public:
-  ActionFunct(StateActions::ActionFunctPtr function, const QString &argument):
-    m_function(function), m_argument(argument)
-  {}
-
-  ~ActionFunct() {};
-  bool call(const ParserStatus &status)
-  {
-    return m_function(status, m_argument);
-  } 
-
-private:
-  StateActions::ActionFunctPtr m_function;
-  QString m_argument;
-  
-};
+#define DEBUG_STATEMACHINE
 
 /**
  * This class reads the possible parser states from an XML file and
@@ -48,15 +31,45 @@ private:
  */
 class StateMachine{
 
+  template <class T>
+  class Function {
+
+  public:
+    Function(T function, const QString &argument):
+    m_function(function), m_argument(argument)
+    {}
+    Function() {};
+
+    ~Function() {};
+    bool call(const ParserStatus &status)
+    {
+      return m_function(status, m_argument);
+    }
+
+#ifdef DEBUG_STATEMACHINE
+    void setName(const QString &name) {m_name = name;}
+    QString name() {return m_name;}
+    QString argument() {return m_argument;}
+#endif
+
+  private:
+    T m_function;
+    QString m_argument;
+#ifdef DEBUG_STATEMACHINE
+    QString m_name; //for debugging
+#endif
+  };
+  
   /**
    * Describes a condition in a state. Conditions are tested when a character is
    * read from an input source, and they can execute an action and they trigger
-   * a state switch (might go back to the same state).
+   * a state switch (might go back to the same state). The @ref compareFunction
+   * is called and if it returns true the @ref actionFunctions are executed and
+   * the state machine will switch to the @ref nextState.
    */
   struct Condition {
-    Comparator::CompareFunctPtr compareFunction; ///<pointer to the condition verification function
-    QString compareArgument; ///< possible argument for the above function    
-    QList<ActionFunct> actionFunctions; ///<possible list of actions with their arguments
+    Function<Comparator::CompareFunctPtr> compareFunction; ///<condition verification function
+    QList< Function<StateActions::ActionFunctPtr> > actionFunctions; ///<possible list of actions with their arguments
     int nextState; ///<if the condition function returns true, switch to this state
   };
 

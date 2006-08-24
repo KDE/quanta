@@ -25,6 +25,7 @@
 #include "tagdialogsif.h"
 #include "helper.h"
 #include "tagpair.h"
+#include "statemachine.h"
 
 #include <QCheckBox>
 #include <QLabel>
@@ -104,6 +105,10 @@ QuantaCorePart::~QuantaCorePart()
 
 void QuantaCorePart::init()
 {
+  StateMachine *xmlStateMachine = new StateMachine();
+  QString xmlFile = KGlobal::instance()->dirs()->findResource("data", "quanta/statemachines/xmlstates.xml");
+  xmlStateMachine->build(xmlFile);  
+  
   Settings::self()->readConfig();
   Settings::self()->setLoadedDTEPNickNames(DTDs::ref()->nickNameList(true));
   ParserManager *pm = ParserManager::self(this); //create the parser manager

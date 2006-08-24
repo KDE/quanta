@@ -17,6 +17,7 @@
 #include <QFile>
 #include <QFileInfo>
 
+#include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 
@@ -70,6 +71,23 @@ bool StateMachine::build(const QString &fileName)
     readConditions(&n, m_parsingStates[i].conditions);
   }
 
+#ifdef DEBUG_STATEMACHINE  
+  uint i = 0;
+  foreach(State state, m_parsingStates)
+  {
+    kDebug(24000) << "State: name = " << state.name << ", index: " << i << endl;
+    foreach (Condition condition, state.conditions)
+    {
+      kDebug(24000) << "   Condition: " << " comparatorFunct = " << condition.compareFunction.name() << ", argument = \"" << condition.compareFunction.argument() << "\" nextState = (" << condition.nextState << " , " << m_stateNameMapping.key(condition.nextState) << ")" << endl;
+      foreach(Function<StateActions::ActionFunctPtr> action, condition.actionFunctions)
+      {
+        kDebug(24000) << "      Action: name = " << action.name() << ", argument = " << action.argument() << endl;
+      }
+    } 
+    ++i;
+  }
+#endif
+    
   return true;
 }
 
@@ -83,9 +101,15 @@ void StateMachine::readConditions(QDomNode *stateNode, QList<Condition> &conditi
     {
       Condition condition;
       QDomElement el = n.toElement();
-      condition.compareArgument = el.attribute("argument");
-      condition.compareFunction = Comparator::factory(el.attribute("name"));
-      condition.nextState = m_stateNameMapping.value(el.attribute("nextState"));
+      Function<Comparator::CompareFunctPtr> compareFunction(Comparator::factory(el.attribute("name")), el.attribute("argument"));
+#ifdef DEBUG_STATEMACHINE
+      compareFunction.setName(el.attribute("name"));
+#endif      
+      condition.compareFunction = compareFunction;
+      if (m_stateNameMapping.contains(el.attribute("nextState")))
+        condition.nextState = m_stateNameMapping.value(el.attribute("nextState"));
+      else
+        condition.nextState = -1;
       QDomElement item = el.firstChild().toElement();
       QString tagName;
       while (!item.isNull())
@@ -93,7 +117,10 @@ void StateMachine::readConditions(QDomNode *stateNode, QList<Condition> &conditi
         tagName = item.tagName();
         if (tagName == "action")
         {
-          ActionFunct action(StateActions::factory(item.attribute("name")), item.attribute("argument"));
+          Function<StateActions::ActionFunctPtr> action(StateActions::factory(item.attribute("name")), item.attribute("argument"));
+#ifdef DEBUG_STATEMACHINE
+          action.setName(item.attribute("name"));
+#endif          
           condition.actionFunctions.append(action);
         }
         item = item.nextSibling().toElement();

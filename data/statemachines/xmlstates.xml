@@ -1,7 +1,7 @@
 <statemachine>
 <!-- Prolog parsing -->  
   <state name="begin">
-    <condition name="equals" argument="<" nextState="ltFound">
+    <condition name="equals" argument="&lt;" nextState="ltFound">
       <action name="startTag" />
     </condition>
     <condition name="isWhiteSpace" nextState="begin" />
@@ -11,10 +11,10 @@
   </state>
 
   <state name="ltFound">
-    <condition name="isWhiteSpace" nextState="ltFound" />
+    <condition name="isWhiteSpace" nextState="ltFound" >
       <action name="reportError" />
     </condition>
-    <condition name="equals" argument="<" nextState="ltFound">
+    <condition name="equals" argument="&lt;" nextState="ltFound">
       <action name="reportError" />
       <action name="startTag" />
     </condition>

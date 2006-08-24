@@ -26,10 +26,10 @@
       <customdirectory>/</customdirectory>
       <programargs></programargs>
       <terminal>false</terminal>
-      <autocompile>true</autocompile>
+      <autocompile>false</autocompile>
       <envvars>
         <envvar value="/opt/kde4" name="KDEDIR" />
-        <envvar value=" " name="KDEDIRS" />
+        <envvar value="/opt/kde4" name="KDEDIRS" />
         <envvar value="/home/andris/.kde4" name="KDEHOME" />
         <envvar value="/tmp/andris-kde4" name="KDETMP" />
         <envvar value="/var/tmp/andris-kde4" name="KDEVARTMP" />
