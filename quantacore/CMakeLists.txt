@@ -36,7 +36,8 @@ set(kdevquantacore_PART_SRCS
    parsers/sagroupparser.cpp
    parsers/saparser.cpp
 
-   parsers/quantaxmlinputsource.cpp	
+   parsers/quantaxmlinputsource.cpp
+   parsers/statemachine.cpp
    parsers/parserstatus.cpp
    parsers/stateactions.cpp
    
