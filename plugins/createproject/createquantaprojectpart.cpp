@@ -182,7 +182,7 @@ void CreateQuantaProjectPart::slotCreateNewProject()
     (*tempFile.textStream()) << projectDom.toString(2);
     tempFile.close();
     KUrl dest = baseURL;
-    dest.addPath("/" + firstPage->fileName());
+    dest.addPath('/' + firstPage->fileName());
     KIO::NetAccess::upload(tempFile.name(), dest, KDevCore::mainWindow());
     KDevCore::projectController()->openProject(dest.path()); //FIXME: use the URL when it is supported by the framework
     QFile::remove(tempFile.name());

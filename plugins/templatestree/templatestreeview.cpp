@@ -418,7 +418,7 @@ void TemplatesTreeView::slotNewDir()
     startDir = currentURL().path() + "/dummy_file";
    }
    startDir = QFileInfo(startDir).path();
-   if (!dir.mkdir(startDir+"/"+createDirDlg->dirName->text()))
+   if (!dir.mkdir(startDir + '/' + createDirDlg->dirName->text()))
    {
       KMessageBox::error(this,i18n("Error while creating the new folder.\n \
                    Maybe you do not have permission to write in the %1 folder.", startDir));
@@ -429,7 +429,7 @@ void TemplatesTreeView::slotNewDir()
       m_dirInfo.mimeType = i18nToType[createDirDlg->typesCombo->currentText()];
       m_dirInfo.preText = "";
       m_dirInfo.postText = "";
-      writeDirInfo(startDir+"/"+createDirDlg->dirName->text()+"/.dirinfo");
+      writeDirInfo(startDir + '/' + createDirDlg->dirName->text() + "/.dirinfo");
    }
   }
 }
@@ -1077,7 +1077,7 @@ void TemplatesTreeView::slotExtractSiteTemplate()
                 QStringList entries = directory->entries();
                 KUrl::List fileList;
                 for (QStringList::Iterator it = entries.begin(); it != entries.end(); ++it)
-                  fileList.append(KUrl(tempDirName + "/" + *it));
+                  fileList.append(KUrl(tempDirName + '/' + *it));
                 if (!KIO::NetAccess::dircopy(fileList, targetURL, this))
                     error = true;
                 KIO::NetAccess::del(KUrl(tempDirName), this);

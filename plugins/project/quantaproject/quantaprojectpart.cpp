@@ -314,7 +314,7 @@ QStringList QuantaProjectPart::removeItems(const QStringList &items)
     while (it != end)
     {
       fileName = it.key();
-      if (fileName == *itemIt || fileName.startsWith(*itemIt + "/"))
+      if (fileName == *itemIt || fileName.startsWith(*itemIt + '/'))
       {
         kDebug(24000) << "File removed from project: " << fileName << endl;
         QDomElement el = it.value();
@@ -360,7 +360,7 @@ void QuantaProjectPart::slotInsertFiles()
       QString section;
       for (int i = 0 ; i < sections.count() - 1; i++)
       {
-        section += sections[i] + "/";
+        section += sections[i] + '/';
         filenames += section;
       }
       KUrl::List::ConstIterator end = urls.constEnd();

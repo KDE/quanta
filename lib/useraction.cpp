@@ -221,7 +221,7 @@ bool UserAction::slotActionActivated()
           scriptname.replace("%scriptdir","scripts");
  //         kDebug(24000) << "Script name is: |" << scriptname << "|" << endl;
 //FIXME: the scrips should be loaded from the language-plugin dir
-          scriptname = " " + KStandardDirs::locate("data", "kdevusertoolbars/"+scriptname);
+          scriptname = ' ' + KStandardDirs::locate("data", "kdevusertoolbars/"+scriptname);
    //       kDebug(24000) << "Script found at: " << scriptname << endl;
           args.replace(begin, end - begin, scriptname);
           //kDebug(24000) << "Modified argument list: " << args << endl;
@@ -290,7 +290,7 @@ bool UserAction::slotActionActivated()
       proc->closeStdin();
     } else
     {
-      KMessageBox::error(KDevCore::mainWindow(), i18n("<qt>There was an error running <b>%1</b>.<br>Check that you have the <i>%2</i> executable installed and it is accessible.</qt>", command + " " + args, command), i18n("Script Not Found"));
+      KMessageBox::error(KDevCore::mainWindow(), i18n("<qt>There was an error running <b>%1</b>.<br>Check that you have the <i>%2</i> executable installed and it is accessible.</qt>", command + ' ' + args, command), i18n("Script Not Found"));
 //FIXME       ViewManager::ref()->activeView()->setFocus();
       if (m_loopStarted)
       {

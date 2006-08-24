@@ -102,7 +102,7 @@ void Tagxml::initialize(QDomNode &d, QTag *dtdTag)
             QLabel *label = new QLabel(this);
             QDomElement ltext = ::findChild(n,"text").toElement();
             if ( !ltext.isNull() )
-                label->setText( ltext.text().isEmpty() ? QString("") : (ltext.text()+":") );
+                label->setText( ltext.text().isEmpty() ? QString("") : (ltext.text() + ':') );
 
             if ( !tip.isNull() )
                 label->setToolTip( tip );
@@ -122,7 +122,7 @@ void Tagxml::initialize(QDomNode &d, QTag *dtdTag)
             if ( !ltext.isNull() && (type != "check") ) //if there is a text label for the attribute
             {
                 QLabel *label = new QLabel(this);
-                label->setText( ltext.text().isEmpty() ? QString("") : (ltext.text()+":") );
+                label->setText( ltext.text().isEmpty() ? QString("") : (ltext.text() + ':') );
 
                 if ( !tip.isNull() )
                     label->setToolTip( tip );

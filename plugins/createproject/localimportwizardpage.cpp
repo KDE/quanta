@@ -112,7 +112,7 @@ KUrl::List LocalImportWizardPage::projectFiles()
         QStringList patterns = (*it)->patterns();
         for (int i = 0 ; i < patterns.count(); i++)
         {
-          ffilterMask = ffilterMask + patterns[i] + ";";
+          ffilterMask = ffilterMask + patterns[i] + ';';
         }
       }
     }

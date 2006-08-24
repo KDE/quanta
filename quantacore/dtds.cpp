@@ -72,9 +72,9 @@ DTDs::DTDs(QObject *parent)
     QStringList subDirs = dir.entryList();
     for ( QStringList::Iterator subit = subDirs.begin(); subit != subDirs.end(); ++subit )
     {
-//      kDebug(24000) << "dtds::dtds add:" << *it + *subit+"/" << endl;
+//      kDebug(24000) << "dtds::dtds add:" << *it + *subit+'/' << endl;
       if ((*subit != ".") && (*subit != ".."))
-         tagsDirs += *it + *subit+"/";
+         tagsDirs += *it + *subit + '/';
     }
   }
 //  kDebug(24000) << tagsDirs.count() << " folders found." << endl;
@@ -265,9 +265,9 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
   //read the toolbars
   dtdConfig->setGroup("Toolbars");
   tmpStr = dtdConfig->readPathEntry("Location"); //holds the location of the toolbars
-  if (!tmpStr.endsWith("/") && !tmpStr.isEmpty())
+  if (!tmpStr.endsWith('/') && !tmpStr.isEmpty())
   {
-    tmpStr.append("/");
+    tmpStr.append('/');
   }
   dtd->toolbars = dtdConfig->readEntry("Names", QStringList());
   for (int i = 0; i < dtd->toolbars.count(); i++)
@@ -373,7 +373,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
     {
       tmpStrList = specialAreasList[i].trimmed().split(" ");
       tmpStr = tmpStrList[0].trimmed();
-      rxStr.append(QuantaCommon::makeRxCompatible(tmpStr)+"|");
+      rxStr.append(QuantaCommon::makeRxCompatible(tmpStr) + '|');
       dtd->specialAreas[tmpStr] = tmpStrList[1].trimmed();
       dtd->specialAreaNames[tmpStr] = specialAreaNameList[i];
     }
@@ -405,7 +405,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
     tmpStrList = commentsList[i].trimmed().split(" ");
     tmpStr = tmpStrList[0].trimmed();
     rxStr += QuantaCommon::makeRxCompatible(tmpStr);
-    rxStr += "|";
+    rxStr += '|';
     tmpStr2 = tmpStrList[1].trimmed();
     if (tmpStr2 == "EOL")
         tmpStr2 = '\n';
@@ -422,7 +422,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
       tmpStr = "\\b(";
       for (int i = 0; i < structKeywords.count(); i++)
       {
-        tmpStr += structKeywords[i].trimmed()+"|";
+        tmpStr += structKeywords[i].trimmed()+'|';
       }
       tmpStr.truncate(tmpStr.length()-1);
       tmpStr += ")\\b";
@@ -438,7 +438,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
       tmpStr = "\\b(";
       for (int i = 0; i < structKeywords.count(); i++)
       {
-        tmpStr += structKeywords[i].trimmed()+"|";
+        tmpStr += structKeywords[i].trimmed()+'|';
       }
       tmpStr.truncate(tmpStr.length()-1);
       tmpStr += ")\\b";
@@ -612,7 +612,7 @@ void DTDs::resolveInherited (DTDStruct *dtd)
   QMap<QString, QString>::ConstIterator mapIt;
   QString specialAreaStartRxStr = dtd->specialAreaStartRx.pattern();
   if (!specialAreaStartRxStr.isEmpty())
-      specialAreaStartRxStr += "|";
+      specialAreaStartRxStr += '|';
   for (int i = 0; i < dtd->insideDTDs.count(); i++)
   {
     const DTDStruct *insideDTD = m_dict->value(dtd->insideDTDs[i]);  // search but don't load
@@ -907,8 +907,8 @@ void DTDs::slotLoadDTD()
 void DTDs::slotLoadDTEP(const QString &_dirName, bool askForAutoload)
 {
   QString dirName = _dirName;
-  if (!dirName.endsWith("/"))
-    dirName += "/";
+  if (!dirName.endsWith('/'))
+    dirName += '/';
   KConfig dtdcfg(dirName + m_rcFilename, true);
   dtdcfg.setGroup("General");
   QString dtdName = dtdcfg.readEntry("Name");
@@ -1010,7 +1010,7 @@ QStringList DTDs::fileNameList(bool topLevelOnly)
     DTDStruct *dtd = it.value();
     if (!topLevelOnly || dtd->toplevel)
     {
-      nameList << (dtd->name + "|" + dtd->fileName);
+      nameList << (dtd->name + '|' + dtd->fileName);
     }
   }
   return nameList;

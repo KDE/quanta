@@ -130,7 +130,7 @@ bool DTDParser::parse()
   m_dtdURLLine = form.dtdURL->text();
   m_defaultExtension = form.defaultExtension->text();
   m_caseSensitive = form.caseSensitive->isChecked();
-  DTD::dirName = m_dtepDir + "/" + form.directory->text();
+  DTD::dirName = m_dtepDir + '/' + form.directory->text();
   KUrl u;
   u.setPath(DTD::dirName);
   if (!ExtFileInfo::createDir(u)) {

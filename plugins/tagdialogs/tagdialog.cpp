@@ -319,7 +319,7 @@ QString TagDialog::getAttributeString()
       attrval += attr; // for checkboxes dont print =""
     }
     else {
-        attrval += attr + "=" + Settings::self()->attributeQuotationChar() + val + Settings::self()->attributeQuotationChar();
+        attrval += attr + '=' + Settings::self()->attributeQuotationChar() + val + Settings::self()->attributeQuotationChar();
     }
     attrStr = attrval + attrStr;
 
@@ -330,7 +330,7 @@ QString TagDialog::getAttributeString()
 /**Return the value of the attribute specified by attr. */
 QString TagDialog::getAttribute(const QString& attr)
 {
- QString attrStr = getAttributeString()+" ";
+ QString attrStr = getAttributeString() + ' ';
  int pos = attrStr.toUpper().indexOf(attr.toUpper());
  if (pos != -1)
  {

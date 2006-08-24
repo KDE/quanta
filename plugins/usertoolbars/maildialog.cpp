@@ -60,10 +60,10 @@ void MailDialog::slotSelectAddress()
   KABC::AddressBook::Iterator it;
   for( it = addressBook->begin(); it != addressBook->end(); ++it ) {
     QStringList emails = (*it).emails();
-    QString n = (*it).prefix() + " " +
-    (*it).givenName() + " " +
-    (*it).additionalName() + " " +
-          (*it).familyName() + " " +
+    QString n = (*it).prefix() + ' ' +
+    (*it).givenName() + ' ' +
+    (*it).additionalName() + ' ' +
+          (*it).familyName() + ' ' +
     (*it).suffix();
     n = n.simplified();
     for( unsigned int i = 0; i < emails.count(); ++i ) {
@@ -72,9 +72,9 @@ void MailDialog::slotSelectAddress()
     addr = "";
   else { /* do we really need quotes around this name ? */
     if (n.indexOf(QRegExp("[^ 0-9A-Za-z\\x0080-\\xFFFF]")) != -1)
-      addr = "\"" + n + "\"" + " ";
+      addr = "\"" + n + "\"" + ' ';
     else
-      addr = n + " ";
+      addr = n + ' ';
   }
   email = emails[i];
   if (!addr.isEmpty() && (email.indexOf( "<" ) == -1)

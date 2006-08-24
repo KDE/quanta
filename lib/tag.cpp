@@ -530,7 +530,7 @@ QString Tag::toString() const
       attrString.append(attr.name);
     } else
     {
-      attrString.append(attr.name + "=");
+      attrString.append(attr.name + '=');
       if (!attr.value.startsWith("\\\"") && !attr.value.startsWith("\\\'"))
         attrString.append(Settings::self()->attributeQuotationChar());
       attrString.append(attr.value);
@@ -541,7 +541,7 @@ QString Tag::toString() const
   }
   attrString = m_closing ? "<" : "</";
   if (!m_nameSpace.isEmpty())
-    attrString += m_nameSpace + ":";
+    attrString += m_nameSpace + ':';
   attrString.append(convertCase(m_name));
   tagString.prepend(attrString);
 

@@ -58,7 +58,7 @@ SimpleTreeViewItem *SimpleFileTree::createItem(const QString& startPath, const K
   SimpleTreeViewItem *item = 0L;
   for (QStringList::ConstIterator it = pathSections.constBegin(); it != end; ++it)
   {
-    currentPath += *it + "/";
+    currentPath += *it + '/';
     item = itemForPath(currentPath);
     if (!item)
     {

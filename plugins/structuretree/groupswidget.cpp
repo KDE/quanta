@@ -329,11 +329,11 @@ void GroupsWidget::createXMLBranch(const DTDStruct *dtd, const GroupStorage *gro
 
     if (groupStorage->elementCount((*it).name) > 0)
     {
-      item->setText(0, i18n((*it).name.toUtf8()) + " [" + dtd->nickName + "]");
+      item->setText(0, i18n((*it).name.toUtf8()) + " [" + dtd->nickName + ']');
       item->setExpandable(true);
     } else
     {
-      item->setText(0, i18n((*it).noName.toUtf8()) + " [" + dtd->nickName + "]");
+      item->setText(0, i18n((*it).noName.toUtf8()) + " [" + dtd->nickName + ']');
     }
   }
 }
@@ -350,7 +350,7 @@ void GroupsWidget::createScriptBranch(const DTDStruct *dtd, const GroupStorage *
     if (!group->icon.isEmpty())
       item->setPixmap(0, SmallIcon(group->icon));
 
-    item->setText(0, i18n(group->name.toUtf8()) + " [" + dtd->nickName + "]");
+    item->setText(0, i18n(group->name.toUtf8()) + " [" + dtd->nickName + ']');
     if(groupStorage->elementCount(group->name) > 0)
     {
       item->setExpandable(true);

@@ -515,7 +515,7 @@ void UserToolbarsPart::slotLoadToolbarFile(const KUrl& url)
 
 void UserToolbarsPart::slotLoadToolbar()
 {
-  KUrl::List urls = KFileDialog::getOpenUrls(KStandardDirs::locateLocal("data", resourceDir + "toolbars/"), "*" + Helper::toolbarExtension(), KDevCore::mainWindow());
+  KUrl::List urls = KFileDialog::getOpenUrls(KStandardDirs::locateLocal("data", resourceDir + "toolbars/"), '*' + Helper::toolbarExtension(), KDevCore::mainWindow());
   if (!urls.isEmpty())
   {
     for (KUrl::List::ConstIterator it = urls.constBegin(); it != urls.constEnd(); ++it)
@@ -526,7 +526,7 @@ void UserToolbarsPart::slotLoadToolbar()
 void UserToolbarsPart::slotLoadGlobalToolbar()
 {
  QString globalDataDir = KGlobal::dirs()->findResourceDir("data",resourceDir + "global");
- KUrl::List urls = KFileDialog::getOpenUrls(globalDataDir + resourceDir + "toolbars/", "*" + Helper::toolbarExtension() + "\n*", KDevCore::mainWindow());
+ KUrl::List urls = KFileDialog::getOpenUrls(globalDataDir + resourceDir + "toolbars/", '*' + Helper::toolbarExtension() + "\n*", KDevCore::mainWindow());
  if (!urls.isEmpty())
  {
    for (KUrl::List::ConstIterator it = urls.constBegin(); it != urls.constEnd(); ++it)
@@ -731,11 +731,11 @@ bool UserToolbarsPart::saveToolbar(bool localToolbar, const QString& toolbarToSa
 
       if (localToolbar)
       {
-        url = KFileDialog::getSaveUrl(localToolbarsDir, "*" + Helper::toolbarExtension(), KDevCore::mainWindow());
+        url = KFileDialog::getSaveUrl(localToolbarsDir, '*' + Helper::toolbarExtension(), KDevCore::mainWindow());
       } else
       {
 //FIXME no toolbarURL() in KDevProject. Check all hardcoded "toolbars" dir below!
-        url = KFileDialog::getSaveUrl(prj->projectDirectory().path() + "/toolbars", "*" + Helper::toolbarExtension(), KDevCore::mainWindow());
+        url = KFileDialog::getSaveUrl(prj->projectDirectory().path() + "/toolbars", '*' + Helper::toolbarExtension(), KDevCore::mainWindow());
       }
 
       if (url.isEmpty())

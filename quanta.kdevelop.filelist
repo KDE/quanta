@@ -312,3 +312,4 @@ quanta/quantacore/parsers/stateactions.cpp
 quanta/quantacore/parsers/stateactions.h
 quanta/quantacore/parsers/parserstatus.cpp
 quanta/quantacore/parsers/parserstatus.h
+quanta/quantacore/parsers/comparator.h

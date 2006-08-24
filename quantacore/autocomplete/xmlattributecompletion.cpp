@@ -105,7 +105,7 @@ QList<KTextEditor::CompletionItem>* XmlAttributeCompletion::completionEntries()
 CompletionBase::CompletionRequest XmlAttributeCompletion::completionDone(const KTextEditor::CompletionItem& completion)
 {
   Q_UNUSED(completion);
-  m_source->insertText("=" + Settings::self()->attributeQuotationChar(), true);
+  m_source->insertText('=' + Settings::self()->attributeQuotationChar(), true);
   m_source->insertText(Settings::self()->attributeQuotationChar(), false);
   return RequestCompletion;
 }

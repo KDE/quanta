@@ -104,21 +104,21 @@ CompletionBase::HintResult SpecialAreaAttributeCompletion::completionHint()
       for (int i =0; i < qTag->attributeCount(); i++)
       {
         Attribute* attr = qTag->attributeAt(i);
-        if (attr->status == "optional")
+        if (attr->status == "optional") 
         {
-          arguments = arguments + "[" + attr->type + " " + attr->name + "], ";
+          arguments = arguments + '[' + attr->type + ' ' + attr->name + "], ";
         } else
         {
-          arguments = arguments + attr->type + " " + attr->name + ", ";
+          arguments = arguments + attr->type + ' ' + attr->name + ", ";
         }
       }
-      arguments = qTag->returnType + " " + qTag->name() + "(" + arguments.left(arguments.length()-2) + ")";
+      arguments = qTag->returnType + ' ' + qTag->name() + '(' + arguments.left(arguments.length()-2) + ')';
       result.argList.append(arguments);
       result.wrapper = "()";
       result.delimiter = m_dtd->attributeSeparator;
      } else //CSS specific case
      {
-       arguments = qTag->name() + ": " + qTag->attributeAt(0)->name + ";";
+       arguments = qTag->name() + ": " + qTag->attributeAt(0)->name + ';';
        result.argList.append(arguments);
        result.wrapper = ":;";
        result.delimiter = m_dtd->attributeSeparator;

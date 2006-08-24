@@ -971,9 +971,9 @@ void BaseTreeView::slotCreateFolder()
   {
     KUrl url = currentURL();
     if (currentKFileTreeViewItem()->isDir())
-      url.setPath(url.path() + "/" + folderName + "/");
+      url.setPath(url.path() + '/' + folderName + '/');
     else
-      url.setPath(url.directory() + "/" + folderName +"/");
+      url.setPath(url.directory() + '/' + folderName +'/');
     QuantaNetAccess::mkdir(url, m_plugin, -1);
   }
 }
@@ -986,9 +986,9 @@ void BaseTreeView::slotCreateFile()
   {
     KUrl url = currentURL();
     if (currentKFileTreeViewItem()->isDir())
-      url.setPath(url.path() + "/" + fileName);
+      url.setPath(url.path() + '/' + fileName);
     else
-      url.setPath(url.directory() + "/" + fileName);
+      url.setPath(url.directory() + '/' + fileName);
     if (ExtFileInfo::exists(url))
     {
       KMessageBox::error(this, i18n("<qt>Cannot create file, because a file named <b>%1</b> already exists.</qt>", fileName), i18n("Error Creating File"));

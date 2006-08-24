@@ -303,7 +303,7 @@ void QuantaDoc::slotDelayedTextChanged(bool forced)
                 m_document->removeText(KTextEditor::Range(bl, bc, bl, bc + len));
                 if (updateClosing)
                 {
-                  m_document->insertText(KTextEditor::Cursor(bl, bc), "/" + newName);
+                  m_document->insertText(KTextEditor::Cursor(bl, bc), '/' + newName);
                 } else
                 {
                   m_document->insertText(KTextEditor::Cursor(bl, bc), newName);
@@ -549,7 +549,7 @@ void QuantaDoc::slotCharactersInserted(KTextEditor::View *view, const KTextEdito
       if (Settings::self()->closeTags() && node->tag->validXMLTag &&
           node->tag->isType(Tag::ScriptTag) &&
           (!node->next || !node->next->tag->doesClose(node->tag)))
-        insertText("</" + node->tag->name() + ">", false);
+        insertText("</" + node->tag->name() + '>', false);
     }
   }
   if (m_completion)
@@ -790,8 +790,8 @@ void QuantaDoc::closeTag(Node *node)
         if (!node->next || !node->next->tag->doesClose(node->tag))
         {
           if (!node->tag->nameSpace().isEmpty())
-              tagName.prepend(node->tag->nameSpace() + ":");
-          insertText("</" + tagName + ">", false);
+              tagName.prepend(node->tag->nameSpace() + ':');
+          insertText("</" + tagName + '>', false);
         }
       } else
       if ( qTag->parentDTD->singleTagStyle == "xml" &&

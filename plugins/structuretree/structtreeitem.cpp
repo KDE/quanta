@@ -67,7 +67,7 @@ void StructTreeItem::initItem()
               {
                 setPixmap( 0, UserIcon("tag_font_small") );
                 if ( m_tag->attrCount() )
-                  title = space + m_tag->attribute(0) + "=" + m_tag->attributeValue(0);
+                  title = space + m_tag->attribute(0) + '=' + m_tag->attributeValue(0);
                 else
                   title = "";
               } else

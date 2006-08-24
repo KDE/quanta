@@ -285,7 +285,7 @@ void FilesTreeView::slotSettingsChanged()
       newBranch(url);
     }
     url = KUrl();
-    url.setPath(QDir::homePath()+"/");
+    url.setPath(QDir::homePath() + '/');
     if (!topURLAliases.contains(url.url()))
     {
       newBranch(url);
@@ -315,7 +315,7 @@ void FilesTreeView::restoreBranches()
       topURLAliases.insert(url.url(), "");
 
     url = KUrl();
-    url.setPath(QDir::homePath() + "/");
+    url.setPath(QDir::homePath() + '/');
     if (!topURLAliases.contains(url.url()))
       topURLAliases.insert(url.url(), "");
   }

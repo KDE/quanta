@@ -372,7 +372,7 @@ void QuantaCorePart::slotInsertTag(const KUrl& url, Helper::DirInfo * dirInfo)
           imgTag += TagAttr::quoteAttributeValue(height);
           imgTag += TagAttr::convertCase(" border=");
           imgTag += TagAttr::quoteAttributeValue(QString("%1").arg(0));
-          imgTag += ">";
+          imgTag += '>';
           m_activeQuantaDoc->insertText(imgTag);
           isImage = true;
         }
