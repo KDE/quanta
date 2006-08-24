@@ -1,0 +1,78 @@
+<statemachine>
+<!-- Prolog parsing -->  
+  <state name="begin">
+    <condition name="equals" argument="<" nextState="ltFound">
+      <action name="startTag" />
+    </condition>
+    <condition name="isWhiteSpace" nextState="begin" />
+    <condition name="isAnyChar" nextState="gotoText">
+      <action name="startTag" />
+    </condition>
+  </state>
+
+  <state name="ltFound">
+    <condition name="isWhiteSpace" nextState="ltFound" />
+      <action name="reportError" />
+    </condition>
+    <condition name="equals" argument="<" nextState="ltFound">
+      <action name="reportError" />
+      <action name="startTag" />
+    </condition>
+    <condition name="equals" argument="!" nextState="emFound" />
+    <condition name="equals" argument="?" nextState="gotoPI" />
+    <condition name="equals" argument="-" nextState="gotoClosingElement" />
+    <condition name="isCharacter" nextState="gotoElement" />
+    <condition name="isAnyChar" nextState="gotoElement" >
+      <action name="reportError" />
+    </condition>              
+  </state>
+
+  <state name="emFound">
+     <condition name="equals" argument="-" nextState="gotoComment" />
+     <condition name="equals" argument="D" nextState="gotoDocType" />
+     <condition name="isAnyChar" nextState="gotoElement" >
+       <action name="reportError" />
+     </condition>     
+  </state>
+
+<!-- Comment parsing sub-state machine -->  
+  <state name="gotoComment">
+    <condition name="equals" argument=">" nextState="returnFromState">
+      <action name="createTag" argument="!-" />
+    </condition>
+    <condition name="equals" argument="-" nextState="commentString"/>
+    <condition name="isAnyChar" nextState="commentString">
+      <action name="reportError" />
+    </condition>
+  </state>
+
+  <state name="commentString">
+    <condition name="equals" argument="-" nextState="firstDash" />    
+    <condition name="isAnyChar" nextState="commentString">
+      <action name="rememberChar" />
+    </condition>
+  </state>
+
+  <state name="firstDash">
+    <condition name="equals" argument="-" nextState="secondDash" />
+    <condition name="equals" argument=">" nextState="commentString">
+      <action name="printWarning" />
+      <action name="rememberString" argument="-" />
+    </condition>   
+    <condition name="isAnyChar" nextState="commentString">
+      <action name="rememberString" argument="-" />
+    </condition>
+  </state>
+
+  <state name="secondDash">
+    <condition name="equals" argument=">" nextState="returnFromState">
+      <action name="createTag" argument="rememberBuffer" />
+    </condition>
+    <condition name="isAnyChar" nextState="commentString">
+      <action name="rememberString" argument="--" />
+    </condition>
+  </state>
+
+  
+  
+</statemachine>
