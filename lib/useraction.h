@@ -79,7 +79,7 @@ protected slots:
     virtual void slotActivated();    
     /**
      * Called when the action is activated
-     * @return true if the activation was succesfully completed
+     * @return true if the activation was successfuly completed
      */
     virtual bool slotActionActivated();
     virtual void slotGetScriptOutput( KProcess *, char *buffer, int buflen );

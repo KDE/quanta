@@ -34,7 +34,7 @@ public:
 
   ~Settings();
 
-  /** this method should be used in places where project settings can exist independend
+  /** this method should be used in places where project settings can exist independent
    *  from the global settings.
    *  @see createPrjSettings
    *

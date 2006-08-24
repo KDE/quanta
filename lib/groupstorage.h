@@ -29,7 +29,7 @@ Holds and takes care of the group elements found in a document.
 @author Andras Mantia
 */
 typedef QList<GroupElement*> GroupElementList;
-typedef QMap<QString, GroupElementList> GroupElementMap; ///<holds a list of occurences of elements with the same id (name). For example $i can appear in more than once place in the document, so QMap["$i"] will give a list with this appearances
+typedef QMap<QString, GroupElementList> GroupElementMap; ///<holds a list of occurrences of elements with the same id (name). For example $i can appear in more than once place in the document, so QMap["$i"] will give a list with this appearances
 
 class LIBQUANTA_EXPORT GroupStorage{
 public:

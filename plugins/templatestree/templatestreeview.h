@@ -61,7 +61,7 @@ public slots:
   void slotSettingsChanged();
 
   /**  Inserts the content of the selected template into the
-    *  activ document
+    *  active document
     */
   void slotInsertInDocument();
   

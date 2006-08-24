@@ -88,7 +88,7 @@ public:
   static KDE_DEPRECATED KUrl path(const KUrl &url) {KUrl newURL(url); newURL.setPath(url.directory(KUrl::ObeyTrailingSlash)); return newURL;}
 
   /** A slightly better working alternative of KIO::NetAccess::exists().
-      Checks for the existance of the url and if it is writeable. */
+      Checks for the existence of the url and if it is writeable. */
   static bool exists(const KUrl& url);
 
   /** Synchronous copy, like NetAccess::file_copy in KDE 3.2, just that it doesn't show a progress dialog */

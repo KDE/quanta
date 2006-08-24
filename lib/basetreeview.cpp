@@ -158,7 +158,7 @@ KFileTreeViewItem* BaseTreeBranch::createTreeViewItem(KFileTreeViewItem *parent,
   if( parent && fileItem)
   {
     tvi = new BaseTreeViewItem(parent, fileItem, this);
-    // we assume there are childs
+    // we assume there are children
     if (tvi)
     {
       tvi->setExpandable(tvi->isDir());

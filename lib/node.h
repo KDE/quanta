@@ -37,7 +37,7 @@ class XMLStructGroup;
  * and his first child.
  * It contains some functions to navigate through the tree, but some more are located at kafkacommon.h
  * (and should be moved here...)
- * It also contains a pointer to a Tag object which contains informations about the contents of the Node.
+ * It also contains a pointer to a Tag object which contains information about the contents of the Node.
  * We use this class to represent the XML/SGML document as a tree ( a DOM like tree) when each Node represent
  * a part of the document ( A tag, a text, ... see tag.h)
  * The tree is built with the parser (see parser.h)

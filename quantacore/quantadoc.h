@@ -142,7 +142,7 @@ private:
    */
   void startIdleTimer();
   
-  /** Recursively insert the mandatory childs of tag. 
+  /** Recursively insert the mandatory children of tag.
    * 
    * @param tag insert the children for this tag
    * @param lastTag do not insert more tags if the current tag is this one. Used internally to avoid infinite recursion.

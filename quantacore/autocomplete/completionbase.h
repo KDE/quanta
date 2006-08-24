@@ -84,7 +84,7 @@ public:
     * @param position the coordinates of the cursor
     * @param currentNode the node corresponding to the position in the document
     * @param type the type of the completion. See @ref CompletionType.
-    * @param mode the invokation mode of the completion. See @ref CompletionMode.
+    * @param mode the invocation mode of the completion. See @ref CompletionMode.
     * @param plugin the class is used in this plugin
     * @return pointer to the completion object (of a ScriptCompletion or XmlCompletion class type). Null if the completion object cannot be used at the current position.
     */

@@ -41,7 +41,7 @@ struct ParseResult
   QHash<QString, QTag*> userTags;
   
   /** the base url for all relative path entries in the document.
-   *  this is usally the path to the document but can be something else
+   *  this is usually the path to the document but can be something else
    *  if the BASE tag is present in the header
    */
    KUrl baseURL;

@@ -24,7 +24,7 @@
 // quanta includes
 #include "basetreeview.h"
 
-//foward declarations
+//forward declarations
 class QPoint;
 class KMenu;
 class KUrl;

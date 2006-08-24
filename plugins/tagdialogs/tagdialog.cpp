@@ -316,7 +316,7 @@ QString TagDialog::getAttributeString()
     QString attrval = " ";  // attr=value
 
     if ( val.isEmpty()) {
-      attrval += attr; // for checkboxes dont print =""
+      attrval += attr; // for checkboxes do not print =""
     }
     else {
         attrval += attr + '=' + Settings::self()->attributeQuotationChar() + val + Settings::self()->attributeQuotationChar();
