@@ -56,6 +56,7 @@
 #include <kdevdocument.h>
 #include <kdevcore.h>
 #include <kdevcontext.h>
+#include <kdevplugincontroller.h>
 
 #include <ktexteditor/document.h>
 
@@ -159,7 +160,7 @@ void QuantaCorePart::insertTag(const TagPair & tagPair, bool inLine, bool showDi
   QString attributes = s.remove(0, i).trimmed();
   if (showDialog && m_activeQuantaDoc->mainDTEP()->isKnownTag(name))
   {
-    TagDialogsIf *tagDialog = extension<TagDialogsIf>("KDevelop/TagDialogs");
+    TagDialogsIf *tagDialog = KDevCore::pluginController()->extension<TagDialogsIf>("KDevelop/TagDialogs");
     if (tagDialog)
     {
       QString selection = m_activeQuantaDoc->selection();

@@ -49,7 +49,15 @@ public:
    * @return the top base item, created with import();
    */
   virtual KDevProjectFolderItem *top() {return m_baseItem;}
-
+  /**
+   * Add a folder url to the project files.
+   * @param folder the url pointing to the folder
+   * @param parent the parent folder item
+   * @return 
+   */
+ // virtual KDevProjectFolderItem *addFolder(const KUrl &folder, KDevProjectFolderItem *parent);
+//  virtual KDevProjectFileItem *addFile(const KUrl &folder, KDevProjectFolderItem *parent);
+  
   private:
     KDevProjectFolderItem *m_baseItem;
 };

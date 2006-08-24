@@ -44,6 +44,7 @@
 //kdevelop includes
 #include <kdevmainwindow.h>
 #include <kdevplugin.h>
+#include <kdevplugincontroller.h>
 #include <kdevproject.h>
 #include <kdevcore.h>
 
@@ -87,7 +88,7 @@ UserAction::~UserAction()
 
 bool UserAction::slotActionActivated()
 {
-  QuantaCoreIf *quantaCore = m_plugin->extension<QuantaCoreIf>("KDevelop/Quanta");
+  QuantaCoreIf *quantaCore = KDevCore::pluginController()->extension<QuantaCoreIf>("KDevelop/Quanta");
   if (!quantaCore)
   {
     KMessageBox::information(KDevCore::mainWindow(), i18n("You cannot run a tag user action if the QuantaCore plugin is not loaded."), i18n("Missing QuantaCore"), "ShowQuantaCoreMissingWarning");

@@ -10,6 +10,7 @@
 
 //own includes
 #include "quantafilemanager.h"
+#include "extfileinfo.h"
 // QT includes
 
 #include <QStack>
@@ -35,7 +36,8 @@ KDevProjectItem *QuantaFileManager::import(KDevProjectModel *model, const KUrl &
   if (m_baseItem)
     model->removeItem(m_baseItem); 
   m_baseItem = new KDevProjectFolderItem(base, 0);
-  model->appendItem(m_baseItem);
+  emit folderAdded(m_baseItem);
+  model->appendItem(m_baseItem);  
   return m_baseItem;
 }
 
@@ -52,6 +54,11 @@ QList<KDevProjectFolderItem *> QuantaFileManager::parse(KDevProjectFolderItem *b
   QString relFileName;
   KUrl url, fileUrl;
   KDevProjectFolderItem *parent;
+
+  //Just for testing with more files
+//  KUrl::List urls = ExtFileInfo::allFiles(m_baseItem->url(), "*");
+//  foreach( KUrl fileUrl, urls)
+  
   foreach (QString group, groupList)
   {
     if (! group.startsWith(prefix))
@@ -79,10 +86,12 @@ QList<KDevProjectFolderItem *> QuantaFileManager::parse(KDevProjectFolderItem *b
       parent->add(item);
       folderList.insert(urlStack.pop(), item);
       parent = item;
+      emit folderAdded(item);
     }
     // add the file
     KDevProjectFileItem *item = new KDevProjectFileItem(fileUrl, parent);
     parent->add(item);
+    emit fileAdded(item);
   }
   return QList<KDevProjectFolderItem *>();
 }

@@ -35,6 +35,7 @@
 #include <kdevcore.h>
 #include <kdevcontext.h>
 #include <kdevmainwindow.h>
+#include <kdevplugincontroller.h>
 
 typedef KGenericFactory<TagDialogsPart> TagDialogsFactory;
 K_EXPORT_COMPONENT_FACTORY( libkdevtagdialogs, TagDialogsFactory("kdevtagdialogs") )
@@ -72,7 +73,7 @@ TagDialogsPart::~TagDialogsPart()
 void TagDialogsPart::init()
 {
 // delayed initialization stuff goes here
-  m_qcore = extension<QuantaCoreIf>("KDevelop/Quanta");
+  m_qcore = KDevCore::pluginController()->extension<QuantaCoreIf>("KDevelop/Quanta");
 
 }
 

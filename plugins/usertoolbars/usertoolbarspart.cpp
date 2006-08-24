@@ -1311,7 +1311,7 @@ void UserToolbarsPart::slotShowOutputView()
 {
   if (!m_outputPlugin)
   {
-    m_outputPlugin = extension<KDevAppFrontend>("KDevelop/AppFrontend");
+    m_outputPlugin = KDevCore::pluginController()->extension<KDevAppFrontend>("KDevelop/AppFrontend");
   }
   if (m_outputPlugin)
   {

@@ -44,6 +44,7 @@
 #include <kdevcore.h>
 #include <kdevmainwindow.h>
 #include <kdevprojectcontroller.h>
+#include <kdevplugincontroller.h>
 
 typedef KGenericFactory<StructureTreePart> StructureTreeFactory;
 K_EXPORT_COMPONENT_FACTORY( libkdevstructuretree, StructureTreeFactory("kdevstructuretree") )
@@ -106,7 +107,7 @@ void StructureTreePart::init()
 
   l->addWidget(m_documentTree);
 
-  m_qcore = extension<QuantaCoreIf>("KDevelop/Quanta");
+  m_qcore = KDevCore::pluginController()->extension<QuantaCoreIf>("KDevelop/Quanta");
   connect(m_qcore, SIGNAL(startParsing()), m_documentTree, SLOT(slotBlockGUI()));
 
   connect(m_qcore, SIGNAL(finishedParsing(const ParseResult *)), m_documentTree, SLOT(slotBuild(const ParseResult *)));

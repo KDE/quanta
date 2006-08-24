@@ -48,7 +48,7 @@
 #include <kdevcontext.h>
 #include <kdevmainwindow.h>
 #include <kdevprojectcontroller.h>
-
+#include <kdevplugincontroller.h>
 
 typedef KGenericFactory<TemplatesTreePart> TemplatesTreeFactory;
 K_EXPORT_COMPONENT_FACTORY( libkdevtemplatestree, TemplatesTreeFactory("kdevtemplatestree") )
@@ -103,7 +103,7 @@ QWidget *TemplatesTreePart::pluginView() const
 void TemplatesTreePart::init()
 {
 // delayed initialization stuff goes here
-  m_qcore = extension<QuantaCoreIf>("KDevelop/Quanta");
+  m_qcore = KDevCore::pluginController()->extension<QuantaCoreIf>("KDevelop/Quanta");
   connect(m_widget, SIGNAL(insertTag(const KUrl &, Helper::DirInfo *)), m_qcore, SLOT(slotInsertTag( const KUrl&, Helper::DirInfo* )));
 }
 

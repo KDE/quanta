@@ -302,3 +302,13 @@ quanta/src/CMakeLists.txt
 quanta/src/kdevquantaextension.cpp
 quanta/src/main.cpp
 s.h
+quanta/quantacore/parsers/quantaxmlinputsource.h
+
+quanta/quantacore/parsers/quantaxmlinputsource.cpp
+quanta/data/dtep/html/statemachine.xml
+quanta/quantacore/parsers/statemachine.h
+quanta/quantacore/parsers/statemachine.cpp
+quanta/quantacore/parsers/stateactions.cpp
+quanta/quantacore/parsers/stateactions.h
+quanta/quantacore/parsers/parserstatus.cpp
+quanta/quantacore/parsers/parserstatus.h

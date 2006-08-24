@@ -100,7 +100,7 @@ void CreateQuantaProjectPart::setupActions()
 
 void CreateQuantaProjectPart::slotCreateNewProject()
 {
-  QuantaCoreIf *qCore = extension<QuantaCoreIf>("KDevelop/Quanta");
+  QuantaCoreIf *qCore = KDevCore::pluginController()->extension<QuantaCoreIf>("KDevelop/Quanta");
   if (!qCore)
   {
     KMessageBox::error(KDevCore::mainWindow(), i18n("<qt>The <b>create new Quanta project</b> plugin requires the <b>Quanta core</b> plugin to be loaded."), i18n("Quanta core not loaded"));

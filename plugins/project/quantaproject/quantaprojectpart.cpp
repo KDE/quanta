@@ -236,16 +236,27 @@ void QuantaProjectPart::openProject( const KUrl &dirName, const QString &project
     el = items.item(i).toElement();
     m_files.insert(el.attribute("url"), el);
 }*/
+
+/* //Only for testing
   QList<KDevProjectFileItem*> fileList = recurseFiles(baseItem);
   QListIterator<KDevProjectFileItem*> it(fileList);
   while (it.hasNext())
   {
     KUrl url = it.next()->url();
     m_files.insert(url, QDomElement());
-/*    if (inProject(url))
-      kDebug(24000) << url << " is in project." << endl;*/
+    if (inProject(url))
+      kDebug(24000) << url << " is in project." << endl;
+    else
+      kDebug(24000) << url << " is NOT in project." << endl;
+    url.upUrl();
+    url.adjustPath(KUrl::AddTrailingSlash);
+    if (inProject(url))
+      kDebug(24000) << url << " is in project." << endl;
+    else
+      kDebug(24000) << url << " is NOT in project." << endl;
   }
 //   kDebug(24000) << "Files in the project: " << m_files.keys() << endl;
+*/
   kDebug(24000) << "Project base: " << m_projectBase << " name: " << projectName << " baseItem: "<< baseItem->url() << endl;
 }
 
