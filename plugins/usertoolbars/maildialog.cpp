@@ -90,10 +90,10 @@ void MailDialog::slotSelectAddress()
   }
  result.sort();
 
- bool ok = FALSE;
+ bool ok = false;
  QString res = KInputDialog::getItem(
                  i18n( "Select recipient" ),
-                 i18n( "Please select an e-mail address:" ), result, 1, FALSE, &ok, this);
+                 i18n( "Please select an e-mail address:" ), result, 1, false, &ok, this);
 
  if (ok)
  {

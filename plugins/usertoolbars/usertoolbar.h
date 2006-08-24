@@ -30,7 +30,7 @@ class UserToolBar: public KToolBar
   Q_OBJECT
 
 public:
-  UserToolBar (QWidget *parent, const char *name=0, bool honor_style=FALSE, bool readConfig=TRUE);
+  UserToolBar (QWidget *parent, const char *name=0, bool honor_style=false, bool readConfig=true);
   virtual ~UserToolBar() {};
   /**
    * Set the status of the toolbar.

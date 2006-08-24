@@ -886,10 +886,10 @@ void ActionConfigDialog::slotAddContainerToolbar()
 
   if (lst.count() > 0)
   {
-    bool ok = FALSE;
+    bool ok = false;
     QString res = KInputDialog::getItem(
                     i18n( "Add Action to Toolbar" ),
-                    i18n( "Please select a toolbar:" ), lst, 0, FALSE, &ok, this );
+                    i18n( "Please select a toolbar:" ), lst, 0, false, &ok, this );
 
     if (ok)
     {

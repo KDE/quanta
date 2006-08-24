@@ -686,9 +686,9 @@ QString UserToolbarsPart::selectToolbarDialog(const QString &caption)
     tabData.insert(tb->tabText(i), tb->id(i));
   }
   int current = tabData.keys().indexOf(tb->tabText(tb->currentIndex()));
-  bool ok = FALSE;
+  bool ok = false;
   QString res = KInputDialog::getItem(caption, i18n( "Please select a toolbar:" ),
-                      tabData.keys(), current, FALSE, &ok, KDevCore::mainWindow() );
+                      tabData.keys(), current, false, &ok, KDevCore::mainWindow() );
   if (ok)
     return tabData.value(res);
   else

@@ -72,7 +72,8 @@ DTDParser::~DTDParser()
 
 bool DTDParser::parse()
 {
-  QString fileName = QString::null;
+  QString fileName;
+  fileName.clear();
   if (!KIO::NetAccess::download(m_dtdURL, fileName, 0))
   {
     KMessageBox::error(0, i18n("<qt>Cannot download the DTD from <b>%1</b>.</qt>", m_dtdURL.pathOrUrl()));
