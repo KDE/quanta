@@ -17,44 +17,79 @@
 #include <QString>
 
 
+class ParserStatus;
+
+/**
+ * \short This class holds the static functions that are use for comparision in a parse state.
+ * 
+ * Use the factory to get a pointer for a functions name.
+ * 
+ * \author Jens Herden   \<jens@kdewebdev.org\>
+ **/
+
 class Comparator
 {
 public:
-  typedef bool (*CompareFunct) (const QChar &, const QString &);
+  typedef bool (*CompareFunctPtr) (const ParserStatus &parser, const QString &);
 
-  static CompareFunct factory (int id);
+  static CompareFunctPtr factory (const QString &name);
 
   /**
-   * id=0 always true
-   * @param c unused
-   * @param compare unused
+   * @param parser unused
+   * @param argument unused
    * @return true
    */
-  static bool always(const QChar &c, const QString &compare);
+  static bool always(const ParserStatus &parser, const QString &argument);
 
   /**
-   * id=1 test if character is equal
-   * @param c
-   * @param compare
-   * @return true if c == compare[0]
+   * @param parser the ParserStatus to use
+   * @param argument 
+   * @return true if currChar == argument[0]
    */
-  static bool equal(const QChar &c, const QString &compare);
+  static bool equal(const ParserStatus &parser, const QString &argument);
 
   /**
-   * id=2 check for whitespace
-   * @param c
-   * @param compare unused
-   * @return true if c is whitespace character
+   * @param parser the ParserStatus to use
+   * @param argument unused
+   * @return \e true if parser.currChar is whitespace
    */
-  static bool whitespace(const QChar &c, const QString &compare);
+  static bool whitespace(const ParserStatus &parser, const QString &argument);
 
   /**
-   * fallback if factory got wrong id
-   * @param c unused
-   * @param compare unused
-   * @return false
+   * fallback if factory got wrong name
+   * @param parser unused
+   * @param argument unused
+   * @return \e false
    */
-  static bool never(const QChar &c, const QString &compare);
+  static bool never(const ParserStatus &parser, const QString &argument);
+
+  /**
+   * @param parser the ParserStatus to use
+   * @param argument unused
+   * @return \e true if parser.currChar is a digit
+   */
+  static bool digit(const ParserStatus &parser, const QString &argument);
+
+  /**
+   * @param parser the ParserStatus to use
+   * @param argument unused
+   * @return \e true if parser.currChar is a hex number
+   */
+  static bool hex(const ParserStatus &parser, const QString &argument);
+  
+  /**
+   * @param parser the ParserStatus to use
+   * @param argument unused
+   * @return \e true if parser.currChar is in [a-z] or [A-Z]
+   */
+  static bool asciiChar(const ParserStatus &parser, const QString &argument);
+  
+  /**
+   * @param parser the ParserStatus to use
+   * @param argument string to lookup in
+   * @return \e true argument contains parser.currChar
+   */
+  static bool contains(const ParserStatus &parser, const QString &argument);
 
 };
 

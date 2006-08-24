@@ -12,48 +12,81 @@
  ***************************************************************************/
 
 #include "comparator.h"
+#include "parserstatus.h"
 
-Comparator::CompareFunct Comparator::factory(int id)
+
+Comparator::CompareFunctPtr Comparator::factory(const QString &name)
 {
-  switch( id )
-  {
-    case 0: return &always;
-    case 1: return &equal;
-    case 2: return &whitespace;
-  }
-  return &never; // in case id is wrong
+  QString id = name.toLower();
+  if (id == "isanychar") return &always;
+  if (id == "equals") return &equal;
+  if (id == "iswhitespace") return &whitespace;
+  if (id == "ischaracter") return &asciiChar;
+
+  return &never; // in case name is wrong
 }
 
 
-bool Comparator::always(const QChar &c, const QString &compare)
+bool Comparator::always(const ParserStatus &parser, const QString &argument)
 {
-  Q_UNUSED(c);
-  Q_UNUSED(compare);
+  Q_UNUSED(parser);
+  Q_UNUSED(argument);
   return true;
 }
 
 
-bool Comparator::never(const QChar &c, const QString &compare)
+bool Comparator::never(const ParserStatus &parser, const QString &argument)
 {
-  Q_UNUSED(c);
-  Q_UNUSED(compare);
+  Q_UNUSED(parser);
+  Q_UNUSED(argument);
+  Q_ASSERT(false);
   return false;
 }
 
 
-bool Comparator::equal(const QChar &c, const QString &compare)
+bool Comparator::equal(const ParserStatus &parser, const QString &argument)
 {
-  if (compare.isEmpty())
+  if (argument.isEmpty())
     return false;
 
-  return c == compare[0];
+  return parser.currChar == argument[0];
 }
 
 
-bool Comparator::whitespace(const QChar &c, const QString &compare)
+bool Comparator::whitespace(const ParserStatus &parser, const QString &argument)
 {
-  Q_UNUSED(compare);
-  return c.isSpace();
+  Q_UNUSED(argument);
+  return parser.currChar.isSpace();
 }
+
+
+bool Comparator::digit(const ParserStatus &parser, const QString &argument)
+{
+  Q_UNUSED(argument);
+  return parser.currChar.isDigit();
+}
+
+
+bool Comparator::hex(const ParserStatus &parser, const QString &argument)
+{
+  Q_UNUSED(argument);
+  return parser.currChar.isDigit() || (parser.currChar >= 'a' && parser.currChar <= 'f')
+      || (parser.currChar >= 'A' && parser.currChar <= 'F');
+}
+
+
+bool Comparator::asciiChar(const ParserStatus &parser, const QString &argument)
+{
+  Q_UNUSED(argument);
+  return (parser.currChar >= 'a' && parser.currChar <= 'z')
+      || (parser.currChar >= 'A' && parser.currChar <= 'Z');
+}
+
+
+bool Comparator::contains(const ParserStatus &parser, const QString &argument)
+{
+  return argument.contains(parser.currChar);
+}
+
 
 // kate: space-indent on; indent-width 2; mixedindent off; indent-mode cstyle;
