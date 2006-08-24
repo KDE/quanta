@@ -17,10 +17,11 @@
 #include "parserstatus.h"
 
 
-ParserStatus::ParserStatus(QXmlInputSource *source) :
-  QXmlReader(), m_source(source)
+ParserStatus::ParserStatus(QXmlInputSource *source, QXmlLocator *locator) :
+  QXmlReader(), m_source(source), m_locator(locator)
 {
   Q_ASSERT(source != 0);
+  Q_ASSERT(locator != 0);
 }
 
 

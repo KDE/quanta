@@ -22,7 +22,7 @@ class ParserStatus;
 /**
  * \short This class holds the static functions that are use for comparision in a parse state.
  * 
- * Use the factory to get a pointer for a functions name.
+ * Use the factory to get a pointer for a function name.
  * 
  * \author Jens Herden   \<jens@kdewebdev.org\>
  **/

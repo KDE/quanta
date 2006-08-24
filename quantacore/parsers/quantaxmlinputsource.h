@@ -28,7 +28,7 @@ class KTextEditor::SmartCursor;
  * internally a SmartCursor is used.
  *
  * \author Jens Herden \<jens@kdewebdev.org\>
- **/
+ */
 
 class QuantaXmlInputSource: 
     public QXmlInputSource, public QXmlLocator, public KTextEditor::SmartCursorWatcher
@@ -36,38 +36,38 @@ class QuantaXmlInputSource:
 public:
   /**
    * \param doc the document to read from, must implement KTextEditor::SmartInterface
-   **/
+   */
   QuantaXmlInputSource(KTextEditor::Document * doc);
   
   virtual ~QuantaXmlInputSource();
   /**
    * \return the whole content of the textdocument or QString::Null() if there is no document
-   **/
+   */
   virtual QString data() const;
   /**
    * get the next character and move the cursor one position
    * 
    * \return the next character or QXmlInputSource::EndOfDocument
-   **/
+   */
   virtual QChar next();
   /**
    * reset the cursor to the beginning of the textdocument
-   **/
+   */
   virtual void reset();
   /**
    * from SmartCursorWatcher to make sure that we do not use the cursor anymore
    * after it was deleted.
-   **/
+   */
   void deleted(KTextEditor::SmartCursor * cursor);
   /**
    * Reimplemented from QXmlLocator.
    * \return the current column position, -1 means invalid position!
-   **/
+   */
   virtual int columnNumber();
   /**
    * Reimplemented from QXmlLocator.
    * \return the current line number, -1 means invalid position!
-   **/
+   */
   virtual int lineNumber();
   
 private:

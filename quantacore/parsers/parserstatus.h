@@ -21,30 +21,36 @@
 
 
 class QXmlInputSource;
+class QXmlLocator;
 
-
+/**
+ * \short 
+ * 
+ * \author Jens Herden   \<jens@kdewebdev.org\>
+ */
 class ParserStatus : public QXmlReader 
 {
   friend class StateActions;
   friend class Comparator;
   
   public:
-    ParserStatus(QXmlInputSource *source /*, QVector<statemachine>*/);
+    ParserStatus(QXmlInputSource *source, QXmlLocator *locator /*, QVector<statemachine>*/);
     ~ParserStatus();
     
     void startParsing();
     
   protected:
-    QString m_buffer;
-    QStack<QChar> m_sourceStack;
-    int currState;
-    QChar currChar;
+    QChar m_currChar;
+    mutable QString m_buffer;
+    mutable QStack<QChar> m_sourceStack;
+    mutable int m_currState;
     // int entity;
     // QVector<...> *states;
     
     
   private:
     QXmlInputSource *m_source;
+    QXmlLocator *m_locator;
 };
 
 

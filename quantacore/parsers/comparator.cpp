@@ -11,8 +11,9 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "comparator.h"
 #include "parserstatus.h"
+
+#include "comparator.h"
 
 
 Comparator::CompareFunctPtr Comparator::factory(const QString &name)
@@ -49,43 +50,43 @@ bool Comparator::equal(const ParserStatus &parser, const QString &argument)
   if (argument.isEmpty())
     return false;
 
-  return parser.currChar == argument[0];
+  return parser.m_currChar == argument[0];
 }
 
 
 bool Comparator::whitespace(const ParserStatus &parser, const QString &argument)
 {
   Q_UNUSED(argument);
-  return parser.currChar.isSpace();
+  return parser.m_currChar.isSpace();
 }
 
 
 bool Comparator::digit(const ParserStatus &parser, const QString &argument)
 {
   Q_UNUSED(argument);
-  return parser.currChar.isDigit();
+  return parser.m_currChar.isDigit();
 }
 
 
 bool Comparator::hex(const ParserStatus &parser, const QString &argument)
 {
   Q_UNUSED(argument);
-  return parser.currChar.isDigit() || (parser.currChar >= 'a' && parser.currChar <= 'f')
-      || (parser.currChar >= 'A' && parser.currChar <= 'F');
+  return parser.m_currChar.isDigit() || (parser.m_currChar >= 'a' && parser.m_currChar <= 'f')
+      || (parser.m_currChar >= 'A' && parser.m_currChar <= 'F');
 }
 
 
 bool Comparator::asciiChar(const ParserStatus &parser, const QString &argument)
 {
   Q_UNUSED(argument);
-  return (parser.currChar >= 'a' && parser.currChar <= 'z')
-      || (parser.currChar >= 'A' && parser.currChar <= 'Z');
+  return (parser.m_currChar >= 'a' && parser.m_currChar <= 'z')
+      || (parser.m_currChar >= 'A' && parser.m_currChar <= 'Z');
 }
 
 
 bool Comparator::contains(const ParserStatus &parser, const QString &argument)
 {
-  return argument.contains(parser.currChar);
+  return argument.contains(parser.m_currChar);
 }
 
 
