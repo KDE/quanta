@@ -11,10 +11,11 @@
 #ifndef QUANTAXMLINPUTSOURCE_H
 #define QUANTAXMLINPUTSOURCE_H
 
-#include "QXmlInputSource"
+#include <QXmlInputSource>
+#include <QXmlLocator>
 
-#include "ktexteditor/cursorfeedback.h"
-#include "ktexteditor/cursor.h"
+#include <ktexteditor/cursorfeedback.h>
+#include <ktexteditor/cursor.h>
 
 class KTextEditor::Document;
 class KTextEditor::SmartCursor;
@@ -30,7 +31,7 @@ class KTextEditor::SmartCursor;
  **/
 
 class QuantaXmlInputSource: 
-    public QXmlInputSource, public KTextEditor::SmartCursorWatcher
+    public QXmlInputSource, public QXmlLocator, public KTextEditor::SmartCursorWatcher
 {
 public:
   /**
@@ -59,9 +60,15 @@ public:
    **/
   void deleted(KTextEditor::SmartCursor * cursor);
   /**
-   * \return the current position as a cursor, might be invalid!
+   * Reimplemented from QXmlLocator.
+   * \return the current column position, -1 means invalid position!
    **/
-  KTextEditor::Cursor currentPosition();
+  virtual int columnNumber();
+  /**
+   * Reimplemented from QXmlLocator.
+   * \return the current line number, -1 means invalid position!
+   **/
+  virtual int lineNumber();
   
 private:
   KTextEditor::SmartCursor * m_cursor;

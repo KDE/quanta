@@ -18,16 +18,15 @@
 #include "quantaxmlinputsource.h"
 
 QuantaXmlInputSource::QuantaXmlInputSource(KTextEditor::Document * doc)
-  : QXmlInputSource(), KTextEditor::SmartCursorWatcher(), m_cursor(0)
+  : QXmlInputSource(), QXmlLocator(), KTextEditor::SmartCursorWatcher(), m_cursor(0)
 {
   KTextEditor::SmartInterface* smart = qobject_cast<KTextEditor::SmartInterface*>(doc);
   
   Q_ASSERT(smart != 0);
-  if ( smart )
+  if (smart)
   {
     m_cursor = smart->newSmartCursor();
     m_cursor->setWatcher(this);
-    reset();
   }
 }
 
@@ -67,12 +66,20 @@ void QuantaXmlInputSource::deleted(KTextEditor::SmartCursor * cursor)
     m_cursor = 0;
 }
 
-KTextEditor::Cursor QuantaXmlInputSource::currentPosition()
+int QuantaXmlInputSource::columnNumber()
 {
   if (m_cursor && m_cursor->isValid())
-    return KTextEditor::Cursor(*m_cursor);
+    return m_cursor->column();
   else
-    return KTextEditor::Cursor::invalid();
+    return -1;
+}
+
+int QuantaXmlInputSource::lineNumber()
+{
+  if (m_cursor && m_cursor->isValid())
+    return m_cursor->line();
+  else
+    return -1;
 }
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
