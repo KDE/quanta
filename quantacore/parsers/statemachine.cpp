@@ -28,8 +28,8 @@ StateMachine::StateMachine()
 
 StateMachine::~StateMachine()
 {
-  qDeleteAll(m_parsingStates);
-  m_parsingStates.clear();
+  qDeleteAll(m_stateNameMapping);
+  m_stateNameMapping.clear();
 }
 
 bool StateMachine::build(const QString &fileName)
@@ -52,6 +52,7 @@ bool StateMachine::build(const QString &fileName)
 
   QDomNodeList stateNodes = dom.elementsByTagName("state");
   uint numOfStates = stateNodes.count();
+  m_startState = 0;
 
   //first build the state list with empty states and store the mapping
   //between the state name and the index in the list. This mapping
@@ -61,23 +62,22 @@ bool StateMachine::build(const QString &fileName)
     QDomNode n = stateNodes.item(i);
     QDomElement e = n.toElement();
     State * state = new State();
+    m_startState = m_startState ? m_startState : state;
     state->name = e.attribute("name", QString("state:%1").arg(i));
-    m_parsingStates.append(state);
     m_stateNameMapping.insert(state->name, state);
   }
-  
+
   for (uint i = 0; i < numOfStates; i++)
   {
     QDomNode n = stateNodes.item(i);
     QDomElement e = n.toElement();
-    readConditions(&n, m_parsingStates[i]->conditions);
+    readConditions(&n, m_stateNameMapping[e.attribute("name", QString("state:%1").arg(i))]->conditions);
   }
 
 #ifdef DEBUG_STATEMACHINE  
-  uint i = 0;
-  foreach(State *state, m_parsingStates)
+  foreach(State *state, m_stateNameMapping)
   {
-    kDebug(24000) << "State: name = " << state->name << ", index: " << i << endl;
+    kDebug(24000) << "State: name = " << state->name << endl;
     foreach (Condition condition, state->conditions)
     {
       kDebug(24000) << "   Condition: " << " comparatorFunct = " << condition.compareFunction.name() << ", argument = \"" << condition.compareFunction.argument() << "\" nextState = (" << condition.nextState << " , " << m_stateNameMapping.key(condition.nextState) << ")" << endl;
@@ -86,7 +86,6 @@ bool StateMachine::build(const QString &fileName)
         kDebug(24000) << "      Action: name = " << action.name() << ", argument = " << action.argument() << endl;
       }
     } 
-    ++i;
   }
 #endif
     
