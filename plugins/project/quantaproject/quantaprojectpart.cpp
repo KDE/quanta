@@ -403,13 +403,13 @@ void QuantaProjectPart::slotInsertFolder()
       QString section;
       for (int i = 0 ; i < sections.count(); i++)
       {
-        section += sections[i] + "/";
+        section += sections[i] + '/';
         filenames += section;
       }
       KUrl::List::ConstIterator end = urls.constEnd();
       for (KUrl::List::ConstIterator it = urls.begin(); it != end; ++it)
       {
-        filenames += url.fileName() + "/" + (*it).path();
+        filenames += url.fileName() + '/' + (*it).path();
       }
       addFiles(filenames);
     }

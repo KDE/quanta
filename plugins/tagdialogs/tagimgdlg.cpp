@@ -2,9 +2,8 @@
                           tagimgdlg.cpp  -  description
                              -------------------
     begin                : Sat Nov 27 1999
-    copyright            : (C) 1999 by Yacovlev Alexander & Dmitry Poplavsky
-                           (C) 2002 Andras Mantia
-    email                : pdima@mail.univ.kiev.ua, amantia@kde.org
+    copyright            : (C) 1999 by Yacovlev Alexander & Dmitry Poplavsky <pdima@mail.univ.kiev.ua>
+                           (C) 2002 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************

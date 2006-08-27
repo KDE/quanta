@@ -208,7 +208,7 @@ private:
      * @param localToolbar true if the toolbar is a local toolbar, false if it is a project toolbar
      * @param toolbarToSave the name of the toolbar. If empty, a dialog is shown where the user can select the toolbar to save.
      * @param destURL where to save the toolbar. If empty, a file dialog is shown to select the destination URL.
-     * @return true if succesful, false if saving failed or was cancelled
+     * @return true if successful, false if saving failed or was cancelled
      */
     bool saveToolbar(bool localToolbar = true, const QString& toolbarToSave = QString(), const KUrl& destURL = KUrl());
     /**

@@ -80,7 +80,7 @@ void TagMailDlg::slotSelectAddress()
   if (!addr.isEmpty() && (email.indexOf( "<" ) == -1)
       && (email.indexOf( ">" ) == -1)
       && (email.indexOf( "," ) == -1))
-    addr += "<" + email + ">";
+    addr += '<' + email + '>';
   else
     addr += email;
   addr.trimmed();

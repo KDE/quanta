@@ -183,7 +183,7 @@ void QuantaCorePart::insertTag(const TagPair & tagPair, bool inLine, bool showDi
   if (tagPair.opening().startsWith("<"))
     s1.prepend("<");
   if (!attributes.isEmpty())
-    s1 += " " + TagAttr::convertCase(attributes);
+    s1 += ' ' + TagAttr::convertCase(attributes);
   if (tagPair.opening().endsWith(">"))
   {
     QTag *dtdTag = QTag::tagFromDTD(m_activeQuantaDoc->mainDTEP(), name);

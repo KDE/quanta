@@ -850,10 +850,10 @@ void DTDs::setAttributes(QDomNode *dom, QTag* tag, bool &common)
      {
       if (attr->status == "optional")
       {
-        attrList = attrList + "["+attr->type +" "+attr->name +"], ";
+        attrList = attrList + '[' + attr->type + ' ' + attr->name + "], ";
       } else
       {
-        attrList = attrList + attr->type +" "+attr->name +", ";
+        attrList = attrList + attr->type + ' ' + attr->name + ", ";
       }
      }
      if (!attr->name.isEmpty())
