@@ -22,7 +22,7 @@
 
 //kdevelop includes
 #include <kdevplugin.h>
-
+#include <kdevapplicationinterface.h>
 class QMenu;
 class KMenu;
 class KAction;

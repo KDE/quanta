@@ -65,7 +65,7 @@
 #include <kxmlguifactory.h>
 
 //kdevelop includes
-#include <kdevappfrontend.h>
+#include <kdevapplicationinterface.h>
 #include <kdevcore.h>
 #include <kdevmainwindow.h>
 #include <kdevdocumentcontroller.h>
