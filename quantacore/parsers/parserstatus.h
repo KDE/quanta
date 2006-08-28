@@ -42,6 +42,8 @@ class ParserStatus : public QXmlReader
     void startParsing();
     
   private:
+    void loop();
+    
     QChar m_currChar;
     mutable QString m_buffer;
     mutable QStack<QChar> m_sourceStack;

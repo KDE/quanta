@@ -125,13 +125,21 @@ class StateActions
      */
     static bool createComment(const ParserStatus &parser, const QString &argument);
     /**
-     * reports the found tag to the handler
+     * reports the found start tag to the handler
      * 
      * @param parser the used ParserStatus
      * @param argument unused
      * \return the return value of the handler or \e true if there is no handler
      */
     static bool createTag(const ParserStatus &parser, const QString &argument);
+    /**
+     * reports the found end tag to the handler
+     * 
+     * @param parser the used ParserStatus
+     * @param argument unused
+     * \return the return value of the handler or \e true if there is no handler
+     */
+    static bool createEndTag(const ParserStatus &parser, const QString &argument);
 };
 
 

@@ -34,6 +34,7 @@ StateActions::ActionFunctPtr StateActions::factory(const QString &name)
   if (id == "reportFatalError") return &fatalError;
   if (id == "createComment") return &createComment;
   if (id == "createTag") return &createTag;
+  if (id == "createEndTag") return &createEndTag;
 
   return &crashMe; // in case name is wrong
 }
@@ -130,10 +131,14 @@ bool StateActions::popState(const ParserStatus &parser, const QString &argument)
 bool StateActions::createTag(const ParserStatus &parser, const QString &argument)
 {
   Q_UNUSED(argument);
-  if (! parser.contentHandler())
-    return true;
-  
   return parser.contentHandler()->startElement("", "", parser.m_buffer, QXmlAttributes());
+}
+
+
+bool StateActions::createEndTag(const ParserStatus &parser, const QString &argument)
+{
+  Q_UNUSED(argument);
+  return parser.contentHandler()->endElement("", "", parser.m_buffer);
 }
 
 

@@ -33,10 +33,22 @@ ParserStatus::~ParserStatus()
 
 void ParserStatus::startParsing()
 {
+  if (! contentHandler())
+    return;
+  
+  contentHandler()->setDocumentLocator(m_locator);
+  contentHandler()->startDocument();
   m_currState = m_stateMachine->startState();
+  loop();
+  contentHandler()->endDocument();
+}
+
+
+void ParserStatus::loop()
+{
   while (m_currState)
   {
-    // get the next character
+      // get the next character
     if (! m_sourceStack.isEmpty())
       m_currChar = m_sourceStack.pop();
     else
@@ -47,7 +59,7 @@ void ParserStatus::startParsing()
       if (m_currChar == QXmlInputSource::EndOfDocument)
         return;
     }
-    // test conditions and do the actions
+      // test conditions and do the actions
     foreach (Condition condition, m_currState->conditions)
     {
       if (condition.compareFunction.call(*this))
@@ -59,11 +71,12 @@ void ParserStatus::startParsing()
         }
         if (condition.nextState)
           m_currState = condition.nextState;
-        
+          
         break;
       }
     }
   }
 }
+
 
 //kate: indent-mode cstyle; space-indent on; indent-width 2; replace-tabs on; mixedindent off; encoding utf-8

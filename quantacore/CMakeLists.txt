@@ -40,6 +40,7 @@ set(kdevquantacore_PART_SRCS
    parsers/statemachine.cpp
    parsers/parserstatus.cpp
    parsers/stateactions.cpp
+   parsers/dombuilder.cpp
    
    parsers/dtd/dtdparser.cpp
 
