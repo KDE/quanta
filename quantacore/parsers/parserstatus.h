@@ -36,20 +36,21 @@ class ParserStatus : public QXmlReader
   friend class Comparator;
   
   public:
-    ParserStatus(QXmlInputSource *source, QXmlLocator *locator);
+    ParserStatus(QXmlInputSource *source, QXmlLocator *locator, StateMachine *stateMachine);
     ~ParserStatus();
     
-    void startParsing(State *startState);
+    void startParsing();
     
   private:
     QChar m_currChar;
     mutable QString m_buffer;
     mutable QStack<QChar> m_sourceStack;
-    mutable QStack<QChar> m_stateStack;
-    mutable State *m_currState;
+    mutable QStack<const State *> m_stateStack;
+    mutable const State *m_currState;
     // int entity;
     QXmlInputSource *m_source;
     QXmlLocator *m_locator;
+    StateMachine *m_stateMachine;
 };
 
 

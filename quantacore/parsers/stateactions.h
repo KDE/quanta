@@ -104,10 +104,34 @@ class StateActions
      * push the current state on the stack
      * 
      * @param parser the used ParserStatus
-     * @param argument unused
-     * \return always \e true
+     * @param argument the name of the state
+     * \return \e true if the state is known, \e false otherwise
      */
     static bool pushState(const ParserStatus &parser, const QString &argument);
+    /**
+     * pop state from the stack
+     * 
+     * @param parser the used ParserStatus
+     * @param argument unused
+     * \return \e true if there was a state on the stack, \e false otherwise
+     */
+    static bool popState(const ParserStatus &parser, const QString &argument);
+    /**
+     * reports the found comment to the handler
+     * 
+     * @param parser the used ParserStatus
+     * @param argument unused
+     * \return the return value of the handler or \e true if there is no handler
+     */
+    static bool createComment(const ParserStatus &parser, const QString &argument);
+    /**
+     * reports the found tag to the handler
+     * 
+     * @param parser the used ParserStatus
+     * @param argument unused
+     * \return the return value of the handler or \e true if there is no handler
+     */
+    static bool createTag(const ParserStatus &parser, const QString &argument);
 };
 
 

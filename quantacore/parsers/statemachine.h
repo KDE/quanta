@@ -125,11 +125,6 @@ struct State {
  */
 class StateMachine{
 
-  /**
-   * A list of possible states in the state machine. The states are referred by
-   * their index in the list.
-   */
-  typedef QList<State *> ParsingStates;
 
 public:
    
@@ -141,7 +136,7 @@ public:
    * Build the state machine from an xml file.
    *
    * @param fileName the XML file to be used
-   * @return true in case of success, false if the state machine could not be build
+   * @return @e true in case of success, @e false if the state machine could not be build
    */
   bool build(const QString &fileName);
 
@@ -149,6 +144,12 @@ public:
    * @return the start State 
    */
   const State * startState() const {return m_startState;}
+  
+  /**
+   * @param name the name of the state in the XML file 
+   * @return a pointer to a State for the given name or 0 for unknown states
+   */
+  const State * state(const QString &name) const {return m_stateNameMapping.value(name);}
   
 private:
   /**

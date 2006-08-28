@@ -17,11 +17,12 @@
 #include "parserstatus.h"
 #include "statemachine.h"
 
-ParserStatus::ParserStatus(QXmlInputSource *source, QXmlLocator *locator) :
-  QXmlReader(), m_currState(0), m_source(source), m_locator(locator)
+ParserStatus::ParserStatus(QXmlInputSource *source, QXmlLocator *locator, StateMachine *stateMachine) :
+  QXmlReader(), m_currState(0), m_source(source), m_locator(locator), m_stateMachine(stateMachine)
 {
   Q_ASSERT(source != 0);
   Q_ASSERT(locator != 0);
+  Q_ASSERT(stateMachine != 0);
 }
 
 
@@ -30,9 +31,9 @@ ParserStatus::~ParserStatus()
 }
 
 
-void ParserStatus::startParsing(State *startState)
+void ParserStatus::startParsing()
 {
-  m_currState = startState;
+  m_currState = m_stateMachine->startState();
   while (m_currState)
   {
     // get the next character
