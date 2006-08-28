@@ -181,7 +181,7 @@ void FilesTreeView::fileMenu(const QPoint &point)
   KMenu popup(this);
   popup.addTitle(i18n("Files Tree"));
 
-  if (isFileOpen(currentURL()))
+  if (isFileOpen(currentUrl()))
     popup.addAction(SmallIcon("fileclose"), i18n("Clos&e"), this, SLOT(slotClose()));
   else
     popup.addAction(SmallIcon("fileopen"), i18n("&Open"), this ,SLOT(slotOpen()));
@@ -209,7 +209,7 @@ void FilesTreeView::slotRemoveFromTop()
   if (!curItem || !curItem->isDir() || curItem != curItem->branch()->root())
     return;
 
-  KUrl url(currentURL());
+  KUrl url(currentUrl());
   url.adjustPath(KUrl::AddTrailingSlash);
   topURLAliases.remove(url.url());
   removeBranch(curItem->branch());
@@ -223,7 +223,7 @@ void FilesTreeView::slotAddToTop()
   if (!curItem || !curItem->isDir() || curItem == curItem->branch()->root())
     return;
 
-  KUrl url(currentURL());
+  KUrl url(currentUrl());
   url.adjustPath(KUrl::AddTrailingSlash);
   if (!topURLAliases.contains(url.url()))
   {
@@ -256,7 +256,7 @@ void FilesTreeView::slotChangeAlias()
   if (!curItem || !curItem->isDir() || curItem != curItem->branch()->root())
     return;
 
-  KUrl url(currentURL().url());
+  KUrl url(currentUrl().url());
   url.adjustPath(KUrl::AddTrailingSlash);
   QString s = topURLAliases[url.url()];
   if (s.isEmpty())

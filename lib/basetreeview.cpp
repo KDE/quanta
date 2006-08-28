@@ -214,7 +214,7 @@ void BaseTreeBranch::reopenFolder()
   QStringList::Iterator end(folderToOpen.end());
   for (QStringList::Iterator it = folderToOpen.begin(); it != end; ++it) {
     KUrl url( (*it) );
-    item = findTVIByURL(url);
+    item = findTVIByUrl(url);
     if (item) {
       // erase the url in the list
       (*it) = "";
@@ -338,7 +338,7 @@ bool BaseTreeView::expandArchiv(KFileTreeViewItem *item)
 
   if ( ! urlToOpen.isLocalFile()) return false;
 
-  QString mimeType = KMimeType::findByURL(urlToOpen)->name();
+  QString mimeType = KMimeType::findByUrl(urlToOpen)->name();
 
   if ( mimeType == "application/x-tgz" ||
        mimeType == "application/x-tbz" ||
@@ -381,7 +381,7 @@ FileInfoDlg* BaseTreeView::addFileInfoPage(KPropertiesDialog* propDlg)
 
     int fsize,fimgsize=0;
     int ct=0, imgct=0/*, position=0*/;
-    KUrl u = currentURL();
+    KUrl u = currentUrl();
     if (u.isLocalFile())   //get the file info only for local file. TODO: for non-local ones
     {
        QString nameForInfo = u.path();
@@ -494,7 +494,7 @@ void BaseTreeView::slotClose()
 {
   if (currentItem())
   {
-    KDevDocument * doc = m_partController->documentForUrl(currentURL());
+    KDevDocument * doc = m_partController->documentForUrl(currentUrl());
     if (doc)
       doc->close();
   }
@@ -517,7 +517,7 @@ void BaseTreeView::slotCopy()
    if (currentItem())
    {
      QClipboard *cb = QApplication::clipboard();
-     cb->setText( currentURL().prettyUrl() );
+     cb->setText( currentUrl().prettyUrl() );
    }
 }
 
@@ -529,7 +529,7 @@ void BaseTreeView::slotPaste()
     QClipboard *cb = QApplication::clipboard();
     KUrl::List list( cb->text().split(QChar('\n')) );
 
-    KUrl url = currentURL();
+    KUrl url = currentUrl();
     if ( ! currentKFileTreeViewItem()->isDir() )
       url.setFileName("");   // don't paste on files but in dirs
     QuantaNetAccess::dircopy(list, url, m_plugin, true);
@@ -547,7 +547,7 @@ void BaseTreeView::slotPercent(KJob *job, unsigned long /*value*/)
 void BaseTreeView::slotDelete()
 {
   if (!currentKFileTreeViewItem()) return;
-  KUrl url = currentURL();
+  KUrl url = currentUrl();
   if (currentKFileTreeViewItem()->isDir())
     url.adjustPath(KUrl::AddTrailingSlash);
   QuantaNetAccess::del(url, m_plugin, m_parent, true);
@@ -580,7 +580,7 @@ void BaseTreeView::slotPopulateFinished(KFileTreeViewItem *item)
 /** Bring up the properites dialog, and extend it for files */
 void BaseTreeView::slotProperties()
 {
-  KUrl url = currentURL();
+  KUrl url = currentUrl();
   if (url.isEmpty()) return;
   KFileItem fileItem(KFileItem::Unknown, KFileItem::Unknown, url);
   propDlg = new KPropertiesDialog(&fileItem, this, 0L, false, false); //autodeletes itself
@@ -598,7 +598,7 @@ void BaseTreeView::slotPropertiesApplied()
 {
   if (! propDlg) return;
   // check if renamed
-  KUrl url = currentURL();
+  KUrl url = currentUrl();
   if (url != propDlg->kurl())
   {
     itemRenamed(url, propDlg->kurl());
@@ -821,7 +821,7 @@ void BaseTreeView::slotDocumentClosed(KDevDocument* document)
   KFileTreeBranchIterator it( branches() );
   for ( ; it.current(); ++it)
   {
-    item = (*it)->findTVIByURL(url);
+    item = (*it)->findTVIByUrl(url);
     if (item)
     {
       item->repaint();
@@ -969,7 +969,7 @@ void BaseTreeView::slotCreateFolder()
   QString folderName = KInputDialog::getText(i18n("Create New Folder"), i18n("Folder name:"), "", &ok, this);
   if (ok)
   {
-    KUrl url = currentURL();
+    KUrl url = currentUrl();
     if (currentKFileTreeViewItem()->isDir())
       url.setPath(url.path() + '/' + folderName + '/');
     else
@@ -984,7 +984,7 @@ void BaseTreeView::slotCreateFile()
   QString fileName = KInputDialog::getText(i18n("Create New File"), i18n("File name:"), "", &ok, this);
   if (ok)
   {
-    KUrl url = currentURL();
+    KUrl url = currentUrl();
     if (currentKFileTreeViewItem()->isDir())
       url.setPath(url.path() + '/' + fileName);
     else
@@ -1024,11 +1024,11 @@ void BaseTreeView::slotMenu(K3ListView* listView, Q3ListViewItem *item, const QP
 QString BaseTreeView::iconNameForURL(const KUrl & url)
 {
   if (url.isLocalFile())
-    return KMimeType::iconNameForURL(url);
+    return KMimeType::iconNameForUrl(url);
 
   KUrl protURL(url);
   protURL.setPath("/");
-  return KMimeType::iconNameForURL(protURL);
+  return KMimeType::iconNameForUrl(protURL);
 }
 
 bool BaseTreeView::isFileOpen(const KUrl & url) const

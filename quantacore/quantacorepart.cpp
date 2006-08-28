@@ -353,7 +353,7 @@ void QuantaCorePart::slotInsertTag(const KUrl& url, Helper::DirInfo * dirInfo)
     } else
     {
       bool isImage = false;
-      if (KMimeType::findByURL(url)->name().startsWith("image/"))
+      if (KMimeType::findByUrl(url)->name().startsWith("image/"))
       {
         QString imgFileName;
         KIO::NetAccess::download(url, imgFileName, KDevCore::mainWindow());
@@ -419,7 +419,7 @@ void QuantaCorePart::slotOpenNew()
   {
     KParts::ReadOnlyPart *part = dynamic_cast<KParts::ReadOnlyPart *>(doc->part());
     if (part)
-      part->closeURL();
+      part->closeUrl();
   }
   file->unlink();
 }

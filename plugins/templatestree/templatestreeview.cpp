@@ -231,7 +231,7 @@ KFileTreeBranch* TemplatesTreeView::newBranch(const KUrl& url)
 void TemplatesTreeView::slotInsertInDocument()
 {
   KUrl url = filterTemplate();
-  if (KMimeType::findByURL(url)->is("text") || (Helper::denyBinaryInsert() == KMessageBox::Yes))
+  if (KMimeType::findByUrl(url)->is("text") || (Helper::denyBinaryInsert() == KMessageBox::Yes))
   {
     emit insertFile(url);
   }
@@ -316,7 +316,7 @@ void TemplatesTreeView::fileMenu(const QPoint &point)
   if (hasProject)
     popup.addAction(i18n("&Insert in Project..."), this, SLOT(slotInsertInProject()));
 
-  if (isFileOpen(currentURL()))
+  if (isFileOpen(currentUrl()))
     popup.addAction(SmallIcon("fileclose"), i18n("Clos&e"), this, SLOT(slotClose()));
 
   popup.addSeparator();
@@ -412,10 +412,10 @@ void TemplatesTreeView::slotNewDir()
    QString startDir = "";
    if ( !currentKFileTreeViewItem()->isDir() )
    {
-    startDir = currentURL().path();
+    startDir = currentUrl().path();
    } else
    {
-    startDir = currentURL().path() + "/dummy_file";
+    startDir = currentUrl().path() + "/dummy_file";
    }
    startDir = QFileInfo(startDir).path();
    if (!dir.mkdir(startDir + '/' + createDirDlg->dirName->text()))
@@ -444,7 +444,7 @@ Q3DragObject * TemplatesTreeView::dragObject ()
   m_dirInfo = readDirInfo();
   if(!m_dirInfo.mimeType.isEmpty()) // only drag when the template type is specified
   {
-    K3URLDrag *drag = new K3URLDrag(KUrl::List(currentURL()), this);
+    K3URLDrag *drag = new K3URLDrag(KUrl::List(currentUrl()), this);
     return drag;
   }
   return 0;
@@ -466,13 +466,13 @@ void TemplatesTreeView::contentsDropEvent(QDropEvent *e)
     {
       KUrl dest;
       if ( currentKFileTreeViewItem()->isDir() )
-        dest = currentURL();
+        dest = currentUrl();
       else
-        dest = currentURL().directory(KUrl::AppendTrailingSlash);
+        dest = currentUrl().directory(KUrl::AppendTrailingSlash);
       dest.adjustPath(KUrl::AddTrailingSlash);
       QString content;
       Q3TextDrag::decode(e, content);
-      KUrl url =KUrlRequesterDlg::getURL( dest.path() + "template.txt",
+      KUrl url =KUrlRequesterDlg::getUrl( dest.path() + "template.txt",
                                           this, i18n("Save selection as template file:"));
       if ( !url.isEmpty() )
       {
@@ -512,10 +512,10 @@ Helper::DirInfo TemplatesTreeView::readDirInfo(const QString& dir)
   {
     if (!currentKFileTreeViewItem()->isDir())
     {
-      startDir = currentURL().path();
+      startDir = currentUrl().path();
     } else
     {
-      startDir = currentURL().path() + "/dummy_file";
+      startDir = currentUrl().path() + "/dummy_file";
     }
   }
 
@@ -540,10 +540,10 @@ bool TemplatesTreeView::writeDirInfo(const QString& m_dirInfoFile)
   {
     if ( !currentKFileTreeViewItem()->isDir() )
     {
-      startDir = currentURL().path();
+      startDir = currentUrl().path();
     } else
     {
-      startDir = currentURL().path() + "/dummy_file";
+      startDir = currentUrl().path() + "/dummy_file";
     }
   } else
   {
@@ -571,7 +571,7 @@ void TemplatesTreeView::slotProperties()
 {
   if ( !currentItem() )
     return;
-  KUrl url = currentURL();
+  KUrl url = currentUrl();
 
   KPropertiesDialog *propDlg = new KPropertiesDialog( url, this, 0L, false, false); //autodeletes itself
 
@@ -765,7 +765,7 @@ void TemplatesTreeView::slotInsertTag()
  if (currentItem())
  {
    m_dirInfo = readDirInfo();
-   KUrl url = currentURL();
+   KUrl url = currentUrl();
    emit insertTag(url, &m_dirInfo);
  }
 }
@@ -790,7 +790,7 @@ void TemplatesTreeView::slotDragInsert(QDropEvent *e)
       localFileName = url.path();
       m_dirInfo = readDirInfo(localFileName);
     }
-    QString mimeType = KMimeType::findByURL(url)->name();
+    QString mimeType = KMimeType::findByUrl(url)->name();
 
     /* First, see if the type of the file is specified in the .dirinfo file */
     if(m_dirInfo.mimeType.isEmpty())
@@ -855,7 +855,7 @@ void TemplatesTreeView::slotProjectOpened()
  */
 void TemplatesTreeView::writeTemplateInfo()
 {
-  QString fileName = currentURL().path() + TMPL;
+  QString fileName = currentUrl().path() + TMPL;
   KConfig config(fileName);
   config.setGroup("Filtering");
   if ( m_quantaProperties->actionCombo->currentText() == i18n(NONE) )
@@ -881,7 +881,7 @@ void TemplatesTreeView::slotPaste()
       if (url.isLocalFile() && QFileInfo(url.path()).exists())
           list += url;
     }
-    url = currentURL();
+    url = currentUrl();
     if ( ! currentKFileTreeViewItem()->isDir() )
       url.setFileName("");   // don't paste on files but in dirs
     KIO::Job *job = KIO::copy( list, url);
@@ -893,7 +893,7 @@ void TemplatesTreeView::slotDelete()
 {
   if (currentItem())
   {
-    KUrl url = currentURL();
+    KUrl url = currentUrl();
     QString msg;
     if ( currentKFileTreeViewItem()->isDir() )
       msg = i18n("Do you really want to delete folder \n%1 ?\n", url.path());
@@ -917,7 +917,7 @@ void TemplatesTreeView::slotDelete()
 template file */
 KUrl TemplatesTreeView::filterTemplate()
 {
-  KUrl url = currentURL();
+  KUrl url = currentUrl();
 //   QString name = url.path() + TMPL;
 //   KConfig config(name);
 //   config.setGroup("Filtering");
@@ -958,7 +958,7 @@ KUrl TemplatesTreeView::filterTemplate()
 
 QString TemplatesTreeView::createTemplateTarball()
 {
-  KUrl url = currentURL();
+  KUrl url = currentUrl();
   KUrl dirURL (url);
   if (!currentKFileTreeViewItem()->isDir())
     dirURL.setPath(dirURL.directory(KUrl::AppendTrailingSlash));
@@ -1057,8 +1057,8 @@ void TemplatesTreeView::slotExtractSiteTemplate()
    urlRequester.urlRequester()->setMode(KFile::Directory);
    if (urlRequester.exec())
    {
-      KUrl targetURL = urlRequester.selectedURL();
-      KUrl url = currentURL();
+      KUrl targetUrl = urlRequester.selectedUrl();
+      KUrl url = currentUrl();
       QString tempFile;
       if (KIO::NetAccess::download(url, tempFile, this))
       {
@@ -1066,8 +1066,8 @@ void TemplatesTreeView::slotExtractSiteTemplate()
           if (tar.open(IO_ReadOnly))
           {
             const KArchiveDirectory *directory = tar.directory();
-            if (targetURL.protocol() == "file")
-              directory->copyTo(targetURL.path(), true);
+            if (targetUrl.protocol() == "file")
+              directory->copyTo(targetUrl.path(), true);
             else
             {
                 KTempDir* tempDir = new KTempDir(Helper::tmpFilePrefix());
@@ -1078,7 +1078,7 @@ void TemplatesTreeView::slotExtractSiteTemplate()
                 KUrl::List fileList;
                 for (QStringList::Iterator it = entries.begin(); it != entries.end(); ++it)
                   fileList.append(KUrl(tempDirName + '/' + *it));
-                if (!KIO::NetAccess::dircopy(fileList, targetURL, this))
+                if (!KIO::NetAccess::dircopy(fileList, targetUrl, this))
                     error = true;
                 KIO::NetAccess::del(KUrl(tempDirName), this);
                 delete tempDir;
@@ -1087,7 +1087,7 @@ void TemplatesTreeView::slotExtractSiteTemplate()
           } else
              error = true;
           KIO::NetAccess::removeTempFile(tempFile);
-          if (!m_projectBaseURL.isEmpty() && !KUrl::relativeUrl(m_projectBaseURL, targetURL).startsWith("."))
+          if (!m_projectBaseURL.isEmpty() && !KUrl::relativeUrl(m_projectBaseURL, targetUrl).startsWith("."))
           {
              if (KMessageBox::questionYesNo(this, i18n("You have extracted the site template to a folder which is not under your main project folder.\nDo you want to copy the folder into the main project folder?")) == KMessageBox::Yes)
              {
@@ -1097,7 +1097,7 @@ void TemplatesTreeView::slotExtractSiteTemplate()
       } else
          error = true;
       if (error)
-        KMessageBox::error(this, i18n("<qt>Some error happened while extracting the <i>%1</i> site template file.<br>Check that you have write permission for <i>%2</i> and that there is enough free space in your temporary folder.</qt>", url.pathOrUrl(), targetURL.pathOrUrl()));
+        KMessageBox::error(this, i18n("<qt>Some error happened while extracting the <i>%1</i> site template file.<br>Check that you have write permission for <i>%2</i> and that there is enough free space in your temporary folder.</qt>", url.pathOrUrl(), targetUrl.pathOrUrl()));
    }
 }
 

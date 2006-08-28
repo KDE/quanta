@@ -277,7 +277,7 @@ bool QuantaCommon::checkMimeGroup(const KUrl& url, const QString& group)
  KMimeType::List list = KMimeType::allMimeTypes();
  KMimeType::List::iterator it;
  bool status = false;
- KMimeType::Ptr mime = KMimeType::findByURL(url);
+ KMimeType::Ptr mime = KMimeType::findByUrl(url);
  QString mimetype = mime->name();
  mimetype = mimetype.section('/',-1);
  for ( it = list.begin(); it != list.end(); ++it )

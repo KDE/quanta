@@ -338,7 +338,7 @@ void ProjectTreeView::createFolder()
   QString folderName = KInputDialog::getText(i18n("Create New Folder"), i18n("Folder name:"), "", &ok, this);
   if (ok)
   {
-     KUrl url = currentURL();
+     KUrl url = currentUrl();
      if (currentKFileTreeViewItem()->isDir())
        url.setPath(url.path() + '/' + folderName + '/');
      else
@@ -354,7 +354,7 @@ void ProjectTreeView::slotCreateFile()
   QString fileName = KInputDialog::getText(i18n("Create New File"), i18n("File name:"), "", &ok, this);
   if (ok)
   {
-    KUrl url = currentURL();
+    KUrl url = currentUrl();
     if (currentKFileTreeViewItem()->isDir())
       url.setPath(url.path() + '/' + fileName);
     else
@@ -485,7 +485,7 @@ void ProjectTreeView::slotActivePartChanged(KParts::Part *part)
   if (! roPart)
     return;
 
-  KFileTreeViewItem* item = m_projectDir->findTVIByURL(roPart->url());
+  KFileTreeViewItem* item = m_projectDir->findTVIByUrl(roPart->url());
   if (item)
   {
     ensureItemVisible(item);

@@ -346,7 +346,7 @@ void QuantaProjectPart::slotInsertFiles()
       urlRequesterDlg.setWindowTitle(i18n("Copy Files to Project"));
       urlRequesterDlg.urlRequester()->setMode(KFile::Directory | KFile::ExistingOnly);
       urlRequesterDlg.exec();
-      KUrl destination = urlRequesterDlg.selectedURL();
+      KUrl destination = urlRequesterDlg.selectedUrl();
       if (!destination.isEmpty())
       {
         destination.adjustPath(KUrl::AddTrailingSlash);
@@ -388,7 +388,7 @@ void QuantaProjectPart::slotInsertFolder()
       urlRequesterDlg.setWindowTitle(i18n("%1: Copy to Project", url.pathOrUrl()));
       urlRequesterDlg.urlRequester()->setMode(KFile::Directory | KFile::ExistingOnly);
       urlRequesterDlg.exec();
-      KUrl destination = urlRequesterDlg.selectedURL();
+      KUrl destination = urlRequesterDlg.selectedUrl();
       if (!destination.isEmpty())
       {
         destination.adjustPath(KUrl::AddTrailingSlash);
