@@ -66,7 +66,7 @@ public:
    * @param status the ParserStatus object
    * @return false in case of problems
    */
-  bool call(const ParserStatus &status)
+  bool call(const ParserStatus & status)
   {
     return m_function(status, m_argument);
   }

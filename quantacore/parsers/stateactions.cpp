@@ -14,33 +14,38 @@
 #include <QString>
 #include <QXmlParseException>
 #include <QXmlAttributes>
+#include <QXmlContentHandler>
+#include <QXmlErrorHandler>
+
+#include <kdebug.h>
 
 #include "parserstatus.h"
 #include "quantaxmlinputsource.h"
+#include "statemachine.h"
 
 #include "stateactions.h"
-#include "statemachine.h"
 
 StateActions::ActionFunctPtr StateActions::factory(const QString &name)
 {
   QString id = name.toLower();
-  if (id == "rememberChar") return &currCharToBuffer;
-  if (id == "rememberString") return &stringToBuffer;
-  if (id == "popState") return &popState;
-  if (id == "pushState") return &pushState;
-  if (id == "popState") return &popState;
-  if (id == "reportWarning") return &warning;
-  if (id == "reportError") return &error;
-  if (id == "reportFatalError") return &fatalError;
-  if (id == "createComment") return &createComment;
-  if (id == "createTag") return &createTag;
-  if (id == "createEndTag") return &createEndTag;
+  if (id == "rememberchar") return &currCharToBuffer;
+  if (id == "rememberstring") return &stringToBuffer;
+  if (id == "popstate") return &popState;
+  if (id == "pushstate") return &pushState;
+  if (id == "reportwarning") return &warning;
+  if (id == "reporterror") return &error;
+  if (id == "reportfatalerror") return &fatalError;
+  if (id == "createcomment") return &createComment;
+  if (id == "createtag") return &createTag;
+  if (id == "createendtag") return &createEndTag;
+  if (id == "pushbackchar") return &pushCurrChar;
 
+  kWarning(24001) << "unkown function name '" << id << "' in StateActions::factory" << endl;
   return &crashMe; // in case name is wrong
 }
 
 
-bool StateActions::crashMe(const ParserStatus &parser, const QString &argument)
+bool StateActions::crashMe(const ParserStatus & parser, const QString & argument)
 {
   Q_UNUSED(parser);
   Q_UNUSED(argument);
@@ -49,7 +54,7 @@ bool StateActions::crashMe(const ParserStatus &parser, const QString &argument)
 }
 
 
-bool StateActions::warning(const ParserStatus &parser, const QString &argument)
+bool StateActions::warning(const ParserStatus & parser, const QString & argument)
 {
   kWarning(24001) << argument << endl;
   if (! parser.errorHandler())
@@ -60,7 +65,7 @@ bool StateActions::warning(const ParserStatus &parser, const QString &argument)
 }
 
 
-bool StateActions::error(const ParserStatus &parser, const QString &argument)
+bool StateActions::error(const ParserStatus & parser, const QString & argument)
 {
   kError(24001) << argument << endl;
   if (! parser.errorHandler())
@@ -71,7 +76,7 @@ bool StateActions::error(const ParserStatus &parser, const QString &argument)
 }
 
 
-bool StateActions::fatalError(const ParserStatus &parser, const QString &argument)
+bool StateActions::fatalError(const ParserStatus & parser, const QString & argument)
 {
   kError(24001) << argument << endl;
   if (! parser.errorHandler())
@@ -82,7 +87,7 @@ bool StateActions::fatalError(const ParserStatus &parser, const QString &argumen
 }
 
 
-bool StateActions::currCharToBuffer(const ParserStatus &parser, const QString &argument)
+bool StateActions::currCharToBuffer(const ParserStatus & parser, const QString & argument)
 {
   Q_UNUSED(argument);
   parser.m_buffer.append(parser.m_currChar);
@@ -90,14 +95,14 @@ bool StateActions::currCharToBuffer(const ParserStatus &parser, const QString &a
 }
 
 
-bool StateActions::stringToBuffer(const ParserStatus &parser, const QString &argument)
+bool StateActions::stringToBuffer(const ParserStatus & parser, const QString & argument)
 {
   parser.m_buffer.append(argument);
   return true;
 }
 
 
-bool StateActions::pushCurrChar(const ParserStatus &parser, const QString &argument)
+bool StateActions::pushCurrChar(const ParserStatus & parser, const QString & argument)
 {
   Q_UNUSED(argument);
   parser.m_sourceStack.push(parser.m_currChar);
@@ -105,7 +110,7 @@ bool StateActions::pushCurrChar(const ParserStatus &parser, const QString &argum
 }
 
 
-bool StateActions::pushState(const ParserStatus &parser, const QString &argument)
+bool StateActions::pushState(const ParserStatus & parser, const QString & argument)
 {
   const State *state = parser.m_stateMachine->state(argument);
   if (state)
@@ -117,7 +122,7 @@ bool StateActions::pushState(const ParserStatus &parser, const QString &argument
 }
 
 
-bool StateActions::popState(const ParserStatus &parser, const QString &argument)
+bool StateActions::popState(const ParserStatus & parser, const QString & argument)
 {
   Q_UNUSED(argument);
   if (parser.m_stateStack.isEmpty())
@@ -128,27 +133,33 @@ bool StateActions::popState(const ParserStatus &parser, const QString &argument)
 }
 
 
-bool StateActions::createTag(const ParserStatus &parser, const QString &argument)
+bool StateActions::createTag(const ParserStatus & parser, const QString & argument)
 {
   Q_UNUSED(argument);
-  return parser.contentHandler()->startElement("", "", parser.m_buffer, QXmlAttributes());
+  bool result = parser.contentHandler()->startElement("", "", parser.m_buffer, QXmlAttributes());
+  parser.m_buffer.clear();
+  return result;
 }
 
 
-bool StateActions::createEndTag(const ParserStatus &parser, const QString &argument)
+bool StateActions::createEndTag(const ParserStatus & parser, const QString & argument)
 {
   Q_UNUSED(argument);
-  return parser.contentHandler()->endElement("", "", parser.m_buffer);
+  bool result = parser.contentHandler()->endElement("", "", parser.m_buffer);
+  parser.m_buffer.clear();
+  return result;
 }
 
 
-bool StateActions::createComment(const ParserStatus &parser, const QString &argument)
+bool StateActions::createComment(const ParserStatus & parser, const QString & argument)
 {
   Q_UNUSED(argument);
   if (! parser.lexicalHandler())
     return true;
   
-  return parser.lexicalHandler()->comment(parser.m_buffer);
+  bool result = parser.lexicalHandler()->comment(parser.m_buffer);
+  parser.m_buffer.clear();
+  return result;
 }
 
 

@@ -24,7 +24,9 @@ class KTextEditor::SmartCursor;
  * \short A QXmlInputSource for a KTextEditor::document.
  *
  * This class allows to use a KTextEditor::document as a source for parsing.
- * The document must implement the KTextEditor::SmartInterface because
+ * It also implements the QXmlLocator interface. 
+ * 
+ * \note The document must implement the KTextEditor::SmartInterface because
  * internally a SmartCursor is used.
  *
  * \author Jens Herden \<jens@kdewebdev.org\>
@@ -41,6 +43,12 @@ public:
   
   virtual ~QuantaXmlInputSource();
   /**
+   * \name QXmlInputSource Interface
+   *
+   * The following methods implement the \ref QXmlInputSource interface
+   * \{
+   */
+  /**
    * \return the whole content of the textdocument or QString::Null() if there is no document
    */
   virtual QString data() const;
@@ -55,21 +63,31 @@ public:
    */
   virtual void reset();
   /**
+   * \}
+   */
+  /**
    * from SmartCursorWatcher to make sure that we do not use the cursor anymore
    * after it was deleted.
    */
   void deleted(KTextEditor::SmartCursor * cursor);
   /**
-   * Reimplemented from QXmlLocator.
+   * \name QXmlLocator Interface
+   *
+   * The following methods implement the \ref QXmlLocator interface
+   * \{
+   */
+  /**
    * \return the current column position, -1 means invalid position!
    */
   virtual int columnNumber();
   /**
-   * Reimplemented from QXmlLocator.
    * \return the current line number, -1 means invalid position!
    */
   virtual int lineNumber();
-  
+  /**
+   * \}
+   */
+
 private:
   KTextEditor::SmartCursor * m_cursor;
 };

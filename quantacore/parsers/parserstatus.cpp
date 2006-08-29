@@ -17,12 +17,11 @@
 #include "parserstatus.h"
 #include "statemachine.h"
 
-ParserStatus::ParserStatus(QXmlInputSource *source, QXmlLocator *locator, StateMachine *stateMachine) :
-  QXmlReader(), m_currState(0), m_source(source), m_locator(locator), m_stateMachine(stateMachine)
+ParserStatus::ParserStatus(QXmlLocator *locator, StateMachine *stateMachine) :
+  QXmlReader(), m_currState(0), m_locator(locator), m_stateMachine(stateMachine)
 {
-  Q_ASSERT(source != 0);
-  Q_ASSERT(locator != 0);
-  Q_ASSERT(stateMachine != 0);
+  Q_ASSERT_X(locator != 0, "constructor ParserStatus", "locator undefined");
+  Q_ASSERT_X(stateMachine != 0, "constructor ParserStatus", "stateMachine undefined");
 }
 
 
@@ -30,17 +29,22 @@ ParserStatus::~ParserStatus()
 {
 }
 
-
-void ParserStatus::startParsing()
+bool ParserStatus::parse(const QXmlInputSource * input)
 {
   if (! contentHandler())
-    return;
+    return false;
   
+  Q_ASSERT_X(input != 0, "ParserStatus::parse", "input source is undefined");
+  if (! input)
+    return false;
+  
+  m_source = (QXmlInputSource *) input;
   contentHandler()->setDocumentLocator(m_locator);
   contentHandler()->startDocument();
   m_currState = m_stateMachine->startState();
   loop();
   contentHandler()->endDocument();
+  return true;
 }
 
 

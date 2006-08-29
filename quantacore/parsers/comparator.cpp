@@ -11,6 +11,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <kdebug.h>
+
 #include "parserstatus.h"
 
 #include "comparator.h"
@@ -24,6 +26,7 @@ Comparator::CompareFunctPtr Comparator::factory(const QString &name)
   if (id == "iswhitespace") return &whitespace;
   if (id == "ischaracter") return &asciiChar;
 
+  kWarning(24001) << "unkown function name '" << id << "' in Comparator::factory" << endl;
   return &never; // in case name is wrong
 }
 

@@ -20,9 +20,9 @@
 class ParserStatus;
 
 /**
- * \short This class holds the static functions that are use for comparison in a parse state.
+ * \short This class holds the static functions which are avaiable for comparison in a parse state.
  * 
- * Use the factory to get a pointer for a function name.
+ * Use the \ref factory to get a pointer for a function name.
  * 
  * \author Jens Herden   \<jens@kdewebdev.org\>
  **/
@@ -30,8 +30,25 @@ class ParserStatus;
 class Comparator
 {
 public:
+  /**
+   * The pointer to a compare function. 
+   * \return \e false will abort the parsing
+   */
   typedef bool (*CompareFunctPtr) (const ParserStatus &parser, const QString &);
-
+  
+  /**
+   * This factory function translates the names used in the XML file into
+   * pointer for the internal data structure.
+   * The case of the name does not matter. 
+   * The following names are defined and are pointing to:
+   * \li isanychar -> \ref always
+   * \li equals -> \ref equal
+   * \li iswhitespace -> \ref whitespace
+   * \li ischaracter -> \ref asciiChar
+   * 
+   * \param name the function name
+   * \return function pointer for the name or pointer to \ref never if the name is unknown
+   */
   static CompareFunctPtr factory (const QString &name);
 
   /**
@@ -43,7 +60,7 @@ public:
 
   /**
    * @param parser the ParserStatus to use
-   * @param argument 
+   * @param argument first character is used to compare
    * @return true if currChar == argument[0]
    */
   static bool equal(const ParserStatus &parser, const QString &argument);
