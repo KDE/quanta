@@ -171,4 +171,4 @@ class StateActions
 
 #endif
 
-//kate: indent-mode cstyle; space-indent on; indent-width 2; replace-tabs on; mixedindent off; encoding utf-8
+//kate: space-indent on; indent-width 2; replace-tabs on; mixedindent off; encoding utf-8

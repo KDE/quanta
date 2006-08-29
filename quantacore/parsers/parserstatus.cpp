@@ -18,10 +18,15 @@
 #include "statemachine.h"
 
 ParserStatus::ParserStatus(QXmlLocator *locator, StateMachine *stateMachine) :
-  QXmlReader(), m_currState(0), m_locator(locator), m_stateMachine(stateMachine)
+  QXmlReader()
 {
-  Q_ASSERT_X(locator != 0, "constructor ParserStatus", "locator undefined");
-  Q_ASSERT_X(stateMachine != 0, "constructor ParserStatus", "stateMachine undefined");
+  m_DTDHandler = 0;
+  m_contentHandler = 0;
+  m_declHandler = 0;
+  m_entityResolver = 0;
+  m_errorHandler = 0;
+  m_lexicalHandler = 0;
+  reset(locator, stateMachine);
 }
 
 
@@ -29,6 +34,20 @@ ParserStatus::~ParserStatus()
 {
 }
 
+void ParserStatus::reset(QXmlLocator * locator, StateMachine * stateMachine)
+{
+  Q_ASSERT_X(locator != 0, "ParserStatus::reset", "locator undefined");
+  Q_ASSERT_X(stateMachine != 0, "ParserStatus::reset", "stateMachine undefined");
+  m_locator = locator;
+  m_stateMachine = stateMachine;
+  m_buffer.clear();
+  m_currChar = QChar();
+  m_source = 0;
+  m_sourceStack.clear();
+  m_stateStack.clear();
+}
+    
+    
 bool ParserStatus::parse(const QXmlInputSource * input)
 {
   if (! contentHandler())
@@ -83,4 +102,4 @@ void ParserStatus::loop()
 }
 
 
-//kate: indent-mode cstyle; space-indent on; indent-width 2; replace-tabs on; mixedindent off; encoding utf-8
+//kate: space-indent on; indent-width 2; replace-tabs on; mixedindent off; encoding utf-8

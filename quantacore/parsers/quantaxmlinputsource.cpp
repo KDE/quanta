@@ -22,7 +22,7 @@ QuantaXmlInputSource::QuantaXmlInputSource(KTextEditor::Document * doc)
 {
   KTextEditor::SmartInterface* smart = qobject_cast<KTextEditor::SmartInterface*>(doc);
   
-  Q_ASSERT(smart != 0);
+  Q_ASSERT_X(smart != 0, "constructor QuantaXmlInputSource", "the provided document does not support the smart interface");
   if (smart)
   {
     m_cursor = smart->newSmartCursor();
@@ -82,4 +82,4 @@ int QuantaXmlInputSource::lineNumber()
     return -1;
 }
 
-// kate: space-indent on; indent-width 2; replace-tabs on;
+//kate: space-indent on; indent-width 2; replace-tabs on; mixedindent off; encoding utf-8

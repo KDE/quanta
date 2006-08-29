@@ -70,6 +70,16 @@ class ParserStatus : public QXmlReader
     ~ParserStatus();
     
     /**
+     * Reset the class into the start condition. Erases all member variables.
+     * 
+     * \note This does not change the set handler functions.
+     * 
+     * \param locator the QXmlLocator to use, mandatory argument!
+     * \param stateMachine the StateMachine to use, mandatory argument!
+     */
+    void reset(QXmlLocator * locator, StateMachine * stateMachine);
+    
+    /**
      * \name QXmlReader Interface
      *
      * The following methods implement the \ref QXmlReader interface
@@ -164,4 +174,4 @@ class ParserStatus : public QXmlReader
 
 #endif
 
-//kate: indent-mode cstyle; space-indent on; indent-width 2; replace-tabs on; mixedindent off; encoding utf-8
+//kate: space-indent on; indent-width 2; replace-tabs on; mixedindent off; encoding utf-8

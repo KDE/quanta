@@ -20,17 +20,22 @@
 class QXmlLocator;
 
 /**
- * \short 
+ * \short This class builds the dom tree from the parser events.
  * 
  * \author Jens Herden   \<jens@kdewebdev.org\>
  */
-class DomBuilder : public QXmlContentHandler/*, public QXmlLexicalHandler*/ 
+class DomBuilder : public QXmlContentHandler, public QXmlLexicalHandler, public QXmlErrorHandler 
 {
   public:
     DomBuilder();
     ~DomBuilder();
     
-    // from QXmlContentHandler
+    /**
+     * \name QXmlLexicalHandler Interface
+     *
+     * The following methods implement the \ref QXmlLexicalHandler interface
+     * \{
+     */
     bool characters (const QString & ch);
     bool endDocument();
     bool endElement(const QString & namespaceURI, const QString & localName, const QString & qName);
@@ -43,8 +48,15 @@ class DomBuilder : public QXmlContentHandler/*, public QXmlLexicalHandler*/
     bool startDocument();
     bool startElement (const QString & namespaceURI, const QString & localName, const QString & qName, const QXmlAttributes & atts);
     bool startPrefixMapping(const QString & prefix, const QString & uri); 
-    
-    // from QXmlLexicalHandler
+    /**
+     * \}
+     */
+    /**
+     * \name QXmlLexicalHandler Interface
+     *
+     * The following methods implement the \ref QXmlLexicalHandler interface
+     * \{
+     */
     bool comment(const QString & ch);
     bool endCDATA();
     bool endDTD();
@@ -52,12 +64,26 @@ class DomBuilder : public QXmlContentHandler/*, public QXmlLexicalHandler*/
     bool startCDATA();
     bool startDTD(const QString & name, const QString & publicId, const QString & systemId);
     bool startEntity(const QString & name);
-    
+    /**
+     * \}
+     */
+    /**
+     * \name QXmlErrorHandler Interface
+     *
+     * The following methods implement the \ref QXmlErrorHandler interface
+     * \{
+     */
+    bool error(const QXmlParseException & exception);
+    bool fatalError(const QXmlParseException & exception);
+    bool warning(const QXmlParseException & exception); 
+    /**
+     * \}
+     */
   private:
-    QXmlLocator *m_locator;
+    QXmlLocator * m_locator;
 };
 
 
 #endif
 
-//kate: indent-mode cstyle; space-indent on; indent-width 2; replace-tabs on; mixedindent off; encoding utf-8
+//kate: space-indent on; indent-width 2; replace-tabs on; mixedindent off; encoding utf-8

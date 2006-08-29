@@ -133,5 +133,22 @@ bool DomBuilder::startEntity(const QString & name)
 }
 
 
+bool DomBuilder::error(const QXmlParseException & exception)
+{
+  return true;
+}
 
-//kate: indent-mode cstyle; space-indent on; indent-width 2; replace-tabs on; mixedindent off; encoding utf-8
+
+bool DomBuilder::fatalError(const QXmlParseException & exception)
+{
+  return true;
+}
+
+
+bool DomBuilder::warning(const QXmlParseException & exception)
+{
+  return true;
+} 
+
+
+//kate: space-indent on; indent-width 2; replace-tabs on; mixedindent off; encoding utf-8
