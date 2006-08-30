@@ -13,6 +13,7 @@
 
 #include <QXmlInputSource>
 
+#include <kdebug.h>
 
 #include "parserstatus.h"
 #include "statemachine.h"
@@ -111,7 +112,10 @@ bool ParserStatus::loop()
             return false;
         }
         if (condition.nextState)
+        {
           m_currState = condition.nextState;
+          kDebug(24001) << "State changed to " << m_currState->name << endl;
+        }
           
         break;
       }

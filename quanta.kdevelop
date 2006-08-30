@@ -176,4 +176,9 @@
       <usermanualurl/>
     </projectdoc>
   </kdevdocumentation>
+  <ctagspart>
+    <customArguments/>
+    <customTagfilePath>/data/development/sources/kde-trunk/kdewebdev//tags</customTagfilePath>
+    <activeTagsFiles/>
+  </ctagspart>
 </kdevelop>

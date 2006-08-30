@@ -5,8 +5,9 @@
       <action name="startTag" />
     </condition>
     <condition name="isWhiteSpace" nextState="begin" />
-    <condition name="isAnyChar" nextState="gotoText">
-      <action name="startTag" />
+    <condition name="isAnyChar" nextState="startText">
+      <action name="pushBackChar" />
+      <action name="pushState" argument="begin" />
     </condition>
   </state>
 
@@ -15,15 +16,20 @@
       <action name="reportError" />
     </condition>
     <condition name="equals" argument="&lt;" nextState="ltFound">
-      <action name="reportError" />
+      <action name="reportError" message="&lt; cannot follow &lt;."/>
       <action name="startTag" />
     </condition>
     <condition name="equals" argument="!" nextState="emFound" />
     <condition name="equals" argument="?" nextState="gotoPI" />
     <condition name="equals" argument="-" nextState="gotoClosingElement" />
-    <condition name="isCharacter" nextState="gotoElement" />
-    <condition name="isAnyChar" nextState="gotoElement" >
-      <action name="reportError" />
+    <condition name="isCharacter" nextState="startElement">
+      <action name="addCharToBuffer" />
+      <action name="pushState" argument="begin" />
+    </condition>
+    <condition name="isAnyChar" nextState="startElement" >
+      <action name="reportError" message="Invalid character after &lt;." />
+      <action name="addCharToBuffer" />
+      <action name="pushState" argument="begin" />
     </condition>              
   </state>
 
@@ -31,40 +37,45 @@
     <condition name="equals" argument="-" nextState="startComment">
       <action name="pushState" argument="begin" />
     </condition>
-    <condition name="equals" argument="D" nextState="gotoDocType" />
-    <condition name="isAnyChar" nextState="gotoElement" >
-      <action name="reportError" message="error" />
+    <condition name="equals" argument="D" nextState="startDocType" >
+      <action name="addCharToBuffer" />
+      <action name="pushState" argument="begin" />
+    </condition>
+    <condition name="isAnyChar" nextState="startElement" >
+      <action name="reportError" message="Invalid character after &lt;! ." />
+      <action name="addCharToBuffer" />
+      <action name="pushState" argument="begin" />
     </condition>
   </state>
 
 <!-- Comment parsing sub-state machine -->  
   <state name="startComment">
     <condition name="equals" argument=">" nextState="">
-      <action name="rememberString" argument="!-" />
+      <action name="addStringToBuffer" argument="!-" />
       <action name="createTag" />
       <action name="popState" />
     </condition>
     <condition name="equals" argument="-" nextState="commentString"/>
     <condition name="isAnyChar" nextState="commentString">
-      <action name="reportError" />
+      <action name="reportError" message="Possible comment does not start with &lt;-- ."/>
     </condition>
   </state>
 
   <state name="commentString">
     <condition name="equals" argument="-" nextState="firstDash" />
     <condition name="isAnyChar" nextState="commentString">
-      <action name="rememberChar" />
+      <action name="addCharToBuffer" />
     </condition>
   </state>
 
   <state name="firstDash">
     <condition name="equals" argument="-" nextState="secondDash" />
     <condition name="equals" argument=">" nextState="commentString">
-      <action name="reportWarning" />
-      <action name="rememberString" argument="-" />
+      <action name="reportWarning" message="Wrong end of comment?" />
+      <action name="addStringToBuffer" argument="-" />
     </condition>   
     <condition name="isAnyChar" nextState="commentString">
-      <action name="rememberString" argument="-" />
+      <action name="addStringToBuffer" argument="-" />
     </condition>
   </state>
 
@@ -74,10 +85,225 @@
       <action name="popState" />
     </condition>
     <condition name="isAnyChar" nextState="commentString">
-      <action name="rememberString" argument="--" />
+      <action name="addStringToBuffer" argument="--" />
     </condition>
   </state>
 
+<!-- Text parsing state machine -->
+  <state name="startText">
+    <condition name="equals" argument="&amp;" nextState="startEntity" >
+      <action name="addCharToBuffer" />
+      <action name="pushState" argument="startText" />
+    </condition>
+    <condition name="equals" argument="&lt;" nextState="">
+      <action name="createText" />
+      <action name="pushBackChar" />
+      <action name="popState" />
+    </condition>
+    <condition name="isAnyChar" nextState="startText">
+      <action name="addCharToBuffer" />
+    </condition>
+  </state>
+
+<!-- Entity parsing state machine -->
+  <state name="startEntity">
+    <condition name="equals" argument=";" nextState="">
+      <action name="createEntity" />
+      <action name="addCharToBuffer" />
+      <action name="popState" />      
+    </condition>
+    <condition name="isWhiteSpace" nextState="">
+      <action name="addCharToBuffer" />
+      <action name="popState" />
+    </condition>
+    <condition name="isAnyChar" nextState="startEntity" >
+      <action name="addCharToBuffer" />
+    </condition>
+  </state>
+
+<!-- DocType parsing state machine (incomplete) -->
+  <state name="startDocType">
+    <condition name="equals" argument=">" nextState="">
+      <action name="createTag" />
+      <action name="popState" />
+    </condition>
+    <condition name="isAnyChar" nextState="">
+      <action name="addCharToBuffer"/>
+    </condition>
+  </state>
+
+<!--   Double quoted string parsing state machine -->
+  <state name="startQuotedString">
+    <condition name="equals" argument="&#034;" nextState="">
+      <action name="popState" />
+    </condition>
+    <condition name="equals" argument="&amp;" nextState="startEntity">
+      <action name="addCharToBuffer" />
+      <action name="pushState" argument="startQuotedString" />
+    </condition>
+    <condition name="equals" argument="\" nextState="slashFound">
+      <action name="addCharToBuffer" />
+      <action name="pushState" argument="startQuotedString"/>
+    </condition>
+    <condition name="isAnyChar" nextState="startQuotedString" >
+      <action name="addCharToBuffer" />
+    </condition>
+  </state>
+
+<!--   Entered when a character after a slash should be ignored -->
+  <state name="slashFound">
+    <condition name="isAnyChar">
+      <action name="addCharToBuffer" />
+      <action name="popState" />
+    </condition>
+  </state>
   
+<!--   Single quoted string parsing state machine -->
+  <state name="startSingleQuotedString">
+    <condition name="equals" argument="'" nextState="">
+      <action name="popState" />
+    </condition>
+    <condition name="equals" argument="&amp;" nextState="startEntity">
+      <action name="addCharToBuffer" />
+      <action name="pushState" argument="startSingleQuotedString" />
+    </condition>
+    <condition name="equals" argument="\" nextState="slashFound">
+      <action name="addCharToBuffer" />
+      <action name="pushState" argument="startSingleQuotedString"/>
+    </condition>
+    <condition name="isAnyChar" nextState="startQuotedString" >
+      <action name="addCharToBuffer" />
+    </condition>
+  </state>
+  
+  <state name="slashFound">
+    <condition name="isAnyChar" nextState="startQuotedString">
+      <action name="addCharToBuffer" />
+    </condition>
+  </state>
+
+<!-- Element (tag) parsing state machine -->
+  <state name="startElement" endOfDocument="" >
+    <condition name="equals" argument=">" nextState="tagEnded" >
+      <action name="addToTagName" />
+    </condition>
+    <condition name="isWhiteSpace" nextState="searchAttribute">
+      <action name="addToTagName" />
+    </condition>
+    <condition name="equals" argument=":" nextState="startElement">
+      <action name="rememberNameSpace" />
+    </condition>
+    <condition name="isAnyChar" nextState="startElement">
+      <action name="addCharToBuffer"/>
+    </condition>
+  </state>
+
+  <state name="searchAttribute">
+    <condition name="isWhiteSpace" nextState="searchAttribute" />
+    <condition name="equals" argument=">" nextState="tagEnded" />
+    <condition name="equals" argument="=" nextState="attributeValue">
+      <action name="reportError" message="Attribute value starts without an attribute name." />
+    </condition>
+    <condition name="isCharacter" nextState="startAttribute">
+      <action name="addToAttributeName" />
+    </condition>
+    <condition name="isAnyChar" nextState="startAttribute">
+      <action name="reportError" message="Attribute name does not start with a a letter."/>
+      <action name="addToAttributeName" />
+    </condition>    
+  </state>
+
+  <state name="startAttribute">
+    <condition name="equals" argument=">" nextState="tagEnded">
+      <action name="reportError" message="Attribute ends without a value." />
+      <action name="createAttribute" />
+    </condition>
+    <condition name="equals" argument="=" nextState="attributeValue" />
+    <condition name="equals" argument="&#034;" nextState="startQuotedString">
+      <action name="reportError" message="Assignment operator missing between attribute name and value." />
+      <action name="pushState" argument="endAttributeValue" />
+    </condition>
+    <condition name="isWhiteSpace" nextState="whiteSpaceAfterAttributeName" />
+    <condition name="isAnyChar" nextState="startAttribute">
+      <action name="addToAttributeName" />
+    </condition>
+  </state>
+
+  <state name="whiteSpaceAfterAttributeName">
+    <condition name="isWhiteSpace" nextState="whiteSpaceAfterAttributeName" />
+    <condition name="equals" argument=">" nextState="tagEnded">
+      <action name="reportError" message="Attribute ends without a value." />
+      <action name="createAttribute" />
+    </condition>
+    <condition name="isAnyChar" nextState="searchAttribute">
+      <action name="createAttribute" />
+      <action name="pushBackChar" />
+    </condition>
+  </state>
+
+  <state name="attributeValue">
+    <condition name="equals" argument=">" nextState="tagEnded">
+      <action name="reportError" message="Attribute ends without a value." />
+      <action name="createAttribute" />
+    </condition>
+    <condition name="isWhiteSpace" nextState="attributeValue" />
+    <condition name="equals" argument="&#034;" nextState="startQuotedString" >
+      <action name="pushState" argument="endAttributeValue" />
+    </condition>
+    <condition name="isAnyChar" nextState="notQuotedAttributeValue" />    
+  </state>
+
+  <state name="notQuotedAttributeValue">
+    <condition name="equals" argument=">" nextState="tagEnded">
+      <action name="createAttribute" />
+    </condition>
+    <condition name="isWhiteSpace" nextState="endAttributeValue" />
+    <condition name="equals" argument="&#034;" nextState="notQuotedAttributeValue">
+      <action name="addCharToBuffer" />
+      <action name="reportError" message="Quotation mark found inside attribute value." />
+    </condition>
+    <condition name="isAnyChar" nextState="notQuotedAttributeValue">
+      <action name="addCharToBuffer" />
+    </condition>
+  </state>
+
+  <state name="endAttributeValue">
+    <condition name="isAnyChar" nextState="searchAttribute">
+      <action name="createAttribute" />
+      <action name="pushBackChar" />
+    </condition>
+  </state>
+
+  <state name="tagEnded">
+    <condition name="isAnyChar" nextState="">
+      <action name="createTag" />
+      <action name="pushBackChar" />
+      <action name="quickParseSpecial" argument="specialChecked" /> <!-- will go to a sub-state machine and will pop back to the argument -->
+    </condition>
+  </state>
+  <state name="specialChecked">
+    <condition name="isAnyChar" nextState="">
+      <action name="pushBackChar" />
+      <action name="popState" />
+    </condition>
+  </state>
+
+ <!-- <state name="en...." endOfDocument="">
+    <condition name="isAnyChar" nextState="">
+      <action name=""/>
+    </condition>
+  </state>
+
+  <state name="checkSpecialTag">
+    <condition name="isSpecialTag" >
+      <action name="parseSpecialTag" />
+    </condition>
+    <condition name="isAnyChar" >
+      <action name="pushBackChar" />
+      <action name="popState" />
+    </condition>    
+  </state>-->
+  
+         
   
 </statemachine>

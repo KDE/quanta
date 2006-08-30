@@ -85,7 +85,7 @@ private:
 #endif
 };
 
-/** Helper typedef's to ease readability.*/  
+/** Helper typedef's to ease readability.*/
 typedef Function<StateActions::ActionFunctPtr> ActionFunction;
 typedef Function<Comparator::CompareFunctPtr> CompareFunction;
       

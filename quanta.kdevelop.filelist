@@ -313,3 +313,7 @@ quanta/quantacore/parsers/stateactions.h
 quanta/quantacore/parsers/parserstatus.cpp
 quanta/quantacore/parsers/parserstatus.h
 quanta/quantacore/parsers/comparator.h
+quanta/lib/node.h
+quanta/lib/qtag.h
+quanta/quantacore/parsers/dombuilder.h
+quanta/quantacore/parsers/dombuilder.cpp

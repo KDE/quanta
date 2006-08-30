@@ -20,7 +20,9 @@
 class Node;
 class EditorSource;
 class ParseResult;
+class StateMachine;
 struct DTDStruct;
+
 
 /**
 The manager of the parser(s). Right now it's only an interface to our parser object.
@@ -55,6 +57,8 @@ public:
    */
   void rebuild(EditorSource *source, ParseResult *base, const DTDStruct *dtd, bool detailed);
 
+  StateMachine *xmlStateMachine() {return m_xmlStateMachine;}
+
   static ParserManager *m_ref;
 signals:
 
@@ -81,9 +85,11 @@ signals:
    */
   void groupsParsed(const EditorSource *source, const ParseResult *parseResult);
 
+
 private:
   ParserManager(QObject *parent = 0);
   Parser* m_parser;
+  StateMachine *m_xmlStateMachine;
 };
 
 #endif

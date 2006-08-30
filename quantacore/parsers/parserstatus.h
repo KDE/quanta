@@ -110,7 +110,7 @@ class ParserStatus : public QXmlReader
     
     bool hasProperty(const QString & name) const {Q_UNUSED(name); return false;};
     
-    QXmlLexicalHandler * lexicalHandler () const {return m_lexicalHandler;};
+    QXmlLexicalHandler * lexicalHandler() const {return m_lexicalHandler;};
     /**
      * Start the parsing process. 
      * 
@@ -119,7 +119,15 @@ class ParserStatus : public QXmlReader
      * \param input the source where the data comes from
      * \return \e true if parsing was successfull \e false if not
      */
-    bool parse (const QXmlInputSource * input);
+    bool parse(const QXmlInputSource * input);
+    
+    /**
+     * Obsolete version of the above method, but we still need to implement
+     * as it is part of the interface.
+     * @param input the source where the data comes from
+     * @return \e true if parsing was successfull \e false if not
+     */
+    bool parse(const QXmlInputSource & input) {return parse(&input);}
     
     void * property (const QString & name, bool * ok = 0) const
     { // we do not support properties yet

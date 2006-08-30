@@ -30,6 +30,10 @@
 #include "specialareagroupcompletion.h"
 #include "settings.h"
 
+#include "parserstatus.h"
+#include "quantaxmlinputsource.h"
+#include "dombuilder.h"
+
 //qt includes
 #include <QDir>
 #include <QTextCodec>
@@ -68,7 +72,13 @@ QuantaDoc::QuantaDoc(KTextEditor::Document *document, QuantaCorePart *qcore)
   kDebug(24000) << "DTD area: " << area.start.x() << ", " << area.start.y() << " | " << area.end.x() << ", " << area.end.y() << endl;
 
 //initial parsing
-  parse();
+  QuantaXmlInputSource *inputSource = new QuantaXmlInputSource(document);
+  ParserStatus *parser = new ParserStatus(inputSource->newLocator(), ParserManager::self()->xmlStateMachine());
+  DomBuilder *builder = new DomBuilder();
+  parser->setContentHandler(builder);
+  parser->setLexicalHandler(builder);
+  parser->parse(inputSource);
+  //parse();
   m_parsingNeeded = false;
 //  Node::coutTree(m_parseResult.baseNode, 2);
   for (int i = 0; i < m_parseResult.dtepList.count(); i++)
