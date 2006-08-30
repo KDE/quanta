@@ -26,12 +26,12 @@
     <condition name="equals" argument="?" nextState="gotoPI" />
     <condition name="equals" argument="-" nextState="gotoClosingElement" />
     <condition name="isCharacter" nextState="startElement">
-      <action name="addCharToBuffer" />
+      <action name="addToTagName" />
       <action name="pushState" argument="begin" />
     </condition>
     <condition name="isAnyChar" nextState="startElement" >
       <action name="reportError" message="Invalid character after &lt;." />
-      <action name="addCharToBuffer" />
+      <action name="addToTagName" />
       <action name="pushState" argument="begin" />
     </condition>              
   </state>
@@ -46,7 +46,7 @@
     </condition>
     <condition name="isAnyChar" nextState="startElement" >
       <action name="reportError" message="Invalid character after &lt;! ." />
-      <action name="addCharToBuffer" />
+      <action name="addToTagName" />
       <action name="pushState" argument="begin" />
     </condition>
   </state>
@@ -283,8 +283,9 @@
     <condition name="isAnyChar" nextState="">
       <action name="createTag" />
       <action name="pushBackChar" />
+      <action name="popState" />
       <!-- will go to a sub-state machine and will pop back to the argument -->
-      <action name="quickParseSpecial" argument="specialChecked" /> 
+  <!--    <action name="quickParseSpecial" argument="specialChecked" /> -->
     </condition>
   </state>
   <state name="specialChecked" endOfDocument="">
