@@ -16,10 +16,22 @@
 #include "dombuilder.h"
 
 
+DomBuilder::DomBuilder()
+{
+  m_CDATAstarted = false;
+}
+
+
+DomBuilder::~DomBuilder()
+{
+}
+
+    
 // from QXmlContentHandler
 
 bool DomBuilder::characters (const QString & ch)
 {
+  kDebug(24001) << "Characters send: " << ch << endl;
   return true;
 }
 
@@ -99,12 +111,16 @@ bool DomBuilder::comment(const QString & ch)
 
 bool DomBuilder::endCDATA()
 {
+  m_CDATAstarted = false;
   return true;
 }
 
 
 bool DomBuilder::endDTD()
 {
+  m_DTDstarted = false;
+  m_startColumn = 0;
+  m_startLine = 0;
   return true;
 }
 
@@ -117,12 +133,18 @@ bool DomBuilder::endEntity(const QString & name)
 
 bool DomBuilder::startCDATA()
 {
+  m_CDATAstarted = true;
+  m_startColumn = m_locator->columnNumber() - 1; // TODO check if -1 is correct
+  m_startLine = m_locator->lineNumber();
   return true;
 }
 
 
 bool DomBuilder::startDTD(const QString & name, const QString & publicId, const QString & systemId)
 {
+  m_DTDstarted = true;
+  m_startColumn = m_locator->columnNumber() - 1; // TODO check if -1 is correct
+  m_startLine = m_locator->lineNumber();
   return true;
 }
 
@@ -149,6 +171,13 @@ bool DomBuilder::warning(const QXmlParseException & exception)
 {
   return true;
 } 
+
+
+bool DomBuilder::elementRanges(const KTextEditor::Range & elementRange, const Ranges & attrRanges)
+{
+  kDebug(24001) << "Element Range: " << elementRange << endl;
+  return true;
+}
 
 
 //kate: space-indent on; indent-width 2; replace-tabs on; mixedindent off; encoding utf-8

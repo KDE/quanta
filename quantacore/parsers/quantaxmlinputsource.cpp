@@ -10,6 +10,7 @@
 
 
 #include "QXmlInputSource"
+#include <QXmlLocator>
 
 #include "ktexteditor/smartcursor.h"
 #include "ktexteditor/document.h"
@@ -17,8 +18,49 @@
 
 #include "quantaxmlinputsource.h"
 
+
+class Locator : public QXmlLocator
+{
+  public:
+    Locator(const QuantaXmlInputSource * source) : m_source(source) {};
+    ~Locator() {};
+    /**
+     * \name QXmlLocator Interface
+     *
+     * The following methods implement the \ref QXmlLocator interface
+     * \{
+     */
+    /**
+     * \return the current column position, -1 means invalid position!
+     */
+    int columnNumber() const
+    {
+      if (m_source->m_cursor && m_source->m_cursor->isValid())
+        return m_source->m_cursor->column();
+      else
+        return -1;
+    }
+    /**
+     * \return the current line number, -1 means invalid position!
+     */
+    int lineNumber() const
+    {
+      if (m_source->m_cursor && m_source->m_cursor->isValid())
+        return m_source->m_cursor->line();
+      else
+        return -1;
+    }
+    /**
+     * \}
+     */
+  private:
+    const QuantaXmlInputSource * m_source;
+};
+
+
+
 QuantaXmlInputSource::QuantaXmlInputSource(KTextEditor::Document * doc)
-  : QXmlInputSource(), QXmlLocator(), KTextEditor::SmartCursorWatcher(), m_cursor(0)
+  : QXmlInputSource(), KTextEditor::SmartCursorWatcher(), m_cursor(0)
 {
   KTextEditor::SmartInterface* smart = qobject_cast<KTextEditor::SmartInterface*>(doc);
   
@@ -35,6 +77,12 @@ QuantaXmlInputSource::~QuantaXmlInputSource()
   delete m_cursor;
   m_cursor = 0;
 }
+
+QXmlLocator * QuantaXmlInputSource::newLocator() const
+{
+  return new Locator(this);
+}
+
 
 QString QuantaXmlInputSource::data() const
 {
@@ -66,20 +114,5 @@ void QuantaXmlInputSource::deleted(KTextEditor::SmartCursor * cursor)
     m_cursor = 0;
 }
 
-int QuantaXmlInputSource::columnNumber()
-{
-  if (m_cursor && m_cursor->isValid())
-    return m_cursor->column();
-  else
-    return -1;
-}
-
-int QuantaXmlInputSource::lineNumber()
-{
-  if (m_cursor && m_cursor->isValid())
-    return m_cursor->line();
-  else
-    return -1;
-}
 
 //kate: space-indent on; indent-width 2; replace-tabs on; mixedindent off; encoding utf-8

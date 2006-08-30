@@ -18,6 +18,12 @@
 #include <QString>
 #include <QChar>
 #include <QStack>
+#include <QVector>
+#include <QXmlAttributes>
+
+#include <ktexteditor/range.h>
+
+#include "quantahandler.h"
 
 
 class QXmlInputSource;
@@ -28,6 +34,7 @@ class QXmlDeclHandler;
 class QXmlEntityResolver;
 class QXmlLexicalHandler;
 class QXmlErrorHandler;
+class QuantaHandler;
 
 class StateMachine;
 struct State;
@@ -73,6 +80,8 @@ class ParserStatus : public QXmlReader
      * Reset the class into the start condition. Erases all member variables.
      * 
      * \note This does not change the set handler functions.
+     * \note This class takes ownership of the locator and destroys it when it 
+     * does not need it anymore.
      * 
      * \param locator the QXmlLocator to use, mandatory argument!
      * \param stateMachine the StateMachine to use, mandatory argument!
@@ -95,13 +104,9 @@ class ParserStatus : public QXmlReader
     
     QXmlErrorHandler * errorHandler() const {return m_errorHandler;};
     
-    bool feature(const QString & name, bool * ok = 0) const
-    { // we do not have features yet
-      Q_UNUSED(name);
-      if (ok) *ok = false;
-      return false;
-    }
-    bool hasFeature(const QString & name) const {Q_UNUSED(name); return false;};
+    bool feature(const QString & name, bool * ok = 0) const;
+    
+    bool hasFeature(const QString & name) const;
     
     bool hasProperty(const QString & name) const {Q_UNUSED(name); return false;};
     
@@ -132,12 +137,11 @@ class ParserStatus : public QXmlReader
     
     void setErrorHandler(QXmlErrorHandler * handler) {m_errorHandler = handler;};
     
-    void setFeature(const QString & name, bool value) 
-    {
-      Q_UNUSED(name); Q_UNUSED(value);
-      return;
-    };
+    void setFeature(const QString & name, bool value); 
+    
     void setLexicalHandler(QXmlLexicalHandler * handler) {m_lexicalHandler = handler;};
+    
+    void setQuantaHandler(QuantaHandler * handler) {m_quantaHandler = handler;};
     
     void setProperty(const QString & name, void * value)
     {
@@ -151,7 +155,7 @@ class ParserStatus : public QXmlReader
     /**
      * helper function for \ref startParsing
      */
-    void loop();
+    bool loop();
     
     QXmlDTDHandler * m_DTDHandler;
     QXmlContentHandler * m_contentHandler;
@@ -159,13 +163,27 @@ class ParserStatus : public QXmlReader
     QXmlEntityResolver * m_entityResolver;
     QXmlErrorHandler * m_errorHandler;
     QXmlLexicalHandler * m_lexicalHandler;
+    QuantaHandler * m_quantaHandler;
         
     QChar m_currChar;
-    mutable QString m_buffer;
     mutable QStack<QChar> m_sourceStack;
-    mutable QStack<const State *> m_stateStack;
+    mutable QString m_buffer;
+    // state handling
     mutable const State * m_currState;
-    // int entity;
+    mutable QStack<const State *> m_stateStack;
+    // tag handling
+    mutable QString m_namespace;
+    mutable QString m_tagName;
+    mutable KTextEditor::Range m_tagRange;
+    // attribute handling
+    mutable QString m_attrName;
+    mutable QuantaHandler::Ranges m_attrRanges;
+    mutable QXmlAttributes m_attributes;
+    /**
+     * for the feature http://kdewebdev.org/quanta/features/html-mode
+     * \e true parsing in html mode, \e false parsing in xml mode
+     */
+    bool m_htmlMode; 
     QXmlInputSource * m_source;
     QXmlLocator * m_locator;
     StateMachine * m_stateMachine;

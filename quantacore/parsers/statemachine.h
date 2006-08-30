@@ -114,6 +114,7 @@ struct Condition {
  */
 struct State {
   QList<Condition> conditions; ///<the list of conditions
+  State * endState; ///< the state if we encounter the end of the document
   QString name; ///<the name of the state
 };
 

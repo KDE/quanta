@@ -26,25 +26,38 @@ ParserStatus::ParserStatus(QXmlLocator *locator, StateMachine *stateMachine) :
   m_entityResolver = 0;
   m_errorHandler = 0;
   m_lexicalHandler = 0;
+  m_quantaHandler = 0;
   reset(locator, stateMachine);
 }
 
 
 ParserStatus::~ParserStatus()
 {
+  delete m_locator;
 }
 
 void ParserStatus::reset(QXmlLocator * locator, StateMachine * stateMachine)
 {
   Q_ASSERT_X(locator != 0, "ParserStatus::reset", "locator undefined");
   Q_ASSERT_X(stateMachine != 0, "ParserStatus::reset", "stateMachine undefined");
+  
+  if (m_locator != locator)
+    delete m_locator;
+  
   m_locator = locator;
   m_stateMachine = stateMachine;
   m_buffer.clear();
+  m_tagName.clear();
   m_currChar = QChar();
   m_source = 0;
   m_sourceStack.clear();
   m_stateStack.clear();
+  m_attributes.clear();
+  m_namespace.clear();
+  m_htmlMode = true;
+  m_tagRange = KTextEditor::Range(KTextEditor::Cursor::invalid(),
+                                  KTextEditor::Cursor::invalid());
+  m_attrRanges.clear();
 }
     
     
@@ -61,13 +74,13 @@ bool ParserStatus::parse(const QXmlInputSource * input)
   contentHandler()->setDocumentLocator(m_locator);
   contentHandler()->startDocument();
   m_currState = m_stateMachine->startState();
-  loop();
+  bool result = loop();
   contentHandler()->endDocument();
-  return true;
+  return result;
 }
 
 
-void ParserStatus::loop()
+bool ParserStatus::loop()
 {
   while (m_currState)
   {
@@ -80,7 +93,12 @@ void ParserStatus::loop()
       if (m_currChar == QXmlInputSource::EndOfData)
         m_currChar = m_source->next();
       if (m_currChar == QXmlInputSource::EndOfDocument)
-        return;
+      {
+        if (m_currState->endState)
+          m_currState = m_currState->endState;
+        else
+          break;
+      }
     }
       // test conditions and do the actions
     foreach (Condition condition, m_currState->conditions)
@@ -90,7 +108,7 @@ void ParserStatus::loop()
         foreach (ActionFunction af, condition.actionFunctions)
         {
           if (! af.call(*this))
-            return;
+            return false;
         }
         if (condition.nextState)
           m_currState = condition.nextState;
@@ -98,8 +116,42 @@ void ParserStatus::loop()
         break;
       }
     }
+    if (m_currChar == QXmlInputSource::EndOfDocument)
+      break;
   }
+  return true;
 }
 
+    
+bool ParserStatus::feature(const QString & name, bool * ok) const
+{ 
+  if (name == "http://kdewebdev.org/quanta/features/html-mode")
+  {
+    if (ok) 
+      *ok = true;
+    return m_htmlMode;
+  }
+  if (ok) 
+    *ok = false;
+  return false;
+}
+    
+
+void ParserStatus::setFeature(const QString & name, bool value) 
+{
+  if (name == "http://kdewebdev.org/quanta/features/html-mode")
+    m_htmlMode = value;
+
+  return;
+};
+
+    
+bool ParserStatus::hasFeature(const QString & name) const
+{
+  if (name == "http://kdewebdev.org/quanta/features/html-mode")
+     return true;
+  
+  return false;
+}
 
 //kate: space-indent on; indent-width 2; replace-tabs on; mixedindent off; encoding utf-8

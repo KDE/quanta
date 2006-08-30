@@ -12,7 +12,6 @@
 #define QUANTAXMLINPUTSOURCE_H
 
 #include <QXmlInputSource>
-#include <QXmlLocator>
 
 #include <ktexteditor/cursorfeedback.h>
 #include <ktexteditor/cursor.h>
@@ -32,9 +31,11 @@ class KTextEditor::SmartCursor;
  * \author Jens Herden \<jens@kdewebdev.org\>
  */
 
-class QuantaXmlInputSource: 
-    public QXmlInputSource, public QXmlLocator, public KTextEditor::SmartCursorWatcher
+class QuantaXmlInputSource : 
+    public QXmlInputSource, public KTextEditor::SmartCursorWatcher
 {
+  friend class Locator;
+  
 public:
   /**
    * \param doc the document to read from, must implement KTextEditor::SmartInterface
@@ -42,6 +43,16 @@ public:
   QuantaXmlInputSource(KTextEditor::Document * doc);
   
   virtual ~QuantaXmlInputSource();
+  
+  /**
+   * Create a new Locator.
+   * 
+   * \note this class does not keep ownership of the locator.
+   * 
+   * \return the new Locator for this input source
+   */
+  QXmlLocator * newLocator() const;
+  
   /**
    * \name QXmlInputSource Interface
    *
@@ -52,16 +63,19 @@ public:
    * \return the whole content of the textdocument or QString::Null() if there is no document
    */
   virtual QString data() const;
+  
   /**
    * get the next character and move the cursor one position
    * 
    * \return the next character or QXmlInputSource::EndOfDocument
    */
   virtual QChar next();
+  
   /**
    * reset the cursor to the beginning of the textdocument
    */
   virtual void reset();
+  
   /**
    * \}
    */
@@ -70,23 +84,6 @@ public:
    * after it was deleted.
    */
   void deleted(KTextEditor::SmartCursor * cursor);
-  /**
-   * \name QXmlLocator Interface
-   *
-   * The following methods implement the \ref QXmlLocator interface
-   * \{
-   */
-  /**
-   * \return the current column position, -1 means invalid position!
-   */
-  virtual int columnNumber();
-  /**
-   * \return the current line number, -1 means invalid position!
-   */
-  virtual int lineNumber();
-  /**
-   * \}
-   */
 
 private:
   KTextEditor::SmartCursor * m_cursor;

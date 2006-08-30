@@ -166,8 +166,91 @@ class StateActions
      * \return the return value of the handler or \e true if there is no handler
      */
     static bool createEndTag(const ParserStatus & parser, const QString & argument);
-};
+    
+    /**
+     * creates a new Range in the container with the current position set as start & end
+     * 
+     * @param parser the used ParserStatus
+     * @param argument unused
+     * \return true
+     */
+    static bool addAttrRange(const ParserStatus & parser, const QString & argument);
+    
+    /**
+     * set the end of the last range in the container
+     * 
+     * @param parser the used ParserStatus
+     * @param argument unused
+     * \return true
+     */
+    static bool setAttrRangeEnd(const ParserStatus & parser, const QString & argument);
+    
+    /**
+     * remove the last range from the container
+     * 
+     * @param parser the used ParserStatus
+     * @param argument unused
+     * \return true
+     */
+    static bool popAttrRange(const ParserStatus & parser, const QString & argument);
+    
+    /**
+     * append the current character to the tag name
+     * 
+     * @param parser the used ParserStatus
+     * @param argument unused
+     * \return true
+     */
+    static bool currCharToTag(const ParserStatus & parser, const QString & argument);
+    
+    /**
+     * append the current character to the attribute name
+     * 
+     * @param parser the used ParserStatus
+     * @param argument unused
+     * \return true
+     */
+    static bool currCharToAttr(const ParserStatus & parser, const QString & argument);
+    
+    /**
+     * Add the found attribute to the container. 
+     * \note This will clear the buffer and the attribute name buffer
+     * 
+     * @param parser the used ParserStatus
+     * @param argument unused
+     * \return true
+     */
+    static bool addAttr(const ParserStatus & parser, const QString & argument);
+    
+    /**
+     * Move the tag name to the namespace variable 
+     * \note This clears the tag name.
+     * 
+     * @param parser the used ParserStatus
+     * @param argument unused
+     * \return true
+     */
+    static bool tagToNamespace(const ParserStatus & parser, const QString & argument);
 
+    /**
+     * set the end of the element range 
+     * 
+     * @param parser the used ParserStatus
+     * @param argument unused
+     * \return true
+     */
+//     static bool setTagRangeEnd(const ParserStatus & parser, const QString & argument);
+    
+    /**
+     * set the end of the element range 
+     * 
+     * @param parser the used ParserStatus
+     * @param argument unused
+     * \return true
+     */
+    static bool setTagRangeStart(const ParserStatus & parser, const QString & argument);
+
+};
 
 #endif
 

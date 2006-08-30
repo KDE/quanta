@@ -17,36 +17,46 @@
 #include <QXmlContentHandler>
 #include <QXmlLexicalHandler>
 
+#include "quantahandler.h"
+
 class QXmlLocator;
+
 
 /**
  * \short This class builds the dom tree from the parser events.
  * 
  * \author Jens Herden   \<jens@kdewebdev.org\>
  */
-class DomBuilder : public QXmlContentHandler, public QXmlLexicalHandler, public QXmlErrorHandler 
+class DomBuilder : public QXmlContentHandler, public QXmlLexicalHandler, public QXmlErrorHandler, public QuantaHandler 
 {
   public:
     DomBuilder();
     ~DomBuilder();
-    
     /**
-     * \name QXmlLexicalHandler Interface
+     * \name QuantaHandler Interface
      *
-     * The following methods implement the \ref QXmlLexicalHandler interface
+     * The following methods implement the \ref QuantaHandler interface
      * \{
      */
-    bool characters (const QString & ch);
+    bool elementRanges(const KTextEditor::Range & elementRange, const Ranges & attrRanges);
+    /**
+     * \}
+     * \name QXmlContentHandler Interface
+     *
+     * The following methods implement the \ref QXmlContentHandler interface
+     * \{
+     */
+    bool characters(const QString & ch);
     bool endDocument();
     bool endElement(const QString & namespaceURI, const QString & localName, const QString & qName);
-    bool endPrefixMapping (const QString & prefix);
+    bool endPrefixMapping(const QString & prefix);
     QString errorString() const;
     bool ignorableWhitespace(const QString & ch);
     bool processingInstruction(const QString & target, const QString & data);
     void setDocumentLocator(QXmlLocator * locator) {m_locator = locator;}
     bool skippedEntity(const QString & name);
     bool startDocument();
-    bool startElement (const QString & namespaceURI, const QString & localName, const QString & qName, const QXmlAttributes & atts);
+    bool startElement(const QString & namespaceURI, const QString & localName, const QString & qName, const QXmlAttributes & atts);
     bool startPrefixMapping(const QString & prefix, const QString & uri); 
     /**
      * \}
@@ -81,6 +91,10 @@ class DomBuilder : public QXmlContentHandler, public QXmlLexicalHandler, public 
      */
   private:
     QXmlLocator * m_locator;
+    bool m_DTDstarted;
+    bool m_CDATAstarted;
+    int m_startColumn;
+    int m_startLine;
 };
 
 
