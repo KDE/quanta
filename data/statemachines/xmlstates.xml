@@ -1,6 +1,9 @@
-<statemachine>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE statemachine SYSTEM "http://quanta.kdewebdev.org/download/statemachine.dtd">
+
+<statemachine version="1.0">
 <!-- Prolog parsing -->  
-  <state name="begin">
+  <state name="begin" endOfDocument="">
     <condition name="equals" argument="&lt;" nextState="ltFound">
       <action name="startTag" />
     </condition>
@@ -11,7 +14,7 @@
     </condition>
   </state>
 
-  <state name="ltFound">
+  <state name="ltFound" endOfDocument="">
     <condition name="isWhiteSpace" nextState="ltFound" >
       <action name="reportError" />
     </condition>
@@ -33,7 +36,7 @@
     </condition>              
   </state>
 
-  <state name="emFound">
+  <state name="emFound" endOfDocument="">
     <condition name="equals" argument="-" nextState="startComment">
       <action name="pushState" argument="begin" />
     </condition>
@@ -49,7 +52,7 @@
   </state>
 
 <!-- Comment parsing sub-state machine -->  
-  <state name="startComment">
+  <state name="startComment" endOfDocument="">
     <condition name="equals" argument=">" nextState="">
       <action name="addStringToBuffer" argument="!-" />
       <action name="createTag" />
@@ -61,14 +64,14 @@
     </condition>
   </state>
 
-  <state name="commentString">
+  <state name="commentString" endOfDocument="">
     <condition name="equals" argument="-" nextState="firstDash" />
     <condition name="isAnyChar" nextState="commentString">
       <action name="addCharToBuffer" />
     </condition>
   </state>
 
-  <state name="firstDash">
+  <state name="firstDash" endOfDocument="">
     <condition name="equals" argument="-" nextState="secondDash" />
     <condition name="equals" argument=">" nextState="commentString">
       <action name="reportWarning" message="Wrong end of comment?" />
@@ -80,7 +83,7 @@
     </condition>
   </state>
 
-  <state name="secondDash">
+  <state name="secondDash" endOfDocument="">
     <condition name="equals" argument=">" nextState="">
       <action name="createComment" />
       <action name="popState" />
@@ -96,7 +99,7 @@
   </state>
 
 <!-- Text parsing state machine -->
-  <state name="startText">
+  <state name="startText" endOfDocument="">
     <condition name="equals" argument="&amp;" nextState="startEntity" >
       <action name="addCharToBuffer" />
       <action name="pushState" argument="startText" />
@@ -112,7 +115,7 @@
   </state>
 
 <!-- Entity parsing state machine -->
-  <state name="startEntity">
+  <state name="startEntity" endOfDocument="">
     <condition name="equals" argument=";" nextState="">
       <action name="createEntity" />
       <action name="addCharToBuffer" />
@@ -128,7 +131,7 @@
   </state>
 
 <!-- DocType parsing state machine (incomplete) -->
-  <state name="startDocType">
+  <state name="startDocType" endOfDocument="">
     <condition name="equals" argument=">" nextState="">
       <action name="createTag" />
       <action name="popState" />
@@ -139,7 +142,7 @@
   </state>
 
 <!--   Double quoted string parsing state machine -->
-  <state name="startQuotedString">
+  <state name="startQuotedString" endOfDocument="">
     <condition name="equals" argument="&#034;" nextState="">
       <action name="popState" />
     </condition>
@@ -157,15 +160,15 @@
   </state>
 
 <!--   Entered when a character after a slash should be ignored -->
-  <state name="slashFound">
-    <condition name="isAnyChar">
+  <state name="slashFound" endOfDocument="">
+    <condition name="isAnyChar" nextState="">
       <action name="addCharToBuffer" />
       <action name="popState" />
     </condition>
   </state>
   
 <!--   Single quoted string parsing state machine -->
-  <state name="startSingleQuotedString">
+  <state name="startSingleQuotedString" endOfDocument="">
     <condition name="equals" argument="'" nextState="">
       <action name="popState" />
     </condition>
@@ -197,7 +200,7 @@
     </condition>
   </state>
 
-  <state name="searchAttribute">
+  <state name="searchAttribute" endOfDocument="">
     <condition name="isWhiteSpace" nextState="searchAttribute" />
     <condition name="equals" argument=">" nextState="tagEnded" />
     <condition name="equals" argument="=" nextState="attributeValue">
@@ -212,7 +215,7 @@
     </condition>    
   </state>
 
-  <state name="startAttribute">
+  <state name="startAttribute" endOfDocument="">
     <condition name="equals" argument=">" nextState="tagEnded">
       <action name="reportError" message="Attribute ends without a value." />
       <action name="createAttribute" />
@@ -228,7 +231,7 @@
     </condition>
   </state>
 
-  <state name="wspAfterAttrName">
+  <state name="wspAfterAttrName" endOfDocument="">
     <condition name="isWhiteSpace" nextState="wspAfterAttrName" />
     <condition name="equals" argument=">" nextState="tagEnded">
       <action name="reportError" message="Attribute ends without a value." />
@@ -241,7 +244,7 @@
     </condition>
   </state>
 
-  <state name="attributeValue">
+  <state name="attributeValue" endOfDocument="">
     <condition name="equals" argument=">" nextState="tagEnded">
       <action name="reportError" message="Attribute ends without a value." />
       <action name="createAttribute" />
@@ -255,7 +258,7 @@
     </condition>
   </state>
 
-  <state name="notQuotedAttributeValue">
+  <state name="notQuotedAttributeValue" endOfDocument="">
     <condition name="equals" argument=">" nextState="tagEnded">
       <action name="createAttribute" />
     </condition>
@@ -269,21 +272,22 @@
     </condition>
   </state>
 
-  <state name="endAttributeValue">
+  <state name="endAttributeValue" endOfDocument="">
     <condition name="isAnyChar" nextState="searchAttribute">
       <action name="createAttribute" />
       <action name="pushBackChar" />
     </condition>
   </state>
 
-  <state name="tagEnded">
+  <state name="tagEnded" endOfDocument="">
     <condition name="isAnyChar" nextState="">
       <action name="createTag" />
       <action name="pushBackChar" />
-      <action name="quickParseSpecial" argument="specialChecked" /> <!-- will go to a sub-state machine and will pop back to the argument -->
+      <!-- will go to a sub-state machine and will pop back to the argument -->
+      <action name="quickParseSpecial" argument="specialChecked" /> 
     </condition>
   </state>
-  <state name="specialChecked">
+  <state name="specialChecked" endOfDocument="">
     <condition name="isAnyChar" nextState="">
       <action name="pushBackChar" />
       <action name="popState" />

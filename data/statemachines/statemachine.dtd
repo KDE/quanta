@@ -1,0 +1,61 @@
+<!--
+This files provides information about the internal data structure of 
+a statemachine file for the parser of Quanta.
+
+You can validate the xml file with this command:
+
+    xmllint statemachine.xml &hyphen;&hyphen;dtdvalid statemachine.dtd
+
+-->
+
+<!-- we need one statemachine element, this is the root of the document 
+      and at least one state inside -->
+<!ELEMENT statemachine (state)+>
+
+<!-- the version is used for future extension of the format, it should be '1.0' for now -->
+<!ATTLIST statemachine
+          version    CDATA   #REQUIRED
+          >
+
+
+<!-- we need at least one condition element -->
+<!ELEMENT state (condition)+>
+
+<!-- the name attribute is required and must also be unique in the statemachine
+     the endOfDocument attribute defines the state where to continue if the 
+          end of the document was reached -->
+<!ATTLIST state
+          name          CDATA   #REQUIRED
+          endOfDocument CDATA   #REQUIRED
+          >
+
+<!--  The conditions are tested one by one. The first which returns true is used
+      and the actions are executed and after that the state is changed to the 
+      value in nextState.
+      The action element is optional. -->
+<!ELEMENT condition (action?)+>
+
+<!-- the name attribute is mandatory and identifies the function to call
+     the argument attribute is optional the value will be passed to the function
+     the nextState attribute is mandatory but could be empty
+ -->
+<!ATTLIST condition
+          name      CDATA   #REQUIRED
+          argument  CDATA   #IMPLIED
+          nextState CDATA   #REQUIRED
+          >
+
+<!-- The action element identifies the function to call if the parent condition
+     returned true. -->
+<!ELEMENT action EMPTY>
+
+<!-- the name attribute is mandatory and identifies the function to call
+     the argument attribute is optional the value will be passed to the function
+     the message attribute is optional the value will be passed to the function
+          (the value will get localized and overwrites the argument value)
+ -->
+<!ATTLIST action
+          name      CDATA   #REQUIRED
+          argument  CDATA   #IMPLIED
+          message   CDATA   #IMPLIED
+          >
