@@ -72,10 +72,11 @@
     <condition name="equals" argument="-" nextState="secondDash" />
     <condition name="equals" argument=">" nextState="commentString">
       <action name="reportWarning" message="Wrong end of comment?" />
-      <action name="addStringToBuffer" argument="-" />
+      <action name="addStringToBuffer" argument="->" />
     </condition>   
     <condition name="isAnyChar" nextState="commentString">
       <action name="addStringToBuffer" argument="-" />
+      <action name="addCharToBuffer" />
     </condition>
   </state>
 
@@ -84,8 +85,13 @@
       <action name="createComment" />
       <action name="popState" />
     </condition>
+    <condition name="equals" argument="-" nextState="secondDash">
+      <action name="addCharToBuffer" />
+      <action name="reportWarning" message="Adjacent hyphens wihtin comment." />
+    </condition>
     <condition name="isAnyChar" nextState="commentString">
       <action name="addStringToBuffer" argument="--" />
+      <action name="addCharToBuffer" />
     </condition>
   </state>
 
@@ -171,30 +177,23 @@
       <action name="addCharToBuffer" />
       <action name="pushState" argument="startSingleQuotedString"/>
     </condition>
-    <condition name="isAnyChar" nextState="startQuotedString" >
+    <condition name="isAnyChar" nextState="startSingleQuotedString" >
       <action name="addCharToBuffer" />
     </condition>
   </state>
   
-  <state name="slashFound">
-    <condition name="isAnyChar" nextState="startQuotedString">
-      <action name="addCharToBuffer" />
-    </condition>
-  </state>
 
 <!-- Element (tag) parsing state machine -->
   <state name="startElement" endOfDocument="" >
     <condition name="equals" argument=">" nextState="tagEnded" >
-      <action name="addToTagName" />
     </condition>
     <condition name="isWhiteSpace" nextState="searchAttribute">
-      <action name="addToTagName" />
     </condition>
     <condition name="equals" argument=":" nextState="startElement">
       <action name="rememberNameSpace" />
     </condition>
     <condition name="isAnyChar" nextState="startElement">
-      <action name="addCharToBuffer"/>
+      <action name="addToTagName"/>
     </condition>
   </state>
 
@@ -223,18 +222,19 @@
       <action name="reportError" message="Assignment operator missing between attribute name and value." />
       <action name="pushState" argument="endAttributeValue" />
     </condition>
-    <condition name="isWhiteSpace" nextState="whiteSpaceAfterAttributeName" />
+    <condition name="isWhiteSpace" nextState="wspAfterAttrName" />
     <condition name="isAnyChar" nextState="startAttribute">
       <action name="addToAttributeName" />
     </condition>
   </state>
 
-  <state name="whiteSpaceAfterAttributeName">
-    <condition name="isWhiteSpace" nextState="whiteSpaceAfterAttributeName" />
+  <state name="wspAfterAttrName">
+    <condition name="isWhiteSpace" nextState="wspAfterAttrName" />
     <condition name="equals" argument=">" nextState="tagEnded">
       <action name="reportError" message="Attribute ends without a value." />
       <action name="createAttribute" />
     </condition>
+    <condition name="equals" argument="=" nextState="attributeValue" />
     <condition name="isAnyChar" nextState="searchAttribute">
       <action name="createAttribute" />
       <action name="pushBackChar" />
@@ -250,7 +250,9 @@
     <condition name="equals" argument="&#034;" nextState="startQuotedString" >
       <action name="pushState" argument="endAttributeValue" />
     </condition>
-    <condition name="isAnyChar" nextState="notQuotedAttributeValue" />    
+    <condition name="isAnyChar" nextState="notQuotedAttributeValue" >
+      <action name="addCharToBuffer" />
+    </condition>
   </state>
 
   <state name="notQuotedAttributeValue">
