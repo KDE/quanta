@@ -51,6 +51,12 @@ class StateActions
      * \li createcomment -> \ref createComment
      * \li createtag -> \ref createTag
      * \li createendtag -> \ref createEndTag
+     * \li addtoattributename -> \ref currCharToAttr
+     * \li addtotagname -> \ref currCharToTag
+     * \li xxx -> \ref popAttrRange
+     * \li xxx -> \ref setAttrRangeEnd
+     * \li starttag -> \ref setTagRangeStart
+     * 
      * 
      * \param name the function name
      * \return function pointer for the name or pointer to \ref crashme if the name is unknown
