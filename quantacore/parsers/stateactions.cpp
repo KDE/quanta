@@ -50,10 +50,12 @@ StateActions::ActionFunctPtr StateActions::factory(const QString &name)
   if (id == "createcomment") return &createComment;
   if (id == "createtag") return &createTag;
   if (id == "createendtag") return &createEndTag;
+  if (id == "createtext") return &createText;
+  if (id == "createentity") return &createEntity;
   if (id == "remembernamespace") return &tagToNamespace;
   if (id == "createattribute") return &addAttr;
-  if (id == "addtoattributename") return &currCharToAttr;
-  if (id == "addtotagname") return &currCharToTag;
+  if (id == "addtoattributename") return &addToAttr;
+  if (id == "addtotagname") return &addToTag;
   if (id == "") return &popAttrRange;
   if (id == "") return &setAttrRangeEnd;
   if (id == "starttag") return &setTagRangeStart;
@@ -67,8 +69,10 @@ bool StateActions::crashMe(const ParserStatus & parser, const QString & argument
 {
   Q_UNUSED(parser);
   Q_UNUSED(argument);
-  Q_ASSERT(false);
-  return false;
+/*  Q_ASSERT(false);
+  return false;*/
+  kWarning(24001) << "Unknown action function called." << endl;
+  return true;
 }
 
 
@@ -147,7 +151,8 @@ bool StateActions::popState(const ParserStatus & parser, const QString & argumen
     return false;
   
   parser.m_currState = parser.m_stateStack.pop();
-  return true; 
+  kDebug(24001) << "State changed to " << parser.m_currState->name << " using popState" << endl;
+  return true;
 }
 
 
@@ -193,6 +198,21 @@ bool StateActions::createComment(const ParserStatus & parser, const QString & ar
   return result;
 }
 
+bool StateActions::createText(const ParserStatus & parser, const QString & argument)
+{
+  Q_UNUSED(argument);
+  bool result = parser.contentHandler()->characters(parser.m_buffer);
+  parser.m_buffer.clear();
+  return result;
+}
+
+bool StateActions::createEntity(const ParserStatus & parser, const QString & argument)
+{
+  Q_UNUSED(argument);
+  bool result = parser.contentHandler()->skippedEntity(parser.m_buffer);
+  return result;
+}
+
 
 bool StateActions::addAttrRange(const ParserStatus & parser, const QString & argument)
 { 
@@ -228,18 +248,22 @@ bool StateActions::popAttrRange(const ParserStatus & parser, const QString & arg
 }
 
 
-bool StateActions::currCharToTag(const ParserStatus & parser, const QString & argument)
+bool StateActions::addToTag(const ParserStatus & parser, const QString & argument)
 {
-  Q_UNUSED(argument);
-  parser.m_tagName.append(parser.m_currChar);
+  if (argument.isEmpty())
+    parser.m_tagName.append(parser.m_currChar);
+  else
+    parser.m_tagName.append(argument);
   return true;
 }
 
 
-bool StateActions::currCharToAttr(const ParserStatus & parser, const QString & argument)
+bool StateActions::addToAttr(const ParserStatus & parser, const QString & argument)
 {
-  Q_UNUSED(argument);
-  parser.m_attrName.append(parser.m_currChar);
+  if (argument.isEmpty())
+    parser.m_attrName.append(parser.m_currChar);
+  else
+    parser.m_attrName.append(argument);
   return true;
 }
 

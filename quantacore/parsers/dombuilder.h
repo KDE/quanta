@@ -27,7 +27,7 @@ class QXmlLocator;
  * 
  * \author Jens Herden   \<jens@kdewebdev.org\>
  */
-class DomBuilder : public QXmlContentHandler, public QXmlLexicalHandler, public QXmlErrorHandler, public QuantaHandler 
+class DomBuilder : public QXmlContentHandler, public QXmlLexicalHandler, public QXmlErrorHandler, public QuantaHandler
 {
   public:
     DomBuilder();

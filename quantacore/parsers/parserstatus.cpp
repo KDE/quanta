@@ -28,6 +28,7 @@ ParserStatus::ParserStatus(QXmlLocator *locator, StateMachine *stateMachine) :
   m_errorHandler = 0;
   m_lexicalHandler = 0;
   m_quantaHandler = 0;
+  m_locator = 0;
   reset(locator, stateMachine);
 }
 

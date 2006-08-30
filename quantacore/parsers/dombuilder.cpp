@@ -15,7 +15,6 @@
 
 #include "dombuilder.h"
 
-
 DomBuilder::DomBuilder()
 {
   m_CDATAstarted = false;
@@ -29,9 +28,9 @@ DomBuilder::~DomBuilder()
     
 // from QXmlContentHandler
 
-bool DomBuilder::characters (const QString & ch)
+bool DomBuilder::characters(const QString & ch)
 {
-  kDebug(24001) << "Characters send: " << ch << endl;
+  kDebug(24001) << "Text: " << ch << endl;
   return true;
 }
 
@@ -76,6 +75,7 @@ bool DomBuilder::processingInstruction(const QString & target, const QString & d
 
 bool DomBuilder::skippedEntity(const QString & name)
 {
+  kDebug(24001) << "Skipped entity" << name << endl;
   return true;
 }
 
@@ -89,7 +89,7 @@ bool DomBuilder::startDocument()
 
 bool DomBuilder::startElement (const QString & namespaceURI, const QString & localName, const QString & qName, const QXmlAttributes & atts)
 {
-  kDebug(24001) << "Start Element: " << qName << endl;
+  kDebug(24001) << "DomBuilder::startElement: " << qName << endl;
   return true;
 }
 

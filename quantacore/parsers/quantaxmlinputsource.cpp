@@ -98,7 +98,8 @@ QChar QuantaXmlInputSource::next()
     return QXmlInputSource::EndOfDocument;
   
   QChar c = m_cursor->character();
-  m_cursor->advance(+1, KTextEditor::SmartCursor::ByCharacter);
+  if (!m_cursor->advance(+1, KTextEditor::SmartCursor::ByCharacter))
+    m_cursor->setPosition(-1, -1); //will be invalid on the following call to next
   return c;
 }
 
@@ -113,6 +114,7 @@ void QuantaXmlInputSource::deleted(KTextEditor::SmartCursor * cursor)
   if (m_cursor == cursor)
     m_cursor = 0;
 }
+
 
 
 //kate: space-indent on; indent-width 2; replace-tabs on; mixedindent off; encoding utf-8

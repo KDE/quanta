@@ -86,7 +86,7 @@ bool Comparator::asciiChar(const ParserStatus &parser, const QString &argument)
   Q_UNUSED(argument);
   bool result = (parser.m_currChar >= 'a' && parser.m_currChar <= 'z')
       || (parser.m_currChar >= 'A' && parser.m_currChar <= 'Z');
-  kDebug(24001) << parser.m_currChar << " is a character: " << result << endl;
+//   kDebug(24001) << parser.m_currChar << " is a character: " << result << endl;
   return result;
 }
 

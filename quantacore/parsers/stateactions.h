@@ -51,8 +51,8 @@ class StateActions
      * \li createcomment -> \ref createComment
      * \li createtag -> \ref createTag
      * \li createendtag -> \ref createEndTag
-     * \li addtoattributename -> \ref currCharToAttr
-     * \li addtotagname -> \ref currCharToTag
+     * \li addtoattributename -> \ref addToAttr
+     * \li addtotagname -> \ref addToTag
      * \li xxx -> \ref popAttrRange
      * \li xxx -> \ref setAttrRangeEnd
      * \li starttag -> \ref setTagRangeStart
@@ -174,6 +174,24 @@ class StateActions
     static bool createEndTag(const ParserStatus & parser, const QString & argument);
     
     /**
+     * reports the found text area to the handler
+     *
+     * @param parser the used ParserStatus
+     * @param argument unused
+     * \return the return value of the handler or \e true if there is no handler
+     */
+    static bool createText(const ParserStatus & parser, const QString & argument);
+    
+    /**
+     * reports the found entity to the handler. Does not clear the buffer.
+     *
+     * @param parser the used ParserStatus
+     * @param argument unused
+     * \return the return value of the handler or \e true if there is no handler
+     */
+    static bool createEntity(const ParserStatus & parser, const QString & argument);
+    
+    /**
      * creates a new Range in the container with the current position set as start & end
      * 
      * @param parser the used ParserStatus
@@ -201,22 +219,24 @@ class StateActions
     static bool popAttrRange(const ParserStatus & parser, const QString & argument);
     
     /**
-     * append the current character to the tag name
+     * Append a string to the tag name. If argument is empty, the current
+     * character is appended.
      * 
      * @param parser the used ParserStatus
-     * @param argument unused
+     * @param argument the string to append
      * \return true
      */
-    static bool currCharToTag(const ParserStatus & parser, const QString & argument);
+    static bool addToTag(const ParserStatus & parser, const QString & argument);
     
     /**
-     * append the current character to the attribute name
+     * Append a string to the attribute name. If argument is empty, the current
+     * character is appended.
      * 
      * @param parser the used ParserStatus
-     * @param argument unused
+     * @param argument the string to append
      * \return true
      */
-    static bool currCharToAttr(const ParserStatus & parser, const QString & argument);
+    static bool addToAttr(const ParserStatus & parser, const QString & argument);
     
     /**
      * Add the found attribute to the container. 
