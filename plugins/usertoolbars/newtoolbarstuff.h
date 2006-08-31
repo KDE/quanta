@@ -31,7 +31,7 @@ class NewToolbarStuff : public KNewStuffSecure
    Q_OBJECT
 
 public:
-  NewToolbarStuff(const QString &type,  QWidget *parentWidget=0);
+  explicit NewToolbarStuff(const QString &type,  QWidget *parentWidget=0);
   ~NewToolbarStuff() {};
   
 Q_SIGNALS:

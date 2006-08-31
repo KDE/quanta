@@ -23,7 +23,7 @@ class ProjectTreeWidget: public QWidget
 {
   Q_OBJECT
 public:
-  ProjectTreeWidget(ProjectTreePart *part);
+  explicit ProjectTreeWidget(ProjectTreePart *part);
   ~ProjectTreeWidget();
 
   ProjectTreeView * tree() {return m_tree;}

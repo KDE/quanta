@@ -20,7 +20,7 @@ class QuantaFilesTreeProjectConfig: public QWidget, public Ui::QuantaFilesTreePr
 {
     Q_OBJECT
 public:
-    QuantaFilesTreeProjectConfig(QuantaFilesTreePart *part, QWidget *parent = 0);
+    explicit QuantaFilesTreeProjectConfig(QuantaFilesTreePart *part, QWidget *parent = 0);
 
 public slots:
     void accept();

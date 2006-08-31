@@ -21,7 +21,7 @@ class QuantaFilesTreeGlobalConfig: public QWidget, public Ui::QuantaFilesTreeGlo
 {
     Q_OBJECT
 public:
-    QuantaFilesTreeGlobalConfig(QuantaFilesTreePart *part, QWidget *parent = 0);
+    explicit QuantaFilesTreeGlobalConfig(QuantaFilesTreePart *part, QWidget *parent = 0);
 
     ~QuantaFilesTreeGlobalConfig();
 

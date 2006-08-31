@@ -20,7 +20,7 @@ class HTMLPreviewGlobalConfig: public QWidget, public Ui::HTMLPreviewGlobalConfi
 {
     Q_OBJECT
 public:
-    HTMLPreviewGlobalConfig(HTMLPreviewPart *part, QWidget *parent = 0);
+    explicit HTMLPreviewGlobalConfig(HTMLPreviewPart *part, QWidget *parent = 0);
 
 public slots:
     void accept();

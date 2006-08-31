@@ -21,7 +21,7 @@ class ProjectTreeGlobalConfig: public QWidget, public Ui::ProjectTreeGlobalConfi
 {
   Q_OBJECT
 public:
-  ProjectTreeGlobalConfig(ProjectTreePart *part, QWidget *parent = 0);
+  explicit ProjectTreeGlobalConfig(ProjectTreePart *part, QWidget *parent = 0);
 
   ~ProjectTreeGlobalConfig();
 

@@ -31,7 +31,7 @@ class LIBQUANTA_EXPORT EditorSource : public QObject
 {
 Q_OBJECT
 public:
-  EditorSource(KTextEditor::Document *document, QObject *parent = 0);
+  explicit EditorSource(KTextEditor::Document *document, QObject *parent = 0);
   ~EditorSource();
 
 //TODO Needed methods:

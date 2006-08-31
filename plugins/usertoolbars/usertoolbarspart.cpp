@@ -692,7 +692,7 @@ QString UserToolbarsPart::selectToolbarDialog(const QString &caption)
   if (ok)
     return tabData.value(res);
   else
-    return QString::Null();
+    return QString();
 }
 
 
@@ -1014,7 +1014,7 @@ QString UserToolbarsPart::createToolbarTarball()
 {
   QString toolbar = selectToolbarDialog(i18n("Save Toolbar"));
   if (toolbar.isNull())
-    return QString::Null();
+    return QString();
   QString prefix="quanta";
   KTempDir* tempDir = new KTempDir(m_tmpDir);
   tempDir->setAutoDelete(true);

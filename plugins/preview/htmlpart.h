@@ -25,7 +25,7 @@ class HTMLPart: public KDevHTMLPart
 {
   Q_OBJECT
 public:
-  HTMLPart(HTMLPreviewPart *part);
+  explicit HTMLPart(HTMLPreviewPart *part);
   ~HTMLPart();
 
 protected slots:

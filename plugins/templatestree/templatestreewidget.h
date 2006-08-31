@@ -22,7 +22,7 @@ class TemplatesTreeWidget: public QWidget
 {
     Q_OBJECT
 public:  
-    TemplatesTreeWidget(TemplatesTreePart *part);
+    explicit TemplatesTreeWidget(TemplatesTreePart *part);
     ~TemplatesTreeWidget();
 
 private:

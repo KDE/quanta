@@ -31,7 +31,7 @@ TODO: Put this code into the KDevelop libs instead of resizeablecombo.h/cpp
 class LIBQUANTA_EXPORT ResizableWidget: public QWidget{
     Q_OBJECT
 public:
-    ResizableWidget(QWidget *view, QWidget *parent = 0);
+    explicit ResizableWidget(QWidget *view, QWidget *parent = 0);
 
 private:
     MyPushButton *m_sizer;

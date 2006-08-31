@@ -23,7 +23,7 @@ class UserToolbarsGlobalConfig: public QWidget, public Ui::UserToolbarsGlobalCon
 {
     Q_OBJECT
 public:
-    UserToolbarsGlobalConfig(UserToolbarsPart *part, QWidget *parent = 0);
+    explicit UserToolbarsGlobalConfig(UserToolbarsPart *part, QWidget *parent = 0);
 
 public slots:
     void accept();

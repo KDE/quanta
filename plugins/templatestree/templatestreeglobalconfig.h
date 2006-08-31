@@ -21,7 +21,7 @@ class TemplatesTreeGlobalConfig: public QWidget, public Ui::TemplatesTreeGlobalC
 {
     Q_OBJECT
 public:
-    TemplatesTreeGlobalConfig(TemplatesTreePart *part, QWidget *parent = 0);
+    explicit TemplatesTreeGlobalConfig(TemplatesTreePart *part, QWidget *parent = 0);
 
     ~TemplatesTreeGlobalConfig();
 

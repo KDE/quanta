@@ -21,7 +21,12 @@
 
 class QXmlLocator;
 
-
+namespace DOM { 
+  class HTMLDocument;
+  class Document;
+}
+  
+  
 /**
  * \short This class builds the dom tree from the parser events.
  * 
@@ -38,7 +43,7 @@ class DomBuilder : public QXmlContentHandler, public QXmlLexicalHandler, public 
      * The following methods implement the \ref QuantaHandler interface
      * \{
      */
-    bool elementRanges(const KTextEditor::Range & elementRange, const Ranges & attrRanges);
+    bool elementRanges(const KTextEditor::Range & elementRange, const QuantaHandler::Ranges & attrRanges);
     /**
      * \}
      * \name QXmlContentHandler Interface
@@ -95,6 +100,10 @@ class DomBuilder : public QXmlContentHandler, public QXmlLexicalHandler, public 
     bool m_CDATAstarted;
     int m_startColumn;
     int m_startLine;
+    KTextEditor::Range m_elementRange;
+    QuantaHandler::Ranges m_attrRanges;
+    DOM::HTMLDocument * m_HTMLdocument;
+    DOM::Document * m_document;
 };
 
 

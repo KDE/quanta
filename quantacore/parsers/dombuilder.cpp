@@ -12,17 +12,37 @@
  ***************************************************************************/
 
 #include <kdebug.h>
+#include <dom/html_document.h>
+#include <dom/dom_doc.h>
+
 
 #include "dombuilder.h"
+
+#define DEBUGMODE
+
+#ifdef DEBUGMODE
+  #define DOMBUILDERDEBUG( S ) kDebug(24001) << S << endl;
+#else
+  #define DOMBUILDERDEBUG( S )
+#endif
+
 
 DomBuilder::DomBuilder()
 {
   m_CDATAstarted = false;
+  m_DTDstarted = false;
+  m_locator = 0;
+  m_HTMLdocument = new DOM::HTMLDocument();
+  m_document = new DOM::Document();
 }
 
 
 DomBuilder::~DomBuilder()
 {
+  delete m_HTMLdocument;
+  m_HTMLdocument = 0;
+  delete m_document;
+  m_document = 0;
 }
 
 
@@ -30,21 +50,21 @@ DomBuilder::~DomBuilder()
 
 bool DomBuilder::characters(const QString & ch)
 {
-  kDebug(24001) << "DomBuilder::Text: " << ch << endl;
+  DOMBUILDERDEBUG("DomBuilder::Text: " << ch)
   return true;
 }
 
 
 bool DomBuilder::endDocument()
 {
-  kDebug(24001) << "DomBuilder::End Document" << endl;
+  DOMBUILDERDEBUG("DomBuilder::End Document")
   return true;
 }
 
 
 bool DomBuilder::endElement(const QString & namespaceURI, const QString & localName, const QString & qName)
 {
-  kDebug(24001) << "DomBuilder::End Element: " << qName << endl;
+  DOMBUILDERDEBUG("DomBuilder::End Element: " << qName)
   return true;
 }
 
@@ -75,21 +95,21 @@ bool DomBuilder::processingInstruction(const QString & target, const QString & d
 
 bool DomBuilder::skippedEntity(const QString & name)
 {
-  kDebug(24001) << "DomBuilder::Skipped entity" << name << endl;
+  DOMBUILDERDEBUG("DomBuilder::Skipped entity" << name)
   return true;
 }
 
 
 bool DomBuilder::startDocument()
 {
-  kDebug(24001) << "DomBuilder::Start Document" << endl;
+  DOMBUILDERDEBUG("DomBuilder::Start Document")
   return true;
 }
 
 
 bool DomBuilder::startElement (const QString & namespaceURI, const QString & localName, const QString & qName, const QXmlAttributes & atts)
 {
-  kDebug(24001) << "DomBuilder::startElement: " << qName << endl;
+  DOMBUILDERDEBUG("DomBuilder::startElement: ")
   return true;
 }
 
@@ -104,7 +124,7 @@ bool DomBuilder::startPrefixMapping(const QString & prefix, const QString & uri)
 
 bool DomBuilder::comment(const QString & ch)
 {
-  kDebug(24001) << "DomBuilder::Comment: " << ch << endl;
+  DOMBUILDERDEBUG("DomBuilder::Comment: " << ch)
   return true;
 }
 
@@ -157,7 +177,7 @@ bool DomBuilder::startEntity(const QString & name)
 
 bool DomBuilder::error(const QXmlParseException & exception)
 {
-  kError(24001) << exception.message() << " at: " << exception.lineNumber() << ", " << exception.columnNumber() << endl;
+  DOMBUILDERDEBUG( exception.message() << " at: " << exception.lineNumber() << ", " << exception.columnNumber() )
   return true;
 }
 
@@ -170,14 +190,18 @@ bool DomBuilder::fatalError(const QXmlParseException & exception)
 
 bool DomBuilder::warning(const QXmlParseException & exception)
 {
-  kWarning(24001) << exception.message() << " at: " << exception.lineNumber() << ", " << exception.columnNumber() << endl;
+  DOMBUILDERDEBUG( exception.message() << " at: " << exception.lineNumber() << ", " << exception.columnNumber() )
   return true;
 }
 
 
+// from QuantaHandler
+
 bool DomBuilder::elementRanges(const KTextEditor::Range & elementRange, const Ranges & attrRanges)
 {
-  kDebug(24001) << "DomBuilder::Element Range: " << elementRange << endl;
+  DOMBUILDERDEBUG("DomBuilder::Element Range: " << elementRange)
+  m_elementRange = elementRange;
+  m_attrRanges = attrRanges;
   return true;
 }
 

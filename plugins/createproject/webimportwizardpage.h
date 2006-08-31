@@ -35,7 +35,7 @@ class KUrl;
 class WebImportWizardPage : public QWidget, public Ui::WebImportWizardPageBase  {
    Q_OBJECT
 public:
-  WebImportWizardPage(KInstance *instance, QWidget *parent=0);
+  explicit WebImportWizardPage(KInstance *instance, QWidget *parent=0);
   ~WebImportWizardPage();
 
 public slots:

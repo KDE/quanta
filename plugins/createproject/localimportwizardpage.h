@@ -31,7 +31,7 @@ class LocalImportWizardPage : public QWidget, public Ui::LocalImportWizardPageBa
 {
    Q_OBJECT
 public:
-  LocalImportWizardPage(KInstance *instance, QWidget *parent=0);
+  explicit LocalImportWizardPage(KInstance *instance, QWidget *parent=0);
   ~LocalImportWizardPage();
 
   /**

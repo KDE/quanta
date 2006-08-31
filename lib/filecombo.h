@@ -34,7 +34,7 @@ class KUrl;
 class LIBQUANTA_EXPORT FileCombo : public QWidget  {
    Q_OBJECT
 public:
-  FileCombo(const KUrl& a_baseURL, QWidget *parent=0);
+  explicit FileCombo(const KUrl& a_baseURL, QWidget *parent=0);
   FileCombo(QWidget *parent=0);
   ~FileCombo();
 

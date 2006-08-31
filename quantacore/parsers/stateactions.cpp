@@ -61,7 +61,7 @@ StateActions::ActionFunctPtr StateActions::factory(const QString &name)
   if (id == "starttag") return &setTagRangeStart;
   if (id == "quickparsespecial") return &popState;
 
-  kWarning(24001) << "unkown function name '" << id << "' in StateActions::factory" << endl;
+  kWarning(24001) << "unknown function name '" << id << "' in StateActions::factory" << endl;
   return &crashMe; // in case name is wrong
 }
 
@@ -161,7 +161,7 @@ bool StateActions::createTag(const ParserStatus & parser, const QString & argume
 
   REPORTRANGES
 
-  bool result = parser.contentHandler()->startElement(parser.m_namespace + ":" + parser.m_tagName, "", parser.m_tagName, parser.m_attributes);
+  bool result = parser.contentHandler()->startElement(parser.m_namespace + ':' + parser.m_tagName, "", parser.m_tagName, parser.m_attributes);
   parser.m_tagName.clear();
   parser.m_namespace.clear();
   parser.m_attributes.clear();
@@ -176,7 +176,7 @@ bool StateActions::createEndTag(const ParserStatus & parser, const QString & arg
   REPORTRANGES
 
   bool result = parser.contentHandler()->endElement(
-                   parser.m_namespace + ":" + parser.m_tagName, "", parser.m_tagName);
+                   parser.m_namespace + ':' + parser.m_tagName, "", parser.m_tagName);
   parser.m_tagName.clear();
   parser.m_namespace.clear();
   parser.m_attributes.clear(); // just in case

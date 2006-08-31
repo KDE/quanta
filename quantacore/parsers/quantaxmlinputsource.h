@@ -40,7 +40,7 @@ public:
   /**
    * \param doc the document to read from, must implement KTextEditor::SmartInterface
    */
-  QuantaXmlInputSource(KTextEditor::Document * doc);
+  explicit QuantaXmlInputSource(KTextEditor::Document * doc);
 
   virtual ~QuantaXmlInputSource();
 

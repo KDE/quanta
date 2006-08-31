@@ -18,7 +18,7 @@ class QuantaFileManager: public KDevFileManager
   Q_OBJECT
       
 public:
-  QuantaFileManager(QObject *parent);
+  explicit QuantaFileManager(QObject *parent);
   ~QuantaFileManager();
   /**
    * Imports the base into the model. Creates a KDevProjectFolderItem for the base

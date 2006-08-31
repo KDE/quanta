@@ -19,7 +19,7 @@ class QuantaProjectProjectConfig: public QWidget, public Ui::QuantaProjectProjec
 {
     Q_OBJECT
 public:
-    QuantaProjectProjectConfig(QuantaProjectPart *part, QWidget *parent = 0);
+    explicit QuantaProjectProjectConfig(QuantaProjectPart *part, QWidget *parent = 0);
 
 public slots:
     void accept();

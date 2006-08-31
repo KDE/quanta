@@ -20,7 +20,7 @@ class TemplatesTreeProjectConfig: public QWidget, public Ui::TemplatesTreeProjec
 {
     Q_OBJECT
 public:
-    TemplatesTreeProjectConfig(TemplatesTreePart *part, QWidget *parent = 0);
+    explicit TemplatesTreeProjectConfig(TemplatesTreePart *part, QWidget *parent = 0);
 
 public slots:
     void accept();

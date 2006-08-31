@@ -339,7 +339,7 @@ QString TagDialog::getAttribute(const QString& attr)
  }
  else
  {
-  return QString::null;
+   return QString();
  }
 
 }

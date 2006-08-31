@@ -22,7 +22,7 @@ class StructureTreeGlobalConfig : public QWidget, public Ui::StructureTreeGlobal
 {
   Q_OBJECT
 public:
-  StructureTreeGlobalConfig(StructureTreePart *part, QWidget *parent = 0);
+  explicit StructureTreeGlobalConfig(StructureTreePart *part, QWidget *parent = 0);
 
   ~StructureTreeGlobalConfig();
 

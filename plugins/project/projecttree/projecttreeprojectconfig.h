@@ -20,7 +20,7 @@ class ProjectTreeProjectConfig: public QWidget, public Ui::ProjectTreeProjectCon
 {
     Q_OBJECT
 public:
-    ProjectTreeProjectConfig(ProjectTreePart *part, QWidget *parent = 0);
+    explicit ProjectTreeProjectConfig(ProjectTreePart *part, QWidget *parent = 0);
 
 public slots:
     void accept();

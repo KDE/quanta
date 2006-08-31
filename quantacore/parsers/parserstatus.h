@@ -117,7 +117,7 @@ class ParserStatus : public QXmlReader
      * \note You have to call at least \ref setContentHandler before you call this. 
      * 
      * \param input the source where the data comes from
-     * \return \e true if parsing was successfull \e false if not
+     * \return \e true if parsing was successful \e false if not
      */
     bool parse(const QXmlInputSource * input);
     
@@ -125,7 +125,7 @@ class ParserStatus : public QXmlReader
      * Obsolete version of the above method, but we still need to implement
      * as it is part of the interface.
      * @param input the source where the data comes from
-     * @return \e true if parsing was successfull \e false if not
+     * @return \e true if parsing was successful \e false if not
      */
     bool parse(const QXmlInputSource & input) {return parse(&input);}
     

@@ -31,7 +31,7 @@ public:
    * Create a GUI client which uses the file specified as parameter.
    * @param xmlFile the xml file describing this client
    */
-  ToolbarXMLGUI(const QString& xmlFile);
+  explicit ToolbarXMLGUI(const QString& xmlFile);
   ~ToolbarXMLGUI();
 };
 

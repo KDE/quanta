@@ -20,7 +20,7 @@ class HTMLPreviewProjectConfig: public QWidget, public Ui::HTMLPreviewProjectCon
 {
     Q_OBJECT
 public:
-    HTMLPreviewProjectConfig(HTMLPreviewPart *part, QWidget *parent = 0);
+    explicit HTMLPreviewProjectConfig(HTMLPreviewPart *part, QWidget *parent = 0);
 
 public slots:
     void accept();

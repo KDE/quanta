@@ -84,7 +84,7 @@ QString QuantaXmlInputSource::data() const
   if (m_cursor)
     return m_cursor->document()->text();
   else
-    return QString::Null();
+    return QString();
 }
 
 QChar QuantaXmlInputSource::next()

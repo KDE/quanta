@@ -169,7 +169,7 @@ private:
    *  If you need the class use DTDs::ref() for
    *  construction and reference
    */
-  DTDs(QObject *parent);
+  explicit DTDs(QObject *parent);
 
 
   /** Reads the tag files and the description.rc from tagDir in order to

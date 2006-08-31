@@ -231,14 +231,14 @@ QString Node::nodeName()
 {
     if (tag)
         return tag->name();
-    return QString::null;
+    return QString();
 }
 
 QString Node::nodeValue()
 {
     if (tag)
         return tag->tagStr();
-    return QString::null;
+    return QString();
 }
 
 void Node::setNodeValue(const QString &value)

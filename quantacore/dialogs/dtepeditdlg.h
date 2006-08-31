@@ -57,7 +57,7 @@ class DTEPEditDlg : public QWidget, public Ui::DTEPEditDlgS
 {
   Q_OBJECT
   public:
-    DTEPEditDlg(const QString& descriptionFile, QWidget *parent = 0);
+    explicit DTEPEditDlg(const QString& descriptionFile, QWidget *parent = 0);
     ~DTEPEditDlg();
     void saveResult();
     void slotFamilyChanged(int family);

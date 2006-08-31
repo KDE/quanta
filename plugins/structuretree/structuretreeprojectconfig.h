@@ -20,7 +20,7 @@ class StructureTreeProjectConfig: public QWidget, public Ui::StructureTreeProjec
 {
     Q_OBJECT
 public:
-    StructureTreeProjectConfig(StructureTreePart *part, QWidget *parent = 0);
+    explicit StructureTreeProjectConfig(StructureTreePart *part, QWidget *parent = 0);
 
 public slots:
     void accept();

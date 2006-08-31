@@ -50,7 +50,7 @@ public:
   */
   TagDialog(QTag* dtdTag, Tag* tag, const KUrl& a_baseURL = KUrl());
   TagDialog(QTag* dtdTag, Tag* tag, const QString& selection, const KUrl& a_baseURL = KUrl());
-  TagDialog(QTag* dtdTag, const QString& attrs = QString::null, const KUrl& a_baseURL = KUrl());
+  explicit TagDialog(QTag* dtdTag, const QString& attrs = QString::null, const KUrl& a_baseURL = KUrl());
   TagDialog(QTag* dtdTag, const QString& selection, const QString& attrs=QString::null, const KUrl& a_baseURL = KUrl());
   ~TagDialog();
   /** Insert an attribute to dict*/
