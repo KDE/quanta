@@ -27,7 +27,7 @@ class QDomNode;
 
 /**
  *  @short Template class to call function by their name.
- * 
+ *
  *  Right now there are two kind of function we would like to call:
  * comparator functions (Comparator::CompareFunctPtr) used to check if a
  * condition in a state is true and action functions
@@ -41,7 +41,7 @@ class QDomNode;
  *  Function<Comparator::CompareFunctPtr> compareFunction(functionPtr, argument);
  *  ...
  * //call the function
- *  compareFunction.call(statusObject); //statusObject is a ParserStatus object 
+ *  compareFunction.call(statusObject); //statusObject is a ParserStatus object
  * @endcode
  *
  * @author Andras Mantia <amantia@kde.org>
@@ -66,11 +66,10 @@ public:
    * @param status the ParserStatus object
    * @return false in case of problems
    */
-  bool call(const ParserStatus & status)
+  bool call(const ParserStatus & status) const
   {
     return m_function(status, m_argument);
   }
-
 #ifdef DEBUG_STATEMACHINE
   void setName(const QString &name) {m_name = name;}
   QString name() {return m_name;}
@@ -88,11 +87,11 @@ private:
 /** Helper typedef's to ease readability.*/
 typedef Function<StateActions::ActionFunctPtr> ActionFunction;
 typedef Function<Comparator::CompareFunctPtr> CompareFunction;
-      
+
 struct State;
 /**
  * @short Describes a condition in a state.
- * 
+ *
  * Conditions are tested when a character is
  * read from an input source, and they can execute an action and they trigger
  * a state switch (might go back to the same state). The @ref compareFunction
@@ -101,9 +100,12 @@ struct State;
  *
  * @author Andras Mantia <amantia@kde.org>
  */
+
+#define MAXFUNCTIONS 10
+
 struct Condition {
   CompareFunction compareFunction; ///<condition verification function
-  QList< ActionFunction > actionFunctions; ///<possible list of actions with their arguments
+  ActionFunction * actionFunctions[MAXFUNCTIONS]; ///<possible list of actions with their arguments
   State * nextState; ///<if the condition function returns true, switch to this state
 };
 
@@ -113,7 +115,7 @@ struct Condition {
  * @author Andras Mantia <amantia@kde.org>
  */
 struct State {
-  QList<Condition> conditions; ///<the list of conditions
+  Condition * conditions[MAXFUNCTIONS]; ///<the list of conditions
   State * endState; ///< the state if we encounter the end of the document
   QString name; ///<the name of the state
 };
@@ -128,7 +130,7 @@ class StateMachine{
 
 
 public:
-   
+
   StateMachine();
 
   ~StateMachine();
@@ -142,24 +144,24 @@ public:
   bool build(const QString &fileName);
 
   /**
-   * @return the start State 
+   * @return the start State
    */
   const State * startState() const {return m_startState;}
-  
+
   /**
-   * @param name the name of the state in the XML file 
+   * @param name the name of the state in the XML file
    * @return a pointer to a State for the given name or 0 for unknown states
    */
   const State * state(const QString &name) const {return m_stateNameMapping.value(name);}
-  
+
 private:
   /**
    * Reads the conditions from the dom tree in a list of conditions.
    * @param stateNode read the conditions from under this node
    * @param conditions store the conditions in this list
    */
-  void readConditions(QDomNode *stateNode, QList<Condition> &conditions);
-  
+  void readConditions(QDomNode *stateNode, Condition *conditions[]);
+
   QHash<QString, State *> m_stateNameMapping; ///<mapping between state name and state index in the above list
   State *m_startState; ///< the statemachine starts from this state. It is the first state read from the xml file
 

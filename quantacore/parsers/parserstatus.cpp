@@ -12,11 +12,22 @@
  ***************************************************************************/
 
 #include <QXmlInputSource>
+#include <QTime>
 
 #include <kdebug.h>
 
 #include "parserstatus.h"
 #include "statemachine.h"
+#include "quantaxmlinputsource.h"
+
+#undef DEBUGMODE
+
+#ifdef DEBUGMODE
+#define PARSERSTATUSDEBUG( S )  kDebug(24001) << S << endl;
+#else
+#define PARSERSTATUSDEBUG( S )
+#endif
+
 
 ParserStatus::ParserStatus(QXmlLocator *locator, StateMachine *stateMachine) :
   QXmlReader()
@@ -42,14 +53,18 @@ void ParserStatus::reset(QXmlLocator * locator, StateMachine * stateMachine)
 {
   Q_ASSERT_X(locator != 0, "ParserStatus::reset", "locator undefined");
   Q_ASSERT_X(stateMachine != 0, "ParserStatus::reset", "stateMachine undefined");
-  
+
   if (m_locator != locator)
     delete m_locator;
-  
+
   m_locator = locator;
   m_stateMachine = stateMachine;
   m_buffer.clear();
+  m_buffer.reserve(1000);
   m_tagName.clear();
+  m_tagName.reserve(100);
+  m_attrName.clear();
+  m_attrName.reserve(100);
   m_currChar = QChar();
   m_source = 0;
   m_sourceStack.clear();
@@ -61,23 +76,51 @@ void ParserStatus::reset(QXmlLocator * locator, StateMachine * stateMachine)
                                   KTextEditor::Cursor::invalid());
   m_attrRanges.clear();
 }
-    
-    
+
+
 bool ParserStatus::parse(const QXmlInputSource * input)
 {
   if (! contentHandler())
     return false;
-  
+
   Q_ASSERT_X(input != 0, "ParserStatus::parse", "input source is undefined");
   if (! input)
     return false;
-  
-  m_source = (QXmlInputSource *) input;
+
+  QTime timer;
+  timer.start();
+
+//  m_source = (QXmlInputSource *) input;
   contentHandler()->setDocumentLocator(m_locator);
   contentHandler()->startDocument();
   m_currState = m_stateMachine->startState();
   bool result = loop();
   contentHandler()->endDocument();
+
+  kDebug(24000) << "Parsing time: " << timer.elapsed() << " ms" << endl;
+  return result;
+}
+
+bool ParserStatus::parse(const QuantaXmlInputSource * input)
+{
+  if (! contentHandler())
+    return false;
+
+  Q_ASSERT_X(input != 0, "ParserStatus::parse", "input source is undefined");
+  if (! input)
+    return false;
+
+  QTime timer;
+  timer.start();
+
+  m_source = (QuantaXmlInputSource *) input;
+  contentHandler()->setDocumentLocator(m_locator);
+  contentHandler()->startDocument();
+  m_currState = m_stateMachine->startState();
+  bool result = loop();
+  contentHandler()->endDocument();
+
+  kDebug(24000) << "Parsing time: " << timer.elapsed() << " ms" << endl;
   return result;
 }
 
@@ -101,7 +144,44 @@ bool ParserStatus::loop()
         else
           break;
       }
+      if (m_currChar == '\n')
+        m_currChar = ' ';
     }
+
+      // test conditions and do the actions
+    Condition *cond = m_currState->conditions[0];
+    int i = 0;
+    while (cond)
+    {
+      if (cond->compareFunction.call(*this))
+      {
+        const State * nextState = cond->nextState;
+        ActionFunction *action = cond->actionFunctions[0];
+        int j = 0;
+        while (action)
+        {
+          if (! action->call(*this))
+            return false;
+          j++;
+          action = cond->actionFunctions[j];
+        }
+        if (nextState)
+        {
+#ifdef DEBUGMODE
+          if (m_currState != nextState)
+          {
+            PARSERSTATUSDEBUG("State changed to " << nextState->name << " char: " << m_currChar)
+          }
+#endif
+          m_currState = nextState;
+        }
+
+        break;
+      }
+      i++;
+      cond = m_currState->conditions[i];
+    }
+#if 0
       // test conditions and do the actions
     foreach (Condition condition, m_currState->conditions)
     {
@@ -109,40 +189,41 @@ bool ParserStatus::loop()
       {
         foreach (ActionFunction af, condition.actionFunctions)
         {
-          if (! af.call(*this))
+          if (!af.call(*this))
             return false;
         }
         if (condition.nextState)
         {
           m_currState = condition.nextState;
-          kDebug(24001) << "State changed to " << m_currState->name << endl;
+          PARSERSTATUSDEBUG("State changed to " << m_currState->name)
         }
-          
+
         break;
       }
     }
+#endif
     if (m_currChar == QXmlInputSource::EndOfDocument)
       break;
   }
   return true;
 }
 
-    
+
 bool ParserStatus::feature(const QString & name, bool * ok) const
-{ 
+{
   if (name == "http://kdewebdev.org/quanta/features/html-mode")
   {
-    if (ok) 
+    if (ok)
       *ok = true;
     return m_htmlMode;
   }
-  if (ok) 
+  if (ok)
     *ok = false;
   return false;
 }
-    
 
-void ParserStatus::setFeature(const QString & name, bool value) 
+
+void ParserStatus::setFeature(const QString & name, bool value)
 {
   if (name == "http://kdewebdev.org/quanta/features/html-mode")
     m_htmlMode = value;
@@ -150,12 +231,12 @@ void ParserStatus::setFeature(const QString & name, bool value)
   return;
 };
 
-    
+
 bool ParserStatus::hasFeature(const QString & name) const
 {
   if (name == "http://kdewebdev.org/quanta/features/html-mode")
      return true;
-  
+
   return false;
 }
 

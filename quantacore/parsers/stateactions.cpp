@@ -28,6 +28,16 @@
 
 #include "stateactions.h"
 
+
+#undef DEBUGMODE
+
+#ifdef DEBUGMODE
+#define ACTIONDEBUG( S )  kDebug(24001) << S << endl;
+#else
+#define ACTIONDEBUG( S )
+#endif
+
+
 // I am using a define because I want to have it as fast a possible
 #define REPORTRANGES   if (parser.m_quantaHandler) \
     parser.m_quantaHandler->elementRanges(parser.m_tagRange, parser.m_attrRanges); \
@@ -60,6 +70,7 @@ StateActions::ActionFunctPtr StateActions::factory(const QString &name)
   if (id == "") return &setAttrRangeEnd;
   if (id == "starttag") return &setTagRangeStart;
   if (id == "quickparsespecial") return &popState;
+  if (id == "fillbufferuntil") return &fillBufferUntil;
 
   kWarning(24001) << "unknown function name '" << id << "' in StateActions::factory" << endl;
   return &crashMe; // in case name is wrong
@@ -150,7 +161,7 @@ bool StateActions::popState(const ParserStatus & parser, const QString & argumen
     return false;
 
   parser.m_currState = parser.m_stateStack.pop();
-  kDebug(24001) << "State changed to " << parser.m_currState->name << " using popState" << endl;
+  ACTIONDEBUG("State changed to " << parser.m_currState->name << " using popState" )
   return true;
 }
 
@@ -194,6 +205,7 @@ bool StateActions::createComment(const ParserStatus & parser, const QString & ar
 
   bool result = parser.lexicalHandler()->comment(parser.m_buffer);
   parser.m_buffer.clear();
+  parser.m_buffer.reserve(1000);
   return result;
 }
 
@@ -202,6 +214,7 @@ bool StateActions::createText(const ParserStatus & parser, const QString & argum
   Q_UNUSED(argument);
   bool result = parser.contentHandler()->characters(parser.m_buffer);
   parser.m_buffer.clear();
+  parser.m_buffer.reserve(1000);
   return result;
 }
 
@@ -273,7 +286,9 @@ bool StateActions::addAttr(const ParserStatus & parser, const QString & argument
   // TODO add namespace
   parser.m_attributes.append(parser.m_attrName, "", parser.m_attrName, parser.m_buffer);
   parser.m_attrName.clear();
+  parser.m_attrName.reserve(100);
   parser.m_buffer.clear();
+  parser.m_buffer.reserve(1000);
   return true;
 }
 
@@ -294,6 +309,17 @@ bool StateActions::setTagRangeStart(const ParserStatus & parser, const QString &
                                                 parser.m_locator->columnNumber(),
                                                 parser.m_locator->lineNumber(),
                                                 parser.m_locator->columnNumber()));
+  return true;
+}
+
+bool StateActions::fillBufferUntil(const ParserStatus & parser, const QString & argument)
+{
+  if (argument.isEmpty())
+  {
+    parser.m_buffer.append(parser.m_currChar);
+    return true;
+  }
+  parser.m_buffer.append(parser.m_source->charactersUntil(argument.at(0)));
   return true;
 }
 

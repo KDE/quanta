@@ -79,15 +79,18 @@ public:
   /**
    * \}
    */
-  /**
-   * from SmartCursorWatcher to make sure that we do not use the cursor anymore
-   * after it was deleted.
-   */
-  void deleted(KTextEditor::SmartCursor * cursor);
+
+  QString charactersUntil(const QChar &searchCh);
+
 
 private:
-  KTextEditor::SmartCursor * m_cursor;
-  KTextEditor::Cursor m_lastCursor;
+  QString m_buffer;
+  int m_line;
+  int m_column;
+  int m_oldLine;
+  int m_oldColumn;
+  KTextEditor::Document * m_document;
+  int m_numLines;
 };
 
 #endif

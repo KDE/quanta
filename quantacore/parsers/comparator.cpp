@@ -17,12 +17,20 @@
 
 #include "comparator.h"
 
+#undef DEBUGMODE
+
+#ifdef DEBUGMODE
+#define COMPAREDEBUG( S )  kDebug(24001) << S << endl;
+#else
+#define COMPAREDEBUG( S )
+#endif
+
 
 Comparator::CompareFunctPtr Comparator::factory(const QString &name)
 {
   QString id = name.toLower();
-  if (id == "isanychar") return &always;
   if (id == "equals") return &equal;
+  if (id == "isanychar") return &always;
   if (id == "containedin") return &containedIn;
   if (id == "iswhitespace") return &whitespace;
   if (id == "ischaracter") return &asciiChar;
@@ -56,7 +64,7 @@ bool Comparator::equal(const ParserStatus &parser, const QString &argument)
   if (argument.isEmpty())
     return false;
 
-  return parser.m_currChar == argument[0];
+  return parser.m_currChar == argument.at(0);
 }
 
 bool Comparator::containedIn(const ParserStatus &parser, const QString &argument)
@@ -94,7 +102,8 @@ bool Comparator::asciiChar(const ParserStatus &parser, const QString &argument)
   Q_UNUSED(argument);
   bool result = (parser.m_currChar >= 'a' && parser.m_currChar <= 'z')
       || (parser.m_currChar >= 'A' && parser.m_currChar <= 'Z');
-//   kDebug(24001) << parser.m_currChar << " is a character: " << result << endl;
+
+  COMPAREDEBUG( parser.m_currChar << " is a character: " << result )
   return result;
 }
 

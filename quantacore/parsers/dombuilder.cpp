@@ -18,12 +18,12 @@
 
 #include "dombuilder.h"
 
-#define DEBUGMODE
+#undef DEBUGMODE
 
 #ifdef DEBUGMODE
-  #define DOMBUILDERDEBUG( S ) kDebug(24001) << S << endl;
+#define DOMBUILDERDEBUG( S ) kDebug(24001) << S << endl;
 #else
-  #define DOMBUILDERDEBUG( S )
+#define DOMBUILDERDEBUG( S )
 #endif
 
 
@@ -177,7 +177,7 @@ bool DomBuilder::startEntity(const QString & name)
 
 bool DomBuilder::error(const QXmlParseException & exception)
 {
-  DOMBUILDERDEBUG( exception.message() << " at: " << exception.lineNumber() << ", " << exception.columnNumber() )
+  kError(24001) << exception.message() << " at: " << exception.lineNumber() << ", " << exception.columnNumber() << endl;
   return true;
 }
 
@@ -190,7 +190,7 @@ bool DomBuilder::fatalError(const QXmlParseException & exception)
 
 bool DomBuilder::warning(const QXmlParseException & exception)
 {
-  DOMBUILDERDEBUG( exception.message() << " at: " << exception.lineNumber() << ", " << exception.columnNumber() )
+  kWarning(24001) << exception.message() << " at: " << exception.lineNumber() << ", " << exception.columnNumber() << endl;
   return true;
 }
 

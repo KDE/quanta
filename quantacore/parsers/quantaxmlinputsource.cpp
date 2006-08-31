@@ -35,14 +35,14 @@ class Locator : public QXmlLocator
      */
     int columnNumber() const
     {
-      return m_source->m_lastCursor.column();
+      return m_source->m_oldColumn;
     }
     /**
      * \return the current line number, -1 means invalid position!
      */
     int lineNumber() const
     {
-      return m_source->m_lastCursor.line();
+      return m_source->m_oldLine;
     }
     /**
      * \}
@@ -54,23 +54,14 @@ class Locator : public QXmlLocator
 
 
 QuantaXmlInputSource::QuantaXmlInputSource(KTextEditor::Document * doc)
-  : QXmlInputSource(), KTextEditor::SmartCursorWatcher(), m_cursor(0)
+  : QXmlInputSource(), m_document(doc)
 {
-  KTextEditor::SmartInterface* smart = qobject_cast<KTextEditor::SmartInterface*>(doc);
-
-  Q_ASSERT_X(smart != 0, "constructor QuantaXmlInputSource", "the provided document does not support the smart interface");
-  if (smart)
-  {
-    m_cursor = smart->newSmartCursor();
-    m_cursor->setWatcher(this);
-    m_lastCursor.setPosition(*m_cursor);
-  }
+  reset();
+  // TODO connect to the document to know when it is about to close
 }
 
 QuantaXmlInputSource::~QuantaXmlInputSource()
 {
-  delete m_cursor;
-  m_cursor = 0;
 }
 
 QXmlLocator * QuantaXmlInputSource::newLocator() const
@@ -81,40 +72,92 @@ QXmlLocator * QuantaXmlInputSource::newLocator() const
 
 QString QuantaXmlInputSource::data() const
 {
-  if (m_cursor)
-    return m_cursor->document()->text();
-  else
-    return QString();
+  return m_document->text();
 }
+
+QString QuantaXmlInputSource::charactersUntil(const QChar &searchCh)
+{
+  QString result;
+  result.reserve(1000);
+  int pos = m_buffer.indexOf(searchCh, m_column);
+  if ( pos != -1)
+  {
+    result = m_buffer.mid(m_column, pos - m_column);
+    m_column = pos;
+    return result;
+  }
+  m_buffer = m_buffer.mid(m_column);
+  while (pos == -1)
+  {
+    result.append(m_buffer);
+    m_line++;
+    if (m_line >= m_numLines)
+    {
+      m_line = -1;
+      return result;
+    }
+    m_buffer = m_document->line(m_line);
+    pos = m_buffer.indexOf(searchCh);
+  }
+  if (pos > 0)
+  {
+    result.append(m_buffer.left(pos - 1));
+    m_column = pos - 1;
+  } else
+  {
+    m_line--;
+    m_buffer = m_document->line(m_line);
+    m_column = m_buffer.length();
+  }
+  return result;
+}
+
 
 QChar QuantaXmlInputSource::next()
 {
-  m_lastCursor.setPosition(*m_cursor);
-  if (! m_cursor || ! m_cursor->isValid())
+  m_oldLine = m_line;
+  m_oldColumn = m_column;
+  if (m_line < 0)
     return QXmlInputSource::EndOfDocument;
 
-  QChar c = m_cursor->character();
-  if (!m_cursor->advance(+1, KTextEditor::SmartCursor::ByCharacter))
-    m_cursor->setPosition(-1, -1); //will be invalid on the following call to next
-  return c;
+  if (m_column >= m_buffer.length())
+  {
+    m_line++;
+    if (m_line >= m_numLines)
+    {
+      m_line = -1;
+    }
+    else
+    {
+      m_column = 0;
+      m_buffer = m_document->line(m_line);
+    }
+    return '\n';
+  }
+  else
+  {
+    QChar c = m_buffer.at(m_column);
+    m_column++;
+    return c;
+  }
 }
 
 void QuantaXmlInputSource::reset()
 {
-  if (m_cursor)
+  m_numLines = m_document->lines() ;
+  if (m_numLines > 0)
   {
-    m_cursor->setPosition(m_cursor->start());
-    m_lastCursor.setPosition(*m_cursor);
+    m_line = 0;
+    m_column = 0;
+    m_buffer = m_document->line(0);
   }
-}
-
-void QuantaXmlInputSource::deleted(KTextEditor::SmartCursor * cursor)
-{
-  if (m_cursor == cursor)
+  else
   {
-    m_cursor = 0;
-    m_lastCursor = KTextEditor::Cursor::invalid();
+    m_line = -1;
+    m_buffer = QString();
   }
+  m_oldLine = m_line;
+  m_oldColumn = m_column;
 }
 
 

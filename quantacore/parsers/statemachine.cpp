@@ -74,20 +74,33 @@ bool StateMachine::build(const QString &fileName)
   {
     QDomNode n = stateNodes.item(i);
     QDomElement e = n.toElement();
-    readConditions(&n, m_stateNameMapping[e.attribute("name", QString("state:%1").arg(i))]->conditions);
+    State * state = m_stateNameMapping[e.attribute("name", QString("state:%1").arg(i))];
+    readConditions(&n, state->conditions);
+    state->endState = m_stateNameMapping.value(e.attribute("endOfDocument"));
   }
 
 #ifdef DEBUG_STATEMACHINE
   foreach(State *state, m_stateNameMapping)
   {
-    kDebug(24000) << "State: name = " << state->name << endl;
-    foreach (Condition condition, state->conditions)
+    if (state->endState)
+      kDebug(24001) << "State: name = " << state->name << " endOfDocument=" << state->endState->name << endl;
+    else
+      kDebug(24001) << "State: name = " << state->name << " endOfDocument= not specified" << endl;
+    Condition * condition = state->conditions[0];
+    int i = 0;
+    while (condition)
     {
-      kDebug(24000) << "   Condition: " << " comparatorFunct = " << condition.compareFunction.name() << ", argument = \"" << condition.compareFunction.argument() << "\", nextState = (" << condition.nextState << " , " << m_stateNameMapping.key(condition.nextState) << ")" << endl;
-      foreach(ActionFunction action, condition.actionFunctions)
+      kDebug(24001) << "   Condition: " << " comparatorFunct = " << condition->compareFunction.name() << ", argument = \"" << condition->compareFunction.argument() << "\", nextState = (" << condition->nextState << " , " << m_stateNameMapping.key(condition->nextState) << ")" << endl;
+      int j = 0;
+      ActionFunction *action = condition->actionFunctions[0];
+      while (action)
       {
-        kDebug(24000) << "      Action: name = " << action.name() << ", argument = \"" << action.argument() << "\"" << endl;
+        kDebug(24001) << "      Action: name = " << action->name() << ", argument = \"" << action->argument() << "\"" << endl;
+        j++;
+        action = condition->actionFunctions[j];
       }
+      i++;
+      condition = state->conditions[i];
     }
   }
 #endif
@@ -95,7 +108,7 @@ bool StateMachine::build(const QString &fileName)
   return true;
 }
 
-void StateMachine::readConditions(QDomNode *stateNode, QList<Condition> &conditions)
+void StateMachine::readConditions(QDomNode *stateNode, Condition* conditions[])
 {
   QString nodeName;
   QString conditionName;
@@ -103,12 +116,17 @@ void StateMachine::readConditions(QDomNode *stateNode, QList<Condition> &conditi
 #ifdef DEBUG_STATEMACHINE
   bool defaultConditionExists = false;
 #endif
+  for (uint i = 0; i < MAXFUNCTIONS; i++)
+    conditions[i] = 0;
+  int i = 0;
   for (QDomNode n = stateNode->firstChild(); !n.isNull(); n = n.nextSibling() )
   {
     nodeName = n.nodeName();
     if (nodeName == "condition")
     {
-      Condition condition;
+      Condition *condition = new Condition();
+      for (uint j = 0; j < MAXFUNCTIONS; j++)
+        condition->actionFunctions[j] = 0;
       QDomElement el = n.toElement();
       conditionName = el.attribute("name");
       CompareFunction compareFunction(Comparator::factory(conditionName), el.attribute("argument"));
@@ -117,21 +135,22 @@ void StateMachine::readConditions(QDomNode *stateNode, QList<Condition> &conditi
       if (conditionName.toLower() == "isanychar")
         defaultConditionExists = true;
 #endif
-      condition.compareFunction = compareFunction;
+      condition->compareFunction = compareFunction;
       nextStateName = el.attribute("nextState");
       if (m_stateNameMapping.contains(nextStateName))
-        condition.nextState = m_stateNameMapping.value(nextStateName);
+        condition->nextState = m_stateNameMapping.value(nextStateName);
       else
       {
 #ifdef DEBUG_STATEMACHINE
         if (!nextStateName.isEmpty())
           kWarning(24001) << "State " << nextStateName << " is not known." << endl;
 #endif
-        condition.nextState = 0;
+        condition->nextState = 0;
       }
       QDomElement item = el.firstChild().toElement();
       QString tagName;
       QString argument;
+      int j = 0;
       while (!item.isNull())
       {
         tagName = item.tagName();
@@ -140,15 +159,21 @@ void StateMachine::readConditions(QDomNode *stateNode, QList<Condition> &conditi
           argument = item.attribute("argument");
           if (argument.isEmpty() && !item.attribute("message").isEmpty())
             argument = i18n(item.attribute("message").toUtf8());
-          ActionFunction action(StateActions::factory(item.attribute("name")), argument);
+          ActionFunction *action = new ActionFunction(StateActions::factory(item.attribute("name")), argument);
 #ifdef DEBUG_STATEMACHINE
-          action.setName(item.attribute("name"));
+          action->setName(item.attribute("name"));
 #endif
-          condition.actionFunctions.append(action);
+          condition->actionFunctions[j] = action;
+          j++;
+          if (j == MAXFUNCTIONS - 1)
+            break;
         }
         item = item.nextSibling().toElement();
       }
-      conditions.append(condition);
+      conditions[i] = condition;
+      i++;
+      if (i == MAXFUNCTIONS - 1)
+        break;
     }
   }
 #ifdef DEBUG_STATEMACHINE

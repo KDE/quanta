@@ -113,7 +113,7 @@
       <action name="popState" />
     </condition>
     <condition name="isAnyChar" nextState="startText">
-      <action name="addCharToBuffer" />
+      <action name="fillBufferUntil"  argument="&lt;" />
     </condition>
   </state>
 
@@ -139,7 +139,7 @@
       <action name="createTag" />
       <action name="popState" />
     </condition>
-    <condition name="isAnyChar" nextState="">
+    <condition name="isAnyChar" nextState="startDocType">
       <action name="addCharToBuffer"/>
     </condition>
   </state>
@@ -238,7 +238,7 @@
       <action name="pushBackChar" />
       <action name="popState" />
     </condition>
-    <condition name="isAnyChar" nextState="">
+    <condition name="isAnyChar" nextState="startAttribute">
       <action name="addToAttributeName" argument="/" />
       <action name="reportError" message="/ is invalid in attribute name." />
       <action name="pushBackChar" />
@@ -261,7 +261,7 @@
       <action name="addToAttributeName" />
     </condition>
     <condition name="isAnyChar" nextState="startAttribute">
-      <action name="reportError" message="Attribute name does not start with a a letter."/>
+      <action name="reportError" message="Attribute name does not start with a letter."/>
       <action name="addToAttributeName" />
     </condition>
   </state>
