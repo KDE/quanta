@@ -23,6 +23,7 @@ Comparator::CompareFunctPtr Comparator::factory(const QString &name)
   QString id = name.toLower();
   if (id == "isanychar") return &always;
   if (id == "equals") return &equal;
+  if (id == "containedin") return &containedIn;
   if (id == "iswhitespace") return &whitespace;
   if (id == "ischaracter") return &asciiChar;
 
@@ -58,6 +59,13 @@ bool Comparator::equal(const ParserStatus &parser, const QString &argument)
   return parser.m_currChar == argument[0];
 }
 
+bool Comparator::containedIn(const ParserStatus &parser, const QString &argument)
+{
+  if (argument.isEmpty())
+    return false;
+
+  return argument.contains(parser.m_currChar);
+}
 
 bool Comparator::whitespace(const ParserStatus &parser, const QString &argument)
 {

@@ -2,7 +2,7 @@
 <!DOCTYPE statemachine SYSTEM "http://quanta.kdewebdev.org/download/statemachine.dtd">
 
 <statemachine version="1.0">
-<!-- Prolog parsing -->  
+<!-- Main parsing -->
   <state name="begin" endOfDocument="">
     <condition name="equals" argument="&lt;" nextState="ltFound">
       <action name="startTag" />
@@ -16,7 +16,7 @@
 
   <state name="ltFound" endOfDocument="">
     <condition name="isWhiteSpace" nextState="ltFound" >
-      <action name="reportError" />
+      <action name="reportError" message="Whitespace cannot follow the &lt;."/>
     </condition>
     <condition name="equals" argument="&lt;" nextState="ltFound">
       <action name="reportError" message="&lt; cannot follow &lt;."/>
@@ -25,6 +25,9 @@
     <condition name="equals" argument="!" nextState="emFound" />
     <condition name="equals" argument="?" nextState="gotoPI" />
     <condition name="equals" argument="-" nextState="gotoClosingElement" />
+    <condition name="equals" argument="/" nextState="closingElement" >
+      <action name="pushState" argument="begin" />
+    </condition>
     <condition name="isCharacter" nextState="startElement">
       <action name="addToTagName" />
       <action name="pushState" argument="begin" />
@@ -33,7 +36,7 @@
       <action name="reportError" message="Invalid character after &lt;." />
       <action name="addToTagName" />
       <action name="pushState" argument="begin" />
-    </condition>              
+    </condition>
   </state>
 
   <state name="emFound" endOfDocument="">
@@ -51,7 +54,7 @@
     </condition>
   </state>
 
-<!-- Comment parsing sub-state machine -->  
+<!-- Comment parsing sub-state machine -->
   <state name="startComment" endOfDocument="">
     <condition name="equals" argument=">" nextState="">
       <action name="addStringToBuffer" argument="!-" />
@@ -65,30 +68,30 @@
   </state>
 
   <state name="commentString" endOfDocument="">
-    <condition name="equals" argument="-" nextState="firstDash" />
+    <condition name="equals" argument="-" nextState="firstDashFound" />
     <condition name="isAnyChar" nextState="commentString">
       <action name="addCharToBuffer" />
     </condition>
   </state>
 
-  <state name="firstDash" endOfDocument="">
-    <condition name="equals" argument="-" nextState="secondDash" />
+  <state name="firstDashFound" endOfDocument="">
+    <condition name="equals" argument="-" nextState="secondDashFound" />
     <condition name="equals" argument=">" nextState="commentString">
       <action name="reportWarning" message="Wrong end of comment?" />
       <action name="addStringToBuffer" argument="->" />
-    </condition>   
+    </condition>
     <condition name="isAnyChar" nextState="commentString">
       <action name="addStringToBuffer" argument="-" />
       <action name="addCharToBuffer" />
     </condition>
   </state>
 
-  <state name="secondDash" endOfDocument="">
+  <state name="secondDashFound" endOfDocument="">
     <condition name="equals" argument=">" nextState="">
       <action name="createComment" />
       <action name="popState" />
     </condition>
-    <condition name="equals" argument="-" nextState="secondDash">
+    <condition name="equals" argument="-" nextState="secondDashFound">
       <action name="addCharToBuffer" />
       <action name="reportWarning" message="Adjacent hyphens wihtin comment." />
     </condition>
@@ -119,7 +122,7 @@
     <condition name="equals" argument=";" nextState="">
       <action name="createEntity" />
       <action name="addCharToBuffer" />
-      <action name="popState" />      
+      <action name="popState" />
     </condition>
     <condition name="isWhiteSpace" nextState="">
       <action name="addCharToBuffer" />
@@ -159,14 +162,6 @@
     </condition>
   </state>
 
-<!--   Entered when a character after a slash should be ignored -->
-  <state name="slashFound" endOfDocument="">
-    <condition name="isAnyChar" nextState="">
-      <action name="addCharToBuffer" />
-      <action name="popState" />
-    </condition>
-  </state>
-  
 <!--   Single quoted string parsing state machine -->
   <state name="startSingleQuotedString" endOfDocument="">
     <condition name="equals" argument="'" nextState="">
@@ -184,13 +179,31 @@
       <action name="addCharToBuffer" />
     </condition>
   </state>
-  
 
-<!-- Element (tag) parsing state machine -->
+<!--   Entered when a character after a slash should be ignored -->
+  <state name="slashFound" endOfDocument="">
+    <condition name="isAnyChar" nextState="">
+      <action name="addCharToBuffer" />
+      <action name="popState" />
+    </condition>
+  </state>
+
+
+<!-- Element (tag) parsing state machine. It consists of several sub-state machines. -->
+  <!-- Parse the tag name and deal with tag creation -->
   <state name="startElement" endOfDocument="" >
-    <condition name="equals" argument=">" nextState="tagEnded" >
+    <condition name="equals" argument=">" nextState="" >
+      <action name="createTag" />
+      <action name="quickParseSpecial" />
+    </condition>
+    <condition name="equals" argument="&lt;" nextState="" >
+      <action name="reportError" message="&gt; not found at the end of the tag."/>
+      <action name="createTag"/>
+      <action name="pushBackChar" />
+      <action name="popState" />
     </condition>
     <condition name="isWhiteSpace" nextState="searchAttribute">
+      <action name="pushState" argument="tagEnded" />
     </condition>
     <condition name="equals" argument=":" nextState="startElement">
       <action name="rememberNameSpace" />
@@ -200,11 +213,49 @@
     </condition>
   </state>
 
+  <state name="tagEnded" endOfDocument="">
+    <condition name="equals" argument="/" nextState="slashInTag" />
+    <condition name="equals" argument="&lt;" nextState="">
+      <action name="reportError" message="&gt; not found at the end of the tag."/>
+      <action name="createTag"/>
+      <action name="pushBackChar" />
+      <action name="popState" />
+    </condition>
+    <condition name="isAnyChar" nextState="">
+      <action name="createTag" />
+      <action name="quickParseSpecial" /> <!-- acts as a popState as well -->
+    </condition>
+  </state>
+
+  <state name="slashInTag" endOfDocument="">
+    <condition name="equals" argument=">" nextState="">
+      <action name="createEndTag" />
+      <action name="popState" />
+    </condition>
+    <condition name="equals" argument="&lt;" nextState="">
+      <action name="reportError" message="&gt; not found at the end of the tag."/>
+      <action name="createTag"/>
+      <action name="pushBackChar" />
+      <action name="popState" />
+    </condition>
+    <condition name="isAnyChar" nextState="">
+      <action name="addToAttributeName" argument="/" />
+      <action name="reportError" message="/ is invalid in attribute name." />
+      <action name="pushBackChar" />
+      <action name="pushState" argument="tagEnded" />
+    </condition>
+  </state>
+
+  <!-- Parse the attribute name -->
   <state name="searchAttribute" endOfDocument="">
     <condition name="isWhiteSpace" nextState="searchAttribute" />
-    <condition name="equals" argument=">" nextState="tagEnded" />
+    <condition name="containedIn" argument=">/&lt;" nextState="">
+      <action name="pushBackChar" />
+      <action name="popState" />
+    </condition>
     <condition name="equals" argument="=" nextState="attributeValue">
       <action name="reportError" message="Attribute value starts without an attribute name." />
+      <action name="pushState" argument="attrValueComplete" />
     </condition>
     <condition name="isCharacter" nextState="startAttribute">
       <action name="addToAttributeName" />
@@ -212,15 +263,23 @@
     <condition name="isAnyChar" nextState="startAttribute">
       <action name="reportError" message="Attribute name does not start with a a letter."/>
       <action name="addToAttributeName" />
-    </condition>    
+    </condition>
   </state>
 
   <state name="startAttribute" endOfDocument="">
-    <condition name="equals" argument=">" nextState="tagEnded">
+    <condition name="containedIn" argument=">&lt;" nextState="">
       <action name="reportError" message="Attribute ends without a value." />
       <action name="createAttribute" />
+      <action name="pushBackChar" />
+      <action name="popState"/>
     </condition>
-    <condition name="equals" argument="=" nextState="attributeValue" />
+    <condition name="equals" argument="/" nextState="">
+      <action name="pushBackChar" />
+      <action name="popState"/>
+    </condition>
+    <condition name="equals" argument="=" nextState="attributeValue" >
+      <action name="pushState" argument="attrValueComplete" />
+    </condition>
     <condition name="equals" argument="&#034;" nextState="startQuotedString">
       <action name="reportError" message="Assignment operator missing between attribute name and value." />
       <action name="pushState" argument="endAttributeValue" />
@@ -233,21 +292,38 @@
 
   <state name="wspAfterAttrName" endOfDocument="">
     <condition name="isWhiteSpace" nextState="wspAfterAttrName" />
-    <condition name="equals" argument=">" nextState="tagEnded">
+    <condition name="containedIn" argument=">&lt;" nextState="">
       <action name="reportError" message="Attribute ends without a value." />
       <action name="createAttribute" />
+      <action name="pushBackChar" />
+      <action name="popState"/>
     </condition>
-    <condition name="equals" argument="=" nextState="attributeValue" />
+    <condition name="equals" argument="=" nextState="attributeValue" >
+      <action name="pushState" argument="attrValueComplete" />
+    </condition>
     <condition name="isAnyChar" nextState="searchAttribute">
       <action name="createAttribute" />
       <action name="pushBackChar" />
     </condition>
   </state>
 
+  <state name="attrValueComplete" endOfDocument="">
+    <condition name="containedIn" argument=">&lt;" nextState="" >
+      <action name="pushBackChar" />
+      <action name="popState"/>
+    </condition>
+    <condition name="isAnyChar" nextState="searchAttribute">
+      <action name="pushBackChar" />
+    </condition>
+  </state>
+
+  <!-- Attribute value parser -->
   <state name="attributeValue" endOfDocument="">
-    <condition name="equals" argument=">" nextState="tagEnded">
+    <condition name="equals" argument=">" nextState="">
       <action name="reportError" message="Attribute ends without a value." />
       <action name="createAttribute" />
+      <action name="pushBackChar" />
+      <action name="popState"/>
     </condition>
     <condition name="isWhiteSpace" nextState="attributeValue" />
     <condition name="equals" argument="&#034;" nextState="startQuotedString" >
@@ -259,9 +335,11 @@
   </state>
 
   <state name="notQuotedAttributeValue" endOfDocument="">
-    <condition name="equals" argument=">" nextState="tagEnded">
+    <condition name="equals" argument=">" nextState="">
       <action name="createAttribute" />
-    </condition>
+      <action name="pushBackChar" />
+      <action name="popState"/>
+   </condition>
     <condition name="isWhiteSpace" nextState="endAttributeValue" />
     <condition name="equals" argument="&#034;" nextState="notQuotedAttributeValue">
       <action name="addCharToBuffer" />
@@ -273,27 +351,53 @@
   </state>
 
   <state name="endAttributeValue" endOfDocument="">
-    <condition name="isAnyChar" nextState="searchAttribute">
+    <condition name="isAnyChar" nextState="">
       <action name="createAttribute" />
       <action name="pushBackChar" />
-    </condition>
+      <action name="popState"/>
+   </condition>
   </state>
 
-  <state name="tagEnded" endOfDocument="">
-    <condition name="isAnyChar" nextState="">
-      <action name="createTag" />
-      <action name="pushBackChar" />
-      <action name="popState" />
-      <!-- will go to a sub-state machine and will pop back to the argument -->
-  <!--    <action name="quickParseSpecial" argument="specialChecked" /> -->
-    </condition>
-  </state>
-  <state name="specialChecked" endOfDocument="">
-    <condition name="isAnyChar" nextState="">
-      <action name="pushBackChar" />
+<!-- Closing XML tag parser -->
+  <state name="closingElement" endOfDocument="">
+    <condition name="equals" argument=">" nextState="">
+      <action name="createEndTag" />
+      <action name="reportError" message="Empty closing element." />
       <action name="popState" />
     </condition>
+    <condition name="isWhiteSpace" nextState="closingElement">
+      <action name="reportError" message="Closing element starts with whitespace." />
+    </condition>
+    <condition name="isCharacter" nextState="closingElementName">
+      <action name="addToTagName" />
+    </condition>
+    <condition name="isAnyChar" nextState="closingElementName">
+      <action name="reportError" message="Invalid character in element name." />
+      <action name="addToTagName" />
+   </condition>
   </state>
+
+  <state name="closingElementName" endOfDocument="">
+    <condition name="equals" argument=">" nextState="">
+      <action name="createEndTag" />
+      <action name="popState" />
+    </condition>
+    <condition name="isWhiteSpace" nextState="closingElementSkip"/>
+    <condition name="equals" argument=":" nextState="closingElementName">
+      <action name="rememberNameSpace" />
+    </condition>
+    <condition name="isAnyChar" nextState="closingElementName">
+      <action name="addToTagName" />
+    </condition>
+ </state>
+
+ <state name="closingElementSkip" endOfDocument="">
+   <condition name="equals" argument=">" nextState="">
+     <action name="createEndTag" />
+     <action name="popState" />
+   </condition>
+   <condition name="isAnyChar" nextState="closingElementSkip" />
+ </state>
 
  <!-- <state name="en...." endOfDocument="">
     <condition name="isAnyChar" nextState="">
@@ -308,9 +412,9 @@
     <condition name="isAnyChar" >
       <action name="pushBackChar" />
       <action name="popState" />
-    </condition>    
+    </condition>
   </state>-->
-  
-         
-  
+
+
+
 </statemachine>

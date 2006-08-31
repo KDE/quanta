@@ -25,26 +25,26 @@ DomBuilder::~DomBuilder()
 {
 }
 
-    
+
 // from QXmlContentHandler
 
 bool DomBuilder::characters(const QString & ch)
 {
-  kDebug(24001) << "Text: " << ch << endl;
+  kDebug(24001) << "DomBuilder::Text: " << ch << endl;
   return true;
 }
 
 
 bool DomBuilder::endDocument()
 {
-  kDebug(24001) << "End Document" << endl;
+  kDebug(24001) << "DomBuilder::End Document" << endl;
   return true;
 }
 
 
 bool DomBuilder::endElement(const QString & namespaceURI, const QString & localName, const QString & qName)
 {
-  kDebug(24001) << "End Element: " << qName << endl;
+  kDebug(24001) << "DomBuilder::End Element: " << qName << endl;
   return true;
 }
 
@@ -75,14 +75,14 @@ bool DomBuilder::processingInstruction(const QString & target, const QString & d
 
 bool DomBuilder::skippedEntity(const QString & name)
 {
-  kDebug(24001) << "Skipped entity" << name << endl;
+  kDebug(24001) << "DomBuilder::Skipped entity" << name << endl;
   return true;
 }
 
 
 bool DomBuilder::startDocument()
 {
-  kDebug(24001) << "Start Document" << endl;
+  kDebug(24001) << "DomBuilder::Start Document" << endl;
   return true;
 }
 
@@ -94,7 +94,7 @@ bool DomBuilder::startElement (const QString & namespaceURI, const QString & loc
 }
 
 
-bool DomBuilder::startPrefixMapping(const QString & prefix, const QString & uri) 
+bool DomBuilder::startPrefixMapping(const QString & prefix, const QString & uri)
 {
   return true;
 }
@@ -104,7 +104,7 @@ bool DomBuilder::startPrefixMapping(const QString & prefix, const QString & uri)
 
 bool DomBuilder::comment(const QString & ch)
 {
-  kDebug(24001) << "Comment: " << ch << endl;
+  kDebug(24001) << "DomBuilder::Comment: " << ch << endl;
   return true;
 }
 
@@ -157,6 +157,7 @@ bool DomBuilder::startEntity(const QString & name)
 
 bool DomBuilder::error(const QXmlParseException & exception)
 {
+  kError(24001) << exception.message() << " at: " << exception.lineNumber() << ", " << exception.columnNumber() << endl;
   return true;
 }
 
@@ -169,13 +170,14 @@ bool DomBuilder::fatalError(const QXmlParseException & exception)
 
 bool DomBuilder::warning(const QXmlParseException & exception)
 {
+  kWarning(24001) << exception.message() << " at: " << exception.lineNumber() << ", " << exception.columnNumber() << endl;
   return true;
-} 
+}
 
 
 bool DomBuilder::elementRanges(const KTextEditor::Range & elementRange, const Ranges & attrRanges)
 {
-  kDebug(24001) << "Element Range: " << elementRange << endl;
+  kDebug(24001) << "DomBuilder::Element Range: " << elementRange << endl;
   return true;
 }
 

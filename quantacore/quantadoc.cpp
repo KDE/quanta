@@ -77,6 +77,7 @@ QuantaDoc::QuantaDoc(KTextEditor::Document *document, QuantaCorePart *qcore)
   DomBuilder *builder = new DomBuilder();
   parser->setContentHandler(builder);
   parser->setLexicalHandler(builder);
+  parser->setErrorHandler(builder);
   parser->parse(inputSource);
   //parse();
   m_parsingNeeded = false;

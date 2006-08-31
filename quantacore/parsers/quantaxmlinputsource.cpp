@@ -35,20 +35,14 @@ class Locator : public QXmlLocator
      */
     int columnNumber() const
     {
-      if (m_source->m_cursor && m_source->m_cursor->isValid())
-        return m_source->m_cursor->column();
-      else
-        return -1;
+      return m_source->m_lastCursor.column();
     }
     /**
      * \return the current line number, -1 means invalid position!
      */
     int lineNumber() const
     {
-      if (m_source->m_cursor && m_source->m_cursor->isValid())
-        return m_source->m_cursor->line();
-      else
-        return -1;
+      return m_source->m_lastCursor.line();
     }
     /**
      * \}
@@ -63,12 +57,13 @@ QuantaXmlInputSource::QuantaXmlInputSource(KTextEditor::Document * doc)
   : QXmlInputSource(), KTextEditor::SmartCursorWatcher(), m_cursor(0)
 {
   KTextEditor::SmartInterface* smart = qobject_cast<KTextEditor::SmartInterface*>(doc);
-  
+
   Q_ASSERT_X(smart != 0, "constructor QuantaXmlInputSource", "the provided document does not support the smart interface");
   if (smart)
   {
     m_cursor = smart->newSmartCursor();
     m_cursor->setWatcher(this);
+    m_lastCursor.setPosition(*m_cursor);
   }
 }
 
@@ -94,9 +89,10 @@ QString QuantaXmlInputSource::data() const
 
 QChar QuantaXmlInputSource::next()
 {
+  m_lastCursor.setPosition(*m_cursor);
   if (! m_cursor || ! m_cursor->isValid())
     return QXmlInputSource::EndOfDocument;
-  
+
   QChar c = m_cursor->character();
   if (!m_cursor->advance(+1, KTextEditor::SmartCursor::ByCharacter))
     m_cursor->setPosition(-1, -1); //will be invalid on the following call to next
@@ -106,13 +102,19 @@ QChar QuantaXmlInputSource::next()
 void QuantaXmlInputSource::reset()
 {
   if (m_cursor)
+  {
     m_cursor->setPosition(m_cursor->start());
+    m_lastCursor.setPosition(*m_cursor);
+  }
 }
 
 void QuantaXmlInputSource::deleted(KTextEditor::SmartCursor * cursor)
 {
   if (m_cursor == cursor)
+  {
     m_cursor = 0;
+    m_lastCursor = KTextEditor::Cursor::invalid();
+  }
 }
 
 

@@ -23,36 +23,36 @@ class KTextEditor::SmartCursor;
  * \short A QXmlInputSource for a KTextEditor::document.
  *
  * This class allows to use a KTextEditor::document as a source for parsing.
- * It also implements the QXmlLocator interface. 
- * 
+ * It also implements the QXmlLocator interface.
+ *
  * \note The document must implement the KTextEditor::SmartInterface because
  * internally a SmartCursor is used.
  *
  * \author Jens Herden \<jens@kdewebdev.org\>
  */
 
-class QuantaXmlInputSource : 
+class QuantaXmlInputSource :
     public QXmlInputSource, public KTextEditor::SmartCursorWatcher
 {
   friend class Locator;
-  
+
 public:
   /**
    * \param doc the document to read from, must implement KTextEditor::SmartInterface
    */
   QuantaXmlInputSource(KTextEditor::Document * doc);
-  
+
   virtual ~QuantaXmlInputSource();
-  
+
   /**
    * Create a new Locator.
-   * 
+   *
    * \note this class does not keep ownership of the locator.
-   * 
+   *
    * \return the new Locator for this input source
    */
   QXmlLocator * newLocator() const;
-  
+
   /**
    * \name QXmlInputSource Interface
    *
@@ -63,19 +63,19 @@ public:
    * \return the whole content of the textdocument or QString::Null() if there is no document
    */
   virtual QString data() const;
-  
+
   /**
    * get the next character and move the cursor one position
-   * 
+   *
    * \return the next character or QXmlInputSource::EndOfDocument
    */
   virtual QChar next();
-  
+
   /**
    * reset the cursor to the beginning of the textdocument
    */
   virtual void reset();
-  
+
   /**
    * \}
    */
@@ -87,8 +87,9 @@ public:
 
 private:
   KTextEditor::SmartCursor * m_cursor;
+  KTextEditor::Cursor m_lastCursor;
 };
 
-#endif 
+#endif
 
 // kate: space-indent on; indent-width 2; replace-tabs on;

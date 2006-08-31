@@ -59,7 +59,8 @@ StateActions::ActionFunctPtr StateActions::factory(const QString &name)
   if (id == "") return &popAttrRange;
   if (id == "") return &setAttrRangeEnd;
   if (id == "starttag") return &setTagRangeStart;
-  
+  if (id == "quickparsespecial") return &popState;
+
   kWarning(24001) << "unkown function name '" << id << "' in StateActions::factory" << endl;
   return &crashMe; // in case name is wrong
 }
@@ -78,10 +79,9 @@ bool StateActions::crashMe(const ParserStatus & parser, const QString & argument
 
 bool StateActions::warning(const ParserStatus & parser, const QString & argument)
 {
-  kWarning(24001) << argument << endl;
   if (! parser.errorHandler())
-    return true; 
-  
+    return true;
+
   QXmlParseException exception(argument, parser.m_locator->columnNumber(), parser.m_locator->lineNumber());
   return parser.errorHandler()->warning(exception);
 }
@@ -89,10 +89,9 @@ bool StateActions::warning(const ParserStatus & parser, const QString & argument
 
 bool StateActions::error(const ParserStatus & parser, const QString & argument)
 {
-  kError(24001) << argument << endl;
   if (! parser.errorHandler())
-    return true; 
-  
+    return true;
+
   QXmlParseException exception(argument, parser.m_locator->columnNumber(), parser.m_locator->lineNumber());
   return parser.errorHandler()->error(exception);
 }
@@ -103,7 +102,7 @@ bool StateActions::fatalError(const ParserStatus & parser, const QString & argum
   kError(24001) << argument << endl;
   if (! parser.errorHandler())
     return false;
-  
+
   QXmlParseException exception(argument, parser.m_locator->columnNumber(), parser.m_locator->lineNumber());
   return parser.errorHandler()->fatalError(exception);
 }
@@ -149,7 +148,7 @@ bool StateActions::popState(const ParserStatus & parser, const QString & argumen
   Q_UNUSED(argument);
   if (parser.m_stateStack.isEmpty())
     return false;
-  
+
   parser.m_currState = parser.m_stateStack.pop();
   kDebug(24001) << "State changed to " << parser.m_currState->name << " using popState" << endl;
   return true;
@@ -215,7 +214,7 @@ bool StateActions::createEntity(const ParserStatus & parser, const QString & arg
 
 
 bool StateActions::addAttrRange(const ParserStatus & parser, const QString & argument)
-{ 
+{
   Q_UNUSED(argument);
   parser.m_attrRanges.append(KTextEditor::Range(parser.m_locator->lineNumber(),
                                                 parser.m_locator->columnNumber(),
@@ -226,7 +225,7 @@ bool StateActions::addAttrRange(const ParserStatus & parser, const QString & arg
 
 
 bool StateActions::setAttrRangeEnd(const ParserStatus & parser, const QString & argument)
-{ 
+{
   Q_UNUSED(argument);
   if (! parser.m_attrRanges.isEmpty())
   {
@@ -239,11 +238,11 @@ bool StateActions::setAttrRangeEnd(const ParserStatus & parser, const QString & 
 
 
 bool StateActions::popAttrRange(const ParserStatus & parser, const QString & argument)
-{ 
+{
   Q_UNUSED(argument);
   if (! parser.m_attrRanges.isEmpty())
     parser.m_attrRanges.pop_back();
-  
+
   return true;
 }
 
@@ -272,7 +271,7 @@ bool StateActions::addAttr(const ParserStatus & parser, const QString & argument
 {
   Q_UNUSED(argument);
   // TODO add namespace
-  parser.m_attributes.append(parser.m_attrName, "", parser.m_attrName, parser.m_buffer); 
+  parser.m_attributes.append(parser.m_attrName, "", parser.m_attrName, parser.m_buffer);
   parser.m_attrName.clear();
   parser.m_buffer.clear();
   return true;

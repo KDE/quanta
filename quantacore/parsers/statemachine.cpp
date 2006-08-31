@@ -37,7 +37,7 @@ bool StateMachine::build(const QString &fileName)
   QFile xmlFile(fileName);
   if (!xmlFile.exists() || !xmlFile.open(QIODevice::ReadOnly))
     return false;
-    
+
   QDomDocument dom;
   QString errorMsg;
   int errorLine;
@@ -64,7 +64,10 @@ bool StateMachine::build(const QString &fileName)
     State * state = new State();
     m_startState = m_startState ? m_startState : state;
     state->name = e.attribute("name", QString("state:%1").arg(i));
-    m_stateNameMapping.insert(state->name, state);
+    if (m_stateNameMapping.contains(state->name))
+      kWarning(24001) << "Duplicate state name found: " << state->name << endl;
+    else
+      m_stateNameMapping.insert(state->name, state);
   }
 
   for (uint i = 0; i < numOfStates; i++)
@@ -74,7 +77,7 @@ bool StateMachine::build(const QString &fileName)
     readConditions(&n, m_stateNameMapping[e.attribute("name", QString("state:%1").arg(i))]->conditions);
   }
 
-#ifdef DEBUG_STATEMACHINE  
+#ifdef DEBUG_STATEMACHINE
   foreach(State *state, m_stateNameMapping)
   {
     kDebug(24000) << "State: name = " << state->name << endl;
@@ -85,10 +88,10 @@ bool StateMachine::build(const QString &fileName)
       {
         kDebug(24000) << "      Action: name = " << action.name() << ", argument = \"" << action.argument() << "\"" << endl;
       }
-    } 
+    }
   }
 #endif
-    
+
   return true;
 }
 
@@ -99,7 +102,7 @@ void StateMachine::readConditions(QDomNode *stateNode, QList<Condition> &conditi
   QString nextStateName;
 #ifdef DEBUG_STATEMACHINE
   bool defaultConditionExists = false;
-#endif  
+#endif
   for (QDomNode n = stateNode->firstChild(); !n.isNull(); n = n.nextSibling() )
   {
     nodeName = n.nodeName();
@@ -113,7 +116,7 @@ void StateMachine::readConditions(QDomNode *stateNode, QList<Condition> &conditi
       compareFunction.setName(conditionName);
       if (conditionName.toLower() == "isanychar")
         defaultConditionExists = true;
-#endif      
+#endif
       condition.compareFunction = compareFunction;
       nextStateName = el.attribute("nextState");
       if (m_stateNameMapping.contains(nextStateName))
@@ -121,9 +124,9 @@ void StateMachine::readConditions(QDomNode *stateNode, QList<Condition> &conditi
       else
       {
 #ifdef DEBUG_STATEMACHINE
-        if (!nextStateName.isEmpty())        
+        if (!nextStateName.isEmpty())
           kWarning(24001) << "State " << nextStateName << " is not known." << endl;
-#endif        
+#endif
         condition.nextState = 0;
       }
       QDomElement item = el.firstChild().toElement();
@@ -140,7 +143,7 @@ void StateMachine::readConditions(QDomNode *stateNode, QList<Condition> &conditi
           ActionFunction action(StateActions::factory(item.attribute("name")), argument);
 #ifdef DEBUG_STATEMACHINE
           action.setName(item.attribute("name"));
-#endif          
+#endif
           condition.actionFunctions.append(action);
         }
         item = item.nextSibling().toElement();
