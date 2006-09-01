@@ -103,10 +103,6 @@
 
 <!-- Text parsing state machine -->
   <state name="startText" endOfDocument="">
-    <condition name="equals" argument="&amp;" nextState="startEntity" >
-      <action name="addCharToBuffer" />
-      <action name="pushState" argument="startText" />
-    </condition>
     <condition name="equals" argument="&lt;" nextState="">
       <action name="createText" />
       <action name="pushBackChar" />
@@ -149,10 +145,6 @@
     <condition name="equals" argument="&#034;" nextState="">
       <action name="popState" />
     </condition>
-    <condition name="equals" argument="&amp;" nextState="startEntity">
-      <action name="addCharToBuffer" />
-      <action name="pushState" argument="startQuotedString" />
-    </condition>
     <condition name="equals" argument="\" nextState="slashFound">
       <action name="addCharToBuffer" />
       <action name="pushState" argument="startQuotedString"/>
@@ -166,10 +158,6 @@
   <state name="startSingleQuotedString" endOfDocument="">
     <condition name="equals" argument="'" nextState="">
       <action name="popState" />
-    </condition>
-    <condition name="equals" argument="&amp;" nextState="startEntity">
-      <action name="addCharToBuffer" />
-      <action name="pushState" argument="startSingleQuotedString" />
     </condition>
     <condition name="equals" argument="\" nextState="slashFound">
       <action name="addCharToBuffer" />
