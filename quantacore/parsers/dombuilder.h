@@ -17,14 +17,20 @@
 #include <QXmlContentHandler>
 #include <QXmlLexicalHandler>
 
+// KDE includes
+#include <dom/html_document.h>
+#include <dom/dom_doc.h>
+#include <dom/dom_node.h>
+
 #include "quantahandler.h"
 
 class QXmlLocator;
 
-namespace DOM { 
+/*namespace DOM { 
   class HTMLDocument;
   class Document;
-}
+  class Node;
+}*/
   
   
 /**
@@ -95,6 +101,8 @@ class DomBuilder : public QXmlContentHandler, public QXmlLexicalHandler, public 
      * \}
      */
   private:
+    void showTreeView();
+    
     QXmlLocator * m_locator;
     bool m_DTDstarted;
     bool m_CDATAstarted;
@@ -102,8 +110,11 @@ class DomBuilder : public QXmlContentHandler, public QXmlLexicalHandler, public 
     int m_startLine;
     KTextEditor::Range m_elementRange;
     QuantaHandler::Ranges m_attrRanges;
-    DOM::HTMLDocument * m_HTMLdocument;
-    DOM::Document * m_document;
+    DOM::HTMLDocument m_HTMLdocument;
+    DOM::Document m_document;
+    DOM::DocumentFragment m_fragment;
+    DOM::Node m_currNode;
+    QString m_error;
 };
 
 

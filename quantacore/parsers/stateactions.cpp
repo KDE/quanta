@@ -172,7 +172,12 @@ bool StateActions::createTag(const ParserStatus & parser, const QString & argume
 
   REPORTRANGES
 
-  bool result = parser.contentHandler()->startElement(parser.m_namespace + ':' + parser.m_tagName, "", parser.m_tagName, parser.m_attributes);
+  bool result;
+  if (parser.m_namespace.isEmpty())
+    result = parser.contentHandler()->startElement("", parser.m_tagName, "", parser.m_attributes);
+  else
+    result = parser.contentHandler()->startElement(parser.m_namespace, parser.m_tagName, parser.m_namespace + ':' + parser.m_tagName, parser.m_attributes);
+  
   parser.m_tagName.clear();
   parser.m_namespace.clear();
   parser.m_attributes.clear();

@@ -5,6 +5,8 @@ add_subdirectory( parsers )
 add_subdirectory( app_templates )
 add_subdirectory( autocomplete )
 
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  ${KDE4_ENABLE_EXCEPTIONS}")
+
 include_directories( ${LIBXML2_INCLUDE_DIR} )
 
 include_directories( 
@@ -41,6 +43,7 @@ set(kdevquantacore_PART_SRCS
    parsers/parserstatus.cpp
    parsers/stateactions.cpp
    parsers/dombuilder.cpp
+   parsers/domtreeview.cpp
    
    parsers/dtd/dtdparser.cpp
 

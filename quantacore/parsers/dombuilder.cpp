@@ -12,13 +12,21 @@
  ***************************************************************************/
 
 #include <kdebug.h>
+#include <klocale.h>
 #include <dom/html_document.h>
 #include <dom/dom_doc.h>
+#include <dom/dom_node.h>
+#include <dom/dom_text.h>
+#include <dom/dom_element.h>
+#include <dom/dom_xml.h>
+#include <dom/dom_exception.h>
+#include <dom/html_element.h>
+#include <dom/dom_string.h>
 
 
 #include "dombuilder.h"
 
-#undef DEBUGMODE
+#define DEBUGMODE
 
 #ifdef DEBUGMODE
 #define DOMBUILDERDEBUG( S ) kDebug(24001) << S << endl;
@@ -27,22 +35,26 @@
 #endif
 
 
+#ifdef DEBUGMODE
+#include <QDialog>
+#include <QBoxLayout>
+#include "domtreeview.h"
+#endif
+
 DomBuilder::DomBuilder()
 {
   m_CDATAstarted = false;
   m_DTDstarted = false;
   m_locator = 0;
-  m_HTMLdocument = new DOM::HTMLDocument();
-  m_document = new DOM::Document();
+  // i am not allowed to add text nodes to the document, so make a child first
+  m_currNode = m_document.createElement("quanta");
+  m_document.appendChild(m_currNode);
+  m_error.clear();
 }
 
 
 DomBuilder::~DomBuilder()
 {
-  delete m_HTMLdocument;
-  m_HTMLdocument = 0;
-  delete m_document;
-  m_document = 0;
 }
 
 
@@ -51,6 +63,33 @@ DomBuilder::~DomBuilder()
 bool DomBuilder::characters(const QString & ch)
 {
   DOMBUILDERDEBUG("DomBuilder::Text: " << QString(ch).replace('\n', ' '))
+  
+  DOM::Node node; 
+  if (m_CDATAstarted)
+  {
+    node = m_document.createCDATASection(ch);
+    Q_ASSERT_X(! node.isNull(), "DomBuilder::characters", "could not create a CDATA element");
+    if (node.isNull())
+    {
+      m_error = i18n("Unable to create a CDATA element!");
+      return false;
+    }
+  }
+  else
+  {
+    try
+    {
+      node = m_document.createTextNode(ch);
+      // TODO if the currNode is text we don't want to add the new node as child but as sibling
+      m_currNode.appendChild(node);
+    }
+    catch (DOM::DOMException& e)
+    {
+      DOMBUILDERDEBUG("Unable to create a text element! DOM::Exception: " << e.code)
+      m_error = i18n("Unable to create a text node!");
+      return false;
+    } 
+  }
   return true;
 }
 
@@ -58,6 +97,9 @@ bool DomBuilder::characters(const QString & ch)
 bool DomBuilder::endDocument()
 {
   DOMBUILDERDEBUG("DomBuilder::End Document")
+#ifdef DEBUGMODE
+  showTreeView();
+#endif
   return true;
 }
 
@@ -65,6 +107,10 @@ bool DomBuilder::endDocument()
 bool DomBuilder::endElement(const QString & namespaceURI, const QString & localName, const QString & qName)
 {
   DOMBUILDERDEBUG("DomBuilder::End Element: " << qName)
+      
+  if (! m_currNode.parentNode().isNull())
+    m_currNode = m_currNode.parentNode();
+  
   return true;
 }
 
@@ -77,7 +123,7 @@ bool DomBuilder::endPrefixMapping (const QString & prefix)
 
 QString DomBuilder::errorString() const
 {
-  return QString();
+  return m_error;
 }
 
 
@@ -107,9 +153,68 @@ bool DomBuilder::startDocument()
 }
 
 
-bool DomBuilder::startElement (const QString & namespaceURI, const QString & localName, const QString & qName, const QXmlAttributes & atts)
+bool DomBuilder::startElement(const QString & namespaceURI, const QString & localName, const QString & qName, const QXmlAttributes & atts)
 {
-  DOMBUILDERDEBUG("DomBuilder::startElement: " << qName)
+  if (localName.isEmpty())
+  {
+    DOMBUILDERDEBUG("DomBuilder::startElement: localName name is empty!")
+    m_error = i18n("Unable to create an empty element!");
+    return true;
+  }
+  
+  DOM::Element el;
+  try
+  {
+    if (qName.isEmpty())
+    {
+      DOMBUILDERDEBUG("DomBuilder::startElement: create HTML element for " << localName)
+      el = m_document.createElement(localName);
+    }
+    else {
+  // was it not HTML?
+//     if (el.isNull())
+//     {
+//       if (qName.isEmpty())
+//       {
+//         DOMBUILDERDEBUG("DomBuilder::startElement: create XML element for " << localName)
+//         el = m_document.createElement(localName);
+//       }
+//       else
+//       {
+        DOMBUILDERDEBUG("DomBuilder::startElement: create XML element for " << qName << " Uri: " << namespaceURI)
+        el = m_document.createElementNS(namespaceURI, qName);
+//       }
+    }
+  }
+  catch (DOM::DOMException& e) 
+  {
+    DOMBUILDERDEBUG("DomBuilder::startElement: Unable to create an element: DOMException " << e.code)
+    m_error = i18n("Unable to create an HTML element: DOMException !");
+    return true;
+  }
+  Q_ASSERT_X(! el.isNull(), "DomBuilder::startElement", "could not create an element");
+  if (el.isNull())
+  {
+    m_error = i18n("Unable to create an element!");
+    return true;
+  }
+  // copy attributes
+  int i = 0;
+  int max = atts.count();
+  while (i < max)
+  {
+    el.setAttributeNS(atts.uri(i), atts.qName(i), atts.value(i));
+    ++i;
+  }
+  try 
+  {
+    m_currNode.appendChild(el);
+  }
+  catch (DOM::DOMException& e) 
+  {
+    DOMBUILDERDEBUG("DomBuilder::startElement: Unable to append! DOMException: " << e.code)
+  }
+  m_currNode = el;
   return true;
 }
 
@@ -125,6 +230,8 @@ bool DomBuilder::startPrefixMapping(const QString & prefix, const QString & uri)
 bool DomBuilder::comment(const QString & ch)
 {
   DOMBUILDERDEBUG("DomBuilder::Comment: " << QString(ch).replace('\n', ' '))
+  
+  m_currNode.appendChild(m_document.createComment(ch));
   return true;
 }
 
@@ -205,5 +312,33 @@ bool DomBuilder::elementRanges(const KTextEditor::Range & elementRange, const Ra
   return true;
 }
 
+
+void DomBuilder::showTreeView()
+{
+#ifdef DEBUGMODE
+/*  m_HTMLdocument = m_HTMLdocument.implementation().createHTMLDocument("test");
+  DOM::NodeList childs = m_HTMLdocument.childNodes();
+  uint i = 0;
+  while (i < childs.length())
+  {
+    try
+    {
+      m_HTMLdocument.body().appendChild(childs.item(i));
+    }
+    catch (DOM::DOMException& e) 
+    {
+      DOMBUILDERDEBUG("showTreeView failed to import: " << childs.item(i).nodeName() << " exception: " << e.code)
+    };
+    ++i;
+  } */
+  QDialog dialog;
+  QBoxLayout layout(QBoxLayout::LeftToRight, &dialog);
+  DOMTreeView view(&dialog);
+  layout.addWidget(&view);
+  view.showTree(m_document.firstChild());
+  dialog.resize(300,300);
+  dialog.exec();
+#endif
+}
 
 //kate: space-indent on; indent-width 2; replace-tabs on; mixedindent off; encoding utf-8
