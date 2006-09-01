@@ -38,16 +38,17 @@
 #include "dtepstructureeditdlgs.h"
 #include "dtds.h"
 #include "resource.h"
+#include "quantacommon.h"
 
 DTEPEditDlg::DTEPEditDlg(const QString& descriptionFile, QWidget *parent, const char *name)
  : DTEPEditDlgS(parent, name)
 {
   nameEdit->setFocus();
   m_descriptionFile = descriptionFile;
-  
+
   m_config = new KConfig(m_descriptionFile, false, false);
   init();
-  
+
 }
 
 
@@ -98,20 +99,20 @@ void DTEPEditDlg::readGeneral()
     inheritsCombo->insertItem(inherits, 0);
   else
     inheritsCombo->setCurrentItem(idx);
-  
+
   urlEdit->setText(m_config->readEntry("URL"));
   doctypeEdit->setText(m_config->readEntry("DoctypeString"));
   topLevel->setChecked(m_config->readBoolEntry("TopLevel", false));
-  
+
   m_config->setGroup("Toolbars");
-  toolbarFolderEdit->setText(m_config->readPathEntry("Location"));
+  toolbarFolderEdit->setText(QuantaCommon::readPathEntry(m_config, "Location"));
   toolbarsEdit->setText(m_config->readEntry("Names"));
-   
+
 }
 
 void DTEPEditDlg::readPages()
 {
-  int i = 1; 
+  int i = 1;
   while (m_config->hasGroup(QString("Page%1").arg(i)) && i < 6)
   {
     m_config->setGroup(QString("Page%1").arg(i));
@@ -146,7 +147,7 @@ void DTEPEditDlg::readPages()
       enablePage5->setChecked(true);
       pageTitleEdit5->setText(title);
       groupsEdit5->setText(groups);
-    } 
+    }
     i++;
   }
 }
@@ -158,7 +159,7 @@ void DTEPEditDlg::readParserRules()
   attributeSeparatorEdit->setText(m_config->readEntry("AttributeSeparator"));
   tagSeparatorEdit->setText(m_config->readEntry("TagSeparator"));
   tagAfterEdit->setText(m_config->readEntry("TagAutoCompleteAfter"));
-  
+
   if (m_family == 0)
   {
     extendedBooleans->setChecked(m_config->readEntry("BooleanAttributes", "extended") == "extended");
@@ -170,17 +171,17 @@ void DTEPEditDlg::readParserRules()
     attributesAfterEdit->setText(m_config->readEntry("AttributeAutoCompleteAfter"));
     membersAfterEdit->setText(m_config->readEntry("MemberAutoCompleteAfter"));
   }
-  
+
   m_config->setGroup("Parsing rules");
   commentsEdit->setText(m_config->readEntry("Comments"));
   mayContainEdit->setText(m_config->readEntry("MayContain"));
-  
+
   if (m_family == 0)
   {
     specialAreasEdit->setText(m_config->readEntry("SpecialAreas"));
     specialAreaNamesEdit->setText(m_config->readEntry("SpecialAreaNames"));
     specialTagsEdit->setText(m_config->readEntry("SpecialTags"));
-    useCommonRules->setChecked(m_config->readBoolEntry("AppendCommonSpecialAreas", true));  
+    useCommonRules->setChecked(m_config->readBoolEntry("AppendCommonSpecialAreas", true));
   } else
   {
     areaBordersEdit->setText(m_config->readEntry("AreaBorders"));
@@ -191,7 +192,7 @@ void DTEPEditDlg::readParserRules()
     structEndEdit->setText(m_config->readEntry("StructEndStr"));
     structRxEdit->setText(m_config->readEntry("StructRx"));
   }
-  
+
 }
 
 void DTEPEditDlg::saveResult()
@@ -221,12 +222,12 @@ void DTEPEditDlg::saveResult()
     writeParserRules(newConfig);
     writeStructures(newConfig);
     newConfig->sync();
-    delete newConfig;        
+    delete newConfig;
   }
 }
 
 void DTEPEditDlg::writeGeneral(KConfig *config)
-{  
+{
   config->setGroup("General");
   writeEntry(config, "Name", nameEdit->text());
   writeEntry(config, "NickName", nickNameEdit->text());
@@ -239,7 +240,7 @@ void DTEPEditDlg::writeGeneral(KConfig *config)
   writeEntry(config, "MimeTypes", mimeTypeEdit->text());
   if (m_family == 1)
     config->writeEntry("TopLevel", topLevel->isChecked());
-  
+
   config->setGroup("Toolbars");
   writeEntry(config, "Location", toolbarFolderEdit->text());
   writeEntry(config, "Names", toolbarsEdit->text());
@@ -298,7 +299,7 @@ void DTEPEditDlg::writeParserRules(KConfig *config)
   writeEntry(config, "AttributeSeparator", attributeSeparatorEdit->text());
   writeEntry(config, "TagSeparator", tagSeparatorEdit->text());
   writeEntry(config, "TagAutoCompleteAfter", tagAfterEdit->text());
-  
+
   if (m_family == 0)
   {
     writeEntry(config, "BooleanAttributes", extendedBooleans->isChecked() ? "extended" : "simple");
@@ -310,17 +311,17 @@ void DTEPEditDlg::writeParserRules(KConfig *config)
     writeEntry(config, "AttributeAutoCompleteAfter", attributesAfterEdit->text());
     writeEntry(config, "MemberAutoCompleteAfter", membersAfterEdit->text());
   }
-  
+
   config->setGroup("Parsing rules");
   writeEntry(config, "Comments", commentsEdit->text());
   writeEntry(config, "MayContain", mayContainEdit->text());
-  
+
   if (m_family == 0)
   {
     writeEntry(config, "SpecialAreas", specialAreasEdit->text());
     writeEntry(config, "SpecialAreaNames", specialAreaNamesEdit->text());
     writeEntry(config, "SpecialTags", specialTagsEdit->text());
-    config->writeEntry("AppendCommonSpecialAreas", useCommonRules->isChecked());  
+    config->writeEntry("AppendCommonSpecialAreas", useCommonRules->isChecked());
   } else
   {
     writeEntry(config, "AreaBorders", areaBordersEdit->text());
@@ -340,8 +341,8 @@ void DTEPEditDlg::readStructures()
   int functionGroupId = m_config->readNumEntry("FunctionGroupIndex", -1);
   int classGroupId = m_config->readNumEntry("ClassGroupIndex", -1);
   int objectGroupId = m_config->readNumEntry("ObjectGroupIndex", -1);
-  
-  int i = 1; 
+
+  int i = 1;
   while (m_config->hasGroup(QString("StructGroup_%1").arg(i)))
   {
     StructGroup group;
@@ -367,10 +368,10 @@ void DTEPEditDlg::readStructures()
     group.classGroup = (classGroupId == i);
     group.objectGroup = (objectGroupId == i);
     group.simpleGroup = (!group.variableGroup && !group.functionGroup && !group.classGroup && !group.objectGroup);
-    
-    m_structGroups.append(group);    
+
+    m_structGroups.append(group);
     i++;
-  }  
+  }
   for (QValueList<StructGroup>::ConstIterator it = m_structGroups.constBegin(); it != m_structGroups.constEnd(); ++it)
   {
     structuresList->insertItem((*it).name);
@@ -381,8 +382,8 @@ void DTEPEditDlg::writeStructures(KConfig *config)
 {
   config->setGroup("Extra rules");
   config->writeEntry("StructGroupsCount", m_structGroups.count());
-  
-  int i = 1; 
+
+  int i = 1;
   for (QValueList<StructGroup>::ConstIterator it = m_structGroups.constBegin(); it != m_structGroups.constEnd(); ++it)
   {
     StructGroup group = *it;
@@ -424,11 +425,11 @@ void DTEPEditDlg::writeStructures(KConfig *config)
       {
         config->setGroup("Extra rules");
         config->writeEntry("ObjectGroupIndex", i);
-      } 
+      }
     }
-    
+
     i++;
-  }  
+  }
   for (QValueList<StructGroup>::ConstIterator it = m_structGroups.constBegin(); it != m_structGroups.constEnd(); ++it)
   {
     structuresList->insertItem((*it).name);
@@ -443,7 +444,7 @@ void DTEPEditDlg::slotEditStructGroup()
     KDialogBase editDlg(this, "edit_group", true, i18n("Edit Structure Group"), KDialogBase::Ok | KDialogBase::Cancel);
     DTEPStructureEditDlgS structDlg(&editDlg);
     editDlg.setMainWidget(&structDlg);
-    
+
     StructGroup group = m_structGroups[currentItem];
     structDlg.nameEdit->setText(group.name);
     structDlg.noNameEdit->setText(group.noName);
@@ -461,7 +462,7 @@ void DTEPEditDlg::slotEditStructGroup()
         break;
       }
     }
-  
+
     structDlg.definitionRxEdit->setText(group.definitionRx);
     structDlg.definitionRxMinimal->setChecked(group.definitionRxMinimal);
     structDlg.usageRxEdit->setText(group.usageRx);
@@ -474,10 +475,10 @@ void DTEPEditDlg::slotEditStructGroup()
     structDlg.functionGroup->setChecked(group.functionGroup);
     structDlg.classGroup->setChecked(group.classGroup);
     structDlg.objectGroup->setChecked(group.objectGroup);
-    
+
     if (m_family == 0)
       structDlg.pseudoGroupBox->setEnabled(false);
-    
+
     if (editDlg.exec())
     {
       StructGroup group = readFromStructDlg(&structDlg);
@@ -504,7 +505,7 @@ void DTEPEditDlg::slotAddStructGroup()
 StructGroup DTEPEditDlg::readFromStructDlg(DTEPStructureEditDlgS *structDlg)
 {
   StructGroup group;
-  
+
   group.name = structDlg->nameEdit->text();
   group.noName = structDlg->noNameEdit->text();
   group.icon = structDlg->iconButton->icon();
@@ -526,7 +527,7 @@ StructGroup DTEPEditDlg::readFromStructDlg(DTEPStructureEditDlgS *structDlg)
   group.functionGroup = structDlg->functionGroup->isChecked();
   group.classGroup = structDlg->classGroup->isChecked();
   group.objectGroup = structDlg->objectGroup->isChecked();
-  
+
   return group;
 }
 
@@ -540,7 +541,7 @@ void DTEPEditDlg::slotDeleteStructGroup()
       m_structGroups.remove(m_structGroups.at(currentItem));
       structuresList->removeItem(currentItem);
     }
-  }  
+  }
 }
 
 void DTEPEditDlg::writeEntry(KConfig *config, const QString &key, const QString &value)

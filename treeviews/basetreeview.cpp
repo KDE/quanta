@@ -694,9 +694,9 @@ void BaseTreeView::slotInsertDirInProject()
 /** Bring up the properites dialog, and extend it for files */
 void BaseTreeView::slotProperties()
 {
-  if (! currentKFileTreeViewItem()) 
+  if (! currentKFileTreeViewItem())
     return;
-  
+
   propDlg = new KPropertiesDialog(currentKFileTreeViewItem()->fileItem(), this, 0L, false, false); //autodeletes itself
   fileInfoDlg = 0L;
   if (!currentKFileTreeViewItem()->isDir())
@@ -1060,7 +1060,7 @@ void BaseTreeView::restoreLayout(KConfig *config, const QString &group)
   int maxBranch = config->readNumEntry("NumOpenFolderList", 0);
   for (int i = 1; i <= maxBranch; ++i)
   {
-    QStringList folderList = config->readPathListEntry("OpenFolderList" + QString::number(i));
+    QStringList folderList = QuantaCommon::readPathListEntry(config, "OpenFolderList" + QString::number(i));
     if (folderList.count() > 1) {
       KURL rootURL = (*folderList.begin());
       folderList.remove(folderList.begin());  // remove the root URL

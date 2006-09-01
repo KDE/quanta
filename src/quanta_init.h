@@ -80,18 +80,18 @@ private:
 
   /** Initialize the plugin architecture. */
   void initPlugins();
-  /** search for s in autosaveUrls and return a file path */
-  QString searchPathListEntry(const QString& backedUpUrl, const QString& autosavedUrls);
+
+  /** find where was url backed up in the list of autosaved urls*/
+  QString searchPathListEntry(const QString& url, const QStringList& autosavedUrlsList, bool &notFound);
   /** Retrieves hashed path from the name of a backup file */
   QString retrieveHashedPath(const QString& filename);
   /** Obtains PID from file extension */
   QString retrievePID(const QString& filename);
-  /** Retrieves the non hashed part of the name of a backup file */
-  QString retrieveBaseFileName(const QString& filename);
   ProjectTreeView *pTab;
   TemplatesTreeView *tTab;
   // config
   KConfig *m_config;
+  QStringList m_PIDlist;
   /**  @return number of Quanta instances registered by dcop */
   int runningQuantas();
 };

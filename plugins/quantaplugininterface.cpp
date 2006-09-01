@@ -63,7 +63,7 @@ void QuantaPluginInterface::readConfigFile(const QString& configFile)
     (*it) = (*it).stripWhiteSpace();
   //setPluginNames(pList);
 
-  QStringList paths = config->readPathListEntry("SearchPaths");
+  QStringList paths = QuantaCommon::readPathListEntry(config, "SearchPaths");
   for(QStringList::Iterator it = paths.begin();it != paths.end(); ++it)
     (*it) = (*it).stripWhiteSpace();
   qConfig.pluginSearchPaths = paths;

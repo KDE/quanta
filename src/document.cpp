@@ -197,8 +197,6 @@ Document::Document(KTextEditor::Document *doc,
   delayedTextChangedEnabled = true;
   docUndoRedo = new undoRedo(this);
 
-  //each document remember wheter it has a entry in quantarc
-  m_backupEntry = false;
   //path of the backup copy file of the document
   m_backupPathValue = QString::null;
 
@@ -221,7 +219,7 @@ Document::Document(KTextEditor::Document *doc,
 
 //   connect(m_doc, SIGNAL(marksChanged()), this, SLOT(slotMarksChanged()));
   connect(m_doc, SIGNAL(markChanged(KTextEditor::Mark, KTextEditor::MarkInterfaceExtension::MarkChangeAction)), this, SLOT(slotMarkChanged(KTextEditor::Mark, KTextEditor::MarkInterfaceExtension::MarkChangeAction)));
-  
+
 }
 
 Document::~Document()
@@ -878,7 +876,7 @@ void Document::slotCharactersInserted(int line, int column, const QString& strin
       return;
     }
   }
-  
+
 
  if ( (string == ">") ||
       (string == "<") )
@@ -1070,7 +1068,7 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
       showCodeCompletions(getCharacterCompletions(s));
       handled = true;
     }
-  } 
+  }
  return handled;
 }
 
@@ -2272,7 +2270,7 @@ void Document::slotTextChanged()
     kdDebug(24000) << "Delayed text changed called." << endl;
     //delay the handling, otherwise we may get wrong values for (line,column)
     QTimer::singleShot(0, this, SLOT(slotDelayedTextChanged()));
-    delayedTextChangedEnabled = false;  
+    delayedTextChangedEnabled = false;
   }
 }
 
@@ -2284,10 +2282,10 @@ void Document::slotDelayedTextChanged(bool forced)
      parser->setParsingNeeded(true);
      QTimer::singleShot(1000, this, SLOT(slotDelayedTextChanged()));
      reparseEnabled = false;
-     delayedTextChangedEnabled = false;	
+     delayedTextChangedEnabled = false;
      return;
    }
-	
+
     uint line, column;
     QString oldNodeName = "";
     Node *node;
@@ -2415,7 +2413,7 @@ void Document::slotDelayedTextChanged(bool forced)
       StructTreeView::ref()->slotReparse(this, baseNode , qConfig.expandLevel);
     }
     reparseEnabled = true;
-   delayedTextChangedEnabled = true;	
+   delayedTextChangedEnabled = true;
 }
 
 /** Returns list of values for attribute */
@@ -2558,11 +2556,6 @@ void Document::clearErrorMarks()
   }
 }
 
-/** obvious */
-void Document::setBackupEntry(bool b)
-{
-   m_backupEntry = b;
-}
 QString Document::backupPathEntryValue()
 {
   return m_backupPathValue;
@@ -2576,58 +2569,57 @@ void Document::setBackupPathEntryValue(const QString& ev)
 /** if the document is modified then backup it and insert an entry in quantarc */
 void Document::createBackup(KConfig* config)
 {
-    if(isModified())
+  if (isModified())
+  {
+    m_backupPathValue = qConfig.backupDirPath + url().fileName() + "." + hashFilePath(url().path());
+    if (isUntitled())
+      m_backupPathValue.append('U');
+
+    //the encoding used for the current document
+    QString encoding = quantaApp->defaultEncoding();
+    if (encodingIf)
+      encoding = encodingIf->encoding();
+    if (encoding.isEmpty())
+      encoding = "utf8";  //final fallback
+
+    //creates an entry string in quantarc if it does not exist yet
+    config->setGroup("General Options");
+    QStringList backedupFilesEntryList = QuantaCommon::readPathListEntry(config, "List of backedup files"); //the files that were backedup
+    QStringList autosavedFilesEntryList = QuantaCommon::readPathListEntry(config, "List of autosaved files"); //the list of actual backup files inside $KDEHOME/share/apps/quanta/backups
+    if (!autosavedFilesEntryList.contains(m_backupPathValue)) //not yet backed up, add an entry for this file
     {
-     if(isUntitled())
-      m_backupPathValue = qConfig.backupDirPath + url().fileName() + "." + hashFilePath(url().path())+"U";
-     else
-      m_backupPathValue = qConfig.backupDirPath + url().fileName() + "." + hashFilePath(url().path());
-     //creates an entry string in quantarc if it does not exist yet
-     config->setGroup("General Options");
-     QStringList backedupFilesEntryList = config->readPathListEntry("List of backedup files");
-     QStringList autosavedFilesEntryList = config->readPathListEntry("List of autosaved files");
-     QString encoding = quantaApp->defaultEncoding();
-     if (encodingIf)
-         encoding = encodingIf->encoding();
-     if (encoding.isEmpty())
-         encoding = "utf8";  //final fallback
-    if(!autosavedFilesEntryList.contains(m_backupPathValue))
-     {
-       autosavedFilesEntryList.append(m_backupPathValue);
-       config->writePathEntry("List of autosaved files", autosavedFilesEntryList);
-       backedupFilesEntryList.append(url().path() + "." + qConfig.quantaPID);
-       config->writePathEntry("List of backedup files", backedupFilesEntryList);
-       config->sync();
-       setBackupEntry(true);
-     }
-     //creates a copy of this specific document
-     QFile file(m_backupPathValue);
-     if(file.open(IO_WriteOnly))
-     {
+      autosavedFilesEntryList.append(m_backupPathValue);
+      config->writePathEntry("List of autosaved files", autosavedFilesEntryList);
+      backedupFilesEntryList.append(url().path() + "." + qConfig.quantaPID);
+      config->writePathEntry("List of backedup files", backedupFilesEntryList);
+      config->sync();
+    }
+
+    //creates a copy of this specific document
+    QFile file(m_backupPathValue);
+    if (file.open(IO_WriteOnly))
+    {
       QTextStream stream(&file);
       stream.setCodec(QTextCodec::codecForName(encoding));
       stream << editIf->text();
       file.close();
-     }
-
     }
+  }
 }
-/** if there is no more need of a backup copy then remove it */
+/** if there is no more need for a backup copy then remove it */
 void Document::removeBackup(KConfig *config)
 {
   config->reparseConfiguration();
   config->setGroup("General Options");
 
-  QStringList backedupFilesEntryList = config->readPathListEntry("List of backedup files");
-  QStringList autosavedFilesEntryList = config->readPathListEntry("List of autosaved files");
+  QStringList backedupFilesEntryList = QuantaCommon::readPathListEntry(config, "List of backedup files");
+  QStringList autosavedFilesEntryList = QuantaCommon::readPathListEntry(config, "List of autosaved files");
 
   autosavedFilesEntryList.remove(m_backupPathValue);
-  config->writePathEntry("List of autosaved files",autosavedFilesEntryList);
+  config->writePathEntry("List of autosaved files", autosavedFilesEntryList);
   backedupFilesEntryList.remove(url().path() + "." + qConfig.quantaPID);
   config->writePathEntry("List of backedup files", backedupFilesEntryList);
   config->sync();
-
-  setBackupEntry(false);
 
   if(QFile::exists(m_backupPathValue))
     QFile::remove(m_backupPathValue);

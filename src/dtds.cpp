@@ -267,7 +267,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
 
   //read the toolbars
   dtdConfig->setGroup("Toolbars");
-  tmpStr = dtdConfig->readPathEntry("Location"); //holds the location of the toolbars
+  tmpStr = QuantaCommon::readPathEntry(dtdConfig, "Location"); //holds the location of the toolbars
   if (!tmpStr.endsWith("/") && !tmpStr.isEmpty())
   {
     tmpStr.append("/");

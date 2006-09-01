@@ -620,7 +620,7 @@ bool QuantaDebuggerGubed::sendCommand(const QString& command, char * firstarg, .
   next = firstarg;
   while(next)
   {
-    ca[(QString)next] = (QString)va_arg(l_Arg, char*) ; 
+    ca[(QString)next] = (QString)va_arg(l_Arg, char*) ;
 //     kdDebug(24002) << k_lineinfo << " Added arg/valuepair " << next << ", " << ca[next].left(30) << endl;
 
     next = va_arg(l_Arg, char*);

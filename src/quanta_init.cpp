@@ -202,7 +202,7 @@ void QuantaInit::initQuanta()
       if (mdiMode != KMdi::IDEAlMode)
         m_quanta->setToolviewStyle(qConfig.toolviewTabs);
   }
-  
+
   m_quanta->initTabWidget(true);
   qConfig.windowLayout = "Custom";
   //FIXME: This is a hack to workaround the starting problem when we are in Toplevel mode.
@@ -305,7 +305,7 @@ void QuantaInit::initQuanta()
 
   checkRuntimeDependencies();
   ViewManager::ref()->activeDocument()->view()->setFocus();
-  
+
   m_quanta->refreshTimer = new QTimer(m_quanta);
   connect(m_quanta->refreshTimer, SIGNAL(timeout()), m_quanta, SLOT(slotReparse()));
   m_quanta->refreshTimer->start( qConfig.refreshFrequency*1000, false ); //update the structure tree every 5 seconds
@@ -453,7 +453,7 @@ void QuantaInit::initView()
   loadVPLConfig();
   ToolbarTabWidget *toolBarTab = ToolbarTabWidget::ref(quantaApp);
   connect(toolBarTab, SIGNAL(iconTextModeChanged()), quantaApp, SLOT(slotRefreshActiveWindow()));
-   
+
   //set the toolview and close button style before the GUI is created
   m_config->setGroup("General Options");
   int iconTextMode = m_config->readNumEntry("IconTextMode", KToolBar::IconOnly);
@@ -568,7 +568,7 @@ void QuantaInit::readOptions()
   qConfig.updateClosingTags = m_config->readBoolEntry("Update Closing Tags", true);
   qConfig.replaceAccented = m_config->readBoolEntry("Replace Accented Chars", false);
   qConfig.replaceNotInEncoding = m_config->readBoolEntry("Replace Chars Not In Current Encoding", true);
-    
+
 
   qConfig.defaultEncoding = m_config->readEntry("Default encoding", "UTF8");
 
@@ -637,7 +637,7 @@ void QuantaInit::openLastFiles()
   // because project now can be
   // in load stage ( remote prj )
   m_config->setGroup("Projects");
-  QString pu = m_config->readPathEntry("Last Project");
+  QString pu = QuantaCommon::readPathEntry(m_config, "Last Project");
 
   KURL u;
   QuantaCommon::setUrl(u, pu);
@@ -649,8 +649,8 @@ void QuantaInit::openLastFiles()
 
   m_config->setGroup("General Options");
 
-  QStringList urls = m_config->readPathListEntry("List of opened files");
-  QStringList encodings = m_config->readPathListEntry("Encoding of opened files");
+  QStringList urls = QuantaCommon::readPathListEntry(m_config, "List of opened files");
+  QStringList encodings = QuantaCommon::readPathListEntry(m_config, "Encoding of opened files");
   m_quanta->m_doc->blockSignals(true);
   m_quanta->setParserEnabled(false);
   uint i = 0;
@@ -698,7 +698,7 @@ void QuantaInit::loadInitialProject(const QString& url)
 void QuantaInit::initActions()
 {
     KActionCollection *ac = m_quanta->actionCollection();
-    new KAction(i18n("Annotate..."), 0, m_quanta, SLOT(slotAnnotate()),ac, "annotate"); 
+    new KAction(i18n("Annotate..."), 0, m_quanta, SLOT(slotAnnotate()),ac, "annotate");
     m_quanta->editTagAction = new KAction( i18n( "&Edit Current Tag..." ), CTRL+Key_E,
                         m_quanta, SLOT( slotEditCurrentTag() ),
                         ac, "edit_current_tag" );
@@ -719,7 +719,7 @@ void QuantaInit::initActions()
     KStdAction::cut(m_quanta, SLOT(slotCut()), ac);
     KStdAction::copy(m_quanta, SLOT(slotCopy()), ac) ;
     KStdAction::pasteText(m_quanta, SLOT(slotPaste()), ac);
-    
+
 //help
    (void) new KAction(i18n("Ti&p of the Day"), "idea", "", m_quanta,
       SLOT(slotHelpTip()), ac, "help_tip");
@@ -767,11 +767,11 @@ void QuantaInit::initActions()
                         SmallIcon("filefind"), CTRL+ALT+Key_F,
                         m_quanta, SLOT( slotEditFindInFiles() ),
                         ac, "find_in_files" );
-    
+
     KAction* aux = TagActionManager::self()->actionCollection()->action("apply_source_indentation");
     aux->setEnabled(false);
     ac->insert(aux);
-    
+
     // Tool actions
 
     (void) new KAction( i18n( "&Context Help..." ), CTRL+Key_H,
@@ -797,7 +797,7 @@ void QuantaInit::initActions()
     (void) new KAction( i18n( "&Change the DTD..." ), 0,
                         m_quanta, SLOT( slotChangeDTD() ),
                         ac, "change_dtd" );
-    
+
     (void) new KAction( i18n( "&Edit DTD Settings..." ), 0,
     m_quanta, SLOT( slotEditDTD() ),
     ac, "edit_dtd" );
@@ -1000,7 +1000,7 @@ void QuantaInit::initActions()
                                   m_quanta, SLOT(slotShowNoFramesPreview()),
                                   ac, "show_preview_no_frames" );
     act->plug(m_quanta->showPreviewAction->popupMenu());
-    
+
     act = new KAction( i18n( "View with &Konqueror" ), "konqueror", Key_F12,
                         m_quanta, SLOT( slotViewInKFM() ),
                         ac, "view_with_konqueror" );
@@ -1101,9 +1101,10 @@ void QuantaInit::recoverCrashed(QStringList& recoveredFileNameList)
   m_quanta->m_doc->blockSignals(true);
 
   execCommandPS("ps -C quanta -C quanta_be -o pid --no-headers");
+  m_PIDlist = QStringList::split("\n", m_quanta->m_scriptOutput);
 
   m_config->setGroup("Projects");
-  QString pu = m_config->readPathEntry("Last Project");
+  QString pu = QuantaCommon::readPathEntry(m_config, "Last Project");
 
   KURL u;
   QuantaCommon::setUrl(u, pu);
@@ -1116,55 +1117,58 @@ void QuantaInit::recoverCrashed(QStringList& recoveredFileNameList)
   m_config->reparseConfiguration();
   m_config->setGroup("General Options");
 
-  QStringList backedUpUrlsList = m_config->readPathListEntry("List of backedup files");
-  QStringList autosavedUrlsList = m_config->readPathListEntry("List of autosaved files");
+  QStringList backedUpUrlsList = QuantaCommon::readPathListEntry(m_config, "List of backedup files");
+  QStringList autosavedUrlsList = QuantaCommon::readPathListEntry(m_config, "List of autosaved files");
 
-  for ( QStringList::Iterator backedUpUrlsIt = backedUpUrlsList.begin();
-        backedUpUrlsIt != backedUpUrlsList.end();
-      ++backedUpUrlsIt )
+  QStringList::ConstIterator backedUpUrlsEndIt = backedUpUrlsList.constEnd();
+  for (QStringList::ConstIterator backedUpUrlsIt = backedUpUrlsList.constBegin();
+       backedUpUrlsIt != backedUpUrlsEndIt; ++backedUpUrlsIt )
   {
-   // when quanta crashes and file autoreloading option is on
-   // then if user restarts quanta, the backup copies will reload
-   QString backedUpFileName = retrieveBaseFileName((*backedUpUrlsIt));
-   QString autosavedPath = searchPathListEntry( backedUpFileName, autosavedUrlsList.join(",") );
-   if(!autosavedPath.isEmpty())
+    // when quanta crashes and file autoreloading option is on
+    // then if user restarts quanta, the backup copies will reload
+    QString backedUpFileName = (*backedUpUrlsIt).left((*backedUpUrlsIt).findRev(".")); //the filename without the PID
+    bool notFound;
+    QString autosavedPath = searchPathListEntry(backedUpFileName, autosavedUrlsList, notFound);
+    if (!autosavedPath.isEmpty()) //the current item was autosaved and is not in use by another Quanta
     {
-     KURL originalVersion;
-     QuantaCommon::setUrl(originalVersion, backedUpFileName );
-     KURL autosavedVersion;
-     QuantaCommon::setUrl(autosavedVersion,autosavedPath);
-     bool isUntitledDocument = false;
-     if (autosavedVersion.path().right(1) == "U")
-      isUntitledDocument = true;
-     if (!isPrj || originalVersion.isLocalFile())
-     {
-       KIO::UDSEntry entry;
-       KIO::NetAccess::stat(originalVersion, entry, m_quanta);
-       KFileItem* item= new KFileItem(entry, originalVersion, false, true);
-       QString origTime = item->timeString();
-       KIO::filesize_t origSize = item->size();
-       delete item;
-       KIO::NetAccess::stat(autosavedVersion, entry, m_quanta);
-       item= new KFileItem(entry, autosavedVersion, false, true);
-       QString backupTime = item->timeString();
-       KIO::filesize_t backupSize = item->size();
-       delete item;
-       if (QFileInfo(autosavedVersion.path()).exists())
-       {
+      KURL originalVersion;
+      KURL autosavedVersion;
+      QuantaCommon::setUrl(originalVersion, backedUpFileName);
+      QuantaCommon::setUrl(autosavedVersion, autosavedPath);
+      bool isUntitledDocument = false;
+      if (autosavedVersion.path().right(1) == "U")
+        isUntitledDocument = true;
+      if (!isPrj || originalVersion.isLocalFile())
+      {
+        //find some information about local files
+        KIO::UDSEntry entry;
+        KIO::NetAccess::stat(originalVersion, entry, m_quanta);
+        KFileItem* item= new KFileItem(entry, originalVersion, false, true);
+        QString origTime = item->timeString();
+        KIO::filesize_t origSize = item->size();
+        delete item;
+        KIO::NetAccess::stat(autosavedVersion, entry, m_quanta);
+        item= new KFileItem(entry, autosavedVersion, false, true);
+        QString backupTime = item->timeString();
+        KIO::filesize_t backupSize = item->size();
+        delete item;
+
+        if (QFileInfo(autosavedPath).exists()) //if the backup file exists
+        {
           emit hideSplash();
           DirtyDlg *dlg = new DirtyDlg(autosavedVersion.path(), originalVersion.path(), false, m_quanta);
           dlg->setCaption(i18n("Restore File"));
           DirtyDialog *w = static_cast<DirtyDialog*>(dlg->mainWidget());
           w->textLabel->setText(i18n("<qt>A backup copy of a file was found:<br><br>"
-           "Original file: <b>%1</b><br>"
-           "Original file size: <b>%2</b><br>"
-           "Original file last modified on: <b>%3</b><br><br>"
-           "Backup file size: <b>%4</b><br>"
-           "Backup created on: <b>%5</b><br><br>"
-           "</qt>")
-           .arg(originalVersion.prettyURL(0, KURL::StripFileProtocol ))
-           .arg(KIO::convertSize(origSize)).arg(origTime)
-           .arg(KIO::convertSize(backupSize)).arg(backupTime));
+            "Original file: <b>%1</b><br>"
+            "Original file size: <b>%2</b><br>"
+            "Original file last modified on: <b>%3</b><br><br>"
+            "Backup file size: <b>%4</b><br>"
+            "Backup created on: <b>%5</b><br><br>"
+            "</qt>")
+            .arg(originalVersion.prettyURL(0, KURL::StripFileProtocol ))
+            .arg(KIO::convertSize(origSize)).arg(origTime)
+            .arg(KIO::convertSize(backupSize)).arg(backupTime));
           w->buttonLoad->setText(i18n("&Restore the file from backup"));
           w->buttonIgnore->setText(i18n("Do &not restore the file from backup"));
           delete w->warningLabel;
@@ -1178,56 +1182,86 @@ void QuantaInit::recoverCrashed(QStringList& recoveredFileNameList)
           }
           if (dlg->exec())
           {
+            //backup the current version and restore it from the autosaved backup
             KURL backupURL = originalVersion;
-            backupURL.setPath(backupURL.path()+"."+QString::number(getpid(),10)+".backup");
+            backupURL.setPath(backupURL.path() + "." + QString::number(getpid(),10) + ".backup");
             QExtFileInfo::copy(originalVersion, backupURL, -1, true, false, m_quanta);
             QExtFileInfo::copy(autosavedVersion, originalVersion, -1, true, false, m_quanta);
             //we save a list of autosaved file names so "KQApplicationPrivate::init()"
             //can open them. If autosavedVersion.path().right(1) == "U" then we are recovering
             //an untitled document
             if(isUntitledDocument)
-             m_quanta->slotFileOpen(autosavedVersion,
+              m_quanta->slotFileOpen(autosavedVersion,
                                     m_quanta->defaultEncoding());  // load initial files
             else
-             recoveredFileNameList += originalVersion.path();
+              recoveredFileNameList += backedUpFileName;
           }
           delete dlg;
+          QFile::remove(autosavedPath); //we don't need the backup anymore
        }
-     }
-     //now we remove the autosaved copiy and clean the quantarc up
-     if(QFile::exists(autosavedVersion.path()))
-     {
-      QFile::remove(autosavedVersion.path());
+      }
+      //remove the auto-backup file from the list
       m_config->setGroup("General Options");
-
-     QStringList backedupFilesEntryList = m_config->readPathListEntry("List of backedup files");
-     QStringList autosavedFilesEntryList = m_config->readPathListEntry("List of autosaved files");
-     QStringList::Iterator entryIt;
-
-      for ( entryIt = autosavedFilesEntryList.begin();
-            entryIt != autosavedFilesEntryList.end(); ++entryIt )
+      QStringList autosavedFilesEntryList = QuantaCommon::readPathListEntry(m_config, "List of autosaved files");
+      QStringList::Iterator entryIt = autosavedFilesEntryList.begin();
+      while(entryIt != autosavedFilesEntryList.end())
       {
-        if ((*entryIt) == autosavedVersion.path())
-        {
+        if ((*entryIt) == autosavedPath)
           entryIt = autosavedFilesEntryList.remove(entryIt);
-        }
+        else
+          ++entryIt;
       }
       m_config->writePathEntry("List of autosaved files", autosavedFilesEntryList);
 
       autosavedUrlsList = autosavedFilesEntryList;
+    }
 
-      for ( entryIt = backedupFilesEntryList.begin();
-            entryIt != backedupFilesEntryList.end(); ++entryIt )
+    if (notFound)
+    {
+      //remove processed items
+      m_config->setGroup("General Options");
+
+      QStringList backedupFilesEntryList = QuantaCommon::readPathListEntry(m_config, "List of backedup files");
+      QStringList::Iterator entryIt = backedupFilesEntryList.begin();
+      while (entryIt != backedupFilesEntryList.end())
       {
         if ((*entryIt) == (*backedUpUrlsIt))
           entryIt = backedupFilesEntryList.remove(entryIt);
+        else
+          ++entryIt;
       }
       m_config->writePathEntry("List of backedup files", backedupFilesEntryList);
-     }
     }
   }
 
- }
+  //clean up auto-backup list, just in case of an old Quanta was used before
+  QStringList::Iterator entryIt = autosavedUrlsList.begin();
+  while (entryIt != autosavedUrlsList.end())
+  {
+    QString quPID = retrievePID((*entryIt));
+
+    //check if the file is opened by another running Quanta or not
+    bool isOrphan = true;
+    QStringList::ConstIterator PIDEndIt = m_PIDlist.constEnd();
+    for (QStringList::ConstIterator PIDIt = m_PIDlist.constBegin(); PIDIt != PIDEndIt; ++PIDIt )
+    {
+      if ((*PIDIt) == quPID && qConfig.quantaPID != quPID)
+      {
+        isOrphan = false; //the file is opened
+        break;
+      }
+    }
+    if (isOrphan)
+      entryIt = autosavedUrlsList.remove(entryIt);
+    else
+      ++entryIt;
+  }
+  m_config->writePathEntry("List of autosaved files", autosavedUrlsList);
+
+
+
+}
+
  void QuantaInit::execCommandPS(const QString& cmd)
  {
 
@@ -1262,35 +1296,36 @@ void QuantaInit::recoverCrashed(QStringList& recoveredFileNameList)
  }
 
 
-QString QuantaInit::searchPathListEntry(const QString& backedUpUrl,const QString& autosavedUrls)
+ QString QuantaInit::searchPathListEntry(const QString& url, const QStringList& autosavedUrlsList, bool &notFound)
 {
-  KURL k;
-  QuantaCommon::setUrl(k, backedUpUrl);
-  QStringList autosavedUrlsList = QStringList::split(",", autosavedUrls);
-  QStringList::Iterator autosavedUrlsIt;
-  for (autosavedUrlsIt = autosavedUrlsList.begin();
-       autosavedUrlsIt != autosavedUrlsList.end();
+  QString backedUpUrlHashedPath = retrieveHashedPath('.' + Document::hashFilePath(url));
+  notFound = true;
+  QStringList::ConstIterator autosavedUrlsEndIt = autosavedUrlsList.constEnd();
+  for (QStringList::ConstIterator autosavedUrlsIt = autosavedUrlsList.constBegin();
+       autosavedUrlsIt != autosavedUrlsEndIt;
        ++autosavedUrlsIt)
   {
-   QString quPID = retrievePID((*autosavedUrlsIt));
+    QString quPID = retrievePID((*autosavedUrlsIt));
 
-   QStringList PIDlist = QStringList::split("\n", m_quanta->m_scriptOutput);
-
-   bool isOrphan = true;
-   QStringList::Iterator PIDIt;
-   for ( PIDIt = PIDlist.begin(); PIDIt != PIDlist.end(); ++PIDIt )
-   {
-    if ((*PIDIt) == quPID && qConfig.quantaPID != quPID)
+    //check if the file is opened by another running Quanta or not
+    bool isOrphan = true;
+    QStringList::ConstIterator PIDEndIt = m_PIDlist.constEnd();
+    for (QStringList::ConstIterator PIDIt = m_PIDlist.constBegin(); PIDIt != PIDEndIt; ++PIDIt )
     {
-     isOrphan = false;
-     break;
+      if ((*PIDIt) == quPID && qConfig.quantaPID != quPID)
+      {
+        isOrphan = false; //the file is opened
+        break;
+      }
     }
-   }
-   if (isOrphan || ((*autosavedUrlsIt).right(1) == "U"))
-   {
-    if(retrieveHashedPath(Document::hashFilePath(k.path())) == retrieveHashedPath((*autosavedUrlsIt)))
-      return (*autosavedUrlsIt);
-   }
+
+    if (backedUpUrlHashedPath ==  retrieveHashedPath((*autosavedUrlsIt)))
+    {
+      notFound = false;
+      if (isOrphan)
+        return (*autosavedUrlsIt); //the url was autosaved to this file
+    }
+
   }
   return QString::null;
 }
@@ -1298,8 +1333,10 @@ QString QuantaInit::searchPathListEntry(const QString& backedUpUrl,const QString
 /** Retrieves hashed path from the name of a backup file */
 QString QuantaInit::retrieveHashedPath(const QString& filename)
 {
- return filename.mid(filename.findRev(".") + 1,
-                      filename.findRev("P") - 1 - filename.findRev("."));
+  int lastPoint = filename.findRev(".");
+  int Ppos = filename.find("P", lastPoint);
+  return filename.mid(lastPoint + 1,
+                      Ppos - lastPoint);
 }
 
 
@@ -1307,19 +1344,17 @@ QString QuantaInit::retrieveHashedPath(const QString& filename)
 QString QuantaInit::retrievePID(const QString& filename)
 {
  QString strPID = QString::null;
- strPID = filename.right(filename.length() - filename.findRev("P") - 1);
+ strPID = filename.mid(filename.findRev("P") + 1);
 
  if (strPID.isEmpty())
-  strPID = filename.right(filename.length() - filename.findRev("N") - 1);
+  strPID = filename.mid(filename.findRev("N") + 1);
+
+ if (strPID.endsWith("U"))
+   strPID = strPID.left(strPID.length() - 1);
 
  return strPID;
 }
 
-/** Retrieves the non hashed part of the name of a backup file */
-QString QuantaInit::retrieveBaseFileName(const QString& filename)
-{
- return filename.left(filename.findRev("."));
-}
 
 void QuantaInit::loadVPLConfig()
 {
@@ -1331,7 +1366,7 @@ void QuantaInit::loadVPLConfig()
   qConfig.kafkaRefreshDelay = m_config->readNumEntry("Kafka refresh delay", 4000);
   /**reloadUpdateTimers();*/
 
-  m_config->setGroup("Kafka Indentation options");  
+  m_config->setGroup("Kafka Indentation options");
   qConfig.inlineNodeIndentation = m_config->readBoolEntry("Inline Node Indentation");
 }
 
@@ -1346,10 +1381,10 @@ struct Dependency{
   };
   Type type;
 };
-  
+
 void QuantaInit::checkRuntimeDependencies()
 {
-  
+
   QValueList<Dependency> dependencies;
   Dependency dependency;
   dependency.name = "Kommander";
@@ -1358,73 +1393,73 @@ void QuantaInit::checkRuntimeDependencies()
   dependency.description = i18n("various script based dialogs including the Quick Start dialog");
   dependency.type = Dependency::Executable;
   dependencies.append(dependency);
-  
+
   dependency.name = "Tidy";
   dependency.execName = "tidy";
   dependency.url = "http://tidy.sourceforge.net";
   dependency.description = i18n("HTML syntax checking");
   dependency.type = Dependency::Executable;
   dependencies.append(dependency);
-  
+
   dependency.name = "Kompare";
   dependency.execName = "kompare";
   dependency.url = "http://bruggie.dnsalias.org/kompare";
   dependency.description = i18n("comparing of files by content");
   dependency.type = Dependency::Executable;
   dependencies.append(dependency);
-  
-    
+
+
   dependency.name = i18n("Control Center (kdebase)");
   dependency.execName = "kcmshell";
   dependency.url = "http://www.kde.org";
   dependency.description = i18n("preview browser configuration");
   dependency.type = Dependency::Executable;
   dependencies.append(dependency);
-  
+
   dependency.name = "GPG (OpenPGP)";
   dependency.execName = "gpg";
   dependency.url = "http://www.gnupg.de";
   dependency.description = i18n("preview browser configuration");
   dependency.type = Dependency::Executable;
   dependencies.append(dependency);
-  
+
   dependency.name = "KFileReplace)";
   dependency.execName = "KFileReplace";
   dependency.url = "http://kfilereplace.kdewebdev.org";
   dependency.description = i18n("search and replace in files");
   dependency.type = Dependency::Plugin;
   dependencies.append(dependency);
-  
+
   dependency.name = "KXSLDbg";
   dependency.execName = "XSLT Debugger";
   dependency.url = "http://xsldbg.sourceforge.net/";
   dependency.description = i18n("XSLT debugging");
   dependency.type = Dependency::Plugin;
   dependencies.append(dependency);
-  
-    
+
+
   dependency.name = "KImageMapEditor";
   dependency.execName = "KImageMapEditor";
   dependency.url = "http://www.nongnu.org/kimagemap/";
   dependency.description = i18n("editing HTML image maps");
   dependency.type = Dependency::Plugin;
   dependencies.append(dependency);
-  
-    
+
+
   dependency.name = "KLinkStatus";
   dependency.execName = "Link Checker";
   dependency.url = "http://kde-apps.org/content/show.php?content=12318";
   dependency.description = i18n("link validity checking");
   dependency.type = Dependency::Plugin;
   dependencies.append(dependency);
-  
+
   dependency.name = "Cervisia";
   dependency.execName = "CVS Management (Cervisia)";
   dependency.url = "http://www.kde.org/apps/cervisia";
   dependency.description = i18n("CVS management plugin");
   dependency.type = Dependency::Plugin;
   dependencies.append(dependency);
-  
+
   QString errorStr;
   QString stdErrorMsg = i18n("<br><b>-    %1</b> [<i>%2</i>] - %3 will not be available;");
   for (QValueList<Dependency>::ConstIterator it = dependencies.constBegin(); it != dependencies.constEnd(); ++it)
@@ -1434,7 +1469,7 @@ void QuantaInit::checkRuntimeDependencies()
     {
       if (KStandardDirs::findExe(dependency.execName).isNull())
         errorStr += QString(stdErrorMsg).arg(dependency.name).arg(dependency.url).arg(dependency.description);
-    
+
     } else
     if (dependency.type == Dependency::Plugin)
     {
@@ -1442,7 +1477,7 @@ void QuantaInit::checkRuntimeDependencies()
         errorStr += QString(stdErrorMsg).arg(dependency.name).arg(dependency.url).arg(dependency.description);
     }
   }
-  
+
 #ifdef ENABLE_CVSSERVICE
   QString error;
   QCString appId;

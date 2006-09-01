@@ -217,7 +217,7 @@ void ProjectPrivate::init()
   excludeRx.setPattern(".*~$");
   excludeList.clear();
   excludeList.append("*~");
-  usePreviewPrefix = false;  
+  usePreviewPrefix = false;
   previewPrefix = KURL();
   m_persistentBookmarks = false;
   m_debuggerPersistentBreakpoints = false;
@@ -420,7 +420,7 @@ void ProjectPrivate::loadProjectXML()
   {
     el = m_sessionDom.createElement("itemcursorpositions");
     sessionNode.appendChild(el);
-  } 
+  }
   m_eventsEnabled = projectNode.toElement().attribute("enableEvents", "true") == "true";
   m_defaultEncoding = projectNode.toElement().attribute("encoding");
   if (m_defaultEncoding.isEmpty())
@@ -676,7 +676,7 @@ void ProjectPrivate::loadProjectXML()
     uploadNode = projectNode.namedItem("uploadprofiles").cloneNode(true);
     sessionNode.appendChild(uploadNode);
   }
-  
+
   QDomElement uploadEl = uploadNode.toElement();
   m_showUploadTreeviews = uploadEl.attribute("showtreeviews", "true") == "true";
   if (m_showUploadTreeviews)
@@ -694,8 +694,8 @@ void ProjectPrivate::loadProjectXML()
     node = projectNode.namedItem("debuggers").cloneNode(true);
     sessionNode.appendChild(node);
   }
- 
-  
+
+
   parent->statusMsg(QString::null);
   parent->newProjectLoaded(projectName, baseURL, templateURL);
   parent->reloadTree(&(m_projectFiles), true, treeStatusFromXML());
@@ -719,7 +719,7 @@ void ProjectPrivate::slotAcceptCreateProject()
       path.append("/");
     if (!path.isEmpty())
       baseURL.setPath(path);
-  }  
+  }
   /*
     it is important to set the fields only if there is some input
     otherwise you set them to an empty string and the treeview will
@@ -1360,7 +1360,7 @@ bool ProjectPrivate::loadProject(const KURL &url)
       return false;
   }
   QString projectTmpFile;
-  QString sessionTmpFile;  
+  QString sessionTmpFile;
 
   // test if url is writeable and download to local file
   if (KIO::NetAccess::exists(url, false, m_mainWindow) &&
@@ -1384,7 +1384,7 @@ bool ProjectPrivate::loadProject(const KURL &url)
       QString sessionStr;
       QTextStream sessionStream(&sessionStr, IO_WriteOnly);
       sessionStream.setEncoding(QTextStream::UnicodeUTF8);
-    
+
       sessionStream << "<!DOCTYPE webprojectsession ><webprojectsession>" << endl;
       sessionStream << "\t<session>" << endl;
       sessionStream << "\t</session>" << endl;
@@ -1406,7 +1406,7 @@ bool ProjectPrivate::loadProject(const KURL &url)
           fstream.setEncoding(QTextStream::UnicodeUTF8);
           fstream << sessionStr;
           m_tmpSessionFile = sessionURL.path();  // we are local: the temp file and the projectURL are the same
-        } 
+        }
         f.close();
       }
       m_sessionDom.setContent(sessionStr);
@@ -1554,16 +1554,16 @@ void ProjectPrivate::writeConfig()
   // add project to list
   if (!projectURL.isEmpty())
   {
-    QStringList projectList = config->readPathListEntry("OpenProjects");
+    QStringList projectList = QuantaCommon::readPathListEntry(config, "OpenProjects");
     if (projectList.contains( projectURL.url() ) == 0)
     {
       projectList.append( projectURL.url() );
       config->writePathEntry("OpenProjects", projectList);
       // add the temp file to list
-      projectList = config->readPathListEntry("ProjectTempFiles");
+      projectList = QuantaCommon::readPathListEntry(config, "ProjectTempFiles");
       projectList.append(KURL::fromPathOrURL(m_tmpProjectFile).url());
       config->writePathEntry("ProjectTempFiles", projectList);
-      projectList = config->readPathListEntry("ProjectSessionTempFiles");
+      projectList = QuantaCommon::readPathListEntry(config, "ProjectSessionTempFiles");
       projectList.append(KURL::fromPathOrURL(m_tmpSessionFile).url());
       config->writePathEntry("ProjectSessionTempFiles", projectList);
     }
@@ -1579,17 +1579,17 @@ void ProjectPrivate::removeFromConfig(const QString & urlStr)
 {
   config->reparseConfiguration();
   config->setGroup("Projects");
-  QStringList projectList = config->readPathListEntry("OpenProjects");
+  QStringList projectList = QuantaCommon::readPathListEntry(config, "OpenProjects");
   int i = projectList.findIndex( urlStr );
   if ( i > -1)
   {
     projectList.remove(projectList.at(i));
     config->writePathEntry("OpenProjects", projectList);
     // remove the temp file from list
-    projectList = config->readPathListEntry("ProjectTempFiles");
+    projectList = QuantaCommon::readPathListEntry(config, "ProjectTempFiles");
     projectList.remove(projectList.at(i));
     config->writePathEntry("ProjectTempFiles", projectList);
-    projectList = config->readPathListEntry("ProjectSessionTempFiles");
+    projectList = QuantaCommon::readPathListEntry(config, "ProjectSessionTempFiles");
     if (projectList.count() > (uint)i)
     {
       projectList.remove(projectList.at(i));
@@ -1604,7 +1604,7 @@ bool ProjectPrivate::projectAlreadyOpen(const QString & urlStr)
 {
   config->reparseConfiguration();
   config->setGroup("Projects");
-  QStringList projectList = config->readPathListEntry("OpenProjects");
+  QStringList projectList = QuantaCommon::readPathListEntry(config, "OpenProjects");
   return (projectList.contains(urlStr) != 0);
 }
 

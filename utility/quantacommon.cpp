@@ -687,4 +687,32 @@ bool QuantaCommon::checkOverwrite(const KURL& url, QWidget *window)
   return result;
 }
 
+QStringList QuantaCommon::readPathListEntry(KConfig *config, const QString &pKey)
+{
+  QStringList list = config->readPathListEntry(pKey);
+  QStringList::Iterator end = list.end();
+  for (QStringList::Iterator it = list.begin(); it != end; ++it)
+  {
+    KURL u = KURL::fromPathOrURL(*it);
+    if (u.isValid())
+    {
+      u.setPath(QExtFileInfo::canonicalPath(u.path()));
+      *it = u.path();
+    }
+  }
+  return list;
+}
+
+QString QuantaCommon::readPathEntry(KConfig *config, const QString &pKey)
+{
+  QString path = config->readPathEntry(pKey);
+  KURL u = KURL::fromPathOrURL(path);
+  if (u.isValid())
+  {
+    u.setPath(QExtFileInfo::canonicalPath(u.path()));
+    path = u.path();
+  }
+  return path;
+}
+
 

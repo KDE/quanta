@@ -26,7 +26,7 @@
 #define IDS_MODIFIED    3
 #define IDS_STATUS_CLM  4
 // Number 5 is used by he debugger, but not added until debugger is activated
-#define IDS_STATUS_DEBUGGER  5  
+#define IDS_STATUS_DEBUGGER  5
 
 #define IDS_DEFAULT     "Ready."
 
@@ -220,7 +220,7 @@ public:
   /** Updates the structure and attribute treeview. */
   void updateTreeViews();
   void setTitle(const QString&);
-  
+
   QPtrList<TagAction> const& tagActions() const {return m_tagActions;}
 
   /** Clicked word or selected text for context sensitive menu in editor */
@@ -234,7 +234,7 @@ signals: // Signals
 
   /** Emitted when some kind of event that can have associated actions has happened. */
   void eventHappened(const QString&, const QString&, const QString& );
-  
+
   void toolbarRemoved(const QString&);
 
   void showMessage(const QString&, bool);
@@ -311,7 +311,7 @@ public slots:
   /** options slots */
   void slotShowMenuBar();
   void slotPreviewOptions();
-  void slotOptions(); 
+  void slotOptions();
   void slotOptionsConfigureKeys();
   void slotOptionsConfigureToolbars();
   void slotNewToolbarConfig();
@@ -415,7 +415,7 @@ public slots:
   void slotHTMLPartDeleted(QObject *object);
 
   void slotRefreshActiveWindow();
-  
+
   bool slotEnableIdleTimer(bool enable);
 
 //Overridden KMdiMainFrm slots
@@ -430,7 +430,7 @@ public slots:
 
   // Get saved position of dock
   KDockWidget::DockPosition prevDockPosition(QWidget* dock, KDockWidget::DockPosition def);
- 
+
 protected slots:
   void slotDockWidgetHasUndocked(KDockWidget *widget);
   void slotPreviewBeingClosed();
@@ -527,12 +527,12 @@ protected:
   *   the name of the created file or QString::null if creation has failed.
   */
   QString createDTEPTarball();
-  
+
   /** Create a toolbar tarball which can be uploaded or sent in email. Returns
   *   the name of the created file or QString::null if creation has failed.
   */
   QString createToolbarTarball();
-  
+
   /** Ask for save all the modified user toolbars. */
   bool removeToolbars();
   /** Returns true if all toolbars are hidden, false otherwise. */

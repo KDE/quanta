@@ -183,7 +183,7 @@ work correctly. */
   void open(const KURL &url, const QString &encoding);
   /**
    * Opens a file in the editor part.
-   * @param url 
+   * @param url
    */
   bool openURL(const KURL& url);
   /** Reads the DTD info from the file, tries to find the correct DTD and builds the tag/attribute list from the DTD file. */
@@ -218,8 +218,6 @@ work correctly. */
   bool isBackedUp();
   /** Creates an automatic backup copy for the crash recovering mechanism */
   void createBackup(KConfig* config);
-  /** No descriptions */
-  void setBackupEntry(bool b);
   /** No descriptions */
   QString backupPathEntryValue();
   /** No descriptions */
@@ -275,12 +273,12 @@ private:
   /**
    * Finds the beginning of a tag in the document, starting from a position.
    * @param position start to look from this position backwards
-   * @return the position of the starting character or an empty QPoint if not found 
+   * @return the position of the starting character or an empty QPoint if not found
    */
   QPoint findTagBeginning(const QPoint& position);
   QPoint findTagEnd(const QPoint& position);
-  
-  
+
+
 
   QMap<uint, QPair<QString, QString> > m_annotations;
   QString untitledUrl;
@@ -294,7 +292,6 @@ private:
   KTempFile *tempFile;
   QString m_tempFileName;
   QDateTime m_modifTime;
-  bool m_backupEntry;
   /* path of the backup copy file of the document */
   QString m_backupPathValue;
   QString dtdName;

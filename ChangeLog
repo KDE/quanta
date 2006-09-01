@@ -1,6 +1,11 @@
 This files contains the changes since Quanta 2.0 until the current 3.5.x series.
 
-Version 3.5.4 (Release date: xx-xx-2006; Started 24-06-2005):
+Version 3.5.5 (Release date: xx-xx-2006; Started 01-09-2006):
+ - bugfixes:
+      - do not allow growing of quantarc until it crashes Quanta [#111049]
+      - symlink handling fixes (hopefully won't break anything)
+
+Version 3.5.4 (Release date: 02-08-2006; Started 24-06-2005):
  - bugfixes:
       - make Open File in context menu work for remote projects as well
       - make possible to remove a shortcut assigned to an action
@@ -21,7 +26,7 @@ Version 3.5.3 (Release date: 23-05-2006; Started 18-03-2005):
 
 - improvements:
       - add input button to the Forms toolbar [#125202]
-	
+
 Version 3.5.2 (Release date: 17-03-2006; Started 23-01-2005):
  - bugfixes:
         - allow opening of read-only remote files, like from http:// [#120632]
@@ -140,7 +145,7 @@ Version 3.4.3 (Release date: 05-10-2005; Started 01-08-2005):
         - replace a leading ~ in an upload profile with the users home folder and avoid a hang
   - fix lots of VPL related crashes
   - show DT tags in VPL [#109723]
-  
+
 Version 3.4.2 (Release date: 20-07-2005; Started 01-06-2005):
  - bugfixes:
         - entity autocompletion fixes
@@ -157,7 +162,7 @@ Version 3.4.2 (Release date: 20-07-2005; Started 01-06-2005):
         - Paste as HTML Encoded encodes more chars to their corresponding entities [#100547, #100103]
         - improve the automatic conversion of characters. Only those are converted that cannot be
    encoded in the encoding of the document
-           
+
 Version 3.4.1 (Release date: 31-05-2005; Started 04-03-2004):
  - bugfixes:
         - read/write the correct entry from description.rc in the editor
@@ -182,7 +187,7 @@ Version 3.4 (Release date: 16-03-2005; Started 20-08-2004):
           - Improved path mapping
           - Fixed bug that objects appeared incorrectly in watch list
           - Fixed lockup when watching large variables
-          - The debugger docks should now remember their positions 
+          - The debugger docks should now remember their positions
         - VPL:
           - enable VPL on KDE 3.3.x
           - Update cursor position in VPL when return key is pressed. [#94816]
@@ -251,13 +256,13 @@ Version 3.4 (Release date: 16-03-2005; Started 20-08-2004):
           the tab context menu [#98265]
         - do not close the previous project if the new project dialog was cancelled
           [#92693]
-        - extra checks added to make it possible to use editors that do not implement the KTextEditor 
+        - extra checks added to make it possible to use editors that do not implement the KTextEditor
           interfaces completely, like Kyzis M3
         - fix highlighting problems (in some cases the loaded or new documents had the highlighting set to NONE)
         - avoid crashes on exit (with a general solution)
         - really show only the possible children in the completion box
         - speed up the autocompletion of scripts (which in turn helps to not have big delays while typing)
-        - don't add back an action to a toolbar after switching between documents that have different DTEPs if 
+        - don't add back an action to a toolbar after switching between documents that have different DTEPs if
           it was removed
         - deal correctly with toolbars having the same name, but belonging to different DTEPs
         - workaround a QTable bug, which causes the scrollbar to disappear when entering data in the table editor [#99011]
@@ -325,7 +330,7 @@ Version 3.4 (Release date: 16-03-2005; Started 20-08-2004):
             - update to HEAD
             - update to tag/date
             - revert
-            - add/remove to/from the repository 
+            - add/remove to/from the repository
             - show log
             - add/remove to/from .cvsignore
         - added possibility to execute CVS commands on the main project directory
@@ -340,8 +345,8 @@ Version 3.4 (Release date: 16-03-2005; Started 20-08-2004):
         - possibility to invoke the tag editing dialog inside PHP added back
         - PHP class autocompletion improved (autocomplete for $this; class methods; for classes from
           included files)
-        - make CSS autocompletion less intrussive      
- 
+        - make CSS autocompletion less intrussive
+
 Version 3.3.0 (Release date: 18-08-2004; Started 07-05-2004):
 NOTE: Unfortunately I failed to update the changelog regulary, thus some new features and
 bugfixes might not be listed here.

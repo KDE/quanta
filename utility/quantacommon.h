@@ -35,6 +35,7 @@ class KStandardDirs;
 class QWidget;
 class Tag;
 
+class KConfig;
 class KPopupMenu;
 
 /** Describes one abbreviation group */
@@ -78,7 +79,7 @@ public:
           int quantaRefreshDelay;
           bool kafkaRefreshOnFocus;
           int kafkaRefreshDelay;
-          
+
           //kafka indentation options
           bool inlineNodeIndentation;
 
@@ -193,6 +194,22 @@ pointer must be deleted by the caller!! */
   *  @return true if the user answered yes, false otherwise.
   */
   static bool checkOverwrite(const KURL& url, QWidget *window);
+
+  /**
+   * Same as KConfigBase::readPathListEntry, but resolves symlinks
+   * @param config
+   * @param pKey
+   * @return
+   */
+  static QStringList readPathListEntry(KConfig *config, const QString &pKey);
+
+    /**
+   * Same as KConfigBase::readPathEntry, but resolves symlinks
+   * @param config
+   * @param pKey
+   * @return
+     */
+  static QString readPathEntry(KConfig *config, const QString &pKey);
 
 };
 

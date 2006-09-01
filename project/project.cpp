@@ -175,9 +175,9 @@ void Project::readConfig(KConfig *config)
 void Project::loadLastProject(bool reload)
 {
   d->config->setGroup("Projects");
-  QStringList projectList = d->config->readPathListEntry("OpenProjects");
-  QStringList tempList = d->config->readPathListEntry("ProjectTempFiles");
-  QStringList sessionTempList = d->config->readPathListEntry("ProjectSessionTempFiles");
+  QStringList projectList = QuantaCommon::readPathListEntry(d->config, "OpenProjects");
+  QStringList tempList = QuantaCommon::readPathListEntry(d->config, "ProjectTempFiles");
+  QStringList sessionTempList = QuantaCommon::readPathListEntry(d->config, "ProjectSessionTempFiles");
   // remove all local open projects because project and temp file are the same
   for (uint i = 0; i < projectList.count(); ++i)
   {
@@ -229,7 +229,7 @@ void Project::loadLastProject(bool reload)
   d->config->writePathEntry("OpenProjects", projectList);
   d->config->writePathEntry("ProjectTempFiles", tempList);
   // now we look for the last project
-  urlPath = d->config->readPathEntry("Last Project");
+  urlPath = QuantaCommon::readPathEntry(d->config, "Last Project");
   QuantaCommon::setUrl(url, urlPath);
 
   if ( reload && (!urlPath.isEmpty() && url.isValid()))
@@ -417,13 +417,13 @@ void Project::slotRemove(const KURL& urlToRemove)
     setModified();  // there happens more than setting the flag !
   emit reloadTree( &(d->m_projectFiles), false, QStringList() );
   emit newStatus();
-  
+
   QString urlPath = QExtFileInfo::toRelative(urlToRemove, d->baseURL).path();
   QString nice = urlPath;
   nice = KStringHandler::lsqueeze(nice, 60);
   if (KMessageBox::warningContinueCancel(d->m_mainWindow, i18n("<qt>Do you want to remove <br><b>%1</b><br> from the server(s) as well?</qt>").arg(nice), i18n("Remove From Server"), KStdGuiItem::remove(), "RemoveFromServer") == KMessageBox::Continue )
   {
-    QDomNode profilesNode = d->m_sessionDom.firstChild().firstChild().namedItem("uploadprofiles");  
+    QDomNode profilesNode = d->m_sessionDom.firstChild().firstChild().namedItem("uploadprofiles");
     QDomNodeList profileList = profilesNode.toElement().elementsByTagName("profile");
     QDomElement e;
     QString s;
@@ -443,7 +443,7 @@ void Project::slotRemove(const KURL& urlToRemove)
       baseUrl.setPass(passwd);
       baseUrl.addPath(urlPath);
       KIO::NetAccess::del(baseUrl, d->m_mainWindow);
-    }  
+    }
   }
 }
 
@@ -1360,7 +1360,7 @@ void Project::loadCursorPosition(const KURL &url, KTextEditor::ViewCursorInterfa
     el = nl.item(i).toElement();
     if ( el.attribute("url") == QuantaCommon::qUrl(u) )
     {
-      QString s = el.attribute("line");      
+      QString s = el.attribute("line");
       uint line, col;
       bool ok;
       line = s.toUInt(&ok, 10);
@@ -1409,7 +1409,7 @@ void Project::saveCursorPosition(const KURL &url, KTextEditor::ViewCursorInterfa
     el.setAttribute("line", line);
     el.setAttribute("url", QuantaCommon::qUrl(u));
     QDomNode no = d->m_sessionDom.firstChild().firstChild().namedItem("itemcursorpositions");
-    no.appendChild(el);   
+    no.appendChild(el);
   }
 }
 #include "project.moc"

@@ -52,8 +52,8 @@ FilesTreeView::FilesTreeView(KConfig *config, QWidget *parent, const char *name)
   // I must read this here because quanta_init has not done it yet
   qConfig.showHiddenFiles = m_config->readBoolEntry("Show Hidden Files", true);
   qConfig.saveTrees = m_config->readBoolEntry("Save Local Trees", true);
-  QStringList topStrList = m_config->readPathListEntry("Top folders");
-  QStringList topStrAliasList = m_config->readPathListEntry("Top folder aliases");
+  QStringList topStrList = QuantaCommon::readPathListEntry(m_config, "Top folders");
+  QStringList topStrAliasList = QuantaCommon::readPathListEntry(m_config, "Top folder aliases");
   KURL url;
   for (uint i = 0; i < topStrList.count(); i++)
   {
