@@ -128,10 +128,19 @@ _ (&#095;) Underscore
 ÿ (&#255;) Small y, diaeresis
 Ă (&#258;) Capital A, romanian accent
 ă (&#259;) Small a, romanian accent
+č (&#269;) Small c, caron
+ď (&#271;) Small d, caron
+ě (&#283;) Small e, caron
+ň (&#328;) Small n, caron
+ř (&#345;) Small r, caron
 Ş (&#350;) Capital S, cedilla accent
 ş (&#351;) Small s, cedilla accent
+š (&#353;) Small s, caron
 Ţ (&#354;) Capital T, cedilla accent
 ţ (&#355;) Small t, cedilla accent
+ť (&#357;) Small t, caron
+ů (&#367;) Small u, ring above
+ž (&#382;) Small z, caron
 Ş (&#536;) Capital S, comma accent below
 ş (&#537;) Small s, comma accent below
 Ţ (&#538;) Capital T, comma accent below
