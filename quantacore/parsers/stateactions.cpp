@@ -314,9 +314,9 @@ bool StateActions::setTagRangeStart(const ParserStatus & parser, const QString &
 
 bool StateActions::fillBufferUntil(const ParserStatus & parser, const QString & argument)
 {
+  parser.m_buffer.append(parser.m_currChar);
   if (argument.isEmpty())
   {
-    parser.m_buffer.append(parser.m_currChar);
     return true;
   }
   parser.m_buffer.append(parser.m_source->charactersUntil(argument.at(0)));

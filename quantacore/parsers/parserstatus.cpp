@@ -137,15 +137,15 @@ bool ParserStatus::loop()
       m_currChar = m_source->next();
       if (m_currChar == QXmlInputSource::EndOfData)
         m_currChar = m_source->next();
-      if (m_currChar == QXmlInputSource::EndOfDocument)
-      {
-        if (m_currState->endState)
-          m_currState = m_currState->endState;
-        else
-          break;
-      }
       if (m_currChar == '\n')
         m_currChar = ' ';
+    }
+    if (m_currChar == QXmlInputSource::EndOfDocument)
+    {
+      if (m_currState->endState)
+        m_currState = m_currState->endState;
+      else
+        break;
     }
 
       // test conditions and do the actions
@@ -181,28 +181,7 @@ bool ParserStatus::loop()
       i++;
       cond = m_currState->conditions[i];
     }
-#if 0
-      // test conditions and do the actions
-    foreach (Condition condition, m_currState->conditions)
-    {
-      if (condition.compareFunction.call(*this))
-      {
-        foreach (ActionFunction af, condition.actionFunctions)
-        {
-          if (!af.call(*this))
-            return false;
-        }
-        if (condition.nextState)
-        {
-          m_currState = condition.nextState;
-          PARSERSTATUSDEBUG("State changed to " << m_currState->name)
-        }
-
-        break;
-      }
-    }
-#endif
-    if (m_currChar == QXmlInputSource::EndOfDocument)
+    if (m_currChar == QXmlInputSource::EndOfDocument && m_sourceStack.isEmpty())
       break;
   }
   return true;

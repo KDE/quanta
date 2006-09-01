@@ -317,3 +317,4 @@ quanta/lib/node.h
 quanta/lib/qtag.h
 quanta/quantacore/parsers/dombuilder.h
 quanta/quantacore/parsers/dombuilder.cpp
+quanta/data/statemachines/xmlendstates.xml

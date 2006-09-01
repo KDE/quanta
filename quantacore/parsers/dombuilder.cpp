@@ -50,7 +50,7 @@ DomBuilder::~DomBuilder()
 
 bool DomBuilder::characters(const QString & ch)
 {
-  DOMBUILDERDEBUG("DomBuilder::Text: " << ch)
+  DOMBUILDERDEBUG("DomBuilder::Text: " << QString(ch).replace('\n', ' '))
   return true;
 }
 
@@ -109,7 +109,7 @@ bool DomBuilder::startDocument()
 
 bool DomBuilder::startElement (const QString & namespaceURI, const QString & localName, const QString & qName, const QXmlAttributes & atts)
 {
-  DOMBUILDERDEBUG("DomBuilder::startElement: ")
+  DOMBUILDERDEBUG("DomBuilder::startElement: " << qName)
   return true;
 }
 
@@ -124,7 +124,7 @@ bool DomBuilder::startPrefixMapping(const QString & prefix, const QString & uri)
 
 bool DomBuilder::comment(const QString & ch)
 {
-  DOMBUILDERDEBUG("DomBuilder::Comment: " << ch)
+  DOMBUILDERDEBUG("DomBuilder::Comment: " << QString(ch).replace('\n', ' '))
   return true;
 }
 
