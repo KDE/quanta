@@ -136,6 +136,7 @@ bool QuantaView::mayRemove()
         m_customWidget->reparent(0L, 0, QPoint(), false);
     if (!saveModified())
           return false;
+    slotSetSourceLayout();
     if (static_cast<QuantaView *>(quantaApp->activeWindow()) == this)
     {
         parser->setSAParserEnabled(false);
@@ -143,8 +144,6 @@ bool QuantaView::mayRemove()
         delete baseNode;
         baseNode = 0L;
         kdDebug(24000) << "Node objects after delete :" << NN << " baseNode= " << baseNode << endl;
-        if (m_kafkaDocument && m_kafkaDocument->getKafkaWidget() && m_kafkaDocument->getKafkaWidget()->view())
-          m_kafkaDocument->getKafkaWidget()->view()->reparent(0, 0, QPoint(), false);
     }
     if (m_document)
     {
@@ -152,8 +151,6 @@ bool QuantaView::mayRemove()
       Project::ref()->saveBookmarks(url, dynamic_cast<KTextEditor::MarkInterface*>(m_document->doc()));
       emit eventHappened("before_close", url.url(), QString::null);
       m_currentViewsLayout = -1;
-      //slotSetSourceLayout(); //set the layout to source only, otherwise it crashes...
-     // m_kafkaDocument->getKafkaWidget()->view()->reparent(0, 0, QPoint(), false);
 //      m_document->closeTempFile();
       if (!m_document->isUntitled() && url.isLocalFile())
       {
@@ -161,7 +158,7 @@ bool QuantaView::mayRemove()
 //        kdDebug(24000) << "removeFile[mayRemove]: " << url.path() << endl;
       }
       Project::ref()->saveCursorPosition(url, dynamic_cast<KTextEditor::ViewCursorInterface*>(m_document->view()));
-    
+
       quantaApp->menuBar()->activateItemAt(-1);
       quantaApp->guiFactory()->removeClient(m_document->view());
       emit eventHappened("after_close", url.url(), QString::null);
@@ -372,6 +369,7 @@ void QuantaView::slotSetSourceLayout()
 
 //show the document if full size
    m_splitter->hide();
+   m_kafkaDocument->getKafkaWidget()->view()->reparent(0, 0, QPoint(), false);
    m_document->view()->reparent(m_documentArea, 0, QPoint(), true);
    m_document->view()->resize(m_documentArea->size());
    m_viewLayout->addWidget(m_documentArea, 1, 0);
@@ -751,20 +749,20 @@ void QuantaView::insertNewTag(const QString &tag, const QString &attr, bool inse
 {
   if (m_document)
   {
-    if (m_currentFocus == QuantaView::VPLFocus || 
+    if (m_currentFocus == QuantaView::VPLFocus ||
         (m_currentFocus == QuantaView::SourceFocus && qConfig.smartTagInsertion))
       insertOutputInTheNodeTree("", "", quantaApp->showTagDialogAndReturnNode(tag, attr));
     else
     {
       QString selection;
-      if (m_document->selectionIf)  
+      if (m_document->selectionIf)
         selection = m_document->selectionIf->selection();
       TagDialog *dlg = new TagDialog(QuantaCommon::tagFromDTD(m_document->getDTDIdentifier(), tag), selection, attr, baseURL());
       if (dlg->exec())
       {
         dlg->insertTag(m_document, insertInLine);
       }
-  
+
       delete dlg;
     }
   }
@@ -996,7 +994,7 @@ void QuantaView::refreshWindow()
        resize(width(), height());
   } else
   {
-/*    
+/*
     kdDebug(24000) << "m_documentArea->height(): " << m_documentArea->height() << endl;
     kdDebug(24000) << "ToolbarTabWidget::ref()->height(): " << ToolbarTabWidget::ref()->height() << " hidden: " << ToolbarTabWidget::ref()->isHidden() << " visible: " << ToolbarTabWidget::ref()->isVisible() << endl;
     kdDebug(24000) <<"sum: " << m_documentArea->height() + ToolbarTabWidget::ref()->height() << endl;

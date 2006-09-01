@@ -7,6 +7,7 @@ Version 3.5.5 (Release date: xx-xx-2006; Started 01-09-2006):
       - fix Save As problems, possibly #131728
       - add some more special characters to the list [#130513, #124628]
       - crash fix in CSS editor [#131849]
+      - don't crash when closing a document in VPL mode [#133082, #126585, #125153]
 
 Version 3.5.4 (Release date: 02-08-2006; Started 24-06-2005):
  - bugfixes:

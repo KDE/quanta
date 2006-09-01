@@ -235,7 +235,7 @@ void ViewManager::slotViewActivated(KMdiChildView *view)
   if (w && !w->isUntitled())
   {
     emit viewActivated(w->url());
-    
+
     bool flag = TagActionManager::canIndentDTD(w->defaultDTD()->name);
     quantaApp->actionCollection()->action("apply_source_indentation")->setEnabled(flag);
   }
@@ -304,7 +304,7 @@ void ViewManager::slotCloseOtherTabs()
       return;  //save aborted
     }
   }
-  
+
   for (childIt = children.begin(); childIt != children.end(); ++childIt)
   {
       view = *childIt;
@@ -477,7 +477,7 @@ bool ViewManager::closeAll(bool createNew)
   disconnect(quantaApp, SIGNAL(viewActivated (KMdiChildView *)), this, SLOT(slotViewActivated(KMdiChildView*)));
   disconnect(quantaApp, SIGNAL(lastChildViewClosed()), this, SLOT(slotLastViewClosed()));
   ToolbarTabWidget::ref()->reparent(0L, 0, QPoint(), false);
-  
+
   for (childIt = children.begin(); childIt != children.end(); ++childIt)
   {
       view = dynamic_cast<QuantaView*>(*childIt);
@@ -525,7 +525,7 @@ bool ViewManager::closeAll(bool createNew)
       quantaApp->slotNewStatus();
   }
   emit filesClosed(true);
-  return true; 
+  return true;
 }
 
 bool ViewManager::isOneModified()
@@ -587,10 +587,10 @@ void ViewManager::slotTabContextMenu(QWidget *widget, const QPoint& point)
    if (m_separatorVisible)
        m_tabPopup->removeItemAt(SEPARATOR_INDEX);
    m_separatorVisible = false;
-   m_contextView = dynamic_cast<QuantaView*>(widget);   
+   m_contextView = dynamic_cast<QuantaView*>(widget);
    Document *w = 0L;
    if (m_contextView)
-    w = m_contextView->document();       
+    w = m_contextView->document();
    if (w)
    {
        if (!w->isUntitled())
@@ -620,7 +620,7 @@ void ViewManager::slotTabContextMenu(QWidget *widget, const QPoint& point)
    bool bookmarksFound = false;
    if (w && w->markIf)
    {
-     m_bookmarks->setDocument(w);           
+     m_bookmarks->setDocument(w);
      QPtrList<KTextEditor::Mark> m = w->markIf->marks();
      QPtrListIterator<KTextEditor::Mark> it(m);
      for(; *it; ++it)
@@ -631,7 +631,7 @@ void ViewManager::slotTabContextMenu(QWidget *widget, const QPoint& point)
          break;
        }
      }
-   }  
+   }
    m_tabPopup->setItemVisible(m_bookmarksMenuId, bookmarksFound);
 #ifdef ENABLE_CVSSERVICE
    if (w && w->url().isLocalFile() && !w->isUntitled() && CVSService::ref()->exists())
