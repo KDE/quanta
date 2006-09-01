@@ -376,7 +376,7 @@ void QuantaApp::slotFileOpen(const KURL::List &urls, const QString& encoding)
     if (!QExtFileInfo::exists(*i, true, this))
     {
       KMessageBox::error(this, i18n("<qt>The file <b>%1</b> does not exist or is not a recognized mime type.</qt>").arg((*i).prettyURL(0, KURL::StripFileProtocol)));
-      
+
     } else
     {
       if (QuantaCommon::checkMimeGroup(*i, "text") ||
@@ -463,7 +463,9 @@ bool QuantaApp::slotFileSaveAs(QuantaView *viewToSave)
       fileWatcher->removeFile(oldURL.path());
 //      kdDebug(24000) << "removeFile[slotFileSaveAs]: " << oldURL.path() << endl;
     }
-    QString myEncoding =  dynamic_cast<KTextEditor::EncodingInterface*>(w->doc())->encoding();
+
+    //FIXME: in katepart changing encoding saves the original file if it was modified, so it's useless in saveas...
+//    QString myEncoding =  dynamic_cast<KTextEditor::EncodingInterface*>(w->doc())->encoding();
 
     bool gotPath = false;
 
@@ -502,15 +504,20 @@ bool QuantaApp::slotFileSaveAs(QuantaView *viewToSave)
         saveAsUrl.setPath(saveAsUrl.directory(false, false) + oldURL.fileName());
       }
 
-
+//FIXME: in katepart changing encoding saves the original file if it was modified, so it's useless in saveas...
+      /*
     KEncodingFileDialog::Result data;
     data = KEncodingFileDialog::getSaveURLAndEncoding(myEncoding, saveAsUrl.url(),
         "all/allfiles text/html text/xml application/x-php text/plain", this, i18n("Save File"));
     KURL saveUrl = data.URLs[0];
-    QString encoding = data.encoding;
+    bool found;
+    QString encoding = KGlobal::charsets()->codecForName(data.encoding, found)->name();
     KTextEditor::EncodingInterface* encodingIf = dynamic_cast<KTextEditor::EncodingInterface*>(w->doc());
-    if (encodingIf)
+    if (encodingIf && encodingIf->encoding() != encoding)
        encodingIf->setEncoding(encoding);
+      */
+    KURL saveUrl = KFileDialog::getSaveURL(saveAsUrl.url(),
+         "all/allfiles text/html text/xml application/x-php text/plain", this, i18n("Save File"));
 
     if (QuantaCommon::checkOverwrite(saveUrl, this) && view->saveDocument(saveUrl))
     {
@@ -3419,7 +3426,7 @@ void QuantaApp::slotRefreshActiveWindow()
 //FIXME: Find a good way to redraw the editor view when the toolbar height
 //changes
 //  if (ViewManager::ref()->activeView())
-    //ViewManager::ref()->activeView()->activated();  
+    //ViewManager::ref()->activeView()->activated();
 }
 
 
@@ -4486,7 +4493,7 @@ void QuantaApp::slotInsertCSS()
     delete dlg;
 
   } else
-  if (!node || w->currentDTD(true)->name == "text/css") 
+  if (!node || w->currentDTD(true)->name == "text/css")
   {
         kdDebug(24000) << "[CSS editor] This is a pure CSS document" << endl;
 

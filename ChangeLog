@@ -4,6 +4,7 @@ Version 3.5.5 (Release date: xx-xx-2006; Started 01-09-2006):
  - bugfixes:
       - do not allow growing of quantarc until it crashes Quanta [#111049]
       - symlink handling fixes (hopefully won't break anything)
+      - fix Save As problems, possibly #131728
 
 Version 3.5.4 (Release date: 02-08-2006; Started 24-06-2005):
  - bugfixes:
