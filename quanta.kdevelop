@@ -48,7 +48,7 @@
     </compiler>
     <run>
       <mainprogram>quanta/src/quanta</mainprogram>
-      <programargs/>
+      <programargs></programargs>
       <terminal>false</terminal>
       <envvars/>
       <directoryradio>build</directoryradio>

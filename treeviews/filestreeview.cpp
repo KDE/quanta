@@ -35,7 +35,7 @@
 #ifdef ENABLE_CVSSERVICE
 #include "cvsservice.h"
 #endif
-
+#include "qextfileinfo.h"
 
 
 //FilesTreeView implementation
@@ -74,7 +74,7 @@ FilesTreeView::FilesTreeView(KConfig *config, QWidget *parent, const char *name)
     if (!topURLList.contains(url))
         topURLList.append(url);
     url = KURL();
-    url.setPath(QDir::homeDirPath()+"/");
+    url.setPath(QExtFileInfo::homeDirPath() + "/");
     if (!topURLList.contains(url))
         topURLList.append(url);
   }
@@ -150,7 +150,7 @@ KFileTreeBranch* FilesTreeView::newBranch(const KURL& url)
     newBrnch = new BaseTreeBranch(this, url, i18n("Root Folder"), SmallIcon(fileItem.iconName()), true);
   } else
   {
-    if (url.isLocalFile() && url.equals(KURL(QDir::homeDirPath()), true))
+    if (url.isLocalFile() && url.equals(KURL(QExtFileInfo::homeDirPath() + "/"), true))
     {
       newBrnch = new BaseTreeBranch(this, url, i18n("Home Folder"), SmallIcon(fileItem.iconName()), true);
     } else
@@ -215,7 +215,7 @@ void FilesTreeView::slotMenu(KListView* listView, QListViewItem *item, const QPo
         m_folderMenu->setItemVisible(m_menuFolderRename, false);
 
         m_config->setGroup("General Options");
-        if ((url == KURL("file:/") || url == KURL("file:" + QDir::homeDirPath()+"/")) &&
+        if ((url == KURL("file:/") || url == KURL("file:" + QExtFileInfo::homeDirPath() + "/")) &&
             m_config->readBoolEntry("Home-Root Folder On", true) )
           m_folderMenu ->setItemVisible(m_menuTop, false);
         m_folderMenu ->setItemVisible(m_reloadMenuId, true);
