@@ -14,8 +14,8 @@
     <secondaryLanguages>
       <language>C</language>
     </secondaryLanguages>
-    <description></description>
-    <defaultencoding></defaultencoding>
+    <description/>
+    <defaultencoding/>
     <versioncontrol/>
   </general>
   <kdevcustomproject>
@@ -24,7 +24,7 @@
       <mainprogram>src/quanta</mainprogram>
       <directoryradio>build</directoryradio>
       <customdirectory>/</customdirectory>
-      <programargs></programargs>
+      <programargs/>
       <terminal>false</terminal>
       <autocompile>false</autocompile>
       <envvars>
@@ -49,14 +49,14 @@
       <abortonerror>true</abortonerror>
       <numberofjobs>1</numberofjobs>
       <dontact>false</dontact>
-      <makebin></makebin>
+      <makebin/>
       <selectedenvironment>default</selectedenvironment>
       <environments>
         <default/>
       </environments>
       <prio>0</prio>
-      <defaulttarget></defaulttarget>
-      <makeoptions></makeoptions>
+      <defaulttarget/>
+      <makeoptions/>
     </make>
     <general>
       <activedir/>
@@ -64,7 +64,7 @@
   </kdevcustomproject>
   <kdevfilecreate>
     <filetypes>
-      <type icon="source_f" ext="for" create="template" name="Preprocessed Fortran" >
+      <type icon="source_f" ext="for" name="Preprocessed Fortran" create="template" >
         <descr>A new empty preprocessed Fortran file.</descr>
       </type>
     </filetypes>
@@ -124,7 +124,7 @@
       <designerintegration>ExternalDesigner</designerintegration>
     </qt>
     <creategettersetter>
-      <prefixGet></prefixGet>
+      <prefixGet/>
       <prefixSet>set</prefixSet>
       <prefixVariable>m_,_</prefixVariable>
       <parameterName>theValue</parameterName>
@@ -148,17 +148,17 @@
     </groups>
     <tree>
       <hidepatterns>*.o,*.lo,CVS,*~,cmake*</hidepatterns>
-      <hidenonprojectfiles>true</hidenonprojectfiles>
+      <hidenonprojectfiles>false</hidenonprojectfiles>
     </tree>
   </kdevfileview>
   <kdevdebugger>
     <general>
-      <programargs></programargs>
-      <gdbpath></gdbpath>
-      <dbgshell></dbgshell>
-      <configGdbScript></configGdbScript>
-      <runShellScript></runShellScript>
-      <runGdbScript></runGdbScript>
+      <programargs/>
+      <gdbpath/>
+      <dbgshell/>
+      <configGdbScript/>
+      <runShellScript/>
+      <runGdbScript/>
       <breakonloadinglibs>true</breakonloadinglibs>
       <separatetty>false</separatetty>
       <floatingtoolbar>false</floatingtoolbar>
