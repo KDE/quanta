@@ -74,6 +74,7 @@ Project::Project(KMainWindow *parent)
   d = new ProjectPrivate(this);
   connect(d, SIGNAL(eventHappened(const QString&, const QString&, const QString& )), this, SIGNAL(eventHappened(const QString&, const QString&, const QString& )));
   d->m_mainWindow = parent;
+  d->m_uploadDialog = 0L;
   keepPasswd = true;
   d->initActions(parent->actionCollection());
 }
@@ -854,9 +855,13 @@ void Project::slotUpload()
   if (! ViewManager::ref()->saveAll())
     return;
 
-  ProjectUpload *dlg = new ProjectUpload(KURL(), "", false, false, false, i18n("Upload project items..."));
-  connect(dlg, SIGNAL(eventHappened(const QString&, const QString&, const QString& )), this, SIGNAL(eventHappened(const QString&, const QString&, const QString& )));
-  dlg->show();
+  if (!d->m_uploadDialog)
+  {
+    d->m_uploadDialog = new ProjectUpload(KURL(), "", false, false, false, i18n("Upload project items..."));
+    connect(d->m_uploadDialog, SIGNAL(eventHappened(const QString&, const QString&, const QString& )), this, SIGNAL(eventHappened(const QString&, const QString&, const QString& )));
+    d->m_uploadDialog->show();
+  } else
+    d->m_uploadDialog->raise();
 }
 
 void Project::slotUploadURL(const KURL& urlToUpload, const QString& profileName, bool quickUpload, bool markOnly)
@@ -865,10 +870,13 @@ void Project::slotUploadURL(const KURL& urlToUpload, const QString& profileName,
     return;
 
   KURL url = QExtFileInfo::toRelative( urlToUpload, d->baseURL);
-
-  ProjectUpload *dlg = new ProjectUpload(url, profileName, false, quickUpload, markOnly, i18n("Upload project items..."));
-  connect(dlg, SIGNAL(eventHappened(const QString&, const QString&, const QString& )), this, SIGNAL(eventHappened(const QString&, const QString&, const QString& )));
-  dlg->show();
+  if (!d->m_uploadDialog)
+  {
+    d->m_uploadDialog = new ProjectUpload(url, profileName, false, quickUpload, markOnly, i18n("Upload project items..."));
+    connect(d->m_uploadDialog, SIGNAL(eventHappened(const QString&, const QString&, const QString& )), this, SIGNAL(eventHappened(const QString&, const QString&, const QString& )));
+    d->m_uploadDialog->show();
+  } else
+    d->m_uploadDialog->raise();
 }
 
 

@@ -21,10 +21,12 @@
 //qt includes
 #include <qmap.h>
 #include <qregexp.h>
+#include <qguardedptr.h>
 
 //app includes
 #include "project.h"
 #include "projectlist.h"
+#include "projectupload.h"
 
 class QWidgetStack;
 
@@ -101,6 +103,7 @@ upload.*/
   QString debuggerClient;
   bool m_debuggerPersistentBreakpoints;
   bool m_debuggerPersistentWatches;
+  QGuardedPtr<ProjectUpload> m_uploadDialog;
 
   TeamMember m_teamLeader;
   QMap<QString, TeamMember> m_subprojectLeaders;
@@ -171,7 +174,7 @@ upload.*/
       @return false if there was nothing to save or an error occured during save
   */
   bool saveProject();
-  
+
   /**
       adds information about the current open project into config
    */
@@ -213,7 +216,7 @@ public slots:
 
   /** Proceed with project closing.*/
   void slotProceedWithCloseProject(bool success);
-  
+
   void slotAddDirectory();
 
   void slotAddFiles();

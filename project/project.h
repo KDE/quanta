@@ -121,7 +121,7 @@ public:
   QString yourself();
   /**
    * Get the roles of the current user in the form "role:task".
-   * Examples: "team leader", "project leader:subprojectname", "task leader:taskname". 
+   * Examples: "team leader", "project leader:subprojectname", "task leader:taskname".
    * @return the roles (in lowercase)
    */
   QStringList yourRoles();
@@ -144,7 +144,7 @@ public:
        @return true if close is possible
   */
   bool queryClose();
-  
+
   /** Saves the bookmarks for the url into the project file */
   void saveBookmarks(const KURL &url, KTextEditor::MarkInterface *markIf);
   /** Loads the bookmarks for the url from the project file and sets them in the view*/

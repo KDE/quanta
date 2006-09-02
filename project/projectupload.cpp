@@ -169,13 +169,13 @@ void ProjectUpload::slotBuildTree()
  totalText->setText(i18n("Scanning project files..."));
 
  KURL u = m_project->projectBaseURL();
- if (!startUrl.isEmpty()) 
+ if (!startUrl.isEmpty())
  {
    u = QExtFileInfo::toAbsolute(startUrl, u);
  }
  QDict<KFileItem> projectDirFiles;
 
- if (startUrl.isEmpty() || strUrl.endsWith("/")) //upload a folder 
+ if (startUrl.isEmpty() || strUrl.endsWith("/")) //upload a folder
  {
    projectDirFiles = QExtFileInfo::allFilesDetailed(u, "*", this);
  } else
@@ -558,7 +558,7 @@ void ProjectUpload::slotUploadNext()
    // QListViewItem *it = list->findItem( currentURL.path() );
     QListViewItem *it = currentItem;
     if (it)
-    {      
+    {
      it->setSelected(false);
      UploadTreeFile *itf = dynamic_cast<UploadTreeFile*>(it);
      if (itf)

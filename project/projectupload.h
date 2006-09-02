@@ -26,7 +26,6 @@
 #include <qstringlist.h>
 
 #include <kio/job.h>
-#include "uploadtreeview.h"
 
 /**
   *@author Dmitry Poplavsky & Alexander Yakovlev & Andras Mantia
@@ -76,6 +75,7 @@ protected slots:
 
   virtual void resizeEvent( QResizeEvent * );
   virtual void reject();
+
 
 signals: // Signals
   /** No descriptions */
