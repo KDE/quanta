@@ -132,6 +132,9 @@ bool QuantaView::mayRemove()
     m_plugin->unload(false);
   } else
   {
+    bool unmodifiedUntitled = false;
+    if (m_document && m_document->isUntitled() && !m_document->isModified())
+      unmodifiedUntitled = true;
     if (m_customWidget)
         m_customWidget->reparent(0L, 0, QPoint(), false);
     if (!saveModified())
@@ -149,7 +152,8 @@ bool QuantaView::mayRemove()
     {
       KURL url = m_document->url();
       Project::ref()->saveBookmarks(url, dynamic_cast<KTextEditor::MarkInterface*>(m_document->doc()));
-      emit eventHappened("before_close", url.url(), QString::null);
+      if (!unmodifiedUntitled)
+        emit eventHappened("before_close", url.url(), QString::null);
       m_currentViewsLayout = -1;
 //      m_document->closeTempFile();
       if (!m_document->isUntitled() && url.isLocalFile())
@@ -161,7 +165,8 @@ bool QuantaView::mayRemove()
 
       quantaApp->menuBar()->activateItemAt(-1);
       quantaApp->guiFactory()->removeClient(m_document->view());
-      emit eventHappened("after_close", url.url(), QString::null);
+      if (!unmodifiedUntitled)
+        emit eventHappened("after_close", url.url(), QString::null);
     }
 /*      kdDebug(24000) << "Calling reparse from close " << endl;
       parser->setSAParserEnabled(true);
