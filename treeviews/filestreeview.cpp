@@ -59,11 +59,14 @@ FilesTreeView::FilesTreeView(KConfig *config, QWidget *parent, const char *name)
   {
     url = KURL();
     QuantaCommon::setUrl(url, topStrList[i]);
-    topURLList.append(url);
-    if (i < topStrAliasList.count())
-      topURLAliases.insert(url.url(), topStrAliasList[i]);
-    else
-      topURLAliases.insert(url.url(), url.fileName());
+    if (!topURLList.contains(url))
+    {
+      topURLList.append(url);
+      if (i < topStrAliasList.count())
+        topURLAliases.insert(url.url(), topStrAliasList[i]);
+      else
+        topURLAliases.insert(url.url(), url.fileName());
+    }
   }
 
   m_config->setGroup("General Options");
