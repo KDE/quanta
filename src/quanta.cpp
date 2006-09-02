@@ -1540,7 +1540,7 @@ void QuantaApp::slotNewLineColumn()
   oldCursorCol = cursorCol;
   Document *w = ViewManager::ref()->activeDocument();
   if (w)
-    w->viewCursorIf->cursorPositionReal(&cursorLine, &cursorCol);
+    w->viewCursorIf->cursorPosition(&cursorLine, &cursorCol);
   linenumber = i18n("Line: %1 Col: %2").arg(cursorLine+1).arg(cursorCol+1);
   statusBar()->changeItem(linenumber, IDS_STATUS_CLM);
 }
