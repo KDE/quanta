@@ -470,10 +470,11 @@ void QuantaView::slotSetVPLOnlyLayout()
 
    m_currentViewsLayout = VPLOnly;
 
+
 //update timers are not needed in VPL only mode
     m_sourceUpdateTimer.stop();
     m_VPLUpdateTimer.stop();
-
+    reloadBothViews(true);
 }
 
 void QuantaView::reloadUpdateTimers()

@@ -11,7 +11,7 @@ Version 3.5.5 (Release date: xx-xx-2006; Started 01-09-2006):
       - fix crash when copying to clipboard inside VPL [#130212]
       - show the correct column number if tabs are used in the document [#133313]
       - only one upload dialog can be shown at any time [#132535]
-      - do not show Find in Files if KFileReplace is not installed
+      - do not show Find in Files menu if KFileReplace is not installed [#132530]
 
 Version 3.5.4 (Release date: 02-08-2006; Started 24-06-2005):
  - bugfixes:

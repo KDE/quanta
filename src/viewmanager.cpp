@@ -418,7 +418,7 @@ bool ViewManager::saveAll()
 bool ViewManager::closeAll(bool createNew)
 {
   quantaApp->slotShowPreviewWidget(false);
-
+  parser->setSAParserEnabled(false);
   KMdiIterator<KMdiChildView*> *it = quantaApp->createIterator();
   QuantaView *view;
   //save the children first to a list, as removing invalidates our iterator
