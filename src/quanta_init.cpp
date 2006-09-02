@@ -1093,6 +1093,12 @@ void QuantaInit::initPlugins()
           m_quanta, SLOT(slotHideSplash()));
   connect(m_quanta->m_pluginInterface, SIGNAL(statusMsg(const QString &)),
           m_quanta, SLOT(slotStatusMsg(const QString & )));
+
+  QuantaPlugin *fileReplacePlugin =m_quanta-> m_pluginInterface->plugin("KFileReplace");
+  if (!fileReplacePlugin)
+  {
+    delete m_quanta->actionCollection()->action("find_in_files");
+  }
 }
 
 
@@ -1423,7 +1429,7 @@ void QuantaInit::checkRuntimeDependencies()
   dependency.type = Dependency::Executable;
   dependencies.append(dependency);
 
-  dependency.name = "KFileReplace)";
+  dependency.name = "KFileReplace";
   dependency.execName = "KFileReplace";
   dependency.url = "http://kfilereplace.kdewebdev.org";
   dependency.description = i18n("search and replace in files");
