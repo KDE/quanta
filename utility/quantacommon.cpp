@@ -694,10 +694,10 @@ QStringList QuantaCommon::readPathListEntry(KConfig *config, const QString &pKey
   for (QStringList::Iterator it = list.begin(); it != end; ++it)
   {
     KURL u = KURL::fromPathOrURL(*it);
-    if (u.isValid())
+    if (u.isValid() && u.isLocalFile())
     {
       u.setPath(QExtFileInfo::canonicalPath(u.path()));
-      *it = u.path();
+      *it = u.url();
     }
   }
   return list;
@@ -707,10 +707,10 @@ QString QuantaCommon::readPathEntry(KConfig *config, const QString &pKey)
 {
   QString path = config->readPathEntry(pKey);
   KURL u = KURL::fromPathOrURL(path);
-  if (u.isValid())
+  if (u.isValid() && u.isLocalFile())
   {
     u.setPath(QExtFileInfo::canonicalPath(u.path()));
-    path = u.path();
+    path = u.url();
   }
   return path;
 }

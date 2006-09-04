@@ -12,6 +12,7 @@
     <version>3.2-CVS-1</version>
     <description>Quanta Plus Web Development Environment</description>
     <ignoreparts>
+      <part>kdevkonsoleview</part>
       <part>kdevvalgrind</part>
     </ignoreparts>
     <projectdirectory>.</projectdirectory>
@@ -48,7 +49,7 @@
     </compiler>
     <run>
       <mainprogram>quanta/src/quanta</mainprogram>
-      <programargs></programargs>
+      <programargs/>
       <terminal>false</terminal>
       <envvars/>
       <directoryradio>build</directoryradio>
@@ -63,15 +64,15 @@
         <ccompiler>kdevgccoptions</ccompiler>
         <cxxcompiler>kdevgppoptions</cxxcompiler>
         <f77compiler>kdevpgf77options</f77compiler>
-        <ccompilerbinary></ccompilerbinary>
-        <cxxcompilerbinary></cxxcompilerbinary>
-        <f77compilerbinary></f77compilerbinary>
+        <ccompilerbinary/>
+        <cxxcompilerbinary/>
+        <f77compilerbinary/>
         <cflags>-DKDE_NO_COMPAT -DQT_NO_COMPAT</cflags>
         <cxxflags>-DKDE_NO_COMPAT -DQT_NO_COMPAT -DDEBUG_PARSER</cxxflags>
-        <f77flags></f77flags>
+        <f77flags/>
         <topsourcedir>/home/andris/development/kdewebdev</topsourcedir>
-        <cppflags></cppflags>
-        <ldflags></ldflags>
+        <cppflags/>
+        <ldflags/>
         <envvars>
           <envvar value="kommander klinkstatus kfilereplace kxsldbg kimagemapeditor" name="DO_NOT_COMPILE2" />
         </envvars>
@@ -244,10 +245,10 @@
   </kdevcvs>
   <kdevfilecreate>
     <filetypes>
-      <type icon="" ext="h" name="C++ header" create="template" >
+      <type icon="" ext="h" create="template" name="C++ header" >
         <descr>Quanta speicfic header</descr>
       </type>
-      <type icon="source_cpp" ext="cpp" name="C++ source" create="template" >
+      <type icon="source_cpp" ext="cpp" create="template" name="C++ source" >
         <descr>A new empty C++ file.</descr>
       </type>
     </filetypes>
@@ -274,9 +275,7 @@
       <processPrimaryTypes>true</processPrimaryTypes>
       <processFunctionArguments>false</processFunctionArguments>
     </codecompletion>
-    <references>
-      <pcs>KDElibs3</pcs>
-    </references>
+    <references/>
     <creategettersetter>
       <prefixGet></prefixGet>
       <prefixSet>set</prefixSet>
