@@ -337,7 +337,6 @@ void UserToolbarsPart::slotLoadToolbarFile(const KUrl& url)
   }
 
   QDomDocument actionDom;
-  QDomDocument *toolbarDom = new QDomDocument();
 
   QTextStream str;
   str.setCodec(QTextCodec::codecForName("UTF-8"));
@@ -345,6 +344,7 @@ void UserToolbarsPart::slotLoadToolbarFile(const KUrl& url)
 
   if (url.fileName().endsWith(Helper::toolbarExtension()))
   {
+    QDomDocument *toolbarDom = new QDomDocument();
   //extract the files from the archives
     KTar tar(fileName);
     if (tar.open(IO_ReadOnly))
@@ -865,6 +865,7 @@ KUrl UserToolbarsPart::saveToolbarToFile(const QString& toolbarName, const KUrl&
 
   KTempFile *tempFile = new KTempFile(m_tmpDir);
   tempFile->setAutoDelete(true);
+  m_tempFileList.append(tempFile);
   tempFile->close();
   KTar tar(tempFile->name(), "application/x-gzip");
   if (!tar.open(IO_WriteOnly))
@@ -1190,7 +1191,7 @@ void UserToolbarsPart::slotToolbarLoaded(const QString &id)
 void UserToolbarsPart::slotToolbarRemoved(const QString &id)
 {
   ToolbarEntry *p_toolbar = m_toolbarList.value(id);
-  if (p_toolbar || !m_createActionsMenu)
+  if (p_toolbar && !m_createActionsMenu)
   {
     delete p_toolbar->menu;
     p_toolbar->menu = 0L;
