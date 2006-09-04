@@ -318,3 +318,5 @@ quanta/lib/qtag.h
 quanta/quantacore/parsers/dombuilder.h
 quanta/quantacore/parsers/dombuilder.cpp
 quanta/data/statemachines/xmlendstates.xml
+quanta/plugins/tagdialogs/tagwidget.h
+quanta/plugins/tagdialogs/attributes.h

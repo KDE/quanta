@@ -310,42 +310,43 @@ void Tagxml::readAttributes( QHash<QString, QString*> *d )
 
 void Tagxml::writeAttributes( QHash<QString, QString*> *d )
 {
-    QString name,value;
+  QString name,value;
 
-    Attr * attr;
+  Attr * attr;
 
-    int count = 0;
-    QListIterator<Attr*> it(attributes);
-    while (it.hasNext())
+  int count = 0;
+  QListIterator<Attr*> it(attributes);
+  while (it.hasNext())
+  {
+    attr = it.next();
+
+    name = attr->attrName();
+
+    QString *v = d->value(name);
+    if (v)
     {
-      attr = it.next();
-
-        name = attr->attrName();
-
-        QString *v = d->value(name);
-        if ( v ) {
-            v->replace("&amp;","&");
-            if ( dynamic_cast<Attr_check *>(attr) ) // checkbox
-                value = "checked";
-            else
-                if ( dynamic_cast<Attr_file *>(attr))
-                    value = KUrl::fromPercentEncoding( QString(*v).toLatin1() );
-            else
-                value = *v;
-        }
-        else
-        {
-            value = "";
-
-            Attribute* attrib = m_dtdTag->attribute(name);
-            if(attrib && attrib->source.toLower() == "selection")
-                value = m_selection;
-        }
-
-        attr->setValue( value );
-
-        ++count;
+      v->replace("&amp;","&");
+      if (dynamic_cast<Attr_check *>(attr)) // checkbox
+        value = "checked";
+      else
+      if (dynamic_cast<Attr_file *>(attr))
+        value = KUrl::fromPercentEncoding( QString(*v).toLatin1() );
+      else
+        value = *v;
     }
+    else
+    {
+      value = "";
+
+      Attribute* attrib = m_dtdTag->attribute(name);
+      if(attrib && attrib->source.toLower() == "selection")
+          value = m_selection;
+    }
+
+    attr->setValue( value );
+
+    ++count;
+  }
 }
 
 #include "tagxml.moc"

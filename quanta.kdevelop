@@ -64,7 +64,7 @@
   </kdevcustomproject>
   <kdevfilecreate>
     <filetypes>
-      <type icon="source_f" ext="for" create="template" name="Preprocessed Fortran" >
+      <type icon="source_f" ext="for" name="Preprocessed Fortran" create="template" >
         <descr>A new empty preprocessed Fortran file.</descr>
       </type>
     </filetypes>
