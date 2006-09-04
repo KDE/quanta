@@ -593,10 +593,10 @@ void QuantaApp::saveAsTemplate(bool projectTemplate, bool selectionOnly)
 
   if (query == KMessageBox::Cancel) return;
 
-  KTempFile *tempFile = new KTempFile(tmpDir);
-  tempFile->setAutoDelete(true);
   if (selectionOnly && w->selectionIf)
   {
+    KTempFile *tempFile = new KTempFile(tmpDir);
+    tempFile->setAutoDelete(true);
     QString content;
     content = w->selectionIf->selection();
     QTextStream stream(tempFile->file());
@@ -2106,7 +2106,6 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
         return;
   }
  QDomDocument actionDom;
- QDomDocument *toolbarDom = new QDomDocument();
 
  QTextStream str;
  str.setEncoding(QTextStream::UnicodeUTF8);
@@ -2114,6 +2113,7 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
 
  if ( url.fileName().endsWith(toolbarExtension) )
  {
+   QDomDocument *toolbarDom = new QDomDocument();
 //extract the files from the archives
    KTar tar(fileName);
    if (tar.open(IO_ReadOnly))
