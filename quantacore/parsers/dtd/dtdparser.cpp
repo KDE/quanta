@@ -219,6 +219,8 @@ void saveElement(xmlElementPtr elem, xmlBufferPtr buf)
       xmlAttributePtr at_ptr;
       el_ptr = xmlGetDtdElementDesc(DTD::dtd_ptr, elem->name);
       AttributeList attributes;
+      int childNum = 0;
+      const xmlChar *list_ptr[MAX_CHILD_ELEMENTS];
       if (el_ptr)
       {
         at_ptr = el_ptr->attributes;
@@ -247,14 +249,11 @@ void saveElement(xmlElementPtr elem, xmlBufferPtr buf)
           attributes.append(attr);
           at_ptr = at_ptr->nexth;
        }
+       childNum = xmlValidGetPotentialChildren(el_ptr->content, list_ptr,
+                                               &childNum, MAX_CHILD_ELEMENTS);
       }
       if (!attributes.isEmpty())
         stream << QuantaCommon::xmlFromAttributes(&attributes);
-      const xmlChar *list_ptr[MAX_CHILD_ELEMENTS];
-      int childNum = 0;
-      childNum = xmlValidGetPotentialChildren(el_ptr->content, list_ptr,
-                        &childNum, MAX_CHILD_ELEMENTS);
-
       if (childNum > 0)
       {
         stream << "<children>" << endl;
