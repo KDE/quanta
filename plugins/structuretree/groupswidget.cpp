@@ -364,6 +364,9 @@ void GroupsWidget::showEvent ( QShowEvent *ev )
 void GroupsWidget::slotOpenFile()
 {
   GroupsTreeItem *item = dynamic_cast<GroupsTreeItem *>(currentItem());
+  if (!item)
+    return;
+
   KUrl url = item->getURL();
   if (url.isEmpty())
     return;
@@ -382,11 +385,11 @@ void GroupsWidget::slotOpenFile()
 void GroupsWidget::slotPaste()
 {
   GroupsTreeItem *item = dynamic_cast<GroupsTreeItem *>(currentItem());
-  if (! item)
+  if (!item)
     return;
 
   EditorSource * es = m_qcore->activeEditorSource();
-  if (! es || ! es->pasteAction())
+  if (!es || !es->pasteAction())
     return;
 
   setCursorPosition(item->tagArea().start);
