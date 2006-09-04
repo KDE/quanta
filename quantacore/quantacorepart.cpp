@@ -103,7 +103,7 @@ QuantaCorePart::~QuantaCorePart()
 }
 
 void QuantaCorePart::init()
-{  
+{
   Settings::self()->readConfig();
   Settings::self()->setLoadedDTEPNickNames(DTDs::ref()->nickNameList(true));
   ParserManager *pm = ParserManager::self(this); //create the parser manager
@@ -405,8 +405,9 @@ void QuantaCorePart::contextMenu(KMenu *popup, const Context *context)
 
 void QuantaCorePart::slotOpenNew()
 {
+  //FIXME: just a hack to have new empty documents with KDevelop platform
   KTempFile * file = new KTempFile(KStandardDirs::locateLocal("tmp", ""), i18n(".unsaved"));
-//   file->setAutoDelete(true);
+  file->setAutoDelete(true);
   file->close();
   KUrl url = KUrl(file->name());
   KDevDocument *doc = KDevCore::documentController()->editDocument(url);
