@@ -42,7 +42,10 @@ void TagWidget::updateDict(const QString &attr, QComboBox *combo )
 {
   QString *s = new QString(combo->currentText());
   if (s->isEmpty())
+  {
     dict->remove(attr);
+    delete s;
+  }
   else
     dict->replace(attr, s);
 }
@@ -84,7 +87,10 @@ void TagWidget::updateDict(const QString &attr, QLineEdit *line )
 {
   QString *s = new QString(line->text());
   if (s->isEmpty())
+  {
     dict->remove(attr);
+    delete s;
+  }
   else
     dict->replace(attr, s);
 }
@@ -93,7 +99,10 @@ void TagWidget::updateDict(const QString &attr, QSpinBox *spin )
 {
   QString *s = new QString(spin->text());
   if (s->isEmpty())
+  {
     dict->remove(attr);
+    delete s;
+  } 
   else
     dict->replace(attr, s);
 }
