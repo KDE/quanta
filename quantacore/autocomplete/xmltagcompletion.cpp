@@ -36,7 +36,7 @@ QList<KTextEditor::CompletionItem>* XmlTagCompletion::completionEntries()
 //FIXME  completion.type = "tagCompletion";
 
   QTag *parentQTag = 0L;
-  if (m_currentNode && m_currentNode->parent)
+  if (m_currentNode->parent)
       parentQTag = QTag::tagFromDTD(m_currentNode->parent);
   QStringList tagNameList;
   QMap<QString, QString> comments;
