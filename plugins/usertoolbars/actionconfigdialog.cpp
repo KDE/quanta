@@ -295,7 +295,7 @@ void ActionConfigDialog::slotSelectionChanged(Q3ListViewItem *item)
     {
       KAction *a = ac->actions().value(i);
       QString actionName = a->objectName();
-      if (a && actionName == item->text(2) && a->inherits("UserAction"))
+      if (actionName == item->text(2) && a->inherits("UserAction"))
       {
         action = static_cast<UserAction*>(a);
         actionProperties->setEnabled(true);
@@ -734,10 +734,10 @@ void ActionConfigDialog::slotShortcutCaptured(const KShortcut &shortcut)
   {
     QList<KXMLGUIClient*> clients = KDevCore::mainWindow()->guiFactory()->clients();
     KXMLGUIClient *current = 0L;
-    QListIterator<KXMLGUIClient*> it( clients );
+    QListIterator<KXMLGUIClient*> it(clients);
     while (it.hasNext())
     {
-        it.next();
+        current = it.next();
         KActionCollection *ac = current->actionCollection();
         for (int i = 0; i < ac->actions().count(); i++)
         {
