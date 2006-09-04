@@ -478,11 +478,11 @@ FileInfoDlg* ProjectTreeView::addFileInfoPage(KPropertiesDialog* propDlg)
 
 void ProjectTreeView::slotActivePartChanged(KParts::Part *part)
 {
-  if (! m_projectDir && !isVisible())
+  if (!m_projectDir || !isVisible())
     return;
 
   KParts::ReadOnlyPart * roPart = dynamic_cast<KParts::ReadOnlyPart *>(part);
-  if (! roPart)
+  if (!roPart)
     return;
 
   KFileTreeViewItem* item = m_projectDir->findTVIByUrl(roPart->url());
