@@ -209,9 +209,11 @@ bool SAParser::slotParseOneLine()
                   ParserCommon::appendAreaToTextNode(m_write, s_currentContext.area, s_currentNode);
                 else
                   s_currentNode = ParserCommon::createTextNode(m_write, s_currentNode, s_line, groupKeywordPos, s_currentContext.parentNode);
-                s_currentNode->insideSpecial = true;
-                s_currentNode->specialInsideXml = m_specialInsideXml;
-
+                if (s_currentNode)
+                {
+                  s_currentNode->insideSpecial = true;
+                  s_currentNode->specialInsideXml = m_specialInsideXml;
+                }
                 s_previousContext = s_contextStack.pop();
                 s_currentContext.parentNode = s_previousContext.parentNode;
                 s_currentContext.lastNode = s_previousContext.lastNode;
@@ -343,8 +345,11 @@ bool SAParser::slotParseOneLine()
             {
               s_currentNode = ParserCommon::createTextNode(m_write, s_currentNode, s_line, areaEndPos, s_parentNode);
             }
-            s_currentNode->insideSpecial = true;
-            s_currentNode->specialInsideXml = m_specialInsideXml;
+            if (s_currentNode)
+            {
+              s_currentNode->insideSpecial = true;
+              s_currentNode->specialInsideXml = m_specialInsideXml;
+            }
           }
           //kdDebug(24000) << QString("Special area %1 ends at %2, %3").arg(s_dtd->name).arg(s_line).arg(lastCol) << endl;
 
