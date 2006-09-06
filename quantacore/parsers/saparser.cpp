@@ -830,18 +830,7 @@ Node *SAParser::parsingDone()
     //parse for groups only when doing aynchronous detailed parsing
     if (!m_synchronous)
     {
-      bool parsingLastNode = true;
-      Node *n = g_endNode;
-      while (n)
-      {
-        n = n->nextSibling();
-        if (n && n->insideSpecial)
-        {
-          parsingLastNode = false;
-          break;
-        }
-      }
-      SAGroupParser *groupParser = new SAGroupParser(this, m_base, m_source, g_node, g_endNode, m_synchronous, parsingLastNode, true);
+      SAGroupParser *groupParser = new SAGroupParser(this, m_base, m_source, g_node, 0L, m_synchronous, true /*last node*/, true);
       connect(groupParser, SIGNAL(groupsParsed(const EditorSource *, const ParseResult *)), SIGNAL(groupsParsed(const EditorSource *, const ParseResult *)));
       connect(groupParser, SIGNAL(cleanGroups()), SIGNAL(cleanGroups()));
       connect(groupParser, SIGNAL(parsingDone(SAGroupParser*)), SLOT(slotGroupParsingDone(SAGroupParser*)));

@@ -320,3 +320,12 @@ quanta/quantacore/parsers/dombuilder.cpp
 quanta/data/statemachines/xmlendstates.xml
 quanta/plugins/tagdialogs/tagwidget.h
 quanta/plugins/tagdialogs/attributes.h
+quanta/quantacore/autocomplete/xmltagcompletion.h
+quanta/quantacore/autocomplete/xmlentitycompletion.h
+quanta/quantacore/autocomplete/xmlattributevaluecompletion.h
+quanta/quantacore/autocomplete/xmlattributecompletion.h
+quanta/quantacore/autocomplete/specialareatagcompletion.h
+quanta/quantacore/autocomplete/specialareagroupcompletion.h
+quanta/quantacore/autocomplete/specialareaattributecompletion.h
+quanta/quantacore/autocomplete/dtdcompletion.h
+quanta/quantacore/autocomplete/completionbase.h
