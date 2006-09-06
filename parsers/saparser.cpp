@@ -32,7 +32,7 @@
 #include "quantacommon.h"
 #include "resource.h"
 
-#define DEBUG_PARSER
+//#define DEBUG_PARSER
 
 SAParser::SAParser()
 {
