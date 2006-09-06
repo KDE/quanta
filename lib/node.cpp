@@ -39,13 +39,14 @@ Node::Node(Node *parent)
   closesPrevious = false;
   insideSpecial = false;
   _closingNode = 0L;
+  m_groupStorage = 0L;
   //m_groupElements.clear();
 }
 
 
 Node::~Node()
 {
- // kDebug(24000) << "Node destructor " << this << tag->name << endl; 
+ // kDebug(24000) << "Node destructor " << this << tag->name << endl;
   //It has no use, except to know when it crash why it has crashed.
   //If it has crashed here, the Node doesn't exist anymore.
   // If it has crashed the next line, it is a GroupElements bug.
@@ -105,33 +106,33 @@ void Node::deleteNode(GroupStorage *groupStorage)
 //             _closingNode->save(child_element);
 //         }
 //     }
-// 
+//
 //     Q_ASSERT(tag);
 //     child_element = element.ownerDocument().createElement("tag");
 //     element.appendChild(child_element);
 //     tag->save(child_element);
-// 
+//
 //     element.setAttribute("closesPrevious", closesPrevious);           // bool
 //     element.setAttribute("opened", opened);     // bool
 //     element.setAttribute("removeAll", removeAll); // bool
 //     element.setAttribute("insideSpecial", insideSpecial);             // bool
 //     element.setAttribute("specialInsideXml", specialInsideXml);             // bool
 //     element.setAttribute("fileName", fileName);                         // QString
-// 
+//
 // /*    QString s_element;
 //     QTextStream stream(&s_element, IO_WriteOnly);
 //     element.save(stream, 3);*/
 //     //kDebug(25001) << "Load:\n" << s_element << endl;
 //     //kDebug(25001) << "Save:\n" << element.ownerDocument().toString() << endl;
 // }
-// 
+//
 // bool Node::load(QDomElement const& element)
 // {
 // /*    QString s_element;
 //     QTextStream stream(&s_element, IO_WriteOnly);
 //     element.save(stream, 3);*/
 //     //kDebug(25001) << "Load:\n" << s_element << endl;
-// 
+//
 //     QDomNodeList list = element.childNodes();
 //     for(unsigned int i = 0; i != list.count(); ++i)
 //     {
@@ -163,16 +164,16 @@ void Node::deleteNode(GroupStorage *groupStorage)
 //             }
 //         }
 //     }
-// 
+//
 //     closesPrevious = QString(element.attribute("closesPrevious")).toInt();  // bool
 //     opened = QString(element.attribute("opened")).toInt();     // bool
 //     removeAll = QString(element.attribute("removeAll")).toInt(); // bool
 //     insideSpecial = QString(element.attribute("insideSpecial")).toInt();    // bool
 //     specialInsideXml = QString(element.attribute("specialInsideXml")).toInt();  // bool
 //     fileName = element.attribute("fileName");                         // QString
-// 
+//
 //     //Node::coutTree(this, 3);
-// 
+//
 //     return true;
 // }
 
@@ -180,16 +181,16 @@ Node *Node::nextSibling()
 {
     if (child)
         return child;
-    
+
     if (next)
         return next;
-        
+
     Node *n = this;
     while (n)
     {
         if (n->parent && n->parent->next)
             return n->parent->next;
-        
+
         n = n->parent;
     }
     return 0;
@@ -215,13 +216,13 @@ Node *Node::nextNotChild()
 {
     if (next)
         return next;
-        
+
     Node *n = this;
     while (n)
     {
         if (n->parent && n->parent->next)
             return n->parent->next;
-        
+
         n = n->parent;
     }
     return n;
@@ -346,7 +347,7 @@ void Node::detachNode()
     count++;
   }
 #ifdef DEBUG_PARSER
-  if (count > 0) 
+  if (count > 0)
       kDebug(24001) << count << " GroupElement scheduled for deletion. " << &m_groupElements << endl;
 #endif
 
@@ -369,11 +370,11 @@ Node *Node::nodeAt(Node *base, int line, int col, bool findDeepest, bool exact)
     if (n && n->tag)
     {
       n->tag->beginPos(el, ec);
-      ec--; 
+      ec--;
       result = AreaStruct::isBetween(line, col, bl, bc, el, ec);
     }
     //the cursor is between the beginning of the node and the beginning of the next, not child node
-    if (result == 0) 
+    if (result == 0)
     {
       if (node->child)
       {
@@ -479,7 +480,7 @@ AreaStruct Node::tagArea(bool excludeClosing) const
   AreaStruct area;
   if (! tag)
     return area;
-    
+
   area = tag->area();
   if (! tag->single && next)
   {

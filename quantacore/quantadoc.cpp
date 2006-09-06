@@ -274,11 +274,11 @@ void QuantaDoc::slotDelayedTextChanged(bool forced)
         if ( (bl != bl2 || bc !=bc2) && previousNode)
         {
           previousNode->tag->beginPos(bl2, bc2);
-          currentNode->deleteNode(0L);
+          delete currentNode;
           currentNode = previousNode;
         } else
         {
-          previousNode->deleteNode(0L);
+          delete previousNode;
           previousNode = 0L;
         }
         if (bl == bl2 && bc == bc2 &&
@@ -340,6 +340,8 @@ void QuantaDoc::slotDelayedTextChanged(bool forced)
           currentNode->deleteNode(0L);
         }
       }
+      delete currentNode;
+      delete previousNode;
     }
   m_parserEnabled = true;
   m_parsingNeeded = false;
