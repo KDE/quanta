@@ -32,7 +32,7 @@
 #include "quantacommon.h"
 #include "resource.h"
 
-//#undef DEBUG_PARSER
+#define DEBUG_PARSER
 
 SAParser::SAParser()
 {
@@ -488,7 +488,7 @@ bool SAParser::slotParseOneLine()
             if (p == 0 || (p > 0 && s_textLine[p-1] != '\\'))
             {
               pos = p;
-              break;  
+              break;
             }
           } else
             break;
@@ -796,30 +796,18 @@ Node *SAParser::parsingDone()
       s_currentNode = n;
     }
     Node *g_node = n;
-    Node *g_endNode = 0L;
 #ifdef DEBUG_PARSER
     kdDebug(24001) << "Calling slotParseForScriptGroup from parsingDone. Synch:" << m_synchronous << endl;
 #endif
     //parse for groups only when doing aynchronous detailed parsing
     if (!m_synchronous)
     {
-      bool parsingLastNode = true;
-      Node *n = g_endNode;
-      while (n)
-      {
-        n = n->nextSibling();
-        if (n && n->insideSpecial)
-        {
-          parsingLastNode = false;
-          break;
-        }
-      }
-      SAGroupParser *groupParser = new SAGroupParser(this, write(), g_node, g_endNode, m_synchronous, parsingLastNode, true);
+      SAGroupParser *groupParser = new SAGroupParser(this, write(), g_node, 0L, m_synchronous, true /*last node*/, true);
       connect(groupParser, SIGNAL(rebuildStructureTree(bool)), SIGNAL(rebuildStructureTree(bool)));
       connect(groupParser, SIGNAL(cleanGroups()), SIGNAL(cleanGroups()));
       connect(groupParser, SIGNAL(parsingDone(SAGroupParser*)), SLOT(slotGroupParsingDone(SAGroupParser*)));
       groupParser->slotParseForScriptGroup();
-      m_groupParsers.append(groupParser);      
+      m_groupParsers.append(groupParser);
      }
   }
 
