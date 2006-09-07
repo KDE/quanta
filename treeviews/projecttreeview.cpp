@@ -491,10 +491,17 @@ void ProjectTreeView::slotPopulateFinished(KFileTreeViewItem* item)
     }
   }
 
-  if ( m_projectFiles->isEmpty() )
-    m_projectDir->root()->setExpandable( false );
-  else
-    m_projectDir->setOpen( true );
+   if ( m_projectFiles->isEmpty() )
+     m_projectDir->root()->setExpandable( false );
+   /* FIXME:
+    * The below code can cause infinite recursion, possibly over slow links.
+    * setOpen call KFileTreeBranch::openURL, that calls KDirListerCache::listDir,
+    * that calls KDirListerCache::stop, that emit the signal cancelled, that
+    * is connected to KFileTreeBranch::slotCanceled, that emit populateFinished
+    * and we are back in this same function with item being the same and
+    * everything starts over again. */
+//   else
+//     m_projectDir->setOpen( true );
 
 }
 
