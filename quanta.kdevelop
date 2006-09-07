@@ -170,7 +170,7 @@
     </groups>
     <tree>
       <hidenonprojectfiles>false</hidenonprojectfiles>
-      <hidepatterns/>
+      <hidepatterns></hidepatterns>
       <showvcsfields>true</showvcsfields>
     </tree>
   </kdevfileview>
@@ -276,8 +276,8 @@
       <processFunctionArguments>false</processFunctionArguments>
     </codecompletion>
     <references>
-      <pcs>KDElibs3</pcs>
       <pcs>Qt3</pcs>
+      <pcs>KDElibs3</pcs>
     </references>
     <creategettersetter>
       <prefixGet/>
