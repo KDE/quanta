@@ -26,6 +26,7 @@ Version 3.5.4 (Release date: 02-08-2006; Started 24-06-2005):
         saved [#130236]
       - respect the order of items in the .docrc [#133704]
       - fix crash when creating project through slow links
+      - really abort if a remote directory cannot be created [#117032]
 
 Version 3.5.3 (Release date: 23-05-2006; Started 18-03-2005):
  - bugfixes:
