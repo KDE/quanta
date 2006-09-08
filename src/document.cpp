@@ -2296,7 +2296,9 @@ void Document::slotDelayedTextChanged(bool forced)
       viewCursorIf->cursorPositionReal(&line, &column);
       node = parser->nodeAt(line, column, false);
       if (node &&
-          (node->tag->type==Tag::XmlTag || node->tag->type == Tag::XmlTagEnd) )
+          ((node->tag->type == Tag::XmlTag && !node->tag->single) ||
+            node->tag->type == Tag::XmlTagEnd)
+           )
       {
         Tag *tag;
         tag = new Tag(*node->tag);
@@ -2322,7 +2324,7 @@ void Document::slotDelayedTextChanged(bool forced)
       node = parser->nodeAt(line, column, false);
       if (node &&
           node->tag->nameSpace + node->tag->name != currentNode->tag->nameSpace + currentNode->tag->name &&
-          (node->tag->type == Tag::XmlTag || node->tag->type == Tag::XmlTagEnd) && node->tag->validXMLTag)
+          ((node->tag->type == Tag::XmlTag && !node->tag->single) || node->tag->type == Tag::XmlTagEnd) && node->tag->validXMLTag)
       {
         int bl, bc, bl2, bc2;
         node->tag->beginPos(bl, bc);
@@ -2339,7 +2341,7 @@ void Document::slotDelayedTextChanged(bool forced)
           previousNode = 0L;
         }
         if (bl == bl2 && bc == bc2 &&
-           (currentNode->tag->type == Tag::XmlTag || currentNode->tag->type == Tag::XmlTagEnd))
+           ((node->tag->type == Tag::XmlTag && !node->tag->single) || currentNode->tag->type == Tag::XmlTagEnd))
         {
           QString newName = node->tag->name;
           bool updateClosing = (currentNode->tag->type == Tag::XmlTag) && !newName.startsWith("!");
@@ -2352,7 +2354,7 @@ void Document::slotDelayedTextChanged(bool forced)
             node = node->previousSibling();
           while (node)
           {
-            if (node->tag->validXMLTag && (node->tag->type == Tag::XmlTag || node->tag->type == Tag::XmlTagEnd))
+            if (node->tag->validXMLTag && ((node->tag->type == Tag::XmlTag && !node->tag->single) || node->tag->type == Tag::XmlTagEnd))
             {
               if (node->tag->nameSpace + node->tag->name == currentNode->tag->nameSpace + currentNode->tag->name )
               {
