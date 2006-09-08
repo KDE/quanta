@@ -14,6 +14,10 @@ Version 3.5.5 (Release date: xx-xx-2006; Started 01-09-2006):
       - do not show Find in Files menu if KFileReplace is not installed [#132530]
       - allow logging to files outside of project directory [#131782]
       - don't send closing events for untitled, unmodified documents [#131782]
+      - respect the order of items in the .docrc [#133704]
+      - fix crash when creating project through slow links [#133705]
+      - really abort if a remote directory cannot be created [#117032]
+
 
 Version 3.5.4 (Release date: 02-08-2006; Started 24-06-2005):
  - bugfixes:
@@ -24,9 +28,6 @@ Version 3.5.4 (Release date: 02-08-2006; Started 24-06-2005):
       - default to a better place when saving a global toolbar to the local
         toolbar directory and improve the error message if a toolbar cannot be
         saved [#130236]
-      - respect the order of items in the .docrc [#133704]
-      - fix crash when creating project through slow links
-      - really abort if a remote directory cannot be created [#117032]
 
 Version 3.5.3 (Release date: 23-05-2006; Started 18-03-2005):
  - bugfixes:
