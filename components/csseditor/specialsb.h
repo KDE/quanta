@@ -21,6 +21,7 @@
 #include "minieditor.h"
 #include <qcombobox.h>
 class mySpinBox;
+class KLineEdit;
 
 /**
   *@author gulmini luciano
@@ -30,10 +31,11 @@ class specialSB : public miniEditor {
     Q_OBJECT
   protected:
     QComboBox *m_cb;
-    mySpinBox  *m_sb;
+    mySpinBox *m_sb;
+    KLineEdit *m_lineEdit;
 
    public:
-     specialSB(QWidget *parent=0, const char *name=0);
+     specialSB(QWidget *parent=0, const char *name=0, bool useLineEdit = false);
      ~specialSB();
      void insertItem(const QString& s){ m_cb->insertItem(s); }
      void setInitialValue(const QString& s);
@@ -43,6 +45,7 @@ class specialSB : public miniEditor {
    public slots:
      void cbValueSlot(const QString&);
      void sbValueSlot(const QString&);
+     void lineEditValueSlot(const QString&);
 
    signals:
      void valueChanged(const QString&);

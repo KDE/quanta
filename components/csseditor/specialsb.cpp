@@ -19,16 +19,29 @@
 #include "propertysetter.h"
 #include "csseditor_globals.h"
 
-specialSB::specialSB(QWidget *parent, const char *name ) : miniEditor(parent,name) {
-  m_sb=new mySpinBox(this);
-  m_cb=new QComboBox(this);
+#include <klineedit.h>
+
+specialSB::specialSB(QWidget *parent, const char *name, bool useLineEdit ) : miniEditor(parent,name) {
+  if (useLineEdit)
+  {
+    m_lineEdit = new KLineEdit(this);
+    m_sb = 0L;
+    connect(m_lineEdit, SIGNAL(textChanged ( const QString & )), this, SLOT(lineEditValueSlot ( const QString & )));
+  }
+  else
+  {
+    m_sb=new mySpinBox(this);
+    connect(m_sb, SIGNAL(valueChanged ( const QString & )), this, SLOT(sbValueSlot(const QString&)));
+    m_lineEdit = 0L;
+  }
+  m_cb = new QComboBox(this);
   connect(m_cb, SIGNAL(activated ( const QString & )), this, SLOT(cbValueSlot(const QString&)));
-  connect(m_sb, SIGNAL(valueChanged ( const QString & )), this, SLOT(sbValueSlot(const QString&)));
 }
 
 specialSB::~specialSB(){
   delete m_cb;
   delete m_sb;
+  delete m_lineEdit;
 }
 
 void specialSB::connectToPropertySetter(propertySetter* p){
@@ -37,10 +50,17 @@ void specialSB::connectToPropertySetter(propertySetter* p){
 
 
 void specialSB::cbValueSlot(const QString& s){
-  emit valueChanged( m_sb->text() +s );
+  if (m_sb)
+    emit valueChanged( m_sb->text() +s );
+  else
+    emit valueChanged( m_lineEdit->text() +s );
 }
 
 void specialSB::sbValueSlot(const QString& s){
+  emit valueChanged( s + m_cb->currentText());
+}
+
+void specialSB::lineEditValueSlot(const QString& s){
   emit valueChanged( s + m_cb->currentText());
 }
 
@@ -48,12 +68,15 @@ void specialSB::setInitialValue(const QString& s){
 
   QRegExp pattern("\\d("+ cbValueList().join("|")+")");
 
-  if(s.contains(pattern)) {
-    QString temp1(s.stripWhiteSpace()),
-                 temp2(s.stripWhiteSpace());
+  if (pattern.search(s) != -1) {
+    QString temp(s.stripWhiteSpace());
+    QString cbValue = pattern.cap(1);
 
-    m_sb->setValue(temp1.remove(QRegExp("\\D")).toInt());
-    m_cb->setCurrentText(temp2.remove(QRegExp("\\d")));
+    if (m_sb)
+      m_sb->setValue(temp.remove(cbValue).toInt());
+    else
+      m_lineEdit->setText(temp.remove(cbValue));
+    m_cb->setCurrentText(cbValue);
   }
   else return;
 }
@@ -84,7 +107,7 @@ timeEditor::timeEditor(QWidget *parent, const char *name ) : specialSB(parent,na
   m_sb->setMaxValue(99999);
 }
 
-lengthEditor::lengthEditor(QWidget *parent, const char *name ) : specialSB(parent,name) {
+lengthEditor::lengthEditor(QWidget *parent, const char *name ) : specialSB(parent,name, true) {
   m_cb->insertItem("px");
   m_cb->insertItem("em");
   m_cb->insertItem("ex");
@@ -93,7 +116,8 @@ lengthEditor::lengthEditor(QWidget *parent, const char *name ) : specialSB(paren
   m_cb->insertItem("mm");
   m_cb->insertItem("pt");
   m_cb->insertItem("pc");
-  m_sb->setMaxValue(99999);
+  if (m_sb)
+    m_sb->setMaxValue(99999);
 }
 
 
