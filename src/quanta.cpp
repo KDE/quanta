@@ -533,12 +533,10 @@ bool QuantaApp::slotFileSaveAs(QuantaView *viewToSave)
         }
         Project::ref()->insertFile(saveUrl, true);
       }
-      if(ViewManager::ref()->activeView() &&
-            ViewManager::ref()->activeView()->hadLastFocus() == QuantaView::VPLFocus)
+      if (view->hadLastFocus() == QuantaView::VPLFocus)
         w->docUndoRedo->reloadQuantaEditor();
 
       w->docUndoRedo->fileSaved();
-//      slotUpdateStatus(w); //FIXME:
       result = true;
     }
     if (oldURL.isLocalFile())

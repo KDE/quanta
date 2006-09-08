@@ -46,10 +46,7 @@ DocFolder::DocFolder(QListViewItem *parent, const QString &_name, KConfig *confi
       QString url = config->readEntry( item );
       DocItem *el = new DocItem( this, QString(item), basePath+url);
       el->setPixmap( 0, SmallIcon("info") );
-    }
-  }
-
-  for ( list.last(); ( item = list.current() ) ; list.prev() ) {
+    } else
     if ( item[0] == '#' ) { // current item is folder
       item++; // remove leading #
       QString l_url = config->readEntry( QString("folder_")+item, "" );
