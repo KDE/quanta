@@ -1050,17 +1050,46 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
          }
     else if ( string[0] == qConfig.attrValueQuotation )
           {
-          //we need to find the attribute name
-          QString textLine = editIf->textLine(line).left(column-1);
-          QString attribute = textLine.mid(textLine.findRev(' ')+1);
-          showCodeCompletions( getAttributeValueCompletions(tagName, attribute) );
-          handled = true;
+            //we need to find the attribute name
+            QString textLine = editIf->textLine(line).left(column-1);
+            QString attribute = textLine.mid(textLine.findRev(' ')+1);
+            if (attribute == "style" && completionDTD->insideDTDs.contains("css"))
+            {
+              completionDTD = DTDs::ref()->find("text/css");
+              completionRequested = true;
+              return scriptAutoCompletion(line, column + 1, string);
+            }
+            showCodeCompletions( getAttributeValueCompletions(tagName, attribute) );
+            handled = true;
           }
   } // else - we are inside of a tag
   if (!handled)
   {
+    //check if we are inside a style attribute, and use css autocompletion if we are
+    QString textLine = editIf->textLine(line);
+    textLine = textLine.left(column);
+    int pos = textLine.findRev('"');
+    if (pos != -1)
+    {
+      pos = textLine.findRev(' ', pos);
+      if (pos != -1)
+      {
+        textLine = textLine.mid(pos + 1);
+        pos = textLine.find('=');
+        if (pos != -1)
+        {
+          QString attribute = textLine.left(pos);
+          if (attribute == "style" && completionDTD->insideDTDs.contains("css"))
+          {
+            completionDTD = DTDs::ref()->find("text/css");
+            completionRequested = true;
+            return scriptAutoCompletion(line, column + 1, string);
+          }
+        }
+      }
+    }
     QString s = editIf->textLine(line).left(column + 1);
-    int pos = s.findRev('&');
+    pos = s.findRev('&');
     if (pos != -1)
     {
       //complete character codes
@@ -2064,10 +2093,18 @@ bool Document::xmlCodeCompletion(int line, int col)
       index = tag->valueIndexAtPos(line,col);
       if (index != -1)      //inside a value
       {
-        tag->attributeValuePos(index, bLine, bCol);
-        s = tag->attributeValue(index).left(col - bCol);
-        showCodeCompletions( getAttributeValueCompletions(tagName, tag->attribute(index), s) );
-        handled = true;
+        s = tag->attribute(index);
+        if (s == "style" && completionDTD->insideDTDs.contains("css"))
+        {
+          completionDTD = DTDs::ref()->find("text/css");
+          return scriptAutoCompletion(line, col, "");
+        } else
+        {
+          tag->attributeValuePos(index, bLine, bCol);
+          s = tag->attributeValue(index).left(col - bCol);
+          showCodeCompletions( getAttributeValueCompletions(tagName, tag->attribute(index), s) );
+          handled = true;
+        }
       } else
       {
         index = tag->attributeIndexAtPos(line,col);
