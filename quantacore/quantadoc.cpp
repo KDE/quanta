@@ -276,6 +276,7 @@ void QuantaDoc::slotDelayedTextChanged(bool forced)
           previousNode->tag->beginPos(bl2, bc2);
           delete currentNode;
           currentNode = previousNode;
+          previousNode = 0L;
         } else
         {
           delete previousNode;
@@ -338,15 +339,11 @@ void QuantaDoc::slotDelayedTextChanged(bool forced)
               node = node->previousSibling();
           }
           delete currentNode;
-          if (currentNode == previousNode)
-            previousNode = 0;
-          currentNode = 0;
+          currentNode = 0L;
         }
       }
       delete currentNode;
-      // they might be the same
-      if (currentNode != previousNode)
-        delete previousNode;
+      delete previousNode;
     }
   m_parserEnabled = true;
   m_parsingNeeded = false;
