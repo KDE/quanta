@@ -342,7 +342,9 @@ void QuantaDoc::slotDelayedTextChanged(bool forced)
         }
       }
       delete currentNode;
-      delete previousNode;
+      // they might be the same 
+      if (currentNode != previousNode)
+        delete previousNode;
     }
   m_parserEnabled = true;
   m_parsingNeeded = false;
