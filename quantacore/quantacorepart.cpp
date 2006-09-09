@@ -406,10 +406,10 @@ void QuantaCorePart::contextMenu(KMenu *popup, const Context *context)
 void QuantaCorePart::slotOpenNew()
 {
   //FIXME: just a hack to have new empty documents with KDevelop platform
-  KTempFile * file = new KTempFile(KStandardDirs::locateLocal("tmp", ""), i18n(".unsaved"));
-  file->setAutoDelete(true);
-  file->close();
-  KUrl url = KUrl(file->name());
+  KTempFile file(KStandardDirs::locateLocal("tmp", ""), i18n(".unsaved"));
+  file.setAutoDelete(true);
+  file.close();
+  KUrl url = KUrl(file.name());
   KDevDocument *doc = KDevCore::documentController()->editDocument(url);
   if (doc)
   {
@@ -417,7 +417,6 @@ void QuantaCorePart::slotOpenNew()
     if (part)
       part->closeUrl();
   }
-  file->unlink();
 }
 
 void QuantaCorePart::slotChangeDTEP()
