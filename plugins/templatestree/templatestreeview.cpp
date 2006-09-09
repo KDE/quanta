@@ -110,7 +110,7 @@ KFileTreeViewItem* TemplatesTreeBranch::createTreeViewItem(KFileTreeViewItem *pa
     {
       if (url.isLocalFile())
       {
-        QDir dir (url.path(), "", QDir::All & !QDir::Hidden);
+        QDir dir (url.path(), "", QDir::Name | QDir::IgnoreCase, QDir::AllEntries);
         tvi->setExpandable(dir.count() != 2);     //   . and .. are always there
       } else {
         tvi->setExpandable(true);     //   we assume there is something
@@ -218,7 +218,7 @@ KFileTreeBranch* TemplatesTreeView::newBranch(const KUrl& url)
   addBranch(newBrnch);
   if (url.isLocalFile())
   {
-    QDir dir (url.path(), "", QDir::All & !QDir::Hidden);
+    QDir dir (url.path(), "", QDir::Name | QDir::IgnoreCase, QDir::AllEntries);
     newBrnch->root()->setExpandable(dir.count() != 2);     //   . and .. are always there
   } else {
     newBrnch->root()->setExpandable(true);     //   we assume there is something

@@ -209,7 +209,7 @@ void saveElement(xmlElementPtr elem, xmlBufferPtr buf)
     if ( file.open( IO_WriteOnly ) )
     {
       QTextStream stream( &file );
-      stream.setCodec(QTextCodec::codecForName("UTF-8"));
+      stream.setEncoding(QTextStream::UnicodeUTF8);
       stream << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << endl;
       stream << "<!DOCTYPE TAGS>" << endl
              << "<TAGS>" << endl
@@ -219,8 +219,6 @@ void saveElement(xmlElementPtr elem, xmlBufferPtr buf)
       xmlAttributePtr at_ptr;
       el_ptr = xmlGetDtdElementDesc(DTD::dtd_ptr, elem->name);
       AttributeList attributes;
-      int childNum = 0;
-      const xmlChar *list_ptr[MAX_CHILD_ELEMENTS];
       if (el_ptr)
       {
         at_ptr = el_ptr->attributes;
@@ -249,88 +247,91 @@ void saveElement(xmlElementPtr elem, xmlBufferPtr buf)
           attributes.append(attr);
           at_ptr = at_ptr->nexth;
        }
-       childNum = xmlValidGetPotentialChildren(el_ptr->content, list_ptr,
-                                               &childNum, MAX_CHILD_ELEMENTS);
-      }
-      if (!attributes.isEmpty())
-        stream << QuantaCommon::xmlFromAttributes(&attributes);
-      if (childNum > 0)
-      {
-        stream << "<children>" << endl;
-        for( int i = 0; i < childNum; i++ )
-        {
-          stream << "  <child name=\"" << QString((const char*)list_ptr[i]) << "\"";
-          xmlElementPtr child_ptr = xmlGetDtdElementDesc(DTD::dtd_ptr, list_ptr[i]);
-          if (child_ptr && child_ptr->content && child_ptr->content->ocur)
-          {
-            //if (child_ptr->content->ocur == XML_ELEMENT_CONTENT_PLUS)
-            //{
-//              stream << " usage=\"required\"";
-  //          }
-            QString ocur;
-            switch (child_ptr->content->ocur)
-            {
-              case 1: {ocur = "once"; break;}
-              case 2: {ocur = "opt"; break;}
-              case 3: {ocur = "mult"; break;}
-              case 4: {ocur = "plus"; break;}
-            }
-            stream << " usage=\"" << ocur << "\"";
-            QString name = QString((const char*)child_ptr->content->name);
-            if (name == "#PCDATA")
-               name == "#text";
-            stream << " name2=\"" << name << "\"";
-          }
-          stream << " />" << endl;
-        }
 
-        stream << "</children>" << endl;
-        stream << endl;
-      }
-      /*
-      xmlElementContentPtr content_ptr = el_ptr->content;
-      if (content_ptr)
-      {
-        stream << "<children>" << endl;
-        while (content_ptr)
+       if (!attributes.isEmpty())
+          stream << QuantaCommon::xmlFromAttributes(&attributes);
+       const xmlChar *list_ptr[MAX_CHILD_ELEMENTS];
+       int childNum = 0;
+       childNum = xmlValidGetPotentialChildren(el_ptr->content, list_ptr,
+                          &childNum, MAX_CHILD_ELEMENTS);
+
+        if (childNum > 0)
         {
-          if (!QString((const char*)content_ptr->name).isEmpty())
+          stream << "<children>" << endl;
+          for( int i = 0; i < childNum; i++ )
           {
-            stream << "  <child name=\"" << QString((const char*)content_ptr->name) << "\"";
-            QString ocur;
-            switch (content_ptr->ocur)
+            stream << "  <child name=\"" << QString((const char*)list_ptr[i]) << "\"";
+            xmlElementPtr child_ptr = xmlGetDtdElementDesc(DTD::dtd_ptr, list_ptr[i]);
+            if (child_ptr && child_ptr->content && child_ptr->content->ocur)
             {
-              case 1: {ocur = "once"; break;}
-              case 2: {ocur = "opt"; break;}
-              case 3: {ocur = "mult"; break;}
-              case 4: {ocur = "plus"; break;}
+              //if (child_ptr->content->ocur == XML_ELEMENT_CONTENT_PLUS)
+              //{
+  //              stream << " usage=\"required\"";
+    //          }
+              QString ocur;
+              switch (child_ptr->content->ocur)
+              {
+                case 1: {ocur = "once"; break;}
+                case 2: {ocur = "opt"; break;}
+                case 3: {ocur = "mult"; break;}
+                case 4: {ocur = "plus"; break;}
+              }
+              stream << " usage=\"" << ocur << "\"";
+              QString name = QString((const char*)child_ptr->content->name);
+              if (name == "#PCDATA")
+                name == "#text";
+              stream << " name2=\"" << name << "\"";
             }
-            stream << " usage=\"" << ocur << "\"";
             stream << " />" << endl;
           }
-          if (content_ptr->c1)
-              content_ptr = content_ptr->c1;
-          else if (content_ptr->c2)
-              content_ptr = content_ptr->c2;
-          else
-          {
-            if (content_ptr == el_ptr->content)
-              break;
-            if (content_ptr->parent)
-            {
-              if (content_ptr == content_ptr->parent->c1)
-                  content_ptr->c1 = 0L;
-              else
-                  content_ptr->c2 = 0L;
-            }
-            content_ptr = content_ptr->parent;
-          }
+
+          stream << "</children>" << endl;
+          stream << endl;
         }
-        stream << "</children>" << endl;
-      } */
+        /*
+        xmlElementContentPtr content_ptr = el_ptr->content;
+        if (content_ptr)
+        {
+          stream << "<children>" << endl;
+          while (content_ptr)
+          {
+            if (!QString((const char*)content_ptr->name).isEmpty())
+            {
+              stream << "  <child name=\"" << QString((const char*)content_ptr->name) << "\"";
+              QString ocur;
+              switch (content_ptr->ocur)
+              {
+                case 1: {ocur = "once"; break;}
+                case 2: {ocur = "opt"; break;}
+                case 3: {ocur = "mult"; break;}
+                case 4: {ocur = "plus"; break;}
+              }
+              stream << " usage=\"" << ocur << "\"";
+              stream << " />" << endl;
+            }
+            if (content_ptr->c1)
+                content_ptr = content_ptr->c1;
+            else if (content_ptr->c2)
+                content_ptr = content_ptr->c2;
+            else
+            {
+              if (content_ptr == el_ptr->content)
+                break;
+              if (content_ptr->parent)
+              {
+                if (content_ptr == content_ptr->parent->c1)
+                    content_ptr->c1 = 0L;
+                else
+                    content_ptr->c2 = 0L;
+              }
+              content_ptr = content_ptr->parent;
+            }
+          }
+          stream << "</children>" << endl;
+        } */
+      }
       stream << "</tag>" << endl
              << "</TAGS>" << endl;
-      qDeleteAll(attributes.begin(), attributes.end());
       file.close();
     }
  }
