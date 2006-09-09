@@ -231,6 +231,7 @@ void ViewManager::slotViewActivated(KMdiChildView *view)
   {
     m_lastActiveEditorView = m_lastActiveView;
   }
+
   Document *w = qView->document();
   if (w && !w->isUntitled())
   {

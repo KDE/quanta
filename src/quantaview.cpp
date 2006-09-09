@@ -202,21 +202,8 @@ void QuantaView::addDocument(Document *document)
 
   reloadUpdateTimers();
 
-
    m_currentViewsLayout = -1; //force loading of this layout
-   int currentViewsLayout = SourceOnly;
-   switch (currentViewsLayout)
-   {
-        case SourceOnly:
-            slotSetSourceLayout();
-            break;
-        case SourceAndVPL:
-            slotSetSourceAndVPLLayout();
-            break;
-        case VPLOnly:
-            slotSetVPLOnlyLayout();
-            break;
-   }
+   slotSetSourceLayout();
 }
 
 void QuantaView::addPlugin(QuantaPlugin *plugin)
@@ -259,20 +246,7 @@ void QuantaView::addCustomWidget(QWidget *widget, const QString &label)
       ToolbarTabWidget::ref()->reparent(this, 0, QPoint(), qConfig.enableDTDToolbar);
       m_viewLayout->addWidget(ToolbarTabWidget::ref(), 0 , 0);
       m_customWidget = 0L; //avoid infinite recursion
-      int currentViewsLayout = m_currentViewsLayout;
-      m_currentViewsLayout = -1; //force loading of this layout
-      switch (currentViewsLayout)
-      {
-            case SourceOnly:
-                slotSetSourceLayout();
-                break;
-            case SourceAndVPL:
-                slotSetSourceAndVPLLayout();
-                break;
-            case VPLOnly:
-                slotSetVPLOnlyLayout();
-                break;
-      }
+      reloadLayout();
    }
   if (m_documentArea->height() + ToolbarTabWidget::ref()->height() > height() && ToolbarTabWidget::ref()->isVisible())
     resize(m_documentArea->width(), m_documentArea->height() - ToolbarTabWidget::ref()->height());
@@ -280,6 +254,23 @@ void QuantaView::addCustomWidget(QWidget *widget, const QString &label)
     resize(width(), height());
 }
 
+void QuantaView::reloadLayout()
+{
+  int currentViewsLayout = m_currentViewsLayout;
+  m_currentViewsLayout = -1; //force loading of this layout
+  switch (currentViewsLayout)
+  {
+        case SourceOnly:
+            slotSetSourceLayout();
+            break;
+        case SourceAndVPL:
+            slotSetSourceAndVPLLayout();
+            break;
+        case VPLOnly:
+            slotSetVPLOnlyLayout();
+            break;
+  }
+}
 
 void QuantaView::updateTab()
 {
@@ -479,7 +470,6 @@ void QuantaView::slotSetVPLOnlyLayout()
 //update timers are not needed in VPL only mode
     m_sourceUpdateTimer.stop();
     m_VPLUpdateTimer.stop();
-    reloadBothViews(true);
 }
 
 void QuantaView::reloadUpdateTimers()
@@ -1038,27 +1028,7 @@ void QuantaView::activated()
     (static_cast<KToggleAction* >(action))->setChecked(false);
   }
 
-  switch (m_currentViewsLayout)
-  {
-      case SourceOnly:
-        {
-           m_currentViewsLayout = -1;
-           slotSetSourceLayout();
-           break;
-        }
-      case SourceAndVPL:
-        {
-           m_currentViewsLayout = -1;
-           slotSetSourceAndVPLLayout();
-           break;
-        }
-      case VPLOnly:
-        {
-            m_currentViewsLayout = -1;
-            slotSetVPLOnlyLayout();
-            break;
-        }
-  }
+  reloadLayout();
   refreshWindow();
  }
 

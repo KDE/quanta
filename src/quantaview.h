@@ -90,7 +90,7 @@ public:
 
    bool saveDocument(const KURL&);
   /** Saves the document if it's modified. Ask the user if their
-   @param ask is true. */ 
+   @param ask is true. */
   bool saveModified(bool ask = true);
   /** Returns the baseURL of the document. */
   KURL baseURL();
@@ -106,6 +106,8 @@ public:
   void reloadSourceView(bool force = false);
   /** Return the curren views layout*/
   int currentViewsLayout() {return m_currentViewsLayout;}
+
+  void reloadLayout();
 
  /** Called when this view become the active one */
   void activated();
