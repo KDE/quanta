@@ -28,7 +28,7 @@
 #include <ktexteditor/selectioninterface.h>
 #include <kstandarddirs.h>
 #include <klocale.h>
-#include <kmultipledrag.h> 
+#include <kmultipledrag.h>
 #include <kglobal.h>
 #include <kcharsets.h>
 
@@ -36,8 +36,8 @@
 #include <qfile.h>
 #include <qtextstream.h>
 #include <qdatetime.h>
-#include <qclipboard.h> 
-#include <qptrvector.h> 
+#include <qclipboard.h>
+#include <qptrvector.h>
 
 #include "document.h"
 #include "viewmanager.h"
@@ -350,7 +350,7 @@ kNodeAttrs* KafkaDocument::connectDomNodeToQuantaNode(DOM::Node domNode, Node *n
 		_domNode.nodeName().string());*/
 	else
 		name = domNode.nodeName().string().lower();
- 
+
 //     kdDebug(25001) << "KafkaDocument::connectDomNodeToQuantaNode() - domNode name: |" << name << "|" << endl;
 
 	props = new kNodeAttrs();
@@ -477,8 +477,8 @@ void KafkaDocument::setCursorAndSelection(NodeSelectionInd *nodeSelection)
     endDomNode = *(endNode->rootNode());
   translateNodeIntoKafkaCursorPosition(startNode, nodeSelection->cursorOffset(), foo, startOffset);
   translateNodeIntoKafkaCursorPosition(endNode, nodeSelection->cursorOffsetEndSel(), foo, endOffset);
-  
-  
+
+
   if(cursorAtSelectionStart && !startDomNode.isNull())
   {
     m_kafkaPart->setCurrentNode(startDomNode, startOffset);
@@ -487,7 +487,7 @@ void KafkaDocument::setCursorAndSelection(NodeSelectionInd *nodeSelection)
   {
     m_kafkaPart->setCurrentNode(endDomNode, endOffset);
   }
-  
+
   if(!startDomNode.isNull() && !endDomNode.isNull())
     m_kafkaPart->setSelection(DOM::Range(startDomNode, (long)startOffset, endDomNode, (long)endOffset));
 }
@@ -501,7 +501,7 @@ void KafkaDocument::setCursor(Node* cursorNode, int cursorOffset)
          !domNode.firstChild().isNull() && domNode.firstChild().nodeType() == DOM::Node::TEXT_NODE)
         domNode = domNode.firstChild();
     if (!domNode.isNull())
-        m_kafkaPart->setCurrentNode(domNode, (int)longDomNodeOffset);       
+        m_kafkaPart->setCurrentNode(domNode, (int)longDomNodeOffset);
 }
 
 bool KafkaDocument::buildKafkaNodeFromNode(Node *node, bool insertNode)
@@ -525,14 +525,14 @@ bool KafkaDocument::buildKafkaNodeFromNode(Node *node, bool insertNode)
             canInsertEmptyNode = true;
         else
             canInsertEmptyNode = kafkaCommon::hasParent(node, "body");
-        
+
         Node* parent_node = node->parent;
         QTag* parent_node_description_tag = QuantaCommon::tagFromDTD(parent_node);
         if(parent_node_description_tag && !parent_node_description_tag->isChild(node, false, true))
             canInsertEmptyNode = false;
     }
-    
-    if(node->tag->type == Tag::XmlTag || 
+
+    if(node->tag->type == Tag::XmlTag ||
        ((node->tag->type == Tag::Text || (node->tag->type == Tag::Empty && canInsertEmptyNode)) && !node->insideSpecial))
     {
 		str = node->tag->name.lower();
@@ -737,9 +737,9 @@ bool KafkaDocument::buildKafkaNodeFromNode(Node *node, bool insertNode)
             QTag* qTag = QuantaCommon::tagFromDTD(getCurrentDoc()->defaultDTD(),
                     parentNode.nodeName().string());
 
-            if(qTag->isChild(node, false))
+            if(qTag && qTag->isChild(node, false))
             {
-                
+
                 if(nextNode.isNull())
                 {
                     if(!kafkaCommon::insertDomNode(newNode, parentNode))
@@ -1074,7 +1074,7 @@ QString KafkaDocument::generateCodeFromNode(Node *node, int bLine, int bCol, int
 		openingNode = node->getOpeningNode();
 		if(openingNode && openingNode->tag->type == Tag::ScriptTag)
 		{
-                  if(openingNode->tag->name.contains("XML PI", false) || 
+                  if(openingNode->tag->name.contains("XML PI", false) ||
                     openingNode->tag->name.contains("PHP", false))
                     text = "?>";
                   else if(openingNode->tag->name.contains("DTD", false))
@@ -1249,13 +1249,13 @@ void KafkaDocument::translateQuantaIntoNodeCursorPosition(uint line, uint col, N
 {
   int curCol, curLine, beginCol, beginLine;
   QString currentLine;
-  
+
   *node = parser->nodeAt(line, col, false);
-  
+
   offset = 0;
   if(!*node)
    return;
-  
+
   if((*node)->tag->cleanStrBuilt() && (*node)->tag->indentationDone())
   {
     (*node)->tag->beginPos(beginLine, beginCol);
@@ -1296,7 +1296,7 @@ void KafkaDocument::translateKafkaIntoNodeCursorPosition(DOM::Node domNode, long
 
         offset = 0;
         (*node) = 0L;
-        
+
 	if(domNode.isNull())
 	{
 #ifdef HEAVY_DEBUG
@@ -1682,7 +1682,7 @@ void KafkaDocument::translateNodeIntoKafkaCursorPosition(Node *node, int offset,
 void KafkaDocument::translateNodeIntoQuantaCursorPosition(Node *node, int offset, uint &line, uint &col)
 {
   int curCol, curLine, curOffset;
-  
+
   node->tag->beginPos(curLine, curCol);
   line = curLine;
   col = curCol;
@@ -2028,7 +2028,7 @@ void KafkaDocument::slotDomNodeModified(DOM::Node domNode, NodeModifsSet* modifs
                           kafkaCommon::extractNode(node->prev, modifs);
                         if(node->next && node->next->tag->type == Tag::Empty)
                           kafkaCommon::extractNode(node->next, modifs);
-                          
+
                         //Log the changes
 			m_currentDoc->docUndoRedo->addNewModifsSet(modifs, undoRedo::KafkaModif);
 		}
@@ -2286,62 +2286,62 @@ void KafkaDocument::slotdomNodeNewCursorPos(DOM::Node, int)
 void KafkaDocument::slotCut()
 {
     QString text = m_kafkaPart->selectedText();
-        
+
     NodeSelectionInd selection_ind;
     selection_ind.fillWithVPLCursorSelection();
-    
+
     int startOffset = selection_ind.cursorOffset();
     int endOffset = selection_ind.cursorOffsetEndSel();
     Node* startNode = kafkaCommon::getNodeFromLocation(selection_ind.cursorNode());
     Node* endNode = kafkaCommon::getNodeFromLocation(selection_ind.cursorNodeEndSel());
-    
+
     DOM::Node cursorDomNode;
     long cursorOffset;
-    
+
     m_kafkaPart->getCurrentNode(cursorDomNode, cursorOffset);
     Node* cursorNode = getNode(cursorDomNode);
-    
+
     slotCut(startNode, startOffset, endNode, endOffset, &cursorNode, cursorOffset, text);
 }
 
-void KafkaDocument::slotCut(Node* startNode, int startOffset, Node* endNode, int endOffset, 
+void KafkaDocument::slotCut(Node* startNode, int startOffset, Node* endNode, int endOffset,
                             Node** cursorNode, long cursorOffset, QString const& text)
 {
     if(!startNode || !endNode)
         return;
-    
+
     NodeModifsSet *modifs = new NodeModifsSet();
-    
-    Node* subtree_root = kafkaCommon::DTDExtractNodeSubtree(startNode, startOffset, endNode, endOffset, 
+
+    Node* subtree_root = kafkaCommon::DTDExtractNodeSubtree(startNode, startOffset, endNode, endOffset,
             cursorNode, cursorOffset, modifs);
-    
+
     m_currentDoc->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);
-    
+
     //Now update the VPL cursor position
     kafkaWidget->setCurrentNode(startNode, startOffset);
-    
+
     if(subtree_root)
-    {        
+    {
         KafkaDragObject* node_drag = new KafkaDragObject(subtree_root);
         QTextDrag* text_drag = new QTextDrag(text);
         KMultipleDrag* drag_object = new KMultipleDrag();
         drag_object->addDragObject(node_drag);
         drag_object->addDragObject(text_drag);
-        
+
         QApplication::clipboard()->setData(drag_object);
 #ifdef LIGHT_DEBUG
         kafkaCommon::coutTree(subtree_root, 3);
 #endif
-    }   
+    }
 }
 
 void KafkaDocument::slotCopy()
 {
     QString text = m_kafkaPart->selectedText();
-        
+
     NodeSelectionInd selection_ind;
     selection_ind.fillWithVPLCursorSelection();
-    
+
     int startOffset = selection_ind.cursorOffset();
     int endOffset = selection_ind.cursorOffsetEndSel();
     Node* startNode = kafkaCommon::getNodeFromLocation(selection_ind.cursorNode());
@@ -2354,9 +2354,9 @@ void KafkaDocument::slotCopy(Node* startNode, int startOffset, Node* endNode, in
 {
     if(!startNode || !endNode)
         return;
-    
+
     Node* subtree_root = kafkaCommon::getNodeSubtree(startNode, startOffset, endNode, endOffset);
-    
+
     if(subtree_root)
     {
         KafkaDragObject* node_drag = new KafkaDragObject(subtree_root);
@@ -2364,13 +2364,13 @@ void KafkaDocument::slotCopy(Node* startNode, int startOffset, Node* endNode, in
         KMultipleDrag* drag_object = new KMultipleDrag();
         drag_object->addDragObject(node_drag);
         drag_object->addDragObject(text_drag);
-        
+
         QApplication::clipboard()->setData(drag_object);
-        // FIXME delete the subtree 
+        // FIXME delete the subtree
 #ifdef LIGHT_DEBUG
         kafkaCommon::coutTree(subtree_root, 3);
 #endif
-    }    
+    }
 }
 
 void KafkaDocument::slotPaste()
@@ -2378,29 +2378,29 @@ void KafkaDocument::slotPaste()
     QClipboard *cb = QApplication::clipboard();
     QMimeSource* e = cb->data();
     Node* node = new Node(0);
-    
+
     if(KafkaDragObject::decode(e, node))
     {
         bool go_up = false;
         for(Node* aux = node; aux; aux = kafkaCommon::getNextNode(aux, go_up))
             kafkaCommon::restorePastedNode(aux, getCurrentDoc());
-        
+
         NodeSelectionInd selection_ind;
         selection_ind.fillWithVPLCursorSelection();
-    
+
         Node* cursorNode = kafkaCommon::getNodeFromLocation(selection_ind.cursorNode());
         long cursorOffset = selection_ind.cursorOffset();
-        
+
         NodeModifsSet *modifs = new NodeModifsSet();
-        
+
         if(selection_ind.hasSelection())
             kafkaCommon::DTDRemoveSelection(selection_ind, &cursorNode, cursorOffset, modifs);
         else
             cursorNode = 0; // use selection_ind
         kafkaCommon::DTDInsertNodeSubtree(node, selection_ind, &cursorNode, cursorOffset, modifs);
-        
+
         m_currentDoc->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif, 0, false);
-        
+
         //Now update the VPL cursor position
         kafkaWidget->setCurrentNode(cursorNode, cursorOffset);
     }
