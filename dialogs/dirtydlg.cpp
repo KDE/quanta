@@ -15,6 +15,7 @@
 
 //qt includes
 #include <qevent.h>
+#include <qlabel.h>
 #include <qradiobutton.h>
 #include <qpushbutton.h>
 
@@ -33,13 +34,14 @@
 #include "resource.h"
 #include "qextfileinfo.h"
 
-DirtyDlg::DirtyDlg(const QString& srcName, const QString& destName, bool createBackup, QWidget *parent, const char *name ) : KDialogBase(parent, name, true, i18n("File Changed"), KDialogBase::Ok | KDialogBase::Cancel)
+DirtyDlg::DirtyDlg(const QString& srcName, const QString& destName, bool createBackup, QWidget *parent, const char *name ) : KDialogBase(parent, name, true, i18n("File Changed"), KDialogBase::Ok)
 {
  m_src.setPath(srcName);
  m_dest.setPath(destName);
  m_busy = false;
  m_createBackup = createBackup;
  m_mainWidget = new DirtyDialog(this);
+ m_mainWidget->textLabel->setText(i18n("<qt>The file <b>%1</b> was changed outside of the Quanta editor.</qt>").arg(srcName));
  setMainWidget(m_mainWidget);
 }
 
