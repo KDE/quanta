@@ -338,6 +338,7 @@ void QuantaDoc::slotDelayedTextChanged(bool forced)
               node = node->previousSibling();
           }
           currentNode->deleteNode(0L);
+          currentNode = 0;
         }
       }
       delete currentNode;
