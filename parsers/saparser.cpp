@@ -490,10 +490,20 @@ bool SAParser::slotParseOneLine()
           p = s_textLine.find(s_currentContext.startString, p);
           if (p != -1)
           {
-            if (p == 0 || (p > 0 && s_textLine[p-1] != '\\'))
+            if (p >= 0)
             {
-              pos = p;
-              break;
+              int i = p - 1;
+              int slahNum = 0;
+              while (i > 0 && s_textLine[i] == '\\')
+              {
+                slahNum++;
+                i--;
+              }
+              if (p == 0 || (slahNum % 2 == 0))
+              {
+                pos = p;
+                break;
+              }
             }
           } else
             break;

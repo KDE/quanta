@@ -19,6 +19,7 @@ Version 3.5.5 (Release date: xx-xx-2006; Started 01-09-2006):
       - really abort if a remote directory cannot be created [#117032]
       - fix automatic updating of closing tags [#132357]
       - accept float numbers for length values [#130295]
+      - handle correctly the escaped backslashes inside strings []
 
  - improvements:
       - make CSS completion work inside style attributes [#80605]

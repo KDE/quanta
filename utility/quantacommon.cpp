@@ -468,9 +468,22 @@ void QuantaCommon::removeCommentsAndQuotes(QString &str, const DTDStruct *dtd)
      s = dtd->commentsStartRx.cap();
      if (s == "\\\"" || s == "\\'")
      {
-       str[pos] = space;
-       str[pos+1] = space;
-       pos += 2;
+        int i = pos;
+        int slahNum = 0;
+        while (i > 0 && str[i] == '\\')
+        {
+          slahNum++;
+          i--;
+        }
+        if (slahNum % 2 == 0)
+        {
+          pos++;
+        } else
+        {
+          str[pos] = space;
+          str[pos+1] = space;
+          pos += 2;
+        }
      } else
      {
        s = dtd->comments[s];
@@ -521,9 +534,22 @@ bool QuantaCommon::insideCommentsOrQuotes(int position, const QString &string, c
      s = dtd->commentsStartRx.cap();
      if (s == "\\\"" || s == "\\'")
      {
-       str[pos] = space;
-       str[pos+1] = space;
-       pos += 2;
+        int i = pos;
+        int slahNum = 0;
+        while (i > 0 && str[i] == '\\')
+        {
+          slahNum++;
+          i--;
+        }
+        if (slahNum % 2 == 0)
+        {
+          pos++;
+        } else
+        {
+          str[pos] = space;
+          str[pos+1] = space;
+          pos += 2;
+        }
      } else
      {
        s = dtd->comments[s];
