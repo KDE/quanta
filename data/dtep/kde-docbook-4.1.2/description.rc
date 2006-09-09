@@ -3,6 +3,7 @@ Name = -//KDE//DTD DocBook XML V4.1.2-Based Variant V1.0//EN
 NickName = KDE Docbook XML 4.1.2
 URL = dtd/kdex.dtd
 DoctypeString = book PUBLIC "-//KDE//DTD DocBook XML V4.1.2-Based Variant V1.0//EN" "dtd/kdex.dtd"
+MimeTypes = text/docbook
 DefaultExtension = docbook
 Groups = Core
 NumOfPages = 1

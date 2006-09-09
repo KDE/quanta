@@ -1,6 +1,7 @@
 [General]
 Name = XML Schema
 NickName = XML Schema 1.0
+MimeTypes = application/xsd
 DefaultExtension = xsd
 NumOfPages = 0
 CaseSensitive = true

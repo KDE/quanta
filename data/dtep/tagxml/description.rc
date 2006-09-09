@@ -1,5 +1,6 @@
 [General]
 Name = TAGS
+MimeTypes = text/xml
 DefaultExtension = tag
 NickName = Quanta Tag Files
 NumOfPages = 0

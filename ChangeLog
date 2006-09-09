@@ -19,11 +19,12 @@ Version 3.5.5 (Release date: xx-xx-2006; Started 01-09-2006):
       - really abort if a remote directory cannot be created [#117032]
       - fix automatic updating of closing tags [#132357]
       - accept float numbers for length values [#130295]
-      - handle correctly the escaped backslashes inside strings []
+      - handle correctly the escaped backslashes inside strings [#128819]
 
  - improvements:
       - make CSS completion work inside style attributes [#80605]
       - improve usability of the File Changed dialog [#126058]
+      - improve finding a DTEP for a file [related to #129808]
 
 Version 3.5.4 (Release date: 02-08-2006; Started 24-06-2005):
  - bugfixes:

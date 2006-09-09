@@ -2949,12 +2949,21 @@ void Document::processDTD(const QString& documentType)
       }
    } else //DOCTYPE not found in file
    {
-     QString mimetype = KMimeType::findByURL(url())->name();
-     const DTDStruct *currdtd = DTDs::ref()->DTDfromMimeType(mimetype);
-     if (currdtd)
-        setDTDIdentifier(currdtd->name);
-     else
-        setDTDIdentifier(projectDTD);
+     KURL u = url();
+     QString dtdId = DTDs::ref()->DTDforURL(u)->name;
+//     if (dtdId == "empty")
+     {
+       const DTDStruct * dtd = DTDs::ref()->find(projectDTD);
+       if (DTDs::canHandle(dtd, u))
+        dtdId = projectDTD;
+       else
+       {
+         dtd = DTDs::ref()->find(qConfig.defaultDocType);
+         if (DTDs::canHandle(dtd, u))
+           dtdId = qConfig.defaultDocType;
+       }
+     }
+     setDTDIdentifier(dtdId);
    }
  } else //dtdName is read from the method's parameter
  {

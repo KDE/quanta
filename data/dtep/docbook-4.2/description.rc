@@ -3,6 +3,7 @@ Name = -//OASIS//DTD DocBook XML V4.2//EN
 NickName = Docbook XML 4.2
 URL = http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd
 DoctypeString = book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"
+MimeTypes = text/docbook
 DefaultExtension = docbook
 Groups = Core
 NumOfPages = 1

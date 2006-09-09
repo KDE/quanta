@@ -109,7 +109,23 @@ DTDs::DTDs(QObject *parent)
 //     kdDebug(24000) << "read:" << *it  << endl;
     readTagDir(*it, false);  // read all tags, but only short form
   }
-//  kdDebug(24000) << "dtds::dtds constructed" << endl;
+
+//load the mimetypes from the insideDTDs
+  QDictIterator<DTDStruct> it(*m_dict);
+  for( ; it.current(); ++it )
+  {
+    DTDStruct * dtd = it.current();
+    for (uint i = 0; i < dtd->insideDTDs.count(); i++)
+    {
+      const DTDStruct *insideDTD = m_dict->find(dtd->insideDTDs[i]);  // search but don't load
+      if (!insideDTD)
+          insideDTD = m_dict->find(getDTDNameFromNickName(dtd->insideDTDs[i]));   // search but don't load
+      if (insideDTD && !insideDTD->toplevel)
+          dtd->mimeTypes += insideDTD->mimeTypes;
+    }
+  }
+
+ //  kdDebug(24000) << "dtds::dtds constructed" << endl;
 }
 
 DTDs::~DTDs()
@@ -189,6 +205,12 @@ bool DTDs::readTagDir(const QString &dirName, bool loadAll)
     int pos = tmpStr.find('(');
     dtd->definitionTags[tmpStr.left(pos).stripWhiteSpace()] = tmpStr.mid(pos+1, tmpStr.findRev(')')-pos-1).stripWhiteSpace();
   }
+  //Which DTD can be present in this one?
+  dtd->insideDTDs = dtdConfig->readListEntry("MayContain");
+  for (uint i = 0; i < dtd->insideDTDs.count(); i++)
+  {
+    dtd->insideDTDs[i] = dtd->insideDTDs[i].stripWhiteSpace().lower();
+  }
 
 
   m_dict->insert(dtdName.lower(), dtd); //insert the structure into the dictionary
@@ -236,7 +258,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
   dtd->inheritsTagsFrom = dtdConfig->readEntry("Inherits").lower();
   dtd->documentation = dtdConfig->readEntry("Documentation").lower();
 
-  dtd->defaultExtension = dtdConfig->readEntry("DefaultExtension", "html");
+  dtd->defaultExtension = dtdConfig->readEntry("DefaultExtension");
   dtd->caseSensitive = caseSensitive;
   int numOfTags = 0;
   QTagList *tagList = new QTagList(119, false); //max 119 tag in a DTD
@@ -356,12 +378,6 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
   /**** Code for the new parser *****/
 
   dtdConfig->setGroup("Parsing rules");
-  //Which DTD can be present in this one?
-  dtd->insideDTDs = dtdConfig->readListEntry("MayContain");
-  for (uint i = 0; i < dtd->insideDTDs.count(); i++)
-  {
-    dtd->insideDTDs[i] = dtd->insideDTDs[i].stripWhiteSpace().lower();
-  }
   bool appendCommonRules = dtdConfig->readBoolEntry("AppendCommonSpecialAreas", true);
   //Read the special areas and area names
   QString rxStr = "";
@@ -1046,18 +1062,39 @@ QStringList DTDs::fileNameList(bool topLevelOnly)
 }
 
 
-/** find a DTD for a given mimetype */
-const DTDStruct * DTDs::DTDfromMimeType(const QString &mimetype)
+const DTDStruct * DTDs::DTDforURL(const KURL &url)
 {
+  QValueList<DTDStruct*> foundList;
   QDictIterator<DTDStruct> it(*m_dict);
   for( ; it.current(); ++it )
   {
-    if (it.current()->toplevel && it.current()->mimeTypes.contains(mimetype))
+    if (it.current()->toplevel && canHandle(it.current(), url))
     {
-      return it.current();
+      foundList.append(it.current());
     }
   }
-  return 0L;
+  if (foundList.isEmpty())
+    return find("empty");
+  else
+  {
+    QString path = url.path();
+    for (uint i = 0; i < foundList.count(); i++)
+    {
+      if (path.endsWith('.' + foundList[i]->defaultExtension))
+        return foundList[i];
+    }
+    return foundList[0];
+  }
+}
+
+bool DTDs::canHandle(const DTDStruct *dtd, const KURL &url)
+{
+  QString mimetype = KMimeType::findByURL(url)->name();
+  if (dtd->mimeTypes.contains(mimetype))
+    return true;
+  if (url.path().endsWith('.' + dtd->defaultExtension))
+    return true;
+  return false;
 }
 
 #include "dtds.moc"

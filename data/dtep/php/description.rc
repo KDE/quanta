@@ -1,5 +1,6 @@
 [General]
 Name = PHP
+MimeTypes = application/x-php
 DefaultExtension = php
 NumOfPages = 0
 CaseSensitive = true

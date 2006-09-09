@@ -127,12 +127,20 @@ public:
   QStringList fileNameList (bool topLevelOnly=false);
 
 
-  /** finds a dtd for a given mimetype
+  /** finds a dtd for a given url
    *
-   * @param mimetype look for this type
-   * @return the first DTD for this mimetype or 0L
+   * @param url look for this file
+   * @return the first DTD for this mimetype or the "empty" DTD if not found
    */
-  const DTDStruct * DTDfromMimeType(const QString &mimetype);
+  const DTDStruct * DTDforURL(const KURL &url);
+
+  /**
+   * Checks if a DTD can handle the file or not.
+   * @param dtd the DTD to check against
+   * @param url the url pointing to the file
+   * @return true if it can handle
+   */
+  static bool canHandle(const DTDStruct *dtd, const KURL &url);
 
 public slots:
 
@@ -158,10 +166,10 @@ signals:
 
   /** DTD has changed need reparse */
   void forceReparse();
-  
+
   /** Enable/disbale the idle timer*/
   void enableIdleTimer(bool);
-  
+
   void loadToolbarForDTD(const QString&);
 
 private:

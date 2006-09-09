@@ -1,6 +1,7 @@
 [General]
 Name = -//WAPFORUM//DTD WML 1.2//EN
 NickName = WML 1.2
+MimeTypes = text/vnd.wap.wml
 DefaultExtension = wml
 Groups = Core
 NumOfPages = 1

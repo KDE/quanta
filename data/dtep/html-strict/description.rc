@@ -3,6 +3,7 @@ Name = -//W3C//DTD HTML 4.01//EN
 NickName = HTML 4.01 Strict
 URL = http://www.w3.org/TR/html4/strict.dtd
 DoctypeString = HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"
+MimeTypes = text/html
 DefaultExtension = html
 Groups = Core, I18n, Script
 NumOfPages = 2
