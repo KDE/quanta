@@ -32,7 +32,6 @@
 // kde includes
 #include <klocale.h>
 #include <kprocess.h>
-#include <kprogressbar.h>
 #include <kiconloader.h>
 #include <kinstance.h>
 #include <kio/job.h>

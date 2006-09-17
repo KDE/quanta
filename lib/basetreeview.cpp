@@ -61,7 +61,6 @@
 #include <kmessagebox.h>
 #include <kpropertiesdialog.h>
 #include <kfiledialog.h>
-#include <kprogressbar.h>
 #include <kstandarddirs.h>
 #include <kurl.h>
 #include <ktar.h>

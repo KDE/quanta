@@ -39,7 +39,6 @@
 #include <kinstance.h>
 #include <kfiledialog.h>
 #include <k3listview.h>
-#include <kprogressbar.h>
 #include <kmimetype.h>
 #include <kdeversion.h>
 #include <kurlrequesterdlg.h>

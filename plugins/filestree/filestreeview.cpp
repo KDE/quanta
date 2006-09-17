@@ -33,7 +33,6 @@
 #include <kmessagebox.h>
 #include <kmenu.h>
 #include <kfiledialog.h>
-#include <kprogressbar.h>
 #include <kurl.h>
 #include <kapplication.h>
 

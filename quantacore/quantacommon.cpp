@@ -34,7 +34,6 @@
 #include <kmessagebox.h>
 #include <kio/netaccess.h>
 #include <klocale.h>
-#include <kprogressbar.h>
 #include <ktempdir.h>
 #include <ktempfile.h>
 

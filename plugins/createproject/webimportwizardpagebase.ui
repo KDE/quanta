@@ -182,7 +182,7 @@
     </spacer>
    </item>
    <item row="2" column="1" >
-    <widget class="KProgressBar" name="progress" >
+    <widget class="QProgressBar" name="progress" >
      <property name="orientation" >
       <enum>Qt::Horizontal</enum>
      </property>
@@ -205,13 +205,6 @@
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction></pixmapfunction>
  <customwidgets>
-  <customwidget>
-   <class>KProgressBar</class>
-   <extends></extends>
-   <header>kprogressbar.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
   <customwidget>
    <class>SimpleFileTree</class>
    <extends></extends>
