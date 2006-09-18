@@ -10,7 +10,7 @@ Comment=QuantaProject Description
 Comment[x-test]=xxQuantaProject Descriptionxx
 Icon=quanta
 ServiceTypes=KDevelop/Project
-I
+
 X-KDevelop-Plugin-Version=1
 X-KDevelop-Plugin-Homepage=http://kdewebdev.org/
 X-KDevelop-Plugin-BugsEmailAddress=amantia@kde.org
