@@ -20,5 +20,6 @@ X-KDevelop-Args=
 
 X-KDevelop-Scope=Global
 X-KDE-Library=libkdevtemplatestree
+X-KDE-PluginInfo-Name=KDevTemplatesTree
 X-KDevelop-Version=4
 X-KDevelop-Properties=Quanta,Quanta-TemplatesTree

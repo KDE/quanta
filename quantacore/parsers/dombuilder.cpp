@@ -25,6 +25,7 @@
 
 
 #include "dombuilder.h"
+#include "dommodel.h"
 
 #define DEBUGMODE
 
@@ -38,17 +39,19 @@
 #ifdef DEBUGMODE
 #include <QDialog>
 #include <QBoxLayout>
-#include "domtreeview.h"
+#include <QTreeView>
+#include "dommodel.h"
 #endif
 
-DomBuilder::DomBuilder()
+DomBuilder::DomBuilder() 
 {
   m_CDATAstarted = false;
   m_DTDstarted = false;
   m_locator = 0;
   // i am not allowed to add text nodes to the document, so make a child first
-  m_currNode = m_document.createElement("quanta");
-  m_document.appendChild(m_currNode);
+  m_startNode = m_document.createElement("quanta");
+  m_currNode = m_startNode;
+  m_document.appendChild(m_startNode);
   m_error.clear();
 }
 
@@ -77,16 +80,33 @@ bool DomBuilder::characters(const QString & ch)
   }
   else
   {
+    node = m_document.createTextNode(ch);
     try
     {
-      node = m_document.createTextNode(ch);
-      // TODO if the currNode is text we don't want to add the new node as child but as sibling
-      m_currNode.appendChild(node);
+      // for some nodes the text should become a child not a sibling
+      if (m_currNode.nodeType() == DOM::Node::COMMENT_NODE ||
+          m_currNode.nodeType() == DOM::Node::DOCUMENT_FRAGMENT_NODE ||
+          m_currNode.nodeType() == DOM::Node::ELEMENT_NODE)
+      {
+        m_currNode.appendChild(node);
+      }
+      else
+      {
+        if (! m_currNode.parentNode().isNull())
+        {
+          m_currNode = m_currNode.parentNode().appendChild(node);
+/*        }
+        else
+        {
+          DOMBUILDERDEBUG("Unable to append a text element! Parent is missing " << " Current: " << m_currNode.nodeName())*/
+        }
+      }
     }
     catch (DOM::DOMException& e)
     {
-      DOMBUILDERDEBUG("Unable to create a text element! DOM::Exception: " << e.code)
-      m_error = i18n("Unable to create a text node!");
+      DOMBUILDERDEBUG("Unable to append a text element! DOM::Exception: " << e.code << " Current: " << m_currNode.nodeName())
+      
+      m_error = i18n("Unable to append a text node!");
       return false;
     } 
   }
@@ -104,18 +124,18 @@ bool DomBuilder::endDocument()
 }
 
 
-bool DomBuilder::endElement(const QString & namespaceURI, const QString & localName, const QString & qName)
+bool DomBuilder::endElement(const QString & /*namespaceURI*/, const QString & /*localName*/, const QString & qName)
 {
   DOMBUILDERDEBUG("DomBuilder::End Element: " << qName)
       
   if (! m_currNode.parentNode().isNull())
-    m_currNode = m_currNode.parentNode();
+      m_currNode = m_currNode.parentNode();
   
   return true;
 }
 
 
-bool DomBuilder::endPrefixMapping (const QString & prefix)
+bool DomBuilder::endPrefixMapping (const QString & /*prefix*/)
 {
   return true;
 }
@@ -127,13 +147,13 @@ QString DomBuilder::errorString() const
 }
 
 
-bool DomBuilder::ignorableWhitespace(const QString & ch)
+bool DomBuilder::ignorableWhitespace(const QString & /*ch*/)
 {
   return true;
 }
 
 
-bool DomBuilder::processingInstruction(const QString & target, const QString & data)
+bool DomBuilder::processingInstruction(const QString & /*target*/, const QString & /*data*/)
 {
   return true;
 }
@@ -167,7 +187,7 @@ bool DomBuilder::startElement(const QString & namespaceURI, const QString & loca
   {
     if (qName.isEmpty())
     {
-      DOMBUILDERDEBUG("DomBuilder::startElement: create HTML element for " << localName)
+      DOMBUILDERDEBUG("DomBuilder::startElement: " << localName)
       el = m_document.createElement(localName);
     }
     else {
@@ -189,7 +209,7 @@ bool DomBuilder::startElement(const QString & namespaceURI, const QString & loca
   catch (DOM::DOMException& e) 
   {
     DOMBUILDERDEBUG("DomBuilder::startElement: Unable to create an element: DOMException " << e.code)
-    m_error = i18n("Unable to create an HTML element: DOMException !");
+    m_error = i18n("Unable to create an element: DOMException !");
     return true;
   }
   Q_ASSERT_X(! el.isNull(), "DomBuilder::startElement", "could not create an element");
@@ -203,23 +223,29 @@ bool DomBuilder::startElement(const QString & namespaceURI, const QString & loca
   int max = atts.count();
   while (i < max)
   {
-    el.setAttributeNS(atts.uri(i), atts.qName(i), atts.value(i));
+    try 
+    {
+      el.setAttributeNS(atts.uri(i), atts.qName(i), atts.value(i));
+    }
+    catch (DOM::DOMException& e) 
+    {
+      DOMBUILDERDEBUG("DomBuilder::startElement: Unable to set attribute: " << atts.qName(i) << " Value: " << atts.value(i) << "  DOMException: " << e.code )
+    }
     ++i;
   }
   try 
   {
-    m_currNode.appendChild(el);
+    m_currNode = m_currNode.appendChild(el);
   }
   catch (DOM::DOMException& e) 
   {
-    DOMBUILDERDEBUG("DomBuilder::startElement: Unable to append! DOMException: " << e.code)
+    DOMBUILDERDEBUG("DomBuilder::startElement: Unable to append! DOMException: " << e.code << " Current: " << m_currNode.nodeName())
   }
-  m_currNode = el;
   return true;
 }
 
 
-bool DomBuilder::startPrefixMapping(const QString & prefix, const QString & uri)
+bool DomBuilder::startPrefixMapping(const QString & /*prefix*/, const QString & /*uri*/)
 {
   return true;
 }
@@ -231,7 +257,14 @@ bool DomBuilder::comment(const QString & ch)
 {
   DOMBUILDERDEBUG("DomBuilder::Comment: " << QString(ch).replace('\n', ' '))
   
-  m_currNode.appendChild(m_document.createComment(ch));
+  try 
+  {
+    m_currNode.appendChild(m_document.createComment(ch));
+  }
+  catch (DOM::DOMException& e) 
+  {
+    DOMBUILDERDEBUG("DomBuilder::comment: Unable to append! DOMException: " << e.code << " Current: " << m_currNode.nodeName())
+  }
   return true;
 }
 
@@ -252,7 +285,7 @@ bool DomBuilder::endDTD()
 }
 
 
-bool DomBuilder::endEntity(const QString & name)
+bool DomBuilder::endEntity(const QString & /*name*/)
 {
   return true;
 }
@@ -267,7 +300,7 @@ bool DomBuilder::startCDATA()
 }
 
 
-bool DomBuilder::startDTD(const QString & name, const QString & publicId, const QString & systemId)
+bool DomBuilder::startDTD(const QString & /*name*/, const QString & /*publicId*/, const QString & /*systemId*/)
 {
   m_DTDstarted = true;
   m_startColumn = m_locator->columnNumber() - 1; // TODO check if -1 is correct
@@ -276,7 +309,7 @@ bool DomBuilder::startDTD(const QString & name, const QString & publicId, const 
 }
 
 
-bool DomBuilder::startEntity(const QString & name)
+bool DomBuilder::startEntity(const QString & /*name*/)
 {
   return true;
 }
@@ -289,7 +322,7 @@ bool DomBuilder::error(const QXmlParseException & exception)
 }
 
 
-bool DomBuilder::fatalError(const QXmlParseException & exception)
+bool DomBuilder::fatalError(const QXmlParseException & /*exception*/)
 {
   return true;
 }
@@ -333,9 +366,10 @@ void DomBuilder::showTreeView()
   } */
   QDialog dialog;
   QBoxLayout layout(QBoxLayout::LeftToRight, &dialog);
-  DOMTreeView view(&dialog);
+  QTreeView view(&dialog);
   layout.addWidget(&view);
-  view.showTree(m_document.firstChild());
+  DomModel model(m_startNode);
+  view.setModel(&model);
   dialog.resize(300,300);
   dialog.exec();
 #endif

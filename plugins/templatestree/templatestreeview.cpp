@@ -836,8 +836,8 @@ void TemplatesTreeView::slotDragInsert(QDropEvent *e)
 
 void TemplatesTreeView::slotProjectOpened()
 {
-  m_projectName = KDevCore::activeProject()->projectName();
-  m_projectBaseURL = KDevCore::activeProject()->projectDirectory();
+  m_projectName = KDevCore::activeProject()->name();
+  m_projectBaseURL = KDevCore::activeProject()->folder();
 
   if (m_projectDir)
     removeBranch(m_projectDir);

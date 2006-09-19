@@ -23,7 +23,8 @@
 #include <kdevprojectmodel.h>
 
 
-QuantaFileManager::QuantaFileManager(QObject *parent) : KDevFileManager(parent), m_baseItem(0L)
+QuantaFileManager::QuantaFileManager(KInstance* instance, QObject *parent) 
+  : KDevFileManager(instance, parent), m_baseItem(0L)
 {
 }
 
@@ -33,11 +34,11 @@ QuantaFileManager::~QuantaFileManager()
    
 KDevProjectItem *QuantaFileManager::import(KDevProjectModel *model, const KUrl &base)
 {
-  if (m_baseItem)
-    model->removeItem(m_baseItem); 
+//   if (m_baseItem)
+//     model->removeFolder(m_baseItem); 
   m_baseItem = new KDevProjectFolderItem(base, 0);
   emit folderAdded(m_baseItem);
-  model->appendItem(m_baseItem);  
+//   model->appendItem(m_baseItem);  
   return m_baseItem;
 }
 
@@ -65,7 +66,7 @@ QList<KDevProjectFolderItem *> QuantaFileManager::parse(KDevProjectFolderItem *b
       continue;
 
     relFileName = group.mid(prefix.length());
-    fileUrl = prj->absoluteUrl(relFileName);
+    fileUrl = prj->urlRelativeToProject(relFileName);
     parent = m_baseItem;
     url = fileUrl.upUrl();
     // search for not yet created folders

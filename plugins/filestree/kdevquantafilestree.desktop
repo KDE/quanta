@@ -20,5 +20,6 @@ X-KDevelop-Args=
 
 X-KDevelop-Scope=Global
 X-KDE-Library=libkdevquantafilestree
+X-KDE-PluginInfo-Name=KDevQuantaFilesTree
 X-KDevelop-Version=4
 X-KDevelop-Properties=Quanta,Quanta-FilesTree

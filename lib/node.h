@@ -46,7 +46,7 @@ class XMLStructGroup;
 class LIBQUANTA_EXPORT Node {
 
 public:
-  Node( Node *parent );
+  explicit Node( Node *parent );
 
   /**
    * Deletes a node and removes the references of it from the passed GroupStorage object.

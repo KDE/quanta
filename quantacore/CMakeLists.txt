@@ -43,7 +43,7 @@ set(kdevquantacore_PART_SRCS
    parsers/parserstatus.cpp
    parsers/stateactions.cpp
    parsers/dombuilder.cpp
-   parsers/domtreeview.cpp
+   parsers/dommodel.cpp
    
    parsers/dtd/dtdparser.cpp
 

@@ -613,7 +613,7 @@ bool UserToolbarsPart::slotRemoveToolbar(const QString& id)
         case KMessageBox::Yes:
              {
                bool local = true;
-               if (prj && p_toolbar->url.url().startsWith(prj->projectDirectory().path()))
+               if (prj && p_toolbar->url.url().startsWith(prj->folder().path()))
                   local = false;
                 if (!saveToolbar(local, p_toolbar->id))
                     return false;
@@ -622,7 +622,7 @@ bool UserToolbarsPart::slotRemoveToolbar(const QString& id)
         case KMessageBox::Continue:
              {
                 bool local = true;
-                if (prj && p_toolbar->url.url().startsWith(prj->projectDirectory().path()))
+                if (prj && p_toolbar->url.url().startsWith(prj->folder().path()))
                   local = false;
                 if (!saveToolbar(local, p_toolbar->id, p_toolbar->url))
                     return false;
@@ -735,14 +735,14 @@ bool UserToolbarsPart::saveToolbar(bool localToolbar, const QString& toolbarToSa
       } else
       {
 //FIXME no toolbarURL() in KDevProject. Check all hardcoded "toolbars" dir below!
-        url = KFileDialog::getSaveUrl(prj->projectDirectory().path() + "/toolbars", '*' + Helper::toolbarExtension(), KDevCore::mainWindow());
+        url = KFileDialog::getSaveUrl(prj->folder().path() + "/toolbars", '*' + Helper::toolbarExtension(), KDevCore::mainWindow());
       }
 
       if (url.isEmpty())
           return false;
 
       if (prj)
-        projectToolbarsURL = KUrl(prj->projectDirectory().path() + "/toolbars");
+        projectToolbarsURL = KUrl(prj->folder().path() + "/toolbars");
       if ( ((!localToolbar) && (projectToolbarsURL.isParentOf(url)) ) ||
             ((localToolbar) && (KUrl(localToolbarsDir).isParentOf(url))) )
       {
@@ -1312,7 +1312,7 @@ void UserToolbarsPart::slotShowOutputView()
 {
   if (!m_outputPlugin)
   {
-    m_outputPlugin = KDevCore::pluginController()->extension<KDevAppFrontend>("KDevelop/AppFrontend");
+    m_outputPlugin = KDevPluginController::self()->extension<KDevAppFrontend>("KDevelop/AppFrontend");
   }
   if (m_outputPlugin)
   {

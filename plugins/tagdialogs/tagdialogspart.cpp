@@ -64,7 +64,7 @@ TagDialogsPart::~TagDialogsPart()
 void TagDialogsPart::init()
 {
 // delayed initialization stuff goes here
-  m_qcore = KDevCore::pluginController()->extension<QuantaCoreIf>("KDevelop/Quanta");
+  m_qcore = KDevPluginController::self()->extension<QuantaCoreIf>("KDevelop/Quanta");
 
 }
 

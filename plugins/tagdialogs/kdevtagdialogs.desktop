@@ -20,5 +20,6 @@ X-KDevelop-Args=
 
 X-KDevelop-Scope=Global
 X-KDE-Library=libkdevtagdialogs
+X-KDE-PluginInfo-Name=KDevTagDialogs
 X-KDevelop-Version=4
 X-KDevelop-Properties=Quanta,Quanta-TagDialogs

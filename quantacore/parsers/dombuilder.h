@@ -23,6 +23,8 @@
 #include <dom/dom_node.h>
 
 #include "quantahandler.h"
+#include "dommodel.h"
+
 
 class QXmlLocator;
 
@@ -110,9 +112,10 @@ class DomBuilder : public QXmlContentHandler, public QXmlLexicalHandler, public 
     int m_startLine;
     KTextEditor::Range m_elementRange;
     QuantaHandler::Ranges m_attrRanges;
-    DOM::HTMLDocument m_HTMLdocument;
-    DOM::Document m_document;
+    DOM::HTMLDocument m_document;
+//     DOM::Document m_document;
     DOM::DocumentFragment m_fragment;
+    DOM::Node m_startNode; 
     DOM::Node m_currNode;
     QString m_error;
 };

@@ -266,11 +266,11 @@ void ProjectTreeView::emptyMenu(const QPoint &point)
 
 void ProjectTreeView::slotProjectOpened()
 {
-  m_projectName = KDevCore::activeProject()->projectName();
+  m_projectName = KDevCore::activeProject()->name();
   if (m_quantaProject)
-    m_projectBaseURL = m_quantaProject->projectDirectory();
+    m_projectBaseURL = m_quantaProject->folder();
   else
-    m_projectBaseURL = KUrl(KDevCore::activeProject()->projectDirectory());
+    m_projectBaseURL = KUrl(KDevCore::activeProject()->folder());
 
   if (m_projectDir)  // just in case we have already one
   {

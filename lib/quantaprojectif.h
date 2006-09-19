@@ -28,7 +28,7 @@ Extension of the KDevProject interface for our needs, especially to work with re
 class LIBQUANTA_EXPORT QuantaProjectIf : public KDevProject
 {
 public:
-  QuantaProjectIf(KInstance * info, QObject *parent);
+  QuantaProjectIf(/*KInstance * info, */QObject *parent);
   ~QuantaProjectIf();
 
   /**

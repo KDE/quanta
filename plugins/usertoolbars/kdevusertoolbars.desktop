@@ -20,5 +20,6 @@ X-KDevelop-Args=
 
 X-KDevelop-Scope=Global
 X-KDE-Library=libkdevusertoolbars
+X-KDE-PluginInfo-Name=KDevUserToolbars
 X-KDevelop-Version=4
 X-KDevelop-Properties=Quanta,UserToolbars

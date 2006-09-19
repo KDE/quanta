@@ -98,7 +98,7 @@ void StructureTreePart::init()
 
   l->addWidget(m_documentTree);
 
-  m_qcore = KDevCore::pluginController()->extension<QuantaCoreIf>("KDevelop/Quanta");
+  m_qcore = KDevPluginController::self()->extension<QuantaCoreIf>("KDevelop/Quanta");
   connect(m_qcore, SIGNAL(startParsing()), m_documentTree, SLOT(slotBlockGUI()));
 
   connect(m_qcore, SIGNAL(finishedParsing(const ParseResult *)), m_documentTree, SLOT(slotBuild(const ParseResult *)));

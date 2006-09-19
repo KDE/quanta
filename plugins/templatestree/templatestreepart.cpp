@@ -94,7 +94,7 @@ QWidget *TemplatesTreePart::pluginView() const
 void TemplatesTreePart::init()
 {
 // delayed initialization stuff goes here
-  m_qcore = KDevCore::pluginController()->extension<QuantaCoreIf>("KDevelop/Quanta");
+  m_qcore = KDevPluginController::self()->extension<QuantaCoreIf>("KDevelop/Quanta");
   connect(m_widget, SIGNAL(insertTag(const KUrl &, Helper::DirInfo *)), m_qcore, SLOT(slotInsertTag( const KUrl&, Helper::DirInfo* )));
 }
 

@@ -20,5 +20,6 @@ X-KDevelop-Args=
 
 X-KDevelop-Scope=Global
 X-KDE-Library=libkdevcreatequantaproject
+X-KDE-PluginInfo-Name=KDevCreateQuantaProject
 X-KDevelop-Version=4
 X-KDevelop-Properties=Quanta,Quanta-CreateProject

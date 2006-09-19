@@ -47,12 +47,12 @@ K_EXPORT_COMPONENT_FACTORY( libkdevquantaproject, QuantaProjectFactory("kdevquan
 #define PROJECTDOC_OPTIONS 2
 
 QuantaProjectPart::QuantaProjectPart( QObject *parent, const QStringList & /*args*/ )
-  : KDevProject(QuantaProjectFactory::instance(), parent)
+  : KDevPlugin(QuantaProjectFactory::instance(), parent)
 {
   kDebug( 24000 ) << "QuantaProjectPart loaded" << endl;
   setXMLFile( "kdevquantaproject.rc" );
   
-  m_workspace = 0;
+//   m_workspace = 0;
   m_projectModel = new KDevProjectModel(this);
   
   m_browserMenu = 0L;
@@ -80,8 +80,8 @@ QuantaProjectPart::QuantaProjectPart( QObject *parent, const QStringList & /*arg
   connect( KDevCore::mainWindow(), SIGNAL( contextMenu( KMenu *, const Context * ) ),
            this, SLOT( contextMenu( KMenu *, const Context * ) ) );
 
-  QuantaFileManager *qFileManager = new QuantaFileManager(this);
-  setFileManager(qFileManager);
+  QuantaFileManager *qFileManager = new QuantaFileManager(this->instance(), this);
+  KDevCore::activeProject()->setFileManager(qFileManager);
 
   QTimer::singleShot( 0, this, SLOT( init() ) );
 }
@@ -159,7 +159,7 @@ void QuantaProjectPart::contextMenu( KMenu *popup, const Context *context )
     KUrl::List::ConstIterator end = m_fileContextURLs.constEnd();
     for (KUrl::List::ConstIterator it = m_fileContextURLs.constBegin(); it != end; ++it)
     {
-      if (!inProject(*it))
+      if (!KDevCore::activeProject()->inProject(*it))
       {
         isInProject = false; //at least one of the files is outside of the project
         break;
@@ -208,8 +208,8 @@ void QuantaProjectPart::closeProject()
 
 void QuantaProjectPart::openProject( const KUrl &dirName, const QString &projectName )
 { 
-  if (m_workspace)
-    m_projectModel->removeItem(m_workspace);
+//   if (m_workspace)
+//     m_projectModel->removeItem(m_workspace);
   
   m_projectBase = dirName;
   m_projectBase.adjustPath(KUrl::AddTrailingSlash);
@@ -217,7 +217,7 @@ void QuantaProjectPart::openProject( const KUrl &dirName, const QString &project
 
   kDebug(24000) << "dirName: " << dirName << " projectName: " << projectName << " baseUrl:" << m_projectBase << endl;
   
-  KDevFileManager *manager = fileManager();
+  KDevFileManager *manager = KDevCore::activeProject()->fileManager();
   KDevProjectFolderItem *baseItem = static_cast<KDevProjectFolderItem *>(manager->import(m_projectModel, m_projectBase));
   manager->parse(baseItem);
 
@@ -267,7 +267,7 @@ QStringList QuantaProjectPart::allFiles() const
 
 QList<KDevProjectFileItem*> QuantaProjectPart::allFiles()
 {
-  return recurseFiles(fileManager()->top());
+  return recurseFiles(KDevCore::activeProject()->fileManager()->top());
 }
 
 void QuantaProjectPart::addFiles( const QStringList &fileList )

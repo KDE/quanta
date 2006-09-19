@@ -175,7 +175,7 @@ void WebImportWizardPage::slotGetWgetOutput(KProcess *, char *buffer, int buflen
   QString basePath = baseURL.path(KUrl::AddTrailingSlash);
   while ( (pos = output.indexOf("saved")) != -1 )
   {
-    progress->advance(1);
+    progress->setValue(progress->value() + 1);
     int begName = output.lastIndexOf('`', pos);
     if ( begName == -1 ) {
       output = output.remove(0, pos+1);

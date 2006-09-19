@@ -33,6 +33,7 @@
 #include <kdevdocumentcontroller.h>
 #include <shell/splashscreen.h>
 #include <kdevplugin.h>
+#include <kdeveditorintegrator.h>
 
 #include "kdevquantaextension.h"
 
@@ -79,16 +80,6 @@ int main(int argc, char *argv[])
 
   KDevQuantaExtension::init();
 
-  //initialize the api object
-  KDevCore::setMainWindow( new KDevMainWindow );
-  KDevCore::setPluginController( new KDevPluginController );
-  KDevCore::setPartController( new KDevPartController );
-  KDevCore::setDocumentController( new KDevDocumentController );
-  KDevCore::setLanguageController( new KDevLanguageController );
-  KDevCore::setProjectController( new KDevProjectController );
-  KDevCore::setEnvironment( new KDevEnvironment );
-  KDevCore::setBackgroundParser( new KDevBackgroundParser );
-
   SplashScreen *splash = 0;
 
   QString splashFile = KStandardDirs::locate("appdata", "pics/quantalogo.png");
@@ -97,28 +88,21 @@ int main(int argc, char *argv[])
     QPixmap pm;
     pm.load(splashFile);
     splash = new SplashScreen( pm );
+    splash->show();
+    splash->repaint();
   }
   
-  QObject::connect( KDevCore::pluginController(),
-                    SIGNAL( loadingPlugin( const QString & ) ),
-                    splash, SLOT( showMessage( const QString & ) ) );
-
-  QObject::connect( KDevCore::documentController(),
-                    SIGNAL( openingDocument( const QString & ) ),
-                    splash, SLOT( showMessage( const QString & ) ) );
-
-  app.processEvents();
-
-  if (splash)
-    splash->showMessage( i18n("Loading Settings") );
-  //TopLevel::getInstance()->loadSettings();
-  KDevCore::initialize();
-  if (splash)
-    splash->show();
-
+  // initialize the editor integrator - it needs a qobject on the main thread
+  KDevEditorIntegrator::initialise();
+  
+  //initialize the api object
+  //WARNING! the order is important
+  KDevCore::setMainWindow( new KDevMainWindow );
+  KDevCore::setPartController( new KDevPartController );
+  KDevCore::setDocumentController( new KDevDocumentController );
   //Load QuantaCore *before* loading other plugins, otherwise the signal
   //connection between them an QuantaCore will not work.
-  KDevPlugin *p = KDevCore::pluginController()->loadPlugin("KDevelop/Quanta", "");
+  KDevPlugin *p = KDevPluginController::self()->loadPlugin("KDevQuantaCore");
   if (!p)
   {
     delete splash;
@@ -126,22 +110,29 @@ int main(int argc, char *argv[])
     KMessageBox::error( 0L, i18n("The Quanta Core Plugin could not be loaded.\nYour installation seems to be broken."));
   }
 
-  KDevCore::pluginController()->loadPlugins( ProfileEngine::Core );
-  KDevCore::pluginController()->loadPlugins( ProfileEngine::Global );
+  KDevPluginController::self()->loadPlugins( KDevPluginController::Global );
+  KDevCore::setLanguageController( new KDevLanguageController );
+  KDevCore::setProjectController( new KDevProjectController );
+  KDevCore::setBackgroundParser( new KDevBackgroundParser );
+  KDevCore::setEnvironment( new KDevEnvironment );
+  
+  if ( splash )
+  {
+    QObject::connect(KDevPluginController::self(), SIGNAL(loadingPlugin(const QString&)),
+                     splash, SLOT(showMessage(const QString&)));
+    QObject::connect( KDevCore::documentController(),
+                      SIGNAL( openingDocument( const QString & ) ),
+                      splash, SLOT( showMessage( const QString & ) ) );
 
-//  Core::getInstance()->doEmitCoreInitialized();
-
-  if (splash)
     splash->showMessage( i18n( "Starting GUI" ) );
-/*  //BEGIN a workaround on kmdi bug - we do not allow mainwindow to be shown until now
-  SimpleMainWindow *mw = dynamic_cast<SimpleMainWindow*>(TopLevel::getInstance()->main());
-  if (mw)
-    mw->enableShow();
-  //END workaround*/
-//  TopLevel::getInstance()->show();
+  }
 
-  if (splash)
-    delete splash;
+  QObject::connect( KDevCore::mainWindow(), SIGNAL( finishedLoading() ),
+                    splash, SLOT( deleteLater() ) );
+
+  KDevCore::initialize();
+
+
 
   for( int i=0; i<args->count(); ++i )
   {

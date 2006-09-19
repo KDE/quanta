@@ -12,8 +12,8 @@
  ***************************************************************************/
 #include "quantaprojectif.h"
 
-QuantaProjectIf::QuantaProjectIf(KInstance * info, QObject *parent)
-  : KDevProject(info, parent)
+QuantaProjectIf::QuantaProjectIf(/*KInstance * info,*/ QObject *parent)
+  : KDevProject(/*info, */parent)
 {
 }
 

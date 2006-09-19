@@ -88,7 +88,7 @@ UserAction::~UserAction()
 
 bool UserAction::slotActionActivated()
 {
-  QuantaCoreIf *quantaCore = KDevCore::pluginController()->extension<QuantaCoreIf>("KDevelop/Quanta");
+  QuantaCoreIf *quantaCore = KDevPluginController::self()->extension<QuantaCoreIf>("KDevelop/Quanta");
   if (!quantaCore)
   {
     KMessageBox::information(KDevCore::mainWindow(), i18n("You cannot run a tag user action if the QuantaCore plugin is not loaded."), i18n("Missing QuantaCore"), "ShowQuantaCoreMissingWarning");
@@ -137,7 +137,7 @@ bool UserAction::slotActionActivated()
 
     KDevProject *proj = KDevCore::activeProject();
     if (proj)
-      proc->setWorkingDirectory(proj->projectDirectory().path());
+      proc->setWorkingDirectory(proj->folder().path());
 
     QDomElement script = tag.namedItem("script").toElement();
     QString command = script.text();
@@ -232,7 +232,7 @@ bool UserAction::slotActionActivated()
       {
           QString s;
           if (proj)
-            s = proj->projectDirectory().path();
+            s = proj->folder().path();
           args.replace("%projectbase", s);
       }
       QStringList argsList1 = args.split(' ');

@@ -83,8 +83,8 @@ bool QuantaNetAccess::file_move( const KUrl& src, const KUrl& target, int permis
   }
   // don't ask if move is inside of the project
   bool oldConfirm = confirm;
-  if ( project && project->projectDirectory().isParentOf(src) &&
-       project->projectDirectory().isParentOf(target) )
+  if ( project && project->folder().isParentOf(src) &&
+       project->folder().isParentOf(target) )
   {
     confirm = false;
   }
@@ -158,9 +158,9 @@ bool QuantaNetAccess::move( const KUrl::List& srcList, const KUrl& target, KDevP
   {
     bool oldConfirm = confirm;
     bool moveInsideProject = false;
-    bool targetInProject = project->projectDirectory().isParentOf(targetURL);
+    bool targetInProject = project->folder().isParentOf(targetURL);
     KUrl url;
-    KUrl baseURL = project->projectDirectory();
+    KUrl baseURL = project->folder();
     // first we ask about the URLs in the list without actually removing them from the project
     KUrl::List::ConstIterator end(srcList.end());
     for ( KUrl::List::ConstIterator it = srcList.begin(); it != end; ++it )
@@ -292,7 +292,7 @@ void QuantaNetAccess::checkProjectInsert(const KUrl& source, const KUrl& target,
     return;
 
   KUrl saveUrl = adjustURL(target);
-  KUrl baseURL = project->projectDirectory();
+  KUrl baseURL = project->folder();
   KFileItem fileItem(KFileItem::Unknown, KFileItem::Unknown, source);
   if ( baseURL.isParentOf(saveUrl) && (fileItem.isDir() || !project->inProject(saveUrl)) ) //directories should always be checked as might contain files that were not yet added to the project
   {
@@ -350,7 +350,7 @@ bool QuantaNetAccess::checkProjectRemove(const KUrl& src, KDevPlugin* plugin, bo
     return true;
 
   KUrl url = adjustURL(src);
-  KUrl baseURL = project->projectDirectory();
+  KUrl baseURL = project->folder();
   if ( baseURL.isParentOf(url) && project->inProject(url) )
   {
     if (confirm)
@@ -383,7 +383,7 @@ bool QuantaNetAccess::checkProjectDel(const KUrl& src, KDevPlugin* plugin, QWidg
   KUrl url = adjustURL(src);
   if ( project )
   {
-    if ( project->projectDirectory().isParentOf(url) && project->inProject(url) )
+    if ( project->folder().isParentOf(url) && project->inProject(url) )
     {
       if (confirm)
       {
@@ -394,7 +394,7 @@ bool QuantaNetAccess::checkProjectDel(const KUrl& src, KDevPlugin* plugin, QWidg
           return false;
         }
       }
-      url = KUrl::relativeUrl(project->projectDirectory(), url);
+      url = KUrl::relativeUrl(project->folder(), url);
       //FIXME!!! Not ported to KDevelop4
       //project->fileManager()->removeFile(url.path());
       return true;

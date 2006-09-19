@@ -12,10 +12,12 @@
 #define KDEVQUANTAPROJECT_H
 
 #include <kdevproject.h>
+#include <kdevplugin.h>
 
 #include <qmap.h>
 #include <qdom.h>
 #include <QPointer>
+#include <QStringList>
 
 #include <kurl.h>
 
@@ -34,7 +36,7 @@ class KDevProjectItem;
 /**
 Please read the README.dox file for more info about this part
 */
-class QuantaProjectPart: public KDevProject
+class QuantaProjectPart: public KDevPlugin
 {
     Q_OBJECT
 public:
@@ -75,15 +77,6 @@ public:
     */
     virtual QDomElement domProjectElement() {return m_projectDomElement;}
 
-    /* A lot of pure virtuals in the KDevProject interface that we don't use, don't care about them, but have to reimplement them. */
-    virtual DomUtil::PairList runEnvironmentVars() const {return DomUtil::PairList();}
-    virtual QString mainProgram (bool relative = false) const {Q_UNUSED(relative) return QString();}
-    virtual QString runDirectory () const {return QString();}
-    virtual QString runArguments () const {return QString();}
-    virtual QString activeDirectory () const {return QString();}
-    virtual QString buildDirectory () const {return QString();}
-    virtual QStringList distFiles () const {return QStringList();}
-
     /**
       * @param url url of a project file or folder
       * @return the QDomElement associated to a project url
@@ -119,7 +112,7 @@ private:
     BrowserPopupMenu *m_browserMenu;
     QDomElement m_projectDomElement;
     KDevProjectModel *m_projectModel;
-    KDevProjectFolderItem *m_workspace;
+//     KDevProjectFolderItem *m_workspace;
 
 };
 
