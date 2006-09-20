@@ -2466,6 +2466,7 @@ KURL QuantaApp::saveToolbarToFile(const QString& toolbarName, const KURL& destFi
     p_toolbar->dom = oldDom;
   } else
     delete oldDom;
+  delete tempFile;
   return tarFile;
 }
 

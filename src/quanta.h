@@ -19,13 +19,13 @@
 #define QUANTA_H
 
 #define QUANTA_PACKAGE "quanta"
-#define QUANTA_VERSION "3.5.4"
+#define QUANTA_VERSION "3.5.5"
 
 #define IDS_STATUS      1
 #define IDS_INS_OVR     2
 #define IDS_MODIFIED    3
 #define IDS_STATUS_CLM  4
-// Number 5 is used by he debugger, but not added until debugger is activated
+// Number 5 is used by the debugger, but not added until debugger is activated
 #define IDS_STATUS_DEBUGGER  5
 
 #define IDS_DEFAULT     "Ready."
