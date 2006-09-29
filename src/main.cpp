@@ -100,17 +100,7 @@ int main(int argc, char *argv[])
   KDevCore::setMainWindow( new KDevMainWindow );
   KDevCore::setPartController( new KDevPartController );
   KDevCore::setDocumentController( new KDevDocumentController );
-  //Load QuantaCore *before* loading other plugins, otherwise the signal
-  //connection between them an QuantaCore will not work.
-  KDevPlugin *p = KDevPluginController::self()->loadPlugin("KDevQuantaCore");
-  if (!p)
-  {
-    delete splash;
-    splash = 0;
-    KMessageBox::error( 0L, i18n("The Quanta Core Plugin could not be loaded.\nYour installation seems to be broken."));
-  }
-
-  KDevPluginController::self()->loadPlugins( KDevPluginController::Global );
+  
   KDevCore::setLanguageController( new KDevLanguageController );
   KDevCore::setProjectController( new KDevProjectController );
   KDevCore::setBackgroundParser( new KDevBackgroundParser );
@@ -132,6 +122,17 @@ int main(int argc, char *argv[])
 
   KDevCore::initialize();
 
+  //Load QuantaCore *before* loading other plugins, otherwise the signal
+  //connection between them an QuantaCore will not work.
+  KDevPlugin *p = KDevPluginController::self()->loadPlugin("KDevQuantaCore");
+  if (!p)
+  {
+    delete splash;
+    splash = 0;
+    KMessageBox::error( 0L, i18n("The Quanta Core Plugin could not be loaded.\nYour installation seems to be broken."));
+  }
+
+  KDevPluginController::self()->loadPlugins( KDevPluginController::Global );
 
 
   for( int i=0; i<args->count(); ++i )

@@ -75,45 +75,10 @@ DomModelItem * DomModelItem::parentItem() const
 
 void DomModelItem::appendItem(DomModelItem * newChild)
 {
-  DOM::Node::appendChild(*newChild); // call DOM::Node
   m_childItems.append(newChild);
 }
 
 
-// reimplemented from DOM::Node
-
-
-// DomModelItem DomModelItem::insertBefore(const DOM::Node &newChild, const DOM::Node &refChild)
-// {
-//   DomModelItem item(newChild);
-//   insertBefore(newChild, refChild);
-//   // TODO insert in
-//   return item;
-// }
-// 
-// 
-// DomModelItem DomModelItem::replaceChild(const DOM::Node &newChild, DomModelItem * oldChild)
-// {
-//   int i = m_childItems.indexOf(oldChild);
-//   if (i < 0)
-//     return DomModelItem();
-//   
-//   DomModelItem item(newChild);
-//   replaceChild(newChild, const_cast<DOM::Node *>(oldChild));
-//   return item;
-// }
-
-
-DomModelItem * DomModelItem::appendChild(const DOM::Node & newChild)
-{
-  DomModelItem * item = new DomModelItem(newChild, this);
-  appendItem(item); 
-  return item;
-}
-
-
-// ==========================      here comes the model
-    
 DomModel::DomModel(DOM::Node node, QObject * parent)
   : QAbstractItemModel(parent), m_rootItem(node)
 {

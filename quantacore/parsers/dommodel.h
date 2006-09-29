@@ -43,13 +43,6 @@ class DomModelItem: public DOM::Node
     
     void appendItem(DomModelItem * newChild);
     
-    // the following is from DOM::Node
-/*    DomModelItem insertBefore(const DOM::Node & newChild, const DOM::Node & refChild);
-    
-    DomModelItem replaceChild(const DOM::Node & newChild, DomModelItem * oldChild);*/
-    
-    DomModelItem * appendChild(const DOM::Node & newChild);
-    
   private:
     QList<DomModelItem *> m_childItems;
     
