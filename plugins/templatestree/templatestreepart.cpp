@@ -32,6 +32,7 @@
 #include <ktar.h>
 #include <kmainwindow.h>
 #include <kstandarddirs.h>
+#include <ktemporaryfile.h>
 
 //kdevelop includes
 #include <kdevdocumentcontroller.h>
@@ -223,10 +224,10 @@ void TemplatesTreePart::slotCreateSiteTemplate()
     KMessageBox::information(KDevCore::mainWindow(), i18n("This Template will not be visible in your Templates Tree, because you do not save it to the local or project template folder."));
 
 
-  KTempFile *tempFile = new KTempFile(Helper::tmpFilePrefix());
-  tempFile->setAutoDelete(true);
-  tempFile->close();
-  KTar tar(tempFile->name(), "application/x-gzip");
+  KTemporaryFile *tempFile = new KTemporaryFile();
+  tempFile->setPrefix(Helper::tmpFilePrefix());
+  tempFile->open();
+  KTar tar(tempFile->fileName(), "application/x-gzip");
   bool error = false;
   if (tar.open(IO_WriteOnly))
   {
@@ -234,7 +235,7 @@ void TemplatesTreePart::slotCreateSiteTemplate()
     tar.close();
   } else
     error = true;
-  if (!QuantaNetAccess::copy(KUrl(tempFile->name()), targetURL, this, false))
+  if (!QuantaNetAccess::copy(KUrl(tempFile->fileName()), targetURL, this, false))
     error = true;
 
   if (error)

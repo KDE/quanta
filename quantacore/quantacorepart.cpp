@@ -46,7 +46,7 @@
 #include <kurl.h>
 #include <kmenu.h>
 #include <kstdaction.h>
-#include <ktempfile.h>
+#include <ktemporaryfile.h>
 #include <kstandarddirs.h>
 #include <ktoolinvocation.h>
 
@@ -406,10 +406,10 @@ void QuantaCorePart::contextMenu(KMenu *popup, const Context *context)
 void QuantaCorePart::slotOpenNew()
 {
   //FIXME: just a hack to have new empty documents with KDevelop platform
-  KTempFile file(KStandardDirs::locateLocal("tmp", ""), i18n(".unsaved"));
-  file.setAutoDelete(true);
-  file.close();
-  KUrl url = KUrl(file.name());
+  KTemporaryFile file;
+  file.setSuffix(i18n(".unsaved"));
+  file.open();
+  KUrl url = KUrl(file.fileName());
   KDevDocument *doc = KDevCore::documentController()->editDocument(url);
   if (doc)
   {

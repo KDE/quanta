@@ -37,7 +37,7 @@
 #include <kdebug.h>
 #include <kmenu.h>
 #include <kpropertiesdialog.h>
-#include <ktempfile.h>
+#include <ktemporaryfile.h>
 #include <kapplication.h>
 #include <kstringhandler.h>
 #include <kparts/part.h>
@@ -364,10 +364,10 @@ void ProjectTreeView::slotCreateFile()
       KMessageBox::error(this, i18n("<qt>Cannot create file, because a file named <b>%1</b> already exists.</qt>", fileName), i18n("Error Creating File"));
       return;
     }
-    KTempFile *tempFile = new KTempFile(Helper::tmpFilePrefix());
-    tempFile->setAutoDelete(true);
-    tempFile->close();
-    if (ExtFileInfo::copy(KUrl(tempFile->name()), url));
+    KTemporaryFile *tempFile = new KTemporaryFile();
+    tempFile->setSuffix(Helper::tmpFilePrefix());
+    tempFile->open();
+    if (ExtFileInfo::copy(KUrl(tempFile->fileName()), url));
     {
 // FIXME      emit insertToProject(url);
 //       emit openFile(url);

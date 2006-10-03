@@ -70,7 +70,7 @@
 #include <kurlrequester.h>
 #include <kurlrequesterdlg.h>
 #include <ktempdir.h>
-#include <ktempfile.h>
+#include <ktemporaryfile.h>
 #include <kio/netaccess.h>
 #include <ktar.h>
 #include <kdebug.h>
@@ -477,11 +477,13 @@ void TemplatesTreeView::contentsDropEvent(QDropEvent *e)
       if ( !url.isEmpty() )
       {
         //now save the file
-        KTempFile* tempFile = new KTempFile(Helper::tmpFilePrefix());
-        tempFile->setAutoDelete(true);
-        tempFile->textStream()->setCodec(QTextCodec::codecForName("UTF-8"));
-        *(tempFile->textStream()) << content;
-        tempFile->close();
+        KTemporaryFile* tempFile = new KTemporaryFile();
+        tempFile->setPrefix(Helper::tmpFilePrefix());
+        tempFile->open();
+        QTextStream stream(tempFile);
+        stream.setCodec(QTextCodec::codecForName("UTF-8"));
+        stream << content;
+        stream.flush();
         bool proceed = true;
         if (ExtFileInfo::exists(url))
         {
@@ -489,7 +491,7 @@ void TemplatesTreeView::contentsDropEvent(QDropEvent *e)
         }
         if (proceed)
         {
-          if (!QuantaNetAccess::upload(tempFile->name(), url, m_plugin, false))
+          if (!QuantaNetAccess::upload(tempFile->fileName(), url, m_plugin, false))
           {
             KMessageBox::error(this,i18n("<qt>Could not write to file <b>%1</b>.<br>Check if you have rights to write there or that your connection is working.</qt>", url.pathOrUrl()));
           }

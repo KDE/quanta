@@ -43,7 +43,7 @@
 #include <kmainwindow.h>
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
-#include <ktempfile.h>
+#include <ktemporaryfile.h>
 
 //kdevelop includes
 #include <kdevcore.h>
@@ -168,15 +168,19 @@ void CreateQuantaProjectPart::slotCreateNewProject()
     el.setAttribute("usePreviewPrefix", secondPage->usePreviewPrefix());
 
     f.close();
-    KTempFile tempFile(KGlobal::dirs()->resourceDirs("tmp")[0] + "quanta", ".template");
-    tempFile.setAutoDelete(false);
-    (*tempFile.textStream()) << projectDom.toString(2);
-    tempFile.close();
+    KTemporaryFile tempFile;
+    tempFile.setPrefix(KGlobal::dirs()->resourceDirs("tmp")[0] + "quanta");
+    tempFile.setSuffix(".template");
+    tempFile.setAutoRemove(false);
+    tempFile.open();
+    QTextStream str ( &tempFile );
+    str << projectDom.toString(2);
+    str.flush();
     KUrl dest = baseURL;
     dest.addPath('/' + firstPage->fileName());
-    KIO::NetAccess::upload(tempFile.name(), dest, KDevCore::mainWindow());
+    KIO::NetAccess::upload(tempFile.fileName(), dest, KDevCore::mainWindow());
     KDevCore::projectController()->openProject(dest.path()); //FIXME: use the URL when it is supported by the framework
-    QFile::remove(tempFile.name());
+    QFile::remove(tempFile.fileName());
     if (secondPage->insertGlobalTemplates())
     {
       //FIXME do not hardcode the quanta name

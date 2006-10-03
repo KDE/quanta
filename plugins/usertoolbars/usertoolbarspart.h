@@ -30,7 +30,7 @@ class KRecentFilesAction;
 class KDevAppFrontend;
 class KDialog;
 class KTempDir;
-class KTempFile;
+class KTemporaryFile;
 class Context;
 class ConfigWidgetProxy;
 
@@ -243,7 +243,7 @@ private:
     uint m_userToolbarsCount; ///< the number of loaded user toolbars
     QString m_tmpDir; ///< the directory where the temporary files are created
     QHash<QString, ToolbarEntry*> m_toolbarList; ///< a list of the loaded toolbars
-    QList<KTempFile*> m_tempFileList; ///< a list of temporary files created during the plugins lifetime
+    QList<KTemporaryFile*> m_tempFileList; ///< a list of temporary files created during the plugins lifetime
     QList<KTempDir*> m_tempDirList; ///< a list of temporary directories created during the plugins lifetime
     QList<UserAction*> m_userActions;    ///< list of action loaded from toolbar files
     NewToolbarStuff *m_newToolbarStuff;

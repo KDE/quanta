@@ -60,7 +60,7 @@
 #include <kstandarddirs.h>
 #include <ktar.h>
 #include <ktempdir.h>
-#include <ktempfile.h>
+#include <ktemporaryfile.h>
 #include <ktoolinvocation.h>
 #include <kxmlguifactory.h>
 
@@ -440,8 +440,9 @@ void UserToolbarsPart::slotLoadToolbarFile(const KUrl& url)
     m_userToolbarsCount++;
 
     //Change the name also in the XML File -> create a temp XML file
-    KTempFile* tempFile = new KTempFile(m_tmpDir);
-    tempFile->setAutoDelete(true);
+    KTemporaryFile* tempFile = new KTemporaryFile();
+    tempFile->setPrefix(m_tmpDir);
+    tempFile->open();
 
     nodeList = toolbarDom->elementsByTagName("ToolBar");
     QDomElement el = nodeList.item(0).toElement();
@@ -451,12 +452,13 @@ void UserToolbarsPart::slotLoadToolbarFile(const KUrl& url)
     el.setAttribute("id", toolbarId);
     nodeList = toolbarDom->elementsByTagName("text");
     el.firstChild().setNodeValue(name);
-    tempFile->textStream()->setCodec(QTextCodec::codecForName("UTF-8"));
-    * (tempFile->textStream()) << toolbarDom->toString();
-    tempFile->close();
+    QTextStream str(tempFile);
+    str.setCodec(QTextCodec::codecForName("UTF-8"));
+    str << toolbarDom->toString();
+    str.flush();
 
     //create the new toolbar GUI from the temp file
-    ToolbarXMLGUI * toolbarGUI = new ToolbarXMLGUI(tempFile->name());
+    ToolbarXMLGUI * toolbarGUI = new ToolbarXMLGUI(tempFile->fileName());
 
     //setup the actions
     KActionCollection *ac = KDevCore::mainWindow()->actionCollection();
@@ -863,11 +865,12 @@ KUrl UserToolbarsPart::saveToolbarToFile(const QString& toolbarName, const KUrl&
   buffer.close();
   buffer2.close();
 
-  KTempFile *tempFile = new KTempFile(m_tmpDir);
-  tempFile->setAutoDelete(true);
+  KTemporaryFile *tempFile = new KTemporaryFile();
+  tempFile->setPrefix(m_tmpDir);
+  tempFile->open();
   m_tempFileList.append(tempFile);
   tempFile->close();
-  KTar tar(tempFile->name(), "application/x-gzip");
+  KTar tar(tempFile->fileName(), "application/x-gzip");
   if (!tar.open(IO_WriteOnly))
       return KUrl();
   if (!tar.writeFile(QFileInfo(tarFile.path()).baseName() + ".toolbar", "user", "group", buffer.buffer().data(), buffer.buffer().size()))
@@ -875,7 +878,7 @@ KUrl UserToolbarsPart::saveToolbarToFile(const QString& toolbarName, const KUrl&
   if (!tar.writeFile(QFileInfo(tarFile.path()).baseName() + ".actions", "user", "group", buffer2.buffer().data(), buffer2.buffer().size()))
       return KUrl();
   tar.close();
-  if (!ExtFileInfo::copy(KUrl(tempFile->name()), tarFile, -1, true, false, KDevCore::mainWindow()))
+  if (!ExtFileInfo::copy(KUrl(tempFile->fileName()), tarFile, -1, true, false, KDevCore::mainWindow()))
   {
     KMessageBox::error(KDevCore::mainWindow(), i18n("<qt>An error happened while saving the <b>%1</b> toolbar.<br>"
         "Check that you have write permissions for<br><b>%2</b></qt>", p_toolbar->name, tarFile.pathOrUrl()), i18n("Toolbar Saving Error"));
@@ -904,14 +907,16 @@ void UserToolbarsPart::slotAddToolbar()
   }
   toolbarId = toolbarId.toLower();
 
-  KTempFile* tempFile = new KTempFile(m_tmpDir);
-  tempFile->setAutoDelete(true);
-  tempFile->textStream()->setCodec(QTextCodec::codecForName("UTF-8"));
-  * (tempFile->textStream()) << QString("<!DOCTYPE kpartgui SYSTEM \"kpartgui.dtd\">\n<kpartgui name=\"quanta\" version=\"2\">\n<ToolBar name=\"%1\" tabname=\"%2\" i18ntabname=\"%3\" id=\"%4\">\n<text>%5</text>\n</ToolBar>\n</kpartgui>\n")
+  KTemporaryFile* tempFile = new KTemporaryFile();
+  tempFile->setPrefix(m_tmpDir);
+  tempFile->open();
+  QTextStream str(tempFile);
+  str.setCodec(QTextCodec::codecForName("UTF-8"));
+  str << QString("<!DOCTYPE kpartgui SYSTEM \"kpartgui.dtd\">\n<kpartgui name=\"quanta\" version=\"2\">\n<ToolBar name=\"%1\" tabname=\"%2\" i18ntabname=\"%3\" id=\"%4\">\n<text>%5</text>\n</ToolBar>\n</kpartgui>\n")
       .arg(name.toLower()).arg(name).arg(name).arg(toolbarId).arg(name);
-  tempFile->close();
+  str.flush();
 
-  ToolbarXMLGUI * toolbarGUI = new ToolbarXMLGUI(tempFile->name());
+  ToolbarXMLGUI * toolbarGUI = new ToolbarXMLGUI(tempFile->fileName());
   KActionCollection *ac = KDevCore::mainWindow()->actionCollection();
 
 //add all actions to the xmlguiclient of this toolbar

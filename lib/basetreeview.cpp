@@ -64,7 +64,7 @@
 #include <kstandarddirs.h>
 #include <kurl.h>
 #include <ktar.h>
-#include <ktempfile.h>
+#include <ktemporaryfile.h>
 #include <kapplication.h>
 #include <kcursor.h>
 #include <kprotocolinfo.h>
@@ -993,10 +993,10 @@ void BaseTreeView::slotCreateFile()
       KMessageBox::error(this, i18n("<qt>Cannot create file, because a file named <b>%1</b> already exists.</qt>", fileName), i18n("Error Creating File"));
       return;
     }
-    KTempFile *tempFile = new KTempFile(Helper::tmpFilePrefix());
-    tempFile->setAutoDelete(true);
-    tempFile->close();
-    if (QuantaNetAccess::copy(KUrl(tempFile->name()), url, m_plugin));
+    KTemporaryFile *tempFile = new KTemporaryFile();
+    tempFile->setPrefix(Helper::tmpFilePrefix());
+    tempFile->open();
+    if (QuantaNetAccess::copy(KUrl(tempFile->fileName()), url, m_plugin));
     {
       m_partController->editDocument(url);
     }

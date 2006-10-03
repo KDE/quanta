@@ -20,11 +20,11 @@
 #include "helper.h"
 
 #include <ktempdir.h>
-#include <ktempfile.h>
 
 //forward declarations
 class Q3DragObject;
 class KMainWindow;
+class KTemporaryFile;
 
 namespace Ui
 {
@@ -133,7 +133,7 @@ private:
   int m_insertFileInProject;
   int m_insertFolderInProject;
   QList<KTempDir*> tempDirList;
-  QList<KTempFile*> tempFileList;
+  QList<KTemporaryFile*> tempFileList;
   TemplatesTreePart * m_part;
   
 protected: // Protected methods
