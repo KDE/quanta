@@ -35,7 +35,7 @@ class KXMLGUIClient;
 /**
   The ToolbarEntry describes a user toolbar.
 */
-typedef struct ToolbarEntry{
+struct ToolbarEntry{
   KXMLGUIClient *guiClient; ///< the GUI client of the toolbar, loaded from the XML file
   QDomDocument *dom; ///< the XML dom tree which describes the toolbar
   QMenu *menu; ///< a menu with the actions that are on the toolbar

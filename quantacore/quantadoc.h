@@ -28,7 +28,6 @@ class TagPair;
 
 class QTextCodec;
 class QTimer;
-class KParts::Part;
 
 namespace KTextEditor
 {

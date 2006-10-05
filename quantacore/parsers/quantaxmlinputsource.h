@@ -16,8 +16,6 @@
 #include <ktexteditor/cursorfeedback.h>
 #include <ktexteditor/cursor.h>
 
-class KTextEditor::Document;
-class KTextEditor::SmartCursor;
 
 /**
  * \short A QXmlInputSource for a KTextEditor::document.

@@ -23,7 +23,7 @@
 
 
 //an internal representation of a DTD
-typedef struct DTDStruct
+struct DTDStruct
 {
   enum DTDFamily {Unknown = 0, Xml, Script}; ///< defined DTD families
 

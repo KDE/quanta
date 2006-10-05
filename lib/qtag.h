@@ -42,7 +42,7 @@ struct DTDStruct;
 
 
 //an attribute of a tag looks like:
-typedef struct Attribute
+struct Attribute
 {
   QString name;
   QString type;         //"input", "check", "list"

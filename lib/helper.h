@@ -56,7 +56,7 @@ public:
    */
   static QString resourceDir() {return "quanta/";};
   
-  typedef struct DirInfo
+  struct DirInfo
   {
     QString mimeType;
     QString preText;
