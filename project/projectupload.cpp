@@ -757,7 +757,7 @@ void ProjectUpload::reject()
   {
     suspendUpload = true;
     if (KMessageBox::questionYesNo(this,i18n("Do you really want to abort the upload?"),
-                                   i18n("Abort Upload"), i18n("Abort"), KStdGuiItem::cancel()) == KMessageBox::No)
+                                   i18n("Abort Upload"), i18n("Abort the uploading", "Abort"), KStdGuiItem::cancel()) == KMessageBox::No)
     {
       suspendUpload = false;
       emit uploadNext();
