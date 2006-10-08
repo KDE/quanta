@@ -35,7 +35,7 @@
 #include <kio/netaccess.h>
 #include <klocale.h>
 #include <ktempdir.h>
-#include <ktempfile.h>
+#include <ktemporaryfile.h>
 
 //remove the below ones when KQPasteAction is removed
 #include <kdebug.h>

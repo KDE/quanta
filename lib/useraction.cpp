@@ -39,7 +39,7 @@
 #include <kmessagebox.h>
 #include <kshortcut.h>
 #include <kstandarddirs.h>
-#include <ktempfile.h>
+#include <ktemporaryfile.h>
 
 //kdevelop includes
 #include <kdevmainwindow.h>
