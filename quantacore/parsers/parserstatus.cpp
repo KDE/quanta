@@ -208,7 +208,7 @@ void ParserStatus::setFeature(const QString & name, bool value)
     m_htmlMode = value;
 
   return;
-};
+}
 
 
 bool ParserStatus::hasFeature(const QString & name) const
