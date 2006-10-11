@@ -98,6 +98,7 @@ bool DTDParser::parse(const QString &targetDir, bool entitiesOnly)
       s = QString::fromLatin1(errorPtr->str2);
       if (!s.isEmpty())
         errorStr += "<br>" + s;
+      errorStr += QString("(%1, %2)").arg(errorPtr->line).arg(errorPtr->int2);
       xmlResetError(errorPtr);
     }
 #endif
@@ -182,7 +183,7 @@ bool DTDParser::parse(const QString &targetDir, bool entitiesOnly)
       {
         dtepDlg.saveResult();
       }
-    }    
+    }
   }
   return true;
 }
@@ -254,14 +255,14 @@ void saveElement(xmlElementPtr elem, xmlBufferPtr buf)
           attributes.append(attr);
           at_ptr = at_ptr->nexth;
        }
-        
+
        if (!attributes.isEmpty())
           stream << QuantaCommon::xmlFromAttributes(&attributes);
        const xmlChar *list_ptr[MAX_CHILD_ELEMENTS];
        int childNum = 0;
        childNum = xmlValidGetPotentialChildren(el_ptr->content, list_ptr,
                           &childNum, MAX_CHILD_ELEMENTS);
-  
+
         if (childNum > 0)
         {
           stream << "<children>" << endl;
@@ -291,7 +292,7 @@ void saveElement(xmlElementPtr elem, xmlBufferPtr buf)
             }
             stream << " />" << endl;
           }
-  
+
           stream << "</children>" << endl;
           stream << endl;
         }
