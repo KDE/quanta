@@ -44,8 +44,9 @@
 #include <QPainter>
 #include <QToolTip>
 #include <qstack.h>
+#if defined Q_WS_X11
 #include <qx11info_x11.h>
-
+#endif
 // KDE includes
 #include <kaction.h>
 #include <kicon.h>
@@ -71,9 +72,9 @@
 #include <kmenu.h>
 #include <kparts/part.h>
 #include <kio/jobuidelegate.h>
-
+#if defined Q_WS_X11
 #include <X11/Xlib.h>
-
+#endif
 //BaseTreeViewItem implementation
 BaseTreeViewItem::BaseTreeViewItem( KFileTreeViewItem *parent, KFileItem* item, KFileTreeBranch *brnch )
   : KFileTreeViewItem( parent, item, brnch)
@@ -715,25 +716,28 @@ void BaseTreeView::slotDropped (QWidget *, QDropEvent * /*e*/, KUrl::List& fileL
   bool sMoving = KProtocolManager::supportsMoving(url);
 
   // Check the state of the modifiers key at the time of the drop
+  uint keybstate;
+#warning "KDE4: port it on macosx";
+#if defined Q_WS_X11
   Window root;
   Window child;
   int root_x, root_y, win_x, win_y;
-  uint keybstate;
   XQueryPointer( QX11Info::display(), QX11Info::appRootWindow(), &root, &child,
                   &root_x, &root_y, &win_x, &win_y, &keybstate );
-
+#endif
   KAction *moveAction = new KAction(KIcon("goto"), i18n("&Move Here"), 0, "move");
   KAction *copyAction = new KAction(KIcon("editcopy"), i18n("&Copy Here"), 0, "copy");
   KAction *linkAction = new KAction(KIcon("www"), i18n("&Link Here"), 0, "link");
   KAction *cancelAction = new KAction(KIcon("cancel"), i18n("C&ancel"), 0, "cancel");
   KAction *result;
+#if defined Q_WS_X11
   if (keybstate & ControlMask) {
     result = copyAction;   // copy
   } else {
     if (keybstate & ShiftMask) {
       result = moveAction;  // move
     } else {
-
+#endif
       // create the popup menu
       QMenu popup;
       if (sMoving || (sReading && sDeleting))
@@ -746,8 +750,10 @@ void BaseTreeView::slotDropped (QWidget *, QDropEvent * /*e*/, KUrl::List& fileL
       popup.insertAction(0L, cancelAction);
 
       result = dynamic_cast<KAction*>(popup.exec(QCursor::pos()));
+#if defined Q_WS_X11
     }
   }
+#endif
   bool tooltip = showToolTips();
 //   KIO::Job *job;
   if (result == copyAction)
