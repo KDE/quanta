@@ -35,7 +35,7 @@ kde4_automoc(kdevquanta ${kdevquanta_LIB_SRCS})
 
 kde4_add_ui_files(kdevquanta_LIB_SRCS fileinfodlg.ui )
 
-kde4_add_kcfg_files(kdevquanta_LIB_SRCS settingsbase.kcfgc )
+kde4_add_kcfg_files(kdevquanta kdevquanta_LIB_SRCS settingsbase.kcfgc )
 
 kde4_add_library(kdevquanta SHARED ${kdevquanta_LIB_SRCS})
 
