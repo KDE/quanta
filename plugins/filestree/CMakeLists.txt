@@ -14,7 +14,7 @@ set(kdevquantafilestree_PART_SRCS
    quantafilestreeprojectconfig.cpp 
    filestreeview.cpp )
 
-kde4_automoc(${kdevquantafilestree_PART_SRCS})
+kde4_automoc(kdevquantafilestree ${kdevquantafilestree_PART_SRCS})
 
 kde4_add_ui_files(kdevquantafilestree_PART_SRCS
   quantafilestreeglobalconfigbase.ui

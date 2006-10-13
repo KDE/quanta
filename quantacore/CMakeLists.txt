@@ -69,7 +69,7 @@ dialogs/environmentconfigbase.ui
 parsers/dtd/dtepcreationdlg.ui
 )   
 
-kde4_automoc(${kdevquantacore_PART_SRCS})
+kde4_automoc(kdevquantacore ${kdevquantacore_PART_SRCS})
 
 kde4_add_plugin(kdevquantacore WITH_PREFIX ${kdevquantacore_PART_SRCS})
 

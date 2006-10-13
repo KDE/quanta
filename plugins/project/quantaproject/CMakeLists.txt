@@ -15,7 +15,7 @@ set(kdevquantaproject_PART_SRCS
    quantaprojectprojectconfig.cpp 
    browserpopupmenu.cpp )
 
-kde4_automoc(${kdevquantaproject_PART_SRCS})
+kde4_automoc(kdevquantaproject ${kdevquantaproject_PART_SRCS})
 
 kde4_add_ui_files(kdevquantaproject_PART_SRCS
   quantaprojectprojectconfigbase.ui )

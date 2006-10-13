@@ -15,7 +15,7 @@ set(kdevprojecttree_PART_SRCS
    projecttreeprojectconfig.cpp 
    projecttreeview.cpp )
 
-kde4_automoc(${kdevprojecttree_PART_SRCS})
+kde4_automoc(kdevprojecttree ${kdevprojecttree_PART_SRCS})
 
 kde4_add_ui_files(kdevprojecttree_PART_SRCS
   projecttreeglobalconfigbase.ui
