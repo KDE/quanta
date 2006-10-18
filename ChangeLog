@@ -1,6 +1,10 @@
 This files contains the changes since Quanta 2.0 until the current 3.5.x series.
 
-Version 3.5.5 (Release date: xx-10-2006; Started 01-09-2006):
+Version 3.5.6 (Release date: xx-xx-2006; Started 01-09-2006):
+ - bugfixes:
+      - show Find in Files menu if KFileReplace is installed [related to #132530]
+
+Version 3.5.5 (Release date: 11-10-2006; Started 01-09-2006):
  - bugfixes:
       - do not allow growing of quantarc until it crashes Quanta [#111049]
       - symlink handling fixes (hopefully won't break anything)

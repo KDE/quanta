@@ -176,8 +176,6 @@ void QuantaInit::initQuanta()
           m_quanta->m_debugger, SLOT(slotHandleEvent(const QString &, const QString &, const QString &)));
   connect(m_quanta->m_debugger, SIGNAL(hideSplash()), m_quanta, SLOT(slotHideSplash()));
 
-  m_quanta->m_pluginInterface->readConfig(); //call here, so the plugin actions are created before the GUI
-
   //m_quanta->KDockMainWindow::createGUI( QString::null, false /* conserveMemory */ );
   m_quanta->createShellGUI(true);
 
@@ -1094,8 +1092,8 @@ void QuantaInit::initPlugins()
   connect(m_quanta->m_pluginInterface, SIGNAL(statusMsg(const QString &)),
           m_quanta, SLOT(slotStatusMsg(const QString & )));
 
-  QuantaPlugin *fileReplacePlugin =m_quanta-> m_pluginInterface->plugin("KFileReplace");
-  if (!fileReplacePlugin)
+  m_quanta->m_pluginInterface->readConfig();
+  if (!m_quanta->m_pluginInterface->pluginAvailable("KFileReplace"))
   {
     delete m_quanta->actionCollection()->action("find_in_files");
   }
