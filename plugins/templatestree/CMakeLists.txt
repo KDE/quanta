@@ -15,7 +15,7 @@ set(kdevtemplatestree_PART_SRCS
    templatestreeview.cpp 
    newtemplatedirdlg.cpp )
 
-kde4_automoc(kdevtemplatestree ${kdevtemplatestree_PART_SRCS})
+kde4_automoc(${kdevtemplatestree_PART_SRCS})
 
 kde4_add_ui_files(kdevtemplatestree_PART_SRCS
    templatestreeglobalconfigbase.ui 

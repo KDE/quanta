@@ -14,7 +14,7 @@ include_directories(
 
 set(quanta_SRCS main.cpp kdevquantaextension.cpp )
 
-kde4_automoc(quanta ${quanta_SRCS})
+kde4_automoc(${quanta_SRCS})
 
 kde4_add_executable(quanta ${quanta_SRCS})
 

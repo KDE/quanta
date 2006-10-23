@@ -24,7 +24,7 @@ set(kdevtagdialogs_PART_SRCS
    tagxml.cpp 
    attributes.cpp )
 
-kde4_automoc(kdevtagdialogs ${kdevtagdialogs_PART_SRCS})
+kde4_automoc(${kdevtagdialogs_PART_SRCS})
 
 kde4_add_ui_files(kdevtagdialogs_PART_SRCS
   tagmail.ui

@@ -17,7 +17,7 @@ set(kdevstructuretree_PART_SRCS
    groupswidget.cpp 
    groupstreeitem.cpp )
 
-kde4_automoc(kdevstructuretree ${kdevstructuretree_PART_SRCS})
+kde4_automoc(${kdevstructuretree_PART_SRCS})
 
 kde4_add_ui_files(kdevstructuretree_PART_SRCS
   structuretreeglobalconfigbase.ui
