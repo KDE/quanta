@@ -621,11 +621,11 @@ void TemplatesTreeView::slotProperties()
   if (!currentKFileTreeViewItem()->isDir())
   {
     startDir = url.path();
-    m_quantaProperties->typeStack->raiseWidget(1);
+    m_quantaProperties->typeStack->setCurrentIndex(1);
   } else
   {
     startDir = url.path() + "/dummy_file";
-    m_quantaProperties->typeStack->raiseWidget(0);
+    m_quantaProperties->typeStack->setCurrentIndex(0);
   }
   w->setEnabled(writable);
   QFileInfo dotFileInfo(QFileInfo(startDir).path() + "/.dirinfo");

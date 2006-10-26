@@ -44,7 +44,7 @@
     <number>6</number>
    </property>
    <item row="0" column="0" >
-    <widget class="Q3WidgetStack" name="typeStack" >
+    <widget class="QStackedWidget" name="typeStack" >
      <widget class="QWidget" name="WStackPage" >
       <property name="geometry" >
        <rect>
@@ -224,13 +224,6 @@
    <extends></extends>
    <header>kcombobox.h</header>
    <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>Q3WidgetStack</class>
-   <extends></extends>
-   <header>q3widgetstack.h</header>
-   <container>1</container>
    <pixmap></pixmap>
   </customwidget>
   <customwidget>

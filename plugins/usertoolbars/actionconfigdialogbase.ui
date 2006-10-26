@@ -414,7 +414,7 @@
               <number>6</number>
              </property>
              <item row="0" column="0" >
-              <widget class="Q3WidgetStack" name="widgetStack1" >
+              <widget class="QStackedWidget" name="widgetStack1" >
                <widget class="QWidget" name="page" >
                 <property name="geometry" >
                  <rect>
@@ -746,13 +746,6 @@
    <extends></extends>
    <header>kkeybutton.h</header>
    <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>Q3WidgetStack</class>
-   <extends></extends>
-   <header>q3widgetstack.h</header>
-   <container>1</container>
    <pixmap></pixmap>
   </customwidget>
   <customwidget>
