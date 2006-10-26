@@ -171,7 +171,7 @@
            <number>6</number>
           </property>
           <item row="0" column="0" >
-           <widget class="Q3WidgetStack" name="generalWidgetStack" >
+           <widget class="QStackedWidget" name="generalWidgetStack" >
             <widget class="QWidget" name="WStackPage" >
              <layout class="QGridLayout" >
               <property name="margin" >
@@ -886,7 +886,7 @@ Example: &lt;b>//&amp;nbsp;EOL,&amp;nbsp;/*&amp;nbsp;*/&lt;/b></string>
            <number>6</number>
           </property>
           <item row="0" column="0" >
-           <widget class="Q3WidgetStack" name="rulesWidgetStack" >
+           <widget class="QStackedWidget" name="rulesWidgetStack" >
             <widget class="QWidget" name="WStackPage" >
              <layout class="QGridLayout" >
               <property name="margin" >
@@ -1594,13 +1594,6 @@ Example: &lt;b>//&amp;nbsp;EOL,&amp;nbsp;/*&amp;nbsp;*/&lt;/b></string>
    <extends></extends>
    <header>klineedit.h</header>
    <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>Q3WidgetStack</class>
-   <extends></extends>
-   <header>q3widgetstack.h</header>
-   <container>1</container>
    <pixmap></pixmap>
   </customwidget>
   <customwidget>

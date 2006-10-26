@@ -93,8 +93,8 @@ void DTEPEditDlg::readGeneral()
   extensionEdit->setText(m_config->readEntry("DefaultExtension"));
   mimeTypeEdit->setText(m_config->readEntry("MimeTypes"));
   typeCombo->setCurrentIndex(m_family);
-  rulesWidgetStack->raiseWidget(m_family);
-  generalWidgetStack->raiseWidget(m_family);
+  rulesWidgetStack->setCurrentIndex (m_family);
+  generalWidgetStack->setCurrentIndex (m_family);
   caseSensitive->setChecked(m_config->readEntry("CaseSensitive", false));
   QString inherits = m_config->readEntry("Inherits");
   QStringList lst(DTDs::ref()->nameList());
