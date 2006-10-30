@@ -1023,7 +1023,6 @@ QString UserToolbarsPart::createToolbarTarball()
     return QString();
   QString prefix="quanta";
   KTempDir* tempDir = new KTempDir(m_tmpDir);
-  tempDir->setAutoDelete(true);
   m_tempDirList.append(tempDir);
   QString tempFileName = tempDir->name() + toolbar;
 

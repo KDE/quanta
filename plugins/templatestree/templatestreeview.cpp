@@ -966,7 +966,6 @@ QString TemplatesTreeView::createTemplateTarball()
     dirURL.setPath(dirURL.directory(KUrl::AppendTrailingSlash));
 
   KTempDir* tempDir = new KTempDir(Helper::tmpFilePrefix());
-  tempDir->setAutoDelete(true);
   tempDirList.append(tempDir);
   QString tempFileName = tempDir->name() + url.fileName() + ".tgz";
   //pack the files into a .tgz file
@@ -1073,7 +1072,6 @@ void TemplatesTreeView::slotExtractSiteTemplate()
             else
             {
                 KTempDir* tempDir = new KTempDir(Helper::tmpFilePrefix());
-                tempDir->setAutoDelete(true);
                 QString tempDirName = tempDir->name();
                 directory->copyTo(tempDirName, true);
                 QStringList entries = directory->entries();
