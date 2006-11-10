@@ -73,7 +73,7 @@ kde4_automoc(${kdevquantacore_PART_SRCS})
 
 kde4_add_plugin(kdevquantacore WITH_PREFIX ${kdevquantacore_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kdevquantacore )
+
 
 target_link_libraries(kdevquantacore kdevquanta
 kdevplatform kdevutil ktexteditor ${KDE4_KHTML_LIBS}

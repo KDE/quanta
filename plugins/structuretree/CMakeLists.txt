@@ -25,7 +25,7 @@ kde4_add_ui_files(kdevstructuretree_PART_SRCS
 
 kde4_add_plugin(kdevstructuretree WITH_PREFIX ${kdevstructuretree_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kdevstructuretree )
+
 
 target_link_libraries(kdevstructuretree kdevquanta kdevplatform kdevutil ${KDE4_KDECORE_LIBS} )
 

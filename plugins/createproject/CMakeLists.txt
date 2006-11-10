@@ -30,7 +30,7 @@ kde4_add_ui_files(kdevcreatequantaproject_PART_SRCS
 
 kde4_add_plugin(kdevcreatequantaproject WITH_PREFIX ${kdevcreatequantaproject_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kdevcreatequantaproject )
+
 
 target_link_libraries(kdevcreatequantaproject kdevquanta kdevplatform ${KDE4_KDECORE_LIBS})
 

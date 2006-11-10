@@ -20,7 +20,7 @@ kde4_add_ui_files(kdevhtmlpreview_PART_SRCS
 
 kde4_add_plugin(kdevhtmlpreview WITH_PREFIX ${kdevhtmlpreview_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kdevhtmlpreview )
+
 
 target_link_libraries(kdevhtmlpreview kdevplatform kdevwidgets kdevutil ktexteditor ${KDE4_KHTML_LIBS} )
 
