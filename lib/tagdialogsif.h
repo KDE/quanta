@@ -39,7 +39,7 @@ TagDialogsIf * plugin = extension<TagDialogsIf>("KDevelop/TagDialogs");
 */
 
 
-class LIBQUANTA_EXPORT TagDialogsIf : public KDevPlugin
+class KDEVQUANTA_EXPORT TagDialogsIf : public KDevPlugin
 {
   Q_OBJECT
 

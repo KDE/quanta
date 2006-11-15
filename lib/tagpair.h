@@ -25,7 +25,7 @@ pair of opening and closing parts of a tag
 
 @author Jens Herden
 */
-class LIBQUANTA_EXPORT TagPair : QPair<QString, QString> {
+class KDEVQUANTA_EXPORT TagPair : QPair<QString, QString> {
 public:
   TagPair();
 

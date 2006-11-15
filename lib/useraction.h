@@ -38,7 +38,7 @@ class QTimer;
  *         Paulo Moura Guedes, moura@kdewebdev.org
  */
 
-class LIBQUANTA_EXPORT UserAction : public KToggleAction
+class KDEVQUANTA_EXPORT UserAction : public KToggleAction
 {
     Q_OBJECT
 

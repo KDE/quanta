@@ -31,7 +31,7 @@ class QComboBox;
 class QPushButton;
 class KUrl;
 
-class LIBQUANTA_EXPORT FileCombo : public QWidget  {
+class KDEVQUANTA_EXPORT FileCombo : public QWidget  {
    Q_OBJECT
 public:
   explicit FileCombo(const KUrl& a_baseURL, QWidget *parent=0);

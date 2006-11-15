@@ -22,7 +22,7 @@
 class QDomElement;
 
 
-class LIBQUANTA_EXPORT TagAttr {
+class KDEVQUANTA_EXPORT TagAttr {
   
 public:
   TagAttr() 

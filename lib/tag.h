@@ -39,7 +39,7 @@ class QDomElement;
 
 
 
-class LIBQUANTA_EXPORT Tag {
+class KDEVQUANTA_EXPORT Tag {
 public:
   Tag();
   Tag(const Tag&);

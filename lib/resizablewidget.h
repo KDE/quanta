@@ -28,7 +28,7 @@ Resizable widget.
 Used to place resizable widgets onto toolbars.
 TODO: Put this code into the KDevelop libs instead of resizeablecombo.h/cpp
 */
-class LIBQUANTA_EXPORT ResizableWidget: public QWidget{
+class KDEVQUANTA_EXPORT ResizableWidget: public QWidget{
     Q_OBJECT
 public:
     explicit ResizableWidget(QWidget *view, QWidget *parent = 0);

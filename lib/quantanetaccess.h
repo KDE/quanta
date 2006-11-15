@@ -29,7 +29,7 @@
 
 class KDevPlugin;
 
-class LIBQUANTA_EXPORT QuantaNetAccess
+class KDEVQUANTA_EXPORT QuantaNetAccess
 {
 public:
 

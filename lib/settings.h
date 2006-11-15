@@ -24,7 +24,7 @@
 
     @author Jens Herden <jens@kdewebdev.org>
 */
-class LIBQUANTA_EXPORT Settings : public SettingsBase
+class KDEVQUANTA_EXPORT Settings : public SettingsBase
 {
 public:
   /**

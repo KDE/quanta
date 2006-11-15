@@ -27,7 +27,7 @@ This class can be used to access the editor functionality in an abstracted way.
 
 @author Andras Mantia
 */
-class LIBQUANTA_EXPORT EditorSource : public QObject
+class KDEVQUANTA_EXPORT EditorSource : public QObject
 {
 Q_OBJECT
 public:

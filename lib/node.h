@@ -43,7 +43,7 @@ class XMLStructGroup;
  * The tree is built with the parser (see parser.h)
  */
 
-class LIBQUANTA_EXPORT Node {
+class KDEVQUANTA_EXPORT Node {
 
 public:
   explicit Node( Node *parent );

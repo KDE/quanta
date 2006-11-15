@@ -51,7 +51,7 @@ class BaseTreeView;
  *
  * @author Jens Herden <jens@kdewebdev.org>
  */
-class LIBQUANTA_EXPORT BaseTreeViewItem : public KFileTreeViewItem {
+class KDEVQUANTA_EXPORT BaseTreeViewItem : public KFileTreeViewItem {
 
 public:
   BaseTreeViewItem( KFileTreeViewItem *parent, KFileItem* item, KFileTreeBranch *brnch );
@@ -85,7 +85,7 @@ private:
  *
  * @author Jens Herden <jens@kdewebdev.org>
  */
-class LIBQUANTA_EXPORT BaseTreeBranch : public KFileTreeBranch {
+class KDEVQUANTA_EXPORT BaseTreeBranch : public KFileTreeBranch {
    Q_OBJECT
 
 public:
@@ -139,7 +139,7 @@ private:
  * @ref TemplatesTreeView use this class.
  *
  */
-class LIBQUANTA_EXPORT BaseTreeView : public KFileTreeView {
+class KDEVQUANTA_EXPORT BaseTreeView : public KFileTreeView {
    Q_OBJECT
 
 public:

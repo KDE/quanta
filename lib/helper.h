@@ -24,7 +24,7 @@ This class has some static helper functions that do not fit somewhere else.
 
 @author Jens Herden
 */
-class LIBQUANTA_EXPORT Helper
+class KDEVQUANTA_EXPORT Helper
 {
 public:
   Helper();

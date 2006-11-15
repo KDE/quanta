@@ -29,14 +29,22 @@
 # include <QtCore/qglobal.h>
 #endif
 
-//FIXME: add the windows part
-/*#if defined Q_OS_WIN
-# include <kdelibs_export_win.h>
+#if defined Q_OS_WIN
+#ifndef KDEVQUANTA_EXPORT
+# ifdef MAKE_KDEVQUANTA_LIB
+#  define KDEVQUANTA_EXPORT KDE_EXPORT
+# else
+#  define KDEVQUANTA_EXPORT KDE_IMPORT
+# endif
+#endif
+
+
 #else //UNIX
-*/
+
 
 /* export statements for unix */
-#define LIBQUANTA_EXPORT KDE_EXPORT
+#define KDEVQUANTA_EXPORT KDE_EXPORT
+#endif
 
 #endif /* QUANTAEXPORT_H*/
 

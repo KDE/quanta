@@ -24,7 +24,7 @@
 #include <QHash>
 #include <QRegExp>
 
-class LIBQUANTA_EXPORT ExtFileInfo : public QObject
+class KDEVQUANTA_EXPORT ExtFileInfo : public QObject
 {
  Q_OBJECT
 public:

@@ -93,7 +93,7 @@ class StructTreeGroup : public XMLStructGroup {
 #define MAX_STRUCTGROUPSCOUNT 10
 
 
-class LIBQUANTA_EXPORT QTag {
+class KDEVQUANTA_EXPORT QTag {
 public:
   QTag();
   QTag(  QTag&);
