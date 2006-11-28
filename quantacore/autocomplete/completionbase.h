@@ -29,10 +29,6 @@ class SpecialAreaGroupCompletion;
 class SpecialAreaTagCompletion;
 struct DTDStruct;
 
-namespace KTextEditor
-{
-  class CompletionItem;
-}
 class KDevPlugin;
 
 /**

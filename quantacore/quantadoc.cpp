@@ -18,7 +18,9 @@
 #include <ktexteditor/view.h>
 
 #include "quantadoc.h"
-#include "completionbase.h"
+// TODO PORT
+//#include "completionbase.h"
+//#include "specialareagroupcompletion.h"
 #include "dtds.h"
 #include "editorsource.h"
 #include "groupstorage.h"
@@ -27,7 +29,6 @@
 #include "tagpair.h"
 #include "quantacommon.h"
 #include "quantacorepart.h"
-#include "specialareagroupcompletion.h"
 #include "settings.h"
 
 #include "parserstatus.h"
@@ -362,6 +363,7 @@ void QuantaDoc::startIdleTimer()
 }
 
 
+#if 0 // TODO PORT
 void QuantaDoc::slotFilterCompletion(KTextEditor::CompletionItem *completion, QString *string)
 {
   m_completion->filterCompletion(completion, string);
@@ -390,6 +392,7 @@ void QuantaDoc::slotCompletionDone(KTextEditor::CompletionItem completion)
 //   m_completion = 0L;
 
 }
+#endif
 
 void QuantaDoc::slotCompletionAborted()
 {
@@ -406,7 +409,9 @@ void QuantaDoc::slotDelayedCodeCompletionHint()
 void QuantaDoc::slotDelayedShowCodeCompletion()
 {
   kDebug(24000) << "slotDelayedShowCodeCompletion" << endl;
+#if 0 // TODO PORT
   showCodeCompletions(m_completionEntries);
+#endif
 }
 
 void QuantaDoc::slotDelayedManualCodeCompletion()
@@ -501,6 +506,7 @@ void QuantaDoc::slotCharactersInserted(KTextEditor::View *view, const KTextEdito
   }
   if (dtd->family == DTDStruct::Xml)
   {
+#if 0 // TODO PORT
     if (string == "<")
     {
       m_completion = CompletionBase::getCompletionObject(&m_parseResult, this, position, node, CompletionBase::XmlTag, CompletionBase::Auto, m_qcore);
@@ -517,6 +523,7 @@ void QuantaDoc::slotCharactersInserted(KTextEditor::View *view, const KTextEdito
     {
       m_completion = CompletionBase::getCompletionObject(&m_parseResult, this, position, node, CompletionBase::XmlEntity, CompletionBase::Auto, m_qcore);
     } else
+#endif
     if (string == ">")
     {
       int index = node->tag->valueIndexAtPos(line, column);
@@ -526,6 +533,7 @@ void QuantaDoc::slotCharactersInserted(KTextEditor::View *view, const KTextEdito
   } else
   if (dtd->family == DTDStruct::Script)
   {
+#if 0 // TODO PORT
     if (dtd->name == "DTD" && string == " ") //special case
     {
        m_completion = CompletionBase::getCompletionObject(&m_parseResult, this, position, node, CompletionBase::DTDDefinition, CompletionBase::Auto, m_qcore);
@@ -560,6 +568,7 @@ void QuantaDoc::slotCharactersInserted(KTextEditor::View *view, const KTextEdito
       }
     }
     if (!m_completion)
+#endif
     {
       if (Settings::self()->closeTags() && node->tag->validXMLTag &&
           node->tag->isType(Tag::ScriptTag) &&
@@ -569,7 +578,9 @@ void QuantaDoc::slotCharactersInserted(KTextEditor::View *view, const KTextEdito
   }
   if (m_completion)
   {
+#if 0 // TODO PORT
     showCodeCompletions(m_completion->completionEntries());
+#endif
   }
   if (tempNodeCreated) //a custom node was created
     node->deleteNode(0L);
@@ -624,6 +635,7 @@ void QuantaDoc::insertChildTags(QTag *qtag, QTag *lastTag)
   }
 }
 
+#if 0 // TODO PORT
 void QuantaDoc::showCodeCompletions(QList<KTextEditor::CompletionItem> *completions)
 {
   bool reparse = m_parserEnabled;
@@ -639,12 +651,14 @@ void QuantaDoc::showCodeCompletions(QList<KTextEditor::CompletionItem> *completi
   m_parserEnabled = reparse;
   delete completions;
 }
+#endif
 
 void QuantaDoc::codeCompletionRequested()
 {
   if (m_completionInProgress)
     return;
 
+#if 0 // TODO PORT
   m_completion = 0L;
   slotDelayedTextChanged(true);
   KTextEditor::Cursor cursor = m_view->cursorPosition();
@@ -690,6 +704,7 @@ void QuantaDoc::codeCompletionRequested()
   }
   if (m_completion)
     showCodeCompletions(m_completion->completionEntries());
+#endif
 }
 
 void QuantaDoc::codeCompletionHintRequested()
@@ -707,12 +722,14 @@ void QuantaDoc::codeCompletionHintRequested()
   const DTDStruct *dtd = node->tag->dtd();
   if (dtd->family == DTDStruct::Script)
   {
+#if 0 // TODO PORT
     m_completion = CompletionBase::getCompletionObject(&m_parseResult, this, position, node, CompletionBase::SpecialAreaAttribute, CompletionBase::Manual, m_qcore);
   }
   if (m_completion)
   {
     CompletionBase::HintResult result = m_completion->completionHint();
   //FIXME: Code completion needs to be rewritten using a CompletionProvider    //m_codeCompletionIf->showArgHint(result.argList, result.wrapper, result.delimiter);
+#endif
   }
 
 }

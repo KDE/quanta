@@ -3,7 +3,8 @@ find_package(LibXml2 REQUIRED)
 add_subdirectory( dialogs )
 add_subdirectory( parsers )
 add_subdirectory( app_templates )
-add_subdirectory( autocomplete )
+# TODO PORT
+#add_subdirectory( autocomplete )
 
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  ${KDE4_ENABLE_EXCEPTIONS}")
 
@@ -46,17 +47,19 @@ set(kdevquantacore_PART_SRCS
    parsers/dommodel.cpp
    
    parsers/dtd/dtdparser.cpp
-
-   autocomplete/completionbase.cpp
-   autocomplete/dtdcompletion.cpp
-   autocomplete/specialareaattributecompletion.cpp
-   autocomplete/specialareagroupcompletion.cpp
-   autocomplete/specialareatagcompletion.cpp
-   autocomplete/xmlattributecompletion.cpp
-   autocomplete/xmlattributevaluecompletion.cpp
-   autocomplete/xmlentitycompletion.cpp
-   autocomplete/xmltagcompletion.cpp
 )
+
+# TODO PORT
+#  autocomplete/completionbase.cpp
+#  autocomplete/dtdcompletion.cpp
+#  autocomplete/specialareaattributecompletion.cpp
+#  autocomplete/specialareagroupcompletion.cpp
+#  autocomplete/specialareatagcompletion.cpp
+#  autocomplete/xmlattributecompletion.cpp
+#  autocomplete/xmlattributevaluecompletion.cpp
+#  autocomplete/xmlentitycompletion.cpp
+#  autocomplete/xmltagcompletion.cpp
+
 
 kde4_add_ui_files(kdevquantacore_PART_SRCS
 dialogs/autocompletionconfigbase.ui

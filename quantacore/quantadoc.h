@@ -32,7 +32,6 @@ class QTimer;
 namespace KTextEditor
 {
   class CodeCompletionInterface;
-  class CompletionItem;
   class Document;
   class View;
 }
@@ -103,10 +102,12 @@ private slots:
    * A slot to used a delayed replacement of accented characters.
    */
   void slotDelayedReplaceChar();
+#if 0 // TODO PORT
   /** Called when a user selects a completion, we then can modify it */
   void slotFilterCompletion(KTextEditor::CompletionItem*,QString *);
   /** Called after a completion is inserted */
   void slotCompletionDone( KTextEditor::CompletionItem completion );
+#endif
   /** Called when the code completion is aborted.*/
   void slotCompletionAborted();
   /**
@@ -148,11 +149,13 @@ private:
    */
   void insertChildTags(QTag *tag, QTag* lastTag = 0L);
 
+#if 0 // TODO PORT
   /** Brings up list of code completions 
    * 
    * @param completions the list of the completion entries
    */
   void showCodeCompletions( QList<KTextEditor::CompletionItem> *completions );
+#endif
 
   /**
    * Replace a char with it's corresponding unicode entity, if it cannot be encoded
@@ -220,7 +223,9 @@ private:
   //a bug: the box is not showing up if it is called from slotCompletionDone)
   int m_lastLine, m_lastCol;
 
+#if 0 // TODO PORT
   QList<KTextEditor::CompletionItem> *m_completionEntries;
+#endif
 };
 
 #endif
