@@ -68,7 +68,7 @@ QuantaDebuggerGubed::~QuantaDebuggerGubed ()
 
   if(m_socket)
   {
-    sendCommand("die", 0);
+    sendCommand("die", (char*)0L);
     m_socket->flush();
     m_socket->close();
     delete m_socket;
@@ -151,7 +151,7 @@ void QuantaDebuggerGubed::endSession()
   // Close the socket
   if(m_socket)
   {
-    sendCommand("die", 0);
+    sendCommand("die", (char*)0L);
     m_socket->flush();
     m_socket->close();
 
@@ -182,26 +182,26 @@ void QuantaDebuggerGubed::setExecutionState(State newstate)
 {
   if(newstate == Pause)
   {
-    sendCommand("pause", 0);
-    sendCommand("sendactiveline", 0);
+    sendCommand("pause", (char*)0L);
+    sendCommand("sendactiveline", (char*)0L);
     if(isActive())
       emit updateStatus(DebuggerUI::Paused);
   }
   else if(newstate == Run)
   {
     if(m_executionState == Pause)
-      sendCommand("next", 0);
+      sendCommand("next", (char*)0L);
 
-    sendCommand("run", 0);
+    sendCommand("run", (char*)0L);
     if(isActive())
       emit updateStatus(DebuggerUI::Running);
   }
   else if(newstate == Trace)
   {
     if(m_executionState == Pause)
-      sendCommand("next", 0);
+      sendCommand("next", (char*)0L);
 
-    sendCommand("trace", 0);
+    sendCommand("trace", (char*)0L);
     if(isActive())
       emit updateStatus(DebuggerUI::Tracing);
   }
@@ -315,7 +315,7 @@ void QuantaDebuggerGubed::connected()
 {
   kdDebug(24002) << k_funcinfo << endl;
 
-  sendCommand("wait", 0);
+  sendCommand("wait", (char*)0L);
   debuggerInterface()->enableAction("debug_connect", false);
   debuggerInterface()->enableAction("debug_disconnect", true);
   debuggerInterface()->enableAction("debug_request", false);
@@ -416,28 +416,28 @@ void QuantaDebuggerGubed::processCommand(const QString& datas)
   // See what command we got and act accordingly..
   if(m_command == "commandme")
   {
-    //sendCommand("sendactiveline", 0);
+    //sendCommand("sendactiveline", (char*)0L);
     debuggerInterface()->setActiveLine(mapServerPathToLocal(args["filename"]), args["line"].toLong());
     sendWatches();
     if(m_executionState == Trace)
-      sendCommand("wait", 0);
+      sendCommand("wait", (char*)0L);
 
     if(m_executionState != Pause)
-      sendCommand("next", 0);
+      sendCommand("next", (char*)0L);
   }
   // Send run mode to script
   else if(m_command == "getrunmode")
   {
     debuggingState(true);
-    sendCommand("setdisplaydelay", "newdelay", QString::number(m_displaydelay).ascii(), 0);
+    sendCommand("setdisplaydelay", "newdelay", QString::number(m_displaydelay).ascii(), (char*)0L);
     if(m_executionState == Pause)
-      sendCommand("pause", 0);
+      sendCommand("pause", (char*)0L);
     else if(m_executionState == Run)
-      sendCommand("run", 0);
+      sendCommand("run", (char*)0L);
     else if(m_executionState == Trace)
-      sendCommand("trace", 0);
+      sendCommand("trace", (char*)0L);
 
-    sendCommand("seterrormask", "errormask", QString::number(m_errormask).ascii(), 0);
+    sendCommand("seterrormask", "errormask", QString::number(m_errormask).ascii(), (char*)0L);
   }
   // Just some status info, display on status line
   else if(m_command == "status")
@@ -517,10 +517,10 @@ void QuantaDebuggerGubed::processCommand(const QString& datas)
   else if(m_command == "initialize")
   {
     debuggerInterface()->showStatus(i18n("Established connection to %1").arg(args["filename"]), false);
-    sendCommand("sendprotocolversion", 0);
+    sendCommand("sendprotocolversion", (char*)0L);
 
     debuggerInterface()->setActiveLine(mapServerPathToLocal(args["filename"]), 0);
-    sendCommand("havesource", 0);
+    sendCommand("havesource", (char*)0L);
     debuggingState(true);
   }
   else if(m_command == "sendingwatches")
@@ -558,7 +558,7 @@ void QuantaDebuggerGubed::processCommand(const QString& datas)
     if(args["version"] != protocolversion)
     {
       debuggerInterface()->showStatus(i18n("The script being debugged does not communicate with the correct protocol version"), true);
-      sendCommand("die", 0);
+      sendCommand("die", (char*)0L);
     }
     return;
   }
@@ -589,8 +589,8 @@ void QuantaDebuggerGubed::sendBreakpoints()
 void QuantaDebuggerGubed::sendWatches()
 {
   for(QValueList<QString>::iterator it = m_watchlist.begin(); it != m_watchlist.end(); ++it)
-    sendCommand("getwatch", "variable", (*it).ascii(), 0);
-  sendCommand("sentwatches", "key", 0, 0);
+    sendCommand("getwatch", "variable", (*it).ascii(), (char*)0L);
+  sendCommand("sentwatches", "key", (char*)0L, (char*)0L);
 }
 
 // Send a command to gubed
@@ -620,9 +620,8 @@ bool QuantaDebuggerGubed::sendCommand(const QString& command, char * firstarg, .
   next = firstarg;
   while(next)
   {
-    ca[(QString)next] = (QString)va_arg(l_Arg, char*) ;
+    ca[(QString)next] = (QString)va_arg(l_Arg, char*);
 //     kdDebug(24002) << k_lineinfo << " Added arg/valuepair " << next << ", " << ca[next].left(30) << endl;
-
     next = va_arg(l_Arg, char*);
   }
 
@@ -673,33 +672,33 @@ void QuantaDebuggerGubed::run()
 void QuantaDebuggerGubed::stepInto()
 {
   setExecutionState(Pause);
-  sendCommand("next", 0);
+  sendCommand("next", (char*)0L);
 }
 
 // Step over function
 void QuantaDebuggerGubed::stepOver()
 {
   setExecutionState(Pause);
-  sendCommand("stepover", 0);
+  sendCommand("stepover", (char*)0L);
 }
 
 // Step out of function
 void QuantaDebuggerGubed::stepOut()
 {
   setExecutionState(Pause);
-  sendCommand("stepout", 0);
+  sendCommand("stepout", (char*)0L);
 }
 
 // Skip next function
 void QuantaDebuggerGubed::skip()
 {
-  sendCommand("skip", 0);
+  sendCommand("skip", (char*)0L);
 }
 
 // Kill the running script
 void QuantaDebuggerGubed::kill()
 {
-  sendCommand("die", 0);
+  sendCommand("die", (char*)0L);
 }
 
 // Pause execution
@@ -727,7 +726,7 @@ void QuantaDebuggerGubed::addBreakpoint (DebuggerBreakpoint* breakpoint)
               "function", breakpoint->inFunction().ascii(),
               "expression", breakpoint->condition().ascii(),
               "line", QString::number(breakpoint->line()).ascii(),
-              0);
+              (char *)0L);
 }
 
 // QString QuantaDebuggerGubed::bpToGubed(DebuggerBreakpoint* breakpoint)
@@ -757,13 +756,13 @@ void QuantaDebuggerGubed::removeBreakpoint(DebuggerBreakpoint* breakpoint)
               "function", breakpoint->inFunction().ascii(),
               "expression", breakpoint->condition().ascii(),
               "line", QString::number(breakpoint->line()).ascii(),
-              0);
+              (char*)0L);
 }
 
 // A file was opened...
 void QuantaDebuggerGubed::fileOpened(const QString&)
 {
-  sendCommand("reinitialize", 0);
+  sendCommand("reinitialize", (char*)0L);
 }
 
 // Watch a variable
@@ -771,7 +770,7 @@ void QuantaDebuggerGubed::addWatch(const QString &variable)
 {
   if(m_watchlist.find(variable) == m_watchlist.end())
     m_watchlist.append(variable);
-  sendCommand("getwatch", "variable", variable.ascii(), 0);
+  sendCommand("getwatch", "variable", variable.ascii(), (char*)0L);
 }
 // Remove watch
 void QuantaDebuggerGubed::removeWatch(DebuggerVariable *variable)
@@ -989,7 +988,7 @@ void QuantaDebuggerGubed::variableSetValue(const DebuggerVariable &variable)
   sendCommand("setvariable", 
               "variable", variable.name().ascii(),
               "value", variable.value().ascii(),
-              0);
+              (char*)0L);
 }
 
 QString QuantaDebuggerGubed::phpSerialize(StringMap args)
