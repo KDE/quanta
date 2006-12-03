@@ -29,7 +29,6 @@
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kinputdialog.h>
-#include <kopenwith.h>
 #include <kmessagebox.h>
 #include <kmenu.h>
 #include <kfiledialog.h>

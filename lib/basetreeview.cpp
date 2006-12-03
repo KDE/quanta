@@ -58,7 +58,6 @@
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kprotocolmanager.h>
-// #include <kopenwith.h>
 #include <kmessagebox.h>
 #include <kpropertiesdialog.h>
 #include <kfiledialog.h>
