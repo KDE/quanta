@@ -549,7 +549,7 @@ bool UserToolbarsPart::slotRemoveToolbar(const QString& id)
 
     if (toolbarGUI)
     {
-      KAction *action;
+      QAction *action;
       //check if the actions on the toolbar were modified or not
       bool actionsModified = false;
       QDomNodeList nodeList = toolbarGUI->domDocument().elementsByTagName("Action");
@@ -649,7 +649,7 @@ bool UserToolbarsPart::slotRemoveToolbar(const QString& id)
      for (int i = 0; i < nodeList.count(); i++)
      {
        action = ac->action(nodeList.item(i).toElement().attribute("name"));
-       if (action && !action->isPlugged())
+       if (action && action->associatedWidgets().count()!=0)
        {
          if (dynamic_cast<UserAction*>(action) &&
              !dynamic_cast<UserAction*>(action)->isModified())
@@ -1158,7 +1158,7 @@ void UserToolbarsPart::slotToolbarLoaded(const QString &id)
   //Plug in the actions & build the menu
   QMenu *menu = new QMenu;
   menu->setTitle(i18n(p_toolbar->name.toUtf8()));
-  KAction *action;
+  QAction *action;
   KActionCollection *ac = p_toolbar->guiClient->actionCollection();
   QDomNodeList nodeList = p_toolbar->guiClient->domDocument().elementsByTagName("Action");
   for (int i = 0; i < nodeList.count(); i++)
@@ -1222,7 +1222,7 @@ void UserToolbarsPart::slotNewAction()
 
 void UserToolbarsPart::slotRemoveAction(const QString& id, const QString& a_actionName)
 {
-  KAction *action = 0L;
+  QAction *action = 0L;
   QString actionName = a_actionName;
   actionName.replace('&',"&&");
   KActionCollection *ac = KDevCore::mainWindow()->actionCollection();

@@ -89,7 +89,7 @@ ActionConfigDialog::ActionConfigDialog(const QHash<QString, ToolbarEntry*> &tool
   allActionsItem = new K3ListViewItem(actionTreeView, i18n("All"));
   actionTreeView->insertItem(allActionsItem);
   Q3ListViewItem *item, *oldItem = allActionsItem;
-  KAction *action;
+  QAction *action;
   QString toolbarName;
   QString toolbarId;
   ToolbarTabWidget *tb = ToolbarTabWidget::ref();
@@ -233,7 +233,7 @@ void ActionConfigDialog::slotEditToolbar()
     emit configureToolbars(toolbarName +" <quanta>");
 
     //update the tree view
-    KAction *action;
+    QAction *action;
     KActionCollection *ac = KDevCore::mainWindow()->actionCollection();
     ToolbarTabWidget *tb = ToolbarTabWidget::ref();
     for (int i = 0; i < tb->count(); i++)
@@ -293,7 +293,7 @@ void ActionConfigDialog::slotSelectionChanged(Q3ListViewItem *item)
 //find the corresponding action
     for (uint i = 0; i < acCount; i++)
     {
-      KAction *a = ac->actions().value(i);
+      QAction *a = ac->actions().value(i);
       QString actionName = a->objectName();
       if (actionName == item->text(2) && a->inherits("UserAction"))
       {
@@ -741,7 +741,7 @@ void ActionConfigDialog::slotShortcutCaptured(const KShortcut &shortcut)
         KActionCollection *ac = current->actionCollection();
         for (int i = 0; i < ac->actions().count(); i++)
         {
-          KAction *action = ac->actions().value(i);
+          QAction *action = ac->actions().value(i);
           if (action != currentAction && action->shortcut().toString().contains(shortcutText))
           {
             global = action->text();

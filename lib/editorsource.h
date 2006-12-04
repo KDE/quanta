@@ -88,17 +88,17 @@ public:
   /**
    * @return pointer to the cut action
    */
-  KAction * cutAction() const {return m_cutAction;};
+  QAction * cutAction() const {return m_cutAction;};
 
   /**
    * @return pointer to the copy action
    */
-  KAction * copyAction() const {return m_copyAction;};
+  QAction * copyAction() const {return m_copyAction;};
 
   /**
    * @return pointer to the paste action
    */
-  KAction * pasteAction() const {return m_pasteAction;};
+  QAction * pasteAction() const {return m_pasteAction;};
 
   /**set the selection to the area and get the focus
    *
@@ -117,9 +117,9 @@ protected:
   KTextEditor::Document *m_document;
   KTextEditor::View *m_view;
 
-  KAction * m_copyAction;
-  KAction * m_cutAction;
-  KAction * m_pasteAction;
+  QAction * m_copyAction;
+  QAction * m_cutAction;
+  QAction * m_pasteAction;
 };
 
 #endif
