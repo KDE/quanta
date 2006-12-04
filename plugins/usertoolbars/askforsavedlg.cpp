@@ -46,6 +46,10 @@ AskForSaveDlg::AskForSaveDlg(const QString &caption, const QString &question, QW
   layout->addWidget(label, 0, 1 );
   resize( QSize(425, 150).expandedTo(minimumSizeHint()) );
   m_status = -1; //cancel
+  connect(this,SIGNAL(user1Clicked()),this,SLOT(slotUser1()));
+  connect(this,SIGNAL(user2Clicked()),this,SLOT(slotUser2()));
+  connect(this,SIGNAL(user3Clicked()),this,SLOT(slotUser3()));
+
 }
 
 
