@@ -1583,6 +1583,7 @@ bool QuantaApp::slotEnableIdleTimer(bool enable)
    if (enable)
      startIdleTimer();
    else
+   if (idleTimer)  
      idleTimer->stop();
    m_idleTimerEnabled = enable;
    return status;
@@ -4483,7 +4484,6 @@ void QuantaApp::slotInsertCSS()
     if(!dlg->errorOnProcessingStylesheet())
     if( dlg->exec() ){
       w->activateParser(false);
-      styleNode->next->tag->beginPos(eLine, eCol);
       w->editIf->removeText(bLine, bCol+1, eLine, eCol);
       w->viewCursorIf->setCursorPositionReal((uint)bLine, (uint)bCol+1);
       w->activateParser(true);
