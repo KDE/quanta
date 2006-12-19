@@ -43,7 +43,7 @@
 //kde includes
 #include <kmenu.h>
 #include <kaction.h>
-#include <kstdaction.h>
+#include <kstandardaction.h>
 #include <krecentfilesaction.h>
 #include <kactioncollection.h>
 #include <kconfig.h>

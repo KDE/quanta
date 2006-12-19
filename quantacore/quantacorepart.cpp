@@ -45,7 +45,7 @@
 #include <kio/netaccess.h>
 #include <kurl.h>
 #include <kmenu.h>
-#include <kstdaction.h>
+#include <kstandardaction.h>
 #include <ktemporaryfile.h>
 #include <kstandarddirs.h>
 #include <ktoolinvocation.h>
@@ -135,7 +135,7 @@ void QuantaCorePart::initActions()
   m_insertTagAction = new KAction(i18n("Insert &Tag"), ac, "insert_tag");
   connect(m_insertTagAction, SIGNAL(triggered(bool)), SLOT(slotInsertTag()));
 
-  KStdAction::openNew(this, SLOT(slotOpenNew()), ac, "file_new");
+  KStandardAction::openNew(this, SLOT(slotOpenNew()), ac, "file_new");
 
   newAct = new KAction(i18n("&Change the DTEP..." ), ac, "change_dtd" );
   connect(newAct, SIGNAL(triggered(bool)), SLOT(slotChangeDTEP()));

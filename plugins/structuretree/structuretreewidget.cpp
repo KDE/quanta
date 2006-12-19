@@ -29,7 +29,7 @@
 #include <klocale.h>
 #include <kmenu.h>
 #include <kaction.h>
-#include <kstdaction.h>
+#include <kstandardaction.h>
 // #include <kdebug.h>
 
 //kdevelop includes
@@ -153,11 +153,11 @@ void StructureTreeWidget::slotContextMenu(K3ListView * view, Q3ListViewItem * it
     m_popupMenu->addAction(i18n("Select Tag Area"), this, SLOT(slotSelectTag()));
     m_popupMenu->addAction(i18n("Go to End of Tag"), this ,SLOT(slotGotoClosingTag()));
     m_popupMenu->addSeparator();
-    m_cutAction = KStdAction::cut(this, SLOT(slotCut()), 0);
+    m_cutAction = KStandardAction::cut(this, SLOT(slotCut()), 0);
     m_popupMenu->addAction(m_cutAction);
-    m_copyAction = KStdAction::copy(this, SLOT(slotCopy()), 0);
+    m_copyAction = KStandardAction::copy(this, SLOT(slotCopy()), 0);
     m_popupMenu->addAction(m_copyAction);
-    m_pasteAction = KStdAction::paste(this, SLOT(slotPaste()), 0);
+    m_pasteAction = KStandardAction::paste(this, SLOT(slotPaste()), 0);
     m_popupMenu->addAction(m_pasteAction);
     m_popupMenu->addSeparator();
     m_popupMenu->addAction(i18n("Open Subtrees"), this, SLOT(slotOpenSubTree()));
