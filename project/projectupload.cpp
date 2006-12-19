@@ -756,8 +756,9 @@ void ProjectUpload::reject()
   if (uploadInProgress && !m_profilesOnly)
   {
     suspendUpload = true;
+    //TODO when message freeze if lift: i18n("Upload") -> i18n("Continue") or "Continue upload"
     if (KMessageBox::questionYesNo(this,i18n("Do you really want to abort the upload?"),
-                                   i18n("Abort Upload"), i18n("Abort the uploading", "Abort"), KStdGuiItem::cancel()) == KMessageBox::No)
+                                   i18n("Abort Upload"), i18n("Abort the uploading", "Abort"), i18n("Upload")) == KMessageBox::No)
     {
       suspendUpload = false;
       emit uploadNext();
