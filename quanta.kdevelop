@@ -12,7 +12,6 @@
     <version>3.2-CVS-1</version>
     <description>Quanta Plus Web Development Environment</description>
     <ignoreparts>
-      <part>kdevkonsoleview</part>
       <part>kdevvalgrind</part>
     </ignoreparts>
     <projectdirectory>.</projectdirectory>
@@ -55,12 +54,14 @@
       <directoryradio>build</directoryradio>
       <customdirectory>/</customdirectory>
       <autocompile>true</autocompile>
+      <autoinstall>false</autoinstall>
+      <autokdesu>false</autokdesu>
     </run>
     <envvars/>
     <configurations>
       <default>
         <configargs>--enable-debug=full --prefix=/opt/kde-35 --enable-editors</configargs>
-        <builddir>/home/andris/development/build/kde-3.5/kdewebdev</builddir>
+        <builddir>/data/development/build/kde-3.5/kdewebdev</builddir>
         <ccompiler>kdevgccoptions</ccompiler>
         <cxxcompiler>kdevgppoptions</cxxcompiler>
         <f77compiler>kdevpgf77options</f77compiler>
@@ -70,7 +71,7 @@
         <cflags>-DKDE_NO_COMPAT -DQT_NO_COMPAT</cflags>
         <cxxflags>-DKDE_NO_COMPAT -DQT_NO_COMPAT -DDEBUG_PARSER</cxxflags>
         <f77flags/>
-        <topsourcedir>/home/andris/development/kdewebdev</topsourcedir>
+        <topsourcedir>/data/development/sources/kde-3.5/kdewebdev</topsourcedir>
         <cppflags/>
         <ldflags/>
         <envvars>
@@ -79,7 +80,7 @@
       </default>
       <withkommander>
         <configargs>--enable-debug=full --prefix=/opt/kde3</configargs>
-        <builddir>/home/andris/development/build/kde-head/kdewebdev</builddir>
+        <builddir>/data/development/build/kde-head/kdewebdev</builddir>
         <topsourcedir/>
         <ccompiler>kdevgccoptions</ccompiler>
         <cxxcompiler>kdevgppoptions</cxxcompiler>
@@ -95,8 +96,8 @@
       </withkommander>
       <all>
         <configargs>--enable-debug=full --prefix=/opt/kde3 --enable-editors</configargs>
-        <builddir>/home/andris/development/build/kde-head/kdewebdev</builddir>
-        <topsourcedir>/home/andris/development/sources/kde-head/kdewebdev</topsourcedir>
+        <builddir>/data/development/build/kde-head/kdewebdev</builddir>
+        <topsourcedir>/data/development/sources/kde-head/kdewebdev</topsourcedir>
         <ccompiler>kdevgccoptions</ccompiler>
         <cxxcompiler>kdevgppoptions</cxxcompiler>
         <f77compiler>kdevpgf77options</f77compiler>
@@ -111,7 +112,7 @@
       </all>
       <withoutkafka>
         <configargs>--enable-debug=full --without-kommander --without-kafkapart --prefix=/opt/kde3</configargs>
-        <builddir>/home/andris/development/build/kde-head/kdewebdev-simple</builddir>
+        <builddir>/data/development/build/kde-head/kdewebdev-simple</builddir>
         <topsourcedir/>
         <cppflags/>
         <ldflags/>
@@ -127,8 +128,8 @@
       </withoutkafka>
       <final>
         <configargs>--enable-debug=full --without-kommander --prefix=/opt/kde3 --enable-final</configargs>
-        <builddir>/home/andris/development/build/kde-head/kdewebdev-final</builddir>
-        <topsourcedir>/home/andris/development/sources/kde-head/kdewebdev</topsourcedir>
+        <builddir>/data/development/build/kde-head/kdewebdev-final</builddir>
+        <topsourcedir>/data/development/sources/kde-head/kdewebdev</topsourcedir>
         <cppflags/>
         <ldflags/>
         <ccompiler>kdevgccoptions</ccompiler>
@@ -245,10 +246,10 @@
   </kdevcvs>
   <kdevfilecreate>
     <filetypes>
-      <type icon="" ext="h" name="C++ header" create="template" >
+      <type icon="" ext="h" create="template" name="C++ header" >
         <descr>Quanta speicfic header</descr>
       </type>
-      <type icon="source_cpp" ext="cpp" name="C++ source" create="template" >
+      <type icon="source_cpp" ext="cpp" create="template" name="C++ source" >
         <descr>A new empty C++ file.</descr>
       </type>
     </filetypes>
@@ -274,6 +275,13 @@
       <namespaceAliases>std=_GLIBCXX_STD</namespaceAliases>
       <processPrimaryTypes>true</processPrimaryTypes>
       <processFunctionArguments>false</processFunctionArguments>
+      <preProcessAllHeaders>false</preProcessAllHeaders>
+      <parseMissingHeaders>false</parseMissingHeaders>
+      <resolveIncludePaths>true</resolveIncludePaths>
+      <alwaysParseInBackground>true</alwaysParseInBackground>
+      <usePermanentCaching>true</usePermanentCaching>
+      <alwaysIncludeNamespaces>false</alwaysIncludeNamespaces>
+      <includePaths>.;</includePaths>
     </codecompletion>
     <references/>
     <creategettersetter>
@@ -285,11 +293,13 @@
       <inlineSet>true</inlineSet>
     </creategettersetter>
     <qt>
-      <used>false</used>
+      <used>true</used>
       <version>3</version>
       <root>/usr/lib/qt3</root>
-      <includestyle>4</includestyle>
-      <designerintegration>EmbeddedKDevDesigner</designerintegration>
+      <includestyle>3</includestyle>
+      <designerintegration>ExternalDesigner</designerintegration>
+      <qmake>/usr/lib/qt3/bin/qmake</qmake>
+      <designer>/usr/lib/qt3/bin/designer</designer>
     </qt>
     <designerintegration>
       <qtdesigner/>

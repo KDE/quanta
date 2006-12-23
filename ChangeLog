@@ -5,6 +5,7 @@ Version 3.5.6 (Release date: xx-xx-2006; Started 01-09-2006):
       - show Find in Files menu if KFileReplace is installed [related to #132530]
       - fix various crashes in the debugger [#137483]
       - fix crash when editing a <style> CSS area
+      - use the correct encoding in the file dialogs [#138343]
 
 Version 3.5.5 (Release date: 11-10-2006; Started 01-09-2006):
  - bugfixes:

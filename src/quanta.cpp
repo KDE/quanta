@@ -3482,7 +3482,7 @@ QString QuantaApp::defaultEncoding()
   {
     encoding = Project::ref()->defaultEncoding();
   }
-  return encoding;
+  return encoding.lower();
 }
 
 void QuantaApp::slotGetUserToolbarFiles(KURL::List *list)
