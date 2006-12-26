@@ -582,7 +582,7 @@ void BaseTreeView::slotProperties()
   KUrl url = currentUrl();
   if (url.isEmpty()) return;
   KFileItem fileItem(KFileItem::Unknown, KFileItem::Unknown, url);
-  propDlg = new KPropertiesDialog(&fileItem, this, 0L, false, false); //autodeletes itself
+  propDlg = new KPropertiesDialog(&fileItem, this); //autodeletes itself
   fileInfoDlg = 0L;
   if (!currentKFileTreeViewItem()->isDir())
   {

@@ -575,7 +575,7 @@ void TemplatesTreeView::slotProperties()
     return;
   KUrl url = currentUrl();
 
-  KPropertiesDialog *propDlg = new KPropertiesDialog( url, this, 0L, false, false); //autodeletes itself
+  KPropertiesDialog *propDlg = new KPropertiesDialog( url, this ); //autodeletes itself
 
 //Always add the Quanta directory page
   QFrame *quantaDirPage = new QFrame();
