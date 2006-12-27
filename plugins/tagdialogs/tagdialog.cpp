@@ -42,7 +42,7 @@
 #include <ktexteditor/view.h>
 #include <kconfig.h>
 #include <kurl.h>
-#include <kstdguiitem.h>
+#include <kstandardguiitem.h>
 #include <kdebug.h>
 
 TagDialog::TagDialog(QTag* dtdTag, Tag *tag, const KUrl& a_baseURL)
@@ -123,8 +123,8 @@ TagDialog::~TagDialog()
 
 void TagDialog::init(QTag *a_dtdTag, const KUrl& a_baseURL)
 {
-  setOkButton(KStdGuiItem::ok().text());
-  setCancelButton(KStdGuiItem::cancel().text());
+  setOkButton(KStandardGuiItem::ok().text());
+  setCancelButton(KStandardGuiItem::cancel().text());
 
   connect( this, SIGNAL(applyButtonPressed()),  SLOT(slotAccept()) );
   connect( this, SIGNAL(cancelButtonPressed()), SLOT(reject()) );

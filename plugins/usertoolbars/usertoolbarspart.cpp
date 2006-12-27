@@ -589,7 +589,7 @@ bool UserToolbarsPart::slotRemoveToolbar(const QString& id)
         if (p_toolbar->url.isEmpty())
         {
           result = KMessageBox::warningYesNoCancel(KDevCore::mainWindow(), i18n("<qt>Toolbar <b>%1</b> is new and unsaved. Do you want to save it before it is removed?</qt>", p_toolbar->name),
-              i18n("Save Toolbar"), KStdGuiItem::save(), KStdGuiItem::discard());
+              i18n("Save Toolbar"), KStandardGuiItem::save(), KStandardGuiItem::discard());
         } else
         {
           AskForSaveDlg dlg(i18n("Save Toolbar"), i18n("<qt>The toolbar <b>%1</b> was modified. Do you want to save it before it is removed?</qt>", p_toolbar->name), KDevCore::mainWindow());

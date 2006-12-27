@@ -172,7 +172,7 @@ void UserToolBar::slotEditAction()
 
 void UserToolBar::slotRemoveAction()
 {
-  if ( KMessageBox::warningContinueCancel(this, i18n("<qt>Are you sure you want to remove the <b>%1</b> action?</qt>", currentActionName),QString::null,KStdGuiItem::del()) == KMessageBox::Continue )
+  if ( KMessageBox::warningContinueCancel(this, i18n("<qt>Are you sure you want to remove the <b>%1</b> action?</qt>", currentActionName),QString::null,KStandardGuiItem::del()) == KMessageBox::Continue )
   {
     emit removeAction(ToolbarTabWidget::ref()->tabUnderMouse, currentActionName);
   }

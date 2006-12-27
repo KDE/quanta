@@ -547,7 +547,7 @@ void DTEPEditDlg::slotDeleteStructGroup()
   int currentItem = structuresList->currentItem();
   if (currentItem != -1)
   {
-      if (KMessageBox::warningContinueCancel(this, i18n("<qt>Do you really want to delete the <b>%1</b> group?</qt>", structuresList->currentText()), i18n("Delete Group"),KStdGuiItem::del()) == KMessageBox::Continue)
+      if (KMessageBox::warningContinueCancel(this, i18n("<qt>Do you really want to delete the <b>%1</b> group?</qt>", structuresList->currentText()), i18n("Delete Group"),KStandardGuiItem::del()) == KMessageBox::Continue)
     {
       m_structGroups.removeAt(currentItem);
       structuresList->removeItem(currentItem);

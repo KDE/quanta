@@ -35,7 +35,7 @@ int Helper::denyBinaryInsert()
 {
   return KMessageBox::questionYesNo(0L, i18n("The file type is not recognized. \
   Opening binary files may confuse Quanta.\n Are you sure you want to open this file?"),
-  i18n("Unknown Type"), KStdGuiItem::yes(), KStdGuiItem::no(), "Open Everything");
+  i18n("Unknown Type"), KStandardGuiItem::yes(), KStandardGuiItem::no(), "Open Everything");
 }
 
 

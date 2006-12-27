@@ -19,7 +19,7 @@
 
 //kde includes
 #include <kiconloader.h>
-#include <kstdguiitem.h>
+#include <kstandardguiitem.h>
 
 AskForSaveDlg::AskForSaveDlg(const QString &caption, const QString &question, QWidget *parent)
  : KDialog(parent)
@@ -27,9 +27,9 @@ AskForSaveDlg::AskForSaveDlg(const QString &caption, const QString &question, QW
     setCaption( caption );
     setButtons( KDialog::User2 | KDialog::User1 | KDialog::User3 | KDialog::Cancel );
     setDefaultButton( KDialog::User3 );
-    setButtonGuiItem( KDialog::User1,KStdGuiItem::discard() );
-    setButtonGuiItem( KDialog::User2,KStdGuiItem::saveAs());
-    setButtonGuiItem( KDialog::User3,KStdGuiItem::save());
+    setButtonGuiItem( KDialog::User1,KStandardGuiItem::discard() );
+    setButtonGuiItem( KDialog::User2,KStandardGuiItem::saveAs());
+    setButtonGuiItem( KDialog::User3,KStandardGuiItem::save());
     QWidget *widget = new QWidget( this );
     setMainWidget( widget );
   QGridLayout *layout = new QGridLayout(widget);
