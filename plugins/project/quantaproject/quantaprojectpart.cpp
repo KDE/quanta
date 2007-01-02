@@ -29,7 +29,7 @@
 #include <kmainwindow.h>
 #include <kmessagebox.h>
 #include <kurlrequester.h>
-#include <kurlrequesterdlg.h>
+#include <kurlrequesterdialog.h>
 #include <kmenu.h>
 
 //kdevelop includes
@@ -342,7 +342,7 @@ void QuantaProjectPart::slotInsertFiles()
   {
     if (!m_projectBase.isParentOf(urls.first()))
     {
-      KUrlRequesterDlg urlRequesterDlg(m_projectBase.pathOrUrl(), KDevCore::mainWindow());
+      KUrlRequesterDialog urlRequesterDlg(m_projectBase.pathOrUrl(), KDevCore::mainWindow());
       urlRequesterDlg.setWindowTitle(i18n("Copy Files to Project"));
       urlRequesterDlg.urlRequester()->setMode(KFile::Directory | KFile::ExistingOnly);
       urlRequesterDlg.exec();
@@ -384,7 +384,7 @@ void QuantaProjectPart::slotInsertFolder()
   {
     if (!m_projectBase.isParentOf(url))
     {
-      KUrlRequesterDlg urlRequesterDlg(m_projectBase.pathOrUrl(), KDevCore::mainWindow());
+      KUrlRequesterDialog urlRequesterDlg(m_projectBase.pathOrUrl(), KDevCore::mainWindow());
       urlRequesterDlg.setWindowTitle(i18n("%1: Copy to Project", url.pathOrUrl()));
       urlRequesterDlg.urlRequester()->setMode(KFile::Directory | KFile::ExistingOnly);
       urlRequesterDlg.exec();

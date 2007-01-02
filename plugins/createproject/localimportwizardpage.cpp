@@ -41,7 +41,7 @@
 #include <k3listview.h>
 #include <kmimetype.h>
 #include <kdeversion.h>
-#include <kurlrequesterdlg.h>
+#include <kurlrequesterdialog.h>
 #include <kurlrequester.h>
 
 

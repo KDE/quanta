@@ -68,7 +68,7 @@
 #include <kmenu.h>
 #include <kpropertiesdialog.h>
 #include <kurlrequester.h>
-#include <kurlrequesterdlg.h>
+#include <kurlrequesterdialog.h>
 #include <ktempdir.h>
 #include <ktemporaryfile.h>
 #include <kio/netaccess.h>
@@ -472,7 +472,7 @@ void TemplatesTreeView::contentsDropEvent(QDropEvent *e)
       dest.adjustPath(KUrl::AddTrailingSlash);
       QString content;
       Q3TextDrag::decode(e, content);
-      KUrl url =KUrlRequesterDlg::getUrl( dest.path() + "template.txt",
+      KUrl url =KUrlRequesterDialog::getUrl( dest.path() + "template.txt",
                                           this, i18n("Save selection as template file:"));
       if ( !url.isEmpty() )
       {
@@ -1054,7 +1054,7 @@ void TemplatesTreeView::slotExtractSiteTemplate()
    if (startDir.isEmpty())
      startDir = QDir::homePath();
    bool error = false;
-   KUrlRequesterDlg urlRequester(startDir, i18n("Target folder"), this);
+   KUrlRequesterDialog urlRequester(startDir, i18n("Target folder"), this);
    urlRequester.urlRequester()->setMode(KFile::Directory);
    if (urlRequester.exec())
    {
