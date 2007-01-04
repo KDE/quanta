@@ -25,13 +25,13 @@
 
 #include <kurl.h>
 
-class KInstance;
+class KIconLoader;
 
 class LocalImportWizardPage : public QWidget, public Ui::LocalImportWizardPageBase
 {
    Q_OBJECT
 public:
-  explicit LocalImportWizardPage(KInstance *instance, QWidget *parent=0);
+  explicit LocalImportWizardPage(KIconLoader *iconLoader, QWidget *parent=0);
   ~LocalImportWizardPage();
 
   /**

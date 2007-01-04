@@ -28,14 +28,14 @@
 //kde includes
 #include <kurl.h>
 
-class KInstance;
+class KIconLoader;
 class KProcess;
 class KUrl;
 
 class WebImportWizardPage : public QWidget, public Ui::WebImportWizardPageBase  {
    Q_OBJECT
 public:
-  explicit WebImportWizardPage(KInstance *instance, QWidget *parent=0);
+  explicit WebImportWizardPage(KIconLoader *iconLoader, QWidget *parent=0);
   ~WebImportWizardPage();
 
 public slots:

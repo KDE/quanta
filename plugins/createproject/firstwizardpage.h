@@ -23,13 +23,13 @@
 #include <kurl.h>
 
 class QuantaCoreIf;
-class KInstance;
+class KIconLoader;
 
 class FirstWizardPage : public QWidget, public Ui::FirstWizardPageBase
 {
    Q_OBJECT
 public:
-  FirstWizardPage(QuantaCoreIf *qCore, KInstance *instance, QWidget *parent=0);
+  FirstWizardPage(QuantaCoreIf *qCore, KIconLoader *iconLoader, QWidget *parent=0);
   ~FirstWizardPage();
 
   void setMargin(int);

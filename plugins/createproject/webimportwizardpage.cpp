@@ -33,19 +33,18 @@
 #include <klocale.h>
 #include <kprocess.h>
 #include <kiconloader.h>
-#include <kinstance.h>
 #include <kio/job.h>
 #include <kmessagebox.h>
 
 
-WebImportWizardPage::WebImportWizardPage(KInstance *instance, QWidget *parent)
+WebImportWizardPage::WebImportWizardPage(KIconLoader *iconLoader, QWidget *parent)
   : QWidget(parent)
 {
   setupUi(this);
   button->setEnabled(false);
   siteUrl->setFocus();
 
-  imagelabel->setPixmap(UserIcon("thirdwizardpage"/*, instance*/));
+  imagelabel->setPixmap(iconLoader->loadIcon("thirdwizardpage", K3Icon::User));
 
   connect( commandLine, SIGNAL(textChanged(const QString&)),
            this,        SLOT  (enableStart(const QString&)));

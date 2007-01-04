@@ -36,7 +36,6 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kiconloader.h>
-#include <kinstance.h>
 #include <kfiledialog.h>
 #include <k3listview.h>
 #include <kmimetype.h>
@@ -45,7 +44,7 @@
 #include <kurlrequester.h>
 
 
-LocalImportWizardPage::LocalImportWizardPage(KInstance *instance, QWidget *parent)
+LocalImportWizardPage::LocalImportWizardPage(KIconLoader *iconLoader, QWidget *parent)
   : QWidget(parent)
 {
   setupUi(this);
@@ -53,7 +52,7 @@ LocalImportWizardPage::LocalImportWizardPage(KInstance *instance, QWidget *paren
   connect(addFiles, SIGNAL(clicked()), SLOT(slotAddFiles()));
   connect(addFolder, SIGNAL(clicked()), SLOT(slotAddFolder()));
   connect(clearList, SIGNAL(clicked()), SLOT(slotClearList()));
-  imagelabel->setPixmap(UserIcon("thirdwizardpage"/*, instance*/));
+  imagelabel->setPixmap(iconLoader->loadIcon("thirdwizardpage", K3Icon::User));
 
   filterMask->setText("*");
   checkInsertWeb->setChecked( true );

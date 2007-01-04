@@ -101,11 +101,11 @@ void CreateQuantaProjectPart::slotCreateNewProject()
   wizard->setWindowTitle(i18n("New Project Wizard"));
   wizard->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
   QStackedWidget *stack = new QStackedWidget(wizard);
-  FirstWizardPage *firstPage = new FirstWizardPage(qCore, instance(), wizard);
-  SecondWizardPage *secondPage = new SecondWizardPage(stack, instance(), wizard);
+  FirstWizardPage *firstPage = new FirstWizardPage(qCore, iconLoader(), wizard);
+  SecondWizardPage *secondPage = new SecondWizardPage(stack, iconLoader(), wizard);
 
-  LocalImportWizardPage *localImportPage = new LocalImportWizardPage(instance(), stack);
-  WebImportWizardPage *webImportPage = new WebImportWizardPage(instance(), stack);
+  LocalImportWizardPage *localImportPage = new LocalImportWizardPage(iconLoader(), stack);
+  WebImportWizardPage *webImportPage = new WebImportWizardPage(iconLoader(), stack);
   stack->addWidget(localImportPage);
   stack->addWidget(webImportPage);
 

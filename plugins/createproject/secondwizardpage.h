@@ -22,11 +22,11 @@
 
 class QStackedWidget;
 
-class KInstance;
+class KIconLoader;
 class SecondWizardPage : public QWidget, Ui::SecondWizardPageBase  {
    Q_OBJECT
 public:
-  SecondWizardPage(QStackedWidget *importStack, KInstance *instance, QWidget *parent=0);
+  SecondWizardPage(QStackedWidget *importStack, KIconLoader *iconLoader, QWidget *parent=0);
   ~SecondWizardPage();
 
   void setMargin(int);

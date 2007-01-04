@@ -33,14 +33,13 @@
 #include <kglobal.h>
 #include <kfiledialog.h>
 #include <kiconloader.h>
-#include <kinstance.h>
 #include <klocale.h>
 #include <kurl.h>
 #include <kprotocolinfo.h>
 #include <kdeversion.h>
 #include <kprotocolmanager.h>
 
-FirstWizardPage::FirstWizardPage(QuantaCoreIf *qCore, KInstance *instance, QWidget *parent)
+FirstWizardPage::FirstWizardPage(QuantaCoreIf *qCore, KIconLoader *iconLoader, QWidget *parent)
   : QWidget(parent)
 {
   setupUi(this);
@@ -51,7 +50,7 @@ FirstWizardPage::FirstWizardPage(QuantaCoreIf *qCore, KInstance *instance, QWidg
   connect(linePrjName, SIGNAL(textChanged(const QString&)), SLOT(slotSetProjectBase()));
   connect(linePrjName, SIGNAL(textChanged(const QString&)), SLOT(slotChangeNames(const QString &)));
   
-  imagelabel->setPixmap(UserIcon("firstwizardpage"/*, instance*/));
+  imagelabel->setPixmap(iconLoader->loadIcon("firstwizardpage", K3Icon::User));
   linePrjName->setFocus();
 
   QStringList lst = Settings::self()->loadedDTEPNickNames();

@@ -31,15 +31,13 @@
 
 // kde includes
 #include <kiconloader.h>
-#include <kinstance.h>
 
-
-SecondWizardPage::SecondWizardPage(QStackedWidget *importStack, KInstance *instance, QWidget *parent)
+SecondWizardPage::SecondWizardPage(QStackedWidget *importStack, KIconLoader *iconLoader, QWidget *parent)
   : QWidget(parent)
 {
   setupUi(this);
   connect(radioLocal, SIGNAL(toggled(bool)), SLOT(slotLocalInsertToggled(bool)));
-  imagelabel->setPixmap(UserIcon("secondwizardpage"/*, instance*/));
+  imagelabel->setPixmap(iconLoader->loadIcon("secondwizardpage", K3Icon::User));
   m_importStack = importStack;
  
   linePrjTmpl->setText("resources/templates");
