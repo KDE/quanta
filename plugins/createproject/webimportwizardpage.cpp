@@ -45,7 +45,7 @@ WebImportWizardPage::WebImportWizardPage(KInstance *instance, QWidget *parent)
   button->setEnabled(false);
   siteUrl->setFocus();
 
-  imagelabel->setPixmap(UserIcon("thirdwizardpage", instance));
+  imagelabel->setPixmap(UserIcon("thirdwizardpage"/*, instance*/));
 
   connect( commandLine, SIGNAL(textChanged(const QString&)),
            this,        SLOT  (enableStart(const QString&)));

@@ -53,7 +53,7 @@ LocalImportWizardPage::LocalImportWizardPage(KInstance *instance, QWidget *paren
   connect(addFiles, SIGNAL(clicked()), SLOT(slotAddFiles()));
   connect(addFolder, SIGNAL(clicked()), SLOT(slotAddFolder()));
   connect(clearList, SIGNAL(clicked()), SLOT(slotClearList()));
-  imagelabel->setPixmap(UserIcon("thirdwizardpage", instance));
+  imagelabel->setPixmap(UserIcon("thirdwizardpage"/*, instance*/));
 
   filterMask->setText("*");
   checkInsertWeb->setChecked( true );

@@ -51,7 +51,7 @@ FirstWizardPage::FirstWizardPage(QuantaCoreIf *qCore, KInstance *instance, QWidg
   connect(linePrjName, SIGNAL(textChanged(const QString&)), SLOT(slotSetProjectBase()));
   connect(linePrjName, SIGNAL(textChanged(const QString&)), SLOT(slotChangeNames(const QString &)));
   
-  imagelabel->setPixmap(UserIcon("firstwizardpage", instance));
+  imagelabel->setPixmap(UserIcon("firstwizardpage"/*, instance*/));
   linePrjName->setFocus();
 
   QStringList lst = Settings::self()->loadedDTEPNickNames();

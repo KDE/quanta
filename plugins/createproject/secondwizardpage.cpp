@@ -39,7 +39,7 @@ SecondWizardPage::SecondWizardPage(QStackedWidget *importStack, KInstance *insta
 {
   setupUi(this);
   connect(radioLocal, SIGNAL(toggled(bool)), SLOT(slotLocalInsertToggled(bool)));
-  imagelabel->setPixmap(UserIcon("secondwizardpage", instance));
+  imagelabel->setPixmap(UserIcon("secondwizardpage"/*, instance*/));
   m_importStack = importStack;
  
   linePrjTmpl->setText("resources/templates");
