@@ -18,7 +18,8 @@
     <absoluteprojectpath>false</absoluteprojectpath>
     <secondaryLanguages/>
     <versioncontrol/>
-    <defaultencoding/>
+    <defaultencoding></defaultencoding>
+    <projectname>quanta</projectname>
   </general>
   <kdevautoproject>
     <general>
@@ -47,8 +48,8 @@
       <cxxflags>\s-O0 -g3 -Wall</cxxflags>
     </compiler>
     <run>
-      <mainprogram>quanta/src/quanta</mainprogram>
-      <programargs/>
+      <mainprogram>/data/development/build/kde-3.5/kdewebdev/quanta/src/quanta</mainprogram>
+      <programargs></programargs>
       <terminal>false</terminal>
       <envvars/>
       <directoryradio>build</directoryradio>
@@ -56,6 +57,18 @@
       <autocompile>true</autocompile>
       <autoinstall>false</autoinstall>
       <autokdesu>false</autokdesu>
+      <globaldebugarguments></globaldebugarguments>
+      <globalcwd>/data/development/build/kde-3.5/kdewebdev</globalcwd>
+      <useglobalprogram>true</useglobalprogram>
+      <runarguments>
+        <quanta/>
+      </runarguments>
+      <debugarguments>
+        <quanta/>
+      </debugarguments>
+      <cwd>
+        <quanta>/data/development/build/kde-3.5/kdewebdev/quanta/src</quanta>
+      </cwd>
     </run>
     <envvars/>
     <configurations>
@@ -171,7 +184,7 @@
     </groups>
     <tree>
       <hidenonprojectfiles>false</hidenonprojectfiles>
-      <hidepatterns></hidepatterns>
+      <hidepatterns/>
       <showvcsfields>true</showvcsfields>
     </tree>
   </kdevfileview>
@@ -194,16 +207,16 @@
   </kdevdoctreeview>
   <kdevdebugger>
     <general>
-      <dbgshell/>
+      <dbgshell></dbgshell>
       <programargs/>
       <gdbpath>/usr/bin/gdb</gdbpath>
       <breakonloadinglibs>true</breakonloadinglibs>
       <separatetty>false</separatetty>
       <floatingtoolbar>false</floatingtoolbar>
       <runappinappdirectory>true</runappinappdirectory>
-      <configGdbScript/>
-      <runShellScript/>
-      <runGdbScript/>
+      <configGdbScript></configGdbScript>
+      <runShellScript></runShellScript>
+      <runGdbScript></runGdbScript>
     </general>
     <display>
       <staticmembers>false</staticmembers>
@@ -246,10 +259,10 @@
   </kdevcvs>
   <kdevfilecreate>
     <filetypes>
-      <type icon="" ext="h" create="template" name="C++ header" >
+      <type icon="" ext="h" name="C++ header" create="template" >
         <descr>Quanta speicfic header</descr>
       </type>
-      <type icon="source_cpp" ext="cpp" create="template" name="C++ source" >
+      <type icon="source_cpp" ext="cpp" name="C++ source" create="template" >
         <descr>A new empty C++ file.</descr>
       </type>
     </filetypes>
@@ -285,7 +298,7 @@
     </codecompletion>
     <references/>
     <creategettersetter>
-      <prefixGet/>
+      <prefixGet></prefixGet>
       <prefixSet>set</prefixSet>
       <prefixVariable>m_,_</prefixVariable>
       <parameterName>theValue</parameterName>
@@ -300,6 +313,8 @@
       <designerintegration>ExternalDesigner</designerintegration>
       <qmake>/usr/lib/qt3/bin/qmake</qmake>
       <designer>/usr/lib/qt3/bin/designer</designer>
+      <designerprefix/>
+      <designerpluginpaths/>
     </qt>
     <designerintegration>
       <qtdesigner/>

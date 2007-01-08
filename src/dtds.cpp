@@ -23,6 +23,7 @@
 #include <qextfileinfo.h>
 #include <qdom.h>
 #include <qcursor.h>
+#include <qtimer.h>
 
 // include files for KDE
 #include <kapplication.h>
@@ -103,13 +104,15 @@ DTDs::DTDs(QObject *parent)
     }
   }
 //  kdDebug(24000) << tagsDirs.count() << " folders found." << endl;
+  QTime t;
+  t.start();
   QStringList::ConstIterator tagsDirsEnd = tagsDirs.constEnd();
   for ( QStringList::ConstIterator it = tagsDirs.constBegin(); it != tagsDirsEnd; ++it )
   {
 //     kdDebug(24000) << "read:" << *it  << endl;
     readTagDir(*it, false);  // read all tags, but only short form
   }
-
+  kdDebug(24000) << "DTD reading: " << t.elapsed() << endl;
 //load the mimetypes from the insideDTDs
   QDictIterator<DTDStruct> it(*m_dict);
   for( ; it.current(); ++it )

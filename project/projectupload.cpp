@@ -130,6 +130,7 @@ void  ProjectUpload::initProjectInfo(const QString& defaultProfile)
         m_defaultProfile = defaultProfile;
       QDomNodeList profileList = m_profilesNode.toElement().elementsByTagName("profile");
       QDomElement e;
+      m_currentProfileElement = profileList.item(0).toElement();
       QString s;
       int defaultIdx = 0;
       for (uint i = 0; i < profileList.count(); i++)
