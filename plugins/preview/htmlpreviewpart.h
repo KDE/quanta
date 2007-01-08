@@ -67,7 +67,7 @@ private:
   void setupActions();
   void loadContent(KTextEditor::Document * editor);
 
-  KAction *action;
+  QAction *action;
 
   HTMLPart *m_browserPart;
   ConfigWidgetProxy * m_configProxy;

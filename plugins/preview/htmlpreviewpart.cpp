@@ -38,7 +38,7 @@
 #include <kdevdocumentcontroller.h>
 #include <kdevdocument.h>
 #include <kdevprojectcontroller.h>
-
+#include <kactioncollection.h>
 
 typedef KGenericFactory<HTMLPreviewPart> HTMLPreviewFactory;
 K_EXPORT_COMPONENT_FACTORY( libkdevhtmlpreview, HTMLPreviewFactory("kdevhtmlpreview") )
@@ -104,7 +104,9 @@ void HTMLPreviewPart::setupActions()
 {
   // create XMLGUI actions here
 //FIXME  action = new KAction(KIcon(info()->icon()), i18n("&Preview"), actionCollection(), "plugin_preview" );
-  action = new KAction(KIcon(), i18n("&Preview"), actionCollection(), "plugin_preview" );
+  action = actionCollection()->addAction("plugin_preview");
+  action->setText(i18n("&Preview"));
+
   connect(action, SIGNAL(triggered(bool)), SLOT(slotPreview()));
   action->setToolTip(i18n("Preview the document in the browser"));
   action->setWhatsThis(i18n("<b>Preview</b><p>The preview shows the current document in an HTML browser."));

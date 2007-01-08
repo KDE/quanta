@@ -219,30 +219,43 @@ void UserToolbarsPart::slotAdjustActions()
 void UserToolbarsPart::setupActions()
 {
   KActionCollection *ac = actionCollection();
-  m_projectToolbarFiles = new KRecentFilesAction(i18n("Load &Project Toolbar"), ac, "toolbars_load_project");
+  m_projectToolbarFiles = ac->add<KRecentFilesAction>("toolbars_load_project");
+  m_projectToolbarFiles->setText(i18n("Load &Project Toolbar"));
+
   connect(m_projectToolbarFiles, SIGNAL(urlSelected(const KUrl &)), SLOT(slotLoadToolbarFile(const KUrl&)));
 
-  KAction *action = new KAction(i18n("Load &Global Toolbar..."), ac, "toolbars_load_global");
+    KAction *action  = new KAction(i18n("Load &Global Toolbar..."), this);
+    actionCollection()->addAction("toolbars_load_global", action );
   connect(action, SIGNAL(triggered(bool)), SLOT(slotLoadGlobalToolbar()));
-  action = new KAction(i18n("Load &Local Toolbar..."), ac, "toolbars_load_user");
+    action  = new KAction(i18n("Load &Local Toolbar..."), this);
+    actionCollection()->addAction("toolbars_load_user", action );
   connect(action, SIGNAL(triggered(bool)), SLOT(slotLoadToolbar()));
-  action = new KAction(i18n("Save as &Local Toolbar..."), ac, "toolbars_save_local");
+    action  = new KAction(i18n("Save as &Local Toolbar..."), this);
+    actionCollection()->addAction("toolbars_save_local", action );
   connect(action, SIGNAL(triggered(bool)), SLOT(slotSaveLocalToolbar()));
-  action = new KAction(i18n("Save as &Project Toolbar..."), ac, "toolbars_save_project");
+    action  = new KAction(i18n("Save as &Project Toolbar..."), this);
+    actionCollection()->addAction("toolbars_save_project", action );
   connect(action, SIGNAL(triggered(bool)), SLOT(slotSaveProjectToolbar()));
-  action = new KAction(i18n("&New User Toolbar..."), ac, "toolbars_add");
+    action  = new KAction(i18n("&New User Toolbar..."), this);
+    actionCollection()->addAction("toolbars_add", action );
   connect(action, SIGNAL(triggered(bool)), SLOT(slotAddToolbar()));
-  action = new KAction(i18n("&Remove User Toolbar..."), ac, "toolbars_remove");
+    action  = new KAction(i18n("&Remove User Toolbar..."), this);
+    actionCollection()->addAction("toolbars_remove", action );
   connect(action, SIGNAL(triggered(bool)), SLOT(slotRemoveToolbar()));
-  action = new KAction(i18n("Re&name User Toolbar..."), ac, "toolbars_rename");
+    action  = new KAction(i18n("Re&name User Toolbar..."), this);
+    actionCollection()->addAction("toolbars_rename", action );
   connect(action, SIGNAL(triggered(bool)), SLOT(slotRenameToolbar()));
-  action = new KAction(KIcon("mail_send"), i18n("Send Toolbar in E&mail..."), ac, "toolbars_send");
+    action  = new KAction(KIcon("mail_send"), i18n("Send Toolbar in E&mail..."), this);
+    actionCollection()->addAction("toolbars_send", action );
   connect(action, SIGNAL(triggered(bool)), SLOT(slotSendToolbar()));
-  action = new KAction(KIcon("network"), i18n("&Upload Toolbar..." ), ac, "toolbars_upload" );
+    action  = new KAction(KIcon("network"), i18n("&Upload Toolbar..."), this);
+    actionCollection()->addAction("toolbars_upload", action );
   connect(action, SIGNAL(triggered(bool)), SLOT(slotUploadToolbar()));
-  action = new KAction(KIcon("network"), i18n("&Download Toolbar..." ), ac, "toolbars_download" );
+    action  = new KAction(KIcon("network"), i18n("&Download Toolbar..."), this);
+    actionCollection()->addAction("toolbars_download", action );
   connect(action, SIGNAL(triggered(bool)), SLOT(slotDownloadToolbar()));
-  action = new KAction(KIcon("ball"), i18n( "Configure &Actions..." ), ac, "configure_actions" );
+    action  = new KAction(KIcon("ball"), i18n("Configure &Actions..."), this);
+    actionCollection()->addAction("configure_actions", action );
   connect(action, SIGNAL(triggered(bool)), SLOT(slotConfigureActions()));
 }
 
@@ -478,10 +491,13 @@ void UserToolbarsPart::slotLoadToolbarFile(const KUrl& url)
         //add the actions to every toolbar xmlguiclient, so these actions can be added
         //to any toolbar
         QHashIterator<QString, ToolbarEntry*> it(m_toolbarList);
+	int i=0;
         while (it.hasNext())
         {
+	
           it.next();
-          it.value()->guiClient->actionCollection()->insert(userAction);
+          it.value()->guiClient->actionCollection()->addAction(QString("nametoolbar%1").arg(i),userAction);
+	  i++;
         }
       } else
       {
@@ -495,7 +511,7 @@ void UserToolbarsPart::slotLoadToolbarFile(const KUrl& url)
     //add all actions to the xmlguiclient of this toolbar, otherwise it will not be
     //possible to add other actions to this toolbar in the Configure Toolbar dialog
     for (int i = 0 ; i < ac->actions().count(); i++)
-        toolbarGUI->actionCollection()->insert(ac->actions().value(i));
+        toolbarGUI->actionCollection()->addAction(QString("name%1").arg(i),ac->actions().value(i));
 
     m_tempFileList.append(tempFile);
     p_toolbar->guiClient = toolbarGUI;
@@ -660,7 +676,7 @@ bool UserToolbarsPart::slotRemoveToolbar(const QString& id)
             while (it.hasNext())
             {
               it.next();
-              it.value()->guiClient->actionCollection()->take(action);
+              it.value()->guiClient->actionCollection()->takeAction(action);
             }
             delete action;
          }
@@ -921,7 +937,7 @@ void UserToolbarsPart::slotAddToolbar()
 
 //add all actions to the xmlguiclient of this toolbar
   for (int i = 0 ; i < ac->actions().count(); i++)  // FIXME can we add the whole collection at once?
-     toolbarGUI->actionCollection()->insert(ac->actions().value(i));
+     toolbarGUI->actionCollection()->addAction(QString("name_toolbar%1").arg(i),ac->actions().value(i));
 
   m_tempFileList.append(tempFile);
   ToolbarEntry *p_toolbar = new ToolbarEntry;
@@ -1281,7 +1297,7 @@ void UserToolbarsPart::slotConfigureActions()
   dlg.exec();
 }
 
-void UserToolbarsPart::slotDeleteAction(KAction *action)
+void UserToolbarsPart::slotDeleteAction(QAction *action)
 {
 //remove all references to this action
   QDomElement el = static_cast<UserAction*>(action)->data();
@@ -1306,7 +1322,7 @@ void UserToolbarsPart::slotDeleteAction(KAction *action)
         break;
       }
     }
-    guiClient->actionCollection()->take(action);
+    guiClient->actionCollection()->takeAction(action);
   }
   delete action;
   action = 0L;

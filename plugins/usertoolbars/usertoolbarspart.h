@@ -72,7 +72,7 @@ public slots:
      * Delete an action
      * @param action pointer to the actions
      */
-    void slotDeleteAction(KAction *action);
+    void slotDeleteAction(QAction *action);
 
 
 private slots:

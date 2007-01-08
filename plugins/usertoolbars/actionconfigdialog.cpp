@@ -799,10 +799,12 @@ void ActionConfigDialog::slotNewAction()
   currentAction = new UserAction(&el, m_plugin);
   //add the actions to every toolbar xmlguiclient
   QHashIterator<QString, ToolbarEntry*> it(m_toolbarList);
+  int i=0;
   while (it.hasNext())
   {
     it.next();
-    it.value()->guiClient->actionCollection()->insert(currentAction);
+    it.value()->guiClient->actionCollection()->addAction(QString("name_action%1").arg(i),currentAction);
+    i++;
   }
 
   selectedShortcut = KShortcut();

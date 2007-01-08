@@ -49,7 +49,7 @@
 #include <ktemporaryfile.h>
 #include <kstandarddirs.h>
 #include <ktoolinvocation.h>
-
+#include <kactioncollection.h>
 //kdevelop includes
 #include <kdevmainwindow.h>
 #include <kdevdocumentcontroller.h>
@@ -115,29 +115,36 @@ void QuantaCorePart::init()
 void QuantaCorePart::initActions()
 {
   KActionCollection *ac = actionCollection();
-  KAction *newAct = new KAction(i18n("&Quanta Homepage"), ac, "help_homepage");
+    KAction *newAct  = new KAction(i18n("&Quanta Homepage"), this);
+    actionCollection()->addAction("help_homepage", newAct );
   connect(newAct, SIGNAL(triggered(bool)), SLOT(slotHelpHomepage()));
 
-  newAct = new KAction(i18n("&User Mailing List"), ac, "help_userlist" );
+    newAct  = new KAction(i18n("&User Mailing List"), this);
+    actionCollection()->addAction("help_userlist", newAct );
   connect(newAct, SIGNAL(triggered(bool)), SLOT(slotHelpUserList()));
 
-  newAct = new KAction(i18n("Make &Donation"), ac, "help_donation" );
+    newAct  = new KAction(i18n("Make &Donation"), this);
+    actionCollection()->addAction("help_donation", newAct );
   connect(newAct, SIGNAL(triggered(bool)), SLOT(slotMakeDonation()));
 
-  newAct = new KAction(i18n("Complete Text"), ac, "show_completion");
+    newAct  = new KAction(i18n("Complete Text"), this);
+    actionCollection()->addAction("show_completion", newAct );
   newAct->setShortcut(KShortcut(Qt::CTRL + Qt::Key_Space));
   connect(newAct, SIGNAL(triggered(bool)), SLOT(slotShowCompletion()));
 
-  newAct = new KAction(i18n("Show Completion Hints"), ac, "show_completion_hint");
+    newAct  = new KAction(i18n("Show Completion Hints"), this);
+    actionCollection()->addAction("show_completion_hint", newAct );
   newAct->setShortcut(KShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_Space));
   connect(newAct, SIGNAL(triggered(bool)), SLOT(slotShowCompletionHint()));
 
-  m_insertTagAction = new KAction(i18n("Insert &Tag"), ac, "insert_tag");
+    m_insertTagAction  = new KAction(i18n("Insert &Tag"), this);
+    actionCollection()->addAction("insert_tag", m_insertTagAction );
   connect(m_insertTagAction, SIGNAL(triggered(bool)), SLOT(slotInsertTag()));
+#warning "kde4 port it"
+//actionCollection()->addAction(KStandardAction::OpenNew,  "file_new", this, SLOT(slotOpenNew()));
 
-  KStandardAction::openNew(this, SLOT(slotOpenNew()), ac, "file_new");
-
-  newAct = new KAction(i18n("&Change the DTEP..." ), ac, "change_dtd" );
+    newAct  = new KAction(i18n("&Change the DTEP..."), this);
+    actionCollection()->addAction("change_dtd", newAct );
   connect(newAct, SIGNAL(triggered(bool)), SLOT(slotChangeDTEP()));
 }
 

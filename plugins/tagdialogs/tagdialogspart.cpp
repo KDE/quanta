@@ -27,7 +27,7 @@
 #include <kdevcontext.h>
 #include <kdevmainwindow.h>
 #include <kdevplugincontroller.h>
-
+#include <kactioncollection.h>
 typedef KGenericFactory<TagDialogsPart> TagDialogsFactory;
 K_EXPORT_COMPONENT_FACTORY( libkdevtagdialogs, TagDialogsFactory("kdevtagdialogs") )
 
@@ -91,7 +91,8 @@ void TagDialogsPart::setupActions()
 {
 // create XMLGUI actions here
   KActionCollection *ac = actionCollection();
-  m_editCurrentTagAction = new KAction(i18n("&Edit Current Tag..."), ac, "edit_current_tag");
+    m_editCurrentTagAction  = new KAction(i18n("&Edit Current Tag..."), this);
+    actionCollection()->addAction("edit_current_tag", m_editCurrentTagAction );
   connect(m_editCurrentTagAction, SIGNAL(triggered(bool)), SLOT(slotEditCurrentTag()));
 }
 

@@ -44,6 +44,7 @@
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
 #include <ktemporaryfile.h>
+#include <kactioncollection.h>
 
 //kdevelop includes
 #include <kdevcore.h>
@@ -83,7 +84,9 @@ void CreateQuantaProjectPart::init()
 void CreateQuantaProjectPart::setupActions()
 {
 // create XMLGUI actions here
-  action = new KAction(KIcon("filenew"), i18n("&New Project..."), actionCollection(), "new_project");
+  action =  actionCollection()->addAction("new_project");
+  action->setText(i18n("&New Project..."));
+  action->setIcon(KIcon("filenew"));
   connect(action, SIGNAL(triggered(bool)), SLOT(slotCreateNewProject()));
   action->setToolTip(i18n("Create new project"));
 }

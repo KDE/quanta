@@ -52,9 +52,10 @@
 
 UserAction::UserAction( QDomElement *element, KDevPlugin *plugin, bool toggle)
     : KToggleAction(element->attribute("text").isEmpty() ? QString("") : i18n(element->attribute("text").toUtf8()),
-                    KDevCore::mainWindow()->actionCollection(), element->attribute("name")),
+                    KDevCore::mainWindow()->actionCollection()),
   m_toggle(toggle)
 {
+	KDevCore::mainWindow()->actionCollection()->addAction(element->attribute("name"), this);
   setShortcut(KShortcut(element->attribute("shortcut")));
   m_plugin = plugin;
   m_modified = false;
@@ -325,7 +326,7 @@ QString UserAction::actionText()
 void UserAction::slotActivated()
 {
 //     if(m_toggle)
-    KToggleAction::slotTriggered();
+    KToggleAction::slotToggled(m_toggle);
     if(!m_toggle)
         setChecked(!isChecked());
 }

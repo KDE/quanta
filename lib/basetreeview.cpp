@@ -713,7 +713,8 @@ void BaseTreeView::slotDropped (QWidget *, QDropEvent * /*e*/, KUrl::List& fileL
   bool sReading = KProtocolManager::supportsReading(url);
   bool sDeleting = KProtocolManager::supportsDeleting(url);
   bool sMoving = KProtocolManager::supportsMoving(url);
-
+#warning "kde: need to port it"
+#if 0
   // Check the state of the modifiers key at the time of the drop
   uint keybstate;
 #warning "KDE4: port it on macosx";
@@ -724,11 +725,15 @@ void BaseTreeView::slotDropped (QWidget *, QDropEvent * /*e*/, KUrl::List& fileL
   XQueryPointer( QX11Info::display(), QX11Info::appRootWindow(), &root, &child,
                   &root_x, &root_y, &win_x, &win_y, &keybstate );
 #endif
-  KAction *moveAction = new KAction(KIcon("goto"), i18n("&Move Here"), 0, "move");
-  KAction *copyAction = new KAction(KIcon("editcopy"), i18n("&Copy Here"), 0, "copy");
-  KAction *linkAction = new KAction(KIcon("www"), i18n("&Link Here"), 0, "link");
-  KAction *cancelAction = new KAction(KIcon("cancel"), i18n("C&ancel"), 0, "cancel");
-  KAction *result;
+    KAction *moveAction  = new KAction(KIcon("goto"), i18n("&Move Here"), this);
+    actionCollection()->addAction("move", moveAction );
+    KAction *copyAction  = new KAction(KIcon("editcopy"), i18n("&Copy Here"), this);
+    actionCollection()->addAction("copy", copyAction );
+    KAction *linkAction  = new KAction(KIcon("www"), i18n("&Link Here"), this);
+    actionCollection()->addAction("link", linkAction );
+    KAction *cancelAction  = new KAction(KIcon("cancel"), i18n("C&ancel"), this);
+    actionCollection()->addAction("cancel", cancelAction );
+  QAction *result;
 #if defined Q_WS_X11
   if (keybstate & ControlMask) {
     result = copyAction;   // copy
@@ -748,7 +753,7 @@ void BaseTreeView::slotDropped (QWidget *, QDropEvent * /*e*/, KUrl::List& fileL
       popup.addSeparator();
       popup.insertAction(0L, cancelAction);
 
-      result = dynamic_cast<KAction*>(popup.exec(QCursor::pos()));
+      result = dynamic_cast<QAction *>(popup.exec(QCursor::pos()));
 #if defined Q_WS_X11
     }
   }
@@ -784,6 +789,7 @@ void BaseTreeView::slotDropped (QWidget *, QDropEvent * /*e*/, KUrl::List& fileL
   delete moveAction;
   delete linkAction;
   delete cancelAction;
+#endif
 }
 
 

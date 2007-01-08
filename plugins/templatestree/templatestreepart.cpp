@@ -41,6 +41,7 @@
 #include <kdevmainwindow.h>
 #include <kdevprojectcontroller.h>
 #include <kdevplugincontroller.h>
+#include <kactioncollection.h>
 
 typedef KGenericFactory<TemplatesTreePart> TemplatesTreeFactory;
 K_EXPORT_COMPONENT_FACTORY( libkdevtemplatestree, TemplatesTreeFactory("kdevtemplatestree") )
@@ -102,7 +103,8 @@ void TemplatesTreePart::init()
 void TemplatesTreePart::setupActions()
 {
 // create XMLGUI actions here
-  m_createTemplateAction = new KAction(i18n("Create Site &Template..."), actionCollection(), "site_template_action" );
+    m_createTemplateAction  = new KAction(i18n("Create Site &Template..."), this);
+    actionCollection()->addAction("site_template_action", m_createTemplateAction );
   connect(m_createTemplateAction, SIGNAL(triggered(bool)), SLOT(slotCreateSiteTemplate()));
 }
 

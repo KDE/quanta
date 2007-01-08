@@ -39,7 +39,7 @@
 #include <kdevmainwindow.h>
 #include <kdevprojectmodel.h>
 #include <kdevdocumentcontroller.h>
-
+#include <kactioncollection.h>
 typedef KGenericFactory<QuantaProjectPart> QuantaProjectFactory;
 K_EXPORT_COMPONENT_FACTORY( libkdevquantaproject, QuantaProjectFactory("kdevquantaproject") )
 
@@ -107,13 +107,15 @@ void QuantaProjectPart::init()
 void QuantaProjectPart::setupActions()
 {
   // create XMLGUI actions here
-  KAction *action;
-  action = new KAction(i18n("&Insert Files..."), actionCollection(), "insert_files");
+  QAction *action;
+  action = actionCollection()->addAction("insert_files");
+  action->setText(i18n("&Insert Files...")); 
   connect(action, SIGNAL(triggered(bool)), SLOT(slotInsertFiles()));
   action->setToolTip( i18n( "Insert Files" ) );
   action->setWhatsThis( i18n( "Insert Files - Insert new files into the project." ) );
 
-  action = new KAction(i18n("&Insert Folder..."), actionCollection(), "insert_folder");
+  action =  actionCollection()->addAction("insert_folder");
+  action->setText(i18n("&Insert Folder..."));
   connect(action, SIGNAL(triggered(bool)), SLOT(slotInsertFolder()));
   action->setToolTip( i18n( "Insert Folder" ) );
   action->setWhatsThis( i18n( "Insert Folder - Insert a new folder into the project." ) );

@@ -48,7 +48,7 @@ private slots:
 private:
     void setupActions();
     
-    KAction *action;
+    QAction *action;
     QList<QPair<KUrl, KUrl> > m_files;
 };
 
