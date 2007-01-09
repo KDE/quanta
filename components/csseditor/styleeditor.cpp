@@ -75,7 +75,7 @@ void StyleEditor::openCSSEditor(){
 
   QString fullDocument = w->editIf->text().stripWhiteSpace();
 
-  if (styleNode && styleNode->tag->type == Tag::XmlTag) {
+  if (styleNode && (styleNode->tag->type == Tag::XmlTag || styleNode->tag->type == Tag::Empty) ) {
     CSSEditor *dlg = new CSSEditor(this);
     QFileInfo fi(ViewManager::ref()->currentURL());
     dlg->setFileToPreview(Project::ref()->projectBaseURL().path() +  fi.baseName(),false);
