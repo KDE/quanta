@@ -325,7 +325,7 @@ void ProjectPrivate::insertFiles( KURL::List files )
         if (!m_projectFiles.contains(url))
         {
           el = dom.createElement("item");
-          el.setAttribute("url", QuantaCommon::qUrl(QExtFileInfo::toRelative(url, baseURL)));
+          el.setAttribute("url", QuantaCommon::qUrl(QExtFileInfo::toRelative(url, baseURL, false)));
           dom.firstChild().firstChild().appendChild(el);
           m_projectFiles.insert( new ProjectURL(url, "", 1, false, el) );
           emit eventHappened("after_project_add", url.url(), QString::null);
@@ -337,7 +337,7 @@ void ProjectPrivate::insertFiles( KURL::List files )
       url = *it;
       if (!excludeRx.exactMatch(url.path()))
       {
-        el.setAttribute("url", QuantaCommon::qUrl(QExtFileInfo::toRelative(url, baseURL)));
+        el.setAttribute("url", QuantaCommon::qUrl(QExtFileInfo::toRelative(url, baseURL, false)));
         dom.firstChild().firstChild().appendChild(el);
         m_projectFiles.insert( new ProjectURL(url, "", 1, false, el) );
         emit eventHappened("after_project_add", url.url(), QString::null);

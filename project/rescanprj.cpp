@@ -131,7 +131,7 @@ void RescanPrj::addEntries(KIO::Job *job,const KIO::UDSEntryList &list)
       }
     }
   }
-  for (QPtrList<KFileItem>::ConstIterator it = linkItems.constBegin(); it != linkItems.constEnd(); ++it)
+ for (QPtrList<KFileItem>::ConstIterator it = linkItems.constBegin(); it != linkItems.constEnd(); ++it)
   {
     KIO::ListJob *ljob = KIO::listRecursive( (*it)->url(), false );
     m_listJobCount++;

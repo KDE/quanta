@@ -6,6 +6,8 @@ Version 3.5.6 (Release date: xx-xx-2006; Started 01-09-2006):
       - fix various crashes in the debugger [#137483]
       - fix crash when editing a <style> CSS area
       - use the correct encoding in the file dialogs [#138343]
+      - don't lose upload profile settings in certain cases
+      - fix symlink handling in Project Rescan, New Project adding files/folders [#138107]
 
 Version 3.5.5 (Release date: 11-10-2006; Started 01-09-2006):
  - bugfixes:

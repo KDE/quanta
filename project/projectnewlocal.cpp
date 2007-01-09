@@ -142,7 +142,7 @@ KURL::List ProjectNewLocal::projectFiles()
     fmask = mask->text();
   }
 
-  list = QExtFileInfo::allFilesRelative(baseURL, fmask, this);
+  list = QExtFileInfo::allFilesRelative(baseURL, fmask, this, false);
 
   return list;
 }
@@ -188,7 +188,7 @@ void ProjectNewLocal::slotAddFiles()
   {
     KURL u = list.first();
 
-    u = QExtFileInfo::toRelative( u, baseURL );
+    u = QExtFileInfo::toRelative( u, baseURL, false );
 
     if ( u.path().startsWith("..") || u.path().startsWith("/"))
     {
@@ -218,7 +218,7 @@ void ProjectNewLocal::slotAddFiles()
     progressBar->setTextEnabled(true);
     for (uint i = 0; i < list.count(); i++)
     {
-       list[i] = QExtFileInfo::toRelative(list[i], baseURL);
+       list[i] = QExtFileInfo::toRelative(list[i], baseURL, false);
        if (!fileList.contains(list[i]))
        {
          fileList.append(list[i]);
@@ -248,7 +248,7 @@ void ProjectNewLocal::slotAddFolder()
     dirURL.adjustPath(1);
 
     KURL sdir = dirURL;
-    sdir = QExtFileInfo::toRelative( sdir, baseURL);
+    sdir = QExtFileInfo::toRelative( sdir, baseURL, false);
 
     if ( sdir.path().startsWith("..") || sdir.path().startsWith("/") )
     {
@@ -275,7 +275,7 @@ void ProjectNewLocal::slotAddFolder()
       }
     }
 
-    slotInsertFilesAfterCopying(dirURL);
+    slotInsertFolderAfterCopying(dirURL);
   }
 }
 
@@ -293,7 +293,7 @@ void ProjectNewLocal::slotInsertFolderAfterCopying(const KURL::List& a_urlList)
   {
     dirURL = *it;
    // dirURL.adjustPath(1);
-    KURL::List files = QExtFileInfo::allFilesRelative(dirURL, "*", this);
+    KURL::List files = QExtFileInfo::allFilesRelative(dirURL, "*", this, false);
     progressBar->setTotalSteps(files.count() - 1);
     progressBar->setTextEnabled(true);
     KURL u;
@@ -328,7 +328,7 @@ void ProjectNewLocal::slotInsertFilesAfterCopying(const KURL::List& a_urlList)
   progressBar->setTextEnabled(true);
   for (it = a_urlList.begin(); it != a_urlList.end(); ++it)
   {
-    u = QExtFileInfo::toRelative(*it, baseURL);
+    u = QExtFileInfo::toRelative(*it, baseURL, false);
     if ( !fileList.contains(u))
     {
       fileList.append(u);

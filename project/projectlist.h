@@ -56,7 +56,7 @@ public:
   */
   KURL toRelative(const KURL &url) const
   {
-    return QExtFileInfo::toRelative(url, m_baseURL);
+    return QExtFileInfo::toRelative(url, m_baseURL, false);
   }
 
   /**
