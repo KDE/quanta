@@ -261,8 +261,8 @@ void Project::slotOpenProject(const KURL &url)
            == KMessageBox::Yes)
       {
         d->m_projectRecent->removeURL(url);
-      }
-      d->m_projectRecent->setCurrentItem(0);
+      } else
+        d->m_projectRecent->setCurrentItem(0);
     } else
     {
       d->loadProject ( url );
