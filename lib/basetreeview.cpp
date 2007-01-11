@@ -1007,7 +1007,7 @@ void BaseTreeView::slotCreateFile()
     KTemporaryFile *tempFile = new KTemporaryFile();
     tempFile->setPrefix(Helper::tmpFilePrefix());
     tempFile->open();
-    if (QuantaNetAccess::copy(KUrl(tempFile->fileName()), url, m_plugin));
+    if (QuantaNetAccess::copy(KUrl(tempFile->fileName()), url, m_plugin))
     {
       m_partController->editDocument(url);
     }
