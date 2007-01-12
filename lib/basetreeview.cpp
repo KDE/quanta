@@ -713,11 +713,15 @@ void BaseTreeView::slotDropped (QWidget *, QDropEvent * /*e*/, KUrl::List& fileL
   bool sReading = KProtocolManager::supportsReading(url);
   bool sDeleting = KProtocolManager::supportsDeleting(url);
   bool sMoving = KProtocolManager::supportsMoving(url);
+#ifdef __GNUC__
 #warning "kde: need to port it"
+#endif
 #if 0
   // Check the state of the modifiers key at the time of the drop
   uint keybstate;
+#ifdef __GNUC__
 #warning "KDE4: port it on macosx";
+#endif
 #if defined Q_WS_X11
   Window root;
   Window child;

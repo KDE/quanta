@@ -140,7 +140,9 @@ void QuantaCorePart::initActions()
     m_insertTagAction  = new KAction(i18n("Insert &Tag"), this);
     actionCollection()->addAction("insert_tag", m_insertTagAction );
   connect(m_insertTagAction, SIGNAL(triggered(bool)), SLOT(slotInsertTag()));
+#ifdef __GNUC__
 #warning "kde4 port it"
+#endif
 //actionCollection()->addAction(KStandardAction::OpenNew,  "file_new", this, SLOT(slotOpenNew()));
 
     newAct  = new KAction(i18n("&Change the DTEP..."), this);

@@ -211,7 +211,9 @@ pointer must be deleted by the caller!! */
   
   static void removeCommentsAndQuotes(QString& str, const DTDStruct* dtd);
   static bool insideCommentsOrQuotes(int position, const QString &string, const DTDStruct *dtd);
+#ifdef __GNUC__
 #warning "kde4: port it"
+#endif
 #if 0
   /** Calls a Quanta DCOP method.
   * @param interface the DCOP interface the method belongs to

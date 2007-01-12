@@ -224,7 +224,9 @@ void QuantaProjectPart::openProject( const KUrl &dirName, const QString &project
   manager->parse(baseItem);
 
   //FIXME: there is no projectDom anymore!!
+#ifdef __GNUC__
 #warning There is no projectDom!! Change it!  
+#endif
 /*  m_projectDom = KDevApi::self()->projectDom();
   m_projectDomElement = DomUtil::elementByPath(*m_projectDom, "/project");
   if (m_projectDomElement.isNull())

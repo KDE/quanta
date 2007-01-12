@@ -162,7 +162,9 @@ int main(int argc, char *argv[])
       KDevCore::documentController()->editDocument( KUrl(args->url(a)) );
     }
   }
+#ifdef __GNUC__
 #warning "kde4: port it"
+#endif
   //kapp->dcopClient()->registerAs("quanta");
 
   return app.exec();
