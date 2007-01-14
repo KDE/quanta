@@ -10,6 +10,7 @@ Version 3.5.6 (Release date: xx-xx-2006; Started 01-09-2006):
       - fix symlink handling in Project Rescan, New Project adding files/folders [#138107]
       - do not set the current project mark to a project that could not be opened [#137186]
       - allow closing of an untitle editor tab when an image is previewed inside [#134534]
+      - fix problems with the automatic backup system
 
 Version 3.5.5 (Release date: 11-10-2006; Started 01-09-2006):
  - bugfixes:

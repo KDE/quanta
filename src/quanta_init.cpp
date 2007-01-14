@@ -1210,7 +1210,7 @@ void QuantaInit::recoverCrashed(QStringList& recoveredFileNameList)
       QStringList::Iterator entryIt = autosavedFilesEntryList.begin();
       while(entryIt != autosavedFilesEntryList.end())
       {
-        if ((*entryIt) == autosavedPath)
+        if ((*entryIt) == KURL::fromPathOrURL(autosavedPath).url())
           entryIt = autosavedFilesEntryList.remove(entryIt);
         else
           ++entryIt;
@@ -1327,7 +1327,7 @@ void QuantaInit::recoverCrashed(QStringList& recoveredFileNameList)
     {
       notFound = false;
       if (isOrphan)
-        return (*autosavedUrlsIt); //the url was autosaved to this file
+        return KURL::fromPathOrURL(*autosavedUrlsIt).path(); //the url was autosaved to this file
     }
 
   }

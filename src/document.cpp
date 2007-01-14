@@ -2610,9 +2610,14 @@ void Document::createBackup(KConfig* config)
 {
   if (isModified())
   {
-    m_backupPathValue = qConfig.backupDirPath + url().fileName() + "." + hashFilePath(url().path());
     if (isUntitled())
-      m_backupPathValue.append('U');
+    {
+      m_backupPathValue = qConfig.backupDirPath + untitledUrl + "." + hashFilePath("file:///" + untitledUrl) + "U";
+    } else
+    {
+      m_backupPathValue = qConfig.backupDirPath + url().fileName() + "." + hashFilePath(url().url());
+    }
+    QString backupPathValueURL = KURL::fromPathOrURL(m_backupPathValue).url();
 
     //the encoding used for the current document
     QString encoding = quantaApp->defaultEncoding();
@@ -2625,11 +2630,14 @@ void Document::createBackup(KConfig* config)
     config->setGroup("General Options");
     QStringList backedupFilesEntryList = QuantaCommon::readPathListEntry(config, "List of backedup files"); //the files that were backedup
     QStringList autosavedFilesEntryList = QuantaCommon::readPathListEntry(config, "List of autosaved files"); //the list of actual backup files inside $KDEHOME/share/apps/quanta/backups
-    if (!autosavedFilesEntryList.contains(m_backupPathValue)) //not yet backed up, add an entry for this file
+    if (!autosavedFilesEntryList.contains(backupPathValueURL)) //not yet backed up, add an entry for this file
     {
-      autosavedFilesEntryList.append(m_backupPathValue);
+      autosavedFilesEntryList.append(backupPathValueURL);
       config->writePathEntry("List of autosaved files", autosavedFilesEntryList);
-      backedupFilesEntryList.append(url().path() + "." + qConfig.quantaPID);
+      if (!isUntitled())
+        backedupFilesEntryList.append(KURL::fromPathOrURL(url().path() + "." + qConfig.quantaPID).url());
+      else
+        backedupFilesEntryList.append(url().url() + "." + qConfig.quantaPID);
       config->writePathEntry("List of backedup files", backedupFilesEntryList);
       config->sync();
     }
@@ -2648,15 +2656,17 @@ void Document::createBackup(KConfig* config)
 /** if there is no more need for a backup copy then remove it */
 void Document::removeBackup(KConfig *config)
 {
+  QString backupPathValueURL = KURL::fromPathOrURL(m_backupPathValue).url();
+  
   config->reparseConfiguration();
   config->setGroup("General Options");
 
   QStringList backedupFilesEntryList = QuantaCommon::readPathListEntry(config, "List of backedup files");
   QStringList autosavedFilesEntryList = QuantaCommon::readPathListEntry(config, "List of autosaved files");
 
-  autosavedFilesEntryList.remove(m_backupPathValue);
+  autosavedFilesEntryList.remove(backupPathValueURL);
   config->writePathEntry("List of autosaved files", autosavedFilesEntryList);
-  backedupFilesEntryList.remove(url().path() + "." + qConfig.quantaPID);
+  backedupFilesEntryList.remove(KURL::fromPathOrURL(url().path() + "." + qConfig.quantaPID).url());
   config->writePathEntry("List of backedup files", backedupFilesEntryList);
   config->sync();
 
