@@ -5,5 +5,6 @@ Exec=kcmshell --caption %c %i khtml_behavior khtml_java_js khtml_fonts cookies c
 Icon=konqueror
 DocPath=konqueror/index.html
 Name=Configure KHTML Browser Part
+Name[el]=Ρύθμιση του KHTML περιηγητή
 Name[fr]=Configurer le composant de navigation KHTML
 Name[x-test]=xxConfigure KHTML Browser Partxx
