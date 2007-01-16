@@ -368,10 +368,16 @@ bool ExtFileInfo::internalCopy(const KUrl& src, const KUrl& target, int permissi
 
   KIO::Scheduler::checkSlaveOnHold(true);
   KIO::Job * job = KIO::file_copy( src, target, permissions, overwrite, resume, false );
+
+#ifdef __GNUC__
+#warning If you commented this code because of the result signal was never emitted on the job,
+#warning please uncomment it, is now fixed (ereslibre)
+#endif
+
 //  KIO::Job * job2 = KIO::del(target, false );
   //job2->setWindow (window);
-  //connect( job2, SIGNAL( result (KIO::Job *) ),
-//           this, SLOT( slotResult (KIO::Job *) ) );
+  //connect( job2, SIGNAL( result (KJob *) ),
+//           this, SLOT( slotResult (KJob *) ) );
 
   //enter_loop();
   //if (bJobOK)
