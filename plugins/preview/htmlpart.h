@@ -18,7 +18,7 @@
 //kdevelop includes
 #include <widgets/kdevhtmlpart.h>
 
-class KDevProject;
+namespace Koncrete { class Project; }
 class HTMLPreviewPart;
 
 class HTMLPart: public KDevHTMLPart

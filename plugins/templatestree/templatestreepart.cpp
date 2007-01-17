@@ -50,7 +50,7 @@ K_EXPORT_COMPONENT_FACTORY( libkdevtemplatestree, TemplatesTreeFactory("kdevtemp
 #define PROJECTDOC_OPTIONS 2
 
 TemplatesTreePart::TemplatesTreePart(QObject *parent, const QStringList &/*args*/)
-  : KDevPlugin(TemplatesTreeFactory::instance(), parent)
+  : Koncrete::Plugin(TemplatesTreeFactory::instance(), parent)
 {
     setXMLFile("kdevtemplatestree.rc");
 
@@ -61,7 +61,7 @@ TemplatesTreePart::TemplatesTreePart(QObject *parent, const QStringList &/*args*
 
     m_widget->setWhatsThis(i18n("Working with templates"));
 
-    connect(KDevCore::mainWindow(), SIGNAL(projectOpened()), m_widget, SLOT(slotProjectOpened()));
+    connect(Koncrete::Core::mainWindow(), SIGNAL(projectOpened()), m_widget, SLOT(slotProjectOpened()));
 
     setupActions();
 //FIXME: New KCM modules need to be created for each config page
@@ -72,12 +72,12 @@ TemplatesTreePart::TemplatesTreePart(QObject *parent, const QStringList &/*args*
     connect(m_configProxy, SIGNAL(insertConfigWidget(const KDialog*, QWidget*, unsigned int )),
         this, SLOT(insertConfigWidget(const KDialog*, QWidget*, unsigned int)));
     */
-    connect(KDevCore::mainWindow(), SIGNAL(contextMenu(QMenu *, const Context *)),
-        this, SLOT(contextMenu(QMenu *, const Context *)));
-    connect(KDevCore::projectController(), SIGNAL(projectOpened()), this, SLOT(projectOpened()));
-    connect(KDevCore::projectController(), SIGNAL(projectClosed()), this, SLOT(projectClosed()));
+    connect(Koncrete::Core::mainWindow(), SIGNAL(contextMenu(QMenu *, const Koncrete::Context *)),
+            this, SLOT(contextMenu(QMenu *, const Koncrete::Context *)));
+    connect(Koncrete::Core::projectController(), SIGNAL(projectOpened()), this, SLOT(projectOpened()));
+    connect(Koncrete::Core::projectController(), SIGNAL(projectClosed()), this, SLOT(projectClosed()));
 
-    connect(KDevCore::documentController(), SIGNAL(documentClosed(KDevDocument*)), m_widget, SLOT(slotDocumentClosed(KDevDocument*)));
+    connect(Koncrete::Core::documentController(), SIGNAL(documentClosed(Koncrete::Document*)), m_widget, SLOT(slotDocumentClosed(Koncrete::Document*)));
 
     QTimer::singleShot(0, this, SLOT(init()));
 }
@@ -96,7 +96,7 @@ QWidget *TemplatesTreePart::pluginView() const
 void TemplatesTreePart::init()
 {
 // delayed initialization stuff goes here
-  m_qcore = KDevPluginController::self()->extension<QuantaCoreIf>("KDevelop/Quanta");
+  m_qcore = Koncrete::PluginController::self()->extension<QuantaCoreIf>("KDevelop/Quanta");
   connect(m_widget, SIGNAL(insertTag(const KUrl &, Helper::DirInfo *)), m_qcore, SLOT(slotInsertTag( const KUrl&, Helper::DirInfo* )));
 }
 
@@ -129,11 +129,11 @@ void TemplatesTreePart::insertConfigWidget(const KDialog *dlg, QWidget *page, un
     }
 }
 
-void TemplatesTreePart::contextMenu(QMenu *popup, const Context *context)
+void TemplatesTreePart::contextMenu(QMenu *popup, const Koncrete::Context *context)
 {
-  if (context->hasType(Context::FileContext))
+  if (context->hasType(Koncrete::Context::FileContext))
   {
-    m_fileContextList = static_cast<const FileContext*>(context)->urls();
+    m_fileContextList = static_cast<const Koncrete::FileContext*>(context)->urls();
     kDebug(24000) << m_fileContextList.front().fileName(false) << m_fileContextList.front().fileName(false).isEmpty() << endl;
     if ((m_fileContextList.count() == 1) && m_fileContextList.front().fileName(false).isEmpty())
     {
@@ -205,7 +205,7 @@ void TemplatesTreePart::slotCreateSiteTemplate()
    //temporary directory
   if (url.protocol() != "file")
   {
-    KMessageBox::sorry(KDevCore::mainWindow(), i18n("Currently you can create site templates only from local folders."), i18n("Unsupported Feature"));
+    KMessageBox::sorry(Koncrete::Core::mainWindow(), i18n("Currently you can create site templates only from local folders."), i18n("Unsupported Feature"));
     return;
   }
 
@@ -216,14 +216,14 @@ void TemplatesTreePart::slotCreateSiteTemplate()
    } else*/
 
   QString startDir = KStandardDirs::locateLocal("data", Helper::resourceDir() + "templates/");
-  KUrl targetURL = KFileDialog::getSaveUrl(startDir, "*.tgz", KDevCore::mainWindow(), i18n("Create Site Template File"));
+  KUrl targetURL = KFileDialog::getSaveUrl(startDir, "*.tgz", Koncrete::Core::mainWindow(), i18n("Create Site Template File"));
   if (targetURL.isEmpty())
     return;
 
 /*    if (Project::ref()->hasProject() && targetURL.url().startsWith(Project::ref()->templateURL().url()))
       valid = true;*/
   if (!KUrl(startDir).isParentOf(targetURL))
-    KMessageBox::information(KDevCore::mainWindow(), i18n("This Template will not be visible in your Templates Tree, because you do not save it to the local or project template folder."));
+    KMessageBox::information(Koncrete::Core::mainWindow(), i18n("This Template will not be visible in your Templates Tree, because you do not save it to the local or project template folder."));
 
 
   KTemporaryFile *tempFile = new KTemporaryFile();
@@ -241,7 +241,7 @@ void TemplatesTreePart::slotCreateSiteTemplate()
     error = true;
 
   if (error)
-    KMessageBox::error(KDevCore::mainWindow(), i18n("<qt>There was an error while creating the site template tarball.<br>Check that you can read the files from <i>%1</i>, you have write access to <i>%2</i> and that you have enough free space in your temporary folder.</qt>", url.pathOrUrl(), targetURL.pathOrUrl()), i18n("Template Creation Error"));
+    KMessageBox::error(Koncrete::Core::mainWindow(), i18n("<qt>There was an error while creating the site template tarball.<br>Check that you can read the files from <i>%1</i>, you have write access to <i>%2</i> and that you have enough free space in your temporary folder.</qt>", url.pathOrUrl(), targetURL.pathOrUrl()), i18n("Template Creation Error"));
   delete tempFile;
 }
 

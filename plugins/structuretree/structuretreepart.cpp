@@ -44,7 +44,7 @@ K_EXPORT_COMPONENT_FACTORY( libkdevstructuretree, StructureTreeFactory("kdevstru
 #define PROJECTDOC_OPTIONS 2
 
 StructureTreePart::StructureTreePart(QObject *parent, const QStringList &/*args*/)
-  : KDevPlugin(StructureTreeFactory::instance(), parent)
+  : Koncrete::Plugin(StructureTreeFactory::instance(), parent)
 {
     setXMLFile("kdevstructuretree.rc");
 
@@ -64,10 +64,10 @@ StructureTreePart::StructureTreePart(QObject *parent, const QStringList &/*args*
     connect(m_configProxy, SIGNAL(insertConfigWidget(const KDialog*, QWidget*, unsigned int )),
         this, SLOT(insertConfigWidget(const KDialog*, QWidget*, unsigned int)));
     */
-    connect(KDevCore::mainWindow(), SIGNAL(contextMenu(QMenu *, const Context *)),
+    connect(Koncrete::Core::mainWindow(), SIGNAL(contextMenu(QMenu *, const Koncrete::Context *)),
         this, SLOT(contextMenu(QMenu *, const Context *)));
-    connect(KDevCore::projectController(), SIGNAL(projectOpened()), this, SLOT(projectOpened()));
-    connect(KDevCore::projectController(), SIGNAL(projectClosed()), this, SLOT(projectClosed()));
+    connect(Koncrete::Core::projectController(), SIGNAL(projectOpened()), this, SLOT(projectOpened()));
+    connect(Koncrete::Core::projectController(), SIGNAL(projectClosed()), this, SLOT(projectClosed()));
 
 
     QTimer::singleShot(0, this, SLOT(init()));
@@ -98,7 +98,7 @@ void StructureTreePart::init()
 
   l->addWidget(m_documentTree);
 
-  m_qcore = KDevPluginController::self()->extension<QuantaCoreIf>("KDevelop/Quanta");
+  m_qcore = Koncrete::PluginController::self()->extension<QuantaCoreIf>("KDevelop/Quanta");
   connect(m_qcore, SIGNAL(startParsing()), m_documentTree, SLOT(slotBlockGUI()));
 
   connect(m_qcore, SIGNAL(finishedParsing(const ParseResult *)), m_documentTree, SLOT(slotBuild(const ParseResult *)));
@@ -149,7 +149,7 @@ void StructureTreePart::insertConfigWidget(const KDialog *dlg, QWidget *page, un
     }
 }
 
-void StructureTreePart::contextMenu(QMenu */*popup*/, const Context */*context*/)
+void StructureTreePart::contextMenu(QMenu */*popup*/, const Koncrete::Context */*context*/)
 {
 // put actions into the context menu here
 //     if (context->hasType(Context::EditorContext))

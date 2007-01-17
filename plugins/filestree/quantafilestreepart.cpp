@@ -42,7 +42,7 @@ K_EXPORT_COMPONENT_FACTORY( libkdevquantafilestree, QuantaFilesTreeFactory("kdev
 #define PROJECTDOC_OPTIONS 2
 
 QuantaFilesTreePart::QuantaFilesTreePart(QObject *parent, const QStringList &/*args*/)
-  : KDevPlugin(QuantaFilesTreeFactory::instance(), parent)
+  : Koncrete::Plugin(QuantaFilesTreeFactory::instance(), parent)
 {
     setXMLFile("kdevquantafilestree.rc");
 
@@ -62,10 +62,10 @@ QuantaFilesTreePart::QuantaFilesTreePart(QObject *parent, const QStringList &/*a
     connect(m_configProxy, SIGNAL(insertConfigWidget(const KDialog*, QWidget*, unsigned int )),
         this, SLOT(insertConfigWidget(const KDialog*, QWidget*, unsigned int)));
     */
-    connect(KDevCore::mainWindow(), SIGNAL(contextMenu(QMenu *, const Context *)),
+    connect(Koncrete::Core::mainWindow(), SIGNAL(contextMenu(QMenu *, const Koncrete::Context *)),
         this, SLOT(contextMenu(QMenu *, const Context *)));
-    connect(KDevCore::projectController(), SIGNAL(projectOpened()), this, SLOT(projectOpened()));
-    connect(KDevCore::projectController(), SIGNAL(projectClosed()), this, SLOT(projectClosed()));
+    connect(Koncrete::Core::projectController(), SIGNAL(projectOpened()), this, SLOT(projectOpened()));
+    connect(Koncrete::Core::projectController(), SIGNAL(projectClosed()), this, SLOT(projectClosed()));
 
     QTimer::singleShot(0, this, SLOT(init()));
 }
@@ -84,7 +84,7 @@ void QuantaFilesTreePart::init()
 {
 // delayed initialization stuff goes here
   m_tree = new FilesTreeView(this, m_widget);
-  connect(KDevCore::documentController(), SIGNAL(documentClosed(KDevDocument*)), m_tree, SLOT(slotDocumentClosed(KDevDocument*)));
+  connect(Koncrete::Core::documentController(), SIGNAL(documentClosed(Koncrete::Document*)), m_tree, SLOT(slotDocumentClosed(Koncrete::Document*)));
 
   K3ListViewSearchLineWidget * sl = new K3ListViewSearchLineWidget(m_tree, m_widget);
 
@@ -123,7 +123,7 @@ void QuantaFilesTreePart::insertConfigWidget(const KDialog *dlg, QWidget *page, 
     }
 }
 
-void QuantaFilesTreePart::contextMenu(QMenu */*popup*/, const Context */*context*/)
+void QuantaFilesTreePart::contextMenu(QMenu */*popup*/, const Koncrete::Context */*context*/)
 {
 // put actions into the context menu here
 /*    if (context->hasType(Context::EditorContext))

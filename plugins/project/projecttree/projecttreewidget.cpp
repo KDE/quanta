@@ -32,7 +32,7 @@
 
 
 ProjectTreeWidget::ProjectTreeWidget(ProjectTreePart *part)
-  : QWidget(KDevCore::mainWindow()), m_part(part)
+  : QWidget(Koncrete::Core::mainWindow()), m_part(part)
 {
   m_tree = new ProjectTreeView(part, this);
 
@@ -43,10 +43,10 @@ ProjectTreeWidget::ProjectTreeWidget(ProjectTreePart *part)
   
   l->addWidget(m_tree); 
   
-  connect(KDevCore::projectController(), SIGNAL(projectOpened()), m_tree, SLOT(slotProjectOpened()));
+  connect(Koncrete::Core::projectController(), SIGNAL(projectOpened()), m_tree, SLOT(slotProjectOpened()));
   connect(part, SIGNAL(saveProject()), m_tree, SLOT(slotProjectClosed()));
   
-  connect(KDevCore::documentController(), SIGNAL(activePartChanged(KParts::Part *)), m_tree, SLOT(slotActivePartChanged(KParts::Part *)));
+  connect(Koncrete::Core::documentController(), SIGNAL(activePartChanged(KParts::Part *)), m_tree, SLOT(slotActivePartChanged(KParts::Part *)));
 
 }
 

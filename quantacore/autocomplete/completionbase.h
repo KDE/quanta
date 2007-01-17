@@ -29,7 +29,7 @@ class SpecialAreaGroupCompletion;
 class SpecialAreaTagCompletion;
 struct DTDStruct;
 
-class KDevPlugin;
+namespace Koncrete { class Plugin; }
 
 /**
 Base class for the auto and manual completion handling classes.
@@ -84,7 +84,7 @@ public:
     * @param plugin the class is used in this plugin
     * @return pointer to the completion object (of a ScriptCompletion or XmlCompletion class type). Null if the completion object cannot be used at the current position.
     */
-  static CompletionBase* getCompletionObject(ParseResult *base, EditorSource *source, const QPoint& position, Node* currentNode, CompletionType type, CompletionMode mode, KDevPlugin *plugin);
+  static CompletionBase* getCompletionObject(ParseResult *base, EditorSource *source, const QPoint& position, Node* currentNode, CompletionType type, CompletionMode mode, Koncrete::Plugin *plugin);
 
   /**
    * Returns a list with the completion entries. Must be reimplemented.
@@ -126,7 +126,7 @@ protected:
    * @param node the node
    * @param plugin the class is used in this plugin
   */
-  void init(ParseResult *base, EditorSource *source, const QPoint& position, Node *currentNode, KDevPlugin *plugin);
+  void init(ParseResult *base, EditorSource *source, const QPoint& position, Node *currentNode, Koncrete::Plugin *plugin);
 
   /**
    * Checks if the completion object is valid for the current position and completion mode. Must be reimplemented.
@@ -142,7 +142,7 @@ protected:
   QPoint m_position;
   QString m_lastInsertedString;
   const DTDStruct *m_dtd; ///<the DTD of the area where the completion happens
-  KDevPlugin *m_plugin; ///<the plugin where this completion object is used
+  Koncrete::Plugin *m_plugin; ///<the plugin where this completion object is used
 
 private:
   static XmlTagCompletion *m_xmlTagCompletion;

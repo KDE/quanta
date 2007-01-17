@@ -27,8 +27,8 @@ class ConfigWidgetProxy;
 class KDialog;
 class FileContext;
 class KMenu;
-class Context;
-class KDevDocument;
+namespace Koncrete { class Context; }
+namespace Koncrete { class Document; }
 
 /**
 @author Andras Mantia
@@ -76,13 +76,13 @@ private slots:
 
   void init();
   
-  void contextMenu(KMenu *popup, const Context *context);
+  void contextMenu(KMenu *popup, const Koncrete::Context *context);
   
   /**
     * Called when a file was loaded into the application.
     * @param url The url pointing to the file
     */
-  void slotFileLoaded(KDevDocument* document);
+  void slotFileLoaded(Koncrete::Document* document);
 
   void slotStartParsing(const EditorSource *source);
   
@@ -105,19 +105,19 @@ private slots:
    * emits @see finishedParsing when the new part is known
    * @param newPart 
    */
-  void slotDocumentActivated(KDevDocument *document);
+  void slotDocumentActivated(Koncrete::Document *document);
   
   /**
    * removes the pointer to this @see QuantaDoc from @see m_documents
    * @param url 
    */
-  void slotClosedFile(KDevDocument* document);
+  void slotClosedFile(Koncrete::Document* document);
 
   /**
    * adjusts the url in @see m_documents if a part changed it
    * @param part 
    */
-  void slotPartURLChanged(KDevDocument* document, const KUrl &oldUrl, const KUrl &newUrl);
+  void slotPartURLChanged(Koncrete::Document* document, const KUrl &oldUrl, const KUrl &newUrl);
   
   /**
    * insert a tag from a file context

@@ -15,7 +15,7 @@
 #include <qwidget.h>
 #include <QString>
 
-class KDevProject;
+namespace Koncrete { class Project; }
 class ProjectTreePart;
 class ProjectTreeView;
 

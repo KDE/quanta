@@ -15,7 +15,7 @@
 #include <qwidget.h>
 #include <QString>
 
-class KDevProject;
+namespace Koncrete { class Project; }
 class TemplatesTreePart;
 
 class TemplatesTreeWidget: public QWidget

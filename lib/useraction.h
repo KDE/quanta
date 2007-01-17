@@ -24,7 +24,7 @@
 #include <ktoggleaction.h>
 
 
-class KDevPlugin;
+namespace Koncrete { class Plugin; }
 class KProcess;
 class QFile;
 class QTimer;
@@ -50,7 +50,7 @@ public:
      * @param toggle If set to true, the class behaves like a KToggleAction;
      *               Else it behaves like a KAction. This avoids the multi-inheritance problem.
      */
-    UserAction(QDomElement *element, KDevPlugin *plugin, bool toggle = false);
+    UserAction(QDomElement *element, Koncrete::Plugin *plugin, bool toggle = false);
     virtual ~UserAction();
 
     QDomElement data() const { return tag; }
@@ -112,7 +112,7 @@ private:
     QTimer* timer;
     QDomElement tag;
     QFile* m_file;
-    KDevPlugin *m_plugin;
+    Koncrete::Plugin *m_plugin;
     QString m_inputFileName;
     QStringList m_argsList;
     uint m_killCount;

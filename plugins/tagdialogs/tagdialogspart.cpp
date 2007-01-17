@@ -42,8 +42,8 @@ TagDialogsPart::TagDialogsPart(QObject *parent, const QStringList &/*args*/)
 
     setupActions();
 
-    connect(KDevCore::mainWindow(), SIGNAL(contextMenu(QMenu *, const Context *)),
-        this, SLOT(slotContextMenu(QMenu *, const Context *)));
+    connect(Koncrete::Core::mainWindow(), SIGNAL(contextMenu(QMenu *, const Koncrete::Context *)),
+            this, SLOT(slotContextMenu(QMenu *, const Koncrete::Context *)));
 
 /*    m_configProxy = new ConfigWidgetProxy(core());
     m_configProxy->createGlobalConfigPage(i18n("Document Structure"), GLOBALDOC_OPTIONS, info()->icon());
@@ -64,14 +64,14 @@ TagDialogsPart::~TagDialogsPart()
 void TagDialogsPart::init()
 {
 // delayed initialization stuff goes here
-  m_qcore = KDevPluginController::self()->extension<QuantaCoreIf>("KDevelop/Quanta");
+  m_qcore = Koncrete::PluginController::self()->extension<QuantaCoreIf>("KDevelop/Quanta");
 
 }
 
-void TagDialogsPart::slotContextMenu(QMenu *popup, const Context *context)
+void TagDialogsPart::slotContextMenu(QMenu *popup, const Koncrete::Context *context)
 {
 // put actions into the context menu here
-    if (context->hasType(Context::EditorContext))
+  if (context->hasType(Koncrete::Context::EditorContext))
     {
         // editor context menu
 //         const EditorContext *econtext = static_cast<const EditorContext*>(context);

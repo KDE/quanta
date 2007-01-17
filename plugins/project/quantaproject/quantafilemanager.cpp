@@ -24,7 +24,7 @@
 
 
 QuantaFileManager::QuantaFileManager(KInstance* instance, QObject *parent) 
-  : KDevFileManager(instance, parent), m_baseItem(0L)
+  : Koncrete::FileManager(instance, parent), m_baseItem(0L)
 {
 }
 
@@ -32,29 +32,29 @@ QuantaFileManager::~QuantaFileManager()
 {
 }
    
-KDevProjectItem *QuantaFileManager::import(KDevProjectModel *model, const KUrl &base)
+Koncrete::ProjectItem *QuantaFileManager::import(Koncrete::ProjectModel *model, const KUrl &base)
 {
 //   if (m_baseItem)
 //     model->removeFolder(m_baseItem); 
-  m_baseItem = new KDevProjectFolderItem(base, 0);
+  m_baseItem = new Koncrete::ProjectFolderItem(base, 0);
   emit folderAdded(m_baseItem);
 //   model->appendItem(m_baseItem);  
   return m_baseItem;
 }
 
-QList<KDevProjectFolderItem *> QuantaFileManager::parse(KDevProjectFolderItem *base)
+QList<Koncrete::ProjectFolderItem *> QuantaFileManager::parse(Koncrete::ProjectFolderItem *base)
 {
   const QString prefix = "Item - ";
-  KConfig *projectConfig = KDevConfig::localProject();
+  KConfig *projectConfig = Koncrete::Config::localProject();
   QStringList groupList = projectConfig->groupList();
-  QMap<KUrl, KDevProjectFolderItem*> folderList;
+  QMap<KUrl, Koncrete::ProjectFolderItem*> folderList;
   KUrl baseUrl = base->url();
   folderList.insert(baseUrl, base);
-  KDevProject *prj = project();
+  Koncrete::Project *prj = project();
   QStack<KUrl> urlStack;
   QString relFileName;
   KUrl url, fileUrl;
-  KDevProjectFolderItem *parent;
+  Koncrete::ProjectFolderItem *parent;
 
   //Just for testing with more files
 //  KUrl::List urls = ExtFileInfo::allFiles(m_baseItem->url(), "*");
@@ -83,18 +83,18 @@ QList<KDevProjectFolderItem *> QuantaFileManager::parse(KDevProjectFolderItem *b
     // add new folders
     while (! urlStack.isEmpty())
     {
-      KDevProjectFolderItem *item = new KDevProjectFolderItem(urlStack.top(), parent);
+      Koncrete::ProjectFolderItem *item = new Koncrete::ProjectFolderItem(urlStack.top(), parent);
       parent->add(item);
       folderList.insert(urlStack.pop(), item);
       parent = item;
       emit folderAdded(item);
     }
     // add the file
-    KDevProjectFileItem *item = new KDevProjectFileItem(fileUrl, parent);
+    Koncrete::ProjectFileItem *item = new Koncrete::ProjectFileItem(fileUrl, parent);
     parent->add(item);
     emit fileAdded(item);
   }
-  return QList<KDevProjectFolderItem *>();
+  return QList<Koncrete::ProjectFolderItem *>();
 }
 
 

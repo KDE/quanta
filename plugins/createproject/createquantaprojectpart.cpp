@@ -62,7 +62,7 @@ K_EXPORT_COMPONENT_FACTORY( libkdevcreatequantaproject, CreateQuantaProjectFacto
 #define PROJECTDOC_OPTIONS 2
 
 CreateQuantaProjectPart::CreateQuantaProjectPart(QObject *parent, const QStringList &/*args*/)
-  : KDevPlugin(CreateQuantaProjectFactory::instance(), parent)
+  : Koncrete::Plugin(CreateQuantaProjectFactory::instance(), parent)
 {
   kDebug(24000) << "Quanta create project plugin loaded" << endl;
   setXMLFile("kdevcreatequantaproject.rc");
@@ -94,13 +94,13 @@ void CreateQuantaProjectPart::setupActions()
 
 void CreateQuantaProjectPart::slotCreateNewProject()
 {
-  QuantaCoreIf *qCore = KDevPluginController::self()->extension<QuantaCoreIf>("KDevelop/Quanta");
+  QuantaCoreIf *qCore = Koncrete::PluginController::self()->extension<QuantaCoreIf>("KDevelop/Quanta");
   if (!qCore)
   {
-    KMessageBox::error(KDevCore::mainWindow(), i18n("<qt>The <b>create new Quanta project</b> plugin requires the <b>Quanta core</b> plugin to be loaded."), i18n("Quanta core not loaded"));
+    KMessageBox::error(Koncrete::Core::mainWindow(), i18n("<qt>The <b>create new Quanta project</b> plugin requires the <b>Quanta core</b> plugin to be loaded."), i18n("Quanta core not loaded"));
     return;
   }
-  Q3Wizard *wizard = new Q3Wizard(KDevCore::mainWindow(), "new", true);
+  Q3Wizard *wizard = new Q3Wizard(Koncrete::Core::mainWindow(), "new", true);
   wizard->setWindowTitle(i18n("New Project Wizard"));
   wizard->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
   QStackedWidget *stack = new QStackedWidget(wizard);
@@ -158,15 +158,15 @@ void CreateQuantaProjectPart::slotCreateNewProject()
     domContent.replace("%{EMAIL}", firstPage->email());
     domContent.replace("%{VERSION}", "0.1");
     projectDom.setContent(domContent);
-    QDomElement el = DomUtil::createElementByPath(projectDom, "/project/templates");
+    QDomElement el = Koncrete::DomUtil::createElementByPath(projectDom, "/project/templates");
     el.setAttribute("url", secondPage->templates());
-    el = DomUtil::createElementByPath(projectDom, "/project/toolbars");
+    el = Koncrete::DomUtil::createElementByPath(projectDom, "/project/toolbars");
     el.setAttribute("url", secondPage->toolbars());
-    el = DomUtil::elementByPath(projectDom, "/project");
+    el = Koncrete::DomUtil::elementByPath(projectDom, "/project");
     el.setAttribute("name", firstPage->name());
     el.setAttribute("encoding", firstPage->encoding());
     el.setAttribute("defaultDTEP", firstPage->dtep());
-    el = DomUtil::elementByPath(projectDom, "/preview");
+    el = Koncrete::DomUtil::elementByPath(projectDom, "/preview");
     el.setAttribute("previewPrefixURL", secondPage->previewPrefix());
     el.setAttribute("usePreviewPrefix", secondPage->usePreviewPrefix());
 
@@ -181,8 +181,8 @@ void CreateQuantaProjectPart::slotCreateNewProject()
     str.flush();
     KUrl dest = baseURL;
     dest.addPath('/' + firstPage->fileName());
-    KIO::NetAccess::upload(tempFile.fileName(), dest, KDevCore::mainWindow());
-    KDevCore::projectController()->openProject(dest.path()); //FIXME: use the URL when it is supported by the framework
+    KIO::NetAccess::upload(tempFile.fileName(), dest, Koncrete::Core::mainWindow());
+    Koncrete::Core::projectController()->openProject(dest.path()); //FIXME: use the URL when it is supported by the framework
     QFile::remove(tempFile.fileName());
     if (secondPage->insertGlobalTemplates())
     {

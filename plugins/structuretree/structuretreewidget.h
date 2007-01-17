@@ -18,11 +18,11 @@
 #include <QList>
 //#include <QString>
 
-//class KDevProject;
+//namespace Koncrete { class Project; }
 class KMenu;
 class AreaStruct;
 struct ParseResult;
-class KDevPlugin;
+namespace Koncrete { class Plugin; }
 class KAction;
 class QuantaCoreIf;
 
@@ -42,7 +42,7 @@ class StructureTreeWidget: public K3ListView
 {
   Q_OBJECT
 public:  
-  StructureTreeWidget(KDevPlugin *plugin, QWidget *parent);
+  StructureTreeWidget(Koncrete::Plugin *plugin, QWidget *parent);
   ~StructureTreeWidget();
 
   /**
@@ -175,7 +175,7 @@ private:
   bool m_populated; ///< flag to indicate that the tree is fully populated
   const ParseResult * m_parseResult;
   QuantaCoreIf * m_qcore;
-  KDevPlugin *m_plugin;
+  Koncrete::Plugin *m_plugin;
   KAction * m_copyAction;
   KAction * m_cutAction;
   KAction * m_pasteAction;

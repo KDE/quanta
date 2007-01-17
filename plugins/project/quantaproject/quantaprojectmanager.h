@@ -24,14 +24,14 @@
 #include "kdevtreeview.h"
 
 class QuantaProjectPart;
-class KDevProjectModel;
-class KDevProjectFolderItem;
-class KDevProjectFileItem;
-class KDevProjectTargetItem;
-class KDevProjectItem;
+namespace Koncrete { class ProjectModel; }
+namespace Koncrete { class ProjectFolderItem; }
+namespace Koncrete { class ProjectFileItem; }
+namespace Koncrete { class ProjectTargetItem; }
+namespace Koncrete { class ProjectItem; }
 class KUrl;
 
-class QuantaProjectManager: public KDevTreeView
+class QuantaProjectManager: public Koncrete::TreeView
 {
   Q_OBJECT
 public:
@@ -39,17 +39,17 @@ public:
   virtual ~QuantaProjectManager();
 
   QuantaProjectPart *part() const;
-  KDevProjectModel *projectModel() const;
+  Koncrete::ProjectModel *projectModel() const;
 
-  KDevProjectFolderItem *currentFolderItem() const;
-  KDevProjectFileItem *currentFileItem() const;
-  KDevProjectTargetItem *currentTargetItem() const;
+  Koncrete::ProjectFolderItem *currentFolderItem() const;
+  Koncrete::ProjectFileItem *currentFileItem() const;
+  Koncrete::ProjectTargetItem *currentTargetItem() const;
 
   virtual void reset();
 
 signals:
   void activateURL(const KUrl &url);
-  void currentChanged(KDevProjectItem *item);
+  void currentChanged(Koncrete::ProjectItem *item);
 
 protected slots:
   void slotActivated(const QModelIndex &index);

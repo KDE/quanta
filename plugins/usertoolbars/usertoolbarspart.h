@@ -27,11 +27,11 @@ class QMenu;
 class KMenu;
 class KAction;
 class KRecentFilesAction;
-class KDevAppFrontend;
 class KDialog;
 class KTempDir;
 class KTemporaryFile;
-class Context;
+namespace Koncrete { class AppFrontend; }
+namespace Koncrete { class Context; }
 class ConfigWidgetProxy;
 
 class UserAction;
@@ -42,7 +42,7 @@ struct ToolbarEntry;
 /**
 Please read the README.dox file for more info about this part
 */
-class UserToolbarsPart: public KDevPlugin
+class UserToolbarsPart: public Koncrete::Plugin
 {
     Q_OBJECT
 public:
@@ -79,7 +79,7 @@ private slots:
     void init();
 
     void insertConfigWidget(const KDialog *dlg, QWidget *page, unsigned int pageNo);
-    void contextMenu(KMenu *popup, const Context *context);
+    void contextMenu(KMenu *popup, const Koncrete::Context *context);
     void projectOpened();
     void projectClosed();
     /**
@@ -251,7 +251,7 @@ private:
     bool m_separateToolbars; ///< if true, the toolbars are created as standalone toolbars, not as part of a tabwidget
     bool m_createActionsMenu; ///< if true a menu is created with the user actions, grouped by toolbars in submenus
     int m_actionsMenuId; ///< the id of the Actions menu in the menubar
-    KDevAppFrontend *m_outputPlugin;
+    Koncrete::AppFrontend *m_outputPlugin;
 };
 
 #endif

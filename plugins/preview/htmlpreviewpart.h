@@ -23,7 +23,7 @@
 class QMenu;
 class KAction;
 class KDialog;
-class Context;
+namespace Koncrete { class Context; }
 class ConfigWidgetProxy;
 
 namespace KTextEditor {
@@ -37,7 +37,7 @@ namespace KParts {
 /**
 Please read the README.dox file for more info about this part
 */
-class HTMLPreviewPart : public KDevPlugin
+class HTMLPreviewPart : public Koncrete::Plugin
 {
   Q_OBJECT
 public:
@@ -54,7 +54,7 @@ private slots:
   void init();
 
   void insertConfigWidget(const KDialog *dlg, QWidget *page, unsigned int pageNo);
-  void contextMenu(QMenu *popup, const Context *context);
+  void contextMenu(QMenu *popup, const Koncrete::Context *context);
   void projectOpened();
   void projectClosed();
 

@@ -27,53 +27,53 @@
     and the caller gets false as result.
 */
 
-class KDevPlugin;
+namespace Koncrete { class Plugin; }
 
 class KDEVQUANTA_EXPORT QuantaNetAccess
 {
 public:
 
-  static bool upload(const QString& src, const KUrl& target, KDevPlugin* plugin, bool confirm = true);
+  static bool upload(const QString& src, const KUrl& target, Koncrete::Plugin* plugin, bool confirm = true);
 
-  static bool copy( const KUrl & src, const KUrl & target, KDevPlugin* plugin, bool confirm = true )
+  static bool copy( const KUrl & src, const KUrl & target, Koncrete::Plugin* plugin, bool confirm = true )
   {
     return file_copy( src, target, -1, false /*not overwrite*/, false, plugin, confirm );
   }
 
   static bool file_copy( const KUrl& src, const KUrl& target, int permissions,
-                         bool overwrite, bool resume, KDevPlugin* plugin, bool confirm = true );
+                         bool overwrite, bool resume, Koncrete::Plugin* plugin, bool confirm = true );
 
   static bool file_move( const KUrl& src, const KUrl& target, int permissions,
-                         bool overwrite, bool resume, KDevPlugin* plugin, bool confirm = true );
+                         bool overwrite, bool resume, Koncrete::Plugin* plugin, bool confirm = true );
 
-  static bool dircopy( const KUrl & src, const KUrl & target, KDevPlugin* plugin, bool confirm = true )
+  static bool dircopy( const KUrl & src, const KUrl & target, Koncrete::Plugin* plugin, bool confirm = true )
   {
     KUrl::List srcList;
     srcList.append( src );
     return dircopy( srcList, target, plugin, confirm );
   };
 
-  static bool dircopy( const KUrl::List & srcList, const KUrl & target, KDevPlugin* plugin, bool confirm = true );
+  static bool dircopy( const KUrl::List & srcList, const KUrl & target, Koncrete::Plugin* plugin, bool confirm = true );
 
-  static bool move( const KUrl& src, const KUrl& target, KDevPlugin* plugin, bool confirm = true )
+  static bool move( const KUrl& src, const KUrl& target, Koncrete::Plugin* plugin, bool confirm = true )
   {
     KUrl::List srcList;
     srcList.append( src );
     return move( srcList, target, plugin, confirm );
   }
 
-  static bool move( const KUrl::List& srcList, const KUrl& target, KDevPlugin* plugin, bool confirm = true );
+  static bool move( const KUrl::List& srcList, const KUrl& target, Koncrete::Plugin* plugin, bool confirm = true );
 
-  static bool del( const KUrl & url, KDevPlugin* plugin, QWidget* window, bool confirm = true );
+  static bool del( const KUrl & url, Koncrete::Plugin* plugin, QWidget* window, bool confirm = true );
 
-  static bool mkdir( const KUrl & url, KDevPlugin* plugin, int permissions, bool confirm = true );
+  static bool mkdir( const KUrl & url, Koncrete::Plugin* plugin, int permissions, bool confirm = true );
 
 private:
-  static void checkProjectInsert(const KUrl& source, const KUrl& target, KDevPlugin* plugin, bool confirm = true);
+  static void checkProjectInsert(const KUrl& source, const KUrl& target, Koncrete::Plugin* plugin, bool confirm = true);
 
-  static bool checkProjectRemove(const KUrl& target, KDevPlugin* plugin, bool confirm = true, bool remove = true);
+  static bool checkProjectRemove(const KUrl& target, Koncrete::Plugin* plugin, bool confirm = true, bool remove = true);
 
-  static bool checkProjectDel(const KUrl& target, KDevPlugin* plugin, QWidget* window, bool confirm = true);
+  static bool checkProjectDel(const KUrl& target, Koncrete::Plugin* plugin, QWidget* window, bool confirm = true);
 
   static KUrl adjustURL(const KUrl &url);
 

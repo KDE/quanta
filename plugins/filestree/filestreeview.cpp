@@ -46,7 +46,7 @@ FilesTreeView::FilesTreeView(QuantaFilesTreePart *part, QWidget *parent)
   setShowToolTips(Settings::self()->filesTreeTooltips());
   setSaveOpenFolder(Settings::self()->filesTreeSave());
 
-  m_config = KDevConfig::standard();
+  m_config = Koncrete::Config::standard();
 
   addColumn(i18n("Files Tree"), -1);
   addColumn("");
@@ -167,8 +167,8 @@ void FilesTreeView::folderMenu(const QPoint &point)
   KUrl menuURL(currentKFileTreeViewItem()->url());
   menuURL.adjustPath(KUrl::AddTrailingSlash);
   KUrl::List urlList(menuURL);
-  FileContext context(urlList);
-  KDevCore::mainWindow()->fillContextMenu(&popup, &context);
+  Koncrete::FileContext context(urlList);
+  Koncrete::Core::mainWindow()->fillContextMenu(&popup, &context);
 
   popup.exec(point);
 }
@@ -193,8 +193,8 @@ void FilesTreeView::fileMenu(const QPoint &point)
 
   // ask other plugins for menu entries
   KUrl::List urlList(currentKFileTreeViewItem()->url());
-  FileContext context(urlList);
-  KDevCore::mainWindow()->fillContextMenu(&popup, &context);
+  Koncrete::FileContext context(urlList);
+  Koncrete::Core::mainWindow()->fillContextMenu(&popup, &context);
 
   popup.exec(point);
 }

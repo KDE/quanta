@@ -26,8 +26,8 @@
 
 class FileInfoDlg;
 class ProjectList;
-class KDevPlugin;
-class KDevProject;
+namespace Koncrete { class Plugin; }
+namespace Koncrete { class Project; }
 namespace KParts{
   class Part;
 }
@@ -61,17 +61,17 @@ class ProjectTreeBranch : public BaseTreeBranch
 {
 
 public:
-  ProjectTreeBranch(KDevProject * project, BaseTreeView *parent, const KUrl& url,
+  ProjectTreeBranch(Koncrete::Project * project, BaseTreeView *parent, const KUrl& url,
                     const QString& name, const QPixmap& pix,
                     bool showHidden = false, KFileTreeViewItem *branchRoot = 0L);
 
   /** check for CVS and visible*/
   virtual KFileTreeViewItem* createTreeViewItem(KFileTreeViewItem *parent, KFileItem *fileItem );
 
-  KDevProject * project() {return m_project;}
+  Koncrete::Project * project() {return m_project;}
   
   private:
-    KDevProject * m_project;
+    Koncrete::Project * m_project;
 };
 
 
@@ -82,7 +82,7 @@ class ProjectTreeView : public BaseTreeView
 
 public:
 
-  ProjectTreeView(KDevPlugin * plugin, QWidget *parent);
+  ProjectTreeView(Koncrete::Plugin * plugin, QWidget *parent);
 
   virtual ~ProjectTreeView();
   
@@ -163,8 +163,8 @@ private:
 
   ProjectTreeBranch *m_projectDir;
   ProjectList *m_projectFiles;
-  KDevPlugin * m_plugin;
-  KDevProject * m_quantaProject;
+  Koncrete::Plugin * m_plugin;
+  Koncrete::Project * m_quantaProject;
   static const QString & m_attrDesc;
   static const QString & m_attrOpen;
 };

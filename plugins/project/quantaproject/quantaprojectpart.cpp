@@ -47,13 +47,13 @@ K_EXPORT_COMPONENT_FACTORY( libkdevquantaproject, QuantaProjectFactory("kdevquan
 #define PROJECTDOC_OPTIONS 2
 
 QuantaProjectPart::QuantaProjectPart( QObject *parent, const QStringList & /*args*/ )
-  : KDevPlugin(QuantaProjectFactory::instance(), parent)
+  : Koncrete::Plugin(QuantaProjectFactory::instance(), parent)
 {
   kDebug( 24000 ) << "QuantaProjectPart loaded" << endl;
   setXMLFile( "kdevquantaproject.rc" );
   
 //   m_workspace = 0;
-  m_projectModel = new KDevProjectModel(this);
+  m_projectModel = new Koncrete::ProjectModel(this);
   
   m_browserMenu = 0L;
 
@@ -76,12 +76,12 @@ QuantaProjectPart::QuantaProjectPart( QObject *parent, const QStringList & /*arg
            this, SLOT( insertConfigWidget( const KDialog*, QWidget*, unsigned int ) ) );
   */
   connect( manager, SIGNAL( activateURL( const KUrl & ) ),
-           KDevCore::documentController(), SLOT( editDocument( const KUrl & ) ) );
-  connect( KDevCore::mainWindow(), SIGNAL( contextMenu( KMenu *, const Context * ) ),
+           Koncrete::Core::documentController(), SLOT( editDocument( const KUrl & ) ) );
+  connect( Koncrete::Core::mainWindow(), SIGNAL( contextMenu( KMenu *, const Context * ) ),
            this, SLOT( contextMenu( KMenu *, const Context * ) ) );
 
   QuantaFileManager *qFileManager = new QuantaFileManager(this->instance(), this);
-  KDevCore::activeProject()->setFileManager(qFileManager);
+  Koncrete::Core::activeProject()->setFileManager(qFileManager);
 
   QTimer::singleShot( 0, this, SLOT( init() ) );
 }
@@ -135,10 +135,10 @@ void QuantaProjectPart::insertConfigWidget( const KDialog *dlg, QWidget *page, u
   }
 }
 
-void QuantaProjectPart::contextMenu( KMenu *popup, const Context *context )
+void QuantaProjectPart::contextMenu( KMenu *popup, const Koncrete::Context *context )
 {
   // put actions into the context menu here
-  if ( context->hasType( Context::EditorContext ) )
+  if ( context->hasType( Koncrete::Context::EditorContext ) )
   {
     // editor context menu
 //     const EditorContext * econtext = static_cast<const EditorContext*>( context );
@@ -152,16 +152,16 @@ void QuantaProjectPart::contextMenu( KMenu *popup, const Context *context )
     //     this, SLOT(doSomething()) );
     // popup->setWhatsThis(id, i18n("<b>Do something here</b><p>Describe here what does this action do."
   }
-  else if ( context->hasType( Context::FileContext ) )
+  else if ( context->hasType( Koncrete::Context::FileContext ) )
   {
     // file context menu
-    const FileContext * fcontext = static_cast<const FileContext*>( context );
+    const Koncrete::FileContext * fcontext = static_cast<const Koncrete::FileContext*>( context );
     m_fileContextURLs = fcontext->urls();
     bool isInProject = true;
     KUrl::List::ConstIterator end = m_fileContextURLs.constEnd();
     for (KUrl::List::ConstIterator it = m_fileContextURLs.constBegin(); it != end; ++it)
     {
-      if (!KDevCore::activeProject()->inProject(*it))
+      if (!Koncrete::Core::activeProject()->inProject(*it))
       {
         isInProject = false; //at least one of the files is outside of the project
         break;
@@ -180,14 +180,14 @@ void QuantaProjectPart::contextMenu( KMenu *popup, const Context *context )
 
     //use context and plug actions here
   }
-  else if ( context->hasType( Context::ProjectItemContext ) )
+  else if ( context->hasType( Koncrete::Context::ProjectItemContext ) )
   {
     // project tree context menu
 //     const ProjectItemContext * pcontext = static_cast<const ProjectItemContext*>( context );
 
     // use context and plug actions here
   }
-  else if ( context->hasType( Context::CodeItemContext ) )
+  else if ( context->hasType( Koncrete::Context::CodeItemContext ) )
   {
     // class tree context menu
 //     const CodeItemContext * mcontext = static_cast<const CodeItemContext*>( context );
@@ -219,8 +219,8 @@ void QuantaProjectPart::openProject( const KUrl &dirName, const QString &project
 
   kDebug(24000) << "dirName: " << dirName << " projectName: " << projectName << " baseUrl:" << m_projectBase << endl;
   
-  KDevFileManager *manager = KDevCore::activeProject()->fileManager();
-  KDevProjectFolderItem *baseItem = static_cast<KDevProjectFolderItem *>(manager->import(m_projectModel, m_projectBase));
+  Koncrete::FileManager *manager = Koncrete::Core::activeProject()->fileManager();
+  Koncrete::ProjectFolderItem *baseItem = static_cast<Koncrete::ProjectFolderItem *>(manager->import(m_projectModel, m_projectBase));
   manager->parse(baseItem);
 
   //FIXME: there is no projectDom anymore!!
@@ -242,8 +242,8 @@ void QuantaProjectPart::openProject( const KUrl &dirName, const QString &project
 }*/
 
 /* //Only for testing
-  QList<KDevProjectFileItem*> fileList = recurseFiles(baseItem);
-  QListIterator<KDevProjectFileItem*> it(fileList);
+  QList<Koncrete::ProjectFileItem*> fileList = recurseFiles(baseItem);
+  QListIterator<Koncrete::ProjectFileItem*> it(fileList);
   while (it.hasNext())
   {
     KUrl url = it.next()->url();
@@ -269,15 +269,15 @@ QStringList QuantaProjectPart::allFiles() const
   return m_files.keys();
 }
 
-QList<KDevProjectFileItem*> QuantaProjectPart::allFiles()
+QList<Koncrete::ProjectFileItem*> QuantaProjectPart::allFiles()
 {
-  return recurseFiles(KDevCore::activeProject()->fileManager()->top());
+  return recurseFiles(Koncrete::Core::activeProject()->fileManager()->top());
 }
 
 void QuantaProjectPart::addFiles( const QStringList &fileList )
 {
   kDebug(24000) << "Files added to project: " << fileList << endl;
-  QDomElement itemsElement = DomUtil::elementByPath(*m_projectDom, "/project/items");
+  QDomElement itemsElement = Koncrete::DomUtil::elementByPath(*m_projectDom, "/project/items");
   QDomElement el;
   QStringList::ConstIterator end = fileList.constEnd();
   for (QStringList::ConstIterator it = fileList.constBegin(); it != end; ++it)
@@ -340,13 +340,13 @@ QStringList QuantaProjectPart::removeItems(const QStringList &items)
 
 void QuantaProjectPart::slotInsertFiles()
 {
-  KUrl::List urls = KFileDialog::getOpenUrls(m_projectBase, i18n("*"), KDevCore::mainWindow(), i18n("Insert Files in Project"));
+  KUrl::List urls = KFileDialog::getOpenUrls(m_projectBase, i18n("*"), Koncrete::Core::mainWindow(), i18n("Insert Files in Project"));
 
   if (!urls.isEmpty())
   {
     if (!m_projectBase.isParentOf(urls.first()))
     {
-      KUrlRequesterDialog urlRequesterDlg(m_projectBase.pathOrUrl(), KDevCore::mainWindow());
+      KUrlRequesterDialog urlRequesterDlg(m_projectBase.pathOrUrl(), Koncrete::Core::mainWindow());
       urlRequesterDlg.setWindowTitle(i18n("Copy Files to Project"));
       urlRequesterDlg.urlRequester()->setMode(KFile::Directory | KFile::ExistingOnly);
       urlRequesterDlg.exec();
@@ -382,13 +382,13 @@ void QuantaProjectPart::slotInsertFiles()
 void QuantaProjectPart::slotInsertFolder()
 {
   KUrl url = KUrl();
-  url = KFileDialog::getExistingUrl(m_projectBase, KDevCore::mainWindow(), i18n("Insert Folder in Project"));
+  url = KFileDialog::getExistingUrl(m_projectBase, Koncrete::Core::mainWindow(), i18n("Insert Folder in Project"));
 
   if (!url.isEmpty())
   {
     if (!m_projectBase.isParentOf(url))
     {
-      KUrlRequesterDialog urlRequesterDlg(m_projectBase.pathOrUrl(), KDevCore::mainWindow());
+      KUrlRequesterDialog urlRequesterDlg(m_projectBase.pathOrUrl(), Koncrete::Core::mainWindow());
       urlRequesterDlg.setWindowTitle(i18n("%1: Copy to Project", url.pathOrUrl()));
       urlRequesterDlg.urlRequester()->setMode(KFile::Directory | KFile::ExistingOnly);
       urlRequesterDlg.exec();
@@ -454,27 +454,27 @@ QString QuantaProjectPart::relativeProjectFile(const QString &absPath)
   return result;
 }
 
-QList<KDevProjectFileItem*> QuantaProjectPart::recurseFiles(KDevProjectItem *item)
+QList<Koncrete::ProjectFileItem*> QuantaProjectPart::recurseFiles(Koncrete::ProjectItem *item)
 {
-  QList<KDevProjectFileItem*> files;
+  QList<Koncrete::ProjectFileItem*> files;
 
-  if (KDevProjectFolderItem *folder = item->folder())
+  if (Koncrete::ProjectFolderItem *folder = item->folder())
   {
-    QList<KDevProjectFolderItem*> folder_list = folder->folderList();
-    for (QList<KDevProjectFolderItem*>::Iterator it = folder_list.begin(); it != folder_list.end(); ++it)
+    QList<Koncrete::ProjectFolderItem*> folder_list = folder->folderList();
+    for (QList<Koncrete::ProjectFolderItem*>::Iterator it = folder_list.begin(); it != folder_list.end(); ++it)
       files += recurseFiles((*it));
 
-    QList<KDevProjectFileItem*> file_list = folder->fileList();
-    for (QList<KDevProjectFileItem*>::Iterator it = file_list.begin(); it != file_list.end(); ++it)
+    QList<Koncrete::ProjectFileItem*> file_list = folder->fileList();
+    for (QList<Koncrete::ProjectFileItem*>::Iterator it = file_list.begin(); it != file_list.end(); ++it)
       files += recurseFiles((*it));
   }
-  else if (KDevProjectTargetItem *target = item->target())
+  else if (Koncrete::ProjectTargetItem *target = item->target())
   {
-    QList<KDevProjectFileItem*> file_list = target->fileList();
-    for (QList<KDevProjectFileItem*>::Iterator it = file_list.begin(); it != file_list.end(); ++it)
+    QList<Koncrete::ProjectFileItem*> file_list = target->fileList();
+    for (QList<Koncrete::ProjectFileItem*>::Iterator it = file_list.begin(); it != file_list.end(); ++it)
       files += recurseFiles((*it));
   }
-  else if (KDevProjectFileItem *file = item->file())
+  else if (Koncrete::ProjectFileItem *file = item->file())
   {
     files.append(file);
   }

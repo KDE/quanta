@@ -28,15 +28,15 @@ class QAction;
 class KMenu;
 class KAction;
 class KDialog;
-class Context;
+namespace Koncrete { class Context; }
 class ConfigWidgetProxy;
-class KDevProjectModel;
-class KDevProjectItem;
+namespace Koncrete { class ProjectModel; }
+namespace Koncrete { class ProjectItem; }
 
 /**
 Please read the README.dox file for more info about this part
 */
-class QuantaProjectPart: public KDevPlugin
+class QuantaProjectPart: public Koncrete::Plugin
 {
     Q_OBJECT
 public:
@@ -59,7 +59,7 @@ public:
     virtual void openProject(const KUrl &dirName, const QString &projectName);
     virtual QString projectName() const {return m_projectName;}
     virtual QStringList allFiles () const;
-    virtual QList<KDevProjectFileItem*> allFiles();
+    virtual QList<Koncrete::ProjectFileItem*> allFiles();
     virtual void addFiles (const QStringList &fileList);
 
     virtual void addFile (const QString &fileName) {addFiles(QStringList(fileName));}
@@ -89,7 +89,7 @@ private slots:
     void init();
 
     void insertConfigWidget(const KDialog *dlg, QWidget *page, unsigned int pageNo);
-    void contextMenu(KMenu *popup, const Context *context);
+    void contextMenu(KMenu *popup, const Koncrete::Context *context);
 
     void slotInsertFiles();
     void slotInsertFolder();
@@ -98,7 +98,7 @@ private slots:
 private:
     void setupActions();
     QStringList removeItems(const QStringList &item);
-    QList<KDevProjectFileItem*> recurseFiles(KDevProjectItem *item);
+    QList<Koncrete::ProjectFileItem*> recurseFiles(Koncrete::ProjectItem *item);
 
     QuantaProjectManager *m_widget;
     ConfigWidgetProxy *m_configProxy;
@@ -111,8 +111,8 @@ private:
     KUrl::List m_fileContextURLs;
     BrowserPopupMenu *m_browserMenu;
     QDomElement m_projectDomElement;
-    KDevProjectModel *m_projectModel;
-//     KDevProjectFolderItem *m_workspace;
+    Koncrete::ProjectModel *m_projectModel;
+//     Koncrete::ProjectFolderItem *m_workspace;
 
 };
 

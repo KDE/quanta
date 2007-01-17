@@ -27,7 +27,7 @@ class QDomDocument;
 class QMenu;
 
 class KAction;
-class KDevPlugin;
+namespace Koncrete { class Plugin; }
 class KMenu;
 class KShortcut;
 class KXMLGUIClient;
@@ -61,14 +61,14 @@ public:
   /**
    * Constructs the dialog.
    * @param toolbarList a list with the currently loaded user toolbars
-   * @param parent the parent of the dialog (a KDevPlugin)
+   * @param parent the parent of the dialog (a Koncrete::Plugin)
    * @param name name of the dialog object
    * @param modal true if the dialog should be modal
    * @param fl window flags
    * @param defaultAction the name of the action which should be selected by default
    * @return 
    */
-  ActionConfigDialog(const QHash<QString, ToolbarEntry*> &toolbarList, KDevPlugin* parent, bool modal = true, Qt::WFlags fl = 0 , const QString& defaultAction = QString::null);
+  ActionConfigDialog(const QHash<QString, ToolbarEntry*> &toolbarList, Koncrete::Plugin* parent, bool modal = true, Qt::WFlags fl = 0 , const QString& defaultAction = QString::null);
   ~ActionConfigDialog();
   /**
    * Autmatically creates a script action
@@ -181,7 +181,7 @@ private:
   Q3ListViewItem *allActionsItem; ///< the ALL item in the treeview
   QMap<QString, QString> globalShortcuts; ///< list with the global KDE shortcuts
   KShortcut selectedShortcut; 
-  KDevPlugin *m_plugin; ///< the parent plugin object
+  Koncrete::Plugin *m_plugin; ///< the parent plugin object
   QHash<QString, ToolbarEntry*> m_toolbarList; ///< list of currently loaded user toolbars
   Q3ListViewItem *m_toolbarItem; ///< the currently selected user toolbar item
 };

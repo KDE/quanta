@@ -16,7 +16,7 @@
 class SettingsWidget;
 class KDialog;
 
-class KDevQuantaExtension : public ShellExtension {
+class KDevQuantaExtension : public Koncrete::ShellExtension {
 public:
     static void init();
 

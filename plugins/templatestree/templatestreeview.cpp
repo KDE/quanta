@@ -280,8 +280,8 @@ void TemplatesTreeView::folderMenu(const QPoint &point)
   KUrl menuURL(currentKFileTreeViewItem()->url());
   menuURL.adjustPath(KUrl::AddTrailingSlash);
   KUrl::List urlList(menuURL);
-  FileContext context(urlList);
-  KDevCore::mainWindow()->fillContextMenu(&popup, &context);
+  Koncrete::FileContext context(urlList);
+  Koncrete::Core::mainWindow()->fillContextMenu(&popup, &context);
 
   popup.exec(point);
 }
@@ -328,8 +328,8 @@ void TemplatesTreeView::fileMenu(const QPoint &point)
 
   // ask other plugins for menu entries
   KUrl::List urlList(currentKFileTreeViewItem()->url());
-  FileContext context(urlList);
-  KDevCore::mainWindow()->fillContextMenu(&popup, &context);
+  Koncrete::FileContext context(urlList);
+  Koncrete::Core::mainWindow()->fillContextMenu(&popup, &context);
 
   popup.exec(point);
 }
@@ -838,8 +838,8 @@ void TemplatesTreeView::slotDragInsert(QDropEvent *e)
 
 void TemplatesTreeView::slotProjectOpened()
 {
-  m_projectName = KDevCore::activeProject()->name();
-  m_projectBaseURL = KDevCore::activeProject()->folder();
+  m_projectName = Koncrete::Core::activeProject()->name();
+  m_projectBaseURL = Koncrete::Core::activeProject()->folder();
 
   if (m_projectDir)
     removeBranch(m_projectDir);

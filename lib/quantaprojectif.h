@@ -21,11 +21,11 @@
 class QDomElement;
 class KUrl;
 /**
-Extension of the KDevProject interface for our needs, especially to work with remote projects and files.
+Extension of the Koncrete::Project interface for our needs, especially to work with remote projects and files.
 
 	@author Andras Mantia <amantia@kde.org>
 */
-class KDEVQUANTA_EXPORT QuantaProjectIf : public KDevProject
+class KDEVQUANTA_EXPORT QuantaProjectIf : public Koncrete::Project
 {
 public:
   QuantaProjectIf(/*KInstance * info, */QObject *parent);

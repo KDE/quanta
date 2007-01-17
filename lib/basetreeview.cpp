@@ -258,8 +258,8 @@ void BaseTreeBranch::updateOpenFolder()
 //
 ////////////////////////////////////////////////////////////////////////////////////
 
-BaseTreeView::BaseTreeView(KDevPlugin *plugin, QWidget * parent)
-  : KFileTreeView(parent), fileInfoDlg(0), m_parent(parent), m_plugin(plugin), m_saveOpenFolder(false), m_partController(KDevCore::documentController())
+BaseTreeView::BaseTreeView(Koncrete::Plugin *plugin, QWidget * parent)
+  : KFileTreeView(parent), fileInfoDlg(0), m_parent(parent), m_plugin(plugin), m_saveOpenFolder(false), m_partController(Koncrete::Core::documentController())
 {
 //   setTreeStepSize(15);
   setRootIsDecorated(true);
@@ -493,7 +493,7 @@ void BaseTreeView::slotClose()
 {
   if (currentItem())
   {
-    KDevDocument * doc = m_partController->documentForUrl(currentUrl());
+    Koncrete::Document * doc = m_partController->documentForUrl(currentUrl());
     if (doc)
       doc->close();
   }
@@ -825,7 +825,7 @@ bool BaseTreeView::isPathInClipboard()
 }
 
 
-void BaseTreeView::slotDocumentClosed(KDevDocument* document)
+void BaseTreeView::slotDocumentClosed(Koncrete::Document* document)
 {
   if (!isVisible())
     return;

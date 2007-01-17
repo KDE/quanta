@@ -18,14 +18,14 @@
 #include <QList>
 //#include <QString>
 
-//class KDevProject;
+//namespace Koncrete { class Project; }
 class KMenu;
 class AreaStruct;
 struct ParseResult;
 struct DTDStruct;
 struct GroupStorage;
-class KDevPlugin;
-class KDevDocumentController;
+namespace Koncrete { class Plugin; }
+namespace Koncrete { class DocumentController; }
 class QuantaCoreIf;
 class KAction;
 
@@ -42,7 +42,7 @@ class GroupsWidget: public K3ListView
 {
   Q_OBJECT
 public:  
-  GroupsWidget(KDevPlugin *plugin, QWidget *parent);
+  GroupsWidget(Koncrete::Plugin *plugin, QWidget *parent);
   ~GroupsWidget();
 
 public slots:
@@ -164,8 +164,8 @@ private:
   KMenu * m_dtdMenu;
   bool m_dirty;
   const ParseResult * m_parseResult;
-  KDevPlugin * m_plugin;
-  KDevDocumentController * m_partController;
+  Koncrete::Plugin * m_plugin;
+  Koncrete::DocumentController * m_partController;
   int openFileMenuId;
   QuantaCoreIf * m_qcore;
   

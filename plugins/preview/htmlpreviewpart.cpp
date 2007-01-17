@@ -47,7 +47,7 @@ K_EXPORT_COMPONENT_FACTORY( libkdevhtmlpreview, HTMLPreviewFactory("kdevhtmlprev
 #define PROJECTDOC_OPTIONS 2
 
 HTMLPreviewPart::HTMLPreviewPart(QObject *parent, const QStringList &/*args*/)
-  : KDevPlugin(HTMLPreviewFactory::instance(), parent), m_activeEditor(0), m_partmanager(0)
+  : Koncrete::Plugin(HTMLPreviewFactory::instance(), parent), m_activeEditor(0), m_partmanager(0)
 {
   setXMLFile("kdevhtmlpreview.rc");
 
@@ -69,12 +69,12 @@ HTMLPreviewPart::HTMLPreviewPart(QObject *parent, const QStringList &/*args*/)
   connect(m_configProxy, SIGNAL(insertConfigWidget(const KDialog*, QWidget*, unsigned int )),
           this, SLOT(insertConfigWidget(const KDialog*, QWidget*, unsigned int)));
 */
-  connect(KDevCore::mainWindow(), SIGNAL(contextMenu(QMenu *, const Context *)),
-          this, SLOT(contextMenu(QMenu *, const Context *)));
-  connect(KDevCore::projectController(), SIGNAL(projectOpened()), this, SLOT(projectOpened()));
-  connect(KDevCore::projectController(), SIGNAL(projectClosed()), this, SLOT(projectClosed()));
+  connect(Koncrete::Core::mainWindow(), SIGNAL(contextMenu(QMenu *, const Koncrete::Context *)),
+          this, SLOT(contextMenu(QMenu *, const Koncrete::Context *)));
+  connect(Koncrete::Core::projectController(), SIGNAL(projectOpened()), this, SLOT(projectOpened()));
+  connect(Koncrete::Core::projectController(), SIGNAL(projectClosed()), this, SLOT(projectClosed()));
 
-  connect(KDevCore::documentController(), SIGNAL(activePartChanged(KParts::Part *)), this, SLOT(slotActivePartChanged(KParts::Part *)));
+  connect(Koncrete::Core::documentController(), SIGNAL(activePartChanged(KParts::Part *)), this, SLOT(slotActivePartChanged(KParts::Part *)));
 
   QTimer::singleShot(0, this, SLOT(init()));
 }
@@ -133,10 +133,10 @@ void HTMLPreviewPart::insertConfigWidget(const KDialog *dlg, QWidget *page, unsi
   }
 }
 
-void HTMLPreviewPart::contextMenu(QMenu */*popup*/, const Context *context)
+void HTMLPreviewPart::contextMenu(QMenu */*popup*/, const Koncrete::Context *context)
 {
   // put actions into the context menu here
-  if (context->hasType(Context::EditorContext))
+  if (context->hasType(Koncrete::Context::EditorContext))
   {
     // editor context menu
 //     const EditorContext *econtext = static_cast<const EditorContext*>(context);
@@ -150,21 +150,21 @@ void HTMLPreviewPart::contextMenu(QMenu */*popup*/, const Context *context)
     //     this, SLOT(doSomething()) );
     // popup->setWhatsThis(id, i18n("<b>Do something here</b><p>Describe here what does this action do."
   }
-  else if (context->hasType(Context::FileContext))
+  else if (context->hasType(Koncrete::Context::FileContext))
   {
     // file context menu
 //     const FileContext *fcontext = static_cast<const FileContext*>(context);
 
     //use context and plug actions here
   }
-  else if (context->hasType(Context::ProjectItemContext))
+  else if (context->hasType(Koncrete::Context::ProjectItemContext))
   {
     // project tree context menu
 //     const ProjectItemContext *pcontext = static_cast<const ProjectItemContext*>(context);
 
     // use context and plug actions here
   }
-  else if (context->hasType(Context::CodeItemContext))
+  else if (context->hasType(Koncrete::Context::CodeItemContext))
   {
     // class tree context menu
 //     const CodeItemContext *mcontext = static_cast<const CodeItemContext*>(context);

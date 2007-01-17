@@ -14,7 +14,7 @@
 #include "quantacoreif.h"
 
 QuantaCoreIf::QuantaCoreIf(KInstance * info, QObject *parent)
-  : KDevPlugin(info, parent)
+  : Koncrete::Plugin(info, parent)
 {
 }
 

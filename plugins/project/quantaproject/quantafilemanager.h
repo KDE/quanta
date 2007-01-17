@@ -13,7 +13,7 @@
 
 #include <kdevfilemanager.h>
 
-class QuantaFileManager: public KDevFileManager
+class QuantaFileManager: public Koncrete::FileManager
 {
   Q_OBJECT
       
@@ -21,45 +21,45 @@ public:
   explicit QuantaFileManager(KInstance* instance, QObject *parent);
   ~QuantaFileManager();
   /**
-   * Imports the base into the model. Creates a KDevProjectFolderItem for the base
-   * and appends it to the KDevProjectModel passed as the argument
-   * @param model the KDevProjectModel to insert the created item
+   * Imports the base into the model. Creates a Koncrete::ProjectFolderItem for the base
+   * and appends it to the Koncrete::ProjectModel passed as the argument
+   * @param model the Koncrete::ProjectModel to insert the created item
    * @param base the base URL to import (points to a directory)
    * @return the item created for base and inserted into the model
    */
-  virtual KDevProjectItem *import(KDevProjectModel *model, const KUrl &base);
+  virtual Koncrete::ProjectItem *import(Koncrete::ProjectModel *model, const KUrl &base);
 
   /**
    * Parses the project file for the files and folders and builds the internal tree
-   * consisting of KDevProjectFolderItem and KDevProjectFileItem objects. The base of the
-   * tree will be the KDevProjectFolderItem used as the argument.
+   * consisting of Koncrete::ProjectFolderItem and Koncrete::ProjectFileItem objects. The base of the
+   * tree will be the Koncrete::ProjectFolderItem used as the argument.
    * The generic usage would be
    * @code
    *  QuantaFileManager *manager = new QuantaFileManager(projectObject);
-   *  KDevProjectFolderItem *baseItem = manager->import(model, baseUrl);
+   *  Koncrete::ProjectFolderItem *baseItem = manager->import(model, baseUrl);
    *  manager->parse(baseItem);
    * @endcode
    *
    * @param base the base folder item in the project
    * @return This implementation always returns an empty subfolder list and should be ignored.
    */
-  virtual QList<KDevProjectFolderItem *> parse(KDevProjectFolderItem *base);
+  virtual QList<Koncrete::ProjectFolderItem *> parse(Koncrete::ProjectFolderItem *base);
   /**
-   * Reimplemented from KDevFileManager.
+   * Reimplemented from Koncrete::FileManager.
    * @return the top base item, created with import();
    */
-  virtual KDevProjectFolderItem *top() {return m_baseItem;}
+  virtual Koncrete::ProjectFolderItem *top() {return m_baseItem;}
   /**
    * Add a folder url to the project files.
    * @param folder the url pointing to the folder
    * @param parent the parent folder item
    * @return 
    */
- // virtual KDevProjectFolderItem *addFolder(const KUrl &folder, KDevProjectFolderItem *parent);
-//  virtual KDevProjectFileItem *addFile(const KUrl &folder, KDevProjectFolderItem *parent);
+ // virtual Koncrete::ProjectFolderItem *addFolder(const KUrl &folder, Koncrete::ProjectFolderItem *parent);
+//  virtual Koncrete::ProjectFileItem *addFile(const KUrl &folder, Koncrete::ProjectFolderItem *parent);
   
   private:
-    KDevProjectFolderItem *m_baseItem;
+    Koncrete::ProjectFolderItem *m_baseItem;
 };
 
 #endif

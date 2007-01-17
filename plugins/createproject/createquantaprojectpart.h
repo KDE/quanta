@@ -26,7 +26,7 @@ class KDialog;
 /**
 Please read the README.dox file for more info about this part
 */
-class CreateQuantaProjectPart: public KDevPlugin
+class CreateQuantaProjectPart: public Koncrete::Plugin
 {
     Q_OBJECT
 public:

@@ -34,7 +34,7 @@
 
 
 QuantaProjectManager::QuantaProjectManager(QuantaProjectPart *part, QWidget *parent)
-  : KDevTreeView(parent),
+  : Koncrete::TreeView(parent),
     m_part(part)
 {
   header()->hide();
@@ -56,10 +56,10 @@ QuantaProjectPart *QuantaProjectManager::part() const
 
 void QuantaProjectManager::reset()
 {
-  KDevTreeView::reset();
+  Koncrete::TreeView::reset();
 }
 
-KDevProjectFolderItem *QuantaProjectManager::currentFolderItem() const
+Koncrete::ProjectFolderItem *QuantaProjectManager::currentFolderItem() const
 {
   Q_ASSERT(projectModel() != 0);
 
@@ -68,7 +68,7 @@ KDevProjectFolderItem *QuantaProjectManager::currentFolderItem() const
 
   while (current.isValid())
     {
-      if (KDevProjectFolderItem *folderItem = dynamic_cast<KDevProjectFolderItem*>(projectModel()->item(current)))
+      if (Koncrete::ProjectFolderItem *folderItem = dynamic_cast<Koncrete::ProjectFolderItem*>(projectModel()->item(current)))
         return folderItem;
 
       current = projectModel()->parent(current);
@@ -77,7 +77,7 @@ KDevProjectFolderItem *QuantaProjectManager::currentFolderItem() const
   return 0;
 }
 
-KDevProjectFileItem *QuantaProjectManager::currentFileItem() const
+Koncrete::ProjectFileItem *QuantaProjectManager::currentFileItem() const
 {
   Q_ASSERT(projectModel() != 0);
 
@@ -86,7 +86,7 @@ KDevProjectFileItem *QuantaProjectManager::currentFileItem() const
 
   while (current.isValid())
     {
-      if (KDevProjectFileItem *fileItem = dynamic_cast<KDevProjectFileItem*>(projectModel()->item(current)))
+      if (Koncrete::ProjectFileItem *fileItem = dynamic_cast<Koncrete::ProjectFileItem*>(projectModel()->item(current)))
         return fileItem;
 
       current = projectModel()->parent(current);
@@ -95,7 +95,7 @@ KDevProjectFileItem *QuantaProjectManager::currentFileItem() const
   return 0;
 }
 
-KDevProjectTargetItem *QuantaProjectManager::currentTargetItem() const
+Koncrete::ProjectTargetItem *QuantaProjectManager::currentTargetItem() const
 {
   Q_ASSERT(projectModel() != 0);
 
@@ -104,7 +104,7 @@ KDevProjectTargetItem *QuantaProjectManager::currentTargetItem() const
 
   while (current.isValid())
     {
-      if (KDevProjectTargetItem *targetItem = dynamic_cast<KDevProjectTargetItem*>(projectModel()->item(current)))
+      if (Koncrete::ProjectTargetItem *targetItem = dynamic_cast<Koncrete::ProjectTargetItem*>(projectModel()->item(current)))
         return targetItem;
 
       current = projectModel()->parent(current);
@@ -113,14 +113,14 @@ KDevProjectTargetItem *QuantaProjectManager::currentTargetItem() const
   return 0;
 }
 
-KDevProjectModel *QuantaProjectManager::projectModel() const
+Koncrete::ProjectModel *QuantaProjectManager::projectModel() const
 {
-  return qobject_cast<KDevProjectModel*>(model());
+  return qobject_cast<Koncrete::ProjectModel*>(model());
 }
 
 void QuantaProjectManager::slotActivated(const QModelIndex &index)
 {
-  KDevProjectItem *item = projectModel()->item(index);
+  Koncrete::ProjectItem *item = projectModel()->item(index);
 
   if (item && item->file())
     {
@@ -132,25 +132,25 @@ void QuantaProjectManager::popupContextMenu(const QPoint &pos)
 {
   QModelIndex index = indexAt(pos);
 
-  if (KDevProjectItem *item = projectModel()->item(index))
+  if (Koncrete::ProjectItem *item = projectModel()->item(index))
     {
       KMenu menu(this);
 
-      if (KDevProjectFolderItem *folder = item->folder())
+      if (Koncrete::ProjectFolderItem *folder = item->folder())
         {
           menu.addTitle(i18n("Folder: %1", folder->url().directory()));
         }
-      else if (KDevProjectFileItem *file = item->file())
+      else if (Koncrete::ProjectFileItem *file = item->file())
         {
           menu.addTitle(i18n("File: %1", file->url().fileName()));
         }
-      else if (KDevProjectTargetItem *target = item->target())
+      else if (Koncrete::ProjectTargetItem *target = item->target())
         {
           menu.addTitle(i18n("Target: %1", target->text()));
         }
 
-      ProjectItemContext context(item);
-      KDevCore::mainWindow()->fillContextMenu(&menu, &context);
+      Koncrete::ProjectItemContext context(item);
+      Koncrete::Core::mainWindow()->fillContextMenu(&menu, &context);
 
       menu.exec(mapToGlobal(pos));
     }
@@ -158,7 +158,7 @@ void QuantaProjectManager::popupContextMenu(const QPoint &pos)
 
 void QuantaProjectManager::slotCurrentChanged(const QModelIndex &index)
 {
-  if (KDevProjectItem *item = projectModel()->item(index))
+  if (Koncrete::ProjectItem *item = projectModel()->item(index))
     {
       emit currentChanged(item);
     }

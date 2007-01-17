@@ -16,7 +16,7 @@
 
 class QuantaCoreIf;
 
-class Context;
+namespace Koncrete { class Context; }
 class QMenu;
 class KAction;
 
@@ -34,7 +34,7 @@ public:
 
 private slots:
   void init();
-  void slotContextMenu(QMenu *popup, const Context *context);
+  void slotContextMenu(QMenu *popup, const Koncrete::Context *context);
   void slotEditCurrentTag();
   
 private:

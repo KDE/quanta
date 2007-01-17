@@ -39,7 +39,7 @@ TagDialogsIf * plugin = extension<TagDialogsIf>("KDevelop/TagDialogs");
 */
 
 
-class KDEVQUANTA_EXPORT TagDialogsIf : public KDevPlugin
+class KDEVQUANTA_EXPORT TagDialogsIf : public Koncrete::Plugin
 {
   Q_OBJECT
 

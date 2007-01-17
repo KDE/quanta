@@ -82,7 +82,7 @@ bool ProjectTreeViewItem::filter(const QString &s) const
 
 bool ProjectTreeViewItem::shouldBeVisible() const
 {
-  KDevProject * p = static_cast<ProjectTreeBranch *>(branch())->project();
+  Koncrete::Project * p = static_cast<ProjectTreeBranch *>(branch())->project();
   return p->inProject(url());
 }
 
@@ -94,7 +94,7 @@ bool ProjectTreeViewItem::shouldBeVisible() const
 //
 ///////////////////////////////////////////////
 
-ProjectTreeBranch::ProjectTreeBranch(KDevProject * project, BaseTreeView *parent, const KUrl& url, const QString& name, const QPixmap& pix, bool showHidden, KFileTreeViewItem *branchRoot)
+ProjectTreeBranch::ProjectTreeBranch(Koncrete::Project * project, BaseTreeView *parent, const KUrl& url, const QString& name, const QPixmap& pix, bool showHidden, KFileTreeViewItem *branchRoot)
   : BaseTreeBranch(parent, url, name, pix, showHidden, branchRoot), m_project(project)
 {
 }
@@ -123,8 +123,8 @@ KFileTreeViewItem* ProjectTreeBranch::createTreeViewItem(KFileTreeViewItem *pare
 // FIXME check the parent relations
 /////////////////////////////////////////////
 
-ProjectTreeView::ProjectTreeView(KDevPlugin * plugin, QWidget *parent)
-  : BaseTreeView(plugin, parent), m_projectDir(0), m_plugin(plugin), m_quantaProject(KDevCore::activeProject())
+ProjectTreeView::ProjectTreeView(Koncrete::Plugin * plugin, QWidget *parent)
+  : BaseTreeView(plugin, parent), m_projectDir(0), m_plugin(plugin), m_quantaProject(Koncrete::Core::activeProject())
 {
   setShowToolTips(Settings::self()->projectTreeTooltips());
   //setSelectionModeExt(K3ListView::Extended);
@@ -201,8 +201,8 @@ void ProjectTreeView::fileMenu(const QPoint &point)
 
   // ask other plugins for menu entries
   KUrl::List urlList(currentKFileTreeViewItem()->url());
-  FileContext context(urlList);
-  KDevCore::mainWindow()->fillContextMenu(&popup, &context);
+  Koncrete::FileContext context(urlList);
+  Koncrete::Core::mainWindow()->fillContextMenu(&popup, &context);
 
   popup.exec(point);
 }
@@ -234,8 +234,8 @@ void ProjectTreeView::folderMenu(const QPoint &point)
   KUrl menuURL(currentKFileTreeViewItem()->url());
   menuURL.adjustPath(KUrl::AddTrailingSlash);
   KUrl::List urlList(menuURL);
-  FileContext context(urlList);
-  KDevCore::mainWindow()->fillContextMenu(&popup, &context);
+  Koncrete::FileContext context(urlList);
+  Koncrete::Core::mainWindow()->fillContextMenu(&popup, &context);
 
   popup.exec(point);
 }
@@ -266,11 +266,11 @@ void ProjectTreeView::emptyMenu(const QPoint &point)
 
 void ProjectTreeView::slotProjectOpened()
 {
-  m_projectName = KDevCore::activeProject()->name();
+  m_projectName = Koncrete::Core::activeProject()->name();
   if (m_quantaProject)
     m_projectBaseURL = m_quantaProject->folder();
   else
-    m_projectBaseURL = KUrl(KDevCore::activeProject()->folder());
+    m_projectBaseURL = KUrl(Koncrete::Core::activeProject()->folder());
 
   if (m_projectDir)  // just in case we have already one
   {

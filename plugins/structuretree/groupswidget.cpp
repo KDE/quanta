@@ -42,8 +42,8 @@
 #include <kdevdocumentcontroller.h>
 
 
-GroupsWidget::GroupsWidget(KDevPlugin *plugin, QWidget *parent)
-  : K3ListView(parent), m_popupMenu(0), m_dtdMenu(0), m_dirty(false), m_parseResult(0), m_plugin(plugin), m_partController(KDevCore::documentController())
+GroupsWidget::GroupsWidget(Koncrete::Plugin *plugin, QWidget *parent)
+  : K3ListView(parent), m_popupMenu(0), m_dtdMenu(0), m_dirty(false), m_parseResult(0), m_plugin(plugin), m_partController(Koncrete::Core::documentController())
 {
   setTreeStepSize(15);
   setRootIsDecorated(false);
@@ -66,7 +66,7 @@ GroupsWidget::GroupsWidget(KDevPlugin *plugin, QWidget *parent)
 
   connect(this, SIGNAL(mouseButtonPressed(int, Q3ListViewItem*, const QPoint&, int)),SLOT(slotMouseClicked(int, Q3ListViewItem*, const QPoint&, int)));
 
-  m_qcore = KDevPluginController::self()->extension<QuantaCoreIf>("KDevelop/Quanta");
+  m_qcore = Koncrete::PluginController::self()->extension<QuantaCoreIf>("KDevelop/Quanta");
 
 }
 

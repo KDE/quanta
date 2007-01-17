@@ -34,9 +34,9 @@
 #include <kdevcore.h>
 
 
-bool QuantaNetAccess::upload(const QString& src, const KUrl& target, KDevPlugin* plugin, bool confirm)
+bool QuantaNetAccess::upload(const QString& src, const KUrl& target, Koncrete::Plugin* plugin, bool confirm)
 {
-  QWidget *window = KDevCore::mainWindow();
+  QWidget *window = Koncrete::Core::mainWindow();
   bool ok = KIO::NetAccess::upload(src, target, window);
   if (ok)
   {
@@ -51,9 +51,9 @@ bool QuantaNetAccess::upload(const QString& src, const KUrl& target, KDevPlugin*
 
 
 bool QuantaNetAccess::file_copy( const KUrl& src, const KUrl& target, int permissions,
-                                 bool overwrite, bool resume, KDevPlugin* plugin, bool confirm)
+                                 bool overwrite, bool resume, Koncrete::Plugin* plugin, bool confirm)
 {
-  QWidget *window = KDevCore::mainWindow();
+  QWidget *window = Koncrete::Core::mainWindow();
   bool ok;
   if (src == target)
     ok = true;
@@ -72,14 +72,14 @@ bool QuantaNetAccess::file_copy( const KUrl& src, const KUrl& target, int permis
 
 
 bool QuantaNetAccess::file_move( const KUrl& src, const KUrl& target, int permissions,
-                                 bool overwrite, bool resume, KDevPlugin* plugin, bool confirm)
+                                 bool overwrite, bool resume, Koncrete::Plugin* plugin, bool confirm)
 {
   QWidget *window = 0L;
-  KDevProject *project = 0L;
+  Koncrete::Project *project = 0L;
   if (plugin)
   {
-    window = KDevCore::mainWindow();
-    project = KDevCore::activeProject();
+    window = Koncrete::Core::mainWindow();
+    project = Koncrete::Core::activeProject();
   }
   // don't ask if move is inside of the project
   bool oldConfirm = confirm;
@@ -109,12 +109,12 @@ bool QuantaNetAccess::file_move( const KUrl& src, const KUrl& target, int permis
 }
 
 
-bool QuantaNetAccess::dircopy( const KUrl::List & srcList, const KUrl & target, KDevPlugin* plugin, bool confirm )
+bool QuantaNetAccess::dircopy( const KUrl::List & srcList, const KUrl & target, Koncrete::Plugin* plugin, bool confirm )
 {
   QWidget *window = 0L;
   if (plugin)
   {
-    window = KDevCore::mainWindow();
+    window = Koncrete::Core::mainWindow();
   }
   if (!ExtFileInfo::exists(target))
   {
@@ -144,14 +144,14 @@ bool QuantaNetAccess::dircopy( const KUrl::List & srcList, const KUrl & target, 
 }
 
 
-bool QuantaNetAccess::move( const KUrl::List& srcList, const KUrl& target, KDevPlugin* plugin, bool confirm )
+bool QuantaNetAccess::move( const KUrl::List& srcList, const KUrl& target, Koncrete::Plugin* plugin, bool confirm )
 {
   QWidget *window = 0L;
-  KDevProject *project = 0L;
+  Koncrete::Project *project = 0L;
   if (plugin)
   {
-    window = KDevCore::mainWindow();
-    project = KDevCore::activeProject();
+    window = Koncrete::Core::mainWindow();
+    project = Koncrete::Core::activeProject();
   }
   KUrl targetURL = adjustURL(target);
   if (project)
@@ -215,7 +215,7 @@ bool QuantaNetAccess::move( const KUrl::List& srcList, const KUrl& target, KDevP
 }
 
 
-bool QuantaNetAccess::del( const KUrl & url, KDevPlugin* plugin, QWidget* window, bool confirm )
+bool QuantaNetAccess::del( const KUrl & url, Koncrete::Plugin* plugin, QWidget* window, bool confirm )
 {
   if ( !checkProjectDel(url, plugin, window, confirm)) {
     return false;
@@ -229,12 +229,12 @@ bool QuantaNetAccess::del( const KUrl & url, KDevPlugin* plugin, QWidget* window
 }
 
 
-bool QuantaNetAccess::mkdir( const KUrl & path, KDevPlugin* plugin, int permissions, bool confirm )
+bool QuantaNetAccess::mkdir( const KUrl & path, Koncrete::Plugin* plugin, int permissions, bool confirm )
 {
   QWidget *window = 0L;
   if (plugin)
   {
-    window = KDevCore::mainWindow();
+    window = Koncrete::Core::mainWindow();
   }
   KUrl url = path;
   if (ExtFileInfo::exists(url))
@@ -279,14 +279,14 @@ bool QuantaNetAccess::mkdir( const KUrl & path, KDevPlugin* plugin, int permissi
 }
 
 
-void QuantaNetAccess::checkProjectInsert(const KUrl& source, const KUrl& target, KDevPlugin* plugin, bool confirm)
+void QuantaNetAccess::checkProjectInsert(const KUrl& source, const KUrl& target, Koncrete::Plugin* plugin, bool confirm)
 {
   QWidget *window = 0L;
-  KDevProject *project = 0L;
+  Koncrete::Project *project = 0L;
   if (plugin)
   {
-    window = KDevCore::mainWindow();
-    project = KDevCore::activeProject();
+    window = Koncrete::Core::mainWindow();
+    project = Koncrete::Core::activeProject();
   }
   if ( !project )
     return;
@@ -337,14 +337,14 @@ void QuantaNetAccess::checkProjectInsert(const KUrl& source, const KUrl& target,
 }
 
 
-bool QuantaNetAccess::checkProjectRemove(const KUrl& src, KDevPlugin* plugin, bool confirm, bool remove)
+bool QuantaNetAccess::checkProjectRemove(const KUrl& src, Koncrete::Plugin* plugin, bool confirm, bool remove)
 {
   QWidget *window = 0L;
-  KDevProject *project = 0L;
+  Koncrete::Project *project = 0L;
   if (plugin)
   {
-    window = KDevCore::mainWindow();
-    project = KDevCore::activeProject();
+    window = Koncrete::Core::mainWindow();
+    project = Koncrete::Core::activeProject();
   }
   if (!project)
     return true;
@@ -373,12 +373,12 @@ bool QuantaNetAccess::checkProjectRemove(const KUrl& src, KDevPlugin* plugin, bo
 }
 
 
-bool QuantaNetAccess::checkProjectDel(const KUrl& src, KDevPlugin* plugin, QWidget* window, bool confirm)
+bool QuantaNetAccess::checkProjectDel(const KUrl& src, Koncrete::Plugin* plugin, QWidget* window, bool confirm)
 {
-  KDevProject *project = 0L;
+  Koncrete::Project *project = 0L;
   if (plugin)
   {
-    project = KDevCore::activeProject();
+    project = Koncrete::Core::activeProject();
   }
   KUrl url = adjustURL(src);
   if ( project )

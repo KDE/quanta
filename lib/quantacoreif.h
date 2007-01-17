@@ -53,7 +53,7 @@ Settings * s = Settings::self();
 @author Jens Herden
 */
 
-class KDEVQUANTA_EXPORT QuantaCoreIf : public KDevPlugin
+class KDEVQUANTA_EXPORT QuantaCoreIf : public Koncrete::Plugin
 {
   Q_OBJECT
 

@@ -20,7 +20,7 @@
 class QMenu;
 class KAction;
 class KDialog;
-class Context;
+namespace Koncrete { class Context; }
 class ConfigWidgetProxy;
 class QToolBox;
 class QuantaCoreIf;
@@ -31,7 +31,7 @@ class GroupsWidget;
 /**
 Please read the README.dox file for more info about this part
 */
-class StructureTreePart: public KDevPlugin
+class StructureTreePart: public Koncrete::Plugin
 {
   Q_OBJECT
 public:
@@ -48,7 +48,7 @@ private slots:
   void init();
   
   void insertConfigWidget(const KDialog *dlg, QWidget *page, unsigned int pageNo);
-  void contextMenu(QMenu *popup, const Context *context);
+  void contextMenu(QMenu *popup, const Koncrete::Context *context);
   void projectOpened();
   void projectClosed();
 

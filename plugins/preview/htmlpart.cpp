@@ -36,13 +36,13 @@ HTMLPart::~HTMLPart()
 
 void HTMLPart::slotDuplicate( )
 {
-  KDevCore::documentController()->showDocumentation(url(), true);
+  Koncrete::Core::documentController()->showDocumentation(url(), true);
 }
 
 
 void HTMLPart::slotOpenInNewWindow( const KUrl & url )
 {
-  KDevCore::documentController()->showDocumentation(url, true);
+  Koncrete::Core::documentController()->showDocumentation(url, true);
 }
 
 #include "htmlpart.moc"

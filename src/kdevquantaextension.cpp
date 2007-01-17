@@ -27,7 +27,7 @@
 
 
 KDevQuantaExtension::KDevQuantaExtension()
- : ShellExtension()
+ : Koncrete::ShellExtension()
 {
 }
 
@@ -75,7 +75,7 @@ void KDevQuantaExtension::acceptGlobalSettingsPage(KDialog */*dlg*/)
 //     //current item id must be in sync with the enum!
 //     config->writeEntry("CompilerOutputLevel",gsw->compileOutputCombo->currentItem());
 //     config->sync();
-//     if( KDevPlugin *makeExt = API::getInstance()->pluginController()->extension("KDevelop/MakeFrontend"))
+//     if( Koncrete::Plugin *makeExt = API::getInstance()->pluginController()->extension("KDevelop/MakeFrontend"))
 //     {
 //         static_cast<KDevMakeFrontend*>(makeExt)->updateSettingsFromConfig();
 //     }

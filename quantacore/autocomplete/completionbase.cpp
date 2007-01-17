@@ -55,7 +55,7 @@ CompletionBase::~CompletionBase()
 {
 }
 
-void CompletionBase::init(ParseResult *base, EditorSource *source, const QPoint& position, Node *currentNode, KDevPlugin *plugin)
+void CompletionBase::init(ParseResult *base, EditorSource *source, const QPoint& position, Node *currentNode, Koncrete::Plugin *plugin)
 {
   m_startsWith = "";
   m_base = base;
@@ -67,7 +67,7 @@ void CompletionBase::init(ParseResult *base, EditorSource *source, const QPoint&
 }
   
 
-CompletionBase* CompletionBase::getCompletionObject(ParseResult *base, EditorSource *source, const QPoint& position, Node* currentNode, CompletionType type, CompletionMode mode, KDevPlugin *plugin)
+CompletionBase* CompletionBase::getCompletionObject(ParseResult *base, EditorSource *source, const QPoint& position, Node* currentNode, CompletionType type, CompletionMode mode, Koncrete::Plugin *plugin)
 {
 
   CompletionBase *completionObject = 0L;
