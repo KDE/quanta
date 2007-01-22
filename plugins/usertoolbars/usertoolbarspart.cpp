@@ -366,12 +366,14 @@ void UserToolbarsPart::slotLoadToolbarFile(const KUrl& url)
       KArchiveFile* file = (KArchiveFile *)(tar.directory()->entry(base + ".toolbar"));
       if (file)
       {
-        toolbarDom->setContent(file->device());
+        QIODevice *device = file->createDevice();
+        toolbarDom->setContent(device);
+        delete device;
       }
       file = (KArchiveFile *)(tar.directory()->entry(base + ".actions"));
       if (file)
       {
-        QIODevice *device = file->device();
+        QIODevice *device = file->createDevice();
         actionDom.setContent(device);
         delete device;
       }
