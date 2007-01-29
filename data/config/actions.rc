@@ -1,21 +1,21 @@
 <!DOCTYPE actionsconfig>
 <actions>
-<action shortcut="Alt+Ctrl+T" icon="check.png" type="script" tooltip="Syntax checking with HTML Tidy" name="tidy_check" text="HTML &Tidy Syntax Checking" >
+<action shortcut="Alt+Ctrl+T" icon="check.png" type="script" tooltip="Syntax checking with HTML Tidy" name="tidy_check" text="HTML &amp;Tidy Syntax Checking" >
 <script output="message" error="message" input="current" >tidy -qe</script>
 </action>
-<action shortcut="" icon="kompare" type="script" tooltip="" name="kompare_script" text="&Kompare" >
+<action shortcut="" icon="kompare" type="script" tooltip="" name="kompare_script" text="&amp;Kompare" >
 <script output="message" error="message" input="none" >kompare</script>
 </action>
-<action shortcut="ALT+F6" icon="opera" type="script" tooltip="" name="view_with_opera" text="View with &Opera">
+<action shortcut="ALT+F6" icon="opera" type="script" tooltip="" name="view_with_opera" text="View with &amp;Opera">
 <script output="message" error="message" input="none" >sh %scriptdir/externalpreview.sh %pid opera new-page</script>
 </action>
-<action shortcut="SHIFT+F12" icon="mozilla" type="script" tooltip="" name="view_with_mozilla" text="View with Mo&zilla">
+<action shortcut="SHIFT+F12" icon="mozilla" type="script" tooltip="" name="view_with_mozilla" text="View with Mo&amp;zilla">
 <script output="message" error="message" input="none" >sh %scriptdir/externalpreview.sh %pid mozilla new-tab</script>
 </action>
-<action shortcut="CTRL+SHIFT+F12" icon="firefox" type="script" tooltip="" name="view_with_firefox" text="View with &Firefox">
+<action shortcut="CTRL+SHIFT+F12" icon="firefox" type="script" tooltip="" name="view_with_firefox" text="View with &amp;Firefox">
 <script output="message" error="message" input="none" >sh %scriptdir/externalpreview.sh %pid firefox new-tab</script>
 </action>
-<action shortcut="SHIFT+F6" icon="netscape" type="script" tooltip="" name="view_with_netscape" text="View with &Netscape">
+<action shortcut="SHIFT+F6" icon="netscape" type="script" tooltip="" name="view_with_netscape" text="View with &amp;Netscape">
 <script output="message" error="message" input="none" >sh %scriptdir/externalpreview.sh %pid netscape new-tab</script>
 </action>
 </actions>
