@@ -62,7 +62,7 @@ K_EXPORT_COMPONENT_FACTORY( libkdevcreatequantaproject, CreateQuantaProjectFacto
 #define PROJECTDOC_OPTIONS 2
 
 CreateQuantaProjectPart::CreateQuantaProjectPart(QObject *parent, const QStringList &/*args*/)
-  : Koncrete::Plugin(CreateQuantaProjectFactory::instance(), parent)
+  : Koncrete::Plugin(CreateQuantaProjectFactory::componentData(), parent)
 {
   kDebug(24000) << "Quanta create project plugin loaded" << endl;
   setXMLFile("kdevcreatequantaproject.rc");

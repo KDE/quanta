@@ -67,10 +67,10 @@ K_EXPORT_COMPONENT_FACTORY(libkdevquantacore, QuantaCoreFactory("kdevquantacore"
 #define ENVIRONMENT_OPTIONS 2
 
 QuantaCorePart::QuantaCorePart(QObject *parent, const QStringList& )
-  : QuantaCoreIf(QuantaCoreFactory::instance(), parent), m_activeQuantaDoc(0)
+  : QuantaCoreIf(QuantaCoreFactory::componentData(), parent), m_activeQuantaDoc(0)
 {
   kDebug(24000) << "Creating Quanta Support Part" << endl;
-  setInstance(QuantaCoreFactory::instance());
+  setComponentData(QuantaCoreFactory::componentData());
   setXMLFile("kdevquantacore.rc");
 
   DTDs::ref(this)->find("dtd"); //load on startup;

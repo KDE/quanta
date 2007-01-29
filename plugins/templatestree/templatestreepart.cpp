@@ -50,7 +50,7 @@ K_EXPORT_COMPONENT_FACTORY( libkdevtemplatestree, TemplatesTreeFactory("kdevtemp
 #define PROJECTDOC_OPTIONS 2
 
 TemplatesTreePart::TemplatesTreePart(QObject *parent, const QStringList &/*args*/)
-  : Koncrete::Plugin(TemplatesTreeFactory::instance(), parent)
+  : Koncrete::Plugin(TemplatesTreeFactory::componentData(), parent)
 {
     setXMLFile("kdevtemplatestree.rc");
 

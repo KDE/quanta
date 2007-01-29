@@ -58,7 +58,7 @@ class KDEVQUANTA_EXPORT QuantaCoreIf : public Koncrete::Plugin
   Q_OBJECT
 
 public:
-  QuantaCoreIf(KInstance * info, QObject *parent);
+  QuantaCoreIf(const KComponentData &info, QObject *parent);
 
   ~QuantaCoreIf();
 

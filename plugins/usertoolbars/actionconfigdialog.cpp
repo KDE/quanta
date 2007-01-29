@@ -687,7 +687,7 @@ void ActionConfigDialog::saveCurrentAction()
         }
       }
       KXMLGUIFactory::saveConfigFile(p_toolbar->guiClient->domDocument(),
-        p_toolbar->guiClient->xmlFile(), p_toolbar->guiClient->instance());
+        p_toolbar->guiClient->xmlFile(), p_toolbar->guiClient->componentData());
     }
     QWidget *toolBar = tb->page(i);
     if (toolBar->minimumSizeHint().height() > 20)

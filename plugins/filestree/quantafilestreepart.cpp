@@ -42,7 +42,7 @@ K_EXPORT_COMPONENT_FACTORY( libkdevquantafilestree, QuantaFilesTreeFactory("kdev
 #define PROJECTDOC_OPTIONS 2
 
 QuantaFilesTreePart::QuantaFilesTreePart(QObject *parent, const QStringList &/*args*/)
-  : Koncrete::Plugin(QuantaFilesTreeFactory::instance(), parent)
+  : Koncrete::Plugin(QuantaFilesTreeFactory::componentData(), parent)
 {
     setXMLFile("kdevquantafilestree.rc");
 

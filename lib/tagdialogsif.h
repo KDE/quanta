@@ -44,7 +44,7 @@ class KDEVQUANTA_EXPORT TagDialogsIf : public Koncrete::Plugin
   Q_OBJECT
 
 public:
-  TagDialogsIf(KInstance * info, QObject *parent);
+  TagDialogsIf(const KComponentData &info, QObject *parent);
   ~TagDialogsIf();
 
    virtual TagPair createNewTag(QTag *dtdTag, const QString& selection, const QString& attrs = QString::null, const KUrl& baseURL = KUrl()) = 0;

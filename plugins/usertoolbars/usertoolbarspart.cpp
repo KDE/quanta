@@ -85,7 +85,7 @@ const QString resourceDir = "quanta/";
 
 
 UserToolbarsPart::UserToolbarsPart(QObject *parent, const QStringList &/*args*/)
-  : Koncrete::Plugin(UserToolbarsFactory::instance(), parent)
+  : Koncrete::Plugin(UserToolbarsFactory::componentData(), parent)
 {
     kDebug(24000) << "Creating UserToolbars Part" << endl;
     setXMLFile("kdevusertoolbars.rc");
@@ -176,7 +176,7 @@ UserToolbarsPart::~UserToolbarsPart()
 
 void UserToolbarsPart::init()
 {
-  KConfig *config = UserToolbarsFactory::instance()->config();
+  KConfig *config = UserToolbarsFactory::componentData().config();
   config->setGroup("General");
   m_separateToolbars = config->readEntry("Separate toolbars", false);
   m_createActionsMenu = config->readEntry("Create Actions menu", true);
@@ -999,7 +999,7 @@ void UserToolbarsPart::slotRenameToolbar(const QString& id)
         nodeList.item(i).toElement().setTagName("Separator");
       }
       KXMLGUIFactory::saveConfigFile(p_toolbar->guiClient->domDocument(),
-          p_toolbar->guiClient->xmlFile(), p_toolbar->guiClient->instance());
+          p_toolbar->guiClient->xmlFile(), p_toolbar->guiClient->componentData());
       ToolbarTabWidget *tb = ToolbarTabWidget::ref();
       QMenu *actionsMenu = static_cast<QMenu*>(factory()->container("actions", this));
 /*      if (m_separateToolbars)
@@ -1026,7 +1026,7 @@ void UserToolbarsPart::slotRenameToolbar(const QString& id)
         }
       }
       KXMLGUIFactory::readConfigFile(
-          p_toolbar->guiClient->xmlFile(), p_toolbar->guiClient->instance());
+          p_toolbar->guiClient->xmlFile(), p_toolbar->guiClient->componentData());
       m_toolbarList.insert(id, p_toolbar);
 kDebug(24000) << "p_toolbar->guiClient after rename:" <<  p_toolbar->guiClient->domDocument().toString() << endl;
 
@@ -1116,7 +1116,7 @@ bool UserToolbarsPart::removeToolbars()
   }
 
   //save the user actions that aren't on any toolbar, so they are not lost
-  QFile f(KGlobal::instance()->dirs()->saveLocation("data") + resourceDir + "actions.rc" );
+  QFile f(KGlobal::mainComponent().dirs()->saveLocation("data") + resourceDir + "actions.rc" );
   if (f.open( IO_ReadWrite | IO_Truncate ))
   {
     if (!actions.firstChild().firstChild().isNull())
@@ -1288,7 +1288,7 @@ void UserToolbarsPart::slotRemoveAction(const QString& id, const QString& a_acti
         node = node.nextSibling();
       }
       KXMLGUIFactory::saveConfigFile(p_toolbar->guiClient->domDocument(),
-        p_toolbar->guiClient->xmlFile(), p_toolbar->guiClient->instance());
+        p_toolbar->guiClient->xmlFile(), p_toolbar->guiClient->componentData());
     }
   }
 }
@@ -1312,7 +1312,7 @@ void UserToolbarsPart::slotDeleteAction(QAction *action)
   for (int i = 0; i < guiClients.count(); i++)
   {
     guiClient = guiClients.at(i);
-    guiClient->domDocument().setContent(KXMLGUIFactory::readConfigFile( guiClient->xmlFile(), guiClient->instance() ));
+    guiClient->domDocument().setContent(KXMLGUIFactory::readConfigFile( guiClient->xmlFile(), guiClient->componentData() ));
     nodeList = guiClient->domDocument().elementsByTagName("Action");
     for (int j = 0; j < nodeList.count(); j++)
     {
@@ -1353,7 +1353,7 @@ void UserToolbarsPart::slotShowMessage(const QString &message, bool append)
 
 void UserToolbarsPart::saveConfig()
 {
-  KConfig *config = UserToolbarsFactory::instance()->config();
+  KConfig *config = UserToolbarsFactory::componentData().config();
   config->setGroup("General");
   config->writeEntry("Separate toolbars", m_separateToolbars);
   config->writeEntry("Create Actions menu", m_createActionsMenu);

@@ -51,6 +51,7 @@
 #include <kaction.h>
 #include <kicon.h>
 #include <kconfigbase.h>
+#include <kconfiggroup.h>
 #include <kdebug.h>
 #include <krun.h>
 #include <kicon.h>

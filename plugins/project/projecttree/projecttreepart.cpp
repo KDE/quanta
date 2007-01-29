@@ -40,7 +40,7 @@ K_EXPORT_COMPONENT_FACTORY( libkdevprojecttree, ProjectTreeFactory("kdevprojectt
 #define PROJECTDOC_OPTIONS 2
 
 ProjectTreePart::ProjectTreePart(QObject *parent, const QStringList &/*args*/)
-  : Koncrete::Plugin(ProjectTreeFactory::instance(), parent)
+  : Koncrete::Plugin(ProjectTreeFactory::componentData(), parent)
 {
   setXMLFile("kdevprojecttree.rc");
 

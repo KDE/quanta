@@ -38,7 +38,7 @@ void KDevQuantaExtension::init()
 
 void KDevQuantaExtension::createGlobalSettingsPage(KDialog */*dlg*/)
 {
-//     KConfig* config = kapp->config();
+//     KSharedConfig::Ptr config = KGlobal::config();
 //     QVBox *vbox = dlg->addVBoxPage(i18n("General"), i18n("General"), BarIcon("kdevelop", KIcon::SizeMedium) );
 //     gsw = new SettingsWidget(vbox, "general settings widget");
 //
@@ -62,7 +62,7 @@ void KDevQuantaExtension::createGlobalSettingsPage(KDialog */*dlg*/)
 
 void KDevQuantaExtension::acceptGlobalSettingsPage(KDialog */*dlg*/)
 {
-//     KConfig* config = kapp->config();
+//     KSharedConfig::Ptr config = KGlobal::config();
 //
 //     config->setGroup("General Options");
 //     config->writeEntry("DesignerApp", gsw->designerButtonGroup->selectedId());

@@ -47,7 +47,7 @@ K_EXPORT_COMPONENT_FACTORY( libkdevquantaproject, QuantaProjectFactory("kdevquan
 #define PROJECTDOC_OPTIONS 2
 
 QuantaProjectPart::QuantaProjectPart( QObject *parent, const QStringList & /*args*/ )
-  : Koncrete::Plugin(QuantaProjectFactory::instance(), parent)
+  : Koncrete::Plugin(QuantaProjectFactory::componentData(), parent)
 {
   kDebug( 24000 ) << "QuantaProjectPart loaded" << endl;
   setXMLFile( "kdevquantaproject.rc" );
@@ -80,7 +80,7 @@ QuantaProjectPart::QuantaProjectPart( QObject *parent, const QStringList & /*arg
   connect( Koncrete::Core::mainWindow(), SIGNAL( contextMenu( KMenu *, const Context * ) ),
            this, SLOT( contextMenu( KMenu *, const Context * ) ) );
 
-  QuantaFileManager *qFileManager = new QuantaFileManager(this->instance(), this);
+  QuantaFileManager *qFileManager = new QuantaFileManager(this->componentData(), this);
   Koncrete::Core::activeProject()->setFileManager(qFileManager);
 
   QTimer::singleShot( 0, this, SLOT( init() ) );

@@ -13,7 +13,7 @@
 #include "parsermanager.h"
 #include "statemachine.h"
 
-#include <kinstance.h>
+#include <kcomponentdata.h>
 #include <kstandarddirs.h>
 
 ParserManager *ParserManager::m_ref = 0L;
@@ -26,7 +26,7 @@ ParserManager::ParserManager(QObject *parent)
   connect(m_parser, SIGNAL(groupsParsed(const EditorSource *, const ParseResult  *)), SIGNAL(groupsParsed(const EditorSource *, const ParseResult  *)));
 
   m_xmlStateMachine = new StateMachine();
-  QString xmlFile = KGlobal::instance()->dirs()->findResource("data", "quanta/statemachines/xmlstates.xml");
+  QString xmlFile = KGlobal::mainComponent().dirs()->findResource("data", "quanta/statemachines/xmlstates.xml");
   m_xmlStateMachine->build(xmlFile);
 
 }

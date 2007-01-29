@@ -13,7 +13,7 @@
 
 #include "tagdialogsif.h"
 
-TagDialogsIf::TagDialogsIf(KInstance * info, QObject *parent)
+TagDialogsIf::TagDialogsIf(const KComponentData &info, QObject *parent)
   : Koncrete::Plugin(info, parent)
 {
 }

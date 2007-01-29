@@ -59,7 +59,7 @@ DTDs::DTDs(QObject *parent)
   m_globalEntities = new QHash<QString, QTag*>;
   m_doc = new QDomDocument();
 
-  QStringList tagsResourceDirs = KGlobal::instance()->dirs()->findDirs("data", "quanta/dtep");
+  QStringList tagsResourceDirs = KGlobal::mainComponent().dirs()->findDirs("data", "quanta/dtep");
   QStringList tagsDirs;
   for ( QStringList::Iterator it = tagsResourceDirs.begin(); it != tagsResourceDirs.end(); ++it )
   {

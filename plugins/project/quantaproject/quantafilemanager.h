@@ -18,7 +18,7 @@ class QuantaFileManager: public Koncrete::FileManager
   Q_OBJECT
       
 public:
-  explicit QuantaFileManager(KInstance* instance, QObject *parent);
+  explicit QuantaFileManager(const KComponentData &instance, QObject *parent);
   ~QuantaFileManager();
   /**
    * Imports the base into the model. Creates a Koncrete::ProjectFolderItem for the base

@@ -28,7 +28,7 @@ Extension of the Koncrete::Project interface for our needs, especially to work w
 class KDEVQUANTA_EXPORT QuantaProjectIf : public Koncrete::Project
 {
 public:
-  QuantaProjectIf(/*KInstance * info, */QObject *parent);
+  QuantaProjectIf(/*const KComponentData &info, */QObject *parent);
   ~QuantaProjectIf();
 
   /**

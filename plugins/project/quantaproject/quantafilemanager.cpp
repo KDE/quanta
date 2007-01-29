@@ -23,7 +23,7 @@
 #include <kdevprojectmodel.h>
 
 
-QuantaFileManager::QuantaFileManager(KInstance* instance, QObject *parent) 
+QuantaFileManager::QuantaFileManager(const KComponentData &instance, QObject *parent) 
   : Koncrete::FileManager(instance, parent), m_baseItem(0L)
 {
 }

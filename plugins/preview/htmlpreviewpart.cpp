@@ -47,7 +47,7 @@ K_EXPORT_COMPONENT_FACTORY( libkdevhtmlpreview, HTMLPreviewFactory("kdevhtmlprev
 #define PROJECTDOC_OPTIONS 2
 
 HTMLPreviewPart::HTMLPreviewPart(QObject *parent, const QStringList &/*args*/)
-  : Koncrete::Plugin(HTMLPreviewFactory::instance(), parent), m_activeEditor(0), m_partmanager(0)
+  : Koncrete::Plugin(HTMLPreviewFactory::componentData(), parent), m_activeEditor(0), m_partmanager(0)
 {
   setXMLFile("kdevhtmlpreview.rc");
 
