@@ -919,13 +919,12 @@ void BaseTreeView::doRename(KFileTreeViewItem* kftvi, const QString & newName)
 }
 
 
-void BaseTreeView::saveLayout(KConfig *config, const QString &group)
+void BaseTreeView::saveLayout(KConfigGroup &configGroup)
 {
-  K3ListView::saveLayout(config, group);
+  K3ListView::saveLayout(configGroup);
   if (! m_saveOpenFolder)
     return;
 
-  KConfigGroup configGroup(config, group);
   BaseTreeBranch *btb;
   int i = 0;
   KFileTreeBranchIterator it( branches() );
@@ -945,10 +944,9 @@ void BaseTreeView::saveLayout(KConfig *config, const QString &group)
 }
 
 
-void BaseTreeView::restoreLayout(KConfig *config, const QString &group)
+void BaseTreeView::restoreLayout(KConfigGroup &configGroup)
 {
-  K3ListView::restoreLayout(config, group);
-  KConfigGroup configGroup(config, group);
+  K3ListView::restoreLayout(configGroup);
 
   if (! m_saveOpenFolder)
     return;

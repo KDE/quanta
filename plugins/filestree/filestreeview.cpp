@@ -26,6 +26,7 @@
 
 // KDE includes
 #include <kdebug.h>
+#include <kconfiggroup.h>
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kinputdialog.h>
@@ -57,7 +58,8 @@ FilesTreeView::FilesTreeView(QuantaFilesTreePart *part, QWidget *parent)
           this, SLOT(slotMenu(K3ListView*, Q3ListViewItem*, const QPoint&)));
 
   restoreBranches();
-  restoreLayout(m_config, metaObject()->className());
+  KConfigGroup configGroup(m_config, metaObject()->className());
+  restoreLayout(configGroup);
   // the restored size of the first column might be too large for the current content
   // we set it to 10 and the listview will adjust it to the size of the largest entry
   setColumnWidth(0, 10);
@@ -68,7 +70,8 @@ FilesTreeView::~FilesTreeView()
   m_config->setGroup(metaObject()->className());
   m_config->writePathEntry("Top folders", topURLAliases.keys());
   m_config->writePathEntry("Top folder aliases", topURLAliases.values());
-  saveLayout(m_config, metaObject()->className());
+  KConfigGroup configGroup(m_config, metaObject()->className());
+  saveLayout(configGroup);
 }
 
 KFileTreeBranch* FilesTreeView::newBranch(const KUrl& url)

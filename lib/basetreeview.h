@@ -153,16 +153,15 @@ public:
    * @param config the KConfig object to write to
    * @param group the config group to use
    */
-  void saveLayout(KConfig *config, const QString &group);
+  void saveLayout(KConfigGroup &group);
 
   /**
-   * Reads the list view's layout from a KConfig group as stored with
+   * Reads the list view's layout from a KConfigGroup as stored with
    * saveLayout. Reimplemented to load the open folders.
    *
-   * @param config the KConfig object to read from
-   * @param group the config group to use
+   * @param group the KConfigGroup object to read from
    */
-  void restoreLayout(KConfig *config, const QString &group);
+  void restoreLayout(KConfigGroup& group);
 
    /**
   * en/disable saving a list of open folders in @ref saveLayout and

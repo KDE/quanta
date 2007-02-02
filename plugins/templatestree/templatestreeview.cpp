@@ -77,6 +77,7 @@
 #include <kfile.h>
 #include <kactioncollection.h>
 #include <k3urldrag.h>
+#include <kconfiggroup.h>
 
 
 
@@ -176,7 +177,8 @@ TemplatesTreeView::TemplatesTreeView(TemplatesTreePart *plugin)
   setShowToolTips(Settings::self()->templatesTreeTooltips());
   setSaveOpenFolder(Settings::self()->templatesTreeSave());
 
-  restoreLayout(KGlobal::config(), metaObject()->className());
+  KConfigGroup configGroup(KGlobal::config(), metaObject()->className());
+  restoreLayout(configGroup);
   // the restored size of the first column might be too large for the current content
   // we set it to 10 and the listview will adjust it to the size of the largest entry
   setColumnWidth(0, 10);
@@ -186,7 +188,8 @@ TemplatesTreeView::~TemplatesTreeView()
 {
   qDeleteAll(tempFileList.begin(), tempFileList.end());
   qDeleteAll(tempDirList.begin(), tempDirList.end());
-  saveLayout(KGlobal::config(), metaObject()->className());
+  KConfigGroup configGroup(KGlobal::config(), metaObject()->className());
+  saveLayout(configGroup);
 }
 
 

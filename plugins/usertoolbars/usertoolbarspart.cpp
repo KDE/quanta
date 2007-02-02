@@ -46,7 +46,7 @@
 #include <kstandardaction.h>
 #include <krecentfilesaction.h>
 #include <kactioncollection.h>
-#include <kconfig.h>
+#include <kconfiggroup.h>
 #include <kedittoolbar.h>
 #include <kfiledialog.h>
 #include <kgenericfactory.h>
@@ -176,10 +176,9 @@ UserToolbarsPart::~UserToolbarsPart()
 
 void UserToolbarsPart::init()
 {
-  KConfig *config = UserToolbarsFactory::componentData().config();
-  config->setGroup("General");
-  m_separateToolbars = config->readEntry("Separate toolbars", false);
-  m_createActionsMenu = config->readEntry("Create Actions menu", true);
+  KConfigGroup config( UserToolbarsFactory::componentData().config(), "General" );
+  m_separateToolbars = config.readEntry("Separate toolbars", false);
+  m_createActionsMenu = config.readEntry("Create Actions menu", true);
   slotAdjustActions();
   ToolbarGUIBuilder::ref(Koncrete::Core::mainWindow())->setSeparateToolbars(m_separateToolbars);
   KMenu *actionsMenu = static_cast<KMenu*>(factory()->container("actions", this));
@@ -496,7 +495,7 @@ void UserToolbarsPart::slotLoadToolbarFile(const KUrl& url)
 	int i=0;
         while (it.hasNext())
         {
-	
+
           it.next();
           it.value()->guiClient->actionCollection()->addAction(QString("nametoolbar%1").arg(i),userAction);
 	  i++;
@@ -1155,7 +1154,7 @@ void UserToolbarsPart::slotConfigureToolbars(const QString &defaultToolbar)
  KMainWindow *mw = Koncrete::Core::mainWindow();
  m_currentTabPage = tb->currentIndex();
  QDomNodeList nodeList;
- mw->saveMainWindowSettings(KGlobal::config(), mw->autoSaveGroup());
+ mw->saveMainWindowSettings(KGlobal::config().data(), mw->autoSaveGroup());
  KEditToolbar dlg(defaultToolbar, mw->factory(), mw);
  connect(&dlg, SIGNAL(newToolbarConfig()), SLOT(slotNewToolbarConfig()));
  dlg.exec();
@@ -1164,7 +1163,7 @@ void UserToolbarsPart::slotConfigureToolbars(const QString &defaultToolbar)
 
 void UserToolbarsPart::slotNewToolbarConfig()
 {
-  Koncrete::Core::mainWindow()->applyMainWindowSettings(KGlobal::config(), Koncrete::Core::mainWindow()->autoSaveGroup());
+  Koncrete::Core::mainWindow()->applyMainWindowSettings(KGlobal::config().data(), Koncrete::Core::mainWindow()->autoSaveGroup());
   ToolbarTabWidget::ref()->setCurrentIndex(m_currentTabPage);
 }
 
@@ -1353,11 +1352,10 @@ void UserToolbarsPart::slotShowMessage(const QString &message, bool append)
 
 void UserToolbarsPart::saveConfig()
 {
-  KConfig *config = UserToolbarsFactory::componentData().config();
-  config->setGroup("General");
-  config->writeEntry("Separate toolbars", m_separateToolbars);
-  config->writeEntry("Create Actions menu", m_createActionsMenu);
-  config->sync();
+  KConfigGroup config( UserToolbarsFactory::componentData().config(), "General" );
+  config.writeEntry("Separate toolbars", m_separateToolbars);
+  config.writeEntry("Create Actions menu", m_createActionsMenu);
+  config.sync();
 }
 
 

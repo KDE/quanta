@@ -30,6 +30,7 @@
 #include <QTimer>
 
 // KDE includes
+#include <kconfiggroup.h>
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kinputdialog.h>
@@ -143,7 +144,8 @@ ProjectTreeView::ProjectTreeView(Koncrete::Plugin * plugin, QWidget *parent)
   connect(this, SIGNAL(open(Q3ListViewItem *)),
           this, SLOT(slotSelectFile(Q3ListViewItem *)));
 
-  restoreLayout(KGlobal::config(), metaObject()->className());
+  KConfigGroup configGroup(KGlobal::config(), metaObject()->className());
+  restoreLayout(configGroup);
   // the restored size of the first column might be too large for the current content
   // we set it to 10 and the listview will adjust it to the size of the largest entry
   setColumnWidth(0, 10);
