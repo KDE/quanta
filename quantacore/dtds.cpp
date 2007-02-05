@@ -39,6 +39,7 @@
 #include <klocale.h>
 #include <kstandarddirs.h>
 #include <kfiledialog.h>
+#include <kio/copyjob.h>
 
 DTDs *DTDs::m_ref = 0L;
 

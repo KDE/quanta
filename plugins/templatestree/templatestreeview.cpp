@@ -72,6 +72,8 @@
 #include <ktempdir.h>
 #include <ktemporaryfile.h>
 #include <kio/netaccess.h>
+#include <kio/copyjob.h>
+#include <kio/deletejob.h>
 #include <ktar.h>
 #include <kdebug.h>
 #include <kfile.h>
