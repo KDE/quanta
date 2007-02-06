@@ -158,7 +158,9 @@ bool QuantaNetAccess::del( const KURL & url, QWidget* window, bool confirm )
 
 bool QuantaNetAccess::mkdir( const KURL & url, QWidget* window, int permissions, bool confirm )
 {
-  bool ok = KIO::NetAccess::mkdir( url, window, permissions );
+  KURL u = url;
+  u.adjustPath(-1); //some servers refuse to create directories ending with a slash
+  bool ok = KIO::NetAccess::mkdir( u, window, permissions );
   if (ok) {
     checkProjectInsert(url, window, confirm);
   } else {
