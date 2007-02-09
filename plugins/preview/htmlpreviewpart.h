@@ -42,7 +42,7 @@ class HTMLPreviewPart : public Koncrete::Plugin
   Q_OBJECT
 public:
   HTMLPreviewPart(QObject *parent, const QStringList &args);
-  ~HTMLPreviewPart();
+  virtual ~HTMLPreviewPart();
   // the methods to embed the view 
   virtual QWidget *pluginView() const;
     

@@ -60,7 +60,7 @@ class KDEVQUANTA_EXPORT QuantaCoreIf : public Koncrete::Plugin
 public:
   QuantaCoreIf(const KComponentData &info, QObject *parent);
 
-  ~QuantaCoreIf();
+  virtual ~QuantaCoreIf();
 
   /**
    * Inserts a new tag into the current document.
