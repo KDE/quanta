@@ -435,8 +435,8 @@ FileInfoDlg* BaseTreeView::addFileInfoPage(KPropertiesDialog* propDlg)
          */
          quantaFileProperties->lineNum->setText(i18n("Number of lines: %1", ct));
          quantaFileProperties->imageNum->setText(i18n("Number of images included: %1", imgct));
-         quantaFileProperties->imageSize->setText(i18np("Size of the included images: 1 byte", "Size of the included images: %n bytes", fimgsize));
-         quantaFileProperties->totalSize->setText(i18np("Total size with images: 1 byte", "Total size with images: %n bytes", fsize+fimgsize));
+         quantaFileProperties->imageSize->setText(i18np("Size of the included images: 1 byte", "Size of the included images: %1 bytes", fimgsize));
+         quantaFileProperties->totalSize->setText(i18np("Total size with images: 1 byte", "Total size with images: %1 bytes", fsize+fimgsize));
         }
         else if (mimetype.contains("image"))
         {              // assume it's an image file
