@@ -18,7 +18,7 @@ kde4_automoc(${quanta_SRCS})
 
 kde4_add_executable(quanta ${quanta_SRCS})
 
-target_link_libraries(quanta  ${KDE4_KDECORE_LIBS} kdevquanta kdevshell )
+target_link_libraries(quanta  ${KDE4_KDECORE_LIBS} kdevplatformshell kdevplatformproject)
 
 install(TARGETS quanta  DESTINATION ${BIN_INSTALL_DIR} )
 
