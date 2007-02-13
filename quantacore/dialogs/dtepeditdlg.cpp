@@ -33,7 +33,7 @@
 #include <kconfig.h>
 #include <kfiledialog.h>
 #include <kicondialog.h>
-#include <klistbox.h>
+#include <k3listbox.h>
 #include <klineedit.h>
 #include <klocale.h>
 #include <kmessagebox.h>

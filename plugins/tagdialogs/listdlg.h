@@ -21,7 +21,7 @@
 class QPushButton;
 class QString;
 class QStringList;
-class KListBox;
+class K3ListBox;
 
 /**Select an item from a list. The list is given in
 the constructor as a parameter. After calling
@@ -39,7 +39,7 @@ public:
   int getEntryNum();
 private: // Private attributes
   /**  */
-  KListBox * listbox;
+  K3ListBox * listbox;
 };
 
 #endif

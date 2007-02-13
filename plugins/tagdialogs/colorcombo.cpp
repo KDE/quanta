@@ -40,7 +40,7 @@
 #include <kglobal.h>
 #include <kglobalsettings.h>
 #include <kiconloader.h>
-#include <klistbox.h>
+#include <k3listbox.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kseparator.h>

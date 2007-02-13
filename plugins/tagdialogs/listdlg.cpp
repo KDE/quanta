@@ -16,7 +16,7 @@
 #include "listdlg.h"
 
 //kde include
-#include <klistbox.h>
+#include <k3listbox.h>
 #include <klocale.h>
 
 //qt includes
@@ -25,7 +25,7 @@
 #include <QStringList>
 
 ListDlg::ListDlg(QStringList &entryList,QWidget* parent)
-  : KDialog(parent), listbox(new KListBox(this))
+  : KDialog(parent), listbox(new K3ListBox(this))
 {
    Q_CHECK_PTR(listbox);
    setMainWidget(listbox);
