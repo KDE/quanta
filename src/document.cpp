@@ -1199,11 +1199,11 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(int line, 
   {
     case Xml: completion.type = "tag";
               break;
-    case Script: completion.type = "script";
-                 break;
+    case Script: 
+              completion.type = "script";
+              break;
   }
   Node *node = parser->nodeAt(line, col);
-  Node *n = node;
   if (node && node->tag->type != Tag::XmlTag)
       node = node->parent;
   if (node && node->tag->type != Tag::XmlTag)
@@ -1231,6 +1231,8 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(int line, 
         {
           QString parentGroupStr = "";
           bool classFound = false;
+          parser->synchParseInDetail(); 
+          Node *n = parser->nodeAt(line, col);
           while (n && !classFound)
           {
             //Need to parser for groups, as the node tree is rebuilt before
@@ -1285,6 +1287,8 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(int line, 
   completion.userdata = word + "|";
   QStringList tagNameList;
   QMap<QString, QString> comments;
+  //A QMap to hold the completion type (function/string/class/etc)
+  QMap<QString, QString> type;
   QString tagName;
   QDictIterator<QTag> it(*(completionDTD->tagsList));
   int i = 0;
@@ -1318,11 +1322,36 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(int line, 
       tagName = tag->name() + QString("%1").arg(i, 10);
       tagNameList += tagName;
       comments.insert(tagName, tag->comment);
-      i++;
+      
+       // If the completion family is script, then we want to update the tag type
+       // it appears we use "script" for adding the completionDTD->attrAutoCompleteAfter when we run the slotFilterCompletion
+       // so we will continue to use that for functions (they need the attribute added), but variables get a new type - and we do not
+       // have to auto-complete them
+      if(completionDTD->family==Script)
+      {
+        if(tag->type=="variable")
+          type.insert(tagName, tag->type);
+        else if(tag->type=="function")
+          type.insert(tagName, "script");
+        
+        // We add the type to the comment variable, so it displays on the screen, giving the user some feedback
+        if(comments[tagName].length())
+          comments[tagName] = tag->type + "\n" + comments[tagName];
+        else
+          comments[tagName] = tag->type + comments[tagName];
+        i++;
+      }
     }
   }
 
   tagNameList.sort();
+   // tagNameList is sorted above to sort the completions by name alphabetically
+   // Now we want to sort the completions by their types.
+   // We only want to do this if we are completing Script DTDs
+   // We are going to use a couple of iterators to sort the list by Type
+   // Type Sorting is as follows: 0:Other, 1:Variables, 2: Functions (script)
+  QValueList<KTextEditor::CompletionEntry>::Iterator otherIt=completions->begin();
+  QValueList<KTextEditor::CompletionEntry>::Iterator variableIt=completions->begin();
   for (uint i = 0; i < tagNameList.count(); i++)
   {
     if (completionDTD->family == Xml)
@@ -1331,10 +1360,42 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(int line, 
       completion.text = tagNameList[i];
     completion.text = completion.text.left(completion.text.length() - 10).stripWhiteSpace();
     completion.comment = comments[tagNameList[i]];
-    completions->append( completion );
+
+    if(completionDTD->family==Script)
+    {
+      // Here we actually append the completion type
+      completion.type = type[tagNameList[i]];
+      // And here is out sorting...
+      if(completion.type.contains("variable"))
+      {
+        // Insert after the last variable
+        variableIt++;
+        variableIt = completions->insert(variableIt, completion);
+      }
+      else
+      {
+        if(completion.type.contains("script"))
+        {
+          //Scripts can go at the end of the list
+          completions->append(completion);
+        }
+        else
+        {
+          // Other types go first, after the last other type
+          otherIt++;
+          otherIt = completions->insert(otherIt, completion);
+          // If we have no variables in the list, we need to point variableIt to otherIt, so they will go after the 'others'
+          if((*variableIt).text.length()==0)
+            variableIt=otherIt;
+        }
+      }
+    }
+    else
+      completions->append( completion );
   }
 
 //  completionInProgress = true;
+
   return completions;
 }
 

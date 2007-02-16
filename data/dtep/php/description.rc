@@ -50,6 +50,8 @@ Icon = abs
 DefinitionRx = \$+([a-zA-Z0-9_\x7f-\xff]*[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)
 UsageRx = \$+([a-zA-Z0-9_\x7f-\xff]*[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)
 AutoCompleteAfter = \$+[a-zA-Z0-9_\x7f-\xff]*$
+AppendToTags = true
+ParentGroup = Classes
 
 [StructGroup_3]
 Name = Functions

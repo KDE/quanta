@@ -203,7 +203,9 @@ void SAGroupParser::parseForScriptGroup(Node *node)
         if (group.appendToTags)
         {
           QTag *qTag = new QTag();
-          qTag->setName(s.left(s.find('(')));
+          // The location of the first open bracket '(', also the end of the tag name
+          int nameEnd = s.find('(');
+          qTag->setName(s.left(nameEnd));
           qTag->className = "";
           if (groupElement->parentNode)
           {
@@ -216,7 +218,61 @@ void SAGroupParser::parseForScriptGroup(Node *node)
               }
             }
           }
-          m_write->userTagList.insert(s.lower(), qTag);
+           // Test for variable or function Type by checking for an opening bracket "(" used by functions
+           // and store the type in the QTag type variable.
+          bool isArgument=false;
+          if (nameEnd == -1)
+          {
+            qTag->type="variable";
+            // If this tag is a class function argument, it should not belong to the class, so we need to remove it
+            if(qTag->className.length() != 0 && tagStr.contains('(') && tagStr.contains(')'))
+            {
+            // First we want to determine the whole line the tag is on
+              QString tagWholeLineStr = tagStr;
+            // Remove lines before target line
+              while(tagWholeLineStr.length() > 0) // this stops infinit looping in case something goes wrong!
+              {
+                int firstNewline = tagWholeLineStr.find('\n');
+                if(firstNewline == -1) //no new lines so we must be on the last
+                  break; 
+                QString checkLineStr = tagWholeLineStr.mid(firstNewline+1,tagWholeLineStr.length());
+                if(checkLineStr.contains(s))
+                  tagWholeLineStr = checkLineStr;
+                else
+                  break;
+              }
+            // Remove lines after target line - essentially same as above
+              while(tagWholeLineStr.length() > 0)
+              {
+                int lastNewLine = tagWholeLineStr.findRev('\n');
+                if(lastNewLine == -1)
+                  break;
+                QString checkLineStr = tagWholeLineStr.mid(0,lastNewLine);
+                if(checkLineStr.contains(s))
+                  tagWholeLineStr = checkLineStr;
+                else
+                  break;
+              }
+            // Now we are left with the current line, lets check if the variable is inside parentheses
+              int lineOpenParenth=tagWholeLineStr.find('(');
+              if(lineOpenParenth != -1)
+              {
+                int lineCloseParenth=tagWholeLineStr.find(')');
+                if(lineCloseParenth != -1)
+                {
+                  int lineNameLocation=tagWholeLineStr.find(s);
+                  if(lineNameLocation > lineOpenParenth || lineNameLocation < lineCloseParenth) // Write the current tag to the list
+                    isArgument=true;
+                }
+              }
+            }
+          }
+          else
+          {
+            qTag->type="function";
+          }
+          if(!isArgument)
+            m_write->userTagList.insert(s.lower(), qTag);
         }
 
 
