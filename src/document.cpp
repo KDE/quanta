@@ -1339,8 +1339,8 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(int line, 
           comments[tagName] = tag->type + "\n" + comments[tagName];
         else
           comments[tagName] = tag->type + comments[tagName];
-        i++;
       }
+      i++;
     }
   }
 
