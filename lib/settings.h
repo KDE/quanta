@@ -52,7 +52,7 @@ public:
   static void deletePrjSettings();
 
 private:
-  Settings(bool readOnly = false);
+  Settings();
 
   static Settings * m_prjSettings;
 

@@ -147,7 +147,7 @@ bool DTDs::readTagDir(const QString &dirName, bool loadAll)
   QString tmpStr = dirName + m_rcFilename;
   if (!QFile::exists(tmpStr))
      return false;
-  KConfig *dtdConfig = new KConfig(tmpStr, true);
+  KConfig *dtdConfig = new KConfig(tmpStr);
   dtdConfig->setGroup("General");
   QString dtdName = dtdConfig->readEntry("Name", "Unknown");
   if (m_dict->contains(dtdName.toLower()))
@@ -217,7 +217,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
 
   kapp->setOverrideCursor( QCursor(Qt::WaitCursor) );
 
-  KConfig *dtdConfig = new KConfig(dtd->fileName, true);
+  KConfig *dtdConfig = new KConfig(dtd->fileName);
 
   //read the general DTD info
   dtdConfig->setGroup("General");
@@ -470,7 +470,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
     dtd->attributeSeparator = (dtd->family == DTDStruct::Xml) ? '\"' : ',';
   } else
     dtd->attributeSeparator = tmpStr.at(0);
-   
+
   tmpStr = dtdConfig->readEntry("TagSeparator").trimmed();
   if (tmpStr.isEmpty())
   {
@@ -878,7 +878,7 @@ void DTDs::slotLoadDTD()
     if (dtdParser.parse())
     {
       QString dirName = dtdParser.dirName();
-      KConfig dtdcfg(dirName + m_rcFilename, true);
+      KConfig dtdcfg(dirName + m_rcFilename);
       dtdcfg.setGroup("General");
       QString dtdName = dtdcfg.readEntry("Name");
       QString nickName = dtdcfg.readEntry("NickName", dtdName);
@@ -910,7 +910,7 @@ void DTDs::slotLoadDTEP(const QString &_dirName, bool askForAutoload)
   QString dirName = _dirName;
   if (!dirName.endsWith('/'))
     dirName += '/';
-  KConfig dtdcfg(dirName + m_rcFilename, true);
+  KConfig dtdcfg(dirName + m_rcFilename);
   dtdcfg.setGroup("General");
   QString dtdName = dtdcfg.readEntry("Name");
   QString nickName = dtdcfg.readEntry("NickName", dtdName);

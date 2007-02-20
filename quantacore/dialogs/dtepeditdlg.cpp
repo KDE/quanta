@@ -52,7 +52,7 @@ DTEPEditDlg::DTEPEditDlg(const QString& descriptionFile, QWidget *parent)
   nameEdit->setFocus();
   m_descriptionFile = descriptionFile;
 
-  m_config = new KConfig(m_descriptionFile, false, false);
+  m_config = new KConfig(m_descriptionFile, KConfig::NoGlobals );
   init();
 
 }

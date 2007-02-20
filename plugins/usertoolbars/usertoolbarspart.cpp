@@ -1154,7 +1154,7 @@ void UserToolbarsPart::slotConfigureToolbars(const QString &defaultToolbar)
  KMainWindow *mw = Koncrete::Core::mainWindow();
  m_currentTabPage = tb->currentIndex();
  QDomNodeList nodeList;
- mw->saveMainWindowSettings(KGlobal::config().data(), mw->autoSaveGroup());
+ mw->saveMainWindowSettings(KGlobal::config()->group( mw->autoSaveGroup()) );
  KEditToolbar dlg(defaultToolbar, mw->factory(), mw);
  connect(&dlg, SIGNAL(newToolbarConfig()), SLOT(slotNewToolbarConfig()));
  dlg.exec();
@@ -1163,7 +1163,7 @@ void UserToolbarsPart::slotConfigureToolbars(const QString &defaultToolbar)
 
 void UserToolbarsPart::slotNewToolbarConfig()
 {
-  Koncrete::Core::mainWindow()->applyMainWindowSettings(KGlobal::config().data(), Koncrete::Core::mainWindow()->autoSaveGroup());
+  Koncrete::Core::mainWindow()->applyMainWindowSettings(KGlobal::config()->group( Koncrete::Core::mainWindow()->autoSaveGroup()) );
   ToolbarTabWidget::ref()->setCurrentIndex(m_currentTabPage);
 }
 

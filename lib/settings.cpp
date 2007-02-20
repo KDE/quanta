@@ -33,10 +33,9 @@ Settings *Settings::self()
 }
 
 
-Settings::Settings(bool readOnly)
+Settings::Settings()
   : SettingsBase()
 {
-  config()->setReadOnly(readOnly);
 }
 
 
@@ -57,7 +56,7 @@ void Settings::createPrjSettings()
   if (m_prjSettings)
     staticSettingsPrjDeleter.destructObject();
 
-  staticSettingsPrjDeleter.setObject(m_prjSettings, new Settings(true));
+  staticSettingsPrjDeleter.setObject(m_prjSettings, new Settings());
   m_prjSettings->readConfig(); // read global values as default
 }
 
