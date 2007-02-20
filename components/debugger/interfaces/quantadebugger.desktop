@@ -2,6 +2,7 @@
 Type=ServiceType
 X-KDE-ServiceType=Quanta/Debugger
 Comment=A Quanta Debugger plugin
+Comment[bg]=Приставка на Quanta за дебъгване
 Comment[br]=Ul lugent dizraener Quanta
 Comment[ca]=Un connector de depuració pel Quanta
 Comment[cs]=Ladicí modul Quanty

@@ -4,6 +4,7 @@ Encoding=UTF-8
 Name=Gubed
 Name[ta]=குபெட்
 Comment=Quanta debugger plugin to interact with the Gubed PHP debugger, see http://gubed.sf.net
+Comment[bg]=Приставка на Quanta за връзка с дебъгера Gubed PHP, http://gubed.sf.net
 Comment[ca]=Connector de depuració pel Quanta que interactua amb el depurador Gubed PHP, consulteu http://gubed.sf.net
 Comment[cs]=Ladicí modul Quanty s Gubed PHP debuggerem, viz http://gubed.sf.net
 Comment[da]=Quanta fejlretter-plugin til at virke sammen med Gubed PHP fejlretter, se http://gubed.sf.net

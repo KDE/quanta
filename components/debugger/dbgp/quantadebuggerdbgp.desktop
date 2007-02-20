@@ -3,6 +3,7 @@ Type=Service
 Encoding=UTF-8
 Name=DBGp
 Comment=DBGp debugger plugin, see http://xdebug.org
+Comment[bg]=Приставка на дебъгер DBGp, http://xdebug.org
 Comment[ca]=Connector de depuració DBGp, consulteu http://xdebug.org
 Comment[cs]=DBGp debugger plugin, viz http://xdebug.org
 Comment[da]=DBGp fejlretter-plugin, se http://xdebug.org
