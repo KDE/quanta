@@ -99,29 +99,23 @@ bool QuantaDoc::newDocument( const KURL& url, bool switchToExisting )
   QuantaView *view = ViewManager::ref()->isOpened(url);
   if (!view || newfile)
   {
+/*    
     // no modi and new -> we can remove                           !!!!
     w = ViewManager::ref()->activeDocument();
     if (w && !w->isModified() &&
          w->isUntitled() && !w->busy)
     {
-    //workaround for some strange Katepart behavior. If there is a highlighting mode
-    //selected and new content is loaded, the highlighting is reset to None. To avoid this
-    //remove the untitled document and create a new one, where we don't set the
-    //highlighting
-    ViewManager::ref()->removeActiveView(false);
-    w = ViewManager::ref()->activeDocument();
+      //workaround for some strange Katepart behavior. If there is a highlighting mode
+      //selected and new content is loaded, the highlighting is reset to None. To avoid this
+      //remove the untitled document and create a new one, where we don't set the
+      //highlighting
+      ViewManager::ref()->removeActiveView(false);
+      w = ViewManager::ref()->activeDocument();
    
-   /*
-    KTextEditor::HighlightingInterface* highlightIf = dynamic_cast<KTextEditor::HighlightingInterface*>(w->doc());
-    if (highlightIf)
-    {
-      highlightIf->setHlMode(0);
+      if (w && !w->isModified() && w->isUntitled() && !w->busy)
+          return true;
     }
-    */
-        if (w && !w->isModified() && w->isUntitled() && !w->busy)
-            return true;
-    }
-
+*/
     // now we can create new kwrite
     ViewManager::ref()->createNewDocument();
     view = ViewManager::ref()->activeView();
