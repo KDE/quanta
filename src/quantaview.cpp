@@ -74,6 +74,8 @@
 #include "tagdialog.h"
 
 extern int NN;
+extern QValueList<Node*> nodes;
+
 QuantaView::QuantaView(QWidget *parent, const char *name, const QString &caption )
   : KMdiChildView(parent, name)
   , m_document(0L)
@@ -143,10 +145,14 @@ bool QuantaView::mayRemove()
     if (static_cast<QuantaView *>(quantaApp->activeWindow()) == this)
     {
         parser->setSAParserEnabled(false);
-        kdDebug(24000) << "Node objects before delete :" << NN << " baseNode= " << baseNode << endl;
+        kdDebug(24000) << "Node objects before delete = " << NN << " ; list count = " << nodes.count() << endl;
         delete baseNode;
         baseNode = 0L;
-        kdDebug(24000) << "Node objects after delete :" << NN << " baseNode= " << baseNode << endl;
+        kdDebug(24000) << "Node objects after delete = " << NN << " ; list count = " << nodes.count() << endl;
+        QValueList<Node*> nList = nodes;
+/*        for (QValueList<Node*>::ConstIterator it = nList.constBegin(); it != nList.constEnd(); ++it)
+          delete (*it);
+        kdDebug(24000) << "Node objects after cleanup = " << NN << " ; list count = " << nodes.count() << endl;*/
     }
     if (m_document)
     {

@@ -68,6 +68,7 @@ extern GroupElementMapList globalGroupMap;
 static const QChar space(' ');
 
 extern int NN;
+extern QValueList<Node*> nodes;
 
 Parser::Parser()
 {
@@ -520,12 +521,16 @@ Node *Parser::parse(Document *w, bool force)
  // clearGroups();
   if (baseNode)
   {
-     kdDebug(24000) << "NN before delete = " << NN << endl;
+     kdDebug(24000) << "Node objects before delete = " << NN << " ; list count = " << nodes.count() << endl;
      //kdDebug(24000) << "baseNode before delete = " << baseNode << endl;
      //ParserCommon::coutTree(m_node, 2);
      delete baseNode;
      baseNode = 0L;
-     kdDebug(24000) << "NN after delete = " << NN << endl;
+     kdDebug(24000) << "Node objects after delete = " << NN << " ; list count = " << nodes.count() << endl;
+     QValueList<Node*> nList = nodes;
+/*     for (QValueList<Node*>::ConstIterator it = nList.constBegin(); it != nList.constEnd(); ++it)
+       delete (*it);
+     kdDebug(24000) << "Node objects after cleanup = " << NN << " ; list count = " << nodes.count() << endl;       */
   }
   m_node = 0L;
 
@@ -1013,8 +1018,9 @@ Node *Parser::rebuild(Document *w)
 
    kdDebug(24000) << QString("Invalid area: %1,%2,%3,%4").arg(area.bLine).arg(area.bCol).arg(area.eLine).arg(area.eCol) << "\n";
 
+//    kdDebug(24000) << "lastNode1: " << lastNode << " " << lastNode->tag << endl;
    deleteNodes(firstNode->nextSibling(), lastNode, modifs);
-
+//    kdDebug(24000) << "lastNode2: " << lastNode << " " << lastNode->tag << endl;
 
    firstNode->child = 0L;
    Node *lastInserted = 0L;
@@ -1053,10 +1059,11 @@ Node *Parser::rebuild(Document *w)
      m_saParser->setParsingEnabled(saParserEnabled);
      return parse(w);
    }
-
+//    kdDebug(24000) << "lastNode3: " << lastNode << " " << lastNode->tag << endl;
    bool goUp;
    if (lastNode && lastInserted)
    {
+//      kdDebug(24000) << "lastNode4: " << lastNode << " " << lastNode->tag << endl;
       //merge the nodes if they are both of type Text or Empty
       if ( (lastInserted->tag->type == Tag::Empty || lastInserted->tag->type == Tag::Text) &&
             (lastNode->tag->type == Tag::Empty || lastNode->tag->type == Tag::Text))
@@ -1115,9 +1122,11 @@ Node *Parser::rebuild(Document *w)
 
     node = lastInserted;
 
+//     kdDebug(24000) << "lastNode5: " << lastNode << " " << lastNode->tag << endl;
     QTag *qTag = 0L;
     while (node && lastNode)
     {
+//       kdDebug(24000) << "lastNode6: " << lastNode << " " << lastNode->tag << endl;
       qTag = 0L;
       goUp = ( node->parent &&
                ( (lastNode->tag->type == Tag::XmlTagEnd && QuantaCommon::closesTag(node->parent->tag, lastNode->tag) ) ||
@@ -1142,65 +1151,69 @@ Node *Parser::rebuild(Document *w)
             (!m_dtd->caseSensitive && node->tag->name.lower() == node->parent->tag->name.lower())) )
           goUp = false; //it can happen that the tag closes the previous and not the parent
 
-    if (goUp) //lastnode closes the node->parent
-    {
-        //handle cases like <ul><li></ul>
-        if (lastNode->tag->type == Tag::XmlTagEnd &&
-            !QuantaCommon::closesTag(node->parent->tag, lastNode->tag))
-        {
-          while ( node->parent->parent &&
-                  QuantaCommon::closesTag(node->parent->parent->tag, lastNode->tag)
-                )
+      if (goUp) //lastnode closes the node->parent
+      {
+          //handle cases like <ul><li></ul>
+          if (lastNode->tag->type == Tag::XmlTagEnd &&
+              !QuantaCommon::closesTag(node->parent->tag, lastNode->tag))
           {
-            node = node->parent;
-          }
-        } else
-        if (qTag && lastNode->tag->type != Tag::XmlTagEnd)
-        {
-          //handle the case when a tag is a stopping tag for parent, and grandparent and so on. I'm not sure it's needed here, but anyway...
-          Node *n = node->parent;
-          QString searchFor = (m_dtd->caseSensitive) ? lastNode->tag->name : lastNode->tag->name.upper();
-          while (qTag && n)
-          {
-            qTag = QuantaCommon::tagFromDTD(m_dtd, n->tag->name);
-            if ( qTag )
+            while ( node->parent->parent &&
+                    QuantaCommon::closesTag(node->parent->parent->tag, lastNode->tag)
+                  )
             {
-              if ( qTag->stoppingTags.contains(searchFor) )
+              node = node->parent;
+            }
+          } else
+          if (qTag && lastNode->tag->type != Tag::XmlTagEnd)
+          {
+            //handle the case when a tag is a stopping tag for parent, and grandparent and so on. I'm not sure it's needed here, but anyway...
+            Node *n = node->parent;
+            QString searchFor = (m_dtd->caseSensitive) ? lastNode->tag->name : lastNode->tag->name.upper();
+            while (qTag && n)
+            {
+              qTag = QuantaCommon::tagFromDTD(m_dtd, n->tag->name);
+              if ( qTag )
               {
-                n->tag->closingMissing = true; //parent is single...
-                if (n->parent)
-                  node = n;
-                n = n->parent;
-              } else
-              {
-                break;
+                if ( qTag->stoppingTags.contains(searchFor) )
+                {
+                  n->tag->closingMissing = true; //parent is single...
+                  if (n->parent)
+                    node = n;
+                  n = n->parent;
+                } else
+                {
+                  break;
+                }
               }
             }
           }
-        }
-      if (lastNode->prev && lastNode->prev->next == lastNode)
-        lastNode->prev->next = 0L;
-      if (lastNode->parent && lastNode->parent->child == lastNode)
-          lastNode->parent->child = 0L;
-      node->parent->next = lastNode;
-      lastNode->prev = node->parent;
-      if (node->parent)
-        lastNode->parent = node->parent->parent;
-      else
-        lastNode->parent = 0L;
-      node->next = 0L;
-      lastNode->closesPrevious = true;
-    } else
-    {
-      if (lastNode->prev && lastNode->prev->next == lastNode)
+        if (lastNode->prev && lastNode->prev->next == lastNode)
           lastNode->prev->next = 0L;
-      node->next = lastNode;
-      lastNode->prev = node;
-      lastNode->parent = node->parent;
+        if (lastNode->parent && lastNode->parent->child == lastNode)
+            lastNode->parent->child = 0L;
+        if (node->parent)
+          node->parent->next = lastNode;
+        lastNode->prev = node->parent;
+        if (node->parent)
+          lastNode->parent = node->parent->parent;
+        else
+          lastNode->parent = 0L;
+        node->next = 0L;
+        lastNode->closesPrevious = true;
+      } else
+      {
+        if (lastNode->prev && lastNode->prev->next == lastNode)
+            lastNode->prev->next = 0L;
+        node->next = lastNode;
+        lastNode->prev = node;
+        lastNode->parent = node->parent;
+//         kdDebug(24000) << "lastNode7: " << lastNode << " " << lastNode->tag << endl;
+      }
+      node = lastNode;
+      lastNode = lastNode->nextNotChild();
+      if (lastNode)
+        QString s = lastNode->tag->tagStr();
     }
-    node = lastNode;
-    lastNode = lastNode->nextNotChild();
-   }
  }
 /*   kdDebug(24000)<< "END"<< endl;
    ParserCommon::coutTree(baseNode,  2);
@@ -1209,7 +1222,8 @@ Node *Parser::rebuild(Document *w)
    w->docUndoRedo->addNewModifsSet(modifs, undoRedo::SourceModif);
  }
   kdDebug(24000) << "Rebuild: " << t.elapsed() << " ms; baseNode=" << baseNode << "\n";
-
+ 
+//   ParserCommon::verifyTree(m_node);
 /* treeSize = 0;
  ParserCommon::coutTree(m_node, 2);
  kdDebug(24000) << "Size of tree: " << treeSize << endl;*/

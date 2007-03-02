@@ -27,6 +27,8 @@
 #include "structtreetag.h"
 #include "kafkacommon.h"
 
+QValueList<Node*> nodes; //list of all created nodes. Used to do some own memory management and avoid double deletes, for whatever reason they happen...
+
 int NN = 0; //for debugging purposes: count the Node objects
 
 GroupElementMapList globalGroupMap;
@@ -46,11 +48,23 @@ Node::Node(Node *parent)
   m_leafNode = 0L;
   m_groupElements.clear();
   NN++;
+  if (nodes.contains(this) == 0)
+    nodes.append(this);
+  else
+  {
+    kdError(24000) << "A node with this address " << this << " already exists!" << endl; 
+  }
 }
 
 
 Node::~Node()
 {
+  if (nodes.contains(this) == 0)
+  {     
+    kdError(24000) << "No node with this address " << this << " was allocated!" << endl; 
+    return;
+  }
+    
   //It has no use, except to know when it crash why it has crashed.
   //If it has crashed here, the Node doesn't exist anymore.
   // If it has crashed the next line, it is a GroupElements bug.
@@ -60,6 +74,8 @@ Node::~Node()
     tag->setCleanStrBuilt(false);
 
   detachNode();
+  if (nodes.contains(this) > 0)
+    nodes.remove(this);
   if (prev && prev->next == this)
       prev->next = 0L;
   if (parent && parent->child == this)
@@ -487,6 +503,12 @@ void Node::operator =(Node* node)
 
 void Node::detachNode()
 {
+  if (nodes.contains(this) == 0)
+  {
+    kdError(24000) << "No node with this address " << this << " was allocated!" << endl; 
+    return;
+  }    
+
   int count = 0;
   //kdDebug(24000) << &m_groupElements << " " << this << endl;
   //Remove the references to this node from the list of group elements.

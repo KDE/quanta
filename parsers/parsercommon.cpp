@@ -236,4 +236,21 @@ void coutTree(Node *node, int indent)
     }
 }
 
+void verifyTree(Node *node)
+{
+  QString output;
+  int bLine, bCol, eLine, eCol;
+  while (node)
+  {
+    if (!node->tag)
+    {
+      kdDebug(24000) << "Bad node: " << node << endl;
+      kdDebug(24000) << "Parent: " << node->parent << " " << node->parent->tag->tagStr() << endl;
+    }      
+    if (node->child)
+      verifyTree(node->child);
+    node = node->next;
+  }
+}
+
 }

@@ -900,7 +900,8 @@ void SAParser::slotParseNodeInDetail()
       AreaStruct area(m_currentNode->tag->area());
       s_next = 0L;
       m_useNext = false;
-      if (m_currentNode->next)
+      //FIXME: Find out why can the tag become 0L
+      if (m_currentNode->next && m_currentNode->next->tag)
       {
         AreaStruct area2(m_currentNode->next->tag->area());
         area.eLine = area2.eLine;

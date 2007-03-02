@@ -53,6 +53,7 @@ namespace ParserCommon{
 /** Print the doc structure tree to the standard output.
     Only for debugging purposes. */
   void coutTree(Node *node, int indent);
+  void verifyTree(Node *node);
 }
  
 #endif

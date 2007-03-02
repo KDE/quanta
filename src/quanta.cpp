@@ -4274,7 +4274,7 @@ void QuantaApp::slotEditCurrentTag()
   QString tagName;
   if (node && node->tag)
   {
-    Tag *tag = node->tag;
+    Tag *tag = new Tag(*node->tag); //create a copy, as a reparse might happen meantime and that would make node (and node->tag) invalid
     tagName = tag->name;
     if ( QuantaCommon::isKnownTag(tag->dtd()->name,tagName) )
     {
@@ -4287,7 +4287,7 @@ void QuantaApp::slotEditCurrentTag()
       {
         w->changeTag(tag, dlg->getAttributes() );
       }
-
+      delete tag;
       delete dlg;
     }
   }
