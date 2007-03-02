@@ -17,7 +17,7 @@ messages: rc.cpp
 	$(EXTRACTRC) `find . -name "*.kmdr"` >> rc.cpp ;\
 	cat data/chars | perl -e 'while(<STDIN>) { chomp ; s/\"/\\\"/ ; print "i18n(\"$$_\");\n"; }' >> rc.cpp ;\
 	$(EXTRACTRC) extrafiles >> rc.cpp ;\
-	cat extrafiles | perl -e 'while(<STDIN>) { if (/\<action .* text="(.*)"/) { print "i18n(\"$$1\");\n"; }}' >> rc.cpp
+	cat extrafiles | perl -e 'while(<STDIN>) { if (/\<action .* text="(.*)"/) { print "i18n(\"$$1\");\n"; }}' | sed -e 's/\&amp;/\&/g' >> rc.cpp
 	(cd data && $(PREPARETIPS) >> ../tips.cpp)
 	find . -name "*.tag" -print | xargs cat | perl -e 'while(<STDIN>) { if (/\<tag .* comment="(.*)"/) { print "i18n(\"$$1\");\n"; }}' >> rc.cpp
 	$(XGETTEXT) rc.cpp tips.cpp `cat files` -o $(podir)/quanta.pot
