@@ -86,7 +86,7 @@ void CreateQuantaProjectPart::setupActions()
 // create XMLGUI actions here
   action =  actionCollection()->addAction("new_project");
   action->setText(i18n("&New Project..."));
-  action->setIcon(KIcon("filenew"));
+  action->setIcon(KIcon("document-new"));
   connect(action, SIGNAL(triggered(bool)), SLOT(slotCreateNewProject()));
   action->setToolTip(i18n("Create new project"));
 }

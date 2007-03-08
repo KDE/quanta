@@ -244,13 +244,13 @@ void UserToolbarsPart::setupActions()
     action  = new KAction(i18n("Re&name User Toolbar..."), this);
     actionCollection()->addAction("toolbars_rename", action );
   connect(action, SIGNAL(triggered(bool)), SLOT(slotRenameToolbar()));
-    action  = new KAction(KIcon("mail_send"), i18n("Send Toolbar in E&mail..."), this);
+    action  = new KAction(KIcon("mail-send"), i18n("Send Toolbar in E&mail..."), this);
     actionCollection()->addAction("toolbars_send", action );
   connect(action, SIGNAL(triggered(bool)), SLOT(slotSendToolbar()));
-    action  = new KAction(KIcon("network"), i18n("&Upload Toolbar..."), this);
+    action  = new KAction(KIcon("network-wired"), i18n("&Upload Toolbar..."), this);
     actionCollection()->addAction("toolbars_upload", action );
   connect(action, SIGNAL(triggered(bool)), SLOT(slotUploadToolbar()));
-    action  = new KAction(KIcon("network"), i18n("&Download Toolbar..."), this);
+    action  = new KAction(KIcon("network-wired"), i18n("&Download Toolbar..."), this);
     actionCollection()->addAction("toolbars_download", action );
   connect(action, SIGNAL(triggered(bool)), SLOT(slotDownloadToolbar()));
     action  = new KAction(KIcon("ball"), i18n("Configure &Actions..."), this);

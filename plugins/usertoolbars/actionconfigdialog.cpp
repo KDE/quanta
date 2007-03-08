@@ -64,10 +64,10 @@ ActionConfigDialog::ActionConfigDialog(const QHash<QString, ToolbarEntry*> &tool
   setupUi(this);
   m_plugin = parent;
   m_toolbarList = toolbarList;
-  buttonOk->setIcon(KIcon("button_ok"));
-  buttonCancel->setIcon(KIcon("button_cancel"));
-  buttonApply->setIcon(KIcon("apply"));
-  //buttonHelp->setIcon(KIcon("help"));
+  buttonOk->setIcon(KIcon("dialog-ok"));
+  buttonCancel->setIcon(KIcon("dialog-cancel"));
+  buttonApply->setIcon(KIcon("dialog-apply"));
+  //buttonHelp->setIcon(KIcon("help-contents"));
 
   currentAction = 0L;
   m_toolbarItem = 0L;

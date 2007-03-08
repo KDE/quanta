@@ -730,9 +730,9 @@ void BaseTreeView::slotDropped (QWidget *, QDropEvent * /*e*/, KUrl::List& fileL
   XQueryPointer( QX11Info::display(), QX11Info::appRootWindow(), &root, &child,
                   &root_x, &root_y, &win_x, &win_y, &keybstate );
 #endif
-    KAction *moveAction  = new KAction(KIcon("goto"), i18n("&Move Here"), this);
+    KAction *moveAction  = new KAction(KIcon("goto-page"), i18n("&Move Here"), this);
     actionCollection()->addAction("move", moveAction );
-    KAction *copyAction  = new KAction(KIcon("editcopy"), i18n("&Copy Here"), this);
+    KAction *copyAction  = new KAction(KIcon("edit-copy"), i18n("&Copy Here"), this);
     actionCollection()->addAction("copy", copyAction );
     KAction *linkAction  = new KAction(KIcon("www"), i18n("&Link Here"), this);
     actionCollection()->addAction("link", linkAction );

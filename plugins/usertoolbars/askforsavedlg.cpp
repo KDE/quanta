@@ -39,7 +39,7 @@ AskForSaveDlg::AskForSaveDlg(const QString &caption, const QString &question, QW
   QLabel *pixmapLabel = new QLabel(widget);
   pixmapLabel->setObjectName("pixmapLabel");
   pixmapLabel->setMaximumSize(QSize(32, 32));
-  pixmapLabel->setPixmap(BarIcon("messagebox_warning", K3Icon::SizeMedium));
+  pixmapLabel->setPixmap(BarIcon("dialog-warning", K3Icon::SizeMedium));
   layout->addWidget(pixmapLabel, 0, 0);
   QLabel *label = new QLabel(widget);
   label->setText(question);

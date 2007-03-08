@@ -191,15 +191,15 @@ void ProjectTreeView::fileMenu(const QPoint &point)
   KMenu popup(this);
 
   if (isFileOpen(currentKFileTreeViewItem()->url()))
-    popup.addAction(SmallIcon("fileclose"), i18n("Clos&e"), this, SLOT(slotClose()));
+    popup.addAction(SmallIcon("window-close"), i18n("Clos&e"), this, SLOT(slotClose()));
   else
-    popup.addAction(SmallIcon("fileopen"), i18n("&Open"), this, SLOT(slotOpen()));
+    popup.addAction(SmallIcon("document-open"), i18n("&Open"), this, SLOT(slotOpen()));
 
   popup.addSeparator();
   popup.addAction(i18n("Re&name"), this, SLOT(slotStartRename()));
-  popup.addAction(SmallIcon("editdelete"), i18n("&Delete"), this, SLOT(slotDelete()));
+  popup.addAction(SmallIcon("edit-delete"), i18n("&Delete"), this, SLOT(slotDelete()));
   popup.addSeparator();
-  popup.addAction(SmallIcon("info"), i18n("&Properties"), this, SLOT(slotProperties()));
+  popup.addAction(SmallIcon("document-properties"), i18n("&Properties"), this, SLOT(slotProperties()));
 
   // ask other plugins for menu entries
   KUrl::List urlList(currentKFileTreeViewItem()->url());
@@ -218,8 +218,8 @@ void ProjectTreeView::folderMenu(const QPoint &point)
 
   KMenu createNewMenu(this);
   createNewMenu.setTitle(i18n("&Create New"));
-  createNewMenu.setIcon(SmallIconSet("filenew"));
-  createNewMenu.addAction(SmallIcon("folder_new"), i18n("F&older..."), this, SLOT(slotCreateFolder()));
+  createNewMenu.setIcon(SmallIconSet("document-new"));
+  createNewMenu.addAction(SmallIcon("folder-new"), i18n("F&older..."), this, SLOT(slotCreateFolder()));
   createNewMenu.addAction(SmallIcon("document"), i18n("&File..."), this, SLOT(slotCreateFile()));
 
   KMenu popup(this);
@@ -228,9 +228,9 @@ void ProjectTreeView::folderMenu(const QPoint &point)
   popup.addMenu(&createNewMenu);
   popup.addSeparator();
   popup.addAction(i18n("Re&name"), this, SLOT(slotStartRename()));
-  popup.addAction(SmallIcon("editdelete"), i18n("&Delete"), this, SLOT(slotDelete()));
+  popup.addAction(SmallIcon("edit-delete"), i18n("&Delete"), this, SLOT(slotDelete()));
   popup.addSeparator();
-  popup.addAction(SmallIcon("info"), i18n("&Properties"), this, SLOT(slotProperties()));
+  popup.addAction(SmallIcon("document-properties"), i18n("&Properties"), this, SLOT(slotProperties()));
 
   // ask other plugins for menu entries
   KUrl menuURL(currentKFileTreeViewItem()->url());
@@ -249,8 +249,8 @@ void ProjectTreeView::emptyMenu(const QPoint &point)
 
   KMenu createNewMenu(this);
   createNewMenu.setTitle(i18n("&Create New"));
-  createNewMenu.setIcon(SmallIconSet("filenew"));
-  createNewMenu.addAction(SmallIcon("folder_new"), i18n("F&older..."), this, SLOT(slotCreateFolder()));
+  createNewMenu.setIcon(SmallIconSet("document-new"));
+  createNewMenu.addAction(SmallIcon("folder-new"), i18n("F&older..."), this, SLOT(slotCreateFolder()));
   createNewMenu.addAction(SmallIcon("document"), i18n("&File..."), this, SLOT(slotCreateFile()));
 
   KMenu popup(this);
@@ -258,9 +258,9 @@ void ProjectTreeView::emptyMenu(const QPoint &point)
 
   popup.addMenu(&createNewMenu);
   popup.addSeparator();
-//   popup.insertItem(SmallIcon("reload"), i18n("Re&scan Project Folder..."), this, SLOT(slotRescan()));
+//   popup.insertItem(SmallIcon("view-refresh"), i18n("Re&scan Project Folder..."), this, SLOT(slotRescan()));
 //   popup.insertItem(SmallIcon("configure"), i18n("Project &Properties"), this, SLOT(slotOptions()));
-  popup.addAction(SmallIcon("revert"), i18n("&Reload"), this, SLOT(slotReload()));
+  popup.addAction(SmallIcon("file-revert"), i18n("&Reload"), this, SLOT(slotReload()));
 
   popup.exec(point);
 }

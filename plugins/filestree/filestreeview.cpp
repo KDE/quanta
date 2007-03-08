@@ -124,7 +124,7 @@ void FilesTreeView::folderMenu(const QPoint &point)
   KMenu popup(this);
   popup.addTitle(i18n("Files Tree"));
 
-  popup.addAction(SmallIcon("folder_new"), i18n("New Top &Folder..."), this, SLOT(slotNewTopFolder()));
+  popup.addAction(SmallIcon("folder-new"), i18n("New Top &Folder..."), this, SLOT(slotNewTopFolder()));
 
   KUrl url = currentKFileTreeViewItem()->url();
   bool rootItem = (currentKFileTreeViewItem() == currentKFileTreeViewItem()->branch()->root());
@@ -142,15 +142,15 @@ void FilesTreeView::folderMenu(const QPoint &point)
   KMenu createNewMenu(this);
   createNewMenu.setTitle(i18n("&Create New"));
   createNewMenu.setIcon(SmallIcon("empty"));
-  createNewMenu.addAction(SmallIcon("folder_new"), i18n("F&older..."), this, SLOT(slotCreateFolder()));
+  createNewMenu.addAction(SmallIcon("folder-new"), i18n("F&older..."), this, SLOT(slotCreateFolder()));
   createNewMenu.addAction(SmallIcon("document"), i18n("&File..."), this, SLOT(slotCreateFile()));
 
   popup.addMenu(&createNewMenu);
   popup.addSeparator();
-  popup.addAction(SmallIcon("editcopy"), i18n("&Copy"), this, SLOT(slotCopy()));
+  popup.addAction(SmallIcon("edit-copy"), i18n("&Copy"), this, SLOT(slotCopy()));
 
   if (isPathInClipboard())
-    popup.addAction(SmallIcon("editpaste"), i18n("&Paste"), this, SLOT(slotPaste()));
+    popup.addAction(SmallIcon("edit-paste"), i18n("&Paste"), this, SLOT(slotPaste()));
 
   if (rootItem)
     popup.addAction(i18n("&Change Alias..."), this, SLOT(slotChangeAlias()));
@@ -158,13 +158,13 @@ void FilesTreeView::folderMenu(const QPoint &point)
   if (!rootItem)
   {
     popup.addAction(i18n("Re&name"), this, SLOT(slotStartRename()));
-    popup.addAction( SmallIcon("editdelete"), i18n("&Delete"), this, SLOT(slotDelete()));
+    popup.addAction( SmallIcon("edit-delete"), i18n("&Delete"), this, SLOT(slotDelete()));
   }
   popup.addSeparator();
-  popup.addAction(SmallIcon("info"), i18n("&Properties"), this, SLOT(slotProperties()));
+  popup.addAction(SmallIcon("document-properties"), i18n("&Properties"), this, SLOT(slotProperties()));
 
   if (rootItem)
-    popup.addAction(SmallIcon("revert"), i18n("&Reload"), this, SLOT(slotReload()));
+    popup.addAction(SmallIcon("file-revert"), i18n("&Reload"), this, SLOT(slotReload()));
 
   // ask other plugins for menu entries
   KUrl menuURL(currentKFileTreeViewItem()->url());
@@ -183,16 +183,16 @@ void FilesTreeView::fileMenu(const QPoint &point)
   popup.addTitle(i18n("Files Tree"));
 
   if (isFileOpen(currentUrl()))
-    popup.addAction(SmallIcon("fileclose"), i18n("Clos&e"), this, SLOT(slotClose()));
+    popup.addAction(SmallIcon("window-close"), i18n("Clos&e"), this, SLOT(slotClose()));
   else
-    popup.addAction(SmallIcon("fileopen"), i18n("&Open"), this ,SLOT(slotOpen()));
+    popup.addAction(SmallIcon("document-open"), i18n("&Open"), this ,SLOT(slotOpen()));
 
   popup.addSeparator();
-  popup.addAction(SmallIcon("editcopy"), i18n("&Copy"), this, SLOT(slotCopy()));
+  popup.addAction(SmallIcon("edit-copy"), i18n("&Copy"), this, SLOT(slotCopy()));
   popup.addAction(i18n("Re&name"), this, SLOT(slotStartRename()));
-  popup.addAction(SmallIcon("editdelete"), i18n("&Delete"), this, SLOT(slotDelete()));
+  popup.addAction(SmallIcon("edit-delete"), i18n("&Delete"), this, SLOT(slotDelete()));
   popup.addSeparator();
-  popup.addAction(SmallIcon("info"), i18n("&Properties"), this, SLOT(slotProperties()));
+  popup.addAction(SmallIcon("document-properties"), i18n("&Properties"), this, SLOT(slotProperties()));
 
   // ask other plugins for menu entries
   KUrl::List urlList(currentKFileTreeViewItem()->url());

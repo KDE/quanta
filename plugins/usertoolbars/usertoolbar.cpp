@@ -159,7 +159,7 @@ void UserToolBar::mousePressEvent(QMouseEvent *e)
       m_popupMenu->addAction(i18n("Rename Toolbar..."), toolbarTab, SLOT(slotRenameToolbar()));
       m_popupMenu->addSeparator();
       m_popupMenu->addMenu(m_iconTextMenu);
-      m_popupMenu->addAction(SmallIconSet("configure_toolbars"), i18n("Configure Toolbars..."), toolbarTab, SLOT(slotEditToolbar()));
+      m_popupMenu->addAction(SmallIconSet("configure-toolbars"), i18n("Configure Toolbars..."), toolbarTab, SLOT(slotEditToolbar()));
     }
     m_popupMenu->popup(p);
   }

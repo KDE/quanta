@@ -246,7 +246,7 @@ void TemplatesTreeView::emptyMenu(const QPoint &point)
 {
   KMenu popup(this);
 
-  popup.addAction(SmallIcon("network"), i18n("&Download Template..."), this, SIGNAL(downloadTemplate()));
+  popup.addAction(SmallIcon("network-wired"), i18n("&Download Template..."), this, SIGNAL(downloadTemplate()));
   popup.exec(point);
 }
 
@@ -256,30 +256,30 @@ void TemplatesTreeView::folderMenu(const QPoint &point)
   KMenu popup(this);
   popup.addTitle(i18n("Templates Tree"));
 
-  popup.addAction(SmallIcon("folder_new"), i18n("&New Folder..."), this, SLOT(slotNewDir()));
-  popup.addAction(SmallIcon("mail_send"), i18n("Send in E&mail..."), this, SLOT(slotSendInMail()));
-  popup.addAction(SmallIcon("network"), i18n("&Upload Template..."), this, SLOT(slotUploadTemplate()));
+  popup.addAction(SmallIcon("folder-new"), i18n("&New Folder..."), this, SLOT(slotNewDir()));
+  popup.addAction(SmallIcon("mail-send"), i18n("Send in E&mail..."), this, SLOT(slotSendInMail()));
+  popup.addAction(SmallIcon("network-wired"), i18n("&Upload Template..."), this, SLOT(slotUploadTemplate()));
 
   bool rootItem = (currentKFileTreeViewItem() == currentKFileTreeViewItem()->branch()->root());
   if (rootItem)
-    popup.addAction(SmallIcon("network"), i18n("&Download Template..."), this, SIGNAL(downloadTemplate()));
+    popup.addAction(SmallIcon("network-wired"), i18n("&Download Template..."), this, SIGNAL(downloadTemplate()));
 
   bool hasProject = !m_projectName.isEmpty();
   if (hasProject)
     popup.addAction(i18n("&Insert in Project..."), this, SLOT(slotInsertDirInProject()));
 
   popup.addSeparator();
-  popup.addAction(SmallIcon("editcopy"), i18n("&Copy"), this, SLOT(slotCopy()));
+  popup.addAction(SmallIcon("edit-copy"), i18n("&Copy"), this, SLOT(slotCopy()));
   if (isPathInClipboard())
-    popup.addAction(SmallIcon("editpaste"), i18n("&Paste"), this, SLOT(slotPaste()));
+    popup.addAction(SmallIcon("edit-paste"), i18n("&Paste"), this, SLOT(slotPaste()));
 
   if (!rootItem)
-    popup.addAction(SmallIcon("editdelete"), i18n("&Delete"), this, SLOT(slotDelete()));
+    popup.addAction(SmallIcon("edit-delete"), i18n("&Delete"), this, SLOT(slotDelete()));
 
   popup.addSeparator();
-  popup.addAction(SmallIcon("info"), i18n("&Properties"), this, SLOT(slotProperties()));
+  popup.addAction(SmallIcon("document-properties"), i18n("&Properties"), this, SLOT(slotProperties()));
   if (rootItem)
-    popup.addAction(SmallIcon("revert"), i18n("&Reload"), this, SLOT(slotReload()));
+    popup.addAction(SmallIcon("file-revert"), i18n("&Reload"), this, SLOT(slotReload()));
 
   // ask other plugins for menu entries
   KUrl menuURL(currentKFileTreeViewItem()->url());
@@ -313,22 +313,22 @@ void TemplatesTreeView::fileMenu(const QPoint &point)
     if (m_dirInfo.mimeType.contains("SITE", Qt::CaseInsensitive))
       popup.addAction(i18n("&Extract Site Template To..."), this, SLOT(slotExtractSiteTemplate()));
 
-  popup.addAction(SmallIcon("fileopen"), i18n("&Open"), this ,SLOT(slotOpen()));
-  popup.addAction(SmallIcon("mail_send"), i18n("Send in E&mail..."), this, SLOT(slotSendInMail()));
-  popup.addAction(SmallIcon("network"), i18n("&Upload Template..."), this, SLOT(slotUploadTemplate()));
+  popup.addAction(SmallIcon("document-open"), i18n("&Open"), this ,SLOT(slotOpen()));
+  popup.addAction(SmallIcon("mail-send"), i18n("Send in E&mail..."), this, SLOT(slotSendInMail()));
+  popup.addAction(SmallIcon("network-wired"), i18n("&Upload Template..."), this, SLOT(slotUploadTemplate()));
 
   bool hasProject = !m_projectName.isEmpty();
   if (hasProject)
     popup.addAction(i18n("&Insert in Project..."), this, SLOT(slotInsertInProject()));
 
   if (isFileOpen(currentUrl()))
-    popup.addAction(SmallIcon("fileclose"), i18n("Clos&e"), this, SLOT(slotClose()));
+    popup.addAction(SmallIcon("window-close"), i18n("Clos&e"), this, SLOT(slotClose()));
 
   popup.addSeparator();
-  popup.addAction(SmallIcon("editcopy"), i18n("&Copy"), this, SLOT(slotCopy()));
-  popup.addAction(SmallIcon("editdelete"), i18n("&Delete"), this, SLOT(slotDelete()));
+  popup.addAction(SmallIcon("edit-copy"), i18n("&Copy"), this, SLOT(slotCopy()));
+  popup.addAction(SmallIcon("edit-delete"), i18n("&Delete"), this, SLOT(slotDelete()));
   popup.addSeparator();
-  popup.addAction(SmallIcon("info"), i18n("&Properties"), this, SLOT(slotProperties()));
+  popup.addAction(SmallIcon("document-properties"), i18n("&Properties"), this, SLOT(slotProperties()));
 
 
   // ask other plugins for menu entries

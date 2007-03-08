@@ -42,7 +42,7 @@ ToolbarTabWidget::ToolbarTabWidget(QWidget * parent, const char * name, Qt::WFla
   m_popupMenu->addAction(i18n("New Toolbar..."), this, SIGNAL(addToolbar()));
   m_popupMenu->addAction(i18n("Remove Toolbar"), this, SLOT(slotRemoveToolbar()));
   m_popupMenu->addAction(i18n("Rename Toolbar..."), this, SLOT(slotRenameToolbar()));
-  m_popupMenu->addAction(SmallIconSet("configure_toolbars"), i18n("Configure Toolbars..."), this, SLOT(slotEditToolbar()));
+  m_popupMenu->addAction(SmallIconSet("configure-toolbars"), i18n("Configure Toolbars..."), this, SLOT(slotEditToolbar()));
 
   KAcceleratorManager::setNoAccel(this);
   m_iconText = Qt::ToolButtonIconOnly;
