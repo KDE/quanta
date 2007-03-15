@@ -1,8 +1,6 @@
 find . -name "*.cpp" -print > files 
 find . -name "*.cc" -print >> files
 find . -name "*.h" -print >> files
-find ../lib -name "*.h" -print >> files 
-find ../lib -name "*.cpp" -print >> files 
 toolbars=`find . -name "*.toolbar.tgz"`
 for toolbar in $toolbars; do 
    tar Oxfz $toolbar >> extrafiles
