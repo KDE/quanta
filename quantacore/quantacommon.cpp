@@ -273,33 +273,34 @@ KStandardDirs* QuantaCommon::pluginDirs(const char *type)
 /** Return true, if the url belong to the mimetype group. */
 bool QuantaCommon::checkMimeGroup(const KUrl& url, const QString& group)
 {
- KMimeType::List list = KMimeType::allMimeTypes();
- KMimeType::List::iterator it;
  bool status = false;
  KMimeType::Ptr mime = KMimeType::findByUrl(url);
  QString mimetype = mime->name();
  mimetype = mimetype.section('/',-1);
+#if 0
+ // This is really a slow way to lookup one mimetype - why do it this way? (DF)
+ const KMimeType::List list = KMimeType::allMimeTypes(); // slow. We need a allMimeTypeNames for this.
+ KMimeType::List::const_iterator it;
  for ( it = list.begin(); it != list.end(); ++it )
  {
-    if ( ((*it)->name().contains(group)) && ((*it)->name().indexOf(mimetype) != -1)
+    // ## why indexOf and not just == ?
+    if ( ((*it)->name().startsWith(group)) && ((*it)->name().indexOf(mimetype) != -1)
 )    {
       status = true;
       break;
     }
  }
+#endif
+ status = mime->name().startsWith(group);
 
  if (!status && group == "text")
  {
    if (url.isLocalFile())
    {
-      KMimeType::Format f = KMimeType::findFormatByFileContent(url.path());
-      if (f.text && f.compression == KMimeType::Format::NoCompression)
-          status = true;
+     status = !KMimeType::isBinaryData(url.path());
    } else
    {
-     QVariant v = mime->property("X-KDE-text");
-     if (v.isValid())
-         status = v.toBool();
+     status = mime->is("text/plain");
    }
  }
  if (!status && group == "text" && mimetype == "x-zerosize")
