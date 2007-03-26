@@ -31,7 +31,7 @@
 #include <kactioncollection.h>
 #include <kapplication.h>
 #include <kdebug.h>
-#include <kprocess.h>
+#include <k3process.h>
 #include <kicon.h>
 #include <kiconloader.h>
 #include <klocale.h>
@@ -255,12 +255,12 @@ bool UserAction::slotActionActivated()
     m_firstOutput = true;
     m_firstError  = true;
 
-    connect( proc, SIGNAL(receivedStdout(   KProcess*,char*,int)), this,
-                 SLOT(  slotGetScriptOutput(KProcess*,char*,int)));
-    connect( proc, SIGNAL(receivedStderr(   KProcess*,char*,int)), this,
-                 SLOT(  slotGetScriptError(KProcess*,char*,int)));
-    connect( proc, SIGNAL(processExited(   KProcess*)), this,
-                 SLOT(  slotProcessExited(KProcess*)));
+    connect( proc, SIGNAL(receivedStdout(   K3Process*,char*,int)), this,
+                 SLOT(  slotGetScriptOutput(K3Process*,char*,int)));
+    connect( proc, SIGNAL(receivedStderr(   K3Process*,char*,int)), this,
+                 SLOT(  slotGetScriptError(K3Process*,char*,int)));
+    connect( proc, SIGNAL(processExited(   K3Process*)), this,
+                 SLOT(  slotProcessExited(K3Process*)));
 
     if (!m_useOutputFile)
         scriptOutputDest = script.attribute("output","none");
@@ -277,7 +277,7 @@ bool UserAction::slotActionActivated()
       *proc << m_inputFileName;
     }
 
-    if (proc->start(KProcess::NotifyOnExit, KProcess::All))
+    if (proc->start(K3Process::NotifyOnExit, K3Process::All))
     {
 /*FIXME      emit clearMessages();
       emit showMessage(i18n("The \"%1\" script started.\n",actionText()), false);*/
@@ -331,7 +331,7 @@ void UserAction::slotActivated()
         setChecked(!isChecked());
 }
 
-void UserAction::slotProcessExited(KProcess *process)
+void UserAction::slotProcessExited(K3Process *process)
 {
   if (m_loopStarted)
   {
@@ -372,7 +372,7 @@ void UserAction::execute(bool blocking)
     slotActionActivated();
 }
 
-void UserAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
+void UserAction::slotGetScriptOutput( K3Process *, char *buffer, int buflen )
 {
   QByteArray tmp( buffer, buflen + 1 );
   QString text( QString::fromLocal8Bit(tmp) );
@@ -388,7 +388,7 @@ void UserAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
   }
 }
 
-void UserAction::slotGetScriptError( KProcess *, char *buffer, int buflen )
+void UserAction::slotGetScriptError( K3Process *, char *buffer, int buflen )
 {
   QByteArray tmp( buffer, buflen + 1 );
   QString text( QString::fromLocal8Bit(tmp) );

@@ -16,14 +16,14 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-MyProcess::MyProcess():KProcess()
+MyProcess::MyProcess():K3Process()
 {
 }
 
 int MyProcess::commSetupDoneC()
 {
   ::setpgid(pid_, 0);
-  return KProcess::commSetupDoneC();
+  return K3Process::commSetupDoneC();
 }
 
 #include "myprocess.moc"

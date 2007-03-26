@@ -25,7 +25,7 @@
 
 
 namespace Koncrete { class Plugin; }
-class KProcess;
+class K3Process;
 class QFile;
 class QTimer;
 
@@ -82,11 +82,11 @@ protected slots:
      * @return true if the activation was successfuly completed
      */
     virtual bool slotActionActivated();
-    virtual void slotGetScriptOutput( KProcess *, char *buffer, int buflen );
-    virtual void slotGetScriptError( KProcess *, char *buffer, int buflen );
+    virtual void slotGetScriptOutput( K3Process *, char *buffer, int buflen );
+    virtual void slotGetScriptError( K3Process *, char *buffer, int buflen );
     virtual void scriptDone();
     void slotTimeout();
-    void slotProcessExited(KProcess *);
+    void slotProcessExited(K3Process *);
 
 signals:
    /**
@@ -100,7 +100,7 @@ signals:
      */
     void showMessage(const QString& message, bool append);
 private:
-    KProcess *proc;
+    K3Process *proc;
     bool m_firstError;
     bool m_firstOutput;
     bool m_modified;

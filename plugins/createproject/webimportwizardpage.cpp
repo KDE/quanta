@@ -31,7 +31,7 @@
 
 // kde includes
 #include <klocale.h>
-#include <kprocess.h>
+#include <k3process.h>
 #include <kiconloader.h>
 #include <kio/job.h>
 #include <kmessagebox.h>
@@ -101,7 +101,7 @@ void WebImportWizardPage::slotStart()
       {
           ::chdir(baseURL.path(KUrl::AddTrailingSlash).toLocal8Bit());
 
-        proc = new KProcess();
+        proc = new K3Process();
         proc ->clearArguments();
 
         QStringList list = commandLine->text().split(" ");
@@ -111,14 +111,14 @@ void WebImportWizardPage::slotStart()
           *proc << *it;
         }
 
-        connect( proc, SIGNAL(receivedStdout(   KProcess*,char*,int)), this,
-                       SLOT(  slotGetWgetOutput(KProcess*,char*,int)));
-        connect( proc, SIGNAL(receivedStderr(   KProcess*,char*,int)), this,
-                       SLOT(  slotGetWgetOutput(KProcess*,char*,int)));
-        connect( proc, SIGNAL(processExited(    KProcess *)), this,
-                       SLOT(  slotGetWgetExited(KProcess *)));
+        connect( proc, SIGNAL(receivedStdout(   K3Process*,char*,int)), this,
+                       SLOT(  slotGetWgetOutput(K3Process*,char*,int)));
+        connect( proc, SIGNAL(receivedStderr(   K3Process*,char*,int)), this,
+                       SLOT(  slotGetWgetOutput(K3Process*,char*,int)));
+        connect( proc, SIGNAL(processExited(    K3Process *)), this,
+                       SLOT(  slotGetWgetExited(K3Process *)));
 
-        if (proc->start(KProcess::NotifyOnExit, KProcess::AllOutput))
+        if (proc->start(K3Process::NotifyOnExit, K3Process::AllOutput))
         {
           start = true;
           button->setText( i18n("Stop") );
@@ -154,7 +154,7 @@ void WebImportWizardPage::slotStart()
   }
 }
 
-void WebImportWizardPage::slotGetWgetExited(KProcess*)
+void WebImportWizardPage::slotGetWgetExited(K3Process*)
 {
   progress->setValue(0);
   start = false;
@@ -163,7 +163,7 @@ void WebImportWizardPage::slotGetWgetExited(KProcess*)
   emit enableNextButton((QWidget *)this->parent(),true);
 }
 
-void WebImportWizardPage::slotGetWgetOutput(KProcess *, char *buffer, int buflen)
+void WebImportWizardPage::slotGetWgetOutput(K3Process *, char *buffer, int buflen)
 {
   QString output = buffer;
   output = output.left( buflen );

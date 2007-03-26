@@ -823,7 +823,7 @@ See the operations in order to get a picture what's here." name="QuantaDoc" stat
     <UML:Operation stereotype="" package="" xmi.id="736" type="virtual bool" abstract="0" documentation="" name="unload" static="0" scope="200" />
     <UML:Operation stereotype="" package="" xmi.id="737" type="" abstract="0" documentation="" name="~QuantaCmdPlugin" static="0" scope="200" />
     <UML:Attribute stereotype="" package="" xmi.id="726" value="" type="bool" abstract="0" documentation="" name="m_firstOutput" static="0" scope="202" />
-    <UML:Attribute stereotype="" package="" xmi.id="727" value="" type="KProcess *" abstract="0" documentation="" name="m_process" static="0" scope="202" />
+    <UML:Attribute stereotype="" package="" xmi.id="727" value="" type="K3Process *" abstract="0" documentation="" name="m_process" static="0" scope="202" />
    </UML:Class>
    <UML:Class stereotype="" package="" xmi.id="738" abstract="0" documentation="" name="PluginEditorItem" static="0" scope="200" >
     <UML:Operation stereotype="" package="" xmi.id="739" type="" abstract="0" documentation="" name="PluginEditorItem" static="0" scope="200" >
@@ -1606,7 +1606,7 @@ See the operations in order to get a picture what's here." name="QuantaDoc" stat
     <UML:Operation stereotype="" package="" xmi.id="1377" type="" abstract="0" documentation="" name="~ProjectNewWeb" static="0" scope="200" />
     <UML:Attribute stereotype="" package="" xmi.id="1368" value="" type="KURL" abstract="0" documentation="" name="baseURL" static="0" scope="201" />
     <UML:Attribute stereotype="" package="" xmi.id="1369" value="" type="QStringList" abstract="0" documentation="" name="filesList" static="0" scope="201" />
-    <UML:Attribute stereotype="" package="" xmi.id="1370" value="" type="KProcess *" abstract="0" documentation="" name="proc" static="0" scope="201" />
+    <UML:Attribute stereotype="" package="" xmi.id="1370" value="" type="K3Process *" abstract="0" documentation="" name="proc" static="0" scope="201" />
     <UML:Attribute stereotype="" package="" xmi.id="1371" value="" type="bool" abstract="0" documentation="" name="start" static="0" scope="201" />
    </UML:Class>
    <UML:Class stereotype="" package="" xmi.id="1378" abstract="0" documentation="" name="ProjectNewGeneral" static="0" scope="200" >
@@ -1741,12 +1741,12 @@ See the operations in order to get a picture what's here." name="QuantaDoc" stat
     <UML:Operation stereotype="" package="" xmi.id="1493" type="virtual void" abstract="0" documentation="" name="insertTag" static="0" scope="202" />
     <UML:Operation stereotype="" package="" xmi.id="1494" type="virtual void" abstract="0" documentation="" name="scriptDone" static="0" scope="202" />
     <UML:Operation stereotype="" package="" xmi.id="1495" type="virtual void" abstract="0" documentation="" name="slotGetScriptError" static="0" scope="202" >
-     <UML:Parameter stereotype="" package="" xmi.id="1496" value="" type="KProcess *" abstract="0" documentation="" name="" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="1496" value="" type="K3Process *" abstract="0" documentation="" name="" static="0" scope="200" />
      <UML:Parameter stereotype="" package="" xmi.id="1497" value="" type="char *" abstract="0" documentation="" name="buffer" static="0" scope="200" />
      <UML:Parameter stereotype="" package="" xmi.id="1498" value="" type="int" abstract="0" documentation="" name="buflen" static="0" scope="200" />
     </UML:Operation>
     <UML:Operation stereotype="" package="" xmi.id="1499" type="virtual void" abstract="0" documentation="" name="slotGetScriptOutput" static="0" scope="202" >
-     <UML:Parameter stereotype="" package="" xmi.id="1500" value="" type="KProcess *" abstract="0" documentation="" name="" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="1500" value="" type="K3Process *" abstract="0" documentation="" name="" static="0" scope="200" />
      <UML:Parameter stereotype="" package="" xmi.id="1501" value="" type="char *" abstract="0" documentation="" name="buffer" static="0" scope="200" />
      <UML:Parameter stereotype="" package="" xmi.id="1502" value="" type="int" abstract="0" documentation="" name="buflen" static="0" scope="200" />
     </UML:Operation>
@@ -1754,7 +1754,7 @@ See the operations in order to get a picture what's here." name="QuantaDoc" stat
     <UML:Attribute stereotype="" package="" xmi.id="1480" value="" type="bool" abstract="0" documentation="" name="firstError" static="0" scope="201" />
     <UML:Attribute stereotype="" package="" xmi.id="1481" value="" type="bool" abstract="0" documentation="" name="firstOutput" static="0" scope="201" />
     <UML:Attribute stereotype="" package="" xmi.id="1482" value="" type="QuantaView *" abstract="0" documentation="" name="m_view" static="0" scope="201" />
-    <UML:Attribute stereotype="" package="" xmi.id="1483" value="" type="KProcess *" abstract="0" documentation="" name="proc" static="0" scope="201" />
+    <UML:Attribute stereotype="" package="" xmi.id="1483" value="" type="K3Process *" abstract="0" documentation="" name="proc" static="0" scope="201" />
     <UML:Attribute stereotype="" package="" xmi.id="1484" value="" type="QString" abstract="0" documentation="" name="scriptErrorDest" static="0" scope="201" />
     <UML:Attribute stereotype="" package="" xmi.id="1485" value="" type="QString" abstract="0" documentation="" name="scriptOutputDest" static="0" scope="201" />
     <UML:Attribute stereotype="" package="" xmi.id="1486" value="" type="QDomElement" abstract="0" documentation="" name="tag" static="0" scope="201" />

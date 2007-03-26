@@ -29,7 +29,7 @@
 #include <kurl.h>
 
 class KIconLoader;
-class KProcess;
+class K3Process;
 class KUrl;
 
 class WebImportWizardPage : public QWidget, public Ui::WebImportWizardPageBase  {
@@ -47,8 +47,8 @@ public slots:
 
   KUrl::List files();
 
-  void slotGetWgetExited(KProcess *);
-  void slotGetWgetOutput(KProcess *proc, char *buffer, int buflen);
+  void slotGetWgetExited(K3Process *);
+  void slotGetWgetOutput(K3Process *proc, char *buffer, int buflen);
 
 signals:
 
@@ -63,7 +63,7 @@ private:
 
   bool start;
 
-  KProcess *proc;
+  K3Process *proc;
 
 private slots: // Private slots
   /** No descriptions */

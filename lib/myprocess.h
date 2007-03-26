@@ -16,9 +16,9 @@
 #ifndef MYPROCESS_H
 #define MYPROCESS_H
 
-#include <kprocess.h>
+#include <k3process.h>
 
-class MyProcess:public KProcess
+class MyProcess:public K3Process
 {
   Q_OBJECT
 
