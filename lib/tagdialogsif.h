@@ -19,7 +19,7 @@
 #include <kurl.h>
 
 //kdevelop includes
-#include <kdevplugin.h>
+#include <iextension.h>
 
 
 // class EditorSource;
@@ -39,16 +39,16 @@ TagDialogsIf * plugin = extension<TagDialogsIf>("KDevelop/TagDialogs");
 */
 
 
-class KDEVQUANTA_EXPORT TagDialogsIf : public Koncrete::Plugin
+class KDEVQUANTA_EXPORT TagDialogsIf
 {
-  Q_OBJECT
-
 public:
-  TagDialogsIf(const KComponentData &info, QObject *parent);
-  ~TagDialogsIf();
+  TagDialogsIf();
+  virtual ~TagDialogsIf();
 
    virtual TagPair createNewTag(QTag *dtdTag, const QString& selection, const QString& attrs = QString::null, const KUrl& baseURL = KUrl()) = 0;
 
 };
+
+Q_DECLARE_INTERFACE( TagDialogsIf, "org.kdevelop.TagDialogsIf" );
 
 #endif

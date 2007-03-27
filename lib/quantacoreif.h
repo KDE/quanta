@@ -17,7 +17,12 @@
 #include "quantaexport.h"
 
 //kdevelop includes
-#include <kdevplugin.h>
+#include <iextension.h>
+
+//kde includes
+
+//qt includes
+#include <QObject>
 
 class QPoint;
 
@@ -53,12 +58,12 @@ Settings * s = Settings::self();
 @author Jens Herden
 */
 
-class KDEVQUANTA_EXPORT QuantaCoreIf : public Koncrete::Plugin
+class KDEVQUANTA_EXPORT QuantaCoreIf : public QObject
 {
   Q_OBJECT
 
 public:
-  QuantaCoreIf(const KComponentData &info, QObject *parent);
+  QuantaCoreIf(QObject *parent);
 
   virtual ~QuantaCoreIf();
 
@@ -120,5 +125,7 @@ public slots:
   virtual void slotInsertTag(const KUrl & url, Helper::DirInfo * dirInfo = 0) = 0;
 
 };
+
+Q_DECLARE_INTERFACE( QuantaCoreIf, "org.kdevelop.QuantaCoreIf" );
 
 #endif

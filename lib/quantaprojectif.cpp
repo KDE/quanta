@@ -12,8 +12,7 @@
  ***************************************************************************/
 #include "quantaprojectif.h"
 
-QuantaProjectIf::QuantaProjectIf(/*const KComponentData &info,*/ QObject *parent)
-  : Koncrete::Project(/*info, */parent)
+QuantaProjectIf::QuantaProjectIf()
 {
 }
 

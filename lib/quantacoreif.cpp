@@ -13,8 +13,8 @@
 
 #include "quantacoreif.h"
 
-QuantaCoreIf::QuantaCoreIf(const KComponentData &info, QObject *parent)
-  : Koncrete::Plugin(info, parent)
+QuantaCoreIf::QuantaCoreIf(QObject *parent)
+  : QObject(parent)
 {
 }
 

@@ -40,9 +40,11 @@ class KPropertiesDialog;
 class KUrl;
 class FileInfoDlg;
 class BaseTreeViewToolTip;
-namespace Koncrete { class Document; }
-namespace Koncrete { class DocumentController; }
-namespace Koncrete { class Plugin; }
+namespace KDevelop 
+{ 
+  class IDocument; 
+  class IPlugin; 
+}
 class BaseTreeView;
 
 
@@ -143,7 +145,7 @@ class KDEVQUANTA_EXPORT BaseTreeView : public KFileTreeView {
    Q_OBJECT
 
 public:
-  BaseTreeView(Koncrete::Plugin *plugin, QWidget * parent);
+  BaseTreeView(KDevelop::IPlugin *plugin, QWidget * parent);
   virtual ~BaseTreeView();
 
   /**
@@ -181,7 +183,7 @@ public slots:
   /**
   repaints all treeview items
   */
-  void slotDocumentClosed(Koncrete::Document* document);
+  void slotDocumentClosed(KDevelop::IDocument* document);
 
 protected slots:
 
@@ -348,7 +350,7 @@ protected:
       the passwords are cached there */
   QWidget * m_parent;
 
-  Koncrete::Plugin * m_plugin;
+  KDevelop::IPlugin * m_plugin;
 
   /** some stuff for renaming */
   void doRename(KFileTreeViewItem* kvtvi, const QString & newName);
@@ -371,7 +373,7 @@ signals:
 private:
   bool m_saveOpenFolder;
   BaseTreeViewToolTip * m_tooltip;
-  Koncrete::DocumentController * m_partController;
+  //KDevelop::DocumentController * m_partController;
 };
 
 #endif

@@ -16,20 +16,19 @@
 #include "quantaexport.h"
 
 //kdevelop includes
-#include <kdevproject.h>
 
 class QDomElement;
 class KUrl;
 /**
 Extension of the Koncrete::Project interface for our needs, especially to work with remote projects and files.
 
-	@author Andras Mantia <amantia@kde.org>
+  @author Andras Mantia <amantia@kde.org>
 */
-class KDEVQUANTA_EXPORT QuantaProjectIf : public Koncrete::Project
+class KDEVQUANTA_EXPORT QuantaProjectIf
 {
 public:
-  QuantaProjectIf(/*const KComponentData &info, */QObject *parent);
-  ~QuantaProjectIf();
+  QuantaProjectIf();
+  virtual ~QuantaProjectIf();
 
   /**
    * Checks if an url is part of the project or not.
@@ -51,5 +50,8 @@ public:
   virtual QDomElement domProjectElement() = 0;
 
 };
+//FIXME:  why does  this give a compilation error??
+
+// Q_DECLARE_INTERFACE( QuantaProjectIf, "org.kdevelop.QuantaProjectIf" );
 
 #endif

@@ -42,20 +42,22 @@
 #include <ktemporaryfile.h>
 
 //kdevelop includes
-#include <kdevmainwindow.h>
-#include <kdevplugin.h>
-#include <kdevplugincontroller.h>
-#include <kdevproject.h>
-#include <kdevcore.h>
+#include <iplugin.h>
+#include <iproject.h>
+// #include <kdevmainwindow.h>
+#include <iplugincontroller.h>
+#include <iprojectcontroller.h>
+#include <core.h>
 
 
-
-UserAction::UserAction( QDomElement *element, Koncrete::Plugin *plugin, bool toggle)
+//FIXME: instead of OL a pointer to the MainWindow's actionCollection is needed!
+UserAction::UserAction( QDomElement *element, KDevelop::IPlugin *plugin, bool toggle)
     : KToggleAction(element->attribute("text").isEmpty() ? QString("") : i18n(element->attribute("text").toUtf8()),
-                    Koncrete::Core::mainWindow()->actionCollection()),
+                    0L /*KDevelop::Core::mainWindow()->actionCollection()*/),
   m_toggle(toggle)
 {
-	Koncrete::Core::mainWindow()->actionCollection()->addAction(element->attribute("name"), this);
+//FIXME: a pointer to the MainWindow's actionCollection is needed!
+//  KDevelop::Core::mainWindow()->actionCollection()->addAction(element->attribute("name"), this);
   setShortcut(KShortcut(element->attribute("shortcut")));
   m_plugin = plugin;
   m_modified = false;
@@ -81,6 +83,8 @@ UserAction::UserAction( QDomElement *element, Koncrete::Plugin *plugin, bool tog
   connect(this, SIGNAL(showMessage(const QString&, bool)), m_plugin, SLOT(slotShowMessage(const QString&, bool)));
   connect(this, SIGNAL(showOutputView()), m_plugin, SLOT(slotShowOutputView()));
 //  connect(this, SIGNAL(clearMessages()), m_plugin, SIGNAL(clearMessages()));
+  
+  m_quantaCore = KDevelop::Core::self()->pluginController()->pluginForExtension( "QuantaCoreIf", "KDevQuantaCore");
 }
 
 UserAction::~UserAction()
@@ -89,10 +93,11 @@ UserAction::~UserAction()
 
 bool UserAction::slotActionActivated()
 {
-  QuantaCoreIf *quantaCore = Koncrete::PluginController::self()->extension<QuantaCoreIf>("KDevelop/Quanta");
+  QuantaCoreIf *quantaCore = m_quantaCore->extension<QuantaCoreIf>();
   if (!quantaCore)
   {
-    KMessageBox::information(Koncrete::Core::mainWindow(), i18n("You cannot run a tag user action if the QuantaCore plugin is not loaded."), i18n("Missing QuantaCore"), "ShowQuantaCoreMissingWarning");
+    //FIXME: use a mainWindow pointer
+    KMessageBox::information(0L /*Koncrete::Core::mainWindow()*/, i18n("You cannot run a tag user action if the QuantaCore plugin is not loaded."), i18n("Missing QuantaCore"), "ShowQuantaCoreMissingWarning");
     return false;
   }
   EditorSource * source = quantaCore->activeEditorSource();
@@ -136,7 +141,7 @@ bool UserAction::slotActionActivated()
   {
     proc = new MyProcess();
 
-    Koncrete::Project *proj = Koncrete::Core::activeProject();
+    KDevelop::IProject *proj = m_plugin->core()->projectController()->currentProject();
     if (proj)
       proc->setWorkingDirectory(proj->folder().path());
 
@@ -291,7 +296,8 @@ bool UserAction::slotActionActivated()
       proc->closeStdin();
     } else
     {
-      KMessageBox::error(Koncrete::Core::mainWindow(), i18n("<qt>There was an error running <b>%1</b>.<br>Check that you have the <i>%2</i> executable installed and it is accessible.</qt>", command + ' ' + args, command), i18n("Script Not Found"));
+//FIXME: pointer to mainWindow is needed      
+      KMessageBox::error(0L /*Koncrete::Core::mainWindow()*/, i18n("<qt>There was an error running <b>%1</b>.<br>Check that you have the <i>%2</i> executable installed and it is accessible.</qt>", command + ' ' + args, command), i18n("Script Not Found"));
 //FIXME       ViewManager::ref()->activeView()->setFocus();
       if (m_loopStarted)
       {
@@ -397,7 +403,9 @@ void UserAction::slotGetScriptError( K3Process *, char *buffer, int buflen )
 /** Timeout occurred while waiting for some network function to return. */
 void UserAction::slotTimeout()
 {
-  if ((m_killCount == 0) && (KMessageBox::questionYesNo(Koncrete::Core::mainWindow(), i18n("<qt>The filtering action <b>%1</b> seems to be locked.<br>Do you want to terminate it?</qt>", actionText()), i18n("Action Not Responding")) == KMessageBox::Yes))
+  
+//FIXME: pointer to mainWindow is needed      
+  if ((m_killCount == 0) && (KMessageBox::questionYesNo(0L /*Koncrete::Core::mainWindow()*/, i18n("<qt>The filtering action <b>%1</b> seems to be locked.<br>Do you want to terminate it?</qt>", actionText()), i18n("Action Not Responding")) == KMessageBox::Yes))
   {
     if (::kill(-proc->pid(), SIGTERM))
     {

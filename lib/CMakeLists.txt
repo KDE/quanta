@@ -2,6 +2,9 @@
 include_directories(
    ${CMAKE_BINARY_DIR}/lib
    ${KDE4_INCLUDE_DIR}/kdevelop
+   ${KDE4_INCLUDE_DIR}/kdevelop/interfaces
+   ${KDE4_INCLUDE_DIR}/kdevelop/shell
+   ${KDE4_INCLUDE_DIR}/kdevelop/editor
    )
 
 
@@ -39,7 +42,7 @@ kde4_add_kcfg_files(kdevquanta_LIB_SRCS settingsbase.kcfgc )
 
 kde4_add_library(kdevquanta SHARED ${kdevquanta_LIB_SRCS})
 
-target_link_libraries(kdevquanta kdevplatform ktexteditor ${KDE4_KIO_LIBS})
+target_link_libraries(kdevquanta kdevplatforminterfaces kdevplatformshell kdevplatformeditor ktexteditor ${KDE4_KIO_LIBS})
 
 set_target_properties(kdevquanta PROPERTIES VERSION 1.0.0 SOVERSION 1 )
 install(TARGETS kdevquanta  DESTINATION ${LIB_INSTALL_DIR})
