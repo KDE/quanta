@@ -22,18 +22,12 @@
 #include <QFileInfo>
 
 //kdevelop includes
-#include <kdevcore.h>
-#include <kdevbackgroundparser.h>
-#include <kdevenvironment.h>
-#include <kdevpartcontroller.h>
-#include <kdevprojectcontroller.h>
-#include <kdevlanguagecontroller.h>
-#include <kdevmainwindow.h>
-#include <kdevplugincontroller.h>
-#include <kdevdocumentcontroller.h>
-#include <shell/splashscreen.h>
-#include <kdevplugin.h>
-#include <kdeveditorintegrator.h>
+#include <core.h>
+#include <idocumentcontroller.h>
+#include <iplugin.h>
+#include <iplugincontroller.h>
+#include <iprojectcontroller.h>
+#include <plugincontroller.h>
 
 #include "kdevquantaextension.h"
 
@@ -80,6 +74,8 @@ int main(int argc, char *argv[])
 
   KDevQuantaExtension::init();
 
+//FIXME: There is no SplashScreen at this moment
+  /*
   SplashScreen *splash = 0;
 
   QString splashFile = KStandardDirs::locate("appdata", "pics/quantalogo.png");
@@ -91,10 +87,13 @@ int main(int argc, char *argv[])
     splash->show();
     splash->repaint();
   }
+  */
   
-  // initialize the editor integrator - it needs a qobject on the main thread
-  Koncrete::EditorIntegrator::initialise();
+    //initialize the api object
+    //WARNING! the order is important
+  KDevelop::Core::initialize();
   
+  /*
   //initialize the api object
   //WARNING! the order is important
   Koncrete::Core::setMainWindow( new Koncrete::MainWindow );
@@ -105,34 +104,34 @@ int main(int argc, char *argv[])
   Koncrete::Core::setProjectController( new Koncrete::ProjectController );
   Koncrete::Core::setBackgroundParser( new Koncrete::BackgroundParser );
   Koncrete::Core::setEnvironment( new Koncrete::Environment );
+  */
   
+//FIXME: There is no SplashScreen at this moment
+  /*
   if ( splash )
   {
-    QObject::connect(Koncrete::PluginController::self(), SIGNAL(loadingPlugin(const QString&)),
+    QObject::connect(Core::self(), SIGNAL(loadingPlugin(const QString&)),
                      splash, SLOT(showMessage(const QString&)));
+   QTimer::singleShot(0, splash, SLOT(deleteLater()));
     QObject::connect( Koncrete::Core::documentController(),
                       SIGNAL( openingDocument( const QString & ) ),
                       splash, SLOT( showMessage( const QString & ) ) );
 
     splash->showMessage( i18n( "Starting GUI" ) );
   }
-
-  QObject::connect( Koncrete::Core::mainWindow(), SIGNAL( finishedLoading() ),
-                    splash, SLOT( deleteLater() ) );
-
-  Koncrete::Core::initialize();
-
+*/
+  
   //Load QuantaCore *before* loading other plugins, otherwise the signal
   //connection between them an QuantaCore will not work.
-  Koncrete::Plugin *p = Koncrete::PluginController::self()->loadPlugin("KDevQuantaCore");
+  KDevelop::IPlugin *p = KDevelop::Core::self()->pluginController()->loadPlugin("KDevQuantaCore");
   if (!p)
   {
-    delete splash;
-    splash = 0;
+ //   delete splash;
+ //   splash = 0;
     KMessageBox::error( 0L, i18n("The Quanta Core Plugin could not be loaded.\nYour installation seems to be broken."));
   }
 
-  Koncrete::PluginController::self()->loadPlugins( Koncrete::PluginController::Global );
+  KDevelop::Core::self()->pluginController()->loadPlugins( KDevelop::PluginController::Global);
 
 
   for( int i=0; i<args->count(); ++i )
@@ -151,7 +150,7 @@ int main(int argc, char *argv[])
       QString ext = QFileInfo( url.fileName() ).suffix();
       if( ext == "kdevelop" || ext == "quanta" )
       {
-        Koncrete::Core::projectController()->openProject( url );
+        KDevelop::Core::self()->projectController()->openProject( url );
         openProject = true;
       }
   }
@@ -159,7 +158,7 @@ int main(int argc, char *argv[])
   if( !openProject ){
     for( int a = 0; a < args->count(); ++a )
     {
-      Koncrete::Core::documentController()->editDocument( KUrl(args->url(a)) );
+      KDevelop::Core::self()->documentController()->openDocument( KUrl(args->url(a)) );
     }
   }
 #ifdef __GNUC__

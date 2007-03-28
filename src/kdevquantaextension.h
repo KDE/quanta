@@ -16,7 +16,7 @@
 class SettingsWidget;
 class KDialog;
 
-class KDevQuantaExtension : public Koncrete::ShellExtension {
+class KDevQuantaExtension : public KDevelop::ShellExtension {
 public:
     static void init();
 
@@ -26,6 +26,8 @@ public:
     virtual QString xmlFile();
     
     virtual QString defaultProfile();
+    
+    virtual KDevelop::AreaParams defaultArea();
     
 protected:
     KDevQuantaExtension();

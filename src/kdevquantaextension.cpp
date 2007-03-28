@@ -21,13 +21,11 @@
 #include <kurlrequester.h>
 #include <kapplication.h>
 
-#include <kdevplugin.h>
-// #include <kdevmakefrontend.h>
-#include <kdevplugincontroller.h>
+//kdevelop includes
 
 
 KDevQuantaExtension::KDevQuantaExtension()
- : Koncrete::ShellExtension()
+ : KDevelop::ShellExtension()
 {
 }
 
@@ -93,4 +91,10 @@ QString KDevQuantaExtension::xmlFile()
 QString KDevQuantaExtension::defaultProfile()
 {
     return "quanta";
+}
+
+KDevelop::AreaParams KDevQuantaExtension::defaultArea()
+{
+  KDevelop::AreaParams params = {"code", i18n("Code")};
+  return params;
 }
