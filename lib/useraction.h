@@ -116,7 +116,6 @@ private:
     QDomElement tag;
     QFile* m_file;
     KDevelop::IPlugin *m_plugin;
-    KDevelop::IPlugin *m_quantaCore;
     QString m_inputFileName;
     QStringList m_argsList;
     uint m_killCount;

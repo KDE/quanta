@@ -498,7 +498,6 @@ void BaseTreeView::slotClose()
 {
   if (currentItem())
   {
-    //FIXME: Probably this should get an IDocument and use close instead of closeUrl
     KDevelop::IDocument * doc = KDevelop::Core::self()->documentController()->documentForUrl(currentUrl());
     if (doc)
       doc->close();
