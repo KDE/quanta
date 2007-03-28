@@ -126,6 +126,7 @@ Q_SIGNALS:
   
 };
 
+KDEV_DECLARE_EXTENSION_INTERFACE( QuantaCoreIf, "org.kdevelop.QuantaCoreIf" );
 Q_DECLARE_INTERFACE( QuantaCoreIf, "org.kdevelop.QuantaCoreIf" );
 
 #endif
