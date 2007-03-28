@@ -22,7 +22,7 @@
 //kde includes
 
 //qt includes
-#include <QObject>
+// #include <QObject>
 
 class QPoint;
 
@@ -58,14 +58,12 @@ Settings * s = Settings::self();
 @author Jens Herden
 */
 
-class KDEVQUANTA_EXPORT QuantaCoreIf : public QObject
+class KDEVQUANTA_EXPORT QuantaCoreIf
 {
-  Q_OBJECT
-
 public:
-  QuantaCoreIf(QObject *parent);
+  //QuantaCoreIf();
 
-  virtual ~QuantaCoreIf();
+  virtual ~QuantaCoreIf() {};
 
   /**
    * Inserts a new tag into the current document.
@@ -88,7 +86,18 @@ public:
    * @return the nickname of the DTEP or an empty string if no such DTEP was loaded
    */
   virtual QString getDTEPNickName(const QString &name) const = 0;
-signals:
+
+public Q_SLOTS:
+  
+  /** insert <img> tag for images or <a> for other
+   *  
+   * @param url the url to insert, will be converted to relative
+   * @param dirInfo optional information for pre and post text
+   */
+    virtual void slotInsertTag(const KUrl & url, Helper::DirInfo * dirInfo = 0) = 0;
+
+  
+Q_SIGNALS:
   /**
    * emitted when the current document is about to get parsed
    */
@@ -115,15 +124,6 @@ signals:
    */
   void newCursorPosition(const QPoint & qp);
   
-public slots:
-  
-  /** insert <img> tag for images or <a> for other
-   *  
-   * @param url the url to insert, will be converted to relative
-   * @param dirInfo optional information for pre and post text
-   */
-  virtual void slotInsertTag(const KUrl & url, Helper::DirInfo * dirInfo = 0) = 0;
-
 };
 
 Q_DECLARE_INTERFACE( QuantaCoreIf, "org.kdevelop.QuantaCoreIf" );

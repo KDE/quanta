@@ -14,7 +14,6 @@ set(kdevquanta_LIB_SRCS
    settings.cpp 
    resizablewidget.cpp 
    useraction.cpp 
-   quantacoreif.cpp 
    myprocess.cpp 
    node.cpp 
    tag.cpp 
