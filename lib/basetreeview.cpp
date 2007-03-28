@@ -22,8 +22,8 @@
 
 //kdevelop includes
 #include <core.h>
-#include <editorintegrator.h>
 #include <idocument.h>
+#include <idocumentcontroller.h>
 #include <iuicontroller.h>
 
 // QT includes
@@ -328,7 +328,7 @@ void BaseTreeView::slotSelectFile(Q3ListViewItem *item)
   KUrl urlToOpen = kftvi->url();
   if (!urlToOpen.isEmpty())
   {
-    KDevelop::Core::self()->uiController()->openUrl(urlToOpen);
+    KDevelop::Core::self()->documentController()->openDocument(urlToOpen);
     item->repaint();
   }
 }
@@ -499,9 +499,9 @@ void BaseTreeView::slotClose()
   if (currentItem())
   {
     //FIXME: Probably this should get an IDocument and use close instead of closeUrl
-    KTextEditor::Document * doc = KDevelop::EditorIntegrator::documentForUrl(currentUrl());
+    KDevelop::IDocument * doc = KDevelop::Core::self()->documentController()->documentForUrl(currentUrl());
     if (doc)
-      doc->closeUrl();
+      doc->close();
   }
 }
 
@@ -1017,8 +1017,7 @@ void BaseTreeView::slotCreateFile()
     tempFile->open();
     if (QuantaNetAccess::copy(KUrl(tempFile->fileName()), url, m_plugin))
     {
-    //  m_partController->editDocument(url);
-      KDevelop::Core::self()->uiController()->openUrl(url);    
+      KDevelop::Core::self()->documentController()->openDocument(url);    
     }
     delete tempFile;
   }
@@ -1052,7 +1051,7 @@ QString BaseTreeView::iconNameForURL(const KUrl & url)
 
 bool BaseTreeView::isFileOpen(const KUrl & url) const
 {
-  return KDevelop::EditorIntegrator::documentForUrl(url);
+  return KDevelop::Core::self()->documentController()->documentForUrl(url);
 }
 
 #include "basetreeview.moc"
