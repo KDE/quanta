@@ -79,8 +79,8 @@
 #include <X11/Xlib.h>
 #endif
 //BaseTreeViewItem implementation
-BaseTreeViewItem::BaseTreeViewItem( KFileTreeViewItem *parent, KFileItem* item, KFileTreeBranch *brnch )
-  : KFileTreeViewItem( parent, item, brnch)
+BaseTreeViewItem::BaseTreeViewItem( K3FileTreeViewItem *parent, KFileItem* item, KFileTreeBranch *brnch )
+  : K3FileTreeViewItem( parent, item, brnch)
 {
   // cache this for speed
   m_baseTreeView = static_cast<BaseTreeBranch *>(branch())->baseTreeView();
@@ -124,7 +124,7 @@ void BaseTreeViewItem::paintCell(QPainter *p, const QColorGroup &cg,
     v = (v < 155 ? v + 100 : 255);
     _cg.setColor(QColorGroup::Text, QColor::fromHsv(h, s, v));
   };
-  KFileTreeViewItem::paintCell( p, _cg, column, width, align );
+  K3FileTreeViewItem::paintCell( p, _cg, column, width, align );
 }
 
 void BaseTreeViewItem::refreshIcon()
@@ -137,7 +137,7 @@ void BaseTreeViewItem::refreshIcon()
 BaseTreeBranch::BaseTreeBranch(BaseTreeView *parent, const KUrl& url,
                                  const QString& name, const QPixmap& pix,
                                  bool showHidden,
-                                 KFileTreeViewItem *branchRoot)
+                                 K3FileTreeViewItem *branchRoot)
   : KFileTreeBranch(parent, url, name, pix, showHidden, branchRoot), m_baseTreeView(parent)
 {
   bool localFile = url.isLocalFile();
@@ -154,7 +154,7 @@ bool BaseTreeBranch::matchesFilter(const KFileItem *item) const
   return KFileTreeBranch::matchesFilter(item);
 }
 
-KFileTreeViewItem* BaseTreeBranch::createTreeViewItem(KFileTreeViewItem *parent,
+K3FileTreeViewItem* BaseTreeBranch::createTreeViewItem(K3FileTreeViewItem *parent,
                                                       KFileItem *fileItem)
 {
   BaseTreeViewItem  *tvi = 0;
@@ -177,13 +177,13 @@ void BaseTreeBranch::addOpenFolder(QStringList* openFolder)
 {
   if (! openFolder)  // just in case
     return;
-  KFileTreeViewItem *newItem;
-  KFileTreeViewItem *item = root();
+  K3FileTreeViewItem *newItem;
+  K3FileTreeViewItem *item = root();
   while (item) {
     if (item->isDir() && item->isOpen()) {
       openFolder->append( item->url().url() );
       // dive into the tree first
-      newItem = dynamic_cast<KFileTreeViewItem *>(item->firstChild());
+      newItem = dynamic_cast<K3FileTreeViewItem *>(item->firstChild());
       if (newItem) {
         // found child go ahead
         item = newItem;
@@ -195,12 +195,12 @@ void BaseTreeBranch::addOpenFolder(QStringList* openFolder)
     {
       if (item->nextSibling())
       {
-        item = dynamic_cast<KFileTreeViewItem *>(item->nextSibling());
+        item = dynamic_cast<K3FileTreeViewItem *>(item->nextSibling());
         break;
       }
       else
       {
-        item = dynamic_cast<KFileTreeViewItem *>(item->parent());
+        item = dynamic_cast<K3FileTreeViewItem *>(item->parent());
       }
     }
     if (item == root())
@@ -213,7 +213,7 @@ void BaseTreeBranch::reopenFolder()
 {
   if (folderToOpen.isEmpty())
     return;
-  KFileTreeViewItem *item;
+  K3FileTreeViewItem *item;
   QStringList::Iterator end(folderToOpen.end());
   for (QStringList::Iterator it = folderToOpen.begin(); it != end; ++it) {
     KUrl url( (*it) );
@@ -231,14 +231,14 @@ void BaseTreeBranch::reopenFolder()
 
 void BaseTreeBranch::updateOpenFolder()
 {
-  KFileTreeViewItem *newItem;
-  KFileTreeViewItem *item = root();
+  K3FileTreeViewItem *newItem;
+  K3FileTreeViewItem *item = root();
   while (item) {
     if (item->isDir() && item->isOpen()) {
       updateDirectory( item->url() );
       kapp->processEvents(QEventLoop::ExcludeUserInput | QEventLoop::ExcludeSocketNotifiers);
       // dive into the tree first
-      newItem = dynamic_cast<KFileTreeViewItem *>(item->firstChild());
+      newItem = dynamic_cast<K3FileTreeViewItem *>(item->firstChild());
       if (newItem) {
         // found child go ahead
         item = newItem;
@@ -247,11 +247,11 @@ void BaseTreeBranch::updateOpenFolder()
     };
     // go up if no sibling available
     if (! item->nextSibling())
-      item = dynamic_cast<KFileTreeViewItem *>(item->parent());
+      item = dynamic_cast<K3FileTreeViewItem *>(item->parent());
     if (item == root())
       break;
     if (item)
-      item = dynamic_cast<KFileTreeViewItem *>(item->nextSibling());
+      item = dynamic_cast<K3FileTreeViewItem *>(item->nextSibling());
   };
 }
 
@@ -263,7 +263,7 @@ void BaseTreeBranch::updateOpenFolder()
 ////////////////////////////////////////////////////////////////////////////////////
 
 BaseTreeView::BaseTreeView(KDevelop::IPlugin *plugin, QWidget * parent)
-  : KFileTreeView(parent), fileInfoDlg(0), m_parent(parent), m_plugin(plugin), m_saveOpenFolder(false)
+  : K3FileTreeView(parent), fileInfoDlg(0), m_parent(parent), m_plugin(plugin), m_saveOpenFolder(false)
     /*, m_partController(Koncrete::Core::documentController())*/
 {
 //   setTreeStepSize(15);
@@ -297,7 +297,7 @@ BaseTreeView::~BaseTreeView()
 
 void BaseTreeView::itemRenamed(const KUrl& oldURL, const KUrl& newURL)
 {
-  KFileTreeViewItem *curItem = currentKFileTreeViewItem();
+  K3FileTreeViewItem *curItem = currentKFileTreeViewItem();
   if (! curItem) return;
 
   if (curItem->isDir())
@@ -318,7 +318,7 @@ void BaseTreeView::itemRenamed(const KUrl& oldURL, const KUrl& newURL)
 /** Called for: double click, return, Open */
 void BaseTreeView::slotSelectFile(Q3ListViewItem *item)
 {
-  KFileTreeViewItem* kftvi = currentKFileTreeViewItem();
+  K3FileTreeViewItem* kftvi = currentKFileTreeViewItem();
   if (!kftvi || kftvi->isDir())
     return;
 
@@ -335,7 +335,7 @@ void BaseTreeView::slotSelectFile(Q3ListViewItem *item)
 
 
 /** expands an archiv, if possible */
-bool BaseTreeView::expandArchiv(KFileTreeViewItem *item)
+bool BaseTreeView::expandArchiv(K3FileTreeViewItem *item)
 {
   if (!item) return false;
   KUrl urlToOpen = item->url();
@@ -474,7 +474,7 @@ bool BaseTreeView::event(QEvent *event)
     if (!item)
       return true;
     QString text;
-    KFileTreeViewItem * kftvi = dynamic_cast<BaseTreeViewItem *> (item);
+    K3FileTreeViewItem * kftvi = dynamic_cast<BaseTreeViewItem *> (item);
     if (kftvi) {
       QString desc = kftvi->text(1);
       text = kftvi->fileItem()->getToolTipText();
@@ -558,7 +558,7 @@ void BaseTreeView::slotDelete()
 }
 
 
-void BaseTreeView::slotPopulateFinished(KFileTreeViewItem *item)
+void BaseTreeView::slotPopulateFinished(K3FileTreeViewItem *item)
 {
 //   progressBar->setTotalSteps(1);  FIXME
 //   progressBar->setProgress(-1);
@@ -607,7 +607,7 @@ void BaseTreeView::slotPropertiesApplied()
   {
     itemRenamed(url, propDlg->kurl());
   }
-  KFileTreeViewItem *kftvi = currentKFileTreeViewItem();
+  K3FileTreeViewItem *kftvi = currentKFileTreeViewItem();
   if (fileInfoDlg && kftvi)
   {
     // has description changed?
@@ -648,7 +648,7 @@ void BaseTreeView::slotReloadAllTrees()
 
 void BaseTreeView::slotReload()
 {
-  KFileTreeViewItem *curItem = currentKFileTreeViewItem();
+  K3FileTreeViewItem *curItem = currentKFileTreeViewItem();
   if (curItem)
     reload(dynamic_cast<BaseTreeBranch *>(curItem->branch()));
 }
@@ -694,11 +694,11 @@ bool BaseTreeView::acceptDrag(QDropEvent* e) const
 {
   QPoint p (contentsToViewport(e->pos()));
   Q3ListViewItem *atpos = itemAt(p);
-  KFileTreeViewItem *kftvi = dynamic_cast <KFileTreeViewItem *> (atpos);
+  K3FileTreeViewItem *kftvi = dynamic_cast <K3FileTreeViewItem *> (atpos);
   if (kftvi)
-    return (KFileTreeView::acceptDrag(e) && kftvi->isDir());  //  accept only on folders
+    return (K3FileTreeView::acceptDrag(e) && kftvi->isDir());  //  accept only on folders
   else
-    return (KFileTreeView::acceptDrag(e));
+    return (K3FileTreeView::acceptDrag(e));
 }
 
 
@@ -836,7 +836,7 @@ void BaseTreeView::slotDocumentClosed(KDevelop::IDocument* document)
     return;
 
   KUrl url = document->url();
-  KFileTreeViewItem * item;
+  K3FileTreeViewItem * item;
   KFileTreeBranchIterator it( branches() );
   for ( ; it.current(); ++it)
   {
@@ -851,7 +851,7 @@ void BaseTreeView::slotDocumentClosed(KDevelop::IDocument* document)
 
 void BaseTreeView::slotStartRename()
 {
-  KFileTreeViewItem * item = currentKFileTreeViewItem();
+  K3FileTreeViewItem * item = currentKFileTreeViewItem();
   if (item) {
     setRenameable(0, true);
     rename(item, 0);
@@ -876,14 +876,14 @@ void BaseTreeView::slotRenameItem(Q3ListViewItem* item, const QString & newText,
   // reset the inline rename option for file/folder name
   if (col == 0) {
     setRenameable(0, false);
-    KFileTreeViewItem * kvtvi = dynamic_cast<KFileTreeViewItem *>(item);
+    K3FileTreeViewItem * kvtvi = dynamic_cast<K3FileTreeViewItem *>(item);
     if (kvtvi)
       doRename(kvtvi, newText);
   }
 }
 
 
-void BaseTreeView::doRename(KFileTreeViewItem* kftvi, const QString & newName)
+void BaseTreeView::doRename(K3FileTreeViewItem* kftvi, const QString & newName)
 {
   if (! kftvi)
     return;

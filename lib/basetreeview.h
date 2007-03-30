@@ -24,8 +24,8 @@
 
 //kde includes
 #include <kfiletreebranch.h>
-#include <kfiletreeview.h>
-#include <kfiletreeviewitem.h>
+#include <k3filetreeview.h>
+#include <k3filetreeviewitem.h>
 
 //forward declarations
 class Q3ListViewItem;
@@ -49,14 +49,14 @@ class BaseTreeView;
 
 
 /**
- * @short a KFileTreeViewItem with some specials.
+ * @short a K3FileTreeViewItem with some specials.
  *
  * @author Jens Herden <jens@kdewebdev.org>
  */
-class KDEVQUANTA_EXPORT BaseTreeViewItem : public KFileTreeViewItem {
+class KDEVQUANTA_EXPORT BaseTreeViewItem : public K3FileTreeViewItem {
 
 public:
-  BaseTreeViewItem( KFileTreeViewItem *parent, KFileItem* item, KFileTreeBranch *brnch );
+  BaseTreeViewItem( K3FileTreeViewItem *parent, KFileItem* item, KFileTreeBranch *brnch );
 
   /**
   sorts folders separate from files
@@ -93,11 +93,11 @@ class KDEVQUANTA_EXPORT BaseTreeBranch : public KFileTreeBranch {
 public:
   BaseTreeBranch(BaseTreeView *parent, const KUrl& url,
                   const QString& name, const QPixmap& pix,
-                  bool showHidden = false, KFileTreeViewItem *branchRoot = 0);
+                  bool showHidden = false, K3FileTreeViewItem *branchRoot = 0);
   /**
   get the BaseTreeViewItem
   */
-  virtual KFileTreeViewItem* createTreeViewItem( KFileTreeViewItem *parent,
+  virtual K3FileTreeViewItem* createTreeViewItem( K3FileTreeViewItem *parent,
                                                  KFileItem *fileItem );
   /**
   does custom filtering
@@ -141,7 +141,7 @@ private:
  * @ref TemplatesTreeView use this class.
  *
  */
-class KDEVQUANTA_EXPORT BaseTreeView : public KFileTreeView {
+class KDEVQUANTA_EXPORT BaseTreeView : public K3FileTreeView {
    Q_OBJECT
 
 public:
@@ -205,7 +205,7 @@ protected slots:
    */
   virtual void slotPercent(KJob *job, unsigned long value);
 
-  void slotPopulateFinished(KFileTreeViewItem *item);
+  void slotPopulateFinished(K3FileTreeViewItem *item);
 
   /**
   Called for: double click, return, Open
@@ -308,7 +308,7 @@ protected:
   @param item the treeview item
   @param newDesc the new description of item
   */
-  virtual void itemDescChanged(KFileTreeViewItem* item, const QString& newDesc)
+  virtual void itemDescChanged(K3FileTreeViewItem* item, const QString& newDesc)
   {
     Q_UNUSED(item);
     Q_UNUSED(newDesc);
@@ -337,7 +337,7 @@ protected:
   expands an archiv inside of the tree
   @return true if expanding was possible
   */
-  bool expandArchiv (KFileTreeViewItem *item);
+  bool expandArchiv (K3FileTreeViewItem *item);
   bool acceptDrag(QDropEvent* e ) const;
   void findDrop(const QPoint &pos, Q3ListViewItem *&parent, Q3ListViewItem *&after);
 
@@ -353,7 +353,7 @@ protected:
   KDevelop::IPlugin * m_plugin;
 
   /** some stuff for renaming */
-  void doRename(KFileTreeViewItem* kvtvi, const QString & newName);
+  void doRename(K3FileTreeViewItem* kvtvi, const QString & newName);
 
   /** reimplemented to reset renameable */
   void cancelRename(int col);
