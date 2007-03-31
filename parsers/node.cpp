@@ -86,6 +86,12 @@ Node::~Node()
     child = 0L;
     delete next;
     next = 0L;
+  } else
+  {
+    if (next && next->prev == this)
+      next->prev = 0L;
+    if (child && child->parent == this)
+      child->parent = 0L;
   }
 
   delete tag;

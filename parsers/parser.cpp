@@ -827,6 +827,10 @@ void Parser::deleteNodes(Node *firstNode, Node *lastNode, NodeModifsSet *modifs)
     {
       nextNode->prev = prev;
     }
+    if (nextNode && nextNode->parent == node)
+    {
+      nextNode->parent = parent;
+    }
     if (next)
       next->prev = prev;
     if (prev && prev->next == node)

@@ -254,6 +254,8 @@ void ViewManager::slotCloseOtherTabs()
      currentView = m_contextView;
    else
      currentView = quantaApp->activeWindow();
+   if (dynamic_cast<QuantaView*>(currentView) && !static_cast<QuantaView*>(currentView)->document())
+     ToolbarTabWidget::ref()->reparent(0, 0, QPoint(), false);
   KMdiIterator<KMdiChildView*> *it = quantaApp->createIterator();
   //save the children first to a list, as removing invalidates our iterator
   QValueList<KMdiChildView *> children;
