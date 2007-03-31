@@ -25,17 +25,18 @@
 #include <kfileitem.h>
 #include <kmainwindow.h>
 #include <kstringhandler.h>
+#include <kparts/mainwindow.h>
 
 //kdevelop includes
 #include <core.h>
 #include <iplugin.h>
 #include <iproject.h>
 #include <iprojectcontroller.h>
+#include <iuicontroller.h>
 
 bool QuantaNetAccess::upload(const QString& src, const KUrl& target, KDevelop::IPlugin* plugin, bool confirm)
 {
-  //FIXME: mainWindow!
-  QWidget *window = 0L; //KDevelop::Core::mainWindow();
+  QWidget *window = KDevelop::Core::self()->uiController()->activeMainWindow();
   bool ok = KIO::NetAccess::upload(src, target, window);
   if (ok)
   {
@@ -52,8 +53,7 @@ bool QuantaNetAccess::upload(const QString& src, const KUrl& target, KDevelop::I
 bool QuantaNetAccess::file_copy( const KUrl& src, const KUrl& target, int permissions,
                                  bool overwrite, bool resume, KDevelop::IPlugin* plugin, bool confirm)
 {
-  //FIXME: mainWindow!
-  QWidget *window = 0L; //KDevelop::Core::mainWindow();
+  QWidget *window = KDevelop::Core::self()->uiController()->activeMainWindow();
   bool ok;
   if (src == target)
     ok = true;
@@ -78,9 +78,9 @@ bool QuantaNetAccess::file_move( const KUrl& src, const KUrl& target, int permis
   KDevelop::IProject *project = 0L;
   if (plugin)
   {
-  //FIXME: mainWindow!
-    //window = KDevelop::Core::mainWindow();
-    project = KDevelop::Core::self()->projectController()->currentProject();
+    window = KDevelop::Core::self()->uiController()->activeMainWindow();    
+    //FIXME: no currentProject!
+    project = KDevelop::Core::self()->projectController()->projectAt(0);
   }
   // don't ask if move is inside of the project
   bool oldConfirm = confirm;
@@ -115,8 +115,7 @@ bool QuantaNetAccess::dircopy( const KUrl::List & srcList, const KUrl & target, 
   QWidget *window = 0L;
   if (plugin)
   {
-      //FIXME: mainWindow!
-    //window = KDevelop::Core::mainWindow();
+    window = KDevelop::Core::self()->uiController()->activeMainWindow();      
   }
   if (!ExtFileInfo::exists(target))
   {
@@ -152,9 +151,9 @@ bool QuantaNetAccess::move( const KUrl::List& srcList, const KUrl& target, KDeve
   KDevelop::IProject *project = 0L;
   if (plugin)
   {
-  //FIXME: mainWindow!
-    //window = KDevelop::Core::mainWindow();
-    project = KDevelop::Core::self()->projectController()->currentProject();
+    window = KDevelop::Core::self()->uiController()->activeMainWindow();
+    //FIXME: no currentProject!
+    project = KDevelop::Core::self()->projectController()->projectAt(0);
   }
   KUrl targetURL = adjustURL(target);
   if (project)
@@ -237,8 +236,7 @@ bool QuantaNetAccess::mkdir( const KUrl & path, KDevelop::IPlugin* plugin, int p
   QWidget *window = 0L;
   if (plugin)
   {
-   //FIXME: mainWindow!
-//    window = KDevelop::Core::mainWindow();
+    window = KDevelop::Core::self()->uiController()->activeMainWindow();
   }
   KUrl url = path;
   if (ExtFileInfo::exists(url))
@@ -289,9 +287,9 @@ void QuantaNetAccess::checkProjectInsert(const KUrl& source, const KUrl& target,
   KDevelop::IProject *project = 0L;
   if (plugin)
   {
-  //FIXME: mainWindow!
-    //window = KDevelop::Core::mainWindow();
-    project = KDevelop::Core::self()->projectController()->currentProject();
+    window = KDevelop::Core::self()->uiController()->activeMainWindow();
+    //FIXME: no currentProject!
+    project = KDevelop::Core::self()->projectController()->projectAt(0);
   }
   if ( !project )
     return;
@@ -348,9 +346,9 @@ bool QuantaNetAccess::checkProjectRemove(const KUrl& src, KDevelop::IPlugin* plu
   KDevelop::IProject *project = 0L;
   if (plugin)
   {
-  //FIXME: mainWindow!
-    //window = KDevelop::Core::mainWindow();
-    project = KDevelop::Core::self()->projectController()->currentProject();
+    window = KDevelop::Core::self()->uiController()->activeMainWindow();
+    //FIXME: no currentProject!
+    project = KDevelop::Core::self()->projectController()->projectAt(0);
   }
   if (!project)
     return true;
@@ -384,7 +382,8 @@ bool QuantaNetAccess::checkProjectDel(const KUrl& src, KDevelop::IPlugin* plugin
   KDevelop::IProject *project = 0L;
   if (plugin)
   {
-    project = KDevelop::Core::self()->projectController()->currentProject();
+    //FIXME: no currentProject!
+    project = KDevelop::Core::self()->projectController()->projectAt(0);
   }
   KUrl url = adjustURL(src);
   if ( project )

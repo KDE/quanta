@@ -136,8 +136,8 @@ bool UserAction::slotActionActivated()
   if ( type == "script" )
   {
     proc = new MyProcess();
-
-    KDevelop::IProject *proj = m_plugin->core()->projectController()->currentProject();
+//FIXME: no way to get the current project...
+    KDevelop::IProject *proj = m_plugin->core()->projectController()->projectAt(0);
     if (proj)
       proc->setWorkingDirectory(proj->folder().path());
 
