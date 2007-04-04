@@ -15,12 +15,15 @@
 #include <QPointer>
 
 //kdevelop includes
-#include <kdevplugin.h>
+#include <iplugin.h>
 
 class QMenu;
 class KAction;
 class KDialog;
-namespace Koncrete { class Context; }
+namespace KDevelop  
+{ 
+  class Context; 
+}
 class ConfigWidgetProxy;
 class QWidget;
 class FilesTreeView;
@@ -29,7 +32,7 @@ class FilesTreeView;
 /**
 Please read the README.dox file for more info about this part
 */
-class QuantaFilesTreePart: public Koncrete::Plugin
+class QuantaFilesTreePart: public KDevelop::IPlugin
 {
     Q_OBJECT
 public:
@@ -45,7 +48,7 @@ private slots:
     void init();
     
     void insertConfigWidget(const KDialog *dlg, QWidget *page, unsigned int pageNo);
-    void contextMenu(QMenu *popup, const Koncrete::Context *context);
+    void contextMenu(QMenu *popup, const KDevelop::Context *context);
     void projectOpened();
     void projectClosed();
     

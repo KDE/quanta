@@ -19,10 +19,7 @@
 #include "settings.h"
 
 //kdevelop includes
-#include <kdevcore.h>
-#include <kdevconfig.h>
-#include <kdevcontext.h>
-#include <kdevmainwindow.h>
+#include <core.h>
 
 // KDE includes
 #include <kdebug.h>
@@ -47,7 +44,7 @@ FilesTreeView::FilesTreeView(QuantaFilesTreePart *part, QWidget *parent)
   setShowToolTips(Settings::self()->filesTreeTooltips());
   setSaveOpenFolder(Settings::self()->filesTreeSave());
 
-  m_config = Koncrete::Config::standard();
+  m_config = KGlobal::config();
 
   addColumn(i18n("Files Tree"), -1);
   addColumn("");
@@ -167,12 +164,14 @@ void FilesTreeView::folderMenu(const QPoint &point)
     popup.addAction(SmallIcon("file-revert"), i18n("&Reload"), this, SLOT(slotReload()));
 
   // ask other plugins for menu entries
+  //FIXME: context menu handling changed
+  /*
   KUrl menuURL(currentKFileTreeViewItem()->url());
   menuURL.adjustPath(KUrl::AddTrailingSlash);
   KUrl::List urlList(menuURL);
   Koncrete::FileContext context(urlList);
   Koncrete::Core::mainWindow()->fillContextMenu(&popup, &context);
-
+*/
   popup.exec(point);
 }
 
@@ -195,10 +194,12 @@ void FilesTreeView::fileMenu(const QPoint &point)
   popup.addAction(SmallIcon("document-properties"), i18n("&Properties"), this, SLOT(slotProperties()));
 
   // ask other plugins for menu entries
+  //FIXME: context menu handling changed
+  /*
   KUrl::List urlList(currentKFileTreeViewItem()->url());
   Koncrete::FileContext context(urlList);
   Koncrete::Core::mainWindow()->fillContextMenu(&popup, &context);
-
+*/
   popup.exec(point);
 }
 

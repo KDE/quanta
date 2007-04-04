@@ -10,6 +10,9 @@
  ***************************************************************************/
 
 #include "quantafilestreepart.h"
+#include "filestreeview.h"
+#include "quantafilestreeglobalconfig.h"
+#include "quantafilestreeprojectconfig.h"
 
 #include <QTimer>
 #include <QMenu>
@@ -25,15 +28,13 @@
 #include <kmessagebox.h>
 #include <k3listviewsearchline.h>
 
-//kdevelop includes
-#include <kdevdocumentcontroller.h>
-#include <kdevcore.h>
-#include <kdevmainwindow.h>
-#include <kdevprojectcontroller.h>
+#include <kparts/mainwindow.h>
 
-#include "filestreeview.h"
-#include "quantafilestreeglobalconfig.h"
-#include "quantafilestreeprojectconfig.h"
+//kdevelop includes
+#include <core.h>
+#include <idocumentcontroller.h>
+#include <iprojectcontroller.h>
+#include <iuicontroller.h>
 
 typedef KGenericFactory<QuantaFilesTreePart> QuantaFilesTreeFactory;
 K_EXPORT_COMPONENT_FACTORY( libkdevquantafilestree, QuantaFilesTreeFactory("kdevquantafilestree") )
@@ -42,7 +43,7 @@ K_EXPORT_COMPONENT_FACTORY( libkdevquantafilestree, QuantaFilesTreeFactory("kdev
 #define PROJECTDOC_OPTIONS 2
 
 QuantaFilesTreePart::QuantaFilesTreePart(QObject *parent, const QStringList &/*args*/)
-  : Koncrete::Plugin(QuantaFilesTreeFactory::componentData(), parent)
+  : KDevelop::IPlugin(QuantaFilesTreeFactory::componentData(), parent)
 {
     setXMLFile("kdevquantafilestree.rc");
 
@@ -62,10 +63,10 @@ QuantaFilesTreePart::QuantaFilesTreePart(QObject *parent, const QStringList &/*a
     connect(m_configProxy, SIGNAL(insertConfigWidget(const KDialog*, QWidget*, unsigned int )),
         this, SLOT(insertConfigWidget(const KDialog*, QWidget*, unsigned int)));
     */
-    connect(Koncrete::Core::mainWindow(), SIGNAL(contextMenu(QMenu *, const Koncrete::Context *)),
+    connect(KDevelop::Core::self()->uiController()->activeMainWindow(), SIGNAL(contextMenu(QMenu *, const KDevelop::Context *)),
         this, SLOT(contextMenu(QMenu *, const Context *)));
-    connect(Koncrete::Core::projectController(), SIGNAL(projectOpened()), this, SLOT(projectOpened()));
-    connect(Koncrete::Core::projectController(), SIGNAL(projectClosed()), this, SLOT(projectClosed()));
+    connect(KDevelop::Core::self()->projectController(), SIGNAL(projectOpened()), this, SLOT(projectOpened()));
+    connect(KDevelop::Core::self()->projectController(), SIGNAL(projectClosed()), this, SLOT(projectClosed()));
 
     QTimer::singleShot(0, this, SLOT(init()));
 }
@@ -84,7 +85,7 @@ void QuantaFilesTreePart::init()
 {
 // delayed initialization stuff goes here
   m_tree = new FilesTreeView(this, m_widget);
-  connect(Koncrete::Core::documentController(), SIGNAL(documentClosed(Koncrete::Document*)), m_tree, SLOT(slotDocumentClosed(Koncrete::Document*)));
+  connect(KDevelop::Core::self()->documentController(), SIGNAL(documentClosed(KDevelop::IDocument*)), m_tree, SLOT(slotDocumentClosed(KDevelop::IDocument*)));
 
   K3ListViewSearchLineWidget * sl = new K3ListViewSearchLineWidget(m_tree, m_widget);
 
@@ -123,7 +124,8 @@ void QuantaFilesTreePart::insertConfigWidget(const KDialog *dlg, QWidget *page, 
     }
 }
 
-void QuantaFilesTreePart::contextMenu(QMenu */*popup*/, const Koncrete::Context */*context*/)
+//FIXME: context menu handling was changed!
+void QuantaFilesTreePart::contextMenu(QMenu */*popup*/, const KDevelop::Context */*context*/)
 {
 // put actions into the context menu here
 /*    if (context->hasType(Context::EditorContext))

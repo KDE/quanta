@@ -24,6 +24,8 @@
 // quanta includes
 #include "basetreeview.h"
 
+#include <ksharedconfig.h>
+
 //forward declarations
 class QPoint;
 class KMenu;
@@ -71,7 +73,7 @@ protected:
 
   KMenu *m_emptyMenu;
   // config
-  KConfig *m_config;
+  KSharedConfigPtr m_config;
 
   /**
    * show a context menu if no file or folder is available
