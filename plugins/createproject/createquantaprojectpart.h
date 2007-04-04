@@ -18,7 +18,7 @@
 #include <kurl.h>
 
 //kdevelop includes
-#include <kdevplugin.h>
+#include <iplugin.h>
 
 class KAction;
 class KDialog;
@@ -26,7 +26,7 @@ class KDialog;
 /**
 Please read the README.dox file for more info about this part
 */
-class CreateQuantaProjectPart: public Koncrete::Plugin
+class CreateQuantaProjectPart: public KDevelop::IPlugin
 {
     Q_OBJECT
 public:
