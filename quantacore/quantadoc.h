@@ -36,6 +36,11 @@ namespace KTextEditor
   class View;
 }
 
+namespace KDevelop
+{
+  class IDocument;
+}
+
 /**
 This class handles the events belonging to an opened document and stores information about the document itself. It provides a way to interact with the edited document.
 
@@ -45,7 +50,7 @@ class QuantaDoc : public EditorSource
 {
 Q_OBJECT
 public:
-  QuantaDoc(KTextEditor::Document *document, QuantaCorePart *qcore);
+  QuantaDoc(KDevelop::IDocument *document, QuantaCorePart *qcore);
 
   ~QuantaDoc();
   /** Code completion was requested by the user. */
@@ -66,11 +71,11 @@ public:
   ParseResult * parseResult() {return &m_parseResult;};
   
   /**
-   * compares a KPart with the internal Document
+   * compares a KDevelop::IDocument with the internal Document
    * @param part 
-   * @return true if the part is the internal Document
+   * @return true if the two IDocument objects are the same
    */
-  bool isDocument(KParts::Part *part);
+  bool isSameDocument(KDevelop::IDocument *document);
   
 private slots:
   /** Called whenever the text in the document is changed. */

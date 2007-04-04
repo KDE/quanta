@@ -17,6 +17,8 @@
 #include <ktexteditor/document.h>
 #include <ktexteditor/view.h>
 
+#include <idocument.h>
+
 #include "quantadoc.h"
 // TODO PORT
 //#include "completionbase.h"
@@ -44,7 +46,7 @@
 
 
 
-QuantaDoc::QuantaDoc(KTextEditor::Document *document, QuantaCorePart *qcore)
+QuantaDoc::QuantaDoc(KDevelop::IDocument *document, QuantaCorePart *qcore)
   : EditorSource(document, qcore), m_qcore(qcore)
 {
   m_parseResult.baseNode = 0L;
@@ -73,7 +75,7 @@ QuantaDoc::QuantaDoc(KTextEditor::Document *document, QuantaCorePart *qcore)
   kDebug(24000) << "DTD area: " << area.start.x() << ", " << area.start.y() << " | " << area.end.x() << ", " << area.end.y() << endl;
 
 //initial parsing
-  QuantaXmlInputSource *inputSource = new QuantaXmlInputSource(document);
+  QuantaXmlInputSource *inputSource = new QuantaXmlInputSource(document->textDocument());
   ParserStatus *parser = new ParserStatus(inputSource->newLocator(), ParserManager::self()->xmlStateMachine());
   DomBuilder *builder = new DomBuilder();
   parser->setContentHandler(builder);
@@ -740,9 +742,9 @@ void QuantaDoc::parse()
   ParserManager::self()->parse(this, &m_parseResult, m_dtd, true);
 }
 
-bool QuantaDoc::isDocument(KParts::Part *part)
+bool QuantaDoc::isSameDocument(KDevelop::IDocument *document)
 {
-  return part == m_document;
+  return document == m_ideDocument;
 }
 
 void QuantaDoc::slotIdleTimerExpired()

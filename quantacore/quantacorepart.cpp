@@ -50,13 +50,15 @@
 #include <kstandarddirs.h>
 #include <ktoolinvocation.h>
 #include <kactioncollection.h>
+
+#include <kparts/mainwindow.h>
+
 //kdevelop includes
-#include <kdevmainwindow.h>
-#include <kdevdocumentcontroller.h>
-#include <kdevdocument.h>
-#include <kdevcore.h>
-#include <kdevcontext.h>
-#include <kdevplugincontroller.h>
+#include <core.h>
+#include <idocument.h>
+#include <idocumentcontroller.h>
+#include <iplugincontroller.h>
+#include <iuicontroller.h>
 
 #include <ktexteditor/document.h>
 
@@ -67,8 +69,9 @@ K_EXPORT_COMPONENT_FACTORY(libkdevquantacore, QuantaCoreFactory("kdevquantacore"
 #define ENVIRONMENT_OPTIONS 2
 
 QuantaCorePart::QuantaCorePart(QObject *parent, const QStringList& )
-  : QuantaCoreIf(QuantaCoreFactory::componentData(), parent), m_activeQuantaDoc(0)
+  : KDevelop::IPlugin(QuantaCoreFactory::componentData(), parent), QuantaCoreIf(), m_activeQuantaDoc(0)
 {
+  KDEV_USE_EXTENSION_INTERFACE( QuantaCoreIf )
   kDebug(24000) << "Creating Quanta Support Part" << endl;
   setComponentData(QuantaCoreFactory::componentData());
   setXMLFile("kdevquantacore.rc");
@@ -84,17 +87,19 @@ QuantaCorePart::QuantaCorePart(QObject *parent, const QStringList& )
   connect(m_configProxy, SIGNAL(insertConfigWidget(const KDialog*, QWidget*, unsigned int )),
       this, SLOT(slotInsertConfigWidget(const KDialog*, QWidget*, unsigned int)));
   */
-  connect(Koncrete::Core::documentController(), SIGNAL(documentLoaded(Koncrete::Document*)), this, SLOT(slotFileLoaded(Koncrete::Document*)));
+  KDevelop::Core *core = KDevelop::Core::self();
+  connect(core->documentController(), SIGNAL(documentLoaded(KDevelop::IDocument*)), this, SLOT(slotFileLoaded(KDevelop::IDocument*)));
 
-  connect(Koncrete::Core::documentController(), SIGNAL(documentActivated(Koncrete::Document *)), this, SLOT(slotDocumentActivated(Koncrete::Document *)));
+  connect(core->documentController(), SIGNAL(documentActivated(KDevelop::IDocument *)), this, SLOT(slotDocumentActivated(KDevelop::IDocument *)));
 
-  connect(Koncrete::Core::documentController(), SIGNAL(documentClosed(Koncrete::Document*)), this, SLOT(slotClosedFile(Koncrete::Document*)));
+  connect(core->documentController(), SIGNAL(documentClosed(KDevelop::IDocument*)), this, SLOT(slotClosedFile(KDevelop::IDocument*)));
 
-  connect(Koncrete::Core::documentController(), SIGNAL(documentUrlChanged(Koncrete::Document*, const KUrl, const KUrl)), this, SLOT(slotPartURLChanged(Koncrete::Document*, const KUrl, const KUrl)));
+  connect(core->documentController(), SIGNAL(documentUrlChanged(KDevelop::IDocument*, const KUrl, const KUrl)), this, SLOT(slotPartURLChanged(KDevelop::IDocument*, const KUrl, const KUrl)));
 
-  connect(Koncrete::Core::mainWindow(), SIGNAL(contextMenu(KMenu *, const Context *)), this, SLOT(contextMenu(KMenu *, const Context *)));
-
-  QTimer::singleShot(0, this, SLOT(init()));
+  //FIXME: how to plug the context menu?
+//   connect(KDevelop::Core::self()->uiController()->activeMainWindow(), SIGNAL(contextMenu(KMenu *, const Context *)), this, SLOT(contextMenu(KMenu *, const Context *)));
+    
+  QTimer::singleShot(0, this, SLOT(init()));     
 }
 
 
@@ -169,7 +174,7 @@ void QuantaCorePart::insertTag(const TagPair & tagPair, bool inLine, bool showDi
   QString attributes = s.remove(0, i).trimmed();
   if (showDialog && m_activeQuantaDoc->mainDTEP()->isKnownTag(name))
   {
-    TagDialogsIf *tagDialog = Koncrete::PluginController::self()->extension<TagDialogsIf>("KDevelop/TagDialogs");
+    TagDialogsIf *tagDialog =  KDevelop::Core::self()->pluginController()->extensionForPlugin<TagDialogsIf>("TagDialogsIf", "KDevTagDialogs");
     if (tagDialog)
     {
       QString selection = m_activeQuantaDoc->selection();
@@ -237,7 +242,7 @@ void QuantaCorePart::slotInsertConfigWidget(const KDialog */*dlg*/, QWidget */*p
 
 void QuantaCorePart::slotMakeDonation()
 {
-  KDialog dlg(Koncrete::Core::mainWindow());
+  KDialog dlg(KDevelop::Core::self()->uiController()->activeMainWindow());
   dlg.setCaption( i18n("Support Quanta with Financial Donation") );
   dlg.setButtons( KDialog::Close );
   dlg.setDefaultButton( KDialog::Close );
@@ -258,13 +263,12 @@ void QuantaCorePart::slotHelpUserList()
   KToolInvocation::invokeBrowser("http://mail.kde.org/mailman/listinfo/quanta");
 }
 
-void QuantaCorePart::slotFileLoaded(Koncrete::Document* document)
+void QuantaCorePart::slotFileLoaded(KDevelop::IDocument* document)
 {
 //   kDebug(24000) << "slotFileLoaded: " << url << endl;
-  KTextEditor::Document *doc = document->textDocument();
-  if (doc)
+  if (document->textDocument()) //it is a text document
   {
-    m_activeQuantaDoc = new QuantaDoc(doc, this);
+    m_activeQuantaDoc = new QuantaDoc(document, this);
     m_documents.insert(document->url().url(), m_activeQuantaDoc);
   }
 }
@@ -291,17 +295,16 @@ void QuantaCorePart::slotGroupsParsed(const EditorSource *source, const ParseRes
     emit groupsParsed(parseResult); // signal in QuantaCoreIf
 }
 
-void QuantaCorePart::slotDocumentActivated(Koncrete::Document *document)
+void QuantaCorePart::slotDocumentActivated(KDevelop::IDocument *document)
 {
   m_activeQuantaDoc = 0;
-  KParts::ReadOnlyPart * part = dynamic_cast<KParts::ReadOnlyPart *>(document->part());
-  if (! part)
+  if (!document->textDocument())
   {
     emit finishedParsing(0); // clear the trees
     return;
   }
-  QuantaDoc * doc = m_documents.value(part->url().url());
-  if (doc && doc->isDocument(part))
+  QuantaDoc * doc = m_documents.value(document->url().url());
+  if (doc && doc->isSameDocument(document))
   {
     m_activeQuantaDoc = doc;
     emit finishedParsing(doc->parseResult()); // signal in QuantaCoreIf
@@ -312,7 +315,7 @@ void QuantaCorePart::slotDocumentActivated(Koncrete::Document *document)
   }
 }
 
-void QuantaCorePart::slotClosedFile(Koncrete::Document* document)
+void QuantaCorePart::slotClosedFile(KDevelop::IDocument* document)
 {
 //   kDebug(24000) << "-----------slotClosedFile " << url.url() << endl;
   QuantaDoc * doc = m_documents.value(document->url().url());
@@ -326,7 +329,7 @@ void QuantaCorePart::slotClosedFile(Koncrete::Document* document)
 }
 
 
-void QuantaCorePart::slotPartURLChanged(Koncrete::Document* document, const KUrl &oldUrl, const KUrl &newUrl)
+void QuantaCorePart::slotPartURLChanged(KDevelop::IDocument* document, const KUrl &oldUrl, const KUrl &newUrl)
 {
   QuantaDoc * doc = m_documents.value(oldUrl.url());
   if (doc)
@@ -360,7 +363,7 @@ void QuantaCorePart::slotInsertTag(const KUrl& url, Helper::DirInfo * dirInfo)
       if (KMimeType::findByUrl(url)->name().startsWith("image/"))
       {
         QString imgFileName;
-        KIO::NetAccess::download(url, imgFileName, Koncrete::Core::mainWindow());
+        KIO::NetAccess::download(url, imgFileName, KDevelop::Core::self()->uiController()->activeMainWindow());
         QImage img(imgFileName);
         if (!img.isNull())
         {
@@ -401,14 +404,16 @@ void QuantaCorePart::slotInsertTag()
   m_fileContextList.clear();
 }
 
-void QuantaCorePart::contextMenu(KMenu *popup, const Koncrete::Context *context)
+void QuantaCorePart::contextMenu(KMenu *popup, const KDevelop::Context *context)
 {
+  //FIXME: port it
+  /*
   if (m_activeQuantaDoc && context->hasType(Koncrete::Context::FileContext))
   {
-    m_fileContextList = static_cast<const Koncrete::FileContext*>(context)->urls();
+    m_fileContextList = static_cast<const KDevelop::FileContext*>(context)->urls();
     popup->addSeparator();
     popup->addAction(m_insertTagAction);
-  }
+  }*/
 }
 
 
@@ -419,12 +424,10 @@ void QuantaCorePart::slotOpenNew()
   file.setSuffix(i18n(".unsaved"));
   file.open();
   KUrl url = KUrl(file.fileName());
-  Koncrete::Document *doc = Koncrete::Core::documentController()->editDocument(url);
+  KDevelop::IDocument *doc = KDevelop::Core::self()->documentController()->openDocument(url);
   if (doc)
   {
-    KParts::ReadOnlyPart *part = dynamic_cast<KParts::ReadOnlyPart *>(doc->part());
-    if (part)
-      part->closeUrl();
+     doc->close();
   }
 }
 
@@ -432,7 +435,7 @@ void QuantaCorePart::slotChangeDTEP()
 {
   if (m_activeQuantaDoc)
   {
-    KDialog dlg(Koncrete::Core::mainWindow() );
+    KDialog dlg(KDevelop::Core::self()->uiController()->activeMainWindow() );
     dlg.setCaption( i18n("DTEP Selector") );
     dlg.setButtons( KDialog::Ok | KDialog::Cancel );
     dlg.setDefaultButton( KDialog::Ok );

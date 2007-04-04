@@ -18,6 +18,8 @@ include_directories(
    ${CMAKE_SOURCE_DIR}/quanta/quantacore/autocomplete
    ${CMAKE_BINARY_DIR}/quanta/lib
    ${KDE4_INCLUDE_DIR}/kdevelop
+   ${KDE4_INCLUDE_DIR}/kdevelop/shell
+   ${KDE4_INCLUDE_DIR}/kdevelop/interfaces
    )
 
 
@@ -79,7 +81,7 @@ kde4_add_plugin(kdevquantacore WITH_PREFIX ${kdevquantacore_PART_SRCS})
 
 
 target_link_libraries(kdevquantacore kdevquanta
-kdevplatform kdevutil ktexteditor ${KDE4_KHTML_LIBS}
+kdevplatforminterfaces  ktexteditor ${KDE4_KHTML_LIBS}
 ${LIBXML2_LIBRARIES} ${KDE4_KDECORE_LIBS})
 
 install(TARGETS kdevquantacore  DESTINATION ${PLUGIN_INSTALL_DIR})

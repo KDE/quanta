@@ -13,10 +13,15 @@
 #ifndef QUANTACOREPART_H
 #define QUANTACOREPART_H
 
+//quanta includes
 #include "quantacoreif.h"
 #include "quantadoc.h"
 #include "helper.h"
 
+//kdevelop includes
+#include <iplugin.h>
+
+//qt includes
 #include <QHash>
 
 class Parser;
@@ -27,15 +32,19 @@ class ConfigWidgetProxy;
 class KDialog;
 class FileContext;
 class KMenu;
-namespace Koncrete { class Context; }
-namespace Koncrete { class Document; }
+namespace KDevelop 
+{ 
+  class Context; 
+  class IDocument; 
+}
 
 /**
 @author Andras Mantia
 */
-class QuantaCorePart : public QuantaCoreIf
+class QuantaCorePart : public KDevelop::IPlugin, public QuantaCoreIf
 {
-Q_OBJECT
+  Q_OBJECT
+  Q_INTERFACES(QuantaCoreIf)
 public:
   QuantaCorePart(QObject *parent, const QStringList &);
 
@@ -61,8 +70,37 @@ public:
    * proxy for QuantaDoc to emit this signal 
    * @param qp qp.x() = line and qp.y() = column
    */
-  void emitNewCursorPosition(const QPoint & qp) {emit newCursorPosition(qp);};
+  void emitNewCursorPosition(const QPoint & qp) {emit newCursorPosition(qp);}
   
+  QStringList extensions() const { return QStringList() << "QuantaCoreIf" ;}
+  
+Q_SIGNALS:
+  /**
+   * emitted when the current document is about to get parsed
+   */
+    void startParsing();
+  
+  /**
+     * emitted when the current document was parsed
+     * 
+     * @param parseResult the result of the parsing or 0 if the current doc was closed
+   */
+    void finishedParsing(const ParseResult *parseResult);
+
+  /**
+     * emitted when some groups in the current document were parsed
+     * 
+     * @param parseResult the result of the parsing
+   */
+    void groupsParsed(const ParseResult *parseResult);
+
+  /**
+     * emitted when the cursor position has changed and the idle timer expired
+     *
+     * @param qp qp.x() = line and qp.y() = column
+   */
+    void newCursorPosition(const QPoint & qp);
+ 
 public slots:
   
   /** insert <img> tag for images or <a> for other
@@ -76,13 +114,13 @@ private slots:
 
   void init();
   
-  void contextMenu(KMenu *popup, const Koncrete::Context *context);
+  void contextMenu(KMenu *popup, const KDevelop::Context *context);
   
   /**
     * Called when a file was loaded into the application.
     * @param url The url pointing to the file
     */
-  void slotFileLoaded(Koncrete::Document* document);
+  void slotFileLoaded(KDevelop::IDocument* document);
 
   void slotStartParsing(const EditorSource *source);
   
@@ -105,19 +143,19 @@ private slots:
    * emits @see finishedParsing when the new part is known
    * @param newPart 
    */
-  void slotDocumentActivated(Koncrete::Document *document);
+  void slotDocumentActivated(KDevelop::IDocument *document);
   
   /**
    * removes the pointer to this @see QuantaDoc from @see m_documents
    * @param url 
    */
-  void slotClosedFile(Koncrete::Document* document);
+  void slotClosedFile(KDevelop::IDocument* document);
 
   /**
    * adjusts the url in @see m_documents if a part changed it
    * @param part 
    */
-  void slotPartURLChanged(Koncrete::Document* document, const KUrl &oldUrl, const KUrl &newUrl);
+  void slotPartURLChanged(KDevelop::IDocument* document, const KUrl &oldUrl, const KUrl &newUrl);
   
   /**
    * insert a tag from a file context
