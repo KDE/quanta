@@ -31,11 +31,13 @@
 #include <kmessagebox.h>
 #include <k3listviewsearchline.h>
 
+#include <kparts/mainwindow.h>
+
 //kdevelop includes
-#include <kdevcore.h>
-#include <kdevmainwindow.h>
-#include <kdevprojectcontroller.h>
-#include <kdevplugincontroller.h>
+#include <core.h>
+#include <iprojectcontroller.h>
+#include <iplugincontroller.h>
+#include <iuicontroller.h>
 
 typedef KGenericFactory<StructureTreePart> StructureTreeFactory;
 K_EXPORT_COMPONENT_FACTORY( libkdevstructuretree, StructureTreeFactory("kdevstructuretree") )
@@ -44,7 +46,7 @@ K_EXPORT_COMPONENT_FACTORY( libkdevstructuretree, StructureTreeFactory("kdevstru
 #define PROJECTDOC_OPTIONS 2
 
 StructureTreePart::StructureTreePart(QObject *parent, const QStringList &/*args*/)
-  : Koncrete::Plugin(StructureTreeFactory::componentData(), parent)
+  : KDevelop::IPlugin(StructureTreeFactory::componentData(), parent)
 {
     setXMLFile("kdevstructuretree.rc");
 
@@ -64,10 +66,10 @@ StructureTreePart::StructureTreePart(QObject *parent, const QStringList &/*args*
     connect(m_configProxy, SIGNAL(insertConfigWidget(const KDialog*, QWidget*, unsigned int )),
         this, SLOT(insertConfigWidget(const KDialog*, QWidget*, unsigned int)));
     */
-    connect(Koncrete::Core::mainWindow(), SIGNAL(contextMenu(QMenu *, const Koncrete::Context *)),
+    connect(KDevelop::Core::self()->uiController()->activeMainWindow(), SIGNAL(contextMenu(QMenu *, const Koncrete::Context *)),
         this, SLOT(contextMenu(QMenu *, const Context *)));
-    connect(Koncrete::Core::projectController(), SIGNAL(projectOpened()), this, SLOT(projectOpened()));
-    connect(Koncrete::Core::projectController(), SIGNAL(projectClosed()), this, SLOT(projectClosed()));
+    connect(KDevelop::Core::self()->projectController(), SIGNAL(projectOpened()), this, SLOT(projectOpened()));
+    connect(KDevelop::Core::self()->projectController(), SIGNAL(projectClosed()), this, SLOT(projectClosed()));
 
 
     QTimer::singleShot(0, this, SLOT(init()));
@@ -98,23 +100,26 @@ void StructureTreePart::init()
 
   l->addWidget(m_documentTree);
 
-  m_qcore = Koncrete::PluginController::self()->extension<QuantaCoreIf>("KDevelop/Quanta");
+  m_qcore = KDevelop::Core::self()->pluginController()->extensionForPlugin<QuantaCoreIf>("QuantaCoreIf", "KDevQuantaCore");
+  //FIXME: it is unclear how can we use signals in interfaces...
+  /*
   connect(m_qcore, SIGNAL(startParsing()), m_documentTree, SLOT(slotBlockGUI()));
 
   connect(m_qcore, SIGNAL(finishedParsing(const ParseResult *)), m_documentTree, SLOT(slotBuild(const ParseResult *)));
 
   connect(m_qcore, SIGNAL(newCursorPosition(const QPoint &)), m_documentTree, SLOT(slotNewCursorPosition(const QPoint &)));
-
+*/
 
   m_groupsTree = new GroupsWidget(this, m_widget);
-
+//FIXME: it is unclear how can we use signals in interfaces..
+  /*
   connect(m_qcore, SIGNAL(startParsing()), m_groupsTree, SLOT(slotBlockGUI()));
 
   connect(m_qcore, SIGNAL(finishedParsing(const ParseResult *)), m_groupsTree, SLOT(slotBuild(const ParseResult *)));
 
   connect(m_qcore, SIGNAL(groupsParsed(const ParseResult *)), m_groupsTree, SLOT(slotGroupsParsed(const ParseResult *)));
 
-
+*/
   // add the widgets to the qtoolbox
   m_widget->addItem(m_groupsTree, i18n("Groups"));
   m_widget->addItem(w, i18n("Document"));

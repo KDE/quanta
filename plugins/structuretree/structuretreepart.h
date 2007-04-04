@@ -15,7 +15,7 @@
 #include <QPointer>
 
 //kdevelop includes
-#include <kdevplugin.h>
+#include <iplugin.h>
 
 class QMenu;
 class KAction;
@@ -31,7 +31,7 @@ class GroupsWidget;
 /**
 Please read the README.dox file for more info about this part
 */
-class StructureTreePart: public Koncrete::Plugin
+class StructureTreePart: public KDevelop::IPlugin
 {
   Q_OBJECT
 public:

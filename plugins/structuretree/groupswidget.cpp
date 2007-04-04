@@ -36,14 +36,14 @@
 #include <kstandardaction.h>
 
 //kdevelop includes
-#include <kdevcore.h>
-#include <kdevplugin.h>
-#include <kdevplugincontroller.h>
-#include <kdevdocumentcontroller.h>
+#include <core.h>
+#include <iplugin.h>
+#include <iplugincontroller.h>
+#include <idocumentcontroller.h>
 
 
-GroupsWidget::GroupsWidget(Koncrete::Plugin *plugin, QWidget *parent)
-  : K3ListView(parent), m_popupMenu(0), m_dtdMenu(0), m_dirty(false), m_parseResult(0), m_plugin(plugin), m_partController(Koncrete::Core::documentController())
+GroupsWidget::GroupsWidget(KDevelop::IPlugin *plugin, QWidget *parent)
+  : K3ListView(parent), m_popupMenu(0), m_dtdMenu(0), m_dirty(false), m_parseResult(0), m_plugin(plugin), m_partController(KDevelop::Core::self()->documentController())
 {
   setTreeStepSize(15);
   setRootIsDecorated(false);
@@ -66,7 +66,7 @@ GroupsWidget::GroupsWidget(Koncrete::Plugin *plugin, QWidget *parent)
 
   connect(this, SIGNAL(mouseButtonPressed(int, Q3ListViewItem*, const QPoint&, int)),SLOT(slotMouseClicked(int, Q3ListViewItem*, const QPoint&, int)));
 
-  m_qcore = Koncrete::PluginController::self()->extension<QuantaCoreIf>("KDevelop/Quanta");
+  m_qcore = KDevelop::Core::self()->pluginController()->extensionForPlugin<QuantaCoreIf>("QuantaCoreIf", "KDevQuantaCore");
 
 }
 
@@ -377,7 +377,7 @@ void GroupsWidget::slotOpenFile()
   }
   if (ExtFileInfo::exists(url))
   {
-    m_partController->editDocument(url);
+    m_partController->openDocument(url);
   }
 }
 

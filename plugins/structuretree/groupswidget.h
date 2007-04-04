@@ -24,8 +24,11 @@ class AreaStruct;
 struct ParseResult;
 struct DTDStruct;
 struct GroupStorage;
-namespace Koncrete { class Plugin; }
-namespace Koncrete { class DocumentController; }
+namespace KDevelop 
+{ 
+  class IPlugin; 
+  class IDocumentController; 
+}
 class QuantaCoreIf;
 class KAction;
 
@@ -42,7 +45,7 @@ class GroupsWidget: public K3ListView
 {
   Q_OBJECT
 public:  
-  GroupsWidget(Koncrete::Plugin *plugin, QWidget *parent);
+  GroupsWidget(KDevelop::IPlugin *plugin, QWidget *parent);
   ~GroupsWidget();
 
 public slots:
@@ -164,8 +167,8 @@ private:
   KMenu * m_dtdMenu;
   bool m_dirty;
   const ParseResult * m_parseResult;
-  Koncrete::Plugin * m_plugin;
-  Koncrete::DocumentController * m_partController;
+  KDevelop::IPlugin * m_plugin;
+  KDevelop::IDocumentController * m_partController;
   int openFileMenuId;
   QuantaCoreIf * m_qcore;
   

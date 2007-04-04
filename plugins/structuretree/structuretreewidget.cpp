@@ -33,12 +33,12 @@
 // #include <kdebug.h>
 
 //kdevelop includes
-#include <kdevcore.h>
-#include <kdevplugin.h>
-#include <kdevplugincontroller.h>
+#include <core.h>
+#include <iplugin.h>
+#include <iplugincontroller.h>
 
 
-StructureTreeWidget::StructureTreeWidget(Koncrete::Plugin *plugin, QWidget *parent)
+StructureTreeWidget::StructureTreeWidget(KDevelop::IPlugin *plugin, QWidget *parent)
   : K3ListView(parent), m_popupMenu(0), m_dirty(false), m_populated(0), m_parseResult(0), m_plugin(plugin)
 {
   setTreeStepSize(15);
@@ -62,7 +62,7 @@ StructureTreeWidget::StructureTreeWidget(Koncrete::Plugin *plugin, QWidget *pare
 
   connect(this, SIGNAL(mouseButtonPressed(int, Q3ListViewItem*, const QPoint&, int)),SLOT(slotMouseClicked(int, Q3ListViewItem*, const QPoint&, int)));
 
-  m_qcore = Koncrete::PluginController::self()->extension<QuantaCoreIf>("KDevelop/Quanta");
+  m_qcore = KDevelop::Core::self()->pluginController()->extensionForPlugin<QuantaCoreIf>("QuantaCoreIf", "KDevQuantaCore");
 }
 
 

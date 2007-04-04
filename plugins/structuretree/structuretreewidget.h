@@ -22,7 +22,10 @@
 class KMenu;
 class AreaStruct;
 struct ParseResult;
-namespace Koncrete { class Plugin; }
+namespace KDevelop 
+{ 
+  class IPlugin; 
+}
 class KAction;
 class QuantaCoreIf;
 
@@ -42,7 +45,7 @@ class StructureTreeWidget: public K3ListView
 {
   Q_OBJECT
 public:  
-  StructureTreeWidget(Koncrete::Plugin *plugin, QWidget *parent);
+  StructureTreeWidget(KDevelop::IPlugin *plugin, QWidget *parent);
   ~StructureTreeWidget();
 
   /**
@@ -175,7 +178,7 @@ private:
   bool m_populated; ///< flag to indicate that the tree is fully populated
   const ParseResult * m_parseResult;
   QuantaCoreIf * m_qcore;
-  Koncrete::Plugin *m_plugin;
+  KDevelop::IPlugin *m_plugin;
   KAction * m_copyAction;
   KAction * m_cutAction;
   KAction * m_pasteAction;
