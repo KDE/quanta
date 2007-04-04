@@ -100,26 +100,21 @@ void StructureTreePart::init()
 
   l->addWidget(m_documentTree);
 
+  KDevelop::IPlugin *corePlugin = KDevelop::Core::self()->pluginController()->pluginForExtension("QuantaCoreIf", "KDevQuantaCore");
   m_qcore = KDevelop::Core::self()->pluginController()->extensionForPlugin<QuantaCoreIf>("QuantaCoreIf", "KDevQuantaCore");
-  //FIXME: it is unclear how can we use signals in interfaces...
-  /*
-  connect(m_qcore, SIGNAL(startParsing()), m_documentTree, SLOT(slotBlockGUI()));
+  connect(corePlugin, SIGNAL(startParsing()), m_documentTree, SLOT(slotBlockGUI()));
 
-  connect(m_qcore, SIGNAL(finishedParsing(const ParseResult *)), m_documentTree, SLOT(slotBuild(const ParseResult *)));
+  connect(corePlugin, SIGNAL(finishedParsing(const ParseResult *)), m_documentTree, SLOT(slotBuild(const ParseResult *)));
 
-  connect(m_qcore, SIGNAL(newCursorPosition(const QPoint &)), m_documentTree, SLOT(slotNewCursorPosition(const QPoint &)));
-*/
+  connect(corePlugin, SIGNAL(newCursorPosition(const QPoint &)), m_documentTree, SLOT(slotNewCursorPosition(const QPoint &)));
 
   m_groupsTree = new GroupsWidget(this, m_widget);
-//FIXME: it is unclear how can we use signals in interfaces..
-  /*
-  connect(m_qcore, SIGNAL(startParsing()), m_groupsTree, SLOT(slotBlockGUI()));
+  connect(corePlugin, SIGNAL(startParsing()), m_groupsTree, SLOT(slotBlockGUI()));
 
-  connect(m_qcore, SIGNAL(finishedParsing(const ParseResult *)), m_groupsTree, SLOT(slotBuild(const ParseResult *)));
+  connect(corePlugin, SIGNAL(finishedParsing(const ParseResult *)), m_groupsTree, SLOT(slotBuild(const ParseResult *)));
 
-  connect(m_qcore, SIGNAL(groupsParsed(const ParseResult *)), m_groupsTree, SLOT(slotGroupsParsed(const ParseResult *)));
+  connect(corePlugin, SIGNAL(groupsParsed(const ParseResult *)), m_groupsTree, SLOT(slotGroupsParsed(const ParseResult *)));
 
-*/
   // add the widgets to the qtoolbox
   m_widget->addItem(m_groupsTree, i18n("Groups"));
   m_widget->addItem(w, i18n("Document"));
