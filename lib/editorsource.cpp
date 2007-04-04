@@ -13,18 +13,22 @@
 #include "editorsource.h"
 
 #include <ktexteditor/range.h>
+
 #include <kdebug.h>
 
-EditorSource::EditorSource(KTextEditor::Document *document, QObject *parent)
+#include <idocument.h>
+
+EditorSource::EditorSource(KDevelop::IDocument *document, QObject *parent)
   : QObject(parent)
 {
-  m_document = document;
+  m_ideDocument = document;
+  m_document = m_ideDocument->textDocument();
   m_view = m_document->activeView();
 
 
-  m_copyAction = document->action("edit_copy");
-  m_cutAction = document->action("edit_cut");
-  m_pasteAction = document->action("edit_paste");
+  m_copyAction = m_document->action("edit_copy");
+  m_cutAction = m_document->action("edit_cut");
+  m_pasteAction = m_document->action("edit_paste");
 }
 
 

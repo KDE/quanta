@@ -49,6 +49,7 @@ public:
 
 };
 
-Q_DECLARE_INTERFACE( TagDialogsIf, "org.kdevelop.TagDialogsIf" );
+KDEV_DECLARE_EXTENSION_INTERFACE( TagDialogsIf, "org.kdevelop.TagDialogsIf" )
+Q_DECLARE_INTERFACE( TagDialogsIf, "org.kdevelop.TagDialogsIf" )
 
 #endif

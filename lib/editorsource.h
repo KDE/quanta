@@ -21,6 +21,9 @@
 #include <ktexteditor/view.h>
 #include <ktexteditor/cursor.h>
 
+namespace KDevelop {
+ class IDocument; 
+}
 
 /**
 This class can be used to access the editor functionality in an abstracted way.
@@ -31,7 +34,7 @@ class KDEVQUANTA_EXPORT EditorSource : public QObject
 {
 Q_OBJECT
 public:
-  explicit EditorSource(KTextEditor::Document *document, QObject *parent = 0);
+  explicit EditorSource(KDevelop::IDocument *document, QObject *parent = 0);
   ~EditorSource();
 
 //TODO Needed methods:
@@ -114,6 +117,7 @@ public:
   void setCursorPosition(int line, int col);
 
 protected:
+  KDevelop::IDocument *m_ideDocument;
   KTextEditor::Document *m_document;
   KTextEditor::View *m_view;
 
