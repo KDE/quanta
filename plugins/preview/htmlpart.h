@@ -16,12 +16,12 @@
 #include <QString>
 
 //kdevelop includes
-#include <widgets/kdevhtmlpart.h>
+#include <khtml_part.h>
 
-namespace Koncrete { class Project; }
+
 class HTMLPreviewPart;
 
-class HTMLPart: public KDevHTMLPart
+class HTMLPart: public KHTMLPart
 {
   Q_OBJECT
 public:

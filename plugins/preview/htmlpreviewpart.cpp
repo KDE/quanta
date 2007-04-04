@@ -20,25 +20,25 @@
 
 #include <klocale.h>
 #include <kaction.h>
+#include <kactioncollection.h>
 #include <kdialog.h>
 #include <kgenericfactory.h>
 #include <kicon.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
 #include <khtmlview.h>
+#include <kparts/mainwindow.h>
 #include <kparts/partmanager.h>
 #include <kparts/part.h>
 #include <kparts/browserextension.h>
 #include <ktexteditor/document.h>
 
 //kdevelop includes
-#include <kdevcore.h>
-#include <kdevcontext.h>
-#include <kdevmainwindow.h>
-#include <kdevdocumentcontroller.h>
-#include <kdevdocument.h>
-#include <kdevprojectcontroller.h>
-#include <kactioncollection.h>
+#include <core.h>
+#include <idocumentcontroller.h>
+#include <idocument.h>
+#include <iprojectcontroller.h>
+#include <iuicontroller.h>
 
 typedef KGenericFactory<HTMLPreviewPart> HTMLPreviewFactory;
 K_EXPORT_COMPONENT_FACTORY( libkdevhtmlpreview, HTMLPreviewFactory("kdevhtmlpreview") )
@@ -47,7 +47,7 @@ K_EXPORT_COMPONENT_FACTORY( libkdevhtmlpreview, HTMLPreviewFactory("kdevhtmlprev
 #define PROJECTDOC_OPTIONS 2
 
 HTMLPreviewPart::HTMLPreviewPart(QObject *parent, const QStringList &/*args*/)
-  : Koncrete::Plugin(HTMLPreviewFactory::componentData(), parent), m_activeEditor(0), m_partmanager(0)
+  : KDevelop::IPlugin(HTMLPreviewFactory::componentData(), parent), m_activeEditor(0), m_partmanager(0)
 {
   setXMLFile("kdevhtmlpreview.rc");
 
@@ -69,12 +69,12 @@ HTMLPreviewPart::HTMLPreviewPart(QObject *parent, const QStringList &/*args*/)
   connect(m_configProxy, SIGNAL(insertConfigWidget(const KDialog*, QWidget*, unsigned int )),
           this, SLOT(insertConfigWidget(const KDialog*, QWidget*, unsigned int)));
 */
-  connect(Koncrete::Core::mainWindow(), SIGNAL(contextMenu(QMenu *, const Koncrete::Context *)),
+  connect(KDevelop::Core::self()->uiController()->activeMainWindow(), SIGNAL(contextMenu(QMenu *, const Koncrete::Context *)),
           this, SLOT(contextMenu(QMenu *, const Koncrete::Context *)));
-  connect(Koncrete::Core::projectController(), SIGNAL(projectOpened()), this, SLOT(projectOpened()));
-  connect(Koncrete::Core::projectController(), SIGNAL(projectClosed()), this, SLOT(projectClosed()));
+  connect(KDevelop::Core::self()->projectController(), SIGNAL(projectOpened()), this, SLOT(projectOpened()));
+  connect(KDevelop::Core::self()->projectController(), SIGNAL(projectClosed()), this, SLOT(projectClosed()));
 
-  connect(Koncrete::Core::documentController(), SIGNAL(activePartChanged(KParts::Part *)), this, SLOT(slotActivePartChanged(KParts::Part *)));
+  connect(KDevelop::Core::self()->documentController(), SIGNAL(activePartChanged(KParts::Part *)), this, SLOT(slotActivePartChanged(KParts::Part *)));
 
   QTimer::singleShot(0, this, SLOT(init()));
 }
@@ -133,9 +133,11 @@ void HTMLPreviewPart::insertConfigWidget(const KDialog *dlg, QWidget *page, unsi
   }
 }
 
-void HTMLPreviewPart::contextMenu(QMenu */*popup*/, const Koncrete::Context *context)
+void HTMLPreviewPart::contextMenu(QMenu */*popup*/, const KDevelop::Context *context)
 {
+  //FIXME: context menu handling was changed
   // put actions into the context menu here
+  /*
   if (context->hasType(Koncrete::Context::EditorContext))
   {
     // editor context menu

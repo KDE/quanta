@@ -1,6 +1,9 @@
 
 include_directories(
    ${KDE4_INCLUDE_DIR}/kdevelop
+   ${KDE4_INCLUDE_DIR}/kdevelop/interfaces
+   ${KDE4_INCLUDE_DIR}/kdevelop/shell
+
    )
 
 
@@ -22,7 +25,7 @@ kde4_add_plugin(kdevhtmlpreview WITH_PREFIX ${kdevhtmlpreview_PART_SRCS})
 
 
 
-target_link_libraries(kdevhtmlpreview kdevplatform kdevwidgets kdevutil ktexteditor ${KDE4_KHTML_LIBS} )
+target_link_libraries(kdevhtmlpreview kdevplatforminterfaces kdevplatformshell ktexteditor ${KDE4_KHTML_LIBS} )
 
 install(TARGETS kdevhtmlpreview  DESTINATION ${PLUGIN_INSTALL_DIR})
 

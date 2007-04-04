@@ -19,14 +19,16 @@
 #include <khtmlview.h>
 
 //kdevelop includes
-#include <kdevcore.h>
-#include <kdevdocumentcontroller.h>
+#include <core.h>
+#include <idocumentcontroller.h>
 
 
 HTMLPart::HTMLPart(HTMLPreviewPart *part)
-  : KDevHTMLPart(), m_part(part)
+  : KHTMLPart(), m_part(part)
 {
-  setOptions(CanOpenInNewWindow);
+  
+  //FIXME: ?
+//  setOptions(CanOpenInNewWindow);
 }
 
 
@@ -36,13 +38,15 @@ HTMLPart::~HTMLPart()
 
 void HTMLPart::slotDuplicate( )
 {
-  Koncrete::Core::documentController()->showDocumentation(url(), true);
+  //FIXME: how to show the docs?
+//  KDevelop::Core::self()->documentController()->showDocumentation(url(), true);
 }
 
 
 void HTMLPart::slotOpenInNewWindow( const KUrl & url )
 {
-  Koncrete::Core::documentController()->showDocumentation(url, true);
+  //FIXME: how to show the docs?
+  //KDevelop::Core::self()->documentController()->showDocumentation(url, true);
 }
 
 #include "htmlpart.moc"
