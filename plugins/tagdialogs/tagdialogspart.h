@@ -14,18 +14,24 @@
 
 #include "tagdialogsif.h"
 
+#include <iplugin.h>
+
 class QuantaCoreIf;
 
-namespace Koncrete { class Context; }
+namespace KDevelop 
+{ 
+  class Context; 
+}
 class QMenu;
 class KAction;
 
 /**
 Please read the README.dox file for more info about this part
 */
-class TagDialogsPart: public TagDialogsIf
+class TagDialogsPart: public KDevelop::IPlugin, TagDialogsIf
 {
   Q_OBJECT
+  Q_INTERFACES(TagDialogsIf)
 public:
   TagDialogsPart(QObject *parent, const QStringList &args);
   ~TagDialogsPart();
@@ -34,7 +40,7 @@ public:
 
 private slots:
   void init();
-  void slotContextMenu(QMenu *popup, const Koncrete::Context *context);
+  void slotContextMenu(QMenu *popup, const KDevelop::Context *context);
   void slotEditCurrentTag();
   
 private:

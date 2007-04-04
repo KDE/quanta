@@ -18,16 +18,18 @@
 #include <QTimer>
 
 #include <kaction.h>
+#include <kactioncollection.h>
 #include <kdebug.h>
 #include <kgenericfactory.h>
 #include <klocale.h>
+#include <kparts/mainwindow.h>
 
 //kdevelop includes
-#include <kdevcore.h>
-#include <kdevcontext.h>
-#include <kdevmainwindow.h>
-#include <kdevplugincontroller.h>
-#include <kactioncollection.h>
+#include <core.h>
+// #include <kdevcontext.h>
+#include <iplugincontroller.h>
+#include <iuicontroller.h>
+
 typedef KGenericFactory<TagDialogsPart> TagDialogsFactory;
 K_EXPORT_COMPONENT_FACTORY( libkdevtagdialogs, TagDialogsFactory("kdevtagdialogs") )
 
@@ -35,14 +37,15 @@ K_EXPORT_COMPONENT_FACTORY( libkdevtagdialogs, TagDialogsFactory("kdevtagdialogs
 #define PROJECTDOC_OPTIONS 2
 
 TagDialogsPart::TagDialogsPart(QObject *parent, const QStringList &/*args*/)
-  : TagDialogsIf(TagDialogsFactory::componentData(), parent)
+  : KDevelop::IPlugin(TagDialogsFactory::componentData(), parent), TagDialogsIf()
 {
+  KDEV_USE_EXTENSION_INTERFACE( TagDialogsIf )
     setXMLFile("kdevtagdialogs.rc");
     kDebug(24000) << "TagDialogs plugin loaded" << endl;
 
     setupActions();
 
-    connect(Koncrete::Core::mainWindow(), SIGNAL(contextMenu(QMenu *, const Koncrete::Context *)),
+    connect(KDevelop::Core::self()->uiController()->activeMainWindow(), SIGNAL(contextMenu(QMenu *, const Koncrete::Context *)),
             this, SLOT(slotContextMenu(QMenu *, const Koncrete::Context *)));
 
 /*    m_configProxy = new ConfigWidgetProxy(core());
@@ -64,12 +67,14 @@ TagDialogsPart::~TagDialogsPart()
 void TagDialogsPart::init()
 {
 // delayed initialization stuff goes here
-  m_qcore = Koncrete::PluginController::self()->extension<QuantaCoreIf>("KDevelop/Quanta");
+  m_qcore = KDevelop::Core::self()->pluginController()->extensionForPlugin<QuantaCoreIf>("QuantaCoreIf", "KDevQuantaCore");
 
 }
 
-void TagDialogsPart::slotContextMenu(QMenu *popup, const Koncrete::Context *context)
+void TagDialogsPart::slotContextMenu(QMenu *popup, const KDevelop::Context *context)
 {
+  //FIXME: context menu handling was changed, adapt it!
+  /*
 // put actions into the context menu here
   if (context->hasType(Koncrete::Context::EditorContext))
     {
@@ -83,7 +88,7 @@ void TagDialogsPart::slotContextMenu(QMenu *popup, const Koncrete::Context *cont
         // id = popup->insertItem(i18n("Do Something Here"),
         //     this, SLOT(doSomething()) );
         // popup->setWhatsThis(id, i18n("<b>Do something here</b><p>Describe here what does this action do."
-    }
+    }*/
 }
 
 

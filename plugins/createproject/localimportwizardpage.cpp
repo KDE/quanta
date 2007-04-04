@@ -150,8 +150,8 @@ void LocalImportWizardPage::slotAddFiles()
 void LocalImportWizardPage::slotAddFolder()
 {
   KUrl dirURL ;
-  dirURL = KFileDialog::getExistingUrl(
-           baseURL.url(),  this, i18n("Insert Folder in Project"));
+  dirURL = KFileDialog::getExistingDirectoryUrl(
+           baseURL,  this, i18n("Insert Folder in Project"));
   if ( !dirURL.isEmpty() )
   {
   //  listView->setBase(dirURL.directory(false, true));

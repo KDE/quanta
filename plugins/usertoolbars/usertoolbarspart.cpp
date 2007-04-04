@@ -64,14 +64,15 @@
 #include <ktoolinvocation.h>
 #include <kxmlguifactory.h>
 
+#include <kparts/mainwindow.h>
+
 //kdevelop includes
-#include <kdevapplicationinterface.h>
-#include <kdevcore.h>
-#include <kdevmainwindow.h>
-#include <kdevdocumentcontroller.h>
-#include <kdevplugincontroller.h>
-#include <kdevproject.h>
-#include <kdevprojectcontroller.h>
+#include <core.h>
+#include <idocumentcontroller.h>
+#include <iplugincontroller.h>
+#include <iproject.h>
+#include <iprojectcontroller.h>
+#include <iuicontroller.h>
 
 typedef KGenericFactory<UserToolbarsPart> UserToolbarsFactory;
 K_EXPORT_COMPONENT_FACTORY( libkdevusertoolbars, UserToolbarsFactory("kdevusertoolbars") )
@@ -85,7 +86,7 @@ const QString resourceDir = "quanta/";
 
 
 UserToolbarsPart::UserToolbarsPart(QObject *parent, const QStringList &/*args*/)
-  : Koncrete::Plugin(UserToolbarsFactory::componentData(), parent)
+  : KDevelop::IPlugin(UserToolbarsFactory::componentData(), parent)
 {
     kDebug(24000) << "Creating UserToolbars Part" << endl;
     setXMLFile("kdevusertoolbars.rc");

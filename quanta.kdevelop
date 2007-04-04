@@ -17,6 +17,7 @@
     <description/>
     <defaultencoding/>
     <versioncontrol/>
+    <projectname>quanta</projectname>
   </general>
   <kdevcustomproject>
     <filelistdirectory>/home/andris/development/sources/kde-trunk/kdewebdev/quanta</filelistdirectory>
@@ -61,6 +62,22 @@
     <general>
       <activedir/>
     </general>
+    <filetypes>
+      <filetype>*.java</filetype>
+      <filetype>*.h</filetype>
+      <filetype>*.H</filetype>
+      <filetype>*.hh</filetype>
+      <filetype>*.hxx</filetype>
+      <filetype>*.hpp</filetype>
+      <filetype>*.c</filetype>
+      <filetype>*.C</filetype>
+      <filetype>*.cc</filetype>
+      <filetype>*.cpp</filetype>
+      <filetype>*.c++</filetype>
+      <filetype>*.cxx</filetype>
+      <filetype>Makefile</filetype>
+      <filetype>CMakeLists.txt</filetype>
+    </filetypes>
   </kdevcustomproject>
   <kdevfilecreate>
     <filetypes>
@@ -111,10 +128,16 @@
       <namespaceAliases>std=_GLIBCXX_STD</namespaceAliases>
       <processPrimaryTypes>true</processPrimaryTypes>
       <processFunctionArguments>false</processFunctionArguments>
+      <preProcessAllHeaders>false</preProcessAllHeaders>
+      <parseMissingHeaders>false</parseMissingHeaders>
+      <resolveIncludePaths>true</resolveIncludePaths>
+      <alwaysParseInBackground>true</alwaysParseInBackground>
+      <usePermanentCaching>true</usePermanentCaching>
+      <alwaysIncludeNamespaces>false</alwaysIncludeNamespaces>
+      <includePaths>.;</includePaths>
     </codecompletion>
     <references>
       <pcs>Qt4</pcs>
-      <pcs>KDElibs4</pcs>
     </references>
     <qt>
       <used>true</used>
@@ -122,6 +145,9 @@
       <root>/data2/kde4/qt4</root>
       <includestyle>4</includestyle>
       <designerintegration>ExternalDesigner</designerintegration>
+      <qmake>/usr/bin/qmake</qmake>
+      <designer>/usr/bin/designer</designer>
+      <designerpluginpaths/>
     </qt>
     <creategettersetter>
       <prefixGet/>

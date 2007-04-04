@@ -37,10 +37,10 @@ class TemplatesTreeBranch : public BaseTreeBranch {
 public:
   TemplatesTreeBranch(BaseTreeView *parent, const KUrl& url,
                       const QString& name, const QPixmap& pix,
-                      bool showHidden = false, KFileTreeViewItem *branchRoot = 0L);
+                      bool showHidden = false, K3FileTreeViewItem *branchRoot = 0L);
 
   /** read the mimetype */
-  virtual KFileTreeViewItem* createTreeViewItem(KFileTreeViewItem *parent,
+  virtual K3FileTreeViewItem* createTreeViewItem(K3FileTreeViewItem *parent,
                                                 KFileItem *fileItem );
 };
 
@@ -120,7 +120,7 @@ private:
   KUrl filterTemplate();
   
   void writeTemplateInfo();
-  void updateTypeDescription(KFileTreeViewItem *item, const QString &typeString);
+  void updateTypeDescription(K3FileTreeViewItem *item, const QString &typeString);
 
   BaseTreeBranch *m_projectDir;
   Ui::QuantaPropertiesPage *m_quantaProperties;

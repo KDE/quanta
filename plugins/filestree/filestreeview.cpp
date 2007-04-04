@@ -207,7 +207,7 @@ void FilesTreeView::fileMenu(const QPoint &point)
 /** remove folder from the top list */
 void FilesTreeView::slotRemoveFromTop()
 {
-  KFileTreeViewItem *curItem = currentKFileTreeViewItem();
+  K3FileTreeViewItem *curItem = currentKFileTreeViewItem();
   if (!curItem || !curItem->isDir() || curItem != curItem->branch()->root())
     return;
 
@@ -221,7 +221,7 @@ void FilesTreeView::slotRemoveFromTop()
 /** Add a folder to the top list */
 void FilesTreeView::slotAddToTop()
 {
-  KFileTreeViewItem *curItem = currentKFileTreeViewItem();
+  K3FileTreeViewItem *curItem = currentKFileTreeViewItem();
   if (!curItem || !curItem->isDir() || curItem == curItem->branch()->root())
     return;
 
@@ -238,7 +238,7 @@ void FilesTreeView::slotAddToTop()
 
 void FilesTreeView::slotNewTopFolder()
 {
-  KUrl url = KFileDialog::getExistingUrl(KUrl(), this, i18n("Choose Local or Remote Folder"));
+  KUrl url = KFileDialog::getExistingDirectoryUrl(KUrl(), this, i18n("Choose Local or Remote Folder"));
   if (url.isEmpty())
     return;
   url.adjustPath(KUrl::AddTrailingSlash);
@@ -253,7 +253,7 @@ void FilesTreeView::slotNewTopFolder()
 
 void FilesTreeView::slotChangeAlias()
 {
-  KFileTreeViewItem *curItem = currentKFileTreeViewItem();
+  K3FileTreeViewItem *curItem = currentKFileTreeViewItem();
   // test if we have an item, it is a folder and it is a root item
   if (!curItem || !curItem->isDir() || curItem != curItem->branch()->root())
     return;

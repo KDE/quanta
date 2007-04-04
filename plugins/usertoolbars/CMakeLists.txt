@@ -5,6 +5,7 @@ include_directories(
    ${CMAKE_SOURCE_DIR}/quanta/lib
    ${KDE4_INCLUDE_DIR}/kdevelop
    ${KDE4_INCLUDE_DIR}/kdevelop/interfaces
+   ${KDE4_INCLUDE_DIR}/kdevelop/shell
    )
 
 
@@ -35,7 +36,7 @@ kde4_add_plugin(kdevusertoolbars WITH_PREFIX ${kdevusertoolbars_PART_SRCS})
 
 
 
-target_link_libraries(kdevusertoolbars kdevquanta kdevutil koncreteshell
+target_link_libraries(kdevusertoolbars kdevquanta kdevplatforminterfaces
  knewstuff  ${KDE4_KDECORE_LIBS} ${KDE4_KDE3SUPPORT_LIBS} )
 
 install(TARGETS kdevusertoolbars  DESTINATION ${PLUGIN_INSTALL_DIR})

@@ -3,6 +3,8 @@ include_directories(
    ${CMAKE_SOURCE_DIR}/quanta/lib
    ${CMAKE_BINARY_DIR}/quanta/lib
    ${KDE4_INCLUDE_DIR}/kdevelop
+   ${KDE4_INCLUDE_DIR}/kdevelop/interfaces
+   ${KDE4_INCLUDE_DIR}/kdevelop/shell
    )
 
 
@@ -34,7 +36,7 @@ kde4_add_plugin(kdevtagdialogs WITH_PREFIX ${kdevtagdialogs_PART_SRCS})
 
 
 
-target_link_libraries(kdevtagdialogs  kdevquanta kdevplatform ${KDE4_KDECORE_LIBS} ${KDE4_KDE3SUPPORT_LIBS})
+target_link_libraries(kdevtagdialogs  kdevquanta kdevplatforminterfaces ${KDE4_KDECORE_LIBS} ${KDE4_KDE3SUPPORT_LIBS})
 
 install(TARGETS kdevtagdialogs  DESTINATION ${PLUGIN_INSTALL_DIR})
 

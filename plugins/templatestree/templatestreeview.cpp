@@ -95,12 +95,12 @@ QMap<QString, QString> i18nToType;
 TemplatesTreeBranch::TemplatesTreeBranch(BaseTreeView *parent, const KUrl& url,
                                          const QString& name, const QPixmap& pix,
                                          bool showHidden,
-                                         KFileTreeViewItem *branchRoot)
+                                         K3FileTreeViewItem *branchRoot)
     : BaseTreeBranch(parent, url, name, pix, showHidden, branchRoot)
 {
 }
 
-KFileTreeViewItem* TemplatesTreeBranch::createTreeViewItem(KFileTreeViewItem *parent,
+K3FileTreeViewItem* TemplatesTreeBranch::createTreeViewItem(K3FileTreeViewItem *parent,
                                                            KFileItem *fileItem )
 {
   BaseTreeViewItem  *tvi = 0;
@@ -366,7 +366,7 @@ void TemplatesTreeView::slotSelectFile(Q3ListViewItem *item)
   if ( !item )
     return;
 
-  KFileTreeViewItem *kftvItem = currentKFileTreeViewItem();
+  K3FileTreeViewItem *kftvItem = currentKFileTreeViewItem();
   if ( !kftvItem || kftvItem->isDir())
     return;
 
@@ -732,9 +732,9 @@ void TemplatesTreeView::slotPropertiesApplied()
     m_dirInfo.postText = m_localDirInfo.postText;
     m_dirInfo.usePrePostText = m_localDirInfo.usePrePostText;
     bool result = writeDirInfo();
-    KFileTreeViewItem *item = currentKFileTreeViewItem();
+    K3FileTreeViewItem *item = currentKFileTreeViewItem();
     if (item && !item->isDir())
-      item = static_cast<KFileTreeViewItem *>(item->parent());
+      item = static_cast<K3FileTreeViewItem *>(item->parent());
     if (result && item && !typeString.isEmpty())
     {
       if (item->parent() && item->isDir())
@@ -746,12 +746,12 @@ void TemplatesTreeView::slotPropertiesApplied()
   writeTemplateInfo();
 }
 
-void TemplatesTreeView::updateTypeDescription(KFileTreeViewItem *item, const QString &typeString)
+void TemplatesTreeView::updateTypeDescription(K3FileTreeViewItem *item, const QString &typeString)
 {
   if (item->parent() && item->isDir())
       item->setText(1, typeString);
-  KFileTreeViewItem *curItem = static_cast<KFileTreeViewItem *>(item->firstChild());
-  while (curItem && curItem != static_cast<KFileTreeViewItem *>(item->nextSibling()))
+  K3FileTreeViewItem *curItem = static_cast<K3FileTreeViewItem *>(item->firstChild());
+  while (curItem && curItem != static_cast<K3FileTreeViewItem *>(item->nextSibling()))
   {
     if (!curItem->isDir())
     {
@@ -762,7 +762,7 @@ void TemplatesTreeView::updateTypeDescription(KFileTreeViewItem *item, const QSt
        if (!dotFileInfo.exists())
         updateTypeDescription(curItem, typeString);
     }
-    curItem = static_cast<KFileTreeViewItem *>(curItem->nextSibling());
+    curItem = static_cast<K3FileTreeViewItem *>(curItem->nextSibling());
   }
 }
 
