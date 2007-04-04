@@ -17,12 +17,15 @@
 #include <kurl.h>
 
 //kdevelop includes
-#include <kdevplugin.h>
+#include <iplugin.h>
 
 class QMenu;
 class KAction;
 class KDialog;
-namespace Koncrete { class Context; }
+namespace KDevelop 
+{ 
+  class Context; 
+}
 class ConfigWidgetProxy;
 class TemplatesTreeView;
 class QuantaCoreIf;
@@ -30,7 +33,7 @@ class QuantaCoreIf;
 /**
 Please read the README.dox file for more info about this part
 */
-class TemplatesTreePart: public Koncrete::Plugin
+class TemplatesTreePart: public KDevelop::IPlugin
 {
   Q_OBJECT
 public:
@@ -49,7 +52,7 @@ private slots:
   void init();
   
   void insertConfigWidget(const KDialog *dlg, QWidget *page, unsigned int pageNo);
-  void contextMenu(QMenu *popup, const Koncrete::Context *context);
+  void contextMenu(QMenu *popup, const KDevelop::Context *context);
   void projectOpened();
   void projectClosed();
   

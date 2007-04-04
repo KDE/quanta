@@ -28,11 +28,10 @@
 #include "settings.h"
 
 //kdevelop includes
-#include <kdevcore.h>
-#include <kdevplugin.h>
-#include <kdevproject.h>
-#include <kdevcontext.h>
-#include <kdevmainwindow.h>
+#include <core.h>
+#include <iplugin.h>
+#include <iproject.h>
+#include <iprojectcontroller.h>
 
 #include <unistd.h>
 #include <grp.h>
@@ -282,12 +281,14 @@ void TemplatesTreeView::folderMenu(const QPoint &point)
     popup.addAction(SmallIcon("file-revert"), i18n("&Reload"), this, SLOT(slotReload()));
 
   // ask other plugins for menu entries
+  //FIXME: context menu handling was changed!
+  /*
   KUrl menuURL(currentKFileTreeViewItem()->url());
   menuURL.adjustPath(KUrl::AddTrailingSlash);
   KUrl::List urlList(menuURL);
   Koncrete::FileContext context(urlList);
   Koncrete::Core::mainWindow()->fillContextMenu(&popup, &context);
-
+*/
   popup.exec(point);
 }
 
@@ -332,10 +333,12 @@ void TemplatesTreeView::fileMenu(const QPoint &point)
 
 
   // ask other plugins for menu entries
+//FIXME: context menu handling was changed!
+  /*  
   KUrl::List urlList(currentKFileTreeViewItem()->url());
   Koncrete::FileContext context(urlList);
   Koncrete::Core::mainWindow()->fillContextMenu(&popup, &context);
-
+*/
   popup.exec(point);
 }
 
@@ -561,15 +564,12 @@ bool TemplatesTreeView::writeDirInfo(const QString& m_dirInfoFile)
 
   bool success = false;
   KConfig *config = new KConfig(dotFileInfo.filePath());
-  if (!config->isReadOnly())
-  {
-    config->writeEntry("Type", m_dirInfo.mimeType);
-    config->writeEntry("PreText", m_dirInfo.preText);
-    config->writeEntry("PostText", m_dirInfo.postText);
-    config->writeEntry("UsePrePostText", m_dirInfo.usePrePostText);
-    config->sync();
-    success = true;
-  }
+  config->writeEntry("Type", m_dirInfo.mimeType);
+  config->writeEntry("PreText", m_dirInfo.preText);
+  config->writeEntry("PostText", m_dirInfo.postText);
+  config->writeEntry("UsePrePostText", m_dirInfo.usePrePostText);
+  config->sync();
+  success = true;
   delete config;
   return success;
 }
@@ -843,8 +843,9 @@ void TemplatesTreeView::slotDragInsert(QDropEvent *e)
 
 void TemplatesTreeView::slotProjectOpened()
 {
-  m_projectName = Koncrete::Core::activeProject()->name();
-  m_projectBaseURL = Koncrete::Core::activeProject()->folder();
+  //FIXME: no active project! Possibly hook to the signal which is emmitted when a project is opened
+  m_projectName = KDevelop::Core::self()->projectController()->projectAt(0)->name();
+  m_projectBaseURL = KDevelop::Core::self()->projectController()->projectAt(0)->folder();
 
   if (m_projectDir)
     removeBranch(m_projectDir);

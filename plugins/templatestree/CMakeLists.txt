@@ -3,6 +3,8 @@ include_directories(
    ${CMAKE_SOURCE_DIR}/quanta/lib
    ${CMAKE_BINARY_DIR}/quanta/lib
    ${KDE4_INCLUDE_DIR}/kdevelop
+   ${KDE4_INCLUDE_DIR}/kdevelop/interfaces
+   ${KDE4_INCLUDE_DIR}/kdevelop/shell
    )
 
 
@@ -27,7 +29,7 @@ kde4_add_plugin(kdevtemplatestree WITH_PREFIX ${kdevtemplatestree_PART_SRCS})
 
 
 
-target_link_libraries(kdevtemplatestree  kdevquanta kdevplatform kdevutil ${KDE4_KDE3SUPPORT_LIBS} )
+target_link_libraries(kdevtemplatestree  kdevquanta kdevplatforminterfaces ${KDE4_KDE3SUPPORT_LIBS} )
 
 install(TARGETS kdevtemplatestree  DESTINATION ${PLUGIN_INSTALL_DIR})
 
