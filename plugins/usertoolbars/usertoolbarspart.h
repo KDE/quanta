@@ -23,7 +23,6 @@
 //kdevelop includes
 #include <iplugin.h>
 
-#include <kdevapplicationinterface.h>
 class QMenu;
 class KMenu;
 class KAction;
@@ -249,7 +248,7 @@ private:
     QList<KTemporaryFile*> m_tempFileList; ///< a list of temporary files created during the plugins lifetime
     QList<KTempDir*> m_tempDirList; ///< a list of temporary directories created during the plugins lifetime
     QList<UserAction*> m_userActions;    ///< list of action loaded from toolbar files
-    NewToolbarStuff *m_newToolbarStuff;
+   //FIXME: knewstuff2 NewToolbarStuff *m_newToolbarStuff;
     int m_currentTabPage; ///< the index of the currently visible toolbar tab
     bool m_separateToolbars; ///< if true, the toolbars are created as standalone toolbars, not as part of a tabwidget
     bool m_createActionsMenu; ///< if true a menu is created with the user actions, grouped by toolbars in submenus

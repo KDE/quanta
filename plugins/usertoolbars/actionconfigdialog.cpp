@@ -11,6 +11,12 @@
  *   the Free Software Foundation; version 2 of the License.               *
  *                                                                         *
  ***************************************************************************/
+//app includes
+
+#include "actionconfigdialog.h"
+#include "filecombo.h"
+#include "useraction.h"
+#include "toolbartabwidget.h"
 
 //qt includes
 #include <QButtonGroup>
@@ -31,10 +37,9 @@
 #include <kicon.h>
 #include <kicondialog.h>
 #include <kiconloader.h>
-#include <kkeybutton.h>
+#include <kkeysequencewidget.h>
 #include <k3listview.h>
 #include <klocale.h>
-#include <kmainwindow.h>
 #include <kmessagebox.h>
 #include <kmenu.h>
 #include <kpushbutton.h>
@@ -45,20 +50,15 @@
 #include <ktoolbar.h>
 #include <kxmlguifactory.h>
 #include <kactioncollection.h>
+#include <kparts/mainwindow.h>
 
-#include <kdevcore.h>
-#include <kdevmainwindow.h>
-#include <kdevplugin.h>
+//kdevelop includes
+#include <core.h>
+#include <iplugin.h>
+#include <iuicontroller.h>
 
-//app includes
-
-#include "actionconfigdialog.h"
-#include "filecombo.h"
-#include "useraction.h"
-#include "toolbartabwidget.h"
-
-ActionConfigDialog::ActionConfigDialog(const QHash<QString, ToolbarEntry*> &toolbarList, Koncrete::Plugin* parent, bool modal, Qt::WFlags fl, const QString& defaultAction )
-  :QDialog( Koncrete::Core::mainWindow(), fl )
+ActionConfigDialog::ActionConfigDialog(const QHash<QString, ToolbarEntry*> &toolbarList, KDevelop::IPlugin* parent, bool modal, Qt::WFlags fl, const QString& defaultAction )
+  :QDialog( KDevelop::Core::self()->uiController()->activeMainWindow(), fl )
 {
   setModal(modal);
   setupUi(this);
@@ -94,7 +94,7 @@ ActionConfigDialog::ActionConfigDialog(const QHash<QString, ToolbarEntry*> &tool
   QString toolbarId;
   ToolbarTabWidget *tb = ToolbarTabWidget::ref();
   QRegExp r("\\&(?!\\&)");
-  KActionCollection *ac = Koncrete::Core::mainWindow()->actionCollection();
+  KActionCollection *ac = KDevelop::Core::self()->uiController()->activeMainWindow()->actionCollection();
   for (int i = 0; i < tb->count(); i++)
   {
     toolbarName = tb->tabText(i);
@@ -234,7 +234,7 @@ void ActionConfigDialog::slotEditToolbar()
 
     //update the tree view
     QAction *action;
-    KActionCollection *ac = Koncrete::Core::mainWindow()->actionCollection();
+    KActionCollection *ac = KDevelop::Core::self()->uiController()->activeMainWindow()->actionCollection();
     ToolbarTabWidget *tb = ToolbarTabWidget::ref();
     for (int i = 0; i < tb->count(); i++)
     {
@@ -288,7 +288,7 @@ void ActionConfigDialog::slotSelectionChanged(Q3ListViewItem *item)
   if (item && item->depth() > 0)
   {
     UserAction *action = 0L;
-    KActionCollection *ac = Koncrete::Core::mainWindow()->actionCollection();
+    KActionCollection *ac = KDevelop::Core::self()->uiController()->activeMainWindow()->actionCollection();
     uint acCount = ac->actions().count();
 //find the corresponding action
     for (uint i = 0; i < acCount; i++)
@@ -329,12 +329,11 @@ void ActionConfigDialog::slotSelectionChanged(Q3ListViewItem *item)
       if (shortcutText.isEmpty())
       {
         noShortcut->setChecked(true);
-        shortcutKeyButton->setText(i18n("None"));
+        shortcutKeyButton->clearKeySequence();
       } else
       {
         customShortcut->setChecked(true);
-        shortcutKeyButton->setShortcut(action->shortcut());
-        shortcutKeyButton->setText(shortcutText);
+        shortcutKeyButton->setKeySequence(shortcutText);
       }
 
 //find the container toolbars of this action and add them to the container listbox
@@ -732,7 +731,7 @@ void ActionConfigDialog::slotShortcutCaptured(const KShortcut &shortcut)
 
   if (global.isEmpty())
   {
-    QList<KXMLGUIClient*> clients = Koncrete::Core::mainWindow()->guiFactory()->clients();
+    QList<KXMLGUIClient*> clients = KDevelop::Core::self()->uiController()->activeMainWindow()->guiFactory()->clients();
     KXMLGUIClient *current = 0L;
     QListIterator<KXMLGUIClient*> it(clients);
     while (it.hasNext())
@@ -761,7 +760,7 @@ void ActionConfigDialog::slotShortcutCaptured(const KShortcut &shortcut)
 
   if (global.isEmpty())
   {
-    shortcutKeyButton->setText(shortcutText);
+    shortcutKeyButton->setKeySequence(shortcutText);
     buttonApply->setEnabled(true);
     selectedShortcut = shortcut;
   } else
@@ -811,7 +810,7 @@ void ActionConfigDialog::slotNewAction()
   static_cast<UserAction*>(currentAction)->setModified(true);
   Q3ListViewItem *currentItem = actionTreeView->currentItem();
   Q3ListViewItem *item = new K3ListViewItem(allActionsItem);
-  QString actionText = QString("Action_%1").arg(Koncrete::Core::mainWindow()->actionCollection()->actions().count());
+  QString actionText = QString("Action_%1").arg(KDevelop::Core::self()->uiController()->activeMainWindow()->actionCollection()->actions().count());
   currentAction->setText(actionText);
   item->setText(2, currentAction->objectName());
   item->setText(0, actionText);

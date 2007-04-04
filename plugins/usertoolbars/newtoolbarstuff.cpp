@@ -24,7 +24,7 @@
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
 
-
+/*
 NewToolbarStuff::NewToolbarStuff(const QString &type,  QWidget *parentWidget)
   :KNewStuffSecure(type, parentWidget)
 {
@@ -50,5 +50,5 @@ void NewToolbarStuff::installResource()
         if (!ok)
             KMessageBox::error(parentWidget(), i18n("There was an error with the downloaded toolbar tarball file. Possible causes are damaged archive or invalid directory structure in the archive."), i18n("Toolbar Installation Error"));
      }
-}
+}*/
 #include "newtoolbarstuff.moc"

@@ -16,8 +16,8 @@
 //qt includes
 #include <QObject>
 #include <QMap>
+
 //kde includes
-#include <knewstuff/knewstuffsecure.h>
 
 class KUrl;
 /**
@@ -26,6 +26,9 @@ Makes possible downloading and installing a Toolbar resource files from a server
 
 @author Andras Mantia
 */
+
+//FIXME: Port to KNewStuff2
+/*
 class NewToolbarStuff : public KNewStuffSecure
 {
    Q_OBJECT
@@ -40,5 +43,6 @@ Q_SIGNALS:
 private:
    virtual void installResource();
 };
+*/
 
 #endif
