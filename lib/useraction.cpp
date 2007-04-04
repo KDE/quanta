@@ -44,6 +44,8 @@
 #include <kparts/mainwindow.h>
 
 //kdevelop includes
+#include <idocument.h>
+#include <idocumentcontroller.h>
 #include <iplugin.h>
 #include <iproject.h>
 #include <iplugincontroller.h>
@@ -136,8 +138,10 @@ bool UserAction::slotActionActivated()
   if ( type == "script" )
   {
     proc = new MyProcess();
-//FIXME: no way to get the current project...
-    KDevelop::IProject *proj = m_plugin->core()->projectController()->projectAt(0);
+    KDevelop::IProject *proj = 0L;
+    KDevelop::IDocument *doc = m_plugin->core()->documentController()->activeDocument();
+    if (doc)
+      proj = m_plugin->core()->projectController()->findProjectForUrl(doc->url());
     if (proj)
       proc->setWorkingDirectory(proj->folder().path());
 
