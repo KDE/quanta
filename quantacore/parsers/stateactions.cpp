@@ -11,22 +11,24 @@
  *                                                                         *
  ***************************************************************************/
 
+//own includes
+#include "stateactions.h"
+#include "parserstatus.h"
+#include "quantaxmlinputsource.h"
+#include "statemachine.h"
+#include "quantahandler.h"
+
+//qt includes
 #include <QString>
 #include <QXmlParseException>
 #include <QXmlAttributes>
 #include <QXmlContentHandler>
 #include <QXmlErrorHandler>
 
+//kde includes
 #include <kdebug.h>
 #include <ktexteditor/cursor.h>
 #include <ktexteditor/range.h>
-
-#include "parserstatus.h"
-#include "quantaxmlinputsource.h"
-#include "statemachine.h"
-#include "quantahandler.h"
-
-#include "stateactions.h"
 
 
 #undef DEBUGMODE

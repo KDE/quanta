@@ -31,7 +31,7 @@
 
 #include "kdevquantaextension.h"
 
-#include "config.h"
+#include <config.h>
 
 static KCmdLineOptions options[] =
 {

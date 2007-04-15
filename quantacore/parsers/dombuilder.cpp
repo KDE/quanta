@@ -11,6 +11,11 @@
  *                                                                         *
  ***************************************************************************/
 
+//own includes
+#include "dombuilder.h"
+#include "dommodel.h"
+
+//kde includes
 #include <kdebug.h>
 #include <klocale.h>
 #include <dom/html_document.h>
@@ -24,8 +29,6 @@
 #include <dom/dom_string.h>
 
 
-#include "dombuilder.h"
-#include "dommodel.h"
 
 #define DEBUGMODE
 
@@ -40,7 +43,6 @@
 #include <QDialog>
 #include <QBoxLayout>
 #include <QTreeView>
-#include "dommodel.h"
 #endif
 
 DomBuilder::DomBuilder() 

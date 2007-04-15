@@ -11,13 +11,14 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <QVariant>
-
-
-#include <dom/dom_string.h>
-
+//own includes
 #include "dommodel.h"
 
+//qt includes
+#include <QVariant>
+
+//kde includes
+#include <dom/dom_string.h>
 
 
 DomModelItem::DomModelItem(DOM::Node node, DomModelItem * parent) 

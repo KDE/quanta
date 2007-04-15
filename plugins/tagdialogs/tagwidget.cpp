@@ -14,6 +14,10 @@
  *                                                                         *
  ***************************************************************************/
 
+// application's headers
+#include "tagwidget.h"
+#include "tagdialog.h"
+
 // QT files
 #include <QComboBox>
 #include <klineedit.h>
@@ -25,9 +29,6 @@
 #include <kcolorbutton.h>
 #include <kurl.h>
 
-// application's headers
-#include "tagwidget.h"
-#include "tagdialog.h"
 
 TagWidget::TagWidget(QObject *parent)
 {

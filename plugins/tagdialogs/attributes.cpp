@@ -16,6 +16,12 @@
  ***************************************************************************/
 
 
+//app includes
+#include "attributes.h"
+#include "node.h"
+#include "colorcombo.h"
+#include "qtag.h"
+
 //kde includes
 #include <kapplication.h>
 #include <kdebug.h>
@@ -24,12 +30,6 @@
 //qt includes
 #include <qdom.h>
 #include <QTextStream>
-
-//app includes
-#include "attributes.h"
-#include "node.h"
-#include "colorcombo.h"
-#include "qtag.h"
 
 QString Attr::attrName() const
 {

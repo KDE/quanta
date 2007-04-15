@@ -13,6 +13,16 @@
  *                                                                         *
  ***************************************************************************/
 
+//own includes
+#include "extfileinfo.h"
+#include "quantacommon.h"
+#include "tag.h"
+#include "tagattr.h"
+#include "dtds.h"
+#include "settings.h"
+//#include "resource.h"
+
+
 //system includes
 #include <sys/types.h>
 #include <unistd.h>
@@ -46,16 +56,6 @@
 #include <QTimer>
 #include <QClipboard>
 #include <qdatastream.h>
-
-#include "extfileinfo.h"
-#include "quantacommon.h"
-#include "tag.h"
-#include "tagattr.h"
-#include "dtds.h"
-#include "settings.h"
-//#include "resource.h"
-
-
 
 QuantaCommon::QuantaCommon(){
 }

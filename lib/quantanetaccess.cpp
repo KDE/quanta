@@ -11,13 +11,16 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "extfileinfo.h"
+//own includes
 #include "quantanetaccess.h"
+#include "extfileinfo.h"
 
+//qt includes
 #include <QString>
 #include <qwidget.h>
 #include <QDir>
 
+//kde includes
 #include <kio/netaccess.h>
 #include <kurl.h>
 #include <kmessagebox.h>

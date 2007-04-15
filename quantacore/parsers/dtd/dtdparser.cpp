@@ -13,6 +13,14 @@
  *                                                                         *
  ***************************************************************************/
 
+//own includes
+#include "dtdparser.h"
+#include "dtepeditdlg.h"
+#include "qtag.h"
+#include "ui_dtepcreationdlg.h"
+#include "quantacommon.h"
+#include "extfileinfo.h"
+
 //qt includes
 #include <QCheckBox>
 #include <QFile>
@@ -39,14 +47,6 @@
 
 #include <libxml/parser.h>
 #include <libxml/valid.h>
-
-//own includes
-#include "dtepeditdlg.h"
-#include "dtdparser.h"
-#include "qtag.h"
-#include "ui_dtepcreationdlg.h"
-#include "quantacommon.h"
-#include "extfileinfo.h"
 
 #define MAX_CHILD_ELEMENTS 100
 

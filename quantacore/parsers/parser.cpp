@@ -13,6 +13,25 @@
  *                                                                         *
  ***************************************************************************/
 
+//app includes
+
+#include "parser.h"
+
+#include "editorsource.h"
+#include "groupelement.h"
+#include "groupstorage.h"
+
+#include "saparser.h"
+#include "parsercommon.h"
+#include "node.h"
+#include "tag.h"
+#include "quantacommon.h"
+// #include "extfileinfo.h"
+#include "dtds.h"
+
+#include "parseresult.h"
+
+
 //qt includes
 #include <QEventLoop>
 #include <QString>
@@ -29,23 +48,6 @@
 #include <stdio.h>
 #include <ctype.h>
 //#include <iostream.h>
-
-//app includes
-
-#include "editorsource.h"
-#include "groupelement.h"
-#include "groupstorage.h"
-
-#include "parser.h"
-#include "saparser.h"
-#include "parsercommon.h"
-#include "node.h"
-#include "tag.h"
-#include "quantacommon.h"
-// #include "extfileinfo.h"
-#include "dtds.h"
-
-#include "parseresult.h"
 
 //kde includes
 #include <kapplication.h>

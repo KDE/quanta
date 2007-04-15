@@ -15,6 +15,12 @@
  *                                                                         *
  ***************************************************************************/
 
+//app includes
+#include "tagimgdlg.h"
+#include "pictureview.h"
+#include "extfileinfo.h"
+#include "tagdialog.h"
+
 //qt includes
 #include <qspinbox.h>
 #include <QImage>
@@ -25,12 +31,6 @@
 #include <kio/netaccess.h>
 #include <kfiledialog.h>
 #include <kurl.h>
-
-//app includes
-#include "pictureview.h"
-#include "extfileinfo.h"
-#include "tagdialog.h"
-#include "tagimgdlg.h"
 
 TagImgDlg::TagImgDlg(QWidget *parent)
   : QWidget(parent), TagWidget(parent)

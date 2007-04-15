@@ -16,6 +16,8 @@
 
 #include "quantaexport.h"
 
+#include <kurl.h>
+
 /** @short helperclass to track changes in the project
 
     Use this class as replacement for KIO::NetAccess (look there for details).

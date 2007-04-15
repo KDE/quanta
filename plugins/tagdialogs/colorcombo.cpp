@@ -19,6 +19,7 @@
 // <mweilguni@sime.com>
 //
 
+#include "colorcombo.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -47,7 +48,6 @@
 #include <kpalette.h>
 #include <kimageeffect.h>
 
-#include "colorcombo.h"
 #include "colorcombo.moc"
 
 // This is repeated from the KColorDlg, but I didn't

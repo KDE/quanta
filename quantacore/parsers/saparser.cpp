@@ -14,12 +14,6 @@
  *                                                                         *
   ***************************************************************************/
 
-//qt includes
-#include <QTimer>
-
-//kde includes
-#include <kdebug.h>
-
 //own includes
 #include "saparser.h"
 #include "sagroupparser.h"
@@ -33,6 +27,13 @@
 //#include "resource.h"
 
 #include "editorsource.h"
+
+//qt includes
+#include <QTimer>
+
+//kde includes
+#include <kdebug.h>
+
 //#undef DEBUG_PARSER
 
 SAParser::SAParser()

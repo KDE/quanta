@@ -15,6 +15,10 @@
  *                                                                         *
  ***************************************************************************/
 
+// app include
+#include "filecombo.h"
+#include "extfileinfo.h"
+
 // QT includes
 #include <QLayout>
 #include <QComboBox>
@@ -24,10 +28,6 @@
 #include <klocale.h>
 #include <kfiledialog.h>
 #include <kurl.h>
-
-// app include
-#include "filecombo.h"
-#include "extfileinfo.h"
 
 FileCombo::FileCombo(const KUrl& a_baseURL, QWidget *parent)
   :QWidget(parent)

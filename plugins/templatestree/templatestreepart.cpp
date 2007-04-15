@@ -9,19 +9,22 @@
  *                                                                         *
  ***************************************************************************/
 
+//app includes
+#include "templatestreepart.h"
 #include "templatestreeview.h"
 #include "templatestreeglobalconfig.h"
 #include "templatestreeprojectconfig.h"
-#include "templatestreepart.h"
 #include "quantacoreif.h"
 #include "quantanetaccess.h"
 // #include "extfileinfo.h"
 #include "helper.h"
 
+//qt includes
 #include <QTimer>
 #include <QMenu>
 #include <QWhatsThis>
 
+//kde includes
 #include <klocale.h>
 #include <kaction.h>
 #include <kactioncollection.h>

@@ -8,15 +8,18 @@
  *   (at your option) any later version.
  */
 
+//own includes
+#include "quantaxmlinputsource.h"
 
-#include "QXmlInputSource"
+//qt includes
+#include <QXmlInputSource>
 #include <QXmlLocator>
 
-#include "ktexteditor/smartcursor.h"
-#include "ktexteditor/document.h"
-#include "ktexteditor/smartinterface.h"
+//kde includes
+#include <ktexteditor/smartcursor.h>
+#include <ktexteditor/document.h>
+#include <ktexteditor/smartinterface.h>
 
-#include "quantaxmlinputsource.h"
 
 
 class Locator : public QXmlLocator

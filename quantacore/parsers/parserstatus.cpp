@@ -11,14 +11,18 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <QXmlInputSource>
-#include <QTime>
-
-#include <kdebug.h>
-
+//own includes
 #include "parserstatus.h"
 #include "statemachine.h"
 #include "quantaxmlinputsource.h"
+
+//qt includes
+#include <QXmlInputSource>
+#include <QTime>
+
+//kde includes
+#include <kdebug.h>
+
 
 #undef DEBUGMODE
 

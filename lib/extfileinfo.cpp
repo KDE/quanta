@@ -10,6 +10,8 @@
     (at your option) any later version.
 */
 
+//app includes
+#include "extfileinfo.h"
 
 //qt includes
 #include <QDir>
@@ -32,9 +34,6 @@
 #include <kmessagebox.h>
 #include <kprotocolinfo.h>
 #include <kdebug.h>
-
-//app includes
-#include "extfileinfo.h"
 
 QString ExtFileInfo::lastErrorMsg = "";
 

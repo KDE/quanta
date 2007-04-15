@@ -20,12 +20,13 @@
 #include <qwidget.h>
 #include <QHash>
 
+#include <kurl.h>
+
 class QComboBox;
 class QLineEdit;
 class QSpinBox;
 class QCheckBox;
 class KColorButton;
-class KUrl;
 
 /**base class for tag widgets
   *@author Yacovlev Alexander & Dmitry Poplavsky

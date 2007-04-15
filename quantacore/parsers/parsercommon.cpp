@@ -14,6 +14,14 @@
  *                                                                         *
  ***************************************************************************/
 
+//own includes
+#include "parsercommon.h"
+#include "node.h"
+#include "qtag.h"
+#include "quantacommon.h"
+#include "dtds.h"
+#include "editorsource.h"
+
 //qt includes
 #include "qstring.h"
 
@@ -21,14 +29,6 @@
 #include "klocale.h"
 #include <ktexteditor/document.h>
 
-//own includes
-#include "parsercommon.h"
-#include "node.h"
-#include "qtag.h"
-#include "quantacommon.h"
-#include "dtds.h"
-
-#include "editorsource.h"
 
 class KDirWatch;
 

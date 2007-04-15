@@ -17,9 +17,9 @@
  ***************************************************************************/
 
 // application specific includes
+#include "dtds.h"
 #include "quantacommon.h"
 #include "dtdparser.h"
-#include "dtds.h"
 #include "helper.h"
 
 

@@ -11,11 +11,12 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <kdebug.h>
-
+//own includes
+#include "comparator.h"
 #include "parserstatus.h"
 
-#include "comparator.h"
+//kde includes
+#include <kdebug.h>
 
 #undef DEBUGMODE
 

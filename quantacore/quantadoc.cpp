@@ -10,15 +10,8 @@
  *   the Free Software Foundation; version 2 of the License.               *
  *                                                                         *
  ***************************************************************************/
-//kde includes
-#include <kdebug.h>
-
-#include <ktexteditor/codecompletioninterface.h> //right now leave it as first, otherwise it does not compile
-#include <ktexteditor/document.h>
-#include <ktexteditor/view.h>
-
-#include <idocument.h>
-
+ 
+//own includes
 #include "quantadoc.h"
 // TODO PORT
 //#include "completionbase.h"
@@ -43,6 +36,15 @@
 #include <QTimer>
 #include <qpoint.h>
 #include <QList>
+
+//kde includes
+#include <kdebug.h>
+
+#include <ktexteditor/codecompletioninterface.h> //right now leave it as first, otherwise it does not compile
+#include <ktexteditor/document.h>
+#include <ktexteditor/view.h>
+
+#include <idocument.h>
 
 
 

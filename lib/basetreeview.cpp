@@ -35,7 +35,6 @@
 #include <QFileInfo>
 #include <QLabel>
 #include <QImage>
-#include <QRegExp>
 #include <QClipboard>
 #include <qpoint.h>
 #include <QRegExp>
@@ -47,6 +46,7 @@
 #if defined Q_WS_X11
 #include <qx11info_x11.h>
 #endif
+
 // KDE includes
 #include <kaction.h>
 #include <kicon.h>
@@ -54,7 +54,6 @@
 #include <kconfiggroup.h>
 #include <kdebug.h>
 #include <krun.h>
-#include <kicon.h>
 #include <kinputdialog.h>
 #include <klocale.h>
 #include <kiconloader.h>
