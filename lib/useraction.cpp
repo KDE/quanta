@@ -35,7 +35,7 @@
 #include <kicon.h>
 #include <kiconloader.h>
 #include <klocale.h>
-#include <kmainwindow.h>
+#include <kxmlguiwindow.h>
 #include <kmessagebox.h>
 #include <kshortcut.h>
 #include <kstandarddirs.h>

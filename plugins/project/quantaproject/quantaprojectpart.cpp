@@ -26,7 +26,7 @@
 #include <kdialog.h>
 #include <kfiledialog.h>
 #include <kgenericfactory.h>
-#include <kmainwindow.h>
+#include <kxmlguiwindow.h>
 #include <kmessagebox.h>
 #include <kurlrequester.h>
 #include <kurlrequesterdialog.h>

@@ -34,7 +34,7 @@
 #include <kmessagebox.h>
 #include <kfiledialog.h>
 #include <ktar.h>
-#include <kmainwindow.h>
+#include <kxmlguiwindow.h>
 #include <kstandarddirs.h>
 #include <ktemporaryfile.h>
 

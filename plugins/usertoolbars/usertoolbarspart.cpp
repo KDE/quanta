@@ -54,7 +54,7 @@
 #include <kiconloader.h>
 #include <kinputdialog.h>
 #include <kio/netaccess.h>
-#include <kmainwindow.h>
+#include <kxmlguiwindow.h>
 #include <kmenubar.h>
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
@@ -312,7 +312,7 @@ void UserToolbarsPart::setSeparateToolbars(bool separate)
 {
   if (m_separateToolbars != separate)
   {
-    KMainWindow *mw = KDevelop::Core::self()->uiController()->activeMainWindow();
+    KXmlGuiWindow *mw = KDevelop::Core::self()->uiController()->activeMainWindow();
     ToolbarGUIBuilder::ref(mw)->setSeparateToolbars(separate);
     m_separateToolbars = separate;
     QHashIterator<QString, ToolbarEntry*> it(m_toolbarList);
@@ -976,7 +976,7 @@ void UserToolbarsPart::slotRenameToolbar(const QString& id)
   ToolbarEntry *p_toolbar = m_toolbarList.value(id);
   if (p_toolbar)
   {
-    KMainWindow *mw = KDevelop::Core::self()->uiController()->activeMainWindow();
+    KXmlGuiWindow *mw = KDevelop::Core::self()->uiController()->activeMainWindow();
     bool ok;
     QString newName = KInputDialog::getText(i18n("Rename Toolbar"), i18n("Enter the new name:"), p_toolbar->name, &ok, mw);
     if (ok && newName != p_toolbar->name)

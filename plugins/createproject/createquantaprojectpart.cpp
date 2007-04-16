@@ -40,7 +40,7 @@
 #include <kiconloader.h>
 #include <kgenericfactory.h>
 #include <kglobal.h>
-#include <kmainwindow.h>
+#include <kxmlguiwindow.h>
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
 #include <ktemporaryfile.h>

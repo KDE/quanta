@@ -39,7 +39,7 @@
 #include <kgenericfactory.h>
 #include <kiconloader.h>
 #include <klocale.h>
-#include <kmainwindow.h>
+#include <kxmlguiwindow.h>
 #include <kpushbutton.h>
 #include <kparts/part.h>
 #include <kio/netaccess.h>

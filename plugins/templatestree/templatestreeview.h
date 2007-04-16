@@ -23,7 +23,7 @@
 
 //forward declarations
 class Q3DragObject;
-class KMainWindow;
+class KXmlGuiWindow;
 class KTemporaryFile;
 
 namespace Ui
@@ -127,7 +127,7 @@ private:
   QString m_projectName;
   KUrl localURL;
   KUrl globalURL;
-  KMainWindow *m_mainWindow;
+  KXmlGuiWindow *m_mainWindow;
   Helper::DirInfo m_dirInfo;
   Helper::DirInfo m_parentDirInfo;
   int m_insertFileInProject;

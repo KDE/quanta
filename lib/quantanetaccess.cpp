@@ -26,7 +26,7 @@
 #include <kmessagebox.h>
 #include <klocale.h>
 #include <kfileitem.h>
-#include <kmainwindow.h>
+#include <kxmlguiwindow.h>
 #include <kstringhandler.h>
 #include <kparts/mainwindow.h>
 

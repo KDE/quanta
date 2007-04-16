@@ -60,7 +60,7 @@
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kstandarddirs.h>
-#include <kmainwindow.h>
+#include <kxmlguiwindow.h>
 #include <kmimetype.h>
 #include <kmessagebox.h>
 #include <kcombobox.h>
