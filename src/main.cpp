@@ -31,7 +31,7 @@
 
 #include "kdevquantaextension.h"
 
-#include <config.h>
+#include "version.h"
 
 static KCmdLineOptions options[] =
 {
@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
       \n\nWe hope you enjoy Quanta Plus.\n\n");
 
   KAboutData aboutData("quanta", I18N_NOOP("Quanta"),
-                       VERSION, description, KAboutData::License_GPL,
+                       QUANTA_VERSION, description, KAboutData::License_GPL,
                        I18N_NOOP("(c) 1999-2006, The Quanta+ developers"), othertext, "http://www.kdewebdev.org");
                            
   aboutData.addAuthor("Eric Laffoon",I18N_NOOP("Project Lead - public liaison"), "sequitur@kde.org");
@@ -161,10 +161,6 @@ int main(int argc, char *argv[])
       KDevelop::Core::self()->documentController()->openDocument( KUrl(args->url(a)) );
     }
   }
-#ifdef __GNUC__
-#warning "kde4: port it"
-#endif
-  //kapp->dcopClient()->registerAs("quanta");
 
   return app.exec();
 }
