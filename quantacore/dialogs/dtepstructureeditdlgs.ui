@@ -217,12 +217,9 @@
     </widget>
    </item>
    <item row="7" column="0" colspan="6" >
-    <widget class="Q3GroupBox" name="pseudoGroupBox" >
+    <widget class="QGroupBox" name="pseudoGroupBox" >
      <property name="title" >
       <string>&amp;Pseudo DTEP Specific Settings</string>
-     </property>
-     <property name="orientation" >
-      <enum>Qt::Vertical</enum>
      </property>
      <layout class="QGridLayout" >
       <property name="margin" >
@@ -599,13 +596,6 @@ The first captured area (between "&lt;b>(&lt;/b>" and "&lt;b>)&lt;/b>") holds th
    <extends></extends>
    <header>kicondialog.h</header>
    <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>Q3GroupBox</class>
-   <extends></extends>
-   <header>Qt3Support/Q3GroupBox</header>
-   <container>1</container>
    <pixmap></pixmap>
   </customwidget>
   <customwidget>

@@ -127,12 +127,9 @@
     </widget>
    </item>
    <item row="2" column="1" colspan="2" >
-    <widget class="Q3GroupBox" name="GroupBox3" >
+    <widget class="QGroupBox" name="GroupBox3" >
      <property name="title" >
       <string>Resource folders</string>
-     </property>
-     <property name="orientation" >
-      <enum>Qt::Vertical</enum>
      </property>
      <layout class="QGridLayout" >
       <property name="margin" >
@@ -243,13 +240,6 @@
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
-  <customwidget>
-   <class>Q3GroupBox</class>
-   <extends></extends>
-   <header>Qt3Support/Q3GroupBox</header>
-   <container>1</container>
-   <pixmap></pixmap>
-  </customwidget>
   <customwidget>
    <class>Q3ButtonGroup</class>
    <extends></extends>

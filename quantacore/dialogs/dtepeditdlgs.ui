@@ -159,7 +159,7 @@
         </spacer>
        </item>
        <item row="8" column="0" colspan="6" >
-        <widget class="Q3GroupBox" name="groupBox1" >
+        <widget class="QGroupBox" name="groupBox1" >
          <property name="title" >
           <string>Type Specific Settings</string>
          </property>
@@ -866,7 +866,7 @@ Example: &lt;b>//&amp;nbsp;EOL,&amp;nbsp;/*&amp;nbsp;*/&lt;/b></string>
         </widget>
        </item>
        <item row="0" column="0" colspan="5" >
-        <widget class="Q3GroupBox" name="groupBox7" >
+        <widget class="QGroupBox" name="groupBox7" >
          <property name="sizePolicy" >
           <sizepolicy>
            <hsizetype>1</hsizetype>
@@ -1575,13 +1575,6 @@ Example: &lt;b>//&amp;nbsp;EOL,&amp;nbsp;/*&amp;nbsp;*/&lt;/b></string>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
-  <customwidget>
-   <class>Q3GroupBox</class>
-   <extends></extends>
-   <header>Qt3Support/Q3GroupBox</header>
-   <container>1</container>
-   <pixmap></pixmap>
-  </customwidget>
   <customwidget>
    <class>Q3ListBox</class>
    <extends></extends>
