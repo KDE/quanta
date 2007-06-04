@@ -18,7 +18,6 @@
 #include <iplugin.h>
 
 class QMenu;
-class KAction;
 class KDialog;
 namespace Koncrete { class Context; }
 class ConfigWidgetProxy;

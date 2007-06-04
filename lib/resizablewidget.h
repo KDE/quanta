@@ -15,7 +15,6 @@
 #include <QPushButton>
 #include <qpoint.h>
 
-class KComboView;
 class QMouseEvent;
 class MyPushButton;
 

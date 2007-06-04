@@ -29,9 +29,7 @@
 struct DTDStruct;
 class Document;
 class QString;
-class QStringList;
 class QTimer;
-class KDirWatch;
 class ParseResult;
 class SAGroupParser;
 

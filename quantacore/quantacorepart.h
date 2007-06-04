@@ -24,13 +24,11 @@
 //qt includes
 #include <QHash>
 
-class Parser;
 class ParseResult;
 
 class KUrl;
 class ConfigWidgetProxy;
 class KDialog;
-class FileContext;
 class KMenu;
 class KAction;
 namespace KDevelop 

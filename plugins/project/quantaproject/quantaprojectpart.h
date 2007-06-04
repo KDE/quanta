@@ -26,7 +26,6 @@ class QuantaProjectManager;
 
 class QAction;
 class KMenu;
-class KAction;
 class KDialog;
 namespace Koncrete { class Context; }
 class ConfigWidgetProxy;

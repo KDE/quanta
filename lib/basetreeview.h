@@ -32,9 +32,7 @@ class Q3ListViewItem;
 class QString;
 class QPixmap;
 class QPoint;
-class QCloseEvent;
 
-class KAction;
 class KFileItem;
 class KPropertiesDialog;
 class KUrl;

@@ -22,7 +22,6 @@
 #include <iextension.h>
 
 
-// class EditorSource;
 class QTag;
 
 /**

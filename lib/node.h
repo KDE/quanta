@@ -28,8 +28,6 @@ class QDomElement;
 class AreaStruct;
 class GroupStorage;
 class Tag;
-class StructTreeGroup;
-class XMLStructGroup;
 
 
 /**

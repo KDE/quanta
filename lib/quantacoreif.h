@@ -27,7 +27,6 @@
 class QPoint;
 
 class ParseResult;
-class AreaStruct;
 class EditorSource;
 class KUrl;
 class TagPair;

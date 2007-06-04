@@ -23,7 +23,6 @@
 //kdevelop includes
 #include <iplugin.h>
 
-class QMenu;
 class KMenu;
 class KAction;
 class KRecentFilesAction;

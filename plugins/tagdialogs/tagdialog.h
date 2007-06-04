@@ -28,7 +28,6 @@
   *@author Yacovlev Alexander & Dmitry Poplavsky & Andras Mantia
   */
 
-class TagWidget;
 class Tagxml;
 class QTag;
 class Tag;

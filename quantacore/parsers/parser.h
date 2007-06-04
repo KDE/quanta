@@ -31,8 +31,6 @@
 
 class EditorSource;
 
-class KDirWatch;
-class QRegExp;
 class NodeModifsSet;
 class ParseResult;
 class SAParser;

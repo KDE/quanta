@@ -21,7 +21,6 @@
 #include <iplugin.h>
 
 class QMenu;
-class KAction;
 class KDialog;
 namespace KDevelop 
 { 

@@ -17,7 +17,6 @@
 #include <ktoolbar.h>
 
 class KMenu;
-class ToolbarTabWidget;
 class QAction;
 
 /**

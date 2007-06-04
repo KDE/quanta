@@ -18,7 +18,6 @@
 
 #include <kdialog.h>
 
-class QPushButton;
 class QString;
 class QStringList;
 class K3ListBox;

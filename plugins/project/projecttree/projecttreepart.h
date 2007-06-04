@@ -18,7 +18,6 @@
 
 class QMenu;
 class QDomElement;
-class KAction;
 class KDialog;
 namespace Koncrete { class Context; }
 class ConfigWidgetProxy;

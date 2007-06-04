@@ -36,7 +36,6 @@ class QDomDocument;
 class QTag;
 class QString;
 class QStringList;
-class KConfig;
 
 
 /** @short This class manages the DTD's for Quanta.

@@ -20,8 +20,6 @@
 //kdevelop includes
 #include <iplugin.h>
 
-class KAction;
-class KDialog;
 
 /**
 Please read the README.dox file for more info about this part
