@@ -32,6 +32,7 @@ class ConfigWidgetProxy;
 class KDialog;
 class FileContext;
 class KMenu;
+class KAction;
 namespace KDevelop 
 { 
   class Context; 
