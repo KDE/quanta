@@ -419,7 +419,7 @@ void ExtFileInfo::slotResult(KJob *job)
     if ( lastErrorMsg.isEmpty() )
      lastErrorMsg = job->errorString();
   }
-  if (job->metaObject()->className() == "KIO::StatJob")
+  if (::qt_cast<KIO::StatJob*>(job))
     m_entry = static_cast<KIO::StatJob *>(job)->statResult();
   emit leaveModality();
 }
