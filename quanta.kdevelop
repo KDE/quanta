@@ -22,7 +22,7 @@
   <kdevcustomproject>
     <filelistdirectory>/home/andris/development/sources/kde-trunk/kdewebdev/quanta</filelistdirectory>
     <run>
-      <mainprogram>src/quanta</mainprogram>
+      <mainprogram>/data/development/build/kde-trunk/kdewebdev/quanta/src/quanta</mainprogram>
       <directoryradio>build</directoryradio>
       <customdirectory>/</customdirectory>
       <programargs/>
@@ -34,17 +34,22 @@
         <envvar value="/home/andris/.kde4" name="KDEHOME" />
         <envvar value="/tmp/andris-kde4" name="KDETMP" />
         <envvar value="/var/tmp/andris-kde4" name="KDEVARTMP" />
-        <envvar value="/opt/kde4/lib:/data2/kde4/qt4/lib:$LD_LIBRARY_PATH" name="LD_LIBRARY_PATH" />
-        <envvar value="/opt/kde4/bin:/data2/kde4/qt4/bin:$PATH" name="PATH" />
-        <envvar value="/data2/kde4/qt4" name="QTDIR" />
+        <envvar value="/opt/kde4/lib:/opt/qt4/lib:$LD_LIBRARY_PATH" name="LD_LIBRARY_PATH" />
+        <envvar value="/opt/kde4/bin:/opt/qt4/bin:$PATH" name="PATH" />
+        <envvar value="/opt/qt4" name="QTDIR" />
         <envvar value="/opt/kde4/lib/kde4/plugins" name="QT_PLUGIN_PATH" />
         <envvar value=" " name="XDG_CONFIG_DIRS" />
         <envvar value=" " name="XDG_DATA_DIRS" />
       </envvars>
+      <globaldebugarguments/>
+      <globalcwd>/data/development/build/kde-trunk/kdewebdev</globalcwd>
+      <useglobalprogram>false</useglobalprogram>
+      <autoinstall>false</autoinstall>
+      <autokdesu>false</autokdesu>
     </run>
     <build>
       <buildtool>make</buildtool>
-      <builddir>/home/andris/development/build/kde-trunk/kdewebdev/quanta</builddir>
+      <builddir>/data/development/build/kde-trunk/kdewebdev</builddir>
     </build>
     <make>
       <abortonerror>true</abortonerror>
@@ -78,6 +83,17 @@
       <filetype>Makefile</filetype>
       <filetype>CMakeLists.txt</filetype>
     </filetypes>
+    <blacklist/>
+    <other>
+      <prio>0</prio>
+      <otherbin/>
+      <defaulttarget/>
+      <otheroptions/>
+      <selectedenvironment>default</selectedenvironment>
+      <environments>
+        <default/>
+      </environments>
+    </other>
   </kdevcustomproject>
   <kdevfilecreate>
     <filetypes>
@@ -135,10 +151,10 @@
       <usePermanentCaching>true</usePermanentCaching>
       <alwaysIncludeNamespaces>false</alwaysIncludeNamespaces>
       <includePaths>.;</includePaths>
+      <parseMissingHeadersExperimental>false</parseMissingHeadersExperimental>
+      <resolveIncludePathsUsingMakeExperimental>false</resolveIncludePathsUsingMakeExperimental>
     </codecompletion>
-    <references>
-      <pcs>Qt4</pcs>
-    </references>
+    <references/>
     <qt>
       <used>true</used>
       <version>4</version>

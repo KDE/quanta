@@ -1,8 +1,8 @@
 
 include_directories(
    ${CMAKE_SOURCE_DIR}/quanta/lib
-   ${KDE4_INCLUDE_DIR}/kdevelop
-   ${KDE4_INCLUDE_DIR}/kdevelop/util
+   ${KDE4_INCLUDE_DIR}/kdevplatform
+   ${KDE4_INCLUDE_DIR}/kdevplatform/util
    )
 
 
@@ -39,13 +39,13 @@ install( FILES  kdevquantaproject.rc  DESTINATION ${DATA_INSTALL_DIR}/kdevquanta
 
 #original Makefile.am contents follow:
 
-#INCLUDES = -I$(top_srcdir)/lib -I$(kde_includes)/kdevelop/interfaces \
-#	-I$(kde_includes)/kdevelop/util $(all_includes)
+#INCLUDES = -I$(top_srcdir)/lib -I$(kde_includes)/kdevplatform/interfaces \
+#	-I$(kde_includes)/kdevplatform/util $(all_includes)
 #
 #kde_module_LTLIBRARIES = libkdevquantaproject.la
 #libkdevquantaproject_la_LDFLAGS = -L$(top_builddir)/lib -avoid-version -module -no-undefined \
 #	$(all_libraries) $(KDE_PLUGIN)
-#libkdevquantaproject_la_LIBADD = -lkdevquanta	-lkdevelop
+#libkdevquantaproject_la_LIBADD = -lkdevquanta	-lkdevplatform
 #libkdevquantaproject_la_SOURCES = quantaprojectpart.cpp quantaprojectwidget.cpp \
 #		quantaprojectprojectconfigbase.ui quantaprojectprojectconfig.cpp browserpopupmenu.cpp
 #

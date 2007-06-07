@@ -1,8 +1,8 @@
 
 include_directories(
-   ${KDE4_INCLUDE_DIR}/kdevelop
-   ${KDE4_INCLUDE_DIR}/kdevelop/interfaces
-   ${KDE4_INCLUDE_DIR}/kdevelop/shell
+   ${KDE4_INCLUDE_DIR}/kdevplatform
+   ${KDE4_INCLUDE_DIR}/kdevplatform/interfaces
+   ${KDE4_INCLUDE_DIR}/kdevplatform/shell
 
    )
 

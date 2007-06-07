@@ -1,10 +1,10 @@
 
 include_directories(
    ${CMAKE_BINARY_DIR}/lib
-   ${KDE4_INCLUDE_DIR}/kdevelop
-   ${KDE4_INCLUDE_DIR}/kdevelop/interfaces
-   ${KDE4_INCLUDE_DIR}/kdevelop/shell
-   ${KDE4_INCLUDE_DIR}/kdevelop/editor
+   ${KDE4_INCLUDE_DIR}/kdevplatform
+   ${KDE4_INCLUDE_DIR}/kdevplatform/interfaces
+   ${KDE4_INCLUDE_DIR}/kdevplatform/shell
+   ${KDE4_INCLUDE_DIR}/kdevplatform/editor
    )
 
 
