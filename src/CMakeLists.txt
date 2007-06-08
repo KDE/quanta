@@ -28,7 +28,7 @@ install(TARGETS quanta  DESTINATION ${BIN_INSTALL_DIR} )
 install( FILES  quanta.desktop  DESTINATION ${XDG_APPS_DIR})
 install( FILES  profile.config  DESTINATION ${DATA_INSTALL_DIR}/kdevplatform/profiles/IDE/quanta)
 install( FILES  quantarc quantaui.rc  DESTINATION ${DATA_INSTALL_DIR}/quanta)
-install( FILES  kdevplatformquanta.desktop  DESTINATION ${SERVICETYPES_INSTALL_DIR})
+install( FILES  kdevelopquanta.desktop  DESTINATION ${SERVICETYPES_INSTALL_DIR})
 
 
 
