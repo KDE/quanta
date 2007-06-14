@@ -1,6 +1,6 @@
 
 add_subdirectory( createproject )
-#add_subdirectory( project )
+add_subdirectory( project )
 add_subdirectory( structuretree )
 add_subdirectory( tagdialogs )
 add_subdirectory( filestree )

@@ -1,12 +1,4 @@
+#add_subdirectory( quantaproject )
+#add_subdirectory( projecttree )
+add_subdirectory( projectfilemanager ) 
 
-add_subdirectory( quantaproject )
-add_subdirectory( projecttree )
-
-
-
-
-#original Makefile.am contents follow:
-
-#SUBDIRS = quantaproject projecttree
-#_SOURCES = PROJECTDOM.dtd
-#
