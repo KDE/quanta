@@ -4,6 +4,7 @@ Comment=
 Encoding=UTF-8
 Exec=quanta %u
 GenericName=IDE for Web Development
+GenericName[it]=Ambiente integrato per lo sviluppo Web
 GenericName[x-test]=xxIDE for Web Developmentxx
 Icon=quanta
 MimeType=application/x-kdevelop;application/x-php;text/css;application/docbook+xml;text/html;application/xml
