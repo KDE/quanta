@@ -10,11 +10,20 @@
  
 #include "quantaprojectfilemanager.h" 
 
+#include <icore.h>
 #include <iproject.h>
+#include <iuicontroller.h>
 #include <projectmodel.h>
 
+#include <kdebug.h>
+#include <kio/netaccess.h>
+#include <kmessagebox.h>
 #include <kgenericfactory.h>
+#include <kparts/mainwindow.h>
 
+#include <QDomDocument>
+#include <QDir>
+#include <QFile>
 #include <QStack>
 
 typedef KGenericFactory<QuantaProjectFileManager> QuantaProjectFileManagerFactory;
@@ -22,6 +31,7 @@ K_EXPORT_COMPONENT_FACTORY( quantaprojectfilemanager, QuantaProjectFileManagerFa
 
     QuantaProjectFileManager::QuantaProjectFileManager(QObject *parent, const QStringList &args): KDevelop::IPlugin( QuantaProjectFileManagerFactory::componentData(), parent ), KDevelop::IProjectFileManager()
 {
+  kDebug(24000) << "Creating QuantaProjectFileManager Part" << endl;
   KDEV_USE_EXTENSION_INTERFACE( KDevelop::IProjectFileManager )
   Q_UNUSED(args)
 }
@@ -34,13 +44,48 @@ QuantaProjectFileManager::~QuantaProjectFileManager()
 KDevelop::ProjectItem* QuantaProjectFileManager::import(KDevelop::IProject *project)
 {
   m_project = project;
-  m_baseItem = new KDevelop::ProjectItem(project, "base", 0);
+  m_baseItem = new KDevelop::ProjectItem(project, project->folder().pathOrUrl(), 0L);
+  kDebug(24000) << "Importing project url: " << project->folder() <<  " base item: " << m_baseItem->url() << endl;
   emit folderAdded(m_baseItem);
   return m_baseItem;
 }
 
 QList<KDevelop::ProjectFolderItem*> QuantaProjectFileManager::parse(KDevelop::ProjectFolderItem *base)
 {
+  KUrl url = base->url();
+  url.adjustPath(KUrl::AddTrailingSlash);
+  url.setFileName(base->project()->name() + ".webprj");
+  kDebug(24000) << "Parsing project file: " << url << endl;
+  QString projectTmpFile;
+  KParts::MainWindow *mainWindow = core()->uiController()->activeMainWindow();
+  QDomDocument dom;
+
+  // test if url is writeable and download to local file
+  if (KIO::NetAccess::exists(url, false, mainWindow) &&
+      KIO::NetAccess::download(url, projectTmpFile, mainWindow))
+  {
+    QFile f(projectTmpFile);
+    if (f.open(IO_ReadOnly))
+    {
+      KUrl baseURL = url;
+      baseURL.setPath(url.directory());
+      if (baseURL.isLocalFile())
+      {
+        QDir dir(baseURL.path());
+        baseURL.setPath(dir.canonicalPath());
+        baseURL.adjustPath(KUrl::RemoveTrailingSlash);
+      }
+      dom.setContent(&f);   
+      kDebug(24000) << "Project content: " << dom.toString() << endl;
+      f.close();     
+    }
+  } else      
+  {
+    KMessageBox::error(mainWindow, i18n("<qt>Cannot access the project file <b>%1</b>.</qt>").arg(url.pathOrUrl()));
+    return QList<KDevelop::ProjectFolderItem*>();
+  }
+  
+/*  
   const QString prefix = "Item - ";
   KSharedConfigPtr projectConfig = m_project->projectConfiguration();
   QStringList groupList = projectConfig->groupList();
@@ -90,7 +135,7 @@ QList<KDevelop::ProjectFolderItem*> QuantaProjectFileManager::parse(KDevelop::Pr
     parent->add(item);
     emit fileAdded(item);
   }
-  return QList<KDevelop::ProjectFolderItem *>();
+  return QList<KDevelop::ProjectFolderItem *>();*/
 }
 
 KDevelop::ProjectFolderItem* QuantaProjectFileManager::addFolder(const KUrl &folder, KDevelop::ProjectFolderItem *parent)

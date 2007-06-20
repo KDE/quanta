@@ -18,7 +18,7 @@ kde4_automoc(${quantaprojectfilemanager_PART_SRCS})
 #  projecttreeglobalconfigbase.ui
 #  projecttreeprojectconfigbase.ui )
 
-kde4_add_plugin(quantaprojectfilemanager WITH_PREFIX ${quantaprojectfilemanager_PART_SRCS})
+kde4_add_plugin(quantaprojectfilemanager ${quantaprojectfilemanager_PART_SRCS})
 
 target_link_libraries(quantaprojectfilemanager kdevquanta kdevplatforminterfaces kdevplatformproject ${KDE4_KDECORE_LIBS} )
 

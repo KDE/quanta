@@ -41,6 +41,11 @@ public:
   
   //Reimplemented methods from IProjectFileManager
   virtual QList<KDevelop::ProjectFolderItem*> parse(KDevelop::ProjectFolderItem *dom);
+  /**
+   * Create the root project item for a project.
+   * @param project the project
+   * @return the root item
+   */
   virtual KDevelop::ProjectItem* import(KDevelop::IProject *project);
   virtual KDevelop::ProjectFolderItem* addFolder(const KUrl &folder, KDevelop::ProjectFolderItem *parent);
   virtual KDevelop::ProjectFileItem* addFile(const KUrl &folder, KDevelop::ProjectFolderItem *parent);
