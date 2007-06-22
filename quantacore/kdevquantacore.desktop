@@ -3,6 +3,7 @@ Encoding=UTF-8
 Type=Service
 Exec=blubb
 Comment=Quanta Core
+Comment[el]=Ο πυρήνας του Quanta
 Comment[it]=Nocciolo di Quanta
 Comment[x-test]=xxQuanta Corexx
 Name=KDevQuantaCore
