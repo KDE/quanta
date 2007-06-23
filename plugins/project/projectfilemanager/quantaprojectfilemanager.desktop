@@ -2,8 +2,10 @@
 Type=Service
 Name=Quanta Project Importer
 Name[el]=Εισαγωγέας έργου Quanta
+Name[it]=Importazione di progetti Quanta
 Comment=Allow KDevelop to manage Quanta projects
 Comment[el]=Επιτρέπει στο KDevelop τη διαχείριση έργων Quanta
+Comment[it]=Permetti a KDevelop di gestire i progetti di Quanta
 Icon=gear
 ServiceTypes=KDevelop/Plugin
 X-KDE-Library=quantaprojectfilemanager
