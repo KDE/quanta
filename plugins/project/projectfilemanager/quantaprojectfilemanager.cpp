@@ -9,6 +9,7 @@
  ***************************************************************************/
  
 #include "quantaprojectfilemanager.h" 
+#include "extfileinfo.h"
 
 #include <icore.h>
 #include <iproject.h>
@@ -52,9 +53,16 @@ KDevelop::ProjectItem* QuantaProjectFileManager::import(KDevelop::IProject *proj
 
 QList<KDevelop::ProjectFolderItem*> QuantaProjectFileManager::parse(KDevelop::ProjectFolderItem *base)
 {
+  //This method parses the whole project file for items belonging to the project instead of parsing
+  //the content of only one directory as it seems the framework waits. So simply return nothing when
+  //the request is for a folder which is not the base item.
+  if (base != m_baseItem)
+    return QList<KDevelop::ProjectFolderItem*>();
   KUrl url = base->url();
+  QString name = base->project()->name();
+  name.replace(".kdev4", ".webprj");
   url.adjustPath(KUrl::AddTrailingSlash);
-  url.setFileName(base->project()->name() + ".webprj");
+  url.setFileName(name);
   kDebug(24000) << "Parsing project file: " << url << endl;
   QString projectTmpFile;
   KParts::MainWindow *mainWindow = core()->uiController()->activeMainWindow();
@@ -67,75 +75,109 @@ QList<KDevelop::ProjectFolderItem*> QuantaProjectFileManager::parse(KDevelop::Pr
     QFile f(projectTmpFile);
     if (f.open(IO_ReadOnly))
     {
-      KUrl baseURL = url;
-      baseURL.setPath(url.directory());
-      if (baseURL.isLocalFile())
+      KUrl baseUrl = url;
+      baseUrl.setPath(url.directory());
+      if (baseUrl.isLocalFile())
       {
-        QDir dir(baseURL.path());
-        baseURL.setPath(dir.canonicalPath());
-        baseURL.adjustPath(KUrl::RemoveTrailingSlash);
+        QDir dir(baseUrl.path());
+        baseUrl.setPath(dir.canonicalPath());
+        baseUrl.adjustPath(KUrl::RemoveTrailingSlash);
       }
       dom.setContent(&f);   
-      kDebug(24000) << "Project content: " << dom.toString() << endl;
-      f.close();     
+      //kDebug(24000) << "Project content: " << dom.toString() << endl;
+      f.close();    
+      
+      QMap<KUrl, KDevelop::ProjectFolderItem*> folderList;
+      url = baseUrl;
+      url.adjustPath(KUrl::AddTrailingSlash);        
+      folderList.insert(url, base);
+      QStack<KUrl> urlStack;
+      KDevelop::ProjectFolderItem *parent;
+      //read the items from the dom 
+      QString tmpString;
+      QDomNodeList nl = dom.firstChild().firstChild().childNodes();
+      QDomElement el;
+      uint nlCount = nl.count();
+      for ( uint i = 0; i < nlCount; i++ )
+      {
+        KUrl url = baseUrl;
+        el = nl.item(i).toElement();
+        tmpString = el.attribute("url");
+        if (!tmpString.isEmpty())
+        {
+          ExtFileInfo::setUrl(url,tmpString);
+        } else
+          continue;
+//         kDebug(24000) << "tmpstring " << tmpString <<" url " << url << " baseUrl " << baseUrl << endl;
+        url = ExtFileInfo::toAbsolute(url, baseUrl);
+        if ( el.nodeName() == "item" )
+        {
+//           if (excludeRx.exactMatch(path) || find(url.url(-1)))
+//           {
+//             el.parentNode().removeChild(el);
+//             modified = true;
+//             i--;
+//           } else
+          {
+            bool docFolder = (el.attribute("documentFolder", "false") == "true");
+            int uploadStatus = el.attribute("uploadstatus", "-1").toInt();
+            if (uploadStatus == -1)
+              el.setAttribute("uploadstatus", 1);
+        //remove non-existent local files
+            bool skipItem = false;
+            if (url.isLocalFile())
+            {
+              QFileInfo fi(url.path());
+              if ( !fi.exists() )
+              {
+                el.parentNode().removeChild( el );
+                i--;
+                skipItem = true;
+              } 
+            } 
+            if (!skipItem)
+            {
+              KUrl fileUrl = url;
+              url = fileUrl.upUrl();
+              // search for not yet created folders
+              while (url != baseUrl)
+              {
+                if (folderList.contains(url))
+                {
+                  parent = folderList[url];
+                  break;
+                }
+                urlStack.push(url);
+                url = url.upUrl();
+              }
+              // add new folders
+              while (!urlStack.isEmpty())
+              {
+//                 kDebug(24000) << "Adding folder: " << urlStack.top()<< endl;
+                KDevelop::ProjectFolderItem *item = new KDevelop::ProjectFolderItem(m_project, urlStack.top(), parent);
+                folderList.insert(urlStack.pop(), item);
+                parent = item;
+              }
+              // add the file
+//               kDebug(24000) << "Adding file: " << fileUrl<< endl;
+              KDevelop::ProjectFileItem *item = new KDevelop::ProjectFileItem(m_project, fileUrl, parent);
+            }
+          }
+        }
+      }  
+      //the base should not be returned as it was already created in the import method
+      url = baseUrl;
+      url.adjustPath(KUrl::AddTrailingSlash);       
+      folderList.remove(url);
+      return folderList.values();
     }
+    KMessageBox::error(mainWindow, i18n("<qt>Cannot open the downloaded project file.</qt>"));
+    return QList<KDevelop::ProjectFolderItem*>();
   } else      
   {
     KMessageBox::error(mainWindow, i18n("<qt>Cannot access the project file <b>%1</b>.</qt>").arg(url.pathOrUrl()));
     return QList<KDevelop::ProjectFolderItem*>();
   }
-  
-/*  
-  const QString prefix = "Item - ";
-  KSharedConfigPtr projectConfig = m_project->projectConfiguration();
-  QStringList groupList = projectConfig->groupList();
-  QMap<KUrl, KDevelop::ProjectFolderItem*> folderList;
-  KUrl baseUrl = base->url();
-  folderList.insert(baseUrl, base);
-  QStack<KUrl> urlStack;
-  QString relFileName;
-  KUrl url, fileUrl;
-  KDevelop::ProjectFolderItem *parent;
-
-  //Just for testing with more files
-//  KUrl::List urls = ExtFileInfo::allFiles(m_baseItem->url(), "*");
-//  foreach( KUrl fileUrl, urls)
-  
-  foreach (QString group, groupList)
-  {
-    if (! group.startsWith(prefix))
-      continue;
-
-    relFileName = group.mid(prefix.length());
-    fileUrl = m_project->urlRelativeToProject(relFileName);
-    parent = m_baseItem;
-    url = fileUrl.upUrl();
-    // search for not yet created folders
-    while (url != baseUrl)
-    {
-      if (folderList.contains(url))
-      {
-        parent = folderList[url];
-        break;
-      }
-      urlStack.push(url);
-      url = url.upUrl();
-    }
-    // add new folders
-    while (! urlStack.isEmpty())
-    {
-      KDevelop::ProjectFolderItem *item = new KDevelop::ProjectFolderItem(m_project, urlStack.top(), parent);
-      parent->add(item);
-      folderList.insert(urlStack.pop(), item);
-      parent = item;
-      emit folderAdded(item);
-    }
-    // add the file
-    KDevelop::ProjectFileItem *item = new KDevelop::ProjectFileItem(m_project, fileUrl, parent);
-    parent->add(item);
-    emit fileAdded(item);
-  }
-  return QList<KDevelop::ProjectFolderItem *>();*/
 }
 
 KDevelop::ProjectFolderItem* QuantaProjectFileManager::addFolder(const KUrl &folder, KDevelop::ProjectFolderItem *parent)
