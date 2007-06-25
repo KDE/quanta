@@ -183,30 +183,36 @@ QList<KDevelop::ProjectFolderItem*> QuantaProjectFileManager::parse(KDevelop::Pr
 KDevelop::ProjectFolderItem* QuantaProjectFileManager::addFolder(const KUrl &folder, KDevelop::ProjectFolderItem *parent)
 {
   //TODO implement it
+    return 0;
 }
 
 KDevelop::ProjectFileItem* QuantaProjectFileManager::addFile(const KUrl &folder, KDevelop::ProjectFolderItem *parent)
 {
   //TODO implement it
+    return 0;
 }
 bool QuantaProjectFileManager::removeFolder(KDevelop::ProjectFolderItem *folder)
 {
   //TODO implement it
+    return false;
 }
   
 bool QuantaProjectFileManager::removeFile(KDevelop::ProjectFileItem *file)
 {
   //TODO implement it
+    return false;
 }
 
 bool QuantaProjectFileManager::renameFile(KDevelop::ProjectFileItem *oldFile, const KUrl &newFile)
 {
   //TODO implement it
+    return false;
 }
   
 bool QuantaProjectFileManager::renameFolder(KDevelop::ProjectFolderItem *oldFolder, const KUrl &newFolder)
 {
   //TODO implement it
+    return false;
 }
 
 #include "quantaprojectfilemanager.moc"
