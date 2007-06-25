@@ -6,6 +6,7 @@ Exec=quanta %u
 GenericName=IDE for Web Development
 GenericName[el]=Περιβάλλον ανάπτυξης ιστοσελίδων
 GenericName[it]=Ambiente integrato per lo sviluppo Web
+GenericName[sv]=Integrerad webbutvecklingsmiljö
 GenericName[x-test]=xxIDE for Web Developmentxx
 Icon=quanta
 MimeType=application/x-kdevelop;application/x-php;text/css;application/docbook+xml;text/html;application/xml;
