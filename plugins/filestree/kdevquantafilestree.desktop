@@ -9,6 +9,7 @@ Name[x-test]=xxKDevQuantaFilesTreexx
 GenericName=Quanta Files Tree Plugin
 GenericName[el]=Πρόσθετο δέντρου αρχείων Quanta 
 GenericName[it]=Plugin per l'albero dei file di Quanta
+GenericName[pa]=ਕੁਆਂਤਾ ਫਾਇਲ ਲੜੀ ਪਲੱਗਇਨ
 GenericName[sv]=Insticksprogram för Quantas filträd
 GenericName[x-test]=xxQuanta Files Tree Pluginxx
 Comment=The Files Tree provides an interface to work with your filesystem
