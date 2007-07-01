@@ -40,6 +40,8 @@ public:
   virtual  ~QuantaProjectFileManager();
   
   //Reimplemented methods from IProjectFileManager
+  virtual Features features() const { return Features(Folders | Files); }
+
   virtual QList<KDevelop::ProjectFolderItem*> parse(KDevelop::ProjectFolderItem *dom);
   /**
    * Create the root project item for a project.
