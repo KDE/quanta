@@ -45,7 +45,6 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kseparator.h>
-#include <kpalette.h>
 #include <kimageeffect.h>
 
 #include "colorcombo.moc"
