@@ -33,14 +33,6 @@
 
 #include "version.h"
 
-static KCmdLineOptions options[] =
-{
-  { "profile <profile>", I18N_NOOP("Profile to load"), 0 },
-  { "project <project>", I18N_NOOP("Project to load"), 0 },
-  { "+file(s)", I18N_NOOP("Files to load"), 0 },
-  { 0,0,0 }
-};
-
 
 int main(int argc, char *argv[])
 {
@@ -55,18 +47,23 @@ int main(int argc, char *argv[])
       versions of Quanta. \
       \n\nWe hope you enjoy Quanta Plus.\n\n");
 
-  KAboutData aboutData("quanta", I18N_NOOP("Quanta"),
-                       QUANTA_VERSION, description, KAboutData::License_GPL,
-                       I18N_NOOP("(c) 1999-2006, The Quanta+ developers"), othertext, "http://www.kdewebdev.org");
+  KAboutData aboutData("quanta", 0, ki18n("Quanta"),
+                       QUANTA_VERSION, ki18n(description), KAboutData::License_GPL,
+                       ki18n("(c) 1999-2006, The Quanta+ developers"), ki18n(othertext), "http://www.kdewebdev.org");
                            
-  aboutData.addAuthor("Eric Laffoon",I18N_NOOP("Project Lead - public liaison"), "sequitur@kde.org");
-  aboutData.addAuthor("Andras Mantia",I18N_NOOP("Program Lead - bug squisher"), "amantia@kde.org");
-  aboutData.addCredit("Jens Herden",
-                      I18N_NOOP("Invaluable member - Help with code cleanup, porting to KDevelop and KDE4, etc."),
+  aboutData.addAuthor(ki18n("Eric Laffoon"),ki18n("Project Lead - public liaison"), "sequitur@kde.org");
+  aboutData.addAuthor(ki18n("Andras Mantia"),ki18n("Program Lead - bug squisher"), "amantia@kde.org");
+  aboutData.addCredit(ki18n("Jens Herden"),
+                      ki18n("Invaluable member - Help with code cleanup, porting to KDevelop and KDE4, etc."),
                       "jens@kdewebdev.org");
  
 
   KCmdLineArgs::init(argc, argv, &aboutData);
+
+  KCmdLineOptions options;
+  options.add("profile <profile>", ki18n("Profile to load"));
+  options.add("project <project>", ki18n("Project to load"));
+  options.add("+file(s)", ki18n("Files to load"));
   KCmdLineArgs::addCmdLineOptions( options );
   KCmdLineArgs* args = KCmdLineArgs::parsedArgs();
 
