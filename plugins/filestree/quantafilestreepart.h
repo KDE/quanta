@@ -9,8 +9,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef KDEVQUANTAFILESTREE_H
-#define KDEVQUANTAFILESTREE_H
+#ifndef QUANTAFILESTREEPART_H
+#define QUANTAFILESTREEPART_H
 
 #include <QPointer>
 

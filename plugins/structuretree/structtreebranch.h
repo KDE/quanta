@@ -38,7 +38,7 @@ public:
    * @param after 
    * @return the new item
    */
-  StructTreeItem* createStrucTreeItem(StructTreeItem *parent, Node *node, const QString title = QString::null, StructTreeItem *after = 0)
+  StructTreeItem* createStrucTreeItem(StructTreeItem *parent, Node *node, const QString title = QString(), StructTreeItem *after = 0)
   {
     return new StructTreeItem(this, parent, node, title, after);
   };

@@ -9,8 +9,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef KDEVTAGDIALOGS_H
-#define KDEVTAGDIALOGS_H
+#ifndef TAGDIALOGSPART_H
+#define TAGDIALOGSPART_H
 
 #include "tagdialogsif.h"
 
@@ -36,7 +36,7 @@ public:
   TagDialogsPart(QObject *parent, const QStringList &args);
   ~TagDialogsPart();
 
-  TagPair createNewTag(QTag *dtdTag, const QString& selection, const QString& attrs = QString::null, const KUrl& baseURL = KUrl());
+  TagPair createNewTag(QTag *dtdTag, const QString& selection, const QString& attrs = QString(), const KUrl& baseURL = KUrl());
 
 private slots:
   void init();

@@ -231,7 +231,7 @@ void CreateQuantaProjectPart::slotDelayedAddFiles()
   {
     source = (*it).first;
     dest = (*it).second;
-    if (source.path().endsWith("/"))
+    if (source.path().endsWith('/'))
     {
       kDebug(24000) << "create: " << dest << endl;
       QuantaNetAccess::mkdir(dest, this, -1, false);

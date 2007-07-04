@@ -28,7 +28,7 @@ class TagMiscDlg : public KDialog, public Ui::TagMisc
     Q_OBJECT
 
 public:
-    TagMiscDlg( QWidget* parent = 0, bool addClosingTag=true, const QString &element=QString::null );
+    explicit TagMiscDlg( QWidget* parent = 0, bool addClosingTag=true, const QString &element=QString() );
     ~TagMiscDlg();
 
     QString elementTagName() const;

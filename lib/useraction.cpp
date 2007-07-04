@@ -186,7 +186,7 @@ bool UserAction::slotActionActivated()
       args = command.mid(pos+1);
       command = command.left(pos);
     }
-    if (command.startsWith("~"))
+    if (command.startsWith('~'))
     {
       command = command.mid(1);
       command.prepend(QDir::homePath());

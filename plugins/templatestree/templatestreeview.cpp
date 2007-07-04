@@ -908,7 +908,7 @@ void TemplatesTreeView::slotDelete()
     else
       msg = i18n("Do you really want to delete file \n%1 ?\n", url.path());
 
-    if ( KMessageBox::warningContinueCancel(this, msg, QString::null, KStandardGuiItem::del()) == KMessageBox::Continue )
+    if ( KMessageBox::warningContinueCancel(this, msg, QString(), KStandardGuiItem::del()) == KMessageBox::Continue )
     {
       KIO::Job *job = KIO::del(url);
       connect( job, SIGNAL( result( KJob *) ), this , SLOT( slotJobFinished( KJob *) ) );
@@ -1093,7 +1093,7 @@ void TemplatesTreeView::slotExtractSiteTemplate()
           } else
              error = true;
           KIO::NetAccess::removeTempFile(tempFile);
-          if (!m_projectBaseURL.isEmpty() && !KUrl::relativeUrl(m_projectBaseURL, targetUrl).startsWith("."))
+          if (!m_projectBaseURL.isEmpty() && !KUrl::relativeUrl(m_projectBaseURL, targetUrl).startsWith('.'))
           {
              if (KMessageBox::questionYesNo(this, i18n("You have extracted the site template to a folder which is not under your main project folder.\nDo you want to copy the folder into the main project folder?")) == KMessageBox::Yes)
              {

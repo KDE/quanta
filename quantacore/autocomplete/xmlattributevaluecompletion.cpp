@@ -79,7 +79,7 @@ QList<KTextEditor::CompletionItem>* XmlAttributeValueCompletion::completionEntri
        for ( it = elementMap->constBegin(); it != elementMap->constEnd(); ++it )
        {
           QString selectorName = it.key();
-          if (selectorName.startsWith("#"))
+          if (selectorName.startsWith('#'))
           {
             values << selectorName.mid(1);
           }

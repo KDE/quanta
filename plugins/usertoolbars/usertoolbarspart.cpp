@@ -1081,7 +1081,7 @@ void UserToolbarsPart::slotSendToolbar()
       return;
     }
 
-    KToolInvocation::invokeMailer(toStr, QString::null, QString::null, subjectStr, message, QString::null, toolbarFile);
+    KToolInvocation::invokeMailer(toStr, QString(), QString(), subjectStr, message, QString(), toolbarFile);
   }
   delete mailDlg;
 }

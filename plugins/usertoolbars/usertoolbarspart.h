@@ -12,8 +12,8 @@
  ***************************************************************************/
 
 
-#ifndef KDEVUSERTOOLBARS_H
-#define KDEVUSERTOOLBARS_H
+#ifndef USERTOOLBARSPART_H
+#define USERTOOLBARSPART_H
 
 #include <kurl.h>
 

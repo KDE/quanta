@@ -9,8 +9,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef KDEVTEMPLATESTREE_H
-#define KDEVTEMPLATESTREE_H
+#ifndef TEMPLATESTREEPART_H
+#define TEMPLATESTREEPART_H
 
 #include <QPointer>
 

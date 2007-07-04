@@ -29,7 +29,7 @@
 # include <QtCore/qglobal.h>
 #endif
 
-#if defined Q_OS_WIN
+#if defined _WIN32 || defined _WIN64
 #ifndef KDEVQUANTA_EXPORT
 # ifdef MAKE_KDEVQUANTA_LIB
 #  define KDEVQUANTA_EXPORT KDE_EXPORT

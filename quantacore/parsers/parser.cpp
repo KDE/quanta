@@ -246,7 +246,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
         {
           tag->single = true;
           QString name = tag->name();
-          if (name.length() > 1 && name.endsWith("/"))
+          if (name.length() > 1 && name.endsWith('/'))
           {
             name.truncate(name.length() - 1);
             tag->setName(name);

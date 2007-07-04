@@ -164,7 +164,7 @@ void Tag::parse(const QString &p_tagStr)
   m_tagStr = p_tagStr;
   int strLength = m_tagStr.length();
   cleanStr = m_tagStr;
-  if (!m_tagStr.startsWith("<"))
+  if (!m_tagStr.startsWith('<'))
   {
     m_type = Tag::Text;
     return;
@@ -207,7 +207,7 @@ void Tag::parse(const QString &p_tagStr)
       pos++;
     }
     attr.name = m_tagStr.mid(sPos, pos - sPos);
-    if (attr.name.endsWith(">") && pos == strLength)
+    if (attr.name.endsWith('>') && pos == strLength)
     {
       attr.name = attr.name.left(attr.name.length() - 1).toLower();
       if (!attr.name.trimmed().isEmpty())

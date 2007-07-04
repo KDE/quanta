@@ -9,8 +9,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef KDEVSTRUCTURETREE_H
-#define KDEVSTRUCTURETREE_H
+#ifndef STRUCTURETREEPART_H
+#define STRUCTURETREEPART_H
 
 #include <QPointer>
 

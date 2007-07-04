@@ -27,7 +27,7 @@ class SearchLineWidget : public KTreeWidgetSearchLineWidget
 {
   Q_OBJECT
 public:
-  SearchLineWidget(QWidget *parent = 0, QTreeWidget * treeWidget = 0);
+  explicit SearchLineWidget(QWidget *parent = 0, QTreeWidget * treeWidget = 0);
 
   ~SearchLineWidget();
 

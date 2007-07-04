@@ -9,8 +9,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef KDEVPROJECTTREE_H
-#define KDEVPROJECTTREE_H
+#ifndef PROJECTTREEPART_H
+#define PROJECTTREEPART_H
 
 #include <QPointer>
 

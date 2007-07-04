@@ -44,7 +44,7 @@ public:
   TagDialogsIf();
   virtual ~TagDialogsIf();
 
-   virtual TagPair createNewTag(QTag *dtdTag, const QString& selection, const QString& attrs = QString::null, const KUrl& baseURL = KUrl()) = 0;
+   virtual TagPair createNewTag(QTag *dtdTag, const QString& selection, const QString& attrs = QString(), const KUrl& baseURL = KUrl()) = 0;
 
 };
 

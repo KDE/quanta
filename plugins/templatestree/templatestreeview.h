@@ -110,10 +110,10 @@ signals:
 private:
   
   /** Writes a .dirinfo file from the selected item's path */
-  bool writeDirInfo(const QString& dirInfoFile = QString::null);
+  bool writeDirInfo(const QString& dirInfoFile = QString());
   
   /** Reads a .dirinfo file from the selected item's path */
-  Helper::DirInfo readDirInfo(const QString& dir = QString::null);
+  Helper::DirInfo readDirInfo(const QString& dir = QString());
 
   /** Filters the template through and action, and returns the modified/filtered
   template file */

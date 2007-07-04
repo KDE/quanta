@@ -45,11 +45,11 @@ KUrl ExtFileInfo::toRelative(const KUrl& urlToConvert, const KUrl& baseURL)
   {
     QString path = urlToConvert.path();
     QString basePath = baseURL.path(KUrl::AddTrailingSlash);
-    if (path.startsWith("/"))
+    if (path.startsWith('/'))
     {
       path.remove(0, 1);
       basePath.remove(0, 1);
-      if (! basePath.endsWith("/") ) basePath.append('/');
+      if (! basePath.endsWith('/') ) basePath.append('/');
 
       int pos=0;
       int pos1=0;
@@ -78,7 +78,7 @@ KUrl ExtFileInfo::toRelative(const KUrl& urlToConvert, const KUrl& baseURL)
     resultURL.setPath(QDir::cleanPath(path));
   }
 
-  if (urlToConvert.path().endsWith("/") && !resultURL.path().isEmpty())
+  if (urlToConvert.path().endsWith('/') && !resultURL.path().isEmpty())
     resultURL.adjustPath(KUrl::AddTrailingSlash);
   return resultURL;
 }
@@ -88,7 +88,7 @@ KUrl ExtFileInfo::toRelative(const KUrl& urlToConvert, const KUrl& baseURL)
 KUrl ExtFileInfo::toAbsolute(const KUrl& urlToConvert, const KUrl& baseURL)
 {
   KUrl resultURL = urlToConvert;
-  if (urlToConvert.protocol() == baseURL.protocol() && !urlToConvert.path().startsWith("/"))
+  if (urlToConvert.protocol() == baseURL.protocol() && !urlToConvert.path().startsWith('/'))
   {
     int pos;
     QString cutname = urlToConvert.path();
@@ -102,7 +102,7 @@ KUrl ExtFileInfo::toAbsolute(const KUrl& urlToConvert, const KUrl& baseURL)
     resultURL.setPath(QDir::cleanPath(cutdir+cutname));
   }
 
-  if (urlToConvert.path().endsWith("/")) resultURL.adjustPath(KUrl::AddTrailingSlash);
+  if (urlToConvert.path().endsWith('/')) resultURL.adjustPath(KUrl::AddTrailingSlash);
   return resultURL;
 }
 

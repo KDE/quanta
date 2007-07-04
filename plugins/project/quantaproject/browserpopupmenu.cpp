@@ -47,7 +47,7 @@ void BrowserPopupMenu::buildMenu()
   QStringList::ConstIterator end = entries.constEnd();
   for (QStringList::ConstIterator it = entries.constBegin(); it != end; ++it)
   {
-    if ((*it).endsWith("/"))
+    if ((*it).endsWith('/'))
     {
       KUrl u = m_base;
       u.addPath(*it);

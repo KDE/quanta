@@ -9,8 +9,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef PROJECTTREE_WIDGET_H
-#define PROJECTTREE_WIDGET_H
+#ifndef PROJECTTREEWIDGET_H
+#define PROJECTTREEWIDGET_H
 
 #include <qwidget.h>
 #include <QString>

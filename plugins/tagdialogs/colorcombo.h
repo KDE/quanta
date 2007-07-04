@@ -31,7 +31,7 @@ class ColorCombo : public QComboBox
 {
   Q_OBJECT
 public:
-  ColorCombo( QWidget *parent = 0L, const char *name = 0L );
+  explicit ColorCombo( QWidget *parent = 0L, const char *name = 0L );
   ~ColorCombo();
 
   void setColor( const QColor &col );

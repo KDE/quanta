@@ -70,7 +70,7 @@ public:
    * @param defaultAction the name of the action which should be selected by default
    * @return 
    */
-  ActionConfigDialog(const QHash<QString, ToolbarEntry*> &toolbarList, KDevelop::IPlugin* parent, bool modal = true, Qt::WFlags fl = 0 , const QString& defaultAction = QString::null);
+  ActionConfigDialog(const QHash<QString, ToolbarEntry*> &toolbarList, KDevelop::IPlugin* parent, bool modal = true, Qt::WFlags fl = 0 , const QString& defaultAction = QString());
   ~ActionConfigDialog();
   /**
    * Autmatically creates a script action

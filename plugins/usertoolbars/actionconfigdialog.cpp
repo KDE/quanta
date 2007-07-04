@@ -202,7 +202,7 @@ void ActionConfigDialog::slotRemoveToolbar()
   }
   if (s != i18n("All"))
   {
-      if ( KMessageBox::warningContinueCancel(this, i18n("Do you really want to remove the \"%1\" toolbar?", s),QString::null,KStandardGuiItem::del()) == KMessageBox::Continue )
+      if ( KMessageBox::warningContinueCancel(this, i18n("Do you really want to remove the \"%1\" toolbar?", s),QString(),KStandardGuiItem::del()) == KMessageBox::Continue )
     {
       m_toolbarItem = item;
       connect(m_plugin, SIGNAL(toolbarRemoved(const QString&)), SLOT(slotToolbarRemoved(const QString&)));
@@ -843,7 +843,7 @@ void ActionConfigDialog::slotNewAction()
 
 void ActionConfigDialog::slotDeleteAction()
 {
-    if ( KMessageBox::warningContinueCancel(this, i18n("<qt>Removing the action removes all the references to it.\nAre you sure you want to remove the <b>%1</b> action?</qt>", currentAction->text()),QString::null,KStandardGuiItem::del()) == KMessageBox::Continue )
+    if ( KMessageBox::warningContinueCancel(this, i18n("<qt>Removing the action removes all the references to it.\nAre you sure you want to remove the <b>%1</b> action?</qt>", currentAction->text()),QString(),KStandardGuiItem::del()) == KMessageBox::Continue )
   {
     QString actionName = currentAction->objectName();
     emit deleteUserAction(currentAction);

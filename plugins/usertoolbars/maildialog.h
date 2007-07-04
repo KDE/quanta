@@ -25,7 +25,7 @@
 class MailDialog : public KDialog, public Ui::MailDialogBase  {
 Q_OBJECT
 public:
-  MailDialog(QWidget *parent=0, const QString &caption = QString::null);
+  explicit MailDialog(QWidget *parent=0, const QString &caption = QString());
   ~MailDialog();
 private slots: // Private slots
   /** Select a mail address, using the KABC */

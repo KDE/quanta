@@ -8,8 +8,8 @@
  *   (at your option) any later version.                                   *
  ***************************************************************************/
 
-#ifndef KDEVQUANTAPROJECT_H
-#define KDEVQUANTAPROJECT_H
+#ifndef QUANTAPROJECTPART_H
+#define QUANTAPROJECTPART_H
 
 #include <kdevproject.h>
 #include <kdevplugin.h>

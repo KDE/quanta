@@ -162,9 +162,9 @@ void QuantaCorePart::insertTag(const TagPair & tagPair, bool inLine, bool showDi
     return;
 
   QString s = tagPair.opening();
-  if (s.startsWith("<"))
+  if (s.startsWith('<'))
       s.remove(0, 1);
-  if (s.endsWith(">"))
+  if (s.endsWith('>'))
       s.truncate(s.length()-1);
   s = s.trimmed();
   int i = 0;
@@ -189,11 +189,11 @@ void QuantaCorePart::insertTag(const TagPair & tagPair, bool inLine, bool showDi
   }
 
   QString s1 = Tag::convertCase(name);
-  if (tagPair.opening().startsWith("<"))
+  if (tagPair.opening().startsWith('<'))
     s1.prepend("<");
   if (!attributes.isEmpty())
     s1 += ' ' + TagAttr::convertCase(attributes);
-  if (tagPair.opening().endsWith(">"))
+  if (tagPair.opening().endsWith('>'))
   {
     QTag *dtdTag = QTag::tagFromDTD(m_activeQuantaDoc->mainDTEP(), name);
     if (m_activeQuantaDoc->mainDTEP()->singleTagStyle == "xml" && dtdTag &&

@@ -14,8 +14,8 @@
  ***************************************************************************/
 
 //own includes
-#include "extfileinfo.h"
 #include "quantacommon.h"
+#include "extfileinfo.h"
 #include "tag.h"
 #include "tagattr.h"
 #include "dtds.h"
@@ -331,7 +331,7 @@ bool QuantaCommon::checkMimeGroup(const KUrl& url, const QString& group)
 QString QuantaCommon::qUrl(const KUrl &url)
 {
   QString result = url.path();
-  if (url.path().startsWith("/")) result = url.url();
+  if (url.path().startsWith('/')) result = url.url();
 
   return result;
 }
@@ -593,7 +593,7 @@ QString QuantaCommon::findWordRev(const QString& textToSearch, bool withHyphen)
 
 //   static const QRegExp rx("\\W");
 //   QString t = textToSearch;
-//   while (t.endsWith(" "))
+//   while (t.endsWith(' '))
 //     t = t.left(t.length()-1);
 //   int startPos = -1;
 //   int pos;

@@ -9,8 +9,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef KDEVHTMLPREVIEW_H
-#define KDEVHTMLPREVIEW_H
+#ifndef HTMLPREVIEWPART_H
+#define HTMLPREVIEWPART_H
 
 #include "htmlpart.h"
 

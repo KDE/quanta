@@ -9,8 +9,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef KDEVCREATEQUANTAPROJECT_H
-#define KDEVCREATEQUANTAPROJECT_H
+#ifndef CREATEQUANTAPROJECTPART_H
+#define CREATEQUANTAPROJECTPART_H
 
 #include <QPair>
 #include <QList>

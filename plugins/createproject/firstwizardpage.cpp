@@ -137,7 +137,7 @@ void FirstWizardPage::slotSetProjectBase()
   }
   url.setPath(linePrjDir->text());
   url.adjustPath(KUrl::AddTrailingSlash);
-  if (!url.path().startsWith("/"))
+  if (!url.path().startsWith('/'))
     url.setPath('/' + url.path());
 
   if (url.isValid())
