@@ -109,7 +109,7 @@ void HTMLPreviewPart::setupActions()
 
   connect(action, SIGNAL(triggered(bool)), SLOT(slotPreview()));
   action->setToolTip(i18n("Preview the document in the browser"));
-  action->setWhatsThis(i18n("<b>Preview</b><p>The preview shows the current document in an HTML browser."));
+  action->setWhatsThis(i18n("<b>Preview</b><p>The preview shows the current document in an HTML browser.</p>"));
   action->setEnabled(false);
 }
 
