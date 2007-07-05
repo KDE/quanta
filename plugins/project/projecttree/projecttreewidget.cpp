@@ -18,7 +18,6 @@
 
 #include <kurl.h>
 #include <klibloader.h>
-#include <kparts/part.h>
 #include <k3listviewsearchline.h>
 #include <kxmlguiwindow.h>
 #include <kparts/part.h>
