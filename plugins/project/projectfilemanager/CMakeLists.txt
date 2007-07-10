@@ -12,7 +12,6 @@ set(quantaprojectfilemanager_PART_SRCS
    quantaprojectfilemanager.cpp 
    )
 
-kde4_automoc(${quantaprojectfilemanager_PART_SRCS})
 
 #kde4_add_ui_files(quantaprojectfilemanager_PART_SRCS
 #  projecttreeglobalconfigbase.ui

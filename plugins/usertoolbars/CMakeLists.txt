@@ -23,7 +23,6 @@ set(kdevusertoolbars_PART_SRCS
    newtoolbarstuff.cpp 
    actionconfigdialog.cpp )
 
-kde4_automoc(${kdevusertoolbars_PART_SRCS})
 
 kde4_add_ui_files(
    kdevusertoolbars_PART_SRCS

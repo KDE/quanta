@@ -33,7 +33,6 @@ set(kdevquanta_LIB_SRCS
    searchlinewidget.cpp
    )
 
-kde4_automoc(${kdevquanta_LIB_SRCS})
 
 kde4_add_ui_files(kdevquanta_LIB_SRCS fileinfodlg.ui )
 
