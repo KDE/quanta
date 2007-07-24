@@ -438,7 +438,7 @@ void ExtFileInfo::slotNewEntries(KIO::Job *job, const KIO::UDSEntryList& udsList
   QList<KFileItem*> linkItems;
   for ( ; it != end; ++it )
   {
-    QString name = (*it).stringValue(KIO::UDS_NAME);
+    QString name = (*it).stringValue(KIO::UDSEntry::UDS_NAME);
 
     if (!name.isEmpty() && name != dot && name != dotdot)
     {
@@ -498,7 +498,7 @@ void ExtFileInfo::slotNewDetailedEntries(KIO::Job *job, const KIO::UDSEntryList&
   QList<KFileItem*> linkItems;
   for ( ; it != end; ++it )
   {
-    QString name = (*it).stringValue(KIO::UDS_NAME);
+    QString name = (*it).stringValue(KIO::UDSEntry::UDS_NAME);
 
     if (!name.isEmpty() && name != dot && name != dotdot)
     {
