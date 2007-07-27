@@ -15,6 +15,7 @@ GenericName[pt]='Plugin' da Árvore de Projectos
 GenericName[pt_BR]='Plugin' da Árvore de Projectos
 GenericName[sv]=Insticksprogram för projektträd
 GenericName[x-test]=xxProjectTree Pluginxx
+GenericName[zh_TW]=專案樹狀圖外掛程式
 Comment=ProjectTree Description
 Comment[el]=Περιγραφή δέντρου έργου
 Comment[ga]=Cur Síos ProjectTree
@@ -23,6 +24,7 @@ Comment[pt]=Descrição da Árvore de Projectos
 Comment[pt_BR]=Descrição da Árvore de Projectos
 Comment[sv]=Beskrivning av projektträd
 Comment[x-test]=xxProjectTree Descriptionxx
+Comment[zh_TW]=專案樹狀圖描述
 Icon=folder_green
 ServiceTypes=KDevelop/Plugin
 

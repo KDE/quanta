@@ -15,6 +15,7 @@ GenericName[pt]='Plugin' das Janelas de Marcas
 GenericName[pt_BR]='Plugin' das Janelas de Marcas
 GenericName[sv]=Insticksprogram för taggdialogrutor
 GenericName[x-test]=xxTagDialogs Pluginxx
+GenericName[zh_TW]=標籤對話框外掛程式
 Comment=TagDialogs Description
 Comment[el]=Περιγραφή διαλόγων ετικετών
 Comment[ga]=Cur Síos TagDialogs
@@ -23,6 +24,7 @@ Comment[pt]=Descrição das Janelas de Marcas
 Comment[pt_BR]=Descrição das Janelas de Marcas
 Comment[sv]=Beskrivning av taggdialogrutor
 Comment[x-test]=xxTagDialogs Descriptionxx
+Comment[zh_TW]=標籤對話框描述
 Icon=view_sidetree
 ServiceTypes=KDevelop/Plugin,KDevelop/TagDialogs
 

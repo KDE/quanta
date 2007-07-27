@@ -16,6 +16,7 @@ GenericName[pt]='Plugin' das Barras de Ferramentas do Utilizador
 GenericName[pt_BR]='Plugin' das Barras de Ferramentas do Utilizador
 GenericName[sv]=Insticksprogram för användarverktygsrader
 GenericName[x-test]=xxUserToolbars Pluginxx
+GenericName[zh_TW]=使用者工具列外掛程式
 Comment=UserToolbars Description
 Comment[el]=Περιγραφή γραμμών εργαλείων χρήστη
 Comment[ga]=Cur Síos UserToolbars
@@ -25,6 +26,7 @@ Comment[pt]=Descrição das Barras de Ferramentas do Utilizador
 Comment[pt_BR]=Descrição das Barras de Ferramentas do Utilizador
 Comment[sv]=Beskrivning av användarverktygsrader
 Comment[x-test]=xxUserToolbars Descriptionxx
+Comment[zh_TW]=使用者工具列描述
 Icon=kdevelop
 ServiceTypes=KDevelop/Plugin,KDevelop/UserToolbars
 

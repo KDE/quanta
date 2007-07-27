@@ -17,6 +17,7 @@ GenericName[pt]='Plugin' da Árvore de Ficheiros do Quanta
 GenericName[pt_BR]='Plugin' da Árvore de Ficheiros do Quanta
 GenericName[sv]=Insticksprogram för Quantas filträd
 GenericName[x-test]=xxQuanta Files Tree Pluginxx
+GenericName[zh_TW]=Quanta 檔案樹狀圖外掛程式
 Comment=The Files Tree provides an interface to work with your filesystem
 Comment[el]=Το δέντρο αρχείων προσφέρει μια διασύνδεση εργασίας με το σύστημα αρχείων σας
 Comment[ga]=Soláthraíonn an Crann Comhad comhéadan a oibríonn le do chóras comhad
@@ -26,6 +27,7 @@ Comment[pt]=A Árvore de Ficheiros oferece uma interface para lidar com o seu si
 Comment[pt_BR]=A Árvore de Ficheiros oferece uma interface para lidar com o seu sistema de ficheiros
 Comment[sv]=Filträdet tillhandahåller ett gränssnitt för att arbeta med filsystemet
 Comment[x-test]=xxThe Files Tree provides an interface to work with your filesystemxx
+Comment[zh_TW]=檔案樹狀圖提供使用者介面讓您方便使用檔案系統
 Icon=system
 ServiceTypes=KDevelop/Plugin
 

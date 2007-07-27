@@ -11,6 +11,7 @@ Name[pt]=Interface para Projectos do KDevelop
 Name[pt_BR]=Interface para Projectos do KDevelop
 Name[sv]=KDevelop-projektgränssnitt
 Name[x-test]=xxKDevelop Project Interfacexx
+Name[zh_TW]=KDevelop 專案介面
 Type=ServiceType
 X-KDE-Derived=KDevelop/Plugin
 X-KDE-ServiceType=KDevelop/Quanta

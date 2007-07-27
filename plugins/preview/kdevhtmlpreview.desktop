@@ -16,6 +16,7 @@ GenericName[pt]='Plugin' de Antevisão em HTML
 GenericName[pt_BR]='Plugin' de Antevisão em HTML
 GenericName[sv]=Insticksprogram för HTML-förhandsgranskning
 GenericName[x-test]=xxHTMLPreview Pluginxx
+GenericName[zh_TW]=HTML 預覽外掛程式
 Comment=HTMLPreview Description
 Comment[el]=Περιγραφή προεπισκόπησης HTML
 Comment[ga]=Cur Síos HTMLPreview
@@ -24,6 +25,7 @@ Comment[pt]=Descrição da Antevisão em HTML
 Comment[pt_BR]=Descrição da Antevisão em HTML
 Comment[sv]=Beskrivning av HTML-förhandsgranskning
 Comment[x-test]=xxHTMLPreview Descriptionxx
+Comment[zh_TW]=HTML 預覽描述
 Icon=konqueror
 ServiceTypes=KDevelop/Plugin
 

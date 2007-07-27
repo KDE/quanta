@@ -16,6 +16,7 @@ GenericName[pt]='Plugin' da Árvore de Modelos
 GenericName[pt_BR]='Plugin' da Árvore de Modelos
 GenericName[sv]=Insticksprogram för mallträd
 GenericName[x-test]=xxTemplatesTree Pluginxx
+GenericName[zh_TW]=樣本樹狀圖外掛程式
 Comment=TemplatesTree Description
 Comment[el]=Περιγραφή δέντρου προτύπων
 Comment[ga]=Cur Síos TemplatesTree
@@ -25,6 +26,7 @@ Comment[pt]=Descrição da Árvore de Modelos
 Comment[pt_BR]=Descrição da Árvore de Modelos
 Comment[sv]=Beskrivning av mallträd
 Comment[x-test]=xxTemplatesTree Descriptionxx
+Comment[zh_TW]=樣本樹狀圖描述
 Icon=template_source
 ServiceTypes=KDevelop/Plugin
 

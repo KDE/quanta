@@ -14,6 +14,7 @@ GenericName[pt]=IDE de Desenvolvimento Web
 GenericName[pt_BR]=IDE de Desenvolvimento Web
 GenericName[sv]=Integrerad webbutvecklingsmiljö
 GenericName[x-test]=xxIDE for Web Developmentxx
+GenericName[zh_TW]=網頁開發整合環境
 Icon=quanta
 MimeType=application/x-kdevelop;application/x-php;text/css;application/docbook+xml;text/html;application/xml;
 Name=Quanta Plus

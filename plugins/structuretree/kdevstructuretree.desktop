@@ -15,6 +15,7 @@ GenericName[pt]='Plugin' da Árvore de Estrutura
 GenericName[pt_BR]='Plugin' da Árvore de Estrutura
 GenericName[sv]=Insticksprogram med strukturträd
 GenericName[x-test]=xxStructure Tree Pluginxx
+GenericName[zh_TW]=結構樹狀圖外掛程式
 Comment=The Structure Tree is a view on the stucture of the document.
 Comment[el]=Το δέντρο δομής είναι μια προβολή της δομής του εγγράφου.
 Comment[ga]=Soláthraíonn an Crann Struchtúir amharc ar struchtúr na cáipéise.
@@ -24,6 +25,7 @@ Comment[pt]=A Árvore da Estrutura é uma visão sobre a estrutura do documento.
 Comment[pt_BR]=A Árvore da Estrutura é uma visão sobre a estrutura do documento.
 Comment[sv]=Strukturträdet är en vy av dokumentets struktur.
 Comment[x-test]=xxThe Structure Tree is a view on the stucture of the document.xx
+Comment[zh_TW]=結構樹狀圖檢視文件的結構
 Icon=view_tree
 ServiceTypes=KDevelop/Plugin
 

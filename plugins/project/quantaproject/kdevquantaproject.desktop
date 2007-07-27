@@ -17,6 +17,7 @@ GenericName[pt]='Plugin' de Projectos do Quanta
 GenericName[pt_BR]='Plugin' de Projectos do Quanta
 GenericName[sv]=Insticksprogram för Quanta-projekt
 GenericName[x-test]=xxQuantaproject Pluginxx
+GenericName[zh_TW]=Quanta 專案外掛程式
 Comment=QuantaProject Description
 Comment[el]=Περιγραφή έργου Quanta
 Comment[fa]=توصیف QuantaProject
@@ -26,6 +27,7 @@ Comment[pt]=Descrição dos Projectos do Quanta
 Comment[pt_BR]=Descrição dos Projectos do Quanta
 Comment[sv]=Beskrivning av Quanta-projekt
 Comment[x-test]=xxQuantaProject Descriptionxx
+Comment[zh_TW]=Quanta 專案描述
 Icon=quanta
 ServiceTypes=KDevelop/Project
 

@@ -17,6 +17,7 @@ GenericName[pt]='Plugin' de Criação de Projectos do Quanta
 GenericName[pt_BR]='Plugin' de Criação de Projectos do Quanta
 GenericName[sv]=Insticksprogram för att skapa Quanta-projekt
 GenericName[x-test]=xxCreateQuantaProject Pluginxx
+GenericName[zh_TW]=建立 Quanta 專案外掛程式
 Comment=CreateQuantaProject Description
 Comment[el]=Περιγραφή δημιουργίας έργου Quanta
 Comment[ga]=Cur Síos CreateQuantaProject
@@ -26,6 +27,7 @@ Comment[pt]=Descrição da Criação de Projectos do Quanta
 Comment[pt_BR]=Descrição da Criação de Projectos do Quanta
 Comment[sv]=Beskrivning av skapa Quanta-projekt
 Comment[x-test]=xxCreateQuantaProject Descriptionxx
+Comment[zh_TW]=建立 Quanta 專案描述
 Icon=kdevelop
 ServiceTypes=KDevelop/Plugin
 
