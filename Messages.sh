@@ -1,3 +1,4 @@
+#! /usr/bin/env bash
 find . -name "*.cpp" -print > files 
 find . -name "*.cc" -print >> files
 find . -name "*.h" -print >> files
