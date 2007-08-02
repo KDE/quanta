@@ -67,8 +67,8 @@ Q_SIGNALS:
   void fileRenamed(const KUrl& oldFile, KDevelop::ProjectFileItem* newFile);
   
 private:
-  KDevelop::ProjectItem  *m_baseItem;
-  KDevelop::IProject *m_project;
+  QMap<KUrl, KUrl::List> m_projectFolders; ///< list of project folders, and the subfolders for each folder in the form of <folder,subfolder>
+  QMap<KUrl, KUrl::List> m_projectFiles; ///< list of project folders, and the files for each folder in the form of <folder,files>
 };
 
 #endif
