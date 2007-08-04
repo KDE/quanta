@@ -40,9 +40,6 @@
     <height>32000</height>
    </size>
   </property>
-  <property name="windowTitle" >
-   <string>WebImportWizardPageBase</string>
-  </property>
   <layout class="QGridLayout" >
    <property name="margin" >
     <number>11</number>

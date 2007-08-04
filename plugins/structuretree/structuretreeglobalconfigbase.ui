@@ -35,18 +35,12 @@
      <property name="text" >
       <string>Show whitespace areas and empt&amp;y groups.</string>
      </property>
-     <property name="shortcut" >
-      <string>Alt+Y</string>
-     </property>
     </widget>
    </item>
    <item>
     <widget class="QCheckBox" name="kcfg_ShowClosingTag" >
      <property name="text" >
       <string>Show closi&amp;ng tags</string>
-     </property>
-     <property name="shortcut" >
-      <string>Alt+N</string>
      </property>
     </widget>
    </item>

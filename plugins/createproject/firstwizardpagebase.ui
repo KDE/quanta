@@ -37,9 +37,6 @@
     <height>410</height>
    </size>
   </property>
-  <property name="windowTitle" >
-   <string>FirstWizardPageBase</string>
-  </property>
   <layout class="QGridLayout" >
    <property name="margin" >
     <number>11</number>

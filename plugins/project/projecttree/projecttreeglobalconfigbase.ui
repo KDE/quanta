@@ -48,9 +48,6 @@
      <property name="text" >
       <string>Remem&amp;ber the tree status</string>
      </property>
-     <property name="shortcut" >
-      <string>Alt+B</string>
-     </property>
     </widget>
    </item>
    <item>

@@ -42,18 +42,12 @@
         <property name="text" >
          <string>Cre&amp;ate separate toolbars</string>
         </property>
-        <property name="shortcut" >
-         <string>Alt+A</string>
-        </property>
        </widget>
       </item>
       <item row="1" column="0" >
        <widget class="QCheckBox" name="createActionsMenu" >
         <property name="text" >
          <string>Create an Actions &amp;menu</string>
-        </property>
-        <property name="shortcut" >
-         <string>Alt+M</string>
         </property>
        </widget>
       </item>
