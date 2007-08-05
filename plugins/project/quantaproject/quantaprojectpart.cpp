@@ -49,7 +49,7 @@ K_EXPORT_COMPONENT_FACTORY( libkdevquantaproject, QuantaProjectFactory("kdevquan
 QuantaProjectPart::QuantaProjectPart( QObject *parent, const QStringList & /*args*/ )
   : Koncrete::Plugin(QuantaProjectFactory::componentData(), parent)
 {
-  kDebug( 24000 ) << "QuantaProjectPart loaded" << endl;
+  kDebug( 24000 ) << "QuantaProjectPart loaded";
   setXMLFile( "kdevquantaproject.rc" );
   
 //   m_workspace = 0;
@@ -88,7 +88,7 @@ QuantaProjectPart::QuantaProjectPart( QObject *parent, const QStringList & /*arg
 
 QuantaProjectPart::~QuantaProjectPart()
 {
-  kDebug( 24000 ) << "QuantaProjectPart unloaded" << endl;
+  kDebug( 24000 ) << "QuantaProjectPart unloaded";
 }
 
 
@@ -217,7 +217,7 @@ void QuantaProjectPart::openProject( const KUrl &dirName, const QString &project
   m_projectBase.adjustPath(KUrl::AddTrailingSlash);
   m_projectName = projectName;
 
-  kDebug(24000) << "dirName: " << dirName << " projectName: " << projectName << " baseUrl:" << m_projectBase << endl;
+  kDebug(24000) << "dirName: " << dirName << " projectName: " << projectName << " baseUrl:" << m_projectBase;
   
   Koncrete::FileManager *manager = Koncrete::Core::activeProject()->fileManager();
   Koncrete::ProjectFolderItem *baseItem = static_cast<Koncrete::ProjectFolderItem *>(manager->import(m_projectModel, m_projectBase));
@@ -249,19 +249,19 @@ void QuantaProjectPart::openProject( const KUrl &dirName, const QString &project
     KUrl url = it.next()->url();
     m_files.insert(url, QDomElement());
     if (inProject(url))
-      kDebug(24000) << url << " is in project." << endl;
+      kDebug(24000) << url << " is in project.";
     else
-      kDebug(24000) << url << " is NOT in project." << endl;
+      kDebug(24000) << url << " is NOT in project.";
     url.upUrl();
     url.adjustPath(KUrl::AddTrailingSlash);
     if (inProject(url))
-      kDebug(24000) << url << " is in project." << endl;
+      kDebug(24000) << url << " is in project.";
     else
-      kDebug(24000) << url << " is NOT in project." << endl;
+      kDebug(24000) << url << " is NOT in project.";
   }
-//   kDebug(24000) << "Files in the project: " << m_files.keys() << endl;
+//   kDebug(24000) << "Files in the project: " << m_files.keys();
 */
-  kDebug(24000) << "Project base: " << m_projectBase << " name: " << projectName << " baseItem: "<< baseItem->url() << endl;
+  kDebug(24000) << "Project base: " << m_projectBase << " name: " << projectName << " baseItem: "<< baseItem->url();
 }
 
 QStringList QuantaProjectPart::allFiles() const
@@ -276,7 +276,7 @@ QList<Koncrete::ProjectFileItem*> QuantaProjectPart::allFiles()
 
 void QuantaProjectPart::addFiles( const QStringList &fileList )
 {
-  kDebug(24000) << "Files added to project: " << fileList << endl;
+  kDebug(24000) << "Files added to project: " << fileList;
   QDomElement itemsElement = Koncrete::DomUtil::elementByPath(*m_projectDom, "/project/items");
   QDomElement el;
   QStringList::ConstIterator end = fileList.constEnd();
@@ -320,7 +320,7 @@ QStringList QuantaProjectPart::removeItems(const QStringList &items)
       fileName = it.key();
       if (fileName == *itemIt || fileName.startsWith(*itemIt + '/'))
       {
-        kDebug(24000) << "File removed from project: " << fileName << endl;
+        kDebug(24000) << "File removed from project: " << fileName;
         QDomElement el = it.value();
         el.parentNode().removeChild(el);
         deleteIt = it;
@@ -429,7 +429,7 @@ bool QuantaProjectPart::isProjectFile(const KUrl &url)
     return true;
 
   QString u = url.path().remove(0, m_projectBase.path().length());
-  kDebug(24000) << "Is part of the project: url=" <<  url << " relativepath= " << u << " result=" << (m_files.contains(u) || m_files.contains(u.append('/'))) << endl;
+  kDebug(24000) << "Is part of the project: url=" <<  url << " relativepath= " << u << " result=" << (m_files.contains(u) || m_files.contains(u.append('/')));
   return (m_files.contains(u) || (u.right(1) != "/" && m_files.contains(u.append('/'))));
 }
 */

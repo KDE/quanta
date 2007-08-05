@@ -246,13 +246,13 @@ KUrl::List ExtFileInfo::allFilesInternal(const KUrl& startURL, const QString& ma
              this, SLOT( slotListResult (KJob *) ) );
     m_listStartURL = startURL.url();
 
-    //kDebug(24000) << "Now listing: " << startURL.url() << endl;
+    //kDebug(24000) << "Now listing: " << startURL.url();
     enter_loop();
-    //kDebug(24000) << "Listing done: " << startURL.url() << endl;
+    //kDebug(24000) << "Listing done: " << startURL.url();
     lstFilters.clear();
     if (!bJobOK)
     {
- //     kDebug(24000) << "Error while listing "<< startURL.url() << endl;
+ //     kDebug(24000) << "Error while listing "<< startURL.url();
       dirListItems.clear();
     }
   }
@@ -286,13 +286,13 @@ QHash<QString, KFileItem*> ExtFileInfo::allFilesDetailedInternal(const KUrl& sta
     connect( job, SIGNAL( result (KJob *) ),
              this, SLOT( slotListResult (KJob *) ) );
     m_listStartURL = startURL.url();
-    //kDebug(24000) << "Now listing: " << startURL.url() << endl;
+    //kDebug(24000) << "Now listing: " << startURL.url();
     enter_loop();
-    //kDebug(24000) << "Listing done: " << startURL.url() << endl;
+    //kDebug(24000) << "Listing done: " << startURL.url();
     lstFilters.clear();
     if (!bJobOK)
     {
- //     kDebug(24000) << "Error while listing "<< startURL.url() << endl;
+ //     kDebug(24000) << "Error while listing "<< startURL.url();
       detailedDirListItems.clear();
     }
   }
@@ -324,13 +324,13 @@ KUrl::List ExtFileInfo::listDirInternal(const KUrl& startURL, const QString& mas
              this, SLOT( slotListResult (KJob *) ) );
     m_listStartURL = startURL.url();
 
-    //kDebug(24000) << "Now listing: " << startURL.url() << endl;
+    //kDebug(24000) << "Now listing: " << startURL.url();
     enter_loop();
-    //kDebug(24000) << "Listing done: " << startURL.url() << endl;
+    //kDebug(24000) << "Listing done: " << startURL.url();
     lstFilters.clear();
     if (!bJobOK)
     {
- //     kDebug(24000) << "Error while listing "<< startURL.url() << endl;
+ //     kDebug(24000) << "Error while listing "<< startURL.url();
       dirListItems.clear();
     }
   }
@@ -345,7 +345,7 @@ bool ExtFileInfo::internalExists(const KUrl& url)
   bJobOK = true;
   KUrl url2 = url;
   url2.adjustPath(KUrl::RemoveTrailingSlash);
- // kDebug(24000)<<"ExtFileInfo::internalExists"<<endl;
+ // kDebug(24000)<<"ExtFileInfo::internalExists";
   KIO::StatJob * job = KIO::stat(url2, false);
   job->setDetails(0);
   job->setSide(false); //check the url for writing
@@ -354,9 +354,9 @@ bool ExtFileInfo::internalExists(const KUrl& url)
 
   //To avoid lock-ups, start a timer.
   QTimer::singleShot(60*1000, this,SLOT(slotTimeout()));
-  //kDebug(24000)<<"ExtFileInfo::internalExists:before enter_loop"<<endl;
+  //kDebug(24000)<<"ExtFileInfo::internalExists:before enter_loop";
   enter_loop();
-  //kDebug(24000)<<"ExtFileInfo::internalExists:after enter_loop"<<endl;
+  //kDebug(24000)<<"ExtFileInfo::internalExists:after enter_loop";
   return bJobOK;
 }
 
@@ -381,7 +381,7 @@ bool ExtFileInfo::internalCopy(const KUrl& src, const KUrl& target, int permissi
   //enter_loop();
   //if (bJobOK)
   {
-//    kDebug(24000) << "Copying " << src << " to " << target << endl;
+//    kDebug(24000) << "Copying " << src << " to " << target;
    // KIO::Job *job = KIO::copy( src, target, false );
     job->ui()->setWindow(window);
     connect( job, SIGNAL( result (KJob *) ),
@@ -412,7 +412,7 @@ void ExtFileInfo::slotListResult(KJob *job)
 
 void ExtFileInfo::slotResult(KJob *job)
 {
-   //kDebug(24000)<<"ExtFileInfo::slotResult"<<endl;
+   //kDebug(24000)<<"ExtFileInfo::slotResult";
  bJobOK = !job->error();
   if ( !bJobOK )
   {
@@ -453,7 +453,7 @@ void ExtFileInfo::slotNewEntries(KIO::Job *job, const KIO::UDSEntryList& udsList
           linkItems.append(new KFileItem(*item));
         } else
         {
-          kDebug(24000) << "Recursive link" << u.url() << endl;
+          kDebug(24000) << "Recursive link" << u.url();
           continue;
         }
       }
@@ -472,7 +472,7 @@ void ExtFileInfo::slotNewEntries(KIO::Job *job, const KIO::UDSEntryList& udsList
   {
     KIO::ListJob *ljob = KIO::listRecursive((*it)->url(), false, true);
     m_listJobCount++;
-    //kDebug(24000) << "Now listing: " << (*it)->url() << endl;
+    //kDebug(24000) << "Now listing: " << (*it)->url();
     connect( ljob, SIGNAL(entries(KIO::Job *,const KIO::UDSEntryList &)),
              this,SLOT  (slotNewEntries(KIO::Job *,const KIO::UDSEntryList &)));
     connect( ljob, SIGNAL(result(KJob *)),
@@ -514,7 +514,7 @@ void ExtFileInfo::slotNewDetailedEntries(KIO::Job *job, const KIO::UDSEntryList&
           linkItems.append(new KFileItem(*item));
         } else
         {
-          kDebug(24000) << "Recursive link" << item->url() << endl;
+          kDebug(24000) << "Recursive link" << item->url();
           continue;
         }
       }
@@ -533,7 +533,7 @@ void ExtFileInfo::slotNewDetailedEntries(KIO::Job *job, const KIO::UDSEntryList&
   {
     KIO::ListJob *ljob = KIO::listRecursive(it->url(), false, true);
     m_listJobCount++;
-   // kDebug(24000) << "Now listing: " << (*it)->url() << endl;
+   // kDebug(24000) << "Now listing: " << (*it)->url();
     connect( ljob, SIGNAL(entries(KIO::Job *,const KIO::UDSEntryList &)),
              this,SLOT  (slotNewDetailedEntries(KIO::Job *,const KIO::UDSEntryList &)));
     connect( ljob, SIGNAL(result(KJob *)),

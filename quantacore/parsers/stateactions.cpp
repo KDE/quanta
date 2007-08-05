@@ -34,7 +34,7 @@
 #undef DEBUGMODE
 
 #ifdef DEBUGMODE
-#define ACTIONDEBUG( S )  kDebug(24001) << S << endl;
+#define ACTIONDEBUG( S )  kDebug(24001) << S;
 #else
 #define ACTIONDEBUG( S )
 #endif
@@ -74,7 +74,7 @@ StateActions::ActionFunctPtr StateActions::factory(const QString &name)
   if (id == "quickparsespecial") return &popState;
   if (id == "fillbufferuntil") return &fillBufferUntil;
 
-  kWarning(24001) << "unknown function name '" << id << "' in StateActions::factory" << endl;
+  kWarning(24001) << "unknown function name '" << id << "' in StateActions::factory";
   return &crashMe; // in case name is wrong
 }
 
@@ -85,7 +85,7 @@ bool StateActions::crashMe(const ParserStatus & parser, const QString & argument
   Q_UNUSED(argument);
 /*  Q_ASSERT(false);
   return false;*/
-  kWarning(24001) << "Unknown action function called." << endl;
+  kWarning(24001) << "Unknown action function called.";
   return true;
 }
 

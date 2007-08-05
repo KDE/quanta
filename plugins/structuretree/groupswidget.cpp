@@ -78,7 +78,7 @@ GroupsWidget::~GroupsWidget()
 
 void GroupsWidget::slotBuild(const ParseResult *parseResult)
 {
-//   kDebug(24000) << "GroupsWidget::slotBuild " << parseResult->baseURL << endl;
+//   kDebug(24000) << "GroupsWidget::slotBuild " << parseResult->baseURL;
   if (!isVisible())
   {
     m_dirty = true;
@@ -103,14 +103,14 @@ void GroupsWidget::slotExpanded(Q3ListViewItem * item)
 
 void GroupsWidget::slotBlockGUI()
 {
- // kDebug(24000) << "slotBlockGUI" << endl;
+ // kDebug(24000) << "slotBlockGUI";
   setEnabled(false);
 }
 
 
 void GroupsWidget::slotUnblockGUI()
 {
-//  kDebug(24000) << "slotUnblockGUI" << endl;
+//  kDebug(24000) << "slotUnblockGUI";
   setEnabled(true);
   m_dirty = false;
 }

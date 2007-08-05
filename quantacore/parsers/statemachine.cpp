@@ -65,7 +65,7 @@ bool StateMachine::build(const QString &fileName)
     m_startState = m_startState ? m_startState : state;
     state->name = e.attribute("name", QString("state:%1").arg(i));
     if (m_stateNameMapping.contains(state->name))
-      kWarning(24001) << "Duplicate state name found: " << state->name << endl;
+      kWarning(24001) << "Duplicate state name found: " << state->name;
     else
       m_stateNameMapping.insert(state->name, state);
   }
@@ -83,19 +83,19 @@ bool StateMachine::build(const QString &fileName)
   foreach(State *state, m_stateNameMapping)
   {
     if (state->endState)
-      kDebug(24001) << "State: name = " << state->name << " endOfDocument=" << state->endState->name << endl;
+      kDebug(24001) << "State: name = " << state->name << " endOfDocument=" << state->endState->name;
     else
-      kDebug(24001) << "State: name = " << state->name << " endOfDocument= not specified" << endl;
+      kDebug(24001) << "State: name = " << state->name << " endOfDocument= not specified";
     Condition * condition = state->conditions[0];
     int i = 0;
     while (condition)
     {
-      kDebug(24001) << "   Condition: " << " comparatorFunct = " << condition->compareFunction.name() << ", argument = \"" << condition->compareFunction.argument() << "\", nextState = (" << condition->nextState << " , " << m_stateNameMapping.key(condition->nextState) << ")" << endl;
+      kDebug(24001) << "   Condition: " << " comparatorFunct = " << condition->compareFunction.name() << ", argument = \"" << condition->compareFunction.argument() << "\", nextState = (" << condition->nextState << " , " << m_stateNameMapping.key(condition->nextState) << ")";
       int j = 0;
       ActionFunction *action = condition->actionFunctions[0];
       while (action)
       {
-        kDebug(24001) << "      Action: name = " << action->name() << ", argument = \"" << action->argument() << "\"" << endl;
+        kDebug(24001) << "      Action: name = " << action->name() << ", argument = \"" << action->argument() << "\"";
         j++;
         action = condition->actionFunctions[j];
       }
@@ -143,7 +143,7 @@ void StateMachine::readConditions(QDomNode *stateNode, Condition* conditions[])
       {
 #ifdef DEBUG_STATEMACHINE
         if (!nextStateName.isEmpty())
-          kWarning(24001) << "State " << nextStateName << " is not known." << endl;
+          kWarning(24001) << "State " << nextStateName << " is not known.";
 #endif
         condition->nextState = 0;
       }
@@ -178,7 +178,7 @@ void StateMachine::readConditions(QDomNode *stateNode, Condition* conditions[])
   }
 #ifdef DEBUG_STATEMACHINE
   if (!defaultConditionExists)
-    kWarning(24001) << "State " << stateNode->toElement().attribute("name") <<"  misses the default \"isAnyChar\" condition." << endl;
+    kWarning(24001) << "State " << stateNode->toElement().attribute("name") <<"  misses the default \"isAnyChar\" condition.";
 #endif
 }
 

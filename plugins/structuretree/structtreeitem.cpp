@@ -201,7 +201,7 @@ stripWhiteSpace                if (m_node->prev)
     setText(0, title);
     setVisible(shouldBeVisible());
 
-//     kDebug(24000) << isVisible() << m_node->opened << endl;
+//     kDebug(24000) << isVisible() << m_node->opened;
     if (isVisible() && m_node->opened)
     {
       setOpen(true);
@@ -237,7 +237,7 @@ void StructTreeItem::populate()
   if (!node)
     return;
 
-//   kDebug(24000) << "populate() " << text(0) << endl;
+//   kDebug(24000) << "populate() " << text(0);
 
   StructTreeItem *item = new StructTreeItem(this, node);
   setOpen(true);
@@ -258,7 +258,7 @@ bool StructTreeItem::shouldBeVisible() const
   bool v = ((!m_tag->isType(Tag::Empty)) || Settings::self()->showWhitespace()) &&
            (((!m_tag->isType(Tag::XmlTagEnd)) && (!m_tag->isType(Tag::ScriptStructureEnd))) || Settings::self()->showClosingTag());
 
-//   kDebug(24000) << v << endl;
+//   kDebug(24000) << v;
 
   return v;
 }
@@ -320,12 +320,12 @@ void StructTreeItem::setOpen(bool open)
 {
   K3ListViewItem::setOpen(open);
   m_node->opened = open;
-//    kDebug(24000) << "============setOpen " << open << endl;
+//    kDebug(24000) << "============setOpen " << open;
 }
 
 StructTreeItem * StructTreeItem::makeNodeVisible(const QPoint & qp)
 {
- // kDebug(24000) << "Make item visible: " << text(0) << endl;
+ // kDebug(24000) << "Make item visible: " << text(0);
   if (! m_tag)
     return 0;
 

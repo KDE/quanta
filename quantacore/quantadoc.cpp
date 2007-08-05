@@ -74,7 +74,7 @@ QuantaDoc::QuantaDoc(KDevelop::IDocument *document, QuantaCorePart *qcore)
   m_codec = QTextCodec::codecForName(m_encoding.toUtf8());
 
   AreaStruct area = parseForDTD(); //find the main DTD. It inits m_dtd as well.
-  kDebug(24000) << "DTD area: " << area.start.x() << ", " << area.start.y() << " | " << area.end.x() << ", " << area.end.y() << endl;
+  kDebug(24000) << "DTD area: " << area.start.x() << ", " << area.start.y() << " | " << area.end.x() << ", " << area.end.y();
 
 //initial parsing
   QuantaXmlInputSource *inputSource = new QuantaXmlInputSource(document->textDocument());
@@ -89,7 +89,7 @@ QuantaDoc::QuantaDoc(KDevelop::IDocument *document, QuantaCorePart *qcore)
 //  Node::coutTree(m_parseResult.baseNode, 2);
   for (int i = 0; i < m_parseResult.dtepList.count(); i++)
   {
-    kDebug(24000) << "DTEP: " << m_parseResult.dtepList[i]->name << endl;
+    kDebug(24000) << "DTEP: " << m_parseResult.dtepList[i]->name;
   }
 
   m_idleTimer = new QTimer(this);
@@ -192,7 +192,7 @@ AreaStruct QuantaDoc::parseForDTD()
 
  QString dtdName =  foundText.toLower();
 
- kDebug(24000) << "defaultDTD: dtdName = " << dtdName << endl;
+ kDebug(24000) << "defaultDTD: dtdName = " << dtdName;
  m_dtd = DTDs::ref()->find(dtdName);
 //FIXME  if (!dtd) dtd = DTDs::ref()->find(Project::ref()->defaultDTD());
  if (!m_dtd)
@@ -217,7 +217,7 @@ void QuantaDoc::slotTextChanged(KTextEditor::Document* document)
   Q_UNUSED(document);
   if (m_parserEnabled)
   {
-//    kDebug(24000) << "Delayed text changed called." << endl;
+//    kDebug(24000) << "Delayed text changed called.";
     //delay the handling, otherwise we may get wrong values for (line,column)
     QTimer::singleShot(0, this, SLOT(slotDelayedTextChanged()));
   }
@@ -225,10 +225,10 @@ void QuantaDoc::slotTextChanged(KTextEditor::Document* document)
 
 void QuantaDoc::slotDelayedTextChanged(bool forced)
 {
-  kDebug(24000) << "slotDelayedTextChanged" << endl;
+  kDebug(24000) << "slotDelayedTextChanged";
    if (!forced && m_idleTimer->isActive())
    {
-   //  kDebug(24000) << "Reparsing delayed!" << endl;
+   //  kDebug(24000) << "Reparsing delayed!";
      m_parsingNeeded = true;
      QTimer::singleShot(1000, this, SLOT(slotDelayedTextChanged()));
      m_parserEnabled = false;
@@ -400,7 +400,7 @@ void QuantaDoc::slotCompletionDone(KTextEditor::CompletionItem completion)
 
 void QuantaDoc::slotCompletionAborted()
 {
-  kDebug(24000) << "Completion aborted" << endl;
+  kDebug(24000) << "Completion aborted";
 //   m_completion = 0L;
   m_completionInProgress = false;
 }
@@ -412,7 +412,7 @@ void QuantaDoc::slotDelayedCodeCompletionHint()
 
 void QuantaDoc::slotDelayedShowCodeCompletion()
 {
-  kDebug(24000) << "slotDelayedShowCodeCompletion" << endl;
+  kDebug(24000) << "slotDelayedShowCodeCompletion";
 #if 0 // TODO PORT
   showCodeCompletions(m_completionEntries);
 #endif
@@ -459,7 +459,7 @@ void QuantaDoc::slotCharactersInserted(KTextEditor::View *view, const KTextEdito
   Q_UNUSED(view);
   int line = cursor.line();
   int column = cursor.column();
-  kDebug(24000) << "Inserted char: |" << string <<"|" << endl;
+  kDebug(24000) << "Inserted char: |" << string <<"|";
   QPoint position(line, column);
   replaceAccentedChars(position, string[0]);
 
@@ -486,10 +486,10 @@ void QuantaDoc::slotCharactersInserted(KTextEditor::View *view, const KTextEdito
   if (!node)
     return; //problems, should not happen...
   const DTDStruct *dtd = node->tag->dtd();
-//       kDebug(24000) << "Tested position: " << line << ", " << column << endl;
-//       kDebug(24000) << "node: " << node->tag->tagStr() << " " << node->tag->type << " " << node->tag->validXMLTag << endl;
+//       kDebug(24000) << "Tested position: " << line << ", " << column;
+//       kDebug(24000) << "node: " << node->tag->tagStr() << " " << node->tag->type << " " << node->tag->validXMLTag;
 //       AreaStruct area(node->tag->area());
-//       kDebug(24000) << "node area: " << area.bLine() << ", " << area.bCol() << ", " << area.eLine() << ", " << area.eCol() << endl;
+//       kDebug(24000) << "node area: " << area.bLine() << ", " << area.bCol() << ", " << area.eLine() << ", " << area.eCol();
   bool tempNodeCreated = false;
   if (m_parsingNeeded) //the node tree is not up to date, we need to build our custom node
   {
@@ -503,10 +503,10 @@ void QuantaDoc::slotCharactersInserted(KTextEditor::View *view, const KTextEdito
     node = new Node(0L);
     node->tag = tag;
     tempNodeCreated = true;
-/*    kDebug(24000) << "Tag should be between " << begin << " and " << end << endl;
-    kDebug(24000) << "Tag text:" << areaString << endl;
-    kDebug(24000) << "Tag:" << tag->toString() << endl;
-    kDebug(24000) << "Tag type:" << tag->type << endl;*/
+/*    kDebug(24000) << "Tag should be between " << begin << " and " << end;
+    kDebug(24000) << "Tag text:" << areaString;
+    kDebug(24000) << "Tag:" << tag->toString();
+    kDebug(24000) << "Tag type:" << tag->type;*/
   }
   if (dtd->family == DTDStruct::Xml)
   {

@@ -52,10 +52,10 @@ const QString DTDs::m_rcFilename = "description.rc";
 DTDs::DTDs(QObject *parent)
   :QObject(parent)
 {
-  kDebug(24000) << "Constructing DTDs" << endl;
+  kDebug(24000) << "Constructing DTDs";
 //  connect(this, SIGNAL((bool)), parent, SLOT(slotEnableIdleTimer(bool)));
   connect(this, SIGNAL(loadToolbarForDTD(const QString&)), parent, SLOT(slotLoadToolbarForDTD(const QString&)));
-//  kDebug(24000) << "dtds::dtds" << endl;
+//  kDebug(24000) << "dtds::dtds";
   m_dict = new QHash<QString,DTDStruct*>;
   m_globalEntities = new QHash<QString, QTag*>;
   m_doc = new QDomDocument();
@@ -73,17 +73,17 @@ DTDs::DTDs(QObject *parent)
     QStringList subDirs = dir.entryList();
     for ( QStringList::Iterator subit = subDirs.begin(); subit != subDirs.end(); ++subit )
     {
-//      kDebug(24000) << "dtds::dtds add:" << *it + *subit+'/' << endl;
+//      kDebug(24000) << "dtds::dtds add:" << *it + *subit+'/';
       if ((*subit != ".") && (*subit != ".."))
          tagsDirs += *it + *subit + '/';
     }
   }
-//  kDebug(24000) << tagsDirs.count() << " folders found." << endl;
+//  kDebug(24000) << tagsDirs.count() << " folders found.";
   for ( QStringList::Iterator it = tagsDirs.begin(); it != tagsDirs.end(); ++it )
   {
     readTagDir(*it, false);  // read all tags, but only short form
   }
-//  kDebug(24000) << "dtds::dtds constructed" << endl;
+//  kDebug(24000) << "dtds::dtds constructed";
 }
 
 DTDs::~DTDs()
@@ -143,7 +143,7 @@ void DTDs::removeDTD(DTDStruct *dtd)
     build up the internal DTD and tag structures. */
 bool DTDs::readTagDir(const QString &dirName, bool loadAll)
 {
- // kDebug(24000) << "dtds::readTagDir:" << dirName << "  all:" << loadAll << endl;
+ // kDebug(24000) << "dtds::readTagDir:" << dirName << "  all:" << loadAll;
   QString tmpStr = dirName + m_rcFilename;
   if (!QFile::exists(tmpStr))
      return false;
@@ -190,7 +190,7 @@ bool DTDs::readTagDir(const QString &dirName, bool loadAll)
     dtd->definitionTags[tmpStr.left(pos).trimmed()] = tmpStr.mid(pos+1, tmpStr.lastIndexOf(')')-pos-1).trimmed();
   }
 
-  kDebug(24000) << "DTD loaded: " << dtdName << " pointer " << dtd << endl;
+  kDebug(24000) << "DTD loaded: " << dtdName << " pointer " << dtd;
 
   m_dict->insert(dtdName.toLower(), dtd); //insert the structure into the dictionary
   delete dtdConfig;
@@ -211,7 +211,7 @@ bool DTDs::readTagDir(const QString &dirName, bool loadAll)
     */
 bool DTDs::readTagDir2(DTDStruct *dtd)
 {
-//  kDebug(24000) << "dtds::readTagDir2:" << dtd->name << " at " << dtd->fileName << endl;
+//  kDebug(24000) << "dtds::readTagDir2:" << dtd->name << " at " << dtd->fileName;
 
   if (!QFile::exists(dtd->fileName)) return false;
 
@@ -643,7 +643,7 @@ void DTDs::resolveInherited (DTDStruct *dtd)
 /** Reads the tags for the tag files. Returns the number of read tags. */
 uint DTDs::readTagFile(const QString& fileName, DTDStruct* parentDTD, QTagList *tagList)
 {
-//  kDebug(24000) << "dtds::readTagFile:" << fileName << endl;
+//  kDebug(24000) << "dtds::readTagFile:" << fileName;
  QFile f(fileName);
  if (! f.exists())
    kError() << "dtds::readTagFile file does not exist:" << fileName << endl;
@@ -661,7 +661,7 @@ uint DTDs::readTagFile(const QString& fileName, DTDStruct* parentDTD, QTagList *
 //   emit hideSplash();
    KMessageBox::error(0L, i18n("<qt>The DTD tag file %1 is not valid.<br> The error message is: <i>%2 in line %3, column %4.</i></qt>", fileName, errorMsg, errorLine, errorCol),
    i18n("Invalid Tag File"));
-   kWarning() << fileName << ": " << errorMsg << ": " << errorLine << "," << errorCol << endl;
+   kWarning() << fileName << ": " << errorMsg << ": " << errorLine << "," << errorCol;
  }
 
  f.close();

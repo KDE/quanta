@@ -106,7 +106,7 @@ QList<KTextEditor::CompletionItem> *SpecialAreaTagCompletion::completionEntries(
             if (!(*it)->tag)
               continue;
 #ifdef DEBUG_PARSER
-            kDebug(24000) << "GroupElement: " << (*it) << " " << (*it)->tag->area().bLine() << " " << (*it)->tag->area().bCol() << " "<< (*it)->tag->area().eLine() << " "<< (*it)->tag->area().eCol() << " " << (*it)->tag->tagStr() << " " << (*it)->type << endl;
+            kDebug(24000) << "GroupElement: " << (*it) << " " << (*it)->tag->area().bLine() << " " << (*it)->tag->area().bCol() << " "<< (*it)->tag->area().eLine() << " "<< (*it)->tag->area().eCol() << " " << (*it)->tag->tagStr() << " " << (*it)->type;
 #endif
             if (!(*it)->type.isEmpty())
             {
@@ -196,7 +196,7 @@ bool SpecialAreaTagCompletion::isValid(CompletionMode mode)
         int bl, bc;
         m_currentNode->tag->beginPos(bl, bc);
         QString s = m_source->text(bl, bc, m_position.x(), m_position.y());
-        kDebug(24000) << "s=|" << s << "|" << endl;
+        kDebug(24000) << "s=|" << s << "|";
         if (QuantaCommon::insideCommentsOrQuotes(s.length() -1, s, m_dtd))
           return false; //again, nothing to do
         QString s2 = s;

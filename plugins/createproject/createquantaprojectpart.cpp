@@ -64,7 +64,7 @@ K_EXPORT_COMPONENT_FACTORY( libkdevcreatequantaproject, CreateQuantaProjectFacto
 CreateQuantaProjectPart::CreateQuantaProjectPart(QObject *parent, const QStringList &/*args*/)
   : KDevelop::IPlugin(CreateQuantaProjectFactory::componentData(), parent)
 {
-  kDebug(24000) << "Quanta create project plugin loaded" << endl;
+  kDebug(24000) << "Quanta create project plugin loaded";
   setXMLFile("kdevcreatequantaproject.rc");
 
   setupActions();
@@ -233,11 +233,11 @@ void CreateQuantaProjectPart::slotDelayedAddFiles()
     dest = (*it).second;
     if (source.path().endsWith('/'))
     {
-      kDebug(24000) << "create: " << dest << endl;
+      kDebug(24000) << "create: " << dest;
       QuantaNetAccess::mkdir(dest, this, -1, false);
     } else
     {
-      kDebug(24000) << "copy: " << source << " to: "<< dest << endl;
+      kDebug(24000) << "copy: " << source << " to: "<< dest;
       QuantaNetAccess::file_copy(source, dest, -1, true, false, this, false);
     }
   }

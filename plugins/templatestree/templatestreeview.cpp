@@ -139,7 +139,7 @@ K3FileTreeViewItem* TemplatesTreeBranch::createTreeViewItem(K3FileTreeViewItem *
 
   }
   else
-    kDebug(24000) << "TemplatesTreeBranch::createTreeViewItem: Have no parent" << endl;
+    kDebug(24000) << "TemplatesTreeBranch::createTreeViewItem: Have no parent";
   return tvi;
 }
 

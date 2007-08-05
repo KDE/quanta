@@ -88,7 +88,7 @@ const QString resourceDir = "quanta/";
 UserToolbarsPart::UserToolbarsPart(QObject *parent, const QStringList &/*args*/)
   : KDevelop::IPlugin(UserToolbarsFactory::componentData(), parent)
 {
-    kDebug(24000) << "Creating UserToolbars Part" << endl;
+    kDebug(24000) << "Creating UserToolbars Part";
     setXMLFile("kdevusertoolbars.rc");
 
     setupActions();
@@ -110,7 +110,7 @@ UserToolbarsPart::UserToolbarsPart(QObject *parent, const QStringList &/*args*/)
     m_actionsMenuId = -1;
     m_outputPlugin = 0L;
     QStringList tmpDirs = KGlobal::dirs()->resourceDirs("tmp");
-    kDebug(24000) << "tmpDirs: " << tmpDirs << endl;
+    kDebug(24000) << "tmpDirs: " << tmpDirs;
     QDir dir;
     m_tmpDir = tmpDirs[0];
     for (int i = 0; i < tmpDirs.count(); i++)
@@ -321,7 +321,7 @@ void UserToolbarsPart::setSeparateToolbars(bool separate)
     {
       it.next();
       p_toolbar = it.value();
-      kDebug(24000) << "p_toolbar->guiClient in setSeparateToolbars:" <<  p_toolbar->guiClient->domDocument().toString() << endl;
+      kDebug(24000) << "p_toolbar->guiClient in setSeparateToolbars:" <<  p_toolbar->guiClient->domDocument().toString();
       mw->guiFactory()->removeClient(p_toolbar->guiClient);
 /*      if (m_separateToolbars)
         p_toolbar->guiClient->setClientBuilder(mw->clientBuilder());
@@ -500,7 +500,7 @@ void UserToolbarsPart::slotLoadToolbarFile(const KUrl& url)
         }
       } else
       {
-  //      kDebug(24000) << "The action " << actionName << " is already present!" << endl;
+  //      kDebug(24000) << "The action " << actionName << " is already present!";
         UserAction *userAction = dynamic_cast<UserAction*>(ac->action(actionName));
         if (userAction)
            userAction->setModified(true);
@@ -981,7 +981,7 @@ void UserToolbarsPart::slotRenameToolbar(const QString& id)
     QString newName = KInputDialog::getText(i18n("Rename Toolbar"), i18n("Enter the new name:"), p_toolbar->name, &ok, mw);
     if (ok && newName != p_toolbar->name)
     {
-      kDebug(24000) << "p_toolbar->guiClient before rename:" <<  p_toolbar->guiClient->domDocument().toString() << endl;
+      kDebug(24000) << "p_toolbar->guiClient before rename:" <<  p_toolbar->guiClient->domDocument().toString();
       m_toolbarList.take(id);
       p_toolbar->name = newName;
       QDomElement el = p_toolbar->guiClient->domDocument().firstChild().firstChild().toElement();
@@ -1027,7 +1027,7 @@ void UserToolbarsPart::slotRenameToolbar(const QString& id)
       KXMLGUIFactory::readConfigFile(
           p_toolbar->guiClient->xmlFile(), p_toolbar->guiClient->componentData());
       m_toolbarList.insert(id, p_toolbar);
-kDebug(24000) << "p_toolbar->guiClient after rename:" <<  p_toolbar->guiClient->domDocument().toString() << endl;
+kDebug(24000) << "p_toolbar->guiClient after rename:" <<  p_toolbar->guiClient->domDocument().toString();
 
     }
   }

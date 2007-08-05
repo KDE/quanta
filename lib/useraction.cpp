@@ -72,7 +72,7 @@ UserAction::UserAction( QDomElement *element, KDevelop::IPlugin *plugin, bool to
   }
   if (plugin)
   {
-    kDebug(24000) << "Load icon: " << s << " from: "<< plugin->iconLoader()->iconPath(s, K3Icon::Small, false) << endl;
+    kDebug(24000) << "Load icon: " << s << " from: "<< plugin->iconLoader()->iconPath(s, K3Icon::Small, false);
     setIcon(KIcon(plugin->iconLoader()->iconPath(s, K3Icon::Small, false)));
   }
   else
@@ -101,10 +101,10 @@ bool UserAction::slotActionActivated()
   EditorSource * source = quantaCore->activeEditorSource();
   if (!source)
   {
-    kDebug(24000) << "non-document" << endl;
+    kDebug(24000) << "non-document";
     return false;
   }
-  kDebug(24000) << "editor-document" << endl;
+  kDebug(24000) << "editor-document";
 
   QString type = tag.attribute("type", "");
   if ( type == "tag" )
@@ -225,12 +225,12 @@ bool UserAction::slotActionActivated()
           }
           scriptname = args.mid(begin, end - begin).trimmed();
           scriptname.replace("%scriptdir","scripts");
- //         kDebug(24000) << "Script name is: |" << scriptname << "|" << endl;
+ //         kDebug(24000) << "Script name is: |" << scriptname << "|";
 //FIXME: the scrips should be loaded from the language-plugin dir
           scriptname = ' ' + KStandardDirs::locate("data", "kdevusertoolbars/"+scriptname);
-   //       kDebug(24000) << "Script found at: " << scriptname << endl;
+   //       kDebug(24000) << "Script found at: " << scriptname;
           args.replace(begin, end - begin, scriptname);
-          //kDebug(24000) << "Modified argument list: " << args << endl;
+          //kDebug(24000) << "Modified argument list: " << args;
         }
       }
       int pos = args.indexOf("%projectbase");

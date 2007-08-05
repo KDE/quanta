@@ -31,7 +31,7 @@ static void silenceQToolBar(QtMsgType, const char *){}
 
 QWidget *ToolbarGUIBuilder::createContainer(QWidget *parent, int index, const QDomElement &element, int &id)
 {
-//  kDebug(24000) << "createContainer: this=" << this << " parent=" << parent << endl;
+//  kDebug(24000) << "createContainer: this=" << this << " parent=" << parent;
   QWidget *container = 0L;
   QString tabname = element.attribute( "i18ntabname", "" );
   QString idStr = element.attribute( "id", "" );
@@ -50,7 +50,7 @@ QWidget *ToolbarGUIBuilder::createContainer(QWidget *parent, int index, const QD
     tb->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
 
     //set the correct fixed height of the toolbar
-  //kDebug(24000) << "tb->iconSize() " << tb->iconSize() << endl;
+  //kDebug(24000) << "tb->iconSize() " << tb->iconSize();
     if (toolbarTab->iconText() == Qt::ToolButtonTextUnderIcon)
     {
       tb->setGeometry(0,0, toolbarTab->width(), tb->iconSize().height() + QFontMetrics(KGlobalSettings::toolBarFont()).height() + 10);
@@ -61,9 +61,9 @@ QWidget *ToolbarGUIBuilder::createContainer(QWidget *parent, int index, const QD
       toolbarTab->setFixedHeight(toolbarTab->tabHeight() + tb->height() + 3);
     }
 /*
-   kDebug(24000) << "tb->height() " << tb->height() << endl;
-   kDebug(24000) << "toolbarTab->height() " << toolbarTab->height() << endl;
-   kDebug(24000) << "toolbarTab->tabHeight() " << toolbarTab->tabHeight() << endl;
+   kDebug(24000) << "tb->height() " << tb->height();
+   kDebug(24000) << "toolbarTab->height() " << toolbarTab->height();
+   kDebug(24000) << "toolbarTab->tabHeight() " << toolbarTab->tabHeight();
 */
     toolbarTab->insertTab(tb, i18n(tabname.toUtf8()), idStr);
     toolbarTab->setCurrentWidget(w);
@@ -86,7 +86,7 @@ QWidget *ToolbarGUIBuilder::createContainer(QWidget *parent, int index, const QD
     container = KXMLGUIBuilder::createContainer(parent, index, element, id);
   }
 
-//  kDebug(24000) << "container " << element.attribute("name") << " created: " << container << endl;
+//  kDebug(24000) << "container " << element.attribute("name") << " created: " << container;
   //The tabwidget needs to be the child of the user toolbar, so detect when it is created
   //and make the child of it.
   if (element.attribute("name") == "userToolbar")
@@ -103,8 +103,8 @@ void ToolbarGUIBuilder::removeContainer(QWidget *container, QWidget *parent, QDo
   QString s;
   QTextStream str(&s, IO_ReadWrite);
   element.save(str, 2);
-  kDebug(24000) << "Remove element:" << s << endl;
-//  kDebug(24000) << "removeContainer: this=" << this << " parent=" << parent << "container = " << container << endl;
+  kDebug(24000) << "Remove element:" << s;
+//  kDebug(24000) << "removeContainer: this=" << this << " parent=" << parent << "container = " << container;
   //We need to reparent the tabwidget, otherwise it gets deleted when for example the
   //toolbars are configured and the GUI is rebuilt.
   ToolbarTabWidget *toolbarTab = ToolbarTabWidget::ref();

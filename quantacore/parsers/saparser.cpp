@@ -70,7 +70,7 @@ bool SAParser::slotParseOneLine()
   if ((!m_parsingEnabled || !m_base->baseNode) && !m_synchronous)
   {
 #ifdef DEBUG_PARSER
-    kDebug(24001) << "slotParseOneLine - interrupted" << endl;
+    kDebug(24001) << "slotParseOneLine - interrupted";
 #endif
     return false;
   }
@@ -188,7 +188,7 @@ bool SAParser::slotParseOneLine()
                 else
                 {
 #ifdef DEBUG_PARSER
-                  kDebug(24001) << "Calling slotParseOneLine from parseArea (opening group struct)." << endl;
+                  kDebug(24001) << "Calling slotParseOneLine from parseArea (opening group struct).";
 #endif
                   m_parseOneLineTimer->setSingleShot(true);
                   m_parseOneLineTimer->start(0);
@@ -205,7 +205,7 @@ bool SAParser::slotParseOneLine()
                   else
                   {
 #ifdef DEBUG_PARSER
-                    kDebug(24001) << "Calling slotParseOneLine from parseArea (closing group struct)." << endl;
+                    kDebug(24001) << "Calling slotParseOneLine from parseArea (closing group struct).";
 #endif
                     m_parseOneLineTimer->setSingleShot(true);
                     m_parseOneLineTimer->start(0);
@@ -213,7 +213,7 @@ bool SAParser::slotParseOneLine()
                   return true;
                 }
                 s_currentContext.area.setEnd(s_line, groupKeywordPos - 1);
-                //kDebug(24000) << QString("Group Struct s_context: %1, %2, %3, %4").arg( s_currentContext.bLine).arg(s_currentContext.bCol).arg(s_currentContext.eLine).arg(s_currentContext.eCol) << endl;
+                //kDebug(24000) << QString("Group Struct s_context: %1, %2, %3, %4").arg( s_currentContext.bLine).arg(s_currentContext.bCol).arg(s_currentContext.eLine).arg(s_currentContext.eCol);
 
                 if (s_currentNode &&
                     (s_currentNode->tag->isType(Tag::Text) ||
@@ -265,7 +265,7 @@ bool SAParser::slotParseOneLine()
                 else
                 {
 #ifdef DEBUG_PARSER
-                  kDebug(24001) << "Calling slotParseOneLine from parseArea (group structure)." << endl;
+                  kDebug(24001) << "Calling slotParseOneLine from parseArea (group structure).";
 #endif
                   m_parseOneLineTimer->setSingleShot(true);
                   m_parseOneLineTimer->start(0);
@@ -303,7 +303,7 @@ bool SAParser::slotParseOneLine()
               AreaStruct area(s_line, specialAreaPos, s_line, specialAreaPos + foundText.length() - 1);
               Node *node = ParserCommon::createScriptTagNode(area, foundText, s_dtd, s_currentContext.parentNode, s_currentNode);
 #ifdef DEBUG_PARSER
-              kDebug(24001) << "Parsing a nested area." << endl;
+              kDebug(24001) << "Parsing a nested area.";
 #endif
               AreaStruct area2(s_line, specialAreaPos, s_endLine, s_endCol);
               SAParser *p = new SAParser();
@@ -324,7 +324,7 @@ bool SAParser::slotParseOneLine()
               else
               {
 #ifdef DEBUG_PARSER
-                kDebug(24001) << "Calling slotParseOneLine from slotParseOneLine (nested area)." << endl;
+                kDebug(24001) << "Calling slotParseOneLine from slotParseOneLine (nested area).";
 #endif
                   m_parseOneLineTimer->setSingleShot(true);
                   m_parseOneLineTimer->start(0);
@@ -374,7 +374,7 @@ bool SAParser::slotParseOneLine()
               s_currentNode->specialInsideXml = m_specialInsideXml;
             }
           }
-          //kDebug(24000) << QString("Special area %1 ends at %2, %3").arg(s_dtd->name).arg(s_line).arg(lastCol) << endl;
+          //kDebug(24000) << QString("Special area %1 ends at %2, %3").arg(s_dtd->name).arg(s_line).arg(lastCol);
 
           //at this point s_parentNode = the opening node of the special area (eg. <?)
           //and it should always exist
@@ -409,7 +409,7 @@ bool SAParser::slotParseOneLine()
               g_endNode = s_parentNode->next;*/
             g_endNode = s_parentNode->next;
 #ifdef DEBUG_PARSER
-            kDebug(24001) << "Calling slotParseForScriptGroup from slotParseOneLine." << endl;
+            kDebug(24001) << "Calling slotParseForScriptGroup from slotParseOneLine.";
 #endif
 //            slotParseForScriptGroup();
             if (!m_synchronous)
@@ -439,7 +439,7 @@ bool SAParser::slotParseOneLine()
           if (!m_synchronous)
           {
 #ifdef DEBUG_PARSER
-            kDebug(24001) << "Calling parsingDone from slotParseOneLine (area end found)." << endl;
+            kDebug(24001) << "Calling parsingDone from slotParseOneLine (area end found).";
 #endif
             m_lastParsedNode = parsingDone();
           }
@@ -496,7 +496,7 @@ bool SAParser::slotParseOneLine()
               s_currentNode = node;
             }
           }
-          //kDebug(24000) << QString("%1 s_context: %2, %3, %4, %5").arg(s_currentContext.type).arg( s_currentContext.bLine).arg(s_currentContext.bCol).arg(s_currentContext.eLine).arg(s_currentContext.eCol) << endl;
+          //kDebug(24000) << QString("%1 s_context: %2, %3, %4, %5").arg(s_currentContext.type).arg( s_currentContext.bLine).arg(s_currentContext.bCol).arg(s_currentContext.eLine).arg(s_currentContext.eCol);
 
           s_currentContext = s_context;
           s_col = s_context.area.bCol() + s_context.startString.length();
@@ -533,7 +533,7 @@ bool SAParser::slotParseOneLine()
 /*          s_currentContext.area.eLine = s_line;
           s_currentContext.area.eCol = pos;*/
           s_currentContext.area.setEnd(s_line, pos);
-          //kDebug(24000) << QString("Quoted String s_context: %1, %2, %3, %4").arg( s_currentContext.bLine).arg(s_currentContext.bCol).arg(s_currentContext.eLine).arg(s_currentContext.eCol) << endl;
+          //kDebug(24000) << QString("Quoted String s_context: %1, %2, %3, %4").arg( s_currentContext.bLine).arg(s_currentContext.bCol).arg(s_currentContext.eLine).arg(s_currentContext.eCol);
           if (s_fullParse)
           {
             if ( s_currentNode  &&
@@ -585,7 +585,7 @@ bool SAParser::slotParseOneLine()
           s_currentContext.area.eCol = pos + s_dtd->comments[s_currentContext.startString].length() - 1;*/
           s_currentContext.area.setEnd(s_line, pos + s_dtd->comments[s_currentContext.startString].length() - 1);
           s_currentContext.type = s_previousContext.type;
-          //kDebug(24000) << QString("Comment s_context: %1, %2, %3, %4").arg( s_currentContext.bLine).arg(s_currentContext.bCol).arg(s_currentContext.eLine).arg(s_currentContext.eCol) << endl;
+          //kDebug(24000) << QString("Comment s_context: %1, %2, %3, %4").arg( s_currentContext.bLine).arg(s_currentContext.bCol).arg(s_currentContext.eLine).arg(s_currentContext.eCol);
 
           if (s_fullParse)
           {
@@ -640,7 +640,7 @@ bool SAParser::slotParseOneLine()
     else
     {
 #ifdef DEBUG_PARSER
-      kDebug(24001) << "Calling slotParseOneLine from slotParseOneLine." << endl;
+      kDebug(24001) << "Calling slotParseOneLine from slotParseOneLine.";
 #endif
       m_parseOneLineTimer->setSingleShot(true);
       m_parseOneLineTimer->start(0);
@@ -650,7 +650,7 @@ bool SAParser::slotParseOneLine()
     if (!m_synchronous)
     {
 #ifdef DEBUG_PARSER
-      kDebug(24001) << "Calling parsingDone from slotParseOneLine." << endl;
+      kDebug(24001) << "Calling parsingDone from slotParseOneLine.";
 #endif
       parsingDone();
     }
@@ -669,14 +669,14 @@ Node* SAParser::parseArea(const AreaStruct &specialArea,
   s_parentNode = parentNode;
   s_fullParse = fullParse;
 #ifdef DEBUG_PARSER
-  kDebug(24001) << "parseArea full: " << s_fullParse << "  synch: " << m_synchronous <<endl;
+  kDebug(24001) << "parseArea full: " << s_fullParse << "  synch: " << m_synchronous;
 #endif
 
   int s_startLine = specialArea.bLine();
   int s_startCol = specialArea.bCol();
   s_endLine = specialArea.eLine();
   s_endCol = specialArea.eCol();
-  //kDebug(24000) << QString("Starting to parse at %1, %2 for %3").arg(s_startLine).arg(s_startCol).arg(areaStartString) << endl;
+  //kDebug(24000) << QString("Starting to parse at %1, %2 for %3").arg(s_startLine).arg(s_startCol).arg(areaStartString);
 
   s_searchForAreaEnd = false;
   s_searchForForcedAreaEnd = false;
@@ -745,7 +745,7 @@ Node* SAParser::parseArea(const AreaStruct &specialArea,
     else
     {
 #ifdef DEBUG_PARSER
-      kDebug(24001) << "Calling slotParseOneLine from parseArea." << endl;
+      kDebug(24001) << "Calling slotParseOneLine from parseArea.";
 #endif
       m_parseOneLineTimer->setSingleShot(true);
       m_parseOneLineTimer->start(0);
@@ -755,7 +755,7 @@ Node* SAParser::parseArea(const AreaStruct &specialArea,
   if (m_synchronous) //if the special area end was not found and we are in synchronous mode
   {
 #ifdef DEBUG_PARSER
-    kDebug(24001) << "Calling parsingDone from parseArea." << endl;
+    kDebug(24001) << "Calling parsingDone from parseArea.";
 #endif
     s_currentNode = parsingDone();
     return s_currentNode;
@@ -766,7 +766,7 @@ Node* SAParser::parseArea(const AreaStruct &specialArea,
 Node *SAParser::parsingDone()
 {
 #ifdef DEBUG_PARSER
-  kDebug(24001) << "parsingDone. Use return values:" << s_useReturnVars << endl;
+  kDebug(24001) << "parsingDone. Use return values:" << s_useReturnVars;
 #endif
   if (s_useReturnVars)
   {
@@ -777,7 +777,7 @@ Node *SAParser::parsingDone()
         if (m_currentNode)
         {
 #ifdef DEBUG_PARSER
-          kDebug(24001) << "Calling slotParseNodeInDetail from parsingDone (use return values)" << endl;
+          kDebug(24001) << "Calling slotParseNodeInDetail from parsingDone (use return values)";
 #endif
           emit finishedParsing(m_source, m_base);
           m_parseOneLineTimer->setSingleShot(true);
@@ -788,11 +788,11 @@ Node *SAParser::parsingDone()
         {
           m_parsingEnabled = true;
 #ifdef DEBUG_PARSER
-          kDebug(24001) << "Emitting finishedParsing from parsingDone (use return values). Enable parsing." << endl;
+          kDebug(24001) << "Emitting finishedParsing from parsingDone (use return values). Enable parsing.";
 #endif
           emit finishedParsing(m_source, m_base);
 #ifdef DEBUG_PARSER
-          kDebug(24000) << "Calling cleanGroups from SAParser::parsingDone" << endl;
+          kDebug(24000) << "Calling cleanGroups from SAParser::parsingDone";
 #endif
           emit cleanGroups();
         }
@@ -831,7 +831,7 @@ Node *SAParser::parsingDone()
     Node *g_node = n;
     Node *g_endNode = 0L;
 #ifdef DEBUG_PARSER
-    kDebug(24001) << "Calling slotParseForScriptGroup from parsingDone. Synch:" << m_synchronous << endl;
+    kDebug(24001) << "Calling slotParseForScriptGroup from parsingDone. Synch:" << m_synchronous;
 #endif
     //parse for groups only when doing aynchronous detailed parsing
     if (!m_synchronous)
@@ -855,7 +855,7 @@ Node *SAParser::parsingDone()
       if (m_currentNode)
       {
 #ifdef DEBUG_PARSER
-        kDebug(24001) << "Calling slotParseNodeInDetail from parsingDone." << endl;
+        kDebug(24001) << "Calling slotParseNodeInDetail from parsingDone.";
 #endif
         m_parseOneLineTimer->setSingleShot(true);
         m_parseOneLineTimer->start(0);
@@ -865,7 +865,7 @@ Node *SAParser::parsingDone()
       {
         m_parsingEnabled = true;
 #ifdef DEBUG_PARSER
-        kDebug(24001) << "Emitting detailedParsingDone from parsingDone. Enable parsing." << endl;
+        kDebug(24001) << "Emitting detailedParsingDone from parsingDone. Enable parsing.";
 #endif
         emit finishedParsing(m_source, m_base);
       }
@@ -879,7 +879,7 @@ void SAParser::parseInDetail(bool synchronous)
 //  synchronous = true; //for testing. Uncomment to test the parser in synchronous mode
 //  return; //for testing. Uncomment to disable the detailed parser
 #ifdef DEBUG_PARSER
-  kDebug(24001) << "parseInDetail. Enabled: " << m_parsingEnabled << endl;
+  kDebug(24001) << "parseInDetail. Enabled: " << m_parsingEnabled;
 #endif
   if (!m_parsingEnabled)
   {
@@ -889,7 +889,7 @@ void SAParser::parseInDetail(bool synchronous)
     if (m_currentNode)
     {
 #ifdef DEBUG_PARSER
-      kDebug(24001) << "Calling slotParseNodeInDetail from parseInDetail." << endl;
+      kDebug(24001) << "Calling slotParseNodeInDetail from parseInDetail.";
 #endif
       slotParseNodeInDetail();
     }
@@ -899,7 +899,7 @@ void SAParser::parseInDetail(bool synchronous)
 void SAParser::slotParseNodeInDetail()
 {
 #ifdef DEBUG_PARSER
-  kDebug(24001) << "slotParseNodeInDetail. Enabled: " << m_parsingEnabled << " Synch: " << m_synchronous << endl; //this is really heavy debug information, enable only when really needed
+  kDebug(24001) << "slotParseNodeInDetail. Enabled: " << m_parsingEnabled << " Synch: " << m_synchronous; //this is really heavy debug information, enable only when really needed
 #endif
   if (m_currentNode && m_parsingEnabled && m_base->baseNode)
   {
@@ -920,7 +920,7 @@ void SAParser::slotParseNodeInDetail()
         area.setEnd(m_source->numLines() - 1, m_source->lineLength(area.eLine()));
       }
 #ifdef DEBUG_PARSER
-      kDebug(24001) << "Calling parseArea from slotParseNodeInDetail." << endl;
+      kDebug(24001) << "Calling parseArea from slotParseNodeInDetail.";
 #endif
       QString areaStartString = m_currentNode->tag->tagStr();
       if (m_currentNode->tag->dtd()->specialAreaNames[areaStartString].isEmpty())
@@ -938,14 +938,14 @@ void SAParser::slotParseNodeInDetail()
       if (m_currentNode)
       {
 #ifdef DEBUG_PARSER
-//        kDebug(24001) << "Calling slotParseNodeInDetail from slotParseNodeInDetail." << endl; //this is really heavy debug information, enable only when really needed
+//        kDebug(24001) << "Calling slotParseNodeInDetail from slotParseNodeInDetail."; //this is really heavy debug information, enable only when really needed
 #endif
         m_parseInDetailTimer->setSingleShot(true);
         m_parseInDetailTimer->start(0);
       } else
       {
 #ifdef DEBUG_PARSER
-        kDebug(24001) << "Emitting finishedParsing from slotParseNodeInDetail." << endl;
+        kDebug(24001) << "Emitting finishedParsing from slotParseNodeInDetail.";
 #endif
         emit finishedParsing(m_source, m_base);
       }
@@ -957,7 +957,7 @@ void SAParser::slotParseNodeInDetail()
 void SAParser::setParsingEnabled(bool enabled)
 {
 #ifdef DEBUG_PARSER
-  kDebug(24001) << "Parsing enabled: " << enabled << endl;
+  kDebug(24001) << "Parsing enabled: " << enabled;
 #endif
   m_parsingEnabled = enabled;
   if (!enabled)

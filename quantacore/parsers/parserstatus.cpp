@@ -27,7 +27,7 @@
 #undef DEBUGMODE
 
 #ifdef DEBUGMODE
-#define PARSERSTATUSDEBUG( S )  kDebug(24001) << S << endl;
+#define PARSERSTATUSDEBUG( S )  kDebug(24001) << S;
 #else
 #define PARSERSTATUSDEBUG( S )
 #endif
@@ -101,7 +101,7 @@ bool ParserStatus::parse(const QXmlInputSource * input)
   bool result = loop();
   contentHandler()->endDocument();
 
-  kDebug(24000) << "Parsing time: " << timer.elapsed() << " ms" << endl;
+  kDebug(24000) << "Parsing time: " << timer.elapsed() << " ms";
   return result;
 }
 
@@ -124,7 +124,7 @@ bool ParserStatus::parse(const QuantaXmlInputSource * input)
   bool result = loop();
   contentHandler()->endDocument();
 
-  kDebug(24000) << "Parsing time: " << timer.elapsed() << " ms" << endl;
+  kDebug(24000) << "Parsing time: " << timer.elapsed() << " ms";
   return result;
 }
 

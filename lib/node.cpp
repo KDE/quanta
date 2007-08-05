@@ -46,7 +46,7 @@ Node::Node(Node *parent)
 
 Node::~Node()
 {
- // kDebug(24000) << "Node destructor " << this << tag->name << endl;
+ // kDebug(24000) << "Node destructor " << this << tag->name;
   //It has no use, except to know when it crash why it has crashed.
   //If it has crashed here, the Node doesn't exist anymore.
   // If it has crashed the next line, it is a GroupElements bug.
@@ -83,7 +83,7 @@ void Node::deleteNode(GroupStorage *groupStorage)
 
 // void Node::save(QDomElement& element) const
 // {
-//     //kDebug(25001) << "Save:\n" << element.ownerDocument().toString() << endl;
+//     //kDebug(25001) << "Save:\n" << element.ownerDocument().toString();
 //     QDomElement child_element;
 //     if(next)
 //     {
@@ -122,8 +122,8 @@ void Node::deleteNode(GroupStorage *groupStorage)
 // /*    QString s_element;
 //     QTextStream stream(&s_element, IO_WriteOnly);
 //     element.save(stream, 3);*/
-//     //kDebug(25001) << "Load:\n" << s_element << endl;
-//     //kDebug(25001) << "Save:\n" << element.ownerDocument().toString() << endl;
+//     //kDebug(25001) << "Load:\n" << s_element;
+//     //kDebug(25001) << "Save:\n" << element.ownerDocument().toString();
 // }
 //
 // bool Node::load(QDomElement const& element)
@@ -131,7 +131,7 @@ void Node::deleteNode(GroupStorage *groupStorage)
 // /*    QString s_element;
 //     QTextStream stream(&s_element, IO_WriteOnly);
 //     element.save(stream, 3);*/
-//     //kDebug(25001) << "Load:\n" << s_element << endl;
+//     //kDebug(25001) << "Load:\n" << s_element;
 //
 //     QDomNodeList list = element.childNodes();
 //     for(unsigned int i = 0; i != list.count(); ++i)
@@ -247,7 +247,7 @@ void Node::setNodeValue(const QString &value)
     if (!tag)
         tag = new Tag();
     tag->setStr(value);
-    kDebug(24000) << "Node::setNodeValue: dtd is 0L for " << value << endl;
+    kDebug(24000) << "Node::setNodeValue: dtd is 0L for " << value;
 }
 
 Node* Node::lastChild()
@@ -332,7 +332,7 @@ void Node::operator =(Node* node)
 void Node::detachNode()
 {
   int count = 0;
-  //kDebug(24000) << &m_groupElements << " " << this << endl;
+  //kDebug(24000) << &m_groupElements << " " << this;
   //Remove the references to this node from the list of group elements.
   //They are actually stored in globalGroupMap.
   for (QValueListIterator<GroupElement*> it = m_groupElements.begin(); it != m_groupElements.end(); ++it)
@@ -342,17 +342,17 @@ void Node::detachNode()
     groupElement->deleted = true;
     groupElement->group = 0L;
 #ifdef DEBUG_PARSER
-    kDebug(24001) << "GroupElement scheduled for deletion: " << groupElement << " "<< groupElement->tag->area().bLine << " " << groupElement->tag->area().bCol << " "<< groupElement->tag->area().eLine << " "<< groupElement->tag->area().eCol << " " << groupElement->tag->tagStr() << " " << groupElement->type << endl;
+    kDebug(24001) << "GroupElement scheduled for deletion: " << groupElement << " "<< groupElement->tag->area().bLine << " " << groupElement->tag->area().bCol << " "<< groupElement->tag->area().eLine << " "<< groupElement->tag->area().eCol << " " << groupElement->tag->tagStr() << " " << groupElement->type;
 #endif
     count++;
   }
 #ifdef DEBUG_PARSER
   if (count > 0)
-      kDebug(24001) << count << " GroupElement scheduled for deletion. " << &m_groupElements << endl;
+      kDebug(24001) << count << " GroupElement scheduled for deletion. " << &m_groupElements;
 #endif
 
   m_groupElements.clear();
-  //kDebug(24000) << m_groupElements.count() << " " << this << endl;
+  //kDebug(24000) << m_groupElements.count() << " " << this;
 }*/
 
 Node *Node::nodeAt(Node *base, int line, int col, bool findDeepest, bool exact)
@@ -446,7 +446,7 @@ void Node::coutTree(Node *node, int indent)
   QString output;
   int bLine, bCol, eLine, eCol;
   if (!node)
-      kDebug(24000)<< "Node::coutTree() - bad node!" << endl;
+      kDebug(24000)<< "Node::coutTree() - bad node!";
   while (node)
   {
     output = "";

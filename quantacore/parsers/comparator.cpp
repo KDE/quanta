@@ -21,7 +21,7 @@
 #undef DEBUGMODE
 
 #ifdef DEBUGMODE
-#define COMPAREDEBUG( S )  kDebug(24001) << S << endl;
+#define COMPAREDEBUG( S )  kDebug(24001) << S;
 #else
 #define COMPAREDEBUG( S )
 #endif
@@ -36,7 +36,7 @@ Comparator::CompareFunctPtr Comparator::factory(const QString &name)
   if (id == "iswhitespace") return &whitespace;
   if (id == "ischaracter") return &asciiChar;
 
-  kWarning(24001) << "unknown function name '" << id << "' in Comparator::factory" << endl;
+  kWarning(24001) << "unknown function name '" << id << "' in Comparator::factory";
   return &never; // in case name is wrong
 }
 
@@ -55,7 +55,7 @@ bool Comparator::never(const ParserStatus &parser, const QString &argument)
   Q_UNUSED(argument);
 /*  Q_ASSERT(false);
   return false;*/
-  kWarning(24001) << "Unknown comparator function called." << endl;
+  kWarning(24001) << "Unknown comparator function called.";
   return true;
 }
 

@@ -80,7 +80,7 @@ void StructureTreeWidget::slotBuild(const ParseResult *parseResult)
   m_dirty = true;
   m_parseResult = parseResult;
 
-//   kDebug(24000) << "StructureTreeWidget-----------slotBuild dirty " << parseResult << endl;
+//   kDebug(24000) << "StructureTreeWidget-----------slotBuild dirty " << parseResult;
 }
 
 
@@ -113,14 +113,14 @@ void StructureTreeWidget::slotExpanded(Q3ListViewItem * item)
 
 void StructureTreeWidget::slotBlockGUI()
 {
- // kDebug(24000) << "slotBlockGUI" << endl;
+ // kDebug(24000) << "slotBlockGUI";
   setEnabled(false);
 }
 
 
 void StructureTreeWidget::slotUnblockGUI()
 {
-//  kDebug(24000) << "slotUnblockGUI" << endl;
+//  kDebug(24000) << "slotUnblockGUI";
   setEnabled(true);
 }
 
@@ -324,7 +324,7 @@ void StructureTreeWidget::slotNewCursorPosition(const QPoint & qp)
   if (!isEnabled() || !isVisible() || !Settings::self()->followCursor())
     return;
 
-//   kDebug(24000) << "slotNewCursorPosition " << Settings::self()->followCursor() << endl;
+//   kDebug(24000) << "slotNewCursorPosition " << Settings::self()->followCursor();
   StructTreeItem * openItem;
   StructTreeItem * item = static_cast<StructTreeItem *>(firstChild());
   while (item)

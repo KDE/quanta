@@ -54,12 +54,12 @@ SAGroupParser::SAGroupParser(SAParser *parent, ParseResult *base, EditorSource *
 void SAGroupParser::slotParseForScriptGroup()
 {
 #ifdef DEBUG_PARSER
-    //kDebug(24001) << "slotParseForScriptGroup. Synch: " << m_synchronous << endl;
+    //kDebug(24001) << "slotParseForScriptGroup. Synch: " << m_synchronous;
 #endif
   if ((m_parent && !m_parent->parsingEnabled()) || (!m_base->baseNode && !m_synchronous))
   {
 #ifdef DEBUG_PARSER
-    kDebug(24001) << "slotParseForScriptGroup aborted. Synch: " << m_synchronous << endl;
+    kDebug(24001) << "slotParseForScriptGroup aborted. Synch: " << m_synchronous;
 #endif
     return;
   }
@@ -77,7 +77,7 @@ void SAGroupParser::slotParseForScriptGroup()
     else
     {
 #ifdef DEBUG_PARSER
-      //kDebug(24001) << "Calling slotParseForScriptGroup from slotParseForScriptGroup." << endl;
+      //kDebug(24001) << "Calling slotParseForScriptGroup from slotParseForScriptGroup.";
 #endif
       m_parseForGroupTimer->setSingleShot(true);
       m_parseForGroupTimer->start(0);
@@ -85,21 +85,21 @@ void SAGroupParser::slotParseForScriptGroup()
   } else
   {
 #ifdef DEBUG_PARSER
-    kDebug(24001) << "slotParseForScriptGroup done." << endl;
+    kDebug(24001) << "slotParseForScriptGroup done.";
 #endif
     if (m_lastGroupParsed && m_parsingLastNode && !m_synchronous)
     {
       if (m_lastGroupParsed)
       {
 #ifdef DEBUG_PARSER
-        kDebug(24000) << "Calling cleanGroups from SAGroupParser::slotParseForScriptGroup" << endl;
-        kDebug(24001) << m_count << " GroupElement created." << endl;
+        kDebug(24000) << "Calling cleanGroups from SAGroupParser::slotParseForScriptGroup";
+        kDebug(24001) << m_count << " GroupElement created.";
 #endif
         emit cleanGroups();
         m_lastGroupParsed = false;
       }
 #ifdef DEBUG_PARSER
-        kDebug(24001) << "Emitting groupsParsed from slotParseForScriptGroup." << endl;
+        kDebug(24001) << "Emitting groupsParsed from slotParseForScriptGroup.";
 #endif
         emit groupsParsed(m_source, m_base);
     }
@@ -139,13 +139,13 @@ void SAGroupParser::parseForScriptGroup(Node *node)
       continue;
     pos = 0;
     group.definitionRx.setMinimal(group.isMinimalDefinitionRx);
-//    kDebug(24000) << "Analyzing\n\n " << str << endl;
+//    kDebug(24000) << "Analyzing\n\n " << str;
     while (pos != -1)
     {
       pos = group.definitionRx.indexIn(str, pos);
       if (pos != -1) //the Node is part of this group
       {
- //       kDebug(24000) << "Found from\n\n " << str.mid(pos) << endl;
+ //       kDebug(24000) << "Found from\n\n " << str.mid(pos);
         title = tagStr.mid(pos, group.definitionRx.matchedLength());
         node->tag->beginPos(bl, bc);
         tmpStr = tagStr.left(pos);
@@ -226,7 +226,7 @@ void SAGroupParser::parseForScriptGroup(Node *node)
         if (!group.typeRx.pattern().isEmpty() && group.typeRx.indexIn(title) != -1)
           groupElement->type = group.typeRx.cap(1);
 #ifdef DEBUG_PARSER
-       kDebug(24001) << "GroupElement created: " <<groupElement << " "<< groupElement->tag->area().bLine() << " " << groupElement->tag->area().bCol() << " "<< groupElement->tag->area().eLine() << " "<< groupElement->tag->area().eCol() << " " << groupElement->tag->tagStr() << " " << groupElement->type << endl;
+       kDebug(24001) << "GroupElement created: " <<groupElement << " "<< groupElement->tag->area().bLine() << " " << groupElement->tag->area().bCol() << " "<< groupElement->tag->area().eLine() << " "<< groupElement->tag->area().eCol() << " " << groupElement->tag->tagStr() << " " << groupElement->type;
 #endif
         //store the pointer to the group element list where this node was put
         //used to clear the corresponding entry from the group element lists
@@ -255,7 +255,7 @@ void SAGroupParser::parseForScriptGroup(Node *node)
   }
 #ifdef DEBUG_PARSER
  if (t.elapsed() > 10)
-     kDebug(24001) << "Done: " << t.elapsed() << endl;
+     kDebug(24001) << "Done: " << t.elapsed();
 #endif
 }
 

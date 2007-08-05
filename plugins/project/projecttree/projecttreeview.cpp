@@ -114,7 +114,7 @@ KFileTreeViewItem* ProjectTreeBranch::createTreeViewItem(KFileTreeViewItem *pare
     }
   }
   else
-    kDebug(24000) << "ProjectTreeBranch::createTreeViewItem: Have no parent" << endl;
+    kDebug(24000) << "ProjectTreeBranch::createTreeViewItem: Have no parent";
   return tvi;
 }
 

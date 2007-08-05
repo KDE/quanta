@@ -32,7 +32,7 @@ K_EXPORT_COMPONENT_FACTORY( quantaprojectfilemanager, QuantaProjectFileManagerFa
 
     QuantaProjectFileManager::QuantaProjectFileManager(QObject *parent, const QStringList &args): KDevelop::IPlugin( QuantaProjectFileManagerFactory::componentData(), parent ), KDevelop::IProjectFileManager()
 {
-  kDebug(24000) << "Creating QuantaProjectFileManager Part" << endl;
+  kDebug(24000) << "Creating QuantaProjectFileManager Part";
   KDEV_USE_EXTENSION_INTERFACE( KDevelop::IProjectFileManager )
   Q_UNUSED(args)
 }
@@ -50,7 +50,7 @@ KDevelop::ProjectItem* QuantaProjectFileManager::import(KDevelop::IProject *proj
   name.replace(".kdev4", ".webprj");
   url.adjustPath(KUrl::AddTrailingSlash);
   url.setFileName(name);
-  kDebug(24000) << "Parsing project file: " << url << endl;
+  kDebug(24000) << "Parsing project file: " << url;
   QString projectTmpFile;
   KParts::MainWindow *mainWindow = core()->uiController()->activeMainWindow();
   QDomDocument dom;
@@ -140,14 +140,14 @@ KDevelop::ProjectItem* QuantaProjectFileManager::import(KDevelop::IProject *proj
                   url = urlStack.pop();
                   if (!m_projectFiles.contains(url))
                   {
-                    kDebug(24000) << "Adding folder: " << url<< endl;
+                    kDebug(24000) << "Adding folder: " << url;
                     m_projectFiles[url] = QStringList();
                     m_projectFolders[parent] << url;
                   }
                   parent = url;
                 }
               // add the file
-                kDebug(24000) << "Adding file: " << fileUrl<< endl;
+                kDebug(24000) << "Adding file: " << fileUrl;
                 m_projectFiles[parent] << fileUrl;
               }
             }
@@ -172,7 +172,7 @@ QList<KDevelop::ProjectFolderItem*> QuantaProjectFileManager::parse(KDevelop::Pr
   KUrl url = base->url();
   url.adjustPath(KUrl::AddTrailingSlash);
   KDevelop::IProject *project = base->project();
-//   kDebug(24000) << "Request parse for : " << url << endl;
+//   kDebug(24000) << "Request parse for : " << url;
   
   KUrl::List::ConstIterator itBegin = m_projectFolders[url].constBegin();
   KUrl::List::ConstIterator itEnd = m_projectFolders[url].constEnd();

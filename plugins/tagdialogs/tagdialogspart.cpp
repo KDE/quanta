@@ -41,7 +41,7 @@ TagDialogsPart::TagDialogsPart(QObject *parent, const QStringList &/*args*/)
 {
   KDEV_USE_EXTENSION_INTERFACE( TagDialogsIf )
     setXMLFile("kdevtagdialogs.rc");
-    kDebug(24000) << "TagDialogs plugin loaded" << endl;
+    kDebug(24000) << "TagDialogs plugin loaded";
 
     setupActions();
 
@@ -114,7 +114,7 @@ TagPair TagDialogsPart::createNewTag(QTag *dtdTag, const QString& selection, con
 
 void TagDialogsPart::slotEditCurrentTag()
 {
-  kDebug(24000) << "slotEditCurrentTag " << endl;
+  kDebug(24000) << "slotEditCurrentTag ";
 }
 
 #include "tagdialogspart.moc"

@@ -72,7 +72,7 @@ QuantaCorePart::QuantaCorePart(QObject *parent, const QStringList& )
   : KDevelop::IPlugin(QuantaCoreFactory::componentData(), parent), QuantaCoreIf(), m_activeQuantaDoc(0)
 {
   KDEV_USE_EXTENSION_INTERFACE( QuantaCoreIf )
-  kDebug(24000) << "Creating Quanta Support Part" << endl;
+  kDebug(24000) << "Creating Quanta Support Part";
   setComponentData(QuantaCoreFactory::componentData());
   setXMLFile("kdevquantacore.rc");
 
@@ -265,7 +265,7 @@ void QuantaCorePart::slotHelpUserList()
 
 void QuantaCorePart::slotFileLoaded(KDevelop::IDocument* document)
 {
-//   kDebug(24000) << "slotFileLoaded: " << url << endl;
+//   kDebug(24000) << "slotFileLoaded: " << url;
   if (document->textDocument()) //it is a text document
   {
     m_activeQuantaDoc = new QuantaDoc(document, this);
@@ -290,7 +290,7 @@ void QuantaCorePart::slotFinishedParsing(const EditorSource *source, const Parse
 
 void QuantaCorePart::slotGroupsParsed(const EditorSource *source, const ParseResult *parseResult)
 {
-  kDebug(24000) << "Group parsing done" << endl;
+  kDebug(24000) << "Group parsing done";
   if (source == m_activeQuantaDoc)
     emit groupsParsed(parseResult); // signal in QuantaCoreIf
 }
@@ -317,7 +317,7 @@ void QuantaCorePart::slotDocumentActivated(KDevelop::IDocument *document)
 
 void QuantaCorePart::slotClosedFile(KDevelop::IDocument* document)
 {
-//   kDebug(24000) << "-----------slotClosedFile " << url.url() << endl;
+//   kDebug(24000) << "-----------slotClosedFile " << url.url();
   QuantaDoc * doc = m_documents.value(document->url().url());
   if (doc)
   {

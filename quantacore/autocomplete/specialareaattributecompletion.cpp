@@ -151,7 +151,7 @@ bool SpecialAreaAttributeCompletion::isValid(CompletionMode mode)
     case Manual:
     case Auto:
       {
-        kDebug(24000) << "s=|" << s << "|" << endl;
+        kDebug(24000) << "s=|" << s << "|";
         if (QuantaCommon::insideCommentsOrQuotes(s.length() -1, s, m_dtd))
           return false; //again, nothing to do
         QString s2 = s;
@@ -169,8 +169,8 @@ bool SpecialAreaAttributeCompletion::isValid(CompletionMode mode)
           while (i > 0 && s[i] != m_dtd->attrAutoCompleteAfter)
             i--;
           s = s.left(i + 1);
-          kDebug(24000) << "s=|" << s << "|" << endl;
-          kDebug(24000) << "s[i]= " << QString(s[i]) << ";  attrAutoCompleteAfter = " << m_dtd->attrAutoCompleteAfter << "; attributeSeparator=" << m_dtd->attributeSeparator << endl;
+          kDebug(24000) << "s=|" << s << "|";
+          kDebug(24000) << "s[i]= " << QString(s[i]) << ";  attrAutoCompleteAfter = " << m_dtd->attrAutoCompleteAfter << "; attributeSeparator=" << m_dtd->attributeSeparator;
           if ( s[i] == m_dtd->attrAutoCompleteAfter)
           {
             m_attrAutoCompleteAfterCharPosition = i;

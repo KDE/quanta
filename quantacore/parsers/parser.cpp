@@ -444,7 +444,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
         ec = 0;
     AreaStruct area(el, ec, endLine, endCol);
 #ifdef DEBUG_PARSER
-    kDebug(24000) << "Calling cleanGroups from Parser::parseArea" << endl;
+    kDebug(24000) << "Calling cleanGroups from Parser::parseArea";
 #endif
     cleanGroups();
     m_saParser->setParsingEnabled(true);
@@ -517,9 +517,9 @@ void Parser::parse(EditorSource *source, ParseResult *base, const DTDStruct *dtd
   }
 
 //  treeSize = 0;
-//  kDebug(24000) << "Basenode : " << m_base->baseNode << endl;
+//  kDebug(24000) << "Basenode : " << m_base->baseNode;
   //Node::coutTree(m_base->baseNode, 2);
-//  kDebug(24000) << "Size of tree: " << treeSize << endl;
+//  kDebug(24000) << "Size of tree: " << treeSize;
 
  m_saParser->init(m_base, m_source, m_dtd);
 
@@ -825,7 +825,7 @@ void Parser::deleteNodes(Node *firstNode, Node *lastNode/*FIXME, NodeModifsSet *
     modifs->addNodeModif(modif);*/
     node = nextNode;
 
- //   kDebug(24000)<< "Node removed!" << endl;
+ //   kDebug(24000)<< "Node removed!";
 //    Node::coutTree(m_node, 2);
   }
 //  Node::coutTree(m_node, 2);
@@ -833,7 +833,7 @@ void Parser::deleteNodes(Node *firstNode, Node *lastNode/*FIXME, NodeModifsSet *
 
 void Parser::rebuild(EditorSource *source, ParseResult *base, const DTDStruct *dtd, bool detailed)
 {
- kDebug(24000) << "Rebuild started. " << endl;
+ kDebug(24000) << "Rebuild started. ";
  QTime t;
  t.start();
  m_source = source;
@@ -849,10 +849,10 @@ FIXME
  NodeModif *modif;
 
 
-// kDebug(24000)<< "Node *Parser::rebuild()" << endl;
+// kDebug(24000)<< "Node *Parser::rebuild()";
  modifs->setIsModifiedAfter(w->isModified());
 */
- //**kDebug(24000)<< "************* Begin User Modification *****************" << endl;
+ //**kDebug(24000)<< "************* Begin User Modification *****************";
   //debug!
   //Node::coutTree(m_node, 2);//*/
  if (/*FIXME w != write || */!m_base->baseNode) //the document has changed or the top node does not exists => parse completely
@@ -1070,16 +1070,16 @@ FIXME
     lastNode = lastNode->nextNotChild();
    }
  }
-/*   kDebug(24000)<< "END"<< endl;
+/*   kDebug(24000)<< "END";
    Node::coutTree(baseNode,  2);
-   kDebug(24000)<< "************* End User Modification *****************" << endl;*/
+   kDebug(24000)<< "************* End User Modification *****************";*/
 //FIXME   w->docUndoRedo->addNewModifsSet(modifs, undoRedo::SourceModif);
  }
   kDebug(24000) << "Rebuild: " << t.elapsed() << " ms \n";
 
 //  treeSize = 0;
 //  Node::coutTree(m_base->baseNode, 2);
-//  kDebug(24000) << "Size of tree: " << treeSize << endl;
+//  kDebug(24000) << "Size of tree: " << treeSize;
 // cout << "\n"; */
 
  m_saParser->init(m_base, m_source, m_dtd);
@@ -1144,7 +1144,7 @@ void Parser::clearIncludedGroupElements()
 void Parser::parseIncludedFiles()
 {
 #ifdef DEBUG_PARSER
-  kDebug(24000) << "parseIncludedFiles" << endl;
+  kDebug(24000) << "parseIncludedFiles";
 #endif
   clearIncludedGroupElements();
   uint listCount;
@@ -1174,7 +1174,7 @@ void Parser::parseIncludedFile(const QString& fileName, const DTDStruct *dtd)
 #if 0
 FIXME
 #ifdef DEBUG_PARSER
-  kDebug(24000) << "parseIncludedFile: " << fileName << endl;
+  kDebug(24000) << "parseIncludedFile: " << fileName;
 #endif
   StructTreeGroup group;
   QString content;

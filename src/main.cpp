@@ -133,7 +133,7 @@ int main(int argc, char *argv[])
 
   for( int i=0; i<args->count(); ++i )
   {
-    kDebug(24000) << "------> arg " << args->arg(i) << endl;
+    kDebug(24000) << "------> arg " << args->arg(i);
   }
 
   bool openProject = false;

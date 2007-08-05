@@ -44,7 +44,7 @@ void GroupStorage::detachNode(Node* node)
       groupElement->node = 0L;
       groupElement->group = 0L;
 #ifdef DEBUG_PARSER
-      kDebug(24001) << "Detach group element " << groupElement << " from node " << node << endl;
+      kDebug(24001) << "Detach group element " << groupElement << " from node " << node;
 #endif
     }
     m_nodeElements.remove(node);
@@ -67,7 +67,7 @@ void GroupStorage::clear(QHash<QString, QTag*> *userTags)
       for (GroupElementList::Iterator elementsIt = elements->begin(); elementsIt != end; ++elementsIt)
       {
 #ifdef DEBUG_PARSER
-        kDebug(24001) << "Delete group element " << membersIt.key() << ", " << (*elementsIt) << " from group " << groupsIt.key() << endl;
+        kDebug(24001) << "Delete group element " << membersIt.key() << ", " << (*elementsIt) << " from group " << groupsIt.key();
 #endif
         if (userTags)
           delete userTags->take((*elementsIt)->tag->name().toLower());
@@ -106,7 +106,7 @@ void GroupStorage::cleanUp(QHash<QString, QTag*> *userTags)
         if (groupElement->deleted)
         {
 #ifdef DEBUG_PARSER
-          kDebug(24001) << "Cleanup group element " << membersIt.key() << ", " << groupElement << " from group " << groupsIt.key() << endl;
+          kDebug(24001) << "Cleanup group element " << membersIt.key() << ", " << groupElement << " from group " << groupsIt.key();
 #endif
           if (userTags)
             delete userTags->take(groupElement->tag->name().toLower());
@@ -120,7 +120,7 @@ void GroupStorage::cleanUp(QHash<QString, QTag*> *userTags)
       if (elements->isEmpty())
         deleteIt = membersIt;
 #ifdef DEBUG_PARSER
-          kDebug(24001) << "Size of elements list for " << membersIt.key() << ": " << elements->count() << endl;
+          kDebug(24001) << "Size of elements list for " << membersIt.key() << ": " << elements->count();
 #endif
     }
     if (deleteIt != end)
@@ -159,7 +159,7 @@ void GroupStorage::insert(const QString& group, const QString &memberName, Group
   elements->append(element);
   m_nodeElements[element->node].append(element);
 #ifdef DEBUG_PARSER
-  kDebug(24001) << "Insert group element " << memberName << ", " << element << " into " << group << endl;
+  kDebug(24001) << "Insert group element " << memberName << ", " << element << " into " << group;
 #endif
 }
 

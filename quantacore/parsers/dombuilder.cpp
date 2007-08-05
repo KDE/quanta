@@ -33,7 +33,7 @@
 #define DEBUGMODE
 
 #ifdef DEBUGMODE
-#define DOMBUILDERDEBUG( S ) kDebug(24001) << S << endl;
+#define DOMBUILDERDEBUG( S ) kDebug(24001) << S;
 #else
 #define DOMBUILDERDEBUG( S )
 #endif
@@ -332,7 +332,7 @@ bool DomBuilder::fatalError(const QXmlParseException & /*exception*/)
 
 bool DomBuilder::warning(const QXmlParseException & exception)
 {
-  kWarning(24001) << exception.message() << " at: " << exception.lineNumber() << ", " << exception.columnNumber() << endl;
+  kWarning(24001) << exception.message() << " at: " << exception.lineNumber() << ", " << exception.columnNumber();
   return true;
 }
 
