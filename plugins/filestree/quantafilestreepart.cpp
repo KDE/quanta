@@ -36,24 +36,46 @@
 #include <iprojectcontroller.h>
 #include <iuicontroller.h>
 
+#define GLOBALDOC_OPTIONS 1
+#define PROJECTDOC_OPTIONS 2
+    
 typedef KGenericFactory<QuantaFilesTreePart> QuantaFilesTreeFactory;
 K_EXPORT_COMPONENT_FACTORY( libkdevquantafilestree, QuantaFilesTreeFactory("kdevquantafilestree") )
 
-#define GLOBALDOC_OPTIONS 1
-#define PROJECTDOC_OPTIONS 2
+    
+class FilesTreeViewFactory: public KDevelop::IToolViewFactory{
+  public:
+    FilesTreeViewFactory(QuantaFilesTreePart *part): m_part(part) {}
+
+    virtual QWidget* create(QWidget *parent = 0)
+    {
+      FilesTreeView *tree = new FilesTreeView(m_part, parent);
+      QObject::connect(KDevelop::Core::self()->documentController(), SIGNAL(documentClosed(KDevelop::IDocument*)), tree, SLOT(slotDocumentClosed(KDevelop::IDocument*)));
+
+      K3ListViewSearchLineWidget * sl = new K3ListViewSearchLineWidget(tree, parent);
+
+      QVBoxLayout *l = new QVBoxLayout(parent);
+      l->addWidget(sl);
+      l->addWidget(tree);
+      return tree;
+    }
+
+    virtual Qt::DockWidgetArea defaultPosition(const QString &/*areaName*/)
+    {
+      return Qt::LeftDockWidgetArea;
+    }
+
+  private:
+    QuantaFilesTreePart *m_part;
+};
 
 QuantaFilesTreePart::QuantaFilesTreePart(QObject *parent, const QStringList &/*args*/)
   : KDevelop::IPlugin(QuantaFilesTreeFactory::componentData(), parent)
 {
     setXMLFile("kdevquantafilestree.rc");
-
-    m_widget = new QWidget();
-    m_widget->setObjectName("FilesTreeWidget");
-    m_widget->setWindowTitle("Files Tree");
-//    m_widget->setWindowIcon(SmallIcon(info()->icon()));
-
-    m_widget->setWhatsThis(i18n("Here you can manage your filesystem, either local or remote."));
-
+    FilesTreeViewFactory *factory = new FilesTreeViewFactory(this);
+    core()->uiController()->addToolView( "File Manager", factory );
+    
     setupActions();
 //FIXME: New KCM modules need to be created for each config page
     /*
@@ -75,23 +97,9 @@ QuantaFilesTreePart::~QuantaFilesTreePart()
 {
 }
   
-
-QWidget *QuantaFilesTreePart::pluginView() const
-{
-  return m_widget;
-}
-
 void QuantaFilesTreePart::init()
 {
 // delayed initialization stuff goes here
-  m_tree = new FilesTreeView(this, m_widget);
-  connect(KDevelop::Core::self()->documentController(), SIGNAL(documentClosed(KDevelop::IDocument*)), m_tree, SLOT(slotDocumentClosed(KDevelop::IDocument*)));
-
-  K3ListViewSearchLineWidget * sl = new K3ListViewSearchLineWidget(m_tree, m_widget);
-
-  QVBoxLayout *l = new QVBoxLayout(m_widget);
-  l->addWidget(sl);
-  l->addWidget(m_tree);
 }
 
 void QuantaFilesTreePart::setupActions()
@@ -106,6 +114,7 @@ void QuantaFilesTreePart::setupActions()
 void QuantaFilesTreePart::insertConfigWidget(const KDialog *dlg, QWidget *page, unsigned int pageNo)
 {
 // create configuraton dialogs here
+  /*
     switch (pageNo)
     {
         case GLOBALDOC_OPTIONS:
@@ -115,13 +124,13 @@ void QuantaFilesTreePart::insertConfigWidget(const KDialog *dlg, QWidget *page, 
             connect(w, SIGNAL(accepted()), m_tree, SLOT(slotSettingsChanged()));
             break;
         }
-/*        case PROJECTDOC_OPTIONS:
+        case PROJECTDOC_OPTIONS:
         {
             QuantaFilesTreeProjectConfig *w = new QuantaFilesTreeProjectConfig(this, page);
             connect(dlg, SIGNAL(okClicked()), w, SLOT(accept()));
             break;
-        }*/
-    }
+        }
+    }*/
 }
 
 //FIXME: context menu handling was changed!
