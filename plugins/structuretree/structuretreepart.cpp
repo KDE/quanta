@@ -39,23 +39,78 @@
 #include <iplugincontroller.h>
 #include <iuicontroller.h>
 
-typedef KGenericFactory<StructureTreePart> StructureTreeFactory;
-K_EXPORT_COMPONENT_FACTORY( libkdevstructuretree, StructureTreeFactory("kdevstructuretree") )
-
 #define GLOBALDOC_OPTIONS 1
 #define PROJECTDOC_OPTIONS 2
 
+typedef KGenericFactory<StructureTreePart> StructureTreeFactory;
+K_EXPORT_COMPONENT_FACTORY( libkdevstructuretree, StructureTreeFactory("kdevstructuretree") )
+
+class StructureTreeWidgetFactory: public KDevelop::IToolViewFactory
+{
+  public:
+    StructureTreeWidgetFactory( StructureTreePart *part ): m_part( part )
+    {}
+    virtual QWidget* create( QWidget *parent = 0 )
+    {
+      
+      QToolBox *widget = new QToolBox(parent);
+      widget->setObjectName("StructureTreeWidget");
+      widget->setWindowTitle(i18n("Structure Tree"));
+//    m_widget->setWindowIcon(SmallIcon(info()->icon()));
+
+      widget->setWhatsThis(i18n("Displays the structure of current document. Manipulation of the document is also possible."));
+ 
+      QWidget *w = new QWidget(widget);
+      w->setObjectName("structuretreecontainer");
+
+      StructureTreeWidget *documentTree = new StructureTreeWidget(m_part, w);
+
+      K3ListViewSearchLineWidget * sl = new K3ListViewSearchLineWidget(documentTree, w);
+
+      QVBoxLayout *l = new QVBoxLayout(w);
+      l->addWidget(sl);
+      l->addWidget(documentTree);
+     
+      KDevelop::IPlugin *corePlugin = KDevelop::Core::self()->pluginController()->pluginForExtension("org.kdevelop.QuantaCoreIf");
+      QuantaCoreIf *qcore = corePlugin->extension<QuantaCoreIf>();
+  
+      QObject::connect(corePlugin, SIGNAL(startParsing()), documentTree, SLOT(slotBlockGUI()));
+
+      QObject::connect(corePlugin, SIGNAL(finishedParsing(const ParseResult *)), documentTree, SLOT(slotBuild(const ParseResult *)));
+
+      QObject::connect(corePlugin, SIGNAL(newCursorPosition(const QPoint &)), documentTree, SLOT(slotNewCursorPosition(const QPoint &)));
+
+      GroupsWidget *groupsTree = new GroupsWidget(m_part, widget);
+      QObject::connect(corePlugin, SIGNAL(startParsing()), groupsTree, SLOT(slotBlockGUI()));
+
+      QObject::connect(corePlugin, SIGNAL(finishedParsing(const ParseResult *)), groupsTree, SLOT(slotBuild(const ParseResult *)));
+
+      QObject::connect(corePlugin, SIGNAL(groupsParsed(const ParseResult *)), groupsTree, SLOT(slotGroupsParsed(const ParseResult *)));
+
+  // add the widgets to the qtoolbox
+      widget->addItem(groupsTree, i18n("Groups"));
+      widget->addItem(w, i18n("Document"));
+
+      widget->setCurrentIndex(widget->indexOf(w));
+      
+      return widget;
+    }
+    virtual Qt::DockWidgetArea defaultPosition(const QString &/*areaName*/)
+    {
+      return Qt::LeftDockWidgetArea;
+    }
+  private:
+    StructureTreePart *m_part;
+};
+    
+    
 StructureTreePart::StructureTreePart(QObject *parent, const QStringList &/*args*/)
   : KDevelop::IPlugin(StructureTreeFactory::componentData(), parent)
 {
     setXMLFile("kdevstructuretree.rc");
 
-    m_widget = new QToolBox();
-    m_widget->setObjectName("StructureTreeWidget");
-    m_widget->setWindowTitle(i18n("Structure Tree"));
-//    m_widget->setWindowIcon(SmallIcon(info()->icon()));
-
-    m_widget->setWhatsThis(i18n("Displays the structure of current document. Manipulation of the document is also possible."));
+    StructureTreeWidgetFactory *factory = new StructureTreeWidgetFactory(this);
+    core()->uiController()->addToolView("Structure Tree", factory);
 
     setupActions();
 //FIXME: New KCM modules need to be created for each config page
@@ -63,10 +118,10 @@ StructureTreePart::StructureTreePart(QObject *parent, const QStringList &/*args*
     m_configProxy = new ConfigWidgetProxy(core());
     m_configProxy->createGlobalConfigPage(i18n("Document Structure"), GLOBALDOC_OPTIONS, info()->icon());
     m_configProxy->createProjectConfigPage(i18n("Document Structure"), PROJECTDOC_OPTIONS, info()->icon());
-    connect(m_configProxy, SIGNAL(insertConfigWidget(const KDialog*, QWidget*, unsigned int )),
+    QObject::connect(m_configProxy, SIGNAL(insertConfigWidget(const KDialog*, QWidget*, unsigned int )),
         this, SLOT(insertConfigWidget(const KDialog*, QWidget*, unsigned int)));
     */
-    connect(KDevelop::Core::self()->uiController()->activeMainWindow(), SIGNAL(contextMenu(QMenu *, const Koncrete::Context *)),
+    connect(KDevelop::Core::self()->uiController()->activeMainWindow(), SIGNAL(contextMenu(QMenu *, const KDevelop::Context *)),
         this, SLOT(contextMenu(QMenu *, const Context *)));
     connect(KDevelop::Core::self()->projectController(), SIGNAL(projectOpened()), this, SLOT(projectOpened()));
     connect(KDevelop::Core::self()->projectController(), SIGNAL(projectClosed()), this, SLOT(projectClosed()));
@@ -79,48 +134,11 @@ StructureTreePart::~StructureTreePart()
 {
 }
   
-
-QWidget *StructureTreePart::pluginView() const
-{
-  return m_widget;
-}
-
 void StructureTreePart::init()
 {
-// delayed initialization stuff goes here
-  QWidget *w = new QWidget(m_widget);
-  w->setObjectName("structuretreecontainer");
-
-  m_documentTree = new StructureTreeWidget(this, w);
-
-  K3ListViewSearchLineWidget * sl = new K3ListViewSearchLineWidget(m_documentTree, w);
-
-  QVBoxLayout *l = new QVBoxLayout(w);
-  l->addWidget(sl);
-
-  l->addWidget(m_documentTree);
-
   KDevelop::IPlugin *corePlugin = KDevelop::Core::self()->pluginController()->pluginForExtension("org.kdevelop.QuantaCoreIf");
   m_qcore = corePlugin->extension<QuantaCoreIf>();
   
-  connect(corePlugin, SIGNAL(startParsing()), m_documentTree, SLOT(slotBlockGUI()));
-
-  connect(corePlugin, SIGNAL(finishedParsing(const ParseResult *)), m_documentTree, SLOT(slotBuild(const ParseResult *)));
-
-  connect(corePlugin, SIGNAL(newCursorPosition(const QPoint &)), m_documentTree, SLOT(slotNewCursorPosition(const QPoint &)));
-
-  m_groupsTree = new GroupsWidget(this, m_widget);
-  connect(corePlugin, SIGNAL(startParsing()), m_groupsTree, SLOT(slotBlockGUI()));
-
-  connect(corePlugin, SIGNAL(finishedParsing(const ParseResult *)), m_groupsTree, SLOT(slotBuild(const ParseResult *)));
-
-  connect(corePlugin, SIGNAL(groupsParsed(const ParseResult *)), m_groupsTree, SLOT(slotGroupsParsed(const ParseResult *)));
-
-  // add the widgets to the qtoolbox
-  m_widget->addItem(m_groupsTree, i18n("Groups"));
-  m_widget->addItem(w, i18n("Document"));
-
-  m_widget->setCurrentIndex(m_widget->indexOf(w));
 }
 
 void StructureTreePart::setupActions()
@@ -135,22 +153,22 @@ void StructureTreePart::insertConfigWidget(const KDialog *dlg, QWidget *page, un
     {
         case GLOBALDOC_OPTIONS:
         {
-            StructureTreeGlobalConfig *w = new StructureTreeGlobalConfig(this, page);
-            connect(dlg, SIGNAL(okClicked()), w, SLOT(accept()));
-            connect(w, SIGNAL(accepted()), m_documentTree, SLOT(slotNewSettings()));
-            connect(w, SIGNAL(accepted()), m_groupsTree, SLOT(slotNewSettings()));
+/*            StructureTreeGlobalConfig *w = new StructureTreeGlobalConfig(this, page);
+            QObject::connect(dlg, SIGNAL(okClicked()), w, SLOT(accept()));
+            QObject::connect(w, SIGNAL(accepted()), m_documentTree, SLOT(slotNewSettings()));
+            QObject::connect(w, SIGNAL(accepted()), m_groupsTree, SLOT(slotNewSettings()));*/
             break;
         }
         case PROJECTDOC_OPTIONS:
         {
 /*            StructureTreeProjectConfig *w = new StructureTreeProjectConfig(this, page);
-            connect(dlg, SIGNAL(okClicked()), w, SLOT(accept()));*/
+            QObject::connect(dlg, SIGNAL(okClicked()), w, SLOT(accept()));*/
             break;
         }
     }
 }
 
-void StructureTreePart::contextMenu(QMenu */*popup*/, const Koncrete::Context */*context*/)
+void StructureTreePart::contextMenu(QMenu */*popup*/, const KDevelop::Context */*context*/)
 {
 // put actions into the context menu here
 //     if (context->hasType(Context::EditorContext))

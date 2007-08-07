@@ -19,7 +19,6 @@
 
 class QMenu;
 class KDialog;
-namespace Koncrete { class Context; }
 class ConfigWidgetProxy;
 class QToolBox;
 class QuantaCoreIf;
@@ -37,17 +36,11 @@ public:
   StructureTreePart(QObject *parent, const QStringList &args);
   ~StructureTreePart();
   
-  // the methods to embed the view 
-  virtual QWidget *pluginView() const;
-    
-  virtual Qt::DockWidgetArea dockWidgetAreaHint() const 
-    {return Qt::LeftDockWidgetArea;}
-  
 private slots:
   void init();
   
   void insertConfigWidget(const KDialog *dlg, QWidget *page, unsigned int pageNo);
-  void contextMenu(QMenu *popup, const Koncrete::Context *context);
+  void contextMenu(QMenu *popup, const KDevelop::Context *context);
   void projectOpened();
   void projectClosed();
 
@@ -55,10 +48,7 @@ private:
   void setupActions();
   
   QuantaCoreIf * m_qcore;
-  QToolBox *m_widget;
   ConfigWidgetProxy * m_configProxy;
-  StructureTreeWidget * m_documentTree;
-  GroupsWidget * m_groupsTree;
 };
 
 #endif
