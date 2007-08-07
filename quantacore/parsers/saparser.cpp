@@ -711,6 +711,8 @@ Node* SAParser::parseArea(const AreaStruct &specialArea,
   }
   addDTEP(s_dtd);
   s_searchForSpecialAreas = (s_dtd->specialAreas.count() > 0);
+  if (s_parentNode && s_parentNode->tag->isType(Tag::Comment))
+    s_searchForSpecialAreas = false;
   s_col = s_startCol + areaStartString.length();
   s_line = s_startLine;
   s_textLine = m_source->text(s_startLine, 0, s_startLine, m_source->lineLength(s_startLine));
@@ -911,7 +913,7 @@ void SAParser::slotParseNodeInDetail()
       m_childToDelete = m_currentNode->child;
       m_currentNode->child = 0L;
       AreaStruct area(m_currentNode->tag->area());
-      if (m_currentNode->next)
+      if (m_currentNode->next && m_currentNode->next->tag)
       {
         area.end = m_currentNode->next->tag->area().end;
         ++(area.end.ry());

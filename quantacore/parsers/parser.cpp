@@ -150,6 +150,9 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
            node->prev->next = 0L;
            node->prev = 0L;
          }
+        if (node->tag->name().lower().startsWith("comment"))
+          node->tag->setType(Tag::Comment);
+
         if (!rootNode)
           rootNode = node;
 
@@ -175,7 +178,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
         bool insideSingleQuotes = false;
         bool insideDoubleQuotes = false;
         //find the matching ">" in the document
-        while (line <= endLine && openNum > 0)
+        while (line <= endLine && openNum > 0 && !firstOpenFound)
         {
           textLine = m_source->getLine( line, endLine, endCol);
           uint textLineLen = textLine.length();
@@ -193,11 +196,15 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
                 if (textLine[i] == '<')
                 {
                   openNum++;
-                  if (!firstOpenFound)
+                  if (!firstOpenFound &&
+                      (i < textLineLen -1 && (textLine[i + 1] == '/' || textLine[i + 1].isLetter()) ||
+                       i == textLineLen -1)
+                     )
                   {
                     firstStartCol = i;
                     firstStartLine = line;
                     firstOpenFound = true;
+                    break;
                   }
                 } else
                 if (textLine[i] == '>') openNum--;
@@ -411,7 +418,17 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
             parentNode = node;
 
         node->tag = tag;
-        if (tag->isType(Tag::XmlTag))
+        if (tag->isType(Tag::NeedsParsing))
+        {
+          if (tag->name().lower().startsWith("comment"))
+          {
+#ifdef DEBUG_PARSER
+            kdDebug(24000) << "COMMENT!" << endl;
+#endif
+            node->tag->setType(Tag::Comment);
+          }
+        }
+        else if (tag->isType(Tag::XmlTag))
             {
               parseForXMLGroup(node);
               //search for scripts inside the XML tag
@@ -515,7 +532,6 @@ void Parser::parse(EditorSource *source, ParseResult *base, const DTDStruct *dtd
   {
     m_base->baseNode = ParserCommon::createTextNode(m_source, m_dtd, 0L, maxLines, m_source->lineLength(maxLines), 0L);
   }
-
 //  treeSize = 0;
 //  kDebug(24000) << "Basenode : " << m_base->baseNode;
   //Node::coutTree(m_base->baseNode, 2);
@@ -692,6 +708,10 @@ void Parser::deleteNodes(Node *firstNode, Node *lastNode/*FIXME, NodeModifsSet *
     if (nextNode && nextNode->prev == node)
     {
       nextNode->prev = prev;
+    }
+    if (nextNode && nextNode->parent == node)
+    {
+      nextNode->parent = parent;
     }
     if (next)
       next->prev = prev;

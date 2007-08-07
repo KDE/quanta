@@ -27,6 +27,7 @@
 
 //KDE includes
 #include <kdebug.h>
+QList<Node*> nodes; //list of all created nodes. Used to do some own memory management and avoid double deletes, for whatever reason they happen...
 
 
 Node::Node(Node *parent)
@@ -41,11 +42,22 @@ Node::Node(Node *parent)
   _closingNode = 0L;
   m_groupStorage = 0L;
   //m_groupElements.clear();
+  if (nodes.contains(this) == 0)
+    nodes.append(this);
+  else
+  {
+    kdError(24000) << "A node with this address " << this << " already exists!" << endl; 
+  }
 }
 
 
 Node::~Node()
 {
+  if (nodes.contains(this) == 0)
+  {     
+    kdError(24000) << "No node with this address " << this << " was allocated!" << endl; 
+    return;
+  }
  // kDebug(24000) << "Node destructor " << this << tag->name;
   //It has no use, except to know when it crash why it has crashed.
   //If it has crashed here, the Node doesn't exist anymore.
@@ -53,6 +65,8 @@ Node::~Node()
   tag->setCleanStrBuilt(false);
 
 //  detachNode();
+  if (nodes.contains(this) > 0)
+    nodes.remove(this);
   if (prev && prev->next == this)
       prev->next = 0L;
   if (parent && parent->child == this)
@@ -63,7 +77,14 @@ Node::~Node()
     child = 0L;
     next->deleteNode(m_groupStorage);
     next = 0L;
+  } else
+  {
+    if (next && next->prev == this)
+      next->prev = 0L;
+    if (child && child->parent == this)
+      child->parent = 0L;
   }
+
 
   delete tag;
   tag = 0L;
