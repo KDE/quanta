@@ -105,6 +105,7 @@ void TemplatesTreePart::init()
   connect(m_widget, SIGNAL(insertTag(const KUrl &, Helper::DirInfo *)), corePlugin, SLOT(slotInsertTag( const KUrl&, Helper::DirInfo* )));
   
   m_qcore = KDevelop::Core::self()->pluginController()->extensionForPlugin<QuantaCoreIf>("QuantaCoreIf", "KDevQuantaCore");
+  kDebug(24000) << "Quanta core: " << m_qcore;
 }
 
 void TemplatesTreePart::setupActions()

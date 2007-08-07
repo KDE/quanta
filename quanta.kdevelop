@@ -9,7 +9,7 @@
     <ignoreparts>
       <part>kdevkonsoleview</part>
     </ignoreparts>
-    <projectdirectory>/data/development/sources/kde-trunk/kdewebdev/</projectdirectory>
+    <projectdirectory>/data/development/sources/kde-trunk/kdewebdev/quanta</projectdirectory>
     <absoluteprojectpath>true</absoluteprojectpath>
     <secondaryLanguages>
       <language>C</language>
@@ -27,7 +27,7 @@
       <customdirectory>/</customdirectory>
       <programargs/>
       <terminal>false</terminal>
-      <autocompile>false</autocompile>
+      <autocompile>true</autocompile>
       <envvars>
         <envvar value="/opt/kde4" name="KDEDIR" />
         <envvar value="/opt/kde4" name="KDEDIRS" />
@@ -58,14 +58,19 @@
       <makebin/>
       <selectedenvironment>default</selectedenvironment>
       <environments>
-        <default/>
+        <default>
+          <envvar value="/opt/kde4" name="KDEDIRS" />
+          <envvar value="/opt/kde4/lib:/opt/qt4/lib:$LD_LIBRARY_PATH" name="LD_LIBRARY_PATH" />
+          <envvar value="/opt/kde4/bin:/opt/qt4/bin:$PATH" name="PATH" />
+          <envvar value="/opt/qt4" name="QTDIR" />
+        </default>
       </environments>
       <prio>0</prio>
       <defaulttarget/>
       <makeoptions/>
     </make>
     <general>
-      <activedir/>
+      <activedir>plugins/project/projectfilemanager</activedir>
     </general>
     <filetypes>
       <filetype>*.java</filetype>
@@ -97,14 +102,21 @@
   </kdevcustomproject>
   <kdevfilecreate>
     <filetypes>
-      <type icon="source_f" ext="for" name="Preprocessed Fortran" create="template" >
+      <type icon="source_cpp" ext="cpp" create="template" name="C++ Source" >
+        <descr>A new empty C++ file.</descr>
+      </type>
+      <type icon="source_h" ext="h" create="template" name="C/C++ Header" >
+        <descr>A new empty header file for C or C++.</descr>
+      </type>
+      <type icon="source_cpp" ext="cpp" create="template" name="C++ Source" >
+        <descr>A new empty C++ file.</descr>
+      </type>
+      <type icon="source_f" ext="for" create="template" name="Preprocessed Fortran" >
         <descr>A new empty preprocessed Fortran file.</descr>
       </type>
     </filetypes>
     <useglobaltypes>
       <type ext="ui" />
-      <type ext="cpp" />
-      <type ext="h" />
     </useglobaltypes>
   </kdevfilecreate>
   <kdevdoctreeview>
@@ -143,7 +155,7 @@
       <statusBarTypeEvaluation>false</statusBarTypeEvaluation>
       <namespaceAliases>std=_GLIBCXX_STD</namespaceAliases>
       <processPrimaryTypes>true</processPrimaryTypes>
-      <processFunctionArguments>false</processFunctionArguments>
+      <processFunctionArguments>true</processFunctionArguments>
       <preProcessAllHeaders>false</preProcessAllHeaders>
       <parseMissingHeaders>false</parseMissingHeaders>
       <resolveIncludePaths>true</resolveIncludePaths>
@@ -154,7 +166,9 @@
       <parseMissingHeadersExperimental>false</parseMissingHeadersExperimental>
       <resolveIncludePathsUsingMakeExperimental>false</resolveIncludePathsUsingMakeExperimental>
     </codecompletion>
-    <references/>
+    <references>
+      <pcs>Qt4</pcs>
+    </references>
     <qt>
       <used>true</used>
       <version>4</version>

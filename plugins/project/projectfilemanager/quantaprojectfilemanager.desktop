@@ -28,3 +28,4 @@ X-KDE-PluginInfo-Name=QuantaProjectFileManager
 X-KDevelop-FileManager=None
 X-KDevelop-Version=4
 X-KDevelop-Interfaces=org.kdevelop.IProjectFileManager
+X-KDevelop-IRequired=org.kdevelop.QuantaCoreIf

@@ -118,19 +118,6 @@ int main(int argc, char *argv[])
   }
 */
   
-  //Load QuantaCore *before* loading other plugins, otherwise the signal
-  //connection between them an QuantaCore will not work.
-  KDevelop::IPlugin *p = KDevelop::Core::self()->pluginController()->loadPlugin("KDevQuantaCore");
-  if (!p)
-  {
- //   delete splash;
- //   splash = 0;
-    KMessageBox::error( 0L, i18n("The Quanta Core Plugin could not be loaded.\nYour installation seems to be broken."));
-  }
-
-  KDevelop::Core::self()->pluginController()->loadPlugins( KDevelop::PluginController::Global);
-
-
   for( int i=0; i<args->count(); ++i )
   {
     kDebug(24000) << "------> arg " << args->arg(i);

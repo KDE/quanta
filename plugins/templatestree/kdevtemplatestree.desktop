@@ -37,8 +37,9 @@ X-KDevelop-Plugin-Copyright=(C) by Jens Herden
 
 X-KDevelop-Args=
 
-X-KDevelop-Scope=Global
+X-KDevelop-Category=Global
 X-KDE-Library=libkdevtemplatestree
 X-KDE-PluginInfo-Name=KDevTemplatesTree
 X-KDevelop-Version=4
-X-KDevelop-Properties=Quanta,Quanta-TemplatesTree
+X-KDevelop-Properties=Quanta-TemplatesTree
+X-KDevelop-IRequired=org.kdevelop.QuantaCoreIf

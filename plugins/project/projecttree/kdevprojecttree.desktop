@@ -40,3 +40,4 @@ X-KDE-Library=libkdevprojecttree
 X-KDE-PluginInfo-Name=KDevProjectTree
 X-KDevelop-Version=4
 X-KDevelop-Properties=Quanta,Quanta-ProjectTree
+X-KDevelop-IRequired=org.kdevelop.QuantaCoreIf

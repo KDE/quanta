@@ -32,10 +32,11 @@ Icon=kdevelop
 X-KDE-PluginInfo-Name=KDevQuantaCore
 X-KDE-Library=libkdevquantacore
 X-KDevelop-Version=4
-X-KDevelop-Scope=Global
+X-KDevelop-Category=Global
 X-KDevelop-Properties=Quanta,QuantaCore
 
 X-KDevelop-Plugin-Version=1
 X-KDevelop-Plugin-Homepage=http://kdewebdev.org/
 X-KDevelop-Plugin-BugsEmailAddress=amantia@kde.org
 X-KDevelop-Plugin-Copyright=(C) by Andras Mantia
+X-KDevelop-Interfaces=org.kdevelop.QuantaCoreIf

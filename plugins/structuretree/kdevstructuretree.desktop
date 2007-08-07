@@ -36,8 +36,9 @@ X-KDevelop-Plugin-Copyright=(C) by Jens Herden
 
 X-KDevelop-Args=
 
-X-KDevelop-Scope=Global
+X-KDevelop-Category=Global
 X-KDE-Library=libkdevstructuretree
 X-KDE-PluginInfo-Name=KDevStructureTree
 X-KDevelop-Version=4
 X-KDevelop-Properties=Quanta,Quanta-StructureTree
+X-KDevelop-IRequired=org.kdevelop.QuantaCoreIf

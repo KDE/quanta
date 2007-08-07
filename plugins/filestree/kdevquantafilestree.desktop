@@ -38,7 +38,7 @@ X-KDevelop-Plugin-Copyright=(C) by Jens Herden
 
 X-KDevelop-Args=
 
-X-KDevelop-Scope=Global
+X-KDevelop-Category=Global
 X-KDE-Library=libkdevquantafilestree
 X-KDE-PluginInfo-Name=KDevQuantaFilesTree
 X-KDevelop-Version=4
