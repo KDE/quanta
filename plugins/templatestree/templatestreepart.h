@@ -45,9 +45,6 @@ public:
 
   QuantaCoreIf * quantaCore() {return m_qcore;};
     
-  virtual Qt::DockWidgetArea dockWidgetAreaHint() const 
-    {return Qt::RightDockWidgetArea;}
-    
 private slots:
   
   void init();
