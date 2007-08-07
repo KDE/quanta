@@ -110,13 +110,6 @@ TemplatesTreePart::~TemplatesTreePart()
 {
 }
   
-
-// QWidget *TemplatesTreePart::pluginView() const
-// {
-//   return m_widget;
-// }
-
-
 void TemplatesTreePart::init()
 {
 // delayed initialization stuff goes here

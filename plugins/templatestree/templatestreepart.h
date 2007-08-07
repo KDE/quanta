@@ -44,8 +44,6 @@ public:
   ~TemplatesTreePart();
 
   QuantaCoreIf * quantaCore() {return m_qcore;};
-// the methods to embed the view 
-//   virtual QWidget *pluginView() const;
     
   virtual Qt::DockWidgetArea dockWidgetAreaHint() const 
     {return Qt::RightDockWidgetArea;}
