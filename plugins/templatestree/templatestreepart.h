@@ -19,12 +19,15 @@
 //kdevelop includes
 #include <iplugin.h>
 
+#include "helper.h"
+
 class QMenu;
 class KAction;
 class KDialog;
 namespace KDevelop 
 { 
   class Context; 
+  class IToolViewFactory;
 }
 class ConfigWidgetProxy;
 class TemplatesTreeView;
@@ -42,7 +45,7 @@ public:
 
   QuantaCoreIf * quantaCore() {return m_qcore;};
 // the methods to embed the view 
-  virtual QWidget *pluginView() const;
+//   virtual QWidget *pluginView() const;
     
   virtual Qt::DockWidgetArea dockWidgetAreaHint() const 
     {return Qt::RightDockWidgetArea;}
@@ -65,9 +68,13 @@ private:
   KAction *m_createTemplateAction;
   KUrl::List m_fileContextList;
   
-  TemplatesTreeView *m_widget;
+//   TemplatesTreeView *m_widget;
   ConfigWidgetProxy *m_configProxy;
   QuantaCoreIf * m_qcore;
+  KDevelop::IToolViewFactory *m_factory;
+  
+signals:
+    void insertTag(const KUrl &, Helper::DirInfo *);
 };
 
 #endif

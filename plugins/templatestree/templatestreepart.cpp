@@ -47,25 +47,47 @@
 #include <iplugincontroller.h>
 #include <iuicontroller.h>
 
-typedef KGenericFactory<TemplatesTreePart> TemplatesTreeFactory;
-K_EXPORT_COMPONENT_FACTORY( libkdevtemplatestree, TemplatesTreeFactory("kdevtemplatestree") )
-
 #define GLOBALDOC_OPTIONS 1
 #define PROJECTDOC_OPTIONS 2
+
+typedef KGenericFactory<TemplatesTreePart> TemplatesTreeFactory;
+K_EXPORT_COMPONENT_FACTORY( libkdevtemplatestree, TemplatesTreeFactory("kdevtemplatestree") )
+    
+class TemplatesTreeViewFactory: public KDevelop::IToolViewFactory
+{
+  public:
+    TemplatesTreeViewFactory( TemplatesTreePart *part ): m_part( part )
+    {}
+    virtual QWidget* create( QWidget *parent = 0 )
+    {
+      TemplatesTreeView *widget = new TemplatesTreeView(m_part);
+      widget->setWindowTitle(i18n("Templates Tree"));
+      widget->setObjectName("TemplatesTreeWidget");
+      widget->setWhatsThis(i18n("Working with templates"));
+      
+      QObject::connect(KDevelop::Core::self()->uiController()->activeMainWindow(), SIGNAL(projectOpened()), widget, SLOT(slotProjectOpened()));
+      QObject::connect(KDevelop::Core::self()->documentController(), SIGNAL(documentClosed(KDevelop::Document*)), widget, SLOT(slotDocumentClosed(KDevelop::Document*)));
+      QObject::connect(widget, SIGNAL(insertTag(const KUrl &, Helper::DirInfo *)), m_part, SIGNAL(insertTag(const KUrl &, Helper::DirInfo *)));
+      
+      return widget;
+    }
+    virtual Qt::DockWidgetArea defaultPosition(const QString &/*areaName*/)
+    {
+      return Qt::LeftDockWidgetArea;
+    }
+  private:
+    TemplatesTreePart *m_part;
+};
+
 
 TemplatesTreePart::TemplatesTreePart(QObject *parent, const QStringList &/*args*/)
   : KDevelop::IPlugin(TemplatesTreeFactory::componentData(), parent)
 {
     setXMLFile("kdevtemplatestree.rc");
 
-    m_widget = new TemplatesTreeView(this);
-    m_widget->setWindowTitle(i18n("Templates Tree"));
-    m_widget->setObjectName("TemplatesTreeWidget");
-//    m_widget->setWindowIcon(SmallIcon(info()->icon()));
-
-    m_widget->setWhatsThis(i18n("Working with templates"));
-
-    connect(KDevelop::Core::self()->uiController()->activeMainWindow(), SIGNAL(projectOpened()), m_widget, SLOT(slotProjectOpened()));
+    m_factory = new TemplatesTreeViewFactory(this);
+    core()->uiController()->addToolView("Templates Tree", m_factory);
+    
 
     setupActions();
 //FIXME: New KCM modules need to be created for each config page
@@ -81,8 +103,6 @@ TemplatesTreePart::TemplatesTreePart(QObject *parent, const QStringList &/*args*
     connect(KDevelop::Core::self()->projectController(), SIGNAL(projectOpened()), this, SLOT(projectOpened()));
     connect(KDevelop::Core::self()->projectController(), SIGNAL(projectClosed()), this, SLOT(projectClosed()));
 
-    connect(KDevelop::Core::self()->documentController(), SIGNAL(documentClosed(Koncrete::Document*)), m_widget, SLOT(slotDocumentClosed(Koncrete::Document*)));
-
     QTimer::singleShot(0, this, SLOT(init()));
 }
 
@@ -91,10 +111,10 @@ TemplatesTreePart::~TemplatesTreePart()
 }
   
 
-QWidget *TemplatesTreePart::pluginView() const
-{
-  return m_widget;
-}
+// QWidget *TemplatesTreePart::pluginView() const
+// {
+//   return m_widget;
+// }
 
 
 void TemplatesTreePart::init()
@@ -102,7 +122,7 @@ void TemplatesTreePart::init()
 // delayed initialization stuff goes here
   KDevelop::IPlugin *corePlugin = KDevelop::Core::self()->pluginController()->pluginForExtension("org.kdevelop.QuantaCoreIf");
   
-  connect(m_widget, SIGNAL(insertTag(const KUrl &, Helper::DirInfo *)), corePlugin, SLOT(slotInsertTag( const KUrl&, Helper::DirInfo* )));
+  connect(this, SIGNAL(insertTag(const KUrl &, Helper::DirInfo *)), corePlugin, SLOT(slotInsertTag( const KUrl&, Helper::DirInfo* )));
   
   m_qcore = corePlugin->extension<QuantaCoreIf>();
 }
@@ -118,7 +138,7 @@ void TemplatesTreePart::setupActions()
 void TemplatesTreePart::insertConfigWidget(const KDialog *dlg, QWidget *page, unsigned int pageNo)
 {
 // create configuraton dialogs here
-    switch (pageNo)
+/*    switch (pageNo)
     {
         case GLOBALDOC_OPTIONS:
         {
@@ -133,7 +153,7 @@ void TemplatesTreePart::insertConfigWidget(const KDialog *dlg, QWidget *page, un
             connect(dlg, SIGNAL(okClicked()), w, SLOT(accept()));
             break;
         }
-    }
+    }*/
 }
 
 void TemplatesTreePart::contextMenu(QMenu *popup, const KDevelop::Context *context)
