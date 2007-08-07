@@ -67,8 +67,9 @@ TagDialogsPart::~TagDialogsPart()
 void TagDialogsPart::init()
 {
 // delayed initialization stuff goes here
-  m_qcore = KDevelop::Core::self()->pluginController()->extensionForPlugin<QuantaCoreIf>("QuantaCoreIf", "KDevQuantaCore");
-
+  KDevelop::IPlugin *corePlugin = KDevelop::Core::self()->pluginController()->pluginForExtension("org.kdevelop.QuantaCoreIf");
+  
+  m_qcore = corePlugin->extension<QuantaCoreIf>();
 }
 
 void TagDialogsPart::slotContextMenu(QMenu *popup, const KDevelop::Context *context)

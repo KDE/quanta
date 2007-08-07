@@ -61,8 +61,10 @@ StructureTreeWidget::StructureTreeWidget(KDevelop::IPlugin *plugin, QWidget *par
   connect(this, SIGNAL(doubleClicked(Q3ListViewItem *)), SLOT(slotDoubleClicked(Q3ListViewItem *)));
 
   connect(this, SIGNAL(mouseButtonPressed(int, Q3ListViewItem*, const QPoint&, int)),SLOT(slotMouseClicked(int, Q3ListViewItem*, const QPoint&, int)));
-
-  m_qcore = KDevelop::Core::self()->pluginController()->extensionForPlugin<QuantaCoreIf>("QuantaCoreIf", "KDevQuantaCore");
+  
+  KDevelop::IPlugin *corePlugin = KDevelop::Core::self()->pluginController()->pluginForExtension("org.kdevelop.QuantaCoreIf");
+  
+  m_qcore = corePlugin->extension<QuantaCoreIf>();
 }
 
 

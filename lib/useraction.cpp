@@ -92,7 +92,8 @@ UserAction::~UserAction()
 
 bool UserAction::slotActionActivated()
 {
-  QuantaCoreIf *quantaCore = KDevelop::Core::self()->pluginController()->extensionForPlugin<QuantaCoreIf>("QuantaCoreIf", "KDevQuantaCore");
+  KDevelop::IPlugin *corePlugin = KDevelop::Core::self()->pluginController()->pluginForExtension("org.kdevelop.QuantaCoreIf");
+  QuantaCoreIf *quantaCore = corePlugin->extension<QuantaCoreIf>();
   if (!quantaCore)
   {
     KMessageBox::information(KDevelop::Core::self()->uiController()->activeMainWindow(), i18n("You cannot run a tag user action if the QuantaCore plugin is not loaded."), i18n("Missing QuantaCore"), "ShowQuantaCoreMissingWarning");

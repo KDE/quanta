@@ -94,12 +94,14 @@ void CreateQuantaProjectPart::setupActions()
 
 void CreateQuantaProjectPart::slotCreateNewProject()
 {
-  QuantaCoreIf *qCore = KDevelop::Core::self()->pluginController()->extensionForPlugin<QuantaCoreIf>("QuantaCoreIf", "KDevQuantaCore");
-  if (!qCore)
+  KDevelop::IPlugin *corePlugin =KDevelop::Core::self()->pluginController()->pluginForExtension("org.kdevelop.QuantaCoreIf");
+  if (!corePlugin)
   {
     KMessageBox::error(KDevelop::Core::self()->uiController()->activeMainWindow(), i18n("<qt>The <b>create new Quanta project</b> plugin requires the <b>Quanta core</b> plugin to be loaded."), i18n("Quanta core not loaded"));
     return;
   }
+  QuantaCoreIf *qCore = corePlugin->extension<QuantaCoreIf>();
+  
   Q3Wizard *wizard = new Q3Wizard(KDevelop::Core::self()->uiController()->activeMainWindow(), "new", true);
   wizard->setWindowTitle(i18n("New Project Wizard"));
   wizard->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
