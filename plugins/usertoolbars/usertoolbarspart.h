@@ -222,7 +222,7 @@ private:
     KUrl saveToolbarToFile(const QString& toolbarName, const KUrl& destFile);
     /**
      * Creates a toolbar tarball which can be uploaded or sent in email.
-     * @return the name of the created file or QString::null if creation has failed.
+     * @return the name of the created file or QString() if creation has failed.
      */
     QString createToolbarTarball();
     /**
@@ -233,7 +233,7 @@ private:
     /**
      * Opens a dialog for the user to choose a toolbar
      * @param caption the caption of the dialog
-     * @return the id of the toolbar or QString::Null() if canceled
+     * @return the id of the toolbar or QString() if canceled
      */
     QString selectToolbarDialog(const QString &caption);
 
