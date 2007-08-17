@@ -956,7 +956,7 @@ KUrl TemplatesTreeView::filterTemplate()
     filterAction->setInputFileName(url.path());
     filterAction->execute(true);
     filterAction->setOutputFile(0L);
-    filterAction->setInputFileName(QString::null);	//krazy:exclude=nullstrassign for old broken gcc
+    filterAction->setInputFileName(QString());
     tempFile->close();
     tempFileList.append(tempFile);
     url.setPath(tempFile->name());
@@ -1038,7 +1038,7 @@ void TemplatesTreeView::slotSendInMail()
         delete mailDlg;
         return;
       }
-      kapp->invokeMailer(toStr, QString::null, QString::null, subjectStr, message, QString::null, attachmentFile);	//krazy:exclude=nullstrassign for old broken gcc
+      kapp->invokeMailer(toStr, QString(), QString(), subjectStr, message, QString(), attachmentFile);
     }
     delete mailDlg;*/
 }
