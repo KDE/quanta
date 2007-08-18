@@ -56,7 +56,7 @@ KDevelop::ProjectItem* QuantaProjectFileManager::import(KDevelop::IProject *proj
   QDomDocument dom;
 
   // test if url is writeable and download to local file
-  if (KIO::NetAccess::exists(url, false, mainWindow) &&
+  if (KIO::NetAccess::exists(url, KIO::NetAccess::DestinationSide, mainWindow) &&
       KIO::NetAccess::download(url, projectTmpFile, mainWindow))
   {
     QFile f(projectTmpFile);

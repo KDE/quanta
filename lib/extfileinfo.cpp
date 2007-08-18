@@ -187,7 +187,7 @@ bool ExtFileInfo::exists(const KUrl& a_url)
 {
 // Andras: Don't use it now, as it brings up an extra dialog and need manual
 // intervention when usign fish
-// return KIO::NetAccess::exists(a_url, false);
+// return KIO::NetAccess::exists(a_url, KIO::NetAccess::DestinationSide);
 
 // No dialog when stating.
  if ( a_url.isLocalFile() )
