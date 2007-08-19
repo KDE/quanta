@@ -1,2 +1,3 @@
+#ifndef QUANTA_VERSION
 #define QUANTA_VERSION "3.9.0"
-
+#endif // QUANTA_VERSION

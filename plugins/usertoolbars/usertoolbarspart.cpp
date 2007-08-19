@@ -771,7 +771,7 @@ bool UserToolbarsPart::saveToolbar(bool localToolbar, const QString& toolbarToSa
       {
         if (!localToolbar)
             localToolbarsDir = projectToolbarsURL.prettyUrl();
-        KMessageBox::sorry(KDevelop::Core::self()->uiController()->activeMainWindow(),i18n("<qt>You must save the toolbars to the following folder: <br><br><b>%1</b></qt>",
+        KMessageBox::sorry(KDevelop::Core::self()->uiController()->activeMainWindow(),i18n("<qt>You must save the toolbars to the following folder: <br /><br /><b>%1</b></qt>",
                                   localToolbarsDir));
         query = KMessageBox::No;
       }
@@ -897,8 +897,8 @@ KUrl UserToolbarsPart::saveToolbarToFile(const QString& toolbarName, const KUrl&
   tar.close();
   if (!ExtFileInfo::copy(KUrl(tempFile->fileName()), tarFile, -1, true, false, KDevelop::Core::self()->uiController()->activeMainWindow()))
   {
-    KMessageBox::error(KDevelop::Core::self()->uiController()->activeMainWindow(), i18n("<qt>An error happened while saving the <b>%1</b> toolbar.<br>"
-        "Check that you have write permissions for<br><b>%2</b></qt>", p_toolbar->name, tarFile.pathOrUrl()), i18n("Toolbar Saving Error"));
+    KMessageBox::error(KDevelop::Core::self()->uiController()->activeMainWindow(), i18n("<qt>An error happened while saving the <b>%1</b> toolbar.<br />"
+        "Check that you have write permissions for<br /><b>%2</b></qt>", p_toolbar->name, tarFile.pathOrUrl()), i18n("Toolbar Saving Error"));
     tarFile = KUrl();
     delete p_toolbar->dom;
     p_toolbar->dom = oldDom;

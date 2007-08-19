@@ -44,7 +44,7 @@ bool StateMachine::build(const QString &fileName)
   int errorColumn;
   if (!dom.setContent(&xmlFile, &errorMsg, &errorLine, &errorColumn))
   {
-    KMessageBox::error(0L, i18n("<qt>The statemachine describing file <b>%1</b> is not valid.<br> The error message is: <i>%2 in line %3, column %4.</i></qt>", fileName, errorMsg, errorLine, errorColumn), i18n("Invalid StateMachine File"));
+    KMessageBox::error(0L, i18n("<qt>The statemachine describing file <b>%1</b> is not valid.<br />The error message is: <i>%2 in line %3, column %4.</i></qt>", fileName, errorMsg, errorLine, errorColumn), i18n("Invalid StateMachine File"));
     xmlFile.close();
     return false;
   }

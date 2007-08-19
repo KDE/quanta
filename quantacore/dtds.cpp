@@ -659,7 +659,7 @@ uint DTDs::readTagFile(const QString& fileName, DTDStruct* parentDTD, QTagList *
  if (!m_doc->setContent( &f, &errorMsg, &errorLine, &errorCol ))
  {
 //   emit hideSplash();
-   KMessageBox::error(0L, i18n("<qt>The DTD tag file %1 is not valid.<br> The error message is: <i>%2 in line %3, column %4.</i></qt>", fileName, errorMsg, errorLine, errorCol),
+   KMessageBox::error(0L, i18n("<qt>The DTD tag file %1 is not valid.<br />The error message is: <i>%2 in line %3, column %4.</i></qt>", fileName, errorMsg, errorLine, errorCol),
    i18n("Invalid Tag File"));
    kWarning() << fileName << ": " << errorMsg << ": " << errorLine << "," << errorCol;
  }

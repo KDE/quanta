@@ -297,7 +297,7 @@ bool UserAction::slotActionActivated()
       proc->closeStdin();
     } else
     {
-      KMessageBox::error(KDevelop::Core::self()->uiController()->activeMainWindow(), i18n("<qt>There was an error running <b>%1</b>.<br>Check that you have the <i>%2</i> executable installed and it is accessible.</qt>", command + ' ' + args, command), i18n("Script Not Found"));
+      KMessageBox::error(KDevelop::Core::self()->uiController()->activeMainWindow(), i18n("<qt>There was an error running <b>%1</b>.<br />Check that you have the <i>%2</i> executable installed and it is accessible.</qt>", command + ' ' + args, command), i18n("Script Not Found"));
 //FIXME       ViewManager::ref()->activeView()->setFocus();
       if (m_loopStarted)
       {
@@ -403,7 +403,7 @@ void UserAction::slotGetScriptError( K3Process *, char *buffer, int buflen )
 /** Timeout occurred while waiting for some network function to return. */
 void UserAction::slotTimeout()
 {
-  if ((m_killCount == 0) && (KMessageBox::questionYesNo(KDevelop::Core::self()->uiController()->activeMainWindow(), i18n("<qt>The filtering action <b>%1</b> seems to be locked.<br>Do you want to terminate it?</qt>", actionText()), i18n("Action Not Responding")) == KMessageBox::Yes))
+  if ((m_killCount == 0) && (KMessageBox::questionYesNo(KDevelop::Core::self()->uiController()->activeMainWindow(), i18n("<qt>The filtering action <b>%1</b> seems to be locked.<br />Do you want to terminate it?</qt>", actionText()), i18n("Action Not Responding")) == KMessageBox::Yes))
   {
     if (::kill(-proc->pid(), SIGTERM))
     {

@@ -903,7 +903,7 @@ void BaseTreeView::doRename(K3FileTreeViewItem* kftvi, const QString & newName)
     bool proceed = true;
     if (ExtFileInfo::exists(newURL))
     {
-      proceed = (KMessageBox::warningYesNo(this, i18n("<qt>The file <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>", newURL.pathOrUrl()), i18n("Overwrite")) == KMessageBox::Yes);
+      proceed = (KMessageBox::warningYesNo(this, i18n("<qt>The file <b>%1</b> already exists.<br />Do you want to overwrite it?</qt>", newURL.pathOrUrl()), i18n("Overwrite")) == KMessageBox::Yes);
     }
     if (proceed)
     {

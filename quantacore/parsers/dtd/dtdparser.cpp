@@ -102,7 +102,7 @@ bool DTDParser::parse()
       xmlResetError(errorPtr);
     }
 #endif
-    KMessageBox::error(0, i18n("<qt>Error while parsing the DTD.<br>The error message is:<br><i>%1</i></qt>", errorStr));
+    KMessageBox::error(0, i18n("<qt>Error while parsing the DTD.<br />The error message is:<br /><i>%1</i></qt>", errorStr));
     return false;
   }
   KDialog dlg(0L );

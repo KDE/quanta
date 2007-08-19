@@ -215,7 +215,7 @@ bool ExtFileInfo::checkOverwrite(const KUrl& url)
   if (ExtFileInfo::exists(url))
   {
     if (KMessageBox::warningYesNo(0L,
-        i18n( "<qt>The file <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>", url.pathOrUrl() )) == KMessageBox::No)
+        i18n( "<qt>The file <b>%1</b> already exists.<br />Do you want to overwrite it?</qt>", url.pathOrUrl() )) == KMessageBox::No)
             result = false;
   }
 

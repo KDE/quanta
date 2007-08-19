@@ -297,7 +297,7 @@ void QuantaDoc::slotDelayedTextChanged(bool forced)
            (currentNode->tag->isType(Tag::XmlTag) || currentNode->tag->isType(Tag::XmlTagEnd)))
         {
           QString newName = node->tag->nameAndNS(false);
-          bool updateClosing = (currentNode->tag->isType(Tag::XmlTag)) && !node->tag->name().startsWith("!");
+          bool updateClosing = (currentNode->tag->isType(Tag::XmlTag)) && !node->tag->name().startsWith('!');
           int num = 1;
           if (updateClosing)
             node = node->nextSibling();

@@ -125,7 +125,7 @@ void WebImportWizardPage::slotStart()
           emit enableNextButton((QWidget *)this->parent(),false);
         } else
         {
-          KMessageBox::error(this, i18n("<qt>There was an error while trying to run the <b>wget</b> application.<br>Check first that it is present on your system and that it is in your PATH.</qt>"));
+          KMessageBox::error(this, i18n("<qt>There was an error while trying to run the <b>wget</b> application.<br />Check first that it is present on your system and that it is in your PATH.</qt>"));
           delete proc;
         }
       } else

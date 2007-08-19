@@ -306,7 +306,7 @@ void QuantaNetAccess::checkProjectInsert(const KUrl& source, const KUrl& target,
     {
       QString nice = KUrl::relativeUrl(baseURL, saveUrl);
       nice = KStringHandler::lsqueeze(nice, 60);
-      if ( KMessageBox::Yes != KMessageBox::questionYesNo(window, i18n("<qt>Do you want to add <br><b>%1</b><br> to the project?</qt>", nice), i18n("Add to Project"), KStandardGuiItem::yes(), KStandardGuiItem::no(), "AddToProject") )
+      if ( KMessageBox::Yes != KMessageBox::questionYesNo(window, i18n("<qt>Do you want to add<br /><b>%1</b><br />to the project?</qt>", nice), i18n("Add to Project"), KStandardGuiItem::yes(), KStandardGuiItem::no(), "AddToProject") )
       {
         return;
       }
@@ -364,7 +364,7 @@ bool QuantaNetAccess::checkProjectRemove(const KUrl& src, KDevelop::IPlugin* plu
     {
       QString nice = KUrl::relativeUrl(baseURL, url);
       nice = KStringHandler::lsqueeze(nice, 60);
-      if ( KMessageBox::Continue != KMessageBox::warningContinueCancel(window, i18n("<qt>Do you really want to remove <br><b>%1</b><br> from the project?</qt>", nice), i18n("Remove From Project"), KStandardGuiItem::del(), KStandardGuiItem::cancel(), "RemoveFromProject") )
+      if ( KMessageBox::Continue != KMessageBox::warningContinueCancel(window, i18n("<qt>Do you really want to remove<br /><b>%1</b><br />from the project?</qt>", nice), i18n("Remove From Project"), KStandardGuiItem::del(), KStandardGuiItem::cancel(), "RemoveFromProject") )
       {
         return false;
       }
@@ -397,7 +397,7 @@ bool QuantaNetAccess::checkProjectDel(const KUrl& src, KDevelop::IPlugin* plugin
       {
         QString nice = url.pathOrUrl();
         nice = KStringHandler::csqueeze(nice, 60);
-        if ( KMessageBox::Continue != KMessageBox::warningContinueCancel(window, i18n("<qt>Do you really want to delete <br><b>%1</b><br> and remove it from the project?</qt>", nice), i18n("Delete & Remove From Project"), KStandardGuiItem::del(), KStandardGuiItem::cancel(), "DeleteAndRemoveFromProject") )
+        if ( KMessageBox::Continue != KMessageBox::warningContinueCancel(window, i18n("<qt>Do you really want to delete<br /><b>%1</b><br />and remove it from the project?</qt>", nice), i18n("Delete & Remove From Project"), KStandardGuiItem::del(), KStandardGuiItem::cancel(), "DeleteAndRemoveFromProject") )
         {
           return false;
         }
@@ -412,7 +412,7 @@ bool QuantaNetAccess::checkProjectDel(const KUrl& src, KDevelop::IPlugin* plugin
   if (confirm) {
     QString nice = url.pathOrUrl();
     nice = KStringHandler::csqueeze(nice, 60);
-    return (KMessageBox::Continue == KMessageBox::warningContinueCancel(window, i18n("<qt>Do you really want to delete <br><b>%1</b>?</qt>", nice), i18n("Delete File or Folder"), KStandardGuiItem::del(), KStandardGuiItem::cancel(), "DeleteFileOrFolder") );
+    return (KMessageBox::Continue == KMessageBox::warningContinueCancel(window, i18n("<qt>Do you really want to delete<br /><b>%1</b>?</qt>", nice), i18n("Delete File or Folder"), KStandardGuiItem::del(), KStandardGuiItem::cancel(), "DeleteFileOrFolder") );
   }
   return true;
 }

@@ -495,13 +495,13 @@ void TemplatesTreeView::contentsDropEvent(QDropEvent *e)
         bool proceed = true;
         if (ExtFileInfo::exists(url))
         {
-          proceed = KMessageBox::warningYesNo(this, i18n("<qt>The file <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>", url.pathOrUrl()),i18n("Overwrite")) == KMessageBox::Yes;
+          proceed = KMessageBox::warningYesNo(this, i18n("<qt>The file <b>%1</b> already exists.<br />Do you want to overwrite it?</qt>", url.pathOrUrl()),i18n("Overwrite")) == KMessageBox::Yes;
         }
         if (proceed)
         {
           if (!QuantaNetAccess::upload(tempFile->fileName(), url, m_plugin, false))
           {
-            KMessageBox::error(this,i18n("<qt>Could not write to file <b>%1</b>.<br>Check if you have rights to write there or that your connection is working.</qt>", url.pathOrUrl()));
+            KMessageBox::error(this,i18n("<qt>Could not write to file <b>%1</b>.<br />Check if you have rights to write there or that your connection is working.</qt>", url.pathOrUrl()));
           }
         }
         delete tempFile;
@@ -1103,7 +1103,7 @@ void TemplatesTreeView::slotExtractSiteTemplate()
       } else
          error = true;
       if (error)
-        KMessageBox::error(this, i18n("<qt>Some error happened while extracting the <i>%1</i> site template file.<br>Check that you have write permission for <i>%2</i> and that there is enough free space in your temporary folder.</qt>", url.pathOrUrl(), targetUrl.pathOrUrl()));
+        KMessageBox::error(this, i18n("<qt>Some error happened while extracting the <i>%1</i> site template file.<br />Check that you have write permission for <i>%2</i> and that there is enough free space in your temporary folder.</qt>", url.pathOrUrl(), targetUrl.pathOrUrl()));
    }
 }
 
