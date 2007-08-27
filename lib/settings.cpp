@@ -12,15 +12,15 @@
  ***************************************************************************/
 #include "settings.h"
 
-#include <kstaticdeleter.h>
+#include <k3staticdeleter.h>
 #include <kconfig.h>
 
 
 Settings * Settings::m_prjSettings = 0;
-static KStaticDeleter<Settings> staticSettingsPrjDeleter;
+static K3StaticDeleter<Settings> staticSettingsPrjDeleter;
 
 Settings *Settings::m_Self = 0;
-static KStaticDeleter<Settings> staticSettingsDeleter;
+static K3StaticDeleter<Settings> staticSettingsDeleter;
 
 Settings *Settings::self()
 {
