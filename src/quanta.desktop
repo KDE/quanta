@@ -4,6 +4,7 @@ Comment=
 Encoding=UTF-8
 Exec=quanta %u
 GenericName=IDE for Web Development
+GenericName[de]=Web-Entwicklungsumgebung
 GenericName[el]=Περιβάλλον ανάπτυξης ιστοσελίδων
 GenericName[fa]=IDE برای توسعۀ وب
 GenericName[ga]=Timpeallacht Chomhtháite Forbartha le haghaidh Forbartha Gréasáin

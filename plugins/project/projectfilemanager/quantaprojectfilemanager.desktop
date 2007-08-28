@@ -1,6 +1,7 @@
 [Desktop Entry]
 Type=Service
 Name=Quanta Project Importer
+Name[de]=Quanta-Projekt-Importeur
 Name[el]=Εισαγωγέας έργου Quanta
 Name[fa]=واردکنندۀ پروژۀ Quanta
 Name[ga]=Iompórtálaí Tionscadal Quanta
@@ -13,6 +14,7 @@ Name[pt_BR]=Importação de Projectos do Quanta
 Name[sv]=Import av Quanta-projekt
 Name[zh_TW]=Quanta 專案匯入器
 Comment=Allow KDevelop to manage Quanta projects
+Comment[de]=Quanta-Projekte in KDevelop verwalten
 Comment[el]=Επιτρέπει στο KDevelop τη διαχείριση έργων Quanta
 Comment[fa]=اجازه دادن به KDevelop برای مدیریت پروژه‌های Quanta
 Comment[ga]=Ceadaigh do KDevelop tionscadail Quanta a bhainistiú
