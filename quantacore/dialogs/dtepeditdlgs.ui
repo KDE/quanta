@@ -1364,7 +1364,7 @@ Example:&lt;br>
 - we have a class called &lt;b>foo&lt;/b> with some member variables&lt;br>
 - the object of type &lt;b>foo&lt;/b> is used in the document as $&lt;b>objFoo&lt;/b>&lt;br>
 - the members can appear as &lt;b>$objFoo->member&lt;/b> or &lt;b>$objFoo.member&lt;/b>
-- in the above case this entry shoul look like &lt;b>(?:-&amp;gt;|\.)$&lt;/b> (autocomplete if the object is followed by &lt;b>-&amp;gt;&lt;/b> or &lt;b>.&lt;/b>)&lt;br>
+- in the above case this entry should look like &lt;b>(?:-&amp;gt;|\.)$&lt;/b> (autocomplete if the object is followed by &lt;b>-&amp;gt;&lt;/b> or &lt;b>.&lt;/b>)&lt;br>
     The regular expression must be terminated with &lt;b>$&lt;/b> (match end of line).</string>
                 </property>
                </widget>
@@ -1435,7 +1435,7 @@ Example: &lt;b>//&amp;nbsp;EOL,&amp;nbsp;/*&amp;nbsp;*/&lt;/b></string>
           <string>The character after which the list of tags should be shown</string>
          </property>
          <property name="whatsThis" >
-          <string>The autocompletion box is brought up automatically once this character is entered or space is pressed after this character.&lt;br> For real DTEPs it's usually &lt;b>&amp;lt;&lt;/b>, but for example for the CSS pseudo DTEP it is &lt;b>{&lt;/b>. The text &lt;b>none&lt;/b> instead of a character specifies that the tag completion box should not be brought up automatically, only if the user requests it.</string>
+          <string>The autocompletion box is brought up automatically once this character is entered or space is pressed after this character.&lt;br> For real DTEPs it is usually &lt;b>&amp;lt;&lt;/b>, but for example for the CSS pseudo DTEP it is &lt;b>{&lt;/b>. The text &lt;b>none&lt;/b> instead of a character specifies that the tag completion box should not be brought up automatically, only if the user requests it.</string>
          </property>
          <property name="text" >
           <string>Autocomplete tags after:</string>
@@ -1451,7 +1451,7 @@ Example: &lt;b>//&amp;nbsp;EOL,&amp;nbsp;/*&amp;nbsp;*/&lt;/b></string>
           <string>The character after which the list of tags should be shown</string>
          </property>
          <property name="whatsThis" >
-          <string>The autocompletion box is brought up automatically once this character is entered or space is pressed after this character&lt;br>. For real DTEPs it's usually &lt;b>&amp;lt;&lt;/b>, but for example for the CSS pseudo DTEP it is &lt;b>{&lt;/b>. The text &lt;b>none&lt;/b> instead of a character specifies that the tag completion box should not be brought up automatically, only if the user requests it.</string>
+          <string>The autocompletion box is brought up automatically once this character is entered or space is pressed after this character.&lt;br> For real DTEPs it is usually &lt;b>&amp;lt;&lt;/b>, but for example for the CSS pseudo DTEP it is &lt;b>{&lt;/b>. The text &lt;b>none&lt;/b> instead of a character specifies that the tag completion box should not be brought up automatically, only if the user requests it.</string>
          </property>
         </widget>
        </item>
