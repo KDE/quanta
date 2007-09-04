@@ -65,7 +65,7 @@
    <item row="1" column="0" >
     <widget class="QCheckBox" name="closeTags" >
      <property name="text" >
-      <string>Auto-close non single and non optional tags</string>
+      <string>Auto-close non-single and non-optional tags</string>
      </property>
      <property name="shortcut" >
       <string/>
