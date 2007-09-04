@@ -77,10 +77,10 @@
           </sizepolicy>
          </property>
          <property name="toolTip" >
-          <string>Beautified, user visible name</string>
+          <string>Beautified, user-visible name</string>
          </property>
          <property name="whatsThis" >
-          <string>The user visible, beautified name. If not defined, the real name is used.</string>
+          <string>The user-visible, beautified name. If not defined, the real name is used.</string>
          </property>
          <property name="text" >
           <string>Short name:</string>
@@ -135,10 +135,10 @@
           </sizepolicy>
          </property>
          <property name="toolTip" >
-          <string>Beautified, user visible name</string>
+          <string>Beautified, user-visible name</string>
          </property>
          <property name="whatsThis" >
-          <string>The user visible, beautified name. If not defined, the real name is used.</string>
+          <string>The user-visible, beautified name. If not defined, the real name is used.</string>
          </property>
         </widget>
        </item>
@@ -291,10 +291,10 @@
        <item row="6" column="0" >
         <widget class="QLabel" name="textLabel10" >
          <property name="toolTip" >
-          <string>Comma separated list of toolbars</string>
+          <string>Comma-separated list of toolbars</string>
          </property>
          <property name="whatsThis" >
-          <string>Comma separated list of toolbars from the toolbar folder that will be loaded when a document with this DTEP is loaded.</string>
+          <string>Comma-separated list of toolbars from the toolbar folder that will be loaded when a document with this DTEP is loaded.</string>
          </property>
          <property name="text" >
           <string>Autoloaded toolbars:</string>
@@ -307,10 +307,10 @@
        <item row="6" column="1" colspan="5" >
         <widget class="KLineEdit" name="toolbarsEdit" >
          <property name="toolTip" >
-          <string>Comma separated list of toolbars</string>
+          <string>Comma-separated list of toolbars</string>
          </property>
          <property name="whatsThis" >
-          <string>Comma separated list of toolbars from the toolbar folder that will be loaded when a document with this DTEP is loaded.</string>
+          <string>Comma-separated list of toolbars from the toolbar folder that will be loaded when a document with this DTEP is loaded.</string>
          </property>
         </widget>
        </item>
@@ -436,10 +436,10 @@
        <item row="4" column="1" colspan="2" >
         <widget class="KLineEdit" name="mimeTypeEdit" >
          <property name="toolTip" >
-          <string>Comma separated list of mimetypes</string>
+          <string>Comma-separated list of mimetypes</string>
          </property>
          <property name="whatsThis" >
-          <string>Comma separated list of mimetypes. Files of these types are treated as belonging to this DTEP, unless the !DOCTYPE entry says something else.</string>
+          <string>Comma-separated list of mimetypes. Files of these types are treated as belonging to this DTEP, unless the !DOCTYPE entry says something else.</string>
          </property>
         </widget>
        </item>
@@ -540,10 +540,10 @@
           <bool>false</bool>
          </property>
          <property name="toolTip" >
-          <string>Comma separated list of the common attribute groups</string>
+          <string>Comma-separated list of the common attribute groups</string>
          </property>
          <property name="whatsThis" >
-          <string>Comma separated list of the common attribute groups. The attributes from the listed groups will appear on this page.&lt;br>The common attributes are specified in each DTEP's &lt;i>common.tag&lt;/i> file, where the &lt;i>common="yes"&lt;/i> attribute must be set.&lt;br>The following example defined the common I18n attribute group:&lt;br>&lt;p>&lt;b>
+          <string>Comma-separated list of the common attribute groups. The attributes from the listed groups will appear on this page.&lt;br>The common attributes are specified in each DTEP's &lt;i>common.tag&lt;/i> file, where the &lt;i>common="yes"&lt;/i> attribute must be set.&lt;br>The following example defined the common I18n attribute group:&lt;br>&lt;p>&lt;b>
 &amp;lt;tag name="I18n" common="yes">&lt;br>
 &amp;nbsp;&amp;nbsp;&amp;lt;attr name="lang" type="input" />&lt;br>
 &amp;nbsp;&amp;nbsp;&amp;lt;attr name="dir" type="input" />&lt;br>
@@ -626,10 +626,10 @@
           <bool>false</bool>
          </property>
          <property name="toolTip" >
-          <string>Comma separated list of the common attribute groups</string>
+          <string>Comma-separated list of the common attribute groups</string>
          </property>
          <property name="whatsThis" >
-          <string>Comma separated list of the common attribute groups. The attributes from the listed groups will appear on this page.&lt;br>The common attributes are specified in each DTEP's &lt;i>common.tag&lt;/i> file, where the &lt;i>common="yes"&lt;/i> attribute must be set.&lt;br>The following example defined the common I18n attribute group:&lt;br>&lt;p>&lt;b>
+          <string>Comma-separated list of the common attribute groups. The attributes from the listed groups will appear on this page.&lt;br>The common attributes are specified in each DTEP's &lt;i>common.tag&lt;/i> file, where the &lt;i>common="yes"&lt;/i> attribute must be set.&lt;br>The following example defined the common I18n attribute group:&lt;br>&lt;p>&lt;b>
 &amp;lt;tag name="I18n" common="yes">&lt;br>
 &amp;nbsp;&amp;nbsp;&amp;lt;attr name="lang" type="input" />&lt;br>
 &amp;nbsp;&amp;nbsp;&amp;lt;attr name="dir" type="input" />&lt;br>
@@ -851,10 +851,10 @@
        <item row="2" column="0" >
         <widget class="QLabel" name="textLabel13" >
          <property name="toolTip" >
-          <string>Comma separated list of area borders for comments</string>
+          <string>Comma-separated list of area borders for comments</string>
          </property>
          <property name="whatsThis" >
-          <string>Comma separated list of area borders for comments. &lt;i>EOL&lt;/i> means end of line, used for single line comments.&lt;br>
+          <string>Comma-separated list of area borders for comments. &lt;i>EOL&lt;/i> means end of line, used for single line comments.&lt;br>
 Example: &lt;b>//&amp;nbsp;EOL,&amp;nbsp;/*&amp;nbsp;*/&lt;/b></string>
          </property>
          <property name="text" >
@@ -1031,7 +1031,7 @@ See the &lt;b>True&lt;/b> and &lt;b>False&lt;/b> boxes to define the values for 
               <item row="0" column="1" colspan="6" >
                <widget class="KLineEdit" name="specialAreasEdit" >
                 <property name="toolTip" >
-                 <string>Comma separated list of the beginning and closing string for special areas</string>
+                 <string>Comma-separated list of the beginning and closing string for special areas</string>
                 </property>
                 <property name="whatsThis" >
                  <string>The beginning and closing string of special areas, separated by a comma.&lt;br>
@@ -1043,7 +1043,7 @@ See the &lt;b>True&lt;/b> and &lt;b>False&lt;/b> boxes to define the values for 
               <item row="0" column="0" >
                <widget class="QLabel" name="textLabel27" >
                 <property name="toolTip" >
-                 <string>Comma separated list of the beginning and closing string for special areas</string>
+                 <string>Comma-separated list of the beginning and closing string for special areas</string>
                 </property>
                 <property name="whatsThis" >
                  <string>The beginning and closing string of special areas, separated by a comma.&lt;br>
@@ -1119,7 +1119,7 @@ Example:&lt;b>script(language)&lt;/b> means that any &lt;b>&amp;lt;script&amp;gt
                  <string>Tags and attributes defining this DTEP</string>
                 </property>
                 <property name="whatsThis" >
-                 <string>Comma separated list of tags that define this DTEP. The format used is &lt;i>tagname(attribute[defaultvalue])&lt;/i>. If the parent (a real) DTEP has a tag with &lt;i>tagname&lt;/i> and
+                 <string>Comma-separated list of tags that define this DTEP. The format used is &lt;i>tagname(attribute[defaultvalue])&lt;/i>. If the parent (a real) DTEP has a tag with &lt;i>tagname&lt;/i> and
 the &lt;i>attribute value&lt;/i> of this tag is equal with the name of this DTEP, the tag area
 is parsed according to the rules of this DTEP.&lt;br>
 If &lt;i>[defaultvalue]&lt;/i> is present, it means that if the attribute is not present in the tag it is taken as present with &lt;i>value = defaultvalue&lt;/i>.&lt;br>
@@ -1136,10 +1136,10 @@ Example: &lt;b>Tags=style(type[text/css])&lt;/b> means that both &lt;b>&amp;lt;s
               <item row="0" column="0" >
                <widget class="QLabel" name="textLabel20" >
                 <property name="toolTip" >
-                 <string>Comma separated list of the area borders</string>
+                 <string>Comma-separated list of the area borders</string>
                 </property>
                 <property name="whatsThis" >
-                 <string>Comma separated list of the area borders encapsulating this pseudo DTEP. In the case of PHP it is:&lt;br>
+                 <string>Comma-separated list of the area borders encapsulating this pseudo DTEP. In the case of PHP it is:&lt;br>
 &lt;b>&amp;lt;?&amp;nbsp;?&amp;gt;,&amp;nbsp;&amp;lt;*&amp;nbsp;*&amp;gt;,&amp;nbsp;&amp;lt;%&amp;nbsp;%&amp;gt;&lt;/b></string>
                 </property>
                 <property name="text" >
@@ -1153,10 +1153,10 @@ Example: &lt;b>Tags=style(type[text/css])&lt;/b> means that both &lt;b>&amp;lt;s
               <item row="2" column="0" >
                <widget class="QLabel" name="textLabel22" >
                 <property name="toolTip" >
-                 <string>Comma separated list of structure keywords</string>
+                 <string>Comma-separated list of structure keywords</string>
                 </property>
                 <property name="whatsThis" >
-                 <string>Comma separated list of structure keywords. The keywords used here are used to create new node (nodes for structures) in the structure tree, like for a function, class or if block.</string>
+                 <string>Comma-separated list of structure keywords. The keywords used here are used to create new node (nodes for structures) in the structure tree, like for a function, class or if block.</string>
                 </property>
                 <property name="text" >
                  <string>Structure keywords:</string>
@@ -1201,10 +1201,10 @@ Example: &lt;b>Tags=style(type[text/css])&lt;/b> means that both &lt;b>&amp;lt;s
               <item row="3" column="0" >
                <widget class="QLabel" name="textLabel23" >
                 <property name="toolTip" >
-                 <string>Comma separated list of the local scope defining keywords</string>
+                 <string>Comma-separated list of the local scope defining keywords</string>
                 </property>
                 <property name="whatsThis" >
-                 <string>Comma separated list of the local scope defining keywords. Other structure group elements found under a structure node that was created based on a keyword from this list are treated as local elements. For example if this list contains &lt;b>function&lt;/b>, it means that elements, like variables found under a &lt;b>function&lt;/b> are local, relative to the node that holds the &lt;b>function&lt;/b>.</string>
+                 <string>Comma-separated list of the local scope defining keywords. Other structure group elements found under a structure node that was created based on a keyword from this list are treated as local elements. For example if this list contains &lt;b>function&lt;/b>, it means that elements, like variables found under a &lt;b>function&lt;/b> are local, relative to the node that holds the &lt;b>function&lt;/b>.</string>
                 </property>
                 <property name="text" >
                  <string>Local scope keywords:</string>
@@ -1217,20 +1217,20 @@ Example: &lt;b>Tags=style(type[text/css])&lt;/b> means that both &lt;b>&amp;lt;s
               <item row="3" column="1" colspan="3" >
                <widget class="KLineEdit" name="localStructKeywordsEdit" >
                 <property name="toolTip" >
-                 <string>Comma separated list of the local scope defining keywords</string>
+                 <string>Comma-separated list of the local scope defining keywords</string>
                 </property>
                 <property name="whatsThis" >
-                 <string>Comma separated list of the local scope defining keywords. Other structure group elements found under a structure node that was created based on a keyword from this list are treated as local elements. For example if this list contains &lt;b>function&lt;/b>, it means that elements, like variables found under a &lt;b>function&lt;/b> are local, relative to the node that holds the &lt;b>function&lt;/b>.</string>
+                 <string>Comma-separated list of the local scope defining keywords. Other structure group elements found under a structure node that was created based on a keyword from this list are treated as local elements. For example if this list contains &lt;b>function&lt;/b>, it means that elements, like variables found under a &lt;b>function&lt;/b> are local, relative to the node that holds the &lt;b>function&lt;/b>.</string>
                 </property>
                </widget>
               </item>
               <item row="2" column="1" colspan="3" >
                <widget class="KLineEdit" name="structKeywordsEdit" >
                 <property name="toolTip" >
-                 <string>Comma separated list of structure keywords</string>
+                 <string>Comma-separated list of structure keywords</string>
                 </property>
                 <property name="whatsThis" >
-                 <string>Comma separated list of structure keywords. The keywords used here are used to create new node (nodes for structures) in the structure tree, like for a function, class or if block.</string>
+                 <string>Comma-separated list of structure keywords. The keywords used here are used to create new node (nodes for structures) in the structure tree, like for a function, class or if block.</string>
                 </property>
                </widget>
               </item>
@@ -1240,7 +1240,7 @@ Example: &lt;b>Tags=style(type[text/css])&lt;/b> means that both &lt;b>&amp;lt;s
                  <string>Tags and attributes defining this DTEP</string>
                 </property>
                 <property name="whatsThis" >
-                 <string>Comma separated list of tags that define this DTEP. The format used is &lt;i>tagname(attribute[defaultvalue])&lt;/i>. If the parent (a real) DTEP has a tag with &lt;i>tagname&lt;/i> and
+                 <string>Comma-separated list of tags that define this DTEP. The format used is &lt;i>tagname(attribute[defaultvalue])&lt;/i>. If the parent (a real) DTEP has a tag with &lt;i>tagname&lt;/i> and
 the &lt;i>attribute value&lt;/i> of this tag is equal with the name of this DTEP, the tag area
 is parsed according to the rules of this DTEP.&lt;br>
 If &lt;i>[defaultvalue]&lt;/i> is present, it means that if the attribute is not present in the tag it is taken as present with &lt;i>value = defaultvalue&lt;/i>.&lt;br>
@@ -1251,10 +1251,10 @@ Example: &lt;b>Tags=style(type[text/css])&lt;/b> means that both &lt;b>&amp;lt;s
               <item row="0" column="1" colspan="3" >
                <widget class="KLineEdit" name="areaBordersEdit" >
                 <property name="toolTip" >
-                 <string>Comma separated list of the area borders</string>
+                 <string>Comma-separated list of the area borders</string>
                 </property>
                 <property name="whatsThis" >
-                 <string>Comma separated list of the area borders encapsulating this pseudo DTEP. In the case of PHP it is:&lt;br>
+                 <string>Comma-separated list of the area borders encapsulating this pseudo DTEP. In the case of PHP it is:&lt;br>
 &lt;b>&amp;lt;?&amp;nbsp;?&amp;gt;,&amp;nbsp;&amp;lt;*&amp;nbsp;*&amp;gt;,&amp;nbsp;&amp;lt;%&amp;nbsp;%&amp;gt;&lt;/b></string>
                 </property>
                </widget>
@@ -1405,10 +1405,10 @@ Example:&lt;br>
        <item row="2" column="1" colspan="4" >
         <widget class="KLineEdit" name="commentsEdit" >
          <property name="toolTip" >
-          <string>Comma separated list of area borders for comments</string>
+          <string>Comma-separated list of area borders for comments</string>
          </property>
          <property name="whatsThis" >
-          <string>Comma separated list of area borders for comments. &lt;i>EOL&lt;/i> means end of line, used for single line comments.&lt;br>
+          <string>Comma-separated list of area borders for comments. &lt;i>EOL&lt;/i> means end of line, used for single line comments.&lt;br>
 Example: &lt;b>//&amp;nbsp;EOL,&amp;nbsp;/*&amp;nbsp;*/&lt;/b></string>
          </property>
         </widget>

@@ -501,7 +501,7 @@ instances of Quanta running.</string>
                                     <cstring>ParseQuiet</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Suppress nonessential output</string>
+                                    <string>Suppress non-essential output</string>
                                 </property>
                                 <property name="associations" stdset="0">
                                     <stringlist>
