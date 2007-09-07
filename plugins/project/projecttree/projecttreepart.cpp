@@ -49,7 +49,7 @@ ProjectTreePart::ProjectTreePart(QObject *parent, const QStringList &/*args*/)
   m_widget->setObjectName("ProjecttreePartWidget");
 //  m_widget->setWindowIcon(SmallIcon(info()->icon()));
 
-  m_widget->setWhatsThis(i18n("This treeview manages the files and folers of your project."));
+  m_widget->setWhatsThis(i18n("This treeview manages the files and folders of your project."));
 
   setupActions();
   

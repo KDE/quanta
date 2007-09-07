@@ -58,7 +58,7 @@ class StructureTreeWidgetFactory: public KDevelop::IToolViewFactory
       widget->setWindowTitle(i18n("Structure Tree"));
 //    m_widget->setWindowIcon(SmallIcon(info()->icon()));
 
-      widget->setWhatsThis(i18n("Displays the structure of current document. Manipulation of the document is also possible."));
+      widget->setWhatsThis(i18n("Displays the structure of the current document. Manipulation of the document is also possible."));
  
       QWidget *w = new QWidget(widget);
       w->setObjectName("structuretreecontainer");
