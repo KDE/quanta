@@ -21,10 +21,11 @@
 
 #include <klocale.h>
 #include <kaction.h>
-#include <kgenericfactory.h>
 #include <kdialog.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
+#include <kpluginfactory.h>
+#include <kpluginloader.h>
 
 //kdevelop includes
 #include <kdevcore.h>
@@ -33,13 +34,14 @@
 #include <kdevprojectcontroller.h>
 
 
-typedef KGenericFactory<ProjectTreePart> ProjectTreeFactory;
-K_EXPORT_COMPONENT_FACTORY( libkdevprojecttree, ProjectTreeFactory("kdevprojecttree") )
+K_PLUGIN_FACTORY(ProjectTreeFactory, registerPlugin<ProjectTreePart>();)
+K_EXPORT_PLUGIN(ProjectTreeFactory("kdevprojecttree"))
+
 
 #define GLOBALDOC_OPTIONS 1
 #define PROJECTDOC_OPTIONS 2
 
-ProjectTreePart::ProjectTreePart(QObject *parent, const QStringList &/*args*/)
+ProjectTreePart::ProjectTreePart(QObject *parent, const QVariantList &/*args*/)
   : Koncrete::Plugin(ProjectTreeFactory::componentData(), parent)
 {
   setXMLFile("kdevprojecttree.rc");

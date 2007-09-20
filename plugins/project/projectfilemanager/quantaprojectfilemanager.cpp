@@ -19,18 +19,21 @@
 #include <kdebug.h>
 #include <kio/netaccess.h>
 #include <kmessagebox.h>
-#include <kgenericfactory.h>
 #include <kparts/mainwindow.h>
+#include <kpluginfactory.h>
+#include <kpluginloader.h>
+#include <klocale.h>
 
 #include <QDomDocument>
 #include <QDir>
 #include <QFile>
 #include <QStack>
 
-typedef KGenericFactory<QuantaProjectFileManager> QuantaProjectFileManagerFactory;
-K_EXPORT_COMPONENT_FACTORY( quantaprojectfilemanager, QuantaProjectFileManagerFactory( "quantaprojectfilemanager" ) )
+K_PLUGIN_FACTORY(QuantaProjectFileManagerFactory, registerPlugin<QuantaProjectFileManager>();)
+K_EXPORT_PLUGIN(QuantaProjectFileManagerFactory( "quantaprojectfilemanager" ))
 
-    QuantaProjectFileManager::QuantaProjectFileManager(QObject *parent, const QStringList &args): KDevelop::IPlugin( QuantaProjectFileManagerFactory::componentData(), parent ), KDevelop::IProjectFileManager()
+
+    QuantaProjectFileManager::QuantaProjectFileManager(QObject *parent, const QVariantList &args): KDevelop::IPlugin( QuantaProjectFileManagerFactory::componentData(), parent ), KDevelop::IProjectFileManager()
 {
   kDebug(24000) << "Creating QuantaProjectFileManager Part";
   KDEV_USE_EXTENSION_INTERFACE( KDevelop::IProjectFileManager )

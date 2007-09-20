@@ -30,7 +30,7 @@ class ProjectTreePart: public Koncrete::Plugin
 {
   Q_OBJECT
 public:
-  ProjectTreePart(QObject *parent, const QStringList &args);
+  ProjectTreePart(QObject *parent, const QVariantList &args);
   ~ProjectTreePart();
   
   void savePartialProjectSession(QDomElement *el);

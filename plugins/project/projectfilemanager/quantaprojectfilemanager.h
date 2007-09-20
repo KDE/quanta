@@ -35,7 +35,7 @@ class QuantaProjectFileManager : public KDevelop::IPlugin, public KDevelop::IPro
   Q_INTERFACES( KDevelop::IProjectFileManager )
 public:
   explicit QuantaProjectFileManager( QObject *parent = 0,
-                            const QStringList &args = QStringList());
+                            const QVariantList &args = QVariantList());
 
   virtual  ~QuantaProjectFileManager();
   
