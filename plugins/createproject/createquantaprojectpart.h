@@ -28,7 +28,7 @@ class CreateQuantaProjectPart: public KDevelop::IPlugin
 {
     Q_OBJECT
 public:
-    CreateQuantaProjectPart(QObject *parent, const QStringList &args);
+    CreateQuantaProjectPart(QObject *parent, const QVariantList &args);
     ~CreateQuantaProjectPart();
   
 private slots:

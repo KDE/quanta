@@ -22,7 +22,6 @@
 #include <kaction.h>
 #include <kactioncollection.h>
 #include <kdialog.h>
-#include <kgenericfactory.h>
 #include <kicon.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
@@ -32,6 +31,8 @@
 #include <kparts/part.h>
 #include <kparts/browserextension.h>
 #include <ktexteditor/document.h>
+#include <kpluginfactory.h>
+#include <kpluginloader.h>
 
 //kdevelop includes
 #include <core.h>
@@ -40,13 +41,14 @@
 #include <iprojectcontroller.h>
 #include <iuicontroller.h>
 
-typedef KGenericFactory<HTMLPreviewPart> HTMLPreviewFactory;
-K_EXPORT_COMPONENT_FACTORY( libkdevhtmlpreview, HTMLPreviewFactory("kdevhtmlpreview") )
+K_PLUGIN_FACTORY(HTMLPreviewFactory, registerPlugin<HTMLPreviewPart>();)
+K_EXPORT_PLUGIN(HTMLPreviewFactory("kdevhtmlpreview"))
+
 
 #define GLOBALDOC_OPTIONS 1
 #define PROJECTDOC_OPTIONS 2
 
-HTMLPreviewPart::HTMLPreviewPart(QObject *parent, const QStringList &/*args*/)
+HTMLPreviewPart::HTMLPreviewPart(QObject *parent, const QVariantList &/*args*/)
   : KDevelop::IPlugin(HTMLPreviewFactory::componentData(), parent), m_activeEditor(0), m_partmanager(0)
 {
   setXMLFile("kdevhtmlpreview.rc");

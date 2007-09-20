@@ -43,7 +43,7 @@ class HTMLPreviewPart : public KDevelop::IPlugin
 {
   Q_OBJECT
 public:
-  HTMLPreviewPart(QObject *parent, const QStringList &args);
+  HTMLPreviewPart(QObject *parent, const QVariantList &args);
   virtual ~HTMLPreviewPart();
   // the methods to embed the view 
   virtual QWidget *pluginView() const;

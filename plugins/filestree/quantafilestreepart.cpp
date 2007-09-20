@@ -23,10 +23,12 @@
 #include <klocale.h>
 #include <kaction.h>
 #include <kdialog.h>
-#include <kgenericfactory.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
 #include <k3listviewsearchline.h>
+#include <kpluginfactory.h>
+#include <kpluginloader.h>
+
 
 #include <kparts/mainwindow.h>
 
@@ -39,8 +41,9 @@
 #define GLOBALDOC_OPTIONS 1
 #define PROJECTDOC_OPTIONS 2
     
-typedef KGenericFactory<QuantaFilesTreePart> QuantaFilesTreeFactory;
-K_EXPORT_COMPONENT_FACTORY( libkdevquantafilestree, QuantaFilesTreeFactory("kdevquantafilestree") )
+K_PLUGIN_FACTORY(QuantaFilesTreeFactory, registerPlugin<QuantaFilesTreePart>();)
+K_EXPORT_PLUGIN(QuantaFilesTreeFactory("kdevquantafilestree"))
+
 
     
 class FilesTreeViewFactory: public KDevelop::IToolViewFactory{
@@ -69,7 +72,7 @@ class FilesTreeViewFactory: public KDevelop::IToolViewFactory{
     QuantaFilesTreePart *m_part;
 };
 
-QuantaFilesTreePart::QuantaFilesTreePart(QObject *parent, const QStringList &/*args*/)
+QuantaFilesTreePart::QuantaFilesTreePart(QObject *parent, const QVariantList &/*args*/)
   : KDevelop::IPlugin(QuantaFilesTreeFactory::componentData(), parent)
 {
     setXMLFile("kdevquantafilestree.rc");

@@ -38,13 +38,15 @@
 #include <kdialog.h>
 #include <kicon.h>
 #include <kiconloader.h>
-#include <kgenericfactory.h>
 #include <kglobal.h>
 #include <kxmlguiwindow.h>
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
 #include <ktemporaryfile.h>
 #include <kactioncollection.h>
+#include <kpluginfactory.h>
+#include <kpluginloader.h>
+
 
 #include <kparts/mainwindow.h>
 
@@ -55,13 +57,14 @@
 #include <iprojectcontroller.h>
 #include <iuicontroller.h>
 
-typedef KGenericFactory<CreateQuantaProjectPart> CreateQuantaProjectFactory;
-K_EXPORT_COMPONENT_FACTORY( libkdevcreatequantaproject, CreateQuantaProjectFactory("kdevcreatequantaproject") )
+K_PLUGIN_FACTORY(CreateQuantaProjectFactory, registerPlugin<CreateQuantaProjectPart>();)
+K_EXPORT_PLUGIN(CreateQuantaProjectFactory("kdevcreatequantaproject"))
+
 
 #define GLOBALDOC_OPTIONS 1
 #define PROJECTDOC_OPTIONS 2
 
-CreateQuantaProjectPart::CreateQuantaProjectPart(QObject *parent, const QStringList &/*args*/)
+CreateQuantaProjectPart::CreateQuantaProjectPart(QObject *parent, const QVariantList &/*args*/)
   : KDevelop::IPlugin(CreateQuantaProjectFactory::componentData(), parent)
 {
   kDebug(24000) << "Quanta create project plugin loaded";

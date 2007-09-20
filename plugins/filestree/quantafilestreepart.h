@@ -13,7 +13,7 @@
 #define QUANTAFILESTREEPART_H
 
 #include <QPointer>
-
+#include <QVariant>
 //kdevelop includes
 #include <iplugin.h>
 
@@ -28,7 +28,6 @@ class ConfigWidgetProxy;
 class QWidget;
 class FilesTreeView;
 
-
 /**
 Please read the README.dox file for more info about this part
 */
@@ -36,7 +35,7 @@ class QuantaFilesTreePart: public KDevelop::IPlugin
 {
     Q_OBJECT
 public:
-    QuantaFilesTreePart(QObject *parent, const QStringList &args);
+    QuantaFilesTreePart(QObject *parent, const QVariantList &args);
     ~QuantaFilesTreePart();
   
 private slots:
