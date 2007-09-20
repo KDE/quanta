@@ -33,7 +33,7 @@ class TagDialogsPart: public KDevelop::IPlugin, TagDialogsIf
   Q_OBJECT
   Q_INTERFACES(TagDialogsIf)
 public:
-  TagDialogsPart(QObject *parent, const QStringList &args);
+  TagDialogsPart(QObject *parent, const QVariantList &args);
   ~TagDialogsPart();
 
   TagPair createNewTag(QTag *dtdTag, const QString& selection, const QString& attrs = QString(), const KUrl& baseURL = KUrl());

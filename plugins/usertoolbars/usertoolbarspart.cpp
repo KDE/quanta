@@ -49,7 +49,6 @@
 #include <kconfiggroup.h>
 #include <kedittoolbar.h>
 #include <kfiledialog.h>
-#include <kgenericfactory.h>
 #include <kicon.h>
 #include <kiconloader.h>
 #include <kinputdialog.h>
@@ -63,6 +62,8 @@
 #include <ktemporaryfile.h>
 #include <ktoolinvocation.h>
 #include <kxmlguifactory.h>
+#include <kpluginfactory.h>
+#include <kpluginloader.h>
 
 #include <kparts/mainwindow.h>
 
@@ -74,8 +75,9 @@
 #include <iprojectcontroller.h>
 #include <iuicontroller.h>
 
-typedef KGenericFactory<UserToolbarsPart> UserToolbarsFactory;
-K_EXPORT_COMPONENT_FACTORY( libkdevusertoolbars, UserToolbarsFactory("kdevusertoolbars") )
+K_PLUGIN_FACTORY(UserToolbarsFactory, registerPlugin<UserToolbarsPart>();)
+K_EXPORT_PLUGIN(UserToolbarsFactory("kdevusertoolbars"))
+
 
 
 #define GLOBALDOC_OPTIONS 1
@@ -85,7 +87,7 @@ K_EXPORT_COMPONENT_FACTORY( libkdevusertoolbars, UserToolbarsFactory("kdevuserto
 const QString resourceDir = "quanta/";
 
 
-UserToolbarsPart::UserToolbarsPart(QObject *parent, const QStringList &/*args*/)
+UserToolbarsPart::UserToolbarsPart(QObject *parent, const QVariantList &/*args*/)
   : KDevelop::IPlugin(UserToolbarsFactory::componentData(), parent)
 {
     kDebug(24000) << "Creating UserToolbars Part";

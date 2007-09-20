@@ -20,9 +20,10 @@
 #include <kaction.h>
 #include <kactioncollection.h>
 #include <kdebug.h>
-#include <kgenericfactory.h>
 #include <klocale.h>
 #include <kparts/mainwindow.h>
+#include <kpluginfactory.h>
+#include <kpluginloader.h>
 
 //kdevelop includes
 #include <core.h>
@@ -30,13 +31,14 @@
 #include <iplugincontroller.h>
 #include <iuicontroller.h>
 
-typedef KGenericFactory<TagDialogsPart> TagDialogsFactory;
-K_EXPORT_COMPONENT_FACTORY( libkdevtagdialogs, TagDialogsFactory("kdevtagdialogs") )
+K_PLUGIN_FACTORY(TagDialogsFactory, registerPlugin<TagDialogsPart>();)
+K_EXPORT_PLUGIN(TagDialogsFactory("kdevtagdialogs"))
+
 
 #define GLOBALDOC_OPTIONS 1
 #define PROJECTDOC_OPTIONS 2
 
-TagDialogsPart::TagDialogsPart(QObject *parent, const QStringList &/*args*/)
+TagDialogsPart::TagDialogsPart(QObject *parent, const QVariantList &/*args*/)
   : KDevelop::IPlugin(TagDialogsFactory::componentData(), parent), TagDialogsIf()
 {
   KDEV_USE_EXTENSION_INTERFACE( TagDialogsIf )

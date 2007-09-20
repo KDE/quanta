@@ -29,7 +29,6 @@
 #include <kaction.h>
 #include <kactioncollection.h>
 #include <kdialog.h>
-#include <kgenericfactory.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
 #include <kfiledialog.h>
@@ -37,6 +36,8 @@
 #include <kxmlguiwindow.h>
 #include <kstandarddirs.h>
 #include <ktemporaryfile.h>
+#include <kpluginfactory.h>
+#include <kpluginloader.h>
 
 #include <kparts/mainwindow.h>
 
@@ -50,9 +51,10 @@
 #define GLOBALDOC_OPTIONS 1
 #define PROJECTDOC_OPTIONS 2
 
-typedef KGenericFactory<TemplatesTreePart> TemplatesTreeFactory;
-K_EXPORT_COMPONENT_FACTORY( libkdevtemplatestree, TemplatesTreeFactory("kdevtemplatestree") )
-    
+K_PLUGIN_FACTORY(TemplatesTreeFactory, registerPlugin<TemplatesTreePart>();)
+K_EXPORT_PLUGIN(TemplatesTreeFactory("kdevtemplatestree"))
+
+
 class TemplatesTreeViewFactory: public KDevelop::IToolViewFactory
 {
   public:
@@ -80,7 +82,7 @@ class TemplatesTreeViewFactory: public KDevelop::IToolViewFactory
 };
 
 
-TemplatesTreePart::TemplatesTreePart(QObject *parent, const QStringList &/*args*/)
+TemplatesTreePart::TemplatesTreePart(QObject *parent, const QVariantList &/*args*/)
   : KDevelop::IPlugin(TemplatesTreeFactory::componentData(), parent)
 {
     setXMLFile("kdevtemplatestree.rc");

@@ -47,7 +47,7 @@ class UserToolbarsPart: public KDevelop::IPlugin
 {
     Q_OBJECT
 public:
-    UserToolbarsPart(QObject *parent, const QStringList &args);
+    UserToolbarsPart(QObject *parent, const QVariantList &args);
     ~UserToolbarsPart();
     /**
      * Enables/disables the creation of the Actions menu

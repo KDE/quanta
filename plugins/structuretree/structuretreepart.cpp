@@ -26,10 +26,11 @@
 #include <klocale.h>
 #include <kaction.h>
 #include <kdialog.h>
-#include <kgenericfactory.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
 #include <k3listviewsearchline.h>
+#include <kpluginfactory.h>
+#include <kpluginloader.h>
 
 #include <kparts/mainwindow.h>
 
@@ -42,8 +43,9 @@
 #define GLOBALDOC_OPTIONS 1
 #define PROJECTDOC_OPTIONS 2
 
-typedef KGenericFactory<StructureTreePart> StructureTreeFactory;
-K_EXPORT_COMPONENT_FACTORY( libkdevstructuretree, StructureTreeFactory("kdevstructuretree") )
+K_PLUGIN_FACTORY(StructureTreeFactory, registerPlugin<StructureTreePart>();)
+K_EXPORT_PLUGIN(StructureTreeFactory("kdevstructuretree"))
+
 
 class StructureTreeWidgetFactory: public KDevelop::IToolViewFactory
 {
@@ -104,7 +106,7 @@ class StructureTreeWidgetFactory: public KDevelop::IToolViewFactory
 };
     
     
-StructureTreePart::StructureTreePart(QObject *parent, const QStringList &/*args*/)
+StructureTreePart::StructureTreePart(QObject *parent, const QVariantList &/*args*/)
   : KDevelop::IPlugin(StructureTreeFactory::componentData(), parent)
 {
     setXMLFile("kdevstructuretree.rc");

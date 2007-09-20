@@ -40,7 +40,7 @@ class TemplatesTreePart: public KDevelop::IPlugin
 {
   Q_OBJECT
 public:
-  TemplatesTreePart(QObject *parent, const QStringList &args);
+  TemplatesTreePart(QObject *parent, const QVariantList &args);
   ~TemplatesTreePart();
 
   QuantaCoreIf * quantaCore() {return m_qcore;};

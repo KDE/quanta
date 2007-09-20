@@ -13,7 +13,7 @@
 #define STRUCTURETREEPART_H
 
 #include <QPointer>
-
+#include <QVariant>
 //kdevelop includes
 #include <iplugin.h>
 
@@ -33,7 +33,7 @@ class StructureTreePart: public KDevelop::IPlugin
 {
   Q_OBJECT
 public:
-  StructureTreePart(QObject *parent, const QStringList &args);
+  StructureTreePart(QObject *parent, const QVariantList &args);
   ~StructureTreePart();
   
 private slots:
