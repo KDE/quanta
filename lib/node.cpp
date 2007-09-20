@@ -46,7 +46,7 @@ Node::Node(Node *parent)
     nodes.append(this);
   else
   {
-    kdError(24000) << "A node with this address " << this << " already exists!" << endl; 
+    kError(24000) << "A node with this address " << this << " already exists!" << endl; 
   }
 }
 
@@ -55,7 +55,7 @@ Node::~Node()
 {
   if (nodes.contains(this) == 0)
   {     
-    kdError(24000) << "No node with this address " << this << " was allocated!" << endl; 
+    kError(24000) << "No node with this address " << this << " was allocated!" << endl; 
     return;
   }
  // kDebug(24000) << "Node destructor " << this << tag->name;
