@@ -7,7 +7,7 @@
  *                                                                         *
  *   See COPYING file that comes with this distribution for details.       *
  **************************************************************************/
- 
+
 #ifndef QUANTAPROJECTFILEMANAGER_H
 #define QUANTAPROJECTFILEMANAGER_H
 
@@ -19,14 +19,13 @@ namespace KDevelop
   class ProjectBaseItem;
   class ProjectFolderItem;
   class ProjectFileItem;
-  class ProjectItem;
 }
 
 class KDialogBase;
 
 /**
  * @short This class operates on the Quanta specific project file.
- * 
+ *
  * @author Andras Mantia <amantia@kde.org>
 */
 class QuantaProjectFileManager : public KDevelop::IPlugin, public KDevelop::IProjectFileManager
@@ -38,7 +37,7 @@ public:
                             const QVariantList &args = QVariantList());
 
   virtual  ~QuantaProjectFileManager();
-  
+
   //Reimplemented methods from IProjectFileManager
   virtual Features features() const { return Features(Folders | Files); }
 
@@ -48,14 +47,14 @@ public:
    * @param project the project
    * @return the root item
    */
-  virtual KDevelop::ProjectItem* import(KDevelop::IProject *project);
+  virtual KDevelop::ProjectFolderItem* import(KDevelop::IProject *project);
   virtual KDevelop::ProjectFolderItem* addFolder(const KUrl &folder, KDevelop::ProjectFolderItem *parent);
   virtual KDevelop::ProjectFileItem* addFile(const KUrl &folder, KDevelop::ProjectFolderItem *parent);
   virtual bool removeFolder(KDevelop::ProjectFolderItem *folder);
   virtual bool removeFile(KDevelop::ProjectFileItem *file);
   virtual bool renameFile(KDevelop::ProjectFileItem *oldFile, const KUrl &newFile);
   virtual bool renameFolder(KDevelop::ProjectFolderItem *oldFolder, const KUrl &newFolder);
-  
+
 Q_SIGNALS:
   //Declare again the signals as IProjectFileManager doesn't inherit from QObject
   void projectItemConfigWidget(const QList<KDevelop::ProjectBaseItem*> &dom, KDialogBase *dialog);
@@ -65,7 +64,7 @@ Q_SIGNALS:
   void fileAdded(KDevelop::ProjectFileItem* file);
   void fileRemoved(KDevelop::ProjectFileItem* file);
   void fileRenamed(const KUrl& oldFile, KDevelop::ProjectFileItem* newFile);
-  
+
 private:
   QMap<KUrl, KUrl::List> m_projectFolders; ///< list of project folders, and the subfolders for each folder in the form of <folder,subfolder>
   QMap<KUrl, KUrl::List> m_projectFiles; ///< list of project folders, and the files for each folder in the form of <folder,files>

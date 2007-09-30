@@ -7,8 +7,8 @@
  *                                                                         *
  *   See COPYING file that comes with this distribution for details.       *
  ***************************************************************************/
- 
-#include "quantaprojectfilemanager.h" 
+
+#include "quantaprojectfilemanager.h"
 #include "extfileinfo.h"
 
 #include <icore.h>
@@ -45,7 +45,7 @@ QuantaProjectFileManager::~QuantaProjectFileManager()
 {
 }
 
-KDevelop::ProjectItem* QuantaProjectFileManager::import(KDevelop::IProject *project)
+KDevelop::ProjectFolderItem* QuantaProjectFileManager::import(KDevelop::IProject *project)
 {
   KUrl url = project->folder();
   QString name = project->name();
@@ -73,15 +73,15 @@ KDevelop::ProjectItem* QuantaProjectFileManager::import(KDevelop::IProject *proj
         baseUrl.setPath(dir.canonicalPath());
         baseUrl.adjustPath(KUrl::RemoveTrailingSlash);
       }
-      dom.setContent(&f);   
-      f.close();    
-      
+      dom.setContent(&f);
+      f.close();
+
       url = baseUrl;
-      url.adjustPath(KUrl::AddTrailingSlash);        
+      url.adjustPath(KUrl::AddTrailingSlash);
       m_projectFolders[url] = QStringList();
       QStack<KUrl> urlStack;
       KUrl parent;
-      //read the items from the dom 
+      //read the items from the dom
       QString tmpString;
       QDomNodeList nl = dom.firstChild().firstChild().childNodes();
       QDomElement el;
@@ -120,8 +120,8 @@ KDevelop::ProjectItem* QuantaProjectFileManager::import(KDevelop::IProject *proj
                   el.parentNode().removeChild( el );
                   i--;
                   skipItem = true;
-                } 
-              } 
+                }
+              }
               if (!skipItem)
               {
                 KUrl fileUrl = url;
@@ -155,17 +155,17 @@ KDevelop::ProjectItem* QuantaProjectFileManager::import(KDevelop::IProject *proj
               }
             }
           }
-      }  
+      }
     } else
       KMessageBox::error(mainWindow, i18n("<qt>Cannot open the downloaded project file.</qt>"));
-  } else      
+  } else
   {
     KMessageBox::error(mainWindow, i18n("<qt>Cannot access the project file <b>%1</b>.</qt>").arg(url.pathOrUrl()));
   }
-  
+
   //create the base item
-  KDevelop::ProjectItem *baseItem = new KDevelop::ProjectItem(project, project->folder().pathOrUrl(), 0L);
-  
+  KDevelop::ProjectFolderItem *baseItem = new KDevelop::ProjectFolderItem(project, project->folder().pathOrUrl(), 0L);
+  baseItem->setProjectRoot( true );
   return baseItem;
 }
 
@@ -176,21 +176,21 @@ QList<KDevelop::ProjectFolderItem*> QuantaProjectFileManager::parse(KDevelop::Pr
   url.adjustPath(KUrl::AddTrailingSlash);
   KDevelop::IProject *project = base->project();
 //   kDebug(24000) << "Request parse for : " << url;
-  
+
   KUrl::List::ConstIterator itBegin = m_projectFolders[url].constBegin();
   KUrl::List::ConstIterator itEnd = m_projectFolders[url].constEnd();
   for (KUrl::List::ConstIterator it = itBegin; it != itEnd; ++it)
   {
     subFolders.append(new KDevelop::ProjectFolderItem(project, *it, base));
   }
-  
+
   itBegin = m_projectFiles[url].constBegin();
   itEnd = m_projectFiles[url].constEnd();
   for (KUrl::List::ConstIterator it = itBegin; it != itEnd; ++it)
   {
     new KDevelop::ProjectFileItem(project, *it, base);
   }
-  
+
   return subFolders;
 }
 
@@ -210,7 +210,7 @@ bool QuantaProjectFileManager::removeFolder(KDevelop::ProjectFolderItem *folder)
   //TODO implement it
     return false;
 }
-  
+
 bool QuantaProjectFileManager::removeFile(KDevelop::ProjectFileItem *file)
 {
   //TODO implement it
@@ -222,7 +222,7 @@ bool QuantaProjectFileManager::renameFile(KDevelop::ProjectFileItem *oldFile, co
   //TODO implement it
     return false;
 }
-  
+
 bool QuantaProjectFileManager::renameFolder(KDevelop::ProjectFolderItem *oldFolder, const KUrl &newFolder)
 {
   //TODO implement it
