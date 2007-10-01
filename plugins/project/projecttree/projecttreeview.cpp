@@ -56,7 +56,7 @@ const QString & ProjectTreeView::m_attrOpen = KGlobal::staticQString("OpenInTree
 
 
 //ProjectTreeViewItem implementation
-ProjectTreeViewItem::ProjectTreeViewItem( KFileTreeViewItem *parent, KFileItem* item, KFileTreeBranch *brnch )
+ProjectTreeViewItem::ProjectTreeViewItem( KFileTreeViewItem *parent, const KFileItem &item, KFileTreeBranch *brnch )
   : BaseTreeViewItem( parent, item, brnch), FilterableItemIf()
 {
   setVisible(shouldBeVisible());
@@ -101,10 +101,10 @@ ProjectTreeBranch::ProjectTreeBranch(Koncrete::Project * project, BaseTreeView *
 }
 
 KFileTreeViewItem* ProjectTreeBranch::createTreeViewItem(KFileTreeViewItem *parent,
-                                                         KFileItem *fileItem )
+                                                         const KFileItem &fileItem )
 {
   BaseTreeViewItem  *tvi = 0;
-  if( parent && fileItem )
+  if( parent && !fileItem.isNull() )
   {
     tvi = new ProjectTreeViewItem( parent, fileItem, this );
     if (tvi)

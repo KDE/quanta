@@ -78,7 +78,7 @@
 #include <X11/Xlib.h>
 #endif
 //BaseTreeViewItem implementation
-BaseTreeViewItem::BaseTreeViewItem( K3FileTreeViewItem *parent, KFileItem* item, KFileTreeBranch *brnch )
+BaseTreeViewItem::BaseTreeViewItem( K3FileTreeViewItem *parent, const KFileItem &item, KFileTreeBranch *brnch )
   : K3FileTreeViewItem( parent, item, brnch)
 {
   // cache this for speed
@@ -144,20 +144,20 @@ BaseTreeBranch::BaseTreeBranch(BaseTreeView *parent, const KUrl& url,
   setChildRecurse(false);
 }
 
-bool BaseTreeBranch::matchesFilter(const KFileItem *item) const
+bool BaseTreeBranch::matchesFilter(const KFileItem &item) const
 {
   if (!excludeFilterRx.isEmpty())
-    if (excludeFilterRx.exactMatch(item->url().path()))
+    if (excludeFilterRx.exactMatch(item.url().path()))
       return false;
 
   return KFileTreeBranch::matchesFilter(item);
 }
 
 K3FileTreeViewItem* BaseTreeBranch::createTreeViewItem(K3FileTreeViewItem *parent,
-                                                      KFileItem *fileItem)
+                                                       const KFileItem &fileItem)
 {
   BaseTreeViewItem  *tvi = 0;
-  if( parent && fileItem)
+  if( parent && !fileItem.isNull())
   {
     tvi = new BaseTreeViewItem(parent, fileItem, this);
     // we assume there are children

@@ -54,7 +54,7 @@ class BaseTreeView;
 class KDEVQUANTA_EXPORT BaseTreeViewItem : public K3FileTreeViewItem {
 
 public:
-  BaseTreeViewItem( K3FileTreeViewItem *parent, KFileItem* item, KFileTreeBranch *brnch );
+  BaseTreeViewItem( K3FileTreeViewItem *parent, const KFileItem &item, KFileTreeBranch *brnch );
 
   /**
   sorts folders separate from files
@@ -96,11 +96,11 @@ public:
   get the BaseTreeViewItem
   */
   virtual K3FileTreeViewItem* createTreeViewItem( K3FileTreeViewItem *parent,
-                                                 KFileItem *fileItem );
+                                                  const KFileItem &fileItem );
   /**
   does custom filtering
   */
-  bool matchesFilter(const KFileItem *item) const;
+  bool matchesFilter(const KFileItem &item) const;
 
   /**
   files matching to this will not be shown

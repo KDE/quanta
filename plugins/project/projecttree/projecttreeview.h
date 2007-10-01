@@ -37,7 +37,7 @@ class ProjectTreeViewItem : public BaseTreeViewItem, public FilterableItemIf
 {
 
 public:
-  ProjectTreeViewItem( KFileTreeViewItem *parent, KFileItem* item, KFileTreeBranch *brnch );
+  ProjectTreeViewItem( KFileTreeViewItem *parent, const KFileItem &item, KFileTreeBranch *brnch );
   
   /**
    * @param s the string to compare with
@@ -66,7 +66,7 @@ public:
                     bool showHidden = false, KFileTreeViewItem *branchRoot = 0L);
 
   /** check for CVS and visible*/
-  virtual KFileTreeViewItem* createTreeViewItem(KFileTreeViewItem *parent, KFileItem *fileItem );
+  virtual KFileTreeViewItem* createTreeViewItem(KFileTreeViewItem *parent, const KFileItem &fileItem );
 
   Koncrete::Project * project() {return m_project;}
   

@@ -59,7 +59,7 @@ public:
       The user should delete the KFileItems and clear the dict
       after they are not needed.
   */
-  static QHash<QString, KFileItem*> allFilesDetailed(const KUrl& path, const QString &mask);
+  static QHash<QString, KFileItem> allFilesDetailed(const KUrl& path, const QString &mask);
 
   /**
    * Gets a list with the urls under path. The listing is not recursive.
@@ -124,14 +124,14 @@ private:
   bool internalCopy(const KUrl& src, const KUrl& target, int permissions,
                     bool overwrite, bool resume, QWidget* window);
   KUrl::List allFilesInternal(const KUrl& startURL, const QString& mask);
-  QHash<QString, KFileItem*> allFilesDetailedInternal(const KUrl& startURL, const QString& mask);
+  QHash<QString, KFileItem> allFilesDetailedInternal(const KUrl& startURL, const QString& mask);
   KUrl::List listDirInternal(const KUrl& startURL, const QString& mask);
 
   bool bJobOK;
   static QString lastErrorMsg;
   KIO::UDSEntry m_entry;
   KUrl::List dirListItems;
-  QHash<QString, KFileItem*> detailedDirListItems;
+  QHash<QString, KFileItem> detailedDirListItems;
   QList<QRegExp*> lstFilters;
   int m_listJobCount;
   QString m_listStartURL;

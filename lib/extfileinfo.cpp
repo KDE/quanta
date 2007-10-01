@@ -126,7 +126,7 @@ KUrl::List ExtFileInfo::allFilesRelative( const KUrl& path, const QString& mask)
   return r;
 }
 
-QHash<QString, KFileItem*> ExtFileInfo::allFilesDetailed( const KUrl& path, const QString& mask)
+QHash<QString, KFileItem> ExtFileInfo::allFilesDetailed( const KUrl& path, const QString& mask)
 {
   ExtFileInfo internalFileInfo;
   return internalFileInfo.allFilesDetailedInternal(path, mask);
@@ -259,12 +259,8 @@ KUrl::List ExtFileInfo::allFilesInternal(const KUrl& startURL, const QString& ma
   return dirListItems;
 }
 
-QHash<QString, KFileItem*> ExtFileInfo::allFilesDetailedInternal(const KUrl& startURL, const QString& mask)
+QHash<QString, KFileItem> ExtFileInfo::allFilesDetailedInternal(const KUrl& startURL, const QString& mask)
 {
-  foreach (KFileItem *item, detailedDirListItems)
-  {
-    delete item;
-  }
   detailedDirListItems.clear();
   if (internalExists(startURL))
   {
@@ -435,52 +431,47 @@ void ExtFileInfo::slotNewEntries(KIO::Job *job, const KIO::UDSEntryList& udsList
   KIO::UDSEntryList::ConstIterator it = udsList.begin();
   KIO::UDSEntryList::ConstIterator end = udsList.end();
   KUrl itemURL;
-  QList<KFileItem*> linkItems;
+  QList<KFileItem> linkItems;
   for ( ; it != end; ++it )
   {
     QString name = (*it).stringValue(KIO::UDSEntry::UDS_NAME);
 
     if (!name.isEmpty() && name != dot && name != dotdot)
     {
-      KFileItem* item = new KFileItem( *it, url, false, true );
-      if (item->isDir() && item->isLink())
+      const KFileItem item( *it, url, false, true );
+      if (item.isDir() && item.isLink())
       {
-        KUrl u = item->url();
-        u.setPath(item->linkDest());
+        KUrl u = item.url();
+        u.setPath(item.linkDest());
         u.adjustPath(KUrl::AddTrailingSlash);
         if (!dirListItems.contains(u) && u.url() != m_listStartURL)
         {
-          linkItems.append(new KFileItem(*item));
+          linkItems.append(item);
         } else
         {
           kDebug(24000) << "Recursive link" << u.url();
           continue;
         }
       }
-      itemURL = item->url();
-      if (item->isDir())
+      itemURL = item.url();
+      if (item.isDir())
         itemURL.adjustPath(KUrl::AddTrailingSlash);
       foreach (QRegExp *filter, lstFilters)
       {
-        if (filter->exactMatch(item->text()))
+        if (filter->exactMatch(item.text()))
             dirListItems.append(itemURL);
       }
-      delete item;
     }
   }
-  for (QList<KFileItem*>::ConstIterator it = linkItems.constBegin(); it != linkItems.constEnd(); ++it)
+  for (QList<KFileItem>::ConstIterator it = linkItems.constBegin(); it != linkItems.constEnd(); ++it)
   {
-    KIO::ListJob *ljob = KIO::listRecursive((*it)->url(), false, true);
+    KIO::ListJob *ljob = KIO::listRecursive((*it).url(), false, true);
     m_listJobCount++;
     //kDebug(24000) << "Now listing: " << (*it)->url();
     connect( ljob, SIGNAL(entries(KIO::Job *,const KIO::UDSEntryList &)),
              this,SLOT  (slotNewEntries(KIO::Job *,const KIO::UDSEntryList &)));
     connect( ljob, SIGNAL(result(KJob *)),
              this,SLOT  (slotListResult(KJob *)));
-  }
-  foreach(KFileItem *item, linkItems)
-  {
-    delete item;
   }
 }
 
@@ -495,53 +486,45 @@ void ExtFileInfo::slotNewDetailedEntries(KIO::Job *job, const KIO::UDSEntryList&
   KIO::UDSEntryList::ConstIterator it = udsList.begin();
   KIO::UDSEntryList::ConstIterator end = udsList.end();
   KUrl itemURL;
-  QList<KFileItem*> linkItems;
+  QList<KFileItem> linkItems;
   for ( ; it != end; ++it )
   {
     QString name = (*it).stringValue(KIO::UDSEntry::UDS_NAME);
 
     if (!name.isEmpty() && name != dot && name != dotdot)
     {
-      KFileItem *item=  new KFileItem(*it, url, false, true );
-      if (item->isDir() && item->isLink())
+      const KFileItem item(*it, url, false, true );
+      if (item.isDir() && item.isLink())
       {
-        KUrl u = item->url();
-        u.setPath(item->linkDest());
+        KUrl u = item.url();
+        u.setPath(item.linkDest());
         QString urlStr = u.url();
         if (detailedDirListItems.contains(urlStr) == 0L &&
             (urlStr != m_listStartURL))
         {
-          linkItems.append(new KFileItem(*item));
+          linkItems.append(item);
         } else
         {
-          kDebug(24000) << "Recursive link" << item->url();
+          kDebug(24000) << "Recursive link" << item.url();
           continue;
         }
       }
-      bool added = false;
       foreach (QRegExp *filter, lstFilters)
-        if (filter->exactMatch(item->text()))
+        if (filter->exactMatch(item.text()))
         {
-          detailedDirListItems.insert(item->url().url(), item);
-          added = true;
+          detailedDirListItems.insert(item.url().url(), item);
         }
-      if (!added)
-        delete item;
     }
   }
-  foreach (KFileItem *it ,linkItems)
+  foreach (const KFileItem it ,linkItems)
   {
-    KIO::ListJob *ljob = KIO::listRecursive(it->url(), false, true);
+    KIO::ListJob *ljob = KIO::listRecursive(it.url(), false, true);
     m_listJobCount++;
    // kDebug(24000) << "Now listing: " << (*it)->url();
     connect( ljob, SIGNAL(entries(KIO::Job *,const KIO::UDSEntryList &)),
              this,SLOT  (slotNewDetailedEntries(KIO::Job *,const KIO::UDSEntryList &)));
     connect( ljob, SIGNAL(result(KJob *)),
              this,SLOT  (slotListResult(KJob *)));
-  }
-  foreach(KFileItem* item, linkItems)
-  {
-    delete item;
   }
 }
 

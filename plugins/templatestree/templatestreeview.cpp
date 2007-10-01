@@ -101,14 +101,14 @@ TemplatesTreeBranch::TemplatesTreeBranch(BaseTreeView *parent, const KUrl& url,
 }
 
 K3FileTreeViewItem* TemplatesTreeBranch::createTreeViewItem(K3FileTreeViewItem *parent,
-                                                           KFileItem *fileItem )
+                                                            const KFileItem &fileItem )
 {
   BaseTreeViewItem  *tvi = 0;
-  if( parent && fileItem )
+  if( parent && !fileItem.isNull() )
   {
-    KUrl url = fileItem->url();
+    KUrl url = fileItem.url();
     tvi = new BaseTreeViewItem( parent, fileItem, this );
-    if (tvi && fileItem->isDir())
+    if (tvi && fileItem.isDir())
     {
       if (url.isLocalFile())
       {

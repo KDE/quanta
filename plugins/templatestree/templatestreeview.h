@@ -41,7 +41,7 @@ public:
 
   /** read the mimetype */
   virtual K3FileTreeViewItem* createTreeViewItem(K3FileTreeViewItem *parent,
-                                                KFileItem *fileItem );
+                                                 const KFileItem &fileItem );
 };
 
 
