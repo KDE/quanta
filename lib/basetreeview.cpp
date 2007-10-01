@@ -128,7 +128,7 @@ void BaseTreeViewItem::paintCell(QPainter *p, const QColorGroup &cg,
 
 void BaseTreeViewItem::refreshIcon()
 {
-  fileItem()->refreshMimeType();
+  fileItem().refreshMimeType();
 }
 
 
@@ -476,7 +476,7 @@ bool BaseTreeView::event(QEvent *event)
     K3FileTreeViewItem * kftvi = dynamic_cast<BaseTreeViewItem *> (item);
     if (kftvi) {
       QString desc = kftvi->text(1);
-      text = kftvi->fileItem()->getToolTipText();
+      text = kftvi->fileItem().getToolTipText();
       if ( !desc.isEmpty() )
         text.prepend("&nbsp;<i>" + desc + "</i><br>");
     } else
@@ -586,7 +586,7 @@ void BaseTreeView::slotProperties()
   KUrl url = currentUrl();
   if (url.isEmpty()) return;
   KFileItem fileItem(KFileItem::Unknown, KFileItem::Unknown, url);
-  propDlg = new KPropertiesDialog(&fileItem, this); //autodeletes itself
+  propDlg = new KPropertiesDialog(fileItem, this); //autodeletes itself
   fileInfoDlg = 0L;
   if (!currentKFileTreeViewItem()->isDir())
   {
@@ -912,11 +912,11 @@ void BaseTreeView::doRename(K3FileTreeViewItem* kftvi, const QString & newName)
       newURL.adjustPath(KUrl::RemoveTrailingSlash);
       if (!QuantaNetAccess::file_move(oldURL, newURL, -1, true, false, m_plugin, true))
       {
-        kftvi->setText(0, kftvi->fileItem()->text());  // reset the text
+        kftvi->setText(0, kftvi->fileItem().text());  // reset the text
       }
     } else
     {
-       kftvi->setText(0, kftvi->fileItem()->text());  // reset the text
+       kftvi->setText(0, kftvi->fileItem().text());  // reset the text
     }
   }
 }
