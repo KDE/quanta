@@ -37,7 +37,7 @@ SecondWizardPage::SecondWizardPage(QStackedWidget *importStack, KIconLoader *ico
 {
   setupUi(this);
   connect(radioLocal, SIGNAL(toggled(bool)), SLOT(slotLocalInsertToggled(bool)));
-  imagelabel->setPixmap(iconLoader->loadIcon("secondwizardpage", K3Icon::User));
+  imagelabel->setPixmap(iconLoader->loadIcon("secondwizardpage", KIconLoader::User));
   m_importStack = importStack;
  
   linePrjTmpl->setText("resources/templates");

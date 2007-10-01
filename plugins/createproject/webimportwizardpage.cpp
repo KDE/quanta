@@ -44,7 +44,7 @@ WebImportWizardPage::WebImportWizardPage(KIconLoader *iconLoader, QWidget *paren
   button->setEnabled(false);
   siteUrl->setFocus();
 
-  imagelabel->setPixmap(iconLoader->loadIcon("thirdwizardpage", K3Icon::User));
+  imagelabel->setPixmap(iconLoader->loadIcon("thirdwizardpage", KIconLoader::User));
 
   connect( commandLine, SIGNAL(textChanged(const QString&)),
            this,        SLOT  (enableStart(const QString&)));

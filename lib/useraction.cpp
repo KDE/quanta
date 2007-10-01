@@ -72,8 +72,8 @@ UserAction::UserAction( QDomElement *element, KDevelop::IPlugin *plugin, bool to
   }
   if (plugin)
   {
-    kDebug(24000) << "Load icon: " << s << " from: "<< plugin->iconLoader()->iconPath(s, K3Icon::Small, false);
-    setIcon(KIcon(plugin->iconLoader()->iconPath(s, K3Icon::Small, false)));
+    kDebug(24000) << "Load icon: " << s << " from: "<< plugin->iconLoader()->iconPath(s, KIconLoader::Small, false);
+    setIcon(KIcon(plugin->iconLoader()->iconPath(s, KIconLoader::Small, false)));
   }
   else
     setIcon(KIcon(s));

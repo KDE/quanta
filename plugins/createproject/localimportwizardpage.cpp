@@ -52,7 +52,7 @@ LocalImportWizardPage::LocalImportWizardPage(KIconLoader *iconLoader, QWidget *p
   connect(addFiles, SIGNAL(clicked()), SLOT(slotAddFiles()));
   connect(addFolder, SIGNAL(clicked()), SLOT(slotAddFolder()));
   connect(clearList, SIGNAL(clicked()), SLOT(slotClearList()));
-  imagelabel->setPixmap(iconLoader->loadIcon("thirdwizardpage", K3Icon::User));
+  imagelabel->setPixmap(iconLoader->loadIcon("thirdwizardpage", KIconLoader::User));
 
   filterMask->setText("*");
   checkInsertWeb->setChecked( true );

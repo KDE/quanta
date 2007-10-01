@@ -50,7 +50,7 @@ FirstWizardPage::FirstWizardPage(QuantaCoreIf *qCore, KIconLoader *iconLoader, Q
   connect(linePrjName, SIGNAL(textChanged(const QString&)), SLOT(slotSetProjectBase()));
   connect(linePrjName, SIGNAL(textChanged(const QString&)), SLOT(slotChangeNames(const QString &)));
   
-  imagelabel->setPixmap(iconLoader->loadIcon("firstwizardpage", K3Icon::User));
+  imagelabel->setPixmap(iconLoader->loadIcon("firstwizardpage", KIconLoader::User));
   linePrjName->setFocus();
 
   QStringList lst = Settings::self()->loadedDTEPNickNames();
