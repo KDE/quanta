@@ -122,6 +122,11 @@ void Project::insertFile(const KURL& nameURL, bool repaint )
     urlRequesterDlg->urlRequester()->setMode( KFile::Directory | KFile::ExistingOnly);
     urlRequesterDlg->exec();
     KURL destination = urlRequesterDlg->selectedURL();
+    if (destination.isLocalFile())
+    {
+      QDir dir(destination.path());
+      destination.setPath(dir.canonicalPath());
+    }
     delete urlRequesterDlg;
     if ( !destination.isEmpty() )
     {
