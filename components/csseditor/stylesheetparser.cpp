@@ -160,6 +160,18 @@ void stylesheetParser::parseSelector(){
       selectorName.remove("\n").remove("\t");
       selectorValue.remove("\n").remove("\t");
       QPair<QString,unsigned int> tmp(selectorValue,++m_orderNumber);
+            
+      if (m_stylesheetStructure.contains(selectorName))
+      {
+        uint i = 2;
+        QString s = selectorName + QString("-v%1").arg(i);
+        while (m_stylesheetStructure.contains(s))
+        {          
+         i++;
+         s = selectorName + QString("-v%1").arg(i);
+        }
+        selectorName = s;
+      }
       m_stylesheetStructure[selectorName]=tmp; 
       break;
     } 

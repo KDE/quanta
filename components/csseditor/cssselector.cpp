@@ -26,6 +26,7 @@
 #include <qobjectlist.h>
 #include <qfileinfo.h>
 #include <qlabel.h>
+#include <qregexp.h>
 #include <qwhatsthis.h>
 
 #include <kstandarddirs.h>
@@ -352,13 +353,15 @@ QString CSSSelector::generateFormattedStyleSection(){
                       indentDisplacement = 2;
   for ( unsigned int i=0;i<=m_orderNumber;i++ ) {
     for ( it = m_currentStylesheetStructure.begin(); it != m_currentStylesheetStructure.end(); ++it ) {
+      QString key = it.key();
       if(it.data().second == i){
-       if(it.key().startsWith("@rule"))
+       if(key.startsWith("@rule"))
          styleSection += it.data().first;
-       else if(it.key().startsWith("/*"))
+       else if(key.startsWith("/*"))
                  styleSection += it.data().first;
                else {
-                  styleSection += "\n" + it.key() + " {\n";
+                  key.remove(QRegExp("-v[\\d]+$"));
+                  styleSection += "\n" + key + " {\n";
                   indentWidth = indentDisplacement + 2;
                   QStringList props = QStringList::split(";",it.data().first.simplifyWhiteSpace());
                   QString indentStr;
