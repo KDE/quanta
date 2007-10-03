@@ -104,16 +104,31 @@ void RescanPrj::addEntries(KIO::Job *job,const KIO::UDSEntryList &list)
     name = item.name();
     if (item.isDir() && item.isLink())
     {
-      kdDebug(24000) << "Got link: " << name << " Points to:" << item.linkDest() << endl;
+      QString linkDest = item.linkDest();
+      kdDebug(24000) << "Got link: " << name << " Points to:" << linkDest << endl;
       KURL u = item.url();
-      u.setPath(item.linkDest());
+      if (linkDest.startsWith("."))
+      {
+        u.setPath(u.directory(false, true) + linkDest);
+        u.cleanPath();
+      }
+      else       
+        u.setPath(linkDest);
       u.adjustPath(+1);
-      if (!prjFileList.contains(u))
+      KURL u2 = QExtFileInfo::toRelative(u, baseURL);
+      bool found = false;
+      for (uint i = 0; i < urlList.count(); i++)
+       if (urlList[i].url == u2)
+       { 
+         found = true;
+         break;
+       }
+      if (!prjFileList.contains(u) && !found)
       {
         linkItems.append(new KFileItem(item));
       } else
       {
-        kdDebug(24000) << "Recursive link" << endl;
+        kdDebug(24000) << "Recursive link - points to a place inside the project" << endl;
         continue;
       }
     }
