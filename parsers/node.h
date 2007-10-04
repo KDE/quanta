@@ -63,6 +63,14 @@ class Node {
 public:
  Node( Node *parent );
  ~Node();
+ 
+ /** 
+  * Deletes the node. Use this instead of delete node; as it checkes if there
+  * node was really allocated or not and avoid nasty crashes.
+  * @return true - if node existed and is deleted
+  *         false - if the node did not exist
+  */
+ static bool deleteNode(Node *node);
 
  /**
   * Copy everything from node except prev, next, child, parent, listItem, group, groupTag, which are set to Null

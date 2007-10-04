@@ -146,12 +146,12 @@ bool QuantaView::mayRemove()
     {
         parser->setSAParserEnabled(false);
         kdDebug(24000) << "Node objects before delete = " << NN << " ; list count = " << nodes.count() << endl;
-        delete baseNode;
+        Node::deleteNode(baseNode);
         baseNode = 0L;
         kdDebug(24000) << "Node objects after delete = " << NN << " ; list count = " << nodes.count() << endl;
         QValueList<Node*> nList = nodes;
 /*        for (QValueList<Node*>::ConstIterator it = nList.constBegin(); it != nList.constEnd(); ++it)
-          delete (*it);
+        Node::deleteNode(*it);
         kdDebug(24000) << "Node objects after cleanup = " << NN << " ; list count = " << nodes.count() << endl;*/
     }
     if (m_document)

@@ -2430,12 +2430,12 @@ void Document::slotDelayedTextChanged(bool forced)
         if ( (bl != bl2 || bc !=bc2) && previousNode)
         {
           previousNode->tag->beginPos(bl2, bc2);
-          delete currentNode;
+          Node::deleteNode(currentNode);
           currentNode = previousNode;
           previousNode = 0L;
         } else
         {
-          delete previousNode;
+          Node::deleteNode(previousNode);
           previousNode = 0L;
         }
         if (bl == bl2 && bc == bc2 &&
@@ -2502,8 +2502,8 @@ void Document::slotDelayedTextChanged(bool forced)
           }
         }
       }
-      delete currentNode;
-      delete previousNode;
+      Node::deleteNode(currentNode);
+      Node::deleteNode(previousNode);
     }
 
     quantaApp->slotNewLineColumn();

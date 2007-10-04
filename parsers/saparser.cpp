@@ -895,7 +895,7 @@ void SAParser::slotParseNodeInDetail()
         m_currentNode->tag->type != Tag::Text &&
         m_currentNode->tag->type != Tag::Empty)
     {
-      delete m_currentNode->child;
+      Node::deleteNode(m_currentNode->child);
       m_currentNode->child = 0L;
       AreaStruct area(m_currentNode->tag->area());
       s_next = 0L;
@@ -913,7 +913,7 @@ void SAParser::slotParseNodeInDetail()
           Node *secondNext = m_currentNode->next->next;
           if (secondNext)
             secondNext->prev = m_currentNode;
-          delete m_currentNode->next;
+          Node::deleteNode(m_currentNode->next);
           m_currentNode->next = secondNext;
           m_useNext = true;
         }

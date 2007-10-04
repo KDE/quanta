@@ -64,7 +64,7 @@ NodeModif::~NodeModif()
     m_node->prev = 0L;
     if(m_type == NodeRemoved)
       m_node->child = 0L;
-    delete m_node;
+    Node::deleteNode(m_node);
   }
   if(m_tag)
     delete m_tag;
@@ -77,9 +77,9 @@ void NodeModif::setNode(Node *node)
   {
     //FIXME: Andras: I don't have the slightest idea what this is supposed to do and what the
     //below comment means, but without a real delete we are seriously leaking memory
-    delete m_node;
+    Node::deleteNode(m_node);
     m_node = 0L;
-    delete node;
+    Node::deleteNode(node);
     return;
   }
   else

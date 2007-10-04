@@ -56,6 +56,16 @@ Node::Node(Node *parent)
   }
 }
 
+bool Node::deleteNode(Node *node)
+{
+  if (nodes.contains(node) == 0)
+  {     
+    //kdDebug(24000) << "Trying to delete a node with address " << node << " that was not allocated!" << endl; 
+    return false;
+  }
+  delete node;
+  return true;
+}
 
 Node::~Node()
 {
@@ -82,9 +92,9 @@ Node::~Node()
       parent->child = 0L;
   if (removeAll)
   {
-    delete child;
+    deleteNode(child);
     child = 0L;
-    delete next;
+    deleteNode(next);
     next = 0L;
   } else
   {

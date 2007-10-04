@@ -524,12 +524,12 @@ Node *Parser::parse(Document *w, bool force)
      kdDebug(24000) << "Node objects before delete = " << NN << " ; list count = " << nodes.count() << endl;
      //kdDebug(24000) << "baseNode before delete = " << baseNode << endl;
      //ParserCommon::coutTree(m_node, 2);
-     delete baseNode;
+     Node::deleteNode(baseNode);
      baseNode = 0L;
      kdDebug(24000) << "Node objects after delete = " << NN << " ; list count = " << nodes.count() << endl;
      QValueList<Node*> nList = nodes;
 /*     for (QValueList<Node*>::ConstIterator it = nList.constBegin(); it != nList.constEnd(); ++it)
-       delete (*it);
+     Node::deleteNode(*it);
      kdDebug(24000) << "Node objects after cleanup = " << NN << " ; list count = " << nodes.count() << endl;       */
   }
   m_node = 0L;
@@ -1056,7 +1056,7 @@ Node *Parser::rebuild(Document *w)
        if (lastNode->parent && lastNode->parent->child == lastNode)
            lastNode->parent->child = 0L;
      }
-     delete lastNode;
+     Node::deleteNode(lastNode);
      nodeNum--;
      lastNode = 0L;
      logReparse(modifs, w);
@@ -1357,7 +1357,7 @@ void Parser::clearIncludedGroupElements()
         {
           GroupElement *groupElement = it.data()[i];
           groupElement->node->tag->write()->userTagList.remove(groupElement->node->tag->name.lower());
-          delete it.data()[i]->node;
+          Node::deleteNode(it.data()[i]->node);
           delete it.data()[i];
         }
       }
@@ -1611,7 +1611,7 @@ void Parser::slotIncludedFileChanged(const QString& fileName)
           uint listCount = it.data().count();
           for (uint i = 0 ; i < listCount; i++)
           {
-            delete it.data()[i]->node;
+            Node::deleteNode(it.data()[i]->node);
             delete it.data()[i];
           }
         }

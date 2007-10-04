@@ -930,14 +930,14 @@ void TableEditor::slotRemoveRow()
         updatedMainNodes.append(mainTableNode);
       }
     }
-    delete (*it3).node;
+    Node::deleteNode((*it3).node);
     (*it3).node = 0L;
     newNum--;
   }
   m_tableTags->erase(it2);
   m_dataTable->removeRow(m_row);
   QValueList<TableNode>::Iterator it = m_tableRows->at(m_row);
-  delete (*it).node;
+  Node::deleteNode((*it).node);
   newNum--;
   m_tableRows->erase(it);
   m_rowSpin->setValue(m_dataTable->numRows());
@@ -981,7 +981,7 @@ void TableEditor::slotRemoveCol()
         updatedMainNodes.append(mainTableNode);
       }
     }
-    delete (*it2).node;
+    Node::deleteNode((*it2).node);
     newNum--;
     (*it).erase(it2);
   }
@@ -1021,7 +1021,7 @@ void TableEditor::createNewTable(Document *write, const DTDStruct *dtd)
 void TableEditor::deleteList( QValueList<TableNode> *table )
 {
   for (QValueList<TableNode>::Iterator it = table->begin(); it != table->end(); ++it) {
-    delete (*it).node;
+    Node::deleteNode((*it).node);
     newNum--;
   }
   delete table;
@@ -1033,7 +1033,7 @@ void TableEditor::deleteMatrix( QValueList<QValueList<TableNode> > *matrix )
 {
     for (QValueList<QValueList<TableNode> >::Iterator it = matrix->begin(); it != matrix->end(); ++it) {
       for (QValueList<TableNode>::Iterator it2 = (*it).begin(); it2 != (*it).end(); ++it2) {
-        delete (*it2).node;
+        Node::deleteNode((*it2).node);
         newNum--;
       }
   }
@@ -1063,7 +1063,7 @@ void TableEditor::slotMergeCells()
         setCellText(m_dataTable, tRow + i, lCol + j, i18n("Merged with (%1, %2).").arg(tRow + 1).arg(lCol + 1));
         m_dataTable->item(tRow + i, lCol + j)->setEnabled(false);
         TableNode *tableNode = &((*m_tableTags)[tRow + i][lCol + j]);
-        delete tableNode->node;
+        Node::deleteNode(tableNode->node);
         tableNode->node = new Node(0L);
         newNum++;
         tableNode->node->tag = new Tag(*(mainTableNode->node->tag));
@@ -1107,7 +1107,7 @@ void TableEditor::slotUnmergeCells()
               tableNode.mergedRow == (*it2).mergedRow &&
               tableNode.mergedCol == (*it2).mergedCol) {
 
-              delete (*it2).node;
+              Node::deleteNode((*it2).node);
               newNum--;
               it2 = (*it).erase(it2);
               newTableNode.merged = false;
@@ -1142,7 +1142,7 @@ void TableEditor::slotUnmergeCells()
       QValueList<TableNode>::Iterator iter2 = (*iter1).at(tableNode.mergedCol);
       iter2 = (*iter1).erase(iter2);
       (*iter1).insert(iter2, newTableNode);
-      delete tmpNode.node;
+      Node::deleteNode(tmpNode.node);
       newNum--;
     }
 }
@@ -1218,7 +1218,7 @@ void TableEditor::slotEditChildTable()
        setCellText(m_dataTable, table.row, table.col, cellData);
       }
       //cleanup on success
-      delete baseNode;
+      Node::deleteNode(baseNode);
       baseNode = savedBaseNode;
       delete localParser;
       delete w;
@@ -1231,7 +1231,7 @@ void TableEditor::slotEditChildTable()
     m_dataTable->item(table.row, table.col)->setPixmap(QPixmap());
     m_dataTable->updateCell(table.row, table.col);
     if (tempDocCreated) {
-      delete baseNode;
+      Node::deleteNode(baseNode);
       baseNode = savedBaseNode;
       delete localParser;
       delete w;

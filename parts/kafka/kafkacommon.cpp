@@ -1513,7 +1513,7 @@ bool kafkaCommon::DTDinsertNode(Node *newNode, Node *startNode, int startOffset,
 
     if(!startNode || !endNode || !newNode || !doc)
     {
-        delete newNode;
+        Node::deleteNode(newNode);
         return false;
     }
 
@@ -1523,8 +1523,8 @@ bool kafkaCommon::DTDinsertNode(Node *newNode, Node *startNode, int startOffset,
     newNodeQTag = QuantaCommon::tagFromDTD(newNode);
     if(!newNodeQTag || !lastNewNodeQTag)
     {
-        delete newNode;
-        return false;
+      Node::deleteNode(newNode);
+      return false;
     }
 
     //Then search for the common parent of startNode and endNode (commonParent)
@@ -1608,8 +1608,8 @@ bool kafkaCommon::DTDinsertNode(Node *newNode, Node *startNode, int startOffset,
 
     /**if(!lastValidEndParent || !lastValidStartParent)
     {
-    delete newNode;
-        return false;
+      Node::deleteNode(newNode);
+      return false;
     }*/
 
     //OK now, we are sure the node can be inserted. Start the work by splitting
@@ -1749,8 +1749,8 @@ bool kafkaCommon::DTDinsertNode(Node *newNode, Node *startNode, int startOffset,
         }
         else
         {
-            delete newNode;
-            return false;
+          Node::deleteNode(newNode);
+          return false;
         }
     }
     else
@@ -2108,7 +2108,7 @@ bool kafkaCommon::addNodeRecursively(Node *newNode, Node *leafNode,
 
     //The newNode was a template, let's delete it now.
     if(level == 0)
-        delete newNode;
+      Node::deleteNode(newNode);
     return true;
 }
 
