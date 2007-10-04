@@ -1215,8 +1215,8 @@ Node *Parser::rebuild(Document *w)
       }
       node = lastNode;
       lastNode = lastNode->nextNotChild();
-      if (lastNode)
-        QString s = lastNode->tag->tagStr();
+/*      if (lastNode)
+        QString s = lastNode->tag->tagStr();*/
     }
  }
 /*   kdDebug(24000)<< "END"<< endl;

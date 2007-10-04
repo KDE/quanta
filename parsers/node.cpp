@@ -27,7 +27,7 @@
 #include "structtreetag.h"
 #include "kafkacommon.h"
 
-QValueList<Node*> nodes; //list of all created nodes. Used to do some own memory management and avoid double deletes, for whatever reason they happen...
+QMap<Node*, int> nodes; //list of all created nodes. Used to do some own memory management and avoid double deletes, for whatever reason they happen...
 
 int NN = 0; //for debugging purposes: count the Node objects
 
@@ -48,19 +48,21 @@ Node::Node(Node *parent)
   m_leafNode = 0L;
   m_groupElements.clear();
   NN++;
-  if (nodes.contains(this) == 0)
-    nodes.append(this);
-  else
-  {
-    kdError(24000) << "A node with this address " << this << " already exists!" << endl; 
-  }
+//   if (nodes.contains(this) == 0)
+  nodes[this] = 1;
+//   else
+//   {
+//     kdError(24000) << "A node with this address " << this << " already exists!" << endl; 
+//   }
 }
 
 bool Node::deleteNode(Node *node)
 {
-  if (nodes.contains(node) == 0)
+  if (!node)
+    return true;
+  if (!nodes.contains(node))
   {     
-    //kdDebug(24000) << "Trying to delete a node with address " << node << " that was not allocated!" << endl; 
+    kdDebug(24000) << "Trying to delete a node with address " << node << " that was not allocated!" << endl; 
     return false;
   }
   delete node;
@@ -69,11 +71,11 @@ bool Node::deleteNode(Node *node)
 
 Node::~Node()
 {
-  if (nodes.contains(this) == 0)
-  {     
-    kdError(24000) << "No node with this address " << this << " was allocated!" << endl; 
-    return;
-  }
+//   if (!nodes.contains(this))
+//   {     
+//     kdError(24000) << "No node with this address " << this << " was allocated!" << endl; 
+//     return;
+//   }
     
   //It has no use, except to know when it crash why it has crashed.
   //If it has crashed here, the Node doesn't exist anymore.
@@ -84,8 +86,7 @@ Node::~Node()
     tag->setCleanStrBuilt(false);
 
   detachNode();
-  if (nodes.contains(this) > 0)
-    nodes.remove(this);
+  nodes.erase(this);
   if (prev && prev->next == this)
       prev->next = 0L;
   if (parent && parent->child == this)
