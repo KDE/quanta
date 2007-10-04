@@ -237,6 +237,9 @@ public slots:
   void slotSelectProjectType(const QString &title);
 
   void slotDeleteCopytoDlg(CopyTo *dlg);
+  
+private slots:
+  void slotNewProjectHelpClicked();
 
 signals:
   void setLocalFiles(bool);

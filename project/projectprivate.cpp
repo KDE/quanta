@@ -1153,9 +1153,10 @@ void ProjectPrivate::slotNewProject()
           pnw, SLOT(  setBaseURL(const KURL&)));
   connect( this,SIGNAL(setLocalFiles(bool)),
           pnl, SLOT(slotSetFiles(bool)));
-
+  
   connect(wiz, SIGNAL(selected(const QString &)),
           this, SLOT  (slotSelectProjectType(const QString &)));
+  connect(wiz, SIGNAL(helpClicked()), SLOT(slotNewProjectHelpClicked()));
 
   connect( pnw, SIGNAL(enableMessagesWidget()),
           parent, SIGNAL(enableMessageWidget()));
@@ -1664,6 +1665,11 @@ bool ProjectPrivate::uploadProjectFile()
     return false;
   }
   return true;
+}
+
+void ProjectPrivate::slotNewProjectHelpClicked()
+{
+  kapp->invokeHelp("create-new-project-3-2", "quanta");
 }
 
 #include "projectprivate.moc"
