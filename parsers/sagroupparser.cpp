@@ -272,7 +272,7 @@ void SAGroupParser::parseForScriptGroup(Node *node)
             qTag->type="function";
           }
           if(!isArgument)
-            m_write->userTagList.insert(s.lower(), qTag);
+            m_write->userTagList.replace(s.lower(), qTag);
         }
 
 

@@ -68,7 +68,7 @@ extern GroupElementMapList globalGroupMap;
 static const QChar space(' ');
 
 extern int NN;
-extern QValueList<Node*> nodes;
+extern QMap<Node*, int> nodes;
 
 Parser::Parser()
 {
@@ -527,8 +527,8 @@ Node *Parser::parse(Document *w, bool force)
      Node::deleteNode(baseNode);
      baseNode = 0L;
      kdDebug(24000) << "Node objects after delete = " << NN << " ; list count = " << nodes.count() << endl;
-     QValueList<Node*> nList = nodes;
-/*     for (QValueList<Node*>::ConstIterator it = nList.constBegin(); it != nList.constEnd(); ++it)
+/*     QMap<Node*, int> nList = nodes;
+     for (QValueList<Node*>::ConstIterator it = nList.constBegin(); it != nList.constEnd(); ++it)
      Node::deleteNode(*it);
      kdDebug(24000) << "Node objects after cleanup = " << NN << " ; list count = " << nodes.count() << endl;       */
   }
@@ -1580,7 +1580,7 @@ void Parser::parseIncludedFile(const QString& fileName, const DTDStruct *dtd)
                       qTag->className = "";
                       if (groupElement->parentNode)
                         qTag->className = groupElement->parentNode->tag->name;
-                      write->userTagList.insert(s.lower(), qTag);
+                      write->userTagList.replace(s.lower(), qTag);
                     }
                   }
                 }

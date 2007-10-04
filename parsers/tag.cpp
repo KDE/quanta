@@ -340,7 +340,7 @@ void Tag::parse(const QString &p_tagStr, Document *p_write)
       }
       if (insertNew)
       {
-        m_write->userTagList.insert(tagName, newTag);
+        m_write->userTagList.replace(tagName, newTag);
       }
     }
   }
