@@ -1215,7 +1215,9 @@ Node *Parser::rebuild(Document *w)
       }
       node = lastNode;
       lastNode = lastNode->nextNotChild();
-      if (!nodes.contains(lastNode))
+      //For some reason this can happen, the lastNode can point to an invalid place. 
+      //To avoid crashes, forget the rebuild and do a full parse instead.
+      if (!nodes.contains(lastNode)) 
       {
         kdDebug(24000) << "Lastnode is invalid, do a full reparse!" << endl;
         logReparse(modifs, w);
