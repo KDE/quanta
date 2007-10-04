@@ -1215,6 +1215,14 @@ Node *Parser::rebuild(Document *w)
       }
       node = lastNode;
       lastNode = lastNode->nextNotChild();
+      if (!nodes.contains(lastNode))
+      {
+        kdDebug(24000) << "Lastnode is invalid, do a full reparse!" << endl;
+        logReparse(modifs, w);
+        m_saParser->setParsingEnabled(saParserEnabled);
+        Node *n = parse(w, true);
+        return n;
+      }
 /*      if (lastNode)
         QString s = lastNode->tag->tagStr();*/
     }
