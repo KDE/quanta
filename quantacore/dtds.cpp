@@ -934,7 +934,7 @@ void DTDs::slotLoadDTEP(const QString &_dirName, bool askForAutoload)
       KUrl target;
       QString destDir = KGlobal::dirs()->saveLocation("data") + Helper::resourceDir() + "dtep/";
       target.setPath(destDir + src.fileName());
-      KIO::copy( src, target, false); //don't care about the result
+      KIO::copy( src, target, KIO::HideProgressInfo); //don't care about the result
     }
 /*FIXME    Document *w = ViewManager::ref()->activeDocument();
     if (family == "1" && w &&

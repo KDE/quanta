@@ -238,7 +238,7 @@ KUrl::List ExtFileInfo::allFilesInternal(const KUrl& startURL, const QString& ma
       lstFilters.append( new QRegExp(*it, Qt::CaseInsensitive, QRegExp::Wildcard) );
 
     bJobOK = true;
-    KIO::ListJob *job = KIO::listRecursive(startURL, false, true);
+    KIO::ListJob *job = KIO::listRecursive(startURL, KIO::HideProgressInfo, true);
     m_listJobCount = 1;
     connect(job, SIGNAL(entries(KIO::Job *, const KIO::UDSEntryList&)),
             this, SLOT(slotNewEntries(KIO::Job *, const KIO::UDSEntryList&)));
@@ -275,7 +275,7 @@ QHash<QString, KFileItem> ExtFileInfo::allFilesDetailedInternal(const KUrl& star
       lstFilters.append( new QRegExp(*it, Qt::CaseInsensitive, QRegExp::Wildcard) );
 
     bJobOK = true;
-    KIO::ListJob *job = KIO::listRecursive(startURL, false, true);
+    KIO::ListJob *job = KIO::listRecursive(startURL, KIO::HideProgressInfo, true);
     m_listJobCount = 1;
     connect(job, SIGNAL(entries(KIO::Job *, const KIO::UDSEntryList&)),
             this, SLOT(slotNewDetailedEntries(KIO::Job *, const KIO::UDSEntryList&)));
@@ -312,7 +312,7 @@ KUrl::List ExtFileInfo::listDirInternal(const KUrl& startURL, const QString& mas
       lstFilters.append( new QRegExp(*it, Qt::CaseInsensitive, QRegExp::Wildcard) );
 
     bJobOK = true;
-    KIO::ListJob *job = KIO::listDir(startURL, false, true);
+    KIO::ListJob *job = KIO::listDir(startURL, KIO::HideProgressInfo, true);
     m_listJobCount = 1;
     connect(job, SIGNAL(entries(KIO::Job *, const KIO::UDSEntryList&)),
             this, SLOT(slotNewEntries(KIO::Job *, const KIO::UDSEntryList&)));
@@ -342,7 +342,7 @@ bool ExtFileInfo::internalExists(const KUrl& url)
   KUrl url2 = url;
   url2.adjustPath(KUrl::RemoveTrailingSlash);
  // kDebug(24000)<<"ExtFileInfo::internalExists";
-  KIO::StatJob * job = KIO::stat(url2, false);
+  KIO::StatJob * job = KIO::stat(url2, KIO::HideProgressInfo);
   job->setDetails(0);
   job->setSide(false); //check the url for writing
   connect( job, SIGNAL( result (KJob *) ),
@@ -362,14 +362,17 @@ bool ExtFileInfo::internalCopy(const KUrl& src, const KUrl& target, int permissi
   bJobOK = true; // success unless further error occurs
 
   KIO::Scheduler::checkSlaveOnHold(true);
-  KIO::Job * job = KIO::file_copy( src, target, permissions, overwrite, resume, false );
+  KIO::JobFlags flags = KIO::DefaultFlags;
+  if (overwrite) flags |= KIO::Overwrite;
+  if (resume) flags |= KIO::Resume;
+  KIO::Job * job = KIO::file_copy( src, target, permissions, flags | KIO::HideProgressInfo );
 
 #ifdef __GNUC__
 #warning If you commented this code because of the result signal was never emitted on the job,
 #warning please uncomment it, is now fixed (ereslibre)
 #endif
 
-//  KIO::Job * job2 = KIO::del(target, false );
+//  KIO::Job * job2 = KIO::del(target);
   //job2->setWindow (window);
   //connect( job2, SIGNAL( result (KJob *) ),
 //           this, SLOT( slotResult (KJob *) ) );
@@ -378,7 +381,7 @@ bool ExtFileInfo::internalCopy(const KUrl& src, const KUrl& target, int permissi
   //if (bJobOK)
   {
 //    kDebug(24000) << "Copying " << src << " to " << target;
-   // KIO::Job *job = KIO::copy( src, target, false );
+   // KIO::Job *job = KIO::copy( src, target, KIO::HideProgressInfo );
     job->ui()->setWindow(window);
     connect( job, SIGNAL( result (KJob *) ),
             this, SLOT( slotResult (KJob *) ) );
@@ -465,7 +468,7 @@ void ExtFileInfo::slotNewEntries(KIO::Job *job, const KIO::UDSEntryList& udsList
   }
   for (QList<KFileItem>::ConstIterator it = linkItems.constBegin(); it != linkItems.constEnd(); ++it)
   {
-    KIO::ListJob *ljob = KIO::listRecursive((*it).url(), false, true);
+    KIO::ListJob *ljob = KIO::listRecursive((*it).url(), KIO::HideProgressInfo, true);
     m_listJobCount++;
     //kDebug(24000) << "Now listing: " << (*it)->url();
     connect( ljob, SIGNAL(entries(KIO::Job *,const KIO::UDSEntryList &)),
@@ -518,7 +521,7 @@ void ExtFileInfo::slotNewDetailedEntries(KIO::Job *job, const KIO::UDSEntryList&
   }
   foreach (const KFileItem it ,linkItems)
   {
-    KIO::ListJob *ljob = KIO::listRecursive(it.url(), false, true);
+    KIO::ListJob *ljob = KIO::listRecursive(it.url(), KIO::HideProgressInfo, true);
     m_listJobCount++;
    // kDebug(24000) << "Now listing: " << (*it)->url();
     connect( ljob, SIGNAL(entries(KIO::Job *,const KIO::UDSEntryList &)),

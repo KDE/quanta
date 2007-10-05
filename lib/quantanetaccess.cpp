@@ -22,6 +22,7 @@
 
 //kde includes
 #include <kio/netaccess.h>
+#include <kio/jobuidelegate.h>
 #include <kurl.h>
 #include <kmessagebox.h>
 #include <klocale.h>
@@ -52,7 +53,7 @@ bool QuantaNetAccess::upload(const QString& src, const KUrl& target, KDevelop::I
   return ok;
 }
 
-
+// TODO port the overwrite and resume bools to KIO::JobFlags? (Remove resume, you probably don't need it)
 bool QuantaNetAccess::file_copy( const KUrl& src, const KUrl& target, int permissions,
                                  bool overwrite, bool resume, KDevelop::IPlugin* plugin, bool confirm)
 {
@@ -60,8 +61,14 @@ bool QuantaNetAccess::file_copy( const KUrl& src, const KUrl& target, int permis
   bool ok;
   if (src == target)
     ok = true;
-  else
-    ok = KIO::NetAccess::file_copy( src, target, permissions, overwrite, resume, window );
+  else {
+    KIO::JobFlags flags = KIO::DefaultFlags;
+    if (overwrite) flags |= KIO::Overwrite;
+    if (resume) flags |= KIO::Resume;
+    KIO::Job* job = KIO::file_copy( src, target, permissions, flags );
+    job->ui()->setWindow( window );
+    ok = job->exec();
+  }
   if (ok)
   {
     checkProjectInsert(src, target, plugin, confirm);
@@ -74,6 +81,7 @@ bool QuantaNetAccess::file_copy( const KUrl& src, const KUrl& target, int permis
 }
 
 
+// TODO port the overwrite and resume bools to KIO::JobFlags? (Remove resume, you probably don't need it)
 bool QuantaNetAccess::file_move( const KUrl& src, const KUrl& target, int permissions,
                                  bool overwrite, bool resume, KDevelop::IPlugin* plugin, bool confirm)
 {
@@ -99,8 +107,14 @@ bool QuantaNetAccess::file_move( const KUrl& src, const KUrl& target, int permis
   bool ok;
   if (src == target)
     ok = true;
-  else
-    ok = KIO::NetAccess::file_move( src, target, permissions, overwrite, resume, window );
+  else {
+    KIO::JobFlags flags = KIO::DefaultFlags;
+    if (overwrite) flags |= KIO::Overwrite;
+    if (resume) flags |= KIO::Resume;
+    KIO::Job* job = KIO::file_move( src, target, permissions, flags );
+    job->ui()->setWindow( window );
+    ok = job->exec();
+  }
   if (ok)
   {
      checkProjectInsert(src, target, plugin, confirm);
