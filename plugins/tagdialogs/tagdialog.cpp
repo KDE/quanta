@@ -200,15 +200,16 @@ void TagDialog::parseTag()
   }
 
   KConfig *dtdConfig = new KConfig(dtdTag->parentDTD->fileName);
+  KConfigGroup grp(dtdConfig, "General");
   dtdConfig->setGroup("General");
-  int numOfPages = dtdConfig->readEntry("NumOfPages", 0);
+  int numOfPages = grp.readEntry("NumOfPages", 0);
   extraPageList = new QList<Tagxml*>;
   for (int i = 1; i <= numOfPages; i++)
   {
     Tagxml *extraPage = 0L;
     dtdConfig->setGroup(QString("Page%1").arg(i));
-    QString title = dtdConfig->readEntry("Title");
-    QStringList groupList = dtdConfig->readEntry("Groups", QStringList());
+    QString title = grp.readEntry("Title");
+    QStringList groupList = grp.readEntry("Groups", QStringList());
     QDomDocument extraDoc; //build an internal tag XML for the groups
     bool addPage = false;
     QString docString = "<!DOCTYPE TAGS>\n<TAGS>\n";

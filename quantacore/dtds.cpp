@@ -148,8 +148,9 @@ bool DTDs::readTagDir(const QString &dirName, bool loadAll)
   if (!QFile::exists(tmpStr))
      return false;
   KConfig *dtdConfig = new KConfig(tmpStr);
+  KConfigGroup grp(dtdConfig, "General");
   dtdConfig->setGroup("General");
-  QString dtdName = dtdConfig->readEntry("Name", "Unknown");
+  QString dtdName = grp.readEntry("Name", "Unknown");
   if (m_dict->contains(dtdName.toLower()))
   {
     delete dtdConfig;
@@ -161,13 +162,13 @@ bool DTDs::readTagDir(const QString &dirName, bool loadAll)
   DTDStruct *dtd = new DTDStruct;
   dtd->fileName  = tmpStr;
   dtd->name      = dtdName;
-  dtd->nickName  = dtdConfig->readEntry("NickName", dtdName);
-  dtd->mimeTypes = dtdConfig->readEntry("MimeTypes", QStringList() );
+  dtd->nickName  = grp.readEntry("NickName", dtdName);
+  dtd->mimeTypes = grp.readEntry("MimeTypes", QStringList() );
   for (int i = 0; i < dtd->mimeTypes.count(); i++)
     dtd->mimeTypes[i] = dtd->mimeTypes[i].trimmed();
-  dtd->family = static_cast<DTDStruct::DTDFamily>(dtdConfig->readEntry("Family", /*DTDStruct::Xml*/ 1)); //FIXME convert back to enum
+  dtd->family = static_cast<DTDStruct::DTDFamily>(grp.readEntry("Family", /*DTDStruct::Xml*/ 1)); //FIXME convert back to enum
   if (dtd->family != DTDStruct::Xml)
-      dtd->toplevel = dtdConfig->readEntry("TopLevel", false);
+      dtd->toplevel = grp.readEntry("TopLevel", false);
   else
       dtd->toplevel = true;
   dtd->tagsList = 0L;
@@ -175,14 +176,14 @@ bool DTDs::readTagDir(const QString &dirName, bool loadAll)
 
   //Read the areas that define the areas
   dtdConfig->setGroup("Parsing rules");
-  QStringList definitionAreaBorders = dtdConfig->readEntry("AreaBorders", QStringList());
+  QStringList definitionAreaBorders = grp.readEntry("AreaBorders", QStringList());
   for (int i = 0; i < definitionAreaBorders.count(); i++)
   {
     QStringList tmpStrList = definitionAreaBorders[i].trimmed().split(" ");
     dtd->definitionAreas[tmpStrList[0].trimmed()] = tmpStrList[1].trimmed();
   }
   //Read the tags that define this DTD
-  QStringList tmpStrList = dtdConfig->readEntry("Tags", QStringList());
+  QStringList tmpStrList = grp.readEntry("Tags", QStringList());
   for (int i = 0; i < tmpStrList.count(); i++)
   {
     tmpStr = tmpStrList[i].trimmed();
@@ -218,14 +219,14 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
   kapp->setOverrideCursor( QCursor(Qt::WaitCursor) );
 
   KConfig *dtdConfig = new KConfig(dtd->fileName);
-
+  KConfigGroup grp(dtdConfig, "General");
   //read the general DTD info
   dtdConfig->setGroup("General");
   dtd->commonAttrs = new AttributeListDict();
 
-  bool caseSensitive = dtdConfig->readEntry("CaseSensitive", false);
-  dtd->url = dtdConfig->readEntry("URL");
-  dtd->doctypeStr = dtdConfig->readEntry("DoctypeString");
+  bool caseSensitive = grp.readEntry("CaseSensitive", false);
+  dtd->url = grp.readEntry("URL");
+  dtd->doctypeStr = grp.readEntry("DoctypeString");
   if (dtd->doctypeStr.isEmpty())
   {
     dtd->doctypeStr = "PUBLIC \"" + dtd->name + "\"";
@@ -233,10 +234,10 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
         dtd->doctypeStr += " \"" + dtd->url + "\"";
   }
   dtd->doctypeStr.prepend(' ');
-  dtd->inheritsTagsFrom = dtdConfig->readEntry("Inherits").toLower();
-  dtd->documentation = dtdConfig->readEntry("Documentation").toLower();
+  dtd->inheritsTagsFrom = grp.readEntry("Inherits").toLower();
+  dtd->documentation = grp.readEntry("Documentation").toLower();
 
-  dtd->defaultExtension = dtdConfig->readEntry("DefaultExtension", "html");
+  dtd->defaultExtension = grp.readEntry("DefaultExtension", "html");
   dtd->caseSensitive = caseSensitive;
   int numOfTags = 0;
   QTagList *tagList = new QTagList;
@@ -265,12 +266,12 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
 
   //read the toolbars
   dtdConfig->setGroup("Toolbars");
-  tmpStr = dtdConfig->readPathEntry("Location"); //holds the location of the toolbars
+  tmpStr = grp.readPathEntry("Location"); //holds the location of the toolbars
   if (!tmpStr.endsWith('/') && !tmpStr.isEmpty())
   {
     tmpStr.append('/');
   }
-  dtd->toolbars = dtdConfig->readEntry("Names", QStringList());
+  dtd->toolbars = grp.readEntry("Names", QStringList());
   for (int i = 0; i < dtd->toolbars.count(); i++)
   {
     dtd->toolbars[i] = tmpStr + dtd->toolbars[i].trimmed() + Helper::toolbarExtension();
@@ -278,8 +279,8 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
 
   //read the extra tags and their attributes
   dtdConfig->setGroup("Extra tags");
-  dtd->defaultAttrType = dtdConfig->readEntry("DefaultAttrType","input");
-  QStringList extraTagsList = dtdConfig->readEntry("List", QStringList());
+  dtd->defaultAttrType = grp.readEntry("DefaultAttrType","input");
+  QStringList extraTagsList = grp.readEntry("List", QStringList());
   QString option;
   QStringList optionsList;
   QStringList attrList;
@@ -296,7 +297,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
     }
     tag->parentDTD = dtd;
     //read the possible stopping tags
-    QStringList stoppingTags = dtdConfig->readEntry(tag->name() + "_stoppingtags", QStringList());
+    QStringList stoppingTags = grp.readEntry(tag->name() + "_stoppingtags", QStringList());
     for (int j = 0; j < stoppingTags.count(); j++)
     {
       QString stopTag = QString(stoppingTags.at(j)).trimmed();
@@ -304,7 +305,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
       tag->stoppingTags.append(stopTag);
     }
     //read the possible tag options
-    optionsList = dtdConfig->readEntry(tag->name() + "_options", QStringList());
+    optionsList = grp.readEntry(tag->name() + "_options", QStringList());
     for (int j = 0; j < optionsList.count(); j++)
     {
       option = QString(optionsList.at(j)).trimmed();
@@ -327,7 +328,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
         tag->setOptional(true);
       }
     }
-    attrList = dtdConfig->readEntry(tag->name(), QStringList());
+    attrList = grp.readEntry(tag->name(), QStringList());
     for (int j = 0; j < attrList.count(); j++)
     {
       Attribute* attr = new Attribute;
@@ -345,12 +346,12 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
 
   dtdConfig->setGroup("Parsing rules");
   //Which DTD can be present in this one?
-  dtd->insideDTDs = dtdConfig->readEntry("MayContain", QStringList());
+  dtd->insideDTDs = grp.readEntry("MayContain", QStringList());
   for (int i = 0; i < dtd->insideDTDs.count(); i++)
   {
     dtd->insideDTDs[i] = dtd->insideDTDs[i].trimmed().toLower();
   }
-  bool appendCommonRules = dtdConfig->readEntry("AppendCommonSpecialAreas", true);
+  bool appendCommonRules = grp.readEntry("AppendCommonSpecialAreas", true);
   //Read the special areas and area names
   QString rxStr = "";
   if (dtd->family == DTDStruct::Xml && appendCommonRules)
@@ -365,8 +366,8 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
       tmpStr = "(<?xml)|(<!--)|(<!)|";
       rxStr = QuantaCommon::makeRxCompatible(tmpStr);
   }
-  QStringList specialAreasList = dtdConfig->readEntry("SpecialAreas", QStringList());
-  QStringList specialAreaNameList = dtdConfig->readEntry("SpecialAreaNames", QStringList());
+  QStringList specialAreasList = grp.readEntry("SpecialAreas", QStringList());
+  QStringList specialAreaNameList = grp.readEntry("SpecialAreaNames", QStringList());
   QStringList tmpStrList;
   for (int i = 0; i < specialAreasList.count(); i++)
   {
@@ -387,7 +388,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
     dtd->specialAreaStartRx.setPattern(rxStr.left(rxStr.length() - 1));
   }
   //Read the special tags
-  tmpStrList = dtdConfig->readEntry("SpecialTags", QStringList());
+  tmpStrList = grp.readEntry("SpecialTags", QStringList());
   for (int i = 0; i < tmpStrList.count(); i++)
   {
     tmpStr = tmpStrList[i].trimmed();
@@ -397,7 +398,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
 
   //static const QString quotationStr = "\\\\\"|\\\\'";
   rxStr = "\\\\\"|\\\\'|";
-  QStringList commentsList = dtdConfig->readEntry("Comments", QStringList());
+  QStringList commentsList = grp.readEntry("Comments", QStringList());
   if (dtd->family == DTDStruct::Xml && appendCommonRules)
     commentsList.append("<!-- -->");
   QString tmpStr2;
@@ -417,7 +418,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
   /**** End of code for the new parser *****/
 
   //read the definition of a structure, and the structure keywords
-  QStringList structKeywords = dtdConfig->readEntry("StructKeywords", QStringList(), ',');
+  QStringList structKeywords = grp.readEntry("StructKeywords", QStringList(), ',');
   if (structKeywords.count() !=0 )
   {
       tmpStr = "\\b(";
@@ -433,7 +434,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
   }
   dtd->structKeywordsRx.setPattern(tmpStr);
 
-  structKeywords = dtdConfig->readEntry("LocalScopeKeywords", QStringList(),',');
+  structKeywords = grp.readEntry("LocalScopeKeywords", QStringList(),',');
   if (structKeywords.count() !=0 )
   {
       tmpStr = "\\b(";
@@ -449,14 +450,14 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
   }
   dtd->localScopeKeywordsRx.setPattern(tmpStr);
 
-  dtd->structRx.setPattern(dtdConfig->readEntry("StructRx","\\{|\\}").trimmed());
-  dtd->structBeginStr = dtdConfig->readEntry("StructBeginStr","{").trimmed();
-  dtd->structEndStr = dtdConfig->readEntry("StructEndStr","}").trimmed();
+  dtd->structRx.setPattern(grp.readEntry("StructRx","\\{|\\}").trimmed());
+  dtd->structBeginStr = grp.readEntry("StructBeginStr","{").trimmed();
+  dtd->structEndStr = grp.readEntry("StructEndStr","}").trimmed();
 
 
   dtdConfig->setGroup("Extra rules");
-  dtd->minusAllowedInWord = dtdConfig->readEntry("MinusAllowedInWord", false);
-  tmpStr = dtdConfig->readEntry("TagAutoCompleteAfter", "<").trimmed();
+  dtd->minusAllowedInWord = grp.readEntry("MinusAllowedInWord", false);
+  tmpStr = grp.readEntry("TagAutoCompleteAfter", "<").trimmed();
   if (tmpStr.toUpper() == "NONE")
       dtd->tagAutoCompleteAfter = '\0';
   else
@@ -464,14 +465,14 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
       dtd->tagAutoCompleteAfter = '\1';
   else
       dtd->tagAutoCompleteAfter = tmpStr.at(0);
-  tmpStr = dtdConfig->readEntry("AttributeAutoCompleteAfter","(").trimmed();
+  tmpStr = grp.readEntry("AttributeAutoCompleteAfter","(").trimmed();
   if (tmpStr.isEmpty())
   {
     dtd->attributeSeparator = (dtd->family == DTDStruct::Xml) ? '\"' : ',';
   } else
     dtd->attributeSeparator = tmpStr.at(0);
 
-  tmpStr = dtdConfig->readEntry("TagSeparator").trimmed();
+  tmpStr = grp.readEntry("TagSeparator").trimmed();
   if (tmpStr.isEmpty())
   {
     dtd->tagSeparator = dtd->attributeSeparator;
@@ -479,23 +480,23 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
   {
     dtd->tagSeparator = tmpStr.at(0);
   }
-  dtd->booleanAttributes = dtdConfig->readEntry("BooleanAttributes","extended");
-  dtd->booleanTrue = dtdConfig->readEntry("BooleanTrue","true");
-  dtd->booleanFalse = dtdConfig->readEntry("BooleanFalse","false");
-  dtd->singleTagStyle = dtdConfig->readEntry("Single Tag Style", "xml").toLower();
-  dtd->variableGroupIndex = dtdConfig->readEntry("VariableGroupIndex", 0) - 1;
-  dtd->functionGroupIndex = dtdConfig->readEntry("FunctionGroupIndex", 0) - 1;
-  dtd->classGroupIndex = dtdConfig->readEntry("ClassGroupIndex", 0) - 1;
+  dtd->booleanAttributes = grp.readEntry("BooleanAttributes","extended");
+  dtd->booleanTrue = grp.readEntry("BooleanTrue","true");
+  dtd->booleanFalse = grp.readEntry("BooleanFalse","false");
+  dtd->singleTagStyle = grp.readEntry("Single Tag Style", "xml").toLower();
+  dtd->variableGroupIndex = grp.readEntry("VariableGroupIndex", 0) - 1;
+  dtd->functionGroupIndex = grp.readEntry("FunctionGroupIndex", 0) - 1;
+  dtd->classGroupIndex = grp.readEntry("ClassGroupIndex", 0) - 1;
   if (dtd->classGroupIndex != -1)
   {
-    tmpStr = dtdConfig->readEntry("MemberAutoCompleteAfter").trimmed();
+    tmpStr = grp.readEntry("MemberAutoCompleteAfter").trimmed();
     dtd->memberAutoCompleteAfter.setPattern(tmpStr);
   }
-  dtd->objectGroupIndex = dtdConfig->readEntry("ObjectGroupIndex", 0) - 1;
+  dtd->objectGroupIndex = grp.readEntry("ObjectGroupIndex", 0) - 1;
 
   //read the definition of different structure groups, like links, images, functions
   //classes, etc.
-  uint structGroupsCount = dtdConfig->readEntry("StructGroupsCount", 0);
+  uint structGroupsCount = grp.readEntry("StructGroupsCount", 0);
   if (structGroupsCount > MAX_STRUCTGROUPSCOUNT)
       structGroupsCount = MAX_STRUCTGROUPSCOUNT; //max. 10 groups
 
@@ -508,20 +509,20 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
       {
         dtdConfig->setGroup(QString("StructGroup_%1").arg(index));
         //new code
-        group.name = dtdConfig->readEntry("Name").trimmed();
-        group.noName = dtdConfig->readEntry("No_Name").trimmed();
-        group.icon = dtdConfig->readEntry("Icon").trimmed();
-        tmpStr = dtdConfig->readEntry("DefinitionRx").trimmed();
+        group.name = grp.readEntry("Name").trimmed();
+        group.noName = grp.readEntry("No_Name").trimmed();
+        group.icon = grp.readEntry("Icon").trimmed();
+        tmpStr = grp.readEntry("DefinitionRx").trimmed();
         group.definitionRx.setPattern(tmpStr);
-        tmpStr = dtdConfig->readEntry("UsageRx").trimmed();
+        tmpStr = grp.readEntry("UsageRx").trimmed();
         group.usageRx.setPattern(tmpStr);
-        tmpStr = dtdConfig->readEntry("TypeRx").trimmed();
+        tmpStr = grp.readEntry("TypeRx").trimmed();
         group.typeRx.setPattern(tmpStr);
         group.hasDefinitionRx = !group.definitionRx.pattern().isEmpty();
-        group.isMinimalDefinitionRx = dtdConfig->readEntry("DefinitionRx_Minimal", false);
-        group.appendToTags = dtdConfig->readEntry("AppendToTags", false);
-        group.parentGroup = dtdConfig->readEntry("ParentGroup").trimmed();
-        tagStr = dtdConfig->readEntry("TagType", "Text").trimmed();
+        group.isMinimalDefinitionRx = grp.readEntry("DefinitionRx_Minimal", false);
+        group.appendToTags = grp.readEntry("AppendToTags", false);
+        group.parentGroup = grp.readEntry("ParentGroup").trimmed();
+        tagStr = grp.readEntry("TagType", "Text").trimmed();
         if (tagStr == "XmlTag")
             group.tagType = Tag::XmlTag;
         else if (tagStr == "XmlTagEnd")
@@ -539,13 +540,13 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
         else if (tagStr == "ScriptStructureEnd")
             group.tagType = Tag::ScriptStructureEnd;
         else group.tagType = -1;
-        tmpStr = dtdConfig->readEntry("AutoCompleteAfter").trimmed();
+        tmpStr = grp.readEntry("AutoCompleteAfter").trimmed();
         group.autoCompleteAfterRx.setPattern(tmpStr);
-        tmpStr = dtdConfig->readEntry("RemoveFromAutoCompleteWord").trimmed();
+        tmpStr = grp.readEntry("RemoveFromAutoCompleteWord").trimmed();
         group.removeFromAutoCompleteWordRx.setPattern(tmpStr);
-        group.hasFileName = dtdConfig->readEntry("HasFileName", false);
-        group.parseFile = dtdConfig->readEntry("ParseFile", false);
-        tmpStr = dtdConfig->readEntry("FileNameRx").trimmed();
+        group.hasFileName = grp.readEntry("HasFileName", false);
+        group.parseFile = grp.readEntry("ParseFile", false);
+        tmpStr = grp.readEntry("FileNameRx").trimmed();
         group.fileNameRx.setPattern(tmpStr);
         dtd->structTreeGroups.append(group);
       }
@@ -557,12 +558,12 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
       for (uint index = 1; index <= structGroupsCount; index++)
       {
         dtdConfig->setGroup(QString("StructGroup_%1").arg(index));
-        group.name = dtdConfig->readEntry("Name").trimmed();
-        group.noName = dtdConfig->readEntry("No_Name").trimmed();
-        group.icon = dtdConfig->readEntry("Icon").trimmed();
-        group.appendToTags = dtdConfig->readEntry("AppendToTags", false);
-        group.parentGroup = dtdConfig->readEntry("ParentGroup").trimmed();
-        QString tagStr = dtdConfig->readEntry("Tag").trimmed();
+        group.name = grp.readEntry("Name").trimmed();
+        group.noName = grp.readEntry("No_Name").trimmed();
+        group.icon = grp.readEntry("Icon").trimmed();
+        group.appendToTags = grp.readEntry("AppendToTags", false);
+        group.parentGroup = grp.readEntry("ParentGroup").trimmed();
+        QString tagStr = grp.readEntry("Tag").trimmed();
         if (!tagStr.isEmpty())
         {
           attrRx.indexIn(tagStr);
@@ -572,8 +573,8 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
           group.attributes.clear();
           for (int i = 0; i < tmpStrList.count(); i++)
             group.attributes += tmpStrList[i].trimmed();
-          group.hasFileName = dtdConfig->readEntry("HasFileName", false);
-          tmpStr = dtdConfig->readEntry("FileNameRx").trimmed();
+          group.hasFileName = grp.readEntry("HasFileName", false);
+          tmpStr = grp.readEntry("FileNameRx").trimmed();
           group.fileNameRx.setPattern(tmpStr);
           dtd->xmlStructTreeGroups.insert(tagName, group);
         }
@@ -879,9 +880,10 @@ void DTDs::slotLoadDTD()
     {
       QString dirName = dtdParser.dirName();
       KConfig dtdcfg(dirName + m_rcFilename);
+      KConfigGroup grp(&dtdcfg, "General");
       dtdcfg.setGroup("General");
-      QString dtdName = dtdcfg.readEntry("Name");
-      QString nickName = dtdcfg.readEntry("NickName", dtdName);
+      QString dtdName = grp.readEntry("Name");
+      QString nickName = grp.readEntry("NickName", dtdName);
       DTDStruct * dtd = m_dict->value(dtdName) ;
       if (dtd &&
           KMessageBox::warningYesNo(0L, i18n("<qt>Do you want to replace the existing <b>%1</b> DTD?</qt>", nickName)) == KMessageBox::No)
@@ -891,7 +893,7 @@ void DTDs::slotLoadDTD()
       removeDTD(dtd);
       if (readTagDir(dirName))
       {
-/*FIXME          QString family = dtdcfg.readEntry("Family", "1");
+/*FIXME          QString family = grp.readEntry("Family", "1");
           Document *w = ViewManager::ref()->activeDocument();
           if (family == "1" && w &&
               KMessageBox::questionYesNo(0L, i18n("<qt>Use the newly loaded <b>%1</b> DTD for the current document?</qt>",nickName), i18n("Change DTD")) == KMessageBox::Yes)
@@ -911,9 +913,10 @@ void DTDs::slotLoadDTEP(const QString &_dirName, bool askForAutoload)
   if (!dirName.endsWith('/'))
     dirName += '/';
   KConfig dtdcfg(dirName + m_rcFilename);
+  KConfigGroup grp(&dtdcfg, "General");
   dtdcfg.setGroup("General");
-  QString dtdName = dtdcfg.readEntry("Name");
-  QString nickName = dtdcfg.readEntry("NickName", dtdName);
+  QString dtdName = grp.readEntry("Name");
+  QString nickName = grp.readEntry("NickName", dtdName);
   DTDStruct * dtd = m_dict->value(dtdName) ;
   if ( dtd &&
       KMessageBox::warningYesNo(0L, i18n("<qt>Do you want to replace the existing <b>%1</b> DTD?</qt>", nickName)) == KMessageBox::No)
@@ -926,7 +929,7 @@ void DTDs::slotLoadDTEP(const QString &_dirName, bool askForAutoload)
     KMessageBox::error(0L, i18n("<qt>Cannot read the DTEP from <b>%1</b>. Check that the folder contains a valid DTEP (<i>description.rc and *.tag files</i>).</qt>", dirName), i18n("Error Loading DTEP"));
   } else
   {
-    QString family = dtdcfg.readEntry("Family", "1");
+    QString family = grp.readEntry("Family", "1");
     if (askForAutoload && KMessageBox::questionYesNo(0L, i18n("<qt>Autoload the <b>%1</b> DTD in the feature?</qt>", nickName)) == KMessageBox::Yes)
     {
       KUrl src;

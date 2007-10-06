@@ -184,17 +184,18 @@ bool DTDParser::parse()
 void DTDParser::writeDescriptionRC()
 {
   KConfig config(DTD::dirName + "description.rc");
+  KConfigGroup grp(&config, "General");
   config.setGroup("General");
-  config.writeEntry("Name", m_name);
-  config.writeEntry("NickName", m_nickName);
-  config.writeEntry("DoctypeString", m_doctype);
-  config.writeEntry("URL", m_dtdURLLine);
-  config.writeEntry("DefaultExtension", m_defaultExtension);
-  config.writeEntry("Family", "1");
-  config.writeEntry("CaseSensitive", m_caseSensitive);
+  grp.writeEntry("Name", m_name);
+  grp.writeEntry("NickName", m_nickName);
+  grp.writeEntry("DoctypeString", m_doctype);
+  grp.writeEntry("URL", m_dtdURLLine);
+  grp.writeEntry("DefaultExtension", m_defaultExtension);
+  grp.writeEntry("Family", "1");
+  grp.writeEntry("CaseSensitive", m_caseSensitive);
   config.setGroup("Parsing rules");
-  config.writeEntry("SpecialAreas","<!-- -->,<?xml ?>,<!DOCTYPE >");
-  config.writeEntry("SpecialAreaNames","comment,XML PI,DTD");
+  grp.writeEntry("SpecialAreas","<!-- -->,<?xml ?>,<!DOCTYPE >");
+  grp.writeEntry("SpecialAreaNames","comment,XML PI,DTD");
 
   config.sync();
 }
