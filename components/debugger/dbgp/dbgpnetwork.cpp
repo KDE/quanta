@@ -52,7 +52,7 @@ void DBGpNetwork::sessionStart(bool useproxy, const QString& server, const QStri
       connect(m_socket, SIGNAL(connected(const KResolverEntry &)), this, SLOT(slotConnected(const KNetwork::KResolverEntry &)));
       connect(m_socket, SIGNAL(closed()), this, SLOT(slotConnectionClosed()));
       connect(m_socket, SIGNAL(readyRead()), this, SLOT(slotReadyRead()));
-
+      connect(m_socket, SIGNAL(destroyed()), this, SLOT(slotSocketDestroyed()));
       m_socket->connect();
       emit active(false);
       kdDebug(24002) << k_funcinfo << ", proxy:" << server << ", " << service << endl;
@@ -66,6 +66,7 @@ void DBGpNetwork::sessionStart(bool useproxy, const QString& server, const QStri
 
       m_server->setAddressReuseable(true);
       connect(m_server, SIGNAL(readyAccept()), this, SLOT(slotReadyAccept()));
+      connect(m_server, SIGNAL(gotError(int)), this, SLOT(slotError(int)));
 
       if(m_server->listen())
       {
@@ -114,16 +115,16 @@ void DBGpNetwork::slotError(int)
   kdDebug(24002) << k_funcinfo << ", m_server: " << m_server << ", m_socket" << m_socket << endl;
   if(m_socket)
   {
+    kdDebug(24002) << k_funcinfo << ", " << m_socket->errorString() << endl;
     if(m_socket->error() == KNetwork::KSocketBase::RemotelyDisconnected)
     {
-//       slotConnectionClosed();
-//       emit networkError(i18n("Disconnected from remote host"), true);
+       slotConnectionClosed();
+       emit networkError(i18n("Disconnected from remote host"), true);
       return;
     }
 
     if(m_socket->error())
-    {
-      kdDebug(24002) << k_funcinfo << ", " << m_socket->errorString() << endl;
+    {      
       emit networkError(m_socket->errorString(), true);
     }
   }
@@ -147,8 +148,9 @@ void DBGpNetwork::slotReadyAccept()
     m_socket = (KNetwork::KStreamSocket *)m_server->accept(); // KSocketServer returns a KStreamSocket (!)
     if(m_socket)
     {
-      kdDebug(24002) << k_funcinfo << ", ready" << endl;
+      kdDebug(24002) << k_funcinfo << ", ready" << ", m_socket" << m_socket << endl;
       m_socket->enableRead(true);
+      m_socket->setAddressReuseable(true);
 //       m_socket->setSocketFlags(KExtendedSocket::inetSocket |  KExtendedSocket::inputBufferedSocket);
 //       m_socket->setBufferSize(-1);
       connect(m_socket, SIGNAL(gotError(int)), this, SLOT(slotError(int)));
@@ -203,6 +205,8 @@ void DBGpNetwork::slotConnectionClosed()
 
   if(m_socket)
   {
+    m_socket->flush();
+    m_socket->close();
     delete m_socket;
     m_socket = NULL;
   }
@@ -215,6 +219,17 @@ void DBGpNetwork::slotConnectionClosed()
   emit active(m_server != NULL);
 
 }
+
+
+//called when m_socket is destroyed either by deleting it or if XDebug disconnects from the client
+void DBGpNetwork::slotSocketDestroyed()
+{
+  kdDebug(24002) << k_funcinfo << " , m_server: " << m_server << ", m_socket" << m_socket << endl;
+
+  m_socket = NULL; //m_socket is already wrong, without this the app would crash on the next m_socket->close() or delete m_socket call.
+  slotConnectionClosed();
+}
+
 
 // Data from socket
 void DBGpNetwork::slotReadyRead()

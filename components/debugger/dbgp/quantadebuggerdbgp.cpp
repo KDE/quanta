@@ -200,11 +200,13 @@ void QuantaDebuggerDBGp::setExecutionState(const QString &state)
   {
     setExecutionState(Stopping);
     emit updateStatus(DebuggerUI::Paused);
+    m_network.slotSocketDestroyed(); //XDebug disconnects when stopped and destroys our socket
   }
   else if(state == "stopped")
   {
     setExecutionState(Stopped);
     emit updateStatus(DebuggerUI::Paused);
+    m_network.slotSocketDestroyed(); //XDebug disconnects when stopped and destroys our socket
   }
   else if(state == "running")
   {
@@ -307,6 +309,8 @@ void QuantaDebuggerDBGp::processCommand(const QString& datas)
     
     else if(command == "property_set")
       propertySetResponse(response);
+    else if(command == "stop")
+      setExecutionState("stopped");
 
     // Unknown command...
     else

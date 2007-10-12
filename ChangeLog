@@ -1,5 +1,9 @@
 This files contains the changes since Quanta 2.0 until the current 3.5.x series.
 
+Version 3.5.8+:
+ - bugfixes:
+      - fix crashes when using XDebug
+
 Version 3.5.8 (Release date: 07-10-2006)
  - bugfixes:
       - fix recursive symlink handling [#145651]

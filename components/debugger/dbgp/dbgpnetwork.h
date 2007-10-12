@@ -69,6 +69,7 @@ class DBGpNetwork : public QObject
     void slotError(int);
     void slotReadyRead();
     void slotReadyAccept();
+    void slotSocketDestroyed();
 };
 
 
