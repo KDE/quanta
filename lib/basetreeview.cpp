@@ -959,7 +959,7 @@ void BaseTreeView::restoreLayout(KConfigGroup &configGroup)
   int maxBranch = configGroup.readEntry("NumOpenFolderList", 0);
   for (int i = 1; i <= maxBranch; ++i)
   {
-    QStringList folderList = configGroup.readPathListEntry("OpenFolderList" + QString::number(i));
+    QStringList folderList = configGroup.readPathEntry("OpenFolderList" + QString::number(i), QStringList());
     if (folderList.count() > 1) {
       KUrl rootURL = folderList.takeFirst();  // remove the root URL
       KFileTreeBranchIterator it( branches() );

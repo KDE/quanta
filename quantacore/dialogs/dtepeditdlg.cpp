@@ -110,7 +110,7 @@ void DTEPEditDlg::readGeneral()
   topLevel->setChecked(grp.readEntry("TopLevel", false));
 
   grp.changeGroup("Toolbars");
-  toolbarFolderEdit->setText(grp.readPathEntry("Location"));
+  toolbarFolderEdit->setText(grp.readPathEntry("Location", QString()));
   toolbarsEdit->setText(grp.readEntry("Names"));
 
 }

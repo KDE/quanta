@@ -262,7 +262,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
 
   //read the toolbars
   grp.changeGroup("Toolbars");
-  tmpStr = grp.readPathEntry("Location"); //holds the location of the toolbars
+  tmpStr = grp.readPathEntry("Location", QString()); //holds the location of the toolbars
   if (!tmpStr.endsWith('/') && !tmpStr.isEmpty())
   {
     tmpStr.append('/');
@@ -414,7 +414,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
   /**** End of code for the new parser *****/
 
   //read the definition of a structure, and the structure keywords
-  QStringList structKeywords = grp.readEntry("StructKeywords", QStringList(), ',');
+  QStringList structKeywords = grp.readEntry("StructKeywords", QStringList());
   if (structKeywords.count() !=0 )
   {
       tmpStr = "\\b(";
@@ -430,7 +430,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
   }
   dtd->structKeywordsRx.setPattern(tmpStr);
 
-  structKeywords = grp.readEntry("LocalScopeKeywords", QStringList(),',');
+  structKeywords = grp.readEntry("LocalScopeKeywords", QStringList());
   if (structKeywords.count() !=0 )
   {
       tmpStr = "\\b(";

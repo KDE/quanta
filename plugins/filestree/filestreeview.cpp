@@ -299,8 +299,8 @@ void FilesTreeView::slotSettingsChanged()
 void FilesTreeView::restoreBranches()
 {
   KConfigGroup configGroup(m_config, metaObject()->className());
-  QStringList topStrList = configGroup.readPathListEntry("Top folders");
-  QStringList topStrAliasList = configGroup.readPathListEntry("Top folder aliases");
+  QStringList topStrList = configGroup.readPathEntry("Top folders", QStringList());
+  QStringList topStrAliasList = configGroup.readPathEntry("Top folder aliases", QStringList());
   for (int i = 0; i < topStrList.count(); i++)
   {
     if (i < topStrAliasList.count())
