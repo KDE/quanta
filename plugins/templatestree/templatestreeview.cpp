@@ -131,11 +131,10 @@ K3FileTreeViewItem* TemplatesTreeBranch::createTreeViewItem(K3FileTreeViewItem *
     }
     if (dotFileInfo.exists())
     {
-      KConfig *config = new KConfig(dotFileInfo.filePath());
-      KConfigGroup grp(config, config->group());
+      KConfig config(dotFileInfo.filePath());
+      KConfigGroup grp(&config, QString());
       QString s = grp.readEntry("Type");
       tvi->setText(1, typeToi18n[s]);
-      delete config;
     }
 
   }
@@ -532,14 +531,13 @@ Helper::DirInfo TemplatesTreeView::readDirInfo(const QString& dir)
 
   QFileInfo dotFileInfo(QFileInfo(startDir).path() + "/.dirinfo");
 
-  KConfig *config = new KConfig(dotFileInfo.filePath());
-  KConfigGroup grp(config, config->group());
+  KConfig config(dotFileInfo.filePath());
+  KConfigGroup grp(&config, QString());
   dirInfo.mimeType = grp.readEntry("Type");
   dirInfo.preText = grp.readEntry("PreText");
   dirInfo.postText = grp.readEntry("PostText");
   dirInfo.usePrePostText = grp.readEntry("UsePrePostText", false);
 
-  delete config;
   return dirInfo;
 }
 
@@ -565,15 +563,14 @@ bool TemplatesTreeView::writeDirInfo(const QString& m_dirInfoFile)
   QFileInfo dotFileInfo(QFileInfo(startDir).path()+"/.dirinfo");
 
   bool success = false;
-  KConfig *config = new KConfig(dotFileInfo.filePath());
-  KConfigGroup grp(config, config->group());
+  KConfig config(dotFileInfo.filePath());
+  KConfigGroup grp(&config, QString());
   grp.writeEntry("Type", m_dirInfo.mimeType);
   grp.writeEntry("PreText", m_dirInfo.preText);
   grp.writeEntry("PostText", m_dirInfo.postText);
   grp.writeEntry("UsePrePostText", m_dirInfo.usePrePostText);
-  config->sync();
+  config.sync();
   success = true;
-  delete config;
   return success;
 }
 
@@ -662,7 +659,6 @@ void TemplatesTreeView::slotProperties()
   QString name = url.path() + TMPL;
   KConfig config(name);
   KConfigGroup grp(&config, "Filtering");
-  config.setGroup("Filtering");
   name = grp.readEntry("Action", NONE);
   if ( name == NONE )
      name = i18n(NONE);
@@ -870,7 +866,6 @@ void TemplatesTreeView::writeTemplateInfo()
   QString fileName = currentUrl().path() + TMPL;
   KConfig config(fileName);
   KConfigGroup grp(&config, "Filtering");
-  config.setGroup("Filtering");
   if ( m_quantaProperties->actionCombo->currentText() == i18n(NONE) )
     grp.writeEntry("Action", NONE);
   else

@@ -64,7 +64,6 @@ FilesTreeView::FilesTreeView(QuantaFilesTreePart *part, QWidget *parent)
 
 FilesTreeView::~FilesTreeView()
 {
-  m_config->setGroup(metaObject()->className());
   KConfigGroup configGroup(m_config, metaObject()->className());
   configGroup.writePathEntry("Top folders", topURLAliases.keys());
   configGroup.writePathEntry("Top folder aliases", topURLAliases.values());
@@ -299,7 +298,6 @@ void FilesTreeView::slotSettingsChanged()
 
 void FilesTreeView::restoreBranches()
 {
-  m_config->setGroup(metaObject()->className());
   KConfigGroup configGroup(m_config, metaObject()->className());
   QStringList topStrList = configGroup.readPathListEntry("Top folders");
   QStringList topStrAliasList = configGroup.readPathListEntry("Top folder aliases");

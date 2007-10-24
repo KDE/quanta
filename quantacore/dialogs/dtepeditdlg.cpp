@@ -87,7 +87,6 @@ void DTEPEditDlg::init()
 void DTEPEditDlg::readGeneral()
 {
   KConfigGroup grp(m_config, "General");
-  m_config->setGroup("General");
   nameEdit->setText(grp.readEntry("Name"));
   nickNameEdit->setText(grp.readEntry("NickName"));
   m_family = grp.readEntry("Family", 1) - 1;
@@ -110,7 +109,7 @@ void DTEPEditDlg::readGeneral()
   doctypeEdit->setText(grp.readEntry("DoctypeString"));
   topLevel->setChecked(grp.readEntry("TopLevel", false));
 
-  m_config->setGroup("Toolbars");
+  grp.changeGroup("Toolbars");
   toolbarFolderEdit->setText(grp.readPathEntry("Location"));
   toolbarsEdit->setText(grp.readEntry("Names"));
 
@@ -122,7 +121,6 @@ void DTEPEditDlg::readPages()
   while (m_config->hasGroup(QString("Page%1").arg(i)) && i < 6)
   {
     KConfigGroup grp(m_config, QString("Page%1").arg(i));
-    m_config->setGroup(QString("Page%1").arg(i));
     QString title = grp.readEntry("Title");
     QString groups = grp.readEntry("Groups");
     if (i == 1)
@@ -162,7 +160,6 @@ void DTEPEditDlg::readPages()
 void DTEPEditDlg::readParserRules()
 {
   KConfigGroup grp(m_config, "Extra rules");
-  m_config->setGroup("Extra rules");
   enableMinusInWords->setChecked(grp.readEntry("MinusAllowedInWord", false));
   attributeSeparatorEdit->setText(grp.readEntry("AttributeSeparator"));
   tagSeparatorEdit->setText(grp.readEntry("TagSeparator"));
@@ -180,7 +177,7 @@ void DTEPEditDlg::readParserRules()
     membersAfterEdit->setText(grp.readEntry("MemberAutoCompleteAfter"));
   }
 
-  m_config->setGroup("Parsing rules");
+  grp.changeGroup("Parsing rules");
   commentsEdit->setText(grp.readEntry("Comments"));
   mayContainEdit->setText(grp.readEntry("MayContain"));
 
@@ -237,7 +234,6 @@ void DTEPEditDlg::saveResult()
 void DTEPEditDlg::writeGeneral(KConfig *config)
 {
   KConfigGroup grp(config, "General");
-  config->setGroup("General");
   grp.writeEntry("Name", nameEdit->text());
   grp.writeEntry("NickName", nickNameEdit->text());
   grp.writeEntry("Family", typeCombo->currentIndex() + 1);
@@ -250,7 +246,7 @@ void DTEPEditDlg::writeGeneral(KConfig *config)
   if (m_family == 1)
     grp.writeEntry("TopLevel", topLevel->isChecked());
 
-  config->setGroup("Toolbars");
+  grp.changeGroup("Toolbars");
   grp.writeEntry("Location", toolbarFolderEdit->text());
   grp.writeEntry("Names", toolbarsEdit->text());
 }
@@ -265,39 +261,39 @@ void DTEPEditDlg::writePages(KConfig *config)
     if (enablePage1->isChecked())
     {
       num++;
-      config->setGroup(QString("Page%1").arg(num));
+      grp.changeGroup(QString("Page%1").arg(num));
       grp.writeEntry("Title", pageTitleEdit1->text());
       grp.writeEntry("Groups", groupsEdit1->text());
     }
     if (enablePage2->isChecked())
     {
       num++;
-      config->setGroup(QString("Page%1").arg(num));
+      grp.changeGroup(QString("Page%1").arg(num));
       grp.writeEntry("Title", pageTitleEdit2->text());
       grp.writeEntry("Groups", groupsEdit2->text());
     }
     if (enablePage3->isChecked())
     {
       num++;
-      config->setGroup(QString("Page%1").arg(num));
+      grp.changeGroup(QString("Page%1").arg(num));
       grp.writeEntry("Title", pageTitleEdit3->text());
       grp.writeEntry("Groups", groupsEdit3->text());
     }
     if (enablePage4->isChecked())
     {
       num++;
-      config->setGroup(QString("Page%1").arg(num));
+      grp.changeGroup(QString("Page%1").arg(num));
       grp.writeEntry("Title", pageTitleEdit4->text());
       grp.writeEntry("Groups", groupsEdit4->text());
     }
     if (enablePage5->isChecked())
     {
       num++;
-      config->setGroup(QString("Page%1").arg(num));
+      grp.changeGroup(QString("Page%1").arg(num));
       grp.writeEntry("Title", pageTitleEdit5->text());
       grp.writeEntry("Groups", groupsEdit5->text());
     }
-    config->setGroup("General");
+    grp.changeGroup("General");
     grp.writeEntry("NumOfPages", num);
   }
 }
@@ -305,7 +301,6 @@ void DTEPEditDlg::writePages(KConfig *config)
 void DTEPEditDlg::writeParserRules(KConfig *config)
 {
   KConfigGroup grp(config, "Extra rules");
-  config->setGroup("Extra rules");
   grp.writeEntry("MinusAllowedInWord", enableMinusInWords->isChecked());
   grp.writeEntry("AttributeSeparator", attributeSeparatorEdit->text());
   grp.writeEntry("TagSeparator", tagSeparatorEdit->text());
@@ -323,7 +318,7 @@ void DTEPEditDlg::writeParserRules(KConfig *config)
     grp.writeEntry("MemberAutoCompleteAfter", membersAfterEdit->text());
   }
 
-  config->setGroup("Parsing rules");
+  grp.changeGroup("Parsing rules");
   grp.writeEntry("Comments", commentsEdit->text());
   grp.writeEntry("MayContain", mayContainEdit->text());
 
@@ -348,7 +343,6 @@ void DTEPEditDlg::writeParserRules(KConfig *config)
 void DTEPEditDlg::readStructures()
 {
   KConfigGroup grp(m_config, "Extra rules");
-  m_config->setGroup("Extra rules");
   int variableGroupId = grp.readEntry("VariableGroupIndex", -1);
   int functionGroupId = grp.readEntry("FunctionGroupIndex", -1);
   int classGroupId = grp.readEntry("ClassGroupIndex", -1);
@@ -358,7 +352,7 @@ void DTEPEditDlg::readStructures()
   while (m_config->hasGroup(QString("StructGroup_%1").arg(i)))
   {
     StructGroup group;
-    m_config->setGroup(QString("StructGroup_%1").arg(i));
+    grp.changeGroup(QString("StructGroup_%1").arg(i));
     group.name = grp.readEntry("Name");
     group.noName = grp.readEntry("No_Name");
     group.icon = grp.readEntry("Icon");
@@ -393,14 +387,13 @@ void DTEPEditDlg::readStructures()
 void DTEPEditDlg::writeStructures(KConfig *config)
 {
   KConfigGroup grp(config, "Extra rules");
-  config->setGroup("Extra rules");
   grp.writeEntry("StructGroupsCount", m_structGroups.count());
 
   int i = 1;
   for (QList<StructGroup>::ConstIterator it = m_structGroups.constBegin(); it != m_structGroups.constEnd(); ++it)
   {
     StructGroup group = *it;
-    config->setGroup(QString("StructGroup_%1").arg(i));
+    grp.changeGroup(QString("StructGroup_%1").arg(i));
     grp.writeEntry("Name", group.name);
     grp.writeEntry("No_Name", group.noName);
     grp.writeEntry("Icon", group.icon);
@@ -421,22 +414,22 @@ void DTEPEditDlg::writeStructures(KConfig *config)
       grp.writeEntry("RemoveFromAutoCompleteWord", group.removeRx);
       if (group.variableGroup)
       {
-        config->setGroup("Extra rules");
+        grp.changeGroup("Extra rules");
         grp.writeEntry("VariableGroupIndex", i);
       } else
       if (group.functionGroup)
       {
-        config->setGroup("Extra rules");
+        grp.changeGroup("Extra rules");
         grp.writeEntry("FunctionGroupIndex", i);
       } else
       if (group.classGroup)
       {
-        config->setGroup("Extra rules");
+        grp.changeGroup("Extra rules");
         grp.writeEntry("ClassGroupIndex", i);
       } else
       if (group.objectGroup)
       {
-        config->setGroup("Extra rules");
+        grp.changeGroup("Extra rules");
         grp.writeEntry("ObjectGroupIndex", i);
       }
     }
@@ -562,15 +555,5 @@ void DTEPEditDlg::slotDeleteStructGroup()
     }
   }
 }
-
-void DTEPEditDlg::writeEntry(KConfig *config, const QString &key, const QString &value)
-{
-  KConfigGroup grp(config, config->group());
-  if (value.isEmpty())
-    grp.deleteEntry(key);
-  else
-    grp.writeEntry(key, value);
-}
-
 
 #include "dtepeditdlg.moc"

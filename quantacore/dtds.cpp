@@ -147,13 +147,11 @@ bool DTDs::readTagDir(const QString &dirName, bool loadAll)
   QString tmpStr = dirName + m_rcFilename;
   if (!QFile::exists(tmpStr))
      return false;
-  KConfig *dtdConfig = new KConfig(tmpStr);
-  KConfigGroup grp(dtdConfig, "General");
-  dtdConfig->setGroup("General");
+  KConfig dtdConfig(tmpStr);
+  KConfigGroup grp(&dtdConfig, "General");
   QString dtdName = grp.readEntry("Name", "Unknown");
   if (m_dict->contains(dtdName.toLower()))
   {
-    delete dtdConfig;
     kDebug(24000) << "dtds::readTagDir from " << dirName
                    << " canceled, DTD " << dtdName << " found in memory" << endl;
     return false;
@@ -175,7 +173,7 @@ bool DTDs::readTagDir(const QString &dirName, bool loadAll)
   dtd->commonAttrs = 0L;
 
   //Read the areas that define the areas
-  dtdConfig->setGroup("Parsing rules");
+  grp.changeGroup("Parsing rules");
   QStringList definitionAreaBorders = grp.readEntry("AreaBorders", QStringList());
   for (int i = 0; i < definitionAreaBorders.count(); i++)
   {
@@ -194,7 +192,6 @@ bool DTDs::readTagDir(const QString &dirName, bool loadAll)
   kDebug(24000) << "DTD loaded: " << dtdName << " pointer " << dtd;
 
   m_dict->insert(dtdName.toLower(), dtd); //insert the structure into the dictionary
-  delete dtdConfig;
 
   if (!loadAll)
   {
@@ -218,10 +215,9 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
 
   kapp->setOverrideCursor( QCursor(Qt::WaitCursor) );
 
-  KConfig *dtdConfig = new KConfig(dtd->fileName);
-  KConfigGroup grp(dtdConfig, "General");
+  KConfig dtdConfig(dtd->fileName);
+  KConfigGroup grp(&dtdConfig, "General");
   //read the general DTD info
-  dtdConfig->setGroup("General");
   dtd->commonAttrs = new AttributeListDict();
 
   bool caseSensitive = grp.readEntry("CaseSensitive", false);
@@ -265,7 +261,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
   }
 
   //read the toolbars
-  dtdConfig->setGroup("Toolbars");
+  grp.changeGroup("Toolbars");
   tmpStr = grp.readPathEntry("Location"); //holds the location of the toolbars
   if (!tmpStr.endsWith('/') && !tmpStr.isEmpty())
   {
@@ -278,7 +274,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
   }
 
   //read the extra tags and their attributes
-  dtdConfig->setGroup("Extra tags");
+  grp.changeGroup("Extra tags");
   dtd->defaultAttrType = grp.readEntry("DefaultAttrType","input");
   QStringList extraTagsList = grp.readEntry("List", QStringList());
   QString option;
@@ -344,7 +340,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
 
   /**** Code for the new parser *****/
 
-  dtdConfig->setGroup("Parsing rules");
+  grp.changeGroup("Parsing rules");
   //Which DTD can be present in this one?
   dtd->insideDTDs = grp.readEntry("MayContain", QStringList());
   for (int i = 0; i < dtd->insideDTDs.count(); i++)
@@ -455,7 +451,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
   dtd->structEndStr = grp.readEntry("StructEndStr","}").trimmed();
 
 
-  dtdConfig->setGroup("Extra rules");
+  grp.changeGroup("Extra rules");
   dtd->minusAllowedInWord = grp.readEntry("MinusAllowedInWord", false);
   tmpStr = grp.readEntry("TagAutoCompleteAfter", "<").trimmed();
   if (tmpStr.toUpper() == "NONE")
@@ -507,7 +503,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
       QString tagStr;
       for (uint index = 1; index <= structGroupsCount; index++)
       {
-        dtdConfig->setGroup(QString("StructGroup_%1").arg(index));
+        grp.changeGroup(QString("StructGroup_%1").arg(index));
         //new code
         group.name = grp.readEntry("Name").trimmed();
         group.noName = grp.readEntry("No_Name").trimmed();
@@ -557,7 +553,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
       QString tagName;
       for (uint index = 1; index <= structGroupsCount; index++)
       {
-        dtdConfig->setGroup(QString("StructGroup_%1").arg(index));
+        grp.changeGroup(QString("StructGroup_%1").arg(index));
         group.name = grp.readEntry("Name").trimmed();
         group.noName = grp.readEntry("No_Name").trimmed();
         group.icon = grp.readEntry("Icon").trimmed();
@@ -581,7 +577,6 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
       }
     }
 
-  delete dtdConfig;
   dtd->loaded = true;
   resolveInherited(dtd);
   kapp->restoreOverrideCursor();
@@ -881,7 +876,6 @@ void DTDs::slotLoadDTD()
       QString dirName = dtdParser.dirName();
       KConfig dtdcfg(dirName + m_rcFilename);
       KConfigGroup grp(&dtdcfg, "General");
-      dtdcfg.setGroup("General");
       QString dtdName = grp.readEntry("Name");
       QString nickName = grp.readEntry("NickName", dtdName);
       DTDStruct * dtd = m_dict->value(dtdName) ;
@@ -914,7 +908,6 @@ void DTDs::slotLoadDTEP(const QString &_dirName, bool askForAutoload)
     dirName += '/';
   KConfig dtdcfg(dirName + m_rcFilename);
   KConfigGroup grp(&dtdcfg, "General");
-  dtdcfg.setGroup("General");
   QString dtdName = grp.readEntry("Name");
   QString nickName = grp.readEntry("NickName", dtdName);
   DTDStruct * dtd = m_dict->value(dtdName) ;

@@ -185,7 +185,6 @@ void DTDParser::writeDescriptionRC()
 {
   KConfig config(DTD::dirName + "description.rc");
   KConfigGroup grp(&config, "General");
-  config.setGroup("General");
   grp.writeEntry("Name", m_name);
   grp.writeEntry("NickName", m_nickName);
   grp.writeEntry("DoctypeString", m_doctype);
@@ -193,7 +192,7 @@ void DTDParser::writeDescriptionRC()
   grp.writeEntry("DefaultExtension", m_defaultExtension);
   grp.writeEntry("Family", "1");
   grp.writeEntry("CaseSensitive", m_caseSensitive);
-  config.setGroup("Parsing rules");
+  grp.changeGroup("Parsing rules");
   grp.writeEntry("SpecialAreas","<!-- -->,<?xml ?>,<!DOCTYPE >");
   grp.writeEntry("SpecialAreaNames","comment,XML PI,DTD");
 
