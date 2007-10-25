@@ -24,7 +24,7 @@ kde4_add_plugin(kdevhtmlpreview WITH_PREFIX ${kdevhtmlpreview_PART_SRCS})
 
 
 
-target_link_libraries(kdevhtmlpreview kdevplatforminterfaces kdevplatformshell ktexteditor ${KDE4_KHTML_LIBS} )
+target_link_libraries(kdevhtmlpreview kdevplatforminterfaces kdevplatformshell ${KDE4_KTEXTEDITOR_LIBS} ${KDE4_KHTML_LIBS} )
 
 install(TARGETS kdevhtmlpreview  DESTINATION ${PLUGIN_INSTALL_DIR})
 
