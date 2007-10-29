@@ -17,17 +17,17 @@
 
 /**
  Builder for the toolbar XML gui client objects. It handles putting and removing the toolbar
- on a tabwidget inside a toolbar. 
+ on a tabwidget inside a toolbar.
 
 @author Andras Mantia <amantia@kde.org>
 */
 
-class ToolbarGUIBuilder:public KXMLGUIBuilder  
+class ToolbarGUIBuilder:public KXMLGUIBuilder
 {
 public:
   /**
    * The builder is a singleton. You can access it via this method.
-   * @param widget the argument passes to the KXMLGUIBuilder constructor 
+   * @param widget the argument passes to the KXMLGUIBuilder constructor
    * @return a pointer to the KXMLGUIBuilder object
    */
   static ToolbarGUIBuilder* const ref(QWidget *widget = 0L)
@@ -36,18 +36,18 @@ public:
     if (!m_ref) m_ref = new ToolbarGUIBuilder(widget);
     return m_ref;
   }
-  
+
   /**
-   * Called when a new XML gui client is added to the gui factory. 
-   * Reimplemented from KXMLGUIBuilder in order to create the toolbar inside 
+   * Called when a new XML gui client is added to the gui factory.
+   * Reimplemented from KXMLGUIBuilder in order to create the toolbar inside
    * a tabwidget, not as a standalone toolbar.
    */
-  virtual QWidget *createContainer(QWidget *parent, int index, const QDomElement &element, int &id);
+  virtual QWidget *createContainer(QWidget *parent, int index, const QDomElement &element, QAction*& action);
   /**
-   * Called when a XML gui client is removed the gui factory. 
+   * Called when a XML gui client is removed the gui factory.
    * Reimplemented from KXMLGUIBuilder in order to remove out customly built toolbar.
    */
-  virtual void removeContainer(QWidget *container, QWidget *parent, QDomElement &element, int id);
+  virtual void removeContainer(QWidget *container, QWidget *parent, QDomElement &element, QAction* action);
 
   /**
    * Sets the toolbar mode.
@@ -58,9 +58,9 @@ public:
 
 private:
   /**
-   * The private constructor. 
+   * The private constructor.
    * @param widget passed to the KXMLGUIBuilder constructor
-   * @return 
+   * @return
    */
   ToolbarGUIBuilder(QWidget *widget):KXMLGUIBuilder(widget){ m_separateToolbars = false; }
 

@@ -29,7 +29,7 @@
 // from kfiledialog.cpp - avoid qt warning in STDERR (~/.xsessionerrors)
 static void silenceQToolBar(QtMsgType, const char *){}
 
-QWidget *ToolbarGUIBuilder::createContainer(QWidget *parent, int index, const QDomElement &element, int &id)
+QWidget *ToolbarGUIBuilder::createContainer(QWidget *parent, int index, const QDomElement &element, QAction* &action)
 {
 //  kDebug(24000) << "createContainer: this=" << this << " parent=" << parent;
   QWidget *container = 0L;
@@ -74,7 +74,7 @@ QWidget *ToolbarGUIBuilder::createContainer(QWidget *parent, int index, const QD
 
     if (m_separateToolbars)
     {
-      container = KXMLGUIBuilder::createContainer(parent, index, element, id);
+      container = KXMLGUIBuilder::createContainer(parent, index, element, action);
       static_cast<KToolBar*>(container)->setWindowTitle(i18n(tabname.toUtf8()));
       toolbarTab->parentWidget()->parentWidget()->hide();
     } else
@@ -83,7 +83,7 @@ QWidget *ToolbarGUIBuilder::createContainer(QWidget *parent, int index, const QD
     }
   } else
   {
-    container = KXMLGUIBuilder::createContainer(parent, index, element, id);
+    container = KXMLGUIBuilder::createContainer(parent, index, element, action);
   }
 
 //  kDebug(24000) << "container " << element.attribute("name") << " created: " << container;
@@ -98,7 +98,7 @@ QWidget *ToolbarGUIBuilder::createContainer(QWidget *parent, int index, const QD
   return container;
 }
 
-void ToolbarGUIBuilder::removeContainer(QWidget *container, QWidget *parent, QDomElement &element, int id)
+void ToolbarGUIBuilder::removeContainer(QWidget *container, QWidget *parent, QDomElement &element, QAction* action)
 {
   QString s;
   QTextStream str(&s, IO_ReadWrite);
@@ -120,7 +120,7 @@ void ToolbarGUIBuilder::removeContainer(QWidget *container, QWidget *parent, QDo
     if (tb)
     {
       if (tb->separate())
-        KXMLGUIBuilder::removeContainer(container, parent, element, id);
+        KXMLGUIBuilder::removeContainer(container, parent, element, action);
       toolbarTab->removePage(tb);
       if (toolbarTab->count() == 0 && toolbarTab->parentWidget()->parentWidget())
         toolbarTab->parentWidget()->parentWidget()->hide();
@@ -128,6 +128,6 @@ void ToolbarGUIBuilder::removeContainer(QWidget *container, QWidget *parent, QDo
     }
   }
 
-  KXMLGUIBuilder::removeContainer(container, parent, element, id);
+  KXMLGUIBuilder::removeContainer(container, parent, element, action);
 }
 
