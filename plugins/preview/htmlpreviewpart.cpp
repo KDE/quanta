@@ -51,6 +51,7 @@ K_EXPORT_PLUGIN(HTMLPreviewFactory("kdevhtmlpreview"))
 HTMLPreviewPart::HTMLPreviewPart(QObject *parent, const QVariantList &/*args*/)
   : KDevelop::IPlugin(HTMLPreviewFactory::componentData(), parent), m_activeEditor(0), m_partmanager(0)
 {
+  kDebug(24000) << "Loading HTMLPreviewPart plugin";
   setXMLFile("kdevhtmlpreview.rc");
 
   m_browserPart = new HTMLPart(this);
@@ -83,6 +84,7 @@ HTMLPreviewPart::HTMLPreviewPart(QObject *parent, const QVariantList &/*args*/)
 
 HTMLPreviewPart::~HTMLPreviewPart()
 {
+  delete m_browserPart;
   delete m_idleTimer;
 }
 
