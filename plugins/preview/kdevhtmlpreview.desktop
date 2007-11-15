@@ -1,5 +1,4 @@
 [Desktop Entry]
-Encoding=UTF-8
 Type=Service
 Exec=blubb
 Name=KDevHTMLPreview
@@ -36,7 +35,7 @@ Comment[x-test]=xxHTMLPreview Descriptionxx
 Comment[zh_CN]=HTML 预览插件的描述
 Comment[zh_TW]=HTML 預覽描述
 Icon=konqueror
-ServiceTypes=KDevelop/Plugin
+X-KDE-ServiceTypes=KDevelop/Plugin
 
 X-KDevelop-Plugin-Version=1
 X-KDevelop-Plugin-Homepage=http://kdewebdev.org/

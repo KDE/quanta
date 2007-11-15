@@ -1,5 +1,4 @@
 [Desktop Entry]
-Encoding=UTF-8
 Type=Service
 Exec=blubb
 Comment=Quanta Core
@@ -36,7 +35,7 @@ GenericName[sv]=Quanta-kärna
 GenericName[x-test]=xxQuanta Corexx
 GenericName[zh_CN]=Quanta 核心
 GenericName[zh_TW]=Quanta 核心
-ServiceTypes=KDevelop/Plugin,KDevelop/Quanta
+X-KDE-ServiceTypes=KDevelop/Plugin,KDevelop/Quanta
 Icon=kdevelop
 X-KDE-PluginInfo-Name=KDevQuantaCore
 X-KDE-Library=libkdevquantacore

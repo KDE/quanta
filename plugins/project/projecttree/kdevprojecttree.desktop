@@ -1,5 +1,4 @@
 [Desktop Entry]
-Encoding=UTF-8
 Type=Service
 Exec=blubb
 Name=KDevProjectTree
@@ -35,7 +34,7 @@ Comment[x-test]=xxProjectTree Descriptionxx
 Comment[zh_CN]=工程树插件的描述
 Comment[zh_TW]=專案樹狀圖描述
 Icon=folder_green
-ServiceTypes=KDevelop/Plugin
+X-KDE-ServiceTypes=KDevelop/Plugin
 
 X-KDevelop-Plugin-Version=1
 X-KDevelop-Plugin-Homepage=http://kdewebdev.org/

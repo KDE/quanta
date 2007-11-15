@@ -1,5 +1,4 @@
 [Desktop Entry]
-Encoding=UTF-8
 Type=Service
 Exec=blubb
 Name=KDevTagDialogs
@@ -35,7 +34,7 @@ Comment[x-test]=xxTagDialogs Descriptionxx
 Comment[zh_CN]=标签对话框插件的描述
 Comment[zh_TW]=標籤對話框描述
 Icon=view_sidetree
-ServiceTypes=KDevelop/Plugin,KDevelop/TagDialogs
+X-KDE-ServiceTypes=KDevelop/Plugin,KDevelop/TagDialogs
 
 X-KDevelop-Plugin-Version=1
 X-KDevelop-Plugin-Homepage=http://kdewebdev.org/

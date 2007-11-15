@@ -1,9 +1,8 @@
 [Desktop Entry]
-Encoding=UTF-8
 Type=Service
 Exec=kcmshell4 --caption %c %i khtml_behavior khtml_java_js khtml_fonts cookies cache proxy kcmcss crypto useragent khtml_plugins
 Icon=konqueror
-DocPath=konqueror/index.html
+X-DocPath=konqueror/index.html
 Name=Configure KHTML Browser Part
 Name[ca]=Configura la part del fullejador KHTML
 Name[cs]=Nastavení KHTML Part

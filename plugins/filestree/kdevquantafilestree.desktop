@@ -1,5 +1,4 @@
 [Desktop Entry]
-Encoding=UTF-8
 Type=Service
 Exec=blubb
 Name=KDevQuantaFilesTree
@@ -38,7 +37,7 @@ Comment[x-test]=xxThe Files Tree provides an interface to work with your filesys
 Comment[zh_CN]=此文件树提供了一个和您的文件系统协同工作的界面
 Comment[zh_TW]=檔案樹狀圖提供使用者介面讓您方便使用檔案系統
 Icon=system
-ServiceTypes=KDevelop/Plugin
+X-KDE-ServiceTypes=KDevelop/Plugin
 
 X-KDevelop-Plugin-Version=1
 X-KDevelop-Plugin-Homepage=http://kdewebdev.org/

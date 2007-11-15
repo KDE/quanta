@@ -1,5 +1,4 @@
 [Desktop Entry]
-Encoding=UTF-8
 Type=Service
 Exec=blubb
 Name=KDevUserToolbars
@@ -37,7 +36,7 @@ Comment[x-test]=xxUserToolbars Descriptionxx
 Comment[zh_CN]=用户工具栏插件的描述
 Comment[zh_TW]=使用者工具列描述
 Icon=kdevelop
-ServiceTypes=KDevelop/Plugin,KDevelop/UserToolbars
+X-KDE-ServiceTypes=KDevelop/Plugin,KDevelop/UserToolbars
 
 X-KDevelop-Plugin-Version=1
 X-KDevelop-Plugin-Homepage=http://kdewebdev.org/

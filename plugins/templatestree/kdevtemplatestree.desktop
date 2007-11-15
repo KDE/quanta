@@ -1,5 +1,4 @@
 [Desktop Entry]
-Encoding=UTF-8
 Type=Service
 Exec=blubb
 Name=KDevTemplatesTree
@@ -37,7 +36,7 @@ Comment[x-test]=xxTemplatesTree Descriptionxx
 Comment[zh_CN]=模板树插件的描述
 Comment[zh_TW]=樣本樹狀圖描述
 Icon=template_source
-ServiceTypes=KDevelop/Plugin
+X-KDE-ServiceTypes=KDevelop/Plugin
 
 X-KDevelop-Plugin-Version=1
 X-KDevelop-Plugin-Homepage=http://kdewebdev.org/

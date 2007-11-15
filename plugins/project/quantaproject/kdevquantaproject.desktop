@@ -1,5 +1,4 @@
 [Desktop Entry]
-Encoding=UTF-8
 Type=Service
 Exec=blubb
 Name=KDevQuantaProject
@@ -38,7 +37,7 @@ Comment[x-test]=xxQuantaProject Descriptionxx
 Comment[zh_CN]=Quanta 工程插件的描述
 Comment[zh_TW]=Quanta 專案描述
 Icon=quanta
-ServiceTypes=KDevelop/Project
+X-KDE-ServiceTypes=KDevelop/Project
 
 X-KDevelop-Plugin-Version=1
 X-KDevelop-Plugin-Homepage=http://kdewebdev.org/

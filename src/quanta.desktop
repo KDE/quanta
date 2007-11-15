@@ -1,7 +1,6 @@
 [Desktop Entry]
 Categories=Qt;KDE;Development;
 Comment=
-Encoding=UTF-8
 Exec=quanta %u
 GenericName=IDE for Web Development
 GenericName[de]=Web-Entwicklungsumgebung
@@ -28,7 +27,6 @@ Name[pa]=ਕੁਆਂਟਾ ਪਲੱਸ
 Name[sv]=Quanta plus
 Name[ta]=குவாண்டா ப்ளஸ்
 Name[x-test]=xxQuanta Plusxx
-Path=
 StartupNotify=true
 Terminal=false
 TerminalOptions=
