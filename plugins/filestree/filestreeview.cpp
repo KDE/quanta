@@ -137,9 +137,9 @@ void FilesTreeView::folderMenu(const QPoint &point)
   // submenu for creating files or folders
   KMenu createNewMenu(this);
   createNewMenu.setTitle(i18n("&Create New"));
-  createNewMenu.setIcon(SmallIcon("empty"));
+  createNewMenu.setIcon(SmallIcon("document-new"));
   createNewMenu.addAction(SmallIcon("folder-new"), i18n("F&older..."), this, SLOT(slotCreateFolder()));
-  createNewMenu.addAction(SmallIcon("document"), i18n("&File..."), this, SLOT(slotCreateFile()));
+  createNewMenu.addAction(SmallIcon("document-new"), i18n("&File..."), this, SLOT(slotCreateFile()));
 
   popup.addMenu(&createNewMenu);
   popup.addSeparator();

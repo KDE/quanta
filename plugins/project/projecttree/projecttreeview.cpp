@@ -220,7 +220,7 @@ void ProjectTreeView::folderMenu(const QPoint &point)
   createNewMenu.setTitle(i18n("&Create New"));
   createNewMenu.setIcon(SmallIconSet("document-new"));
   createNewMenu.addAction(SmallIcon("folder-new"), i18n("F&older..."), this, SLOT(slotCreateFolder()));
-  createNewMenu.addAction(SmallIcon("document"), i18n("&File..."), this, SLOT(slotCreateFile()));
+  createNewMenu.addAction(SmallIcon("document-new"), i18n("&File..."), this, SLOT(slotCreateFile()));
 
   KMenu popup(this);
   popup.addTitle(i18n("Project Tree"));
@@ -251,7 +251,7 @@ void ProjectTreeView::emptyMenu(const QPoint &point)
   createNewMenu.setTitle(i18n("&Create New"));
   createNewMenu.setIcon(SmallIconSet("document-new"));
   createNewMenu.addAction(SmallIcon("folder-new"), i18n("F&older..."), this, SLOT(slotCreateFolder()));
-  createNewMenu.addAction(SmallIcon("document"), i18n("&File..."), this, SLOT(slotCreateFile()));
+  createNewMenu.addAction(SmallIcon("document-new"), i18n("&File..."), this, SLOT(slotCreateFile()));
 
   KMenu popup(this);
   popup.addTitle(i18n("Project Tree"));

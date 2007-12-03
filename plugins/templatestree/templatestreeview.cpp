@@ -210,7 +210,7 @@ KFileTreeBranch* TemplatesTreeView::newBranch(const KUrl& url)
       newBrnch = new TemplatesTreeBranch(this, url, i18n("Local"), SmallIcon(""));
     else
     {
-      newBrnch = new TemplatesTreeBranch(this, url, i18n("Project"), SmallIcon("folder_green"));
+      newBrnch = new TemplatesTreeBranch(this, url, i18n("Project"), SmallIcon("folder-green"));
       m_projectDir = newBrnch;
     }
   }
