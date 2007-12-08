@@ -66,7 +66,7 @@ ActionConfigDialog::ActionConfigDialog(const QHash<QString, ToolbarEntry*> &tool
   m_toolbarList = toolbarList;
   buttonOk->setIcon(KIcon("dialog-ok"));
   buttonCancel->setIcon(KIcon("dialog-cancel"));
-  buttonApply->setIcon(KIcon("dialog-apply"));
+  buttonApply->setIcon(KIcon("dialog-ok-apply"));
   //buttonHelp->setIcon(KIcon("help-contents"));
 
   currentAction = 0L;
