@@ -43,6 +43,7 @@
 #include <QTextCodec>
 #include <QList>
 #include <qstack.h>
+#include <QTimer>
 
 //standard library includes
 #include <stdio.h>
