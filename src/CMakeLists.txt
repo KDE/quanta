@@ -1,5 +1,5 @@
 
-find_package(Strigi)
+find_package(Strigi REQUIRED)
 
 include_directories(
   ${CMAKE_SOURCE_DIR}/quanta/lib
