@@ -99,6 +99,10 @@ bool QuantaDoc::newDocument( const KURL& url, bool switchToExisting )
   QuantaView *view = ViewManager::ref()->isOpened(url);
   if (!view || newfile)
   {
+    w = ViewManager::ref()->activeDocument();
+    if (w && !newfile && !w->isModified() && w->isUntitled() && !w->busy)
+         ViewManager::ref()->removeActiveView(false);
+
 /*    
     // no modi and new -> we can remove                           !!!!
     w = ViewManager::ref()->activeDocument();

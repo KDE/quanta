@@ -277,6 +277,7 @@ void QuantaDebuggerDBGp::processCommand(const QString& datas)
          || command == "step_into" 
          || command == "step_out")
     {
+      handleError(response);
       // If this is the acknoledge of a step command, request the call stack 
       m_network.sendCommand("stack_get");
       setExecutionState(attribute(response, "status"));
@@ -346,8 +347,12 @@ void QuantaDebuggerDBGp::initiateSession(const QDomNode& initpacket)
     endSession();
     return;
   }
-
-  debuggerInterface()->setActiveLine(mapServerPathToLocal(attribute(initpacket, "fileuri")), 0);
+  QString path = attribute(initpacket, "fileuri");
+  if (path.startsWith("file://"))
+  {
+    path.remove(0, 7);
+  }
+  debuggerInterface()->setActiveLine(mapServerPathToLocal(path), 0);
   
   // Store some vars
   m_initialscript = attribute(initpacket, "fileuri");

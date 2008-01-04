@@ -91,7 +91,8 @@ void DBGpNetwork::sessionEnd()
   if(m_socket)
   {
     m_socket->flush();
-    m_socket->close();
+    if (m_socket)
+      m_socket->close();
     delete m_socket;
   }
 
