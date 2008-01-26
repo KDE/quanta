@@ -163,7 +163,7 @@ bool ViewManager::removeView(QuantaView *view, bool force, bool createNew)
         break;
     }
     delete it;
-    if (noOfViews == 1 && view->document()->isUntitled() && !view->document()->isModified() && createNew)
+    if (noOfViews == 1 && view->document() && view->document()->isUntitled() && !view->document()->isModified() && createNew)
     {
       quantaApp->slotShowPreviewWidget(false);
       return true;
