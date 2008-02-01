@@ -211,6 +211,15 @@ pointer must be deleted by the caller!! */
      */
   static QString readPathEntry(KConfig *config, const QString &pKey);
 
+  /**
+   * Returns the HTML encoding string for character with the specified code.
+   * If no such literal encoding is known (like &auml;), the numeric encoding
+   * is returned: &#code;
+   * @param code the numeric code of the character
+   * @return the encoded string
+   */
+  static QString encodedChar(uint code);
+
 };
 
 #endif

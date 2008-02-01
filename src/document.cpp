@@ -858,7 +858,7 @@ void Document::slotCharactersInserted(int line, int column, const QString& strin
       {
         m_replaceLine = line;
         m_replaceCol = column;
-        m_replaceStr = QString("&#%1;").arg(string[0].unicode());
+        m_replaceStr = QuantaCommon::encodedChar(string[0].unicode());
         QTimer::singleShot(0, this, SLOT(slotReplaceChar()));
         return;
       }
@@ -871,7 +871,7 @@ void Document::slotCharactersInserted(int line, int column, const QString& strin
     {
       m_replaceLine = line;
       m_replaceCol = column;
-      m_replaceStr = QString("&#%1;").arg(c);
+      m_replaceStr = QuantaCommon::encodedChar(c);
       QTimer::singleShot(0, this, SLOT(slotReplaceChar()));
       return;
     }

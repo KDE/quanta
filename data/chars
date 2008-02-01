@@ -1,10 +1,10 @@
 ! (&#033;) Exclamation mark
-" (&#034;) Quotation mark
+" (&quot;) Quotation mark
 # (&#035;) Hash mark
 $ (&#036;) Dollar sign
 % (&#037;) Percent sign
-& (&#038;) Ampersand
-' (&#039;) Apostrophe
+& (&amp;) Ampersand
+' (&apos;) Apostrophe
 ( (&#040;) Left parenthesis
 ) (&#041;) Right parenthesis
 * (&#042;) Asterisk
@@ -15,9 +15,9 @@ $ (&#036;) Dollar sign
 / (&#047;) Slash
 : (&#058;) Colon
 ; (&#059;) Semicolon
-< (&#060;) Less than
+< (&lt;) Less than
 = (&#061;) Equals sign
-> (&#062;) Greater than
+> (&gt;) Greater than
 ? (&#063;) Question mark
 @ (&#064;) Commercial at sign
 [ (&#091;) Left square bracket
@@ -30,102 +30,102 @@ _ (&#095;) Underscore
 | (&#124;) Vertical bar
 } (&#125;) Right curly brace
 ~ (&#126;) Tilde
-  (&#160;) Nonbreaking space
-¡ (&#161;) Inverted exclamation mark
-¢ (&#162;) Cent sign
-£ (&#163;) Pound sign
-¤ (&#164;) Currency sign
-¥ (&#165;) Yen sign
-¦ (&#166;) Broken vertical bar
-§ (&#167;) Section sign
-¨ (&#168;) Diaeresis
-© (&#169;) Copyright
-ª (&#170;) Feminine ordinal
-« (&#171;) Left Pointing Guillemet
-¬ (&#172;) Not sign
-  (&#173;) Soft hyphen
-® (&#174;) Registered trademark
-¯ (&#175;) Macron
-° (&#176;) Degree sign
-± (&#177;) Plus-minus sign
-² (&#178;) Superscript 2
-³ (&#179;) Superscript 3
-´ (&#180;) Acute accent
-µ (&#181;) Micro sign
-¶ (&#182;) Paragraph sign
-· (&#183;) Middle dot
-¸ (&#184;) Cedilla
-¹ (&#185;) Superscript 1
-º (&#186;) Masculine ordinal
-» (&#187;) Right Pointing Guillemet
-¼ (&#188;) Fraction one-fourth
-½ (&#189;) Fraction one-half
-¾ (&#190;) Fraction three-fourths
-¿ (&#191;) Inverted question mark
-À (&#192;) Capital A, grave accent
-Á (&#193;) Capital A, acute accent
-Â (&#194;) Capital A, circumflex accent
-Ã (&#195;) Capital A, tilde
-Ä (&#196;) Capital A, diaeresis
-Å (&#197;) Capital A, ring
-Æ (&#198;) Capital AE ligature
-Ç (&#199;) Capital C, cedilla
-È (&#200;) Capital E, grave accent
-É (&#201;) Capital E, acute accent
-Ê (&#202;) Capital E, circumflex accent
-Ë (&#203;) Capital E, diaeresis
-Ì (&#204;) Capital I, grave accent
-Í (&#205;) Capital I, acute accent
-Î (&#206;) Capital I, circumflex accent
-Ï (&#207;) Capital I, diaeresis
-Ð (&#208;) Capital eth
-Ñ (&#209;) Capital N, tilde
-Ò (&#210;) Capital O, grave accent
-Ó (&#211;) Capital O, acute accent
-Ô (&#212;) Capital O, circumflex accent
-Õ (&#213;) Capital O, tilde
-Ö (&#214;) Capital O, diaeresis
-× (&#215;) Multiplication
-Ø (&#216;) Capital O, slash
-Ù (&#217;) Capital U, grave accent
-Ú (&#218;) Capital U, acute accent
-Û (&#219;) Capital U, circumflex accent
-Ü (&#220;) Capital U, diaeresis
-Ý (&#221;) Capital Y, acute accent
-Þ (&#222;) Capital thorn
-ß (&#223;) Small Sharp s
-à (&#224;) Small a, grave accent
-á (&#225;) Small a, acute accent
-â (&#226;) Small a, circumflex accent
-ã (&#227;) Small a, tilde
-ä (&#228;) Small a, diaeresis
-å (&#229;) Small a, ring
-æ (&#230;) Small ae ligature
-ç (&#231;) Small c, cedilla
-è (&#232;) Small e, grave accent
-é (&#233;) Small e, acute accent
-ê (&#234;) Small e, circumflex accent
-ë (&#235;) Small e, diaeresis
-ì (&#236;) Small i, grave accent
-í (&#237;) Small i, acute accent
-î (&#238;) Small i, circumflex accent
-ï (&#239;) Small i, diaeresis
-ð (&#240;) Small eth
-ñ (&#241;) Small n, tilde
-ò (&#242;) Small o, grave accent
-ó (&#243;) Small o, acute accent
-ô (&#244;) Small o, circumflex accent
-õ (&#245;) Small o, tilde
-ö (&#246;) Small o, diaeresis
-÷ (&#247;) Division
-ø (&#248;) Small o, slash
-ù (&#249;) Small u, grave accent
-ú (&#250;) Small u, acute accent
-û (&#251;) Small u, circumflex accent
-ü (&#252;) Small u, diaeresis
-ý (&#253;) Small y, acute accent
-þ (&#254;) Small thorn
-ÿ (&#255;) Small y, diaeresis
+  (&nbsp;) Nonbreaking space
+¡ (&iexcl;) Inverted exclamation mark
+¢ (&cent;) Cent sign
+£ (&pound;) Pound sign
+¤ (&curren;) Currency sign
+¥ (&yen;) Yen sign
+¦ (&brvbar;) Broken vertical bar
+§ (&sect;) Section sign
+¨ (&uml;) Diaeresis
+© (&copy;) Copyright
+ª (&ordf;) Feminine ordinal
+« (&laquo;) Left Pointing Guillemet
+¬ (&not;) Not sign
+  (&shy;) Soft hyphen
+® (&reg;) Registered trademark
+¯ (&macr;) Macron
+° (&deg;) Degree sign
+± (&plusmn;) Plus-minus sign
+² (&sup2;) Superscript 2
+³ (&sup3;) Superscript 3
+´ (&acute;) Acute accent
+µ (&micro;) Micro sign
+¶ (&para;) Paragraph sign
+· (&middot;) Middle dot
+¸ (&cedil;) Cedilla
+¹ (&sup1;) Superscript 1
+º (&ordm;) Masculine ordinal
+» (&raquo;) Right Pointing Guillemet
+¼ (&frac14;) Fraction one-fourth
+½ (&frac12;) Fraction one-half
+¾ (&frac34;) Fraction three-fourths
+¿ (&iquest;) Inverted question mark
+À (&Agrave;) Capital A, grave accent
+Á (&Aacute;) Capital A, acute accent
+Â (&Acirc;) Capital A, circumflex accent
+Ã (&Atilde;) Capital A, tilde
+Ä (&Auml;) Capital A, diaeresis
+Å (&Aring;) Capital A, ring
+Æ (&AElig;) Capital AE ligature
+Ç (&Ccedil;) Capital C, cedilla
+È (&Egrave;) Capital E, grave accent
+É (&Eacute;) Capital E, acute accent
+Ê (&Ecirc;) Capital E, circumflex accent
+Ë (&Euml;) Capital E, diaeresis
+Ì (&Igrave;) Capital I, grave accent
+Í (&Iacute;) Capital I, acute accent
+Î (&Icirc;) Capital I, circumflex accent
+Ï (&Iuml;) Capital I, diaeresis
+Ð (&ETH;) Capital eth
+Ñ (&Ntilde;) Capital N, tilde
+Ò (&Ograve;) Capital O, grave accent
+Ó (&Oacute;) Capital O, acute accent
+Ô (&Ocirc;) Capital O, circumflex accent
+Õ (&Otilde;) Capital O, tilde
+Ö (&Ouml;) Capital O, diaeresis
+× (&times;) Multiplication
+Ø (&Oslash;) Capital O, slash
+Ù (&Ugrave;) Capital U, grave accent
+Ú (&Uacute;) Capital U, acute accent
+Û (&Ucirc;) Capital U, circumflex accent
+Ü (&Uuml;) Capital U, diaeresis
+Ý (&Yacute;) Capital Y, acute accent
+Þ (&THORN;) Capital thorn
+ß (&szlig;) Small Sharp s
+à (&agrave;) Small a, grave accent
+á (&aacute;) Small a, acute accent
+â (&acirc;) Small a, circumflex accent
+ã (&atilde;) Small a, tilde
+ä (&auml;) Small a, diaeresis
+å (&aring;) Small a, ring
+æ (&aelig;) Small ae ligature
+ç (&ccedil;) Small c, cedilla
+è (&egrave;) Small e, grave accent
+é (&eacute;) Small e, acute accent
+ê (&circ;) Small e, circumflex accent
+ë (&euml;) Small e, diaeresis
+ì (&igrave;) Small i, grave accent
+í (&iacute;) Small i, acute accent
+î (&icirc;) Small i, circumflex accent
+ï (&iuml;) Small i, diaeresis
+ð (&eth;) Small eth
+ñ (&ntilde;) Small n, tilde
+ò (&ograve;) Small o, grave accent
+ó (&oacute;) Small o, acute accent
+ô (&ocirc;) Small o, circumflex accent
+õ (&otilde;) Small o, tilde
+ö (&ouml;) Small o, diaeresis
+÷ (&divide;) Division
+ø (&oslash;) Small o, slash
+ù (&ugrave;) Small u, grave accent
+ú (&uacute;) Small u, acute accent
+û (&ucirc;) Small u, circumflex accent
+ü (&uuml;) Small u, diaeresis
+ý (&yacute;) Small y, acute accent
+þ (&thorn;) Small thorn
+ÿ (&yuml;) Small y, diaeresis
 Ă (&#258;) Capital A, romanian accent
 ă (&#259;) Small a, romanian accent
 č (&#269;) Small c, caron
@@ -146,25 +146,25 @@ _ (&#095;) Underscore
 Ţ (&#538;) Capital T, comma accent below
 ţ (&#539;) Small t, comma accent below
 ‐ (&#8208;) Hyphen
-– (&#8211;) En dash
-— (&#8212;) Em dash
-‘ (&#8216;) Left Single Quotation mark
-’ (&#8217;) Right Single Quotation mark
-‚ (&#8218;) Single Low-9 Quotation mark
-“ (&#8220;) Left Double Quotation mark
-” (&#8221;) Right Double Quotation mark
-„ (&#8222;) Double Low-9 Quotation mark
-† (&#8224;) Dagger
-‡ (&#8225;) Double Dagger
-• (&#8226;) Bullet
-… (&#8230;) Horizontal Ellipsis
-‰ (&#8240;) Per Mille sign
-‹ (&#8249;) Single Left-Pointing Angle Quotation mark
-› (&#8250;) Single Right-Pointing Angle Quotation mark
-⁄ (&#8260;) Fraction slash
+– (&ndash;) En dash
+— (&mdash;) Em dash
+‘ (&lsquo;) Left Single Quotation mark
+’ (&rsquo;) Right Single Quotation mark
+‚ (&sbquo;) Single Low-9 Quotation mark
+“ (&ldquo;) Left Double Quotation mark
+” (&rdquo;) Right Double Quotation mark
+„ (&bdquo;) Double Low-9 Quotation mark
+† (&dagger;) Dagger
+‡ (&Dagger;) Double Dagger
+• (&bull;) Bullet
+… (&hellip;) Horizontal Ellipsis
+‰ (&permil;) Per Mille sign
+‹ (&lsaquo;) Single Left-Pointing Angle Quotation mark
+› (&rsaquo;) Single Right-Pointing Angle Quotation mark
+⁄ (&frasl;) Fraction slash
 ₣ (&#8355;) French Franc sign
 ₧ (&#8359;) Peseta sign
 ₪ (&#8362;) New Sheqel sign
 ₫ (&#8363;) Dong sign
-€ (&#8364;) Euro currency sign
-™ (&#8482;) Trade Mark sign
+€ (&euro;) Euro currency sign
+™ (&trade;) Trade Mark sign

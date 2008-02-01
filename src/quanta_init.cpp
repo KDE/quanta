@@ -113,6 +113,7 @@
 #include "tagactionmanager.h"
 #include "tagactionset.h"
 
+extern QMap<int, QString> replacementMap;
 
 QuantaInit::QuantaInit(QuantaApp * quantaApp)
         : QObject()
@@ -292,7 +293,16 @@ void QuantaInit::initQuanta()
     t.setEncoding(QTextStream::UnicodeUTF8);
     QString s;
     while (!t.eof())
-      charList << i18n(t.readLine().utf8()); // line excluding '\n'
+    {
+      s = t.readLine();
+      charList << i18n(s.utf8()); // line excluding '\n'
+      int begin = s.find("(&") + 1;
+      if (begin == 1)
+          continue;
+      int length = s.find(";)") - begin + 1;
+      QString s2 = s.mid(begin, length - 1);
+      replacementMap[s[0].unicode()] = s2;
+    }
     file.close();
   }
 

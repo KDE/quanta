@@ -74,6 +74,7 @@ KProgress *progressBar;
 QString toolbarExtension = ".toolbar.tgz";
 QRegExp newLineRx("\\n");
 QStringList charList; //hold the list of the &char; chars. See the data/chars file.
+QMap<int, QString> replacementMap;
 QPtrList<KTempFile> tempFileList;
 QPtrList<KTempDir> tempDirList;
 bool typingInProgress;
@@ -741,4 +742,12 @@ QString QuantaCommon::readPathEntry(KConfig *config, const QString &pKey)
   return path;
 }
 
+QString QuantaCommon::encodedChar(uint code)
+{
+   
+  if (replacementMap.contains(code))
+    return QString("%1;").arg(replacementMap[code]);
+  else
+    return QString("&#%1;").arg(code);
+}
 
