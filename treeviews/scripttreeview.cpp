@@ -343,6 +343,30 @@ KURL ScriptTreeView::infoFile(const KURL& url, bool htmlVersion)
 
   if (htmlVersion)
   {
+      KTempFile *tempInfoFile = 0L;
+      if (!QFileInfo(returnUrl.path()).exists())
+      {
+        tempInfoFile = new KTempFile(tmpDir);
+        tempInfoFile->setAutoDelete(true);
+        returnUrl = KURL::fromPathOrURL(tempInfoFile->name());
+        QTextStream str(tempInfoFile->file());
+        str.setEncoding(QTextStream::UnicodeUTF8);
+        str << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << endl;
+        str << "<?xml-stylesheet type=\"text/xsl\" href=\"info.xsl\" ?>" << endl;
+        str << "<!DOCTYPE QuantaScriptInfo>" << endl;
+        str << "<INFO>" << endl;
+        str << "  <options editor=\"\" interpreter=\"\" />" << endl;
+        str << "  <name>" << url.fileName() << "</name>" << endl;
+        str << "  <author></author>" << endl;
+        str << "  <email></email>" << endl;
+        str << "  <website></website>" << endl;
+        str << "  <version></version>" << endl;
+        str << "  <license></license>" << endl;
+        str << "  <about></about>" << endl;
+        str << "</INFO>" << endl;
+        tempInfoFile->close();
+        tempFileList.append(tempInfoFile);        
+      }
       KTempFile *tempFile = new KTempFile(tmpDir);
       tempFile->setAutoDelete(true);
     //apply the stylesheet
