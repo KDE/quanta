@@ -112,6 +112,7 @@ KDevelop::ProjectFolderItem* QuantaProjectFileManager::import(KDevelop::IProject
                 el.setAttribute("uploadstatus", 1);
               //remove non-existent local files
               bool skipItem = false;
+              bool isDir = false;
               if (url.isLocalFile())
               {
                 QFileInfo fi(url.path());
@@ -120,6 +121,10 @@ KDevelop::ProjectFolderItem* QuantaProjectFileManager::import(KDevelop::IProject
                   el.parentNode().removeChild( el );
                   i--;
                   skipItem = true;
+                }
+                if ( fi.isDir() )
+                {
+                  isDir = true;
                 }
               }
               if (!skipItem)
@@ -149,9 +154,23 @@ KDevelop::ProjectFolderItem* QuantaProjectFileManager::import(KDevelop::IProject
                   }
                   parent = url;
                 }
-              // add the file
-                kDebug(24000) << "Adding file: " << fileUrl;
-                m_projectFiles[parent] << fileUrl;
+              
+                if ( isDir )
+                {
+                  // add the folder
+                  if (!m_projectFiles.contains(fileUrl))
+                  {
+                    kDebug(24000) << "Adding folder: " << fileUrl;
+                    m_projectFiles[fileUrl] = QStringList();
+                    m_projectFolders[parent] << fileUrl;
+                  }
+                }
+                else
+                {
+                  // add the file
+                  kDebug(24000) << "Adding file: " << fileUrl;
+                  m_projectFiles[parent] << fileUrl;
+                }
               }
             }
           }
