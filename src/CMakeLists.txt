@@ -4,10 +4,10 @@ find_package(Strigi REQUIRED)
 include_directories(
   ${CMAKE_SOURCE_DIR}/quanta/lib
   ${CMAKE_BINARY_DIR}
-  ${KDE4_INCLUDE_DIR}/kdevplatform
-  ${KDE4_INCLUDE_DIR}/kdevplatform/interfaces
-  ${KDE4_INCLUDE_DIR}/kdevplatform/shell
-  ${KDE4_INCLUDE_DIR}/kdevplatform/shell/profileengine
+  ${KDEVPLATFORM_INCLUDE_DIR}
+  ${KDEVPLATFORM_INCLUDE_DIR}/interfaces
+  ${KDEVPLATFORM_INCLUDE_DIR}/shell
+  ${KDEVPLATFORM_INCLUDE_DIR}/shell/profileengine
   
 )
 

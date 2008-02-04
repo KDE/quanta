@@ -2,7 +2,7 @@
 include_directories(
    ${CMAKE_SOURCE_DIR}/quanta/lib
    ${CMAKE_BINARY_DIR}/quanta/lib
-   ${KDE4_INCLUDE_DIR}/kdevplatform
+   ${KDEVPLATFORM_INCLUDE_DIR}
    )
 
 
