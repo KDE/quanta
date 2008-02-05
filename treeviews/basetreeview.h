@@ -44,6 +44,7 @@ class KPropertiesDialog;
 class KURL;
 class FileInfoDlg;
 class BaseTreeViewToolTip;
+class QuantaPlugin;
 
 /**
  * @short a KFileTreeViewItem with some specials.
@@ -259,6 +260,8 @@ protected slots:
    */
   virtual void slotCreateFile();
 
+  virtual void slotOpenWithActivated(int id);
+
 protected:
   /**
   implement this to create a branch and add this branch to the treeview
@@ -353,6 +356,7 @@ private:
   KPopupMenu *m_openWithMenu;
   int m_openWithMenuId;
   QValueList<KAction *> m_openWithActions;
+  QMap<int, QuantaPlugin*> m_pluginIds;
 };
 
 #endif

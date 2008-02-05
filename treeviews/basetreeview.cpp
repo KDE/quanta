@@ -62,6 +62,8 @@
 #include "qextfileinfo.h"
 #include "viewmanager.h"
 #include "quantanetaccess.h"
+#include "quantaplugininterface.h"
+#include "quantaplugin.h"
 
 #include <X11/Xlib.h>
 
@@ -561,6 +563,21 @@ void BaseTreeView::slotOpenWithApplication()
   }
 }
 
+void BaseTreeView::slotOpenWithActivated(int id)
+{
+  if (m_pluginIds.contains(id))
+  {
+    QuantaPlugin *plugin = m_pluginIds[id];
+    plugin->unload(true);
+    plugin->load();
+    int input = plugin->input();
+    plugin->setInput(-1); //disable input
+    plugin->run();
+    plugin->part()->openURL(currentURL());
+    plugin->setInput(input);
+  }
+}
+
 void BaseTreeView::insertOpenWithMenu(KPopupMenu *menu, int position)
 {
   if (m_openWithMenuId != -1)
@@ -574,19 +591,36 @@ void BaseTreeView::insertOpenWithMenu(KPopupMenu *menu, int position)
   KURL urlToOpen = currentURL();
   QString mimeType = KMimeType::findByURL(urlToOpen, 0, true, true)->name();
   KTrader::OfferList offers = KTrader::self()->query(mimeType, "Type == 'Application'");
+  QDict<QuantaPlugin> plugins = QuantaPluginInterface::ref()->plugins();   
+  m_pluginIds.clear();
 
-  if (offers.count() > 0)
+  if (offers.count() > 0 || plugins.count() > 0)
   {
     m_openWithMenu = new KPopupMenu(this);
-    KTrader::OfferList::Iterator it;
-    for (it = offers.begin(); it != offers.end(); ++it)
+    if (offers.count() > 0) 
     {
-      KAction *action = new KAction((*it)->name(), (*it)->icon(), 0, 0, QFile::encodeName((*it)->desktopEntryPath()).data());
-      connect(action, SIGNAL(activated()), this, SLOT(slotOpenWithApplication()));
-      action->plug(m_openWithMenu);
-      m_openWithActions.append(action);
+      KTrader::OfferList::Iterator it;
+      for (it = offers.begin(); it != offers.end(); ++it)
+      {
+        KAction *action = new KAction((*it)->name(), (*it)->icon(), 0, 0, QFile::encodeName((*it)->desktopEntryPath()).data());
+        connect(action, SIGNAL(activated()), this, SLOT(slotOpenWithApplication()));
+        action->plug(m_openWithMenu);
+        m_openWithActions.append(action);
+      }
+      m_openWithMenu->insertSeparator();
     }
-    m_openWithMenu->insertSeparator();
+    if (plugins.count() > 0)
+    {
+      m_openWithMenu->insertTitle(i18n("Plugins"));
+      QDictIterator<QuantaPlugin> it2(plugins);
+      for(;it2.current();++it2)
+      {
+        int id = m_openWithMenu->insertItem(KGlobal::iconLoader()->loadIconSet(it2.current()->icon(),KIcon::Small), it2.current()->name());
+        m_pluginIds[id] = it2.current();
+      }
+      connect(m_openWithMenu, SIGNAL(activated(int)), SLOT(slotOpenWithActivated(int)));    
+      m_openWithMenu->insertSeparator();
+    }
     m_openWithMenu->insertItem(i18n("&Other..."), this, SLOT(slotOpenWith()));
     m_openWithMenuId = menu->insertItem(i18n("Open &With"), m_openWithMenu, -1, position);
   } else

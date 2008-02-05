@@ -20,4 +20,5 @@ AM_CPPFLAGS = -I$(top_srcdir)/quanta/utility \
 	-I$(top_srcdir)/lib \
 	-I$(top_builddir)/quanta/dialogs/tagdialogs \
 	-I$(top_builddir)/quanta/components/csseditor \
+	-I$(top_srcdir)/quanta/plugins \
 	$(KMDI_INCLUDES) $(CVSSERVICE_INCLUDE) $(LIBXML_CFLAGS) $(LIBXSLT_CFLAGS) $(all_includes)
