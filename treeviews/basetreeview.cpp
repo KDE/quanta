@@ -569,12 +569,15 @@ void BaseTreeView::slotOpenWithActivated(int id)
   {
     QuantaPlugin *plugin = m_pluginIds[id];
     plugin->unload(true);
-    plugin->load();
-    int input = plugin->input();
-    plugin->setInput(-1); //disable input
-    plugin->run();
-    plugin->part()->openURL(currentURL());
-    plugin->setInput(input);
+    if (plugin->load())
+    {
+      int input = plugin->input();
+      plugin->setInput(-1); //disable input
+      plugin->run();
+      if (plugin->part())
+        plugin->part()->openURL(currentURL());
+      plugin->setInput(input);
+    }
   }
 }
 
