@@ -145,8 +145,8 @@ K3FileTreeViewItem* TemplatesTreeBranch::createTreeViewItem(K3FileTreeViewItem *
 
 
 
-TemplatesTreeView::TemplatesTreeView(TemplatesTreePart *plugin)
-  : BaseTreeView(plugin, 0), m_projectDir(0), m_part(plugin)
+TemplatesTreeView::TemplatesTreeView(TemplatesTreePart *plugin, QWidget *parent)
+  : BaseTreeView(plugin, parent), m_projectDir(0), m_part(plugin)
 {
   typeToi18n["text/all"] = i18n("Text Snippet");
   typeToi18n["file/all"] = i18n("Binary File");

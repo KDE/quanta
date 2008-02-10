@@ -62,7 +62,7 @@ class TemplatesTreeViewFactory: public KDevelop::IToolViewFactory
     {}
     virtual QWidget* create( QWidget *parent = 0 )
     {
-      TemplatesTreeView *widget = new TemplatesTreeView(m_part);
+      TemplatesTreeView *widget = new TemplatesTreeView(m_part, parent);
       widget->setWindowTitle(i18n("Templates Tree"));
       widget->setObjectName("TemplatesTreeWidget");
       widget->setWhatsThis(i18n("Working with templates"));

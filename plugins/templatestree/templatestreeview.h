@@ -50,7 +50,7 @@ class TemplatesTreeView : public BaseTreeView  {
 
 public:
 
-  TemplatesTreeView(TemplatesTreePart *plugin);
+  TemplatesTreeView(TemplatesTreePart *plugin, QWidget *parent);
 
   ~TemplatesTreeView();
 
