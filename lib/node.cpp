@@ -94,6 +94,11 @@ void Node::deleteNode(GroupStorage *groupStorage)
 {
   if (!this)
     return;
+  if (nodes.contains(this) == 0)
+  {     
+    kdError(24000) << "No node with this address " << this << " was allocated!" << endl; 
+    return;
+  }
   m_groupStorage = groupStorage;
   if (groupStorage)
   {
