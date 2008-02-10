@@ -321,10 +321,10 @@ void QuantaCorePart::slotClosedFile(KDevelop::IDocument* document)
   QuantaDoc * doc = m_documents.value(document->url().url());
   if (doc)
   {
-    delete doc;
     m_documents.remove(document->url().url());
     if (doc == m_activeQuantaDoc)
       emit finishedParsing(0); // notify that current doc was closed
+    delete doc;    
   }
 }
 
