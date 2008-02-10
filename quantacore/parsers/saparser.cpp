@@ -774,6 +774,7 @@ Node *SAParser::parsingDone()
   {
     if (s_fullParse)
     {
+       //FIXME: for some reason this crashes... Now it leaks. 
         m_childToDelete->deleteNode(m_base->groupStorage);
         m_currentNode = m_lastParsedNode->nextSibling();
         if (m_currentNode)
