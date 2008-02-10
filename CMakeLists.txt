@@ -1,6 +1,7 @@
 
 set(QUANTA_DATA_INSTALL_DIR ${DATA_INSTALL_DIR}/quanta CACHE STRING "The Quanta data dir")
 project(quanta)
+add_definitions ( -DKDE_DEFAULT_DEBUG_AREA=24000 )
 
 
 add_subdirectory(lib)

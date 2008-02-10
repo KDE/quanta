@@ -1,16 +1,16 @@
 <?xml version = '1.0'?>
 <kdevelop>
   <general>
+    <projectmanagement>KDevCustomProject</projectmanagement>
+    <projectdirectory>/data/development/sources/kde-trunk/kdewebdev</projectdirectory>
+    <absoluteprojectpath>true</absoluteprojectpath>
     <author>Andras Mantia</author>
     <email>amantia@kde.org</email>
     <version>$VERSION$</version>
-    <projectmanagement>KDevCustomProject</projectmanagement>
     <primarylanguage>C++</primarylanguage>
     <ignoreparts>
       <part>kdevkonsoleview</part>
     </ignoreparts>
-    <projectdirectory>/data/development/sources/kde-trunk/kdewebdev/quanta</projectdirectory>
-    <absoluteprojectpath>true</absoluteprojectpath>
     <secondaryLanguages>
       <language>C</language>
     </secondaryLanguages>
@@ -20,7 +20,7 @@
     <projectname>quanta</projectname>
   </general>
   <kdevcustomproject>
-    <filelistdirectory>/home/andris/development/sources/kde-trunk/kdewebdev/quanta</filelistdirectory>
+    <filelistdirectory>/data/development/sources/kde-trunk/kdewebdev/quanta</filelistdirectory>
     <run>
       <mainprogram>/data/development/build/kde-trunk/kdewebdev/quanta/src/quanta</mainprogram>
       <directoryradio>build</directoryradio>
@@ -28,19 +28,7 @@
       <programargs/>
       <terminal>false</terminal>
       <autocompile>true</autocompile>
-      <envvars>
-        <envvar value="/opt/kde4" name="KDEDIR" />
-        <envvar value="/opt/kde4" name="KDEDIRS" />
-        <envvar value="/home/andris/.kde4" name="KDEHOME" />
-        <envvar value="/tmp/andris-kde4" name="KDETMP" />
-        <envvar value="/var/tmp/andris-kde4" name="KDEVARTMP" />
-        <envvar value="/opt/kde4/lib:/opt/qt4/lib:$LD_LIBRARY_PATH" name="LD_LIBRARY_PATH" />
-        <envvar value="/opt/kde4/bin:/opt/qt4/bin:$PATH" name="PATH" />
-        <envvar value="/opt/qt4" name="QTDIR" />
-        <envvar value="/opt/kde4/lib/kde4/plugins" name="QT_PLUGIN_PATH" />
-        <envvar value=" " name="XDG_CONFIG_DIRS" />
-        <envvar value=" " name="XDG_DATA_DIRS" />
-      </envvars>
+      <envvars/>
       <globaldebugarguments/>
       <globalcwd>/data/development/build/kde-trunk/kdewebdev</globalcwd>
       <useglobalprogram>false</useglobalprogram>
@@ -49,11 +37,11 @@
     </run>
     <build>
       <buildtool>make</buildtool>
-      <builddir>/data/development/build/kde-trunk/kdewebdev</builddir>
+      <builddir>/data/development/build/kde-trunk/kdewebdev/quanta</builddir>
     </build>
     <make>
       <abortonerror>true</abortonerror>
-      <numberofjobs>1</numberofjobs>
+      <numberofjobs>2</numberofjobs>
       <dontact>false</dontact>
       <makebin/>
       <selectedenvironment>default</selectedenvironment>
@@ -70,6 +58,9 @@
       <makeoptions/>
     </make>
     <general>
+      <projectmanagement>KDevCustomProject</projectmanagement>
+      <projectdirectory>/data/development/sources/kde-trunk/kdewebdev</projectdirectory>
+      <absoluteprojectpath>true</absoluteprojectpath>
       <activedir>plugins/project/projectfilemanager</activedir>
     </general>
     <filetypes>
@@ -102,16 +93,16 @@
   </kdevcustomproject>
   <kdevfilecreate>
     <filetypes>
-      <type icon="source_cpp" ext="cpp" create="template" name="C++ Source" >
+      <type icon="source_cpp" ext="cpp" name="C++ Source" create="template" >
         <descr>A new empty C++ file.</descr>
       </type>
-      <type icon="source_h" ext="h" create="template" name="C/C++ Header" >
+      <type icon="source_h" ext="h" name="C/C++ Header" create="template" >
         <descr>A new empty header file for C or C++.</descr>
       </type>
-      <type icon="source_cpp" ext="cpp" create="template" name="C++ Source" >
+      <type icon="source_cpp" ext="cpp" name="C++ Source" create="template" >
         <descr>A new empty C++ file.</descr>
       </type>
-      <type icon="source_f" ext="for" create="template" name="Preprocessed Fortran" >
+      <type icon="source_f" ext="for" name="Preprocessed Fortran" create="template" >
         <descr>A new empty preprocessed Fortran file.</descr>
       </type>
     </filetypes>
@@ -167,6 +158,7 @@
       <resolveIncludePathsUsingMakeExperimental>false</resolveIncludePathsUsingMakeExperimental>
     </codecompletion>
     <references>
+      <pcs>KDELibs4</pcs>
       <pcs>Qt4</pcs>
     </references>
     <qt>
@@ -209,6 +201,9 @@
   </kdevfileview>
   <kdevdebugger>
     <general>
+      <projectmanagement>KDevCustomProject</projectmanagement>
+      <projectdirectory>/data/development/sources/kde-trunk/kdewebdev</projectdirectory>
+      <absoluteprojectpath>true</absoluteprojectpath>
       <programargs/>
       <gdbpath/>
       <dbgshell/>
@@ -218,6 +213,7 @@
       <breakonloadinglibs>true</breakonloadinglibs>
       <separatetty>false</separatetty>
       <floatingtoolbar>false</floatingtoolbar>
+      <raiseGDBOnStart>false</raiseGDBOnStart>
     </general>
     <display>
       <staticmembers>false</staticmembers>
