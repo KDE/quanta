@@ -40,6 +40,9 @@
   </Menu>
   <Menu name="view">
     <text>&amp;View</text>
+    <Action name="add_toolview"/>
+    <Action name="remove_view"/>
+    <Action name="user_interface"/>
     <DefineGroup name="history_operations"/>
     <Action name="history_back"/>
     <Action name="history_forward"/>
@@ -119,6 +122,8 @@
     <Action name="settings_configure_editors" />
     <Action name="settings_configure" />
     <DefineGroup name="configure_merge" />
+    <Separator />
+    <Action name="project_config_menu" />
   </Menu>
   <Menu name="help" append="about_merge">
     <text>&amp;Help</text>
