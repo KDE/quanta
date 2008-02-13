@@ -717,6 +717,10 @@ void QuantaDebuggerDBGp::showConfig(QDomNode node)
     {
       m_localBasedir = set.lineLocalBasedir->text();
       m_serverBasedir = set.lineServerBasedir->text();
+      if (!m_localBasedir.endsWith("/"))
+        m_localBasedir.append('/');
+      if (!m_serverBasedir.endsWith("/"))
+        m_serverBasedir.append('/');
     }
 
     el = node.namedItem("localbasedir").toElement();

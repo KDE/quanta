@@ -3,6 +3,7 @@ This files contains the changes since Quanta 2.0 until the current 3.5.x series.
 Version 3.5.9:
  - bugfixes:
       - fix crashes when using XDebug
+      - fix problem with not stopping on breakpoints when using XDebug
       - do not keep an empty, Untitled document opened when opening new files [#151682]
       - fix crash when closing a plugin and no other document is opened [#156728]
       - insert literal character entities if possible [#129520]
