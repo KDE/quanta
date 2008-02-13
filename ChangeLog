@@ -6,6 +6,10 @@ Version 3.5.9:
       - do not keep an empty, Untitled document opened when opening new files [#151682]
       - fix crash when closing a plugin and no other document is opened [#156728]
       - insert literal character entities if possible [#129520]
+      - make HTML forms work in the internal preview 
+      - fix deadlock in CSS editor when the propery contains ":" [#153221]
+- improvements:
+      - list plugins in the Open With... menu.
 
 Version 3.5.8 (Release date: 07-10-2006)
  - bugfixes:
@@ -17,8 +21,6 @@ Version 3.5.8 (Release date: 07-10-2006)
       - make the parser as fast as it was in 3.5.6 and before
       - fix help button in the New Project wizard [#145324]
       - do not add the same entry over and over to the completion list
-- improvements:
-      - list plugins in the Open With... menu.
 
 Version 3.5.7 (Release date: xx-xx-2006; Started 06-02-2006)
  - bugfixes:

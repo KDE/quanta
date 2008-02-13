@@ -264,7 +264,7 @@ void CSSEditor::initialize(){
 
   for ( QStringList::Iterator it = props.begin(); it != props.end(); ++it ) {
        const QString propertyName((*it).section(":",0,0).stripWhiteSpace());
-       const QString propertyValue((*it).section(":",1,1));
+       const QString propertyValue((*it).section(":",1));
 
       if( ShorthandFormer::SHFormList().contains(propertyName)==0 ) {
          temp+= propertyName + " : " + propertyValue +";\n\t";
