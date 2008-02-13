@@ -597,7 +597,7 @@ bool DebuggerManager::setActiveLine (const QString& file, int line )
   m_currentLine = line;
 
   // No new current position
-  if(filename.isEmpty())
+  if(filename.isEmpty() || quantaApp->previewVisible())
     return true;
 
   // Find new position in editor

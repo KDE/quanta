@@ -171,6 +171,7 @@ public:
   void reparse(bool force);
 
   bool structTreeVisible() const;
+  bool previewVisible() const {return m_previewVisible;}
 
   //return the old Cursor position
   void oldCursorPos(uint &line, uint &col) {line = oldCursorLine; col = oldCursorCol;}

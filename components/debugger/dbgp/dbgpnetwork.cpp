@@ -91,9 +91,11 @@ void DBGpNetwork::sessionEnd()
   if(m_socket)
   {
     m_socket->flush();
+    disconnect(m_socket, SIGNAL(closed()), this, SLOT(slotConnectionClosed()));
     if (m_socket)
       m_socket->close();
     delete m_socket;
+    m_socket = 0L;
   }
 
   // Close the server
