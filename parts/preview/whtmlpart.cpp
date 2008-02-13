@@ -57,6 +57,8 @@ WHTMLPart::WHTMLPart(QWidget *parentWidget, const char *widgetName, bool enableV
     
     connect(this, SIGNAL(popupMenu(const QString&, const QPoint&)), SLOT(popupMenu(const QString&, const QPoint&)));
    }
+   connect(browserExtension(), SIGNAL(openURLRequest (const KURL &, const KParts::URLArgs &)), this, SLOT(openURL(const KURL&)));
+
 //   setCharset( konqConfig.readEntry("DefaultEncoding") );
 //   setEncoding( konqConfig.readEntry("DefaultEncoding") );
 //   setStandardFont( konqConfig.readEntry("StandardFont") );
