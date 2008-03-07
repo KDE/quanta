@@ -127,6 +127,8 @@ KUrl::List LocalImportWizardPage::projectFiles()
 void LocalImportWizardPage::slotInsertFiles()
 {
   KUrl::List list = projectFiles();
+  if (list.isEmpty())
+      return;
   insertURLs(list.first().directory(), list);
 }
 
