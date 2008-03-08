@@ -28,6 +28,10 @@ public:
     virtual QString defaultProfile();
     
     virtual KDevelop::AreaParams defaultArea();
+
+    virtual QString projectFileExtension();
+
+    virtual QString projectFileDescription();
     
 protected:
     KDevQuantaExtension();

@@ -98,3 +98,14 @@ KDevelop::AreaParams KDevQuantaExtension::defaultArea()
   KDevelop::AreaParams params = {"code", i18n("Code")};
   return params;
 }
+
+QString KDevQuantaExtension::projectFileExtension()
+{
+    return i18n("*.kdev4");
+}
+
+QString KDevQuantaExtension::projectFileDescription()
+{
+    return i18n("KDevelop4 Project Files");
+}
+
