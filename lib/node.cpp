@@ -46,7 +46,7 @@ Node::Node(Node *parent)
     nodes.append(this);
   else
   {
-    kError(24000) << "A node with this address " << this << " already exists!" << endl; 
+    kError(24000) << "A node with this address " << this << " already exists!"; 
   }
 }
 
@@ -55,7 +55,7 @@ Node::~Node()
 {
   if (nodes.contains(this) == 0)
   {     
-    kError(24000) << "No node with this address " << this << " was allocated!" << endl; 
+    kError(24000) << "No node with this address " << this << " was allocated!"; 
     return;
   }
  // kDebug(24000) << "Node destructor " << this << tag->name;
@@ -96,7 +96,7 @@ void Node::deleteNode(GroupStorage *groupStorage)
     return;
   if (nodes.contains(this) == 0)
   {     
-    kdError(24000) << "No node with this address " << this << " was allocated!" << endl; 
+    kError(24000) << "No node with this address " << this << " was allocated!"; 
     return;
   }
   m_groupStorage = groupStorage;
@@ -484,14 +484,14 @@ void Node::coutTree(Node *node, int indent)
     else
       output+= node->tag->tagStr().replace('\n'," ");
     kDebug(24000) << output <<" (" << node->tag->type() << ") at pos " <<
-            bLine << ":" << bCol << " - " << eLine << ":" << eCol << " This: "<< node << " Parent: " << node->parent << " Prev: " << node->prev << " Next: " << node->next << " Child: " << node->child << endl;
+            bLine << ":" << bCol << " - " << eLine << ":" << eCol << " This: "<< node << " Parent: " << node->parent << " Prev: " << node->prev << " Next: " << node->next << " Child: " << node->child;
 /*           for(j = 0; j < node->tag->attrCount(); j++)
             {
                     kDebug(24000)<< " attr" << j << " " <<
                             node->tag->getAttribute(j).nameLine << ":" <<
                             node->tag->getAttribute(j).nameCol << " - " <<
                             node->tag->getAttribute(j).valueLine << ":" <<
-                            node->tag->getAttribute(j).valueCol << endl;
+                            node->tag->getAttribute(j).valueCol;
             }
 */
     if (node->child)

@@ -875,7 +875,7 @@ KUrl UserToolbarsPart::saveToolbarToFile(const QString& toolbarName, const KUrl&
   QString error;
   int el, ec;
   if (!dom->setContent(s, &error, &el, &ec))
-      kError(24000) << QString("Error %1 at (%2, %3)").arg(error).arg(el).arg(ec)<<endl;
+      kError(24000) << QString("Error %1 at (%2, %3)").arg(error).arg(el).arg(ec);
   p_toolbar->dom = dom;
 
   QTextStream bufferStr(&buffer);
