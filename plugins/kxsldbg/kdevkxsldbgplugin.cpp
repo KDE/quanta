@@ -885,7 +885,8 @@ void  KDevKXSLDbgPlugin::breakpointItem(QString fileName, int lineNumber ,
             }
         }
     }else{
-        fetchURL(fileName);
+        KUrl url(fileName);
+        fetchURL(url);
         document = KDevelop::ICore::self()->documentController()->documentForUrl(url);
         if (document){
             iface = dynamic_cast<MarkInterface*>(document->textDocument());
