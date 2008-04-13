@@ -1,0 +1,17 @@
+13 Ap[ril 2008
+- bugs/bug fixes
+        - integrate to this project fix for bug 160765. Not that latin1 files name are not
+          supported.
+11th April 2008
+- improvements
+	- initial version of KDevelop/Quanta plugin for KXSLDbg
+
+- bugs/bug fixes
+	- Quanta DTD parsing stalls when kxsldbg causes a file like testdoc.xml to open
+
+- todo
+	- complete support for configuration settings
+	- ensure that KXSLDbg translation are loaded 
+	- maybe move the breakpoint dialog into a docked window in Quanta
+	- look at building all possible sources into one or more libraries to avoiding
+		beinging compiled multiple times (for KXSLDbg, xsldbg and this plugin)

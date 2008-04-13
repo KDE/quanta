@@ -1,0 +1,42 @@
+[Desktop Entry]
+Encoding=UTF-8
+Icon=kxsldbg
+Type=Service
+ServiceTypes=KCModule
+Name=KXSLDbg Settings
+Name[x-test]=xxKXSLDbg Settingsxx
+GenericName=KXSLDbg Plugin
+GenericName[fr]=
+GenericName[ga]=
+GenericName[pt]=
+GenericName[pt_BR]=
+GenericName[tr]=
+GenericName[uk]=
+GenericName[x-test]=xxKXSLDbg Settingsxx
+GenericName[zh_TW]=
+Comment=Configure KXSLDbg Settings
+Comment[fr]=
+Comment[ga]=
+Comment[pt]=
+Comment[pt_BR]=
+Comment[tr]=
+Comment[uk]=
+Comment[x-test]=xxConfigure KXSLDbg Settingsxx
+Comment[zh_TW]=
+
+X-KDevelop-Plugin-Version=1
+X-KDevelop-Plugin-BugsEmailAddress=keith@kdewebdev.org
+X-KDevelop-Plugin-Copyright=(C) by Keith Isdale
+X-KDevelop-Plugin-License=GPL
+
+
+X-KDevelop-Args=
+
+X-KDE-PluginInfo-Name=KCmKDevKXSLDbg
+X-KDE-ModuleType=Library
+X-KDE-Library=kcm_kdev_kxsldbg
+X-KDE-ParentApp=kdevplatformproject
+X-KDE-ParentComponents=kdevplatformproject
+X-KDE-CfgDlgHierarchy=GENERAL
+X-KDevelop-Category=Global
+X-KDevelop-Version=4
