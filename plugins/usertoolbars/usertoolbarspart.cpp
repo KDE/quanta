@@ -186,20 +186,22 @@ void UserToolbarsPart::init()
   KMenu *actionsMenu = static_cast<KMenu*>(factory()->container("actions", this));
 
   if (actionsMenu)
-    actionsMenu->setVisible(false);
+  {
+    actionsMenu->menuAction()->setVisible(false);
+  }
 
-/* I keep this for reference for the moment. Jens
-  KMenuBar *menuBar = mainWindow()->main()->menuBar();
+// I keep this for reference for the moment. Jens
+  KMenuBar *menuBar = KDevelop::Core::self()->uiController()->activeMainWindow()->menuBar();
   for (int i = 0; i < menuBar->count(); i++)
   {
     QMenuItem *it = menuBar->findItem(menuBar->idAt(i));
     if (it->menu() == actionsMenu)
     {
       m_actionsMenuId = menuBar->idAt(i);
-      mainWindow()->main()->menuBar()->setItemVisible(m_actionsMenuId, false);
+      menuBar->setItemVisible(m_actionsMenuId, false);
       break;
     }
-  }*/
+  }
 }
 
 void UserToolbarsPart::slotAdjustActions()
@@ -1030,7 +1032,6 @@ void UserToolbarsPart::slotRenameToolbar(const QString& id)
       }
       KXMLGUIFactory::saveConfigFile(p_toolbar->guiClient->domDocument(),
           p_toolbar->guiClient->xmlFile(), p_toolbar->guiClient->componentData());
-      QMenu *actionsMenu = static_cast<QMenu*>(factory()->container("actions", this));
       if (m_separateToolbars)
       {
         mw->guiFactory()->addClient(p_toolbar->guiClient);
@@ -1239,7 +1240,8 @@ void UserToolbarsPart::slotToolbarLoaded(const QString &id)
       }
     }
   }
-/*  if (m_actionsMenuId != -1)
+  actionsMenu->menuAction()->setVisible(true);
+  /*  if (m_actionsMenuId != -1)
      KDevelop::Core::self()->uiController()->activeMainWindow()->menuBar()->setItemVisible(m_actionsMenuId, true);*/
   p_toolbar->menu = menu;
 }
@@ -1253,9 +1255,9 @@ void UserToolbarsPart::slotToolbarRemoved(const QString &id)
     p_toolbar->menu = 0L;
   }
   QMenu *actionsMenu = static_cast<QMenu*>(factory()->container("actions", this));
-  if (actionsMenu->actions().count() == 0)
+  if (m_toolbarList.isEmpty())
   {
-    actionsMenu->setVisible(false);
+    actionsMenu->menuAction()->setVisible(false);
   }
 }
 
