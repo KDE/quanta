@@ -1037,17 +1037,12 @@ void UserToolbarsPart::slotRenameToolbar(const QString& id)
           if (tb->id(i) == id)
           {
             tb->setTabText(tb->indexOf(tb->page(id)->parentWidget()), i18n(p_toolbar->name.toUtf8()));
-            actionsMenu->changeItem(actionsMenu->idAt(i), i18n(p_toolbar->name.toUtf8()));
-            if (m_separateToolbars)
-            {
-              mw->guiFactory()->removeClient(p_toolbar->guiClient);
-              mw->guiFactory()->addClient(p_toolbar->guiClient);
-              dynamic_cast<KToolBar*>(tb->page(id)->parentWidget())->setWindowTitle(i18n(p_toolbar->name.toUtf8()));
-            }
             break;
           }
         }
       }
+      if (p_toolbar->menu)
+        p_toolbar->menu->setTitle(i18n(p_toolbar->name.toUtf8()));
       KXMLGUIFactory::readConfigFile(p_toolbar->guiClient->xmlFile(), p_toolbar->guiClient->componentData());
       m_toolbarList.insert(id, p_toolbar);
       kDebug(24000) << "p_toolbar->guiClient after rename:" <<  p_toolbar->guiClient->domDocument().toString();
