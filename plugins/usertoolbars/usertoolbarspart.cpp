@@ -204,7 +204,7 @@ void UserToolbarsPart::init()
 
 void UserToolbarsPart::slotAdjustActions()
 {
-  bool toolbarsLoaded = (ToolbarTabWidget::ref()->count() > 0);
+  bool toolbarsLoaded = !m_toolbarList.isEmpty();
   bool projectLoaded = (KDevelop::Core::self()->projectController()->projectAt(0) != 0L);
   KActionCollection *ac = actionCollection();
   ac->action("toolbars_save_local")->setEnabled(toolbarsLoaded);
@@ -708,14 +708,26 @@ bool UserToolbarsPart::slotRemoveToolbar(const QString& id)
 
 QString UserToolbarsPart::selectToolbarDialog(const QString &caption)
 {
-  ToolbarTabWidget *tb = ToolbarTabWidget::ref();
-
+  int current = 0;
   QMap<QString, QString> tabData;
-  for (int i = 0; i < tb->count(); ++i)
+  if (m_separateToolbars)
   {
-    tabData.insert(tb->tabText(i), tb->id(i));
+    QHashIterator<QString, ToolbarEntry*> it(m_toolbarList);
+    while (it.hasNext()) 
+    {
+      it.next();
+      tabData.insert(m_toolbarList.value(it.key())->name,it.key());
+    }
+  } else
+  {
+    ToolbarTabWidget *tb = ToolbarTabWidget::ref();
+  
+    for (int i = 0; i < tb->count(); ++i)
+    {
+      tabData.insert(tb->tabText(i), tb->id(i));
+    }
+    current = tabData.keys().indexOf(tb->tabText(tb->currentIndex()));
   }
-  int current = tabData.keys().indexOf(tb->tabText(tb->currentIndex()));
   bool ok = false;
   QString res = KInputDialog::getItem(caption, i18n( "Please select a toolbar:" ),
                       tabData.keys(), current, false, &ok, KDevelop::Core::self()->uiController()->activeMainWindow() );
@@ -1011,7 +1023,6 @@ void UserToolbarsPart::slotRenameToolbar(const QString& id)
       }
       KXMLGUIFactory::saveConfigFile(p_toolbar->guiClient->domDocument(),
           p_toolbar->guiClient->xmlFile(), p_toolbar->guiClient->componentData());
-      ToolbarTabWidget *tb = ToolbarTabWidget::ref();
       QMenu *actionsMenu = static_cast<QMenu*>(factory()->container("actions", this));
       if (m_separateToolbars)
       {
@@ -1020,6 +1031,7 @@ void UserToolbarsPart::slotRenameToolbar(const QString& id)
           toolbar->setWindowTitle(i18n(p_toolbar->name.toUtf8()));
       } else
       {
+        ToolbarTabWidget *tb = ToolbarTabWidget::ref();
         for (int i = 0; i < tb->count(); i++)
         {
           if (tb->id(i) == id)
