@@ -634,7 +634,6 @@ bool UserToolbarsPart::slotRemoveToolbar(const QString& id)
                       break;
           }
         }
-
         //FIXME: no active project. What to use here?
       KDevelop::IProject *prj = KDevelop::Core::self()->projectController()->projectAt(0);
       switch (result)
@@ -645,7 +644,9 @@ bool UserToolbarsPart::slotRemoveToolbar(const QString& id)
                if (prj && p_toolbar->url.url().startsWith(prj->folder().path()))
                   local = false;
                 if (!saveToolbar(local, p_toolbar->id))
-                    return false;
+                {
+                  return false;
+                }
                 break;
              }
         case KMessageBox::Continue:
@@ -654,7 +655,9 @@ bool UserToolbarsPart::slotRemoveToolbar(const QString& id)
                 if (prj && p_toolbar->url.url().startsWith(prj->folder().path()))
                   local = false;
                 if (!saveToolbar(local, p_toolbar->id, p_toolbar->url))
-                    return false;
+                {
+                  return false;
+                }
                 break;
              }
         case KMessageBox::No:
@@ -910,7 +913,7 @@ KUrl UserToolbarsPart::saveToolbarToFile(const QString& toolbarName, const KUrl&
   tempFile->setPrefix(m_tmpDir);
   tempFile->open();
   m_tempFileList.append(tempFile);
-  tempFile->close();
+//   tempFile->close();
   KTar tar(tempFile->fileName(), "application/x-gzip");
   if (!tar.open(IO_WriteOnly))
       return KUrl();
@@ -1006,6 +1009,10 @@ void UserToolbarsPart::slotRenameToolbar(const QString& id)
     if (ok && newName != p_toolbar->name)
     {
       kDebug(24000) << "p_toolbar->guiClient before rename:" <<  p_toolbar->guiClient->domDocument().toString();
+      if (m_separateToolbars)
+      {
+        mw->guiFactory()->removeClient(p_toolbar->guiClient);
+      }
       m_toolbarList.take(id);
       p_toolbar->name = newName;
       QDomElement el = p_toolbar->guiClient->domDocument().firstChild().firstChild().toElement();
@@ -1026,6 +1033,7 @@ void UserToolbarsPart::slotRenameToolbar(const QString& id)
       QMenu *actionsMenu = static_cast<QMenu*>(factory()->container("actions", this));
       if (m_separateToolbars)
       {
+        mw->guiFactory()->addClient(p_toolbar->guiClient);
         KToolBar *toolbar = dynamic_cast<KToolBar*>(KDevelop::Core::self()->uiController()->activeMainWindow()->factory()->container(id,  p_toolbar->guiClient));
         if (toolbar)
           toolbar->setWindowTitle(i18n(p_toolbar->name.toUtf8()));
