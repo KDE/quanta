@@ -75,6 +75,8 @@
 #include <iprojectcontroller.h>
 #include <iuicontroller.h>
 
+#include <iostream>
+
 K_PLUGIN_FACTORY(UserToolbarsFactory, registerPlugin<UserToolbarsPart>();)
 K_EXPORT_PLUGIN(UserToolbarsFactory("kdevusertoolbars"))
 
@@ -488,6 +490,7 @@ void UserToolbarsPart::slotLoadToolbarFile(const KUrl& url)
         bool toggable = (el.attribute("toggable", "") == "true");
         UserAction *userAction = new UserAction(&el, this, toggable);
         m_userActions.append(userAction);
+        ac->addAction(actionName, userAction);
 
         //add the actions to every toolbar xmlguiclient, so these actions can be added
         //to any toolbar
@@ -497,12 +500,12 @@ void UserToolbarsPart::slotLoadToolbarFile(const KUrl& url)
         {
 
           it.next();
-          it.value()->guiClient->actionCollection()->addAction(QString("nametoolbar%1").arg(i),userAction);
+          it.value()->guiClient->actionCollection()->addAction(userAction->objectName(), userAction);
 	  i++;
         }
       } else
       {
-  //      kDebug(24000) << "The action " << actionName << " is already present!";
+        kDebug(24000) << "The action " << actionName << " is already present!";
         UserAction *userAction = dynamic_cast<UserAction*>(ac->action(actionName));
         if (userAction)
            userAction->setModified(true);
@@ -511,9 +514,13 @@ void UserToolbarsPart::slotLoadToolbarFile(const KUrl& url)
 
     //add all actions to the xmlguiclient of this toolbar, otherwise it will not be
     //possible to add other actions to this toolbar in the Configure Toolbar dialog
-    for (int i = 0 ; i < ac->actions().count(); i++)
-        toolbarGUI->actionCollection()->addAction(QString("name%1").arg(i),ac->actions().value(i));
-
+    QList<QAction*> actions = ac->actions();
+    for (int i = 0 ; i < actions.count(); i++)
+    {
+      QAction *action = actions.value(i);
+      kDebug(24000) << "Add the action " << action->objectName() << " to toolbar: " << name << toolbarId<< toolbarGUI << toolbarGUI->actionCollection();
+      toolbarGUI->actionCollection()->addAction(action->objectName(), action);
+    }
     m_tempFileList.append(tempFile);
     p_toolbar->guiClient = toolbarGUI;
     p_toolbar->name = name;
@@ -686,6 +693,7 @@ bool UserToolbarsPart::slotRemoveToolbar(const QString& id)
      }
      delete p_toolbar->dom;
      delete p_toolbar->guiClient;
+     delete p_toolbar->menu;
      m_toolbarList.remove(name);
     }
   }
@@ -1180,14 +1188,17 @@ void UserToolbarsPart::slotToolbarLoaded(const QString &id)
   ToolbarEntry *p_toolbar = m_toolbarList.value(id);
   if (!p_toolbar || !m_createActionsMenu)
     return;
+  QMenu *actionsMenu = static_cast<QMenu*>(factory()->container("actions", this));
   //Plug in the actions & build the menu
-  QMenu *menu = new QMenu;
+  QMenu *menu = new QMenu(actionsMenu);
   menu->setTitle(i18n(p_toolbar->name.toUtf8()));
   QAction *action;
   KActionCollection *ac = p_toolbar->guiClient->actionCollection();
   QDomNodeList nodeList = p_toolbar->guiClient->domDocument().elementsByTagName("Action");
+  kDebug(24000) << "Check toolbar " << p_toolbar->name << id << p_toolbar->guiClient << ac;
   for (int i = 0; i < nodeList.count(); i++)
   {
+    kDebug(24000) << "node name=" << nodeList.item(i).cloneNode().toElement().attribute("name");
     action = ac->action(nodeList.item(i).cloneNode().toElement().attribute("name") );
     if (action)
     {
@@ -1195,11 +1206,10 @@ void UserToolbarsPart::slotToolbarLoaded(const QString &id)
     }
   }
 
-  QMenu *actionsMenu = static_cast<QMenu*>(factory()->container("actions", this));
 
   actionsMenu->addMenu(menu);
   actionsMenu->setVisible(true);
-/*  if (m_actionsMenuId == -1)
+  if (m_actionsMenuId == -1)
   {
     KMenuBar *menuBar = KDevelop::Core::self()->uiController()->activeMainWindow()->menuBar();
     for (uint i = 0; i < menuBar->count(); i++)
@@ -1213,7 +1223,7 @@ void UserToolbarsPart::slotToolbarLoaded(const QString &id)
     }
   }
   if (m_actionsMenuId != -1)
-     KDevelop::Core::self()->uiController()->activeMainWindow()->menuBar()->setItemVisible(m_actionsMenuId, true);*/
+     KDevelop::Core::self()->uiController()->activeMainWindow()->menuBar()->setItemVisible(m_actionsMenuId, true);
   p_toolbar->menu = menu;
 }
 

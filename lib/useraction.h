@@ -21,7 +21,6 @@
 
 #include <qdom.h>
 #include <kaction.h>
-#include <ktoggleaction.h>
 
 
 namespace KDevelop 
@@ -41,7 +40,7 @@ class QTimer;
  *         Paulo Moura Guedes, moura@kdewebdev.org
  */
 
-class KDEVQUANTA_EXPORT UserAction : public KToggleAction
+class KDEVQUANTA_EXPORT UserAction : public KAction
 {
     Q_OBJECT
 

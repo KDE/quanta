@@ -79,7 +79,6 @@ QuantaDoc::QuantaDoc(KDevelop::IDocument *document, QuantaCorePart *qcore)
 //initial parsing
   
   //TODO: Enable the new parsing when you work on it!
-  /*
   //new parser 
   QuantaXmlInputSource *inputSource = new QuantaXmlInputSource(document->textDocument());
   ParserStatus *parser = new ParserStatus(inputSource->newLocator(), ParserManager::self()->xmlStateMachine());
@@ -88,9 +87,9 @@ QuantaDoc::QuantaDoc(KDevelop::IDocument *document, QuantaCorePart *qcore)
   parser->setLexicalHandler(builder);
   parser->setErrorHandler(builder);
   parser->parse(inputSource);
-  */
+  
   //old parser
-  parse();
+//   parse();
   m_parsingNeeded = false;
 //  Node::coutTree(m_parseResult.baseNode, 2);
   for (int i = 0; i < m_parseResult.dtepList.count(); i++)

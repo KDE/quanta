@@ -1,6 +1,6 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui version="1" name="quanta" >
-<MenuBar>
+<kpartgui version="2" name="quanta" >
+<MenuBar noMerge="1">
   <Menu name="file" noMerge="1"><text>&amp;File</text>
     <DefineGroup name="new_merge"/>
     <Separator/>
@@ -96,12 +96,28 @@
     <Merge/>
   </Menu>
   <Menu name="window">
-    <text>&amp;Window</text>
-    <Action name="split_h"/>
-    <Action name="split_v"/>
-    <Separator/>
-    <DefineGroup name="window_operations"/>
-    <Merge/>
+      <text>&amp;Window</text>
+      <Action name="new_window"/>
+      <Separator/>
+      <Action name="view_next_window"/>
+      <Action name="view_previous_window"/>
+      <Separator/>
+      <Action name="split_horizontal"/>
+      <Action name="split_vertical"/>
+      <DefineGroup name="window_operations"/>
+      <Separator/>
+      <Action name="show_left_dock"/>
+      <Action name="show_right_dock"/>
+      <Action name="show_top_dock"/>
+      <Action name="show_bottom_dock"/>
+      <Action name="hide_all_docks"/>
+      <Action name="anchor_current_dock"/>
+      <Action name="maximize_current_dock"/>
+      <Action name="select_next_dock"/>
+      <Action name="select_previous_dock"/>
+      <Action name="docks_submenu"/>
+      <Separator/>
+      <Merge/>
   </Menu>
   <Menu name="settings" noMerge="1">
     <text>&amp;Settings</text>

@@ -46,7 +46,7 @@ Node::Node(Node *parent)
     nodes.append(this);
   else
   {
-    kError(24000) << "A node with this address " << this << " already exists!"; 
+//     kError(24000) << "A node with this address " << this << " already exists!"; 
   }
 }
 
@@ -55,7 +55,7 @@ Node::~Node()
 {
   if (nodes.contains(this) == 0)
   {     
-    kError(24000) << "No node with this address " << this << " was allocated!"; 
+//     kError(24000) << "No node with this address " << this << " was allocated!"; 
     return;
   }
  // kDebug(24000) << "Node destructor " << this << tag->name;
@@ -96,7 +96,7 @@ void Node::deleteNode(GroupStorage *groupStorage)
     return;
   if (nodes.contains(this) == 0)
   {     
-    kError(24000) << "No node with this address " << this << " was allocated!"; 
+//     kError(24000) << "No node with this address " << this << " was allocated!"; 
     return;
   }
   m_groupStorage = groupStorage;

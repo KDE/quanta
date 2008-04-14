@@ -40,7 +40,7 @@ QWidget *ToolbarGUIBuilder::createContainer(QWidget *parent, int index, const QD
   if ( element.tagName().toLower() == "toolbar" && !tabname.isEmpty())
   {
     //avoid QToolBar warning in the log
-    QtMsgHandler oldHandler = qInstallMsgHandler(silenceQToolBar);
+//     QtMsgHandler oldHandler = qInstallMsgHandler(silenceQToolBar);
 
     //create the toolbar on the tabwidget
     QWidget *w = new QWidget(toolbarTab);
@@ -60,16 +60,14 @@ QWidget *ToolbarGUIBuilder::createContainer(QWidget *parent, int index, const QD
       tb->setGeometry(0,0, toolbarTab->width(), tb->iconSize().height() + 10);
       toolbarTab->setFixedHeight(toolbarTab->tabHeight() + tb->height() + 3);
     }
-/*
    kDebug(24000) << "tb->height() " << tb->height();
    kDebug(24000) << "toolbarTab->height() " << toolbarTab->height();
    kDebug(24000) << "toolbarTab->tabHeight() " << toolbarTab->tabHeight();
-*/
     toolbarTab->insertTab(tb, i18n(tabname.toUtf8()), idStr);
     toolbarTab->setCurrentWidget(w);
     if (toolbarTab->parentWidget()->parentWidget())
       toolbarTab->parentWidget()->parentWidget()->show();
-    qInstallMsgHandler(oldHandler);
+//     qInstallMsgHandler(oldHandler);
     tb->setSeparate(m_separateToolbars);
 
     if (m_separateToolbars)
