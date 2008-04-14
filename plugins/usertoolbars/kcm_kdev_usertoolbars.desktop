@@ -1,0 +1,15 @@
+[Desktop Entry]
+Encoding=UTF-8
+Icon=quanta
+Type=Service
+ServiceTypes=KCModule
+
+X-KDE-ModuleType=Library
+X-KDE-Library=kcm_kdev_usertoolbars
+X-KDE-FactoryName=kcm_kdev_usertoolbars
+X-KDE-ParentApp=kdevplatform
+X-KDE-ParentComponents=kdevplatform
+X-KDE-CfgDlgHierarchy=USERINTERFACE
+
+Name=User Toolbars setting
+Comment=Configure User Toolbars

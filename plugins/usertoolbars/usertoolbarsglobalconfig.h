@@ -15,21 +15,22 @@
 #ifndef USERTOOLBARS_GLOBAL_CONFIG_H
 #define USERTOOLBARS_GLOBAL_CONFIG_H
 
+#include <kcmodule.h>
+
 #include "ui_usertoolbarsglobalconfigbase.h"
 
-class UserToolbarsPart;
-
-class UserToolbarsGlobalConfig: public QWidget, public Ui::UserToolbarsGlobalConfigBase
+class UserToolbarsGlobalConfig: public KCModule
 {
     Q_OBJECT
 public:
-    explicit UserToolbarsGlobalConfig(UserToolbarsPart *part, QWidget *parent = 0);
+     explicit UserToolbarsGlobalConfig(QWidget *parent, const QVariantList &args = QVariantList() );
+    ~UserToolbarsGlobalConfig();
 
 public slots:
     void accept();
 
 private:
-    UserToolbarsPart *m_part;
+    Ui::UserToolbarsGlobalConfigBase *m_ui;
 };
 
 #endif

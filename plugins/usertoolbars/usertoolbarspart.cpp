@@ -267,7 +267,7 @@ void UserToolbarsPart::setupActions()
 void UserToolbarsPart::insertConfigWidget(const KDialog *dlg, QWidget *page, unsigned int pageNo)
 {
 // create configuraton dialogs here
-    switch (pageNo)
+/*    switch (pageNo)
     {
         case GLOBALDOC_OPTIONS:
         {
@@ -275,7 +275,7 @@ void UserToolbarsPart::insertConfigWidget(const KDialog *dlg, QWidget *page, uns
             connect(dlg, SIGNAL(okClicked()), w, SLOT(accept()));
             break;
         }
-    }
+    }*/
 }
 
 void UserToolbarsPart::contextMenu(KMenu *popup, const KDevelop::Context *context)

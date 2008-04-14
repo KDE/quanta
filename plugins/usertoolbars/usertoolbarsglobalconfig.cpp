@@ -15,22 +15,41 @@
 #include "usertoolbarsglobalconfig.h"
 #include "usertoolbarspart.h"
 
+#include <kglobal.h>
+#include <kconfiggroup.h>
+#include <kpluginfactory.h>
+
 //qt includes
 #include <QCheckBox>
 
-UserToolbarsGlobalConfig::UserToolbarsGlobalConfig(UserToolbarsPart *part, QWidget *parent)
-    : QWidget(parent), m_part(part)
+K_PLUGIN_FACTORY(UserToolbarsConfigFactory, registerPlugin<UserToolbarsGlobalConfig>(); )
+    
+K_EXPORT_PLUGIN(UserToolbarsConfigFactory("kcm_kdev_usertoolbars"))
+
+UserToolbarsGlobalConfig::UserToolbarsGlobalConfig(QWidget *parent, const QVariantList &args)
+  : KCModule( UserToolbarsConfigFactory::componentData(), parent, args )
 {
-  setupUi(this);
-  separateToolbars->setChecked(m_part->separateToolbars());
-  createActionsMenu->setChecked(m_part->createActionsMenu());
+  m_ui = new Ui::UserToolbarsGlobalConfigBase;
+  m_ui->setupUi(this);
+  KConfigGroup config( KGlobal::config(), "General" );
+  bool separateToolbars = config.readEntry("Separate toolbars", true);
+  bool createActionsMenu = config.readEntry("Create Actions menu", true);
+  m_ui->separateToolbars->setChecked(separateToolbars);
+  m_ui->createActionsMenu->setChecked(createActionsMenu);
+}
+
+UserToolbarsGlobalConfig::~UserToolbarsGlobalConfig()
+{
+  delete m_ui;
+  m_ui = 0L;
 }
 
 void UserToolbarsGlobalConfig::accept()
 {
-  m_part->setSeparateToolbars(separateToolbars->isChecked());
-  m_part->setCreateActionsMenu(createActionsMenu->isChecked());
-  m_part->saveConfig();
+  KConfigGroup config( KGlobal::config(), "General" );
+  config.writeEntry("Separate toolbars", m_ui->separateToolbars->isChecked());
+  config.writeEntry("Create Actions menu", (m_ui->createActionsMenu->isChecked()));
+  config.sync();
 }
 
 #include "usertoolbarsglobalconfig.moc"
