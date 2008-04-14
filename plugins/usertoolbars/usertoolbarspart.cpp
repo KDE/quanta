@@ -148,6 +148,8 @@ UserToolbarsPart::UserToolbarsPart(QObject *parent, const QVariantList &/*args*/
             this, SLOT(slotRemoveAction(const QString&, const QString&)));
     connect(toolbarTab, SIGNAL(editAction(const QString&)),
             this, SLOT(slotEditAction(const QString&)));
+    connect(this, SIGNAL(toolbarRemoved(const QString&)),
+            this, SLOT(slotToolbarRemoved(const QString&)));
 
 //let the ToolbarGUIBuilder handle the creation of the GUI for this plugin, so
 //creation of the main user toolbar is detected as well
