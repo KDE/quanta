@@ -179,7 +179,7 @@ UserToolbarsPart::~UserToolbarsPart()
 void UserToolbarsPart::init()
 {
   KConfigGroup config( UserToolbarsFactory::componentData().config(), "General" );
-  m_separateToolbars = config.readEntry("Separate toolbars", false);
+  m_separateToolbars = config.readEntry("Separate toolbars", true);
   m_createActionsMenu = config.readEntry("Create Actions menu", true);
   slotAdjustActions();
   ToolbarGUIBuilder::ref(KDevelop::Core::self()->uiController()->activeMainWindow())->setSeparateToolbars(m_separateToolbars);
@@ -327,9 +327,9 @@ void UserToolbarsPart::setSeparateToolbars(bool separate)
       p_toolbar = it.value();
       kDebug(24000) << "p_toolbar->guiClient in setSeparateToolbars:" <<  p_toolbar->guiClient->domDocument().toString();
       mw->guiFactory()->removeClient(p_toolbar->guiClient);
-/*      if (m_separateToolbars)
+     if (m_separateToolbars)
         p_toolbar->guiClient->setClientBuilder(mw->clientBuilder());
-      else*/
+      else
         p_toolbar->guiClient->setClientBuilder(ToolbarGUIBuilder::ref(mw));
       mw->guiFactory()->addClient(p_toolbar->guiClient);
     }
@@ -530,9 +530,11 @@ void UserToolbarsPart::slotLoadToolbarFile(const KUrl& url)
     p_toolbar->user = true; //TODO
     m_toolbarList.insert(toolbarId, p_toolbar);
 
-//     if (!m_separateToolbars)
-    toolbarGUI->setClientBuilder(ToolbarGUIBuilder::ref(KDevelop::Core::self()->uiController()->activeMainWindow()));
+    if (!m_separateToolbars)
+      toolbarGUI->setClientBuilder(ToolbarGUIBuilder::ref(KDevelop::Core::self()->uiController()->activeMainWindow()));
     KDevelop::Core::self()->uiController()->activeMainWindow()->guiFactory()->addClient(toolbarGUI);
+    if (m_separateToolbars)
+      slotToolbarLoaded(toolbarId);
 
     delete toolbarDom;
  }
@@ -965,7 +967,7 @@ void UserToolbarsPart::slotAddToolbar()
   p_toolbar->id = toolbarId;
   m_toolbarList.insert(toolbarId, p_toolbar);
 
-//   if (!m_separateToolbars)
+   if (!m_separateToolbars)
     toolbarGUI->setClientBuilder(ToolbarGUIBuilder::ref(KDevelop::Core::self()->uiController()->activeMainWindow()));
   KDevelop::Core::self()->uiController()->activeMainWindow()->guiFactory()->addClient(toolbarGUI);
   ToolbarTabWidget::ref()->setCurrentIndex(ToolbarTabWidget::ref()->count()-1);
@@ -1011,12 +1013,12 @@ void UserToolbarsPart::slotRenameToolbar(const QString& id)
           p_toolbar->guiClient->xmlFile(), p_toolbar->guiClient->componentData());
       ToolbarTabWidget *tb = ToolbarTabWidget::ref();
       QMenu *actionsMenu = static_cast<QMenu*>(factory()->container("actions", this));
-/*      if (m_separateToolbars)
+      if (m_separateToolbars)
       {
         KToolBar *toolbar = dynamic_cast<KToolBar*>(KDevelop::Core::self()->uiController()->activeMainWindow()->factory()->container(id,  p_toolbar->guiClient));
         if (toolbar)
-          toolbar->setTitle(i18n(p_toolbar->name.toUtf8()));
-      }// else*/
+          toolbar->setWindowTitle(i18n(p_toolbar->name.toUtf8()));
+      } else
       {
         for (int i = 0; i < tb->count(); i++)
         {
@@ -1024,20 +1026,19 @@ void UserToolbarsPart::slotRenameToolbar(const QString& id)
           {
             tb->setTabText(tb->indexOf(tb->page(id)->parentWidget()), i18n(p_toolbar->name.toUtf8()));
             actionsMenu->changeItem(actionsMenu->idAt(i), i18n(p_toolbar->name.toUtf8()));
-/*            if (m_separateToolbars)
+            if (m_separateToolbars)
             {
               mw->guiFactory()->removeClient(p_toolbar->guiClient);
               mw->guiFactory()->addClient(p_toolbar->guiClient);
-             // dynamic_cast<KToolBar*>(tb->page(id)->parentWidget())->setTitle(i18n(p_toolbar->name.toUtf8()));
-            }*/
+              dynamic_cast<KToolBar*>(tb->page(id)->parentWidget())->setWindowTitle(i18n(p_toolbar->name.toUtf8()));
+            }
             break;
           }
         }
       }
-      KXMLGUIFactory::readConfigFile(
-          p_toolbar->guiClient->xmlFile(), p_toolbar->guiClient->componentData());
+      KXMLGUIFactory::readConfigFile(p_toolbar->guiClient->xmlFile(), p_toolbar->guiClient->componentData());
       m_toolbarList.insert(id, p_toolbar);
-kDebug(24000) << "p_toolbar->guiClient after rename:" <<  p_toolbar->guiClient->domDocument().toString();
+      kDebug(24000) << "p_toolbar->guiClient after rename:" <<  p_toolbar->guiClient->domDocument().toString();
 
     }
   }
@@ -1189,8 +1190,10 @@ void UserToolbarsPart::slotToolbarLoaded(const QString &id)
   if (!p_toolbar || !m_createActionsMenu)
     return;
   QMenu *actionsMenu = static_cast<QMenu*>(factory()->container("actions", this));
+//   actionsMenu->show();
   //Plug in the actions & build the menu
   QMenu *menu = new QMenu(actionsMenu);
+  menu->hide();
   menu->setTitle(i18n(p_toolbar->name.toUtf8()));
   QAction *action;
   KActionCollection *ac = p_toolbar->guiClient->actionCollection();
@@ -1208,7 +1211,6 @@ void UserToolbarsPart::slotToolbarLoaded(const QString &id)
 
 
   actionsMenu->addMenu(menu);
-  actionsMenu->setVisible(true);
   if (m_actionsMenuId == -1)
   {
     KMenuBar *menuBar = KDevelop::Core::self()->uiController()->activeMainWindow()->menuBar();
@@ -1222,8 +1224,8 @@ void UserToolbarsPart::slotToolbarLoaded(const QString &id)
       }
     }
   }
-  if (m_actionsMenuId != -1)
-     KDevelop::Core::self()->uiController()->activeMainWindow()->menuBar()->setItemVisible(m_actionsMenuId, true);
+/*  if (m_actionsMenuId != -1)
+     KDevelop::Core::self()->uiController()->activeMainWindow()->menuBar()->setItemVisible(m_actionsMenuId, true);*/
   p_toolbar->menu = menu;
 }
 
