@@ -967,20 +967,20 @@ void SAParser::setParsingEnabled(bool enabled)
   {
     m_parseOneLineTimer->stop();
     m_parseInDetailTimer->stop();
-    QList<SAGroupParser*>::Iterator end(m_groupParsers.end());
-    for (QList<SAGroupParser*>::Iterator it = m_groupParsers.begin(); it != end; ++it)
+    while(m_groupParsers.count())
     {
-      (*it)->m_parseForGroupTimer->stop();
-      delete (*it);
+      SAGroupParser* item = m_groupParsers.takeAt(0);
+      item->m_parseForGroupTimer->stop();
+      item->deleteLater();
     }
-    m_groupParsers.clear();
   }
 }
 
 void SAParser::slotGroupParsingDone(SAGroupParser *groupParser)
 {
+  groupParser->m_parseForGroupTimer->stop();
   m_groupParsers.removeAll(groupParser);
-  delete groupParser;
+  groupParser->deleteLater();
 }
 
 void SAParser::addDTEP(const DTDStruct *dtd)
