@@ -399,6 +399,8 @@ void  KDevKXSLDbgPlugin::showKXSLDbg()
         }
         setupWidgets=true;
         frame->show();
+        // cause the configuration dialog to show upon starting
+        configureCmd_activated();
     }
 }
 
