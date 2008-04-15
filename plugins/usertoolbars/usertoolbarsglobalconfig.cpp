@@ -31,11 +31,8 @@ UserToolbarsGlobalConfig::UserToolbarsGlobalConfig(QWidget *parent, const QVaria
 {
   m_ui = new Ui::UserToolbarsGlobalConfigBase;
   m_ui->setupUi(this);
-  KConfigGroup config( KGlobal::config(), "General" );
-  bool separateToolbars = config.readEntry("Separate toolbars", true);
-  bool createActionsMenu = config.readEntry("Create Actions menu", true);
-  m_ui->separateToolbars->setChecked(separateToolbars);
-  m_ui->createActionsMenu->setChecked(createActionsMenu);
+  connect(m_ui->separateToolbars, SIGNAL(stateChanged(int)), this, SLOT(changed()));
+  connect(m_ui->createActionsMenu, SIGNAL(stateChanged(int)), this, SLOT(changed()));
 }
 
 UserToolbarsGlobalConfig::~UserToolbarsGlobalConfig()
@@ -44,12 +41,27 @@ UserToolbarsGlobalConfig::~UserToolbarsGlobalConfig()
   m_ui = 0L;
 }
 
-void UserToolbarsGlobalConfig::accept()
+void  UserToolbarsGlobalConfig::load()
+{
+  KConfigGroup config( KGlobal::config(), "General" );
+  bool separateToolbars = config.readEntry("Separate toolbars", false);
+  bool createActionsMenu = config.readEntry("Create Actions menu", true);
+  m_ui->separateToolbars->setChecked(separateToolbars);
+  m_ui->createActionsMenu->setChecked(createActionsMenu);
+}
+
+void  UserToolbarsGlobalConfig::save()
 {
   KConfigGroup config( KGlobal::config(), "General" );
   config.writeEntry("Separate toolbars", m_ui->separateToolbars->isChecked());
   config.writeEntry("Create Actions menu", (m_ui->createActionsMenu->isChecked()));
   config.sync();
+}
+
+void  UserToolbarsGlobalConfig::defaults()
+{
+  m_ui->separateToolbars->setChecked(false);
+  m_ui->createActionsMenu->setChecked(true);
 }
 
 #include "usertoolbarsglobalconfig.moc"

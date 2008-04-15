@@ -61,12 +61,6 @@ public:
      */
     void setSeparateToolbars(bool separate);
     bool separateToolbars() {return m_separateToolbars;}
-    /**
-     * Saves the configuration in the plugin's rc file.
-     */
-    void saveConfig();
-
-    void go();
 
 public slots:
     /**
@@ -79,7 +73,6 @@ public slots:
 private slots:
     void init();
 
-    void insertConfigWidget(const KDialog *dlg, QWidget *page, unsigned int pageNo);
     void contextMenu(KMenu *popup, const KDevelop::Context *context);
     void projectOpened();
     void projectClosed();
@@ -251,7 +244,6 @@ private:
     int m_currentTabPage; ///< the index of the currently visible toolbar tab
     bool m_separateToolbars; ///< if true, the toolbars are created as standalone toolbars, not as part of a tabwidget
     bool m_createActionsMenu; ///< if true a menu is created with the user actions, grouped by toolbars in submenus
-    int m_actionsMenuId; ///< the id of the Actions menu in the menubar
     KDevelop::IPlugin *m_outputPlugin;
 };
 

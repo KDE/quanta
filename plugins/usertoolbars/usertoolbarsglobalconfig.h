@@ -27,8 +27,9 @@ public:
     ~UserToolbarsGlobalConfig();
 
 public slots:
-    void accept();
-
+    void load();
+    void save();
+    void defaults();
 private:
     Ui::UserToolbarsGlobalConfigBase *m_ui;
 };

@@ -96,14 +96,7 @@ UserToolbarsPart::UserToolbarsPart(QObject *parent, const QVariantList &/*args*/
     setXMLFile("kdevusertoolbars.rc");
 
     setupActions();
-//FIXME: New KCM modules need to be created for each config page
-    /*
-    m_configProxy = new ConfigWidgetProxy(core());
-    m_configProxy->createGlobalConfigPage(i18n("UserToolbars"), GLOBALDOC_OPTIONS, info()->icon());
-    m_configProxy->createProjectConfigPage(i18n("UserToolbars"), PROJECTDOC_OPTIONS, info()->icon());
-    connect(m_configProxy, SIGNAL(insertConfigWidget(const KDialog*, QWidget*, unsigned int )),
-        this, SLOT(insertConfigWidget(const KDialog*, QWidget*, unsigned int)));
-    */
+    
     connect(KDevelop::Core::self()->uiController()->activeMainWindow(), SIGNAL(contextMenu(KMenu *, const Koncrete::Context *)),
             this, SLOT(contextMenu(KMenu *, const KDevelop::Context *)));
     connect(KDevelop::Core::self()->projectController(), SIGNAL(projectOpened()), this, SLOT(projectOpened()));
@@ -111,7 +104,6 @@ UserToolbarsPart::UserToolbarsPart(QObject *parent, const QVariantList &/*args*/
 
 //setup some member variables
     m_userToolbarsCount = 0;
-    m_actionsMenuId = -1;
     m_outputPlugin = 0L;
     QStringList tmpDirs = KGlobal::dirs()->resourceDirs("tmp");
     kDebug(24000) << "tmpDirs: " << tmpDirs;
@@ -180,8 +172,8 @@ UserToolbarsPart::~UserToolbarsPart()
 
 void UserToolbarsPart::init()
 {
-  KConfigGroup config( UserToolbarsFactory::componentData().config(), "General" );
-  m_separateToolbars = config.readEntry("Separate toolbars", true);
+  KConfigGroup config( KGlobal::config(), "General" );
+  m_separateToolbars = config.readEntry("Separate toolbars", false);
   m_createActionsMenu = config.readEntry("Create Actions menu", true);
   slotAdjustActions();
   ToolbarGUIBuilder::ref(KDevelop::Core::self()->uiController()->activeMainWindow())->setSeparateToolbars(m_separateToolbars);
@@ -190,19 +182,6 @@ void UserToolbarsPart::init()
   if (actionsMenu)
   {
     actionsMenu->menuAction()->setVisible(false);
-  }
-
-// I keep this for reference for the moment. Jens
-  KMenuBar *menuBar = KDevelop::Core::self()->uiController()->activeMainWindow()->menuBar();
-  for (int i = 0; i < menuBar->count(); i++)
-  {
-    QMenuItem *it = menuBar->findItem(menuBar->idAt(i));
-    if (it->menu() == actionsMenu)
-    {
-      m_actionsMenuId = menuBar->idAt(i);
-      menuBar->setItemVisible(m_actionsMenuId, false);
-      break;
-    }
   }
 }
 
@@ -262,20 +241,6 @@ void UserToolbarsPart::setupActions()
     action  = new KAction(KIcon("ball"), i18n("Configure &Actions..."), this);
     actionCollection()->addAction("configure_actions", action );
   connect(action, SIGNAL(triggered(bool)), SLOT(slotConfigureActions()));
-}
-
-void UserToolbarsPart::insertConfigWidget(const KDialog *dlg, QWidget *page, unsigned int pageNo)
-{
-// create configuraton dialogs here
-/*    switch (pageNo)
-    {
-        case GLOBALDOC_OPTIONS:
-        {
-            UserToolbarsGlobalConfig *w = new UserToolbarsGlobalConfig(this, page);
-            connect(dlg, SIGNAL(okClicked()), w, SLOT(accept()));
-            break;
-        }
-    }*/
 }
 
 void UserToolbarsPart::contextMenu(KMenu *popup, const KDevelop::Context *context)
@@ -1207,8 +1172,8 @@ void UserToolbarsPart::slotToolbarLoaded(const QString &id)
   ToolbarEntry *p_toolbar = m_toolbarList.value(id);
   if (!p_toolbar || !m_createActionsMenu)
     return;
+  
   QMenu *actionsMenu = static_cast<QMenu*>(factory()->container("actions", this));
-//   actionsMenu->show();
   //Plug in the actions & build the menu
   QMenu *menu = new QMenu(actionsMenu);
   menu->hide();
@@ -1227,24 +1192,8 @@ void UserToolbarsPart::slotToolbarLoaded(const QString &id)
     }
   }
 
-
   actionsMenu->addMenu(menu);
-  if (m_actionsMenuId == -1)
-  {
-    KMenuBar *menuBar = KDevelop::Core::self()->uiController()->activeMainWindow()->menuBar();
-    for (uint i = 0; i < menuBar->count(); i++)
-    {
-      QMenuItem *it = menuBar->findItem(menuBar->idAt(i));
-      if (it->menu() == actionsMenu)
-      {
-        m_actionsMenuId = menuBar->idAt(i);
-        break;
-      }
-    }
-  }
   actionsMenu->menuAction()->setVisible(true);
-  /*  if (m_actionsMenuId != -1)
-     KDevelop::Core::self()->uiController()->activeMainWindow()->menuBar()->setItemVisible(m_actionsMenuId, true);*/
   p_toolbar->menu = menu;
 }
 
@@ -1392,20 +1341,6 @@ void UserToolbarsPart::slotShowMessage(const QString &message, bool append)
   {
     m_outputPlugin->insertStderrLine(message);
   }*/
-}
-
-void UserToolbarsPart::saveConfig()
-{
-  KConfigGroup config( UserToolbarsFactory::componentData().config(), "General" );
-  config.writeEntry("Separate toolbars", m_separateToolbars);
-  config.writeEntry("Create Actions menu", m_createActionsMenu);
-  config.sync();
-}
-
-
-void UserToolbarsPart::go()
-{
-  QMessageBox::information(0, "test", "go go go");
 }
 
 #include "usertoolbarspart.moc"
