@@ -70,6 +70,7 @@ class KDevKXSLDbgPlugin: public KDevelop::IPlugin
         KDevKXSLDbgPlugin(QObject *parent, const QVariantList & = QVariantList());
         virtual ~KDevKXSLDbgPlugin();
 
+
         void setupActions();
 
 
@@ -89,6 +90,7 @@ Q_SIGNALS:
         Q_SCRIPTABLE void newDebuggerPosition(const QString &file, int lineNumber);
 
         public slots:
+        void showKXSLDbg();
             virtual bool openUrl(const KUrl &url);
         virtual bool closeUrl();
         void quit();
@@ -151,7 +153,7 @@ Q_SIGNALS:
         void docChanged();
 
         void debuggerStarted();
-        QWidget * topWidget(QWidget *parent);
+        QWidget * topWidget();
 
     protected:
         /**
@@ -181,6 +183,30 @@ Q_SIGNALS:
 
         KDevelop::IOutputView *dev_outputview;
         QStandardItemModel *dev_outputModel;
+        QAction *configureEditorCmd;
+        QAction *configureCmd;
+        QAction *inspectCmd;
+        QAction *runCmd;
+        QAction *continueCmd;
+        QAction *stepCmd;
+        QAction *nextCmd;
+        QAction *stepupCmd;
+        QAction *stepdownCmd;
+        QAction *breakCmd;
+        QAction *enableCmd;
+        QAction *deleteCmd;
+        QAction *sourceCmd;
+        QAction *dataCmd;
+        QAction *outputCmd;
+        QAction *refreshCmd;
+        QAction *walkCmd;
+        QAction *walkStopCmd;
+        QAction *traceCmd;
+        QAction *traceStopCmd;
+        QAction *evaluateCmd;
+        QAction *gotoXPathCmd;
+        QAction *lookupSystemCmd;
+        QAction *lookupPublicIDCmd;
 };
 
 #endif

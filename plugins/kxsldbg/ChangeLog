@@ -1,7 +1,16 @@
-13 Ap[ril 2008
+15 April 2008
+-improvements
+	- only display kxsldbg plugin toolbar and widgets if requested - needs more work to be done
+
+- bugs/bug fixes
+	- fix minor bug, "Step Down" command was actually mapped to the step command
+
+
+13 April 2008
 - bugs/bug fixes
         - integrate to this project fix for bug 160765. Not that latin1 files name are not
           supported.
+
 11th April 2008
 - improvements
 	- initial version of KDevelop/Quanta plugin for KXSLDbg
@@ -15,3 +24,5 @@
 	- maybe move the breakpoint dialog into a docked window in Quanta
 	- look at building all possible sources into one or more libraries to avoiding
 		beinging compiled multiple times (for KXSLDbg, xsldbg and this plugin)
+
+
