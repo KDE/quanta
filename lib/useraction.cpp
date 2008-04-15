@@ -428,5 +428,9 @@ void UserAction::slotTimeout()
   timer->start(180 * 1000);
 }
 
+void UserAction::setData(const QDomElement& element)
+{
+  tag = element.cloneNode().toElement();
+}
 
 #include "useraction.moc"

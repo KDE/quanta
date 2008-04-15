@@ -76,6 +76,7 @@ public:
      */
     QString actionText();
 
+    void setData(const QDomElement &element);
     
 protected slots:
     virtual void slotActivated();    

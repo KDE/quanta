@@ -153,6 +153,7 @@ private slots:
    * @param toolbarName the name of the toolbar (it is ignored)
    */
   void slotToolbarRemoved(const QString& toolbarName);
+  void slotEnableApply();
   
 signals:
   /**

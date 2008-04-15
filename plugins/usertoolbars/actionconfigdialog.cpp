@@ -19,6 +19,7 @@
 #include "toolbartabwidget.h"
 
 //qt includes
+#include <QPushButton>
 #include <QButtonGroup>
 #include <QCheckBox>
 #include <qdom.h>
@@ -72,6 +73,26 @@ ActionConfigDialog::ActionConfigDialog(const QHash<QString, ToolbarEntry*> &tool
   currentAction = 0L;
   m_toolbarItem = 0L;
 
+  //enable the Apply button if something has changed
+  connect(typeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(slotEnableApply()));
+  connect(lineText, SIGNAL( textChanged ( const QString &)), this, SLOT(slotEnableApply()));
+  connect(lineToolTip, SIGNAL( textChanged ( const QString &)), this, SLOT(slotEnableApply()));
+  connect(noShortcut, SIGNAL( toggled(bool)), this, SLOT(slotEnableApply()));
+  connect(customShortcut, SIGNAL( toggled(bool)), this, SLOT(slotEnableApply()));
+  connect(addToolbarButton, SIGNAL( clicked(bool)), this, SLOT(slotEnableApply()));
+  connect(removeToolbarButton, SIGNAL( clicked(bool)), this, SLOT(slotEnableApply()));
+ 
+  connect(lineTag, SIGNAL( textChanged ( const QString &)), this, SLOT(slotEnableApply()));
+  connect(lineClosingTag, SIGNAL( textChanged ( const QString &)), this, SLOT(slotEnableApply()));
+  connect(useClosingTag, SIGNAL(stateChanged(int)), this, SLOT(slotEnableApply()));
+  connect(useActionDialog, SIGNAL(stateChanged(int)), this, SLOT(slotEnableApply()));  
+  connect(inputBox, SIGNAL(currentIndexChanged(int)), this, SLOT(slotEnableApply()));
+  connect(outputBox, SIGNAL(currentIndexChanged(int)), this, SLOT(slotEnableApply()));
+  connect(errorBox, SIGNAL(currentIndexChanged(int)), this, SLOT(slotEnableApply()));
+  
+  connect(buttonOk, SIGNAL(clicked(bool)), this, SLOT(accept()));
+  connect(buttonCancel, SIGNAL(clicked(bool)), this, SLOT(reject()));
+  connect(buttonApply, SIGNAL(clicked(bool)), this, SLOT(slotApply()));
   connect(actionTreeView, SIGNAL(contextMenu(K3ListView *,Q3ListViewItem *,const QPoint &)),
                           SLOT(slotContextMenu(K3ListView *,Q3ListViewItem *,const QPoint &)));
   connect(actionTreeView, SIGNAL(selectionChanged(Q3ListViewItem *)),
@@ -318,7 +339,7 @@ void ActionConfigDialog::slotSelectionChanged(Q3ListViewItem *item)
         QString s = el.attribute("icon");
         if (!QFileInfo(s).exists())
           s = QFileInfo(s).fileName();
-        actionIcon->setIcon(s);
+//FIXME!         actionIcon->setIcon(s);
       }
       QString actionText = el.attribute("text");
       actionText.replace(QRegExp("\\&(?!\\&)"),"");
@@ -478,7 +499,7 @@ void ActionConfigDialog::saveCurrentAction()
   static_cast<UserAction *>(currentAction)->setModified(true);
   QString s;
   QDomElement el = static_cast<UserAction *>(currentAction)->data();
-  s = actionIcon->icon();
+// FIXME  s = actionIcon->icon();
   el.setAttribute("icon", s);
   currentAction->setIcon(KIcon(s));
   QString oldText = el.attribute("text");
@@ -505,7 +526,7 @@ void ActionConfigDialog::saveCurrentAction()
     listItem = it.current();
     if (listItem->depth() > 0 && listItem->text(2) == currentAction->objectName())
     {
-      listItem->setPixmap(0, SmallIcon(actionIcon->icon()));
+// FIXME      listItem->setPixmap(0, SmallIcon(actionIcon->icon()));
       listItem->setText(0, lineText->text());
       listItem->setText(1, currentAction->shortcut().toString());
     }
@@ -615,6 +636,9 @@ void ActionConfigDialog::saveCurrentAction()
         break;
       }
   }
+  
+  static_cast<UserAction *>(currentAction)->setData(el);
+  
   ToolbarTabWidget *tb = ToolbarTabWidget::ref();
   for (int i = 0; i < tb->count(); i++)
   {
@@ -681,7 +705,7 @@ void ActionConfigDialog::saveCurrentAction()
           if (placeOnToolbar)
           {
               listItem = new K3ListViewItem(listItem, after, lineText->text(), currentAction->shortcut().toString(), currentAction->objectName());
-              listItem->setPixmap(0, SmallIcon(actionIcon->icon()));
+//FIXME               listItem->setPixmap(0, SmallIcon(actionIcon->icon()));
           }
         }
       }
@@ -933,6 +957,11 @@ void ActionConfigDialog::createScriptAction(const QString& name, const QString& 
   typeCombo->setCurrentIndex(1);
   scriptPath->setText(script);
   lineText->setText(name);
+}
+
+void ActionConfigDialog::slotEnableApply()
+{
+  buttonApply->setEnabled(true);
 }
 
 #include "actionconfigdialog.moc"

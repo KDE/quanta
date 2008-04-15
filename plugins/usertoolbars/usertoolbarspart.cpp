@@ -461,13 +461,13 @@ void UserToolbarsPart::slotLoadToolbarFile(const KUrl& url)
         //add the actions to every toolbar xmlguiclient, so these actions can be added
         //to any toolbar
         QHashIterator<QString, ToolbarEntry*> it(m_toolbarList);
-	int i=0;
+        int i=0;
         while (it.hasNext())
         {
 
           it.next();
           it.value()->guiClient->actionCollection()->addAction(userAction->objectName(), userAction);
-	  i++;
+          i++;
         }
       } else
       {
