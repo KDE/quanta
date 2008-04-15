@@ -1,5 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
+Exec=blubb
 Type=Service
 Name=KDevKXSLDbg
 GenericName=KXSLDbg Plugin

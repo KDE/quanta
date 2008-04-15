@@ -165,7 +165,6 @@ Qt::DockWidgetArea KDevKXSLDbgViewFactory::defaultPosition(const QString &areaNa
 
 KDevKXSLDbgPlugin::~KDevKXSLDbgPlugin()
 {
-    delete m_widgetFactory;
 }
 
 QWidget *KDevKXSLDbgPlugin::topWidget()
