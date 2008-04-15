@@ -195,7 +195,6 @@ void ToolbarTabWidget::mousePressEvent (QMouseEvent *e)
 void ToolbarTabWidget::resizeEvent(QResizeEvent *e)
 {
 //  kDebug(24000) << "ToolbarTabWidget::resizeEvent. width = " << width() << "height = " << height();
-  QWidget::resizeEvent(e);
   //Resize every included toolbar if the tabwidget is resized
   QWidget *tb;
   for (QMap<QString, QWidget*>::Iterator it = m_toolbarList.begin(); it != m_toolbarList.end(); ++it)
@@ -204,6 +203,7 @@ void ToolbarTabWidget::resizeEvent(QResizeEvent *e)
     tb->setFixedSize(QSize(width(), tb->height()));
 //    kDebug(24000) << it.data() << " resize";
   }
+  
   //force update of the widget and the toolbars contained inside
   int i = currentIndex();
   if (i > 0)
@@ -215,6 +215,7 @@ void ToolbarTabWidget::resizeEvent(QResizeEvent *e)
     setCurrentIndex(i + 1);
   }
   setCurrentIndex(i);
+  QWidget::resizeEvent(e);
 }
 
 int ToolbarTabWidget::tabHeight() const

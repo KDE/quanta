@@ -80,13 +80,8 @@
 K_PLUGIN_FACTORY(UserToolbarsFactory, registerPlugin<UserToolbarsPart>();)
 K_EXPORT_PLUGIN(UserToolbarsFactory("kdevusertoolbars"))
 
-
-
-#define GLOBALDOC_OPTIONS 1
-#define PROJECTDOC_OPTIONS 2
-
-
 const QString resourceDir = "quanta/";
+
 
 
 UserToolbarsPart::UserToolbarsPart(QObject *parent, const QVariantList &/*args*/)
@@ -489,7 +484,7 @@ void UserToolbarsPart::slotLoadToolbarFile(const KUrl& url)
     for (int i = 0 ; i < actions.count(); i++)
     {
       QAction *action = actions.value(i);
-      kDebug(24000) << "Add the action " << action->objectName() << " to toolbar: " << name << toolbarId<< toolbarGUI << toolbarGUI->actionCollection();
+//       kDebug(24000) << "Add the action " << action->objectName() << " to toolbar: " << name << toolbarId<< toolbarGUI << toolbarGUI->actionCollection();
       toolbarGUI->actionCollection()->addAction(action->objectName(), action);
     }
     m_tempFileList.append(tempFile);
@@ -1183,10 +1178,10 @@ void UserToolbarsPart::slotToolbarLoaded(const QString &id)
   QAction *action;
   KActionCollection *ac = p_toolbar->guiClient->actionCollection();
   QDomNodeList nodeList = p_toolbar->guiClient->domDocument().elementsByTagName("Action");
-  kDebug(24000) << "Check toolbar " << p_toolbar->name << id << p_toolbar->guiClient << ac;
+//   kDebug(24000) << "Check toolbar " << p_toolbar->name << id << p_toolbar->guiClient << ac;
   for (int i = 0; i < nodeList.count(); i++)
   {
-    kDebug(24000) << "node name=" << nodeList.item(i).cloneNode().toElement().attribute("name");
+//     kDebug(24000) << "node name=" << nodeList.item(i).cloneNode().toElement().attribute("name");
     action = ac->action(nodeList.item(i).cloneNode().toElement().attribute("name") );
     if (action)
     {

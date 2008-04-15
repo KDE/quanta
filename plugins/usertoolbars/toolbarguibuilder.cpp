@@ -26,8 +26,35 @@
 #include <kglobalsettings.h>
 #include <ktoolbar.h>
 
-// from kfiledialog.cpp - avoid qt warning in STDERR (~/.xsessionerrors)
-static void silenceQToolBar(QtMsgType, const char *){}
+#include <core.h>
+#include <iuicontroller.h>
+
+#if 0
+//code to create a toolview for each toolbar
+class UTViewFactory: public KDevelop::IToolViewFactory
+{
+  public:
+    UTViewFactory(const QDomElement &element) : m_domElement(element)
+    {}
+    
+    virtual QWidget* create( QWidget *parent = 0 )
+    {
+      UserToolBar *tb = new UserToolBar(parent, m_domElement.attribute("name").toUtf8(), true, true);
+      tb->loadState(m_domElement);
+      tb->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
+      tb->setWindowTitle(i18n(m_domElement.attribute( "i18ntabname", "" ).toUtf8()));
+      
+      return tb;
+    }
+    virtual Qt::DockWidgetArea defaultPosition(const QString &/*areaName*/)
+    {
+      return Qt::TopDockWidgetArea;
+    }
+    
+  private:
+    QDomElement m_domElement;
+};
+#endif
 
 QWidget *ToolbarGUIBuilder::createContainer(QWidget *parent, int index, const QDomElement &element, QAction* &action)
 {
@@ -39,9 +66,13 @@ QWidget *ToolbarGUIBuilder::createContainer(QWidget *parent, int index, const QD
   ToolbarTabWidget *toolbarTab = ToolbarTabWidget::ref();
   if ( element.tagName().toLower() == "toolbar" && !tabname.isEmpty())
   {
-    //avoid QToolBar warning in the log
-//     QtMsgHandler oldHandler = qInstallMsgHandler(silenceQToolBar);
-
+#if 0
+    //code to create a toolview for each toolbar
+    UTViewFactory *factory = new UTViewFactory(element);
+    KDevelop::Core::self()->uiController()->addToolView(i18n(tabname.toUtf8()), factory);        
+    return container;
+#endif
+        
     //create the toolbar on the tabwidget
     QWidget *w = new QWidget(toolbarTab);
     w->setObjectName(QString("ToolbarHoldingWidget" + element.attribute("name")).toUtf8());
@@ -51,6 +82,7 @@ QWidget *ToolbarGUIBuilder::createContainer(QWidget *parent, int index, const QD
 
     //set the correct fixed height of the toolbar
   //kDebug(24000) << "tb->iconSize() " << tb->iconSize();
+    
     if (toolbarTab->iconText() == Qt::ToolButtonTextUnderIcon)
     {
       tb->setGeometry(0,0, toolbarTab->width(), tb->iconSize().height() + QFontMetrics(KGlobalSettings::toolBarFont()).height() + 10);
@@ -60,36 +92,29 @@ QWidget *ToolbarGUIBuilder::createContainer(QWidget *parent, int index, const QD
       tb->setGeometry(0,0, toolbarTab->width(), tb->iconSize().height() + 10);
       toolbarTab->setFixedHeight(toolbarTab->tabHeight() + tb->height() + 3);
     }
+    /*
    kDebug(24000) << "tb->height() " << tb->height();
    kDebug(24000) << "toolbarTab->height() " << toolbarTab->height();
    kDebug(24000) << "toolbarTab->tabHeight() " << toolbarTab->tabHeight();
+   */
+    
     toolbarTab->insertTab(tb, i18n(tabname.toUtf8()), idStr);
     toolbarTab->setCurrentWidget(w);
-    if (toolbarTab->parentWidget()->parentWidget())
-      toolbarTab->parentWidget()->parentWidget()->show();
-//     qInstallMsgHandler(oldHandler);
-    tb->setSeparate(m_separateToolbars);
-
-    if (m_separateToolbars)
-    {
-      container = KXMLGUIBuilder::createContainer(parent, index, element, action);
-      static_cast<KToolBar*>(container)->setWindowTitle(i18n(tabname.toUtf8()));
-      toolbarTab->parentWidget()->parentWidget()->hide();
-    } else
-    {
-      container = tb;
-    }
+    toolbarTab->show();
+    if (m_userToolbar)
+      m_userToolbar->show();
+     container = tb;
   } else
   {
     container = KXMLGUIBuilder::createContainer(parent, index, element, action);
   }
 
-//  kDebug(24000) << "container " << element.attribute("name") << " created: " << container;
-  //The tabwidget needs to be the child of the user toolbar, so detect when it is created
-  //and make the child of it.
-  if (element.attribute("name") == "userToolbar")
+  //The tabwidget needs to be the inside the user toolbar, so detect when it is created
+  //and add to it.
+  if (element.attribute("name") == "userToolbar" && dynamic_cast<QToolBar*>(container))
   {
-    toolbarTab->parentWidget()->setParent(container);
+    m_userToolbar = static_cast<QToolBar*>(container);
+    m_userToolbar->addWidget(toolbarTab);
     if (toolbarTab->count() == 0 || m_separateToolbars)
       container->hide();
   }
@@ -98,34 +123,37 @@ QWidget *ToolbarGUIBuilder::createContainer(QWidget *parent, int index, const QD
 
 void ToolbarGUIBuilder::removeContainer(QWidget *container, QWidget *parent, QDomElement &element, QAction* action)
 {
+  /*
   QString s;
   QTextStream str(&s, IO_ReadWrite);
   element.save(str, 2);
   kDebug(24000) << "Remove element:" << s;
-//  kDebug(24000) << "removeContainer: this=" << this << " parent=" << parent << "container = " << container;
+  kDebug(24000) << "removeContainer: this=" << this << " parent=" << parent << "container = " << container;
+  */
+  
   //We need to reparent the tabwidget, otherwise it gets deleted when for example the
   //toolbars are configured and the GUI is rebuilt.
-  ToolbarTabWidget *toolbarTab = ToolbarTabWidget::ref();
-  if (container == toolbarTab->parentWidget()->parent())
-    toolbarTab->parentWidget()->setParent(0);
-
-  QString tabname = element.attribute( "i18ntabname", "" );
-  QString idStr = element.attribute( "id", "" );
-
-  if ( element.tagName().toLower() == "toolbar" && !tabname.isEmpty())
+  if (!m_separateToolbars)
   {
-    UserToolBar *tb = dynamic_cast<UserToolBar*>(toolbarTab->page(idStr));
-    if (tb)
+    ToolbarTabWidget *toolbarTab = ToolbarTabWidget::ref();
+    if (container == m_userToolbar)
+      toolbarTab->setParent(0);
+  
+    QString tabname = element.attribute( "i18ntabname", "" );
+    QString idStr = element.attribute( "id", "" );
+  
+    if ( element.tagName().toLower() == "toolbar" && !tabname.isEmpty())
     {
-      if (tb->separate())
-        KXMLGUIBuilder::removeContainer(container, parent, element, action);
-      toolbarTab->removePage(tb);
-      if (toolbarTab->count() == 0 && toolbarTab->parentWidget()->parentWidget())
-        toolbarTab->parentWidget()->parentWidget()->hide();
-      return;
+      UserToolBar *tb = dynamic_cast<UserToolBar*>(toolbarTab->page(idStr));
+      if (tb)
+      {
+        toolbarTab->removePage(tb);
+        if (toolbarTab->count() == 0 && m_userToolbar)
+          m_userToolbar->hide();
+        return;
+      }
     }
   }
-
   KXMLGUIBuilder::removeContainer(container, parent, element, action);
 }
 

@@ -15,6 +15,8 @@
 
 #include <kxmlguibuilder.h>
 
+class QToolBar;
+
 /**
  Builder for the toolbar XML gui client objects. It handles putting and removing the toolbar
  on a tabwidget inside a toolbar.
@@ -62,9 +64,10 @@ private:
    * @param widget passed to the KXMLGUIBuilder constructor
    * @return
    */
-  ToolbarGUIBuilder(QWidget *widget):KXMLGUIBuilder(widget){ m_separateToolbars = false; }
+  ToolbarGUIBuilder(QWidget *widget):KXMLGUIBuilder(widget){ m_separateToolbars = false; m_userToolbar = 0L;}
 
   bool m_separateToolbars; ///< True when the toolbars are not on a tab widget
+  QToolBar *m_userToolbar;
 };
 
 #endif
