@@ -67,8 +67,8 @@ class TemplatesTreeViewFactory: public KDevelop::IToolViewFactory
       widget->setObjectName("TemplatesTreeWidget");
       widget->setWhatsThis(i18n("Working with templates"));
       
-      QObject::connect(KDevelop::Core::self()->uiController()->activeMainWindow(), SIGNAL(projectOpened()), widget, SLOT(slotProjectOpened()));
-      QObject::connect(KDevelop::Core::self()->documentController(), SIGNAL(documentClosed(KDevelop::Document*)), widget, SLOT(slotDocumentClosed(KDevelop::Document*)));
+      QObject::connect(KDevelop::Core::self()->projectController(), SIGNAL(projectOpened(KDevelop::IProject *)), widget, SLOT(slotProjectOpened(KDevelop::IProject *)));
+      QObject::connect(KDevelop::Core::self()->documentController(), SIGNAL(documentClosed(KDevelop::IDocument*)), widget, SLOT(slotDocumentClosed(KDevelop::IDocument*)));
       QObject::connect(widget, SIGNAL(insertTag(const KUrl &, Helper::DirInfo *)), m_part, SIGNAL(insertTag(const KUrl &, Helper::DirInfo *)));
       
       return widget;
@@ -102,8 +102,8 @@ TemplatesTreePart::TemplatesTreePart(QObject *parent, const QVariantList &/*args
     */
     connect(KDevelop::Core::self()->uiController()->activeMainWindow(), SIGNAL(contextMenu(QMenu *, const Koncrete::Context *)),
             this, SLOT(contextMenu(QMenu *, const Koncrete::Context *)));
-    connect(KDevelop::Core::self()->projectController(), SIGNAL(projectOpened()), this, SLOT(projectOpened()));
-    connect(KDevelop::Core::self()->projectController(), SIGNAL(projectClosed()), this, SLOT(projectClosed()));
+    connect(KDevelop::Core::self()->projectController(), SIGNAL(projectOpened(KDevelop::IProject *)), this, SLOT(projectOpened(KDevelop::IProject *)));
+    connect(KDevelop::Core::self()->projectController(), SIGNAL(projectClosed(KDevelop::IProject *)), this, SLOT(projectClosed(KDevelop::IProject *)));
 
     QTimer::singleShot(0, this, SLOT(init()));
 }
@@ -211,12 +211,12 @@ void TemplatesTreePart::contextMenu(QMenu *popup, const KDevelop::Context *conte
     }*/
 }
 
-void TemplatesTreePart::projectOpened()
+void TemplatesTreePart::projectOpened(KDevelop::IProject *project)
 {
 // do something when the project is opened
 }
 
-void TemplatesTreePart::projectClosed()
+void TemplatesTreePart::projectClosed(KDevelop::IProject *project)
 {
 // do something when the project is closed
 }

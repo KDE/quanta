@@ -39,6 +39,7 @@
 #include <iprojectcontroller.h>
 #include <iplugincontroller.h>
 #include <iuicontroller.h>
+#include <iproject.h>
 
 #define GLOBALDOC_OPTIONS 1
 #define PROJECTDOC_OPTIONS 2
@@ -125,8 +126,8 @@ StructureTreePart::StructureTreePart(QObject *parent, const QVariantList &/*args
     */
     connect(KDevelop::Core::self()->uiController()->activeMainWindow(), SIGNAL(contextMenu(QMenu *, const KDevelop::Context *)),
         this, SLOT(contextMenu(QMenu *, const Context *)));
-    connect(KDevelop::Core::self()->projectController(), SIGNAL(projectOpened()), this, SLOT(projectOpened()));
-    connect(KDevelop::Core::self()->projectController(), SIGNAL(projectClosed()), this, SLOT(projectClosed()));
+    connect(KDevelop::Core::self()->projectController(), SIGNAL(projectOpened( KDevelop::IProject*)), this, SLOT(projectOpened( KDevelop::IProject*)));
+    connect(KDevelop::Core::self()->projectController(), SIGNAL(projectClosed( KDevelop::IProject*)), this, SLOT(projectClosed( KDevelop::IProject*)));
 
 
     QTimer::singleShot(0, this, SLOT(init()));
@@ -217,12 +218,12 @@ void StructureTreePart::contextMenu(QMenu */*popup*/, const KDevelop::Context */
 //     }
 }
 
-void StructureTreePart::projectOpened()
+void StructureTreePart::projectOpened(KDevelop::IProject *project)
 {
 // do something when the project is opened
 }
 
-void StructureTreePart::projectClosed()
+void StructureTreePart::projectClosed(KDevelop::IProject *project)
 {
 // do something when the project is closed
 }

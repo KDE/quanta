@@ -32,6 +32,7 @@ class KTemporaryFile;
 namespace KDevelop
 {
    class Context; 
+   class IProject;
 }
 class ConfigWidgetProxy;
 
@@ -74,8 +75,8 @@ private slots:
     void init();
 
     void contextMenu(KMenu *popup, const KDevelop::Context *context);
-    void projectOpened();
-    void projectClosed();
+    void projectOpened(KDevelop::IProject *project);
+    void projectClosed(KDevelop::IProject *project);
     /**
      * Loads a toolbar file.
      * @param url The url pointing to the toolbar file.

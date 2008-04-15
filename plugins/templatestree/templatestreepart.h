@@ -28,6 +28,7 @@ namespace KDevelop
 { 
   class Context; 
   class IToolViewFactory;
+  class IProject;
 }
 class ConfigWidgetProxy;
 class TemplatesTreeView;
@@ -51,8 +52,8 @@ private slots:
   
   void insertConfigWidget(const KDialog *dlg, QWidget *page, unsigned int pageNo);
   void contextMenu(QMenu *popup, const KDevelop::Context *context);
-  void projectOpened();
-  void projectClosed();
+  void projectOpened( KDevelop::IProject *project);
+  void projectClosed( KDevelop::IProject *project);
   
   void slotCreateSiteTemplate();
 

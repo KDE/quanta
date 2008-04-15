@@ -90,8 +90,8 @@ QuantaFilesTreePart::QuantaFilesTreePart(QObject *parent, const QVariantList &/*
     */
     connect(KDevelop::Core::self()->uiController()->activeMainWindow(), SIGNAL(contextMenu(QMenu *, const KDevelop::Context *)),
         this, SLOT(contextMenu(QMenu *, const Context *)));
-    connect(KDevelop::Core::self()->projectController(), SIGNAL(projectOpened()), this, SLOT(projectOpened()));
-    connect(KDevelop::Core::self()->projectController(), SIGNAL(projectClosed()), this, SLOT(projectClosed()));
+    connect(KDevelop::Core::self()->projectController(), SIGNAL(projectOpened( KDevelop::IProject*)), this, SLOT(projectOpened( KDevelop::IProject*)));
+    connect(KDevelop::Core::self()->projectController(), SIGNAL(projectClosed( KDevelop::IProject*)), this, SLOT(projectClosed( KDevelop::IProject*)));
 
     QTimer::singleShot(0, this, SLOT(init()));
 }
@@ -184,12 +184,12 @@ void QuantaFilesTreePart::contextMenu(QMenu */*popup*/, const KDevelop::Context 
     }*/
 }
 
-void QuantaFilesTreePart::projectOpened()
+void QuantaFilesTreePart::projectOpened(KDevelop::IProject *project)
 {
 // do something when the project is opened
 }
 
-void QuantaFilesTreePart::projectClosed()
+void QuantaFilesTreePart::projectClosed(KDevelop::IProject *project)
 {
 // do something when the project is closed
 }

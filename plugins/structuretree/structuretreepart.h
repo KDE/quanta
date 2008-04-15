@@ -25,6 +25,9 @@ class QuantaCoreIf;
 class StructureTreeWidget;
 class GroupsWidget;
 
+namespace KDevelop {
+  class IProject;
+}
 
 /**
 Please read the README.dox file for more info about this part
@@ -41,8 +44,8 @@ private slots:
   
   void insertConfigWidget(const KDialog *dlg, QWidget *page, unsigned int pageNo);
   void contextMenu(QMenu *popup, const KDevelop::Context *context);
-  void projectOpened();
-  void projectClosed();
+  void projectOpened(KDevelop::IProject *project);
+  void projectClosed(KDevelop::IProject *project);
 
 private:
   void setupActions();

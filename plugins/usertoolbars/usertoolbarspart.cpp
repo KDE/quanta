@@ -99,8 +99,8 @@ UserToolbarsPart::UserToolbarsPart(QObject *parent, const QVariantList &/*args*/
     
     connect(KDevelop::Core::self()->uiController()->activeMainWindow(), SIGNAL(contextMenu(KMenu *, const Koncrete::Context *)),
             this, SLOT(contextMenu(KMenu *, const KDevelop::Context *)));
-    connect(KDevelop::Core::self()->projectController(), SIGNAL(projectOpened()), this, SLOT(projectOpened()));
-    connect(KDevelop::Core::self()->projectController(), SIGNAL(projectClosed()), this, SLOT(projectClosed()));
+    connect(KDevelop::Core::self()->projectController(), SIGNAL(projectOpened( KDevelop::IProject*)), this, SLOT(projectOpened( KDevelop::IProject*)));
+    connect(KDevelop::Core::self()->projectController(), SIGNAL(projectClosed( KDevelop::IProject*)), this, SLOT(projectClosed( KDevelop::IProject*)));
 
 //setup some member variables
     m_userToolbarsCount = 0;
@@ -249,14 +249,16 @@ void UserToolbarsPart::contextMenu(KMenu *popup, const KDevelop::Context *contex
   Q_UNUSED(context);
 }
 
-void UserToolbarsPart::projectOpened()
+void UserToolbarsPart::projectOpened(KDevelop::IProject* project)
 {
+  Q_UNUSED(project);
 // do something when the project is opened
   slotAdjustActions();
 }
 
-void UserToolbarsPart::projectClosed()
+void UserToolbarsPart::projectClosed(KDevelop::IProject* project)
 {
+  Q_UNUSED(project);
 // do something when the project is closed
   QTimer::singleShot(0, this, SLOT(slotAdjustActions()));
 }

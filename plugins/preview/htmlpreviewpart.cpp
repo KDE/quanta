@@ -74,8 +74,8 @@ HTMLPreviewPart::HTMLPreviewPart(QObject *parent, const QVariantList &/*args*/)
 */
   connect(KDevelop::Core::self()->uiController()->activeMainWindow(), SIGNAL(contextMenu(QMenu *, const Koncrete::Context *)),
           this, SLOT(contextMenu(QMenu *, const Koncrete::Context *)));
-  connect(KDevelop::Core::self()->projectController(), SIGNAL(projectOpened()), this, SLOT(projectOpened()));
-  connect(KDevelop::Core::self()->projectController(), SIGNAL(projectClosed()), this, SLOT(projectClosed()));
+  connect(KDevelop::Core::self()->projectController(), SIGNAL(projectOpened( KDevelop::IProject*)), this, SLOT(projectOpened( KDevelop::IProject*)));
+  connect(KDevelop::Core::self()->projectController(), SIGNAL(projectClosed( KDevelop::IProject*)), this, SLOT(projectClosed( KDevelop::IProject*)));
 
   connect(KDevelop::Core::self()->documentController(), SIGNAL(activePartChanged(KParts::Part *)), this, SLOT(slotActivePartChanged(KParts::Part *)));
 
@@ -186,12 +186,12 @@ void HTMLPreviewPart::contextMenu(QMenu */*popup*/, const KDevelop::Context *con
 }*/
 }
 
-void HTMLPreviewPart::projectOpened()
+void HTMLPreviewPart::projectOpened(KDevelop::IProject *project)
 {
   // do something when the project is opened
 }
 
-void HTMLPreviewPart::projectClosed()
+void HTMLPreviewPart::projectClosed(KDevelop::IProject *project)
 {
   // do something when the project is closed
 }

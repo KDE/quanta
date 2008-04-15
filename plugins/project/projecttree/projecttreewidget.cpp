@@ -42,7 +42,7 @@ ProjectTreeWidget::ProjectTreeWidget(ProjectTreePart *part)
   
   l->addWidget(m_tree); 
   
-  connect(Koncrete::Core::projectController(), SIGNAL(projectOpened()), m_tree, SLOT(slotProjectOpened()));
+  connect(Koncrete::Core::projectController(), SIGNAL(projectOpened(KDevelop::IProject *)), m_tree, SLOT(slotProjectOpenedKDevelop::IProject *()));
   connect(part, SIGNAL(saveProject()), m_tree, SLOT(slotProjectClosed()));
   
   connect(Koncrete::Core::documentController(), SIGNAL(activePartChanged(KParts::Part *)), m_tree, SLOT(slotActivePartChanged(KParts::Part *)));
