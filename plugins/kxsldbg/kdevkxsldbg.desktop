@@ -17,3 +17,4 @@ X-KDevelop-Category=Global
 X-KDevelop-Properties=Quanta-KXSLDbg
 X-KDevelop-Args=
 X-KDE-ServiceTypes=KDevelop/Plugin
+X-KDevelop-IRequired=org.kdevelop.IOutputView
