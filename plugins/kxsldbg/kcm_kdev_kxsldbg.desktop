@@ -4,8 +4,11 @@ Icon=kxsldbg
 Type=Service
 ServiceTypes=KCModule
 Name=KXSLDbg Settings
+Name[ga]=Socruithe KXSLDbg
 GenericName=KXSLDbg Plugin
+GenericName[ga]=Breiseán KXSLDbg
 Comment=Configure KXSLDbg Settings
+Comment[ga]=Cumraigh Socruithe KXSLDbg
 
 X-KDevelop-Plugin-Version=1
 X-KDevelop-Plugin-BugsEmailAddress=keith@kdewebdev.org
