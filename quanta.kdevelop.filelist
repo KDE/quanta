@@ -565,6 +565,10 @@ quanta/lib/tagdialogsif.cpp
 quanta/lib/tagdialogsif.h
 quanta/lib/tagpair.cpp
 quanta/lib/tagpair.h
+quanta/lib/treeelement.cpp
+quanta/lib/treeelement.h
+quanta/lib/treelement.cpp
+quanta/lib/treelement.h
 quanta/lib/useraction.cpp
 quanta/lib/useraction.h
 quanta/plugins

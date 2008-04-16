@@ -44,7 +44,7 @@
 #define REPORTRANGES   if (parser.m_quantaHandler) \
     parser.m_quantaHandler->elementRanges(parser.m_tagRange, parser.m_attrRanges); \
 \
-  parser.m_tagRange.setRange(KTextEditor::Cursor::invalid(), KTextEditor::Cursor::invalid()); \
+  parser.m_tagRange.start().setPosition(parser.m_tagRange.end()); \
   parser.m_attrRanges.clear();
 
 
@@ -171,7 +171,8 @@ bool StateActions::popState(const ParserStatus & parser, const QString & argumen
 bool StateActions::createTag(const ParserStatus & parser, const QString & argument)
 {
   Q_UNUSED(argument);
-
+  parser.m_tagRange.end().setPosition(parser.m_locator->lineNumber(), parser.m_locator->columnNumber() + 1);
+    
   REPORTRANGES
 
   bool result;
@@ -190,7 +191,8 @@ bool StateActions::createTag(const ParserStatus & parser, const QString & argume
 bool StateActions::createEndTag(const ParserStatus & parser, const QString & argument)
 {
   Q_UNUSED(argument);
-
+  parser.m_tagRange.end().setPosition(parser.m_locator->lineNumber(), parser.m_locator->columnNumber() + 1);
+    
   REPORTRANGES
 
   bool result = parser.contentHandler()->endElement(
@@ -207,7 +209,8 @@ bool StateActions::createComment(const ParserStatus & parser, const QString & ar
   Q_UNUSED(argument);
   if (! parser.lexicalHandler())
     return true;
-
+  parser.m_tagRange.end().setPosition(parser.m_locator->lineNumber(), parser.m_locator->columnNumber() + 1);
+  
   REPORTRANGES
 
   bool result = parser.lexicalHandler()->comment(parser.m_buffer);
@@ -219,6 +222,10 @@ bool StateActions::createComment(const ParserStatus & parser, const QString & ar
 bool StateActions::createText(const ParserStatus & parser, const QString & argument)
 {
   Q_UNUSED(argument);
+  parser.m_tagRange.end().setPosition(parser.m_locator->lineNumber(), parser.m_locator->columnNumber());
+  
+  REPORTRANGES
+      
   bool result = parser.contentHandler()->characters(parser.m_buffer);
   parser.m_buffer.clear();
   parser.m_buffer.reserve(1000);

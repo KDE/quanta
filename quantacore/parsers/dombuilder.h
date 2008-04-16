@@ -18,15 +18,16 @@
 #include <QXmlLexicalHandler>
 
 // KDE includes
-#include <dom/html_document.h>
-#include <dom/dom_doc.h>
-#include <dom/dom_node.h>
+// #include <dom/html_document.h>
+// #include <dom/dom_doc.h>
+// #include <dom/dom_node.h>
 
 #include "quantahandler.h"
 #include "dommodel.h"
 
 
 class QXmlLocator;
+class TreeElement;
 
 /*namespace DOM { 
   class HTMLDocument;
@@ -51,7 +52,7 @@ class DomBuilder : public QXmlContentHandler, public QXmlLexicalHandler, public 
      * The following methods implement the \ref QuantaHandler interface
      * \{
      */
-    bool elementRanges(const KTextEditor::Range & elementRange, const QuantaHandler::Ranges & attrRanges);
+    bool elementRanges(const KTextEditor::Range & elementRange, const QVector<KTextEditor::Range> & attrRanges);
     /**
      * \}
      * \name QXmlContentHandler Interface
@@ -111,12 +112,13 @@ class DomBuilder : public QXmlContentHandler, public QXmlLexicalHandler, public 
     int m_startColumn;
     int m_startLine;
     KTextEditor::Range m_elementRange;
-    QuantaHandler::Ranges m_attrRanges;
-    DOM::HTMLDocument m_document;
+    QVector<KTextEditor::Range> m_attrRanges;
+//     DOM::HTMLDocument m_document;
 //     DOM::Document m_document;
-    DOM::DocumentFragment m_fragment;
-    DOM::Node m_startNode; 
-    DOM::Node m_currNode;
+//     DOM::DocumentFragment m_fragment;
+    TreeElement *m_startElement; 
+    TreeElement *m_currentElement;
+    TreeElement *m_lastInserted;
     QString m_error;
 };
 

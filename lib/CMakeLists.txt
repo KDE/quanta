@@ -31,6 +31,7 @@ set(kdevquanta_LIB_SRCS
    extfileinfo.cpp 
    quantaprojectif.cpp 
    searchlinewidget.cpp
+   treelement.cpp
    )
 
 

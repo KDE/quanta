@@ -189,7 +189,7 @@ class ParserStatus : public QXmlReader
     mutable KTextEditor::Range m_tagRange;
     // attribute handling
     mutable QString m_attrName;
-    mutable QuantaHandler::Ranges m_attrRanges;
+    mutable QVector<KTextEditor::Range> m_attrRanges;
     mutable QXmlAttributes m_attributes;
     /**
      * for the feature http://kdewebdev.org/quanta/features/html-mode

@@ -17,15 +17,14 @@
 #include <QList>
 #include <QAbstractItemModel>
 
-#include <dom/dom_node.h>
+#include "treelement.h"
 
 
 
-
-class DomModelItem: public DOM::Node
+class DomModelItem
 {
   public:
-    explicit DomModelItem(DOM::Node node = 0, DomModelItem * parent= 0);
+    explicit DomModelItem(TreeElement *node = 0, DomModelItem * parent= 0);
     
     virtual ~DomModelItem();
     
@@ -43,6 +42,13 @@ class DomModelItem: public DOM::Node
     
     void appendItem(DomModelItem * newChild);
     
+    bool equals(DomModelItem item) { return m_node == item.m_node; }
+    
+    TreeElement *firstChild() { return m_node->firstChild(); }
+    
+  protected:
+    TreeElement *m_node;
+    
   private:
     QList<DomModelItem *> m_childItems;
     
@@ -56,7 +62,7 @@ class DomModel : public QAbstractItemModel
   Q_OBJECT
 
   public:
-    explicit DomModel(DOM::Node node, QObject *parent = 0);
+    explicit DomModel(TreeElement *node, QObject *parent = 0);
     
     ~DomModel();
 

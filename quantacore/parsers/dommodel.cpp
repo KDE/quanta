@@ -21,17 +21,15 @@
 #include <dom/dom_string.h>
 
 
-DomModelItem::DomModelItem(DOM::Node node, DomModelItem * parent) 
-  : DOM::Node(node), m_parentItem(parent)
+DomModelItem::DomModelItem(TreeElement *node, DomModelItem * parent) 
+  : m_node(node), m_parentItem(parent)
 {
 }
 
 
 DomModelItem::~DomModelItem()
 {
-  qDeleteAll(m_childItems);
 }
-
 
 DomModelItem * DomModelItem::child(int row) const
 {
@@ -61,8 +59,8 @@ QVariant DomModelItem::data(int column, int role) const
 
   switch (column)
   {
-    case 0: return nodeName().string();
-    case 1: return nodeValue().string();
+    case 0: return m_node->name();
+//     case 1: return nodeValue().string();
   }
   return QVariant();
 }
@@ -80,10 +78,10 @@ void DomModelItem::appendItem(DomModelItem * newChild)
 }
 
 
-DomModel::DomModel(DOM::Node node, QObject * parent)
+DomModel::DomModel(TreeElement *node, QObject * parent)
   : QAbstractItemModel(parent), m_rootItem(node)
 {
-  if (! node.isNull())
+  if (node)
   {
     setupModelData(&m_rootItem);
   } 
@@ -119,7 +117,7 @@ QModelIndex DomModel::parent(const QModelIndex &index) const
   DomModelItem * childItem = static_cast<DomModelItem *>(index.internalPointer());
   DomModelItem * parentItem = childItem->parentItem();
 
-  if (*parentItem == m_rootItem)
+  if (parentItem->equals(m_rootItem))
     return QModelIndex();
 
   return createIndex(parentItem->row(), 0, parentItem);
@@ -180,17 +178,13 @@ QVariant DomModel::headerData(int section, Qt::Orientation orientation,
 
 void DomModel::setupModelData(DomModelItem * parent)
 {
-  if (parent->hasChildNodes())
+  TreeElement *el = parent->firstChild();
+  while (el)
   {
-    DOM::NodeList list = parent->childNodes();
-    uint i = 0;
-    while (i <= list.length())
-    {
-      DomModelItem * newItem = new DomModelItem(list.item(i), parent);
-      parent->appendItem(newItem);
-      setupModelData(newItem);
-      ++i;
-    }
+    DomModelItem * newItem = new DomModelItem(el, parent);
+    parent->appendItem(newItem);
+    setupModelData(newItem);
+    el = el->next();
   }
 }
 

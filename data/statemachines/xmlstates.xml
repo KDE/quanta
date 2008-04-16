@@ -44,7 +44,7 @@
       <action name="pushState" argument="begin" />
     </condition>
     <condition name="equals" argument="D" nextState="startDocType" >
-      <action name="addCharToBuffer" />
+      <action name="addToTagName" />
       <action name="pushState" argument="begin" />
     </condition>
     <condition name="isAnyChar" nextState="startElement" >
@@ -136,7 +136,7 @@
       <action name="popState" />
     </condition>
     <condition name="isAnyChar" nextState="startDocType">
-      <action name="addCharToBuffer"/>
+      <action name="addToTagName"/>
     </condition>
   </state>
 

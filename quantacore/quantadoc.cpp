@@ -86,6 +86,7 @@ QuantaDoc::QuantaDoc(KDevelop::IDocument *document, QuantaCorePart *qcore)
   parser->setContentHandler(builder);
   parser->setLexicalHandler(builder);
   parser->setErrorHandler(builder);
+  parser->setQuantaHandler(builder);
   parser->parse(inputSource);
   
   //old parser

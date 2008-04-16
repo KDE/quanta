@@ -32,7 +32,6 @@
 class QuantaHandler
 {
   public:
-    typedef QVector<KTextEditor::Range> Ranges;
     
     QuantaHandler() {};
     virtual ~QuantaHandler() {};
@@ -47,7 +46,7 @@ class QuantaHandler
      * 
      * \return \e false if the reader should stops parsing and report an error. 
      */
-    virtual bool elementRanges(const KTextEditor::Range & elementRange, const Ranges & attrRanges) = 0;
+    virtual bool elementRanges(const KTextEditor::Range & elementRange, const QVector<KTextEditor::Range> & attrRanges) = 0;
     
     /**
      * The reader uses the function errorString() to get the error message.

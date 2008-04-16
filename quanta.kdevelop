@@ -71,7 +71,7 @@
       <projectmanagement>KDevCustomProject</projectmanagement>
       <projectdirectory>/data/development/sources/kde-trunk/kdewebdev</projectdirectory>
       <absoluteprojectpath>true</absoluteprojectpath>
-      <activedir>plugins/project/projectfilemanager</activedir>
+      <activedir>quanta/lib</activedir>
     </general>
     <filetypes>
       <filetype>*.java</filetype>
