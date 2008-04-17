@@ -22,8 +22,6 @@ class KDialog;
 class ConfigWidgetProxy;
 class QToolBox;
 class QuantaCoreIf;
-class StructureTreeWidget;
-class GroupsWidget;
 
 namespace KDevelop {
   class IProject;

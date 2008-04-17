@@ -23,7 +23,7 @@
 
 class QDomNode;
 
-#define DEBUG_STATEMACHINE
+//#define DEBUG_STATEMACHINE
 
 /**
  *  @short Template class to call function by their name.

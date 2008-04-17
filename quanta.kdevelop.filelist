@@ -521,6 +521,8 @@ quanta/lib/CMakeLists.txt
 quanta/lib/areastruct.h
 quanta/lib/basetreeview.cpp
 quanta/lib/basetreeview.h
+quanta/lib/dommodel.cpp
+quanta/lib/dommodel.h
 quanta/lib/dtdstruct.h
 quanta/lib/editorsource.cpp
 quanta/lib/editorsource.h
@@ -557,6 +559,8 @@ quanta/lib/searchlinewidget.h
 quanta/lib/settings.cpp
 quanta/lib/settings.h
 quanta/lib/settingsbase.kcfgc
+quanta/lib/structuretreeview.cpp
+quanta/lib/structuretreeview.h
 quanta/lib/tag.cpp
 quanta/lib/tag.h
 quanta/lib/tagattr.cpp
@@ -565,8 +569,6 @@ quanta/lib/tagdialogsif.cpp
 quanta/lib/tagdialogsif.h
 quanta/lib/tagpair.cpp
 quanta/lib/tagpair.h
-quanta/lib/treeelement.cpp
-quanta/lib/treeelement.h
 quanta/lib/treelement.cpp
 quanta/lib/treelement.h
 quanta/lib/useraction.cpp

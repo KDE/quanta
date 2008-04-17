@@ -519,6 +519,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
         group.appendToTags = grp.readEntry("AppendToTags", false);
         group.parentGroup = grp.readEntry("ParentGroup").trimmed();
         tagStr = grp.readEntry("TagType", "Text").trimmed();
+#if 0        
         if (tagStr == "XmlTag")
             group.tagType = Tag::XmlTag;
         else if (tagStr == "XmlTagEnd")
@@ -536,6 +537,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
         else if (tagStr == "ScriptStructureEnd")
             group.tagType = Tag::ScriptStructureEnd;
         else group.tagType = -1;
+#endif                          
         tmpStr = grp.readEntry("AutoCompleteAfter").trimmed();
         group.autoCompleteAfterRx.setPattern(tmpStr);
         tmpStr = grp.readEntry("RemoveFromAutoCompleteWord").trimmed();

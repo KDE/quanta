@@ -13,8 +13,6 @@
 #ifndef TAGPAIR_H
 #define TAGPAIR_H
 
-#include "tag.h"
-#include "tagattr.h"
 #include "quantaexport.h"
 
 #include <QString>
@@ -74,6 +72,10 @@ public:
    * @return a TagPair with <a href="ref"> </a>
    */
   static TagPair createLinkTag(const QString & ref)
-    {return TagPair(Tag::convertCase("<a ") + TagAttr::convertCase("href=") + TagAttr::quoteAttributeValue(ref) + ">", Tag::convertCase("</a>"));};
+    {
+#if 0      
+      return TagPair(Tag::convertCase("<a ") + TagAttr::convertCase("href=") + TagAttr::quoteAttributeValue(ref) + ">", Tag::convertCase("</a>"));
+#endif    
+    };
 };
 #endif

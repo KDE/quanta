@@ -12,6 +12,10 @@
  ***************************************************************************/
 #include "parsermanager.h"
 #include "statemachine.h"
+#include "parserstatus.h"
+#include "quantaxmlinputsource.h"
+#include "dombuilder.h"
+#include "parseresult.h"
 
 #include <kcomponentdata.h>
 #include <kstandarddirs.h>
@@ -21,9 +25,9 @@ ParserManager *ParserManager::m_ref = 0L;
 ParserManager::ParserManager(QObject *parent)
  : QObject(parent)
 {
-  m_parser = new Parser();
-  connect(m_parser, SIGNAL(finishedParsing(const EditorSource *, const ParseResult  *)), SIGNAL(finishedParsing(const EditorSource *, const ParseResult  *)));
-  connect(m_parser, SIGNAL(groupsParsed(const EditorSource *, const ParseResult  *)), SIGNAL(groupsParsed(const EditorSource *, const ParseResult  *)));
+//   m_parser = new Parser();
+//   connect(m_parser, SIGNAL(finishedParsing(const EditorSource *, const ParseResult  *)), SIGNAL(finishedParsing(const EditorSource *, const ParseResult  *)));
+//   connect(m_parser, SIGNAL(groupsParsed(const EditorSource *, const ParseResult  *)), SIGNAL(groupsParsed(const EditorSource *, const ParseResult  *)));
 
   m_xmlStateMachine = new StateMachine();
   QString xmlFile = KGlobal::mainComponent().dirs()->findResource("data", "quanta/statemachines/xmlstates.xml");
@@ -34,18 +38,28 @@ ParserManager::ParserManager(QObject *parent)
 
 ParserManager::~ParserManager()
 {
-  delete m_parser;
-  m_parser = 0L;
+/*  delete m_parser;
+  m_parser = 0L;*/
   delete m_xmlStateMachine;
   m_xmlStateMachine = 0L;
   m_ref = 0L;
 }
 
 
-void ParserManager::parse(EditorSource *source, ParseResult *base, const DTDStruct *dtd, bool detailed)
+void ParserManager::parse(EditorSource *source, QuantaXmlInputSource *inputSource, ParseResult *base, const DTDStruct *dtd, bool detailed)
 {
   emit startParsing(source);
-  m_parser->parse(source, base, dtd, detailed);
+  ParserStatus *parser = new ParserStatus(inputSource->newLocator(), xmlStateMachine());
+  DomBuilder *builder = new DomBuilder();
+  parser->setContentHandler(builder);
+  parser->setLexicalHandler(builder);
+  parser->setErrorHandler(builder);
+  parser->setQuantaHandler(builder);
+  parser->parse(inputSource);
+  base->model = builder->model();
+  delete parser;
+  delete builder;
+  //   m_parser->parse(source, base, dtd, detailed);
   emit finishedParsing(source, base);
 }
 
@@ -53,7 +67,7 @@ void ParserManager::parse(EditorSource *source, ParseResult *base, const DTDStru
 void ParserManager::rebuild(EditorSource *source, ParseResult *base, const DTDStruct *dtd, bool detailed)
 {
   emit startParsing(source);
-  m_parser->rebuild(source, base, dtd, detailed);
+//   m_parser->rebuild(source, base, dtd, detailed);
   emit finishedParsing(source, base);
 }
 

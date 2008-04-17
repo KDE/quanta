@@ -10,25 +10,24 @@
  ***************************************************************************/
 
 #include "structuretreepart.h"
-#include "structuretreewidget.h"
-#include "groupswidget.h"
 #include "structuretreeglobalconfig.h"
 #include "structuretreeprojectconfig.h"
 #include "quantacoreif.h"
 #include "searchlinewidget.h"
+#include "structuretreeview.h"
 
 #include <QTimer>
 #include <QMenu>
 #include <QWhatsThis>
-#include <qtoolbox.h>
+#include <QToolBox>
 #include <QLayout>
+#include <QTreeView>
 
 #include <klocale.h>
 #include <kaction.h>
 #include <kdialog.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
-#include <k3listviewsearchline.h>
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
 
@@ -66,29 +65,32 @@ class StructureTreeWidgetFactory: public KDevelop::IToolViewFactory
       QWidget *w = new QWidget(widget);
       w->setObjectName("structuretreecontainer");
 
-      StructureTreeWidget *documentTree = new StructureTreeWidget(m_part, w);
-
-      K3ListViewSearchLineWidget * sl = new K3ListViewSearchLineWidget(documentTree, w);
+      //FIXME: here comes
+      StructureTreeView *documentTree = new StructureTreeView(w);
 
       QVBoxLayout *l = new QVBoxLayout(w);
-      l->addWidget(sl);
+      w->setLayout(l);
+      l->setContentsMargins(0, 0, 0, 0);
+          //       l->addWidget(sl);
       l->addWidget(documentTree);
      
       KDevelop::IPlugin *corePlugin = KDevelop::Core::self()->pluginController()->pluginForExtension("org.kdevelop.QuantaCoreIf");
       QuantaCoreIf *qcore = corePlugin->extension<QuantaCoreIf>();
   
-      QObject::connect(corePlugin, SIGNAL(startParsing()), documentTree, SLOT(slotBlockGUI()));
+//       QObject::connect(corePlugin, SIGNAL(startParsing()), documentTree, SLOT(slotBlockGUI()));
 
-      QObject::connect(corePlugin, SIGNAL(finishedParsing(const ParseResult *)), documentTree, SLOT(slotBuild(const ParseResult *)));
+      QObject::connect(corePlugin, SIGNAL(finishedParsing(const ParseResult *)), documentTree, SLOT(newDataArrived(const ParseResult *)));
 
       QObject::connect(corePlugin, SIGNAL(newCursorPosition(const QPoint &)), documentTree, SLOT(slotNewCursorPosition(const QPoint &)));
 
-      GroupsWidget *groupsTree = new GroupsWidget(m_part, widget);
+      QTreeView *groupsTree = new QTreeView(widget);
+#if 0
       QObject::connect(corePlugin, SIGNAL(startParsing()), groupsTree, SLOT(slotBlockGUI()));
 
       QObject::connect(corePlugin, SIGNAL(finishedParsing(const ParseResult *)), groupsTree, SLOT(slotBuild(const ParseResult *)));
 
       QObject::connect(corePlugin, SIGNAL(groupsParsed(const ParseResult *)), groupsTree, SLOT(slotGroupsParsed(const ParseResult *)));
+#endif
 
   // add the widgets to the qtoolbox
       widget->addItem(groupsTree, i18n("Groups"));

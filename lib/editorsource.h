@@ -115,6 +115,8 @@ public:
    * @param col
    */
   void setCursorPosition(int line, int col);
+  
+  
 
 protected:
   KDevelop::IDocument *m_ideDocument;

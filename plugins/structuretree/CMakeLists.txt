@@ -12,12 +12,13 @@ include_directories(
 
 set(kdevstructuretree_PART_SRCS 
    structuretreepart.cpp 
-   structuretreewidget.cpp 
+   structuretreeview.cpp 
    structuretreeglobalconfig.cpp 
    structuretreeprojectconfig.cpp 
-   structtreeitem.cpp 
-   groupswidget.cpp 
-   groupstreeitem.cpp )
+#   structtreeitem.cpp 
+#   groupswidget.cpp 
+#   groupstreeitem.cpp 
+)
 
 
 kde4_add_ui_files(kdevstructuretree_PART_SRCS

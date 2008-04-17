@@ -13,14 +13,12 @@
 #ifndef PARSERMANAGER_H
 #define PARSERMANAGER_H
 
-#include "parser.h"
-
 #include <QObject>
 
-class Node;
 class EditorSource;
 class ParseResult;
 class StateMachine;
+class QuantaXmlInputSource;
 struct DTDStruct;
 
 
@@ -46,7 +44,7 @@ public:
    * @param dtd the main DTD of the source
    * @param detailed enable or disable detailed (special area) parsing
    */
-  void parse(EditorSource *source, ParseResult *base, const DTDStruct *dtd, bool detailed);
+  void parse(EditorSource *source, QuantaXmlInputSource *inputSource, ParseResult *base, const DTDStruct *dtd, bool detailed);
 
   /**
    * Rebuilds the node tree for the source. Tries to parse as small amount as possible, but sometimes a full parsing cannot be avoided, so the whole node tree will be changed.
@@ -88,7 +86,7 @@ signals:
 
 private:
   ParserManager(QObject *parent = 0);
-  Parser* m_parser;
+//   Parser* m_parser;
   StateMachine *m_xmlStateMachine;
 };
 

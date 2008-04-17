@@ -17,24 +17,13 @@
 #include <QXmlContentHandler>
 #include <QXmlLexicalHandler>
 
-// KDE includes
-// #include <dom/html_document.h>
-// #include <dom/dom_doc.h>
-// #include <dom/dom_node.h>
-
 #include "quantahandler.h"
-#include "dommodel.h"
 
 
 class QXmlLocator;
-class TreeElement;
+class DomModelItem;
+class DomModel;
 
-/*namespace DOM { 
-  class HTMLDocument;
-  class Document;
-  class Node;
-}*/
-  
   
 /**
  * \short This class builds the dom tree from the parser events.
@@ -103,9 +92,10 @@ class DomBuilder : public QXmlContentHandler, public QXmlLexicalHandler, public 
     /**
      * \}
      */
-  private:
     void showTreeView();
+    DomModel *model() {return m_model;}
     
+  private:    
     QXmlLocator * m_locator;
     bool m_DTDstarted;
     bool m_CDATAstarted;
@@ -113,13 +103,13 @@ class DomBuilder : public QXmlContentHandler, public QXmlLexicalHandler, public 
     int m_startLine;
     KTextEditor::Range m_elementRange;
     QVector<KTextEditor::Range> m_attrRanges;
-//     DOM::HTMLDocument m_document;
-//     DOM::Document m_document;
-//     DOM::DocumentFragment m_fragment;
-    TreeElement *m_startElement; 
-    TreeElement *m_currentElement;
-    TreeElement *m_lastInserted;
-    QString m_error;
+    
+    DomModelItem *m_startElement; 
+    DomModelItem *m_currentElement;
+    DomModelItem *m_lastInserted;
+    DomModel *m_model;
+    
+    QString m_error;    
 };
 
 

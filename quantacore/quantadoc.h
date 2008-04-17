@@ -25,6 +25,7 @@ class EditorSource;
 class Node;
 class QuantaCorePart;
 class TagPair;
+class QuantaXmlInputSource;
 
 class QTextCodec;
 class QTimer;
@@ -80,6 +81,8 @@ public:
 private slots:
   /** Called whenever the text in the document is changed. */
   void slotTextChanged(KTextEditor::Document* document);
+  
+#if 0  
   /** Handle the text changed events. Usually called from slotTextChanged,
   but it's possible to force the handling by calling manually and setting
   forced to true. 
@@ -87,6 +90,8 @@ private slots:
    * @param forced true if the event must be handled in any case
    */
   void slotDelayedTextChanged(bool forced = false);
+#endif  
+  
   /**
    * Called when the cursor moves inside the document.
    */
@@ -227,7 +232,8 @@ private:
   //autocompletion box delayed with the singleshot timer (workaround for
   //a bug: the box is not showing up if it is called from slotCompletionDone)
   int m_lastLine, m_lastCol;
-
+  
+  QuantaXmlInputSource *m_inputSource;
 #if 0 // TODO PORT
   QList<KTextEditor::CompletionItem> *m_completionEntries;
 #endif

@@ -23,7 +23,6 @@
 // #include "extfileinfo.h"
 #include "qtag.h"
 #include "settings.h"
-#include "tag.h"
 #include "tagpair.h"
 #include "tagwidget.h"
 #include "tagimgdlg.h"
@@ -303,6 +302,7 @@ QHash<QString, QString*> * TagDialog::getAttributes()
 /** Return all the attributes in one string*/
 QString TagDialog::getAttributeString()
 {
+#if 0
   QHashIterator<QString, QString*> it( *dict );
 
   QString attrStr;
@@ -325,6 +325,7 @@ QString TagDialog::getAttributeString()
 
   }
   return attrStr;
+#endif`
 }
 
 /**Return the value of the attribute specified by attr. */
@@ -431,6 +432,7 @@ void TagDialog::parseAttributes(const QString &attrs)
 /** Insert the new tag into the Document*/
 TagPair TagDialog::getNewlyCreatedTag()
 {
+#if 0
   TagPair tagPair;
 
   if (dtdTag->name() == i18n("Unknown tag"))
@@ -453,6 +455,7 @@ TagPair TagDialog::getNewlyCreatedTag()
     tagPair.setClosing(Tag::convertCase(dtdTag->name()));
   }
   return tagPair;
+#endif
 }
 
 /*FIXME

@@ -18,17 +18,24 @@
 #include <QVariant>
 
 //kde includes
-#include <dom/dom_string.h>
+#include <ktexteditor/range.h>
 
 
-DomModelItem::DomModelItem(TreeElement *node, DomModelItem * parent) 
-  : m_node(node), m_parentItem(parent)
+DomModelItem::DomModelItem(DomModelItem * parent) 
+  : m_parentItem(parent)
 {
+  m_type = Empty;
+  if (parent)
+  {
+    parent->appendItem(this);
+  }
+  m_range = 0L;
 }
 
 
 DomModelItem::~DomModelItem()
 {
+  delete m_range;   
 }
 
 DomModelItem * DomModelItem::child(int row) const
@@ -59,14 +66,14 @@ QVariant DomModelItem::data(int column, int role) const
 
   switch (column)
   {
-    case 0: return m_node->name();
+    case 0: return m_name;
 //     case 1: return nodeValue().string();
   }
   return QVariant();
 }
     
     
-DomModelItem * DomModelItem::parentItem() const
+DomModelItem * DomModelItem::parent() const
 {
   return m_parentItem;
 }
@@ -77,15 +84,44 @@ void DomModelItem::appendItem(DomModelItem * newChild)
   m_childItems.append(newChild);
 }
 
-
-DomModel::DomModel(TreeElement *node, QObject * parent)
-  : QAbstractItemModel(parent), m_rootItem(node)
+void DomModelItem::setRange(KTextEditor::Range *range)
 {
-  if (node)
+  if (range != m_range)
+    delete m_range;
+  m_range = range;
+}
+
+void DomModelItem::setName(const QString &name)
+{
+  m_name = name;
+}
+
+void DomModelItem::setNameSpace(const QString &nameSpace)
+{
+  m_nameSpace = nameSpace;
+}
+
+void DomModelItem::setAttributes(const QXmlAttributes & attributes)
+{
+  m_attributes = attributes;
+}
+
+void DomModelItem::setAttributeRanges(const QVector<KTextEditor::Range> & attrRanges)
+{
+  m_attributeRanges = attrRanges;
+}
+
+
+DomModel::DomModel(DomModelItem *rootItem, QObject * parent)
+  : QAbstractItemModel(parent), m_rootItem(rootItem)
+{
+/*  if (node)
   {
     setupModelData(&m_rootItem);
-  } 
+  } */
 }
+
+
 
 
 DomModel::~DomModel()
@@ -98,7 +134,7 @@ QModelIndex DomModel::index(int row, int column, const QModelIndex &parent) cons
   DomModelItem * childItem;
       
   if (!parent.isValid())
-    childItem = m_rootItem.child(row);
+    childItem = m_rootItem->child(row);
   else
     childItem = static_cast<DomModelItem *>(parent.internalPointer())->child(row);
 
@@ -115,9 +151,9 @@ QModelIndex DomModel::parent(const QModelIndex &index) const
     return QModelIndex();
 
   DomModelItem * childItem = static_cast<DomModelItem *>(index.internalPointer());
-  DomModelItem * parentItem = childItem->parentItem();
+  DomModelItem * parentItem = childItem->parent();
 
-  if (parentItem->equals(m_rootItem))
+  if (parentItem == m_rootItem)
     return QModelIndex();
 
   return createIndex(parentItem->row(), 0, parentItem);
@@ -129,7 +165,7 @@ int DomModel::rowCount(const QModelIndex &parent) const
   const DomModelItem * parentItem;
 
   if (!parent.isValid())
-    parentItem = &m_rootItem;
+    parentItem = m_rootItem;
   else
     parentItem = static_cast<DomModelItem *>(parent.internalPointer());
 
@@ -142,7 +178,7 @@ int DomModel::columnCount(const QModelIndex &parent) const
   if (parent.isValid())
     return static_cast<DomModelItem *>(parent.internalPointer())->columnCount();
   else
-    return m_rootItem.columnCount();
+    return m_rootItem->columnCount();
 }
 
 
@@ -170,7 +206,7 @@ QVariant DomModel::headerData(int section, Qt::Orientation orientation,
                                int role) const
 {
   if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
-    return m_rootItem.data(section, role);
+    return m_rootItem->data(section, role);
 
   return QVariant();
 }
@@ -178,14 +214,14 @@ QVariant DomModel::headerData(int section, Qt::Orientation orientation,
 
 void DomModel::setupModelData(DomModelItem * parent)
 {
-  TreeElement *el = parent->firstChild();
+/*  TreeElement *el = parent->firstChild();
   while (el)
   {
     DomModelItem * newItem = new DomModelItem(el, parent);
     parent->appendItem(newItem);
     setupModelData(newItem);
     el = el->next();
-  }
+  }*/
 }
 
 #include "dommodel.moc"

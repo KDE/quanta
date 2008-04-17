@@ -16,8 +16,6 @@
 //own includes
 #include "quantacommon.h"
 #include "extfileinfo.h"
-#include "tag.h"
-#include "tagattr.h"
 #include "dtds.h"
 #include "settings.h"
 //#include "resource.h"

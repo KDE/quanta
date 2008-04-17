@@ -13,8 +13,6 @@
 #include "environmentconfig.h"
 #include "dtds.h"
 #include "settings.h"
-#include "tag.h"
-#include "tagattr.h"
 
 #include <QStringList>
 

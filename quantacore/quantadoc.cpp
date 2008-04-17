@@ -18,7 +18,6 @@
 //#include "specialareagroupcompletion.h"
 #include "dtds.h"
 #include "editorsource.h"
-#include "groupstorage.h"
 #include "parsermanager.h"
 #include "qtag.h"
 #include "tagpair.h"
@@ -51,9 +50,8 @@
 QuantaDoc::QuantaDoc(KDevelop::IDocument *document, QuantaCorePart *qcore)
   : EditorSource(document, qcore), m_qcore(qcore)
 {
-  m_parseResult.baseNode = 0L;
+  m_parseResult.model = 0L;
   m_parseResult.dtepList.clear();
-  m_parseResult.groupStorage = new GroupStorage();
 
   // set the default baseURL to the path of the document, the parse may overwrite this
   KUrl baseURL = document->url();
@@ -80,17 +78,10 @@ QuantaDoc::QuantaDoc(KDevelop::IDocument *document, QuantaCorePart *qcore)
   
   //TODO: Enable the new parsing when you work on it!
   //new parser 
-  QuantaXmlInputSource *inputSource = new QuantaXmlInputSource(document->textDocument());
-  ParserStatus *parser = new ParserStatus(inputSource->newLocator(), ParserManager::self()->xmlStateMachine());
-  DomBuilder *builder = new DomBuilder();
-  parser->setContentHandler(builder);
-  parser->setLexicalHandler(builder);
-  parser->setErrorHandler(builder);
-  parser->setQuantaHandler(builder);
-  parser->parse(inputSource);
+  m_inputSource = new QuantaXmlInputSource(document->textDocument());
   
   //old parser
-//   parse();
+  parse();
   m_parsingNeeded = false;
 //  Node::coutTree(m_parseResult.baseNode, 2);
   for (int i = 0; i < m_parseResult.dtepList.count(); i++)
@@ -115,14 +106,14 @@ QuantaDoc::QuantaDoc(KDevelop::IDocument *document, QuantaCorePart *qcore)
 
 QuantaDoc::~QuantaDoc()
 {
-  delete m_parseResult.groupStorage;
-  m_parseResult.groupStorage = 0L;
   delete m_idleTimer;
+  delete m_inputSource;
 }
 
 AreaStruct QuantaDoc::parseForDTD()
 {
  AreaStruct area;
+#if 0
  //Do some magic to find the document type
  int endLine = m_document->lines();
  QString foundText = "";
@@ -200,6 +191,7 @@ AreaStruct QuantaDoc::parseForDTD()
 
  kDebug(24000) << "defaultDTD: dtdName = " << dtdName;
  m_dtd = DTDs::ref()->find(dtdName);
+#endif
 //FIXME  if (!dtd) dtd = DTDs::ref()->find(Project::ref()->defaultDTD());
  if (!m_dtd)
   m_dtd = DTDs::ref()->find(Settings::self()->defaultDTEP()); //this will always exists
@@ -209,6 +201,7 @@ AreaStruct QuantaDoc::parseForDTD()
 const DTDStruct* QuantaDoc::dtdAt(int line, int col) const
 {
   const DTDStruct *dtd = m_dtd;
+#if 0
   Node *node = Node::nodeAt(m_parseResult.baseNode, line, col, false, true);
   if (node)
   {
@@ -216,6 +209,7 @@ const DTDStruct* QuantaDoc::dtdAt(int line, int col) const
   }
 
   return dtd;
+#endif
 }
 
 void QuantaDoc::slotTextChanged(KTextEditor::Document* document)
@@ -229,6 +223,7 @@ void QuantaDoc::slotTextChanged(KTextEditor::Document* document)
   }
 }
 
+#if 0
 void QuantaDoc::slotDelayedTextChanged(bool forced)
 {
   kDebug(24000) << "slotDelayedTextChanged";
@@ -359,6 +354,7 @@ void QuantaDoc::slotDelayedTextChanged(bool forced)
   m_parserEnabled = true;
   m_parsingNeeded = false;
 }
+#endif
 
 void QuantaDoc::slotCursorPositionChanged(KTextEditor::View *view, const KTextEditor::Cursor &newPosition)
 {
@@ -462,6 +458,7 @@ void QuantaDoc::replaceAccentedChars(const QPoint &position, const QChar& ch)
 
 void QuantaDoc::slotCharactersInserted(KTextEditor::View *view, const KTextEditor::Cursor &cursor, const QString &string)
 {
+#if 0
   Q_UNUSED(view);
   int line = cursor.line();
   int column = cursor.column();
@@ -594,6 +591,7 @@ void QuantaDoc::slotCharactersInserted(KTextEditor::View *view, const KTextEdito
   }
   if (tempNodeCreated) //a custom node was created
     node->deleteNode(0L);
+#endif
 }
 
 void QuantaDoc::insertTag(const TagPair & tagPair)
@@ -618,6 +616,7 @@ void QuantaDoc::insertTag(const TagPair & tagPair)
 
 void QuantaDoc::insertChildTags(QTag *qtag, QTag *lastTag)
 {
+#if 0
   if (!qtag || qtag == lastTag) //avoid infinite recursion
     return;
 
@@ -643,6 +642,7 @@ void QuantaDoc::insertChildTags(QTag *qtag, QTag *lastTag)
       }
     }
   }
+#endif
 }
 
 #if 0 // TODO PORT
@@ -719,6 +719,7 @@ void QuantaDoc::codeCompletionRequested()
 
 void QuantaDoc::codeCompletionHintRequested()
 {
+#if 0  
   if (m_completionInProgress)
     return;
 
@@ -741,13 +742,13 @@ void QuantaDoc::codeCompletionHintRequested()
   //FIXME: Code completion needs to be rewritten using a CompletionProvider    //m_codeCompletionIf->showArgHint(result.argList, result.wrapper, result.delimiter);
 #endif
   }
-
+#endif
 }
 
 
 void QuantaDoc::parse()
 {
-  ParserManager::self()->parse(this, &m_parseResult, m_dtd, true);
+  ParserManager::self()->parse(this, m_inputSource, &m_parseResult, m_dtd, true);
 }
 
 bool QuantaDoc::isSameDocument(KDevelop::IDocument *document)
@@ -818,6 +819,7 @@ QPoint QuantaDoc::findTagEnd(const QPoint& position)
 
 void QuantaDoc::closeTag(Node *node)
 {
+#if 0
   QString tagName = node->tag->name();
   QTag *qTag = QTag::tagFromDTD(node->tag->dtd(), tagName);
   if (node->tag->isClosingTag() || tagName.isEmpty())
@@ -855,6 +857,7 @@ void QuantaDoc::closeTag(Node *node)
     m_parserEnabled = true;
     ParserManager::self()->rebuild(this, &m_parseResult, m_dtd, true);
   }
+#endif
 }
 
 #include "quantadoc.moc"

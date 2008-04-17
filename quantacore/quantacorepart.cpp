@@ -20,8 +20,6 @@
 #include "parsermanager.h"
 #include "quantacommon.h"
 #include "settings.h"
-#include "tag.h"
-#include "tagattr.h"
 #include "tagdialogsif.h"
 #include "helper.h"
 #include "tagpair.h"
@@ -158,6 +156,7 @@ void QuantaCorePart::initActions()
 
 void QuantaCorePart::insertTag(const TagPair & tagPair, bool inLine, bool showDialog)
 {
+#if 0
   if (!m_activeQuantaDoc)
     return;
 
@@ -214,6 +213,7 @@ void QuantaCorePart::insertTag(const TagPair & tagPair, bool inLine, bool showDi
     }
   }
   m_activeQuantaDoc->insertTag(TagPair(s1, s2));
+#endif
 }
 
 
@@ -342,6 +342,7 @@ void QuantaCorePart::slotPartURLChanged(KDevelop::IDocument* document, const KUr
 
 void QuantaCorePart::slotInsertTag(const KUrl& url, Helper::DirInfo * dirInfo)
 {
+#if 0
   if (m_activeQuantaDoc)
   {
     KUrl baseURL = m_activeQuantaDoc->parseResult()->baseURL;
@@ -391,6 +392,7 @@ void QuantaCorePart::slotInsertTag(const KUrl& url, Helper::DirInfo * dirInfo)
       }
     }
   }
+#endif
 }
 
 

@@ -35,18 +35,18 @@ set(kdevquantacore_PART_SRCS
    dialogs/environmentconfig.cpp
 
    parsers/comparator.cpp
-   parsers/parsercommon.cpp
-   parsers/parser.cpp
+#   parsers/parsercommon.cpp
+#   parsers/parser.cpp
    parsers/parsermanager.cpp
-   parsers/sagroupparser.cpp
-   parsers/saparser.cpp
+#   parsers/sagroupparser.cpp
+#   parsers/saparser.cpp
 
    parsers/quantaxmlinputsource.cpp
    parsers/statemachine.cpp
    parsers/parserstatus.cpp
    parsers/stateactions.cpp
    parsers/dombuilder.cpp
-   parsers/dommodel.cpp
+#   parsers/dommodel.cpp
    
    parsers/dtd/dtdparser.cpp
 )

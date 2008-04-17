@@ -16,15 +16,27 @@
 
 #include <QList>
 #include <QAbstractItemModel>
+#include <QXmlAttributes>
+#include <QVector>
 
-#include "treelement.h"
+#include "quantaexport.h"
 
+namespace KTextEditor {
+  class Range;
+}
 
-
-class DomModelItem
+class KDEVQUANTA_EXPORT DomModelItem
 {
   public:
-    explicit DomModelItem(TreeElement *node = 0, DomModelItem * parent= 0);
+    enum Type {
+      TagStart = 0,
+      TagEnd,
+      Text,
+      Comment,
+      Empty
+    };
+    
+    explicit DomModelItem(DomModelItem * parent= 0);
     
     virtual ~DomModelItem();
     
@@ -32,37 +44,52 @@ class DomModelItem
     
     int childCount() const;
     
-    int columnCount() const {return 2;};
+    int columnCount() const {return 1;};
     
     QVariant data(int column, int role) const;
     
     int row() const;
 
-    DomModelItem * parentItem() const;
+    DomModelItem * parent() const;
     
     void appendItem(DomModelItem * newChild);
     
-    bool equals(DomModelItem item) { return m_node == item.m_node; }
-    
-    TreeElement *firstChild() { return m_node->firstChild(); }
-    
-  protected:
-    TreeElement *m_node;
-    
+    void setRange(KTextEditor::Range *range);
+    KTextEditor::Range *range() { return m_range; }
+    void setType(Type type) { m_type = type; }
+    Type type() { return m_type; }
+  
+    void setName(const QString &name);
+    QString name() const { return m_name;} 
+    void setNameSpace(const QString &nameSpace);
+    QString nameSpace() const { return m_nameSpace; } 
+    void setAttributes(const QXmlAttributes & attributes);
+    QXmlAttributes attributes() { return m_attributes; }
+    void setAttributeRanges(const QVector<KTextEditor::Range> & attrRanges); 
+  
   private:
+//relationship inside of the model    
     QList<DomModelItem *> m_childItems;
-    
     DomModelItem * m_parentItem;
+
+//data    
+    Type m_type;
+    KTextEditor::Range *m_range;
+    QVector<KTextEditor::Range> m_attributeRanges;
+  
+    QString m_name;
+    QString m_nameSpace;
+    QXmlAttributes m_attributes;
 };
 
 
 
-class DomModel : public QAbstractItemModel
+class KDEVQUANTA_EXPORT DomModel : public QAbstractItemModel
 {
   Q_OBJECT
 
   public:
-    explicit DomModel(TreeElement *node, QObject *parent = 0);
+    explicit DomModel(DomModelItem *rootItem, QObject *parent = 0);
     
     ~DomModel();
 
@@ -85,7 +112,7 @@ class DomModel : public QAbstractItemModel
   private:
     void setupModelData(DomModelItem * parent);
     
-    DomModelItem m_rootItem;
+    DomModelItem *m_rootItem;
 };
 
 #endif

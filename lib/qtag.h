@@ -37,7 +37,6 @@
 
 
 //class QTag;
-class Node;
 struct DTDStruct;
 
 
@@ -134,7 +133,9 @@ public:
   there are no children defined and if trueIfNoChildsDefined is set to true. */
   bool isChild(const QString& tag, bool trueIfNoChildsDefined = true);
   //prefer using this variant, it handle Text, Empty, XmlTagEnd nodes!
+#if 0  
   bool isChild(Node *node, bool trueIfNoChildsDefined = true, bool treatEmptyNodesAsText = false);
+#endif  
   /*** Returns the list of parent of this tag. */
   QList<QTag*> parents();
 
@@ -171,12 +172,15 @@ public:
    * @return pointer to @see QTag or 0
    */
   static QTag* tagFromDTD(const DTDStruct* dtd, const QString& tag);
+  
+#if 0  
   /** Returns the QTag object for the node "node" from node's DTD.
    *
    * @param node 
    * @return pointer to @see QTag or 0
    */
   static QTag* tagFromDTD(Node *node);
+#endif  
 
 protected: // Protected attributes
   /** List of the possible attributes */

@@ -14,27 +14,18 @@
 //own includes
 #include "dombuilder.h"
 #include "dommodel.h"
-#include "treelement.h"
 
 //kde includes
 #include <kdebug.h>
 #include <klocale.h>
-// #include <dom/html_document.h>
-// #include <dom/dom_doc.h>
-// #include <dom/dom_node.h>
-// #include <dom/dom_text.h>
-// #include <dom/dom_element.h>
-// #include <dom/dom_xml.h>
-// #include <dom/dom_exception.h>
-// #include <dom/html_element.h>
-// #include <dom/dom_string.h>
-// 
+ 
 
 
 #define DEBUGMODE
 
 #ifdef DEBUGMODE
-#define DOMBUILDERDEBUG( S ) kDebug(24001) << S;
+#define DOMBUILDERDEBUG( S )
+//#define DOMBUILDERDEBUG( S ) kDebug(24001) << S;
 #else
 #define DOMBUILDERDEBUG( S )
 #endif
@@ -52,10 +43,12 @@ DomBuilder::DomBuilder()
   m_DTDstarted = false;
   m_locator = 0;
   // i am not allowed to add text nodes to the document, so make a child first
-  m_startElement = new TreeElement(TreeElement::TagStart);
+  m_startElement = new DomModelItem();
+  m_startElement->setType(DomModelItem::TagStart);
   m_startElement->setRange(new KTextEditor::Range(KTextEditor::Range::invalid()));
   m_lastInserted = m_startElement;
   m_currentElement = m_startElement;
+  m_model = new DomModel(m_startElement);
   m_error.clear();
 }
 
@@ -70,16 +63,16 @@ DomBuilder::~DomBuilder()
 bool DomBuilder::characters(const QString & ch)
 {
   DOMBUILDERDEBUG("DomBuilder::Text: " << QString(ch).replace('\n', ' '))
-  m_lastInserted = new TreeElement(TreeElement::Text);
-  m_lastInserted->setName(ch);
-  m_lastInserted->setRange(new KTextEditor::Range(m_elementRange));
-  if (m_currentElement->type() != TreeElement::Comment)
+  if (m_currentElement->type() != DomModelItem::Comment)
   {
-    m_lastInserted->insertBelow(m_currentElement);    
+    m_lastInserted = new DomModelItem(m_currentElement);
   } else
   {
-    m_lastInserted->insertAfter(m_currentElement);
+    m_lastInserted = new DomModelItem(m_currentElement->parent());
   }
+  m_lastInserted->setType(DomModelItem::Text);
+  m_lastInserted->setName(ch);
+  m_lastInserted->setRange(new KTextEditor::Range(m_elementRange));
   return true;
 }
 
@@ -88,7 +81,7 @@ bool DomBuilder::endDocument()
 {
   DOMBUILDERDEBUG("DomBuilder::End Document")
 #ifdef DEBUGMODE
-  showTreeView();
+//   showTreeView();
 #endif
   return true;
 }
@@ -98,38 +91,46 @@ bool DomBuilder::endElement(const QString & /*namespaceURI*/, const QString & /*
 {
   DOMBUILDERDEBUG("DomBuilder::End Element: " << qName)
       
-  TreeElement *emptyElement = 0L;
-  if (m_lastInserted->type() != TreeElement::Text)
-  {
-    emptyElement = new TreeElement(TreeElement::Empty);
-    emptyElement->setName("endElement");
-    emptyElement->setRange(new KTextEditor::Range(m_lastInserted->range()->end(), m_elementRange.start()));
-  }
-  
-  TreeElement *endElement = new TreeElement(TreeElement::TagEnd);
-  endElement->setName('/' + qName);
-  endElement->setRange(new KTextEditor::Range(m_elementRange));
-  
-  TreeElement *el = m_currentElement;
+  DomModelItem *emptyElement = 0L;
+  DomModelItem *endElement = 0L;
+  bool insertEmptyElement = (m_lastInserted->type() != DomModelItem::Text);
+    
+  DomModelItem *el = m_currentElement;
   while (el != m_startElement)
   {
     if (el->name() == qName)
     {
-      if (emptyElement)
-        emptyElement->insertAfter(m_lastInserted);
-      endElement->insertAfter(el);
+      if (insertEmptyElement)
+      {
+        emptyElement = new DomModelItem(m_lastInserted->parent());
+      }
+      endElement = new DomModelItem(el->parent());
       m_currentElement = el->parent();
-      m_lastInserted = endElement;
-      return true;
+      break;
     } else
     {
       el = el->parent();
     }    
   }
+  if (!endElement)
+  {
+    if (insertEmptyElement)
+    {
+      emptyElement = new DomModelItem(m_currentElement->parent());
+    } 
+    endElement = new DomModelItem(m_currentElement->parent());
+  }
   
-  endElement->insertAfter(m_currentElement);
   if (emptyElement)
-    emptyElement->insertAfter(m_currentElement);
+  {
+    emptyElement->setName("endElement");
+    emptyElement->setRange(new KTextEditor::Range(m_lastInserted->range()->end(), m_elementRange.start()));
+  }
+  
+  endElement->setType(DomModelItem::TagEnd);
+  endElement->setName('/' + qName);
+  endElement->setRange(new KTextEditor::Range(m_elementRange));
+  
   m_lastInserted = endElement;    
   return true;
 }
@@ -182,15 +183,15 @@ bool DomBuilder::startElement(const QString & namespaceURI, const QString & loca
     return true;
   }
   
-  if (m_lastInserted->type() != TreeElement::Text)
+  if (m_lastInserted->type() != DomModelItem::Text)
   {
-    TreeElement *el = new TreeElement(TreeElement::Empty);
+    DomModelItem *el = new DomModelItem(m_currentElement);
     el->setRange(new KTextEditor::Range(m_lastInserted->range()->end(), m_elementRange.start()));
     el->setName("startElement");
-    el->insertBelow(m_currentElement);
   }
   
-  m_lastInserted = new TreeElement(TreeElement::TagStart);
+  m_lastInserted = new DomModelItem(m_currentElement);
+  m_lastInserted->setType(DomModelItem::TagStart);
   
   if (qName.isEmpty())
   {
@@ -209,7 +210,6 @@ bool DomBuilder::startElement(const QString & namespaceURI, const QString & loca
   
   m_lastInserted->setRange(new KTextEditor::Range(m_elementRange));
   m_lastInserted->setAttributeRanges(m_attrRanges);
-  m_lastInserted->insertBelow(m_currentElement);
   m_currentElement = m_lastInserted;
   return true;
 }
@@ -227,29 +227,29 @@ bool DomBuilder::comment(const QString & ch)
 {
   DOMBUILDERDEBUG("DomBuilder::Comment: " << QString(ch).replace('\n', ' '))
       
-  if (m_lastInserted->type() != TreeElement::Text)
+  if (m_lastInserted->type() != DomModelItem::Text)
   {
-    TreeElement *el = new TreeElement(TreeElement::Empty);
-    el->setRange(new KTextEditor::Range(m_lastInserted->range()->end(), m_elementRange.start()));
-    if (m_currentElement->type() != TreeElement::Comment)
+    DomModelItem *el = 0L;
+    if (m_currentElement->type() != DomModelItem::Comment)
     {
-      el->insertBelow(m_currentElement);    
+      el = new DomModelItem(m_currentElement);    
     } else
     {
-      el->insertAfter(m_currentElement);
+      el = new DomModelItem(m_currentElement->parent());
     }
+    el->setRange(new KTextEditor::Range(m_lastInserted->range()->end(), m_elementRange.start()));
   }
   
-  m_lastInserted = new TreeElement(TreeElement::Comment);
-  m_lastInserted->setName(ch);
-  m_lastInserted->setRange(new KTextEditor::Range(m_elementRange));
-  if (m_currentElement->type() != TreeElement::Comment)
+  if (m_currentElement->type() != DomModelItem::Comment)
   {
-    m_lastInserted->insertBelow(m_currentElement);    
+    m_lastInserted = new DomModelItem(m_currentElement);
   } else
   {
-    m_lastInserted->insertAfter(m_currentElement);
+    m_lastInserted = new DomModelItem(m_currentElement->parent());
   }
+  m_lastInserted->setType(DomModelItem::Comment);
+  m_lastInserted->setName(ch);
+  m_lastInserted->setRange(new KTextEditor::Range(m_elementRange));
   return true;
 }
 
@@ -329,6 +329,7 @@ bool DomBuilder::elementRanges(const KTextEditor::Range & elementRange, const QV
   m_attrRanges = attrRanges;
   return true;
 }
+#if 0
 void coutTree (TreeElement *node, int indent)
 {
   QString output;
@@ -362,42 +363,18 @@ void coutTree (TreeElement *node, int indent)
     node = node->next();
   }
 }
-
+#endif
+                 
 void DomBuilder::showTreeView()
 {
-#ifdef DEBUGMODE
-/*  m_HTMLdocument = m_HTMLdocument.implementation().createHTMLDocument("test");
-  DOM::NodeList childs = m_HTMLdocument.childNodes();
-  uint i = 0;
-  while (i < childs.length())
-  {
-    try
-    {
-      m_HTMLdocument.body().appendChild(childs.item(i));
-    }
-    catch (DOM::DOMException& e) 
-    {
-      DOMBUILDERDEBUG("showTreeView failed to import: " << childs.item(i).nodeName() << " exception: " << e.code)
-    };
-    ++i;
-  } */
-  TreeElement *el = m_startElement;
-  coutTree(el, 2);
-    
-  
-  QDialog dialog;
+/*  QDialog dialog;
   QBoxLayout layout(QBoxLayout::LeftToRight, &dialog);
   QTreeView view(&dialog);
   layout.addWidget(&view);
   DomModel model(m_startElement);
   view.setModel(&model);
   dialog.resize(300,300);
-  dialog.exec();
-#endif
-/** Print the doc structure tree to the standard output.
-  Only for debugging purposes. */
-/*  TreeElement *el = m_startElement;
-  coutTree(el, 2);*/
+  dialog.exec();*/
 }
 
 

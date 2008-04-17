@@ -20,19 +20,16 @@
 
 #include <kurl.h>
 
-class Node;
-class GroupStorage;
+class DomModel;
 
 /** Describes a parser result.*/
 struct ParseResult 
 {
-  ParseResult() : baseNode(0L), groupStorage(0L), baseURL(KUrl()) {};
+  ParseResult() : model(0L), baseURL(KUrl()) {};
   
   /** the base of the node tree resulted from a parsing */
-  Node *baseNode; 
+  DomModel *model; 
   
-  /** pointer to the object holding information about the groups found in this node tree */
-  GroupStorage *groupStorage; 
   
   /** a list with the DTEPs present in the node tree  */
   QList<const DTDStruct*> dtepList;

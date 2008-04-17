@@ -15,10 +15,10 @@ set(kdevquanta_LIB_SRCS
    resizablewidget.cpp 
    useraction.cpp 
    myprocess.cpp 
-   node.cpp 
-   tag.cpp 
+#   node.cpp 
+#   tag.cpp 
    qtag.cpp 
-   tagattr.cpp 
+#   tagattr.cpp 
    editorsource.cpp
    fileinfodlg.cpp
    filecombo.cpp 
@@ -27,11 +27,11 @@ set(kdevquanta_LIB_SRCS
    helper.cpp 
    quantanetaccess.cpp 
    tagpair.cpp 
-   groupstorage.cpp 
+#   groupstorage.cpp 
    extfileinfo.cpp 
    quantaprojectif.cpp 
    searchlinewidget.cpp
-   treelement.cpp
+   dommodel.cpp
    )
 
 

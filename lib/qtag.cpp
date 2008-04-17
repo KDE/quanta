@@ -14,8 +14,6 @@
  ***************************************************************************/
 
 #include "qtag.h"
-#include "node.h"
-#include "tag.h"
 #include "dtdstruct.h"
 
 #include <kdebug.h>
@@ -204,6 +202,7 @@ Attribute* QTag::attribute(const QString& name)
 
 bool QTag::isChild(const QString& tag, bool trueIfNoChildsDefined)
 {
+  
   QString tagName = parentDTD->caseSensitive ? tag : tag.toUpper();
   if(trueIfNoChildsDefined)
     return (childTags.isEmpty() || childTags.contains(tagName));
@@ -211,6 +210,7 @@ bool QTag::isChild(const QString& tag, bool trueIfNoChildsDefined)
     return (!childTags.isEmpty() && childTags.contains(tagName));
 }
 
+#if 0
 bool QTag::isChild(Node *node, bool trueIfNoChildsDefined, bool treatEmptyNodesAsText)
 {
   if(!node)
@@ -251,6 +251,7 @@ bool QTag::isChild(Node *node, bool trueIfNoChildsDefined, bool treatEmptyNodesA
 
   return isChild(node->tag->name(), trueIfNoChildsDefined);
 }
+#endif
 
 QList<QTag*> QTag::parents()
 {
@@ -285,6 +286,7 @@ QTag* QTag::tagFromDTD(const DTDStruct *dtd, const QString& tag)
  return qtag;
 }
 
+#if 0
 /** Returns the QTag object for the node "node" from node's DTD. */
 QTag* QTag::tagFromDTD(Node *node)
 {
@@ -293,3 +295,4 @@ QTag* QTag::tagFromDTD(Node *node)
 
   return tagFromDTD(node->tag->dtd(), node->tag->name());
 }
+#endif

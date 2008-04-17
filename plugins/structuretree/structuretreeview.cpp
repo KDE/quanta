@@ -1,6 +1,6 @@
 /***************************************************************************
-    begin                : Mon Jun 27 2005
-    copyright            : (C) 2005 by Jens Herden <jens@kdewebdev.org>
+    begin                : Thu Apr 17 2008
+    copyright            : (C) 2008 by Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -11,23 +11,28 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "structtreebranch.h"
-#include "lib/node.h"
 
+//kate: indent-mode cstyle; space-indent on; indent-width 2; replace-tabs on; mixedindent off; encoding utf-8
+#include "structuretreeview.h"
+#include "parseresult.h"
+#include "dommodel.h"
 
-
-StructTreeBranch::StructTreeBranch(Q3ListView *parent, const QString &title, Node *firstChild, StructTreeBranch *after)
-: StructTreeItem(parent, title, after)
+StructureTreeView::StructureTreeView(QWidget *parent)
+ : QTreeView(parent)
 {
-  Node *node = new Node(0);
-  node->child = firstChild;
-  m_node = const_cast<Node *>(node);
+  m_parseResult = 0L;
 }
 
 
-StructTreeBranch::~StructTreeBranch()
+StructureTreeView::~StructureTreeView()
 {
 }
 
-
-
+void StructureTreeView::newDataArrived(const ParseResult *data)
+{
+  m_parseResult = data;
+  if (data)
+    setModel(m_parseResult->model);
+  else
+    setModel(0L);
+}

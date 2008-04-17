@@ -19,8 +19,6 @@
 #include <kdeversion.h>
 
 #include "qtag.h"
-#include "node.h"
-#include "parser.h"
 
 /**Some common, mostly static functions.
   *@author Andras Mantia
@@ -32,7 +30,6 @@ class QString;
 class KUrl;
 class KStandardDirs;
 class QWidget;
-class Tag;
 
 
 /** Describes one abbreviation group */
