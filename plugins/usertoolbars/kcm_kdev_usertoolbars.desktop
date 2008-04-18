@@ -12,4 +12,10 @@ X-KDE-ParentComponents=kdevplatform
 X-KDE-CfgDlgHierarchy=USERINTERFACE
 
 Name=User Toolbars setting
+Name[ga]=Socrú UserToolbars
+Name[uk]=Параметр Панелей користувача
+Name[zh_TW]=使用者工具列設定
 Comment=Configure User Toolbars
+Comment[ga]=Cumraigh UserToolbars
+Comment[uk]=Налаштувати Панелі користувача
+Comment[zh_TW]=設定使用者工具列

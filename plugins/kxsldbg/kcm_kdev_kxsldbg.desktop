@@ -5,10 +5,16 @@ Type=Service
 ServiceTypes=KCModule
 Name=KXSLDbg Settings
 Name[ga]=Socruithe KXSLDbg
+Name[uk]=Параметри KXSLDbg
+Name[zh_TW]=KXSLDbg 設定
 GenericName=KXSLDbg Plugin
 GenericName[ga]=Breiseán KXSLDbg
+GenericName[uk]=Додаток KXSLDbg
+GenericName[zh_TW]=KXSLDbg 外掛程式
 Comment=Configure KXSLDbg Settings
 Comment[ga]=Cumraigh Socruithe KXSLDbg
+Comment[uk]=Налаштувати параметри KXSLDbg
+Comment[zh_TW]=設定 KXSLDbg
 
 X-KDevelop-Plugin-Version=1
 X-KDevelop-Plugin-BugsEmailAddress=keith@kdewebdev.org
