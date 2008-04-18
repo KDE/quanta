@@ -37,6 +37,11 @@ namespace KDevelop
   class IDocument; 
 }
 
+namespace KTextEditor {
+  class Cursor;
+  class Range;
+}
+
 /**
 @author Andras Mantia
 */
@@ -108,7 +113,9 @@ public slots:
    * @param dirInfo optional information for pre and post text
    */
   void slotInsertTag(const KUrl& url, Helper::DirInfo * dirInfo = 0);
-
+  
+  void selectRange(const KTextEditor::Range& area);
+  void setCursorPosition(const KTextEditor::Cursor &cursor);
 private slots:
 
   void init();

@@ -25,6 +25,10 @@ namespace KDevelop {
  class IDocument; 
 }
 
+namespace KTextEditor {
+  class Range;
+}
+
 /**
 This class can be used to access the editor functionality in an abstracted way.
 
@@ -109,6 +113,12 @@ public:
    */
   void selectArea(const AreaStruct &area);
 
+  /**set the selection to the area and get the focus
+   *
+   * @param area
+   */
+  void selectRange(const KTextEditor::Range &range);
+  
   /** move the cursor to a new position and get the focus
    *
    * @param line

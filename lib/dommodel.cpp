@@ -13,6 +13,7 @@
 
 //own includes
 #include "dommodel.h"
+#include "areastruct.h"
 
 //qt includes
 #include <QVariant>
@@ -61,6 +62,20 @@ int DomModelItem::row() const
 
 QVariant DomModelItem::data(int column, int role) const
 {  
+  if (role == Qt::UserRole)
+  {
+    switch (column)
+    {
+      case 0: 
+      {
+        AreaStruct *area = new AreaStruct(m_range->start().line(), m_range->start().column(), m_range->end().line(), m_range->end().column());
+        return qVariantFromValue((void*)area);
+      }     
+      default:
+        return QVariant();      
+    }
+  }
+      
   if (role != Qt::DisplayRole)
     return QVariant();
 

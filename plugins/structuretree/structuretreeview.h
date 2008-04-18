@@ -19,6 +19,10 @@
 #include <QTreeView>
 
 class ParseResult;
+namespace KTextEditor {
+  class Cursor;
+  class Range;
+}
 
 /**
 	@author Andras Mantia <amantia@kde.org>
@@ -35,8 +39,16 @@ public Q_SLOTS:
   
   void newDataArrived(const ParseResult *data);
 
-  private:
-    const ParseResult *m_parseResult;
+Q_SIGNALS:
+  void selectRange(const KTextEditor::Range &range);
+  void setCursorPosition(const KTextEditor::Cursor &cursor);
+    
+private Q_SLOTS:    
+  void modelIndexActivated(const QModelIndex &index);
+  void modelIndexClicked(const QModelIndex &index);
+  
+private:
+  const ParseResult *m_parseResult;
 };
 
 #endif

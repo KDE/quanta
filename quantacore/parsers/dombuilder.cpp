@@ -123,7 +123,7 @@ bool DomBuilder::endElement(const QString & /*namespaceURI*/, const QString & /*
   
   if (emptyElement)
   {
-    emptyElement->setName("endElement");
+    emptyElement->setName("Empty area before endElement");
     emptyElement->setRange(new KTextEditor::Range(m_lastInserted->range()->end(), m_elementRange.start()));
   }
   
@@ -187,7 +187,7 @@ bool DomBuilder::startElement(const QString & namespaceURI, const QString & loca
   {
     DomModelItem *el = new DomModelItem(m_currentElement);
     el->setRange(new KTextEditor::Range(m_lastInserted->range()->end(), m_elementRange.start()));
-    el->setName("startElement");
+    el->setName("Empty area before startElement");
   }
   
   m_lastInserted = new DomModelItem(m_currentElement);
@@ -210,7 +210,11 @@ bool DomBuilder::startElement(const QString & namespaceURI, const QString & loca
   
   m_lastInserted->setRange(new KTextEditor::Range(m_elementRange));
   m_lastInserted->setAttributeRanges(m_attrRanges);
-  m_currentElement = m_lastInserted;
+  if (localName.startsWith("DOCTYPE "))
+  {
+    m_lastInserted->setType(DomModelItem::DocType);
+  } else
+    m_currentElement = m_lastInserted;
   return true;
 }
 
@@ -238,6 +242,7 @@ bool DomBuilder::comment(const QString & ch)
       el = new DomModelItem(m_currentElement->parent());
     }
     el->setRange(new KTextEditor::Range(m_lastInserted->range()->end(), m_elementRange.start()));
+    el->setName("Empty area before comment");
   }
   
   if (m_currentElement->type() != DomModelItem::Comment)

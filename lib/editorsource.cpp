@@ -178,10 +178,15 @@ void EditorSource::insertText(const QString &text, bool adjustCursor)
 
 void EditorSource::selectArea(const AreaStruct &area)
 {
-  m_view->setSelection(KTextEditor::Range(area.bLine(), area.bCol(), area.eLine(), area.eCol() + 1));
   m_view->setFocus();
+  m_view->setSelection(KTextEditor::Range(area.bLine(), area.bCol(), area.eLine(), area.eCol()));
 }
 
+void EditorSource::selectRange(const KTextEditor::Range &range)
+{
+  m_view->setFocus();
+  m_view->setSelection(range);
+}
 
 void EditorSource::setCursorPosition(int line, int col)
 {

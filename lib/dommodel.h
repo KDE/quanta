@@ -33,6 +33,7 @@ class KDEVQUANTA_EXPORT DomModelItem
       TagEnd,
       Text,
       Comment,
+      DocType,
       Empty
     };
     

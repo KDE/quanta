@@ -59,6 +59,8 @@
 #include <iuicontroller.h>
 
 #include <ktexteditor/document.h>
+#include <ktexteditor/range.h>
+#include <ktexteditor/cursor.h>
 
 typedef KGenericFactory<QuantaCorePart> QuantaCoreFactory;
 K_EXPORT_COMPONENT_FACTORY(libkdevquantacore, QuantaCoreFactory("kdevquantacore"))
@@ -506,6 +508,16 @@ void QuantaCorePart::slotChangeDTEP()
 QString QuantaCorePart::getDTEPNickName(const QString &name) const
 {
   return DTDs::ref()->getDTDNickNameFromName(name.toLower());
+}
+
+void QuantaCorePart::selectRange(const KTextEditor::Range &range)
+{
+  m_activeQuantaDoc->selectRange(range);
+}
+
+void QuantaCorePart::setCursorPosition(const KTextEditor::Cursor &cursor)
+{
+  m_activeQuantaDoc->setCursorPosition(cursor.line(), cursor.column());
 }
 
 #include "quantacorepart.moc"

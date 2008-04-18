@@ -82,6 +82,9 @@ class StructureTreeWidgetFactory: public KDevelop::IToolViewFactory
       QObject::connect(corePlugin, SIGNAL(finishedParsing(const ParseResult *)), documentTree, SLOT(newDataArrived(const ParseResult *)));
 
       QObject::connect(corePlugin, SIGNAL(newCursorPosition(const QPoint &)), documentTree, SLOT(slotNewCursorPosition(const QPoint &)));
+      
+      QObject::connect(documentTree, SIGNAL(selectRange(const KTextEditor::Range &)), corePlugin ,SLOT(selectRange(const KTextEditor::Range &)));
+      QObject::connect(documentTree, SIGNAL(setCursorPosition(const KTextEditor::Cursor &)), corePlugin ,SLOT(setCursorPosition(const KTextEditor::Cursor &)));
 
       QTreeView *groupsTree = new QTreeView(widget);
 #if 0
