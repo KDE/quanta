@@ -74,12 +74,6 @@
     <Separator/>
     <Action name="project_close"/>
   </Menu>
-  <Menu name="build">
-    <text>Bu&amp;ild</text>
-    <Merge/>
-    <Separator/>
-    <Action name="stop_processes"/>
-  </Menu>
   <Menu name="debug">
     <text>&amp;Debug</text>
     <DefineGroup name="debug"/>
