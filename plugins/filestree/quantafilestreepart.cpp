@@ -18,7 +18,7 @@
 #include <QMenu>
 #include <QWhatsThis>
 #include <QLayout>
-#include <qtoolbox.h>
+#include <QTreeView>
 
 #include <klocale.h>
 #include <kaction.h>
@@ -52,15 +52,20 @@ class FilesTreeViewFactory: public KDevelop::IToolViewFactory{
 
     virtual QWidget* create(QWidget *parent = 0)
     {
-      FilesTreeView *tree = new FilesTreeView(m_part, parent);
+      QWidget *widget = new QWidget(parent);
+      QVBoxLayout *l = new QVBoxLayout(widget);
+      widget->setLayout(l);
+      l->setContentsMargins(0, 0, 0, 0);
+     
+      FilesTreeView *tree = new FilesTreeView(m_part, widget);
       QObject::connect(KDevelop::Core::self()->documentController(), SIGNAL(documentClosed(KDevelop::IDocument*)), tree, SLOT(slotDocumentClosed(KDevelop::IDocument*)));
 
-      K3ListViewSearchLineWidget * sl = new K3ListViewSearchLineWidget(tree, parent);
+      K3ListViewSearchLineWidget * sl = new K3ListViewSearchLineWidget(tree, widget);
 
-      QVBoxLayout *l = new QVBoxLayout(parent);
       l->addWidget(sl);
       l->addWidget(tree);
-      return tree;
+      
+      return widget;
     }
 
     virtual Qt::DockWidgetArea defaultPosition(const QString &/*areaName*/)

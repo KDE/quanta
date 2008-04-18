@@ -464,6 +464,7 @@ FileInfoDlg* BaseTreeView::addFileInfoPage(KPropertiesDialog* propDlg)
 
 bool BaseTreeView::event(QEvent *event)
 {
+  K3FileTreeView::event(event);
   if (event->type() == QEvent::ToolTip)
   {
     if (!showToolTips() )
