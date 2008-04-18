@@ -1,7 +1,10 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui version="2" name="quanta" >
+<kpartgui version="3" name="quanta" >
 <MenuBar noMerge="1">
   <Menu name="file" noMerge="1"><text>&amp;File</text>
+    <Action name="file_new"/>
+    <DefineGroup name="new_merge"/>
+    <Separator/>
     <DefineGroup name="new_merge"/>
     <Separator/>
     <Action name="file_open"/>
@@ -149,6 +152,7 @@
 
 <ToolBar name="mainToolBar" position="Top" noMerge="1" fullWidth="true" newline="true" >
   <text>Main Toolbar</text>
+  <Action name="file_new" />
   <DefineGroup name="new_merge"/>
   <Action name="file_open_recent"/>
   <Action name="project_open" />
@@ -162,14 +166,6 @@
   <DefineGroup name="view_operations"/>
   <DefineGroup name="zoom_operations"/>
   <Merge/>
-  <Action name="help_whats_this"/>
-</ToolBar>
-
-<ToolBar name="buildToolBar" position="Top" noMerge="1">
-  <text>Build Toolbar</text>
-  <DefineGroup name="build_operations"/>
-  <DefineGroup name="debug_operations"/>
-  <Action name="stop_processes"/>
 </ToolBar>
 
 <ToolBar name="browserToolBar" position="Top" noMerge="1">
@@ -177,10 +173,6 @@
   <DefineGroup name="class_operations" />
   <DefineGroup name="browser_operations" />
   <Merge/>
-</ToolBar>
-
-<ToolBar name="extraToolBar" position="Top" noMerge="1" hidden="true">
-  <text>Extra Toolbar</text>
 </ToolBar>
 
 <Menu name="rb_popup">
