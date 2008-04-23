@@ -378,8 +378,10 @@ void  KDevKXSLDbgPlugin::showKXSLDbg()
 
         dev_outputview = plugin->extension<KDevelop::IOutputView>();
         Q_ASSERT( dev_outputview );
-        int id = dev_outputview->registerView( "KXSLDbg output", KDevelop::IOutputView::AllowUserClose);
-        dev_outputModel = new QStandardItemModel();
+        int tvid = dev_outputview->registerToolView(i18n("KXSLDbg"));
+        int id = dev_outputview->registerOutputInToolView( tvid, i18n("KXSLDbg Output"),
+                KDevelop::IOutputView::AllowUserClose | KDevelop::IOutputView::AutoScroll);
+        dev_outputModel = new QStandardItemModel(this);
         Q_ASSERT(dev_outputModel);
         QItemDelegate *itemDelegate = new QItemDelegate();
         Q_ASSERT(itemDelegate);
