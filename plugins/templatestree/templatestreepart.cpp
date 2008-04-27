@@ -73,7 +73,12 @@ class TemplatesTreeViewFactory: public KDevelop::IToolViewFactory
       
       return widget;
     }
-    virtual Qt::DockWidgetArea defaultPosition(const QString &/*areaName*/)
+    virtual QString id() const
+    {
+      return "org.quanta.TemplatesTree";
+    }
+
+    virtual Qt::DockWidgetArea defaultPosition()
     {
       return Qt::LeftDockWidgetArea;
     }

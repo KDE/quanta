@@ -115,7 +115,9 @@ class KDevKXSLDbgViewFactory : public KDevelop::IToolViewFactory
         /**
           Return a hint as to where to put our tool
          */
-        Qt::DockWidgetArea defaultPosition(const QString &areaName);
+        Qt::DockWidgetArea defaultPosition();
+
+        QString id() const;
 
         KDevKXSLDbgPlugin * myplugin;
 };
@@ -133,12 +135,15 @@ QWidget* KDevKXSLDbgViewFactory::create(QWidget * parent)
     return w;
 }
 
-Qt::DockWidgetArea KDevKXSLDbgViewFactory::defaultPosition(const QString &areaName)
+Qt::DockWidgetArea KDevKXSLDbgViewFactory::defaultPosition()
 {
-    Q_UNUSED(areaName);
     return Qt::TopDockWidgetArea;
 }
 
+QString KDevKXSLDbgViewFactory::id() const
+{
+    return "org.quanta.KXSLDbg";
+}
 
     KDevKXSLDbgPlugin::KDevKXSLDbgPlugin(QObject *parent, const QVariantList &args)
 : KDevelop::IPlugin(KDevKXSLDbgFactory::componentData(),parent)
