@@ -65,6 +65,6 @@ X-KDevelop-Args=
 X-KDevelop-Category=Global
 X-KDE-Library=libkdevtemplatestree
 X-KDE-PluginInfo-Name=KDevTemplatesTree
-X-KDevelop-Version=4
+X-KDevelop-Version=6
 X-KDevelop-Properties=Quanta-TemplatesTree
 X-KDevelop-IRequired=org.kdevelop.QuantaCoreIf

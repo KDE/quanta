@@ -56,7 +56,7 @@ X-KDE-ServiceTypes=KDevelop/Plugin,KDevelop/Quanta
 Icon=kdevelop
 X-KDE-PluginInfo-Name=KDevQuantaCore
 X-KDE-Library=libkdevquantacore
-X-KDevelop-Version=4
+X-KDevelop-Version=6
 X-KDevelop-Category=Global
 X-KDevelop-Properties=Quanta,QuantaCore
 
