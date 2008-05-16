@@ -208,8 +208,8 @@ const DTDStruct* QuantaDoc::dtdAt(int line, int col) const
     dtd = node->tag->dtd();
   }
 
-  return dtd;
 #endif
+  return dtd;
 }
 
 void QuantaDoc::slotTextChanged(KTextEditor::Document* document)
