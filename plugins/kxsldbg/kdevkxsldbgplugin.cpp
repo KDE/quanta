@@ -18,10 +18,13 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#include <icore.h>
+#include <core.h>
+#include <iproject.h>
+#include <iprojectcontroller.h>
 #include <idocumentcontroller.h>
 #include <iuicontroller.h>
 #include "kdevkxsldbgplugin.h"
+#include "kdevkxsldbgview.h"
 #include <klibloader.h>
 #include <kparts/mainwindow.h>
 #include <kmessagebox.h>
@@ -34,9 +37,12 @@
 #include <kaboutdata.h>
 #include <kmainwindow.h>
 #include <kxmlguiwindow.h>
+#include <ksettings/dispatcher.h>
 
 #include <libxsldbg/files.h>
+#include <libxsldbg/utils.h>
 #include <libxsldbg/xsldbg.h>
+#include <libxsldbg/options.h>
 
 #include <kcomponentdata.h>
 #include <kaction.h>
@@ -62,6 +68,7 @@
 #include <QVariant>
 #include <QStatusBar>
 #include <QSplitter>
+#include <QDialogButtonBox>
 
 #include <QLayout>
 #include <QToolTip>
@@ -82,6 +89,7 @@
 #include <kdebug.h>
 #include <kvbox.h>
 #include <kactioncollection.h>
+#include <ksettings/dispatcher.h>
 // kate specific classes
 #include <ktexteditor/document.h>
 #include <ktexteditor/markinterface.h>
@@ -91,6 +99,7 @@
 #include <QStandardItemModel>
 #include <QStandardItem>
 #include <QItemDelegate>
+#include "configdialogprivate.h"
 
 K_PLUGIN_FACTORY(KDevKXSLDbgFactory, registerPlugin<KDevKXSLDbgPlugin>(); )
 K_EXPORT_PLUGIN(KDevKXSLDbgFactory("kdevkxsldbg"))
@@ -103,21 +112,23 @@ class KDevKXSLDbgViewFactory : public KDevelop::IToolViewFactory
 {
     public:
         KDevKXSLDbgViewFactory(KDevKXSLDbgPlugin *thePart)
-            : KDevelop::IToolViewFactory(), myplugin(thePart)
+            :  myplugin(thePart)
         {
 
         }
         /**
           Return the main widget for our tool
          */
-        QWidget *create(QWidget * parent = 0 );
+        virtual QWidget *create(QWidget * parent = 0 );
 
         /**
           Return a hint as to where to put our tool
          */
-        Qt::DockWidgetArea defaultPosition();
+        virtual Qt::DockWidgetArea defaultPosition();
 
-        QString id() const;
+        virtual QString id() const;
+
+    private:
 
         KDevKXSLDbgPlugin * myplugin;
 };
@@ -125,19 +136,14 @@ class KDevKXSLDbgViewFactory : public KDevelop::IToolViewFactory
 
 QWidget* KDevKXSLDbgViewFactory::create(QWidget * parent)
 {
-    QWidget *w = 0;
+    QWidget *w = new KDevKXSLDbgView(parent, myplugin) ;
 
-    if (myplugin){
-        w = myplugin->topWidget();
-        if (w)
-            w->setParent(parent);
-    }
     return w;
 }
 
 Qt::DockWidgetArea KDevKXSLDbgViewFactory::defaultPosition()
 {
-    return Qt::TopDockWidgetArea;
+    return Qt::BottomDockWidgetArea;
 }
 
 QString KDevKXSLDbgViewFactory::id() const
@@ -148,64 +154,62 @@ QString KDevKXSLDbgViewFactory::id() const
     KDevKXSLDbgPlugin::KDevKXSLDbgPlugin(QObject *parent, const QVariantList &args)
 : KDevelop::IPlugin(KDevKXSLDbgFactory::componentData(),parent)
 {
+    connect(core()->projectController(), SIGNAL(projectOpened(KDevelop::IProject*)),
+                   this, SLOT(projectOpened(KDevelop::IProject*)));
+    connect(core()->projectController(), SIGNAL(projectClosed(KDevelop::IProject*)),
+                   this, SLOT(projectClosed(KDevelop::IProject*)));
+    connect(KDevelop::ICore::self()->documentController(), SIGNAL(documentClosed(KDevelop::IDocument*)),
+            this, SLOT(documentClosed(KDevelop::IDocument*)));
     Q_UNUSED(args)
     setXMLFile( "kdevkxsldbg.rc");
-    m_widgetFactory = new KDevKXSLDbgViewFactory(this);
-    core()->uiController()->addToolView("KXSLDbg", m_widgetFactory );
     currentColumnNo = 0;
     inspector = 0L;
     debugger = 0L;
     configWidget = 0L;
-    frame = new KVBox(0);
-    KHBox *h = new KHBox(frame);
-    newXPath = new QLineEdit(h);
-    xPathBtn = new QPushButton(i18n("Goto XPath"), h);
-    h = new KHBox(frame);
-    newEvaluate = new QLineEdit(h);
-    evaluateBtn = new QPushButton(i18n("Evaluate"), h);
+    dev_outputModel = 0L;
+    dev_outputView = 0L;
+    dlg = 0L;
+    lastProject = 0L;
+    toolID = -1;
+    optionSetAutoConfig(false);
 
+    outputModel();
     setupActions();
-
 }
 
 KDevKXSLDbgPlugin::~KDevKXSLDbgPlugin()
 {
-}
-
-QWidget *KDevKXSLDbgPlugin::topWidget()
-{
-    return frame;
+  //  delete dlg;
+ //   delete debugger;
+ //   delete inspector;
 }
 
 void KDevKXSLDbgPlugin::setupActions()
 {
     KActionCollection* ac = actionCollection();
-    m_projectKXSLDbgActionMenu = new KActionMenu(i18n("&Run Project via KXSLDbg"), this);
-    m_projectKXSLDbgActionMenu->setIcon(KIcon("xsldbg-source"));
+    m_projectKXSLDbgActionMenu = new KActionMenu(i18n("Run Project via KXSLDbg"), this);
+    m_projectKXSLDbgActionMenu->setIcon(KIcon("xsldbg_source"));
     m_projectKXSLDbgActionMenu->setToolTip(i18n("Run project"));
+    m_projectKXSLDbgActionMenu->setVisible(false);
+
     ac->addAction("project_kxsldbg_run", m_projectKXSLDbgActionMenu);
     connect(m_projectKXSLDbgActionMenu, SIGNAL(triggered(bool)), SLOT(showKXSLDbg()));
     // create our actions
     KStandardAction::open(this, SLOT(fileOpen()), actionCollection());
 
-    configureEditorCmd = ac->addAction( "configureEditorCmd" );
-    configureEditorCmd->setText( i18n("Configure Editor...") );
-    configureEditorCmd->setIcon( KIcon("configure") );
-    connect(configureEditorCmd, SIGNAL(triggered(bool)), SLOT(configureEditorCmd_activated()));
-    configureEditorCmd->setVisible(false);
     configureCmd = ac->addAction( "configureCmd" );
     configureCmd->setText( i18n("Configure...") );
     configureCmd->setIcon( KIcon("configure") );
     connect(configureCmd, SIGNAL(triggered(bool)), SLOT(configureCmd_activated()));
     configureCmd->setShortcut(QKeySequence(Qt::Key_C));
-    configureEditorCmd->setVisible(false);
+    xsldbgActions.append(configureCmd);
 
     inspectCmd = ac->addAction( "inspectCmd" );
     inspectCmd->setText( i18n("Inspect...") );
     inspectCmd->setIcon( KIcon("edit-find") );
     connect(inspectCmd, SIGNAL(triggered(bool)), SLOT(inspectorCmd_activated()));
     inspectCmd->setShortcut(QKeySequence(Qt::Key_I));
-    inspectCmd->setVisible(false);
+    xsldbgActions.append(inspectCmd);
 
 
     // Motions commands
@@ -214,200 +218,191 @@ void KDevKXSLDbgPlugin::setupActions()
     runCmd->setIcon( KIcon("system-run") );
     connect(runCmd, SIGNAL(triggered(bool)), SLOT(runCmd_activated()));
     runCmd->setShortcut(QKeySequence(Qt::Key_F5));
-    runCmd->setVisible(false);
+    xsldbgActions.append(runCmd);
 
     continueCmd = ac->addAction( "continueCmd" );
     continueCmd->setText( i18n("Continue") );
     continueCmd->setIcon( KIcon("media-playback-start") );
     connect(continueCmd, SIGNAL(triggered(bool)), SLOT(continueCmd_activated()));
     continueCmd->setShortcut(QKeySequence(Qt::Key_F4));
-    continueCmd->setVisible(false);
+    xsldbgActions.append(continueCmd);
 
     stepCmd = ac->addAction( "stepCmd" );
     stepCmd->setText( i18n("Step") );
     stepCmd->setIcon( KIcon("step") );
     connect(stepCmd, SIGNAL(triggered(bool)), SLOT(stepCmd_activated()));
     stepCmd->setShortcut(QKeySequence(Qt::Key_F8));
-    stepCmd->setVisible(false);
+    xsldbgActions.append(stepCmd);
 
     nextCmd  = new KAction(KIcon("go-down-search"), i18n("Next"), this);
     ac->addAction("nextCmd", nextCmd );
     connect(nextCmd, SIGNAL(triggered(bool)), SLOT(nextCmd_activated()));
     nextCmd->setShortcut(QKeySequence(Qt::Key_F10));
-    nextCmd->setVisible(false);
+    xsldbgActions.append(nextCmd);
 
     stepupCmd  = new KAction(KIcon("xsldbg_stepup"), i18n("Step Up"), this);
     ac->addAction("stepupCmd", stepupCmd );
     connect(stepupCmd, SIGNAL(triggered(bool)), SLOT(stepupCmd_activated()));
     stepupCmd->setShortcut(QKeySequence(Qt::Key_F6));
-    stepupCmd->setVisible(false);
+    xsldbgActions.append(stepupCmd);
 
     stepdownCmd  = new KAction(KIcon("xsldbg_stepdown"), i18n("Step Down"), this);
     ac->addAction("stepdownCmd", stepdownCmd );
     connect(stepdownCmd, SIGNAL(triggered(bool)), SLOT(stepdownCmd_activated()));
     stepdownCmd->setShortcut(QKeySequence(Qt::Key_F7));
-    stepdownCmd->setVisible(false);
+    xsldbgActions.append(stepdownCmd);
 
     // Breakpoint commands
     breakCmd  = new KAction(KIcon("xsldbg_break"), i18n("Break"), this);
     ac->addAction("breakCmd", breakCmd );
     connect(breakCmd, SIGNAL(triggered(bool)), SLOT(breakCmd_activated()));
     breakCmd->setShortcut(QKeySequence(Qt::Key_F2));
-    breakCmd->setVisible(false);
+    xsldbgActions.append(breakCmd);
 
     enableCmd  = new KAction(KIcon("xsldbg_enable"), i18n("Enable/Disable"), this);
     ac->addAction("enableCmd", enableCmd );
     connect(enableCmd, SIGNAL(triggered(bool)), SLOT(enableCmd_activated()));
     enableCmd->setShortcut(QKeySequence(Qt::Key_F3));
-    enableCmd->setVisible(false);
+    xsldbgActions.append(enableCmd);
 
     deleteCmd  = new KAction(KIcon("xsldbg_delete"), i18n("Delete"), this);
     ac->addAction("deleteCmd", deleteCmd );
     connect(deleteCmd, SIGNAL(triggered(bool)), SLOT(deleteCmd_activated()));
     deleteCmd->setShortcut(QKeySequence(Qt::Key_Delete));
-    deleteCmd->setVisible(false);
+    xsldbgActions.append(deleteCmd);
 
     sourceCmd  = new KAction(KIcon("xsldbg_source"), i18n("&Source"), this);
     ac->addAction("sourceCmd", sourceCmd );
     connect(sourceCmd, SIGNAL(triggered(bool)), SLOT(sourceCmd_activated()));
     sourceCmd->setShortcut(QKeySequence(Qt::Key_S));
-    sourceCmd->setVisible(false);
+    xsldbgActions.append(sourceCmd);
 
     dataCmd  = new KAction(KIcon("xsldbg_data"), i18n("&Data"), this);
     ac->addAction("dataCmd", dataCmd );
     connect(dataCmd, SIGNAL(triggered(bool)), SLOT(dataCmd_activated()));
     dataCmd->setShortcut(QKeySequence(Qt::Key_D));
-    dataCmd->setVisible(false);
+    xsldbgActions.append(dataCmd);
 
     outputCmd  = new KAction(KIcon("xsldbg_output"), i18n("&Output"), this);
     ac->addAction("outputCmd", outputCmd );
     connect(outputCmd, SIGNAL(triggered(bool)), SLOT(outputCmd_activated()));
     outputCmd->setShortcut(QKeySequence(Qt::Key_O));
-    outputCmd->setVisible(false);
+    xsldbgActions.append(outputCmd);
 
     refreshCmd  = new KAction(KIcon("xsldbg_refresh"), i18n("Reload"), this);
     ac->addAction("refreshCmd", refreshCmd );
     connect(refreshCmd, SIGNAL(triggered(bool)), SLOT(refreshCmd_activated()));
     refreshCmd->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_F5));
-    refreshCmd->setVisible(false);
+    xsldbgActions.append(refreshCmd);
 
     /* tracing and walking */
     walkCmd  = new KAction(i18n("Walk Through Stylesheet..."), this);
     ac->addAction("walkCmd", walkCmd );
     connect(walkCmd, SIGNAL(triggered(bool)), SLOT(walkCmd_activated()));
     walkCmd->setShortcut(QKeySequence(Qt::Key_W));
-    walkCmd->setVisible(false);
+    xsldbgActions.append(walkCmd);
 
     walkStopCmd  = new KAction(i18n("Stop Wal&king Through Stylesheet"), this);
     ac->addAction("walkStopCmd", walkStopCmd );
     connect(walkStopCmd, SIGNAL(triggered(bool)), SLOT(walkStopCmd_activated()));
     walkStopCmd->setShortcut(QKeySequence(Qt::Key_K));
-    walkStopCmd->setVisible(false);
+    xsldbgActions.append(walkStopCmd);
 
     traceCmd  = new KAction(i18n("Tr&ace Execution of Stylesheet"), this);
     ac->addAction("traceCmd", traceCmd );
     connect(traceCmd, SIGNAL(triggered(bool)), SLOT(traceCmd_activated()));
     traceCmd->setShortcut(QKeySequence(Qt::Key_A));
-    traceCmd->setVisible(false);
+    xsldbgActions.append(traceCmd);
 
     traceStopCmd  = new KAction(i18n("Stop Tracing of Stylesheet"), this);
     ac->addAction("traceStopCmd", traceStopCmd );
     connect(traceStopCmd, SIGNAL(triggered(bool)), SLOT(traceStopCmd_activated()));
     traceStopCmd->setShortcut(QKeySequence(Qt::Key_K));
-    traceStopCmd->setVisible(false);
+    xsldbgActions.append(traceStopCmd);
 
     evaluateCmd  = new KAction(i18n("&Evaluate Expression..."), this);
     ac->addAction("evaluateCmd", evaluateCmd );
     connect(evaluateCmd, SIGNAL(triggered(bool)), SLOT(evaluateCmd_activated()));
     evaluateCmd->setShortcut(QKeySequence(Qt::Key_E));
-    evaluateCmd->setVisible(false);
+    xsldbgActions.append(evaluateCmd);
 
     gotoXPathCmd  = new KAction(i18n("Goto &XPath..."), this);
     ac->addAction("gotoXPathCmd", gotoXPathCmd );
     connect(gotoXPathCmd, SIGNAL(triggered(bool)), SLOT(gotoXPathCmd_activated()));
     gotoXPathCmd->setShortcut(QKeySequence(Qt::Key_X));
-    gotoXPathCmd->setVisible(false);
+    xsldbgActions.append(gotoXPathCmd);
 
     lookupSystemCmd  = new KAction(i18n("Lookup SystemID..."), this);
     ac->addAction("lookupSystemID", lookupSystemCmd );
     connect(lookupSystemCmd, SIGNAL(triggered(bool)), SLOT(slotLookupSystemID()));
-    lookupSystemCmd->setVisible(false);
+    xsldbgActions.append(lookupSystemCmd);
 
     lookupPublicIDCmd  = new KAction(i18n("Lookup PublicID..."), this);
     ac->addAction("lookupPublicID", lookupPublicIDCmd );
     connect(lookupPublicIDCmd, SIGNAL(triggered(bool)), SLOT(slotLookupPublicID()));
-    lookupPublicIDCmd->setVisible(false);
+    xsldbgActions.append(lookupPublicIDCmd);
 
-    connect( xPathBtn, SIGNAL( clicked() ),
-            this, SLOT( slotGotoXPath() ) );
-    connect( evaluateBtn, SIGNAL( clicked() ),
-            this, SLOT( slotEvaluate() ) );
+    foreach (QAction *action, xsldbgActions)
+        action->setVisible(false);
 }
 
+// toggle "run Project with kxsldbg"
 void  KDevKXSLDbgPlugin::showKXSLDbg()
 {
-    QWidget *w = topWidget();
     static bool setupWidgets=false;
+    static bool runProject=true;
 
-    if (setupWidgets){
-        if (w)
-            w->show();
-    }else{
-        configureEditorCmd->setVisible(true);
-        configureCmd->setVisible(true);
-        inspectCmd->setVisible(true);
-        runCmd->setVisible(true);
-        continueCmd->setVisible(true);
-        stepCmd->setVisible(true);
-        nextCmd->setVisible(true);
-        stepupCmd->setVisible(true);
-        stepdownCmd->setVisible(true);
-        breakCmd->setVisible(true);
-        enableCmd->setVisible(true);
-        deleteCmd->setVisible(true);
-        sourceCmd->setVisible(true);
-        dataCmd->setVisible(true);
-        outputCmd->setVisible(true);
-        refreshCmd->setVisible(true);
-        walkCmd->setVisible(true);
-        walkStopCmd->setVisible(true);
-        traceCmd->setVisible(true);
-        traceStopCmd->setVisible(true);
-        evaluateCmd->setVisible(true);
-        gotoXPathCmd->setVisible(true);
-        lookupSystemCmd->setVisible(true);
-        lookupPublicIDCmd->setVisible(true);
-        
-        KDevelop::IPlugin* plugin = core()->pluginController()->pluginForExtension( "org.kdevelop.IOutputView");
-        Q_ASSERT( plugin );
+    if (!setupWidgets){
+        // add the output view
+        Q_ASSERT(outputModel());
 
-        dev_outputview = plugin->extension<KDevelop::IOutputView>();
-        Q_ASSERT( dev_outputview );
-        int tvid = dev_outputview->registerToolView(i18n("KXSLDbg"));
-        int id = dev_outputview->registerOutputInToolView( tvid, i18n("KXSLDbg Output"),
-                KDevelop::IOutputView::AllowUserClose | KDevelop::IOutputView::AutoScroll);
-        dev_outputModel = new QStandardItemModel(this);
-        Q_ASSERT(dev_outputModel);
-        QItemDelegate *itemDelegate = new QItemDelegate();
-        Q_ASSERT(itemDelegate);
-
-        dev_outputview->setModel(id, dev_outputModel);
-        dev_outputview->setDelegate(id, itemDelegate);
+        // add the KXSLDbg tool
+        m_widgetFactory = new KDevKXSLDbgViewFactory(this);
+        core()->uiController()->addToolView("KXSLDbg", m_widgetFactory );
 
         /* We must have a valid debugger and inspector */
         createInspector();
+
         if (checkDebugger()){
-            configWidget = new XsldbgConfigImpl( debugger, 0L );
-            Q_CHECK_PTR( configWidget );
-            debugger->start();
-        }else{
-            openUrl(KUrl());
+            dlg = new  ConfigDialogPrivate(0);
+            Q_CHECK_PTR(dlg);
+            configWidget = dlg->configWidget;
+            // create the configuration dialog 
+            setupWidgets=true;
         }
-        setupWidgets=true;
-        frame->show();
-        // cause the configuration dialog to show upon starting
-        configureCmd_activated();
+        setupWidgets = true;
     }
+
+    if (runProject) {
+        // start running this project
+        m_projectKXSLDbgActionMenu->setText(i18n("Stop running Project in KXSLDbg"));
+        //enable the debugger actions
+        foreach (QAction *action, xsldbgActions) 
+            action->setVisible(true);
+        if (debugger)
+            debugger->start();
+    }else {
+        // stop running this project
+        m_projectKXSLDbgActionMenu->setText(i18n("Run Project via KXSLDbg"));
+        if (debugger){
+            saveProfile();
+            debugger->stop();
+        }
+        //disable the debugger actions
+        foreach (QAction *action, xsldbgActions) 
+            action->setVisible(false);
+        if (dlg)
+            dlg->hide();
+    }
+    runProject = !runProject;
+
+}
+
+void KDevKXSLDbgPlugin::documentClosed( KDevelop::IDocument* document )
+{
+    Q_ASSERT(document);
+    Q_UNUSED(document);
+    // TODO handle this case
 }
 
 void KDevKXSLDbgPlugin::quit()
@@ -435,9 +430,22 @@ bool  KDevKXSLDbgPlugin::openUrl(const KUrl &url)
 /* Don't show the content of URL just loaded it into our data structures */
 bool  KDevKXSLDbgPlugin::fetchURL(const KUrl &url)
 {
-    KDevelop::IDocument* document = KDevelop::ICore::self()->documentController()->openDocument(url);
+    KDevelop::IDocument* document;
+    bool foundDoc = false;
+
+    foreach (document,
+            KDevelop::ICore::self()->documentController()->openDocuments()) {
+        if (document->url() == url) {
+            foundDoc = true;
+            break;
+        }
+    }
+
+    if (!foundDoc)
+        document = KDevelop::ICore::self()->documentController()->openDocument(url);
+
     if (!document)
-        qWarning("Unable to fetch URL %s", url.url().toUtf8().constData());
+        qWarning() << "Unable to fetch URL" <<  url;
 
     return document != 0;
 }
@@ -450,8 +458,6 @@ bool KDevKXSLDbgPlugin::openFile()
 
 bool KDevKXSLDbgPlugin::closeUrl()
 {
-    // TODO
-    //docDictionary.clear();
     return true;
 }
 
@@ -466,10 +472,10 @@ void KDevKXSLDbgPlugin::fileOpen()
         openUrl(KUrl( file_name ));
 }
 
-bool KDevKXSLDbgPlugin::checkDebugger()
+bool KDevKXSLDbgPlugin::checkDebugger(bool showWarningDialog)
 {
     bool result = debugger != 0L;
-    if (!result){
+    if (!result && showWarningDialog){
         QMessageBox::information(0L, i18n("Debugger Not Ready"),
                 i18n("Configure and start the debugger first."),
                 QMessageBox::Ok);
@@ -490,7 +496,7 @@ void KDevKXSLDbgPlugin::lookupSystemID( QString systemID)
                 i18n( "Lookup SystemID" ),
                 i18n( "Please enter SystemID to find:" ),
                 QString(), &ok,
-                frame);
+                0);
     }else{
         ok = true;
     }
@@ -513,7 +519,7 @@ void KDevKXSLDbgPlugin::lookupPublicID(QString publicID)
         publicID = KInputDialog::getText(
                 i18n( "Lookup PublicID" ),
                 i18n( "Please enter PublicID to find:" ),
-                QString(), &ok, frame );
+                QString(), &ok, 0);
     }else{
         ok = true;
     }
@@ -537,13 +543,12 @@ void KDevKXSLDbgPlugin::slotLookupPublicID()
 
 void KDevKXSLDbgPlugin::configureCmd_activated()
 {
-    if (!checkDebugger())
+    if (!checkDebugger() || !dlg || !configWidget)
         return;
 
-    if (configWidget != 0L){
-        configWidget->refresh();
-        configWidget->show();
-    }
+    configWidget->setModel(optionDataModel());
+
+    dlg->show();
 }
 
     void
@@ -572,10 +577,11 @@ void KDevKXSLDbgPlugin::showMessage(QString message)
         int endPosition = message.indexOf(QChar('\n'));
         if (endPosition >= 0){
             processed = true;
-            QMessageBox::information(frame, i18n("Result of evaluation"),
+            QMessageBox::information(0, i18n("Result of evaluation"),
                     message.mid(endPosition + 1));
         }
-    }else  /* Is there some sort of error message in message */
+    }else {
+        /* Is there some sort of error message in message */
         if ((message.indexOf("Error:") != -1) ||
                 (message.indexOf("Warning:") != -1) ||
                 (message.indexOf("Request to xsldbg failed") != -1) ||
@@ -589,11 +595,15 @@ void KDevKXSLDbgPlugin::showMessage(QString message)
                     (message.indexOf("Error: No XML data file supplied") == -1) &&
                     (message.indexOf("Load of source deferred") == -1) &&
                     (message.indexOf("Load of data deferred") == -1) )
-                QMessageBox::warning(frame, i18n("Request Failed "), message);
+                QMessageBox::warning(0, i18n("Request Failed "), message);
             processed = true;
         }
-    if (dev_outputModel && !processed)
-        dev_outputModel->appendRow(new QStandardItem(message));
+    }
+    if (outputModel() && !processed){
+        QStandardItem *item = new QStandardItem(message);
+        if (item)
+            outputModel()->appendRow(item);
+    }
 
 }
 
@@ -645,6 +655,19 @@ void KDevKXSLDbgPlugin::createInspector()
     }
 }
 
+const KUrl KDevKXSLDbgPlugin::currentFile()
+{
+    KUrl url;
+    Q_ASSERT(KDevelop::ICore::self());
+    Q_ASSERT(KDevelop::ICore::self()->documentController());
+    Q_ASSERT(KDevelop::ICore::self()->documentController()->activeDocument());
+    KDevelop::IDocument* document = KDevelop::ICore::self()->documentController()->activeDocument();
+    if (document){
+        url = document->url();
+        currentFileName = url.url();
+    }
+    return url;
+}
 int KDevKXSLDbgPlugin::currentLineNo()
 {
     int lineNo = -1;
@@ -658,10 +681,10 @@ int KDevKXSLDbgPlugin::currentLineNo()
 
 void KDevKXSLDbgPlugin::emitOpenFile(QString file, int line, int row)
 {
-    Q_UNUSED(file)
-        Q_UNUSED(line)
-        Q_UNUSED(row)
-        qWarning("%s %s", __PRETTY_FUNCTION__, "called but not supported");
+    Q_UNUSED(file);
+    Q_UNUSED(line);
+    Q_UNUSED(row);
+    qWarning("%s %s", __PRETTY_FUNCTION__, "called but not supported");
 }
 
 void KDevKXSLDbgPlugin::continueCmd_activated()
@@ -714,16 +737,17 @@ KDevKXSLDbgPlugin::sourceCmd_activated()
     void
 KDevKXSLDbgPlugin::outputCmd_activated()
 {
-    if ( ( inspector != 0L ) &&  checkDebugger() && ( configWidget != 0L ) ){
+    XsldbgSettingData item;
+    if ( ( inspector != 0L ) &&  checkDebugger() && ( configWidget != 0L ) && optionDataModel()
+            && optionDataModel()->findSetting(OPTIONS_OUTPUT_FILE_NAME, item)){
         debugger->setOutputFileActive(true);
-        lineNoChanged( configWidget->getOutputFile(), 1, false );
+        lineNoChanged( item.m_value.toString(), 1, false );
         refreshCmd_activated();
     }
 }
 
 void KDevKXSLDbgPlugin::refreshCmd_activated()
 {
-    qWarning("%s", __PRETTY_FUNCTION__);
     KDevelop::IDocument* document;
     MarkInterface *iface;
 
@@ -744,20 +768,20 @@ void KDevKXSLDbgPlugin::refreshCmd_activated()
 void KDevKXSLDbgPlugin::enableCmd_activated()
 {
     if ( checkDebugger() )
-        debugger->slotEnableCmd( currentFileName, currentLineNo());
+        debugger->slotEnableCmd( currentFile().url(), currentLineNo());
 }
 
 void KDevKXSLDbgPlugin::deleteCmd_activated()
 {
     if ( checkDebugger() ){
-        debugger->slotDeleteCmd( currentFileName, currentLineNo());
+        debugger->slotDeleteCmd( currentFile().url(), currentLineNo());
     }
 }
 
 void KDevKXSLDbgPlugin::breakCmd_activated()
 {
     if ( checkDebugger() ){
-        debugger->slotBreakCmd( currentFileName, currentLineNo());
+        debugger->slotBreakCmd( currentFile().url(), currentLineNo());
     }
 }
 
@@ -803,7 +827,7 @@ KDevKXSLDbgPlugin::lineNoChanged(QString fileName, int lineNumber, bool breakpoi
         }
     }
 
-    document = KDevelop::ICore::self()->documentController()->openDocument(KUrl( fileName ),
+    document = KDevelop::ICore::self()->documentController()->openDocument(KUrl(debugger->workDirName() +  fileName ),
             KTextEditor::Cursor(lineNumber - 1, 0));
     if (document){
         currentFileName = fileName;
@@ -829,44 +853,9 @@ void  KDevKXSLDbgPlugin::docChanged()
 void  KDevKXSLDbgPlugin::debuggerStarted()
 {
     if (configWidget != 0L){
-        KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-        if (args){
-            int i=0, result=1, noFilesFound = 0;
-            QString expandedName;      /* contains file name with path expansion if any */
-
-            for (i = 0; i < args->count(); i++) {
-                if (!result)
-                    break;
-
-                if (args->arg(i)[0] != '-') {
-                    expandedName = QString::fromUtf8((const char*)filesExpandName((const xmlChar*)args->arg(i).toUtf8().data()));
-                    if (expandedName.isEmpty()) {
-                        result = 0;
-                        break;
-                    }
-                    switch (noFilesFound) {
-                        case 0:
-                            configWidget->slotSourceFile(expandedName);
-                            noFilesFound++;
-                            break;
-                        case 1:
-                            configWidget->slotDataFile(expandedName);
-                            noFilesFound++;
-                            break;
-                        case 2:
-                            configWidget->slotOutputFile(expandedName);
-                            noFilesFound++;
-                            break;
-
-                        default:
-                            xsldbgGenericErrorFunc(i18n("Error: Too many file names supplied via command line.\n"));
-                            result = 0;
-                    }
-                    continue;
-                }
-            }
-            configWidget->refresh();
-        }
+        loadProfile();
+        configWidget->refresh();
+        configureCmd_activated();
     }
 }
 
@@ -894,26 +883,26 @@ void  KDevKXSLDbgPlugin::deleteBreakPoint(int lineNumber)
 
 
 
-void KDevKXSLDbgPlugin::slotSearch()
+void KDevKXSLDbgPlugin::slotSearch(const QString &text)
 {
-    if ((newSearch != 0L)  && checkDebugger() ) {
-        QString msg(QString("search \"%1\"").arg(newSearch->text()));  // noTr
+    if ( checkDebugger() ) {
+        QString msg(QString("search \"%1\"").arg(text));  // noTr
         debugger->fakeInput(msg, false);
     }
 }
 
 
-void KDevKXSLDbgPlugin::slotEvaluate()
+void KDevKXSLDbgPlugin::slotEvaluate(const QString &text)
 {
-    if ((newEvaluate != 0L) && checkDebugger() ){
-        debugger->slotCatCmd( newEvaluate->text() );
+    if ( checkDebugger() ){
+        debugger->slotCatCmd( text );
     }
 }
 
-void KDevKXSLDbgPlugin::slotGotoXPath()
+void KDevKXSLDbgPlugin::slotGotoXPath( const QString &text)
 {
-    if ((newXPath != 0L) && checkDebugger() ){
-        debugger->slotCdCmd( newXPath->text() );
+    if ( checkDebugger() ){
+        debugger->slotCdCmd( text );
     }
 }
 
@@ -922,7 +911,7 @@ void KDevKXSLDbgPlugin::slotGotoXPath()
 void KDevKXSLDbgPlugin::slotProcResolveItem(QString URI)
 {
     if (!URI.isEmpty()){
-        QMessageBox::information(frame, i18n("SystemID or PublicID Resolution Result"),
+        QMessageBox::information(0, i18n("SystemID or PublicID Resolution Result"),
                 i18n("SystemID or PublicID has been resolved to\n.%1", URI),
                 QMessageBox::Ok);
     }
@@ -947,7 +936,7 @@ void  KDevKXSLDbgPlugin::breakpointItem(QString fileName, int lineNumber ,
             }
         }
     }else{
-        KUrl url(fileName);
+        KUrl url(debugger->workDirName() + fileName);
         fetchURL(url);
         document = KDevelop::ICore::self()->documentController()->documentForUrl(url);
         if (document){
@@ -991,3 +980,100 @@ void KDevKXSLDbgPlugin::traceStopCmd_activated()
     walkStopCmd_activated();
 }
 
+
+void KDevKXSLDbgPlugin::projectOpened(KDevelop::IProject* project)
+{
+    lastProject = project;
+
+    //TODO support more than one open project
+    m_projectKXSLDbgActionMenu->setVisible(true);
+
+    if (!checkDebugger(false))
+        return;
+
+    KConfigGroup group = project->projectConfiguration()->group("KXSLDbg");
+    if (debugger && !optionDataModel()->loadSettings(group))
+        qWarning("Load of KXSLDbg settings failed");
+}
+
+void KDevKXSLDbgPlugin::projectClosed(KDevelop::IProject* project)
+{
+    //TODO support more than one open project
+    m_projectKXSLDbgActionMenu->setVisible(false);
+    qWarning(" %s %d", __PRETTY_FUNCTION__, __LINE__);
+
+    if (!checkDebugger(false))
+        return;
+    qWarning(" %s %d", __PRETTY_FUNCTION__, __LINE__);
+
+    KConfigGroup group = project->projectConfiguration()->group("KXSLDbg");
+   if (debugger && optionDataModel()->saveSettings(group))
+       group.sync();
+   else
+       qWarning("Save of KXSLDbg settings failed");
+    lastProject = 0;
+}
+
+
+void  KDevKXSLDbgPlugin::loadProfile()
+{
+    if (!lastProject || !checkDebugger())
+        return;
+
+    projectOpened(lastProject);
+}
+
+void  KDevKXSLDbgPlugin::saveProfile()
+{
+    if (!lastProject || !checkDebugger())
+        return;
+
+   KConfigGroup group = lastProject->projectConfiguration()->group("KXSLDbg");
+   if (debugger && optionDataModel()->saveSettings(group))
+       group.sync();
+   else
+       qWarning("Save of KXSLDbg settings failed");
+}
+
+void  KDevKXSLDbgPlugin::unload()
+{
+    qWarning("%s", __PRETTY_FUNCTION__);
+    saveProfile();
+}
+
+QStandardItemModel*  KDevKXSLDbgPlugin::outputModel()
+{
+    if (dev_outputModel)
+       return dev_outputModel;
+
+    KDevelop::IPlugin* plugin = core()->pluginController()->pluginForExtension( "org.kdevelop.IOutputView");
+    Q_ASSERT( plugin );
+
+    if ( plugin ){
+        dev_outputView = plugin->extension<KDevelop::IOutputView>();
+        if (dev_outputView){
+            int tvid = dev_outputView->registerToolView(i18n("KXSLDbg Output"));
+            toolID = dev_outputView->registerOutputInToolView(tvid, i18n("KXSLDbg Output"),
+                    KDevelop::IOutputView::AllowUserClose | KDevelop::IOutputView::AutoScroll );
+            dev_outputModel = new QStandardItemModel(this);
+            if (dev_outputModel){
+                connect(plugin, SIGNAL(viewRemoved(int)), this, SLOT(outputViewRemoved(int)));
+                dev_outputView->setModel(toolID, dev_outputModel);
+                dev_outputView->setDelegate(toolID, new QItemDelegate(dev_outputModel));
+            }
+        }
+    }
+    if (!dev_outputModel)
+        qWarning("Creating output model failed");
+    return dev_outputModel;
+}
+
+void KDevKXSLDbgPlugin::outputViewRemoved(int id)
+{
+    qWarning("%s", __PRETTY_FUNCTION__);
+    if (id == toolID) {
+        dev_outputView = 0;
+        dev_outputModel = 0;
+    }
+}
+#include "kdevkxsldbgplugin.moc"

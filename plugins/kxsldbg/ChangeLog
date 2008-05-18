@@ -1,3 +1,18 @@
+18 May 2008
+- improvements
+	- make use of new settings model in kxsldbg
+	- provide a KControl configuration dialog (not compiled  nor used for KDE 4.1)
+	- refactor how outputmodel is created
+	- remove redundant configuration dialog implementation
+
+- bug/bug fixes
+	- correct how the KXSLDdg toolview is shown in Quanta
+	- correct the declations/implmentation of KDevKXSLDbgViewFactory functions (add virtual keyword as required)
+	- add missing xsldbg-source icon for "Run .. KXSLDbg" menu
+	- hide the KXSLDdbg tool bar items if KXSLDbg is not ready to run
+	- the menu item "Run .. KXSLDbg" now acutally starts/stops KXSLDbg as intended
+	- correctly load/save configuration when "Run .. KXSLDbg" menu item is used
+
 15 April 2008
 -improvements
 	- only display kxsldbg plugin toolbar and widgets if requested - needs more work to be done
@@ -24,5 +39,3 @@
 	- maybe move the breakpoint dialog into a docked window in Quanta
 	- look at building all possible sources into one or more libraries to avoiding
 		beinging compiled multiple times (for KXSLDbg, xsldbg and this plugin)
-
-

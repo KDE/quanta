@@ -51,10 +51,12 @@ class KUrl;
 class KVBox;
 class KFrame;
 class KAboutData;
+class ConfigDialogPrivate;
 
 namespace KDevelop
 {
     class IOutputView;
+    class IDocument;
     class IProject;
 }
 
@@ -69,6 +71,8 @@ class KDevKXSLDbgPlugin: public KDevelop::IPlugin
     public:
         KDevKXSLDbgPlugin(QObject *parent, const QVariantList & = QVariantList());
         virtual ~KDevKXSLDbgPlugin();
+        virtual void unload();
+        QStandardItemModel* outputModel();
 
 
         void setupActions();
@@ -79,11 +83,12 @@ class KDevKXSLDbgPlugin: public KDevelop::IPlugin
          *
          * @returns TRUE if debugger is ready, otherwise FALSE
          */
-        bool checkDebugger();
+        bool checkDebugger(bool showWarningDialog=true);
         void lookupSystemID(QString systemID);
         void lookupPublicID(QString publicID);
         void createInspector();
         int currentLineNo();
+        const KUrl currentFile();
 
 Q_SIGNALS:
         Q_SCRIPTABLE void newCursorPosition(const QString &file, int lineNumber, int columnNumber);
@@ -91,7 +96,7 @@ Q_SIGNALS:
 
         public slots:
         void showKXSLDbg();
-            virtual bool openUrl(const KUrl &url);
+        virtual bool openUrl(const KUrl &url);
         virtual bool closeUrl();
         void quit();
         void emitOpenFile(QString file, int line, int row);
@@ -134,13 +139,13 @@ Q_SIGNALS:
         void deleteBreakPoint(int lineNumber);
 
         /** Evaluate expression entered in expressionEdit */
-        void slotEvaluate();
+        void slotEvaluate(const QString &text);
 
         /** Goto/display file that matches XPath specified in xPathEdit */
-        void slotGotoXPath();
+        void slotGotoXPath(const QString &text);
 
         /** Run search on data base , see search.dtd for DTD of search database */
-        void slotSearch();
+        void slotSearch(const QString &text);
 
         /* Process the the URI for SystemID or PublicID requested */
         void slotProcResolveItem(QString URI);
@@ -152,8 +157,24 @@ Q_SIGNALS:
 
         void docChanged();
 
+        void outputViewRemoved(int);
+
+
+        /**
+         * Called when project was opened, adds a upload-action to the project-menu.
+         */
+        void projectOpened(KDevelop::IProject* project);
+
+        /**
+         * Called when project was closed, removes the upload-action from the project-menu.
+         */
+        void projectClosed(KDevelop::IProject* project);
+        void documentClosed(KDevelop::IDocument* document);
+
         void debuggerStarted();
-        QWidget * topWidget();
+
+        void loadProfile();
+        void saveProfile();
 
     protected:
         /**
@@ -162,28 +183,25 @@ Q_SIGNALS:
         virtual bool openFile();
         bool fetchURL(const KUrl &url);
 
-        protected slots:
-            void fileOpen();
+    protected slots:
+        void fileOpen();
 
     private:
         KDevKXSLDbgViewFactory *m_widgetFactory;
         KActionMenu* m_projectKXSLDbgActionMenu; ///< KXSLDbg ActionMenu, displayed in the Project-Menu
-        KVBox * frame;
-        QDBusInterface *dbusIface;
-
-        QPushButton *xPathBtn, *searchBtn, *evaluateBtn;
-        QLineEdit *newXPath, *newSearch, *newEvaluate;
-        QGridLayout* qxsldbgLayout;
 
         uint currentColumnNo;
         XsldbgInspector *inspector;
         XsldbgDebugger *debugger;
         XsldbgConfigImpl *configWidget;
         QString currentFileName;
+        ConfigDialogPrivate *dlg;
+        QDBusInterface *dbusIface;
+        KDevelop::IProject *lastProject;
 
-        KDevelop::IOutputView *dev_outputview;
+        KDevelop::IOutputView *dev_outputView;
         QStandardItemModel *dev_outputModel;
-        QAction *configureEditorCmd;
+        int toolID;
         QAction *configureCmd;
         QAction *inspectCmd;
         QAction *runCmd;
@@ -207,6 +225,7 @@ Q_SIGNALS:
         QAction *gotoXPathCmd;
         QAction *lookupSystemCmd;
         QAction *lookupPublicIDCmd;
+        QList<QAction *> xsldbgActions;
 };
 
 #endif

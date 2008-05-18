@@ -1,6 +1,8 @@
 include_directories(
    ${KDEVPLATFORM_INCLUDE_DIR}
    ${KDEVPLATFORM_INCLUDE_DIR}/interfaces
+   ${KDEVPLATFORM_INCLUDE_DIR}/shell
+   ${KDEVPLATFORM_INCLUDE_DIR}/project
    ${KDEVPLATFORM_INCLUDE_DIR}/outputview
    ${CMAKE_SOURCE_DIR}/kxsldbg/
    ${CMAKE_BINARY_DIR}/kxsldbg/
@@ -12,26 +14,35 @@ include_directories(
 ########### next target ###############
 
 #setings
-set(kcm_kdev_kxsldbg_PART_SRCS
-       kdevkxsldbgconfigimpl.cpp
-       #       ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/xsldbgconfigimpl.cpp
-)
-
-set(kcm_kdev_kxsldbg_PART_UI
-      ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/xsldbgconfig.ui
-)
-
-kde4_add_ui_files(kcm_kdev_kxsldbg_PART_SRCS ${kcm_kdev_kxsldbg_PART_UI})
-#kde4_add_kcfg_files( kcm_kdev_kxsldbg_PART_SRCS kxsldbg.kcfgc )
-kde4_add_plugin(kcm_kdev_kxsldbg ${kcm_kdev_kxsldbg_PART_SRCS})
-
-target_link_libraries(kcm_kdev_kxsldbg
-       ${KDE4_KUTILS_LIBS}
-)
-
-install(TARGETS kcm_kdev_kxsldbg DESTINATION ${PLUGIN_INSTALL_DIR})
-install(FILES kcm_kdev_kxsldbg.desktop DESTINATION ${SERVICES_INSTALL_DIR})
-
+# set(kcm_kdev_kxsldbg_PART_SRCS
+#       ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/xsldbgsettingsmodel.cpp
+#       ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/options_common.cpp
+#       ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/utils.cpp
+#       ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/xsldbgconfigimpl.cpp
+#       ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/configdialogprivate.cpp
+#       ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/xsldbgdialogbase.cpp
+#       kcm_kdevkxsldbg.cpp
+# )
+# 
+# set(kcm_kdev_kxsldbg_PART_UI
+#       ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/xsldbgconfig.ui
+# )
+# 
+# kde4_add_ui_files(kcm_kdev_kxsldbg_PART_SRCS ${kcm_kdev_kxsldbg_PART_UI})
+# #kde4_add_kcfg_files( kcm_kdev_kxsldbg_PART_SRCS kxsldbg.kcfgc )
+# kde4_add_plugin(kcm_kdev_kxsldbg ${kcm_kdev_kxsldbg_PART_SRCS})
+# 
+# target_link_libraries(kcm_kdev_kxsldbg
+#    kdevquanta
+#    kdevplatforminterfaces
+#    kdevplatformproject
+#    ${KDE4_KUTILS_LIBS}
+#    ${LIBXML2_LIBRARIES}
+# )
+# 
+# install(TARGETS kcm_kdev_kxsldbg DESTINATION ${PLUGIN_INSTALL_DIR})
+# install(FILES kcm_kdev_kxsldbg.desktop DESTINATION ${SERVICES_INSTALL_DIR})
+# 
 
 ########### next target ###############
 
@@ -59,6 +70,7 @@ set(libxsldbg_SRCS
     ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/os_cmds.cpp
     ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/options_unix.cpp
     ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/options.cpp
+    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/options_common.cpp
     ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/option_cmds.cpp
     ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/nodeview_cmds.cpp
     ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/help_unix.cpp
@@ -71,6 +83,7 @@ set(libxsldbg_SRCS
     ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/breakpoint_cmds.cpp
     ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/breakpoint.cpp
     ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/arraylist.cpp
+    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/xsldbgsettingsmodel.cpp
 )
 
 set(libkxsldbgcommon_SRCS
@@ -86,11 +99,13 @@ set(libkxsldbgcommon_SRCS
     ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/xsldbgconfigimpl.cpp
     ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/xsldbgcallstackimpl.cpp
     ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/xsldbgbreakpointsimpl.cpp
+    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/configdialogprivate.cpp
     ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/qxsldbgdoc.cpp
 )
 
 set(kdevkxsldbg_PART_SRCS
    kdevkxsldbgplugin.cpp
+   kdevkxsldbgview.cpp
    ${libqtnotfier_SRCS}
    ${libxsldbg_SRCS}
    ${libkxsldbgcommon_SRCS}
@@ -119,10 +134,13 @@ target_link_libraries(kdevkxsldbg
    exslt
    ${LIBXML2_LIBRARIES}
    ${LIBXSLT_LIBRARIES}
+   ${KDE4_KUTILS_LIBS}
 )
 
 ########### install files ###############
 install(TARGETS kdevkxsldbg  DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES  kdevkxsldbg.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
 install(FILES  kdevkxsldbg.rc DESTINATION ${DATA_INSTALL_DIR}/kdevkxsldbg)
+
+kde4_install_icons( ${ICON_INSTALL_DIR}   )
 

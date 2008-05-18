@@ -21,18 +21,30 @@
 #ifndef KDEVKXSLDBGCONFIGIMPL_H
 #define KDEVKXSLDBGCONFIGIMPL_H
 
-#include "ui_xsldbgconfig.h"
+#include "xsldbgconfigimpl.h"
 #include <QWidget>
 #include <QVariant>
 #include <kcmodule.h>
+#include <core.h>
+#include <iproject.h>
+#include <iprojectcontroller.h>
+#include <idocumentcontroller.h>
+#include <iuicontroller.h>
 
-class KDevKXsldbgConfigImpl :  public KCModule, Ui::XsldbgConfig
+class KCM_KDevKXsldbg :  public KCModule
 {
 Q_OBJECT
 
 public:
-    KDevKXsldbgConfigImpl(QWidget *parent, const QVariantList &args);
-    ~KDevKXsldbgConfigImpl();
+    KCM_KDevKXsldbg(QWidget *parent, const QVariantList &args = QVariantList());
+    virtual ~KCM_KDevKXsldbg();
+    virtual void save();
+    virtual void load();
+
+
+    XsldbgConfigImpl *cfg;
+    KDevelop::IProject* project;
+    XsldbgSettingsModel *model;
 };
 
 #endif

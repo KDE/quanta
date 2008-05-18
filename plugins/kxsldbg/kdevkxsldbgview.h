@@ -18,21 +18,33 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#include "kdevkxsldbgconfigimpl.h"
-#include <kgenericfactory.h>
+#ifndef KDEVKXSLDBGVIEW_H
+#define KDEVKXSLDBGVIEW_H
+#include <QWidget>
 
-K_PLUGIN_FACTORY(KDevKXsldbgConfigFactory, registerPlugin<KDevKXsldbgConfigImpl>();)
-K_EXPORT_PLUGIN(KDevKXsldbgConfigFactory("kcm_kdev_kxsldbg"))
+class KDevKXSLDbgPlugin;
+class QPushButton;
+class QLineEdit;
+class QGridLayout;
 
-KDevKXsldbgConfigImpl::KDevKXsldbgConfigImpl(QWidget *parent, const QVariantList &args)
-: KCModule( KDevKXsldbgConfigFactory::componentData(), parent, args )
+class KDevKXSLDbgView : public QWidget
 {
-    setupUi(this);
-    load();
-}
+    Q_OBJECT
+    public:
+    KDevKXSLDbgView(QWidget *parent,KDevKXSLDbgPlugin *thePlugin);
+    ~KDevKXSLDbgView();
 
-KDevKXsldbgConfigImpl::~KDevKXsldbgConfigImpl()
-{
-}
+    KDevKXSLDbgPlugin *myplugin;
 
-#include "kdevkxsldbgconfigimpl.moc"
+    QPushButton *xPathBtn, *searchBtn, *evaluateBtn;
+    QLineEdit *newXPath, *newSearch, *newEvaluate;
+    QGridLayout* qxsldbgLayout;
+
+    public slots:
+        void slotGotoXPath();
+        void slotEvaluate();
+};
+
+
+#endif
+
