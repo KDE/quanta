@@ -360,6 +360,11 @@ void  KDevKXSLDbgPlugin::showKXSLDbg()
         m_widgetFactory = new KDevKXSLDbgViewFactory(this);
         core()->uiController()->addToolView("KXSLDbg", m_widgetFactory );
 
+        setupWidgets = true;
+    }
+
+    if (runProject) {
+
         /* We must have a valid debugger and inspector */
         createInspector();
 
@@ -367,20 +372,13 @@ void  KDevKXSLDbgPlugin::showKXSLDbg()
             dlg = new  ConfigDialogPrivate(0);
             Q_CHECK_PTR(dlg);
             configWidget = dlg->configWidget;
-            // create the configuration dialog 
-            setupWidgets=true;
-        }
-        setupWidgets = true;
-    }
-
-    if (runProject) {
-        // start running this project
-        m_projectKXSLDbgActionMenu->setText(i18n("Stop running Project in KXSLDbg"));
-        //enable the debugger actions
-        foreach (QAction *action, xsldbgActions) 
-            action->setVisible(true);
-        if (debugger)
             debugger->start();
+            // start running this project
+            m_projectKXSLDbgActionMenu->setText(i18n("Stop running Project in KXSLDbg"));
+            //enable the debugger actions
+            foreach (QAction *action, xsldbgActions) 
+                action->setVisible(true);
+        }
     }else {
         // stop running this project
         m_projectKXSLDbgActionMenu->setText(i18n("Run Project via KXSLDbg"));
@@ -393,6 +391,11 @@ void  KDevKXSLDbgPlugin::showKXSLDbg()
             action->setVisible(false);
         if (dlg)
             dlg->hide();
+
+        delete inspector;
+        inspector = 0;
+        delete debugger;
+        debugger = 0;
     }
     runProject = !runProject;
 
@@ -1000,11 +1003,9 @@ void KDevKXSLDbgPlugin::projectClosed(KDevelop::IProject* project)
 {
     //TODO support more than one open project
     m_projectKXSLDbgActionMenu->setVisible(false);
-    qWarning(" %s %d", __PRETTY_FUNCTION__, __LINE__);
 
     if (!checkDebugger(false))
         return;
-    qWarning(" %s %d", __PRETTY_FUNCTION__, __LINE__);
 
     KConfigGroup group = project->projectConfiguration()->group("KXSLDbg");
    if (debugger && optionDataModel()->saveSettings(group))
@@ -1017,7 +1018,7 @@ void KDevKXSLDbgPlugin::projectClosed(KDevelop::IProject* project)
 
 void  KDevKXSLDbgPlugin::loadProfile()
 {
-    if (!lastProject || !checkDebugger())
+    if (!lastProject || !checkDebugger(false))
         return;
 
     projectOpened(lastProject);
@@ -1025,7 +1026,7 @@ void  KDevKXSLDbgPlugin::loadProfile()
 
 void  KDevKXSLDbgPlugin::saveProfile()
 {
-    if (!lastProject || !checkDebugger())
+    if (!lastProject || !checkDebugger(false))
         return;
 
    KConfigGroup group = lastProject->projectConfiguration()->group("KXSLDbg");
@@ -1037,7 +1038,6 @@ void  KDevKXSLDbgPlugin::saveProfile()
 
 void  KDevKXSLDbgPlugin::unload()
 {
-    qWarning("%s", __PRETTY_FUNCTION__);
     saveProfile();
 }
 
@@ -1070,7 +1070,6 @@ QStandardItemModel*  KDevKXSLDbgPlugin::outputModel()
 
 void KDevKXSLDbgPlugin::outputViewRemoved(int id)
 {
-    qWarning("%s", __PRETTY_FUNCTION__);
     if (id == toolID) {
         dev_outputView = 0;
         dev_outputModel = 0;
