@@ -13,6 +13,7 @@
 	- the menu item "Run .. KXSLDbg" now acutally starts/stops KXSLDbg as intended
 	- correctly load/save configuration when "Run .. KXSLDbg" menu item is used
 	- fix crash when the menu "Run ... KXSLDbg is used many times
+	- resolve problem with "Debug" menu short cut for keys F2 to F10 by requiring <Ctrl> key to be pressed at same time
 
 15 April 2008
 -improvements

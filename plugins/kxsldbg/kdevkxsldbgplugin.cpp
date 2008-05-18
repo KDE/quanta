@@ -217,52 +217,52 @@ void KDevKXSLDbgPlugin::setupActions()
     runCmd->setText( i18n("Run") );
     runCmd->setIcon( KIcon("system-run") );
     connect(runCmd, SIGNAL(triggered(bool)), SLOT(runCmd_activated()));
-    runCmd->setShortcut(QKeySequence(Qt::Key_F5));
+    runCmd->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_F5));
     xsldbgActions.append(runCmd);
 
     continueCmd = ac->addAction( "continueCmd" );
     continueCmd->setText( i18n("Continue") );
     continueCmd->setIcon( KIcon("media-playback-start") );
     connect(continueCmd, SIGNAL(triggered(bool)), SLOT(continueCmd_activated()));
-    continueCmd->setShortcut(QKeySequence(Qt::Key_F4));
+    continueCmd->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_F4));
     xsldbgActions.append(continueCmd);
 
     stepCmd = ac->addAction( "stepCmd" );
     stepCmd->setText( i18n("Step") );
     stepCmd->setIcon( KIcon("step") );
     connect(stepCmd, SIGNAL(triggered(bool)), SLOT(stepCmd_activated()));
-    stepCmd->setShortcut(QKeySequence(Qt::Key_F8));
+    stepCmd->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_F8));
     xsldbgActions.append(stepCmd);
 
     nextCmd  = new KAction(KIcon("go-down-search"), i18n("Next"), this);
     ac->addAction("nextCmd", nextCmd );
     connect(nextCmd, SIGNAL(triggered(bool)), SLOT(nextCmd_activated()));
-    nextCmd->setShortcut(QKeySequence(Qt::Key_F10));
+    nextCmd->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_F10));
     xsldbgActions.append(nextCmd);
 
     stepupCmd  = new KAction(KIcon("xsldbg_stepup"), i18n("Step Up"), this);
     ac->addAction("stepupCmd", stepupCmd );
     connect(stepupCmd, SIGNAL(triggered(bool)), SLOT(stepupCmd_activated()));
-    stepupCmd->setShortcut(QKeySequence(Qt::Key_F6));
+    stepupCmd->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_F6));
     xsldbgActions.append(stepupCmd);
 
     stepdownCmd  = new KAction(KIcon("xsldbg_stepdown"), i18n("Step Down"), this);
     ac->addAction("stepdownCmd", stepdownCmd );
     connect(stepdownCmd, SIGNAL(triggered(bool)), SLOT(stepdownCmd_activated()));
-    stepdownCmd->setShortcut(QKeySequence(Qt::Key_F7));
+    stepdownCmd->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_F7));
     xsldbgActions.append(stepdownCmd);
 
     // Breakpoint commands
     breakCmd  = new KAction(KIcon("xsldbg_break"), i18n("Break"), this);
     ac->addAction("breakCmd", breakCmd );
     connect(breakCmd, SIGNAL(triggered(bool)), SLOT(breakCmd_activated()));
-    breakCmd->setShortcut(QKeySequence(Qt::Key_F2));
+    breakCmd->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_F2));
     xsldbgActions.append(breakCmd);
 
     enableCmd  = new KAction(KIcon("xsldbg_enable"), i18n("Enable/Disable"), this);
     ac->addAction("enableCmd", enableCmd );
     connect(enableCmd, SIGNAL(triggered(bool)), SLOT(enableCmd_activated()));
-    enableCmd->setShortcut(QKeySequence(Qt::Key_F3));
+    enableCmd->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_F3));
     xsldbgActions.append(enableCmd);
 
     deleteCmd  = new KAction(KIcon("xsldbg_delete"), i18n("Delete"), this);
@@ -292,7 +292,7 @@ void KDevKXSLDbgPlugin::setupActions()
     refreshCmd  = new KAction(KIcon("xsldbg_refresh"), i18n("Reload"), this);
     ac->addAction("refreshCmd", refreshCmd );
     connect(refreshCmd, SIGNAL(triggered(bool)), SLOT(refreshCmd_activated()));
-    refreshCmd->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_F5));
+    refreshCmd->setShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_F5));
     xsldbgActions.append(refreshCmd);
 
     /* tracing and walking */
