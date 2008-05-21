@@ -2,7 +2,6 @@
 Type=Service
 Exec=blubb
 Name=KDevHTMLPreview
-Name[it]=Anteprima HTML
 Name[ne]=केडीई विकास एचटीएमएल पूर्वावलोकन
 Name[nl]=HTML-voorbeeld
 Name[sv]=KDevelop HTML-förhandsgranskning
