@@ -21,7 +21,7 @@ kde4_add_executable(quanta ${quanta_SRCS})
 
 target_link_libraries(quanta  ${KDE4_KDEUI_LIBS} ${KDE4_KTEXTEDITOR_LIBRARY} ${STRIGI_LIBRARIES} kdevplatformshell kdevplatformproject)
 
-install(TARGETS quanta  DESTINATION ${BIN_INSTALL_DIR} )
+install(TARGETS quanta  ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
 
 ########### install files ###############
