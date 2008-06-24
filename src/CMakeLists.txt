@@ -19,7 +19,7 @@ set(quanta_SRCS main.cpp kdevquantaextension.cpp )
 
 kde4_add_executable(quanta ${quanta_SRCS})
 
-target_link_libraries(quanta  ${KDE4_KDEUI_LIBS} ${KDE4_KTEXTEDITOR_LIBRARY} ${STRIGI_LIBRARIES} kdevplatformshell kdevplatformproject)
+target_link_libraries(quanta  ${KDE4_KDEUI_LIBS} ${KDE4_KTEXTEDITOR_LIBRARY} ${STRIGI_LIBRARIES} ${KDEVPLATFORM_SHELL_LIBRARY} ${KDEVPLATFORM_PROJECT_LIBRARY})
 
 install(TARGETS quanta  ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
