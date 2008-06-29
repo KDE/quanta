@@ -1,6 +1,5 @@
 [Desktop Entry]
 Type=Service
-Encoding=UTF-8
 Name=DBGp
 Comment=DBGp debugger plugin, see http://xdebug.org
 Comment[bg]=Приставка на дебъгер DBGp, http://xdebug.org
