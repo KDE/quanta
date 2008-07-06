@@ -3,6 +3,7 @@ Categories=Qt;KDE;Development;
 Comment=
 Exec=quanta %u
 GenericName=IDE for Web Development
+GenericName[da]=IDE til webudvikling
 GenericName[de]=Web-Entwicklungsumgebung
 GenericName[el]=Περιβάλλον ανάπτυξης ιστοσελίδων
 GenericName[es]=Entorno para desarrollo web
