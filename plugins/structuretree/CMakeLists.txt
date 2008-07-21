@@ -29,7 +29,7 @@ kde4_add_plugin(kdevstructuretree WITH_PREFIX ${kdevstructuretree_PART_SRCS})
 
 
 
-target_link_libraries(kdevstructuretree kdevquanta kdevplatforminterfaces ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KDECORE_LIBS} )
+target_link_libraries(kdevstructuretree kdevquanta kdevplatforminterfaces kdevplatformshell ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KDECORE_LIBS} ${KDE4_KTEXTEDITOR_LIBS} )
 
 install(TARGETS kdevstructuretree  DESTINATION ${PLUGIN_INSTALL_DIR})
 

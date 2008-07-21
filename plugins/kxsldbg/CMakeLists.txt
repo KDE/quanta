@@ -135,6 +135,8 @@ target_link_libraries(kdevkxsldbg
    ${LIBXML2_LIBRARIES}
    ${LIBXSLT_LIBRARIES}
    ${KDE4_KUTILS_LIBS}
+   ${KDE4_KDEUI_LIBS}
+   ${KDE4_KPARTS_LIBS}
 )
 
 ########### install files ###############

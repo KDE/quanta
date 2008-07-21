@@ -25,7 +25,7 @@ kde4_add_plugin(kdevquantafilestree WITH_PREFIX ${kdevquantafilestree_PART_SRCS}
 
 
 
-target_link_libraries(kdevquantafilestree  kdevquanta kdevplatforminterfaces ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KDECORE_LIBS} )
+target_link_libraries(kdevquantafilestree  kdevquanta kdevplatforminterfaces kdevplatformshell ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KDECORE_LIBS} )
 
 install(TARGETS kdevquantafilestree  DESTINATION ${PLUGIN_INSTALL_DIR})
 

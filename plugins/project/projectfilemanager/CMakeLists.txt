@@ -19,7 +19,7 @@ set(quantaprojectfilemanager_PART_SRCS
 
 kde4_add_plugin(quantaprojectfilemanager ${quantaprojectfilemanager_PART_SRCS})
 
-target_link_libraries(quantaprojectfilemanager kdevquanta kdevplatforminterfaces kdevplatformproject ${KDE4_KDECORE_LIBS} )
+target_link_libraries(quantaprojectfilemanager kdevquanta kdevplatforminterfaces kdevplatformproject ${KDE4_KIO_LIBS} ${QT_QTXML_LIBRARY})
 
 install(TARGETS quantaprojectfilemanager  DESTINATION ${PLUGIN_INSTALL_DIR})
 

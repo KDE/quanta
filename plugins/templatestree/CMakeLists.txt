@@ -28,7 +28,7 @@ kde4_add_plugin(kdevtemplatestree WITH_PREFIX ${kdevtemplatestree_PART_SRCS})
 
 
 
-target_link_libraries(kdevtemplatestree  kdevquanta kdevplatforminterfaces ${KDE4_KDE3SUPPORT_LIBS} )
+target_link_libraries(kdevtemplatestree  kdevquanta kdevplatforminterfaces kdevplatformshell ${KDE4_KDE3SUPPORT_LIBS} )
 
 install(TARGETS kdevtemplatestree  DESTINATION ${PLUGIN_INSTALL_DIR})
 
