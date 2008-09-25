@@ -147,7 +147,7 @@ Q_SIGNALS:
         /** Run search on data base , see search.dtd for DTD of search database */
         void slotSearch(const QString &text);
 
-        /* Process the the URI for SystemID or PublicID requested */
+        /* Process the URI for SystemID or PublicID requested */
         void slotProcResolveItem(QString URI);
 
         /* used to get breakpoint list notfication */
