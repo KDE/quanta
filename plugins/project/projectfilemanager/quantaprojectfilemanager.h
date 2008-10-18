@@ -54,6 +54,9 @@ public:
   virtual bool removeFile(KDevelop::ProjectFileItem *file);
   virtual bool renameFile(KDevelop::ProjectFileItem *oldFile, const KUrl &newFile);
   virtual bool renameFolder(KDevelop::ProjectFolderItem *oldFolder, const KUrl &newFolder);
+  virtual bool reload(KDevelop::ProjectBaseItem* item) {
+#warning Implement this method
+  }
 
 Q_SIGNALS:
   //Declare again the signals as IProjectFileManager doesn't inherit from QObject
