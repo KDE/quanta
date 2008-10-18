@@ -2,9 +2,9 @@
 include_directories(
    ${CMAKE_SOURCE_DIR}/quanta/lib
    ${CMAKE_BINARY_DIR}/quanta/lib
-   ${KDEVPLATFORM_INCLUDE_DIR}
-   ${KDEVPLATFORM_INCLUDE_DIR}/interfaces
-   ${KDEVPLATFORM_INCLUDE_DIR}/shell
+   ${KDevPlatform_INCLUDE_DIR}
+   ${KDevPlatform_INCLUDE_DIR}/interfaces
+   ${KDevPlatform_INCLUDE_DIR}/shell
    )
 
 

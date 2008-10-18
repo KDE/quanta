@@ -4,10 +4,10 @@ find_package(Strigi REQUIRED)
 include_directories(
   ${CMAKE_SOURCE_DIR}/quanta/lib
   ${CMAKE_BINARY_DIR}
-  ${KDEVPLATFORM_INCLUDE_DIR}
-  ${KDEVPLATFORM_INCLUDE_DIR}/interfaces
-  ${KDEVPLATFORM_INCLUDE_DIR}/shell
-  ${KDEVPLATFORM_INCLUDE_DIR}/shell/profileengine
+  ${KDevPlatform_INCLUDE_DIR}
+  ${KDevPlatform_INCLUDE_DIR}/interfaces
+  ${KDevPlatform_INCLUDE_DIR}/shell
+  ${KDevPlatform_INCLUDE_DIR}/shell/profileengine
   
 )
 
@@ -19,7 +19,7 @@ set(quanta_SRCS main.cpp kdevquantaextension.cpp )
 
 kde4_add_executable(quanta ${quanta_SRCS})
 
-target_link_libraries(quanta  ${KDE4_KDEUI_LIBS} ${KDE4_KTEXTEDITOR_LIBRARY} ${STRIGI_LIBRARIES} ${KDEVPLATFORM_SHELL_LIBRARY} ${KDEVPLATFORM_PROJECT_LIBRARY})
+target_link_libraries(quanta  ${KDE4_KDEUI_LIBS} ${KDE4_KTEXTEDITOR_LIBRARY} ${STRIGI_LIBRARIES} ${KDevPlatform_SHELL_LIBRARY} ${KDevPlatform_PROJECT_LIBRARY})
 
 install(TARGETS quanta  ${INSTALL_TARGETS_DEFAULT_ARGS} )
 

@@ -1,10 +1,10 @@
 
 include_directories(
    ${CMAKE_BINARY_DIR}/lib
-   ${KDEVPLATFORM_INCLUDE_DIR}
-   ${KDEVPLATFORM_INCLUDE_DIR}/interfaces
-   ${KDEVPLATFORM_INCLUDE_DIR}/shell
-   ${KDEVPLATFORM_INCLUDE_DIR}/editor
+   ${KDevPlatform_INCLUDE_DIR}
+   ${KDevPlatform_INCLUDE_DIR}/interfaces
+   ${KDevPlatform_INCLUDE_DIR}/shell
+   ${KDevPlatform_INCLUDE_DIR}/editor
    )
 
 
@@ -41,7 +41,7 @@ kde4_add_kcfg_files(kdevquanta_LIB_SRCS settingsbase.kcfgc )
 
 kde4_add_library(kdevquanta SHARED ${kdevquanta_LIB_SRCS})
 
-target_link_libraries(kdevquanta ${KDEVPLATFORM_INTERFACES_LIBRARY} ${KDEVPLATFORM_SHELL_LIBRARY} ${KDEVPLATFORM_LANGUAGE_LIBRARY} ${KDE4_KTEXTEDITOR_LIBS} ${KDE4_KFILE_LIBS} ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KDEUI_LIBS} ${KDE4_KPARTS_LIBS})
+target_link_libraries(kdevquanta ${KDevPlatform_INTERFACES_LIBRARY} ${KDevPlatform_SHELL_LIBRARY} ${KDevPlatform_LANGUAGE_LIBRARY} ${KDE4_KTEXTEDITOR_LIBS} ${KDE4_KFILE_LIBS} ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KDEUI_LIBS} ${KDE4_KPARTS_LIBS})
 
 set_target_properties(kdevquanta PROPERTIES VERSION 1.0.0 SOVERSION 1 )
 install(TARGETS kdevquanta ${INSTALL_TARGETS_DEFAULT_ARGS})
