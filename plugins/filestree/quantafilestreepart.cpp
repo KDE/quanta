@@ -126,7 +126,7 @@ void QuantaFilesTreePart::setupActions()
 
 void QuantaFilesTreePart::insertConfigWidget(const KDialog *dlg, QWidget *page, unsigned int pageNo)
 {
-// create configuraton dialogs here
+// create configuration dialogs here
   /*
     switch (pageNo)
     {

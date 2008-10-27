@@ -123,7 +123,7 @@ void QuantaProjectPart::setupActions()
 
 void QuantaProjectPart::insertConfigWidget( const KDialog *dlg, QWidget *page, unsigned int pageNo )
 {
-  // create configuraton dialogs here
+  // create configuration dialogs here
   switch ( pageNo )
   {
     case PROJECTDOC_OPTIONS:

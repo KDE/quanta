@@ -157,7 +157,7 @@ signals:
   /** DTD has changed need reparse */
   void forceReparse();
 
-  /** Enable/disbale the idle timer*/
+  /** Enable/disable the idle timer*/
 //  void enableIdleTimer(bool);
 
   void loadToolbarForDTD(const QString&);

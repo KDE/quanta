@@ -119,7 +119,7 @@ void HTMLPreviewPart::setupActions()
 
 void HTMLPreviewPart::insertConfigWidget(const KDialog *dlg, QWidget *page, unsigned int pageNo)
 {
-  // create configuraton dialogs here
+  // create configuration dialogs here
   switch (pageNo)
   {
     case GLOBALDOC_OPTIONS:

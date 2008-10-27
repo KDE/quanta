@@ -222,7 +222,7 @@ void QuantaCorePart::insertTag(const TagPair & tagPair, bool inLine, bool showDi
 void QuantaCorePart::slotInsertConfigWidget(const KDialog */*dlg*/, QWidget */*page*/, unsigned int /*pageNo*/)
 {
     //FIXME: New KCM modules need to be created for each config page
-// create configuraton dialogs here
+// create configuration dialogs here
   /*
     switch (pageNo)
     {

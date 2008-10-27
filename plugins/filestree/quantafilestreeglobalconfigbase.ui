@@ -33,7 +33,7 @@
       </sizepolicy>
      </property>
      <property name="whatsThis" >
-      <string>If this is set the tooltips with additional informations will show.</string>
+      <string>If this is set the tooltips with additional information will show.</string>
      </property>
      <property name="text" >
       <string>Show tooltips</string>
