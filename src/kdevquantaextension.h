@@ -33,6 +33,8 @@ public:
 
     virtual QString projectFileDescription();
     
+    virtual QStringList defaultPlugins() { return QStringList(); }
+    
 protected:
     KDevQuantaExtension();
     
