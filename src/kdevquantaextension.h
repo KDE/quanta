@@ -13,6 +13,8 @@
 
 #include <shellextension.h>
 
+#include <QStringList>
+
 class SettingsWidget;
 class KDialog;
 
