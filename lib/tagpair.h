@@ -76,6 +76,7 @@ public:
 #if 0      
       return TagPair(Tag::convertCase("<a ") + TagAttr::convertCase("href=") + TagAttr::quoteAttributeValue(ref) + ">", Tag::convertCase("</a>"));
 #endif    
+      return TagPair();
     };
 };
 #endif
