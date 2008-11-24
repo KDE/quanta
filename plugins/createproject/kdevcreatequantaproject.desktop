@@ -68,5 +68,5 @@ X-KDevelop-Category=Global
 X-KDE-Library=libkdevcreatequantaproject
 X-KDE-PluginInfo-Name=KDevCreateQuantaProject
 X-KDevelop-Version=6
-X-KDevelop-Properties=Quanta,Quanta-CreateProject
 X-KDevelop-IRequired=org.kdevelop.QuantaCoreIf
+X-KDevelop-Mode=GUI

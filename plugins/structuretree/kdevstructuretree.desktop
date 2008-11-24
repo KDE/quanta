@@ -61,5 +61,5 @@ X-KDevelop-Category=Global
 X-KDE-Library=libkdevstructuretree
 X-KDE-PluginInfo-Name=KDevStructureTree
 X-KDevelop-Version=6
-X-KDevelop-Properties=Quanta,Quanta-StructureTree
 X-KDevelop-IRequired=org.kdevelop.QuantaCoreIf
+X-KDevelop-Mode=GUI

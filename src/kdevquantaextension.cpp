@@ -88,11 +88,6 @@ QString KDevQuantaExtension::xmlFile()
     return "quantaui.rc";
 }
 
-QString KDevQuantaExtension::defaultProfile()
-{
-    return "quanta";
-}
-
 KDevelop::AreaParams KDevQuantaExtension::defaultArea()
 {
   KDevelop::AreaParams params = {"code", i18n("Code")};

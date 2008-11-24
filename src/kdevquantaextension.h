@@ -27,8 +27,6 @@ public:
     
     virtual QString xmlFile();
     
-    virtual QString defaultProfile();
-    
     virtual KDevelop::AreaParams defaultArea();
 
     virtual QString projectFileExtension();

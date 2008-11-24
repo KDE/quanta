@@ -66,4 +66,4 @@ X-KDevelop-Category=Global
 X-KDE-Library=libkdevquantafilestree
 X-KDE-PluginInfo-Name=KDevQuantaFilesTree
 X-KDevelop-Version=6
-X-KDevelop-Properties=Quanta,Quanta-FilesTree
+X-KDevelop-Mode=GUI
