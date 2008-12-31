@@ -1,8 +1,8 @@
 
 include_directories(
    ${CMAKE_SOURCE_DIR}/quanta/lib
-   ${KDevPlatform_INCLUDE_DIR}
-   ${KDevPlatform_INCLUDE_DIR}/util
+   ${KDEVPLATFORM_INCLUDE_DIR}
+   ${KDEVPLATFORM_INCLUDE_DIR}/util
    )
 
 
