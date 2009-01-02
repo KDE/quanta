@@ -738,9 +738,9 @@ void BaseTreeView::slotDropped (QWidget *, QDropEvent * /*e*/, KUrl::List& fileL
     actionCollection()->addAction("move", moveAction );
     KAction *copyAction  = new KAction(KIcon("edit-copy"), i18n("&Copy Here"), this);
     actionCollection()->addAction("copy", copyAction );
-    KAction *linkAction  = new KAction(KIcon("www"), i18n("&Link Here"), this);
+    KAction *linkAction  = new KAction(KIcon("applications-internet"), i18n("&Link Here"), this);
     actionCollection()->addAction("link", linkAction );
-    KAction *cancelAction  = new KAction(KIcon("cancel"), i18n("C&ancel"), this);
+    KAction *cancelAction  = new KAction(KIcon("dialog-cancel"), i18n("C&ancel"), this);
     actionCollection()->addAction("cancel", cancelAction );
   QAction *result;
 #if defined Q_WS_X11
