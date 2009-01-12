@@ -30,7 +30,7 @@
 ## all template changes to the file.
 ##
 ## Check http://sys.4s-hosting.ch/bstocker/dwt/ 
-## for more informations and updates. 
+## for more information and updates.
 ##
 ## Please, let me know it this script works for you, your questions
 ## and comments are welcome! 
@@ -38,7 +38,7 @@
 use Getopt::Std;
 use IO::Dir;
 
-# Write debug informations to STDOUT (-d)
+# Write debug information to STDOUT (-d)
 $DEBUG=0;
 # Version
 $VERSION="1.11 (06/9/2003)";
