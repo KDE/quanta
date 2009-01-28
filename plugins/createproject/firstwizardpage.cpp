@@ -64,7 +64,7 @@ FirstWizardPage::FirstWizardPage(QuantaCoreIf *qCore, KIconLoader *iconLoader, Q
   encodingCombo->addItems(availableEncodingNames);
   QStringList::ConstIterator iter;
   int iIndex = -1;
-  for (iter = availableEncodingNames.begin(); iter != availableEncodingNames.end(); ++iter)
+  for (iter = availableEncodingNames.constBegin(); iter != availableEncodingNames.constEnd(); ++iter)
   {
     ++iIndex;
     if ((*iter).toLower() == Settings::self()->defaultEncoding().toLower())
