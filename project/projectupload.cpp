@@ -375,7 +375,7 @@ void ProjectUpload::startUpload()
     buttonUpload->setEnabled(false);
     KURL u = *baseUrl;
     u.setPath(u.protocol() == "file" ? "/" : "");
-    if (QExtFileInfo::exists(u, false, this))
+    if (QExtFileInfo::exists(u, false, this) || (u.protocol() == "webdav" && QExtFileInfo::exists(*baseUrl, false, this)))
     {
       upload();
       return;
