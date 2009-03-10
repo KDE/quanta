@@ -179,7 +179,7 @@ bool DomBuilder::startElement(const QString & namespaceURI, const QString & loca
   if (localName.isEmpty())
   {
     DOMBUILDERDEBUG("DomBuilder::startElement: localName name is empty!")
-    m_error = i18n("Unable to create an empty element!");
+    m_error = i18n("Unable to create an empty element.");
     return true;
   }
   

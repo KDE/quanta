@@ -252,7 +252,7 @@ void TemplatesTreePart::slotCreateSiteTemplate()
 /*    if (Project::ref()->hasProject() && targetURL.url().startsWith(Project::ref()->templateURL().url()))
       valid = true;*/
   if (!KUrl(startDir).isParentOf(targetURL))
-    KMessageBox::information(KDevelop::Core::self()->uiController()->activeMainWindow(), i18n("This Template will not be visible in your Templates Tree, because you do not save it to the local or project template folder."));
+    KMessageBox::information(KDevelop::Core::self()->uiController()->activeMainWindow(), i18n("This template will not be visible in your Templates Tree because it is not saved to the local or project template folder."));
 
 
   KTemporaryFile *tempFile = new KTemporaryFile();
