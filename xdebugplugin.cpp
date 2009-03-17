@@ -25,7 +25,6 @@
 
 #include "xdebugplugin.h"
 
-#include "debuggercontroller.h"
 #include <QDir>
 #include <QToolTip>
 #include <QByteArray>
@@ -61,12 +60,12 @@
 #include <interfaces/idocumentcontroller.h>
 #include <interfaces/iprojectcontroller.h>
 #include <interfaces/iruncontroller.h>
-#include <interfaces/iproject.h>
 #include <interfaces/context.h>
-#include <util/processlinemaker.h>
 #include <interfaces/context.h>
-#include <interfaces/contextmenuextension.h>
-#include <language/interfaces/editorcontext.h>
+
+#include "debuggercontroller.h"
+#include "breakpoints.h"
+#include "breakpointcontroller.h"
 
 
 K_PLUGIN_FACTORY(KDevXDebugDebuggerFactory, registerPlugin<XDebug::XDebugPlugin>(); )
@@ -85,6 +84,9 @@ XDebugPlugin::XDebugPlugin( QObject *parent, const QVariantList & ) :
     m_controller = new DebuggerController(this);
     connect(m_controller->connection(), SIGNAL(stateChanged(DebuggerState)), this, SLOT(debuggerStateChanged(DebuggerState)));
     connect(m_controller->connection(), SIGNAL(outputLine(QString,KDevelop::IRunProvider::OutputTypes)), this, SLOT(outputLine(QString,KDevelop::IRunProvider::OutputTypes)));
+
+    m_breakpointController = new BreakpointController(this);
+    connect(m_controller->connection(), SIGNAL(showStepInSource(QString, int)), this, SLOT(showStepInSource(QString, int)));
 
     setupActions();
 }
@@ -166,11 +168,18 @@ void XDebugPlugin::slotStartDebugger()
 void XDebugPlugin::debuggerStateChanged(XDebug::DebuggerState state)
 {
     if (state == StoppedState) {
+        m_breakpointController->clearExecutionPoint();
         m_startDebugger->setEnabled(true);
         m_stepInto->setEnabled(false);
         emit finished(m_currentJob);
     }
 }
+
+void XDebugPlugin::showStepInSource(const QString& fileName, int lineNum)
+{
+    m_breakpointController->gotoExecutionPoint(fileName, lineNum);
+}
+
 void XDebugPlugin::outputLine(const QString& line, KDevelop::IRunProvider::OutputTypes type)
 {
     emit output(m_currentJob, line, type);

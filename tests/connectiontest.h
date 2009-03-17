@@ -23,7 +23,9 @@
 #define QTEST_CONNECTIONTEST
 
 #include <QtCore/QObject>
-
+namespace KDevelop {
+    class TestCore;
+}
 class ConnectionTest : public QObject
 {
 Q_OBJECT
@@ -34,6 +36,8 @@ private slots:
     void testStdOutput();
     void testShowStepInSource();
     void testMultipleSessions();
+private:
+    KDevelop::TestCore* m_core;
 };
 
 #endif

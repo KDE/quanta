@@ -59,6 +59,7 @@ target_link_libraries(connectiontest
     ${QT_QTNETWORK_LIBRARY}
     ${KDE4_KDECORE_LIBS}
     ${KDEVPLATFORM_INTERFACES_LIBRARY}
+    ${KDEVPLATFORM_TESTSHELL_LIBRARY}
 )
 
 

@@ -24,11 +24,8 @@
 #include <KDebug>
 
 #include <interfaces/icore.h>
-#include "gdb/ibreakpointcontroller.h"
 
 #include "debuggercontroller.h"
-#include "breakpoints.h"
-#include "breakpointcontroller.h"
 #include <QDate>
 
 namespace XDebug {
@@ -36,29 +33,10 @@ namespace XDebug {
 DebuggerController::DebuggerController(QObject* parent)
     : QObject(parent), m_status(UnknownState), m_process(0)
 {
-    m_breakpointController = new BreakpointController(this);
-    
     m_connection = new Connection(this);
-    connect(m_connection, SIGNAL(showStepInSource(QString, int)), this, SLOT(showStepInSource(QString, int)));
-    connect(m_connection, SIGNAL(stateChanged(DebuggerState)), this, SLOT(stateChanged(DebuggerState)));
     m_connection->listen(9000);
 }
 
-void DebuggerController::showStepInSource(const QString& fileName, int lineNum)
-{
-    if (KDevelop::ICore::self()) {
-        m_breakpointController->gotoExecutionPoint(fileName, lineNum);
-    }
-}
-
-void DebuggerController::stateChanged(DebuggerState state)
-{
-    if (state == StoppedState) {
-        if (KDevelop::ICore::self()) {
-            m_breakpointController->clearExecutionPoint();
-        }
-    }
-}
 
 bool DebuggerController::startDebugging(const QString& filename)
 {

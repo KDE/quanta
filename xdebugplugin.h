@@ -40,6 +40,7 @@
 class KAction;
 namespace XDebug
 {
+class BreakpointController;
 class DebuggerController;
 
 
@@ -69,14 +70,16 @@ private:
 private Q_SLOTS:
     void slotStartDebugger();
     void debuggerStateChanged(DebuggerState state);
+    void showStepInSource(const QString& fileName, int lineNum);
     void outputLine(const QString&, KDevelop::IRunProvider::OutputTypes);
 
 Q_SIGNALS:
     void startDebugger(const KDevelop::IRun & run, KJob* job);
 
 private:
-    KAction* m_startDebugger;
+    BreakpointController* m_breakpointController;
     DebuggerController* m_controller;
+    KAction* m_startDebugger;
     KAction* m_stepInto;
     
     KJob* m_currentJob;

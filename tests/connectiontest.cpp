@@ -28,23 +28,59 @@
 
 #include <KDebug>
 #include <KProcess>
+#include <shell/testcore.h>
+#include <interfaces/iassistant.h>
+#include <shell/plugincontroller.h>
+#include <shell/shellextension.h>
+#include <shell/core.h>
+#include <shell/testcore.h>
 
 #include "connection.h"
 #include "debuggercontroller.h"
-#include <QTcpSocket>
-#include <qhostaddress.h>
-#include <QTcpServer>
-#include <QXmlStreamReader>
 
 using namespace XDebug;
+namespace KParts {
+    class MainWindow;
+}
+namespace Sublime {
+    class Controller;
+}
+namespace KDevelop {
+    class IToolViewFactory;
+}
+
+class AutoTestShell : public KDevelop::ShellExtension
+{
+public:
+    QString xmlFile() { return QString(); }
+    QString defaultProfile() { return "kdevtest"; }
+    KDevelop::AreaParams defaultArea() {
+        KDevelop::AreaParams params;
+        params.name = "test";
+        params.title = "Test";
+        return params;
+    }
+    QString projectFileExtension() { return QString(); }
+    QString projectFileDescription() { return QString(); }
+    QStringList defaultPlugins() { return QStringList(); }
+
+    static void init() { s_instance = new AutoTestShell; }
+};
 
 void ConnectionTest::init()
 {
     qRegisterMetaType<KDevelop::IRunProvider::OutputTypes>("KDevelop::IRunProvider::OutputTypes");
+
+    AutoTestShell::init();
+    m_core = new KDevelop::TestCore();
+    m_core->initialize(KDevelop::Core::NoUi);
+
 }
 
 void ConnectionTest::cleanup()
 {
+    m_core->cleanup();
+    delete m_core;
 }
 
 void ConnectionTest::testStdOutput()

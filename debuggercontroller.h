@@ -53,7 +53,6 @@ public Q_SLOTS:
     void eval(QByteArray source);
 
 private:
-    KDevelop::IBreakpointController* m_breakpointController;
     Connection* m_connection;
     KProcess* m_process;
     DebuggerState m_status;
@@ -63,8 +62,6 @@ private:
 private Q_SLOTS:
     void processReadyRead();
     void processFinished(int extCode);
-    void showStepInSource(const QString &fileName, int lineNum);
-    void stateChanged(DebuggerState state);
 };
 
 }
