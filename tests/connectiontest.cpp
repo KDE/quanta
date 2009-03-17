@@ -29,11 +29,7 @@
 #include <KDebug>
 #include <KProcess>
 #include <shell/testcore.h>
-#include <interfaces/iassistant.h>
-#include <shell/plugincontroller.h>
 #include <shell/shellextension.h>
-#include <shell/core.h>
-#include <shell/testcore.h>
 
 #include "connection.h"
 #include "debuggercontroller.h"
