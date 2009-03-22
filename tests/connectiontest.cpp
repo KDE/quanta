@@ -32,7 +32,8 @@
 #include <shell/shellextension.h>
 
 #include "connection.h"
-#include "debuggercontroller.h"
+#include <server.h>
+#include <debugsession.h>
 
 using namespace XDebug;
 namespace KParts {
@@ -66,6 +67,7 @@ public:
 void ConnectionTest::init()
 {
     qRegisterMetaType<KDevelop::IRunProvider::OutputTypes>("KDevelop::IRunProvider::OutputTypes");
+    qRegisterMetaType<DebugSession*>("DebugSession*");
 
     AutoTestShell::init();
     m_core = new KDevelop::TestCore();
@@ -95,15 +97,18 @@ void ConnectionTest::testStdOutput()
     file.write(contents.join("\n").toUtf8());
     file.close();
 
-    DebuggerController controller;
+    Server server;
+    server.listen(9001);
 
-    QSignalSpy outputSpy(controller.connection(), SIGNAL(output(QString, KDevelop::IRunProvider::OutputTypes)));
-    QSignalSpy outputLineSpy(controller.connection(), SIGNAL(outputLine(QString, KDevelop::IRunProvider::OutputTypes)));
-    controller.startDebugging(fileName);
-    controller.waitForState(StartingState);
-    controller.run();
-    controller.waitForFinished();
-
+    QSignalSpy outputLineSpy(&server, SIGNAL(outputLine(DebugSession*,QString, KDevelop::IRunProvider::OutputTypes)));
+    server.startDebugger(fileName);
+    server.waitForConnected();
+    DebugSession* session = server.lastSession();
+    QSignalSpy outputSpy(session, SIGNAL(output(QString, KDevelop::IRunProvider::OutputTypes)));
+    session->waitForState(DebugSession::StartingState);
+    session->startDebugger();
+    session->waitForFinished();
+    QVERIFY(session->process());
     {
         QCOMPARE(outputSpy.count(), 4);
         QList<QVariant> arguments = outputSpy.takeFirst();
@@ -113,11 +118,11 @@ void ConnectionTest::testStdOutput()
     {
         QCOMPARE(outputLineSpy.count(), 2);
         QList<QVariant> arguments = outputLineSpy.takeFirst();
-        QCOMPARE(arguments.count(), 2);
-        QCOMPARE(arguments.first().toString(), QString("foo"));
+        QCOMPARE(arguments.count(), 3);
+        QCOMPARE(arguments.at(1).toString(), QString("foo"));
         arguments = outputLineSpy.takeFirst();
-        QCOMPARE(arguments.count(), 2);
-        QCOMPARE(arguments.first().toString(), QString("foobar"));
+        QCOMPARE(arguments.count(), 3);
+        QCOMPARE(arguments.at(1).toString(), QString("foobar"));
     }
 }
 
@@ -133,17 +138,21 @@ void ConnectionTest::testShowStepInSource()
     file.write(contents.join("\n").toUtf8());
     file.close();
 
-    DebuggerController controller;
+    Server server;
+    server.listen(9001);
 
-    QSignalSpy showStepInSourceSpy(controller.connection(), SIGNAL(showStepInSource(QString, int)));
-    controller.startDebugging(fileName);
-    controller.waitForState(StartingState);
-    controller.stepInto();
-    controller.waitForState(BreakState);
-    controller.stepInto();
-    controller.waitForState(BreakState);
-    controller.run();
-    controller.waitForFinished();
+    server.startDebugger(fileName);
+    server.waitForConnected();
+    DebugSession* session = server.lastSession();
+    QSignalSpy showStepInSourceSpy(session->connection(), SIGNAL(showStepInSource(QString, int)));
+
+    session->waitForState(DebugSession::StartingState);
+    session->stepInto();
+    session->waitForState(DebugSession::PausedState);
+    session->stepInto();
+    session->waitForState(DebugSession::PausedState);
+    session->startDebugger();
+    session->waitForFinished();
     {
         QCOMPARE(showStepInSourceSpy.count(), 2);
         QList<QVariant> arguments = showStepInSourceSpy.takeFirst();
@@ -169,12 +178,17 @@ void ConnectionTest::testMultipleSessions()
     file.write(contents.join("\n").toUtf8());
     file.close();
 
-    DebuggerController controller;
+    Server server;
+    server.listen(9001);
+
     for (int i=0; i<10; ++i) {
-        controller.startDebugging(fileName);
-        controller.waitForState(StartingState);
-        controller.run();
-        controller.waitForFinished();
+        server.startDebugger(fileName);
+        server.waitForConnected();
+        DebugSession* session = server.lastSession();
+        kDebug() << session;
+        session->waitForState(DebugSession::StartingState);
+        session->startDebugger();
+        session->waitForFinished();
     }
 }
 //     controller.connection()->sendCommand("property_get -i 123 -n $i");

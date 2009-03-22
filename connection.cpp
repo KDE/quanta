@@ -24,7 +24,6 @@
 #include "connection.h"
 
 #include <QtNetwork/QTcpSocket>
-#include <QtNetwork/QTcpServer>
 #include <QtCore/QSocketNotifier>
 #include <QtCore/QXmlStreamReader>
 #include <QtCore/QTextCodec>
@@ -33,61 +32,55 @@
 #include <KLocale>
 
 #include <interfaces/irunprovider.h>
+#include "debugsession.h"
 
 namespace XDebug {
 
-Connection::Connection(QObject * parent)
+Connection::Connection(QTcpSocket* socket, QObject * parent)
     : QObject(parent),
-    m_currentClient(0), m_server(0)
+    m_socket(socket),
+    m_currentState(DebugSession::NotStartedState)
 {
+    Q_ASSERT(m_socket);
+
     m_codec = QTextCodec::codecForLocale();
+
+    connect(m_socket, SIGNAL(disconnected()), this, SLOT(closed()));
+    connect(m_socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(error( QAbstractSocket::SocketError)));
+
+    connect(m_socket, SIGNAL(readyRead()), this, SLOT(readyRead()));
 }
 
 Connection::~Connection()
 {
-    close();
+    delete m_socket;
 }
 
 void Connection::closed()
 {
-    if (m_currentClient) {
-        m_currentClient->deleteLater();
-        m_currentClient = 0;
-    }
-    setState(StoppedState);
+    setState(DebugSession::StoppedState);
 }
 
-void Connection::close()
+void Connection::close() {
+    delete m_socket;
+    m_socket = 0;
+}
+
+
+void Connection::error(QAbstractSocket::SocketError error)
 {
-    if (m_currentClient) {
-        delete m_currentClient;
-        m_currentClient = 0;
-    }
-}
-
-bool Connection::isListening() {
-    return m_server->isListening();
-}
-
-void Connection::incomingConnection()
-{
-    Q_ASSERT(!m_currentClient);
-    m_currentClient = m_server->nextPendingConnection();
-
-    connect(m_currentClient, SIGNAL(disconnected()), this, SLOT(closed()));
-    connect(m_currentClient, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(error( QAbstractSocket::SocketError)));
-
-    connect(m_currentClient, SIGNAL(readyRead()), this, SLOT(readyRead()));
+    //kWarning() << m_socket->errorString();
+    kWarning() << error;
 }
 
 void Connection::readyRead()
 {
-    while (m_currentClient && m_currentClient->bytesAvailable()) {
+    while (m_socket && m_socket->bytesAvailable()) {
         long length;
         {
             QByteArray data;
             char c;
-            while(m_currentClient->getChar(&c)) {
+            while(m_socket->getChar(&c)) {
                 if(c==0) break;
                 data.append(c);
             }
@@ -95,10 +88,10 @@ void Connection::readyRead()
         }
         QByteArray data;
         while (data.length() <= length) {
-            if (!data.isEmpty() && !m_currentClient->waitForReadyRead()) {
+            if (!data.isEmpty() && !m_socket->waitForReadyRead()) {
                 return;
             }
-            data += m_currentClient->read(length+1);
+            data += m_socket->read(length+1);
         }
         //kDebug() << data;
         
@@ -130,27 +123,29 @@ void Connection::sendCommand(const QString& cmd, const QStringList& arguments, c
         out += " -- " + data.toBase64();
     }
     kDebug() << out;
-    m_currentClient->write(out);
-    m_currentClient->write("\0", 1);
+    m_socket->write(out);
+    m_socket->write("\0", 1);
 }
 
 void Connection::processInit(QXmlStreamReader* xml)
 {
-    m_idKey = xml->attributes().value("idkey").toString();
     sendCommand("feature_get -i 3 -n encoding");
     sendCommand("stderr -i 1 -c 1"); //copy stderr to IDE
     sendCommand("stdout -i 2 -c 1"); //copy stdout to IDE
-    setState(StartingState);
+    kDebug() << "idekey" << xml->attributes().value("idekey");
+    emit initDone(xml->attributes().value("idekey").toString());
+
+    setState(DebugSession::StartingState);
 }
 
 void Connection::processResponse(QXmlStreamReader* xml)
 {
     if (xml->attributes().value("status") == "running") {
-        setState(RunningState);
+        setState(DebugSession::ActiveState);
     } else if (xml->attributes().value("status") == "stopped") {
-        setState(StoppedState);
+        setState(DebugSession::StoppedState);
     } else if (xml->attributes().value("status") == "break") {
-        setState(BreakState);
+        setState(DebugSession::PausedState);
         xml->readNext();
         if (xml->isStartElement() && xml->namespaceUri() == "http://xdebug.org/dbgp/xdebug" && xml->name() == "message") {
             QString fileName = xml->attributes().value("filename").toString();
@@ -167,17 +162,19 @@ void Connection::processResponse(QXmlStreamReader* xml)
     }
 }
 
-void Connection::setState(DebuggerState state)
+void Connection::setState(DebugSession::DebuggerState state)
 {
-    //kDebug() << state;
-    m_currentState = state;
-    emit stateChanged(state);
-    if (state == StoppedState) {
-        close();
+    kDebug() << state;
+    if (m_currentState != state) {
+        m_currentState = state;
+        if (state == DebugSession::StoppedState) {
+            close();
+        }
+        emit stateChanged(state);
     }
 }
 
-DebuggerState Connection::currentState()
+DebugSession::DebuggerState Connection::currentState()
 {
     return m_currentState;
 }
@@ -221,35 +218,11 @@ void Connection::processFinished(int exitCode)
 }
 
 
-void Connection::error(QAbstractSocket::SocketError error)
-{
-    kWarning() << error << m_server->errorString();
+
+QTcpSocket* Connection::socket() {
+    return m_socket;
 }
 
-
-bool Connection::listen(int port)
-{
-    Q_ASSERT(!m_server);
-    m_server = new QTcpServer(this);
-    if(m_server->listen(QHostAddress::Any, port)) {
-        connect(m_server, SIGNAL(newConnection()), this, SLOT(incomingConnection()));
-        kDebug() << "listening on" << port;
-    } else {
-        kDebug() << "Error" << m_server->errorString();
-        delete m_server;
-        m_server = 0;
-    }
-
-    return m_server->isListening();
-}
-
-QTcpSocket* Connection::currentClient() {
-    return m_currentClient;
-}
-
-bool Connection::waitForNewConnection(int msecs) {
-    return m_server->waitForNewConnection(msecs);
-}
 
 }
 

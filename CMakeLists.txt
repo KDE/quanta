@@ -18,14 +18,15 @@ include_directories(
 
 set(kdevxdebugcore_PART_SRCS
     connection.cpp
-    debuggercontroller.cpp
-    breakpoints.cpp
-    breakpointcontroller.cpp
-    gdb/ibreakpointcontroller.cpp
-    gdb/util/treeitem.cpp
-    gdb/util/treemodel.cpp
-    gdb/ibreakpoints.cpp
-    gdb/inewbreakpoint.cpp
+#    breakpoints.cpp
+#    breakpointcontroller.cpp
+    debugsession.cpp
+    server.cpp
+#    gdb/ibreakpointcontroller.cpp
+#    gdb/util/treeitem.cpp
+#    gdb/util/treemodel.cpp
+#    gdb/ibreakpoints.cpp
+#    gdb/inewbreakpoint.cpp
 )
 
 set(kdevxdebug_PART_SRCS
@@ -39,6 +40,7 @@ target_link_libraries(kdevxdebug
     ${QT_QTNETWORK_LIBRARY}
     ${KDE4_KDECORE_LIBS}
     ${KDEVPLATFORM_INTERFACES_LIBRARY}
+    ${KDEVPLATFORM_DEBUGGER_LIBRARY}
 )
 
 install(TARGETS kdevxdebug DESTINATION ${PLUGIN_INSTALL_DIR})
@@ -60,6 +62,7 @@ target_link_libraries(connectiontest
     ${KDE4_KDECORE_LIBS}
     ${KDEVPLATFORM_INTERFACES_LIBRARY}
     ${KDEVPLATFORM_TESTSHELL_LIBRARY}
+    ${KDEVPLATFORM_DEBUGGER_LIBRARY}
 )
 
 

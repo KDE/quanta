@@ -37,4 +37,5 @@ X-KDE-PluginInfo-Name=kdevxdebug
 X-KDE-PluginInfo-License=GPL
 ServiceTypes=KDevelop/Plugin
 X-KDevelop-Interfaces=org.kdevelop.IRunProvider
+X-KDevelop-IRequired=org.kdevelop.IDebugController
 X-KDevelop-Mode=GUI

@@ -1,3 +1,4 @@
+class KProcess;
 /*
  * XDebug Debugger Support
  *
@@ -35,13 +36,18 @@
 
 #include <interfaces/iplugin.h>
 #include <interfaces/irunprovider.h>
-#include "common.h"
+#include <debugger/interfaces/idebugsession.h>
 
 class KAction;
+namespace KDevelop {
+    class IDebugController;
+}
+
 namespace XDebug
 {
+class DebugSession;
+class Server;
 class BreakpointController;
-class DebuggerController;
 
 
 class XDebugPlugin : public KDevelop::IPlugin, public KDevelop::IRunProvider
@@ -69,18 +75,20 @@ private:
 
 private Q_SLOTS:
     void slotStartDebugger();
-    void debuggerStateChanged(DebuggerState state);
-    void showStepInSource(const QString& fileName, int lineNum);
-    void outputLine(const QString&, KDevelop::IRunProvider::OutputTypes);
+    void sessionStarted(DebugSession* session);
+    void outputLine(DebugSession* session, QString line, KDevelop::IRunProvider::OutputTypes type);
+    void debuggerStateChanged(DebugSession*, KDevelop::IDebugSession::DebuggerState state);
+
 
 Q_SIGNALS:
     void startDebugger(const KDevelop::IRun & run, KJob* job);
 
 private:
+    Server* m_server;
+    QMap<KProcess*, KJob*> m_jobs;
     BreakpointController* m_breakpointController;
-    DebuggerController* m_controller;
+    KDevelop::IDebugController* m_debugController;
     KAction* m_startDebugger;
-    KAction* m_stepInto;
     
     KJob* m_currentJob;
 };

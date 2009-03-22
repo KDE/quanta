@@ -28,12 +28,11 @@
 #include <QStringList>
 #include <interfaces/irunprovider.h>
 
-#include "common.h"
+#include "debugsession.h"
 
 
 class QXmlStreamReader;
 class QTcpSocket;
-class QTcpServer;
 
 namespace XDebug {
 
@@ -41,46 +40,41 @@ class Connection : public QObject
 {
     Q_OBJECT
 public:
-    Connection(QObject * parent = 0);
+    Connection(QTcpSocket* socket, QObject * parent = 0);
     ~Connection();
 
-    bool listen(int); 
-    bool isListening();
     void close();
 
     void sendCommand(const QString& cmd, const QStringList& arguments = QStringList(), const QByteArray& data = QByteArray());
-    DebuggerState currentState();
+    DebugSession::DebuggerState currentState();
 
-    QTcpSocket* currentClient();
-    bool waitForNewConnection(int msecs = 30000);
+    QTcpSocket* socket();
 
 public Q_SLOTS:
     void processFinished(int exitCode);
 
 Q_SIGNALS:
-    void stateChanged(DebuggerState status);
+    void stateChanged(KDevelop::IDebugSession::DebuggerState status);
     void showStepInSource(const QString &fileName, int lineNum);
     void output(QString content, KDevelop::IRunProvider::OutputTypes type);
     void outputLine(QString content, KDevelop::IRunProvider::OutputTypes type);
+    void initDone(const QString& ideKey);
 
 private Q_SLOTS:
-    void incomingConnection();
     void closed();
-    void error(QAbstractSocket::SocketError);
     void readyRead();
+    void error(QAbstractSocket::SocketError error);
 
 private:
     void processInit(QXmlStreamReader* xml);
     void processResponse(QXmlStreamReader* xml);
     void processStream(QXmlStreamReader* xml);
-    void setState(DebuggerState state);
+    void setState(DebugSession::DebuggerState state);
 
-    QTcpSocket* m_currentClient;
-    QTcpServer* m_server;
+    QTcpSocket* m_socket;
     
-    QString m_idKey;
     QMap<KDevelop::IRunProvider::OutputTypes, QString> m_outputLine;
-    DebuggerState m_currentState;
+    DebugSession::DebuggerState m_currentState;
     QTextCodec* m_codec;
 };
 

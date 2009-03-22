@@ -61,11 +61,11 @@
 #include <interfaces/iprojectcontroller.h>
 #include <interfaces/iruncontroller.h>
 #include <interfaces/context.h>
-#include <interfaces/context.h>
+#include <interfaces/idebugcontroller.h>
+#include <interfaces/iplugincontroller.h>
 
-#include "debuggercontroller.h"
-#include "breakpoints.h"
-#include "breakpointcontroller.h"
+#include "debugsession.h"
+#include "server.h"
 
 
 K_PLUGIN_FACTORY(KDevXDebugDebuggerFactory, registerPlugin<XDebug::XDebugPlugin>(); )
@@ -75,18 +75,22 @@ namespace XDebug
 {
 
 XDebugPlugin::XDebugPlugin( QObject *parent, const QVariantList & ) :
-    KDevelop::IPlugin( KDevXDebugDebuggerFactory::componentData(), parent ), m_currentJob(0)
+    KDevelop::IPlugin( KDevXDebugDebuggerFactory::componentData(), parent )
 {
     KDEV_USE_EXTENSION_INTERFACE( KDevelop::IRunProvider )
 
     setXMLFile("kdevxdebugui.rc");
 
-    m_controller = new DebuggerController(this);
-    connect(m_controller->connection(), SIGNAL(stateChanged(DebuggerState)), this, SLOT(debuggerStateChanged(DebuggerState)));
-    connect(m_controller->connection(), SIGNAL(outputLine(QString,KDevelop::IRunProvider::OutputTypes)), this, SLOT(outputLine(QString,KDevelop::IRunProvider::OutputTypes)));
+    m_server = new Server(this);
+    m_server->listen();
+    
+    connect(m_server, SIGNAL(sessionStarted(DebugSession*)), SLOT(sessionStarted(DebugSession*)));
+    connect(m_server, SIGNAL(outputLine(DebugSession*,QString,KDevelop::IRunProvider::OutputTypes)), SLOT(outputLine(DebugSession*,QString,KDevelop::IRunProvider::OutputTypes)));
+    connect(m_server, SIGNAL(stateChanged(DebugSession*,KDevelop::IDebugSession::DebuggerState)), SLOT(debuggerStateChanged(DebugSession*,KDevelop::IDebugSession::DebuggerState)));
+    KDevelop::IPlugin* plugin = KDevelop::ICore::self()->pluginController()->pluginForExtension("org.kdevelop.IDebugController");
+    m_debugController = dynamic_cast<KDevelop::IDebugController*>(plugin);
+    Q_ASSERT(m_debugController);
 
-    m_breakpointController = new BreakpointController(this);
-    connect(m_controller->connection(), SIGNAL(showStepInSource(QString, int)), this, SLOT(showStepInSource(QString, int)));
 
     setupActions();
 }
@@ -106,30 +110,30 @@ void XDebugPlugin::setupActions()
                                "about variables, frame stack, and so on.") );
     ac->addAction("debug_run", action);
     connect(action, SIGNAL(triggered(bool)), this, SLOT(slotStartDebugger()));
-
-    m_stepInto = action = new KAction(KIcon("dbgstep"), i18n("Step &Into (XDebug)"), this);
-    action->setShortcut(Qt::Key_F11);
-    action->setToolTip( i18n("Step into the next statement") );
-    action->setWhatsThis( i18n("<b>Step into</b><p>"
-                               "Executes exactly one line of source. If the source line "
-                               "is a call to a function then execution will stop after "
-                               "the function has been entered.") );
-    action->setEnabled(false);
-    connect(action, SIGNAL(triggered(bool)), m_controller, SLOT(stepInto()));
-    ac->addAction("debug_stepinto", action);
-
 }
 
 XDebugPlugin::~XDebugPlugin()
 {
 }
 
+void XDebugPlugin::sessionStarted(DebugSession* session)
+{
+    kDebug() << session;
+    m_debugController->addSession(session);
+}
+
+void XDebugPlugin::outputLine(XDebug::DebugSession* session, QString line, KDevelop::IRunProvider::OutputTypes type)
+{
+    if (session->process() && m_jobs.contains(session->process())) {
+        emit output(m_jobs[session->process()], line, type);    
+    }
+}
+
+
 bool XDebugPlugin::execute(const KDevelop::IRun & run, KJob* job)
 {
     Q_ASSERT(instrumentorsProvided().contains(run.instrumentor()));
-    
-    m_currentJob = job;
-    
+
     QString path = run.executable().toLocalFile();
     if (path.endsWith("php")) {
         path = "";
@@ -137,7 +141,11 @@ bool XDebugPlugin::execute(const KDevelop::IRun & run, KJob* job)
     path += " " + run.arguments().join(" ");
     path = path.trimmed();
     kDebug() << path;
-    return m_controller->startDebugging(path);
+
+    KProcess* process = m_server->startDebugger(path);
+    m_jobs[process] = job;
+
+    return !!job;
 }
 
 void XDebugPlugin::abort(KJob* job) {
@@ -158,35 +166,31 @@ QString XDebugPlugin::translatedInstrumentor(const QString&) const
 void XDebugPlugin::slotStartDebugger()
 {
     m_startDebugger->setEnabled(false);
-    m_stepInto->setEnabled(true);
+//    m_debugController->setState(KDevelop::IDebugController::PausedState);
 
     KDevelop::IRun run = KDevelop::ICore::self()->runController()->defaultRun();
     run.setInstrumentor("xdebug");
     KDevelop::ICore::self()->runController()->execute(run);
 }
 
-void XDebugPlugin::debuggerStateChanged(XDebug::DebuggerState state)
+void XDebugPlugin::debuggerStateChanged(DebugSession* session, KDevelop::IDebugSession::DebuggerState state)
 {
-    if (state == StoppedState) {
-        m_breakpointController->clearExecutionPoint();
-        m_startDebugger->setEnabled(true);
-        m_stepInto->setEnabled(false);
-        emit finished(m_currentJob);
+    switch (state) {
+        case KDevelop::IDebugSession::StartingState:
+        case KDevelop::IDebugSession::ActiveState:
+            break;
+        case KDevelop::IDebugSession::PausedState:
+            break;
+        case KDevelop::IDebugSession::NotStartedState:
+        case KDevelop::IDebugSession::StoppingState:
+        case KDevelop::IDebugSession::StoppedState:
+            m_startDebugger->setEnabled(true);
+            if (session->process() && m_jobs.contains(session->process())) {
+                emit finished(m_jobs[session->process()]);
+            }
+            break;
     }
 }
-
-void XDebugPlugin::showStepInSource(const QString& fileName, int lineNum)
-{
-    m_breakpointController->gotoExecutionPoint(fileName, lineNum);
-}
-
-void XDebugPlugin::outputLine(const QString& line, KDevelop::IRunProvider::OutputTypes type)
-{
-    emit output(m_currentJob, line, type);
-}
-
-
-
 
 }
 
