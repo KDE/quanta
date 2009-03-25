@@ -12,6 +12,7 @@ cat data/config/actions.rc >> extrafiles2
 $EXTRACTRC `find . -name "*.ui"` >> rc.cpp 
 $EXTRACTRC `find . -name "*.rc"` >> rc.cpp 
 $EXTRACTRC `find . -name "*.kmdr"` >> rc.cpp 
+$EXTRACTRC `find . -name "*.kcfg"` >> rc.cpp
 cat data/chars | perl -e 'while(<STDIN>) { chomp ; s/\"/\\\"/ ; print "i18n(\"$_\");\n"; }' >> rc.cpp 
 $EXTRACTRC extrafiles >> rc.cpp 
 cat extrafiles | perl -e 'while(<STDIN>) { if (/\<action .* text="(.*)"/) { print "i18n(\"$1\");\n"; }}' >> rc.cpp
