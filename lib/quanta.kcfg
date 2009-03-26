@@ -82,7 +82,7 @@
   
     <entry key="FollowCursor" type="Bool">
       <default>true</default> 
-      <label>Adjust the Strucure Tree to the cursor position</label>
+      <label>Adjust the Structure Tree to the cursor position</label>
       <whatsthis>If this option is true the tree will scroll to the item that belongs to the current cursor position in the document.</whatsthis>
     </entry>
   
