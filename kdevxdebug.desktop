@@ -18,6 +18,7 @@ Name[sv]=Xdebug-stöd
 Name[uk]=ПІдтримка XDebug
 Name[x-test]=xxXDebug Supportxx
 GenericName=Debugger Frontend
+GenericName[de]=Oberfläche für Debugger
 GenericName[es]=Interfaz del depurador
 GenericName[et]=Siluri kasutajaliides
 GenericName[fr]=Interface du débogueur
