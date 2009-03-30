@@ -35,6 +35,7 @@ class QXmlStreamReader;
 class QTcpSocket;
 
 namespace XDebug {
+class StackModel;
 
 class Connection : public QObject
 {
@@ -49,16 +50,18 @@ public:
     DebugSession::DebuggerState currentState();
 
     QTcpSocket* socket();
+    StackModel* stackModel();
 
 public Q_SLOTS:
     void processFinished(int exitCode);
 
 Q_SIGNALS:
     void stateChanged(KDevelop::IDebugSession::DebuggerState status);
-    void showStepInSource(const QString &fileName, int lineNum);
+    void showStepInSource(const KUrl &fileName, int lineNum);
     void output(QString content, KDevelop::IRunProvider::OutputTypes type);
     void outputLine(QString content, KDevelop::IRunProvider::OutputTypes type);
     void initDone(const QString& ideKey);
+    void paused();
 
 private Q_SLOTS:
     void closed();
@@ -76,6 +79,7 @@ private:
     QMap<KDevelop::IRunProvider::OutputTypes, QString> m_outputLine;
     DebugSession::DebuggerState m_currentState;
     QTextCodec* m_codec;
+    StackModel* m_stackModel;
 };
 
 }

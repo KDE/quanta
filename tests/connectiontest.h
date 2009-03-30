@@ -36,6 +36,7 @@ private slots:
     void testStdOutput();
     void testShowStepInSource();
     void testMultipleSessions();
+    void testStackModel();
 private:
     KDevelop::TestCore* m_core;
 };

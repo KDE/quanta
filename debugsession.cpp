@@ -25,7 +25,7 @@
 #include <kprocess.h>
 #include "connection.h"
 #include <QTcpSocket>
-#include <debugger/util/treemodel.h>
+#include "stackmodel.h"
 
 namespace XDebug {
 
@@ -37,15 +37,15 @@ DebugSession::DebugSession(Connection* connection)
     connect(m_connection, SIGNAL(outputLine(QString,KDevelop::IRunProvider::OutputTypes)), SIGNAL(outputLine(QString,KDevelop::IRunProvider::OutputTypes)));
     connect(m_connection, SIGNAL(initDone(QString)), SIGNAL(initDone(QString)));
     connect(m_connection, SIGNAL(stateChanged(KDevelop::IDebugSession::DebuggerState)), SIGNAL(stateChanged(KDevelop::IDebugSession::DebuggerState)));
-    connect(m_connection, SIGNAL(showStepInSource(QString,int)), SIGNAL(showStepInSource(QString,int)));
+    connect(m_connection, SIGNAL(showStepInSource(KUrl,int)), SIGNAL(showStepInSource(KUrl,int)));
 }
 
-KDevelop::TreeModel* DebugSession::stackModel() {
-    return 0;
+KDevelop::StackModel* DebugSession::stackModel() const {
+    return m_connection->stackModel();
 }
 
 
-DebugSession::DebuggerState DebugSession::state() {
+DebugSession::DebuggerState DebugSession::state() const {
     return m_connection->currentState();
 }
 
@@ -82,7 +82,7 @@ void DebugSession::stepOver() {
     m_connection->sendCommand("step_over -i 123");
 }
 
-void DebugSession::setToCursor() {
+void DebugSession::jumpToCursor() {
 
 }
 
@@ -149,6 +149,14 @@ void DebugSession::setProcess(KProcess* process) {
     m_process = process;
 }
 
+void DebugSession::stackGet() {
+    m_connection->sendCommand("stack_get -i 123");
+}
+
+bool DebugSession::restartAvaliable() const
+{
+    return false;
+}
 
 
 }

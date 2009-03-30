@@ -32,14 +32,17 @@
 #include <KLocale>
 
 #include <interfaces/irunprovider.h>
+
 #include "debugsession.h"
+#include "stackmodel.h"
 
 namespace XDebug {
 
 Connection::Connection(QTcpSocket* socket, QObject * parent)
     : QObject(parent),
     m_socket(socket),
-    m_currentState(DebugSession::NotStartedState)
+    m_currentState(DebugSession::NotStartedState),
+    m_stackModel(new StackModel(this))
 {
     Q_ASSERT(m_socket);
 
@@ -93,7 +96,7 @@ void Connection::readyRead()
             }
             data += m_socket->read(length+1);
         }
-        //kDebug() << data;
+//         kDebug() << data;
         
         QXmlStreamReader* xml = new QXmlStreamReader(data);
         while (!xml->atEnd()) {
@@ -148,16 +151,34 @@ void Connection::processResponse(QXmlStreamReader* xml)
         setState(DebugSession::PausedState);
         xml->readNext();
         if (xml->isStartElement() && xml->namespaceUri() == "http://xdebug.org/dbgp/xdebug" && xml->name() == "message") {
-            QString fileName = xml->attributes().value("filename").toString();
+            KUrl file = KUrl(xml->attributes().value("filename").toString());
             int lineNum = xml->attributes().value("lineno").toString().toInt()-1;
-            emit showStepInSource(fileName, lineNum);
+            emit showStepInSource(file, lineNum);
         }
+        emit paused();
     }
     if (xml->attributes().value("command") == "feature_get" && xml->attributes().value("feature_name") == "encoding") {
         xml->readNext();
         QTextCodec* c = QTextCodec::codecForName(xml->text().toString().toAscii());
         if (c) {
             m_codec = c;
+        }
+    } else if (xml->attributes().value("command") == "stack_get") {
+        m_stackModel->clear();
+        while (!(xml->isEndElement() && xml->name() == "response")) {
+            xml->readNext();
+            if (xml->isStartElement() && xml->name() == "stack") {
+                kDebug() << "level" << xml->attributes().value("level");
+                kDebug() << "type" << xml->attributes().value("type");
+                kDebug() << "filename" << xml->attributes().value("filename");
+                kDebug() << "lineno" << xml->attributes().value("lineno");
+                kDebug() << "where" << xml->attributes().value("where");
+                m_stackModel->appendItem(xml->attributes().value("level").toString().toInt(),
+                                         xml->attributes().value("where").toString(),
+                                         xml->attributes().value("filename").toString(),
+                                         xml->attributes().value("lineno").toString().toInt()
+                                         );
+            }
         }
     }
 }
@@ -217,12 +238,14 @@ void Connection::processFinished(int exitCode)
     }
 }
 
-
-
 QTcpSocket* Connection::socket() {
     return m_socket;
 }
 
+StackModel* Connection::stackModel()
+{
+    return m_stackModel;
+}
 
 }
 

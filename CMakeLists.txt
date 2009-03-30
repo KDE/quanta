@@ -18,15 +18,9 @@ include_directories(
 
 set(kdevxdebugcore_PART_SRCS
     connection.cpp
-#    breakpoints.cpp
-#    breakpointcontroller.cpp
     debugsession.cpp
     server.cpp
-#    gdb/ibreakpointcontroller.cpp
-#    gdb/util/treeitem.cpp
-#    gdb/util/treemodel.cpp
-#    gdb/ibreakpoints.cpp
-#    gdb/inewbreakpoint.cpp
+    stackmodel.cpp
 )
 
 set(kdevxdebug_PART_SRCS

@@ -1,4 +1,3 @@
-class KProcess;
 /*
  * XDebug Debugger Support
  *
@@ -39,9 +38,7 @@ class KProcess;
 #include <debugger/interfaces/idebugsession.h>
 
 class KAction;
-namespace KDevelop {
-    class IDebugController;
-}
+class KProcess;
 
 namespace XDebug
 {
@@ -87,9 +84,8 @@ private:
     Server* m_server;
     QMap<KProcess*, KJob*> m_jobs;
     BreakpointController* m_breakpointController;
-    KDevelop::IDebugController* m_debugController;
     KAction* m_startDebugger;
-    
+
     KJob* m_currentJob;
 };
 

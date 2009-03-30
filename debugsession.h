@@ -47,8 +47,12 @@ public:
     KProcess* process();
     void setProcess(KProcess* process);
 
-    virtual DebuggerState state();
-    virtual KDevelop::TreeModel* stackModel();
+    virtual DebuggerState state() const;
+    virtual KDevelop::StackModel* stackModel() const;
+    
+    void stackGet();
+
+    virtual bool restartAvaliable() const;
 
 Q_SIGNALS:
     void output(QString line, KDevelop::IRunProvider::OutputTypes type);
@@ -63,7 +67,7 @@ public Q_SLOTS:
     virtual void stepInto();
     virtual void stepIntoInstruction();
     virtual void stepOver();
-    virtual void setToCursor();
+    virtual void jumpToCursor();
     virtual void runToCursor();
     virtual void interruptDebugger();
     virtual void stopDebugger();
@@ -75,6 +79,7 @@ public Q_SLOTS:
 private:
     Connection* m_connection;
     KProcess* m_process;
+
 };
 
 }

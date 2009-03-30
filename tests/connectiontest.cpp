@@ -30,10 +30,11 @@
 #include <KProcess>
 #include <shell/testcore.h>
 #include <shell/shellextension.h>
+#include <debugger/interfaces/stackmodel.h>
 
 #include "connection.h"
-#include <server.h>
-#include <debugsession.h>
+#include "server.h"
+#include "debugsession.h"
 
 using namespace XDebug;
 namespace KParts {
@@ -106,7 +107,7 @@ void ConnectionTest::testStdOutput()
     DebugSession* session = server.lastSession();
     QSignalSpy outputSpy(session, SIGNAL(output(QString, KDevelop::IRunProvider::OutputTypes)));
     session->waitForState(DebugSession::StartingState);
-    session->startDebugger();
+    session->run();
     session->waitForFinished();
     QVERIFY(session->process());
     {
@@ -128,6 +129,8 @@ void ConnectionTest::testStdOutput()
 
 void ConnectionTest::testShowStepInSource()
 {
+    qRegisterMetaType<KUrl>("KUrl");
+
     QStringList contents;
     contents << "<?php"
             << "$i = 0;"
@@ -144,23 +147,23 @@ void ConnectionTest::testShowStepInSource()
     server.startDebugger(fileName);
     server.waitForConnected();
     DebugSession* session = server.lastSession();
-    QSignalSpy showStepInSourceSpy(session->connection(), SIGNAL(showStepInSource(QString, int)));
+    QSignalSpy showStepInSourceSpy(session, SIGNAL(showStepInSource(KUrl, int)));
 
     session->waitForState(DebugSession::StartingState);
     session->stepInto();
     session->waitForState(DebugSession::PausedState);
     session->stepInto();
     session->waitForState(DebugSession::PausedState);
-    session->startDebugger();
+    session->run();
     session->waitForFinished();
     {
         QCOMPARE(showStepInSourceSpy.count(), 2);
         QList<QVariant> arguments = showStepInSourceSpy.takeFirst();
-        QCOMPARE(arguments.first().toString(), "file://"+QDir::currentPath()+'/'+fileName);
+        QCOMPARE(arguments.first().value<KUrl>(), KUrl("file://"+QDir::currentPath()+'/'+fileName));
         QCOMPARE(arguments.at(1).toInt(), 1);
 
         arguments = showStepInSourceSpy.takeFirst();
-        QCOMPARE(arguments.first().toString(), "file://"+QDir::currentPath()+'/'+fileName);
+        QCOMPARE(arguments.first().value<KUrl>(), KUrl("file://"+QDir::currentPath()+'/'+fileName));
         QCOMPARE(arguments.at(1).toInt(), 2);
     }
 }
@@ -187,9 +190,64 @@ void ConnectionTest::testMultipleSessions()
         DebugSession* session = server.lastSession();
         kDebug() << session;
         session->waitForState(DebugSession::StartingState);
-        session->startDebugger();
+        session->run();
         session->waitForFinished();
     }
+}
+
+void ConnectionTest::testStackModel()
+{
+    QStringList contents;
+    contents << "<?php"         // 1
+            << "function x() {" // 2
+            << "  echo 'x';"    // 3
+            << "}"              // 4
+            << "x();"           // 5
+            << "echo 'y';";     // 6
+    QTemporaryFile file("xdebugtest");
+    file.open();
+    QString fileName = file.fileName();
+    file.write(contents.join("\n").toUtf8());
+    file.close();
+
+    Server server;
+    server.listen(9001);
+
+    server.startDebugger(fileName);
+    server.waitForConnected();
+    DebugSession* session = server.lastSession();
+    kDebug() << session;
+    session->waitForState(DebugSession::StartingState);
+    
+    //step into function
+    for (int i=0; i<3; ++i) {
+        session->stepInto();
+        session->waitForState(DebugSession::PausedState);
+    }
+    
+    KDevelop::StackModel* model = session->stackModel();
+    model->setAutoUpdate(true);
+    QTest::qWait(100);
+    
+    QCOMPARE(model->rowCount(QModelIndex()), 2);
+    QCOMPARE(model->columnCount(QModelIndex()), 3);
+
+    QCOMPARE(model->data(model->index(0,0), Qt::DisplayRole).toString(), QString("0"));
+    QCOMPARE(model->data(model->index(0,1), Qt::DisplayRole).toString(), QString("x"));
+    QCOMPARE(model->data(model->index(0,2), Qt::DisplayRole).toString(), "file://"+QDir::currentPath()+"/"+fileName+QString(":3"));
+    QCOMPARE(model->data(model->index(1,0), Qt::DisplayRole).toString(), QString("1"));
+    QCOMPARE(model->data(model->index(1,1), Qt::DisplayRole).toString(), QString("{main}"));
+    QCOMPARE(model->data(model->index(1,2), Qt::DisplayRole).toString(), "file://"+QDir::currentPath()+"/"+fileName+QString(":5"));
+    
+    session->stepInto();
+    session->waitForState(DebugSession::PausedState);
+    session->stepInto();
+    session->waitForState(DebugSession::PausedState);
+    QTest::qWait(100);
+    QCOMPARE(model->rowCount(QModelIndex()), 1);
+
+    session->run();
+    session->waitForFinished();
 }
 //     controller.connection()->sendCommand("property_get -i 123 -n $i");
 //     controller.connection()->sendCommand("eval -i 124", QStringList(), "eval(\"function test124() { return rand(); } return test124();\")");

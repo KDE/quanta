@@ -87,10 +87,6 @@ XDebugPlugin::XDebugPlugin( QObject *parent, const QVariantList & ) :
     connect(m_server, SIGNAL(sessionStarted(DebugSession*)), SLOT(sessionStarted(DebugSession*)));
     connect(m_server, SIGNAL(outputLine(DebugSession*,QString,KDevelop::IRunProvider::OutputTypes)), SLOT(outputLine(DebugSession*,QString,KDevelop::IRunProvider::OutputTypes)));
     connect(m_server, SIGNAL(stateChanged(DebugSession*,KDevelop::IDebugSession::DebuggerState)), SLOT(debuggerStateChanged(DebugSession*,KDevelop::IDebugSession::DebuggerState)));
-    KDevelop::IPlugin* plugin = KDevelop::ICore::self()->pluginController()->pluginForExtension("org.kdevelop.IDebugController");
-    m_debugController = dynamic_cast<KDevelop::IDebugController*>(plugin);
-    Q_ASSERT(m_debugController);
-
 
     setupActions();
 }
@@ -119,7 +115,7 @@ XDebugPlugin::~XDebugPlugin()
 void XDebugPlugin::sessionStarted(DebugSession* session)
 {
     kDebug() << session;
-    m_debugController->addSession(session);
+    KDevelop::ICore::self()->debugController()->addSession(session);
 }
 
 void XDebugPlugin::outputLine(XDebug::DebugSession* session, QString line, KDevelop::IRunProvider::OutputTypes type)
@@ -166,7 +162,6 @@ QString XDebugPlugin::translatedInstrumentor(const QString&) const
 void XDebugPlugin::slotStartDebugger()
 {
     m_startDebugger->setEnabled(false);
-//    m_debugController->setState(KDevelop::IDebugController::PausedState);
 
     KDevelop::IRun run = KDevelop::ICore::self()->runController()->defaultRun();
     run.setInstrumentor("xdebug");

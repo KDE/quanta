@@ -1,5 +1,6 @@
-class KProcess;
 /*
+   Copyright 2009 Niko Sams <niko.sams@gmail.com>
+
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
    License version 2 as published by the Free Software Foundation.
@@ -23,6 +24,7 @@ class KProcess;
 #include <debugger/interfaces/idebugsession.h>
 
 class QTcpServer;
+class KProcess;
 
 namespace XDebug {
 class DebugSession;
