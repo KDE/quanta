@@ -96,7 +96,7 @@ void Connection::readyRead()
             }
             data += m_socket->read(length+1);
         }
-//         kDebug() << data;
+        kDebug() << data;
         
         QXmlStreamReader* xml = new QXmlStreamReader(data);
         while (!xml->atEnd()) {
@@ -132,11 +132,14 @@ void Connection::sendCommand(const QString& cmd, const QStringList& arguments, c
 
 void Connection::processInit(QXmlStreamReader* xml)
 {
+    kDebug() << "idekey" << xml->attributes().value("idekey");
+    emit initDone(xml->attributes().value("idekey").toString());
+
     sendCommand("feature_get -i 3 -n encoding");
     sendCommand("stderr -i 1 -c 1"); //copy stderr to IDE
     sendCommand("stdout -i 2 -c 1"); //copy stdout to IDE
-    kDebug() << "idekey" << xml->attributes().value("idekey");
-    emit initDone(xml->attributes().value("idekey").toString());
+
+    
 
     setState(DebugSession::StartingState);
 }

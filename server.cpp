@@ -18,13 +18,13 @@
 
 #include <QTcpServer>
 #include <QTcpSocket>
+#include <QTime>
 
 #include <KDebug>
+#include <KProcess>
 
 #include "connection.h"
 #include "debugsession.h"
-#include <KProcess>
-#include <QTime>
 
 namespace XDebug {
 
@@ -44,7 +44,7 @@ bool Server::listen(int port)
         kDebug() << "listening on" << port;
         m_port = port;
     } else {
-        kDebug() << "Error" << m_server->errorString();
+        kWarning() << "Error" << m_server->errorString();
         delete m_server;
         m_server = 0;
         return false;
@@ -161,8 +161,6 @@ bool Server::waitForConnected(int msecs)
     if (msecs != -1) msecs = msecs - stopWatch.elapsed();
     return m_lastSession->waitForConnected(msecs);
 }
-
-
 
 }
 #include "server.moc"

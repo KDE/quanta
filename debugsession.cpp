@@ -20,11 +20,14 @@
  */
 
 #include "debugsession.h"
+
 #include <QTime>
-#include <kdebug.h>
-#include <kprocess.h>
-#include "connection.h"
 #include <QTcpSocket>
+
+#include <KDebug>
+#include <KProcess>
+
+#include "connection.h"
 #include "stackmodel.h"
 
 namespace XDebug {
@@ -32,20 +35,26 @@ namespace XDebug {
 DebugSession::DebugSession(Connection* connection)
     : KDevelop::IDebugSession(), m_connection(connection), m_process(0)
 {
-    Q_ASSERT(m_connection);
     connect(m_connection, SIGNAL(output(QString,KDevelop::IRunProvider::OutputTypes)), SIGNAL(output(QString,KDevelop::IRunProvider::OutputTypes)));
     connect(m_connection, SIGNAL(outputLine(QString,KDevelop::IRunProvider::OutputTypes)), SIGNAL(outputLine(QString,KDevelop::IRunProvider::OutputTypes)));
     connect(m_connection, SIGNAL(initDone(QString)), SIGNAL(initDone(QString)));
+    connect(m_connection, SIGNAL(initDone(QString)), SLOT(slotInitDone(QString)));
     connect(m_connection, SIGNAL(stateChanged(KDevelop::IDebugSession::DebuggerState)), SIGNAL(stateChanged(KDevelop::IDebugSession::DebuggerState)));
     connect(m_connection, SIGNAL(showStepInSource(KUrl,int)), SIGNAL(showStepInSource(KUrl,int)));
 }
 
-KDevelop::StackModel* DebugSession::stackModel() const {
+KDevelop::StackModel* DebugSession::stackModel() const
+{
     return m_connection->stackModel();
 }
 
+KDevelop::IBreakpointController* DebugSession::breakpointController() const
+{
+    return 0;
+}
 
-DebugSession::DebuggerState DebugSession::state() const {
+DebugSession::DebuggerState DebugSession::state() const
+{
     return m_connection->currentState();
 }
 
@@ -118,6 +127,7 @@ bool DebugSession::waitForFinished(int msecs) {
 
 bool DebugSession::waitForState(KDevelop::IDebugSession::DebuggerState state, int msecs)
 {
+    if (m_connection->currentState() == state) return true;
     QTime stopWatch;
     stopWatch.start();
     if (!waitForConnected(msecs)) return false;
@@ -155,9 +165,29 @@ void DebugSession::stackGet() {
 
 bool DebugSession::restartAvaliable() const
 {
+    //not supported at all by xdebug
     return false;
 }
 
+void DebugSession::slotInitDone(const QString& ideKey)
+{
+    Q_UNUSED(ideKey);
+    /*
+    int cnt = m_breakpointController->breakpointsItem()->breakpointCount();
+    for (int i=0; i<cnt; ++i) {
+        KDevelop::IBreakpoint *breakpoint = m_breakpointController->breakpointsItem()->breakpoint(i);
+        if (breakpoint->kind() == Breakpoint::CodeBreakpoint) {
+            QString location = breakpoint->location();
+            if (location.contains(':')) {
+                QString cmd = "breakpoint_set -i 123 -t line";
+                cmd.append(" -f "+location.left(location.indexOf(':', -2)));
+                cmd.append(" -n "+location.mid(location.indexOf(':', -2)+1));
+                m_connection->sendCommand(cmd);
+            }
+        }
+    }
+    */
+}
 
 }
 

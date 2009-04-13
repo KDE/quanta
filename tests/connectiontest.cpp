@@ -69,6 +69,7 @@ void ConnectionTest::init()
 {
     qRegisterMetaType<KDevelop::IRunProvider::OutputTypes>("KDevelop::IRunProvider::OutputTypes");
     qRegisterMetaType<DebugSession*>("DebugSession*");
+    qRegisterMetaType<KUrl>("KUrl");
 
     AutoTestShell::init();
     m_core = new KDevelop::TestCore();
@@ -129,8 +130,6 @@ void ConnectionTest::testStdOutput()
 
 void ConnectionTest::testShowStepInSource()
 {
-    qRegisterMetaType<KUrl>("KUrl");
-
     QStringList contents;
     contents << "<?php"
             << "$i = 0;"
@@ -249,6 +248,51 @@ void ConnectionTest::testStackModel()
     session->run();
     session->waitForFinished();
 }
+
+/*
+void ConnectionTest::testBreakpoint()
+{
+    QStringList contents;
+    contents << "<?php"         // 1
+            << "function x() {" // 2
+            << "  echo 'x';"    // 3
+            << "}"              // 4
+            << "x();"           // 5
+            << "echo 'y';";     // 6
+    QTemporaryFile file("xdebugtest");
+    file.open();
+    QString fileName = file.fileName();
+    file.write(contents.join("\n").toUtf8());
+    file.close();
+
+    Server server;
+    server.listen(9001);
+    BreakpointController *breakpointController = server.breakpointController();
+    QString location("file://"+QDir::currentPath()+"/"+fileName+QString(":3"));
+    breakpointController->breakpointsItem()->addCodeBreakpoint(location);
+
+    server.startDebugger(fileName);
+    server.waitForConnected();
+    DebugSession* session = server.lastSession();
+    kDebug() << session;
+    QSignalSpy showStepInSourceSpy(session, SIGNAL(showStepInSource(KUrl, int)));
+
+    session->waitForState(DebugSession::StartingState);
+    session->run();
+    session->waitForState(DebugSession::PausedState);
+
+    session->run();
+    session->waitForFinished();
+    session->waitForFinished();
+    {
+        QCOMPARE(showStepInSourceSpy.count(), 1);
+        QList<QVariant> arguments = showStepInSourceSpy.takeFirst();
+        QCOMPARE(arguments.first().value<KUrl>(), KUrl("file://"+QDir::currentPath()+'/'+fileName));
+        QCOMPARE(arguments.at(1).toInt(), 3);
+    }
+}
+*/
+
 //     controller.connection()->sendCommand("property_get -i 123 -n $i");
 //     controller.connection()->sendCommand("eval -i 124", QStringList(), "eval(\"function test124() { return rand(); } return test124();\")");
 //     controller.connection()->sendCommand("eval -i 126", QStringList(), "test124();");

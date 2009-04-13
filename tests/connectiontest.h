@@ -37,6 +37,7 @@ private slots:
     void testShowStepInSource();
     void testMultipleSessions();
     void testStackModel();
+    //void testBreakpoint();
 private:
     KDevelop::TestCore* m_core;
 };

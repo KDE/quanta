@@ -37,7 +37,7 @@ class DebugSession : public KDevelop::IDebugSession
 {
     Q_OBJECT
 public:
-    DebugSession(Connection* connection);
+    DebugSession(Connection *connection);
     
     bool waitForState(DebuggerState state, int msecs = 30000);
     bool waitForFinished(int msecs = 30000);
@@ -48,11 +48,13 @@ public:
     void setProcess(KProcess* process);
 
     virtual DebuggerState state() const;
-    virtual KDevelop::StackModel* stackModel() const;
+    virtual KDevelop::StackModel *stackModel() const;
+    virtual KDevelop::IBreakpointController *breakpointController() const;
     
     void stackGet();
 
     virtual bool restartAvaliable() const;
+
 
 Q_SIGNALS:
     void output(QString line, KDevelop::IRunProvider::OutputTypes type);
@@ -76,9 +78,12 @@ public Q_SLOTS:
 
     void eval(QByteArray source);
 
+private Q_SLOTS:
+    void slotInitDone(const QString& ideKey);
+
 private:
-    Connection* m_connection;
-    KProcess* m_process;
+    Connection *m_connection;
+    KProcess *m_process;
 
 };
 
