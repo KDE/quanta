@@ -11,7 +11,7 @@ X-KDE-ParentComponents=kdevplatform
 X-KDE-CfgDlgHierarchy=USERINTERFACE
 
 Name=User Toolbars setting
-Name[da]=Brugeropsætning af værktøjslinjer
+Name[da]=Indstilling af brugerværktøjslinjer
 Name[de]=Einstellungen für Benutzerwerkzeugleisten
 Name[el]=Ρύθμιση γραμμών εργαλείων χρήστη
 Name[es]=Configuración de la barra de herramientas del usuario
