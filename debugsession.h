@@ -49,7 +49,6 @@ public:
 
     virtual DebuggerState state() const;
     virtual KDevelop::StackModel *stackModel() const;
-    virtual KDevelop::IBreakpointController *breakpointController() const;
     
     void stackGet();
 

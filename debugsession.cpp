@@ -48,11 +48,6 @@ KDevelop::StackModel* DebugSession::stackModel() const
     return m_connection->stackModel();
 }
 
-KDevelop::IBreakpointController* DebugSession::breakpointController() const
-{
-    return 0;
-}
-
 DebugSession::DebuggerState DebugSession::state() const
 {
     return m_connection->currentState();
