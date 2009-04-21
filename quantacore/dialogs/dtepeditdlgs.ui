@@ -8,7 +8,6 @@
  *                                                                         *
  ***************************************************************************
 </comment>
- <exportmacro></exportmacro>
  <class>DTEPEditDlgS</class>
  <widget class="QWidget" name="DTEPEditDlgS" >
   <property name="geometry" >
@@ -1572,8 +1571,6 @@ Example: &lt;b>//&amp;nbsp;EOL,&amp;nbsp;/*&amp;nbsp;*/&lt;/b></string>
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11" />
- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
    <class>Q3ListBox</class>

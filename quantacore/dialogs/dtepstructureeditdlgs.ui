@@ -9,7 +9,6 @@
  *                                                                         *
  ***************************************************************************
 </comment>
- <exportmacro></exportmacro>
  <class>DTEPStructureEditDlgS</class>
  <widget class="QWidget" name="DTEPStructureEditDlgS" >
   <property name="geometry" >
@@ -574,8 +573,6 @@ The first captured area (between "&lt;b>(&lt;/b>" and "&lt;b>)&lt;/b>") holds th
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11" />
- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
    <class>KLineEdit</class>

@@ -8,7 +8,6 @@
  *                                                                         *
  ***************************************************************************
 </comment>
- <exportmacro></exportmacro>
  <class>DTEPCreationDlg</class>
  <widget class="QWidget" name="DTEPCreationDlg" >
   <property name="geometry" >
@@ -117,8 +116,6 @@
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11" />
- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <tabstops>
   <tabstop>directory</tabstop>
   <tabstop>dtdName</tabstop>

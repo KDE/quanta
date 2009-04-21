@@ -1,5 +1,4 @@
 <ui version="4.0" >
- <author></author>
  <comment>***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -8,7 +7,6 @@
  *                                                                         *
  ***************************************************************************
 </comment>
- <exportmacro></exportmacro>
  <class>FileInfoDlg</class>
  <widget class="QWidget" name="FileInfoDlg" >
   <property name="geometry" >
@@ -83,8 +81,6 @@
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11" />
- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
    <class>Q3ListBox</class>

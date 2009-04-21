@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>StructureTreeProjectConfigBase</class>
  <widget class="QWidget" name="StructureTreeProjectConfigBase" >
   <property name="geometry" >
@@ -16,8 +13,6 @@
    <string>StructureTree</string>
   </property>
  </widget>
- <layoutdefault spacing="6" margin="11" />
- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <resources/>
  <connections/>
 </ui>

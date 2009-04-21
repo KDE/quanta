@@ -9,7 +9,6 @@
  *                                                                         *
  ***************************************************************************
 </comment>
- <exportmacro></exportmacro>
  <class>SecondWizardPageBase</class>
  <widget class="QWidget" name="SecondWizardPageBase" >
   <property name="geometry" >
@@ -219,8 +218,6 @@
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11" />
- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
    <class>Q3ButtonGroup</class>

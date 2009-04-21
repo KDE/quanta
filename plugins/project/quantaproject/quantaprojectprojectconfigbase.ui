@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>QuantaProjectProjectConfigBase</class>
  <widget class="QWidget" name="QuantaProjectProjectConfigBase" >
   <property name="geometry" >
@@ -16,8 +13,6 @@
    <string>QuantaProject</string>
   </property>
  </widget>
- <layoutdefault spacing="6" margin="11" />
- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <resources/>
  <connections/>
 </ui>

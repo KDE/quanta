@@ -9,7 +9,6 @@
  *                                                                         *
  ***************************************************************************
 </comment>
- <exportmacro></exportmacro>
  <class>FirstWizardPageBase</class>
  <widget class="QWidget" name="FirstWizardPageBase" >
   <property name="enabled" >
@@ -414,8 +413,6 @@
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11" />
- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <tabstops>
   <tabstop>linePrjName</tabstop>
   <tabstop>linePrjFile</tabstop>

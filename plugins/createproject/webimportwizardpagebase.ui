@@ -1,5 +1,4 @@
 <ui version="4.0" >
- <author></author>
  <comment>***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -9,7 +8,6 @@
  *                                                                         *
  ***************************************************************************
 </comment>
- <exportmacro></exportmacro>
  <class>WebImportWizardPageBase</class>
  <widget class="QWidget" name="WebImportWizardPageBase" >
   <property name="geometry" >
@@ -199,8 +197,6 @@
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11" />
- <pixmapfunction></pixmapfunction>
  <customwidgets>
   <customwidget>
    <class>SimpleFileTree</class>

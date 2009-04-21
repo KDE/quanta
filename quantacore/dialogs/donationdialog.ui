@@ -8,7 +8,6 @@
  *                                                                         *
  ***************************************************************************
 </comment>
- <exportmacro></exportmacro>
  <class>DonationDialog</class>
  <widget class="QWidget" name="DonationDialog" >
   <property name="geometry" >
@@ -90,8 +89,6 @@
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11" />
- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
    <class>KTextBrowser</class>

@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>AutocompletionConfigBase</class>
  <widget class="QWidget" name="AutocompletionConfigBase" >
   <property name="geometry" >
@@ -84,8 +81,6 @@
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11" />
- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <tabstops>
   <tabstop>enableAutocompletion</tabstop>
   <tabstop>updateClosingTags</tabstop>

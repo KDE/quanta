@@ -9,7 +9,6 @@
  *                                                                         *
  ***************************************************************************
 </comment>
- <exportmacro></exportmacro>
  <class>LocalImportWizardPageBase</class>
  <widget class="QWidget" name="LocalImportWizardPageBase" >
   <property name="geometry" >
@@ -237,8 +236,6 @@
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11" />
- <pixmapfunction></pixmapfunction>
  <customwidgets>
   <customwidget>
    <class>Q3ButtonGroup</class>
