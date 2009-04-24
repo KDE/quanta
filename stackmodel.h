@@ -22,10 +22,10 @@
 #include <debugger/interfaces/stackmodel.h>
 #include <debugger/interfaces/idebugsession.h>
 
+namespace KDevelop { class StackItem; }
 
 namespace XDebug {
 class Connection;
-class StackItem;
 class DebugSession;
 
 class StackModel : public KDevelop::StackModel
@@ -43,7 +43,7 @@ private slots:
     void stateChanged(KDevelop::IDebugSession::DebuggerState state);
 
 private:
-    StackItem* m_rootItem;
+    KDevelop::FramesModel* m_frames;
     Connection* m_connection;
 };
 

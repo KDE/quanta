@@ -19,33 +19,36 @@
 #include "stackmodel.h"
 #include <klocalizedstring.h>
 #include <debugger/util/treeitem.h>
+#include <debugger/interfaces/stackitem.h>
 #include "debugsession.h"
 #include "connection.h"
 #include <KDebug>
+
+using namespace KDevelop;
 
 namespace XDebug {
 
 class StackItem : public KDevelop::TreeItem {
 public:
-    StackItem(KDevelop::TreeModel* model, TreeItem *parent = 0)
+    StackItem(KDevelop::StackModel* model, TreeItem *parent = 0)
         : KDevelop::TreeItem(model, parent)
-    {}
+    {
+        appendChild(new ThreadItem(model));
+    }
 
     virtual void fetchMoreChildren() {}
     
 public:
     using KDevelop::TreeItem::setData;
     using KDevelop::TreeItem::appendChild;
-    using KDevelop::TreeItem::clear;
 };
 
 StackModel::StackModel(Connection* connection)
-    : KDevelop::StackModel((QVector<QString>() << i18n("Depth") << i18n("Where") << i18n("Source")), connection),
+    : KDevelop::StackModel(connection),
       m_connection(connection)
 {
-    StackItem* rootItem = new StackItem(this);
-    setRootItem(rootItem);
-    m_rootItem = rootItem;
+    setRootItem(new StackItem(this));
+    m_frames = modelForThread(0);
     
     connect(connection, SIGNAL(paused()), SLOT(paused()));
     connect(connection, SIGNAL(stateChanged(KDevelop::IDebugSession::DebuggerState)), SLOT(stateChanged(KDevelop::IDebugSession::DebuggerState)));
@@ -66,17 +69,16 @@ void StackModel::stateChanged(KDevelop::IDebugSession::DebuggerState state)
     }
 }
 
-
 void StackModel::clear()
 {
-    m_rootItem->clear();
+    m_frames->removeAll();
 }
 
 void StackModel::appendItem(int depth, const QString& function, const QString& file, int line)
 {
-    StackItem* i = new StackItem(this, m_rootItem);
-    i->setData(QVector<QString>() << QString::number(depth) << function << file + ":" + QString::number(line));
-    m_rootItem->appendChild(i);    
+    FrameItem* i = new FrameItem(m_frames);
+    i->setInformation(depth, function, qMakePair<QString, int>(file, line));
+    m_frames->addFrame(i);
 }
 
 void StackModel::update()
