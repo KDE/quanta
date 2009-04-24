@@ -62,7 +62,6 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     virtual void run();
-    virtual void toggleBreakpoint();
     virtual void stepOut();
     virtual void stepOverInstruction();
     virtual void stepInto();

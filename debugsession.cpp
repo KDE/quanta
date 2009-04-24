@@ -61,11 +61,6 @@ void DebugSession::run() {
     m_connection->sendCommand("run -i 123");
 }
 
-
-void DebugSession::toggleBreakpoint() {
-
-}
-
 void DebugSession::stepOut() {
     m_connection->sendCommand("step_out -i 123");
 }
