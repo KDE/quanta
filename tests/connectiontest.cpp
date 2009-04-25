@@ -21,6 +21,7 @@
 
 #include "connectiontest.h"
 
+#include <iostream>
 #include <QtTest/QTest>
 #include <QtTest/QSignalSpy>
 #include <QtCore/QTemporaryFile>
@@ -110,7 +111,8 @@ void ConnectionTest::testStdOutput()
     session->waitForState(DebugSession::StartingState);
     session->run();
     session->waitForFinished();
-    QVERIFY(session->process());
+    session->stopDebugger();
+    session->waitForState(DebugSession::StoppedState);
     {
         QCOMPARE(outputSpy.count(), 4);
         QList<QVariant> arguments = outputSpy.takeFirst();
@@ -126,6 +128,8 @@ void ConnectionTest::testStdOutput()
         QCOMPARE(arguments.count(), 3);
         QCOMPARE(arguments.at(1).toString(), QString("foobar"));
     }
+    
+    delete session;
 }
 
 void ConnectionTest::testShowStepInSource()
@@ -155,6 +159,9 @@ void ConnectionTest::testShowStepInSource()
     session->waitForState(DebugSession::PausedState);
     session->run();
     session->waitForFinished();
+    session->stopDebugger();
+    session->waitForState(DebugSession::StoppedState);
+
     {
         QCOMPARE(showStepInSourceSpy.count(), 2);
         QList<QVariant> arguments = showStepInSourceSpy.takeFirst();
@@ -165,6 +172,7 @@ void ConnectionTest::testShowStepInSource()
         QCOMPARE(arguments.first().value<KUrl>(), KUrl("file://"+QDir::currentPath()+'/'+fileName));
         QCOMPARE(arguments.at(1).toInt(), 2);
     }
+    delete session;
 }
 
 
@@ -191,6 +199,9 @@ void ConnectionTest::testMultipleSessions()
         session->waitForState(DebugSession::StartingState);
         session->run();
         session->waitForFinished();
+        session->stopDebugger();
+        session->waitForState(DebugSession::StoppedState);
+        delete session;        
     }
 }
 
@@ -228,15 +239,16 @@ void ConnectionTest::testStackModel()
     model->setAutoUpdate(true);
     QTest::qWait(100);
     
-    QCOMPARE(model->rowCount(QModelIndex()), 2);
-    QCOMPARE(model->columnCount(QModelIndex()), 3);
+    QCOMPARE(model->rowCount(QModelIndex()), 1); //one fake thread
+    
+    KDevelop::FramesModel* fmodel=model->modelForThread(0);
 
-    QCOMPARE(model->data(model->index(0,0), Qt::DisplayRole).toString(), QString("0"));
-    QCOMPARE(model->data(model->index(0,1), Qt::DisplayRole).toString(), QString("x"));
-    QCOMPARE(model->data(model->index(0,2), Qt::DisplayRole).toString(), "file://"+QDir::currentPath()+"/"+fileName+QString(":3"));
-    QCOMPARE(model->data(model->index(1,0), Qt::DisplayRole).toString(), QString("1"));
-    QCOMPARE(model->data(model->index(1,1), Qt::DisplayRole).toString(), QString("{main}"));
-    QCOMPARE(model->data(model->index(1,2), Qt::DisplayRole).toString(), "file://"+QDir::currentPath()+"/"+fileName+QString(":5"));
+    QCOMPARE(fmodel->data(fmodel->index(0,0), Qt::DisplayRole).toString(), QString("0"));
+    QCOMPARE(fmodel->data(fmodel->index(0,1), Qt::DisplayRole).toString(), QString("x"));
+    QCOMPARE(fmodel->data(fmodel->index(0,2), Qt::DisplayRole).toString(), "file://"+QDir::currentPath()+"/"+fileName+QString(":3"));
+    QCOMPARE(fmodel->data(fmodel->index(1,0), Qt::DisplayRole).toString(), QString("1"));
+    QCOMPARE(fmodel->data(fmodel->index(1,1), Qt::DisplayRole).toString(), QString("{main}"));
+    QCOMPARE(fmodel->data(fmodel->index(1,2), Qt::DisplayRole).toString(), "file://"+QDir::currentPath()+"/"+fileName+QString(":5"));
     
     session->stepInto();
     session->waitForState(DebugSession::PausedState);
@@ -244,9 +256,13 @@ void ConnectionTest::testStackModel()
     session->waitForState(DebugSession::PausedState);
     QTest::qWait(100);
     QCOMPARE(model->rowCount(QModelIndex()), 1);
+    QCOMPARE(fmodel->rowCount(QModelIndex()), 1);
 
     session->run();
     session->waitForFinished();
+    session->stopDebugger();
+    session->waitForState(DebugSession::StoppedState);
+    delete session;
 }
 
 /*

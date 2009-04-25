@@ -30,31 +30,32 @@ namespace XDebug {
 
 class StackItem : public KDevelop::TreeItem {
 public:
-    //We do not have multiple threads, make it dumb
-    struct XDebugThreadItem : public ThreadItem
-    {
-        XDebugThreadItem(KDevelop::StackModel* model) : ThreadItem(model) {}
-        virtual void fetchMoreChildren() {}
-    };
-    
     StackItem(KDevelop::StackModel* model, TreeItem *parent = 0)
         : KDevelop::TreeItem(model, parent)
     {
-        appendChild(new XDebugThreadItem(model));
     }
 
     virtual void fetchMoreChildren() {}
     
 public:
-    using KDevelop::TreeItem::setData;
     using KDevelop::TreeItem::appendChild;
 };
+
+//We do not have multiple threads, make it dumb
+struct XDebugThreadItem : public ThreadItem
+{
+    XDebugThreadItem(KDevelop::StackModel* model) : ThreadItem(model) {}
+    virtual void fetchMoreChildren() {}
+};
+
 
 StackModel::StackModel(Connection* connection)
     : KDevelop::StackModel(connection),
       m_connection(connection)
 {
-    setRootItem(new StackItem(this));
+    StackItem* r = new StackItem(this);
+    setRootItem(r);
+    r->appendChild(new XDebugThreadItem(this));
     m_frames = modelForThread(0);
     
     connect(connection, SIGNAL(paused()), SLOT(paused()));

@@ -92,7 +92,7 @@ void Server::stateChanged(KDevelop::IDebugSession::DebuggerState state)
     Q_ASSERT(dynamic_cast<DebugSession*>(sender()));
     DebugSession* session = static_cast<DebugSession*>(sender());
     emit stateChanged(session, state);
-    if (state == DebugSession::StoppedState) {
+    if (state == KDevelop::IDebugSession::StoppedState) {
         QString i = m_sessions.key(session);
         m_sessions.remove(i);
         if (m_processes.contains(i)) {
@@ -114,17 +114,19 @@ KProcess* Server::startDebugger(const QString& filename)
     kDebug() << filename << m_port;
 
     QString ideKey = "kdev"+QString::number(qrand());
-    QStringList env;
-    env << "XDEBUG_CONFIG=\"remote_enable=1 remote_port="+QString::number(m_port)+" idekey="+ideKey+" \"";
+    
+    QStringList e = QProcess::systemEnvironment();
+    e.append("XDEBUG_CONFIG=\"remote_enable=1 \"");
+
     KProcess* process = new KProcess(this);
+    process->setEnvironment(e);    
     connect(process, SIGNAL(readyRead()), this, SLOT(processReadyRead()));
     connect(process, SIGNAL(finished(int)), this, SLOT(processFinished(int)));
 
-    QStringList e = QProcess::systemEnvironment();
-    
-    e.append(env);
-    process->setEnvironment(e);
     *process << "php";
+    *process << "-d xdebug.remote_enable=1";
+    *process << "-d xdebug.remote_port="+QString::number(m_port);
+    *process << "-d xdebug.idekey="+ideKey;
     *process << filename;
     process->setOutputChannelMode(KProcess::SeparateChannels);
     process->start();

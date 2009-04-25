@@ -146,8 +146,11 @@ void Connection::processInit(QXmlStreamReader* xml)
 
 void Connection::processResponse(QXmlStreamReader* xml)
 {
+    kDebug() << xml->attributes().value("status");
     if (xml->attributes().value("status") == "running") {
         setState(DebugSession::ActiveState);
+    } else if (xml->attributes().value("status") == "stopping") {
+        setState(DebugSession::StoppingState);
     } else if (xml->attributes().value("status") == "stopped") {
         setState(DebugSession::StoppedState);
     } else if (xml->attributes().value("status") == "break") {

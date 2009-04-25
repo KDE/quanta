@@ -94,7 +94,7 @@ void DebugSession::interruptDebugger() {
 }
 
 void DebugSession::stopDebugger() {
-
+    m_connection->sendCommand("stop -i 123");
 }
 
 void DebugSession::restartDebugger() {
@@ -107,7 +107,7 @@ void DebugSession::eval(QByteArray source) {
 bool DebugSession::waitForFinished(int msecs) {
     QTime stopWatch;
     stopWatch.start();
-    if (!waitForState(DebugSession::StoppedState, msecs)) return false;
+    if (!waitForState(DebugSession::StoppingState, msecs)) return false;
     if (msecs != -1) msecs = msecs - stopWatch.elapsed();
     if (m_process) {
         return m_process->waitForFinished(msecs);
