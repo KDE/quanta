@@ -85,7 +85,7 @@ void StackModel::clear()
 void StackModel::appendItem(int depth, const QString& function, const QString& file, int line)
 {
     FrameItem* i = new FrameItem(m_frames);
-    i->setInformation(depth, function, qMakePair<QString, int>(file, line));
+    i->setInformation(depth, function, file, line);
     m_frames->addFrame(i);
 }
 
