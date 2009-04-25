@@ -29,16 +29,17 @@
 
 #include "connection.h"
 #include "stackmodel.h"
+#include "breakpointcontroller.h"
 
 namespace XDebug {
 
 DebugSession::DebugSession(Connection* connection)
     : KDevelop::IDebugSession(), m_connection(connection), m_process(0)
 {
+    new BreakpointController(this);
     connect(m_connection, SIGNAL(output(QString,KDevelop::IRunProvider::OutputTypes)), SIGNAL(output(QString,KDevelop::IRunProvider::OutputTypes)));
     connect(m_connection, SIGNAL(outputLine(QString,KDevelop::IRunProvider::OutputTypes)), SIGNAL(outputLine(QString,KDevelop::IRunProvider::OutputTypes)));
     connect(m_connection, SIGNAL(initDone(QString)), SIGNAL(initDone(QString)));
-    connect(m_connection, SIGNAL(initDone(QString)), SLOT(slotInitDone(QString)));
     connect(m_connection, SIGNAL(stateChanged(KDevelop::IDebugSession::DebuggerState)), SIGNAL(stateChanged(KDevelop::IDebugSession::DebuggerState)));
     connect(m_connection, SIGNAL(showStepInSource(KUrl,int)), SIGNAL(showStepInSource(KUrl,int)));
 }
@@ -58,11 +59,11 @@ void DebugSession::startDebugger()
 }
 
 void DebugSession::run() {
-    m_connection->sendCommand("run -i 123");
+    m_connection->sendCommand("run");
 }
 
 void DebugSession::stepOut() {
-    m_connection->sendCommand("step_out -i 123");
+    m_connection->sendCommand("step_out");
 }
 
 void DebugSession::stepOverInstruction() {
@@ -70,7 +71,7 @@ void DebugSession::stepOverInstruction() {
 }
 
 void DebugSession::stepInto() {
-    m_connection->sendCommand("step_into -i 123");
+    m_connection->sendCommand("step_into");
 }
 
 void DebugSession::stepIntoInstruction() {
@@ -78,7 +79,7 @@ void DebugSession::stepIntoInstruction() {
 }
 
 void DebugSession::stepOver() {
-    m_connection->sendCommand("step_over -i 123");
+    m_connection->sendCommand("step_over");
 }
 
 void DebugSession::jumpToCursor() {
@@ -94,14 +95,14 @@ void DebugSession::interruptDebugger() {
 }
 
 void DebugSession::stopDebugger() {
-    m_connection->sendCommand("stop -i 123");
+    m_connection->sendCommand("stop");
 }
 
 void DebugSession::restartDebugger() {
 
 }
 void DebugSession::eval(QByteArray source) {
-    m_connection->sendCommand("eval -i 123", QStringList(), source);
+    m_connection->sendCommand("eval", QStringList(), source);
 }
 
 bool DebugSession::waitForFinished(int msecs) {
@@ -150,33 +151,13 @@ void DebugSession::setProcess(KProcess* process) {
 }
 
 void DebugSession::stackGet() {
-    m_connection->sendCommand("stack_get -i 123");
+    m_connection->sendCommand("stack_get");
 }
 
 bool DebugSession::restartAvaliable() const
 {
     //not supported at all by xdebug
     return false;
-}
-
-void DebugSession::slotInitDone(const QString& ideKey)
-{
-    Q_UNUSED(ideKey);
-    /*
-    int cnt = m_breakpointController->breakpointsItem()->breakpointCount();
-    for (int i=0; i<cnt; ++i) {
-        KDevelop::IBreakpoint *breakpoint = m_breakpointController->breakpointsItem()->breakpoint(i);
-        if (breakpoint->kind() == Breakpoint::CodeBreakpoint) {
-            QString location = breakpoint->location();
-            if (location.contains(':')) {
-                QString cmd = "breakpoint_set -i 123 -t line";
-                cmd.append(" -f "+location.left(location.indexOf(':', -2)));
-                cmd.append(" -n "+location.mid(location.indexOf(':', -2)+1));
-                m_connection->sendCommand(cmd);
-            }
-        }
-    }
-    */
 }
 
 }

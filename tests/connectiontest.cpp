@@ -32,6 +32,9 @@
 #include <shell/testcore.h>
 #include <shell/shellextension.h>
 #include <debugger/interfaces/stackmodel.h>
+#include <interfaces/idebugcontroller.h>
+#include <debugger/breakpoint/breakpointmodel.h>
+#include <debugger/breakpoint/breakpoint.h>
 
 #include "connection.h"
 #include "server.h"
@@ -265,7 +268,7 @@ void ConnectionTest::testStackModel()
     delete session;
 }
 
-/*
+
 void ConnectionTest::testBreakpoint()
 {
     QStringList contents;
@@ -280,15 +283,16 @@ void ConnectionTest::testBreakpoint()
     QString fileName = file.fileName();
     file.write(contents.join("\n").toUtf8());
     file.close();
+    
+    KDevelop::ICore::self()->debugController()->breakpointModel()->breakpointsItem()
+                ->addCodeBreakpoint(QDir::currentPath()+"/"+fileName, 3);
 
     Server server;
     server.listen(9001);
-    BreakpointController *breakpointController = server.breakpointController();
-    QString location("file://"+QDir::currentPath()+"/"+fileName+QString(":3"));
-    breakpointController->breakpointsItem()->addCodeBreakpoint(location);
-
+    
     server.startDebugger(fileName);
     server.waitForConnected();
+
     DebugSession* session = server.lastSession();
     kDebug() << session;
     QSignalSpy showStepInSourceSpy(session, SIGNAL(showStepInSource(KUrl, int)));
@@ -299,7 +303,9 @@ void ConnectionTest::testBreakpoint()
 
     session->run();
     session->waitForFinished();
-    session->waitForFinished();
+    session->stopDebugger();
+    session->waitForState(DebugSession::StoppedState);
+    delete session;
     {
         QCOMPARE(showStepInSourceSpy.count(), 1);
         QList<QVariant> arguments = showStepInSourceSpy.takeFirst();
@@ -307,7 +313,158 @@ void ConnectionTest::testBreakpoint()
         QCOMPARE(arguments.at(1).toInt(), 3);
     }
 }
-*/
+
+
+void ConnectionTest::testDisableBreakpoint()
+{
+    QStringList contents;
+    contents << "<?php"         // 1
+            << "function x() {" // 2
+            << "  echo 'x';"    // 3
+            << "  echo 'z';"    // 4
+            << "}"              // 5
+            << "x();"           // 6
+            << "x();"           // 7
+            << "echo 'y';";     // 8
+    QTemporaryFile file("xdebugtest");
+    file.open();
+    QString fileName = file.fileName();
+    file.write(contents.join("\n").toUtf8());
+    file.close();
+    
+    KDevelop::Breakpoints *breakpoints = KDevelop::ICore::self()->debugController()
+                                            ->breakpointModel()->breakpointsItem();
+    KDevelop::Breakpoint *b;
+                                            
+    //add disabled breakpoint before startProgram
+    b = breakpoints->addCodeBreakpoint(QDir::currentPath()+"/"+fileName, 2);
+    b->setColumn(KDevelop::Breakpoint::EnableColumn, false);
+
+    b = breakpoints->addCodeBreakpoint(fileName, 3);
+
+    Server server;
+    server.listen(9001);
+    
+    server.startDebugger(fileName);
+    server.waitForConnected();
+
+    DebugSession* session = server.lastSession();
+
+    session->waitForState(DebugSession::StartingState);
+    session->run();
+    session->waitForState(DebugSession::PausedState);
+    
+    //disable existing breakpoint
+    b->setColumn(KDevelop::Breakpoint::EnableColumn, false);
+
+    //add another disabled breakpoint
+    b = breakpoints->addCodeBreakpoint(QDir::currentPath()+"/"+fileName, 7);
+    QTest::qWait(300);
+    b->setColumn(KDevelop::Breakpoint::EnableColumn, false);
+
+    session->run();
+    session->waitForFinished();
+    session->stopDebugger();
+    session->waitForState(DebugSession::StoppedState);
+    delete session;
+}
+
+void ConnectionTest::testChangeLocationBreakpoint()
+{
+    QStringList contents;
+    contents << "<?php"         // 1
+            << "function x() {" // 2
+            << "  echo 'x';"    // 3
+            << "  echo 'z';"    // 4
+            << "}"              // 5
+            << "x();"           // 6
+            << "x();"           // 7
+            << "echo 'y';";     // 8
+    QTemporaryFile file("xdebugtest");
+    file.open();
+    QString fileName = file.fileName();
+    file.write(contents.join("\n").toUtf8());
+    file.close();
+
+    KDevelop::Breakpoints *breakpoints = KDevelop::ICore::self()->debugController()
+                                            ->breakpointModel()->breakpointsItem();
+
+    KDevelop::Breakpoint *b = breakpoints->addCodeBreakpoint(QDir::currentPath()+"/"+fileName, 5);
+
+    Server server;
+    server.listen(9001);
+    
+    server.startDebugger(fileName);
+    server.waitForConnected();
+
+    DebugSession* session = server.lastSession();
+    session->waitForState(DebugSession::StartingState);
+    session->run();
+    session->waitForState(DebugSession::PausedState);
+
+    b->setLine(7);
+    QTest::qWait(100);
+    session->run();
+
+    QTest::qWait(100);
+    session->waitForState(DebugSession::PausedState);
+
+    session->run();
+    session->waitForFinished();
+    session->stopDebugger();
+    session->waitForState(DebugSession::StoppedState);
+    delete session;
+}
+
+void ConnectionTest::testDeleteBreakpoint()
+{
+    QStringList contents;
+    contents << "<?php"         // 1
+            << "function x() {" // 2
+            << "  echo 'x';"    // 3
+            << "  echo 'z';"    // 4
+            << "}"              // 5
+            << "x();"           // 6
+            << "x();"           // 7
+            << "echo 'y';";     // 8
+    QTemporaryFile file("xdebugtest");
+    file.open();
+    QString fileName = file.fileName();
+    file.write(contents.join("\n").toUtf8());
+    file.close();
+
+    KDevelop::Breakpoints *breakpoints = KDevelop::ICore::self()->debugController()
+                                            ->breakpointModel()->breakpointsItem();
+
+    QCOMPARE(KDevelop::ICore::self()->debugController()->breakpointModel()->rowCount(), 1); //one for the "insert here" entry
+    //add breakpoint before startProgram
+    KDevelop::Breakpoint *b = breakpoints->addCodeBreakpoint(QDir::currentPath()+"/"+fileName, 5);
+    QCOMPARE(KDevelop::ICore::self()->debugController()->breakpointModel()->rowCount(), 2);
+    breakpoints->remove(KDevelop::ICore::self()->debugController()->breakpointModel()->index(0, 0));
+    QCOMPARE(KDevelop::ICore::self()->debugController()->breakpointModel()->rowCount(), 1);
+
+    b = breakpoints->addCodeBreakpoint(QDir::currentPath()+"/"+fileName, 2);
+
+    Server server;
+    server.listen(9001);
+    
+    server.startDebugger(fileName);
+    server.waitForConnected();
+
+    DebugSession* session = server.lastSession();
+    session->waitForState(DebugSession::StartingState);
+    session->run();
+    session->waitForState(DebugSession::PausedState);
+
+    breakpoints->remove(KDevelop::ICore::self()->debugController()->breakpointModel()->index(0, 0));
+
+    QTest::qWait(100);
+    session->run();
+    session->waitForFinished();
+    session->stopDebugger();
+    session->waitForState(DebugSession::StoppedState);
+    delete session;
+}
 
 //     controller.connection()->sendCommand("property_get -i 123 -n $i");
 //     controller.connection()->sendCommand("eval -i 124", QStringList(), "eval(\"function test124() { return rand(); } return test124();\")");

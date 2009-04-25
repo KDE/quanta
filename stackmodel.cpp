@@ -92,7 +92,7 @@ void StackModel::appendItem(int depth, const QString& function, const QString& f
 void StackModel::update()
 {
     kDebug();
-    m_connection->sendCommand("stack_get -i 123");
+    m_connection->sendCommand("stack_get");
 }
 
 

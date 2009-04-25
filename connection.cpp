@@ -42,7 +42,8 @@ Connection::Connection(QTcpSocket* socket, QObject * parent)
     : QObject(parent),
     m_socket(socket),
     m_currentState(DebugSession::NotStartedState),
-    m_stackModel(new StackModel(this))
+    m_stackModel(new StackModel(this)),
+    m_lastTransactionId(0)
 {
     Q_ASSERT(m_socket);
 
@@ -116,8 +117,13 @@ void Connection::readyRead()
         delete xml;
     }
 }
-void Connection::sendCommand(const QString& cmd, const QStringList& arguments, const QByteArray& data)
+void Connection::sendCommand(const QString& cmd, QStringList arguments, const QByteArray& data, CallbackBase* callback)
 {
+    arguments << "-i " + QString::number(++m_lastTransactionId);
+    if (callback) {
+        m_callbacks[m_lastTransactionId] = callback;
+    }
+    
     QByteArray out = m_codec->fromUnicode(cmd);
     if (!arguments.isEmpty()) {
         out += ' ' + m_codec->fromUnicode(arguments.join(QString(' ')));
@@ -135,9 +141,9 @@ void Connection::processInit(QXmlStreamReader* xml)
     kDebug() << "idekey" << xml->attributes().value("idekey");
     emit initDone(xml->attributes().value("idekey").toString());
 
-    sendCommand("feature_get -i 3 -n encoding");
-    sendCommand("stderr -i 1 -c 1"); //copy stderr to IDE
-    sendCommand("stdout -i 2 -c 1"); //copy stdout to IDE
+    sendCommand("feature_get -n encoding");
+    sendCommand("stderr -c 1"); //copy stderr to IDE
+    sendCommand("stdout -c 1"); //copy stdout to IDE
 
     
 
@@ -146,7 +152,6 @@ void Connection::processInit(QXmlStreamReader* xml)
 
 void Connection::processResponse(QXmlStreamReader* xml)
 {
-    kDebug() << xml->attributes().value("status");
     if (xml->attributes().value("status") == "running") {
         setState(DebugSession::ActiveState);
     } else if (xml->attributes().value("status") == "stopping") {
@@ -185,6 +190,14 @@ void Connection::processResponse(QXmlStreamReader* xml)
                                          xml->attributes().value("lineno").toString().toInt()
                                          );
             }
+        }
+    }
+    if (xml->attributes().hasAttribute("transaction_id")) {
+        int transactionId = xml->attributes().value("transaction_id").toString().toInt();
+        if (m_callbacks.contains(transactionId)) {
+            m_callbacks[transactionId]->execute(xml);
+            delete m_callbacks[transactionId];
+            m_callbacks.remove(transactionId);
         }
     }
 }

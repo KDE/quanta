@@ -37,6 +37,30 @@ class QTcpSocket;
 namespace XDebug {
 class StackModel;
 
+class CallbackBase {
+public:
+    virtual void execute(QXmlStreamReader*) = 0;
+    virtual ~CallbackBase() {};
+};
+
+template<class Handler, class Return>
+class Callback : public CallbackBase {
+public:
+    Callback(Handler* scope, void (Handler::*method)(Return*, QXmlStreamReader*), Return* ret = 0)
+        : m_return(ret), m_scope(scope), m_method(method)
+    {}
+
+    virtual void execute(QXmlStreamReader* xml)
+    {
+        return (m_scope->*m_method)(m_return, xml);
+    }
+    
+private:
+    Return* m_return;
+    Handler* m_scope;
+    void (Handler::*m_method)(Return*, QXmlStreamReader*);
+};
+
 class Connection : public QObject
 {
     Q_OBJECT
@@ -46,7 +70,8 @@ public:
 
     void close();
 
-    void sendCommand(const QString& cmd, const QStringList& arguments = QStringList(), const QByteArray& data = QByteArray());
+    void sendCommand(const QString& cmd, QStringList arguments = QStringList(),
+                const QByteArray& data = QByteArray(), CallbackBase* callback = 0);
     DebugSession::DebuggerState currentState();
 
     QTcpSocket* socket();
@@ -80,6 +105,9 @@ private:
     DebugSession::DebuggerState m_currentState;
     QTextCodec* m_codec;
     StackModel* m_stackModel;
+    
+    int m_lastTransactionId;
+    QMap<int, CallbackBase*> m_callbacks;
 };
 
 }

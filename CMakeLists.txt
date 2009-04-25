@@ -21,6 +21,7 @@ set(kdevxdebugcore_PART_SRCS
     debugsession.cpp
     server.cpp
     stackmodel.cpp
+    breakpointcontroller.cpp
 )
 
 set(kdevxdebug_PART_SRCS

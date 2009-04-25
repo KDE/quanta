@@ -76,9 +76,6 @@ public Q_SLOTS:
 
     void eval(QByteArray source);
 
-private Q_SLOTS:
-    void slotInitDone(const QString& ideKey);
-
 private:
     Connection *m_connection;
     KProcess *m_process;
