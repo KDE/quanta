@@ -10,7 +10,7 @@ TopLevel = false
 
 [Parsing rules]
 AreaBorders = <! >
-MayContain = dtd 
+MayContain = dtd
 
 [Extra rules]
 StructGroupsCount = 1
@@ -21,5 +21,5 @@ StructRx = \\[|\\]
 [StructGroup_1]
 Name = Entities
 No_Name = No Entities Found
-DefinitionRx = ENTITY[\\s]+([\\w]+)[\\s]+ 
-AutoCompleteAfter = \&
+DefinitionRx = ENTITY[\\s]+([\\w]+)[\\s]+
+AutoCompleteAfter = \\&

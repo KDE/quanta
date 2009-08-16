@@ -45,7 +45,7 @@ No_Name = No Links (anchor)
 Icon = www
 Tag = a(name,href)
 HasFileName = true
-FileNameRx = .*\||#.*
+FileNameRx = .*\\||#.*
 
 [StructGroup_3]
 Name = Resources (link)

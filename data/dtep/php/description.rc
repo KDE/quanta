@@ -18,7 +18,7 @@ VariableGroupIndex = 2
 FunctionGroupIndex = 3
 ClassGroupIndex = 4
 ObjectGroupIndex = 5
-MemberAutoCompleteAfter = (?:\.|->)$
+MemberAutoCompleteAfter = (?:\\.|->)$
 
 [Parsing rules]
 AreaBorders = <? ?>, <* *>, <% %>
@@ -35,26 +35,26 @@ MayContain = php
 Name = Inclusions
 No_Name = No Inclusions
 Icon = attach
-DefinitionRx = ((?:include|require)(?:_once)?(?:\\s+(?:\$\w+\\s*)?|\\s*\((?:\\s+|\\s*\$\w+\\s*)\)\\s*);)
+DefinitionRx = ((?:include|require)(?:_once)?(?:\\s+(?:\\$\\w+\\s*)?|\\s*\\((?:\\s+|\\s*\\$\\w+\\s*)\\)\\s*);)
 DefinitionRx_Minimal = true
 HasFileName = true
 ParseFile = true
-New_FileNameRx_Not_Used = (?:include|require)(?:_once)?(\\s+(?:\$\w+\\s*)?|\\s*\((?:\\s+|\\s*\$\w+\\s*)\)\\s*);
-FileNameRx = (?:^include|^require|^include_once|^require_once|\(|\)|\"|\'|;$)
+New_FileNameRx_Not_Used = (?:include|require)(?:_once)?(\\s+(?:\\$\\w+\\s*)?|\\s*\\((?:\\s+|\\s*\\$\\w+\\s*)\\)\\s*);
+FileNameRx = (?:^include|^require|^include_once|^require_once|\\(|\\)|\\"|\\'|;$)
 
 [StructGroup_2]
 Name = Variables
 No_Name = No Variables
 Icon = abs
-DefinitionRx = \$+([a-zA-Z0-9_\x7f-\xff]*[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)
-UsageRx = \$+([a-zA-Z0-9_\x7f-\xff]*[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)
-AutoCompleteAfter = \$+[a-zA-Z0-9_\x7f-\xff]*$
+DefinitionRx = \\$+([a-zA-Z0-9_\\x7f-\\xff]*[a-zA-Z_\\x7f-\\xff][a-zA-Z0-9_\\x7f-\\xff]*)
+UsageRx = \\$+([a-zA-Z0-9_\\x7f-\\xff]*[a-zA-Z_\\x7f-\\xff][a-zA-Z0-9_\\x7f-\\xff]*)
+AutoCompleteAfter = \\$+[a-zA-Z0-9_\\x7f-\\xff]*$
 
 [StructGroup_3]
 Name = Functions
 No_Name = No Functions
 Icon = mini-modules
-DefinitionRx = \bfunction[\\s]+([0-9a-zA-Z_\x7f-\xff]*[\\s]*(?:\(.*\)){0,1})
+DefinitionRx = \\bfunction[\\s]+([0-9a-zA-Z_\\x7f-\\xff]*[\\s]*(?:\\(.*\\)){0,1})
 AppendToTags = true
 ParentGroup = Classes
 
@@ -63,13 +63,13 @@ Name = Classes
 No_Name = No Classes
 Icon = classnew
 DefinitionRx = \\sclass[\\s]+([0-9a-zA-Z_\x7f-\xff]*)[\\s]*
-UsageRx = \B\$+([a-zA-Z0-9_\x7f-\xff]*[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)$
-AutoCompleteAfter = \bnew[\\s]+$
-RemoveFromAutoCompleteWord = \bnew[\\s]*
+UsageRx = \\B\\$+([a-zA-Z0-9_\\x7f-\\xff]*[a-zA-Z_\\x7f-\\xff][a-zA-Z0-9_\\x7f-\\xff]*)$
+AutoCompleteAfter = \\bnew[\\s]+$
+RemoveFromAutoCompleteWord = \\bnew[\\s]*
 
 [StructGroup_5]
 Name = Objects
 No_Name = No Objects
 Icon = classnew
-DefinitionRx =\$+([a-zA-Z0-9_\x7f-\xff]*[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)[\\s]*=[\\s]*new[\\s]*[a-zA-Z0-9_\x7f-\xff]*[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*[\\s]*;
-TypeRx = [\\s]*new[\\s]*([a-zA-Z0-9_\x7f-\xff]*[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)[\\s]*
+DefinitionRx =\\$+([a-zA-Z0-9_\\x7f-\\xff]*[a-zA-Z_\\x7f-\\xff][a-zA-Z0-9_\\x7f-\\xff]*)[\\s]*=[\\s]*new[\\s]*[a-zA-Z0-9_\\x7f-\\xff]*[a-zA-Z_\\x7f-\\xff][a-zA-Z0-9_\\x7f-\\xff]*[\\s]*;
+TypeRx = [\\s]*new[\\s]*([a-zA-Z0-9_\\x7f-\\xff]*[a-zA-Z_\\x7f-\\xff][a-zA-Z0-9_\\x7f-\\xff]*)[\\s]*

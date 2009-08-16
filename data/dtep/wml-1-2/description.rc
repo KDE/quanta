@@ -54,4 +54,4 @@ No_Name = No Links
 Icon = www
 Tag = a(title,href)
 HasFileName = true
-FileNameRx = .*\||#.*
+FileNameRx = .*\\||#.*
