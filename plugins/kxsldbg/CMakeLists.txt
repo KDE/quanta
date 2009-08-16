@@ -1,3 +1,5 @@
+find_package(Threads REQUIRED)
+
 include_directories(
    ${KDEVPLATFORM_INCLUDE_DIR}
    ${KDEVPLATFORM_INCLUDE_DIR}/interfaces
@@ -137,6 +139,7 @@ target_link_libraries(kdevkxsldbg
    ${KDE4_KUTILS_LIBS}
    ${KDE4_KDEUI_LIBS}
    ${KDE4_KPARTS_LIBS}
+   ${CMAKE_THREAD_LIBS_INIT}
 )
 
 ########### install files ###############
