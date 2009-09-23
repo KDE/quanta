@@ -73,6 +73,7 @@ public:
    */
   static TagPair createLinkTag(const QString & ref)
     {
+      Q_UNUSED(ref)
 #if 0      
       return TagPair(Tag::convertCase("<a ") + TagAttr::convertCase("href=") + TagAttr::quoteAttributeValue(ref) + ">", Tag::convertCase("</a>"));
 #endif    

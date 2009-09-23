@@ -119,7 +119,7 @@ void QuantaCorePart::init()
 
 void QuantaCorePart::initActions()
 {
-  KActionCollection *ac = actionCollection();
+
     KAction *newAct  = new KAction(i18n("&Quanta Homepage"), this);
     actionCollection()->addAction("help_homepage", newAct );
   connect(newAct, SIGNAL(triggered(bool)), SLOT(slotHelpHomepage()));
