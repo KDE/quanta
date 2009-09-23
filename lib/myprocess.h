@@ -16,9 +16,9 @@
 #ifndef MYPROCESS_H
 #define MYPROCESS_H
 
-#include <KDE/KProcess>
+#include <k3process.h>
 
-class MyProcess:public KProcess
+class MyProcess:public K3Process
 {
   Q_OBJECT
 
@@ -27,7 +27,7 @@ class MyProcess:public KProcess
     virtual ~MyProcess() {};
 
   protected:
-    void setupChildProcess();
+    virtual int commSetupDoneC();
 };
 
 
