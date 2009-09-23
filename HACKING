@@ -39,20 +39,12 @@ to Quanta please follow the below rules:
 18. Include the moc files in the .cpp files: use
         #include "qobject_derivated_class_file.moc"
       at the end of the cpp files.
-19. Avoid the usage of .ui.h files (implementing the slots in Designer). The reasons behind this rule
-    are:
-	- the automake/autoconf framework won't detect if you make a change in the .ui.h file and the
-	  file won't be recompiled if you modify it. Aside of being annoying can lead to unexpected
-	  runtime and linking errors.
-	- it's nicer to edit the sources in KDevelop. ;-)
-    So instead of using .ui.h, create a derived class, and implement the slots/methods there. You can
-    still create and connect slots in Designer.
-20. Create a new file for each class.
-21. Use forward declarations.
-22. Put the inclusion for the class's header file as the first inclusion in the implemenetation file.
+19. Create a new file for each class.
+20. Use forward declarations.
+21. Put the inclusion for the class's header file as the first inclusion in the implemenetation file.
 Follow it by the application header files, than Qt headers and finally KDE headers.
-23. Document your methods using Doxygen comments.
-24. Try to reduce inter-header dependencies. 
-25. Avoid using of STL and assert. Use Qt classes and methods and Q_ASSERT.
+22. Document your methods using Doxygen comments.
+23. Try to reduce inter-header dependencies. 
+24. Avoid using of STL and assert. Use Qt classes and methods and Q_ASSERT.
 
 Last, but not least read the howto's and faq's on http://developer.kde.org
