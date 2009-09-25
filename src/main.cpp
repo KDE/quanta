@@ -68,55 +68,8 @@ int main(int argc, char *argv[])
   KCmdLineArgs* args = KCmdLineArgs::parsedArgs();
 
   KApplication app;
-
   KDevQuantaExtension::init();
-
-//FIXME: There is no SplashScreen at this moment
-  /*
-  SplashScreen *splash = 0;
-
-  QString splashFile = KStandardDirs::locate("appdata", "pics/quantalogo.png");
-  if (!splashFile.isEmpty())
-  {
-    QPixmap pm;
-    pm.load(splashFile);
-    splash = new SplashScreen( pm );
-    splash->show();
-    splash->repaint();
-  }
-  */
-  
-    //initialize the api object
-    //WARNING! the order is important
   KDevelop::Core::initialize();
-  
-  /*
-  //initialize the api object
-  //WARNING! the order is important
-  Koncrete::Core::setMainWindow( new Koncrete::MainWindow );
-  Koncrete::Core::setPartController( new Koncrete::PartController );
-  Koncrete::Core::setDocumentController( new Koncrete::DocumentController );
-  
-  Koncrete::Core::setLanguageController( new Koncrete::LanguageController );
-  Koncrete::Core::setProjectController( new Koncrete::ProjectController );
-  Koncrete::Core::setBackgroundParser( new Koncrete::BackgroundParser );
-  Koncrete::Core::setEnvironment( new Koncrete::Environment );
-  */
-  
-//FIXME: There is no SplashScreen at this moment
-  /*
-  if ( splash )
-  {
-    QObject::connect(Core::self(), SIGNAL(loadingPlugin(const QString&)),
-                     splash, SLOT(showMessage(const QString&)));
-   QTimer::singleShot(0, splash, SLOT(deleteLater()));
-    QObject::connect( Koncrete::Core::documentController(),
-                      SIGNAL( openingDocument( const QString & ) ),
-                      splash, SLOT( showMessage( const QString & ) ) );
-
-    splash->showMessage( i18n( "Starting GUI" ) );
-  }
-*/
   
   for( int i=0; i<args->count(); ++i )
   {
@@ -125,7 +78,6 @@ int main(int argc, char *argv[])
 
   bool openProject = false;
   if( args->count() == 0 ){
-//    Koncrete::Core::projectController()->init(); do we still need it?
     openProject = true;
   } else
     if( args->count() > 0 )
