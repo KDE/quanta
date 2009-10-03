@@ -59,7 +59,7 @@ Connection::~Connection()
 
 void Connection::closed()
 {
-    setState(DebugSession::StoppedState);
+    setState(DebugSession::EndedState);
 }
 
 void Connection::close() {

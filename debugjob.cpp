@@ -32,6 +32,8 @@
 #include <kicon.h>
 #include <klocale.h>
 #include <kshell.h>
+#include <KMessageBox>
+#include <KParts/MainWindow>
 
 #include <outputview/outputmodel.h>
 #include <interfaces/ilaunchconfiguration.h>
@@ -186,15 +188,34 @@ void XDebugJob::stdoutReceived(const QStringList& l )
 */
 
 
-void XDebugJob::processError(QProcess::ProcessError )
+void XDebugJob::processFinished( int exitCode , QProcess::ExitStatus status )
 {
-
+    if (exitCode == 0 && status == QProcess::NormalExit)
+        model()->appendLine( i18n("*** Exited normally ***") );
+    else
+        if (status == QProcess::NormalExit)
+            model()->appendLine( i18n("*** Exited with return code: %1 ***", QString::number(exitCode)) );
+        else
+            if (error() == KJob::KilledJobError)
+                model()->appendLine( i18n("*** Process aborted ***") );
+            else
+                model()->appendLine( i18n("*** Crashed with return code: %1 ***", QString::number(exitCode)) );
+    kDebug() << "Process done";
+    emitResult();
 }
 
-
-void XDebugJob::processFinished(int , QProcess::ExitStatus )
+void XDebugJob::processError( QProcess::ProcessError error )
 {
-
+    if( error == QProcess::FailedToStart )
+    {
+        setError( -1 );
+        QString errmsg =  i18n("Could not start program '%1'. Make sure that the "
+                           "path is specified correctly.", m_proc->property("executable").toString() );
+        KMessageBox::error( KDevelop::ICore::self()->uiController()->activeMainWindow(), errmsg, i18n("Could not start application") );
+        setErrorText( errmsg );
+        emitResult();
+    }
+    kDebug() << "Process error";
 }
 
 

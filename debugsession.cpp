@@ -34,35 +34,6 @@
 
 namespace XDebug {
 
-/*
-TODO NIKO: reenable this?
-void Server::stateChanged(KDevelop::IDebugSession::DebuggerState state)
-{
-    Q_ASSERT(dynamic_cast<DebugSession*>(sender()));
-    DebugSession* session = static_cast<DebugSession*>(sender());
-    emit stateChanged(session, state);
-    if (state == KDevelop::IDebugSession::StoppedState) {
-        QString i = m_sessions.key(session);
-        m_sessions.remove(i);
-        if (m_processes.contains(i)) {
-            m_processes[i]->kill();
-        }
-        session->deleteLater();
-        if (m_lastSession == session) {
-            m_lastSession = 0;
-        }
-    }
-}
-
-void Server::processFinished(int exitCode)
-{
-    Q_UNUSED(exitCode); //TODO: use it :D
-    Q_ASSERT(dynamic_cast<KProcess*>(sender()));
-    KProcess* process = static_cast<KProcess*>(sender());
-    process->deleteLater();
-}
-*/
-
 DebugSession::DebugSession()
     : KDevelop::IDebugSession(), m_server(0), m_connection(0)
 {
@@ -170,16 +141,12 @@ void DebugSession::eval(QByteArray source) {
     m_connection->sendCommand("eval", QStringList(), source);
 }
 
-bool DebugSession::waitForFinished(int msecs) {
+bool DebugSession::waitForFinished(int msecs)
+{
     QTime stopWatch;
     stopWatch.start();
     if (!waitForState(DebugSession::StoppingState, msecs)) return false;
     if (msecs != -1) msecs = msecs - stopWatch.elapsed();
-    /*
-    if (m_process) {
-        return m_process->waitForFinished(msecs);
-    }
-    */
     return true;
 }
 
