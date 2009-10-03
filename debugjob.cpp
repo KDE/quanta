@@ -46,10 +46,10 @@
 #include <interfaces/iplugincontroller.h>
 #include <interfaces/icore.h>
 #include <util/processlinemaker.h>
+#include <iexecutescriptplugin.h>
 
 #include "debugsession.h"
 #include "xdebugplugin.h"
-#include "../executescript/iexecutescriptplugin.h" //TODO NIKO
 
 
 namespace XDebug {

@@ -64,10 +64,10 @@
 #include <interfaces/idebugcontroller.h>
 #include <interfaces/iplugincontroller.h>
 #include <interfaces/launchconfigurationtype.h>
+#include <iexecutescriptplugin.h>
 
 #include "debugsession.h"
 #include "launchconfig.h"
-#include "../executescript/iexecutescriptplugin.h" //TODO NIKO
 
 K_PLUGIN_FACTORY(KDevXDebugDebuggerFactory, registerPlugin<XDebug::XDebugPlugin>(); )
 K_EXPORT_PLUGIN(KDevXDebugDebuggerFactory("kdevxdebug"))
