@@ -30,11 +30,9 @@
 
 #include <KDebug>
 #include <KLocale>
-
-#include <interfaces/irunprovider.h>
+#include <KUrl>
 
 #include "debugsession.h"
-#include "stackmodel.h"
 
 namespace XDebug {
 
@@ -42,7 +40,6 @@ Connection::Connection(QTcpSocket* socket, QObject * parent)
     : QObject(parent),
     m_socket(socket),
     m_currentState(DebugSession::NotStartedState),
-    m_stackModel(new StackModel(this)),
     m_lastTransactionId(0)
 {
     Q_ASSERT(m_socket);
@@ -119,11 +116,14 @@ void Connection::readyRead()
 }
 void Connection::sendCommand(const QString& cmd, QStringList arguments, const QByteArray& data, CallbackBase* callback)
 {
+    Q_ASSERT(m_socket);
+    Q_ASSERT(m_socket->isOpen());
+
     arguments << "-i " + QString::number(++m_lastTransactionId);
     if (callback) {
         m_callbacks[m_lastTransactionId] = callback;
     }
-    
+
     QByteArray out = m_codec->fromUnicode(cmd);
     if (!arguments.isEmpty()) {
         out += ' ' + m_codec->fromUnicode(arguments.join(QString(' ')));
@@ -139,7 +139,7 @@ void Connection::sendCommand(const QString& cmd, QStringList arguments, const QB
 void Connection::processInit(QXmlStreamReader* xml)
 {
     kDebug() << "idekey" << xml->attributes().value("idekey");
-    emit initDone(xml->attributes().value("idekey").toString());
+//     emit initDone(xml->attributes().value("idekey").toString());
 
     sendCommand("feature_get -n encoding");
     sendCommand("stderr -c 1"); //copy stderr to IDE
@@ -166,30 +166,12 @@ void Connection::processResponse(QXmlStreamReader* xml)
             int lineNum = xml->attributes().value("lineno").toString().toInt()-1;
             emit showStepInSource(file, lineNum);
         }
-        emit paused();
     }
     if (xml->attributes().value("command") == "feature_get" && xml->attributes().value("feature_name") == "encoding") {
         xml->readNext();
         QTextCodec* c = QTextCodec::codecForName(xml->text().toString().toAscii());
         if (c) {
             m_codec = c;
-        }
-    } else if (xml->attributes().value("command") == "stack_get") {
-        m_stackModel->clear();
-        while (!(xml->isEndElement() && xml->name() == "response")) {
-            xml->readNext();
-            if (xml->isStartElement() && xml->name() == "stack") {
-                kDebug() << "level" << xml->attributes().value("level");
-                kDebug() << "type" << xml->attributes().value("type");
-                kDebug() << "filename" << xml->attributes().value("filename");
-                kDebug() << "lineno" << xml->attributes().value("lineno");
-                kDebug() << "where" << xml->attributes().value("where");
-                m_stackModel->appendItem(xml->attributes().value("level").toString().toInt(),
-                                         xml->attributes().value("where").toString(),
-                                         xml->attributes().value("filename").toString(),
-                                         xml->attributes().value("lineno").toString().toInt()
-                                         );
-            }
         }
     }
     if (xml->attributes().hasAttribute("transaction_id")) {
@@ -210,8 +192,8 @@ void Connection::setState(DebugSession::DebuggerState state)
         if (state == DebugSession::StoppedState) {
             close();
         }
-        emit stateChanged(state);
     }
+    emit stateChanged(state);
 }
 
 DebugSession::DebuggerState Connection::currentState()
@@ -223,6 +205,7 @@ DebugSession::DebuggerState Connection::currentState()
 void Connection::processStream(QXmlStreamReader* xml)
 {
     if (xml->attributes().value("encoding") == "base64") {
+        /* We ignore the output type for now
         KDevelop::IRunProvider::OutputTypes outputType;
         if (xml->attributes().value("type") == "stdout") {
             outputType = KDevelop::IRunProvider::StandardOutput;
@@ -232,15 +215,16 @@ void Connection::processStream(QXmlStreamReader* xml)
             kWarning() << "unknown output type" << xml->attributes().value("type");
             return;
         }
+        */
         xml->readNext();
         QString c = m_codec->toUnicode(QByteArray::fromBase64(xml->text().toString().toAscii()));
         //kDebug() << c;
-        emit output(c, outputType);
-        m_outputLine[outputType] += c;
-        int pos = m_outputLine[outputType].indexOf('\n');
+        emit output(c);
+        m_outputLine += c;
+        int pos = m_outputLine.indexOf('\n');
         if (pos != -1) {
-            emit outputLine(m_outputLine[outputType].left(pos), outputType);
-            m_outputLine[outputType] = m_outputLine[outputType].mid(pos+1);
+            emit outputLine(m_outputLine.left(pos));
+            m_outputLine = m_outputLine.mid(pos+1);
         }
     } else {
         kWarning() << "unknown encoding" << xml->attributes().value("encoding");
@@ -250,20 +234,17 @@ void Connection::processStream(QXmlStreamReader* xml)
 void Connection::processFinished(int exitCode)
 {
     Q_UNUSED(exitCode);
+    /*
     QMapIterator<KDevelop::IRunProvider::OutputTypes, QString> i(m_outputLine);
     while (i.hasNext()) {
         i.next();
         emit outputLine(i.value(), i.key());
     }
+    */
 }
 
 QTcpSocket* Connection::socket() {
     return m_socket;
-}
-
-StackModel* Connection::stackModel()
-{
-    return m_stackModel;
 }
 
 }

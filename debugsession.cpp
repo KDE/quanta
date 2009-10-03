@@ -23,34 +23,97 @@
 
 #include <QTime>
 #include <QTcpSocket>
+#include <QTcpServer>
 
 #include <KDebug>
 #include <KProcess>
 
 #include "connection.h"
-#include "stackmodel.h"
 #include "breakpointcontroller.h"
+#include "framestackmodel.h"
 
 namespace XDebug {
 
-DebugSession::DebugSession(Connection* connection)
-    : KDevelop::IDebugSession(), m_connection(connection), m_process(0)
+/*
+TODO NIKO: reenable this?
+void Server::stateChanged(KDevelop::IDebugSession::DebuggerState state)
 {
-    new BreakpointController(this);
-    connect(m_connection, SIGNAL(output(QString,KDevelop::IRunProvider::OutputTypes)), SIGNAL(output(QString,KDevelop::IRunProvider::OutputTypes)));
-    connect(m_connection, SIGNAL(outputLine(QString,KDevelop::IRunProvider::OutputTypes)), SIGNAL(outputLine(QString,KDevelop::IRunProvider::OutputTypes)));
-    connect(m_connection, SIGNAL(initDone(QString)), SIGNAL(initDone(QString)));
-    connect(m_connection, SIGNAL(stateChanged(KDevelop::IDebugSession::DebuggerState)), SIGNAL(stateChanged(KDevelop::IDebugSession::DebuggerState)));
-    connect(m_connection, SIGNAL(showStepInSource(KUrl,int)), SIGNAL(showStepInSource(KUrl,int)));
+    Q_ASSERT(dynamic_cast<DebugSession*>(sender()));
+    DebugSession* session = static_cast<DebugSession*>(sender());
+    emit stateChanged(session, state);
+    if (state == KDevelop::IDebugSession::StoppedState) {
+        QString i = m_sessions.key(session);
+        m_sessions.remove(i);
+        if (m_processes.contains(i)) {
+            m_processes[i]->kill();
+        }
+        session->deleteLater();
+        if (m_lastSession == session) {
+            m_lastSession = 0;
+        }
+    }
 }
 
-KDevelop::StackModel* DebugSession::stackModel() const
+void Server::processFinished(int exitCode)
 {
-    return m_connection->stackModel();
+    Q_UNUSED(exitCode); //TODO: use it :D
+    Q_ASSERT(dynamic_cast<KProcess*>(sender()));
+    KProcess* process = static_cast<KProcess*>(sender());
+    process->deleteLater();
+}
+*/
+
+DebugSession::DebugSession()
+    : KDevelop::IDebugSession(), m_server(0), m_connection(0)
+{
+    m_breakpointController = new BreakpointController(this);
+}
+
+bool DebugSession::listenForConnection()
+{
+    Q_ASSERT(!m_server);
+    m_server = new QTcpServer(this);
+    if(m_server->listen(QHostAddress::Any, 9000)) {
+        connect(m_server, SIGNAL(newConnection()), this, SLOT(incomingConnection()));
+    } else {
+        kWarning() << "Error" << m_server->errorString();
+        delete m_server;
+        m_server = 0;
+        return false;
+    }
+    return m_server->isListening();
+}
+
+
+void DebugSession::incomingConnection()
+{
+    QTcpSocket* client = m_server->nextPendingConnection();
+    client->setParent(this); //don't delete it when server is deleted
+
+    m_connection = new Connection(client, this);
+    connect(m_connection, SIGNAL(output(QString)), SIGNAL(output(QString)));
+    connect(m_connection, SIGNAL(outputLine(QString)), SIGNAL(outputLine(QString)));
+    connect(m_connection, SIGNAL(initDone(QString)), SIGNAL(initDone(QString)));
+    connect(m_connection, SIGNAL(stateChanged(KDevelop::IDebugSession::DebuggerState)), SIGNAL(stateChanged(KDevelop::IDebugSession::DebuggerState)));
+    connect(m_connection, SIGNAL(stateChanged(KDevelop::IDebugSession::DebuggerState)), SLOT(_stateChanged(KDevelop::IDebugSession::DebuggerState)));
+    connect(m_connection, SIGNAL(showStepInSource(KUrl,int)), SIGNAL(showStepInSource(KUrl,int)));
+
+    m_server->close();
+    m_server->deleteLater();
+    m_server = 0;
+}
+
+
+void DebugSession::_stateChanged(KDevelop::IDebugSession::DebuggerState state)
+{
+    if (state == PausedState) {
+        raiseEvent(program_state_changed);
+    }
 }
 
 DebugSession::DebuggerState DebugSession::state() const
 {
+    if (!m_connection) return NotStartedState;
     return m_connection->currentState();
 }
 
@@ -94,7 +157,9 @@ void DebugSession::interruptDebugger() {
 
 }
 
-void DebugSession::stopDebugger() {
+void DebugSession::stopDebugger()
+{
+    if (!m_connection || m_connection->currentState() == DebugSession::StoppedState) return;
     m_connection->sendCommand("stop");
 }
 
@@ -110,9 +175,11 @@ bool DebugSession::waitForFinished(int msecs) {
     stopWatch.start();
     if (!waitForState(DebugSession::StoppingState, msecs)) return false;
     if (msecs != -1) msecs = msecs - stopWatch.elapsed();
+    /*
     if (m_process) {
         return m_process->waitForFinished(msecs);
     }
+    */
     return true;
 }
 
@@ -123,6 +190,7 @@ bool DebugSession::waitForState(KDevelop::IDebugSession::DebuggerState state, in
     stopWatch.start();
     if (!waitForConnected(msecs)) return false;
     while (m_connection->currentState() != state) {
+        if (!m_connection->socket()) break;
         if (!m_connection->socket()->isOpen()) break;
         m_connection->socket()->waitForReadyRead(100);
         if (msecs != -1 && stopWatch.elapsed() > msecs) {
@@ -132,7 +200,12 @@ bool DebugSession::waitForState(KDevelop::IDebugSession::DebuggerState state, in
     return true;
 }
 
-bool DebugSession::waitForConnected(int msecs) {
+bool DebugSession::waitForConnected(int msecs)
+{
+    if (!m_connection) {
+        Q_ASSERT(m_server);
+        if (!m_server->waitForNewConnection(msecs)) return false;
+    }
     Q_ASSERT(m_connection);
     Q_ASSERT(m_connection->socket());
     return m_connection->socket()->waitForConnected(msecs);
@@ -142,22 +215,16 @@ bool DebugSession::waitForConnected(int msecs) {
 Connection* DebugSession::connection() {
     return m_connection;
 }
-KProcess* DebugSession::process() {
-    return m_process;
-}
-
-void DebugSession::setProcess(KProcess* process) {
-    m_process = process;
-}
-
-void DebugSession::stackGet() {
-    m_connection->sendCommand("stack_get");
-}
 
 bool DebugSession::restartAvaliable() const
 {
     //not supported at all by xdebug
     return false;
+}
+
+KDevelop::IFrameStackModel* DebugSession::createFrameStackModel()
+{
+    return new FrameStackModel(this);
 }
 
 }

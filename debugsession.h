@@ -24,7 +24,6 @@
 
 #include <QtCore/QString>
 #include <debugger/interfaces/idebugsession.h>
-#include <interfaces/irunprovider.h>
 
 class KJob;
 class QTcpServer;
@@ -37,28 +36,27 @@ class DebugSession : public KDevelop::IDebugSession
 {
     Q_OBJECT
 public:
-    DebugSession(Connection *connection);
+    DebugSession();
+
+    bool listenForConnection();
     
     bool waitForState(DebuggerState state, int msecs = 30000);
     bool waitForFinished(int msecs = 30000);
     bool waitForConnected(int msecs = 30000);
 
     Connection* connection();
-    KProcess* process();
-    void setProcess(KProcess* process);
 
     virtual DebuggerState state() const;
-    virtual KDevelop::StackModel *stackModel() const;
     
-    void stackGet();
-
     virtual bool restartAvaliable() const;
 
+private:
+    virtual KDevelop::IFrameStackModel* createFrameStackModel();
 
 Q_SIGNALS:
-    void output(QString line, KDevelop::IRunProvider::OutputTypes type);
-    void outputLine(QString line,KDevelop::IRunProvider::OutputTypes type);
-    void initDone(const QString& ideKey);
+    void output(QString line);
+    void outputLine(QString line);
+//     void initDone(const QString& ideKey);
 
 public Q_SLOTS:
     virtual void run();
@@ -76,9 +74,13 @@ public Q_SLOTS:
 
     void eval(QByteArray source);
 
+private Q_SLOTS:
+    void incomingConnection();
+    void _stateChanged(KDevelop::IDebugSession::DebuggerState);
+
 private:
+    QTcpServer* m_server;
     Connection *m_connection;
-    KProcess *m_process;
 
 };
 

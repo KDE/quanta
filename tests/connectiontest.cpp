@@ -22,23 +22,29 @@
 #include "connectiontest.h"
 
 #include <iostream>
-#include <QtTest/QTest>
 #include <QtTest/QSignalSpy>
 #include <QtCore/QTemporaryFile>
 #include <QtCore/QDir>
 
 #include <KDebug>
 #include <KProcess>
-#include <shell/testcore.h>
+#include <KConfig>
+#include <qtest_kde.h>
+
 #include <shell/shellextension.h>
-#include <debugger/interfaces/stackmodel.h>
 #include <interfaces/idebugcontroller.h>
 #include <debugger/breakpoint/breakpointmodel.h>
 #include <debugger/breakpoint/breakpoint.h>
+#include <interfaces/ilaunchconfiguration.h>
+#include <tests/testcore.h>
+#include <tests/autotestshell.h>
+#include <debugger/interfaces/iframestackmodel.h>
+#include <debugger/variable/variablecollection.h>
 
 #include "connection.h"
-#include "server.h"
 #include "debugsession.h"
+#include "launchconfig.h"
+#include "debugjob.h"
 
 using namespace XDebug;
 namespace KParts {
@@ -51,27 +57,41 @@ namespace KDevelop {
     class IToolViewFactory;
 }
 
-class AutoTestShell : public KDevelop::ShellExtension
+class TestLaunchConfiguration : public KDevelop::ILaunchConfiguration
 {
 public:
-    QString xmlFile() { return QString(); }
-    QString defaultProfile() { return "kdevtest"; }
-    KDevelop::AreaParams defaultArea() {
-        KDevelop::AreaParams params;
-        params.name = "test";
-        params.title = "Test";
-        return params;
+    TestLaunchConfiguration(KUrl script) {
+        c = new KConfig();
+        cfg = c->group("launch");
+        cfg.writeEntry("isExecutable", true);
+        cfg.writeEntry("Executable", script);
+        cfg.writeEntry("Interpreter", "php");
     }
-    QString projectFileExtension() { return QString(); }
-    QString projectFileDescription() { return QString(); }
-    QStringList defaultPlugins() { return QStringList(); }
-
-    static void init() { s_instance = new AutoTestShell; }
+    ~TestLaunchConfiguration() {
+        delete c;
+    }
+    virtual const KConfigGroup config() const { return cfg; }
+    virtual QString name() const { return QString("Test-Launch"); }
+    virtual KDevelop::IProject* project() const { return 0; }
+    virtual KDevelop::LaunchConfigurationType* type() const { return 0; }
+private:
+    KConfigGroup cfg;
+    KConfig *c;
 };
+
+#define COMPARE_DATA(index, expected) \
+    compareData((index), (expected), __FILE__, __LINE__)
+void compareData(QModelIndex index, QString expected, const char *file, int line)
+{
+    QString s = index.model()->data(index, Qt::DisplayRole).toString();
+    if (s != expected) {
+        kFatal() << QString("'%0' didn't match expected '%1' in %2:%3").arg(s).arg(expected).arg(file).arg(line);
+    }
+}
+
 
 void ConnectionTest::init()
 {
-    qRegisterMetaType<KDevelop::IRunProvider::OutputTypes>("KDevelop::IRunProvider::OutputTypes");
     qRegisterMetaType<DebugSession*>("DebugSession*");
     qRegisterMetaType<KUrl>("KUrl");
 
@@ -79,6 +99,17 @@ void ConnectionTest::init()
     m_core = new KDevelop::TestCore();
     m_core->initialize(KDevelop::Core::NoUi);
 
+    //remove all breakpoints - so we can set our own in the test
+    KDevelop::BreakpointModel* m = KDevelop::ICore::self()->debugController()->breakpointModel();
+    m->removeRows(0, m->rowCount());
+
+    /*
+    KDevelop::VariableCollection *vc = KDevelop::ICore::self()->debugController()->variableCollection();
+    for (int i=0; i < vc->watches()->childCount(); ++i) {
+        delete vc->watches()->child(i);
+    }
+    vc->watches()->clear();
+    */
 }
 
 void ConnectionTest::cleanup()
@@ -99,40 +130,38 @@ void ConnectionTest::testStdOutput()
             << "echo \"\\n\";";
     QTemporaryFile file("xdebugtest");
     file.open();
-    QString fileName = file.fileName();
+    KUrl url(QDir::currentPath() + "/" + file.fileName());
     file.write(contents.join("\n").toUtf8());
     file.close();
 
-    Server server;
-    server.listen(9001);
+    DebugSession session;
 
-    QSignalSpy outputLineSpy(&server, SIGNAL(outputLine(DebugSession*,QString, KDevelop::IRunProvider::OutputTypes)));
-    server.startDebugger(fileName);
-    server.waitForConnected();
-    DebugSession* session = server.lastSession();
-    QSignalSpy outputSpy(session, SIGNAL(output(QString, KDevelop::IRunProvider::OutputTypes)));
-    session->waitForState(DebugSession::StartingState);
-    session->run();
-    session->waitForFinished();
-    session->stopDebugger();
-    session->waitForState(DebugSession::StoppedState);
+    TestLaunchConfiguration cfg(url);
+    XDebugJob job(&session, &cfg);
+
+    QSignalSpy outputLineSpy(&session, SIGNAL(outputLine(QString)));
+    QSignalSpy outputSpy(&session, SIGNAL(output(QString)));
+
+    job.start();
+    session.waitForConnected();
+    session.waitForState(DebugSession::StartingState);
+    session.run();
+    session.waitForFinished();
     {
         QCOMPARE(outputSpy.count(), 4);
         QList<QVariant> arguments = outputSpy.takeFirst();
-        QCOMPARE(arguments.count(), 2);
+        QCOMPARE(arguments.count(), 1);
         QCOMPARE(arguments.first().toString(), QString("foo\n"));
     }
     {
         QCOMPARE(outputLineSpy.count(), 2);
         QList<QVariant> arguments = outputLineSpy.takeFirst();
-        QCOMPARE(arguments.count(), 3);
-        QCOMPARE(arguments.at(1).toString(), QString("foo"));
+        QCOMPARE(arguments.count(), 1);
+        QCOMPARE(arguments.at(0).toString(), QString("foo"));
         arguments = outputLineSpy.takeFirst();
-        QCOMPARE(arguments.count(), 3);
-        QCOMPARE(arguments.at(1).toString(), QString("foobar"));
+        QCOMPARE(arguments.count(), 1);
+        QCOMPARE(arguments.at(0).toString(), QString("foobar"));
     }
-    
-    delete session;
 }
 
 void ConnectionTest::testShowStepInSource()
@@ -143,39 +172,38 @@ void ConnectionTest::testShowStepInSource()
             << "$i++;";
     QTemporaryFile file("xdebugtest");
     file.open();
-    QString fileName = file.fileName();
+    KUrl url(QDir::currentPath() + "/" + file.fileName());
     file.write(contents.join("\n").toUtf8());
     file.close();
 
-    Server server;
-    server.listen(9001);
+    DebugSession session;
 
-    server.startDebugger(fileName);
-    server.waitForConnected();
-    DebugSession* session = server.lastSession();
-    QSignalSpy showStepInSourceSpy(session, SIGNAL(showStepInSource(KUrl, int)));
+    TestLaunchConfiguration cfg(url);
+    XDebugJob job(&session, &cfg);
 
-    session->waitForState(DebugSession::StartingState);
-    session->stepInto();
-    session->waitForState(DebugSession::PausedState);
-    session->stepInto();
-    session->waitForState(DebugSession::PausedState);
-    session->run();
-    session->waitForFinished();
-    session->stopDebugger();
-    session->waitForState(DebugSession::StoppedState);
+    QSignalSpy showStepInSourceSpy(&session, SIGNAL(showStepInSource(KUrl, int)));
+
+    job.start();
+    session.waitForConnected();
+
+    session.waitForState(DebugSession::StartingState);
+    session.stepInto();
+    session.waitForState(DebugSession::PausedState);
+    session.stepInto();
+    session.waitForState(DebugSession::PausedState);
+    session.run();
+    session.waitForFinished();
 
     {
         QCOMPARE(showStepInSourceSpy.count(), 2);
         QList<QVariant> arguments = showStepInSourceSpy.takeFirst();
-        QCOMPARE(arguments.first().value<KUrl>(), KUrl("file://"+QDir::currentPath()+'/'+fileName));
+        QCOMPARE(arguments.first().value<KUrl>(), url);
         QCOMPARE(arguments.at(1).toInt(), 1);
 
         arguments = showStepInSourceSpy.takeFirst();
-        QCOMPARE(arguments.first().value<KUrl>(), KUrl("file://"+QDir::currentPath()+'/'+fileName));
+        QCOMPARE(arguments.first().value<KUrl>(), url);
         QCOMPARE(arguments.at(1).toInt(), 2);
     }
-    delete session;
 }
 
 
@@ -187,24 +215,24 @@ void ConnectionTest::testMultipleSessions()
             << "$i++;";
     QTemporaryFile file("xdebugtest");
     file.open();
-    QString fileName = file.fileName();
+    KUrl url(QDir::currentPath() + "/" + file.fileName());
     file.write(contents.join("\n").toUtf8());
     file.close();
 
-    Server server;
-    server.listen(9001);
-
     for (int i=0; i<10; ++i) {
-        server.startDebugger(fileName);
-        server.waitForConnected();
-        DebugSession* session = server.lastSession();
-        kDebug() << session;
-        session->waitForState(DebugSession::StartingState);
-        session->run();
-        session->waitForFinished();
-        session->stopDebugger();
-        session->waitForState(DebugSession::StoppedState);
-        delete session;        
+
+        DebugSession session;
+
+        TestLaunchConfiguration cfg(url);
+        XDebugJob job(&session, &cfg);
+
+        QSignalSpy showStepInSourceSpy(&session, SIGNAL(showStepInSource(KUrl, int)));
+
+        job.start();
+        session.waitForConnected();
+        session.waitForState(DebugSession::StartingState);
+        session.run();
+        session.waitForFinished();
     }
 }
 
@@ -219,53 +247,49 @@ void ConnectionTest::testStackModel()
             << "echo 'y';";     // 6
     QTemporaryFile file("xdebugtest");
     file.open();
-    QString fileName = file.fileName();
+    KUrl url(QDir::currentPath() + "/" + file.fileName());
     file.write(contents.join("\n").toUtf8());
     file.close();
 
-    Server server;
-    server.listen(9001);
+    DebugSession session;
 
-    server.startDebugger(fileName);
-    server.waitForConnected();
-    DebugSession* session = server.lastSession();
-    kDebug() << session;
-    session->waitForState(DebugSession::StartingState);
+    TestLaunchConfiguration cfg(url);
+    XDebugJob job(&session, &cfg);
+
+    job.start();
+    session.waitForConnected();
+    session.waitForState(DebugSession::StartingState);
     
     //step into function
     for (int i=0; i<3; ++i) {
-        session->stepInto();
-        session->waitForState(DebugSession::PausedState);
+        session.stepInto();
+        session.waitForState(DebugSession::PausedState);
     }
-    
-    KDevelop::StackModel* model = session->stackModel();
-    model->setAutoUpdate(true);
     QTest::qWait(100);
-    
-    QCOMPARE(model->rowCount(QModelIndex()), 1); //one fake thread
-    
-    KDevelop::FramesModel* fmodel=model->modelForThread(0);
 
-    QCOMPARE(fmodel->data(fmodel->index(0,0), Qt::DisplayRole).toString(), QString("0"));
-    QCOMPARE(fmodel->data(fmodel->index(0,1), Qt::DisplayRole).toString(), QString("x"));
-    QCOMPARE(fmodel->data(fmodel->index(0,2), Qt::DisplayRole).toString(), "file://"+QDir::currentPath()+"/"+fileName+QString(":3"));
-    QCOMPARE(fmodel->data(fmodel->index(1,0), Qt::DisplayRole).toString(), QString("1"));
-    QCOMPARE(fmodel->data(fmodel->index(1,1), Qt::DisplayRole).toString(), QString("{main}"));
-    QCOMPARE(fmodel->data(fmodel->index(1,2), Qt::DisplayRole).toString(), "file://"+QDir::currentPath()+"/"+fileName+QString(":5"));
-    
-    session->stepInto();
-    session->waitForState(DebugSession::PausedState);
-    session->stepInto();
-    session->waitForState(DebugSession::PausedState);
+    KDevelop::IFrameStackModel* stackModel = session.frameStackModel();
+
+    QCOMPARE(stackModel->rowCount(QModelIndex()), 1); //one fake thread
+
+    QModelIndex tIdx = stackModel->index(0,0);
+    QCOMPARE(stackModel->rowCount(tIdx), 2);
+    QCOMPARE(stackModel->columnCount(tIdx), 3);
+    COMPARE_DATA(tIdx.child(0, 0), "0");
+    COMPARE_DATA(tIdx.child(0, 1), "x");
+    COMPARE_DATA(tIdx.child(0, 2), url.toLocalFile()+":4");
+    COMPARE_DATA(tIdx.child(1, 0), "1");
+    COMPARE_DATA(tIdx.child(1, 1), "{main}");
+    COMPARE_DATA(tIdx.child(1, 2), url.toLocalFile()+":6");
+
+    session.stepInto();
+    session.waitForState(DebugSession::PausedState);
+    session.stepInto();
+    session.waitForState(DebugSession::PausedState);
     QTest::qWait(100);
-    QCOMPARE(model->rowCount(QModelIndex()), 1);
-    QCOMPARE(fmodel->rowCount(QModelIndex()), 1);
+    QCOMPARE(stackModel->rowCount(tIdx), 1);
 
-    session->run();
-    session->waitForFinished();
-    session->stopDebugger();
-    session->waitForState(DebugSession::StoppedState);
-    delete session;
+    session.run();
+    session.waitForFinished();
 }
 
 
@@ -280,40 +304,36 @@ void ConnectionTest::testBreakpoint()
             << "echo 'y';";     // 6
     QTemporaryFile file("xdebugtest");
     file.open();
-    QString fileName = file.fileName();
+    KUrl url(QDir::currentPath() + "/" + file.fileName());
     file.write(contents.join("\n").toUtf8());
     file.close();
-    
-    KDevelop::ICore::self()->debugController()->breakpointModel()->breakpointsItem()
-                ->addCodeBreakpoint(QDir::currentPath()+"/"+fileName, 3);
 
-    Server server;
-    server.listen(9001);
-    
-    server.startDebugger(fileName);
-    server.waitForConnected();
+    DebugSession session;
 
-    DebugSession* session = server.lastSession();
-    kDebug() << session;
-    QSignalSpy showStepInSourceSpy(session, SIGNAL(showStepInSource(KUrl, int)));
+    TestLaunchConfiguration cfg(url);
+    XDebugJob job(&session, &cfg);
 
-    session->waitForState(DebugSession::StartingState);
-    session->run();
-    session->waitForState(DebugSession::PausedState);
 
-    session->run();
-    session->waitForFinished();
-    session->stopDebugger();
-    session->waitForState(DebugSession::StoppedState);
-    delete session;
+    KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(url, 3);
+
+    job.start();
+    session.waitForConnected();
+
+    QSignalSpy showStepInSourceSpy(&session, SIGNAL(showStepInSource(KUrl, int)));
+
+    session.waitForState(DebugSession::StartingState);
+    session.run();
+    session.waitForState(DebugSession::PausedState);
+
+    session.run();
+    session.waitForFinished();
     {
         QCOMPARE(showStepInSourceSpy.count(), 1);
         QList<QVariant> arguments = showStepInSourceSpy.takeFirst();
-        QCOMPARE(arguments.first().value<KUrl>(), KUrl("file://"+QDir::currentPath()+'/'+fileName));
+        QCOMPARE(arguments.first().value<KUrl>(), url);
         QCOMPARE(arguments.at(1).toInt(), 3);
     }
 }
-
 
 void ConnectionTest::testDisableBreakpoint()
 {
@@ -328,45 +348,41 @@ void ConnectionTest::testDisableBreakpoint()
             << "echo 'y';";     // 8
     QTemporaryFile file("xdebugtest");
     file.open();
-    QString fileName = file.fileName();
+    KUrl url(QDir::currentPath() + "/" + file.fileName());
     file.write(contents.join("\n").toUtf8());
     file.close();
-    
-    KDevelop::Breakpoints *breakpoints = KDevelop::ICore::self()->debugController()
-                                            ->breakpointModel()->breakpointsItem();
+
+    DebugSession session;
+
+    TestLaunchConfiguration cfg(url);
+    XDebugJob job(&session, &cfg);
+
+    KDevelop::BreakpointModel* breakpoints = KDevelop::ICore::self()->debugController()->breakpointModel();
     KDevelop::Breakpoint *b;
-                                            
+
     //add disabled breakpoint before startProgram
-    b = breakpoints->addCodeBreakpoint(QDir::currentPath()+"/"+fileName, 2);
-    b->setColumn(KDevelop::Breakpoint::EnableColumn, false);
+    b = breakpoints->addCodeBreakpoint(url, 2);
+    b->setData(KDevelop::Breakpoint::EnableColumn, false);
 
-    b = breakpoints->addCodeBreakpoint(fileName, 3);
+    b = breakpoints->addCodeBreakpoint(url, 3);
 
-    Server server;
-    server.listen(9001);
-    
-    server.startDebugger(fileName);
-    server.waitForConnected();
+    job.start();
+    session.waitForConnected();
 
-    DebugSession* session = server.lastSession();
-
-    session->waitForState(DebugSession::StartingState);
-    session->run();
-    session->waitForState(DebugSession::PausedState);
+    session.waitForState(DebugSession::StartingState);
+    session.run();
+    session.waitForState(DebugSession::PausedState);
     
     //disable existing breakpoint
-    b->setColumn(KDevelop::Breakpoint::EnableColumn, false);
+    b->setData(KDevelop::Breakpoint::EnableColumn, false);
 
     //add another disabled breakpoint
-    b = breakpoints->addCodeBreakpoint(QDir::currentPath()+"/"+fileName, 7);
+    b = breakpoints->addCodeBreakpoint(url, 7);
     QTest::qWait(300);
-    b->setColumn(KDevelop::Breakpoint::EnableColumn, false);
+    b->setData(KDevelop::Breakpoint::EnableColumn, false);
 
-    session->run();
-    session->waitForFinished();
-    session->stopDebugger();
-    session->waitForState(DebugSession::StoppedState);
-    delete session;
+    session.run();
+    session.waitForFinished();
 }
 
 void ConnectionTest::testChangeLocationBreakpoint()
@@ -382,38 +398,35 @@ void ConnectionTest::testChangeLocationBreakpoint()
             << "echo 'y';";     // 8
     QTemporaryFile file("xdebugtest");
     file.open();
-    QString fileName = file.fileName();
+    KUrl url(QDir::currentPath() + "/" + file.fileName());
     file.write(contents.join("\n").toUtf8());
     file.close();
 
-    KDevelop::Breakpoints *breakpoints = KDevelop::ICore::self()->debugController()
-                                            ->breakpointModel()->breakpointsItem();
+    DebugSession session;
 
-    KDevelop::Breakpoint *b = breakpoints->addCodeBreakpoint(QDir::currentPath()+"/"+fileName, 5);
+    TestLaunchConfiguration cfg(url);
+    XDebugJob job(&session, &cfg);
 
-    Server server;
-    server.listen(9001);
-    
-    server.startDebugger(fileName);
-    server.waitForConnected();
+    KDevelop::BreakpointModel* breakpoints = KDevelop::ICore::self()->debugController()->breakpointModel();
 
-    DebugSession* session = server.lastSession();
-    session->waitForState(DebugSession::StartingState);
-    session->run();
-    session->waitForState(DebugSession::PausedState);
+    KDevelop::Breakpoint *b = breakpoints->addCodeBreakpoint(url, 5);
+
+    job.start();
+    session.waitForConnected();
+
+    session.waitForState(DebugSession::StartingState);
+    session.run();
+    session.waitForState(DebugSession::PausedState);
 
     b->setLine(7);
     QTest::qWait(100);
-    session->run();
+    session.run();
 
     QTest::qWait(100);
-    session->waitForState(DebugSession::PausedState);
+    session.waitForState(DebugSession::PausedState);
 
-    session->run();
-    session->waitForFinished();
-    session->stopDebugger();
-    session->waitForState(DebugSession::StoppedState);
-    delete session;
+    session.run();
+    session.waitForFinished();
 }
 
 void ConnectionTest::testDeleteBreakpoint()
@@ -429,41 +442,38 @@ void ConnectionTest::testDeleteBreakpoint()
             << "echo 'y';";     // 8
     QTemporaryFile file("xdebugtest");
     file.open();
-    QString fileName = file.fileName();
+    KUrl url(QDir::currentPath() + "/" + file.fileName());
     file.write(contents.join("\n").toUtf8());
     file.close();
 
-    KDevelop::Breakpoints *breakpoints = KDevelop::ICore::self()->debugController()
-                                            ->breakpointModel()->breakpointsItem();
+    DebugSession session;
+
+    TestLaunchConfiguration cfg(url);
+    XDebugJob job(&session, &cfg);
+
+    KDevelop::BreakpointModel* breakpoints = KDevelop::ICore::self()->debugController()->breakpointModel();
 
     QCOMPARE(KDevelop::ICore::self()->debugController()->breakpointModel()->rowCount(), 1); //one for the "insert here" entry
     //add breakpoint before startProgram
-    KDevelop::Breakpoint *b = breakpoints->addCodeBreakpoint(QDir::currentPath()+"/"+fileName, 5);
+    KDevelop::Breakpoint *b = breakpoints->addCodeBreakpoint(url, 5);
     QCOMPARE(KDevelop::ICore::self()->debugController()->breakpointModel()->rowCount(), 2);
-    breakpoints->remove(KDevelop::ICore::self()->debugController()->breakpointModel()->index(0, 0));
+    breakpoints->removeRow(0);
     QCOMPARE(KDevelop::ICore::self()->debugController()->breakpointModel()->rowCount(), 1);
 
-    b = breakpoints->addCodeBreakpoint(QDir::currentPath()+"/"+fileName, 2);
+    b = breakpoints->addCodeBreakpoint(url, 2);
 
-    Server server;
-    server.listen(9001);
-    
-    server.startDebugger(fileName);
-    server.waitForConnected();
+    job.start();
+    session.waitForConnected();
 
-    DebugSession* session = server.lastSession();
-    session->waitForState(DebugSession::StartingState);
-    session->run();
-    session->waitForState(DebugSession::PausedState);
+    session.waitForState(DebugSession::StartingState);
+    session.run();
+    session.waitForState(DebugSession::PausedState);
 
-    breakpoints->remove(KDevelop::ICore::self()->debugController()->breakpointModel()->index(0, 0));
+    breakpoints->removeRow(0);
 
     QTest::qWait(100);
-    session->run();
-    session->waitForFinished();
-    session->stopDebugger();
-    session->waitForState(DebugSession::StoppedState);
-    delete session;
+    session.run();
+    session.waitForFinished();
 }
 
 //     controller.connection()->sendCommand("property_get -i 123 -n $i");
@@ -471,6 +481,6 @@ void ConnectionTest::testDeleteBreakpoint()
 //     controller.connection()->sendCommand("eval -i 126", QStringList(), "test124();");
 
 
-QTEST_MAIN( ConnectionTest )
+QTEST_KDEMAIN(ConnectionTest, GUI)
 
 #include "connectiontest.moc"

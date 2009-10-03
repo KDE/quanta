@@ -34,7 +34,6 @@
 #include <KTextEditor/Cursor>
 
 #include <interfaces/iplugin.h>
-#include <interfaces/irunprovider.h>
 #include <debugger/interfaces/idebugsession.h>
 
 class KAction;
@@ -44,49 +43,19 @@ namespace XDebug
 {
 class DebugSession;
 class Server;
-class BreakpointController;
 
 
-class XDebugPlugin : public KDevelop::IPlugin, public KDevelop::IRunProvider
+class XDebugPlugin : public KDevelop::IPlugin
 {
     Q_OBJECT
-    Q_INTERFACES(KDevelop::IRunProvider)
 
 public:
     XDebugPlugin( QObject *parent, const QVariantList & = QVariantList() );
     ~XDebugPlugin();
-
-    //BEGIN IRunProvider
-    virtual QStringList instrumentorsProvided() const;
-    virtual QString translatedInstrumentor(const QString& instrumentor) const;
-    virtual bool execute(const KDevelop::IRun& run, KJob* job);
-    virtual void abort(KJob* job);
-
-Q_SIGNALS:
-    void finished(KJob* job);
-    void output(KJob* job, const QString& line, KDevelop::IRunProvider::OutputTypes type);
-    //END IRunProvider
-
-private:
-    void setupActions();
-
-private Q_SLOTS:
-    void slotStartDebugger();
-    void sessionStarted(DebugSession* session);
-    void outputLine(DebugSession* session, QString line, KDevelop::IRunProvider::OutputTypes type);
-    void debuggerStateChanged(DebugSession*, KDevelop::IDebugSession::DebuggerState state);
-
-
-Q_SIGNALS:
-    void startDebugger(const KDevelop::IRun & run, KJob* job);
+    DebugSession* createSession() const;
 
 private:
     Server* m_server;
-    QMap<KProcess*, KJob*> m_jobs;
-    BreakpointController* m_breakpointController;
-    KAction* m_startDebugger;
-
-    KJob* m_currentJob;
 };
 
 }

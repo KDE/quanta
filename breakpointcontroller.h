@@ -26,7 +26,7 @@ class QXmlStreamReader;
 namespace XDebug {
 class DebugSession;
 
-class BreakpointController : KDevelop::IBreakpointController
+class BreakpointController : public KDevelop::IBreakpointController
 {
 Q_OBJECT
 public:

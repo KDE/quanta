@@ -1,7 +1,7 @@
 /*
- * XDebug Debugger Support
+ * XDebug-specific implementation of thread and frame model.
  *
- * Copyright 2009 Niko Sams <niko.sams@gmail.com>
+ * Copyright 2009 Niko Sams <nikol.sams@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -19,31 +19,32 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef QTEST_CONNECTIONTEST
-#define QTEST_CONNECTIONTEST
+#ifndef XDEBUG_FRAMESTACKMODEL_H
+#define XDEBUG_FRAMESTACKMODEL_H
 
-#include <QtCore/QObject>
-namespace KDevelop {
-    class TestCore;
-}
-class ConnectionTest : public QObject
+#include <debugger/framestack/framestackmodel.h>
+
+#include "debugsession.h"
+
+class QXmlStreamReader;
+namespace XDebug {
+
+class FrameStackModel : public KDevelop::FrameStackModel
 {
-Q_OBJECT
-private slots:
-    void init();
-    void cleanup();
+public:
+    FrameStackModel(DebugSession* session) : KDevelop::FrameStackModel(session) {}
 
-    void testStdOutput();
-    void testShowStepInSource();
-    void testMultipleSessions();
-    void testStackModel();
-    void testBreakpoint();
-    void testDisableBreakpoint();
-    void testChangeLocationBreakpoint();
-    void testDeleteBreakpoint();
+public:
+    DebugSession* session() { return static_cast<DebugSession*>(KDevelop::FrameStackModel::session()); }
+
+protected: // KDevelop::FrameStackModel overrides
+    virtual void fetchThreads();
+    virtual void fetchFrames(int threadNumber, int from, int to);
 
 private:
-    KDevelop::TestCore* m_core;
+    void handleStack(QXmlStreamReader* xml);
 };
+
+}
 
 #endif

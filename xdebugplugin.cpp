@@ -63,10 +63,11 @@
 #include <interfaces/context.h>
 #include <interfaces/idebugcontroller.h>
 #include <interfaces/iplugincontroller.h>
+#include <interfaces/launchconfigurationtype.h>
 
 #include "debugsession.h"
-#include "server.h"
-
+#include "launchconfig.h"
+#include "../executescript/iexecutescriptplugin.h" //TODO NIKO
 
 K_PLUGIN_FACTORY(KDevXDebugDebuggerFactory, registerPlugin<XDebug::XDebugPlugin>(); )
 K_EXPORT_PLUGIN(KDevXDebugDebuggerFactory("kdevxdebug"))
@@ -77,40 +78,30 @@ namespace XDebug
 XDebugPlugin::XDebugPlugin( QObject *parent, const QVariantList & ) :
     KDevelop::IPlugin( KDevXDebugDebuggerFactory::componentData(), parent )
 {
-    KDEV_USE_EXTENSION_INTERFACE( KDevelop::IRunProvider )
+    kDebug();
+//     connect(m_server, SIGNAL(sessionStarted(DebugSession*)), SLOT(sessionStarted(DebugSession*)));
+//     connect(m_server, SIGNAL(outputLine(DebugSession*,QString,KDevelop::IRunProvider::OutputTypes)), SLOT(outputLine(DebugSession*,QString,KDevelop::IRunProvider::OutputTypes)));
+//     connect(m_server, SIGNAL(stateChanged(DebugSession*,KDevelop::IDebugSession::DebuggerState)), SLOT(debuggerStateChanged(DebugSession*,KDevelop::IDebugSession::DebuggerState)));
 
-    setXMLFile("kdevxdebugui.rc");
-
-    m_server = new Server(this);
-    m_server->listen();
-    
-    connect(m_server, SIGNAL(sessionStarted(DebugSession*)), SLOT(sessionStarted(DebugSession*)));
-    connect(m_server, SIGNAL(outputLine(DebugSession*,QString,KDevelop::IRunProvider::OutputTypes)), SLOT(outputLine(DebugSession*,QString,KDevelop::IRunProvider::OutputTypes)));
-    connect(m_server, SIGNAL(stateChanged(DebugSession*,KDevelop::IDebugSession::DebuggerState)), SLOT(debuggerStateChanged(DebugSession*,KDevelop::IDebugSession::DebuggerState)));
-
-    setupActions();
-}
-
-void XDebugPlugin::setupActions()
-{
-    KActionCollection* ac = actionCollection();
-
-    KAction* action = m_startDebugger = new KAction(KIcon("dbgrun"), i18n("&Start with XDebug"), this);
-    action->setShortcut(Qt::Key_F9);
-    action->setToolTip( i18n("Start in debugger") );
-    action->setWhatsThis( i18n("<b>Start in debugger</b><p>"
-                               "Starts the debugger with the project's main "
-                               "executable. You may set some breakpoints "
-                               "before this, or you can interrupt the program "
-                               "while it is running, in order to get information "
-                               "about variables, frame stack, and so on.") );
-    ac->addAction("debug_run", action);
-    connect(action, SIGNAL(triggered(bool)), this, SLOT(slotStartDebugger()));
+    IExecuteScriptPlugin* iface = KDevelop::ICore::self()->pluginController()->pluginForExtension("org.kdevelop.IExecuteScriptPlugin")->extension<IExecuteScriptPlugin>();
+    Q_ASSERT(iface);
+    KDevelop::LaunchConfigurationType* type = core()->runController()->launchConfigurationTypeForId( iface->scriptAppConfigTypeId() );
+    Q_ASSERT(type);
+    type->addLauncher( new XDebugLauncher( this ) );
 }
 
 XDebugPlugin::~XDebugPlugin()
 {
 }
+
+DebugSession* XDebugPlugin::createSession() const
+{
+    DebugSession *session = new DebugSession();
+    KDevelop::ICore::self()->debugController()->addSession(session);
+    return session;
+}
+
+/*
 
 void XDebugPlugin::sessionStarted(DebugSession* session)
 {
@@ -121,10 +112,9 @@ void XDebugPlugin::sessionStarted(DebugSession* session)
 void XDebugPlugin::outputLine(XDebug::DebugSession* session, QString line, KDevelop::IRunProvider::OutputTypes type)
 {
     if (session->process() && m_jobs.contains(session->process())) {
-        emit output(m_jobs[session->process()], line, type);    
+        emit output(m_jobs[session->process()], line, type);
     }
 }
-
 
 bool XDebugPlugin::execute(const KDevelop::IRun & run, KJob* job)
 {
@@ -149,25 +139,6 @@ void XDebugPlugin::abort(KJob* job) {
 }
 
 
-QStringList XDebugPlugin::instrumentorsProvided() const
-{
-    return QStringList() << "xdebug";
-}
-
-QString XDebugPlugin::translatedInstrumentor(const QString&) const
-{
-    return i18n("XDebug");
-}
-
-void XDebugPlugin::slotStartDebugger()
-{
-    m_startDebugger->setEnabled(false);
-
-    KDevelop::IRun run = KDevelop::ICore::self()->runController()->defaultRun();
-    run.setInstrumentor("xdebug");
-    KDevelop::ICore::self()->runController()->execute(run);
-}
-
 void XDebugPlugin::debuggerStateChanged(DebugSession* session, KDevelop::IDebugSession::DebuggerState state)
 {
     switch (state) {
@@ -179,14 +150,13 @@ void XDebugPlugin::debuggerStateChanged(DebugSession* session, KDevelop::IDebugS
         case KDevelop::IDebugSession::NotStartedState:
         case KDevelop::IDebugSession::StoppingState:
         case KDevelop::IDebugSession::StoppedState:
-            m_startDebugger->setEnabled(true);
             if (session->process() && m_jobs.contains(session->process())) {
                 emit finished(m_jobs[session->process()]);
             }
             break;
     }
 }
-
+*/
 }
 
 #include "xdebugplugin.moc"

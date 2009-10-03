@@ -19,23 +19,23 @@ include_directories(
 set(kdevxdebugcore_PART_SRCS
     connection.cpp
     debugsession.cpp
-    server.cpp
-    stackmodel.cpp
+    debugjob.cpp
+    framestackmodel.cpp
     breakpointcontroller.cpp
 )
 
 set(kdevxdebug_PART_SRCS
     xdebugplugin.cpp
+    launchconfig.cpp
 )
 
 kde4_add_plugin(kdevxdebug ${kdevxdebug_PART_SRCS} ${kdevxdebugcore_PART_SRCS})
 
 target_link_libraries(kdevxdebug
-    ${QT_QTCORE_LIBRARY}
-    ${QT_QTNETWORK_LIBRARY}
-    ${KDE4_KDECORE_LIBS}
     ${KDEVPLATFORM_INTERFACES_LIBRARY}
     ${KDEVPLATFORM_DEBUGGER_LIBRARY}
+    ${KDEVPLATFORM_OUTPUTVIEW_LIBRARY}
+    ${KDEVPLATFORM_UTIL_LIBRARY}
 )
 
 install(TARGETS kdevxdebug DESTINATION ${PLUGIN_INSTALL_DIR})
@@ -52,12 +52,10 @@ kde4_add_unit_test(connectiontest ${connectiontest_SRCS} ${kdevxdebugcore_PART_S
 
 target_link_libraries(connectiontest
     ${QT_QTTEST_LIBRARY}
-    ${QT_QTCORE_LIBRARY}
-    ${QT_QTNETWORK_LIBRARY}
-    ${KDE4_KDECORE_LIBS}
     ${KDEVPLATFORM_INTERFACES_LIBRARY}
     ${KDEVPLATFORM_TESTSHELL_LIBRARY}
     ${KDEVPLATFORM_DEBUGGER_LIBRARY}
+    ${KDEVPLATFORM_TESTS_LIBRARY}
 )
 
 
@@ -65,4 +63,3 @@ target_link_libraries(connectiontest
 ########### install files ###############
 
 install(FILES kdevxdebug.desktop DESTINATION ${SERVICES_INSTALL_DIR})
-install( FILES kdevxdebugui.rc DESTINATION ${DATA_INSTALL_DIR}/kdevxdebug )

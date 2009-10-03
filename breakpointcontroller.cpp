@@ -57,9 +57,9 @@ void BreakpointController::sendMaybe(KDevelop::Breakpoint* breakpoint)
                 }
                 args << "-f "+breakpoint->url().url();
                 args << "-n "+QString::number(breakpoint->line()+1);
-                Callback<BreakpointController, KDevelop::Breakpoint>* cb = 0;
+                CallbackWithCookie<BreakpointController, KDevelop::Breakpoint>* cb = 0;
                 if (!m_ids.contains(breakpoint)) {
-                    cb = new Callback<BreakpointController, KDevelop::Breakpoint>
+                    cb = new CallbackWithCookie<BreakpointController, KDevelop::Breakpoint>
                             (this, &BreakpointController::handleSetBreakpoint, breakpoint);
                 }
                 debugSession()->connection()->sendCommand(cmd, args, QByteArray(), cb);

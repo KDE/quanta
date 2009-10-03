@@ -26,7 +26,6 @@
 #include <QtCore/QObject>
 #include <QtNetwork/QAbstractSocket>
 #include <QStringList>
-#include <interfaces/irunprovider.h>
 
 #include "debugsession.h"
 
@@ -43,22 +42,39 @@ public:
     virtual ~CallbackBase() {};
 };
 
-template<class Handler, class Return>
-class Callback : public CallbackBase {
+template<class Handler, class Cookie>
+class CallbackWithCookie : public CallbackBase {
 public:
-    Callback(Handler* scope, void (Handler::*method)(Return*, QXmlStreamReader*), Return* ret = 0)
-        : m_return(ret), m_scope(scope), m_method(method)
+    CallbackWithCookie(Handler* scope, void (Handler::*method)(Cookie*, QXmlStreamReader*), Cookie* cookie = 0)
+        : m_cookie(cookie), m_scope(scope), m_method(method)
     {}
 
     virtual void execute(QXmlStreamReader* xml)
     {
-        return (m_scope->*m_method)(m_return, xml);
+        return (m_scope->*m_method)(m_cookie, xml);
     }
     
 private:
-    Return* m_return;
+    Cookie* m_cookie;
     Handler* m_scope;
-    void (Handler::*m_method)(Return*, QXmlStreamReader*);
+    void (Handler::*m_method)(Cookie*, QXmlStreamReader*);
+};
+
+template<class Handler>
+class Callback : public CallbackBase {
+public:
+    Callback(Handler* scope, void (Handler::*method)(QXmlStreamReader*))
+        : m_scope(scope), m_method(method)
+    {}
+
+    virtual void execute(QXmlStreamReader* xml)
+    {
+        return (m_scope->*m_method)(xml);
+    }
+
+private:
+    Handler* m_scope;
+    void (Handler::*m_method)(QXmlStreamReader*);
 };
 
 class Connection : public QObject
@@ -75,7 +91,6 @@ public:
     DebugSession::DebuggerState currentState();
 
     QTcpSocket* socket();
-    StackModel* stackModel();
 
 public Q_SLOTS:
     void processFinished(int exitCode);
@@ -83,10 +98,9 @@ public Q_SLOTS:
 Q_SIGNALS:
     void stateChanged(KDevelop::IDebugSession::DebuggerState status);
     void showStepInSource(const KUrl &fileName, int lineNum);
-    void output(QString content, KDevelop::IRunProvider::OutputTypes type);
-    void outputLine(QString content, KDevelop::IRunProvider::OutputTypes type);
-    void initDone(const QString& ideKey);
-    void paused();
+    void output(QString content);
+    void outputLine(QString content);
+//     void initDone(const QString& ideKey);
 
 private Q_SLOTS:
     void closed();
@@ -101,7 +115,7 @@ private:
 
     QTcpSocket* m_socket;
     
-    QMap<KDevelop::IRunProvider::OutputTypes, QString> m_outputLine;
+    QString m_outputLine;
     DebugSession::DebuggerState m_currentState;
     QTextCodec* m_codec;
     StackModel* m_stackModel;
