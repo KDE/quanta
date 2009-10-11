@@ -41,6 +41,7 @@ private slots:
     void testDisableBreakpoint();
     void testChangeLocationBreakpoint();
     void testDeleteBreakpoint();
+    void testVariablesLocals();
 
 private:
     KDevelop::TestCore* m_core;

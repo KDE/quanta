@@ -31,6 +31,7 @@
 #include "connection.h"
 #include "breakpointcontroller.h"
 #include "framestackmodel.h"
+#include "variablecontroller.h"
 
 namespace XDebug {
 
@@ -38,6 +39,7 @@ DebugSession::DebugSession()
     : KDevelop::IDebugSession(), m_server(0), m_connection(0)
 {
     m_breakpointController = new BreakpointController(this);
+    m_variableController = new VariableController(this);
 }
 
 bool DebugSession::listenForConnection()
@@ -79,6 +81,8 @@ void DebugSession::_stateChanged(KDevelop::IDebugSession::DebuggerState state)
 {
     if (state == PausedState) {
         raiseEvent(program_state_changed);
+    } else if (state == EndedState) {
+        raiseEvent(debugger_exited);
     }
 }
 

@@ -40,6 +40,7 @@
 #include <tests/autotestshell.h>
 #include <debugger/interfaces/iframestackmodel.h>
 #include <debugger/variable/variablecollection.h>
+#include <debugger/interfaces/ivariablecontroller.h>
 
 #include "connection.h"
 #include "debugsession.h"
@@ -476,7 +477,62 @@ void ConnectionTest::testDeleteBreakpoint()
     session.waitForFinished();
 }
 
-//     controller.connection()->sendCommand("property_get -i 123 -n $i");
+KDevelop::VariableCollection *variableCollection()
+{
+    return KDevelop::ICore::self()->debugController()->variableCollection();
+}
+
+void ConnectionTest::testVariablesLocals()
+{
+    QStringList contents;
+    contents << "<?php"                 // 1
+            << "$foo = 'foo';"          // 2
+            << "$bar = 123;"            // 3
+            << "$baz = array(1, 2, 3);" // 4
+            << "echo '';";              // 5
+    QTemporaryFile file("xdebugtest");
+    file.open();
+    KUrl url(QDir::currentPath() + "/" + file.fileName());
+    file.write(contents.join("\n").toUtf8());
+    file.close();
+
+    DebugSession session;
+    KDevelop::ICore::self()->debugController()->addSession(&session);
+
+    TestLaunchConfiguration cfg(url);
+    XDebugJob job(&session, &cfg);
+
+    session.variableController()->setAutoUpdate(KDevelop::IVariableController::UpdateLocals);
+    KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(url, 4);
+
+    job.start();
+    session.waitForConnected();
+
+    session.waitForState(DebugSession::StartingState);
+    session.run();
+    session.waitForState(DebugSession::PausedState);
+    QTest::qWait(1000);
+
+    QCOMPARE(variableCollection()->rowCount(), 2);
+    QModelIndex i = variableCollection()->index(1, 0);
+    COMPARE_DATA(i, "Locals");
+    QCOMPARE(variableCollection()->rowCount(i), 3);
+    COMPARE_DATA(variableCollection()->index(0, 0, i), "$foo");
+    COMPARE_DATA(variableCollection()->index(0, 1, i), "foo");
+    COMPARE_DATA(variableCollection()->index(1, 0, i), "$bar");
+    COMPARE_DATA(variableCollection()->index(1, 1, i), "123");
+    COMPARE_DATA(variableCollection()->index(2, 0, i), "$baz");
+    COMPARE_DATA(variableCollection()->index(2, 1, i), "");
+    i = variableCollection()->index(2, 0, i);
+    QCOMPARE(variableCollection()->rowCount(i), 3);
+    COMPARE_DATA(variableCollection()->index(0, 0, i), "0");
+    COMPARE_DATA(variableCollection()->index(0, 1, i), "1");
+    COMPARE_DATA(variableCollection()->index(2, 0, i), "2");
+    COMPARE_DATA(variableCollection()->index(2, 1, i), "3");
+    session.run();
+    session.waitForFinished();
+}
+
 //     controller.connection()->sendCommand("eval -i 124", QStringList(), "eval(\"function test124() { return rand(); } return test124();\")");
 //     controller.connection()->sendCommand("eval -i 126", QStringList(), "test124();");
 

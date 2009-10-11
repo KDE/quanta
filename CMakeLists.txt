@@ -26,6 +26,9 @@ set(kdevxdebugcore_PART_SRCS
     debugjob.cpp
     framestackmodel.cpp
     breakpointcontroller.cpp
+    variablecontroller.cpp
+    variable.cpp
+    stringhelpers.cpp
 )
 
 set(kdevxdebug_PART_SRCS
