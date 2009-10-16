@@ -1,0 +1,15 @@
+[Desktop Entry]
+Type=Service
+Exec=blubb
+Comment=This plugin allows running browser.
+Name=Execute Browser
+GenericName=Browser Execution Support
+ServiceTypes=KDevelop/Plugin
+X-KDE-Library=kdevexecutebrowser
+X-KDevelop-Version=7
+X-KDevelop-Category=Global
+X-KDE-PluginInfo-Name=kdevexecutebrowser
+X-KDE-PluginInfo-Author=Niko Sams
+X-KDE-PluginInfo-License=GPL
+X-KDevelop-Interfaces=org.kdevelop.IExecuteBrowserPlugin
+X-KDevelop-Mode=NoGUI
