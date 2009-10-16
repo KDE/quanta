@@ -27,8 +27,6 @@ kde4_add_plugin(kdevexecutebrowser ${kdevexecutebrowser_PART_SRCS}  )
 target_link_libraries(kdevexecutebrowser 
     ${KDE4_KDEUI_LIBS} 
     kdevplatforminterfaces 
-    kdevplatformutil 
-    kdevplatformproject 
     kdevplatformoutputview)
 
 install(TARGETS kdevexecutebrowser DESTINATION ${PLUGIN_INSTALL_DIR})
