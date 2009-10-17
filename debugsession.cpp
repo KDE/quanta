@@ -83,6 +83,7 @@ void DebugSession::_stateChanged(KDevelop::IDebugSession::DebuggerState state)
         raiseEvent(program_state_changed);
     } else if (state == EndedState) {
         raiseEvent(debugger_exited);
+        emit finished();
     }
 }
 

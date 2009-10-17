@@ -26,6 +26,7 @@
 #include "debugjob.h"
 
 #include <QFileInfo>
+#include <QDesktopServices>
 
 #include <KProcess>
 #include <kconfiggroup.h>
@@ -49,10 +50,11 @@
 #include <interfaces/icore.h>
 #include <util/processlinemaker.h>
 #include <iexecutescriptplugin.h>
+#include <iexecutebrowserplugin.h>
+
 
 #include "debugsession.h"
 #include "xdebugplugin.h"
-
 
 namespace XDebug {
 
@@ -230,6 +232,65 @@ void XDebugJob::done()
     emitResult();
 }
 */
+
+
+XDebugBrowserJob::XDebugBrowserJob(DebugSession* session, KDevelop::ILaunchConfiguration* cfg, QObject* parent)
+    : m_session(session), KJob(parent)
+{
+    setCapabilities(Killable);
+
+    IExecuteBrowserPlugin* iface = KDevelop::ICore::self()->pluginController()
+        ->pluginForExtension("org.kdevelop.IExecuteBrowserPlugin")->extension<IExecuteBrowserPlugin>();
+    Q_ASSERT(iface);
+
+    QString err;
+    m_url = iface->url(cfg, err);
+    if (!err.isEmpty()) {
+        m_url.clear();
+        setError( -1 );
+        setErrorText( err );
+        return;
+    }
+
+    m_url.addQueryItem("XDEBUG_SESSION_START", "kdev");
+
+    connect(m_session, SIGNAL(finished()), SLOT(sessionFinished()));
+}
+
+void XDebugBrowserJob::start()
+{
+    kDebug() << "launching?" << m_url;
+    if (m_url.isValid()) {
+        if (!m_session->listenForConnection()) {
+            kWarning() << "listening for connection failed";
+            emitResult();
+            return;
+        }
+        if (!QDesktopServices::openUrl(m_url)) {
+            kWarning() << "openUrl failed, something went wrong when creating the job";
+            emitResult();
+        } else {
+    //         startOutput();
+    //         model()->appendLine( i18n("Starting: %1", proc->program().join(" ") ) );
+    //         proc->start();
+        }
+    }
+}
+
+
+bool XDebugBrowserJob::doKill()
+{
+    kDebug();
+    m_session->stopDebugger();
+    return true;
+}
+
+
+void XDebugBrowserJob::sessionFinished()
+{
+    emitResult();
+}
+
 
 }
 

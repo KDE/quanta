@@ -101,4 +101,21 @@ QString XDebugLauncher::description() const
     return i18n("Executes a php script with xdebug enabled");
 }
 
+XDebugBrowserLauncher::XDebugBrowserLauncher(XDebugPlugin* plugin)
+    : XDebugLauncher(plugin)
+{
+}
+
+KJob* XDebugBrowserLauncher::start(const QString& launchMode, KDevelop::ILaunchConfiguration* cfg)
+{
+    Q_ASSERT(cfg);
+    if( !cfg ) return 0;
+
+    if( launchMode == "debug" ) {
+        return new XDebugBrowserJob( m_plugin->createSession(), cfg );
+    }
+    kWarning() << "Unknown launch mode" << launchMode << "for config:" << cfg->name();
+    return 0;
+}
+
 }

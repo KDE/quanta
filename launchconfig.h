@@ -49,8 +49,15 @@ public:
     virtual QString name() const;
     virtual KJob* start(const QString& launchMode, KDevelop::ILaunchConfiguration* cfg);
     virtual QStringList supportedModes() const;
-private:
+protected:
     XDebugPlugin* m_plugin;
+};
+
+class XDebugBrowserLauncher : public XDebugLauncher
+{
+public :
+    XDebugBrowserLauncher( XDebugPlugin* plugin );
+    virtual KJob* start(const QString& launchMode, KDevelop::ILaunchConfiguration* cfg);
 };
 
 }

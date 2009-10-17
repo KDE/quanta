@@ -25,6 +25,7 @@
 #define XDEBUGDEBUGJOB
 
 #include <QProcess>
+#include <KUrl>
 
 #include <outputview/outputjob.h>
 
@@ -59,6 +60,23 @@ private slots:
 private:
     KProcess* m_proc;
     KDevelop::ProcessLineMaker* m_lineMaker;
+    DebugSession* m_session;
+};
+
+class XDebugBrowserJob : public KJob
+{
+    Q_OBJECT
+public:
+    XDebugBrowserJob( DebugSession* session, KDevelop::ILaunchConfiguration*, QObject* parent = 0 );
+    virtual void start();
+protected:
+    virtual bool doKill();
+
+private slots:
+    void sessionFinished();
+
+private:
+    KUrl m_url;
     DebugSession* m_session;
 };
 

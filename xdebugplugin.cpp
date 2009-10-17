@@ -65,6 +65,7 @@
 #include <interfaces/iplugincontroller.h>
 #include <interfaces/launchconfigurationtype.h>
 #include <iexecutescriptplugin.h>
+#include <iexecutebrowserplugin.h>
 
 #include "debugsession.h"
 #include "launchconfig.h"
@@ -82,12 +83,20 @@ XDebugPlugin::XDebugPlugin( QObject *parent, const QVariantList & ) :
 //     connect(m_server, SIGNAL(sessionStarted(DebugSession*)), SLOT(sessionStarted(DebugSession*)));
 //     connect(m_server, SIGNAL(outputLine(DebugSession*,QString,KDevelop::IRunProvider::OutputTypes)), SLOT(outputLine(DebugSession*,QString,KDevelop::IRunProvider::OutputTypes)));
 //     connect(m_server, SIGNAL(stateChanged(DebugSession*,KDevelop::IDebugSession::DebuggerState)), SLOT(debuggerStateChanged(DebugSession*,KDevelop::IDebugSession::DebuggerState)));
-
-    IExecuteScriptPlugin* iface = KDevelop::ICore::self()->pluginController()->pluginForExtension("org.kdevelop.IExecuteScriptPlugin")->extension<IExecuteScriptPlugin>();
-    Q_ASSERT(iface);
-    KDevelop::LaunchConfigurationType* type = core()->runController()->launchConfigurationTypeForId( iface->scriptAppConfigTypeId() );
-    Q_ASSERT(type);
-    type->addLauncher( new XDebugLauncher( this ) );
+    {
+        IExecuteScriptPlugin* iface = KDevelop::ICore::self()->pluginController()->pluginForExtension("org.kdevelop.IExecuteScriptPlugin")->extension<IExecuteScriptPlugin>();
+        Q_ASSERT(iface);
+        KDevelop::LaunchConfigurationType* type = core()->runController()->launchConfigurationTypeForId( iface->scriptAppConfigTypeId() );
+        Q_ASSERT(type);
+        type->addLauncher( new XDebugLauncher( this ) );
+    }
+    {
+        IExecuteBrowserPlugin* iface = KDevelop::ICore::self()->pluginController()->pluginForExtension("org.kdevelop.IExecuteBrowserPlugin")->extension<IExecuteBrowserPlugin>();
+        Q_ASSERT(iface);
+        KDevelop::LaunchConfigurationType* type = core()->runController()->launchConfigurationTypeForId( iface->browserAppConfigTypeId() );
+        Q_ASSERT(type);
+        type->addLauncher( new XDebugBrowserLauncher( this ) );
+    }
 }
 
 XDebugPlugin::~XDebugPlugin()
