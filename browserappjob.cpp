@@ -67,12 +67,12 @@ void BrowserAppJob::start()
     kDebug() << "launching?" << m_url;
     if (!QDesktopServices::openUrl(m_url)) {
         kWarning() << "openUrl failed, something went wrong when creating the job";
-        emitResult();
     } else {
 //         startOutput();
 //         model()->appendLine( i18n("Starting: %1", proc->program().join(" ") ) );
 //         proc->start();
     }
+    emitResult();
 }
 
 
