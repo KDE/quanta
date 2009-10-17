@@ -79,7 +79,9 @@ void DebugSession::incomingConnection()
 
 void DebugSession::_stateChanged(KDevelop::IDebugSession::DebuggerState state)
 {
-    if (state == PausedState) {
+    if (state == StartingState) {
+        run();
+    } else if (state == PausedState) {
         raiseEvent(program_state_changed);
     } else if (state == EndedState) {
         raiseEvent(debugger_exited);
@@ -157,13 +159,15 @@ bool DebugSession::waitForFinished(int msecs)
 
 bool DebugSession::waitForState(KDevelop::IDebugSession::DebuggerState state, int msecs)
 {
+    if (!m_connection) return false;
     if (m_connection->currentState() == state) return true;
     QTime stopWatch;
     stopWatch.start();
     if (!waitForConnected(msecs)) return false;
     while (m_connection->currentState() != state) {
-        if (!m_connection->socket()) break;
-        if (!m_connection->socket()->isOpen()) break;
+        if (!m_connection) return false;
+        if (!m_connection->socket()) return false;
+        if (!m_connection->socket()->isOpen()) return false;
         m_connection->socket()->waitForReadyRead(100);
         if (msecs != -1 && stopWatch.elapsed() > msecs) {
             return false;

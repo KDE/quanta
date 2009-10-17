@@ -144,9 +144,8 @@ void ConnectionTest::testStdOutput()
     QSignalSpy outputSpy(&session, SIGNAL(output(QString)));
 
     job.start();
+    
     session.waitForConnected();
-    session.waitForState(DebugSession::StartingState);
-    session.run();
     session.waitForFinished();
     {
         QCOMPARE(outputSpy.count(), 4);
@@ -182,13 +181,13 @@ void ConnectionTest::testShowStepInSource()
     TestLaunchConfiguration cfg(url);
     XDebugJob job(&session, &cfg);
 
+    KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(url, 1);
+
     QSignalSpy showStepInSourceSpy(&session, SIGNAL(showStepInSource(KUrl, int)));
 
     job.start();
     session.waitForConnected();
 
-    session.waitForState(DebugSession::StartingState);
-    session.stepInto();
     session.waitForState(DebugSession::PausedState);
     session.stepInto();
     session.waitForState(DebugSession::PausedState);
@@ -231,8 +230,6 @@ void ConnectionTest::testMultipleSessions()
 
         job.start();
         session.waitForConnected();
-        session.waitForState(DebugSession::StartingState);
-        session.run();
         session.waitForFinished();
     }
 }
@@ -257,12 +254,14 @@ void ConnectionTest::testStackModel()
     TestLaunchConfiguration cfg(url);
     XDebugJob job(&session, &cfg);
 
+    KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(url, 1);
+
     job.start();
     session.waitForConnected();
-    session.waitForState(DebugSession::StartingState);
+    session.waitForState(DebugSession::PausedState);
     
     //step into function
-    for (int i=0; i<3; ++i) {
+    for (int i=0; i<2; ++i) {
         session.stepInto();
         session.waitForState(DebugSession::PausedState);
     }
@@ -322,8 +321,6 @@ void ConnectionTest::testBreakpoint()
 
     QSignalSpy showStepInSourceSpy(&session, SIGNAL(showStepInSource(KUrl, int)));
 
-    session.waitForState(DebugSession::StartingState);
-    session.run();
     session.waitForState(DebugSession::PausedState);
 
     session.run();
@@ -370,8 +367,6 @@ void ConnectionTest::testDisableBreakpoint()
     job.start();
     session.waitForConnected();
 
-    session.waitForState(DebugSession::StartingState);
-    session.run();
     session.waitForState(DebugSession::PausedState);
     
     //disable existing breakpoint
@@ -415,8 +410,6 @@ void ConnectionTest::testChangeLocationBreakpoint()
     job.start();
     session.waitForConnected();
 
-    session.waitForState(DebugSession::StartingState);
-    session.run();
     session.waitForState(DebugSession::PausedState);
 
     b->setLine(7);
@@ -466,8 +459,6 @@ void ConnectionTest::testDeleteBreakpoint()
     job.start();
     session.waitForConnected();
 
-    session.waitForState(DebugSession::StartingState);
-    session.run();
     session.waitForState(DebugSession::PausedState);
 
     breakpoints->removeRow(0);
@@ -508,8 +499,6 @@ void ConnectionTest::testVariablesLocals()
     job.start();
     session.waitForConnected();
 
-    session.waitForState(DebugSession::StartingState);
-    session.run();
     session.waitForState(DebugSession::PausedState);
     QTest::qWait(1000);
 
