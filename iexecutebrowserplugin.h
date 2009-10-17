@@ -19,8 +19,8 @@
  * 02110-1301, USA.
  */
 
-#ifndef IEXECUTESCRIPTPLUGIN_H
-#define IEXECUTESCRIPTPLUGIN_H
+#ifndef IEXECUTEBROWSERPLUGIN_H
+#define IEXECUTEBROWSERPLUGIN_H
 
 #include <interfaces/iextension.h>
 #include <QtCore/QString>
