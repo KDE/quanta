@@ -22,7 +22,7 @@
 #include <debugger/interfaces/ibreakpointcontroller.h>
 #include <debugger/interfaces/idebugsession.h>
 
-class QXmlStreamReader;
+class QDomDocument;
 namespace XDebug {
 class DebugSession;
 
@@ -40,7 +40,7 @@ private slots:
 
 private:
     DebugSession *debugSession();
-    void handleSetBreakpoint(KDevelop::Breakpoint* breakpoint, QXmlStreamReader* xml);
+    void handleSetBreakpoint(KDevelop::Breakpoint* breakpoint, const QDomDocument &xml);
     
     QMap<KDevelop::Breakpoint*, QString> m_ids;
 };

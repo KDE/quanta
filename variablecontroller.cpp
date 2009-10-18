@@ -58,11 +58,9 @@ void VariableController::update()
 //    }
 }
 
-
-
-void VariableController::handleLocals(QXmlStreamReader* xml)
+void VariableController::handleLocals(const QDomDocument &xml)
 {
-    Q_ASSERT(xml->attributes().value("command") == "context_get");
+    Q_ASSERT(xml.documentElement().attribute("command") == "context_get");
 
     KDevelop::Locals* locals = KDevelop::ICore::self()->debugController()->variableCollection()->locals();
     
@@ -76,25 +74,23 @@ void VariableController::handleLocals(QXmlStreamReader* xml)
     }
 
     QSet<QString> current;
-    while (!xml->atEnd()) {
-        xml->readNext();
-        if (xml->isStartElement() && xml->name() == "property") {
-            QString name = xml->attributes().value("fullname").toString();
-            kDebug() << name;
-            current << name;
-            Variable* v = 0;
-            if( !existing.contains(name) ) {
-                v = static_cast<Variable*>(createVariable(
-                        KDevelop::ICore::self()->debugController()->variableCollection(),
-                        locals, name ));
-                locals->appendChild( v, false );
-            } else {
-                v = existing[name];
-            }
-            v->handleProperty(xml);
+    QDomElement el = xml.documentElement().firstChildElement("property");
+    while (!el.isNull()) {
+        QString name = el.attribute("fullname");
+        kDebug() << name;
+        current << name;
+        Variable* v = 0;
+        if( !existing.contains(name) ) {
+            v = static_cast<Variable*>(createVariable(
+                    KDevelop::ICore::self()->debugController()->variableCollection(),
+                    locals, name ));
+            locals->appendChild( v, false );
+        } else {
+            v = existing[name];
         }
+        v->handleProperty(el);
+        el = el.nextSiblingElement("property");
     }
-
     for (int i = 0; i < locals->childCount(); ++i) {
         Q_ASSERT(dynamic_cast<KDevelop::Variable*>(locals->child(i)));
         KDevelop::Variable* v = static_cast<KDevelop::Variable*>(locals->child(i));
@@ -104,6 +100,7 @@ void VariableController::handleLocals(QXmlStreamReader* xml)
             delete v;
         }
     }
+
 }
 
 void VariableController::updateLocals()

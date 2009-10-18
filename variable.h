@@ -27,7 +27,7 @@
 
 #include <debugger/variable/variablecollection.h>
 
-class QXmlStreamReader;
+class QDomElement;
 
 namespace XDebug
 {
@@ -53,7 +53,7 @@ private: // Internal
     friend class PropertyGetCallback;
     friend class VariableController;
 
-    void handleProperty(QXmlStreamReader* xml);
+    void handleProperty(const QDomElement &xml);
 
     QString m_fullName;
 

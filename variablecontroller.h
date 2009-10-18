@@ -26,7 +26,7 @@
 
 #include <debugger/interfaces/ivariablecontroller.h>
 
-class QXmlStreamReader;
+class QDomDocument;
 namespace XDebug {
 
 class Variable;
@@ -54,7 +54,7 @@ private:
     DebugSession* debugSession() const;
 
     void updateLocals();
-    void handleLocals(QXmlStreamReader* xml);
+    void handleLocals(const QDomDocument &xml);
 
 /*
     void handleVarUpdate(const GDBMI::ResultRecord& r);

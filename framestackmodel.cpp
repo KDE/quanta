@@ -25,6 +25,7 @@
 
 #include "framestackmodel.h"
 #include "connection.h"
+#include <QDomElement>
 
 namespace XDebug {
 
@@ -40,26 +41,20 @@ void FrameStackModel::fetchThreads()
     setCurrentThread(0);
 }
 
-void FrameStackModel::handleStack(QXmlStreamReader* xml)
+void FrameStackModel::handleStack(const QDomDocument &xml)
 {
-    Q_ASSERT(xml->attributes().value("command") == "stack_get");
+    Q_ASSERT(xml.documentElement().attribute("command") == "stack_get");
 
     QList<KDevelop::FrameStackModel::FrameItem> frames;
-    while (!(xml->isEndElement() && xml->name() == "response")) {
-        xml->readNext();
-        if (xml->isStartElement() && xml->name() == "stack") {
-            kDebug() << "level" << xml->attributes().value("level");
-            kDebug() << "type" << xml->attributes().value("type");
-            kDebug() << "filename" << xml->attributes().value("filename");
-            kDebug() << "lineno" << xml->attributes().value("lineno");
-            kDebug() << "where" << xml->attributes().value("where");
-            KDevelop::FrameStackModel::FrameItem f;
-            f.nr = xml->attributes().value("level").toString().toInt();
-            f.name = xml->attributes().value("where").toString();
-            f.file = xml->attributes().value("filename").toString();
-            f.line = xml->attributes().value("lineno").toString().toInt();
-            frames << f;
-        }
+    QDomElement el = xml.documentElement().firstChildElement("stack");
+    while (!el.isNull()) {
+        KDevelop::FrameStackModel::FrameItem f;
+        f.nr = el.attribute("level").toInt();
+        f.name = el.attribute("where");
+        f.file = el.attribute("filename");
+        f.line = el.attribute("lineno").toInt();
+        frames << f;
+        el = el.nextSiblingElement("stack");
     }
     setFrames(0, frames);
     setHasMoreFrames(0, false);

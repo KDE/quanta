@@ -58,20 +58,16 @@ public:
     : m_variable(variable), m_callback(callback), m_callbackMethod(callbackMethod)
     {}
 
-    virtual void execute(QXmlStreamReader* xml)
+    virtual void execute(const QDomDocument &xml)
     {
-        Q_ASSERT(xml->attributes().value("command") == "property_get");
+        Q_ASSERT(xml.documentElement().attribute("command") == "property_get");
 
         if (!m_variable) return;
         bool hasValue = false;
 
-        while (!xml->atEnd() && !(xml->isEndElement() && xml->name() == "response")) {
-            xml->readNext();
-            if (xml->isStartElement() && xml->name() == "property") {
-                m_variable->handleProperty(xml);
-            }
-        }
-
+        QDomElement el = xml.firstChildElement("property");
+        Q_ASSERT(!el.isNull());
+        m_variable->handleProperty(el);
         hasValue = true; //TODO: implement correctly
 
         if (m_callback && m_callbackMethod) {
@@ -111,17 +107,24 @@ void Variable::fetchMoreChildren()
 }
 
 
-void Variable::handleProperty(QXmlStreamReader *xml)
+void Variable::handleProperty(const QDomElement &xml)
 {
-    Q_ASSERT(xml->isStartElement() && xml->name() == "property");
+    Q_ASSERT(!xml.isNull());
+    Q_ASSERT(xml.nodeName() == "property");
 
     setInScope(true);
 
-    QStringRef encoding;
-    if (xml->attributes().hasAttribute("encoding")) {
-        encoding = xml->attributes().value("encoding");
+    m_fullName = xml.attribute("fullname");
+    qDebug() << m_fullName;
+    if (xml.firstChild().isText()) {
+        QString v  = xml.firstChild().toText().data();
+        if (xml.attribute("encoding") == "base64") {
+            //TODO: use Connection::m_codec->toUnicode
+            v = QString::fromUtf8(QByteArray::fromBase64(xml.text().toAscii()));
+        }
+        qDebug() << "value" << v;
+        setValue(v);
     }
-    m_fullName = xml->attributes().value("fullname").toString();
 
     QMap<QString, Variable*> existing;
     for (int i = 0; i < childCount(); i++) {
@@ -131,44 +134,32 @@ void Variable::handleProperty(QXmlStreamReader *xml)
     }
 
     QSet<QString> current;
-    xml->readNext();
-    while (!xml->atEnd() && !(xml->isEndElement() && xml->name() == "property")) {
-        if (xml->isStartElement() && xml->name() == "property") {
-            QString name = xml->attributes().value("name").toString();
-            kDebug() << name;
-            current << name;
-            Variable* v = 0;
-            if( !existing.contains(name) ) {
-                v = new Variable(model(), this, name);
-                appendChild( v, false );
-            } else {
-                v = existing[name];
-            }
-
-            /* TODO: implement correctly
-            kDebug() << "children" << xml->attributes().value("children");
-            bool hasMore = xml->attributes().value("children") == "true";
-            m_variable->setHasMore(hasMore);
-            if (isExpanded() && hasMore) {
-                fetchMoreChildren();
-            }
-            */
-
-            v->handleProperty(xml);
+    QDomElement el = xml.firstChildElement("property");
+    while (!el.isNull()) {
+        QString name = el.attribute("name");
+        kDebug() << name;
+        current << name;
+        Variable* v = 0;
+        if( !existing.contains(name) ) {
+            v = new Variable(model(), this, name);
+            appendChild( v, false );
+        } else {
+            v = existing[name];
         }
-        if (xml->isCDATA() || xml->isCharacters()) {
-            QString v;
-            if (encoding == "base64") {
-                //TODO: use Connection::m_codec->toUnicode
-                v = QString::fromUtf8(QByteArray::fromBase64(xml->text().toString().toAscii()));
-            } else {
-                v = xml->text().toString();
-            }
-            setValue(v);
+
+        /* TODO: implement correctly
+        kDebug() << "children" << xml->attributes().value("children");
+        bool hasMore = xml->attributes().value("children") == "true";
+        m_variable->setHasMore(hasMore);
+        if (isExpanded() && hasMore) {
+            fetchMoreChildren();
         }
-        xml->readNext();
+        */
+
+        v->handleProperty(el);
+
+        el = el.nextSiblingElement("property");
     }
-
 
     for (int i = 0; i < childCount(); ++i) {
         Q_ASSERT(dynamic_cast<KDevelop::Variable*>(child(i)));

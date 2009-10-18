@@ -29,8 +29,7 @@
 
 #include "debugsession.h"
 
-
-class QXmlStreamReader;
+class QDomDocument;
 class QTcpSocket;
 
 namespace XDebug {
@@ -38,18 +37,18 @@ class StackModel;
 
 class CallbackBase {
 public:
-    virtual void execute(QXmlStreamReader*) = 0;
+    virtual void execute(const QDomDocument &) = 0;
     virtual ~CallbackBase() {};
 };
 
 template<class Handler, class Cookie>
 class CallbackWithCookie : public CallbackBase {
 public:
-    CallbackWithCookie(Handler* scope, void (Handler::*method)(Cookie*, QXmlStreamReader*), Cookie* cookie = 0)
+    CallbackWithCookie(Handler* scope, void (Handler::*method)(Cookie*, const QDomDocument &), Cookie* cookie = 0)
         : m_cookie(cookie), m_scope(scope), m_method(method)
     {}
 
-    virtual void execute(QXmlStreamReader* xml)
+    virtual void execute(const QDomDocument & xml)
     {
         return (m_scope->*m_method)(m_cookie, xml);
     }
@@ -57,24 +56,24 @@ public:
 private:
     Cookie* m_cookie;
     Handler* m_scope;
-    void (Handler::*m_method)(Cookie*, QXmlStreamReader*);
+    void (Handler::*m_method)(Cookie*, const QDomDocument &);
 };
 
 template<class Handler>
 class Callback : public CallbackBase {
 public:
-    Callback(Handler* scope, void (Handler::*method)(QXmlStreamReader*))
+    Callback(Handler* scope, void (Handler::*method)(const QDomDocument &))
         : m_scope(scope), m_method(method)
     {}
 
-    virtual void execute(QXmlStreamReader* xml)
+    virtual void execute(const QDomDocument & xml)
     {
         return (m_scope->*m_method)(xml);
     }
 
 private:
     Handler* m_scope;
-    void (Handler::*m_method)(QXmlStreamReader*);
+    void (Handler::*m_method)(const QDomDocument &);
 };
 
 class Connection : public QObject
@@ -108,9 +107,9 @@ private Q_SLOTS:
     void error(QAbstractSocket::SocketError error);
 
 private:
-    void processInit(QXmlStreamReader* xml);
-    void processResponse(QXmlStreamReader* xml);
-    void processStream(QXmlStreamReader* xml);
+    void processInit(const QDomDocument & xml);
+    void processResponse(const QDomDocument &xml);
+    void processStream(const QDomDocument &xml);
     void setState(DebugSession::DebuggerState state);
 
     QTcpSocket* m_socket;

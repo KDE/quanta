@@ -18,13 +18,13 @@
 
 #include "breakpointcontroller.h"
 
+#include <QDomElement>
 #include <KDebug>
 
 #include <debugger/breakpoint/breakpoint.h>
 
 #include "debugsession.h"
 #include "connection.h"
-#include <QXmlStreamReader>
 
 namespace XDebug {
 
@@ -76,11 +76,11 @@ void BreakpointController::sendMaybe(KDevelop::Breakpoint* breakpoint)
     }
 }
 
-void BreakpointController::handleSetBreakpoint(KDevelop::Breakpoint* breakpoint, QXmlStreamReader* xml)
+void BreakpointController::handleSetBreakpoint(KDevelop::Breakpoint* breakpoint, const QDomDocument &xml)
 {
-    Q_ASSERT(xml->attributes().value("command") == "breakpoint_set");
+    Q_ASSERT(xml.documentElement().attribute("command") == "breakpoint_set");
     Q_ASSERT(breakpoint);
-    m_ids[breakpoint] = xml->attributes().value("id").toString();
+    m_ids[breakpoint] = xml.documentElement().attribute("id");
 }
 
 

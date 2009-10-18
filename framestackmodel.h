@@ -26,7 +26,7 @@
 
 #include "debugsession.h"
 
-class QXmlStreamReader;
+class QDomDocument;
 namespace XDebug {
 
 class FrameStackModel : public KDevelop::FrameStackModel
@@ -42,7 +42,7 @@ protected: // KDevelop::FrameStackModel overrides
     virtual void fetchFrames(int threadNumber, int from, int to);
 
 private:
-    void handleStack(QXmlStreamReader* xml);
+    void handleStack(const QDomDocument &xml);
 };
 
 }

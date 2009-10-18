@@ -479,8 +479,23 @@ void ConnectionTest::testVariablesLocals()
     contents << "<?php"                 // 1
             << "$foo = 'foo';"          // 2
             << "$bar = 123;"            // 3
-            << "$baz = array(1, 2, 3);" // 4
+            << "$baz = array(1, 2, 5);" // 4
             << "echo '';";              // 5
+/*
+<response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="http://xdebug.org/dbgp/xdebug" command="context_get" transaction_id="9" context="0">
+    <property name="foo" fullname="$foo" address="13397880" type="string" size="3" encoding="base64">
+        <![CDATA[Zm9v]]>
+    </property>
+    <property name="bar" fullname="$bar" address="13397840" type="int">
+        <![CDATA[123]]>
+    </property>
+    <property name="baz" fullname="$baz" address="13403224" type="array" children="1" numchildren="3">
+        <property name="0" fullname="$baz[0]" address="13397800" type="int"><![CDATA[1]]></property>
+        <property name="1" fullname="$baz[1]" address="13402872" type="int"><![CDATA[2]]></property>
+        <property name="2" fullname="$baz[2]" address="13403000" type="int"><![CDATA[3]]></property>
+    </property>
+</response>
+*/
     QTemporaryFile file("xdebugtest");
     file.open();
     KUrl url(QDir::currentPath() + "/" + file.fileName());
@@ -517,7 +532,7 @@ void ConnectionTest::testVariablesLocals()
     COMPARE_DATA(variableCollection()->index(0, 0, i), "0");
     COMPARE_DATA(variableCollection()->index(0, 1, i), "1");
     COMPARE_DATA(variableCollection()->index(2, 0, i), "2");
-    COMPARE_DATA(variableCollection()->index(2, 1, i), "3");
+    COMPARE_DATA(variableCollection()->index(2, 1, i), "5");
     session.run();
     session.waitForFinished();
 }

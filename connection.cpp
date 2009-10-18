@@ -25,8 +25,8 @@
 
 #include <QtNetwork/QTcpSocket>
 #include <QtCore/QSocketNotifier>
-#include <QtCore/QXmlStreamReader>
 #include <QtCore/QTextCodec>
+#include <QDomElement>
 
 #include <KDebug>
 #include <KLocale>
@@ -95,23 +95,18 @@ void Connection::readyRead()
             data += m_socket->read(length+1);
         }
         kDebug() << data;
-        
-        QXmlStreamReader* xml = new QXmlStreamReader(data);
-        while (!xml->atEnd()) {
-            xml->readNext();
-            if (xml->isStartElement()) {
-                if (xml->name() == "init") {
-                    processInit(xml);
-                } else if (xml->name() == "response") {
-                    processResponse(xml);
-                } else if (xml->name() == "stream") {
-                    processStream(xml);
-                } else {
-                    //kWarning() << "unknown element" << xml->name();
-                }
-            }
+
+        QDomDocument doc;
+        doc.setContent(data);
+        if (doc.documentElement().tagName() == "init") {
+            processInit(doc);
+        } else if (doc.documentElement().tagName() == "response") {
+            processResponse(doc);
+        } else if (doc.documentElement().tagName() == "stream") {
+            processStream(doc);
+        } else {
+            //kWarning() << "unknown element" << xml->name();
         }
-        delete xml;
     }
 }
 void Connection::sendCommand(const QString& cmd, QStringList arguments, const QByteArray& data, CallbackBase* callback)
@@ -136,9 +131,9 @@ void Connection::sendCommand(const QString& cmd, QStringList arguments, const QB
     m_socket->write("\0", 1);
 }
 
-void Connection::processInit(QXmlStreamReader* xml)
+void Connection::processInit(const QDomDocument &xml)
 {
-    kDebug() << "idekey" << xml->attributes().value("idekey");
+    kDebug() << "idekey" << xml.documentElement().attribute("idekey");
 //     emit initDone(xml->attributes().value("idekey").toString());
 
     sendCommand("feature_get -n encoding");
@@ -150,32 +145,32 @@ void Connection::processInit(QXmlStreamReader* xml)
     setState(DebugSession::StartingState);
 }
 
-void Connection::processResponse(QXmlStreamReader* xml)
+void Connection::processResponse(const QDomDocument &xml)
 {
-    if (xml->attributes().value("status") == "running") {
+    QString status = xml.documentElement().attribute("status");
+    if (status == "running") {
         setState(DebugSession::ActiveState);
-    } else if (xml->attributes().value("status") == "stopping") {
+    } else if (status == "stopping") {
         setState(DebugSession::StoppingState);
-    } else if (xml->attributes().value("status") == "stopped") {
+    } else if (status == "stopped") {
         setState(DebugSession::StoppedState);
-    } else if (xml->attributes().value("status") == "break") {
+    } else if (status == "break") {
         setState(DebugSession::PausedState);
-        xml->readNext();
-        if (xml->isStartElement() && xml->namespaceUri() == "http://xdebug.org/dbgp/xdebug" && xml->name() == "message") {
-            KUrl file = KUrl(xml->attributes().value("filename").toString());
-            int lineNum = xml->attributes().value("lineno").toString().toInt()-1;
+        QDomElement el = xml.documentElement().firstChildElement();
+        if (el.nodeName() == "xdebug:message") {
+            KUrl file = KUrl(el.attribute("filename"));
+            int lineNum = el.attribute("lineno").toInt()-1;
             emit showStepInSource(file, lineNum);
         }
     }
-    if (xml->attributes().value("command") == "feature_get" && xml->attributes().value("feature_name") == "encoding") {
-        xml->readNext();
-        QTextCodec* c = QTextCodec::codecForName(xml->text().toString().toAscii());
+    if (xml.documentElement().attribute("command") == "feature_get" && xml.documentElement().attribute("feature_name") == "encoding") {
+        QTextCodec* c = QTextCodec::codecForName(xml.documentElement().text().toAscii());
         if (c) {
             m_codec = c;
         }
     }
-    if (xml->attributes().hasAttribute("transaction_id")) {
-        int transactionId = xml->attributes().value("transaction_id").toString().toInt();
+    if (xml.documentElement().hasAttribute("transaction_id")) {
+        int transactionId = xml.documentElement().attribute("transaction_id").toInt();
         if (m_callbacks.contains(transactionId)) {
             m_callbacks[transactionId]->execute(xml);
             delete m_callbacks[transactionId];
@@ -202,9 +197,9 @@ DebugSession::DebuggerState Connection::currentState()
 }
 
 
-void Connection::processStream(QXmlStreamReader* xml)
+void Connection::processStream(const QDomDocument &xml)
 {
-    if (xml->attributes().value("encoding") == "base64") {
+    if (xml.documentElement().attribute("encoding") == "base64") {
         /* We ignore the output type for now
         KDevelop::IRunProvider::OutputTypes outputType;
         if (xml->attributes().value("type") == "stdout") {
@@ -216,8 +211,8 @@ void Connection::processStream(QXmlStreamReader* xml)
             return;
         }
         */
-        xml->readNext();
-        QString c = m_codec->toUnicode(QByteArray::fromBase64(xml->text().toString().toAscii()));
+        
+        QString c = m_codec->toUnicode(QByteArray::fromBase64(xml.documentElement().text().toAscii()));
         //kDebug() << c;
         emit output(c);
         m_outputLine += c;
@@ -227,7 +222,7 @@ void Connection::processStream(QXmlStreamReader* xml)
             m_outputLine = m_outputLine.mid(pos+1);
         }
     } else {
-        kWarning() << "unknown encoding" << xml->attributes().value("encoding");
+        kWarning() << "unknown encoding" << xml.documentElement().attribute("encoding");
     }
 }
 
