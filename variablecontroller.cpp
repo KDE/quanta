@@ -62,45 +62,32 @@ void VariableController::handleLocals(const QDomDocument &xml)
 {
     Q_ASSERT(xml.documentElement().attribute("command") == "context_get");
 
-    KDevelop::Locals* locals = KDevelop::ICore::self()->debugController()->variableCollection()->locals();
-    
-    locals->setHasMore(false);
-
-    QMap<QString, Variable*> existing;
-    for (int i = 0; i < locals->childCount(); i++) {
-        Q_ASSERT(dynamic_cast<Variable*>(locals->child(i)));
-        Variable* var = static_cast<Variable*>(locals->child(i));
-        existing[var->expression()] = var;
-    }
-
-    QSet<QString> current;
-    QDomElement el = xml.documentElement().firstChildElement("property");
-    while (!el.isNull()) {
-        QString name = el.attribute("fullname");
-        kDebug() << name;
-        current << name;
-        Variable* v = 0;
-        if( !existing.contains(name) ) {
-            v = static_cast<Variable*>(createVariable(
-                    KDevelop::ICore::self()->debugController()->variableCollection(),
-                    locals, name ));
-            locals->appendChild( v, false );
-        } else {
-            v = existing[name];
-        }
-        v->handleProperty(el);
-        el = el.nextSiblingElement("property");
-    }
-    for (int i = 0; i < locals->childCount(); ++i) {
-        Q_ASSERT(dynamic_cast<KDevelop::Variable*>(locals->child(i)));
-        KDevelop::Variable* v = static_cast<KDevelop::Variable*>(locals->child(i));
-        if (!current.contains(v->expression())) {
-            locals->removeChild(i);
-            --i;
-            delete v;
+    QStringList names;
+    {
+        QDomElement el = xml.documentElement().firstChildElement("property");
+        while (!el.isNull()) {
+            names << el.attribute("fullname");
+            el = el.nextSiblingElement("property");
         }
     }
 
+    {
+        KDevelop::Locals* locals = KDevelop::ICore::self()->debugController()->variableCollection()->locals();
+        QList<KDevelop::Variable*> vars = locals->updateLocals(names);
+
+        QDomElement el = xml.documentElement().firstChildElement("property");
+        while (!el.isNull()) {
+            QString name = el.attribute("fullname");
+            foreach (KDevelop::Variable *v, vars) {
+                Q_ASSERT(dynamic_cast<Variable*>(v));
+                if (v->expression() == name) {
+                    static_cast<Variable*>(v)->handleProperty(el);
+                    break;
+                }
+            }
+            el = el.nextSiblingElement("property");
+        }
+    }
 }
 
 void VariableController::updateLocals()
