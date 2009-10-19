@@ -27,6 +27,9 @@
 #include <debugger/interfaces/ivariablecontroller.h>
 
 class QDomDocument;
+namespace KDevelop {
+class Locals;
+}
 namespace XDebug {
 
 class Variable;
@@ -54,7 +57,8 @@ private:
     DebugSession* debugSession() const;
 
     void updateLocals();
-    void handleLocals(const QDomDocument &xml);
+    void handleLocals(KDevelop::Locals *locals, const QDomDocument &xml);
+    void handleContextNames(const QDomDocument &xml);
 
 /*
     void handleVarUpdate(const GDBMI::ResultRecord& r);

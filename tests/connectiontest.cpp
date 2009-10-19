@@ -517,7 +517,7 @@ void ConnectionTest::testVariablesLocals()
     session.waitForState(DebugSession::PausedState);
     QTest::qWait(1000);
 
-    QCOMPARE(variableCollection()->rowCount(), 2);
+    QVERIFY(variableCollection()->rowCount() >= 2);
     QModelIndex i = variableCollection()->index(1, 0);
     COMPARE_DATA(i, "Locals");
     QCOMPARE(variableCollection()->rowCount(i), 3);
@@ -533,6 +533,50 @@ void ConnectionTest::testVariablesLocals()
     COMPARE_DATA(variableCollection()->index(0, 1, i), "1");
     COMPARE_DATA(variableCollection()->index(2, 0, i), "2");
     COMPARE_DATA(variableCollection()->index(2, 1, i), "5");
+    session.run();
+    session.waitForFinished();
+}
+
+
+void ConnectionTest::testVariablesSuperglobals()
+{
+QStringList contents;
+    contents << "<?php"                 // 1
+            << "$foo = 'foo';";         // 2
+
+    QTemporaryFile file("xdebugtest");
+    file.open();
+    KUrl url(QDir::currentPath() + "/" + file.fileName());
+    file.write(contents.join("\n").toUtf8());
+    file.close();
+
+    DebugSession session;
+    KDevelop::ICore::self()->debugController()->addSession(&session);
+
+    TestLaunchConfiguration cfg(url);
+    XDebugJob job(&session, &cfg);
+
+    session.variableController()->setAutoUpdate(KDevelop::IVariableController::UpdateLocals);
+    KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(url, 1);
+
+    job.start();
+    session.waitForConnected();
+
+    session.waitForState(DebugSession::PausedState);
+    QTest::qWait(1000);
+
+    QVERIFY(variableCollection()->rowCount() >= 3);
+    QModelIndex i = variableCollection()->index(2, 0);
+    COMPARE_DATA(i, "Superglobals");
+    QVERIFY(variableCollection()->rowCount(i) > 4);
+    COMPARE_DATA(variableCollection()->index(0, 0, i), "$_COOKIE");
+    COMPARE_DATA(variableCollection()->index(0, 1, i), "");
+    COMPARE_DATA(variableCollection()->index(1, 0, i), "$_ENV");
+    COMPARE_DATA(variableCollection()->index(1, 1, i), "");
+    COMPARE_DATA(variableCollection()->index(6, 0, i), "$_SERVER");
+    COMPARE_DATA(variableCollection()->index(6, 1, i), "");
+    i = variableCollection()->index(6, 0, i);
+    QVERIFY(variableCollection()->rowCount(i) > 5);
     session.run();
     session.waitForFinished();
 }

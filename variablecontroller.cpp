@@ -58,7 +58,7 @@ void VariableController::update()
 //    }
 }
 
-void VariableController::handleLocals(const QDomDocument &xml)
+void VariableController::handleLocals(KDevelop::Locals *locals, const QDomDocument &xml)
 {
     Q_ASSERT(xml.documentElement().attribute("command") == "context_get");
 
@@ -72,7 +72,6 @@ void VariableController::handleLocals(const QDomDocument &xml)
     }
 
     {
-        KDevelop::Locals* locals = KDevelop::ICore::self()->debugController()->variableCollection()->locals();
         QList<KDevelop::Variable*> vars = locals->updateLocals(names);
 
         QDomElement el = xml.documentElement().firstChildElement("property");
@@ -89,11 +88,29 @@ void VariableController::handleLocals(const QDomDocument &xml)
         }
     }
 }
+void VariableController::handleContextNames(const QDomDocument &xml)
+{
+    Q_ASSERT(xml.documentElement().attribute("command") == "context_names");
+
+    QDomElement el = xml.documentElement().firstChildElement("context");
+    while (!el.isNull()) {
+        QString name = el.attribute("name");
+        QString id = el.attribute("id");
+        QStringList args;
+        args << QString("-c %0").arg(id);
+        KDevelop::Locals* locals = KDevelop::ICore::self()->debugController()->variableCollection()->locals(name);
+        CallbackWithCookie<VariableController, KDevelop::Locals>* cb =
+            new CallbackWithCookie<VariableController, KDevelop::Locals>
+                    (this, &VariableController::handleLocals, locals);
+        debugSession()->connection()->sendCommand("context_get", args, QByteArray(), cb);
+        el = el.nextSiblingElement("context");
+    }
+}
 
 void VariableController::updateLocals()
 {
-    Callback<VariableController>* cb = new Callback<VariableController>(this, &VariableController::handleLocals);
-    debugSession()->connection()->sendCommand("context_get", QStringList(), QByteArray(), cb);
+    Callback<VariableController>* cb = new Callback<VariableController>(this, &VariableController::handleContextNames);
+    debugSession()->connection()->sendCommand("context_names", QStringList(), QByteArray(), cb);
 }
 
 QString VariableController::expressionUnderCursor(KTextEditor::Document* doc, const KTextEditor::Cursor& cursor)
