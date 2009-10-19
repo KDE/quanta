@@ -61,7 +61,6 @@ bool DebugSession::listenForConnection()
 void DebugSession::incomingConnection()
 {
     QTcpSocket* client = m_server->nextPendingConnection();
-    client->setParent(this); //don't delete it when server is deleted
 
     m_connection = new Connection(client, this);
     connect(m_connection, SIGNAL(output(QString)), SIGNAL(output(QString)));

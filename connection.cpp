@@ -43,6 +43,7 @@ Connection::Connection(QTcpSocket* socket, QObject * parent)
     m_lastTransactionId(0)
 {
     Q_ASSERT(m_socket);
+    m_socket->setParent(this);
 
     m_codec = QTextCodec::codecForLocale();
 
@@ -54,7 +55,6 @@ Connection::Connection(QTcpSocket* socket, QObject * parent)
 
 Connection::~Connection()
 {
-    delete m_socket;
 }
 
 void Connection::closed()
