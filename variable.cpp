@@ -65,7 +65,7 @@ public:
         if (!m_variable) return;
         bool hasValue = false;
 
-        QDomElement el = xml.firstChildElement("property");
+        QDomElement el = xml.documentElement().firstChildElement("property");
         Q_ASSERT(!el.isNull());
         m_variable->handleProperty(el);
         hasValue = true; //TODO: implement correctly
