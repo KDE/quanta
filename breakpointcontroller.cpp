@@ -62,7 +62,7 @@ void BreakpointController::sendMaybe(KDevelop::Breakpoint* breakpoint)
                     cb = new CallbackWithCookie<BreakpointController, KDevelop::Breakpoint>
                             (this, &BreakpointController::handleSetBreakpoint, breakpoint);
                 }
-                debugSession()->connection()->sendCommand(cmd, args, QByteArray(), cb);
+                debugSession()->connection()->sendCommand(cmd, args, breakpoint->condition().toUtf8(), cb);
             }
         } else if (m_dirty[breakpoint].contains(KDevelop::Breakpoint::EnableColumn)) {
             Q_ASSERT(m_ids.contains(breakpoint));

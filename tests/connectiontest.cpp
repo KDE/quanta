@@ -468,6 +468,51 @@ void ConnectionTest::testDeleteBreakpoint()
     session.waitForFinished();
 }
 
+
+void ConnectionTest::testConditionalBreakpoint()
+{
+    QStringList contents;
+    contents << "<?php"        // 1
+            << "$i = 0;"       // 2
+            << "$i++;"         // 3
+            << "$i++;"         // 4
+            << "$i++;"         // 5
+            << "echo 'y';";    // 6
+    QTemporaryFile file("xdebugtest");
+    file.open();
+    KUrl url(QDir::currentPath() + "/" + file.fileName());
+    file.write(contents.join("\n").toUtf8());
+    file.close();
+
+    DebugSession session;
+
+    TestLaunchConfiguration cfg(url);
+    XDebugJob job(&session, &cfg);
+
+
+    KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(url, 2)
+        ->setCondition("1==2");
+    KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(url, 5)
+        ->setCondition("1==1");
+
+    job.start();
+    session.waitForConnected();
+
+    QSignalSpy showStepInSourceSpy(&session, SIGNAL(showStepInSource(KUrl, int)));
+
+    session.waitForState(DebugSession::PausedState);
+
+    session.run();
+    session.waitForFinished();
+    {
+        QCOMPARE(showStepInSourceSpy.count(), 1);
+        QList<QVariant> arguments = showStepInSourceSpy.takeFirst();
+        QCOMPARE(arguments.first().value<KUrl>(), url);
+        QCOMPARE(arguments.at(1).toInt(), 5);
+    }
+}
+
+
 KDevelop::VariableCollection *variableCollection()
 {
     return KDevelop::ICore::self()->debugController()->variableCollection();
