@@ -60,7 +60,7 @@ private slots:
 private:
     KProcess* m_proc;
     KDevelop::ProcessLineMaker* m_lineMaker;
-    DebugSession* m_session;
+    QPointer<DebugSession> m_session;
 };
 
 class XDebugBrowserJob : public KJob

@@ -88,6 +88,14 @@ XDebugJob::XDebugJob( DebugSession* session, KDevelop::ILaunchConfiguration* cfg
         return;
     }
 
+    QString remoteHost = iface->remoteHost( cfg, err );
+    if( !err.isEmpty() )
+    {
+        setError( -4 );
+        setErrorText( err );
+        return;
+    }
+
     if( envgrp.isEmpty() )
     {
         kWarning() << "Launch Configuration:" << cfg->name() << i18n("No environment group specified, looks like a broken "
@@ -112,13 +120,6 @@ XDebugJob::XDebugJob( DebugSession* session, KDevelop::ILaunchConfiguration* cfg
     QString ideKey = "kdev"+QString::number(qrand());
     //TODO NIKO set ideKey to session?
 
-    arguments.prepend(script.toLocalFile());
-
-    arguments.prepend("-d xdebug.remote_enable=1");
-    arguments.prepend("-d xdebug.remote_port="+QString::number(9000));
-    arguments.prepend("-d xdebug.idekey="+ideKey);
-
-
     m_proc = new KProcess( this );
 
     m_lineMaker = new KDevelop::ProcessLineMaker( m_proc, this );
@@ -132,7 +133,6 @@ XDebugJob::XDebugJob( DebugSession* session, KDevelop::ILaunchConfiguration* cfg
     connect( m_proc, SIGNAL(finished(int,QProcess::ExitStatus)), SLOT(processFinished(int,QProcess::ExitStatus)) );
 
     QStringList env = l.createEnvironment( envgrp, m_proc->systemEnvironment());
-    env.append("XDEBUG_CONFIG=\"remote_enable=1 \"");
     m_proc->setEnvironment( env );
 
     KUrl wc = iface->workingDirectory( cfg );
@@ -143,11 +143,25 @@ XDebugJob::XDebugJob( DebugSession* session, KDevelop::ILaunchConfiguration* cfg
     m_proc->setWorkingDirectory( wc.toLocalFile() );
     m_proc->setProperty( "executable", interpreter );
 
-    kDebug() << "setting app:" << interpreter << arguments;
+    QStringList program;
+    if (!remoteHost.isEmpty()) {
+        program << "ssh";
+        program << remoteHost;
+    }
+    program << "XDEBUG_CONFIG=\"remote_enable=1 \"";
+    program << interpreter;
+    program << "-d xdebug.remote_enable=1";
+    program << "-d xdebug.remote_port="+QString::number(9000);
+    program << "-d xdebug.idekey="+ideKey;
+    program << script.toLocalFile();
+    program << arguments;
+
+    
+    kDebug() << "setting app:" << program;
 
     m_proc->setOutputChannelMode(KProcess::MergedChannels);
 
-    m_proc->setProgram( interpreter, arguments );
+    m_proc->setProgram( program );
 
     setTitle(cfg->name());
 
@@ -174,7 +188,7 @@ void XDebugJob::start()
 bool XDebugJob::doKill()
 {
     kDebug();
-    m_session->stopDebugger();
+    if (m_session) m_session->stopDebugger();
     return true;
 }
 /*
@@ -204,6 +218,8 @@ void XDebugJob::processFinished( int exitCode , QProcess::ExitStatus status )
                 model()->appendLine( i18n("*** Crashed with return code: %1 ***", QString::number(exitCode)) );
     kDebug() << "Process done";
     emitResult();
+
+    if (m_session) delete m_session;
 }
 
 void XDebugJob::processError( QProcess::ProcessError error )
@@ -218,6 +234,8 @@ void XDebugJob::processError( QProcess::ProcessError error )
         emitResult();
     }
     kDebug() << "Process error";
+
+    if (m_session) delete m_session;
 }
 
 
@@ -235,7 +253,7 @@ void XDebugJob::done()
 
 
 XDebugBrowserJob::XDebugBrowserJob(DebugSession* session, KDevelop::ILaunchConfiguration* cfg, QObject* parent)
-    : m_session(session), KJob(parent)
+    : KJob(parent), m_session(session)
 {
     setCapabilities(Killable);
 
