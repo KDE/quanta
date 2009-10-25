@@ -26,8 +26,8 @@ kde4_add_ui_files( kdevexecutebrowser_PART_SRCS ${kdevexecutebrowser_PART_UIS} )
 kde4_add_plugin(kdevexecutebrowser ${kdevexecutebrowser_PART_SRCS}  )
 target_link_libraries(kdevexecutebrowser 
     ${KDE4_KDEUI_LIBS} 
-    kdevplatforminterfaces 
-    kdevplatformoutputview)
+    ${KDEVPLATFORM_INTERFACES_LIBRARIES} 
+    ${KDEVPLATFORM_OUTPUTVIEW_LIBRARIES})
 
 install(TARGETS kdevexecutebrowser DESTINATION ${PLUGIN_INSTALL_DIR})
 
