@@ -133,6 +133,7 @@ XDebugJob::XDebugJob( DebugSession* session, KDevelop::ILaunchConfiguration* cfg
     connect( m_proc, SIGNAL(finished(int,QProcess::ExitStatus)), SLOT(processFinished(int,QProcess::ExitStatus)) );
 
     QStringList env = l.createEnvironment( envgrp, m_proc->systemEnvironment());
+    env << "XDEBUG_CONFIG=\"remote_enable=1 \"";
     m_proc->setEnvironment( env );
 
     KUrl wc = iface->workingDirectory( cfg );
@@ -147,8 +148,8 @@ XDebugJob::XDebugJob( DebugSession* session, KDevelop::ILaunchConfiguration* cfg
     if (!remoteHost.isEmpty()) {
         program << "ssh";
         program << remoteHost;
+        program << "XDEBUG_CONFIG=\"remote_enable=1 \"";
     }
-    program << "XDEBUG_CONFIG=\"remote_enable=1 \"";
     program << interpreter;
     program << "-d xdebug.remote_enable=1";
     program << "-d xdebug.remote_port="+QString::number(9000);
