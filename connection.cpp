@@ -114,7 +114,7 @@ void Connection::sendCommand(const QString& cmd, QStringList arguments, const QB
     Q_ASSERT(m_socket);
     Q_ASSERT(m_socket->isOpen());
 
-    arguments << "-i " + QString::number(++m_lastTransactionId);
+    arguments.prepend("-i " + QString::number(++m_lastTransactionId));
     if (callback) {
         m_callbacks[m_lastTransactionId] = callback;
     }
