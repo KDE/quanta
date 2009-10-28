@@ -59,11 +59,9 @@ void BreakpointController::sendMaybe(KDevelop::Breakpoint* breakpoint)
                 url = debugSession()->convertToRemoteUrl(url);
                 args << "-f "+url.url();
                 args << "-n "+QString::number(breakpoint->line()+1);
-                CallbackWithCookie<BreakpointController, KDevelop::Breakpoint>* cb = 0;
-                if (!m_ids.contains(breakpoint)) {
-                    cb = new CallbackWithCookie<BreakpointController, KDevelop::Breakpoint>
-                            (this, &BreakpointController::handleSetBreakpoint, breakpoint);
-                }
+                CallbackWithCookie<BreakpointController, KDevelop::Breakpoint>* cb =
+                    new CallbackWithCookie<BreakpointController, KDevelop::Breakpoint>
+                        (this, &BreakpointController::handleSetBreakpoint, breakpoint);
                 debugSession()->connection()->sendCommand(cmd, args, breakpoint->condition().toUtf8(), cb);
             }
         } else if (m_dirty[breakpoint].contains(KDevelop::Breakpoint::EnableColumn)) {
@@ -80,11 +78,17 @@ void BreakpointController::sendMaybe(KDevelop::Breakpoint* breakpoint)
 
 void BreakpointController::handleSetBreakpoint(KDevelop::Breakpoint* breakpoint, const QDomDocument &xml)
 {
-    Q_ASSERT(xml.documentElement().attribute("command") == "breakpoint_set");
+    Q_ASSERT(xml.documentElement().attribute("command") == "breakpoint_set"
+        || xml.documentElement().attribute("command") == "breakpoint_update");
     Q_ASSERT(breakpoint);
-    m_ids[breakpoint] = xml.documentElement().attribute("id");
+    if (xml.documentElement().attribute("command") == "breakpoint_set") {
+        m_ids[breakpoint] = xml.documentElement().attribute("id");
+    }
+    if (!xml.documentElement().firstChildElement("error").isNull()) {
+        kWarning() << "breakpoint error" << xml.documentElement().firstChildElement("error").text();
+        error(breakpoint, xml.documentElement().firstChildElement("error").text(), KDevelop::Breakpoint::LocationColumn);
+    }
 }
-
 
 DebugSession* BreakpointController::debugSession()
 {

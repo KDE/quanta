@@ -42,6 +42,7 @@ private slots:
     void testChangeLocationBreakpoint();
     void testDeleteBreakpoint();
     void testConditionalBreakpoint();
+    void testBreakpointError();
     void testVariablesLocals();
     void testVariablesSuperglobals();
 

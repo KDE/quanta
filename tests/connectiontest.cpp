@@ -513,6 +513,44 @@ void ConnectionTest::testConditionalBreakpoint()
 }
 
 
+void ConnectionTest::testBreakpointError()
+{
+    QStringList contents;
+    contents << "<?php"        // 1
+            << "$i = 0;"       // 2
+            << "$i++;";         // 3
+    QTemporaryFile file("xdebugtest");
+    file.open();
+    KUrl url(QDir::currentPath() + "/" + file.fileName());
+    file.write(contents.join("\n").toUtf8());
+    file.close();
+
+    DebugSession session;
+    KDevelop::ICore::self()->debugController()->addSession(&session);
+
+    TestLaunchConfiguration cfg(url);
+    XDebugJob job(&session, &cfg);
+
+    KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(url, 2);
+
+    KDevelop::Breakpoint* b = KDevelop::ICore::self()->debugController()->breakpointModel()
+        ->addCodeBreakpoint(KUrl(""), 2);
+    QVERIFY(b->errorText().isEmpty());
+
+
+    job.start();
+    session.waitForConnected();
+    session.waitForState(DebugSession::PausedState);
+    kDebug() << b->errors();
+    kDebug() << b->errorText();
+    QVERIFY(!b->errorText().isEmpty());
+
+    session.run();
+    session.waitForFinished();
+}
+
+
+
 KDevelop::VariableCollection *variableCollection()
 {
     return KDevelop::ICore::self()->debugController()->variableCollection();
