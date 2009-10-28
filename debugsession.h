@@ -25,6 +25,9 @@
 #include <QtCore/QString>
 #include <debugger/interfaces/idebugsession.h>
 
+namespace KDevelop {
+    class ILaunchConfiguration;
+}
 class KJob;
 class QTcpServer;
 class KProcess;
@@ -38,6 +41,8 @@ class DebugSession : public KDevelop::IDebugSession
 public:
     DebugSession();
 
+    void setLaunchConfiguration(KDevelop::ILaunchConfiguration *cfg);
+
     bool listenForConnection();
     
     bool waitForState(DebuggerState state, int msecs = 30000);
@@ -49,6 +54,14 @@ public:
     virtual DebuggerState state() const;
     
     virtual bool restartAvaliable() const;
+
+    virtual KUrl convertToLocalUrl(const KUrl& url) const;
+    virtual KUrl convertToRemoteUrl(const KUrl& url) const;
+
+
+    static const QString pathMappingsEntry;
+    static const QString pathMappingRemoteEntry;
+    static const QString pathMappingLocalEntry;
 
 private:
     virtual KDevelop::IFrameStackModel* createFrameStackModel();
@@ -70,7 +83,7 @@ public Q_SLOTS:
     virtual void interruptDebugger();
     virtual void stopDebugger();
     virtual void restartDebugger();
-    virtual void startDebugger();
+    void startDebugger();
 
     void eval(QByteArray source);
 
@@ -81,6 +94,7 @@ private Q_SLOTS:
 private:
     QTcpServer* m_server;
     Connection *m_connection;
+    KDevelop::ILaunchConfiguration *m_launchConfiguration;
 
 };
 

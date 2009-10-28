@@ -55,7 +55,9 @@ void BreakpointController::sendMaybe(KDevelop::Breakpoint* breakpoint)
                 } else {
                     args << "-t line";
                 }
-                args << "-f "+breakpoint->url().url();
+                KUrl url = breakpoint->url();
+                url = debugSession()->convertToRemoteUrl(url);
+                args << "-f "+url.url();
                 args << "-n "+QString::number(breakpoint->line()+1);
                 CallbackWithCookie<BreakpointController, KDevelop::Breakpoint>* cb = 0;
                 if (!m_ids.contains(breakpoint)) {

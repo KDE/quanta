@@ -63,6 +63,8 @@ XDebugJob::XDebugJob( DebugSession* session, KDevelop::ILaunchConfiguration* cfg
 {
     setCapabilities(Killable);
 
+    session->setLaunchConfiguration(cfg);
+
     IExecuteScriptPlugin* iface = KDevelop::ICore::self()->pluginController()->pluginForExtension("org.kdevelop.IExecuteScriptPlugin")->extension<IExecuteScriptPlugin>();
     Q_ASSERT(iface);
 
@@ -160,7 +162,7 @@ XDebugJob::XDebugJob( DebugSession* session, KDevelop::ILaunchConfiguration* cfg
     
     kDebug() << "setting app:" << program;
 
-    m_proc->setOutputChannelMode(KProcess::MergedChannels);
+    m_proc->setOutputChannelMode(KProcess::ForwardedChannels);
 
     m_proc->setProgram( program );
 
@@ -257,6 +259,8 @@ XDebugBrowserJob::XDebugBrowserJob(DebugSession* session, KDevelop::ILaunchConfi
     : KJob(parent), m_session(session)
 {
     setCapabilities(Killable);
+
+    session->setLaunchConfiguration(cfg);
 
     IExecuteBrowserPlugin* iface = KDevelop::ICore::self()->pluginController()
         ->pluginForExtension("org.kdevelop.IExecuteBrowserPlugin")->extension<IExecuteBrowserPlugin>();

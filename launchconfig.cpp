@@ -53,17 +53,19 @@
 #include "debugsession.h"
 #include "xdebugplugin.h"
 #include "debugjob.h"
+#include "launchconfigurationpage.h"
 
 
 namespace XDebug {
 
 XDebugLauncher::XDebugLauncher( XDebugPlugin* p ) : m_plugin( p )
 {
+    m_factoryList << new ConfigPageFactory();
 }
 
 QList< KDevelop::LaunchConfigurationPageFactory* > XDebugLauncher::configPages() const
 {
-    return QList< KDevelop::LaunchConfigurationPageFactory* >();
+    return m_factoryList;;
 }
 
 QString XDebugLauncher::id()
