@@ -63,12 +63,12 @@ public:
         Q_ASSERT(xml.documentElement().attribute("command") == "property_get");
 
         if (!m_variable) return;
-        bool hasValue = false;
 
         QDomElement el = xml.documentElement().firstChildElement("property");
-        Q_ASSERT(!el.isNull());
-        m_variable->handleProperty(el);
-        hasValue = true; //TODO: implement correctly
+        bool hasValue = !el.isNull();
+        if (hasValue) {
+            m_variable->handleProperty(el);
+        }
 
         if (m_callback && m_callbackMethod) {
             QMetaObject::invokeMethod(m_callback, m_callbackMethod, Q_ARG(bool, hasValue));
