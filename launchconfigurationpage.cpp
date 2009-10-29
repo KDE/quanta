@@ -65,7 +65,7 @@ public:
         if (role == Qt::DisplayRole || role == Qt::EditRole) {
             if (index.row() == m_paths.count()) return QString();
             if (index.column() == 0) {
-                return m_paths[index.row()].remote;
+                return m_paths[index.row()].remote.pathOrUrl();
             } else if (index.column() == 1) {
                 return m_paths[index.row()].local.pathOrUrl();
             }
@@ -94,7 +94,7 @@ public:
                 endInsertRows();
             }
             if (index.column() == 0) {
-                m_paths[index.row()].remote = value.toString();
+                m_paths[index.row()].remote = KUrl(value.toString());
             } else if (index.column() == 1) {
                 m_paths[index.row()].local = KUrl(value.toString());
             }
@@ -104,12 +104,27 @@ public:
         return false;
     }
 
+    virtual bool removeRows(int row, int count, const QModelIndex& parent = QModelIndex())
+    {
+        if (parent.isValid()) return false;
+        if (row+count > m_paths.count()) return false;
+        beginRemoveRows(parent, row, row+count-1);
+        for (int i=0; i<count; ++i) {
+            kDebug() << row + i;
+            m_paths.removeAt(row + i);
+        }
+        kDebug() << m_paths.count();
+        endRemoveRows();
+
+        return true;
+    }
+
     void loadFromConfiguration(const KConfigGroup &config)
     {
         m_paths.clear();
         KConfigGroup cfg = config.group(DebugSession::pathMappingsEntry);
-        foreach (const QString &group, cfg.groupList()) {
-            KConfigGroup pCfg = cfg.group(group);
+        for (int i=0; i<cfg.readEntry("Count", 0); ++i) {
+            KConfigGroup pCfg = cfg.group(QString::number(i+1));
             Path p;
             p.remote = pCfg.readEntry(DebugSession::pathMappingRemoteEntry, KUrl());
             p.local = pCfg.readEntry(DebugSession::pathMappingLocalEntry, KUrl());
@@ -120,13 +135,10 @@ public:
 
     void saveToConfiguration(KConfigGroup config)
     {
+        kDebug() << m_paths.count();
+
         KConfigGroup cfg = config.group(DebugSession::pathMappingsEntry);
-        foreach (const QString &group, cfg.groupList()) {
-            bool ok;
-            if (group.toInt(&ok) >= m_paths.count() || !ok) {
-                cfg.deleteGroup(group);
-            }
-        }
+        cfg.writeEntry("Count", m_paths.count());
         int i=0;
         foreach (const Path &p, m_paths) {
             i++;
@@ -156,7 +168,28 @@ ConfigPage::ConfigPage( QWidget* parent )
     ui->setupUi( this );
     ui->pathMappingTable->setModel(new PathMappingModel());
     connect(ui->pathMappingTable->model(), SIGNAL(dataChanged(QModelIndex,QModelIndex)), SIGNAL(changed()));
+    connect(ui->pathMappingTable->model(), SIGNAL(rowsRemoved(QModelIndex,int,int)), SIGNAL(changed()));
+    connect(ui->pathMappingTable->model(), SIGNAL(rowsInserted(QModelIndex,int,int)), SIGNAL(changed()));
+
+    QAction* deletePath = new QAction(
+        KIcon("breakpoint_delete"),
+        i18n( "Delete" ),
+        this
+    );
+    connect(deletePath, SIGNAL(triggered(bool)), SLOT(deletePath()));
+    deletePath->setShortcut(Qt::Key_Delete);
+    deletePath->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    ui->pathMappingTable->addAction(deletePath);
 }
+
+
+void ConfigPage::deletePath()
+{
+    foreach (const QModelIndex &i, ui->pathMappingTable->selectionModel()->selectedRows()) {
+        ui->pathMappingTable->model()->removeRow(i.row(), i.parent());
+    }
+}
+
 
 KIcon ConfigPage::icon() const
 {
