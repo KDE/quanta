@@ -1,4 +1,5 @@
 project(xdebug)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${xdebug_SOURCE_DIR}/cmake/)
 
 add_definitions( -DKDE_DEFAULT_DEBUG_AREA=9046 )
 
