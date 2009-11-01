@@ -1,3 +1,6 @@
+project(executebrowser)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${executebrowser_SOURCE_DIR}/cmake)
+
 find_package(KDE4 REQUIRED)
 find_package(KDevPlatform REQUIRED)
 
