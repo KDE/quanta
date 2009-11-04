@@ -43,7 +43,6 @@
 #include "executebrowserplugin.h"
 #include <util/kdevstringhandler.h>
 #include <util/environmentgrouplist.h>
-#include <util/projectitemlineedit.h>
 
 KIcon BrowserAppConfigPage::icon() const
 {
@@ -165,6 +164,19 @@ KIcon BrowserAppConfigType::icon() const
     return KIcon("system-run");
 }
 
+bool BrowserAppConfigType::canLaunch(const KUrl& file) const
+{
+    return false;
+}
 
+bool BrowserAppConfigType::canLaunch(KDevelop::ProjectBaseItem* item) const
+{
+    return false;
+}
+
+void BrowserAppConfigType::configureLaunchFromItem(KConfigGroup config, KDevelop::ProjectBaseItem* item) const
+{
+
+}
 
 #include "browserappconfig.moc"
