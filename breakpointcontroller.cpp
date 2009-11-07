@@ -20,6 +20,7 @@
 
 #include <QDomElement>
 #include <KDebug>
+#include <KLocalizedString>
 
 #include <debugger/breakpoint/breakpoint.h>
 
@@ -37,18 +38,19 @@ BreakpointController::BreakpointController(DebugSession* parent)
 
 void BreakpointController::sendMaybe(KDevelop::Breakpoint* breakpoint)
 {
-    if (breakpoint->kind() == KDevelop::Breakpoint::CodeBreakpoint) {
-        if (breakpoint->deleted()) {
-            if (m_ids.contains(breakpoint)) {
-                QString cmd("breakpoint_remove");
-                QStringList args;
-                args << "-d "+m_ids[breakpoint];
-                debugSession()->connection()->sendCommand(cmd, args);
-            }
-        } else if (m_dirty[breakpoint].contains(KDevelop::Breakpoint::LocationColumn)) {
-            if (breakpoint->enabled()) {
-                QString cmd = m_ids.contains(breakpoint) ? "breakpoint_update" : "breakpoint_set";
-                QStringList args;
+    if (breakpoint->deleted()) {
+        if (m_ids.contains(breakpoint)) {
+            QString cmd("breakpoint_remove");
+            QStringList args;
+            args << "-d "+m_ids[breakpoint];
+            debugSession()->connection()->sendCommand(cmd, args);
+        }
+    } else if (m_dirty[breakpoint].contains(KDevelop::Breakpoint::LocationColumn)) {
+        if (breakpoint->enabled()) {
+            QString cmd = m_ids.contains(breakpoint) ? "breakpoint_update" : "breakpoint_set";
+            QStringList args;
+            kDebug() << "breakpoint kind" << breakpoint->kind();
+            if (breakpoint->kind() == KDevelop::Breakpoint::CodeBreakpoint) {
                 if (m_ids.contains(breakpoint)) {
                     args << "-d "+m_ids[breakpoint];
                 } else if (breakpoint->line() != -1) {
@@ -64,25 +66,31 @@ void BreakpointController::sendMaybe(KDevelop::Breakpoint* breakpoint)
                 } else {
                     args << "-m "+breakpoint->expression();
                 }
-                if (breakpoint->ignoreHits()) {
-                    args << "-h "+QString::number(breakpoint->ignoreHits()+1);
-                    args << "-o >=";
-                }
-                CallbackWithCookie<BreakpointController, KDevelop::Breakpoint>* cb =
-                    new CallbackWithCookie<BreakpointController, KDevelop::Breakpoint>
-                        (this, &BreakpointController::handleSetBreakpoint, breakpoint);
-                debugSession()->connection()->sendCommand(cmd, args, breakpoint->condition().toUtf8(), cb);
+            } else if (breakpoint->kind() == KDevelop::Breakpoint::WriteBreakpoint) {
+                args << "-t watch";
+                args << "-m "+breakpoint->expression();
+            } else {
+                error(breakpoint, i18n("breakpoint type is not supported"), KDevelop::Breakpoint::LocationColumn);
+                return;
             }
-        } else if (m_dirty[breakpoint].contains(KDevelop::Breakpoint::EnableColumn)) {
-            Q_ASSERT(m_ids.contains(breakpoint));
-            QString cmd = "breakpoint_update";
-            QStringList args;
-            args << "-d "+m_ids[breakpoint];
-            args << QString("-s %0").arg(breakpoint->enabled() ? "enabled" : "disabled");
-            debugSession()->connection()->sendCommand(cmd, args);
+            if (breakpoint->ignoreHits()) {
+                args << "-h "+QString::number(breakpoint->ignoreHits()+1);
+                args << "-o >=";
+            }
+            CallbackWithCookie<BreakpointController, KDevelop::Breakpoint>* cb =
+                new CallbackWithCookie<BreakpointController, KDevelop::Breakpoint>
+                    (this, &BreakpointController::handleSetBreakpoint, breakpoint);
+            debugSession()->connection()->sendCommand(cmd, args, breakpoint->condition().toUtf8(), cb);
         }
-        m_dirty[breakpoint].clear();
+    } else if (m_dirty[breakpoint].contains(KDevelop::Breakpoint::EnableColumn)) {
+        Q_ASSERT(m_ids.contains(breakpoint));
+        QString cmd = "breakpoint_update";
+        QStringList args;
+        args << "-d "+m_ids[breakpoint];
+        args << QString("-s %0").arg(breakpoint->enabled() ? "enabled" : "disabled");
+        debugSession()->connection()->sendCommand(cmd, args);
     }
+    m_dirty[breakpoint].clear();
 }
 
 void BreakpointController::handleSetBreakpoint(KDevelop::Breakpoint* breakpoint, const QDomDocument &xml)
