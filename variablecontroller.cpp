@@ -29,6 +29,7 @@
 #include <debugger/breakpoint/breakpointmodel.h>
 #include <interfaces/icore.h>
 #include <interfaces/idebugcontroller.h>
+#include <debugger/interfaces/iframestackmodel.h>
 
 #include "connection.h"
 #include "debugsession.h"
@@ -98,6 +99,7 @@ void VariableController::handleContextNames(const QDomDocument &xml)
         QString id = el.attribute("id");
         QStringList args;
         args << QString("-c %0").arg(id);
+        args << QString("-d %0").arg(debugSession()->frameStackModel()->currentFrame());
         KDevelop::Locals* locals = KDevelop::ICore::self()->debugController()->variableCollection()->locals(name);
         CallbackWithCookie<VariableController, KDevelop::Locals>* cb =
             new CallbackWithCookie<VariableController, KDevelop::Locals>
@@ -110,7 +112,9 @@ void VariableController::handleContextNames(const QDomDocument &xml)
 void VariableController::updateLocals()
 {
     Callback<VariableController>* cb = new Callback<VariableController>(this, &VariableController::handleContextNames);
-    debugSession()->connection()->sendCommand("context_names", QStringList(), QByteArray(), cb);
+    QStringList args;
+    args << QString("-d %0").arg(debugSession()->frameStackModel()->currentFrame());
+    debugSession()->connection()->sendCommand("context_names", args, QByteArray(), cb);
 }
 
 QString VariableController::expressionUnderCursor(KTextEditor::Document* doc, const KTextEditor::Cursor& cursor)

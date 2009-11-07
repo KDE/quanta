@@ -23,10 +23,13 @@
 #include "variable.h"
 #include "debugsession.h"
 
+#include <QXmlStreamReader>
+
 #include <interfaces/icore.h>
 #include <debugger/interfaces/ivariablecontroller.h>
+#include <debugger/interfaces/iframestackmodel.h>
+
 #include "connection.h"
-#include <QXmlStreamReader>
 
 namespace XDebug {
 
@@ -88,6 +91,7 @@ void Variable::attachMaybe(QObject *callback, const char *callbackMethod)
         DebugSession* s = static_cast<DebugSession*>(is);
         QStringList args;
         args << "-n " + expression();
+        args << QString("-d %0").arg(s->frameStackModel()->currentFrame());
         s->connection()->sendCommand("property_get", args, QByteArray(),
                                      new PropertyGetCallback(this, callback, callbackMethod));
     }
