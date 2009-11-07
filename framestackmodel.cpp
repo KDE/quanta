@@ -52,7 +52,7 @@ void FrameStackModel::handleStack(const QDomDocument &xml)
         f.nr = el.attribute("level").toInt();
         f.name = el.attribute("where");
         f.file = el.attribute("filename");
-        f.line = el.attribute("lineno").toInt();
+        f.line = el.attribute("lineno").toInt() - 1;
         frames << f;
         el = el.nextSiblingElement("stack");
     }
