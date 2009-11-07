@@ -31,7 +31,6 @@ namespace XDebug {
 BreakpointController::BreakpointController(DebugSession* parent)
     : IBreakpointController(parent)
 {
-    connect(debugSession(), SIGNAL(initDone(QString)), SLOT(initDone(QString)));
     connect(debugSession(), SIGNAL(stateChanged(KDevelop::IDebugSession::DebuggerState)),
                 SLOT(stateChanged(KDevelop::IDebugSession::DebuggerState)));
 }
@@ -110,10 +109,25 @@ void BreakpointController::stateChanged(KDevelop::IDebugSession::DebuggerState s
     kDebug() << state;
     if (state == KDevelop::IDebugSession::StartingState) {
         sendMaybeAll();
+    } else if (state == KDevelop::IDebugSession::PausedState) {
+        Callback<BreakpointController>* cb =
+            new Callback<BreakpointController>(this, &BreakpointController::handleBreakpointList);
+        debugSession()->connection()->sendCommand("breakpoint_list", QStringList(), QByteArray(), cb);
     }
 }
 
+void BreakpointController::handleBreakpointList(const QDomDocument &xml)
+{
+    Q_ASSERT(xml.firstChildElement().attribute("command") == "breakpoint_list");
 
+    QDomElement el = xml.documentElement().firstChildElement("breakpoint");
+    while (!el.isNull()) {
+        KDevelop::Breakpoint *b = m_ids.key(el.attribute("id"));
+        setHitCount(b, el.attribute("hit_count").toInt());
+        el = el.nextSiblingElement("breakpoint");
+    }
+
+}
 
 }
 

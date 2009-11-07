@@ -41,7 +41,8 @@ private slots:
 private:
     DebugSession *debugSession();
     void handleSetBreakpoint(KDevelop::Breakpoint* breakpoint, const QDomDocument &xml);
-    
+    void handleBreakpointList(const QDomDocument &xml);
+
     QMap<KDevelop::Breakpoint*, QString> m_ids;
 };
 
