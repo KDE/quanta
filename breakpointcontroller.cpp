@@ -65,6 +65,10 @@ void BreakpointController::sendMaybe(KDevelop::Breakpoint* breakpoint)
                 } else {
                     args << "-m "+breakpoint->expression();
                 }
+                if (breakpoint->ignoreHits()) {
+                    args << "-h "+QString::number(breakpoint->ignoreHits()+1);
+                    args << "-o >=";
+                }
                 CallbackWithCookie<BreakpointController, KDevelop::Breakpoint>* cb =
                     new CallbackWithCookie<BreakpointController, KDevelop::Breakpoint>
                         (this, &BreakpointController::handleSetBreakpoint, breakpoint);
