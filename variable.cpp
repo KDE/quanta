@@ -119,14 +119,14 @@ void Variable::handleProperty(const QDomElement &xml)
     setInScope(true);
 
     m_fullName = xml.attribute("fullname");
-    qDebug() << m_fullName;
+    //kDebug() << m_fullName;
     if (xml.firstChild().isText()) {
         QString v  = xml.firstChild().toText().data();
         if (xml.attribute("encoding") == "base64") {
             //TODO: use Connection::m_codec->toUnicode
             v = QString::fromUtf8(QByteArray::fromBase64(xml.text().toAscii()));
         }
-        qDebug() << "value" << v;
+        //kDebug() << "value" << v;
         setValue(v);
     }
 
@@ -141,7 +141,7 @@ void Variable::handleProperty(const QDomElement &xml)
     QDomElement el = xml.firstChildElement("property");
     while (!el.isNull()) {
         QString name = el.attribute("name");
-        kDebug() << name;
+        //kDebug() << name;
         current << name;
         Variable* v = 0;
         if( !existing.contains(name) ) {
