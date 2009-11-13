@@ -14,7 +14,7 @@
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>Url</string>
+      <string>URL</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="0">
@@ -30,7 +30,7 @@
          <string>Enter arguments to give to the executable</string>
         </property>
         <property name="clickMessage">
-         <string>Enter arguments to give to the url</string>
+         <string>Enter arguments to give to the URL</string>
         </property>
        </widget>
       </item>
