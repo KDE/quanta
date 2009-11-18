@@ -55,6 +55,11 @@ GenericName[x-test]=xxStructure Tree Pluginxx
 GenericName[zh_CN]=结构树插件
 GenericName[zh_TW]=結構樹狀圖外掛程式
 Comment=The Structure Tree is a view on the structure of the document.
+Comment[en_GB]=The Structure Tree is a view on the structure of the document.
+Comment[pt]=A Árvore da Estrutura é uma visão sobre a estrutura do documento.
+Comment[sv]=Strukturträdet är en vy av dokumentets struktur.
+Comment[uk]=Дерево структури — це панель перегляду структури документа.
+Comment[x-test]=xxThe Structure Tree is a view on the structure of the document.xx
 Icon=view_tree
 X-KDE-ServiceTypes=KDevelop/Plugin
 
