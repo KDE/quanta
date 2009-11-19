@@ -60,6 +60,7 @@ Comment[pt]=A Árvore da Estrutura é uma visão sobre a estrutura do documento.
 Comment[sv]=Strukturträdet är en vy av dokumentets struktur.
 Comment[uk]=Дерево структури — це панель перегляду структури документа.
 Comment[x-test]=xxThe Structure Tree is a view on the structure of the document.xx
+Comment[zh_TW]=結構樹狀圖檢視文件的結構
 Icon=view_tree
 X-KDE-ServiceTypes=KDevelop/Plugin
 
