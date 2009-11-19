@@ -89,7 +89,7 @@ KUrl ExecuteBrowserPlugin::url( KDevelop::ILaunchConfiguration* cfg, QString& er
     if( host.isEmpty() )
     {
         err_ = i18n("No valid server specified");
-        kWarning() << "Launch Configuration:" << cfg->name() << "no valid script set";
+        kWarning() << "Launch Configuration:" << cfg->name() << "no valid server specified";
         return url;
     }
     url.setScheme("http");
