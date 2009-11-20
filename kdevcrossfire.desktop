@@ -1,0 +1,16 @@
+[Desktop Entry]
+Type=Service
+Exec=blubb
+Comment=This plugin provides a frontend for Crossfire
+Name=Crossfire Support
+GenericName=Debugger Frontend
+
+Icon=debugger
+X-KDE-Library=kdevcrossfire
+X-KDevelop-Category=Global
+X-KDevelop-Version=7
+X-KDE-PluginInfo-Name=kdevcrossfire
+X-KDE-PluginInfo-License=GPL
+ServiceTypes=KDevelop/Plugin
+X-KDevelop-Interfaces=org.kdevelop.IRunProvider
+X-KDevelop-Mode=GUI
