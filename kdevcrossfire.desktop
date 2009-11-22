@@ -2,7 +2,13 @@
 Type=Service
 Exec=blubb
 Comment=This plugin provides a frontend for Crossfire
+Comment[en_GB]=This plugin provides a frontend for Crossfire
+Comment[uk]=Цей додаток є оболонкою до Crossfire
+Comment[x-test]=xxThis plugin provides a frontend for Crossfirexx
 Name=Crossfire Support
+Name[en_GB]=Crossfire Support
+Name[uk]=Підтримка Crossfire
+Name[x-test]=xxCrossfire Supportxx
 GenericName=Debugger Frontend
 GenericName[ca]=Frontal del depurador
 GenericName[de]=Oberfläche für Debugger
