@@ -41,6 +41,9 @@ class DebugJob : public KDevelop::OutputJob
 public:
     DebugJob( DebugSession* session, KDevelop::ILaunchConfiguration*, QObject* parent = 0 );
     virtual void start();
+
+    int browserPid() const { return m_browserPid; }
+
 protected:
     virtual bool doKill();
 
@@ -53,6 +56,7 @@ private:
 
     KUrl m_url;
     DebugSession* m_session;
+    int m_browserPid;
 };
 
 }

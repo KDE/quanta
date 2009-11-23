@@ -36,7 +36,7 @@ namespace Crossfire {
 
 
 DebugJob::DebugJob(DebugSession* session, KDevelop::ILaunchConfiguration* cfg, QObject* parent)
-    : OutputJob(parent), m_session(session)
+    : OutputJob(parent), m_session(session), m_browserPid(0)
 {
     setCapabilities(Killable);
 
@@ -87,7 +87,8 @@ void DebugJob::start()
         p << m_url.url();
         startOutput();
         model()->appendLine( i18n("Opening: %1", m_url.url() ) );
-        if (!KProcess::startDetached(p)) {
+        m_browserPid = KProcess::startDetached(p);
+        if (!m_browserPid) {
             kWarning() << "openUrl failed, something went wrong when creating the job";
             emitResult();
         }

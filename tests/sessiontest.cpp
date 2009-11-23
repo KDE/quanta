@@ -132,6 +132,13 @@ void SessionTest::testOutput()
         QCOMPARE(arguments.at(0).toString(), QString("hello world"));
     }
 
+    if (job.browserPid()) {
+        KProcess p;
+        p << "kill";
+        p << QString::number(job.browserPid());
+        p.execute();
+        p.waitForFinished();
+    }
 }
 
 
