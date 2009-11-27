@@ -1,0 +1,17 @@
+[Desktop Entry]
+Type=Service
+Exec=blubb
+Icon=text-xml
+Name=XML Formatter
+GenericName=XML Formatter
+Comment=A plugin for formatting XML files
+ServiceTypes=KDevelop/Plugin
+X-KDE-Library=kdevxmlformatter
+X-KDevelop-Version=7
+X-KDE-PluginInfo-Name=kdevxmlformatter
+X-KDE-PluginInfo-Author=Ruan Strydom
+X-KDE-PluginInfo-License=LGPL
+X-KDevelop-Category=Global
+X-KDevelop-Interfaces=org.kdevelop.ISourceFormatter
+X-KDevelop-SupportedMimeTypes=text/xml,application/xml,application/xsd,application/xsd+xml,application/xslt+xml,application/wsdl+xml,application/x-wsdl
+X-KDevelop-Mode=NoGUI

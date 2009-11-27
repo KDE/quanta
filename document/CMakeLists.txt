@@ -1,0 +1,34 @@
+
+set(kdevxmldocument_PART_SRCS
+    xmldocumentplugin.cpp
+    xmldocument.cpp
+    xmldocumentview.cpp
+    xmltree.cpp
+    abstractxmlmodel.cpp
+    xmldocumentmodel.cpp
+    xsddocumentmodel.cpp
+)
+
+set(kdevxmldocument_PICS_RCCS pics/pics.qrc )
+qt4_add_resources(kdevxmldocument_PICS_SRCS  ${kdevxmldocument_PICS_RCCS})
+
+
+kde4_add_plugin(kdevxmldocument ${kdevxmldocument_PART_SRCS} ${kdevxmldocument_DOC_SRCS} ${kdevxmldocument_PICS_SRCS})
+
+target_link_libraries(kdevxmldocument
+  ${KDE4_KDEUI_LIBS}
+  ${KDE4_THREADWEAVER_LIBRARIES}
+  ${KDEVPLATFORM_INTERFACES_LIBRARY}
+  ${KDEVPLATFORM_INTERFACES_LIBRARIES}
+  ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
+  ${KDEVPLATFORM_SHELL_LIBRARIES}
+  ${KDEVPLATFORM_SUBLIME_LIBRARIES}
+  ${KDE4_KTEXTEDITOR_LIBS}
+)
+
+install(TARGETS kdevxmldocument DESTINATION ${PLUGIN_INSTALL_DIR})
+
+########### install files ###############
+
+install(FILES kdevxmldocument.desktop DESTINATION ${SERVICES_INSTALL_DIR})
+#install(FILES kdevxmldocument.rc DESTINATION ${DATA_INSTALL_DIR}/kdevxmldocument)

@@ -1,0 +1,17 @@
+[Desktop Entry]
+Type=Service
+Exec=blubb
+Icon=text-xml
+Name=XML Document Tree
+GenericName=XML Document Tree
+Comment=Displays the XML structure as a tree
+ServiceTypes=KDevelop/Plugin
+X-KDE-Library=kdevxmldocument
+X-KDE-PluginInfo-Name=kdevxmldocument
+X-KDE-PluginInfo-Author=Ruan Strydom
+X-KDE-PluginInfo-License=LGPL
+X-KDevelop-Version=7
+X-KDevelop-Language=XML
+X-KDevelop-Category=Global
+X-KDevelop-SupportedMimeTypes=text/xml,application/xml,application/xslt+xml,application/xsd,application/xsd+xml,application/x-wsdl,application/wsdl+xml
+X-KDevelop-Mode=GUI

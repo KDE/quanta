@@ -1,0 +1,7 @@
+This implementations is probably completely wrong.
+It serves as a half baked/but half working idea and is not included in the build.
+The source was copied and modified from TextDocument/PartDocument.
+
+What is outstanding:
+1) Actual functionality ie: being able to modify schema and XML through tree.
+2) Breaks on some encodings

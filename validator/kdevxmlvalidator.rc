@@ -1,0 +1,9 @@
+<!DOCTYPE kpartgui>
+<kpartgui name="kdevxmlvalidator" version="1">
+<MenuBar>
+  <Menu name="edit" >
+    <text context="@title:menu">Edit</text>
+    <Action name="xmlvalidate_xmllanguagesupport" group="edit_formatting"/>
+  </Menu>
+</MenuBar>
+</kpartgui> 

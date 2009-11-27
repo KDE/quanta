@@ -1,0 +1,11 @@
+<!DOCTYPE kpartgui>
+<kpartgui name="kdevxmlformatter" version="1">
+<MenuBar>
+  <Menu name="edit" >
+    <text context="@title:menu">Edit</text>
+    <Action name="xmlcompact_xmllanguagesupport" group="edit_formatting"/>
+    <Action name="xmlescape_xmllanguagesupport" group="edit_formatting"/>
+    <Action name="xmlunescape_xmllanguagesupport" group="edit_formatting"/>
+  </Menu>
+</MenuBar>
+</kpartgui> 

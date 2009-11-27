@@ -1,0 +1,16 @@
+[Desktop Entry]
+Type=Service
+Exec=blubb
+Icon=text-xml
+Name=XML Validator
+GenericName=XML Validator
+Comment=Validates XML files against a DTD or schema
+ServiceTypes=KDevelop/Plugin
+X-KDE-Library=kdevxmlvalidator
+X-KDevelop-Version=7
+X-KDE-PluginInfo-Name=kdevxmlvalidator
+X-KDE-PluginInfo-Author=Ruan Strydom
+X-KDE-PluginInfo-License=LGPL
+X-KDevelop-Category=Global
+X-KDevelop-SupportedMimeTypes=text/xml,application/xml,application/xsd, application/xsd+xml, application/xslt+xml, application/wsdl, application/wsdl+xml
+X-KDevelop-Mode=NoGUI
