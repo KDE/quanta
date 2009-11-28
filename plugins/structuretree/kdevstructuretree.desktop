@@ -55,6 +55,7 @@ GenericName[x-test]=xxStructure Tree Pluginxx
 GenericName[zh_CN]=结构树插件
 GenericName[zh_TW]=結構樹狀圖外掛程式
 Comment=The Structure Tree is a view on the structure of the document.
+Comment[da]=Strukturtræet er en visning af dokumentets struktur.
 Comment[en_GB]=The Structure Tree is a view on the structure of the document.
 Comment[es]=La estructura en árbol es una vista de la estructura del documento.
 Comment[et]=Struktuuripuu näitab dokumendi struktuuri.
