@@ -5,7 +5,7 @@ include (KDE4Defaults)
 include (MacroLibrary)
 
 add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
-include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES})
+include_directories (${quanta_SOURCE_DIR}/../ ${quanta_BINARY_DIR}/../ ${KDE4_INCLUDES})
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${quanta_SOURCE_DIR}/cmake/)
 

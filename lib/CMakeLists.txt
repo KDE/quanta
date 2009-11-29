@@ -1,6 +1,6 @@
 
 include_directories(
-   ${CMAKE_BINARY_DIR}/lib
+   ${quanta_BINARY_DIR}/..//lib
    ${KDEVPLATFORM_INCLUDE_DIR}
    ${KDEVPLATFORM_INCLUDE_DIR}/interfaces
    ${KDEVPLATFORM_INCLUDE_DIR}/shell

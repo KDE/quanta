@@ -6,9 +6,9 @@ include_directories(
    ${KDEVPLATFORM_INCLUDE_DIR}/shell
    ${KDEVPLATFORM_INCLUDE_DIR}/project
    ${KDEVPLATFORM_INCLUDE_DIR}/outputview
-   ${CMAKE_SOURCE_DIR}/kxsldbg/
-   ${CMAKE_BINARY_DIR}/kxsldbg/
-   ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/
+   ${quanta_SOURCE_DIR}/..//kxsldbg/
+   ${quanta_BINARY_DIR}/..//kxsldbg/
+   ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/
    ${LIBXSLT_INCLUDE_DIR}
    ${LIBXML2_INCLUDE_DIR}
 )
@@ -17,17 +17,17 @@ include_directories(
 
 #setings
 # set(kcm_kdev_kxsldbg_PART_SRCS
-#       ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/xsldbgsettingsmodel.cpp
-#       ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/options_common.cpp
-#       ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/utils.cpp
-#       ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/xsldbgconfigimpl.cpp
-#       ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/configdialogprivate.cpp
-#       ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/xsldbgdialogbase.cpp
+#       ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/libxsldbg/xsldbgsettingsmodel.cpp
+#       ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/libxsldbg/options_common.cpp
+#       ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/libxsldbg/utils.cpp
+#       ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/xsldbgconfigimpl.cpp
+#       ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/configdialogprivate.cpp
+#       ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/xsldbgdialogbase.cpp
 #       kcm_kdevkxsldbg.cpp
 # )
 # 
 # set(kcm_kdev_kxsldbg_PART_UI
-#       ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/xsldbgconfig.ui
+#       ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/xsldbgconfig.ui
 # )
 # 
 # kde4_add_ui_files(kcm_kdev_kxsldbg_PART_SRCS ${kcm_kdev_kxsldbg_PART_UI})
@@ -50,59 +50,59 @@ include_directories(
 
 
 set(libqtnotfier_SRCS
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libqtnotfier/xsldbgthread.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libqtnotfier/xsldbgnotifier.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libqtnotfier/xsldbgevent.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libqtnotfier/xsldbgdebuggerbase.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libqtnotfier/qtnotifier2.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/libqtnotfier/xsldbgthread.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/libqtnotfier/xsldbgnotifier.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/libqtnotfier/xsldbgevent.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/libqtnotfier/xsldbgdebuggerbase.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/libqtnotfier/qtnotifier2.cpp
     )
 
 set(libxsldbg_SRCS
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/allmoc.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/xsldbgthread.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/xsldbg.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/xsldbgmsg.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/variable_cmds.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/utils.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/trace_cmds.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/template_cmds.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/search_cmds.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/search.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/param_cmds.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/os_cmds.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/options_unix.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/options.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/options_common.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/option_cmds.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/nodeview_cmds.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/help_unix.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/files_unix.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/files.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/file_cmds.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/debugXSL.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/debug.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/callstack.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/breakpoint_cmds.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/breakpoint.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/arraylist.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/libxsldbg/xsldbgsettingsmodel.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/libxsldbg/allmoc.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/libxsldbg/xsldbgthread.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/libxsldbg/xsldbg.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/libxsldbg/xsldbgmsg.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/libxsldbg/variable_cmds.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/libxsldbg/utils.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/libxsldbg/trace_cmds.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/libxsldbg/template_cmds.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/libxsldbg/search_cmds.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/libxsldbg/search.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/libxsldbg/param_cmds.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/libxsldbg/os_cmds.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/libxsldbg/options_unix.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/libxsldbg/options.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/libxsldbg/options_common.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/libxsldbg/option_cmds.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/libxsldbg/nodeview_cmds.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/libxsldbg/help_unix.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/libxsldbg/files_unix.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/libxsldbg/files.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/libxsldbg/file_cmds.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/libxsldbg/debugXSL.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/libxsldbg/debug.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/libxsldbg/callstack.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/libxsldbg/breakpoint_cmds.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/libxsldbg/breakpoint.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/libxsldbg/arraylist.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/libxsldbg/xsldbgsettingsmodel.cpp
 )
 
 set(libkxsldbgcommon_SRCS
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/xsldbgwalkspeedimpl.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/xsldbgtemplatesimpl.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/xsldbgsourcesimpl.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/xsldbgvariablesimpl.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/xsldbginspector.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/xsldbgentitiesimpl.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/xsldbgdoc.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/xsldbgdialogbase.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/xsldbgdebugger.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/xsldbgconfigimpl.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/xsldbgcallstackimpl.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/xsldbgbreakpointsimpl.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/configdialogprivate.cpp
-    ${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/qxsldbgdoc.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/xsldbgwalkspeedimpl.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/xsldbgtemplatesimpl.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/xsldbgsourcesimpl.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/xsldbgvariablesimpl.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/xsldbginspector.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/xsldbgentitiesimpl.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/xsldbgdoc.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/xsldbgdialogbase.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/xsldbgdebugger.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/xsldbgconfigimpl.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/xsldbgcallstackimpl.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/xsldbgbreakpointsimpl.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/configdialogprivate.cpp
+    ${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/qxsldbgdoc.cpp
 )
 
 set(kdevkxsldbg_PART_SRCS
@@ -114,15 +114,15 @@ set(kdevkxsldbg_PART_SRCS
 )
 
 kde4_add_ui_files(kdevkxsldbg_PART_SRCS
-	${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/xsldbgbreakpoints.ui
-	${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/xsldbgcallstack.ui 
-	${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/xsldbgconfig.ui
-	${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/xsldbgentities.ui 
-	${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/xsldbgmsgdialog.ui 
-	${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/xsldbgvariables.ui
-	${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/xsldbgsources.ui
-	${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/xsldbgtemplates.ui
-	${CMAKE_SOURCE_DIR}/kxsldbg/kxsldbgpart/xsldbgwalkspeed.ui
+	${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/xsldbgbreakpoints.ui
+	${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/xsldbgcallstack.ui 
+	${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/xsldbgconfig.ui
+	${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/xsldbgentities.ui 
+	${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/xsldbgmsgdialog.ui 
+	${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/xsldbgvariables.ui
+	${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/xsldbgsources.ui
+	${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/xsldbgtemplates.ui
+	${quanta_SOURCE_DIR}/..//kxsldbg/kxsldbgpart/xsldbgwalkspeed.ui
 )
 
 

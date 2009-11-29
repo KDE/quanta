@@ -11,12 +11,12 @@ set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  ${KDE4_ENABLE_EXCEPTIONS}")
 include_directories( ${LIBXML2_INCLUDE_DIR} )
 
 include_directories( 
-   ${CMAKE_SOURCE_DIR}/quanta/lib
-   ${CMAKE_SOURCE_DIR}/quanta/quantacore/parsers
-   ${CMAKE_SOURCE_DIR}/quanta/quantacore/parsers/dtd
-   ${CMAKE_SOURCE_DIR}/quanta/quantacore/dialogs
-   ${CMAKE_SOURCE_DIR}/quanta/quantacore/autocomplete
-   ${CMAKE_BINARY_DIR}/quanta/lib
+   ${quanta_SOURCE_DIR}/lib
+   ${quanta_SOURCE_DIR}/quantacore/parsers
+   ${quanta_SOURCE_DIR}/quantacore/parsers/dtd
+   ${quanta_SOURCE_DIR}/quantacore/dialogs
+   ${quanta_SOURCE_DIR}/quantacore/autocomplete
+   ${quanta_BINARY_DIR}/lib
    ${KDEVPLATFORM_INCLUDE_DIR}
    ${KDEVPLATFORM_INCLUDE_DIR}/shell
    ${KDEVPLATFORM_INCLUDE_DIR}/interfaces
