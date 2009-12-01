@@ -1,10 +1,18 @@
 # KDE Config File
 [General]
 Name=Quanta Project Template
+Name[en_GB]=Quanta Project Template
+Name[pt]=Modelo de Projecto do Quanta
+Name[sv]=Quanta-projektmall
 Name[uk]=Шаблон проекту Quanta
+Name[x-test]=xxQuanta Project Templatexx
 Category=Quanta
 Comment=This generates a Quanta project
+Comment[en_GB]=This generates a Quanta project
+Comment[pt]=Isto gera um projecto do Quanta
+Comment[sv]=Det här skapar ett Quanta-projekt
 Comment[uk]=Створює проект Quanta
+Comment[x-test]=xxThis generates a Quanta projectxx
 FileTemplates=html
 Archive=quanta.tar.gz
 Icon=quanta.png
@@ -18,4 +26,8 @@ Dest=%{dest}/%{APPNAMELC}.kdevelop
 [MSG]
 Type=message
 Comment=A simple Quanta project was created in %{dest}
+Comment[en_GB]=A simple Quanta project was created in %{dest}
+Comment[pt]=Foi criado um projecto simples do Quanta em %{dest}
+Comment[sv]=Ett enkelt Quanta-projekt skapades i %{dest}
 Comment[uk]=У %{dest} було створено простий проект Quanta
+Comment[x-test]=xxA simple Quanta project was created in %{dest}xx

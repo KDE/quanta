@@ -2,11 +2,23 @@
 Type=Service
 Exec=blubb
 Name=KDevQuantaProject
+Name[en_GB]=KDevQuantaProject
+Name[pt]=KDevQuantaProject
+Name[sv]=Kdevelop Quanta-projekt
 Name[uk]=KDevQuantaProject
+Name[x-test]=xxKDevQuantaProjectxx
 GenericName=Quantaproject Plugin
+GenericName[en_GB]=Quantaproject Plugin
+GenericName[pt]='Plugin' de Projectos do Quanta
+GenericName[sv]=Insticksprogram för Quanta-projekt
 GenericName[uk]=Додаток проектів Quanta
+GenericName[x-test]=xxQuantaproject Pluginxx
 Comment=QuantaProject Description
+Comment[en_GB]=QuantaProject Description
+Comment[pt]=Descrição dos Projectos do Quanta
+Comment[sv]=Beskrivning av Quanta-projekt
 Comment[uk]=Опис QuantaProject
+Comment[x-test]=xxQuantaProject Descriptionxx
 Icon=quanta
 X-KDE-ServiceTypes=KDevelop/Project
 

@@ -2,11 +2,23 @@
 Type=Service
 Exec=blubb
 Name=KDevUserToolbars
+Name[en_GB]=KDevUserToolbars
+Name[pt]=KDevUserToolbars
+Name[sv]=Kdevelop användarverktygsrader
 Name[uk]=KDevUserToolbars
+Name[x-test]=xxKDevUserToolbarsxx
 GenericName=UserToolbars Plugin
+GenericName[en_GB]=UserToolbars Plugin
+GenericName[pt]='Plugin' das Barras de Ferramentas do Utilizador
+GenericName[sv]=Insticksprogram för användarverktygsrader
 GenericName[uk]=Додаток UserToolbars
+GenericName[x-test]=xxUserToolbars Pluginxx
 Comment=UserToolbars Description
+Comment[en_GB]=UserToolbars Description
+Comment[pt]=Descrição das Barras de Ferramentas do Utilizador
+Comment[sv]=Beskrivning av användarverktygsrader
 Comment[uk]=Опис UserToolbars
+Comment[x-test]=xxUserToolbars Descriptionxx
 Icon=kdevelop
 X-KDE-ServiceTypes=KDevelop/Plugin,KDevelop/UserToolbars
 

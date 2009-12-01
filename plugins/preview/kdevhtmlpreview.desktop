@@ -2,11 +2,23 @@
 Type=Service
 Exec=blubb
 Name=KDevHTMLPreview
+Name[en_GB]=KDevHTMLPreview
+Name[pt]=KDevHTMLPreview
+Name[sv]=KDevelop HTML-förhandsgranskning
 Name[uk]=KDevHTMLPreview
+Name[x-test]=xxKDevHTMLPreviewxx
 GenericName=HTMLPreview Plugin
+GenericName[en_GB]=HTMLPreview Plugin
+GenericName[pt]='Plugin' de Antevisão em HTML
+GenericName[sv]=Insticksprogram för HTML-förhandsgranskning
 GenericName[uk]=Додаток HTMLPreview
+GenericName[x-test]=xxHTMLPreview Pluginxx
 Comment=HTMLPreview Description
+Comment[en_GB]=HTMLPreview Description
+Comment[pt]=Descrição da Antevisão em HTML
+Comment[sv]=Beskrivning av HTML-förhandsgranskning
 Comment[uk]=Опис HTMLPreview
+Comment[x-test]=xxHTMLPreview Descriptionxx
 Icon=konqueror
 X-KDE-ServiceTypes=KDevelop/Plugin
 

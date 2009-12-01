@@ -2,11 +2,23 @@
 Type=Service
 Exec=blubb
 Name=KDevProjectTree
+Name[en_GB]=KDevProjectTree
+Name[pt]=KDevProjectTree
+Name[sv]=Kdevelop projektträd
 Name[uk]=KDevProjectTree
+Name[x-test]=xxKDevProjectTreexx
 GenericName=ProjectTree Plugin
+GenericName[en_GB]=ProjectTree Plugin
+GenericName[pt]='Plugin' da Árvore de Projectos
+GenericName[sv]=Insticksprogram för projektträd
 GenericName[uk]=Додаток ProjectTree
+GenericName[x-test]=xxProjectTree Pluginxx
 Comment=ProjectTree Description
+Comment[en_GB]=ProjectTree Description
+Comment[pt]=Descrição da Árvore de Projectos
+Comment[sv]=Beskrivning av projektträd
 Comment[uk]=Опис ProjectTree
+Comment[x-test]=xxProjectTree Descriptionxx
 Icon=folder_green
 X-KDE-ServiceTypes=KDevelop/Plugin
 

@@ -2,11 +2,23 @@
 Type=Service
 Exec=blubb
 Name=KDevTemplatesTree
+Name[en_GB]=KDevTemplatesTree
+Name[pt]=KDevTemplatesTree
+Name[sv]=Kdevelop mallträd
 Name[uk]=KDevTemplatesTree
+Name[x-test]=xxKDevTemplatesTreexx
 GenericName=TemplatesTree Plugin
+GenericName[en_GB]=TemplatesTree Plugin
+GenericName[pt]='Plugin' da Árvore de Modelos
+GenericName[sv]=Insticksprogram för mallträd
 GenericName[uk]=Додаток TemplatesTree
+GenericName[x-test]=xxTemplatesTree Pluginxx
 Comment=TemplatesTree Description
+Comment[en_GB]=TemplatesTree Description
+Comment[pt]=Descrição da Árvore de Modelos
+Comment[sv]=Beskrivning av mallträd
 Comment[uk]=Опис TemplatesTree
+Comment[x-test]=xxTemplatesTree Descriptionxx
 Icon=template_source
 X-KDE-ServiceTypes=KDevelop/Plugin
 
