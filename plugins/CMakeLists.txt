@@ -8,5 +8,5 @@ add_subdirectory( templatestree )
 add_subdirectory( preview )
 add_subdirectory( usertoolbars )
 add_subdirectory( upload )
-add_subdirectory( kxsldbg )
+macro_optional_add_subdirectory( kxsldbg )
 
