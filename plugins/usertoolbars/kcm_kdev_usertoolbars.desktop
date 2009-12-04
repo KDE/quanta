@@ -12,6 +12,7 @@ X-KDE-CfgDlgHierarchy=USERINTERFACE
 
 Name=User Toolbars setting
 Name[en_GB]=User Toolbars setting
+Name[es]=Preferencias de la barra de herramientas del usuario
 Name[pt]=Configuração das Barras de Ferramentas do Utilizador
 Name[pt_BR]=Configuração das barras de ferramentas do usuário
 Name[sv]=Inställning av användarverktygsrader
@@ -19,6 +20,7 @@ Name[uk]=Налаштування панелей користувача
 Name[x-test]=xxUser Toolbars settingxx
 Comment=Configure User Toolbars
 Comment[en_GB]=Configure User Toolbars
+Comment[es]=Configurar las barras de herramientas del usuario
 Comment[pt]=Configurar as Barras de Ferramentas dos Utilizadores
 Comment[pt_BR]=Configura as barras de ferramentas do usuário
 Comment[sv]=Anpassa användarverktygsrader
