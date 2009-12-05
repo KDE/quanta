@@ -153,12 +153,13 @@ void Connection::readyRead()
                 || result["event"] == "onConsoleWarn"
                 || result["event"] == "onConsoleError"
             ) {
-                //TODO: result["context_id"];
+                //TODO: compare result["context_id"]; with current context
                 foreach (const QVariant &v, result["data"].toMap().values()) {
                     kDebug() << v.toString();
                     emit outputLine(v.toString());
                 }
             }
+            emit eventReceived(result);
         }
 
         if (!m_commandQueue.isEmpty()) {

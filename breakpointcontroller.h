@@ -34,6 +34,9 @@ public:
 protected:
     virtual void sendMaybe(KDevelop::Breakpoint* breakpoint);
 
+private slots:
+    void stateChanged(KDevelop::IDebugSession::DebuggerState state);
+
 private:
     DebugSession *debugSession();
 

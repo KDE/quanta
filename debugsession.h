@@ -31,6 +31,7 @@ namespace KDevelop {
 
 namespace Crossfire {
 
+class CallbackBase;
 class Connection;
 
 class DebugSession : public KDevelop::IDebugSession
@@ -42,8 +43,13 @@ public:
     void setLaunchConfiguration(KDevelop::ILaunchConfiguration *cfg);
     bool listenForConnection();
     void setCurrentContext(const QString &context);
+    Connection *connection() const;
+    void sendCommand(const QString &cmd, const QVariantMap &arguments = QVariantMap(),
+                     CallbackBase* callback = 0);
 
     virtual bool restartAvaliable() const { return false; }
+
+    void setState(DebugSession::DebuggerState state);
     virtual DebuggerState state() const;
 
     virtual KUrl convertToLocalUrl(const KUrl& url) const;
@@ -73,12 +79,14 @@ public Q_SLOTS:
 
 private Q_SLOTS:
     void incomingConnection();
+    void eventReceived(const QVariantMap &event);
 
 private:
     QTcpServer *m_server;
     Connection *m_connection;
     KDevelop::ILaunchConfiguration *m_launchConfiguration;
     QString m_currentContext;
+    KDevelop::IDebugSession::DebuggerState m_currentState;
 
 };
 

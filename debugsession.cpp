@@ -37,7 +37,7 @@
 namespace Crossfire {
 
 DebugSession::DebugSession()
-    : m_server(0), m_connection(0)
+    : m_server(0), m_connection(0), m_currentState(KDevelop::IDebugSession::NotStartedState)
 {
     m_breakpointController = new BreakpointController(this);
     m_variableController = new VariableController(this);
@@ -70,20 +70,61 @@ void DebugSession::incomingConnection()
 
     m_connection = new Connection(client, this);
     connect(m_connection, SIGNAL(outputLine(QString)), SIGNAL(outputLine(QString)));
+    connect(m_connection, SIGNAL(contextCreated(QString)), SLOT(contextCreated(QString)));
+    connect(m_connection, SIGNAL(eventReceived(QVariantMap)), SLOT(eventReceived(QVariantMap)));
 
     m_server->close();
     m_server->deleteLater();
     m_server = 0;
 }
 
-void DebugSession::setCurrentContext(const QString& context)
+
+void DebugSession::eventReceived(const QVariantMap &event)
+{
+    kDebug() << event;
+    if (event["context_id"] == m_currentContext) {
+        if (event["event"] == "onContextCreated") {
+            setState(KDevelop::IDebugSession::StartingState);
+            setState(KDevelop::IDebugSession::ActiveState);
+        } else if (event["event"] == "onBreak") {
+            setState(KDevelop::IDebugSession::PausedState);
+            KUrl url(event["data"].toMap()["url"].toString());
+            emit showStepInSource(url, event["data"].toMap()["line"].toInt()-1);
+        }
+    }
+}
+
+void DebugSession::setCurrentContext(const QString &context)
 {
     m_currentContext = context;
 }
 
+Connection* DebugSession::connection() const
+{
+    return m_connection;
+}
+
+void DebugSession::sendCommand(const QString& cmd, const QVariantMap& arguments, CallbackBase* callback)
+{
+    connection()->sendCommand(cmd, m_currentContext, arguments, callback);
+}
+
+
+void DebugSession::setState(DebugSession::DebuggerState state)
+{
+    kDebug() << state;
+    if (m_currentState != state) {
+        m_currentState = state;
+        if (state == DebugSession::StoppedState) {
+            //close();
+        }
+    }
+    emit stateChanged(state);
+}
+
 KDevelop::IDebugSession::DebuggerState DebugSession::state() const
 {
-
+    return m_currentState;
 }
 
 KUrl DebugSession::convertToLocalUrl(const KUrl& remoteUrl) const

@@ -92,7 +92,8 @@ public:
     QTcpSocket* socket();
 
 Q_SIGNALS:
-    void outputLine(QString content);
+    void outputLine(const QString &content);
+    void eventReceived(const QVariantMap &event);
 
 private Q_SLOTS:
     void closed();

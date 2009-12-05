@@ -73,6 +73,52 @@ private:
     KConfig *c;
 };
 
+class TestDebugJob : public DebugJob
+{
+public:
+    TestDebugJob(DebugSession* session, KDevelop::ILaunchConfiguration* cfg, QObject* parent = 0)
+        : DebugJob(session, cfg, parent)
+    {}
+
+    ~TestDebugJob()
+    {
+        Q_ASSERT(browserPid());
+        if (browserPid()) {
+            KProcess p;
+            p << "kill";
+            p << QString::number(browserPid());
+            p.execute();
+            p.waitForFinished();
+        }
+    }
+};
+
+class TestDebugSession : public DebugSession
+{
+    Q_OBJECT
+public:
+    TestDebugSession() : DebugSession(), m_line(0)
+    {
+        qRegisterMetaType<KUrl>("KUrl");
+        connect(this, SIGNAL(showStepInSource(KUrl, int)), SLOT(slotShowStepInSource(KUrl, int)));
+
+        KDevelop::ICore::self()->debugController()->addSession(this);
+    }
+    KUrl url() { return m_url; }
+    int line() { return m_line; }
+
+private slots:
+    void slotShowStepInSource(const KUrl &url, int line)
+    {
+        m_url = url;
+        m_line = line;
+    }
+private:
+    KUrl m_url;
+    int m_line;
+
+};
+
 void SessionTest::init()
 {
     qRegisterMetaType<DebugSession*>("DebugSession*");
@@ -113,10 +159,10 @@ void SessionTest::testOutput()
     file.close();
     file.setPermissions(QFile::ReadOther | file.permissions());
 
-    DebugSession session;
+    TestDebugSession session;
 
     TestLaunchConfiguration cfg(url);
-    DebugJob job(&session, &cfg);
+    TestDebugJob job(&session, &cfg);
 
     QSignalSpy outputLineSpy(&session, SIGNAL(outputLine(QString)));
 
@@ -131,18 +177,50 @@ void SessionTest::testOutput()
         QCOMPARE(arguments.count(), 1);
         QCOMPARE(arguments.at(0).toString(), QString("hello world"));
     }
-
-    if (job.browserPid()) {
-        KProcess p;
-        p << "kill";
-        p << QString::number(job.browserPid());
-        p.execute();
-        p.waitForFinished();
-    }
 }
 
+
+void SessionTest::testInsertBreakpoint()
+{
+    QStringList contents;
+    contents << "<html>"
+            << "<body>"
+            << "foo"
+            << "<script type=\"text/javascript\">"
+            << "setTimeout(function() {"
+            << "  console.log('asdf');"
+            << "  var i=0;"
+            << "  i++;"
+            << "  i++;"
+            << "}, 3000);"
+            << "</script>"
+            << "</body>"
+            << "</html>";
+    QTemporaryFile file("crossfiretest");
+    file.open();
+    KUrl url(buildBaseUrl + file.fileName());
+    file.write(contents.join("\n").toUtf8());
+    file.close();
+    file.setPermissions(QFile::ReadOther | file.permissions());
+
+    KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(url, 6);
+
+    TestDebugSession session;
+
+    TestLaunchConfiguration cfg(url);
+    TestDebugJob job(&session, &cfg);
+    job.start();
+
+    QVERIFY(session.waitForHandshake());
+    QTest::qWait(5000);
+    QCOMPARE(session.state(), KDevelop::IDebugSession::PausedState);
+    QCOMPARE(session.line(), 6);
+    QCOMPARE(session.url(), url);
+
+}
 
 
 QTEST_KDEMAIN(SessionTest, GUI)
 
+#include "moc_sessiontest.cpp"
 #include "sessiontest.moc"

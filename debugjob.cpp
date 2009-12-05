@@ -62,6 +62,8 @@ DebugJob::DebugJob(DebugSession* session, KDevelop::ILaunchConfiguration* cfg, Q
     connect(m_session, SIGNAL(outputLine(QString)), model(), SLOT(appendLine(QString)));
     connect(m_session, SIGNAL(outputLine(QString)), SLOT(outputLine(QString)));
 
+    m_session->setCurrentContext(m_url.url());
+
 }
 
 
@@ -81,7 +83,7 @@ void DebugJob::start()
             return;
         }
         QStringList p;
-        p << "firefox";
+        p << "/opt/firefox/firefox-bin"; //TODO this should obviously not stay
         p << "--crossfire-host=localhost";
         p << "--crossfire-port=5000";
         p << m_url.url();
