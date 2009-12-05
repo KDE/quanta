@@ -30,6 +30,7 @@
 #include <KProcess>
 
 #include <interfaces/ilaunchconfiguration.h>
+#include <debugger/util/pathmappings.h>
 
 #include "connection.h"
 #include "breakpointcontroller.h"
@@ -38,10 +39,6 @@
 #include "launchconfig.h"
 
 namespace XDebug {
-
-const QString DebugSession::pathMappingsEntry("Path Mappings");
-const QString DebugSession::pathMappingRemoteEntry("Remote");
-const QString DebugSession::pathMappingLocalEntry("Local");
 
 DebugSession::DebugSession()
     : KDevelop::IDebugSession(), m_server(0), m_connection(0), m_launchConfiguration(0)
@@ -218,51 +215,14 @@ KDevelop::IFrameStackModel* DebugSession::createFrameStackModel()
 KUrl DebugSession::convertToLocalUrl(const KUrl& remoteUrl) const
 {
     Q_ASSERT(m_launchConfiguration);
-    if (remoteUrl.isLocalFile() && QFile::exists(remoteUrl.toLocalFile())) {
-        return remoteUrl;
-    }
-
-    kDebug() << remoteUrl;
-
-    KConfigGroup cfg = m_launchConfiguration->config().group(DebugSession::pathMappingsEntry);
-    foreach (const QString &group, cfg.groupList()) {
-        KConfigGroup pCfg = cfg.group(group);
-        KUrl remote = pCfg.readEntry(DebugSession::pathMappingRemoteEntry, KUrl());
-        KUrl local = pCfg.readEntry(DebugSession::pathMappingLocalEntry, KUrl());
-        kDebug() << remote << local;
-        if (remoteUrl.pathOrUrl().startsWith(remote.pathOrUrl())) {
-            QString path = remoteUrl.pathOrUrl().mid(remote.pathOrUrl().length());
-            local.addPath(path);
-            return local;
-        }
-    }
-
-    kDebug() << "no mapping found";
-
-    return remoteUrl;
+    return KDevelop::PathMappings::convertToLocalUrl(m_launchConfiguration->config(), remoteUrl);
 }
 
 
 KUrl DebugSession::convertToRemoteUrl(const KUrl& localUrl) const
 {
-    kDebug() << localUrl;
-
-    KConfigGroup cfg = m_launchConfiguration->config().group(DebugSession::pathMappingsEntry);
-    foreach (const QString &group, cfg.groupList()) {
-        KConfigGroup pCfg = cfg.group(group);
-        KUrl remote = pCfg.readEntry(DebugSession::pathMappingRemoteEntry, KUrl());
-        KUrl local = pCfg.readEntry(DebugSession::pathMappingLocalEntry, KUrl());
-        kDebug() << remote << local;
-        if (localUrl.pathOrUrl().startsWith(local.pathOrUrl())) {
-            QString path = localUrl.pathOrUrl().mid(local.pathOrUrl().length());
-            remote.addPath(path);
-            return remote;
-        }
-    }
-
-    kDebug() << "no mapping found";
-
-    return localUrl;
+    Q_ASSERT(m_launchConfiguration);
+    return KDevelop::PathMappings::convertToRemoteUrl(m_launchConfiguration->config(), localUrl);
 }
 
 }

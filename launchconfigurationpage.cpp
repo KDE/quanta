@@ -21,141 +21,18 @@
 
 #include "launchconfigurationpage.h"
 
-#include "ui_pathmapping.h"
+#include <QVBoxLayout>
+
+#include <KIcon>
+#include <KLocalizedString>
+
+#include <debugger/util/pathmappings.h>
+
 #include "launchconfig.h"
 #include "debugsession.h"
 
 namespace XDebug
 {
-
-class PathMappingModel : public QAbstractTableModel
-{
-    Q_OBJECT
-public:
-    virtual int columnCount(const QModelIndex& parent = QModelIndex()) const
-    {
-        if (parent.isValid()) return 0;
-        return 2;
-    }
-
-    virtual int rowCount(const QModelIndex& parent = QModelIndex()) const
-    {
-        if (parent.isValid()) return 0;
-        return m_paths.count() + 1;
-    }
-
-    virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const
-    {
-        if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
-            if (section == 0) {
-                return i18n("Remote Path");
-            } else if (section == 1) {
-                return i18n("Local Path");
-            }
-        }
-        return QAbstractTableModel::headerData(section, orientation, role);
-    }
-
-    virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const
-    {
-        if (!index.isValid()) return QVariant();
-        if (index.parent().isValid()) return QVariant();
-        if (index.column() > 1) return QVariant();
-        if (index.row() > m_paths.count()) return QVariant();
-        if (role == Qt::DisplayRole || role == Qt::EditRole) {
-            if (index.row() == m_paths.count()) return QString();
-            if (index.column() == 0) {
-                return m_paths[index.row()].remote.pathOrUrl();
-            } else if (index.column() == 1) {
-                return m_paths[index.row()].local.pathOrUrl();
-            }
-        }
-        return QVariant();
-    }
-
-    virtual Qt::ItemFlags flags(const QModelIndex& index) const
-    {
-        if (index.parent().isValid()) return Qt::NoItemFlags;
-        if (!index.isValid()) return Qt::NoItemFlags;
-        return ( Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled );
-
-    }
-
-    virtual bool setData(const QModelIndex& index, const QVariant& value, int role = Qt::EditRole)
-    {
-        if (!index.isValid()) return false;
-        if (index.parent().isValid()) return false;
-        if (index.column() > 1) return false;
-        if (index.row() > m_paths.count()) return false;
-        if (role == Qt::EditRole) {
-            if (index.row() == m_paths.count()) {
-                beginInsertRows(QModelIndex(), index.row()+1, index.row()+1);
-                m_paths.append(Path());
-                endInsertRows();
-            }
-            if (index.column() == 0) {
-                m_paths[index.row()].remote = KUrl(value.toString());
-            } else if (index.column() == 1) {
-                m_paths[index.row()].local = KUrl(value.toString());
-            }
-            dataChanged(index, index);
-            return true;
-        }
-        return false;
-    }
-
-    virtual bool removeRows(int row, int count, const QModelIndex& parent = QModelIndex())
-    {
-        if (parent.isValid()) return false;
-        if (row+count > m_paths.count()) return false;
-        beginRemoveRows(parent, row, row+count-1);
-        for (int i=0; i<count; ++i) {
-            kDebug() << row + i;
-            m_paths.removeAt(row + i);
-        }
-        kDebug() << m_paths.count();
-        endRemoveRows();
-
-        return true;
-    }
-
-    void loadFromConfiguration(const KConfigGroup &config)
-    {
-        m_paths.clear();
-        KConfigGroup cfg = config.group(DebugSession::pathMappingsEntry);
-        for (int i=0; i<cfg.readEntry("Count", 0); ++i) {
-            KConfigGroup pCfg = cfg.group(QString::number(i+1));
-            Path p;
-            p.remote = pCfg.readEntry(DebugSession::pathMappingRemoteEntry, KUrl());
-            p.local = pCfg.readEntry(DebugSession::pathMappingLocalEntry, KUrl());
-            m_paths << p;
-        }
-        reset();
-    }
-
-    void saveToConfiguration(KConfigGroup config)
-    {
-        kDebug() << m_paths.count();
-
-        KConfigGroup cfg = config.group(DebugSession::pathMappingsEntry);
-        cfg.writeEntry("Count", m_paths.count());
-        int i=0;
-        foreach (const Path &p, m_paths) {
-            i++;
-            KConfigGroup pCfg = cfg.group(QString::number(i));
-            pCfg.writeEntry(DebugSession::pathMappingRemoteEntry, p.remote);
-            pCfg.writeEntry(DebugSession::pathMappingLocalEntry, p.local);
-        }
-        cfg.sync();
-    }
-
-private:
-    struct Path {
-        KUrl remote;
-        KUrl local;
-    };
-    QList<Path> m_paths;
-};
 
 KDevelop::LaunchConfigurationPage* ConfigPageFactory::createWidget( QWidget* parent )
 {
@@ -163,33 +40,15 @@ KDevelop::LaunchConfigurationPage* ConfigPageFactory::createWidget( QWidget* par
 }
 
 ConfigPage::ConfigPage( QWidget* parent )
-    : LaunchConfigurationPage(parent), ui( new Ui::PathMappingWidget )
+    : LaunchConfigurationPage(parent)
 {
-    ui->setupUi( this );
-    ui->pathMappingTable->setModel(new PathMappingModel());
-    connect(ui->pathMappingTable->model(), SIGNAL(dataChanged(QModelIndex,QModelIndex)), SIGNAL(changed()));
-    connect(ui->pathMappingTable->model(), SIGNAL(rowsRemoved(QModelIndex,int,int)), SIGNAL(changed()));
-    connect(ui->pathMappingTable->model(), SIGNAL(rowsInserted(QModelIndex,int,int)), SIGNAL(changed()));
+    QVBoxLayout *verticalLayout = new QVBoxLayout(this);
+    this->setLayout(verticalLayout);
 
-    QAction* deletePath = new QAction(
-        KIcon("breakpoint_delete"),
-        i18n( "Delete" ),
-        this
-    );
-    connect(deletePath, SIGNAL(triggered(bool)), SLOT(deletePath()));
-    deletePath->setShortcut(Qt::Key_Delete);
-    deletePath->setShortcutContext(Qt::WidgetWithChildrenShortcut);
-    ui->pathMappingTable->addAction(deletePath);
+    m_pathMappings = new KDevelop::PathMappingsWidget;
+    connect(m_pathMappings, SIGNAL(changed()), SIGNAL(changed()));
+    verticalLayout->addWidget(m_pathMappings);
 }
-
-
-void ConfigPage::deletePath()
-{
-    foreach (const QModelIndex &i, ui->pathMappingTable->selectionModel()->selectedRows()) {
-        ui->pathMappingTable->model()->removeRow(i.row(), i.parent());
-    }
-}
-
 
 KIcon ConfigPage::icon() const
 {
@@ -198,12 +57,12 @@ KIcon ConfigPage::icon() const
 
 void ConfigPage::loadFromConfiguration( const KConfigGroup& cfg, KDevelop::IProject*  )
 {
-    static_cast<PathMappingModel*>(ui->pathMappingTable->model())->loadFromConfiguration(cfg);
+    m_pathMappings->loadFromConfiguration(cfg);
 }
 
 void ConfigPage::saveToConfiguration( KConfigGroup cfg, KDevelop::IProject* ) const
 {
-    static_cast<PathMappingModel*>(ui->pathMappingTable->model())->saveToConfiguration(cfg);
+    m_pathMappings->saveToConfiguration(cfg);
 }
 
 QString ConfigPage::title() const
@@ -214,4 +73,3 @@ QString ConfigPage::title() const
 }
 
 #include "launchconfigurationpage.moc"
-#include "moc_launchconfigurationpage.cpp"

@@ -42,11 +42,6 @@ set(kdevxdebug_PART_SRCS
     launchconfigurationpage.cpp
 )
 
-set( kdevxdebug_UI
-    pathmapping.ui
-)
-
-kde4_add_ui_files( kdevxdebug_PART_SRCS ${kdevxdebug_UI} )
 kde4_add_plugin(kdevxdebug ${kdevxdebug_PART_SRCS} ${kdevxdebugcore_PART_SRCS})
 
 target_link_libraries(kdevxdebug

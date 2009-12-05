@@ -58,11 +58,6 @@ public:
     virtual KUrl convertToLocalUrl(const KUrl& url) const;
     virtual KUrl convertToRemoteUrl(const KUrl& url) const;
 
-
-    static const QString pathMappingsEntry;
-    static const QString pathMappingRemoteEntry;
-    static const QString pathMappingLocalEntry;
-
 private:
     virtual KDevelop::IFrameStackModel* createFrameStackModel();
 

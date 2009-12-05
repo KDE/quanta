@@ -23,9 +23,11 @@
 #define XDEBUGLAUNCHCONFIGURATIONPAGE_H
 
 #include <interfaces/launchconfigurationpage.h>
-namespace Ui {
-    class PathMappingWidget;
+
+namespace KDevelop {
+    class PathMappingsWidget;
 }
+
 namespace XDebug
 {
 
@@ -44,10 +46,8 @@ public:
     virtual void loadFromConfiguration(const KConfigGroup& cfg, KDevelop::IProject* = 0);
     virtual void saveToConfiguration(KConfigGroup, KDevelop::IProject* = 0 ) const;
     virtual QString title() const;
-private slots:
-    void deletePath();
 private:
-    Ui::PathMappingWidget* ui;
+    KDevelop::PathMappingsWidget *m_pathMappings;
 };
 
 }
