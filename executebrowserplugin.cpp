@@ -95,7 +95,12 @@ KUrl ExecuteBrowserPlugin::url( KDevelop::ILaunchConfiguration* cfg, QString& er
     url.setScheme("http");
     url.setHost(host);
     url.setPath(grp.readEntry( ExecuteBrowserPlugin::pathEntry, "" ));
-    url.setQuery(grp.readEntry( ExecuteBrowserPlugin::argumentsEntry, "" ));
+    {
+        QString q = grp.readEntry( ExecuteBrowserPlugin::argumentsEntry, "" );
+        if (!q.isEmpty()) {
+            url.setQuery(q);
+        }
+    }
     return url;
 }
 
