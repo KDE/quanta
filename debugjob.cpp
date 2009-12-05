@@ -74,7 +74,7 @@ void DebugJob::outputLine(QString line)
 void DebugJob::start()
 {
     kDebug() << "launching?" << m_url;
-    if (m_url.isValid()) {
+    if (!m_url.isEmpty()) {
         if (!m_session->listenForConnection()) {
             kWarning() << "listening for connection failed";
             emitResult();

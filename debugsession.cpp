@@ -26,6 +26,9 @@
 
 #include <KDebug>
 
+#include <debugger/util/pathmappings.h>
+#include <interfaces/ilaunchconfiguration.h>
+
 #include "connection.h"
 #include "breakpointcontroller.h"
 #include "variablecontroller.h"
@@ -81,6 +84,18 @@ void DebugSession::setCurrentContext(const QString& context)
 KDevelop::IDebugSession::DebuggerState DebugSession::state() const
 {
 
+}
+
+KUrl DebugSession::convertToLocalUrl(const KUrl& remoteUrl) const
+{
+    Q_ASSERT(m_launchConfiguration);
+    return KDevelop::PathMappings::convertToLocalUrl(m_launchConfiguration->config(), remoteUrl);
+}
+
+KUrl DebugSession::convertToRemoteUrl(const KUrl& localUrl) const
+{
+    Q_ASSERT(m_launchConfiguration);
+    return KDevelop::PathMappings::convertToRemoteUrl(m_launchConfiguration->config(), localUrl);
 }
 
 KDevelop::IFrameStackModel* DebugSession::createFrameStackModel()

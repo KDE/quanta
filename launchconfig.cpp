@@ -27,36 +27,17 @@
 #include <KConfigGroup>
 
 #include <interfaces/ilaunchconfiguration.h>
-#include <interfaces/launchconfigurationpage.h>
 
 #include "debugsession.h"
 #include "debugjob.h"
 #include "crossfireplugin.h"
-
+#include "launchconfigurationpage.h"
 
 namespace Crossfire {
 
-class ConfigPage : public KDevelop::LaunchConfigurationPage
-{
-public:
-    ConfigPage( QWidget* parent = 0 ) : KDevelop::LaunchConfigurationPage(parent) {}
-    virtual QString title() const { return i18n("Crossfire Configuration"); }
-    virtual KIcon icon() const { return KIcon(); }
-    virtual void loadFromConfiguration(const KConfigGroup&, KDevelop::IProject* = 0) {}
-    virtual void saveToConfiguration(KConfigGroup, KDevelop::IProject* = 0) const {}
-};
-
-class ConfigPageFactory : public KDevelop::LaunchConfigurationPageFactory
-{
-public:
-    virtual KDevelop::LaunchConfigurationPage* createWidget(QWidget* parent) {
-        return new ConfigPage(parent);
-    }
-};
-
 BrowserLauncher::BrowserLauncher( CrossfirePlugin* p ) : m_plugin( p )
 {
-    //m_factoryList << new ConfigPageFactory();
+    m_factoryList << new ConfigPageFactory();
 }
 
 QList< KDevelop::LaunchConfigurationPageFactory* > BrowserLauncher::configPages() const

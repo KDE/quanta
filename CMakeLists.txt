@@ -32,6 +32,7 @@ set(kdevcrossfirecore_PART_SRCS
 set(kdevcrossfire_PART_SRCS
     crossfireplugin.cpp
     launchconfig.cpp
+    launchconfigurationpage.cpp
 )
 kde4_add_plugin(kdevcrossfire ${kdevcrossfire_PART_SRCS} ${kdevcrossfirecore_PART_SRCS})
 target_link_libraries(kdevcrossfire

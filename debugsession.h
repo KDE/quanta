@@ -46,6 +46,9 @@ public:
     virtual bool restartAvaliable() const { return false; }
     virtual DebuggerState state() const;
 
+    virtual KUrl convertToLocalUrl(const KUrl& url) const;
+    virtual KUrl convertToRemoteUrl(const KUrl& url) const;
+
     bool waitForConnected(int timeout = 30000);
     bool waitForHandshake(int timeout = 30000);
 
