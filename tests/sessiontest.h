@@ -37,6 +37,7 @@ private slots:
 
     void testOutput();
     void testInsertBreakpoint();
+    void testRemoveBreakpoint();
 
 private:
     KDevelop::TestCore* m_core;

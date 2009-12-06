@@ -70,7 +70,6 @@ void DebugSession::incomingConnection()
 
     m_connection = new Connection(client, this);
     connect(m_connection, SIGNAL(outputLine(QString)), SIGNAL(outputLine(QString)));
-    connect(m_connection, SIGNAL(contextCreated(QString)), SLOT(contextCreated(QString)));
     connect(m_connection, SIGNAL(eventReceived(QVariantMap)), SLOT(eventReceived(QVariantMap)));
 
     m_server->close();
@@ -78,15 +77,19 @@ void DebugSession::incomingConnection()
     m_server = 0;
 }
 
-
 void DebugSession::eventReceived(const QVariantMap &event)
 {
     kDebug() << event;
-    if (event["context_id"] == m_currentContext) {
-        if (event["event"] == "onContextCreated") {
+    if (event["event"] == "onContextCreated") {
+        kDebug() << event["data"].toMap()["href"] << m_startUrl;
+        if (event["data"].toMap()["href"] == m_startUrl.url()) {
+            m_currentContext = event["context_id"].toString();
             setState(KDevelop::IDebugSession::StartingState);
             setState(KDevelop::IDebugSession::ActiveState);
-        } else if (event["event"] == "onBreak") {
+        }
+    }
+    if (event["context_id"] == m_currentContext) {
+        if (event["event"] == "onBreak") {
             setState(KDevelop::IDebugSession::PausedState);
             KUrl url(event["data"].toMap()["url"].toString());
             emit showStepInSource(url, event["data"].toMap()["line"].toInt()-1);
@@ -94,9 +97,9 @@ void DebugSession::eventReceived(const QVariantMap &event)
     }
 }
 
-void DebugSession::setCurrentContext(const QString &context)
+void DebugSession::setStartUrl(const KUrl& url)
 {
-    m_currentContext = context;
+    m_startUrl = url;
 }
 
 Connection* DebugSession::connection() const

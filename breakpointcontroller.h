@@ -39,8 +39,9 @@ private slots:
 
 private:
     DebugSession *debugSession();
+    void handleSetBreakpoint(KDevelop::Breakpoint *breakpoint, const QVariantMap &data);
 
-    QMap<KDevelop::Breakpoint*, QString> m_ids;
+    QMap<KDevelop::Breakpoint*, int> m_ids;
 };
 
 }

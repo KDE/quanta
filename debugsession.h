@@ -22,6 +22,8 @@
 #ifndef CROSSFIRE_DEBUGSESSION_H
 #define CROSSFIRE_DEBUGSESSION_H
 
+#include <KUrl>
+
 #include <debugger/interfaces/idebugsession.h>
 
 class QTcpServer;
@@ -39,10 +41,9 @@ class DebugSession : public KDevelop::IDebugSession
     Q_OBJECT
 public:
     DebugSession();
-
+    void setStartUrl(const KUrl& url);
     void setLaunchConfiguration(KDevelop::ILaunchConfiguration *cfg);
     bool listenForConnection();
-    void setCurrentContext(const QString &context);
     Connection *connection() const;
     void sendCommand(const QString &cmd, const QVariantMap &arguments = QVariantMap(),
                      CallbackBase* callback = 0);
@@ -86,6 +87,7 @@ private:
     Connection *m_connection;
     KDevelop::ILaunchConfiguration *m_launchConfiguration;
     QString m_currentContext;
+    KUrl m_startUrl;
     KDevelop::IDebugSession::DebuggerState m_currentState;
 
 };

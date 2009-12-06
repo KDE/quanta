@@ -188,7 +188,6 @@ void SessionTest::testInsertBreakpoint()
             << "foo"
             << "<script type=\"text/javascript\">"
             << "setTimeout(function() {"
-            << "  console.log('asdf');"
             << "  var i=0;"
             << "  i++;"
             << "  i++;"
@@ -217,6 +216,56 @@ void SessionTest::testInsertBreakpoint()
     QCOMPARE(session.line(), 6);
     QCOMPARE(session.url(), url);
 
+}
+
+void SessionTest::testRemoveBreakpoint()
+{
+    QStringList contents;
+    contents << "<html>"                             // 0
+            << "<body>"                              // 1
+            << "foo"                                 // 2
+            << "<script type=\"text/javascript\">"   // 3
+            << "function asdf() {"                   // 4
+            << "  var i=0;"                          // 5
+            << "}"                                   // 6
+            << "setTimeout(function() {"             // 7
+            << "  asdf();"                           // 8
+            << "  asdf();"                           // 9
+            << "  asdf();"                           //10
+            << "}, 2000);"
+            << "</script>"
+            << "</body>"
+            << "</html>";
+    QTemporaryFile file("crossfiretest");
+    file.open();
+    KUrl url(buildBaseUrl + file.fileName());
+    file.write(contents.join("\n").toUtf8());
+    file.close();
+    file.setPermissions(QFile::ReadOther | file.permissions());
+
+    KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(url, 5);
+    KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(url, 10);
+
+    TestDebugSession session;
+
+    TestLaunchConfiguration cfg(url);
+    TestDebugJob job(&session, &cfg);
+    job.start();
+
+    QVERIFY(session.waitForHandshake());
+    QTest::qWait(3000);
+    QCOMPARE(session.state(), KDevelop::IDebugSession::PausedState);
+    QCOMPARE(session.line(), 5);
+    QCOMPARE(session.url(), url);
+
+    KDevelop::ICore::self()->debugController()->breakpointModel()->removeRow(0);
+    QTest::qWait(1000);
+    session.run();
+    QTest::qWait(1000);
+
+    QCOMPARE(session.state(), KDevelop::IDebugSession::PausedState);
+    QCOMPARE(session.line(), 10);
+    QCOMPARE(session.url(), url);
 }
 
 

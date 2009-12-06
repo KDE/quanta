@@ -62,8 +62,7 @@ DebugJob::DebugJob(DebugSession* session, KDevelop::ILaunchConfiguration* cfg, Q
     connect(m_session, SIGNAL(outputLine(QString)), model(), SLOT(appendLine(QString)));
     connect(m_session, SIGNAL(outputLine(QString)), SLOT(outputLine(QString)));
 
-    m_session->setCurrentContext(m_url.url());
-
+    m_session->setStartUrl(m_url);
 }
 
 

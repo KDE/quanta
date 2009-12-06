@@ -36,19 +36,19 @@
 
 namespace Crossfire {
 
-static const char* HANDSHAKE_STRING = "Fbug+CrossfireHandshake\r\n";
+static const char* HANDSHAKE_STRING = "CrossfireHandshake\r\n";
 
 
 Connection::Connection(QTcpSocket* socket, QObject * parent)
     : QObject(parent),
     m_socket(socket), m_handsShaked(false), m_commandPending(false), m_lastSeqNr(0)
 {
+
     Q_ASSERT(m_socket);
     m_socket->setParent(this);
 
     connect(m_socket, SIGNAL(disconnected()), this, SLOT(closed()));
     connect(m_socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(error( QAbstractSocket::SocketError)));
-
     connect(m_socket, SIGNAL(readyRead()), this, SLOT(readyRead()));
 }
 
@@ -82,13 +82,19 @@ void Connection::error(QAbstractSocket::SocketError error)
 
 void Connection::readyRead()
 {
+    kDebug() << m_handsShaked;;
     if (!m_handsShaked) {
-        if (m_socket->read(25) == HANDSHAKE_STRING) {
-            m_socket->write("Fbug+CrossfireHandshake\r\n");
+        QByteArray data = m_socket->read(strlen(HANDSHAKE_STRING));
+        kDebug() << data;
+        if (data == HANDSHAKE_STRING) {
+            m_socket->write(HANDSHAKE_STRING);
             m_socket->flush();
             m_socket->waitForBytesWritten();
             kDebug() << "handshake successful";
             m_handsShaked = true;
+            if (!m_commandQueue.isEmpty()) {
+                sendData(m_commandQueue.dequeue());
+            }
         }
     }
     while (m_socket && m_socket->bytesAvailable()) {
@@ -146,6 +152,12 @@ void Connection::readyRead()
             }
 //             result["success"];
 //             result["running"];
+            kDebug() << "command queue size" << m_commandQueue.size();
+            if (!m_commandQueue.isEmpty()) {
+                sendData(m_commandQueue.dequeue());
+            } else {
+                m_commandPending = false;
+            }
         } else if (result["type"] == "event") {
             if (result["event"] == "onConsoleLog"
                 || result["event"] == "onConsoleDebug"
@@ -161,20 +173,11 @@ void Connection::readyRead()
             }
             emit eventReceived(result);
         }
-
-        if (!m_commandQueue.isEmpty()) {
-            sendData(m_commandQueue.dequeue());
-        } else {
-            m_commandPending = false;
-        }
     }
 }
 void Connection::sendCommand(const QString &cmd, const QString &contextId,
                              const QVariantMap &arguments, CallbackBase* callback)
 {
-    Q_ASSERT(m_socket);
-    Q_ASSERT(m_socket->isOpen());
-
     QVariantMap data;
     data["context_id"] = contextId;
     data["type"] = "request";
@@ -184,16 +187,18 @@ void Connection::sendCommand(const QString &cmd, const QString &contextId,
 
     QJson::Serializer serializer;
     const QByteArray out = serializer.serialize(data);
-    kDebug() << out;
 
     if (callback) {
         m_callbacks[m_lastSeqNr] = callback;
     }
     
-    if (!m_commandPending) {
+    if (!m_commandPending && m_socket) {
+        Q_ASSERT(m_socket->isOpen());
+        kDebug() << "sending" << out;
         sendData(out);
         m_commandPending = true;
     } else {
+        kDebug() << "queueing" << out;
         m_commandQueue.enqueue(out);
     }
 }

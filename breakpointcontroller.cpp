@@ -40,11 +40,9 @@ void BreakpointController::sendMaybe(KDevelop::Breakpoint* breakpoint)
     if (breakpoint->deleted()) {
         if (m_ids.contains(breakpoint)) {
             QString cmd("clearbreakpoint");
-            /*
-            QStringList args;
-            args << "-d "+m_ids[breakpoint];
-            debugSession()->connection()->sendCommand(cmd, args);
-            */
+            QVariantMap args;
+            args["breakpoint"] = m_ids[breakpoint];
+            debugSession()->sendCommand(cmd, args);
         }
     } else if (m_dirty[breakpoint].contains(KDevelop::Breakpoint::LocationColumn)) {
         if (breakpoint->enabled()) {
@@ -78,10 +76,10 @@ void BreakpointController::sendMaybe(KDevelop::Breakpoint* breakpoint)
             if (breakpoint->ignoreHits()) {
                 args["ignoreCount"] = breakpoint->ignoreHits();
             }
-            //CallbackWithCookie<BreakpointController, KDevelop::Breakpoint>* cb =
-            //    new CallbackWithCookie<BreakpointController, KDevelop::Breakpoint>
-            //        (this, &BreakpointController::handleSetBreakpoint, breakpoint);
-            debugSession()->sendCommand(cmd, args/*, cb*/);
+            CallbackWithCookie<BreakpointController, KDevelop::Breakpoint>* cb =
+                new CallbackWithCookie<BreakpointController, KDevelop::Breakpoint>
+                    (this, &BreakpointController::handleSetBreakpoint, breakpoint);
+            debugSession()->sendCommand(cmd, args, cb);
         }
     } else if (m_dirty[breakpoint].contains(KDevelop::Breakpoint::EnableColumn)) {
         Q_ASSERT(m_ids.contains(breakpoint));
@@ -93,6 +91,16 @@ void BreakpointController::sendMaybe(KDevelop::Breakpoint* breakpoint)
     }
     m_dirty[breakpoint].clear();
 }
+
+
+void BreakpointController::handleSetBreakpoint(KDevelop::Breakpoint* breakpoint, const QVariantMap& data)
+{
+    Q_ASSERT(data["command"] == "setbreakpoint");
+    Q_ASSERT(data["success"].toBool());
+    Q_ASSERT(breakpoint);
+    m_ids[breakpoint] = data["data"].toMap()["ref"].toInt();
+}
+
 
 DebugSession* BreakpointController::debugSession()
 {
