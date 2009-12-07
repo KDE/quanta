@@ -33,20 +33,27 @@
 
 namespace Crossfire {
 
-static bool hasStartedSession()
+bool hasStartedSession()
 {
     KDevelop::IDebugSession *session = KDevelop::ICore::self()->debugController()->currentSession();
     if (!session)
         return false;
+    if (!dynamic_cast<DebugSession*>(session)) return false;
 
     KDevelop::IDebugSession::DebuggerState s = session->state();
     return s != KDevelop::IDebugSession::NotStartedState
         && s != KDevelop::IDebugSession::EndedState;
 }
+DebugSession *currentSession()
+{
+    if (!hasStartedSession()) return 0;
+    return static_cast<DebugSession*>(KDevelop::ICore::self()->debugController()->currentSession());
+}
+
 
 Variable::Variable(KDevelop::TreeModel* model, KDevelop::TreeItem* parent,
             const QString& expression, const QString& display)
-: KDevelop::Variable(model, parent, expression, display)
+: KDevelop::Variable(model, parent, expression, display), m_ref(-1)
 {
 }
 
@@ -54,12 +61,50 @@ Variable::~Variable()
 {
 }
 
-void Variable::attachMaybe(QObject *callback, const char *callbackMethod)
+
+void Variable::setValue(const QVariantMap& val)
 {
+    kDebug() << val;
+    if (val["type"] == "ref") {
+        m_ref = val["handle"].toInt();
+        Q_ASSERT(m_ref > 0);
+        setHasMore(true);
+    } else {
+        KDevelop::Variable::setValue(val["value"].toString());
+    }
+}
+
+void Variable::handleLookup(const QVariantMap& data)
+{
+    QMapIterator<QString, QVariant> i(data["body"].toMap()["value"].toMap()["value"].toMap());
+    while (i.hasNext()) {
+        i.next();
+        kDebug() << i.key() << i.value();
+        KDevelop::Variable* xvar = currentSession()->variableController()->
+            createVariable(model(), this,
+                            i.key());
+        Variable* var = static_cast<Variable*>(xvar);
+        var->setTopLevel(false);
+        appendChild(var);
+        var->setValue(i.value().toMap());
+    }
 }
 
 void Variable::fetchMoreChildren()
 {
+    Q_ASSERT(m_ref);
+    DebugSession* session = currentSession();
+    if (session) {
+        QVariantMap args;
+        args["handle"] = m_ref;
+        Callback<Variable>* cb = new Callback<Variable>(this, &Variable::handleLookup);
+        session->sendCommand("lookup", args, cb);
+    }
 }
+
+void Variable::attachMaybe(QObject *callback, const char *callbackMethod)
+{
+}
+
 
 }

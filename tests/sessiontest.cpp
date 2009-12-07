@@ -394,14 +394,14 @@ void SessionTest::testVariablesLocals()
     COMPARE_DATA(variableCollection()->index(1, 1, i), "");
     COMPARE_DATA(variableCollection()->index(2, 0, i), "x");
     COMPARE_DATA(variableCollection()->index(2, 1, i), "10");
-    /*
     i = variableCollection()->index(1, 0, i);
+    variableCollection()->expanded(i);
+    QTest::qWait(1000);
     QCOMPARE(variableCollection()->rowCount(i), 2);
-    COMPARE_DATA(variableCollection()->index(0, 0, i), "foo");
-    COMPARE_DATA(variableCollection()->index(0, 1, i), "foo");
-    COMPARE_DATA(variableCollection()->index(2, 0, i), "bar");
-    COMPARE_DATA(variableCollection()->index(2, 1, i), "1");
-    */
+    COMPARE_DATA(variableCollection()->index(0, 0, i), "bar");
+    COMPARE_DATA(variableCollection()->index(0, 1, i), "1");
+    COMPARE_DATA(variableCollection()->index(1, 0, i), "foo");
+    COMPARE_DATA(variableCollection()->index(1, 1, i), "foo");
 }
 
 

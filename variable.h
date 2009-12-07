@@ -43,6 +43,13 @@ public:
 public: // Variable overrides
     virtual void attachMaybe(QObject *callback = 0, const char *callbackMethod = 0);
     virtual void fetchMoreChildren();
+
+    void setValue(const QVariantMap &val);
+
+private:
+    void handleLookup(const QVariantMap& data);
+
+    int m_ref;
 };
 
 }

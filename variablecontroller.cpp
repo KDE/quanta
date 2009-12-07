@@ -72,7 +72,6 @@ void VariableController::handleFrame(const QVariantMap& data)
     QMapIterator<QString, QVariant> i(data["body"].toMap()["object"].toMap()["value"].toMap());
     while (i.hasNext()) {
         i.next();
-        kDebug() << i.key();
         if (i.key() != "parent") {
             names << i.key();
         }
@@ -91,7 +90,7 @@ void VariableController::handleFrame(const QVariantMap& data)
             foreach (KDevelop::Variable *v, vars) {
                 Q_ASSERT(dynamic_cast<Variable*>(v));
                 if (v->expression() == name) {
-                    static_cast<Variable*>(v)->setValue(i.value().toMap()["value"].toString());
+                    static_cast<Variable*>(v)->setValue(i.value().toMap());
                     break;
                 }
             }
